@@ -2,80 +2,95 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F7FDC64EB1
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 07:46:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8C9EC65BAF
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 07:47:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EA00320892
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 07:46:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA00320892
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id ACF7E20892
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 07:47:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ACF7E20892
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726080AbeLGHq3 convert rfc822-to-8bit (ORCPT
+        id S1726101AbeLGHrh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 02:46:29 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:43916 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725952AbeLGHq2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 02:46:28 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 7A5EC20834; Fri,  7 Dec 2018 08:46:26 +0100 (CET)
-Received: from xps13 (aaubervilliers-681-1-79-44.w90-88.abo.wanadoo.fr [90.88.21.44])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 3843920717;
-        Fri,  7 Dec 2018 08:46:26 +0100 (CET)
-Date:   Fri, 7 Dec 2018 08:46:25 +0100
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     linux-mtd@lists.infradead.org,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        linux-kernel@vger.kernel.org, Marek Vasut <marek.vasut@gmail.com>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        David Woodhouse <dwmw2@infradead.org>
-Subject: Re: [PATCH v2 0/2] mtd: rawnand: denali: clean-up unnecessary hook
- and device reset
-Message-ID: <20181207084625.2d93c769@xps13>
-In-Reply-To: <1543382857-30827-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1543382857-30827-1-git-send-email-yamada.masahiro@socionext.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Fri, 7 Dec 2018 02:47:37 -0500
+Received: from mailgw01.mediatek.com ([210.61.82.183]:23176 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725952AbeLGHrg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Dec 2018 02:47:36 -0500
+X-UUID: 95ffd9d0e0cd46a4b5d1582e7a56c99d-20181207
+X-UUID: 95ffd9d0e0cd46a4b5d1582e7a56c99d-20181207
+Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw01.mediatek.com
+        (envelope-from <long.cheng@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 600503054; Fri, 07 Dec 2018 15:47:28 +0800
+Received: from mtkcas08.mediatek.inc (172.21.101.126) by
+ mtkmbs01n1.mediatek.inc (172.21.101.68) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Fri, 7 Dec 2018 15:47:27 +0800
+Received: from localhost.localdomain (10.17.3.153) by mtkcas08.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Fri, 7 Dec 2018 15:47:26 +0800
+From:   Long Cheng <long.cheng@mediatek.com>
+To:     Vinod Koul <vkoul@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+CC:     Matthias Brugger <matthias.bgg@gmail.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        Sean Wang <sean.wang@mediatek.com>,
+        Sean Wang <sean.wang@kernel.org>, <dmaengine@vger.kernel.org>,
+        <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-serial@vger.kernel.org>,
+        <srv_heupstream@mediatek.com>,
+        Yingjoe Chen <yingjoe.chen@mediatek.com>,
+        YT Shen <yt.shen@mediatek.com>,
+        Long Cheng <long.cheng@mediatek.com>
+Subject: [PATCH v3 0/2] add uart DMA function 
+Date:   Fri, 7 Dec 2018 15:47:19 +0800
+Message-ID: <1544168842-13860-1-git-send-email-long.cheng@mediatek.com>
+X-Mailer: git-send-email 1.7.9.5
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Masahiro,
+In Mediatek SOCs, the uart can support DMA function.
+Base on DMA engine formwork, we add the DMA code to support uart. And put the code under drivers/dma.
 
-Masahiro Yamada <yamada.masahiro@socionext.com> wrote on Wed, 28 Nov
-2018 14:27:35 +0900:
+This series contains document bindings, Kconfig to control the function enable or not,
+device tree including interrupt and dma device node, the code of UART DM
 
-> I sent this series on September,
-> and Miquel replied this series was applied:
-> http://patchwork.ozlabs.org/patch/967242/
-> 
-> But, It turned out not applied.
-> 
-> I rebased it and resending now.
-> 
-> 
-> Masahiro Yamada (2):
->   mtd: rawnand: denali: remove ->dev_ready() hook
->   mtd: rawnand: denali: remove denali_reset_banks()
-> 
->  drivers/mtd/nand/raw/denali.c | 52 +------------------------------------------
->  1 file changed, 1 insertion(+), 51 deletions(-)
-> 
+Changes compared to v2:
+-remove unimportant parameters
+-instead of cookie, use APIs of virtual channel.
+-use of_dma_xlate_by_chan_id.
+Changes compared to v1:
+-mian revised file, 8250_mtk_dma.c
+--parameters renamed for standard
+--remove atomic operation
 
-I don't know how I missed those. Sorry for that, they are now applied
-on nand/next.
+Long Cheng (2):
+  dmaengine: 8250_mtk_dma: add Mediatek uart DMA support
+  arm: dts: mt2701: add uart APDMA to device tree
+
+ arch/arm64/boot/dts/mediatek/mt2712e.dtsi |   50 ++
+ drivers/dma/mediatek/8250_mtk_dma.c       |  847 +++++++++++++++++++++++++++++
+ drivers/dma/mediatek/Kconfig              |   11 +
+ drivers/dma/mediatek/Makefile             |    1 +
+ 4 files changed, 909 insertions(+)
+ create mode 100644 drivers/dma/mediatek/8250_mtk_dma.c
+
+-- 
+1.7.9.5
 
 
-Thanks,
-Miquèl
