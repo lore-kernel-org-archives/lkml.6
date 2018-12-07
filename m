@@ -2,229 +2,160 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5E56C64EB1
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 18:40:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B8DBC64EB1
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 18:40:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A97E22081C
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 18:40:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A97E22081C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 404322064D
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 18:40:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Xmck1bS0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 404322064D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726409AbeLGSkm (ORCPT
+        id S1726425AbeLGSkq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 7 Dec 2018 13:40:46 -0500
+Received: from mail-ua1-f67.google.com ([209.85.222.67]:37381 "EHLO
+        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726408AbeLGSkm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 7 Dec 2018 13:40:42 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:52152 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726077AbeLGSkk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 13:40:40 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1610715AD;
-        Fri,  7 Dec 2018 10:40:40 -0800 (PST)
-Received: from moonbear.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F1CF53F5AF;
-        Fri,  7 Dec 2018 10:40:36 -0800 (PST)
-From:   Kristina Martsenko <kristina.martsenko@arm.com>
-To:     linux-arm-kernel@lists.infradead.org
-Cc:     Adam Wallis <awallis@codeaurora.org>,
-        Amit Kachhap <amit.kachhap@arm.com>,
-        Andrew Jones <drjones@redhat.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Christoffer Dall <christoffer.dall@arm.com>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Dave P Martin <dave.martin@arm.com>,
-        Jacob Bramley <jacob.bramley@arm.com>,
-        Kees Cook <keescook@chromium.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ramana Radhakrishnan <ramana.radhakrishnan@arm.com>,
-        Richard Henderson <richard.henderson@linaro.org>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
+Received: by mail-ua1-f67.google.com with SMTP id u19so1748879uae.4
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Dec 2018 10:40:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=SRCkAV/rwwCb6G1s504cXx97lfWxm12ZTF5AciiY020=;
+        b=Xmck1bS0DtZaa+WeJixKR5fKXvJ0b/KkgVumJ+cB+BRhf2dA1IB3yHuUry37zHpQs6
+         zaxAXd4KG8ZJT1/0HnMFp9V5QWu3sIojUVz3n8BmfxYYfJvsAIizcUxSgPQrz5Rov1t2
+         CbtwE330HXlFJIaGEy1i92cSc9oRewduTt9lw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=SRCkAV/rwwCb6G1s504cXx97lfWxm12ZTF5AciiY020=;
+        b=UgxKgpaNv02MsHXZXOG15Djihjlx95+PZA+u/sOsrlmfkByAaTWfYtw4ZdPiehcncS
+         w23p9vdkhfWG/VQ4j2cAcxkeUMfKqrpC300Chnj4nH6nC6ovveX0ORz6pahYPTTU6d8L
+         9OP9W+RPu0gMTeSeThf8prt/lqnxqcl9+vFk1yAgZuADFbvbKfHfx4ZVpQ9qZmAOaFb1
+         pTgH/YZSh6CD6ttN/QplFb+wDFtxYTtb4Xk0zLFAELCQx9u11zUMWtRHMLyf6oD2+YA8
+         cpCWtFj9bKTFsIFcg5nc+QF90UoIKt2beLgc/Gc3FNLXP5uT+E3Fxz2cn7vjgpSPuBJr
+         qZcA==
+X-Gm-Message-State: AA+aEWZcTli4M0jodhq2xTXfz18YPGosDEcO2fjf0pcHsPAd/z0D1hiS
+        cclZsvEGhaeMnaIhv8g0IwsrEmvBa+I=
+X-Google-Smtp-Source: AFSGD/Ws7SSgCy6KVeOpx0jUYtiOwsZxXvBOjyRT+dDQLneH5v3I+MkiCBFVrOm6mxE/sZ4VBg+lAw==
+X-Received: by 2002:ab0:6198:: with SMTP id h24mr1454539uan.97.1544208040595;
+        Fri, 07 Dec 2018 10:40:40 -0800 (PST)
+Received: from mail-vs1-f42.google.com (mail-vs1-f42.google.com. [209.85.217.42])
+        by smtp.gmail.com with ESMTPSA id y195sm1746685vkd.0.2018.12.07.10.40.38
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 07 Dec 2018 10:40:38 -0800 (PST)
+Received: by mail-vs1-f42.google.com with SMTP id h78so3022150vsi.6
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Dec 2018 10:40:38 -0800 (PST)
+X-Received: by 2002:a67:dd11:: with SMTP id y17mr1406802vsj.111.1544208038051;
+ Fri, 07 Dec 2018 10:40:38 -0800 (PST)
+MIME-Version: 1.0
+References: <20181205033828.6156-1-dianders@chromium.org> <20181207174231.GD11961@arrakis.emea.arm.com>
+In-Reply-To: <20181207174231.GD11961@arrakis.emea.arm.com>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Fri, 7 Dec 2018 10:40:24 -0800
+X-Gmail-Original-Message-ID: <CAD=FV=WO2xMojkEqKCMkufwihUvnow3yEH4GZPh7hh8noNZ+=A@mail.gmail.com>
+Message-ID: <CAD=FV=WO2xMojkEqKCMkufwihUvnow3yEH4GZPh7hh8noNZ+=A@mail.gmail.com>
+Subject: Re: [REPOST PATCH v6 0/4] kgdb: Fix kgdb_roundup_cpus()
+To:     Catalin Marinas <catalin.marinas@arm.com>
+Cc:     Jason Wessel <jason.wessel@windriver.com>,
+        Daniel Thompson <daniel.thompson@linaro.org>, mhocko@suse.com,
+        linux-sh@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
+        kgdb-bugreport@lists.sourceforge.net,
         Will Deacon <will.deacon@arm.com>,
-        kvmarm@lists.cs.columbia.edu, linux-kernel@vger.kernel.org
-Subject: [PATCH v6 10/13] arm64: add prctl control for resetting ptrauth keys
-Date:   Fri,  7 Dec 2018 18:39:28 +0000
-Message-Id: <20181207183931.4285-11-kristina.martsenko@arm.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20181207183931.4285-1-kristina.martsenko@arm.com>
-References: <20181207183931.4285-1-kristina.martsenko@arm.com>
+        LKML <linux-kernel@vger.kernel.org>, dalias@libc.org,
+        paulus@samba.org, "H. Peter Anvin" <hpa@zytor.com>,
+        sparclinux@vger.kernel.org,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        linux-hexagon@vger.kernel.org, x86@kernel.org,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Ingo Molnar <mingo@redhat.com>, jhogan@kernel.org,
+        linux-snps-arc@lists.infradead.org, ying.huang@intel.com,
+        linux-mips@vger.kernel.org, rppt@linux.vnet.ibm.com, bp@alien8.de,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        christophe.leroy@c-s.fr, Vineet Gupta <vgupta@synopsys.com>,
+        Ralf Baechle <ralf@linux-mips.org>, rkuo@codeaurora.org,
+        paul.burton@mips.com,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        mpe@ellerman.id.au, Andrew Morton <akpm@linux-foundation.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        David Miller <davem@davemloft.net>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add an arm64-specific prctl to allow a thread to reinitialize its
-pointer authentication keys to random values. This can be useful when
-exec() is not used for starting new processes, to ensure that different
-processes still have different keys.
+Hi,
 
-Signed-off-by: Kristina Martsenko <kristina.martsenko@arm.com>
----
- arch/arm64/include/asm/pointer_auth.h |  3 +++
- arch/arm64/include/asm/processor.h    |  4 +++
- arch/arm64/kernel/Makefile            |  1 +
- arch/arm64/kernel/pointer_auth.c      | 47 +++++++++++++++++++++++++++++++++++
- include/uapi/linux/prctl.h            |  8 ++++++
- kernel/sys.c                          |  8 ++++++
- 6 files changed, 71 insertions(+)
- create mode 100644 arch/arm64/kernel/pointer_auth.c
+On Fri, Dec 7, 2018 at 9:42 AM Catalin Marinas <catalin.marinas@arm.com> wrote:
+>
+> On Tue, Dec 04, 2018 at 07:38:24PM -0800, Douglas Anderson wrote:
+> > Douglas Anderson (4):
+> >   kgdb: Remove irq flags from roundup
+> >   kgdb: Fix kgdb_roundup_cpus() for arches who used smp_call_function()
+> >   kgdb: Don't round up a CPU that failed rounding up before
+> >   kdb: Don't back trace on a cpu that didn't round up
+>
+> FWIW, trying these on arm64 (ThunderX2) with CONFIG_KGDB_TESTS_ON_BOOT=y
+> on top of 4.20-rc5 doesn't boot. It looks like they leave interrupts
+> disabled when they shouldn't and it trips over the BUG at
+> mm/vmalloc.c:1380 (called via do_fork -> copy_process).
+>
+> Now, I don't think these patches make things worse on arm64 since prior
+> to them the kgdb boot tests on arm64 were stuck in a loop (RUN
+> singlestep).
 
-diff --git a/arch/arm64/include/asm/pointer_auth.h b/arch/arm64/include/asm/pointer_auth.h
-index 89190d93c850..7797bc346c6b 100644
---- a/arch/arm64/include/asm/pointer_auth.h
-+++ b/arch/arm64/include/asm/pointer_auth.h
-@@ -59,6 +59,8 @@ static inline void ptrauth_keys_switch(struct ptrauth_keys *keys)
- 		__ptrauth_key_install(APGA, keys->apga);
- }
- 
-+extern int ptrauth_prctl_reset_keys(struct task_struct *tsk, unsigned long arg);
-+
- /*
-  * The EL0 pointer bits used by a pointer authentication code.
-  * This is dependent on TBI0 being enabled, or bits 63:56 would also apply.
-@@ -82,6 +84,7 @@ do {									\
- 	ptrauth_keys_switch(&(tsk)->thread_info.keys_user)
- 
- #else /* CONFIG_ARM64_PTR_AUTH */
-+#define ptrauth_prctl_reset_keys(tsk, arg)	(-EINVAL)
- #define ptrauth_strip_insn_pac(lr)	(lr)
- #define ptrauth_thread_init_user(tsk)
- #define ptrauth_thread_switch(tsk)
-diff --git a/arch/arm64/include/asm/processor.h b/arch/arm64/include/asm/processor.h
-index 6b0d4dff5012..40ccfb7605b6 100644
---- a/arch/arm64/include/asm/processor.h
-+++ b/arch/arm64/include/asm/processor.h
-@@ -46,6 +46,7 @@
- #include <asm/hw_breakpoint.h>
- #include <asm/lse.h>
- #include <asm/pgtable-hwdef.h>
-+#include <asm/pointer_auth.h>
- #include <asm/ptrace.h>
- #include <asm/types.h>
- 
-@@ -270,6 +271,9 @@ extern void __init minsigstksz_setup(void);
- #define SVE_SET_VL(arg)	sve_set_current_vl(arg)
- #define SVE_GET_VL()	sve_get_current_vl()
- 
-+/* PR_PAC_RESET_KEYS prctl */
-+#define PAC_RESET_KEYS(tsk, arg)	ptrauth_prctl_reset_keys(tsk, arg)
-+
- /*
-  * For CONFIG_GCC_PLUGIN_STACKLEAK
-  *
-diff --git a/arch/arm64/kernel/Makefile b/arch/arm64/kernel/Makefile
-index 4c8b13bede80..096740ab81d2 100644
---- a/arch/arm64/kernel/Makefile
-+++ b/arch/arm64/kernel/Makefile
-@@ -57,6 +57,7 @@ arm64-obj-$(CONFIG_CRASH_DUMP)		+= crash_dump.o
- arm64-obj-$(CONFIG_CRASH_CORE)		+= crash_core.o
- arm64-obj-$(CONFIG_ARM_SDE_INTERFACE)	+= sdei.o
- arm64-obj-$(CONFIG_ARM64_SSBD)		+= ssbd.o
-+arm64-obj-$(CONFIG_ARM64_PTR_AUTH)	+= pointer_auth.o
- 
- obj-y					+= $(arm64-obj-y) vdso/ probes/
- obj-m					+= $(arm64-obj-m)
-diff --git a/arch/arm64/kernel/pointer_auth.c b/arch/arm64/kernel/pointer_auth.c
-new file mode 100644
-index 000000000000..b9f6f5f3409a
---- /dev/null
-+++ b/arch/arm64/kernel/pointer_auth.c
-@@ -0,0 +1,47 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+#include <linux/errno.h>
-+#include <linux/prctl.h>
-+#include <linux/random.h>
-+#include <linux/sched.h>
-+#include <asm/cpufeature.h>
-+#include <asm/pointer_auth.h>
-+
-+int ptrauth_prctl_reset_keys(struct task_struct *tsk, unsigned long arg)
-+{
-+	struct ptrauth_keys *keys = &tsk->thread_info.keys_user;
-+	unsigned long addr_key_mask = PR_PAC_APIAKEY | PR_PAC_APIBKEY |
-+				      PR_PAC_APDAKEY | PR_PAC_APDBKEY;
-+	unsigned long key_mask = addr_key_mask | PR_PAC_APGAKEY;
-+
-+	if (!system_supports_address_auth() && !system_supports_generic_auth())
-+		return -EINVAL;
-+
-+	if (!arg) {
-+		ptrauth_keys_init(keys);
-+		ptrauth_keys_switch(keys);
-+		return 0;
-+	}
-+
-+	if (arg & ~key_mask)
-+		return -EINVAL;
-+
-+	if (((arg & addr_key_mask) && !system_supports_address_auth()) ||
-+	    ((arg & PR_PAC_APGAKEY) && !system_supports_generic_auth()))
-+		return -EINVAL;
-+
-+	if (arg & PR_PAC_APIAKEY)
-+		get_random_bytes(&keys->apia, sizeof(keys->apia));
-+	if (arg & PR_PAC_APIBKEY)
-+		get_random_bytes(&keys->apib, sizeof(keys->apib));
-+	if (arg & PR_PAC_APDAKEY)
-+		get_random_bytes(&keys->apda, sizeof(keys->apda));
-+	if (arg & PR_PAC_APDBKEY)
-+		get_random_bytes(&keys->apdb, sizeof(keys->apdb));
-+	if (arg & PR_PAC_APGAKEY)
-+		get_random_bytes(&keys->apga, sizeof(keys->apga));
-+
-+	ptrauth_keys_switch(keys);
-+
-+	return 0;
-+}
-diff --git a/include/uapi/linux/prctl.h b/include/uapi/linux/prctl.h
-index b17201edfa09..b4875a93363a 100644
---- a/include/uapi/linux/prctl.h
-+++ b/include/uapi/linux/prctl.h
-@@ -220,4 +220,12 @@ struct prctl_mm_map {
- # define PR_SPEC_DISABLE		(1UL << 2)
- # define PR_SPEC_FORCE_DISABLE		(1UL << 3)
- 
-+/* Reset arm64 pointer authentication keys */
-+#define PR_PAC_RESET_KEYS		54
-+# define PR_PAC_APIAKEY			(1UL << 0)
-+# define PR_PAC_APIBKEY			(1UL << 1)
-+# define PR_PAC_APDAKEY			(1UL << 2)
-+# define PR_PAC_APDBKEY			(1UL << 3)
-+# define PR_PAC_APGAKEY			(1UL << 4)
-+
- #endif /* _LINUX_PRCTL_H */
-diff --git a/kernel/sys.c b/kernel/sys.c
-index 123bd73046ec..64b5a230f38d 100644
---- a/kernel/sys.c
-+++ b/kernel/sys.c
-@@ -121,6 +121,9 @@
- #ifndef SVE_GET_VL
- # define SVE_GET_VL()		(-EINVAL)
- #endif
-+#ifndef PAC_RESET_KEYS
-+# define PAC_RESET_KEYS(a, b)	(-EINVAL)
-+#endif
- 
- /*
-  * this is where the system-wide overflow UID and GID are defined, for
-@@ -2476,6 +2479,11 @@ SYSCALL_DEFINE5(prctl, int, option, unsigned long, arg2, unsigned long, arg3,
- 			return -EINVAL;
- 		error = arch_prctl_spec_ctrl_set(me, arg2, arg3);
- 		break;
-+	case PR_PAC_RESET_KEYS:
-+		if (arg3 || arg4 || arg5)
-+			return -EINVAL;
-+		error = PAC_RESET_KEYS(me, arg2);
-+		break;
- 	default:
- 		error = -EINVAL;
- 		break;
--- 
-2.11.0
+Thanks for the report!  ...actually, I'd never tried CONFIG_KGDB_TESTS
+before.  ...so I tried them now:
 
+A) chromeos-4.19 tree on qcom-sdm845 without this series: booted up OK
+B) chromeos-4.19 tree on qcom-sdm845 with this series: booted up OK
+C) v4.20-rc5-90-g30002dd008ed on rockchip-rk3399 (kevin) with this
+series: booted up OK
+
+Example output from B) above:
+
+localhost ~ # dmesg | grep kgdbts
+[    2.139814] KGDB: Registered I/O driver kgdbts
+[    2.144582] kgdbts:RUN plant and detach test
+[    2.165333] kgdbts:RUN sw breakpoint test
+[    2.172990] kgdbts:RUN bad memory access test
+[    2.178640] kgdbts:RUN singlestep test 1000 iterations
+[    2.187765] kgdbts:RUN singlestep [0/1000]
+[    2.559596] kgdbts:RUN singlestep [100/1000]
+[    2.931419] kgdbts:RUN singlestep [200/1000]
+[    3.303474] kgdbts:RUN singlestep [300/1000]
+[    3.675121] kgdbts:RUN singlestep [400/1000]
+[    4.046867] kgdbts:RUN singlestep [500/1000]
+[    4.418920] kgdbts:RUN singlestep [600/1000]
+[    4.790824] kgdbts:RUN singlestep [700/1000]
+[    5.162479] kgdbts:RUN singlestep [800/1000]
+[    5.534103] kgdbts:RUN singlestep [900/1000]
+[    5.902299] kgdbts:RUN do_fork for 100 breakpoints
+[    8.463900] KGDB: Unregistered I/O driver kgdbts, debugger disabled
+
+...so I guess I'm a little confused.  Either I have a different config
+than you do or something is special about your machine?
+
+
+NOTE: In general I've never considered "single step" as reliable in
+kgdb.  I mostly use kgdb as "after the fact" crash debugging to
+analyze local variables / memory / other tasks.  If it worked that'd
+actually be kinda great, but at least when I started using kgdb years
+ago I learned that it didn't work and stopped trying...
+
+
+-Doug
