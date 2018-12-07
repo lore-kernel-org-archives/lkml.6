@@ -2,81 +2,102 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0269C64EB1
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 11:14:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36D24C07E85
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 11:15:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A072A20868
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 11:14:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A072A20868
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id 0509B20868
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 11:15:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0509B20868
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726129AbeLGLO3 (ORCPT
+        id S1726134AbeLGLPX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 06:14:29 -0500
-Received: from mx2.suse.de ([195.135.220.15]:41566 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725987AbeLGLO3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 06:14:29 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 5D733ABE7;
-        Fri,  7 Dec 2018 11:14:27 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 8D95E1E0D9D; Fri,  7 Dec 2018 12:14:26 +0100 (CET)
-Date:   Fri, 7 Dec 2018 12:14:26 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Alexander Lochmann <alexander.lochmann@tu-dortmund.de>
-Cc:     Jan Kara <jack@suse.cz>, viro@zeniv.linux.org.uk,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Horst Schirmeier <horst.schirmeier@tu-dortmund.de>,
-        linux-block@vger.kernel.org, Jens Axboe <axboe@kernel.dk>
-Subject: Re: [PATCH] Fix sync. in inode_has_no_xattr()
-Message-ID: <20181207111426.GG13008@quack2.suse.cz>
-References: <13eaa1c6-def5-afad-89eb-6f149db90684@tu-dortmund.de>
- <20181205153254.GD30615@quack2.suse.cz>
- <c4f0d66f-7cad-c3b4-79a6-ced14b9c7cc8@tu-dortmund.de>
+        Fri, 7 Dec 2018 06:15:23 -0500
+Received: from ozlabs.org ([203.11.71.1]:45329 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725989AbeLGLPW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Dec 2018 06:15:22 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 43B8yV2KbGz9s47;
+        Fri,  7 Dec 2018 22:15:14 +1100 (AEDT)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     Christophe Leroy <christophe.leroy@c-s.fr>,
+        Vineet Gupta <vgupta@synopsys.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Richard Kuo <rkuo@codeaurora.org>,
+        Michal Simek <monstr@monstr.eu>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>,
+        Ley Foon Tan <lftan@altera.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Rich Felker <dalias@libc.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, Jason Wessel <jason.wessel@windriver.com>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        "GitAuthor\: Christophe Leroy" <christophe.leroy@c-s.fr>,
+        Douglas Anderson <dianders@chromium.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc:     linux-snps-arc@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        uclinux-h8-devel@lists.sourceforge.jp,
+        linux-hexagon@vger.kernel.org, linux-mips@vger.kernel.org,
+        nios2-dev@lists.rocketboards.org, linuxppc-dev@lists.ozlabs.org,
+        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
+        kgdb-bugreport@lists.sourceforge.net
+Subject: Re: [PATCH v2 2/2] kgdb/treewide: constify struct kgdb_arch arch_kgdb_ops
+In-Reply-To: <5e130b11680be09537913aae9649c84ede763ec8.1544083483.git.christophe.leroy@c-s.fr>
+References: <030d63848e4b0ef4d76ca24597ab8302a393d692.1544083483.git.christophe.leroy@c-s.fr> <5e130b11680be09537913aae9649c84ede763ec8.1544083483.git.christophe.leroy@c-s.fr>
+Date:   Fri, 07 Dec 2018 22:15:14 +1100
+Message-ID: <87va45k2pp.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c4f0d66f-7cad-c3b4-79a6-ced14b9c7cc8@tu-dortmund.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 07-12-18 11:24:47, Alexander Lochmann wrote:
-> Am 05.12.18 um 16:32 schrieb Jan Kara:
-> > 
-> > Thinking more about this I'm not sure if this is actually the right
-> > solution. Because for example the write(2) can set S_NOSEC flag wrongly
-> > when it would race with chmod adding SUID bit. So probably we rather need
-> > to acquire i_rwsem in blkdev_write_iter() if file does not have S_NOSEC set
-> > (we don't want to acquire it unconditionally as that would heavily impact
-> > scalability of block device writes).
-> > 
-> > 								Honza
-> > 
-> Trying to implement your suggestion, I'm not sure which inode to use:
-> In blkdev_write_iter() there is the "bd_inode = bdev_file_inode(file)".
-> file_remove_privs() uses "inode = file_inode(file)" as a parameter for
-> inode_has_no_xattr().
-> So, do file->f_mapping->host and f->f_inode refer to the identical inode?
+Christophe Leroy <christophe.leroy@c-s.fr> writes:
 
-Ah, that's a good question and I forgot to warn you. Sorry for that and my
-respect for noticing this yourself :). For block devices f->f_inode refers
-to the device inode in the filesystem (i.e., where xattrs are attached to,
-permissions are stored, etc.).  file->f_mapping->host refers to the inode
-carrying data - this split is needed so that if there are more instances of
-device inode in the system for the same block device, they see data
-coherently. So you need to use file_inode(file) for the locking. Thanks!
+> checkpatch.pl reports the following:
+>
+>   WARNING: struct kgdb_arch should normally be const
+>   #28: FILE: arch/mips/kernel/kgdb.c:397:
+>   +struct kgdb_arch arch_kgdb_ops = {
+>
+> This report makes sense, as all other ops struct, this
+> one should also be const. This patch does the change.
+...
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> diff --git a/arch/powerpc/kernel/kgdb.c b/arch/powerpc/kernel/kgdb.c
+> index 59c578f865aa..bdb588b1d8fb 100644
+> --- a/arch/powerpc/kernel/kgdb.c
+> +++ b/arch/powerpc/kernel/kgdb.c
+> @@ -477,7 +477,7 @@ int kgdb_arch_remove_breakpoint(struct kgdb_bkpt *bpt)
+>  /*
+>   * Global data
+>   */
+> -struct kgdb_arch arch_kgdb_ops;
+> +const struct kgdb_arch arch_kgdb_ops;
+>  
+>  static int kgdb_not_implemented(struct pt_regs *regs)
+>  {
+
+Acked-by: Michael Ellerman <mpe@ellerman.id.au> (powerpc)
+
+cheers
