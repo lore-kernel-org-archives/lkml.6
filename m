@@ -2,165 +2,217 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FA28C04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 02:57:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34731C04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 03:06:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB5092083D
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 02:57:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KQt8PwvR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB5092083D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id DCDD02083D
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 03:06:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DCDD02083D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725996AbeLGC5G (ORCPT
+        id S1726013AbeLGDGZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 21:57:06 -0500
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:43379 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725939AbeLGC5G (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 21:57:06 -0500
-Received: by mail-ed1-f68.google.com with SMTP id f9so2501206eds.10
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Dec 2018 18:57:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=TrMVb01cMJC6LzGuY4FwPTJac0sY3J83+QzgLObCMAE=;
-        b=KQt8PwvRcVOAG8sDx2kBWIPR4LBeRy8jenXgr4lD/qYSSKj42dy7apRNF4MYnDvdeL
-         Nq+5Lc9oAdLKhR7B2BmzbpCQc74lZqwCT1/8Aj4PcBKk2z+2d8041QFZBH4M8gJD7JCy
-         r58mrhAhhM3LMMMUC0fCBGw1WoQqJp/vWr++P7gVxkaypneTbi3Lim++VmqPJ5MFbKoT
-         q/AtssSOdpFd1SbCE3uDe5i3pxejqJEKzT0i7CT5VXDhFjxZm+sKxh3w9vhEN+06KM4q
-         mEYMMdbpyfnDKDHg/mcdaNpc0rFVrkqt4XzvzheJiSSZnCk7Npzcdqe/hK4ob9XaUVOj
-         Vgdg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=TrMVb01cMJC6LzGuY4FwPTJac0sY3J83+QzgLObCMAE=;
-        b=IUL0MVVDXZVfeThNx7uK0VK53Y8EOvE4JDulFmnN/UyHrM/vuaK1UFE/nJxMp/K40L
-         /ZdyAO7v7JNTbkvkLrMxOJJ+yLWE0GQ9ZI2ZIRdJCbKtfn6sGsEvUrv0qzofmmZpYL8G
-         1urtwU+f90Otu+n5Z2VVG7QGvfby8A1BJod2uIjwON41EhS31VG5kN4fOvtVAm0KYFEt
-         GGHPZLcolSIliYBP1q+O/v94ezkkMZFJE044x+xhhCeIWXPdlPbWJ1jsg4iQQjc2q3Ah
-         JlPGMgwOvh+DEpIGc3Y1qifur0Tkjw8UnmzBrnQToCH7NTBByqFEz6yxbS++cQUSk/ia
-         KXhg==
-X-Gm-Message-State: AA+aEWaWB6jshXVdPuSGsAp10LLmSOn8CYdh3L90E9l7GpYh84mzlqLl
-        wrgKozgy+HGbM3doQzCk8WsrtRTRttZISp4Rpw==
-X-Google-Smtp-Source: AFSGD/VBUwY78QY2hxG7tKm58RexXRY05XJ/tOwqutHBuaVlnA3J3Wr474/MYsoOmvyL4bQ7WjEfIk1rhjCWucqQ72o=
-X-Received: by 2002:a50:d2d6:: with SMTP id q22mr668893edg.121.1544151423509;
- Thu, 06 Dec 2018 18:57:03 -0800 (PST)
+        Thu, 6 Dec 2018 22:06:25 -0500
+Received: from mga12.intel.com ([192.55.52.136]:61366 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725939AbeLGDGY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 22:06:24 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Dec 2018 19:06:23 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,324,1539673200"; 
+   d="scan'208";a="98758693"
+Received: from orsmsx103.amr.corp.intel.com ([10.22.225.130])
+  by orsmga006.jf.intel.com with ESMTP; 06 Dec 2018 19:06:23 -0800
+Received: from orsmsx112.amr.corp.intel.com ([169.254.3.8]) by
+ ORSMSX103.amr.corp.intel.com ([169.254.5.29]) with mapi id 14.03.0415.000;
+ Thu, 6 Dec 2018 19:06:22 -0800
+From:   "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
+To:     "keescook@chromium.org" <keescook@chromium.org>,
+        "luto@kernel.org" <luto@kernel.org>,
+        "nadav.amit@gmail.com" <nadav.amit@gmail.com>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "daniel@iogearbox.net" <daniel@iogearbox.net>,
+        "ard.biesheuvel@linaro.org" <ard.biesheuvel@linaro.org>,
+        "ast@kernel.org" <ast@kernel.org>,
+        "rostedt@goodmis.org" <rostedt@goodmis.org>,
+        "jeyu@kernel.org" <jeyu@kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "jannh@google.com" <jannh@google.com>,
+        "Dock, Deneen T" <deneen.t.dock@intel.com>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "kristen@linux.intel.com" <kristen@linux.intel.com>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "igor.stoppa@gmail.com" <igor.stoppa@gmail.com>,
+        "tycho@tycho.ws" <tycho@tycho.ws>,
+        "will.deacon@arm.com" <will.deacon@arm.com>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "Keshavamurthy, Anil S" <anil.s.keshavamurthy@intel.com>,
+        "kernel-hardening@lists.openwall.com" 
+        <kernel-hardening@lists.openwall.com>,
+        "mhiramat@kernel.org" <mhiramat@kernel.org>,
+        "naveen.n.rao@linux.vnet.ibm.com" <naveen.n.rao@linux.vnet.ibm.com>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "Hansen, Dave" <dave.hansen@intel.com>
+Subject: Re: [PATCH 1/2] vmalloc: New flag for flush before releasing pages
+Thread-Topic: [PATCH 1/2] vmalloc: New flag for flush before releasing pages
+Thread-Index: AQHUhrIVlTqKMmCRwUWBsYfr2au/NaVuXiWAgADwQACAAENYAIAAAZmAgAEEZoCAAMIbgIAAiZqAgAC/VACAAAISgIAABSEAgAAFkQCAAAqIgIAAL7kAgABDKwA=
+Date:   Fri, 7 Dec 2018 03:06:22 +0000
+Message-ID: <7b2ef6c657d2ab32c221f2ecbf69e8221e3dc844.camel@intel.com>
+References: <20181128000754.18056-1-rick.p.edgecombe@intel.com>
+         <20181128000754.18056-2-rick.p.edgecombe@intel.com>
+         <4883FED1-D0EC-41B0-A90F-1A697756D41D@gmail.com>
+         <20181204160304.GB7195@arm.com>
+         <51281e69a3722014f718a6840f43b2e6773eed90.camel@intel.com>
+         <CALCETrUiEWkSjnruCbBSi8WsDm071YiU5WEqoPhZbjezS0CrFw@mail.gmail.com>
+         <20181205114148.GA15160@arm.com>
+         <CALCETrUdTShjY+tQoRsE1uR1cnL9cr2Trbz-g5=WaLGA3rWXzA@mail.gmail.com>
+         <CAKv+Gu_EEjhwbfp1mdB0Pu3ZyAsZgNeaCDArs569hAeWzHMWpw@mail.gmail.com>
+         <CALCETrVedB7yacMU=i3JaUZxiwsnM+PnABfG48K9TZK32UWshA@mail.gmail.com>
+         <20181206190115.GC10086@cisco>
+         <CALCETrUmxht8dibJPBbPudQnoe6mHsKocEBgkJ7O1eFrVBfekQ@mail.gmail.com>
+         <F5664C1D-C3E7-433B-8E5A-7967023E0567@gmail.com>
+         <CALCETrUbmmcL7pixsP9AH1-AE2WMVgbDkoP_E4wAJMbuZ0CzCg@mail.gmail.com>
+         <EFB09636-D34F-4C63-87E6-76C49007C2CA@gmail.com>
+In-Reply-To: <EFB09636-D34F-4C63-87E6-76C49007C2CA@gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.54.75.141]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <846C93EE93403740BA4E3D176076C182@intel.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-References: <CAFgQCTv56drDBx-sTr6KdeQNKJnojG3g_a-k8wKe_q2y9w9NtA@mail.gmail.com>
- <20181204085601.GC1286@dhcp22.suse.cz> <CAFgQCTuyKBZdwWG=fOECE6J8DbZJsErJOyXTrLT0Kog3ec7vhw@mail.gmail.com>
- <20181205092148.GA1286@dhcp22.suse.cz> <CAFgQCTtj4m637tAzConCfeWQXSrWeNY-DLD5=f9-ZSmJMRe31Q@mail.gmail.com>
- <186b1804-3b1e-340e-f73b-f3c7e69649f5@suse.cz> <CAFgQCTv5-jeqwRVkJuDHvv0vq6uCzfdV2ZmVAU3eUzn2w2ReEQ@mail.gmail.com>
- <20181206082806.GB1286@dhcp22.suse.cz> <CAFgQCTsMdQSRFruZRGBuo30TjfiQ=sbrf9kUJAGgwN6uw+LsBw@mail.gmail.com>
- <CAFgQCTv7ADVW3WvB0tuqpL1U2MFGADA113MUm6ZmVcgvqyBfTA@mail.gmail.com> <20181206121152.GH1286@dhcp22.suse.cz>
-In-Reply-To: <20181206121152.GH1286@dhcp22.suse.cz>
-From:   Pingfan Liu <kernelfans@gmail.com>
-Date:   Fri, 7 Dec 2018 10:56:51 +0800
-Message-ID: <CAFgQCTuqn32_pZrLBDNvC_0Aepv2F7KF7rk2nAbxmYF45KfT2w@mail.gmail.com>
-Subject: Re: [PATCH] mm/alloc: fallback to first node if the wanted node offline
-To:     mhocko@kernel.org
-Cc:     Vlastimil Babka <vbabka@suse.cz>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 6, 2018 at 8:11 PM Michal Hocko <mhocko@kernel.org> wrote:
->
-> On Thu 06-12-18 18:44:03, Pingfan Liu wrote:
-> > On Thu, Dec 6, 2018 at 6:03 PM Pingfan Liu <kernelfans@gmail.com> wrote:
-> [...]
-> > > Which commit is this patch applied on? I can not apply it on latest linux tree.
-> > >
-> > I applied it by manual, will see the test result. I think it should
-> > work since you instance all the node.
-> > But there are two things worth to consider:
-> > -1st. why x86 do not bring up all nodes by default, apparently it will
-> > be more simple by that way
->
-> What do you mean? Why it didn't bring up before? Or do you see some
-
-Yes, this is what I mean. But maybe the author does not consider about
-the nr_cpus, otherwise, using:
-+       for_each_node(node)
-+               if (!node_online(node))
-+                       init_memory_less_node(node);
-in init_cpu_to_node() is more simple.
-
-> nodes not being brought up after this patch?
->
-> > -2nd. there are other archs, do they obey the rules?
->
-> I am afraid that each arch does its own initialization.
-
-Then it is arguable whether to fix this issue in memory core or let
-each archs to fix this issue. I check the powerpc code, it should also
-need a fix, it maybe the same in arm and mips ..
- BTW, your patch can not work for normal bootup, and the kernel hang
-without any kernel message.
-I think it is due to the bug in the patch:
-                alloc_node_data(nid);
-+               if (!end)
-+                       init_memory_less_node(nid); //which calls
-alloc_node_data(nid) also.
-How about the following:
-diff --git a/arch/x86/mm/numa.c b/arch/x86/mm/numa.c
-index 1308f54..4dc497d 100644
---- a/arch/x86/mm/numa.c
-+++ b/arch/x86/mm/numa.c
-@@ -754,18 +754,23 @@ void __init init_cpu_to_node(void)
- {
-        int cpu;
-        u16 *cpu_to_apicid = early_per_cpu_ptr(x86_cpu_to_apicid);
-+       int node, nr;
-
-        BUG_ON(cpu_to_apicid == NULL);
-+       nr = cpumask_weight(cpu_possible_mask);
-+
-+       /* bring up all possible node, since dev->numa_node */
-+       //should check acpi works for node possible,
-+       for_each_node(node)
-+               if (!node_online(node))
-+                       init_memory_less_node(node);
-
-        for_each_possible_cpu(cpu) {
--               int node = numa_cpu_node(cpu);
-+               node = numa_cpu_node(cpu);
-
-                if (node == NUMA_NO_NODE)
-                        continue;
-
--               if (!node_online(node))
--                       init_memory_less_node(node);
--
-                numa_set_node(cpu, node);
-        }
- }
-
-Although it works, I hesitate about the idea, due to the semantic of
-online-node, does the online-node require either cpu or memory inside
-the node to be online?
-In a short word, the fix method should consider about the two factors:
-semantic of online-node and the effect on all archs
-
-Thanks,
-Pingfan
-
-> --
-> Michal Hocko
-> SUSE Labs
+T24gVGh1LCAyMDE4LTEyLTA2IGF0IDE1OjA4IC0wODAwLCBOYWRhdiBBbWl0IHdyb3RlOg0KPiA+
+IE9uIERlYyA2LCAyMDE4LCBhdCAxMjoxNyBQTSwgQW5keSBMdXRvbWlyc2tpIDxsdXRvQGtlcm5l
+bC5vcmc+IHdyb3RlOg0KPiA+IA0KPiA+IE9uIFRodSwgRGVjIDYsIDIwMTggYXQgMTE6MzkgQU0g
+TmFkYXYgQW1pdCA8bmFkYXYuYW1pdEBnbWFpbC5jb20+IHdyb3RlOg0KPiA+ID4gPiBPbiBEZWMg
+NiwgMjAxOCwgYXQgMTE6MTkgQU0sIEFuZHkgTHV0b21pcnNraSA8bHV0b0BrZXJuZWwub3JnPiB3
+cm90ZToNCj4gPiA+ID4gDQo+ID4gPiA+IE9uIFRodSwgRGVjIDYsIDIwMTggYXQgMTE6MDEgQU0g
+VHljaG8gQW5kZXJzZW4gPHR5Y2hvQHR5Y2hvLndzPiB3cm90ZToNCj4gPiA+ID4gPiBPbiBUaHUs
+IERlYyAwNiwgMjAxOCBhdCAxMDo1Mzo1MEFNIC0wODAwLCBBbmR5IEx1dG9taXJza2kgd3JvdGU6
+DQo+ID4gPiA+ID4gPiA+IElmIHdlIGFyZSBnb2luZyB0byB1bm1hcCB0aGUgbGluZWFyIGFsaWFz
+LCB3aHkgbm90IGRvIGl0IGF0DQo+ID4gPiA+ID4gPiA+IHZtYWxsb2MoKQ0KPiA+ID4gPiA+ID4g
+PiB0aW1lIHJhdGhlciB0aGFuIHZmcmVlKCkgdGltZT8NCj4gPiA+ID4gPiA+IA0KPiA+ID4gPiA+
+ID4gVGhhdOKAmXMgbm90IHRvdGFsbHkgbnV0cy4gRG8gd2UgZXZlciBoYXZlIGNvZGUgdGhhdCBl
+eHBlY3RzIF9fdmEoKSB0bw0KPiA+ID4gPiA+ID4gd29yayBvbiBtb2R1bGUgZGF0YT8gIFBlcmhh
+cHMgY3J5cHRvIGNvZGUgdHJ5aW5nIHRvIGVuY3J5cHQgc3RhdGljDQo+ID4gPiA+ID4gPiBkYXRh
+IGJlY2F1c2Ugb3VyIEFQSXMgZG9u4oCZdCB1bmRlcnN0YW5kIHZpcnR1YWwgYWRkcmVzc2VzLiAg
+SSBndWVzcw0KPiA+ID4gPiA+ID4gaWYNCj4gPiA+ID4gPiA+IGhpZ2htZW0gaXMgZXZlciB1c2Vk
+IGZvciBtb2R1bGVzLCB0aGVuIHdlIHNob3VsZCBiZSBmaW5lLg0KPiA+ID4gPiA+ID4gDQo+ID4g
+PiA+ID4gPiBSTyBpbnN0ZWFkIG9mIG5vdCBwcmVzZW50IG1pZ2h0IGJlIHNhZmVyLiAgQnV0IEkg
+ZG8gbGlrZSB0aGUgaWRlYSBvZg0KPiA+ID4gPiA+ID4gcmVuYW1pbmcgUmljaydzIGZsYWcgdG8g
+c29tZXRoaW5nIGxpa2UgVk1fWFBGTyBvciBWTV9OT19ESVJFQ1RfTUFQDQo+ID4gPiA+ID4gPiBh
+bmQNCj4gPiA+ID4gPiA+IG1ha2luZyBpdCBkbyBhbGwgb2YgdGhpcy4NCj4gPiA+ID4gPiANCj4g
+PiA+ID4gPiBZZWFoLCBkb2luZyBpdCBmb3IgZXZlcnl0aGluZyBhdXRvbWF0aWNhbGx5IHNlZW1l
+ZCBsaWtlIGl0IHdhcy9pcw0KPiA+ID4gPiA+IGdvaW5nIHRvIGJlIGEgbG90IG9mIHdvcmsgdG8g
+ZGVidWcgYWxsIHRoZSBjb3JuZXIgY2FzZXMgd2hlcmUgdGhpbmdzDQo+ID4gPiA+ID4gZXhwZWN0
+IG1lbW9yeSB0byBiZSBtYXBwZWQgYnV0IGRvbid0IGV4cGxpY2l0bHkgc2F5IGl0LiBBbmQgaW4N
+Cj4gPiA+ID4gPiBwYXJ0aWN1bGFyLCB0aGUgWFBGTyBzZXJpZXMgb25seSBkb2VzIGl0IGZvciB1
+c2VyIG1lbW9yeSwgd2hlcmVhcyBhbg0KPiA+ID4gPiA+IGFkZGl0aW9uYWwgZmxhZyBsaWtlIHRo
+aXMgd291bGQgd29yayBmb3IgZXh0cmEgcGFyYW5vaWQgYWxsb2NhdGlvbnMNCj4gPiA+ID4gPiBv
+ZiBrZXJuZWwgbWVtb3J5IHRvby4NCj4gPiA+ID4gDQo+ID4gPiA+IEkganVzdCByZWFkIHRoZSBj
+b2RlLCBhbmQgSSBsb29rcyBsaWtlIHZtYWxsb2MoKSBpcyBhbHJlYWR5IHVzaW5nDQo+ID4gPiA+
+IGhpZ2htZW0gKF9fR0ZQX0hJR0gpIGlmIGF2YWlsYWJsZSwgc28sIG9uIGJpZyB4ODZfMzIgc3lz
+dGVtcywgZm9yDQo+ID4gPiA+IGV4YW1wbGUsIHdlIGFscmVhZHkgZG9uJ3QgaGF2ZSBtb2R1bGVz
+IGluIHRoZSBkaXJlY3QgbWFwLg0KPiA+ID4gPiANCj4gPiA+ID4gU28gSSBzYXkgd2UgZ28gZm9y
+IGl0LiAgVGhpcyBzaG91bGQgYmUgcXVpdGUgc2ltcGxlIHRvIGltcGxlbWVudCAtLQ0KPiA+ID4g
+PiB0aGUgcGFnZWF0dHIgY29kZSBhbHJlYWR5IGhhcyBhbG1vc3QgYWxsIHRoZSBuZWVkZWQgbG9n
+aWMgb24geDg2LiAgVGhlDQo+ID4gPiA+IG9ubHkgYXJjaCBzdXBwb3J0IHdlIHNob3VsZCBuZWVk
+IGlzIGEgcGFpciBvZiBmdW5jdGlvbnMgdG8gcmVtb3ZlIGENCj4gPiA+ID4gdm1hbGxvYyBhZGRy
+ZXNzIHJhbmdlIGZyb20gdGhlIGFkZHJlc3MgbWFwIChpZiBpdCB3YXMgcHJlc2VudCBpbiB0aGUN
+Cj4gPiA+ID4gZmlyc3QgcGxhY2UpIGFuZCBhIGZ1bmN0aW9uIHRvIHB1dCBpdCBiYWNrLiAgT24g
+eDg2LCB0aGlzIHNob3VsZCBvbmx5DQo+ID4gPiA+IGJlIGEgZmV3IGxpbmVzIG9mIGNvZGUuDQo+
+ID4gPiA+IA0KPiA+ID4gPiBXaGF0IGRvIHlvdSBhbGwgdGhpbms/ICBUaGlzIHNob3VsZCBzb2x2
+ZSBtb3N0IG9mIHRoZSBwcm9ibGVtcyB3ZSBoYXZlLg0KPiA+ID4gPiANCj4gPiA+ID4gSWYgd2Ug
+cmVhbGx5IHdhbnRlZCB0byBvcHRpbWl6ZSB0aGlzLCB3ZSdkIG1ha2UgaXQgc28gdGhhdA0KPiA+
+ID4gPiBtb2R1bGVfYWxsb2MoKSBhbGxvY2F0ZXMgbWVtb3J5IHRoZSBub3JtYWwgd2F5LCB0aGVu
+LCBsYXRlciBvbiwgd2UNCj4gPiA+ID4gY2FsbCBzb21lIGZ1bmN0aW9uIHRoYXQsIGFsbCBhdCBv
+bmNlLCByZW1vdmVzIHRoZSBtZW1vcnkgZnJvbSB0aGUNCj4gPiA+ID4gZGlyZWN0IG1hcCBhbmQg
+YXBwbGllcyB0aGUgcmlnaHQgcGVybWlzc2lvbnMgdG8gdGhlIHZtYWxsb2MgYWxpYXMgKG9yDQo+
+ID4gPiA+IGp1c3QgbWFrZXMgdGhlIHZtYWxsb2MgYWxpYXMgbm90LXByZXNlbnQgc28gd2UgY2Fu
+IGFkZCBwZXJtaXNzaW9ucw0KPiA+ID4gPiBsYXRlciB3aXRob3V0IGZsdXNoaW5nKSwgYW5kIGZs
+dXNoZXMgdGhlIFRMQi4gIEFuZCB3ZSBhcnJhbmdlIGZvcg0KPiA+ID4gPiB2dW5tYXAgdG8gemFw
+IHRoZSB2bWFsbG9jIHJhbmdlLCB0aGVuIHB1dCB0aGUgbWVtb3J5IGJhY2sgaW50byB0aGUNCj4g
+PiA+ID4gZGlyZWN0IG1hcCwgdGhlbiBmcmVlIHRoZSBwYWdlcyBiYWNrIHRvIHRoZSBwYWdlIGFs
+bG9jYXRvciwgd2l0aCB0aGUNCj4gPiA+ID4gZmx1c2ggaW4gdGhlIGFwcHJvcHJpYXRlIHBsYWNl
+Lg0KPiA+ID4gPiANCj4gPiA+ID4gSSBkb24ndCBzZWUgd2h5IHRoZSBwYWdlIGFsbG9jYXRvciBu
+ZWVkcyB0byBrbm93IGFib3V0IGFueSBvZiB0aGlzLg0KPiA+ID4gPiBJdCdzIGFscmVhZHkgb2th
+eSB3aXRoIHRoZSBwZXJtaXNzaW9ucyBiZWluZyBjaGFuZ2VkIG91dCBmcm9tIHVuZGVyIGl0DQo+
+ID4gPiA+IG9uIHg4NiwgYW5kIGl0IHNlZW1zIGZpbmUuICBSaWNrLCBkbyB5b3Ugd2FudCB0byBn
+aXZlIHNvbWUgdmFyaWFudCBvZg0KPiA+ID4gPiB0aGlzIGEgdHJ5Pw0KPiA+ID4gDQo+ID4gPiBT
+ZXR0aW5nIGl0IGFzIHJlYWQtb25seSBtYXkgd29yayAoYW5kIGFscmVhZHkgaGFwcGVucyBmb3Ig
+dGhlIHJlYWQtb25seQ0KPiA+ID4gbW9kdWxlIGRhdGEpLiBJIGFtIG5vdCBzdXJlIGFib3V0IHNl
+dHRpbmcgaXQgYXMgbm9uLXByZXNlbnQuDQo+ID4gPiANCj4gPiA+IEF0IHNvbWUgcG9pbnQsIGEg
+ZGlzY3Vzc2lvbiBhYm91dCBhIHRocmVhdC1tb2RlbCwgYXMgUmljayBpbmRpY2F0ZWQsIHdvdWxk
+DQo+ID4gPiBiZSByZXF1aXJlZC4gSSBwcmVzdW1lIFJPUCBhdHRhY2tzIGNhbiBlYXNpbHkgY2Fs
+bA0KPiA+ID4gc2V0X2FsbF9tb2R1bGVzX3RleHRfcncoKQ0KPiA+ID4gYW5kIG92ZXJyaWRlIGFs
+bCB0aGUgcHJvdGVjdGlvbnMuDQo+ID4gDQo+ID4gSSBhbSBmYXIgZnJvbSBhbiBleHBlcnQgb24g
+ZXhwbG9pdCB0ZWNobmlxdWVzLCBidXQgaGVyZSdzIGENCj4gPiBwb3RlbnRpYWxseSB1c2VmdWwg
+bW9kZWw6IGxldCdzIGFzc3VtZSB0aGVyZSdzIGFuIGF0dGFja2VyIHdobyBjYW4NCj4gPiB3cml0
+ZSBjb250cm9sbGVkIGRhdGEgdG8gYSBjb250cm9sbGVkIGtlcm5lbCBhZGRyZXNzIGJ1dCBjYW5u
+b3QNCj4gPiBkaXJlY3RseSBtb2RpZnkgY29udHJvbCBmbG93LiAgSXQgd291bGQgYmUgbmljZSBm
+b3Igc3VjaCBhbiBhdHRhY2tlcg0KPiA+IHRvIGhhdmUgYSB2ZXJ5IGRpZmZpY3VsdCB0aW1lIG9m
+IG1vZGlmeWluZyBrZXJuZWwgdGV4dCBvciBvZg0KPiA+IGNvbXByb21pc2luZyBjb250cm9sIGZs
+b3cuICBTbyB3ZSdyZSBhc3N1bWluZyBhIGZlYXR1cmUgbGlrZSBrZXJuZWwNCj4gPiBDRVQgb3Ig
+dGhhdCB0aGUgYXR0YWNrZXIgZmluZHMgaXQgdmVyeSBkaWZmaWN1bHQgdG8gZG8gc29tZXRoaW5n
+IGxpa2UNCj4gPiBtb2RpZnlpbmcgc29tZSB0aHJlYWQncyBJUkVUIGZyYW1lLg0KPiA+IA0KPiA+
+IEFkbWl0dGVkbHksIGZvciB0aGUga2VybmVsLCB0aGlzIGlzIGFuIG9kZCB0aHJlYXQgbW9kZWws
+IHNpbmNlIGFuDQo+ID4gYXR0YWNrZXIgY2FuIHByZXN1bWFibHkgcXVpdGUgZWFzaWx5IGxlYXJu
+IHRoZSBrZXJuZWwgc3RhY2sgYWRkcmVzcyBvZg0KPiA+IG9uZSBvZiB0aGVpciB0YXNrcywgZG8g
+c29tZSBzeXNjYWxsLCBhbmQgdGhlbiBtb2RpZnkgdGhlaXIga2VybmVsDQo+ID4gdGhyZWFkJ3Mg
+c3RhY2sgc3VjaCB0aGF0IGl0IHdpbGwgSVJFVCByaWdodCBiYWNrIHRvIGEgZnVsbHkgY29udHJv
+bGxlZA0KPiA+IHJlZ2lzdGVyIHN0YXRlIHdpdGggUlNQIHBvaW50aW5nIGF0IGFuIGF0dGFja2Vy
+LXN1cHBsaWVkIGtlcm5lbCBzdGFjay4NCj4gPiBTbyB0aGlzIHRocmVhdCBtb2RlbCBnaXZlcyB2
+ZXJ5IHN0cm9uZyBST1AgcG93ZXJzLiB1bmxlc3Mgd2UgaGF2ZQ0KPiA+IGVpdGhlciBDRVQgb3Ig
+c29tZSBzb2Z0d2FyZSB0ZWNobmlxdWUgdG8gaGFyZGVuIGFsbCB0aGUgUkVUDQo+ID4gaW5zdHJ1
+Y3Rpb25zIGluIHRoZSBrZXJuZWwuDQo+ID4gDQo+ID4gSSB3b25kZXIgaWYgdGhlcmUncyBhIGJl
+dHRlciBtb2RlbCB0byB1c2UuICBNYXliZSB3aXRoIHN0YWNrLXByb3RlY3Rvcg0KPiA+IHdlIGdl
+dCBzb21lIGRlZ3JlZSBvZiBwcm90ZWN0aW9uPyAgT3IgaXMgYWxsIG9mIHRoaXMgaXMgcmF0aGVy
+IHdlYWsNCj4gPiB1bnRpbCB3ZSBoYXZlIENFVCBvciBhIFJBUC1saWtlIGZlYXR1cmUuDQo+IA0K
+PiBJIGJlbGlldmUgdGhhdCBzZWVpbmcgdGhlIGVuZC1nb2FsIHdvdWxkIG1ha2UgcmVhc29uaW5n
+IGFib3V0IHBhdGNoZXMNCj4gZWFzaWVyLCBvdGhlcndpc2UgdGhlIGNvbXBsYWludCDigJxidXQg
+YW55aG93IGl04oCZcyBhbGwgaW5zZWN1cmXigJ0ga2VlcHMgcG9wcGluZw0KPiB1cC4NCj4gDQo+
+IEnigJltIG5vdCBzdXJlIENFVCBvciBvdGhlciBDRkkgd291bGQgYmUgZW5vdWdoIGV2ZW4gd2l0
+aCB0aGlzIHRocmVhdC1tb2RlbC4NCj4gVGhlIHBhZ2UtdGFibGVzICh0aGUgdmVyeSBsZWFzdCkg
+bmVlZCB0byBiZSB3cml0ZS1wcm90ZWN0ZWQsIGFzIG90aGVyd2lzZQ0KPiBjb250cm9sbGVkIGRh
+dGEgd3JpdGVzIG1heSBqdXN0IG1vZGlmeSB0aGVtLiBUaGVyZSBhcmUgdmFyaW91cyBwb3NzaWJs
+ZQ0KPiBzb2x1dGlvbnMgSSBwcmVzdW1lOiB3cml0ZV9yYXJlIGZvciBwYWdlLXRhYmxlcywgaHlw
+ZXJ2aXNvci1hc3Npc3RlZA0KPiBzZWN1cml0eSB0byBvYnRhaW4gcGh5c2ljYWwgbGV2ZWwgTlgv
+Uk8gKGEtbGEgTWljcm9zb2Z0IFZCUykgb3Igc29tZSBzb3J0IG9mDQo+IGhhcmR3YXJlIGVuY2xh
+dmUuDQo+IA0KPiBXaGF0IGRvIHlvdSB0aGluaz8NCg0KSSBhbSBub3Qgc3VyZSB3aGljaCBpc3N1
+ZSB5b3UgYXJlIHRhbGtpbmcgYWJvdXQuIEkgdGhpbmsgdGhlcmUgYXJlIGFjdHVhbGx5IHR3bw0K
+c2VwYXJhdGUgaXNzdWVzIHRoYXQgYXJlIG1lcmdlZCBkaXNjdXNzaW9ucyBmcm9tIG92ZXJsYXAg
+b2YgZml4IGZvciB0aGUgdGVhcmRvd24NCldeWCB3aW5kb3cuDQoNCkZvciB0aGUgV15YIHN0dWZm
+IEkgaGFkIG9yaWdpbmFsbHkgaW1hZ2luZWQgdGhlIHByb3RlY3Rpb24gd2FzIGZvciB3aGVuIGFu
+DQphdHRhY2tlciBoYXMgYSBsaW1pdGVkIGJ1ZyB0aGF0IGNvdWxkIHdyaXRlIHRvIGEgbG9jYXRp
+b24gaW4gdGhlIG1vZHVsZSBzcGFjZSwNCmJ1dCBub3Qgb3RoZXIgbG9jYXRpb25zIGR1ZSB0byBv
+bmx5IGhhdmluZyB0aGUgYWJpbGl0eSB0byBvdmVyd3JpdGUgcGFydCBvZiBhDQpwb2ludGVyIG9y
+IHNvbWUgc29tZXRoaW5nIGxpa2UgdGhhdC4gVGhlbiB0aGUgbW9kdWxlIGNvdWxkIGV4ZWN1dGUg
+dGhlIG5ldyBjb2RlDQphcyBpdCByYW4gbm9ybWFsbHkgYWZ0ZXIgZmluaXNoaW5nIGxvYWRpbmcu
+IFNvIHRoYXQgaXMgd2h5IEkgd2FzIHdvbmRlcmluZyBhYm91dA0KdGhlIFJXIHdpbmRvdyBkdXJp
+bmcgbG9hZC4gU3RpbGwgc2VlbXMgZ2VuZXJhbGx5IHNlbnNpYmxlIHRvIGVuZm9yY2UgV15YIHRo
+b3VnaC4NCg0KSSBsaWtlIHlvdXIgaWRlYSBhYm91dCBzb21ldGhpbmcgbGlrZSB0ZXh0X3Bva2Ug
+dG8gbG9hZCBtb2R1bGVzLiBJIHRoaW5rIG1heWJlDQpteSBtb2R1bGVzIEtBU0xSIHBhdGNoc2V0
+IGNvdWxkIGhlbHAgdGhlIGFib3ZlIHNvbWV3aGF0IHRvbyBzaW5jZSBpdCBsb2FkcyBhdCBhDQpm
+cmVzaGx5IHJhbmRvbWl6ZWQgYWRkcmVzcy4NCg0KU2luY2UgdGhlIGlzc3VlIHdpdGggdGhlIGZy
+ZWVkIHBhZ2VzIGJlZm9yZSBmbHVzaCAodGhlIG9yaWdpbmFsIHNvdXJjZSBvZiB0aGlzDQp0aHJl
+YWQpIGRvZXNuJ3QgcmVxdWlyZSBhIHdyaXRlIGJ1ZyB0byBpbnNlcnQgdGhlIGNvZGUsIGJ1dCBk
+b2VzIHJlcXVpcmUgYSB3YXkNCnRvIGp1bXAgdG8gaXQsIGl0cyBraW5kIG9mIHRoZSBvcHBvc2l0
+ZSBtb2RlbCBvZiB0aGUgYWJvdmUuIFNvIHRoYXQncyB3aHkgSQ0KdGhpbmsgdGhleSBhcmUgZGlm
+ZmVyZW50Lg0KDQpJIGFtIHN0aWxsIGxlYXJuaW5nIGxvdHMgb24ga2VybmVsIGV4cGxvaXRzIHRo
+b3VnaCwgbWF5YmUgS2VlcyBjYW4gcHJvdmlkZSBzb21lDQpiZXR0ZXIgaW5zaWdodCBoZXJlPw0K
+DQpUaGFua3MsDQoNClJpY2sNCg0KDQoNCg0K
