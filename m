@@ -2,466 +2,95 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BAF62C64EB1
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 09:56:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91445C07E85
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 09:57:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6ECE320868
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 09:56:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="OE5INQ7k"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6ECE320868
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 5B81620868
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 09:57:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B81620868
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726094AbeLGJ4Z (ORCPT
+        id S1726058AbeLGJ5y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 04:56:25 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:53985 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726054AbeLGJ4R (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 04:56:17 -0500
-Received: by mail-wm1-f66.google.com with SMTP id y1so3708453wmi.3
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Dec 2018 01:56:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=aYZfeTLKa/S3KhYjr+S7UmShnKTAgn7a31CkqqADO3E=;
-        b=OE5INQ7kDVh5m1FO5In67bAXMmkmvlwp33b0tsOoPeu5N+TofElrh7jEZsU9pcpvgf
-         cTI9wpGgjj9ygRomGqNgzR6F+cArXU2jbt8fZQ3HF+UffOSkDdMY20/dih+fcxkMlCnA
-         NQdqSK42+HV9r8Gr5r5RCzm8UAMJUlyrahdeA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=aYZfeTLKa/S3KhYjr+S7UmShnKTAgn7a31CkqqADO3E=;
-        b=kmYI27K3qJhUP+Wtd9SATCyfhZHJeiJi7pr0+h6+ayZyVSRgGc+ZRIgerqU5BBqgbR
-         HRoXr1TXLhIBwM/NC/lwXB4NCs+EdcDGCqOwqslnhNk6Q1C6rnZ7id3zzfTRyhlIcX62
-         V1G8TDMEGPTnPf8vge5XFiiVYDa8YNyQrmMsTeeGeELNhoxMuyByZKjX5f955rChwA9n
-         n/k5gF9QPIQVhjTPgHV0YFatTQIa0Mu1cHoIr5g6FKNemPrMGtQmdQSGcqAgi0hvsn8z
-         Rh9w1dYq3I3vjfKPSfnOpSpDNp5FMQNdSHW03v6eNCpM/jStdW7Um0OHDy9ZtuFR6xqS
-         Qxkg==
-X-Gm-Message-State: AA+aEWb6njIsTkJ3T7w0b+JALOKln5ha8uyh1Xh1mNdtkTJCfOwj67cl
-        4fh8gow7Schwm/xIR4NC49inow==
-X-Google-Smtp-Source: AFSGD/W3pC9DfykISpvAzkE32qxIXL41S/B/WPkTz429aMkmYg7oPaa1NEh6ilX6rPTdwX7YgzTJ3g==
-X-Received: by 2002:a1c:e3d7:: with SMTP id a206mr1738700wmh.80.1544176575153;
-        Fri, 07 Dec 2018 01:56:15 -0800 (PST)
-Received: from localhost.localdomain (58.red-81-47-145.staticip.rima-tde.net. [81.47.145.58])
-        by smtp.gmail.com with ESMTPSA id h129sm3153776wma.0.2018.12.07.01.56.13
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Fri, 07 Dec 2018 01:56:14 -0800 (PST)
-From:   Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
-To:     jorge.ramirez-ortiz@linaro.org, gregkh@linuxfoundation.org,
-        robh+dt@kernel.org, mark.rutland@arm.com, kishon@ti.com
-Cc:     linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, shawn.guo@linaro.org,
-        vkoul@kernel.org
-Subject: [PATCH 2/2] phy: qualcomm: usb: Add Super-Speed PHY driver
-Date:   Fri,  7 Dec 2018 10:55:58 +0100
-Message-Id: <1544176558-7946-3-git-send-email-jorge.ramirez-ortiz@linaro.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1544176558-7946-1-git-send-email-jorge.ramirez-ortiz@linaro.org>
-References: <1544176558-7946-1-git-send-email-jorge.ramirez-ortiz@linaro.org>
+        Fri, 7 Dec 2018 04:57:54 -0500
+Received: from mx2.suse.de ([195.135.220.15]:58104 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725985AbeLGJ5y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Dec 2018 04:57:54 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 1DBFEAC3E;
+        Fri,  7 Dec 2018 09:57:52 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id E74851E0D9D; Fri,  7 Dec 2018 10:57:50 +0100 (CET)
+Date:   Fri, 7 Dec 2018 10:57:50 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Josef Bacik <josef@toxicpanda.com>
+Cc:     kernel-team@fb.com, hannes@cmpxchg.org,
+        linux-kernel@vger.kernel.org, tj@kernel.org, david@fromorbit.com,
+        akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, riel@redhat.com, jack@suse.cz
+Subject: Re: [PATCH 2/4] filemap: kill page_cache_read usage in filemap_fault
+Message-ID: <20181207095750.GC13008@quack2.suse.cz>
+References: <20181130195812.19536-1-josef@toxicpanda.com>
+ <20181130195812.19536-3-josef@toxicpanda.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181130195812.19536-3-josef@toxicpanda.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Shawn Guo <shawn.guo@linaro.org>
+On Fri 30-11-18 14:58:10, Josef Bacik wrote:
+> If we do not have a page at filemap_fault time we'll do this weird
+> forced page_cache_read thing to populate the page, and then drop it
+> again and loop around and find it.  This makes for 2 ways we can read a
+> page in filemap_fault, and it's not really needed.  Instead add a
+> FGP_FOR_MMAP flag so that pagecache_get_page() will return a unlocked
+> page that's in pagecache.  Then use the normal page locking and readpage
+> logic already in filemap_fault.  This simplifies the no page in page
+> cache case significantly.
+> 
+> Signed-off-by: Josef Bacik <josef@toxicpanda.com>
 
-Driver to control the Synopsys SS PHY 1.0.0 implemeneted in QCS404
+Thanks for the patch. I like the simplification but I think it could be
+even improved... see below.
 
-Based on Sriharsha Allenki's <sallenki@codeaurora.org> original code.
+> @@ -2449,9 +2426,11 @@ vm_fault_t filemap_fault(struct vm_fault *vmf)
+>  		count_memcg_event_mm(vmf->vma->vm_mm, PGMAJFAULT);
+>  		ret = VM_FAULT_MAJOR;
+>  retry_find:
+> -		page = find_get_page(mapping, offset);
+> +		page = pagecache_get_page(mapping, offset,
+> +					  FGP_CREAT|FGP_FOR_MMAP,
+> +					  vmf->gfp_mask);
+>  		if (!page)
+> -			goto no_cached_page;
+> +			return vmf_error(-ENOMEM);
 
-Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
-Signed-off-by: Shawn Guo <shawn.guo@linaro.org>
-Reviewed-by: Vinod Koul <vkoul@kernel.org>
----
- drivers/phy/qualcomm/Kconfig           |  11 ++
- drivers/phy/qualcomm/Makefile          |   1 +
- drivers/phy/qualcomm/phy-qcom-usb-ss.c | 340 +++++++++++++++++++++++++++++++++
- 3 files changed, 352 insertions(+)
- create mode 100644 drivers/phy/qualcomm/phy-qcom-usb-ss.c
+So why don't you just do:
 
-diff --git a/drivers/phy/qualcomm/Kconfig b/drivers/phy/qualcomm/Kconfig
-index c7b5ee8..35a5a67 100644
---- a/drivers/phy/qualcomm/Kconfig
-+++ b/drivers/phy/qualcomm/Kconfig
-@@ -92,3 +92,14 @@ config PHY_QCOM_USB_HS_SNPS_28NM
- 	  Enable this to support the Synopsys 28nm Femto USB PHY on Qualcomm
- 	  chips. This driver supports the high-speed PHY which is usually
- 	  paired with either the ChipIdea or Synopsys DWC3 USB IPs on MSM SOCs.
-+
-+config PHY_QCOM_USB_SS
-+	tristate "Qualcomm USB SS PHY driver"
-+	depends on ARCH_QCOM || COMPILE_TEST
-+	depends on EXTCON || !EXTCON # if EXTCON=m, this cannot be built-in
-+	select GENERIC_PHY
-+	help
-+	  Enable this to support the Super-Speed USB transceiver on Qualcomm
-+	  chips. This driver supports the PHY which uses the QSCRATCH-based
-+	  register set for its control sequences, normally paired with newer
-+	  DWC3-based Super-Speed controllers on Qualcomm SoCs.
-diff --git a/drivers/phy/qualcomm/Makefile b/drivers/phy/qualcomm/Makefile
-index dc238d9..7149261 100644
---- a/drivers/phy/qualcomm/Makefile
-+++ b/drivers/phy/qualcomm/Makefile
-@@ -10,3 +10,4 @@ obj-$(CONFIG_PHY_QCOM_UFS_20NM)		+= phy-qcom-ufs-qmp-20nm.o
- obj-$(CONFIG_PHY_QCOM_USB_HS) 		+= phy-qcom-usb-hs.o
- obj-$(CONFIG_PHY_QCOM_USB_HSIC) 	+= phy-qcom-usb-hsic.o
- obj-$(CONFIG_PHY_QCOM_USB_HS_SNPS_28NM)	+= phy-qcom-usb-hs-snsp-28nm.o
-+obj-$(CONFIG_PHY_QCOM_USB_SS)		+= phy-qcom-usb-ss.o
-diff --git a/drivers/phy/qualcomm/phy-qcom-usb-ss.c b/drivers/phy/qualcomm/phy-qcom-usb-ss.c
-new file mode 100644
-index 0000000..7b6a55e
---- /dev/null
-+++ b/drivers/phy/qualcomm/phy-qcom-usb-ss.c
-@@ -0,0 +1,340 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (c) 2012-2014,2017 The Linux Foundation. All rights reserved.
-+ * Copyright (c) 2018, Linaro Limited
-+ */
-+
-+#include <linux/clk.h>
-+#include <linux/delay.h>
-+#include <linux/err.h>
-+#include <linux/io.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/phy/phy.h>
-+#include <linux/platform_device.h>
-+#include <linux/regulator/consumer.h>
-+#include <linux/reset.h>
-+#include <linux/slab.h>
-+
-+#define PHY_CTRL0			0x6C
-+#define PHY_CTRL1			0x70
-+#define PHY_CTRL2			0x74
-+#define PHY_CTRL4			0x7C
-+
-+/* PHY_CTRL bits */
-+#define REF_PHY_EN			BIT(0)
-+#define LANE0_PWR_ON			BIT(2)
-+#define SWI_PCS_CLK_SEL			BIT(4)
-+#define TST_PWR_DOWN			BIT(4)
-+#define PHY_RESET			BIT(7)
-+
-+enum phy_vdd_level { LEVEL_NONE, LEVEL_MIN, LEVEL_MAX, LEVEL_NUM, };
-+
-+struct ssphy_priv {
-+	void __iomem *base;
-+	struct device *dev;
-+	struct reset_control *reset_com;
-+	struct reset_control *reset_phy;
-+	struct clk *clk_ref;
-+	struct clk *clk_phy;
-+	struct clk *clk_pipe;
-+	struct regulator *vdda1p8;
-+	struct regulator *vbus;
-+	struct regulator *vdd;
-+	unsigned int vdd_levels[LEVEL_NUM];
-+};
-+
-+static inline void qcom_ssphy_updatel(void __iomem *addr, u32 mask, u32 val)
-+{
-+	writel((readl(addr) & ~mask) | val, addr);
-+}
-+
-+static int qcom_ssphy_config_vdd(struct ssphy_priv *priv,
-+				 enum phy_vdd_level level)
-+{
-+	return regulator_set_voltage(priv->vdd,
-+				     priv->vdd_levels[level],
-+				     priv->vdd_levels[LEVEL_MAX]);
-+}
-+
-+static int qcom_ssphy_ldo_enable(struct ssphy_priv *priv)
-+{
-+	int ret;
-+
-+	ret = regulator_set_load(priv->vdda1p8, 23000);
-+	if (ret < 0) {
-+		dev_err(priv->dev, "Failed to set regulator1p8 load\n");
-+		return ret;
-+	}
-+
-+	ret = regulator_set_voltage(priv->vdda1p8, 1800000, 1800000);
-+	if (ret) {
-+		dev_err(priv->dev, "Failed to set regulator1p8 voltage\n");
-+		goto put_vdda1p8_lpm;
-+	}
-+
-+	ret = regulator_enable(priv->vdda1p8);
-+	if (ret) {
-+		dev_err(priv->dev, "Failed to enable regulator1p8\n");
-+		goto unset_vdda1p8;
-+	}
-+
-+	return ret;
-+
-+	/* rollback regulator changes */
-+
-+unset_vdda1p8:
-+	regulator_set_voltage(priv->vdda1p8, 0, 1800000);
-+
-+put_vdda1p8_lpm:
-+	regulator_set_load(priv->vdda1p8, 0);
-+
-+	return ret;
-+}
-+
-+static void qcom_ssphy_ldo_disable(struct ssphy_priv *priv)
-+{
-+	regulator_disable(priv->vdda1p8);
-+	regulator_set_voltage(priv->vdda1p8, 0, 1800000);
-+	regulator_set_load(priv->vdda1p8, 0);
-+}
-+
-+static int qcom_ssphy_power_on(struct phy *phy)
-+{
-+	struct ssphy_priv *priv = phy_get_drvdata(phy);
-+	int ret;
-+
-+	if (!priv->vbus)
-+		goto config;
-+
-+	ret = regulator_enable(priv->vbus);
-+	if (ret)
-+		return ret;
-+config:
-+	ret = qcom_ssphy_config_vdd(priv, LEVEL_MIN);
-+	if (ret) {
-+		dev_err(priv->dev, "Failed to config vdd on\n");
-+		goto err;
-+	}
-+
-+	ret = qcom_ssphy_ldo_enable(priv);
-+	if (ret) {
-+		dev_err(priv->dev, "Failed to enable LDO\n");
-+		goto err1;
-+	}
-+
-+	ret = clk_prepare_enable(priv->clk_ref);
-+	if (ret) {
-+		dev_err(priv->dev, "Failed to enable the reference clock\n");
-+		goto err1;
-+	}
-+
-+	ret = clk_prepare_enable(priv->clk_phy);
-+	if (ret) {
-+		dev_err(priv->dev, "Failed to enable the phy clock\n");
-+		goto err2;
-+	}
-+
-+	ret = clk_prepare_enable(priv->clk_pipe);
-+	if (ret) {
-+		dev_err(priv->dev, "Failed to enable the pipe clock\n");
-+		goto err3;
-+	}
-+
-+	if (priv->reset_com && priv->reset_phy) {
-+		ret = reset_control_assert(priv->reset_com);
-+		if (ret) {
-+			dev_err(priv->dev, "Failed to assert reset com\n");
-+			goto err4;
-+		}
-+
-+		ret = reset_control_assert(priv->reset_phy);
-+		if (ret) {
-+			dev_err(priv->dev, "Failed to assert reset phy\n");
-+			goto err4;
-+		}
-+
-+		usleep_range(10, 20);
-+
-+		ret = reset_control_deassert(priv->reset_com);
-+		if (ret) {
-+			dev_err(priv->dev, "Failed to deassert reset com\n");
-+			goto err4;
-+		}
-+
-+		ret = reset_control_deassert(priv->reset_phy);
-+		if (ret) {
-+			dev_err(priv->dev, "Failed to deassert reset phy\n");
-+			goto err4;
-+		}
-+
-+		goto power_on;
-+	}
-+
-+	qcom_ssphy_updatel(priv->base + PHY_CTRL1, PHY_RESET, PHY_RESET);
-+	usleep_range(10, 20);
-+	qcom_ssphy_updatel(priv->base + PHY_CTRL1, PHY_RESET, 0);
-+
-+power_on:
-+	writeb(SWI_PCS_CLK_SEL, priv->base + PHY_CTRL0);
-+	qcom_ssphy_updatel(priv->base + PHY_CTRL4, LANE0_PWR_ON, LANE0_PWR_ON);
-+	qcom_ssphy_updatel(priv->base + PHY_CTRL2, REF_PHY_EN, REF_PHY_EN);
-+	qcom_ssphy_updatel(priv->base + PHY_CTRL4, TST_PWR_DOWN, 0);
-+
-+	return 0;
-+
-+err4:
-+	clk_disable_unprepare(priv->clk_ref);
-+err3:
-+	clk_disable_unprepare(priv->clk_phy);
-+err2:
-+	clk_disable_unprepare(priv->clk_ref);
-+err1:
-+	qcom_ssphy_config_vdd(priv, LEVEL_NONE);
-+err:
-+	if (priv->vbus)
-+		regulator_disable(priv->vbus);
-+
-+	return ret;
-+}
-+
-+static int qcom_ssphy_power_off(struct phy *phy)
-+{
-+	struct ssphy_priv *priv = phy_get_drvdata(phy);
-+
-+	qcom_ssphy_updatel(priv->base + PHY_CTRL4, LANE0_PWR_ON, 0);
-+	qcom_ssphy_updatel(priv->base + PHY_CTRL2, REF_PHY_EN, 0);
-+	qcom_ssphy_updatel(priv->base + PHY_CTRL4, TST_PWR_DOWN, TST_PWR_DOWN);
-+
-+	clk_disable_unprepare(priv->clk_pipe);
-+	clk_disable_unprepare(priv->clk_phy);
-+	clk_disable_unprepare(priv->clk_ref);
-+
-+	qcom_ssphy_ldo_disable(priv);
-+	qcom_ssphy_config_vdd(priv, LEVEL_NONE);
-+
-+	if (priv->vbus)
-+		regulator_disable(priv->vbus);
-+
-+	return 0;
-+}
-+
-+static const struct phy_ops qcom_ssphy_ops = {
-+	.power_off = qcom_ssphy_power_off,
-+	.power_on = qcom_ssphy_power_on,
-+	.owner = THIS_MODULE,
-+};
-+
-+static int qcom_ssphy_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct phy_provider *provider;
-+	struct ssphy_priv *priv;
-+	struct resource *res;
-+	struct phy *phy;
-+	int ret;
-+
-+	priv = devm_kzalloc(dev, sizeof(struct ssphy_priv), GFP_KERNEL);
-+	if (!priv)
-+		return -ENOMEM;
-+
-+	priv->dev = dev;
-+
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	priv->base = devm_ioremap_resource(dev, res);
-+	if (IS_ERR(priv->base))
-+		return PTR_ERR(priv->base);
-+
-+	priv->clk_ref = devm_clk_get(dev, "ref");
-+	if (IS_ERR(priv->clk_ref)) {
-+		dev_err(dev, "Failed to get the reference clock\n");
-+		return PTR_ERR(priv->clk_ref);
-+	}
-+
-+	priv->clk_phy = devm_clk_get(dev, "phy");
-+	if (IS_ERR(priv->clk_phy)) {
-+		dev_err(dev, "Failed to get the phy clock\n");
-+		return PTR_ERR(priv->clk_phy);
-+	}
-+
-+	priv->clk_pipe = devm_clk_get(dev, "pipe");
-+	if (IS_ERR(priv->clk_pipe)) {
-+		dev_err(dev, "Failed to get the pipe clock\n");
-+		return PTR_ERR(priv->clk_pipe);
-+	}
-+
-+	priv->reset_com = devm_reset_control_get_optional(dev, "com");
-+	if (IS_ERR(priv->reset_com)) {
-+		dev_err(dev, "Failed to get reset control com\n");
-+		return PTR_ERR(priv->reset_com);
-+	}
-+
-+	if (priv->reset_com) {
-+		/* if reset_com is present, reset_phy is no longer optional */
-+		priv->reset_phy = devm_reset_control_get(dev, "phy");
-+		if (IS_ERR(priv->reset_phy)) {
-+			dev_err(dev, "Failed to get reset control phy\n");
-+			return PTR_ERR(priv->reset_phy);
-+		}
-+	}
-+
-+	priv->vdd = devm_regulator_get(dev, "vdd");
-+	if (IS_ERR(priv->vdd)) {
-+		dev_err(dev, "Failed to get the vdd regulator\n");
-+		return PTR_ERR(priv->vdd);
-+	}
-+
-+	priv->vdda1p8 = devm_regulator_get(dev, "vdda1p8");
-+	if (IS_ERR(priv->vdda1p8)) {
-+		dev_err(dev, "Failed to get the vdda1p8 regulator\n");
-+		return PTR_ERR(priv->vdda1p8);
-+	}
-+
-+	ret = of_property_read_u32_array(dev->of_node,
-+					 "qcom,vdd-voltage-level",
-+					 priv->vdd_levels,
-+					 ARRAY_SIZE(priv->vdd_levels));
-+	if (ret) {
-+		dev_err(dev, "Failed to read qcom,vdd-voltage-level\n");
-+		return ret;
-+	}
-+
-+	priv->vbus = devm_regulator_get_optional(dev, "vbus");
-+	if (IS_ERR(priv->vbus)) {
-+		if (PTR_ERR(priv->vbus) == -EPROBE_DEFER)
-+			return -EPROBE_DEFER;
-+
-+		priv->vbus = NULL;
-+	}
-+
-+	phy = devm_phy_create(dev, dev->of_node, &qcom_ssphy_ops);
-+	if (IS_ERR(phy)) {
-+		dev_err(dev, "Failed to create the ss phy\n");
-+		return PTR_ERR(phy);
-+	}
-+
-+	phy_set_drvdata(phy, priv);
-+
-+	provider = devm_of_phy_provider_register(dev, of_phy_simple_xlate);
-+
-+	return PTR_ERR_OR_ZERO(provider);
-+}
-+
-+static const struct of_device_id qcom_ssphy_match[] = {
-+	{ .compatible = "qcom,usb-ssphy", },
-+	{ },
-+};
-+MODULE_DEVICE_TABLE(of, qcom_ssphy_match);
-+
-+static struct platform_driver qcom_ssphy_driver = {
-+	.probe		= qcom_ssphy_probe,
-+	.driver = {
-+		.name	= "qcom_usb_ssphy",
-+		.of_match_table = qcom_ssphy_match,
-+	},
-+};
-+module_platform_driver(qcom_ssphy_driver);
-+
-+MODULE_DESCRIPTION("Qualcomm Super-Speed USB PHY driver");
-+MODULE_LICENSE("GPL v2");
+		page = pagecache_get_page(mapping, offset,
+					  FGP_CREAT | FGP_LOCK, vmf->gfp_mask);
+		if (!page)
+			return vmf_error(-ENOMEM);
+		goto check_uptodate;
+
+where check_uptodate would be a label before 'PageUptodate' check?
+
+Then you don't have to introduce new flag for pagecache_get_page() and you
+also don't have to unlock and then lock again the page... And you can still
+delete all the code you've deleted.
+
+								Honza
 -- 
-2.7.4
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
