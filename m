@@ -2,145 +2,262 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,T_DKIMWL_WL_MED,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52BA1C64EB1
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 11:30:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BA5FC64EB1
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 11:30:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E1F520892
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 11:30:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3BE86208E7
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 11:30:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microchiptechnology.onmicrosoft.com header.i=@microchiptechnology.onmicrosoft.com header.b="l1Od9y5m"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E1F520892
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="EeW2jro/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3BE86208E7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726109AbeLGLaI (ORCPT
+        id S1726118AbeLGLaj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 06:30:08 -0500
-Received: from esa2.microchip.iphmx.com ([68.232.149.84]:48019 "EHLO
-        esa2.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726080AbeLGLaD (ORCPT
+        Fri, 7 Dec 2018 06:30:39 -0500
+Received: from perceval.ideasonboard.com ([213.167.242.64]:44844 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725992AbeLGLaj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 06:30:03 -0500
-X-IronPort-AV: E=Sophos;i="5.56,326,1539673200"; 
-   d="scan'208";a="23959541"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa2.microchip.iphmx.com with ESMTP/TLS/AES128-SHA; 07 Dec 2018 04:30:01 -0700
-Received: from NAM04-CO1-obe.outbound.protection.outlook.com (10.10.215.89) by
- email.microchip.com (10.10.76.37) with Microsoft SMTP Server (TLS) id
- 14.3.352.0; Fri, 7 Dec 2018 04:30:01 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=microchiptechnology.onmicrosoft.com;
- s=selector1-microchiptechnology-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=WOffFeUonqNeJyyXQeFve5l0eGyYiy4qRNGzUpbBvzk=;
- b=l1Od9y5mcf/3XHomjl9D6NlIIksWx2rvAh3ktDHExIzDOWrMX0v6ZCG7Ttkq1k3TfbU0fGp6PhLMic05urVHTmsoHoUZVD7ohLWAw9guFgnH94D5wd9DHrIJAkqihJCks27SzGBX4QOT9RPgXgO8MiYQ7INROkglEwNdadLhfFg=
-Received: from BN6PR11MB1842.namprd11.prod.outlook.com (10.175.99.146) by
- BN6PR11MB1395.namprd11.prod.outlook.com (10.173.33.15) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1404.21; Fri, 7 Dec 2018 11:29:59 +0000
-Received: from BN6PR11MB1842.namprd11.prod.outlook.com
- ([fe80::d88c:1d67:5fb0:12ae]) by BN6PR11MB1842.namprd11.prod.outlook.com
- ([fe80::d88c:1d67:5fb0:12ae%2]) with mapi id 15.20.1404.021; Fri, 7 Dec 2018
- 11:29:59 +0000
-From:   <Tudor.Ambarus@microchip.com>
-To:     <wsa@the-dreams.de>
-CC:     <Nicolas.Ferre@microchip.com>, <Ludovic.Desroches@microchip.com>,
-        <alexandre.belloni@bootlin.com>, <linux-i2c@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <Tudor.Ambarus@microchip.com>,
-        <Tudor.Ambarus@microchip.com>
-Subject: [2nd RESEND PATCH 2/2] i2c: at91: Save the bus clock frequency in
- adapter
-Thread-Topic: [2nd RESEND PATCH 2/2] i2c: at91: Save the bus clock frequency
- in adapter
-Thread-Index: AQHUjiAwvr3DWjad40q+nnl2R6rcoA==
-Date:   Fri, 7 Dec 2018 11:29:59 +0000
-Message-ID: <20181207112939.15791-3-tudor.ambarus@microchip.com>
-References: <20181207112939.15791-1-tudor.ambarus@microchip.com>
-In-Reply-To: <20181207112939.15791-1-tudor.ambarus@microchip.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: VI1PR0202CA0007.eurprd02.prod.outlook.com
- (2603:10a6:803:14::20) To BN6PR11MB1842.namprd11.prod.outlook.com
- (2603:10b6:404:103::18)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Tudor.Ambarus@microchip.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [94.177.32.154]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BN6PR11MB1395;6:cpOvnnStqmewvJcCVdVVLuGu+frkC4Ka5y3oabrRDQJWN/fmbk8MEFZ/mgy+KWtfqV0rbjKIY4eBJlpWwVJePCITNPWPuynlq535yZYxORoLYcMSVs2HgmUad9SnkfI29o65KtYCJs1uhU/FkOXFRa1AlaPTv7v2TDkDn2JTerupdX38a+ZVxVa9wnCto/olerzTiuSVevD1N2lh8Xj9ul6Ejh78/nQLdmLSK0RQ2RN/Y9PKP36cg2eIMzyu9Y8AUfmuB56nV1Kr0TNeypxOTga9no0ZTcx6TpTowdjf+ceC8LVOv55wEOnPotvWVPPqXcJigBsOE9Vhw+RcM4EbhqeI1IzCmhE+XSt2OjeWOX1/e2FKBS8LQ6V5AkrjXkb+cmY/DXuHUPcuMwegOAcrspYK8WwEQrB0AfCTKAyjnqqIG4K1QyYd0xHIdNsS8dIAEScBRI2dIMkfvL+t0sSoQQ==;5:qmMUHFXCebzNZlTr4NSL03mzSf6b64PD5Fr3nXCEVilgTUw9HiL19Oh7HrsGH0AgQoZb5ogHWau0l/Uhnm1q599ttHTX+t5oMG3m+eKytj5JO1opjCQ2oBSLxDPl77DHeGWA1Qb20IzQCLIukmbcA/EkFC/a9tvD95iCd0hjzp0=;7:Bf1d/dnK0LSz+NRT/LSfWixCzPJaef85BjoJFZTtqcA4za9TGoDrs2zbS9ikprchC559e8wLTx9+JCx3/wU0hHXv4++KBEkf9STwlVVTTAewR7Zj9KMeQGT2jfGfFdrtB+gpzassNXdQ1ZSu93EfVw==
-x-ms-office365-filtering-correlation-id: f3cead92-c8e9-4cb3-8fd5-08d65c375262
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:BN6PR11MB1395;
-x-ms-traffictypediagnostic: BN6PR11MB1395:
-x-microsoft-antispam-prvs: <BN6PR11MB139560D5BB45FE5C50CD28DAF0AA0@BN6PR11MB1395.namprd11.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(10201501046)(3002001)(93006095)(93001095)(3231455)(999002)(944501520)(52105112)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123562045)(20161123560045)(20161123564045)(201708071742011)(7699051)(76991095);SRVR:BN6PR11MB1395;BCL:0;PCL:0;RULEID:;SRVR:BN6PR11MB1395;
-x-forefront-prvs: 0879599414
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(396003)(136003)(376002)(39860400002)(346002)(189003)(199004)(7736002)(6116002)(68736007)(107886003)(186003)(26005)(36756003)(6506007)(71190400001)(305945005)(386003)(316002)(2501003)(53936002)(54906003)(71200400001)(97736004)(2616005)(76176011)(6916009)(1076002)(446003)(99286004)(11346002)(476003)(66066001)(217873002)(72206003)(52116002)(6486002)(2351001)(86362001)(81166006)(8936002)(105586002)(6512007)(486006)(5640700003)(5660300001)(6436002)(4326008)(3846002)(478600001)(102836004)(14444005)(14454004)(81156014)(8676002)(106356001)(256004)(2906002)(25786009)(1730700003);DIR:OUT;SFP:1101;SCL:1;SRVR:BN6PR11MB1395;H:BN6PR11MB1842.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: microchip.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: qci6HnkLSrS5mZ+1hhFVar4pivwJQi7QMgZPLylPVSPrtW7Nr0DG0jVM+KYG9fe2bhmjM/gAK3EP/PnokApau7VM3SLOROrm+QRE9Ea7aMCSCXde8aUYI9FXn7VeALOaaVDAS1doVp3lm1o28sYjulqKdnuIvNqkXEL45EISKjHQGO/PqM2RBrPqxDD3CHxW6AN4slIjhzxkrT2YWhK5OxM/YHoTzgz5CwlxZFLbl4jGCMv0yMm+rdT3mIw5bgVUfzRU9NrKjWrSShX4t5vdQ8q8S/99Y5kEvNPGd1VUZzTDYB6fqstT8/12fKRsy8gac3QUq+mVsGsctQCMYirY4zQyjEiv2oKZCRuZwmc7pm8=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        Fri, 7 Dec 2018 06:30:39 -0500
+Received: from [192.168.0.21] (cpc89242-aztw30-2-0-cust488.18-1.cable.virginm.net [86.31.129.233])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 93B39537;
+        Fri,  7 Dec 2018 12:30:33 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1544182235;
+        bh=21sn3No9vTImcnA5ONUX2pEmjhljoAzL+ofIJEsTpR8=;
+        h=Reply-To:Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=EeW2jro/SQwWlM2rWOn2bpzPY407qmx2Bx8FBEiHsCTmO6BGOo9tohdDiLHFNriVm
+         vPVL7v/uKttNUAyHOfvG4TByvTIPBxrDw64UhYHb2o29O0XhecpojSPqoJmoB9D3RX
+         9xg1FJkYTmnMkpTpvWD4zchTqudztQDiOu9aww+I=
+Reply-To: kieran.bingham@ideasonboard.com
+Subject: Re: [RFC v3 11/19] kunit: add Python libraries for handing KUnit
+ config and kernel
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Luis Chamberlain <mcgrof@kernel.org>,
+        Brendan Higgins <brendanhiggins@google.com>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        Eryu Guan <guaneryu@gmail.com>,
+        Eric Sandeen <sandeen@sandeen.net>, jeffm@suse.com,
+        Sasha Levin <Alexander.Levin@microsoft.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Kees Cook <keescook@google.com>, shuah@kernel.org,
+        Joel Stanley <joel@jms.id.au>, mpe@ellerman.id.au,
+        joe@perches.com, brakmo@fb.com, rostedt@goodmis.org,
+        Tim.Bird@sony.com, khilman@baylibre.com,
+        Julia Lawall <julia.lawall@lip6.fr>,
+        linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        jdike@addtoit.com, richard@nod.at, linux-um@lists.infradead.org,
+        Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel@lists.freedesktop.org, Rob Herring <robh@kernel.org>,
+        dan.j.williams@intel.com, linux-nvdimm@lists.01.org,
+        Frank Rowand <frowand.list@gmail.com>,
+        Knut Omang <knut.omang@oracle.com>,
+        Felix Guo <felixguoxiuping@gmail.com>,
+        Petr Mladek <pmladek@suse.com>, linux-fsdevel@vger.kernel.org
+References: <20181128193636.254378-1-brendanhiggins@google.com>
+ <20181128193636.254378-12-brendanhiggins@google.com>
+ <841cf4ae-501b-05ae-5863-a51010709b67@ideasonboard.com>
+ <CAFd5g47x-UNja72k-CWPmWz9+LTn8pF8Wj5Poq+2FJ93E=vymA@mail.gmail.com>
+ <20181204204701.GT28501@garbanzo.do-not-panic.com>
+ <f8722f4a-44c8-24c2-c433-5178f9f40b82@ideasonboard.com>
+ <20181206153718.GD24603@bombadil.infradead.org>
+From:   Kieran Bingham <kieran.bingham@ideasonboard.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=kieran.bingham@ideasonboard.com; keydata=
+ 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
+ sbsRB8KNNvVXBOVNwko86rQqF9drZuw=
+Organization: Ideas on Board
+Message-ID: <f2a3d7fc-21f2-7bd0-94e2-4122f2073da5@ideasonboard.com>
+Date:   Fri, 7 Dec 2018 11:30:30 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: f3cead92-c8e9-4cb3-8fd5-08d65c375262
-X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Dec 2018 11:29:59.7924
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR11MB1395
-X-OriginatorOrg: microchip.com
+In-Reply-To: <20181206153718.GD24603@bombadil.infradead.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Tudor.Ambarus@microchip.com" <Tudor.Ambarus@microchip.com>
+Hi Matthew,
 
-The clock-frequency property is not mandatory for the i2c buses. If it's
-not present in the device tree, the buses __usually__ assume it's 100kHZ
-(see altera, at91, axxia, etc.). Broadcom uses a 375kHZ default
-clock-frequency, so the default clock frequency varies from bus to bus.
+On 06/12/2018 15:37, Matthew Wilcox wrote:
+> On Thu, Dec 06, 2018 at 12:32:47PM +0000, Kieran Bingham wrote:
+>> On 04/12/2018 20:47, Luis Chamberlain wrote:
+>>> On Mon, Dec 03, 2018 at 03:48:15PM -0800, Brendan Higgins wrote:
+>>>> On Thu, Nov 29, 2018 at 5:54 AM Kieran Bingham
+>>>> <kieran.bingham@ideasonboard.com> wrote:
+>>>>>
+>>>>> Hi Brendan,
+>>>>>
+>>>>> Thanks again for this series!
+>>>>>
+>>>>> On 28/11/2018 19:36, Brendan Higgins wrote:
+>>>>>> The ultimate goal is to create minimal isolated test binaries; in the
+>>>>>> meantime we are using UML to provide the infrastructure to run tests, so
+>>>>>> define an abstract way to configure and run tests that allow us to
+>>>>>> change the context in which tests are built without affecting the user.
+>>>>>> This also makes pretty and dynamic error reporting, and a lot of other
+>>>>>> nice features easier.
+>>>>>
+>>>>>
+>>>>> I wonder if we could somehow generate a shared library object
+>>>>> 'libkernel' or 'libumlinux' from a UM configured set of headers and
+>>>>> objects so that we could create binary targets directly ?
+>>>>
+>>>> That's an interesting idea. I think it would be difficult to figure
+>>>> out exactly where to draw the line of what goes in there and what
+>>>> needs to be built specific to a test a priori. Of course, that leads
+>>>> into the biggest problem in general, needed to know what I need to
+>>>> build to test the thing that I want to test.
+>>>>
+>>>> Nevertheless, I could definitely imagine that being useful in a lot of cases.
+>>>
+>>> Whether or not we can abstract away the kernel into such a mechanism
+>>> with uml libraries is a good question worth exploring.
+>>>
+>>> Developers working upstream do modify their kernels a lot, so we'd have
+>>> to update such libraries quite a bit, but I think that's fine too. The
+>>> *real* value I think from the above suggestion would be enterprise /
+>>> mobile distros or stable kernel maintainers which have a static kernel
+>>> they need to support for a relatively *long time*, consider a 10 year
+>>> time frame. Running unit tests without qemu with uml and libraries for
+>>> respective kernels seems real worthy.
+>>
+>> I think any such library might be something generated by the kernel
+>> build system, so if someone makes substantial changes to a core
+>> component provided by the library - it can be up to them to build a
+>> corresponding userspace library as well.
+>>
+>> We could also consider to only provide *static* libraries rather than
+>> dynamic. So any one building some userspace tool / test with this would
+>> be required to compile against (the version of) the kernel they expect
+>> perhaps... - much like we expect modules to be compiled currently.
+>>
+>> And then the userspace binary would be sufficiently able to live it's
+>> life on it's own :)
+>>
+>>> The overhead for testing a unit test for said targets, *ideally*, would
+>>> just be to to reboot into the system with such libraries available, a
+>>> unit test would just look for the respective uname -r library and mimic
+>>> that kernel, much the same way enterprise distributions today rely on
+>>> having debugging symbols available to run against crash / gdb. Having
+>>> debug modules / kernel for crash requires such effort already, so this
+>>> would just be an extra layer of other prospect tests.
+>>
+>> Oh - although, yes - there are some good concepts there - but I'm a bit
+>> weary of how easy it would be to 'run' the said test against multiple
+>> kernel version libraries... there would be a lot of possible ABI
+>> conflicts perhaps.
+>>
+>> My main initial idea for a libumlinux is to provide infrastructure such
+>> as our linked-lists and other kernel formatting so that we can take
+>> kernel code directly to userspace for test and debug (assuming that
+>> there are no hardware dependencies or things that we can't mock out)
+>>
+>> I think all of this could complement kunit of course - this isn't
+>> suggesting an alternative implementation :-)
+> 
+> I suspect the reason Luis cc'd me on this is that we already have some
+> artisinally-crafted userspace kernel-mocking interfaces under tools/.
 
-There are i2c clients that need to know the bus clock frequency in order to
-compute their wake token (see atecc508a i2c client).
+Aha - excellent - I had hoped to grab you at Plumbers to talk about
+this, after hearing you mention something at your Xarray talk - but
+didn't seem to find a suitable time.
 
-The clock-frequency value has to be propagated to the i2c clients, otherwis=
-e,
-if they will not find the i2c bus clock frequency in the device tree, they
-will have to make their own assumption of the clock frequency.
+> The tools/testing/radix-tree directory is the source of some of this,
+> but I've been moving pieces out into tools/ more generally where it
+> makes sense to.
 
-Spare the i2c clients of making wrong assumptions of the i2c bus clock
-frequency and provide the bus clock frequency in adapter.
+Sounds like we already have a starting point then.
 
-Signed-off-by: Tudor Ambarus <tudor.ambarus@microchip.com>
-Acked-by: Ludovic Desroches <ludovic.desroches@microchip.com>
----
- drivers/i2c/busses/i2c-at91.c | 1 +
- 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/i2c/busses/i2c-at91.c b/drivers/i2c/busses/i2c-at91.c
-index 3f3e8b3bf5ff..9aa0937817ac 100644
---- a/drivers/i2c/busses/i2c-at91.c
-+++ b/drivers/i2c/busses/i2c-at91.c
-@@ -1124,6 +1124,7 @@ static int at91_twi_probe(struct platform_device *pde=
-v)
- 	dev->adapter.quirks =3D &at91_twi_quirks;
- 	dev->adapter.dev.parent =3D dev->dev;
- 	dev->adapter.nr =3D pdev->id;
-+	dev->adapter.bus_freq_hz =3D bus_clk_rate;
- 	dev->adapter.timeout =3D AT91_I2C_TIMEOUT;
- 	dev->adapter.dev.of_node =3D pdev->dev.of_node;
-=20
---=20
-2.9.4
+> We have liburcu already, which is good.  The main sticking points are:
+> 
+>  - No emulation of kernel thread interfaces
 
+Scheduling finesse aside, This shouldn't be too hard to emulate/wrap
+with pthreads?
+
+
+>  - The kernel does not provide the ability to aggressively fail memory
+>    allocations (which is useful when trying to exercise the memory failure
+>    paths).
+
+Fault injection throughout would certainly be a valuable addition to any
+unit-testing.
+
+Wrapping tests into a single userspace binary could facilitate further
+memory leak checking or other valgrind facilities too.
+
+
+
+>  - printk has started adding a lot of %pX enhancements which printf
+>    obviously doesn't know about.
+
+Wrapping through User-mode linux essentially provides this already
+though. In fact I guess that goes for the thread interfaces topic above too.
+
+
+>  - No global pseudo-random number generator in the kernel.  Probably
+>    we should steal the i915 one.
+> 
+> I know Dan Williams has also done a lot of working mocking kernel
+> interfaces for libnvdimm.
+
+
+Thanks for the references - more to investigate.
+
+-- 
+Regards
+--
+Kieran
