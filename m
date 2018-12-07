@@ -2,177 +2,308 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90EEFC07E85
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 04:32:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74837C64EB1
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 04:32:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E59420850
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 04:32:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1B38E20850
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 04:32:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="qm+1WkYa"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E59420850
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="hf4nbw2e"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B38E20850
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726032AbeLGEcG (ORCPT
+        id S1726053AbeLGEcM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 23:32:06 -0500
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:41252 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725939AbeLGEcF (ORCPT
+        Thu, 6 Dec 2018 23:32:12 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:42550 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725939AbeLGEcL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 23:32:05 -0500
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id wB74Vx3O026431;
-        Thu, 6 Dec 2018 22:31:59 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1544157119;
-        bh=4pqQDszV9eB7pWQQz9A4RljAqst4q3FprFXuzUBEN28=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=qm+1WkYau01gDunC7sWXHnPpHJ8NSeHszgOLZxFgE/kwxf56SuAHQG/FgctNPqmn7
-         z4JvRXYLbUJpE/h3TNMev6KQR+i68BOKEF1RQ0o4pOEmSBy7WsHJPzlw8n2C7m7IOf
-         wlj4N4rwQDituk0vst2PHLM1H7AcUMsxhdT5g0mI=
-Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wB74Vxkr040133
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 6 Dec 2018 22:31:59 -0600
-Received: from DLEE110.ent.ti.com (157.170.170.21) by DLEE115.ent.ti.com
- (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Thu, 6
- Dec 2018 22:31:59 -0600
-Received: from dflp33.itg.ti.com (10.64.6.16) by DLEE110.ent.ti.com
- (157.170.170.21) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Thu, 6 Dec 2018 22:31:58 -0600
-Received: from [172.24.190.233] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id wB74Vr7F014709;
-        Thu, 6 Dec 2018 22:31:55 -0600
-Subject: Re: [PATCH v10 0/6] Support for Qualcomm UFS QMP PHY on SDM845
-To:     Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Can Guo <cang@codeaurora.org>
-CC:     Subhash Jadavani <subhashj@codeaurora.org>,
-        <asutoshd@codeaurora.org>, <evgreen@chromium.org>,
-        Manu Gautam <mgautam@codeaurora.org>,
-        robh+dt <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>
-References: <1540269361-28185-1-git-send-email-cang@codeaurora.org>
- <CAFp+6iH9sz3NsejvxLdgAy+E-6Rff9RDA74EtnSidWOuZN=q9w@mail.gmail.com>
-From:   Kishon Vijay Abraham I <kishon@ti.com>
-Message-ID: <2835270c-79aa-81fc-574a-5cb48a542260@ti.com>
-Date:   Fri, 7 Dec 2018 10:01:43 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Thu, 6 Dec 2018 23:32:11 -0500
+Received: by mail-lf1-f65.google.com with SMTP id l10so2040965lfh.9
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Dec 2018 20:32:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Pgc93Elzn0yDZsGvIneJWW/7FgDXGS1XQW3csqBPn40=;
+        b=hf4nbw2e2AYxvzSjMtwBwkO21zCiq0060EBEgao++IaRl0SO9wYHQ33AFfoQ5x2fzS
+         RWdyKmA0KlJiUfCZPph7NZrgY7odvznZ9p7QNkMpxiIAWN0T03hksm9V27iMROfHSiw+
+         TfoaIqAMN4hvL3Umyz0Ksnt5H86lRfuqBSL1Y=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Pgc93Elzn0yDZsGvIneJWW/7FgDXGS1XQW3csqBPn40=;
+        b=OieibYBoDz3XhtAL+uLH5fo8VUc+poWpP6TXi2AmZqUlYoMCGbTC+3cYzMBs1CRgBv
+         UhV5wLaegnDCmlGZapGR7JXB+67DMWgLeGTudc9I295AESzSBLnZe2fb2x1mUpCzvTVe
+         36C+nmiNQpIhNvyW/CNm9GETUernY44U/0ot5KEOIC9syF6oLLd/L61bV2PXBNIyyfi8
+         UHKtoF0l0qDRc5N6jAgY2PlfrePtc5qq86yL8y0Y/jKc0XVo9So2vHPgOgKHUYptCOmf
+         52Y3MsdKGHiPgl+3bndRNzBOOWp/y0rXpo5WcMHX0ooSvgGYy6uKeFJa0lMXLvwOGtf+
+         pVtA==
+X-Gm-Message-State: AA+aEWa6LtoxDTKXydb8fEBf3Kdk9/5bTeiMIJ5Tk/t75qaGOi7CY4IS
+        H3R71xI5n//bA6rmzvOIg8lERU8WuM4=
+X-Google-Smtp-Source: AFSGD/WuejUwPzMgJLJzVKjmgFmiAV2IOrG1jCtrgnDzs8gDJy/a1RlMnbMvGmnzwuaP0EfuBqeyag==
+X-Received: by 2002:a19:3b9c:: with SMTP id d28mr386514lfl.30.1544157128396;
+        Thu, 06 Dec 2018 20:32:08 -0800 (PST)
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com. [209.85.208.173])
+        by smtp.gmail.com with ESMTPSA id y12-v6sm374723ljy.76.2018.12.06.20.32.03
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 06 Dec 2018 20:32:03 -0800 (PST)
+Received: by mail-lj1-f173.google.com with SMTP id k15-v6so2389451ljc.8
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Dec 2018 20:32:03 -0800 (PST)
+X-Received: by 2002:a2e:9819:: with SMTP id a25-v6mr403876ljj.6.1544157122741;
+ Thu, 06 Dec 2018 20:32:02 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <CAFp+6iH9sz3NsejvxLdgAy+E-6Rff9RDA74EtnSidWOuZN=q9w@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <20181203201214.GB3540@redhat.com> <CAHk-=wg=6uxAJMbvGJC-5CSikC8OdqsjE1vw+DsCMj=2SNSnZg@mail.gmail.com>
+ <CAHk-=whDg5+e2-eXYo-jwC1spt2r7JjLQSaLm4OyfGMQHLTrdw@mail.gmail.com>
+ <64a4aec6-3275-a716-8345-f021f6186d9b@suse.cz> <20181204104558.GV23260@techsingularity.net>
+ <20181205204034.GB11899@redhat.com> <CAHk-=whi8Ju-cTDL4cYtwuLA7BYgGJYyy6HVMoknZaLHnRc83g@mail.gmail.com>
+ <20181205233632.GE11899@redhat.com> <CAHk-=wguXjkbK8BUU998s7HD7AXJgBkuc9JmuNxiN7uGQyfSfQ@mail.gmail.com>
+ <CAHk-=wjm9V843eg0uesMrxKnCCq7UfWn8VJ+z-cNztb_0fVW6A@mail.gmail.com> <20181206091405.GD1286@dhcp22.suse.cz>
+In-Reply-To: <20181206091405.GD1286@dhcp22.suse.cz>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Thu, 6 Dec 2018 20:31:46 -0800
+X-Gmail-Original-Message-ID: <CAHk-=whCnERJt8bterD5yXABvoSmoJAx004Y76c82bBHCWbgDg@mail.gmail.com>
+Message-ID: <CAHk-=whCnERJt8bterD5yXABvoSmoJAx004Y76c82bBHCWbgDg@mail.gmail.com>
+Subject: Re: MADV_HUGEPAGE vs. NUMA semantic (was: Re: [LKP] [mm] ac5b2c1891:
+ vm-scalability.throughput -61.3% regression)
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Andrea Arcangeli <aarcange@redhat.com>,
+        mgorman@techsingularity.net, Vlastimil Babka <vbabka@suse.cz>,
+        ying.huang@intel.com, s.priebe@profihost.ag,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        alex.williamson@redhat.com, lkp@01.org,
+        David Rientjes <rientjes@google.com>, kirill@shutemov.name,
+        Andrew Morton <akpm@linux-foundation.org>,
+        zi.yan@cs.rutgers.edu
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
+        boundary="000000000000cb19e9057c6718b2"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+--000000000000cb19e9057c6718b2
+Content-Type: text/plain; charset="UTF-8"
 
-On 05/12/18 12:31 PM, Vivek Gautam wrote:
-> On Tue, Oct 23, 2018 at 10:07 AM Can Guo <cang@codeaurora.org> wrote:
->>
->> This patch series adds support for UFS QMP PHY on SDM845 and the
->> compatible string for it. This patch series depends on the current
->> proposed QMP V3 USB3 UNI PHY support for sdm845 driver [1], on
->> the DT bindings for the QMP V3 USB3 PHYs based dirver [2], and also
->> rebased on updated pipe_clk initialization sequence [3]. This series
->> can only be merged once the dependent patches do.
->> [1] http://lists-archives.com/linux-kernel/29071659-dt-bindings-phy-qcom-qmp-update-bindings-for-sdm845.html
->> [2] http://lists-archives.com/linux-kernel/29071660-phy-qcom-qmp-add-qmp-v3-usb3-uni-phy-support-for-sdm845.html
->> [3] https://patchwork.kernel.org/patch/10376551/
-> 
-> Besides my comment for PATCH 4/6, I have already reviewed the entire series,
-> and it looks good.
-> If adding new bindings for sdm845 needs a further review, can you separate out
-> just the phy patches from this series (patch 1, 2, 3 & 6), and re-send them.
-> We can ask Kishon if he can pull them in for this merge window.
-> Thanks.
+[ Oops. different thread for me due to edited subject, so I saw this
+after replying to the earlier email by David ]
 
-Looks like the PHY patches has gone in the previous merge window itself. If
-there are any changes, please post only the diff as a separate patch.
+On Thu, Dec 6, 2018 at 1:14 AM Michal Hocko <mhocko@kernel.org> wrote:
+>
+> MADV_HUGEPAGE changes the picture because the caller expressed a need
+> for THP and is willing to go extra mile to get it.
 
-Thanks
-Kishon
-> 
-> best regards
-> Vivek
-> 
->>
->> Changes since v9:
->> - Incorporated review comments from Rob.
->>
->> Changes since v8:
->> - Add one new change to support ufs core reset.
->> - Incorporated review comments from Evan, Vivek.
->>
->> Changes since v7:
->> - Add one new change to update UFS PHY power on sequence
->> - Incorporated review comments from Evan, Vivek and Manu.
->>
->> Changes since v6:
->> - Add one new change to clean up some structs and field
->> - Updates the PHY power control sequence.
->> - Incorporated review comments from Vivek and Manu.
->>
->> Changes since v5:
->> - Updates the PHY power control sequence.
->> - Updates UFS PHY power on condition check.
->>
->> Changes since v4:
->> - Adds 'ref_aux' clock back to SDM845 UFS PHY clock list.
->> - Power on PHY before serdes configuration starts.
->> - Updates the UFS PHY initialization sequence.
->> - Updates a few UFS PHY registers.
->> - Incorporated review comments from Vivek and Manu.
->>
->> Changes since v3:
->> - Incorporated review comments from Vivek and Rob.
->>
->> Changes since v2:
->> - Incorporated review comments from Vivek and Rob.
->> - Remove "ref_aux" from sdm845 ufs phy clock list structure.
->>
->> Changes since v1:
->> - Incorporated review comments from Vivek and Manu.
->> - Update the commit title of patch 2.
->>
->> Can Guo (5):
->>   phy: Update PHY power control sequence
->>   phy: General struct and field cleanup
->>   phy: Add QMP phy based UFS phy support for sdm845
->>   scsi: ufs: Power on phy after it is initialized
->>   dt-bindings: phy-qcom-qmp: Add UFS phy compatible string for sdm845
->>
->> Dov Levenglick (1):
->>   scsi: ufs: Add core reset support
->>
->>  .../devicetree/bindings/phy/qcom-qmp-phy.txt       |   4 +-
->>  drivers/phy/qualcomm/phy-qcom-qmp.c                | 216 +++++++++++++++++++--
->>  drivers/phy/qualcomm/phy-qcom-qmp.h                |  15 ++
->>  drivers/scsi/ufs/ufs-qcom.c                        |  34 +++-
->>  drivers/scsi/ufs/ufs-qcom.h                        |   1 +
->>  drivers/scsi/ufs/ufshcd-pltfrm.c                   |  22 +++
->>  drivers/scsi/ufs/ufshcd.c                          |  13 ++
->>  drivers/scsi/ufs/ufshcd.h                          |  12 ++
->>  8 files changed, 296 insertions(+), 21 deletions(-)
->>
->> --
->> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
->> a Linux Foundation Collaborative Project
->>
-> 
-> 
+Actually, I think MADV_HUGEPAGE should just be
+"TRANSPARENT_HUGEPAGE_ALWAYS but only for this vma".
+
+So MADV_HUGEPAGE shouldn't change any behavior at all, if the kernel
+was built with TRANSPARENT_HUGEPAGE_ALWAYS.
+
+Put another way: even if you decide to run a kernel that does *not*
+have that "always THP" (beause you presumably think that it's too
+blunt an instrument), then MADV_HUGEPAGE says "for _this_ vma, do the
+'always THP' bebavior"
+
+I think those semantics would be a whole lot easier to explain to
+people, and perhaps more imporantly, starting off from that kind of
+mindset also gives good guidance to what MADV_HUGEPAGE behavior should
+be: it should be sane enough that it makes sense as the _default_
+behavior for the TRANSPARENT_HUGEPAGE_ALWAYS configuration.
+
+But that also means that no, MADV_HUGEPAGE doesn't really change the
+picture. All it does is says "I know that for this vma, THP really
+does make sense as a default".
+
+It doesn't say "I _have_ to have THP", exactly like
+TRANSPARENT_HUGEPAGE_ALWAYS does not mean that every allocation should
+strive to be THP.
+
+>I believe that something like the below would be sensible
+>         1) THP on a local node with compaction not giving up too early
+>         2) THP on a remote node in NOWAIT mode - so no direct
+>            compaction/reclaim (trigger kswapd/kcompactd only for
+>            defrag=defer+madvise)
+>         3) fallback to the base page allocation
+
+That doesn't sound insane to me. That said, the numbers David quoted
+do fairly strongly imply that local small-pages are actually preferred
+to any remote THP pages.
+
+But *that* in turn makes for other possible questions:
+
+ - if the reason we couldn't get a local hugepage is that we're simply
+out of local memory (huge *or* small), then maybe a remote hugepage is
+better.
+
+   Note that this now implies that the choice can be an issue of "did
+the hugepage allocation fail due to fragmentation, or due to the node
+being low of memory"
+
+and there is the other question that I asked in the other thread
+(before subject edit):
+
+ - how local is the load to begin with?
+
+   Relatively shortlived processes - or processes that are explicitly
+bound to a node - might have different preferences than some
+long-lived process where the CPU bounces around, and might have
+different trade-offs for the local vs remote question too.
+
+So just based on David's numbers, and some wild handwaving on my part,
+a slightly more complex, but still very sensible default might be
+something like
+
+ 1) try to do a cheap local node hugepage allocation
+
+    Rationale: everybody agrees this is the best case.
+
+    But if that fails:
+
+ 2) look at compacting and the local node, but not very hard.
+
+    If there's lots of memory on the local node, but synchronous
+compaction doesn't do anything easily, just fall back to small pages.
+
+    Rationale: local memory is generally more important than THP.
+
+    If that fails (ie local node is simply low on memory):
+
+ 3) Try to do remote THP allocation
+
+     Rationale: Ok, we simply didn't have a lot of local memory, so
+it's not just a question of fragmentation. If it *had* been
+fragmentation, lots of small local pages would have been better than a
+remote THP page.
+
+     Oops, remote THP allocation failed (possibly after synchronous
+remote compaction, but maybe this is where we do kcompactd).
+
+ 4) Just do any small page, and do reclaim etc. THP isn't happening,
+and it's not a priority when you're starting to feel memory pressure.
+
+In general, I really would want to avoid magic kernel command lines
+(or sysfs settings, or whatever) making a huge difference in behavior.
+So I really wish people would see the whole
+'transparent_hugepage_flags' thing as a way for kernel developers to
+try different settings, not as a way for users to tune their loads.
+
+Our default should work as sane defaults, we shouldn't have a "ok,
+let's have this sysfs tunable and let people make their own
+decisions". That's a cop-out.
+
+Btw, don't get me wrong: I'm not suggesting removing the sysfs knob.
+As a debug tool, it's great, where you can ask "ok, do things work
+better if you set THP-defrag to defer+madvise".
+
+I'm just saying that we should *not* use that sysfs flag as an excuse
+for "ok, if we get the default wrong, people can make their own
+defaults". We should strive to do well enough that it really shouldn't
+be an issue in normal situations.
+
+                     Linus
+
+--000000000000cb19e9057c6718b2
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
+
+MIIT/AYJKoZIhvcNAQcCoIIT7TCCE+kCAQExDzANBglghkgBZQMEAgEFADALBgkqhkiG9w0BBwGg
+ghEQMIIF5jCCA86gAwIBAgIQapvhODv/K2ufAdXZuKdSVjANBgkqhkiG9w0BAQwFADCBhTELMAkG
+A1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4GA1UEBxMHU2FsZm9yZDEa
+MBgGA1UEChMRQ09NT0RPIENBIExpbWl0ZWQxKzApBgNVBAMTIkNPTU9ETyBSU0EgQ2VydGlmaWNh
+dGlvbiBBdXRob3JpdHkwHhcNMTMwMTEwMDAwMDAwWhcNMjgwMTA5MjM1OTU5WjCBlzELMAkGA1UE
+BhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4GA1UEBxMHU2FsZm9yZDEaMBgG
+A1UEChMRQ09NT0RPIENBIExpbWl0ZWQxPTA7BgNVBAMTNENPTU9ETyBSU0EgQ2xpZW50IEF1dGhl
+bnRpY2F0aW9uIGFuZCBTZWN1cmUgRW1haWwgQ0EwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEK
+AoIBAQC+s55XrCh2dUAWxzgDmNPGGHYhUPMleQtMtaDRfTpYPpynMS6n9jR22YRq2tA9NEjk6vW7
+rN/5sYFLIP1of3l0NKZ6fLWfF2VgJ5cijKYy/qlAckY1wgOkUMgzKlWlVJGyK+UlNEQ1/5ErCsHq
+9x9aU/x1KwTdF/LCrT03Rl/FwFrf1XTCwa2QZYL55AqLPikFlgqOtzk06kb2qvGlnHJvijjI03BO
+rNpo+kZGpcHsgyO1/u1OZTaOo8wvEU17VVeP1cHWse9tGKTDyUGg2hJZjrqck39UIm/nKbpDSZ0J
+sMoIw/JtOOg0JC56VzQgBo7ictReTQE5LFLG3yQK+xS1AgMBAAGjggE8MIIBODAfBgNVHSMEGDAW
+gBS7r34CPfqm8TyEjq3uOJjs2TIy1DAdBgNVHQ4EFgQUgq9sjPjF/pZhfOgfPStxSF7Ei8AwDgYD
+VR0PAQH/BAQDAgGGMBIGA1UdEwEB/wQIMAYBAf8CAQAwEQYDVR0gBAowCDAGBgRVHSAAMEwGA1Ud
+HwRFMEMwQaA/oD2GO2h0dHA6Ly9jcmwuY29tb2RvY2EuY29tL0NPTU9ET1JTQUNlcnRpZmljYXRp
+b25BdXRob3JpdHkuY3JsMHEGCCsGAQUFBwEBBGUwYzA7BggrBgEFBQcwAoYvaHR0cDovL2NydC5j
+b21vZG9jYS5jb20vQ09NT0RPUlNBQWRkVHJ1c3RDQS5jcnQwJAYIKwYBBQUHMAGGGGh0dHA6Ly9v
+Y3NwLmNvbW9kb2NhLmNvbTANBgkqhkiG9w0BAQwFAAOCAgEAeFyygSg0TzzuX1bOn5dW7I+iaxf2
+8/ZJCAbU2C81zd9A/tNx4+jsQgwRGiHjZrAYayZrrm78hOx7aEpkfNPQIHGG6Fvq3EzWf/Lvx7/h
+k6zSPwIal9v5IkDcZoFD7f3iT7PdkHJY9B51csvU50rxpEg1OyOT8fk2zvvPBuM4qQNqbGWlnhMp
+IMwpWZT89RY0wpJO+2V6eXEGGHsROs3njeP9DqqqAJaBa4wBeKOdGCWn1/Jp2oY6dyNmNppI4ZNM
+UH4Tam85S1j6E95u4+1Nuru84OrMIzqvISE2HN/56ebTOWlcrurffade2022O/tUU1gb4jfWCcyv
+B8czm12FgX/y/lRjmDbEA08QJNB2729Y+io1IYO3ztveBdvUCIYZojTq/OCR6MvnzS6X72HP0PRL
+RTiOSEmIDsS5N5w/8IW1Hva5hEFy6fDAfd9yI+O+IMMAj1KcL/Zo9jzJ16HO5m60ttl1Enk8MQkz
+/W3JlHaeI5iKFn4UJu1/cP2YHXYPiWf2JyBzsLBrGk1II+3yL8aorYew6CQvdVifC3HtwlSam9V1
+niiCfOBe2C12TdKGu05LWIA3ZkFcWJGaNXOZ6Ggyh/TqvXG5v7zmEVDNXFnHn9tFpMpOUvxhcsjy
+cBtH0dZ0WrNw6gH+HF8TIhCnH3+zzWuDN0Rk6h9KVkfKehIwggXYMIIDwKADAgECAhBMqvnK22Nv
+4B/3TthbA4adMA0GCSqGSIb3DQEBDAUAMIGFMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRl
+ciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRowGAYDVQQKExFDT01PRE8gQ0EgTGltaXRl
+ZDErMCkGA1UEAxMiQ09NT0RPIFJTQSBDZXJ0aWZpY2F0aW9uIEF1dGhvcml0eTAeFw0xMDAxMTkw
+MDAwMDBaFw0zODAxMTgyMzU5NTlaMIGFMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBN
+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
+AaOCAfMwggHvMB8GA1UdIwQYMBaAFIKvbIz4xf6WYXzoHz0rcUhexIvAMB0GA1UdDgQWBBRjn/GS
+Juh8DKxLx8YgPKopKgyxBTAOBgNVHQ8BAf8EBAMCBaAwDAYDVR0TAQH/BAIwADAgBgNVHSUEGTAX
+BggrBgEFBQcDBAYLKwYBBAGyMQEDBQIwEQYJYIZIAYb4QgEBBAQDAgUgMEYGA1UdIAQ/MD0wOwYM
+KwYBBAGyMQECAQEBMCswKQYIKwYBBQUHAgEWHWh0dHBzOi8vc2VjdXJlLmNvbW9kby5uZXQvQ1BT
+MFoGA1UdHwRTMFEwT6BNoEuGSWh0dHA6Ly9jcmwuY29tb2RvY2EuY29tL0NPTU9ET1JTQUNsaWVu
+dEF1dGhlbnRpY2F0aW9uYW5kU2VjdXJlRW1haWxDQS5jcmwwgYsGCCsGAQUFBwEBBH8wfTBVBggr
+BgEFBQcwAoZJaHR0cDovL2NydC5jb21vZG9jYS5jb20vQ09NT0RPUlNBQ2xpZW50QXV0aGVudGlj
+YXRpb25hbmRTZWN1cmVFbWFpbENBLmNydDAkBggrBgEFBQcwAYYYaHR0cDovL29jc3AuY29tb2Rv
+Y2EuY29tMCgGA1UdEQQhMB+BHXRvcnZhbGRzQGxpbnV4LWZvdW5kYXRpb24ub3JnMA0GCSqGSIb3
+DQEBCwUAA4IBAQAGi1sxlNUFKWBzuBr+awa5Pl46M0AHRkFPiu3VKUkaNu8XuIA2i6Pj6rgiT/3l
+7ca/KvxohOUvFTYnq6Fr26H6BJT6XaMiC6LItbfoIMB2yzFOVuruxfTUO7TCJPCg4oLEtUUIMS1v
+KrajMYuEaI5rVAY04ntAa9nRnjj8TqDg+OXupr8yHrkomt7qWlsyZQKExtmQ4DvfEUADDY2ue6Kn
+qNa5FHY8uBWlYBSaHnnR90Rr0Rqd4naFPQ1Kkkxp35g0tcdGBN5Qcyli834X9rdyhj9CwSwOSnCD
+KYvaXyUP3o7hBubLcdMz/VM9VKT5HnU6c3rFemJSmUc41Htu57YYMYICsDCCAqwCAQEwga0wgZcx
+CzAJBgNVBAYTAkdCMRswGQYDVQQIExJHcmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZv
+cmQxGjAYBgNVBAoTEUNPTU9ETyBDQSBMaW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVu
+dCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBAhEAyRamH6VuTQrvgXSXzzbh6jAN
+BglghkgBZQMEAgEFAKCB1DAvBgkqhkiG9w0BCQQxIgQgEYxGj42qgyihj9yBcR5TCN5jEds0p2qD
+5z0SiI4Gz6IwGAYJKoZIhvcNAQkDMQsGCSqGSIb3DQEHATAcBgkqhkiG9w0BCQUxDxcNMTgxMjA3
+MDQzMjAyWjBpBgkqhkiG9w0BCQ8xXDBaMAsGCWCGSAFlAwQBKjALBglghkgBZQMEARYwCwYJYIZI
+AWUDBAECMAoGCCqGSIb3DQMHMAsGCSqGSIb3DQEBCjALBgkqhkiG9w0BAQcwCwYJYIZIAWUDBAIB
+MA0GCSqGSIb3DQEBAQUABIIBAHBBZlQeHs8JX3Yfg210EUz4+uXZL1eagD17s5HwzqE013gHYUBN
+iiYPljkDsH88bBwkzhyVZNmZjdbTf2pr3NfvwkokTuem5UyyRAGdFogt3PB4tcpQ8tlOp29G7aJS
+4vAy81rbybOLc5yY7got0RddY9D9wzNRCnnIQ/Z6PiB2tvkMGpWlMM53JtMRv4NBTyLyzCeBFz5A
+ogDVRoC221Ps5gK4tPbRevNU0E6X60hHvti4emJKbLGxbsZxFM9K+swlB6ppn773jXv5gHq0NUQB
+PQ3G3PZ6RA4/7KD+pWAvYRzMx3qCJSF8IFZS1CNnA8zxqsCU+QOrph9WaMx2sto=
+--000000000000cb19e9057c6718b2--
