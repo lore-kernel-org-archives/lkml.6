@@ -2,140 +2,159 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1534EC64EB1
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 15:13:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87E8BC07E85
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 15:14:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA033214DA
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 15:13:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 404A120882
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 15:14:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Njdm2dQw";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Dt7O+XU2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA033214DA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Qd867Bi/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 404A120882
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726107AbeLGPNU (ORCPT
+        id S1726145AbeLGPOZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 10:13:20 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:51820 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726034AbeLGPNU (ORCPT
+        Fri, 7 Dec 2018 10:14:25 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:45516 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726034AbeLGPOY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 10:13:20 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id BA5A260792; Fri,  7 Dec 2018 15:13:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1544195598;
-        bh=+mqfN/8Qh8/QyieDtTmNvFLM604n5M1874yB0KutcYQ=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=Njdm2dQw7/lLEe39CP22i4CcsFUfBKRD3l6C/6o3ug5riEBbm9unWwQLQrfUnasgk
-         k0cP5KK4ZJc1ZWDgK/IAIDd9NAspdTtp2hyqYP93fP8Tp22kUBRzShvFm+HtxexKIi
-         hTVyyoPXyGgqXUHazpLLaxIMuPIv/oXtcjjCtkJ8=
-Received: from [10.226.60.81] (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: jhugo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 3DE4C601C4;
-        Fri,  7 Dec 2018 15:13:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1544195597;
-        bh=+mqfN/8Qh8/QyieDtTmNvFLM604n5M1874yB0KutcYQ=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=Dt7O+XU2fHyCiiSkuspgC1xThGI/7GyYn01YVZfMFiE+gPl3nJ0TyWH9aYmHpy07m
-         a/iohbIZmZnyy+SkRgvjb4mm06V4aLsXo/Yg5piMk2dxMnSIO1hQeYi+v5sBf4A9cs
-         OA3pvH2M+9FygTmP3U3DyYmp/UysjR0Kk1Yto4tg=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3DE4C601C4
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jhugo@codeaurora.org
-Subject: Re: [PATCH v2] clk: qcom: smd: Add support for MSM8998 rpm clocks
-To:     Marc Gonzalez <marc.w.gonzalez@free.fr>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        MSM <linux-arm-msm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <1544134310-10227-1-git-send-email-jhugo@codeaurora.org>
- <84c0fd53-98e9-ac41-f1ca-68ad6d676e9a@free.fr>
-From:   Jeffrey Hugo <jhugo@codeaurora.org>
-Message-ID: <8b3702e8-3779-db5c-1777-94a6d97c1080@codeaurora.org>
-Date:   Fri, 7 Dec 2018 08:13:16 -0700
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+        Fri, 7 Dec 2018 10:14:24 -0500
+Received: by mail-wr1-f66.google.com with SMTP id b14so4108538wru.12;
+        Fri, 07 Dec 2018 07:14:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:subject:to:cc:references:from:openpgp:autocrypt:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=jvsrK9fuBp4EhpNaGA578d9Coc6TFRRDbrRIiXY/DVA=;
+        b=Qd867Bi/1nPhGnr1MNjjsFR1tHlv/BY4nOR0IssMGZRf8FdWeveL1sHFGh5PSSZ/Vs
+         0T77GvlayNf77ZBnCcKcj+K8HqxoFRKmcPFq2ZZ3h0kCQsIklDymA7OIT1f4wLGxZbFn
+         HxgaEAVHFRlaz6gCks/SHYxEWBoRXLuEJb9gM7A95o4r5vnzDkHQzzLIN3mQd7ph4aIR
+         efurRR803sPkhRkK4qQRAFoyKY3WugA3P/RRyNfGHSohQC6VlvLRjRPC/1BCSe9qY7gy
+         qCvBNL+XqRMwITbGDN8RDns5JBOgQOJXRl8HejzfpXAvvFj3h8W0vzP45a9PS9bAlVYq
+         caag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:subject:to:cc:references:from:openpgp
+         :autocrypt:message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=jvsrK9fuBp4EhpNaGA578d9Coc6TFRRDbrRIiXY/DVA=;
+        b=NDraiwo5FWZG30td9hL/m8f8wI1N6IN1igbkQi9XzUrQj4K3L5vQB5zG2iPbyRqYWn
+         Xj9bD5HkhRUIdXGQbHsdLeYqAgCHTaTxnPted0Q8pbWoVtJeXc7bAjQoEfvcQYWmkORc
+         LvRIZ0WISHK5TdWsLNj2osZOvR+6NbwotOZPhQe/K4oAQzqNckqR/lEwcgOL56aJAwqB
+         QCc5J3nwhIwazo9vSyOMG7abhNj5dYOlPXf7/q2kVhPuUJQeXbca+w0UcPWr8w/zB5En
+         QB3M6M7hcyw2fM+L0Ow2hPzBg8YodhrLQc/l9ZeAZv6UG5EiXKhFRDg5uDTX5yuukFqg
+         tE3Q==
+X-Gm-Message-State: AA+aEWZBq/Vbpg11h//diW5VODGSZaZPkT9pVnvv6XJFi+gZxbtxBIcg
+        z3lrxvDFVuny8KzzM4Ii2b8=
+X-Google-Smtp-Source: AFSGD/Ujp1DVLl9AztZLYimqulXDk5nS/EgxxOux89pTzI1Dwt1QmGEU3BgnMvBLsD5jEwqJwewejQ==
+X-Received: by 2002:a05:6000:110f:: with SMTP id z15mr2055424wrw.136.1544195661953;
+        Fri, 07 Dec 2018 07:14:21 -0800 (PST)
+Received: from [192.168.43.81] ([31.157.62.197])
+        by smtp.googlemail.com with ESMTPSA id q14sm3628751wrw.39.2018.12.07.07.14.18
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 07 Dec 2018 07:14:20 -0800 (PST)
+Subject: Re: [PATCH v8 1/7] xen/pvh: Split CONFIG_XEN_PVH into CONFIG_PVH and
+ CONFIG_XEN_PVH
+To:     Juergen Gross <jgross@suse.com>,
+        Maran Wilson <maran.wilson@oracle.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
+        kvm@vger.kernel.org
+Cc:     tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
+        boris.ostrovsky@oracle.com, jpoimboe@redhat.com,
+        kirill.shutemov@linux.intel.com, bp@suse.de,
+        thomas.lendacky@amd.com, luto@kernel.org,
+        dave.hansen@linux.intel.com, roger.pau@citrix.com,
+        rkrcmar@redhat.com, rdunlap@infradead.org
+References: <1544076152-21637-1-git-send-email-maran.wilson@oracle.com>
+ <1544076257-21792-1-git-send-email-maran.wilson@oracle.com>
+ <d532f023-85f9-62b9-ca56-53a619fdcd1e@redhat.com>
+ <2c289956-0e6a-700c-605d-83685fbb08f9@suse.com>
+ <0a2f692a-f7df-8ad1-9d34-96f5e36926db@redhat.com>
+ <3f95d053-87aa-ad45-03e6-1e1977283eb4@suse.com>
+ <d0fd8799-35ea-fba5-9d0d-94feead85943@redhat.com>
+ <5d1d0071-1db4-ea03-027f-2a12812b78d0@suse.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=pbonzini@redhat.com; keydata=
+ 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
+Message-ID: <d18b961a-d115-8d12-8ee4-eb1a3466959c@redhat.com>
+Date:   Fri, 7 Dec 2018 16:14:15 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.3.1
 MIME-Version: 1.0
-In-Reply-To: <84c0fd53-98e9-ac41-f1ca-68ad6d676e9a@free.fr>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <5d1d0071-1db4-ea03-027f-2a12812b78d0@suse.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/7/2018 7:23 AM, Marc Gonzalez wrote:
-> On 06/12/2018 23:11, Jeffrey Hugo wrote:
-> 
->> Add rpm smd clocks, PMIC and bus clocks which are required on MSM8998
->> for clients to vote on.
+On 07/12/18 14:58, Juergen Gross wrote:
+> On 07/12/2018 14:52, Paolo Bonzini wrote:
+>> On 07/12/18 14:50, Juergen Gross wrote:
+>>> The PVH boot entry is in the same bzImage binary as the normal one.
+>>> Its just another entry, similar to the Xen PV boot entry. So the binary
+>>> arch/x86/boot/bzimage can be booted either on bare metal via grub2 or
+>>> other boot-loaders, as Xen PV-guest, as Xen PVH-guest, or as KVM
+>>> PVH-guest. So one build and one binary. The non-standard boot entries
+>>> (PV- or PVH-node) are found via ELF-notes by the boot loader (qemu in
+>>> case of KVM).
 >>
->> Signed-off-by: Jeffrey Hugo <jhugo@codeaurora.org>
->> ---
->> v2
->> -fix compatible ordering nits per Stephen
->>
->>   .../devicetree/bindings/clock/qcom,rpmcc.txt       |  1 +
->>   drivers/clk/qcom/clk-smd-rpm.c                     | 62 ++++++++++++++++++++++
->>   include/dt-bindings/clock/qcom,rpmcc.h             |  6 +++
->>   3 files changed, 69 insertions(+)
+>> But the bzImage is not an ELF binary, and it is compressed, isn't it?
+>> /me is confused. :)
 > 
-> Hmmm, my board seems to dislike this patch... it locks up for a while,
-> then reboots.
-> 
-> [    6.957289] ufshcd-qcom 1da4000.ufshc: ufshcd_query_flag: Sending flag query for idn 1 failed, err = -11
-> [    6.961233] ufshcd-qcom 1da4000.ufshc: ufshcd_query_flag_retry: failed with error -11, retries 2
-> [    6.970782] ufshcd-qcom 1da4000.ufshc: ufshcd_query_flag_retry: query attribute, opcode 6, idn 1, failed with error -11 after 3 retires
-> [    6.979576] ufshcd-qcom 1da4000.ufshc: ufshcd_complete_dev_init setting fDeviceInit flag failed with error -11
-> [   23.432798] rcu: INFO: rcu_preempt detected stalls on CPUs/tasks:
-> [   23.432884] rcu:     7-...0: (1 GPs behind) idle=6a2/1/0x4000000000000000 softirq=92/93 fqs=2626
-> [   23.437927] rcu:     (detected by 0, t=5252 jiffies, g=-819, q=112)
-> [   23.446425] Task dump for CPU 7:
-> [   23.452567] swapper/0       R  running task        0     1      0 0x0000002a
-> [   23.455806] Call trace:
-> [   23.462872]  __switch_to+0x94/0xe0
-> [   23.465009]  _regmap_write+0x58/0xb0
-> [   23.468452]  _regmap_update_bits+0xf0/0x110
-> [   23.472186]  regmap_update_bits_base+0x60/0x90
-> [   23.476110]  clk_disable_regmap+0x34/0x40
-> [   23.480614]  clk_branch_toggle+0x108/0x1b0
-> [   23.484681]  clk_branch2_disable+0x18/0x20
-> [   23.488692]  clk_disable_unused_subtree+0xc4/0xe0
-> [   23.492761]  clk_disable_unused+0x3c/0x130
-> [   23.497535]  do_one_initcall+0x5c/0x180
-> [   23.501557]  kernel_init_freeable+0x198/0x244
-> [   23.505276]  kernel_init+0x10/0x110
-> [   23.509768]  ret_from_fork+0x10/0x20
-> 
-> /*** REBOOT ***/
-> Format: Log Type - Time(microsec) - Message - Optional Info
-> Log Type: B - Since Boot(Power On Reset),  D - Delta,  S - Statistic
-> 
-> I need to check the ufs_reset pin and phy init seq before I can investigate
-> this issue, but I wanted to send a report ASAP.
-> 
+> grub2 (and qemu, too) can decompress it. And the decompressed result
+> "vmlinux" is an ELF-binary.
 
-Hmm.  I run with clk_ignore_unused.  I'm guessing that something was 
-defined that should be used eventually, but isn't used now, and so its 
-getting turned off when it probably shouldn't be.
+Aha - for KVM, the main advantage of PVH would be to skip the cost of
+decompression, and that is what confused me (also we probably prefer not
+having any decompression code running in QEMU, since that increases the
+attack surface; there's no real disadvantage to using the existing
+linuxboot code if we're given a bzImage).  So, at least for now, KVM
+would go with the two-binaries/one-config approach.
 
-I'll try to repro on my end.
+Sorry for having you lecture me, it's much clearer now.  Thanks,
 
--- 
-Jeffrey Hugo
-Qualcomm Datacenter Technologies as an affiliate of Qualcomm 
-Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the
-Code Aurora Forum, a Linux Foundation Collaborative Project.
+Paolo
