@@ -4,148 +4,150 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,T_MIXED_ES autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB5F2C07E85
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 10:08:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4737C07E85
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 10:09:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 650D320645
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 10:08:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 965EC20645
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 10:09:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="jh9WpA31"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 650D320645
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="UeiJ5KTy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 965EC20645
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726056AbeLGKI0 (ORCPT
+        id S1726058AbeLGKJu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 05:08:26 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:44698 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725986AbeLGKI0 (ORCPT
+        Fri, 7 Dec 2018 05:09:50 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:46349 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725976AbeLGKJt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 05:08:26 -0500
-Received: by mail-wr1-f68.google.com with SMTP id z5so3197558wrt.11
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Dec 2018 02:08:23 -0800 (PST)
+        Fri, 7 Dec 2018 05:09:49 -0500
+Received: by mail-lj1-f195.google.com with SMTP id v15-v6so3012199ljh.13
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Dec 2018 02:09:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=0Zizx2lHMpqH5V3Aj7mmqJM8bK23abmMAS2tz3iI3JI=;
-        b=jh9WpA31YXM9TMThAgwh16+3uDH8c0me9zX0HZn3DHGqL4AS/a4uJtmtm9R7MPF/YC
-         KRrk4Dyhfaub4u8QW5ujm9lW/S64UQ4U+CVuxBzKIJiElrFAmxfId0snSMH/3egTYkEn
-         jEUq70nQToAXlZhSMoB0Zlg4h5yEJprLxVMzk=
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=0rKOCNsEEralVnv3+pgrH2PH46J1ohkkYhMPx2Ya9Ng=;
+        b=UeiJ5KTyLGZxZ/mWK3moLQNLU2Cy9pX6FkQMhHPi44hB9WwshStTZcbERKkiOml67n
+         Vk9oEDOJHRQFaR/LO5sr/FZxH+O/oUoRNJAY8+UAHbsaZz+4WWTiF5l4RIl4D3EU1Uy5
+         yWt/XLJ1T592MGHLvOCulvtM9mY2SMicGD+po=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=0Zizx2lHMpqH5V3Aj7mmqJM8bK23abmMAS2tz3iI3JI=;
-        b=FGnu15WnmDfjqXSsrbrRuevPTYO1RC6heajOe+LAHDa8pbSpPWKsbVkKPTt65eUCiY
-         uCxd1VAb1WRvFRwnovOmytHCCHdO/NAPsJuQdG5gH6hY1kFz0ZDjTaJQqWWZl3FxmKzB
-         3PgK4eI7s2uajmYMpTV3J4ZJaM7uFMZpSqOKyWM+eLjC+GUSrUbDQ6xOxnSvTARBei2C
-         fRkD3Mbgfapeo9dp6Qo7RyBjhbpfsdMepTYbbKN2S2S5LZWoismoKYgkYk2/kL7YPSHI
-         2wMZt+t07Yhj8/vgM7S1gAexEnihvjHQVTCqF6vVA91H+RioDz7rcnm8N3HS/u/AGWbA
-         VQDA==
-X-Gm-Message-State: AA+aEWZy/XW2jU9B8fJ5LIsR9bhvB4i3WF+LiktGCSJqAxIflW3Z34MT
-        Cwd9rjrcRkpEkZNqTI14mSrODA==
-X-Google-Smtp-Source: AFSGD/UNdsmxfJ+u67ShRjDZxPElCTaCrnt2SocFtqXHjFAPnc7kL56JGsGtuG5/KMmFi9zopS+6iA==
-X-Received: by 2002:adf:f189:: with SMTP id h9mr1259404wro.35.1544177303069;
-        Fri, 07 Dec 2018 02:08:23 -0800 (PST)
-Received: from [192.168.27.209] (mx2.mm-sol.com. [217.18.243.227])
-        by smtp.googlemail.com with ESMTPSA id v6sm3265923wro.57.2018.12.07.02.08.21
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 07 Dec 2018 02:08:22 -0800 (PST)
-Subject: Re: [PATCH 1/1] media: venus: core: Set dma maximum segment size
-To:     Vivek Gautam <vivek.gautam@codeaurora.org>,
-        stanimir.varbanov@linaro.org, mchehab@kernel.org
-Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, vgarodia@codeaurora.org,
-        acourbot@chromium.org
-References: <20181205083151.3685-1-vivek.gautam@codeaurora.org>
-From:   Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Message-ID: <a28d0542-5d63-7c72-0f39-40e4524d9a2a@linaro.org>
-Date:   Fri, 7 Dec 2018 12:08:20 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=0rKOCNsEEralVnv3+pgrH2PH46J1ohkkYhMPx2Ya9Ng=;
+        b=k0pqVo3Fr5pozp72zouAKUwOTqdbiX/H3ocr1es7q72fYlqE8NGA8wV7S1kSQduKca
+         EBpIhZVSLJJuMWj35FCeumdoJFAhCVus9t3jcMLkOprJpwFnsaQs/JbFyAKz05TS9KTn
+         80EozB0tHYlmelP5nU3oA2u1WF89nA/MKW9v+fqhbWMD5TniiY8I4FZ+32+1DnFbe09T
+         RZWgps9x7PCl0kCeDC1MF8Tu8pb3iH9JSR9TlQgqwuIrkOmTpLF4uktT+TDoWve+p9gA
+         /zl75wpM3Qlwx+z0/jQH2BrgYbpxL7mDquqshi3d7PLmXV5gLg4OX+GYKmthonTUVkTe
+         EoSw==
+X-Gm-Message-State: AA+aEWY5YkfsVyLdJFCzMVHzvI3JngDPJ5QJYrHYmtMfAJdwKXbqiFiw
+        tw5J7f3eWztRS7jZroHZIlTVGokTy4F6YLSMIPUPeg==
+X-Google-Smtp-Source: AFSGD/UdL3AMbh16kThY0+WR7FuBsM0ovtp0Tqjvu3cZuqGcNgJTKDLP2kW66i/fuMgCFPUbxZjKQYebsCewZDE2u20=
+X-Received: by 2002:a2e:710a:: with SMTP id m10-v6mr957483ljc.66.1544177387746;
+ Fri, 07 Dec 2018 02:09:47 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20181205083151.3685-1-vivek.gautam@codeaurora.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20181129133119.29387-1-linus.walleij@linaro.org>
+In-Reply-To: <20181129133119.29387-1-linus.walleij@linaro.org>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Fri, 7 Dec 2018 11:09:35 +0100
+Message-ID: <CACRpkdbKrpWQJkL=FFis39PiHxvx5zOL0gYHuYa80yYMdP8bqw@mail.gmail.com>
+Subject: Re: [PATCH] irq: Request and release resources for chained IRQs
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Jason Cooper <jason@lakedaemon.net>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        stable <stable@vger.kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Vivek,
+On Thu, Nov 29, 2018 at 2:31 PM Linus Walleij <linus.walleij@linaro.org> wrote:
 
-Thanks for the patch!
+> This addresses a bug in the irqchip core that was triggered
+> by new code assuming a strict semantic order of the irqchip
+> calls:
+>
+>  .irq_request_resources()
+>  .irq_enable()
+>  .irq_disable()
+>  .irq_release_resources()
+>
+> Mostly this is working fine when handled inside manage.c,
+> the calls are strictly happening in the above assumed order.
+>
+> However on a Qualcomm platform I get the following in dmesg:
+>
+> WARNING: CPU: 0 PID: 1 at ../drivers/gpio/gpiolib.c:3513
+>          gpiochip_irq_enable+0x18/0x44
+> Modules linked in:
+> CPU: 0 PID: 1 Comm: swapper/0
+>      Not tainted 4.20.0-rc4-00002-g1b8a75b25c6e-dirty #9
+> Hardware name: Generic DT based system
+> [<c03124ac>] (unwind_backtrace) from [<c030d994>] (show_stack+0x10/0x14)
+> [<c030d994>] (show_stack) from [<c0b48aec>] (dump_stack+0x78/0x8c)
+> [<c0b48aec>] (dump_stack) from [<c03213e4>] (__warn+0xe0/0xf8)
+> [<c03213e4>] (__warn) from [<c0321514>] (warn_slowpath_null+0x40/0x48)
+> [<c0321514>] (warn_slowpath_null) from [<c06ad5d0>]
+>              (gpiochip_irq_enable+0x18/0x44)
+> [<c06ad5d0>] (gpiochip_irq_enable) from [<c0371198>] (irq_enable+0x44/0x64)
+> [<c0371198>] (irq_enable) from [<c0371258>] (__irq_startup+0xa0/0xa8)
+> [<c0371258>] (__irq_startup) from [<c03712ac>] (irq_startup+0x4c/0x130)
+> [<c03712ac>] (irq_startup) from [<c03716d0>]
+>              (irq_set_chained_handler_and_data+0x4c/0x78)
+> [<c03716d0>] (irq_set_chained_handler_and_data) from [<c081c17c>]
+>              (pm8xxx_probe+0x160/0x22c)
+> [<c081c17c>] (pm8xxx_probe) from [<c07f439c>] (platform_drv_probe+0x48/0x98)
+>
+> What happens is that when the pm8xxx driver tries to register
+> a chained IRQ irq_set_chained_handler_and_data() will eventually
+> set the type and call irq_startup() and thus the .irq_enable()
+> callback on the irqchip.
+>
+> This irqchip is in drivers/pinctrl/qcom/pinctrl-msm.c and known
+> as TLMM.
+>
+> However, the irqchip core helpers in GPIO assumes that
+> the .irq_request_resources() callback is always called before
+> .irq_enable(), and the latter is where module refcount and
+> also gpiochip_lock_as_irq() is normally called.
+>
+> When .irq_enable() is called without .irq_request_resources()
+> having been called first, it seems like we are enabling
+> an IRQ on a GPIO line that has not first been locked to be
+> used as IRQ and we get the above warning. This happens since
+> as of
+> commit 461c1a7d4733d ("gpiolib: override irq_enable/disable")
+> this is strictly assumed for all GPIO-based IRQs.
+>
+> As it seems reasonable to assume that .irq_request_resources()
+> is always strictly called before .irq_enable(), we add the
+> irq_[request|release]_resources() functions to the internal
+> API and call them also when adding a chained irqchip to
+> an IRQ.
+>
+> I am a bit uncertain about the call site for
+> irq_released_resources() inside chip.c, but it appears this
+> path is for uninstalling a chained handler.
+>
+> Cc: stable@vger.kernel.org
+> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+> Cc: Hans Verkuil <hverkuil@xs4all.nl>
+> Fixes: 461c1a7d4733d ("gpiolib: override irq_enable/disable")
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 
-On 12/5/18 10:31 AM, Vivek Gautam wrote:
-> Turning on CONFIG_DMA_API_DEBUG_SG results in the following error:
-> 
-> [  460.308650] ------------[ cut here ]------------
-> [  460.313490] qcom-venus aa00000.video-codec: DMA-API: mapping sg segment longer than device claims to support [len=4194304] [max=65536]
-> [  460.326017] WARNING: CPU: 3 PID: 3555 at src/kernel/dma/debug.c:1301 debug_dma_map_sg+0x174/0x254
-> [  460.338888] Modules linked in: venus_dec venus_enc videobuf2_dma_sg videobuf2_memops hci_uart btqca bluetooth venus_core v4l2_mem2mem videobuf2_v4l2 videobuf2_common ath10k_snoc ath10k_core ath lzo lzo_compress zramjoydev
-> [  460.375811] CPU: 3 PID: 3555 Comm: V4L2DecoderThre Tainted: G        W         4.19.1 #82
-> [  460.384223] Hardware name: Google Cheza (rev1) (DT)
-> [  460.389251] pstate: 60400009 (nZCv daif +PAN -UAO)
-> [  460.394191] pc : debug_dma_map_sg+0x174/0x254
-> [  460.398680] lr : debug_dma_map_sg+0x174/0x254
-> [  460.403162] sp : ffffff80200c37d0
-> [  460.406583] x29: ffffff80200c3830 x28: 0000000000010000
-> [  460.412056] x27: 00000000ffffffff x26: ffffffc0f785ea80
-> [  460.417532] x25: 0000000000000000 x24: ffffffc0f4ea1290
-> [  460.423001] x23: ffffffc09e700300 x22: ffffffc0f4ea1290
-> [  460.428470] x21: ffffff8009037000 x20: 0000000000000001
-> [  460.433936] x19: ffffff80091b0000 x18: 0000000000000000
-> [  460.439411] x17: 0000000000000000 x16: 000000000000f251
-> [  460.444885] x15: 0000000000000006 x14: 0720072007200720
-> [  460.450354] x13: ffffff800af536e0 x12: 0000000000000000
-> [  460.455822] x11: 0000000000000000 x10: 0000000000000000
-> [  460.461288] x9 : 537944d9c6c48d00 x8 : 537944d9c6c48d00
-> [  460.466758] x7 : 0000000000000000 x6 : ffffffc0f8d98f80
-> [  460.472230] x5 : 0000000000000000 x4 : 0000000000000000
-> [  460.477703] x3 : 000000000000008a x2 : ffffffc0fdb13948
-> [  460.483170] x1 : ffffffc0fdb0b0b0 x0 : 000000000000007a
-> [  460.488640] Call trace:
-> [  460.491165]  debug_dma_map_sg+0x174/0x254
-> [  460.495307]  vb2_dma_sg_alloc+0x260/0x2dc [videobuf2_dma_sg]
-> [  460.501150]  __vb2_queue_alloc+0x164/0x374 [videobuf2_common]
-> [  460.507076]  vb2_core_reqbufs+0xfc/0x23c [videobuf2_common]
-> [  460.512815]  vb2_reqbufs+0x44/0x5c [videobuf2_v4l2]
-> [  460.517853]  v4l2_m2m_reqbufs+0x44/0x78 [v4l2_mem2mem]
-> [  460.523144]  v4l2_m2m_ioctl_reqbufs+0x1c/0x28 [v4l2_mem2mem]
-> [  460.528976]  v4l_reqbufs+0x30/0x40
-> [  460.532480]  __video_do_ioctl+0x36c/0x454
-> [  460.536610]  video_usercopy+0x25c/0x51c
-> [  460.540572]  video_ioctl2+0x38/0x48
-> [  460.544176]  v4l2_ioctl+0x60/0x74
-> [  460.547602]  do_video_ioctl+0x948/0x3520
-> [  460.551648]  v4l2_compat_ioctl32+0x60/0x98
-> [  460.555872]  __arm64_compat_sys_ioctl+0x134/0x20c
-> [  460.560718]  el0_svc_common+0x9c/0xe4
-> [  460.564498]  el0_svc_compat_handler+0x2c/0x38
-> [  460.568982]  el0_svc_compat+0x8/0x18
-> [  460.572672] ---[ end trace ce209b87b2f3af88 ]---
-> 
-> From above warning one would deduce that the sg segment will overflow
-> the device's capacity. In reality, the hardware can accommodate larger
-> sg segments.
-> So, initialize the max segment size properly to weed out this warning.
-> 
-> Based on a similar patch sent by Sean Paul for mdss:
-> https://patchwork.kernel.org/patch/10671457/
-> 
-> Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
-> ---
->  drivers/media/platform/qcom/venus/core.c | 8 ++++++++
->  1 file changed, 8 insertions(+)
+IRQ folks: did you have time to look at this?
 
-Acked-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
+It's a very real regression for me.
 
--- 
-regards,
-Stan
+Yours,
+Linus Walleij
