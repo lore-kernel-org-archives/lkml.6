@@ -2,120 +2,109 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C130C07E85
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 18:45:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68D73C64EB1
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 18:50:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 583B42082D
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 18:45:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2ADC420837
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 18:50:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="ZZVrDpHf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 583B42082D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sifive.com
+	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="YwRORVwq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2ADC420837
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726307AbeLGSpS (ORCPT
+        id S1726093AbeLGSuN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 13:45:18 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:35945 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726260AbeLGSpO (ORCPT
+        Fri, 7 Dec 2018 13:50:13 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:35506 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726011AbeLGSuM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 13:45:14 -0500
-Received: by mail-pf1-f196.google.com with SMTP id b85so2351425pfc.3
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Dec 2018 10:45:14 -0800 (PST)
+        Fri, 7 Dec 2018 13:50:12 -0500
+Received: by mail-pg1-f193.google.com with SMTP id s198so2099350pgs.2
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Dec 2018 10:50:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
-        h=date:subject:in-reply-to:cc:from:to:message-id:mime-version
-         :content-transfer-encoding;
-        bh=klopY/IsuJEDowTc4qrt4dyez0fGpBDt1xs5/j2mVbY=;
-        b=ZZVrDpHfZs52iuETgv3m44IeOtThlIBsuU8+93Vxx7aBcyIR3CfRT2lS31h8wJewmV
-         Tki/oz/jT6A7N4MGx481OP3Ps6TfITealhGoP+JTLC5p3O6m82JGXuTjm4MWJPiDDJCd
-         9EM9eqL6VYHHdGU1Bbtl+2lYmINTz3fkchPJj6pBGjTeh2ZntnCGYTTqejWBvjffftmA
-         toRKjgdsx+CHfywJWPgM5ghK05Brr0Nyal9TZfyhadDDwN7cBZzDrkwfdK203vs0gGwr
-         AjaKi368ZuHFSEclC49QQ0orgjY0eyXcBcs8mUkDr49hFKBs8OxYP3kz6S111fXbWDUC
-         Z4zQ==
+        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=Nnht3jCBryS9HUgUX34dDS3skyULy3W1Q28HHDlxc9U=;
+        b=YwRORVwqg21IflGLnDmUsqeyjek2uDpYvvFaC0BXK7DnX3L5aAzZ32Q1ruynaSEVRb
+         /9BKIVNGl59ZN/Sx8137RpijJM8uI9WX+OlUMW0KFTCmsjE7VcA0eLsSFcN0WAcweJ70
+         rCLYyfCa6Qo5uDrxRoMN1CtqaF3iEIHlErubjDIRYJRQQjgg+P4lNR9gAGlP7EWXNGFn
+         Is7a/+6zDKV/dfeLzh6a2rxOHvXNaz1jdC8j/cob1/oRyJu0J9r/s/1y9iXaJtKl2wkL
+         mjS8qjwL2N+9CtsDFJsnPzX8DB5AelpD76K08eIq+krW6FxkWiBumHsZpXlWR8m7FCgh
+         5uqA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:subject:in-reply-to:cc:from:to:message-id
-         :mime-version:content-transfer-encoding;
-        bh=klopY/IsuJEDowTc4qrt4dyez0fGpBDt1xs5/j2mVbY=;
-        b=ntkXjX78qIDxl11ufUxsB1G1KEv5CauOKa+HUnbmJMUqmiZX9dahw3bSbWRnKbtLFH
-         M9LCyAOFCIDVCxddZ/FkSH/G7IvydH5e9yISBwf3YjQPHUbNuAXpFfx2D8A0mFbmMKa0
-         01WpHwnNoG0+W3AVDg+5A0xmWGBAUzZqmofkqYU+nv882BJAkhsg4LYP6Zt6d+aXNxtK
-         VLef4z12hdFV25gSyBE82U9v7rugeILri+ra3MCkBEvJesD8tLKB1nPHG5V1Q8YGpSUN
-         Qw+JyrWGUMcU9H69GfnoiHe1aaBMciXe31cIBYxlWl7Jursyjq8nZ5owegUyUBzH+ls3
-         /kwQ==
-X-Gm-Message-State: AA+aEWYyX/yEe9wxaAJeihBToM7GJ6ghmJ8HWoHirxUs4ph6BL7v65jB
-        vsqFciIRVx9MHGh9WegRWQw3BA==
-X-Google-Smtp-Source: AFSGD/XwDgPF73po7jcMK0WLUnbQk9jaegnMO7Qp7EVNMCgsiulHRkkPkb3v6ey4N4xdmNlmrKTYkg==
-X-Received: by 2002:a63:f515:: with SMTP id w21mr2938694pgh.220.1544208313756;
-        Fri, 07 Dec 2018 10:45:13 -0800 (PST)
-Received: from localhost ([216.3.10.7])
-        by smtp.gmail.com with ESMTPSA id y89sm6257168pfa.136.2018.12.07.10.45.12
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=Nnht3jCBryS9HUgUX34dDS3skyULy3W1Q28HHDlxc9U=;
+        b=l9g8rgPe44bhp7wg7O0GvHiN5EdItCVnRVD4NAVXw9dQbOk+yXJ0VOfMb2L9cz3kye
+         N2NlKyP1OoaLOnUYx9toB7lJ4xjUCsuDbG8d0pok9S/i1LEA/KTw8pV4ChjrMi6iacdm
+         dovEWaKX1kPCcoYwYBnzOVJW5WopM2PXgTFv6T6Bhdx0XufNPLN7KpU4ooxCNSi5i6Qu
+         w4hmUoeDbgJwKWt5bNCG7h/PzZxiBvS8yogzwMlwnR/sIKrF3GJL0qW9x0E6ocGOl5/E
+         efdUJX1FiNDDM0+z7W/6JC/aLmgdOE03ts6wCn3Fp0CNgqIF8MpAjiUGOiKD2W8/Pc8E
+         xh0w==
+X-Gm-Message-State: AA+aEWa5MIXuqlK3Zd0xgwSSqlTYQe7BLOZei0FO4Hj2hukJVPlB0eoX
+        pSjAG0LWlngtw75fGcTcPSxlJqF0efM=
+X-Google-Smtp-Source: AFSGD/X0krLt2ZrsMojk9HTEGTIE9UI961YmlMXczbjDw2yiHonHskLVftOu3PWdf7AU4GdmYPYolw==
+X-Received: by 2002:a62:5182:: with SMTP id f124mr3377934pfb.238.1544208611377;
+        Fri, 07 Dec 2018 10:50:11 -0800 (PST)
+Received: from ?IPv6:2600:1010:b02e:9276:b497:ca3d:93db:f61e? ([2600:1010:b02e:9276:b497:ca3d:93db:f61e])
+        by smtp.gmail.com with ESMTPSA id z127sm5835307pfb.80.2018.12.07.10.50.09
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 07 Dec 2018 10:45:13 -0800 (PST)
-Date:   Fri, 07 Dec 2018 10:45:13 -0800 (PST)
-X-Google-Original-Date: Fri, 07 Dec 2018 10:44:39 PST (-0800)
-Subject:     Re: [PATCH RFC 4/7] riscv/vdso: don't clear PG_reserved
-In-Reply-To: <20181205122851.5891-5-david@redhat.com>
-CC:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-m68k@lists.linux-m68k.org, linuxppc-dev@lists.ozlabs.org,
-        linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
-        linux-mediatek@lists.infradead.org, david@redhat.com,
-        aou@eecs.berkeley.edu, tklauser@distanz.ch,
-        akpm@linux-foundation.org, mhocko@kernel.org, willy@infradead.org
-From:   Palmer Dabbelt <palmer@sifive.com>
-To:     david@redhat.com
-Message-ID: <mhng-3e6b4869-d5d7-42f4-a9d8-789a6772f52a@palmer-si-x1c4>
-Mime-Version: 1.0 (MHng)
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+        Fri, 07 Dec 2018 10:50:10 -0800 (PST)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (1.0)
+Subject: Re: [RFC PATCH v2 4/4] x86/vdso: Add __vdso_sgx_enter_enclave() to wrap SGX enclave transitions
+From:   Andy Lutomirski <luto@amacapital.net>
+X-Mailer: iPhone Mail (16B92)
+In-Reply-To: <59c989a1-e699-9665-780f-6dd263f41ce4@intel.com>
+Date:   Fri, 7 Dec 2018 10:50:08 -0800
+Cc:     Jethro Beekman <jethro@fortanix.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "x86@kernel.org" <x86@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Haitao Huang <haitao.huang@linux.intel.com>,
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        "Dr. Greg" <greg@enjellic.com>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <85EE19AF-C085-4E17-A673-44242996AF75@amacapital.net>
+References: <20181206221922.31012-1-sean.j.christopherson@intel.com> <20181206221922.31012-5-sean.j.christopherson@intel.com> <f2b7df05-20ef-ac16-fc99-258c39d84666@fortanix.com> <59c989a1-e699-9665-780f-6dd263f41ce4@intel.com>
+To:     Dave Hansen <dave.hansen@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 05 Dec 2018 04:28:48 PST (-0800), david@redhat.com wrote:
-> The VDSO is part of the kernel image and therefore the struct pages are
-> marked as reserved during boot.
->
-> As we install a special mapping, the actual struct pages will never be
-> exposed to MM via the page tables. We can therefore leave the pages
-> marked as reserved.
->
-> Cc: Palmer Dabbelt <palmer@sifive.com>
-> Cc: Albert Ou <aou@eecs.berkeley.edu>
-> Cc: Tobias Klauser <tklauser@distanz.ch>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Michal Hocko <mhocko@kernel.org>
-> Cc: Matthew Wilcox <willy@infradead.org>
-> Signed-off-by: David Hildenbrand <david@redhat.com>
-> ---
->  arch/riscv/kernel/vdso.c | 1 -
->  1 file changed, 1 deletion(-)
->
-> diff --git a/arch/riscv/kernel/vdso.c b/arch/riscv/kernel/vdso.c
-> index 582cb153eb24..0cd044122234 100644
-> --- a/arch/riscv/kernel/vdso.c
-> +++ b/arch/riscv/kernel/vdso.c
-> @@ -54,7 +54,6 @@ static int __init vdso_init(void)
->  		struct page *pg;
->
->  		pg = virt_to_page(vdso_start + (i << PAGE_SHIFT));
-> -		ClearPageReserved(pg);
->  		vdso_pagelist[i] = pg;
->  	}
->  	vdso_pagelist[i] = virt_to_page(vdso_data);
 
-I'm going to assume this will go in through another tree along with the rest of 
-the set assuming everyone else is happy with it.
 
-Acked-by: Palmer Dabbelt <palmer@sifive.com>
+> On Dec 7, 2018, at 10:44 AM, Dave Hansen <dave.hansen@intel.com> wrote:
+>=20
+>> On 12/7/18 10:15 AM, Jethro Beekman wrote:
+>> This is not sufficient to support the Fortanix SGX ABI calling
+>> convention, which was designed to be mostly compatible with the SysV
+>> 64-bit calling convention. The following registers need to be passed in
+>> to an enclave from userspace: RDI, RSI, RDX, R8, R9, R10. The following
+>> registers need to be passed out from an enclave to userspace: RDI, RSI,
+>> RDX, R8, R9.
+>=20
+> Are you asking nicely to change the new Linux ABI to be consistent with
+> your existing ABI?  Or, are you saying that the new ABI *must* be
+> compatible with this previous out-of-tree implementation?
 
-Thanks!
+I think that allowing the enclave to return at least a few registers is quit=
+e reasonable, but I don=E2=80=99t have a strong opinion.=
