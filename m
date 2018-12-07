@@ -6,38 +6,38 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B96A4C64EB1
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 20:13:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADB88C64EB1
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 20:13:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 75A942082D
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 20:13:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75A942082D
+	by mail.kernel.org (Postfix) with ESMTP id 7833020892
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 20:13:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7833020892
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=windriver.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726170AbeLGUNk (ORCPT
+        id S1726186AbeLGUNm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 15:13:40 -0500
-Received: from mail1.windriver.com ([147.11.146.13]:57415 "EHLO
-        mail1.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726147AbeLGUNh (ORCPT
+        Fri, 7 Dec 2018 15:13:42 -0500
+Received: from mail.windriver.com ([147.11.1.11]:61068 "EHLO
+        mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726137AbeLGUNf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 15:13:37 -0500
+        Fri, 7 Dec 2018 15:13:35 -0500
 Received: from ALA-HCA.corp.ad.wrs.com ([147.11.189.40])
-        by mail1.windriver.com (8.15.2/8.15.1) with ESMTPS id wB7KDYKf029603
+        by mail.windriver.com (8.15.2/8.15.1) with ESMTPS id wB7KDXTJ023164
         (version=TLSv1 cipher=AES128-SHA bits=128 verify=FAIL);
-        Fri, 7 Dec 2018 12:13:34 -0800 (PST)
+        Fri, 7 Dec 2018 12:13:33 -0800 (PST)
 Received: from yow-cube1.wrs.com (128.224.56.98) by ALA-HCA.corp.ad.wrs.com
  (147.11.189.40) with Microsoft SMTP Server id 14.3.408.0; Fri, 7 Dec 2018
- 12:13:34 -0800
+ 12:13:33 -0800
 From:   Paul Gortmaker <paul.gortmaker@windriver.com>
 To:     Lee Jones <lee.jones@linaro.org>
 CC:     <linux-kernel@vger.kernel.org>,
         Paul Gortmaker <paul.gortmaker@windriver.com>,
-        Haojian Zhuang <haojian.zhuang@marvell.com>
-Subject: [PATCH 06/18] mfd: max8925-core: drop unused MODULE_ tags from non-modular code
-Date:   Fri, 7 Dec 2018 15:10:53 -0500
-Message-ID: <1544213465-16259-7-git-send-email-paul.gortmaker@windriver.com>
+        Cory Maccarrone <darkstar6262@gmail.com>
+Subject: [PATCH 05/18] mfd: htc-i2cpld: Make it explicitly non-modular
+Date:   Fri, 7 Dec 2018 15:10:52 -0500
+Message-ID: <1544213465-16259-6-git-send-email-paul.gortmaker@windriver.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1544213465-16259-1-git-send-email-paul.gortmaker@windriver.com>
 References: <1544213465-16259-1-git-send-email-paul.gortmaker@windriver.com>
@@ -48,49 +48,69 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Kconfig currently controlling compilation of this code is:
+The Kconfig for this option is currently:
 
-drivers/mfd/Kconfig:config MFD_MAX8925
-drivers/mfd/Kconfig:    bool "Maxim Semiconductor MAX8925 PMIC Support"
+config HTC_I2CPLD
+        bool "HTC I2C PLD chip support"
 
 ...meaning that it currently is not being built as a module by anyone.
-
-Lets remove the couple traces of modular infrastructure use, so that
+Lets remove the modular code that is essentially orphaned, so that
 when reading the driver there is no doubt it is builtin-only.
 
-We delete the MODULE_LICENSE tag etc. since all that information
+Since module_init translates to device_initcall in the non-modular
+case, the init ordering remains unchanged with this commit.
+
+We also delete the MODULE_LICENSE tag etc. since all that information
 is already contained at the top of the file in the comments.
 
+Cc: Cory Maccarrone <darkstar6262@gmail.com>
 Cc: Lee Jones <lee.jones@linaro.org>
-Cc: Haojian Zhuang <haojian.zhuang@marvell.com>
 Acked-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
 ---
- drivers/mfd/max8925-core.c | 7 +------
- 1 file changed, 1 insertion(+), 6 deletions(-)
+ drivers/mfd/htc-i2cpld.c | 18 +-----------------
+ 1 file changed, 1 insertion(+), 17 deletions(-)
 
-diff --git a/drivers/mfd/max8925-core.c b/drivers/mfd/max8925-core.c
-index fd8b15cd84fd..87c724ba9793 100644
---- a/drivers/mfd/max8925-core.c
-+++ b/drivers/mfd/max8925-core.c
-@@ -10,7 +10,7 @@
-  */
+diff --git a/drivers/mfd/htc-i2cpld.c b/drivers/mfd/htc-i2cpld.c
+index 01572b5e79e8..af3c66355270 100644
+--- a/drivers/mfd/htc-i2cpld.c
++++ b/drivers/mfd/htc-i2cpld.c
+@@ -27,7 +27,6 @@
  
  #include <linux/kernel.h>
+ #include <linux/init.h>
 -#include <linux/module.h>
-+#include <linux/init.h>
- #include <linux/i2c.h>
- #include <linux/irq.h>
  #include <linux/interrupt.h>
-@@ -919,8 +919,3 @@ void max8925_device_exit(struct max8925_chip *chip)
- 		free_irq(chip->tsc_irq, chip);
- 	mfd_remove_devices(chip->dev);
+ #include <linux/platform_device.h>
+ #include <linux/i2c.h>
+@@ -614,8 +613,6 @@ static const struct i2c_device_id htcpld_chip_id[] = {
+ 	{ "htcpld-chip", 0 },
+ 	{ }
+ };
+-MODULE_DEVICE_TABLE(i2c, htcpld_chip_id);
+-
+ 
+ static struct i2c_driver htcpld_chip_driver = {
+ 	.driver = {
+@@ -643,17 +640,4 @@ static int __init htcpld_core_init(void)
+ 	/* Probe for our chips */
+ 	return platform_driver_probe(&htcpld_core_driver, htcpld_core_probe);
  }
 -
+-static void __exit htcpld_core_exit(void)
+-{
+-	i2c_del_driver(&htcpld_chip_driver);
+-	platform_driver_unregister(&htcpld_core_driver);
+-}
 -
--MODULE_DESCRIPTION("PMIC Driver for Maxim MAX8925");
--MODULE_AUTHOR("Haojian Zhuang <haojian.zhuang@marvell.com");
+-module_init(htcpld_core_init);
+-module_exit(htcpld_core_exit);
+-
+-MODULE_AUTHOR("Cory Maccarrone <darkstar6262@gmail.com>");
+-MODULE_DESCRIPTION("I2C HTC PLD Driver");
 -MODULE_LICENSE("GPL");
+-
++device_initcall(htcpld_core_init);
 -- 
 2.7.4
 
