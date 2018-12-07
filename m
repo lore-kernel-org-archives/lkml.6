@@ -2,30 +2,30 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58532C07E85
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 21:18:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94202C07E85
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 21:18:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1876520868
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 21:18:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1876520868
+	by mail.kernel.org (Postfix) with ESMTP id 61A252082D
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 21:18:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61A252082D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726120AbeLGVST (ORCPT
+        id S1726218AbeLGVSY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 16:18:19 -0500
-Received: from mout.kundenserver.de ([212.227.126.133]:60327 "EHLO
+        Fri, 7 Dec 2018 16:18:24 -0500
+Received: from mout.kundenserver.de ([212.227.126.187]:56405 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726008AbeLGVSS (ORCPT
+        with ESMTP id S1726124AbeLGVSU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 16:18:18 -0500
+        Fri, 7 Dec 2018 16:18:20 -0500
 Received: from wuerfel.lan ([109.192.41.194]) by mrelayeu.kundenserver.de
  (mreue009 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1MRCFw-1gsQha2feG-00N6Nc; Fri, 07 Dec 2018 22:18:10 +0100
+ 1MJV9M-1gkiXU0plQ-00Jp7U; Fri, 07 Dec 2018 22:18:12 +0100
 From:   Arnd Bergmann <arnd@arndb.de>
 To:     y2038@lists.linaro.org
 Cc:     linux-kernel@vger.kernel.org,
@@ -33,91 +33,119 @@ Cc:     linux-kernel@vger.kernel.org,
         John Stultz <john.stultz@linaro.org>,
         Thomas Gleixner <tglx@linutronix.de>,
         linux-api@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH 0/5] y2038: further system call conversion
-Date:   Fri,  7 Dec 2018 22:18:03 +0100
-Message-Id: <20181207211808.328719-1-arnd@arndb.de>
+Subject: [PATCH 5/5] y2038: signal: Add compat_sys_rt_sigtimedwait_time64
+Date:   Fri,  7 Dec 2018 22:18:08 +0100
+Message-Id: <20181207211808.328719-6-arnd@arndb.de>
 X-Mailer: git-send-email 2.18.0
-X-Provags-ID: V03:K1:WtmCK3UEOoJzxEJWcuGDMKztAdONV8QvhxHOw9a57WHFouszm8p
- 6hEkjhPNCI9LokEdYw9strDVUbHirIoxha0aEvnb991EeyHnVQyJU9MfgI7LtfjyCiz9Svp
- s0tVsZKX/JxgPLKoEg1gTcutRw0w9yKuLLwLH4EwJG1GvZoHL+fgZUNJ5BVLrcuvLM2FBOi
- rzhKIc2spK6NHUNwc+FhA==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:cMEFwcc1ViI=:n8WQtPswYgxOGCGco5Bbfn
- 1cW7ofScS8QI4q2mFX8glqguPH426EFb6BF3pXPKZtQAftvs0L4NO/CVClaoAj/AqMEO644yF
- bu4h4uWCQB46fAqpwXEMAcMp795VoiCwVuXDuCu1kCraDjAeyOu4azG8Emd4Cnr/N81Q0sw7v
- TTPZaWHKtW94HiTwkWLQKWUP8dmGP2McvZuTsj6hEpGR6c7tCg0QVrG3QAX6NH9Ms7xMXDPFM
- +JHvKjLU9EzMB+hzShRetklL2DUKk+UwiCU1YQkm/AkWdqHTMPNaeJlD06wzQ+hMScaj8jUgZ
- Pu/s55MEdnZ5H8O9csCdIgHSl8zwYRAv9+x4UPkFMFHABcA/YtBTmQzmkPFlUR9ue8wPppPbE
- GDbLspkqDYgVovA1xzr8nfamDoMFqevBIYW8ZVk4zWVFQHiqewwyQffhlpRad6jrZbSR8WkYD
- TB4ugvCDu0Y5aY4lpwFOljveBqj9KlsUZSKEzvUSUD3lvnCLFyBRaEYf0t73sNscGmYaX0RGd
- VioghNLj99Czs0UuSXU3rD2x1gz0023og0XhA31zXMfYPoa23LQ0wcrYUWttlXRgPivGhG3iL
- XmCE7AudwUaRlS06+ug2pzAduCNOf1pRcSTZmjGkpuQanRZhf7KDQ/JDOdDsPXjQG3azao3nf
- EWy9t+wOvxwSk4+LEd+SZx2elmiq0Os3o8ws1VDb0B+TAfibpIixioU9XqRjvKSQNgL64+XZa
- /Ct5SaRcZJtIsD9HV/160KXPBiHfert2oTut5A==
+In-Reply-To: <20181207211808.328719-1-arnd@arndb.de>
+References: <20181207211808.328719-1-arnd@arndb.de>
+X-Provags-ID: V03:K1:jaYEvBfisS0VH6w5saqRe9sT8/XD5lZ11dVe3XVzU/Ndgu+b6m/
+ 5f0AKwRVduUQJNEgwEsPlH1qf3xV07PTRj6bgLonKVxVhTvwXKjaTTEA74SzOUI88WlUGk4
+ DFvuQM4IUYcbVnhTuMZCrBwLvaZxJRCktBLK36xV/Piard5WrCAyioBdghpyNeu2eSTwoFi
+ W3HCDot4zg0KIiunb8z4A==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:/KDsyr0jmQw=:DqxU95dJYhhoXYeHZtYGXi
+ g9Exk5h5cFbIecgVxX+9WCH07VLNbhZ1RyXnXiH4+Lw/uPt7So8SjfRvjZ37KSDMMMYDs0frx
+ xvubZGF9wKeyRHsuLy5TPGRadoSCmAUprQAfKXENgZ6E84UxD4EQJh0XjOUEd5StKUO7aQPgm
+ hgwqKiQuDzvXYl+Y83PH5fWO7VaD5C47yu6380li+xVe72uFYn92pK+giga4DTuYuRO8hURpg
+ xz+f7xDUnGBD3RyiG1l88mujdC0cYtyiNbWQNBH0Vl1K0oeG8kZhQg92nIFxHeP+xCcXiTRbn
+ QhAb/Zj6+B4c2gIZntpyHxZIP/hrImvH5rEc8bixo62C2LNJQ7JRXe68loV7oH+gpBqCfrmYJ
+ 2xnkAuR0y+8LDaTQGNftp9XE/MyJKeE3NKT7tVr/UvHb5SC1h0TsCkQL/lZ6D9BWICFKuyO3H
+ rhLIqHjV0jsjpf0fn5g8ueOuv1GY3jsiuT5nUALzxY8mEg1GSGWOlZ4biMizGKiCvkTnKeWdv
+ kx3AGInoMpy6Ndqfc25+IDCPTDHRE0TjnjBFhywcmckzo10Eb1x4F9I6LkTBRIiOjg1ZnkBEf
+ ff8BO9o20AmnzehQtNBJBQ3kKeQ/b9QuL9LHQ85GpxeNp6D21Tg48VdJKwvrIleRNVoGapBKY
+ lD6JadOk5mCxaPRwvF1qL5fVrnhS9Bdx/b7xTzRF6uEsgptlYsgBE6uFS4mAjlfLerRRoXcrW
+ cglDz0j240NbrKFgPvNZozatpUCdglVTXzsLww==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is another set of system call changes that were intended to get
-merged much earlier. I've rebased the patches on top of the latest kernel
-and Deepa's poll/select/io_pgetevents series now, and applied it to the
-same y2038 branch for inclusion in 4.21.
+Now that 32-bit architectures have two variants of sys_rt_sigtimedwaid()
+for 32-bit and 64-bit time_t, we also need to have a second compat system
+call entry point on the corresponding 64-bit architectures.
 
-This is just a continuation of the earlier system call changes, so I
-expect no surprises here, unless I made a mistake in the rebase.
+The traditional system call keeps getting handled
+by compat_sys_rt_sigtimedwait(), and this adds a new
+compat_sys_rt_sigtimedwait_time64() that differs only in the timeout
+argument type.
 
-After this series, the only remaining system calls that need to be
-modified are:
+The naming remains a bit asymmetric for the moment. Ideally we would
+want to have compat_sys_rt_sigtimedwait_time32() for the old version
+and compat_sys_rt_sigtimedwait() for the new one to mirror the names
+of the native entry points, but renaming the existing system call
+tables causes unnecessary churn. I would suggest renaming all such
+system calls together at a later point.
 
-- setsockopt/getsockopt, they do not need a new entry in the system
-  call table, only new numbers assigned for their socket options.
-  Deepa is finalizing her series to passing 64-bit timestamps in cmsg
-  correctly for SO_TIMESTAMP{,NS,ING}.
-  Further, we need a new SO_RCVTIMEO/SO_SNDTIMEO implementation
-  here, which has not been implemented yet.
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ include/linux/compat.h |  3 +++
+ kernel/signal.c        | 32 ++++++++++++++++++++++++++++++++
+ 2 files changed, 35 insertions(+)
 
-- waitid/getrusage, this needs a rewrite now from earlier versions
-  based on recent feedback. The plan now is to incorporate nanosecond
-  timestamps in a new revision of the 'rusage' structure. Possibly also
-  include BSD wait6() semantics of passing back the child resource
-  usage in waitid(), and/or a method to pass a signal mask as in
-  io_pgetevents().  waitid/getrusage() are not required for correct
-  behavior with 64-bit time_t and can be safely emulated on top of
-  the existing syscalls by the C library beyond 2038.  This needs more
-  discussion.
-
-- clock_adjtime, this is also optional and can be implemented
-  by the C library if necessary. The plan is to do the same as x32
-  and use the 64-bit structure natively on both 32-bit and 64-bit
-  architectures. The timex structure contains a 'timeval' at the
-  moment, but also supports nanoseconds passed in it. 
-
-- getitimer/setitimer, these again can be trivially emulated
-  by the C library.
-
-	Arnd
-
-Arnd Bergmann (5):
-  y2038: futex: Move compat implementation into futex.c
-  y2038: futex: Add support for __kernel_timespec
-  y2038: socket: Add compat_sys_recvmmsg_time64
-  y2038: signal: Add sys_rt_sigtimedwait_time32
-  y2038: signal: Add compat_sys_rt_sigtimedwait_time64
-
- include/linux/compat.h   |   8 +-
- include/linux/futex.h    |   8 --
- include/linux/socket.h   |   9 +-
- include/linux/syscalls.h |   9 +-
- kernel/Makefile          |   3 -
- kernel/futex.c           | 207 +++++++++++++++++++++++++++++++++++++--
- kernel/futex_compat.c    | 202 --------------------------------------
- kernel/signal.c          |  65 ++++++++++++
- kernel/sys_ni.c          |   2 +
- net/compat.c             |  34 +++----
- net/socket.c             |  62 +++++++++---
- 11 files changed, 345 insertions(+), 264 deletions(-)
- delete mode 100644 kernel/futex_compat.c
-
+diff --git a/include/linux/compat.h b/include/linux/compat.h
+index 72969d303434..3bc5f218efd8 100644
+--- a/include/linux/compat.h
++++ b/include/linux/compat.h
+@@ -788,6 +788,9 @@ asmlinkage long compat_sys_rt_sigpending(compat_sigset_t __user *uset,
+ asmlinkage long compat_sys_rt_sigtimedwait(compat_sigset_t __user *uthese,
+ 		struct compat_siginfo __user *uinfo,
+ 		struct old_timespec32 __user *uts, compat_size_t sigsetsize);
++asmlinkage long compat_sys_rt_sigtimedwait_time64(compat_sigset_t __user *uthese,
++		struct compat_siginfo __user *uinfo,
++		struct __kernel_timespec __user *uts, compat_size_t sigsetsize);
+ asmlinkage long compat_sys_rt_sigqueueinfo(compat_pid_t pid, int sig,
+ 				struct compat_siginfo __user *uinfo);
+ /* No generic prototype for rt_sigreturn */
+diff --git a/kernel/signal.c b/kernel/signal.c
+index be6744cd0a11..53e07d97ffe0 100644
+--- a/kernel/signal.c
++++ b/kernel/signal.c
+@@ -3366,6 +3366,37 @@ SYSCALL_DEFINE4(rt_sigtimedwait_time32, const sigset_t __user *, uthese,
+ #endif
+ 
+ #ifdef CONFIG_COMPAT
++COMPAT_SYSCALL_DEFINE4(rt_sigtimedwait_time64, compat_sigset_t __user *, uthese,
++		struct compat_siginfo __user *, uinfo,
++		struct __kernel_timespec __user *, uts, compat_size_t, sigsetsize)
++{
++	sigset_t s;
++	struct timespec64 t;
++	kernel_siginfo_t info;
++	long ret;
++
++	if (sigsetsize != sizeof(sigset_t))
++		return -EINVAL;
++
++	if (get_compat_sigset(&s, uthese))
++		return -EFAULT;
++
++	if (uts) {
++		if (get_timespec64(&t, uts))
++			return -EFAULT;
++	}
++
++	ret = do_sigtimedwait(&s, &info, uts ? &t : NULL);
++
++	if (ret > 0 && uinfo) {
++		if (copy_siginfo_to_user32(uinfo, &info))
++			ret = -EFAULT;
++	}
++
++	return ret;
++}
++
++#ifdef CONFIG_COMPAT_32BIT_TIME
+ COMPAT_SYSCALL_DEFINE4(rt_sigtimedwait, compat_sigset_t __user *, uthese,
+ 		struct compat_siginfo __user *, uinfo,
+ 		struct old_timespec32 __user *, uts, compat_size_t, sigsetsize)
+@@ -3396,6 +3427,7 @@ COMPAT_SYSCALL_DEFINE4(rt_sigtimedwait, compat_sigset_t __user *, uthese,
+ 	return ret;
+ }
+ #endif
++#endif
+ 
+ /**
+  *  sys_kill - send a signal to a process
 -- 
 2.18.0
 
