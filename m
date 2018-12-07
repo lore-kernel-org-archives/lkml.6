@@ -4,56 +4,56 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26049C04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 02:20:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D5A7C04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 02:22:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D678B20659
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 02:20:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3D9EA2083D
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 02:22:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544149202;
-	bh=fvuvgh6qsiQiaM3aPqZPIsSGap6K6+PEn2229Ovp0rE=;
+	s=default; t=1544149355;
+	bh=wsR8xlCQ/MuoVh9wNLdj3jzIywHShzJCHzZoePq7/tc=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=TKFufuXttckheLlraB4n8vOf5JinqzrJXcuswTq1I9SPbr8Fj7gs2DieCgaftndmB
-	 bRGi9UEvEIXmDDfz+VpZkHonJOlTcSjbQzlTUVWyb5LnSaZ3PAGlNZQcw0YfX6VxmH
-	 aQhcrEIHHRvcU1SIExWE9YGjWXjxsRLOJEMqeYHI=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D678B20659
+	b=dY3BSwQX5DI0Ts18ergoLXeZbyWEVqNmrcTrt+DKwkXxQqKQsjCfGjxVBgFnBbOgW
+	 mcmD1OTVAKZ/vDAUahA07wmPd3foX2IU1h+hhv6sdRfWPzKgr1mR6CC+7AFk5rGlau
+	 F12Civ2NW5w0q8yJq7rH0ocv2i7itX0XY43z6/8A=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D9EA2083D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725993AbeLGCUA (ORCPT
+        id S1725997AbeLGCWd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 21:20:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57512 "EHLO mail.kernel.org"
+        Thu, 6 Dec 2018 21:22:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58326 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725939AbeLGCUA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 21:20:00 -0500
+        id S1725939AbeLGCWd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 21:22:33 -0500
 Received: from devnote (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2290020659;
-        Fri,  7 Dec 2018 02:19:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 64C0A2083D;
+        Fri,  7 Dec 2018 02:22:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544149200;
-        bh=fvuvgh6qsiQiaM3aPqZPIsSGap6K6+PEn2229Ovp0rE=;
+        s=default; t=1544149352;
+        bh=wsR8xlCQ/MuoVh9wNLdj3jzIywHShzJCHzZoePq7/tc=;
         h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=VUBg8pL3uNp2rocbCocVUa/OyRgoZZ9uEMTZoEi7N4pOKqoDkqkhoTxZWbSoccQ8r
-         XT6KqRF70k1isdfLoNvBettdENR8GduxEXPGhEozXku6WbAEW6ha7pLXLCXL2KnAvV
-         CuL/0BfkhK/8N0dTEb+IOUekMdH63IO16xbsN788=
-Date:   Fri, 7 Dec 2018 11:19:57 +0900
+        b=2YRQ/EPabpVU/2rdnTahEeRbaJmB6VbY3haBLRNl5ZrTVVgAjehBmsEgskROQhXql
+         GShGW30eTF0Gp/VqZaw+V5IHA540KBWo+5h9LhqJelZckFMTMmAHgH7+8TFf3lxNi6
+         9QYz1BzYr3xJiLKv/GJBGfvyDwEIJqDPak4oAziM=
+Date:   Fri, 7 Dec 2018 11:22:29 +0900
 From:   Masami Hiramatsu <mhiramat@kernel.org>
 To:     Steven Rostedt <rostedt@goodmis.org>
 Cc:     linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
         Tom Zanussi <tom.zanussi@linux.intel.com>,
         Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
-Subject: Re: [PATCH v2 01/12] tracing/uprobes: Add busy check when cleanup
- all uprobes
-Message-Id: <20181207111957.b3889ecdca0e0b296c18787d@kernel.org>
-In-Reply-To: <20181204124333.00f4c5ee@vmware.local.home>
+Subject: Re: [PATCH v2 10/12] tracing: Remove orphaned
+ trace_add/remove_event_call functions
+Message-Id: <20181207112229.ee3f875b46d54d99fbd47c9f@kernel.org>
+In-Reply-To: <20181204135120.02361a89@vmware.local.home>
 References: <154140838606.17322.15294184388075458777.stgit@devbox>
-        <154140841557.17322.12653952888762532401.stgit@devbox>
-        <20181204124333.00f4c5ee@vmware.local.home>
+        <154140866955.17322.2081425494660638846.stgit@devbox>
+        <20181204135120.02361a89@vmware.local.home>
 X-Mailer: Sylpheed 3.5.0 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -63,65 +63,216 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 4 Dec 2018 12:43:33 -0500
+On Tue, 4 Dec 2018 13:51:20 -0500
 Steven Rostedt <rostedt@goodmis.org> wrote:
 
-> On Mon,  5 Nov 2018 18:00:15 +0900
+> On Mon,  5 Nov 2018 18:04:29 +0900
 > Masami Hiramatsu <mhiramat@kernel.org> wrote:
 > 
-> > Add a busy check loop in cleanup_all_probes() before
-> > trying to remove all events in uprobe_events as same as
-> > kprobe_events does.
+> > Remove trace_add_event_call() and trace_remove_event_call()
+> > functions since those are not used anymore.
 > > 
-> > Without this change, writing null to uprobe_events will
-> > try to remove events but if one of them is enabled, it
-> > stopped there but some of events are already cleared.
-> > 
-> > With this change, writing null to uprobe_events make
-> > sure all events are not enabled before removing events.
-> > So, it clears all events, or return an error (-EBUSY)
-> > with keeping all events.
-> > 
+> > Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
 > 
-> Hmm, should this patch be marked as stable?
+> Hi Masami,
+> 
+> I've applied the series locally (need to test it) except for this
+> patch. Honestly, I hate the "_nolock" name, and it makes no sense when
+> 
+>  1) they still grab locks
+>  2) there's no version without "_nolock"
 
-Hmm, OK, let this go to stable. Since anyway, this will cause
-a wired result on uprobe_events from user point of view.
+Agreed.
+
+> 
+> I added this patch in its place:
+
+That looks good to me too. I thought to add similar patch, but just waited
+for the comment.
+
+Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
 
 Thank you!
 
 > 
 > -- Steve
 > 
-> > Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-> > ---
-> >  kernel/trace/trace_uprobe.c |    7 +++++++
-> >  1 file changed, 7 insertions(+)
-> > 
-> > diff --git a/kernel/trace/trace_uprobe.c b/kernel/trace/trace_uprobe.c
-> > index 31ea48eceda1..b708e4ff7ea7 100644
-> > --- a/kernel/trace/trace_uprobe.c
-> > +++ b/kernel/trace/trace_uprobe.c
-> > @@ -587,12 +587,19 @@ static int cleanup_all_probes(void)
-> >  	int ret = 0;
-> >  
-> >  	mutex_lock(&uprobe_lock);
-> > +	/* Ensure no probe is in use. */
-> > +	list_for_each_entry(tu, &uprobe_list, list)
-> > +		if (trace_probe_is_enabled(&tu->tp)) {
-> > +			ret = -EBUSY;
-> > +			goto end;
-> > +		}
-> >  	while (!list_empty(&uprobe_list)) {
-> >  		tu = list_entry(uprobe_list.next, struct trace_uprobe, list);
-> >  		ret = unregister_trace_uprobe(tu);
-> >  		if (ret)
-> >  			break;
-> >  	}
-> > +end:
-> >  	mutex_unlock(&uprobe_lock);
-> >  	return ret;
-> >  }
+> From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+> Date: Tue, 4 Dec 2018 13:35:45 -0500
+> Subject: [PATCH] tracing: Consolidate trace_add/remove_event_call back to the
+>  nolock functions
+> 
+> The trace_add/remove_event_call_nolock() functions were added to allow
+> the tace_add/remove_event_call() code be called when the event_mutex
+> lock was already taken. Now that all callers are done within the
+> event_mutex, there's no reason to have two different interfaces.
+> 
+> Remove the current wrapper trace_add/remove_event_call()s and rename the
+> _nolock versions back to the original names.
+> 
+> Link: http://lkml.kernel.org/r/154140866955.17322.2081425494660638846.stgit@devbox
+> 
+> Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+> ---
+>  include/linux/trace_events.h     |  2 --
+>  kernel/trace/trace_events.c      | 30 ++++--------------------------
+>  kernel/trace/trace_events_hist.c |  6 +++---
+>  kernel/trace/trace_kprobe.c      |  4 ++--
+>  kernel/trace/trace_uprobe.c      |  4 ++--
+>  5 files changed, 11 insertions(+), 35 deletions(-)
+> 
+> diff --git a/include/linux/trace_events.h b/include/linux/trace_events.h
+> index 3aa05593a53f..4130a5497d40 100644
+> --- a/include/linux/trace_events.h
+> +++ b/include/linux/trace_events.h
+> @@ -529,8 +529,6 @@ extern int trace_event_raw_init(struct trace_event_call *call);
+>  extern int trace_define_field(struct trace_event_call *call, const char *type,
+>  			      const char *name, int offset, int size,
+>  			      int is_signed, int filter_type);
+> -extern int trace_add_event_call_nolock(struct trace_event_call *call);
+> -extern int trace_remove_event_call_nolock(struct trace_event_call *call);
+>  extern int trace_add_event_call(struct trace_event_call *call);
+>  extern int trace_remove_event_call(struct trace_event_call *call);
+>  extern int trace_event_get_offsets(struct trace_event_call *call);
+> diff --git a/kernel/trace/trace_events.c b/kernel/trace/trace_events.c
+> index a3b157f689ee..bd0162c0467c 100644
+> --- a/kernel/trace/trace_events.c
+> +++ b/kernel/trace/trace_events.c
+> @@ -2305,7 +2305,8 @@ __trace_early_add_new_event(struct trace_event_call *call,
+>  struct ftrace_module_file_ops;
+>  static void __add_event_to_tracers(struct trace_event_call *call);
+>  
+> -int trace_add_event_call_nolock(struct trace_event_call *call)
+> +/* Add an additional event_call dynamically */
+> +int trace_add_event_call(struct trace_event_call *call)
+>  {
+>  	int ret;
+>  	lockdep_assert_held(&event_mutex);
+> @@ -2320,17 +2321,6 @@ int trace_add_event_call_nolock(struct trace_event_call *call)
+>  	return ret;
+>  }
+>  
+> -/* Add an additional event_call dynamically */
+> -int trace_add_event_call(struct trace_event_call *call)
+> -{
+> -	int ret;
+> -
+> -	mutex_lock(&event_mutex);
+> -	ret = trace_add_event_call_nolock(call);
+> -	mutex_unlock(&event_mutex);
+> -	return ret;
+> -}
+> -
+>  /*
+>   * Must be called under locking of trace_types_lock, event_mutex and
+>   * trace_event_sem.
+> @@ -2376,8 +2366,8 @@ static int probe_remove_event_call(struct trace_event_call *call)
+>  	return 0;
+>  }
+>  
+> -/* no event_mutex version */
+> -int trace_remove_event_call_nolock(struct trace_event_call *call)
+> +/* Remove an event_call */
+> +int trace_remove_event_call(struct trace_event_call *call)
+>  {
+>  	int ret;
+>  
+> @@ -2392,18 +2382,6 @@ int trace_remove_event_call_nolock(struct trace_event_call *call)
+>  	return ret;
+>  }
+>  
+> -/* Remove an event_call */
+> -int trace_remove_event_call(struct trace_event_call *call)
+> -{
+> -	int ret;
+> -
+> -	mutex_lock(&event_mutex);
+> -	ret = trace_remove_event_call_nolock(call);
+> -	mutex_unlock(&event_mutex);
+> -
+> -	return ret;
+> -}
+> -
+>  #define for_each_event(event, start, end)			\
+>  	for (event = start;					\
+>  	     (unsigned long)event < (unsigned long)end;		\
+> diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
+> index 21e4954375a1..82e72c48a5a9 100644
+> --- a/kernel/trace/trace_events_hist.c
+> +++ b/kernel/trace/trace_events_hist.c
+> @@ -960,7 +960,7 @@ static int register_synth_event(struct synth_event *event)
+>  	call->data = event;
+>  	call->tp = event->tp;
+>  
+> -	ret = trace_add_event_call_nolock(call);
+> +	ret = trace_add_event_call(call);
+>  	if (ret) {
+>  		pr_warn("Failed to register synthetic event: %s\n",
+>  			trace_event_name(call));
+> @@ -969,7 +969,7 @@ static int register_synth_event(struct synth_event *event)
+>  
+>  	ret = set_synth_event_print_fmt(call);
+>  	if (ret < 0) {
+> -		trace_remove_event_call_nolock(call);
+> +		trace_remove_event_call(call);
+>  		goto err;
+>  	}
+>   out:
+> @@ -984,7 +984,7 @@ static int unregister_synth_event(struct synth_event *event)
+>  	struct trace_event_call *call = &event->call;
+>  	int ret;
+>  
+> -	ret = trace_remove_event_call_nolock(call);
+> +	ret = trace_remove_event_call(call);
+>  
+>  	return ret;
+>  }
+> diff --git a/kernel/trace/trace_kprobe.c b/kernel/trace/trace_kprobe.c
+> index bdf8c2ad5152..0e0f7b8024fb 100644
+> --- a/kernel/trace/trace_kprobe.c
+> +++ b/kernel/trace/trace_kprobe.c
+> @@ -1353,7 +1353,7 @@ static int register_kprobe_event(struct trace_kprobe *tk)
+>  		kfree(call->print_fmt);
+>  		return -ENODEV;
+>  	}
+> -	ret = trace_add_event_call_nolock(call);
+> +	ret = trace_add_event_call(call);
+>  	if (ret) {
+>  		pr_info("Failed to register kprobe event: %s\n",
+>  			trace_event_name(call));
+> @@ -1368,7 +1368,7 @@ static int unregister_kprobe_event(struct trace_kprobe *tk)
+>  	int ret;
+>  
+>  	/* tp->event is unregistered in trace_remove_event_call() */
+> -	ret = trace_remove_event_call_nolock(&tk->tp.call);
+> +	ret = trace_remove_event_call(&tk->tp.call);
+>  	if (!ret)
+>  		kfree(tk->tp.call.print_fmt);
+>  	return ret;
+> diff --git a/kernel/trace/trace_uprobe.c b/kernel/trace/trace_uprobe.c
+> index 4a7b21c891f3..e335576b9411 100644
+> --- a/kernel/trace/trace_uprobe.c
+> +++ b/kernel/trace/trace_uprobe.c
+> @@ -1320,7 +1320,7 @@ static int register_uprobe_event(struct trace_uprobe *tu)
+>  		return -ENODEV;
+>  	}
+>  
+> -	ret = trace_add_event_call_nolock(call);
+> +	ret = trace_add_event_call(call);
+>  
+>  	if (ret) {
+>  		pr_info("Failed to register uprobe event: %s\n",
+> @@ -1337,7 +1337,7 @@ static int unregister_uprobe_event(struct trace_uprobe *tu)
+>  	int ret;
+>  
+>  	/* tu->event is unregistered in trace_remove_event_call() */
+> -	ret = trace_remove_event_call_nolock(&tu->tp.call);
+> +	ret = trace_remove_event_call(&tu->tp.call);
+>  	if (ret)
+>  		return ret;
+>  	kfree(tu->tp.call.print_fmt);
+> -- 
+> 2.19.2
 > 
 
 
