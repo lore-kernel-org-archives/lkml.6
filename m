@@ -2,108 +2,107 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22068C07E85
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 18:01:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BCFDC07E85
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 18:01:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D49692082D
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 18:01:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="BtFga5hj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D49692082D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id CDD492082D
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 18:01:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CDD492082D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726229AbeLGSBF (ORCPT
+        id S1726239AbeLGSBq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 13:01:05 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:44910 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726111AbeLGSBF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 13:01:05 -0500
-Received: by mail-pg1-f196.google.com with SMTP id t13so2030654pgr.11
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Dec 2018 10:01:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=5HTtmn1EzID3LQoWQ+qje1zRbS/n0UPCm2ohnShczpM=;
-        b=BtFga5hjczahE/ZC1zetTngd3ip3/P/zHfJYmimgZsfFn5rRRgGNsYRSgbeaRfFvgS
-         yQD497ANy/YNfVlnqMtKqpsW6IqjYI4SuGSUHW1jArxp0Bj/OzxpyCo+el2otnAd8EOA
-         tBiCvzgQQ0d0xMxAWy9Qk3A0O6GUT3pOvq8wZ9/qdw1++FzDR00BwE1wXSfVPbi8WttQ
-         3UXJ30VVLnCN2Htv2FRaIB97Ng8cIy2RTaKvkPwCMdn4RmS7iWdYGTc0aFubw+DTuTbb
-         pBtGJTVapD3EQJNSPGaH5VM8KqhMqzait3VKuejl39+Y7wzEpr2IdgS9HZethG7Idhru
-         0wlQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=5HTtmn1EzID3LQoWQ+qje1zRbS/n0UPCm2ohnShczpM=;
-        b=ZK7rBxM2awyhVlz+qMpuPkSzoDXfFP0PJmk94RMenYjb9OaYsnQQ8nVAT0I9UraP7b
-         IW+h9ZuljEZoNbjfhoCRtnr9nmqkuT/UIIpEkt9t8DIgFbZj9b4/DqE+0vL26oXKnlna
-         5jB+ohc954YXkc3+vUhmyzOpdlVMKpiM/qTqoaMugudx/lRqOb4+bhbQfJUz6RPOCHlL
-         CBMX10cpf8J/FhSH9SJGNfCHSKSqPJspTQ6IFr/c4gVdeZKZaMLCZLwT4ZhlczpfNtkI
-         1waOsoZFNp+ps9TQCRZbkNgrcs5sDCbaBTzw6l+x9KZ6HA4WN3LQJW1fYUqcU3OzAYKO
-         K/YQ==
-X-Gm-Message-State: AA+aEWaEdZ9prUI13ssZ+lGCCqWGPBDOmDKvGYtwhPkD575MezRGK6+d
-        m4qaUChXou7hcRtVOE7OYYG/oNVKhL1A9fVBqk+XnA==
-X-Google-Smtp-Source: AFSGD/VYETWXbFVn+SblVE43/YFDLEpEImphJ8L4YH38CtXUfYwTvLNpPzjeTet7EfXbcizGMgWBJjDqk+5zVovyEK8=
-X-Received: by 2002:a65:4683:: with SMTP id h3mr2675549pgr.225.1544205663756;
- Fri, 07 Dec 2018 10:01:03 -0800 (PST)
+        Fri, 7 Dec 2018 13:01:46 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:37690 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726111AbeLGSBq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Dec 2018 13:01:46 -0500
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 14DA8309E978;
+        Fri,  7 Dec 2018 18:01:46 +0000 (UTC)
+Received: from redhat.com (ovpn-124-251.rdu2.redhat.com [10.10.124.251])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 31B355C1A1;
+        Fri,  7 Dec 2018 18:01:45 +0000 (UTC)
+Date:   Fri, 7 Dec 2018 13:01:39 -0500
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     Dongli Zhang <dongli.zhang@oracle.com>
+Cc:     virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, jasowang@redhat.com
+Subject: Re: [PATCH 1/1] virtio: remove deprecated VIRTIO_PCI_CONFIG()
+Message-ID: <20181207125951-mutt-send-email-mst@kernel.org>
+References: <1544168081-13205-1-git-send-email-dongli.zhang@oracle.com>
 MIME-Version: 1.0
-References: <20181206191231.192355-1-ndesaulniers@google.com>
- <20181207101814.GA9385@zn.tnic> <CAKwvOd=75MRjaDbEjHRaMTm1MSC1wkLxPKhH_S3KXreP8yU9Uw@mail.gmail.com>
- <20181207175253.GE9385@zn.tnic>
-In-Reply-To: <20181207175253.GE9385@zn.tnic>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Fri, 7 Dec 2018 10:00:52 -0800
-Message-ID: <CAKwvOd=g_eQwCdtO7bwCx4ykOjCBhw637X=TVc+hqatS+XbNjg@mail.gmail.com>
-Subject: Re: [PATCH] x86/vdso: drop implicit common-page-size linker flag
-To:     bp@alien8.de
-Cc:     luto@kernel.org, Fangrui Song <maskray@google.com>,
-        Andi Kleen <ak@linux.intel.com>, andi@firstfloor.org,
-        Dmitry Golovin <dima@golovin.in>,
-        Bill Wendling <morbo@google.com>, Rui Ueyama <ruiu@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>, mingo@redhat.com,
-        hpa@zytor.com, x86@kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        rafael@espindo.la, Stephen Hines <srhines@google.com>,
-        Greg KH <gregkh@linuxfoundation.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1544168081-13205-1-git-send-email-dongli.zhang@oracle.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.49]); Fri, 07 Dec 2018 18:01:46 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 7, 2018 at 9:53 AM Borislav Petkov <bp@alien8.de> wrote:
+On Fri, Dec 07, 2018 at 03:34:41PM +0800, Dongli Zhang wrote:
+> VIRTIO_PCI_CONFIG() is deprecated. Use VIRTIO_PCI_CONFIG_OFF() instead.
+> 
+> Signed-off-by: Dongli Zhang <dongli.zhang@oracle.com>
+> ---
+>  drivers/virtio/virtio_pci_legacy.c | 6 ++++--
+>  include/uapi/linux/virtio_pci.h    | 2 --
+>  2 files changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/virtio/virtio_pci_legacy.c b/drivers/virtio/virtio_pci_legacy.c
+> index de062fb..eff9ddc 100644
+> --- a/drivers/virtio/virtio_pci_legacy.c
+> +++ b/drivers/virtio/virtio_pci_legacy.c
+> @@ -52,7 +52,8 @@ static void vp_get(struct virtio_device *vdev, unsigned offset,
+>  {
+>  	struct virtio_pci_device *vp_dev = to_vp_device(vdev);
+>  	void __iomem *ioaddr = vp_dev->ioaddr +
+> -				VIRTIO_PCI_CONFIG(vp_dev) + offset;
+> +			VIRTIO_PCI_CONFIG_OFF(vp_dev->msix_enabled) +
+> +			offset;
+>  	u8 *ptr = buf;
+>  	int i;
+>  
+> @@ -67,7 +68,8 @@ static void vp_set(struct virtio_device *vdev, unsigned offset,
+>  {
+>  	struct virtio_pci_device *vp_dev = to_vp_device(vdev);
+>  	void __iomem *ioaddr = vp_dev->ioaddr +
+> -				VIRTIO_PCI_CONFIG(vp_dev) + offset;
+> +			VIRTIO_PCI_CONFIG_OFF(vp_dev->msix_enabled) +
+> +			offset;
+>  	const u8 *ptr = buf;
+>  	int i;
 >
-> On Fri, Dec 07, 2018 at 09:45:42AM -0800, Nick Desaulniers wrote:
-> > Google's Native Client, a technology for running native code in a web
-> > browser.  It's since been superseded by Portable Native Client (pNaCl)
-> > and to an extent Web Assembly.  It seems that BFD still contains code
-> > for NaCl.
->
-> Yeah, found the wikipedia page. :)
->
-> > How does this sound:
-> > TL;DR
-> > -z common-page-size's default value is based on the target
-> > architecture.  arch/x86/entry/vdso/Makefile sets it to the
-> > architecture default, which is implicit and redundant.  Drop it.
->
-> Sure. Although the longer explanation gives more insight into the whole
-> deal but that's fine too - the longer explanation is on the ML and we
-> have the Link: tags.
->
-> So no need to resend - I'll simply take the three-liner above.
 
-Thanks, it's being set to the default value again for x86 usermode
-linux, arm, and for sparc.  I'll send additional clean ups for those
-three.
--- 
-Thanks,
-~Nick Desaulniers
+I agree that VIRTIO_PCI_CONFIG_OFF is a better interface. So above looks
+fine.
+  
+> diff --git a/include/uapi/linux/virtio_pci.h b/include/uapi/linux/virtio_pci.h
+> index 90007a1..2070232 100644
+> --- a/include/uapi/linux/virtio_pci.h
+> +++ b/include/uapi/linux/virtio_pci.h
+> @@ -78,8 +78,6 @@
+>  /* The remaining space is defined by each driver as the per-driver
+>   * configuration space */
+>  #define VIRTIO_PCI_CONFIG_OFF(msix_enabled)	((msix_enabled) ? 24 : 20)
+> -/* Deprecated: please use VIRTIO_PCI_CONFIG_OFF instead */
+> -#define VIRTIO_PCI_CONFIG(dev)	VIRTIO_PCI_CONFIG_OFF((dev)->msix_enabled)
+>  
+>  /* Virtio ABI version, this must match exactly */
+>  #define VIRTIO_PCI_ABI_VERSION		0
+
+This might break some userspace builds, I don't see why we should bother
+removing it. Any reason?
+
+
+> -- 
+> 2.7.4
