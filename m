@@ -7,58 +7,58 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C81DC07E85
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 12:49:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1336C07E85
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 12:49:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DF939208E7
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 12:49:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 975B8208E7
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 12:49:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=mena-vt-edu.20150623.gappssmtp.com header.i=@mena-vt-edu.20150623.gappssmtp.com header.b="ZRLrCoeX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF939208E7
+	dkim=pass (2048-bit key) header.d=mena-vt-edu.20150623.gappssmtp.com header.i=@mena-vt-edu.20150623.gappssmtp.com header.b="XgJFjDXX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 975B8208E7
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=mena.vt.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726308AbeLGMti (ORCPT
+        id S1726320AbeLGMtl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 07:49:38 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:55468 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726281AbeLGMtd (ORCPT
+        Fri, 7 Dec 2018 07:49:41 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:42893 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726294AbeLGMth (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 07:49:33 -0500
-Received: by mail-wm1-f65.google.com with SMTP id y139so4248584wmc.5
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Dec 2018 04:49:31 -0800 (PST)
+        Fri, 7 Dec 2018 07:49:37 -0500
+Received: by mail-wr1-f65.google.com with SMTP id q18so3675301wrx.9
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Dec 2018 04:49:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=mena-vt-edu.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=6aBx4Uf0AXPUXYaYC8L7IOOvH1hBcTiqrQSEjZvFMvY=;
-        b=ZRLrCoeXD9HW8NIerF03oCdBCfs49Kp1L+4nSKW3GXD2Oq7tL/6qr6EIac2uT/L0el
-         DPWzzOG+eEgD/0CL1mm/lzRuqDFU+j7TXH05SlfQOurMEQpG0S4fTGcgQveCjfkHmJaI
-         pCTNXx5TrQmu8OJZeNA3vWJ+SgSft7oEwlepT2AFDZXeGXqvfsIkEUVwyGrtWJfN/Uti
-         QrqdD+0d+avOGwZHD+JXLAr9++3byKWfskeJv9HgdL1DfhB2Ki4prBhvK9q3w5vvDJ12
-         zMoR4r0b2LmF2kZvzdwd8smerBUM+M6obbMfBIoyeFSHT+JT5lOx6MlH8cJvvyCk6oSP
-         6jrQ==
+        bh=8WR3nfZ+UXawr7R//GnRUy/7E5Oz6Kr5I5N3ItmtOwA=;
+        b=XgJFjDXXpxuO5DPzmfvD7ouX2XxqdC6F4pcGXKK0R2tvBXJyw+Nw5D38eOQKsUv1yJ
+         w/DIegcnPPPWksE8FPD5ium12Lvwj6kPzCoek9IsWuK7gwEDoMt7dR9zTdkS+T9s9bvq
+         ZLAsnkr91HoIltBgUbHteWWnl1Hh3XhHRQDYlhY+rzJLRRT/L9mYY5J5R4Iy5LXlvi9j
+         z7ch89Mf2xau8p8XP7PJzWvQ6/wUrjKuz3VZPvW+Zo28sQNrFswQiwGz4XzlxcPy2dlz
+         oSY3/koIjjyHIri9oT4KDnieBCua/yB8JxnS69UUKcxzElquzW2ljPTlPoFBqAKpXBJu
+         7aYA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=6aBx4Uf0AXPUXYaYC8L7IOOvH1hBcTiqrQSEjZvFMvY=;
-        b=lPnNOOJdQfOIPkTwWebcWm6ofsFiCDQFknQ1CucNx5ifSytkhI3b2cMBDyuxiKlhoi
-         ee9UIslRwRo4AVF4lja7LgK0eddmLOen058ROw9yJYee/i935hwQgg91ovwZc/SVYxne
-         d7iHicf4jbtuaFVnQW0GHfNKx50uV9rovlBGtb8cDDc7kR2hEmvjh0wey5DISKYYi0qe
-         Wbd2GASef4vpBZT5O83uv8sOkQixDmZA8eTZUTk3UWX63WgwQSX+d6X2yd1snG/GTq09
-         KIgC6tl8Z4YV1W8f2I6E+X+DyH15T/PfQfn9IscizhxOIOvoHg9YjgAZFoUOzrNPSPU/
-         50Hw==
-X-Gm-Message-State: AA+aEWZRPXarN2DUDGxrZKYflwU04X1S3T445XtikNDqV/mNmvXcYMcF
-        zfEONOjuNQOFfHFJSReJCXnrVg==
-X-Google-Smtp-Source: AFSGD/UgbVwxu0T4GOFk5WoSSvUhKOVLjgnI86o17K0DWzUsnEBQw6xC+04yacjI7Psv/elfu6Qi9A==
-X-Received: by 2002:a1c:2b45:: with SMTP id r66mr2063076wmr.7.1544186971172;
-        Fri, 07 Dec 2018 04:49:31 -0800 (PST)
+        bh=8WR3nfZ+UXawr7R//GnRUy/7E5Oz6Kr5I5N3ItmtOwA=;
+        b=SeMsELy3lFE/b6lAQ8nNnUbx6e8ZJnxu71eXi9LILnROd+C0N1ruTMLko9JXtGupVS
+         5WWzu6t05/2Uew0S0Mcy8iyUP96osQYOeMVyQjZbLzSAPE1rSS61HHNRcgPhrGIYS1Hw
+         Er+ymEsKbeLCZlU50RqyGgLbOzNfF2gCgpNtTplSWHInx/9FGu750qSkPsGScPvrN3DP
+         3JB83s1V4XVEiD9r9HRw+bvtPJxL+zvsFjcTNGk1e4URuT4wUsUXmY1r5YE9XOvIVicl
+         Ajw91OB6pMroNCtvBwESOrQe0IGooVfGF1euyjdlrechnub2HIKyaAYYU+XpPV8J/w3z
+         yzGQ==
+X-Gm-Message-State: AA+aEWaaPB52jv1vRms/0HrPwzysGv9R8Fka/GV41WU23RL7W+CeWpIF
+        agLcfDcbcAAnAe+4Njnis55h2w==
+X-Google-Smtp-Source: AFSGD/Uvbb9zxQ6Le59/z2g9FbUPsfQ3vtkpDzJJRcigKi93yPTIA3dAjUHEfENdbeVJt5hQt2tGqA==
+X-Received: by 2002:adf:e707:: with SMTP id c7mr1616063wrm.196.1544186975504;
+        Fri, 07 Dec 2018 04:49:35 -0800 (PST)
 Received: from localhost.localdomain ([156.213.98.90])
-        by smtp.gmail.com with ESMTPSA id i192sm4362949wmg.7.2018.12.07.04.49.27
+        by smtp.gmail.com with ESMTPSA id i192sm4362949wmg.7.2018.12.07.04.49.31
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 07 Dec 2018 04:49:30 -0800 (PST)
+        Fri, 07 Dec 2018 04:49:35 -0800 (PST)
 From:   Ahmed Abd El Mawgood <ahmedsoliman@mena.vt.edu>
 To:     Paolo Bonzini <pbonzini@redhat.com>, rkrcmar@redhat.com,
         Jonathan Corbet <corbet@lwn.net>,
@@ -71,9 +71,9 @@ To:     Paolo Bonzini <pbonzini@redhat.com>, rkrcmar@redhat.com,
         Boris Lukashev <blukashev@sempervictus.com>,
         Igor Stoppa <igor.stoppa@gmail.com>
 Cc:     Ahmed Abd El Mawgood <ahmedsoliman@mena.vt.edu>
-Subject: [PATCH 09/10] KVM: Add new exit reason For ROE violations
-Date:   Fri,  7 Dec 2018 14:48:02 +0200
-Message-Id: <20181207124803.10828-10-ahmedsoliman@mena.vt.edu>
+Subject: [PATCH 10/10] KVM: Log ROE violations in system log
+Date:   Fri,  7 Dec 2018 14:48:03 +0200
+Message-Id: <20181207124803.10828-11-ahmedsoliman@mena.vt.edu>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181207124803.10828-1-ahmedsoliman@mena.vt.edu>
 References: <20181207124803.10828-1-ahmedsoliman@mena.vt.edu>
@@ -84,124 +84,71 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The problem is that qemu will not be able to detect ROE violations, so
-one option would be create host API to tell if a given page is ROE
-protected, or create ROE violation exit reason.
-
 Signed-off-by: Ahmed Abd El Mawgood <ahmedsoliman@mena.vt.edu>
 ---
- arch/x86/kvm/x86.c       | 10 +++++++++-
- include/kvm/roe.h        | 12 ++++++++++++
- include/uapi/linux/kvm.h |  2 +-
- virt/kvm/kvm_main.c      |  1 +
- virt/kvm/roe.c           |  2 +-
- virt/kvm/roe_generic.h   |  9 +--------
- 6 files changed, 25 insertions(+), 11 deletions(-)
+ virt/kvm/kvm_main.c    |  5 +++++
+ virt/kvm/roe.c         | 14 ++++++++++++++
+ virt/kvm/roe_generic.h |  2 +-
+ 3 files changed, 20 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index 28475c83f9..ddd15bb1a7 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -5334,6 +5334,7 @@ static int emulator_read_write(struct x86_emulate_ctxt *ctxt,
- 			const struct read_write_emulator_ops *ops)
- {
- 	struct kvm_vcpu *vcpu = emul_to_vcpu(ctxt);
-+	struct kvm_memory_slot *slot;
- 	gpa_t gpa;
- 	int rc;
- 
-@@ -5375,7 +5376,14 @@ static int emulator_read_write(struct x86_emulate_ctxt *ctxt,
- 
- 	vcpu->run->mmio.len = min(8u, vcpu->mmio_fragments[0].len);
- 	vcpu->run->mmio.is_write = vcpu->mmio_is_write = ops->write;
--	vcpu->run->exit_reason = KVM_EXIT_MMIO;
-+	slot = kvm_vcpu_gfn_to_memslot(vcpu, gpa >> PAGE_SHIFT);
-+	if (slot && ops->write && (kvm_roe_check_range(slot, gpa>>PAGE_SHIFT,
-+			gpa - (gpa & PAGE_MASK), bytes) ||
-+			gfn_is_full_roe(slot, gpa>>PAGE_SHIFT)))
-+		vcpu->run->exit_reason = KVM_EXIT_ROE;
-+	else
-+		vcpu->run->exit_reason = KVM_EXIT_MMIO;
-+
- 	vcpu->run->mmio.phys_addr = gpa;
- 
- 	return ops->read_write_exit_mmio(vcpu, gpa, val, bytes);
-diff --git a/include/kvm/roe.h b/include/kvm/roe.h
-index 6a86866623..3121a67753 100644
---- a/include/kvm/roe.h
-+++ b/include/kvm/roe.h
-@@ -13,4 +13,16 @@ void kvm_roe_arch_commit_protection(struct kvm *kvm,
- 		struct kvm_memory_slot *slot);
- int kvm_roe(struct kvm_vcpu *vcpu, u64 a0, u64 a1, u64 a2, u64 a3);
- bool kvm_roe_arch_is_userspace(struct kvm_vcpu *vcpu);
-+bool kvm_roe_check_range(struct kvm_memory_slot *slot, gfn_t gfn, int offset,
-+		int len);
-+static inline bool gfn_is_full_roe(struct kvm_memory_slot *slot, gfn_t gfn)
-+{
-+	return test_bit(gfn - slot->base_gfn, slot->roe_bitmap);
-+
-+}
-+static inline bool gfn_is_partial_roe(struct kvm_memory_slot *slot, gfn_t gfn)
-+{
-+	return test_bit(gfn - slot->base_gfn, slot->partial_roe_bitmap);
-+}
-+
- #endif
-diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
-index 2b7a652c9f..185767e512 100644
---- a/include/uapi/linux/kvm.h
-+++ b/include/uapi/linux/kvm.h
-@@ -235,7 +235,7 @@ struct kvm_hyperv_exit {
- #define KVM_EXIT_S390_STSI        25
- #define KVM_EXIT_IOAPIC_EOI       26
- #define KVM_EXIT_HYPERV           27
--
-+#define KVM_EXIT_ROE		  28
- /* For KVM_EXIT_INTERNAL_ERROR */
- /* Emulate instruction failed. */
- #define KVM_INTERNAL_ERROR_EMULATION	1
 diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-index 0d129b05d5..c3a21d3bc8 100644
+index c3a21d3bc8..661933053f 100644
 --- a/virt/kvm/kvm_main.c
 +++ b/virt/kvm/kvm_main.c
-@@ -62,6 +62,7 @@
- #include "async_pf.h"
- #include "vfio.h"
- #include "roe_generic.h"
-+#include <kvm/roe.h>
+@@ -1870,6 +1870,7 @@ static u64 roe_gfn_to_hva(struct kvm_memory_slot *slot, gfn_t gfn, int offset,
+ 	addr = __gfn_to_hva_many(slot, gfn, NULL, false);
+ 	return addr;
+ }
++
+ static int __kvm_write_guest_page(struct kvm_memory_slot *memslot, gfn_t gfn,
+ 			          const void *data, int offset, int len)
+ {
+@@ -1877,6 +1878,10 @@ static int __kvm_write_guest_page(struct kvm_memory_slot *memslot, gfn_t gfn,
+ 	unsigned long addr;
  
- #define CREATE_TRACE_POINTS
- #include <trace/events/kvm.h>
+ 	addr = roe_gfn_to_hva(memslot, gfn, offset, len);
++	if (gfn_is_full_roe(memslot, gfn) ||
++			kvm_roe_check_range(memslot, gfn, offset, len))
++		kvm_warning_roe_violation((gfn << PAGE_SHIFT) + offset, data,
++				len);
+ 	if (kvm_is_error_hva(addr))
+ 		return -EFAULT;
+ 	r = __copy_to_user((void __user *)addr + offset, data, len);
 diff --git a/virt/kvm/roe.c b/virt/kvm/roe.c
-index dfb1de314c..6555838f0c 100644
+index 6555838f0c..36b85fb303 100644
 --- a/virt/kvm/roe.c
 +++ b/virt/kvm/roe.c
-@@ -60,7 +60,7 @@ bool kvm_roe_check_range(struct kvm_memory_slot *slot, gfn_t gfn, int offset,
- 		return false;
- 	return kvm_roe_protected_range(slot, gpa, len);
+@@ -76,6 +76,20 @@ void kvm_roe_free(struct kvm_memory_slot *slot)
+ 	kvfree(slot->prot_list);
  }
--
-+EXPORT_SYMBOL_GPL(kvm_roe_check_range);
  
- void kvm_roe_free(struct kvm_memory_slot *slot)
++void kvm_warning_roe_violation(u64 addr, const void *data, int len)
++{
++	int i;
++	const char *d = data;
++	char *buf = kvmalloc(len * 3 + 1, GFP_KERNEL);
++
++	for (i = 0; i < len; i++)
++		sprintf(buf+3*i, " %02x", d[i]);
++	pr_warn("ROE violation:\n");
++	pr_warn("\tAttempt to write %d bytes at address 0x%08llx\n", len, addr);
++	pr_warn("\tData: %s\n", buf);
++	kvfree(buf);
++}
++
+ static void kvm_roe_protect_slot(struct kvm *kvm, struct kvm_memory_slot *slot,
+ 		gfn_t gfn, u64 npages, bool partial)
  {
 diff --git a/virt/kvm/roe_generic.h b/virt/kvm/roe_generic.h
-index ad121372f2..f1ce4a8aec 100644
+index f1ce4a8aec..8c191362cd 100644
 --- a/virt/kvm/roe_generic.h
 +++ b/virt/kvm/roe_generic.h
-@@ -14,12 +14,5 @@ void kvm_roe_free(struct kvm_memory_slot *slot);
+@@ -14,5 +14,5 @@ void kvm_roe_free(struct kvm_memory_slot *slot);
  int kvm_roe_init(struct kvm_memory_slot *slot);
  bool kvm_roe_check_range(struct kvm_memory_slot *slot, gfn_t gfn, int offset,
  		int len);
--static inline bool gfn_is_full_roe(struct kvm_memory_slot *slot, gfn_t gfn)
--{
--	return test_bit(gfn - slot->base_gfn, slot->roe_bitmap);
--}
--static inline bool gfn_is_partial_roe(struct kvm_memory_slot *slot, gfn_t gfn)
--{
--	return test_bit(gfn - slot->base_gfn, slot->partial_roe_bitmap);
--}
-+
+-
++void kvm_warning_roe_violation(u64 addr, const void *data, int len);
  #endif
 -- 
 2.19.2
