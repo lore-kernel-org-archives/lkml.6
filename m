@@ -2,96 +2,161 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,T_DKIMWL_WL_HIGH,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 575D5C07E85
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 23:35:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F31CC07E85
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 23:36:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1760F20837
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 23:35:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544225716;
-	bh=5MpO0afgjL4LZ3o+dDDDonXRM33KTCXzrj7Zpx14ZKY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=tF1XTj2FFjsrHD4ITuJoaKQtk96ianyII8tWKvFowLIAZVzdQdb+YvxjgoxknNMAq
-	 jxp9lVvjSDfiOCSyTWQXR0pWD175dx37LR4JKCHs4s3m0t0GA3G3I9U5xKTsL65WH+
-	 RYCmrUkVNYy2DZWG6aplvQudP0cP+1Q2YLAtPDrU=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1760F20837
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 5A50520838
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 23:36:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="F3F+Umbf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A50520838
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=wdc.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726124AbeLGXfO (ORCPT
+        id S1726142AbeLGXgw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 18:35:14 -0500
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:42399 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726041AbeLGXfN (ORCPT
+        Fri, 7 Dec 2018 18:36:52 -0500
+Received: from esa5.hgst.iphmx.com ([216.71.153.144]:45057 "EHLO
+        esa5.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726041AbeLGXgv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 18:35:13 -0500
-Received: by mail-oi1-f195.google.com with SMTP id w13so4744213oiw.9;
-        Fri, 07 Dec 2018 15:35:13 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=q2bWIH9ihGljoH/IISkUNN2ujkG0eAQg9/dnWXuF6sU=;
-        b=WhJMYPx8nTkSlB4yobKH7e/QlUvImilGbWQq8xK58BdC5ihDgkZ74RUFx4W9nl9z+5
-         mr8mqn/+9ZithqpT2UI1VUWjcQxSGBISRJybOpMnukQemjmp4dY4JWoNryPecpqyFLPF
-         3vWX90dLVYvkEK/9E0QdQn31PrnZV77e1nR2WytXYSmLWbyes4KI2Ef+11hKHI4olN+V
-         05yV4XtZaGEFti+1B5Gd/9NOBga0tj9rEdofwTFS6ryCNbseGfODAAeypJBXQceQ60/p
-         b6QObMmSPgQpQJmgjyEtUFpYE6eM8zclw9bgXy2yQdd31yVaTnvcsduWjad3vOiVzINM
-         YeCw==
-X-Gm-Message-State: AA+aEWarwZKebpaRr8lf0ZPwmW3B/wJ2SGn9USZOV9CkAxd1OwvTWBx7
-        e5D/Kvr8AmKEl3o0AXy+Hw==
-X-Google-Smtp-Source: AFSGD/UhqK6lbTif8lqNVTBVRcGPbMX9PRvNiI7/GZWewBDEXpkPcxsFRSskeEAXgqYMAfyWEfGEPA==
-X-Received: by 2002:aca:ed48:: with SMTP id l69mr2549441oih.31.1544225712984;
-        Fri, 07 Dec 2018 15:35:12 -0800 (PST)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id w108sm819066otb.6.2018.12.07.15.35.12
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 07 Dec 2018 15:35:12 -0800 (PST)
-Date:   Fri, 7 Dec 2018 17:35:11 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc:     olof@lixom.net, arnd@arndb.de, robh+dt@kernel.org,
-        tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com,
-        daniel.lezcano@linaro.org, gregkh@linuxfoundation.org,
-        jslaby@suse.com, afaerber@suse.de,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-serial@vger.kernel.org,
-        amit.kucheria@linaro.org, linus.walleij@linaro.org,
-        zhao_steven@263.net, overseas.sales@unisoc.com,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: Re: [PATCH v3 01/15] dt-bindings: Add RDA Micro vendor prefix
-Message-ID: <20181207233511.GA9313@bogus>
-References: <20181128135106.9255-1-manivannan.sadhasivam@linaro.org>
- <20181128135106.9255-2-manivannan.sadhasivam@linaro.org>
+        Fri, 7 Dec 2018 18:36:51 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1544225811; x=1575761811;
+  h=subject:to:cc:references:from:message-id:date:
+   mime-version:in-reply-to:content-transfer-encoding;
+  bh=oqFqUSGEZ527gvndpmSeiRdE8bBlWDIBdMBjfGtFk8g=;
+  b=F3F+Umbf/otdZ08dtnB1yNO3HhymLgex9fBfYcog5vyEd4eQo4BKWlDl
+   k3c6LxX4BOQFVqumLIg8VR3NDTYI9FDkIzkRY5OBtYVtQHY7mMR4CCF1g
+   HCNJWvKls1GKahKElWRNDH6rLsqHcFT2xe4uyypiVUZ6yHKFX+0F+xa+0
+   U1dVlPD45WbdMnYrZJTQ82H42VhrWTq9/mKTC1zQgzE5kdasSGqyWwQpA
+   Ai6jBhrpA4uGU7UMJ85qbCkPboisElsFzosX4PcxxZQT+UZIY/Jg4lClV
+   HR1EJ/c366UWIKNQmschOlyzsIXdFOF8mOt94WDX60zGceWmxHPxiHGHX
+   w==;
+X-IronPort-AV: E=Sophos;i="5.56,327,1539619200"; 
+   d="scan'208";a="97338775"
+Received: from h199-255-45-15.hgst.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
+  by ob1.hgst.iphmx.com with ESMTP; 08 Dec 2018 07:36:51 +0800
+Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
+  by uls-op-cesaep02.wdc.com with ESMTP; 07 Dec 2018 15:19:35 -0800
+Received: from gj0bt32.ad.shared (HELO [10.86.57.164]) ([10.86.57.164])
+  by uls-op-cesaip02.wdc.com with ESMTP; 07 Dec 2018 15:36:50 -0800
+Subject: Re: [PATCH 2/4] RISC-V: Support per-hart timebase-frequency
+To:     Palmer Dabbelt <palmer@sifive.com>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>,
+        "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "dmitriy@oss-tech.org" <dmitriy@oss-tech.org>,
+        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "anup@brainfault.org" <anup@brainfault.org>,
+        Damien Le Moal <Damien.LeMoal@wdc.com>
+References: <mhng-531f9ae3-9ab2-48cb-9f1f-4e6814498753@palmer-si-x1c4>
+From:   Atish Patra <atish.patra@wdc.com>
+Message-ID: <f9769cec-2240-b668-c9e5-387212cf317e@wdc.com>
+Date:   Fri, 7 Dec 2018 15:36:49 -0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:60.0)
+ Gecko/20100101 Thunderbird/60.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181128135106.9255-2-manivannan.sadhasivam@linaro.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <mhng-531f9ae3-9ab2-48cb-9f1f-4e6814498753@palmer-si-x1c4>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 28 Nov 2018 19:20:52 +0530, Manivannan Sadhasivam wrote:
-> From: Andreas Färber <afaerber@suse.de>
+On 12/7/18 8:42 AM, Palmer Dabbelt wrote:
+> On Mon, 03 Dec 2018 12:57:29 PST (-0800), atish.patra@wdc.com wrote:
+>> Follow the updated DT specs and read the timebase-frequency
+>> from the boot cpu. Keep the old DT reading as well for backward
+>> compatibility. This patch is rework of old patch from Palmer.
+>>
+>> Signed-off-by: Atish Patra <atish.patra@wdc.com>
+>> ---
+>>   arch/riscv/kernel/time.c          |  9 +--------
+>>   drivers/clocksource/riscv_timer.c | 22 ++++++++++++++++++++++
+>>   2 files changed, 23 insertions(+), 8 deletions(-)
+>>
+>> diff --git a/arch/riscv/kernel/time.c b/arch/riscv/kernel/time.c
+>> index 1911c8f6..225fe743 100644
+>> --- a/arch/riscv/kernel/time.c
+>> +++ b/arch/riscv/kernel/time.c
+>> @@ -20,14 +20,7 @@ unsigned long riscv_timebase;
+>>
+>>   void __init time_init(void)
+>>   {
+>> -	struct device_node *cpu;
+>> -	u32 prop;
+>> -
+>> -	cpu = of_find_node_by_path("/cpus");
+>> -	if (!cpu || of_property_read_u32(cpu, "timebase-frequency", &prop))
+>> -		panic(KERN_WARNING "RISC-V system with no 'timebase-frequency' in DTS\n");
+>> -	riscv_timebase = prop;
+>> +	timer_probe();
+>>
+>>   	lpj_fine = riscv_timebase / HZ;
+>> -	timer_probe();
+>>   }
+>> diff --git a/drivers/clocksource/riscv_timer.c b/drivers/clocksource/riscv_timer.c
+>> index 084e97dc..96af7058 100644
+>> --- a/drivers/clocksource/riscv_timer.c
+>> +++ b/drivers/clocksource/riscv_timer.c
+>> @@ -83,6 +83,26 @@ void riscv_timer_interrupt(void)
+>>   	evdev->event_handler(evdev);
+>>   }
+>>
+>> +static long __init riscv_timebase_frequency(struct device_node *node)
+>> +{
+>> +	u32 timebase;
+>> +
+>> +	if (!of_property_read_u32(node, "timebase-frequency", &timebase))
+>> +		return timebase;
+>> +
+>> +	/*
+>> +	 * As per the DT specification, timebase-frequency should be present
+>> +	 * under individual cpu node. Unfortunately, there are already available
+>> +	 * HiFive Unleashed devices where the timebase-frequency entry is under
+>> +	 * CPUs. check under parent "cpus" node to cover those devices.
+>> +	 */
+>> +	if (!of_property_read_u32(node->parent, "timebase-frequency",
+>> +				  &timebase))
+>> +		return timebase;
+>> +
+>> +	panic("RISC-V system with no 'timebase-frequency' in DTS\n");
+>> +}
+>> +
+>>   static int __init riscv_timer_init_dt(struct device_node *n)
+>>   {
+>>   	int cpuid, hartid, error;
+>> @@ -94,6 +114,8 @@ static int __init riscv_timer_init_dt(struct device_node *n)
+>>   	if (cpuid != smp_processor_id())
+>>   		return 0;
+>>
+>> +	/* This should be called only for boot cpu */
+>> +	riscv_timebase = riscv_timebase_frequency(n);
+>>   	cs = per_cpu_ptr(&riscv_clocksource, cpuid);
+>>   	clocksource_register_hz(cs, riscv_timebase);
 > 
-> Add vendor prefix for RDA Micro which now merged into Unisoc
-> Communications Inc.
+> We need to check to make sure the timebase-frequency of each hart is the same.
+> This is mandated by the RISC-V ISA specification but should be checked in the
+> code.
 > 
-> Cc: overseas.sales@unisoc.com
-> Signed-off-by: Andreas Färber <afaerber@suse.de>
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> ---
->  Documentation/devicetree/bindings/vendor-prefixes.txt | 1 +
->  1 file changed, 1 insertion(+)
-> 
+Fair enough. I will add a timebase-frequency verification function that 
+will be executed for every cpu instead of boot cpu.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+If any cpu's timebase-frequency doesn't match with boot cpu, should we 
+just WARN? or Do we need panic given that DT is not following something 
+that is mandated by ISA ?
+
+Regards,
+Atish
