@@ -2,137 +2,119 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D50EC07E85
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 19:23:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73F19C07E85
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 19:24:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3FFFF223D0
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 19:23:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2D7D920882
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 19:24:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="WObCZGoL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3FFFF223D0
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZtJu/QZl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D7D920882
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726247AbeLGTXO (ORCPT
+        id S1726160AbeLGTYx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 14:23:14 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:38244 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726069AbeLGTXO (ORCPT
+        Fri, 7 Dec 2018 14:24:53 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:36037 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726065AbeLGTYw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 14:23:14 -0500
-Received: by mail-pl1-f194.google.com with SMTP id e5so2254055plb.5
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Dec 2018 11:23:13 -0800 (PST)
+        Fri, 7 Dec 2018 14:24:52 -0500
+Received: by mail-lj1-f196.google.com with SMTP id g11-v6so4505625ljk.3;
+        Fri, 07 Dec 2018 11:24:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=tpMgLz8022es6nTdDC6vCIIc+GNybJRH05E0J5Oj2VU=;
-        b=WObCZGoLaYqDPSDDilAbJevIjVQAGoAq0HCrkKmpUqL+bMw3yop0+HR0MELHqr/Q16
-         ka3Ilw5f+EtP1Bn4SB0X6PfClstVxywWLavqinXG+wKpnfU/HtqBQotTW0R3eA99lrjv
-         S4p0UcjNkgACVR16VIVaCuin9dyOGjGDRJYZ2LBcjR7HnHEqquX1yQf+dq1jCwapUQ5H
-         06nct7T1hQdvS0c2yc70Cr8+HVVrjwybUjX+IwTIlW34QX5rJY6dyQEP1vlvyGGLqXdF
-         LGmlXGRL74+0E+D3DtWb8HXy1rdOeLlww7g54L3lxVJZaiCXwoQ8k02yCK4f1PeAP5bh
-         HPwg==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=9e2Wbzrvdn8hVT2tBhxVO0pp+kL6y3jwcx1ShpPzbP4=;
+        b=ZtJu/QZlyw3bilEm8S9OjKcAaFKDl8uywXIJPv9AXBWu7HUv1lNYCsoq8HAKttktyj
+         ssHKnjWFm75vcL1BkZR6S/HWT1LqZybi7PHlkHL5Gvyu1SX4Uv1WAY8o1yT5uIo9VnZY
+         vpOujufXZQzDptqRH68QItFYzJLEfbo/l0kXvHSgZyTb5d9yGcnluZTEBxPSiF6Wi/i4
+         D6LdrFTq9B6gKKkFc0wmIOsj7KboFS7ojG0/UP5B4tBFQo0EL188h8Sw6mlpJOBVvYHm
+         xlWaL+qNVtOLh6aLFsUD9mklVCrvNKlMW5i3EgHUUglppRWtsj4/Ahh5Kyf5lDmFczee
+         iefQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=tpMgLz8022es6nTdDC6vCIIc+GNybJRH05E0J5Oj2VU=;
-        b=mLNtRSHsRHW7IPkCPp0wRi1FXR31Bp377JzLWCVEd0gVO9qVKr1/6sJRpX1Up8RJKH
-         80M+pHloKqsU1vMPvqUPGK2963bDgHA6abZQumYzSlxetAfSfk71wJjXDRO7HXVSgsCO
-         9WEfc+E61/8lJhy62bxYm4qtXK28dx8uMkEUp5yUZDwSIe2DQqLPjC57Ra6H0HvT1VpX
-         /RNr9PUpi2vNywdqMiVITWJ0ncu+hdM47lxiTrHzOb9DD2AImVgVzFMGIAKhZKr9sg4f
-         UXGYUDQfNeBIFPXCj+KvqAzjTKLSi80MOkX+buVslXKmDT4++2oOKJOIhwhmPMv5kHyS
-         GcDg==
-X-Gm-Message-State: AA+aEWartmv7dsNOeBn8cPshLJJONUpFIG5LJ7vaNhln3tQRBuAoJGht
-        YHm1fTGPhO5py2hLJxAC7mmIQA==
-X-Google-Smtp-Source: AFSGD/XQLYK0sTtJacSi7NJF8SDvbleyWRHM0FivyT4oYZ6o3Nlhz/AAHEo1lnCAWvhUCb73BQPQUA==
-X-Received: by 2002:a17:902:8c91:: with SMTP id t17mr3173993plo.119.1544210593296;
-        Fri, 07 Dec 2018 11:23:13 -0800 (PST)
-Received: from ?IPv6:2600:1010:b02e:9276:b497:ca3d:93db:f61e? ([2600:1010:b02e:9276:b497:ca3d:93db:f61e])
-        by smtp.gmail.com with ESMTPSA id p7sm6260039pfa.22.2018.12.07.11.23.11
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 07 Dec 2018 11:23:12 -0800 (PST)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (1.0)
-Subject: Re: [RFC PATCH v2 4/4] x86/vdso: Add __vdso_sgx_enter_enclave() to wrap SGX enclave transitions
-From:   Andy Lutomirski <luto@amacapital.net>
-X-Mailer: iPhone Mail (16B92)
-In-Reply-To: <20181207190257.GC10404@linux.intel.com>
-Date:   Fri, 7 Dec 2018 11:23:10 -0800
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        X86 ML <x86@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Josh Triplett <josh@joshtriplett.org>,
-        linux-sgx@vger.kernel.org, haitao.huang@linux.intel.com,
-        Jethro Beekman <jethro@fortanix.com>,
-        "Dr. Greg Wettstein" <greg@enjellic.com>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <EFA99261-BE93-49DA-9A8F-E6FD28069AFC@amacapital.net>
-References: <20181206221922.31012-1-sean.j.christopherson@intel.com> <20181206221922.31012-5-sean.j.christopherson@intel.com> <CALCETrXRJ645=08fyeoMQ949fLB1TvhsgERFVx5mAHdViEjq8Q@mail.gmail.com> <20181207165145.GB10404@linux.intel.com> <CALCETrVkEW82PzQZhJ5iS849DLY1gbd8YjH5F7P1J7hgjkjiOQ@mail.gmail.com> <20181207190257.GC10404@linux.intel.com>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=9e2Wbzrvdn8hVT2tBhxVO0pp+kL6y3jwcx1ShpPzbP4=;
+        b=kJ72Wy4R5gGZMb2FARKL2KHZXNA2Ad2+BdgsezZtjkQlscUaAA6kn+u/H0NxjCQP4h
+         0Efp3DTuCvoH1c2rmfHtcgDBRuBqAgaF6Zjjy/Pk8moKrQUvDVdh1htkXa1oZ1PzETfX
+         PQpj4zDNg80e6bBUVBDYiieTrrB23BDVM7/IJfZGg7yB6oLCQ9ZJpxQHZN+fPnqQV6rK
+         mFerVGN7FmXpeU719Fl0Cykp9JIXrRbUb6doIaps7r4c0Yqpzq50OMVXl9VDRPPqyDl8
+         zp8SPY5Ku3ZZz/cjK6neou34VG9hIrRvBOmLOnHHQ5a2v8SItdmQ5E6141jUoLk9Km9q
+         2CKA==
+X-Gm-Message-State: AA+aEWb9banlCA8CB5patTNbo/JJM7ah6vY1PzgVDJsdlbOdT/zTdIn8
+        oc66UBVxF2oIdqnxAnbFmfhK+QXGovaZGXvGPGE=
+X-Google-Smtp-Source: AFSGD/XIzVoTRj76yRnUtycSWUcaUvahf5IXbuO2knQ2ryaj0PDXh4XL9bWH40gRgXnet7zbl7DHlrkXUU8kk86yIgw=
+X-Received: by 2002:a2e:9181:: with SMTP id f1-v6mr2058524ljg.64.1544210689938;
+ Fri, 07 Dec 2018 11:24:49 -0800 (PST)
+MIME-Version: 1.0
+References: <20181206183945.GA20932@jordon-HP-15-Notebook-PC>
+ <53bbc095-c9f5-5d6a-6e50-6e060d17eb68@arm.com> <20181207171116.GA29923@bombadil.infradead.org>
+In-Reply-To: <20181207171116.GA29923@bombadil.infradead.org>
+From:   Souptick Joarder <jrdr.linux@gmail.com>
+Date:   Sat, 8 Dec 2018 00:58:26 +0530
+Message-ID: <CAFqt6zYCWOK-uS85GqCzcgT=+YKn1nBrRPq+M9y6eJjmXEKH+g@mail.gmail.com>
+Subject: Re: [PATCH v3 1/9] mm: Introduce new vm_insert_range API
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     robin.murphy@arm.com, Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        vbabka@suse.cz, Rik van Riel <riel@surriel.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        rppt@linux.vnet.ibm.com, Peter Zijlstra <peterz@infradead.org>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        iamjoonsoo.kim@lge.com, treding@nvidia.com,
+        Kees Cook <keescook@chromium.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        stefanr@s5r6.in-berlin.de, hjc@rock-chips.com,
+        Heiko Stuebner <heiko@sntech.de>, airlied@linux.ie,
+        oleksandr_andrushchenko@epam.com, joro@8bytes.org,
+        pawel@osciak.com, Kyungmin Park <kyungmin.park@samsung.com>,
+        mchehab@kernel.org, Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>, linux-kernel@vger.kernel.org,
+        Linux-MM <linux-mm@kvack.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux1394-devel@lists.sourceforge.net,
+        dri-devel@lists.freedesktop.org,
+        linux-rockchip@lists.infradead.org, xen-devel@lists.xen.org,
+        iommu@lists.linux-foundation.org, linux-media@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Dec 7, 2018 at 10:41 PM Matthew Wilcox <willy@infradead.org> wrote:
+>
+> On Fri, Dec 07, 2018 at 03:34:56PM +0000, Robin Murphy wrote:
+> > > +int vm_insert_range(struct vm_area_struct *vma, unsigned long addr,
+> > > +                   struct page **pages, unsigned long page_count)
+> > > +{
+> > > +   unsigned long uaddr = addr;
+> > > +   int ret = 0, i;
+> >
+> > Some of the sites being replaced were effectively ensuring that vma and
+> > pages were mutually compatible as an initial condition - would it be worth
+> > adding something here for robustness, e.g.:
+> >
+> > +     if (page_count != vma_pages(vma))
+> > +             return -ENXIO;
+>
+> I think we want to allow this to be used to populate part of a VMA.
+> So perhaps:
+>
+>         if (page_count > vma_pages(vma))
+>                 return -ENXIO;
 
-> On Dec 7, 2018, at 11:02 AM, Sean Christopherson <sean.j.christopherson@in=
-tel.com> wrote:
->=20
->> On Fri, Dec 07, 2018 at 09:56:09AM -0800, Andy Lutomirski wrote:
->> On Fri, Dec 7, 2018 at 8:51 AM Sean Christopherson
->> <sean.j.christopherson@intel.com> wrote:
->>> I like that the exit handler allows userspace to trap/panic with the ful=
-l
->>> call stack in place, and in a dedicated path, i.e. outside of the basic
->>> enter/exit code.  An exit handler probably doesn't fundamentally change
->>> what userspace can do with respect to debugging/reporting, but I think
->>> it would actually simplify some userspace implementations, e.g. I'd use
->>> it in my tests like so:
->>>=20
->>> long fault_handler(struct sgx_enclave_exit_info *exit_info, void *tcs, v=
-oid *priv)
->>> {
->>>        if (exit_info->leaf =3D=3D SGX_EEXIT)
->>>                return 0;
->>>=20
->>>        <report exception and die/hang>
->>> }
->>>=20
->>=20
->> Hmm.  That't not totally silly, although you could accomplish almost
->> the same thing by wrapping the vDSO helper in another function.
->=20
-> True, but I think there's value in having the option to intercept an
-> exception at the exact(ish) point of failure, without having to return
-> up the stack.
->=20
-> The enclave has full access to the process' memory space, including the
-> untrsuted stack.  It's not too far fetched to envision a scenario where
-> the enclave corrupts the stack even if the enclave isn't intentionally
-> using the stack, e.g. the host passes in variable that a points at the
-> stack instead of whatever memory is supposed to be shared between the
-> enclave and host.  It'd be nice to have the ability to triage something
-> like that without having to e.g. configure breakpoints on the stack.
+Ok, This can be added.
 
-Ah, I see. You=E2=80=99re saying that, if the non-enclave stare is corrupted=
- such that RIP  is okay and RSP still points somewhere reasonable but the re=
-turn address is garbage, then we can at least get to the fault handler and p=
-rint something?  This only works if the fault handler pointer itself is okay=
-, though, which somewhat limits the usefulness, given that its pointer is qu=
-ite likely to be on the stack very close to the return address.
-
-I really wish the ENCLU instruction had seen fit to preserve some registers.=
+I think Patch [2/9] is the only leftover place where this
+check could be removed.
