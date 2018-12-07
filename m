@@ -2,174 +2,248 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9837C07E85
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 10:43:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB858C07E85
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 10:44:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AAF69208E7
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 10:43:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AAF69208E7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 7C3A020661
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 10:44:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C3A020661
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xs4all.nl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726021AbeLGKnU (ORCPT
+        id S1726050AbeLGKoh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 05:43:20 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:60596 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725985AbeLGKnU (ORCPT
+        Fri, 7 Dec 2018 05:44:37 -0500
+Received: from lb1-smtp-cloud7.xs4all.net ([194.109.24.24]:59925 "EHLO
+        lb1-smtp-cloud7.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725987AbeLGKog (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 05:43:20 -0500
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wB7AebcR007005
-        for <linux-kernel@vger.kernel.org>; Fri, 7 Dec 2018 05:43:18 -0500
-Received: from e16.ny.us.ibm.com (e16.ny.us.ibm.com [129.33.205.206])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2p7py39ba2-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Dec 2018 05:43:18 -0500
-Received: from localhost
-        by e16.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <ego@linux.vnet.ibm.com>;
-        Fri, 7 Dec 2018 10:43:17 -0000
-Received: from b01cxnp23033.gho.pok.ibm.com (9.57.198.28)
-        by e16.ny.us.ibm.com (146.89.104.203) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 7 Dec 2018 10:43:14 -0000
-Received: from b01ledav002.gho.pok.ibm.com (b01ledav002.gho.pok.ibm.com [9.57.199.107])
-        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wB7AhDR516711754
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 7 Dec 2018 10:43:13 GMT
-Received: from b01ledav002.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 6C05B124052;
-        Fri,  7 Dec 2018 10:43:13 +0000 (GMT)
-Received: from b01ledav002.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 297E2124054;
-        Fri,  7 Dec 2018 10:43:13 +0000 (GMT)
-Received: from sofia.ibm.com (unknown [9.124.35.115])
-        by b01ledav002.gho.pok.ibm.com (Postfix) with ESMTP;
-        Fri,  7 Dec 2018 10:43:13 +0000 (GMT)
-Received: by sofia.ibm.com (Postfix, from userid 1000)
-        id A49F82E4C9C; Fri,  7 Dec 2018 16:13:11 +0530 (IST)
-Date:   Fri, 7 Dec 2018 16:13:11 +0530
-From:   Gautham R Shenoy <ego@linux.vnet.ibm.com>
-To:     Thiago Jung Bauermann <bauerman@linux.ibm.com>
-Cc:     "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Tyrel Datwyler <tyreld@linux.vnet.ibm.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Vaidyanathan Srinivasan <svaidy@linux.vnet.ibm.com>,
-        Michael Bringmann <mwb@linux.vnet.ibm.com>,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] pseries/hotplug: Add more delay in pseries_cpu_die while
- waiting for rtas-stop
-Reply-To: ego@linux.vnet.ibm.com
-References: <1544095908-2414-1-git-send-email-ego@linux.vnet.ibm.com>
- <87a7li5zv2.fsf@morokweng.localdomain>
+        Fri, 7 Dec 2018 05:44:36 -0500
+Received: from [192.168.2.10] ([212.251.195.8])
+        by smtp-cloud7.xs4all.net with ESMTPA
+        id VDcTg5jhGgJOKVDcWgYMVo; Fri, 07 Dec 2018 11:44:33 +0100
+Subject: Re: [PATCH v4] media: vivid: Improve timestamping
+To:     Gabriel Francisco Mandaji <gfmandaji@gmail.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     lkcamp@lists.libreplanetbr.org
+References: <20181202134538.GA18886@gfm-note>
+From:   Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <abdac455-669f-de3d-729d-2c18d188046b@xs4all.nl>
+Date:   Fri, 7 Dec 2018 11:44:29 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87a7li5zv2.fsf@morokweng.localdomain>
-User-Agent: Mutt/1.5.23 (2014-03-12)
-X-TM-AS-GCONF: 00
-x-cbid: 18120710-0072-0000-0000-000003D5E190
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010187; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000270; SDB=6.01128244; UDB=6.00582089; IPR=6.00908375;
- MB=3.00024554; MTD=3.00000008; XFM=3.00000015; UTC=2018-12-07 10:43:16
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18120710-0073-0000-0000-00004A5CE9B8
-Message-Id: <20181207104311.GA11431@in.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-07_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1812070093
+In-Reply-To: <20181202134538.GA18886@gfm-note>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfH3A/wBPNB+IHPeZdOX8gB0O9+d2S2qOjaqNMmKqoKSGQ7ojst2DLQ478a/riBi/pOpgxagCcxP6J/Em0HPi6IvxSi9KJ/lNuO+ad00sJJHB67rqt7TI
+ awIiQ3MHpgmxdkBgBiq2+CTTEsz+wzCO9pRr4rt2YlWUF+NTr3H6JuHp9saIvpAOfiDLseXhr52eeGll+3H524mYSCc1Z9b6DzWpPxxXB/FLwuT798+/lskv
+ nhi/29B5AtoajKrmGimyxJgOAyp8BY/cOlSr3uD9R80ytng7QDMhsfg3Pd/nDJgzDFkF6/etVz6+EZeBi6iVUSVHsZRslhWwkT9TLw24KgA=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Thiago,
+Hi Gabriel,
 
-On Thu, Dec 06, 2018 at 03:28:17PM -0200, Thiago Jung Bauermann wrote:
-
-[..snip..]
-
+On 12/02/2018 02:45 PM, Gabriel Francisco Mandaji wrote:
+> Simulate a more precise timestamp by calculating it based on the
+> current framerate.
 > 
-> 
-> I posted a similar patch last year, but I wasn't able to arrive at a
-> root cause analysis like you did:
-> 
->
-https://lists.ozlabs.org/pipermail/linuxppc-dev/2017-February/153734.html
+> Signed-off-by: Gabriel Francisco Mandaji <gfmandaji@gmail.com>
+> ---
+> Changes in v2:
+>     - fix spelling
+>     - end of exposure is offset by 90% of the frame period
+>     - fix timestamp calculation for FIELD_ALTERNATE (untested)
+>     - timestamp is now calculated and set from vivid_thread_cap_tick()
+>     - capture vbi uses the same timestamp as non-vbi, but offset by 5%
+>     - timestamp stays consistent even if the FPS changes
+>     - tested with dropped frames
+> Changes in v3:
+>     - fix calculating offset for 'End of Frame'
+>     - fix changing 'Timestamp Source' mid-capture
+>     - change order of operation when calculating the VBI's offset
+> Changes in v4:
+>     - fix calculations with 64 bit values
 
-Ah! Nice. So this is a known problem.
+I decided to accept this patch. The only change I made was to replace the
+do_div(f_period, 2) by a bit shift.
 
+Thanks for working on this!
+
+Can you look at adding the same support for the video output as well?
+And also SDR capture (in a separate patch).
+
+Regards,
+
+	Hans
+
+> ---
+>  drivers/media/platform/vivid/vivid-core.h        |  3 ++
+>  drivers/media/platform/vivid/vivid-kthread-cap.c | 51 +++++++++++++++++-------
+>  drivers/media/platform/vivid/vivid-vbi-cap.c     |  4 --
+>  3 files changed, 40 insertions(+), 18 deletions(-)
 > 
-> One thing I realized after I posted the patch was that in my case, the
-> CPU was crashing inside RTAS. From the NIP and LR in the trace above it
-> looks like it's crashing in RTAS in your case as well.
+> diff --git a/drivers/media/platform/vivid/vivid-core.h b/drivers/media/platform/vivid/vivid-core.h
+> index 1891254..f7b2a0b 100644
+> --- a/drivers/media/platform/vivid/vivid-core.h
+> +++ b/drivers/media/platform/vivid/vivid-core.h
+> @@ -392,6 +392,9 @@ struct vivid_dev {
+>  	/* thread for generating video capture stream */
+>  	struct task_struct		*kthread_vid_cap;
+>  	unsigned long			jiffies_vid_cap;
+> +	u64				cap_stream_start;
+> +	u64				cap_frame_period;
+> +	u64				cap_frame_eof_offset;
+>  	u32				cap_seq_offset;
+>  	u32				cap_seq_count;
+>  	bool				cap_seq_resync;
+> diff --git a/drivers/media/platform/vivid/vivid-kthread-cap.c b/drivers/media/platform/vivid/vivid-kthread-cap.c
+> index 46e46e3..91c7c67 100644
+> --- a/drivers/media/platform/vivid/vivid-kthread-cap.c
+> +++ b/drivers/media/platform/vivid/vivid-kthread-cap.c
+> @@ -425,12 +425,6 @@ static void vivid_fillbuff(struct vivid_dev *dev, struct vivid_buffer *buf)
+>  		is_loop = true;
+>  
+>  	buf->vb.sequence = dev->vid_cap_seq_count;
+> -	/*
+> -	 * Take the timestamp now if the timestamp source is set to
+> -	 * "Start of Exposure".
+> -	 */
+> -	if (dev->tstamp_src_is_soe)
+> -		buf->vb.vb2_buf.timestamp = ktime_get_ns();
+>  	if (dev->field_cap == V4L2_FIELD_ALTERNATE) {
+>  		/*
+>  		 * 60 Hz standards start with the bottom field, 50 Hz standards
+> @@ -554,14 +548,6 @@ static void vivid_fillbuff(struct vivid_dev *dev, struct vivid_buffer *buf)
+>  			}
+>  		}
+>  	}
+> -
+> -	/*
+> -	 * If "End of Frame" is specified at the timestamp source, then take
+> -	 * the timestamp now.
+> -	 */
+> -	if (!dev->tstamp_src_is_soe)
+> -		buf->vb.vb2_buf.timestamp = ktime_get_ns();
+> -	buf->vb.vb2_buf.timestamp += dev->time_wrap_offset;
+>  }
+>  
+>  /*
+> @@ -667,10 +653,28 @@ static void vivid_overlay(struct vivid_dev *dev, struct vivid_buffer *buf)
+>  	}
+>  }
+>  
+> +static void vivid_cap_update_frame_period(struct vivid_dev *dev)
+> +{
+> +	u64 f_period;
+> +
+> +	f_period = (u64)dev->timeperframe_vid_cap.numerator * 1000000000;
+> +	do_div(f_period, dev->timeperframe_vid_cap.denominator);
+> +	if (dev->field_cap == V4L2_FIELD_ALTERNATE)
+> +		do_div(f_period, 2);
+> +	/*
+> +	 * If "End of Frame", then offset the exposure time by 0.9
+> +	 * of the frame period.
+> +	 */
+> +	dev->cap_frame_eof_offset = f_period * 9;
+> +	do_div(dev->cap_frame_eof_offset, 10);
+> +	dev->cap_frame_period = f_period;
+> +}
+> +
+>  static void vivid_thread_vid_cap_tick(struct vivid_dev *dev, int dropped_bufs)
+>  {
+>  	struct vivid_buffer *vid_cap_buf = NULL;
+>  	struct vivid_buffer *vbi_cap_buf = NULL;
+> +	u64 f_time = 0;
+>  
+>  	dprintk(dev, 1, "Video Capture Thread Tick\n");
+>  
+> @@ -702,6 +706,11 @@ static void vivid_thread_vid_cap_tick(struct vivid_dev *dev, int dropped_bufs)
+>  	if (!vid_cap_buf && !vbi_cap_buf)
+>  		goto update_mv;
+>  
+> +	f_time = dev->cap_frame_period * dev->vid_cap_seq_count +
+> +		 dev->cap_stream_start + dev->time_wrap_offset;
+> +	if (!dev->tstamp_src_is_soe)
+> +		f_time += dev->cap_frame_eof_offset;
+> +
+>  	if (vid_cap_buf) {
+>  		v4l2_ctrl_request_setup(vid_cap_buf->vb.vb2_buf.req_obj.req,
+>  					&dev->ctrl_hdl_vid_cap);
+> @@ -721,9 +730,13 @@ static void vivid_thread_vid_cap_tick(struct vivid_dev *dev, int dropped_bufs)
+>  				VB2_BUF_STATE_ERROR : VB2_BUF_STATE_DONE);
+>  		dprintk(dev, 2, "vid_cap buffer %d done\n",
+>  				vid_cap_buf->vb.vb2_buf.index);
+> +
+> +		vid_cap_buf->vb.vb2_buf.timestamp = f_time;
+>  	}
+>  
+>  	if (vbi_cap_buf) {
+> +		u64 vbi_period;
+> +
+>  		v4l2_ctrl_request_setup(vbi_cap_buf->vb.vb2_buf.req_obj.req,
+>  					&dev->ctrl_hdl_vbi_cap);
+>  		if (dev->stream_sliced_vbi_cap)
+> @@ -736,6 +749,11 @@ static void vivid_thread_vid_cap_tick(struct vivid_dev *dev, int dropped_bufs)
+>  				VB2_BUF_STATE_ERROR : VB2_BUF_STATE_DONE);
+>  		dprintk(dev, 2, "vbi_cap %d done\n",
+>  				vbi_cap_buf->vb.vb2_buf.index);
+> +
+> +		/* If capturing a VBI, offset by 0.05 */
+> +		vbi_period = dev->cap_frame_period * 5;
+> +		do_div(vbi_period, 100);
+> +		vbi_cap_buf->vb.vb2_buf.timestamp = f_time + vbi_period;
+>  	}
+>  	dev->dqbuf_error = false;
+>  
+> @@ -767,6 +785,8 @@ static int vivid_thread_vid_cap(void *data)
+>  	dev->cap_seq_count = 0;
+>  	dev->cap_seq_resync = false;
+>  	dev->jiffies_vid_cap = jiffies;
+> +	dev->cap_stream_start = ktime_get_ns();
+> +	vivid_cap_update_frame_period(dev);
+>  
+>  	for (;;) {
+>  		try_to_freeze();
+> @@ -779,6 +799,9 @@ static int vivid_thread_vid_cap(void *data)
+>  			dev->jiffies_vid_cap = cur_jiffies;
+>  			dev->cap_seq_offset = dev->cap_seq_count + 1;
+>  			dev->cap_seq_count = 0;
+> +			dev->cap_stream_start += dev->cap_frame_period *
+> +						 dev->cap_seq_offset;
+> +			vivid_cap_update_frame_period(dev);
+>  			dev->cap_seq_resync = false;
+>  		}
+>  		numerator = dev->timeperframe_vid_cap.numerator;
+> diff --git a/drivers/media/platform/vivid/vivid-vbi-cap.c b/drivers/media/platform/vivid/vivid-vbi-cap.c
+> index 903cebe..17aa4b0 100644
+> --- a/drivers/media/platform/vivid/vivid-vbi-cap.c
+> +++ b/drivers/media/platform/vivid/vivid-vbi-cap.c
+> @@ -95,8 +95,6 @@ void vivid_raw_vbi_cap_process(struct vivid_dev *dev, struct vivid_buffer *buf)
+>  
+>  	if (!VIVID_INVALID_SIGNAL(dev->std_signal_mode))
+>  		vivid_vbi_gen_raw(&dev->vbi_gen, &vbi, vbuf);
+> -
+> -	buf->vb.vb2_buf.timestamp = ktime_get_ns() + dev->time_wrap_offset;
+>  }
+>  
+>  
+> @@ -119,8 +117,6 @@ void vivid_sliced_vbi_cap_process(struct vivid_dev *dev,
+>  		for (i = 0; i < 25; i++)
+>  			vbuf[i] = dev->vbi_gen.data[i];
+>  	}
+> -
+> -	buf->vb.vb2_buf.timestamp = ktime_get_ns() + dev->time_wrap_offset;
+>  }
+>  
+>  static int vbi_cap_queue_setup(struct vb2_queue *vq,
 > 
-> Michael Ellerman had two comments on my patch:
-> 
-> 1. Regardless of the underlying bug, the kernel shouldn't crash so we
-> need a patch making it more resilient to this failure.
-> 
-> 2. The wait loop should use udelay() so that the loop will actually take
-> a set amount of wall time, rather than just cycles.
-> 
-> Regarding 1. if the problem is that the kernel is causing RTAS to crash
-> because it calls it in a way that's unsupported, then I don't see how we
-> can make the kernel more resilient. We have to make the kernel respect
-> RTAS' restrictions (or alternatively, poke RTAS devs to make RTAS fail
-> gracefuly in these conditions).
-
-
-I agree that the Kernel has to respect RTAS's restriction. The PAPR
-v2.8.1, Requirement R1-7.2.3-8 under section 7.2.3 says the following:
-
-    "The stop-self service needs to be serialized with calls to the
-     stop-self, start-cpu, and set-power-level services. The OS must
-     be able to call RTAS services on other processors while the
-     processor is stopped or being stopped"
-
-Thus the onus is on the OS to ensure that there are no concurrent rtas
-calls with "stop-self" token.
-
-> 
-> Regarding 2. I implemented a new version of my patch (posted below) but
-> I was never able to test it because I couldn't access a system where the
-> problem was reproducible anymore.
-> 
-> There's also a race between the CPU driving the unplug and the CPU being
-> unplugged which I think is not easy for the CPU being unplugged to win,
-> which makes the busy loop in pseries_cpu_die() a bit fragile. I describe
-> the race in the patch description.
-> 
-> My solution to make the race less tight is to make the CPU driving the
-> unplug to only start the busy loop only after the CPU being unplugged is
-> in the CPU_STATE_OFFLINE state. At that point, we know that it either is
-> about to call RTAS or it already has.
-
-Ah, yes this is good optimization. Though, I think we ought to
-unconditionally wait until the target CPU has woken up from CEDE and
-changed its state to CPU_STATE_OFFLINE. After if PROD failed, then we
-would have caught it in dlpar_offline_cpu() itself.
-
-> 
-> Do you think this makes sense? If you do, would you mind testing my
-> patch? You can change the timeouts and delays if you want. To be honest
-> they're just guesses on my part...
-
-Sure. I will test the patch and report back.
-
---
-Thanks and Regards
-gautham.
 
