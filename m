@@ -2,190 +2,184 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A513C07E85
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 03:47:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 509E6C07E85
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 03:48:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3FD5E20837
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 03:47:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0146520837
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 03:48:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="w7SLfpnm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3FD5E20837
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+	dkim=pass (2048-bit key) header.d=endlessm-com.20150623.gappssmtp.com header.i=@endlessm-com.20150623.gappssmtp.com header.b="GC0rqMO9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0146520837
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=endlessm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726088AbeLGDrS (ORCPT
+        id S1726034AbeLGDsr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 22:47:18 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:40130 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725989AbeLGDrR (ORCPT
+        Thu, 6 Dec 2018 22:48:47 -0500
+Received: from mail-vs1-f65.google.com ([209.85.217.65]:40365 "EHLO
+        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725986AbeLGDsr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 22:47:17 -0500
-Received: by mail-pf1-f193.google.com with SMTP id i12so1235440pfo.7
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Dec 2018 19:47:16 -0800 (PST)
+        Thu, 6 Dec 2018 22:48:47 -0500
+Received: by mail-vs1-f65.google.com with SMTP id z3so1681711vsf.7
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Dec 2018 19:48:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=w35DSk4qfnRK16yaEcR4sBBBm709E4JKITl908+WQOY=;
-        b=w7SLfpnmtzd6XCFkvZ4FJAxwooekL+CKf4JtjIKFqa+H3WNrjn0YxPfBEbW9xOfv96
-         Bz4IsT6adXY/HiOS0ESTbS6IYV2WxLHVG49G6b9b8BOuiyMlyFxTmxygBCPshyM6mgvy
-         KBkjkjulFq0PdUdLuAAJqoHozYSNZB4Z1Z9JJkWTXxV8ZrwQOU+6dQ4BpzV2oKOSzdtH
-         7QFTwMgppibomrbN45sl021qwOLRxEYn7hV7kqIKk89R487KP7GQcc1DLpiU4g222Dr7
-         F7h5ZkGOWB1Ouo/iM7jK9MtJtZUUKKi04QtpDVpwovwxjzm1sgKvM0M5axqJ7vyhWDzb
-         akqw==
+        d=endlessm-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=mje8yeM+IKWT/rJe2HtO4QHciU9m7otXlYZ1MuNAtRU=;
+        b=GC0rqMO9639yjXcz03mJS98E7uXn1HR1sWLxJHA7fILsUlLVpjVcEHvwdMFxCw3b8I
+         bRmX/47GeW2p64NdML46Tf3sb6TI/o0cedX2qDc7KefBU54GFV5p8pThDB0prqA3m3h4
+         +vnAFnciwNwGfyupb0rSg0+Jmt1Xnli9igdKRLWy+PQuI7TK/4e63iKRlmRMJKC1DOBy
+         jI3/ZNXRdVvF2ipPegldneTYN7/3D8qAGtzH8ScMKygnMJob1XT6FhByb5BOavl5Szis
+         KWEaZgbJ+UoWvOJeeFKMMTaOzPgogZui65ucRlr9XsSVoTObgbwYPaHwSgLM4oH1K9l7
+         APAg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=w35DSk4qfnRK16yaEcR4sBBBm709E4JKITl908+WQOY=;
-        b=Nl7ut/xbiljRSjQyRppcJnAt8mSVDb7a3uUlCToPlaGPkUsL5fuFMNTiWTRJ0fWQMu
-         v8go3ePzZmmuwEJqnCxXQtQyn8OShwHTPkB9lNbGFep+AlK2mjnC6TUdXzUZsSqs2J0/
-         +9ovjsGoHNgoz7HHDnTnH3xswoyX5TY6fgNPp3CJdnKgNHYle71Vb78XNKlIIzMV9OoB
-         ruvJ1rgsfxG5fSR23y+t4/5NoDG//fasxWKIwZUsy5L/gj5a5mEjNSp3Xs1DxMO2Q/pH
-         xK5xDA9Wk5v4ZHgKfUt4Ob+aKNZoDfNyFazs/uuScUfIMc3w71DG7up09JWyvgMh30xE
-         MgGg==
-X-Gm-Message-State: AA+aEWbV/FQF4bXcZzuwwyy9g6zJy2jw3FkWzmUVh6FEl5qUU8c65hu3
-        Qu8XijeD0+jN5k9+KLKvMAajXd6s39o=
-X-Google-Smtp-Source: AFSGD/UEfRlBVBBzwdqrLiHrud/dLEkqZbmobZUrmKHv3l9+/BcxCW/jB2KAkV5p/yXuSxHWZwM+GQ==
-X-Received: by 2002:a63:8e43:: with SMTP id k64mr582535pge.346.1544154435776;
-        Thu, 06 Dec 2018 19:47:15 -0800 (PST)
-Received: from [192.168.1.121] (66.29.188.166.static.utbb.net. [66.29.188.166])
-        by smtp.gmail.com with ESMTPSA id u29sm2178451pgn.23.2018.12.06.19.47.13
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 06 Dec 2018 19:47:14 -0800 (PST)
-Subject: Re: [PATCH V11 0/4] blk-mq: refactor code of issue directly
-To:     "jianchao.wang" <jianchao.w.wang@oracle.com>
-Cc:     ming.lei@redhat.com, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <1544152185-32667-1-git-send-email-jianchao.w.wang@oracle.com>
- <b2bcbb76-af6f-7660-2bc3-9796338cccff@kernel.dk>
- <0adf3419-bcce-93d8-51fb-aee7cbb5ae17@oracle.com>
- <16205e68-aa5e-c59d-364e-4164a0e51dc7@kernel.dk>
- <f052c016-e521-9f12-f4e5-d65f3814643a@kernel.dk>
- <a59a3a1d-94fb-938d-7ddf-969185cd5b48@oracle.com>
- <1e183b77-2c4d-71ff-b019-2b1070d2ed6b@kernel.dk>
- <38eb7c50-dfad-d9cb-f8ab-a8f5250b0ed7@oracle.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <bd99f969-5eed-5365-6aa1-ce9b85dc84d6@kernel.dk>
-Date:   Thu, 6 Dec 2018 20:47:12 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=mje8yeM+IKWT/rJe2HtO4QHciU9m7otXlYZ1MuNAtRU=;
+        b=Xb7j/UTPPL5LRoMx2NlnZVtYx6Qw3bGcC5dYKVi50uqyW/qmWtc3OcsS4h3vIcHHI5
+         1i/H+Lz0uzZfq3VmIFOEQVcu1T0ad+QQ6RfluXV4LVKpBh9kl8HJoUJjR1a1IXKStwIk
+         SswvPmiN/899h1QCRFHzTVv2Rh9GILKBB8K6abpUszLWRNXSz5jNRFVSkvKZRBhdirFm
+         b16ri87VM3wUPd9iWzXTHXpbKMdNCoGrZ/4/V4fEgyRVWTCeO+HxiN76VX2so0FxrWuS
+         bMLo8+eIoktFHPGhkpOzxh8MtHsghxN0atCZ8Q84YWUhTj3nBy9Epwi+YPfM3F7GDfLM
+         6CQw==
+X-Gm-Message-State: AA+aEWaY8zMx6lyvPs5fFRgSazd5PkJMx0qIsvU0rFyKHxwL5rjKvdBn
+        /AbqhpDG9jUrFZMSrogQFkxxx04b7mrYN3P+W0LCkg==
+X-Google-Smtp-Source: AFSGD/VOLcMRsT8cPfE2y1vhC4suIyNnd7YD71+M7voJvgHpBKeWcSRxfuzFjt4bcP1ZwVqO1eaBBkk/TZ5Zmd/5wYk=
+X-Received: by 2002:a67:8a81:: with SMTP id m123mr239810vsd.206.1544154525551;
+ Thu, 06 Dec 2018 19:48:45 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <38eb7c50-dfad-d9cb-f8ab-a8f5250b0ed7@oracle.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <CAPpJ_eez=1ie2B8rA=GeW+hx7kQU0wBAhW3XCBX3zGPW+kXDZA@mail.gmail.com>
+ <20181206084554.4728-1-jian-hong@endlessm.com> <20181206084554.4728-3-jian-hong@endlessm.com>
+ <6FAB7C47BCF00940BB0999A99BE3547A18420211@RTITMBSV02.realtek.com.tw>
+In-Reply-To: <6FAB7C47BCF00940BB0999A99BE3547A18420211@RTITMBSV02.realtek.com.tw>
+From:   Jian-Hong Pan <jian-hong@endlessm.com>
+Date:   Fri, 7 Dec 2018 11:48:08 +0800
+Message-ID: <CAPpJ_ed36NyopArw98qhkstAm=L9A4=xiLPaa2ju0+qMR0tE9Q@mail.gmail.com>
+Subject: Re: [PATCH v2 2/3] ALSA: hda/realtek: Enable audio jacks of ASUS
+ UX533FD with ALC294
+To:     Kailang Yang <kailang@realtek.com>
+Cc:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        Hui Wang <hui.wang@canonical.com>, alsa-devel@alsa-project.org,
+        Linux Kernel <linux-kernel@vger.kernel.org>,
+        Linux Upstreaming Team <linux@endlessm.com>,
+        Daniel Drake <drake@endlessm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/6/18 8:46 PM, jianchao.wang wrote:
-> 
-> 
-> On 12/7/18 11:42 AM, Jens Axboe wrote:
->> On 12/6/18 8:41 PM, jianchao.wang wrote:
->>>
->>>
->>> On 12/7/18 11:34 AM, Jens Axboe wrote:
->>>> On 12/6/18 8:32 PM, Jens Axboe wrote:
->>>>> On 12/6/18 8:26 PM, jianchao.wang wrote:
->>>>>>
->>>>>>
->>>>>> On 12/7/18 11:16 AM, Jens Axboe wrote:
->>>>>>> On 12/6/18 8:09 PM, Jianchao Wang wrote:
->>>>>>>> Hi Jens
->>>>>>>>
->>>>>>>> Please consider this patchset for 4.21.
->>>>>>>>
->>>>>>>> It refactors the code of issue request directly to unify the interface
->>>>>>>> and make the code clearer and more readable.
->>>>>>>>
->>>>>>>> This patch set is rebased on the recent for-4.21/block and add the 1st
->>>>>>>> patch which inserts the non-read-write request to hctx dispatch
->>>>>>>> list to avoid to involve merge and io scheduler when bypass_insert
->>>>>>>> is true, otherwise, inserting is ignored, BLK_STS_RESOURCE is returned
->>>>>>>> and the caller will fail forever.
->>>>>>>>
->>>>>>>> The 2nd patch refactors the code of issue request directly to unify the
->>>>>>>> helper interface which could handle all the cases.
->>>>>>>>
->>>>>>>> The 3rd patch make blk_mq_sched_insert_requests issue requests directly
->>>>>>>> with 'bypass' false, then it needn't to handle the non-issued requests
->>>>>>>> any more.
->>>>>>>>
->>>>>>>> The 4th patch replace and kill the blk_mq_request_issue_directly.
->>>>>>>
->>>>>>> Sorry to keep iterating on this, but let's default to inserting to
->>>>>>> the dispatch list if we ever see busy from a direct dispatch. I'm fine
->>>>>>> with doing that for 4.21, as suggested by Ming, I just didn't want to
->>>>>>> fiddle with it for 4.20. This will prevent any merging on the request
->>>>>>> going forward, which I think is a much safer default.
->>>>>>>
->>>>>>> You do this already for some cases. Let's do it unconditionally for
->>>>>>> a request that was ever subjected to ->queue_rq() and we didn't either
->>>>>>> error or finish after the fact.
->>>>>>>
->>>>>> I have done it in this version if I get your point correctly.
->>>>>> Please refer to the following fragment in the 2nd patch.
->>>>>>
->>>>>> +	/*
->>>>>> +	 * If the request is issued unsuccessfully with
->>>>>> +	 * BLK_STS_DEV_RESOURCE or BLK_STS_RESOURCE, insert
->>>>>> +	 * the request to hctx dispatch list due to attached
->>>>>> +	 * lldd resource.
->>>>>> +	 */
->>>>>> +	force = true;
->>>>>> +	ret = __blk_mq_issue_directly(hctx, rq, cookie, last);
->>>>>> +out_unlock:
->>>>>> +	hctx_unlock(hctx, srcu_idx);
->>>>>> +out:
->>>>>> +	switch (ret) {
->>>>>> +	case BLK_STS_OK:
->>>>>> +		break;
->>>>>> +	case BLK_STS_DEV_RESOURCE:
->>>>>> +	case BLK_STS_RESOURCE:
->>>>>> +		if (force) {
->>>>>> +			blk_mq_request_bypass_insert(rq, run_queue);
->>>>>> +			ret = bypass ? BLK_STS_OK : ret;
->>>>>> +		} else if (!bypass) {
->>>>>> +			blk_mq_sched_insert_request(rq, false,
->>>>>> +						    run_queue, false);
->>>>>> +		}
->>>>>> +		break;
->>>>>> +	default:
->>>>>
->>>>> You are right, I missed that you set force = true before doing the
->>>>> issue. So this looks good to me!
->>>>
->>>> I applied your series. With this, we should be good to remove the
->>>> REQ_NOMERGE logic that was added for the corruption case, and the
->>>> blk_rq_can_direct_dispatch() as well?
->>>>
->>>
->>> Yes, it should be that.
->>> Every thing rejected by .queue_rq is ended or inserted into hctx dispatch
->>> list. And also direct-issue path is unified with normal path.
->>
->> Why are we doing that return value dance, depending on whether this
->> is a bypass insert or not? That seems confusing.
->>
-> 
-> For the 'bypass == false' case, it need to know whether the request is issued
-> successfully. This is for the 3rd patch.
-> I used to use the returned cookie to identify the result, but you don't like it.
-> So I have to use this return value.
+Kailang <kailang@realtek.com> =E6=96=BC 2018=E5=B9=B412=E6=9C=887=E6=97=A5 =
+=E9=80=B1=E4=BA=94 =E4=B8=8A=E5=8D=8811:32=E5=AF=AB=E9=81=93=EF=BC=9A
+>
+> Hi Jian Hong,
+>
+> Could I know who give you the value as below?
+>
+> +                       { 0x20, AC_VERB_SET_COEF_INDEX, 0x10 },
+> +                       { 0x20, 0x4c4, 0x20 },
+> +                       { 0x20, AC_VERB_SET_COEF_INDEX, 0x40 },
+> +                       { 0x20, 0x488, 0x00 },
 
-Makes sense, but could probably do with a comment. I'm going to let the
-series float for a day or two to ensure others get a chance to review it,
-then we can move forward.
+A module maker.
 
--- 
-Jens Axboe
+Regards,
+Jian-Hong Pan
 
+> -----Original Message-----
+> From: Jian-Hong Pan <jian-hong@endlessm.com>
+> Sent: Thursday, December 6, 2018 4:46 PM
+> To: Jaroslav Kysela <perex@perex.cz>; Takashi Iwai <tiwai@suse.com>; Kail=
+ang <kailang@realtek.com>
+> Cc: Hui Wang <hui.wang@canonical.com>; alsa-devel@alsa-project.org; linux=
+-kernel@vger.kernel.org; linux@endlessm.com; Jian-Hong Pan <jian-hong@endle=
+ssm.com>; Daniel Drake <drake@endlessm.com>
+> Subject: [PATCH v2 2/3] ALSA: hda/realtek: Enable audio jacks of ASUS UX5=
+33FD with ALC294
+>
+> The ASUS UX533FD with ALC294 cannot detect the headset MIC and output thr=
+ough the internal speaker and the headphone until ALC294_FIXUP_ASUS_SPK_NOI=
+SE quirk applied.
+>
+> Signed-off-by: Daniel Drake <drake@endlessm.com>
+> Signed-off-by: Jian-Hong Pan <jian-hong@endlessm.com>
+> ---
+> v2:
+> - Modify the HDA verbs for UX333FA support
+> - Make a new ALC294_FIXUP_ASUS_HEADSET_MIC quirk for ALC294 chain
+> - .chain_id =3D ALC256_FIXUP_ASUS_HEADSET_MODE  =3D=3D> change to ALC269_=
+FIXUP_HEADSET_MODE_NO_HP_MIC
+>
+>  sound/pci/hda/patch_realtek.c | 25 +++++++++++++++++++++++++
+>  1 file changed, 25 insertions(+)
+>
+> diff --git a/sound/pci/hda/patch_realtek.c b/sound/pci/hda/patch_realtek.=
+c index d32e50b1ed60..1525bcdf96e8 100644
+> --- a/sound/pci/hda/patch_realtek.c
+> +++ b/sound/pci/hda/patch_realtek.c
+> @@ -5518,6 +5518,8 @@ enum {
+>         ALC295_FIXUP_HP_AUTO_MUTE,
+>         ALC286_FIXUP_ACER_AIO_MIC_NO_PRESENCE,
+>         ALC294_FIXUP_ASUS_MIC,
+> +       ALC294_FIXUP_ASUS_HEADSET_MIC,
+> +       ALC294_FIXUP_ASUS_SPK_NOISE,
+>  };
+>
+>  static const struct hda_fixup alc269_fixups[] =3D { @@ -6414,6 +6416,28 =
+@@ static const struct hda_fixup alc269_fixups[] =3D {
+>                 .chained =3D true,
+>                 .chain_id =3D ALC269_FIXUP_HEADSET_MODE_NO_HP_MIC
+>         },
+> +       [ALC294_FIXUP_ASUS_HEADSET_MIC] =3D {
+> +               .type =3D HDA_FIXUP_PINS,
+> +               .v.pins =3D (const struct hda_pintbl[]) {
+> +                       { 0x19, 0x01a1113c }, /* use as headset mic, with=
+out its own jack detect */
+> +                       { }
+> +               },
+> +               .chained =3D true,
+> +               .chain_id =3D ALC269_FIXUP_HEADSET_MODE_NO_HP_MIC
+> +       },
+> +       [ALC294_FIXUP_ASUS_SPK_NOISE] =3D {
+> +               .type =3D HDA_FIXUP_VERBS,
+> +               .v.verbs =3D (const struct hda_verb[]) {
+> +                       /* Set EAPD high */
+> +                       { 0x20, AC_VERB_SET_COEF_INDEX, 0x10 },
+> +                       { 0x20, 0x4c4, 0x20 },
+> +                       { 0x20, AC_VERB_SET_COEF_INDEX, 0x40 },
+> +                       { 0x20, 0x488, 0x00 },
+> +                       { }
+> +               },
+> +               .chained =3D true,
+> +               .chain_id =3D ALC294_FIXUP_ASUS_HEADSET_MIC
+> +       },
+>  };
+>
+>  static const struct snd_pci_quirk alc269_fixup_tbl[] =3D { @@ -6556,6 +6=
+580,7 @@ static const struct snd_pci_quirk alc269_fixup_tbl[] =3D {
+>         SND_PCI_QUIRK(0x1043, 0x12e0, "ASUS X541SA", ALC256_FIXUP_ASUS_MI=
+C),
+>         SND_PCI_QUIRK(0x1043, 0x13b0, "ASUS Z550SA", ALC256_FIXUP_ASUS_MI=
+C),
+>         SND_PCI_QUIRK(0x1043, 0x1427, "Asus Zenbook UX31E", ALC269VB_FIXU=
+P_ASUS_ZENBOOK),
+> +       SND_PCI_QUIRK(0x1043, 0x14a1, "ASUS UX533FD",
+> +ALC294_FIXUP_ASUS_SPK_NOISE),
+>         SND_PCI_QUIRK(0x1043, 0x1517, "Asus Zenbook UX31A", ALC269VB_FIXU=
+P_ASUS_ZENBOOK_UX31A),
+>         SND_PCI_QUIRK(0x1043, 0x16e3, "ASUS UX50", ALC269_FIXUP_STEREO_DM=
+IC),
+>         SND_PCI_QUIRK(0x1043, 0x1a13, "Asus G73Jw", ALC269_FIXUP_ASUS_G73=
+JW),
+> --
+> 2.11.0
+>
