@@ -2,104 +2,89 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 673B2C65BAF
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 10:26:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B84FBC64EB1
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 10:28:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E58A20989
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 10:26:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="he5/fwmZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E58A20989
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 7D9E7208E7
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 10:28:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D9E7208E7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726065AbeLGK0u (ORCPT
+        id S1726029AbeLGK2i (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 05:26:50 -0500
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:35456 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725992AbeLGK0u (ORCPT
+        Fri, 7 Dec 2018 05:28:38 -0500
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:2102 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725976AbeLGK2i (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 05:26:50 -0500
-Received: by mail-oi1-f194.google.com with SMTP id v6so3001667oif.2;
-        Fri, 07 Dec 2018 02:26:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=HGLqBv9VTx+Qkeh6OznZaxEk9vgKm95sjYiJmxdO18g=;
-        b=he5/fwmZ+9HTN6QXrnWVRKUKud3dVGiAHDir/H6xFoRK14BiFYP31n5VMRVk+LwFJI
-         85Eb/JI+Lz6qGkRx03m2vvceGC7ld/3AnhVwSnj1tl3ZlDNPaOwm09HEyjcq9UhE7HBm
-         uGPUxsGiLPI+TOnrhhAvx6UnDspre96pu4bH8NtYnHf863wqzdKuv2mtqfq/E7QqpAIl
-         NmnVwnW8KNGMU/AKFdaDXu6/t6UQSz6bdyz3o1/4ao56HKOVtGxhFmw4xIzWGAF98V4p
-         FC/l72AUXw7IvaQj7prKhr2nSwBI/Uccm4qrbp/Hs6NWNAInvhNzQKf/gsJZOMkplOhe
-         YUXA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=HGLqBv9VTx+Qkeh6OznZaxEk9vgKm95sjYiJmxdO18g=;
-        b=MZRXpmM07kUxeGA0eVhVbz2c66VV5AN/X07G8/yADaTqs1Mrt68BxH5/PynVJ2YdSg
-         AiKFiMuvSKGiVg9J6jVsGWwOeLFX5/ZZf5DS8Grx+10oQq+GNg3LgGTDJTDnTKjp3i/1
-         BfQx8ufV1aXLnVBIOyf/cnSisCuJ/M0vTTT1yeKUUOo219gyv/AAyMdYVktvWpEDu984
-         ejU/YaAwO/EROWEgmxYoEu7ND1a5Rkzmp82j7L17XL9cg4bl0m86CPngEChuKDsrCAmW
-         8mFZ6vQlIrXPLvXQ/N8gXWR8vls6ZziukmPq0gRtISplnATBASyBvS10uHmpBhGbDXY2
-         iGJw==
-X-Gm-Message-State: AA+aEWZwxO+7I7veaCnPrduZwjqvBmRTtT+poZMMZ7Gp26TQKYuzl4o4
-        JXow+KWjs5z/R2F6+diKz7bfdZht+WgFJYso2uA=
-X-Google-Smtp-Source: AFSGD/UYaRGcSCWuuJ4hi27297yC7y7TDBDlQY6Cmly7DFl+ZSh/i6IiZ81ClIB12qd/sAQoWmfTkXkLThOfKleD+Rc=
-X-Received: by 2002:aca:cdd0:: with SMTP id d199mr975973oig.266.1544178409303;
- Fri, 07 Dec 2018 02:26:49 -0800 (PST)
+        Fri, 7 Dec 2018 05:28:38 -0500
+Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id wB7AQOQ2012297;
+        Fri, 7 Dec 2018 11:28:04 +0100
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2p3w2s9hpv-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Fri, 07 Dec 2018 11:28:04 +0100
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 7C82A3A;
+        Fri,  7 Dec 2018 10:28:03 +0000 (GMT)
+Received: from Webmail-eu.st.com (sfhdag3node1.st.com [10.75.127.7])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 50F6B2A17;
+        Fri,  7 Dec 2018 10:28:03 +0000 (GMT)
+Received: from SFHDAG3NODE2.st.com (10.75.127.8) by SFHDAG3NODE1.st.com
+ (10.75.127.7) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Fri, 7 Dec
+ 2018 11:28:04 +0100
+Received: from SFHDAG3NODE2.st.com ([fe80::b82f:1ce:8854:5b96]) by
+ SFHDAG3NODE2.st.com ([fe80::b82f:1ce:8854:5b96%20]) with mapi id
+ 15.00.1347.000; Fri, 7 Dec 2018 11:28:04 +0100
+From:   David HERNANDEZ SANCHEZ <david.hernandezsanchez@st.com>
+To:     Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre TORGUE <alexandre.torgue@st.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+CC:     "linux-stm32@st-md-mailman.stormreply.com" 
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: [PATCH] ARM: dts: stm32: Enable thermal sensor support on
+ STM32MP157c-ed1
+Thread-Topic: [PATCH] ARM: dts: stm32: Enable thermal sensor support on
+ STM32MP157c-ed1
+Thread-Index: AQHUjheJEnpwhyHooU+HoBCMfbMWLw==
+Date:   Fri, 7 Dec 2018 10:28:04 +0000
+Message-ID: <1544178482-30494-1-git-send-email-david.hernandezsanchez@st.com>
+Accept-Language: fr-FR, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.75.127.47]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <64AE5F7BD18D6941882D819B88A0C866@st.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-References: <1544072280-26932-1-git-send-email-Anson.Huang@nxp.com>
-In-Reply-To: <1544072280-26932-1-git-send-email-Anson.Huang@nxp.com>
-From:   Fabio Estevam <festevam@gmail.com>
-Date:   Fri, 7 Dec 2018 08:26:40 -0200
-Message-ID: <CAOMZO5Dw1CU6v8OkVC6iJpgbSom9yD7g5ToEdZQ-V_FoYngoDw@mail.gmail.com>
-Subject: Re: [PATCH] iio: magnetometer: mag3110: add optional vcc regulator
- operation support
-To:     Yongcai Huang <anson.huang@nxp.com>
-Cc:     Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald <pmeerw@pmeerw.net>, rtresidd@electromag.com.au,
-        linux-iio@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        NXP Linux Team <linux-imx@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-07_03:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Anson,
-
-On Thu, Dec 6, 2018 at 3:05 AM Anson Huang <anson.huang@nxp.com> wrote:
-
->  static int mag3110_request(struct mag3110_data *data)
-> @@ -469,17 +471,27 @@ static int mag3110_probe(struct i2c_client *client,
->         struct iio_dev *indio_dev;
->         int ret;
->
-> +       indio_dev = devm_iio_device_alloc(&client->dev, sizeof(*data));
-> +       if (!indio_dev)
-> +               return -ENOMEM;
-> +
-> +       data = iio_priv(indio_dev);
-> +
-> +       data->vcc_reg = devm_regulator_get_optional(&client->dev, "vcc");
-> +       if (!IS_ERR(data->vcc_reg)) {
-> +               ret = regulator_enable(data->vcc_reg);
-> +               if (ret) {
-> +                       dev_err(&client->dev, "failed to enable VCC regulator\n");
-
-Same comment as in the previous patch.
-
-There is no VCC regulator as per the datasheet. There are VDD and
-VDDIO power supplies, so better represent both and with the same name
-they appear in the datasheet.
+RW5hYmxlIFNUTTMyIERpZ2l0YWwgVGhlcm1hbCBTZW5zb3IgKGR0cykgZHJpdmVyIGZvcg0KU1RN
+MzJNUDE1N2MtZWQxIGJvYXJkLg0KDQpTaWduZWQtb2ZmLWJ5OiBEYXZpZCBIZXJuYW5kZXogU2Fu
+Y2hleiA8ZGF2aWQuaGVybmFuZGV6c2FuY2hlekBzdC5jb20+DQoNCmRpZmYgLS1naXQgYS9hcmNo
+L2FybS9ib290L2R0cy9zdG0zMm1wMTU3Yy1lZDEuZHRzIGIvYXJjaC9hcm0vYm9vdC9kdHMvc3Rt
+MzJtcDE1N2MtZWQxLmR0cw0KaW5kZXggYzNlY2IxZS4uOThlZjdhMCAxMDA2NDQNCi0tLSBhL2Fy
+Y2gvYXJtL2Jvb3QvZHRzL3N0bTMybXAxNTdjLWVkMS5kdHMNCisrKyBiL2FyY2gvYXJtL2Jvb3Qv
+ZHRzL3N0bTMybXAxNTdjLWVkMS5kdHMNCkBAIC00OSw2ICs0OSwxMCBAQA0KIAl9Ow0KIH07DQog
+DQorJmR0cyB7DQorCXN0YXR1cyA9ICJva2F5IjsNCit9Ow0KKw0KICZpMmM0IHsNCiAJcGluY3Ry
+bC1uYW1lcyA9ICJkZWZhdWx0IjsNCiAJcGluY3RybC0wID0gPCZpMmM0X3BpbnNfYT47DQotLSAN
+CjIuNy40DQo=
