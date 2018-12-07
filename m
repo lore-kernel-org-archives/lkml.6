@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 166C6C07E85
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 16:05:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 765E1C64EB1
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 16:05:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C79DA2081C
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 16:05:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C79DA2081C
+	by mail.kernel.org (Postfix) with ESMTP id 3013D2081C
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 16:05:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3013D2081C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726268AbeLGQFf (ORCPT
+        id S1726281AbeLGQFi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 11:05:35 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:15657 "EHLO huawei.com"
+        Fri, 7 Dec 2018 11:05:38 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:16088 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726233AbeLGQFd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 11:05:33 -0500
+        id S1726257AbeLGQFf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Dec 2018 11:05:35 -0500
 Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 9DCE25445B45D;
-        Sat,  8 Dec 2018 00:05:26 +0800 (CST)
+        by Forcepoint Email with ESMTP id 0304AF9776DFA;
+        Sat,  8 Dec 2018 00:05:32 +0800 (CST)
 Received: from localhost.localdomain (10.175.124.28) by smtp.huawei.com
  (10.3.19.203) with Microsoft SMTP Server (TLS) id 14.3.408.0; Sat, 8 Dec 2018
- 00:05:18 +0800
+ 00:05:23 +0800
 From:   Gao Xiang <gaoxiang25@huawei.com>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         <devel@driverdev.osuosl.org>
@@ -35,9 +35,9 @@ CC:     LKML <linux-kernel@vger.kernel.org>,
         <linux-erofs@lists.ozlabs.org>, "Chao Yu" <yuchao0@huawei.com>,
         Miao Xie <miaoxie@huawei.com>, <weidu.du@huawei.com>,
         Gao Xiang <gaoxiang25@huawei.com>
-Subject: [PATCH 5/7] staging: erofs: refine compressed pages preload flow
-Date:   Sat, 8 Dec 2018 00:19:16 +0800
-Message-ID: <20181207161918.20747-6-gaoxiang25@huawei.com>
+Subject: [PATCH 7/7] staging: erofs: simplify `z_erofs_vle_submit_all'
+Date:   Sat, 8 Dec 2018 00:19:18 +0800
+Message-ID: <20181207161918.20747-8-gaoxiang25@huawei.com>
 X-Mailer: git-send-email 2.14.4
 In-Reply-To: <20181207161918.20747-1-gaoxiang25@huawei.com>
 References: <20181207161918.20747-1-gaoxiang25@huawei.com>
@@ -50,301 +50,311 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently, there are two kinds of compressed pages in erofs:
-  1) file pages for the in-place decompression and
-  2) managed pages for cached decompression.
-Both are all stored in grp->compressed_pages[].
+Previously, there are too many hacked stuffs such as `__FSIO_1',
+`lstgrp_noio', `lstgrp_io' out there in `z_erofs_vle_submit_all'.
 
-For managed pages, they could already exist or could be preloaded
-in this round, including the following cases in detail:
-  1) Already valid (loaded in some previous round);
-  2) PAGE_UNALLOCATED, should be allocated at the time of submission;
-  3) Just found in the managed cache, and with an extra page ref.
-Currently, 1) and 3) can be distinguishable by lock_page and
-checking its PG_private, which is guaranteed by the reclaim path,
-but it's better to do a double check by using an extra tag.
+Revisit the whole process by properly introducing jobqueue to
+represent each type of queued workgroups, furthermore hide all of
+crazyness behind independent separated functions.
 
-This patch reworks the preload flow by introducing such the tag
-by using tagged pointer, too many #ifdefs are removed as well.
+After this patch, 2 independent jobqueues exist if managed cache
+is enabled, or 1 jobqueue if disabled.
 
 Reviewed-by: Chao Yu <yuchao0@huawei.com>
 Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
 ---
-
-This patch adds a new compressed_page_t type because erofs tagged
-pointer implementation defines 1-bit tag tagptr1_t, 2-bit tag
-tagptr2_t, ... structures to wrap up different tagged pointer uses.
-it needs to give a meaningful type name rather than purely use
-tagptr1_t, tagptr2_t, ...
-
-Thanks,
-Gao Xiang
-
- drivers/staging/erofs/unzip_vle.c | 166 ++++++++++++++++++++++++++++----------
- 1 file changed, 123 insertions(+), 43 deletions(-)
+ drivers/staging/erofs/unzip_vle.c | 195 ++++++++++++++++++++++----------------
+ 1 file changed, 113 insertions(+), 82 deletions(-)
 
 diff --git a/drivers/staging/erofs/unzip_vle.c b/drivers/staging/erofs/unzip_vle.c
-index de41f7b739ac..2b494f29e2c2 100644
+index a8cf324f0b9c..500046f271cb 100644
 --- a/drivers/staging/erofs/unzip_vle.c
 +++ b/drivers/staging/erofs/unzip_vle.c
-@@ -21,6 +21,21 @@
-  */
- #define PAGE_UNALLOCATED     ((void *)0x5F0E4B1D)
+@@ -1229,33 +1229,28 @@ pickup_page_for_submission(struct z_erofs_vle_workgroup *grp,
+ 	return page;
+ }
  
-+/* how to allocate cached pages for a workgroup */
-+enum z_erofs_cache_alloctype {
-+	DONTALLOC,	/* don't allocate any cached pages */
-+	DELAYEDALLOC,	/* delayed allocation (at the time of submitting io) */
+-static inline struct z_erofs_vle_unzip_io *
+-prepare_io_handler(struct super_block *sb,
+-		   struct z_erofs_vle_unzip_io *io,
+-		   bool background)
++static struct z_erofs_vle_unzip_io *
++jobqueue_init(struct super_block *sb,
++	      struct z_erofs_vle_unzip_io *io,
++	      bool foreground)
+ {
+ 	struct z_erofs_vle_unzip_io_sb *iosb;
+ 
+-	if (!background) {
++	if (foreground) {
+ 		/* waitqueue available for foreground io */
+-		BUG_ON(!io);
++		DBG_BUGON(!io);
+ 
+ 		init_waitqueue_head(&io->u.wait);
+ 		atomic_set(&io->pending_bios, 0);
+ 		goto out;
+ 	}
+ 
+-	if (io)
+-		BUG();
+-	else {
+-		/* allocate extra io descriptor for background io */
+-		iosb = kvzalloc(sizeof(struct z_erofs_vle_unzip_io_sb),
++	iosb = kvzalloc(sizeof(struct z_erofs_vle_unzip_io_sb),
+ 			GFP_KERNEL | __GFP_NOFAIL);
+-		BUG_ON(!iosb);
+-
+-		io = &iosb->io;
+-	}
++	DBG_BUGON(!iosb);
+ 
++	/* initialize fields in the allocated descriptor */
++	io = &iosb->io;
+ 	iosb->sb = sb;
+ 	INIT_WORK(&io->u.work, z_erofs_vle_unzip_wq);
+ out:
+@@ -1263,27 +1258,105 @@ prepare_io_handler(struct super_block *sb,
+ 	return io;
+ }
+ 
++/* define workgroup jobqueue types */
++enum {
+ #ifdef EROFS_FS_HAS_MANAGED_CACHE
+-#define __FSIO_1 1
++	JQ_BYPASS,
++#endif
++	JQ_SUBMIT,
++	NR_JOBQUEUES,
 +};
 +
-+/*
-+ * tagged pointer with 1-bit tag for all compressed pages
-+ * tag 0 - the page is just found with an extra page reference
-+ */
-+typedef tagptr1_t compressed_page_t;
-+
-+#define tag_compressed_page_justfound(page) \
-+	tagptr_fold(compressed_page_t, page, 1)
-+
- static struct workqueue_struct *z_erofs_workqueue __read_mostly;
- static struct kmem_cache *z_erofs_workgroup_cachep __read_mostly;
- 
-@@ -131,38 +146,58 @@ struct z_erofs_vle_work_builder {
- 	{ .work = NULL, .role = Z_EROFS_VLE_WORK_PRIMARY_FOLLOWED }
- 
- #ifdef EROFS_FS_HAS_MANAGED_CACHE
--
--static bool grab_managed_cache_pages(struct address_space *mapping,
--				     erofs_blk_t start,
--				     struct page **compressed_pages,
--				     int clusterblks,
--				     bool reserve_allocation)
-+static void preload_compressed_pages(struct z_erofs_vle_work_builder *bl,
-+				     struct address_space *mc,
-+				     pgoff_t index,
-+				     unsigned int clusterpages,
-+				     enum z_erofs_cache_alloctype type,
-+				     struct list_head *pagepool,
-+				     gfp_t gfp)
- {
--	bool noio = true;
--	unsigned int i;
-+	struct page **const pages = bl->compressed_pages;
-+	const unsigned int remaining = bl->compressed_deficit;
-+	bool standalone = true;
-+	unsigned int i, j = 0;
-+
-+	if (bl->role < Z_EROFS_VLE_WORK_PRIMARY_FOLLOWED)
-+		return;
-+
-+	gfp = mapping_gfp_constraint(mc, gfp) & ~__GFP_RECLAIM;
- 
--	/* TODO: optimize by introducing find_get_pages_range */
--	for (i = 0; i < clusterblks; ++i) {
--		struct page *page, *found;
-+	index += clusterpages - remaining;
- 
--		if (READ_ONCE(compressed_pages[i]))
-+	for (i = 0; i < remaining; ++i) {
-+		struct page *page;
-+		compressed_page_t t;
-+
-+		/* the compressed page was loaded before */
-+		if (READ_ONCE(pages[i]))
- 			continue;
- 
--		page = found = find_get_page(mapping, start + i);
--		if (!found) {
--			noio = false;
--			if (!reserve_allocation)
--				continue;
--			page = PAGE_UNALLOCATED;
-+		page = find_get_page(mc, index + i);
-+
-+		if (page) {
-+			t = tag_compressed_page_justfound(page);
-+		} else if (type == DELAYEDALLOC) {
-+			t = tagptr_init(compressed_page_t, PAGE_UNALLOCATED);
-+		} else {	/* DONTALLOC */
-+			if (standalone)
-+				j = i;
-+			standalone = false;
-+			continue;
- 		}
- 
--		if (!cmpxchg(compressed_pages + i, NULL, page))
-+		if (!cmpxchg_relaxed(&pages[i], NULL, tagptr_cast_ptr(t)))
- 			continue;
- 
--		if (found)
--			put_page(found);
-+		if (page)
-+			put_page(page);
- 	}
--	return noio;
-+	bl->compressed_pages += j;
-+	bl->compressed_deficit = remaining - j;
-+
-+	if (standalone)
-+		bl->role = Z_EROFS_VLE_WORK_PRIMARY;
- }
- 
- /* called by erofs_shrinker to get rid of all compressed_pages */
-@@ -234,6 +269,17 @@ int erofs_try_to_free_cached_page(struct address_space *mapping,
- 	}
- 	return ret;
- }
-+#else
-+static void preload_compressed_pages(struct z_erofs_vle_work_builder *bl,
-+				     struct address_space *mc,
-+				     pgoff_t index,
-+				     unsigned int clusterpages,
-+				     enum z_erofs_cache_alloctype type,
-+				     struct list_head *pagepool,
-+				     gfp_t gfp)
++static void *jobqueueset_init(struct super_block *sb,
++			      z_erofs_vle_owned_workgrp_t qtail[],
++			      struct z_erofs_vle_unzip_io *q[],
++			      struct z_erofs_vle_unzip_io *fgq,
++			      bool forcefg)
 +{
-+	/* nowhere to load compressed pages from */
++#ifdef EROFS_FS_HAS_MANAGED_CACHE
++	/*
++	 * if managed cache is enabled, bypass jobqueue is needed,
++	 * no need to read from device for all workgroups in this queue.
++	 */
++	q[JQ_BYPASS] = jobqueue_init(sb, fgq + JQ_BYPASS, true);
++	qtail[JQ_BYPASS] = &q[JQ_BYPASS]->head;
++#endif
++
++	q[JQ_SUBMIT] = jobqueue_init(sb, fgq + JQ_SUBMIT, forcefg);
++	qtail[JQ_SUBMIT] = &q[JQ_SUBMIT]->head;
++
++	return tagptr_cast_ptr(tagptr_fold(tagptr1_t, q[JQ_SUBMIT], !forcefg));
++}
++
++#ifdef EROFS_FS_HAS_MANAGED_CACHE
++static void move_to_bypass_jobqueue(struct z_erofs_vle_workgroup *grp,
++				    z_erofs_vle_owned_workgrp_t qtail[],
++				    z_erofs_vle_owned_workgrp_t owned_head)
++{
++	z_erofs_vle_owned_workgrp_t *const submit_qtail = qtail[JQ_SUBMIT];
++	z_erofs_vle_owned_workgrp_t *const bypass_qtail = qtail[JQ_BYPASS];
++
++	DBG_BUGON(owned_head == Z_EROFS_VLE_WORKGRP_TAIL_CLOSED);
++	if (owned_head == Z_EROFS_VLE_WORKGRP_TAIL)
++		owned_head = Z_EROFS_VLE_WORKGRP_TAIL_CLOSED;
++
++	WRITE_ONCE(grp->next, Z_EROFS_VLE_WORKGRP_TAIL_CLOSED);
++
++	WRITE_ONCE(*submit_qtail, owned_head);
++	WRITE_ONCE(*bypass_qtail, &grp->next);
++
++	qtail[JQ_BYPASS] = &grp->next;
++}
++
++static bool postsubmit_is_all_bypassed(struct z_erofs_vle_unzip_io *q[],
++				       unsigned int nr_bios,
++				       bool force_fg)
++{
++	/*
++	 * although background is preferred, no one is pending for submission.
++	 * don't issue workqueue for decompression but drop it directly instead.
++	 */
++	if (force_fg || nr_bios)
++		return false;
++
++	kvfree(container_of(q[JQ_SUBMIT],
++			    struct z_erofs_vle_unzip_io_sb,
++			    io));
++	return true;
++}
+ #else
+-#define __FSIO_1 0
++static void move_to_bypass_jobqueue(struct z_erofs_vle_workgroup *grp,
++				    z_erofs_vle_owned_workgrp_t qtail[],
++				    z_erofs_vle_owned_workgrp_t owned_head)
++{
++	/* impossible to bypass submission for managed cache disabled */
++	DBG_BUGON(1);
++}
++
++static bool postsubmit_is_all_bypassed(struct z_erofs_vle_unzip_io *q[],
++				       unsigned int nr_bios,
++				       bool force_fg)
++{
++	/* bios should be >0 if managed cache is disabled */
++	DBG_BUGON(!nr_bios);
++	return false;
 +}
  #endif
  
- /* page_type must be Z_EROFS_PAGE_TYPE_EXCLUSIVE */
-@@ -608,6 +654,26 @@ struct z_erofs_vle_frontend {
- 	.owned_head = Z_EROFS_VLE_WORKGRP_TAIL, \
- 	.backmost = true, }
- 
-+#ifdef EROFS_FS_HAS_MANAGED_CACHE
-+static inline bool
-+should_alloc_managed_pages(struct z_erofs_vle_frontend *fe, erofs_off_t la)
-+{
-+	if (fe->backmost)
-+		return true;
-+
-+	if (EROFS_FS_ZIP_CACHE_LVL >= 2)
-+		return la < fe->headoffset;
-+
-+	return false;
-+}
-+#else
-+static inline bool
-+should_alloc_managed_pages(struct z_erofs_vle_frontend *fe, erofs_off_t la)
-+{
-+	return false;
-+}
-+#endif
-+
- static int z_erofs_do_read_page(struct z_erofs_vle_frontend *fe,
- 				struct page *page,
- 				struct list_head *page_pool)
-@@ -622,12 +688,7 @@ static int z_erofs_do_read_page(struct z_erofs_vle_frontend *fe,
- 	bool tight = builder_is_followed(builder);
- 	struct z_erofs_vle_work *work = builder->work;
- 
+ static bool z_erofs_vle_submit_all(struct super_block *sb,
+ 				   z_erofs_vle_owned_workgrp_t owned_head,
+ 				   struct list_head *pagepool,
+-				   struct z_erofs_vle_unzip_io *fg_io,
++				   struct z_erofs_vle_unzip_io *fgq,
+ 				   bool force_fg)
+ {
+ 	struct erofs_sb_info *const sbi = EROFS_SB(sb);
+ 	const unsigned int clusterpages = erofs_clusterpages(sbi);
+ 	const gfp_t gfp = GFP_NOFS;
 -#ifdef EROFS_FS_HAS_MANAGED_CACHE
--	struct address_space *const mc = MNGD_MAPPING(sbi);
--	struct z_erofs_vle_workgroup *grp;
--	bool noio_outoforder;
+-	struct z_erofs_vle_workgroup *lstgrp_noio = NULL, *lstgrp_io = NULL;
+-#endif
+-	struct z_erofs_vle_unzip_io *ios[1 + __FSIO_1];
++
++	z_erofs_vle_owned_workgrp_t qtail[NR_JOBQUEUES];
++	struct z_erofs_vle_unzip_io *q[NR_JOBQUEUES];
+ 	struct bio *bio;
+-	tagptr1_t bi_private;
++	void *bi_private;
+ 	/* since bio will be NULL, no need to initialize last_index */
+ 	pgoff_t uninitialized_var(last_index);
+ 	bool force_submit = false;
+@@ -1292,28 +1365,13 @@ static bool z_erofs_vle_submit_all(struct super_block *sb,
+ 	if (unlikely(owned_head == Z_EROFS_VLE_WORKGRP_TAIL))
+ 		return false;
+ 
+-	/*
+-	 * force_fg == 1, (io, fg_io[0]) no io, (io, fg_io[1]) need submit io
+-	 * force_fg == 0, (io, fg_io[0]) no io; (io[1], bg_io) need submit io
+-	 */
+-#ifdef EROFS_FS_HAS_MANAGED_CACHE
+-	ios[0] = prepare_io_handler(sb, fg_io + 0, false);
 -#endif
 -
-+	enum z_erofs_cache_alloctype cache_strategy;
- 	enum z_erofs_page_type page_type;
- 	unsigned int cur, end, spiltted, index;
- 	int err = 0;
-@@ -667,20 +728,16 @@ static int z_erofs_do_read_page(struct z_erofs_vle_frontend *fe,
- 	if (unlikely(err))
- 		goto err_out;
- 
--#ifdef EROFS_FS_HAS_MANAGED_CACHE
--	grp = fe->builder.grp;
+-	if (force_fg) {
+-		ios[__FSIO_1] = prepare_io_handler(sb, fg_io + __FSIO_1, false);
+-		bi_private = tagptr_fold(tagptr1_t, ios[__FSIO_1], 0);
+-	} else {
+-		ios[__FSIO_1] = prepare_io_handler(sb, NULL, true);
+-		bi_private = tagptr_fold(tagptr1_t, ios[__FSIO_1], 1);
+-	}
 -
--	/* let's do out-of-order decompression for noio */
--	noio_outoforder = grab_managed_cache_pages(mc,
--		erofs_blknr(map->m_pa),
--		grp->compressed_pages, erofs_blknr(map->m_plen),
--		/* compressed page caching selection strategy */
--		fe->backmost | (EROFS_FS_ZIP_CACHE_LVL >= 2 ?
--				map->m_la < fe->headoffset : 0));
--
--	if (noio_outoforder && builder_is_followed(builder))
--		builder->role = Z_EROFS_VLE_WORK_PRIMARY;
--#endif
-+	/* preload all compressed pages (maybe downgrade role if necessary) */
-+	if (should_alloc_managed_pages(fe, map->m_la))
-+		cache_strategy = DELAYEDALLOC;
-+	else
-+		cache_strategy = DONTALLOC;
-+
-+	preload_compressed_pages(builder, MNGD_MAPPING(sbi),
-+				 map->m_pa / PAGE_SIZE,
-+				 map->m_plen / PAGE_SIZE,
-+				 cache_strategy, page_pool, GFP_KERNEL);
+-	nr_bios = 0;
+ 	force_submit = false;
+ 	bio = NULL;
++	nr_bios = 0;
++	bi_private = jobqueueset_init(sb, qtail, q, fgq, force_fg);
  
- 	tight &= builder_is_followed(builder);
- 	work = builder->work;
-@@ -1062,6 +1119,9 @@ pickup_page_for_submission(struct z_erofs_vle_workgroup *grp,
- 	struct address_space *mapping;
- 	struct page *oldpage, *page;
+ 	/* by default, all need io submission */
+-	ios[__FSIO_1]->head = owned_head;
++	q[JQ_SUBMIT]->head = owned_head;
  
-+	compressed_page_t t;
-+	int justfound;
-+
- repeat:
- 	page = READ_ONCE(grp->compressed_pages[nr]);
- 	oldpage = page;
-@@ -1078,6 +1138,11 @@ pickup_page_for_submission(struct z_erofs_vle_workgroup *grp,
- 		goto out_allocpage;
- 	}
+ 	do {
+ 		struct z_erofs_vle_workgroup *grp;
+@@ -1353,8 +1411,9 @@ static bool z_erofs_vle_submit_all(struct super_block *sb,
  
-+	/* process the target tagged pointer */
-+	t = tagptr_init(compressed_page_t, page);
-+	justfound = tagptr_unfold_tags(t);
-+	page = tagptr_unfold_ptr(t);
-+
- 	mapping = READ_ONCE(page->mapping);
+ 		if (!bio) {
+ 			bio = erofs_grab_bio(sb, first_index + i,
+-				BIO_MAX_PAGES, z_erofs_vle_read_endio, true);
+-			bio->bi_private = tagptr_cast_ptr(bi_private);
++					     BIO_MAX_PAGES,
++					     z_erofs_vle_read_endio, true);
++			bio->bi_private = bi_private;
  
- 	/*
-@@ -1085,7 +1150,10 @@ pickup_page_for_submission(struct z_erofs_vle_workgroup *grp,
- 	 * get such a cached-like page.
- 	 */
- 	if (nocache) {
--		/* should be locked, not uptodate, and not truncated */
-+		/* if managed cache is disabled, it is impossible `justfound' */
-+		DBG_BUGON(justfound);
-+
-+		/* and it should be locked, not uptodate, and not truncated */
- 		DBG_BUGON(!PageLocked(page));
- 		DBG_BUGON(PageUptodate(page));
- 		DBG_BUGON(!mapping);
-@@ -1102,11 +1170,22 @@ pickup_page_for_submission(struct z_erofs_vle_workgroup *grp,
- 
- 	lock_page(page);
- 
-+	/* only true if page reclaim goes wrong, should never happen */
-+	DBG_BUGON(justfound && PagePrivate(page));
-+
- 	/* the page is still in manage cache */
- 	if (page->mapping == mc) {
- 		WRITE_ONCE(grp->compressed_pages[nr], page);
- 
- 		if (!PagePrivate(page)) {
-+			/*
-+			 * impossible to be !PagePrivate(page) for
-+			 * the current restriction as well if
-+			 * the page is already in compressed_pages[].
-+			 */
-+			DBG_BUGON(!justfound);
-+
-+			justfound = 0;
- 			set_page_private(page, (unsigned long)grp);
- 			SetPagePrivate(page);
+ 			++nr_bios;
  		}
-@@ -1124,6 +1203,7 @@ pickup_page_for_submission(struct z_erofs_vle_workgroup *grp,
- 	 * reuse this one, let's allocate a new cache-managed page.
- 	 */
- 	DBG_BUGON(page->mapping);
-+	DBG_BUGON(!justfound);
+@@ -1369,47 +1428,19 @@ static bool z_erofs_vle_submit_all(struct super_block *sb,
+ 		if (++i < clusterpages)
+ 			goto repeat;
  
- 	tocache = true;
- 	unlock_page(page);
+-#ifdef EROFS_FS_HAS_MANAGED_CACHE
+-		if (bypass < clusterpages) {
+-			lstgrp_io = grp;
+-		} else {
+-			z_erofs_vle_owned_workgrp_t iogrp_next =
+-				owned_head == Z_EROFS_VLE_WORKGRP_TAIL ?
+-				Z_EROFS_VLE_WORKGRP_TAIL_CLOSED :
+-				owned_head;
+-
+-			if (!lstgrp_io)
+-				ios[1]->head = iogrp_next;
+-			else
+-				WRITE_ONCE(lstgrp_io->next, iogrp_next);
+-
+-			if (!lstgrp_noio)
+-				ios[0]->head = &grp->next;
+-			else
+-				WRITE_ONCE(lstgrp_noio->next, grp);
+-
+-			lstgrp_noio = grp;
+-		}
+-#endif
++		if (bypass < clusterpages)
++			qtail[JQ_SUBMIT] = &grp->next;
++		else
++			move_to_bypass_jobqueue(grp, qtail, owned_head);
+ 	} while (owned_head != Z_EROFS_VLE_WORKGRP_TAIL);
+ 
+ 	if (bio)
+ 		__submit_bio(bio, REQ_OP_READ, 0);
+ 
+-#ifndef EROFS_FS_HAS_MANAGED_CACHE
+-	BUG_ON(!nr_bios);
+-#else
+-	if (lstgrp_noio)
+-		WRITE_ONCE(lstgrp_noio->next, Z_EROFS_VLE_WORKGRP_TAIL_CLOSED);
+-
+-	if (!force_fg && !nr_bios) {
+-		kvfree(container_of(ios[1],
+-			struct z_erofs_vle_unzip_io_sb, io));
++	if (postsubmit_is_all_bypassed(q, nr_bios, force_fg))
+ 		return true;
+-	}
+-#endif
+ 
+-	z_erofs_vle_unzip_kickoff(tagptr_cast_ptr(bi_private), nr_bios);
++	z_erofs_vle_unzip_kickoff(bi_private, nr_bios);
+ 	return true;
+ }
+ 
+@@ -1418,23 +1449,23 @@ static void z_erofs_submit_and_unzip(struct z_erofs_vle_frontend *f,
+ 				     bool force_fg)
+ {
+ 	struct super_block *sb = f->inode->i_sb;
+-	struct z_erofs_vle_unzip_io io[1 + __FSIO_1];
++	struct z_erofs_vle_unzip_io io[NR_JOBQUEUES];
+ 
+ 	if (!z_erofs_vle_submit_all(sb, f->owned_head, pagepool, io, force_fg))
+ 		return;
+ 
+ #ifdef EROFS_FS_HAS_MANAGED_CACHE
+-	z_erofs_vle_unzip_all(sb, &io[0], pagepool);
++	z_erofs_vle_unzip_all(sb, &io[JQ_BYPASS], pagepool);
+ #endif
+ 	if (!force_fg)
+ 		return;
+ 
+ 	/* wait until all bios are completed */
+-	wait_event(io[__FSIO_1].u.wait,
+-		!atomic_read(&io[__FSIO_1].pending_bios));
++	wait_event(io[JQ_SUBMIT].u.wait,
++		   !atomic_read(&io[JQ_SUBMIT].pending_bios));
+ 
+ 	/* let's synchronous decompression */
+-	z_erofs_vle_unzip_all(sb, &io[__FSIO_1], pagepool);
++	z_erofs_vle_unzip_all(sb, &io[JQ_SUBMIT], pagepool);
+ }
+ 
+ static int z_erofs_vle_normalaccess_readpage(struct file *file,
 -- 
 2.14.4
 
