@@ -2,174 +2,111 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C865C65BAF
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 03:42:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8614DC07E85
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 03:43:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1189A2082B
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 03:42:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="l5syHDpL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1189A2082B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+	by mail.kernel.org (Postfix) with ESMTP id 3733E2082B
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 03:43:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3733E2082B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726067AbeLGDmd (ORCPT
+        id S1726103AbeLGDny (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 22:42:33 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:39158 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725985AbeLGDmd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 22:42:33 -0500
-Received: by mail-pg1-f194.google.com with SMTP id w6so1086986pgl.6
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Dec 2018 19:42:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=PRLk5oWb9dP5b3xlPgZxdfJer+uCyI27EzVWMWm0yEg=;
-        b=l5syHDpL0OdtpD6FkdOud2/+Z9SGeU/GlvBxKZ+0eBrtKmOHeXlmV9RwdsKxD9rhuG
-         wkBIV6I96aoBY/q/Wx7GeUOjdqRIsjwwgD/bxrXeEY+tFrsUHviKOzW3aBtiINQBtG1O
-         Yb1TZ0rLiJ8RwV6ad6FJ1repZENCqeNoQXGfuUIjPeTmlpUKgD8X8sYD+ByHjs0r3F5g
-         u3O47VtX8L78lY7aNBbAWHwpmHxwrbsJjl0LJm16J6PdyzmKP3sw/9Lw7Qc/lVC+asqH
-         xnA8DfIhtneBBsxVz3HggYXZXPXpSbwWyeIrDraF2JYI7Xb/8P+llPqzAhGtA5W2QqLi
-         +VbA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=PRLk5oWb9dP5b3xlPgZxdfJer+uCyI27EzVWMWm0yEg=;
-        b=KWrGX6NdCfdFfOZ2d860djZVs31RHfQfkuJqv+0RyA7bAStCFembGAOQ5dAUPQ6+2t
-         DXIlY8jwcwLhEeUHJsari9gGXR/gyxY2MdrWuZ1vE5TkaKSDE2IhDFq+v/Ym5kfrIn/d
-         ywqXvdtTduLCkMSJwyi/mk/WKjyzfn8+Z4Uan+U2Sh7OYN2L9bt3LPmRMo98KBhYkWb+
-         1jJwiEnuB5jzkn6Y9KMYl4TTBRy6/G/dhajnOTcoZXMmztw3Hjzibd1jR8ma0N5OhUwh
-         CZ5+Li8JurM37Hzx/88VIHAEmo2RnpXJj655BcEB3Np31sgMiIp2LfZNsQdJbYo95mcj
-         FBmw==
-X-Gm-Message-State: AA+aEWazYnHrCdy0X/KgAiA0de+12K6DNceFaiSNt1yrGUevtSZ8A21O
-        mX9braN/zmlcXSJm7ET7m8VK3kspQEg=
-X-Google-Smtp-Source: AFSGD/UOWOIA0YlUAJKiBQB0eb8SCgHT+eteCQda35+VusheTiJlOb14PE14+BSK6brNxlUomS7VPQ==
-X-Received: by 2002:a62:f5da:: with SMTP id b87mr646168pfm.253.1544154151772;
-        Thu, 06 Dec 2018 19:42:31 -0800 (PST)
-Received: from [192.168.1.121] (66.29.188.166.static.utbb.net. [66.29.188.166])
-        by smtp.gmail.com with ESMTPSA id l22sm3125490pfj.179.2018.12.06.19.42.29
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 06 Dec 2018 19:42:30 -0800 (PST)
-Subject: Re: [PATCH V11 0/4] blk-mq: refactor code of issue directly
-To:     "jianchao.wang" <jianchao.w.wang@oracle.com>
-Cc:     ming.lei@redhat.com, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <1544152185-32667-1-git-send-email-jianchao.w.wang@oracle.com>
- <b2bcbb76-af6f-7660-2bc3-9796338cccff@kernel.dk>
- <0adf3419-bcce-93d8-51fb-aee7cbb5ae17@oracle.com>
- <16205e68-aa5e-c59d-364e-4164a0e51dc7@kernel.dk>
- <f052c016-e521-9f12-f4e5-d65f3814643a@kernel.dk>
- <a59a3a1d-94fb-938d-7ddf-969185cd5b48@oracle.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <1e183b77-2c4d-71ff-b019-2b1070d2ed6b@kernel.dk>
-Date:   Thu, 6 Dec 2018 20:42:28 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Thu, 6 Dec 2018 22:43:54 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:46018 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726069AbeLGDnx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 22:43:53 -0500
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 15B3A3003B44;
+        Fri,  7 Dec 2018 03:43:53 +0000 (UTC)
+Received: from xz-x1 (ovpn-12-222.pek2.redhat.com [10.72.12.222])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id A34C951F09;
+        Fri,  7 Dec 2018 03:43:47 +0000 (UTC)
+Date:   Fri, 7 Dec 2018 11:43:45 +0800
+From:   Peter Xu <peterx@redhat.com>
+To:     Andrea Arcangeli <aarcange@redhat.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Hugh Dickins <hughd@google.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Jann Horn <jannh@google.com>,
+        "Dr. David Alan Gilbert" <dgilbert@redhat.com>
+Subject: Re: [PATCH 1/1] userfaultfd: check VM_MAYWRITE was set after
+ verifying the uffd is registered
+Message-ID: <20181207034345.GC10726@xz-x1>
+References: <20181206212028.18726-1-aarcange@redhat.com>
+ <20181206212028.18726-2-aarcange@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <a59a3a1d-94fb-938d-7ddf-969185cd5b48@oracle.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+In-Reply-To: <20181206212028.18726-2-aarcange@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Fri, 07 Dec 2018 03:43:53 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/6/18 8:41 PM, jianchao.wang wrote:
+On Thu, Dec 06, 2018 at 04:20:28PM -0500, Andrea Arcangeli wrote:
+> Calling UFFDIO_UNREGISTER on virtual ranges not yet registered in uffd
+> could trigger an harmless false positive WARN_ON. Check the vma is
+> already registered before checking VM_MAYWRITE to shut off the
+> false positive warning.
 > 
+> Cc: <stable@vger.kernel.org>
+> Fixes: 29ec90660d68 ("userfaultfd: shmem/hugetlbfs: only allow to register VM_MAYWRITE vmas")
+> Reported-by: syzbot+06c7092e7d71218a2c16@syzkaller.appspotmail.com
+> Signed-off-by: Andrea Arcangeli <aarcange@redhat.com>
+> ---
+>  fs/userfaultfd.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
 > 
-> On 12/7/18 11:34 AM, Jens Axboe wrote:
->> On 12/6/18 8:32 PM, Jens Axboe wrote:
->>> On 12/6/18 8:26 PM, jianchao.wang wrote:
->>>>
->>>>
->>>> On 12/7/18 11:16 AM, Jens Axboe wrote:
->>>>> On 12/6/18 8:09 PM, Jianchao Wang wrote:
->>>>>> Hi Jens
->>>>>>
->>>>>> Please consider this patchset for 4.21.
->>>>>>
->>>>>> It refactors the code of issue request directly to unify the interface
->>>>>> and make the code clearer and more readable.
->>>>>>
->>>>>> This patch set is rebased on the recent for-4.21/block and add the 1st
->>>>>> patch which inserts the non-read-write request to hctx dispatch
->>>>>> list to avoid to involve merge and io scheduler when bypass_insert
->>>>>> is true, otherwise, inserting is ignored, BLK_STS_RESOURCE is returned
->>>>>> and the caller will fail forever.
->>>>>>
->>>>>> The 2nd patch refactors the code of issue request directly to unify the
->>>>>> helper interface which could handle all the cases.
->>>>>>
->>>>>> The 3rd patch make blk_mq_sched_insert_requests issue requests directly
->>>>>> with 'bypass' false, then it needn't to handle the non-issued requests
->>>>>> any more.
->>>>>>
->>>>>> The 4th patch replace and kill the blk_mq_request_issue_directly.
->>>>>
->>>>> Sorry to keep iterating on this, but let's default to inserting to
->>>>> the dispatch list if we ever see busy from a direct dispatch. I'm fine
->>>>> with doing that for 4.21, as suggested by Ming, I just didn't want to
->>>>> fiddle with it for 4.20. This will prevent any merging on the request
->>>>> going forward, which I think is a much safer default.
->>>>>
->>>>> You do this already for some cases. Let's do it unconditionally for
->>>>> a request that was ever subjected to ->queue_rq() and we didn't either
->>>>> error or finish after the fact.
->>>>>
->>>> I have done it in this version if I get your point correctly.
->>>> Please refer to the following fragment in the 2nd patch.
->>>>
->>>> +	/*
->>>> +	 * If the request is issued unsuccessfully with
->>>> +	 * BLK_STS_DEV_RESOURCE or BLK_STS_RESOURCE, insert
->>>> +	 * the request to hctx dispatch list due to attached
->>>> +	 * lldd resource.
->>>> +	 */
->>>> +	force = true;
->>>> +	ret = __blk_mq_issue_directly(hctx, rq, cookie, last);
->>>> +out_unlock:
->>>> +	hctx_unlock(hctx, srcu_idx);
->>>> +out:
->>>> +	switch (ret) {
->>>> +	case BLK_STS_OK:
->>>> +		break;
->>>> +	case BLK_STS_DEV_RESOURCE:
->>>> +	case BLK_STS_RESOURCE:
->>>> +		if (force) {
->>>> +			blk_mq_request_bypass_insert(rq, run_queue);
->>>> +			ret = bypass ? BLK_STS_OK : ret;
->>>> +		} else if (!bypass) {
->>>> +			blk_mq_sched_insert_request(rq, false,
->>>> +						    run_queue, false);
->>>> +		}
->>>> +		break;
->>>> +	default:
->>>
->>> You are right, I missed that you set force = true before doing the
->>> issue. So this looks good to me!
->>
->> I applied your series. With this, we should be good to remove the
->> REQ_NOMERGE logic that was added for the corruption case, and the
->> blk_rq_can_direct_dispatch() as well?
->>
-> 
-> Yes, it should be that.
-> Every thing rejected by .queue_rq is ended or inserted into hctx dispatch
-> list. And also direct-issue path is unified with normal path.
+> diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
+> index cd58939dc977..7a85e609fc27 100644
+> --- a/fs/userfaultfd.c
+> +++ b/fs/userfaultfd.c
+> @@ -1566,7 +1566,6 @@ static int userfaultfd_unregister(struct userfaultfd_ctx *ctx,
+>  		cond_resched();
+>  
+>  		BUG_ON(!vma_can_userfault(vma));
+> -		WARN_ON(!(vma->vm_flags & VM_MAYWRITE));
+>  
+>  		/*
+>  		 * Nothing to do: this vma is already registered into this
 
-Why are we doing that return value dance, depending on whether this
-is a bypass insert or not? That seems confusing.
+Maybe we want to fix this comment too some day:
+
+		/*
+		 * Nothing to do: this vma is already registered into this
+		 * userfaultfd and with the right tracking mode too.
+		 */
+
+But I don't think it's anything urgent since it's clear it means the
+other way round and it can potentially be touched up in any further
+cleanup/fixes of uffd.
+
+Acked-by: Peter Xu <peterx@redhat.com>
+
+> @@ -1575,6 +1574,8 @@ static int userfaultfd_unregister(struct userfaultfd_ctx *ctx,
+>  		if (!vma->vm_userfaultfd_ctx.ctx)
+>  			goto skip;
+>  
+> +		WARN_ON(!(vma->vm_flags & VM_MAYWRITE));
+> +
+>  		if (vma->vm_start > start)
+>  			start = vma->vm_start;
+>  		vma_end = min(end, vma->vm_end);
+
+Thanks,
 
 -- 
-Jens Axboe
-
+Peter Xu
