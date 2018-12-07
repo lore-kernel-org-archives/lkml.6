@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D589C64EB1
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 20:15:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10110C64EB1
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 20:15:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F6232083D
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 20:15:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C579D2083D
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 20:15:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jHeNzApq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F6232083D
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Tl6AQp5N"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C579D2083D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726355AbeLGUPk (ORCPT
+        id S1726401AbeLGUPn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 15:15:40 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:36303 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726314AbeLGUPg (ORCPT
+        Fri, 7 Dec 2018 15:15:43 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:40903 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726363AbeLGUPl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 15:15:36 -0500
-Received: by mail-pf1-f195.google.com with SMTP id b85so2451938pfc.3;
-        Fri, 07 Dec 2018 12:15:36 -0800 (PST)
+        Fri, 7 Dec 2018 15:15:41 -0500
+Received: by mail-pf1-f196.google.com with SMTP id i12so2437767pfo.7;
+        Fri, 07 Dec 2018 12:15:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=mJ+hAWBjzYrtG9eKN+9slhswn7Xi2CuWuxj5q13heRo=;
-        b=jHeNzApqttpKVz/ltNtKvxViPu0Gw62SHb5Tfbcxn1h3KauOhz+MIdEFlRkommBDtO
-         UKaoPECJvDtrpn7BLmf27GGZvKQh7AZcvsB4T0c+kPxzhugZK1dQTfBYiZAsN6Q93USO
-         TRSIaQ0MxMEl3dHIQK69uGxvTnWiprLJ2hsRuiIlAYpxpJ5JrCGm6ezTj8Sua7VQqpT4
-         jHNuFsmdGNeSCldgIIMsdKddU5l2/VhtWE0sI6xmsXd7Nfx5B8dgpO+D/ttnTkbObkVQ
-         5WbgZKxaoZg16Y5L/7/ak0gSnVzpTWg4s6klP0xja4XUqB6Zi1UHmA8sHhKzo0/3uMls
-         kkuw==
+        bh=oiVWgL/WHUTd0gentorRc6DDTrlDET1vasHz44Fkvas=;
+        b=Tl6AQp5NBS+Vty8MRgicYJ/jVsKR0CryNf5wkhgDTDviSmtB5Wz5KcTOni7EQWYiOH
+         M7G/A/ahbj0zI4CX/oWxaTi3eJ6MDEIHpJoed0IEfumnekz0XOS5c/X94GXsjpeRxgu+
+         l2CL4eRuaWgoJimP0SL5rSZ5XqAxlywguM+C8fB+TRPnFh7lzKNozNYlW0wRdQBzUa/a
+         ao6SOAXWMayp5gxtmPSMC71qWuSZw4ETGeggMgxoH2KE8z3aAC0/mT4J9+OJA3FOHaru
+         l5GNQdJ37yTs4EbHlaXxMHzY7kffSwszM0uq23KIDYpnEAM7yJecJW8OXtILW++JSxuo
+         zwQQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=mJ+hAWBjzYrtG9eKN+9slhswn7Xi2CuWuxj5q13heRo=;
-        b=oTJ+ZrlGXnaTodrClUwlvBNtyM8onRoO3oUyHcdWzcNtNj+U/GRTdpec0VlyFy5dbE
-         ZHucDkIkmK7vRMlX5btOZVHHx/vLcrdWQjx5ZezA3lLujg3dQh0eZwswYUtBasc77+6I
-         huhGSt4Nv2gcJWl97NiJ1v6JexFogaPl4ywZ4DYf1NGC3t82J4NYvc5Siwk6hvbseKDC
-         hx4Kd7h5zgWuZcXlBHBcpoZWkSHyEkfQFBIB3UlP7l29T2Sr1dw/3l4LB1wDPF3yc+4t
-         8kPX3WZ23b4wbaPpSZcZZfEEM+tgUMjp3FhuTBVFk4PjE1f5HWiHlBeyk9+YD3YZm5FF
-         cu4w==
-X-Gm-Message-State: AA+aEWbHoTH8dkFU8MhkC6WB/FPFpwyhJit8x9rdymbG+EkicjXksb37
-        YImtw6b8+1c2twTyGgfUOn7jIPwcSSc=
-X-Google-Smtp-Source: AFSGD/UcW/6HIKv/8bU8kGP2dljC/DYICdHpwxuTFWZsNyL2j6k5ofYJkZ+d25EDIVLKXMz3bsN+Ng==
-X-Received: by 2002:a63:6782:: with SMTP id b124mr3203383pgc.151.1544213735947;
-        Fri, 07 Dec 2018 12:15:35 -0800 (PST)
+        bh=oiVWgL/WHUTd0gentorRc6DDTrlDET1vasHz44Fkvas=;
+        b=B1U9JjQEq6+sMMcLcb8vzVAT6YRoR810hN8Gw3T5Y+GICcwfjHv2waip1foTnzvrzy
+         tuDjARzfxpWXE9OjZCv9nTQbbfuH2mPEAOi3uY2RRbzGbQwEfEyce4H1hbRzuFTeUuCv
+         pyEZnh2G1LU2+oON2B5QVsimR/fEH7ytoxVr89y13gCrHZpK9YQHgZeMsBF+b3YDeU2H
+         zSdwz631ZJc9apFcRpfToel9uQHWs3t24vPOF4rWbuRunooGhXEaX57fC+h3aowLvNfT
+         gSy+5tm3LiWTjapdDPSI9lgbwVBinbOaXFlKDKKidCbDuXkek7KQ27QcUprzzoljwxwX
+         tFfA==
+X-Gm-Message-State: AA+aEWZEi8V1rpqZUATGfW8Q6b5Shxo8QZci5h23Pw4ouLbpFN4Z/01X
+        jS9zr2EtRXhTNAxhd+Ap66w=
+X-Google-Smtp-Source: AFSGD/W5GF7l5xue5w7Lkrut0LyE2fg5jVo/CiU87iJyb7jzaQvHLrVInJWKnL5WvqjQBRBvOaQdpA==
+X-Received: by 2002:a63:26c1:: with SMTP id m184mr2951411pgm.367.1544213740629;
+        Fri, 07 Dec 2018 12:15:40 -0800 (PST)
 Received: from castle.thefacebook.com ([2620:10d:c090:200::6:d83b])
-        by smtp.gmail.com with ESMTPSA id q75sm5870898pfa.38.2018.12.07.12.15.34
+        by smtp.gmail.com with ESMTPSA id q75sm5870898pfa.38.2018.12.07.12.15.39
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 07 Dec 2018 12:15:35 -0800 (PST)
+        Fri, 07 Dec 2018 12:15:39 -0800 (PST)
 From:   Roman Gushchin <guroan@gmail.com>
 X-Google-Original-From: Roman Gushchin <guro@fb.com>
 To:     Tejun Heo <tj@kernel.org>, Oleg Nesterov <oleg@redhat.com>
@@ -65,10 +65,11 @@ Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
         Mike Rapoport <rppt@linux.vnet.ibm.com>,
         cgroups@vger.kernel.org, linux-doc@vger.kernel.org,
         linux-kernel@vger.kernel.org, kernel-team@fb.com,
-        Roman Gushchin <guro@fb.com>
-Subject: [PATCH v5 1/7] cgroup: rename freezer.c into legacy_freezer.c
-Date:   Fri,  7 Dec 2018 12:15:25 -0800
-Message-Id: <20181207201531.1665-2-guro@fb.com>
+        Roman Gushchin <guro@fb.com>, Shuah Khan <shuah@kernel.org>,
+        linux-kselftest@vger.kernel.org
+Subject: [PATCH v5 5/7] kselftests: cgroup: don't fail on cg_kill_all() error in cg_destroy()
+Date:   Fri,  7 Dec 2018 12:15:29 -0800
+Message-Id: <20181207201531.1665-6-guro@fb.com>
 X-Mailer: git-send-email 2.17.2
 In-Reply-To: <20181207201531.1665-1-guro@fb.com>
 References: <20181207201531.1665-1-guro@fb.com>
@@ -77,35 +78,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Freezer.c will contain an implementation of cgroup v2 freezer,
-so let's rename the v1 freezer to avoid naming conflicts.
+If the cgroup destruction races with an exit() of a belonging
+process(es), cg_kill_all() may fail. It's not a good reason to make
+cg_destroy() fail and leave the cgroup in place, potentially causing
+next test runs to fail.
 
 Signed-off-by: Roman Gushchin <guro@fb.com>
+Cc: Shuah Khan <shuah@kernel.org>
 Cc: Tejun Heo <tj@kernel.org>
 Cc: kernel-team@fb.com
+Cc: linux-kselftest@vger.kernel.org
 ---
- kernel/cgroup/Makefile                        | 2 +-
- kernel/cgroup/{freezer.c => legacy_freezer.c} | 0
- 2 files changed, 1 insertion(+), 1 deletion(-)
- rename kernel/cgroup/{freezer.c => legacy_freezer.c} (100%)
+ tools/testing/selftests/cgroup/cgroup_util.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/kernel/cgroup/Makefile b/kernel/cgroup/Makefile
-index bfcdae896122..8d5689ca94b9 100644
---- a/kernel/cgroup/Makefile
-+++ b/kernel/cgroup/Makefile
-@@ -1,7 +1,7 @@
- # SPDX-License-Identifier: GPL-2.0
- obj-y := cgroup.o rstat.o namespace.o cgroup-v1.o
- 
--obj-$(CONFIG_CGROUP_FREEZER) += freezer.o
-+obj-$(CONFIG_CGROUP_FREEZER) += legacy_freezer.o
- obj-$(CONFIG_CGROUP_PIDS) += pids.o
- obj-$(CONFIG_CGROUP_RDMA) += rdma.o
- obj-$(CONFIG_CPUSETS) += cpuset.o
-diff --git a/kernel/cgroup/freezer.c b/kernel/cgroup/legacy_freezer.c
-similarity index 100%
-rename from kernel/cgroup/freezer.c
-rename to kernel/cgroup/legacy_freezer.c
+diff --git a/tools/testing/selftests/cgroup/cgroup_util.c b/tools/testing/selftests/cgroup/cgroup_util.c
+index 14c9fe284806..eba06f94433b 100644
+--- a/tools/testing/selftests/cgroup/cgroup_util.c
++++ b/tools/testing/selftests/cgroup/cgroup_util.c
+@@ -227,9 +227,7 @@ int cg_destroy(const char *cgroup)
+ retry:
+ 	ret = rmdir(cgroup);
+ 	if (ret && errno == EBUSY) {
+-		ret = cg_killall(cgroup);
+-		if (ret)
+-			return ret;
++		cg_killall(cgroup);
+ 		usleep(100);
+ 		goto retry;
+ 	}
 -- 
 2.17.2
 
