@@ -2,74 +2,73 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.5 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,
+	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46572C07E85
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 18:35:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD2EBC64EB1
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 18:35:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 12D2220868
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 18:35:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 12D2220868
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 6E9CA20672
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 18:35:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544207715;
+	bh=7kUmXPjWMNLZrT0S4ZvPcTl8RBG3n8vFUulPe3HBqts=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
+	b=Vfs1j6AkdLNFbzMxQZdcAANSX4s5TtaNq0dRBRwf5BleBTyNKe23s1btt4N8nrNru
+	 8cvFdnc4WC1kI9rvZVF0OXxpsB3ZvuJAqy7NIREgYDBdYx7eKMrn179nAwwb6VsZ2/
+	 ITuaJHqeyXJMROw5TnQCYAfjDPi/UwqaY2OnM/q8=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E9CA20672
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726186AbeLGSfH (ORCPT
+        id S1726377AbeLGSfO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 13:35:07 -0500
-Received: from foss.arm.com ([217.140.101.70]:51754 "EHLO foss.arm.com"
+        Fri, 7 Dec 2018 13:35:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54972 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726356AbeLGSfF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 13:35:05 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6436AEBD;
-        Fri,  7 Dec 2018 10:35:05 -0800 (PST)
-Received: from arrakis.emea.arm.com (arrakis.cambridge.arm.com [10.1.196.113])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 543A13F5AF;
-        Fri,  7 Dec 2018 10:35:04 -0800 (PST)
-Date:   Fri, 7 Dec 2018 18:35:01 +0000
-From:   Catalin Marinas <catalin.marinas@arm.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Will Deacon <will.deacon@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] arm64 fixes for 4.20-rc6
-Message-ID: <20181207183459.GA30569@arrakis.emea.arm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1726342AbeLGSfC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Dec 2018 13:35:02 -0500
+Subject: Re: [PULL REQUEST] i2c for 4.20
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544207702;
+        bh=7kUmXPjWMNLZrT0S4ZvPcTl8RBG3n8vFUulPe3HBqts=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=lWz8ZXwkO/4+5yXgSlO79VvuqFdpGm/hDL3QEeVCO9GQVf3kHlFlXFudgsUxkfCNa
+         xJ44ZNVg5e7ZF0/h50HwhEUJiRYIc1tbHlNiQRUeV7G0bMIvOBUAZjHLyevn0EIe2X
+         0ItrmWGNr6+5Ttk3St9ocMcotU16p3qPEqS6lKug=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <20181207130848.GA2661@kunai>
+References: <20181207130848.GA2661@kunai>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20181207130848.GA2661@kunai>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git
+ i2c/for-current-fixed
+X-PR-Tracked-Commit-Id: ece27a337d42a3197935711997f2880f0957ed7e
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 52f842ccd615564a75ef45f8a0985ff14a0a61ce
+Message-Id: <20181207183502.15805.82304.pr-tracker-bot@pdx-korg-gitolite-1.ci.codeaurora.org>
+Date:   Fri, 07 Dec 2018 18:35:02 +0000
+To:     Wolfram Sang <wsa@the-dreams.de>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Peter Rosin <peda@axentia.se>,
+        Bartosz Golaszewski <brgl@bgdev.pl>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+The pull request you sent on Fri, 7 Dec 2018 14:08:52 +0100:
 
-Please pull the arm64 fix below. Thanks.
+> git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git i2c/for-current-fixed
 
-The following changes since commit 2595646791c319cadfdbf271563aac97d0843dc7:
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/52f842ccd615564a75ef45f8a0985ff14a0a61ce
 
-  Linux 4.20-rc5 (2018-12-02 15:07:55 -0800)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux tags/arm64-fixes
-
-for you to fetch changes up to b4aecf78083d8c6424657c1746c7c3de6e61669f:
-
-  arm64: hibernate: Avoid sending cross-calling with interrupts disabled (2018-12-07 15:52:39 +0000)
-
-----------------------------------------------------------------
-- Avoid sending IPIs with interrupts disabled
-
-----------------------------------------------------------------
-Will Deacon (1):
-      arm64: hibernate: Avoid sending cross-calling with interrupts disabled
-
- arch/arm64/kernel/hibernate.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thank you!
 
 -- 
-Catalin
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
