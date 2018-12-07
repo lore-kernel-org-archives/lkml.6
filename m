@@ -2,102 +2,81 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 023A0C64EB1
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 11:14:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0269C64EB1
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 11:14:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C68FC20989
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 11:14:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C68FC20989
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mxic.com.tw
+	by mail.kernel.org (Postfix) with ESMTP id A072A20868
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 11:14:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A072A20868
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726118AbeLGLOA (ORCPT
+        id S1726129AbeLGLO3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 06:14:00 -0500
-Received: from twhmllg4.macronix.com ([211.75.127.132]:27269 "EHLO
-        TWHMLLG4.macronix.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726101AbeLGLN6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 06:13:58 -0500
-Received: from localhost.localdomain ([172.17.195.96])
-        by TWHMLLG4.macronix.com with ESMTP id wB7BDKkl078297;
-        Fri, 7 Dec 2018 19:13:22 +0800 (GMT-8)
-        (envelope-from masonccyang@mxic.com.tw)
-From:   Mason Yang <masonccyang@mxic.com.tw>
-To:     broonie@kernel.org, marek.vasut@gmail.com,
-        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
-        boris.brezillon@bootlin.com, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     juliensu@mxic.com.tw, Simon Horman <horms@verge.net.au>,
-        zhengxunli@mxic.com.tw, Mason Yang <masonccyang@mxic.com.tw>
-Subject: [PATCH v3 2/2] dt-binding: spi: Document Renesas R-Car Gen3 RPC controller bindings
-Date:   Fri,  7 Dec 2018 19:13:19 +0800
-Message-Id: <1544181199-3373-3-git-send-email-masonccyang@mxic.com.tw>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1544181199-3373-1-git-send-email-masonccyang@mxic.com.tw>
-References: <1544181199-3373-1-git-send-email-masonccyang@mxic.com.tw>
-X-MAIL: TWHMLLG4.macronix.com wB7BDKkl078297
+        Fri, 7 Dec 2018 06:14:29 -0500
+Received: from mx2.suse.de ([195.135.220.15]:41566 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725987AbeLGLO3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Dec 2018 06:14:29 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 5D733ABE7;
+        Fri,  7 Dec 2018 11:14:27 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 8D95E1E0D9D; Fri,  7 Dec 2018 12:14:26 +0100 (CET)
+Date:   Fri, 7 Dec 2018 12:14:26 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Alexander Lochmann <alexander.lochmann@tu-dortmund.de>
+Cc:     Jan Kara <jack@suse.cz>, viro@zeniv.linux.org.uk,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Horst Schirmeier <horst.schirmeier@tu-dortmund.de>,
+        linux-block@vger.kernel.org, Jens Axboe <axboe@kernel.dk>
+Subject: Re: [PATCH] Fix sync. in inode_has_no_xattr()
+Message-ID: <20181207111426.GG13008@quack2.suse.cz>
+References: <13eaa1c6-def5-afad-89eb-6f149db90684@tu-dortmund.de>
+ <20181205153254.GD30615@quack2.suse.cz>
+ <c4f0d66f-7cad-c3b4-79a6-ced14b9c7cc8@tu-dortmund.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c4f0d66f-7cad-c3b4-79a6-ced14b9c7cc8@tu-dortmund.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Document the bindings used by the Renesas R-Car Gen3 RPC controller.
+On Fri 07-12-18 11:24:47, Alexander Lochmann wrote:
+> Am 05.12.18 um 16:32 schrieb Jan Kara:
+> > 
+> > Thinking more about this I'm not sure if this is actually the right
+> > solution. Because for example the write(2) can set S_NOSEC flag wrongly
+> > when it would race with chmod adding SUID bit. So probably we rather need
+> > to acquire i_rwsem in blkdev_write_iter() if file does not have S_NOSEC set
+> > (we don't want to acquire it unconditionally as that would heavily impact
+> > scalability of block device writes).
+> > 
+> > 								Honza
+> > 
+> Trying to implement your suggestion, I'm not sure which inode to use:
+> In blkdev_write_iter() there is the "bd_inode = bdev_file_inode(file)".
+> file_remove_privs() uses "inode = file_inode(file)" as a parameter for
+> inode_has_no_xattr().
+> So, do file->f_mapping->host and f->f_inode refer to the identical inode?
 
-Signed-off-by: Mason Yang <masonccyang@mxic.com.tw>
----
- .../devicetree/bindings/spi/spi-renesas-rpc.txt    | 38 ++++++++++++++++++++++
- 1 file changed, 38 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt
+Ah, that's a good question and I forgot to warn you. Sorry for that and my
+respect for noticing this yourself :). For block devices f->f_inode refers
+to the device inode in the filesystem (i.e., where xattrs are attached to,
+permissions are stored, etc.).  file->f_mapping->host refers to the inode
+carrying data - this split is needed so that if there are more instances of
+device inode in the system for the same block device, they see data
+coherently. So you need to use file_inode(file) for the locking. Thanks!
 
-diff --git a/Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt b/Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt
-new file mode 100644
-index 0000000..a191f70
---- /dev/null
-+++ b/Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt
-@@ -0,0 +1,38 @@
-+Renesas R-Car Gen3 RPC controller Device Tree Bindings
-+------------------------------------------------------
-+
-+Required properties:
-+- compatible: should be "renesas,r8a77995-rpc"
-+- #address-cells: should be 1
-+- #size-cells: should be 0
-+- reg: should contain 2 entries, one for the registers and one for the direct
-+       mapping area
-+- reg-names: should contain "rpc_regs" and "dirmap"
-+- interrupts: interrupt line connected to the RPC controller
-+- clock-names: should contain "clk_rpc"
-+- clocks: should contain 1 entries for the module's clock
-+- rpc-mode: should contain "rpc-spi-flash" for rpc spi mode or
-+			   "rpc-hyperflash" for rpc hyerflash mode.
-+
-+Example:
-+
-+	rpc: rpc@ee200000 {
-+		compatible = "renesas,r8a77995-rpc";
-+		reg = <0 0xee200000 0 0x8100>, <0 0x08000000 0 0x4000000>;
-+		reg-names = "rpc_regs", "dirmap";
-+		clocks = <&cpg CPG_MOD 917>;
-+		power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
-+		resets = <&cpg 917>;
-+		clock-names = "clk_rpc";
-+		rpc-mode = "rpc-spi-flash";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		flash@0 {
-+			compatible = "jedec,spi-nor";
-+			reg = <0>;
-+			spi-max-frequency = <40000000>;
-+			spi-tx-bus-width = <1>;
-+			spi-rx-bus-width = <1>;
-+		};
-+	};
+								Honza
 -- 
-1.9.1
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
