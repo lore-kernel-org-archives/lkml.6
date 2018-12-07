@@ -3,146 +3,194 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92FB8C64EB1
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 13:11:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9128AC07E85
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 13:14:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5736E208E7
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 13:11:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="LmCipauO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5736E208E7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 4D86A208E7
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 13:14:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544188466;
+	bh=CCVFTWWL/YgAq4iGp1T8piy/vpCY/l/Geb4kQAGsMTs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=zIiL78P2qC5CAc3uH688H2FFIYe/GZlrEIXU8Gy5oO3Yfag/FGvFCz2cMqzKASelG
+	 XrwU0T9D9Do7J94gqPEtwJ2q2HtHynNiF7AZg0s8FIKVQYKVjGrZMfiKSKNEOWgbte
+	 +O7r86rdlRuyXuhIGsiufktf7rbo5wnZ4lsOaCXY=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D86A208E7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726187AbeLGNLU (ORCPT
+        id S1726087AbeLGNOZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 08:11:20 -0500
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:33860 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726030AbeLGNLS (ORCPT
+        Fri, 7 Dec 2018 08:14:25 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:34044 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726021AbeLGNOY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 08:11:18 -0500
-Received: by mail-lf1-f65.google.com with SMTP id p6so3011409lfc.1
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Dec 2018 05:11:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=EFj9X/innvkpACYNCTtZcY37pslKCk2J0+kVrFHIYOI=;
-        b=LmCipauOb1yLA1CNjfxYn4Q7iy7tl70uGlFvAgMt74FNEpfLA2CjVMLuKDLmyxf9P9
-         vaVmbpOIrI+S6dfKTq9sX/snFic79x2CqMlbxsMCJI1hHSf+subIIkVQuOXv2+B+LXjn
-         xa+GDgGu0JMtiGoaSGSsjQTHibBTehXtos3U8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=EFj9X/innvkpACYNCTtZcY37pslKCk2J0+kVrFHIYOI=;
-        b=GzxNNhp6JmvzPBVUyQqzoOqDpvESU3tO6FJv5hCZ+vLaotQ9Tbr5N8jwCR03HOPjRG
-         c23SkSjh5U5/DNkU2K0yFHLDV5GZwoVJCMWRMFSGsC5/aLs/SAzaYXx2ZcYuC9S408fC
-         8fVoQv0Qoi1YgXs4q+wCjQh/epZm61StWMkIL26htSP7HrJU8p1R8/h9udep9Nw+PLqu
-         qZaNdL6A37AZUKjUr6NAPzoat9+qORvuaIFSwAnJNNwm2W4wnMZhA3wsysceY8SGiYxt
-         RF5mMsXeWUHlKSzi2zxQwMT/VTnguCpeBHy0pOYehLhUs3sm1cMCGvyuW0WO7wJtgqSq
-         wnEQ==
-X-Gm-Message-State: AA+aEWa4E8FF1sTjnfiFBqnWKF/vAw4CrbfQqBVvdfs+81vjRJxIj4PI
-        Jl3leFHQMxJWyfjfRCN/gQ02xQ==
-X-Google-Smtp-Source: AFSGD/WYjfEugWJ/CiebXU8yXokboCL047BVIH5KUpU6vVPMwFkDZfarIwmrnaQbyupeZioH9F/HOg==
-X-Received: by 2002:a19:8f45:: with SMTP id r66mr1413285lfd.9.1544188276612;
-        Fri, 07 Dec 2018 05:11:16 -0800 (PST)
-Received: from centauri.lan (h-229-118.A785.priv.bahnhof.se. [5.150.229.118])
-        by smtp.gmail.com with ESMTPSA id i143sm604609lfg.74.2018.12.07.05.11.15
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 07 Dec 2018 05:11:15 -0800 (PST)
-Date:   Fri, 7 Dec 2018 14:11:13 +0100
-From:   Niklas Cassel <niklas.cassel@linaro.org>
-To:     Andrey Smirnov <andrew.smirnov@gmail.com>
-Cc:     Lucas Stach <l.stach@pengutronix.de>, linux-pci@vger.kernel.org,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Chris Healy <cphealy@gmail.com>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
-        Richard Zhu <hongxing.zhu@nxp.com>, linux-imx@nxp.com,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] PCI: controller: dwc: Make PCI_IMX6 depend on PCIEPORTBUS
-Message-ID: <20181207131113.GA427@centauri.lan>
-References: <20181206074555.19579-1-andrew.smirnov@gmail.com>
- <1544092136.3709.57.camel@pengutronix.de>
- <CAHQ1cqFeJtxnpfzqWVQ3T9Sv=gfw+cvZZw-uKnZV7pxJg_S+EA@mail.gmail.com>
+        Fri, 7 Dec 2018 08:14:24 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=Upfsh2ISMrxgIWIY+1n7+VcOCg+DGiiuqer2zsX05sE=; b=lgm93w8HxBPNB8PBIEHT5DXlZ
+        x6MHkVtnv5hvJ2omdaYtaFlonmf3Z5hil0YtzcGqWKs1yL6yvO8mw2Fdj01kB1nGIHyky4CqguhgJ
+        mDh5A6TXL14xvIOgOnhp5WE59aQP1JcdBkSXk3lK4SKmDkN/gEsmRVXxoifD1Pi3U4Fh4=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1gVFxS-0003dN-TK; Fri, 07 Dec 2018 13:14:18 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id 6A1EF11253E4; Fri,  7 Dec 2018 13:14:18 +0000 (GMT)
+Date:   Fri, 7 Dec 2018 13:14:18 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc:     gregkh@linuxfoundation.org, rafael@kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC] regmap-irq: add "main register" and level-irq support
+Message-ID: <20181207131418.GB6510@sirena.org.uk>
+References: <20181130085908.GA24983@localhost.localdomain>
+ <20181204172137.GE6809@sirena.org.uk>
+ <20181205082251.GE31204@localhost.localdomain>
+ <20181205172701.GH6205@sirena.org.uk>
+ <20181207075829.GA24940@localhost.localdomain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="JYK4vJDZwFMowpUq"
 Content-Disposition: inline
-In-Reply-To: <CAHQ1cqFeJtxnpfzqWVQ3T9Sv=gfw+cvZZw-uKnZV7pxJg_S+EA@mail.gmail.com>
+In-Reply-To: <20181207075829.GA24940@localhost.localdomain>
+X-Cookie: Obey all traffic laws.
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 06, 2018 at 08:55:13PM -0800, Andrey Smirnov wrote:
-> On Thu, Dec 6, 2018 at 2:28 AM Lucas Stach <l.stach@pengutronix.de> wrote:
-> >
-> > Am Mittwoch, den 05.12.2018, 23:45 -0800 schrieb Andrey Smirnov:
-> > > Building a kernel with CONFIG_PCI_IMX6=y, but CONFIG_PCIEPORTBUS=n
-> > > produces a system where built-in PCIE bridge (16c3:abcd) isn't bound
-> > > to pcieport driver. This, in turn, results in a PCIE bus that is
-> > > capable of enumerating attached PCIE device, but lacks functional
-> > > interrupt support.
-> >
-> > This is odd. AFAIK PCI port services are a totally optional thing and
-> > them being absent should not lead to a non-functional PCI bus. So I
-> > would really like to see some deeper analysis what is going on here.
-> >
-> 
-> AFAICT, this is due to pcieport driver enabling MSI of the bridge
-> device (16c3:abcd) via pcie_port_device_register() ->
-> pcie_init_service_irqs() -> pcie_port_enable_irq_vec() -> etc.
-> 
-> I did an experiment on a i.MX8MQ/PCIE -> i210 setup I have: I disabled
-> CONFIG_PCIEPORTBUS and hacked igb_main.c enough to make the i210
-> driver believe it should fall back onto legacy interrupts. Even
-> without pcieport present in the system, i210 worked as expected via
-> legacy interrupts, which seems to collaborate my conjecture above.
-> 
-> Thanks,
-> Andrey Smirnov
 
-IIUC PCIEPORTBUS should not be needed for MSIs to work,
-it is only needed if you want e.g. PME or AER.
+--JYK4vJDZwFMowpUq
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-The difference is that if PCIEPORTBUS is enabled, a MSI irq vector will be
-allocated for the Root Complex itself, so that it can send an irq when
-e.g. AER has detected an error.
+On Fri, Dec 07, 2018 at 09:58:29AM +0200, Matti Vaittinen wrote:
+> On Wed, Dec 05, 2018 at 05:27:01PM +0000, Mark Brown wrote:
 
+> > If they're full subdevices you'd be pointing at the relevant platform
+> > device anyway.
 
-If we disregard that MSI handling is currently broken on DWC PCIe:
-https://marc.info/?l=linux-pci&m=154214986924244&w=2
-It is very possible to have MSIs on dragonboard 820c, which also
-uses the DWC PCIe controller, without having PCIEPORTBUS selected:
+> I am not sure if I have explained me well enough =3D) When we look at
+> regmap_add_irq_chip we see that it creates the IRQ domains. And we
+> further see:
+>=20
+> 		d->domain =3D irq_domain_add_linear(map->dev->of_node,
+> 						  chip->num_irqs,
+> 						  &regmap_domain_ops, d);
 
-# zcat /proc/config.gz | grep -E "PCIE_QCOM|PCIEPORTBUS"
-# CONFIG_PCIEPORTBUS is not set
-CONFIG_PCIE_QCOM=y
+> where map->dev->of_node points the node added to regmap. And as we
+> really want to use the i2c to access registers, we should have done the
+> regmap using:
 
+> devm_regmap_init_i2c(i2c, &regmap);
 
-# lspci -v -s 0000:00:00.0
-0000:00:00.0 PCI bridge: Qualcomm Device 0104 (prog-if 00 [Normal decode])
-	...
-        Capabilities: [50] MSI: Enable- Count=1/32 Maskable+ 64bit+
+> where the i2c is the struct i2c_client *. The dev in i2c_client is the
+> i2c device - which has of_node pointing at the "main i2c node" - not the
+> sub block nodes. Hence all irq chips created by regmap_add_irq_chip for
+> this physical i2c slave device will point to the same DT node.=20
 
-# lspci -v -s 0000:01:00.0
-0000:01:00.0 Network controller: Qualcomm Atheros QCA6174 802.11ac Wireless Network Adapter (rev 32)
-	...
-        Capabilities: [50] MSI: Enable+ Count=1/8 Maskable+ 64bit-
+Hrm, right.  You'd need to have a proxy regmap for the child devices for
+that.  Not ideal.
 
+> 	bool mask_writeonly:1;
+> +	bool no_of:1;
+>=20
+> and in the regmap_add_irq_chip do:
 
-# cat /proc/interrupts | grep MSI
- 70:       5620          0          0          0   PCI-MSI 524288 Edge      ath10k_pci
+> 		node =3D (chip->no_of) ? NULL : map->dev->of_node;
+> 		d->domain =3D irq_domain_add_linear(node, chip->num_irqs,
+> 						  &regmap_domain_ops, d);
 
-So perhaps this is a bug specific to imx6?
+> Then we could have chip->no_of set for the 'main irq chip' and for those
+> chips we don't wan't to expose via DT. In my case I would leave no_of
+> unset only for the irq-chip which I created for the GPIO? Is this a
+> silly idea?
 
+That's worth a shot, yes - I'd need to see it fully fleshed out I think
+but it looks sensible (no ternery operator please).
 
-Kind regards,
-Niklas
+> > The mapping isn't guaranteed to be a 1:1 mapping - one way this hardware
+> > gets structured is that the central interrupt controller is saying which
+> > IP block is flagging an interrupt rather than which register has an
+> > interrupt set in it.  You can then have either more than one detailed
+> > status register for that IP
+
+> Correct. But I guess the IP blocks often have limited set of registers fo=
+r the
+> "sub interrupts". For such cases my idea would work, right. My RFC
+> handled case where there is many 'sub registers' to read for one 'main
+> bit.
+
+Your idea definitely works for the current case, yes - I'm just thinking
+about future edge and extension cases.
+
+> > or several smaller IPs reporting through a
+> > single detailed status register.
+
+> I think that if we have more than two layers of irqs (main and sub) -
+> then we should do cascaded controllers.
+
+Yeah, and my first thought here is that we should just be using cascaded
+controllers all the time (but like I say I'm not 100% certain on that).
+
+> > Right, it's about working out which subregister to read - the point is
+> > you can do this by adding a link in either direction, I'm suggesting
+> > doing it from the individual interrupt to the main register since we
+> > already have individual data structures for those and it feels less
+> > likely to run into hard to represent corner cases.
+
+> I see your point now. But as I said, I am not sure we should add the
+> overhead of 'main irq bit description' for simple cases just to cover
+> the corner cases. Yet I can try seeing what I can come up with if you
+> think this is the way to go.
+
+If you could take a look that'd be great.
+
+> > >  * @main_status: Optional base main status register address. Some chi=
+ps have
+> > >  *		 "main status register(s)" which indicate actual irq registers
+> > >  *		 with unhandled interrupts. Provide main status register
+> > >  *		 address here to avoid reading irq registers with no
+> > >  *		 active interrupts. Mapping from main status value to
+> > >  *		 interrupt register can be provided in sub_reg_offsets.
+
+> > > Perhaps this would clarify that the status_base, mask_base, ack_base,
+> > > etc. should still be used normally?
+
+> > Probably.
+
+> I am not sure this means I was able to convince you or if this is the
+> polite way to tell me not to bother =3D) I am Finnish guy who does not
+> understand small talk or polite hints ;)
+
+I mean that probably if you add clarifications like you suggest that
+might do it.  It's one of these things where you can't 100% tell how
+things will look until you see the actual thing.
+
+--JYK4vJDZwFMowpUq
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlwKcikACgkQJNaLcl1U
+h9BkrAf8CFu+3ZdlY/D0Fwi2KgBBLx48NDOIXLhucgnWPEAvYDjVuivkCa7HGjTi
+o1/CZD8lxTUwHM35z8QbtnrELQb6JrArwkxxAxtKIt0V7XFMqkkz1xAfxrWkwuj2
+28nV0HmSOxHmDKvaITPu3Jer5jK5bs5YIWReex/jaAHAW1mrEoAT5TJA4GNSCRD9
+mI4HDd0XjYPcHIjhwc17P2xegM7uswXCUFGbEUyfJPPG4VsUT9GkO8w/Srxd4AgZ
+7jIfmrUGfyaa5z4hlNSvlfUu4U05zWTtt7vdYnm//YGHNPV8Tj87wMcfO4WHV5hV
+CSPUBPu93nFiBcPNZ+NRteeraspn3Q==
+=glZu
+-----END PGP SIGNATURE-----
+
+--JYK4vJDZwFMowpUq--
