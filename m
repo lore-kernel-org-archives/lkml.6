@@ -2,142 +2,138 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5930C07E85
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 15:43:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 284EDC07E85
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 15:44:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8A57F20837
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 15:43:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A57F20837
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org
+	by mail.kernel.org (Postfix) with ESMTP id E38B920837
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 15:44:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E38B920837
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726074AbeLGPm7 (ORCPT
+        id S1726090AbeLGPoo convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 10:42:59 -0500
-Received: from vmicros1.altlinux.org ([194.107.17.57]:53606 "EHLO
-        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726010AbeLGPm7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 10:42:59 -0500
-Received: from mua.local.altlinux.org (mua.local.altlinux.org [192.168.1.14])
-        by vmicros1.altlinux.org (Postfix) with ESMTP id A590772CC59;
-        Fri,  7 Dec 2018 18:42:55 +0300 (MSK)
-Received: by mua.local.altlinux.org (Postfix, from userid 508)
-        id 972197CE9E5; Fri,  7 Dec 2018 18:42:55 +0300 (MSK)
-Date:   Fri, 7 Dec 2018 18:42:55 +0300
-From:   "Dmitry V. Levin" <ldv@altlinux.org>
-To:     Michael Ellerman <mpe@ellerman.id.au>
-Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Breno Leitao <leitao@debian.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Eugene Syromyatnikov <esyr@redhat.com>,
-        Elvira Khabirova <lineprinter@altlinux.org>,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4] powerpc/ptrace: replace ptrace_report_syscall() with
- a tracehook call
-Message-ID: <20181207154255.GA28964@altlinux.org>
-References: <20181116121701.14359da0@akathisia>
- <87ftw12nyn.fsf@concordia.ellerman.id.au>
- <20181119210139.GA8360@altlinux.org>
- <87efbe166y.fsf@concordia.ellerman.id.au>
- <20181203031823.GE11573@altlinux.org>
- <20181207011946.GA18558@altlinux.org>
- <87y391k2tq.fsf@concordia.ellerman.id.au>
+        Fri, 7 Dec 2018 10:44:44 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:34974 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726010AbeLGPoo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Dec 2018 10:44:44 -0500
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id E09E43082142;
+        Fri,  7 Dec 2018 15:44:43 +0000 (UTC)
+Received: from localhost (ovpn-200-34.brq.redhat.com [10.40.200.34])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 3B58B82785;
+        Fri,  7 Dec 2018 15:44:36 +0000 (UTC)
+Date:   Fri, 7 Dec 2018 16:44:35 +0100
+From:   Jesper Dangaard Brouer <brouer@redhat.com>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Robin Murphy <robin.murphy@arm.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        iommu@lists.linux-foundation.org, tariqt@mellanox.com,
+        ilias.apalodimas@linaro.org, toke@toke.dk,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        brouer@redhat.com
+Subject: Re: [RFC] avoid indirect calls for DMA direct mappings
+Message-ID: <20181207164435.18f8ffed@redhat.com>
+In-Reply-To: <20181207012141.GA4256@lst.de>
+References: <20181206153720.10702-1-hch@lst.de>
+        <CAHk-=wgz6PFCm+XMWN31dRHzA3JcNP0x0Y-z5NMMw3dHhrDXAw@mail.gmail.com>
+        <20181206184330.GB30039@lst.de>
+        <173bfba7-033d-93c4-6ef1-48c9e39c9efc@arm.com>
+        <20181206200006.GA31548@lst.de>
+        <e3e4c17e-ba6d-d743-04e5-7f240211b9bc@arm.com>
+        <20181207012141.GA4256@lst.de>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="oyUTqETQ0mS9luUI"
-Content-Disposition: inline
-In-Reply-To: <87y391k2tq.fsf@concordia.ellerman.id.au>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8BIT
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Fri, 07 Dec 2018 15:44:44 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, 7 Dec 2018 02:21:42 +0100
+Christoph Hellwig <hch@lst.de> wrote:
 
---oyUTqETQ0mS9luUI
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Fri, Dec 07, 2018 at 10:12:49PM +1100, Michael Ellerman wrote:
-> "Dmitry V. Levin" <ldv@altlinux.org> writes:
-> > On Mon, Dec 03, 2018 at 06:18:23AM +0300, Dmitry V. Levin wrote:
-> >> From: Elvira Khabirova <lineprinter@altlinux.org>
-> >>=20
-> >> Arch code should use tracehook_*() helpers, as documented
-> >> in include/linux/tracehook.h,
-> >> ptrace_report_syscall() is not expected to be used outside that file.
-> >>=20
-> >> Co-authored-by: Dmitry V. Levin <ldv@altlinux.org>
-> >> Fixes: 5521eb4bca2d ("powerpc/ptrace: Add support for PTRACE_SYSEMU")
-> >> Signed-off-by: Elvira Khabirova <lineprinter@altlinux.org>
-> >> Signed-off-by: Dmitry V. Levin <ldv@altlinux.org>
-> >> ---
-> >> v4: rewritten to call tracehook_report_syscall_entry() once, compile-t=
-ested
-> >> v3: add a descriptive comment
-> >> v2: explicitly ignore tracehook_report_syscall_entry() return code
-> >>=20
-> >>  arch/powerpc/kernel/ptrace.c | 54 +++++++++++++++++++++++-------------
-> >>  1 file changed, 35 insertions(+), 19 deletions(-)
+> On Thu, Dec 06, 2018 at 08:24:38PM +0000, Robin Murphy wrote:
+> > On 06/12/2018 20:00, Christoph Hellwig wrote:  
+> >> On Thu, Dec 06, 2018 at 06:54:17PM +0000, Robin Murphy wrote:  
+> >>> I'm pretty sure we used to assign dummy_dma_ops explicitly to devices at
+> >>> the point we detected the ACPI properties are wrong - that shouldn't be too
+> >>> much of a headache to go back to.  
+> >>
+> >> Ok.  I've cooked up a patch to use NULL as the go direct marker.
+> >> This cleans up a few things nicely, but also means we now need to
+> >> do the bypass scheme for all ops, not just the fast path.  But we
+> >> probably should just move the slow path ops out of line anyway,
+> >> so I'm not worried about it.  This has survived some very basic
+> >> testing on x86, and really needs to be cleaned up and split into
+> >> multiple patches..  
 > >
-> > Sorry, this patch does not work, please ignore it.
->=20
-> Hmm OK. Why exactly?
+> > I've also just finished hacking something up to keep the arm64 status quo - 
+> > I'll need to actually test it tomorrow, but the overall diff looks like the 
+> > below.  
+> 
+> Nice.  I created a branch that picked up your bits and also the ideas
+> from Linus, and the result looks reall nice.  I'll still need a signoff
+> for your bits, though.
+> 
+> Jesper, can you give this a spin if it changes the number even further?
+> 
+>   git://git.infradead.org/users/hch/misc.git dma-direct-calls.2
+> 
+>   http://git.infradead.org/users/hch/misc.git/shortlog/refs/heads/dma-direct-calls.2
 
-Unfortunately, I have no idea why it doesn't work.
-All I can say is it breaks strace because the kernel no longer sends
-syscall entry stops.
+I'll test it soon...
 
-> I wrote more or less the same patch, although I used a temporary bool.
->=20
-> > However, the bug blocks PTRACE_GET_SYSCALL_INFO, so please fix it.
->=20
-> Sorry, didn't realise it was blocking you.
+I looked at my perf stat recording on my existing tests[1] and there
+seems to be significantly more I-cache usage.
 
-We are changing ptrace_report_syscall signature to implement
-PTRACE_GET_SYSCALL_INFO, and this is the only place in the kernel besides
-tracehook_report_syscall_*() that invokes ptrace_report_syscall() directly.
+Copy-paste from my summary[1]:
+ [1] https://github.com/xdp-project/xdp-project/blob/master/areas/dma/dma01_test_hellwig_direct_dma.org#summary-of-results
 
-> > I'm going to use
-> > 	if (tracehook_report_syscall_entry(regs))
-> > 		return -1;
-> > 	return -1;
-> > in the series until you have a better fix.
->=20
-> Yeah that's fine by me. I could send that to Linus for 4.20 if you want
-> me to, otherwise I'm fine for you to carry it in your series.
+* Summary of results
 
-Yes, please.  I'll send a v5 shortly.
+Using XDP_REDIRECT between drivers RX ixgbe(10G) redirect TX i40e(40G),
+via BPF devmap (used samples/bpf/xdp_redirect_map) . (Note choose
+higher TX link-speed to assure that we don't to have a TX bottleneck).
+The baseline-kernel is at commit https://git.kernel.org/torvalds/c/ef78e5ec9214,
+which is commit just before Hellwigs changes in this tree.
+
+Performance numbers in packets/sec (XDP_REDIRECT ixgbe -> i40e):
+ - 11913154 (11,913,154) pps - baseline compiled without retpoline
+ -  7438283  (7,438,283) pps - regression due to CONFIG_RETPOLINE
+ -  9610088  (9,610,088) pps - mitigation via Hellwig dma-direct-calls
+
+From the inst per cycle, it is clear that retpolines are stalling the CPU
+pipeline:
+
+| pps        | insn per cycle |
+|------------+----------------|
+| 11,913,154 |           2.39 |
+| 7,438,283  |           1.54 |
+| 9,610,088  |           2.04 |
 
 
---=20
-ldv
+Strangely the Instruction-Cache is also under heavier pressure:
 
---oyUTqETQ0mS9luUI
-Content-Type: application/pgp-signature; name="signature.asc"
+| pps        | l2_rqsts.all_code_rd | l2_rqsts.code_rd_hit | l2_rqsts.code_rd_miss |
+|------------+----------------------+----------------------+-----------------------|
+| 11,913,154 | 874,547              | 742,335              | 132,198               |
+| 7,438,283  | 649,513              | 547,581              | 101,945               |
+| 9,610,088  | 2,568,064            | 2,001,369            | 566,683               |
+|            |                      |                      |                       |
 
------BEGIN PGP SIGNATURE-----
 
-iQIcBAEBCAAGBQJcCpT/AAoJEAVFT+BVnCUIMbMQAL8L5afzlG2FpQERgK3jWn4a
-Z+3/hu+dsem3sacLEskTymxnyV7lCNvHvz4kcvNB/wfwbbsaEScu4RveZIMq86E3
-TCu/kWvfYdrxB/Xux9hoZLyxYG3xhd2Jg8I/4PuHG2p8AeamnykVFqLFXlDxYkJq
-gLmbjUxA0flkXoL+Ts9WyIA6X5FYxWY2zaiVgwZ52QSZt6JoyfmiMMYsvAolRtPP
-1C0pJo1ZbPkBUTRI0FXIbbjik3y5tDX/6grLCcDIMBL8/UYRfFDchHmnBtrAkKk6
-L4XzlNX52qWhj7Zlqy5byF1a8Tlyq1GCaXOVl/d7whTDDy96dWWI5HzONhLlU0RD
-QUfTzthXeReNHBMFPW9w3k+iu9DOmlZSy5q8UBq7m8WlNzSAlxvX5fJaTmJA8E57
-uWq1/Sn5abplHuZuom4hourp8+mOxFfL6jyoeraqYTNKgWm+0vIDqw3CU5sERfty
-f/Fb4OBwzm+VMcuQAa6qO5eQMkN6roaEG4uTS1TpiJNrVJERyUTcIei/q41VPVBU
-vagvDi4wERzCKWF0oA611+EKb4UGOlZ9+nC9eKOOLEckf5uOdOu8CVwFtiK994s5
-vpB7YSejmG85ujZkiAXI11jhOnGZlkmEMRhSk+RyKRTT8PbUurm929qnbdWkuxlU
-DyJAIAZjeq7+uQSRXS/B
-=ekme
------END PGP SIGNATURE-----
-
---oyUTqETQ0mS9luUI--
+-- 
+Best regards,
+  Jesper Dangaard Brouer
+  MSc.CS, Principal Kernel Engineer at Red Hat
+  LinkedIn: http://www.linkedin.com/in/brouer
