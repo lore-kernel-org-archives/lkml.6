@@ -2,143 +2,189 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 151C0C64EB1
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 10:03:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4C1CC07E85
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 10:06:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BE9A520645
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 10:03:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8808D20645
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 10:06:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="hn5rWXYT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE9A520645
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="EgLLsRdF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8808D20645
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726125AbeLGKDo (ORCPT
+        id S1726030AbeLGKG3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 05:03:44 -0500
-Received: from mail-eopbgr150082.outbound.protection.outlook.com ([40.107.15.82]:11808
-        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726108AbeLGKDm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 05:03:42 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=H87oSW9GctHOjtNMx+8dMErdLK7VoMvzFgDf6maq/pw=;
- b=hn5rWXYT/dMzjOyyJ5UQNbXtyag6SwdqqLjHpSz7IEURoNdL+8JA0g77sKsRxjDvEIMA2v2JjnJfRTD0BiWx5nypu//cAcT3GiH8ePoVDqHNkD0prd6IQcgrURnFuJX3IZWF/W5SxKJEEoMdizSj/lIVAJr3phvxZRFZbQVd8Ls=
-Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com (52.134.72.18) by
- DB3PR0402MB3946.eurprd04.prod.outlook.com (52.134.72.13) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1404.22; Fri, 7 Dec 2018 10:03:39 +0000
-Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com
- ([fe80::adf8:f49d:deb4:58fd]) by DB3PR0402MB3916.eurprd04.prod.outlook.com
- ([fe80::adf8:f49d:deb4:58fd%3]) with mapi id 15.20.1404.021; Fri, 7 Dec 2018
- 10:03:39 +0000
-From:   Anson Huang <anson.huang@nxp.com>
-To:     "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        Aisheng Dong <aisheng.dong@nxp.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-CC:     dl-linux-imx <linux-imx@nxp.com>
-Subject: [PATCH 3/3] ARM: dts: imx7ulp: add HSRUN mode clocks
-Thread-Topic: [PATCH 3/3] ARM: dts: imx7ulp: add HSRUN mode clocks
-Thread-Index: AQHUjhQgPbL1bIRVAESyGO0FuLOoKQ==
-Date:   Fri, 7 Dec 2018 10:03:39 +0000
-Message-ID: <1544176659-32022-3-git-send-email-Anson.Huang@nxp.com>
-References: <1544176659-32022-1-git-send-email-Anson.Huang@nxp.com>
-In-Reply-To: <1544176659-32022-1-git-send-email-Anson.Huang@nxp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: git-send-email 2.7.4
-x-clientproxiedby: HK0PR01CA0033.apcprd01.prod.exchangelabs.com
- (2603:1096:203:3e::21) To DB3PR0402MB3916.eurprd04.prod.outlook.com
- (2603:10a6:8:10::18)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=anson.huang@nxp.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [119.31.174.66]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DB3PR0402MB3946;6:nDUJSFBlBvzgJN53PNkWYfC41pLiaQULXU4vsUSOYR51yp4SjOI20uYtE9UWkwOUpkkIaMYvxAYVm2vB4nM0GT0z5i64oY/n+LVbL4JnS9GcooTOodDAkPmiJuYACcIN/sLHfxnyes91uRYiIq1QrPytZ+ipWQ01KSRB8EWZq1msFd4GHUQiG7qUfuCbTd9sgLleYEB1v7dPZ5JMrBVeRReGnVZvXo8H26eZGqcgxk/EBVCYAd9Kz/tx6yTWi7Fqyk/z6SNFjj4vgyRexTnldDl6PBg65QyB1oynafhOIqa9jeMrvv4gyHYnX8fhFKZhWvFjSIvum71b2gN8/9LGCDE8aAcrQbvO0/2L1b41xxeAy+gIXlDF2Z4fBg82DLtBsclkK+BTko3qYo3DrxZyzdgBwX8YsUj8+YNI7n0Obg0JfD6RSHIR23RGp2YWwxF3Mtpa3kx3gvBAxh8l6ZJXdA==;5:VIrHYDA4v9w4SsYUrK3ANM6FgcNjZqYFDxUrEZ2RIjDbY03sqrEufmJHic8fbh55QtekWa7QUdDZi0KmcMLzyYLN5oadkt0ScFa87S7dyK1sYfKPRc/OTwOPjLbNWJZ1g+MzMQgckhxJCAOW6mz4gso2BZl/NdJLWYyCDMIXNdU=;7:Vw999RTR3WSJ4RyHyT5LPyNLlCVLkb3i+7ZLyGWMnNWHbSNjH9bkt0VB4JjHIqRtMi9+isaaxc1BTxf+UEJmMGnJO4YShLmeAL7Up62OZnU2zgWsAUHcZxvbp5WLHIuVxysaRPxrCLbj/A33MbgI4g==
-x-ms-office365-filtering-correlation-id: d3eca6a3-01ab-4af2-e16b-08d65c2b429d
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:DB3PR0402MB3946;
-x-ms-traffictypediagnostic: DB3PR0402MB3946:
-x-microsoft-antispam-prvs: <DB3PR0402MB3946C7495C2A6FE13BDB981FF5AA0@DB3PR0402MB3946.eurprd04.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(3002001)(93006095)(93001095)(3231455)(999002)(944501520)(52105112)(6055026)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123562045)(20161123560045)(20161123564045)(201708071742011)(7699051)(76991095);SRVR:DB3PR0402MB3946;BCL:0;PCL:0;RULEID:;SRVR:DB3PR0402MB3946;
-x-forefront-prvs: 0879599414
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(346002)(376002)(39860400002)(396003)(366004)(189003)(199004)(99286004)(305945005)(66066001)(7736002)(81156014)(2616005)(81166006)(446003)(102836004)(11346002)(476003)(26005)(97736004)(71190400001)(2201001)(2501003)(4326008)(36756003)(25786009)(478600001)(7416002)(5660300001)(86362001)(71200400001)(110136005)(316002)(3846002)(6116002)(68736007)(6486002)(2906002)(6506007)(6306002)(6512007)(105586002)(6436002)(53936002)(186003)(106356001)(8936002)(14454004)(8676002)(52116002)(50226002)(14444005)(76176011)(386003)(256004)(966005)(486006)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:DB3PR0402MB3946;H:DB3PR0402MB3916.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: e8uO46bOhm4BeG6uQIxvERzLWN+Rhs5087daCV9ZKDjMSLcGlg8t6xamb8L5EhgavyI8TqRexCly9o0odmrmasgExGSLpdNSOH3HojkPt2w2haLrAwlhp+snHzXr64MSeu8kZE05WruMpeO0rTrTmtqdyEYgzdzwvSgcU0mKFZHmbxzV0AJjh9ENojUp+2Kl0s7twcLTPIMEYZeUAlDQa2VWVHm7b4lRxbsKcCpwkE7amtCNDkQ5eyOqI6KfTC1PlfpK9hOoVVUIV653R7ZYq+pdiPbIe4kGnnVAQ7TYjEDZ8qgUyeC05L/B65i24QCquo5IKTQsCQ6ZDrJ0XW74lWfnxTzCzY/GIwOJpAp+FOc=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        Fri, 7 Dec 2018 05:06:29 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:36267 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725976AbeLGKG2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Dec 2018 05:06:28 -0500
+Received: by mail-wm1-f66.google.com with SMTP id a18so3941346wmj.1
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Dec 2018 02:06:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=kUwCLVhtHzk/2FY1YPtUTTCUBvJxk6qL0FqXIMwaMGE=;
+        b=EgLLsRdF0ufehtUkt0d6+MO46jfc6jxP9t7c8y9Us/0lQ+pO1Z3QVuNlMaRI0Rb79G
+         hu4NIUruXENdjTcXRezhpT6wsga5iXnCgojo6AzjDGt0dFfzMRjaHfIvpDTcPdeSs/yC
+         XtIIWeHSl/z0ZFAX8FAOnI1lcd9BOCBLcsyMc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
+         :message-id:date:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=kUwCLVhtHzk/2FY1YPtUTTCUBvJxk6qL0FqXIMwaMGE=;
+        b=M4qoLtTPRqfOXK3A18pwf10ZKTTUGXLSPDvO7g7YaSC1GM3ub1zhmp0vbiBbZkenj8
+         nk+rbg0tXdxlC79MklgOabXVHMXlJ1UPoTdkR9XeGlt8pRBOeanBkZAI2YZlhzQ3Bax7
+         mDDA7kOqPd6Vz4t9wNdIuLThhetEGjs7CjJaDh45mShb/V65nOCe4RSCGDr1ykKhBxuq
+         IQ7Z6RxpeJdNscD6jb1FnKUYpFgHyajQAAybQ2R4v0XUuvgZXkS1Iud6rWuePGlYIdTK
+         aNL4vDPln/jHAS1GOL4ROl/Dqll/9fmck6H3wa5BJ6ZKk7hIDriV9aRtjYEHZoMsG3WK
+         WLPA==
+X-Gm-Message-State: AA+aEWYzRVkbs/QfGXmSl9pPMueIziOiqXm+tTar+GZ03D1kjmq0g3R0
+        qWBZ3ZzajfC+XcfEFcqwliJ7QQ==
+X-Google-Smtp-Source: AFSGD/UlsM50NUxHuwWMDONeZyXRKXAsqMKVkTVr0RrtmQThCndUvhyJ1U5qwE5su7XgBewMycF4Sg==
+X-Received: by 2002:a7b:c4cb:: with SMTP id g11mr1627453wmk.149.1544177186274;
+        Fri, 07 Dec 2018 02:06:26 -0800 (PST)
+Received: from [10.44.66.8] ([212.45.67.2])
+        by smtp.googlemail.com with ESMTPSA id r69sm5978266wmd.4.2018.12.07.02.06.23
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 07 Dec 2018 02:06:25 -0800 (PST)
+Subject: Re: [PATCH v10 0/8] Introduce on-chip interconnect API
+To:     Greg KH <gregkh@linuxfoundation.org>,
+        Evan Green <evgreen@chromium.org>
+Cc:     linux-pm@vger.kernel.org, rjw@rjwysocki.net, robh+dt@kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        khilman@baylibre.com, Vincent Guittot <vincent.guittot@linaro.org>,
+        Saravana Kannan <skannan@codeaurora.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        amit.kucheria@linaro.org, seansw@qti.qualcomm.com,
+        daidavid1@codeaurora.org, mark.rutland@arm.com,
+        lorenzo.pieralisi@arm.com, Alexandre Bailon <abailon@baylibre.com>,
+        maxime.ripard@bootlin.com, Arnd Bergmann <arnd@arndb.de>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        ksitaraman@nvidia.com, sanjayc@nvidia.com,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-tegra@vger.kernel.org,
+        Doug Anderson <dianders@chromium.org>
+References: <20181127180349.29997-1-georgi.djakov@linaro.org>
+ <CAE=gft4jUjr3oDAZrM=-orLM-YoVAwa+e=crDDC_p9ArGE1dig@mail.gmail.com>
+ <20181206145547.GA7884@kroah.com>
+From:   Georgi Djakov <georgi.djakov@linaro.org>
+Openpgp: preference=signencrypt
+Autocrypt: addr=georgi.djakov@linaro.org; prefer-encrypt=mutual; keydata=
+ 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
+ KEmKjLDvB0pePJkdTw==
+Message-ID: <bdc4bad1-d613-4144-2e5b-2657e170affa@linaro.org>
+Date:   Fri, 7 Dec 2018 12:06:21 +0200
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d3eca6a3-01ab-4af2-e16b-08d65c2b429d
-X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Dec 2018 10:03:39.4849
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB3PR0402MB3946
+In-Reply-To: <20181206145547.GA7884@kroah.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-i.MX7ULP can switch CPU between RUN mode and HSRUN mode
-by programming SMC1 register, different clock sources
-will be used for CPU in different modes, so SMC1 can be
-abstracted as a clock controller for CPU clock switch,
-this patch adds support for it.
+Hi Greg and Evan,
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
----
-This patch is based on top of path series: [V5,1/6] dt-bindings: fsl: add c=
-ompatible for imx7ulp evk,
-https://patchwork.kernel.org/patch/10677263/
----
- arch/arm/boot/dts/imx7ulp.dtsi | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+On 12/6/18 16:55, Greg KH wrote:
+> On Wed, Dec 05, 2018 at 12:41:35PM -0800, Evan Green wrote:
+>> On Tue, Nov 27, 2018 at 10:03 AM Georgi Djakov <georgi.djakov@linaro.org> wrote:
+>>>
+>>> Modern SoCs have multiple processors and various dedicated cores (video, gpu,
+>>> graphics, modem). These cores are talking to each other and can generate a
+>>> lot of data flowing through the on-chip interconnects. These interconnect
+>>> buses could form different topologies such as crossbar, point to point buses,
+>>> hierarchical buses or use the network-on-chip concept.
+>>>
+>>> These buses have been sized usually to handle use cases with high data
+>>> throughput but it is not necessary all the time and consume a lot of power.
+>>> Furthermore, the priority between masters can vary depending on the running
+>>> use case like video playback or CPU intensive tasks.
+>>>
+>>> Having an API to control the requirement of the system in terms of bandwidth
+>>> and QoS, so we can adapt the interconnect configuration to match those by
+>>> scaling the frequencies, setting link priority and tuning QoS parameters.
+>>> This configuration can be a static, one-time operation done at boot for some
+>>> platforms or a dynamic set of operations that happen at run-time.
+>>>
+>>> This patchset introduce a new API to get the requirement and configure the
+>>> interconnect buses across the entire chipset to fit with the current demand.
+>>> The API is NOT for changing the performance of the endpoint devices, but only
+>>> the interconnect path in between them.
+>>
+>> For what it's worth, we are ready to land this in Chrome OS. I think
+>> this series has been very well discussed and reviewed, hasn't changed
+>> much in the last few spins, and is in good enough shape to use as a
+>> base for future patches. Georgi's also done a great job reaching out
+>> to other SoC vendors, and there appears to be enough consensus that
+>> this framework will be usable by more than just Qualcomm. There are
+>> also several drivers out on the list trying to add patches to use this
+>> framework, with more to come, so it made sense (to us) to get this
+>> base framework nailed down. In my experiments this is an important
+>> piece of the overall power management story, especially on systems
+>> that are mostly idle.
+>>
+>> I'll continue to track changes to this series and we will ultimately
+>> reconcile with whatever happens upstream, but I thought it was worth
+>> sending this note to express our "thumbs up" towards this framework.
+> 
+> Looks like a v11 will be forthcoming, so I'll wait for that one to apply
+> it to the tree if all looks good.
+> 
 
-diff --git a/arch/arm/boot/dts/imx7ulp.dtsi b/arch/arm/boot/dts/imx7ulp.dts=
-i
-index 931b275..b86daf7 100644
---- a/arch/arm/boot/dts/imx7ulp.dtsi
-+++ b/arch/arm/boot/dts/imx7ulp.dtsi
-@@ -199,9 +199,13 @@
- 			assigned-clock-parents =3D <&scg1 IMX7ULP_CLK_SOSC_BUS_CLK>;
- 		};
-=20
--		smc1: smc1@40410000 {
-+		smc1: clock-controller@40410000 {
- 			compatible =3D "fsl,imx7ulp-smc1";
- 			reg =3D <0x40410000 0x1000>;
-+			#clock-cells =3D <1>;
-+			clocks =3D <&scg1 IMX7ULP_CLK_CORE_DIV>,
-+				 <&scg1 IMX7ULP_CLK_HSRUN_CORE_DIV>;
-+			clock-names =3D "divcore", "hsrun_divcore";
- 		};
-=20
- 		pcc3: clock-controller@40b30000 {
---=20
-2.7.4
+Yes, it's coming. I will also include an additional fixup patch, as the
+sdm845 provider driver will fail to build in linux-next, due to a recent
+change in the cmd_db API.
 
+Thanks,
+Georgi
