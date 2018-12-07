@@ -2,279 +2,273 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 281BBC07E85
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 15:10:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3BE1C07E85
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 15:10:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA8FD2054F
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 15:10:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5A6A22064D
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 15:10:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="LWR8/9gi";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="c8dWw+3G"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA8FD2054F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="NpAy86kE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A6A22064D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726085AbeLGPK2 (ORCPT
+        id S1726114AbeLGPKd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 10:10:28 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:49490 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726027AbeLGPK2 (ORCPT
+        Fri, 7 Dec 2018 10:10:33 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:39638 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726027AbeLGPKd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 10:10:28 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 782BF60274; Fri,  7 Dec 2018 15:10:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1544195426;
-        bh=NnwozR/AeoslTi+Cb86Px1UJ8c17C1UMlMdqvztP7QQ=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=LWR8/9giUE7zZJedvBk6kj8wHfzA21BgOQoP6OB6TNBOtvBQgA2z0L0uf4y0SGI7B
-         1tQq+qy5vGPuNSGYbWYPeD5dVXGmAN1Wmv4xheCAVOd3T6iU9na7D6aufE7mWFjETF
-         WqBe3QzltQabJgCtB6epH6hP9x6AtwAQHrIXm7p8=
-Received: from [10.226.60.81] (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: jhugo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 05CBD601B4;
-        Fri,  7 Dec 2018 15:10:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1544195425;
-        bh=NnwozR/AeoslTi+Cb86Px1UJ8c17C1UMlMdqvztP7QQ=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=c8dWw+3Go1urjw6FwGM8G0iMTEZASUvJzo6IvgeHknv37AwKwZIVLKmbfdVGfYbjd
-         N1raLNcf9nzm8HNIt/vxtnngV1SrySGsUjiWVrgUxBOJhGeLbKiXtOKllOO4Gy1JLa
-         PUDECR2E3LUyQiiHEqeuEiIfjmgfeGJ1uKfT31oI=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 05CBD601B4
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jhugo@codeaurora.org
-Subject: Re: [PATCH v2] clk: qcom: smd: Add support for MSM8998 rpm clocks
-To:     Marc Gonzalez <marc.w.gonzalez@free.fr>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Rob Herring <robh@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        MSM <linux-arm-msm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <1544134310-10227-1-git-send-email-jhugo@codeaurora.org>
- <be08a9ca-9782-6d10-7c44-523c9e8c56f5@free.fr>
-From:   Jeffrey Hugo <jhugo@codeaurora.org>
-Message-ID: <c0c37e37-d7db-8767-6882-0e8f80cab688@codeaurora.org>
-Date:   Fri, 7 Dec 2018 08:10:23 -0700
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
+        Fri, 7 Dec 2018 10:10:33 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wB7F8pSS166000;
+        Fri, 7 Dec 2018 15:10:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to :
+ references : cc : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=xQ+Wdgsn3ssJEuR7WGlrMLSu/Z8bPmwKuVw3GD0Zzd0=;
+ b=NpAy86kEWucgaBTpxnNb+uYERqfa6sptduu2WgT2DZo+FeAiItvg4CdKToNyzljWjfin
+ aD2waWQuQfndqeXp3mBu1/4qkhEfP0FipPN5rA+cXGo7qb54fPIcE/+u+fTUdMCewhLa
+ QQ+OkOCUV+zuYJoFSLOvzXbQCWdMyrpkN+gvxoYjXsDLssDV9gudU+86mshaopXV7xSM
+ UmJuTXpGOu385YTpAH6BTX/2+guzHKI7BF4hrcduefsQJVKLDkpl8KhR3kyaMgexSKv1
+ LcYMc8S96hN0gdoLC8uS8AWwYVHHODL876fEig0SgawaIoIAjlEahX5cbNvJJKdd+TYt JQ== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by userp2130.oracle.com with ESMTP id 2p3hquecf6-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 07 Dec 2018 15:10:23 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id wB7FAHsI013162
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 7 Dec 2018 15:10:17 GMT
+Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wB7FAHAa007505;
+        Fri, 7 Dec 2018 15:10:17 GMT
+Received: from [10.191.0.19] (/10.191.0.19)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 07 Dec 2018 07:10:17 -0800
+Subject: Re: [Xen-devel] [PATCH 1/1] xen/blkback: rework connect_ring() to
+ avoid inconsistent xenstore 'ring-page-order' set by malicious blkfront
+To:     Paul Durrant <Paul.Durrant@citrix.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>
+References: <1544156284-7756-1-git-send-email-dongli.zhang@oracle.com>
+ <742d0e02a1aa4031ad68a9f81fe2bdc4@AMSPEX02CL03.citrite.net>
+Cc:     "axboe@kernel.dk" <axboe@kernel.dk>,
+        Roger Pau Monne <roger.pau@citrix.com>,
+        "konrad.wilk@oracle.com" <konrad.wilk@oracle.com>
+From:   Dongli Zhang <dongli.zhang@oracle.com>
+Message-ID: <f3fb198f-5a63-7fae-88da-9550019d7de7@oracle.com>
+Date:   Fri, 7 Dec 2018 23:10:05 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.3.0
 MIME-Version: 1.0
-In-Reply-To: <be08a9ca-9782-6d10-7c44-523c9e8c56f5@free.fr>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+In-Reply-To: <742d0e02a1aa4031ad68a9f81fe2bdc4@AMSPEX02CL03.citrite.net>
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9099 signatures=668679
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1812070122
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/7/2018 3:30 AM, Marc Gonzalez wrote:
-> On 06/12/2018 23:11, Jeffrey Hugo wrote:
-> 
->> Add rpm smd clocks, PMIC and bus clocks which are required on MSM8998
->> for clients to vote on.
+Hi Paul,
+
+On 12/07/2018 05:39 PM, Paul Durrant wrote:
+>> -----Original Message-----
+>> From: Xen-devel [mailto:xen-devel-bounces@lists.xenproject.org] On Behalf
+>> Of Dongli Zhang
+>> Sent: 07 December 2018 04:18
+>> To: linux-kernel@vger.kernel.org; xen-devel@lists.xenproject.org; linux-
+>> block@vger.kernel.org
+>> Cc: axboe@kernel.dk; Roger Pau Monne <roger.pau@citrix.com>;
+>> konrad.wilk@oracle.com
+>> Subject: [Xen-devel] [PATCH 1/1] xen/blkback: rework connect_ring() to
+>> avoid inconsistent xenstore 'ring-page-order' set by malicious blkfront
 >>
->> Signed-off-by: Jeffrey Hugo <jhugo@codeaurora.org>
+>> The xenstore 'ring-page-order' is used globally for each blkback queue and
+>> therefore should be read from xenstore only once. However, it is obtained
+>> in read_per_ring_refs() which might be called multiple times during the
+>> initialization of each blkback queue.
+> 
+> That is certainly sub-optimal.
+> 
+>>
+>> If the blkfront is malicious and the 'ring-page-order' is set in different
+>> value by blkfront every time before blkback reads it, this may end up at
+>> the "WARN_ON(i != (XEN_BLKIF_REQS_PER_PAGE * blkif->nr_ring_pages));" in
+>> xen_blkif_disconnect() when frontend is destroyed.
+> 
+> I can't actually see what useful function blkif->nr_ring_pages actually performs any more. Perhaps you could actually get rid of it?
+
+How about we keep it? Other than reading from xenstore, it is the only place for
+us to know the value from 'ring-page-order'.
+
+This helps calculate the initialized number of elements on all
+xen_blkif_ring->pending_free lists. That's how "WARN_ON(i !=
+(XEN_BLKIF_REQS_PER_PAGE * blkif->nr_ring_pages));" is used to double check if
+there is no leak of elements reclaimed from all xen_blkif_ring->pending_free.
+
+It helps vmcore analysis as well. Given blkif->nr_ring_pages, we would be able
+to double check if the number of ring buffer slots are correct.
+
+I could not see any drawback leaving blkif->nr_ring_pagesin the code.
+
+Dongli Zhang
+
+> 
+>>
+>> This patch reworks connect_ring() to read xenstore 'ring-page-order' only
+>> once.
+> 
+> That is certainly a good thing :-)
+> 
+>   Paul
+> 
+>>
+>> Signed-off-by: Dongli Zhang <dongli.zhang@oracle.com>
 >> ---
->> v2
->> -fix compatible ordering nits per Stephen
+>>  drivers/block/xen-blkback/xenbus.c | 49 ++++++++++++++++++++++++---------
+>> -----
+>>  1 file changed, 31 insertions(+), 18 deletions(-)
 >>
->>   .../devicetree/bindings/clock/qcom,rpmcc.txt       |  1 +
->>   drivers/clk/qcom/clk-smd-rpm.c                     | 62 ++++++++++++++++++++++
->>   include/dt-bindings/clock/qcom,rpmcc.h             |  6 +++
->>   3 files changed, 69 insertions(+)
+>> diff --git a/drivers/block/xen-blkback/xenbus.c b/drivers/block/xen-
+>> blkback/xenbus.c
+>> index a4bc74e..4a8ce20 100644
+>> --- a/drivers/block/xen-blkback/xenbus.c
+>> +++ b/drivers/block/xen-blkback/xenbus.c
+>> @@ -919,14 +919,15 @@ static void connect(struct backend_info *be)
+>>  /*
+>>   * Each ring may have multi pages, depends on "ring-page-order".
+>>   */
+>> -static int read_per_ring_refs(struct xen_blkif_ring *ring, const char
+>> *dir)
+>> +static int read_per_ring_refs(struct xen_blkif_ring *ring, const char
+>> *dir,
+>> +			      bool use_ring_page_order)
+>>  {
+>>  	unsigned int ring_ref[XENBUS_MAX_RING_GRANTS];
+>>  	struct pending_req *req, *n;
+>>  	int err, i, j;
+>>  	struct xen_blkif *blkif = ring->blkif;
+>>  	struct xenbus_device *dev = blkif->be->dev;
+>> -	unsigned int ring_page_order, nr_grefs, evtchn;
+>> +	unsigned int nr_grefs, evtchn;
 >>
->> diff --git a/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt b/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
->> index 87b4949..944719b 100644
->> --- a/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
->> +++ b/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
->> @@ -16,6 +16,7 @@ Required properties :
->>   			"qcom,rpmcc-msm8974", "qcom,rpmcc"
->>   			"qcom,rpmcc-apq8064", "qcom,rpmcc"
->>   			"qcom,rpmcc-msm8996", "qcom,rpmcc"
->> +			"qcom,rpmcc-msm8998", "qcom,rpmcc"
->>   			"qcom,rpmcc-qcs404", "qcom,rpmcc"
->>   
->>   - #clock-cells : shall contain 1
->> diff --git a/drivers/clk/qcom/clk-smd-rpm.c b/drivers/clk/qcom/clk-smd-rpm.c
->> index d3aadae..b1f95a9 100644
->> --- a/drivers/clk/qcom/clk-smd-rpm.c
->> +++ b/drivers/clk/qcom/clk-smd-rpm.c
->> @@ -655,10 +655,72 @@ static int clk_smd_rpm_enable_scaling(struct qcom_smd_rpm *rpm)
->>   	.num_clks = ARRAY_SIZE(qcs404_clks),
->>   };
->>   
->> +/* msm8998 */
->> +DEFINE_CLK_SMD_RPM(msm8998, snoc_clk, snoc_a_clk, QCOM_SMD_RPM_BUS_CLK, 1);
->> +DEFINE_CLK_SMD_RPM(msm8998, cnoc_clk, cnoc_a_clk, QCOM_SMD_RPM_BUS_CLK, 2);
->> +DEFINE_CLK_SMD_RPM(msm8998, ce1_clk, ce1_a_clk, QCOM_SMD_RPM_CE_CLK, 0);
->> +DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8998, div_clk1, div_clk1_a, 0xb);
->> +DEFINE_CLK_SMD_RPM(msm8998, ipa_clk, ipa_a_clk, QCOM_SMD_RPM_IPA_CLK, 0);
->> +DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8998, bb_clk1, bb_clk1_a, 1);
->> +DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8998, bb_clk2, bb_clk2_a, 2);
->> +DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(msm8998, bb_clk3_pin, bb_clk3_a_pin, 3);
->> +DEFINE_CLK_SMD_RPM(msm8998, mmssnoc_axi_rpm_clk, mmssnoc_axi_rpm_a_clk,
->> +		   QCOM_SMD_RPM_MMAXI_CLK, 0);
->> +DEFINE_CLK_SMD_RPM(msm8998, aggre1_noc_clk, aggre1_noc_a_clk,
->> +		   QCOM_SMD_RPM_AGGR_CLK, 1);
->> +DEFINE_CLK_SMD_RPM(msm8998, aggre2_noc_clk, aggre2_noc_a_clk,
->> +		   QCOM_SMD_RPM_AGGR_CLK, 2);
->> +DEFINE_CLK_SMD_RPM_QDSS(msm8998, qdss_clk, qdss_a_clk,
->> +			QCOM_SMD_RPM_MISC_CLK, 1);
->> +DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8998, rf_clk1, rf_clk1_a, 4);
->> +DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(msm8998, rf_clk2_pin, rf_clk2_a_pin, 5);
->> +DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8998, rf_clk3, rf_clk3_a, 6);
->> +DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(msm8998, rf_clk3_pin, rf_clk3_a_pin, 6);
->> +static struct clk_smd_rpm *msm8998_clks[] = {
->> +	[RPM_SMD_SNOC_CLK] = &msm8998_snoc_clk,
->> +	[RPM_SMD_SNOC_A_CLK] = &msm8998_snoc_a_clk,
->> +	[RPM_SMD_CNOC_CLK] = &msm8998_cnoc_clk,
->> +	[RPM_SMD_CNOC_A_CLK] = &msm8998_cnoc_a_clk,
->> +	[RPM_SMD_CE1_CLK] = &msm8998_ce1_clk,
->> +	[RPM_SMD_CE1_A_CLK] = &msm8998_ce1_a_clk,
->> +	[RPM_SMD_DIV_CLK1] = &msm8998_div_clk1,
->> +	[RPM_SMD_DIV_A_CLK1] = &msm8998_div_clk1_a,
->> +	[RPM_SMD_IPA_CLK] = &msm8998_ipa_clk,
->> +	[RPM_SMD_IPA_A_CLK] = &msm8998_ipa_a_clk,
->> +	[RPM_SMD_BB_CLK1] = &msm8998_bb_clk1,
->> +	[RPM_SMD_BB_CLK1_A] = &msm8998_bb_clk1_a,
->> +	[RPM_SMD_BB_CLK2] = &msm8998_bb_clk2,
->> +	[RPM_SMD_BB_CLK2_A] = &msm8998_bb_clk2_a,
->> +	[RPM_SMD_BB_CLK3_PIN] = &msm8998_bb_clk3_pin,
->> +	[RPM_SMD_BB_CLK3_A_PIN] = &msm8998_bb_clk3_a_pin,
->> +	[RPM_SMD_MMAXI_CLK] = &msm8998_mmssnoc_axi_rpm_clk,
->> +	[RPM_SMD_MMAXI_A_CLK] = &msm8998_mmssnoc_axi_rpm_a_clk,
->> +	[RPM_SMD_AGGR1_NOC_CLK] = &msm8998_aggre1_noc_clk,
->> +	[RPM_SMD_AGGR1_NOC_A_CLK] = &msm8998_aggre1_noc_a_clk,
->> +	[RPM_SMD_AGGR2_NOC_CLK] = &msm8998_aggre2_noc_clk,
->> +	[RPM_SMD_AGGR2_NOC_A_CLK] = &msm8998_aggre2_noc_a_clk,
->> +	[RPM_SMD_QDSS_CLK] = &msm8998_qdss_clk,
->> +	[RPM_SMD_QDSS_A_CLK] = &msm8998_qdss_a_clk,
->> +	[RPM_SMD_RF_CLK1] = &msm8998_rf_clk1,
->> +	[RPM_SMD_RF_CLK1_A] = &msm8998_rf_clk1_a,
->> +	[RPM_SMD_RF_CLK2_PIN] = &msm8998_rf_clk2_pin,
->> +	[RPM_SMD_RF_CLK2_A_PIN] = &msm8998_rf_clk2_a_pin,
->> +	[RPM_SMD_RF_CLK3] = &msm8998_rf_clk3,
->> +	[RPM_SMD_RF_CLK3_A] = &msm8998_rf_clk3_a,
->> +	[RPM_SMD_RF_CLK3_PIN] = &msm8998_rf_clk3_pin,
->> +	[RPM_SMD_RF_CLK3_A_PIN] = &msm8998_rf_clk3_a_pin,
->> +};
+>>  	err = xenbus_scanf(XBT_NIL, dir, "event-channel", "%u",
+>>  			  &evtchn);
+>> @@ -936,28 +937,18 @@ static int read_per_ring_refs(struct xen_blkif_ring
+>> *ring, const char *dir)
+>>  		return err;
+>>  	}
+>>
+>> -	err = xenbus_scanf(XBT_NIL, dev->otherend, "ring-page-order", "%u",
+>> -			  &ring_page_order);
+>> -	if (err != 1) {
+>> +	nr_grefs = blkif->nr_ring_pages;
 >> +
->> +static const struct rpm_smd_clk_desc rpm_clk_msm8998 = {
->> +	.clks = msm8998_clks,
->> +	.num_clks = ARRAY_SIZE(msm8998_clks),
->> +};
->> +
->>   static const struct of_device_id rpm_smd_clk_match_table[] = {
->>   	{ .compatible = "qcom,rpmcc-msm8916", .data = &rpm_clk_msm8916 },
->>   	{ .compatible = "qcom,rpmcc-msm8974", .data = &rpm_clk_msm8974 },
->>   	{ .compatible = "qcom,rpmcc-msm8996", .data = &rpm_clk_msm8996 },
->> +	{ .compatible = "qcom,rpmcc-msm8998", .data = &rpm_clk_msm8998 },
->>   	{ .compatible = "qcom,rpmcc-qcs404",  .data = &rpm_clk_qcs404  },
->>   	{ }
->>   };
->> diff --git a/include/dt-bindings/clock/qcom,rpmcc.h b/include/dt-bindings/clock/qcom,rpmcc.h
->> index 3658b0c..81dbd1f 100644
->> --- a/include/dt-bindings/clock/qcom,rpmcc.h
->> +++ b/include/dt-bindings/clock/qcom,rpmcc.h
->> @@ -127,5 +127,11 @@
->>   #define RPM_SMD_BIMC_GPU_A_CLK			77
->>   #define RPM_SMD_QPIC_CLK			78
->>   #define RPM_SMD_QPIC_CLK_A			79
->> +#define RPM_SMD_BB_CLK3_PIN			80
->> +#define RPM_SMD_BB_CLK3_A_PIN			81
->> +#define RPM_SMD_RF_CLK3				82
->> +#define RPM_SMD_RF_CLK3_A			83
->> +#define RPM_SMD_RF_CLK3_PIN			84
->> +#define RPM_SMD_RF_CLK3_A_PIN			85
->>   
->>   #endif
+>> +	if (!use_ring_page_order) {
+>>  		err = xenbus_scanf(XBT_NIL, dir, "ring-ref", "%u",
+>> &ring_ref[0]);
+>>  		if (err != 1) {
+>>  			err = -EINVAL;
+>>  			xenbus_dev_fatal(dev, err, "reading %s/ring-ref", dir);
+>>  			return err;
+>>  		}
+>> -		nr_grefs = 1;
+>>  	} else {
+>>  		unsigned int i;
 >>
-> 
-> What's the difference between RPM_SMD_LN_BB_CLK and RPM_SMD_BB_CLK1?
-> 
-> $ git grep RPM_SMD_LN_BB_CLK
-> arch/arm64/boot/dts/qcom/msm8996.dtsi:                  clocks = <&rpmcc RPM_SMD_LN_BB_CLK>,
-> arch/arm64/boot/dts/qcom/msm8996.dtsi:                          <&rpmcc RPM_SMD_LN_BB_CLK>,
-> drivers/clk/qcom/clk-smd-rpm.c: [RPM_SMD_LN_BB_CLK] = &msm8996_ln_bb_clk,
-> drivers/clk/qcom/clk-smd-rpm.c: [RPM_SMD_LN_BB_CLK] = &qcs404_ln_bb_clk,
-> include/dt-bindings/clock/qcom,rpmcc.h:#define RPM_SMD_LN_BB_CLK                        74
-> 
-> 
-> $ git grep 'RPM_SMD_BB_CLK1\>'
-> Documentation/devicetree/bindings/sound/qcom,wcd9335.txt:                <&rpmcc RPM_SMD_BB_CLK1>;
-> drivers/clk/qcom/clk-smd-rpm.c: [RPM_SMD_BB_CLK1]               = &msm8916_bb_clk1,
-> drivers/clk/qcom/clk-smd-rpm.c: [RPM_SMD_BB_CLK1] = &msm8996_bb_clk1,
-> drivers/clk/qcom/clk-smd-rpm.c: [RPM_SMD_BB_CLK1] = &msm8998_bb_clk1,
-> include/dt-bindings/clock/qcom,rpmcc.h:#define RPM_SMD_BB_CLK1                          10
-> 
-> 
-> Because the downstream kernel defines:
-> 
-> DEFINE_CLK_RPM_SMD_XO_BUFFER(ln_bb_clk1, ln_bb_clk1_ao, LN_BB_CLK1_ID);
-> DEFINE_CLK_RPM_SMD_XO_BUFFER_PINCTRL(ln_bb_clk1_pin, ln_bb_clk1_pin_ao,
-> 				     LN_BB_CLK1_PIN_ID);
-> DEFINE_CLK_RPM_SMD_XO_BUFFER(ln_bb_clk2, ln_bb_clk2_ao, LN_BB_CLK2_ID);
-> DEFINE_CLK_RPM_SMD_XO_BUFFER_PINCTRL(ln_bb_clk2_pin, ln_bb_clk2_pin_ao,
-> 				     LN_BB_CLK2_PIN_ID);
-> DEFINE_CLK_RPM_SMD_XO_BUFFER(ln_bb_clk3, ln_bb_clk3_ao, LN_BB_CLK3_ID);
-> DEFINE_CLK_RPM_SMD_XO_BUFFER_PINCTRL(ln_bb_clk3_pin, ln_bb_clk3_pin_ao,
-> 				     LN_BB_CLK3_PIN_ID);
-> 
-> 	CLK_LIST(ln_bb_clk1),
-> 	CLK_LIST(ln_bb_clk1_ao),
-> 	CLK_LIST(ln_bb_clk1_pin),
-> 	CLK_LIST(ln_bb_clk1_pin_ao),
-> 	CLK_LIST(ln_bb_clk2),
-> 	CLK_LIST(ln_bb_clk2_ao),
-> 	CLK_LIST(ln_bb_clk2_pin),
-> 	CLK_LIST(ln_bb_clk2_pin_ao),
-> 	CLK_LIST(ln_bb_clk3),
-> 	CLK_LIST(ln_bb_clk3_ao),
-> 	CLK_LIST(ln_bb_clk3_pin),
-> 	CLK_LIST(ln_bb_clk3_pin_ao),
-> 
-> 
-> While your patch defines
-> 
-> DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8998, bb_clk1, bb_clk1_a, 1);
-> DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8998, bb_clk2, bb_clk2_a, 2);
-> DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(msm8998, bb_clk3_pin, bb_clk3_a_pin, 3);
-> 
-> 	[RPM_SMD_BB_CLK1] = &msm8998_bb_clk1,
-> 	[RPM_SMD_BB_CLK1_A] = &msm8998_bb_clk1_a,
-> 	[RPM_SMD_BB_CLK2] = &msm8998_bb_clk2,
-> 	[RPM_SMD_BB_CLK2_A] = &msm8998_bb_clk2_a,
-> 	[RPM_SMD_BB_CLK3_PIN] = &msm8998_bb_clk3_pin,
-> 	[RPM_SMD_BB_CLK3_A_PIN] = &msm8998_bb_clk3_a_pin,
-> 
-
-Good question.  I don't know.
-
-The downstream ln_bb IDs correspond to the bb IDs used by upstream 8996, 
-where as the upstream 8996 ln_bb IDs are different.  The IDs seem to be 
-the important thing, where as the "name" seems to be fairly irrelevant 
-to the actual handling of the clock.
-
-I haven't yet found documentation other than the downstream code about 
-these clocks, so I chose to be consistent with 8996.
-
-Also, as a side note, I limited the list of clocks I enumerated to those 
-which the downstream driver defined, and were used when grepping the 
-downstream DT.
-
--- 
-Jeffrey Hugo
-Qualcomm Datacenter Technologies as an affiliate of Qualcomm 
-Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the
-Code Aurora Forum, a Linux Foundation Collaborative Project.
+>> -		if (ring_page_order > xen_blkif_max_ring_order) {
+>> -			err = -EINVAL;
+>> -			xenbus_dev_fatal(dev, err, "%s/request %d ring page
+>> order exceed max:%d",
+>> -					 dir, ring_page_order,
+>> -					 xen_blkif_max_ring_order);
+>> -			return err;
+>> -		}
+>> -
+>> -		nr_grefs = 1 << ring_page_order;
+>>  		for (i = 0; i < nr_grefs; i++) {
+>>  			char ring_ref_name[RINGREF_NAME_LEN];
+>>
+>> @@ -972,7 +963,6 @@ static int read_per_ring_refs(struct xen_blkif_ring
+>> *ring, const char *dir)
+>>  			}
+>>  		}
+>>  	}
+>> -	blkif->nr_ring_pages = nr_grefs;
+>>
+>>  	for (i = 0; i < nr_grefs * XEN_BLKIF_REQS_PER_PAGE; i++) {
+>>  		req = kzalloc(sizeof(*req), GFP_KERNEL);
+>> @@ -1030,6 +1020,8 @@ static int connect_ring(struct backend_info *be)
+>>  	size_t xspathsize;
+>>  	const size_t xenstore_path_ext_size = 11; /* sufficient for "/queue-
+>> NNN" */
+>>  	unsigned int requested_num_queues = 0;
+>> +	bool use_ring_page_order = false;
+>> +	unsigned int ring_page_order;
+>>
+>>  	pr_debug("%s %s\n", __func__, dev->otherend);
+>>
+>> @@ -1075,8 +1067,28 @@ static int connect_ring(struct backend_info *be)
+>>  		 be->blkif->nr_rings, be->blkif->blk_protocol, protocol,
+>>  		 pers_grants ? "persistent grants" : "");
+>>
+>> +	err = xenbus_scanf(XBT_NIL, dev->otherend, "ring-page-order", "%u",
+>> +			   &ring_page_order);
+>> +
+>> +	if (err != 1) {
+>> +		be->blkif->nr_ring_pages = 1;
+>> +	} else {
+>> +		if (ring_page_order > xen_blkif_max_ring_order) {
+>> +			err = -EINVAL;
+>> +			xenbus_dev_fatal(dev, err,
+>> +					 "requested ring page order %d exceed
+>> max:%d",
+>> +					 ring_page_order,
+>> +					 xen_blkif_max_ring_order);
+>> +			return err;
+>> +		}
+>> +
+>> +		use_ring_page_order = true;
+>> +		be->blkif->nr_ring_pages = 1 << ring_page_order;
+>> +	}
+>> +
+>>  	if (be->blkif->nr_rings == 1)
+>> -		return read_per_ring_refs(&be->blkif->rings[0], dev-
+>>> otherend);
+>> +		return read_per_ring_refs(&be->blkif->rings[0], dev->otherend,
+>> +					  use_ring_page_order);
+>>  	else {
+>>  		xspathsize = strlen(dev->otherend) + xenstore_path_ext_size;
+>>  		xspath = kmalloc(xspathsize, GFP_KERNEL);
+>> @@ -1088,7 +1100,8 @@ static int connect_ring(struct backend_info *be)
+>>  		for (i = 0; i < be->blkif->nr_rings; i++) {
+>>  			memset(xspath, 0, xspathsize);
+>>  			snprintf(xspath, xspathsize, "%s/queue-%u", dev-
+>>> otherend, i);
+>> -			err = read_per_ring_refs(&be->blkif->rings[i], xspath);
+>> +			err = read_per_ring_refs(&be->blkif->rings[i], xspath,
+>> +						 use_ring_page_order);
+>>  			if (err) {
+>>  				kfree(xspath);
+>>  				return err;
+>> --
+>> 2.7.4
+>>
+>>
+>> _______________________________________________
+>> Xen-devel mailing list
+>> Xen-devel@lists.xenproject.org
+>> https://lists.xenproject.org/mailman/listinfo/xen-devel
