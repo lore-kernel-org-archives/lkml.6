@@ -2,107 +2,112 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD247C07E85
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 06:01:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86D74C07E85
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 06:02:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7EC3B20882
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 06:01:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="bZKHZiuM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7EC3B20882
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id 4BEDD20882
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 06:02:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4BEDD20882
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726032AbeLGGBC (ORCPT
+        id S1726044AbeLGGCT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 01:01:02 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:35190 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725950AbeLGGBB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 01:01:01 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wB75x1vq096965;
-        Fri, 7 Dec 2018 06:00:55 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : mime-version : content-type : in-reply-to;
- s=corp-2018-07-02; bh=lVAJ4AT0gct2/UAxoXI5fAwC/Dl13ytGNwKQn4qBDtk=;
- b=bZKHZiuMvc0dTZTqXMU7smCrN1XX412O0gnnAPjhMY4Twj+wCSefABDcqvAI4rNYMTMP
- AmUDg89bc0TgJIijCpE3mZEUv44XhJSnBspnfSKttMA/5P6+bbW/i7GrzXIZQoIEGeO5
- 0vSbTdLjgyeC2UWsdD3Cak+y7drBn2eCEg+A/j/iuZj07N7WV+wgRECCQ42oRTQYrMbu
- ySwhEwuWx4XHBPKsR3T8vRruJ9uWbOGsoboo6MXP2ejacwtaV8NpgRUrtKk2kVw2zz3P
- rwHzYWVprbc2jyXlu/rR4jy+2MunXhY/qm7tJNXhnkubJ3JwlU6l82rIof4BwJzLQ2QL ZA== 
-Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
-        by userp2120.oracle.com with ESMTP id 2p3jxruvk0-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 07 Dec 2018 06:00:55 +0000
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id wB760sZb003327
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 7 Dec 2018 06:00:54 GMT
-Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id wB760rFY005629;
-        Fri, 7 Dec 2018 06:00:54 GMT
-Received: from unbuntlaptop (/197.157.0.47)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 06 Dec 2018 22:00:53 -0800
-Date:   Fri, 7 Dec 2018 09:00:46 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Richard Cochran <richardcochran@gmail.com>
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        YueHaibing <yuehaibing@huawei.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [PATCH v3] ptp: fix an IS_ERR() vs NULL check
-Message-ID: <20181207060046.GA3943@unbuntlaptop>
+        Fri, 7 Dec 2018 01:02:19 -0500
+Received: from mx2.suse.de ([195.135.220.15]:53828 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725939AbeLGGCS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Dec 2018 01:02:18 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 63E6FAF41;
+        Fri,  7 Dec 2018 06:02:16 +0000 (UTC)
+Subject: Re: [PATCH v8 1/7] xen/pvh: Split CONFIG_XEN_PVH into CONFIG_PVH and
+ CONFIG_XEN_PVH
+To:     Paolo Bonzini <pbonzini@redhat.com>,
+        Maran Wilson <maran.wilson@oracle.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
+        kvm@vger.kernel.org
+Cc:     tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
+        boris.ostrovsky@oracle.com, jpoimboe@redhat.com,
+        kirill.shutemov@linux.intel.com, bp@suse.de,
+        thomas.lendacky@amd.com, luto@kernel.org,
+        dave.hansen@linux.intel.com, roger.pau@citrix.com,
+        rkrcmar@redhat.com, rdunlap@infradead.org
+References: <1544076152-21637-1-git-send-email-maran.wilson@oracle.com>
+ <1544076257-21792-1-git-send-email-maran.wilson@oracle.com>
+ <d532f023-85f9-62b9-ca56-53a619fdcd1e@redhat.com>
+From:   Juergen Gross <jgross@suse.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <2c289956-0e6a-700c-605d-83685fbb08f9@suse.com>
+Date:   Fri, 7 Dec 2018 07:02:13 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181206135719.GA18607@kroah.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9099 signatures=668679
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1812070052
+In-Reply-To: <d532f023-85f9-62b9-ca56-53a619fdcd1e@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: de-DE
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We recently modified pps_register_source() to return error pointers
-instead of NULL but it seems like there was a merge issue and part of
-the commit was lost.  Anyway, the ptp_clock_register() function needs to
-be updated to check for IS_ERR() as well.
+On 06/12/2018 23:11, Paolo Bonzini wrote:
+> On 06/12/18 07:04, Maran Wilson wrote:
+>> +config PVH
+>> +	bool "Support for running PVH guests"
+>> +	---help---
+>> +	  This option enables the PVH entry point for guest virtual machines
+>> +	  as specified in the x86/HVM direct boot ABI.
+>> +
+> 
+> IIUC this breaks "normal" bzImage boot, so we should have something like
+> 
+> 	The resulting kernel will not boot with most x86 boot loaders
+> 	such as GRUB or SYSLINUX.  Unless you plan to start the kernel
+> 	using QEMU or Xen, you probably want to say N here.
 
-Fixes: 3b1ad360acad ("pps: using ERR_PTR instead of NULL while pps_register_source fails")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
-v2:  Use the correct Fixes tag.
-v3:  Add Greg to the CC list for real this time.
+The resulting kernel should be able to be booted either in PVH mode
+via the PVH entry point or the "normal" way via the still existing
+old entry point(s).
 
- drivers/ptp/ptp_clock.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+It is an _additional_ way to boot the kernel, not an exclusive
+alternative.
 
-diff --git a/drivers/ptp/ptp_clock.c b/drivers/ptp/ptp_clock.c
-index 8a81eecc0ecd..48f3594a7458 100644
---- a/drivers/ptp/ptp_clock.c
-+++ b/drivers/ptp/ptp_clock.c
-@@ -265,8 +265,8 @@ struct ptp_clock *ptp_clock_register(struct ptp_clock_info *info,
- 		pps.mode = PTP_PPS_MODE;
- 		pps.owner = info->owner;
- 		ptp->pps_source = pps_register_source(&pps, PTP_PPS_DEFAULTS);
--		if (!ptp->pps_source) {
--			err = -EINVAL;
-+		if (IS_ERR(ptp->pps_source)) {
-+			err = PTR_ERR(ptp->pps_source);
- 			pr_err("failed to register pps source\n");
- 			goto no_pps;
- 		}
--- 
-2.11.0
+
+Juergen
