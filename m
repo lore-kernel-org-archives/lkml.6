@@ -7,58 +7,58 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F780C64EB1
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 12:49:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 309ACC64EB1
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 12:49:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1551520868
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 12:49:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E80E72146F
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 12:49:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=mena-vt-edu.20150623.gappssmtp.com header.i=@mena-vt-edu.20150623.gappssmtp.com header.b="eBzgdhkt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1551520868
+	dkim=pass (2048-bit key) header.d=mena-vt-edu.20150623.gappssmtp.com header.i=@mena-vt-edu.20150623.gappssmtp.com header.b="HsAo0n5Z"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E80E72146F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=mena.vt.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726190AbeLGMtF (ORCPT
+        id S1726203AbeLGMtK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 07:49:05 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:42839 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726172AbeLGMtE (ORCPT
+        Fri, 7 Dec 2018 07:49:10 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:40684 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726193AbeLGMtI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 07:49:04 -0500
-Received: by mail-wr1-f65.google.com with SMTP id q18so3673700wrx.9
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Dec 2018 04:49:02 -0800 (PST)
+        Fri, 7 Dec 2018 07:49:08 -0500
+Received: by mail-wr1-f67.google.com with SMTP id p4so3689746wrt.7
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Dec 2018 04:49:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=mena-vt-edu.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=qskwDCENsUJ4XJZgk7mw/D1NJ3EoY/jK2YNM77334Jg=;
-        b=eBzgdhktIQ137s6FC7u+gCPBBBDYqLbuh6vzpN/BbPDS8ZmYTwukPjotz750UMPraN
-         9HElqnTsb3BVtqBDTmatcs6c5vRRC6ySaruowAOc/ZDEVkf8Ba0b6lh1zZwRFTrY9hhr
-         5MsheYQX6J4rTN0AyUyjB6thGWbLL3fcwC++9dqW6NJncg/te3AAKOIsfaPNXs4ON0TN
-         O2EPUrg5aM3H2zIUOwdZgzNB7y3LJeDGitoPb514EJhQFRWIAT6hVpiuu7F8dMDWc4tM
-         d3pVVADpadqjuH41NgKjOei5dzGkHqnjGFJpWPZyxQVktCEUlB44/Gy6K2LTYgOP5nv7
-         2MjA==
+        bh=S5NVvoOgAgdZo8wmN11QDMw/7RKccGkERCz5dFRhs3I=;
+        b=HsAo0n5ZNHZaaJaRpG3bq8GeB9YXcLdfGtEPiqJR7TiK9RyHGc09ZiBOLVU2/W+GE0
+         V5xYVxwH0yMcAuvTT3IRWHgbtyrUSJjJzeMXPG/c6Dl1235iHf6MF6F7qX3JO7jHRj0n
+         bQjlCVGAQt81pNjjoJSFNzVRYe8zmL8APySTvaZrLtQNWX/ZSF6bRA8M1TcoReAIk29r
+         yVPaYrUMimHnqJ5kgHtagJ+L9KMndIbDBFw7ZFg1lOKmc8PE6RkiyIJqBdovX3EYwv8J
+         1tX5uw0LgZjnd0xFISAw71qw72AJlRkQhrupmJBtsifpJMophzJ+rkWe+16yl4pBfKDt
+         jjDA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=qskwDCENsUJ4XJZgk7mw/D1NJ3EoY/jK2YNM77334Jg=;
-        b=XjqbwZBrzqlkw1AZWX/cLEINdxACNMufnS0LmJpWyt2xzKBEGC+1TalHzvMhCb6uFR
-         YqlgV1B2SE4rxBSu5mB6KYPlVwRQ/bcBJUk9nbELrJDPL/FaS/NB+Db733vqKNh3yj7t
-         aV1UA9LHhVn1xltHnveb4HYP/y7XcyTgdhG7g4P+g2cN7KgBsWxXHbojO5/8IONdYxMF
-         8rzlaoOktOHU6tA/o1smJKyGKSDN1Iq/ogONSIdiTH8aam42PHonfC7+9aHgkW4wkzSd
-         b0FQvvEd65XEgzEr6zNbA97biYgIrZGTwt5uVZwu+em/epQP3UVzOjvxyAANcjQJR0Ud
-         FApg==
-X-Gm-Message-State: AA+aEWaUdZG1xl84ZRM9FsR+KcUBu0wqHC7wj4O3cjkb3+dgt/IEGsZt
-        mTLvbkBigbTXU9CZ17NUz6tj/A==
-X-Google-Smtp-Source: AFSGD/XonZe40VF9RnZ4mhjjnNirD7PlzbAwQIiqaTMt5AApa7uw7RM0qOskDpWMLKRL1BmCis9VEA==
-X-Received: by 2002:adf:a4d9:: with SMTP id h25mr1582875wrb.167.1544186942211;
-        Fri, 07 Dec 2018 04:49:02 -0800 (PST)
+        bh=S5NVvoOgAgdZo8wmN11QDMw/7RKccGkERCz5dFRhs3I=;
+        b=LWuzXFtftytgnvmNTykv/lH0qb/RFSmqnzlmzJlfCaJ8DmKJdIc6YiEMYSjqVPrxTF
+         exAUuEGH3Au+nxaTnEEFiUcsKWssgJ6BKfDZArwUCQYNiC7yW8GS02t6GjJsZBL2SrSp
+         yQB8IPlIMAkfPSJBHvVoXJ2pZqs7CALcMrkrU2W8iLWWAExRlPKR8lOsoRCPI5JOSPlf
+         Xzh/L12fBb0clVDFfdlQ36+yqpxYjbYDuUVpFd8fPz++8azK7M5ZfYZnKnWD7j3ZoFtb
+         if37smcZDTQYeXeq9fGvmpVRtTTT5ua1nnQs027BnKLRfjtRQ4dHdxN/UaqPXbNdjVgF
+         0m5g==
+X-Gm-Message-State: AA+aEWYlUGJVh8RTVP8at9uFJeQNqv8DO2wVkxnwggWxVKUs55WP2uMr
+        8a678aFeJHk6Y6FXvYb89PxLzA==
+X-Google-Smtp-Source: AFSGD/Xg0iVjxrHzmepdWCYZL5IIBms+bQjq3bJau9vmc8enLf7nlyrhxgrAgU168RFf41hftAmKlg==
+X-Received: by 2002:adf:fd03:: with SMTP id e3mr1640907wrr.280.1544186947022;
+        Fri, 07 Dec 2018 04:49:07 -0800 (PST)
 Received: from localhost.localdomain ([156.213.98.90])
-        by smtp.gmail.com with ESMTPSA id i192sm4362949wmg.7.2018.12.07.04.48.57
+        by smtp.gmail.com with ESMTPSA id i192sm4362949wmg.7.2018.12.07.04.49.02
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 07 Dec 2018 04:49:01 -0800 (PST)
+        Fri, 07 Dec 2018 04:49:06 -0800 (PST)
 From:   Ahmed Abd El Mawgood <ahmedsoliman@mena.vt.edu>
 To:     Paolo Bonzini <pbonzini@redhat.com>, rkrcmar@redhat.com,
         Jonathan Corbet <corbet@lwn.net>,
@@ -71,9 +71,9 @@ To:     Paolo Bonzini <pbonzini@redhat.com>, rkrcmar@redhat.com,
         Boris Lukashev <blukashev@sempervictus.com>,
         Igor Stoppa <igor.stoppa@gmail.com>
 Cc:     Ahmed Abd El Mawgood <ahmedsoliman@mena.vt.edu>
-Subject: [PATCH 03/10] KVM: X86: Add helper function to convert SPTE to GFN
-Date:   Fri,  7 Dec 2018 14:47:56 +0200
-Message-Id: <20181207124803.10828-4-ahmedsoliman@mena.vt.edu>
+Subject: [PATCH 04/10] KVM: Document Memory ROE
+Date:   Fri,  7 Dec 2018 14:47:57 +0200
+Message-Id: <20181207124803.10828-5-ahmedsoliman@mena.vt.edu>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181207124803.10828-1-ahmedsoliman@mena.vt.edu>
 References: <20181207124803.10828-1-ahmedsoliman@mena.vt.edu>
@@ -84,40 +84,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+ROE version documented here is implemented in the next 2 patches
 Signed-off-by: Ahmed Abd El Mawgood <ahmedsoliman@mena.vt.edu>
 ---
- arch/x86/kvm/mmu.c | 7 +++++++
- arch/x86/kvm/mmu.h | 1 +
- 2 files changed, 8 insertions(+)
+ Documentation/virtual/kvm/hypercalls.txt | 40 ++++++++++++++++++++++++
+ 1 file changed, 40 insertions(+)
 
-diff --git a/arch/x86/kvm/mmu.c b/arch/x86/kvm/mmu.c
-index b67d743c33..a300e4acb8 100644
---- a/arch/x86/kvm/mmu.c
-+++ b/arch/x86/kvm/mmu.c
-@@ -1024,6 +1024,13 @@ static gfn_t kvm_mmu_page_get_gfn(struct kvm_mmu_page *sp, int index)
+diff --git a/Documentation/virtual/kvm/hypercalls.txt b/Documentation/virtual/kvm/hypercalls.txt
+index da24c138c8..a31f316ce6 100644
+--- a/Documentation/virtual/kvm/hypercalls.txt
++++ b/Documentation/virtual/kvm/hypercalls.txt
+@@ -141,3 +141,43 @@ a0 corresponds to the APIC ID in the third argument (a2), bit 1
+ corresponds to the APIC ID a2+1, and so on.
  
- 	return sp->gfn + (index << ((sp->role.level - 1) * PT64_LEVEL_BITS));
- }
-+gfn_t spte_to_gfn(u64 *spte)
-+{
-+	struct kvm_mmu_page *sp;
+ Returns the number of CPUs to which the IPIs were delivered successfully.
 +
-+	sp = page_header(__pa(spte));
-+	return kvm_mmu_page_get_gfn(sp, spte - sp->spt);
-+}
- 
- static void kvm_mmu_page_set_gfn(struct kvm_mmu_page *sp, int index, gfn_t gfn)
- {
-diff --git a/arch/x86/kvm/mmu.h b/arch/x86/kvm/mmu.h
-index c7b333147c..49d7f2f002 100644
---- a/arch/x86/kvm/mmu.h
-+++ b/arch/x86/kvm/mmu.h
-@@ -211,4 +211,5 @@ void kvm_mmu_gfn_allow_lpage(struct kvm_memory_slot *slot, gfn_t gfn);
- bool kvm_mmu_slot_gfn_write_protect(struct kvm *kvm,
- 				    struct kvm_memory_slot *slot, u64 gfn);
- int kvm_arch_write_log_dirty(struct kvm_vcpu *vcpu);
-+gfn_t spte_to_gfn(u64 *sptep);
- #endif
++7. KVM_HC_ROE
++----------------
++Architecture: x86
++Status: active
++Purpose: Hypercall used to apply Read-Only Enforcement to guest memory and
++registers
++Usage 1:
++     a0: ROE_VERSION
++
++Returns non-signed number that represents the current version of ROE
++implementation current version.
++
++Usage 2:
++
++     a0: ROE_MPROTECT	(requires version >= 1)
++     a1: Start address aligned to page boundary.
++     a2: Number of pages to be protected.
++
++This configuration lets a guest kernel have part of its read/write memory
++converted into read-only.  This action is irreversible.
++Upon successful run, the number of pages protected is returned.
++
++Usage 3:
++     a0: ROE_MPROTECT_CHUNK	(requires version >= 2)
++     a1: Start address aligned to page boundary.
++     a2: Number of bytes to be protected.
++This configuration lets a guest kernel have part of its read/write memory
++converted into read-only with bytes granularity. ROE_MPROTECT_CHUNK is
++relatively slow compared to ROE_MPROTECT. This action is irreversible.
++Upon successful run, the number of bytes protected is returned.
++
++Error codes:
++	-KVM_ENOSYS: system call being triggered from ring 3 or it is not
++	implemented.
++	-EINVAL: error based on given parameters.
++
++Notes: KVM_HC_ROE can not be triggered from guest Ring 3 (user mode). The
++reason is that user mode malicious software can make use of it to enforce read
++only protection on an arbitrary memory page thus crashing the kernel.
 -- 
 2.19.2
 
