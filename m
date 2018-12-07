@@ -2,85 +2,104 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9508C07E85
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 10:25:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 673B2C65BAF
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 10:26:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B79920838
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 10:25:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2E58A20989
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 10:26:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="YvYkgvE/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B79920838
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=alien8.de
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="he5/fwmZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E58A20989
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726062AbeLGKZu (ORCPT
+        id S1726065AbeLGK0u (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 05:25:50 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:48570 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725985AbeLGKZu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 05:25:50 -0500
-Received: from zn.tnic (p200300EC2BCEC90030FF5A381F5D9977.dip0.t-ipconnect.de [IPv6:2003:ec:2bce:c900:30ff:5a38:1f5d:9977])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id B10F71EC0B1A;
-        Fri,  7 Dec 2018 11:25:48 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1544178348;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=Lyl0Tx6XlPxJXvouaiHOPHNvDZVz1XbcyHoYKKWiPA0=;
-        b=YvYkgvE/UvyhOjmzCBooe6uxGI1HoqVGQRqGgQDfIbwNGUlYRHaC17GHM/bvOdwPdnjXrv
-        WwmJkcZd5TrNOexkdXOKt3BU7h57EI09qhIDTbIyvViYG18ELIXSFja8oaBvvAbhgY4npC
-        SoO1mIIhyI4rmNgPfMv5DTVaQU38O10=
-Date:   Fri, 7 Dec 2018 11:25:46 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Paolo Bonzini <pbonzini@redhat.com>
-Cc:     Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Maran Wilson <maran.wilson@oracle.com>, x86@kernel.org,
-        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, jgross@suse.com, bp@suse.de,
-        dave.hansen@linux.intel.com, davem@davemloft.net,
-        gregkh@linuxfoundation.org, hpa@zytor.com, jpoimboe@redhat.com,
-        kirill.shutemov@linux.intel.com, luto@kernel.org,
-        mchehab@kernel.org, mingo@redhat.com, rdunlap@infradead.org,
-        tglx@linutronix.de, thomas.lendacky@amd.com, hch@infradead.org,
-        roger.pau@citrix.com, rkrcmar@redhat.com
-Subject: Re: [PATCH v8 0/7] KVM: x86: Allow Qemu/KVM to use PVH entry point
-Message-ID: <20181207102546.GC9385@zn.tnic>
-References: <1544076152-21637-1-git-send-email-maran.wilson@oracle.com>
- <e8ed34e7-f82a-2314-9919-185d48510715@redhat.com>
- <20181206213752.GL3986@zn.tnic>
- <147cc043-b0af-74e9-5259-8c7854f82d8b@oracle.com>
- <63756df6-6f0b-fdfa-932e-b53d173da5be@redhat.com>
+        Fri, 7 Dec 2018 05:26:50 -0500
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:35456 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725992AbeLGK0u (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Dec 2018 05:26:50 -0500
+Received: by mail-oi1-f194.google.com with SMTP id v6so3001667oif.2;
+        Fri, 07 Dec 2018 02:26:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=HGLqBv9VTx+Qkeh6OznZaxEk9vgKm95sjYiJmxdO18g=;
+        b=he5/fwmZ+9HTN6QXrnWVRKUKud3dVGiAHDir/H6xFoRK14BiFYP31n5VMRVk+LwFJI
+         85Eb/JI+Lz6qGkRx03m2vvceGC7ld/3AnhVwSnj1tl3ZlDNPaOwm09HEyjcq9UhE7HBm
+         uGPUxsGiLPI+TOnrhhAvx6UnDspre96pu4bH8NtYnHf863wqzdKuv2mtqfq/E7QqpAIl
+         NmnVwnW8KNGMU/AKFdaDXu6/t6UQSz6bdyz3o1/4ao56HKOVtGxhFmw4xIzWGAF98V4p
+         FC/l72AUXw7IvaQj7prKhr2nSwBI/Uccm4qrbp/Hs6NWNAInvhNzQKf/gsJZOMkplOhe
+         YUXA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=HGLqBv9VTx+Qkeh6OznZaxEk9vgKm95sjYiJmxdO18g=;
+        b=MZRXpmM07kUxeGA0eVhVbz2c66VV5AN/X07G8/yADaTqs1Mrt68BxH5/PynVJ2YdSg
+         AiKFiMuvSKGiVg9J6jVsGWwOeLFX5/ZZf5DS8Grx+10oQq+GNg3LgGTDJTDnTKjp3i/1
+         BfQx8ufV1aXLnVBIOyf/cnSisCuJ/M0vTTT1yeKUUOo219gyv/AAyMdYVktvWpEDu984
+         ejU/YaAwO/EROWEgmxYoEu7ND1a5Rkzmp82j7L17XL9cg4bl0m86CPngEChuKDsrCAmW
+         8mFZ6vQlIrXPLvXQ/N8gXWR8vls6ZziukmPq0gRtISplnATBASyBvS10uHmpBhGbDXY2
+         iGJw==
+X-Gm-Message-State: AA+aEWZwxO+7I7veaCnPrduZwjqvBmRTtT+poZMMZ7Gp26TQKYuzl4o4
+        JXow+KWjs5z/R2F6+diKz7bfdZht+WgFJYso2uA=
+X-Google-Smtp-Source: AFSGD/UYaRGcSCWuuJ4hi27297yC7y7TDBDlQY6Cmly7DFl+ZSh/i6IiZ81ClIB12qd/sAQoWmfTkXkLThOfKleD+Rc=
+X-Received: by 2002:aca:cdd0:: with SMTP id d199mr975973oig.266.1544178409303;
+ Fri, 07 Dec 2018 02:26:49 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <63756df6-6f0b-fdfa-932e-b53d173da5be@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <1544072280-26932-1-git-send-email-Anson.Huang@nxp.com>
+In-Reply-To: <1544072280-26932-1-git-send-email-Anson.Huang@nxp.com>
+From:   Fabio Estevam <festevam@gmail.com>
+Date:   Fri, 7 Dec 2018 08:26:40 -0200
+Message-ID: <CAOMZO5Dw1CU6v8OkVC6iJpgbSom9yD7g5ToEdZQ-V_FoYngoDw@mail.gmail.com>
+Subject: Re: [PATCH] iio: magnetometer: mag3110: add optional vcc regulator
+ operation support
+To:     Yongcai Huang <anson.huang@nxp.com>
+Cc:     Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald <pmeerw@pmeerw.net>, rtresidd@electromag.com.au,
+        linux-iio@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        NXP Linux Team <linux-imx@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 06, 2018 at 11:14:34PM +0100, Paolo Bonzini wrote:
-> > There are some minor changes in non-xen x86 code so it would be good to
-> > get x86 maintainers' ack.
-> 
-> It's not really code, only Kconfig (and I remarked on it just now), but
-> it doesn't hurt of course.
+Hi Anson,
 
-Yeah, I don't see anything objectionable.
+On Thu, Dec 6, 2018 at 3:05 AM Anson Huang <anson.huang@nxp.com> wrote:
 
-Thx.
+>  static int mag3110_request(struct mag3110_data *data)
+> @@ -469,17 +471,27 @@ static int mag3110_probe(struct i2c_client *client,
+>         struct iio_dev *indio_dev;
+>         int ret;
+>
+> +       indio_dev = devm_iio_device_alloc(&client->dev, sizeof(*data));
+> +       if (!indio_dev)
+> +               return -ENOMEM;
+> +
+> +       data = iio_priv(indio_dev);
+> +
+> +       data->vcc_reg = devm_regulator_get_optional(&client->dev, "vcc");
+> +       if (!IS_ERR(data->vcc_reg)) {
+> +               ret = regulator_enable(data->vcc_reg);
+> +               if (ret) {
+> +                       dev_err(&client->dev, "failed to enable VCC regulator\n");
 
--- 
-Regards/Gruss,
-    Boris.
+Same comment as in the previous patch.
 
-Good mailing practices for 400: avoid top-posting and trim the reply.
+There is no VCC regulator as per the datasheet. There are VDD and
+VDDIO power supplies, so better represent both and with the same name
+they appear in the datasheet.
