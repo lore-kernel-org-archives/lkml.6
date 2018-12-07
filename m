@@ -2,113 +2,101 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AACA2C64EB1
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 20:14:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86E21C64EB1
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 20:14:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 72E75208E7
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 20:14:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 72E75208E7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=windriver.com
+	by mail.kernel.org (Postfix) with ESMTP id 52B1520892
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 20:14:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 52B1520892
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726256AbeLGUOj (ORCPT
+        id S1726269AbeLGUOn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 15:14:39 -0500
-Received: from mail5.windriver.com ([192.103.53.11]:59182 "EHLO mail5.wrs.com"
+        Fri, 7 Dec 2018 15:14:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54046 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726053AbeLGUOi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 15:14:38 -0500
-Received: from ALA-HCA.corp.ad.wrs.com (ala-hca.corp.ad.wrs.com [147.11.189.40])
-        by mail5.wrs.com (8.15.2/8.15.2) with ESMTPS id wB7KDkPM031348
-        (version=TLSv1 cipher=AES128-SHA bits=128 verify=FAIL);
-        Fri, 7 Dec 2018 12:13:56 -0800
-Received: from yow-cube1.wrs.com (128.224.56.98) by ALA-HCA.corp.ad.wrs.com
- (147.11.189.40) with Microsoft SMTP Server id 14.3.408.0; Fri, 7 Dec 2018
- 12:13:35 -0800
-From:   Paul Gortmaker <paul.gortmaker@windriver.com>
-To:     Lee Jones <lee.jones@linaro.org>
-CC:     <linux-kernel@vger.kernel.org>,
-        Paul Gortmaker <paul.gortmaker@windriver.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>
-Subject: [PATCH 07/18] mfd: rc5t583: Make it explicitly non-modular
-Date:   Fri, 7 Dec 2018 15:10:54 -0500
-Message-ID: <1544213465-16259-8-git-send-email-paul.gortmaker@windriver.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1544213465-16259-1-git-send-email-paul.gortmaker@windriver.com>
-References: <1544213465-16259-1-git-send-email-paul.gortmaker@windriver.com>
+        id S1726247AbeLGUOj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Dec 2018 15:14:39 -0500
+Received: from vmware.local.home (unknown [12.174.139.122])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0C6A62082D;
+        Fri,  7 Dec 2018 20:14:37 +0000 (UTC)
+Date:   Fri, 7 Dec 2018 15:14:33 -0500
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Jiri Olsa <jolsa@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Luis Claudio R. Goncalves" <lclaudio@uudg.org>, ldv@altlinux.org,
+        esyr@redhat.com, Frederic Weisbecker <fweisbec@gmail.com>
+Subject: Re: [PATCH 1/8] perf: Allow to block process in syscall tracepoints
+Message-ID: <20181207151433.20bf0399@vmware.local.home>
+In-Reply-To: <20181207151105.GB5289@hirez.programming.kicks-ass.net>
+References: <20181205160509.1168-1-jolsa@kernel.org>
+        <20181205160509.1168-2-jolsa@kernel.org>
+        <20181206081028.GE4234@hirez.programming.kicks-ass.net>
+        <20181206083400.GA13675@hirez.programming.kicks-ass.net>
+        <20181206131946.2c47f556@vmware.local.home>
+        <20181207085839.GC2237@hirez.programming.kicks-ass.net>
+        <20181207072701.5bc564c7@vmware.local.home>
+        <20181207151105.GB5289@hirez.programming.kicks-ass.net>
+X-Mailer: Claws Mail 3.15.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Kconfig currently controlling compilation of this code is:
+On Fri, 7 Dec 2018 16:11:05 +0100
+Peter Zijlstra <peterz@infradead.org> wrote:
 
-drivers/mfd/Kconfig:config MFD_RC5T583
-drivers/mfd/Kconfig:    bool "Ricoh RC5T583 Power Management system device"
+> On Fri, Dec 07, 2018 at 08:41:18AM -0500, Steven Rostedt wrote:
+> > On Fri, 7 Dec 2018 09:58:39 +0100
+> > Peter Zijlstra <peterz@infradead.org> wrote:
+> >   
+> > > These patches give no justification *what*so*ever* for why we're doing
+> > > ugly arse things like this. And why does this, whatever this is, need to
+> > > be done in perf?
+> > > 
+> > > IOW, what problem are we solving ?  
+> > 
+> > I guess the cover letter should have had a link (or copy) of this:
+> > 
+> >  http://lkml.kernel.org/r/20181128134700.212ed035@gandalf.local.home  
+> 
+> That doesn't even begin to explain. Who cares about strace and why? And
+> why is it such a bad thing to loose the occasional record etc..
 
-...meaning that it currently is not being built as a module by anyone.
+Who cares about strace? Do I really need to answer that? It's one of
+the most used tools for seeing what a program is doing.
 
-Lets remove the modular code that is essentially orphaned, so that
-when reading the driver there is no doubt it is builtin-only.
+Why do we care about lost events? Because strace records *all* events,
+as that's what it does and that's what it always has done. It would be
+a break in functionality (a regression) if it were to start losing
+events. I use strace to see everything that an application is doing.
 
-Since module_init was not in use by this code, the init ordering
-remains unchanged with this commit.
+Peter, I think you've spent too much time in the kernel. There's a
+whole world out there that lives in userspace ;-)
 
-Also note that MODULE_DEVICE_TABLE is a no-op for non-modular code.
+When we discussed this at plumbers, Oracle people came to me and said
+how awesome it would be to run strace against their database accesses.
+The problem today is that strace causes such a large overhead that it
+isn't feasible to trace any high speed applications, especially if
+there are time restraints involved.
 
-We also delete the MODULE_LICENSE tag etc. since all that information
-is already contained at the top of the file in the comments.
+If you don't like this for perf, I'll be happy to implement something in
+ftrace. I just figured that the perf interface was more suitable for
+something like this.
 
-Cc: Lee Jones <lee.jones@linaro.org>
-Cc: Laxman Dewangan <ldewangan@nvidia.com>
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
----
- drivers/mfd/rc5t583.c | 14 --------------
- 1 file changed, 14 deletions(-)
-
-diff --git a/drivers/mfd/rc5t583.c b/drivers/mfd/rc5t583.c
-index fd46de02b715..c5cc5cb3dde7 100644
---- a/drivers/mfd/rc5t583.c
-+++ b/drivers/mfd/rc5t583.c
-@@ -23,7 +23,6 @@
- #include <linux/interrupt.h>
- #include <linux/irq.h>
- #include <linux/kernel.h>
--#include <linux/module.h>
- #include <linux/init.h>
- #include <linux/err.h>
- #include <linux/slab.h>
-@@ -298,8 +297,6 @@ static const struct i2c_device_id rc5t583_i2c_id[] = {
- 	{}
- };
- 
--MODULE_DEVICE_TABLE(i2c, rc5t583_i2c_id);
--
- static struct i2c_driver rc5t583_i2c_driver = {
- 	.driver = {
- 		   .name = "rc5t583",
-@@ -313,14 +310,3 @@ static int __init rc5t583_i2c_init(void)
- 	return i2c_add_driver(&rc5t583_i2c_driver);
- }
- subsys_initcall(rc5t583_i2c_init);
--
--static void __exit rc5t583_i2c_exit(void)
--{
--	i2c_del_driver(&rc5t583_i2c_driver);
--}
--
--module_exit(rc5t583_i2c_exit);
--
--MODULE_AUTHOR("Laxman Dewangan <ldewangan@nvidia.com>");
--MODULE_DESCRIPTION("RICOH RC5T583 power management system device driver");
--MODULE_LICENSE("GPL v2");
--- 
-2.7.4
-
+-- Steve
