@@ -2,88 +2,90 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE3D5C64EB1
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 06:14:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4D8FC64EB1
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 06:14:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B00EE20892
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 06:14:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B00EE20892
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gondor.apana.org.au
+	by mail.kernel.org (Postfix) with ESMTP id 7161420837
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 06:14:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7161420837
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725997AbeLGGOQ (ORCPT
+        id S1726034AbeLGGO3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 01:14:16 -0500
-Received: from orcrist.hmeau.com ([104.223.48.154]:48972 "EHLO
-        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725948AbeLGGOQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 01:14:16 -0500
-Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
-        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
-        id 1gV9Ou-0004fX-Q8; Fri, 07 Dec 2018 14:14:12 +0800
-Received: from herbert by gondobar with local (Exim 4.89)
-        (envelope-from <herbert@gondor.apana.org.au>)
-        id 1gV9Os-0006Co-16; Fri, 07 Dec 2018 14:14:10 +0800
-Date:   Fri, 7 Dec 2018 14:14:10 +0800
-From:   Herbert Xu <herbert@gondor.apana.org.au>
-To:     Linus Torvalds <torvalds@linux-foundation.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
-Subject: Crypto Fixes for 4.20
-Message-ID: <20181207061409.xflg423nknleuddw@gondor.apana.org.au>
-References: <20170714141855.GA29426@gondor.apana.org.au>
- <20170922084401.GA15541@gondor.apana.org.au>
- <20171128230929.GA17783@gondor.apana.org.au>
- <20171222064931.GA27068@gondor.apana.org.au>
- <20180105073808.GA14405@gondor.apana.org.au>
- <20180212031702.GA26153@gondor.apana.org.au>
- <20180428080517.haxgpvqrwgotakyo@gondor.apana.org.au>
- <20180622145403.6ltjip7che227fuo@gondor.apana.org.au>
- <20180829033353.agnzxra3jk2r2mzg@gondor.apana.org.au>
- <20181116063146.e7a3mep3ghnfltxe@gondor.apana.org.au>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181116063146.e7a3mep3ghnfltxe@gondor.apana.org.au>
-User-Agent: NeoMutt/20170113 (1.7.2)
+        Fri, 7 Dec 2018 01:14:29 -0500
+Received: from mx2.suse.de ([195.135.220.15]:55054 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725948AbeLGGO2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Dec 2018 01:14:28 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 7CD73AE80;
+        Fri,  7 Dec 2018 06:14:27 +0000 (UTC)
+Message-ID: <1544163250.3008.7.camel@suse.de>
+Subject: Re: [PATCH] mm, kmemleak: Little optimization while scanning
+From:   Oscar Salvador <osalvador@suse.de>
+To:     Wei Yang <richard.weiyang@gmail.com>
+Cc:     akpm@linux-foundation.org, catalin.marinas@arm.com,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org, mhocko@suse.com
+Date:   Fri, 07 Dec 2018 07:14:10 +0100
+In-Reply-To: <20181207041528.xs4xnw6vpsbu5csx@master>
+References: <20181206131918.25099-1-osalvador@suse.de>
+         <20181207041528.xs4xnw6vpsbu5csx@master>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus: 
 
-This push fixes the following issues:
+> > +
+> 
+> This one maybe not necessary.
 
-- Disable the new crypto stats interface as it's still being changed.
-- Fix potential uses-after-free in cbc/cfb/pcbc.
+Yeah, that is a remind of an include file I used for time measurement.
+I hope Andrew can drop that if this is taken.
 
+> > /*
+> >  * Kmemleak configuration and common defines.
+> >  */
+> > @@ -1547,11 +1548,14 @@ static void kmemleak_scan(void)
+> > 		unsigned long pfn;
+> > 
+> > 		for (pfn = start_pfn; pfn < end_pfn; pfn++) {
+> > -			struct page *page;
+> > +			struct page *page =
+> > pfn_to_online_page(pfn);
+> > +
+> > +			if (!page)
+> > +				continue;
+> > 
+> > -			if (!pfn_valid(pfn))
+> > +			/* only scan pages belonging to this node
+> > */
+> > +			if (page_to_nid(page) != i)
+> > 				continue;
+> 
+> Not farmiliar with this situation. Is this often?
+Well, hard to tell how often that happens because that mostly depends
+on the Hardware in case of baremetal.
+Virtual systems can also have it though.
 
-Please pull from
-
-git://git.kernel.org/pub/scm/linux/kernel/git/herbert/crypto-2.6.git linus
-
-
-Herbert Xu (1):
-      crypto: user - Disable statistics interface
-
-Pan Bian (1):
-      crypto: do not free algorithm before using
-
- crypto/Kconfig | 2 +-
- crypto/cbc.c   | 6 ++++--
- crypto/cfb.c   | 6 ++++--
- crypto/pcbc.c  | 6 ++++--
- 4 files changed, 13 insertions(+), 7 deletions(-)
-
-Thanks,
+> 
+> > -			page = pfn_to_page(pfn);
+> > 			/* only scan if page is in use */
+> > 			if (page_count(page) == 0)
+> > 				continue;
+> > -- 
+> > 2.13.7
+> 
+> 
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Oscar Salvador
+SUSE L3
