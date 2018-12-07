@@ -2,109 +2,95 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6DA6C07E85
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 13:46:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71F24C07E85
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 13:47:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 84BEC208E7
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 13:46:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 84BEC208E7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 439B3208E7
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 13:47:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 439B3208E7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726108AbeLGNq0 (ORCPT
+        id S1726078AbeLGNrY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 08:46:26 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:55314 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725997AbeLGNq0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 08:46:26 -0500
-Received: from hsi-kbw-5-158-153-52.hsi19.kabel-badenwuerttemberg.de ([5.158.153.52] helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1gVGST-0000A4-68; Fri, 07 Dec 2018 14:46:21 +0100
-Date:   Fri, 7 Dec 2018 14:46:20 +0100 (CET)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Linus Walleij <linus.walleij@linaro.org>
-cc:     Marc Zyngier <marc.zyngier@arm.com>,
-        Jason Cooper <jason@lakedaemon.net>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        stable <stable@vger.kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>
-Subject: Re: [PATCH] irq: Request and release resources for chained IRQs
-In-Reply-To: <CACRpkdaRs5=Yt6fuSypeJpqdrUApFxxeBqm5sxsw+BdG=jbfBA@mail.gmail.com>
-Message-ID: <alpine.DEB.2.21.1812071404140.14498@nanos.tec.linutronix.de>
-References: <20181129133119.29387-1-linus.walleij@linaro.org> <CACRpkdbKrpWQJkL=FFis39PiHxvx5zOL0gYHuYa80yYMdP8bqw@mail.gmail.com> <alpine.DEB.2.21.1812071143480.14498@nanos.tec.linutronix.de>
- <CACRpkdaRs5=Yt6fuSypeJpqdrUApFxxeBqm5sxsw+BdG=jbfBA@mail.gmail.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Fri, 7 Dec 2018 08:47:24 -0500
+Received: from foss.arm.com ([217.140.101.70]:44824 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725997AbeLGNrX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Dec 2018 08:47:23 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3744E15AB;
+        Fri,  7 Dec 2018 05:47:23 -0800 (PST)
+Received: from [10.1.196.75] (e110467-lin.cambridge.arm.com [10.1.196.75])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BF3B93F5AF;
+        Fri,  7 Dec 2018 05:47:21 -0800 (PST)
+Subject: Re: [PATCH v3 6/9] iommu/dma-iommu.c: Convert to use vm_insert_range
+To:     Souptick Joarder <jrdr.linux@gmail.com>, akpm@linux-foundation.org,
+        willy@infradead.org, mhocko@suse.com, joro@8bytes.org
+Cc:     linux-mm@kvack.org, iommu@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org
+References: <20181206184343.GA30569@jordon-HP-15-Notebook-PC>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <d02ad9d7-d0f6-c891-bb7e-fdf6661f651c@arm.com>
+Date:   Fri, 7 Dec 2018 13:47:19 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20181206184343.GA30569@jordon-HP-15-Notebook-PC>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Linus,
-
-On Fri, 7 Dec 2018, Linus Walleij wrote:
-> On Fri, Dec 7, 2018 at 12:52 PM Thomas Gleixner <tglx@linutronix.de> wrote:
-> > Needs more thought. Btw, the uninstall path does not invoke irq_deactive()
-> > either.... I so hate that chained handler mess....
+On 06/12/2018 18:43, Souptick Joarder wrote:
+> Convert to use vm_insert_range() to map range of kernel
+> memory to user vma.
 > 
-> I think it is just extremely uncommon to remove a chained handler
-> (I don't know if anything exercises that path even) that is why we
-> don't see any fallout from it. It's probably just untested code.
+> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+> Reviewed-by: Matthew Wilcox <willy@infradead.org>
+> ---
+>   drivers/iommu/dma-iommu.c | 13 +++----------
+>   1 file changed, 3 insertions(+), 10 deletions(-)
+> 
+> diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
+> index d1b0475..a2c65e2 100644
+> --- a/drivers/iommu/dma-iommu.c
+> +++ b/drivers/iommu/dma-iommu.c
+> @@ -622,17 +622,10 @@ struct page **iommu_dma_alloc(struct device *dev, size_t size, gfp_t gfp,
+>   
+>   int iommu_dma_mmap(struct page **pages, size_t size, struct vm_area_struct *vma)
+>   {
+> -	unsigned long uaddr = vma->vm_start;
+> -	unsigned int i, count = PAGE_ALIGN(size) >> PAGE_SHIFT;
+> -	int ret = -ENXIO;
+> +	unsigned long count = PAGE_ALIGN(size) >> PAGE_SHIFT;
+>   
+> -	for (i = vma->vm_pgoff; i < count && uaddr < vma->vm_end; i++) {
+> -		ret = vm_insert_page(vma, uaddr, pages[i]);
+> -		if (ret)
+> -			break;
+> -		uaddr += PAGE_SIZE;
+> -	}
+> -	return ret;
+> +	return vm_insert_range(vma, vma->vm_start,
+> +				pages + vma->vm_pgoff, count);
 
-git grep irq_set_chained.*NULL
+You also need to adjust count to compensate for the pages skipped by 
+vm_pgoff, otherwise you've got an out-of-bounds dereference triggered 
+from userspace, which is pretty high up the "not good" scale (not to 
+mention the entire call would then propagate -EFAULT back from 
+vm_insert_page() and thus always appear to fail for nonzero offsets).
 
-tells that there are users. Whether any of this is ever invoked is a
-different questions.
+Robin.
 
-> Do you see that chained handlers have any merit at all or should
-> they all be moved to nested? The question needs asking, but IIUC
-> there are performance benefits with chaining as opposed to
-> nesting. :/
-
-The nested case in gpio land is about nesting in irq thread context, which
-is obviously slower. So instead of nesting you can just use a regular
-interrupt for demultiplexing.
-
-The thing about chained is:
-
-  1) It's hidden, i.e. not exposed in /proc/interrupt
-
-  2) It's not protected against runaway interrupts, which has happened in
-     x86 land. We've converted those over to use regular interrupts to
-     catch that case and shutdown the offending interrupt.
-     e.g. ba714a9c1dea
-
-  3) All the chained handlers have their own flow control inside the
-     handler.
-
-The chained performance benefit compared to a regular handler is
-minimal. The main difference are a few conditionals and the desc->action
-indirection. You probably can measure it with a high interrupt load, but
-I'm still not convinced that it outweighs the downsides for a lot of the
-places which use chained interrupts. I can see the benefit for very low
-level interrupts, but even there we had hard to debug issues with some ARM
-SoCs which ran into interrupt storms.
-
-But hey, we surely can fix that chained issue. It's not going to be pretty
-though :)
-
-Thanks,
-
-	tglx
-
-
-
-
-
-
-    
-
+>   }
+>   
+>   static dma_addr_t __iommu_dma_map(struct device *dev, phys_addr_t phys,
+> 
