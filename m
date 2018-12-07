@@ -2,122 +2,101 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EE85C07E85
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 13:45:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A63CC07E85
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 13:45:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 26501208E7
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 13:45:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=xenosoft.de header.i=@xenosoft.de header.b="FGvNxe8h"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 26501208E7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xenosoft.de
+	by mail.kernel.org (Postfix) with ESMTP id 3FE7020868
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 13:45:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3FE7020868
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726047AbeLGNpL (ORCPT
+        id S1726072AbeLGNpf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 08:45:11 -0500
-Received: from mo4-p01-ob.smtp.rzone.de ([81.169.146.164]:15681 "EHLO
-        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725997AbeLGNpK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 08:45:10 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1544190308;
-        s=strato-dkim-0002; d=xenosoft.de;
-        h=In-Reply-To:Date:Message-ID:References:Cc:To:From:Subject:
-        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=UiKdQhFyjWHE4+ZgL57zQt5agzEVXV1R1L+vfpWOKek=;
-        b=FGvNxe8h5ngT4RxATsvDrjDfdmplxnIUNwqrP/02AKwSQoOqenZthknLAL3eyfmB2D
-        yenAfZ3QQAUfbPwAsHSet1dcl+pdSE8036ttPzl+OUcIki4W7ltkMuLNsYGY5GNfTELI
-        rfQxfYc7qfLbCfv8bKaJDTMENmiPXwO/5Qaww8B7iyQ9o8F896/nOq+YBCSpi5WR4OlZ
-        3+dE8UX/kY4iCv8CgwsLhvwHL5oYk1heuqz5VgdgbRxpGW5mBF2wwb9gKD7fFtCHXN11
-        8OsvyXb+lwC+FpudEuWFhdCQr1upkQaI42P62NMH1h5U8DS67T/MAg8kw2+GECDPU5cS
-        PODA==
-X-RZG-AUTH: ":L2QefEenb+UdBJSdRCXu93KJ1bmSGnhMdmOod1DhGM4l4Hio94KKxRySfLxnHfJ+Dkjp5G5MdirQj0WG7CkMj+ByMwaeBc+kslmr1FsvPSMWMA=="
-X-RZG-CLASS-ID: mo00
-Received: from [IPv6:2a02:8109:a400:162c:3119:8549:9ee9:a01b]
-        by smtp.strato.de (RZmta 44.6 AUTH)
-        with ESMTPSA id 404b20uB7Dj6ssM
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
-        (Client did not present a certificate);
-        Fri, 7 Dec 2018 14:45:06 +0100 (CET)
-Subject: Re: use generic DMA mapping code in powerpc V4
-From:   Christian Zigotzky <chzigotzky@xenosoft.de>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     linux-arch@vger.kernel.org,
-        Darren Stevens <darren@stevens-zone.net>,
-        linux-kernel@vger.kernel.org, Julian Margetson <runaway@candw.ms>,
-        linux-mm@kvack.org, iommu@lists.linux-foundation.org,
-        Paul Mackerras <paulus@samba.org>,
-        Olof Johansson <olof@lixom.net>, linuxppc-dev@lists.ozlabs.org
-References: <20181129170351.GC27951@lst.de>
- <d0e04a85-f17d-414e-6fea-971414417430@xenosoft.de>
- <20181130105346.GB26765@lst.de>
- <8694431d-c669-b7b9-99fa-e99db5d45a7d@xenosoft.de>
- <20181130131056.GA5211@lst.de>
- <25999587-2d91-a63c-ed38-c3fb0075d9f1@xenosoft.de>
- <c5202d29-863d-1377-0e2d-762203b317e2@xenosoft.de>
- <58c61afb-290f-6196-c72c-ac7b61b84718@xenosoft.de>
- <20181204142426.GA2743@lst.de>
- <ef56d279-f75d-008e-71ba-7068c1b37c48@xenosoft.de>
- <20181205140550.GA27549@lst.de>
- <1948cf84-49ab-543c-472c-d18e27751903@xenosoft.de>
-Message-ID: <5a2ea855-b4b0-e48a-5c3e-c859a8451ca2@xenosoft.de>
-Date:   Fri, 7 Dec 2018 14:45:06 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.2
+        Fri, 7 Dec 2018 08:45:35 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:44740 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726050AbeLGNpe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Dec 2018 08:45:34 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 33EAF15AB;
+        Fri,  7 Dec 2018 05:45:34 -0800 (PST)
+Received: from e105550-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A608C3F5AF;
+        Fri,  7 Dec 2018 05:45:30 -0800 (PST)
+Date:   Fri, 7 Dec 2018 13:45:21 +0000
+From:   Morten Rasmussen <morten.rasmussen@arm.com>
+To:     Atish Patra <atish.patra@wdc.com>
+Cc:     linux-kernel@vger.kernel.org, Albert Ou <aou@eecs.berkeley.edu>,
+        Anup Patel <anup@brainfault.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        devicetree@vger.kernel.org,
+        Dmitriy Cherkasov <dmitriy@oss-tech.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Jeremy Linton <jeremy.linton@arm.com>,
+        Juri Lelli <juri.lelli@arm.com>,
+        "moderated list:ARM64 PORT (AARCH64 ARCHITECTURE)" 
+        <linux-arm-kernel@lists.infradead.org>,
+        linux-riscv@lists.infradead.org,
+        Mark Rutland <mark.rutland@arm.com>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Will Deacon <will.deacon@arm.com>
+Subject: Re: [RFT PATCH v1 0/4] Unify CPU topology across ARM64 & RISC-V
+Message-ID: <20181207134509.GA5913@e105550-lin.cambridge.arm.com>
+References: <1543534100-3654-1-git-send-email-atish.patra@wdc.com>
 MIME-Version: 1.0
-In-Reply-To: <1948cf84-49ab-543c-472c-d18e27751903@xenosoft.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: de-DE
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1543534100-3654-1-git-send-email-atish.patra@wdc.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06 December 2018 at 11:55AM, Christian Zigotzky wrote:
-> On 05 December 2018 at 3:05PM, Christoph Hellwig wrote:
->>
->> Thanks.  Can you try a few stepping points in the tree?
->>
->> First just with commit 7fd3bb05b73beea1f9840b505aa09beb9c75a8c6
->> (the first one) applied?
->>
->> Second with all commits up to 5da11e49df21f21dac25a2491aa788307bdacb6b
->>
->> And if that still works with commits up to
->> c1bfcad4b0cf38ce5b00f7ad880d3a13484c123a
->>
-> Hi Christoph,
->
-> I undid the commit 7fd3bb05b73beea1f9840b505aa09beb9c75a8c6 with the 
-> following command:
->
-> git checkout 7fd3bb05b73beea1f9840b505aa09beb9c75a8c6
->
-> Result: PASEMI onboard ethernet works again and the P5020 board boots.
->
-> I will test the other commits in the next days.
->
-> @All
-> It is really important, that you also test Christoph's work on your 
-> PASEMI and NXP boards. Could you please help us with solving the issues?
->
-> 'git clone git://git.infradead.org/users/hch/misc.git -b powerpc-dma.5 a'
->
-> Thanks,
-> Christian
->
->
-Today I tested the commit 5da11e49df21f21dac25a2491aa788307bdacb6b.
+Hi,
 
-git checkout 5da11e49df21f21dac25a2491aa788307bdacb6b
+On Thu, Nov 29, 2018 at 03:28:16PM -0800, Atish Patra wrote:
+> The cpu-map DT entry in ARM64 can describe the CPU topology in
+> much better way compared to other existing approaches. RISC-V can
+> easily adopt this binding to represent it's own CPU topology.
+> Thus, both cpu-map DT binding and topology parsing code can be
+> moved to a common location so that RISC-V or any other
+> architecture can leverage that.
+> 
+> The relevant discussion regarding unifying cpu topology can be
+> found in [1].
+> 
+> arch_topology seems to be a perfect place to move the common
+> code. I have not introduced any functional changes in the moved
+> code. The only downside in this approach is that the capacity
+> code will be executed for RISC-V as well. But, it will exit
+> immediately after not able to find the appropriate DT node. If
+> the overhead is considered too much, we can always compile out
+> capacity related functions under a different config for the
+> architectures that do not support them.
+> 
+> The patches have been tested for RISC-V and compile tested for
+> ARM64 & x86.
 
-The PASEMI onboard ethernet works and the P5020 board boots.
+The cpu-map bindings are used for arch/arm too, and so is
+arch_topology.c. In fact, it was introduced to allow code-sharing
+between arm and arm64. Applying patch three breaks arm.
 
--- Christian
+Moving the DT parsing to arch_topology.c we have to unify all three
+architectures. Be aware that arm and arm64 have some differences in how
+they detect cpu capacities. I think we might have to look at the split
+of code between arch/* and arch_topology.c again :-/
 
+Morten
