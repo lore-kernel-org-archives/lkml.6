@@ -2,123 +2,164 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B842AC07E85
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 18:44:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E101AC07E85
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 18:44:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 803E220892
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 18:44:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 803E220892
+	by mail.kernel.org (Postfix) with ESMTP id A44D92082D
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 18:44:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A44D92082D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726179AbeLGSoN (ORCPT
+        id S1726217AbeLGSoc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 13:44:13 -0500
-Received: from mga06.intel.com ([134.134.136.31]:37895 "EHLO mga06.intel.com"
+        Fri, 7 Dec 2018 13:44:32 -0500
+Received: from mga18.intel.com ([134.134.136.126]:4013 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726011AbeLGSoM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 13:44:12 -0500
+        id S1726041AbeLGSob (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Dec 2018 13:44:31 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Dec 2018 10:44:11 -0800
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Dec 2018 10:44:31 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,327,1539673200"; 
-   d="scan'208";a="257695758"
-Received: from ray.jf.intel.com (HELO [10.7.201.140]) ([10.7.201.140])
-  by orsmga004.jf.intel.com with ESMTP; 07 Dec 2018 10:44:11 -0800
-Subject: Re: [RFC PATCH v2 4/4] x86/vdso: Add __vdso_sgx_enter_enclave() to
- wrap SGX enclave transitions
-To:     Jethro Beekman <jethro@fortanix.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
+   d="scan'208";a="107838178"
+Received: from sjchrist-coffee.jf.intel.com ([10.54.74.154])
+  by fmsmga008.fm.intel.com with ESMTP; 07 Dec 2018 10:44:30 -0800
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Dave Hansen <dave.hansen@linux.intel.com>,
         Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "x86@kernel.org" <x86@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Cc:     "H. Peter Anvin" <hpa@zytor.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Haitao Huang <haitao.huang@linux.intel.com>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        "Dr. Greg" <greg@enjellic.com>
-References: <20181206221922.31012-1-sean.j.christopherson@intel.com>
- <20181206221922.31012-5-sean.j.christopherson@intel.com>
- <f2b7df05-20ef-ac16-fc99-258c39d84666@fortanix.com>
-From:   Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <59c989a1-e699-9665-780f-6dd263f41ce4@intel.com>
-Date:   Fri, 7 Dec 2018 10:44:11 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        x86@kernel.org
+Cc:     "H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Rik van Riel <riel@surriel.com>,
+        Yu-cheng Yu <yu-cheng.yu@intel.com>,
+        Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH] x86/fault: Decode and print #PF oops in human readable form
+Date:   Fri,  7 Dec 2018 10:44:23 -0800
+Message-Id: <20181207184423.1962-1-sean.j.christopherson@intel.com>
+X-Mailer: git-send-email 2.19.2
+In-Reply-To: <CAHk-=whk_fsnxVMvF1T2fFCaP2WrvSybABrLQCWLJyCvHw6NKA@mail.gmail.com>
+References: <CAHk-=whk_fsnxVMvF1T2fFCaP2WrvSybABrLQCWLJyCvHw6NKA@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <f2b7df05-20ef-ac16-fc99-258c39d84666@fortanix.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/7/18 10:15 AM, Jethro Beekman wrote:
-> This is not sufficient to support the Fortanix SGX ABI calling
-> convention, which was designed to be mostly compatible with the SysV
-> 64-bit calling convention. The following registers need to be passed in
-> to an enclave from userspace: RDI, RSI, RDX, R8, R9, R10. The following
-> registers need to be passed out from an enclave to userspace: RDI, RSI,
-> RDX, R8, R9.
+Linus pointed out[1] that deciphering the raw #PF error code and
+printing a more human readable message are two different things,
+e.g. not-executable, not-writable, protection keys and even SGX faults
+are all some form of permission violation faults, and a #PF with the
+USER bit cleared in the error code does not indicate that the fault
+originated in kernel code.
 
-Are you asking nicely to change the new Linux ABI to be consistent with
-your existing ABI?  Or, are you saying that the new ABI *must* be
-compatible with this previous out-of-tree implementation?
+Remove the per-bit decoding of the error code and instead print the raw
+error code followed by a brief description of what caused the fault, the
+effective privilege level of the faulting access, and whether the fault
+originated in user code or kernel code.
+
+This provides the user with the information needed to do basic triage
+on 99.9% oopses without polluting the message with information that is
+useless the vast majority of the time, e.g. an oops on a protection keys
+violation is beyond rare, stating that an oops *wasn't* due to a keys
+violation is pointless noise.
+
+[1] https://lkml.kernel.org/r/CAHk-=whk_fsnxVMvF1T2fFCaP2WrvSybABrLQCWLJyCvHw6NKA@mail.gmail.com
+
+Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Rik van Riel <riel@surriel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Yu-cheng Yu <yu-cheng.yu@intel.com>
+Cc: linux-kernel@vger.kernel.org
+Cc: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+---
+ arch/x86/mm/fault.c | 41 ++++++++++-------------------------------
+ 1 file changed, 10 insertions(+), 31 deletions(-)
+
+diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
+index 2ff25ad33233..85de05d41f58 100644
+--- a/arch/x86/mm/fault.c
++++ b/arch/x86/mm/fault.c
+@@ -603,24 +603,9 @@ static void show_ldttss(const struct desc_ptr *gdt, const char *name, u16 index)
+ 		 name, index, addr, (desc.limit0 | (desc.limit1 << 16)));
+ }
+ 
+-/*
+- * This helper function transforms the #PF error_code bits into
+- * "[PROT] [USER]" type of descriptive, almost human-readable error strings:
+- */
+-static void err_str_append(unsigned long error_code, char *buf, unsigned long mask, const char *txt)
+-{
+-	if (error_code & mask) {
+-		if (buf[0])
+-			strcat(buf, " ");
+-		strcat(buf, txt);
+-	}
+-}
+-
+ static void
+ show_fault_oops(struct pt_regs *regs, unsigned long error_code, unsigned long address)
+ {
+-	char err_txt[64];
+-
+ 	if (!oops_may_print())
+ 		return;
+ 
+@@ -648,27 +633,21 @@ show_fault_oops(struct pt_regs *regs, unsigned long error_code, unsigned long ad
+ 		 address < PAGE_SIZE ? "NULL pointer dereference" : "paging request",
+ 		 (void *)address);
+ 
+-	err_txt[0] = 0;
+-
+-	/*
+-	 * Note: length of these appended strings including the separation space and the
+-	 * zero delimiter must fit into err_txt[].
+-	 */
+-	err_str_append(error_code, err_txt, X86_PF_PROT,  "[PROT]" );
+-	err_str_append(error_code, err_txt, X86_PF_WRITE, "[WRITE]");
+-	err_str_append(error_code, err_txt, X86_PF_USER,  "[USER]" );
+-	err_str_append(error_code, err_txt, X86_PF_RSVD,  "[RSVD]" );
+-	err_str_append(error_code, err_txt, X86_PF_INSTR, "[INSTR]");
+-	err_str_append(error_code, err_txt, X86_PF_PK,    "[PK]"   );
+-
+-	pr_alert("#PF error: %s\n", error_code ? err_txt : "[normal kernel read fault]");
++	pr_alert("#PF: error_code(0x%04lx) - %s\n", error_code,
++		!(error_code & X86_PF_PROT) ? "not-present page" :
++		(error_code & X86_PF_RSVD)  ? "reserved bit violation" :
++					      "permissions violation");
++	pr_alert("#PF: %s-privileged %s from %s code\n",
++		(error_code & X86_PF_USER)  ? "user" : "supervisor",
++		(error_code & X86_PF_INSTR) ? "instruction fetch" :
++		(error_code & X86_PF_WRITE) ? "write access" :
++					      "read access",
++			    user_mode(regs) ? "user" : "kernel");
+ 
+ 	if (!(error_code & X86_PF_USER) && user_mode(regs)) {
+ 		struct desc_ptr idt, gdt;
+ 		u16 ldtr, tr;
+ 
+-		pr_alert("This was a system access from user code\n");
+-
+ 		/*
+ 		 * This can happen for quite a few reasons.  The more obvious
+ 		 * ones are faults accessing the GDT, or LDT.  Perhaps
+-- 
+2.19.2
+
