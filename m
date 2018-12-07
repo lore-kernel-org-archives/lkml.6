@@ -2,93 +2,87 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12335C07E85
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 10:14:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A50AC07E85
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 10:15:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D99192083D
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 10:14:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D99192083D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 60E2E208E7
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 10:15:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="EkqX12io"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 60E2E208E7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726109AbeLGKO4 (ORCPT
+        id S1726122AbeLGKPC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 05:14:56 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:40994 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726010AbeLGKOz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 05:14:55 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CD678EBD;
-        Fri,  7 Dec 2018 02:14:54 -0800 (PST)
-Received: from eglon.cambridge.arm.com (eglon.cambridge.arm.com [10.1.196.105])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4CC8F3F5AF;
-        Fri,  7 Dec 2018 02:14:51 -0800 (PST)
-From:   James Morse <james.morse@arm.com>
-To:     linux-arm-kernel@lists.infradead.org
-Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        kexec@lists.infradead.org, Will Deacon <will.deacon@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        AKASHI Takahiro <takahiro.akashi@linaro.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        David Howells <dhowells@redhat.com>,
-        Vivek Goyal <vgoyal@redhat.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        David Miller <davem@davemloft.net>, dyoung@redhat.com,
-        Baoquan He <bhe@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        prudo@linux.ibm.com, Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        bhsharma@redhat.com, Frank Rowand <frowand.list@gmail.com>,
-        James Morse <james.morse@arm.com>
-Subject: [PATCH arm64/kexec] arm64: kexec_file: forbid kdump via kexec_file_load()
-Date:   Fri,  7 Dec 2018 10:14:39 +0000
-Message-Id: <20181207101439.190918-1-james.morse@arm.com>
-X-Mailer: git-send-email 2.19.2
+        Fri, 7 Dec 2018 05:15:02 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:44503 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726094AbeLGKPB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Dec 2018 05:15:01 -0500
+Received: by mail-lj1-f193.google.com with SMTP id k19-v6so3036852lji.11
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Dec 2018 02:15:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=peLIgHYKKTA7dIqpQ26Gw2DjM++Zd4zFlvCxar8cRYc=;
+        b=EkqX12iov10HSOjhssc4KP6Ie9AeHwoR2YdqyLIkAKNsn+VKvC4bybPzHaOvguFsRa
+         +Vz2xAnAQpubZGil2I9XqwIy31SaVhvEBcUre6kB+BYMc9y8f+E0k3v/4CBn/EvdCzmh
+         90BsjRB/qtqzxZZ1cQjE8okW5ie82f91FkqwY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=peLIgHYKKTA7dIqpQ26Gw2DjM++Zd4zFlvCxar8cRYc=;
+        b=Wl69Xd/75gGCyeiEoAwpsXPq9wcLwzKW2iRDzcAMCjIbipmtSNQCvxXZBzEbpyAzVk
+         AM3CEB4NUy+WfEUHrLyLf18ltwQlpRJXigEIgo0ywQdMUv0P6F1vFhYZBCpkBALHHFwv
+         PSGgjI22+d2F0YxT1GPWslpwCkOX54qoQ7P6ga/DOlqFCL1KUHutOVZ77Omqe5Zl6vZZ
+         JU6l0ejZTtYOnGcGCQ+qjToWRQ4x8RxsnKcmpuewvMLuibpBS27EzKnk629JrhxtVhoq
+         TRGGaOFbycEcXmFB4AO2W90BFRAEAfXTwqNnzmgzzyfBr9zyhMqgN3HpqjklE+3O8wWF
+         itPA==
+X-Gm-Message-State: AA+aEWZoaGTJr3VfkTFlCSGo8osVuHn3p2ZkbsvfGf2ob4Hho/Zy6Bag
+        Wfq/kQQ0I+bOtDTQoHLOm7qkRzj0wLRwyLzglO7uLw==
+X-Google-Smtp-Source: AFSGD/WheBNyGjmroCARhdQ7mJaYuaJOU+buIUj0eizCTWr+nNfasEraccTyxHKER+HgZgSLfdb98uN+pmoYNOrw/8g=
+X-Received: by 2002:a2e:9849:: with SMTP id e9-v6mr968851ljj.9.1544177699253;
+ Fri, 07 Dec 2018 02:14:59 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <1543665438-26756-1-git-send-email-hofrat@osadl.org>
+In-Reply-To: <1543665438-26756-1-git-send-email-hofrat@osadl.org>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Fri, 7 Dec 2018 11:14:47 +0100
+Message-ID: <CACRpkdYp8mT2cXVP6hKmopMmHrzugVjTS_0=-qLo8F7y7Um_ng@mail.gmail.com>
+Subject: Re: [RFC PATCH] gpio: pl061: handle failed allocations
+To:     Nicholas Mc Guire <hofrat@osadl.org>
+Cc:     Russell King <linux@armlinux.org.uk>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that kexec_walk_memblock() can do the crash-kernel placement itself
-architectures that don't support kdump via kexe_file_load() need to
-explicitly forbid it.
+On Sat, Dec 1, 2018 at 1:03 PM Nicholas Mc Guire <hofrat@osadl.org> wrote:
 
-We don't support this on arm64 until the kernel can add the elfcorehdr
-and usable-memory-range fields to the DT. Without these the crash-kernel
-overwrites the previous kernel's memory during startup.
+> devm_kzalloc(), devm_kstrdup() and devm_kasprintf() all can
+> fail internal allocation and return NULL. Using any of the assigned
+> objects without checking is not safe. As this is early in the boot
+> phase and these allocations really should not fail, any failure here
+> is probably an indication of a more serious issue so it makes little
+> sense to try and rollback the previous allocated resources or try to
+> continue;  but rather the probe function is simply exited with -ENOMEM.
+>
+> Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
+> Fixes: 684284b64aae ("ARM: integrator: add MMCI device to IM-PD1")
 
-Add a check to refuse crash image loading.
+Looks good to me so patch applied to my Integrator tree
+for fixes.
 
-Signed-off-by: James Morse <james.morse@arm.com>
----
-
-Context: http://lore.kernel.org/r/20181206155424.GA4422@arm.com
-
- arch/arm64/kernel/kexec_image.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/arch/arm64/kernel/kexec_image.c b/arch/arm64/kernel/kexec_image.c
-index 1ad1d5f8f024..07bf740bea91 100644
---- a/arch/arm64/kernel/kexec_image.c
-+++ b/arch/arm64/kernel/kexec_image.c
-@@ -47,6 +47,10 @@ static void *image_load(struct kimage *image,
- 	struct kexec_segment *kernel_segment;
- 	int ret;
- 
-+	/* We don't support crash kernels yet. */
-+	if (image->type == KEXEC_TYPE_CRASH)
-+		return ERR_PTR(-EOPNOTSUPP);
-+
- 	/*
- 	 * We require a kernel with an unambiguous Image header. Per
- 	 * Documentation/booting.txt, this is the case when image_size
--- 
-2.19.2
-
+Yours,
+Liinus Walleij
