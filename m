@@ -2,98 +2,160 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,T_DKIMWL_WL_HIGH,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA285C07E85
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 17:44:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC3C4C07E85
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 17:45:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 79BDD20838
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 17:44:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544204689;
-	bh=pDuMxFBv7JUFQbPZQh0piYaooGqFZqIH0D3k+JPA7S0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=rQGWoLErG4JavwCUYwfdifTypsz+JlzN7P8cCovI8fZliu8xklz9MvCG9Wa/BlnGK
-	 rbCjNrxxTGbqncV8YC8XNF4o69LEJFbcH858TD7Z8HEUDkh7aU34RQZRl3V0LPGonO
-	 umpYOaEmMjB+RXetGeuF33a5d3j1b3om2/gc5Lpk=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 79BDD20838
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 8823420868
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 17:45:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8823420868
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726159AbeLGRos (ORCPT
+        id S1726174AbeLGRpN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 12:44:48 -0500
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:35340 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726011AbeLGRor (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 12:44:47 -0500
-Received: by mail-ot1-f65.google.com with SMTP id 81so4566750otj.2;
-        Fri, 07 Dec 2018 09:44:47 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=TCqTuN2+JhTJ2mdrXlc0P/j7/wJg9XtgZVlSTt84uns=;
-        b=NHpsyi1IHBVHRI3dhiPpCMLir6L6j1GQdQzc3TVevTYVENjkaHtcKMvcO4u9aTW1Rf
-         T+0b5f1jGi5IUX/Aufc8dfNr5ck7T69R0vJGHe0ZO1zyRrJY612Y1QIL58w4hwxDbl8z
-         bg3ZgOR1gCIKJaRlWNlqyzSK1g40rW/IeVVjByK6D+27Xg/HBvIDWDLVBYHbiY5tsjfK
-         SRo18U7E4zMTw7oJ5GlGcR2+kGAandtOR6K6ajU/on6Gu51ULYGCVc8L5S60LHvD0qcl
-         ndP+GWjGsF3N1qrZDklzA31qIejtAUd/ZvUt6qT0aNSDF8ANq9x8JL8Szk+5srLCqGhm
-         s1Nw==
-X-Gm-Message-State: AA+aEWbJLabuRRK1bLwUCI4EjXGpz7+C6jZkrnVo+p/x0bqJixgINGyu
-        j/aC36s3hxbm8d+7of2eIw==
-X-Google-Smtp-Source: AFSGD/VK1xwlxL8+TXvqdvbkIZgCkrDzDREpPdWkcDMXOu2oTIO/3VUP96I1ZNyJhw895ai5TzbPug==
-X-Received: by 2002:a9d:3a42:: with SMTP id j60mr1993169otc.202.1544204687090;
-        Fri, 07 Dec 2018 09:44:47 -0800 (PST)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id r1sm1639028oie.44.2018.12.07.09.44.46
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 07 Dec 2018 09:44:46 -0800 (PST)
-Date:   Fri, 7 Dec 2018 11:44:45 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Sven Van Asbroeck <thesven73@gmail.com>
-Cc:     svendev@arcx.com, linus.walleij@linaro.org, lee.jones@linaro.org,
-        mark.rutland@arm.com, afaerber@suse.de, treding@nvidia.com,
-        david@lechnology.com, noralf@tronnes.org, johan@kernel.org,
-        monstr@monstr.eu, michal.vokac@ysoft.com, arnd@arndb.de,
-        gregkh@linuxfoundation.org, john.garry@huawei.com,
-        geert+renesas@glider.be, robin.murphy@arm.com,
-        paul.gortmaker@windriver.com,
-        sebastien.bourdelin@savoirfairelinux.com, icenowy@aosc.io,
-        stuyoder@gmail.com, maxime.ripard@bootlin.com,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v5 4/6] dt-bindings: anybus-controller: document
- devicetree binding
-Message-ID: <20181207174445.GA13582@bogus>
-References: <20181204220224.27324-1-TheSven73@googlemail.com>
- <20181204220224.27324-5-TheSven73@googlemail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181204220224.27324-5-TheSven73@googlemail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Fri, 7 Dec 2018 12:45:13 -0500
+Received: from pegase1.c-s.fr ([93.17.236.30]:11495 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726076AbeLGRpM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Dec 2018 12:45:12 -0500
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 43BKcP2drLzB09bP;
+        Fri,  7 Dec 2018 18:45:09 +0100 (CET)
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id qZDQxY8lqwhS; Fri,  7 Dec 2018 18:45:09 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 43BKcP1RSGzB09bM;
+        Fri,  7 Dec 2018 18:45:09 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id D8C368B90D;
+        Fri,  7 Dec 2018 18:45:10 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id j2PiGjkfjL3Y; Fri,  7 Dec 2018 18:45:10 +0100 (CET)
+Received: from po14163vm.idsi0.si.c-s.fr (unknown [192.168.232.3])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id A0A1F8B8F6;
+        Fri,  7 Dec 2018 18:45:10 +0100 (CET)
+Received: by po14163vm.idsi0.si.c-s.fr (Postfix, from userid 0)
+        id 6F2C9716A7; Fri,  7 Dec 2018 17:45:10 +0000 (UTC)
+Message-Id: <a44ea11ba6a80cf270393b780841eb7ffe5f9c6a.1544204546.git.christophe.leroy@c-s.fr>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [PATCH] powerpc: implement CONFIG_DEBUG_VIRTUAL
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Date:   Fri,  7 Dec 2018 17:45:10 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 04, 2018 at 05:02:22PM -0500, Sven Van Asbroeck wrote:
-> From: Sven Van Asbroeck <svendev@arcx.com>
-> 
-> This patch adds devicetree binding documentation for the
-> Arcx anybus controller.
-> 
-> Signed-off-by: Sven Van Asbroeck <svendev@arcx.com>
-> ---
->  .../fieldbus/arcx,anybus-controller.txt       | 71 +++++++++++++++++++
->  1 file changed, 71 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/fieldbus/arcx,anybus-controller.txt
+This patch implements CONFIG_DEBUG_VIRTUAL to warn about
+incorrect use of virt_to_phys() and page_to_phys()
 
-This looks fine to me now, but still seems the rest of the series has 
-some discussion. In theory, all that should have no impact on the 
-bindings.
+Below is the result of test_debug_virtual:
 
-Rob
+[    1.438746] WARNING: CPU: 0 PID: 1 at ./arch/powerpc/include/asm/io.h:808 test_debug_virtual_init+0x3c/0xd4
+[    1.448156] CPU: 0 PID: 1 Comm: swapper Not tainted 4.20.0-rc5-00560-g6bfb52e23a00-dirty #532
+[    1.457259] NIP:  c066c550 LR: c0650ccc CTR: c066c514
+[    1.462257] REGS: c900bdb0 TRAP: 0700   Not tainted  (4.20.0-rc5-00560-g6bfb52e23a00-dirty)
+[    1.471184] MSR:  00029032 <EE,ME,IR,DR,RI>  CR: 48000422  XER: 20000000
+[    1.477811]
+[    1.477811] GPR00: c0650ccc c900be60 c60d0000 00000000 006000c0 c9000000 00009032 c7fa0020
+[    1.477811] GPR08: 00002400 00000001 09000000 00000000 c07b5d04 00000000 c00037d8 00000000
+[    1.477811] GPR16: 00000000 00000000 00000000 00000000 c0760000 c0740000 00000092 c0685bb0
+[    1.477811] GPR24: c065042c c068a734 c0685b8c 00000006 00000000 c0760000 c075c3c0 ffffffff
+[    1.512711] NIP [c066c550] test_debug_virtual_init+0x3c/0xd4
+[    1.518315] LR [c0650ccc] do_one_initcall+0x8c/0x1cc
+[    1.523163] Call Trace:
+[    1.525595] [c900be60] [c0567340] 0xc0567340 (unreliable)
+[    1.530954] [c900be90] [c0650ccc] do_one_initcall+0x8c/0x1cc
+[    1.536551] [c900bef0] [c0651000] kernel_init_freeable+0x1f4/0x2cc
+[    1.542658] [c900bf30] [c00037ec] kernel_init+0x14/0x110
+[    1.547913] [c900bf40] [c000e1d0] ret_from_kernel_thread+0x14/0x1c
+[    1.553971] Instruction dump:
+[    1.556909] 3ca50100 bfa10024 54a5000e 3fa0c076 7c0802a6 3d454000 813dc204 554893be
+[    1.564566] 7d294010 7d294910 90010034 39290001 <0f090000> 7c3e0b78 955e0008 3fe0c062
+[    1.572425] ---[ end trace 6f6984225b280ad6 ]---
+[    1.577467] PA: 0x09000000 for VA: 0xc9000000
+[    1.581799] PA: 0x061e8f50 for VA: 0xc61e8f50
+
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+---
+ arch/powerpc/Kconfig          |  1 +
+ arch/powerpc/include/asm/io.h | 12 +++++++++++-
+ arch/powerpc/mm/pgtable_32.c  |  2 +-
+ 3 files changed, 13 insertions(+), 2 deletions(-)
+
+diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
+index fd634a293d7f..1a3ed380f7d0 100644
+--- a/arch/powerpc/Kconfig
++++ b/arch/powerpc/Kconfig
+@@ -128,6 +128,7 @@ config PPC
+ 	#
+ 	# Please keep this list sorted alphabetically.
+ 	#
++	select ARCH_HAS_DEBUG_VIRTUAL
+ 	select ARCH_HAS_DEVMEM_IS_ALLOWED
+ 	select ARCH_HAS_DMA_SET_COHERENT_MASK
+ 	select ARCH_HAS_ELF_RANDOMIZE
+diff --git a/arch/powerpc/include/asm/io.h b/arch/powerpc/include/asm/io.h
+index e746becd9d6f..75fb9f110eb6 100644
+--- a/arch/powerpc/include/asm/io.h
++++ b/arch/powerpc/include/asm/io.h
+@@ -29,6 +29,7 @@ extern struct pci_dev *isa_bridge_pcidev;
+ 
+ #include <linux/device.h>
+ #include <linux/compiler.h>
++#include <linux/mm_types.h>
+ #include <asm/page.h>
+ #include <asm/byteorder.h>
+ #include <asm/synch.h>
+@@ -804,6 +805,8 @@ extern void __iounmap_at(void *ea, unsigned long size);
+  */
+ static inline unsigned long virt_to_phys(volatile void * address)
+ {
++	WARN_ON(IS_ENABLED(CONFIG_DEBUG_VIRTUAL) && !virt_addr_valid(address));
++
+ 	return __pa((unsigned long)address);
+ }
+ 
+@@ -827,7 +830,14 @@ static inline void * phys_to_virt(unsigned long address)
+ /*
+  * Change "struct page" to physical address.
+  */
+-#define page_to_phys(page)	((phys_addr_t)page_to_pfn(page) << PAGE_SHIFT)
++static inline phys_addr_t page_to_phys(struct page *page)
++{
++	unsigned long pfn = page_to_pfn(page);
++
++	WARN_ON(IS_ENABLED(CONFIG_DEBUG_VIRTUAL) && !pfn_valid(pfn));
++
++	return PFN_PHYS(pfn);
++}
+ 
+ /*
+  * 32 bits still uses virt_to_bus() for it's implementation of DMA
+diff --git a/arch/powerpc/mm/pgtable_32.c b/arch/powerpc/mm/pgtable_32.c
+index deb49a6e9cad..9c4e6ed19a93 100644
+--- a/arch/powerpc/mm/pgtable_32.c
++++ b/arch/powerpc/mm/pgtable_32.c
+@@ -143,7 +143,7 @@ __ioremap_caller(phys_addr_t addr, unsigned long size, pgprot_t prot, void *call
+ 	 * Don't allow anybody to remap normal RAM that we're using.
+ 	 * mem_init() sets high_memory so only do the check after that.
+ 	 */
+-	if (slab_is_available() && (p < virt_to_phys(high_memory)) &&
++	if (slab_is_available() && virt_addr_valid(p) &&
+ 	    page_is_ram(__phys_to_pfn(p))) {
+ 		printk("__ioremap(): phys addr 0x%llx is RAM lr %ps\n",
+ 		       (unsigned long long)p, __builtin_return_address(0));
+-- 
+2.13.3
+
