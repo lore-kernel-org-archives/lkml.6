@@ -2,125 +2,174 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E9ECC07E85
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 10:41:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9837C07E85
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 10:43:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 541AC20661
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 10:41:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 541AC20661
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amlogic.com
+	by mail.kernel.org (Postfix) with ESMTP id AAF69208E7
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 10:43:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AAF69208E7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726019AbeLGKlb (ORCPT
+        id S1726021AbeLGKnU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 05:41:31 -0500
-Received: from mail-sz2.amlogic.com ([211.162.65.114]:20458 "EHLO
-        mail-sz2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725985AbeLGKla (ORCPT
+        Fri, 7 Dec 2018 05:43:20 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:60596 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725985AbeLGKnU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 05:41:30 -0500
-Received: from [10.28.18.115] (10.28.18.115) by mail-sz2.amlogic.com
- (10.28.11.6) with Microsoft SMTP Server (TLS) id 15.0.1320.4; Fri, 7 Dec 2018
- 18:41:39 +0800
-Subject: Re: [PATCH v7 2/2] mtd: rawnand: meson: add support for Amlogic NAND
- flash controller
-To:     Miquel Raynal <miquel.raynal@bootlin.com>,
-        Jianxin Pan <jianxin.pan@amlogic.com>
-CC:     Boris Brezillon <boris.brezillon@bootlin.com>,
-        <linux-mtd@lists.infradead.org>, Yixun Lan <yixun.lan@amlogic.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Carlo Caione <carlo@caione.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Rob Herring <robh@kernel.org>, Jian Hu <jian.hu@amlogic.com>,
-        Hanjie Lin <hanjie.lin@amlogic.com>,
-        Victor Wan <victor.wan@amlogic.com>,
-        <linux-amlogic@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-References: <1542386439-30166-1-git-send-email-jianxin.pan@amlogic.com>
- <1542386439-30166-3-git-send-email-jianxin.pan@amlogic.com>
- <20181207102456.1dc67e07@xps13> <20181207104254.0ecfc1e5@xps13>
-From:   Liang Yang <liang.yang@amlogic.com>
-Message-ID: <ac486ae7-7997-6f35-f29c-267c9c6f0f8c@amlogic.com>
-Date:   Fri, 7 Dec 2018 18:41:39 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; rv:60.0) Gecko/20100101
- Thunderbird/60.3.2
+        Fri, 7 Dec 2018 05:43:20 -0500
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wB7AebcR007005
+        for <linux-kernel@vger.kernel.org>; Fri, 7 Dec 2018 05:43:18 -0500
+Received: from e16.ny.us.ibm.com (e16.ny.us.ibm.com [129.33.205.206])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2p7py39ba2-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Dec 2018 05:43:18 -0500
+Received: from localhost
+        by e16.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <ego@linux.vnet.ibm.com>;
+        Fri, 7 Dec 2018 10:43:17 -0000
+Received: from b01cxnp23033.gho.pok.ibm.com (9.57.198.28)
+        by e16.ny.us.ibm.com (146.89.104.203) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 7 Dec 2018 10:43:14 -0000
+Received: from b01ledav002.gho.pok.ibm.com (b01ledav002.gho.pok.ibm.com [9.57.199.107])
+        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wB7AhDR516711754
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 7 Dec 2018 10:43:13 GMT
+Received: from b01ledav002.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 6C05B124052;
+        Fri,  7 Dec 2018 10:43:13 +0000 (GMT)
+Received: from b01ledav002.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 297E2124054;
+        Fri,  7 Dec 2018 10:43:13 +0000 (GMT)
+Received: from sofia.ibm.com (unknown [9.124.35.115])
+        by b01ledav002.gho.pok.ibm.com (Postfix) with ESMTP;
+        Fri,  7 Dec 2018 10:43:13 +0000 (GMT)
+Received: by sofia.ibm.com (Postfix, from userid 1000)
+        id A49F82E4C9C; Fri,  7 Dec 2018 16:13:11 +0530 (IST)
+Date:   Fri, 7 Dec 2018 16:13:11 +0530
+From:   Gautham R Shenoy <ego@linux.vnet.ibm.com>
+To:     Thiago Jung Bauermann <bauerman@linux.ibm.com>
+Cc:     "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Tyrel Datwyler <tyreld@linux.vnet.ibm.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Vaidyanathan Srinivasan <svaidy@linux.vnet.ibm.com>,
+        Michael Bringmann <mwb@linux.vnet.ibm.com>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] pseries/hotplug: Add more delay in pseries_cpu_die while
+ waiting for rtas-stop
+Reply-To: ego@linux.vnet.ibm.com
+References: <1544095908-2414-1-git-send-email-ego@linux.vnet.ibm.com>
+ <87a7li5zv2.fsf@morokweng.localdomain>
 MIME-Version: 1.0
-In-Reply-To: <20181207104254.0ecfc1e5@xps13>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.28.18.115]
-X-ClientProxiedBy: mail-sz2.amlogic.com (10.28.11.6) To mail-sz2.amlogic.com
- (10.28.11.6)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87a7li5zv2.fsf@morokweng.localdomain>
+User-Agent: Mutt/1.5.23 (2014-03-12)
+X-TM-AS-GCONF: 00
+x-cbid: 18120710-0072-0000-0000-000003D5E190
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010187; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000270; SDB=6.01128244; UDB=6.00582089; IPR=6.00908375;
+ MB=3.00024554; MTD=3.00000008; XFM=3.00000015; UTC=2018-12-07 10:43:16
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18120710-0073-0000-0000-00004A5CE9B8
+Message-Id: <20181207104311.GA11431@in.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-07_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1812070093
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Miquel,
+Hi Thiago,
 
-Appreciate your time.
-I will follow the nand/next and rework some next week as soon as possible.
+On Thu, Dec 06, 2018 at 03:28:17PM -0200, Thiago Jung Bauermann wrote:
 
-On 2018/12/7 17:42, Miquel Raynal wrote:
-> Hi Jianxin,
+[..snip..]
+
 > 
-> Miquel Raynal <miquel.raynal@bootlin.com> wrote on Fri, 7 Dec 2018
-> 10:24:56 +0100:
 > 
->> Hi Jianxin,
->>
->> Looks good to me overall, a few comments inline.
->>
->> Jianxin Pan <jianxin.pan@amlogic.com> wrote on Sat, 17 Nov 2018
->> 00:40:38 +0800:
->>
->>> From: Liang Yang <liang.yang@amlogic.com>
->>>
->>> Add initial support for the Amlogic NAND flash controller which found
->>> in the Meson-GXBB/GXL/AXG SoCs.
->>>
->>> Signed-off-by: Liang Yang <liang.yang@amlogic.com>
->>> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
->>> Signed-off-by: Jianxin Pan <jianxin.pan@amlogic.com>
->>> ---
->>>   drivers/mtd/nand/raw/Kconfig      |   10 +
->>>   drivers/mtd/nand/raw/Makefile     |    1 +
->>>   drivers/mtd/nand/raw/meson_nand.c | 1417 +++++++++++++++++++++++++++++++++++++
->>>   3 files changed, 1428 insertions(+)
->>>   create mode 100644 drivers/mtd/nand/raw/meson_nand.c
->>>
+> I posted a similar patch last year, but I wasn't able to arrive at a
+> root cause analysis like you did:
 > 
-> I forgot to mention, Boris has done more cleanup which breaks your
-> patches, please have a look at the following commits in the nand/next
-> branch, they will force you to do some light rework to get the driver
-> building (especially, you should not export the ->select_chip hook anymore):
+>
+https://lists.ozlabs.org/pipermail/linuxppc-dev/2017-February/153734.html
+
+Ah! Nice. So this is a known problem.
+
 > 
-> 7a08dbaedd36 mtd: rawnand: Move ->setup_data_interface() to nand_controller_ops
-> f2abfeb2078b mtd: rawnand: Move the ->exec_op() method to nand_controller_ops
-> 7d6c37e90cf9 mtd: rawnand: Deprecate the ->select_chip() hook
-> 1770022ffa85 mtd: rawnand: ams-delta: Stop implementing ->select_chip()
-> 653c57c7da08 mtd: rawnand: vf610: Stop implementing ->select_chip()
-> 2ace451cae22 mtd: rawnand: tegra: Stop implementing ->select_chip()
-> b25251414f6e mtd: rawnand: marvell: Stop implementing ->select_chip()
-> 550b9fc4e3af mtd: rawnand: fsmc: Stop implementing ->select_chip()
-> 02b4a52604a4 mtd: rawnand: Make ->select_chip() optional when ->exec_op() is implemented
-> ae2294b10b0f mtd: rawnand: Pass the CS line to be selected in struct nand_operation
-> 1d0178593d14 mtd: rawnand: Add nand_[de]select_target() helpers
+> One thing I realized after I posted the patch was that in my case, the
+> CPU was crashing inside RTAS. From the NIP and LR in the trace above it
+> looks like it's crashing in RTAS in your case as well.
 > 
-> Thanks,
-> Miquèl
+> Michael Ellerman had two comments on my patch:
 > 
-> .
+> 1. Regardless of the underlying bug, the kernel shouldn't crash so we
+> need a patch making it more resilient to this failure.
 > 
+> 2. The wait loop should use udelay() so that the loop will actually take
+> a set amount of wall time, rather than just cycles.
+> 
+> Regarding 1. if the problem is that the kernel is causing RTAS to crash
+> because it calls it in a way that's unsupported, then I don't see how we
+> can make the kernel more resilient. We have to make the kernel respect
+> RTAS' restrictions (or alternatively, poke RTAS devs to make RTAS fail
+> gracefuly in these conditions).
+
+
+I agree that the Kernel has to respect RTAS's restriction. The PAPR
+v2.8.1, Requirement R1-7.2.3-8 under section 7.2.3 says the following:
+
+    "The stop-self service needs to be serialized with calls to the
+     stop-self, start-cpu, and set-power-level services. The OS must
+     be able to call RTAS services on other processors while the
+     processor is stopped or being stopped"
+
+Thus the onus is on the OS to ensure that there are no concurrent rtas
+calls with "stop-self" token.
+
+> 
+> Regarding 2. I implemented a new version of my patch (posted below) but
+> I was never able to test it because I couldn't access a system where the
+> problem was reproducible anymore.
+> 
+> There's also a race between the CPU driving the unplug and the CPU being
+> unplugged which I think is not easy for the CPU being unplugged to win,
+> which makes the busy loop in pseries_cpu_die() a bit fragile. I describe
+> the race in the patch description.
+> 
+> My solution to make the race less tight is to make the CPU driving the
+> unplug to only start the busy loop only after the CPU being unplugged is
+> in the CPU_STATE_OFFLINE state. At that point, we know that it either is
+> about to call RTAS or it already has.
+
+Ah, yes this is good optimization. Though, I think we ought to
+unconditionally wait until the target CPU has woken up from CEDE and
+changed its state to CPU_STATE_OFFLINE. After if PROD failed, then we
+would have caught it in dlpar_offline_cpu() itself.
+
+> 
+> Do you think this makes sense? If you do, would you mind testing my
+> patch? You can change the timeouts and delays if you want. To be honest
+> they're just guesses on my part...
+
+Sure. I will test the patch and report back.
+
+--
+Thanks and Regards
+gautham.
+
