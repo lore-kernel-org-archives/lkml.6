@@ -2,196 +2,151 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	T_MIXED_ES autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2198EC07E85
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 13:21:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C74E8C07E85
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 13:27:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D60D120837
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 13:21:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D60D120837
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 8ABA821479
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 13:27:12 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="NXdkoIOp";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="P9Pps7bS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8ABA821479
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726150AbeLGNVt (ORCPT
+        id S1726103AbeLGN1L (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 08:21:49 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:57231 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725997AbeLGNVt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 08:21:49 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 227CD20510; Fri,  7 Dec 2018 14:21:46 +0100 (CET)
-Received: from localhost (aaubervilliers-681-1-79-44.w90-88.abo.wanadoo.fr [90.88.21.44])
-        by mail.bootlin.com (Postfix) with ESMTPSA id DDDDA20510;
-        Fri,  7 Dec 2018 14:21:35 +0100 (CET)
-Date:   Fri, 7 Dec 2018 14:21:36 +0100
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Jagan Teki <jagan@amarulasolutions.com>
-Cc:     Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Vasily Khoruzhick <anarsoul@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-sunxi@googlegroups.com, linux-amarula@amarulasolutions.com
-Subject: Re: [linux-sunxi] Re: [PATCH v4 08/26] drm/sun4i: sun6i_mipi_dsi:
- Fix VBP size calculation
-Message-ID: <20181207132136.oa4nzpczytzxhl2d@flea>
-References: <20181113111633.20189-1-jagan@amarulasolutions.com>
- <20181113111633.20189-9-jagan@amarulasolutions.com>
- <20181115095551.uctdkfmuwlnzhjnn@flea>
- <CAMty3ZAEHiovm6OF6JvJVQR4aqpG1Q3ML5YqxJkF2ntwRkUO=A@mail.gmail.com>
- <20181120155715.andrjp5kg6ugcv72@flea>
- <CAMty3ZCUOJmvekupOwh281g5HaazTpBbukWQY2Pv2OYypAwciw@mail.gmail.com>
- <20181127102450.b65jzhrdpxn5rxmk@flea>
- <CAMty3ZDTvn4VF_oOvEi2jCw9Rw5WPd1LQT3SZ5X1K0fJAFg2cQ@mail.gmail.com>
+        Fri, 7 Dec 2018 08:27:11 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:44064 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725997AbeLGN1L (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Dec 2018 08:27:11 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 23E6E60ADD; Fri,  7 Dec 2018 13:27:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1544189230;
+        bh=wdC2HuPCuuXgoXAUu8EnRSc0IveHwdGl06tG74aKC7s=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=NXdkoIOppFAHWYUr32ndMl8a0XfN5Y89z4cndGOfMSEKnFcm8aKZ2cAfquYC6VWGt
+         TcoWuU4eKGGEW00Q25JmOPSnR6XFvV+j2Kf0oBg0ge7dVUJxBjyFN+SuXWLf/Dc0NG
+         NOe26adttei2KN4OEMF18QcmK0vIG+ssgQNX7P9k=
+Received: from [10.79.40.233] (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: vivek.gautam@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id E136360115;
+        Fri,  7 Dec 2018 13:27:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1544189227;
+        bh=wdC2HuPCuuXgoXAUu8EnRSc0IveHwdGl06tG74aKC7s=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=P9Pps7bShrwa5ZR1AJ7EXRWHIcmxJVrc+6yWPVRheUcsmR/x7Sr78niSkhMCNLUvL
+         pQ1ORxqtLoozZdbCX09fOuTQ83ZWcjoDHaBz4ZPDjO0GuB/Aq76teVWF7UhuHkGuHh
+         G6Lt1JJCoaAQYvhsxXsupYVihqkyLeFGprJnx1SQ=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E136360115
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vivek.gautam@codeaurora.org
+Subject: Re: [PATCH 1/1] media: venus: core: Set dma maximum segment size
+To:     Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        mchehab@kernel.org
+Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, vgarodia@codeaurora.org,
+        acourbot@chromium.org
+References: <20181205083151.3685-1-vivek.gautam@codeaurora.org>
+ <a28d0542-5d63-7c72-0f39-40e4524d9a2a@linaro.org>
+From:   Vivek Gautam <vivek.gautam@codeaurora.org>
+Message-ID: <97d486e6-d940-5db0-eeff-077d694334a2@codeaurora.org>
+Date:   Fri, 7 Dec 2018 18:57:02 +0530
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.2
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="q7v7wduxjlqssxwi"
-Content-Disposition: inline
-In-Reply-To: <CAMty3ZDTvn4VF_oOvEi2jCw9Rw5WPd1LQT3SZ5X1K0fJAFg2cQ@mail.gmail.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <a28d0542-5d63-7c72-0f39-40e4524d9a2a@linaro.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---q7v7wduxjlqssxwi
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 12/7/2018 3:38 PM, Stanimir Varbanov wrote:
+> Hi Vivek,
+>
+> Thanks for the patch!
+>
+> On 12/5/18 10:31 AM, Vivek Gautam wrote:
+>> Turning on CONFIG_DMA_API_DEBUG_SG results in the following error:
+>>
+>> [  460.308650] ------------[ cut here ]------------
+>> [  460.313490] qcom-venus aa00000.video-codec: DMA-API: mapping sg segment longer than device claims to support [len=4194304] [max=65536]
+>> [  460.326017] WARNING: CPU: 3 PID: 3555 at src/kernel/dma/debug.c:1301 debug_dma_map_sg+0x174/0x254
+>> [  460.338888] Modules linked in: venus_dec venus_enc videobuf2_dma_sg videobuf2_memops hci_uart btqca bluetooth venus_core v4l2_mem2mem videobuf2_v4l2 videobuf2_common ath10k_snoc ath10k_core ath lzo lzo_compress zramjoydev
+>> [  460.375811] CPU: 3 PID: 3555 Comm: V4L2DecoderThre Tainted: G        W         4.19.1 #82
+>> [  460.384223] Hardware name: Google Cheza (rev1) (DT)
+>> [  460.389251] pstate: 60400009 (nZCv daif +PAN -UAO)
+>> [  460.394191] pc : debug_dma_map_sg+0x174/0x254
+>> [  460.398680] lr : debug_dma_map_sg+0x174/0x254
+>> [  460.403162] sp : ffffff80200c37d0
+>> [  460.406583] x29: ffffff80200c3830 x28: 0000000000010000
+>> [  460.412056] x27: 00000000ffffffff x26: ffffffc0f785ea80
+>> [  460.417532] x25: 0000000000000000 x24: ffffffc0f4ea1290
+>> [  460.423001] x23: ffffffc09e700300 x22: ffffffc0f4ea1290
+>> [  460.428470] x21: ffffff8009037000 x20: 0000000000000001
+>> [  460.433936] x19: ffffff80091b0000 x18: 0000000000000000
+>> [  460.439411] x17: 0000000000000000 x16: 000000000000f251
+>> [  460.444885] x15: 0000000000000006 x14: 0720072007200720
+>> [  460.450354] x13: ffffff800af536e0 x12: 0000000000000000
+>> [  460.455822] x11: 0000000000000000 x10: 0000000000000000
+>> [  460.461288] x9 : 537944d9c6c48d00 x8 : 537944d9c6c48d00
+>> [  460.466758] x7 : 0000000000000000 x6 : ffffffc0f8d98f80
+>> [  460.472230] x5 : 0000000000000000 x4 : 0000000000000000
+>> [  460.477703] x3 : 000000000000008a x2 : ffffffc0fdb13948
+>> [  460.483170] x1 : ffffffc0fdb0b0b0 x0 : 000000000000007a
+>> [  460.488640] Call trace:
+>> [  460.491165]  debug_dma_map_sg+0x174/0x254
+>> [  460.495307]  vb2_dma_sg_alloc+0x260/0x2dc [videobuf2_dma_sg]
+>> [  460.501150]  __vb2_queue_alloc+0x164/0x374 [videobuf2_common]
+>> [  460.507076]  vb2_core_reqbufs+0xfc/0x23c [videobuf2_common]
+>> [  460.512815]  vb2_reqbufs+0x44/0x5c [videobuf2_v4l2]
+>> [  460.517853]  v4l2_m2m_reqbufs+0x44/0x78 [v4l2_mem2mem]
+>> [  460.523144]  v4l2_m2m_ioctl_reqbufs+0x1c/0x28 [v4l2_mem2mem]
+>> [  460.528976]  v4l_reqbufs+0x30/0x40
+>> [  460.532480]  __video_do_ioctl+0x36c/0x454
+>> [  460.536610]  video_usercopy+0x25c/0x51c
+>> [  460.540572]  video_ioctl2+0x38/0x48
+>> [  460.544176]  v4l2_ioctl+0x60/0x74
+>> [  460.547602]  do_video_ioctl+0x948/0x3520
+>> [  460.551648]  v4l2_compat_ioctl32+0x60/0x98
+>> [  460.555872]  __arm64_compat_sys_ioctl+0x134/0x20c
+>> [  460.560718]  el0_svc_common+0x9c/0xe4
+>> [  460.564498]  el0_svc_compat_handler+0x2c/0x38
+>> [  460.568982]  el0_svc_compat+0x8/0x18
+>> [  460.572672] ---[ end trace ce209b87b2f3af88 ]---
+>>
+>>  From above warning one would deduce that the sg segment will overflow
+>> the device's capacity. In reality, the hardware can accommodate larger
+>> sg segments.
+>> So, initialize the max segment size properly to weed out this warning.
+>>
+>> Based on a similar patch sent by Sean Paul for mdss:
+>> https://patchwork.kernel.org/patch/10671457/
+>>
+>> Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
+>> ---
+>>   drivers/media/platform/qcom/venus/core.c | 8 ++++++++
+>>   1 file changed, 8 insertions(+)
+> Acked-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
 
-On Tue, Nov 27, 2018 at 04:34:35PM +0530, Jagan Teki wrote:
-> On Tue, Nov 27, 2018 at 3:55 PM Maxime Ripard <maxime.ripard@bootlin.com>=
- wrote:
-> >
-> > On Tue, Nov 20, 2018 at 09:55:42PM +0530, Jagan Teki wrote:
-> > > On Tue, Nov 20, 2018 at 9:27 PM Maxime Ripard <maxime.ripard@bootlin.=
-com> wrote:
-> > > >
-> > > > On Thu, Nov 15, 2018 at 11:19:53PM +0530, Jagan Teki wrote:
-> > > > > On Thu, Nov 15, 2018 at 3:26 PM Maxime Ripard <maxime.ripard@boot=
-lin.com> wrote:
-> > > > > >
-> > > > > > Hi,
-> > > > > >
-> > > > > > On Tue, Nov 13, 2018 at 04:46:15PM +0530, Jagan Teki wrote:
-> > > > > > > The horizontal and vertical back porch calculation in BSP
-> > > > > > > code is simply following the Linux drm comment diagram, in
-> > > > > > > include/drm/drm_modes.h which is
-> > > > > > >
-> > > > > > > [hv]back porch =3D [hv]total - [hv]sync_end
-> > > > > > >
-> > > > > > > BSP code form BPI-M64-bsp is calculating vertical back porch =
-as
-> > > > > > > (from linux-sunxi/drivers/video/sunxi/disp2/disp/de/disp_lcd.=
-c)
-> > > > > > >
-> > > > > > > timmings->ver_sync_time=3D panel_info->lcd_vspw;
-> > > > > > > timmings->ver_back_porch=3D panel_info->lcd_vbp-panel_info->l=
-cd_vspw;
-> > > > > > >
-> > > > > > > vbp =3D panel->lcd_vbp;
-> > > > > > > vspw =3D panel->lcd_vspw;
-> > > > > > > dsi_dev[sel]->dsi_basic_size0.bits.vbp =3D vbp-vspw;
-> > > > > > > dsi_dev[sel]->dsi_basic_size0.bits.vbp =3D panel->lcd_vbp - p=
-anel->lcd_vspw;
-> > > > > > > =3D>  timmings->ver_back_porch + panel_info->lcd_vspw - panel=
-_info->lcd_vspw
-> > > > > > > =3D>  timmings->ver_back_porch
-> > > > > > > =3D>  mode->vtotal - mode->end
-> > > > > > >
-> > > > > > > Which evatually same as mode->vtotal - mode->vsync_end so upd=
-ate the
-> > > > > > > same in SUN6I_DSI_BASIC_SIZE0_VBP
-> > > > > > >
-> > > > > > > On the information note, existing SUN6I_DSI_BASIC_SIZE0_VSA i=
-s proper
-> > > > > > > value.
-> > > > > > >
-> > > > > > > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> > > > > >
-> > > > > > I've tested your changes on my A33 board, and this commit will =
-break
-> > > > > > it.
-> > > > > >
-> > > > > > It creates vblank timeouts, and visual artifacts at the bottom =
-of the
-> > > > > > display.
-> > > > >
-> > > > > Strange, VBP is earlier gives front porch which is anyway wrong.
-> > > > >
-> > > > > >
-> > > > > > Later commits seem to fix the issue, but will create some blank=
-ing on
-> > > > > > the upper third of the display.
-> > > > > >
-> > > > > > Since the documentation is quite sparse, and a MIPI-DSI analyze=
-r is
-> > > > > > way too expensive, I'd really like to have at least what each o=
-f these
-> > > > > > commits are actually fixing, and what symptoms each of these we=
-re
-> > > > > > causing, and not just "the BSP does it".
-> > > > >
-> > > > > W/o this 2-lane panel is breaking, same vblank timeout and visual
-> > > > > artifacts at the bottom of the panel. though the commits may refe=
-rence
-> > > > > BSP, I have at-least tested on 3 different panels for us to prove=
- its
-> > > > > working.
-> > > > >
-> > > > > > Having some datasheet for the panels you had working would help=
- too.
-> > > > >
-> > > > > Unfortunately datasheet doesn't have any required information wha=
-t we
-> > > > > actually looking for.
-> > > >
-> > > > Not even the timings? How did you get that information then?
-> > >
-> > > datasheet has timing values, but this changes need controller
-> > > information about VBP register that I don't have. But again existing
-> > > VBP is not back porch for real, it's front porch.
-> >
-> > Yet, this breaks the existing setup. So again:
->=20
-> Was it with 4-lane or 2-lane panel? can you test it with 2-lane panel?
-> I can see the issue on 2-lane but the 4-lane working fine with this
-> patch even.
 
-It's a 4 lane display.
+Thanks Stan.
 
-Maxime
 
---=20
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Best regards
+Vivek
 
---q7v7wduxjlqssxwi
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXApz4AAKCRDj7w1vZxhR
-xa0MAQDINJywpBXTxw8UvHmXF3KPlaX6XTjqzx6fQVp5X/DPwwD/Z0QEHXJAd3EB
-dstdAPzyyxSR2BO86DpjKjX5ORODjwo=
-=pJW2
------END PGP SIGNATURE-----
-
---q7v7wduxjlqssxwi--
