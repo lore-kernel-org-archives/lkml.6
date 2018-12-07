@@ -2,134 +2,116 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C214C07E85
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 06:06:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1508BC07E85
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 06:11:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DA9CD208E7
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 06:06:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA9CD208E7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
+	by mail.kernel.org (Postfix) with ESMTP id C066520837
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 06:11:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544163114;
+	bh=V9R8FG/Y+o7b3OTIQsDCzQrd1DS1egX20HLDZyAvgEs=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:List-ID:From;
+	b=MiFQG+/yq8+PdCiAo14yOlRWyFgIF/58Weo7ALjoIyjT8eizy04GScrGDJ6pCeRYp
+	 Jg+Na/sTUPocyA1ubZgo3y1IcmwZ4M9oO6q1jifJWh4Rs8VDpPBRB9b0pM2WAQ5zBs
+	 aaA+9t9ULHcAjAQijthGMcQss0t7kq+n0HaNiQbU=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C066520837
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726039AbeLGGG0 (ORCPT
+        id S1725996AbeLGGLx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 01:06:26 -0500
-Received: from mx2.suse.de ([195.135.220.15]:54226 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725950AbeLGGGZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 01:06:25 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 6F3E3AF8C;
-        Fri,  7 Dec 2018 06:06:23 +0000 (UTC)
-Message-ID: <1544162765.3008.1.camel@suse.de>
-Subject: Re: [PATCH] mm, kmemleak: Little optimization while scanning
-From:   Oscar Salvador <osalvador@suse.de>
-To:     akpm@linux-foundation.org
-Cc:     catalin.marinas@arm.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, mhocko@suse.com
-Date:   Fri, 07 Dec 2018 07:06:05 +0100
-In-Reply-To: <20181206131918.25099-1-osalvador@suse.de>
-References: <20181206131918.25099-1-osalvador@suse.de>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Fri, 7 Dec 2018 01:11:53 -0500
+Received: from mga17.intel.com ([192.55.52.151]:38895 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725948AbeLGGLx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Dec 2018 01:11:53 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Dec 2018 22:11:52 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,324,1539673200"; 
+   d="scan'208";a="123764889"
+Received: from pipin.fi.intel.com (HELO localhost) ([10.237.72.175])
+  by fmsmga002.fm.intel.com with ESMTP; 06 Dec 2018 22:11:48 -0800
+From:   Felipe Balbi <balbi@kernel.org>
+To:     Anurag Kumar Vulisha <anuragku@xilinx.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Shuah Khan <shuah@kernel.org>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Johan Hovold <johan@kernel.org>,
+        Jaejoong Kim <climbbb.kim@gmail.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Roger Quadros <rogerq@ti.com>,
+        Manu Gautam <mgautam@codeaurora.org>,
+        "martin.petersen\@oracle.com" <martin.petersen@oracle.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Mike Christie <mchristi@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Colin Ian King <colin.king@canonical.com>
+Cc:     "linux-usb\@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "v.anuragkumar\@gmail.com" <v.anuragkumar@gmail.com>,
+        Thinh Nguyen <thinhn@synopsys.com>,
+        Tejas Joglekar <tejas.joglekar@synopsys.com>,
+        Ajay Yugalkishore Pandey <APANDEY@xilinx.com>
+Subject: RE: [PATCH v7 09/10] usb: dwc3: Check for IOC/LST bit in both event->status and TRB->ctrl fields
+In-Reply-To: <BL0PR02MB563352F83A80E3B92347A7A4A7A80@BL0PR02MB5633.namprd02.prod.outlook.com>
+References: <1543662811-5194-1-git-send-email-anurag.kumar.vulisha@xilinx.com> <1543662811-5194-10-git-send-email-anurag.kumar.vulisha@xilinx.com> <875zw82vfj.fsf@linux.intel.com> <BL0PR02MB563352F83A80E3B92347A7A4A7A80@BL0PR02MB5633.namprd02.prod.outlook.com>
+Date:   Fri, 07 Dec 2018 08:11:47 +0200
+Message-ID: <874lbpx3vg.fsf@linux.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I just realized I forgot to add that this was suggested by Michal.
-Sorry, I was a but rushy.
 
-On Thu, 2018-12-06 at 14:19 +0100, Oscar Salvador wrote:
-> kmemleak_scan() goes through all online nodes and tries
-> to scan all used pages.
-> We can do better and use pfn_to_online_page(), so in case we have
-> CONFIG_MEMORY_HOTPLUG, offlined pages will be skiped automatically.
-> For boxes where CONFIG_MEMORY_HOTPLUG is not present,
-> pfn_to_online_page()
-> will fallback to pfn_valid().
-> 
-> Another little optimization is to check if the page belongs to the
-> node
-> we are currently checking, so in case we have nodes interleaved we
-> will
-> not check the same pfn multiple times.
-> 
-> I ran some tests:
-> 
-> Add some memory to node1 and node2 making it interleaved:
-> 
-> (qemu) object_add memory-backend-ram,id=ram0,size=1G
-> (qemu) device_add pc-dimm,id=dimm0,memdev=ram0,node=1
-> (qemu) object_add memory-backend-ram,id=ram1,size=1G
-> (qemu) device_add pc-dimm,id=dimm1,memdev=ram1,node=2
-> (qemu) object_add memory-backend-ram,id=ram2,size=1G
-> (qemu) device_add pc-dimm,id=dimm2,memdev=ram2,node=1
-> 
-> Then, we offline that memory:
->  # for i in {32..39} ; do echo "offline" >
-> /sys/devices/system/node/node1/memory$i/state;done
->  # for i in {48..55} ; do echo "offline" >
-> /sys/devices/system/node/node1/memory$i/state;don
->  # for i in {40..47} ; do echo "offline" >
-> /sys/devices/system/node/node2/memory$i/state;done
-> 
-> And we run kmemleak_scan:
-> 
->  # echo "scan" > /sys/kernel/debug/kmemleak
-> 
-> before the patch:
-> 
-> kmemleak: time spend: 41596 us
-> 
-> after the patch:
-> 
-> kmemleak: time spend: 34899 us
-> 
-> Signed-off-by: Oscar Salvador <osalvador@suse.de>
-Suggested-by: Michal Hocko <mhocko@suse.com>
+Hi,
 
-> ---
->  mm/kmemleak.c | 10 +++++++---
->  1 file changed, 7 insertions(+), 3 deletions(-)
-> 
-> diff --git a/mm/kmemleak.c b/mm/kmemleak.c
-> index 877de4fa0720..5ce1e6a46d77 100644
-> --- a/mm/kmemleak.c
-> +++ b/mm/kmemleak.c
-> @@ -113,6 +113,7 @@
->  #include <linux/kmemleak.h>
->  #include <linux/memory_hotplug.h>
->  
-> +
->  /*
->   * Kmemleak configuration and common defines.
->   */
-> @@ -1547,11 +1548,14 @@ static void kmemleak_scan(void)
->  		unsigned long pfn;
->  
->  		for (pfn = start_pfn; pfn < end_pfn; pfn++) {
-> -			struct page *page;
-> +			struct page *page = pfn_to_online_page(pfn);
-> +
-> +			if (!page)
-> +				continue;
->  
-> -			if (!pfn_valid(pfn))
-> +			/* only scan pages belonging to this node */
-> +			if (page_to_nid(page) != i)
->  				continue;
-> -			page = pfn_to_page(pfn);
->  			/* only scan if page is in use */
->  			if (page_count(page) == 0)
->  				continue;
+Anurag Kumar Vulisha <anuragku@xilinx.com> writes:
+>>> @@ -2286,7 +2286,12 @@ static int
+>>dwc3_gadget_ep_reclaim_completed_trb(struct dwc3_ep *dep,
+>>>  	if (event->status & DEPEVT_STATUS_SHORT && !chain)
+>>>  		return 1;
+>>>
+>>> -	if (event->status & (DEPEVT_STATUS_IOC | DEPEVT_STATUS_LST))
+>>> +	if ((event->status & DEPEVT_STATUS_IOC) &&
+>>> +	    (trb->ctrl & DWC3_TRB_CTRL_IOC))
+>>> +		return 1;
+>>
+>>this shouldn't be necessary. According to databook, event->status
+>>contains the bits from the completed TRB.  Which means that
+>>event->status & IOC will always be equal to trb->ctrl & IOC.
+>>
+> Thanks for reviewing this patch. Lets consider an example where a request
+> has num_sgs > 0 and each sg is mapped to a TRB and the last TRB has the
+> IOC bit set. Once the controller is done with the transfer, it  generates 
+> XferInProgress for the last TRB (since IOC bit is set). As a part of trb reclaim
+> process  dwc3_gadget_ep_reclaim_trb_sg() calls
+> dwc3_gadget_ep_reclaim_completed_trb() for req->num_sgs times. Since
+> the event already has the IOC bit set, the loop is exited from the loop at the
+> very first TRB and the remaining TRBs (mapped to the sglist) are left unhandled.
+> To avoid this we modified the code to exit only if both TRB & event has the IOC
+> bit set.
+
+Seems like IOC case should just test for chain flag as well:
+
+modified   drivers/usb/dwc3/gadget.c
+@@ -2372,7 +2372,7 @@ static int dwc3_gadget_ep_reclaim_completed_trb(struct dwc3_ep *dep,
+ 	if (event->status & DEPEVT_STATUS_SHORT && !chain)
+ 		return 1;
+ 
+-	if (event->status & DEPEVT_STATUS_IOC)
++	if (event->status & DEPEVT_STATUS_IOC && !chain)
+ 		return 1;
+ 
+ 	return 0;
+
 -- 
-Oscar Salvador
-SUSE L3
+balbi
