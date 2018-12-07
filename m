@@ -2,125 +2,118 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6591BC04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 02:31:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60C2BC65BAF
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 02:32:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 214FB2146D
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 02:31:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="FVAPpqty"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 214FB2146D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	by mail.kernel.org (Postfix) with ESMTP id 2F4C62146D
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 02:32:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F4C62146D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hxt-semitech.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726010AbeLGCbs (ORCPT
+        id S1726035AbeLGCcY convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 21:31:48 -0500
-Received: from ozlabs.org ([203.11.71.1]:55291 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725988AbeLGCbr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 21:31:47 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 439xLS2zTvz9s4s;
-        Fri,  7 Dec 2018 13:31:41 +1100 (AEDT)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1544149904;
-        bh=ak1PPLTFdCdOJEq54PNUKcRJZCp7H54xjbakmo+9bC0=;
-        h=Date:From:To:Cc:Subject:From;
-        b=FVAPpqtyFHdfaBPcEiOU3v2mPviG9SWyxBvoUWPB98nrqzIxZIrtPsPNRABR09r9o
-         JmKpYhVnvq9TF0y94xMppf7nVnwR9tu/JcLan/61k51IkKLarD+dUmmW3sgRiQV1H7
-         IQG+OMHeU9P3ZC1ULDfYdMClXAMpKROqaRGVcddHVBcSAcdw+7x1nFA587HA2JvO2g
-         ZLODsMlrm2OyrgT34NhHA7Z8w6EDCs8fwhKrJ89lCKM+bdoAbFSq42uojPViurUN8s
-         T6sNlF7qj6ds3UpHXrS1sdPCuaB6VXKjWdGTVrwjbsUaX3bpkhDMj4Y7WV7wrZuU2a
-         aYxWrFJXNvCnQ==
-Date:   Fri, 7 Dec 2018 13:31:41 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Dave Airlie <airlied@linux.ie>,
-        DRI <dri-devel@lists.freedesktop.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        David Francis <David.Francis@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>
-Subject: linux-next: manual merge of the drm tree with the drm-fixes tree
-Message-ID: <20181207133141.523b8417@canb.auug.org.au>
+        Thu, 6 Dec 2018 21:32:24 -0500
+Received: from mx01.hxt-semitech.com ([223.203.96.7]:53868 "EHLO
+        barracuda.hxt-semitech.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725978AbeLGCcX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 21:32:23 -0500
+X-ASG-Debug-ID: 1544149933-093b7e6e7f18eb0001-xx1T2L
+Received: from HXTBJIDCEMVIW02.hxtcorp.net ([10.128.0.15]) by barracuda.hxt-semitech.com with ESMTP id ScKxDprNxAPQ9WMJ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NO); Fri, 07 Dec 2018 10:32:13 +0800 (CST)
+X-Barracuda-Envelope-From: shunyong.yang@hxt-semitech.com
+Received: from HXTBJIDCEMVIW02.hxtcorp.net (10.128.0.15) by
+ HXTBJIDCEMVIW02.hxtcorp.net (10.128.0.15) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Fri, 7 Dec 2018 10:31:23 +0800
+Received: from HXTBJIDCEMVIW02.hxtcorp.net ([fe80::3e:f4ff:7927:a6f6]) by
+ HXTBJIDCEMVIW02.hxtcorp.net ([fe80::3e:f4ff:7927:a6f6%12]) with mapi id
+ 15.00.1395.000; Fri, 7 Dec 2018 10:31:23 +0800
+From:   "Yang, Shunyong" <shunyong.yang@hxt-semitech.com>
+To:     "bhelgaas@google.com" <bhelgaas@google.com>
+CC:     "okaya@kernel.org" <okaya@kernel.org>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Zheng, Joey" <yu.zheng@hxt-semitech.com>
+Subject: Re: [PATCH v2 2/2] PCI: pciehp: Add HXT quirk for Command Completed
+ errata
+Thread-Topic: [PATCH v2 2/2] PCI: pciehp: Add HXT quirk for Command Completed
+ errata
+X-ASG-Orig-Subj: Re: [PATCH v2 2/2] PCI: pciehp: Add HXT quirk for Command Completed
+ errata
+Thread-Index: AQHUdmrzK+cv2Db6mkeg7e7p7Mrs0A==
+Date:   Fri, 7 Dec 2018 02:31:23 +0000
+Message-ID: <b29b88482324443e91b45e8557faee9c@HXTBJIDCEMVIW02.hxtcorp.net>
+References: <bcaf1d5d-23a6-d4e6-08e8-587daf6cca06@kernel.org>
+ <5e88860c8426df537c5a5f2d0e6add6df8955a0f.1541574331.git.shunyong.yang@hxt-semitech.com>
+ <77c4a0a9a9174e0aa5d94dada2e0be15@HXTBJIDCEMVIW01.hxtcorp.net>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.64.6.172]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/+s.zoL+r44rIKQ=uSDVM_Bx"; protocol="application/pgp-signature"
+X-Barracuda-Connect: UNKNOWN[10.128.0.15]
+X-Barracuda-Start-Time: 1544149933
+X-Barracuda-Encrypted: ECDHE-RSA-AES256-SHA384
+X-Barracuda-URL: https://192.168.50.101:443/cgi-mod/mark.cgi
+X-Virus-Scanned: by bsmtpd at hxt-semitech.com
+X-Barracuda-BRTS-Status: 1
+X-Barracuda-Bayes: INNOCENT GLOBAL 0.1309 1.0000 -1.2107
+X-Barracuda-Spam-Score: -1.21
+X-Barracuda-Spam-Status: No, SCORE=-1.21 using global scores of TAG_LEVEL=1000.0 QUARANTINE_LEVEL=1000.0 KILL_LEVEL=9.0 tests=
+X-Barracuda-Spam-Report: Code version 3.2, rules version 3.2.3.63220
+        Rule breakdown below
+         pts rule name              description
+        ---- ---------------------- --------------------------------------------------
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/+s.zoL+r44rIKQ=uSDVM_Bx
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi, Bjorn,
+  Gentle ping for these two ID and quirk patches. Would you please help
+to review and pull?
+  Our PCI id is already registered at PCI SIG, following is the link,
+    https://pcisig.com/membership/member-companies?combine=1dbf
 
-Hi all,
+Thanks.
+Shunyong.
+On 2018/11/19 9:07, Yang, Shunyong wrote:
+> Hi, Bjorn,
+>   Would you please help to review and pull these two quirk patches to
+> your branch if there is no problem?
+> 
+> Thanks.
+> Shunyong.
+> 
+> On 2018/11/7 15:24, Yang, Shunyong wrote:
+>> The HXT SD4800 PCI controller does not set the Command Completed
+>> bit unless writes to the Slot Command register change "Control"
+>> bits.
+>>
+>> This patch adds SD4800 to the quirk.
+>>
+>> Cc: Joey Zheng <yu.zheng@hxt-semitech.com>
+>> Signed-off-by: Shunyong Yang <shunyong.yang@hxt-semitech.com>
+>>
+>> diff --git a/drivers/pci/hotplug/pciehp_hpc.c b/drivers/pci/hotplug/pciehp_hpc.c
+>> index 7dd443aea5a5..91db67963aea 100644
+>> --- a/drivers/pci/hotplug/pciehp_hpc.c
+>> +++ b/drivers/pci/hotplug/pciehp_hpc.c
+>> @@ -920,3 +920,5 @@ static void quirk_cmd_compl(struct pci_dev *pdev)
+>>  			      PCI_CLASS_BRIDGE_PCI, 8, quirk_cmd_compl);
+>>  DECLARE_PCI_FIXUP_CLASS_EARLY(PCI_VENDOR_ID_QCOM, 0x0401,
+>>  			      PCI_CLASS_BRIDGE_PCI, 8, quirk_cmd_compl);
+>> +DECLARE_PCI_FIXUP_CLASS_EARLY(PCI_VENDOR_ID_HXT, 0x0401,
+>> +			      PCI_CLASS_BRIDGE_PCI, 8, quirk_cmd_compl);
+>>
+> 
+> 
 
-Today's linux-next merge of the drm tree got a conflict in:
-
-  drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-
-between commit:
-
-  49f1c44b581b ("rm/amd/display: Fix unintialized max_bpc state values")
-
-from the drm-fixes tree and commits:
-
-  c1ee92f94ce3 ("drm/amd: Add abm level drm property")
-  bb47de736661 ("drm/amdgpu: Set FreeSync state using drm VRR properties")
-
-from the drm tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-index 5a6edf65c9ea,32e791d9b9a8..000000000000
---- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-+++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-@@@ -3063,8 -3234,7 +3235,8 @@@ amdgpu_dm_connector_atomic_duplicate_st
-  	__drm_atomic_helper_connector_duplicate_state(connector, &new_state->bas=
-e);
- =20
-  	new_state->freesync_capable =3D state->freesync_capable;
-- 	new_state->freesync_enable =3D state->freesync_enable;
- +	new_state->max_bpc =3D state->max_bpc;
-+ 	new_state->abm_level =3D state->abm_level;
- =20
-  	return &new_state->base;
-  }
-
---Sig_/+s.zoL+r44rIKQ=uSDVM_Bx
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwJ240ACgkQAVBC80lX
-0GxqhQf9HTp1YC9uykaXRQ4bhYvLF33YDBYDB/IFYPsgJmJDeKuvBomLV/f+TsJu
-vf+Dwg/a359/6CePohUgK516PiaoDeOpHlreSgG0QrcRh/nMrWfmcEvX1cnu8Zf2
-59zr6kVJTB4IJcnt7+0Bv3KYp2Vo6uTC7EUYN3x+lGYkYroV5ZzokDXuFboNGmxo
-qZ+HOGKKhVPEXjtcfGbIrTSaaVmRxo4UHsOcGrxnwwxktHNcDMbOzwN3V//3yF1l
-Yl98X1GFDV+HLDFFAcJoavWUQwHIaBEjTAljdi8Tov+fQixa4Jb8hXMTIMCJoRzj
-qt69FGiEVRn7LL9WsiGexzT92nmvbQ==
-=+2Fg
------END PGP SIGNATURE-----
-
---Sig_/+s.zoL+r44rIKQ=uSDVM_Bx--
