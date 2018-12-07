@@ -2,242 +2,151 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	T_DKIMWL_WL_HIGH,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,T_DKIMWL_WL_MED,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99760C64EB1
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 11:30:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B432AC07E85
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 11:33:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 57CF32082D
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 11:30:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544182251;
-	bh=/5QtYrpWH7TW/e5YFUYAdyLut3b7lJsEgZB04ZFrmcg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=w5cdCbTjNMtdeSuSEVR4G9Af7lccnzg0cK1WPdMc+E4yzyN6UA2DSQVe8jsKT5Saq
-	 7BM9N4g9e1Go48OqA5ufTVkVnI8ejEqY5cAgaeZdl+txW6AHFtq7bpkQIomi9w0ohJ
-	 0eFTctJVudTktOpONAORSAroTEnMxpIWWKmXSlQY=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 57CF32082D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 71C3220892
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 11:33:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=microchiptechnology.onmicrosoft.com header.i=@microchiptechnology.onmicrosoft.com header.b="UR7dGkIO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 71C3220892
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726130AbeLGLat (ORCPT
+        id S1726071AbeLGLdQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 06:30:49 -0500
-Received: from mx2.suse.de ([195.135.220.15]:44496 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726006AbeLGLat (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 06:30:49 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 27458AD93;
-        Fri,  7 Dec 2018 11:30:46 +0000 (UTC)
-Date:   Fri, 7 Dec 2018 12:30:44 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Pingfan Liu <kernelfans@gmail.com>
-Cc:     Vlastimil Babka <vbabka@suse.cz>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Subject: Re: [PATCH] mm/alloc: fallback to first node if the wanted node
- offline
-Message-ID: <20181207113044.GB1286@dhcp22.suse.cz>
-References: <CAFgQCTtj4m637tAzConCfeWQXSrWeNY-DLD5=f9-ZSmJMRe31Q@mail.gmail.com>
- <186b1804-3b1e-340e-f73b-f3c7e69649f5@suse.cz>
- <CAFgQCTv5-jeqwRVkJuDHvv0vq6uCzfdV2ZmVAU3eUzn2w2ReEQ@mail.gmail.com>
- <20181206082806.GB1286@dhcp22.suse.cz>
- <CAFgQCTsMdQSRFruZRGBuo30TjfiQ=sbrf9kUJAGgwN6uw+LsBw@mail.gmail.com>
- <CAFgQCTv7ADVW3WvB0tuqpL1U2MFGADA113MUm6ZmVcgvqyBfTA@mail.gmail.com>
- <20181206121152.GH1286@dhcp22.suse.cz>
- <CAFgQCTuqn32_pZrLBDNvC_0Aepv2F7KF7rk2nAbxmYF45KfT2w@mail.gmail.com>
- <20181207075322.GS1286@dhcp22.suse.cz>
- <CAFgQCTsFBUcOE9UKQ2vz=hg2FWp_QurZMQmJZ2wYLBqXkFHKHQ@mail.gmail.com>
+        Fri, 7 Dec 2018 06:33:16 -0500
+Received: from esa1.microchip.iphmx.com ([68.232.147.91]:41219 "EHLO
+        esa1.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725992AbeLGLdQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Dec 2018 06:33:16 -0500
+X-IronPort-AV: E=Sophos;i="5.56,326,1539673200"; 
+   d="scan'208";a="24974523"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa1.microchip.iphmx.com with ESMTP/TLS/AES128-SHA; 07 Dec 2018 04:33:06 -0700
+Received: from NAM01-SN1-obe.outbound.protection.outlook.com (10.10.215.89) by
+ email.microchip.com (10.10.76.37) with Microsoft SMTP Server (TLS) id
+ 14.3.352.0; Fri, 7 Dec 2018 04:33:05 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=microchiptechnology.onmicrosoft.com;
+ s=selector1-microchiptechnology-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=aIlLhVv6TK/hfk0z3NXM4T/pBFPOXGFHqCaex+rVz2Q=;
+ b=UR7dGkIO4Jzx3+XdNECoJ3Fehw6Sn2E9Tmtxnt6fEn8so3A7LX3egoHzOjiDx3ws6YPepdnXb0zeZZOwYIX2Cm+5vzW9x0b/wZGOqWaioxtpULLDhWBY1+3+XcMV/z6hW+GPoeZ6++0mFt4OWNrSNeBhNYm4F+eEw9Lq9CxYdfI=
+Received: from BN6PR1101MB2243.namprd11.prod.outlook.com (10.174.113.19) by
+ BN6PR1101MB2307.namprd11.prod.outlook.com (10.174.113.146) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1404.17; Fri, 7 Dec 2018 11:33:04 +0000
+Received: from BN6PR1101MB2243.namprd11.prod.outlook.com
+ ([fe80::853f:28dc:6c66:cfb1]) by BN6PR1101MB2243.namprd11.prod.outlook.com
+ ([fe80::853f:28dc:6c66:cfb1%5]) with mapi id 15.20.1404.021; Fri, 7 Dec 2018
+ 11:33:04 +0000
+From:   <Andrei.Stefanescu@microchip.com>
+To:     <wsa@the-dreams.de>, <Nicolas.Ferre@microchip.com>,
+        <alexandre.belloni@bootlin.com>, <Cristian.Birsan@microchip.com>
+CC:     <linux-i2c@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <Andrei.Stefanescu@microchip.com>
+Subject: [RESEND PATCH] i2c: at91: switched to resume/suspend callbacks.
+Thread-Topic: [RESEND PATCH] i2c: at91: switched to resume/suspend callbacks.
+Thread-Index: AQHUjiCdUvmDe/qGj02NgBYI/XQKAQ==
+Date:   Fri, 7 Dec 2018 11:33:04 +0000
+Message-ID: <1544182362-7001-1-git-send-email-andrei.stefanescu@microchip.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: VI1PR0102CA0085.eurprd01.prod.exchangelabs.com
+ (2603:10a6:803:15::26) To BN6PR1101MB2243.namprd11.prod.outlook.com
+ (2603:10b6:405:52::19)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Andrei.Stefanescu@microchip.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [94.177.32.154]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BN6PR1101MB2307;6:K0tcQrzidYYuCVKUEc8ZvKUl62h3Id8rhwT4+gJL3KZzngMCOvQv4sHwAZjGIwCC+E6H1O9Z3HvbDtutIe5vv8tis1U+Jr3iTAJlf81EKNzVDRuRlPBgaN/Y8l9rceiQZk0BZhlVQiJT/fifov8PaMlT3hVkOOIXQZiobaHbNdBL7r2pxD9WaI6KfSGnCgh/mgHazyA4zMp4fXEJfPB0Z+7qAyqnZpxKcb892kG8tVGP1jz+tPfOMl7S4GKfkskFPc3EsWy/B21djfu7DtO4uQZh6s5UKMlFIr4PQQJrGM51cPr76htaPEWBftQvKSwxhwjRa2um892pfalj8N+y7wA8mQ77SDhotDix5mM1LaQITdrn2S4Wtn5M+kSZPaLjG/DLpw/4R/Q3GJOK3299BNv08/xa1EVu0vzoq5eywzgufUmFwB0wMFW87/MSnxeAafDsrmBUrYyZZvmvH5Hubw==;5:8VNUUbNMSZ9XEgCOUC/vR1uj+9c+f9AegYDbqPhu2Hl3DQ6KkTV+TaGh9qkk1KW4tQ7n8FGki8rM/2pS52e3+7gio+6cc9BqR1uHzaUbj3C9ROkMJLuWShufZlv+xMk5Gr+dAoY6h1LqCRESBiLwauryMXPvefosTY41HthHce8=;7:RjWq5RyZyQIQcXWLz+t3EdcaAyOozw8FcbPhmzOElYwWl5mzWjEFxOy0sAgKvqsntl3NAQzBvaD/CiC3uGgS3BUxNrs+nBMVV7N1XORvwhnt0tNPH1brAf7A1IfM3dqWvRCTjXuPgC7Q8TjTTp5SrQ==
+x-ms-office365-filtering-correlation-id: a9e8c800-a6bc-43b9-73ac-08d65c37bff0
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:BN6PR1101MB2307;
+x-ms-traffictypediagnostic: BN6PR1101MB2307:
+x-microsoft-antispam-prvs: <BN6PR1101MB23075AD970581C8A2B54D292EDAA0@BN6PR1101MB2307.namprd11.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(10201501046)(3002001)(93006095)(93001095)(3231455)(999002)(944501520)(52105112)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123562045)(20161123560045)(20161123564045)(201708071742011)(7699051)(76991095);SRVR:BN6PR1101MB2307;BCL:0;PCL:0;RULEID:;SRVR:BN6PR1101MB2307;
+x-forefront-prvs: 0879599414
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(136003)(366004)(396003)(346002)(39860400002)(199004)(189003)(53936002)(107886003)(106356001)(68736007)(72206003)(316002)(105586002)(386003)(15650500001)(6506007)(5660300001)(26005)(186003)(4326008)(86362001)(102836004)(99286004)(256004)(54906003)(14444005)(110136005)(478600001)(14454004)(52116002)(8936002)(6436002)(6512007)(7736002)(71190400001)(81156014)(71200400001)(8676002)(2906002)(25786009)(97736004)(6486002)(81166006)(2501003)(3846002)(6636002)(36756003)(305945005)(66066001)(2616005)(6116002)(476003)(486006);DIR:OUT;SFP:1101;SCL:1;SRVR:BN6PR1101MB2307;H:BN6PR1101MB2243.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: microchip.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: QHQOnebGa6QeeHf29hoL65nB3TzzxrsbWg0cpfvaUkHrUdFTm7C/tkveWp+NAGmjANaBZ57LZkYMUfLwrGo61jZkFIAxnCmVEQAJTXbnxjuUlauvE2mtFrH5Z4fBBGuVUGywa9Hs4WohPL0eCymvhateeYn+8ZsSneynsKjCpNr4yO1rvp+79w70w0neVdvp/lejdu9XNlbQvk0wnIPUijukdVV9G4oqUTK3LLGBjiW3tIFvkYYdzu7iShnC1FGwKUuIYLZGbfKlABag2spQ2ZivBz/SxlQkuekYDt93VWVpKLJQANCslwu9MK12cu5Fwn5GknZQgIS4FaQ+61D6lDnH8WZORUtwc/9vfCSfjZo=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAFgQCTsFBUcOE9UKQ2vz=hg2FWp_QurZMQmJZ2wYLBqXkFHKHQ@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-MS-Exchange-CrossTenant-Network-Message-Id: a9e8c800-a6bc-43b9-73ac-08d65c37bff0
+X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Dec 2018 11:33:04.1444
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR1101MB2307
+X-OriginatorOrg: microchip.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 07-12-18 17:40:09, Pingfan Liu wrote:
-> On Fri, Dec 7, 2018 at 3:53 PM Michal Hocko <mhocko@kernel.org> wrote:
-> >
-> > On Fri 07-12-18 10:56:51, Pingfan Liu wrote:
-> > [...]
-> > > In a short word, the fix method should consider about the two factors:
-> > > semantic of online-node and the effect on all archs
-> >
-> > I am pretty sure there is a lot of room for unification in this area.
-> > Nevertheless I strongly believe the bug should be fixed firs with the
-> > simplest way and all the cleanup should be done on top.
-> >
-> > Do I get it right that the diff worked for you and I can prepare a full
-> > patch?
-> >
-> Sure, I am glad to test you new patch.
+In the previous version of the driver resume/suspend_noirq callbacks
+were used. Because of this, when resuming from suspend-to-ram,
+an I2C (belonging to a FLEXCOM) would resume before FLEXCOM.
+The first read on the I2C bus would then result in a timeout.
 
-From 46e68be89d9c299fd497b2b8bea3f2add144f17f Mon Sep 17 00:00:00 2001
-From: Michal Hocko <mhocko@suse.com>
-Date: Fri, 7 Dec 2018 12:23:32 +0100
-Subject: [PATCH] x86, numa: always initialize all possible nodes
+This patch switches to resume/suspend callbacks which are=20
+called after FLEXCOM resumes. FLEXCOM, SPI and USART drivers use
+resume/suspend callbacks.
 
-Pingfan Liu has reported the following splat
-[    5.772742] BUG: unable to handle kernel paging request at 0000000000002088
-[    5.773618] PGD 0 P4D 0
-[    5.773618] Oops: 0000 [#1] SMP NOPTI
-[    5.773618] CPU: 2 PID: 1 Comm: swapper/0 Not tainted 4.20.0-rc1+ #3
-[    5.773618] Hardware name: Dell Inc. PowerEdge R7425/02MJ3T, BIOS 1.4.3 06/29/2018
-[    5.773618] RIP: 0010:__alloc_pages_nodemask+0xe2/0x2a0
-[    5.773618] Code: 00 00 44 89 ea 80 ca 80 41 83 f8 01 44 0f 44 ea 89 da c1 ea 08 83 e2 01 88 54 24 20 48 8b 54 24 08 48 85 d2 0f 85 46 01 00 00 <3b> 77 08 0f 82 3d 01 00 00 48 89 f8 44 89 ea 48 89
-e1 44 89 e6 89
-[    5.773618] RSP: 0018:ffffaa600005fb20 EFLAGS: 00010246
-[    5.773618] RAX: 0000000000000000 RBX: 00000000006012c0 RCX: 0000000000000000
-[    5.773618] RDX: 0000000000000000 RSI: 0000000000000002 RDI: 0000000000002080
-[    5.773618] RBP: 00000000006012c0 R08: 0000000000000000 R09: 0000000000000002
-[    5.773618] R10: 00000000006080c0 R11: 0000000000000002 R12: 0000000000000000
-[    5.773618] R13: 0000000000000001 R14: 0000000000000000 R15: 0000000000000002
-[    5.773618] FS:  0000000000000000(0000) GS:ffff8c69afe00000(0000) knlGS:0000000000000000
-[    5.773618] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[    5.773618] CR2: 0000000000002088 CR3: 000000087e00a000 CR4: 00000000003406e0
-[    5.773618] Call Trace:
-[    5.773618]  new_slab+0xa9/0x570
-[    5.773618]  ___slab_alloc+0x375/0x540
-[    5.773618]  ? pinctrl_bind_pins+0x2b/0x2a0
-[    5.773618]  __slab_alloc+0x1c/0x38
-[    5.773618]  __kmalloc_node_track_caller+0xc8/0x270
-[    5.773618]  ? pinctrl_bind_pins+0x2b/0x2a0
-[    5.773618]  devm_kmalloc+0x28/0x60
-[    5.773618]  pinctrl_bind_pins+0x2b/0x2a0
-[    5.773618]  really_probe+0x73/0x420
-[    5.773618]  driver_probe_device+0x115/0x130
-[    5.773618]  __driver_attach+0x103/0x110
-[    5.773618]  ? driver_probe_device+0x130/0x130
-[    5.773618]  bus_for_each_dev+0x67/0xc0
-[    5.773618]  ? klist_add_tail+0x3b/0x70
-[    5.773618]  bus_add_driver+0x41/0x260
-[    5.773618]  ? pcie_port_setup+0x4d/0x4d
-[    5.773618]  driver_register+0x5b/0xe0
-[    5.773618]  ? pcie_port_setup+0x4d/0x4d
-[    5.773618]  do_one_initcall+0x4e/0x1d4
-[    5.773618]  ? init_setup+0x25/0x28
-[    5.773618]  kernel_init_freeable+0x1c1/0x26e
-[    5.773618]  ? loglevel+0x5b/0x5b
-[    5.773618]  ? rest_init+0xb0/0xb0
-[    5.773618]  kernel_init+0xa/0x110
-[    5.773618]  ret_from_fork+0x22/0x40
-[    5.773618] Modules linked in:
-[    5.773618] CR2: 0000000000002088
-[    5.773618] ---[ end trace 1030c9120a03d081 ]---
-
-with his AMD machine with the following topology
-  NUMA node0 CPU(s):     0,8,16,24
-  NUMA node1 CPU(s):     2,10,18,26
-  NUMA node2 CPU(s):     4,12,20,28
-  NUMA node3 CPU(s):     6,14,22,30
-  NUMA node4 CPU(s):     1,9,17,25
-  NUMA node5 CPU(s):     3,11,19,27
-  NUMA node6 CPU(s):     5,13,21,29
-  NUMA node7 CPU(s):     7,15,23,31
-
-[    0.007418] Early memory node ranges
-[    0.007419]   node   1: [mem 0x0000000000001000-0x000000000008efff]
-[    0.007420]   node   1: [mem 0x0000000000090000-0x000000000009ffff]
-[    0.007422]   node   1: [mem 0x0000000000100000-0x000000005c3d6fff]
-[    0.007422]   node   1: [mem 0x00000000643df000-0x0000000068ff7fff]
-[    0.007423]   node   1: [mem 0x000000006c528000-0x000000006fffffff]
-[    0.007424]   node   1: [mem 0x0000000100000000-0x000000047fffffff]
-[    0.007425]   node   5: [mem 0x0000000480000000-0x000000087effffff]
-
-and nr_cpus set to 4. The underlying reason is tha the device is bound
-to node 2 which doesn't have any memory and init_cpu_to_node only
-initializes memory-less nodes for possible cpus which nr_cpus restrics.
-This in turn means that proper zonelists are not allocated and the page
-allocator blows up.
-
-Fix the issue by moving init_memory_less_node into numa_register_memblks
-and always initialize all possible nodes consistently at a single place.
-
-Reported-by: Pingfan Liu <kernelfans@gmail.com>
-Signed-off-by: Michal Hocko <mhocko@suse.com>
+Signed-off-by: Andrei Stefanescu <andrei.stefanescu@microchip.com>
 ---
- arch/x86/mm/numa.c | 33 +++++++++++++++------------------
- 1 file changed, 15 insertions(+), 18 deletions(-)
+ drivers/i2c/busses/i2c-at91.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/arch/x86/mm/numa.c b/arch/x86/mm/numa.c
-index 1308f5408bf7..4575ae4d5449 100644
---- a/arch/x86/mm/numa.c
-+++ b/arch/x86/mm/numa.c
-@@ -527,6 +527,19 @@ static void __init numa_clear_kernel_node_hotplug(void)
- 	}
+diff --git a/drivers/i2c/busses/i2c-at91.c b/drivers/i2c/busses/i2c-at91.c
+index bfd1fdf..81f7b94 100644
+--- a/drivers/i2c/busses/i2c-at91.c
++++ b/drivers/i2c/busses/i2c-at91.c
+@@ -1174,7 +1174,7 @@ static int at91_twi_runtime_resume(struct device *dev=
+)
+ 	return clk_prepare_enable(twi_dev->clk);
  }
- 
-+static void __init init_memory_less_node(int nid)
-+{
-+	unsigned long zones_size[MAX_NR_ZONES] = {0};
-+	unsigned long zholes_size[MAX_NR_ZONES] = {0};
-+
-+	free_area_init_node(nid, zones_size, 0, zholes_size);
-+
-+	/*
-+	 * All zonelists will be built later in start_kernel() after per cpu
-+	 * areas are initialized.
-+	 */
-+}
-+
- static int __init numa_register_memblks(struct numa_meminfo *mi)
+=20
+-static int at91_twi_suspend_noirq(struct device *dev)
++static int at91_twi_suspend(struct device *dev)
  {
- 	unsigned long uninitialized_var(pfn_align);
-@@ -592,6 +605,8 @@ static int __init numa_register_memblks(struct numa_meminfo *mi)
- 			continue;
- 
- 		alloc_node_data(nid);
-+		if (!end)
-+			init_memory_less_node(nid);
- 	}
- 
- 	/* Dump memblock with node info and return. */
-@@ -721,21 +736,6 @@ void __init x86_numa_init(void)
- 	numa_init(dummy_numa_init);
+ 	if (!pm_runtime_status_suspended(dev))
+ 		at91_twi_runtime_suspend(dev);
+@@ -1182,7 +1182,7 @@ static int at91_twi_suspend_noirq(struct device *dev)
+ 	return 0;
  }
- 
--static void __init init_memory_less_node(int nid)
--{
--	unsigned long zones_size[MAX_NR_ZONES] = {0};
--	unsigned long zholes_size[MAX_NR_ZONES] = {0};
--
--	/* Allocate and initialize node data. Memory-less node is now online.*/
--	alloc_node_data(nid);
--	free_area_init_node(nid, zones_size, 0, zholes_size);
--
--	/*
--	 * All zonelists will be built later in start_kernel() after per cpu
--	 * areas are initialized.
--	 */
--}
--
- /*
-  * Setup early cpu_to_node.
-  *
-@@ -763,9 +763,6 @@ void __init init_cpu_to_node(void)
- 		if (node == NUMA_NO_NODE)
- 			continue;
- 
--		if (!node_online(node))
--			init_memory_less_node(node);
--
- 		numa_set_node(cpu, node);
- 	}
+=20
+-static int at91_twi_resume_noirq(struct device *dev)
++static int at91_twi_resume(struct device *dev)
+ {
+ 	struct at91_twi_dev *twi_dev =3D dev_get_drvdata(dev);
+ 	int ret;
+@@ -1202,8 +1202,8 @@ static int at91_twi_resume_noirq(struct device *dev)
  }
--- 
-2.19.2
+=20
+ static const struct dev_pm_ops at91_twi_pm =3D {
+-	.suspend_noirq	=3D at91_twi_suspend_noirq,
+-	.resume_noirq	=3D at91_twi_resume_noirq,
++	.suspend	=3D at91_twi_suspend,
++	.resume		=3D at91_twi_resume,
+ 	.runtime_suspend	=3D at91_twi_runtime_suspend,
+ 	.runtime_resume		=3D at91_twi_runtime_resume,
+ };
+--=20
+2.7.4
 
--- 
-Michal Hocko
-SUSE Labs
