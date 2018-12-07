@@ -2,164 +2,117 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 648B2C07E85
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 06:53:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99F5EC07E85
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 06:55:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0C85320882
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 06:53:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C85320882
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=realtek.com
+	by mail.kernel.org (Postfix) with ESMTP id 5B6A620989
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 06:55:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="TMGxavd9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B6A620989
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726010AbeLGGxl (ORCPT
+        id S1726019AbeLGGzS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 01:53:41 -0500
-Received: from rtits2.realtek.com ([211.75.126.72]:34000 "EHLO
-        rtits2.realtek.com.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725948AbeLGGxl (ORCPT
+        Fri, 7 Dec 2018 01:55:18 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:45412 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725952AbeLGGzS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 01:53:41 -0500
-Authenticated-By: 
-X-SpamFilter-By: BOX Solutions SpamTrap 5.62 with qID wB76qds3023454, This message is accepted by code: ctloc85258
-Received: from mail.realtek.com (rtitcasv01.realtek.com.tw[172.21.6.18])
-        by rtits2.realtek.com.tw (8.15.2/2.57/5.78) with ESMTPS id wB76qds3023454
-        (version=TLSv1 cipher=AES256-SHA bits=256 verify=NOT);
-        Fri, 7 Dec 2018 14:52:39 +0800
-Received: from RTITMBSV02.realtek.com.tw ([fe80::cc0e:6d5f:56d7:c15f]) by
- RTITCASV01.realtek.com.tw ([::1]) with mapi id 14.03.0415.000; Fri, 7 Dec
- 2018 14:52:39 +0800
-From:   Kailang <kailang@realtek.com>
-To:     Jian-Hong Pan <jian-hong@endlessm.com>
-CC:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        Hui Wang <hui.wang@canonical.com>,
-        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
-        Linux Kernel <linux-kernel@vger.kernel.org>,
-        Linux Upstreaming Team <linux@endlessm.com>,
-        Daniel Drake <drake@endlessm.com>,
-        "josh@wtmec.com" <josh@wtmec.com>
-Subject: RE: [PATCH v2 2/3] ALSA: hda/realtek: Enable audio jacks of ASUS UX533FD with ALC294
-Thread-Topic: [PATCH v2 2/3] ALSA: hda/realtek: Enable audio jacks of ASUS
- UX533FD with ALC294
-Thread-Index: AQHUjUBWWH/9RC4DZUm4FqBMJMBJNaVyn9rA//9+3gCAALXycA==
-Date:   Fri, 7 Dec 2018 06:52:37 +0000
-Message-ID: <6FAB7C47BCF00940BB0999A99BE3547A1842025B@RTITMBSV02.realtek.com.tw>
-References: <CAPpJ_eez=1ie2B8rA=GeW+hx7kQU0wBAhW3XCBX3zGPW+kXDZA@mail.gmail.com>
- <20181206084554.4728-1-jian-hong@endlessm.com>
- <20181206084554.4728-3-jian-hong@endlessm.com>
- <6FAB7C47BCF00940BB0999A99BE3547A18420211@RTITMBSV02.realtek.com.tw>
- <CAPpJ_ed36NyopArw98qhkstAm=L9A4=xiLPaa2ju0+qMR0tE9Q@mail.gmail.com>
-In-Reply-To: <CAPpJ_ed36NyopArw98qhkstAm=L9A4=xiLPaa2ju0+qMR0tE9Q@mail.gmail.com>
-Accept-Language: zh-TW, en-US
-Content-Language: zh-TW
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [172.22.105.152]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Fri, 7 Dec 2018 01:55:18 -0500
+Received: by mail-lj1-f196.google.com with SMTP id s5-v6so2583686ljd.12
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Dec 2018 22:55:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=MVDlOoRHAydJItIWSkkCWeeUUtGh4EBNNdqZFwwlDRQ=;
+        b=TMGxavd9PBX0uK54j1n6yYJEfPAunZKFo27+ttUvVPM6M765sRdMY80W/7iDWG6SlM
+         5zHV7UFTR6chwiB174efPC+IgVUgS4h/cociZSFg5EuyG4K3y/Z1EgpNuddA67Tzz/bY
+         H/WQfzPSgeunNHzF8HI9ydmfBwF4bzZx6q6Bw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=MVDlOoRHAydJItIWSkkCWeeUUtGh4EBNNdqZFwwlDRQ=;
+        b=iPXqJ/MiCCzWSdx4KxUNb7sEqfAWcQRRpWEJD1cs27pic0xTK7GJq+UyyIXJUGfop2
+         iVJEgCkGnoanKD3rxO+EOISIDMpPuozMUXKkDmW58Cqeq6Xry8+JemG3ja1P6RnvDAlF
+         dqcBUF8PZRu3ISH0vLt2HnwJAL9u4+qjmo8tmvT9rKbHG6ct30tkEagfDjl62avSSYix
+         q72qLdLdw01g0DixMRWjMsVesBZwxW+6VdGogoUt3rJnwEhrU0AumWbwTK0Tmy3moqHL
+         u3TvggrEF7/z7iUJ8WxjTmPf6PPvQZctNs4lBs4v/ei79Zf0xGIeuC6104MSJfNGtuc4
+         faTQ==
+X-Gm-Message-State: AA+aEWY/cQJ0BJltkIIM/bN/TFznsb1/DwIqArCR2bUue0szfhAXDvf/
+        54mgNOXI5WNjYVZxIKAdMW2tgKCCnnyOSUzXoTvKGLm3ZoE=
+X-Google-Smtp-Source: AFSGD/XiDNX+C46fqDL4QiXHRiyQxXSqiqJW8Iv3FRhC5eVx0VbRsHq1hm3FstAprx0eQP+PYetcMA93veeyhoik9u0=
+X-Received: by 2002:a2e:9715:: with SMTP id r21-v6mr587079lji.30.1544165715672;
+ Thu, 06 Dec 2018 22:55:15 -0800 (PST)
 MIME-Version: 1.0
+References: <20181205093555.5386-1-sashal@kernel.org> <20181205093555.5386-40-sashal@kernel.org>
+ <CA+G9fYt9o298ZzaiFWDrxMW8OvC2BqvY45r7oU9kz=jtmrUZ-Q@mail.gmail.com>
+In-Reply-To: <CA+G9fYt9o298ZzaiFWDrxMW8OvC2BqvY45r7oU9kz=jtmrUZ-Q@mail.gmail.com>
+From:   Naresh Kamboju <naresh.kamboju@linaro.org>
+Date:   Fri, 7 Dec 2018 12:25:04 +0530
+Message-ID: <CA+G9fYv_4BgrWQC4w1d-nv1XfOgWAc6K96Lus_wpPwzAqqkmqw@mail.gmail.com>
+Subject: Re: [PATCH AUTOSEL 4.19 040/123] bpf: allocate local storage buffers
+ using GFP_ATOMIC
+To:     Daniel Borkmann <daniel@iogearbox.net>,
+        Roman Gushchin <guro@fb.com>
+Cc:     linux- stable <stable@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>, guroan@gmail.com,
+        ast@kernel.org, sashal@kernel.org, netdev@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgSmlhbiBIb25nLA0KDQpJIGNhbGwgb3VyIGFnZW50IGd1eSBAIFdUTUVDLg0KUGxlYXNlIG1v
-ZGlmeSBhcyBiZWxsb3dpbmcgdGhlbiB0ZXN0IGFnYWluLg0KUmVtb3ZlIEVBUEQgY29udHJvbCBi
-eSBoaWRkZW4uDQpJZiB0aGlzIG1vZGlmeSBwYXRjaCB3YXMgcGFzcyBhdWRpbyB0ZXN0LCBwbGVh
-c2UgcmVnZW5lcmF0ZSBwYXRjaCB0byBUYWthc2hpLg0KSWYgdGhpcyBwYXRjaCB3aWxsIHNvbHZl
-IHRoZSBzcGVha2VyIG5vIHNvdW5kIGlzc3VlLCBJIHRoaW5rIHRoZSBtb2RlbCBuYW1lIG1heWJl
-IGNvdWxkIHJlbmFtZSB0byBBTEMyOTRfRklYVVBfQVNVU19TUEsuDQpCZWNhdXNlIGl0IGRvZXNu
-J3QgcmVsYXRlIHdpdGggTm9pc2UuDQoNCj4gKyAgICAgICBbQUxDMjk0X0ZJWFVQX0FTVVNfU1BL
-X05PSVNFXSA9IHsNCj4gKyAgICAgICAgICAgICAgIC50eXBlID0gSERBX0ZJWFVQX1ZFUkJTLA0K
-PiArICAgICAgICAgICAgICAgLnYudmVyYnMgPSAoY29uc3Qgc3RydWN0IGhkYV92ZXJiW10pIHsN
-Cj4gKyAgICAgICAgICAgICAgICAgICAgICAgeyAweDIwLCBBQ19WRVJCX1NFVF9DT0VGX0lOREVY
-LCAweDQwIH0sDQo+ICsgICAgICAgICAgICAgICAgICAgICAgIHsgMHgyMCwgQUNfVkVSQl9TRVRf
-UFJPQ19DT0VGLCAweDg4MDAgfSwNCj4gKyAgICAgICAgICAgICAgICAgICAgICAgeyB9DQo+ICsg
-ICAgICAgICAgICAgICB9LA0KPiArICAgICAgICAgICAgICAgLmNoYWluZWQgPSB0cnVlLA0KPiAr
-ICAgICAgICAgICAgICAgLmNoYWluX2lkID0gQUxDMjk0X0ZJWFVQX0FTVVNfSEVBRFNFVF9NSUMN
-Cj4gKyAgICAgICB9LA0KPiAgfTsNCg0KQlIsDQpLYWlsYW5nDQoNCi0tLS0tT3JpZ2luYWwgTWVz
-c2FnZS0tLS0tDQpGcm9tOiBKaWFuLUhvbmcgUGFuIDxqaWFuLWhvbmdAZW5kbGVzc20uY29tPiAN
-ClNlbnQ6IEZyaWRheSwgRGVjZW1iZXIgNywgMjAxOCAxMTo0OCBBTQ0KVG86IEthaWxhbmcgPGth
-aWxhbmdAcmVhbHRlay5jb20+DQpDYzogSmFyb3NsYXYgS3lzZWxhIDxwZXJleEBwZXJleC5jej47
-IFRha2FzaGkgSXdhaSA8dGl3YWlAc3VzZS5jb20+OyBIdWkgV2FuZyA8aHVpLndhbmdAY2Fub25p
-Y2FsLmNvbT47IGFsc2EtZGV2ZWxAYWxzYS1wcm9qZWN0Lm9yZzsgTGludXggS2VybmVsIDxsaW51
-eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnPjsgTGludXggVXBzdHJlYW1pbmcgVGVhbSA8bGludXhA
-ZW5kbGVzc20uY29tPjsgRGFuaWVsIERyYWtlIDxkcmFrZUBlbmRsZXNzbS5jb20+DQpTdWJqZWN0
-OiBSZTogW1BBVENIIHYyIDIvM10gQUxTQTogaGRhL3JlYWx0ZWs6IEVuYWJsZSBhdWRpbyBqYWNr
-cyBvZiBBU1VTIFVYNTMzRkQgd2l0aCBBTEMyOTQNCg0KS2FpbGFuZyA8a2FpbGFuZ0ByZWFsdGVr
-LmNvbT4g5pa8IDIwMTjlubQxMuaciDfml6Ug6YCx5LqUIOS4iuWNiDExOjMy5a+r6YGT77yaDQo+
-DQo+IEhpIEppYW4gSG9uZywNCj4NCj4gQ291bGQgSSBrbm93IHdobyBnaXZlIHlvdSB0aGUgdmFs
-dWUgYXMgYmVsb3c/DQo+DQo+ICsgICAgICAgICAgICAgICAgICAgICAgIHsgMHgyMCwgQUNfVkVS
-Ql9TRVRfQ09FRl9JTkRFWCwgMHgxMCB9LA0KPiArICAgICAgICAgICAgICAgICAgICAgICB7IDB4
-MjAsIDB4NGM0LCAweDIwIH0sDQo+ICsgICAgICAgICAgICAgICAgICAgICAgIHsgMHgyMCwgQUNf
-VkVSQl9TRVRfQ09FRl9JTkRFWCwgMHg0MCB9LA0KPiArICAgICAgICAgICAgICAgICAgICAgICB7
-IDB4MjAsIDB4NDg4LCAweDAwIH0sDQoNCkEgbW9kdWxlIG1ha2VyLg0KDQpSZWdhcmRzLA0KSmlh
-bi1Ib25nIFBhbg0KDQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IEppYW4t
-SG9uZyBQYW4gPGppYW4taG9uZ0BlbmRsZXNzbS5jb20+DQo+IFNlbnQ6IFRodXJzZGF5LCBEZWNl
-bWJlciA2LCAyMDE4IDQ6NDYgUE0NCj4gVG86IEphcm9zbGF2IEt5c2VsYSA8cGVyZXhAcGVyZXgu
-Y3o+OyBUYWthc2hpIEl3YWkgPHRpd2FpQHN1c2UuY29tPjsgDQo+IEthaWxhbmcgPGthaWxhbmdA
-cmVhbHRlay5jb20+DQo+IENjOiBIdWkgV2FuZyA8aHVpLndhbmdAY2Fub25pY2FsLmNvbT47IGFs
-c2EtZGV2ZWxAYWxzYS1wcm9qZWN0Lm9yZzsgDQo+IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5v
-cmc7IGxpbnV4QGVuZGxlc3NtLmNvbTsgSmlhbi1Ib25nIFBhbiANCj4gPGppYW4taG9uZ0BlbmRs
-ZXNzbS5jb20+OyBEYW5pZWwgRHJha2UgPGRyYWtlQGVuZGxlc3NtLmNvbT4NCj4gU3ViamVjdDog
-W1BBVENIIHYyIDIvM10gQUxTQTogaGRhL3JlYWx0ZWs6IEVuYWJsZSBhdWRpbyBqYWNrcyBvZiBB
-U1VTIA0KPiBVWDUzM0ZEIHdpdGggQUxDMjk0DQo+DQo+IFRoZSBBU1VTIFVYNTMzRkQgd2l0aCBB
-TEMyOTQgY2Fubm90IGRldGVjdCB0aGUgaGVhZHNldCBNSUMgYW5kIG91dHB1dCB0aHJvdWdoIHRo
-ZSBpbnRlcm5hbCBzcGVha2VyIGFuZCB0aGUgaGVhZHBob25lIHVudGlsIEFMQzI5NF9GSVhVUF9B
-U1VTX1NQS19OT0lTRSBxdWlyayBhcHBsaWVkLg0KPg0KPiBTaWduZWQtb2ZmLWJ5OiBEYW5pZWwg
-RHJha2UgPGRyYWtlQGVuZGxlc3NtLmNvbT4NCj4gU2lnbmVkLW9mZi1ieTogSmlhbi1Ib25nIFBh
-biA8amlhbi1ob25nQGVuZGxlc3NtLmNvbT4NCj4gLS0tDQo+IHYyOg0KPiAtIE1vZGlmeSB0aGUg
-SERBIHZlcmJzIGZvciBVWDMzM0ZBIHN1cHBvcnQNCj4gLSBNYWtlIGEgbmV3IEFMQzI5NF9GSVhV
-UF9BU1VTX0hFQURTRVRfTUlDIHF1aXJrIGZvciBBTEMyOTQgY2hhaW4NCj4gLSAuY2hhaW5faWQg
-PSBBTEMyNTZfRklYVVBfQVNVU19IRUFEU0VUX01PREUgID09PiBjaGFuZ2UgdG8gDQo+IEFMQzI2
-OV9GSVhVUF9IRUFEU0VUX01PREVfTk9fSFBfTUlDDQo+DQo+ICBzb3VuZC9wY2kvaGRhL3BhdGNo
-X3JlYWx0ZWsuYyB8IDI1ICsrKysrKysrKysrKysrKysrKysrKysrKysNCj4gIDEgZmlsZSBjaGFu
-Z2VkLCAyNSBpbnNlcnRpb25zKCspDQo+DQo+IGRpZmYgLS1naXQgYS9zb3VuZC9wY2kvaGRhL3Bh
-dGNoX3JlYWx0ZWsuYyANCj4gYi9zb3VuZC9wY2kvaGRhL3BhdGNoX3JlYWx0ZWsuYyBpbmRleCBk
-MzJlNTBiMWVkNjAuLjE1MjViY2RmOTZlOCANCj4gMTAwNjQ0DQo+IC0tLSBhL3NvdW5kL3BjaS9o
-ZGEvcGF0Y2hfcmVhbHRlay5jDQo+ICsrKyBiL3NvdW5kL3BjaS9oZGEvcGF0Y2hfcmVhbHRlay5j
-DQo+IEBAIC01NTE4LDYgKzU1MTgsOCBAQCBlbnVtIHsNCj4gICAgICAgICBBTEMyOTVfRklYVVBf
-SFBfQVVUT19NVVRFLA0KPiAgICAgICAgIEFMQzI4Nl9GSVhVUF9BQ0VSX0FJT19NSUNfTk9fUFJF
-U0VOQ0UsDQo+ICAgICAgICAgQUxDMjk0X0ZJWFVQX0FTVVNfTUlDLA0KPiArICAgICAgIEFMQzI5
-NF9GSVhVUF9BU1VTX0hFQURTRVRfTUlDLA0KPiArICAgICAgIEFMQzI5NF9GSVhVUF9BU1VTX1NQ
-S19OT0lTRSwNCj4gIH07DQo+DQo+ICBzdGF0aWMgY29uc3Qgc3RydWN0IGhkYV9maXh1cCBhbGMy
-NjlfZml4dXBzW10gPSB7IEBAIC02NDE0LDYgKzY0MTYsMjggQEAgc3RhdGljIGNvbnN0IHN0cnVj
-dCBoZGFfZml4dXAgYWxjMjY5X2ZpeHVwc1tdID0gew0KPiAgICAgICAgICAgICAgICAgLmNoYWlu
-ZWQgPSB0cnVlLA0KPiAgICAgICAgICAgICAgICAgLmNoYWluX2lkID0gQUxDMjY5X0ZJWFVQX0hF
-QURTRVRfTU9ERV9OT19IUF9NSUMNCj4gICAgICAgICB9LA0KPiArICAgICAgIFtBTEMyOTRfRklY
-VVBfQVNVU19IRUFEU0VUX01JQ10gPSB7DQo+ICsgICAgICAgICAgICAgICAudHlwZSA9IEhEQV9G
-SVhVUF9QSU5TLA0KPiArICAgICAgICAgICAgICAgLnYucGlucyA9IChjb25zdCBzdHJ1Y3QgaGRh
-X3BpbnRibFtdKSB7DQo+ICsgICAgICAgICAgICAgICAgICAgICAgIHsgMHgxOSwgMHgwMWExMTEz
-YyB9LCAvKiB1c2UgYXMgaGVhZHNldCBtaWMsIHdpdGhvdXQgaXRzIG93biBqYWNrIGRldGVjdCAq
-Lw0KPiArICAgICAgICAgICAgICAgICAgICAgICB7IH0NCj4gKyAgICAgICAgICAgICAgIH0sDQo+
-ICsgICAgICAgICAgICAgICAuY2hhaW5lZCA9IHRydWUsDQo+ICsgICAgICAgICAgICAgICAuY2hh
-aW5faWQgPSBBTEMyNjlfRklYVVBfSEVBRFNFVF9NT0RFX05PX0hQX01JQw0KPiArICAgICAgIH0s
-DQo+ICsgICAgICAgW0FMQzI5NF9GSVhVUF9BU1VTX1NQS19OT0lTRV0gPSB7DQo+ICsgICAgICAg
-ICAgICAgICAudHlwZSA9IEhEQV9GSVhVUF9WRVJCUywNCj4gKyAgICAgICAgICAgICAgIC52LnZl
-cmJzID0gKGNvbnN0IHN0cnVjdCBoZGFfdmVyYltdKSB7DQo+ICsgICAgICAgICAgICAgICAgICAg
-ICAgIC8qIFNldCBFQVBEIGhpZ2ggKi8NCj4gKyAgICAgICAgICAgICAgICAgICAgICAgeyAweDIw
-LCBBQ19WRVJCX1NFVF9DT0VGX0lOREVYLCAweDEwIH0sDQo+ICsgICAgICAgICAgICAgICAgICAg
-ICAgIHsgMHgyMCwgMHg0YzQsIDB4MjAgfSwNCj4gKyAgICAgICAgICAgICAgICAgICAgICAgeyAw
-eDIwLCBBQ19WRVJCX1NFVF9DT0VGX0lOREVYLCAweDQwIH0sDQo+ICsgICAgICAgICAgICAgICAg
-ICAgICAgIHsgMHgyMCwgMHg0ODgsIDB4MDAgfSwNCj4gKyAgICAgICAgICAgICAgICAgICAgICAg
-eyB9DQo+ICsgICAgICAgICAgICAgICB9LA0KPiArICAgICAgICAgICAgICAgLmNoYWluZWQgPSB0
-cnVlLA0KPiArICAgICAgICAgICAgICAgLmNoYWluX2lkID0gQUxDMjk0X0ZJWFVQX0FTVVNfSEVB
-RFNFVF9NSUMNCj4gKyAgICAgICB9LA0KPiAgfTsNCj4NCj4gIHN0YXRpYyBjb25zdCBzdHJ1Y3Qg
-c25kX3BjaV9xdWlyayBhbGMyNjlfZml4dXBfdGJsW10gPSB7IEBAIC02NTU2LDYgKzY1ODAsNyBA
-QCBzdGF0aWMgY29uc3Qgc3RydWN0IHNuZF9wY2lfcXVpcmsgYWxjMjY5X2ZpeHVwX3RibFtdID0g
-ew0KPiAgICAgICAgIFNORF9QQ0lfUVVJUksoMHgxMDQzLCAweDEyZTAsICJBU1VTIFg1NDFTQSIs
-IEFMQzI1Nl9GSVhVUF9BU1VTX01JQyksDQo+ICAgICAgICAgU05EX1BDSV9RVUlSSygweDEwNDMs
-IDB4MTNiMCwgIkFTVVMgWjU1MFNBIiwgQUxDMjU2X0ZJWFVQX0FTVVNfTUlDKSwNCj4gICAgICAg
-ICBTTkRfUENJX1FVSVJLKDB4MTA0MywgMHgxNDI3LCAiQXN1cyBaZW5ib29rIFVYMzFFIiwgDQo+
-IEFMQzI2OVZCX0ZJWFVQX0FTVVNfWkVOQk9PSyksDQo+ICsgICAgICAgU05EX1BDSV9RVUlSSygw
-eDEwNDMsIDB4MTRhMSwgIkFTVVMgVVg1MzNGRCIsIA0KPiArQUxDMjk0X0ZJWFVQX0FTVVNfU1BL
-X05PSVNFKSwNCj4gICAgICAgICBTTkRfUENJX1FVSVJLKDB4MTA0MywgMHgxNTE3LCAiQXN1cyBa
-ZW5ib29rIFVYMzFBIiwgQUxDMjY5VkJfRklYVVBfQVNVU19aRU5CT09LX1VYMzFBKSwNCj4gICAg
-ICAgICBTTkRfUENJX1FVSVJLKDB4MTA0MywgMHgxNmUzLCAiQVNVUyBVWDUwIiwgQUxDMjY5X0ZJ
-WFVQX1NURVJFT19ETUlDKSwNCj4gICAgICAgICBTTkRfUENJX1FVSVJLKDB4MTA0MywgMHgxYTEz
-LCAiQXN1cyBHNzNKdyIsIA0KPiBBTEMyNjlfRklYVVBfQVNVU19HNzNKVyksDQo+IC0tDQo+IDIu
-MTEuMA0KPg0KDQotLS0tLS1QbGVhc2UgY29uc2lkZXIgdGhlIGVudmlyb25tZW50IGJlZm9yZSBw
-cmludGluZyB0aGlzIGUtbWFpbC4NCg==
+On Fri, 7 Dec 2018 at 12:10, Naresh Kamboju <naresh.kamboju@linaro.org> wrote:
+>
+> On Wed, 5 Dec 2018 at 15:08, Sasha Levin <sashal@kernel.org> wrote:
+> >
+> > From: Roman Gushchin <guroan@gmail.com>
+> >
+> > [ Upstream commit 569a933b03f3c48b392fe67c0086b3a6b9306b5a ]
+> >
+> > Naresh reported an issue with the non-atomic memory allocation of
+> > cgroup local storage buffers:
+> >
+> > [   73.047526] BUG: sleeping function called from invalid context at
+> > /srv/oe/build/tmp-rpb-glibc/work-shared/intel-corei7-64/kernel-source/mm/slab.h:421
+> > [   73.060915] in_atomic(): 1, irqs_disabled(): 0, pid: 3157, name: test_cgroup_sto
+> > [   73.068342] INFO: lockdep is turned off.
+> > [   73.072293] CPU: 2 PID: 3157 Comm: test_cgroup_sto Not tainted
+> > 4.20.0-rc2-next-20181113 #1
+> > [   73.080548] Hardware name: Supermicro SYS-5019S-ML/X11SSH-F, BIOS
+> > 2.0b 07/27/2017
+> > [   73.088018] Call Trace:
+> > [   73.090463]  dump_stack+0x70/0xa5
+> > [   73.093783]  ___might_sleep+0x152/0x240
+> > [   73.097619]  __might_sleep+0x4a/0x80
+> > [   73.101191]  __kmalloc_node+0x1cf/0x2f0
+> > [   73.105031]  ? cgroup_storage_update_elem+0x46/0x90
+> > [   73.109909]  cgroup_storage_update_elem+0x46/0x90
+> >
+> > cgroup_storage_update_elem() (as well as other update map update
+> > callbacks) is called with disabled preemption, so GFP_ATOMIC
+> > allocation should be used: e.g. alloc_htab_elem() in hashtab.c.
+> >
+> > Reported-by: Naresh Kamboju <naresh.kamboju@linaro.org>
+> > Tested-by: Naresh Kamboju <naresh.kamboju@linaro.org>
+> > Signed-off-by: Roman Gushchin <guro@fb.com>
+> > Cc: Alexei Starovoitov <ast@kernel.org>
+> > Cc: Daniel Borkmann <daniel@iogearbox.net>
+> > Signed-off-by: Alexei Starovoitov <ast@kernel.org>
+> > Signed-off-by: Sasha Levin <sashal@kernel.org>
+>
+> I have reported above issue on 4.20.0-rc2-next-20181113.
+> Now this BUG re-occurring on 4.19.8-rc1 on x86_64 and arm64 devices.
+
+This BUG: was seen on 4.19.1-rc1 also on x86_64 and arm64 devices.
+
+- Naresh
