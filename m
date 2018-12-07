@@ -2,249 +2,272 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81B6CC64EB1
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 06:31:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21AE6C07E85
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 06:33:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3ADCA20892
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 06:31:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C205920838
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 06:33:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b5eR0qyf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3ADCA20892
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="wCfjefpA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C205920838
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726137AbeLGGbK (ORCPT
+        id S1726013AbeLGGdp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 01:31:10 -0500
-Received: from mail-pl1-f174.google.com ([209.85.214.174]:40469 "EHLO
-        mail-pl1-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726084AbeLGGbI (ORCPT
+        Fri, 7 Dec 2018 01:33:45 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:37720 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725963AbeLGGdo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 01:31:08 -0500
-Received: by mail-pl1-f174.google.com with SMTP id u18so1359507plq.7;
-        Thu, 06 Dec 2018 22:31:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :in-reply-to:references;
-        bh=X6IUw1lo5W2A3uJWtvZsyMI3bRMD3FmSX7BiWko5brM=;
-        b=b5eR0qyf591FzLkV8GccCUgmW6DpdjXBfOoMmf0Lcjx0MJFKXr6k0kL788LEwCG3VV
-         acI9cr/G8yqx5/xYm0hxiJAx92V9W8fzMY279L27Ho6n7lfvg4ytfelQNEGlljtexX5m
-         qsM7/1dvuX0q1qP1jnRp+Ikvd5jY7x5fdsTtokJR/K3yNiTofmj/2bhbI3+urUeGGgsu
-         whN+NzEb21HGlEqOmJvlrhRlXMcSZTtFBCqtWQQpWAijZuWZZO9TjSrrofUHgZYO6mBp
-         9Wyk4ZIlMn0SJcS7/Njevh+BVPNKjOtxB9r2i7g69QJRahrFLL2M0nlZv+QKBdPjhj+d
-         /Xdw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:in-reply-to:references;
-        bh=X6IUw1lo5W2A3uJWtvZsyMI3bRMD3FmSX7BiWko5brM=;
-        b=dsCjkCMlMO5XwWwx9hw2m5zsYjBk8w0np3+a2walm+8G1xz/wXJVhjX6uTbTPnyzk9
-         dXAP/zlrZthIokMBKLdez3OilSlzvSD7bTF2tLl5hO+ZfB/HzQNJUj6I5u1m+Sz6Wwon
-         f+Rt6zp6MM2wHCa6Ic2IK06MgirB/YnSHUBp6aiYWS6BGQxjHlvlip/QS+9onLCvIhCc
-         +KUiBtGwRZgabfBoktYzCg/1i3Iov6OVW5S5EzGJsfIBoilUyqPwLbDdB4foT1ozSO3d
-         VC/UcDlF0yyTODdIs1evnHSMqhrxNSdRK/hCes76s5fR3VS4Rj8MtrpiOyJNYBRYyWJ0
-         IsAw==
-X-Gm-Message-State: AA+aEWYMNrOsmBKIFbc2ehqHF6KwDfxrorIU4bPnVHCXIDVQ3ShWYdSG
-        uoKb/bHhtJYDPTrAerLd6yj5jVtwypw=
-X-Google-Smtp-Source: AFSGD/VbFhC0OV/ov17Xmscq2qWShZyrvjQ1UkbzhfA1vT0Xtu8035pmmDpeN4ar/vm0Z1+6Z0CgaA==
-X-Received: by 2002:a17:902:142:: with SMTP id 60mr1026596plb.330.1544164267880;
-        Thu, 06 Dec 2018 22:31:07 -0800 (PST)
-Received: from localhost ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id q199sm3431612pfc.97.2018.12.06.22.31.06
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 06 Dec 2018 22:31:07 -0800 (PST)
-From:   Xin Long <lucien.xin@gmail.com>
-To:     linux-kernel@vger.kernel.org, network dev <netdev@vger.kernel.org>,
-        linux-sctp@vger.kernel.org
-Cc:     davem@davemloft.net,
-        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
-        Neil Horman <nhorman@tuxdriver.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        David Rientjes <rientjes@google.com>,
-        Eric Paris <eparis@redhat.com>,
-        Konstantin Khorenko <khorenko@virtuozzo.com>
-Subject: [PATCHv2 net 3/3] sctp: fa_resize sctp stream instead of redo fa_alloc
-Date:   Fri,  7 Dec 2018 14:30:35 +0800
-Message-Id: <3bc7041d4157e92a36a60c4868834d0a8a439041.1544163962.git.lucien.xin@gmail.com>
-X-Mailer: git-send-email 2.1.0
-In-Reply-To: <9122685dd16d04613de02594325acf79b2d04a3d.1544163962.git.lucien.xin@gmail.com>
-References: <cover.1544163962.git.lucien.xin@gmail.com>
- <a4474a5886807d13146dc67e2d214b7ba3029d32.1544163962.git.lucien.xin@gmail.com>
- <9122685dd16d04613de02594325acf79b2d04a3d.1544163962.git.lucien.xin@gmail.com>
-In-Reply-To: <cover.1544163962.git.lucien.xin@gmail.com>
-References: <cover.1544163962.git.lucien.xin@gmail.com>
+        Fri, 7 Dec 2018 01:33:44 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wB76TTP6118503;
+        Fri, 7 Dec 2018 06:33:34 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=GuRbCmQT4xsYds33tm2DheZXi+TsfEvYsSmJNDD9GDs=;
+ b=wCfjefpA4Dv5qjU+B4F+/gS8CdwmAT3welh2ybO/EjDbg5/Uz5EjrVkDdLq2k3FRlyoq
+ Qhb89ayORdH6mLKeTQsFtXOPZzLoaubkkW032C2NVAw2lGSpQZjEY30pRRpq3YfP2ba0
+ kCcY6TOOsVm9G8YD9Yr/ozVsJUJP3dVCceBIJwLpj+haXYZ6iESfinle697WFGXMxh+a
+ xJPiFjzeSHNsizCWhRUwIMoyoJm7jovlgF1CcvHlvDmwqxnsyPXgH4e9Z60ud+PNV5PQ
+ uNclkGrMm+IZOWexZ5j0VFu2qKJuzpUM0IfnTKcoVJF9BWdseuRRHVB2kHB564DPWN1G 8A== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by userp2120.oracle.com with ESMTP id 2p3jxrv1rh-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 07 Dec 2018 06:33:34 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id wB76XXMZ026745
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 7 Dec 2018 06:33:33 GMT
+Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wB76XWBT000926;
+        Fri, 7 Dec 2018 06:33:32 GMT
+Received: from [10.0.0.83] (/73.223.239.41)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 06 Dec 2018 22:33:32 -0800
+Subject: Re: [PATCH RFC 1/1] swiotlb: add debugfs to track swiotlb buffer
+ usage
+To:     Dongli Zhang <dongli.zhang@oracle.com>,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
+Cc:     konrad.wilk@oracle.com, hch@lst.de, m.szyprowski@samsung.com,
+        robin.murphy@arm.com
+References: <1544068785-20399-1-git-send-email-dongli.zhang@oracle.com>
+ <da16ecce-4e25-d246-3e0d-389e8e9e413e@oracle.com>
+ <28a9f44a-d1bf-fb34-5a57-cfdb7bb23163@oracle.com>
+From:   Joe Jin <joe.jin@oracle.com>
+Message-ID: <30439f1e-cf75-0560-8bd4-5ec5cd692aef@oracle.com>
+Date:   Thu, 6 Dec 2018 22:33:32 -0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
+ Gecko/20100101 Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <28a9f44a-d1bf-fb34-5a57-cfdb7bb23163@oracle.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9099 signatures=668679
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1812070056
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now when doing 4-shakehand or adding new streams, sctp has to allocate
-new memory for asoc->stream and copy the old stream's information from
-the old asoc->stream to the new one. It also cause the stream pointers
-to change, by which a panic was even caused due to stream->out_curr's
-change.
+On 12/6/18 9:49 PM, Dongli Zhang wrote:
+> 
+> 
+> On 12/07/2018 12:12 AM, Joe Jin wrote:
+>> Hi Dongli,
+>>
+>> Maybe move d_swiotlb_usage declare into swiotlb_create_debugfs():
+> 
+> I assume the call of swiotlb_tbl_map_single() might be frequent in some
+> situations, e.g., when 'swiotlb=force'.
+> 
+> That's why I declare the d_swiotlb_usage out of any functions and use "if
+> (unlikely(!d_swiotlb_usage))".
 
-To fix this, flex_array_resize() is used in sctp_stream_alloc_out/in()
-when asoc->stream has been allocated. Besides, with this asoc->stream
-will only be allocated once, and grow or shrink dynamically later.
+This is reasonable.
 
-Note that flex_array_prealloc() is needed before growing as fa_alloc
-does, while flex_array_clear() and flex_array_shrink() are called to
-free the unused memory before shrinking.
+Thanks,
+Joe
 
-Fixes: 5bbbbe32a431 ("sctp: introduce stream scheduler foundations")
-Reported-by: Ying Xu <yinxu@redhat.com>
-Reported-by: syzbot+e33a3a138267ca119c7d@syzkaller.appspotmail.com
-Suggested-by: Neil Horman <nhorman@tuxdriver.com>
-Signed-off-by: Xin Long <lucien.xin@gmail.com>
-Acked-by: Neil Horman <nhorman@tuxdriver.com>
----
- net/sctp/stream.c | 87 +++++++++++++++++++++++++------------------------------
- 1 file changed, 40 insertions(+), 47 deletions(-)
-
-diff --git a/net/sctp/stream.c b/net/sctp/stream.c
-index 3892e76..aff30b2 100644
---- a/net/sctp/stream.c
-+++ b/net/sctp/stream.c
-@@ -37,6 +37,17 @@
- #include <net/sctp/sm.h>
- #include <net/sctp/stream_sched.h>
- 
-+static void fa_zero(struct flex_array *fa, size_t index, size_t count)
-+{
-+	void *elem;
-+
-+	while (count--) {
-+		elem = flex_array_get(fa, index);
-+		memset(elem, 0, fa->element_size);
-+		index++;
-+	}
-+}
-+
- static struct flex_array *fa_alloc(size_t elem_size, size_t elem_count,
- 				   gfp_t gfp)
- {
-@@ -48,8 +59,9 @@ static struct flex_array *fa_alloc(size_t elem_size, size_t elem_count,
- 		err = flex_array_prealloc(result, 0, elem_count, gfp);
- 		if (err) {
- 			flex_array_free(result);
--			result = NULL;
-+			return NULL;
- 		}
-+		fa_zero(result, 0, elem_count);
- 	}
- 
- 	return result;
-@@ -61,27 +73,28 @@ static void fa_free(struct flex_array *fa)
- 		flex_array_free(fa);
- }
- 
--static void fa_copy(struct flex_array *fa, struct flex_array *from,
--		    size_t index, size_t count)
-+static int fa_resize(struct flex_array *fa, size_t count, gfp_t gfp)
- {
--	void *elem;
-+	int nr = fa->total_nr_elements, n;
- 
--	while (count--) {
--		elem = flex_array_get(from, index);
--		flex_array_put(fa, index, elem, 0);
--		index++;
-+	if (count > nr) {
-+		if (flex_array_resize(fa, count, gfp))
-+			return -ENOMEM;
-+		if (flex_array_prealloc(fa, nr, count - nr, gfp))
-+			return -ENOMEM;
-+		fa_zero(fa, nr, count - nr);
-+
-+		return 0;
- 	}
--}
- 
--static void fa_zero(struct flex_array *fa, size_t index, size_t count)
--{
--	void *elem;
-+	/* Shrink the unused memory,
-+	 * FLEX_ARRAY_FREE check is safe for sctp stream.
-+	 */
-+	for (n = count; n < nr; n++)
-+		flex_array_clear(fa, n);
-+	flex_array_shrink(fa);
- 
--	while (count--) {
--		elem = flex_array_get(fa, index);
--		memset(elem, 0, fa->element_size);
--		index++;
--	}
-+	return flex_array_resize(fa, count, gfp);
- }
- 
- /* Migrates chunks from stream queues to new stream queues if needed,
-@@ -138,47 +151,27 @@ static void sctp_stream_outq_migrate(struct sctp_stream *stream,
- static int sctp_stream_alloc_out(struct sctp_stream *stream, __u16 outcnt,
- 				 gfp_t gfp)
- {
--	struct flex_array *out;
--	size_t elem_size = sizeof(struct sctp_stream_out);
--
--	out = fa_alloc(elem_size, outcnt, gfp);
--	if (!out)
--		return -ENOMEM;
-+	if (!stream->out) {
-+		stream->out = fa_alloc(sizeof(struct sctp_stream_out),
-+				       outcnt, gfp);
- 
--	if (stream->out) {
--		fa_copy(out, stream->out, 0, min(outcnt, stream->outcnt));
--		fa_free(stream->out);
-+		return stream->out ? 0 : -ENOMEM;
- 	}
- 
--	if (outcnt > stream->outcnt)
--		fa_zero(out, stream->outcnt, (outcnt - stream->outcnt));
--
--	stream->out = out;
--
--	return 0;
-+	return fa_resize(stream->out, outcnt, gfp);
- }
- 
- static int sctp_stream_alloc_in(struct sctp_stream *stream, __u16 incnt,
- 				gfp_t gfp)
- {
--	struct flex_array *in;
--	size_t elem_size = sizeof(struct sctp_stream_in);
-+	if (!stream->in) {
-+		stream->in = fa_alloc(sizeof(struct sctp_stream_in),
-+				      incnt, gfp);
- 
--	in = fa_alloc(elem_size, incnt, gfp);
--	if (!in)
--		return -ENOMEM;
--
--	if (stream->in) {
--		fa_copy(in, stream->in, 0, min(incnt, stream->incnt));
--		fa_free(stream->in);
-+		return stream->in ? 0 : -ENOMEM;
- 	}
- 
--	if (incnt > stream->incnt)
--		fa_zero(in, stream->incnt, (incnt - stream->incnt));
--
--	stream->in = in;
--
--	return 0;
-+	return fa_resize(stream->in, incnt, gfp);
- }
- 
- int sctp_stream_init(struct sctp_stream *stream, __u16 outcnt, __u16 incnt,
--- 
-2.1.0
-
+> 
+> I think "if (unlikely(!d_swiotlb_usage))" incur less performance overhead than
+> calling swiotlb_create_debugfs() every time to confirm if debugfs is created. I
+> would declare d_swiotlb_usage statically inside swiotlb_create_debugfs() if the
+> performance overhead is acceptable (it is trivial indeed).
+> 
+> 
+> That is the reason I tag the patch with RFC because I am not sure if the
+> on-demand creation of debugfs is fine with maintainers/reviewers. If swiotlb
+> pages are never allocated, we would not be able to see the debugfs entry.
+> 
+> I would prefer to limit the modification within swiotlb and to not taint any
+> other files.
+> 
+> The drawback is there is no place to create or delete the debugfs entry because
+> swiotlb buffer could be initialized and uninitialized at very early stage.
+> 
+>>
+>> void swiotlb_create_debugfs(void)
+>> {
+>> #ifdef CONFIG_DEBUG_FS
+>> 	static struct dentry *d_swiotlb_usage = NULL;
+>>
+>> 	if (d_swiotlb_usage)
+>> 		return;
+>>
+>> 	d_swiotlb_usage = debugfs_create_dir("swiotlb", NULL);
+>>
+>> 	if (!d_swiotlb_usage)
+>> 		return;
+>>
+>> 	debugfs_create_file("usage", 0600, d_swiotlb_usage,
+>> 			    NULL, &swiotlb_usage_fops);
+>> #endif
+>> }
+>>
+>> And for io_tlb_used, possible add a check at the begin of swiotlb_tbl_map_single(),
+>> if there were not any free slots or not enough slots, return fail directly?
+> 
+> This would optimize the slots allocation path. I will follow this in next
+> version after I got more suggestions and confirmations from maintainers.
+> 
+> 
+> Thank you very much!
+> 
+> Dongli Zhang
+> 
+>>
+>> Thanks,
+>> Joe
+>> On 12/5/18 7:59 PM, Dongli Zhang wrote:
+>>> The device driver will not be able to do dma operations once swiotlb buffer
+>>> is full, either because the driver is using so many IO TLB blocks inflight,
+>>> or because there is memory leak issue in device driver. To export the
+>>> swiotlb buffer usage via debugfs would help the user estimate the size of
+>>> swiotlb buffer to pre-allocate or analyze device driver memory leak issue.
+>>>
+>>> As the swiotlb can be initialized at very early stage when debugfs cannot
+>>> register successfully, this patch creates the debugfs entry on demand.
+>>>
+>>> Signed-off-by: Dongli Zhang <dongli.zhang@oracle.com>
+>>> ---
+>>>  kernel/dma/swiotlb.c | 57 ++++++++++++++++++++++++++++++++++++++++++++++++++++
+>>>  1 file changed, 57 insertions(+)
+>>>
+>>> diff --git a/kernel/dma/swiotlb.c b/kernel/dma/swiotlb.c
+>>> index 045930e..d3c8aa4 100644
+>>> --- a/kernel/dma/swiotlb.c
+>>> +++ b/kernel/dma/swiotlb.c
+>>> @@ -35,6 +35,9 @@
+>>>  #include <linux/scatterlist.h>
+>>>  #include <linux/mem_encrypt.h>
+>>>  #include <linux/set_memory.h>
+>>> +#ifdef CONFIG_DEBUG_FS
+>>> +#include <linux/debugfs.h>
+>>> +#endif
+>>>  
+>>>  #include <asm/io.h>
+>>>  #include <asm/dma.h>
+>>> @@ -73,6 +76,13 @@ static phys_addr_t io_tlb_start, io_tlb_end;
+>>>   */
+>>>  static unsigned long io_tlb_nslabs;
+>>>  
+>>> +#ifdef CONFIG_DEBUG_FS
+>>> +/*
+>>> + * The number of used IO TLB block
+>>> + */
+>>> +static unsigned long io_tlb_used;
+>>> +#endif
+>>> +
+>>>  /*
+>>>   * This is a free list describing the number of free entries available from
+>>>   * each index
+>>> @@ -100,6 +110,41 @@ static DEFINE_SPINLOCK(io_tlb_lock);
+>>>  
+>>>  static int late_alloc;
+>>>  
+>>> +#ifdef CONFIG_DEBUG_FS
+>>> +
+>>> +static struct dentry *d_swiotlb_usage;
+>>> +
+>>> +static int swiotlb_usage_show(struct seq_file *m, void *v)
+>>> +{
+>>> +	seq_printf(m, "%lu\n%lu\n", io_tlb_used, io_tlb_nslabs);
+>>> +	return 0;
+>>> +}
+>>> +
+>>> +static int swiotlb_usage_open(struct inode *inode, struct file *filp)
+>>> +{
+>>> +	return single_open(filp, swiotlb_usage_show, NULL);
+>>> +}
+>>> +
+>>> +static const struct file_operations swiotlb_usage_fops = {
+>>> +	.open           = swiotlb_usage_open,
+>>> +	.read           = seq_read,
+>>> +	.llseek         = seq_lseek,
+>>> +	.release        = single_release,
+>>> +};
+>>> +
+>>> +void swiotlb_create_debugfs(void)
+>>> +{
+>>> +	d_swiotlb_usage = debugfs_create_dir("swiotlb", NULL);
+>>> +
+>>> +	if (!d_swiotlb_usage)
+>>> +		return;
+>>> +
+>>> +	debugfs_create_file("usage", 0600, d_swiotlb_usage,
+>>> +			    NULL, &swiotlb_usage_fops);
+>>> +}
+>>> +
+>>> +#endif
+>>> +
+>>>  static int __init
+>>>  setup_io_tlb_npages(char *str)
+>>>  {
+>>> @@ -449,6 +494,11 @@ phys_addr_t swiotlb_tbl_map_single(struct device *hwdev,
+>>>  		pr_warn_once("%s is active and system is using DMA bounce buffers\n",
+>>>  			     sme_active() ? "SME" : "SEV");
+>>>  
+>>> +#ifdef CONFIG_DEBUG_FS
+>>> +	if (unlikely(!d_swiotlb_usage))
+>>> +		swiotlb_create_debugfs();
+>>> +#endif
+>>> +
+>>>  	mask = dma_get_seg_boundary(hwdev);
+>>>  
+>>>  	tbl_dma_addr &= mask;
+>>> @@ -528,6 +578,9 @@ phys_addr_t swiotlb_tbl_map_single(struct device *hwdev,
+>>>  		dev_warn(hwdev, "swiotlb buffer is full (sz: %zd bytes)\n", size);
+>>>  	return SWIOTLB_MAP_ERROR;
+>>>  found:
+>>> +#ifdef CONFIG_DEBUG_FS
+>>> +	io_tlb_used += nslots;
+>>> +#endif
+>>>  	spin_unlock_irqrestore(&io_tlb_lock, flags);
+>>>  
+>>>  	/*
+>>> @@ -588,6 +641,10 @@ void swiotlb_tbl_unmap_single(struct device *hwdev, phys_addr_t tlb_addr,
+>>>  		 */
+>>>  		for (i = index - 1; (OFFSET(i, IO_TLB_SEGSIZE) != IO_TLB_SEGSIZE -1) && io_tlb_list[i]; i--)
+>>>  			io_tlb_list[i] = ++count;
+>>> +
+>>> +#ifdef CONFIG_DEBUG_FS
+>>> +		io_tlb_used -= nslots;
+>>> +#endif
+>>>  	}
+>>>  	spin_unlock_irqrestore(&io_tlb_lock, flags);
+>>>  }
+>>>
+>>
+>>
