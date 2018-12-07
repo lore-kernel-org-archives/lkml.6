@@ -2,181 +2,115 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFBACC07E85
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 17:56:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DA76C07E85
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 17:57:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B335321104
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 17:56:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544205387;
-	bh=eYA6Un5E3SjnCQ/0lna2qchuwKY1UJ/Zte/umEg/5hA=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=ZxVat2aLMQOCgKRu/v+IMtFkubsG5Kgon98jRGCxICyp8fyHBVW3oLVpD/kOzRymt
-	 HSm/y5wxktz3jEbeT8vCRt4xfIEcgioMcgWpnsFqK9Va1YlmXbw91GxOxkt+1aGlLk
-	 PxGxXBpxABnrj+/I+CK+fZUv8VJbWwT8i4QbPJMw=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B335321104
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id CE3332082D
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 17:57:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE3332082D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726182AbeLGR40 (ORCPT
+        id S1726194AbeLGR5Q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 12:56:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37732 "EHLO mail.kernel.org"
+        Fri, 7 Dec 2018 12:57:16 -0500
+Received: from mga09.intel.com ([134.134.136.24]:35705 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726130AbeLGR40 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 12:56:26 -0500
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2380A2082D
-        for <linux-kernel@vger.kernel.org>; Fri,  7 Dec 2018 17:56:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544205385;
-        bh=eYA6Un5E3SjnCQ/0lna2qchuwKY1UJ/Zte/umEg/5hA=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=I5+jkLMqLZ9muw1OqFQCOb/FHJgnnAvBxvlLcBYNA9Oke2C/dk0teciiTjv5kpWyc
-         xX5TC8r+2Zwzq8nRj1KhCXhQwSrRm0jemUF8gPDZif84KdZi5oPqBXc6GkrxDAomlm
-         GiHXbMaP5yQPl9HlWnOGaGkcljE+M7Oe3/yiTWPw=
-Received: by mail-wm1-f48.google.com with SMTP id s14so5225677wmh.1
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Dec 2018 09:56:25 -0800 (PST)
-X-Gm-Message-State: AA+aEWYwY5Com3mmWoSK0+41C0l/9yfB83XQGr4qh6dPk5mGXato1Jsi
-        gb2RaCih63q6ehU6GvS6+az9KwRE15xumnjw/lHjnA==
-X-Google-Smtp-Source: AFSGD/Xi/KZNxDkd+UDVtU1fnEdusNC7yKdoA8fRu/kcfNW/MwSglOeb8YgrUvnZwMmbJqU/t/Z2qChya+eFJvXaBAs=
-X-Received: by 2002:a1c:f112:: with SMTP id p18mr2884558wmh.83.1544205383599;
- Fri, 07 Dec 2018 09:56:23 -0800 (PST)
+        id S1726083AbeLGR5Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Dec 2018 12:57:16 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Dec 2018 09:57:15 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,327,1539673200"; 
+   d="scan'208";a="128033502"
+Received: from knelson-mobl3.amr.corp.intel.com (HELO [10.252.140.115]) ([10.252.140.115])
+  by fmsmga001.fm.intel.com with ESMTP; 07 Dec 2018 09:57:13 -0800
+Subject: Re: [PATCH v1] ASoC: Intel: kbl_da7219_max98927: fix the audio jack
+ button remapping
+To:     Zhuohao Lee <zhuohao@chromium.org>, alsa-devel@alsa-project.org
+Cc:     Liam Girdwood <liam.r.girdwood@linux.intel.com>,
+        Jie Yang <yang.jie@linux.intel.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, Vinod Koul <vkoul@kernel.org>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Max Chang <changmax@chromium.org>,
+        Oder Chiou <oder_chiou@realtek.com>,
+        linux-kernel@vger.kernel.org, "Zhi, Yong" <yong.zhi@intel.com>
+References: <20181207090552.105205-1-zhuohao@chromium.org>
+From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Message-ID: <90b46425-5dbd-2ba7-d57d-270d0ab68632@linux.intel.com>
+Date:   Fri, 7 Dec 2018 11:57:13 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-References: <20181206221922.31012-1-sean.j.christopherson@intel.com>
- <20181206221922.31012-5-sean.j.christopherson@intel.com> <CALCETrXRJ645=08fyeoMQ949fLB1TvhsgERFVx5mAHdViEjq8Q@mail.gmail.com>
- <20181207165145.GB10404@linux.intel.com>
-In-Reply-To: <20181207165145.GB10404@linux.intel.com>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Fri, 7 Dec 2018 09:56:09 -0800
-X-Gmail-Original-Message-ID: <CALCETrVkEW82PzQZhJ5iS849DLY1gbd8YjH5F7P1J7hgjkjiOQ@mail.gmail.com>
-Message-ID: <CALCETrVkEW82PzQZhJ5iS849DLY1gbd8YjH5F7P1J7hgjkjiOQ@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 4/4] x86/vdso: Add __vdso_sgx_enter_enclave() to
- wrap SGX enclave transitions
-To:     "Christopherson, Sean J" <sean.j.christopherson@intel.com>
-Cc:     Andrew Lutomirski <luto@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        X86 ML <x86@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Josh Triplett <josh@joshtriplett.org>,
-        linux-sgx@vger.kernel.org, haitao.huang@linux.intel.com,
-        Jethro Beekman <jethro@fortanix.com>,
-        "Dr. Greg Wettstein" <greg@enjellic.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20181207090552.105205-1-zhuohao@chromium.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 7, 2018 at 8:51 AM Sean Christopherson
-<sean.j.christopherson@intel.com> wrote:
->
-> +Cc: linux-sgx, Haitao, Greg and Jethro
->
-> My apologies for neglecting to cc the SGX folks, original thread is here:
->
-> https://lkml.kernel.org/r/20181206221922.31012-1-sean.j.christopherson@intel.com
->
-> On Thu, Dec 06, 2018 at 02:50:01PM -0800, Andy Lutomirski wrote:
-> > On Thu, Dec 6, 2018 at 2:19 PM Sean Christopherson
-> > <sean.j.christopherson@intel.com> wrote:
-> > >
-> >  +
-> > > +       /*
-> > > +        * Invoke the caller's exit handler if one was provided.  The return
-> > > +        * value tells us whether to re-enter the enclave (EENTER or ERESUME)
-> > > +        * or to return (EEXIT).
-> > > +        */
-> > > +       if (exit_handler) {
-> > > +               leaf = exit_handler(exit_info, tcs, priv);
-> > > +               if (leaf == SGX_EENTER || leaf == SGX_ERESUME)
-> > > +                       goto enter_enclave;
-> > > +               if (leaf == SGX_EEXIT)
-> > > +                       return 0;
-> > > +               return -EINVAL;
-> > > +       } else if (leaf != SGX_EEXIT) {
-> > > +               return -EFAULT;
-> > > +       }
-> >
-> > This still seems overcomplicated to me.  How about letting the
-> > requested leaf (EENTER or ERESUME) be a parameter to the function and
-> > then just returning here?  As it stands, you're requiring any ERESUME
-> > that gets issued (other than the implicit ones) to be issued in the
-> > same call stack, which is very awkward if you're doing something like
-> > forwarding the fault to a different task over a socket and then
-> > waiting in epoll_wait() or similar before resuming the enclave.
->
-> Ah, yeah, wasn't thinking about usage models where the enclave could
-> get passed off to a different thread.
->
-> What about supporting both, i.e. keep the exit handler but make it 100%
-> optional?  And simplify the exit_handler to effectively return a boolean,
-> i.e. "exit or continue".
->
-> Something like this:
->
-> notrace long __vdso_sgx_enter_enclave(u32 op, void *tcs, void *priv,
->                                       struct sgx_enclave_exit_info *exit_info,
->                                       sgx_enclave_exit_handler *exit_handler)
-> {
->         u64 rdi, rsi, rdx;
->         u32 leaf;
->         long ret;
->
->         if (!tcs || !exit_info)
->                 return -EINVAL;
->
-> enter_enclave:
->         if (op != SGX_EENTER && op != SGX_ERESUME)
->                 return -EINVAL;
->
->         <same core code>
->
->         /*
->          * Invoke the caller's exit handler if one was provided.  The return
->          * value tells us whether to re-enter the enclave (EENTER or ERESUME)
->          * or to return (EEXIT).
->          */
->         if (exit_handler) {
->                 if (exit_handler(exit_info, tcs, priv)) {
->                         op = exit_info->leaf;
->                         goto enter_enclave;
->                 }
->         }
->
->         if (exit_info->leaf == SGX_EEXIT)
->                 return -EFAULT;
->
->         return 0;
-> }
->
->
-> I like that the exit handler allows userspace to trap/panic with the full
-> call stack in place, and in a dedicated path, i.e. outside of the basic
-> enter/exit code.  An exit handler probably doesn't fundamentally change
-> what userspace can do with respect to debugging/reporting, but I think
-> it would actually simplify some userspace implementations, e.g. I'd use
-> it in my tests like so:
->
-> long fault_handler(struct sgx_enclave_exit_info *exit_info, void *tcs, void *priv)
-> {
->         if (exit_info->leaf == SGX_EEXIT)
->                 return 0;
->
->         <report exception and die/hang>
-> }
->
 
-Hmm.  That't not totally silly, although you could accomplish almost
-the same thing by wrapping the vDSO helper in another function.
+On 12/7/18 3:05 AM, Zhuohao Lee wrote:
+>  From the da7219 spec, the button A, B, C and D are remapped to
+> 0, 1, 2 and 3 respectively where button A is KEY_PLAYPAUSE,
+> B is KEY_VOLUMEUP, C is KEY_VOLUMEDOWN and D is KEY_VOICECOMMAND
+
+Ok, but could fix all da7219-based machine drivers then, the mappings 
+are completely inconsistent:
+
+kbl_da7219_max98357a.c:    snd_jack_set_key(jack->jack, SND_JACK_BTN_0, 
+KEY_MEDIA);
+kbl_da7219_max98357a.c:    snd_jack_set_key(jack->jack, SND_JACK_BTN_1, 
+KEY_VOLUMEUP);
+kbl_da7219_max98357a.c:    snd_jack_set_key(jack->jack, SND_JACK_BTN_2, 
+KEY_VOLUMEDOWN);
+kbl_da7219_max98357a.c:    snd_jack_set_key(jack->jack, SND_JACK_BTN_3, 
+KEY_VOICECOMMAND);
+kbl_da7219_max98927.c:    snd_jack_set_key(jack->jack, SND_JACK_BTN_0, 
+KEY_PLAYPAUSE);
+kbl_da7219_max98927.c:    snd_jack_set_key(jack->jack, SND_JACK_BTN_1, 
+KEY_VOICECOMMAND);
+kbl_da7219_max98927.c:    snd_jack_set_key(jack->jack, SND_JACK_BTN_2, 
+KEY_VOLUMEUP);
+kbl_da7219_max98927.c:    snd_jack_set_key(jack->jack, SND_JACK_BTN_3, 
+KEY_VOLUMEDOWN);
+
+Thanks!
+
+>
+> Change-Id: I67f929f226883bd289cb7beb0a7b23f40e7121e2
+You want to remove those Change-Ids for upstream.
+> Signed-off-by: Zhuohao Lee <zhuohao@chromium.org>
+> Signed-off-by: Max Chang  <changmax@chromium.org>
+> ---
+>   sound/soc/intel/boards/kbl_da7219_max98927.c | 6 +++---
+>   1 file changed, 3 insertions(+), 3 deletions(-)
+>
+> diff --git a/sound/soc/intel/boards/kbl_da7219_max98927.c b/sound/soc/intel/boards/kbl_da7219_max98927.c
+> index 3fa1c3ca6d37..d3531f0eb357 100644
+> --- a/sound/soc/intel/boards/kbl_da7219_max98927.c
+> +++ b/sound/soc/intel/boards/kbl_da7219_max98927.c
+> @@ -262,9 +262,9 @@ static int kabylake_da7219_codec_init(struct snd_soc_pcm_runtime *rtd)
+>   
+>   	jack = &ctx->kabylake_headset;
+>   	snd_jack_set_key(jack->jack, SND_JACK_BTN_0, KEY_PLAYPAUSE);
+> -	snd_jack_set_key(jack->jack, SND_JACK_BTN_1, KEY_VOICECOMMAND);
+> -	snd_jack_set_key(jack->jack, SND_JACK_BTN_2, KEY_VOLUMEUP);
+> -	snd_jack_set_key(jack->jack, SND_JACK_BTN_3, KEY_VOLUMEDOWN);
+> +	snd_jack_set_key(jack->jack, SND_JACK_BTN_1, KEY_VOLUMEUP);
+> +	snd_jack_set_key(jack->jack, SND_JACK_BTN_2, KEY_VOLUMEDOWN);
+> +	snd_jack_set_key(jack->jack, SND_JACK_BTN_3, KEY_VOICECOMMAND);
+>   
+>   	da7219_aad_jack_det(component, &ctx->kabylake_headset);
+>   
