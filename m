@@ -2,102 +2,86 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D2ABC07E85
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 12:28:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC1C1C07E85
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 12:30:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 52A7F20989
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 12:28:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 52A7F20989
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 9052020989
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 12:30:30 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="SSLpxFfy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9052020989
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726066AbeLGM2z (ORCPT
+        id S1726073AbeLGMa3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 07:28:55 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:52948 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725995AbeLGM2y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 07:28:54 -0500
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 909DD30024A2;
-        Fri,  7 Dec 2018 12:28:54 +0000 (UTC)
-Received: from alatyr.usersys.redhat.com (unknown [10.43.17.162])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id D86966293B;
-        Fri,  7 Dec 2018 12:28:53 +0000 (UTC)
-Subject: Re: [PATCH v2] kobject: add kernel/uevent_features sysfs file
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, msekleta@redhat.com
-References: <20181207114607.26981-1-prajnoha@redhat.com>
- <20181207120123.GB15336@kroah.com>
-From:   Peter Rajnoha <prajnoha@redhat.com>
-Message-ID: <e0072bf2-c89e-df9c-8764-7505a71ab36e@redhat.com>
-Date:   Fri, 7 Dec 2018 13:28:52 +0100
+        Fri, 7 Dec 2018 07:30:29 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:35785 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726005AbeLGMa2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Dec 2018 07:30:28 -0500
+Received: by mail-lj1-f193.google.com with SMTP id x85-v6so3420618ljb.2
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Dec 2018 04:30:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=7/os7eFrdjZAa8Lq9Ha1NGHegsNC2tJAUi1QBzjgVMQ=;
+        b=SSLpxFfyZYwuHYHP7p2Ut2Ty0LIsEi2IOaquypyrl11wWADZI5DTskb1yEnwosmu3F
+         QbuaZcnzjsIZ48O/a+3qY3rmAlHrYo/SAVokD6v2CHjIgYsM5viEGzMT/kF1oUCHWnuE
+         t8/5HrEp5FGlYzCHYbj+ff8E+Rejt00fJHjvc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=7/os7eFrdjZAa8Lq9Ha1NGHegsNC2tJAUi1QBzjgVMQ=;
+        b=Uv7KWlHpslwieG15Li0+9AY18hL4hyc0KsUXVs3uEsiO3ekv3LRQX6wYeiKs2onOfl
+         VHp8bohlRtLcU7g1yInDmldH5IlzUPLH3iDBwag1GkpSxd6r6qZJ6IWixI/kkbt6OWiM
+         RhAk8e+gX+2RXsLimtEhZKovfZUIc+BqmE146HUOYpU3QAPjkPcV/rIM3mXKn5gJOoqF
+         1pCFJlNzmr41rNFQxaXFqi0yrfXmYe39TuTpm7xt2X+zoz7a84VbglY1pPDKNSXFc+eN
+         lJOJNmEeAUdU0O4nhBz+tI21ifAmO+5WV4r98VLCKNUbyV3Gf8wJl/piU0JhSLVkY5ll
+         Lx8g==
+X-Gm-Message-State: AA+aEWYvW1HCXKPnZ7tsx3chZY6Dh7bEVKkdkQgKSZGxCFODQVSGwpDX
+        7iiYzRo8Q0G4zqM2z5Gy6aHuSJSXyVJRMId4w4gCQQ==
+X-Google-Smtp-Source: AFSGD/WIGfniGElDiivYNO8T1H7qXLY6BOgDe33KqinRMAlSPWQOurZ6BCja9DW032eHL0yw8rctBq1I6VWBugDcKZY=
+X-Received: by 2002:a2e:994:: with SMTP id 142-v6mr1090584ljj.120.1544185826433;
+ Fri, 07 Dec 2018 04:30:26 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20181207120123.GB15336@kroah.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Fri, 07 Dec 2018 12:28:54 +0000 (UTC)
+References: <20181203154100.4280-1-wens@csie.org>
+In-Reply-To: <20181203154100.4280-1-wens@csie.org>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Fri, 7 Dec 2018 13:30:14 +0100
+Message-ID: <CACRpkdYbdDfN93oXEkSmoFAEdrQwzk7mTCreOgem6RTJPWVj5A@mail.gmail.com>
+Subject: Re: [PATCH 0/2] pinctrl: sunxi: a64: Drop numeral from csi0/ts0
+To:     Chen-Yu Tsai <wens@csie.org>
+Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>,
+        jagan@amarulasolutions.com,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/7/18 1:01 PM, Greg KH wrote:
-> On Fri, Dec 07, 2018 at 12:46:07PM +0100, Peter Rajnoha wrote:
->> This patch adds /sys/kernel/uevent_features file which currently lists
->> 'synthargs' string to denote that the kernel is able to recognize the
->> extended synthetic uevent arguments. Userspace can easily check for
->> the feature then.
-> 
-> So this is just to try to have userspace detect what type of feature the
-> kernel has?  Why can't you just go off of the other sysfs file itself?
-> You shouldn't need a "this is a feature list" for the kernel, otherwise
-> we would be on a huge slippery slope trying to document everything.
-> 
-> Who is going to use this thing?  And what else would go into it?
-> 
-> Isn't there some other way you can detect this from userspace (like
-> writing to the file and it fails?)
-> 
+On Mon, Dec 3, 2018 at 4:41 PM Chen-Yu Tsai <wens@csie.org> wrote:
 
-Yes, it's for userspace to be sure that uevent interface has certain
-features available that it can use.
+> This small series renames the csi0 and ts0 pin function names to csi and
+> ts. This makes the names match the datasheet. As there are only one of
+> each type of controller, having a numeral suffix doesn't make sense.
+>
+> I'd like to do the rename now while we don't have users nor support for
+> these two controllers. I planned to send this together with CSI support
+> for the A64, but Jagan beat me to it, so here it is.
 
-For now, it's just that "synthetic uevent arguments" that is the
-extension of the original uevent interface. That applies to both input
-(writing to /sys/.../uevent file) and output (related extra variables
-that appear in generated uevents).
+Patch applied with Maxime's ACK.
 
-The obvious user of this is going to be systemd/udev that will add extra
-variables to identify various synthetic uevents it produces (coming as
-result of the WATCH udev rule, coming from the udevadm trigger call and
-other specific uses where it needs to generate synthetic uevents). Other
-users I know of involve storage handling tools which need to generate
-these synthetic uevents whenever a change happens and it needs to
-synchronize with udevd processing (e.g. waiting on refresh to get
-reflected in udev database).
-
-I understand that there is an argument that we can just use kernel
-version check, but this is not acceptable for all unfortunately (see
-also https://github.com/systemd/systemd/pull/7294#issuecomment-343491015).
-
-The issue with checking the return code after writing to /sys/.../uevent
-is that it doesn't work with older kernel releases because there, it
-always returned success, no matter if the input string was correct or
-not or whether the arguments were recognized (unfortunately, this was
-like that from beginning, it seems). Even though, I've fixed this return
-code with df44b479 recently, but still, there are possible older
-releases out there... And still, there might be new variables introduced
-in the future that don't necessarily need to be direct result of writing
-to /sys/.../uevent file.
-
--- 
-Peter
+Yours,
+Linus Walleij
