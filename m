@@ -2,195 +2,251 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9128AC07E85
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 13:14:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 942B5C64EB1
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 13:18:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D86A208E7
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 13:14:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544188466;
-	bh=CCVFTWWL/YgAq4iGp1T8piy/vpCY/l/Geb4kQAGsMTs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=zIiL78P2qC5CAc3uH688H2FFIYe/GZlrEIXU8Gy5oO3Yfag/FGvFCz2cMqzKASelG
-	 XrwU0T9D9Do7J94gqPEtwJ2q2HtHynNiF7AZg0s8FIKVQYKVjGrZMfiKSKNEOWgbte
-	 +O7r86rdlRuyXuhIGsiufktf7rbo5wnZ4lsOaCXY=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D86A208E7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 5A2032146D
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 13:18:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A2032146D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726087AbeLGNOZ (ORCPT
+        id S1726098AbeLGNR7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 08:14:25 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:34044 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726021AbeLGNOY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 08:14:24 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=Upfsh2ISMrxgIWIY+1n7+VcOCg+DGiiuqer2zsX05sE=; b=lgm93w8HxBPNB8PBIEHT5DXlZ
-        x6MHkVtnv5hvJ2omdaYtaFlonmf3Z5hil0YtzcGqWKs1yL6yvO8mw2Fdj01kB1nGIHyky4CqguhgJ
-        mDh5A6TXL14xvIOgOnhp5WE59aQP1JcdBkSXk3lK4SKmDkN/gEsmRVXxoifD1Pi3U4Fh4=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1gVFxS-0003dN-TK; Fri, 07 Dec 2018 13:14:18 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 6A1EF11253E4; Fri,  7 Dec 2018 13:14:18 +0000 (GMT)
-Date:   Fri, 7 Dec 2018 13:14:18 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc:     gregkh@linuxfoundation.org, rafael@kernel.org,
+        Fri, 7 Dec 2018 08:17:59 -0500
+Received: from foss.arm.com ([217.140.101.70]:44212 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726010AbeLGNR6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Dec 2018 08:17:58 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EFA7015AB;
+        Fri,  7 Dec 2018 05:17:57 -0800 (PST)
+Received: from [10.1.196.75] (e110467-lin.cambridge.arm.com [10.1.196.75])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AFC3D3F5AF;
+        Fri,  7 Dec 2018 05:17:56 -0800 (PST)
+Subject: Re: [PATCH RFC 1/1] swiotlb: add debugfs to track swiotlb buffer
+ usage
+To:     Dongli Zhang <dongli.zhang@oracle.com>,
+        Joe Jin <joe.jin@oracle.com>, iommu@lists.linux-foundation.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [RFC] regmap-irq: add "main register" and level-irq support
-Message-ID: <20181207131418.GB6510@sirena.org.uk>
-References: <20181130085908.GA24983@localhost.localdomain>
- <20181204172137.GE6809@sirena.org.uk>
- <20181205082251.GE31204@localhost.localdomain>
- <20181205172701.GH6205@sirena.org.uk>
- <20181207075829.GA24940@localhost.localdomain>
+Cc:     konrad.wilk@oracle.com, hch@lst.de, m.szyprowski@samsung.com
+References: <1544068785-20399-1-git-send-email-dongli.zhang@oracle.com>
+ <da16ecce-4e25-d246-3e0d-389e8e9e413e@oracle.com>
+ <28a9f44a-d1bf-fb34-5a57-cfdb7bb23163@oracle.com>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <377f610a-035b-a591-de9f-b926e2b4f9e1@arm.com>
+Date:   Fri, 7 Dec 2018 13:17:55 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="JYK4vJDZwFMowpUq"
-Content-Disposition: inline
-In-Reply-To: <20181207075829.GA24940@localhost.localdomain>
-X-Cookie: Obey all traffic laws.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <28a9f44a-d1bf-fb34-5a57-cfdb7bb23163@oracle.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 07/12/2018 05:49, Dongli Zhang wrote:
+> 
+> 
+> On 12/07/2018 12:12 AM, Joe Jin wrote:
+>> Hi Dongli,
+>>
+>> Maybe move d_swiotlb_usage declare into swiotlb_create_debugfs():
+> 
+> I assume the call of swiotlb_tbl_map_single() might be frequent in some
+> situations, e.g., when 'swiotlb=force'.
+> 
+> That's why I declare the d_swiotlb_usage out of any functions and use "if
+> (unlikely(!d_swiotlb_usage))".
+> 
+> I think "if (unlikely(!d_swiotlb_usage))" incur less performance overhead than
+> calling swiotlb_create_debugfs() every time to confirm if debugfs is created. I
+> would declare d_swiotlb_usage statically inside swiotlb_create_debugfs() if the
+> performance overhead is acceptable (it is trivial indeed).
+> 
+> 
+> That is the reason I tag the patch with RFC because I am not sure if the
+> on-demand creation of debugfs is fine with maintainers/reviewers. If swiotlb
+> pages are never allocated, we would not be able to see the debugfs entry.
+> 
+> I would prefer to limit the modification within swiotlb and to not taint any
+> other files.
+> 
+> The drawback is there is no place to create or delete the debugfs entry because
+> swiotlb buffer could be initialized and uninitialized at very early stage.
 
---JYK4vJDZwFMowpUq
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Couldn't you just do it from an initcall? All you really need to care 
+about is ordering after debugfs_init(), which is easy. If SWIOTLB 
+initialisation does end up being skipped at any point, nobody's going to 
+mind if debugfs still has an entry saying io_tlb_nslabs == 0 (in fact, 
+that's arguably useful in itself as positive confirmation that the 
+system is not using SWIOTLB).
 
-On Fri, Dec 07, 2018 at 09:58:29AM +0200, Matti Vaittinen wrote:
-> On Wed, Dec 05, 2018 at 05:27:01PM +0000, Mark Brown wrote:
+>> void swiotlb_create_debugfs(void)
+>> {
+>> #ifdef CONFIG_DEBUG_FS
+>> 	static struct dentry *d_swiotlb_usage = NULL;
+>>
+>> 	if (d_swiotlb_usage)
+>> 		return;
+>>
+>> 	d_swiotlb_usage = debugfs_create_dir("swiotlb", NULL);
+>>
+>> 	if (!d_swiotlb_usage)
+>> 		return;
+>>
+>> 	debugfs_create_file("usage", 0600, d_swiotlb_usage,
+>> 			    NULL, &swiotlb_usage_fops);
 
-> > If they're full subdevices you'd be pointing at the relevant platform
-> > device anyway.
+Maybe expose io_tlb_nslabs and io_tlb_used as separate entries? Then you 
+could just use debugfs_create_ulong() to keep things really simple. That 
+would also make the interface more consistent with dma-debug, which 
+would be nice given how closely-related they are.
 
-> I am not sure if I have explained me well enough =3D) When we look at
-> regmap_add_irq_chip we see that it creates the IRQ domains. And we
-> further see:
->=20
-> 		d->domain =3D irq_domain_add_linear(map->dev->of_node,
-> 						  chip->num_irqs,
-> 						  &regmap_domain_ops, d);
+Robin.
 
-> where map->dev->of_node points the node added to regmap. And as we
-> really want to use the i2c to access registers, we should have done the
-> regmap using:
-
-> devm_regmap_init_i2c(i2c, &regmap);
-
-> where the i2c is the struct i2c_client *. The dev in i2c_client is the
-> i2c device - which has of_node pointing at the "main i2c node" - not the
-> sub block nodes. Hence all irq chips created by regmap_add_irq_chip for
-> this physical i2c slave device will point to the same DT node.=20
-
-Hrm, right.  You'd need to have a proxy regmap for the child devices for
-that.  Not ideal.
-
-> 	bool mask_writeonly:1;
-> +	bool no_of:1;
->=20
-> and in the regmap_add_irq_chip do:
-
-> 		node =3D (chip->no_of) ? NULL : map->dev->of_node;
-> 		d->domain =3D irq_domain_add_linear(node, chip->num_irqs,
-> 						  &regmap_domain_ops, d);
-
-> Then we could have chip->no_of set for the 'main irq chip' and for those
-> chips we don't wan't to expose via DT. In my case I would leave no_of
-> unset only for the irq-chip which I created for the GPIO? Is this a
-> silly idea?
-
-That's worth a shot, yes - I'd need to see it fully fleshed out I think
-but it looks sensible (no ternery operator please).
-
-> > The mapping isn't guaranteed to be a 1:1 mapping - one way this hardware
-> > gets structured is that the central interrupt controller is saying which
-> > IP block is flagging an interrupt rather than which register has an
-> > interrupt set in it.  You can then have either more than one detailed
-> > status register for that IP
-
-> Correct. But I guess the IP blocks often have limited set of registers fo=
-r the
-> "sub interrupts". For such cases my idea would work, right. My RFC
-> handled case where there is many 'sub registers' to read for one 'main
-> bit.
-
-Your idea definitely works for the current case, yes - I'm just thinking
-about future edge and extension cases.
-
-> > or several smaller IPs reporting through a
-> > single detailed status register.
-
-> I think that if we have more than two layers of irqs (main and sub) -
-> then we should do cascaded controllers.
-
-Yeah, and my first thought here is that we should just be using cascaded
-controllers all the time (but like I say I'm not 100% certain on that).
-
-> > Right, it's about working out which subregister to read - the point is
-> > you can do this by adding a link in either direction, I'm suggesting
-> > doing it from the individual interrupt to the main register since we
-> > already have individual data structures for those and it feels less
-> > likely to run into hard to represent corner cases.
-
-> I see your point now. But as I said, I am not sure we should add the
-> overhead of 'main irq bit description' for simple cases just to cover
-> the corner cases. Yet I can try seeing what I can come up with if you
-> think this is the way to go.
-
-If you could take a look that'd be great.
-
-> > >  * @main_status: Optional base main status register address. Some chi=
-ps have
-> > >  *		 "main status register(s)" which indicate actual irq registers
-> > >  *		 with unhandled interrupts. Provide main status register
-> > >  *		 address here to avoid reading irq registers with no
-> > >  *		 active interrupts. Mapping from main status value to
-> > >  *		 interrupt register can be provided in sub_reg_offsets.
-
-> > > Perhaps this would clarify that the status_base, mask_base, ack_base,
-> > > etc. should still be used normally?
-
-> > Probably.
-
-> I am not sure this means I was able to convince you or if this is the
-> polite way to tell me not to bother =3D) I am Finnish guy who does not
-> understand small talk or polite hints ;)
-
-I mean that probably if you add clarifications like you suggest that
-might do it.  It's one of these things where you can't 100% tell how
-things will look until you see the actual thing.
-
---JYK4vJDZwFMowpUq
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlwKcikACgkQJNaLcl1U
-h9BkrAf8CFu+3ZdlY/D0Fwi2KgBBLx48NDOIXLhucgnWPEAvYDjVuivkCa7HGjTi
-o1/CZD8lxTUwHM35z8QbtnrELQb6JrArwkxxAxtKIt0V7XFMqkkz1xAfxrWkwuj2
-28nV0HmSOxHmDKvaITPu3Jer5jK5bs5YIWReex/jaAHAW1mrEoAT5TJA4GNSCRD9
-mI4HDd0XjYPcHIjhwc17P2xegM7uswXCUFGbEUyfJPPG4VsUT9GkO8w/Srxd4AgZ
-7jIfmrUGfyaa5z4hlNSvlfUu4U05zWTtt7vdYnm//YGHNPV8Tj87wMcfO4WHV5hV
-CSPUBPu93nFiBcPNZ+NRteeraspn3Q==
-=glZu
------END PGP SIGNATURE-----
-
---JYK4vJDZwFMowpUq--
+>> #endif
+>> }
+>>
+>> And for io_tlb_used, possible add a check at the begin of swiotlb_tbl_map_single(),
+>> if there were not any free slots or not enough slots, return fail directly?
+> 
+> This would optimize the slots allocation path. I will follow this in next
+> version after I got more suggestions and confirmations from maintainers.
+> 
+> 
+> Thank you very much!
+> 
+> Dongli Zhang
+> 
+>>
+>> Thanks,
+>> Joe
+>> On 12/5/18 7:59 PM, Dongli Zhang wrote:
+>>> The device driver will not be able to do dma operations once swiotlb buffer
+>>> is full, either because the driver is using so many IO TLB blocks inflight,
+>>> or because there is memory leak issue in device driver. To export the
+>>> swiotlb buffer usage via debugfs would help the user estimate the size of
+>>> swiotlb buffer to pre-allocate or analyze device driver memory leak issue.
+>>>
+>>> As the swiotlb can be initialized at very early stage when debugfs cannot
+>>> register successfully, this patch creates the debugfs entry on demand.
+>>>
+>>> Signed-off-by: Dongli Zhang <dongli.zhang@oracle.com>
+>>> ---
+>>>   kernel/dma/swiotlb.c | 57 ++++++++++++++++++++++++++++++++++++++++++++++++++++
+>>>   1 file changed, 57 insertions(+)
+>>>
+>>> diff --git a/kernel/dma/swiotlb.c b/kernel/dma/swiotlb.c
+>>> index 045930e..d3c8aa4 100644
+>>> --- a/kernel/dma/swiotlb.c
+>>> +++ b/kernel/dma/swiotlb.c
+>>> @@ -35,6 +35,9 @@
+>>>   #include <linux/scatterlist.h>
+>>>   #include <linux/mem_encrypt.h>
+>>>   #include <linux/set_memory.h>
+>>> +#ifdef CONFIG_DEBUG_FS
+>>> +#include <linux/debugfs.h>
+>>> +#endif
+>>>   
+>>>   #include <asm/io.h>
+>>>   #include <asm/dma.h>
+>>> @@ -73,6 +76,13 @@ static phys_addr_t io_tlb_start, io_tlb_end;
+>>>    */
+>>>   static unsigned long io_tlb_nslabs;
+>>>   
+>>> +#ifdef CONFIG_DEBUG_FS
+>>> +/*
+>>> + * The number of used IO TLB block
+>>> + */
+>>> +static unsigned long io_tlb_used;
+>>> +#endif
+>>> +
+>>>   /*
+>>>    * This is a free list describing the number of free entries available from
+>>>    * each index
+>>> @@ -100,6 +110,41 @@ static DEFINE_SPINLOCK(io_tlb_lock);
+>>>   
+>>>   static int late_alloc;
+>>>   
+>>> +#ifdef CONFIG_DEBUG_FS
+>>> +
+>>> +static struct dentry *d_swiotlb_usage;
+>>> +
+>>> +static int swiotlb_usage_show(struct seq_file *m, void *v)
+>>> +{
+>>> +	seq_printf(m, "%lu\n%lu\n", io_tlb_used, );
+>>> +	return 0;
+>>> +}
+>>> +
+>>> +static int swiotlb_usage_open(struct inode *inode, struct file *filp)
+>>> +{
+>>> +	return single_open(filp, swiotlb_usage_show, NULL);
+>>> +}
+>>> +
+>>> +static const struct file_operations swiotlb_usage_fops = {
+>>> +	.open           = swiotlb_usage_open,
+>>> +	.read           = seq_read,
+>>> +	.llseek         = seq_lseek,
+>>> +	.release        = single_release,
+>>> +};
+>>> +
+>>> +void swiotlb_create_debugfs(void)
+>>> +{
+>>> +	d_swiotlb_usage = debugfs_create_dir("swiotlb", NULL);
+>>> +
+>>> +	if (!d_swiotlb_usage)
+>>> +		return;
+>>> +
+>>> +	debugfs_create_file("usage", 0600, d_swiotlb_usage,
+>>> +			    NULL, &swiotlb_usage_fops);
+>>> +}
+>>> +
+>>> +#endif
+>>> +
+>>>   static int __init
+>>>   setup_io_tlb_npages(char *str)
+>>>   {
+>>> @@ -449,6 +494,11 @@ phys_addr_t swiotlb_tbl_map_single(struct device *hwdev,
+>>>   		pr_warn_once("%s is active and system is using DMA bounce buffers\n",
+>>>   			     sme_active() ? "SME" : "SEV");
+>>>   
+>>> +#ifdef CONFIG_DEBUG_FS
+>>> +	if (unlikely(!d_swiotlb_usage))
+>>> +		swiotlb_create_debugfs();
+>>> +#endif
+>>> +
+>>>   	mask = dma_get_seg_boundary(hwdev);
+>>>   
+>>>   	tbl_dma_addr &= mask;
+>>> @@ -528,6 +578,9 @@ phys_addr_t swiotlb_tbl_map_single(struct device *hwdev,
+>>>   		dev_warn(hwdev, "swiotlb buffer is full (sz: %zd bytes)\n", size);
+>>>   	return SWIOTLB_MAP_ERROR;
+>>>   found:
+>>> +#ifdef CONFIG_DEBUG_FS
+>>> +	io_tlb_used += nslots;
+>>> +#endif
+>>>   	spin_unlock_irqrestore(&io_tlb_lock, flags);
+>>>   
+>>>   	/*
+>>> @@ -588,6 +641,10 @@ void swiotlb_tbl_unmap_single(struct device *hwdev, phys_addr_t tlb_addr,
+>>>   		 */
+>>>   		for (i = index - 1; (OFFSET(i, IO_TLB_SEGSIZE) != IO_TLB_SEGSIZE -1) && io_tlb_list[i]; i--)
+>>>   			io_tlb_list[i] = ++count;
+>>> +
+>>> +#ifdef CONFIG_DEBUG_FS
+>>> +		io_tlb_used -= nslots;
+>>> +#endif
+>>>   	}
+>>>   	spin_unlock_irqrestore(&io_tlb_lock, flags);
+>>>   }
+>>>
+>>
+>>
