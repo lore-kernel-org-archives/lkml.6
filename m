@@ -2,91 +2,140 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49578C07E85
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 15:11:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1534EC64EB1
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 15:13:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0834A20837
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 15:11:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CA033214DA
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 15:13:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="C3JL37VE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0834A20837
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Njdm2dQw";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Dt7O+XU2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA033214DA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726147AbeLGPLP (ORCPT
+        id S1726107AbeLGPNU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 10:11:15 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:60512 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726041AbeLGPLO (ORCPT
+        Fri, 7 Dec 2018 10:13:20 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:51820 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726034AbeLGPNU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 10:11:14 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=+K/Q3C8Zh/PtzsONM7k7nq3ejdyDZ6Iu/lVeDRTdWOI=; b=C3JL37VEZqE1SNEdktIy6/j0o
-        7vmVQrdZL+0D6gUbIfP61MuuyzDDI8Zt6Vc/ZtmCIr+u+elkg0kEwqn5FrwISxabnZ9mCvZfPeXXX
-        4OErUI/f7RF/2t3SixLyAWxVxfCiKCoSHnoIiDSGNktyCP9enqAZ6dteGpgvDgIlbfM3NaOMCidy4
-        uuq4/6jv5HzFK3dJx1wWn/CQlts6+11oU+MLlnDZLnA+YoKzPrm0dQ05PL6Gyw9y7fqAn3nWkP2lc
-        33fIRSdfWeFXvCOmFB2IU7vfob2noKbA2gDKcghK8g0bAA9giKMBsgvMkVI7Fb5aKeCoRD5U7uWlX
-        JgwCNR9bQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gVHmW-0006Be-En; Fri, 07 Dec 2018 15:11:08 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id A97102072618F; Fri,  7 Dec 2018 16:11:05 +0100 (CET)
-Date:   Fri, 7 Dec 2018 16:11:05 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Jiri Olsa <jolsa@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Luis Claudio R. Goncalves" <lclaudio@uudg.org>, ldv@altlinux.org,
-        esyr@redhat.com, Frederic Weisbecker <fweisbec@gmail.com>
-Subject: Re: [PATCH 1/8] perf: Allow to block process in syscall tracepoints
-Message-ID: <20181207151105.GB5289@hirez.programming.kicks-ass.net>
-References: <20181205160509.1168-1-jolsa@kernel.org>
- <20181205160509.1168-2-jolsa@kernel.org>
- <20181206081028.GE4234@hirez.programming.kicks-ass.net>
- <20181206083400.GA13675@hirez.programming.kicks-ass.net>
- <20181206131946.2c47f556@vmware.local.home>
- <20181207085839.GC2237@hirez.programming.kicks-ass.net>
- <20181207072701.5bc564c7@vmware.local.home>
+        Fri, 7 Dec 2018 10:13:20 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id BA5A260792; Fri,  7 Dec 2018 15:13:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1544195598;
+        bh=+mqfN/8Qh8/QyieDtTmNvFLM604n5M1874yB0KutcYQ=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=Njdm2dQw7/lLEe39CP22i4CcsFUfBKRD3l6C/6o3ug5riEBbm9unWwQLQrfUnasgk
+         k0cP5KK4ZJc1ZWDgK/IAIDd9NAspdTtp2hyqYP93fP8Tp22kUBRzShvFm+HtxexKIi
+         hTVyyoPXyGgqXUHazpLLaxIMuPIv/oXtcjjCtkJ8=
+Received: from [10.226.60.81] (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: jhugo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 3DE4C601C4;
+        Fri,  7 Dec 2018 15:13:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1544195597;
+        bh=+mqfN/8Qh8/QyieDtTmNvFLM604n5M1874yB0KutcYQ=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=Dt7O+XU2fHyCiiSkuspgC1xThGI/7GyYn01YVZfMFiE+gPl3nJ0TyWH9aYmHpy07m
+         a/iohbIZmZnyy+SkRgvjb4mm06V4aLsXo/Yg5piMk2dxMnSIO1hQeYi+v5sBf4A9cs
+         OA3pvH2M+9FygTmP3U3DyYmp/UysjR0Kk1Yto4tg=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3DE4C601C4
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jhugo@codeaurora.org
+Subject: Re: [PATCH v2] clk: qcom: smd: Add support for MSM8998 rpm clocks
+To:     Marc Gonzalez <marc.w.gonzalez@free.fr>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        MSM <linux-arm-msm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <1544134310-10227-1-git-send-email-jhugo@codeaurora.org>
+ <84c0fd53-98e9-ac41-f1ca-68ad6d676e9a@free.fr>
+From:   Jeffrey Hugo <jhugo@codeaurora.org>
+Message-ID: <8b3702e8-3779-db5c-1777-94a6d97c1080@codeaurora.org>
+Date:   Fri, 7 Dec 2018 08:13:16 -0700
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181207072701.5bc564c7@vmware.local.home>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <84c0fd53-98e9-ac41-f1ca-68ad6d676e9a@free.fr>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 07, 2018 at 08:41:18AM -0500, Steven Rostedt wrote:
-> On Fri, 7 Dec 2018 09:58:39 +0100
-> Peter Zijlstra <peterz@infradead.org> wrote:
+On 12/7/2018 7:23 AM, Marc Gonzalez wrote:
+> On 06/12/2018 23:11, Jeffrey Hugo wrote:
 > 
-> > These patches give no justification *what*so*ever* for why we're doing
-> > ugly arse things like this. And why does this, whatever this is, need to
-> > be done in perf?
-> > 
-> > IOW, what problem are we solving ?
+>> Add rpm smd clocks, PMIC and bus clocks which are required on MSM8998
+>> for clients to vote on.
+>>
+>> Signed-off-by: Jeffrey Hugo <jhugo@codeaurora.org>
+>> ---
+>> v2
+>> -fix compatible ordering nits per Stephen
+>>
+>>   .../devicetree/bindings/clock/qcom,rpmcc.txt       |  1 +
+>>   drivers/clk/qcom/clk-smd-rpm.c                     | 62 ++++++++++++++++++++++
+>>   include/dt-bindings/clock/qcom,rpmcc.h             |  6 +++
+>>   3 files changed, 69 insertions(+)
 > 
-> I guess the cover letter should have had a link (or copy) of this:
+> Hmmm, my board seems to dislike this patch... it locks up for a while,
+> then reboots.
 > 
->  http://lkml.kernel.org/r/20181128134700.212ed035@gandalf.local.home
+> [    6.957289] ufshcd-qcom 1da4000.ufshc: ufshcd_query_flag: Sending flag query for idn 1 failed, err = -11
+> [    6.961233] ufshcd-qcom 1da4000.ufshc: ufshcd_query_flag_retry: failed with error -11, retries 2
+> [    6.970782] ufshcd-qcom 1da4000.ufshc: ufshcd_query_flag_retry: query attribute, opcode 6, idn 1, failed with error -11 after 3 retires
+> [    6.979576] ufshcd-qcom 1da4000.ufshc: ufshcd_complete_dev_init setting fDeviceInit flag failed with error -11
+> [   23.432798] rcu: INFO: rcu_preempt detected stalls on CPUs/tasks:
+> [   23.432884] rcu:     7-...0: (1 GPs behind) idle=6a2/1/0x4000000000000000 softirq=92/93 fqs=2626
+> [   23.437927] rcu:     (detected by 0, t=5252 jiffies, g=-819, q=112)
+> [   23.446425] Task dump for CPU 7:
+> [   23.452567] swapper/0       R  running task        0     1      0 0x0000002a
+> [   23.455806] Call trace:
+> [   23.462872]  __switch_to+0x94/0xe0
+> [   23.465009]  _regmap_write+0x58/0xb0
+> [   23.468452]  _regmap_update_bits+0xf0/0x110
+> [   23.472186]  regmap_update_bits_base+0x60/0x90
+> [   23.476110]  clk_disable_regmap+0x34/0x40
+> [   23.480614]  clk_branch_toggle+0x108/0x1b0
+> [   23.484681]  clk_branch2_disable+0x18/0x20
+> [   23.488692]  clk_disable_unused_subtree+0xc4/0xe0
+> [   23.492761]  clk_disable_unused+0x3c/0x130
+> [   23.497535]  do_one_initcall+0x5c/0x180
+> [   23.501557]  kernel_init_freeable+0x198/0x244
+> [   23.505276]  kernel_init+0x10/0x110
+> [   23.509768]  ret_from_fork+0x10/0x20
+> 
+> /*** REBOOT ***/
+> Format: Log Type - Time(microsec) - Message - Optional Info
+> Log Type: B - Since Boot(Power On Reset),  D - Delta,  S - Statistic
+> 
+> I need to check the ufs_reset pin and phy init seq before I can investigate
+> this issue, but I wanted to send a report ASAP.
+> 
 
-That doesn't even begin to explain. Who cares about strace and why? And
-why is it such a bad thing to loose the occasional record etc..
+Hmm.  I run with clk_ignore_unused.  I'm guessing that something was 
+defined that should be used eventually, but isn't used now, and so its 
+getting turned off when it probably shouldn't be.
 
+I'll try to repro on my end.
+
+-- 
+Jeffrey Hugo
+Qualcomm Datacenter Technologies as an affiliate of Qualcomm 
+Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the
+Code Aurora Forum, a Linux Foundation Collaborative Project.
