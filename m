@@ -2,196 +2,98 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 565D6C65BAF
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 15:15:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AA7BC07E85
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 15:19:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E22520837
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 15:15:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E22520837
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=citrix.com
+	by mail.kernel.org (Postfix) with ESMTP id 3338320882
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 15:19:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544195970;
+	bh=GgQpZyggwvg1c0v49la1/Do0wIB1W4l6a9s+oeWC3Nk=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=teNg3IBznVl5O4BGC60+Gf3Xsa2vTiHN1I4t78hpfjPNh8wc4+J74ALbNb8/E7K+C
+	 wVh+WICMyARUyPECxw6HuEYJl3I4mOcfgMlMJIWDfNfD0VkR0PaFPdY4T7rFfO7Kgl
+	 R8nHMRbOY9vGn+QkDt5MtqAKFzJRTY5F5dmUrzjE=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3338320882
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726150AbeLGPPn (ORCPT
+        id S1726081AbeLGPT3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 10:15:43 -0500
-Received: from smtp.ctxuk.citrix.com ([185.25.65.24]:49806 "EHLO
-        SMTP.EU.CITRIX.COM" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726027AbeLGPPm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 10:15:42 -0500
-X-IronPort-AV: E=Sophos;i="5.56,326,1539648000"; 
-   d="scan'208";a="82958796"
-From:   Paul Durrant <Paul.Durrant@citrix.com>
-To:     'Dongli Zhang' <dongli.zhang@oracle.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>
-CC:     "axboe@kernel.dk" <axboe@kernel.dk>,
-        Roger Pau Monne <roger.pau@citrix.com>,
-        "konrad.wilk@oracle.com" <konrad.wilk@oracle.com>
-Subject: RE: [Xen-devel] [PATCH 1/1] xen/blkback: rework connect_ring() to
- avoid inconsistent xenstore 'ring-page-order' set by malicious blkfront
-Thread-Topic: [Xen-devel] [PATCH 1/1] xen/blkback: rework connect_ring() to
- avoid inconsistent xenstore 'ring-page-order' set by malicious blkfront
-Thread-Index: AQHUjePlVFCFD2KmD0G9djADL/FCxaVzAuIQgABOcICAABGFIA==
-Date:   Fri, 7 Dec 2018 15:15:37 +0000
-Message-ID: <4b5b3d4fb52c421d9be3f204b5695cc2@AMSPEX02CL03.citrite.net>
-References: <1544156284-7756-1-git-send-email-dongli.zhang@oracle.com>
- <742d0e02a1aa4031ad68a9f81fe2bdc4@AMSPEX02CL03.citrite.net>
- <f3fb198f-5a63-7fae-88da-9550019d7de7@oracle.com>
-In-Reply-To: <f3fb198f-5a63-7fae-88da-9550019d7de7@oracle.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Fri, 7 Dec 2018 10:19:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48526 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726041AbeLGPT2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Dec 2018 10:19:28 -0500
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C6E3720892
+        for <linux-kernel@vger.kernel.org>; Fri,  7 Dec 2018 15:19:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544195968;
+        bh=GgQpZyggwvg1c0v49la1/Do0wIB1W4l6a9s+oeWC3Nk=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=hxdymbnMnfE9jqddXW+qQm04hAtP4VehwN1GOT9aMrVRtDNMvIQ/do8yIYUKPynyc
+         h945N9F9juBjJHyeoLiLkC7HoBLhC6qUtlRhiyHyUCyyNkY8kKju3yatykceHMJBeF
+         3zQwNNMQPrfeSkBBJ3WwERmlwGRW2xyBx4jN9zUM=
+Received: by mail-wm1-f51.google.com with SMTP id f81so4867958wmd.4
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Dec 2018 07:19:27 -0800 (PST)
+X-Gm-Message-State: AA+aEWaCkQrDDf8wdRUj9P0anrE9cjfFhF+J11b6D9gWWqdlofOeRQvc
+        mreP/JGeGmDIo7pR3RiQLOtHj8fBzEkMaDT2NXXmVA==
+X-Google-Smtp-Source: AFSGD/U8lJakSrxUD2N+1NYCVYC5+M6Wc1YI0Km9KFosyibzJNEgDZRzTD7kyaYrAMCKJWNR/Gz4KXE4yvyC5V+lLDc=
+X-Received: by 2002:a1c:b687:: with SMTP id g129mr2543595wmf.59.1544195966260;
+ Fri, 07 Dec 2018 07:19:26 -0800 (PST)
 MIME-Version: 1.0
+References: <alpine.DEB.2.21.9999.1811211704520.16271@viisi.sifive.com>
+ <20181207000104.GA10814@bogus> <alpine.DEB.2.21.9999.1812061645070.29609@viisi.sifive.com>
+ <CAL_JsqJgt3VxHLcxY54Ojpqz_bLwGSySZ9meowgy6pnLPdXuLQ@mail.gmail.com> <alpine.DEB.2.21.9999.1812070624180.16511@viisi.sifive.com>
+In-Reply-To: <alpine.DEB.2.21.9999.1812070624180.16511@viisi.sifive.com>
+From:   Rob Herring <robh@kernel.org>
+Date:   Fri, 7 Dec 2018 09:19:14 -0600
+X-Gmail-Original-Message-ID: <CABGGisyc-nLZkxtJAr5-BT4ziJO1AW6MU-4ChgBV73No67y0PA@mail.gmail.com>
+Message-ID: <CABGGisyc-nLZkxtJAr5-BT4ziJO1AW6MU-4ChgBV73No67y0PA@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: sifive: describe sifive-blocks versioning
+To:     paul.walmsley@sifive.com
+Cc:     devicetree@vger.kernel.org, palmer@sifive.com, megan@sifive.com,
+        wesley@sifive.com, Mark Rutland <mark.rutland@arm.com>,
+        linux-riscv@lists.infradead.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        paul@pwsan.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBEb25nbGkgWmhhbmcgW21haWx0
-bzpkb25nbGkuemhhbmdAb3JhY2xlLmNvbV0NCj4gU2VudDogMDcgRGVjZW1iZXIgMjAxOCAxNTox
-MA0KPiBUbzogUGF1bCBEdXJyYW50IDxQYXVsLkR1cnJhbnRAY2l0cml4LmNvbT47IGxpbnV4LWtl
-cm5lbEB2Z2VyLmtlcm5lbC5vcmc7DQo+IHhlbi1kZXZlbEBsaXN0cy54ZW5wcm9qZWN0Lm9yZzsg
-bGludXgtYmxvY2tAdmdlci5rZXJuZWwub3JnDQo+IENjOiBheGJvZUBrZXJuZWwuZGs7IFJvZ2Vy
-IFBhdSBNb25uZSA8cm9nZXIucGF1QGNpdHJpeC5jb20+Ow0KPiBrb25yYWQud2lsa0BvcmFjbGUu
-Y29tDQo+IFN1YmplY3Q6IFJlOiBbWGVuLWRldmVsXSBbUEFUQ0ggMS8xXSB4ZW4vYmxrYmFjazog
-cmV3b3JrIGNvbm5lY3RfcmluZygpIHRvDQo+IGF2b2lkIGluY29uc2lzdGVudCB4ZW5zdG9yZSAn
-cmluZy1wYWdlLW9yZGVyJyBzZXQgYnkgbWFsaWNpb3VzIGJsa2Zyb250DQo+IA0KPiBIaSBQYXVs
-LA0KPiANCj4gT24gMTIvMDcvMjAxOCAwNTozOSBQTSwgUGF1bCBEdXJyYW50IHdyb3RlOg0KPiA+
-PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiA+PiBGcm9tOiBYZW4tZGV2ZWwgW21haWx0
-bzp4ZW4tZGV2ZWwtYm91bmNlc0BsaXN0cy54ZW5wcm9qZWN0Lm9yZ10gT24NCj4gQmVoYWxmDQo+
-ID4+IE9mIERvbmdsaSBaaGFuZw0KPiA+PiBTZW50OiAwNyBEZWNlbWJlciAyMDE4IDA0OjE4DQo+
-ID4+IFRvOiBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnOyB4ZW4tZGV2ZWxAbGlzdHMueGVu
-cHJvamVjdC5vcmc7DQo+IGxpbnV4LQ0KPiA+PiBibG9ja0B2Z2VyLmtlcm5lbC5vcmcNCj4gPj4g
-Q2M6IGF4Ym9lQGtlcm5lbC5kazsgUm9nZXIgUGF1IE1vbm5lIDxyb2dlci5wYXVAY2l0cml4LmNv
-bT47DQo+ID4+IGtvbnJhZC53aWxrQG9yYWNsZS5jb20NCj4gPj4gU3ViamVjdDogW1hlbi1kZXZl
-bF0gW1BBVENIIDEvMV0geGVuL2Jsa2JhY2s6IHJld29yayBjb25uZWN0X3JpbmcoKSB0bw0KPiA+
-PiBhdm9pZCBpbmNvbnNpc3RlbnQgeGVuc3RvcmUgJ3JpbmctcGFnZS1vcmRlcicgc2V0IGJ5IG1h
-bGljaW91cyBibGtmcm9udA0KPiA+Pg0KPiA+PiBUaGUgeGVuc3RvcmUgJ3JpbmctcGFnZS1vcmRl
-cicgaXMgdXNlZCBnbG9iYWxseSBmb3IgZWFjaCBibGtiYWNrIHF1ZXVlDQo+IGFuZA0KPiA+PiB0
-aGVyZWZvcmUgc2hvdWxkIGJlIHJlYWQgZnJvbSB4ZW5zdG9yZSBvbmx5IG9uY2UuIEhvd2V2ZXIs
-IGl0IGlzDQo+IG9idGFpbmVkDQo+ID4+IGluIHJlYWRfcGVyX3JpbmdfcmVmcygpIHdoaWNoIG1p
-Z2h0IGJlIGNhbGxlZCBtdWx0aXBsZSB0aW1lcyBkdXJpbmcgdGhlDQo+ID4+IGluaXRpYWxpemF0
-aW9uIG9mIGVhY2ggYmxrYmFjayBxdWV1ZS4NCj4gPg0KPiA+IFRoYXQgaXMgY2VydGFpbmx5IHN1
-Yi1vcHRpbWFsLg0KPiA+DQo+ID4+DQo+ID4+IElmIHRoZSBibGtmcm9udCBpcyBtYWxpY2lvdXMg
-YW5kIHRoZSAncmluZy1wYWdlLW9yZGVyJyBpcyBzZXQgaW4NCj4gZGlmZmVyZW50DQo+ID4+IHZh
-bHVlIGJ5IGJsa2Zyb250IGV2ZXJ5IHRpbWUgYmVmb3JlIGJsa2JhY2sgcmVhZHMgaXQsIHRoaXMg
-bWF5IGVuZCB1cA0KPiBhdA0KPiA+PiB0aGUgIldBUk5fT04oaSAhPSAoWEVOX0JMS0lGX1JFUVNf
-UEVSX1BBR0UgKiBibGtpZi0+bnJfcmluZ19wYWdlcykpOyINCj4gaW4NCj4gPj4geGVuX2Jsa2lm
-X2Rpc2Nvbm5lY3QoKSB3aGVuIGZyb250ZW5kIGlzIGRlc3Ryb3llZC4NCj4gPg0KPiA+IEkgY2Fu
-J3QgYWN0dWFsbHkgc2VlIHdoYXQgdXNlZnVsIGZ1bmN0aW9uIGJsa2lmLT5ucl9yaW5nX3BhZ2Vz
-IGFjdHVhbGx5DQo+IHBlcmZvcm1zIGFueSBtb3JlLiBQZXJoYXBzIHlvdSBjb3VsZCBhY3R1YWxs
-eSBnZXQgcmlkIG9mIGl0Pw0KPiANCj4gSG93IGFib3V0IHdlIGtlZXAgaXQ/IE90aGVyIHRoYW4g
-cmVhZGluZyBmcm9tIHhlbnN0b3JlLCBpdCBpcyB0aGUgb25seQ0KPiBwbGFjZSBmb3INCj4gdXMg
-dG8ga25vdyB0aGUgdmFsdWUgZnJvbSAncmluZy1wYWdlLW9yZGVyJy4NCj4gDQo+IFRoaXMgaGVs
-cHMgY2FsY3VsYXRlIHRoZSBpbml0aWFsaXplZCBudW1iZXIgb2YgZWxlbWVudHMgb24gYWxsDQo+
-IHhlbl9ibGtpZl9yaW5nLT5wZW5kaW5nX2ZyZWUgbGlzdHMuIFRoYXQncyBob3cgIldBUk5fT04o
-aSAhPQ0KPiAoWEVOX0JMS0lGX1JFUVNfUEVSX1BBR0UgKiBibGtpZi0+bnJfcmluZ19wYWdlcykp
-OyIgaXMgdXNlZCB0byBkb3VibGUNCj4gY2hlY2sgaWYNCj4gdGhlcmUgaXMgbm8gbGVhayBvZiBl
-bGVtZW50cyByZWNsYWltZWQgZnJvbSBhbGwgeGVuX2Jsa2lmX3JpbmctDQo+ID5wZW5kaW5nX2Zy
-ZWUuDQo+IA0KPiBJdCBoZWxwcyB2bWNvcmUgYW5hbHlzaXMgYXMgd2VsbC4gR2l2ZW4gYmxraWYt
-Pm5yX3JpbmdfcGFnZXMsIHdlIHdvdWxkIGJlDQo+IGFibGUNCj4gdG8gZG91YmxlIGNoZWNrIGlm
-IHRoZSBudW1iZXIgb2YgcmluZyBidWZmZXIgc2xvdHMgYXJlIGNvcnJlY3QuDQo+IA0KPiBJIGNv
-dWxkIG5vdCBzZWUgYW55IGRyYXdiYWNrIGxlYXZpbmcgYmxraWYtPm5yX3JpbmdfcGFnZXNpbiB0
-aGUgY29kZS4NCg0KTm8sIHRoZXJlJ3Mgbm8gZHJhd2JhY2sgYXBhcnQgZnJvbSBzcGFjZSwgYnV0
-IGFwYXJ0IGZyb20gdGhhdCBjcm9zcy1jaGVjayBhbmQsIGFzIHlvdSBzYXksIGNvcmUgYW5hbHlz
-aXMgaXQgc2VlbXMgdG8gaGF2ZSBsaXR0bGUgdmFsdWUuDQoNCiAgUGF1bA0KDQo+IA0KPiBEb25n
-bGkgWmhhbmcNCj4gDQo+ID4NCj4gPj4NCj4gPj4gVGhpcyBwYXRjaCByZXdvcmtzIGNvbm5lY3Rf
-cmluZygpIHRvIHJlYWQgeGVuc3RvcmUgJ3JpbmctcGFnZS1vcmRlcicNCj4gb25seQ0KPiA+PiBv
-bmNlLg0KPiA+DQo+ID4gVGhhdCBpcyBjZXJ0YWlubHkgYSBnb29kIHRoaW5nIDotKQ0KPiA+DQo+
-ID4gICBQYXVsDQo+ID4NCj4gPj4NCj4gPj4gU2lnbmVkLW9mZi1ieTogRG9uZ2xpIFpoYW5nIDxk
-b25nbGkuemhhbmdAb3JhY2xlLmNvbT4NCj4gPj4gLS0tDQo+ID4+ICBkcml2ZXJzL2Jsb2NrL3hl
-bi1ibGtiYWNrL3hlbmJ1cy5jIHwgNDkgKysrKysrKysrKysrKysrKysrKysrKysrLS0tLS0tDQo+
-IC0tLQ0KPiA+PiAtLS0tLQ0KPiA+PiAgMSBmaWxlIGNoYW5nZWQsIDMxIGluc2VydGlvbnMoKyks
-IDE4IGRlbGV0aW9ucygtKQ0KPiA+Pg0KPiA+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ibG9jay94
-ZW4tYmxrYmFjay94ZW5idXMuYyBiL2RyaXZlcnMvYmxvY2sveGVuLQ0KPiA+PiBibGtiYWNrL3hl
-bmJ1cy5jDQo+ID4+IGluZGV4IGE0YmM3NGUuLjRhOGNlMjAgMTAwNjQ0DQo+ID4+IC0tLSBhL2Ry
-aXZlcnMvYmxvY2sveGVuLWJsa2JhY2sveGVuYnVzLmMNCj4gPj4gKysrIGIvZHJpdmVycy9ibG9j
-ay94ZW4tYmxrYmFjay94ZW5idXMuYw0KPiA+PiBAQCAtOTE5LDE0ICs5MTksMTUgQEAgc3RhdGlj
-IHZvaWQgY29ubmVjdChzdHJ1Y3QgYmFja2VuZF9pbmZvICpiZSkNCj4gPj4gIC8qDQo+ID4+ICAg
-KiBFYWNoIHJpbmcgbWF5IGhhdmUgbXVsdGkgcGFnZXMsIGRlcGVuZHMgb24gInJpbmctcGFnZS1v
-cmRlciIuDQo+ID4+ICAgKi8NCj4gPj4gLXN0YXRpYyBpbnQgcmVhZF9wZXJfcmluZ19yZWZzKHN0
-cnVjdCB4ZW5fYmxraWZfcmluZyAqcmluZywgY29uc3QgY2hhcg0KPiA+PiAqZGlyKQ0KPiA+PiAr
-c3RhdGljIGludCByZWFkX3Blcl9yaW5nX3JlZnMoc3RydWN0IHhlbl9ibGtpZl9yaW5nICpyaW5n
-LCBjb25zdCBjaGFyDQo+ID4+ICpkaXIsDQo+ID4+ICsJCQkgICAgICBib29sIHVzZV9yaW5nX3Bh
-Z2Vfb3JkZXIpDQo+ID4+ICB7DQo+ID4+ICAJdW5zaWduZWQgaW50IHJpbmdfcmVmW1hFTkJVU19N
-QVhfUklOR19HUkFOVFNdOw0KPiA+PiAgCXN0cnVjdCBwZW5kaW5nX3JlcSAqcmVxLCAqbjsNCj4g
-Pj4gIAlpbnQgZXJyLCBpLCBqOw0KPiA+PiAgCXN0cnVjdCB4ZW5fYmxraWYgKmJsa2lmID0gcmlu
-Zy0+YmxraWY7DQo+ID4+ICAJc3RydWN0IHhlbmJ1c19kZXZpY2UgKmRldiA9IGJsa2lmLT5iZS0+
-ZGV2Ow0KPiA+PiAtCXVuc2lnbmVkIGludCByaW5nX3BhZ2Vfb3JkZXIsIG5yX2dyZWZzLCBldnRj
-aG47DQo+ID4+ICsJdW5zaWduZWQgaW50IG5yX2dyZWZzLCBldnRjaG47DQo+ID4+DQo+ID4+ICAJ
-ZXJyID0geGVuYnVzX3NjYW5mKFhCVF9OSUwsIGRpciwgImV2ZW50LWNoYW5uZWwiLCAiJXUiLA0K
-PiA+PiAgCQkJICAmZXZ0Y2huKTsNCj4gPj4gQEAgLTkzNiwyOCArOTM3LDE4IEBAIHN0YXRpYyBp
-bnQgcmVhZF9wZXJfcmluZ19yZWZzKHN0cnVjdA0KPiB4ZW5fYmxraWZfcmluZw0KPiA+PiAqcmlu
-ZywgY29uc3QgY2hhciAqZGlyKQ0KPiA+PiAgCQlyZXR1cm4gZXJyOw0KPiA+PiAgCX0NCj4gPj4N
-Cj4gPj4gLQllcnIgPSB4ZW5idXNfc2NhbmYoWEJUX05JTCwgZGV2LT5vdGhlcmVuZCwgInJpbmct
-cGFnZS1vcmRlciIsICIldSIsDQo+ID4+IC0JCQkgICZyaW5nX3BhZ2Vfb3JkZXIpOw0KPiA+PiAt
-CWlmIChlcnIgIT0gMSkgew0KPiA+PiArCW5yX2dyZWZzID0gYmxraWYtPm5yX3JpbmdfcGFnZXM7
-DQo+ID4+ICsNCj4gPj4gKwlpZiAoIXVzZV9yaW5nX3BhZ2Vfb3JkZXIpIHsNCj4gPj4gIAkJZXJy
-ID0geGVuYnVzX3NjYW5mKFhCVF9OSUwsIGRpciwgInJpbmctcmVmIiwgIiV1IiwNCj4gPj4gJnJp
-bmdfcmVmWzBdKTsNCj4gPj4gIAkJaWYgKGVyciAhPSAxKSB7DQo+ID4+ICAJCQllcnIgPSAtRUlO
-VkFMOw0KPiA+PiAgCQkJeGVuYnVzX2Rldl9mYXRhbChkZXYsIGVyciwgInJlYWRpbmcgJXMvcmlu
-Zy1yZWYiLCBkaXIpOw0KPiA+PiAgCQkJcmV0dXJuIGVycjsNCj4gPj4gIAkJfQ0KPiA+PiAtCQlu
-cl9ncmVmcyA9IDE7DQo+ID4+ICAJfSBlbHNlIHsNCj4gPj4gIAkJdW5zaWduZWQgaW50IGk7DQo+
-ID4+DQo+ID4+IC0JCWlmIChyaW5nX3BhZ2Vfb3JkZXIgPiB4ZW5fYmxraWZfbWF4X3Jpbmdfb3Jk
-ZXIpIHsNCj4gPj4gLQkJCWVyciA9IC1FSU5WQUw7DQo+ID4+IC0JCQl4ZW5idXNfZGV2X2ZhdGFs
-KGRldiwgZXJyLCAiJXMvcmVxdWVzdCAlZCByaW5nIHBhZ2UNCj4gPj4gb3JkZXIgZXhjZWVkIG1h
-eDolZCIsDQo+ID4+IC0JCQkJCSBkaXIsIHJpbmdfcGFnZV9vcmRlciwNCj4gPj4gLQkJCQkJIHhl
-bl9ibGtpZl9tYXhfcmluZ19vcmRlcik7DQo+ID4+IC0JCQlyZXR1cm4gZXJyOw0KPiA+PiAtCQl9
-DQo+ID4+IC0NCj4gPj4gLQkJbnJfZ3JlZnMgPSAxIDw8IHJpbmdfcGFnZV9vcmRlcjsNCj4gPj4g
-IAkJZm9yIChpID0gMDsgaSA8IG5yX2dyZWZzOyBpKyspIHsNCj4gPj4gIAkJCWNoYXIgcmluZ19y
-ZWZfbmFtZVtSSU5HUkVGX05BTUVfTEVOXTsNCj4gPj4NCj4gPj4gQEAgLTk3Miw3ICs5NjMsNiBA
-QCBzdGF0aWMgaW50IHJlYWRfcGVyX3JpbmdfcmVmcyhzdHJ1Y3QgeGVuX2Jsa2lmX3JpbmcNCj4g
-Pj4gKnJpbmcsIGNvbnN0IGNoYXIgKmRpcikNCj4gPj4gIAkJCX0NCj4gPj4gIAkJfQ0KPiA+PiAg
-CX0NCj4gPj4gLQlibGtpZi0+bnJfcmluZ19wYWdlcyA9IG5yX2dyZWZzOw0KPiA+Pg0KPiA+PiAg
-CWZvciAoaSA9IDA7IGkgPCBucl9ncmVmcyAqIFhFTl9CTEtJRl9SRVFTX1BFUl9QQUdFOyBpKysp
-IHsNCj4gPj4gIAkJcmVxID0ga3phbGxvYyhzaXplb2YoKnJlcSksIEdGUF9LRVJORUwpOw0KPiA+
-PiBAQCAtMTAzMCw2ICsxMDIwLDggQEAgc3RhdGljIGludCBjb25uZWN0X3Jpbmcoc3RydWN0IGJh
-Y2tlbmRfaW5mbyAqYmUpDQo+ID4+ICAJc2l6ZV90IHhzcGF0aHNpemU7DQo+ID4+ICAJY29uc3Qg
-c2l6ZV90IHhlbnN0b3JlX3BhdGhfZXh0X3NpemUgPSAxMTsgLyogc3VmZmljaWVudCBmb3IgIi9x
-dWV1ZS0NCj4gPj4gTk5OIiAqLw0KPiA+PiAgCXVuc2lnbmVkIGludCByZXF1ZXN0ZWRfbnVtX3F1
-ZXVlcyA9IDA7DQo+ID4+ICsJYm9vbCB1c2VfcmluZ19wYWdlX29yZGVyID0gZmFsc2U7DQo+ID4+
-ICsJdW5zaWduZWQgaW50IHJpbmdfcGFnZV9vcmRlcjsNCj4gPj4NCj4gPj4gIAlwcl9kZWJ1Zygi
-JXMgJXNcbiIsIF9fZnVuY19fLCBkZXYtPm90aGVyZW5kKTsNCj4gPj4NCj4gPj4gQEAgLTEwNzUs
-OCArMTA2NywyOCBAQCBzdGF0aWMgaW50IGNvbm5lY3RfcmluZyhzdHJ1Y3QgYmFja2VuZF9pbmZv
-ICpiZSkNCj4gPj4gIAkJIGJlLT5ibGtpZi0+bnJfcmluZ3MsIGJlLT5ibGtpZi0+YmxrX3Byb3Rv
-Y29sLCBwcm90b2NvbCwNCj4gPj4gIAkJIHBlcnNfZ3JhbnRzID8gInBlcnNpc3RlbnQgZ3JhbnRz
-IiA6ICIiKTsNCj4gPj4NCj4gPj4gKwllcnIgPSB4ZW5idXNfc2NhbmYoWEJUX05JTCwgZGV2LT5v
-dGhlcmVuZCwgInJpbmctcGFnZS1vcmRlciIsICIldSIsDQo+ID4+ICsJCQkgICAmcmluZ19wYWdl
-X29yZGVyKTsNCj4gPj4gKw0KPiA+PiArCWlmIChlcnIgIT0gMSkgew0KPiA+PiArCQliZS0+Ymxr
-aWYtPm5yX3JpbmdfcGFnZXMgPSAxOw0KPiA+PiArCX0gZWxzZSB7DQo+ID4+ICsJCWlmIChyaW5n
-X3BhZ2Vfb3JkZXIgPiB4ZW5fYmxraWZfbWF4X3Jpbmdfb3JkZXIpIHsNCj4gPj4gKwkJCWVyciA9
-IC1FSU5WQUw7DQo+ID4+ICsJCQl4ZW5idXNfZGV2X2ZhdGFsKGRldiwgZXJyLA0KPiA+PiArCQkJ
-CQkgInJlcXVlc3RlZCByaW5nIHBhZ2Ugb3JkZXIgJWQgZXhjZWVkDQo+ID4+IG1heDolZCIsDQo+
-ID4+ICsJCQkJCSByaW5nX3BhZ2Vfb3JkZXIsDQo+ID4+ICsJCQkJCSB4ZW5fYmxraWZfbWF4X3Jp
-bmdfb3JkZXIpOw0KPiA+PiArCQkJcmV0dXJuIGVycjsNCj4gPj4gKwkJfQ0KPiA+PiArDQo+ID4+
-ICsJCXVzZV9yaW5nX3BhZ2Vfb3JkZXIgPSB0cnVlOw0KPiA+PiArCQliZS0+YmxraWYtPm5yX3Jp
-bmdfcGFnZXMgPSAxIDw8IHJpbmdfcGFnZV9vcmRlcjsNCj4gPj4gKwl9DQo+ID4+ICsNCj4gPj4g
-IAlpZiAoYmUtPmJsa2lmLT5ucl9yaW5ncyA9PSAxKQ0KPiA+PiAtCQlyZXR1cm4gcmVhZF9wZXJf
-cmluZ19yZWZzKCZiZS0+YmxraWYtPnJpbmdzWzBdLCBkZXYtDQo+ID4+PiBvdGhlcmVuZCk7DQo+
-ID4+ICsJCXJldHVybiByZWFkX3Blcl9yaW5nX3JlZnMoJmJlLT5ibGtpZi0+cmluZ3NbMF0sIGRl
-di0+b3RoZXJlbmQsDQo+ID4+ICsJCQkJCSAgdXNlX3JpbmdfcGFnZV9vcmRlcik7DQo+ID4+ICAJ
-ZWxzZSB7DQo+ID4+ICAJCXhzcGF0aHNpemUgPSBzdHJsZW4oZGV2LT5vdGhlcmVuZCkgKyB4ZW5z
-dG9yZV9wYXRoX2V4dF9zaXplOw0KPiA+PiAgCQl4c3BhdGggPSBrbWFsbG9jKHhzcGF0aHNpemUs
-IEdGUF9LRVJORUwpOw0KPiA+PiBAQCAtMTA4OCw3ICsxMTAwLDggQEAgc3RhdGljIGludCBjb25u
-ZWN0X3Jpbmcoc3RydWN0IGJhY2tlbmRfaW5mbyAqYmUpDQo+ID4+ICAJCWZvciAoaSA9IDA7IGkg
-PCBiZS0+YmxraWYtPm5yX3JpbmdzOyBpKyspIHsNCj4gPj4gIAkJCW1lbXNldCh4c3BhdGgsIDAs
-IHhzcGF0aHNpemUpOw0KPiA+PiAgCQkJc25wcmludGYoeHNwYXRoLCB4c3BhdGhzaXplLCAiJXMv
-cXVldWUtJXUiLCBkZXYtDQo+ID4+PiBvdGhlcmVuZCwgaSk7DQo+ID4+IC0JCQllcnIgPSByZWFk
-X3Blcl9yaW5nX3JlZnMoJmJlLT5ibGtpZi0+cmluZ3NbaV0sIHhzcGF0aCk7DQo+ID4+ICsJCQll
-cnIgPSByZWFkX3Blcl9yaW5nX3JlZnMoJmJlLT5ibGtpZi0+cmluZ3NbaV0sIHhzcGF0aCwNCj4g
-Pj4gKwkJCQkJCSB1c2VfcmluZ19wYWdlX29yZGVyKTsNCj4gPj4gIAkJCWlmIChlcnIpIHsNCj4g
-Pj4gIAkJCQlrZnJlZSh4c3BhdGgpOw0KPiA+PiAgCQkJCXJldHVybiBlcnI7DQo+ID4+IC0tDQo+
-ID4+IDIuNy40DQo+ID4+DQo+ID4+DQo+ID4+IF9fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fDQo+ID4+IFhlbi1kZXZlbCBtYWlsaW5nIGxpc3QNCj4gPj4gWGVu
-LWRldmVsQGxpc3RzLnhlbnByb2plY3Qub3JnDQo+ID4+IGh0dHBzOi8vbGlzdHMueGVucHJvamVj
-dC5vcmcvbWFpbG1hbi9saXN0aW5mby94ZW4tZGV2ZWwNCg==
+On Fri, Dec 7, 2018 at 8:31 AM Paul Walmsley <paul.walmsley@sifive.com> wrote:
+>
+>
+> On Fri, 7 Dec 2018, Rob Herring wrote:
+>
+> > On Thu, Dec 6, 2018 at 6:46 PM Paul Walmsley <paul.walmsley@sifive.com> wrote:
+> > > On Thu, 6 Dec 2018, Rob Herring wrote:
+> > > > On Wed, Nov 21, 2018 at 05:06:56PM -0800, Paul Walmsley wrote:
+> > > >
+> > > > >  .../sifive/sifive-blocks-ip-versioning.txt    | 38 +++++++++++++++++++
+> > > > >  1 file changed, 38 insertions(+)
+> > > > >  create mode 100644 Documentation/devicetree/bindings/sifive/sifive-blocks-ip-versioning.txt
+> > > >
+> > > > Use the path that was suggested.
+> > >
+> > > Could you remind me which one that is?
+> >
+> > In this thread: bindings/riscv/sifive/
+>
+> SiFive also produces ARM-based SoCs.  Some of those ARM SoCs may use these
+> IP blocks from sifive-blocks as well.  As far as I know, there's nothing
+> RISC-V-specific about most of these IP blocks.  (As an example, there's
+> nothing CPU architecture-specific about a UART.)
+
+Fair enough. As-is is fine.
+
+Rob
