@@ -2,85 +2,126 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 594EFC07E85
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 09:52:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33F1DC07E85
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 09:53:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B9962083D
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 09:52:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="AadpxacW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B9962083D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 06C6F2083D
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 09:53:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 06C6F2083D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726027AbeLGJwY (ORCPT
+        id S1726044AbeLGJxV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 04:52:24 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:46280 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725976AbeLGJwY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 04:52:24 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=8ukRcOVsbzvtLgosNvoeedWyAJk8/ZxXTDIRAcZAmWA=; b=AadpxacWpB+my2mUAAXWNJYbt
-        h7J4YNSNAr/MbnOI+x9fvzY9/p47wVhN2/jTUFitRJ1jFYfSqxJ1/HUAvcBUvdnnvuOibLzFeGod9
-        pDwMtGGrCLM+wQqlz6JP/pM+UacM6xzXrjauohVDHWFYoXubCanJelz9U1TogkC0EMoOkONuTvYTg
-        +aOeWmbAQQtN4KqKOzgsb+FgpqRLRrFg+KpyJ4phvQLLMt2ajoNr6+6z+TUc7UGlUTa+g/xRBWUSa
-        bkJ/tvU0CFlAePynZce0KJB2iXXd0eYf0Nsm7C/Tr08OJiFdzPUZbYiTMr8qf87isf+8NajcewOgk
-        wlG1tV4WA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gVCnz-00043D-6X; Fri, 07 Dec 2018 09:52:19 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 9F3D62072614D; Fri,  7 Dec 2018 10:52:17 +0100 (CET)
-Date:   Fri, 7 Dec 2018 10:52:17 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Waiman Long <longman@redhat.com>
-Cc:     Ingo Molnar <mingo@redhat.com>, Will Deacon <will.deacon@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel@vger.kernel.org, kasan-dev@googlegroups.com,
-        linux-mm@kvack.org, iommu@lists.linux-foundation.org,
-        Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Tejun Heo <tj@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH v2 08/17] locking/lockdep: Add support for nestable
- terminal locks
-Message-ID: <20181207095217.GA5307@hirez.programming.kicks-ass.net>
-References: <1542653726-5655-1-git-send-email-longman@redhat.com>
- <1542653726-5655-9-git-send-email-longman@redhat.com>
- <20181207092252.GF2237@hirez.programming.kicks-ass.net>
+        Fri, 7 Dec 2018 04:53:21 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:15655 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725976AbeLGJxV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Dec 2018 04:53:21 -0500
+Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id E3249A51BB5BE;
+        Fri,  7 Dec 2018 17:53:17 +0800 (CST)
+Received: from [127.0.0.1] (10.134.22.195) by DGGEMS406-HUB.china.huawei.com
+ (10.3.19.206) with Microsoft SMTP Server id 14.3.408.0; Fri, 7 Dec 2018
+ 17:53:15 +0800
+Subject: Re: [f2fs-dev] [PATCH] f2fs: add an ioctl() to explicitly trigger
+ fsck later
+To:     Jaegeuk Kim <jaegeuk@kernel.org>
+CC:     <linux-kernel@vger.kernel.org>,
+        <linux-f2fs-devel@lists.sourceforge.net>
+References: <20181129015257.95036-1-jaegeuk@kernel.org>
+ <16b92898-0d8b-8edf-17f4-36b112b25add@huawei.com>
+ <20181130203611.GC71781@jaegeuk-macbookpro.roam.corp.google.com>
+From:   Chao Yu <yuchao0@huawei.com>
+Message-ID: <a50a7612-7429-4cc7-c9bb-56a054826a03@huawei.com>
+Date:   Fri, 7 Dec 2018 17:53:14 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181207092252.GF2237@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181130203611.GC71781@jaegeuk-macbookpro.roam.corp.google.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 07, 2018 at 10:22:52AM +0100, Peter Zijlstra wrote:
-> On Mon, Nov 19, 2018 at 01:55:17PM -0500, Waiman Long wrote:
-> > There are use cases where we want to allow nesting of one terminal lock
-> > underneath another terminal-like lock. That new lock type is called
-> > nestable terminal lock which can optionally allow the acquisition of
-> > no more than one regular (non-nestable) terminal lock underneath it.
+On 2018/12/1 4:36, Jaegeuk Kim wrote:
+> On 11/30, Chao Yu wrote:
+>> On 2018/11/29 9:52, Jaegeuk Kim wrote:
+>>> This adds an option in ioctl(F2FS_IOC_SHUTDOWN) in order to trigger fsck by
+>>> setting a NEED_FSCK flag.
+>>>
+>>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+>>> ---
+>>>  fs/f2fs/f2fs.h | 1 +
+>>>  fs/f2fs/file.c | 7 +++++++
+>>>  2 files changed, 8 insertions(+)
+>>>
+>>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+>>> index aa500239baf2..7cec897146a3 100644
+>>> --- a/fs/f2fs/f2fs.h
+>>> +++ b/fs/f2fs/f2fs.h
+>>> @@ -417,6 +417,7 @@ static inline bool __has_cursum_space(struct f2fs_journal *journal,
+>>>  #define F2FS_GOING_DOWN_METASYNC	0x1	/* going down with metadata */
+>>>  #define F2FS_GOING_DOWN_NOSYNC		0x2	/* going down */
+>>>  #define F2FS_GOING_DOWN_METAFLUSH	0x3	/* going down with meta flush */
+>>> +#define F2FS_GOING_DOWN_NEED_FSCK	0x4	/* going down to trigger fsck */
+>>
+>> Why not add a new ioctl interface for this? F2FS_GOING_DOWN_ prefix implies
+>> filesystem will shutdown, IMO, we'd better to keep all sub-interfaces being
+>> consistent in f2fs_ioc_shutdown().
 > 
-> I think I asked for a more coherent changelog on this. The above is
-> still self contradictory and doesn't explain why you'd ever want such a
-> 'misfeature' :-)
+> I'm thinking to use this for QA as device shutdown tests.
+> 
+>>
+>>>  
+>>>  #if defined(__KERNEL__) && defined(CONFIG_COMPAT)
+>>>  /*
+>>> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+>>> index ff82350a2c55..ca9bdbb8651b 100644
+>>> --- a/fs/f2fs/file.c
+>>> +++ b/fs/f2fs/file.c
+>>> @@ -1966,6 +1966,13 @@ static int f2fs_ioc_shutdown(struct file *filp, unsigned long arg)
+>>>  		f2fs_stop_checkpoint(sbi, false);
+>>>  		set_sbi_flag(sbi, SBI_IS_SHUTDOWN);
+>>>  		break;
+>>> +	case F2FS_GOING_DOWN_NEED_FSCK:
+>>> +		set_sbi_flag(sbi, SBI_NEED_FSCK);
+>>> +		/* do checkpoint only */
+>>> +		ret = f2fs_sync_fs(sb, 1);
+>>> +		if (ret)
+>>> +			goto out;
+>>
+>> In large-sized image, it may take long time to trigger full scan during
+>> boot, so I'd like to ask how often we set this flag?
+> 
+> Based on the use of shutdown ioctl, I'll use this for testing purpose, so it
+> won't be used for regular cases.
 
-So maybe call the thing penterminal (contraction of penultimate and
-terminal) locks and explain why this annotation is safe -- in great
-detail.
+How about adding some commit messages or comments on
+F2FS_GOING_DOWN_NEED_FSCK marco definition to give a bit hint for f2fs
+developers to know the usage of the interface?
+
+Thanks,
+
+> 
+>>
+>> Thanks,
+>>
+>>> +		break;
+>>>  	default:
+>>>  		ret = -EINVAL;
+>>>  		goto out;
+>>>
+> 
+> .
+> 
+
