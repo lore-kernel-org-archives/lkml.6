@@ -2,118 +2,131 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA2C9C07E85
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 14:43:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17E38C07E85
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 14:47:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C1BF208E7
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 14:43:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PiHA1C5C"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C1BF208E7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 9C3C02146D
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 14:47:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544194056;
+	bh=FntOFJdPJH20mUtvdxKHhnRbrohNDbfRQwkMEag/mi0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
+	b=l3bc9wkRcVPyWRvPUW29YHVwI1EUTyIZidyxAqRmRvSOT8tpfeVX0rCUC5tXdm7Wl
+	 SIJb1cww58BLd+s24IYWroXU0Dup/lczEaj8zn5IuI9c3DjM0QAU/7eAiWMi6d66wh
+	 OuqhORwgsQK+yWXcKJfmDw/rKUTCcDV9/qU5ue9I=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C3C02146D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726207AbeLGOnP (ORCPT
+        id S1726098AbeLGOrf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 09:43:15 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:46645 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726027AbeLGOnO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 09:43:14 -0500
-Received: by mail-pg1-f194.google.com with SMTP id w7so1804371pgp.13
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Dec 2018 06:43:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mail-followup-to:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=+m3IAR1X/OTOtjB9jc+ln1t5KBP5gteAtU+41d6GFpA=;
-        b=PiHA1C5CsTT0u2FT3JDIbtpx3zYcgU9YC96EFEwXz0mYA25oy4Q+frTuVx5cIsaaXl
-         N2YpdbUA5E54fQDMMyoIjwnJjNX+b+byhWCWVIZVhi1LdD9nc0R4lHohaGMrfB6Pz+q1
-         Kjv6YkxLkZ5rKk41sSke1Su2AADr2Wi/e7FiN4qWTqzkiRjiXqE5wU5pKL6WYjsHM79a
-         1mb4Jj9ZQcIzorfiFNFh7WlOiQyTZAfu/e6Ey31cVwV91tk8QrDPfkVb3HrEVGzrqnF3
-         dQl68Jh//C91sTPniFznAoCXA1RANg1AWmvC7kl6GvgCUs6hNU4xZNdLcGGGb9thALmv
-         YvOw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=+m3IAR1X/OTOtjB9jc+ln1t5KBP5gteAtU+41d6GFpA=;
-        b=fVPhMbh5bQHeAeiu0gz95KqZX++njhPCtXckXEOZa3qjQ/0prSmgwota/0Z+kSIcLd
-         d4D266smSH/pn0ClaYV6EfpKr1QIdNxF8Y8bC8UbZf7F4VgauAT58vyMxoJPYuVoly7o
-         NusuiAc2+zCj3Bi6LiGvB92M+7Sd9CfNYJjpvcZRDUm8aID8hz6BIRiKqqaHzmOpy8TP
-         QS7OpCnKHxEXzvM5LBkbWSUaRkQtU8HxYcVtNp6mEZWH5YmiJfQ3Z16Yq7QPNkKiUSIO
-         jjHyeRmA8+yRlFpY00sjiW2XGeBdRWNZLgJH9h7V5RCTfYJIvnQ/FYaUc3qTKOOawzHx
-         f6rw==
-X-Gm-Message-State: AA+aEWaCOCLuqAxrBvYNVdzKPz+NoE/2SHavfWyfGsG+iPHxWs0W/5yQ
-        TDFVz1KDrH+/CwKxPi9aYxI=
-X-Google-Smtp-Source: AFSGD/V70JSNoj+arladIJEB1DWQDbHrdK2nHwjGxwxyKCTEYyLF1BWGeBCrKUD89YuRKNTdQUchcQ==
-X-Received: by 2002:a63:7154:: with SMTP id b20mr2179159pgn.342.1544193793784;
-        Fri, 07 Dec 2018 06:43:13 -0800 (PST)
-Received: from yubo-2 ([191.101.9.198])
-        by smtp.gmail.com with ESMTPSA id n68sm5310699pfb.62.2018.12.07.06.43.13
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 07 Dec 2018 06:43:13 -0800 (PST)
-Date:   Fri, 7 Dec 2018 09:43:12 -0500
-From:   YU Bo <tsu.yubo@gmail.com>
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     rafael@kernel.org, linux-kernel@vger.kernel.org, joe@perches.com,
-        yuzibode@126.com
-Subject: Re: [PATCH v3 2/2] kobject: drop newline from msg string
-Message-ID: <20181207144311.oijj3lj53ojtlnyl@yubo-2>
-Mail-Followup-To: Greg KH <gregkh@linuxfoundation.org>, rafael@kernel.org,
-        linux-kernel@vger.kernel.org, joe@perches.com, yuzibode@126.com
-References: <cover.1544175417.git.tsu.yubo@gmail.com>
- <f03d23a34df36d55274c5cce7d4081d9017668c1.1544175417.git.tsu.yubo@gmail.com>
- <20181207120405.GC15336@kroah.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20181207120405.GC15336@kroah.com>
-User-Agent: NeoMutt/20180512-62-03f98a
+        Fri, 7 Dec 2018 09:47:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39756 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725998AbeLGOrf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Dec 2018 09:47:35 -0500
+Received: from devnote (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A023420989;
+        Fri,  7 Dec 2018 14:47:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544194054;
+        bh=FntOFJdPJH20mUtvdxKHhnRbrohNDbfRQwkMEag/mi0=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=TJYmQwEuPWQLc1vJcV6zBxxatsGiwrsMJBplrMPvfzBpS0IQlX41M+QxpOHKzeLWB
+         tw1JrcOu697aE8p/VTfKmOi4cuumOfq7rUts1KJbnUxnl0eS9+kNHWZQrwb73ENX0f
+         Y49VJMoaoEpO/1YVu49L7Gj7REP1la8ya6TpFv+4=
+Date:   Fri, 7 Dec 2018 23:47:31 +0900
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Andrea Righi <righi.andrea@gmail.com>
+Cc:     "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
+        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Yonghong Song <yhs@fb.com>, Andy Lutomirski <luto@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] kprobes: x86_64: blacklist non-attachable interrupt
+ functions
+Message-Id: <20181207234731.f52a8c1eff6c0e72c073ad40@kernel.org>
+In-Reply-To: <20181206095648.GA8249@Dell>
+References: <20181206095648.GA8249@Dell>
+X-Mailer: Sylpheed 3.5.0 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 07, 2018 at 01:04:05PM +0100, Greg KH wrote:
->On Fri, Dec 07, 2018 at 05:21:49AM -0500, Bo YU wrote:
->> There is currently a missing terminating newline in non-switch case
->> match, when msg == NULL.
->>
->> Signed-off-by: Bo YU <tsu.yubo@gmail.com>
->> ---
->> Changes in v3:
->> Improve the commit log,requested by rafael.
->>
->> Changes in v2:
->> According to Joe's suggestion,drop newline from msg
->>
->>  lib/kobject_uevent.c | 11 ++++++-----
->>  1 file changed, 6 insertions(+), 5 deletions(-)
->>
->> diff --git a/lib/kobject_uevent.c b/lib/kobject_uevent.c
->> index b7c088c902a2..1837765ebf01 100644
->> --- a/lib/kobject_uevent.c
->> +++ b/lib/kobject_uevent.c
->> @@ -195,12 +195,12 @@ int kobject_synth_uevent(struct kobject *kobj, const char *buf, size_t count)
->>  	enum kobject_action action;
->>  	const char *action_args;
->>  	struct kobj_uevent_env *env;
->> -	const char *msg = NULL, *devpath;
->> +	const char *msg = NULL;
->
->Why did you move the devpath variable from here to lower down?  That
->really doesn't do anything :(
-Hm...If i resend the one patch will be ok?
-Or whole series?
->
->thanks,
->
->greg k-h
+On Thu, 6 Dec 2018 10:56:48 +0100
+Andrea Righi <righi.andrea@gmail.com> wrote:
+
+> These interrupt functions are already non-attachable by kprobes.
+> Blacklist them explicitly so that they can show up in
+> /sys/kernel/debug/kprobes/blacklist and tools like BCC can use this
+> additional information.
+> 
+> Signed-off-by: Andrea Righi <righi.andrea@gmail.com>
+
+For the short term, this is OK. But this is not the best way to cover
+other functions which are also prohibited by arch_within_kprobe_blacklist().
+I'll fix this issue later.
+
+Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
+
+Thank you,
+
+> ---
+>  arch/x86/entry/entry_64.S | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/arch/x86/entry/entry_64.S b/arch/x86/entry/entry_64.S
+> index ce25d84023c0..1f0efdb7b629 100644
+> --- a/arch/x86/entry/entry_64.S
+> +++ b/arch/x86/entry/entry_64.S
+> @@ -566,6 +566,7 @@ ENTRY(interrupt_entry)
+>  
+>  	ret
+>  END(interrupt_entry)
+> +_ASM_NOKPROBE(interrupt_entry)
+>  
+>  
+>  /* Interrupt entry/exit. */
+> @@ -766,6 +767,7 @@ native_irq_return_ldt:
+>  	jmp	native_irq_return_iret
+>  #endif
+>  END(common_interrupt)
+> +_ASM_NOKPROBE(common_interrupt)
+>  
+>  /*
+>   * APIC interrupts.
+> @@ -780,6 +782,7 @@ ENTRY(\sym)
+>  	call	\do_sym	/* rdi points to pt_regs */
+>  	jmp	ret_from_intr
+>  END(\sym)
+> +_ASM_NOKPROBE(\sym)
+>  .endm
+>  
+>  /* Make sure APIC interrupt handlers end up in the irqentry section: */
+> @@ -960,6 +963,7 @@ ENTRY(\sym)
+>  
+>  	jmp	error_exit
+>  	.endif
+> +_ASM_NOKPROBE(\sym)
+>  END(\sym)
+>  .endm
+>  
+> -- 
+> 2.17.1
+
+
+-- 
+Masami Hiramatsu <mhiramat@kernel.org>
