@@ -2,83 +2,97 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A13E2C07E85
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 10:21:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86D60C07E85
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 10:21:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 53E312083D
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 10:21:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4D03F208E7
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 10:21:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="r0zNBjyN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 53E312083D
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BZEK/WcR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D03F208E7
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726067AbeLGKVK (ORCPT
+        id S1726062AbeLGKVh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 05:21:10 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:45689 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725989AbeLGKVJ (ORCPT
+        Fri, 7 Dec 2018 05:21:37 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:44384 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725989AbeLGKVg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 05:21:09 -0500
-Received: by mail-pl1-f194.google.com with SMTP id a14so1635978plm.12
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Dec 2018 02:21:09 -0800 (PST)
+        Fri, 7 Dec 2018 05:21:36 -0500
+Received: by mail-pg1-f194.google.com with SMTP id t13so1525591pgr.11
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Dec 2018 02:21:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=wkHt1TScDEEIbBuQ6HIBO2AZWICx0qSjTGpqbG9hKQI=;
-        b=r0zNBjyNWTFlqlbxwG6bINZa/HT+5qS7m4u5v6sgQ/vMSuyS8pS4Hryv92cEXT1yxo
-         JnGpVwNMezf/QfatDHGjt4R+1CyJC5f1wxOwp6wIi0I0UBFReqsdHsKgSn0fnfLxC1pl
-         L58OxrGd3MFwgKxbX8t3r5MKoCpRVXLLJqwZ5pezR53jWvCPfcjHRE1P3HzTigNWHSvb
-         +R+6gvWTxWkRj3Owfxyko+AI10MMI67jVc7vLgOraNTTfQZQJbiZ3ZTzcDfWmCxFZkZ3
-         aP1ADB/KHH3zpZkxH6OiwoOzfvBZueOM7SZVSXp8jw4n6P8m4/xyEibvtzTFUROwMx1u
-         Wl2A==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=9CEoDCK9uvYi1mDJnsc77baMLzVJKXRnuN8Z4r2UU20=;
+        b=BZEK/WcR3D+eC3AmJjwfYTzfIp3I6pG9Xy/xFo1Tda5XP/k34o+h4qmDHGX7RDgirb
+         IHp2vcPlFLFB3G/7qfZbprj52OoqjMZ3mh33N7tZcMNu5bXUlHUGJuMc6Xn05C3esSoz
+         CS3Hgq1rUSA30PXqEG5DqkXqBoJKUz9cGbwU7pBIIkOTBdaL/RZ/IcvVItldvTTK2tBg
+         NwPJCGG3gTRT0DYH/hPpdRFATOR3lt1ETss44WUONdTEiLFWaZ5/g/kKTrg8IkMfI4OJ
+         6C9H6b9O8AtZTivaczAOmVAZ4z9BhrGvARSdNbi06TuIFtUIVPYaFkB/YiG0++t0IjO4
+         O0qw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=wkHt1TScDEEIbBuQ6HIBO2AZWICx0qSjTGpqbG9hKQI=;
-        b=LeLVhbc2ycdnmJvJr8Rpyjr0aTb1/R2IE7yk1J5PrnisxY/Cp54Kn6Qefwu2YEw+GK
-         ioFlARtiVUMUH5CLm1wQEJf3rtwA15+3p4cDhnPEXfKrQu64lGHRIOaOJkyfKLTye0jw
-         jKivzImZfUXwyS3a56LO4enjMsl4ffocLwthSEAoLrSiAUl/LQdhpwZGWVOEjbN2XsJt
-         Ywgeak2QIFvhXJnamjZS9WnRcMs4/+hz1Aghx+3xonT7ykzfqXGIlj8UqlGDRmf8iqDL
-         fmr75VN0AUF4n48F/Li3eqBi8cAy735pUMOHBbsFEG/iNucAC5iBiUjnlhlfZBGU0xzX
-         Esvw==
-X-Gm-Message-State: AA+aEWbyT3Gi00hfwfAst/H7L2jxF9/IKWYp/CJnaTia0N0R2SKiazmV
-        37aj6FttpXiPT93g3UoQDhE=
-X-Google-Smtp-Source: AFSGD/Xrc549Z/1JnhKwNKre6uaPo6/NzAWmMaCyTPDgWIPgyAcB6HSRRNnK2PienpYcvYuxhh2nnQ==
-X-Received: by 2002:a17:902:930b:: with SMTP id bc11mr1631288plb.17.1544178069160;
-        Fri, 07 Dec 2018 02:21:09 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=9CEoDCK9uvYi1mDJnsc77baMLzVJKXRnuN8Z4r2UU20=;
+        b=c6fo3t/32MuT7EcxapWW3QO/cmgN1L4/exuR0zzETDCzWRRMl6i0lNZxe6dZiUVfJ0
+         d+Y7xPH11NTI9YRKYJHptu6I9IqvtVH5OYVw7HE+ycs4BuuGVCkjK6s9YhJQGuKOX/Sr
+         mZbPsBhR5tXs5TVnxseV0ABAjrZ5pJXfzmUMOnJ1m5TWifXxPskuUVZCYPfJg4scGQ7W
+         YgEGBoUduy0gTAKIF20MNgn2BwuqgeEh3HvpZEaCOzypdU8QUx/4PpqJFou1Twnjljg/
+         7N7tp4SW5x4aIznTIXEWYffQRmjl5PGl/qn8MYjd8ljaahz/wpaqd7oJ7O8GY7MPn9Rj
+         No8g==
+X-Gm-Message-State: AA+aEWaMyBI/Roj+vrrq5RIvKTlCcyFRr15Nx22byDjrq7TvWC1D3s/9
+        Lfr/qXOtPBE/QroBYJBJfdY=
+X-Google-Smtp-Source: AFSGD/VmHkM3+GU8jAlXfPr6SEEHMNaWG+TrglcK8xgl89ZV3YOc865YXa7mR91jauyv7sfjoo7IVA==
+X-Received: by 2002:a63:6cc8:: with SMTP id h191mr1368093pgc.366.1544178096295;
+        Fri, 07 Dec 2018 02:21:36 -0800 (PST)
 Received: from localhost.localdomain ([191.101.9.198])
-        by smtp.gmail.com with ESMTPSA id n186sm4164889pfn.137.2018.12.07.02.21.08
+        by smtp.gmail.com with ESMTPSA id w88sm7363186pfk.11.2018.12.07.02.21.35
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 07 Dec 2018 02:21:08 -0800 (PST)
+        Fri, 07 Dec 2018 02:21:35 -0800 (PST)
 From:   Bo YU <tsu.yubo@gmail.com>
 To:     gregkh@linuxfoundation.org, rafael@kernel.org
 Cc:     Bo YU <tsu.yubo@gmail.com>, linux-kernel@vger.kernel.org,
         joe@perches.com, yuzibode@126.com
-Subject: [PATCH v3 0/2] kobject: trival fix
-Date:   Fri,  7 Dec 2018 05:20:52 -0500
-Message-Id: <cover.1544175417.git.tsu.yubo@gmail.com>
+Subject: [PATCH v3 1/2] kobject: use pr_warn to replace printk
+Date:   Fri,  7 Dec 2018 05:21:28 -0500
+Message-Id: <662efd36ef9a3394f0c4ea64d3bb3715b7390458.1544175417.git.tsu.yubo@gmail.com>
 X-Mailer: git-send-email 2.11.0
+In-Reply-To: <cover.1544175417.git.tsu.yubo@gmail.com>
+References: <cover.1544175417.git.tsu.yubo@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is trival fix for lib/kobject_uevent.c file.
+This is a fix to replace printk with pr_warn
 
-Bo YU (2):
-  kobject: use pr_warn to replace printk
-  kobject: drop newline from msg string
+Signed-off-by: Bo YU <tsu.yubo@gmail.com>
+---
+ lib/kobject_uevent.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- lib/kobject_uevent.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
-
---
+diff --git a/lib/kobject_uevent.c b/lib/kobject_uevent.c
+index 63d0816ab23b..b7c088c902a2 100644
+--- a/lib/kobject_uevent.c
++++ b/lib/kobject_uevent.c
+@@ -224,7 +224,7 @@ int kobject_synth_uevent(struct kobject *kobj, const char *buf, size_t count)
+ out:
+ 	if (r) {
+ 		devpath = kobject_get_path(kobj, GFP_KERNEL);
+-		printk(KERN_WARNING "synth uevent: %s: %s",
++		pr_warn("synth uevent: %s: %s",
+ 		       devpath ?: "unknown device",
+ 		       msg ?: "failed to send uevent");
+ 		kfree(devpath);
+-- 
 2.11.0
 
