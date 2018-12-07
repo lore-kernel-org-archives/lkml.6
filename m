@@ -2,174 +2,135 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E642C07E85
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 12:15:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE41DC07E85
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 12:17:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D291920989
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 12:15:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D291920989
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id A5B5020989
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 12:17:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=axentia.se header.i=@axentia.se header.b="Uu3EkhFj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A5B5020989
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=axentia.se
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726090AbeLGMPt (ORCPT
+        id S1726079AbeLGMRt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 07:15:49 -0500
-Received: from foss.arm.com ([217.140.101.70]:43208 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725992AbeLGMPt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 07:15:49 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EC997EBD;
-        Fri,  7 Dec 2018 04:15:48 -0800 (PST)
-Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id BBAF33F5AF;
-        Fri,  7 Dec 2018 04:15:48 -0800 (PST)
-Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
-        id 258EC1AE0BFA; Fri,  7 Dec 2018 12:16:10 +0000 (GMT)
-Date:   Fri, 7 Dec 2018 12:16:10 +0000
-From:   Will Deacon <will.deacon@arm.com>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>
-Subject: Re: linux-next: manual merge of the arm64 tree with Linus' tree
-Message-ID: <20181207121609.GA26721@arm.com>
-References: <20181207091847.1db6a48e@canb.auug.org.au>
+        Fri, 7 Dec 2018 07:17:49 -0500
+Received: from mail-eopbgr30139.outbound.protection.outlook.com ([40.107.3.139]:14400
+        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726010AbeLGMRt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Dec 2018 07:17:49 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=axentia.se;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=TPP5tRK+sNJp0eDHA3/FL3mtZZW9I8xTvLfguIg1Les=;
+ b=Uu3EkhFjBd4+AMEm0N2oE8J7gi1UW/bm3D/XQ2o3l7CIoJhfLN0dzUYv6NvGOzf3ZyMUwAT55MZmDMVQdq4jGVK6YPE9B8iZ8GmvIWkQ+eHqKSjGZStXQD+ZsgoUr6csbLL70u/Wop1LxnXXt96Tjv8p4FQw89B06PWArCgoz64=
+Received: from VI1PR02MB5119.eurprd02.prod.outlook.com (20.178.13.204) by
+ VI1PR02MB3646.eurprd02.prod.outlook.com (52.134.25.14) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1404.17; Fri, 7 Dec 2018 12:17:05 +0000
+Received: from VI1PR02MB5119.eurprd02.prod.outlook.com
+ ([fe80::b:49a6:411a:6a39]) by VI1PR02MB5119.eurprd02.prod.outlook.com
+ ([fe80::b:49a6:411a:6a39%3]) with mapi id 15.20.1404.021; Fri, 7 Dec 2018
+ 12:17:05 +0000
+From:   Peter Rosin <peda@axentia.se>
+To:     "Tudor.Ambarus@microchip.com" <Tudor.Ambarus@microchip.com>,
+        "wsa@the-dreams.de" <wsa@the-dreams.de>
+CC:     "Nicolas.Ferre@microchip.com" <Nicolas.Ferre@microchip.com>,
+        "Ludovic.Desroches@microchip.com" <Ludovic.Desroches@microchip.com>,
+        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
+        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [2nd RESEND PATCH 1/2] i2c: enable buses to save their clock
+ frequency in adapter
+Thread-Topic: [2nd RESEND PATCH 1/2] i2c: enable buses to save their clock
+ frequency in adapter
+Thread-Index: AQHUjiAuPcBol/ktREin2XNfhFOg2KVzMUQA
+Date:   Fri, 7 Dec 2018 12:17:05 +0000
+Message-ID: <b70e4721-1cff-eb07-ed8e-8fc39b6e84ed@axentia.se>
+References: <20181207112939.15791-1-tudor.ambarus@microchip.com>
+ <20181207112939.15791-2-tudor.ambarus@microchip.com>
+In-Reply-To: <20181207112939.15791-2-tudor.ambarus@microchip.com>
+Accept-Language: en-US, sv-SE
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.2
+x-originating-ip: [85.226.244.23]
+x-clientproxiedby: HE1PR05CA0180.eurprd05.prod.outlook.com
+ (2603:10a6:3:f8::28) To VI1PR02MB5119.eurprd02.prod.outlook.com
+ (2603:10a6:803:b7::12)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=peda@axentia.se; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;VI1PR02MB3646;6:EmDeVsmZImRqsqV5ItjzzOk3qm7PGdwnxUgEt5qAnEk4Vym8QbfP/nNenJmGLC81VisDuC4athAaAcC/1b/DQOev+KiyggVtz9Fp/al2pzBHjrl9dGzkarffp50nLgoVtf3GZJblO4RMBTRKj3mhhg33tpkcLogRFpzAjlUxokNfRno3evU7CjkcXuL/aS2I4Y7ekYb1sFlGPzS6ul4tv9y3ekKLKd8afMDiRxU22XQQS8EfCbiW2xZ/oPh7umTu4uySYSdJQec5XzYQdbrJrIxUJIdqu2dP5cADJ6Qy74CvVZy5VZJf2jJGA0dpgu62oJBnJLFr59k7znGaNG9knM4Cc6LXYKK3MbXuyaNQN0QjjG9GTZWKN2SXD0CWc1ia/yQU0pMPI63QXn3Gj/OPJNb5ppvRlMUnSWnyxPeD6UDShWx/lSAM7AM4kuB0iI+aiDkrEGQkF/AFl/N+euuSgQ==;5:bk6ABOzjrH6BkzdGdDz0yJ0uMJZm+Q0fVladLrcloftCPzFiJa7aI/xGHG2WtBP2Ci7XKZutrf17fVZBYe13W55anH/zMMje5oG+vR5Du4RaaCFzs7xcK6F1nECTRYtnKbjSYafnE+dlUM1k7Q20HNPvldhq9/gDs6ebgnKQ2KE=;7:nL8E7wdfzavXk2A+DDYZxEhDQctBox3VzvH6vI8Vi9gx/gSycOqAhG2rmNd6pnKoCpuHeUAsbiaOkHvLZgu0xCEa2CXGrYWBYB6+ff55mBv8S9eUcBg6YUfH14itQzIHWcyoL8hbXDEVxzaEgNJStA==
+x-ms-office365-filtering-correlation-id: 8b91b550-cefc-4511-5116-08d65c3de6c1
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(7021145)(8989299)(4534185)(7022145)(4603075)(4627221)(201702281549075)(8990200)(7048125)(7024125)(7027125)(7023125)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:VI1PR02MB3646;
+x-ms-traffictypediagnostic: VI1PR02MB3646:
+x-microsoft-antispam-prvs: <VI1PR02MB364698699CDB47C20E296019BCAA0@VI1PR02MB3646.eurprd02.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(10201501046)(3002001)(93006095)(93001095)(3231455)(999002)(944501520)(52105112)(148016)(149066)(150057)(6041310)(2016111802025)(20161123558120)(20161123562045)(20161123560045)(20161123564045)(6043046)(201708071742011)(7699051)(76991095);SRVR:VI1PR02MB3646;BCL:0;PCL:0;RULEID:;SRVR:VI1PR02MB3646;
+x-forefront-prvs: 0879599414
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39830400003)(136003)(396003)(366004)(346002)(376002)(189003)(199004)(305945005)(186003)(52116002)(76176011)(31696002)(26005)(386003)(6506007)(102836004)(53546011)(14454004)(6116002)(229853002)(3846002)(6512007)(6246003)(53936002)(64126003)(217873002)(68736007)(476003)(71190400001)(256004)(71200400001)(81156014)(5660300001)(8936002)(7736002)(446003)(11346002)(486006)(99286004)(65826007)(86362001)(8676002)(14444005)(81166006)(2616005)(316002)(58126008)(54906003)(110136005)(74482002)(97736004)(106356001)(36756003)(508600001)(65806001)(65956001)(2906002)(6486002)(25786009)(6436002)(4326008)(105586002)(66066001)(31686004)(2501003)(42262002);DIR:OUT;SFP:1102;SCL:1;SRVR:VI1PR02MB3646;H:VI1PR02MB5119.eurprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: axentia.se does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: VoHI/it1wJA9uIcdOUejaxuQCjQxFObgp3EvIiwlqophs1gyjV6tWk+C7+wEwKnN8mMzX5VUcqMlpaP2ho1yGZg/j0Sirg94/aTp3FqYDo7eHxrUO6DxrqPH5PCrGhieUQmp3AKHg5vmlhqvtfMv4YPHwD+BqQ1GB+Dhlkn2vkTQWIcmsUTHFNRnIN6uO3EKsLr/2UIedoQs4AKCwGKrPy5s7sP4f3XCRl/6H1uKEeiDYgIDU1kC6bl6BfQ62ThIrFxE4y8knDBUlIyLt8Vmg8yI+MdjUo1OI8BMUJr8Xr8m2oIsRaHOU2rUTGrH7/EUgUCleLy34LjUnub7NHmABGEnAmo1oj2Z6nvR/0L+XZU=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <3D88C2896AA66A499C41B51F6DCF224C@eurprd02.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181207091847.1db6a48e@canb.auug.org.au>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+X-OriginatorOrg: axentia.se
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8b91b550-cefc-4511-5116-08d65c3de6c1
+X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Dec 2018 12:17:05.8006
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 4ee68585-03e1-4785-942a-df9c1871a234
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR02MB3646
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 07, 2018 at 09:18:47AM +1100, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Today's linux-next merge of the arm64 tree got a conflict in:
-> 
->   arch/arm64/kernel/cpu_errata.c
-> 
-> between commit:
-> 
->   ce8c80c536da ("arm64: Add workaround for Cortex-A76 erratum 1286807")
-> 
-> from Linus' tree and commit:
-> 
->   c9460dcb06ee ("arm64: capabilities: Merge entries for ARM64_WORKAROUND_CLEAN_CACHE")
-> 
-> from the arm64 tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
-
-Thanks, Stephen, this looks correct to me. Suzuki -- can you please confirm?
-
-Will
-
-> diff --cc arch/arm64/kernel/cpu_errata.c
-> index 6ad715d67df8,bb44635026f8..000000000000
-> --- a/arch/arm64/kernel/cpu_errata.c
-> +++ b/arch/arm64/kernel/cpu_errata.c
-> @@@ -570,21 -570,43 +570,57 @@@ static const struct midr_range arm64_ha
->   
->   #endif
->   
->  +#ifdef CONFIG_ARM64_WORKAROUND_REPEAT_TLBI
->  +
->  +static const struct midr_range arm64_repeat_tlbi_cpus[] = {
->  +#ifdef CONFIG_QCOM_FALKOR_ERRATUM_1009
->  +	MIDR_RANGE(MIDR_QCOM_FALKOR_V1, 0, 0, 0, 0),
->  +#endif
->  +#ifdef CONFIG_ARM64_ERRATUM_1286807
->  +	MIDR_RANGE(MIDR_CORTEX_A76, 0, 0, 3, 0),
->  +#endif
->  +	{},
->  +};
->  +
->  +#endif
->  +
-> - const struct arm64_cpu_capabilities arm64_errata[] = {
-> + #ifdef CONFIG_CAVIUM_ERRATUM_27456
-> + static const struct midr_range cavium_erratum_27456_cpus[] = {
-> + 	/* Cavium ThunderX, T88 pass 1.x - 2.1 */
-> + 	MIDR_RANGE(MIDR_THUNDERX, 0, 0, 1, 1),
-> + 	/* Cavium ThunderX, T81 pass 1.0 */
-> + 	MIDR_REV(MIDR_THUNDERX_81XX, 0, 0),
-> + 	{},
-> + };
-> + #endif
-> + 
-> + #ifdef CONFIG_CAVIUM_ERRATUM_30115
-> + static const struct midr_range cavium_erratum_30115_cpus[] = {
-> + 	/* Cavium ThunderX, T88 pass 1.x - 2.2 */
-> + 	MIDR_RANGE(MIDR_THUNDERX, 0, 0, 1, 2),
-> + 	/* Cavium ThunderX, T81 pass 1.0 - 1.2 */
-> + 	MIDR_REV_RANGE(MIDR_THUNDERX_81XX, 0, 0, 2),
-> + 	/* Cavium ThunderX, T83 pass 1.0 */
-> + 	MIDR_REV(MIDR_THUNDERX_83XX, 0, 0),
-> + 	{},
-> + };
-> + #endif
-> + 
-> + #ifdef CONFIG_QCOM_FALKOR_ERRATUM_1003
-> + static const struct arm64_cpu_capabilities qcom_erratum_1003_list[] = {
-> + 	{
-> + 		ERRATA_MIDR_REV(MIDR_QCOM_FALKOR_V1, 0, 0),
-> + 	},
-> + 	{
-> + 		.midr_range.model = MIDR_QCOM_KRYO,
-> + 		.matches = is_kryo_midr,
-> + 	},
-> + 	{},
-> + };
-> + #endif
-> + 
-> + #ifdef CONFIG_ARM64_WORKAROUND_CLEAN_CACHE
-> + static const struct midr_range workaround_clean_cache[] = {
->   #if	defined(CONFIG_ARM64_ERRATUM_826319) || \
->   	defined(CONFIG_ARM64_ERRATUM_827319) || \
->   	defined(CONFIG_ARM64_ERRATUM_824069)
-> @@@ -697,23 -698,17 +712,17 @@@ const struct arm64_cpu_capabilities arm
->   	},
->   #ifdef CONFIG_QCOM_FALKOR_ERRATUM_1003
->   	{
-> - 		.desc = "Qualcomm Technologies Falkor erratum 1003",
-> + 		.desc = "Qualcomm Technologies Falkor/Kryo erratum 1003",
->   		.capability = ARM64_WORKAROUND_QCOM_FALKOR_E1003,
-> - 		ERRATA_MIDR_REV(MIDR_QCOM_FALKOR_V1, 0, 0),
-> - 	},
-> - 	{
-> - 		.desc = "Qualcomm Technologies Kryo erratum 1003",
-> - 		.capability = ARM64_WORKAROUND_QCOM_FALKOR_E1003,
-> - 		.type = ARM64_CPUCAP_LOCAL_CPU_ERRATUM,
-> - 		.midr_range.model = MIDR_QCOM_KRYO,
-> - 		.matches = is_kryo_midr,
-> + 		.matches = multi_entry_cap_matches,
-> + 		.match_list = qcom_erratum_1003_list,
->   	},
->   #endif
->  -#ifdef CONFIG_QCOM_FALKOR_ERRATUM_1009
->  +#ifdef CONFIG_ARM64_WORKAROUND_REPEAT_TLBI
->   	{
->  -		.desc = "Qualcomm Technologies Falkor erratum 1009",
->  +		.desc = "Qualcomm erratum 1009, ARM erratum 1286807",
->   		.capability = ARM64_WORKAROUND_REPEAT_TLBI,
->  -		ERRATA_MIDR_REV(MIDR_QCOM_FALKOR_V1, 0, 0),
->  +		ERRATA_MIDR_RANGE_LIST(arm64_repeat_tlbi_cpus),
->   	},
->   #endif
->   #ifdef CONFIG_ARM64_ERRATUM_858921
-
-
+T24gMjAxOC0xMi0wNyAxMjoyOSwgVHVkb3IuQW1iYXJ1c0BtaWNyb2NoaXAuY29tIHdyb3RlOg0K
+PiBGcm9tOiAiVHVkb3IuQW1iYXJ1c0BtaWNyb2NoaXAuY29tIiA8VHVkb3IuQW1iYXJ1c0BtaWNy
+b2NoaXAuY29tPg0KPiANCj4gVGhlIGNsb2NrLWZyZXF1ZW5jeSBwcm9wZXJ0eSBpcyBub3QgbWFu
+ZGF0b3J5IGZvciB0aGUgaTJjIGJ1c2VzLiBJZiBpdCdzDQo+IG5vdCBwcmVzZW50IGluIHRoZSBk
+ZXZpY2UgdHJlZSwgdGhlIGJ1c2VzIF9fdXN1YWxseV9fIGFzc3VtZSBpdCdzIDEwMGtIWg0KPiAo
+c2VlIGFsdGVyYSwgYXQ5MSwgYXh4aWEsIGV0Yy4pLiBCcm9hZGNvbSB1c2VzIGEgMzc1a0haIGRl
+ZmF1bHQNCj4gY2xvY2stZnJlcXVlbmN5LCBzbyB0aGUgZGVmYXVsdCBjbG9jayBmcmVxdWVuY3kg
+dmFyaWVzIGZyb20gYnVzIHRvIGJ1cy4NCj4gDQo+IFRoZXJlIGFyZSBpMmMgY2xpZW50cyB0aGF0
+IG5lZWQgdG8ga25vdyB0aGUgYnVzIGNsb2NrIGZyZXF1ZW5jeSBpbiBvcmRlciB0bw0KPiBjb21w
+dXRlIHRoZWlyIHdha2UgdG9rZW4gKHNlZSBhdGVjYzUwOGEgaTJjIGNsaWVudCkuDQo+IA0KPiBU
+aGUgY2xvY2stZnJlcXVlbmN5IHZhbHVlIGhhcyB0byBiZSBwcm9wYWdhdGVkIHRvIHRoZSBpMmMg
+Y2xpZW50cywgb3RoZXJ3aXNlLA0KPiBpZiB0aGV5IHdpbGwgbm90IGZpbmQgdGhlIGkyYyBidXMg
+Y2xvY2sgZnJlcXVlbmN5IGluIHRoZSBkZXZpY2UgdHJlZSwgdGhleQ0KPiB3aWxsIGhhdmUgdG8g
+bWFrZSB0aGVpciBvd24gYXNzdW1wdGlvbiBvZiB0aGUgY2xvY2sgZnJlcXVlbmN5Lg0KPiANCj4g
+U3BhcmUgdGhlIGkyYyBjbGllbnRzIG9mIG1ha2luZyB3cm9uZyBhc3N1bXB0aW9ucyBvZiB0aGUg
+aTJjIGJ1cyBjbG9jaw0KPiBmcmVxdWVuY3kgYW5kIGVuYWJsZSB0aGUgYnVzZXMgdG8gc2F2ZSB0
+aGVpciBjbG9jayBmcmVxdWVuY3kgaW4gYWRhcHRlci4NCj4gDQo+IFNpZ25lZC1vZmYtYnk6IFR1
+ZG9yIEFtYmFydXMgPHR1ZG9yLmFtYmFydXNAbWljcm9jaGlwLmNvbT4NCj4gUmV2aXdlZC1ieTog
+THVkb3ZpYyBEZXNyb2NoZXMgPGx1ZG92aWMuZGVzcm9jaGVzQG1pY3JvY2hpcC5jb20+DQoNClRo
+aXMgaXMgbm90IHRoZSBjb3JyZWN0IHNwZWxsaW5nIG9mIHRoZSB0YWcgYW5kIHByb2JhYmx5IHRo
+ZSByZWFzb24gZm9yDQp0aGUgbGFjayBvZiByZWFjdGlvbiBmcm9tIFdvbGZyYW0uIFRoZSB0YWcg
+aGFzIHNpbXBseSBub3Qgc2hvd2VkIHVwIGluDQpwYXRjaHdvcmsgYW5kIHRoZSBwYXRjaCBoYXMg
+dGh1cyBiZWVuIHBvc3Rwb25lZC4gUHJvYmFibHkuLi4NCg0KQ2hlZXJzLA0KUGV0ZXINCg0KPiAt
+LS0NCj4gIGluY2x1ZGUvbGludXgvaTJjLmggfCAxICsNCj4gIDEgZmlsZSBjaGFuZ2VkLCAxIGlu
+c2VydGlvbigrKQ0KPiANCj4gZGlmZiAtLWdpdCBhL2luY2x1ZGUvbGludXgvaTJjLmggYi9pbmNs
+dWRlL2xpbnV4L2kyYy5oDQo+IGluZGV4IDY1YjRlYWVkMWQ5Ni4uZjIzOGRhMjA0YzQ5IDEwMDY0
+NA0KPiAtLS0gYS9pbmNsdWRlL2xpbnV4L2kyYy5oDQo+ICsrKyBiL2luY2x1ZGUvbGludXgvaTJj
+LmgNCj4gQEAgLTY3Nyw2ICs2NzcsNyBAQCBzdHJ1Y3QgaTJjX2FkYXB0ZXIgew0KPiAgCXN0cnVj
+dCBydF9tdXRleCBidXNfbG9jazsNCj4gIAlzdHJ1Y3QgcnRfbXV0ZXggbXV4X2xvY2s7DQo+ICAN
+Cj4gKwl1MzIgYnVzX2ZyZXFfaHo7DQo+ICAJaW50IHRpbWVvdXQ7CQkJLyogaW4gamlmZmllcyAq
+Lw0KPiAgCWludCByZXRyaWVzOw0KPiAgCXN0cnVjdCBkZXZpY2UgZGV2OwkJLyogdGhlIGFkYXB0
+ZXIgZGV2aWNlICovDQo+IA0KDQo=
