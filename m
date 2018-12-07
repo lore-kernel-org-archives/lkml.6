@@ -6,37 +6,37 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9123EC07E85
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 20:13:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58E86C64EB1
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 20:13:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 53DD32082D
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 20:13:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 53DD32082D
+	by mail.kernel.org (Postfix) with ESMTP id 26E5620892
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 20:13:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 26E5620892
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=windriver.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726115AbeLGUNb (ORCPT
+        id S1726146AbeLGUNf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 15:13:31 -0500
-Received: from mail5.windriver.com ([192.103.53.11]:59156 "EHLO mail5.wrs.com"
+        Fri, 7 Dec 2018 15:13:35 -0500
+Received: from mail5.windriver.com ([192.103.53.11]:59158 "EHLO mail5.wrs.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726084AbeLGUNb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726093AbeLGUNb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 7 Dec 2018 15:13:31 -0500
 Received: from ALA-HCA.corp.ad.wrs.com (ala-hca.corp.ad.wrs.com [147.11.189.40])
-        by mail5.wrs.com (8.15.2/8.15.2) with ESMTPS id wB7KBUx2030882
+        by mail5.wrs.com (8.15.2/8.15.2) with ESMTPS id wB7KBUx3030882
         (version=TLSv1 cipher=AES128-SHA bits=128 verify=FAIL);
         Fri, 7 Dec 2018 12:12:58 -0800
 Received: from yow-cube1.wrs.com (128.224.56.98) by ALA-HCA.corp.ad.wrs.com
  (147.11.189.40) with Microsoft SMTP Server id 14.3.408.0; Fri, 7 Dec 2018
- 12:11:55 -0800
+ 12:12:30 -0800
 From:   Paul Gortmaker <paul.gortmaker@windriver.com>
 To:     Lee Jones <lee.jones@linaro.org>
 CC:     <linux-kernel@vger.kernel.org>,
         Paul Gortmaker <paul.gortmaker@windriver.com>,
-        Jin Park <jinyoungp@nvidia.com>
-Subject: [PATCH 01/18] mfd: aat2870-core: Make it explicitly non-modular
-Date:   Fri, 7 Dec 2018 15:10:48 -0500
-Message-ID: <1544213465-16259-2-git-send-email-paul.gortmaker@windriver.com>
+        Michael Hennerich <michael.hennerich@analog.com>
+Subject: [PATCH 02/18] mfd: adp5520: Make it explicitly non-modular
+Date:   Fri, 7 Dec 2018 15:10:49 -0500
+Message-ID: <1544213465-16259-3-git-send-email-paul.gortmaker@windriver.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1544213465-16259-1-git-send-email-paul.gortmaker@windriver.com>
 References: <1544213465-16259-1-git-send-email-paul.gortmaker@windriver.com>
@@ -47,10 +47,11 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Kconfig currently controlling compilation of this code is:
+The Makefile/Kconfig currently controlling compilation of this code is:
 
-drivers/mfd/Kconfig:config MFD_AAT2870_CORE
-drivers/mfd/Kconfig:    bool "AnalogicTech AAT2870"
+drivers/mfd/Makefile:obj-$(CONFIG_PMIC_ADP5520) += adp5520.o
+drivers/mfd/Kconfig:config PMIC_ADP5520
+drivers/mfd/Kconfig:    bool "Analog Devices ADP5520/01 MFD PMIC Core Support"
 
 ...meaning that it currently is not being built as a module by anyone.
 
@@ -61,107 +62,89 @@ We explicitly disallow a driver unbind, since that doesn't have a
 sensible use case anyway, and it allows us to drop the ".remove"
 code for non-modular drivers.
 
-Since module_init was not in use by this code, the init ordering
-remains unchanged with this commit.
+Since module_i2c_driver() uses the same init level priority as
+builtin_i2c_driver() the init ordering remains unchanged with
+this commit.
 
 Also note that MODULE_DEVICE_TABLE is a no-op for non-modular code.
 
 We also delete the MODULE_LICENSE tag etc. since all that information
-is already contained at the top of the file in the comments.
+was (or is now) contained at the top of the file in the comments.
 
+Cc: Michael Hennerich <michael.hennerich@analog.com>
 Cc: Lee Jones <lee.jones@linaro.org>
-Cc: Jin Park <jinyoungp@nvidia.com>
 Acked-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
 ---
- drivers/mfd/aat2870-core.c | 40 +++-------------------------------------
- 1 file changed, 3 insertions(+), 37 deletions(-)
+ drivers/mfd/adp5520.c | 30 +++++++-----------------------
+ 1 file changed, 7 insertions(+), 23 deletions(-)
 
-diff --git a/drivers/mfd/aat2870-core.c b/drivers/mfd/aat2870-core.c
-index 3ba19a45f199..9d3d90d386c2 100644
---- a/drivers/mfd/aat2870-core.c
-+++ b/drivers/mfd/aat2870-core.c
-@@ -20,7 +20,6 @@
+diff --git a/drivers/mfd/adp5520.c b/drivers/mfd/adp5520.c
+index be0497b96720..2cdd39cb8a18 100644
+--- a/drivers/mfd/adp5520.c
++++ b/drivers/mfd/adp5520.c
+@@ -7,6 +7,8 @@
+  *
+  * Copyright 2009 Analog Devices Inc.
+  *
++ * Author: Michael Hennerich <michael.hennerich@analog.com>
++ *
+  * Derived from da903x:
+  * Copyright (C) 2008 Compulab, Ltd.
+  *	Mike Rapoport <mike@compulab.co.il>
+@@ -18,7 +20,7 @@
   */
  
  #include <linux/kernel.h>
 -#include <linux/module.h>
- #include <linux/init.h>
- #include <linux/debugfs.h>
++#include <linux/init.h>
+ #include <linux/platform_device.h>
  #include <linux/slab.h>
-@@ -349,18 +348,10 @@ static void aat2870_init_debugfs(struct aat2870_data *aat2870)
- 			 "Failed to create debugfs register file\n");
- }
- 
--static void aat2870_uninit_debugfs(struct aat2870_data *aat2870)
--{
--	debugfs_remove_recursive(aat2870->dentry_root);
--}
- #else
- static inline void aat2870_init_debugfs(struct aat2870_data *aat2870)
- {
- }
--
--static inline void aat2870_uninit_debugfs(struct aat2870_data *aat2870)
--{
--}
- #endif /* CONFIG_DEBUG_FS */
- 
- static int aat2870_i2c_probe(struct i2c_client *client,
-@@ -440,20 +431,6 @@ static int aat2870_i2c_probe(struct i2c_client *client,
+ #include <linux/interrupt.h>
+@@ -304,18 +306,6 @@ static int adp5520_probe(struct i2c_client *client,
  	return ret;
  }
  
--static int aat2870_i2c_remove(struct i2c_client *client)
+-static int adp5520_remove(struct i2c_client *client)
 -{
--	struct aat2870_data *aat2870 = i2c_get_clientdata(client);
+-	struct adp5520_chip *chip = dev_get_drvdata(&client->dev);
 -
--	aat2870_uninit_debugfs(aat2870);
+-	if (chip->irq)
+-		free_irq(chip->irq, chip);
 -
--	mfd_remove_devices(aat2870->dev);
--	aat2870_disable(aat2870);
--	if (aat2870->uninit)
--		aat2870->uninit(aat2870);
--
+-	adp5520_remove_subdevs(chip);
+-	adp5520_write(chip->dev, ADP5520_MODE_STATUS, 0);
 -	return 0;
 -}
 -
  #ifdef CONFIG_PM_SLEEP
- static int aat2870_i2c_suspend(struct device *dev)
+ static int adp5520_suspend(struct device *dev)
  {
-@@ -492,15 +469,14 @@ static const struct i2c_device_id aat2870_i2c_id_table[] = {
- 	{ "aat2870", 0 },
+@@ -346,20 +336,14 @@ static const struct i2c_device_id adp5520_id[] = {
+ 	{ "pmic-adp5501", ID_ADP5501 },
  	{ }
  };
--MODULE_DEVICE_TABLE(i2c, aat2870_i2c_id_table);
+-MODULE_DEVICE_TABLE(i2c, adp5520_id);
  
- static struct i2c_driver aat2870_i2c_driver = {
+ static struct i2c_driver adp5520_driver = {
  	.driver = {
--		.name	= "aat2870",
--		.pm	= &aat2870_pm_ops,
-+		.name			= "aat2870",
-+		.pm			= &aat2870_pm_ops,
+-		.name	= "adp5520",
+-		.pm	= &adp5520_pm,
++		.name			= "adp5520",
++		.pm			= &adp5520_pm,
 +		.suppress_bind_attrs	= true,
  	},
- 	.probe		= aat2870_i2c_probe,
--	.remove		= aat2870_i2c_remove,
- 	.id_table	= aat2870_i2c_id_table,
+ 	.probe		= adp5520_probe,
+-	.remove		= adp5520_remove,
+ 	.id_table	= adp5520_id,
  };
- 
-@@ -509,13 +485,3 @@ static int __init aat2870_init(void)
- 	return i2c_add_driver(&aat2870_i2c_driver);
- }
- subsys_initcall(aat2870_init);
 -
--static void __exit aat2870_exit(void)
--{
--	i2c_del_driver(&aat2870_i2c_driver);
--}
--module_exit(aat2870_exit);
+-module_i2c_driver(adp5520_driver);
 -
--MODULE_DESCRIPTION("Core support for the AnalogicTech AAT2870");
+-MODULE_AUTHOR("Michael Hennerich <michael.hennerich@analog.com>");
+-MODULE_DESCRIPTION("ADP5520(01) PMIC-MFD Driver");
 -MODULE_LICENSE("GPL");
--MODULE_AUTHOR("Jin Park <jinyoungp@nvidia.com>");
++builtin_i2c_driver(adp5520_driver);
 -- 
 2.7.4
 
