@@ -2,42 +2,44 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06676C07E85
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 21:09:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18BFFC07E85
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 21:09:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BC03220892
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 21:09:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC03220892
+	by mail.kernel.org (Postfix) with ESMTP id B84E12083D
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 21:09:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B84E12083D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726150AbeLGVJX (ORCPT
+        id S1726207AbeLGVJ3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 16:09:23 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:56754 "EHLO huawei.com"
+        Fri, 7 Dec 2018 16:09:29 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:56755 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726041AbeLGVJW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 16:09:22 -0500
+        id S1726008AbeLGVJY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Dec 2018 16:09:24 -0500
 Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id EDF9B3FEE71F4;
+        by Forcepoint Email with ESMTP id F26A9B815DFEA;
         Sat,  8 Dec 2018 05:09:19 +0800 (CST)
 Received: from S00293818-DELL1.china.huawei.com (10.202.226.54) by
  DGGEMS414-HUB.china.huawei.com (10.3.19.214) with Microsoft SMTP Server id
- 14.3.408.0; Sat, 8 Dec 2018 05:09:11 +0800
+ 14.3.408.0; Sat, 8 Dec 2018 05:09:13 +0800
 From:   Salil Mehta <salil.mehta@huawei.com>
 To:     <davem@davemloft.net>
 CC:     <salil.mehta@huawei.com>, <yisen.zhuang@huawei.com>,
         <lipeng321@huawei.com>, <mehta.salil@opnsrc.net>,
         <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linuxarm@huawei.com>
-Subject: [PATCH net-next 00/14] net: hns3: Additions/optimizations related to HNS3 H/W err handling
-Date:   Fri, 7 Dec 2018 21:07:57 +0000
-Message-ID: <20181207210811.23844-1-salil.mehta@huawei.com>
+        <linuxarm@huawei.com>, Shiju Jose <shiju.jose@huawei.com>
+Subject: [PATCH net-next 01/14] net: hns3: remove existing process error functions and reorder hw_blk table
+Date:   Fri, 7 Dec 2018 21:07:58 +0000
+Message-ID: <20181207210811.23844-2-salil.mehta@huawei.com>
 X-Mailer: git-send-email 2.8.3
+In-Reply-To: <20181207210811.23844-1-salil.mehta@huawei.com>
+References: <20181207210811.23844-1-salil.mehta@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [10.202.226.54]
@@ -47,50 +49,599 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch set primarily does following addtions and optimizations
-related to error handling in HNS3 Ethernet driver:
+From: Shiju Jose <shiju.jose@huawei.com>
 
- 1. Name changes for enable and process functions and minor loop
-    optimizations. [PATCH 1-6]
- 2. Modify query and clearing of RAS errors using new set of commands
-    because modules specific commands for clearing RCB PPP PF, SSU are
-    obselete. [PATCH 7]
- 3. Deletes logging 1-bit errors for RAS in HNS3 driver as these never
-    get reported to the driver. [PATCH 8]
- 4. Add handling of NIC hw errors reported through MSIx rather than
-    PCIe AER channel. [PATCH 9]
- 5. Add handling for the HW RAS and MSIx errors in the modules MAC, PPP
-    PF, MSIx SRAM, RCB and SSU. [PATCH 10-13]
- 6. Add handling of RoCEE RAS errors. [PATCH 14]
+1.The command interface for queryng and clearing hw errors is
+  changed, which requires the new process error functions to be added.
+  This patch removes all the current process error functions and
+  associated definitions. The new functions to handle ras errors
+  would be added in this patch set.
 
-Salil Mehta (1):
-  net: hns3: add handling of hw errors reported through MSIX
+2. Fixed order issue of the hw_blk table.
 
-Shiju Jose (13):
-  net: hns3: remove existing process error functions and reorder hw_blk
-    table
-  net: hns3: rename enable error interrupt functions
-  net: hns3: re-enable error interrupts on hw reset
-  net: hns3: deletes unnecessary settings of the descriptor data
-  net: hns3: rename process_hw_error function
-  net: hns3: add optimization in the hclge_hw_error_set_state
-  net: hns3: add handling of hw ras errors using new set of commands
-  net: hns3: deleted logging 1 bit errors
-  net: hns3: add handling of hw errors of MAC
-  net: hns3: handle hw errors of PPP PF
-  net: hns3: handle hw errors of PPU(RCB)
-  net: hns3: handle hw errors of SSU
-  net: hns3: add handling of RDMA RAS errors
+Signed-off-by: Shiju Jose <shiju.jose@huawei.com>
+Signed-off-by: Salil Mehta <salil.mehta@huawei.com>
+---
+ .../net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h |  12 -
+ .../net/ethernet/hisilicon/hns3/hns3pf/hclge_err.c | 462 +--------------------
+ .../net/ethernet/hisilicon/hns3/hns3pf/hclge_err.h |  19 -
+ 3 files changed, 18 insertions(+), 475 deletions(-)
 
- drivers/net/ethernet/hisilicon/hns3/hnae3.h        |    3 +-
- drivers/net/ethernet/hisilicon/hns3/hns3_enet.c    |    4 +-
- .../net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h |   27 +-
- .../net/ethernet/hisilicon/hns3/hns3pf/hclge_err.c | 1554 ++++++++++++--------
- .../net/ethernet/hisilicon/hns3/hns3pf/hclge_err.h |   79 +-
- .../ethernet/hisilicon/hns3/hns3pf/hclge_main.c    |   55 +-
- .../ethernet/hisilicon/hns3/hns3pf/hclge_main.h    |    1 +
- 7 files changed, 1067 insertions(+), 656 deletions(-)
-
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h
+index e1805b9..d2fb210 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h
+@@ -216,25 +216,13 @@ enum hclge_opcode_type {
+ 
+ 	/* Error INT commands */
+ 	HCLGE_TM_SCH_ECC_INT_EN		= 0x0829,
+-	HCLGE_TM_SCH_ECC_ERR_RINT_CMD	= 0x082d,
+-	HCLGE_TM_SCH_ECC_ERR_RINT_CE	= 0x082f,
+-	HCLGE_TM_SCH_ECC_ERR_RINT_NFE	= 0x0830,
+-	HCLGE_TM_SCH_ECC_ERR_RINT_FE	= 0x0831,
+-	HCLGE_TM_SCH_MBIT_ECC_INFO_CMD	= 0x0833,
+ 	HCLGE_COMMON_ECC_INT_CFG	= 0x1505,
+-	HCLGE_IGU_EGU_TNL_INT_QUERY	= 0x1802,
+ 	HCLGE_IGU_EGU_TNL_INT_EN	= 0x1803,
+-	HCLGE_IGU_EGU_TNL_INT_CLR	= 0x1804,
+-	HCLGE_IGU_COMMON_INT_QUERY	= 0x1805,
+ 	HCLGE_IGU_COMMON_INT_EN		= 0x1806,
+-	HCLGE_IGU_COMMON_INT_CLR	= 0x1807,
+ 	HCLGE_TM_QCN_MEM_INT_CFG	= 0x1A14,
+-	HCLGE_TM_QCN_MEM_INT_INFO_CMD	= 0x1A17,
+ 	HCLGE_PPP_CMD0_INT_CMD		= 0x2100,
+ 	HCLGE_PPP_CMD1_INT_CMD		= 0x2101,
+-	HCLGE_NCSI_INT_QUERY		= 0x2400,
+ 	HCLGE_NCSI_INT_EN		= 0x2401,
+-	HCLGE_NCSI_INT_CLR		= 0x2402,
+ };
+ 
+ #define HCLGE_TQP_REG_OFFSET		0x80000
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_err.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_err.c
+index 6da9e22..ac9ab3c 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_err.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_err.c
+@@ -336,25 +336,6 @@ static const struct hclge_hw_error hclge_qcn_ecc_err_int[] = {
+ 	{ /* sentinel */ }
+ };
+ 
+-static void hclge_log_error(struct device *dev,
+-			    const struct hclge_hw_error *err_list,
+-			    u32 err_sts)
+-{
+-	const struct hclge_hw_error *err;
+-	int i = 0;
+-
+-	while (err_list[i].msg) {
+-		err = &err_list[i];
+-		if (!(err->int_msk & err_sts)) {
+-			i++;
+-			continue;
+-		}
+-		dev_warn(dev, "%s [error status=0x%x] found\n",
+-			 err->msg, err_sts);
+-		i++;
+-	}
+-}
+-
+ /* hclge_cmd_query_error: read the error information
+  * @hdev: pointer to struct hclge_dev
+  * @desc: descriptor for describing the command
+@@ -391,53 +372,6 @@ static int hclge_cmd_query_error(struct hclge_dev *hdev,
+ 	return ret;
+ }
+ 
+-/* hclge_cmd_clear_error: clear the error status
+- * @hdev: pointer to struct hclge_dev
+- * @desc: descriptor for describing the command
+- * @desc_src: prefilled descriptor from the previous command for reusing
+- * @cmd:  command opcode
+- * @flag: flag for extended command structure
+- *
+- * This function clear the error status in the hw register/s using command
+- */
+-static int hclge_cmd_clear_error(struct hclge_dev *hdev,
+-				 struct hclge_desc *desc,
+-				 struct hclge_desc *desc_src,
+-				 u32 cmd, u16 flag)
+-{
+-	struct device *dev = &hdev->pdev->dev;
+-	int num = 1;
+-	int ret, i;
+-
+-	if (cmd) {
+-		hclge_cmd_setup_basic_desc(&desc[0], cmd, false);
+-		if (flag) {
+-			desc[0].flag |= cpu_to_le16(flag);
+-			hclge_cmd_setup_basic_desc(&desc[1], cmd, false);
+-			num = 2;
+-		}
+-		if (desc_src) {
+-			for (i = 0; i < 6; i++) {
+-				desc[0].data[i] = desc_src[0].data[i];
+-				if (flag)
+-					desc[1].data[i] = desc_src[1].data[i];
+-			}
+-		}
+-	} else {
+-		hclge_cmd_reuse_desc(&desc[0], false);
+-		if (flag) {
+-			desc[0].flag |= cpu_to_le16(flag);
+-			hclge_cmd_reuse_desc(&desc[1], false);
+-			num = 2;
+-		}
+-	}
+-	ret = hclge_cmd_send(&hdev->hw, &desc[0], num);
+-	if (ret)
+-		dev_err(dev, "clear error cmd failed (%d)\n", ret);
+-
+-	return ret;
+-}
+-
+ static int hclge_enable_common_error(struct hclge_dev *hdev, bool en)
+ {
+ 	struct device *dev = &hdev->pdev->dev;
+@@ -665,368 +599,23 @@ int hclge_enable_tm_hw_error(struct hclge_dev *hdev, bool en)
+ 	return ret;
+ }
+ 
+-static void hclge_process_common_error(struct hclge_dev *hdev,
+-				       enum hclge_err_int_type type)
+-{
+-	struct device *dev = &hdev->pdev->dev;
+-	struct hclge_desc desc[2];
+-	u32 err_sts;
+-	int ret;
+-
+-	/* read err sts */
+-	ret = hclge_cmd_query_error(hdev, &desc[0],
+-				    HCLGE_COMMON_ECC_INT_CFG,
+-				    HCLGE_CMD_FLAG_NEXT, 0, 0);
+-	if (ret) {
+-		dev_err(dev,
+-			"failed(=%d) to query COMMON error interrupt status\n",
+-			ret);
+-		return;
+-	}
+-
+-	/* log err */
+-	err_sts = (le32_to_cpu(desc[0].data[0])) & HCLGE_IMP_TCM_ECC_INT_MASK;
+-	hclge_log_error(dev, &hclge_imp_tcm_ecc_int[0], err_sts);
+-
+-	err_sts = (le32_to_cpu(desc[0].data[1])) & HCLGE_CMDQ_ECC_INT_MASK;
+-	hclge_log_error(dev, &hclge_cmdq_nic_mem_ecc_int[0], err_sts);
+-
+-	err_sts = (le32_to_cpu(desc[0].data[1]) >> HCLGE_CMDQ_ROC_ECC_INT_SHIFT)
+-		   & HCLGE_CMDQ_ECC_INT_MASK;
+-	hclge_log_error(dev, &hclge_cmdq_rocee_mem_ecc_int[0], err_sts);
+-
+-	if ((le32_to_cpu(desc[0].data[3])) & BIT(0))
+-		dev_warn(dev, "imp_rd_data_poison_err found\n");
+-
+-	err_sts = (le32_to_cpu(desc[0].data[3]) >> HCLGE_TQP_ECC_INT_SHIFT) &
+-		   HCLGE_TQP_ECC_INT_MASK;
+-	hclge_log_error(dev, &hclge_tqp_int_ecc_int[0], err_sts);
+-
+-	err_sts = (le32_to_cpu(desc[0].data[5])) &
+-		   HCLGE_IMP_ITCM4_ECC_INT_MASK;
+-	hclge_log_error(dev, &hclge_imp_itcm4_ecc_int[0], err_sts);
+-
+-	/* clear error interrupts */
+-	desc[1].data[0] = cpu_to_le32(HCLGE_IMP_TCM_ECC_CLR_MASK);
+-	desc[1].data[1] = cpu_to_le32(HCLGE_CMDQ_NIC_ECC_CLR_MASK |
+-				HCLGE_CMDQ_ROCEE_ECC_CLR_MASK);
+-	desc[1].data[3] = cpu_to_le32(HCLGE_TQP_IMP_ERR_CLR_MASK);
+-	desc[1].data[5] = cpu_to_le32(HCLGE_IMP_ITCM4_ECC_CLR_MASK);
+-
+-	ret = hclge_cmd_clear_error(hdev, &desc[0], NULL, 0,
+-				    HCLGE_CMD_FLAG_NEXT);
+-	if (ret)
+-		dev_err(dev,
+-			"failed(%d) to clear COMMON error interrupt status\n",
+-			ret);
+-}
+-
+-static void hclge_process_ncsi_error(struct hclge_dev *hdev,
+-				     enum hclge_err_int_type type)
+-{
+-	struct device *dev = &hdev->pdev->dev;
+-	struct hclge_desc desc_rd;
+-	struct hclge_desc desc_wr;
+-	u32 err_sts;
+-	int ret;
+-
+-	if (hdev->pdev->revision < 0x21)
+-		return;
+-
+-	/* read NCSI error status */
+-	ret = hclge_cmd_query_error(hdev, &desc_rd, HCLGE_NCSI_INT_QUERY,
+-				    0, 1, HCLGE_NCSI_ERR_INT_TYPE);
+-	if (ret) {
+-		dev_err(dev,
+-			"failed(=%d) to query NCSI error interrupt status\n",
+-			ret);
+-		return;
+-	}
+-
+-	/* log err */
+-	err_sts = le32_to_cpu(desc_rd.data[0]);
+-	hclge_log_error(dev, &hclge_ncsi_err_int[0], err_sts);
+-
+-	/* clear err int */
+-	ret = hclge_cmd_clear_error(hdev, &desc_wr, &desc_rd,
+-				    HCLGE_NCSI_INT_CLR, 0);
+-	if (ret)
+-		dev_err(dev, "failed(=%d) to clear NCSI interrupt status\n",
+-			ret);
+-}
+-
+-static void hclge_process_igu_egu_error(struct hclge_dev *hdev,
+-					enum hclge_err_int_type int_type)
+-{
+-	struct device *dev = &hdev->pdev->dev;
+-	struct hclge_desc desc_rd;
+-	struct hclge_desc desc_wr;
+-	u32 err_sts;
+-	int ret;
+-
+-	/* read IGU common err sts */
+-	ret = hclge_cmd_query_error(hdev, &desc_rd,
+-				    HCLGE_IGU_COMMON_INT_QUERY,
+-				    0, 1, int_type);
+-	if (ret) {
+-		dev_err(dev, "failed(=%d) to query IGU common int status\n",
+-			ret);
+-		return;
+-	}
+-
+-	/* log err */
+-	err_sts = le32_to_cpu(desc_rd.data[0]) &
+-				   HCLGE_IGU_COM_INT_MASK;
+-	hclge_log_error(dev, &hclge_igu_com_err_int[0], err_sts);
+-
+-	/* clear err int */
+-	ret = hclge_cmd_clear_error(hdev, &desc_wr, &desc_rd,
+-				    HCLGE_IGU_COMMON_INT_CLR, 0);
+-	if (ret) {
+-		dev_err(dev, "failed(=%d) to clear IGU common int status\n",
+-			ret);
+-		return;
+-	}
+-
+-	/* read IGU-EGU TNL err sts */
+-	ret = hclge_cmd_query_error(hdev, &desc_rd,
+-				    HCLGE_IGU_EGU_TNL_INT_QUERY,
+-				    0, 1, int_type);
+-	if (ret) {
+-		dev_err(dev, "failed(=%d) to query IGU-EGU TNL int status\n",
+-			ret);
+-		return;
+-	}
+-
+-	/* log err */
+-	err_sts = le32_to_cpu(desc_rd.data[0]) &
+-				   HCLGE_IGU_EGU_TNL_INT_MASK;
+-	hclge_log_error(dev, &hclge_igu_egu_tnl_err_int[0], err_sts);
+-
+-	/* clear err int */
+-	ret = hclge_cmd_clear_error(hdev, &desc_wr, &desc_rd,
+-				    HCLGE_IGU_EGU_TNL_INT_CLR, 0);
+-	if (ret) {
+-		dev_err(dev, "failed(=%d) to clear IGU-EGU TNL int status\n",
+-			ret);
+-		return;
+-	}
+-
+-	hclge_process_ncsi_error(hdev, HCLGE_ERR_INT_RAS_NFE);
+-}
+-
+-static int hclge_log_and_clear_ppp_error(struct hclge_dev *hdev, u32 cmd,
+-					 enum hclge_err_int_type int_type)
+-{
+-	struct device *dev = &hdev->pdev->dev;
+-	const struct hclge_hw_error *hw_err_lst1, *hw_err_lst2, *hw_err_lst3;
+-	struct hclge_desc desc[2];
+-	u32 err_sts;
+-	int ret;
+-
+-	/* read PPP INT sts */
+-	ret = hclge_cmd_query_error(hdev, &desc[0], cmd,
+-				    HCLGE_CMD_FLAG_NEXT, 5, int_type);
+-	if (ret) {
+-		dev_err(dev, "failed(=%d) to query PPP interrupt status\n",
+-			ret);
+-		return -EIO;
+-	}
+-
+-	/* log error */
+-	if (cmd == HCLGE_PPP_CMD0_INT_CMD) {
+-		hw_err_lst1 = &hclge_ppp_mpf_int0[0];
+-		hw_err_lst2 = &hclge_ppp_mpf_int1[0];
+-		hw_err_lst3 = &hclge_ppp_pf_int[0];
+-	} else if (cmd == HCLGE_PPP_CMD1_INT_CMD) {
+-		hw_err_lst1 = &hclge_ppp_mpf_int2[0];
+-		hw_err_lst2 = &hclge_ppp_mpf_int3[0];
+-	} else {
+-		dev_err(dev, "invalid command(=%d)\n", cmd);
+-		return -EINVAL;
+-	}
+-
+-	err_sts = le32_to_cpu(desc[0].data[2]);
+-	if (err_sts)
+-		hclge_log_error(dev, hw_err_lst1, err_sts);
+-
+-	err_sts = le32_to_cpu(desc[0].data[3]);
+-	if (err_sts)
+-		hclge_log_error(dev, hw_err_lst2, err_sts);
+-
+-	if (cmd == HCLGE_PPP_CMD0_INT_CMD) {
+-		err_sts = (le32_to_cpu(desc[0].data[4]) >> 8) & 0x3;
+-		if (err_sts)
+-			hclge_log_error(dev, hw_err_lst3, err_sts);
+-	}
+-
+-	/* clear PPP INT */
+-	ret = hclge_cmd_clear_error(hdev, &desc[0], NULL, 0,
+-				    HCLGE_CMD_FLAG_NEXT);
+-	if (ret) {
+-		dev_err(dev, "failed(=%d) to clear PPP interrupt status\n",
+-			ret);
+-		return -EIO;
+-	}
+-
+-	return 0;
+-}
+-
+-static void hclge_process_ppp_error(struct hclge_dev *hdev,
+-				    enum hclge_err_int_type int_type)
+-{
+-	struct device *dev = &hdev->pdev->dev;
+-	int ret;
+-
+-	/* read PPP INT0,1 sts */
+-	ret = hclge_log_and_clear_ppp_error(hdev, HCLGE_PPP_CMD0_INT_CMD,
+-					    int_type);
+-	if (ret < 0) {
+-		dev_err(dev, "failed(=%d) to clear PPP interrupt 0,1 status\n",
+-			ret);
+-		return;
+-	}
+-
+-	/* read err PPP INT2,3 sts */
+-	ret = hclge_log_and_clear_ppp_error(hdev, HCLGE_PPP_CMD1_INT_CMD,
+-					    int_type);
+-	if (ret < 0)
+-		dev_err(dev, "failed(=%d) to clear PPP interrupt 2,3 status\n",
+-			ret);
+-}
+-
+-static void hclge_process_tm_sch_error(struct hclge_dev *hdev)
+-{
+-	struct device *dev = &hdev->pdev->dev;
+-	const struct hclge_tm_sch_ecc_info *tm_sch_ecc_info;
+-	struct hclge_desc desc;
+-	u32 ecc_info;
+-	u8 module_no;
+-	u8 ram_no;
+-	int ret;
+-
+-	/* read TM scheduler errors */
+-	ret = hclge_cmd_query_error(hdev, &desc,
+-				    HCLGE_TM_SCH_MBIT_ECC_INFO_CMD, 0, 0, 0);
+-	if (ret) {
+-		dev_err(dev, "failed(%d) to read SCH mbit ECC err info\n", ret);
+-		return;
+-	}
+-	ecc_info = le32_to_cpu(desc.data[0]);
+-
+-	ret = hclge_cmd_query_error(hdev, &desc,
+-				    HCLGE_TM_SCH_ECC_ERR_RINT_CMD, 0, 0, 0);
+-	if (ret) {
+-		dev_err(dev, "failed(%d) to read SCH ECC err status\n", ret);
+-		return;
+-	}
+-
+-	/* log TM scheduler errors */
+-	if (le32_to_cpu(desc.data[0])) {
+-		hclge_log_error(dev, &hclge_tm_sch_err_int[0],
+-				le32_to_cpu(desc.data[0]));
+-		if (le32_to_cpu(desc.data[0]) & 0x2) {
+-			module_no = (ecc_info >> 20) & 0xF;
+-			ram_no = (ecc_info >> 16) & 0xF;
+-			tm_sch_ecc_info =
+-				&hclge_tm_sch_ecc_err[module_no][ram_no];
+-			dev_warn(dev, "ecc err module:ram=%s\n",
+-				 tm_sch_ecc_info->name);
+-			dev_warn(dev, "ecc memory address = 0x%x\n",
+-				 ecc_info & 0xFFFF);
+-		}
+-	}
+-
+-	/* clear TM scheduler errors */
+-	ret = hclge_cmd_clear_error(hdev, &desc, NULL, 0, 0);
+-	if (ret) {
+-		dev_err(dev, "failed(%d) to clear TM SCH error status\n", ret);
+-		return;
+-	}
+-
+-	ret = hclge_cmd_query_error(hdev, &desc,
+-				    HCLGE_TM_SCH_ECC_ERR_RINT_CE, 0, 0, 0);
+-	if (ret) {
+-		dev_err(dev, "failed(%d) to read SCH CE status\n", ret);
+-		return;
+-	}
+-
+-	ret = hclge_cmd_clear_error(hdev, &desc, NULL, 0, 0);
+-	if (ret) {
+-		dev_err(dev, "failed(%d) to clear TM SCH CE status\n", ret);
+-		return;
+-	}
+-
+-	ret = hclge_cmd_query_error(hdev, &desc,
+-				    HCLGE_TM_SCH_ECC_ERR_RINT_NFE, 0, 0, 0);
+-	if (ret) {
+-		dev_err(dev, "failed(%d) to read SCH NFE status\n", ret);
+-		return;
+-	}
+-
+-	ret = hclge_cmd_clear_error(hdev, &desc, NULL, 0, 0);
+-	if (ret) {
+-		dev_err(dev, "failed(%d) to clear TM SCH NFE status\n", ret);
+-		return;
+-	}
+-
+-	ret = hclge_cmd_query_error(hdev, &desc,
+-				    HCLGE_TM_SCH_ECC_ERR_RINT_FE, 0, 0, 0);
+-	if (ret) {
+-		dev_err(dev, "failed(%d) to read SCH FE status\n", ret);
+-		return;
+-	}
+-
+-	ret = hclge_cmd_clear_error(hdev, &desc, NULL, 0, 0);
+-	if (ret)
+-		dev_err(dev, "failed(%d) to clear TM SCH FE status\n", ret);
+-}
+-
+-static void hclge_process_tm_qcn_error(struct hclge_dev *hdev)
+-{
+-	struct device *dev = &hdev->pdev->dev;
+-	struct hclge_desc desc;
+-	int ret;
+-
+-	/* read QCN errors */
+-	ret = hclge_cmd_query_error(hdev, &desc,
+-				    HCLGE_TM_QCN_MEM_INT_INFO_CMD, 0, 0, 0);
+-	if (ret) {
+-		dev_err(dev, "failed(%d) to read QCN ECC err status\n", ret);
+-		return;
+-	}
+-
+-	/* log QCN errors */
+-	if (le32_to_cpu(desc.data[0]))
+-		hclge_log_error(dev, &hclge_qcn_ecc_err_int[0],
+-				le32_to_cpu(desc.data[0]));
+-
+-	/* clear QCN errors */
+-	ret = hclge_cmd_clear_error(hdev, &desc, NULL, 0, 0);
+-	if (ret)
+-		dev_err(dev, "failed(%d) to clear QCN error status\n", ret);
+-}
+-
+-static void hclge_process_tm_error(struct hclge_dev *hdev,
+-				   enum hclge_err_int_type type)
+-{
+-	hclge_process_tm_sch_error(hdev);
+-	hclge_process_tm_qcn_error(hdev);
+-}
+-
+ static const struct hclge_hw_blk hw_blk[] = {
+-	{ .msk = BIT(0), .name = "IGU_EGU",
++	{
++	  .msk = BIT(0), .name = "IGU_EGU",
+ 	  .enable_error = hclge_enable_igu_egu_error,
+-	  .process_error = hclge_process_igu_egu_error, },
+-	{ .msk = BIT(5), .name = "COMMON",
+-	  .enable_error = hclge_enable_common_error,
+-	  .process_error = hclge_process_common_error, },
+-	{ .msk = BIT(4), .name = "TM",
+-	  .enable_error = hclge_enable_tm_hw_error,
+-	  .process_error = hclge_process_tm_error, },
+-	{ .msk = BIT(1), .name = "PPP",
++	},
++	{
++	  .msk = BIT(1), .name = "PPP",
+ 	  .enable_error = hclge_enable_ppp_error,
+-	  .process_error = hclge_process_ppp_error, },
++	},
++	{
++	  .msk = BIT(4), .name = "TM",
++	  .enable_error = hclge_enable_tm_hw_error,
++	},
++	{
++	  .msk = BIT(5), .name = "COMMON",
++	  .enable_error = hclge_enable_common_error,
++	},
+ 	{ /* sentinel */ }
+ };
+ 
+@@ -1056,28 +645,13 @@ pci_ers_result_t hclge_process_ras_hw_error(struct hnae3_ae_dev *ae_dev)
+ {
+ 	struct hclge_dev *hdev = ae_dev->priv;
+ 	struct device *dev = &hdev->pdev->dev;
+-	u32 sts, val;
+-	int i = 0;
++	u32 sts;
+ 
+ 	sts = hclge_read_dev(&hdev->hw, HCLGE_RAS_PF_OTHER_INT_STS_REG);
+ 
+-	/* Processing Non-fatal errors */
+-	if (sts & HCLGE_RAS_REG_NFE_MASK) {
+-		val = (sts >> HCLGE_RAS_REG_NFE_SHIFT) & 0xFF;
+-		i = 0;
+-		while (hw_blk[i].name) {
+-			if (!(hw_blk[i].msk & val)) {
+-				i++;
+-				continue;
+-			}
+-			dev_warn(dev, "%s ras non-fatal error identified\n",
+-				 hw_blk[i].name);
+-			if (hw_blk[i].process_error)
+-				hw_blk[i].process_error(hdev,
+-							 HCLGE_ERR_INT_RAS_NFE);
+-			i++;
+-		}
+-	}
++	/* Handling Non-fatal RAS errors */
++	if (sts & HCLGE_RAS_REG_NFE_MASK)
++		dev_warn(dev, "HNS Non-Fatal RAS error identified\n");
+ 
+ 	return PCI_ERS_RESULT_NEED_RESET;
+ }
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_err.h b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_err.h
+index e0e3b58..1c5514d 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_err.h
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_err.h
+@@ -7,9 +7,7 @@
+ #include "hclge_main.h"
+ 
+ #define HCLGE_RAS_PF_OTHER_INT_STS_REG   0x20B00
+-#define HCLGE_RAS_REG_FE_MASK    0xFF
+ #define HCLGE_RAS_REG_NFE_MASK   0xFF00
+-#define HCLGE_RAS_REG_NFE_SHIFT	8
+ 
+ #define HCLGE_IMP_TCM_ECC_ERR_INT_EN	0xFFFF0000
+ #define HCLGE_IMP_TCM_ECC_ERR_INT_EN_MASK	0xFFFF0000
+@@ -42,21 +40,6 @@
+ #define HCLGE_NCSI_ERR_INT_EN	0x3
+ #define HCLGE_NCSI_ERR_INT_TYPE	0x9
+ 
+-#define HCLGE_IMP_TCM_ECC_INT_MASK	0xFFFF
+-#define HCLGE_IMP_ITCM4_ECC_INT_MASK	0x3
+-#define HCLGE_CMDQ_ECC_INT_MASK		0xFFFF
+-#define HCLGE_CMDQ_ROC_ECC_INT_SHIFT	16
+-#define HCLGE_TQP_ECC_INT_MASK		0xFFF
+-#define HCLGE_TQP_ECC_INT_SHIFT		16
+-#define HCLGE_IMP_TCM_ECC_CLR_MASK	0xFFFF
+-#define HCLGE_IMP_ITCM4_ECC_CLR_MASK	0x3
+-#define HCLGE_CMDQ_NIC_ECC_CLR_MASK	0xFFFF
+-#define HCLGE_CMDQ_ROCEE_ECC_CLR_MASK	0xFFFF0000
+-#define HCLGE_TQP_IMP_ERR_CLR_MASK	0x0FFF0001
+-#define HCLGE_IGU_COM_INT_MASK		0xF
+-#define HCLGE_IGU_EGU_TNL_INT_MASK	0x3F
+-#define HCLGE_PPP_PF_INT_MASK		0x100
+-
+ enum hclge_err_int_type {
+ 	HCLGE_ERR_INT_MSIX = 0,
+ 	HCLGE_ERR_INT_RAS_CE = 1,
+@@ -68,8 +51,6 @@ struct hclge_hw_blk {
+ 	u32 msk;
+ 	const char *name;
+ 	int (*enable_error)(struct hclge_dev *hdev, bool en);
+-	void (*process_error)(struct hclge_dev *hdev,
+-			      enum hclge_err_int_type type);
+ };
+ 
+ struct hclge_hw_error {
 -- 
 2.7.4
 
