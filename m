@@ -2,181 +2,109 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D066C64EB1
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 09:33:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67C33C07E85
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 09:33:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B1AC20989
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 09:33:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2E9EE20838
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 09:33:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="flVRg0VT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B1AC20989
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="jYnNFeZv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E9EE20838
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726094AbeLGJdQ (ORCPT
+        id S1726098AbeLGJds (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 04:33:16 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:34821 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726084AbeLGJdO (ORCPT
+        Fri, 7 Dec 2018 04:33:48 -0500
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:5041 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725985AbeLGJdr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 04:33:14 -0500
-Received: by mail-wm1-f65.google.com with SMTP id c126so3801333wmh.0
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Dec 2018 01:33:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=eMnf6ldCLzSIFExqElBpBbrF0a80ehzcW+zL1qWkQFI=;
-        b=flVRg0VT8rf773axgJskOt6mEUkNuIav3OWtUev+VR6+9kCUHhD3g3pj0/HTPpnT3z
-         bBhTTWDmGD5vM9g2SvRc1ZoQfTrTf92V4niKulYBCp7xqRVQ2IH3L2zlAcpCB/Y8j/V3
-         AiIv7yEWETnT1S3aSofPvO3rg11PapadoELmQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=eMnf6ldCLzSIFExqElBpBbrF0a80ehzcW+zL1qWkQFI=;
-        b=aucNZZgIczPmyxr4A/J93nCE7t8fdBRScOZD1T1tFMwKPBb9cVK+4JPq40NpVWKek1
-         kKRkCw9fbV8Jb+20vcy1u6XUR2hi2hDQImI9gw3oOgHi6YhjeL5yKvVWLqGtz8jyTYTB
-         e4sEdUsCSM86Wo6Z2Xg5Ay1TxZL+glm9WOLDFx3te8+9Cj/SsdDw1ZSVosuBs4eFAM40
-         o5tLY/Pjg2RGgXN+iippgxwsOzgwJADAOcCVGelrFyx0bSjMJYfxnShorPx+BRktRemH
-         o/3jXHrxnCQhsjMF/6VSyAMZ/2HDf91vj2vjCFG7Y/Co1BWT387ArzfbjLPmi6UJ52hp
-         lcaw==
-X-Gm-Message-State: AA+aEWYtMYudM1nsUN8LAZsusM8LKRdIHsZLRnbBwfwMYjw4YM6OZwhD
-        XutK9wdujE5NZNXPaKOMP4a+Rw==
-X-Google-Smtp-Source: AFSGD/V8LYViCHAWSFzE+x9aAPgqaVHDnxTvmIm+FgCPVAuapeKQs8FRRTpoXcQsMPx9wkPNtG8gNQ==
-X-Received: by 2002:a1c:b94b:: with SMTP id j72mr1534084wmf.11.1544175192459;
-        Fri, 07 Dec 2018 01:33:12 -0800 (PST)
-Received: from [192.168.27.209] ([37.157.136.206])
-        by smtp.googlemail.com with ESMTPSA id z12sm3528581wrh.35.2018.12.07.01.33.09
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 07 Dec 2018 01:33:11 -0800 (PST)
-Subject: Re: [PATCH v3] media: venus: add support for key frame
-To:     Tomasz Figa <tfiga@chromium.org>, mgottam@codeaurora.org
-Cc:     Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        vgarodia@codeaurora.org
-References: <1541163476-23249-1-git-send-email-mgottam@codeaurora.org>
- <CAAFQd5D=hNdkEovonE6GOaYvq9dBbQwSZ=95V9a80e-sLp7cYg@mail.gmail.com>
- <4767b56f-420b-dc0c-0ae9-44dbf6dcd0b1@linaro.org>
- <6d765e0d7d6b873e087a3db823cb1b29@codeaurora.org>
- <CAAFQd5Ask-mw+uEE0OAEabjaAAYcJyCeexaofOAg1bp2NtvpKA@mail.gmail.com>
-From:   Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Message-ID: <0e0cef43-0747-295f-0eef-3e52dc538523@linaro.org>
-Date:   Fri, 7 Dec 2018 11:33:03 +0200
+        Fri, 7 Dec 2018 04:33:47 -0500
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c0a3e790000>; Fri, 07 Dec 2018 01:33:45 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Fri, 07 Dec 2018 01:33:46 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Fri, 07 Dec 2018 01:33:46 -0800
+Received: from [10.21.132.148] (172.20.13.39) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Fri, 7 Dec
+ 2018 09:33:43 +0000
+Subject: Re: [PATCH 4.14 00/55] 4.14.87-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+        <ben.hutchings@codethink.co.uk>, <lkft-triage@lists.linaro.org>,
+        <stable@vger.kernel.org>, linux-tegra <linux-tegra@vger.kernel.org>
+References: <20181206143001.749982936@linuxfoundation.org>
+From:   Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <798bd7d1-4abc-4275-6442-93804aed0cc6@nvidia.com>
+Date:   Fri, 7 Dec 2018 09:33:42 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <CAAFQd5Ask-mw+uEE0OAEabjaAAYcJyCeexaofOAg1bp2NtvpKA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20181206143001.749982936@linuxfoundation.org>
+X-Originating-IP: [172.20.13.39]
+X-ClientProxiedBy: HQMAIL103.nvidia.com (172.20.187.11) To
+ HQMAIL101.nvidia.com (172.20.187.10)
+Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1544175225; bh=MoW+EN7XTFMnkB0qz5ErfsjFzMSFTtiaOtdiKjbu7r0=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=jYnNFeZvddVcfX1zAZfzP+vOAnV9VrTctBHroZuAUYEHSBxqtC19eCIEyrQeau1es
+         4Itpf/Q2nz5GsEhlsNN+CE44zaX0aQH3ZLibVf9S64feznH/IspRSj3fmBvtSr+H1f
+         DMeqxQCP+MCVMutAlSzg8ggnU+Tr94mLS6zfwl+op7Z34GepntPOOiPrjsXLA05/a1
+         9pyaSmGbHyapn4Zh7id71iDPFSOfJKlMWClAmvdIX5YqShm05dWWlCeBM7f7wbExrH
+         A0RCpSWX4Pj64rn2uIKQi94TVEvpiE04VNN0iVxXJSqrs9xn5ie4kCGVpTnn9YFzPy
+         lOFOjedZIuHuQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Hans,
 
-On 11/29/18 9:40 PM, Tomasz Figa wrote:
-> On Thu, Nov 29, 2018 at 3:10 AM <mgottam@codeaurora.org> wrote:
->>
->>
->> Hi Stan,
->>
->> On 2018-11-29 16:01, Stanimir Varbanov wrote:
->>> Hi Tomasz,
->>>
->>> On 11/3/18 5:01 AM, Tomasz Figa wrote:
->>>> Hi Malathi,
->>>>
->>>> On Fri, Nov 2, 2018 at 9:58 PM Malathi Gottam <mgottam@codeaurora.org>
->>>> wrote:
->>>>>
->>>>> When client requests for a keyframe, set the property
->>>>> to hardware to generate the sync frame.
->>>>>
->>>>> Signed-off-by: Malathi Gottam <mgottam@codeaurora.org>
->>>>> ---
->>>>>  drivers/media/platform/qcom/venus/venc_ctrls.c | 20
->>>>> +++++++++++++++++++-
->>>>>  1 file changed, 19 insertions(+), 1 deletion(-)
->>>>>
->>>>> diff --git a/drivers/media/platform/qcom/venus/venc_ctrls.c
->>>>> b/drivers/media/platform/qcom/venus/venc_ctrls.c
->>>>> index 45910172..59fe7fc 100644
->>>>> --- a/drivers/media/platform/qcom/venus/venc_ctrls.c
->>>>> +++ b/drivers/media/platform/qcom/venus/venc_ctrls.c
->>>>> @@ -79,8 +79,10 @@ static int venc_op_s_ctrl(struct v4l2_ctrl *ctrl)
->>>>>  {
->>>>>         struct venus_inst *inst = ctrl_to_inst(ctrl);
->>>>>         struct venc_controls *ctr = &inst->controls.enc;
->>>>> +       struct hfi_enable en = { .enable = 1 };
->>>>>         u32 bframes;
->>>>>         int ret;
->>>>> +       u32 ptype;
->>>>>
->>>>>         switch (ctrl->id) {
->>>>>         case V4L2_CID_MPEG_VIDEO_BITRATE_MODE:
->>>>> @@ -173,6 +175,19 @@ static int venc_op_s_ctrl(struct v4l2_ctrl
->>>>> *ctrl)
->>>>>
->>>>>                 ctr->num_b_frames = bframes;
->>>>>                 break;
->>>>> +       case V4L2_CID_MPEG_VIDEO_FORCE_KEY_FRAME:
->>>>> +               mutex_lock(&inst->lock);
->>>>> +               if (inst->streamon_out && inst->streamon_cap) {
->>>>
->>>> We had a discussion on this in v2. I don't remember seeing any
->>>> conclusion.
->>>>
->>>> Obviously the hardware should generate a keyframe naturally when the
->>>> CAPTURE streaming starts, which is where the encoding starts, but the
->>>> state of the OUTPUT queue should not affect this.
->>>>
->>>> The application is free to stop and start streaming on the OUTPUT
->>>> queue as it goes and it shouldn't imply any side effects in the
->>>> encoded bitstream (e.g. a keyframe inserted). So:
->>>> - a sequence of STREAMOFF(OUTPUT),
->>>> S_CTRL(V4L2_CID_MPEG_VIDEO_FORCE_KEY_FRAME), STREAMON(OUTPUT) should
->>>> explicitly generate a keyframe,
->>>
->>> I agree with you, but presently we don't follow strictly the stateful
->>> encoder spec. In this spirit I think proposed patch is applicable to
->>> the
->>> current state of the encoder driver, and your comment should be
->>> addressed in the follow-up patches where we have to re-factor a bit
->>> start/stop_streaming according to the encoder documentation.
->>>
->>> But until then we have to get that patch.
->>
->> So I can see that this patch is good implementation of forcing sync
->> frame
->> under current encoder state.
->>
->> Can you please ack the same.
+On 06/12/2018 14:38, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.14.87 release.
+> There are 55 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> Okay, assuming that when you start streaming you naturally get a
-> keyframe, I'm okay with this patch, since it actually fixes the
-> missing key frame request, so from the general encoder interface point
-> of view:
+> Responses should be made by Sat Dec  8 14:29:38 UTC 2018.
+> Anything received after that time might be too late.
 > 
-> Acked-by: Tomasz Figa <tfiga@chromium.org>
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.87-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.14.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+All tests are passing for Tegra ...
 
-Thanks Tomasz!
+Test results for stable-v4.14:
+    8 builds:	8 pass, 0 fail
+    16 boots:	16 pass, 0 fail
+    14 tests:	14 pass, 0 fail
 
-Acked-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
+Linux version:	4.14.87-rc1-g555f40d
+Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
+                tegra210-p2371-2180, tegra30-cardhu-a04
+
+Cheers
+Jon
 
 -- 
-regards,
-Stan
+nvpublic
