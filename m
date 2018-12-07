@@ -2,100 +2,104 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A5B3C64EB1
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 11:55:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2A4DC07E85
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 11:56:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F53E20672
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 11:55:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="uz+nfe2E"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F53E20672
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=marvell.com
+	by mail.kernel.org (Postfix) with ESMTP id 8938520868
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 11:56:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8938520868
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726067AbeLGLzq (ORCPT
+        id S1725989AbeLGL42 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 06:55:46 -0500
-Received: from mx0b-0016f401.pphosted.com ([67.231.156.173]:44114 "EHLO
-        mx0b-0016f401.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725989AbeLGLzp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 06:55:45 -0500
-Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
-        by mx0b-0016f401.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id wB7Au4VJ031311;
-        Fri, 7 Dec 2018 03:55:39 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=from : to : cc :
- subject : date : message-id : references : in-reply-to : content-type :
- content-transfer-encoding : mime-version; s=pfpt0818;
- bh=s3+J/SMGikwB1aRo5/HAixHphOdxDKTJsqWeiBPooYk=;
- b=uz+nfe2EjmZJl1doWWpe4kP+2m1diSIkE+ZqeRkeXehqqx9aE+mvrhg3u/Hc6HOHkrWs
- BEC9ZueLoOeUxgqa9nMaE19qZvuBb3LECXX89x8BUSVE8t1Z5N5oytE7TU7vMggyrcNw
- 2zpFRqujUxm2XsMsWqR58IEF4uE9BXF5ea+a4zJTTzN291Y8au5WDSsV2XVbuU7Pr/Bp
- 2tLYPSU2K2DI9S0Rxt7dwl+FRPEsaPtp7TgS+KTHMEdQGMUhm4rAtOJx+91EvBl2wEeu
- 6YVtXsRBahm6SolMShh4DS5iulfqpfakkv76M9Z5cYqHvn9sxwoIgZPmtLv+uxHRfeu7 tQ== 
-Received: from sc-exch04.marvell.com ([199.233.58.184])
-        by mx0b-0016f401.pphosted.com with ESMTP id 2p7nbtrpkh-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Fri, 07 Dec 2018 03:55:39 -0800
-Received: from SC-EXCH02.marvell.com (10.93.176.82) by SC-EXCH04.marvell.com
- (10.93.176.84) with Microsoft SMTP Server (TLS) id 15.0.1367.3; Fri, 7 Dec
- 2018 03:55:37 -0800
-Received: from SC-EXCH02.marvell.com ([fe80::980b:63cf:b3c0:7c95]) by
- SC-EXCH02.marvell.com ([fe80::980b:63cf:b3c0:7c95%20]) with mapi id
- 15.00.1367.000; Fri, 7 Dec 2018 03:55:37 -0800
-From:   Ganapathi Bhat <gbhat@marvell.com>
-To:     Kalle Valo <kvalo@codeaurora.org>,
-        Brian Norris <briannorris@chromium.org>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Amitkumar Karwar" <amitkarwar@gmail.com>,
-        Nishant Sarmukadam <nishants@marvell.com>,
-        Xinming Hu <huxinming820@gmail.com>,
-        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>
-Subject: Re: [EXT] Re: [RFC PATCH v2 2/2] mwifiex: add
- NL80211_STA_INFO_RX_BITRATE support
-Thread-Topic: [EXT] Re: [RFC PATCH v2 2/2] mwifiex: add
- NL80211_STA_INFO_RX_BITRATE support
-Thread-Index: AQHUjhquQe7JHkSG80CDLVQJUW6cy6VzKslF
-Date:   Fri, 7 Dec 2018 11:55:37 +0000
-Message-ID: <1544183734084.87221@marvell.com>
-References: <20181207001249.165477-1-briannorris@chromium.org>
-        <20181207001249.165477-2-briannorris@chromium.org>,<87ftv9ehla.fsf@codeaurora.org>
-In-Reply-To: <87ftv9ehla.fsf@codeaurora.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.94.250.30]
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        Fri, 7 Dec 2018 06:56:28 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:42890 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725988AbeLGL42 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Dec 2018 06:56:28 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 412B3EBD;
+        Fri,  7 Dec 2018 03:56:27 -0800 (PST)
+Received: from [10.1.194.37] (e113632-lin.cambridge.arm.com [10.1.194.37])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D7FC43F5AF;
+        Fri,  7 Dec 2018 03:56:24 -0800 (PST)
+Subject: Re: [PATCH v4 10/10] sched/fair: Provide idle search schedstats
+To:     Steve Sistare <steven.sistare@oracle.com>, mingo@redhat.com,
+        peterz@infradead.org
+Cc:     subhra.mazumdar@oracle.com, dhaval.giani@oracle.com,
+        daniel.m.jordan@oracle.com, pavel.tatashin@microsoft.com,
+        matt@codeblueprint.co.uk, umgwanakikbuti@gmail.com,
+        riel@redhat.com, jbacik@fb.com, juri.lelli@redhat.com,
+        vincent.guittot@linaro.org, quentin.perret@arm.com,
+        linux-kernel@vger.kernel.org
+References: <1544131696-2888-1-git-send-email-steven.sistare@oracle.com>
+ <1544131696-2888-11-git-send-email-steven.sistare@oracle.com>
+From:   Valentin Schneider <valentin.schneider@arm.com>
+Message-ID: <be837c2a-6e8d-3598-0a27-db90792a2673@arm.com>
+Date:   Fri, 7 Dec 2018 11:56:23 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-07_04:,,
- signatures=0
-X-Proofpoint-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=712 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1812070095
+In-Reply-To: <1544131696-2888-11-git-send-email-steven.sistare@oracle.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Kalle/Brian,=0A=
-=0A=
->> RFC: I'd appreciate it if someone from Marvell could double check my wor=
-k=0A=
->> here.=0A=
-=0A=
->BTW, if we don't hear anything from Marvell I'm going to apply these=0A=
->anyway.=0A=
-=0A=
-This patch series looks good to us.=0A=
-=0A=
-Thanks,=0A=
-Ganapathi =
+Hi Steve,
+
+On 06/12/2018 21:28, Steve Sistare wrote:
+[...]
+> @@ -6392,6 +6422,7 @@ static int wake_cap(struct task_struct *p, int cpu, int prev_cpu)
+>  static int
+>  select_task_rq_fair(struct task_struct *p, int prev_cpu, int sd_flag, int wake_flags)
+>  {
+> +	unsigned long time = schedstat_start_time();
+
+With arm64's defconfig (!CONFIG_SCHEDSTATS) I get:
+
+kernel/sched/fair.c: In function ‘select_task_rq_fair’:
+kernel/sched/fair.c:6459:16: warning: unused variable ‘time’ [-Wunused-variable]
+  unsigned long time = schedstat_start_time();
+                ^~~~
+
+So you probably want something like this:
+
+----->8-----
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 5a113a8..7d33f74 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -6456,12 +6456,14 @@ static int wake_cap(struct task_struct *p, int cpu, int prev_cpu)
+ static int
+ select_task_rq_fair(struct task_struct *p, int prev_cpu, int sd_flag, int wake_flags)
+ {
+-	unsigned long time = schedstat_start_time();
+ 	struct sched_domain *tmp, *sd = NULL;
+ 	int cpu = smp_processor_id();
+ 	int new_cpu = prev_cpu;
+ 	int want_affine = 0;
+ 	int sync = (wake_flags & WF_SYNC) && !(current->flags & PF_EXITING);
++	unsigned long time;
++
++	time = schedstat_start_time();
+ 
+ 	if (sd_flag & SD_BALANCE_WAKE) {
+ 		record_wakee(p);
+-----8<-----
+
+The 0-day bot will catch those but since it's the only warn I got I figured
+I'd report it :)
+
+>  	struct sched_domain *tmp, *sd = NULL;
+>  	int cpu = smp_processor_id();
+>  	int new_cpu = prev_cpu;
+[...]
