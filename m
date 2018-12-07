@@ -2,170 +2,172 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBF49C65BAF
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 21:26:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86BD9C07E85
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 21:36:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 70DB020892
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 21:26:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 70DB020892
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 3E6A82083D
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 21:36:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="BXY6nPQ2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E6A82083D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726135AbeLGV0v (ORCPT
+        id S1726103AbeLGVgQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 16:26:51 -0500
-Received: from mga06.intel.com ([134.134.136.31]:56181 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726008AbeLGV0u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 16:26:50 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Dec 2018 13:26:49 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,327,1539673200"; 
-   d="scan'208";a="257733408"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.154])
-  by orsmga004.jf.intel.com with ESMTP; 07 Dec 2018 13:26:49 -0800
-Date:   Fri, 7 Dec 2018 13:26:49 -0800
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Andy Lutomirski <luto@amacapital.net>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        X86 ML <x86@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Josh Triplett <josh@joshtriplett.org>,
-        linux-sgx@vger.kernel.org, haitao.huang@linux.intel.com,
-        Jethro Beekman <jethro@fortanix.com>,
-        "Dr. Greg Wettstein" <greg@enjellic.com>
-Subject: Re: [RFC PATCH v2 4/4] x86/vdso: Add __vdso_sgx_enter_enclave() to
- wrap SGX enclave transitions
-Message-ID: <20181207212649.GG10404@linux.intel.com>
-References: <20181206221922.31012-1-sean.j.christopherson@intel.com>
- <20181206221922.31012-5-sean.j.christopherson@intel.com>
- <CALCETrXRJ645=08fyeoMQ949fLB1TvhsgERFVx5mAHdViEjq8Q@mail.gmail.com>
- <20181207165145.GB10404@linux.intel.com>
- <CALCETrVkEW82PzQZhJ5iS849DLY1gbd8YjH5F7P1J7hgjkjiOQ@mail.gmail.com>
- <20181207190257.GC10404@linux.intel.com>
- <EFA99261-BE93-49DA-9A8F-E6FD28069AFC@amacapital.net>
- <20181207200935.GE10404@linux.intel.com>
- <4CEB5945-9562-40FA-8CCA-A1675D55B001@amacapital.net>
+        Fri, 7 Dec 2018 16:36:16 -0500
+Received: from mail-vk1-f193.google.com ([209.85.221.193]:38856 "EHLO
+        mail-vk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726008AbeLGVgQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Dec 2018 16:36:16 -0500
+Received: by mail-vk1-f193.google.com with SMTP id w72so1279662vkd.5
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Dec 2018 13:36:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=dP+i4G2wSzRAn0QgynKJSJkIw51tiH0ggqE8uIpfmzY=;
+        b=BXY6nPQ2/wY0SlFiNMyIpAa/VzIcmEV7+Z0BnNxPYXewcbCncx9dbM3lhxVdRnyAJN
+         z38wBH+gAV8AEVN26ZvNborHniPx7MenYSUOGkaTON/F9Vh9e81Q1s2LYnMUXsGa2Dz8
+         j4XO22NBMa24m0FgpoWDXwgITopTiM9ujVrB4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=dP+i4G2wSzRAn0QgynKJSJkIw51tiH0ggqE8uIpfmzY=;
+        b=UMwHOzjhcXxm9jKyYwOQ5kDIV84Lse/EqERvNNFKPybodO59hcFktllHoOrpWP0cMe
+         Z4RNiVZGZOOmpeG9WQVKY+v3JIY1mwxygfcpIGQcpsUvoEH/TZaCopf6UIyqpYhuBkF9
+         a882YJExYCddTC/fB9Pd6lm++lfwbo77BUqkk14xlyRQ73RCSQYTX+U0yKSUDETHPEvz
+         jhNm/dCp1pOqHP1iI6S2g/FUYOk++xi8Tw07prcS0IGVcQ1/2er2Z827kcz1U4ZWEvHN
+         wOvzJ76nQnD3RiSc6ZfmJogw7wgh1gJU3wJY1YBfy+idTwVPjFinZ7dQJQLUwHiKAkT/
+         A/rg==
+X-Gm-Message-State: AA+aEWacnEpjoszggrCVoZUuFj5pSPH1l63Pb3nPkAbz1sGQMgd56+m3
+        TaVILWxC9rnHg3f9BIdvheqz17J9ZYA=
+X-Google-Smtp-Source: AFSGD/Xa3HiwzMVXQx8dNYPalKOyfWsbu2RyIqMT/nkDNfwz7UXFXeXQqdxAx88GgkGHzfYAQVOPnA==
+X-Received: by 2002:a1f:8b48:: with SMTP id n69mr1627263vkd.12.1544218574827;
+        Fri, 07 Dec 2018 13:36:14 -0800 (PST)
+Received: from mail-ua1-f54.google.com (mail-ua1-f54.google.com. [209.85.222.54])
+        by smtp.gmail.com with ESMTPSA id k77sm1595496vkd.17.2018.12.07.13.36.14
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 07 Dec 2018 13:36:14 -0800 (PST)
+Received: by mail-ua1-f54.google.com with SMTP id n7so1909397uao.7
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Dec 2018 13:36:14 -0800 (PST)
+X-Received: by 2002:ab0:146b:: with SMTP id c40mr1644621uae.9.1544218194278;
+ Fri, 07 Dec 2018 13:29:54 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <4CEB5945-9562-40FA-8CCA-A1675D55B001@amacapital.net>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+References: <20181207152917.4862-1-georgi.djakov@linaro.org>
+ <20181207152917.4862-9-georgi.djakov@linaro.org> <20181207162733.pdd62qvqzd6xk4nr@queper01-lin>
+ <fb5d11cd-6729-5521-c828-9bfeedba9ce0@linaro.org> <20181207171437.qmtacurmqg53zzkl@queper01-lin>
+In-Reply-To: <20181207171437.qmtacurmqg53zzkl@queper01-lin>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Fri, 7 Dec 2018 13:29:43 -0800
+X-Gmail-Original-Message-ID: <CAD=FV=VxgeTw5KMY75h487WMGuJxAHCbXMoSm00LBqSh_PdTYA@mail.gmail.com>
+Message-ID: <CAD=FV=VxgeTw5KMY75h487WMGuJxAHCbXMoSm00LBqSh_PdTYA@mail.gmail.com>
+Subject: Re: [PATCH v11 8/8] interconnect: sdm845: Fix build failure after
+ cmd_db API change
+To:     quentin.perret@arm.com
+Cc:     Georgi Djakov <georgi.djakov@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-pm@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Saravana Kannan <skannan@codeaurora.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Amit Kucheria <amit.kucheria@linaro.org>,
+        seansw@qti.qualcomm.com, daidavid1@codeaurora.org,
+        Evan Green <evgreen@chromium.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        abailon@baylibre.com, maxime.ripard@bootlin.com,
+        Arnd Bergmann <arnd@arndb.de>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        ksitaraman@nvidia.com, sanjayc@nvidia.com,
+        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        linux-tegra@vger.kernel.org, Andy Gross <andy.gross@linaro.org>,
+        Olof Johansson <olof@lixom.net>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 07, 2018 at 12:16:59PM -0800, Andy Lutomirski wrote:
-> 
-> 
-> > On Dec 7, 2018, at 12:09 PM, Sean Christopherson <sean.j.christopherson@intel.com> wrote:
-> > 
-> >> On Fri, Dec 07, 2018 at 11:23:10AM -0800, Andy Lutomirski wrote:
-> >> 
-> >> Ah, I see. You’re saying that, if the non-enclave stare is corrupted such
-> >> that RIP  is okay and RSP still points somewhere reasonable but the return
-> >> address is garbage, then we can at least get to the fault handler and print
-> >> something?
-> > 
-> > Yep.  Even for something more subtle like GPR corruption it could dump the
-> > entire call stack before attempting to return back up.
-> > 
-> >> This only works if the fault handler pointer itself is okay, though, which
-> >> somewhat limits the usefulness, given that its pointer is quite likely to
-> >> be on the stack very close to the return address.
-> > 
-> > Yeah, it's not a silver bullet by any means, but it does seem useful for at
-> > least some scenarios.  Even exploding when invoking the handler instead of
-> > at a random point might prove useful, e.g. "calling my exit handler exploded,
-> > maybe my enclave corrupted the stack!".
-> 
-> Here’s another idea: calculate some little hash or other checksum of
-> RSP, RBP, and perhaps a couple words on the stack, and do:
+Hi,
 
-Corrupting RSP and RBP as opposed to the stack memory seems much less
-likely since the enclave would have to poke into the save state area.
-And as much as I dislike the practice of intentionally manipulating
-SSA.RSP, preventing the user from doing something because we're "helping"
-doesn't seem right.
-
-> call __vdso_enclave_corrupted_state
-> 
-> If you get a mismatch after return. That function could be:
-> 
-> call __vdso_enclave_corrupted_state:
->   ud2
-> 
-> And now the debug trace makes it very clear what happened.
+On Fri, Dec 7, 2018 at 9:14 AM Quentin Perret <quentin.perret@arm.com> wrote:
 >
-> This may or may not be worth the effort.
+> On Friday 07 Dec 2018 at 18:47:22 (+0200), Georgi Djakov wrote:
+> > Hi Quentin,
+> >
+> > On 12/7/18 18:27, Quentin Perret wrote:
+> > > Hi Georgi,
+> > >
+> > > On Friday 07 Dec 2018 at 17:29:17 (+0200), Georgi Djakov wrote:
+> > >> Recently the cmd_db_read_aux_data() function was changed to avoid using
+> > >> memcpy and return a pointer instead. Update the code to the new API and
+> > >> fix the build failure.
+> > >>
+> > >> Fixes: ed3cafa79ea7 ("soc: qcom: cmd-db: Stop memcpy()ing in cmd_db_read_aux_data()")
+> > >> Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
+> > >> ---
+> > >>  drivers/interconnect/qcom/sdm845.c | 26 ++++++++++++++------------
+> > >
+> > > IIUC this file is introduced by patch 5. Should the fix be squashed
+> > > into patch 5 directly ? Just to keep things bisectable.
+> >
+> > The reason why i have split it as a separate change is because as a
+> > separate change it would be easier to review & test for the people who
+> > are already familiar with the rest of the series.
+> >
+> > Another minor reason is that a separate patch will also make the life a
+> > bit easier for some people who are back-porting this to kernels using
+> > the older version of the cmd_db API.
+> >
+> > The commit that changed the cmd_db API is not yet in mainline, but in
+> > linux-next. I am not sure what is preferred in this case?
+>
+> Not sure either but I guess that will depend who gets merged first ...
+> If that's the cmd_db change, then you'll need to squash your fix in
+> patch 5. If your series goes first, then the fix needs to be applied to
+> the cmb_db change.
+>
+> I personally don't mind either way as long as we don't break bisection :-)
 
-Running a checksum on the stack for every exit doesn't seem like it'd
-be worth the effort, especially since this type of bug should be quite
-rare, at least in production environments.
+My $0.02 is that anyone downstream picking this will also be picking
+the cmd db change, so I'd suggest squashing as suggested by Quentin.
+Maybe you can do that and post a v12?  Since it sounded like Greg was
+about ready to land [1] maybe we shouldn't wait too long till doing
+it?
 
-If we want to pursue the checksum idea I think the easiest approach
-would be to combine it with an exit_handler and do a simple check on
-the handler.  It'd be minimal overhead in the fast path and would flag
-cases where invoking exit_handle() would explode, while deferring all
-other checks to the user.
+...unfortunately I guess we need to figure out how this will actually
+land.  Greg can't pick the series up directly since it won't compile
+without the cmd-db change.  ...so we need to do one of the following:
 
-E.g. something like this:
+1. Feed it through a tree that goes through arm-soc (Andy's tree or
+arm-soc directly) so you'll have commit ed3cafa79ea7 ("soc: qcom:
+cmd-db: Stop memcpy()ing in cmd_db_read_aux_data()").
 
-diff --git a/arch/x86/entry/vdso/vsgx_enter_enclave.c b/arch/x86/entry/vdso/vsgx_enter_enclave.c
-index d5145e5c5a54..c89dd3cd8da9 100644
---- a/arch/x86/entry/vdso/vsgx_enter_enclave.c
-+++ b/arch/x86/entry/vdso/vsgx_enter_enclave.c
-@@ -42,10 +42,13 @@ enum sgx_enclu_leaf {
-        SGX_EEXIT       = 4,
- };
+2. Greg could also merge in Andy's pull request
+(https://patchwork.kernel.org/patch/10710447/), but you'll get some
+unrelated patches too.
 
-+#define VDSO_MAGIC 0xa5a5a5a5a5a5a5a5UL
-+
- notrace long __vdso_sgx_enter_enclave(u32 op, void *tcs, void *priv,
-                                      struct sgx_enclave_exit_info *exit_info,
-                                      sgx_enclave_exit_handler *exit_handler)
- {
-+       volatile unsigned long hash;
-        u64 rdi, rsi, rdx;
-        u32 leaf;
-        long ret;
-@@ -53,6 +56,9 @@ notrace long __vdso_sgx_enter_enclave(u32 op, void *tcs, void *priv,
-        if (!tcs || !exit_info)
-                return -EINVAL;
+3. Wait until next year and we have the next -rc1 to get this merged.
 
-+       /* Always hash the handler.  XOR is much cheaper than Jcc. */
-+       hash = (unsigned long)exit_handler ^ VDSO_MAGIC;
-+
- enter_enclave:
-        if (op != SGX_EENTER && op != SGX_ERESUME)
-                return -EINVAL;
-@@ -107,6 +113,8 @@ notrace long __vdso_sgx_enter_enclave(u32 op, void *tcs, void *priv,
-         * or to return (EEXIT).
-         */
-        if (exit_handler) {
-+               if (hash != ((unsigned long)exit_handler ^ VDSO_MAGIC))
-+                       asm volatile("ud2\n");
-                if (exit_handler(exit_info, tcs, priv)) {
-                        op = exit_info->leaf;
-                        goto enter_enclave;
+...it seems like #1 would be the least painful option, but obviously
+others would have to be OK w/ it.
 
-> But ISTM the enclave is almost as likely to corrupt the host state and
-> the. EEXIT as it is to corrupt the host state and then fault.
 
-Agreed, I would say even more likely.  But the idea is that the
-exit_handler is called on any exit, not just exceptions.
+[1] https://lkml.kernel.org/r/20181206145547.GA7884@kroah.com
+
+
+-Doug
