@@ -4,43 +4,43 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB629C07E85
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 19:08:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9AD9C64EB1
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 19:08:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 53C552083D
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 19:08:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6C4892083D
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 19:08:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="DZLFzWt9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 53C552083D
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ZfTRxh60"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C4892083D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726391AbeLGTIa (ORCPT
+        id S1726405AbeLGTId (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 14:08:30 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:48612 "EHLO
+        Fri, 7 Dec 2018 14:08:33 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:48624 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726203AbeLGTI2 (ORCPT
+        with ESMTP id S1726389AbeLGTI3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 14:08:28 -0500
+        Fri, 7 Dec 2018 14:08:29 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
         :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=SKcfjqcI9VQDKAxDSG/SrkUlhkFBUqjXnXExNajFi+k=; b=DZLFzWt9U+tnYzv04wF2xPtXPe
-        dwiRiS/l90420kthszm5BNS44rgL5DMWUqO4t7S6629Wdw8aJ7RPMcrvOxzvEfvqYB2DOno5+fz6L
-        vRx/N1ZWTattAMjJosv6YHxewvf5dFp+SOsaR5X5NUT+m0D3UXsgowlJ2QpdDI5FAYTO9UgNRulPX
-        tQJfWhke74K7K8f6vsR0Ab+hneFDnk+3tvvzUNQ2QTnpD/GVLrT3ZFwj5FTwf50rHcBIasm6ybRaU
-        NpbFFKYLNy8a7Rxyhw2n9oRPZfkeohbPzCcHNXPSOt+hPwWPLJ5ZVEX8KbQ6trBMiw7lsbZRRw25H
-        mQ7nuZbA==;
+        bh=ChQTgKiZwHVIwfgRsCDcMPaE+ZWz7J22Nwq2a30o9aU=; b=ZfTRxh60hk4ZBQ6JO81vJjk8Pp
+        ZikcVQo9Y5l8K6iY0LjzHeEDfM0G3iuHYYtmynLzpZKsod8MnffY5rjPhX9IQBxoT2TpcHh+8x7q6
+        6urf+OMWfWsWyXMpAefHCvJbfcc8N7uwIB3EoDuWvAkVxC+ioMI5GGczGKT2xE5BQ6cBfNHVDMlx7
+        NlJOXVgOrJkuLWs2lWKIda4xe5NSSDvjMCau+/zwwn6tFRI7NrtcsKRYEPWeV9dmU/4dH5gFK/+vv
+        9khR3PinaaC63md3+UuvfYsiBf8faedXq0Lxvh+X29EIbo86hmoeryImc5atFPGu1fYl6sgCSXVsB
+        4Ciz6lCA==;
 Received: from [199.255.44.128] (helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gVLTy-0006rb-W0; Fri, 07 Dec 2018 19:08:15 +0000
+        id 1gVLU4-0006tF-8r; Fri, 07 Dec 2018 19:08:20 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     iommu@lists.linux-foundation.org,
         Linus Torvalds <torvalds@linux-foundation.org>,
@@ -57,9 +57,9 @@ Cc:     Tariq Toukan <tariqt@mellanox.com>,
         Jonathan Derrick <jonathan.derrick@intel.com>,
         linux-pci@vger.kernel.org, linux-ia64@vger.kernel.org,
         x86@kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 09/15] dma-mapping: move various slow path functions out of line
-Date:   Fri,  7 Dec 2018 11:07:14 -0800
-Message-Id: <20181207190720.18517-10-hch@lst.de>
+Subject: [PATCH 10/15] dma-mapping: move dma_cache_sync out of line
+Date:   Fri,  7 Dec 2018 11:07:15 -0800
+Message-Id: <20181207190720.18517-11-hch@lst.de>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181207190720.18517-1-hch@lst.de>
 References: <20181207190720.18517-1-hch@lst.de>
@@ -71,374 +71,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is no need to have all setup and coherent allocation / freeing
-routines inline.  Move them out of line to keep the implemeation
-nicely encapsulated and save some kernel text size.
+This isn't exactly a slow path routine, but it is not super critical
+either, and moving it out of line will help to keep the include chain
+clean for the following DMA indirection bypass work.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- arch/powerpc/include/asm/dma-mapping.h |   1 -
- include/linux/dma-mapping.h            | 150 +++----------------------
- kernel/dma/mapping.c                   | 140 ++++++++++++++++++++++-
- 3 files changed, 151 insertions(+), 140 deletions(-)
+ include/linux/dma-mapping.h | 12 ++----------
+ kernel/dma/mapping.c        | 11 +++++++++++
+ 2 files changed, 13 insertions(+), 10 deletions(-)
 
-diff --git a/arch/powerpc/include/asm/dma-mapping.h b/arch/powerpc/include/asm/dma-mapping.h
-index 8fa394520af6..5201f2b7838c 100644
---- a/arch/powerpc/include/asm/dma-mapping.h
-+++ b/arch/powerpc/include/asm/dma-mapping.h
-@@ -108,7 +108,6 @@ static inline void set_dma_offset(struct device *dev, dma_addr_t off)
- }
- 
- #define HAVE_ARCH_DMA_SET_MASK 1
--extern int dma_set_mask(struct device *dev, u64 dma_mask);
- 
- extern u64 __dma_get_required_mask(struct device *dev);
- 
 diff --git a/include/linux/dma-mapping.h b/include/linux/dma-mapping.h
-index 3b431cc58794..0bbce52606c2 100644
+index 0bbce52606c2..0f0078490df4 100644
 --- a/include/linux/dma-mapping.h
 +++ b/include/linux/dma-mapping.h
-@@ -440,107 +440,24 @@ bool dma_in_atomic_pool(void *start, size_t size);
- void *dma_alloc_from_pool(size_t size, struct page **ret_page, gfp_t flags);
- bool dma_free_from_pool(void *start, size_t size);
+@@ -411,16 +411,8 @@ dma_sync_sg_for_device(struct device *dev, struct scatterlist *sg,
+ #define dma_map_page(d, p, o, s, r) dma_map_page_attrs(d, p, o, s, r, 0)
+ #define dma_unmap_page(d, a, s, r) dma_unmap_page_attrs(d, a, s, r, 0)
  
--/**
-- * dma_mmap_attrs - map a coherent DMA allocation into user space
-- * @dev: valid struct device pointer, or NULL for ISA and EISA-like devices
-- * @vma: vm_area_struct describing requested user mapping
-- * @cpu_addr: kernel CPU-view address returned from dma_alloc_attrs
-- * @handle: device-view address returned from dma_alloc_attrs
-- * @size: size of memory originally requested in dma_alloc_attrs
-- * @attrs: attributes of mapping properties requested in dma_alloc_attrs
-- *
-- * Map a coherent DMA buffer previously allocated by dma_alloc_attrs
-- * into user space.  The coherent DMA buffer must not be freed by the
-- * driver until the user space mapping has been released.
-- */
--static inline int
--dma_mmap_attrs(struct device *dev, struct vm_area_struct *vma, void *cpu_addr,
--	       dma_addr_t dma_addr, size_t size, unsigned long attrs)
--{
--	const struct dma_map_ops *ops = get_dma_ops(dev);
--	BUG_ON(!ops);
--	if (ops->mmap)
--		return ops->mmap(dev, vma, cpu_addr, dma_addr, size, attrs);
--	return dma_common_mmap(dev, vma, cpu_addr, dma_addr, size, attrs);
--}
--
-+int dma_mmap_attrs(struct device *dev, struct vm_area_struct *vma,
-+		void *cpu_addr, dma_addr_t dma_addr, size_t size,
-+		unsigned long attrs);
- #define dma_mmap_coherent(d, v, c, h, s) dma_mmap_attrs(d, v, c, h, s, 0)
- 
- int
- dma_common_get_sgtable(struct device *dev, struct sg_table *sgt, void *cpu_addr,
- 		dma_addr_t dma_addr, size_t size, unsigned long attrs);
- 
--static inline int
--dma_get_sgtable_attrs(struct device *dev, struct sg_table *sgt, void *cpu_addr,
--		      dma_addr_t dma_addr, size_t size,
--		      unsigned long attrs)
--{
--	const struct dma_map_ops *ops = get_dma_ops(dev);
--	BUG_ON(!ops);
--	if (ops->get_sgtable)
--		return ops->get_sgtable(dev, sgt, cpu_addr, dma_addr, size,
--					attrs);
--	return dma_common_get_sgtable(dev, sgt, cpu_addr, dma_addr, size,
--			attrs);
--}
--
-+int dma_get_sgtable_attrs(struct device *dev, struct sg_table *sgt,
-+		void *cpu_addr, dma_addr_t dma_addr, size_t size,
-+		unsigned long attrs);
- #define dma_get_sgtable(d, t, v, h, s) dma_get_sgtable_attrs(d, t, v, h, s, 0)
- 
--#ifndef arch_dma_alloc_attrs
--#define arch_dma_alloc_attrs(dev)	(true)
--#endif
--
--static inline void *dma_alloc_attrs(struct device *dev, size_t size,
--				       dma_addr_t *dma_handle, gfp_t flag,
--				       unsigned long attrs)
--{
--	const struct dma_map_ops *ops = get_dma_ops(dev);
--	void *cpu_addr;
--
--	BUG_ON(!ops);
--	WARN_ON_ONCE(dev && !dev->coherent_dma_mask);
--
--	if (dma_alloc_from_dev_coherent(dev, size, dma_handle, &cpu_addr))
--		return cpu_addr;
--
--	/* let the implementation decide on the zone to allocate from: */
--	flag &= ~(__GFP_DMA | __GFP_DMA32 | __GFP_HIGHMEM);
--
--	if (!arch_dma_alloc_attrs(&dev))
--		return NULL;
--	if (!ops->alloc)
--		return NULL;
--
--	cpu_addr = ops->alloc(dev, size, dma_handle, flag, attrs);
--	debug_dma_alloc_coherent(dev, size, *dma_handle, cpu_addr);
--	return cpu_addr;
--}
--
--static inline void dma_free_attrs(struct device *dev, size_t size,
--				     void *cpu_addr, dma_addr_t dma_handle,
--				     unsigned long attrs)
+-static inline void
+-dma_cache_sync(struct device *dev, void *vaddr, size_t size,
+-		enum dma_data_direction dir)
 -{
 -	const struct dma_map_ops *ops = get_dma_ops(dev);
 -
--	BUG_ON(!ops);
--
--	if (dma_release_from_dev_coherent(dev, get_order(size), cpu_addr))
--		return;
--	/*
--	 * On non-coherent platforms which implement DMA-coherent buffers via
--	 * non-cacheable remaps, ops->free() may call vunmap(). Thus getting
--	 * this far in IRQ context is a) at risk of a BUG_ON() or trying to
--	 * sleep on some machines, and b) an indication that the driver is
--	 * probably misusing the coherent API anyway.
--	 */
--	WARN_ON(irqs_disabled());
--
--	if (!ops->free || !cpu_addr)
--		return;
--
--	debug_dma_free_coherent(dev, size, cpu_addr, dma_handle);
--	ops->free(dev, size, cpu_addr, dma_handle, attrs);
+-	BUG_ON(!valid_dma_direction(dir));
+-	if (ops->cache_sync)
+-		ops->cache_sync(dev, vaddr, size, dir);
 -}
-+void *dma_alloc_attrs(struct device *dev, size_t size, dma_addr_t *dma_handle,
-+		gfp_t flag, unsigned long attrs);
-+void dma_free_attrs(struct device *dev, size_t size, void *cpu_addr,
-+		dma_addr_t dma_handle, unsigned long attrs);
++void dma_cache_sync(struct device *dev, void *vaddr, size_t size,
++		enum dma_data_direction dir);
  
- static inline void *dma_alloc_coherent(struct device *dev, size_t size,
- 		dma_addr_t *dma_handle, gfp_t gfp)
-@@ -565,35 +482,9 @@ static inline int dma_mapping_error(struct device *dev, dma_addr_t dma_addr)
- 	return 0;
- }
- 
--static inline void dma_check_mask(struct device *dev, u64 mask)
--{
--	if (sme_active() && (mask < (((u64)sme_get_me_mask() << 1) - 1)))
--		dev_warn(dev, "SME is active, device will require DMA bounce buffers\n");
--}
--
--static inline int dma_supported(struct device *dev, u64 mask)
--{
--	const struct dma_map_ops *ops = get_dma_ops(dev);
--
--	if (!ops)
--		return 0;
--	if (!ops->dma_supported)
--		return 1;
--	return ops->dma_supported(dev, mask);
--}
--
--#ifndef HAVE_ARCH_DMA_SET_MASK
--static inline int dma_set_mask(struct device *dev, u64 mask)
--{
--	if (!dev->dma_mask || !dma_supported(dev, mask))
--		return -EIO;
--
--	dma_check_mask(dev, mask);
--
--	*dev->dma_mask = mask;
--	return 0;
--}
--#endif
-+int dma_supported(struct device *dev, u64 mask);
-+int dma_set_mask(struct device *dev, u64 mask);
-+int dma_set_coherent_mask(struct device *dev, u64 mask);
- 
- static inline u64 dma_get_mask(struct device *dev)
- {
-@@ -602,21 +493,6 @@ static inline u64 dma_get_mask(struct device *dev)
- 	return DMA_BIT_MASK(32);
- }
- 
--#ifdef CONFIG_ARCH_HAS_DMA_SET_COHERENT_MASK
--int dma_set_coherent_mask(struct device *dev, u64 mask);
--#else
--static inline int dma_set_coherent_mask(struct device *dev, u64 mask)
--{
--	if (!dma_supported(dev, mask))
--		return -EIO;
--
--	dma_check_mask(dev, mask);
--
--	dev->coherent_dma_mask = mask;
--	return 0;
--}
--#endif
--
- /*
-  * Set both the DMA mask and the coherent DMA mask to the same thing.
-  * Note that we don't check the return value from dma_set_coherent_mask()
+ extern int dma_common_mmap(struct device *dev, struct vm_area_struct *vma,
+ 		void *cpu_addr, dma_addr_t dma_addr, size_t size,
 diff --git a/kernel/dma/mapping.c b/kernel/dma/mapping.c
-index dfe29d18dba1..176ae3e08916 100644
+index 176ae3e08916..0b18cfbdde95 100644
 --- a/kernel/dma/mapping.c
 +++ b/kernel/dma/mapping.c
-@@ -223,7 +223,20 @@ int dma_common_get_sgtable(struct device *dev, struct sg_table *sgt,
- 		sg_set_page(sgt->sgl, page, PAGE_ALIGN(size), 0);
- 	return ret;
+@@ -430,3 +430,14 @@ int dma_set_coherent_mask(struct device *dev, u64 mask)
  }
--EXPORT_SYMBOL(dma_common_get_sgtable);
-+
-+int dma_get_sgtable_attrs(struct device *dev, struct sg_table *sgt,
-+		void *cpu_addr, dma_addr_t dma_addr, size_t size,
-+		unsigned long attrs)
-+{
-+	const struct dma_map_ops *ops = get_dma_ops(dev);
-+	BUG_ON(!ops);
-+	if (ops->get_sgtable)
-+		return ops->get_sgtable(dev, sgt, cpu_addr, dma_addr, size,
-+					attrs);
-+	return dma_common_get_sgtable(dev, sgt, cpu_addr, dma_addr, size,
-+			attrs);
-+}
-+EXPORT_SYMBOL(dma_get_sgtable_attrs);
- 
- /*
-  * Create userspace mapping for the DMA-coherent memory.
-@@ -261,7 +274,31 @@ int dma_common_mmap(struct device *dev, struct vm_area_struct *vma,
- 	return -ENXIO;
- #endif /* !CONFIG_ARCH_NO_COHERENT_DMA_MMAP */
- }
--EXPORT_SYMBOL(dma_common_mmap);
-+
-+/**
-+ * dma_mmap_attrs - map a coherent DMA allocation into user space
-+ * @dev: valid struct device pointer, or NULL for ISA and EISA-like devices
-+ * @vma: vm_area_struct describing requested user mapping
-+ * @cpu_addr: kernel CPU-view address returned from dma_alloc_attrs
-+ * @dma_addr: device-view address returned from dma_alloc_attrs
-+ * @size: size of memory originally requested in dma_alloc_attrs
-+ * @attrs: attributes of mapping properties requested in dma_alloc_attrs
-+ *
-+ * Map a coherent DMA buffer previously allocated by dma_alloc_attrs into user
-+ * space.  The coherent DMA buffer must not be freed by the driver until the
-+ * user space mapping has been released.
-+ */
-+int dma_mmap_attrs(struct device *dev, struct vm_area_struct *vma,
-+		void *cpu_addr, dma_addr_t dma_addr, size_t size,
-+		unsigned long attrs)
-+{
-+	const struct dma_map_ops *ops = get_dma_ops(dev);
-+	BUG_ON(!ops);
-+	if (ops->mmap)
-+		return ops->mmap(dev, vma, cpu_addr, dma_addr, size, attrs);
-+	return dma_common_mmap(dev, vma, cpu_addr, dma_addr, size, attrs);
-+}
-+EXPORT_SYMBOL(dma_mmap_attrs);
- 
- #ifndef ARCH_HAS_DMA_GET_REQUIRED_MASK
- static u64 dma_default_get_required_mask(struct device *dev)
-@@ -294,3 +331,102 @@ u64 dma_get_required_mask(struct device *dev)
- EXPORT_SYMBOL_GPL(dma_get_required_mask);
+ EXPORT_SYMBOL(dma_set_coherent_mask);
  #endif
- 
-+#ifndef arch_dma_alloc_attrs
-+#define arch_dma_alloc_attrs(dev)	(true)
-+#endif
 +
-+void *dma_alloc_attrs(struct device *dev, size_t size, dma_addr_t *dma_handle,
-+		gfp_t flag, unsigned long attrs)
-+{
-+	const struct dma_map_ops *ops = get_dma_ops(dev);
-+	void *cpu_addr;
-+
-+	BUG_ON(!ops);
-+	WARN_ON_ONCE(dev && !dev->coherent_dma_mask);
-+
-+	if (dma_alloc_from_dev_coherent(dev, size, dma_handle, &cpu_addr))
-+		return cpu_addr;
-+
-+	/* let the implementation decide on the zone to allocate from: */
-+	flag &= ~(__GFP_DMA | __GFP_DMA32 | __GFP_HIGHMEM);
-+
-+	if (!arch_dma_alloc_attrs(&dev))
-+		return NULL;
-+	if (!ops->alloc)
-+		return NULL;
-+
-+	cpu_addr = ops->alloc(dev, size, dma_handle, flag, attrs);
-+	debug_dma_alloc_coherent(dev, size, *dma_handle, cpu_addr);
-+	return cpu_addr;
-+}
-+EXPORT_SYMBOL(dma_alloc_attrs);
-+
-+void dma_free_attrs(struct device *dev, size_t size, void *cpu_addr,
-+		dma_addr_t dma_handle, unsigned long attrs)
++void dma_cache_sync(struct device *dev, void *vaddr, size_t size,
++		enum dma_data_direction dir)
 +{
 +	const struct dma_map_ops *ops = get_dma_ops(dev);
 +
-+	BUG_ON(!ops);
-+
-+	if (dma_release_from_dev_coherent(dev, get_order(size), cpu_addr))
-+		return;
-+	/*
-+	 * On non-coherent platforms which implement DMA-coherent buffers via
-+	 * non-cacheable remaps, ops->free() may call vunmap(). Thus getting
-+	 * this far in IRQ context is a) at risk of a BUG_ON() or trying to
-+	 * sleep on some machines, and b) an indication that the driver is
-+	 * probably misusing the coherent API anyway.
-+	 */
-+	WARN_ON(irqs_disabled());
-+
-+	if (!ops->free || !cpu_addr)
-+		return;
-+
-+	debug_dma_free_coherent(dev, size, cpu_addr, dma_handle);
-+	ops->free(dev, size, cpu_addr, dma_handle, attrs);
++	BUG_ON(!valid_dma_direction(dir));
++	if (ops->cache_sync)
++		ops->cache_sync(dev, vaddr, size, dir);
 +}
-+EXPORT_SYMBOL(dma_free_attrs);
-+
-+static inline void dma_check_mask(struct device *dev, u64 mask)
-+{
-+	if (sme_active() && (mask < (((u64)sme_get_me_mask() << 1) - 1)))
-+		dev_warn(dev, "SME is active, device will require DMA bounce buffers\n");
-+}
-+
-+int dma_supported(struct device *dev, u64 mask)
-+{
-+	const struct dma_map_ops *ops = get_dma_ops(dev);
-+
-+	if (!ops)
-+		return 0;
-+	if (!ops->dma_supported)
-+		return 1;
-+	return ops->dma_supported(dev, mask);
-+}
-+EXPORT_SYMBOL(dma_supported);
-+
-+#ifndef HAVE_ARCH_DMA_SET_MASK
-+int dma_set_mask(struct device *dev, u64 mask)
-+{
-+	if (!dev->dma_mask || !dma_supported(dev, mask))
-+		return -EIO;
-+
-+	dma_check_mask(dev, mask);
-+	*dev->dma_mask = mask;
-+	return 0;
-+}
-+EXPORT_SYMBOL(dma_set_mask);
-+#endif
-+
-+#ifndef CONFIG_ARCH_HAS_DMA_SET_COHERENT_MASK
-+int dma_set_coherent_mask(struct device *dev, u64 mask)
-+{
-+	if (!dma_supported(dev, mask))
-+		return -EIO;
-+
-+	dma_check_mask(dev, mask);
-+	dev->coherent_dma_mask = mask;
-+	return 0;
-+}
-+EXPORT_SYMBOL(dma_set_coherent_mask);
-+#endif
++EXPORT_SYMBOL(dma_cache_sync);
 -- 
 2.19.1
 
