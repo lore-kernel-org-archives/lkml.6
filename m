@@ -2,158 +2,128 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64789C04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 02:11:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26049C04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 02:20:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 32C7C20659
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 02:11:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 32C7C20659
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id D678B20659
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 02:20:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544149202;
+	bh=fvuvgh6qsiQiaM3aPqZPIsSGap6K6+PEn2229Ovp0rE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
+	b=TKFufuXttckheLlraB4n8vOf5JinqzrJXcuswTq1I9SPbr8Fj7gs2DieCgaftndmB
+	 bRGi9UEvEIXmDDfz+VpZkHonJOlTcSjbQzlTUVWyb5LnSaZ3PAGlNZQcw0YfX6VxmH
+	 aQhcrEIHHRvcU1SIExWE9YGjWXjxsRLOJEMqeYHI=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D678B20659
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725992AbeLGCLB (ORCPT
+        id S1725993AbeLGCUA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 21:11:01 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:45754 "EHLO mx1.redhat.com"
+        Thu, 6 Dec 2018 21:20:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57512 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725939AbeLGCLA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 21:11:00 -0500
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1725939AbeLGCUA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 21:20:00 -0500
+Received: from devnote (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id DD9DF30BCD6A;
-        Fri,  7 Dec 2018 02:10:59 +0000 (UTC)
-Received: from localhost (ovpn-8-22.pek2.redhat.com [10.72.8.22])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id C077460E3F;
-        Fri,  7 Dec 2018 02:10:58 +0000 (UTC)
-Date:   Fri, 7 Dec 2018 10:10:55 +0800
-From:   Baoquan He <bhe@redhat.com>
-To:     Masayoshi Mizuma <msys.mizuma@gmail.com>,
-        Chao Fan <fanc.fnst@cn.fujitsu.com>, bp@alien8.de,
-        mingo@redhat.com
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org, tglx@linutronix.de,
-        hpa@zytor.com, keescook@chromium.org, indou.takao@jp.fujitsu.com,
-        caoj.fnst@cn.fujitsu.com
-Subject: Re: [PATCH v12 1/5] x86/boot: Add get_acpi_rsdp() to parse RSDP in
- cmdline from KEXEC
-Message-ID: <20181207021055.GI17340@MiWiFi-R3L-srv>
-References: <20181129081631.11139-1-fanc.fnst@cn.fujitsu.com>
- <20181129081631.11139-2-fanc.fnst@cn.fujitsu.com>
- <20181129211003.saxfvyboxpsn5mdr@gabell>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181129211003.saxfvyboxpsn5mdr@gabell>
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Fri, 07 Dec 2018 02:11:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2290020659;
+        Fri,  7 Dec 2018 02:19:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544149200;
+        bh=fvuvgh6qsiQiaM3aPqZPIsSGap6K6+PEn2229Ovp0rE=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=VUBg8pL3uNp2rocbCocVUa/OyRgoZZ9uEMTZoEi7N4pOKqoDkqkhoTxZWbSoccQ8r
+         XT6KqRF70k1isdfLoNvBettdENR8GduxEXPGhEozXku6WbAEW6ha7pLXLCXL2KnAvV
+         CuL/0BfkhK/8N0dTEb+IOUekMdH63IO16xbsN788=
+Date:   Fri, 7 Dec 2018 11:19:57 +0900
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
+Subject: Re: [PATCH v2 01/12] tracing/uprobes: Add busy check when cleanup
+ all uprobes
+Message-Id: <20181207111957.b3889ecdca0e0b296c18787d@kernel.org>
+In-Reply-To: <20181204124333.00f4c5ee@vmware.local.home>
+References: <154140838606.17322.15294184388075458777.stgit@devbox>
+        <154140841557.17322.12653952888762532401.stgit@devbox>
+        <20181204124333.00f4c5ee@vmware.local.home>
+X-Mailer: Sylpheed 3.5.0 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Tue, 4 Dec 2018 12:43:33 -0500
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-On 11/29/18 at 04:10pm, Masayoshi Mizuma wrote:
-> > diff --git a/arch/x86/boot/compressed/misc.c b/arch/x86/boot/compressed/misc.c
-> > index 8dd1d5ccae58..e51713fe3add 100644
-> > --- a/arch/x86/boot/compressed/misc.c
-> > +++ b/arch/x86/boot/compressed/misc.c
-> > @@ -12,6 +12,7 @@
-> >   * High loaded stuff by Hans Lermen & Werner Almesberger, Feb. 1996
-> >   */
+> On Mon,  5 Nov 2018 18:00:15 +0900
+> Masami Hiramatsu <mhiramat@kernel.org> wrote:
+> 
+> > Add a busy check loop in cleanup_all_probes() before
+> > trying to remove all events in uprobe_events as same as
+> > kprobe_events does.
+> > 
+> > Without this change, writing null to uprobe_events will
+> > try to remove events but if one of them is enabled, it
+> > stopped there but some of events are already cleared.
+> > 
+> > With this change, writing null to uprobe_events make
+> > sure all events are not enabled before removing events.
+> > So, it clears all events, or return an error (-EBUSY)
+> > with keeping all events.
+> > 
+> 
+> Hmm, should this patch be marked as stable?
+
+Hmm, OK, let this go to stable. Since anyway, this will cause
+a wired result on uprobe_events from user point of view.
+
+Thank you!
+
+> 
+> -- Steve
+> 
+> > Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+> > ---
+> >  kernel/trace/trace_uprobe.c |    7 +++++++
+> >  1 file changed, 7 insertions(+)
+> > 
+> > diff --git a/kernel/trace/trace_uprobe.c b/kernel/trace/trace_uprobe.c
+> > index 31ea48eceda1..b708e4ff7ea7 100644
+> > --- a/kernel/trace/trace_uprobe.c
+> > +++ b/kernel/trace/trace_uprobe.c
+> > @@ -587,12 +587,19 @@ static int cleanup_all_probes(void)
+> >  	int ret = 0;
 > >  
-> > +#define BOOT_CTYPE_H
-> >  #include "misc.h"
-> >  #include "error.h"
-> >  #include "pgtable.h"
-> > @@ -426,3 +427,7 @@ void fortify_panic(const char *name)
-> >  {
-> >  	error("detected buffer overflow");
+> >  	mutex_lock(&uprobe_lock);
+> > +	/* Ensure no probe is in use. */
+> > +	list_for_each_entry(tu, &uprobe_list, list)
+> > +		if (trace_probe_is_enabled(&tu->tp)) {
+> > +			ret = -EBUSY;
+> > +			goto end;
+> > +		}
+> >  	while (!list_empty(&uprobe_list)) {
+> >  		tu = list_entry(uprobe_list.next, struct trace_uprobe, list);
+> >  		ret = unregister_trace_uprobe(tu);
+> >  		if (ret)
+> >  			break;
+> >  	}
+> > +end:
+> >  	mutex_unlock(&uprobe_lock);
+> >  	return ret;
 > >  }
-> > +
-> > +#ifdef BOOT_STRING
-> > +#include "../../../../lib/kstrtox.c"
-> > +#endif
-> > diff --git a/arch/x86/boot/compressed/misc.h b/arch/x86/boot/compressed/misc.h
-> > index a1d5918765f3..809c31effa4b 100644
-> > --- a/arch/x86/boot/compressed/misc.h
-> > +++ b/arch/x86/boot/compressed/misc.h
-> > @@ -116,3 +116,7 @@ static inline void console_init(void)
-> >  void set_sev_encryption_mask(void);
-> >  
-> >  #endif
-> > +
-> > +/* acpitb.c */
-> > +#define BOOT_STRING
-> > +extern int kstrtoull(const char *s, unsigned int base, unsigned long long *res);
-> > diff --git a/lib/kstrtox.c b/lib/kstrtox.c
-> > index 1006bf70bf74..a0ac1b2257b8 100644
-> > --- a/lib/kstrtox.c
-> > +++ b/lib/kstrtox.c
-> > @@ -126,6 +126,9 @@ int kstrtoull(const char *s, unsigned int base, unsigned long long *res)
-> >  }
-> >  EXPORT_SYMBOL(kstrtoull);
-> >  
-> > +/* Make compressed period code be able to use kstrtoull(). */
-> > +#ifndef BOOT_STRING
 > 
-> I got the following build error.
-> 
-> ]$ make arch/x86/boot/compressed/misc.o
->   CALL    scripts/checksyscalls.sh
->   DESCEND  objtool
->   CC      arch/x86/boot/compressed/misc.o
-> ld: -r and -pie may not be used together
-> make[1]: *** [scripts/Makefile.build:294: arch/x86/boot/compressed/misc.o] Error 1
-> make: *** [Makefile:1715: arch/x86/boot/compressed/misc.o] Error 2
 
-I have met this issue when change code in boot/compressed/kaslr.c.
 
-I remember Ingo merged my patch and found this build error. Since if 
-CONFIG_MODULES=n EXPORT_SYMBOL is defined as empty in
-include/linux/export.h, that's why you can only meet it only if
-CONFIG_MODULES=y.
-
-I remember I just muted it with below code, please check commit
-d52e7d5a95.
-
-+#define _LINUX_EXPORT_H
-+#define EXPORT_SYMBOL(sym)
-
-commit d52e7d5a952c5e35783f96e8c5b7fcffbb0d7c60
-Author: Baoquan He <bhe@redhat.com>
-Date:   Sat May 13 13:46:28 2017 +0800
-
-    x86/KASLR: Parse all 'memmap=' boot option entries
-
-Later in commit f922c4abdf76, Ard added a new switch __DISABLE_EXPORTS.
-So you can just add #define __DISABLE_EXPORTS into misc.c. Then you
-don't need to copy those lib functions to boot. Maintaining two copies
-might have trouble if it has updates later.
-
-commit f922c4abdf7648523589abee9460c87f51630d2f
-Author: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Tue Aug 21 21:56:04 2018 -0700
-
-    module: allow symbol exports to be disabled
-
-Thanks
-Baoquan
-
-> ]$
-> 
-> I think this error gets fixed by changing the BOOT_STRING ifndef
-> order before the EXPORT_SYMBOL, like this:
-> 
-> #ifndef BOOT_STRING
-> EXPORT_SYMBOL(kstrtoull);
-> 
-> I'm not sure this change is a good way...
-> 
-> Thanks,
-> Masa
+-- 
+Masami Hiramatsu <mhiramat@kernel.org>
