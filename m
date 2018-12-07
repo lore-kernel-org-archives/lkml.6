@@ -5,68 +5,69 @@ X-Spam-Level:
 X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E023C64EB1
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 10:58:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6234C07E85
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 10:59:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC78C208E7
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 10:58:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ABCFC208E7
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 10:59:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="uis4/8d3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC78C208E7
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EGUWPiUJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ABCFC208E7
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726131AbeLGK6c (ORCPT
+        id S1726184AbeLGK67 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 05:58:32 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:32845 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725992AbeLGK6a (ORCPT
+        Fri, 7 Dec 2018 05:58:59 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:46227 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726081AbeLGK61 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 05:58:30 -0500
-Received: by mail-lj1-f195.google.com with SMTP id v1-v6so3215272ljd.0;
-        Fri, 07 Dec 2018 02:58:27 -0800 (PST)
+        Fri, 7 Dec 2018 05:58:27 -0500
+Received: by mail-lf1-f68.google.com with SMTP id f23so2662453lfc.13;
+        Fri, 07 Dec 2018 02:58:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=knG6SyfDCGJn7gk77p8M/RfgY6AhBS/jOJor+ETKwuw=;
-        b=uis4/8d3PSYf/KxJPBFPuq9zQk3n9I1r43bfgu34jnZp3cClc8v7T0hFu/ZmO74kCG
-         +z2odhEXVfiUA//0yijq0pqdjlX82wEGazAVERPdykzpT6cjeo2C3ZAu5e1TgC8w90K/
-         yl+1zI7nmr04kclTC1N4IHQLhTnucirn6ogWZgWYaH9zfoCom0vFodXEGrSP4mSt/e/8
-         wN56qiGqB/Q0k8eTsbZMM5gGl6qYbQoxg9g2YPs2c9ZEwrVP7k6xEldGNrKnc+O3+vOZ
-         tF7bgt4vm4XOC9zWhkZqXtuSAeTekWtYSp9D10x6Az0eDFe9dpmWN/2OMGbKnFp6UPIw
-         Xbhg==
+        bh=iiNySdvKpdqVZthIZ2SEKv6yRudMOPr8qkp6aqwtEDU=;
+        b=EGUWPiUJ5vLhV2r2QgVzTtRuWhddBEGZ1ZSmdDP0uzHNWgVjqlFVf/1APt50eZDgke
+         peMAo4IbOC8TCdJNypovGB1YJ96ppzqAayQ1G3pj8jtUGr1Wj8jDARxebkKoEZb/UGBv
+         OEXr3fI692ntFkBqLKHvr5yVTbWbPhpDUwzz124esyfzGDPM9u7W+U85CuX7le1XPRN9
+         rNSOUgOwiryd9HfgyHO/yWulpdh/6JpGZF7H6kyruk1pTiZNLGudriXJaAJDjFwE6X8k
+         f3JOLHqlA5k/U6XWj7KdNHD120YS5xN+hG8sDr/43bSUMbOwdPEWOwviUHfv8l+ZjwHF
+         GvVw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=knG6SyfDCGJn7gk77p8M/RfgY6AhBS/jOJor+ETKwuw=;
-        b=JD3uRaMdnuk84MaRZ0R85kJ9lwXPieCmDdiZsBwmA4zI2UdRdQMQQIEqoGHQbJx90j
-         uK5SBJAxJGpaaWWBHNOiiEwpixQQiyNwiXhSOjMrL0u0x/IxunhGPFGPTuDJNviLzTa7
-         BPfP1s1WqBpsePLLhnyw1H0Wc4vfjTYVoqEnZJ3n85XAt5x0kbo5JVgskeeQcMPmCyWk
-         XNwwKGHA7EpK7b3Ycs00+mZX2Gtc9hQK0F5pecd9KQDq/idFyQUp/ADexl8tAUjnxNyC
-         fBNO0bCqpkYUzKhv33JbF21JBqfsOl/KUyqgsTZOngnQl1PTvv8j+QhDidjEknZc5OLb
-         N2/g==
-X-Gm-Message-State: AA+aEWZ1Lb3e/aiXiL0zZCUqVXm8HnBsKqh5vPT2h/x/+oEtf32TNWNU
-        NtZTqjckPb6I+aA/S1cXOFk=
-X-Google-Smtp-Source: AFSGD/Wk8R/X1JZz5dmYqkGgc5MPuZ4AupG3QqXjIRee+wlCAt+xQqCeYlFddi77aNdVpzyIvwRuYg==
-X-Received: by 2002:a2e:9356:: with SMTP id m22-v6mr1048761ljh.135.1544180306549;
-        Fri, 07 Dec 2018 02:58:26 -0800 (PST)
-Received: from localhost.localdomain ([2a02:a315:5445:5300:74d5:51ba:2673:f3f4])
-        by smtp.googlemail.com with ESMTPSA id a20-v6sm523362ljf.28.2018.12.07.02.58.25
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        bh=iiNySdvKpdqVZthIZ2SEKv6yRudMOPr8qkp6aqwtEDU=;
+        b=jMe2ZegPAH5PmLE5IhtVcx5zBD7D7Z/p7qwXgaUvRXG9ZFlEk4mvIRe5jY4TXXX0UY
+         MGm17jh54WWWkpiTsQq2jH0dl6bsLxA/pzHcmqeK6ln7lxFeLnK50B8QAjJgUePWCFWm
+         AceJUsItuPOv2PLk4/mQt1ZHFql6t/paOedHGV9o/isu9WyS+UANVA0on/bGNKk2vRWA
+         wMcBjLFjQW+bz62PKd4GlTas5y8sJHp2wSRM0ZqNSN7gxyQNmDGFcA2ItXuU8bZUnWmO
+         TA/3rbP0HHxUU9a1qxpV7C+FKf7vfL+I3RUG4DGGvGzbnEBI8HYe/9Pj0+ppW8ha/4ne
+         cIjg==
+X-Gm-Message-State: AA+aEWY9BcvW9fweIkBdsSpFHB0X+80SGfDPTm2XMDkq5KXov1Ze0Qw2
+        umWi6FXkGFFLpUrgkmODulc=
+X-Google-Smtp-Source: AFSGD/V0KyDsG5eDwdXFS8YyypebvaADggIfJiZTg0aj3TTrIgq51PDJ7vOjHqGkVByN4ac7ocemLA==
+X-Received: by 2002:a19:a86:: with SMTP id 128mr955668lfk.139.1544180305167;
         Fri, 07 Dec 2018 02:58:25 -0800 (PST)
+Received: from localhost.localdomain ([2a02:a315:5445:5300:74d5:51ba:2673:f3f4])
+        by smtp.googlemail.com with ESMTPSA id a20-v6sm523362ljf.28.2018.12.07.02.58.23
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 07 Dec 2018 02:58:24 -0800 (PST)
 From:   =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
 To:     dmitry.torokhov@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com
 Cc:     devicetree@vger.kernel.org, linux-input@vger.kernel.org,
         linux-kernel@vger.kernel.org, pawel.mikolaj.chmiel@gmail.com,
         xc-racer2@live.ca, simon@lineageos.org
-Subject: [PATCH 5/8] Input: tm2-touchkey: Allow specifying custom keycodes
-Date:   Fri,  7 Dec 2018 11:58:08 +0100
-Message-Id: <20181207105811.1831-6-pawel.mikolaj.chmiel@gmail.com>
+Subject: [PATCH 4/8] Input: tm2-touchkey: Correct initial brightness
+Date:   Fri,  7 Dec 2018 11:58:07 +0100
+Message-Id: <20181207105811.1831-5-pawel.mikolaj.chmiel@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181207105811.1831-1-pawel.mikolaj.chmiel@gmail.com>
 References: <20181207105811.1831-1-pawel.mikolaj.chmiel@gmail.com>
@@ -80,124 +81,28 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Jonathan Bakker <xc-racer2@live.ca>
 
-Not all devices use the same keycodes in the same order
+Tm2-touchkey don't have brightness levels, but only on/off states,
+so replace LED_FULL with LED_ON.
 
 Signed-off-by: Jonathan Bakker <xc-racer2@live.ca>
 Signed-off-by: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
 ---
- drivers/input/keyboard/tm2-touchkey.c | 49 +++++++++++++++------------
- 1 file changed, 27 insertions(+), 22 deletions(-)
+ drivers/input/keyboard/tm2-touchkey.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/input/keyboard/tm2-touchkey.c b/drivers/input/keyboard/tm2-touchkey.c
-index a73894b8dede..ebc275ab8ad1 100644
+index cc713b901bf2..a73894b8dede 100644
 --- a/drivers/input/keyboard/tm2-touchkey.c
 +++ b/drivers/input/keyboard/tm2-touchkey.c
-@@ -36,11 +36,6 @@
- #define TM2_TOUCHKEY_LED_VOLTAGE_MIN	2500000
- #define TM2_TOUCHKEY_LED_VOLTAGE_MAX	3300000
+@@ -235,7 +235,7 @@ static int tm2_touchkey_probe(struct i2c_client *client,
  
--enum {
--	TM2_TOUCHKEY_KEY_MENU = 0x1,
--	TM2_TOUCHKEY_KEY_BACK,
--};
--
- struct touchkey_variant {
- 	const char *name;
- 	u8 keycode_reg;
-@@ -54,6 +49,8 @@ struct tm2_touchkey_data {
- 	struct regulator *vdd;
- 	struct regulator_bulk_data regulators[2];
- 	struct touchkey_variant *variant;
-+	u8 keycodes[4];
-+	int num_keycodes;
- };
+ 	/* led device */
+ 	touchkey->led_dev.name = touchkey->variant->name;
+-	touchkey->led_dev.brightness = LED_FULL;
++	touchkey->led_dev.brightness = LED_ON;
+ 	touchkey->led_dev.max_brightness = LED_ON;
+ 	touchkey->led_dev.brightness_set = tm2_touchkey_led_brightness_set;
  
- static struct touchkey_variant tm2_touchkey_variant = {
-@@ -116,7 +113,8 @@ static irqreturn_t tm2_touchkey_irq_handler(int irq, void *devid)
- {
- 	struct tm2_touchkey_data *touchkey = devid;
- 	int data;
--	int key;
-+	int index;
-+	int i;
- 
- 	data = i2c_smbus_read_byte_data(touchkey->client,
- 					touchkey->variant->keycode_reg);
-@@ -126,26 +124,20 @@ static irqreturn_t tm2_touchkey_irq_handler(int irq, void *devid)
- 		goto out;
- 	}
- 
--	switch (data & TM2_TOUCHKEY_BIT_KEYCODE) {
--	case TM2_TOUCHKEY_KEY_MENU:
--		key = KEY_PHONE;
--		break;
--
--	case TM2_TOUCHKEY_KEY_BACK:
--		key = KEY_BACK;
--		break;
--
--	default:
-+	index = (data & TM2_TOUCHKEY_BIT_KEYCODE) - 1;
-+	if (index < 0 || index >= touchkey->num_keycodes) {
- 		dev_warn(&touchkey->client->dev,
--			 "unhandled keycode, data %#02x\n", data);
-+			 "invalid keycode index %d\n", index);
- 		goto out;
- 	}
- 
- 	if (data & TM2_TOUCHKEY_BIT_PRESS_EV) {
--		input_report_key(touchkey->input_dev, KEY_PHONE, 0);
--		input_report_key(touchkey->input_dev, KEY_BACK, 0);
-+		for (i = 0; i < touchkey->num_keycodes; i++)
-+			input_report_key(touchkey->input_dev,
-+					 touchkey->keycodes[i], 0);
- 	} else {
--		input_report_key(touchkey->input_dev, key, 1);
-+		input_report_key(touchkey->input_dev,
-+				 touchkey->keycodes[index], 1);
- 	}
- 
- 	input_sync(touchkey->input_dev);
-@@ -157,8 +149,10 @@ static irqreturn_t tm2_touchkey_irq_handler(int irq, void *devid)
- static int tm2_touchkey_probe(struct i2c_client *client,
- 			      const struct i2c_device_id *id)
- {
-+	struct device_node *np = client->dev.of_node;
- 	struct tm2_touchkey_data *touchkey;
- 	int error;
-+	int i;
- 
- 	if (!i2c_check_functionality(client->adapter,
- 			I2C_FUNC_SMBUS_BYTE | I2C_FUNC_SMBUS_BYTE_DATA)) {
-@@ -189,6 +183,16 @@ static int tm2_touchkey_probe(struct i2c_client *client,
- 	/* Save VDD for easy access */
- 	touchkey->vdd = touchkey->regulators[1].consumer;
- 
-+	touchkey->num_keycodes = of_property_read_variable_u8_array(np,
-+					"keycodes", touchkey->keycodes, 0,
-+					ARRAY_SIZE(touchkey->keycodes));
-+	if (touchkey->num_keycodes <= 0) {
-+		/* default keycodes */
-+		touchkey->keycodes[0] = KEY_PHONE;
-+		touchkey->keycodes[1] = KEY_BACK;
-+		touchkey->num_keycodes = 2;
-+	}
-+
- 	error = tm2_touchkey_power_enable(touchkey);
- 	if (error) {
- 		dev_err(&client->dev, "failed to power up device: %d\n", error);
-@@ -213,8 +217,9 @@ static int tm2_touchkey_probe(struct i2c_client *client,
- 	touchkey->input_dev->name = touchkey->variant->name;
- 	touchkey->input_dev->id.bustype = BUS_I2C;
- 
--	input_set_capability(touchkey->input_dev, EV_KEY, KEY_PHONE);
--	input_set_capability(touchkey->input_dev, EV_KEY, KEY_BACK);
-+	for (i = 0; i < touchkey->num_keycodes; i++)
-+		input_set_capability(touchkey->input_dev, EV_KEY,
-+				     touchkey->keycodes[i]);
- 
- 	error = input_register_device(touchkey->input_dev);
- 	if (error) {
 -- 
 2.17.1
 
