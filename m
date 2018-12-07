@@ -2,95 +2,148 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71F24C07E85
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 13:47:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3818C07E85
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 13:48:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 439B3208E7
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 13:47:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 439B3208E7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 678FB20868
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 13:48:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 678FB20868
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726078AbeLGNrY (ORCPT
+        id S1726104AbeLGNs0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 08:47:24 -0500
-Received: from foss.arm.com ([217.140.101.70]:44824 "EHLO foss.arm.com"
+        Fri, 7 Dec 2018 08:48:26 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:58286 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725997AbeLGNrX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 08:47:23 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3744E15AB;
-        Fri,  7 Dec 2018 05:47:23 -0800 (PST)
-Received: from [10.1.196.75] (e110467-lin.cambridge.arm.com [10.1.196.75])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BF3B93F5AF;
-        Fri,  7 Dec 2018 05:47:21 -0800 (PST)
-Subject: Re: [PATCH v3 6/9] iommu/dma-iommu.c: Convert to use vm_insert_range
-To:     Souptick Joarder <jrdr.linux@gmail.com>, akpm@linux-foundation.org,
-        willy@infradead.org, mhocko@suse.com, joro@8bytes.org
-Cc:     linux-mm@kvack.org, iommu@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org
-References: <20181206184343.GA30569@jordon-HP-15-Notebook-PC>
-From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <d02ad9d7-d0f6-c891-bb7e-fdf6661f651c@arm.com>
-Date:   Fri, 7 Dec 2018 13:47:19 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        id S1725998AbeLGNs0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Dec 2018 08:48:26 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 4549D20CC3; Fri,  7 Dec 2018 14:48:24 +0100 (CET)
+Received: from localhost.localdomain (aaubervilliers-681-1-79-44.w90-88.abo.wanadoo.fr [90.88.21.44])
+        by mail.bootlin.com (Postfix) with ESMTPSA id ED84F20745;
+        Fri,  7 Dec 2018 14:48:13 +0100 (CET)
+From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+To:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Cc:     Eric Anholt <eric@anholt.net>, David Airlie <airlied@linux.ie>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Subject: [PATCH v3] drm/vc4: Add a debugfs entry to disable/enable the load tracker
+Date:   Fri,  7 Dec 2018 14:47:57 +0100
+Message-Id: <20181207134757.32437-1-paul.kocialkowski@bootlin.com>
+X-Mailer: git-send-email 2.19.2
 MIME-Version: 1.0
-In-Reply-To: <20181206184343.GA30569@jordon-HP-15-Notebook-PC>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/12/2018 18:43, Souptick Joarder wrote:
-> Convert to use vm_insert_range() to map range of kernel
-> memory to user vma.
-> 
-> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
-> Reviewed-by: Matthew Wilcox <willy@infradead.org>
-> ---
->   drivers/iommu/dma-iommu.c | 13 +++----------
->   1 file changed, 3 insertions(+), 10 deletions(-)
-> 
-> diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
-> index d1b0475..a2c65e2 100644
-> --- a/drivers/iommu/dma-iommu.c
-> +++ b/drivers/iommu/dma-iommu.c
-> @@ -622,17 +622,10 @@ struct page **iommu_dma_alloc(struct device *dev, size_t size, gfp_t gfp,
->   
->   int iommu_dma_mmap(struct page **pages, size_t size, struct vm_area_struct *vma)
->   {
-> -	unsigned long uaddr = vma->vm_start;
-> -	unsigned int i, count = PAGE_ALIGN(size) >> PAGE_SHIFT;
-> -	int ret = -ENXIO;
-> +	unsigned long count = PAGE_ALIGN(size) >> PAGE_SHIFT;
->   
-> -	for (i = vma->vm_pgoff; i < count && uaddr < vma->vm_end; i++) {
-> -		ret = vm_insert_page(vma, uaddr, pages[i]);
-> -		if (ret)
-> -			break;
-> -		uaddr += PAGE_SIZE;
-> -	}
-> -	return ret;
-> +	return vm_insert_range(vma, vma->vm_start,
-> +				pages + vma->vm_pgoff, count);
+In order to test whether the load tracker is working as expected, we
+need the ability to compare the commit result with the underrun
+indication. With the load tracker always enabled, commits that are
+expected to trigger an underrun are always rejected, so userspace
+cannot get the actual underrun indication from the hardware.
 
-You also need to adjust count to compensate for the pages skipped by 
-vm_pgoff, otherwise you've got an out-of-bounds dereference triggered 
-from userspace, which is pretty high up the "not good" scale (not to 
-mention the entire call would then propagate -EFAULT back from 
-vm_insert_page() and thus always appear to fail for nonzero offsets).
+Add a debugfs entry to disable/enable the load tracker, so that a DRM
+commit expected to trigger an underrun can go through with the load
+tracker disabled. The underrun indication is then available to
+userspace and can be checked against the commit result with the load
+tracker enabled.
 
-Robin.
+Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+---
+This patch is based upon Boris Brezillon's series:
+  drm/vc4: Add a load tracker
 
->   }
->   
->   static dma_addr_t __iommu_dma_map(struct device *dev, phys_addr_t phys,
-> 
+Changes since v2:
+* Used the standard debugfs_create_bool instead of reinventing it.
+
+Changes since v1:
+* Moved all the debugfs-related functions and structure to vc4_debugfs.c.
+
+ drivers/gpu/drm/vc4/vc4_debugfs.c | 9 +++++++++
+ drivers/gpu/drm/vc4/vc4_drv.c     | 2 ++
+ drivers/gpu/drm/vc4/vc4_drv.h     | 2 ++
+ drivers/gpu/drm/vc4/vc4_kms.c     | 6 +++++-
+ 4 files changed, 18 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/vc4/vc4_debugfs.c b/drivers/gpu/drm/vc4/vc4_debugfs.c
+index 7a0003de71ab..7c23f5209f6d 100644
+--- a/drivers/gpu/drm/vc4/vc4_debugfs.c
++++ b/drivers/gpu/drm/vc4/vc4_debugfs.c
+@@ -35,6 +35,15 @@ static const struct drm_info_list vc4_debugfs_list[] = {
+ int
+ vc4_debugfs_init(struct drm_minor *minor)
+ {
++	struct vc4_dev *vc4 = to_vc4_dev(minor->dev);
++	struct dentry *dentry;
++
++	dentry = debugfs_create_bool("load_tracker", S_IRUGO | S_IWUSR,
++				     minor->debugfs_root,
++				     &vc4->load_tracker_enabled);
++	if (!dentry)
++		return -ENOMEM;
++
+ 	return drm_debugfs_create_files(vc4_debugfs_list, VC4_DEBUGFS_ENTRIES,
+ 					minor->debugfs_root, minor);
+ }
+diff --git a/drivers/gpu/drm/vc4/vc4_drv.c b/drivers/gpu/drm/vc4/vc4_drv.c
+index 7195a0bcceb3..12ac971d24d6 100644
+--- a/drivers/gpu/drm/vc4/vc4_drv.c
++++ b/drivers/gpu/drm/vc4/vc4_drv.c
+@@ -290,6 +290,8 @@ static int vc4_drm_bind(struct device *dev)
+ 
+ 	drm_fbdev_generic_setup(drm, 32);
+ 
++	vc4->load_tracker_enabled = true;
++
+ 	return 0;
+ 
+ unbind_all:
+diff --git a/drivers/gpu/drm/vc4/vc4_drv.h b/drivers/gpu/drm/vc4/vc4_drv.h
+index a0fb888604d6..8837d2416aae 100644
+--- a/drivers/gpu/drm/vc4/vc4_drv.h
++++ b/drivers/gpu/drm/vc4/vc4_drv.h
+@@ -188,6 +188,8 @@ struct vc4_dev {
+ 
+ 	int power_refcount;
+ 
++	bool load_tracker_enabled;
++
+ 	/* Mutex controlling the power refcount. */
+ 	struct mutex power_lock;
+ 
+diff --git a/drivers/gpu/drm/vc4/vc4_kms.c b/drivers/gpu/drm/vc4/vc4_kms.c
+index f3fd34faa812..e80b1ad5c938 100644
+--- a/drivers/gpu/drm/vc4/vc4_kms.c
++++ b/drivers/gpu/drm/vc4/vc4_kms.c
+@@ -479,6 +479,7 @@ static const struct drm_private_state_funcs vc4_load_tracker_state_funcs = {
+ static int
+ vc4_atomic_check(struct drm_device *dev, struct drm_atomic_state *state)
+ {
++	struct vc4_dev *vc4 = to_vc4_dev(dev);
+ 	int ret;
+ 
+ 	ret = vc4_ctm_atomic_check(dev, state);
+@@ -489,7 +490,10 @@ vc4_atomic_check(struct drm_device *dev, struct drm_atomic_state *state)
+ 	if (ret)
+ 		return ret;
+ 
+-	return vc4_load_tracker_atomic_check(state);
++	if (vc4->load_tracker_enabled)
++		return vc4_load_tracker_atomic_check(state);
++
++	return 0;
+ }
+ 
+ static const struct drm_mode_config_funcs vc4_mode_funcs = {
+-- 
+2.19.2
+
