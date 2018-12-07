@@ -2,468 +2,1603 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BEB4EC07E85
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 09:25:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9269C64EB1
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 09:25:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6795120892
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 09:25:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="lw0/+I59";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Pbkuf3qB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6795120892
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 477F420838
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 09:25:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 477F420838
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726059AbeLGJZJ (ORCPT
+        id S1726072AbeLGJZO convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 04:25:09 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:56920 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725978AbeLGJZI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 04:25:08 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id D462360316; Fri,  7 Dec 2018 09:25:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1544174706;
-        bh=YHi+EogjNokTXSFsnnLPVIFo3rCPKfoJaZ+AX4q+bNc=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=lw0/+I59v8G59qeICX/ZXtM0ldYj4gyiG6qkcAlRPxh/1klsEufLlTXjgiejW2F1O
-         nZJgHRdA3uFlEMYrvMPEAoYtnhxKU5BfkmPjlfHEAxs7pwlbGhMGkLvn3Q3O18n2l3
-         0FG9rquPZLsk05LMCRxfx7Tm3IgwlbuDbVouexkE=
-Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: vivek.gautam@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 356676063A;
-        Fri,  7 Dec 2018 09:25:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1544174705;
-        bh=YHi+EogjNokTXSFsnnLPVIFo3rCPKfoJaZ+AX4q+bNc=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=Pbkuf3qBjvPjQP2lZnUEHb1g4Zqd61ZUoY8Pas41Ieq27TYxLz0WWGybxER26tqIG
-         6Bwziw1LVLRTHBjS9dgteolpYh3eSf7UE42Ym3m8Ney3oQx3TY1IurnzNJV7EYeWUM
-         u5ye5OuOIo7+qIkgNYPPE+sMLtYtE44NB+xSdP5E=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 356676063A
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vivek.gautam@codeaurora.org
-Received: by mail-qt1-f175.google.com with SMTP id v11so3743250qtc.2;
-        Fri, 07 Dec 2018 01:25:05 -0800 (PST)
-X-Gm-Message-State: AA+aEWZ7lwJS4QdNUYloK7aQ9ReXru23/m07xRTiyOSNp/CLSe7SyC9l
-        ANTFiDzMci/nGvFmMOj5/+9ufeRRYPQYc1yf0+4=
-X-Google-Smtp-Source: AFSGD/WhPOD77CeVkdNAxNUjGh03Grmm1y58ZOmDRTMWFoz74UjPJff0D0qiNtTHuv4eGxmM8z7W+eQ6/8E8FZQ4ZKU=
-X-Received: by 2002:a0c:f053:: with SMTP id b19mr1225251qvl.29.1544174704452;
- Fri, 07 Dec 2018 01:25:04 -0800 (PST)
+        Fri, 7 Dec 2018 04:25:14 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:47173 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726010AbeLGJZL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Dec 2018 04:25:11 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 8569320834; Fri,  7 Dec 2018 10:25:07 +0100 (CET)
+Received: from xps13 (aaubervilliers-681-1-79-44.w90-88.abo.wanadoo.fr [90.88.21.44])
+        by mail.bootlin.com (Postfix) with ESMTPSA id EC03720701;
+        Fri,  7 Dec 2018 10:24:56 +0100 (CET)
+Date:   Fri, 7 Dec 2018 10:24:56 +0100
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Jianxin Pan <jianxin.pan@amlogic.com>
+Cc:     Boris Brezillon <boris.brezillon@bootlin.com>,
+        <linux-mtd@lists.infradead.org>,
+        Liang Yang <liang.yang@amlogic.com>,
+        Yixun Lan <yixun.lan@amlogic.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Carlo Caione <carlo@caione.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Rob Herring <robh@kernel.org>, Jian Hu <jian.hu@amlogic.com>,
+        Hanjie Lin <hanjie.lin@amlogic.com>,
+        Victor Wan <victor.wan@amlogic.com>,
+        <linux-amlogic@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v7 2/2] mtd: rawnand: meson: add support for Amlogic
+ NAND flash controller
+Message-ID: <20181207102456.1dc67e07@xps13>
+In-Reply-To: <1542386439-30166-3-git-send-email-jianxin.pan@amlogic.com>
+References: <1542386439-30166-1-git-send-email-jianxin.pan@amlogic.com>
+        <1542386439-30166-3-git-send-email-jianxin.pan@amlogic.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-References: <20181204110122.12434-1-vivek.gautam@codeaurora.org> <99682bd2-1ca6-406a-890c-b34c25a1b2b3@arm.com>
-In-Reply-To: <99682bd2-1ca6-406a-890c-b34c25a1b2b3@arm.com>
-From:   Vivek Gautam <vivek.gautam@codeaurora.org>
-Date:   Fri, 7 Dec 2018 14:54:52 +0530
-X-Gmail-Original-Message-ID: <CAFp+6iE7U3HCJwHkeL9A4DXUVryt13YxDCYfBDxcSSM2Z_vqcg@mail.gmail.com>
-Message-ID: <CAFp+6iE7U3HCJwHkeL9A4DXUVryt13YxDCYfBDxcSSM2Z_vqcg@mail.gmail.com>
-Subject: Re: [PATCH 1/1] iommu/arm-smmu: Add support to use Last level cache
-To:     Robin Murphy <robin.murphy@arm.com>
-Cc:     Joerg Roedel <joro@8bytes.org>, Will Deacon <will.deacon@arm.com>,
-        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
-        Roedel <joro@8bytes.org>," <iommu@lists.linux-foundation.org>,
-        pdaly@codeaurora.org,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        pratikp@codeaurora.org, Tomasz Figa <tfiga@chromium.org>,
-        Jordan Crouse <jcrouse@codeaurora.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Robin,
+Hi Jianxin,
 
-On Tue, Dec 4, 2018 at 8:51 PM Robin Murphy <robin.murphy@arm.com> wrote:
->
-> On 04/12/2018 11:01, Vivek Gautam wrote:
-> > Qualcomm SoCs have an additional level of cache called as
-> > System cache, aka. Last level cache (LLC). This cache sits right
-> > before the DDR, and is tightly coupled with the memory controller.
-> > The cache is available to all the clients present in the SoC system.
-> > The clients request their slices from this system cache, make it
-> > active, and can then start using it.
-> > For these clients with smmu, to start using the system cache for
-> > buffers and, related page tables [1], memory attributes need to be
-> > set accordingly.
-> > This change updates the MAIR and TCR configurations with correct
-> > attributes to use this system cache.
-> >
-> > To explain a little about memory attribute requirements here:
-> >
-> > Non-coherent I/O devices can't look-up into inner caches. However,
-> > coherent I/O devices can. But both can allocate in the system cache
-> > based on system policy and configured memory attributes in page
-> > tables.
-> > CPUs can access both inner and outer caches (including system cache,
-> > aka. Last level cache), and can allocate into system cache too
-> > based on memory attributes, and system policy.
-> >
-> > Further looking at memory types, we have following -
-> > a) Normal uncached :- MAIR 0x44, inner non-cacheable,
-> >                        outer non-cacheable;
-> > b) Normal cached :-   MAIR 0xff, inner read write-back non-transient,
-> >                        outer read write-back non-transient;
-> >                        attribute setting for coherenet I/O devices.
-> >
-> > and, for non-coherent i/o devices that can allocate in system cache
-> > another type gets added -
-> > c) Normal sys-cached/non-inner-cached :-
-> >                        MAIR 0xf4, inner non-cacheable,
-> >                        outer read write-back non-transient
-> >
-> > So, CPU will automatically use the system cache for memory marked as
-> > normal cached. The normal sys-cached is downgraded to normal non-cached
-> > memory for CPUs.
-> > Coherent I/O devices can use system cache by marking the memory as
-> > normal cached.
-> > Non-coherent I/O devices, to use system cache, should mark the memory as
-> > normal sys-cached in page tables.
-> >
-> > This change is a realisation of following changes
-> > from downstream msm-4.9:
-> > iommu: io-pgtable-arm: Support DOMAIN_ATTRIBUTE_USE_UPSTREAM_HINT[2]
-> > iommu: io-pgtable-arm: Implement IOMMU_USE_UPSTREAM_HINT[3]
-> >
-> > [1] https://patchwork.kernel.org/patch/10302791/
-> > [2] https://source.codeaurora.org/quic/la/kernel/msm-4.9/commit/?h=msm-4.9&id=bf762276796e79ca90014992f4d9da5593fa7d51
-> > [3] https://source.codeaurora.org/quic/la/kernel/msm-4.9/commit/?h=msm-4.9&id=d4c72c413ea27c43f60825193d4de9cb8ffd9602
-> >
-> > Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
-> > ---
-> >
-> > Changes since v1:
-> >   - Addressed Tomasz's comments for basing the change on
-> >     "NO_INNER_CACHE" concept for non-coherent I/O devices
-> >     rather than capturing "SYS_CACHE". This is to indicate
-> >     clearly the intent of non-coherent I/O devices that
-> >     can't access inner caches.
->
-> That seems backwards to me - there is already a fundamental assumption
-> that non-coherent devices can't access caches. What we're adding here is
-> a weird exception where they *can* use some level of cache despite still
-> being non-coherent overall.
->
-> In other words, it's not a case of downgrading coherent devices'
-> accesses to bypass inner caches, it's upgrading non-coherent devices'
-> accesses to hit the outer cache. That's certainly the understanding I
-> got from talking with Pratik at Plumbers, and it does appear to fit with
-> your explanation above despite the final conclusion you draw being
-> different.
+Looks good to me overall, a few comments inline.
 
-Thanks for the thorough review of the change.
-Right, I guess it's rather an upgrade for non-coherent devices to use
-an outer cache than a downgrade for coherent devices.
+Jianxin Pan <jianxin.pan@amlogic.com> wrote on Sat, 17 Nov 2018
+00:40:38 +0800:
 
->
-> I do see what Tomasz meant in terms of the TCR attributes, but what we
-> currently do there is a little unintuitive and not at all representative
-> of actual mapping attributes - I'll come back to that inline.
->
-> >   drivers/iommu/arm-smmu.c       | 15 +++++++++++++++
-> >   drivers/iommu/dma-iommu.c      |  3 +++
-> >   drivers/iommu/io-pgtable-arm.c | 22 +++++++++++++++++-----
-> >   drivers/iommu/io-pgtable.h     |  5 +++++
-> >   include/linux/iommu.h          |  3 +++
-> >   5 files changed, 43 insertions(+), 5 deletions(-)
->
-> As a minor nit, I'd prefer this as at least two patches to separate the
-> io-pgtable changes and arm-smmu changes - basically I'd expect it to
-> look much the same as the non-strict mode support did.
+> From: Liang Yang <liang.yang@amlogic.com>
+> 
+> Add initial support for the Amlogic NAND flash controller which found
+> in the Meson-GXBB/GXL/AXG SoCs.
+> 
+> Signed-off-by: Liang Yang <liang.yang@amlogic.com>
+> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
+> Signed-off-by: Jianxin Pan <jianxin.pan@amlogic.com>
+> ---
+>  drivers/mtd/nand/raw/Kconfig      |   10 +
+>  drivers/mtd/nand/raw/Makefile     |    1 +
+>  drivers/mtd/nand/raw/meson_nand.c | 1417 +++++++++++++++++++++++++++++++++++++
+>  3 files changed, 1428 insertions(+)
+>  create mode 100644 drivers/mtd/nand/raw/meson_nand.c
+> 
+> diff --git a/drivers/mtd/nand/raw/Kconfig b/drivers/mtd/nand/raw/Kconfig
+> index c7efc31..223b041 100644
+> --- a/drivers/mtd/nand/raw/Kconfig
+> +++ b/drivers/mtd/nand/raw/Kconfig
+> @@ -541,4 +541,14 @@ config MTD_NAND_TEGRA
+>  	  is supported. Extra OOB bytes when using HW ECC are currently
+>  	  not supported.
+>  
+> +config MTD_NAND_MESON
+> +	tristate "Support for NAND controller on Amlogic's Meson SoCs"
+> +	depends on ARCH_MESON || COMPILE_TEST
+> +	depends on COMMON_CLK_AMLOGIC
+> +	select COMMON_CLK_REGMAP_MESON
+> +	select MFD_SYSCON
+> +	help
+> +	  Enables support for NAND controller on Amlogic's Meson SoCs.
+> +	  This controller is found on Meson GXBB, GXL, AXG SoCs.
+> +
+>  endif # MTD_NAND
+> diff --git a/drivers/mtd/nand/raw/Makefile b/drivers/mtd/nand/raw/Makefile
+> index 57159b3..a2cc2fe 100644
+> --- a/drivers/mtd/nand/raw/Makefile
+> +++ b/drivers/mtd/nand/raw/Makefile
+> @@ -56,6 +56,7 @@ obj-$(CONFIG_MTD_NAND_BRCMNAND)		+= brcmnand/
+>  obj-$(CONFIG_MTD_NAND_QCOM)		+= qcom_nandc.o
+>  obj-$(CONFIG_MTD_NAND_MTK)		+= mtk_ecc.o mtk_nand.o
+>  obj-$(CONFIG_MTD_NAND_TEGRA)		+= tegra_nand.o
+> +obj-$(CONFIG_MTD_NAND_MESON)		+= meson_nand.o
+>  
+>  nand-objs := nand_base.o nand_legacy.o nand_bbt.o nand_timings.o nand_ids.o
+>  nand-objs += nand_onfi.o
+> diff --git a/drivers/mtd/nand/raw/meson_nand.c b/drivers/mtd/nand/raw/meson_nand.c
+> new file mode 100644
+> index 0000000..c566636
+> --- /dev/null
+> +++ b/drivers/mtd/nand/raw/meson_nand.c
+> @@ -0,0 +1,1417 @@
+> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+> +/*
+> + * Amlogic Meson Nand Flash Controller Driver
+> + *
+> + * Copyright (c) 2018 Amlogic, inc.
+> + * Author: Liang Yang <liang.yang@amlogic.com>
+> + */
+> +
+> +#include <linux/platform_device.h>
+> +#include <linux/dma-mapping.h>
+> +#include <linux/interrupt.h>
+> +#include <linux/clk.h>
+> +#include <linux/mtd/rawnand.h>
+> +#include <linux/mtd/mtd.h>
+> +#include <linux/mfd/syscon.h>
+> +#include <linux/regmap.h>
+> +#include <linux/slab.h>
+> +#include <linux/module.h>
+> +#include <linux/iopoll.h>
+> +#include <linux/of.h>
+> +#include <linux/of_device.h>
+> +
+> +#define NFC_REG_CMD		0x00
+> +#define NFC_CMD_DRD		(0x8 << 14)
+> +#define NFC_CMD_IDLE		(0xc << 14)
+> +#define NFC_CMD_DWR		(0x4 << 14)
+> +#define NFC_CMD_CLE		(0x5 << 14)
+> +#define NFC_CMD_ALE		(0x6 << 14)
+> +#define NFC_CMD_ADL		((0 << 16) | (3 << 20))
+> +#define NFC_CMD_ADH		((1 << 16) | (3 << 20))
+> +#define NFC_CMD_AIL		((2 << 16) | (3 << 20))
+> +#define NFC_CMD_AIH		((3 << 16) | (3 << 20))
+> +#define NFC_CMD_SEED		((8 << 16) | (3 << 20))
+> +#define NFC_CMD_M2N		((0 << 17) | (2 << 20))
+> +#define NFC_CMD_N2M		((1 << 17) | (2 << 20))
+> +#define NFC_CMD_RB		BIT(20)
+> +#define NFC_CMD_IO6		((0xb << 10) | (1 << 18))
+> +#define NFC_CMD_SCRAMBLER_ENABLE	BIT(19)
+> +#define NFC_CMD_RB_INT		BIT(14)
+> +
+> +#define NFC_CMD_GET_SIZE(x)	(((x) >> 22) & GENMASK(4, 0))
+> +
+> +#define NFC_REG_CFG		0x04
+> +#define NFC_REG_DADR		0x08
+> +#define NFC_REG_IADR		0x0c
+> +#define NFC_REG_BUF		0x10
+> +#define NFC_REG_INFO		0x14
+> +#define NFC_REG_DC		0x18
+> +#define NFC_REG_ADR		0x1c
+> +#define NFC_REG_DL		0x20
+> +#define NFC_REG_DH		0x24
+> +#define NFC_REG_CADR		0x28
+> +#define NFC_REG_SADR		0x2c
+> +#define NFC_REG_PINS		0x30
+> +#define NFC_REG_VER		0x38
+> +
+> +#define NFC_RB_IRQ_EN		BIT(21)
+> +#define NFC_INT_MASK		(3 << 20)
+> +
+> +#define CMDRWGEN(cmd_dir, ran, bch, short_mode, page_size, pages)	\
+> +	(								\
+> +		(cmd_dir)			|			\
+> +		((ran) << 19)			|			\
+> +		((bch) << 14)			|			\
+> +		((short_mode) << 13)		|			\
+> +		(((page_size) & 0x7f) << 6)	|			\
+> +		((pages) & 0x3f)					\
+> +	)
+> +
+> +#define GENCMDDADDRL(adl, addr)		((adl) | ((addr) & 0xffff))
+> +#define GENCMDDADDRH(adh, addr)		((adh) | (((addr) >> 16) & 0xffff))
+> +#define GENCMDIADDRL(ail, addr)		((ail) | ((addr) & 0xffff))
+> +#define GENCMDIADDRH(aih, addr)		((aih) | (((addr) >> 16) & 0xffff))
+> +
+> +#define RB_STA(x)		(1 << (26 + (x)))
+> +#define DMA_DIR(dir)		((dir) ? NFC_CMD_N2M : NFC_CMD_M2N)
+> +
+> +#define ECC_CHECK_RETURN_FF	(-1)
+> +
+> +#define NAND_CE0		(0xe << 10)
+> +#define NAND_CE1		(0xd << 10)
+> +
+> +#define DMA_BUSY_TIMEOUT	0x100000
+> +#define CMD_FIFO_EMPTY_TIMEOUT	1000
+> +
+> +#define MAX_CE_NUM		2
+> +
+> +/* eMMC clock register, misc control */
+> +#define SD_EMMC_CLOCK		0x00
+> +#define CLK_ALWAYS_ON		BIT(28)
+> +#define CLK_SELECT_NAND		BIT(31)
+> +#define CLK_DIV_MASK		GENMASK(5, 0)
+> +
+> +#define NFC_CLK_CYCLE		6
+> +
+> +/* nand flash controller delay 3 ns */
+> +#define NFC_DEFAULT_DELAY	3000
+> +
+> +#define MAX_ECC_INDEX		10
+> +
+> +#define MUX_CLK_NUM_PARENTS	2
+> +
+> +#define ROW_ADDER(page, index)	(((page) >> (8 * (index))) & 0xff)
+> +#define MAX_CYCLE_ADDRS		5
+> +#define DIRREAD			1
+> +#define DIRWRITE		0
+> +
+> +#define ECC_PARITY_BCH8_512B	14
+> +
+> +#define PER_INFO_BYTE		8
+> +
+> +#define ECC_COMPLETE            BIT(31)
+> +#define ECC_ERR_CNT(x)		(((x) >> 24) & GENMASK(5, 0))
+> +#define ECC_ZERO_CNT(x)		(((x) >> 16) & GENMASK(5, 0))
+> +
+> +struct meson_nfc_nand_chip {
+> +	struct list_head node;
+> +	struct nand_chip nand;
+> +	unsigned long clk_rate;
+> +	unsigned long level1_divider;
+> +	u32 bus_timing;
+> +	u32 twb;
+> +	u32 tadl;
+> +	u32 tbers_max;
+> +
+> +	u32 bch_mode;
+> +	u8 *data_buf;
+> +	__le64 *info_buf;
+> +	u32 nsels;
+> +	u8 sels[0];
+> +};
+> +
+> +struct meson_nand_ecc {
+> +	u32 bch;
+> +	u32 strength;
+> +};
+> +
+> +struct meson_nfc_data {
+> +	const struct nand_ecc_caps *ecc_caps;
+> +};
+> +
+> +struct meson_nfc_param {
+> +	u32 chip_select;
+> +	u32 rb_select;
+> +};
+> +
+> +struct nand_rw_cmd {
+> +	u32 cmd0;
+> +	u32 addrs[MAX_CYCLE_ADDRS];
+> +	u32 cmd1;
+> +};
+> +
+> +struct nand_timing {
+> +	u32 twb;
+> +	u32 tadl;
+> +	u32 tbers_max;
+> +};
+> +
+> +struct meson_nfc {
+> +	struct nand_controller controller;
+> +	struct clk *core_clk;
+> +	struct clk *device_clk;
+> +	struct clk *phase_tx;
+> +	struct clk *phase_rx;
+> +
+> +	unsigned long clk_rate;
+> +	u32 bus_timing;
+> +
+> +	struct device *dev;
+> +	void __iomem *reg_base;
+> +	struct regmap *reg_clk;
+> +	struct completion completion;
+> +	struct list_head chips;
+> +	const struct meson_nfc_data *data;
+> +	struct meson_nfc_param param;
+> +	struct nand_timing timing;
+> +	union {
+> +		int cmd[32];
+> +		struct nand_rw_cmd rw;
+> +	} cmdfifo;
+> +
+> +	dma_addr_t daddr;
+> +	dma_addr_t iaddr;
+> +
+> +	unsigned long assigned_cs;
+> +};
+> +
+> +enum {
+> +	NFC_ECC_BCH8_1K		= 2,
+> +	NFC_ECC_BCH24_1K,
+> +	NFC_ECC_BCH30_1K,
+> +	NFC_ECC_BCH40_1K,
+> +	NFC_ECC_BCH50_1K,
+> +	NFC_ECC_BCH60_1K,
+> +};
+> +
+> +#define MESON_ECC_DATA(b, s)	{ .bch = (b),	.strength = (s)}
+> +
+> +static int meson_nand_calc_ecc_bytes(int step_size, int strength)
+> +{
+> +	int ecc_bytes;
+> +
+> +	if (step_size == 512 && strength == 8)
+> +		return ECC_PARITY_BCH8_512B;
+> +
+> +	ecc_bytes = DIV_ROUND_UP(strength * fls(step_size * 8), 8);
+> +	ecc_bytes = ALIGN(ecc_bytes, 2);
+> +
+> +	return ecc_bytes;
+> +}
+> +
+> +NAND_ECC_CAPS_SINGLE(meson_gxl_ecc_caps,
+> +		     meson_nand_calc_ecc_bytes, 1024, 8, 24, 30, 40, 50, 60);
+> +NAND_ECC_CAPS_SINGLE(meson_axg_ecc_caps,
+> +		     meson_nand_calc_ecc_bytes, 1024, 8);
+> +
+> +static struct meson_nfc_nand_chip *to_meson_nand(struct nand_chip *nand)
+> +{
+> +	return container_of(nand, struct meson_nfc_nand_chip, nand);
+> +}
+> +
+> +static void meson_nfc_select_chip(struct nand_chip *nand, int chip)
+> +{
+> +	struct meson_nfc_nand_chip *meson_chip = to_meson_nand(nand);
+> +	struct meson_nfc *nfc = nand_get_controller_data(nand);
+> +	int ret, value;
+> +
+> +	if (chip < 0 || WARN_ON_ONCE(chip > MAX_CE_NUM))
+> +		return;
+> +
+> +	nfc->param.chip_select = meson_chip->sels[chip] ? NAND_CE1 : NAND_CE0;
+> +	nfc->param.rb_select = nfc->param.chip_select;
+> +	nfc->timing.twb = meson_chip->twb;
+> +	nfc->timing.tadl = meson_chip->tadl;
+> +	nfc->timing.tbers_max = meson_chip->tbers_max;
+> +
+> +	if (chip >= 0) {
+> +		if (nfc->clk_rate != meson_chip->clk_rate) {
+> +			ret = clk_set_rate(nfc->device_clk,
+> +					   meson_chip->clk_rate);
+> +			if (ret) {
+> +				dev_err(nfc->dev, "failed to set clock rate\n");
+> +				return;
+> +			}
+> +			nfc->clk_rate = meson_chip->clk_rate;
+> +		}
+> +		if (nfc->bus_timing != meson_chip->bus_timing) {
+> +			value = (NFC_CLK_CYCLE - 1)
+> +				| (meson_chip->bus_timing << 5);
+> +			writel(value, nfc->reg_base + NFC_REG_CFG);
+> +			writel((1 << 31), nfc->reg_base + NFC_REG_CMD);
+> +			nfc->bus_timing =  meson_chip->bus_timing;
+> +		}
+> +	}
 
-Sure, will split the patch.
+Don't you have timing registers to set?
 
->
-> > diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
-> > index ba18d89d4732..047f7ff95b0d 100644
-> > --- a/drivers/iommu/arm-smmu.c
-> > +++ b/drivers/iommu/arm-smmu.c
-> > @@ -255,6 +255,7 @@ struct arm_smmu_domain {
-> >       struct mutex                    init_mutex; /* Protects smmu pointer */
-> >       spinlock_t                      cb_lock; /* Serialises ATS1* ops and TLB syncs */
-> >       struct iommu_domain             domain;
-> > +     bool                            no_inner_cache;
->
-> Can we keep all the domain flags together please? In fact, I'd be
-> inclined to implement an options bitmap as we do elsewhere rather than
-> proliferate multiple bools.
+> +}
+> +
+> +static void meson_nfc_cmd_idle(struct meson_nfc *nfc, u32 time)
+> +{
+> +	writel(nfc->param.chip_select | NFC_CMD_IDLE | (time & 0x3ff),
+> +	       nfc->reg_base + NFC_REG_CMD);
+> +}
+> +
+> +static void meson_nfc_cmd_seed(struct meson_nfc *nfc, u32 seed)
+> +{
+> +	writel(NFC_CMD_SEED | (0xc2 + (seed & 0x7fff)),
+> +	       nfc->reg_base + NFC_REG_CMD);
+> +}
+> +
+> +static void meson_nfc_cmd_access(struct nand_chip *nand, int raw, bool dir)
+> +{
+> +	struct mtd_info *mtd = nand_to_mtd(nand);
+> +	struct meson_nfc *nfc = nand_get_controller_data(mtd_to_nand(mtd));
+> +	struct meson_nfc_nand_chip *meson_chip = to_meson_nand(nand);
+> +	u32 bch = meson_chip->bch_mode, cmd;
+> +	int len = mtd->writesize, pagesize, pages;
+> +	int scramble = (nand->options & NAND_NEED_SCRAMBLING) ? 1 : 0;
 
-Yea, changing this to bitmap makes sense. Will update this.
+There are quite a few places where you use hardcoded values, I would
+have preferred preprocessor defines for that. In this case, something
+link:
 
->
-> >   };
-> >
-> >   struct arm_smmu_option_prop {
-> > @@ -897,6 +898,9 @@ static int arm_smmu_init_domain_context(struct iommu_domain *domain,
-> >       if (smmu_domain->non_strict)
-> >               pgtbl_cfg.quirks |= IO_PGTABLE_QUIRK_NON_STRICT;
-> >
-> > +     if (smmu_domain->no_inner_cache)
-> > +             pgtbl_cfg.quirks |= IO_PGTABLE_QUIRK_NO_IC;
->
-> Maybe we need to be a bit cleverer about setting the quirk (and/or
-> allowing the domain attribute to be set), since depending on
-> configuration and hardware support the domain may end up picking a stage
-> 2 or short-descriptor format and thus being rendered unusable.
 
-I don't think I completely get you here.
-But, do you mean that to set such quirks we should first check configurations
-such as the domain's stage, and the format before deciding whether
-we want to set this or not?
+        // naming is just as a reference, use whatever you want
+        +#define CMD_SCRAMBLE BIT(19) 
+        [...]
+        +int scramble = nand->options & NAND_NEED_SCRAMBLING) ? CMD_SCRAMBLE : 0;
 
->
-> > +
-> >       smmu_domain->smmu = smmu;
-> >       pgtbl_ops = alloc_io_pgtable_ops(fmt, &pgtbl_cfg, smmu_domain);
-> >       if (!pgtbl_ops) {
-> > @@ -1579,6 +1583,9 @@ static int arm_smmu_domain_get_attr(struct iommu_domain *domain,
-> >               case DOMAIN_ATTR_NESTING:
-> >                       *(int *)data = (smmu_domain->stage == ARM_SMMU_DOMAIN_NESTED);
-> >                       return 0;
-> > +             case DOMAIN_ATTR_NO_IC:
-> > +                     *((int *)data) = smmu_domain->no_inner_cache;
-> > +                     return 0;
-> >               default:
-> >                       return -ENODEV;
-> >               }
-> > @@ -1619,6 +1626,14 @@ static int arm_smmu_domain_set_attr(struct iommu_domain *domain,
-> >                       else
-> >                               smmu_domain->stage = ARM_SMMU_DOMAIN_S1;
-> >                       break;
-> > +             case DOMAIN_ATTR_NO_IC:
-> > +                     if (smmu_domain->smmu) {
-> > +                             ret = -EPERM;
-> > +                             goto out_unlock;
-> > +                     }
-> > +                     if (*((int *)data))
-> > +                             smmu_domain->no_inner_cache = true;
->
-> This makes the attribute impossible to disable again, even before the
-> domain is initialized - is that intentional? (and if so, why?)
+would be better (you can extend to other places as well).
 
-Right. I should add for data = 0 as well. That should help to disable this
-attribute again.
+> +
+> +	pagesize = nand->ecc.size;
+> +
+> +	if (raw) {
+> +		len = mtd->writesize + mtd->oobsize;
+> +		cmd = (len & 0x3fff) | (scramble << 19) | DMA_DIR(dir);
+> +		writel(cmd, nfc->reg_base + NFC_REG_CMD);
+> +		return;
+> +	}
+> +
+> +	pages = len / nand->ecc.size;
+> +
+> +	cmd = CMDRWGEN(DMA_DIR(dir), scramble, bch, 0, pagesize, pages);
+> +
+> +	writel(cmd, nfc->reg_base + NFC_REG_CMD);
+> +}
+> +
+> +static void meson_nfc_drain_cmd(struct meson_nfc *nfc)
+> +{
+> +	/*
+> +	 * Insert two commands to make sure all valid commands are finished.
+> +	 *
+> +	 * The Nand flash controller is designed as two stages pipleline -
+> +	 *  a) fetch and b) excute.
+> +	 * There might be cases when the driver see command queue is empty,
+> +	 * but the Nand flash controller still has two commands buffered,
+> +	 * one is fetched into NFC request queue (ready to run), and another
+> +	 * is actively executing. So pushing 2 "IDLE" commands guarantees that
+> +	 * the pipeline is emptied.
+> +	 */
+> +	meson_nfc_cmd_idle(nfc, 0);
+> +	meson_nfc_cmd_idle(nfc, 0);
+> +}
+> +
+> +static int meson_nfc_wait_cmd_finish(struct meson_nfc *nfc,
+> +				     unsigned int timeout_ms)
+> +{
+> +	u32 cmd_size = 0;
+> +	int ret;
+> +
+> +	/* wait cmd fifo is empty */
+> +	ret = readl_relaxed_poll_timeout(nfc->reg_base + NFC_REG_CMD, cmd_size,
+> +					 !NFC_CMD_GET_SIZE(cmd_size),
+> +					 10, timeout_ms * 1000);
+> +	if (ret)
+> +		dev_err(nfc->dev, "wait for empty cmd FIFO time out\n");
+> +
+> +	return ret;
+> +}
+> +
+> +static int meson_nfc_wait_dma_finish(struct meson_nfc *nfc)
+> +{
+> +	meson_nfc_drain_cmd(nfc);
+> +
+> +	return meson_nfc_wait_cmd_finish(nfc, DMA_BUSY_TIMEOUT);
+> +}
+> +
+> +static u8 *meson_nfc_oob_ptr(struct nand_chip *nand, int i)
+> +{
+> +	struct meson_nfc_nand_chip *meson_chip = to_meson_nand(nand);
+> +	int len;
+> +
+> +	len = nand->ecc.size * (i + 1) + (nand->ecc.bytes + 2) * i;
+> +
+> +	return meson_chip->data_buf + len;
+> +}
+> +
+> +static u8 *meson_nfc_data_ptr(struct nand_chip *nand, int i)
+> +{
+> +	struct meson_nfc_nand_chip *meson_chip = to_meson_nand(nand);
+> +	int len, temp;
+> +
+> +	temp = nand->ecc.size + nand->ecc.bytes;
+> +	len = (temp + 2) * i;
+> +
+> +	return meson_chip->data_buf + len;
+> +}
+> +
+> +static void meson_nfc_get_data_oob(struct nand_chip *nand,
+> +				   u8 *buf, u8 *oobbuf)
+> +{
+> +	int i, oob_len = 0;
+> +	u8 *dsrc, *osrc;
+> +
+> +	oob_len = nand->ecc.bytes + 2;
+> +	for (i = 0; i < nand->ecc.steps; i++) {
+> +		if (buf) {
+> +			dsrc = meson_nfc_data_ptr(nand, i);
+> +			memcpy(buf, dsrc, nand->ecc.size);
+> +			buf += nand->ecc.size;
+> +		}
+> +		osrc = meson_nfc_oob_ptr(nand, i);
+> +		memcpy(oobbuf, osrc, oob_len);
+> +		oobbuf += oob_len;
+> +	}
+> +}
+> +
+> +static void meson_nfc_set_data_oob(struct nand_chip *nand,
+> +				   const u8 *buf, u8 *oobbuf)
+> +{
+> +	int i, oob_len = 0;
+> +	u8 *dsrc, *osrc;
+> +
+> +	oob_len = nand->ecc.bytes + 2;
+> +	for (i = 0; i < nand->ecc.steps; i++) {
+> +		if (buf) {
+> +			dsrc = meson_nfc_data_ptr(nand, i);
+> +			memcpy(dsrc, buf, nand->ecc.size);
+> +			buf += nand->ecc.size;
+> +		}
+> +		osrc = meson_nfc_oob_ptr(nand, i);
+> +		memcpy(osrc, oobbuf, oob_len);
+> +		oobbuf += oob_len;
+> +	}
+> +}
+> +
+> +static int meson_nfc_queue_rb(struct meson_nfc *nfc, int timeout_ms)
+> +{
+> +	u32 cmd, cfg;
+> +	int ret = 0;
+> +
+> +	meson_nfc_cmd_idle(nfc, nfc->timing.twb);
+> +	meson_nfc_drain_cmd(nfc);
+> +	meson_nfc_wait_cmd_finish(nfc, CMD_FIFO_EMPTY_TIMEOUT);
+> +
+> +	cfg = readl(nfc->reg_base + NFC_REG_CFG);
+> +	cfg |= (1 << 21);
+> +	writel(cfg, nfc->reg_base + NFC_REG_CFG);
+> +
+> +	init_completion(&nfc->completion);
+> +
+> +	/* use the max erase time as the maximum clock for waiting R/B */
+> +	cmd = NFC_CMD_RB | NFC_CMD_RB_INT
+> +		| nfc->param.chip_select | nfc->timing.tbers_max;
 
->
-> > +                     break;
-> >               default:
-> >                       ret = -ENODEV;
-> >               }
-> > diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
-> > index d1b04753b204..87c3d59c4a6c 100644
-> > --- a/drivers/iommu/dma-iommu.c
-> > +++ b/drivers/iommu/dma-iommu.c
-> > @@ -354,6 +354,9 @@ int dma_info_to_prot(enum dma_data_direction dir, bool coherent,
-> >   {
-> >       int prot = coherent ? IOMMU_CACHE : 0;
-> >
-> > +     if (!coherent && (attrs & DOMAIN_ATTR_NO_IC))
-> > +             prot |= IOMMU_NO_IC;
-> > +
->
-> Erm, that's going to be a hilariously unexpected interpretation of
-> DMA_ATTR_FORCE_CONTIGUOUS...
+Nit: I think the '|' should be on the previous line.
 
-Right. :)
-I guess i will take your suggestion to have something like
-DOMAIN_ATTR_QCOM_SYSTEM_CACHE.
+> +	writel(cmd, nfc->reg_base + NFC_REG_CMD);
+> +
+> +	ret = wait_for_completion_timeout(&nfc->completion,
+> +					  msecs_to_jiffies(timeout_ms));
+> +	if (ret == 0)
+> +		ret = -1;
+> +
+> +	return ret;
+> +}
+> +
+> +static void meson_nfc_set_user_byte(struct nand_chip *nand, u8 *oob_buf)
+> +{
+> +	struct meson_nfc_nand_chip *meson_chip = to_meson_nand(nand);
+> +	__le64 *info;
+> +	int i, count;
+> +
+> +	for (i = 0, count = 0; i < nand->ecc.steps; i++, count += 2) {
+> +		info = &meson_chip->info_buf[i];
+> +		*info |= oob_buf[count];
+> +		*info |= oob_buf[count + 1] << 8;
+> +	}
+> +}
+> +
+> +static void meson_nfc_get_user_byte(struct nand_chip *nand, u8 *oob_buf)
+> +{
+> +	struct meson_nfc_nand_chip *meson_chip = to_meson_nand(nand);
+> +	__le64 *info;
+> +	int i, count;
+> +
+> +	for (i = 0, count = 0; i < nand->ecc.steps; i++, count += 2) {
+> +		info = &meson_chip->info_buf[i];
+> +		oob_buf[count] = *info;
+> +		oob_buf[count + 1] = *info >> 8;
+> +	}
+> +}
+> +
+> +static int meson_nfc_ecc_correct(struct nand_chip *nand)
+> +{
+> +	struct mtd_info *mtd = nand_to_mtd(nand);
+> +	struct meson_nfc_nand_chip *meson_chip = to_meson_nand(nand);
+> +	__le64 *info;
+> +	u32 bitflips = 0, i;
+> +	int scramble;
+> +	u8 zero_cnt;
+> +
+> +	scramble = (nand->options & NAND_NEED_SCRAMBLING) ? 1 : 0;
+> +
+> +	for (i = 0; i < nand->ecc.steps; i++) {
+> +		info = &meson_chip->info_buf[i];
+> +		if (ECC_ERR_CNT(*info) == 0x3f) {
+> +			zero_cnt = ECC_ZERO_CNT(*info);
+> +			if (scramble && zero_cnt < nand->ecc.strength)
+> +				return ECC_CHECK_RETURN_FF;
 
->
-> I'm not sure it would really makes sense to expose fine-grained controls
-> at the DMA API level anyway, given the main point is to largely abstract
-> away the notion of caches altogether.
+This and what you do later with ECC_CHECK_RETURN_FF is pretty unclear
+to me.
 
-But there are DMA devices (such as video) which use DMA mapping APIs only,
-and which are non-coherent-upgraded-to-use-sytem-cache. Such devices
-can't force set IOMMU quirks unless they do iommu_get_domain_for_dev()
-and then set the domain attributes.
-Will that be better way?
+> +			mtd->ecc_stats.failed++;
+> +			continue;
+> +		}
+> +		mtd->ecc_stats.corrected += ECC_ERR_CNT(*info);
+> +		bitflips = max_t(u32, bitflips, ECC_ERR_CNT(*info));
+> +	}
 
->
-> >       if (attrs & DMA_ATTR_PRIVILEGED)
-> >               prot |= IOMMU_PRIV;
-> >
-> > diff --git a/drivers/iommu/io-pgtable-arm.c b/drivers/iommu/io-pgtable-arm.c
-> > index 237cacd4a62b..815b86067bcc 100644
-> > --- a/drivers/iommu/io-pgtable-arm.c
-> > +++ b/drivers/iommu/io-pgtable-arm.c
-> > @@ -168,10 +168,12 @@
-> >   #define ARM_LPAE_MAIR_ATTR_MASK             0xff
-> >   #define ARM_LPAE_MAIR_ATTR_DEVICE   0x04
-> >   #define ARM_LPAE_MAIR_ATTR_NC               0x44
-> > +#define ARM_LPAE_MAIR_ATTR_NO_IC     0xf4
-> >   #define ARM_LPAE_MAIR_ATTR_WBRWA    0xff
-> >   #define ARM_LPAE_MAIR_ATTR_IDX_NC   0
-> >   #define ARM_LPAE_MAIR_ATTR_IDX_CACHE        1
-> >   #define ARM_LPAE_MAIR_ATTR_IDX_DEV  2
-> > +#define ARM_LPAE_MAIR_ATTR_IDX_NO_IC 3
-> >
-> >   /* IOPTE accessors */
-> >   #define iopte_deref(pte,d) __va(iopte_to_paddr(pte, d))
-> > @@ -443,6 +445,9 @@ static arm_lpae_iopte arm_lpae_prot_to_pte(struct arm_lpae_io_pgtable *data,
-> >               else if (prot & IOMMU_CACHE)
-> >                       pte |= (ARM_LPAE_MAIR_ATTR_IDX_CACHE
-> >                               << ARM_LPAE_PTE_ATTRINDX_SHIFT);
-> > +             else if (prot & IOMMU_NO_IC)
-> > +                     pte |= (ARM_LPAE_MAIR_ATTR_IDX_NO_IC
-> > +                             << ARM_LPAE_PTE_ATTRINDX_SHIFT);
-> >       } else {
-> >               pte = ARM_LPAE_PTE_HAP_FAULT;
-> >               if (prot & IOMMU_READ)
-> > @@ -780,7 +785,8 @@ arm_64_lpae_alloc_pgtable_s1(struct io_pgtable_cfg *cfg, void *cookie)
-> >       struct arm_lpae_io_pgtable *data;
-> >
-> >       if (cfg->quirks & ~(IO_PGTABLE_QUIRK_ARM_NS | IO_PGTABLE_QUIRK_NO_DMA |
-> > -                         IO_PGTABLE_QUIRK_NON_STRICT))
-> > +                         IO_PGTABLE_QUIRK_NON_STRICT |
-> > +                         IO_PGTABLE_QUIRK_NO_IC))
-> >               return NULL;
-> >
-> >       data = arm_lpae_alloc_pgtable(cfg);
-> > @@ -788,9 +794,13 @@ arm_64_lpae_alloc_pgtable_s1(struct io_pgtable_cfg *cfg, void *cookie)
-> >               return NULL;
-> >
-> >       /* TCR */
-> > -     reg = (ARM_LPAE_TCR_SH_IS << ARM_LPAE_TCR_SH0_SHIFT) |
-> > -           (ARM_LPAE_TCR_RGN_WBWA << ARM_LPAE_TCR_IRGN0_SHIFT) |
-> > -           (ARM_LPAE_TCR_RGN_WBWA << ARM_LPAE_TCR_ORGN0_SHIFT);
->
-> The subtle assumption here is that if the SMMU is coherent then these
-> are the attributes we actually want to use, but if it's non-coherent
-> then the interconnect should ignore them anyway so it doesn't really
-> matter. Does either of those aspects hold for qcom SoCs?
+Are you sure you handle correctly empty pages with bf?
 
-From the downstream [1] it's clear that default for smmu is set to
-Non-cached access.
-So, I don't think the interconnect helps us. OR, possibly we are just
-forcing these
-mappings be uncached.
+> +
+> +	return bitflips;
+> +}
+> +
+> +static int meson_nfc_dma_buffer_setup(struct nand_chip *nand, u8 *databuf,
+> +				      int datalen, u8 *infobuf, int infolen,
+> +				      enum dma_data_direction dir)
+> +{
+> +	struct meson_nfc *nfc = nand_get_controller_data(nand);
+> +	u32 cmd;
+> +	int ret = 0;
+> +
+> +	nfc->daddr = dma_map_single(nfc->dev, (void *)databuf, datalen, dir);
+> +	ret = dma_mapping_error(nfc->dev, nfc->daddr);
+> +	if (ret) {
+> +		dev_err(nfc->dev, "dma mapping error\n");
+> +		return ret;
+> +	}
+> +	cmd = GENCMDDADDRL(NFC_CMD_ADL, nfc->daddr);
+> +	writel(cmd, nfc->reg_base + NFC_REG_CMD);
+> +
+> +	cmd = GENCMDDADDRH(NFC_CMD_ADH, nfc->daddr);
+> +	writel(cmd, nfc->reg_base + NFC_REG_CMD);
+> +
+> +	if (infobuf) {
+> +		nfc->iaddr = dma_map_single(nfc->dev, infobuf, infolen, dir);
+> +		ret = dma_mapping_error(nfc->dev, nfc->iaddr);
+> +		if (ret) {
+> +			dev_err(nfc->dev, "dma mapping error\n");
+> +			dma_unmap_single(nfc->dev,
+> +					 nfc->daddr, datalen, dir);
+> +			return ret;
+> +		}
+> +		cmd = GENCMDIADDRL(NFC_CMD_AIL, nfc->iaddr);
+> +		writel(cmd, nfc->reg_base + NFC_REG_CMD);
+> +
+> +		cmd = GENCMDIADDRH(NFC_CMD_AIH, nfc->iaddr);
+> +		writel(cmd, nfc->reg_base + NFC_REG_CMD);
+> +	}
+> +
+> +	return ret;
+> +}
+> +
+> +static void meson_nfc_dma_buffer_release(struct nand_chip *nand,
+> +					 int infolen, int datalen,
+> +					 enum dma_data_direction dir)
+> +{
+> +	struct meson_nfc *nfc = nand_get_controller_data(nand);
+> +
+> +	dma_unmap_single(nfc->dev, nfc->daddr, datalen, dir);
+> +	if (infolen)
+> +		dma_unmap_single(nfc->dev, nfc->iaddr, infolen, dir);
+> +}
+> +
+> +static int meson_nfc_read_buf(struct nand_chip *nand, u8 *buf, int len)
+> +{
+> +	struct meson_nfc *nfc = nand_get_controller_data(nand);
+> +	int ret = 0;
+> +	u32 cmd;
+> +	u8 *info;
+> +
+> +	info = kzalloc(PER_INFO_BYTE, GFP_KERNEL);
+> +	ret = meson_nfc_dma_buffer_setup(nand, buf, len, info,
+> +					 PER_INFO_BYTE, DMA_FROM_DEVICE);
+> +	if (ret)
+> +		return ret;
+> +
+> +	cmd = NFC_CMD_N2M | (len & 0x3fff);
+> +	writel(cmd, nfc->reg_base + NFC_REG_CMD);
+> +
+> +	meson_nfc_drain_cmd(nfc);
+> +	meson_nfc_wait_cmd_finish(nfc, 1000);
+> +	meson_nfc_dma_buffer_release(nand, len, PER_INFO_BYTE, DMA_FROM_DEVICE);
+> +	kfree(info);
+> +
+> +	return ret;
+> +}
+> +
+> +static int meson_nfc_write_buf(struct nand_chip *nand, u8 *buf, int len)
+> +{
+> +	struct meson_nfc *nfc = nand_get_controller_data(nand);
+> +	int ret = 0;
+> +	u32 cmd;
+> +
+> +	ret = meson_nfc_dma_buffer_setup(nand, buf, len, NULL,
+> +					 0, DMA_TO_DEVICE);
+> +	if (ret)
+> +		return ret;
+> +
+> +	cmd = NFC_CMD_M2N | (len & 0x3fff);
+> +	writel(cmd, nfc->reg_base + NFC_REG_CMD);
+> +
+> +	meson_nfc_drain_cmd(nfc);
+> +	meson_nfc_wait_cmd_finish(nfc, 1000);
+> +	meson_nfc_dma_buffer_release(nand, len, 0, DMA_TO_DEVICE);
+> +
+> +	return ret;
+> +}
+> +
+> +static int meson_nfc_rw_cmd_prepare_and_execute(struct nand_chip *nand,
+> +						int page, bool in)
+> +{
+> +	struct mtd_info *mtd = nand_to_mtd(nand);
+> +	struct meson_nfc *nfc = nand_get_controller_data(nand);
+> +	const struct nand_sdr_timings *sdr =
+> +		nand_get_sdr_timings(&nand->data_interface);
+> +	u32 *addrs = nfc->cmdfifo.rw.addrs;
+> +	u32 cs = nfc->param.chip_select;
+> +	u32 cmd0, cmd_num, row_start;
+> +	int ret = 0, i;
+> +
+> +	cmd_num = sizeof(struct nand_rw_cmd) / sizeof(int);
+> +
+> +	cmd0 = in ? NAND_CMD_READ0 : NAND_CMD_SEQIN;
+> +	nfc->cmdfifo.rw.cmd0 = cs | NFC_CMD_CLE | cmd0;
+> +
+> +	addrs[0] = cs | NFC_CMD_ALE | 0;
+> +	if (mtd->writesize <= 512) {
+> +		cmd_num--;
+> +		row_start = 1;
+> +	} else {
+> +		addrs[1] = cs | NFC_CMD_ALE | 0;
+> +		row_start = 2;
+> +	}
+> +
+> +	addrs[row_start] = cs | NFC_CMD_ALE | ROW_ADDER(page, 0);
+> +	addrs[row_start + 1] = cs | NFC_CMD_ALE | ROW_ADDER(page, 1);
+> +
+> +	if (nand->options & NAND_ROW_ADDR_3)
+> +		addrs[row_start + 2] =
+> +			cs | NFC_CMD_ALE | ROW_ADDER(page, 2);
+> +	else
+> +		cmd_num--;
+> +
+> +	/* subtract cmd1 */
+> +	cmd_num--;
+> +
+> +	for (i = 0; i < cmd_num; i++)
+> +		writel_relaxed(nfc->cmdfifo.cmd[i],
+> +			       nfc->reg_base + NFC_REG_CMD);
+> +
+> +	if (in) {
+> +		nfc->cmdfifo.rw.cmd1 = cs | NFC_CMD_CLE | NAND_CMD_READSTART;
+> +		writel(nfc->cmdfifo.rw.cmd1, nfc->reg_base + NFC_REG_CMD);
+> +		meson_nfc_queue_rb(nfc, PSEC_TO_MSEC(sdr->tR_max));
+> +	} else {
+> +		meson_nfc_cmd_idle(nfc, nfc->timing.tadl);
+> +	}
+> +
+> +	return ret;
+> +}
+> +
+> +static int meson_nfc_write_page_sub(struct nand_chip *nand,
+> +				    int page, int raw)
+> +{
+> +	struct mtd_info *mtd = nand_to_mtd(nand);
+> +	const struct nand_sdr_timings *sdr =
+> +		nand_get_sdr_timings(&nand->data_interface);
+> +	struct meson_nfc_nand_chip *meson_chip = to_meson_nand(nand);
+> +	struct meson_nfc *nfc = nand_get_controller_data(nand);
+> +	int data_len, info_len;
+> +	u32 cmd;
+> +	int ret;
+> +
+> +	data_len =  mtd->writesize + mtd->oobsize;
+> +	info_len = nand->ecc.steps * PER_INFO_BYTE;
+> +
+> +	ret = meson_nfc_rw_cmd_prepare_and_execute(nand, page, DIRWRITE);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = meson_nfc_dma_buffer_setup(nand, meson_chip->data_buf,
+> +					 data_len, (u8 *)meson_chip->info_buf,
+> +					 info_len, DMA_TO_DEVICE);
+> +	if (ret)
+> +		return ret;
+> +
+> +	meson_nfc_cmd_seed(nfc, page);
+> +	meson_nfc_cmd_access(nand, raw, DIRWRITE);
+> +	cmd = nfc->param.chip_select | NFC_CMD_CLE | NAND_CMD_PAGEPROG;
+> +	writel(cmd, nfc->reg_base + NFC_REG_CMD);
+> +	meson_nfc_queue_rb(nfc, PSEC_TO_MSEC(sdr->tPROG_max));
+> +
+> +	meson_nfc_dma_buffer_release(nand, data_len, info_len, DMA_TO_DEVICE);
+> +
+> +	return ret;
+> +}
+> +
+> +static int meson_nfc_write_page_raw(struct nand_chip *nand, const u8 *buf,
+> +				    int oob_required, int page)
+> +{
+> +	u8 *oob_buf = nand->oob_poi;
+> +
+> +	meson_nfc_set_data_oob(nand, buf, oob_buf);
+> +
+> +	return meson_nfc_write_page_sub(nand, page, 1);
+> +}
+> +
+> +static int meson_nfc_write_page_hwecc(struct nand_chip *nand,
+> +				      const u8 *buf, int oob_required, int page)
+> +{
+> +	struct mtd_info *mtd = nand_to_mtd(nand);
+> +	struct meson_nfc_nand_chip *meson_chip = to_meson_nand(nand);
+> +	u8 *oob_buf = nand->oob_poi;
+> +
+> +	memcpy(meson_chip->data_buf, buf, mtd->writesize);
+> +	memset(meson_chip->info_buf, 0, nand->ecc.steps * PER_INFO_BYTE);
+> +	meson_nfc_set_user_byte(nand, oob_buf);
+> +
+> +	return meson_nfc_write_page_sub(nand, page, 0);
+> +}
+> +
+> +static void meson_nfc_check_ecc_pages_valid(struct meson_nfc *nfc,
+> +					    struct nand_chip *nand, int raw)
+> +{
+> +	struct meson_nfc_nand_chip *meson_chip = to_meson_nand(nand);
+> +	__le64 *info;
+> +	u32 neccpages;
+> +	int ret;
+> +
+> +	neccpages = raw ? 1 : nand->ecc.steps;
+> +	info = &meson_chip->info_buf[neccpages - 1];
+> +	do {
+> +		usleep_range(10, 15);
+> +		/* info is updated by nfc dma engine*/
+> +		smp_rmb();
+> +		ret = *info & ECC_COMPLETE;
+> +	} while (!ret);
+> +}
+> +
+> +static int meson_nfc_read_page_sub(struct nand_chip *nand,
+> +				   int page, int raw)
+> +{
+> +	struct mtd_info *mtd = nand_to_mtd(nand);
+> +	struct meson_nfc *nfc = nand_get_controller_data(nand);
+> +	struct meson_nfc_nand_chip *meson_chip = to_meson_nand(nand);
+> +	int data_len, info_len;
+> +	int ret;
+> +
+> +	data_len =  mtd->writesize + mtd->oobsize;
+> +	info_len = nand->ecc.steps * PER_INFO_BYTE;
+> +
+> +	ret = meson_nfc_rw_cmd_prepare_and_execute(nand, page, DIRREAD);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = meson_nfc_dma_buffer_setup(nand, meson_chip->data_buf,
+> +					 data_len, (u8 *)meson_chip->info_buf,
+> +					 info_len, DMA_FROM_DEVICE);
+> +	if (ret)
+> +		return ret;
+> +
+> +	meson_nfc_cmd_seed(nfc, page);
+> +	meson_nfc_cmd_access(nand, raw, DIRREAD);
+> +	ret = meson_nfc_wait_dma_finish(nfc);
+> +	meson_nfc_check_ecc_pages_valid(nfc, nand, raw);
+> +
+> +	meson_nfc_dma_buffer_release(nand, data_len, info_len, DMA_FROM_DEVICE);
+> +
+> +	return ret;
+> +}
+> +
+> +static int meson_nfc_read_page_raw(struct nand_chip *nand, u8 *buf,
+> +				   int oob_required, int page)
+> +{
+> +	u8 *oob_buf = nand->oob_poi;
+> +	int ret;
+> +
+> +	ret = meson_nfc_read_page_sub(nand, page, 1);
+> +	if (ret)
+> +		return ret;
+> +
+> +	meson_nfc_get_data_oob(nand, buf, oob_buf);
+> +
+> +	return 0;
+> +}
+> +
+> +static int meson_nfc_read_page_hwecc(struct nand_chip *nand, u8 *buf,
+> +				     int oob_required, int page)
+> +{
+> +	struct mtd_info *mtd = nand_to_mtd(nand);
+> +	struct meson_nfc_nand_chip *meson_chip = to_meson_nand(nand);
+> +	u8 *oob_buf = nand->oob_poi;
+> +	int ret;
+> +
+> +	ret = meson_nfc_read_page_sub(nand, page, 0);
+> +	if (ret)
+> +		return ret;
+> +
+> +	meson_nfc_get_user_byte(nand, oob_buf);
+> +
+> +	ret = meson_nfc_ecc_correct(nand);
+> +	if (ret == ECC_CHECK_RETURN_FF) {
+> +		if (buf)
+> +			memset(buf, 0xff, mtd->writesize);
+> +
+> +		memset(oob_buf, 0xff, mtd->oobsize);
+> +		return 0;
+> +	}
+> +
+> +	if (buf && buf != meson_chip->data_buf)
+> +		memcpy(buf, meson_chip->data_buf, mtd->writesize);
+> +
+> +	return ret;
+> +}
+> +
+> +static int meson_nfc_read_oob_raw(struct nand_chip *nand, int page)
+> +{
+> +	return meson_nfc_read_page_raw(nand, NULL, 1, page);
+> +}
+> +
+> +static int meson_nfc_read_oob(struct nand_chip *nand, int page)
+> +{
+> +	return meson_nfc_read_page_hwecc(nand, NULL, 1, page);
+> +}
+> +
+> +void *
+> +meson_nand_op_get_dma_safe_input_buf(const struct nand_op_instr *instr)
+> +{
+> +	if (WARN_ON(instr->type != NAND_OP_DATA_IN_INSTR))
+> +		return NULL;
+> +	if (virt_addr_valid(instr->ctx.data.buf.in) &&
+> +	    !object_is_on_stack(instr->ctx.data.buf.in))
+> +		return instr->ctx.data.buf.in;
+> +
+> +	return kzalloc(instr->ctx.data.len, GFP_KERNEL);
 
->
-> TBH if we're going to touch the TCR attributes at all then we should
-> probably correct that sloppiness first - there's an occasional argument
-> for using non-cacheable pagetables even on a coherent SMMU if reducing
-> snoop traffic/latency on walks outweighs the cost of cache maintenance
-> on PTE updates, but anyone thinking they can get that by overriding
-> dma-coherent silently gets the worst of both worlds thanks to this
-> current TCR value.
+I think allocating memory and using it without ever testing the
+allocation succeeded is wrong. You do that in many places. I would like
+to see allocations properly handled.
 
-So, what do you suggest?
-This is something that's smmu's implementation specific detail, not something
-that's going to vary from one domain to another? Isn't that right?
-So, in that case additional dt property can help setting a quirk?
+> +}
+> +
+> +void
+> +meson_nand_op_put_dma_safe_input_buf(const struct nand_op_instr *instr,
+> +				     void *buf)
+> +{
+> +	if (WARN_ON(instr->type != NAND_OP_DATA_IN_INSTR) ||
+> +	    WARN_ON(!buf))
+> +		return;
+> +	if (buf == instr->ctx.data.buf.in)
+> +		return;
+> +
+> +	memcpy(instr->ctx.data.buf.in, buf, instr->ctx.data.len);
+> +	kfree(buf);
+> +}
+> +
+> +const void *
+> +meson_nand_op_get_dma_safe_output_buf(const struct nand_op_instr *instr)
+> +{
+> +	if (WARN_ON(instr->type != NAND_OP_DATA_OUT_INSTR))
+> +		return NULL;
+> +
+> +	if (virt_addr_valid(instr->ctx.data.buf.out) &&
+> +	    !object_is_on_stack(instr->ctx.data.buf.out))
 
->
-> > +     if (cfg->quirks & IO_PGTABLE_QUIRK_NO_IC)
-> > +             reg = ARM_LPAE_TCR_RGN_NC << ARM_LPAE_TCR_IRGN0_SHIFT;
-> > +     else
-> > +             reg = ARM_LPAE_TCR_RGN_WBWA << ARM_LPAE_TCR_IRGN0_SHIFT;
-> > +
-> > +     reg |= (ARM_LPAE_TCR_SH_IS << ARM_LPAE_TCR_SH0_SHIFT) |
-> > +            (ARM_LPAE_TCR_RGN_WBWA << ARM_LPAE_TCR_ORGN0_SHIFT);
-> >
-> >       switch (ARM_LPAE_GRANULE(data)) {
-> >       case SZ_4K:
-> > @@ -842,7 +852,9 @@ arm_64_lpae_alloc_pgtable_s1(struct io_pgtable_cfg *cfg, void *cookie)
-> >             (ARM_LPAE_MAIR_ATTR_WBRWA
-> >              << ARM_LPAE_MAIR_ATTR_SHIFT(ARM_LPAE_MAIR_ATTR_IDX_CACHE)) |
-> >             (ARM_LPAE_MAIR_ATTR_DEVICE
-> > -            << ARM_LPAE_MAIR_ATTR_SHIFT(ARM_LPAE_MAIR_ATTR_IDX_DEV));
-> > +            << ARM_LPAE_MAIR_ATTR_SHIFT(ARM_LPAE_MAIR_ATTR_IDX_DEV)) |
-> > +           (ARM_LPAE_MAIR_ATTR_NO_IC
-> > +            << ARM_LPAE_MAIR_ATTR_SHIFT(ARM_LPAE_MAIR_ATTR_IDX_NO_IC));
-> >
-> >       cfg->arm_lpae_s1_cfg.mair[0] = reg;
-> >       cfg->arm_lpae_s1_cfg.mair[1] = 0;
-> > diff --git a/drivers/iommu/io-pgtable.h b/drivers/iommu/io-pgtable.h
-> > index 47d5ae559329..450a4adf9052 100644
-> > --- a/drivers/iommu/io-pgtable.h
-> > +++ b/drivers/iommu/io-pgtable.h
-> > @@ -75,6 +75,10 @@ struct io_pgtable_cfg {
-> >        * IO_PGTABLE_QUIRK_NON_STRICT: Skip issuing synchronous leaf TLBIs
-> >        *      on unmap, for DMA domains using the flush queue mechanism for
-> >        *      delayed invalidation.
-> > +      *
-> > +      * IO_PGTABLE_QUIRK_NO_IC: Override the attributes to use only the outer
-> > +      *      cache, and not inner cache for non-coherent devices doing normal
-> > +      *      sys-cached memory.
->
-> As above, mappings for non-coherent devices would never be expected to
-> have the inner cacheable attribute anyway, so the comment doesn't really
-> make sense.
+Can you please create helpers for that? I guess it will help removing
+these checks once the core will have a DMA-safe approach.
 
-Right, will update this comment.
+> +		return instr->ctx.data.buf.out;
+> +
+> +	return kmemdup(instr->ctx.data.buf.out,
+> +		       instr->ctx.data.len, GFP_KERNEL);
+> +}
+> +
+> +void
+> +meson_nand_op_put_dma_safe_output_buf(const struct nand_op_instr *instr,
+> +				      const void *buf)
+> +{
+> +	if (WARN_ON(instr->type != NAND_OP_DATA_OUT_INSTR) ||
+> +	    WARN_ON(!buf))
+> +		return;
+> +
+> +	if (buf != instr->ctx.data.buf.out)
+> +		kfree(buf);
+> +}
+> +
+> +static int meson_nfc_exec_op(struct nand_chip *nand,
+> +			     const struct nand_operation *op, bool check_only)
+> +{
+> +	struct meson_nfc_nand_chip *meson_chip = to_meson_nand(nand);
+> +	struct meson_nfc *nfc = nand_get_controller_data(nand);
+> +	const struct nand_op_instr *instr = NULL;
+> +	void *buf;
+> +	u32 op_id, delay_idle, cmd;
+> +	int i;
+> +
+> +	for (op_id = 0; op_id < op->ninstrs; op_id++) {
+> +		instr = &op->instrs[op_id];
+> +		delay_idle = DIV_ROUND_UP(PSEC_TO_NSEC(instr->delay_ns),
+> +					  meson_chip->level1_divider *
+> +					  NFC_CLK_CYCLE);
+> +		switch (instr->type) {
+> +		case NAND_OP_CMD_INSTR:
+> +			cmd = nfc->param.chip_select | NFC_CMD_CLE;
+> +			cmd |= instr->ctx.cmd.opcode & 0xff;
+> +			writel(cmd, nfc->reg_base + NFC_REG_CMD);
+> +			meson_nfc_cmd_idle(nfc, delay_idle);
+> +			break;
+> +
+> +		case NAND_OP_ADDR_INSTR:
+> +			for (i = 0; i < instr->ctx.addr.naddrs; i++) {
+> +				cmd = nfc->param.chip_select | NFC_CMD_ALE;
+> +				cmd |= instr->ctx.addr.addrs[i] & 0xff;
+> +				writel(cmd, nfc->reg_base + NFC_REG_CMD);
+> +			}
+> +			meson_nfc_cmd_idle(nfc, delay_idle);
+> +			break;
+> +
+> +		case NAND_OP_DATA_IN_INSTR:
+> +			buf = meson_nand_op_get_dma_safe_input_buf(instr);
+> +			meson_nfc_read_buf(nand, buf,
+> +					   instr->ctx.data.len);
+> +			meson_nand_op_put_dma_safe_input_buf(instr, buf);
+> +			break;
+> +
+> +		case NAND_OP_DATA_OUT_INSTR:
+> +			buf =
+> +			(void *)meson_nand_op_get_dma_safe_output_buf(instr);
+> +			meson_nfc_write_buf(nand, buf,
+> +					    instr->ctx.data.len);
+> +			meson_nand_op_put_dma_safe_output_buf(instr, buf);
+> +			break;
+> +
+> +		case NAND_OP_WAITRDY_INSTR:
+> +			meson_nfc_queue_rb(nfc, instr->ctx.waitrdy.timeout_ms);
+> +			if (instr->delay_ns)
+> +				meson_nfc_cmd_idle(nfc, delay_idle);
+> +			break;
+> +		}
+> +	}
+> +	meson_nfc_wait_cmd_finish(nfc, 1000);
+> +	return 0;
+> +}
+> +
+> +static int meson_ooblayout_ecc(struct mtd_info *mtd, int section,
+> +			       struct mtd_oob_region *oobregion)
+> +{
+> +	struct nand_chip *nand = mtd_to_nand(mtd);
+> +
+> +	if (section >= nand->ecc.steps)
+> +		return -ERANGE;
+> +
+> +	oobregion->offset =  2 + (section * (2 + nand->ecc.bytes));
+> +	oobregion->length = nand->ecc.bytes;
+> +
+> +	return 0;
+> +}
+> +
+> +static int meson_ooblayout_free(struct mtd_info *mtd, int section,
+> +				struct mtd_oob_region *oobregion)
+> +{
+> +	struct nand_chip *nand = mtd_to_nand(mtd);
+> +
+> +	if (section >= nand->ecc.steps)
+> +		return -ERANGE;
+> +
+> +	oobregion->offset = section * (2 + nand->ecc.bytes);
+> +	oobregion->length = 2;
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct mtd_ooblayout_ops meson_ooblayout_ops = {
+> +	.ecc = meson_ooblayout_ecc,
+> +	.free = meson_ooblayout_free,
+> +};
+> +
+> +static int meson_nfc_clk_init(struct meson_nfc *nfc)
+> +{
+> +	int ret;
+> +
+> +	/* request core clock */
+> +	nfc->core_clk = devm_clk_get(nfc->dev, "core");
+> +	if (IS_ERR(nfc->core_clk)) {
+> +		dev_err(nfc->dev, "failed to get core clk\n");
+> +		return PTR_ERR(nfc->core_clk);
+> +	}
+> +
+> +	nfc->device_clk = devm_clk_get(nfc->dev, "device");
+> +	if (IS_ERR(nfc->device_clk)) {
+> +		dev_err(nfc->dev, "failed to get device clk\n");
+> +		return PTR_ERR(nfc->device_clk);
+> +	}
+> +
+> +	nfc->phase_tx = devm_clk_get(nfc->dev, "tx");
+> +	if (IS_ERR(nfc->phase_tx)) {
+> +		dev_err(nfc->dev, "failed to get tx clk\n");
+> +		return PTR_ERR(nfc->phase_tx);
+> +	}
+> +
+> +	nfc->phase_rx = devm_clk_get(nfc->dev, "rx");
+> +	if (IS_ERR(nfc->phase_rx)) {
+> +		dev_err(nfc->dev, "failed to get rx clk\n");
+> +		return PTR_ERR(nfc->phase_rx);
+> +	}
+> +
+> +	/* init SD_EMMC_CLOCK to sane defaults w/min clock rate */
+> +	regmap_update_bits(nfc->reg_clk,
+> +			   0, CLK_SELECT_NAND, CLK_SELECT_NAND);
+> +
+> +	ret = clk_prepare_enable(nfc->core_clk);
+> +	if (ret) {
+> +		dev_err(nfc->dev, "failed to enable core clk\n");
+> +		return ret;
+> +	}
+> +
+> +	ret = clk_prepare_enable(nfc->device_clk);
+> +	if (ret) {
+> +		dev_err(nfc->dev, "failed to enable device clk\n");
+> +		clk_disable_unprepare(nfc->core_clk);
+> +		return ret;
+> +	}
+> +
+> +	ret = clk_prepare_enable(nfc->phase_tx);
+> +	if (ret) {
+> +		dev_err(nfc->dev, "failed to enable tx clk\n");
+> +		clk_disable_unprepare(nfc->core_clk);
+> +		clk_disable_unprepare(nfc->device_clk);
+> +		return ret;
+> +	}
+> +
+> +	ret = clk_prepare_enable(nfc->phase_rx);
+> +	if (ret) {
+> +		dev_err(nfc->dev, "failed to enable rx clk\n");
+> +		clk_disable_unprepare(nfc->core_clk);
+> +		clk_disable_unprepare(nfc->device_clk);
+> +		clk_disable_unprepare(nfc->phase_tx);
 
->
-> >        */
-> >       #define IO_PGTABLE_QUIRK_ARM_NS         BIT(0)
-> >       #define IO_PGTABLE_QUIRK_NO_PERMS       BIT(1)
-> > @@ -82,6 +86,7 @@ struct io_pgtable_cfg {
-> >       #define IO_PGTABLE_QUIRK_ARM_MTK_4GB    BIT(3)
-> >       #define IO_PGTABLE_QUIRK_NO_DMA         BIT(4)
-> >       #define IO_PGTABLE_QUIRK_NON_STRICT     BIT(5)
-> > +     #define IO_PGTABLE_QUIRK_NO_IC          BIT(6)
-> >       unsigned long                   quirks;
-> >       unsigned long                   pgsize_bitmap;
-> >       unsigned int                    ias;
-> > diff --git a/include/linux/iommu.h b/include/linux/iommu.h
-> > index a1d28f42cb77..c30ee7f8d82d 100644
-> > --- a/include/linux/iommu.h
-> > +++ b/include/linux/iommu.h
-> > @@ -41,6 +41,8 @@
-> >    * if the IOMMU page table format is equivalent.
-> >    */
-> >   #define IOMMU_PRIV  (1 << 5)
-> > +/* Don't use inner caches */
-> > +#define IOMMU_NO_IC  (1 << 6)
->
-> As it stands, this sounds like it should only make sense when combined
-> with IOMMU_CACHE, yet the implementation only affects mappings which
-> would otherwise be INC-ONC anyway. It could really do with having some
-> clearer expectations set.
+This error case is a good candidate to a goto statement.
 
-Yea, the comment and a change in the string for this macro too can be updated
-to clearly show the intent of using system cache for non-coherent devices.
-Will do it.
+> +		return ret;
+> +	}
+> +
+> +	ret = clk_set_rate(nfc->device_clk, 24000000);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return 0;
+> +}
+> +
+> +static void meson_nfc_disable_clk(struct meson_nfc *nfc)
+> +{
+> +	clk_disable_unprepare(nfc->phase_rx);
+> +	clk_disable_unprepare(nfc->phase_tx);
+> +	clk_disable_unprepare(nfc->device_clk);
+> +	clk_disable_unprepare(nfc->core_clk);
+> +}
+> +
+> +static void meson_nfc_free_buffer(struct nand_chip *nand)
+> +{
+> +	struct meson_nfc_nand_chip *meson_chip = to_meson_nand(nand);
+> +
+> +	kfree(meson_chip->info_buf);
+> +	kfree(meson_chip->data_buf);
+> +}
+> +
+> +static int meson_chip_buffer_init(struct nand_chip *nand)
+> +{
+> +	struct mtd_info *mtd = nand_to_mtd(nand);
+> +	struct meson_nfc_nand_chip *meson_chip = to_meson_nand(nand);
+> +	u32 page_bytes, info_bytes, nsectors;
+> +
+> +	nsectors = mtd->writesize / nand->ecc.size;
+> +
+> +	page_bytes =  mtd->writesize + mtd->oobsize;
+> +	info_bytes = nsectors * PER_INFO_BYTE;
+> +
+> +	meson_chip->data_buf = kmalloc(page_bytes, GFP_KERNEL);
+> +	if (!meson_chip->data_buf)
+> +		return -ENOMEM;
+> +
+> +	meson_chip->info_buf = kmalloc(info_bytes, GFP_KERNEL);
+> +	if (!meson_chip->info_buf) {
+> +		kfree(meson_chip->data_buf);
+> +		return -ENOMEM;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static
+> +int meson_nfc_setup_data_interface(struct nand_chip *nand, int csline,
+> +				   const struct nand_data_interface *conf)
+> +{
+> +	struct meson_nfc_nand_chip *meson_chip = to_meson_nand(nand);
+> +	const struct nand_sdr_timings *timings;
+> +	u32 div, bt_min, bt_max, tbers_clocks;
+> +
+> +	timings = nand_get_sdr_timings(conf);
+> +	if (IS_ERR(timings))
+> +		return -ENOTSUPP;
+> +
+> +	if (csline == NAND_DATA_IFACE_CHECK_ONLY)
+> +		return 0;
+> +
+> +	div = DIV_ROUND_UP((timings->tRC_min / 1000), NFC_CLK_CYCLE);
+> +	bt_min = (timings->tREA_max + NFC_DEFAULT_DELAY) / div;
+> +	bt_max = (NFC_DEFAULT_DELAY + timings->tRHOH_min +
+> +		  timings->tRC_min / 2) / div;
+> +
+> +	meson_chip->twb = DIV_ROUND_UP(PSEC_TO_NSEC(timings->tWB_max),
+> +				       div * NFC_CLK_CYCLE);
+> +	meson_chip->tadl = DIV_ROUND_UP(PSEC_TO_NSEC(timings->tADL_min),
+> +					div * NFC_CLK_CYCLE);
+> +	tbers_clocks = DIV_ROUND_UP(PSEC_TO_NSEC(timings->tBERS_max),
+> +				    div * NFC_CLK_CYCLE);
+> +	meson_chip->tbers_max = ilog2(tbers_clocks);
+> +	if (!is_power_of_2(tbers_clocks))
+> +		meson_chip->tbers_max++;
+> +
+> +	bt_min = DIV_ROUND_UP(bt_min, 1000);
+> +	bt_max = DIV_ROUND_UP(bt_max, 1000);
+> +
+> +	if (bt_max < bt_min)
+> +		return -EINVAL;
+> +
+> +	meson_chip->level1_divider = div;
+> +	meson_chip->clk_rate = 1000000000 / meson_chip->level1_divider;
+> +	meson_chip->bus_timing = (bt_min + bt_max) / 2 + 1;
+> +
+> +	return 0;
+> +}
+> +
+> +static int meson_nand_bch_mode(struct nand_chip *nand)
+> +{
+> +	struct meson_nfc_nand_chip *meson_chip = to_meson_nand(nand);
+> +	struct meson_nand_ecc meson_ecc[] = {
+> +		MESON_ECC_DATA(NFC_ECC_BCH8_1K, 8),
+> +		MESON_ECC_DATA(NFC_ECC_BCH24_1K, 24),
+> +		MESON_ECC_DATA(NFC_ECC_BCH30_1K, 30),
+> +		MESON_ECC_DATA(NFC_ECC_BCH40_1K, 40),
+> +		MESON_ECC_DATA(NFC_ECC_BCH50_1K, 50),
+> +		MESON_ECC_DATA(NFC_ECC_BCH60_1K, 60),
+> +	};
 
->
-> >
-> >   struct iommu_ops;
-> >   struct iommu_group;
-> > @@ -125,6 +127,7 @@ enum iommu_attr {
-> >       DOMAIN_ATTR_FSL_PAMUV1,
-> >       DOMAIN_ATTR_NESTING,    /* two stages of translation */
-> >       DOMAIN_ATTR_DMA_USE_FLUSH_QUEUE,
-> > +     DOMAIN_ATTR_NO_IC,
->
-> At the IOMMU API level, nobody's going to have a clue what "NO_IC"
-> means. For how non-generic a concept it really is, I'd personally name
-> it something like DOMAIN_ATTR_QCOM_SYSTEM_CACHE.
+Maybe this array could be static?
 
-Yea, will update this too.
+> +	int i;
+> +
+> +	if (nand->ecc.strength > 60 || nand->ecc.strength < 8)
+> +		return -EINVAL;
+> +
+> +	for (i = 0; i < sizeof(meson_ecc); i++) {
+> +		if (meson_ecc[i].strength == nand->ecc.strength) {
+> +			meson_chip->bch_mode = meson_ecc[i].bch;
+> +			return 0;
+> +		}
+> +	}
+> +
+> +	return -EINVAL;
+> +}
+> +
+> +static int meson_nand_attach_chip(struct nand_chip *nand)
+> +{
+> +	struct meson_nfc *nfc = nand_get_controller_data(nand);
+> +	struct meson_nfc_nand_chip *meson_chip = to_meson_nand(nand);
+> +	struct mtd_info *mtd = nand_to_mtd(nand);
+> +	int nsectors = mtd->writesize / 1024;
+> +	int ret;
+> +
+> +	if (!mtd->name) {
+> +		mtd->name = devm_kasprintf(nfc->dev, GFP_KERNEL,
+> +					   "%s:nand%d",
+> +					   dev_name(nfc->dev),
+> +					   meson_chip->sels[0]);
+> +		if (!mtd->name)
+> +			return -ENOMEM;
+> +	}
+> +
+> +	if (nand->bbt_options & NAND_BBT_USE_FLASH)
+> +		nand->bbt_options |= NAND_BBT_NO_OOB;
+> +
+> +	nand->options |= NAND_NO_SUBPAGE_WRITE;
+> +
+> +	ret = nand_ecc_choose_conf(nand, nfc->data->ecc_caps,
+> +				   mtd->oobsize - 2 * nsectors);
+> +	if (ret) {
+> +		dev_err(nfc->dev, "failed to ecc init\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	ret = meson_nand_bch_mode(nand);
+> +	if (ret)
+> +		return -EINVAL;
+> +
+> +	nand->ecc.mode = NAND_ECC_HW;
+> +	nand->ecc.write_page_raw = meson_nfc_write_page_raw;
+> +	nand->ecc.write_page = meson_nfc_write_page_hwecc;
+> +	nand->ecc.write_oob_raw = nand_write_oob_std;
+> +	nand->ecc.write_oob = nand_write_oob_std;
+> +
+> +	nand->ecc.read_page_raw = meson_nfc_read_page_raw;
+> +	nand->ecc.read_page = meson_nfc_read_page_hwecc;
+> +	nand->ecc.read_oob_raw = meson_nfc_read_oob_raw;
+> +	nand->ecc.read_oob = meson_nfc_read_oob;
+> +
+> +	if (nand->options & NAND_BUSWIDTH_16) {
+> +		dev_err(nfc->dev, "16bits buswidth not supported");
+> +		return -EINVAL;
+> +	}
+> +	meson_chip_buffer_init(nand);
+> +	if (ret)
+> +		return -ENOMEM;
+> +
+> +	return ret;
+> +}
+> +
+> +static const struct nand_controller_ops meson_nand_controller_ops = {
+> +	.attach_chip = meson_nand_attach_chip,
 
->
-> Robin.
->
-> >       DOMAIN_ATTR_MAX,
-> >   };
-> >
-> >
+Don't you need a ->detach_chip hook to free data_buf/info_buf
+buffers?
 
-[1] https://source.codeaurora.org/quic/la/kernel/msm-4.9/tree/drivers/iommu/io-pgtable-arm.c?h=msm-4.9#n1028
+> +};
+> +
+> +static int
+> +meson_nfc_nand_chip_init(struct device *dev,
+> +			 struct meson_nfc *nfc, struct device_node *np)
+> +{
+> +	struct meson_nfc_nand_chip *meson_chip;
+> +	struct nand_chip *nand;
+> +	struct mtd_info *mtd;
+> +	int ret, i;
+> +	u32 tmp, nsels;
+> +
+> +	if (!of_get_property(np, "reg", &nsels))
+> +		return -EINVAL;
+> +
+> +	nsels /= sizeof(u32);
+> +	if (!nsels || nsels > MAX_CE_NUM) {
+> +		dev_err(dev, "invalid reg property size\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	meson_chip = devm_kzalloc(dev,
+> +				  sizeof(*meson_chip) + (nsels * sizeof(u8)),
+> +				  GFP_KERNEL);
+> +	if (!meson_chip)
+> +		return -ENOMEM;
+> +
+> +	meson_chip->nsels = nsels;
+> +
+> +	for (i = 0; i < nsels; i++) {
+> +		ret = of_property_read_u32_index(np, "reg", i, &tmp);
+> +		if (ret) {
+> +			dev_err(dev, "could not retrieve reg property: %d\n",
+> +				ret);
+> +			return ret;
+> +		}
+> +
+> +		if (test_and_set_bit(tmp, &nfc->assigned_cs)) {
+> +			dev_err(dev, "CS %d already assigned\n", tmp);
+> +			return -EINVAL;
+> +		}
+> +	}
+> +
+> +	nand = &meson_chip->nand;
+> +	nand->controller = &nfc->controller;
+> +	nand->controller->ops = &meson_nand_controller_ops;
+> +	nand_set_flash_node(nand, np);
+> +	nand_set_controller_data(nand, nfc);
+> +
+> +	nand->options |= NAND_USE_BOUNCE_BUFFER;
+> +	nand->select_chip = meson_nfc_select_chip;
+> +	nand->exec_op = meson_nfc_exec_op;
+> +	nand->setup_data_interface = meson_nfc_setup_data_interface;
+> +	mtd = nand_to_mtd(nand);
+> +	mtd->owner = THIS_MODULE;
+> +	mtd->dev.parent = dev;
+> +
+> +	ret = nand_scan(nand, nsels);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = mtd_device_register(mtd, NULL, 0);
+> +	if (ret) {
+> +		dev_err(dev, "failed to register mtd device: %d\n", ret);
+> +		nand_cleanup(nand);
+> +		return ret;
+> +	}
+> +
+> +	list_add_tail(&meson_chip->node, &nfc->chips);
+> +
+> +	return 0;
+> +}
+> +
+> +static int meson_nfc_nand_chip_cleanup(struct meson_nfc *nfc)
+> +{
+> +	struct meson_nfc_nand_chip *meson_chip;
+> +	struct mtd_info *mtd;
+> +	int ret;
+> +
+> +	while (!list_empty(&nfc->chips)) {
+> +		meson_chip = list_first_entry(&nfc->chips,
+> +					      struct meson_nfc_nand_chip, node);
+> +		mtd = nand_to_mtd(&meson_chip->nand);
+> +		ret = mtd_device_unregister(mtd);
+> +		if (ret)
+> +			return ret;
+> +
+> +		meson_nfc_free_buffer(&meson_chip->nand);
+> +		nand_cleanup(&meson_chip->nand);
+> +		list_del(&meson_chip->node);
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int meson_nfc_nand_chips_init(struct device *dev,
+> +				     struct meson_nfc *nfc)
+> +{
+> +	struct device_node *np = dev->of_node;
+> +	struct device_node *nand_np;
+> +	int ret;
+> +
+> +	for_each_child_of_node(np, nand_np) {
+> +		ret = meson_nfc_nand_chip_init(dev, nfc, nand_np);
+> +		if (ret) {
+> +			meson_nfc_nand_chip_cleanup(nfc);
+> +			return ret;
+> +		}
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static irqreturn_t meson_nfc_irq(int irq, void *id)
+> +{
+> +	struct meson_nfc *nfc = id;
+> +	u32 cfg;
+> +
+> +	cfg = readl(nfc->reg_base + NFC_REG_CFG);
+> +	if (!(cfg & NFC_RB_IRQ_EN))
+> +		return IRQ_NONE;
+> +
+> +	cfg &= ~(NFC_RB_IRQ_EN);
+> +	writel(cfg, nfc->reg_base + NFC_REG_CFG);
+> +
+> +	complete(&nfc->completion);
+> +	return IRQ_HANDLED;
+> +}
+> +
+> +static const struct meson_nfc_data meson_gxl_data = {
+> +	.ecc_caps = &meson_gxl_ecc_caps,
+> +};
+> +
+> +static const struct meson_nfc_data meson_axg_data = {
+> +	.ecc_caps = &meson_axg_ecc_caps,
+> +};
+> +
+> +static const struct of_device_id meson_nfc_id_table[] = {
+> +	{
+> +		.compatible = "amlogic,meson-gxl-nfc",
+> +		.data = &meson_gxl_data,
+> +	}, {
+> +		.compatible = "amlogic,meson-axg-nfc",
+> +		.data = &meson_axg_data,
+> +	},
+> +	{}
+> +};
+> +MODULE_DEVICE_TABLE(of, meson_nfc_id_table);
+> +
+> +static int meson_nfc_probe(struct platform_device *pdev)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	struct meson_nfc *nfc;
+> +	struct resource *res;
+> +	int ret, irq;
+> +
+> +	nfc = devm_kzalloc(dev, sizeof(*nfc), GFP_KERNEL);
+> +	if (!nfc)
+> +		return -ENOMEM;
+> +
+> +	nfc->data = of_device_get_match_data(&pdev->dev);
+> +	if (!nfc->data)
+> +		return -ENODEV;
+> +
+> +	nand_controller_init(&nfc->controller);
+> +	INIT_LIST_HEAD(&nfc->chips);
+> +
+> +	nfc->dev = dev;
+> +
+> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +	nfc->reg_base = devm_ioremap_resource(dev, res);
+> +	if (IS_ERR(nfc->reg_base))
+> +		return PTR_ERR(nfc->reg_base);
+> +
+> +	nfc->reg_clk =
+> +		syscon_regmap_lookup_by_phandle(dev->of_node,
+> +						"amlogic,mmc-syscon");
+> +	if (IS_ERR(nfc->reg_clk)) {
+> +		dev_err(dev, "Failed to lookup clock base\n");
+> +		return PTR_ERR(nfc->reg_clk);
+> +	}
+> +
+> +	irq = platform_get_irq(pdev, 0);
+> +	if (irq < 0) {
+> +		dev_err(dev, "no nfi irq resource\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	ret = meson_nfc_clk_init(nfc);
+> +	if (ret) {
+> +		dev_err(dev, "failed to initialize nand clk\n");
+> +		goto err;
 
-Best regards
-Vivek
+Useless goto, a return would be enough.
 
---
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+> +	}
+> +
+> +	writel(0, nfc->reg_base + NFC_REG_CFG);
+> +	ret = devm_request_irq(dev, irq, meson_nfc_irq, 0, dev_name(dev), nfc);
+> +	if (ret) {
+> +		dev_err(dev, "failed to request nfi irq\n");
+> +		ret = -EINVAL;
+> +		goto err_clk;
+> +	}
+> +
+> +	ret = dma_set_mask(dev, DMA_BIT_MASK(32));
+> +	if (ret) {
+> +		dev_err(dev, "failed to set dma mask\n");
+
+Nit: I prefer when acronyms are upper case in plain English (DMA, NAND,
+IRQ, etc).
+
+> +		goto err_clk;
+> +	}
+> +
+> +	platform_set_drvdata(pdev, nfc);
+> +
+> +	ret = meson_nfc_nand_chips_init(dev, nfc);
+> +	if (ret) {
+> +		dev_err(dev, "failed to init nand chips\n");
+> +		goto err_clk;
+> +	}
+> +
+> +	return 0;
+> +
+> +err_clk:
+> +	meson_nfc_disable_clk(nfc);
+> +err:
+
+This goto can be removed.
+
+> +	return ret;
+> +}
+> +
+> +static int meson_nfc_remove(struct platform_device *pdev)
+> +{
+> +	struct meson_nfc *nfc = platform_get_drvdata(pdev);
+> +	int ret;
+> +
+> +	ret = meson_nfc_nand_chip_cleanup(nfc);
+> +	if (ret)
+> +		return ret;
+> +
+> +	meson_nfc_disable_clk(nfc);
+> +
+> +	platform_set_drvdata(pdev, NULL);
+> +
+> +	return 0;
+> +}
+> +
+> +static struct platform_driver meson_nfc_driver = {
+> +	.probe  = meson_nfc_probe,
+> +	.remove = meson_nfc_remove,
+> +	.driver = {
+> +		.name  = "meson-nand",
+> +		.of_match_table = meson_nfc_id_table,
+> +	},
+> +};
+> +module_platform_driver(meson_nfc_driver);
+> +
+> +MODULE_LICENSE("Dual MIT/GPL");
+> +MODULE_AUTHOR("Liang Yang <liang.yang@amlogic.com>");
+> +MODULE_DESCRIPTION("Amlogic's Meson NAND Flash Controller driver");
+
+
+
+
+Thanks,
+Miquèl
