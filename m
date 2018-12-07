@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDA80C64EB1
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 11:34:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B49BCC07E85
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 11:34:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9490420892
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 11:34:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7B86520892
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 11:34:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="lgrb6D6C"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9490420892
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="eq5teo3s"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B86520892
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726104AbeLGLeW (ORCPT
+        id S1726122AbeLGLeX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 06:34:22 -0500
-Received: from conuserg-08.nifty.com ([210.131.2.75]:45509 "EHLO
+        Fri, 7 Dec 2018 06:34:23 -0500
+Received: from conuserg-08.nifty.com ([210.131.2.75]:45510 "EHLO
         conuserg-08.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725998AbeLGLeV (ORCPT
+        with ESMTP id S1725992AbeLGLeW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 06:34:21 -0500
+        Fri, 7 Dec 2018 06:34:22 -0500
 Received: from pug.e01.socionext.com (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
-        by conuserg-08.nifty.com with ESMTP id wB7BY6rc020070;
-        Fri, 7 Dec 2018 20:34:07 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-08.nifty.com wB7BY6rc020070
+        by conuserg-08.nifty.com with ESMTP id wB7BY6rd020070;
+        Fri, 7 Dec 2018 20:34:08 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-08.nifty.com wB7BY6rd020070
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1544182447;
-        bh=b+/CYXfoOhRLJl50d2gy+TZDzV3UYeKW/v4ouoz7OoY=;
+        s=dec2015msa; t=1544182448;
+        bh=SRUaAFRTbwO28yc2CsI2BAuLVo7SHEZKUVtHP5T2BIE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lgrb6D6CSf7xC97CxtfCzHEpo4yQbPFJ59WYm47+0gL58RzjcVRd89gsCFMTEsYJR
-         /jt7Yj+qL0m5JGg2zv7ZAbilpc3AJFiHatagUhqrC/QsGX2HoPCrRMpEgFBNsUDLeS
-         o4TbcZgbCd3zwVg7FeyzO0O2MRpTkF1GNpEK/ySNycTDjjMit4SQY5YjIb5oaiJd/d
-         VrVm9eEEP8kD4jzGYhNGZ/3cY7rsucN5/VNLs0L3gkgG7Ml7nL+/i0TAkuebQ1LiKS
-         hj2gygxD0mw0vsi7l9K9Dm0Sl1s5hFpaxNHfFVg/jeWy2VL/ZL78v2SmBgaEbz1b6u
-         yv/68Vm/TjqBQ==
+        b=eq5teo3sx+N2aGPsTWj929xvw1xWSVGEr2TVus2ZCjWtbCXP68n2R8z9g9XVJWHV1
+         NPt30dUSLPI6u3z2hiUApwrCS1SB9OiRBfllBvaq7zdULuHk7jSNR69EfUmbnNzuxk
+         v3nJrUwI2EuIDeLph8y22AhfYeFYjmoRHmf46fAfJQSxZXFRiEpnKrU2bQDBVaeE1O
+         z4IYUWc54aEsW+bnv00r6JBJYHZdl0PzKhb0TktnYFfgI1yHcOIU4MFwG8h1LTELef
+         kIQ2ZyTslc33S2zVJTMwcvumcXA8k6osPhspU+7ZRzy+oUjOe4TL+m+SqnteVz5aS6
+         aCPM2T1FF9FYw==
 X-Nifty-SrcIP: [153.142.97.92]
 From:   Masahiro Yamada <yamada.masahiro@socionext.com>
 To:     Michal Simek <monstr@monstr.eu>
 Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 1/6] microblaze: adjust the help to the real behavior
-Date:   Fri,  7 Dec 2018 20:33:52 +0900
-Message-Id: <1544182437-26660-2-git-send-email-yamada.masahiro@socionext.com>
+Subject: [PATCH 2/6] microblaze: move "... is ready" messages to arch/microblaze/Makefile
+Date:   Fri,  7 Dec 2018 20:33:53 +0900
+Message-Id: <1544182437-26660-3-git-send-email-yamada.masahiro@socionext.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1544182437-26660-1-git-send-email-yamada.masahiro@socionext.com>
 References: <1544182437-26660-1-git-send-email-yamada.masahiro@socionext.com>
@@ -56,58 +56,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-"make ARCH=microblaze help" mentions simpleImage.<dt>.unstrip,
-but it is not a real Make target. It does not work because Makefile
-assumes "system.unstrip" is the name of DT.
-
-$ make ARCH=microblaze CROSS_COMPILE=microblaze-linux- simpleImage.system.unstrip
-  [ snip ]
-make[1]: *** No rule to make target 'arch/microblaze/boot/dts/system.unstrip.dtb', needed by 'arch/microblaze/boot/dts/system.dtb'.  Stop.
-make: *** [Makefile;1060: arch/microblaze/boot/dts] Error 2
-make: *** Waiting for unfinished jobs....
-
-simpleImage.<dt> works like a phony target that generates multiple
-images. Reflect the real behavior. I removed the DT directory path
-information because it is already explained a few lines below.
-
-While I am here, I deleted the redundant *_defconfig explanation.
-
-The top-level Makefile caters to list available defconfig files:
-
-  mmu_defconfig            - Build for mmu
-  nommu_defconfig          - Build for nommu
+To prepare for more fixes, move this to arch/microblaze/Makefile.
+Otherwise, the same "... is ready" would be printed multiple times.
 
 Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 ---
 
-Changes in v2:
-  - Show all the four images in help
-  - Delete redundant *_defconfig explanation
+Changes in v2: None
 
- arch/microblaze/Makefile | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ arch/microblaze/Makefile      | 2 ++
+ arch/microblaze/boot/Makefile | 4 ----
+ 2 files changed, 2 insertions(+), 4 deletions(-)
 
 diff --git a/arch/microblaze/Makefile b/arch/microblaze/Makefile
-index ddb251a..f6b7ea6 100644
+index f6b7ea6..6cee1ca 100644
 --- a/arch/microblaze/Makefile
 +++ b/arch/microblaze/Makefile
-@@ -92,11 +92,11 @@ define archhelp
+@@ -84,9 +84,11 @@ archheaders:
+ 
+ linux.bin linux.bin.gz linux.bin.ub: vmlinux
+ 	$(Q)$(MAKE) $(build)=$(boot) $(boot)/$@
++	@echo 'Kernel: $(boot)/$@ is ready' ' (#'`cat .version`')'
+ 
+ simpleImage.%: vmlinux
+ 	$(Q)$(MAKE) $(build)=$(boot) $(boot)/$@
++	@echo 'Kernel: $(boot)/$@ is ready' ' (#'`cat .version`')'
+ 
+ define archhelp
    echo '* linux.bin    - Create raw binary'
-   echo '  linux.bin.gz - Create compressed raw binary'
-   echo '  linux.bin.ub - Create U-Boot wrapped raw binary'
--  echo '  simpleImage.<dt> - ELF image with $(arch)/boot/dts/<dt>.dts linked in'
--  echo '                   - stripped elf with fdt blob'
--  echo '  simpleImage.<dt>.unstrip - full ELF image with fdt blob'
--  echo '  *_defconfig      - Select default config from arch/microblaze/configs'
--  echo ''
-+  echo '  simpleImage.<dt> - Create the following images with <dt>.dtb linked in'
-+  echo '                    simpleImage.<dt>        : raw image'
-+  echo '                    simpleImage.<dt>.ub     : raw image with U-Boot header'
-+  echo '                    simpleImage.<dt>.unstrip: ELF (identical to vmlinux)'
-+  echo '                    simpleImage.<dt>.strip  : stripped ELF'
-   echo '  Targets with <dt> embed a device tree blob inside the image'
-   echo '  These targets support board with firmware that does not'
-   echo '  support passing a device tree directly. Replace <dt> with the'
+diff --git a/arch/microblaze/boot/Makefile b/arch/microblaze/boot/Makefile
+index 600e5a1..96eefdc 100644
+--- a/arch/microblaze/boot/Makefile
++++ b/arch/microblaze/boot/Makefile
+@@ -9,15 +9,12 @@ OBJCOPYFLAGS := -R .note -R .comment -R .note.gnu.build-id -O binary
+ 
+ $(obj)/linux.bin: vmlinux FORCE
+ 	$(call if_changed,objcopy)
+-	@echo 'Kernel: $@ is ready' ' (#'`cat .version`')'
+ 
+ $(obj)/linux.bin.ub: $(obj)/linux.bin FORCE
+ 	$(call if_changed,uimage)
+-	@echo 'Kernel: $@ is ready' ' (#'`cat .version`')'
+ 
+ $(obj)/linux.bin.gz: $(obj)/linux.bin FORCE
+ 	$(call if_changed,gzip)
+-	@echo 'Kernel: $@ is ready' ' (#'`cat .version`')'
+ 
+ quiet_cmd_cp = CP      $< $@$2
+ 	cmd_cp = cat $< >$@$2 || (rm -f $@ && echo false)
+@@ -35,6 +32,5 @@ $(obj)/simpleImage.%: vmlinux FORCE
+ 	$(call if_changed,objcopy)
+ 	$(call if_changed,uimage)
+ 	$(call if_changed,strip,.strip)
+-	@echo 'Kernel: $(UIMAGE_OUT) is ready' ' (#'`cat .version`')'
+ 
+ clean-files += simpleImage.*.unstrip linux.bin.ub
 -- 
 2.7.4
 
