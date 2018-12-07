@@ -2,203 +2,358 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,T_DKIMWL_WL_MED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF62BC07E85
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 18:36:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F26BC07E85
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 18:37:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B8DE20672
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 18:36:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DFABA20672
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 18:37:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="Q8SYU5fv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B8DE20672
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xilinx.com
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="neJeNX0A"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DFABA20672
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726213AbeLGSgn (ORCPT
+        id S1726224AbeLGShN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 13:36:43 -0500
-Received: from mail-eopbgr820048.outbound.protection.outlook.com ([40.107.82.48]:14880
-        "EHLO NAM01-SN1-obe.outbound.protection.outlook.com"
+        Fri, 7 Dec 2018 13:37:13 -0500
+Received: from mail-eopbgr40082.outbound.protection.outlook.com ([40.107.4.82]:52002
+        "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726078AbeLGSgm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 13:36:42 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=xilinx.onmicrosoft.com; s=selector1-xilinx-com;
+        id S1726072AbeLGShM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Dec 2018 13:37:12 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=+vWceXySRlVZwyvITO9vZWdEyRW3Era+K6ujUiSljWU=;
- b=Q8SYU5fvUu4XQc4na1ZtCspxFY+qqLSOArZv3OfVWzUU3/DhLTwbC7UZMEnOS6wYR1DXA99uS189tfwaK+Q7LrFxWmkGAbMP1sbt3MGGh63mAoFX3NVBKciTd0+HmNTTnCZzJtdkqrvwZY26mNtEQs6FE+WG+5e83kM0+lgjXtk=
-Received: from CY4PR02CA0048.namprd02.prod.outlook.com (2603:10b6:903:117::34)
- by BYAPR02MB4326.namprd02.prod.outlook.com (2603:10b6:a03:56::27) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1404.22; Fri, 7 Dec
- 2018 18:33:47 +0000
-Received: from SN1NAM02FT027.eop-nam02.prod.protection.outlook.com
- (2a01:111:f400:7e44::206) by CY4PR02CA0048.outlook.office365.com
- (2603:10b6:903:117::34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1404.17 via Frontend
- Transport; Fri, 7 Dec 2018 18:33:46 +0000
-Authentication-Results: spf=pass (sender IP is 149.199.60.100)
- smtp.mailfrom=xilinx.com; gmail.com; dkim=none (message not signed)
- header.d=none;gmail.com; dmarc=bestguesspass action=none
- header.from=xilinx.com;
-Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
- 149.199.60.100 as permitted sender) receiver=protection.outlook.com;
- client-ip=149.199.60.100; helo=xsj-pvapsmtpgw02;
-Received: from xsj-pvapsmtpgw02 (149.199.60.100) by
- SN1NAM02FT027.mail.protection.outlook.com (10.152.72.99) with Microsoft SMTP
- Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.1404.17
- via Frontend Transport; Fri, 7 Dec 2018 18:33:42 +0000
-Received: from unknown-38-66.xilinx.com ([149.199.38.66]:47464 helo=xsj-pvapsmtp01)
-        by xsj-pvapsmtpgw02 with esmtp (Exim 4.63)
-        (envelope-from <maruthi.srinivas.bayyavarapu@xilinx.com>)
-        id 1gVKwX-0005fv-QL; Fri, 07 Dec 2018 10:33:41 -0800
-Received: from [127.0.0.1] (helo=localhost)
-        by xsj-pvapsmtp01 with smtp (Exim 4.63)
-        (envelope-from <maruthi.srinivas.bayyavarapu@xilinx.com>)
-        id 1gVKwS-0001uC-Mq; Fri, 07 Dec 2018 10:33:36 -0800
-Received: from [172.23.29.77] (helo=xhdyacto-vnc1.xilinx.com)
-        by xsj-pvapsmtp01 with esmtp (Exim 4.63)
-        (envelope-from <maruthi.srinivas.bayyavarapu@xilinx.com>)
-        id 1gVKwP-0001ry-SN; Fri, 07 Dec 2018 10:33:34 -0800
-From:   Maruthi Srinivas Bayyavarapu 
-        <maruthi.srinivas.bayyavarapu@xilinx.com>
-To:     Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
+ bh=mzOa5zLVvAJomKNv/Jivb5U+TqabZ2OrsHWykZOZUBc=;
+ b=neJeNX0AD3bomQLuUkIwn2zaTyMyESx+xdR+Mx79nGjipijPyrEDiyFDJxpNf9H3OY1PUcS12Mt0E9MGcMg0QuDGEDjbe70WbpuYO2/RnJ3tjveYFEoqeEw2gP63qRwZunzb+F7tx05fh0dwg3AvO4CxKAUCqPMhcCoqekJBjS0=
+Received: from VI1PR04MB5533.eurprd04.prod.outlook.com (20.178.122.159) by
+ VI1SPR8PMB115.eurprd04.prod.outlook.com (10.163.248.18) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1404.19; Fri, 7 Dec 2018 18:35:13 +0000
+Received: from VI1PR04MB5533.eurprd04.prod.outlook.com
+ ([fe80::f80a:77f3:7cbf:62b5]) by VI1PR04MB5533.eurprd04.prod.outlook.com
+ ([fe80::f80a:77f3:7cbf:62b5%2]) with mapi id 15.20.1404.021; Fri, 7 Dec 2018
+ 18:35:13 +0000
+From:   Leonard Crestez <leonard.crestez@nxp.com>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>,
         Rob Herring <robh+dt@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
+        Shawn Guo <shawnguo@kernel.org>
+CC:     Fabio Estevam <fabio.estevam@nxp.com>,
+        Michal Marek <michal.lkml@markovi.net>,
         Mark Rutland <mark.rutland@arm.com>,
-        Vishal Sagar <vsagar@xilinx.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        Maruthi Srinivas Bayyavarapu 
-        <maruthi.srinivas.bayyavarapu@xilinx.com>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <alsa-devel@alsa-project.org>,
-        <linux-arm-kernel@lists.infradead.org>
-Subject: [PATCH 3/3] ASoC: xlnx: enable i2s driver build
-Date:   Sat, 8 Dec 2018 00:02:38 +0530
-Message-ID: <1544207558-72508-4-git-send-email-maruthi.srinivas.bayyavarapu@xilinx.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1544207558-72508-1-git-send-email-maruthi.srinivas.bayyavarapu@xilinx.com>
-References: <1544207558-72508-1-git-send-email-maruthi.srinivas.bayyavarapu@xilinx.com>
-X-TM-AS-Product-Ver: IMSS-7.1.0.1224-8.2.0.1013-23620.005
-X-TM-AS-User-Approved-Sender: Yes;Yes
-X-EOPAttributedMessage: 0
-X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:149.199.60.100;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(346002)(136003)(39860400002)(396003)(376002)(2980300002)(199004)(189003)(50466002)(76176011)(7696005)(39060400002)(51416003)(106466001)(26005)(186003)(8936002)(50226002)(8676002)(336012)(5660300001)(2906002)(36386004)(81166006)(106002)(81156014)(356004)(2201001)(48376002)(486006)(316002)(110136005)(16586007)(305945005)(36756003)(9786002)(77096007)(2616005)(63266004)(7416002)(126002)(476003)(446003)(478600001)(47776003)(426003)(11346002)(107986001)(921003)(1121003)(5001870100001);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR02MB4326;H:xsj-pvapsmtpgw02;FPR:;SPF:Pass;LANG:en;PTR:unknown-60-100.xilinx.com,xapps1.xilinx.com;A:1;MX:1;
-X-Microsoft-Exchange-Diagnostics: 1;SN1NAM02FT027;1:aKBoJ14K1aYjfLsYEtFui9QcL7xb3tTC0ixfD+l+0/joCQYc/hinCD4wfzfEKjtx/rLea+9pGVqW0Mo7qcXsnWY58GA/xN9ydqnZkbzTNHrssoDB+Oskp6q1hmAZN2a6
+        "linux-kbuild@vger.kernel.org" <linux-kbuild@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        moderated for non-subscribers 
+        <linux-arm-kernel@lists.infradead.org>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: [RFC] ARM: dts: Introduce wilddt function instead of listing imx
+ boards
+Thread-Topic: [RFC] ARM: dts: Introduce wilddt function instead of listing imx
+ boards
+Thread-Index: AQHUjluXl7drc3J3qk+tQkJdvWmGcw==
+Date:   Fri, 7 Dec 2018 18:35:13 +0000
+Message-ID: <044dced6439a8ac35cf03336dcef64297e204fc4.1544206368.git.leonard.crestez@nxp.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [95.76.156.53]
+x-mailer: git-send-email 2.17.1
+x-clientproxiedby: AM5PR0202CA0007.eurprd02.prod.outlook.com
+ (2603:10a6:203:69::17) To VI1PR04MB5533.eurprd04.prod.outlook.com
+ (2603:10a6:803:d2::31)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=leonard.crestez@nxp.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;VI1SPR8PMB115;6:KCuTogjZvUw7/a4aoP1XfrjwFFNFJ6phrPoILe3GNTg99KIs8Qbvj8aTu0Rw4fk7cvrhFLp26T2hbR1PuJq+cchhUsdLwpI2+kffp33ak0fLTohRLxYw70CpwjmFpWmSbJp3uAWgrUP52D2R8mTO99utfwNNArfS1MHwYRN+4Ax6Egd1BkKqQOap16Nf5Deu6EKkFt6ekj6p1NFbPyIkT0YCoL7jhgDEHW0ySKMOJUZ0A3aX9HakIr0QS1QdobdzArsI8JVOsN38uOUY+NAfvz/72dVo6gc+OuMXRPQKzZxB8U2fTuEjFopoWZ5i+dQRcpZH7hF+icYySuF25ajXUQ4w3CnrCWXLKxptmKODfQfdNJw0XqXQGIDopz0Py+72521c9xfoBKfygq5Xb95gaIVqsHRgeb97eXCX7N+9Iq6XJhCYQhUUyUJR5qY3kJJ5f6HK1V0mC5+pKhF7hbL4Gg==;5:B6h84p+plT7sk9cuZS/u5T8jLgbom8z32hwRh6oYhjFz3qSIpnRUwJVSSEVTJ/HHQhp0mcee2ZoY1TsHThWfbLU9/qeSO+qQmRdWQi3TlyPJNtr1y5XKdeDbBZ7hCogs0E7HkYdfEDD9H70uX5TlHZ/LZ+8co5lnBjSJKg2wJI8=;7:Xpj7ResdC1oysusoGbQyy15szKoh+jKcldvpfImAca3QZFeZqTQudCKD3Igom9dWOJu56J2wjGqDN7AWweL1bPVu9P5pOGCUCKJAxUjTxOFdsUFNLT/XMFn/pZSks5LKnefRA1UIaozhwgTBZL9ndQ==
+x-ms-office365-filtering-correlation-id: 384f087b-78f0-409f-ba4b-08d65c72b97a
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:VI1SPR8PMB115;
+x-ms-traffictypediagnostic: VI1SPR8PMB115:
+x-microsoft-antispam-prvs: <VI1SPR8PMB115F0368046C6B37F6C85D2EEAA0@VI1SPR8PMB115.eurprd04.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(93006095)(93001095)(3231455)(999002)(944501520)(52105112)(3002001)(6055026)(148016)(149066)(150057)(6041310)(20161123562045)(20161123558120)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:VI1SPR8PMB115;BCL:0;PCL:0;RULEID:;SRVR:VI1SPR8PMB115;
+x-forefront-prvs: 0879599414
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(396003)(39860400002)(346002)(376002)(136003)(189003)(199004)(386003)(86362001)(575784001)(5660300001)(97736004)(99286004)(3846002)(6506007)(52116002)(256004)(102836004)(106356001)(26005)(6116002)(186003)(71200400001)(25786009)(68736007)(44832011)(105586002)(118296001)(71190400001)(2906002)(486006)(478600001)(4326008)(36756003)(66066001)(7736002)(305945005)(54906003)(6436002)(2616005)(476003)(6486002)(50226002)(7416002)(81166006)(8936002)(14454004)(6512007)(53936002)(110136005)(8676002)(81156014)(316002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1SPR8PMB115;H:VI1PR04MB5533.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: /yhho7of3wH3zFSYXx/60saDxGjgzssW1d0lwbLoENZQPWHXe000b87kc6nGJGfIbuXvUW5DU4Zqsb7j0UVWqYIKPCuuWJSKTMHxWvkNlcCY0BF0nks9NLvtbO9IMazzaEqQ2xlYOCMAM8V+I0Mvt8cp7e/hinwUsg1D4ruRkSDNzdjg5O1c6+e8qXw87iGUT5brfk7ga0dXj1pefAhnQf0BKM4Vr+kWSdbCwzp2OZje9ESCfYExwZSz8E4BE87AnViD9H34UD9KKwnwCJ1xf9QgjDSHtrW6Poq2DCaXHRAwzM+8YAs1Wq88xZRQgYGDJvn2PxrMJmcdFp0ZdCJJsKCvp1OxJBbnLMRONSqIGYE=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 5d8e51c7-516a-4792-dd1b-08d65c7285e6
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4608076)(2017052603328)(7153060);SRVR:BYAPR02MB4326;
-X-Microsoft-Exchange-Diagnostics: 1;BYAPR02MB4326;3:dory7lSFo3iambXezml8qt76CQjsN0jsKel8Gj/2p4DhTfqizACey8UeycsIMt7pPR9ZaG3bIzm0Msgd+pb0+CWfjVcQ+QKHRW+5Q2A8KngtABI/8uiuvcSw8csw38wu/p+NFQtRAX8GkZH6ZYDnLq4FzaIss7fMUdRlPFwYN3898agB4lkrae2QyRSYrBZVX7ISN3eaWqPwrV7fMS8HxVS8WBqWaursJtP3/neCp5t0Unv06D6IRZ5uPIJSbkRly2bWMjZ1Z2PkLbQQG/gghQflF+2KZntZprUCpRlHU0dkw8P2cYZaEoeALr0ODhit8K6bw/2/iyLHAEOyF9AYdOnRBYxzVxzX6bgyHGqrLq0=;25:deZm7xSzXzUNuGfwh8ReevsmJn+GmOHFh81Zzf/9tdRo/3yHg7w0dPhj6viwaoLyWi2xe60wQm8kKVtTlHAmu/bGjMiOoaDITb5Pdq4om2y4wbmwcOG7A95yJkcdj3/cJ4/omaolZgNAI6UCH3QPADqD+R9sPl2dkAIst/F2mxCCKLxRFTBe/tcWEfve5ZIo2yMD4k1mZ5gnnocmwdwLEyd6B7mwfO6sJJL1ckS+F7CQYuYmHPkKKxoUX622cifKYrBwyuqPVOURgSseQakfNQ/GhWliS0uKiKl8kQqPoj7EM2e2J4n27yS0NuWTOngVHifzGru/xioU3Wxbivy3vw==
-X-MS-TrafficTypeDiagnostic: BYAPR02MB4326:
-X-Microsoft-Exchange-Diagnostics: 1;BYAPR02MB4326;31:9Og5UkXN0xQnjLglUvtEkWM4CNoQ6s9X+/bbj4D4jwF5HtJLB0mN6nb3dSmOG5+GjArdHmNqgO1guM56Sflou5J4p7tsCthEtI12/mTt8cYgeEEKaYbbhPz+sgeJuNvvjxy3lgErmJ0ja3t13z+34g1YhoDNLDF6q/U5GjLHT3YFH3pFAMrgDFJLBMZJ2HDWvUx/PN5UaTaOboNVtuBnD04eNxWoiuUPnzt+ps2zI3c=;20:c5mkeNfEz3b3HmILQiCmUdK8ZMgbShc6zY7Kf8aSP30C1Rw7uiatG0J+GDl7R07OVGe8yjNcpBjyHooOWDHpNDg9uMKMCWupoL6pkrDNNEIV5EMX47r7DJWdudvAAKCEim6iKOvnu9D9a3dEjqFhvKg8FEGCmgM+Yn3r2j6JE4ObkPeVV2tT5qN35STuVkd+MIbRmxN7+Qbq0x+GZyWles/KvWj5/ZHPLPzwvC/LEPhBEAqHBDWme2i1tYiEOV6cCcE9Gv234MsOvfTubkV5voMjC8eE0B23LfEVRobTjVz9uz4N5f2H8OlQywFPlodm7j3IqCwQ5MGCpzEgGs9Nt9/T0rUuRZyvgb+VkHP0LM/S/zsMQwnviZGAAclH9DMhR4isBbFM5kUDE1IHJgQpXUpnDrRFgj11iN+qKII4xhZ/fz0MCF0xt1HWKq2iYyoq9DqqYfMVYIzMX/S+I5fAVgdlb52KNlbcvclxFcfyU5l718bSzjISYS5j5+WhzL0p
-X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-Microsoft-Antispam-PRVS: <BYAPR02MB4326FA9AAD6622CE226913B7BAAA0@BYAPR02MB4326.namprd02.prod.outlook.com>
-X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231455)(999002)(944501520)(52105112)(93006095)(93004095)(3002001)(10201501046)(6055026)(148016)(149066)(150057)(6041310)(20161123564045)(20161123562045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(201708071742011)(7699051)(76991095);SRVR:BYAPR02MB4326;BCL:0;PCL:0;RULEID:;SRVR:BYAPR02MB4326;
-X-Microsoft-Exchange-Diagnostics: 1;BYAPR02MB4326;4:9gDXXwJtYQHwmGI4K9p3roSkZQU5R/xdiQNvhBz2GNCDQRtjr066VOlAWXwUxBzb1om5uWttNitgsb9OkjVfNwEqFn1uXXYmmr4BTyNUMB1A8Rm7kN8khYzf8MOlGMoBMeaxn+LvIJa4l/brjvJc/5CPhfqavL3+prNSYXiDjwsdAWj6Yuuw+0rC0Sb1hKMUubT8LqTBRt+39thdTBxsovwmXlQ07L/4IP/rZPFylBS86ECQA+fw5+XMu4Fvb0BWGPrptw0iy0FqZQ6UqiUgZQ==
-X-Forefront-PRVS: 0879599414
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BYAPR02MB4326;23:35d0jBPmZJaYjjXxDPMWjx+d8py4SWwVh3QWePZQc?=
- =?us-ascii?Q?qXyXh0mLl0V+hRfbBH5yc4Iu/2Z1hFgrX5GCxhElaiMitNPHaPYo9AiFExsA?=
- =?us-ascii?Q?vOw0gymk6h+janv0A1i4p05ZEIPHK0AY9AzgE8jsBgFI9NXsFv2YKyZrO9+P?=
- =?us-ascii?Q?ZVgAXVFgyp5PW97ZQ+KdXkOOM4GjktivIPP0HMOXYyCbbv+2rcxQ49KO0k1J?=
- =?us-ascii?Q?UYlNc5Iyq8fN28VDhlpPXBPHr7+wY20xxGLrr2tk/8cFTaqkkmn6m9+poM2K?=
- =?us-ascii?Q?afAahRRy7sQ6HfTQVHr8qldZ8cXt1d2i+9YNTYgvrvyNgJIABbpBN1dn6QH9?=
- =?us-ascii?Q?ZDG5Pl426fvPn1kZuwMKYpkzk4nymBbiUWSt3qHED0AEieI6ez4S+9c7mRhA?=
- =?us-ascii?Q?t93cqDgNOW4Ru8xWkqT5SfXQKz55KRq7VFGAhITRAKzR7Ii7bG88XWpA7cD7?=
- =?us-ascii?Q?VbEN2cEboZwBJvoPZooCXXggu/gMafwFDIdfruME0+Q3/rxw2xzIerKDLUK8?=
- =?us-ascii?Q?KN+ppYav68gc8ksXw+bdy+EQzZncw7N+VWXBWme5ylsfmhJ9pUfVQjr0omjv?=
- =?us-ascii?Q?wcQfaNrg+K82uLCZnAzMNFiFWgnsgcZN+lWsqiU3js7/AEAeErTKa4blO+Ri?=
- =?us-ascii?Q?+8spQy1xZPBPB/+KDEslS1RmFzVdK5TfAZEp5XYoGHHPyU2AlQPnIHoUamiO?=
- =?us-ascii?Q?KOFPYjetBanecMesi/jvNw6Ng2aoa22BjlAOwrvAdmDxX8Y3dfdEqzGktEWa?=
- =?us-ascii?Q?JaKLoO3WIBo+4XVHN+/UCnxuKcbE5dw0VPZwu1AioCq1blawBlOfvCEUTf+I?=
- =?us-ascii?Q?MGaSEYJskKwezkx9PIxyaTV/6C9T7A6NBJO113FdLvodMq3nHgMDleBYieT+?=
- =?us-ascii?Q?755VN2COmlZRe+20pu3doDZYTbAyvJJKY0JRzbbXFjwKgDPvWiPkV8qOGLpi?=
- =?us-ascii?Q?nWFtWwWF45CtQRKCo3+VwQDSndXEPCigGbU3DXIGF+OB3QzE4MJrs6TomjR+?=
- =?us-ascii?Q?QpfAUtnq5cnAFLoOPLcuKqPvcB99mGV2E7NoBxouGcx8t7bz7NaK387qCf3V?=
- =?us-ascii?Q?wIRA39JOJ7PiUKE4CQZxNlWSuZwZQ/WG5fsy3vhcSiSF/Q+odf/GgexEmVJi?=
- =?us-ascii?Q?xNL8MkFTJ+eNYsPI7wkMYU0JeIji6Nq?=
-X-Microsoft-Antispam-Message-Info: klY7WNVKPK4ZeG6+IZGrnTOs5a+LIttjNzRH45RJT1sNQA/kqLIPDIIuhNJ5HsffvL3VdK1DF16+BIO5jsSyPVNbaxOYcXCObbYLRQ6jPi8VJJXjOBaj9fGC8eJTclNz9/dtHeFoEkg0bBTSy4HWBIkRO9HlnI5fVgrzBwKGhR6MYZEhm5XTEAx55Ds6hyTkER6ht6rs04rvf/O8uCqpjnYhUcHmL77m4G1Ehh2EgC1KnZ+uQAhOYHCfmUXqfqHkrBKGH62D9AP/Ll+Ux0T4iBLI1thYYMYwIu+nBwg3bw67IaZQhioIK5vDvb9aYv1CyqiBo9LxekVevkcIt4mGF9OfQrUJlIYOaNIhIzqRKLk=
-X-Microsoft-Exchange-Diagnostics: 1;BYAPR02MB4326;6:HWO4NtUn257uFKdDGsLwRYwBijWSfMWnCEhICS83cPKB5v0JvMjJH9dlhg3Lb/XaMwEs66ftZO66TeVQpTHH407IhkYIcPVAH7dhKgyux8/I/HGIW/X6uDtlL42/pT2ZAERuJIdsN5RDrbVKluMqN0T3mx5dEageFvS1s8/O3mtZIdgZ2iyqvsZvahRcq4LBw+G0eAiAEBOO7SJU9A6AmlQ/6X0kWkZF2jJ9k4d43ZKjl9KBSZITaOmLy6Suer+FkJmFGpdPnUcDe5yRuvcQ++tqo8i+8SZQ7LOEnG7y8v6K6MgfSofcWpPNzj6KCawrAAp2JBdRKqpAlcg8Y4WlvBiQl3IEUrI8f5v08kWfMzMFsKSukZlap9fgyH6sVmXlvXO+V8MagFGDO65fVFclBPnCiJHJmthGh4kMj9vhpfZGxXP4bucH4uvA9bsou6gGptJWLNay9aUG/CGlz8X1zw==;5:ykTDPkfNhGZ5lt9QhG5sgDNTT8lXVmjSnkGqWlVVep9uZd9HLG/Fma7c4Vu2CSJ8ud2ua7EfwsXaqxg3p1bX3vSILyZV4JirgKcteJ4LQKl5p+CRE3ZOWxc4EbDsqOML3UKiydHppF0q16R89hO9nhoaVnWwngeCIBoYzRVGjGA=;7:fwRSf2Xxwo+gtVK+o7pOOpzTLb0AWOGreGsiS37mos9mQox0l4hIpBZWFLxw99RQaALw+DTnBIh1z0blvDeydc9NA9K7iZVO3l54sBbKUm6oOpCizV239h4XnVSc9T92jetrGry6EOZwFJG6hlJEqQ==
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Dec 2018 18:33:42.5310
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 384f087b-78f0-409f-ba4b-08d65c72b97a
+X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Dec 2018 18:35:13.5945
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5d8e51c7-516a-4792-dd1b-08d65c7285e6
-X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.100];Helo=[xsj-pvapsmtpgw02]
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR02MB4326
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1SPR8PMB115
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enabled i2s driver build option.
+The dts makefiles go through a lot of pointless churn when boards are
+added. Many SOCs (such as imx) have very simple naming conventions for
+all boards using a certain SOC and board listings can be easily
+collapsed using wildcards.
 
-Signed-off-by: Maruthi Srinivas Bayyavarapu <maruthi.srinivas.bayyavarapu@xilinx.com>
+Add a "wilddt" function and use it for imx6/7
+
+Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
+
 ---
- sound/soc/Kconfig         | 1 +
- sound/soc/Makefile        | 1 +
- sound/soc/xilinx/Kconfig  | 8 ++++++++
- sound/soc/xilinx/Makefile | 2 ++
- 4 files changed, 12 insertions(+)
- create mode 100644 sound/soc/xilinx/Kconfig
- create mode 100644 sound/soc/xilinx/Makefile
+ arch/arm/boot/dts/Makefile | 203 ++++---------------------------------
+ 1 file changed, 19 insertions(+), 184 deletions(-)
 
-diff --git a/sound/soc/Kconfig b/sound/soc/Kconfig
-index 1cf11cf..d21659f 100644
---- a/sound/soc/Kconfig
-+++ b/sound/soc/Kconfig
-@@ -73,6 +73,7 @@ source "sound/soc/tegra/Kconfig"
- source "sound/soc/txx9/Kconfig"
- source "sound/soc/uniphier/Kconfig"
- source "sound/soc/ux500/Kconfig"
-+source "sound/soc/xilinx/Kconfig"
- source "sound/soc/xtensa/Kconfig"
- source "sound/soc/zte/Kconfig"
- 
-diff --git a/sound/soc/Makefile b/sound/soc/Makefile
-index 62a5f87..aff7b19 100644
---- a/sound/soc/Makefile
-+++ b/sound/soc/Makefile
-@@ -57,5 +57,6 @@ obj-$(CONFIG_SND_SOC)	+= tegra/
- obj-$(CONFIG_SND_SOC)	+= txx9/
- obj-$(CONFIG_SND_SOC)	+= uniphier/
- obj-$(CONFIG_SND_SOC)	+= ux500/
-+obj-$(CONFIG_SND_SOC)	+= xilinx/
- obj-$(CONFIG_SND_SOC)	+= xtensa/
- obj-$(CONFIG_SND_SOC)	+= zte/
-diff --git a/sound/soc/xilinx/Kconfig b/sound/soc/xilinx/Kconfig
-new file mode 100644
-index 0000000..25e287f
---- /dev/null
-+++ b/sound/soc/xilinx/Kconfig
-@@ -0,0 +1,8 @@
-+config SND_SOC_XILINX_I2S
-+	tristate "Audio support for the the Xilinx I2S"
-+	help
-+	  Select this option to enable Xilinx I2S Audio. This enables
-+	  I2S playback and capture using xilinx soft IP. In transmitter
-+	  mode, IP receives audio in AES format, extracts PCM and sends
-+	  PCM data. In receiver mode, IP receives PCM audio and
-+	  encapsulates PCM in AES format and sends AES data.
-diff --git a/sound/soc/xilinx/Makefile b/sound/soc/xilinx/Makefile
-new file mode 100644
-index 0000000..6c1209b
---- /dev/null
-+++ b/sound/soc/xilinx/Makefile
-@@ -0,0 +1,2 @@
-+snd-soc-xlnx-i2s-objs      := xlnx_i2s.o
-+obj-$(CONFIG_SND_SOC_XILINX_I2S) += snd-soc-xlnx-i2s.o
--- 
-2.7.4
+If useful in v2 the wilddt function can be split into a separate patch
+for "scripts/Makefile.lib"
+
+A few other arches also have DT wildcards but not on a per-soc basis, in
+theory they could $(call wilddt,*)
+
+I'm not sure if $dtstree is used correctly here?
+
+diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+index b0e966d625b9..42e6ba453adf 100644
+--- a/arch/arm/boot/dts/Makefile
++++ b/arch/arm/boot/dts/Makefile
+@@ -1,6 +1,15 @@
+ # SPDX-License-Identifier: GPL-2.0
++
++dtstree	:=3D $(srctree)/$(src)
++
++# return list of .dtb for all .dts matching $1 in current directory
++# Example usage: dtb-$CONFIG_SOC_ABC123 +=3D $(call wilddt,abc123-*)
++define wilddt
++	$(patsubst $(dtstree)/%.dts,%.dtb, $(wildcard $(dtstree)/$(1).dts))
++endef
++
+ dtb-$(CONFIG_ARCH_ALPINE) +=3D \
+ 	alpine-db.dtb
+ dtb-$(CONFIG_MACH_ARTPEC6) +=3D \
+ 	artpec6-devboard.dtb
+ dtb-$(CONFIG_MACH_ASM9260) +=3D \
+@@ -384,199 +393,25 @@ dtb-$(CONFIG_SOC_IMX53) +=3D \
+ 	imx53-tx53-x03x.dtb \
+ 	imx53-tx53-x13x.dtb \
+ 	imx53-usbarmory.dtb \
+ 	imx53-voipac-bsb.dtb
+ dtb-$(CONFIG_SOC_IMX6Q) +=3D \
+-	imx6dl-apf6dev.dtb \
+-	imx6dl-aristainetos_4.dtb \
+-	imx6dl-aristainetos_7.dtb \
+-	imx6dl-aristainetos2_4.dtb \
+-	imx6dl-aristainetos2_7.dtb \
+-	imx6dl-colibri-eval-v3.dtb \
+-	imx6dl-cubox-i.dtb \
+-	imx6dl-cubox-i-emmc-som-v15.dtb \
+-	imx6dl-cubox-i-som-v15.dtb \
+-	imx6dl-dfi-fs700-m60.dtb \
+-	imx6dl-gw51xx.dtb \
+-	imx6dl-gw52xx.dtb \
+-	imx6dl-gw53xx.dtb \
+-	imx6dl-gw54xx.dtb \
+-	imx6dl-gw551x.dtb \
+-	imx6dl-gw552x.dtb \
+-	imx6dl-gw553x.dtb \
+-	imx6dl-gw560x.dtb \
+-	imx6dl-gw5903.dtb \
+-	imx6dl-gw5904.dtb \
+-	imx6dl-hummingboard.dtb \
+-	imx6dl-hummingboard-emmc-som-v15.dtb \
+-	imx6dl-hummingboard-som-v15.dtb \
+-	imx6dl-hummingboard2.dtb \
+-	imx6dl-hummingboard2-emmc-som-v15.dtb \
+-	imx6dl-hummingboard2-som-v15.dtb \
+-	imx6dl-icore.dtb \
+-	imx6dl-icore-mipi.dtb \
+-	imx6dl-icore-rqs.dtb \
+-	imx6dl-mamoj.dtb \
+-	imx6dl-nit6xlite.dtb \
+-	imx6dl-nitrogen6x.dtb \
+-	imx6dl-phytec-mira-rdk-nand.dtb \
+-	imx6dl-phytec-pbab01.dtb \
+-	imx6dl-rex-basic.dtb \
+-	imx6dl-riotboard.dtb \
+-	imx6dl-sabreauto.dtb \
+-	imx6dl-sabrelite.dtb \
+-	imx6dl-sabresd.dtb \
+-	imx6dl-savageboard.dtb \
+-	imx6dl-ts4900.dtb \
+-	imx6dl-ts7970.dtb \
+-	imx6dl-tx6dl-comtft.dtb \
+-	imx6dl-tx6s-8034.dtb \
+-	imx6dl-tx6s-8034-mb7.dtb \
+-	imx6dl-tx6s-8035.dtb \
+-	imx6dl-tx6s-8035-mb7.dtb \
+-	imx6dl-tx6u-801x.dtb \
+-	imx6dl-tx6u-80xx-mb7.dtb \
+-	imx6dl-tx6u-8033.dtb \
+-	imx6dl-tx6u-8033-mb7.dtb \
+-	imx6dl-tx6u-811x.dtb \
+-	imx6dl-tx6u-81xx-mb7.dtb \
+-	imx6dl-udoo.dtb \
+-	imx6dl-wandboard.dtb \
+-	imx6dl-wandboard-revb1.dtb \
+-	imx6dl-wandboard-revd1.dtb \
+-	imx6q-apalis-eval.dtb \
+-	imx6q-apalis-ixora.dtb \
+-	imx6q-apalis-ixora-v1.1.dtb \
+-	imx6q-apf6dev.dtb \
+-	imx6q-arm2.dtb \
+-	imx6q-b450v3.dtb \
+-	imx6q-b650v3.dtb \
+-	imx6q-b850v3.dtb \
+-	imx6q-cm-fx6.dtb \
+-	imx6q-cubox-i.dtb \
+-	imx6q-cubox-i-emmc-som-v15.dtb \
+-	imx6q-cubox-i-som-v15.dtb \
+-	imx6q-dfi-fs700-m60.dtb \
+-	imx6q-dhcom-pdk2.dtb \
+-	imx6q-display5-tianma-tm070-1280x768.dtb \
+-	imx6q-dmo-edmqmx6.dtb \
+-	imx6q-dms-ba16.dtb \
+-	imx6q-evi.dtb \
+-	imx6q-gk802.dtb \
+-	imx6q-gw51xx.dtb \
+-	imx6q-gw52xx.dtb \
+-	imx6q-gw53xx.dtb \
+-	imx6q-gw5400-a.dtb \
+-	imx6q-gw54xx.dtb \
+-	imx6q-gw551x.dtb \
+-	imx6q-gw552x.dtb \
+-	imx6q-gw553x.dtb \
+-	imx6q-gw560x.dtb \
+-	imx6q-gw5903.dtb \
+-	imx6q-gw5904.dtb \
+-	imx6q-h100.dtb \
+-	imx6q-hummingboard.dtb \
+-	imx6q-hummingboard-emmc-som-v15.dtb \
+-	imx6q-hummingboard-som-v15.dtb \
+-	imx6q-hummingboard2.dtb \
+-	imx6q-hummingboard2-emmc-som-v15.dtb \
+-	imx6q-hummingboard2-som-v15.dtb \
+-	imx6q-icore.dtb \
+-	imx6q-icore-mipi.dtb \
+-	imx6q-icore-ofcap10.dtb \
+-	imx6q-icore-ofcap12.dtb \
+-	imx6q-icore-rqs.dtb \
+-	imx6q-kp-tpc.dtb \
+-	imx6q-marsboard.dtb \
+-	imx6q-mccmon6.dtb \
+-	imx6q-nitrogen6x.dtb \
+-	imx6q-nitrogen6_max.dtb \
+-	imx6q-nitrogen6_som2.dtb \
+-	imx6q-novena.dtb \
+-	imx6q-phytec-mira-rdk-emmc.dtb \
+-	imx6q-phytec-mira-rdk-nand.dtb \
+-	imx6q-phytec-pbab01.dtb \
+-	imx6q-pistachio.dtb \
+-	imx6q-rex-pro.dtb \
+-	imx6q-sabreauto.dtb \
+-	imx6q-sabrelite.dtb \
+-	imx6q-sabresd.dtb \
+-	imx6q-savageboard.dtb \
+-	imx6q-sbc6x.dtb \
+-	imx6q-tbs2910.dtb \
+-	imx6q-ts4900.dtb \
+-	imx6q-ts7970.dtb \
+-	imx6q-tx6q-1010.dtb \
+-	imx6q-tx6q-1010-comtft.dtb \
+-	imx6q-tx6q-1020.dtb \
+-	imx6q-tx6q-1020-comtft.dtb \
+-	imx6q-tx6q-1036.dtb \
+-	imx6q-tx6q-1036-mb7.dtb \
+-	imx6q-tx6q-10x0-mb7.dtb \
+-	imx6q-tx6q-1110.dtb \
+-	imx6q-tx6q-11x0-mb7.dtb \
+-	imx6q-udoo.dtb \
+-	imx6q-utilite-pro.dtb \
+-	imx6q-var-dt6customboard.dtb \
+-	imx6q-wandboard.dtb \
+-	imx6q-wandboard-revb1.dtb \
+-	imx6q-wandboard-revd1.dtb \
+-	imx6q-zii-rdu2.dtb \
+-	imx6qp-nitrogen6_max.dtb \
+-	imx6qp-nitrogen6_som2.dtb \
+-	imx6qp-phytec-mira-rdk-nand.dtb \
+-	imx6qp-sabreauto.dtb \
+-	imx6qp-sabresd.dtb \
+-	imx6qp-tx6qp-8037.dtb \
+-	imx6qp-tx6qp-8037-mb7.dtb \
+-	imx6qp-tx6qp-8137.dtb \
+-	imx6qp-tx6qp-8137-mb7.dtb \
+-	imx6qp-wandboard-revd1.dtb \
+-	imx6qp-zii-rdu2.dtb
++	$(call wilddt,imx6dl-*) \
++	$(call wilddt,imx6q-*) \
++	$(call wilddt,imx6qp-*)
+ dtb-$(CONFIG_SOC_IMX6SL) +=3D \
+-	imx6sl-evk.dtb \
+-	imx6sl-warp.dtb
++	$(call wilddt,imx6sl-*)
+ dtb-$(CONFIG_SOC_IMX6SLL) +=3D \
+-	imx6sll-evk.dtb
++	$(call wilddt,imx6sll-*)
+ dtb-$(CONFIG_SOC_IMX6SX) +=3D \
+-	imx6sx-nitrogen6sx.dtb \
+-	imx6sx-sabreauto.dtb \
+-	imx6sx-sdb-reva.dtb \
+-	imx6sx-sdb-sai.dtb \
+-	imx6sx-sdb.dtb \
+-	imx6sx-softing-vining-2000.dtb \
+-	imx6sx-udoo-neo-basic.dtb \
+-	imx6sx-udoo-neo-extended.dtb \
+-	imx6sx-udoo-neo-full.dtb
++	$(call wilddt,imx6sx-*)
+ dtb-$(CONFIG_SOC_IMX6UL) +=3D \
+-	imx6ul-14x14-evk.dtb \
+-	imx6ul-ccimx6ulsbcexpress.dtb \
+-	imx6ul-ccimx6ulsbcpro.dtb \
+-	imx6ul-geam.dtb \
+-	imx6ul-isiot-emmc.dtb \
+-	imx6ul-isiot-nand.dtb \
+-	imx6ul-liteboard.dtb \
+-	imx6ul-opos6uldev.dtb \
+-	imx6ul-pico-hobbit.dtb \
+-	imx6ul-tx6ul-0010.dtb \
+-	imx6ul-tx6ul-0011.dtb \
+-	imx6ul-tx6ul-mainboard.dtb \
+-	imx6ull-14x14-evk.dtb \
+-	imx6ull-colibri-eval-v3.dtb \
+-	imx6ull-colibri-wifi-eval-v3.dtb \
+-	imx6ulz-14x14-evk.dtb
++	$(call wilddt,imx6ul-*) \
++	$(call wilddt,imx6ull-*) \
++	$(call wilddt,imx6ulz-*)
+ dtb-$(CONFIG_SOC_IMX7D) +=3D \
+-	imx7d-cl-som-imx7.dtb \
+-	imx7d-colibri-emmc-eval-v3.dtb \
+-	imx7d-colibri-eval-v3.dtb \
+-	imx7d-nitrogen7.dtb \
+-	imx7d-pico-pi.dtb \
+-	imx7d-sbc-imx7.dtb \
+-	imx7d-sdb.dtb \
+-	imx7d-sdb-sht11.dtb \
+-	imx7s-colibri-eval-v3.dtb \
+-	imx7s-warp.dtb
++	$(call wilddt,imx7[ds]-*)
+ dtb-$(CONFIG_SOC_LS1021A) +=3D \
+ 	ls1021a-moxa-uc-8410a.dtb \
+ 	ls1021a-qds.dtb \
+ 	ls1021a-twr.dtb
+ dtb-$(CONFIG_SOC_VF610) +=3D \
+--=20
+2.17.1
 
