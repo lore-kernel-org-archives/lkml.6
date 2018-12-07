@@ -2,308 +2,142 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74837C64EB1
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 04:32:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 425F4C07E85
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 04:43:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B38E20850
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 04:32:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="hf4nbw2e"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B38E20850
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	by mail.kernel.org (Postfix) with ESMTP id ED38520700
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 04:43:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544157796;
+	bh=RxSah6ZqqYrCQnUa0WzpHyjmj7N/23NsGyWgKCkekOg=;
+	h=Date:From:To:Cc:Subject:List-ID:From;
+	b=UwgEr8Xz9WvE39Csg+KVNp4kugIbHQ0VI1AOuuE56fzXrxtRzubsReaMDtG7wRAuq
+	 NQCcvA/bKMTn9cCtl5WG1rLl2Xyg6wIDq1pZvdRcDt8Dwa4RW0Hjqhj9mv10+wecNU
+	 R2WviUYFFoANrSkZqXp9rX9YqDktiRIU7IqvtKaE=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED38520700
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726053AbeLGEcM (ORCPT
+        id S1725989AbeLGEnO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 23:32:12 -0500
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:42550 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725939AbeLGEcL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 23:32:11 -0500
-Received: by mail-lf1-f65.google.com with SMTP id l10so2040965lfh.9
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Dec 2018 20:32:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Pgc93Elzn0yDZsGvIneJWW/7FgDXGS1XQW3csqBPn40=;
-        b=hf4nbw2e2AYxvzSjMtwBwkO21zCiq0060EBEgao++IaRl0SO9wYHQ33AFfoQ5x2fzS
-         RWdyKmA0KlJiUfCZPph7NZrgY7odvznZ9p7QNkMpxiIAWN0T03hksm9V27iMROfHSiw+
-         TfoaIqAMN4hvL3Umyz0Ksnt5H86lRfuqBSL1Y=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Pgc93Elzn0yDZsGvIneJWW/7FgDXGS1XQW3csqBPn40=;
-        b=OieibYBoDz3XhtAL+uLH5fo8VUc+poWpP6TXi2AmZqUlYoMCGbTC+3cYzMBs1CRgBv
-         UhV5wLaegnDCmlGZapGR7JXB+67DMWgLeGTudc9I295AESzSBLnZe2fb2x1mUpCzvTVe
-         36C+nmiNQpIhNvyW/CNm9GETUernY44U/0ot5KEOIC9syF6oLLd/L61bV2PXBNIyyfi8
-         UHKtoF0l0qDRc5N6jAgY2PlfrePtc5qq86yL8y0Y/jKc0XVo9So2vHPgOgKHUYptCOmf
-         52Y3MsdKGHiPgl+3bndRNzBOOWp/y0rXpo5WcMHX0ooSvgGYy6uKeFJa0lMXLvwOGtf+
-         pVtA==
-X-Gm-Message-State: AA+aEWa6LtoxDTKXydb8fEBf3Kdk9/5bTeiMIJ5Tk/t75qaGOi7CY4IS
-        H3R71xI5n//bA6rmzvOIg8lERU8WuM4=
-X-Google-Smtp-Source: AFSGD/WuejUwPzMgJLJzVKjmgFmiAV2IOrG1jCtrgnDzs8gDJy/a1RlMnbMvGmnzwuaP0EfuBqeyag==
-X-Received: by 2002:a19:3b9c:: with SMTP id d28mr386514lfl.30.1544157128396;
-        Thu, 06 Dec 2018 20:32:08 -0800 (PST)
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com. [209.85.208.173])
-        by smtp.gmail.com with ESMTPSA id y12-v6sm374723ljy.76.2018.12.06.20.32.03
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 06 Dec 2018 20:32:03 -0800 (PST)
-Received: by mail-lj1-f173.google.com with SMTP id k15-v6so2389451ljc.8
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Dec 2018 20:32:03 -0800 (PST)
-X-Received: by 2002:a2e:9819:: with SMTP id a25-v6mr403876ljj.6.1544157122741;
- Thu, 06 Dec 2018 20:32:02 -0800 (PST)
+        Thu, 6 Dec 2018 23:43:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40316 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725939AbeLGEnN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 23:43:13 -0500
+Received: from localhost (unknown [106.201.124.178])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1436720700;
+        Fri,  7 Dec 2018 04:43:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544157792;
+        bh=RxSah6ZqqYrCQnUa0WzpHyjmj7N/23NsGyWgKCkekOg=;
+        h=Date:From:To:Cc:Subject:From;
+        b=T9nJf1bbOcvULs19jmi2zL+keUT26sZUJVmeh8RybaJ4XBNnknx9VAN6hrDbdduv5
+         7pSckrlh18D+A1WqcXElTAd9l9dFjvwvWMI3egMbD4qFOAu75yzf78oL3IAWy2x0AX
+         Pbk0x2/51vbPW1C70fPfLqOhYy5JnioHuXAAzBO4=
+Date:   Fri, 7 Dec 2018 10:13:04 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     dma <dmaengine@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL]: dmaengine fixes for v4.20-rc6
+Message-ID: <20181207044304.GB2847@vkoul-mobl>
 MIME-Version: 1.0
-References: <20181203201214.GB3540@redhat.com> <CAHk-=wg=6uxAJMbvGJC-5CSikC8OdqsjE1vw+DsCMj=2SNSnZg@mail.gmail.com>
- <CAHk-=whDg5+e2-eXYo-jwC1spt2r7JjLQSaLm4OyfGMQHLTrdw@mail.gmail.com>
- <64a4aec6-3275-a716-8345-f021f6186d9b@suse.cz> <20181204104558.GV23260@techsingularity.net>
- <20181205204034.GB11899@redhat.com> <CAHk-=whi8Ju-cTDL4cYtwuLA7BYgGJYyy6HVMoknZaLHnRc83g@mail.gmail.com>
- <20181205233632.GE11899@redhat.com> <CAHk-=wguXjkbK8BUU998s7HD7AXJgBkuc9JmuNxiN7uGQyfSfQ@mail.gmail.com>
- <CAHk-=wjm9V843eg0uesMrxKnCCq7UfWn8VJ+z-cNztb_0fVW6A@mail.gmail.com> <20181206091405.GD1286@dhcp22.suse.cz>
-In-Reply-To: <20181206091405.GD1286@dhcp22.suse.cz>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Thu, 6 Dec 2018 20:31:46 -0800
-X-Gmail-Original-Message-ID: <CAHk-=whCnERJt8bterD5yXABvoSmoJAx004Y76c82bBHCWbgDg@mail.gmail.com>
-Message-ID: <CAHk-=whCnERJt8bterD5yXABvoSmoJAx004Y76c82bBHCWbgDg@mail.gmail.com>
-Subject: Re: MADV_HUGEPAGE vs. NUMA semantic (was: Re: [LKP] [mm] ac5b2c1891:
- vm-scalability.throughput -61.3% regression)
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Andrea Arcangeli <aarcange@redhat.com>,
-        mgorman@techsingularity.net, Vlastimil Babka <vbabka@suse.cz>,
-        ying.huang@intel.com, s.priebe@profihost.ag,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        alex.williamson@redhat.com, lkp@01.org,
-        David Rientjes <rientjes@google.com>, kirill@shutemov.name,
-        Andrew Morton <akpm@linux-foundation.org>,
-        zi.yan@cs.rutgers.edu
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
-        boundary="000000000000cb19e9057c6718b2"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="bCsyhTFzCvuiizWE"
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---000000000000cb19e9057c6718b2
-Content-Type: text/plain; charset="UTF-8"
 
-[ Oops. different thread for me due to edited subject, so I saw this
-after replying to the earlier email by David ]
+--bCsyhTFzCvuiizWE
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Dec 6, 2018 at 1:14 AM Michal Hocko <mhocko@kernel.org> wrote:
->
-> MADV_HUGEPAGE changes the picture because the caller expressed a need
-> for THP and is willing to go extra mile to get it.
+Hi Linus,
 
-Actually, I think MADV_HUGEPAGE should just be
-"TRANSPARENT_HUGEPAGE_ALWAYS but only for this vma".
+Here is another PULL request for dmaengine. We got bunch of fixes early
+this week and all are tagged to stable. Hope this is last fix for this
+cycle.
 
-So MADV_HUGEPAGE shouldn't change any behavior at all, if the kernel
-was built with TRANSPARENT_HUGEPAGE_ALWAYS.
+Please pull to receive fixes for imx-sdma, cppi and dw controllers.
 
-Put another way: even if you decide to run a kernel that does *not*
-have that "always THP" (beause you presumably think that it's too
-blunt an instrument), then MADV_HUGEPAGE says "for _this_ vma, do the
-'always THP' bebavior"
+The following changes since commit 2595646791c319cadfdbf271563aac97d0843dc7:
 
-I think those semantics would be a whole lot easier to explain to
-people, and perhaps more imporantly, starting off from that kind of
-mindset also gives good guidance to what MADV_HUGEPAGE behavior should
-be: it should be sane enough that it makes sense as the _default_
-behavior for the TRANSPARENT_HUGEPAGE_ALWAYS configuration.
+  Linux 4.20-rc5 (2018-12-02 15:07:55 -0800)
 
-But that also means that no, MADV_HUGEPAGE doesn't really change the
-picture. All it does is says "I know that for this vma, THP really
-does make sense as a default".
+are available in the Git repository at:
 
-It doesn't say "I _have_ to have THP", exactly like
-TRANSPARENT_HUGEPAGE_ALWAYS does not mean that every allocation should
-strive to be THP.
+  git://git.infradead.org/users/vkoul/slave-dma.git tags/dmaengine-fix-4.20=
+-rc6
 
->I believe that something like the below would be sensible
->         1) THP on a local node with compaction not giving up too early
->         2) THP on a remote node in NOWAIT mode - so no direct
->            compaction/reclaim (trigger kswapd/kcompactd only for
->            defrag=defer+madvise)
->         3) fallback to the base page allocation
+for you to fetch changes up to ffe843b18211301ad25893eba09f402c19d12304:
 
-That doesn't sound insane to me. That said, the numbers David quoted
-do fairly strongly imply that local small-pages are actually preferred
-to any remote THP pages.
+  dmaengine: dw: Fix FIFO size for Intel Merrifield (2018-12-06 22:53:05 +0=
+530)
 
-But *that* in turn makes for other possible questions:
+----------------------------------------------------------------
+dmaengine-4.20-rc6
 
- - if the reason we couldn't get a local hugepage is that we're simply
-out of local memory (huge *or* small), then maybe a remote hugepage is
-better.
+dmaengine fixes for v4.20-rc6
 
-   Note that this now implies that the choice can be an issue of "did
-the hugepage allocation fail due to fragmentation, or due to the node
-being low of memory"
+ - Fixing imx-sdma handling of channel terminations, this involves
+   reverting two commits and implement async termination
+ - Fix cppi dma channel deletion from pending list on stop
+ - Fix FIFO size for dw controller in Intel Merrifield
 
-and there is the other question that I asked in the other thread
-(before subject edit):
+----------------------------------------------------------------
+Andy Shevchenko (1):
+      dmaengine: dw: Fix FIFO size for Intel Merrifield
 
- - how local is the load to begin with?
+Bin Liu (1):
+      dmaengine: cppi41: delete channel from pending list when stop channel
 
-   Relatively shortlived processes - or processes that are explicitly
-bound to a node - might have different preferences than some
-long-lived process where the CPU bounces around, and might have
-different trade-offs for the local vs remote question too.
+Lucas Stach (4):
+      Revert "dmaengine: imx-sdma: Use GFP_NOWAIT for dma allocations"
+      Revert "dmaengine: imx-sdma: alloclate bd memory from dma pool"
+      dmaengine: imx-sdma: implement channel termination via worker
+      dmaengine: imx-sdma: use GFP_NOWAIT for dma descriptor allocations
 
-So just based on David's numbers, and some wild handwaving on my part,
-a slightly more complex, but still very sensible default might be
-something like
+ drivers/dma/dw/core.c   |  6 ++---
+ drivers/dma/imx-sdma.c  | 69 +++++++++++++++++++++++++++++++--------------=
+----
+ drivers/dma/ti/cppi41.c | 16 +++++++++++-
+ 3 files changed, 62 insertions(+), 29 deletions(-)
 
- 1) try to do a cheap local node hugepage allocation
+Thanks
+--=20
+~Vinod
 
-    Rationale: everybody agrees this is the best case.
+--bCsyhTFzCvuiizWE
+Content-Type: application/pgp-signature; name="signature.asc"
 
-    But if that fails:
+-----BEGIN PGP SIGNATURE-----
 
- 2) look at compacting and the local node, but not very hard.
+iQIcBAEBAgAGBQJcCfpYAAoJEHwUBw8lI4NHr70QAJlbB3DcZJHPFKqrKRw1T/TW
+LeS4+algyy/Zuz4goXAYax2E0y8vZFF0YLFcFZQYtm5aU/fftIHGd3IMbyXLyh8z
+GhSYVU3y22Pdyg8vFUih/RV57H8A+z0hby6DPajym5faqCMct9tsSrDrpk++vSBw
+TEdr/JSZE0N6SxHKUDKgOww7zR6mJWLfM1v6omU45gAz1SrUaj0pQdfR//w47nLP
+NGXEI3y80Y9pm48zhNtZDf6Ns0fc6psf4/1/eqxLgnzcCCoV+76wJVIQsq5hpA5j
++8aelrrev8RB90Dq4ZjOdsx8pELGvZpoMel2sRalEZ+YfaiH1N5SutYIJTVu1we9
+h6h8a/nTrdjGRtfRfWvZAjNdIpZ0cK3Pq0Q0JHt0bpjynsfh+Dlp6eepNQxpGMZW
+YEElb0+uAnIbElSr+aTjqPnHzJ7+Fe9PNCpW881KI23mzVuObphemwTDwUVMplwU
+Dn06EgHDo4+NKkjZtsJF3u9ORurHdfNrqMg1nHMKOFQH/nQjNW1cTshYetCza+c7
+SGMdqMH23KFwmeE8GvST64Ts3PuD6yUq3mDhJRnnEt35SKgbcSmnccN+8s3uvVRG
+aGLgj2WcvHBOilqQPcxuND8uoY5/G0B+N+9MbKJGC3+UEh59KFDG1YUxG6E7Xbfj
+gfYburcYC8QwAu2AXMY+
+=Q9R0
+-----END PGP SIGNATURE-----
 
-    If there's lots of memory on the local node, but synchronous
-compaction doesn't do anything easily, just fall back to small pages.
-
-    Rationale: local memory is generally more important than THP.
-
-    If that fails (ie local node is simply low on memory):
-
- 3) Try to do remote THP allocation
-
-     Rationale: Ok, we simply didn't have a lot of local memory, so
-it's not just a question of fragmentation. If it *had* been
-fragmentation, lots of small local pages would have been better than a
-remote THP page.
-
-     Oops, remote THP allocation failed (possibly after synchronous
-remote compaction, but maybe this is where we do kcompactd).
-
- 4) Just do any small page, and do reclaim etc. THP isn't happening,
-and it's not a priority when you're starting to feel memory pressure.
-
-In general, I really would want to avoid magic kernel command lines
-(or sysfs settings, or whatever) making a huge difference in behavior.
-So I really wish people would see the whole
-'transparent_hugepage_flags' thing as a way for kernel developers to
-try different settings, not as a way for users to tune their loads.
-
-Our default should work as sane defaults, we shouldn't have a "ok,
-let's have this sysfs tunable and let people make their own
-decisions". That's a cop-out.
-
-Btw, don't get me wrong: I'm not suggesting removing the sysfs knob.
-As a debug tool, it's great, where you can ask "ok, do things work
-better if you set THP-defrag to defer+madvise".
-
-I'm just saying that we should *not* use that sysfs flag as an excuse
-for "ok, if we get the default wrong, people can make their own
-defaults". We should strive to do well enough that it really shouldn't
-be an issue in normal situations.
-
-                     Linus
-
---000000000000cb19e9057c6718b2
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
-
-MIIT/AYJKoZIhvcNAQcCoIIT7TCCE+kCAQExDzANBglghkgBZQMEAgEFADALBgkqhkiG9w0BBwGg
-ghEQMIIF5jCCA86gAwIBAgIQapvhODv/K2ufAdXZuKdSVjANBgkqhkiG9w0BAQwFADCBhTELMAkG
-A1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4GA1UEBxMHU2FsZm9yZDEa
-MBgGA1UEChMRQ09NT0RPIENBIExpbWl0ZWQxKzApBgNVBAMTIkNPTU9ETyBSU0EgQ2VydGlmaWNh
-dGlvbiBBdXRob3JpdHkwHhcNMTMwMTEwMDAwMDAwWhcNMjgwMTA5MjM1OTU5WjCBlzELMAkGA1UE
-BhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4GA1UEBxMHU2FsZm9yZDEaMBgG
-A1UEChMRQ09NT0RPIENBIExpbWl0ZWQxPTA7BgNVBAMTNENPTU9ETyBSU0EgQ2xpZW50IEF1dGhl
-bnRpY2F0aW9uIGFuZCBTZWN1cmUgRW1haWwgQ0EwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEK
-AoIBAQC+s55XrCh2dUAWxzgDmNPGGHYhUPMleQtMtaDRfTpYPpynMS6n9jR22YRq2tA9NEjk6vW7
-rN/5sYFLIP1of3l0NKZ6fLWfF2VgJ5cijKYy/qlAckY1wgOkUMgzKlWlVJGyK+UlNEQ1/5ErCsHq
-9x9aU/x1KwTdF/LCrT03Rl/FwFrf1XTCwa2QZYL55AqLPikFlgqOtzk06kb2qvGlnHJvijjI03BO
-rNpo+kZGpcHsgyO1/u1OZTaOo8wvEU17VVeP1cHWse9tGKTDyUGg2hJZjrqck39UIm/nKbpDSZ0J
-sMoIw/JtOOg0JC56VzQgBo7ictReTQE5LFLG3yQK+xS1AgMBAAGjggE8MIIBODAfBgNVHSMEGDAW
-gBS7r34CPfqm8TyEjq3uOJjs2TIy1DAdBgNVHQ4EFgQUgq9sjPjF/pZhfOgfPStxSF7Ei8AwDgYD
-VR0PAQH/BAQDAgGGMBIGA1UdEwEB/wQIMAYBAf8CAQAwEQYDVR0gBAowCDAGBgRVHSAAMEwGA1Ud
-HwRFMEMwQaA/oD2GO2h0dHA6Ly9jcmwuY29tb2RvY2EuY29tL0NPTU9ET1JTQUNlcnRpZmljYXRp
-b25BdXRob3JpdHkuY3JsMHEGCCsGAQUFBwEBBGUwYzA7BggrBgEFBQcwAoYvaHR0cDovL2NydC5j
-b21vZG9jYS5jb20vQ09NT0RPUlNBQWRkVHJ1c3RDQS5jcnQwJAYIKwYBBQUHMAGGGGh0dHA6Ly9v
-Y3NwLmNvbW9kb2NhLmNvbTANBgkqhkiG9w0BAQwFAAOCAgEAeFyygSg0TzzuX1bOn5dW7I+iaxf2
-8/ZJCAbU2C81zd9A/tNx4+jsQgwRGiHjZrAYayZrrm78hOx7aEpkfNPQIHGG6Fvq3EzWf/Lvx7/h
-k6zSPwIal9v5IkDcZoFD7f3iT7PdkHJY9B51csvU50rxpEg1OyOT8fk2zvvPBuM4qQNqbGWlnhMp
-IMwpWZT89RY0wpJO+2V6eXEGGHsROs3njeP9DqqqAJaBa4wBeKOdGCWn1/Jp2oY6dyNmNppI4ZNM
-UH4Tam85S1j6E95u4+1Nuru84OrMIzqvISE2HN/56ebTOWlcrurffade2022O/tUU1gb4jfWCcyv
-B8czm12FgX/y/lRjmDbEA08QJNB2729Y+io1IYO3ztveBdvUCIYZojTq/OCR6MvnzS6X72HP0PRL
-RTiOSEmIDsS5N5w/8IW1Hva5hEFy6fDAfd9yI+O+IMMAj1KcL/Zo9jzJ16HO5m60ttl1Enk8MQkz
-/W3JlHaeI5iKFn4UJu1/cP2YHXYPiWf2JyBzsLBrGk1II+3yL8aorYew6CQvdVifC3HtwlSam9V1
-niiCfOBe2C12TdKGu05LWIA3ZkFcWJGaNXOZ6Ggyh/TqvXG5v7zmEVDNXFnHn9tFpMpOUvxhcsjy
-cBtH0dZ0WrNw6gH+HF8TIhCnH3+zzWuDN0Rk6h9KVkfKehIwggXYMIIDwKADAgECAhBMqvnK22Nv
-4B/3TthbA4adMA0GCSqGSIb3DQEBDAUAMIGFMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRl
-ciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRowGAYDVQQKExFDT01PRE8gQ0EgTGltaXRl
-ZDErMCkGA1UEAxMiQ09NT0RPIFJTQSBDZXJ0aWZpY2F0aW9uIEF1dGhvcml0eTAeFw0xMDAxMTkw
-MDAwMDBaFw0zODAxMTgyMzU5NTlaMIGFMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBN
-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
-AaOCAfMwggHvMB8GA1UdIwQYMBaAFIKvbIz4xf6WYXzoHz0rcUhexIvAMB0GA1UdDgQWBBRjn/GS
-Juh8DKxLx8YgPKopKgyxBTAOBgNVHQ8BAf8EBAMCBaAwDAYDVR0TAQH/BAIwADAgBgNVHSUEGTAX
-BggrBgEFBQcDBAYLKwYBBAGyMQEDBQIwEQYJYIZIAYb4QgEBBAQDAgUgMEYGA1UdIAQ/MD0wOwYM
-KwYBBAGyMQECAQEBMCswKQYIKwYBBQUHAgEWHWh0dHBzOi8vc2VjdXJlLmNvbW9kby5uZXQvQ1BT
-MFoGA1UdHwRTMFEwT6BNoEuGSWh0dHA6Ly9jcmwuY29tb2RvY2EuY29tL0NPTU9ET1JTQUNsaWVu
-dEF1dGhlbnRpY2F0aW9uYW5kU2VjdXJlRW1haWxDQS5jcmwwgYsGCCsGAQUFBwEBBH8wfTBVBggr
-BgEFBQcwAoZJaHR0cDovL2NydC5jb21vZG9jYS5jb20vQ09NT0RPUlNBQ2xpZW50QXV0aGVudGlj
-YXRpb25hbmRTZWN1cmVFbWFpbENBLmNydDAkBggrBgEFBQcwAYYYaHR0cDovL29jc3AuY29tb2Rv
-Y2EuY29tMCgGA1UdEQQhMB+BHXRvcnZhbGRzQGxpbnV4LWZvdW5kYXRpb24ub3JnMA0GCSqGSIb3
-DQEBCwUAA4IBAQAGi1sxlNUFKWBzuBr+awa5Pl46M0AHRkFPiu3VKUkaNu8XuIA2i6Pj6rgiT/3l
-7ca/KvxohOUvFTYnq6Fr26H6BJT6XaMiC6LItbfoIMB2yzFOVuruxfTUO7TCJPCg4oLEtUUIMS1v
-KrajMYuEaI5rVAY04ntAa9nRnjj8TqDg+OXupr8yHrkomt7qWlsyZQKExtmQ4DvfEUADDY2ue6Kn
-qNa5FHY8uBWlYBSaHnnR90Rr0Rqd4naFPQ1Kkkxp35g0tcdGBN5Qcyli834X9rdyhj9CwSwOSnCD
-KYvaXyUP3o7hBubLcdMz/VM9VKT5HnU6c3rFemJSmUc41Htu57YYMYICsDCCAqwCAQEwga0wgZcx
-CzAJBgNVBAYTAkdCMRswGQYDVQQIExJHcmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZv
-cmQxGjAYBgNVBAoTEUNPTU9ETyBDQSBMaW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVu
-dCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBAhEAyRamH6VuTQrvgXSXzzbh6jAN
-BglghkgBZQMEAgEFAKCB1DAvBgkqhkiG9w0BCQQxIgQgEYxGj42qgyihj9yBcR5TCN5jEds0p2qD
-5z0SiI4Gz6IwGAYJKoZIhvcNAQkDMQsGCSqGSIb3DQEHATAcBgkqhkiG9w0BCQUxDxcNMTgxMjA3
-MDQzMjAyWjBpBgkqhkiG9w0BCQ8xXDBaMAsGCWCGSAFlAwQBKjALBglghkgBZQMEARYwCwYJYIZI
-AWUDBAECMAoGCCqGSIb3DQMHMAsGCSqGSIb3DQEBCjALBgkqhkiG9w0BAQcwCwYJYIZIAWUDBAIB
-MA0GCSqGSIb3DQEBAQUABIIBAHBBZlQeHs8JX3Yfg210EUz4+uXZL1eagD17s5HwzqE013gHYUBN
-iiYPljkDsH88bBwkzhyVZNmZjdbTf2pr3NfvwkokTuem5UyyRAGdFogt3PB4tcpQ8tlOp29G7aJS
-4vAy81rbybOLc5yY7got0RddY9D9wzNRCnnIQ/Z6PiB2tvkMGpWlMM53JtMRv4NBTyLyzCeBFz5A
-ogDVRoC221Ps5gK4tPbRevNU0E6X60hHvti4emJKbLGxbsZxFM9K+swlB6ppn773jXv5gHq0NUQB
-PQ3G3PZ6RA4/7KD+pWAvYRzMx3qCJSF8IFZS1CNnA8zxqsCU+QOrph9WaMx2sto=
---000000000000cb19e9057c6718b2--
+--bCsyhTFzCvuiizWE--
