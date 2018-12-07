@@ -2,397 +2,179 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
-	WEIRD_PORT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DF01C65BAF
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 23:31:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63AF2C07E85
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 23:34:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B04EE20989
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 23:31:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B04EE20989
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.com
+	by mail.kernel.org (Postfix) with ESMTP id 1C5DC20838
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 23:34:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="OyaEqc9r"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C5DC20838
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726164AbeLGXbk (ORCPT
+        id S1726107AbeLGXeN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 18:31:40 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:60878 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726107AbeLGXbj (ORCPT
+        Fri, 7 Dec 2018 18:34:13 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:35900 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726070AbeLGXeM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 18:31:39 -0500
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: gtucker)
-        with ESMTPSA id A5FB4260639
-To:     Ben Skeggs <bskeggs@redhat.com>, Lyude Paul <lyude@redhat.com>
-From:   Guillaume Tucker <guillaume.tucker@collabora.com>
-Subject: next/master boot bisection: Oops in nouveau driver on jetson-tk1
-Cc:     nouveau@lists.freedesktop.org, David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        kernel@collabora.com, Mark Brown <broonie@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Karol Herbst <kherbst@redhat.com>,
-        Kevin Hilman <khilman@baylibre.com>
-Message-ID: <89fa50d0-945f-d1ed-ae55-ee947187f209@collabora.com>
-Date:   Fri, 7 Dec 2018 23:31:34 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Fri, 7 Dec 2018 18:34:12 -0500
+Received: by mail-wm1-f65.google.com with SMTP id a18so6055428wmj.1
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Dec 2018 15:34:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=gxymz6Nr3+iGhNBx9iWU3Z6j+UHaoTAXjZ89bKtXPeE=;
+        b=OyaEqc9rpaEVk6cc64niqkqfP4XEG5D3brZWHl5OlbbBYNvm21VuSWbvkLwr4PA6sf
+         zoYYqdkBQkzX9vpV+Lc4jBTK9CXjftrCsznhpoqplvwkINiNa1MyMoinl9+fFTzVcNMg
+         ZS6lt9zRzB6H3aFtxGsBqeRML6NTyEHBhwgJNvNAN6+tKv1zJc+6bu22NXOAogC3FwIG
+         tZXU84j5VXkKIuxqKePaeYhaKQ0RDBEkwmsYyFXNK5pAqo3cBxQeakMiMbi2kYfcXPNL
+         Ty4XMeE1/WaJAi3e444J8R//H9SlI4qQN8oFtAVOEymgeMV/BNod3xw67LmzmGzfkbGR
+         Xz7w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=gxymz6Nr3+iGhNBx9iWU3Z6j+UHaoTAXjZ89bKtXPeE=;
+        b=AbqX4xZfhvzovq5Acg1wwweVdm99duQJhfxxeTRkGTkorC3CcmsWKccTZylTwJbd6F
+         q3cMM1GRm9/xJ/EasBpUSoWeVGls5V0WSUvzqdBUkeiomX8pX10PeU0JZkQ2Q4X67ItY
+         kaQeqrhvGcytiTmtihTy0MVD1oq6gRCj7xD06R5u5p2C/G54FylABouTQjQS45IH2d2f
+         05GRczrM+2Ru0riAPXJocTSolze7hdp2cwf8Nlk6QInDbd4Zu7qcyvszBWS0BActQT89
+         9i+33Abmljf3Vlcdd8Ow5t0KK8XgPJmYXGn9t/z3CXHKqgFMVDU4kLmqcReix6tmxUHZ
+         A7fg==
+X-Gm-Message-State: AA+aEWZUTr/TM4yM8RzB4Il5aR6h6OPVzASErP92E3cxS81AT81PzIZ8
+        PTRebCI3ToHYi/YT6WfNWFxPD0+XTO4iPVpRxgro/Q==
+X-Google-Smtp-Source: AFSGD/UKR/I8BgxUpKyTmIR131dtGfqxxnF/+sWrj3L7oZbaXSRwDunEGOcqiFJDg+qYXwnLTiegdj5PNizywlTbfkE=
+X-Received: by 2002:a7b:ce17:: with SMTP id m23mr4053076wmc.74.1544225649529;
+ Fri, 07 Dec 2018 15:34:09 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20181206221922.31012-1-sean.j.christopherson@intel.com>
+ <20181206221922.31012-5-sean.j.christopherson@intel.com> <CALCETrXRJ645=08fyeoMQ949fLB1TvhsgERFVx5mAHdViEjq8Q@mail.gmail.com>
+ <20181207165145.GB10404@linux.intel.com> <CALCETrVkEW82PzQZhJ5iS849DLY1gbd8YjH5F7P1J7hgjkjiOQ@mail.gmail.com>
+ <20181207190257.GC10404@linux.intel.com> <EFA99261-BE93-49DA-9A8F-E6FD28069AFC@amacapital.net>
+ <20181207200935.GE10404@linux.intel.com> <4CEB5945-9562-40FA-8CCA-A1675D55B001@amacapital.net>
+ <20181207212649.GG10404@linux.intel.com>
+In-Reply-To: <20181207212649.GG10404@linux.intel.com>
+From:   Andy Lutomirski <luto@amacapital.net>
+Date:   Fri, 7 Dec 2018 15:33:57 -0800
+Message-ID: <CALCETrVBR+2HjTqX=W4r9GOq69Xg36v4gmCKqK0wUjzAqBJnrw@mail.gmail.com>
+Subject: Re: [RFC PATCH v2 4/4] x86/vdso: Add __vdso_sgx_enter_enclave() to
+ wrap SGX enclave transitions
+To:     "Christopherson, Sean J" <sean.j.christopherson@intel.com>
+Cc:     Andrew Lutomirski <luto@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        X86 ML <x86@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Josh Triplett <josh@joshtriplett.org>,
+        linux-sgx@vger.kernel.org, haitao.huang@linux.intel.com,
+        Jethro Beekman <jethro@fortanix.com>,
+        "Dr. Greg Wettstein" <greg@enjellic.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Please find below an automated bisection report for a kernel Oops
-seen during the initialisation of the nouveau GPU driver on
-jetson-tk1.
+On Fri, Dec 7, 2018 at 1:26 PM Sean Christopherson
+<sean.j.christopherson@intel.com> wrote:
+>
+> On Fri, Dec 07, 2018 at 12:16:59PM -0800, Andy Lutomirski wrote:
+> >
+> >
+> > > On Dec 7, 2018, at 12:09 PM, Sean Christopherson <sean.j.christophers=
+on@intel.com> wrote:
+> > >
+> > >> On Fri, Dec 07, 2018 at 11:23:10AM -0800, Andy Lutomirski wrote:
+> > >>
+> > >> Ah, I see. You=E2=80=99re saying that, if the non-enclave stare is c=
+orrupted such
+> > >> that RIP  is okay and RSP still points somewhere reasonable but the =
+return
+> > >> address is garbage, then we can at least get to the fault handler an=
+d print
+> > >> something?
+> > >
+> > > Yep.  Even for something more subtle like GPR corruption it could dum=
+p the
+> > > entire call stack before attempting to return back up.
+> > >
+> > >> This only works if the fault handler pointer itself is okay, though,=
+ which
+> > >> somewhat limits the usefulness, given that its pointer is quite like=
+ly to
+> > >> be on the stack very close to the return address.
+> > >
+> > > Yeah, it's not a silver bullet by any means, but it does seem useful =
+for at
+> > > least some scenarios.  Even exploding when invoking the handler inste=
+ad of
+> > > at a random point might prove useful, e.g. "calling my exit handler e=
+xploded,
+> > > maybe my enclave corrupted the stack!".
+> >
+> > Here=E2=80=99s another idea: calculate some little hash or other checks=
+um of
+> > RSP, RBP, and perhaps a couple words on the stack, and do:
+>
+> Corrupting RSP and RBP as opposed to the stack memory seems much less
+> likely since the enclave would have to poke into the save state area.
+> And as much as I dislike the practice of intentionally manipulating
+> SSA.RSP, preventing the user from doing something because we're "helping"
+> doesn't seem right.
+>
+> > call __vdso_enclave_corrupted_state
+> >
+> > If you get a mismatch after return. That function could be:
+> >
+> > call __vdso_enclave_corrupted_state:
+> >   ud2
+> >
+> > And now the debug trace makes it very clear what happened.
+> >
+> > This may or may not be worth the effort.
+>
+> Running a checksum on the stack for every exit doesn't seem like it'd
+> be worth the effort, especially since this type of bug should be quite
+> rare, at least in production environments.
+>
+> If we want to pursue the checksum idea I think the easiest approach
+> would be to combine it with an exit_handler and do a simple check on
+> the handler.  It'd be minimal overhead in the fast path and would flag
+> cases where invoking exit_handle() would explode, while deferring all
+> other checks to the user.
 
+How about this variant?
 
-All the LAVA test jobs for this bisection can be found here:
+#define MAGIC 0xaaaabbbbccccddddul
+#define RETADDR_HASH ((unsigned long)__builtin_return_address(0) ^ MAGIC)
 
-  http://lava.baylibre.com:10080/scheduler/alljobs?length=25&search=lava-bisect-staging-7366#table
+void foo(void)
+{
+    volatile unsigned long hash =3D RETADDR_HASH;
 
+    /* placeholder for your actual code */
+    asm volatile ("nop");
 
-Here's the beginning of the Oops stack trace:
+    if (hash !=3D RETADDR_HASH)
+        asm volatile ("ud2");
+}
 
-[    7.485361] [00000064] *pgd=f9e7b835
-[    7.485372] Internal error: Oops: 17 [#1] SMP ARM
-[    7.485376] Modules linked in: snd_soc_tegra_rt5640(+) snd_soc_tegra_utils snd_soc_rt5640(+) snd_soc_rl6231 snd_soc_tegra30_ahub snd_hda_tegra snd_soc_core snd_hda_codec snd_hda_core ac97_bus snd_pcm_dmaengine snd_pcm xhci_tegra(+) snd_timer snd soundcore nouveau(+) ttm tegra_devfreq tegra_wdt
-[    7.542227] CPU: 1 PID: 128 Comm: udevd Not tainted 4.20.0-rc5-next-20181206 #44
-[    7.549603] Hardware name: NVIDIA Tegra SoC (Flattened Device Tree)
-[    7.555859] PC is at drm_plane_register_all+0x18/0x50
-[    7.560899] LR is at drm_modeset_register_all+0xc/0x6c
+But I have a real argument for dropping exit_handler: in this new age
+of Spectre, the indirect call is a retpoline, and it's therefore quite
+slow.  So I'm not saying NAK, but I do think it's unnecessary.
 
-
-Full log:
-
-  http://lava.baylibre.com:10080/scheduler/job/68628#L816
-
-
-The bisection was run from next-20181206 as this is where the
-issue was discovered on kernelci.org but the patch it found has
-already been merged in mainline.
-
-Hope this helps!
-
-Guillaume
-
-
------------8<------------------------8<-----------
-
-
-* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-* This automated bisection report was sent to you on the basis  *
-* that you may be involved with the breaking commit it has      *
-* found.  No manual investigation has been done to verify it,   *
-* and the root cause of the problem may be somewhere else.      *
-* Hope this helps!                                              *
-* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-
-Bisection result for next/master (next-20181206) on jetson-tk1
-
-  Good:       84df9525b0c2 Linux 4.19
-  Bad:        4c92b7b3080d Add linux-next specific files for 20181206
-  Found:      cfea88a4d866 drm/nouveau: Start using new drm_dev initialization helpers
-
-Checks:
-  revert:     PASS
-  verify:     PASS
-
-Parameters:
-  Tree:       next
-  URL:        None
-  Branch:     master
-  Target:     jetson-tk1
-  Lab:        lab-baylibre
-  Config:     multi_v7_defconfig
-  Plan:       dmesg-nouveau
-
-Breaking commit found:
-
--------------------------------------------------------------------------------
-commit cfea88a4d86632f28cf80be97079f131645b7869
-Author: Lyude Paul <lyude@redhat.com>
-Date:   Wed Aug 22 21:40:07 2018 -0400
-
-    drm/nouveau: Start using new drm_dev initialization helpers
-    
-    Per the documentation in drm_get_pci_dev(), this function is deprecated
-    and shouldn't be used anymore. As it turns out, we're going to need to
-    stop using drm_get_pci_dev() anyway in order to allow us to turn off the
-    card before full system shutdowns, otherwise we'll hit race conditions
-    with userspace while trying to tear down the card on shutdown.
-    
-    So, start using drm_dev_get() and drm_dev_put(), and just turn our
-    load/unload callbacks into open coded init/fini() functions.
-    
-    Signed-off-by: Lyude Paul <lyude@redhat.com>
-    Cc: Karol Herbst <kherbst@redhat.com>
-    Signed-off-by: Ben Skeggs <bskeggs@redhat.com>
-
-diff --git a/drivers/gpu/drm/nouveau/nouveau_drm.c b/drivers/gpu/drm/nouveau/nouveau_drm.c
-index 905956809d21..2b2baf6e0e0d 100644
---- a/drivers/gpu/drm/nouveau/nouveau_drm.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_drm.c
-@@ -458,75 +458,8 @@ nouveau_accel_init(struct nouveau_drm *drm)
- 	nouveau_bo_move_init(drm);
- }
- 
--static int nouveau_drm_probe(struct pci_dev *pdev,
--			     const struct pci_device_id *pent)
--{
--	struct nvkm_device *device;
--	struct apertures_struct *aper;
--	bool boot = false;
--	int ret;
--
--	if (vga_switcheroo_client_probe_defer(pdev))
--		return -EPROBE_DEFER;
--
--	/* We need to check that the chipset is supported before booting
--	 * fbdev off the hardware, as there's no way to put it back.
--	 */
--	ret = nvkm_device_pci_new(pdev, NULL, "error", true, false, 0, &device);
--	if (ret)
--		return ret;
--
--	nvkm_device_del(&device);
--
--	/* Remove conflicting drivers (vesafb, efifb etc). */
--	aper = alloc_apertures(3);
--	if (!aper)
--		return -ENOMEM;
--
--	aper->ranges[0].base = pci_resource_start(pdev, 1);
--	aper->ranges[0].size = pci_resource_len(pdev, 1);
--	aper->count = 1;
--
--	if (pci_resource_len(pdev, 2)) {
--		aper->ranges[aper->count].base = pci_resource_start(pdev, 2);
--		aper->ranges[aper->count].size = pci_resource_len(pdev, 2);
--		aper->count++;
--	}
--
--	if (pci_resource_len(pdev, 3)) {
--		aper->ranges[aper->count].base = pci_resource_start(pdev, 3);
--		aper->ranges[aper->count].size = pci_resource_len(pdev, 3);
--		aper->count++;
--	}
--
--#ifdef CONFIG_X86
--	boot = pdev->resource[PCI_ROM_RESOURCE].flags & IORESOURCE_ROM_SHADOW;
--#endif
--	if (nouveau_modeset != 2)
--		drm_fb_helper_remove_conflicting_framebuffers(aper, "nouveaufb", boot);
--	kfree(aper);
--
--	ret = nvkm_device_pci_new(pdev, nouveau_config, nouveau_debug,
--				  true, true, ~0ULL, &device);
--	if (ret)
--		return ret;
--
--	pci_set_master(pdev);
--
--	if (nouveau_atomic)
--		driver_pci.driver_features |= DRIVER_ATOMIC;
--
--	ret = drm_get_pci_dev(pdev, pent, &driver_pci);
--	if (ret) {
--		nvkm_device_del(&device);
--		return ret;
--	}
--
--	return 0;
--}
--
- static int
--nouveau_drm_load(struct drm_device *dev, unsigned long flags)
-+nouveau_drm_device_init(struct drm_device *dev)
- {
- 	struct nouveau_drm *drm;
- 	int ret;
-@@ -613,7 +546,7 @@ nouveau_drm_load(struct drm_device *dev, unsigned long flags)
- }
- 
- static void
--nouveau_drm_unload(struct drm_device *dev)
-+nouveau_drm_device_fini(struct drm_device *dev)
- {
- 	struct nouveau_drm *drm = nouveau_drm(dev);
- 
-@@ -642,18 +575,116 @@ nouveau_drm_unload(struct drm_device *dev)
- 	kfree(drm);
- }
- 
-+static int nouveau_drm_probe(struct pci_dev *pdev,
-+			     const struct pci_device_id *pent)
-+{
-+	struct nvkm_device *device;
-+	struct drm_device *drm_dev;
-+	struct apertures_struct *aper;
-+	bool boot = false;
-+	int ret;
-+
-+	if (vga_switcheroo_client_probe_defer(pdev))
-+		return -EPROBE_DEFER;
-+
-+	/* We need to check that the chipset is supported before booting
-+	 * fbdev off the hardware, as there's no way to put it back.
-+	 */
-+	ret = nvkm_device_pci_new(pdev, NULL, "error", true, false, 0, &device);
-+	if (ret)
-+		return ret;
-+
-+	nvkm_device_del(&device);
-+
-+	/* Remove conflicting drivers (vesafb, efifb etc). */
-+	aper = alloc_apertures(3);
-+	if (!aper)
-+		return -ENOMEM;
-+
-+	aper->ranges[0].base = pci_resource_start(pdev, 1);
-+	aper->ranges[0].size = pci_resource_len(pdev, 1);
-+	aper->count = 1;
-+
-+	if (pci_resource_len(pdev, 2)) {
-+		aper->ranges[aper->count].base = pci_resource_start(pdev, 2);
-+		aper->ranges[aper->count].size = pci_resource_len(pdev, 2);
-+		aper->count++;
-+	}
-+
-+	if (pci_resource_len(pdev, 3)) {
-+		aper->ranges[aper->count].base = pci_resource_start(pdev, 3);
-+		aper->ranges[aper->count].size = pci_resource_len(pdev, 3);
-+		aper->count++;
-+	}
-+
-+#ifdef CONFIG_X86
-+	boot = pdev->resource[PCI_ROM_RESOURCE].flags & IORESOURCE_ROM_SHADOW;
-+#endif
-+	if (nouveau_modeset != 2)
-+		drm_fb_helper_remove_conflicting_framebuffers(aper, "nouveaufb", boot);
-+	kfree(aper);
-+
-+	ret = nvkm_device_pci_new(pdev, nouveau_config, nouveau_debug,
-+				  true, true, ~0ULL, &device);
-+	if (ret)
-+		return ret;
-+
-+	pci_set_master(pdev);
-+
-+	if (nouveau_atomic)
-+		driver_pci.driver_features |= DRIVER_ATOMIC;
-+
-+	drm_dev = drm_dev_alloc(&driver_pci, &pdev->dev);
-+	if (IS_ERR(drm_dev)) {
-+		ret = PTR_ERR(drm_dev);
-+		goto fail_nvkm;
-+	}
-+
-+	ret = pci_enable_device(pdev);
-+	if (ret)
-+		goto fail_drm;
-+
-+	drm_dev->pdev = pdev;
-+	pci_set_drvdata(pdev, drm_dev);
-+
-+	ret = nouveau_drm_device_init(drm_dev);
-+	if (ret)
-+		goto fail_pci;
-+
-+	ret = drm_dev_register(drm_dev, pent->driver_data);
-+	if (ret)
-+		goto fail_drm_dev_init;
-+
-+	return 0;
-+
-+fail_drm_dev_init:
-+	nouveau_drm_device_fini(drm_dev);
-+fail_pci:
-+	pci_disable_device(pdev);
-+fail_drm:
-+	drm_dev_put(drm_dev);
-+fail_nvkm:
-+	nvkm_device_del(&device);
-+	return ret;
-+}
-+
- void
- nouveau_drm_device_remove(struct drm_device *dev)
- {
-+	struct pci_dev *pdev = dev->pdev;
- 	struct nouveau_drm *drm = nouveau_drm(dev);
- 	struct nvkm_client *client;
- 	struct nvkm_device *device;
- 
-+	drm_dev_unregister(dev);
-+
- 	dev->irq_enabled = false;
- 	client = nvxx_client(&drm->client.base);
- 	device = nvkm_device_find(client->device);
--	drm_put_dev(dev);
- 
-+	nouveau_drm_device_fini(dev);
-+	pci_disable_device(pdev);
-+	drm_dev_put(dev);
- 	nvkm_device_del(&device);
- }
- 
-@@ -1020,8 +1051,6 @@ driver_stub = {
- 		DRIVER_GEM | DRIVER_MODESET | DRIVER_PRIME | DRIVER_RENDER |
- 		DRIVER_KMS_LEGACY_CONTEXT,
- 
--	.load = nouveau_drm_load,
--	.unload = nouveau_drm_unload,
- 	.open = nouveau_drm_open,
- 	.postclose = nouveau_drm_postclose,
- 	.lastclose = nouveau_vga_lastclose,
--------------------------------------------------------------------------------
-
-
-Git bisection log:
-
--------------------------------------------------------------------------------
-git bisect start
-# good: [84df9525b0c27f3ebc2ebb1864fa62a97fdedb7d] Linux 4.19
-git bisect good 84df9525b0c27f3ebc2ebb1864fa62a97fdedb7d
-# bad: [4c92b7b3080d8281941ae81c51cd62bb49bdc3d4] Add linux-next specific files for 20181206
-git bisect bad 4c92b7b3080d8281941ae81c51cd62bb49bdc3d4
-# bad: [c38239b4be1ac7e4bcf5bbd971353bae51525b8f] Merge branch 'parisc-4.20-2' of git://git.kernel.org/pub/scm/linux/kernel/git/deller/parisc-linux
-git bisect bad c38239b4be1ac7e4bcf5bbd971353bae51525b8f
-# good: [d49f8a52b15bf35db778035340d8a673149f9f93] Merge tag 'scsi-misc' of git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi
-git bisect good d49f8a52b15bf35db778035340d8a673149f9f93
-# good: [ac747c0715f29c2be3848b719a1b7e65b07f7b21] Merge tag 'kbuild-v4.20' of git://git.kernel.org/pub/scm/linux/kernel/git/masahiroy/linux-kbuild
-git bisect good ac747c0715f29c2be3848b719a1b7e65b07f7b21
-# bad: [46972c03ab667dc298cad0c9db517fb9b1521b5f] Merge tag 'drm-misc-next-fixes-2018-10-10' of git://anongit.freedesktop.org/drm/drm-misc into drm-next
-git bisect bad 46972c03ab667dc298cad0c9db517fb9b1521b5f
-# good: [6ac99a328ee16d3f8cc253f1df62623cee3e9ea5] drm/exynos: mixer: Make plane alpha configurable
-git bisect good 6ac99a328ee16d3f8cc253f1df62623cee3e9ea5
-# good: [0957dc7097a3f462f6cedb45cf9b9785cc29e5bb] drm/amdgpu: revert "stop using gart_start as offset for the GTT domain"
-git bisect good 0957dc7097a3f462f6cedb45cf9b9785cc29e5bb
-# good: [2de0b0a158bf423208c3898522c8fa1c1078df48] Merge tag 'drm/tegra/for-4.20-rc1' of git://anongit.freedesktop.org/tegra/linux into drm-next
-git bisect good 2de0b0a158bf423208c3898522c8fa1c1078df48
-# good: [04b96b63c5640a305e30611def7a9c5fcd7a72cf] drm/msm/dpu: Remove unneeded checks in dpu_crtc.c
-git bisect good 04b96b63c5640a305e30611def7a9c5fcd7a72cf
-# good: [6952e3a1dffcb931cf8625aa01642b9afac2af61] Merge branch 'for-upstream/mali-dp' of git://linux-arm.org/linux-ld into drm-next
-git bisect good 6952e3a1dffcb931cf8625aa01642b9afac2af61
-# good: [62e681f7dcab746412dce22d4b75b32c5ea38cdb] Merge tag 'drm-msm-fixes-2018-10-09' of git://people.freedesktop.org/~robclark/linux into drm-next
-git bisect good 62e681f7dcab746412dce22d4b75b32c5ea38cdb
-# bad: [7e6191d4360a2df6cf2a2613dcb79680cb943df8] Merge branch 'linux-4.20' of git://github.com/skeggsb/linux into drm-next
-git bisect bad 7e6191d4360a2df6cf2a2613dcb79680cb943df8
-# good: [c4cee69a4497d9c6ad8868d63568b30e50cac9e9] drm/nouveau: Fix potential memory leak in nouveau_drm_load()
-git bisect good c4cee69a4497d9c6ad8868d63568b30e50cac9e9
-# bad: [a971558c298755d2c07bc5508c65d689471763c8] drm/nouveau/disp: keep track of high-speed state, program into clock
-git bisect bad a971558c298755d2c07bc5508c65d689471763c8
-# bad: [4126b99e744b7a29746e201e2be6644d2edf3c56] drm/nouveau/disp: add a way to configure scrambling/tmds for hdmi 2.0
-git bisect bad 4126b99e744b7a29746e201e2be6644d2edf3c56
-# bad: [cfea88a4d86632f28cf80be97079f131645b7869] drm/nouveau: Start using new drm_dev initialization helpers
-git bisect bad cfea88a4d86632f28cf80be97079f131645b7869
-# first bad commit: [cfea88a4d86632f28cf80be97079f131645b7869] drm/nouveau: Start using new drm_dev initialization helpers
--------------------------------------------------------------------------------
+I don't suppose you've spent a bunch of time programming in the
+continuation-passing style? :)
