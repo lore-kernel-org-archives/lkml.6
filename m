@@ -2,30 +2,30 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B26DC07E85
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 13:49:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39FA6C07E85
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 13:49:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EFD7C20868
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 13:49:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EFD7C20868
+	by mail.kernel.org (Postfix) with ESMTP id 08E8E20868
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 13:49:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 08E8E20868
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726177AbeLGNtd (ORCPT
+        id S1726189AbeLGNtp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 08:49:33 -0500
-Received: from mout.kundenserver.de ([212.227.126.134]:35439 "EHLO
+        Fri, 7 Dec 2018 08:49:45 -0500
+Received: from mout.kundenserver.de ([212.227.126.134]:46225 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726073AbeLGNt1 (ORCPT
+        with ESMTP id S1726059AbeLGNt1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 7 Dec 2018 08:49:27 -0500
 Received: from wuerfel.lan ([109.192.41.194]) by mrelayeu.kundenserver.de
  (mreue011 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1M8yU2-1gaCS41JaQ-0068my; Fri, 07 Dec 2018 14:48:58 +0100
+ 1MJmX3-1gkrXY12oj-00K5H1; Fri, 07 Dec 2018 14:49:01 +0100
 From:   Arnd Bergmann <arnd@arndb.de>
 To:     y2038@lists.linaro.org
 Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
@@ -37,82 +37,91 @@ Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         Rich Felker <dalias@libc.org>,
         Yoshinori Sato <ysato@users.sourceforge.jp>,
         Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH 0/8] timekeeping: cleanups
-Date:   Fri,  7 Dec 2018 14:48:16 +0100
-Message-Id: <20181207134824.300024-1-arnd@arndb.de>
+Subject: [PATCH 7/8] vfs: replace current_kernel_time64 with ktime equivalent
+Date:   Fri,  7 Dec 2018 14:48:23 +0100
+Message-Id: <20181207134824.300024-8-arnd@arndb.de>
 X-Mailer: git-send-email 2.18.0
-X-Provags-ID: V03:K1:1UrHuyDKSqP4sWxNYVU9KewlEriNQJ8CQ6EaHowT8usc2ZXwyx8
- m8wZGZVXHnxHILBCs9+Yt9xqedUV8UUnLLCzOi4yzQ+TJYcgdac2o55+96m85LId00J6ItK
- sonLl7YqrPTNoK9oun5Ju56DEWJOTrjVYMVzn5ud8JVxuySp2dxpwSX/Ynk87oFmvStCgdP
- vffO9hImFBHwwiMxrH9CA==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:0a9NYqyMbfU=:WDXVONAIkLfEsMNJrFC+t1
- 53XHioEpUHaSDEmc9cujf4OPwIZZDYSsUk4/e2i/G6ecLLgYTpnQ0sxA4VxQDPQMlACFU6Y/f
- vDOXvv374dbuHgMyCalnN1B3ZDiGDmv2iH674IbalzLxqhL5o1Oncb3zhh0i0Itxg3icmN+H/
- 5PGW/CXMZXjcqrv1w+HTjFb/o81dj8DQC4Bd8UILf3Kg4qy28geGE0C3pJKVEW2Xxcq+Hs80O
- yFQbNNtgmdgz9hpIQgLa6GL4UOjCxltjNJ4BwVMfBLWvFsVbRJzANWFlPbl9WexJHMi0gC7D1
- Kc0RE+sO39AmjRDGnd+97TaBGUws/eGGbiLO4Y4oT4SiP91SjCWC8MyQVuLoDkXCblbzWFkMP
- +gA/TagsuSQUCx+HTaF5ZdEzlf5ozG8osBUKMof27nA1Pm6ZLjSyfSK66Iw7tdJVP7ADecWUi
- X+sTznOh7m7rEZwW0aCwsDSQTcuGfS/N5sqafmCqSTBSf4tnTfcNvBlnk4CNAl0mR1+Xst377
- E1tPIgG9i3ug+WBAwWfsqsMMeMVrh695DQXa1hKoz5tN4Ptb0KuS8jmxfSJsuL/PBzqCik7M6
- tk3Lj1kzX/A7wRSFh4L30m6fDG14eaFWKZQ1IatE0ciSTlEbELtyYikYUUAmhlxd36Fk6fZ7o
- CFqUmtlTaPkbtZ0P21hA1SQTIshVlgUyptsneg7OkyUTgntyXT7o8rPsYsZC5819BMWmes9s+
- TzYU6QpD11CXuhn7xUmYP3gXs4QBKb1wQd7ccw==
+In-Reply-To: <20181207134824.300024-1-arnd@arndb.de>
+References: <20181207134824.300024-1-arnd@arndb.de>
+X-Provags-ID: V03:K1:/PWWtMTAj7kH3IX8FIHaCh0M4ZVgezPmBZs+fNsTAGU/xKCysp8
+ dL1kT65HFb01mnt9LbC25fw4I9taGCHDZ7iyww/h0B54yAz+S3XluCxtTq7JwLRpd3eP/Vk
+ dLnCg79x8l7iPHfhhKj2XG91qvOvVX6MQ/Utqc/01ovw3KIOCZDZFDJCMqelq3kCPbHJSby
+ UObdskdXz+J5ViYiPwYvA==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:TN0H1/fwOtw=:By9RfTk590MZiC4vntyyQ5
+ fbOdGN36gwZf/zI0N7orC4+OfgmATkMGOmkFkS2OJLu7O5t7wFxEOYFlmxvffT+P6d9Y0oZNC
+ NF+FfpOD9EsKrDfzRcasCYnHNWdt8dcOjGkNRfoNSuQVSpeAMaHpwPkY/RjMEFTu5PNzwRRgv
+ ZoW1z+8yzUulzNHAn8jBNKY12QpJW/ezW2SrQujLhOdi6WpdCilcYRRFwJf+3wxoBHxcY7VrN
+ dIu/bxnr2Mi+fPxTuIskLui2vx5kInvB7HOdRl2jvJiXKHtHrRUGnZmr9s1AJj4rJXzsya1FL
+ jl3gX8KIBgd814Ioctnf9B954YWyNKFtVNoYdGGBQLAqJ2cjadjEeIbozCci/O8Fc9kzM+dxl
+ Ec3BJq5dwFl8WfmxNuw2szW8x1/y4CQIYR2j0DPPdftEi9tEc8F5A9jaP13c9BFbqZX0nPO04
+ i2wLI0E9bLyeq3dg2s6+Aj3ocdxrcoovfe3rXmEo7GqYbhTxH1zQ1fVJZzq7IZW0M+MOsRU3N
+ VYbSVh9jCX8OI5gOVOsQvCKSQ2FbZ+LtYSLM03oPtTub0PsGsAlAv6unS5WrvCOvAgr+PbfFe
+ G4XN0tVvFhHtxSXmNPph+5fLUjAT6GMWp5y3mCZwHwVLZmiqTUbw+ftaGm1wlN722YtC/Nt7D
+ VWjzjXIb5B0oWyhUvdIEwM2vfM6s57OxTjKjXKrPoZHz4fx6As958V2BHmggfrb90a97d7AyS
+ SucssamhWShBmaN6UH++D5cPVBdLF3Wfe8cKtw==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Here are some older cleanups that for one reason or another never made
-it into the mainline kernel so far:
+current_time is the last remaining caller of current_kernel_time64(),
+which is a wrapper around ktime_get_coarse_real_ts64().  This calls the
+latter directly for consistency with the rest of the kernel that is moving
+to the ktime_get_ family of time accessors, as now documented in
+Documentation/core-api/timekeeping.rst.
 
-- the arch/sh series was posted a couple of times by both
-  Baolin and me, with no reply from the sh maintainers
+An open questions is whether we may want to actually call the more
+accurate ktime_get_real_ts64() for file systems that save high-resolution
+timestamps in their on-disk format.  This would add a small overhead to
+each update of the inode stamps but lead to inode timestamps to actually
+have a usable resolution better than one jiffy (1 to 10 milliseconds
+normally).  Experiments on a variety of hardware platforms show a typical
+time of around 100 CPU cycles to read the cycle counter and calculate the
+accurate time from that.  On old platforms without a cycle counter, this
+can be signiciantly higher, up to several microseconds to access a
+hardware clock, but those have become very rare by now.
 
-- the vfs patch initially got some opposition when the new
-  interfaces were not documented right, but that is done now.
+I traced the original addition of the current_kernel_time() call to set
+the nanosecond fields back to linux-2.5.48, where Andi Kleen added a patch
+with subject "nanosecond stat timefields".  Andi explains that the
+motivation was to introduce as little overhead as possible back then.  At
+this time, reading the clock hardware was also more expensive when most
+architectures did not have a cycle counter.
 
-- The remaining three patches simply remove functions that
-  have been obsoleted a while ago and have lost their last
-  callers now.
+One side effect of having more accurate inode timestamp would be having to
+write out the inode every time that mtime/ctime/atime get touched on most
+systems, whereas many file systems today only write it when the timestamps
+have changed, i.e.  at most once per jiffy unless something else changes
+as well.  That change would certainly be noticed in some workloads, which
+is enough reason to not do it without a good reason, regardless of the
+cost of reading the time.
 
-I'm adding these into my y2038 tree now, so they make it into
-linux-next, planning to send a pull request to Thomas for the
-tip tree afterwards.
+One thing we could still consider however would be to round the timestamps
+from current_time() to multiples of NSEC_PER_JIFFY, e.g.  full
+milliseconds rather than having six or seven meaningless but confusing
+digits at the end of the timestamp.
 
-       Arnd
+Link: http://lkml.kernel.org/r/20180726130820.4174359-1-arnd@arndb.de
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ fs/inode.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Arnd Bergmann (8):
-  sh: dreamcast: rtc: push down rtc class ops into driver
-  sh: sh03: rtc: push down rtc class ops into driver
-  sh: remove unused rtc_sh_get/set_time infrastructure
-  sh: remove board_time_init() callback
-  timekeeping: remove unused {read,update}_persistent_clock
-  timekeeping: remove timespec_add/timespec_del
-  vfs: replace current_kernel_time64 with ktime equivalent
-  timekeeping: remove obsolete time accessors
-
- Documentation/sh/new-machine.txt              |  8 --
- arch/sh/boards/mach-dreamcast/Makefile        |  4 +-
- arch/sh/boards/mach-dreamcast/rtc.c           | 39 +++++++---
- arch/sh/boards/mach-dreamcast/setup.c         |  1 -
- arch/sh/boards/mach-sh03/Makefile             |  3 +-
- arch/sh/boards/mach-sh03/rtc.c                | 51 ++++++++-----
- arch/sh/boards/mach-sh03/setup.c              |  9 ---
- arch/sh/boards/of-generic.c                   |  8 --
- arch/sh/configs/dreamcast_defconfig           |  2 +
- arch/sh/configs/sh03_defconfig                |  2 +
- arch/sh/include/asm/rtc.h                     |  3 -
- arch/sh/include/mach-dreamcast/mach/sysasic.h |  1 -
- arch/sh/kernel/time.c                         | 74 +------------------
- fs/inode.c                                    |  4 +-
- include/linux/time32.h                        | 25 -------
- include/linux/timekeeping.h                   | 14 ----
- include/linux/timekeeping32.h                 | 15 ----
- kernel/time/ntp.c                             | 10 +--
- kernel/time/time.c                            | 36 ---------
- kernel/time/timekeeping.c                     | 12 +--
- 20 files changed, 73 insertions(+), 248 deletions(-)
-
+diff --git a/fs/inode.c b/fs/inode.c
+index 9e198f00b64c..73432e64f874 100644
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@ -2146,7 +2146,9 @@ EXPORT_SYMBOL(timespec64_trunc);
+  */
+ struct timespec64 current_time(struct inode *inode)
+ {
+-	struct timespec64 now = current_kernel_time64();
++	struct timespec64 now;
++
++	ktime_get_coarse_real_ts64(&now);
+ 
+ 	if (unlikely(!inode->i_sb)) {
+ 		WARN(1, "current_time() called with uninitialized super_block in the inode");
 -- 
 2.18.0
 
