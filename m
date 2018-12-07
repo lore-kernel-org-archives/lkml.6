@@ -2,104 +2,84 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,T_DKIMWL_WL_HIGH
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63F82C07E85
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 08:45:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C547DC65BAF
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 08:45:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2EA2E20838
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 08:45:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2EA2E20838
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 8C38520838
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 08:45:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544172331;
+	bh=WoS5iVPFqPBkM/aI8SGjRvloj0ihgY/PbNSTH9+PXm0=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=SuTPulq7/gBR1PeVmOe7cz8lvwQHkhEeQGwoX341EjtYlbMWWhYWiYnyoO01ubsGH
+	 rT2nPO2ys2LVtoXgyh8wFzogB86XpwkCKlyH0Hsk8xo/x4aQ7qwAvUSFPnSlzWFlN1
+	 nPp1FZH6xHfcZ80SUrKMunFviVHzC1dG5kCmuZs4=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C38520838
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726022AbeLGIpB (ORCPT
+        id S1726039AbeLGIpa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 03:45:01 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:39024 "EHLO mx1.redhat.com"
+        Fri, 7 Dec 2018 03:45:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34130 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725967AbeLGIpA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 03:45:00 -0500
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1725966AbeLGIpa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Dec 2018 03:45:30 -0500
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 9997E30A315D;
-        Fri,  7 Dec 2018 08:45:00 +0000 (UTC)
-Received: from krava (unknown [10.43.17.30])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 955495D9C6;
-        Fri,  7 Dec 2018 08:44:54 +0000 (UTC)
-Date:   Fri, 7 Dec 2018 09:44:53 +0100
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Luis Claudio R. Goncalves" <lclaudio@uudg.org>, ldv@altlinux.org,
-        esyr@redhat.com, Frederic Weisbecker <fweisbec@gmail.com>
-Subject: Re: [PATCH 1/8] perf: Allow to block process in syscall tracepoints
-Message-ID: <20181207084453.GA1727@krava>
-References: <20181205160509.1168-1-jolsa@kernel.org>
- <20181205160509.1168-2-jolsa@kernel.org>
- <20181206081028.GE4234@hirez.programming.kicks-ass.net>
- <20181206083400.GA13675@hirez.programming.kicks-ass.net>
- <20181206131946.2c47f556@vmware.local.home>
+        by mail.kernel.org (Postfix) with ESMTPSA id 2EC7320989;
+        Fri,  7 Dec 2018 08:45:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544172329;
+        bh=WoS5iVPFqPBkM/aI8SGjRvloj0ihgY/PbNSTH9+PXm0=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=rp+Lu2V3sboswK+BwqU+YBw8SVL3RwRL3S9ngdMUpKsq4a1HUdmfU5gimUsLkCOjD
+         Hki9WR5Lss5dqEKT83WX+VrWCUiQYg5MhE8mBic03z2L7hYZflMJb3sqT9cw4OixsD
+         RxgSbPUB4BWRguarTq/TsE3dyiTMHZPCGdGRH4pA=
+Received: by mail-lj1-f172.google.com with SMTP id k15-v6so2838223ljc.8;
+        Fri, 07 Dec 2018 00:45:29 -0800 (PST)
+X-Gm-Message-State: AA+aEWagpe2N+qBtFKJnZDjoV+Nb97bYuMF3p5GmMKftlHlpXbyUlsCZ
+        Iz6+cA339X58IqC315bJSobjGmkdNz4Hkq/nn7w=
+X-Google-Smtp-Source: AFSGD/W+6F1JlT6vfn6BhSG9L3x2X7KKkKPY6dxVZZ3/5MBXZhgUkMJ0iIdgv2iH4UM0KgXqE9Ax50iaJubsocaz+NQ=
+X-Received: by 2002:a2e:9cd2:: with SMTP id g18-v6mr829636ljj.161.1544172327332;
+ Fri, 07 Dec 2018 00:45:27 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181206131946.2c47f556@vmware.local.home>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Fri, 07 Dec 2018 08:45:00 +0000 (UTC)
+References: <20181206215858.3880-1-sboyd@kernel.org> <20181206215858.3880-8-sboyd@kernel.org>
+In-Reply-To: <20181206215858.3880-8-sboyd@kernel.org>
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+Date:   Fri, 7 Dec 2018 09:45:15 +0100
+X-Gmail-Original-Message-ID: <CAJKOXPcmgvgu8F32ETtVBfB47H0UJ4fM3=6S0t=XYQF4QohJWA@mail.gmail.com>
+Message-ID: <CAJKOXPcmgvgu8F32ETtVBfB47H0UJ4fM3=6S0t=XYQF4QohJWA@mail.gmail.com>
+Subject: Re: [PATCH 7/8] clk: samsung: s3c2410: Remove usage of CLK_IS_BASIC
+To:     sboyd@kernel.org
+Cc:     mturquette@baylibre.com, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, kgene@kernel.org, s.nawrocki@samsung.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 06, 2018 at 01:19:46PM -0500, Steven Rostedt wrote:
-> On Thu, 6 Dec 2018 09:34:00 +0100
-> Peter Zijlstra <peterz@infradead.org> wrote:
-> 
-> > > 
-> > > I don't understand this.. why are we using schedule_timeout() and all
-> > > that?  
-> > 
-> > Urgh.. in fact, the more I look at this the more I hate it.
-> > 
-> > We want to block in __perf_output_begin(), but we cannot because both
-> > tracepoints and perf will have preemptability disabled down there.
-> > 
-> > So what we do is fail the event, fake the lost count and go all the way
-> > up that callstack, detect the failure and then poll-wait and retry.
-> > 
-> > And only do this for a few special events...  *yuck*
-> 
-> Since this is a special case, we should add a new option to the perf
-> system call that, 1 states that it wants the traced process to block
-> (and must have PTRACE permission to do so) and 2, after it reads from
-> the buffer, it needs to check a bit that says "this process is blocked,
-> please wake it up" and then do another perf call to kick the process to
-> continue.
+On Thu, 6 Dec 2018 at 22:59, Stephen Boyd <sboyd@kernel.org> wrote:
+>
+> This flag doesn't look to be used by any code, just set in the clk init
+> structure and then never tested again. Remove it from this drivers as it
+> doesn't provide any benefit.
+>
+> Cc: Kukjin Kim <kgene@kernel.org>
+> Cc: Krzysztof Kozlowski <krzk@kernel.org>
+> Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+> ---
+>  drivers/clk/samsung/clk-s3c2410-dclk.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-so instead of polling the traced process would properly wait for tracer
-to kick him again after it reads/frees the buffer
+Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-I guess we could use the control mmap page (struct perf_event_mmap_page)
-to communicate the 'we are block-ed' message to the tracer and have new
-ioctl to wake the waiting process
-
-jirka
-
-> 
-> I really dislike the polling too. But because this is not a default
-> case, and is a new feature, we can add more infrastructure to make it
-> work properly, instead of trying to hack the current method into
-> something that does something poorly.
-> 
-> -- Steve
+Best regards,
+Krzysztof
