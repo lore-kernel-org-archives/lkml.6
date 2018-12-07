@@ -2,157 +2,133 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44082C07E85
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 20:26:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47238C07E85
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 20:27:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 072D82081C
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 20:26:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 053A42081C
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 20:27:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Q+G7N6R9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 072D82081C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZqQCq+kQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 053A42081C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726178AbeLGU02 (ORCPT
+        id S1726186AbeLGU1D (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 15:26:28 -0500
-Received: from mail-it1-f193.google.com ([209.85.166.193]:39808 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726053AbeLGU02 (ORCPT
+        Fri, 7 Dec 2018 15:27:03 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:40054 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726041AbeLGU1D (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 15:26:28 -0500
-Received: by mail-it1-f193.google.com with SMTP id a6so9008782itl.4
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Dec 2018 12:26:27 -0800 (PST)
+        Fri, 7 Dec 2018 15:27:03 -0500
+Received: by mail-lj1-f195.google.com with SMTP id n18-v6so4624463lji.7
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Dec 2018 12:27:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=KLYwNXnzoVvepzSuxQ5p4veFSZuSN5QPAisGoFQq+eo=;
-        b=Q+G7N6R9cNmw2rFHSHCBK/LyjNfFNjK6oJlQ9JyHKZBsMx0HxymipERlO49GeMH+20
-         KhxyCMfcVstVMdHpB0rtXG0FadSe+4UM6hpo8dZy0naiJ49nd9djvcPExigmA9q6YjPE
-         X9GOzFNFMdixUDbASur84eKVfqpCpgVQbFM6M=
+        bh=f1gp9b66p+D5If3HDTrYunFFk8/ZJcoOdKYP4Xl/4es=;
+        b=ZqQCq+kQXmi7g0s41wlzMA6mevBI36eUjdQcJ1j4qHF1C+8VY38vwn4L2wXd4sE4gO
+         YueKqjACGRacaP9gWD/BK8xFJGApCjvofjC57OfvEqNQQd73PPg4etrZVthsV72UDhxa
+         Csh0ed5de6f1ht4uaCS4TGVU1UiQ0OtQgj17XczohbuhP6KPgY+Pldub5h2B8vHtuM2k
+         CbF9fQeZe+aDh3kRTXp+u12xEcTv9QgHTCIonfv4U2lZ4v6yGlgSvXZmCen6wUtueoUk
+         L9/GGhE6EUaA+V6fdghsP91n9SkogwuKy/s9xGJwvMBDBWH+Kg31K8HXfZsZNmRdffE/
+         Adpg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=KLYwNXnzoVvepzSuxQ5p4veFSZuSN5QPAisGoFQq+eo=;
-        b=VxiLC2pMthIDmporrV+yxODTgfW0W55YK2znHMdVtopOT9FkhICR8Fsukjh/Nnc5Hz
-         xgnItmgElsM8J4L8xADWjdvoDZoOrjsl9/jGU8BiRV732Zb6doUh62a4aKCx0idiPBXk
-         u+53fUwtAhnXAY+dY63+uvmnZ5ayes1kkeNySzjq2mLDl6TZCLDx9+uY0Ic9dfKeSTgk
-         NS8D/9PttxKEQio/bnpS67v29WWV4JTo1QNOt4qmkaWkFM+rMWs546DVIuEMHlz9PI3q
-         vXsoxqeyzo1D4rv5a09q3QlB8Nnliq+E/AsjReZZpqNQv7IF6VkiF25WRDwS79Iuswd3
-         uHLQ==
-X-Gm-Message-State: AA+aEWbPaLNHgTZ2Sdo2dteiXiACmJeQ2VT+HGpXYkzf1Kr/CMz2A0Oh
-        xzh1UApTgfFo8efFoadwJ7f6sX+KCrKzvEfJZKDtmA==
-X-Google-Smtp-Source: AFSGD/WzF2x0t8jZwsZm4obvUhsaa6Fi7Yqlyol6bPbkz5Lun5YOwVmvPE6dYEWnDi+4QFfBf7aB2CPX1N+FCwV1vMI=
-X-Received: by 2002:a05:660c:4b:: with SMTP id p11mr3437505itk.71.1544214387289;
- Fri, 07 Dec 2018 12:26:27 -0800 (PST)
+        bh=f1gp9b66p+D5If3HDTrYunFFk8/ZJcoOdKYP4Xl/4es=;
+        b=lzK2wh2esadSslLsxpweTxgsq0S1Zi4OZeabI4kHAop0UgzRgJUzihRRk5WNvo9nIp
+         rlI27KiQHIkDyHqbf3kMak/UbGjEEdCHzIaOC7Vj5dzwgcVOJ5VHYPQNQExbSu6NqBZk
+         fWzQ8jhVZuz4JFn6vOigSfZZLewOIzS2siFmv8dNF71a767iZ/PHCTs4WB2seHtwo3E2
+         pwajhp3Z83KdvDaWYEFsLRpbju9QwfyCtp/IbRCILa5D61gBZ83SjgqBHgzFKIgij1on
+         usqD06XgXlpClsGYEVWMbnKh5RsozS0YrIQiJqpt5MOz1kTSXmGlkHMNZA0N8S4nVW50
+         5U3w==
+X-Gm-Message-State: AA+aEWbSuNa3zgYRtf3n4Y9FgJBhkt2Cn6yAXud8/3I0wP4TO5xHNYWX
+        zSh3I4qe56F+8XHzyAzu/acWhjPDxdnRvssKlYw=
+X-Google-Smtp-Source: AFSGD/WiWZ1rxWyUbQM5X7LEj+GUG729CL7ZIKd42DpnOLoWaRi8edYXMTAwfrSuYWaLtpERODE3nz53L066pxDF6AI=
+X-Received: by 2002:a2e:9c52:: with SMTP id t18-v6mr1847940ljj.149.1544214420838;
+ Fri, 07 Dec 2018 12:27:00 -0800 (PST)
 MIME-Version: 1.0
-References: <20181207173309.82A0E6D165@po14163vm.idsi0.si.c-s.fr>
-In-Reply-To: <20181207173309.82A0E6D165@po14163vm.idsi0.si.c-s.fr>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Fri, 7 Dec 2018 21:26:15 +0100
-Message-ID: <CAKv+Gu9gz0h2CFNPe9bgrSBzRe7iTVOMxiEEb6OXb75Acv7HUQ@mail.gmail.com>
-Subject: Re: [PATCH] crypto/testmgr: fix skcipher test with CONFIG_VMAP_STACK
-To:     christophe.leroy@c-s.fr
-Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
-        <linux-crypto@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
+References: <20181206184227.GA28656@jordon-HP-15-Notebook-PC> <ca1779ea-7a87-971c-24c4-4a1c77a72e92@arm.com>
+In-Reply-To: <ca1779ea-7a87-971c-24c4-4a1c77a72e92@arm.com>
+From:   Souptick Joarder <jrdr.linux@gmail.com>
+Date:   Sat, 8 Dec 2018 02:00:36 +0530
+Message-ID: <CAFqt6zbMbvB1ckwhSsBATrq5M-HQ6qk95sCWCoTTFFnwzBAnng@mail.gmail.com>
+Subject: Re: [PATCH v3 4/9] drm/rockchip/rockchip_drm_gem.c: Convert to use vm_insert_range
+To:     robin.murphy@arm.com
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michal Hocko <mhocko@suse.com>, hjc@rock-chips.com,
+        Heiko Stuebner <heiko@sntech.de>, airlied@linux.ie,
+        Linux-MM <linux-mm@kvack.org>, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 7 Dec 2018 at 18:33, Christophe Leroy <christophe.leroy@c-s.fr> wrote:
+On Fri, Dec 7, 2018 at 8:20 PM Robin Murphy <robin.murphy@arm.com> wrote:
 >
-> [    2.364486] WARNING: CPU: 0 PID: 60 at ./arch/powerpc/include/asm/io.h:837 dma_nommu_map_page+0x44/0xd4
-> [    2.373579] CPU: 0 PID: 60 Comm: cryptomgr_test Tainted: G        W         4.20.0-rc5-00560-g6bfb52e23a00-dirty #531
-> [    2.384740] NIP:  c000c540 LR: c000c584 CTR: 00000000
-> [    2.389743] REGS: c95abab0 TRAP: 0700   Tainted: G        W          (4.20.0-rc5-00560-g6bfb52e23a00-dirty)
-> [    2.400042] MSR:  00029032 <EE,ME,IR,DR,RI>  CR: 24042204  XER: 00000000
-> [    2.406669]
-> [    2.406669] GPR00: c02f2244 c95abb60 c6262990 c95abd80 0000256a 00000001 00000001 00000001
-> [    2.406669] GPR08: 00000000 00002000 00000010 00000010 24042202 00000000 00000100 c95abd88
-> [    2.406669] GPR16: 00000000 c05569d4 00000001 00000010 c95abc88 c0615664 00000004 00000000
-> [    2.406669] GPR24: 00000010 c95abc88 c95abc88 00000000 c61ae210 c7ff6d40 c61ae210 00003d68
-> [    2.441559] NIP [c000c540] dma_nommu_map_page+0x44/0xd4
-> [    2.446720] LR [c000c584] dma_nommu_map_page+0x88/0xd4
-> [    2.451762] Call Trace:
-> [    2.454195] [c95abb60] [82000808] 0x82000808 (unreliable)
-> [    2.459572] [c95abb80] [c02f2244] talitos_edesc_alloc+0xbc/0x3c8
-> [    2.465493] [c95abbb0] [c02f2600] ablkcipher_edesc_alloc+0x4c/0x5c
-> [    2.471606] [c95abbd0] [c02f4ed0] ablkcipher_encrypt+0x20/0x64
-> [    2.477389] [c95abbe0] [c02023b0] __test_skcipher+0x4bc/0xa08
-> [    2.483049] [c95abe00] [c0204b60] test_skcipher+0x2c/0xcc
-> [    2.488385] [c95abe20] [c0204c48] alg_test_skcipher+0x48/0xbc
-> [    2.494064] [c95abe40] [c0205cec] alg_test+0x164/0x2e8
-> [    2.499142] [c95abf00] [c0200dec] cryptomgr_test+0x48/0x50
-> [    2.504558] [c95abf10] [c0039ff4] kthread+0xe4/0x110
-> [    2.509471] [c95abf40] [c000e1d0] ret_from_kernel_thread+0x14/0x1c
-> [    2.515532] Instruction dump:
-> [    2.518468] 7c7e1b78 7c9d2378 7cbf2b78 41820054 3d20c076 8089c200 3d20c076 7c84e850
-> [    2.526127] 8129c204 7c842e70 7f844840 419c0008 <0fe00000> 2f9e0000 54847022 7c84fa14
-> [    2.533960] ---[ end trace bf78d94af73fe3b8 ]---
-> [    2.539123] talitos ff020000.crypto: master data transfer error
-> [    2.544775] talitos ff020000.crypto: TEA error: ISR 0x20000000_00000040
-> [    2.551625] alg: skcipher: encryption failed on test 1 for ecb-aes-talitos: ret=22
+> On 06/12/2018 18:42, Souptick Joarder wrote:
+> > Convert to use vm_insert_range() to map range of kernel
+> > memory to user vma.
+> >
+> > Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+> > Tested-by: Heiko Stuebner <heiko@sntech.de>
+> > Acked-by: Heiko Stuebner <heiko@sntech.de>
+> > ---
+> >   drivers/gpu/drm/rockchip/rockchip_drm_gem.c | 20 ++------------------
+> >   1 file changed, 2 insertions(+), 18 deletions(-)
+> >
+> > diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_gem.c b/drivers/gpu/drm/rockchip/rockchip_drm_gem.c
+> > index a8db758..2cb83bb 100644
+> > --- a/drivers/gpu/drm/rockchip/rockchip_drm_gem.c
+> > +++ b/drivers/gpu/drm/rockchip/rockchip_drm_gem.c
+> > @@ -221,26 +221,10 @@ static int rockchip_drm_gem_object_mmap_iommu(struct drm_gem_object *obj,
+> >                                             struct vm_area_struct *vma)
+> >   {
+> >       struct rockchip_gem_object *rk_obj = to_rockchip_obj(obj);
+> > -     unsigned int i, count = obj->size >> PAGE_SHIFT;
+> >       unsigned long user_count = vma_pages(vma);
+> > -     unsigned long uaddr = vma->vm_start;
+> > -     unsigned long offset = vma->vm_pgoff;
+> > -     unsigned long end = user_count + offset;
+> > -     int ret;
+> > -
+> > -     if (user_count == 0)
+> > -             return -ENXIO;
+> > -     if (end > count)
+> > -             return -ENXIO;
+> >
+> > -     for (i = offset; i < end; i++) {
+> > -             ret = vm_insert_page(vma, uaddr, rk_obj->pages[i]);
+> > -             if (ret)
+> > -                     return ret;
+> > -             uaddr += PAGE_SIZE;
+> > -     }
+> > -
+> > -     return 0;
+> > +     return vm_insert_range(vma, vma->vm_start, rk_obj->pages,
+> > +                             user_count);
 >
-> IV cannot be on stack when CONFIG_VMAP_STACK is selected because the stack
-> cannot be DMA mapped anymore.
->
-> This patch allocates it with kmalloc()
->
+> We're losing vm_pgoff handling here, which given the implication in
+> 57de50af162b, may well be a regression for at least some combination of
+> GPU and userspace driver (I assume that commit was in the context of
+> some version of the Arm Mali driver, possibly on RK3288).
 
-This looks like a driver bug to me. Other accelerators in
-drivers/crypto all take a copy of the IV before mapping it for DMA, so
-it would be better if talitos did the same.
+In commit  57de50af162b, vma->vm_pgoff = 0 for GEM mmap handler context
+and removing it from common path which means if call stack looks like
+rockchip_gem_mmap_buf() -> rockchip_drm_gem_object_mmap() ->
+rockchip_drm_gem_object_mmap_iommu(), then we might have a non zero
+vma->vm_pgoff context which is not handled.
 
-> Fixes: da7f033ddc9f ("crypto: cryptomgr - Add test infrastructure")
-> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
-> ---
->  crypto/testmgr.c | 8 +++++++-
->  1 file changed, 7 insertions(+), 1 deletion(-)
->
-> diff --git a/crypto/testmgr.c b/crypto/testmgr.c
-> index b1f79c6bf409..eea498f9030d 100644
-> --- a/crypto/testmgr.c
-> +++ b/crypto/testmgr.c
-> @@ -1112,12 +1112,16 @@ static int __test_skcipher(struct crypto_skcipher *tfm, int enc,
->         struct crypto_wait wait;
->         const char *input, *result;
->         void *data;
-> -       char iv[MAX_IVLEN];
-> +       char *iv;
->         char *xbuf[XBUFSIZE];
->         char *xoutbuf[XBUFSIZE];
->         int ret = -ENOMEM;
->         unsigned int ivsize = crypto_skcipher_ivsize(tfm);
->
-> +       iv = kmalloc(MAX_IVLEN, GFP_KERNEL | GFP_DMA);
-> +       if (!iv)
-> +               goto out_noiv;
-> +
->         if (testmgr_alloc_buf(xbuf))
->                 goto out_nobuf;
->
-> @@ -1339,6 +1343,8 @@ static int __test_skcipher(struct crypto_skcipher *tfm, int enc,
->  out_nooutbuf:
->         testmgr_free_buf(xbuf);
->  out_nobuf:
-> +       kfree(iv);
-> +out_noiv:
->         return ret;
->  }
->
-> --
-> 2.13.3
->
+This is the problem you are pointing ? right ?
