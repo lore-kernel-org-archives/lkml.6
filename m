@@ -2,105 +2,85 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9FE0C07E85
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 16:40:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D9ABC07E85
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 16:41:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B253F2081C
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 16:40:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="X5bfLM8Q"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B253F2081C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 431DB2081C
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 16:41:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 431DB2081C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726114AbeLGQks (ORCPT
+        id S1726138AbeLGQlx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 11:40:48 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:46184 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726084AbeLGQks (ORCPT
+        Fri, 7 Dec 2018 11:41:53 -0500
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:34481 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726053AbeLGQlw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 11:40:48 -0500
-Received: by mail-wr1-f65.google.com with SMTP id l9so4358397wrt.13
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Dec 2018 08:40:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=0S+N6XO0NSZ7wv+BOTf/5P2MlBdfSNlts/jfDT2XT2c=;
-        b=X5bfLM8QiKBj9TElLojRnSNCiUBK8XJq8+wFn9ctJ5Geqh9Kwv+ABWskn6leZb7f4o
-         g12RLlvZ04iaeNep6WyZvmcSFGLp3UCjVB8+jzpNKyrpOIrXjBNXjYke7Sq2FTdL/9li
-         G603o4ktQAxLpuxFGPBTkMMz8scFAPRXq1zso=
+        Fri, 7 Dec 2018 11:41:52 -0500
+Received: by mail-qk1-f194.google.com with SMTP id a132so2782662qkg.1;
+        Fri, 07 Dec 2018 08:41:52 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=0S+N6XO0NSZ7wv+BOTf/5P2MlBdfSNlts/jfDT2XT2c=;
-        b=bo/en39JFT5BEQgnu2XWKMqodBO4p4VWmkAQ9sZPf8sGBTMwYfATpqLJ6p3+t4/Md1
-         oZjjxg+9DllUsc6+s8+lMYgd6xk5dSD5GW/QhYu5sZwJpHjrMOlYd3MQuh5V9/Y+boXC
-         lKuwGXUXEK3LaZGytvOabBVgXLuj1/VMXeUV66Jcv4T0Njn1xdgmxWMGdNJlQch6vLdH
-         OPnJ6RWj7W+/HfHk301Zb/ZdoJirpc/2ZsDVhykSXmgcRwqV+29ZTP2em8vYcx5dIYdG
-         8VY7xAavPKprLDm4y/KeUh5oTTHprKjnAPTkG/oBB6lbuUmHcEPeTOP/Ki45hX8R5Yj0
-         q0IQ==
-X-Gm-Message-State: AA+aEWZL3w76P0o1F/6Biq5KrS7s9DlAn4u9UKnnZhMfggPEgX7ghVOJ
-        6QBcN0pae0hYKcdcUQIdPb6TfA==
-X-Google-Smtp-Source: AFSGD/VAD7+Ju+1VzEyiCIkPqo+/RTkAGef0t5aan2oLb6iPlPnYt34baXM5DgCZlXYGQmjMsF2dZw==
-X-Received: by 2002:adf:9467:: with SMTP id 94mr2361113wrq.305.1544200846726;
-        Fri, 07 Dec 2018 08:40:46 -0800 (PST)
-Received: from dell (host109-155-202-221.range109-155.btcentralplus.com. [109.155.202.221])
-        by smtp.gmail.com with ESMTPSA id e16sm5365720wrn.72.2018.12.07.08.40.45
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 07 Dec 2018 08:40:46 -0800 (PST)
-Date:   Fri, 7 Dec 2018 16:40:44 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Oskari Lemmela <oskari@lemmela.net>
-Cc:     Sebastian Reichel <sre@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Quentin Schulz <quentin.schulz@bootlin.com>,
-        Vasily Khoruzhick <anarsoul@gmail.com>,
-        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v6 7/8] mfd: axp20x: Add AC power supply cell for AXP813
-Message-ID: <20181207164044.GJ26661@dell>
-References: <20181120175211.3913-1-oskari@lemmela.net>
- <20181120175211.3913-8-oskari@lemmela.net>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ZZhvnSKTmbJcqh3y3ku1bQhmdAU1ynyRy64Ri+I/g7E=;
+        b=ZKuqn/qRVDuh93qWX7jMZzV1AEU2dsnIuXWeF8sNCIwzzIIqxMVR9xc8jn/Xd6VObO
+         pqj89eoDU+uEaQqu7gxG9YMVwyxOvsOEUYOXWd7UW/3d3D1Y4ZybzB7XKwhTPV97aE7z
+         rO4SkKL3hQ58iAER6l1/dk4X05cIxm36Ugcuj8pdFRJ2baUQdAE9X1ZTprXp311FhLDm
+         Mw9tvRyb6T2YR5Kft/X2pLCAue5JjHyaMFCfc4epDJvPr3lD+vZWIwb8jrO08JAC8JeU
+         2Tq65yruxeRi+xGGCOU3mGk/3n8SQbcCAHQMEavfczcqkldr4fDhMY9rpBPHCkbGH5mr
+         NSIg==
+X-Gm-Message-State: AA+aEWZOe6OtePYik40EfFsGhd83sG7R8nWA3LXGjibnDsdP/Ac5GHlZ
+        eAIIJe3Yg4zcfdmizalLOy9v8Sb913hhxPHHucs=
+X-Google-Smtp-Source: AFSGD/VxVNQUTrZMYSMewQIBCO2BZSpZ7x7wj0HSfcegP+XpTiMai5B4Qojt3FT5RNYuefGkeqEWjkoYXerM/Aa4PB8=
+X-Received: by 2002:ae9:e102:: with SMTP id g2mr2332245qkm.343.1544200911620;
+ Fri, 07 Dec 2018 08:41:51 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181120175211.3913-8-oskari@lemmela.net>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20181207134824.300024-1-arnd@arndb.de> <20181207134824.300024-2-arnd@arndb.de>
+ <20181207154502.GA21335@infradead.org>
+In-Reply-To: <20181207154502.GA21335@infradead.org>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Fri, 7 Dec 2018 17:41:33 +0100
+Message-ID: <CAK8P3a2To65m5fXwbVEBqYHzReKC2XiXx361rbUbLR1Bp+=+5g@mail.gmail.com>
+Subject: Re: [PATCH 1/8] sh: dreamcast: rtc: push down rtc class ops into driver
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     y2038 Mailman List <y2038@lists.linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Linux-sh list <linux-sh@vger.kernel.org>,
+        Baolin Wang <baolin.wang@linaro.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        John Stultz <john.stultz@linaro.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Rich Felker <dalias@libc.org>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 20 Nov 2018, Oskari Lemmela wrote:
+On Fri, Dec 7, 2018 at 4:45 PM Christoph Hellwig <hch@infradead.org> wrote:
+>
+> On Fri, Dec 07, 2018 at 02:48:17PM +0100, Arnd Bergmann wrote:
+> > The dreamcast RTC support has an extra level of indirection to
+> > provide either the old read_persistent_clock/update_persistent_clock
+> > interface or the rtc-generic device for hctosys/systohc.
+>
+> s/dreamcast/sh/ in the above sentence?  Also repeated in the other
+> patches.
 
-> As axp20x-ac-power-supply now supports AXP813, add a cell for it.
-> 
-> Signed-off-by: Oskari Lemmela <oskari@lemmela.net>
-> Reviewed-by: Quentin Schulz <quentin.schulz@bootlin.com>
-> Reviewed-by: Chen-Yu Tsai <wens@csie.org>
-> Tested-by: Vasily Khoruzhick <anarsoul@gmail.com>
-> ---
->  drivers/mfd/axp20x.c | 5 +++++
->  1 file changed, 5 insertions(+)
+Right, I guess this is at least ambiguous. What I was trying to express
+here is that I'm taking the indirection out for dreamcast specifically.
 
-Applied, thanks.
+In the other patches, I obviously copied it wrong. Fixed now in my
+branch, thanks for the review!
 
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+      Arnd
