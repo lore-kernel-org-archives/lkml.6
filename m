@@ -2,210 +2,165 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D88EC07E85
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 18:30:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D121C07E85
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 18:30:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3329620672
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 18:30:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3329620672
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id CAD6620868
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 18:30:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="KiriFpDD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CAD6620868
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sifive.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726191AbeLGSaZ (ORCPT
+        id S1726232AbeLGSa3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 13:30:25 -0500
-Received: from foss.arm.com ([217.140.101.70]:51592 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726055AbeLGSaY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 13:30:24 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 191C0EBD;
-        Fri,  7 Dec 2018 10:30:24 -0800 (PST)
-Received: from [10.1.196.62] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BC3A73F5AF;
-        Fri,  7 Dec 2018 10:30:21 -0800 (PST)
-Subject: Re: [RFC PATCH v3 3/4] irqchip: gic-v3: Add quirk for msm8996 secured
- registers
-To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc:     sudeep.holla@arm.com, tglx@linutronix.de, jason@lakedaemon.net,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        rnayak@codeaurora.org, sboyd@kernel.org, srini@kernel.org,
-        bjorn.andersson@linaro.org, nicolas.dechesne@linaro.org,
-        ctatlor97@gmail.com, vkoul@kernel.org
-References: <20181112103340.24702-1-srinivas.kandagatla@linaro.org>
- <20181112103340.24702-4-srinivas.kandagatla@linaro.org>
-From:   Marc Zyngier <marc.zyngier@arm.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=marc.zyngier@arm.com; prefer-encrypt=mutual; keydata=
- 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
-Organization: ARM Ltd
-Message-ID: <f102b487-d53b-07b3-d85b-460ea223267f@arm.com>
-Date:   Fri, 7 Dec 2018 18:30:18 +0000
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
-MIME-Version: 1.0
-In-Reply-To: <20181112103340.24702-4-srinivas.kandagatla@linaro.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Fri, 7 Dec 2018 13:30:29 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:45122 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726055AbeLGSa3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Dec 2018 13:30:29 -0500
+Received: by mail-pl1-f193.google.com with SMTP id a14so2182329plm.12
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Dec 2018 10:30:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google;
+        h=date:subject:in-reply-to:cc:from:to:message-id:mime-version
+         :content-transfer-encoding;
+        bh=W8EggpNqVluQivnmp6iZyHVmDWnm/JueOezDzfiTuXY=;
+        b=KiriFpDDC62/TPlCCHB38BoU4fopb6xpYfvpq0tsEGPUtcVrl+hteWe/GR4EArFjoq
+         nQ+ptd8mJGKvr6djt5v+QmQhmw0PRZ1XVTQ4JqoNl4IfNVEZIgQhp1hOH4ANC4BzjU5V
+         JMjUglB70auPStIAyviDxc5VK7ZmRb9bOCaauDVob8Mi1sfC2nr1P5mYw0NqisMtNEg2
+         y38U4pOhJeAk26h4q7UbWVvK25wZQK32TiXPQcUtCY6zuJn6cGn0aBqE42yoBIbjlalz
+         AKSi00FjJyQZd3tcuT22w/8miAHXprCyWrkxNIvl7VLOA3tdlhE7+3qI/Nz4DmVbE7FC
+         sIPA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:subject:in-reply-to:cc:from:to:message-id
+         :mime-version:content-transfer-encoding;
+        bh=W8EggpNqVluQivnmp6iZyHVmDWnm/JueOezDzfiTuXY=;
+        b=k+0qoDaIbEFQSRCDtyrjAXAOMmd01OzhpunBxS1JRIQNQ6802sF32tpU60+yK+1lhy
+         1hyW36iSKhqOH0mC66JjNa2i+dnXtqzFpbNOFf768lgIeYmd7uWm9fkIb7/im3nFPDG0
+         qjG1s+VClzRveAae11rfOK1RRYLJdC1izY3fx0B2y1CTAlfGagSqIdRpKukDa2IXLppK
+         H0zX1owcMOfDWO67fdYmneAnTIQBAPLDd1mC19n+R8p/B07su+kx0Nvol/aSuj5rAfLO
+         p5jQw+Hygk6xN2U6GIcVTIQ8eGJrsPb4RYXkK239CyAszGHQqFHzqOdWjY2ahABn0pP8
+         1eWw==
+X-Gm-Message-State: AA+aEWaVhdO/WsBBYFknZ5MsnjqoQiDdHZQmFphyyQi7Y5AvmNBvb9Sg
+        bjcdoPdyLAPqbSrmqlUwFng/iw==
+X-Google-Smtp-Source: AFSGD/Xi/eZBBPy6a3ucsqeinj+9pPNX9MIWjSNXajUSVyZJ+Cb1hfLf6sMgxUT+MvxLSBeJD7gLvA==
+X-Received: by 2002:a17:902:31a4:: with SMTP id x33mr3067158plb.41.1544207428755;
+        Fri, 07 Dec 2018 10:30:28 -0800 (PST)
+Received: from localhost ([216.3.10.7])
+        by smtp.gmail.com with ESMTPSA id g190sm4641158pgc.28.2018.12.07.10.30.27
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 07 Dec 2018 10:30:27 -0800 (PST)
+Date:   Fri, 07 Dec 2018 10:30:27 -0800 (PST)
+X-Google-Original-Date: Fri, 07 Dec 2018 10:12:36 PST (-0800)
+Subject:     Re: [PATCH 1/3] tty/serial: Add RISC-V SBI earlycon support
+In-Reply-To: <20181204135507.3706-2-anup@brainfault.org>
+CC:     Greg KH <gregkh@linuxfoundation.org>, jslaby@suse.com,
+        aou@eecs.berkeley.edu, atish.patra@wdc.com,
+        Christoph Hellwig <hch@infradead.org>, robh@kernel.org,
+        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-serial@vger.kernel.org, anup@brainfault.org
+From:   Palmer Dabbelt <palmer@sifive.com>
+To:     anup@brainfault.org
+Message-ID: <mhng-03b5ef96-37b8-4a95-94fa-2fb5e8e59da3@palmer-si-x1c4>
+Mime-Version: 1.0 (MHng)
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/11/2018 10:33, Srinivas Kandagatla wrote:
-> Access to GICR_WAKER is restricted on msm8996 SoC in Hypervisor.
-> Its been more than 2+ years of wait for this to be fixed, which has
-> no hopes to be fixed. This change was introduced for the "lead device"
-> on msm8996 platform. It looks like all publicly available msm8996 and
-> other qcom SoCs have this implementation.
-
-s/qcom/Qualcomm/
-
-> 
-> So add a quirk to not access this register on msm8996.
-> 
-> With this quirk MSM8996 can at least boot out of mainline,
-> which can help community to work with boards based on MSM8996 and other
-> SoCs with have this restrictions. This Quirk is based on device tree
-> compatible string.
-> 
-> Without this patch Qualcomm DB820c board reboots when GICR_WAKER
-> is accessed.
-> 
-> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+On Tue, 04 Dec 2018 05:55:05 PST (-0800), anup@brainfault.org wrote:
+> In RISC-V, the M-mode runtime firmware provide SBI calls for
+> debug prints. This patch adds earlycon support using RISC-V
+> SBI console calls. To enable it, just pass "earlycon=sbi" in
+> kernel parameters.
+>
+> Signed-off-by: Anup Patel <anup@brainfault.org>
 > ---
->  drivers/irqchip/irq-gic-v3.c | 26 ++++++++++++++++++++++++++
->  1 file changed, 26 insertions(+)
-> 
-> diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
-> index 8f87f40c9460..4bd3bbe1b7ce 100644
-> --- a/drivers/irqchip/irq-gic-v3.c
-> +++ b/drivers/irqchip/irq-gic-v3.c
-> @@ -41,6 +41,8 @@
->  
->  #include "irq-gic-common.h"
->  
-> +#define FLAGS_WORKAROUND_GICR_WAKER_MSM8996	(1ULL << 0)
+>  drivers/tty/serial/Kconfig              | 12 +++++++++++
+>  drivers/tty/serial/Makefile             |  1 +
+>  drivers/tty/serial/earlycon-riscv-sbi.c | 28 +++++++++++++++++++++++++
+>  3 files changed, 41 insertions(+)
+>  create mode 100644 drivers/tty/serial/earlycon-riscv-sbi.c
+>
+> diff --git a/drivers/tty/serial/Kconfig b/drivers/tty/serial/Kconfig
+> index 32886c304641..287bb41ac814 100644
+> --- a/drivers/tty/serial/Kconfig
+> +++ b/drivers/tty/serial/Kconfig
+> @@ -85,6 +85,18 @@ config SERIAL_EARLYCON_ARM_SEMIHOST
+>  	  with "earlycon=smh" on the kernel command line. The console is
+>  	  enabled when early_param is processed.
+>
+> +config SERIAL_EARLYCON_RISCV_SBI
+> +	bool "Early console using RISC-V SBI"
+> +	depends on RISCV
+> +	select SERIAL_CORE
+> +	select SERIAL_CORE_CONSOLE
+> +	select SERIAL_EARLYCON
+> +	help
+> +	  Support for early debug console using RISC-V SBI. This enables
+> +	  the console before standard serial driver is probed. This is enabled
+> +	  with "earlycon=sbi" on the kernel command line. The console is
+> +	  enabled when early_param is processed.
 > +
->  struct redist_region {
->  	void __iomem		*redist_base;
->  	phys_addr_t		phys_base;
-> @@ -55,6 +57,7 @@ struct gic_chip_data {
->  	struct irq_domain	*domain;
->  	u64			redist_stride;
->  	u32			nr_redist_regions;
-> +	u64			flags;
->  	bool			has_rss;
->  	unsigned int		irq_nr;
->  	struct partition_desc	*ppi_descs[16];
-> @@ -139,6 +142,9 @@ static void gic_enable_redist(bool enable)
->  	u32 count = 1000000;	/* 1s! */
->  	u32 val;
->  
-> +	if (gic_data.flags & FLAGS_WORKAROUND_GICR_WAKER_MSM8996)
-> +		return;
+>  config SERIAL_SB1250_DUART
+>  	tristate "BCM1xxx on-chip DUART serial support"
+>  	depends on SIBYTE_SB1xxx_SOC=y
+> diff --git a/drivers/tty/serial/Makefile b/drivers/tty/serial/Makefile
+> index daac675612df..3ce26ce08616 100644
+> --- a/drivers/tty/serial/Makefile
+> +++ b/drivers/tty/serial/Makefile
+> @@ -7,6 +7,7 @@ obj-$(CONFIG_SERIAL_CORE) += serial_core.o
+>
+>  obj-$(CONFIG_SERIAL_EARLYCON) += earlycon.o
+>  obj-$(CONFIG_SERIAL_EARLYCON_ARM_SEMIHOST) += earlycon-arm-semihost.o
+> +obj-$(CONFIG_SERIAL_EARLYCON_RISCV_SBI) += earlycon-riscv-sbi.o
+>
+>  # These Sparc drivers have to appear before others such as 8250
+>  # which share ttySx minor node space.  Otherwise console device
+> diff --git a/drivers/tty/serial/earlycon-riscv-sbi.c b/drivers/tty/serial/earlycon-riscv-sbi.c
+> new file mode 100644
+> index 000000000000..e1a551aae336
+> --- /dev/null
+> +++ b/drivers/tty/serial/earlycon-riscv-sbi.c
+> @@ -0,0 +1,28 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * RISC-V SBI based earlycon
+> + *
+> + * Copyright (C) 2018 Anup Patel <anup@brainfault.org>
+> + */
+> +#include <linux/kernel.h>
+> +#include <linux/console.h>
+> +#include <linux/init.h>
+> +#include <linux/serial_core.h>
+> +#include <asm/sbi.h>
 > +
->  	rbase = gic_data_rdist_rd_base();
->  
->  	val = readl_relaxed(rbase + GICR_WAKER);
-> @@ -1067,6 +1073,23 @@ static const struct irq_domain_ops partition_domain_ops = {
->  	.select = gic_irq_domain_select,
->  };
->  
-> +static bool __maybe_unused gic_enable_quirk_msm8996(void *data)
-
-Why __maybe_unused? It is referenced in the quirk table, right?
-
+> +static void sbi_console_write(struct console *con,
+> +			      const char *s, unsigned int n)
 > +{
-> +	struct gic_chip_data *d = data;
+> +	int i;
 > +
-> +	d->flags |= FLAGS_WORKAROUND_GICR_WAKER_MSM8996;
-> +
-> +	return true;
+> +	for (i = 0; i < n; ++i)
+> +		sbi_console_putchar(s[i]);
 > +}
 > +
-> +static const struct gic_quirk gic_quirks[] = {
-> +	{
-> +		.desc	= "GICv3: Qualcomm MSM8996 skip GICR_WAKER Read/Write",
+> +static int __init early_sbi_setup(struct earlycon_device *device,
+> +				  const char *opt)
+> +{
+> +	device->con->write = sbi_console_write;
+> +	return 0;
+> +}
+> +EARLYCON_DECLARE(sbi, early_sbi_setup);
 
-This should read "GICv3: Qualcomm MSM8996 broken firmware". Nobody knows
-what GICR_WAKER is, but people do understand that they run buggy software.
-
-> +		.compatible = "qcom,msm8996-gic-v3", /* MSM8996 */
-
-Drop this comment, it doesn't add anything.
-
-> +		.init	= gic_enable_quirk_msm8996,
-> +	},
-> +};
-> +
->  static int __init gic_init_bases(void __iomem *dist_base,
->  				 struct redist_region *rdist_regs,
->  				 u32 nr_redist_regions,
-> @@ -1126,6 +1149,9 @@ static int __init gic_init_bases(void __iomem *dist_base,
->  
->  	gic_update_vlpi_properties();
->  
-> +	if (is_of_node(handle))
-> +		gic_enable_of_quirks(to_of_node(handle), gic_quirks, &gic_data);
-> +
-
-Please move this as early as possible. Actually, given that this is DT
-only, it should be done in gic_of_init. It should also be moved to the
-previous patch, with gic_quirks being an empty array.
-
->  	gic_smp_init();
->  	gic_dist_init();
->  	gic_cpu_init();
-> 
-
-Thanks,
-
-	M.
--- 
-Jazz is not dead. It just smells funny...
+Reviewed-by: Palmer Dabbelt <palmer@sifive.com>
