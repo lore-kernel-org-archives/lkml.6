@@ -2,165 +2,118 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FCD6C07E85
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 07:31:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C425C07E85
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 07:32:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B03220882
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 07:31:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0F54920882
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 07:32:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="EFUE0hw5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B03220882
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="j7GuWSJO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F54920882
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726058AbeLGHbh (ORCPT
+        id S1726067AbeLGHcu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 02:31:37 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:33102 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725976AbeLGHbh (ORCPT
+        Fri, 7 Dec 2018 02:32:50 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:46884 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725952AbeLGHcu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 02:31:37 -0500
-Received: by mail-wm1-f65.google.com with SMTP id r24so676624wmh.0
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Dec 2018 23:31:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=on5DWjAF9LpvkIPYgqixEFyxPhgmFwB2pHo8jQcHZvs=;
-        b=EFUE0hw5rCdn+X1uMNNperYk+AfbN3qb0hNN8qIa2lYu/OU4DAIhrqK+8XT0uq16qo
-         pEVXQUm5Zvl1o/Pb25udY6fbXs1Vp7ZSavQRXe8Ac1Y2JHC1ON+D3PBco9hXo4PIoqKu
-         +8P0qBnErkaRJqvAC4EQWMFX8wuq0CBXmAFkc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=on5DWjAF9LpvkIPYgqixEFyxPhgmFwB2pHo8jQcHZvs=;
-        b=a3LFOKPyhSfyP58txnfG9JneNk0bbnOAUcMbsvC1RM5pd5oOWp6M/7CMywi0Be2age
-         pfSouV6vURTkOSV4tJT5S7p0lCUYHW/cNVMP5oxdmA9l0TDsdcifeYktJ9hJ899b7TNx
-         mHSw09t6hs4H07ihPYMBxX0BBdsGUn+wYSvv+B2fBz+0ZBDE6xhCb+P2qZ3yb8B6L9ht
-         58gNL05T+1qPSH/aywP1KZ42XXjl01+RtQrk/UNLMFRxbpNlxsskycB+bZC3NW4SeqRk
-         MHJCARMxqV+/dzE7p2tbH1G+yZvwdJ992qG9jF/VO9KbnFatWVKrC+fDTLweHDcb/lSo
-         dl3Q==
-X-Gm-Message-State: AA+aEWbH1wmtur78TDW1rrlAJU0io9cUGrTg8B2NrbSJJ4s6OSGIQmE7
-        fGnfwZLQdd+OyrNkWkN+xz4xIQ==
-X-Google-Smtp-Source: AFSGD/UabOKaU4UlD7KcdBOXR4qSmYDPsRNZIkjH6brYWCs9+XJjQlmZn7g+BPK0fh3GRaLw149M5A==
-X-Received: by 2002:a7b:c397:: with SMTP id s23mr1153721wmj.127.1544167895133;
-        Thu, 06 Dec 2018 23:31:35 -0800 (PST)
-Received: from dell ([2.31.167.218])
-        by smtp.gmail.com with ESMTPSA id p74sm3713506wmd.29.2018.12.06.23.31.34
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 06 Dec 2018 23:31:34 -0800 (PST)
-Date:   Fri, 7 Dec 2018 07:31:32 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Pascal PAILLET-LME <p.paillet@st.com>
-Cc:     "dmitry.torokhov@gmail.com" <dmitry.torokhov@gmail.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
-        "broonie@kernel.org" <broonie@kernel.org>,
-        "wim@linux-watchdog.org" <wim@linux-watchdog.org>,
-        "linux@roeck-us.net" <linux@roeck-us.net>,
-        "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>,
-        "benjamin.gaignard@linaro.org" <benjamin.gaignard@linaro.org>,
-        "eballetbo@gmail.com" <eballetbo@gmail.com>,
-        "axel.lin@ingics.com" <axel.lin@ingics.com>
-Subject: Re: [PATCH v7 0/7] Introduce STPMIC1 PMIC Driver
-Message-ID: <20181207073132.GH26661@dell>
-References: <1543571742-17995-1-git-send-email-p.paillet@st.com>
- <20181203071145.GA26661@dell>
- <5C069C47.6080305@st.com>
- <20181205093604.GZ26661@dell>
- <5C07F08B.2010701@st.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <5C07F08B.2010701@st.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        Fri, 7 Dec 2018 02:32:50 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wB77ShGh001487;
+        Fri, 7 Dec 2018 07:32:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id; s=corp-2018-07-02;
+ bh=uQAa6oToY8YUDVhEQnLATDT87KeGnyueOfStOCDKTOU=;
+ b=j7GuWSJO+72XUlStJuhTYVSC8z4fOBZN+9+YKq92loq6jgdAT8eHbU+YesHOhJJSX403
+ dpugEJHHtMbBeERN9V0uUHJLE8vNerLES216lDz2B9Xm8u37Pr0NY8ZLR8QVc55myvsD
+ ZR4ql4Z2VxFn8k0TX7wUFwciuTgTSwytqCctg1I85/nckEcK3dIVk1eB24UVRiFDbcbc
+ 8Vd99LRguJ9S8PQ2thOaX2gRb5GggKbmFpmpGV4WZTKazNd1MZ/ItGDwYYKCG8SZF987
+ /Ef+gQj0VdlNjsgBoMJ8t+3I8yNe4aG6aFuPPmSs3pg5Hu3+PL42AlA3a2Q5Wdg12BDY Ng== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by userp2130.oracle.com with ESMTP id 2p3hqucdp8-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 07 Dec 2018 07:32:45 +0000
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id wB77Wesm031388
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 7 Dec 2018 07:32:40 GMT
+Received: from abhmp0005.oracle.com (abhmp0005.oracle.com [141.146.116.11])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id wB77WdJ9013866;
+        Fri, 7 Dec 2018 07:32:40 GMT
+Received: from linux.cn.oracle.com (/10.182.71.9)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 06 Dec 2018 23:32:39 -0800
+From:   Dongli Zhang <dongli.zhang@oracle.com>
+To:     virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org
+Cc:     mst@redhat.com, jasowang@redhat.com
+Subject: [PATCH 1/1] virtio: remove deprecated VIRTIO_PCI_CONFIG()
+Date:   Fri,  7 Dec 2018 15:34:41 +0800
+Message-Id: <1544168081-13205-1-git-send-email-dongli.zhang@oracle.com>
+X-Mailer: git-send-email 2.7.4
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9099 signatures=668679
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=966
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1812070066
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 05 Dec 2018, Pascal PAILLET-LME wrote:
+VIRTIO_PCI_CONFIG() is deprecated. Use VIRTIO_PCI_CONFIG_OFF() instead.
 
-> 
-> pascal paillet (p.paillet@st.com) Le Mans / France
-> Microcontrollers and Digital ICs Group | Application Development
-> TEL: +33.(0)2.44.02.74.69 | TINA: 166 7469
-> 
-> Le 12/05/2018 10:36 AM, Lee Jones a écrit :
-> > On Tue, 04 Dec 2018, Pascal PAILLET-LME wrote:
-> >> Le 12/03/2018 08:11 AM, Lee Jones a écrit :
-> >>> On Fri, 30 Nov 2018, Pascal PAILLET-LME wrote:
-> >>>
-> >>>> The goal of this patch-set is to propose a driver for the STPMIC1 PMIC from
-> >>>> STMicroelectronics.
-> >>>> The STPMIC1 regulators supply power to an application processor as well as
-> >>>> to external system peripherals such as DDR, Flash memories and system
-> >>>> devices. It also features onkey button input and an hardware watchdog.
-> >>>> The STPMIC1 is controlled via I2C.
-> >>>>
-> >>>> Main driver is drivers/mfd/stpmic1 that handle I2C regmap configuration and
-> >>>> irqchip. stpmic1_regulator, stpmic1_onkey and stpmic1_wdt need stpmic1 mfd
-> >>>> as parent.
-> >>>>
-> >>>> STPMIC1 MFD and regulator drivers maybe mandatory at boot time.
-> >>>>
-> >>>> Pascal Paillet (7):
-> >>>> changes in v7:
-> >>>> * rebase on regul/for-next
-> >>>>
-> >>>>     dt-bindings: mfd: document stpmic1
-> >>>>     mfd: stpmic1: add stpmic1 driver
-> >>>>     dt-bindings: input: document stpmic1 pmic onkey
-> >>>>     input: stpmic1: add stpmic1 onkey driver
-> >>>>     dt-bindings: watchdog: document stpmic1 pmic watchdog
-> >>>>     watchdog: stpmic1: add stpmic1 watchdog driver
-> >>>>     regulator: stpmic1: fix regulator_lock usage
-> >>>>
-> >>>>    .../devicetree/bindings/input/st,stpmic1-onkey.txt |  28 +++
-> >>>>    .../devicetree/bindings/mfd/st,stpmic1.txt         |  61 ++++++
-> >>>>    .../bindings/watchdog/st,stpmic1-wdt.txt           |  11 ++
-> >>>>    drivers/input/misc/Kconfig                         |  11 ++
-> >>>>    drivers/input/misc/Makefile                        |   2 +
-> >>>>    drivers/input/misc/stpmic1_onkey.c                 | 198 +++++++++++++++++++
-> >>>>    drivers/mfd/Kconfig                                |  16 ++
-> >>>>    drivers/mfd/Makefile                               |   1 +
-> >>>>    drivers/mfd/stpmic1.c                              | 213 +++++++++++++++++++++
-> >>>>    drivers/regulator/stpmic1_regulator.c              |   2 +-
-> >>> Is it just Mark you're waiting on now?
-> >> It is ok now, Mark has applied the patch.
-> >> Evrey thing has been acked now. What is the nex step ?
-> > Mark has applied patch 7?
-> >
-> > Why don't I see that?  Should you have removed it from this set?
-> Hi Lee, I have received an email from Mark telliing that the regulator 
-> patch is applied on
-> 
->   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git  
-> 
-> I can see it on the branch regul/for-next.
+Signed-off-by: Dongli Zhang <dongli.zhang@oracle.com>
+---
+ drivers/virtio/virtio_pci_legacy.c | 6 ++++--
+ include/uapi/linux/virtio_pci.h    | 2 --
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
-Mark,
-
-Does your patch tracker only reply to the author?
-
-Any reason why I don't see it?
-
+diff --git a/drivers/virtio/virtio_pci_legacy.c b/drivers/virtio/virtio_pci_legacy.c
+index de062fb..eff9ddc 100644
+--- a/drivers/virtio/virtio_pci_legacy.c
++++ b/drivers/virtio/virtio_pci_legacy.c
+@@ -52,7 +52,8 @@ static void vp_get(struct virtio_device *vdev, unsigned offset,
+ {
+ 	struct virtio_pci_device *vp_dev = to_vp_device(vdev);
+ 	void __iomem *ioaddr = vp_dev->ioaddr +
+-				VIRTIO_PCI_CONFIG(vp_dev) + offset;
++			VIRTIO_PCI_CONFIG_OFF(vp_dev->msix_enabled) +
++			offset;
+ 	u8 *ptr = buf;
+ 	int i;
+ 
+@@ -67,7 +68,8 @@ static void vp_set(struct virtio_device *vdev, unsigned offset,
+ {
+ 	struct virtio_pci_device *vp_dev = to_vp_device(vdev);
+ 	void __iomem *ioaddr = vp_dev->ioaddr +
+-				VIRTIO_PCI_CONFIG(vp_dev) + offset;
++			VIRTIO_PCI_CONFIG_OFF(vp_dev->msix_enabled) +
++			offset;
+ 	const u8 *ptr = buf;
+ 	int i;
+ 
+diff --git a/include/uapi/linux/virtio_pci.h b/include/uapi/linux/virtio_pci.h
+index 90007a1..2070232 100644
+--- a/include/uapi/linux/virtio_pci.h
++++ b/include/uapi/linux/virtio_pci.h
+@@ -78,8 +78,6 @@
+ /* The remaining space is defined by each driver as the per-driver
+  * configuration space */
+ #define VIRTIO_PCI_CONFIG_OFF(msix_enabled)	((msix_enabled) ? 24 : 20)
+-/* Deprecated: please use VIRTIO_PCI_CONFIG_OFF instead */
+-#define VIRTIO_PCI_CONFIG(dev)	VIRTIO_PCI_CONFIG_OFF((dev)->msix_enabled)
+ 
+ /* Virtio ABI version, this must match exactly */
+ #define VIRTIO_PCI_ABI_VERSION		0
 -- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+2.7.4
+
