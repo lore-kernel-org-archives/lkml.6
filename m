@@ -2,64 +2,64 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4636EC64EB1
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 06:31:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81B6CC64EB1
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 06:31:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 00D2720838
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 06:31:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3ADCA20892
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 06:31:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PXGgMFcU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 00D2720838
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b5eR0qyf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3ADCA20892
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726119AbeLGGbC (ORCPT
+        id S1726137AbeLGGbK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 01:31:02 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:35348 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725948AbeLGGbB (ORCPT
+        Fri, 7 Dec 2018 01:31:10 -0500
+Received: from mail-pl1-f174.google.com ([209.85.214.174]:40469 "EHLO
+        mail-pl1-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726084AbeLGGbI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 01:31:01 -0500
-Received: by mail-pf1-f196.google.com with SMTP id z9so1450211pfi.2;
-        Thu, 06 Dec 2018 22:31:00 -0800 (PST)
+        Fri, 7 Dec 2018 01:31:08 -0500
+Received: by mail-pl1-f174.google.com with SMTP id u18so1359507plq.7;
+        Thu, 06 Dec 2018 22:31:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :in-reply-to:references;
-        bh=7MfUEQQkpsvuhuLJsGgSUDCmSQkbYrqMmWgv/EsP3fo=;
-        b=PXGgMFcUw1JOXrkayVkXHCuO5iRRzyw6IyZ5NZvlfVGIUhWArFEagsY7lLgmpfta/F
-         PbanvNRZaiOJN7FbpXO4afRzVLGob3YO6WUiIjvNEBNnv2O0NQs7NQF4DpK6OwWz6EmT
-         BuF35RIvowKq23f5S9XXJJdavt+Qu/jMdS776xMpKqrtMX4zX135xDPaHP5oQ1TiP/wA
-         sIu4LQqCC8UQYobTW7iqoz8Iwa89AJlIeyj0/miAP9EAdviYVH/s5syGE2cvW3sC+G7v
-         tF9bZ5ZZn/SQYtwk4INh2IsYjKaryZ1975yfSNKwUQaWpXgl/a3a0cqr2qIyWmoAjqgp
-         2stA==
+        bh=X6IUw1lo5W2A3uJWtvZsyMI3bRMD3FmSX7BiWko5brM=;
+        b=b5eR0qyf591FzLkV8GccCUgmW6DpdjXBfOoMmf0Lcjx0MJFKXr6k0kL788LEwCG3VV
+         acI9cr/G8yqx5/xYm0hxiJAx92V9W8fzMY279L27Ho6n7lfvg4ytfelQNEGlljtexX5m
+         qsM7/1dvuX0q1qP1jnRp+Ikvd5jY7x5fdsTtokJR/K3yNiTofmj/2bhbI3+urUeGGgsu
+         whN+NzEb21HGlEqOmJvlrhRlXMcSZTtFBCqtWQQpWAijZuWZZO9TjSrrofUHgZYO6mBp
+         9Wyk4ZIlMn0SJcS7/Njevh+BVPNKjOtxB9r2i7g69QJRahrFLL2M0nlZv+QKBdPjhj+d
+         /Xdw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:in-reply-to:references;
-        bh=7MfUEQQkpsvuhuLJsGgSUDCmSQkbYrqMmWgv/EsP3fo=;
-        b=W81O2ouly4/J1Q5/rYF34bW1wVS9E8oUTWkQ0Wjf0qsxfUT25rKJ9YK61IWE7/h9lf
-         plLfP21qB2VI0vCQSGYkWbvrrI6ZKH6TLPYIXsbVe+Eu4RN/Uv3wcmCi2uK6nBixtWIu
-         hP0d6JBGkhUdsXk5Dam7Dxby7/Ob4AQrY9D+/orTp7T0B4OujKl1EfJkM21FzmeitECf
-         1o777QSRGRJyt2JAg9UJdOgChv6aKjYUfMoXA0xJTu7NsaaaXvuq42O1PWmoCgN9YDkG
-         IswlU1G+eP5GuSnDCEwXFgjscI1tcxN5AHrB8QSWXB9WHTZHgEsEeIUIYS/oI13xAJgN
-         uBug==
-X-Gm-Message-State: AA+aEWZ2PgmRirStVdq9ybXx2D/P/xDmX5TedtVMvUg54Dd5qE5LwdVo
-        VysyNoqLgAuhuRsZ4MlaPE2vaQG4eEk=
-X-Google-Smtp-Source: AFSGD/XSCMCNgLFp+tsuuzvWlt+tYiPsiEQ5MeKt9KqQ/bJeo23CCsN7K9d9ZYfpJEfqekLrlTzMVQ==
-X-Received: by 2002:a62:cf84:: with SMTP id b126mr1054017pfg.98.1544164259934;
-        Thu, 06 Dec 2018 22:30:59 -0800 (PST)
+        bh=X6IUw1lo5W2A3uJWtvZsyMI3bRMD3FmSX7BiWko5brM=;
+        b=dsCjkCMlMO5XwWwx9hw2m5zsYjBk8w0np3+a2walm+8G1xz/wXJVhjX6uTbTPnyzk9
+         dXAP/zlrZthIokMBKLdez3OilSlzvSD7bTF2tLl5hO+ZfB/HzQNJUj6I5u1m+Sz6Wwon
+         f+Rt6zp6MM2wHCa6Ic2IK06MgirB/YnSHUBp6aiYWS6BGQxjHlvlip/QS+9onLCvIhCc
+         +KUiBtGwRZgabfBoktYzCg/1i3Iov6OVW5S5EzGJsfIBoilUyqPwLbDdB4foT1ozSO3d
+         VC/UcDlF0yyTODdIs1evnHSMqhrxNSdRK/hCes76s5fR3VS4Rj8MtrpiOyJNYBRYyWJ0
+         IsAw==
+X-Gm-Message-State: AA+aEWYMNrOsmBKIFbc2ehqHF6KwDfxrorIU4bPnVHCXIDVQ3ShWYdSG
+        uoKb/bHhtJYDPTrAerLd6yj5jVtwypw=
+X-Google-Smtp-Source: AFSGD/VbFhC0OV/ov17Xmscq2qWShZyrvjQ1UkbzhfA1vT0Xtu8035pmmDpeN4ar/vm0Z1+6Z0CgaA==
+X-Received: by 2002:a17:902:142:: with SMTP id 60mr1026596plb.330.1544164267880;
+        Thu, 06 Dec 2018 22:31:07 -0800 (PST)
 Received: from localhost ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id 84sm4719553pfk.134.2018.12.06.22.30.59
+        by smtp.gmail.com with ESMTPSA id q199sm3431612pfc.97.2018.12.06.22.31.06
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 06 Dec 2018 22:30:59 -0800 (PST)
+        Thu, 06 Dec 2018 22:31:07 -0800 (PST)
 From:   Xin Long <lucien.xin@gmail.com>
 To:     linux-kernel@vger.kernel.org, network dev <netdev@vger.kernel.org>,
         linux-sctp@vger.kernel.org
@@ -70,13 +70,14 @@ Cc:     davem@davemloft.net,
         David Rientjes <rientjes@google.com>,
         Eric Paris <eparis@redhat.com>,
         Konstantin Khorenko <khorenko@virtuozzo.com>
-Subject: [PATCHv2 net 2/3] flex_array: support flex_array_resize
-Date:   Fri,  7 Dec 2018 14:30:34 +0800
-Message-Id: <9122685dd16d04613de02594325acf79b2d04a3d.1544163962.git.lucien.xin@gmail.com>
+Subject: [PATCHv2 net 3/3] sctp: fa_resize sctp stream instead of redo fa_alloc
+Date:   Fri,  7 Dec 2018 14:30:35 +0800
+Message-Id: <3bc7041d4157e92a36a60c4868834d0a8a439041.1544163962.git.lucien.xin@gmail.com>
 X-Mailer: git-send-email 2.1.0
-In-Reply-To: <a4474a5886807d13146dc67e2d214b7ba3029d32.1544163962.git.lucien.xin@gmail.com>
+In-Reply-To: <9122685dd16d04613de02594325acf79b2d04a3d.1544163962.git.lucien.xin@gmail.com>
 References: <cover.1544163962.git.lucien.xin@gmail.com>
  <a4474a5886807d13146dc67e2d214b7ba3029d32.1544163962.git.lucien.xin@gmail.com>
+ <9122685dd16d04613de02594325acf79b2d04a3d.1544163962.git.lucien.xin@gmail.com>
 In-Reply-To: <cover.1544163962.git.lucien.xin@gmail.com>
 References: <cover.1544163962.git.lucien.xin@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
@@ -84,108 +85,166 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This function can dynamically change total_nr_elements of a flex_array,
-and keep the old elements of the same memory. Returns 0 if it succeeds.
+Now when doing 4-shakehand or adding new streams, sctp has to allocate
+new memory for asoc->stream and copy the old stream's information from
+the old asoc->stream to the new one. It also cause the stream pointers
+to change, by which a panic was even caused due to stream->out_curr's
+change.
 
-Note that it won't do any memory allocation or shrinking for elements,
-which should be only done by flex_array_prealloc and flex_array_shrink.
+To fix this, flex_array_resize() is used in sctp_stream_alloc_out/in()
+when asoc->stream has been allocated. Besides, with this asoc->stream
+will only be allocated once, and grow or shrink dynamically later.
 
+Note that flex_array_prealloc() is needed before growing as fa_alloc
+does, while flex_array_clear() and flex_array_shrink() are called to
+free the unused memory before shrinking.
+
+Fixes: 5bbbbe32a431 ("sctp: introduce stream scheduler foundations")
+Reported-by: Ying Xu <yinxu@redhat.com>
+Reported-by: syzbot+e33a3a138267ca119c7d@syzkaller.appspotmail.com
 Suggested-by: Neil Horman <nhorman@tuxdriver.com>
 Signed-off-by: Xin Long <lucien.xin@gmail.com>
 Acked-by: Neil Horman <nhorman@tuxdriver.com>
 ---
- include/linux/flex_array.h | 11 +++++++++
- lib/flex_array.c           | 58 ++++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 69 insertions(+)
+ net/sctp/stream.c | 87 +++++++++++++++++++++++++------------------------------
+ 1 file changed, 40 insertions(+), 47 deletions(-)
 
-diff --git a/include/linux/flex_array.h b/include/linux/flex_array.h
-index 29ad65f..19ff58d 100644
---- a/include/linux/flex_array.h
-+++ b/include/linux/flex_array.h
-@@ -130,6 +130,17 @@ void *flex_array_get(struct flex_array *fa, unsigned int element_nr);
-  */
- int flex_array_shrink(struct flex_array *fa);
+diff --git a/net/sctp/stream.c b/net/sctp/stream.c
+index 3892e76..aff30b2 100644
+--- a/net/sctp/stream.c
++++ b/net/sctp/stream.c
+@@ -37,6 +37,17 @@
+ #include <net/sctp/sm.h>
+ #include <net/sctp/stream_sched.h>
  
-+/**
-+ * flex_array_resize() - Resize without the old elements memory changed
-+ * @fa:		array to resize
-+ * @total:	total number of elements that this would change to
-+ * @flags:	page allocation flags to use for base array
-+ *
-+ * Return:	Returns 0 if it succeeds.
-+ *
-+ */
-+int flex_array_resize(struct flex_array *fa, unsigned int total, gfp_t flags);
-+
- #define flex_array_put_ptr(fa, nr, src, gfp) \
- 	flex_array_put(fa, nr, (void *)&(src), gfp)
- 
-diff --git a/lib/flex_array.c b/lib/flex_array.c
-index 8c0b9b6..2f913e7 100644
---- a/lib/flex_array.c
-+++ b/lib/flex_array.c
-@@ -405,3 +405,61 @@ int flex_array_shrink(struct flex_array *fa)
- 	return ret;
- }
- EXPORT_SYMBOL(flex_array_shrink);
-+
-+/**
-+ * flex_array_resize - resize without the old elements memory changed
-+ * @fa:		the flex array to resize
-+ * @total:	total number of elements that this would change to
-+ * @flags:	page allocation flags to use for base array
-+ *
-+ * This function can dynamically change total_nr_elements of a flex_array,
-+ * and keep the old elements of the same memory. Returns 0 if it succeeds.
-+ * Note that it won't do any memory allocation or shrinking for elements,
-+ * which should be only done by flex_array_prealloc and flex_array_shrink.
-+ *
-+ * Locking must be provided by the caller.
-+ */
-+int flex_array_resize(struct flex_array *fa, unsigned int total, gfp_t flags)
++static void fa_zero(struct flex_array *fa, size_t index, size_t count)
 +{
-+	int nr;
++	void *elem;
 +
-+	if (total > FLEX_ARRAY_NR_BASE_PTRS * fa->elems_per_part)
-+		return -EINVAL;
-+
-+	if (elements_fit_in_base(fa)) {
-+		struct flex_array_part_p *part_p;
-+
-+		nr = fa->total_nr_elements;
-+		fa->total_nr_elements = total;
-+		if (elements_fit_in_base(fa))
-+			return 0;
-+
-+		part_p = kzalloc(sizeof(*part_p), flags);
-+		if (!part_p) {
-+			fa->total_nr_elements = nr;
-+			return -ENOMEM;
-+		}
-+
-+		part_p->p_part[0] = (struct flex_array_part *)&fa->parts[0];
-+		fa->part_p = part_p;
-+	} else {
-+		struct flex_array_part *part;
-+
-+		fa->total_nr_elements = total;
-+		if (!elements_fit_in_base(fa))
-+			return 0;
-+
-+		for (nr = 1; nr < FLEX_ARRAY_NR_BASE_PTRS; nr++) {
-+			part = fa->parts[nr];
-+			if (part) {
-+				fa->parts[nr] = NULL;
-+				kfree(part);
-+			}
-+		}
-+
-+		fa->part_p = (struct flex_array_part_p *)fa->parts[0];
++	while (count--) {
++		elem = flex_array_get(fa, index);
++		memset(elem, 0, fa->element_size);
++		index++;
 +	}
-+
-+	return 0;
 +}
-+EXPORT_SYMBOL(flex_array_resize);
++
+ static struct flex_array *fa_alloc(size_t elem_size, size_t elem_count,
+ 				   gfp_t gfp)
+ {
+@@ -48,8 +59,9 @@ static struct flex_array *fa_alloc(size_t elem_size, size_t elem_count,
+ 		err = flex_array_prealloc(result, 0, elem_count, gfp);
+ 		if (err) {
+ 			flex_array_free(result);
+-			result = NULL;
++			return NULL;
+ 		}
++		fa_zero(result, 0, elem_count);
+ 	}
+ 
+ 	return result;
+@@ -61,27 +73,28 @@ static void fa_free(struct flex_array *fa)
+ 		flex_array_free(fa);
+ }
+ 
+-static void fa_copy(struct flex_array *fa, struct flex_array *from,
+-		    size_t index, size_t count)
++static int fa_resize(struct flex_array *fa, size_t count, gfp_t gfp)
+ {
+-	void *elem;
++	int nr = fa->total_nr_elements, n;
+ 
+-	while (count--) {
+-		elem = flex_array_get(from, index);
+-		flex_array_put(fa, index, elem, 0);
+-		index++;
++	if (count > nr) {
++		if (flex_array_resize(fa, count, gfp))
++			return -ENOMEM;
++		if (flex_array_prealloc(fa, nr, count - nr, gfp))
++			return -ENOMEM;
++		fa_zero(fa, nr, count - nr);
++
++		return 0;
+ 	}
+-}
+ 
+-static void fa_zero(struct flex_array *fa, size_t index, size_t count)
+-{
+-	void *elem;
++	/* Shrink the unused memory,
++	 * FLEX_ARRAY_FREE check is safe for sctp stream.
++	 */
++	for (n = count; n < nr; n++)
++		flex_array_clear(fa, n);
++	flex_array_shrink(fa);
+ 
+-	while (count--) {
+-		elem = flex_array_get(fa, index);
+-		memset(elem, 0, fa->element_size);
+-		index++;
+-	}
++	return flex_array_resize(fa, count, gfp);
+ }
+ 
+ /* Migrates chunks from stream queues to new stream queues if needed,
+@@ -138,47 +151,27 @@ static void sctp_stream_outq_migrate(struct sctp_stream *stream,
+ static int sctp_stream_alloc_out(struct sctp_stream *stream, __u16 outcnt,
+ 				 gfp_t gfp)
+ {
+-	struct flex_array *out;
+-	size_t elem_size = sizeof(struct sctp_stream_out);
+-
+-	out = fa_alloc(elem_size, outcnt, gfp);
+-	if (!out)
+-		return -ENOMEM;
++	if (!stream->out) {
++		stream->out = fa_alloc(sizeof(struct sctp_stream_out),
++				       outcnt, gfp);
+ 
+-	if (stream->out) {
+-		fa_copy(out, stream->out, 0, min(outcnt, stream->outcnt));
+-		fa_free(stream->out);
++		return stream->out ? 0 : -ENOMEM;
+ 	}
+ 
+-	if (outcnt > stream->outcnt)
+-		fa_zero(out, stream->outcnt, (outcnt - stream->outcnt));
+-
+-	stream->out = out;
+-
+-	return 0;
++	return fa_resize(stream->out, outcnt, gfp);
+ }
+ 
+ static int sctp_stream_alloc_in(struct sctp_stream *stream, __u16 incnt,
+ 				gfp_t gfp)
+ {
+-	struct flex_array *in;
+-	size_t elem_size = sizeof(struct sctp_stream_in);
++	if (!stream->in) {
++		stream->in = fa_alloc(sizeof(struct sctp_stream_in),
++				      incnt, gfp);
+ 
+-	in = fa_alloc(elem_size, incnt, gfp);
+-	if (!in)
+-		return -ENOMEM;
+-
+-	if (stream->in) {
+-		fa_copy(in, stream->in, 0, min(incnt, stream->incnt));
+-		fa_free(stream->in);
++		return stream->in ? 0 : -ENOMEM;
+ 	}
+ 
+-	if (incnt > stream->incnt)
+-		fa_zero(in, stream->incnt, (incnt - stream->incnt));
+-
+-	stream->in = in;
+-
+-	return 0;
++	return fa_resize(stream->in, incnt, gfp);
+ }
+ 
+ int sctp_stream_init(struct sctp_stream *stream, __u16 outcnt, __u16 incnt,
 -- 
 2.1.0
 
