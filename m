@@ -2,78 +2,150 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,T_MIXED_ES autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7752C64EB1
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 10:07:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB5F2C07E85
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 10:08:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7285C20645
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 10:07:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7285C20645
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 650D320645
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 10:08:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="jh9WpA31"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 650D320645
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726052AbeLGKH1 (ORCPT
+        id S1726056AbeLGKI0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 05:07:27 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:37520 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725985AbeLGKH1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 05:07:27 -0500
-Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id EB253EAFE43D6;
-        Fri,  7 Dec 2018 18:07:23 +0800 (CST)
-Received: from [127.0.0.1] (10.202.226.41) by DGGEMS410-HUB.china.huawei.com
- (10.3.19.210) with Microsoft SMTP Server id 14.3.408.0; Fri, 7 Dec 2018
- 18:07:18 +0800
-Subject: Re: [PATCH v4 2/5] scsi: hisi_sas: Relocate some code to reduce
- complexity
-To:     Johannes Thumshirn <jthumshirn@suse.de>, <jejb@linux.vnet.ibm.com>,
-        <martin.petersen@oracle.com>
-References: <1544103284-100497-1-git-send-email-john.garry@huawei.com>
- <1544103284-100497-3-git-send-email-john.garry@huawei.com>
- <c7ec9e23-6da8-35e0-1996-02db3d640f4b@suse.de>
- <2da87e22-1bbc-aff9-c0be-85a3fd8f4393@huawei.com>
- <778770d5-b377-2aaa-c2a0-9c548de74f17@suse.de>
-CC:     <linuxarm@huawei.com>, <linux-kernel@vger.kernel.org>,
-        <linux-scsi@vger.kernel.org>,
-        Xiang Chen <chenxiang66@hisilicon.com>
-From:   John Garry <john.garry@huawei.com>
-Message-ID: <0cfe35c7-89c4-b65a-ba25-dfcf5d59a564@huawei.com>
-Date:   Fri, 7 Dec 2018 10:07:13 +0000
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.3.0
+        Fri, 7 Dec 2018 05:08:26 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:44698 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725986AbeLGKI0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Dec 2018 05:08:26 -0500
+Received: by mail-wr1-f68.google.com with SMTP id z5so3197558wrt.11
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Dec 2018 02:08:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=0Zizx2lHMpqH5V3Aj7mmqJM8bK23abmMAS2tz3iI3JI=;
+        b=jh9WpA31YXM9TMThAgwh16+3uDH8c0me9zX0HZn3DHGqL4AS/a4uJtmtm9R7MPF/YC
+         KRrk4Dyhfaub4u8QW5ujm9lW/S64UQ4U+CVuxBzKIJiElrFAmxfId0snSMH/3egTYkEn
+         jEUq70nQToAXlZhSMoB0Zlg4h5yEJprLxVMzk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=0Zizx2lHMpqH5V3Aj7mmqJM8bK23abmMAS2tz3iI3JI=;
+        b=FGnu15WnmDfjqXSsrbrRuevPTYO1RC6heajOe+LAHDa8pbSpPWKsbVkKPTt65eUCiY
+         uCxd1VAb1WRvFRwnovOmytHCCHdO/NAPsJuQdG5gH6hY1kFz0ZDjTaJQqWWZl3FxmKzB
+         3PgK4eI7s2uajmYMpTV3J4ZJaM7uFMZpSqOKyWM+eLjC+GUSrUbDQ6xOxnSvTARBei2C
+         fRkD3Mbgfapeo9dp6Qo7RyBjhbpfsdMepTYbbKN2S2S5LZWoismoKYgkYk2/kL7YPSHI
+         2wMZt+t07Yhj8/vgM7S1gAexEnihvjHQVTCqF6vVA91H+RioDz7rcnm8N3HS/u/AGWbA
+         VQDA==
+X-Gm-Message-State: AA+aEWZy/XW2jU9B8fJ5LIsR9bhvB4i3WF+LiktGCSJqAxIflW3Z34MT
+        Cwd9rjrcRkpEkZNqTI14mSrODA==
+X-Google-Smtp-Source: AFSGD/UNdsmxfJ+u67ShRjDZxPElCTaCrnt2SocFtqXHjFAPnc7kL56JGsGtuG5/KMmFi9zopS+6iA==
+X-Received: by 2002:adf:f189:: with SMTP id h9mr1259404wro.35.1544177303069;
+        Fri, 07 Dec 2018 02:08:23 -0800 (PST)
+Received: from [192.168.27.209] (mx2.mm-sol.com. [217.18.243.227])
+        by smtp.googlemail.com with ESMTPSA id v6sm3265923wro.57.2018.12.07.02.08.21
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 07 Dec 2018 02:08:22 -0800 (PST)
+Subject: Re: [PATCH 1/1] media: venus: core: Set dma maximum segment size
+To:     Vivek Gautam <vivek.gautam@codeaurora.org>,
+        stanimir.varbanov@linaro.org, mchehab@kernel.org
+Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, vgarodia@codeaurora.org,
+        acourbot@chromium.org
+References: <20181205083151.3685-1-vivek.gautam@codeaurora.org>
+From:   Stanimir Varbanov <stanimir.varbanov@linaro.org>
+Message-ID: <a28d0542-5d63-7c72-0f39-40e4524d9a2a@linaro.org>
+Date:   Fri, 7 Dec 2018 12:08:20 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <778770d5-b377-2aaa-c2a0-9c548de74f17@suse.de>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+In-Reply-To: <20181205083151.3685-1-vivek.gautam@codeaurora.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.226.41]
-X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/12/2018 16:20, Johannes Thumshirn wrote:
-> On 06/12/2018 16:37, John Garry wrote:
->> which is important. Let me know if you disagree and I can change it.
->
-> Sure, it's your driver. It was just because the patch is even titled
-> "Relocate some code to reduce complexity", so I thought of reducing the
-> complexity for readers even further (like you don't need the line wrap
-> at 80 chars, and so on).
->
-> Byte,
-> 	Johannes
->
+Hi Vivek,
 
-I would rather not change if you don't mind. When we say "reduce 
-complexity", we are talking about moving the DMA mapping code from the 
-task prep function, as, when we add the DIX-related DMA mapping code, 
-leaving all the DMA mapping code in the task prep function would make it 
-a monster.
+Thanks for the patch!
 
-Thanks,
-John
+On 12/5/18 10:31 AM, Vivek Gautam wrote:
+> Turning on CONFIG_DMA_API_DEBUG_SG results in the following error:
+> 
+> [  460.308650] ------------[ cut here ]------------
+> [  460.313490] qcom-venus aa00000.video-codec: DMA-API: mapping sg segment longer than device claims to support [len=4194304] [max=65536]
+> [  460.326017] WARNING: CPU: 3 PID: 3555 at src/kernel/dma/debug.c:1301 debug_dma_map_sg+0x174/0x254
+> [  460.338888] Modules linked in: venus_dec venus_enc videobuf2_dma_sg videobuf2_memops hci_uart btqca bluetooth venus_core v4l2_mem2mem videobuf2_v4l2 videobuf2_common ath10k_snoc ath10k_core ath lzo lzo_compress zramjoydev
+> [  460.375811] CPU: 3 PID: 3555 Comm: V4L2DecoderThre Tainted: G        W         4.19.1 #82
+> [  460.384223] Hardware name: Google Cheza (rev1) (DT)
+> [  460.389251] pstate: 60400009 (nZCv daif +PAN -UAO)
+> [  460.394191] pc : debug_dma_map_sg+0x174/0x254
+> [  460.398680] lr : debug_dma_map_sg+0x174/0x254
+> [  460.403162] sp : ffffff80200c37d0
+> [  460.406583] x29: ffffff80200c3830 x28: 0000000000010000
+> [  460.412056] x27: 00000000ffffffff x26: ffffffc0f785ea80
+> [  460.417532] x25: 0000000000000000 x24: ffffffc0f4ea1290
+> [  460.423001] x23: ffffffc09e700300 x22: ffffffc0f4ea1290
+> [  460.428470] x21: ffffff8009037000 x20: 0000000000000001
+> [  460.433936] x19: ffffff80091b0000 x18: 0000000000000000
+> [  460.439411] x17: 0000000000000000 x16: 000000000000f251
+> [  460.444885] x15: 0000000000000006 x14: 0720072007200720
+> [  460.450354] x13: ffffff800af536e0 x12: 0000000000000000
+> [  460.455822] x11: 0000000000000000 x10: 0000000000000000
+> [  460.461288] x9 : 537944d9c6c48d00 x8 : 537944d9c6c48d00
+> [  460.466758] x7 : 0000000000000000 x6 : ffffffc0f8d98f80
+> [  460.472230] x5 : 0000000000000000 x4 : 0000000000000000
+> [  460.477703] x3 : 000000000000008a x2 : ffffffc0fdb13948
+> [  460.483170] x1 : ffffffc0fdb0b0b0 x0 : 000000000000007a
+> [  460.488640] Call trace:
+> [  460.491165]  debug_dma_map_sg+0x174/0x254
+> [  460.495307]  vb2_dma_sg_alloc+0x260/0x2dc [videobuf2_dma_sg]
+> [  460.501150]  __vb2_queue_alloc+0x164/0x374 [videobuf2_common]
+> [  460.507076]  vb2_core_reqbufs+0xfc/0x23c [videobuf2_common]
+> [  460.512815]  vb2_reqbufs+0x44/0x5c [videobuf2_v4l2]
+> [  460.517853]  v4l2_m2m_reqbufs+0x44/0x78 [v4l2_mem2mem]
+> [  460.523144]  v4l2_m2m_ioctl_reqbufs+0x1c/0x28 [v4l2_mem2mem]
+> [  460.528976]  v4l_reqbufs+0x30/0x40
+> [  460.532480]  __video_do_ioctl+0x36c/0x454
+> [  460.536610]  video_usercopy+0x25c/0x51c
+> [  460.540572]  video_ioctl2+0x38/0x48
+> [  460.544176]  v4l2_ioctl+0x60/0x74
+> [  460.547602]  do_video_ioctl+0x948/0x3520
+> [  460.551648]  v4l2_compat_ioctl32+0x60/0x98
+> [  460.555872]  __arm64_compat_sys_ioctl+0x134/0x20c
+> [  460.560718]  el0_svc_common+0x9c/0xe4
+> [  460.564498]  el0_svc_compat_handler+0x2c/0x38
+> [  460.568982]  el0_svc_compat+0x8/0x18
+> [  460.572672] ---[ end trace ce209b87b2f3af88 ]---
+> 
+> From above warning one would deduce that the sg segment will overflow
+> the device's capacity. In reality, the hardware can accommodate larger
+> sg segments.
+> So, initialize the max segment size properly to weed out this warning.
+> 
+> Based on a similar patch sent by Sean Paul for mdss:
+> https://patchwork.kernel.org/patch/10671457/
+> 
+> Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
+> ---
+>  drivers/media/platform/qcom/venus/core.c | 8 ++++++++
+>  1 file changed, 8 insertions(+)
 
+Acked-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
+
+-- 
+regards,
+Stan
