@@ -2,90 +2,164 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A388C07E85
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 06:52:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 648B2C07E85
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 06:53:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D1FAD208E7
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 06:52:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544165572;
-	bh=pY8Wk73MLhYprXE6HRedJQZeFVOqYPBMipNLpniHsNs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=qKQZTxSlqbU05O74w2g1N5x/T0o2O/mbwagijJypYllzAqlVK8O78wzCjw+pbfoBD
-	 OpiGt9it/w1jrZ/JJOhfHKk+XNy7U9KNAWiUwk1AHlqV17ZK3OtF72wd5IkJO0mgqj
-	 IQLi8M66UVvse7nygFAHDpm7YR8UKk6u4QO4iLrM=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D1FAD208E7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 0C85320882
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 06:53:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C85320882
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=realtek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725998AbeLGGwv (ORCPT
+        id S1726010AbeLGGxl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 01:52:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39772 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725948AbeLGGwv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 01:52:51 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 04D1720892;
-        Fri,  7 Dec 2018 06:52:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544165570;
-        bh=pY8Wk73MLhYprXE6HRedJQZeFVOqYPBMipNLpniHsNs=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=YUYdYQxtoPSxwVZsvvMCR0v3mblt0VvU6lEvexTHI4xqvbdrruOU2OgaJpYLFqPpG
-         QDqzHyVlRRcDYHd70ceeyy7G/06sBlHRqCzfLpMI5pXs7aBxe0XNDrrwV6eGfo+NM9
-         f1yuZ3Msc0XYYqMMYxIYjelTz4Nr42YE6RmlnqsI=
-Date:   Fri, 7 Dec 2018 07:52:48 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     shuah <shuah@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, linux@roeck-us.net,
-        patches@kernelci.org, ben.hutchings@codethink.co.uk,
-        lkft-triage@lists.linaro.org, stable@vger.kernel.org
-Subject: Re: [PATCH 4.19 00/41] 4.19.8-stable review
-Message-ID: <20181207065248.GB8158@kroah.com>
-References: <20181206142949.757402551@linuxfoundation.org>
- <d6d42f05-629f-e41e-c50d-2e53316cd6bb@kernel.org>
+        Fri, 7 Dec 2018 01:53:41 -0500
+Received: from rtits2.realtek.com ([211.75.126.72]:34000 "EHLO
+        rtits2.realtek.com.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725948AbeLGGxl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Dec 2018 01:53:41 -0500
+Authenticated-By: 
+X-SpamFilter-By: BOX Solutions SpamTrap 5.62 with qID wB76qds3023454, This message is accepted by code: ctloc85258
+Received: from mail.realtek.com (rtitcasv01.realtek.com.tw[172.21.6.18])
+        by rtits2.realtek.com.tw (8.15.2/2.57/5.78) with ESMTPS id wB76qds3023454
+        (version=TLSv1 cipher=AES256-SHA bits=256 verify=NOT);
+        Fri, 7 Dec 2018 14:52:39 +0800
+Received: from RTITMBSV02.realtek.com.tw ([fe80::cc0e:6d5f:56d7:c15f]) by
+ RTITCASV01.realtek.com.tw ([::1]) with mapi id 14.03.0415.000; Fri, 7 Dec
+ 2018 14:52:39 +0800
+From:   Kailang <kailang@realtek.com>
+To:     Jian-Hong Pan <jian-hong@endlessm.com>
+CC:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        Hui Wang <hui.wang@canonical.com>,
+        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
+        Linux Kernel <linux-kernel@vger.kernel.org>,
+        Linux Upstreaming Team <linux@endlessm.com>,
+        Daniel Drake <drake@endlessm.com>,
+        "josh@wtmec.com" <josh@wtmec.com>
+Subject: RE: [PATCH v2 2/3] ALSA: hda/realtek: Enable audio jacks of ASUS UX533FD with ALC294
+Thread-Topic: [PATCH v2 2/3] ALSA: hda/realtek: Enable audio jacks of ASUS
+ UX533FD with ALC294
+Thread-Index: AQHUjUBWWH/9RC4DZUm4FqBMJMBJNaVyn9rA//9+3gCAALXycA==
+Date:   Fri, 7 Dec 2018 06:52:37 +0000
+Message-ID: <6FAB7C47BCF00940BB0999A99BE3547A1842025B@RTITMBSV02.realtek.com.tw>
+References: <CAPpJ_eez=1ie2B8rA=GeW+hx7kQU0wBAhW3XCBX3zGPW+kXDZA@mail.gmail.com>
+ <20181206084554.4728-1-jian-hong@endlessm.com>
+ <20181206084554.4728-3-jian-hong@endlessm.com>
+ <6FAB7C47BCF00940BB0999A99BE3547A18420211@RTITMBSV02.realtek.com.tw>
+ <CAPpJ_ed36NyopArw98qhkstAm=L9A4=xiLPaa2ju0+qMR0tE9Q@mail.gmail.com>
+In-Reply-To: <CAPpJ_ed36NyopArw98qhkstAm=L9A4=xiLPaa2ju0+qMR0tE9Q@mail.gmail.com>
+Accept-Language: zh-TW, en-US
+Content-Language: zh-TW
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [172.22.105.152]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d6d42f05-629f-e41e-c50d-2e53316cd6bb@kernel.org>
-User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 06, 2018 at 03:10:03PM -0700, shuah wrote:
-> On 12/6/18 7:38 AM, Greg Kroah-Hartman wrote:
-> > This is the start of the stable review cycle for the 4.19.8 release.
-> > There are 41 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> > 
-> > Responses should be made by Sat Dec  8 14:29:30 UTC 2018.
-> > Anything received after that time might be too late.
-> > 
-> > The whole patch series can be found in one patch at:
-> > 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.19.8-rc1.gz
-> > or in the git tree and branch at:
-> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.19.y
-> > and the diffstat can be found below.
-> > 
-> > thanks,
-> > 
-> > greg k-h
-> > 
-> 
-> Compiled and booted on my test system. No dmesg regressions.
-
-Thanks for testing and letting me know.
-
-greg k-h
+SGkgSmlhbiBIb25nLA0KDQpJIGNhbGwgb3VyIGFnZW50IGd1eSBAIFdUTUVDLg0KUGxlYXNlIG1v
+ZGlmeSBhcyBiZWxsb3dpbmcgdGhlbiB0ZXN0IGFnYWluLg0KUmVtb3ZlIEVBUEQgY29udHJvbCBi
+eSBoaWRkZW4uDQpJZiB0aGlzIG1vZGlmeSBwYXRjaCB3YXMgcGFzcyBhdWRpbyB0ZXN0LCBwbGVh
+c2UgcmVnZW5lcmF0ZSBwYXRjaCB0byBUYWthc2hpLg0KSWYgdGhpcyBwYXRjaCB3aWxsIHNvbHZl
+IHRoZSBzcGVha2VyIG5vIHNvdW5kIGlzc3VlLCBJIHRoaW5rIHRoZSBtb2RlbCBuYW1lIG1heWJl
+IGNvdWxkIHJlbmFtZSB0byBBTEMyOTRfRklYVVBfQVNVU19TUEsuDQpCZWNhdXNlIGl0IGRvZXNu
+J3QgcmVsYXRlIHdpdGggTm9pc2UuDQoNCj4gKyAgICAgICBbQUxDMjk0X0ZJWFVQX0FTVVNfU1BL
+X05PSVNFXSA9IHsNCj4gKyAgICAgICAgICAgICAgIC50eXBlID0gSERBX0ZJWFVQX1ZFUkJTLA0K
+PiArICAgICAgICAgICAgICAgLnYudmVyYnMgPSAoY29uc3Qgc3RydWN0IGhkYV92ZXJiW10pIHsN
+Cj4gKyAgICAgICAgICAgICAgICAgICAgICAgeyAweDIwLCBBQ19WRVJCX1NFVF9DT0VGX0lOREVY
+LCAweDQwIH0sDQo+ICsgICAgICAgICAgICAgICAgICAgICAgIHsgMHgyMCwgQUNfVkVSQl9TRVRf
+UFJPQ19DT0VGLCAweDg4MDAgfSwNCj4gKyAgICAgICAgICAgICAgICAgICAgICAgeyB9DQo+ICsg
+ICAgICAgICAgICAgICB9LA0KPiArICAgICAgICAgICAgICAgLmNoYWluZWQgPSB0cnVlLA0KPiAr
+ICAgICAgICAgICAgICAgLmNoYWluX2lkID0gQUxDMjk0X0ZJWFVQX0FTVVNfSEVBRFNFVF9NSUMN
+Cj4gKyAgICAgICB9LA0KPiAgfTsNCg0KQlIsDQpLYWlsYW5nDQoNCi0tLS0tT3JpZ2luYWwgTWVz
+c2FnZS0tLS0tDQpGcm9tOiBKaWFuLUhvbmcgUGFuIDxqaWFuLWhvbmdAZW5kbGVzc20uY29tPiAN
+ClNlbnQ6IEZyaWRheSwgRGVjZW1iZXIgNywgMjAxOCAxMTo0OCBBTQ0KVG86IEthaWxhbmcgPGth
+aWxhbmdAcmVhbHRlay5jb20+DQpDYzogSmFyb3NsYXYgS3lzZWxhIDxwZXJleEBwZXJleC5jej47
+IFRha2FzaGkgSXdhaSA8dGl3YWlAc3VzZS5jb20+OyBIdWkgV2FuZyA8aHVpLndhbmdAY2Fub25p
+Y2FsLmNvbT47IGFsc2EtZGV2ZWxAYWxzYS1wcm9qZWN0Lm9yZzsgTGludXggS2VybmVsIDxsaW51
+eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnPjsgTGludXggVXBzdHJlYW1pbmcgVGVhbSA8bGludXhA
+ZW5kbGVzc20uY29tPjsgRGFuaWVsIERyYWtlIDxkcmFrZUBlbmRsZXNzbS5jb20+DQpTdWJqZWN0
+OiBSZTogW1BBVENIIHYyIDIvM10gQUxTQTogaGRhL3JlYWx0ZWs6IEVuYWJsZSBhdWRpbyBqYWNr
+cyBvZiBBU1VTIFVYNTMzRkQgd2l0aCBBTEMyOTQNCg0KS2FpbGFuZyA8a2FpbGFuZ0ByZWFsdGVr
+LmNvbT4g5pa8IDIwMTjlubQxMuaciDfml6Ug6YCx5LqUIOS4iuWNiDExOjMy5a+r6YGT77yaDQo+
+DQo+IEhpIEppYW4gSG9uZywNCj4NCj4gQ291bGQgSSBrbm93IHdobyBnaXZlIHlvdSB0aGUgdmFs
+dWUgYXMgYmVsb3c/DQo+DQo+ICsgICAgICAgICAgICAgICAgICAgICAgIHsgMHgyMCwgQUNfVkVS
+Ql9TRVRfQ09FRl9JTkRFWCwgMHgxMCB9LA0KPiArICAgICAgICAgICAgICAgICAgICAgICB7IDB4
+MjAsIDB4NGM0LCAweDIwIH0sDQo+ICsgICAgICAgICAgICAgICAgICAgICAgIHsgMHgyMCwgQUNf
+VkVSQl9TRVRfQ09FRl9JTkRFWCwgMHg0MCB9LA0KPiArICAgICAgICAgICAgICAgICAgICAgICB7
+IDB4MjAsIDB4NDg4LCAweDAwIH0sDQoNCkEgbW9kdWxlIG1ha2VyLg0KDQpSZWdhcmRzLA0KSmlh
+bi1Ib25nIFBhbg0KDQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IEppYW4t
+SG9uZyBQYW4gPGppYW4taG9uZ0BlbmRsZXNzbS5jb20+DQo+IFNlbnQ6IFRodXJzZGF5LCBEZWNl
+bWJlciA2LCAyMDE4IDQ6NDYgUE0NCj4gVG86IEphcm9zbGF2IEt5c2VsYSA8cGVyZXhAcGVyZXgu
+Y3o+OyBUYWthc2hpIEl3YWkgPHRpd2FpQHN1c2UuY29tPjsgDQo+IEthaWxhbmcgPGthaWxhbmdA
+cmVhbHRlay5jb20+DQo+IENjOiBIdWkgV2FuZyA8aHVpLndhbmdAY2Fub25pY2FsLmNvbT47IGFs
+c2EtZGV2ZWxAYWxzYS1wcm9qZWN0Lm9yZzsgDQo+IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5v
+cmc7IGxpbnV4QGVuZGxlc3NtLmNvbTsgSmlhbi1Ib25nIFBhbiANCj4gPGppYW4taG9uZ0BlbmRs
+ZXNzbS5jb20+OyBEYW5pZWwgRHJha2UgPGRyYWtlQGVuZGxlc3NtLmNvbT4NCj4gU3ViamVjdDog
+W1BBVENIIHYyIDIvM10gQUxTQTogaGRhL3JlYWx0ZWs6IEVuYWJsZSBhdWRpbyBqYWNrcyBvZiBB
+U1VTIA0KPiBVWDUzM0ZEIHdpdGggQUxDMjk0DQo+DQo+IFRoZSBBU1VTIFVYNTMzRkQgd2l0aCBB
+TEMyOTQgY2Fubm90IGRldGVjdCB0aGUgaGVhZHNldCBNSUMgYW5kIG91dHB1dCB0aHJvdWdoIHRo
+ZSBpbnRlcm5hbCBzcGVha2VyIGFuZCB0aGUgaGVhZHBob25lIHVudGlsIEFMQzI5NF9GSVhVUF9B
+U1VTX1NQS19OT0lTRSBxdWlyayBhcHBsaWVkLg0KPg0KPiBTaWduZWQtb2ZmLWJ5OiBEYW5pZWwg
+RHJha2UgPGRyYWtlQGVuZGxlc3NtLmNvbT4NCj4gU2lnbmVkLW9mZi1ieTogSmlhbi1Ib25nIFBh
+biA8amlhbi1ob25nQGVuZGxlc3NtLmNvbT4NCj4gLS0tDQo+IHYyOg0KPiAtIE1vZGlmeSB0aGUg
+SERBIHZlcmJzIGZvciBVWDMzM0ZBIHN1cHBvcnQNCj4gLSBNYWtlIGEgbmV3IEFMQzI5NF9GSVhV
+UF9BU1VTX0hFQURTRVRfTUlDIHF1aXJrIGZvciBBTEMyOTQgY2hhaW4NCj4gLSAuY2hhaW5faWQg
+PSBBTEMyNTZfRklYVVBfQVNVU19IRUFEU0VUX01PREUgID09PiBjaGFuZ2UgdG8gDQo+IEFMQzI2
+OV9GSVhVUF9IRUFEU0VUX01PREVfTk9fSFBfTUlDDQo+DQo+ICBzb3VuZC9wY2kvaGRhL3BhdGNo
+X3JlYWx0ZWsuYyB8IDI1ICsrKysrKysrKysrKysrKysrKysrKysrKysNCj4gIDEgZmlsZSBjaGFu
+Z2VkLCAyNSBpbnNlcnRpb25zKCspDQo+DQo+IGRpZmYgLS1naXQgYS9zb3VuZC9wY2kvaGRhL3Bh
+dGNoX3JlYWx0ZWsuYyANCj4gYi9zb3VuZC9wY2kvaGRhL3BhdGNoX3JlYWx0ZWsuYyBpbmRleCBk
+MzJlNTBiMWVkNjAuLjE1MjViY2RmOTZlOCANCj4gMTAwNjQ0DQo+IC0tLSBhL3NvdW5kL3BjaS9o
+ZGEvcGF0Y2hfcmVhbHRlay5jDQo+ICsrKyBiL3NvdW5kL3BjaS9oZGEvcGF0Y2hfcmVhbHRlay5j
+DQo+IEBAIC01NTE4LDYgKzU1MTgsOCBAQCBlbnVtIHsNCj4gICAgICAgICBBTEMyOTVfRklYVVBf
+SFBfQVVUT19NVVRFLA0KPiAgICAgICAgIEFMQzI4Nl9GSVhVUF9BQ0VSX0FJT19NSUNfTk9fUFJF
+U0VOQ0UsDQo+ICAgICAgICAgQUxDMjk0X0ZJWFVQX0FTVVNfTUlDLA0KPiArICAgICAgIEFMQzI5
+NF9GSVhVUF9BU1VTX0hFQURTRVRfTUlDLA0KPiArICAgICAgIEFMQzI5NF9GSVhVUF9BU1VTX1NQ
+S19OT0lTRSwNCj4gIH07DQo+DQo+ICBzdGF0aWMgY29uc3Qgc3RydWN0IGhkYV9maXh1cCBhbGMy
+NjlfZml4dXBzW10gPSB7IEBAIC02NDE0LDYgKzY0MTYsMjggQEAgc3RhdGljIGNvbnN0IHN0cnVj
+dCBoZGFfZml4dXAgYWxjMjY5X2ZpeHVwc1tdID0gew0KPiAgICAgICAgICAgICAgICAgLmNoYWlu
+ZWQgPSB0cnVlLA0KPiAgICAgICAgICAgICAgICAgLmNoYWluX2lkID0gQUxDMjY5X0ZJWFVQX0hF
+QURTRVRfTU9ERV9OT19IUF9NSUMNCj4gICAgICAgICB9LA0KPiArICAgICAgIFtBTEMyOTRfRklY
+VVBfQVNVU19IRUFEU0VUX01JQ10gPSB7DQo+ICsgICAgICAgICAgICAgICAudHlwZSA9IEhEQV9G
+SVhVUF9QSU5TLA0KPiArICAgICAgICAgICAgICAgLnYucGlucyA9IChjb25zdCBzdHJ1Y3QgaGRh
+X3BpbnRibFtdKSB7DQo+ICsgICAgICAgICAgICAgICAgICAgICAgIHsgMHgxOSwgMHgwMWExMTEz
+YyB9LCAvKiB1c2UgYXMgaGVhZHNldCBtaWMsIHdpdGhvdXQgaXRzIG93biBqYWNrIGRldGVjdCAq
+Lw0KPiArICAgICAgICAgICAgICAgICAgICAgICB7IH0NCj4gKyAgICAgICAgICAgICAgIH0sDQo+
+ICsgICAgICAgICAgICAgICAuY2hhaW5lZCA9IHRydWUsDQo+ICsgICAgICAgICAgICAgICAuY2hh
+aW5faWQgPSBBTEMyNjlfRklYVVBfSEVBRFNFVF9NT0RFX05PX0hQX01JQw0KPiArICAgICAgIH0s
+DQo+ICsgICAgICAgW0FMQzI5NF9GSVhVUF9BU1VTX1NQS19OT0lTRV0gPSB7DQo+ICsgICAgICAg
+ICAgICAgICAudHlwZSA9IEhEQV9GSVhVUF9WRVJCUywNCj4gKyAgICAgICAgICAgICAgIC52LnZl
+cmJzID0gKGNvbnN0IHN0cnVjdCBoZGFfdmVyYltdKSB7DQo+ICsgICAgICAgICAgICAgICAgICAg
+ICAgIC8qIFNldCBFQVBEIGhpZ2ggKi8NCj4gKyAgICAgICAgICAgICAgICAgICAgICAgeyAweDIw
+LCBBQ19WRVJCX1NFVF9DT0VGX0lOREVYLCAweDEwIH0sDQo+ICsgICAgICAgICAgICAgICAgICAg
+ICAgIHsgMHgyMCwgMHg0YzQsIDB4MjAgfSwNCj4gKyAgICAgICAgICAgICAgICAgICAgICAgeyAw
+eDIwLCBBQ19WRVJCX1NFVF9DT0VGX0lOREVYLCAweDQwIH0sDQo+ICsgICAgICAgICAgICAgICAg
+ICAgICAgIHsgMHgyMCwgMHg0ODgsIDB4MDAgfSwNCj4gKyAgICAgICAgICAgICAgICAgICAgICAg
+eyB9DQo+ICsgICAgICAgICAgICAgICB9LA0KPiArICAgICAgICAgICAgICAgLmNoYWluZWQgPSB0
+cnVlLA0KPiArICAgICAgICAgICAgICAgLmNoYWluX2lkID0gQUxDMjk0X0ZJWFVQX0FTVVNfSEVB
+RFNFVF9NSUMNCj4gKyAgICAgICB9LA0KPiAgfTsNCj4NCj4gIHN0YXRpYyBjb25zdCBzdHJ1Y3Qg
+c25kX3BjaV9xdWlyayBhbGMyNjlfZml4dXBfdGJsW10gPSB7IEBAIC02NTU2LDYgKzY1ODAsNyBA
+QCBzdGF0aWMgY29uc3Qgc3RydWN0IHNuZF9wY2lfcXVpcmsgYWxjMjY5X2ZpeHVwX3RibFtdID0g
+ew0KPiAgICAgICAgIFNORF9QQ0lfUVVJUksoMHgxMDQzLCAweDEyZTAsICJBU1VTIFg1NDFTQSIs
+IEFMQzI1Nl9GSVhVUF9BU1VTX01JQyksDQo+ICAgICAgICAgU05EX1BDSV9RVUlSSygweDEwNDMs
+IDB4MTNiMCwgIkFTVVMgWjU1MFNBIiwgQUxDMjU2X0ZJWFVQX0FTVVNfTUlDKSwNCj4gICAgICAg
+ICBTTkRfUENJX1FVSVJLKDB4MTA0MywgMHgxNDI3LCAiQXN1cyBaZW5ib29rIFVYMzFFIiwgDQo+
+IEFMQzI2OVZCX0ZJWFVQX0FTVVNfWkVOQk9PSyksDQo+ICsgICAgICAgU05EX1BDSV9RVUlSSygw
+eDEwNDMsIDB4MTRhMSwgIkFTVVMgVVg1MzNGRCIsIA0KPiArQUxDMjk0X0ZJWFVQX0FTVVNfU1BL
+X05PSVNFKSwNCj4gICAgICAgICBTTkRfUENJX1FVSVJLKDB4MTA0MywgMHgxNTE3LCAiQXN1cyBa
+ZW5ib29rIFVYMzFBIiwgQUxDMjY5VkJfRklYVVBfQVNVU19aRU5CT09LX1VYMzFBKSwNCj4gICAg
+ICAgICBTTkRfUENJX1FVSVJLKDB4MTA0MywgMHgxNmUzLCAiQVNVUyBVWDUwIiwgQUxDMjY5X0ZJ
+WFVQX1NURVJFT19ETUlDKSwNCj4gICAgICAgICBTTkRfUENJX1FVSVJLKDB4MTA0MywgMHgxYTEz
+LCAiQXN1cyBHNzNKdyIsIA0KPiBBTEMyNjlfRklYVVBfQVNVU19HNzNKVyksDQo+IC0tDQo+IDIu
+MTEuMA0KPg0KDQotLS0tLS1QbGVhc2UgY29uc2lkZXIgdGhlIGVudmlyb25tZW50IGJlZm9yZSBw
+cmludGluZyB0aGlzIGUtbWFpbC4NCg==
