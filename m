@@ -2,167 +2,146 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6395CC04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 03:20:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A742EC65BAF
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 03:26:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 22925214DA
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 03:20:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 22925214DA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cn.fujitsu.com
+	by mail.kernel.org (Postfix) with ESMTP id 6B8822054F
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 03:26:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="xiHcJavq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B8822054F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725995AbeLGDUe (ORCPT
+        id S1726006AbeLGD0A (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 22:20:34 -0500
-Received: from mail.cn.fujitsu.com ([183.91.158.132]:28995 "EHLO
-        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725939AbeLGDUe (ORCPT
+        Thu, 6 Dec 2018 22:26:00 -0500
+Received: from aserp2130.oracle.com ([141.146.126.79]:45714 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725939AbeLGD0A (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 22:20:34 -0500
-X-IronPort-AV: E=Sophos;i="5.56,324,1539619200"; 
-   d="scan'208";a="49173189"
-Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
-  by heian.cn.fujitsu.com with ESMTP; 07 Dec 2018 11:20:33 +0800
-Received: from G08CNEXCHPEKD01.g08.fujitsu.local (unknown [10.167.33.80])
-        by cn.fujitsu.com (Postfix) with ESMTP id 1C7F34B710EA;
-        Fri,  7 Dec 2018 11:20:29 +0800 (CST)
-Received: from localhost.localdomain (10.167.225.56) by
- G08CNEXCHPEKD01.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Fri, 7 Dec 2018 11:20:31 +0800
-Date:   Fri, 7 Dec 2018 11:20:01 +0800
-From:   Chao Fan <fanc.fnst@cn.fujitsu.com>
-To:     Baoquan He <bhe@redhat.com>
-CC:     Masayoshi Mizuma <msys.mizuma@gmail.com>, <bp@alien8.de>,
-        <mingo@redhat.com>, <linux-kernel@vger.kernel.org>,
-        <x86@kernel.org>, <tglx@linutronix.de>, <hpa@zytor.com>,
-        <keescook@chromium.org>, <indou.takao@jp.fujitsu.com>,
-        <caoj.fnst@cn.fujitsu.com>
-Subject: Re: [PATCH v12 1/5] x86/boot: Add get_acpi_rsdp() to parse RSDP in
- cmdline from KEXEC
-Message-ID: <20181207032001.GA27206@localhost.localdomain>
-References: <20181129081631.11139-1-fanc.fnst@cn.fujitsu.com>
- <20181129081631.11139-2-fanc.fnst@cn.fujitsu.com>
- <20181129211003.saxfvyboxpsn5mdr@gabell>
- <20181207021055.GI17340@MiWiFi-R3L-srv>
- <20181207025021.GJ17340@MiWiFi-R3L-srv>
+        Thu, 6 Dec 2018 22:26:00 -0500
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wB73OUfO001467;
+        Fri, 7 Dec 2018 03:25:55 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=HUL2igTSGf2aHg9hhP48aEPvyNhWdZ3qngjeHDvPnCM=;
+ b=xiHcJavq/aXOdfxeSwXAvU/1MxY/jTa/6JBI0POXM86LKhU/EiYGGrt6RcvP7onw32q/
+ +sRgdCfSadwJjzC/5QIovbIs9+xmQWSFRiokl1jERmoQ9wqVoQgNd6X5A2gwKfillOik
+ Zmhcko+3UKz7L3AwQMWl+LKLdkFAZnKQ7zdDX3tDMHiCNBnIKn2PRh1fPAgItXmMS3CX
+ R4UVNKUxsUQfBXIee1/1U9kz1lLWvGpKD4Yzle+jXOF0HEL966l3ZE4VqoItTf44RCuM
+ X9GW2FA2bvDuWrvOkpYZbkYc6K7UZWnqL09q15dK/UKh3y1P/43zvyUQdLCF5ilNhcRZ DQ== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by aserp2130.oracle.com with ESMTP id 2p3ftffhhq-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 07 Dec 2018 03:25:55 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wB73PtQU004569
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 7 Dec 2018 03:25:55 GMT
+Received: from abhmp0013.oracle.com (abhmp0013.oracle.com [141.146.116.19])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wB73Pskj016411;
+        Fri, 7 Dec 2018 03:25:54 GMT
+Received: from [10.182.69.118] (/10.182.69.118)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 06 Dec 2018 19:25:54 -0800
+Subject: Re: [PATCH V11 0/4] blk-mq: refactor code of issue directly
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     ming.lei@redhat.com, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <1544152185-32667-1-git-send-email-jianchao.w.wang@oracle.com>
+ <b2bcbb76-af6f-7660-2bc3-9796338cccff@kernel.dk>
+From:   "jianchao.wang" <jianchao.w.wang@oracle.com>
+Message-ID: <0adf3419-bcce-93d8-51fb-aee7cbb5ae17@oracle.com>
+Date:   Fri, 7 Dec 2018 11:26:36 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20181207025021.GJ17340@MiWiFi-R3L-srv>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Originating-IP: [10.167.225.56]
-X-yoursite-MailScanner-ID: 1C7F34B710EA.AC198
-X-yoursite-MailScanner: Found to be clean
-X-yoursite-MailScanner-From: fanc.fnst@cn.fujitsu.com
+In-Reply-To: <b2bcbb76-af6f-7660-2bc3-9796338cccff@kernel.dk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9099 signatures=668679
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=659
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1812070027
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 07, 2018 at 10:50:21AM +0800, Baoquan He wrote:
->On 12/07/18 at 10:10am, Baoquan He wrote:
->> Hi,
->> 
->> On 11/29/18 at 04:10pm, Masayoshi Mizuma wrote:
->> > > diff --git a/arch/x86/boot/compressed/misc.c b/arch/x86/boot/compressed/misc.c
->> > > index 8dd1d5ccae58..e51713fe3add 100644
->> > > --- a/arch/x86/boot/compressed/misc.c
->> > > +++ b/arch/x86/boot/compressed/misc.c
->> > > @@ -12,6 +12,7 @@
->> > >   * High loaded stuff by Hans Lermen & Werner Almesberger, Feb. 1996
->> > >   */
->> > >  
->> > > +#define BOOT_CTYPE_H
->> > >  #include "misc.h"
->> > >  #include "error.h"
->> > >  #include "pgtable.h"
->> > > @@ -426,3 +427,7 @@ void fortify_panic(const char *name)
->> > >  {
->> > >  	error("detected buffer overflow");
->> > >  }
->> > > +
->> > > +#ifdef BOOT_STRING
->> > > +#include "../../../../lib/kstrtox.c"
->> > > +#endif
->> > > diff --git a/arch/x86/boot/compressed/misc.h b/arch/x86/boot/compressed/misc.h
->> > > index a1d5918765f3..809c31effa4b 100644
->> > > --- a/arch/x86/boot/compressed/misc.h
->> > > +++ b/arch/x86/boot/compressed/misc.h
->> > > @@ -116,3 +116,7 @@ static inline void console_init(void)
->> > >  void set_sev_encryption_mask(void);
->> > >  
->> > >  #endif
->> > > +
->> > > +/* acpitb.c */
->> > > +#define BOOT_STRING
->> > > +extern int kstrtoull(const char *s, unsigned int base, unsigned long long *res);
->> > > diff --git a/lib/kstrtox.c b/lib/kstrtox.c
->> > > index 1006bf70bf74..a0ac1b2257b8 100644
->> > > --- a/lib/kstrtox.c
->> > > +++ b/lib/kstrtox.c
->> > > @@ -126,6 +126,9 @@ int kstrtoull(const char *s, unsigned int base, unsigned long long *res)
->> > >  }
->> > >  EXPORT_SYMBOL(kstrtoull);
->> > >  
->> > > +/* Make compressed period code be able to use kstrtoull(). */
->> > > +#ifndef BOOT_STRING
->> > 
->> > I got the following build error.
->> > 
->> > ]$ make arch/x86/boot/compressed/misc.o
->> >   CALL    scripts/checksyscalls.sh
->> >   DESCEND  objtool
->> >   CC      arch/x86/boot/compressed/misc.o
->> > ld: -r and -pie may not be used together
->> > make[1]: *** [scripts/Makefile.build:294: arch/x86/boot/compressed/misc.o] Error 1
->> > make: *** [Makefile:1715: arch/x86/boot/compressed/misc.o] Error 2
->> 
->> I have met this issue when change code in boot/compressed/kaslr.c.
->> 
->> I remember Ingo merged my patch and found this build error. Since if 
->> CONFIG_MODULES=n EXPORT_SYMBOL is defined as empty in
->> include/linux/export.h, that's why you can only meet it only if
->> CONFIG_MODULES=y.
->> 
->> I remember I just muted it with below code, please check commit
->> d52e7d5a95.
->> 
->> +#define _LINUX_EXPORT_H
->> +#define EXPORT_SYMBOL(sym)
->
->I made below change, it passed. My another question is why you need
->include "lib/kstrtox.c" into misc.c. Does it make sense if you plan to
->use it to replace simple_strtoull() in arch/x86/boot/string.c ?
->
->diff --git a/arch/x86/boot/compressed/misc.c b/arch/x86/boot/compressed/misc.c
->index e51713fe3add..777e807756e8 100644
->--- a/arch/x86/boot/compressed/misc.c
->+++ b/arch/x86/boot/compressed/misc.c
->@@ -13,6 +13,8 @@
->  */
+
+
+On 12/7/18 11:16 AM, Jens Axboe wrote:
+> On 12/6/18 8:09 PM, Jianchao Wang wrote:
+>> Hi Jens
+>>
+>> Please consider this patchset for 4.21.
+>>
+>> It refactors the code of issue request directly to unify the interface
+>> and make the code clearer and more readable.
+>>
+>> This patch set is rebased on the recent for-4.21/block and add the 1st
+>> patch which inserts the non-read-write request to hctx dispatch
+>> list to avoid to involve merge and io scheduler when bypass_insert
+>> is true, otherwise, inserting is ignored, BLK_STS_RESOURCE is returned
+>> and the caller will fail forever.
+>>
+>> The 2nd patch refactors the code of issue request directly to unify the
+>> helper interface which could handle all the cases.
+>>
+>> The 3rd patch make blk_mq_sched_insert_requests issue requests directly
+>> with 'bypass' false, then it needn't to handle the non-issued requests
+>> any more.
+>>
+>> The 4th patch replace and kill the blk_mq_request_issue_directly.
 > 
-> #define BOOT_CTYPE_H
->+#define __DISABLE_EXPORTS
->+
-> #include "misc.h"
-> #include "error.h"
-> #include "pgtable.h"
->
->I just tried to include it into boot/string.c, there's no any problem.
+> Sorry to keep iterating on this, but let's default to inserting to
+> the dispatch list if we ever see busy from a direct dispatch. I'm fine
+> with doing that for 4.21, as suggested by Ming, I just didn't want to
+> fiddle with it for 4.20. This will prevent any merging on the request
+> going forward, which I think is a much safer default.
+> 
+> You do this already for some cases. Let's do it unconditionally for
+> a request that was ever subjected to ->queue_rq() and we didn't either
+> error or finish after the fact.
+> 
+I have done it in this version if I get your point correctly.
+Please refer to the following fragment in the 2nd patch.
 
-Thanks for your help, I think it's better to include it into
-boot/string.c.
++	/*
++	 * If the request is issued unsuccessfully with
++	 * BLK_STS_DEV_RESOURCE or BLK_STS_RESOURCE, insert
++	 * the request to hctx dispatch list due to attached
++	 * lldd resource.
++	 */
++	force = true;
++	ret = __blk_mq_issue_directly(hctx, rq, cookie, last);
++out_unlock:
++	hctx_unlock(hctx, srcu_idx);
++out:
++	switch (ret) {
++	case BLK_STS_OK:
++		break;
++	case BLK_STS_DEV_RESOURCE:
++	case BLK_STS_RESOURCE:
++		if (force) {
++			blk_mq_request_bypass_insert(rq, run_queue);
++			ret = bypass ? BLK_STS_OK : ret;
++		} else if (!bypass) {
++			blk_mq_sched_insert_request(rq, false,
++						    run_queue, false);
++		}
++		break;
++	default:
 
-Thanks,
-Chao Fan
->
->Thanks
->Baoquan
->
->
 
-
+Thanks
+Jianchao
