@@ -2,97 +2,150 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 324C2C07E85
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 03:28:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13C06C07E85
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 03:30:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DF9E42054F
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 03:28:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ACBCE20700
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 03:30:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Gtzxpmca"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF9E42054F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="glwMdhZO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ACBCE20700
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726043AbeLGD2s (ORCPT
+        id S1726054AbeLGDaa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 22:28:48 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:45417 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725967AbeLGD2r (ORCPT
+        Thu, 6 Dec 2018 22:30:30 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:44319 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725963AbeLGDa3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 22:28:47 -0500
-Received: by mail-pg1-f193.google.com with SMTP id y4so1062055pgc.12;
-        Thu, 06 Dec 2018 19:28:47 -0800 (PST)
+        Thu, 6 Dec 2018 22:30:29 -0500
+Received: by mail-pg1-f194.google.com with SMTP id t13so1067235pgr.11
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Dec 2018 19:30:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=oSW7qduER+Yo1hj2yqyJG7kVBaZZV80hCAN4pyjfqm4=;
-        b=GtzxpmcaFOuNVVJrnSZMgq1bpWefO9MyEzUdWOEVan8RRUbAJSZf6RlXs6zY5evAPD
-         4D/HBbJGvQnWmYyTKFTwadZr+9hV/BNEKXU9dVZVmf5Ne5nh1kMYR05VVAxQBjKKmOM6
-         Jhrpygq/1rb6RyykO+DlJfMN7E8ToD9N8Av9yEDSwhNN+wcaOi93jco6SnKt3KmwL53E
-         a/nSjz1uOnadWdHKwWNWS2HAMvWj8K3cXImfqrzTIsqdH0oDc1uSGsrdPVgGRUwMnhen
-         4kC/y3k2/3kok7kLJWZHe2X3l8YuOZSxxeRlXh3hf7qq9oJkvi5DFg5WQ2jKcH73Iv6U
-         kuRg==
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=hpNQ2iOCkUhflXr3maJR4vnVkMbwllAH+QRJ/N70D7c=;
+        b=glwMdhZOqx9sHbb5ux1RoaJMM1BzfpIWq7L6wTDMlfE+jFwz28SCqgAIbCZimjg95Q
+         B0BVHMh9a/rtiBgTP301KmfhECks/2Tir2aj2+ChdH3eF99XNqm3pMO7E8ZFEvnga6q7
+         Q3b8nopwrX7770EIBo/nKOL7rN8O/NJQTgfVhlEK6pJ3lAkJE/zcBht5Y5nSCUle9eGb
+         Uqdkk0FeESe/nx3bike1LzFUQ/MZCxy2TXaJK6DRKksm434TlIARCX9xBnwJ76Q3jMIT
+         pdki+hslgnPyj9AzmDSK4uvCdNwAjJortmVSbOrpEh7Egd9vDKgBf+jdGpWz+7nfZJXg
+         yoag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=oSW7qduER+Yo1hj2yqyJG7kVBaZZV80hCAN4pyjfqm4=;
-        b=AsAYJNy23GQHeLAcpzb+cJ0RfJRr20QOO7wu+nKMAh8kAbfZHAQz8Cz61C3FDeqOB/
-         ROppdBluDFjSHZfJPG8fPWkjKBEbmAmjvdBe7nYZBj5J/tHT3JjiIP+y0Nh/E6dwWeyY
-         N7iBBUUfScQVqO5q7rSay1OH307KYLuLKASh8Rd/YtskwndfpZzQpByf04PvwnHDBov/
-         V0ZyFnq3G7UTz/q3WQy4bvKfboC20orXgtKPLRa18Zg2nRtsPWlehjGKyZkgEcKS8sQj
-         8cWCxTcTtT7bGRVme/tjqKzr0qR/G78WHw0E1mlrbE1Xym7TnYRJ+zIFn+QsqXcHF/pV
-         5mYA==
-X-Gm-Message-State: AA+aEWYCkv5/edntJKnCrDRhc9IdOAx7yzfact8Rl9IzgZtI0+J6bls2
-        o7HIFOZ3zNCfV0pJUOxOIqpeObYFRQI=
-X-Google-Smtp-Source: AFSGD/W7UXHENyzsPwaqw3UtG0I4DMTT1RpcBjD6IKwn3jx5cz+La7FucY9b/tWxKyciEPXqtPCjaw==
-X-Received: by 2002:aa7:85d7:: with SMTP id z23mr620743pfn.205.1544153326577;
-        Thu, 06 Dec 2018 19:28:46 -0800 (PST)
-Received: from VTX-VICTOR-WU.vivotek.tw (220-133-8-147.HINET-IP.hinet.net. [220.133.8.147])
-        by smtp.gmail.com with ESMTPSA id q7sm2191386pgp.40.2018.12.06.19.28.44
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 06 Dec 2018 19:28:45 -0800 (PST)
-From:   shaftarger <sholchen@gmail.com>
-X-Google-Original-From: shaftarger <shol@livemail.tw>
-To:     linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     shaftarger <shol@livemail.tw>
-Subject: [PATCH] spi: dw: fix potential variable assignment error
-Date:   Fri,  7 Dec 2018 11:28:32 +0800
-Message-Id: <20181207032832.3156-1-shol@livemail.tw>
-X-Mailer: git-send-email 2.12.2.windows.2
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=hpNQ2iOCkUhflXr3maJR4vnVkMbwllAH+QRJ/N70D7c=;
+        b=YfKuWaWGhtR8gCEn96kZ50LIy0O9t2iScjyTVTz7SFCGl+SK8D+UGVUZUK+v0EapfH
+         HVzjqQYL5Wf/Bfptvw5AyXGpx6Y+CQ4FA5l1+QA9GB9nZZiZJnhq8rK51Uwf4Vd9rBbq
+         nlM+d9AB1w3qVbPsxuZsc+yubwEzDF7FCLyh3tXvJjqJGftMPR772tt351ELwCvVILL+
+         QDA0Omk93d0XhrDMdZxH0OxEfDmN+Pxh21X/1lRRig3eZgGB0G7kmjKNc7rNanMupbKD
+         rknDHS4t0EUbRALnzNhSi0wpPQA9tGRBYHoZ/oOs54rKORSU/WD8nCXUfvHyJQg/o5gv
+         Ow5g==
+X-Gm-Message-State: AA+aEWbJXo47YMHK0xMRqcajgD1ljX4i9V2V3SRnl3CwZoDDh+yemoUR
+        EnNm/3TCX3+2PwOjdSus+gwoIw==
+X-Google-Smtp-Source: AFSGD/XdhNocVzFs6+8gPW2HnEWvT/c9mxKwMTjtQy1jh0xs22PMznADzNTJrHLF92Kzkcq9MTnknA==
+X-Received: by 2002:a62:1043:: with SMTP id y64mr659005pfi.78.1544153428979;
+        Thu, 06 Dec 2018 19:30:28 -0800 (PST)
+Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
+        by smtp.gmail.com with ESMTPSA id s9sm1800591pgl.88.2018.12.06.19.30.27
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 06 Dec 2018 19:30:28 -0800 (PST)
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1gV6qR-000736-AC; Thu, 06 Dec 2018 20:30:27 -0700
+Date:   Thu, 6 Dec 2018 20:30:27 -0700
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     jglisse@redhat.com
+Cc:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org,
+        Matthew Wilcox <mawilcox@microsoft.com>,
+        Ross Zwisler <zwisler@kernel.org>, Jan Kara <jack@suse.cz>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        Christian Koenig <christian.koenig@amd.com>,
+        Felix Kuehling <felix.kuehling@amd.com>,
+        Ralph Campbell <rcampbell@nvidia.com>,
+        John Hubbard <jhubbard@nvidia.com>, kvm@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-rdma@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2 1/3] mm/mmu_notifier: use structure for
+ invalidate_range_start/end callback
+Message-ID: <20181207033027.GA20236@ziepe.ca>
+References: <20181205053628.3210-1-jglisse@redhat.com>
+ <20181205053628.3210-2-jglisse@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181205053628.3210-2-jglisse@redhat.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-spi::mode is defined by framework for several SPI capabilities,
-such as polarity, phase, bit-endian, wire number. Directly use this
-variable for setting controller's polarity and phase causes other
-bit in register being set. Since SPI framework has its definition,
-fetch required bit in spi::mode and set to register.
----
- drivers/spi/spi-dw.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+On Wed, Dec 05, 2018 at 12:36:26AM -0500, jglisse@redhat.com wrote:
+> From: Jérôme Glisse <jglisse@redhat.com>
+> 
+> To avoid having to change many callback definition everytime we want
+> to add a parameter use a structure to group all parameters for the
+> mmu_notifier invalidate_range_start/end callback. No functional changes
+> with this patch.
+> 
+> Signed-off-by: Jérôme Glisse <jglisse@redhat.com>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Matthew Wilcox <mawilcox@microsoft.com>
+> Cc: Ross Zwisler <zwisler@kernel.org>
+> Cc: Jan Kara <jack@suse.cz>
+> Cc: Dan Williams <dan.j.williams@intel.com>
+> Cc: Paolo Bonzini <pbonzini@redhat.com>
+> Cc: Radim Krčmář <rkrcmar@redhat.com>
+> Cc: Michal Hocko <mhocko@kernel.org>
+> Cc: Christian Koenig <christian.koenig@amd.com>
+> Cc: Felix Kuehling <felix.kuehling@amd.com>
+> Cc: Ralph Campbell <rcampbell@nvidia.com>
+> Cc: John Hubbard <jhubbard@nvidia.com>
+> Cc: kvm@vger.kernel.org
+> Cc: dri-devel@lists.freedesktop.org
+> Cc: linux-rdma@vger.kernel.org
+> Cc: linux-fsdevel@vger.kernel.org
+> ---
+>  drivers/gpu/drm/amd/amdgpu/amdgpu_mn.c  | 43 +++++++++++--------------
+>  drivers/gpu/drm/i915/i915_gem_userptr.c | 14 ++++----
+>  drivers/gpu/drm/radeon/radeon_mn.c      | 16 ++++-----
+>  drivers/infiniband/core/umem_odp.c      | 20 +++++-------
+>  drivers/infiniband/hw/hfi1/mmu_rb.c     | 13 +++-----
+>  drivers/misc/mic/scif/scif_dma.c        | 11 ++-----
+>  drivers/misc/sgi-gru/grutlbpurge.c      | 14 ++++----
+>  drivers/xen/gntdev.c                    | 12 +++----
+>  include/linux/mmu_notifier.h            | 14 +++++---
+>  mm/hmm.c                                | 23 ++++++-------
+>  mm/mmu_notifier.c                       | 21 ++++++++++--
+>  virt/kvm/kvm_main.c                     | 14 +++-----
+>  12 files changed, 102 insertions(+), 113 deletions(-)
 
-diff --git a/drivers/spi/spi-dw.c b/drivers/spi/spi-dw.c
-index b705f2bdb8b9..c1b0ae5698ba 100644
---- a/drivers/spi/spi-dw.c
-+++ b/drivers/spi/spi-dw.c
-@@ -317,7 +317,8 @@ static int dw_spi_transfer_one(struct spi_controller *master,
- 	/* Default SPI mode is SCPOL = 0, SCPH = 0 */
- 	cr0 = (transfer->bits_per_word - 1)
- 		| (chip->type << SPI_FRF_OFFSET)
--		| (spi->mode << SPI_MODE_OFFSET)
-+		| ((((spi->mode & SPI_CPOL)?1:0) << SPI_SCOL_OFFSET) |
-+			(((spi->mode & SPI_CPHA)?1:0) << SPI_SCPH_OFFSET))
- 		| (chip->tmode << SPI_TMOD_OFFSET);
- 
- 	/*
--- 
-2.12.2.windows.2
+The changes to drivers/infiniband look mechanical and fine to me.
 
+It even looks like this avoids merge conflicts with the other changes
+to these files :)
+
+For infiniband:
+
+Acked-by: Jason Gunthorpe <jgg@mellanox.com>
+
+I assume this will go through the mm tree?
+
+Jason
