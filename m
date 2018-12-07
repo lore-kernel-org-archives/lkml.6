@@ -7,55 +7,55 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06085C64EB1
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 06:16:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C72BC65BAF
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 06:17:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B09F520837
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 06:16:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2DB1D20837
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 06:17:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Gkfg+veq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B09F520837
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ajW7ykpg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2DB1D20837
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726089AbeLGGQz (ORCPT
+        id S1726105AbeLGGQ7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 01:16:55 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:36811 "EHLO
+        Fri, 7 Dec 2018 01:16:59 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:45245 "EHLO
         mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726007AbeLGGQx (ORCPT
+        with ESMTP id S1726007AbeLGGQ4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 01:16:53 -0500
-Received: by mail-pl1-f196.google.com with SMTP id g9so1345008plo.3
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Dec 2018 22:16:52 -0800 (PST)
+        Fri, 7 Dec 2018 01:16:56 -0500
+Received: by mail-pl1-f196.google.com with SMTP id a14so1331185plm.12
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Dec 2018 22:16:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=uJoswCrlfo65GP7YSjDD5Dxde1TEKzOE1bHdE5k2YXA=;
-        b=Gkfg+veq3tFoCNjzTVVK4MzF1+VxmDDREWTh7F/H38sptZ3jt6fe3ndCmar2DUe88M
-         oshVn2q+niIJDMUfWeFJfKyH74cwlJzUYMUI+jek4GUAaKZJrUA5/Wt8W8OCBlnE+JYt
-         uX3zOPZH8Nwsy5ulmVaJycpdrDUdwiSAerjcw=
+        bh=vfDZBvP3TWcZW6yQdou2wK6yj8xee8CfAn4H8ypmyuM=;
+        b=ajW7ykpgmnhWZg6QkL05VwuXLNY8vPub3SVB9mHKkj9yGCbbp3RyvKpsenzdB8F1TU
+         oLn1EdtQlrOmf/uaPsNtoOjCZKEAYJPBoRxMOEDlXShDmjeohgQld96dRL+2yqHPwu17
+         6eJR8s89WqE/vMoVrnBAkPf/i9bLdV4xvIElw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=uJoswCrlfo65GP7YSjDD5Dxde1TEKzOE1bHdE5k2YXA=;
-        b=EzYXqDoeOQBf9xl7No38VHnSf+0/vxJ9b5D0iDVnnYQrY+8T8xcY0McmmflZ+/Y/xT
-         vQAIqyxX+U3h9lvj5SSUqQzwVkXV/r4gJD4aC02cGVZsrrJQYm0sgv/rnpOwxrfp0p1c
-         0+p9u2qOzNufw7qxGQeDep24SsbgCzxZiDW+GkIeEl8hOvtiMaXNo80WhdzVkkNJp8li
-         Prl3MOu0oJXLVbZCAclckFM3BYNYU+iHEvjOvTYRXjaFPVwJp0vPailLE+XTHhUT2vBt
-         pjJLUQmok86iEP1AayGx3gSdn87DLf2tJ7MIPjG1JiBk554tpYve0fa2sQfCg4DPixal
-         we1A==
-X-Gm-Message-State: AA+aEWY0TqOLhozGiBL7TdB1cHJvGlSrtcP+a8Wt5xkwy3vVvELK8ZbF
-        H8zboq28Rvve2QphwmwDQjGERQ==
-X-Google-Smtp-Source: AFSGD/XZa6HFUd/c5IPU8LIhweh/OmveFRXhgV1EPw5ux8VC+DfGZoBXt4ZppI0AFEFQOSUKgZ7anw==
-X-Received: by 2002:a17:902:74c1:: with SMTP id f1mr928632plt.273.1544163411694;
-        Thu, 06 Dec 2018 22:16:51 -0800 (PST)
+        bh=vfDZBvP3TWcZW6yQdou2wK6yj8xee8CfAn4H8ypmyuM=;
+        b=bEESyQ6komiNn3KU5JdCbYrggoyvaGIE2cbahv++oYJvNdu5EJAP1hplrmcu470joj
+         lMASVnLy+llyWw6Utetn3cxKE4DvjqD2HKagPhy3SAs8cgtN7WM9VXY/cHv8m4cJb9Nl
+         cbHCZPsvO9XMU5SBsl+fr6lQBWVXZiGmcY50yvDCKlXqH7Hn+sJg6kMmKWZwwMVmk2CC
+         MbvFZyJtHMW2U3bbiYizA+PMP9rhP0dQySsh1dnw9JEG1ZsEp1AIPleVbOmU+mLtUdLf
+         9mwOfux0s3kZBCUXo0gHVX3RGpfIfeibC+Ep+RHbpypDm9mZh+7HRze83vbSHv8V4vth
+         67CQ==
+X-Gm-Message-State: AA+aEWbYLZwZ/54Txf5m9vUISsUbdURl3XPfDzqLP2efnKGOt+yCD0d2
+        3bQz68QXSKEkytAr5iRHhKf+9w==
+X-Google-Smtp-Source: AFSGD/WjibF7BAGBT7JCP1KlcCBZK1mBbMEJXi1hjBLMmy0oX0rCi/RPt/SNWaq9HMeIq/lHjXLIEw==
+X-Received: by 2002:a17:902:7848:: with SMTP id e8mr1006902pln.100.1544163415694;
+        Thu, 06 Dec 2018 22:16:55 -0800 (PST)
 Received: from drinkcat2.tpe.corp.google.com ([2401:fa00:1:b:f659:7f17:ea11:4e8e])
-        by smtp.gmail.com with ESMTPSA id z30-v6sm2995944pfg.41.2018.12.06.22.16.47
+        by smtp.gmail.com with ESMTPSA id z30-v6sm2995944pfg.41.2018.12.06.22.16.51
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 06 Dec 2018 22:16:51 -0800 (PST)
+        Thu, 06 Dec 2018 22:16:55 -0800 (PST)
 From:   Nicolas Boichat <drinkcat@chromium.org>
 To:     Will Deacon <will.deacon@arm.com>
 Cc:     Robin Murphy <robin.murphy@arm.com>,
@@ -77,9 +77,9 @@ Cc:     Robin Murphy <robin.murphy@arm.com>,
         Matthias Brugger <matthias.bgg@gmail.com>,
         Tomasz Figa <tfiga@google.com>, yingjoe.chen@mediatek.com,
         hch@infradead.org, Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH v5 2/3] iommu/io-pgtable-arm-v7s: Request DMA32 memory, and improve debugging
-Date:   Fri,  7 Dec 2018 14:16:19 +0800
-Message-Id: <20181207061620.107881-3-drinkcat@chromium.org>
+Subject: [PATCH v5 3/3] mm: Add /sys/kernel/slab/cache/cache_dma32
+Date:   Fri,  7 Dec 2018 14:16:20 +0800
+Message-Id: <20181207061620.107881-4-drinkcat@chromium.org>
 X-Mailer: git-send-email 2.20.0.rc2.403.gdbc3b29805-goog
 In-Reply-To: <20181207061620.107881-1-drinkcat@chromium.org>
 References: <20181207061620.107881-1-drinkcat@chromium.org>
@@ -90,85 +90,111 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-IOMMUs using ARMv7 short-descriptor format require page tables
-(level 1 and 2) to be allocated within the first 4GB of RAM, even
-on 64-bit systems.
+A previous patch in this series adds support for SLAB_CACHE_DMA32
+kmem caches. This adds the corresponding
+/sys/kernel/slab/cache/cache_dma32 entries, and fixes slabinfo
+tool.
 
-For level 1/2 pages, ensure GFP_DMA32 is used if CONFIG_ZONE_DMA32
-is defined (e.g. on arm64 platforms).
-
-For level 2 pages, allocate a slab cache in SLAB_CACHE_DMA32. Note
-that we do not explicitly pass GFP_DMA[32] to kmem_cache_zalloc,
-as this is not strictly necessary, and would cause a warning
-in mm/sl*b.c, as we did not update GFP_SLAB_BUG_MASK.
-
-Also, print an error when the physical address does not fit in
-32-bit, to make debugging easier in the future.
-
-Fixes: ad67f5a6545f ("arm64: replace ZONE_DMA with ZONE_DMA32")
 Signed-off-by: Nicolas Boichat <drinkcat@chromium.org>
 ---
 
-Changes since v2:
- - Commit message
+There were different opinions on whether this sysfs entry should
+be added, so I'll leave it up to the mm/slub maintainers to decide
+whether they want to pick this up, or drop it.
 
-(v3 used the page_frag approach)
+ Documentation/ABI/testing/sysfs-kernel-slab |  9 +++++++++
+ mm/slub.c                                   | 11 +++++++++++
+ tools/vm/slabinfo.c                         |  7 ++++++-
+ 3 files changed, 26 insertions(+), 1 deletion(-)
 
-Changes since v4:
- - Do not pass ARM_V7S_TABLE_GFP_DMA to kmem_cache_zalloc, as this
-   is unnecessary, and would trigger a warning.
-
- drivers/iommu/io-pgtable-arm-v7s.c | 19 +++++++++++++++----
- 1 file changed, 15 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/iommu/io-pgtable-arm-v7s.c b/drivers/iommu/io-pgtable-arm-v7s.c
-index 445c3bde04800c..f311fe1dfa47b7 100644
---- a/drivers/iommu/io-pgtable-arm-v7s.c
-+++ b/drivers/iommu/io-pgtable-arm-v7s.c
-@@ -161,6 +161,14 @@
+diff --git a/Documentation/ABI/testing/sysfs-kernel-slab b/Documentation/ABI/testing/sysfs-kernel-slab
+index 29601d93a1c2ea..d742c6cfdffbe9 100644
+--- a/Documentation/ABI/testing/sysfs-kernel-slab
++++ b/Documentation/ABI/testing/sysfs-kernel-slab
+@@ -106,6 +106,15 @@ Description:
+ 		are from ZONE_DMA.
+ 		Available when CONFIG_ZONE_DMA is enabled.
  
- #define ARM_V7S_TCR_PD1			BIT(5)
++What:		/sys/kernel/slab/cache/cache_dma32
++Date:		December 2018
++KernelVersion:	4.21
++Contact:	Nicolas Boichat <drinkcat@chromium.org>
++Description:
++		The cache_dma32 file is read-only and specifies whether objects
++		are from ZONE_DMA32.
++		Available when CONFIG_ZONE_DMA32 is enabled.
++
+ What:		/sys/kernel/slab/cache/cpu_slabs
+ Date:		May 2007
+ KernelVersion:	2.6.22
+diff --git a/mm/slub.c b/mm/slub.c
+index 4caadb926838ef..840f3719d9d543 100644
+--- a/mm/slub.c
++++ b/mm/slub.c
+@@ -5104,6 +5104,14 @@ static ssize_t cache_dma_show(struct kmem_cache *s, char *buf)
+ SLAB_ATTR_RO(cache_dma);
+ #endif
  
 +#ifdef CONFIG_ZONE_DMA32
-+#define ARM_V7S_TABLE_GFP_DMA GFP_DMA32
-+#define ARM_V7S_TABLE_SLAB_CACHE SLAB_CACHE_DMA32
-+#else
-+#define ARM_V7S_TABLE_GFP_DMA GFP_DMA
-+#define ARM_V7S_TABLE_SLAB_CACHE SLAB_CACHE_DMA
++static ssize_t cache_dma32_show(struct kmem_cache *s, char *buf)
++{
++	return sprintf(buf, "%d\n", !!(s->flags & SLAB_CACHE_DMA32));
++}
++SLAB_ATTR_RO(cache_dma32);
 +#endif
 +
- typedef u32 arm_v7s_iopte;
- 
- static bool selftest_running;
-@@ -198,13 +206,16 @@ static void *__arm_v7s_alloc_table(int lvl, gfp_t gfp,
- 	void *table = NULL;
- 
- 	if (lvl == 1)
--		table = (void *)__get_dma_pages(__GFP_ZERO, get_order(size));
-+		table = (void *)__get_free_pages(
-+			__GFP_ZERO | ARM_V7S_TABLE_GFP_DMA, get_order(size));
- 	else if (lvl == 2)
--		table = kmem_cache_zalloc(data->l2_tables, gfp | GFP_DMA);
-+		table = kmem_cache_zalloc(data->l2_tables, gfp);
- 	phys = virt_to_phys(table);
--	if (phys != (arm_v7s_iopte)phys)
-+	if (phys != (arm_v7s_iopte)phys) {
- 		/* Doesn't fit in PTE */
-+		dev_err(dev, "Page table does not fit in PTE: %pa", &phys);
- 		goto out_free;
-+	}
- 	if (table && !(cfg->quirks & IO_PGTABLE_QUIRK_NO_DMA)) {
- 		dma = dma_map_single(dev, table, size, DMA_TO_DEVICE);
- 		if (dma_mapping_error(dev, dma))
-@@ -737,7 +748,7 @@ static struct io_pgtable *arm_v7s_alloc_pgtable(struct io_pgtable_cfg *cfg,
- 	data->l2_tables = kmem_cache_create("io-pgtable_armv7s_l2",
- 					    ARM_V7S_TABLE_SIZE(2),
- 					    ARM_V7S_TABLE_SIZE(2),
--					    SLAB_CACHE_DMA, NULL);
-+					    ARM_V7S_TABLE_SLAB_CACHE, NULL);
- 	if (!data->l2_tables)
- 		goto out_free_data;
- 
+ static ssize_t usersize_show(struct kmem_cache *s, char *buf)
+ {
+ 	return sprintf(buf, "%u\n", s->usersize);
+@@ -5444,6 +5452,9 @@ static struct attribute *slab_attrs[] = {
+ #ifdef CONFIG_ZONE_DMA
+ 	&cache_dma_attr.attr,
+ #endif
++#ifdef CONFIG_ZONE_DMA32
++	&cache_dma32_attr.attr,
++#endif
+ #ifdef CONFIG_NUMA
+ 	&remote_node_defrag_ratio_attr.attr,
+ #endif
+diff --git a/tools/vm/slabinfo.c b/tools/vm/slabinfo.c
+index 334b16db0ebbe9..4ee1bf6e498dfa 100644
+--- a/tools/vm/slabinfo.c
++++ b/tools/vm/slabinfo.c
+@@ -29,7 +29,7 @@ struct slabinfo {
+ 	char *name;
+ 	int alias;
+ 	int refs;
+-	int aliases, align, cache_dma, cpu_slabs, destroy_by_rcu;
++	int aliases, align, cache_dma, cache_dma32, cpu_slabs, destroy_by_rcu;
+ 	unsigned int hwcache_align, object_size, objs_per_slab;
+ 	unsigned int sanity_checks, slab_size, store_user, trace;
+ 	int order, poison, reclaim_account, red_zone;
+@@ -531,6 +531,8 @@ static void report(struct slabinfo *s)
+ 		printf("** Hardware cacheline aligned\n");
+ 	if (s->cache_dma)
+ 		printf("** Memory is allocated in a special DMA zone\n");
++	if (s->cache_dma32)
++		printf("** Memory is allocated in a special DMA32 zone\n");
+ 	if (s->destroy_by_rcu)
+ 		printf("** Slabs are destroyed via RCU\n");
+ 	if (s->reclaim_account)
+@@ -599,6 +601,8 @@ static void slabcache(struct slabinfo *s)
+ 		*p++ = '*';
+ 	if (s->cache_dma)
+ 		*p++ = 'd';
++	if (s->cache_dma32)
++		*p++ = 'D';
+ 	if (s->hwcache_align)
+ 		*p++ = 'A';
+ 	if (s->poison)
+@@ -1205,6 +1209,7 @@ static void read_slab_dir(void)
+ 			slab->aliases = get_obj("aliases");
+ 			slab->align = get_obj("align");
+ 			slab->cache_dma = get_obj("cache_dma");
++			slab->cache_dma32 = get_obj("cache_dma32");
+ 			slab->cpu_slabs = get_obj("cpu_slabs");
+ 			slab->destroy_by_rcu = get_obj("destroy_by_rcu");
+ 			slab->hwcache_align = get_obj("hwcache_align");
 -- 
 2.20.0.rc2.403.gdbc3b29805-goog
 
