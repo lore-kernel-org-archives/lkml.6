@@ -2,166 +2,196 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D9D2C07E85
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 18:39:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06D5CC07E85
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 18:39:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2B98B20672
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 18:39:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B98B20672
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id BD03E20672
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 18:39:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="b5wItN3S"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD03E20672
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=alien8.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726103AbeLGSjJ (ORCPT
+        id S1726145AbeLGSjn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 13:39:09 -0500
-Received: from foss.arm.com ([217.140.101.70]:51864 "EHLO foss.arm.com"
+        Fri, 7 Dec 2018 13:39:43 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:45374 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726011AbeLGSjI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 13:39:08 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E7F5AEBD;
-        Fri,  7 Dec 2018 10:39:07 -0800 (PST)
-Received: from [10.1.196.62] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 97AD63F5AF;
-        Fri,  7 Dec 2018 10:39:04 -0800 (PST)
-Subject: Re: [PATCH v3 2/4] drivers/irqchip: Add Actions external interrupts
- support
-To:     Parthiban Nallathambi <pn@denx.de>, tglx@linutronix.de,
-        jason@lakedaemon.net, robh+dt@kernel.org, mark.rutland@arm.com,
-        afaerber@suse.de, catalin.marinas@arm.com, will.deacon@arm.com,
-        manivannan.sadhasivam@linaro.org
-Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, thomas.liau@actions-semi.com,
-        mp-cs@actions-semi.com, linux@cubietech.com,
-        edgar.righi@lsitec.org.br, laisa.costa@lsitec.org.br,
-        guilherme.simoes@lsitec.org.br, mkzuffo@lsi.usp.br,
-        Saravanan Sekar <sravanhome@gmail.com>
-References: <20181126100356.2840578-1-pn@denx.de>
- <20181126100356.2840578-3-pn@denx.de>
-From:   Marc Zyngier <marc.zyngier@arm.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=marc.zyngier@arm.com; prefer-encrypt=mutual; keydata=
- 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
-Organization: ARM Ltd
-Message-ID: <769c5482-76e1-f0a2-de75-09abd3167632@arm.com>
-Date:   Fri, 7 Dec 2018 18:39:02 +0000
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
+        id S1726011AbeLGSjn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Dec 2018 13:39:43 -0500
+Received: from zn.tnic (p200300EC2BCEC900C13752FC2028AE4C.dip0.t-ipconnect.de [IPv6:2003:ec:2bce:c900:c137:52fc:2028:ae4c])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id A20BD1EC0BF1;
+        Fri,  7 Dec 2018 19:39:41 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1544207981;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=XUKpLqj7/xXg9jrI/lIGAqGvEsgVQSKGIb3E3fRsWzM=;
+        b=b5wItN3SwdasANuLmiz4/mUehomJUuovnbv3/wVQykDxDRROUyfxrQmt4PrEJWGl9M8o44
+        VFwCb17KwiL/D1Xkz/iOZBFHSCSG1I8/z/5mfI+xMa8k7iWYLoZtkoDmKar55jONfrS3r3
+        CLRZITscbBwkEVXEwOfi2SEKlR5Fg8c=
+Date:   Fri, 7 Dec 2018 19:39:34 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        John Stultz <john.stultz@linaro.org>,
+        Thomas Lendacky <Thomas.Lendacky@amd.com>
+Subject: Re: [PATCH] x86/TSC: Use RDTSCP
+Message-ID: <20181207183934.GF9385@zn.tnic>
+References: <20181119184556.11479-1-bp@alien8.de>
+ <20181123200307.GA6223@roeck-us.net>
+ <20181123204425.GN30697@zn.tnic>
+ <901af2a0-e0d7-586d-5f04-2066cf1ac871@roeck-us.net>
+ <20181123210739.GO30697@zn.tnic>
 MIME-Version: 1.0
-In-Reply-To: <20181126100356.2840578-3-pn@denx.de>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+In-Reply-To: <20181123210739.GO30697@zn.tnic>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 26/11/2018 10:03, Parthiban Nallathambi wrote:
-> Actions Semi Owl family SoC's S500, S700 and S900 provides support
-> for 3 external interrupt controllers through SIRQ pins.
-> 
-> Each line can be independently configured as interrupt and triggers
-> on either of the edges (raising or falling) or either of the levels
-> (high or low) . Each line can also be masked independently.
-> 
-> Signed-off-by: Parthiban Nallathambi <pn@denx.de>
-> Signed-off-by: Saravanan Sekar <sravanhome@gmail.com>
-> ---
->  drivers/irqchip/Makefile       |   1 +
->  drivers/irqchip/irq-owl-sirq.c | 301 +++++++++++++++++++++++++++++++++
->  2 files changed, 302 insertions(+)
->  create mode 100644 drivers/irqchip/irq-owl-sirq.c
-> 
-> diff --git a/drivers/irqchip/Makefile b/drivers/irqchip/Makefile
-> index 794c13d3ac3d..d8015fc5c1a2 100644
-> --- a/drivers/irqchip/Makefile
-> +++ b/drivers/irqchip/Makefile
-> @@ -7,6 +7,7 @@ obj-$(CONFIG_ATH79)			+= irq-ath79-misc.o
->  obj-$(CONFIG_ARCH_BCM2835)		+= irq-bcm2835.o
->  obj-$(CONFIG_ARCH_BCM2835)		+= irq-bcm2836.o
->  obj-$(CONFIG_ARCH_EXYNOS)		+= exynos-combiner.o
-> +obj-$(CONFIG_ARCH_ACTIONS)		+= irq-owl-sirq.o
->  obj-$(CONFIG_FARADAY_FTINTC010)		+= irq-ftintc010.o
->  obj-$(CONFIG_ARCH_HIP04)		+= irq-hip04.o
->  obj-$(CONFIG_ARCH_LPC32XX)		+= irq-lpc32xx.o
-> diff --git a/drivers/irqchip/irq-owl-sirq.c b/drivers/irqchip/irq-owl-sirq.c
-> new file mode 100644
-> index 000000000000..cc59e5743cda
-> --- /dev/null
-> +++ b/drivers/irqchip/irq-owl-sirq.c
-> @@ -0,0 +1,301 @@
-> +// SPDX-License-Identifier: GPL-2.0+
-> +/*
-> + * Actions Semi Owl SoCs SIRQ interrupt controller driver
-> + *
-> + * Copyright (C) 2014 Actions Semi Inc.
-> + * David Liu <liuwei@actions-semi.com>
-> + *
-> + * Author: Parthiban Nallathambi <pn@denx.de>
-> + * Author: Saravanan Sekar <sravanhome@gmail.com>
-> + */
-> +
-> +#include <linux/interrupt.h>
-> +#include <linux/irqchip.h>
-> +#include <linux/of_irq.h>
-> +#include <linux/of_address.h>
-> +
-> +#define INTC_EXTCTL_PENDING		BIT(0)
-> +#define INTC_EXTCTL_CLK_SEL		BIT(4)
-> +#define INTC_EXTCTL_EN			BIT(5)
-> +#define	INTC_EXTCTL_TYPE_MASK		GENMASK(6, 7)
+Ok,
 
-#define GENMASK(h, l) [...]
+I have something which looks like it works here, even with the pentium3
+qemu CPU. I'll be hammering on it in the coming days but if you wanna
+give it a try, here's a conglomerate patch:
 
-I sense a problem here.
+---
+From 0c6adce02d2e7f3b5bbdc4cbe3eb3dae99448def Mon Sep 17 00:00:00 2001
+From: Borislav Petkov <bp@suse.de>
+Date: Fri, 7 Dec 2018 18:54:23 +0100
+Subject: [PATCH] WIP
 
-Thanks,
+Signed-off-by: Borislav Petkov <bp@suse.de>
+---
+ arch/x86/include/asm/alternative.h | 26 +++++++++++++++++++++++++-
+ arch/x86/include/asm/msr.h         | 16 ++++++++++++++--
+ arch/x86/kernel/alternative.c      |  4 ++--
+ 3 files changed, 41 insertions(+), 5 deletions(-)
 
-	M.
+diff --git a/arch/x86/include/asm/alternative.h b/arch/x86/include/asm/alternative.h
+index ea9886651c39..db8ebe5dd5be 100644
+--- a/arch/x86/include/asm/alternative.h
++++ b/arch/x86/include/asm/alternative.h
+@@ -114,6 +114,16 @@ static inline int alternatives_text_reserved(void *start, void *end)
+ 		"(" alt_max_short(alt_rlen(num1), alt_rlen(num2)) " - (" alt_slen ")), 0x90\n"	\
+ 	alt_end_marker ":\n"
+ 
++#define OLDINSTR_3(oldinsn, n1, n2, n3)								\
++	"# ALT: oldinstr\n"										\
++	"661:\n\t" oldinsn "\n662:\n"								\
++	"# ALT: padding\n"										\
++	".skip -((" alt_max_short(alt_max_short(alt_rlen(n1), alt_rlen(n2)), alt_rlen(n3))	\
++		" - (" alt_slen ")) > 0) * "							\
++		"(" alt_max_short(alt_max_short(alt_rlen(n1), alt_rlen(n2)), alt_rlen(n3))	\
++		" - (" alt_slen ")), 0x90\n"							\
++	alt_end_marker ":\n"
++
+ #define ALTINSTR_ENTRY(feature, num)					      \
+ 	" .long 661b - .\n"				/* label           */ \
+ 	" .long " b_replacement(num)"f - .\n"		/* new instruction */ \
+@@ -122,7 +132,8 @@ static inline int alternatives_text_reserved(void *start, void *end)
+ 	" .byte " alt_rlen(num) "\n"			/* replacement len */ \
+ 	" .byte " alt_pad_len "\n"			/* pad len */
+ 
+-#define ALTINSTR_REPLACEMENT(newinstr, feature, num)	/* replacement */     \
++#define ALTINSTR_REPLACEMENT(newinstr, feature, num)	/* replacement */	\
++	"# ALT: replacement " #num "\n"						\
+ 	b_replacement(num)":\n\t" newinstr "\n" e_replacement(num) ":\n\t"
+ 
+ /* alternative assembly primitive: */
+@@ -146,6 +157,19 @@ static inline int alternatives_text_reserved(void *start, void *end)
+ 	ALTINSTR_REPLACEMENT(newinstr2, feature2, 2)			\
+ 	".popsection\n"
+ 
++#define ALTERNATIVE_3(oldinsn, newinsn1, feat1, newinsn2, feat2, newinsn3, feat3) \
++	OLDINSTR_3(oldinsn, 1, 2, 3)						\
++	".pushsection .altinstructions,\"a\"\n"					\
++	ALTINSTR_ENTRY(feat1, 1)						\
++	ALTINSTR_ENTRY(feat2, 2)						\
++	ALTINSTR_ENTRY(feat3, 3)						\
++	".popsection\n"								\
++	".pushsection .altinstr_replacement, \"ax\"\n"				\
++	ALTINSTR_REPLACEMENT(newinsn1, feat1, 1)				\
++	ALTINSTR_REPLACEMENT(newinsn2, feat2, 2)				\
++	ALTINSTR_REPLACEMENT(newinsn3, feat3, 3)				\
++	".popsection\n"
++
+ /*
+  * Alternative instructions for different CPU types or capabilities.
+  *
+diff --git a/arch/x86/include/asm/msr.h b/arch/x86/include/asm/msr.h
+index 91e4cf189914..5cc3930cb465 100644
+--- a/arch/x86/include/asm/msr.h
++++ b/arch/x86/include/asm/msr.h
+@@ -217,6 +217,8 @@ static __always_inline unsigned long long rdtsc(void)
+  */
+ static __always_inline unsigned long long rdtsc_ordered(void)
+ {
++	DECLARE_ARGS(val, low, high);
++
+ 	/*
+ 	 * The RDTSC instruction is not ordered relative to memory
+ 	 * access.  The Intel SDM and the AMD APM are both vague on this
+@@ -227,9 +229,19 @@ static __always_inline unsigned long long rdtsc_ordered(void)
+ 	 * ordering guarantees as reading from a global memory location
+ 	 * that some other imaginary CPU is updating continuously with a
+ 	 * time stamp.
++	 *
++	 * Thus, use the preferred barrier on the respective CPU, aiming for
++	 * RDTSCP as the default.
+ 	 */
+-	barrier_nospec();
+-	return rdtsc();
++	asm volatile(ALTERNATIVE_3("rdtsc",
++				   "mfence; rdtsc", X86_FEATURE_MFENCE_RDTSC,
++				   "lfence; rdtsc", X86_FEATURE_LFENCE_RDTSC,
++				   "rdtscp", X86_FEATURE_RDTSCP)
++			: EAX_EDX_RET(val, low, high)
++			/* RDTSCP clobbers ECX with MSR_TSC_AUX. */
++			:: "ecx");
++
++	return EAX_EDX_VAL(val, low, high);
+ }
+ 
+ static inline unsigned long long native_read_pmc(int counter)
+diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
+index ebeac487a20c..d458c7973c56 100644
+--- a/arch/x86/kernel/alternative.c
++++ b/arch/x86/kernel/alternative.c
+@@ -393,10 +393,10 @@ void __init_or_module noinline apply_alternatives(struct alt_instr *start,
+ 			continue;
+ 		}
+ 
+-		DPRINTK("feat: %d*32+%d, old: (%px len: %d), repl: (%px, len: %d), pad: %d",
++		DPRINTK("feat: %d*32+%d, old: (%pS (%px) len: %d), repl: (%px, len: %d), pad: %d",
+ 			a->cpuid >> 5,
+ 			a->cpuid & 0x1f,
+-			instr, a->instrlen,
++			instr, instr, a->instrlen,
+ 			replacement, a->replacementlen, a->padlen);
+ 
+ 		DUMP_BYTES(instr, a->instrlen, "%px: old_insn: ", instr);
 -- 
-Jazz is not dead. It just smells funny...
+2.19.1
+
+
+-- 
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
