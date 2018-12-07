@@ -2,151 +2,261 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	T_MIXED_ES autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C74E8C07E85
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 13:27:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B00F4C07E85
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 13:29:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8ABA821479
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 13:27:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4F19E20892
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 13:29:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="NXdkoIOp";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="P9Pps7bS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8ABA821479
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="33knP4GP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F19E20892
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xilinx.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726103AbeLGN1L (ORCPT
+        id S1726105AbeLGN3k (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 08:27:11 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:44064 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725997AbeLGN1L (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 08:27:11 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 23E6E60ADD; Fri,  7 Dec 2018 13:27:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1544189230;
-        bh=wdC2HuPCuuXgoXAUu8EnRSc0IveHwdGl06tG74aKC7s=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=NXdkoIOppFAHWYUr32ndMl8a0XfN5Y89z4cndGOfMSEKnFcm8aKZ2cAfquYC6VWGt
-         TcoWuU4eKGGEW00Q25JmOPSnR6XFvV+j2Kf0oBg0ge7dVUJxBjyFN+SuXWLf/Dc0NG
-         NOe26adttei2KN4OEMF18QcmK0vIG+ssgQNX7P9k=
-Received: from [10.79.40.233] (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: vivek.gautam@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id E136360115;
-        Fri,  7 Dec 2018 13:27:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1544189227;
-        bh=wdC2HuPCuuXgoXAUu8EnRSc0IveHwdGl06tG74aKC7s=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=P9Pps7bShrwa5ZR1AJ7EXRWHIcmxJVrc+6yWPVRheUcsmR/x7Sr78niSkhMCNLUvL
-         pQ1ORxqtLoozZdbCX09fOuTQ83ZWcjoDHaBz4ZPDjO0GuB/Aq76teVWF7UhuHkGuHh
-         G6Lt1JJCoaAQYvhsxXsupYVihqkyLeFGprJnx1SQ=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E136360115
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vivek.gautam@codeaurora.org
-Subject: Re: [PATCH 1/1] media: venus: core: Set dma maximum segment size
-To:     Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        mchehab@kernel.org
-Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, vgarodia@codeaurora.org,
-        acourbot@chromium.org
-References: <20181205083151.3685-1-vivek.gautam@codeaurora.org>
- <a28d0542-5d63-7c72-0f39-40e4524d9a2a@linaro.org>
-From:   Vivek Gautam <vivek.gautam@codeaurora.org>
-Message-ID: <97d486e6-d940-5db0-eeff-077d694334a2@codeaurora.org>
-Date:   Fri, 7 Dec 2018 18:57:02 +0530
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.2
+        Fri, 7 Dec 2018 08:29:40 -0500
+Received: from mail-eopbgr720088.outbound.protection.outlook.com ([40.107.72.88]:4992
+        "EHLO NAM05-CO1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726008AbeLGN3k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Dec 2018 08:29:40 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=xilinx.onmicrosoft.com; s=selector1-xilinx-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=MoTUTvlnlSxORwA/WN6jBPN8BVYNGnh2CroKwmT8pvo=;
+ b=33knP4GPd0uZbixqJ69wkI2lczuIQLFl/eSFJoAIdtEpwTm+zJii574dZB3Z57caOZ/DPwob1Si2ZQNJrG6Mz13prA3aEMuSC0Swp7IEUbYYfma91VKHDbzeTxsR6o9AtP7SpVSWlnSlLAmkITxzztPH9Kq8baJjGhTfyo2s8to=
+Received: from SN6PR02CA0020.namprd02.prod.outlook.com (2603:10b6:805:a2::33)
+ by DM6PR02MB4329.namprd02.prod.outlook.com (2603:10b6:5:2a::26) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1404.22; Fri, 7 Dec
+ 2018 13:29:35 +0000
+Received: from CY1NAM02FT053.eop-nam02.prod.protection.outlook.com
+ (2a01:111:f400:7e45::208) by SN6PR02CA0020.outlook.office365.com
+ (2603:10b6:805:a2::33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1404.20 via Frontend
+ Transport; Fri, 7 Dec 2018 13:29:35 +0000
+Authentication-Results: spf=pass (sender IP is 149.199.60.100)
+ smtp.mailfrom=xilinx.com; socionext.com; dkim=none (message not signed)
+ header.d=none;socionext.com; dmarc=bestguesspass action=none
+ header.from=xilinx.com;
+Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
+ 149.199.60.100 as permitted sender) receiver=protection.outlook.com;
+ client-ip=149.199.60.100; helo=xsj-pvapsmtpgw02;
+Received: from xsj-pvapsmtpgw02 (149.199.60.100) by
+ CY1NAM02FT053.mail.protection.outlook.com (10.152.74.165) with Microsoft SMTP
+ Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.1404.17
+ via Frontend Transport; Fri, 7 Dec 2018 13:29:32 +0000
+Received: from unknown-38-66.xilinx.com ([149.199.38.66]:53823 helo=xsj-pvapsmtp01)
+        by xsj-pvapsmtpgw02 with esmtp (Exim 4.63)
+        (envelope-from <michal.simek@xilinx.com>)
+        id 1gVGCB-0003BY-I7; Fri, 07 Dec 2018 05:29:31 -0800
+Received: from [127.0.0.1] (helo=localhost)
+        by xsj-pvapsmtp01 with smtp (Exim 4.63)
+        (envelope-from <michal.simek@xilinx.com>)
+        id 1gVGC6-0004MP-Eb; Fri, 07 Dec 2018 05:29:26 -0800
+Received: from xsj-pvapsmtp01 (smtp2.xilinx.com [149.199.38.66])
+        by xsj-smtp-dlp2.xlnx.xilinx.com (8.13.8/8.13.1) with ESMTP id wB7DTHNl012142;
+        Fri, 7 Dec 2018 05:29:17 -0800
+Received: from [172.30.17.111]
+        by xsj-pvapsmtp01 with esmtp (Exim 4.63)
+        (envelope-from <michals@xilinx.com>)
+        id 1gVGBx-0004L5-12; Fri, 07 Dec 2018 05:29:17 -0800
+Subject: Re: [PATCH 0/7] microblaze: fix various problems in building boot
+ images
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Simek <monstr@monstr.eu>
+CC:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Michal Simek <michal.simek@xilinx.com>
+References: <1543823457-32478-1-git-send-email-yamada.masahiro@socionext.com>
+ <19c7bdab-8df8-f7c6-7921-9a4d43dbca64@monstr.eu>
+ <CAK7LNATWSNqZ8uE+teMW+uvDCLXfq6zMTqh_7=ssrPquCLJz8A@mail.gmail.com>
+From:   Michal Simek <michal.simek@xilinx.com>
+Message-ID: <938f1368-5e07-0178-5b99-d8331ce216f8@xilinx.com>
+Date:   Fri, 7 Dec 2018 14:29:14 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <a28d0542-5d63-7c72-0f39-40e4524d9a2a@linaro.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <CAK7LNATWSNqZ8uE+teMW+uvDCLXfq6zMTqh_7=ssrPquCLJz8A@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-RCIS-Action: ALLOW
+X-TM-AS-Product-Ver: IMSS-7.1.0.1224-8.2.0.1013-23620.005
+X-TM-AS-User-Approved-Sender: Yes;Yes
+X-EOPAttributedMessage: 0
+X-MS-Office365-Filtering-HT: Tenant
+X-Forefront-Antispam-Report: CIP:149.199.60.100;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(39860400002)(396003)(136003)(376002)(346002)(2980300002)(189003)(199004)(8676002)(106466001)(305945005)(64126003)(9786002)(65806001)(47776003)(356004)(31686004)(65956001)(6666004)(110136005)(77096007)(81156014)(8936002)(54906003)(230700001)(50466002)(186003)(2486003)(23676004)(478600001)(81166006)(36756003)(6246003)(26005)(76176011)(31696002)(126002)(2906002)(36386004)(316002)(229853002)(426003)(53546011)(446003)(5660300001)(63266004)(58126008)(336012)(44832011)(106002)(107886003)(65826007)(4326008)(2616005)(486006)(476003)(11346002)(107986001)(5001870100001);DIR:OUT;SFP:1101;SCL:1;SRVR:DM6PR02MB4329;H:xsj-pvapsmtpgw02;FPR:;SPF:Pass;LANG:en;PTR:unknown-60-100.xilinx.com,xapps1.xilinx.com;MX:1;A:1;
+X-Microsoft-Exchange-Diagnostics: 1;CY1NAM02FT053;1:PMcVwF2uPJcd38DWklNXEhFT0gzWNv8qj+pqSrZqDOjwRVVDIk9ELU81EnSKWP2y/2hFtd4hp7FAug9ODU7DFauwLLsWNLiPR/AEjeZviDM46F5dAZ79bc48BmzcYkkH
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 4b758c8d-ef94-4ffb-cedb-08d65c480749
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4608076)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060);SRVR:DM6PR02MB4329;
+X-Microsoft-Exchange-Diagnostics: 1;DM6PR02MB4329;3:S4Emoa+73QlYlz1w46rnqSXvJIXquj5/mm+kdk7A1dRDGOpCS9ToJtjEWx3fMgselKj6lBB0QaxxByPJQCnAeoiVF76AXqpZpemVA82avAAsx0ssk3YTWNLmFgPbo+mzIbrkARsskh8OHk7uvhAn9N8s/wc4KGRKi3ImUVkYTM6ZtOcCsY/jB97HbpksXYmLfOOcTIriysVJxbqK2Z/vNUlfIxbAOXKDllmkQKqFevlKxml7krbkZ5beh3hdXZew8VpOekJMQrgtn6q7QWA/oEuMHjWk7jysRcjKs+r+ndiEuQLEYfwv12pZGV0qxAH+H62DthZq/86bn966DmgJZvTDxWZLvPBZ+h5sKrrtc/o=;25:BWmBj+fNX/fKyG0ypZYsP09aftEJeeVWwfl80Hl+n12ssuG6Epbm5zigGzN7tNNHwBy88hbibZ5xwCuYSbB4QenlnyNRuvnGWZ0QJD846I3bYKTCE+47wnYGb7OBUzPEzp4KRsIJGJlvmuHIvsAnHWgOIsJe6Rnm9WQBovS/I9lIROgClMHgWbe44jEDYe7ByJ2bHDjhTCnfQmfl96DnnusjOlA7AE47AD6lEpXMI4h6RfVNoctrLWbCuOlZS1BuWaG8ZyHBr68ihHibNccgT8lVYGCcq7gS1KMXtWGqunmcmv+tkUnVHPDb1xp4jBgAMA5o4igtAx/y/zvHiHtiaQ==
+X-MS-TrafficTypeDiagnostic: DM6PR02MB4329:
+X-LD-Processed: 657af505-d5df-48d0-8300-c31994686c5c,ExtAddr
+X-Microsoft-Exchange-Diagnostics: 1;DM6PR02MB4329;31:aZyKyRx4fV+6jHfozSa9EohM3DYbL9mMVIt64h2wo70Hc8is+N5+9LJqcUgYmmb5aifDahaRzlwZLQ34Uy+taMUHTIwXwFzgR0Fxrla4vSz0daUxL5jYbzduj3ygQOYnq9IVBa/UP7ue26/wSYZYEHy96CdMhdQjnynFiV1sYV0kj/C22e2wqMwKSDFTchYP3jMXJ6+eIrN7clsOsU+OmrBW6eAdA0WRebhowhHWN5I=;20:t+crQlnDJbs/3PHI7kveUHcATGZr0RQUY5E/vLzwAeM7F1URoJKVwKuPlvzTNpJUsVpdnWqICkFNIZOC7twXu4/nqOLLiPh4EldN6Ft7tnHWeUgS390UoYgJRtDdRddaYAfA+TbOfVLa2MsllcRjlwSfgIQEN6CBc2PfnkgahkRBzjGXDHkUveV5ZWpHQGZ6SX2hOWrBVD350PkZSemHKuEM9rPlD3O5w+KswqahEXn5xTda2jZOHYIB/kSFfVrN5NM78qKy6VxP87zROWVGgTRzGQ75xL55HoctWfyOz+OQr43h/+odQ+BSuErJr3AGqgHeaW1e+ekbJGj2Nwbjd1fGSLk9sU8dXCyyCz2g1y4EGTVvwF1QnFaByjCTfeHfdbTh0Yaz24KDtVJdPF4yz5qYs68Y5PYY6xPZ1ds8oKaJwWW5zo1HL1lDWtaYpGPlszKEzQZMMad7DyPgSbgar8OR+lPaDOIeMYAw3BpDQe5sdGHihRSLvncXtDYlZoa9
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
+X-Microsoft-Antispam-PRVS: <DM6PR02MB432974ADC456E37F9DCA0F58C6AA0@DM6PR02MB4329.namprd02.prod.outlook.com>
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(3002001)(93006095)(93004095)(3231455)(999002)(944501520)(52105112)(6055026)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123560045)(20161123558120)(20161123564045)(201708071742011)(7699051)(76991095);SRVR:DM6PR02MB4329;BCL:0;PCL:0;RULEID:;SRVR:DM6PR02MB4329;
+X-Microsoft-Exchange-Diagnostics: 1;DM6PR02MB4329;4:buvtkN8jQoJ8ZPv/japWy6GGufhTGT/TJY2Jvlkcndbc3aqRNLk+PKITixnlIomjgr6xtL4DPLGtXSKlkELwh1BJL6Ob/HMkuLOoF9XVB9FtbTlXVf29ZVoShayOYTZedhbRSXhFSjm+RAYqWI4WyttD+Xo47jEKNAylCtRa6zKfmqL3a8Esg36oyE7gK1k8wQckehOCSJNf89qbOUt8133d90X+91aM2Nsa/zhlcNTNspANhCJXY36FnPrUhYLMEydAmv2ff80kBB5dY2/DpA==
+X-Forefront-PRVS: 0879599414
+X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtETTZQUjAyTUI0MzI5OzIzOlduazREMzlVb1hZU1hna1dDKzVtbDRKQlBB?=
+ =?utf-8?B?cTNBRXlzUTlYWkFKcytwSWpJTjZtQUc1WEFmS25kZDZxRmZLSy96QURhYjlu?=
+ =?utf-8?B?RlVQaDkvV2E2RTZoNGcxbW42aStoT1BTYWI2bHBjOGFNOHJZMWJLbHE0MWli?=
+ =?utf-8?B?UDYzWjRjeGQ2Q2FSbk56emJlMFovOFlXTzBaTjBqMUhvTytUWXdPWU5QMTQ4?=
+ =?utf-8?B?NURXV21yOHlveDhBclNEMzN4VXoySVBaRUd5Qkpuc1pQeEgrSWFXbTdzKytI?=
+ =?utf-8?B?VXJBNUNtKy9TVTRuMFh5UXVuNHlSYnRiMS8xd2hNK0dYT0dzUm53MHBXNVFo?=
+ =?utf-8?B?RGUyT0lsNGI1K1VRclUyc2pHRlFwTmR1dXduWkE3YXhGOEw0UGRtNmU1eWEr?=
+ =?utf-8?B?d215LzRkcHBDQU1IdDFvUFpVQjJiVWNnKzVIVlp6bmZEbUlROUN3ZGNFK2xa?=
+ =?utf-8?B?TW1sOEpOSS9ZaGJxUEFpZGY2UFRlQVBsdnJOVWRIKzgrWnJVSmFaMWJuajF5?=
+ =?utf-8?B?UysvN0YzZ0VwS1pkNFdKVHY4cHVJWEdNSkpjdThEdmNTSjdORWh5cDdYT0lV?=
+ =?utf-8?B?c25RT1kwaHJIV1EwZFhmeU5WWFZwRTdxV2VWSkVONXpmcWtEaFJLb3gxWXFk?=
+ =?utf-8?B?VDNlNGpOTlVUUGhHamE0dFpIZFpuRk5EYjBveEFDc3Q1ZlV4eVYvZXlUUHo1?=
+ =?utf-8?B?R20xdkZDSE9DWEY0VzUzaFo0d2kwTEtGVnNBMW5MVjB6dm1TdUhJWjNuR0hq?=
+ =?utf-8?B?SlRiR3RvQ29jWXZEdWV1VWtCNy9PcTNzaFM4NzAzTzVYMC9OUUZpZmU2Mi84?=
+ =?utf-8?B?Rk91K01NY0xzampNRjN4NXplWVA2L1pnLzdmODRuU2xpSkMrS0dRQ3JyVEgw?=
+ =?utf-8?B?anRGRkxXUjBuMm54OVpFMEtmeG9pLzhaOXByczFyZnZ1d0Zkdll2VytKZkg2?=
+ =?utf-8?B?L2RCL3BrUXFOVG5FaEw5VWJKME1CMEFiUzRVZzcrMXB5dk91MmVhM0FTYVRC?=
+ =?utf-8?B?V2hjc3BVeUc3L1o0UlBiWjhsRVBOdk1xQnM1cmxUNjQ4YWRZTmVSeVlnNk9x?=
+ =?utf-8?B?SEJOamJzK003N0ZYR2paQmwwaTJzU2FhWFBobnA1Uis5QVhMS2ZSZkxUdHZW?=
+ =?utf-8?B?dXZYU3dyOUE1bllUY2w3dGw1dFlOUWNZMXhvTHdZTy9OVjIvWjJId25LWHdC?=
+ =?utf-8?B?K3VTRkhPK0RsMUdDZ3NJWE9IV2pjNmNCRk50ZFhJUmpna0xUTUhOMnE1Qlky?=
+ =?utf-8?B?NWNvL1lib3kwWmQyZ3ZGcXg1NVYzMkw1dHUvYXpnMkJUNGNaUUd6TC9KTk5X?=
+ =?utf-8?B?NFJxcFU4aEpmalB0bmV2NUVqWG5QRjBWdXBzeHJ1d20xYmxXc0VIR21ZY2xP?=
+ =?utf-8?B?cUVDNGE1aVBOWXBtZnMrWFhEQzloZ3lNdUErdkpDbjBXc3V6RllvWXE5dVEy?=
+ =?utf-8?B?M0lxV1NpMmIyM0IxUFh6K00wV1NPTTZQL2ZNWk9kRkpYa0xjOTdZTTUyRktj?=
+ =?utf-8?B?c2hRMWJyTHUvZzhGUDQ3QTZ2V3IrMjhBYjhSNldpM2JkUEhnL2hJSEdFdnBL?=
+ =?utf-8?B?cU1lTmMxQXQyWjdWYlVUblBYWlRvQ1BwRUhsS04wcjdLckxWUW5lVXBIWE5H?=
+ =?utf-8?B?aUV4WEczZTRWbGNXRUMxT2F1Q0hFNDhlSEh5elFMcDNXZTFyMnR2RFFoSFRi?=
+ =?utf-8?B?R3ZBdXl5b2d6MkoxeWxqV090NStJNlcweW9kT1c2TWlWdVdQaUovbWF6V2l3?=
+ =?utf-8?Q?sfykomwciSpIlYvZ2mYKlwj9qXwp35O/Wi1K8=3D?=
+X-Microsoft-Antispam-Message-Info: x+HV+hkMiewMk9x2MUhm92uNN12duoVZwP6Oh4bPH8PigAbit9PFuP//vO3zkyBBgoKeQuSpJbfRIa/eRPefCcPav0nkF4lWhC9nhRruxQUS6vgEva5CB4e3QEveYGttgknjwnS9DPEYoE5YJghkAK5GxaMzESNGgSUsL2EXjfhvkrqMqvHUf023CoDY90fH1mC2R9vpOUlxjVQBXPmPEhIbm1YuL8m3nOhDWl9ZpBe0D4kEtjUb/d/f9XZpsjr09RCwyuAvPKBfRul8z7FdYiptyLtqqx64T1h1RF/wRQzEDl1N9umTXJkvJEmqW4AvEwzxFKwkngIVyL33JfcIKQ2XbrsotcOKold6ziBlDlA=
+X-Microsoft-Exchange-Diagnostics: 1;DM6PR02MB4329;6:Fxw6VF3gocoXOIELdy1ENsfkwJXPAbIzkjpJgoFlG7gU7xbh+GBXYbw7LqkoHteh2PaYtRgi54IcjLrVf+zViN8Ka1bN2yWqmnH/jkIwthgwtGzXenpBwygsAgA/wIGlW1QR8jMqiAHyHHMrjn+ysNOi7oNsPl8dbsROsSkhzcuKknLQpnQoDnHgawIQol7OOqlRKAXBp5g8evQ4wg5zYuO6W0zZzzIJdQg/7XfuvD+ZPGHBUWHb+kvbQEhPU3thSnjJSEsMlBn3jvxGyXmY5rCTmmFIvy0WSUH3BBqskVOFiIU/CjeOAsUVj5WHEmsj5+Fs75qkSrO+Wqz8yWkOCTj+ZXt+CJTrGiqa1m6Hp5GedGcj5GpEURhgpsg0Zy0N5XkFI3/r1RouZQNvKnLtowRXdy8WCrNJI+zpB/XZ3rOzXjrAze1ZdfodZnYmLzZbLzsFIa6GmOm8QEC1efS3UQ==;5:9WKZDlvYxsCAKDpVKGjSSDzC3fi5XzlWnkngSFDzTKMa6Ia/qphB74BciiFSAlAGuM1vW/BVyk9Yoi3purfEA5zjGuao4GtyDItrXrCB/lxUut0RhjEBnKYJCFwaY0CJNH1eUUbeUK2WJq68E1XGwx/Evdxoy9LWdI3l3j6Rgrc=;7:c6+yTuEDWSemI6S3lbMxXMgpxmE1GeDIfGmJRkl5IAkskqVBdbUAs/Vbqz5+Fn/F54bIt1YeDxCuxD2lVS+drl6Y4Flr+gciz1TnjOlFDU50EhD8LRyYIR3lIPgGqNhN9MFd72s1yRPuU+sJorr9cg==
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-OriginatorOrg: xilinx.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Dec 2018 13:29:32.2776
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4b758c8d-ef94-4ffb-cedb-08d65c480749
+X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.100];Helo=[xsj-pvapsmtpgw02]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR02MB4329
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-On 12/7/2018 3:38 PM, Stanimir Varbanov wrote:
-> Hi Vivek,
->
-> Thanks for the patch!
->
-> On 12/5/18 10:31 AM, Vivek Gautam wrote:
->> Turning on CONFIG_DMA_API_DEBUG_SG results in the following error:
+On 07. 12. 18 12:29, Masahiro Yamada wrote:
+> On Thu, Dec 6, 2018 at 11:55 PM Michal Simek <monstr@monstr.eu> wrote:
 >>
->> [  460.308650] ------------[ cut here ]------------
->> [  460.313490] qcom-venus aa00000.video-codec: DMA-API: mapping sg segment longer than device claims to support [len=4194304] [max=65536]
->> [  460.326017] WARNING: CPU: 3 PID: 3555 at src/kernel/dma/debug.c:1301 debug_dma_map_sg+0x174/0x254
->> [  460.338888] Modules linked in: venus_dec venus_enc videobuf2_dma_sg videobuf2_memops hci_uart btqca bluetooth venus_core v4l2_mem2mem videobuf2_v4l2 videobuf2_common ath10k_snoc ath10k_core ath lzo lzo_compress zramjoydev
->> [  460.375811] CPU: 3 PID: 3555 Comm: V4L2DecoderThre Tainted: G        W         4.19.1 #82
->> [  460.384223] Hardware name: Google Cheza (rev1) (DT)
->> [  460.389251] pstate: 60400009 (nZCv daif +PAN -UAO)
->> [  460.394191] pc : debug_dma_map_sg+0x174/0x254
->> [  460.398680] lr : debug_dma_map_sg+0x174/0x254
->> [  460.403162] sp : ffffff80200c37d0
->> [  460.406583] x29: ffffff80200c3830 x28: 0000000000010000
->> [  460.412056] x27: 00000000ffffffff x26: ffffffc0f785ea80
->> [  460.417532] x25: 0000000000000000 x24: ffffffc0f4ea1290
->> [  460.423001] x23: ffffffc09e700300 x22: ffffffc0f4ea1290
->> [  460.428470] x21: ffffff8009037000 x20: 0000000000000001
->> [  460.433936] x19: ffffff80091b0000 x18: 0000000000000000
->> [  460.439411] x17: 0000000000000000 x16: 000000000000f251
->> [  460.444885] x15: 0000000000000006 x14: 0720072007200720
->> [  460.450354] x13: ffffff800af536e0 x12: 0000000000000000
->> [  460.455822] x11: 0000000000000000 x10: 0000000000000000
->> [  460.461288] x9 : 537944d9c6c48d00 x8 : 537944d9c6c48d00
->> [  460.466758] x7 : 0000000000000000 x6 : ffffffc0f8d98f80
->> [  460.472230] x5 : 0000000000000000 x4 : 0000000000000000
->> [  460.477703] x3 : 000000000000008a x2 : ffffffc0fdb13948
->> [  460.483170] x1 : ffffffc0fdb0b0b0 x0 : 000000000000007a
->> [  460.488640] Call trace:
->> [  460.491165]  debug_dma_map_sg+0x174/0x254
->> [  460.495307]  vb2_dma_sg_alloc+0x260/0x2dc [videobuf2_dma_sg]
->> [  460.501150]  __vb2_queue_alloc+0x164/0x374 [videobuf2_common]
->> [  460.507076]  vb2_core_reqbufs+0xfc/0x23c [videobuf2_common]
->> [  460.512815]  vb2_reqbufs+0x44/0x5c [videobuf2_v4l2]
->> [  460.517853]  v4l2_m2m_reqbufs+0x44/0x78 [v4l2_mem2mem]
->> [  460.523144]  v4l2_m2m_ioctl_reqbufs+0x1c/0x28 [v4l2_mem2mem]
->> [  460.528976]  v4l_reqbufs+0x30/0x40
->> [  460.532480]  __video_do_ioctl+0x36c/0x454
->> [  460.536610]  video_usercopy+0x25c/0x51c
->> [  460.540572]  video_ioctl2+0x38/0x48
->> [  460.544176]  v4l2_ioctl+0x60/0x74
->> [  460.547602]  do_video_ioctl+0x948/0x3520
->> [  460.551648]  v4l2_compat_ioctl32+0x60/0x98
->> [  460.555872]  __arm64_compat_sys_ioctl+0x134/0x20c
->> [  460.560718]  el0_svc_common+0x9c/0xe4
->> [  460.564498]  el0_svc_compat_handler+0x2c/0x38
->> [  460.568982]  el0_svc_compat+0x8/0x18
->> [  460.572672] ---[ end trace ce209b87b2f3af88 ]---
+>> On 03. 12. 18 8:50, Masahiro Yamada wrote:
+>>> This patch set fixes various issues in microblaze Makefiles.
+>>>
+>>> BTW, "simpleImage.<dt>" works like a phony target to generate the
+>>> following four images, where the first three are just aliases.
+>>>
+>>>  - arch/microblaze/boot/simpleImage.<dt>:
+>>>          identical to arch/microblaze/boot/linux.bin
+>>>
+>>>  - arch/microblaze/boot/simpleImage.<dt>.unstrip:
+>>>          identical to vmlinux
+>>>
+>>>  - arch/microblaze/boot/simpleImage.<dt>.ub:
+>>>          identical to arch/microblaze/boot/linux.bin.ub
+>>>
+>>>  - arch/microblaze/boot/simpleImage.<dt>.strip:
+>>>          stripped vmlinux
+>>>
+>>> I am not sure how much useful those copies are,
+>>> but, I tried my best to keep the same behavior.
+>>>
+>>> IMHO, I guess DTB=<dt> would be more sensible,
+>>> but it is up to Michal.
+>>>
+>>>
+>>>
+>>> Masahiro Yamada (7):
+>>>   microblaze: fix cleaning of boot images
+>>>   microblaze: adjust the help to the real behavior
+>>>   microblaze: move "... is ready" message to arch/microblaze/Makefile
+>>>   microblaze: fix multiple bugs in arch/microblaze/boot/Makefile
+>>>   microblaze: add linux.bin* and simpleImage.* to PHONY
+>>>   microblaze: fix race condition in building boot images
+>>>   microblaze: remove the unneeded code just in case file copy fails
+>>>
+>>>  arch/microblaze/Makefile          | 14 +++++++++-----
+>>>  arch/microblaze/boot/Makefile     | 33 +++++++++++++++++----------------
+>>>  arch/microblaze/boot/dts/Makefile |  5 +----
+>>>  3 files changed, 27 insertions(+), 25 deletions(-)
+>>>
 >>
->>  From above warning one would deduce that the sg segment will overflow
->> the device's capacity. In reality, the hardware can accommodate larger
->> sg segments.
->> So, initialize the max segment size properly to weed out this warning.
+>> One more thing I have in my mind for a while is that will be good to
+>> configure kernel build flags from DT and completely get rid of these
+>> symbols.
 >>
->> Based on a similar patch sent by Sean Paul for mdss:
->> https://patchwork.kernel.org/patch/10671457/
+>> XILINX_MICROBLAZE0_USE_MSR_INSTR
+>> XILINX_MICROBLAZE0_USE_PCMP_INSTR
+>> XILINX_MICROBLAZE0_USE_BARREL
+>> XILINX_MICROBLAZE0_USE_DIV
+>> XILINX_MICROBLAZE0_USE_HW_MUL
+>> XILINX_MICROBLAZE0_USE_FPU
 >>
->> Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
->> ---
->>   drivers/media/platform/qcom/venus/core.c | 8 ++++++++
->>   1 file changed, 8 insertions(+)
-> Acked-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
+>> It means setup CPUFLAGS based on extracting that values from DT that it
+>> all the time match the hardware.
+>> It will also simplify all the CPUFLAGS logic which is in
+>> arch/microblaze/Makefile.
+>>
+>> Do you have any idea how this can be done?
+> 
+> 
+> I have no idea.
+> 
+> Parsing DTS with sed or something would be possible, but ugly.
+> 
+> In my opinion, the kernel should be multi platform image,
+> in other words, it is the least common denominator
+> of supported platforms.
+> 
+> So, the kernel should enable all features that may or may not be used
+> depending on platform.
+> 
+> I do not know if this works for MB.
+
+Microblaze is soft core CPU where you can select if you want to have it
+with multiplier, divider, barrel shifter, etc.
+You can of course say that you don't have them and you have "universal"
+kernel but very slow.
+That's why user has to setup these configs which are converted to cflags
+to say GCC what can be used.
+And these configs can be simply parsed from dt.
+
+For example like this based on dtb (quick hack)
+
+for i in `echo use-msr-instr use-pcmp-instr use-barrel use-div
+use-hw-mul use-fpu`; do
+	UPPER=`echo $i | tr '-' '_' | tr '[a-z]' '[A-Z}'`
+	echo $i $UPPER;
+
+	VAR=`fdtget -t i $FILE/arch/microblaze/boot/dts/system.dtb /cpus/cpu@0/
+xlnx,$i`
+	FLAGS+="CONFIG_XILINX_MICROBLAZE0_${UPPER}=${VAR} "
+done
+
+make $FLAGS
 
 
-Thanks Stan.
+When simpleImage is requested dt could be parsed to setup proper build
+flags.
 
-
-Best regards
-Vivek
-
+Thanks,
+Michal
