@@ -2,135 +2,134 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E36B8C64EB1
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 00:20:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4237AC04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 00:22:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF4CD2146D
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 00:20:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF4CD2146D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id EFC9A20868
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 00:22:56 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="t8rfjSho"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EFC9A20868
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725997AbeLGAUw (ORCPT
+        id S1726006AbeLGAWz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 19:20:52 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:36876 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725944AbeLGAUw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 19:20:52 -0500
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 92BD5E3E1C;
-        Fri,  7 Dec 2018 00:20:50 +0000 (UTC)
-Received: from redhat.com (ovpn-122-74.rdu2.redhat.com [10.10.122.74])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 2FE4019C7B;
-        Fri,  7 Dec 2018 00:20:47 +0000 (UTC)
-Date:   Thu, 6 Dec 2018 19:20:45 -0500
-From:   Jerome Glisse <jglisse@redhat.com>
-To:     Logan Gunthorpe <logang@deltatee.com>
-Cc:     Dave Hansen <dave.hansen@intel.com>, linux-mm@kvack.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Ross Zwisler <ross.zwisler@linux.intel.com>,
-        Keith Busch <keith.busch@intel.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Haggai Eran <haggaie@mellanox.com>,
-        Balbir Singh <bsingharora@gmail.com>,
-        "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Felix Kuehling <felix.kuehling@amd.com>,
-        Philip Yang <Philip.Yang@amd.com>,
-        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-        Paul Blinzer <Paul.Blinzer@amd.com>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Ralph Campbell <rcampbell@nvidia.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        Jonathan Cameron <jonathan.cameron@huawei.com>,
-        Mark Hairgrove <mhairgrove@nvidia.com>,
-        Vivek Kini <vkini@nvidia.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Dave Airlie <airlied@redhat.com>,
-        Ben Skeggs <bskeggs@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Rik van Riel <riel@surriel.com>,
-        Ben Woodard <woodard@redhat.com>, linux-acpi@vger.kernel.org
-Subject: Re: [RFC PATCH 00/14] Heterogeneous Memory System (HMS) and hbind()
-Message-ID: <20181207002044.GI3544@redhat.com>
-References: <b8fab9a7-62ed-5d8d-3cb1-aea6aacf77fe@intel.com>
- <20181206192050.GC3544@redhat.com>
- <d6508932-377c-a4d1-d4d8-01d0f55b9190@intel.com>
- <c583be1b-17db-1ed3-0f5a-bd119edc8bfe@deltatee.com>
- <f7eb9939-d550-706a-946d-acbb7383172e@intel.com>
- <20181206223935.GG3544@redhat.com>
- <c1126d60-95c0-ed34-6314-fcec17ac1c29@intel.com>
- <935fc14d-91f2-bc2a-f8b5-665e4145e148@deltatee.com>
- <5e6c87d5-e4ef-12e7-32bf-c163f7ff58d7@intel.com>
- <cd5cf2a6-7415-eae7-0305-004cc7db994b@deltatee.com>
+        Thu, 6 Dec 2018 19:22:55 -0500
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:48670 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725958AbeLGAWz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 19:22:55 -0500
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id wB70Mlfi067082;
+        Thu, 6 Dec 2018 18:22:47 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1544142167;
+        bh=70e0W6vjNV96FkL9hKTnsbSvXKIJmctoaG1dNggYZOo=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=t8rfjSho0zAI0RMtMpKs0ezTTXO83G0Qqtw1C0AsfdcfraRJtVrHwqbn9bmL6Ud1v
+         cdIiAoW266dC+ik+tQ4Ueab924icOMbqujYTDNe6Iiqm097XjPf69tF2l6dlJt/3wS
+         UET0i7vdUAE3l3d2bZf7w+lMY8gXqBqntXMUsOek=
+Received: from DLEE102.ent.ti.com (dlee102.ent.ti.com [157.170.170.32])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wB70MkVZ115462
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 6 Dec 2018 18:22:46 -0600
+Received: from DLEE106.ent.ti.com (157.170.170.36) by DLEE102.ent.ti.com
+ (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Thu, 6
+ Dec 2018 18:22:46 -0600
+Received: from dlep32.itg.ti.com (157.170.170.100) by DLEE106.ent.ti.com
+ (157.170.170.36) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Thu, 6 Dec 2018 18:22:46 -0600
+Received: from [172.22.217.194] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id wB70MhaI013481;
+        Thu, 6 Dec 2018 18:22:44 -0600
+Subject: Re: [PATCH] mfd: tps65218: Use devm_regmap_add_irq_chip and clean up
+ error path in probe
+To:     Sebastian Reichel <sebastian.reichel@collabora.com>
+CC:     <tony@atomide.com>, <lee.jones@linaro.org>, <t-kristo@ti.com>,
+        <linux-omap@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <1544117864-28276-1-git-send-email-j-keerthy@ti.com>
+ <20181206205155.eucqfsq2xnk7kks5@earth.universe>
+From:   "J, KEERTHY" <j-keerthy@ti.com>
+Message-ID: <0b3949c5-1af0-6830-15db-01271a006615@ti.com>
+Date:   Fri, 7 Dec 2018 05:52:42 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <cd5cf2a6-7415-eae7-0305-004cc7db994b@deltatee.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Fri, 07 Dec 2018 00:20:51 +0000 (UTC)
+In-Reply-To: <20181206205155.eucqfsq2xnk7kks5@earth.universe>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 06, 2018 at 04:48:57PM -0700, Logan Gunthorpe wrote:
-> 
-> 
-> On 2018-12-06 4:38 p.m., Dave Hansen wrote:
-> > On 12/6/18 3:28 PM, Logan Gunthorpe wrote:
-> >> I didn't think this was meant to describe actual real world performance
-> >> between all of the links. If that's the case all of this seems like a
-> >> pipe dream to me.
-> > 
-> > The HMAT discussions (that I was a part of at least) settled on just
-> > trying to describe what we called "sticker speed".  Nobody had an
-> > expectation that you *really* had to measure everything.
-> > 
-> > The best we can do for any of these approaches is approximate things.
-> 
-> Yes, though there's a lot of caveats in this assumption alone.
-> Specifically with PCI: the bus may run at however many GB/s but P2P
-> through a CPU's root complexes can slow down significantly (like down to
-> MB/s).
-> 
-> I've seen similar things across QPI: I can sometimes do P2P from
-> PCI->QPI->PCI but the performance doesn't even come close to the sticker
-> speed of any of those buses.
-> 
-> I'm not sure how anyone is going to deal with those issues, but it does
-> firmly place us in world view #2 instead of #1. But, yes, I agree
-> exposing information like in #2 full out to userspace, especially
-> through sysfs, seems like a nightmare and I don't see anything in HMS to
-> help with that. Providing an API to ask for memory (or another resource)
-> that's accessible by a set of initiators and with a set of requirements
-> for capabilities seems more manageable.
 
-Note that in #1 you have bridge that fully allow to express those path
-limitation. So what you just describe can be fully reported to userspace.
 
-I explained and given examples on how program adapt their computation to
-the system topology it does exist today and people are even developing new
-programming langage with some of those idea baked in.
+On 12/7/2018 2:21 AM, Sebastian Reichel wrote:
+> Hi,
+> 
+> On Thu, Dec 06, 2018 at 11:07:44PM +0530, Keerthy wrote:
+>> Use devm_regmap_add_irq_chip and clean up error path in probe.
+>>
+>> Reported-by: Christian Hohnstaedt <Christian.Hohnstaedt@wago.com>
+>> Signed-off-by: Keerthy <j-keerthy@ti.com>
+>> ---
+>>
+>> Boot tested on am437x-gp-evm.
+> 
+> This is missing cleanup of remove path?
 
-So they are people out there that already rely on such information they
-just do not get it from the kernel but from a mix of various device specific
-API and they have to stich everything themself and develop a database of
-quirk and gotcha. My proposal is to provide a coherent kernel API where
-we can sanitize that informations and report it to userspace in a single
-and coherent description.
+Yes! Thanks for catching it. I will send v2 in a bit.
 
-Cheers,
-Jérôme
+> 
+> -- Sebastian
+> 
+>>   drivers/mfd/tps65218.c | 14 +++-----------
+>>   1 file changed, 3 insertions(+), 11 deletions(-)
+>>
+>> diff --git a/drivers/mfd/tps65218.c b/drivers/mfd/tps65218.c
+>> index 910f569..2383621 100644
+>> --- a/drivers/mfd/tps65218.c
+>> +++ b/drivers/mfd/tps65218.c
+>> @@ -235,9 +235,9 @@ static int tps65218_probe(struct i2c_client *client,
+>>   
+>>   	mutex_init(&tps->tps_lock);
+>>   
+>> -	ret = regmap_add_irq_chip(tps->regmap, tps->irq,
+>> -			IRQF_ONESHOT, 0, &tps65218_irq_chip,
+>> -			&tps->irq_data);
+>> +	ret = devm_regmap_add_irq_chip(&client->dev, tps->regmap, tps->irq,
+>> +				       IRQF_ONESHOT, 0, &tps65218_irq_chip,
+>> +				       &tps->irq_data);
+>>   	if (ret < 0)
+>>   		return ret;
+>>   
+>> @@ -253,14 +253,6 @@ static int tps65218_probe(struct i2c_client *client,
+>>   			      ARRAY_SIZE(tps65218_cells), NULL, 0,
+>>   			      regmap_irq_get_domain(tps->irq_data));
+>>   
+>> -	if (ret < 0)
+>> -		goto err_irq;
+>> -
+>> -	return 0;
+>> -
+>> -err_irq:
+>> -	regmap_del_irq_chip(tps->irq, tps->irq_data);
+>> -
+>>   	return ret;
+>>   }
+>>   
+>> -- 
+>> 1.9.1
+>>
