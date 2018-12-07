@@ -2,135 +2,326 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE41DC07E85
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 12:17:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BED7C07E85
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 12:18:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A5B5020989
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 12:17:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=axentia.se header.i=@axentia.se header.b="Uu3EkhFj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A5B5020989
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=axentia.se
+	by mail.kernel.org (Postfix) with ESMTP id F30D820892
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 12:18:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F30D820892
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726079AbeLGMRt (ORCPT
+        id S1726114AbeLGMSY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 07:17:49 -0500
-Received: from mail-eopbgr30139.outbound.protection.outlook.com ([40.107.3.139]:14400
-        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726010AbeLGMRt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 07:17:49 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=axentia.se;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=TPP5tRK+sNJp0eDHA3/FL3mtZZW9I8xTvLfguIg1Les=;
- b=Uu3EkhFjBd4+AMEm0N2oE8J7gi1UW/bm3D/XQ2o3l7CIoJhfLN0dzUYv6NvGOzf3ZyMUwAT55MZmDMVQdq4jGVK6YPE9B8iZ8GmvIWkQ+eHqKSjGZStXQD+ZsgoUr6csbLL70u/Wop1LxnXXt96Tjv8p4FQw89B06PWArCgoz64=
-Received: from VI1PR02MB5119.eurprd02.prod.outlook.com (20.178.13.204) by
- VI1PR02MB3646.eurprd02.prod.outlook.com (52.134.25.14) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1404.17; Fri, 7 Dec 2018 12:17:05 +0000
-Received: from VI1PR02MB5119.eurprd02.prod.outlook.com
- ([fe80::b:49a6:411a:6a39]) by VI1PR02MB5119.eurprd02.prod.outlook.com
- ([fe80::b:49a6:411a:6a39%3]) with mapi id 15.20.1404.021; Fri, 7 Dec 2018
- 12:17:05 +0000
-From:   Peter Rosin <peda@axentia.se>
-To:     "Tudor.Ambarus@microchip.com" <Tudor.Ambarus@microchip.com>,
-        "wsa@the-dreams.de" <wsa@the-dreams.de>
-CC:     "Nicolas.Ferre@microchip.com" <Nicolas.Ferre@microchip.com>,
-        "Ludovic.Desroches@microchip.com" <Ludovic.Desroches@microchip.com>,
-        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
-        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [2nd RESEND PATCH 1/2] i2c: enable buses to save their clock
- frequency in adapter
-Thread-Topic: [2nd RESEND PATCH 1/2] i2c: enable buses to save their clock
- frequency in adapter
-Thread-Index: AQHUjiAuPcBol/ktREin2XNfhFOg2KVzMUQA
-Date:   Fri, 7 Dec 2018 12:17:05 +0000
-Message-ID: <b70e4721-1cff-eb07-ed8e-8fc39b6e84ed@axentia.se>
-References: <20181207112939.15791-1-tudor.ambarus@microchip.com>
- <20181207112939.15791-2-tudor.ambarus@microchip.com>
-In-Reply-To: <20181207112939.15791-2-tudor.ambarus@microchip.com>
-Accept-Language: en-US, sv-SE
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.2
-x-originating-ip: [85.226.244.23]
-x-clientproxiedby: HE1PR05CA0180.eurprd05.prod.outlook.com
- (2603:10a6:3:f8::28) To VI1PR02MB5119.eurprd02.prod.outlook.com
- (2603:10a6:803:b7::12)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=peda@axentia.se; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;VI1PR02MB3646;6:EmDeVsmZImRqsqV5ItjzzOk3qm7PGdwnxUgEt5qAnEk4Vym8QbfP/nNenJmGLC81VisDuC4athAaAcC/1b/DQOev+KiyggVtz9Fp/al2pzBHjrl9dGzkarffp50nLgoVtf3GZJblO4RMBTRKj3mhhg33tpkcLogRFpzAjlUxokNfRno3evU7CjkcXuL/aS2I4Y7ekYb1sFlGPzS6ul4tv9y3ekKLKd8afMDiRxU22XQQS8EfCbiW2xZ/oPh7umTu4uySYSdJQec5XzYQdbrJrIxUJIdqu2dP5cADJ6Qy74CvVZy5VZJf2jJGA0dpgu62oJBnJLFr59k7znGaNG9knM4Cc6LXYKK3MbXuyaNQN0QjjG9GTZWKN2SXD0CWc1ia/yQU0pMPI63QXn3Gj/OPJNb5ppvRlMUnSWnyxPeD6UDShWx/lSAM7AM4kuB0iI+aiDkrEGQkF/AFl/N+euuSgQ==;5:bk6ABOzjrH6BkzdGdDz0yJ0uMJZm+Q0fVladLrcloftCPzFiJa7aI/xGHG2WtBP2Ci7XKZutrf17fVZBYe13W55anH/zMMje5oG+vR5Du4RaaCFzs7xcK6F1nECTRYtnKbjSYafnE+dlUM1k7Q20HNPvldhq9/gDs6ebgnKQ2KE=;7:nL8E7wdfzavXk2A+DDYZxEhDQctBox3VzvH6vI8Vi9gx/gSycOqAhG2rmNd6pnKoCpuHeUAsbiaOkHvLZgu0xCEa2CXGrYWBYB6+ff55mBv8S9eUcBg6YUfH14itQzIHWcyoL8hbXDEVxzaEgNJStA==
-x-ms-office365-filtering-correlation-id: 8b91b550-cefc-4511-5116-08d65c3de6c1
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(7021145)(8989299)(4534185)(7022145)(4603075)(4627221)(201702281549075)(8990200)(7048125)(7024125)(7027125)(7023125)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:VI1PR02MB3646;
-x-ms-traffictypediagnostic: VI1PR02MB3646:
-x-microsoft-antispam-prvs: <VI1PR02MB364698699CDB47C20E296019BCAA0@VI1PR02MB3646.eurprd02.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(10201501046)(3002001)(93006095)(93001095)(3231455)(999002)(944501520)(52105112)(148016)(149066)(150057)(6041310)(2016111802025)(20161123558120)(20161123562045)(20161123560045)(20161123564045)(6043046)(201708071742011)(7699051)(76991095);SRVR:VI1PR02MB3646;BCL:0;PCL:0;RULEID:;SRVR:VI1PR02MB3646;
-x-forefront-prvs: 0879599414
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39830400003)(136003)(396003)(366004)(346002)(376002)(189003)(199004)(305945005)(186003)(52116002)(76176011)(31696002)(26005)(386003)(6506007)(102836004)(53546011)(14454004)(6116002)(229853002)(3846002)(6512007)(6246003)(53936002)(64126003)(217873002)(68736007)(476003)(71190400001)(256004)(71200400001)(81156014)(5660300001)(8936002)(7736002)(446003)(11346002)(486006)(99286004)(65826007)(86362001)(8676002)(14444005)(81166006)(2616005)(316002)(58126008)(54906003)(110136005)(74482002)(97736004)(106356001)(36756003)(508600001)(65806001)(65956001)(2906002)(6486002)(25786009)(6436002)(4326008)(105586002)(66066001)(31686004)(2501003)(42262002);DIR:OUT;SFP:1102;SCL:1;SRVR:VI1PR02MB3646;H:VI1PR02MB5119.eurprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: axentia.se does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: VoHI/it1wJA9uIcdOUejaxuQCjQxFObgp3EvIiwlqophs1gyjV6tWk+C7+wEwKnN8mMzX5VUcqMlpaP2ho1yGZg/j0Sirg94/aTp3FqYDo7eHxrUO6DxrqPH5PCrGhieUQmp3AKHg5vmlhqvtfMv4YPHwD+BqQ1GB+Dhlkn2vkTQWIcmsUTHFNRnIN6uO3EKsLr/2UIedoQs4AKCwGKrPy5s7sP4f3XCRl/6H1uKEeiDYgIDU1kC6bl6BfQ62ThIrFxE4y8knDBUlIyLt8Vmg8yI+MdjUo1OI8BMUJr8Xr8m2oIsRaHOU2rUTGrH7/EUgUCleLy34LjUnub7NHmABGEnAmo1oj2Z6nvR/0L+XZU=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <3D88C2896AA66A499C41B51F6DCF224C@eurprd02.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        Fri, 7 Dec 2018 07:18:24 -0500
+Received: from ozlabs.org ([203.11.71.1]:60589 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726013AbeLGMSX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Dec 2018 07:18:23 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 43BBMG4JS2z9s3q;
+        Fri,  7 Dec 2018 23:18:18 +1100 (AEDT)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     Christoph Hellwig <hch@infradead.org>,
+        Christoph Hellwig <hch@lst.de>
+Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>, linux-arch@vger.kernel.org,
+        linux-mm@kvack.org, iommu@lists.linux-foundation.org,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 01/34] powerpc: use mm zones more sensibly
+In-Reply-To: <20181206140948.GB29741@infradead.org>
+References: <20181114082314.8965-1-hch@lst.de> <20181114082314.8965-2-hch@lst.de> <20181206140948.GB29741@infradead.org>
+Date:   Fri, 07 Dec 2018 23:18:18 +1100
+Message-ID: <87sgz9jzsl.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-X-OriginatorOrg: axentia.se
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8b91b550-cefc-4511-5116-08d65c3de6c1
-X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Dec 2018 12:17:05.8006
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 4ee68585-03e1-4785-942a-df9c1871a234
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR02MB3646
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gMjAxOC0xMi0wNyAxMjoyOSwgVHVkb3IuQW1iYXJ1c0BtaWNyb2NoaXAuY29tIHdyb3RlOg0K
-PiBGcm9tOiAiVHVkb3IuQW1iYXJ1c0BtaWNyb2NoaXAuY29tIiA8VHVkb3IuQW1iYXJ1c0BtaWNy
-b2NoaXAuY29tPg0KPiANCj4gVGhlIGNsb2NrLWZyZXF1ZW5jeSBwcm9wZXJ0eSBpcyBub3QgbWFu
-ZGF0b3J5IGZvciB0aGUgaTJjIGJ1c2VzLiBJZiBpdCdzDQo+IG5vdCBwcmVzZW50IGluIHRoZSBk
-ZXZpY2UgdHJlZSwgdGhlIGJ1c2VzIF9fdXN1YWxseV9fIGFzc3VtZSBpdCdzIDEwMGtIWg0KPiAo
-c2VlIGFsdGVyYSwgYXQ5MSwgYXh4aWEsIGV0Yy4pLiBCcm9hZGNvbSB1c2VzIGEgMzc1a0haIGRl
-ZmF1bHQNCj4gY2xvY2stZnJlcXVlbmN5LCBzbyB0aGUgZGVmYXVsdCBjbG9jayBmcmVxdWVuY3kg
-dmFyaWVzIGZyb20gYnVzIHRvIGJ1cy4NCj4gDQo+IFRoZXJlIGFyZSBpMmMgY2xpZW50cyB0aGF0
-IG5lZWQgdG8ga25vdyB0aGUgYnVzIGNsb2NrIGZyZXF1ZW5jeSBpbiBvcmRlciB0bw0KPiBjb21w
-dXRlIHRoZWlyIHdha2UgdG9rZW4gKHNlZSBhdGVjYzUwOGEgaTJjIGNsaWVudCkuDQo+IA0KPiBU
-aGUgY2xvY2stZnJlcXVlbmN5IHZhbHVlIGhhcyB0byBiZSBwcm9wYWdhdGVkIHRvIHRoZSBpMmMg
-Y2xpZW50cywgb3RoZXJ3aXNlLA0KPiBpZiB0aGV5IHdpbGwgbm90IGZpbmQgdGhlIGkyYyBidXMg
-Y2xvY2sgZnJlcXVlbmN5IGluIHRoZSBkZXZpY2UgdHJlZSwgdGhleQ0KPiB3aWxsIGhhdmUgdG8g
-bWFrZSB0aGVpciBvd24gYXNzdW1wdGlvbiBvZiB0aGUgY2xvY2sgZnJlcXVlbmN5Lg0KPiANCj4g
-U3BhcmUgdGhlIGkyYyBjbGllbnRzIG9mIG1ha2luZyB3cm9uZyBhc3N1bXB0aW9ucyBvZiB0aGUg
-aTJjIGJ1cyBjbG9jaw0KPiBmcmVxdWVuY3kgYW5kIGVuYWJsZSB0aGUgYnVzZXMgdG8gc2F2ZSB0
-aGVpciBjbG9jayBmcmVxdWVuY3kgaW4gYWRhcHRlci4NCj4gDQo+IFNpZ25lZC1vZmYtYnk6IFR1
-ZG9yIEFtYmFydXMgPHR1ZG9yLmFtYmFydXNAbWljcm9jaGlwLmNvbT4NCj4gUmV2aXdlZC1ieTog
-THVkb3ZpYyBEZXNyb2NoZXMgPGx1ZG92aWMuZGVzcm9jaGVzQG1pY3JvY2hpcC5jb20+DQoNClRo
-aXMgaXMgbm90IHRoZSBjb3JyZWN0IHNwZWxsaW5nIG9mIHRoZSB0YWcgYW5kIHByb2JhYmx5IHRo
-ZSByZWFzb24gZm9yDQp0aGUgbGFjayBvZiByZWFjdGlvbiBmcm9tIFdvbGZyYW0uIFRoZSB0YWcg
-aGFzIHNpbXBseSBub3Qgc2hvd2VkIHVwIGluDQpwYXRjaHdvcmsgYW5kIHRoZSBwYXRjaCBoYXMg
-dGh1cyBiZWVuIHBvc3Rwb25lZC4gUHJvYmFibHkuLi4NCg0KQ2hlZXJzLA0KUGV0ZXINCg0KPiAt
-LS0NCj4gIGluY2x1ZGUvbGludXgvaTJjLmggfCAxICsNCj4gIDEgZmlsZSBjaGFuZ2VkLCAxIGlu
-c2VydGlvbigrKQ0KPiANCj4gZGlmZiAtLWdpdCBhL2luY2x1ZGUvbGludXgvaTJjLmggYi9pbmNs
-dWRlL2xpbnV4L2kyYy5oDQo+IGluZGV4IDY1YjRlYWVkMWQ5Ni4uZjIzOGRhMjA0YzQ5IDEwMDY0
-NA0KPiAtLS0gYS9pbmNsdWRlL2xpbnV4L2kyYy5oDQo+ICsrKyBiL2luY2x1ZGUvbGludXgvaTJj
-LmgNCj4gQEAgLTY3Nyw2ICs2NzcsNyBAQCBzdHJ1Y3QgaTJjX2FkYXB0ZXIgew0KPiAgCXN0cnVj
-dCBydF9tdXRleCBidXNfbG9jazsNCj4gIAlzdHJ1Y3QgcnRfbXV0ZXggbXV4X2xvY2s7DQo+ICAN
-Cj4gKwl1MzIgYnVzX2ZyZXFfaHo7DQo+ICAJaW50IHRpbWVvdXQ7CQkJLyogaW4gamlmZmllcyAq
-Lw0KPiAgCWludCByZXRyaWVzOw0KPiAgCXN0cnVjdCBkZXZpY2UgZGV2OwkJLyogdGhlIGFkYXB0
-ZXIgZGV2aWNlICovDQo+IA0KDQo=
+Christoph Hellwig <hch@infradead.org> writes:
+
+> Ben / Michael,
+>
+> can we get this one queued up for 4.21 to prepare for the DMA work later
+> on?
+
+I was hoping the PASEMI / NXP regressions could be solved before
+merging.
+
+My p5020ds is booting fine with this series, so I'm not sure why it's
+causing problems on Christian's machine.
+
+The last time I turned on my PASEMI board it tripped some breakers, so I
+need to investigate that before I can help test that.
+
+I'll see how things look on Monday and either merge the commits you
+identified or the whole series depending on if there's any more info
+from Christian.
+
+cheers
+
+> On Wed, Nov 14, 2018 at 09:22:41AM +0100, Christoph Hellwig wrote:
+>> Powerpc has somewhat odd usage where ZONE_DMA is used for all memory on
+>> common 64-bit configfs, and ZONE_DMA32 is used for 31-bit schemes.
+>> 
+>> Move to a scheme closer to what other architectures use (and I dare to
+>> say the intent of the system):
+>> 
+>>  - ZONE_DMA: optionally for memory < 31-bit (64-bit embedded only)
+>>  - ZONE_NORMAL: everything addressable by the kernel
+>>  - ZONE_HIGHMEM: memory > 32-bit for 32-bit kernels
+>> 
+>> Also provide information on how ZONE_DMA is used by defining
+>> ARCH_ZONE_DMA_BITS.
+>> 
+>> Contains various fixes from Benjamin Herrenschmidt.
+>> 
+>> Signed-off-by: Christoph Hellwig <hch@lst.de>
+>> ---
+>>  arch/powerpc/Kconfig                          |  8 +---
+>>  arch/powerpc/include/asm/page.h               |  2 +
+>>  arch/powerpc/include/asm/pgtable.h            |  1 -
+>>  arch/powerpc/kernel/dma-swiotlb.c             |  6 +--
+>>  arch/powerpc/kernel/dma.c                     |  7 +--
+>>  arch/powerpc/mm/mem.c                         | 47 +++++++------------
+>>  arch/powerpc/platforms/85xx/corenet_generic.c | 10 ----
+>>  arch/powerpc/platforms/85xx/qemu_e500.c       |  9 ----
+>>  include/linux/mmzone.h                        |  2 +-
+>>  9 files changed, 25 insertions(+), 67 deletions(-)
+>> 
+>> diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
+>> index 8be31261aec8..cffff3613bc1 100644
+>> --- a/arch/powerpc/Kconfig
+>> +++ b/arch/powerpc/Kconfig
+>> @@ -374,9 +374,9 @@ config PPC_ADV_DEBUG_DAC_RANGE
+>>  	depends on PPC_ADV_DEBUG_REGS && 44x
+>>  	default y
+>>  
+>> -config ZONE_DMA32
+>> +config ZONE_DMA
+>>  	bool
+>> -	default y if PPC64
+>> +	default y if PPC_BOOK3E_64
+>>  
+>>  config PGTABLE_LEVELS
+>>  	int
+>> @@ -869,10 +869,6 @@ config ISA
+>>  	  have an IBM RS/6000 or pSeries machine, say Y.  If you have an
+>>  	  embedded board, consult your board documentation.
+>>  
+>> -config ZONE_DMA
+>> -	bool
+>> -	default y
+>> -
+>>  config GENERIC_ISA_DMA
+>>  	bool
+>>  	depends on ISA_DMA_API
+>> diff --git a/arch/powerpc/include/asm/page.h b/arch/powerpc/include/asm/page.h
+>> index f6a1265face2..fc8c9ac0c6be 100644
+>> --- a/arch/powerpc/include/asm/page.h
+>> +++ b/arch/powerpc/include/asm/page.h
+>> @@ -354,4 +354,6 @@ typedef struct page *pgtable_t;
+>>  #endif /* __ASSEMBLY__ */
+>>  #include <asm/slice.h>
+>>  
+>> +#define ARCH_ZONE_DMA_BITS 31
+>> +
+>>  #endif /* _ASM_POWERPC_PAGE_H */
+>> diff --git a/arch/powerpc/include/asm/pgtable.h b/arch/powerpc/include/asm/pgtable.h
+>> index 9679b7519a35..8af32ce93c7f 100644
+>> --- a/arch/powerpc/include/asm/pgtable.h
+>> +++ b/arch/powerpc/include/asm/pgtable.h
+>> @@ -66,7 +66,6 @@ extern unsigned long empty_zero_page[];
+>>  
+>>  extern pgd_t swapper_pg_dir[];
+>>  
+>> -void limit_zone_pfn(enum zone_type zone, unsigned long max_pfn);
+>>  int dma_pfn_limit_to_zone(u64 pfn_limit);
+>>  extern void paging_init(void);
+>>  
+>> diff --git a/arch/powerpc/kernel/dma-swiotlb.c b/arch/powerpc/kernel/dma-swiotlb.c
+>> index 5fc335f4d9cd..678811abccfc 100644
+>> --- a/arch/powerpc/kernel/dma-swiotlb.c
+>> +++ b/arch/powerpc/kernel/dma-swiotlb.c
+>> @@ -108,12 +108,8 @@ int __init swiotlb_setup_bus_notifier(void)
+>>  
+>>  void __init swiotlb_detect_4g(void)
+>>  {
+>> -	if ((memblock_end_of_DRAM() - 1) > 0xffffffff) {
+>> +	if ((memblock_end_of_DRAM() - 1) > 0xffffffff)
+>>  		ppc_swiotlb_enable = 1;
+>> -#ifdef CONFIG_ZONE_DMA32
+>> -		limit_zone_pfn(ZONE_DMA32, (1ULL << 32) >> PAGE_SHIFT);
+>> -#endif
+>> -	}
+>>  }
+>>  
+>>  static int __init check_swiotlb_enabled(void)
+>> diff --git a/arch/powerpc/kernel/dma.c b/arch/powerpc/kernel/dma.c
+>> index dbfc7056d7df..6551685a4ed0 100644
+>> --- a/arch/powerpc/kernel/dma.c
+>> +++ b/arch/powerpc/kernel/dma.c
+>> @@ -50,7 +50,7 @@ static int dma_nommu_dma_supported(struct device *dev, u64 mask)
+>>  		return 1;
+>>  
+>>  #ifdef CONFIG_FSL_SOC
+>> -	/* Freescale gets another chance via ZONE_DMA/ZONE_DMA32, however
+>> +	/* Freescale gets another chance via ZONE_DMA, however
+>>  	 * that will have to be refined if/when they support iommus
+>>  	 */
+>>  	return 1;
+>> @@ -94,13 +94,10 @@ void *__dma_nommu_alloc_coherent(struct device *dev, size_t size,
+>>  	}
+>>  
+>>  	switch (zone) {
+>> +#ifdef CONFIG_ZONE_DMA
+>>  	case ZONE_DMA:
+>>  		flag |= GFP_DMA;
+>>  		break;
+>> -#ifdef CONFIG_ZONE_DMA32
+>> -	case ZONE_DMA32:
+>> -		flag |= GFP_DMA32;
+>> -		break;
+>>  #endif
+>>  	};
+>>  #endif /* CONFIG_FSL_SOC */
+>> diff --git a/arch/powerpc/mm/mem.c b/arch/powerpc/mm/mem.c
+>> index 0a64fffabee1..c0b676c3a5ba 100644
+>> --- a/arch/powerpc/mm/mem.c
+>> +++ b/arch/powerpc/mm/mem.c
+>> @@ -246,35 +246,19 @@ static int __init mark_nonram_nosave(void)
+>>  }
+>>  #endif
+>>  
+>> -static bool zone_limits_final;
+>> -
+>>  /*
+>> - * The memory zones past TOP_ZONE are managed by generic mm code.
+>> - * These should be set to zero since that's what every other
+>> - * architecture does.
+>> + * Zones usage:
+>> + *
+>> + * We setup ZONE_DMA to be 31-bits on all platforms and ZONE_NORMAL to be
+>> + * everything else. GFP_DMA32 page allocations automatically fall back to
+>> + * ZONE_DMA.
+>> + *
+>> + * By using 31-bit unconditionally, we can exploit ARCH_ZONE_DMA_BITS to
+>> + * inform the generic DMA mapping code.  32-bit only devices (if not handled
+>> + * by an IOMMU anyway) will take a first dip into ZONE_NORMAL and get
+>> + * otherwise served by ZONE_DMA.
+>>   */
+>> -static unsigned long max_zone_pfns[MAX_NR_ZONES] = {
+>> -	[0            ... TOP_ZONE        ] = ~0UL,
+>> -	[TOP_ZONE + 1 ... MAX_NR_ZONES - 1] = 0
+>> -};
+>> -
+>> -/*
+>> - * Restrict the specified zone and all more restrictive zones
+>> - * to be below the specified pfn.  May not be called after
+>> - * paging_init().
+>> - */
+>> -void __init limit_zone_pfn(enum zone_type zone, unsigned long pfn_limit)
+>> -{
+>> -	int i;
+>> -
+>> -	if (WARN_ON(zone_limits_final))
+>> -		return;
+>> -
+>> -	for (i = zone; i >= 0; i--) {
+>> -		if (max_zone_pfns[i] > pfn_limit)
+>> -			max_zone_pfns[i] = pfn_limit;
+>> -	}
+>> -}
+>> +static unsigned long max_zone_pfns[MAX_NR_ZONES];
+>>  
+>>  /*
+>>   * Find the least restrictive zone that is entirely below the
+>> @@ -324,11 +308,14 @@ void __init paging_init(void)
+>>  	printk(KERN_DEBUG "Memory hole size: %ldMB\n",
+>>  	       (long int)((top_of_ram - total_ram) >> 20));
+>>  
+>> +#ifdef CONFIG_ZONE_DMA
+>> +	max_zone_pfns[ZONE_DMA]	= min(max_low_pfn, 0x7fffffffUL >> PAGE_SHIFT);
+>> +#endif
+>> +	max_zone_pfns[ZONE_NORMAL] = max_low_pfn;
+>>  #ifdef CONFIG_HIGHMEM
+>> -	limit_zone_pfn(ZONE_NORMAL, lowmem_end_addr >> PAGE_SHIFT);
+>> +	max_zone_pfns[ZONE_HIGHMEM] = max_pfn;
+>>  #endif
+>> -	limit_zone_pfn(TOP_ZONE, top_of_ram >> PAGE_SHIFT);
+>> -	zone_limits_final = true;
+>> +
+>>  	free_area_init_nodes(max_zone_pfns);
+>>  
+>>  	mark_nonram_nosave();
+>> diff --git a/arch/powerpc/platforms/85xx/corenet_generic.c b/arch/powerpc/platforms/85xx/corenet_generic.c
+>> index ac191a7a1337..b0dac307bebf 100644
+>> --- a/arch/powerpc/platforms/85xx/corenet_generic.c
+>> +++ b/arch/powerpc/platforms/85xx/corenet_generic.c
+>> @@ -68,16 +68,6 @@ void __init corenet_gen_setup_arch(void)
+>>  
+>>  	swiotlb_detect_4g();
+>>  
+>> -#if defined(CONFIG_FSL_PCI) && defined(CONFIG_ZONE_DMA32)
+>> -	/*
+>> -	 * Inbound windows don't cover the full lower 4 GiB
+>> -	 * due to conflicts with PCICSRBAR and outbound windows,
+>> -	 * so limit the DMA32 zone to 2 GiB, to allow consistent
+>> -	 * allocations to succeed.
+>> -	 */
+>> -	limit_zone_pfn(ZONE_DMA32, 1UL << (31 - PAGE_SHIFT));
+>> -#endif
+>> -
+>>  	pr_info("%s board\n", ppc_md.name);
+>>  
+>>  	mpc85xx_qe_init();
+>> diff --git a/arch/powerpc/platforms/85xx/qemu_e500.c b/arch/powerpc/platforms/85xx/qemu_e500.c
+>> index b63a8548366f..27631c607f3d 100644
+>> --- a/arch/powerpc/platforms/85xx/qemu_e500.c
+>> +++ b/arch/powerpc/platforms/85xx/qemu_e500.c
+>> @@ -45,15 +45,6 @@ static void __init qemu_e500_setup_arch(void)
+>>  
+>>  	fsl_pci_assign_primary();
+>>  	swiotlb_detect_4g();
+>> -#if defined(CONFIG_FSL_PCI) && defined(CONFIG_ZONE_DMA32)
+>> -	/*
+>> -	 * Inbound windows don't cover the full lower 4 GiB
+>> -	 * due to conflicts with PCICSRBAR and outbound windows,
+>> -	 * so limit the DMA32 zone to 2 GiB, to allow consistent
+>> -	 * allocations to succeed.
+>> -	 */
+>> -	limit_zone_pfn(ZONE_DMA32, 1UL << (31 - PAGE_SHIFT));
+>> -#endif
+>>  	mpc85xx_smp_init();
+>>  }
+>>  
+>> diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
+>> index 847705a6d0ec..e2d01ccd071d 100644
+>> --- a/include/linux/mmzone.h
+>> +++ b/include/linux/mmzone.h
+>> @@ -314,7 +314,7 @@ enum zone_type {
+>>  	 * Architecture		Limit
+>>  	 * ---------------------------
+>>  	 * parisc, ia64, sparc	<4G
+>> -	 * s390			<2G
+>> +	 * s390, powerpc	<2G
+>>  	 * arm			Various
+>>  	 * alpha		Unlimited or 0-16MB.
+>>  	 *
+>> -- 
+>> 2.19.1
+>> 
+>> _______________________________________________
+>> iommu mailing list
+>> iommu@lists.linux-foundation.org
+>> https://lists.linuxfoundation.org/mailman/listinfo/iommu
+> ---end quoted text---
