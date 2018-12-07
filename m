@@ -2,174 +2,118 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCF09C07E85
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 18:23:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B291FC64EB1
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 18:23:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 991142083D
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 18:23:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 991142083D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 75CBB20882
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 18:23:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VEmomjx1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75CBB20882
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726325AbeLGSXf (ORCPT
+        id S1726335AbeLGSXq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 13:23:35 -0500
-Received: from foss.arm.com ([217.140.101.70]:51464 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726218AbeLGSXf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 13:23:35 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BA277EBD;
-        Fri,  7 Dec 2018 10:23:34 -0800 (PST)
-Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EC9A93F5AF;
-        Fri,  7 Dec 2018 10:23:32 -0800 (PST)
-Date:   Fri, 7 Dec 2018 18:23:27 +0000
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc:     robh+dt@kernel.org, gregkh@linuxfoundation.org, arnd@arndb.de,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        bjorn.andersson@linaro.org, linux-arm-msm@vger.kernel.org,
-        bkumar@qti.qualcomm.com, thierry.escande@linaro.org
-Subject: Re: [PATCH v2 1/6] misc: dt-bindings: Add Qualcomm Fastrpc bindings
-Message-ID: <20181207182327.64mtkfx6v4wlwccz@lakrids.cambridge.arm.com>
-References: <20181207163513.16412-1-srinivas.kandagatla@linaro.org>
- <20181207163513.16412-2-srinivas.kandagatla@linaro.org>
+        Fri, 7 Dec 2018 13:23:46 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:34456 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726209AbeLGSXp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Dec 2018 13:23:45 -0500
+Received: by mail-wr1-f68.google.com with SMTP id j2so4717433wrw.1;
+        Fri, 07 Dec 2018 10:23:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=Qa24XH3EaFf+Nkn7ea3mzRDaMwsz1E7KXdY5DiZJAtA=;
+        b=VEmomjx1zO45TAe9cagt63MnHPv8zwwCkaD0Su9r4yy6ms7PTQzOn7L4JWbxZuZo2l
+         sVJspbTC7TjeOIS4R4j7T8CFxTMu6x77Dr4nmeRDH/9r9oBLG2CqzfYfj2Rwc1XjMTwf
+         sRdSvlRaTvLlQ1hAl6VBHK955KD0ogO7mVEf8SnGiNpse3aTq915Vk705GGlLXcHs9l9
+         nWej7KcETdOBNymQE9duqJ2QsdJlTwJ+o5LI1oc7iZILTTvoSYjx2obOAOmFTBXdlKLJ
+         rOZL//6mX0ziCp9KTtTVncqEVaVLMAh4s5RbM4QP7eOd/7YdN6kdnMJflC5K4AoBvw+e
+         E66g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Qa24XH3EaFf+Nkn7ea3mzRDaMwsz1E7KXdY5DiZJAtA=;
+        b=sydUvssqS1O3bQnkawIgpz9HKDVMaJ+4BMYaDzoxCSKNNmcGIMGlImwE4DgxJEg305
+         TEsEOCDLEbfpIlrw4Sa4sUI283vQa+CL94NyrhqxPTR+Ed8pDhjFx6jwjo0REsAwfgm0
+         s1SGtVRg6JgMzR3qbbRhFDZtzE4qf4LEbAKNWVJBT2eTvVUQQwCFHiQGKaqNSclh40w9
+         ZhMWHPBELiPZ4a4/jHWTojC9bGfHcZ80sMFV1+U6Aj7KB4WS8zCX/+ySE4cFIma1AcUa
+         p6wK56F4bZpj6K2OS84hyEfmbtso38uA5d0HqLPqnJIPGXyanP84+V4RgamVmcgKntE3
+         tSWw==
+X-Gm-Message-State: AA+aEWYbuwQD4KbYWfSFKJxyng+7KNIR6oSlNkk3vCPf3zBHqlg7363k
+        AYBaPgq7Ily1Dbi9EihO420=
+X-Google-Smtp-Source: AFSGD/WdA70ZJc83fZr52qOZOB97STGiOwLkrKkqReZTJKUTz9wPs0C0vjo38IxURB8NUWoCCfu38Q==
+X-Received: by 2002:adf:f449:: with SMTP id f9mr2771339wrp.40.1544207023377;
+        Fri, 07 Dec 2018 10:23:43 -0800 (PST)
+Received: from [192.168.1.4] (ip-86-49-110-70.net.upcbroadband.cz. [86.49.110.70])
+        by smtp.gmail.com with ESMTPSA id l15sm4079689wrw.4.2018.12.07.10.23.41
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 07 Dec 2018 10:23:42 -0800 (PST)
+Subject: Re: [PATCH v2 1/2] spi: Add Renesas R-Car Gen3 RPC SPI controller
+ driver
+To:     Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Mason Yang <masonccyang@mxic.com.tw>, broonie@kernel.org,
+        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
+        boris.brezillon@bootlin.com, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     juliensu@mxic.com.tw, Simon Horman <horms@verge.net.au>,
+        zhengxunli@mxic.com.tw
+References: <1543828720-18345-1-git-send-email-masonccyang@mxic.com.tw>
+ <1543828720-18345-2-git-send-email-masonccyang@mxic.com.tw>
+ <0bd07d30-1c0a-ef5b-24ae-dcae3c4721ce@cogentembedded.com>
+From:   Marek Vasut <marek.vasut@gmail.com>
+Message-ID: <ef6446d0-8b7f-08b1-df99-799f75578474@gmail.com>
+Date:   Fri, 7 Dec 2018 19:23:41 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181207163513.16412-2-srinivas.kandagatla@linaro.org>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <0bd07d30-1c0a-ef5b-24ae-dcae3c4721ce@cogentembedded.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 07, 2018 at 04:35:08PM +0000, Srinivas Kandagatla wrote:
-> The FastRPC driver implements an IPC (Inter-Processor Communication)
-> mechanism that allows for clients to transparently make remote method
-> invocations across DSP and APPS boundaries. This enables developers
-> to offload tasks to the DSP and free up the application processor for
-> other tasks.
+On 12/07/2018 07:17 PM, Sergei Shtylyov wrote:
+> Hello!
 > 
-> Co-developed-by: Thierry Escande <thierry.escande@linaro.org>
-> Signed-off-by: Thierry Escande <thierry.escande@linaro.org>
-> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-> ---
->  .../devicetree/bindings/misc/qcom,fastrpc.txt | 73 +++++++++++++++++++
->  1 file changed, 73 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/misc/qcom,fastrpc.txt
+>    I'd already started the v2 driver review before you posted v3, so here goes...
 > 
-> diff --git a/Documentation/devicetree/bindings/misc/qcom,fastrpc.txt b/Documentation/devicetree/bindings/misc/qcom,fastrpc.txt
-> new file mode 100644
-> index 000000000000..06e8c25839d5
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/misc/qcom,fastrpc.txt
-> @@ -0,0 +1,73 @@
-> +Qualcomm Technologies, Inc. FastRPC Driver
-> +
-> +The FastRPC driver implements an IPC (Inter-Processor Communication)
-> +mechanism that allows for clients to transparently make remote method
-> +invocations across DSP and APPS boundaries. This enables developers
-> +to offload tasks to the DSP and free up the application processor for
-> +other tasks.
-
-Which hardware does this node represent?
-
-If this is functionality provided by another block of hardware (i.e. the
-DSPs themselves), it would be better to have nodes for them.
-
-> +
-> +- compatible:
-> +	Usage: required
-> +	Value type: <stringlist>
-> +	Definition: must be "qcom,fastrpc"
-> +
-> +- reg
-> +	Usage: required
-> +	Value type: <u32>
-> +	Definition: DSP Processor ID.
-> +	Possible values are :
-> +			0 - ADSP
-> +			1 - MDSP
-> +			2 - SDSP
-> +			3 - CDSP
-
-Why is this in a reg?
-
-To be, a phandle to the relevant DSP would seem better.
-
-> +
-> += COMPUTE BANKS
-> +Each subnode of the Fastrpc node represents compute context banks available
-> +on the dsp. The name of the nodes are not important. The properties of these
-> +nodes are defined by the individual bindings for the specific service
-> +- All Compute context banks MUST contain the following property:
-> +
-> +- compatible:
-> +	Usage: required
-> +	Value type: <stringlist>
-> +	Definition: must be "qcom,fastrpc-compute-cb"
-> +
-> +- reg
-> +	Usage: required
-> +	Value type: <u32>
-> +	Definition: Context Bank ID.
-> +
-> +- secured:
-> +	Usage: Optional
-> +	Value type: <boolean>
-> +	Defination: Indicating context bank is secured
-
-In what sense?
-
-Does this mean Secure / Non-secure in the TrustZone sense?
-
-> +
-> +- nsessions:
-> +	Usage: Optional
-> +	Value type: <u32>
-> +	Defination: A value indicating how many sessions can share this
-> +		    context bank. Defaults to 'One' when this property
-> +		    is not specified.
-
-Presumably the default is 1, rather than 'One'.
-
-What is a session? How do there share a context bank?
-
-> +
-> +Example:
-> +
-> +fastrpc {
-> +	compatible = "qcom,fastrpc";
-> +	qcom,smd-channels = "fastrpcsmd-apps-dsp";
-> +	reg = <0>; /* DOMAIN_ADSP */
-> +	#address-cells = <1>;
-> +	#size-cells = <0>;
-> +
-> +	cb@1 {
-> +		compatible = "qcom,fastrpc-compute-cb";
-> +		reg = <1>;
-> +		iommus = <&lpass_q6_smmu 1>;
-
-These iommus should be associated with the device (i.e. the DSP itself).
-
-Thanks,
-Mark.
-
-> +	};
-> +
-> +	cb@2 {
-> +		compatible = "qcom,fastrpc-compute-cb";
-> +		reg = <2>;
-> +		iommus = <&lpass_q6_smmu 2>;
-> +	};
-> +	...
-> +};
-> -- 
-> 2.19.2
+> On 12/03/2018 12:18 PM, Mason Yang wrote:
 > 
+>> Add a driver for Renesas R-Car Gen3 RPC SPI controller.
+>>
+>> Signed-off-by: Mason Yang <masonccyang@mxic.com.tw>
+> [...]
+>> diff --git a/drivers/spi/spi-renesas-rpc.c b/drivers/spi/spi-renesas-rpc.c
+>> new file mode 100644
+>> index 0000000..ac9094e
+>> --- /dev/null
+>> +++ b/drivers/spi/spi-renesas-rpc.c
+>> @@ -0,0 +1,808 @@
+> [...]
+>> +#define RPC_CMNCR		0x0000	/* R/W */
+>> +#define RPC_CMNCR_MD		BIT(31)
+>> +#define RPC_CMNCR_SFDE		BIT(24)
+> 
+>    This bit is undocumented as of the gen3 manual v1.0. I'd like this to be reflected
+> in a comment...
+
+FYI, not even in v1.50 .
+
+-- 
+Best regards,
+Marek Vasut
