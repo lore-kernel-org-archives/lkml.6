@@ -2,120 +2,317 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0704FC07E85
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 15:27:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB298C07E85
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 15:29:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BDF7A20672
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 15:27:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BDF7A20672
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 5928220672
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 15:29:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Hbjs0LEB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5928220672
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726152AbeLGP1I (ORCPT
+        id S1726135AbeLGP3Z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 10:27:08 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:44262 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726041AbeLGP1I (ORCPT
+        Fri, 7 Dec 2018 10:29:25 -0500
+Received: from mail-wr1-f53.google.com ([209.85.221.53]:45238 "EHLO
+        mail-wr1-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726027AbeLGP3Y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 10:27:08 -0500
-Received: by mail-lj1-f196.google.com with SMTP id k19-v6so3855852lji.11
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Dec 2018 07:27:07 -0800 (PST)
+        Fri, 7 Dec 2018 10:29:24 -0500
+Received: by mail-wr1-f53.google.com with SMTP id b14so4155784wru.12
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Dec 2018 07:29:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=CoGU49NtDU2qnyKDHf7fbLySk7C3wEZ852l6drughEc=;
+        b=Hbjs0LEBJkQ9MFkhfIzWaYwtzAWHMeUC/Uil/t5dPkC3s/afJCXCsMCOkgotUR65sT
+         1CM8nZ8tTTYFoXOsXGJOv29m57CTAKuXr96sYrRWua0ElD2vzatArfXeUTYaEF3jdDXD
+         B4YmregWvtoqs9WDBtuVLOOu4986cedVsTme0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=LWzi5N9ErnaoM0xtxI+fsrH2tP7+GEG9Yks3l1TlQ9c=;
-        b=j/hQaZjf49QZgjtLKC+zZHJRzRMA8PLbd3EaGjDr7/1BHwe6oYiIAGfCaCE+/PYgTw
-         f8nKNDNcgeggViU32qaAwbnFXsDPe/r8yKq4EryLzoYJY5XV7DWMKjE2sQ2X+qXVBIiK
-         oI/Fs9gbmD0kl6tSpVA04ku5ElUteN6jYdi1L5Q4AJnduJ31Q0g8Cy2n6BwWA0Sy6iru
-         9xk9O+Wz3EbDenpbOCClZMMd1hcyHRxVwJRcXRlBL8irNBIvMTekG4J5AtuOGare87YD
-         PDJEtwy/hDHWWCqPfcBDWJNq+p5psGNxJumVFGzOW8ZQV3FR8UxC215a6ZcwaPYrGJfP
-         cDeQ==
-X-Gm-Message-State: AA+aEWbmb2yUq/USk5l/g7MCb2DZdRKr5FU7mbL6+LnIG7BBsC9YuJ/m
-        oXM3daCVrMwiKse8syrjLpl5hAbsKk/DlhdfbENwqw==
-X-Google-Smtp-Source: AFSGD/WTd/GmJolkIKObTs+ltMJuaDgq9GIkgtG35aCg3hkojYRO9GQVVks9H09pqEe4/k1S2cqSx907M7vYAZaI4WA=
-X-Received: by 2002:a2e:96c6:: with SMTP id d6-v6mr1768292ljj.35.1544196426315;
- Fri, 07 Dec 2018 07:27:06 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=CoGU49NtDU2qnyKDHf7fbLySk7C3wEZ852l6drughEc=;
+        b=QeH+C+q12m1fbQSe6V7sHGux5p8XwsNdwDokiD+9WpCe12fT0+KtGaI3pvL01NHgtK
+         1LQf34PX8XU6ynR2blzULvYC+O45enRm0LVfyBauNtSc7ojlkWORq291cTymNdJlT3AG
+         gTJ12MLV5uIHDXfY30Btw5F7JiRIr8q1vV7dZfLobGTEI8ZiW3PnpKxVzANnFA0ctnbE
+         omIjyL5jUzlgX7a8PZkJTI+/R1vlYf5oBIMLwaBjhfOTV4MfBKGN/xon/lHFEiY4z1c+
+         ivfth1qKDr7qQEPAeWMjezrlpNpNrV0FgTDirEjRxPjNAeOOei2G0zRzwlmzFkX3FNaJ
+         m47A==
+X-Gm-Message-State: AA+aEWY7CTUZ9LGuS73TpSj17pfrLAmTZHE2+bxM8SrCqRtWrP+mMJdU
+        FuGE7YR7A1cHOOP0DWeutN4Pcw==
+X-Google-Smtp-Source: AFSGD/XgzpAUlB2M5OYhgMuhH2fI+gLlyTj3HHxDPMcqlrJGB/odEwEbXYIw4Mk0GS+mulTsHroyHA==
+X-Received: by 2002:adf:f350:: with SMTP id e16mr2068912wrp.125.1544196561322;
+        Fri, 07 Dec 2018 07:29:21 -0800 (PST)
+Received: from localhost.localdomain ([212.45.67.2])
+        by smtp.googlemail.com with ESMTPSA id y145sm2728721wmd.30.2018.12.07.07.29.19
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Fri, 07 Dec 2018 07:29:20 -0800 (PST)
+From:   Georgi Djakov <georgi.djakov@linaro.org>
+To:     gregkh@linuxfoundation.org, linux-pm@vger.kernel.org
+Cc:     rjw@rjwysocki.net, robh+dt@kernel.org, mturquette@baylibre.com,
+        khilman@baylibre.com, vincent.guittot@linaro.org,
+        skannan@codeaurora.org, bjorn.andersson@linaro.org,
+        amit.kucheria@linaro.org, seansw@qti.qualcomm.com,
+        daidavid1@codeaurora.org, evgreen@chromium.org,
+        dianders@chromium.org, mark.rutland@arm.com,
+        lorenzo.pieralisi@arm.com, abailon@baylibre.com,
+        maxime.ripard@bootlin.com, arnd@arndb.de, thierry.reding@gmail.com,
+        ksitaraman@nvidia.com, sanjayc@nvidia.com,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-tegra@vger.kernel.org,
+        georgi.djakov@linaro.org
+Subject: [PATCH v11 0/8] Introduce on-chip interconnect API
+Date:   Fri,  7 Dec 2018 17:29:09 +0200
+Message-Id: <20181207152917.4862-1-georgi.djakov@linaro.org>
+X-Mailer: git-send-email 2.19.2
 MIME-Version: 1.0
-References: <20181207101439.190918-1-james.morse@arm.com>
-In-Reply-To: <20181207101439.190918-1-james.morse@arm.com>
-From:   Bhupesh Sharma <bhsharma@redhat.com>
-Date:   Fri, 7 Dec 2018 20:56:53 +0530
-Message-ID: <CACi5LpM9_bQnx+YqBcFqFbMWAmZoYtDwopuSq+NpOaX8tjak=g@mail.gmail.com>
-Subject: Re: [PATCH arm64/kexec] arm64: kexec_file: forbid kdump via kexec_file_load()
-To:     James Morse <james.morse@arm.com>
-Cc:     linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        devicetree@vger.kernel.org,
-        kexec mailing list <kexec@lists.infradead.org>,
-        Will Deacon <will.deacon@arm.com>, robh+dt@kernel.org,
-        AKASHI Takahiro <takahiro.akashi@linaro.org>,
-        Catalin Marinas <catalin.marinas@arm.com>, dhowells@redhat.com,
-        Vivek Goyal <vgoyal@redhat.com>, herbert@gondor.apana.org.au,
-        davem@davemloft.net, Dave Young <dyoung@redhat.com>,
-        Baoquan He <bhe@redhat.com>, arnd@arndb.de,
-        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
-        prudo@linux.ibm.com, Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        frowand.list@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi James,
+Modern SoCs have multiple processors and various dedicated cores (video, gpu,
+graphics, modem). These cores are talking to each other and can generate a
+lot of data flowing through the on-chip interconnects. These interconnect
+buses could form different topologies such as crossbar, point to point buses,
+hierarchical buses or use the network-on-chip concept.
 
-On Fri, Dec 7, 2018 at 3:44 PM James Morse <james.morse@arm.com> wrote:
->
-> Now that kexec_walk_memblock() can do the crash-kernel placement itself
-> architectures that don't support kdump via kexe_file_load() need to
-> explicitly forbid it.
->
-> We don't support this on arm64 until the kernel can add the elfcorehdr
-> and usable-memory-range fields to the DT. Without these the crash-kernel
-> overwrites the previous kernel's memory during startup.
->
-> Add a check to refuse crash image loading.
->
-> Signed-off-by: James Morse <james.morse@arm.com>
-> ---
->
-> Context: http://lore.kernel.org/r/20181206155424.GA4422@arm.com
->
->  arch/arm64/kernel/kexec_image.c | 4 ++++
->  1 file changed, 4 insertions(+)
->
-> diff --git a/arch/arm64/kernel/kexec_image.c b/arch/arm64/kernel/kexec_image.c
-> index 1ad1d5f8f024..07bf740bea91 100644
-> --- a/arch/arm64/kernel/kexec_image.c
-> +++ b/arch/arm64/kernel/kexec_image.c
-> @@ -47,6 +47,10 @@ static void *image_load(struct kimage *image,
->         struct kexec_segment *kernel_segment;
->         int ret;
->
-> +       /* We don't support crash kernels yet. */
-> +       if (image->type == KEXEC_TYPE_CRASH)
-> +               return ERR_PTR(-EOPNOTSUPP);
-> +
->         /*
->          * We require a kernel with an unambiguous Image header. Per
->          * Documentation/booting.txt, this is the case when image_size
-> --
-> 2.19.2
->
+These buses have been sized usually to handle use cases with high data
+throughput but it is not necessary all the time and consume a lot of power.
+Furthermore, the priority between masters can vary depending on the running
+use case like video playback or CPU intensive tasks.
 
-TBH, I would have loved the complete 'kexec_file_load' support to have
-made way upstream for arm64 as well, but I understand that it is stuck
-till we have an agreement on the DT side of things. So, refusing a
-crash image loading in such a case makes sense for now.
+Having an API to control the requirement of the system in terms of bandwidth
+and QoS, so we can adapt the interconnect configuration to match those by
+scaling the frequencies, setting link priority and tuning QoS parameters.
+This configuration can be a static, one-time operation done at boot for some
+platforms or a dynamic set of operations that happen at run-time.
 
-So, please feel free to add:
-Reviewed-by: Bhupesh Sharma <bhsharma@redhat.com>
+This patchset introduce a new API to get the requirement and configure the
+interconnect buses across the entire chipset to fit with the current demand.
+The API is NOT for changing the performance of the endpoint devices, but only
+the interconnect path in between them.
 
-Thanks,
-Bhupesh
+The API is using a consumer/provider-based model, where the providers are
+the interconnect buses and the consumers could be various drivers.
+The consumers request interconnect resources (path) to an endpoint and set
+the desired constraints on this data flow path. The provider(s) receive
+requests from consumers and aggregate these requests for all master-slave
+pairs on that path. Then the providers configure each participating in the
+topology node according to the requested data flow path, physical links and
+constraints. The topology could be complicated and multi-tiered and is SoC
+specific.
+
+Below is a simplified diagram of a real-world SoC topology. The interconnect
+providers are the NoCs.
+
++----------------+    +----------------+
+| HW Accelerator |--->|      M NoC     |<---------------+
++----------------+    +----------------+                |
+                        |      |                    +------------+
+ +-----+  +-------------+      V       +------+     |            |
+ | DDR |  |                +--------+  | PCIe |     |            |
+ +-----+  |                | Slaves |  +------+     |            |
+   ^ ^    |                +--------+     |         |   C NoC    |
+   | |    V                               V         |            |
++------------------+   +------------------------+   |            |   +-----+
+|                  |-->|                        |-->|            |-->| CPU |
+|                  |-->|                        |<--|            |   +-----+
+|     Mem NoC      |   |         S NoC          |   +------------+
+|                  |<--|                        |---------+    |
+|                  |<--|                        |<------+ |    |   +--------+
++------------------+   +------------------------+       | |    +-->| Slaves |
+  ^  ^    ^    ^          ^                             | |        +--------+
+  |  |    |    |          |                             | V
++------+  |  +-----+   +-----+  +---------+   +----------------+   +--------+
+| CPUs |  |  | GPU |   | DSP |  | Masters |-->|       P NoC    |-->| Slaves |
++------+  |  +-----+   +-----+  +---------+   +----------------+   +--------+
+          |
+      +-------+
+      | Modem |
+      +-------+
+
+TODO:
+* Create a followup patch to revert to previous bandwidth configuration
+  if any of the requests fails to apply.
+* Create icc_set_extended() to handle parameters such as latency and other
+  QoS values. Nvidia and Qcom guys are interested in this.
+* Cache the path between the nodes instead of walking the graph on each get().
+* Sync interconnect requests with the idle state of the device.
+
+Changes since patchset v10 (https://lkml.org/lkml/2018/11/28/2)
+* Addressed comments from Joe Perches.
+* Addressed comments from Evan Green and picked Reviewed-by.
+* Changed the name of the DT node from qnoc to interconnect.
+* Minor changes - typos, whitespaces etc.
+* Added a new patch to adjust the sdm845 provider driver to the
+  recently changed cmd_db API in linux-next.
+
+Changes since patchset v9 (https://lkml.org/lkml/2018/8/31/444)
+* Converted from using global node identifiers to local per provider ids.
+* Dropped msm8916 platform driver until we figure out DT bindings.
+* Included sdm845 platform driver instead.
+* Added macros for converting to mbps, gbps, etc. to icc units.
+* Added comments about aggregation, other minor changes.
+* Fixed uninitialized variable. (Gustavo A. R. Silva)
+* Removed set but not used variable. (YueHaibing)
+* Fixed build error without DEBUGFS. (Arnd Bergmann)
+
+Changes since patchset v8 (https://lkml.org/lkml/2018/8/10/387)
+* Fixed the names of the files when built as modules.
+* Corrected some typos in comments.
+
+Changes since patchset v7 (https://lkml.org/lkml/2018/7/31/647)
+* Addressed comments on kernel-doc and grammar. (Randy)
+* Picked Reviewed-by: Evan
+* Squashed consumer and provider DT bindings into single patch. (Rob)
+* Cleaned-up msm8916 DT bindings docs by removing unused port ids.
+* Updated documentation for the cases when NULL is returned. (Saravana)
+* New patch to add myself as maintainer.
+
+Changes since patchset v6 (https://lkml.org/lkml/2018/7/9/698)
+* [patches 1,6]: Move the aggregation within the provider from the framework to
+  the platform driver's set() callback, as the aggregation point could be SoC
+  specific.
+* [patch 1]: Include missing header, reset state only of the traversed nodes,
+  move more code into path_init(), add more asserts, move misplaced mutex,
+  simplify icc_link_destroy() (Evan)
+* [patch 1]: Fix the order of requests to go from source to destination. (Alex)
+* [patch 7]: Use better wording in the documentation. (Evan)
+* [patch 6]: Reorder struct members, sort nodes alphabetically, improve naming
+  of variables , add missing clk_disable_unprepare() in error paths. (Matthias)
+* [patch 6]: Remove redundant NULL pointer check in msm8916 driver. (Alex)
+* [patch 6]: Add missing depend on QCOM_SMD_RPM in Kconfig. (Evan)
+* [patch 3]: Don't check for errors on debugfs calls, remove debugfs directory
+  when module is unloaded (Greg)
+
+Changes since patchset v5 (https://lkml.org/lkml/2018/6/20/453)
+* Fix the modular build, make rpm-smd driver a module.
+* Optimize locking and move to higher level. (Evan)
+* Code cleanups. Fix typos. (Evan, Matthias)
+* Add the source node to the path. (Evan)
+* Rename path_allocate() to path_init() with minor refactoring. (Evan)
+* Rename *_remove() functions to *_destroy().
+* Return fixed errors in icc_link_destroy(). (Evan)
+* Fix krealloc() usage in icc_link_destroy(). (Evan)
+* Add missing kfree() in icc_node_create(). (Matthias)
+* Make icc_node_add() return void. (Matthias)
+* Change mutex_init to mutex_lock in icc_provider_add(). (Matthias)
+* Add new icc_node_del() function to delete nodes from provider.
+* Fix the header guard to reflect the path in smd-rpm.h. (Evan)
+* Check for errors returned by qcom_icc_rpm_smd_send(). (Evan)
+* Propagate the error of icc_provider_del(). (Evan)
+
+Changes since patchset v4 (https://lkml.org/lkml/2018/3/9/856)
+* Simplified locking by using a single global mutex. (Evan)
+* Changed the aggregation function interface.
+* Implemented functions for node, link, provider removal. (Evan)
+* Naming changes on variables and functions, removed redundant code. (Evan)
+* Fixes and clarifications in the docs. (Matthias, Evan, Amit, Alexandre)
+* Removed mandatory reg DT property, made interconnect-names optional. (Bjorn)
+* Made interconnect-cells property required to align with other bindings. (Neil)
+* Moved msm8916 specific bindings into a separate file and patch. (Bjorn)
+* Use the names, instead of the hardcoded ids for topology. (Matthias)
+* Init the node before creating the links. (Evan)
+* Added icc_units_to_bps macro. (Amit)
+
+Changes since patchset v3 (https://lkml.org/lkml/2017/9/8/544)
+* Refactored the constraints aggregation.
+* Use the IDR API.
+* Split the provider and consumer bindings into separate patches and propose
+  new bindings for consumers, which allows to specify the local source port.
+* Adopted the icc_ prefix for API functions.
+* Introduced separate API functions for creating interconnect nodes and links.
+* Added DT lookup support in addition to platform data.
+* Dropped the event tracing patch for now.
+* Added a patch to provide summary via debugfs.
+* Use macro for the list of topology definitions in the platform driver.
+* Various minor changes.
+
+Changes since patchset v2 (https://lkml.org/lkml/2017/7/20/825)
+* Split the aggregation into per node and per provider. Cache the
+  aggregated values.
+* Various small refactorings and cleanups in the framework.
+* Added a patch introducing basic tracepoint support for monitoring
+  the time required to update the interconnect nodes.
+
+Changes since patchset v1 (https://lkml.org/lkml/2017/6/27/890)
+* Updates in the documentation.
+* Changes in request aggregation, locking.
+* Dropped the aggregate() callback and use the default as it currently
+  sufficient for the single vendor driver. Will add it later when needed.
+* Dropped the dt-bindings draft patch for now.
+
+Changes since RFC v2 (https://lkml.org/lkml/2017/6/12/316)
+* Converted documentation to rst format.
+* Fixed an incorrect call to mutex_lock. Renamed max_bw to peak_bw.
+
+Changes since RFC v1 (https://lkml.org/lkml/2017/5/15/605)
+* Refactored code into shorter functions.
+* Added a new aggregate() API function.
+* Rearranged some structs to reduce padding bytes.
+
+Changes since RFC v0 (https://lkml.org/lkml/2017/3/1/599)
+* Removed DT support and added optional Patch 3 with new bindings proposal.
+* Converted the topology into internal driver data.
+* Made the framework modular.
+* interconnect_get() now takes (src and dst ports as arguments).
+* Removed public declarations of some structs.
+* Now passing prev/next nodes to the vendor driver.
+* Properly remove requests on _put().
+* Added refcounting.
+* Updated documentation.
+* Changed struct interconnect_path to use array instead of linked list.
+
+David Dai (2):
+  interconnect: qcom: Add sdm845 interconnect provider driver
+  arm64: dts: sdm845: Add interconnect provider DT nodes
+
+Georgi Djakov (6):
+  interconnect: Add generic on-chip interconnect API
+  dt-bindings: Introduce interconnect binding
+  interconnect: Allow endpoints translation via DT
+  interconnect: Add debugfs support
+  MAINTAINERS: add a maintainer for the interconnect API
+  interconnect: sdm845: Fix build failure after cmd_db API change
+
+ .../bindings/interconnect/interconnect.txt    |  60 ++
+ .../bindings/interconnect/qcom,sdm845.txt     |  24 +
+ Documentation/interconnect/interconnect.rst   |  94 ++
+ MAINTAINERS                                   |  10 +
+ arch/arm64/boot/dts/qcom/sdm845.dtsi          |   5 +
+ drivers/Kconfig                               |   2 +
+ drivers/Makefile                              |   1 +
+ drivers/interconnect/Kconfig                  |  15 +
+ drivers/interconnect/Makefile                 |   6 +
+ drivers/interconnect/core.c                   | 787 ++++++++++++++++
+ drivers/interconnect/qcom/Kconfig             |  13 +
+ drivers/interconnect/qcom/Makefile            |   5 +
+ drivers/interconnect/qcom/sdm845.c            | 838 ++++++++++++++++++
+ .../dt-bindings/interconnect/qcom,sdm845.h    | 143 +++
+ include/linux/interconnect-provider.h         | 142 +++
+ include/linux/interconnect.h                  |  59 ++
+ 16 files changed, 2204 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/interconnect/interconnect.txt
+ create mode 100644 Documentation/devicetree/bindings/interconnect/qcom,sdm845.txt
+ create mode 100644 Documentation/interconnect/interconnect.rst
+ create mode 100644 drivers/interconnect/Kconfig
+ create mode 100644 drivers/interconnect/Makefile
+ create mode 100644 drivers/interconnect/core.c
+ create mode 100644 drivers/interconnect/qcom/Kconfig
+ create mode 100644 drivers/interconnect/qcom/Makefile
+ create mode 100644 drivers/interconnect/qcom/sdm845.c
+ create mode 100644 include/dt-bindings/interconnect/qcom,sdm845.h
+ create mode 100644 include/linux/interconnect-provider.h
+ create mode 100644 include/linux/interconnect.h
+
