@@ -2,115 +2,115 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,T_DKIMWL_WL_HIGH,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D261DC07E85
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 23:13:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DF26C07E85
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 23:15:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 89ACD20892
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 23:13:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544224408;
-	bh=7flK8mgq1Q3ryWLFWkBTPhitQSi1a6sXTybvyCpFKAY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=UoyLuaF860kJKR5aWKxO8RTGBxRFINxSqh/rs+aeacm+7qr7plFdSsmHE7wM7K0Yr
-	 7ahRUHf872Rnhv3PNhiONMP4cwE9raCtzc5j2D5qT4fwSQg6ys2JGwgUK+FppJJZg/
-	 9WuZm6gn2U00eb1w1Ky9/aT7zV5HwxHRe7ENT1pU=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 89ACD20892
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 0CFBD20838
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 23:15:42 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mmwKln+s"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0CFBD20838
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726121AbeLGXN1 (ORCPT
+        id S1726095AbeLGXPk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 18:13:27 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:44277 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726047AbeLGXN1 (ORCPT
+        Fri, 7 Dec 2018 18:15:40 -0500
+Received: from mail-pf1-f177.google.com ([209.85.210.177]:44549 "EHLO
+        mail-pf1-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725791AbeLGXPk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 18:13:27 -0500
-Received: by mail-ot1-f66.google.com with SMTP id f18so5330224otl.11;
-        Fri, 07 Dec 2018 15:13:25 -0800 (PST)
+        Fri, 7 Dec 2018 18:15:40 -0500
+Received: by mail-pf1-f177.google.com with SMTP id u6so2608694pfh.11
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Dec 2018 15:15:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=QUkms/DVJEKkHxhV0riKAPj/37mf5Vv4TDTyEJSUMhk=;
+        b=mmwKln+sZzjUrKXqKL7+e+5HbPmGyDw9iQ6z65MC+pQo5ex5/XAvvWktIF1bhELfcZ
+         dXXtSath4sJ8FCl/xT0b1rdpOqAh/XaU1em8tZ/dahuTg/tNkntq95xkUb1VeqlSWuZP
+         jzr0yYeNQPx8seu730Uf46ydZKgLHz/Nzr6mFv6caPCL3uicOE9WcmcsCJxI9rOnroXX
+         dNJZXd8ZSjwReI2vlJUKEaX9pmlneLNouvk7Pu8xcGgVRaJeulwSMQACQJ9IYiEfNV7Q
+         f1ymI4McAclm1ZoFH4FL39+vVtlgpkXJL85sITtDsj0YPGvLC4ovTH0C6l9uoMeObfbl
+         0ydg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=HAZLB5b01POqOGjmOzQANT2uEEynRmpPNy+sjySi55s=;
-        b=YcYXZIekleDdtkW4CXk1kG/B+XpjN0dYqBbEXHAEAYrlSCGpPeCcTbJ0T+0lrzupa+
-         jfhcBvsx6iBqmshd97OGH3zisyIP8vT/pIvXel1+I1f0OS5EHqpk/ZuHarJ/3Kdq3bWb
-         9I92f38rEOfaBjBF4Y8hQbsBjO9+BkrnfmM8ygEo9YsUyPchhKNIV9jYQvLxgTw4za2R
-         pzmrzYyIZCsi/5/eWXGqvTwcKgTybCh4SePFgalCgHY1wndVgq2JTkB4hyXZ9oCpVqTd
-         9kTlb6ey9wuLTXzuMY9fUWA53qIIxV91UgpDtrbBv9C5Y+waAvyTfdGXuZzDdbI0xJAo
-         9eyQ==
-X-Gm-Message-State: AA+aEWaKCgqs1mIMI1wlVd2FFI8u3Kr+LjxtqKE/mIt/BtDy54gMIH/w
-        ycTQa8gmYakHTm8WcsFemQ==
-X-Google-Smtp-Source: AFSGD/Ueeu7MD6cA9sMKipfPB176YPmUvIUDBn6Beb9ETKeqMYNGavyMi2x9YFpI/t2PRXxaqIzmQQ==
-X-Received: by 2002:a9d:346:: with SMTP id 64mr2848722otv.90.1544224404594;
-        Fri, 07 Dec 2018 15:13:24 -0800 (PST)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id 52sm8216224oti.30.2018.12.07.15.13.23
+        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=QUkms/DVJEKkHxhV0riKAPj/37mf5Vv4TDTyEJSUMhk=;
+        b=sTBoIoJtTiBvxVI8YBks0jRYB9raPBhEvCIgxZH6vwRhSrYxA9z9Pfp2jx/JaNX3y3
+         1j50tGFif0wZnxVizN9PZpwt2O4qdd6jWSd9j8kwX5X1xgQDjeTA3t8HROms3fYcw7wp
+         FoMd3qp6SQPITdZxPhHp0vQeSAY+t5t43TPmSNCNVnJnuk+QBXWSlP4w3msWyunRqjXk
+         du+j8XeZe7v9gMa7wzKNvIujvWFUPBDxwoBv+88Ifm974T8nA4aNaiR/S0JBT1DZZUGq
+         tFC8OJry2dFqfGSQ79mHHoN1YR1O9f1XjCtKn41vSS9cVkGiahk3z6SCtGwGqgckfW7V
+         ZQrg==
+X-Gm-Message-State: AA+aEWbiXPJP3mJNs2TuuOqjTi9khzDv5oFVMRQWf+WSt9HBy5w6xg3n
+        X9S0BWvsJtIic7jgd8IP2TyRsA==
+X-Google-Smtp-Source: AFSGD/U5nVyydSSZjUt1PDP4uvDnDBvk7pLai5HsYYt94QUcAt2kpB3/LJvsVdX4VSwBI0uL8XMouw==
+X-Received: by 2002:aa7:8758:: with SMTP id g24mr4002576pfo.250.1544224539240;
+        Fri, 07 Dec 2018 15:15:39 -0800 (PST)
+Received: from [2620:15c:17:3:3a5:23a7:5e32:4598] ([2620:15c:17:3:3a5:23a7:5e32:4598])
+        by smtp.gmail.com with ESMTPSA id m76sm6497986pfi.102.2018.12.07.15.15.38
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 07 Dec 2018 15:13:23 -0800 (PST)
-Date:   Fri, 7 Dec 2018 17:13:23 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Anson Huang <anson.huang@nxp.com>
-Cc:     "rui.zhang@intel.com" <rui.zhang@intel.com>,
-        "edubezval@gmail.com" <edubezval@gmail.com>,
-        "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-        "will.deacon@arm.com" <will.deacon@arm.com>,
-        Aisheng DONG <aisheng.dong@nxp.com>,
-        Andy Gross <andy.gross@linaro.org>,
-        "heiko@sntech.de" <heiko@sntech.de>,
-        "horms+renesas@verge.net.au" <horms+renesas@verge.net.au>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "amit.kucheria@linaro.org" <amit.kucheria@linaro.org>,
-        "enric.balletbo@collabora.com" <enric.balletbo@collabora.com>,
-        "ezequiel@collabora.com" <ezequiel@collabora.com>,
-        "olof@lixom.net" <olof@lixom.net>,
-        "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "LW@KARO-electronics.de" <LW@KARO-electronics.de>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        dl-linux-imx <linux-imx@nxp.com>
-Subject: Re: [PATCH V4 1/4] dt-bindings: fsl: scu: add thermal binding
-Message-ID: <20181207231323.GA10231@bogus>
-References: <1543458696-4741-1-git-send-email-Anson.Huang@nxp.com>
- <1543458696-4741-2-git-send-email-Anson.Huang@nxp.com>
+        Fri, 07 Dec 2018 15:15:38 -0800 (PST)
+Date:   Fri, 7 Dec 2018 15:15:37 -0800 (PST)
+From:   David Rientjes <rientjes@google.com>
+X-X-Sender: rientjes@chino.kir.corp.google.com
+To:     Vlastimil Babka <vbabka@suse.cz>
+cc:     Michal Hocko <mhocko@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        mgorman@techsingularity.net, ying.huang@intel.com,
+        s.priebe@profihost.ag,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        alex.williamson@redhat.com, lkp@01.org, kirill@shutemov.name,
+        Andrew Morton <akpm@linux-foundation.org>,
+        zi.yan@cs.rutgers.edu
+Subject: Re: MADV_HUGEPAGE vs. NUMA semantic (was: Re: [LKP] [mm] ac5b2c1891:
+ vm-scalability.throughput -61.3% regression)
+In-Reply-To: <779efc07-cac0-5d36-72fc-11d99060cac7@suse.cz>
+Message-ID: <alpine.DEB.2.21.1812071512040.173448@chino.kir.corp.google.com>
+References: <CAHk-=whDg5+e2-eXYo-jwC1spt2r7JjLQSaLm4OyfGMQHLTrdw@mail.gmail.com> <64a4aec6-3275-a716-8345-f021f6186d9b@suse.cz> <20181204104558.GV23260@techsingularity.net> <20181205204034.GB11899@redhat.com> <CAHk-=whi8Ju-cTDL4cYtwuLA7BYgGJYyy6HVMoknZaLHnRc83g@mail.gmail.com>
+ <20181205233632.GE11899@redhat.com> <CAHk-=wguXjkbK8BUU998s7HD7AXJgBkuc9JmuNxiN7uGQyfSfQ@mail.gmail.com> <CAHk-=wjm9V843eg0uesMrxKnCCq7UfWn8VJ+z-cNztb_0fVW6A@mail.gmail.com> <20181206091405.GD1286@dhcp22.suse.cz> <CAHk-=whCnERJt8bterD5yXABvoSmoJAx004Y76c82bBHCWbgDg@mail.gmail.com>
+ <20181207074954.GR1286@dhcp22.suse.cz> <779efc07-cac0-5d36-72fc-11d99060cac7@suse.cz>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1543458696-4741-2-git-send-email-Anson.Huang@nxp.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 29 Nov 2018 02:37:24 +0000, Anson Huang wrote:
-> NXP i.MX8QXP is an ARMv8 SoC with a Cortex-M4 core inside as
-> system controller, the system controller is in charge of system
-> power, clock and thermal sensors etc. management, Linux kernel
-> has to communicate with system controller via MU (message unit)
-> IPC to get temperature from thermal sensors, this patch adds
-> binding doc for i.MX system controller thermal driver.
+On Fri, 7 Dec 2018, Vlastimil Babka wrote:
+
+> >> But *that* in turn makes for other possible questions:
+> >>
+> >>  - if the reason we couldn't get a local hugepage is that we're simply
+> >> out of local memory (huge *or* small), then maybe a remote hugepage is
+> >> better.
+> >>
+> >>    Note that this now implies that the choice can be an issue of "did
+> >> the hugepage allocation fail due to fragmentation, or due to the node
+> >> being low of memory"
+> > How exactly do you tell? Many systems are simply low on memory due to
+> > caching. A clean pagecache is quite cheap to reclaim but it can be more
+> > expensive to fault in. Do we consider it to be a viable target?
 > 
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-> ---
-> ChangeLog:
-> V3->V4:
->   *move binding doc to SCU since it is belonging to SCU;
->   *change compatile string to start with "fsl" instead of "nxp" to align with other nodes in dtb.
-> ---
->  .../devicetree/bindings/arm/freescale/fsl,scu.txt        | 16 ++++++++++++++++
->  1 file changed, 16 insertions(+)
+> Compaction can report if it failed (more precisely: was skipped) due to
+> low memory, or for other reasons. It doesn't distinguish how easily
+> reclaimable is the memory, but I don't think we should reclaim anything
+> (see below).
 > 
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Note that just reclaiming when the order-0 watermark in 
+__compaction_suitable() fails is unfortunately not always sufficient: it 
+needs to be accessible to isolate_freepages().  For order-9 memory, it's 
+possible for isolate_migratepages_block() to skip over a top of free pages 
+that were just reclaimed if there are unmovable pages preventing the 
+entire pageblock from being freed.
