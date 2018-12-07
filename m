@@ -2,167 +2,339 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED397C07E85
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 08:28:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72EB1C07E85
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 08:30:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B6D7D20850
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 08:28:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Hd5/quhP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B6D7D20850
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 1EF79208E7
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 08:30:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1EF79208E7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726062AbeLGI25 (ORCPT
+        id S1726019AbeLGIaz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 03:28:57 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:43131 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725987AbeLGI25 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 03:28:57 -0500
-Received: by mail-lj1-f193.google.com with SMTP id 83-v6so2791648ljf.10
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Dec 2018 00:28:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=7WR+2gG+XFWUPIoM8fbvk2xN0o2zFeFyew6uhSn9pqY=;
-        b=Hd5/quhPSECZ6BM2OPlLVKRcanrDLhgDc0tEG2eVHasKru/HnuuRV8BAiaMJYs+DZ9
-         pVGc3WxfgTCJ/YCJtuaTbgW+y4LzmN/mfmWN/ptnSmuzc0GoIPZ+DbY5xCr4fmx000Pj
-         rMwH4FFlImvK2tcWn5tFKrnIzqMPyYqVMc39A=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=7WR+2gG+XFWUPIoM8fbvk2xN0o2zFeFyew6uhSn9pqY=;
-        b=k/5NJGnUuGupbdb5+ZJTZxddAWa0pVRFXbe9bPpn6Q8pVUDcFgalmRKniB/LfdnDhb
-         rC8pRN7CEGh1HbSFl7z4kYaI2uXnDJtakKRsP+4NlYgduTYBAcPVPTFLw8t6MIx3evSg
-         cQWVKORnySzTVEuSA9iIcDtAREKP8YvXpwVYz2fb9k9f9O4Bp5PowLZbCUmj5ecgVCz0
-         DMY9rKDkFScHK21MPJBakQWpLoPE6JK47PbvhgFd3iDUl5QUkJRzR9v7ySSTirble99b
-         y/95MDmzUUfx2dcxYwqsR2OjNyEzeUzH/WbG8Tju48hYf5/700WHjUYE/MrVQdNhkXvZ
-         dOxA==
-X-Gm-Message-State: AA+aEWYvwc+yIwJMtmwqzahvW3JjOeB1y7wgDByFlfIakKnepPG0DCNq
-        HBCFUtVYhOYp6qZuwKozWF3akgMejYcUr902rN+9UQ==
-X-Google-Smtp-Source: AFSGD/UncD38twP8Hc+6QHgtV+ksKT23euv00RLjP03zI9dupsbDs0fr2afp33LVSSFgqpvr9hG98RmG5Rzyyxv2npw=
-X-Received: by 2002:a2e:45d:: with SMTP id 90-v6mr770945lje.110.1544171335139;
- Fri, 07 Dec 2018 00:28:55 -0800 (PST)
-MIME-Version: 1.0
-References: <20181206142949.757402551@linuxfoundation.org>
-In-Reply-To: <20181206142949.757402551@linuxfoundation.org>
-From:   Naresh Kamboju <naresh.kamboju@linaro.org>
-Date:   Fri, 7 Dec 2018 13:58:42 +0530
-Message-ID: <CA+G9fYvUayPN7CrfXZkf2-ooL8ztAP2x2iMffFRCCUDizY=7EA@mail.gmail.com>
-Subject: Re: [PATCH 4.19 00/41] 4.19.8-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     open list <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        lkft-triage@lists.linaro.org,
-        linux- stable <stable@vger.kernel.org>
+        Fri, 7 Dec 2018 03:30:55 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:45263 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725966AbeLGIaz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Dec 2018 03:30:55 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id A984E20834; Fri,  7 Dec 2018 09:30:51 +0100 (CET)
+Received: from aptenodytes (aaubervilliers-681-1-79-44.w90-88.abo.wanadoo.fr [90.88.21.44])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 5D65120701;
+        Fri,  7 Dec 2018 09:30:41 +0100 (CET)
+Message-ID: <e2b464c83892b79c77fd7388733758b2e02813d2.camel@bootlin.com>
+Subject: Re: [PATCH] media: docs-rst: Document m2m stateless video decoder
+ interface
+From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+To:     Alexandre Courbot <acourbot@chromium.org>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Pawel Osciak <posciak@chromium.org>,
+        linux-media@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org
+Date:   Fri, 07 Dec 2018 09:30:41 +0100
+In-Reply-To: <20181205100121.181765-1-acourbot@chromium.org>
+References: <20181205100121.181765-1-acourbot@chromium.org>
+Organization: Bootlin
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.30.2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 6 Dec 2018 at 20:11, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 4.19.8 release.
-> There are 41 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Sat Dec  8 14:29:30 UTC 2018.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
-4.19.8-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-4.19.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+Hi,
 
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm, x86_64, and i386.
+Thanks for this new version! I only have one comment left, see below.
 
-Summary
-------------------------------------------------------------------------
+On Wed, 2018-12-05 at 19:01 +0900, Alexandre Courbot wrote:
+> Documents the protocol that user-space should follow when
+> communicating with stateless video decoders.
+> 
+> The stateless video decoding API makes use of the new request and tags
+> APIs. While it has been implemented with the Cedrus driver so far, it
+> should probably still be considered staging for a short while.
+> 
+> Signed-off-by: Alexandre Courbot <acourbot@chromium.org>
+> ---
+> Removing the RFC flag this time. Changes since RFCv3:
+> 
+> * Included Tomasz and Hans feedback,
+> * Expanded the decoding section to better describe the use of requests,
+> * Use the tags API.
+> 
+>  Documentation/media/uapi/v4l/dev-codec.rst    |   5 +
+>  .../media/uapi/v4l/dev-stateless-decoder.rst  | 399 ++++++++++++++++++
+>  2 files changed, 404 insertions(+)
+>  create mode 100644 Documentation/media/uapi/v4l/dev-stateless-decoder.rst
+> 
+> diff --git a/Documentation/media/uapi/v4l/dev-codec.rst b/Documentation/media/uapi/v4l/dev-codec.rst
+> index c61e938bd8dc..3e6a3e883f11 100644
+> --- a/Documentation/media/uapi/v4l/dev-codec.rst
+> +++ b/Documentation/media/uapi/v4l/dev-codec.rst
+> @@ -6,6 +6,11 @@
+>  Codec Interface
+>  ***************
+>  
+> +.. toctree::
+> +    :maxdepth: 1
+> +
+> +    dev-stateless-decoder
+> +
+>  A V4L2 codec can compress, decompress, transform, or otherwise convert
+>  video data from one format into another format, in memory. Typically
+>  such devices are memory-to-memory devices (i.e. devices with the
+> diff --git a/Documentation/media/uapi/v4l/dev-stateless-decoder.rst b/Documentation/media/uapi/v4l/dev-stateless-decoder.rst
+> new file mode 100644
+> index 000000000000..7a781c89bd59
+> --- /dev/null
+> +++ b/Documentation/media/uapi/v4l/dev-stateless-decoder.rst
+> @@ -0,0 +1,399 @@
+> +.. -*- coding: utf-8; mode: rst -*-
+> +
+> +.. _stateless_decoder:
+> +
+> +**************************************************
+> +Memory-to-memory Stateless Video Decoder Interface
+> +**************************************************
+> +
+> +A stateless decoder is a decoder that works without retaining any kind of state
+> +between processing frames. This means that each frame is decoded independently
+> +of any previous and future frames, and that the client is responsible for
+> +maintaining the decoding state and providing it to the decoder with each
+> +decoding request. This is in contrast to the stateful video decoder interface,
+> +where the hardware and driver maintain the decoding state and all the client
+> +has to do is to provide the raw encoded stream.
+> +
+> +This section describes how user-space ("the client") is expected to communicate
+> +with such decoders in order to successfully decode an encoded stream. Compared
+> +to stateful codecs, the decoder/client sequence is simpler, but the cost of
+> +this simplicity is extra complexity in the client which must maintain a
+> +consistent decoding state.
+> +
+> +Stateless decoders make use of the request API and buffer tags. A stateless
+> +decoder must thus expose the following capabilities on its queues when
+> +:c:func:`VIDIOC_REQBUFS` or :c:func:`VIDIOC_CREATE_BUFS` are invoked:
+> +
+> +* The ``V4L2_BUF_CAP_SUPPORTS_REQUESTS`` capability must be set on the
+> +  ``OUTPUT`` queue,
+> +
+> +* The ``V4L2_BUF_CAP_SUPPORTS_TAGS`` capability must be set on the ``OUTPUT``
+> +  and ``CAPTURE`` queues,
+> +
 
-kernel: 4.19.8-rc1
-git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
-le-rc.git
-git branch: linux-4.19.y
-git commit: 62b84b3cf313e064c6ad249e95a5fb8feb22c77e
-git describe: v4.19.7-42-g62b84b3cf313
-Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.19-oe/bu=
-ild/v4.19.7-42-g62b84b3cf313
+[...]
 
+> +Decoding
+> +========
+> +
+> +For each frame, the client is responsible for submitting a request to which the
+> +following is attached:
+> +
+> +* Exactly one frame worth of encoded data in a buffer submitted to the
+> +  ``OUTPUT`` queue,
 
-No regressions (compared to build v4.19.7)
+Although this is still the case in the cedrus driver (but will be fixed
+eventually), this requirement should be dropped because metadata is
+per-slice and not per-picture in the formats we're currently aiming to
+support.
 
-No fixes (compared to build v4.19.7)
+I think it would be safer to mention something like filling the output
+buffer with the minimum unit size for the selected output format, to
+which the associated metadata applies.
 
-Ran 20209 total tests in the following environments and test suites.
+> +* All the controls relevant to the format being decoded (see below for details).
+> +
+> +The contents of the source ``OUTPUT`` buffer, as well as the controls that must
+> +be set on the request, depend on the active coded pixel format and might be
+> +affected by codec-specific extended controls, as stated in documentation of each
+> +format.
+> +
+> +A typical frame would thus be decoded using the following sequence:
+> +
+> +1. Queue an ``OUTPUT`` buffer containing one frame worth of encoded bitstream
 
-Environments
---------------
-- dragonboard-410c - arm64
-- hi6220-hikey - arm64
-- i386
-- juno-r2 - arm64
-- qemu_arm
-- qemu_arm64
-- qemu_i386
-- qemu_x86_64
-- x15 - arm
-- x86_64
+Ditto here.
 
-Test Suites
------------
-* boot
-* install-android-platform-tools-r2600
-* kselftest
-* libhugetlbfs
-* ltp-cap_bounds-tests
-* ltp-containers-tests
-* ltp-cve-tests
-* ltp-fcntl-locktests-tests
-* ltp-filecaps-tests
-* ltp-fs-tests
-* ltp-fs_bind-tests
-* ltp-fs_perms_simple-tests
-* ltp-fsx-tests
-* ltp-hugetlb-tests
-* ltp-io-tests
-* ltp-ipc-tests
-* ltp-math-tests
-* ltp-nptl-tests
-* ltp-pty-tests
-* ltp-sched-tests
-* ltp-securebits-tests
-* ltp-syscalls-tests
-* ltp-timers-tests
-* spectre-meltdown-checker-test
-* ltp-open-posix-tests
-* kselftest-vsyscall-mode-native
-* kselftest-vsyscall-mode-none
+> +   data for the decoding request, using :c:func:`VIDIOC_QBUF`.
+> +
+> +    * **Required fields:**
+> +
+> +      ``index``
+> +          index of the buffer being queued.
+> +
+> +      ``type``
+> +          type of the buffer.
+> +
+> +      ``bytesused``
+> +          number of bytes taken by the encoded data frame in the buffer.
+> +
+> +      ``flags``
+> +          the ``V4L2_BUF_FLAG_REQUEST_FD`` flag must be set. In addition, if
+> +	  the decoded frame is to be used as a reference frame in the future,
+> +	  then the ``V4L2_BUF_FLAG_TAG`` flag must be set (it can also be set
+> +	  for non-reference frames if it helps the client).
+> +
+> +      ``request_fd``
+> +          must be set to the file descriptor of the decoding request.
+> +
+> +      ``tag``
+> +          if the ``V4L2_BUF_FLAG_TAG`` is set, then this must contain the tag
+> +          for the frame that will be copied into the decoded frame buffer, and
+> +          can be used to specify this frame as a reference frame for another
+> +          one.
+> +
+> +   .. note::
+> +
+> +     The API currently requires one frame of encoded data per ``OUTPUT`` buffer,
+> +     even though some encoded formats may present their data in smaller chunks
+> +     (e.g. H.264's frames can be made of several slices that can be processed
+> +     independently). It is currently the responsibility of the client to gather
+> +     the different parts of a frame into a single ``OUTPUT`` buffer, while
+> +     preserving the same layout as the original bitstream. This
+> +     restriction may be lifted in the future.
 
---=20
-Linaro LKFT
-https://lkft.linaro.org
+And this part should probably be dropped too.
+
+Cheers,
+
+Paul
+
+> +2. Set the codec-specific controls for the decoding request, using
+> +   :c:func:`VIDIOC_S_EXT_CTRLS`.
+> +
+> +    * **Required fields:**
+> +
+> +      ``which``
+> +          must be ``V4L2_CTRL_WHICH_REQUEST_VAL``.
+> +
+> +      ``request_fd``
+> +          must be set to the file descriptor of the decoding request.
+> +
+> +      other fields
+> +          other fields are set as usual when setting controls. The ``controls``
+> +          array must contain all the codec-specific controls required to decode
+> +          a frame.
+> +
+> +   .. note::
+> +
+> +      It is possible to specify the controls in different invocations of
+> +      :c:func:`VIDIOC_S_EXT_CTRLS`, or to overwrite a previously set control, as
+> +      long as ``request_fd`` and ``which`` are properly set. The controls state
+> +      at the moment of request submission is the one that will be considered.
+> +
+> +   .. note::
+> +
+> +      The order in which steps 1 and 2 take place is interchangeable.
+> +
+> +3. Submit the request by invoking :c:func:`MEDIA_IOC_REQUEST_QUEUE` on the
+> +   request FD.
+> +
+> +    If the request is submitted without an ``OUTPUT`` buffer, or if some of the
+> +    required controls are missing from the request, then
+> +    :c:func:`MEDIA_REQUEST_IOC_QUEUE` will return ``-ENOENT``. If more than one
+> +    ``OUTPUT`` buffer is queued, then it will return ``-EINVAL``.
+> +    :c:func:`MEDIA_REQUEST_IOC_QUEUE` returning non-zero means that no
+> +    ``CAPTURE`` buffer will be produced for this request.
+> +
+> +``CAPTURE`` buffers must not be part of the request, and are queued
+> +independently. They are returned in decode order (i.e. the same order as
+> +``OUTPUT`` buffers were submitted).
+> +
+> +Runtime decoding errors are signaled by the dequeued ``CAPTURE`` buffers
+> +carrying the ``V4L2_BUF_FLAG_ERROR`` flag. If a decoded reference frame has an
+> +error, then all following decoded frames that refer to it also have the
+> +``V4L2_BUF_FLAG_ERROR`` flag set, although the decoder will still try to
+> +produce a (likely corrupted) frame.
+> +
+> +Buffer management while decoding
+> +================================
+> +Contrary to stateful decoders, a stateless decoder does not perform any kind of
+> +buffer management: it only guarantees that dequeued ``CAPTURE`` buffer can be
+> +used by the client for as long as they are not queued again. "Used" here
+> +encompasses using the buffer for compositing, display, or as a reference frame
+> +to decode a subsequent frame.
+> +
+> +Reference frames are specified by using the same tag that was set to the
+> +``OUTPUT`` buffer of a frame into the relevant codec-specific structures that
+> +are submitted as controls. This tag will be copied to the corresponding
+> +``CAPTURE`` buffer, but can be used in any subsequent decoding request as soon
+> +as the decoding request for that buffer is queued successfully. This means that
+> +the client does not need to wait until a ``CAPTURE`` buffer with a given tag is
+> +dequeued to start using that tag in reference frames. However, it must wait
+> +until all frames referencing a given tag are dequeued before queuing the
+> +referenced ``CAPTURE`` buffer again, since queueing a buffer effectively removes
+> +its tag.
+> +
+> +When queuing a decoding request, the driver will increase the reference count of
+> +all the resources associated with reference frames. This means that the client
+> +can e.g. close the DMABUF file descriptors of the reference frame buffers if it
+> +won't need it afterwards, as long as the V4L2 ``CAPTURE`` buffer of the
+> +reference frame is not re-queued before all referencing frames are decoded.
+> +
+> +Seeking
+> +=======
+> +In order to seek, the client just needs to submit requests using input buffers
+> +corresponding to the new stream position. It must however be aware that
+> +resolution may have changed and follow the dynamic resolution change sequence in
+> +that case. Also depending on the codec used, picture parameters (e.g. SPS/PPS
+> +for H.264) may have changed and the client is responsible for making sure that a
+> +valid state is sent to the decoder.
+> +
+> +The client is then free to ignore any returned ``CAPTURE`` buffer that comes
+> +from the pre-seek position.
+> +
+> +Pause
+> +=====
+> +
+> +In order to pause, the client can just cease queuing buffers onto the ``OUTPUT``
+> +queue. Without source bitstream data, there is no data to process and the codec
+> +will remain idle.
+> +
+> +Dynamic resolution change
+> +=========================
+> +
+> +If the client detects a resolution change in the stream, it will need to perform
+> +the initialization sequence again with the new resolution:
+> +
+> +1. Wait until all submitted requests have completed and dequeue the
+> +   corresponding output buffers.
+> +
+> +2. Call :c:func:`VIDIOC_STREAMOFF` on both the ``OUTPUT`` and ``CAPTURE``
+> +   queues.
+> +
+> +3. Free all ``CAPTURE`` buffers by calling :c:func:`VIDIOC_REQBUFS` on the
+> +   ``CAPTURE`` queue with a buffer count of zero.
+> +
+> +4. Perform the initialization sequence again (minus the allocation of
+> +   ``OUTPUT`` buffers), with the new resolution set on the ``OUTPUT`` queue.
+> +   Note that due to resolution constraints, a different format may need to be
+> +   picked on the ``CAPTURE`` queue.
+> +
+> +Drain
+> +=====
+> +
+> +In order to drain the stream on a stateless decoder, the client just needs to
+> +wait until all the submitted requests are completed. There is no need to send a
+> +``V4L2_DEC_CMD_STOP`` command since requests are processed sequentially by the
+> +decoder.
+> +
+> +End of stream
+> +=============
+> +
+> +When the client detects that the end of stream is reached, it can simply stop
+> +sending new frames to the decoder, drain the ``CAPTURE`` queue, and dispose of
+> +the decoder as needed.
+-- 
+Paul Kocialkowski, Bootlin (formerly Free Electrons)
+Embedded Linux and kernel engineering
+https://bootlin.com
+
