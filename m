@@ -2,176 +2,144 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33033C07E85
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 06:40:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9792C07E85
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 06:46:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E32C320882
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 06:40:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 70AA220989
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 06:46:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="KVObqUA5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E32C320882
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (1024-bit key) header.d=microchiptechnology.onmicrosoft.com header.i=@microchiptechnology.onmicrosoft.com header.b="fjMIP67h"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 70AA220989
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725999AbeLGGkS (ORCPT
+        id S1725995AbeLGGq3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 01:40:18 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:33685 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725950AbeLGGkS (ORCPT
+        Fri, 7 Dec 2018 01:46:29 -0500
+Received: from esa2.microchip.iphmx.com ([68.232.149.84]:14915 "EHLO
+        esa2.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725948AbeLGGq3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 01:40:18 -0500
-Received: by mail-lj1-f196.google.com with SMTP id v1-v6so2630530ljd.0
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Dec 2018 22:40:16 -0800 (PST)
+        Fri, 7 Dec 2018 01:46:29 -0500
+X-IronPort-AV: E=Sophos;i="5.56,324,1539673200"; 
+   d="scan'208";a="23951627"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa2.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 06 Dec 2018 23:46:28 -0700
+Received: from NAM03-BY2-obe.outbound.protection.outlook.com (10.10.215.89) by
+ email.microchip.com (10.10.76.107) with Microsoft SMTP Server (TLS) id
+ 14.3.352.0; Thu, 6 Dec 2018 23:46:28 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=pikRb1H5+iimWrXUrM6YIl9Ze/Ojza180B33SsQlzPg=;
-        b=KVObqUA55qWwxchPXBeUYqAxkNFG0JHAw3OlrxE7eeopsMGGxrSBJ4+FL0Lh7RI2bf
-         oM8GCEpl9ciA4gs2Nx5VoQE+b0epkqAB/bgizkOfiq55Vz8iqRskafFBLpkPdwUEARn8
-         SI7U8he5NPoEgQRev6e5VBusidIYxUUuqWFok=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=pikRb1H5+iimWrXUrM6YIl9Ze/Ojza180B33SsQlzPg=;
-        b=bFoIGg03JrWs/bQpXghlNG+GpoiN2GqGmclS95FxwrmF5rYEbM/S0EUHvQXzTj57Wk
-         MYrK8G6gHvIdr0E0VIC14FU/KjgR/urCtcvqq0czL0m5pLmv6zrJRHUqNB/50YATVRXF
-         rGEVkeEJO/Hjo3L7K70JdGx6M+AX7U6yWvxfVaIUqtZnTFnS/wmVeEM8W0h/TtzPla42
-         qEGEV/rGMrSFseOIvE0wjmsZKJ0FNTZWj/g3ZxSbaI85d9SJB4B645Tid6DahxfNLaRY
-         A9htJlYl7YTcJIqzWZdBpI3xdVQkc8rD/bFD0qyIt4uW9UBTZsR/9pcOxfTHS8LooPuW
-         w9KA==
-X-Gm-Message-State: AA+aEWa32PH+cS3Wo2FjP7oYo7DZIAzPgJ0OZmpWQawGMxH1WGQN2Kmz
-        Ra8kXA4D0OibU6+fVJNxT2UxOMHgCVxXEvL1no3NkA==
-X-Google-Smtp-Source: AFSGD/WbvglRz1A0qAw5lqSc3F10BsJAtdochEy+PHq+EWMHmck7aOWdinSkXzsrdkaKKzxgyTXbCXirld/+25S4L5k=
-X-Received: by 2002:a2e:9715:: with SMTP id r21-v6mr561498lji.30.1544164815145;
- Thu, 06 Dec 2018 22:40:15 -0800 (PST)
+ d=microchiptechnology.onmicrosoft.com;
+ s=selector1-microchiptechnology-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=K1C500gJwq5Et1c6nieBiS5s+2oxfilPaaZHneY3Vys=;
+ b=fjMIP67hGyqvVljzpPYsI9BPOk3iy4tQIPAZ1m+BrdkkF4G+4H9PqEKYtZOOk1nByKeyiJyMi2GtqbEF9IV97odfmB+dxINhCEQlRpN8G5ojkNx8HO+BdTZ4+y3+ZSXzrmLxTysAmN6eqXKb7H+BdmW5WwQPHc2nui8cwiUNtx0=
+Received: from BN6PR1101MB2243.namprd11.prod.outlook.com (10.174.113.19) by
+ BN6PR1101MB2257.namprd11.prod.outlook.com (10.174.113.21) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1404.22; Fri, 7 Dec 2018 06:46:24 +0000
+Received: from BN6PR1101MB2243.namprd11.prod.outlook.com
+ ([fe80::853f:28dc:6c66:cfb1]) by BN6PR1101MB2243.namprd11.prod.outlook.com
+ ([fe80::853f:28dc:6c66:cfb1%5]) with mapi id 15.20.1404.021; Fri, 7 Dec 2018
+ 06:46:24 +0000
+From:   <Andrei.Stefanescu@microchip.com>
+To:     <linus.walleij@linaro.org>, <gregkh@linuxfoundation.org>,
+        <Nicolas.Ferre@microchip.com>, <robh+dt@kernel.org>,
+        <mark.rutland@arm.com>
+CC:     <Ludovic.Desroches@microchip.com>, <Cristian.Birsan@microchip.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <Andrei.Stefanescu@microchip.com>
+Subject: [PATCH v3 0/2] add SAMA5D2 PIOBU GPIO driver
+Thread-Topic: [PATCH v3 0/2] add SAMA5D2 PIOBU GPIO driver
+Thread-Index: AQHUjfiSwk/aspLsDU6sd9aFqLWriQ==
+Date:   Fri, 7 Dec 2018 06:46:24 +0000
+Message-ID: <1544165160-13653-1-git-send-email-andrei.stefanescu@microchip.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: VI1PR04CA0075.eurprd04.prod.outlook.com
+ (2603:10a6:802:2::46) To BN6PR1101MB2243.namprd11.prod.outlook.com
+ (2603:10b6:405:52::19)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Andrei.Stefanescu@microchip.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [94.177.32.154]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BN6PR1101MB2257;6:yyo4xMCeH83wD9zX/PLxyhjjC6aqRKzlRkMcR3RYm4bVFsd//+vy2c4XvXKmyTxKe8ilZ8su1UzhCgAQxrZuMx6ou07a1naTtfD6y9DMCwYQMOYnV/l4Oi5L8DZBOGKHfY/VSFHH7GXfMQ6xAq6GwcoU5wEDRVWcXlZWsUDKnS0B/YSFPR5AiHxomnrjspuFB9nJNVmFVNq/wUU8Daop15GtZflwtWWwWxW2w/CBNcVC5AdXMEQpXNtE8YVXWmklOIEoyezIeF7GJELrQ/6MCe2IvQL8gMWOmpl58vM3pxdUhrDLk9xyev+sbUPt7MS5yakAm52L8iXa7Q/YLZMwPmpKvxD/lupeaKxgy8h1l2oRa63uzQCyO1pKnL5pHPaEihK11xlko8YnHpzn8s5sa3qCSao4I9ROs/sEcDAEoDsH4qs88/7ufkDNEuP1Jy/thfFBi6ACel6aTNANxVTlgQ==;5:wcoAHNdKRZgKT2nXI6FqxPiR+Ag9w4bc6cgfWFtSzxCOLMdbBWQu04TqAubwjjv8tpObRbL+wKIBjcsgMRrkc2SMgGSAYyaE3buSMLqp2aKizY3E0+y3b1p3HXc7+q6ChjGZNa/PAICF6FidVqEQPVvl+WB41D/+zrux4aqBVug=;7:3heyx/N4VVfCTdj9UXaXeUWQZ9GBhSaFa5Gc20DLw3V/SAhX65m/R8QsTGx/5/fm+mA3QrNhVDTV3QS0oG4tQF1FgTl2159nDHzqEsBAIbpXev8rXwGahasTqJrlCr3++GPKXnKEloYHLIzGXGjiaA==
+x-ms-office365-filtering-correlation-id: 5f032112-b8b7-4678-845f-08d65c0fb499
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:BN6PR1101MB2257;
+x-ms-traffictypediagnostic: BN6PR1101MB2257:
+x-microsoft-antispam-prvs: <BN6PR1101MB2257089074B4849EBCA2BC33EDAA0@BN6PR1101MB2257.namprd11.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(10201501046)(3002001)(93006095)(93001095)(3231455)(999002)(944501520)(52105112)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123562045)(20161123560045)(20161123564045)(201708071742011)(7699051)(76991095);SRVR:BN6PR1101MB2257;BCL:0;PCL:0;RULEID:;SRVR:BN6PR1101MB2257;
+x-forefront-prvs: 0879599414
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(376002)(39860400002)(366004)(136003)(396003)(199004)(189003)(6512007)(54906003)(110136005)(7736002)(66066001)(99286004)(102836004)(6506007)(386003)(107886003)(25786009)(52116002)(186003)(26005)(72206003)(53936002)(478600001)(4326008)(2501003)(36756003)(14454004)(305945005)(316002)(97736004)(5660300001)(486006)(86362001)(105586002)(6486002)(68736007)(8676002)(476003)(8936002)(2616005)(2906002)(14444005)(6116002)(256004)(71190400001)(71200400001)(3846002)(217873002)(81156014)(81166006)(106356001)(6436002);DIR:OUT;SFP:1101;SCL:1;SRVR:BN6PR1101MB2257;H:BN6PR1101MB2243.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: microchip.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: kda8LFuF3kTf5SOYpjGsVZDcifd8E9YYiGvFYTQAjMv8xEUdpZyp6F/X3bS0zYMHoFxzllM/WLtp94/TFO7DjYOwWjDvEE75XvxsNuWIVjXLG5uNzqp+nzYzKwvxQvLVM7PkKpb44AQVkTh0nPVZR/20e1FSut1Qw4zSgi8xridNcaPSj7s/Y3UWQ0qiRPHdjdyZ54pY/EaP8QC6BelNpCwE5bufhwt0iU/f9F1RExclt0mUo2wP2IYBGDrJCVH+l196ZI4GbwPhIttuhjRw5mM6+mz2AwavxdrfTcrhfofxci0h66NK6AY5baSKxdlaOBe5BjbrsoWSQLqqjxrgxwpj780AdJlVRoCL0A6Q7d0=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-References: <20181205093555.5386-1-sashal@kernel.org> <20181205093555.5386-40-sashal@kernel.org>
-In-Reply-To: <20181205093555.5386-40-sashal@kernel.org>
-From:   Naresh Kamboju <naresh.kamboju@linaro.org>
-Date:   Fri, 7 Dec 2018 12:10:03 +0530
-Message-ID: <CA+G9fYt9o298ZzaiFWDrxMW8OvC2BqvY45r7oU9kz=jtmrUZ-Q@mail.gmail.com>
-Subject: Re: [PATCH AUTOSEL 4.19 040/123] bpf: allocate local storage buffers
- using GFP_ATOMIC
-To:     Daniel Borkmann <daniel@iogearbox.net>,
-        Roman Gushchin <guro@fb.com>
-Cc:     linux- stable <stable@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>, guroan@gmail.com,
-        ast@kernel.org, sashal@kernel.org, netdev@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5f032112-b8b7-4678-845f-08d65c0fb499
+X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Dec 2018 06:46:24.7311
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR1101MB2257
+X-OriginatorOrg: microchip.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 5 Dec 2018 at 15:08, Sasha Levin <sashal@kernel.org> wrote:
->
-> From: Roman Gushchin <guroan@gmail.com>
->
-> [ Upstream commit 569a933b03f3c48b392fe67c0086b3a6b9306b5a ]
->
-> Naresh reported an issue with the non-atomic memory allocation of
-> cgroup local storage buffers:
->
-> [   73.047526] BUG: sleeping function called from invalid context at
-> /srv/oe/build/tmp-rpb-glibc/work-shared/intel-corei7-64/kernel-source/mm/slab.h:421
-> [   73.060915] in_atomic(): 1, irqs_disabled(): 0, pid: 3157, name: test_cgroup_sto
-> [   73.068342] INFO: lockdep is turned off.
-> [   73.072293] CPU: 2 PID: 3157 Comm: test_cgroup_sto Not tainted
-> 4.20.0-rc2-next-20181113 #1
-> [   73.080548] Hardware name: Supermicro SYS-5019S-ML/X11SSH-F, BIOS
-> 2.0b 07/27/2017
-> [   73.088018] Call Trace:
-> [   73.090463]  dump_stack+0x70/0xa5
-> [   73.093783]  ___might_sleep+0x152/0x240
-> [   73.097619]  __might_sleep+0x4a/0x80
-> [   73.101191]  __kmalloc_node+0x1cf/0x2f0
-> [   73.105031]  ? cgroup_storage_update_elem+0x46/0x90
-> [   73.109909]  cgroup_storage_update_elem+0x46/0x90
->
-> cgroup_storage_update_elem() (as well as other update map update
-> callbacks) is called with disabled preemption, so GFP_ATOMIC
-> allocation should be used: e.g. alloc_htab_elem() in hashtab.c.
->
-> Reported-by: Naresh Kamboju <naresh.kamboju@linaro.org>
-> Tested-by: Naresh Kamboju <naresh.kamboju@linaro.org>
-> Signed-off-by: Roman Gushchin <guro@fb.com>
-> Cc: Alexei Starovoitov <ast@kernel.org>
-> Cc: Daniel Borkmann <daniel@iogearbox.net>
-> Signed-off-by: Alexei Starovoitov <ast@kernel.org>
-> Signed-off-by: Sasha Levin <sashal@kernel.org>
+On SAMA5D2 SoC the PIOBU pins do not lose their
+voltage during Backup/Self-refresh mode. This can
+be useful, for example, when the voltage must remain
+positive for a peripheral during Backup/Self-refresh
+mode (suspend-to ram is the Linux equivalent state).
 
-I have reported above issue on 4.20.0-rc2-next-20181113.
-Now this BUG re-occurring on 4.19.8-rc1 on x86_64 and arm64 devices.
+v3:
+- change driver's compatible to atmel,sama5d2-secumod
+- get syscon using syscon_node_to_regmap(pdev->dev.of_node)
+- document how to use SECUMOD as a gpio-controller
 
-[   70.288592] BUG: sleeping function called from invalid context at
-/srv/oe/build/tmp-rpb-glibc/work-shared/intel-corei7-64/kernel-source/mm/slab.h:421
-[   70.301992] in_atomic(): 1, irqs_disabled(): 0, pid: 3001, name:
-test_cgroup_sto
-[   70.309424] INFO: lockdep is turned off.
-[   70.313416] CPU: 0 PID: 3001 Comm: test_cgroup_sto Not tainted 4.19.8-rc1 #1
-[   70.320483] Hardware name: Supermicro SYS-5019S-ML/X11SSH-F, BIOS
-2.0b 07/27/2017
-[   70.327953] Call Trace:
-[   70.330402]  dump_stack+0x70/0xa5
-[   70.333765]  ___might_sleep+0x152/0x240
-[   70.337599]  __might_sleep+0x4a/0x80
-[   70.341169]  __kmalloc_node+0x1d1/0x300
-[   70.345003]  ? cgroup_storage_update_elem+0x46/0x90
-[   70.349881]  cgroup_storage_update_elem+0x46/0x90
-[   70.354585]  map_update_elem+0x1fd/0x450
-[   70.358504]  __x64_sys_bpf+0x129/0x270
-[   70.362258]  do_syscall_64+0x55/0x190
-[   70.365923]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-[   70.370974] RIP: 0033:0x7f42e0ebb969
-[   70.374544] Code: 00 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00
-00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24
-08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d df e4 2b 00 f7 d8 64 89
-01 48
-[   70.393281] RSP: 002b:00007ffde61a0a08 EFLAGS: 00000202 ORIG_RAX:
-0000000000000141
-[   70.400845] RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00007f42e0ebb969
-[   70.407971] RDX: 0000000000000048 RSI: 00007ffde61a0a50 RDI: 0000000000000002
-[   70.415094] RBP: 00007ffde61a0a20 R08: 00007ffde61a0a50 R09: 00007ffde61a0a50
-[   70.422216] R10: 00007ffde61a0a50 R11: 0000000000000202 R12: 0000000000000005
-[   70.429342] R13: 00007ffde61a0c10 R14: 0000000000000000 R15: 0000000000000000
-selftests: bpf: test_cgroup_storage
+v2:
+- make driver be a subnode of the syscon node
+- change Kconfig to depend on MFD_SYSCON and select GPIO_SYSCON
+- change include header from linux/gpio.h to linux/gpio/driver.h
+- include linux/bits.h header
+- change intrusion in comment to tamper
+- fix kerneldoc of functions
+- replace GPIOF_DIR_* flags with 0/1
+- replace ?: statement with if-else
+- remove the use of sama5d2_piobu_template_chip
+- retrieve syscon via syscon_node_to_regmap(pdev->dev.parent->of_node);
 
-Full test log links,
-arm64 Juno
-https://lkft.validation.linaro.org/scheduler/job/537820#L2971
+Note that PIOBU_REG_SIZE is used to determine the register to write to
+with regmap:
+	reg =3D PIOBU_BASE + pin * PIOBU_REG_SIZE;
 
-x86_64 Supermicro SYS-5019S-ML/X11SSH-F
-https://lkft.validation.linaro.org/scheduler/job/537772#L2724
+Also, no irq capability implemented.
 
-Best regards
-Naresh Kamboju
+Andrei Stefanescu (2):
+  dt-bindings: arm: atmel: describe SECUMOD usage as a GPIO controller
+  gpio: add driver for SAMA5D2 PIOBU pins
 
-> ---
->  kernel/bpf/local_storage.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/kernel/bpf/local_storage.c b/kernel/bpf/local_storage.c
-> index 830d7f095748..fc1605aee5ea 100644
-> --- a/kernel/bpf/local_storage.c
-> +++ b/kernel/bpf/local_storage.c
-> @@ -138,7 +138,8 @@ static int cgroup_storage_update_elem(struct bpf_map *map, void *_key,
->                 return -ENOENT;
->
->         new = kmalloc_node(sizeof(struct bpf_storage_buffer) +
-> -                          map->value_size, __GFP_ZERO | GFP_USER,
-> +                          map->value_size,
-> +                          __GFP_ZERO | GFP_ATOMIC | __GFP_NOWARN,
->                            map->numa_node);
->         if (!new)
->                 return -ENOMEM;
-> --
-> 2.17.1
->
+ .../devicetree/bindings/arm/atmel-sysregs.txt      |  12 +-
+ MAINTAINERS                                        |   6 +
+ drivers/gpio/gpio-sama5d2-piobu.c                  | 253 +++++++++++++++++=
+++++
+ 3 files changed, 270 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/gpio/gpio-sama5d2-piobu.c
+
+--=20
+2.7.4
+
