@@ -2,181 +2,166 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BE8CC64EB1
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 18:37:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D9D2C07E85
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 18:39:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E66C520672
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 18:37:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HG4NdIU+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E66C520672
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 2B98B20672
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 18:39:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B98B20672
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726249AbeLGSha (ORCPT
+        id S1726103AbeLGSjJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 13:37:30 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:41144 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726072AbeLGSh3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 13:37:29 -0500
-Received: by mail-pg1-f193.google.com with SMTP id 70so2077600pgh.8;
-        Fri, 07 Dec 2018 10:37:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=TipxjuVTetJLdNenIgGqyzJK986c8b3z8SSjGt//NU8=;
-        b=HG4NdIU+2AOGBg0HjvQlPBxcpJBbCAt33bd/X78GmzeDgOJaatawjkhdTkjxp7J+Pp
-         eGalkiRrVrgWj7HKeqpqjb5v+D//LfcSfVSWvpiGoYWgm3z8adLml8JimmIy3uV40usz
-         dY3ohSJcY/AHV8G+9kLXZCaRvZfPQ1PC96t8aWNuIOiOPHXlKs2BhCBtfjXlY5DcWhG3
-         6zF1eDjvhvWnG6LzzN7zfusMofXRoloJqBFHMmozX3Xlo/Pr+o2LcIAoShoNmSUdiLwJ
-         RYpFXuyoElrgqUUu/oZMzm90eTNbLcClYfaCZPsfdO4nWgLwXoZE9VbadrbG2eg5A4Gj
-         5nmw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=TipxjuVTetJLdNenIgGqyzJK986c8b3z8SSjGt//NU8=;
-        b=MkwuND7a7gJ0X2/BjX5SUbuj2WgrMW3GsxLxzCNjKnWwZMgIghpp7+Y4bSnautm/VH
-         sLKdlFggp4MMz2FmFzkkADDJm2l4dvWCotl6j9ddf3ijWYiWWUJDxxchvmUA4ZViU1su
-         k8waDeMDigQbGM+VnFBp2neKcXgOuQs9kdA+KqmH5cnAsUdg1jjPbW3pdwSFy+aX1R1E
-         nuWUDYcYwDFp4cv6fnUxdmcFfyl+eL8970CezGaQA28dCwnfcJrpV2dWCd3P/5dZujeH
-         7b7RGuHeoANOoQWRLw0bBDQY7AzJdrO/b22JKl1EA4xoIi3rarvxt2/9GINvJw+g5ufk
-         +CSA==
-X-Gm-Message-State: AA+aEWYZIIHd3ILyxvrqamG/bJCf9i3LooNvNYd096dzYyq/KIs+xF6m
-        DOAVcd1EoUxqFASg3osJN9M=
-X-Google-Smtp-Source: AFSGD/X/+hF1Ph5ldWdIS2FJ0RBYwx10Rkpq6GO5IAuArDgqgWTLzsIRSJkaX1hQfnWVNS5oVkWm2Q==
-X-Received: by 2002:a63:c64f:: with SMTP id x15mr2845480pgg.16.1544207847681;
-        Fri, 07 Dec 2018 10:37:27 -0800 (PST)
-Received: from Shreeya-Patel ([103.212.140.150])
-        by smtp.googlemail.com with ESMTPSA id g15sm17915806pfj.131.2018.12.07.10.37.23
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 07 Dec 2018 10:37:26 -0800 (PST)
-Message-ID: <90e3066edb0616cd20ee019e3f2a392fd3a3f285.camel@gmail.com>
-Subject: Re: [PATCH] Revert "Staging: iio: adt7316: Add an extra check for
- 'ret' equals to 0"
-From:   Shreeya Patel <shreeya.patel23498@gmail.com>
-To:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Jeremy Fertic <jeremyfertic@gmail.com>
-Cc:     devel@driverdev.osuosl.org, lars@metafoo.de,
-        Michael.Hennerich@analog.com, linux-iio@vger.kernel.org,
-        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
-        pmeerw@pmeerw.net, knaack.h@gmx.de, jic23@kernel.org
-Date:   Sat, 08 Dec 2018 00:07:21 +0530
-In-Reply-To: <20181206124047.GH3095@unbuntlaptop>
-References: <20181205014900.4827-1-jeremyfertic@gmail.com>
-         <fccdb26936a9cfcd5134c760cd918929ad3dfa19.camel@gmail.com>
-         <20181205215953.GA2365@r2700x.localdomain>
-         <20181206124047.GH3095@unbuntlaptop>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
+        Fri, 7 Dec 2018 13:39:09 -0500
+Received: from foss.arm.com ([217.140.101.70]:51864 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726011AbeLGSjI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Dec 2018 13:39:08 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E7F5AEBD;
+        Fri,  7 Dec 2018 10:39:07 -0800 (PST)
+Received: from [10.1.196.62] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 97AD63F5AF;
+        Fri,  7 Dec 2018 10:39:04 -0800 (PST)
+Subject: Re: [PATCH v3 2/4] drivers/irqchip: Add Actions external interrupts
+ support
+To:     Parthiban Nallathambi <pn@denx.de>, tglx@linutronix.de,
+        jason@lakedaemon.net, robh+dt@kernel.org, mark.rutland@arm.com,
+        afaerber@suse.de, catalin.marinas@arm.com, will.deacon@arm.com,
+        manivannan.sadhasivam@linaro.org
+Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, thomas.liau@actions-semi.com,
+        mp-cs@actions-semi.com, linux@cubietech.com,
+        edgar.righi@lsitec.org.br, laisa.costa@lsitec.org.br,
+        guilherme.simoes@lsitec.org.br, mkzuffo@lsi.usp.br,
+        Saravanan Sekar <sravanhome@gmail.com>
+References: <20181126100356.2840578-1-pn@denx.de>
+ <20181126100356.2840578-3-pn@denx.de>
+From:   Marc Zyngier <marc.zyngier@arm.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=marc.zyngier@arm.com; prefer-encrypt=mutual; keydata=
+ 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
+Organization: ARM Ltd
+Message-ID: <769c5482-76e1-f0a2-de75-09abd3167632@arm.com>
+Date:   Fri, 7 Dec 2018 18:39:02 +0000
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
+MIME-Version: 1.0
+In-Reply-To: <20181126100356.2840578-3-pn@denx.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-12-06 at 15:40 +0300, Dan Carpenter wrote:
-> On Wed, Dec 05, 2018 at 02:59:53PM -0700, Jeremy Fertic wrote:
-> > On Thu, Dec 06, 2018 at 01:25:55AM +0530, Shreeya Patel wrote:
-> > > On Tue, 2018-12-04 at 18:49 -0700, Jeremy Fertic wrote:
-> > > > This reverts commit 00426e99789357dbff7e719a092ce36a3ce49d94.
-> > > > 
-> > > > i2c_smbus_read_byte() returns 0 when a byte with the value 0 is
-> > > > read
-> > > > from
-> > > > the device. This is a valid read so revert the check for 0.
-> > > > 
-> > > > Signed-off-by: Jeremy Fertic <jeremyfertic@gmail.com>
-> > > > ---
-> > > 
-> > > Hi Jeremy,
-> > > 
-> > > As per my understanding, 0 value indicates no error but no data
-> > > read.
-> > > Then how can this be a valid case?
-> > > 
-> > > Can you please make me understand that how can we consider this
-> > > as a
-> > > valid case even when no data has been read?
+On 26/11/2018 10:03, Parthiban Nallathambi wrote:
+> Actions Semi Owl family SoC's S500, S700 and S900 provides support
+> for 3 external interrupt controllers through SIRQ pins.
 > 
-> It's not reading no data.  It's reading one byte of data and
-> returning
-> it.
+> Each line can be independently configured as interrupt and triggers
+> on either of the edges (raising or falling) or either of the levels
+> (high or low) . Each line can also be masked independently.
 > 
-> > > 
-> > > 
-> > > Thanks
-> > 
-> > I'm not sure I understand why the value 0 would indicate no data
-> > read.
-> > Doesn't that just mean a byte was read with the value 0.
+> Signed-off-by: Parthiban Nallathambi <pn@denx.de>
+> Signed-off-by: Saravanan Sekar <sravanhome@gmail.com>
+> ---
+>  drivers/irqchip/Makefile       |   1 +
+>  drivers/irqchip/irq-owl-sirq.c | 301 +++++++++++++++++++++++++++++++++
+>  2 files changed, 302 insertions(+)
+>  create mode 100644 drivers/irqchip/irq-owl-sirq.c
 > 
-> Yes.  It does mean that.  Please don't ask rhetorical
-> questions...  :(
-> This list is full of people who can't resist answering every
-> question.
-> 
-> > For instance, if the input to the adc is 0V. Can you point me to
-> > where
-> > you're seeing that this would indicate no data read?
-> 
-> drivers/i2c/i2c-core-smbus.c
->     88  /**
->     89   * i2c_smbus_read_byte - SMBus "receive byte" protocol
->     90   * @client: Handle to slave device
->     91   *
->     92   * This executes the SMBus "receive byte" protocol, returning
-> negative errno
->     93   * else the byte received from the device.
->     94   */
->     95  s32 i2c_smbus_read_byte(const struct i2c_client *client)
->     96  {
->     97          union i2c_smbus_data data;
->     98          int status;
->     99  
->    100          status = i2c_smbus_xfer(client->adapter, client-
-> >addr, client->flags,
->    101                                  I2C_SMBUS_READ, 0,
->    102                                  I2C_SMBUS_BYTE, &data);
->    103          return (status < 0) ? status : data.byte;
->                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
->    104  }
->    105  EXPORT_SYMBOL(i2c_smbus_read_byte);
+> diff --git a/drivers/irqchip/Makefile b/drivers/irqchip/Makefile
+> index 794c13d3ac3d..d8015fc5c1a2 100644
+> --- a/drivers/irqchip/Makefile
+> +++ b/drivers/irqchip/Makefile
+> @@ -7,6 +7,7 @@ obj-$(CONFIG_ATH79)			+= irq-ath79-misc.o
+>  obj-$(CONFIG_ARCH_BCM2835)		+= irq-bcm2835.o
+>  obj-$(CONFIG_ARCH_BCM2835)		+= irq-bcm2836.o
+>  obj-$(CONFIG_ARCH_EXYNOS)		+= exynos-combiner.o
+> +obj-$(CONFIG_ARCH_ACTIONS)		+= irq-owl-sirq.o
+>  obj-$(CONFIG_FARADAY_FTINTC010)		+= irq-ftintc010.o
+>  obj-$(CONFIG_ARCH_HIP04)		+= irq-hip04.o
+>  obj-$(CONFIG_ARCH_LPC32XX)		+= irq-lpc32xx.o
+> diff --git a/drivers/irqchip/irq-owl-sirq.c b/drivers/irqchip/irq-owl-sirq.c
+> new file mode 100644
+> index 000000000000..cc59e5743cda
+> --- /dev/null
+> +++ b/drivers/irqchip/irq-owl-sirq.c
+> @@ -0,0 +1,301 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+> +/*
+> + * Actions Semi Owl SoCs SIRQ interrupt controller driver
+> + *
+> + * Copyright (C) 2014 Actions Semi Inc.
+> + * David Liu <liuwei@actions-semi.com>
+> + *
+> + * Author: Parthiban Nallathambi <pn@denx.de>
+> + * Author: Saravanan Sekar <sravanhome@gmail.com>
+> + */
+> +
+> +#include <linux/interrupt.h>
+> +#include <linux/irqchip.h>
+> +#include <linux/of_irq.h>
+> +#include <linux/of_address.h>
+> +
+> +#define INTC_EXTCTL_PENDING		BIT(0)
+> +#define INTC_EXTCTL_CLK_SEL		BIT(4)
+> +#define INTC_EXTCTL_EN			BIT(5)
+> +#define	INTC_EXTCTL_TYPE_MASK		GENMASK(6, 7)
 
-Even I had sent the same code to Jonathan and we had a discussion on
-this. 
-I asked him that this code clearly shows that there is an error
-condition only when status < 0 then why do we need a check for status =
-0.
+#define GENMASK(h, l) [...]
 
-Then he explained me that 0 isn't an error. The issue is the silliness
-of the i2c interface.
+I sense a problem here.
 
-Pretty much every other bus returns an error (negative) if less data is
-received than expected.  Most i2c
-bus master's do as well but in theory it can return 0 to indicate no
-error but no data read (which doesn't make any sense)
+Thanks,
 
-0 doesn't ever happen in reality but it should be handled for
-correctness though.
-
-So we should wait for what Jonathan has to say on this :)
-
-Thanks
-
-> You are right.  Commit 00426e997893 ("Staging: iio: adt7316: Add an
-> extra check for 'ret' equals to 0") needs to be reverted...
-> 
-> regards,
-> dan carpenter
-> 
-> 
+	M.
+-- 
+Jazz is not dead. It just smells funny...
