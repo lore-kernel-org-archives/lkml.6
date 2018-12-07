@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01903C07E85
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 18:40:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D18CC07E85
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 18:40:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C077E20672
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 18:40:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C077E20672
+	by mail.kernel.org (Postfix) with ESMTP id 0D4DD20672
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 18:40:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D4DD20672
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726314AbeLGSkQ (ORCPT
+        id S1726329AbeLGSkW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 13:40:16 -0500
-Received: from foss.arm.com ([217.140.101.70]:51996 "EHLO foss.arm.com"
+        Fri, 7 Dec 2018 13:40:22 -0500
+Received: from foss.arm.com ([217.140.101.70]:52018 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726109AbeLGSkP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 13:40:15 -0500
+        id S1726149AbeLGSkU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Dec 2018 13:40:20 -0500
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5A352EBD;
-        Fri,  7 Dec 2018 10:40:15 -0800 (PST)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 13B8815AD;
+        Fri,  7 Dec 2018 10:40:20 -0800 (PST)
 Received: from moonbear.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 41F9E3F5AF;
-        Fri,  7 Dec 2018 10:40:12 -0800 (PST)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EE0B33F5AF;
+        Fri,  7 Dec 2018 10:40:16 -0800 (PST)
 From:   Kristina Martsenko <kristina.martsenko@arm.com>
 To:     linux-arm-kernel@lists.infradead.org
 Cc:     Adam Wallis <awallis@codeaurora.org>,
@@ -47,9 +47,9 @@ Cc:     Adam Wallis <awallis@codeaurora.org>,
         Suzuki K Poulose <suzuki.poulose@arm.com>,
         Will Deacon <will.deacon@arm.com>,
         kvmarm@lists.cs.columbia.edu, linux-kernel@vger.kernel.org
-Subject: [PATCH v6 04/13] arm64/kvm: hide ptrauth from guests
-Date:   Fri,  7 Dec 2018 18:39:22 +0000
-Message-Id: <20181207183931.4285-5-kristina.martsenko@arm.com>
+Subject: [PATCH v6 05/13] arm64: Don't trap host pointer auth use to EL2
+Date:   Fri,  7 Dec 2018 18:39:23 +0000
+Message-Id: <20181207183931.4285-6-kristina.martsenko@arm.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20181207183931.4285-1-kristina.martsenko@arm.com>
 References: <20181207183931.4285-1-kristina.martsenko@arm.com>
@@ -60,82 +60,53 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Mark Rutland <mark.rutland@arm.com>
 
-In subsequent patches we're going to expose ptrauth to the host kernel
-and userspace, but things are a bit trickier for guest kernels. For the
-time being, let's hide ptrauth from KVM guests.
+To allow EL0 (and/or EL1) to use pointer authentication functionality,
+we must ensure that pointer authentication instructions and accesses to
+pointer authentication keys are not trapped to EL2.
 
-Regardless of how well-behaved the guest kernel is, guest userspace
-could attempt to use ptrauth instructions, triggering a trap to EL2,
-resulting in noise from kvm_handle_unknown_ec(). So let's write up a
-handler for the PAC trap, which silently injects an UNDEF into the
-guest, as if the feature were really missing.
+This patch ensures that HCR_EL2 is configured appropriately when the
+kernel is booted at EL2. For non-VHE kernels we set HCR_EL2.{API,APK},
+ensuring that EL1 can access keys and permit EL0 use of instructions.
+For VHE kernels host EL0 (TGE && E2H) is unaffected by these settings,
+and it doesn't matter how we configure HCR_EL2.{API,APK}, so we don't
+bother setting them.
+
+This does not enable support for KVM guests, since KVM manages HCR_EL2
+itself when running VMs.
 
 Signed-off-by: Mark Rutland <mark.rutland@arm.com>
 Signed-off-by: Kristina Martsenko <kristina.martsenko@arm.com>
-Reviewed-by: Andrew Jones <drjones@redhat.com>
-Reviewed-by: Christoffer Dall <christoffer.dall@arm.com>
+Acked-by: Christoffer Dall <christoffer.dall@arm.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
 Cc: Marc Zyngier <marc.zyngier@arm.com>
+Cc: Will Deacon <will.deacon@arm.com>
 Cc: kvmarm@lists.cs.columbia.edu
 ---
- arch/arm64/kvm/handle_exit.c | 18 ++++++++++++++++++
- arch/arm64/kvm/sys_regs.c    |  8 ++++++++
- 2 files changed, 26 insertions(+)
+ arch/arm64/include/asm/kvm_arm.h | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm64/kvm/handle_exit.c b/arch/arm64/kvm/handle_exit.c
-index 35a81bebd02b..ab35929dcb3c 100644
---- a/arch/arm64/kvm/handle_exit.c
-+++ b/arch/arm64/kvm/handle_exit.c
-@@ -173,6 +173,23 @@ static int handle_sve(struct kvm_vcpu *vcpu, struct kvm_run *run)
- 	return 1;
- }
+diff --git a/arch/arm64/include/asm/kvm_arm.h b/arch/arm64/include/asm/kvm_arm.h
+index c8825c5a8dd0..f9123fe8fcf3 100644
+--- a/arch/arm64/include/asm/kvm_arm.h
++++ b/arch/arm64/include/asm/kvm_arm.h
+@@ -24,6 +24,8 @@
  
-+/*
-+ * Guest usage of a ptrauth instruction (which the guest EL1 did not turn into
-+ * a NOP).
-+ */
-+static int kvm_handle_ptrauth(struct kvm_vcpu *vcpu, struct kvm_run *run)
-+{
-+	/*
-+	 * We don't currently support ptrauth in a guest, and we mask the ID
-+	 * registers to prevent well-behaved guests from trying to make use of
-+	 * it.
-+	 *
-+	 * Inject an UNDEF, as if the feature really isn't present.
-+	 */
-+	kvm_inject_undefined(vcpu);
-+	return 1;
-+}
-+
- static exit_handle_fn arm_exit_handlers[] = {
- 	[0 ... ESR_ELx_EC_MAX]	= kvm_handle_unknown_ec,
- 	[ESR_ELx_EC_WFx]	= kvm_handle_wfx,
-@@ -195,6 +212,7 @@ static exit_handle_fn arm_exit_handlers[] = {
- 	[ESR_ELx_EC_BKPT32]	= kvm_handle_guest_debug,
- 	[ESR_ELx_EC_BRK64]	= kvm_handle_guest_debug,
- 	[ESR_ELx_EC_FP_ASIMD]	= handle_no_fpsimd,
-+	[ESR_ELx_EC_PAC]	= kvm_handle_ptrauth,
- };
+ /* Hyp Configuration Register (HCR) bits */
+ #define HCR_FWB		(UL(1) << 46)
++#define HCR_API		(UL(1) << 41)
++#define HCR_APK		(UL(1) << 40)
+ #define HCR_TEA		(UL(1) << 37)
+ #define HCR_TERR	(UL(1) << 36)
+ #define HCR_TLOR	(UL(1) << 35)
+@@ -87,7 +89,7 @@
+ 			 HCR_AMO | HCR_SWIO | HCR_TIDCP | HCR_RW | HCR_TLOR | \
+ 			 HCR_FMO | HCR_IMO)
+ #define HCR_VIRT_EXCP_MASK (HCR_VSE | HCR_VI | HCR_VF)
+-#define HCR_HOST_NVHE_FLAGS (HCR_RW)
++#define HCR_HOST_NVHE_FLAGS (HCR_RW | HCR_API | HCR_APK)
+ #define HCR_HOST_VHE_FLAGS (HCR_RW | HCR_TGE | HCR_E2H)
  
- static exit_handle_fn kvm_get_exit_handler(struct kvm_vcpu *vcpu)
-diff --git a/arch/arm64/kvm/sys_regs.c b/arch/arm64/kvm/sys_regs.c
-index 22fbbdbece3c..1ca592d38c3c 100644
---- a/arch/arm64/kvm/sys_regs.c
-+++ b/arch/arm64/kvm/sys_regs.c
-@@ -1040,6 +1040,14 @@ static u64 read_id_reg(struct sys_reg_desc const *r, bool raz)
- 			kvm_debug("SVE unsupported for guests, suppressing\n");
- 
- 		val &= ~(0xfUL << ID_AA64PFR0_SVE_SHIFT);
-+	} else if (id == SYS_ID_AA64ISAR1_EL1) {
-+		const u64 ptrauth_mask = (0xfUL << ID_AA64ISAR1_APA_SHIFT) |
-+					 (0xfUL << ID_AA64ISAR1_API_SHIFT) |
-+					 (0xfUL << ID_AA64ISAR1_GPA_SHIFT) |
-+					 (0xfUL << ID_AA64ISAR1_GPI_SHIFT);
-+		if (val & ptrauth_mask)
-+			kvm_debug("ptrauth unsupported for guests, suppressing\n");
-+		val &= ~ptrauth_mask;
- 	} else if (id == SYS_ID_AA64MMFR1_EL1) {
- 		if (val & (0xfUL << ID_AA64MMFR1_LOR_SHIFT))
- 			kvm_debug("LORegions unsupported for guests, suppressing\n");
+ /* TCR_EL2 Registers bits */
 -- 
 2.11.0
 
