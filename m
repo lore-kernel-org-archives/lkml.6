@@ -2,187 +2,245 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40456C65BAF
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 12:56:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EDCFC07E85
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 12:57:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 107A92146D
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 12:56:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 107A92146D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by mail.kernel.org (Postfix) with ESMTP id E6C4E214DB
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 12:57:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E6C4E214DB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726083AbeLGM4t (ORCPT
+        id S1726127AbeLGM5J (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 07:56:49 -0500
-Received: from mailgw02.mediatek.com ([1.203.163.81]:65037 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725994AbeLGM4s (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 07:56:48 -0500
-X-UUID: a5016e4c3241480a89e311ccad2365f6-20181207
-X-UUID: a5016e4c3241480a89e311ccad2365f6-20181207
-Received: from mtkcas32.mediatek.inc [(172.27.4.250)] by mailgw02.mediatek.com
-        (envelope-from <jianjun.wang@mediatek.com>)
-        (mailgw01.mediatek.com ESMTP with TLS)
-        with ESMTP id 1553370085; Fri, 07 Dec 2018 20:56:39 +0800
-Received: from MTKCAS32.mediatek.inc (172.27.4.184) by MTKMBS31N2.mediatek.inc
- (172.27.4.87) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Fri, 7 Dec
- 2018 20:56:38 +0800
-Received: from [10.17.3.153] (10.17.3.153) by MTKCAS32.mediatek.inc
- (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Fri, 7 Dec 2018 20:56:37 +0800
-Message-ID: <1544187397.10946.27.camel@mhfsdcap03>
-Subject: Re: [PATCH 2/2] PCI: mediatek: Add controller support for MT7629
-From:   Jianjun Wang <jianjun.wang@mediatek.com>
-To:     Honghui Zhang <honghui.zhang@mediatek.com>
-CC:     <ryder.lee@mediatek.com>, <bhelgaas@google.com>,
-        <robh+dt@kernel.org>, <lorenzo.pieralisi@arm.com>,
-        <matthias.bgg@gmail.com>, <linux-pci@vger.kernel.org>,
-        <mark.rutland@arm.com>, <linux-mediatek@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <youlin.pei@mediatek.com>
-Date:   Fri, 7 Dec 2018 20:56:37 +0800
-In-Reply-To: <1544075633.3753.11.camel@mhfsdcap03>
-References: <1544058553-10936-1-git-send-email-jianjun.wang@mediatek.com>
-         <1544058553-10936-3-git-send-email-jianjun.wang@mediatek.com>
-         <1544075633.3753.11.camel@mhfsdcap03>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 7bit
+        Fri, 7 Dec 2018 07:57:09 -0500
+Received: from foss.arm.com ([217.140.101.70]:43878 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726032AbeLGM5I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Dec 2018 07:57:08 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 317B4EBD;
+        Fri,  7 Dec 2018 04:57:08 -0800 (PST)
+Received: from e107981-ln.cambridge.arm.com (e107981-ln.cambridge.arm.com [10.1.197.40])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id ABBDB3F5AF;
+        Fri,  7 Dec 2018 04:57:06 -0800 (PST)
+Date:   Fri, 7 Dec 2018 12:57:00 +0000
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc:     Linux PM <linux-pm@vger.kernel.org>,
+        Doug Smythies <dsmythies@telus.net>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux Documentation <linux-doc@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Giovanni Gherdovich <ggherdovich@suse.cz>
+Subject: Re: [PATCH] cpuidle: Add 'above' and 'below' idle state metrics
+Message-ID: <20181207125700.GA20256@e107981-ln.cambridge.arm.com>
+References: <1688146.Dmze7u1T7F@aspire.rjw.lan>
 MIME-Version: 1.0
-X-MTK:  N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1688146.Dmze7u1T7F@aspire.rjw.lan>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-12-06 at 13:53 +0800, Honghui Zhang wrote:
-> On Thu, 2018-12-06 at 09:09 +0800, Jianjun Wang wrote:
-> > MT7629 is an arm platform SoC which has the same PCIe IP with MT7622.
-> > 
-> > The read value of BAR0 is 0xffff_ffff, it's size will be calculated as 4GB
-> > in arm64 but bogus alignment values at arm32, the pcie device and devices
+On Fri, Dec 07, 2018 at 12:57:00PM +0100, Rafael J. Wysocki wrote:
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> Subject: [PATCH] cpuidle: Add 'above' and 'below' idle state metrics
 > 
-> :s /the pcie device /the bridge device
+> Add two new metrics for CPU idle states, "above" and "below", to count
+> the number of times the given state had been asked for (or entered
+> from the kernel's perspective), but the observed idle duration turned
+> out to be too short or too long for it (respectively).
 > 
-> > behind this bridge will not be enabled. Fix it's BAR0 resource size to
-> > guarantee the pcie devices will be enabled correctly.
-> > 
-> > The HW default value of its device id is invalid, fix it's device id to
-> > match the hardware implementation.
-> > 
-> > Signed-off-by: Jianjun Wang <jianjun.wang@mediatek.com>
-> > ---
-> >  drivers/pci/controller/pcie-mediatek.c | 26 ++++++++++++++++++++++++++
-> >  include/linux/pci_ids.h                |  1 +
-> >  2 files changed, 27 insertions(+)
-> > 
-> > diff --git a/drivers/pci/controller/pcie-mediatek.c b/drivers/pci/controller/pcie-mediatek.c
-> > index d20cf461ba00..f8937cc3c87c 100644
-> > --- a/drivers/pci/controller/pcie-mediatek.c
-> > +++ b/drivers/pci/controller/pcie-mediatek.c
-> > @@ -73,6 +73,7 @@
-> >  #define PCIE_MSI_VECTOR		0x0c0
-> >  
-> >  #define PCIE_CONF_VEND_ID	0x100
-> > +#define PCIE_CONF_DEVICE_ID	0x102
-> >  #define PCIE_CONF_CLASS_ID	0x106
-> >  
-> >  #define PCIE_INT_MASK		0x420
-> > @@ -135,12 +136,14 @@ struct mtk_pcie_port;
-> >  /**
-> >   * struct mtk_pcie_soc - differentiate between host generations
-> >   * @need_fix_class_id: whether this host's class ID needed to be fixed or not
-> > + * @need_fix_device_id: whether this host's device ID needed to be fixed or not
-> >   * @ops: pointer to configuration access functions
-> >   * @startup: pointer to controller setting functions
-> >   * @setup_irq: pointer to initialize IRQ functions
-> >   */
-> >  struct mtk_pcie_soc {
-> >  	bool need_fix_class_id;
-> > +	bool need_fix_device_id;
-> >  	struct pci_ops *ops;
-> >  	int (*startup)(struct mtk_pcie_port *port);
-> >  	int (*setup_irq)(struct mtk_pcie_port *port, struct device_node *node);
-> > @@ -692,6 +695,11 @@ static int mtk_pcie_startup_port_v2(struct mtk_pcie_port *port)
-> >  		writew(val, port->base + PCIE_CONF_CLASS_ID);
-> >  	}
-> >  
-> > +	if (soc->need_fix_device_id) {
-> > +		val = PCI_DEVICE_ID_MEDIATEK_7629;
-> > +		writew(val, port->base + PCIE_CONF_DEVICE_ID);
-> > +	}
-> > +
-> >  	/* 100ms timeout value should be enough for Gen1/2 training */
-> >  	err = readl_poll_timeout(port->base + PCIE_LINK_STATUS_V2, val,
-> >  				 !!(val & PCIE_PORT_LINKUP_V2), 20,
-> > @@ -1238,11 +1246,29 @@ static const struct mtk_pcie_soc mtk_pcie_soc_mt7622 = {
-> >  	.setup_irq = mtk_pcie_setup_irq,
-> >  };
-> >  
-> > +static const struct mtk_pcie_soc mtk_pcie_soc_mt7629 = {
-> > +	.need_fix_class_id = true,
-> > +	.need_fix_device_id = true,
-> > +	.ops = &mtk_pcie_ops_v2,
-> > +	.startup = mtk_pcie_startup_port_v2,
-> > +	.setup_irq = mtk_pcie_setup_irq,
-> > +};
-> > +
-> > +static void mtk_fixup_bar_size(struct pci_dev *dev)
-> > +{
-> > +	struct resource *dev_res = &dev->resource[0];
-> > +	/* 32bit resource length will calculate size to 0, set it smaller */
-> > +	dev_res->end = 0xfffffffe;
-> > +}
-> 
-> I'm not sure assign the BAR0 size in driver to fit in the bogus
-> alignment is a good idea. Seems the size value of 0xffff_fffe also is an
-> arbitrary value.
-> Do we have a chance to change the resource framework code to make it
-> adopt this scenario?
-> 
-> Thanks.
+> These mertics help to estimate the quality of the CPU idle governor
 
-I'm afraid not, the resource size length defined by phys_addr_t, which
-related to the hardware's physical address length. 
-It will be much more better if the BAR0 size is not related with the
-pcie to axi window, when we set the window to 4GB, the BAR0 size still
-have initial value, and we can set the BAR0 size value or just disable
-it independently.
-The BAR0 size value need bigger than the MMIO space size, so the
-software will think it's a invalid resource but not a bogus alignment
-one, since we can't disable the BAR0 by hardware, and the flow of enable
-devices will keep going. 
-> 
-> > +DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_MEDIATEK, PCI_DEVICE_ID_MEDIATEK_7629,
-> > +			 mtk_fixup_bar_size);
-> > +
-> >  static const struct of_device_id mtk_pcie_ids[] = {
-> >  	{ .compatible = "mediatek,mt2701-pcie", .data = &mtk_pcie_soc_v1 },
-> >  	{ .compatible = "mediatek,mt7623-pcie", .data = &mtk_pcie_soc_v1 },
-> >  	{ .compatible = "mediatek,mt2712-pcie", .data = &mtk_pcie_soc_mt2712 },
-> >  	{ .compatible = "mediatek,mt7622-pcie", .data = &mtk_pcie_soc_mt7622 },
-> > +	{ .compatible = "mediatek,mt7629-pcie", .data = &mtk_pcie_soc_mt7629 },
-> >  	{},
-> >  };
-> >  
-> > diff --git a/include/linux/pci_ids.h b/include/linux/pci_ids.h
-> > index 69f0abe1ba1a..77b278bac3a8 100644
-> > --- a/include/linux/pci_ids.h
-> > +++ b/include/linux/pci_ids.h
-> > @@ -2126,6 +2126,7 @@
-> >  #define PCI_VENDOR_ID_MYRICOM		0x14c1
-> >  
-> >  #define PCI_VENDOR_ID_MEDIATEK		0x14c3
-> > +#define PCI_DEVICE_ID_MEDIATEK_7629	0x7629
-> >  
-> >  #define PCI_VENDOR_ID_TITAN		0x14D2
-> >  #define PCI_DEVICE_ID_TITAN_010L	0x8001
-> 
-> 
+s/mertics/metrics
 
+> in use.
+> 
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> ---
+> 
+> This is a replacement for https://patchwork.kernel.org/patch/10714995/ with
+> the metrics renamed and some documentation confusion cleaned up.  Thanks!
+> 
+> ---
+>  Documentation/ABI/testing/sysfs-devices-system-cpu |    7 ++++
+>  Documentation/admin-guide/pm/cpuidle.rst           |   10 ++++++
+>  drivers/cpuidle/cpuidle.c                          |   31 ++++++++++++++++++++-
+>  drivers/cpuidle/sysfs.c                            |    6 ++++
+>  include/linux/cpuidle.h                            |    2 +
+>  5 files changed, 55 insertions(+), 1 deletion(-)
+> 
+> Index: linux-pm/drivers/cpuidle/cpuidle.c
+> ===================================================================
+> --- linux-pm.orig/drivers/cpuidle/cpuidle.c
+> +++ linux-pm/drivers/cpuidle/cpuidle.c
+> @@ -202,7 +202,6 @@ int cpuidle_enter_state(struct cpuidle_d
+>  	struct cpuidle_state *target_state = &drv->states[index];
+>  	bool broadcast = !!(target_state->flags & CPUIDLE_FLAG_TIMER_STOP);
+>  	ktime_t time_start, time_end;
+> -	s64 diff;
+>  
+>  	/*
+>  	 * Tell the time framework to switch to a broadcast timer because our
+> @@ -248,6 +247,9 @@ int cpuidle_enter_state(struct cpuidle_d
+>  		local_irq_enable();
+>  
+>  	if (entered_state >= 0) {
+> +		s64 diff, delay = drv->states[entered_state].exit_latency;
 
+I am probably pointing out something that has been already debated,
+apologies if so.
+
+exit_latency is the *worst* case exit latency for idle states that involve
+multiple CPUs, we can't say for certain it is the latency that was
+actually experienced by the idle state exit.
+
+It can be microseconds (eg CPU resume) vs milliseconds (eg groups of
+cpus resume).
+
+I think the current approach (which may only understimate the "below" by
+substracting the worst case value) is reasonable but I pointed this out
+since I do not know how these stats will be used.
+
+Lorenzo
+
+> +		int i;
+> +
+>  		/*
+>  		 * Update cpuidle counters
+>  		 * This can be moved to within driver enter routine,
+> @@ -260,6 +262,33 @@ int cpuidle_enter_state(struct cpuidle_d
+>  		dev->last_residency = (int)diff;
+>  		dev->states_usage[entered_state].time += dev->last_residency;
+>  		dev->states_usage[entered_state].usage++;
+> +
+> +		if (diff < drv->states[entered_state].target_residency) {
+> +			for (i = entered_state - 1; i >= 0; i--) {
+> +				if (drv->states[i].disabled ||
+> +				    dev->states_usage[i].disable)
+> +					continue;
+> +
+> +				/* Shallower states are enabled, so update. */
+> +				dev->states_usage[entered_state].above++;
+> +				break;
+> +			}
+> +		} else if (diff > delay) {
+> +			for (i = entered_state + 1; i < drv->state_count; i++) {
+> +				if (drv->states[i].disabled ||
+> +				    dev->states_usage[i].disable)
+> +					continue;
+> +
+> +				/*
+> +				 * Update if a deeper state would have been a
+> +				 * better match for the observed idle duration.
+> +				 */
+> +				if (diff - delay >= drv->states[i].target_residency)
+> +					dev->states_usage[entered_state].below++;
+> +
+> +				break;
+> +			}
+> +		}
+>  	} else {
+>  		dev->last_residency = 0;
+>  	}
+> Index: linux-pm/include/linux/cpuidle.h
+> ===================================================================
+> --- linux-pm.orig/include/linux/cpuidle.h
+> +++ linux-pm/include/linux/cpuidle.h
+> @@ -33,6 +33,8 @@ struct cpuidle_state_usage {
+>  	unsigned long long	disable;
+>  	unsigned long long	usage;
+>  	unsigned long long	time; /* in US */
+> +	unsigned long long	above; /* Number of times it's been too deep */
+> +	unsigned long long	below;  /* Number of times it's been too shallow */
+>  #ifdef CONFIG_SUSPEND
+>  	unsigned long long	s2idle_usage;
+>  	unsigned long long	s2idle_time; /* in US */
+> Index: linux-pm/drivers/cpuidle/sysfs.c
+> ===================================================================
+> --- linux-pm.orig/drivers/cpuidle/sysfs.c
+> +++ linux-pm/drivers/cpuidle/sysfs.c
+> @@ -301,6 +301,8 @@ define_show_state_str_function(name)
+>  define_show_state_str_function(desc)
+>  define_show_state_ull_function(disable)
+>  define_store_state_ull_function(disable)
+> +define_show_state_ull_function(above)
+> +define_show_state_ull_function(below)
+>  
+>  define_one_state_ro(name, show_state_name);
+>  define_one_state_ro(desc, show_state_desc);
+> @@ -310,6 +312,8 @@ define_one_state_ro(power, show_state_po
+>  define_one_state_ro(usage, show_state_usage);
+>  define_one_state_ro(time, show_state_time);
+>  define_one_state_rw(disable, show_state_disable, store_state_disable);
+> +define_one_state_ro(above, show_state_above);
+> +define_one_state_ro(below, show_state_below);
+>  
+>  static struct attribute *cpuidle_state_default_attrs[] = {
+>  	&attr_name.attr,
+> @@ -320,6 +324,8 @@ static struct attribute *cpuidle_state_d
+>  	&attr_usage.attr,
+>  	&attr_time.attr,
+>  	&attr_disable.attr,
+> +	&attr_above.attr,
+> +	&attr_below.attr,
+>  	NULL
+>  };
+>  
+> Index: linux-pm/Documentation/admin-guide/pm/cpuidle.rst
+> ===================================================================
+> --- linux-pm.orig/Documentation/admin-guide/pm/cpuidle.rst
+> +++ linux-pm/Documentation/admin-guide/pm/cpuidle.rst
+> @@ -398,6 +398,16 @@ deeper the (effective) idle state repres
+>  a number of files (attributes) representing the properties of the idle state
+>  object corresponding to it, as follows:
+>  
+> +``above``
+> +	Total number of times this idle state had been asked for, but the
+> +	observed idle duration was certainly too short to match its target
+> +	residency.
+> +
+> +``below``
+> +	Total number of times this idle state had been asked for, but cerainly
+> +	a deeper idle state would have been a better match for the observed idle
+> +	duration.
+> +
+>  ``desc``
+>  	Description of the idle state.
+>  
+> Index: linux-pm/Documentation/ABI/testing/sysfs-devices-system-cpu
+> ===================================================================
+> --- linux-pm.orig/Documentation/ABI/testing/sysfs-devices-system-cpu
+> +++ linux-pm/Documentation/ABI/testing/sysfs-devices-system-cpu
+> @@ -145,6 +145,8 @@ What:		/sys/devices/system/cpu/cpuX/cpui
+>  		/sys/devices/system/cpu/cpuX/cpuidle/stateN/power
+>  		/sys/devices/system/cpu/cpuX/cpuidle/stateN/time
+>  		/sys/devices/system/cpu/cpuX/cpuidle/stateN/usage
+> +		/sys/devices/system/cpu/cpuX/cpuidle/stateN/high
+> +		/sys/devices/system/cpu/cpuX/cpuidle/stateN/below
+>  Date:		September 2007
+>  KernelVersion:	v2.6.24
+>  Contact:	Linux power management list <linux-pm@vger.kernel.org>
+> @@ -166,6 +168,11 @@ Description:
+>  
+>  		usage: (RO) Number of times this state was entered (a count).
+>  
+> +		above: (RO) Number of times this state was entered, but the
+> +		       observed CPU idle duration was too short for it (a count).
+> +
+> +		below: (RO) Number of times this state was entered, but the
+> +		       observed CPU idle duration was too long for it (a count).
+>  
+>  What:		/sys/devices/system/cpu/cpuX/cpuidle/stateN/desc
+>  Date:		February 2008
+> 
