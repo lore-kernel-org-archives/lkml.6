@@ -2,224 +2,137 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CDF1C07E85
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 21:43:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5A70C07E85
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 21:45:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1BB3B20892
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 21:43:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544218996;
-	bh=+O48f/Y1/XyNpSdGwLGOKHpv9oRQUzrRA7kqhTUMWp8=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=jT2ObINAeM4+bLrnSkAWjbQD3aDRmcSrYZdjE4Wzf7dbO0dXvYdaSRkIEMwC5EwH8
-	 aNi22CT0BUuiwu5zgiXNr0v6VuQzB4Q8L7kp6bmhMuB3Y0Ec+deG3ZJE/b4jABQ/Om
-	 BqWYu/1siId88sFy+ihgjkHly2e25+C2JBNv5brw=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1BB3B20892
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 6CD47208E7
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 21:45:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ipmNs0vN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6CD47208E7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726101AbeLGVnO (ORCPT
+        id S1726104AbeLGVpR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 16:43:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47136 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726008AbeLGVnO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 16:43:14 -0500
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0B0B921104;
-        Fri,  7 Dec 2018 21:43:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544218993;
-        bh=+O48f/Y1/XyNpSdGwLGOKHpv9oRQUzrRA7kqhTUMWp8=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=D/j8BXVqkdgvszMGsgcZA55qs7eL0jyxWr1bjOv4gjjn/uaaDRg/+Y9jXLNsK6L/S
-         EvZfm95UOPqOfGchLhxI6w1O8fNk0vWBki5g3lLWIiPkLnZyGKyRhoUtRvEgGHmjnc
-         FIGPxo2ARqfASTojvi5jL/wwBei81oOMHm3s+TR4=
-Received: by mail-wr1-f41.google.com with SMTP id z5so5067932wrt.11;
-        Fri, 07 Dec 2018 13:43:12 -0800 (PST)
-X-Gm-Message-State: AA+aEWaoCOJuWeI3duRlaOEHO5rp1pGesVMI2SJ/myOAXNcM8xPt5qZ+
-        rs39lxhVJbW36PfYPjKe/D8uDahwa2iy+v73blc=
-X-Google-Smtp-Source: AFSGD/W2mjbSj4IOVPMpbShuWUXfDuDA4/cczTvInbSvuTnk10xGY7tItfPJDeXt5Z3h6XN4X6MsqBL2jQnABKMS4I8=
-X-Received: by 2002:adf:b243:: with SMTP id y3mr3246073wra.184.1544218991380;
- Fri, 07 Dec 2018 13:43:11 -0800 (PST)
+        Fri, 7 Dec 2018 16:45:17 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:33129 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726008AbeLGVpQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Dec 2018 16:45:16 -0500
+Received: by mail-lj1-f195.google.com with SMTP id v1-v6so4824937ljd.0;
+        Fri, 07 Dec 2018 13:45:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=v6KpxNhJmlXUycYQajdCWj2sFrZIkqlDQLw4h1pTRk8=;
+        b=ipmNs0vN037Cl5mH4fVf3ttZCVpQb/9Zld0Lkafz8Hbbo90MYs8acI6L5OpSFJxaW3
+         NuFIVq89n+RQB95eqVngvZc1bQPEIb77dxGHnJss6F0qQblkGWQKXumuHBQbh8kw+Pfd
+         3/K0hNQprlIJGICL+7alaFrZ3Z2v2TlTjVc5In/VXdKgMGqVOfy4DcESgBnfEpfSkD8Q
+         CS+/197PnoXgoa+YJq8kvN+LBSGjUpJ0O93FRXM2PTZARwFtFZf8uWXHjIM8xzvXrila
+         K5YT5DJoNt48G/JUUvwx4XDAKl38hLSP20n9jY8+hpjApMF8Sg0qHyrGAn5/iI3/ITQ4
+         gxAw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=v6KpxNhJmlXUycYQajdCWj2sFrZIkqlDQLw4h1pTRk8=;
+        b=UYiJMP3/0OPJe2/gjpyN0lj7waQv7EKvd5vhkqXXpogtnmdM6ImT9Lz7wnFeqwZRo4
+         ZYEDqHYgmfttEv7Gh59VnW73eWlDLj+lapkxKt9lI0+vV9SscycwleDXu7vYC0dY7RvV
+         x4S+TA3LgUbrxaE59Yip0l6wgGQGkKh6PtGMk2TA8LpV1a0fzVJTD1QBHWTGL1WyN076
+         UPc3CAJZ+9WMUyAJsDiN1mW8231ok3hEbYvCyfATnl4XHK3vbCCv0mN0Iw6PmSpYeMBi
+         zxeOKqmTkFT2uyRlPP/jSrhR9e6sSUJTjO4vM9lVcfkJSM8FA/yiN1MmsCcuspZ1HsjH
+         uthA==
+X-Gm-Message-State: AA+aEWayFOQiqECBqRTJbcnm9ZvzZ2sphXFhgkNKjM0N6apUQQMvzAB2
+        DiOS6WuKy6Ns/oHHq8yYvjw2/0JcXgDIEgc2m3I=
+X-Google-Smtp-Source: AFSGD/UiO69YGGtyeIa+0dEyKTkhClEazQP+Xrjk9iG9Qx2lN8TS6sOEC5U+Cv+TxQru0RaL3krxiwlEDml8OIL6rbE=
+X-Received: by 2002:a2e:9f0b:: with SMTP id u11-v6mr2011980ljk.99.1544219113588;
+ Fri, 07 Dec 2018 13:45:13 -0800 (PST)
 MIME-Version: 1.0
-References: <20181107174844.5381-1-manivannan.sadhasivam@linaro.org>
- <20181107174844.5381-2-manivannan.sadhasivam@linaro.org> <CACRpkda25cuiPCe9ouvDDSpFwZ2z=Pm8pK=5jC-7OAcYwPSvvA@mail.gmail.com>
- <c1f63dd8-1c06-1797-025c-2cd4891d905d@gmail.com> <CACRpkdYCsh3AfmV-7ym-ffjp2k-kaNRqY1O3rd9h-WoUPYM_bw@mail.gmail.com>
- <CAOesGMhcBXLRRKdOMdq3Bg8fOGX6F0gWMJ3zzg0jW9bg9VeW7A@mail.gmail.com>
-In-Reply-To: <CAOesGMhcBXLRRKdOMdq3Bg8fOGX6F0gWMJ3zzg0jW9bg9VeW7A@mail.gmail.com>
-From:   Sean Wang <sean.wang@kernel.org>
-Date:   Fri, 7 Dec 2018 13:42:59 -0800
-X-Gmail-Original-Message-ID: <CAGp9Lzp9auBd5+gbrz5hZTM054JsWXs=NfSnO5EvczrJ8HOcGQ@mail.gmail.com>
-Message-ID: <CAGp9Lzp9auBd5+gbrz5hZTM054JsWXs=NfSnO5EvczrJ8HOcGQ@mail.gmail.com>
-Subject: Re: [PATCH v3 1/4] dt-bindings: pinctrl: Add devicetree bindings for
- MT6797 SoC Pinctrl
-To:     olof@lixom.net
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>, arm@kernel.org,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        robh+dt@kernel.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, amit.kucheria@linaro.org
+References: <20181206183945.GA20932@jordon-HP-15-Notebook-PC>
+ <53bbc095-c9f5-5d6a-6e50-6e060d17eb68@arm.com> <20181207171116.GA29923@bombadil.infradead.org>
+ <CAFqt6zYCWOK-uS85GqCzcgT=+YKn1nBrRPq+M9y6eJjmXEKH+g@mail.gmail.com> <67495f8f-2092-e42d-321e-5216c346513f@arm.com>
+In-Reply-To: <67495f8f-2092-e42d-321e-5216c346513f@arm.com>
+From:   Souptick Joarder <jrdr.linux@gmail.com>
+Date:   Sat, 8 Dec 2018 03:18:49 +0530
+Message-ID: <CAFqt6zbuT3mhLCSas=EO38NW+M4KAARKeBpMqDz6xwkVbw=FGA@mail.gmail.com>
+Subject: Re: [PATCH v3 1/9] mm: Introduce new vm_insert_range API
+To:     robin.murphy@arm.com
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        vbabka@suse.cz, Rik van Riel <riel@surriel.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        rppt@linux.vnet.ibm.com, Peter Zijlstra <peterz@infradead.org>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        iamjoonsoo.kim@lge.com, treding@nvidia.com,
+        Kees Cook <keescook@chromium.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        stefanr@s5r6.in-berlin.de, hjc@rock-chips.com,
+        Heiko Stuebner <heiko@sntech.de>, airlied@linux.ie,
+        oleksandr_andrushchenko@epam.com, joro@8bytes.org,
+        pawel@osciak.com, Kyungmin Park <kyungmin.park@samsung.com>,
+        mchehab@kernel.org, Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>, linux-kernel@vger.kernel.org,
+        Linux-MM <linux-mm@kvack.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux1394-devel@lists.sourceforge.net,
+        dri-devel@lists.freedesktop.org,
+        linux-rockchip@lists.infradead.org, xen-devel@lists.xen.org,
+        iommu@lists.linux-foundation.org, linux-media@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Olof,
-
-I'm a guy from MediaTek.
-Thanks for your input and we will get these bad things to be better.
-
-On Fri, Dec 7, 2018 at 10:42 AM Olof Johansson <olof@lixom.net> wrote:
+On Sat, Dec 8, 2018 at 2:40 AM Robin Murphy <robin.murphy@arm.com> wrote:
 >
-> On Wed, Dec 5, 2018 at 4:01 AM Linus Walleij <linus.walleij@linaro.org> wrote:
+> On 2018-12-07 7:28 pm, Souptick Joarder wrote:
+> > On Fri, Dec 7, 2018 at 10:41 PM Matthew Wilcox <willy@infradead.org> wrote:
+> >>
+> >> On Fri, Dec 07, 2018 at 03:34:56PM +0000, Robin Murphy wrote:
+> >>>> +int vm_insert_range(struct vm_area_struct *vma, unsigned long addr,
+> >>>> +                   struct page **pages, unsigned long page_count)
+> >>>> +{
+> >>>> +   unsigned long uaddr = addr;
+> >>>> +   int ret = 0, i;
+> >>>
+> >>> Some of the sites being replaced were effectively ensuring that vma and
+> >>> pages were mutually compatible as an initial condition - would it be worth
+> >>> adding something here for robustness, e.g.:
+> >>>
+> >>> +     if (page_count != vma_pages(vma))
+> >>> +             return -ENXIO;
+> >>
+> >> I think we want to allow this to be used to populate part of a VMA.
+> >> So perhaps:
+> >>
+> >>          if (page_count > vma_pages(vma))
+> >>                  return -ENXIO;
 > >
-> > On Mon, Dec 3, 2018 at 2:08 AM Matthias Brugger <matthias.bgg@gmail.com> wrote:
-> > > On 15/11/2018 11:04, Linus Walleij wrote:
-> > > > On Wed, Nov 7, 2018 at 6:49 PM Manivannan Sadhasivam
-> > > > <manivannan.sadhasivam@linaro.org> wrote:
-> > > >
-> > > >> Add devicetree bindings for Mediatek MT6797 SoC Pin Controller.
-> > > >>
-> > > >> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> > > >
-> > > > Patch applied.
-> > > >
-> > >
-> > > Could you provide a stable tree for me, so that I can take the dts parts?
-> > > I just realized that my build is broken because of the missing dt-bindings
-> > > header file.
+> > Ok, This can be added.
 > >
-> > Since I pulled other changes on top it is too late for me to put that
-> > in an immutable branch and merge into my tree separately,
-> > you would have to pull in the whole "devel" branch from the
-> > pin control tree.
-> >
-> > What we sometimes do is simply apply the *EXACT* same patch
-> > to two git trees. Git will cope with that as long as they are
-> > absolutely *IDENTICAL*. (The patch will appear twice in the
-> > git log with different hashes but they will merge without
-> > problems, a bit unelegant but it works.)
-> >
-> > So in your situation I would extract this patch from the pinctrl
-> > tree:
-> > https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git/commit/?h=devel&id=95d2f00657ad4c2c3eacd8a871a7aa022c3fe7d9
-> > and apply it with some notice to the maintainers about
-> > the situation.
-> >
-> > ARM SoC folks: agreed?
+> > I think Patch [2/9] is the only leftover place where this
+> > check could be removed.
 >
-> So, applying the patches in parallel is fine, but this made me look at
-> the actual patches and file contents, and they seem to be a bit messy.
->
+> Right, 9/9 could also have relied on my stricter check here, but since
+> it's really testing whether it actually managed to allocate vma_pages()
+> worth of pages earlier, Matthew's more lenient version won't help for
+> that one.
 
-I've also noticed the messy thing so we've changed these doable SoCs
-to using generic pinctrl bindings like MT7622 and MT7629 to get rid of
-the big header. And for the other SoCs, they still tend to keep vendor
-binding because of historical reasons, the related board makers
-preferences and it is indeed a little hard to change what these people
-used to.
 
-> This feedback is more to the MT maintainers/developers than you, Linus
-> (obviously):
->
-> These header files are huge, and they're inconsistent in the way they
-> define these constants:
->
-> include/dt-bindings/pinctrl/mt7623-pinfunc.h:
-> #define MT7623_PIN_21_PCM_TX_FUNC_GPIO21 (MTK_PIN_NO(21) | 0)
-> #define MT7623_PIN_21_PCM_TX_FUNC_PCM_TX (MTK_PIN_NO(21) | 1)
-> #define MT7623_PIN_21_PCM_TX_FUNC_MRG_TX (MTK_PIN_NO(21) | 2)
-> #define MT7623_PIN_21_PCM_TX_FUNC_MRG_RX (MTK_PIN_NO(21) | 3)
-> #define MT7623_PIN_21_PCM_TX_FUNC_PCM_RX (MTK_PIN_NO(21) | 4)
-> #define MT7623_PIN_21_PCM_TX_FUNC_CONN_DSP_JMS (MTK_PIN_NO(21) | 5)
-> #define MT7623_PIN_21_PCM_TX_FUNC_AP_PCM_TX (MTK_PIN_NO(21) | 6)
->
-> include/dt-bindings/pinctrl/mt6397-pinfunc.h:
-> #define MT6397_PIN_24_ROW4__FUNC_GPIO24 (MTK_PIN_NO(24) | 0)
-> #define MT6397_PIN_24_ROW4__FUNC_ROW4 (MTK_PIN_NO(24) | 1)
-> #define MT6397_PIN_24_ROW4__FUNC_EINT22_1X (MTK_PIN_NO(24) | 2)
-> #define MT6397_PIN_24_ROW4__FUNC_SCL2_3X (MTK_PIN_NO(24) | 3)
-> #define MT6397_PIN_24_ROW4__FUNC_TEST_IN15 (MTK_PIN_NO(24) | 6)
-> #define MT6397_PIN_24_ROW4__FUNC_TEST_OUT15 (MTK_PIN_NO(24) | 7)
->
-> include/dt-bindings/pinctrl/mt6797-pinfunc.h:
-> #define MT6797_GPIO34__FUNC_GPIO34 (MTK_PIN_NO(34) | 0)
-> #define MT6797_GPIO34__FUNC_CMFLASH (MTK_PIN_NO(34) | 1)
-> #define MT6797_GPIO34__FUNC_CLKM0 (MTK_PIN_NO(34) | 2)
-> #define MT6797_GPIO34__FUNC_UDI_NTRST (MTK_PIN_NO(34) | 3)
-> #define MT6797_GPIO34__FUNC_SCP_JTAG_TRSTN (MTK_PIN_NO(34) | 4)
-> #define MT6797_GPIO34__FUNC_CONN_MCU_TRST_B (MTK_PIN_NO(34) | 5)
-> #define MT6797_GPIO34__FUNC_MD_UTXD0 (MTK_PIN_NO(34) | 6)
-> #define MT6797_GPIO34__FUNC_C2K_DM_JTINTP (MTK_PIN_NO(34) | 7)
->
-> So, is it a pin or a GPIO and why does 6797 use different naming
-> scheme?
+(Why privcmd_buf_mmap() doesn't clean up and return an error
+> as soon as that allocation loop fails, without taking the mutex under
+> which it still does a bunch more pointless work to only undo it again,
+> is a mind-boggling mystery, but that's not our problem here...)
 
-They all stand for the pin and list all the functions which the pin
-can be switched to.
-
-MT6797 is the first mtk pinctrl driver not contributed by mediatek people,
-we will try to fix these confusing things and should be careful
-keeping the naming be uniform in the future.
-
-> Why do some of them have __FUNC and some _FUNC?Why do some
-> have the non-gpio function as part of the name and some do not?
->
-
-ditto, we will try to fix and keep the naming be uniform
-
-> Also, "pin 24 row 4 func row4"? Seems to have very limited value to
-> describe it in that manner, it's just overly verbose without adding
-> information.
-
-All the function names for a pin totally are same (copied) with
-hardware document describes. That means it's default function of the
-pin the hardware provides.
-
->
-> Some other SoCs tend to use a pinctrl specifier that is two-cell <pin
-> function> instead of trying to pack them into one integer.
-
-I'm not the initial developer for the vendor binding. but I guessed
-the initial thought trying to pack them into one integer can decrease
-the risk of inconsistency between pin and function, especially
-there're more than some hundred pins and functions present on SoC.
-
-> That seems
-> a lot more practical, especially since the base GPIO function seems to
-> generically be '0'. So the pin number would go in the first cell, and
-> the function in the second.
->
-> Finally, I don't see how the header file is used in the code at all?
->
-> The main idea behind the dt bindings header files is that they would
-> provide shared constants between the DT and the driver in the kernel.
-> If the constants are never used (i.e. they're just register values,
-> like today), then there's no need to merge the dt header with the
-> driver at all, it should go with the DT contents instead.
-
-Yes, it should be better to go with DT contents, not be the interface
-between DT and driver. These pin names are totally the same with these
-pin names shown on the schematic diagram, so it works more like
-providing an easy to remember text to allow people configure its pin
-easier while crossing reference schematic diagram.
-
-> So, for
-> example, if you used something like a format of <pin function>
-> properties, the header file could contain both the string
-> representation of the function for debug, as well as the values, all
-> derived from one place. Today all you have string representations for
-> is "func0".."func15" through mtk_gpio_functions[]. Seems like an
-> improvement all around?
->
->
-> -Olof
+I think some clean up can be done here in a separate patch.
