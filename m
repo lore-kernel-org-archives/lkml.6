@@ -2,180 +2,267 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D51DC07E85
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 19:26:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C762C07E85
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 19:35:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF17E2082D
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 19:26:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 34F0D20673
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 19:35:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="ppLHULFK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF17E2082D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="knjiomJ4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 34F0D20673
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726180AbeLGT0r (ORCPT
+        id S1726115AbeLGTfq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 14:26:47 -0500
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:35758 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726061AbeLGT0r (ORCPT
+        Fri, 7 Dec 2018 14:35:46 -0500
+Received: from mail-it1-f195.google.com ([209.85.166.195]:34379 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726045AbeLGTfp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 14:26:47 -0500
-Received: by mail-oi1-f195.google.com with SMTP id v6so4289565oif.2
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Dec 2018 11:26:46 -0800 (PST)
+        Fri, 7 Dec 2018 14:35:45 -0500
+Received: by mail-it1-f195.google.com with SMTP id x124so2307363itd.1;
+        Fri, 07 Dec 2018 11:35:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=rRe7I5CnWoOS70dVvA09ImjzxNXITAbSvAPnYX/jWk4=;
-        b=ppLHULFK6HM6+ObgaYiEbCaRfZ14fCBaXKgTf+DgTpu+Iai4nxGaJ0jSEwU3yMwTli
-         +M1+qKSncbZYxf3rgDrLXOcURS2xRPBW7mvDERE73R9H/4Gxkkh0oEKsSA8AdBAq/SuZ
-         0AHoK1iGEZo5x9KErVRpYmDOftrwtgWBrejPyXGslfvWbgPrbIh5soCQum+exVFQXwxe
-         wRvZmk+Mc5mPbfPLx61NitBrtT9ajXLSo+4R1OdOh++S6ahSzBn+nKQKFCeJt2Lfj9k7
-         0YSQ3EL4GLiXg01TB4flfV6MC8UMHGvbRBvOhpHGSDP+ZXrXs1EUQyloZgrp/WVkQNVr
-         NOMw==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
+        bh=beCD05nZWbeYcBnFZ9Uyu0lGvx1BqGCDThwyEpjQx8U=;
+        b=knjiomJ4UMkK/3PkMMhE0rThQ0KFk7Get+MJaa9SNAav1DySr8p/NfohU5xq+0a86o
+         V/eMbIpwM/c+Kn0U5HBv559ZKcO+dSv9LpVz8NyyGWWn6wMaY2ICOuIkKqCpepFrS+ya
+         QFWJST1mR3IPQVswcZi2H7oS7iKIB/9UYj7ryXUGbghIcmxijO9VcZ7yCxVrEbcSVgB0
+         7n79/bAxUjgGuJDv3eQEox3yKShBahJk4xhGyjI/sI6+rl2yv/k4xtU2px/NpDW919YU
+         elELuSQWL0ppS5/9GAovO2YaOGdrTQrbGA7TfWHhWwSi+DAsAAsyHWR/mfRnrbdeg1KI
+         OClA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=rRe7I5CnWoOS70dVvA09ImjzxNXITAbSvAPnYX/jWk4=;
-        b=aVlyuFWfEmFCintzn3G3SbA32jfFJYD1yGphzm+dzOc0eyOPHa8r61QmjqRJFAuyvU
-         XdsSvaeYFJpzPLQbz2uvr8yjA823c/CR/CToMCi2SnSVNtqD03TM3xIxnYeCepUFM+wB
-         EE2hOb5AN3Ym4ylevtanjnRgzVflu7FuSTwi+xN1UutgoBBPz3zdvy/QOp27c+3CzRcQ
-         ofgYYOiomZf+0gFvCeC7xOJc5rwlmlU7kbuYMcJJ1P07BpyuDlqaSMhaUT1mu6KwnhN7
-         jaMRMzpdEVYuUTQzcHu2i0KpgmtkYKLlzFCrUC02bhD2zxp1JNuO4uH7us/Iq+kHlkpx
-         rBDA==
-X-Gm-Message-State: AA+aEWbgfo/tSNP4474Db9iiySKDRM+5YTgmkzJAGD4N5zzPCDzP8YhE
-        J8ZyCs4jxN/XblTcWFnh+lVOVxDrZ7dMLzvXyC489BW5
-X-Google-Smtp-Source: AFSGD/VWEwx3EgQbp9vCFOhcRfUgKktkgNRZkt/X0FX0+5U7jefak6B053QruGufjk9xPtApcGzLSgBNLpSirUoxSSs=
-X-Received: by 2002:aca:d905:: with SMTP id q5mr2074058oig.0.1544210805706;
- Fri, 07 Dec 2018 11:26:45 -0800 (PST)
+         :message-id:subject:to;
+        bh=beCD05nZWbeYcBnFZ9Uyu0lGvx1BqGCDThwyEpjQx8U=;
+        b=bMcG4+yLCsLSlwpEuz/QdjlVgfk/3LI3kve59LzrUPB3ehKAe1W6wRVN0UiG0ebtw6
+         PVTld/W7lKJ1WD4aTIQdLVdjd/COYlZ679ts46kh3HGEWNB6K9Ylspo2g4tfh5GGP5tq
+         HMRf6q/7NAet3F80zqEkXHhEU+rwscNs6taJBf2I2ukir6pGxxv+D8qe1D0SLvwvEDJi
+         Y0tWOic3YUHHaHBTmEYU9wJvpmPRBjOvW7qDt6JQvPgz5byjP1AkReH3z7veMR96raRD
+         UGtO3Q5+WHB4xRYgA2BsyPBS/3R5URVcksH27lJ8h6KkkAUIFuS/el98L6BdVPIFerrp
+         VSfw==
+X-Gm-Message-State: AA+aEWbKWNUYjLDmDmaNrH9QsOL+BlXdUkBvaKKlRjEGQJWOtLzAhIAY
+        YqKnRxFtdBPIqTKrVebFA8/2jocUViLAIYZ/rBI=
+X-Google-Smtp-Source: AFSGD/URPAkPenSJKLIphnjqmSWE3o2fwnXC6XSgdJGvbOf/8HQ1LdEUsdcK+h9H3jPWX+KxgZKmpwNHLhllSau0N4I=
+X-Received: by 2002:a02:3da:: with SMTP id e87mr2737637jae.78.1544211344235;
+ Fri, 07 Dec 2018 11:35:44 -0800 (PST)
 MIME-Version: 1.0
-References: <20181204001720.26138-1-jhubbard@nvidia.com> <20181204001720.26138-2-jhubbard@nvidia.com>
- <CAPcyv4h99JVHAS7Q7k3iPPUq+oc1NxHdyBHMjpgyesF1EjVfWA@mail.gmail.com>
- <a0adcf7c-5592-f003-abc5-a2645eb1d5df@nvidia.com> <CAPcyv4iNtamDAY9raab=iXhSZByecedBpnGybjLM+PuDMwq7SQ@mail.gmail.com>
- <3c91d335-921c-4704-d159-2975ff3a5f20@nvidia.com> <20181205011519.GV10377@bombadil.infradead.org>
- <20181205014441.GA3045@redhat.com> <59ca5c4b-fd5b-1fc6-f891-c7986d91908e@nvidia.com>
- <7b4733be-13d3-c790-ff1b-ac51b505e9a6@nvidia.com> <20181207191620.GD3293@redhat.com>
-In-Reply-To: <20181207191620.GD3293@redhat.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Fri, 7 Dec 2018 11:26:34 -0800
-Message-ID: <CAPcyv4ig0Lg+6Abc+P9guOSdszk0B4LyHGh=wXf_kMzGs=5oww@mail.gmail.com>
-Subject: Re: [PATCH 1/2] mm: introduce put_user_page*(), placeholder versions
-To:     =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>
-Cc:     John Hubbard <jhubbard@nvidia.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        John Hubbard <john.hubbard@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux MM <linux-mm@kvack.org>, Jan Kara <jack@suse.cz>,
-        tom@talpey.com, Al Viro <viro@zeniv.linux.org.uk>, benve@cisco.com,
-        Christoph Hellwig <hch@infradead.org>,
-        Christopher Lameter <cl@linux.com>,
-        "Dalessandro, Dennis" <dennis.dalessandro@intel.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Michal Hocko <mhocko@kernel.org>,
-        Mike Marciniszyn <mike.marciniszyn@intel.com>,
-        rcampbell@nvidia.com,
+References: <20181207170656.13208-1-jcrouse@codeaurora.org> <20181207180712.GC20602@jcrouse-lnx.qualcomm.com>
+In-Reply-To: <20181207180712.GC20602@jcrouse-lnx.qualcomm.com>
+From:   Rob Clark <robdclark@gmail.com>
+Date:   Fri, 7 Dec 2018 14:35:32 -0500
+Message-ID: <CAF6AEGvRQ9h4b8329oddaJZQeK4+P3xZb-LXwAvKAHfSWBBoDQ@mail.gmail.com>
+Subject: Re: [Freedreno] [PATCH] drm/msm/a6xx: Add support for an interconnect path
+To:     freedreno <freedreno@lists.freedesktop.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+        Georgi Djakov <georgi.djakov@linaro.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 7, 2018 at 11:16 AM Jerome Glisse <jglisse@redhat.com> wrote:
+On Fri, Dec 7, 2018 at 1:07 PM Jordan Crouse <jcrouse@codeaurora.org> wrote:
 >
-> On Thu, Dec 06, 2018 at 06:45:49PM -0800, John Hubbard wrote:
-> > On 12/4/18 5:57 PM, John Hubbard wrote:
-> > > On 12/4/18 5:44 PM, Jerome Glisse wrote:
-> > >> On Tue, Dec 04, 2018 at 05:15:19PM -0800, Matthew Wilcox wrote:
-> > >>> On Tue, Dec 04, 2018 at 04:58:01PM -0800, John Hubbard wrote:
-> > >>>> On 12/4/18 3:03 PM, Dan Williams wrote:
-> > >>>>> Except the LRU fields are already in use for ZONE_DEVICE pages... how
-> > >>>>> does this proposal interact with those?
-> > >>>>
-> > >>>> Very badly: page->pgmap and page->hmm_data both get corrupted. Is there an entire
-> > >>>> use case I'm missing: calling get_user_pages() on ZONE_DEVICE pages? Said another
-> > >>>> way: is it reasonable to disallow calling get_user_pages() on ZONE_DEVICE pages?
-> > >>>>
-> > >>>> If we have to support get_user_pages() on ZONE_DEVICE pages, then the whole
-> > >>>> LRU field approach is unusable.
-> > >>>
-> > >>> We just need to rearrange ZONE_DEVICE pages.  Please excuse the whitespace
-> > >>> damage:
-> > >>>
-> > >>> +++ b/include/linux/mm_types.h
-> > >>> @@ -151,10 +151,12 @@ struct page {
-> > >>>  #endif
-> > >>>                 };
-> > >>>                 struct {        /* ZONE_DEVICE pages */
-> > >>> +                       unsigned long _zd_pad_2;        /* LRU */
-> > >>> +                       unsigned long _zd_pad_3;        /* LRU */
-> > >>> +                       unsigned long _zd_pad_1;        /* uses mapping */
-> > >>>                         /** @pgmap: Points to the hosting device page map. */
-> > >>>                         struct dev_pagemap *pgmap;
-> > >>>                         unsigned long hmm_data;
-> > >>> -                       unsigned long _zd_pad_1;        /* uses mapping */
-> > >>>                 };
-> > >>>
-> > >>>                 /** @rcu_head: You can use this to free a page by RCU. */
-> > >>>
-> > >>> You don't use page->private or page->index, do you Dan?
-> > >>
-> > >> page->private and page->index are use by HMM DEVICE page.
-> > >>
-> > >
-> > > OK, so for the ZONE_DEVICE + HMM case, that leaves just one field remaining for
-> > > dma-pinned information. Which might work. To recap, we need:
-> > >
-> > > -- 1 bit for PageDmaPinned
-> > > -- 1 bit, if using LRU field(s), for PageDmaPinnedWasLru.
-> > > -- N bits for a reference count
-> > >
-> > > Those *could* be packed into a single 64-bit field, if really necessary.
-> > >
+> On Fri, Dec 07, 2018 at 10:06:56AM -0700, Jordan Crouse wrote:
+> > Try to get the interconnect path for the GPU and vote for the maximum
+> > bandwidth to support all frequencies. This is needed for performance.
+> > Later we will want to scale the bandwidth based on the frequency to
+> > also optimize for power but that will require some device tree
+> > infrastructure that does not yet exist.
 > >
-> > ...actually, this needs to work on 32-bit systems, as well. And HMM is using a lot.
-> > However, it is still possible for this to work.
-> >
-> > Matthew, can I have that bit now please? I'm about out of options, and now it will actually
-> > solve the problem here.
-> >
-> > Given:
-> >
-> > 1) It's cheap to know if a page is ZONE_DEVICE, and ZONE_DEVICE means not on the LRU.
-> > That, in turn, means only 1 bit instead of 2 bits (in addition to a counter) is required,
-> > for that case.
-> >
-> > 2) There is an independent bit available (according to Matthew).
-> >
-> > 3) HMM uses 4 of the 5 struct page fields, so only one field is available for a counter
-> >    in that case.
+> > v3: Use macros and change port string per Georgi Djakov
 >
-> To expend on this, HMM private page are use for anonymous page
-> so the index and mapping fields have the value you expect for
-> such pages. Down the road i want also to support file backed
-> page with HMM private (mapping, private, index).
+> Rob had asked earlier if it would be appropriate and/or possible to merge this
+> with the generic interconnect patches and with his blessing I would like to
+> renew that request. This should merge cleanly against tip of tree and it would
+> be nice to get this support in at the same time that the base patches go in.
 >
-> For HMM public both anonymous and file back page are supported
-> today (HMM public is only useful on platform with something like
-> OpenCAPI, CCIX or NVlink ... so PowerPC for now).
->
-> > 4) get_user_pages() must work on ZONE_DEVICE and HMM pages.
->
-> get_user_pages() only need to work with HMM public page not the
-> private one as we can not allow _anyone_ to pin HMM private page.
 
-How does HMM enforce that? Because the kernel should not allow *any*
-memory management facility to arbitrarily fail direct-I/O operations.
-That's why CONFIG_FS_DAX_LIMITED is a temporary / experimental hack
-for S390 and ZONE_DEVICE was invented to bypass that hack for X86 and
-any arch that plans to properly support DAX. I would classify any
-memory management that can't support direct-I/O in the same
-"experimental" category.
+Acked-by: Rob Clark <robdclark@gmail.com>
+
+for landing this via Georgi's tree.. that seems easier than having to
+do a 2nd late pull-req for drm to get the driver parts merged..
+
+BR,
+-R
+
+
+> Jordan
+>
+> > Signed-off-by: Jordan Crouse <jcrouse@codeaurora.org>
+> > ---
+> >  drivers/gpu/drm/msm/Kconfig             |  1 +
+> >  drivers/gpu/drm/msm/adreno/a6xx_gmu.c   | 20 ++++++++++++++++++++
+> >  drivers/gpu/drm/msm/adreno/adreno_gpu.c |  9 +++++++++
+> >  drivers/gpu/drm/msm/msm_gpu.h           |  3 +++
+> >  4 files changed, 33 insertions(+)
+> >
+> > diff --git a/drivers/gpu/drm/msm/Kconfig b/drivers/gpu/drm/msm/Kconfig
+> > index 843a9d40c05e..990c4350f0c4 100644
+> > --- a/drivers/gpu/drm/msm/Kconfig
+> > +++ b/drivers/gpu/drm/msm/Kconfig
+> > @@ -5,6 +5,7 @@ config DRM_MSM
+> >       depends on ARCH_QCOM || (ARM && COMPILE_TEST)
+> >       depends on OF && COMMON_CLK
+> >       depends on MMU
+> > +     depends on INTERCONNECT || !INTERCONNECT
+> >       select QCOM_MDT_LOADER if ARCH_QCOM
+> >       select REGULATOR
+> >       select DRM_KMS_HELPER
+> > diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
+> > index 546599a7ab05..f37a9bfe5c30 100644
+> > --- a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
+> > +++ b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
+> > @@ -2,6 +2,7 @@
+> >  /* Copyright (c) 2017-2018 The Linux Foundation. All rights reserved. */
+> >
+> >  #include <linux/clk.h>
+> > +#include <linux/interconnect.h>
+> >  #include <linux/pm_opp.h>
+> >  #include <soc/qcom/cmd-db.h>
+> >
+> > @@ -63,6 +64,9 @@ static bool a6xx_gmu_gx_is_on(struct a6xx_gmu *gmu)
+> >
+> >  static void __a6xx_gmu_set_freq(struct a6xx_gmu *gmu, int index)
+> >  {
+> > +     struct a6xx_gpu *a6xx_gpu = container_of(gmu, struct a6xx_gpu, gmu);
+> > +     struct adreno_gpu *adreno_gpu = &a6xx_gpu->base;
+> > +     struct msm_gpu *gpu = &adreno_gpu->base;
+> >       int ret;
+> >
+> >       gmu_write(gmu, REG_A6XX_GMU_DCVS_ACK_OPTION, 0);
+> > @@ -85,6 +89,12 @@ static void __a6xx_gmu_set_freq(struct a6xx_gmu *gmu, int index)
+> >               dev_err(gmu->dev, "GMU set GPU frequency error: %d\n", ret);
+> >
+> >       gmu->freq = gmu->gpu_freqs[index];
+> > +
+> > +     /*
+> > +      * Eventually we will want to scale the path vote with the frequency but
+> > +      * for now leave it at max so that the performance is nominal.
+> > +      */
+> > +     icc_set(gpu->icc_path, 0, MBps_to_icc(7216));
+> >  }
+> >
+> >  void a6xx_gmu_set_freq(struct msm_gpu *gpu, unsigned long freq)
+> > @@ -680,6 +690,8 @@ int a6xx_gmu_reset(struct a6xx_gpu *a6xx_gpu)
+> >
+> >  int a6xx_gmu_resume(struct a6xx_gpu *a6xx_gpu)
+> >  {
+> > +     struct adreno_gpu *adreno_gpu = &a6xx_gpu->base;
+> > +     struct msm_gpu *gpu = &adreno_gpu->base;
+> >       struct a6xx_gmu *gmu = &a6xx_gpu->gmu;
+> >       int status, ret;
+> >
+> > @@ -695,6 +707,9 @@ int a6xx_gmu_resume(struct a6xx_gpu *a6xx_gpu)
+> >       if (ret)
+> >               goto out;
+> >
+> > +     /* Set the bus quota to a reasonable value for boot */
+> > +     icc_set(gpu->icc_path, 0, MBps_to_icc(3072));
+> > +
+> >       a6xx_gmu_irq_enable(gmu);
+> >
+> >       /* Check to see if we are doing a cold or warm boot */
+> > @@ -735,6 +750,8 @@ bool a6xx_gmu_isidle(struct a6xx_gmu *gmu)
+> >
+> >  int a6xx_gmu_stop(struct a6xx_gpu *a6xx_gpu)
+> >  {
+> > +     struct adreno_gpu *adreno_gpu = &a6xx_gpu->base;
+> > +     struct msm_gpu *gpu = &adreno_gpu->base;
+> >       struct a6xx_gmu *gmu = &a6xx_gpu->gmu;
+> >       u32 val;
+> >
+> > @@ -781,6 +798,9 @@ int a6xx_gmu_stop(struct a6xx_gpu *a6xx_gpu)
+> >       /* Tell RPMh to power off the GPU */
+> >       a6xx_rpmh_stop(gmu);
+> >
+> > +     /* Remove the bus vote */
+> > +     icc_set(gpu->icc_path, 0, 0);
+> > +
+> >       clk_bulk_disable_unprepare(gmu->nr_clocks, gmu->clocks);
+> >
+> >       pm_runtime_put_sync(gmu->dev);
+> > diff --git a/drivers/gpu/drm/msm/adreno/adreno_gpu.c b/drivers/gpu/drm/msm/adreno/adreno_gpu.c
+> > index 93d70f4a2154..7403ade9aabc 100644
+> > --- a/drivers/gpu/drm/msm/adreno/adreno_gpu.c
+> > +++ b/drivers/gpu/drm/msm/adreno/adreno_gpu.c
+> > @@ -18,6 +18,7 @@
+> >   */
+> >
+> >  #include <linux/ascii85.h>
+> > +#include <linux/interconnect.h>
+> >  #include <linux/kernel.h>
+> >  #include <linux/pm_opp.h>
+> >  #include <linux/slab.h>
+> > @@ -695,6 +696,11 @@ static int adreno_get_pwrlevels(struct device *dev,
+> >
+> >       DBG("fast_rate=%u, slow_rate=27000000", gpu->fast_rate);
+> >
+> > +     /* Check for an interconnect path for the bus */
+> > +     gpu->icc_path = of_icc_get(dev, "gfx-mem");
+> > +     if (IS_ERR(gpu->icc_path))
+> > +             gpu->icc_path = NULL;
+> > +
+> >       return 0;
+> >  }
+> >
+> > @@ -733,10 +739,13 @@ int adreno_gpu_init(struct drm_device *drm, struct platform_device *pdev,
+> >
+> >  void adreno_gpu_cleanup(struct adreno_gpu *adreno_gpu)
+> >  {
+> > +     struct msm_gpu *gpu = &adreno_gpu->base;
+> >       unsigned int i;
+> >
+> >       for (i = 0; i < ARRAY_SIZE(adreno_gpu->info->fw); i++)
+> >               release_firmware(adreno_gpu->fw[i]);
+> >
+> > +     icc_put(gpu->icc_path);
+> > +
+> >       msm_gpu_cleanup(&adreno_gpu->base);
+> >  }
+> > diff --git a/drivers/gpu/drm/msm/msm_gpu.h b/drivers/gpu/drm/msm/msm_gpu.h
+> > index f82bac086666..12fc5b1cb39d 100644
+> > --- a/drivers/gpu/drm/msm/msm_gpu.h
+> > +++ b/drivers/gpu/drm/msm/msm_gpu.h
+> > @@ -19,6 +19,7 @@
+> >  #define __MSM_GPU_H__
+> >
+> >  #include <linux/clk.h>
+> > +#include <linux/interconnect.h>
+> >  #include <linux/regulator/consumer.h>
+> >
+> >  #include "msm_drv.h"
+> > @@ -119,6 +120,8 @@ struct msm_gpu {
+> >       struct clk *ebi1_clk, *core_clk, *rbbmtimer_clk;
+> >       uint32_t fast_rate;
+> >
+> > +     struct icc_path *icc_path;
+> > +
+> >       /* Hang and Inactivity Detection:
+> >        */
+> >  #define DRM_MSM_INACTIVE_PERIOD   66 /* in ms (roughly four frames) */
+> > --
+> > 2.18.0
+> >
+> > _______________________________________________
+> > Freedreno mailing list
+> > Freedreno@lists.freedesktop.org
+> > https://lists.freedesktop.org/mailman/listinfo/freedreno
+>
+> --
+> The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+> a Linux Foundation Collaborative Project
