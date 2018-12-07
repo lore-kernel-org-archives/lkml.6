@@ -2,85 +2,837 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23D61C07E85
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 05:44:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4684EC07E85
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 05:46:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D780120838
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 05:44:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D780120838
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by mail.kernel.org (Postfix) with ESMTP id CF34B20892
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 05:46:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="GHVlwXmP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF34B20892
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726044AbeLGFoG (ORCPT
+        id S1726039AbeLGFqt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 00:44:06 -0500
-Received: from mailgw02.mediatek.com ([1.203.163.81]:7862 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725952AbeLGFoG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 00:44:06 -0500
-X-UUID: d8ebf40d5dd2418b8e511b6b63ee64b3-20181207
-X-UUID: d8ebf40d5dd2418b8e511b6b63ee64b3-20181207
-Received: from mtkcas35.mediatek.inc [(172.27.4.250)] by mailgw02.mediatek.com
-        (envelope-from <guochun.mao@mediatek.com>)
-        (mailgw01.mediatek.com ESMTP with TLS)
-        with ESMTP id 615148597; Fri, 07 Dec 2018 13:44:01 +0800
-Received: from MTKCAS36.mediatek.inc (172.27.4.186) by MTKMBS31N2.mediatek.inc
- (172.27.4.87) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Fri, 7 Dec
- 2018 13:44:00 +0800
-Received: from [10.17.3.153] (10.17.3.153) by MTKCAS36.mediatek.inc
- (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Fri, 7 Dec 2018 13:43:59 +0800
-Message-ID: <1544161439.8955.3.camel@mhfsdcap03>
-Subject: Re: [RESEND PATCH 2/4] mtd: spi-nor: mtk-quadspi: use ofpart for
- parsing partitions
-From:   Guochun Mao <guochun.mao@mediatek.com>
-To:     Boris Brezillon <boris.brezillon@bootlin.com>
-CC:     Ryder Lee <ryder.lee@mediatek.com>,
+        Fri, 7 Dec 2018 00:46:49 -0500
+Received: from mail-eopbgr30057.outbound.protection.outlook.com ([40.107.3.57]:64084
+        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725950AbeLGFqt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Dec 2018 00:46:49 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=a0a40emcT+8S8KEPbfo1vbqZPYAX0IqbiQKDCbsRt0Q=;
+ b=GHVlwXmPbKhLCug81oxAu5FDRljgK6ChhtL/Ju65qIHQkzPQmtX4Wza4lXYycVWWfxDgj3HEx6GWy/aaQiNj2cJBxjL3PXmqAOZHRylf9I25f78tXs0OxFE6FxVvFTUS0ETt0FcpMJr8JQZKXetZ6NIWzi6PXZI0p40kUemmYb0=
+Received: from VI1PR04MB5726.eurprd04.prod.outlook.com (20.178.127.24) by
+ VI1PR04MB5760.eurprd04.prod.outlook.com (20.178.127.146) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1404.19; Fri, 7 Dec 2018 05:46:40 +0000
+Received: from VI1PR04MB5726.eurprd04.prod.outlook.com
+ ([fe80::595a:9890:8397:5d51]) by VI1PR04MB5726.eurprd04.prod.outlook.com
+ ([fe80::595a:9890:8397:5d51%4]) with mapi id 15.20.1404.021; Fri, 7 Dec 2018
+ 05:46:40 +0000
+From:   Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>
+To:     Schrempf Frieder <frieder.schrempf@kontron.de>,
+        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        "boris.brezillon@bootlin.com" <boris.brezillon@bootlin.com>,
+        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
         Marek Vasut <marek.vasut@gmail.com>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Weijie Gao <weijie.gao@mediatek.com>,
-        <linux-mtd@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>
-Date:   Fri, 7 Dec 2018 13:43:59 +0800
-In-Reply-To: <20181206153610.26db522c@bbrezillon>
-References: <235ade9c5cda19fb0c9356913e3f56ad86600f59.1543472168.git.ryder.lee@mediatek.com>
-         <6cca6844f426d4ad4e7c878420b363cfb34499aa.1543472168.git.ryder.lee@mediatek.com>
-         <20181206153610.26db522c@bbrezillon>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 7bit
+        Mark Brown <broonie@kernel.org>, Han Xu <han.xu@nxp.com>
+CC:     "dwmw2@infradead.org" <dwmw2@infradead.org>,
+        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
+        "richard@nod.at" <richard@nod.at>,
+        "miquel.raynal@bootlin.com" <miquel.raynal@bootlin.com>,
+        David Wolfe <david.wolfe@nxp.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Prabhakar Kushwaha <prabhakar.kushwaha@nxp.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v7 3/9] spi: Add a driver for the Freescale/NXP QuadSPI
+ controller
+Thread-Topic: [PATCH v7 3/9] spi: Add a driver for the Freescale/NXP QuadSPI
+ controller
+Thread-Index: AQHUi9vWAE0Oo4W6mEqTtVIHp+5UgqVyyC1A
+Date:   Fri, 7 Dec 2018 05:46:40 +0000
+Message-ID: <VI1PR04MB572683D945EB3615348227CB99AA0@VI1PR04MB5726.eurprd04.prod.outlook.com>
+References: <1543932685-15011-1-git-send-email-frieder.schrempf@kontron.de>
+ <1543932685-15011-4-git-send-email-frieder.schrempf@kontron.de>
+In-Reply-To: <1543932685-15011-4-git-send-email-frieder.schrempf@kontron.de>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=yogeshnarayan.gaur@nxp.com; 
+x-originating-ip: [14.142.187.166]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;VI1PR04MB5760;6:Yuek6j5XRNhRAWhHd8/ZKZlGXWQW0I/uaFlL35YNh1EDe7spAjS4yzcU0fn6SJZFqVLmQ+tZq40slPR8uhclN9b4K7DufPWgL8bUu7S63SWhfUUnU+sg8ywf+j1S71Lr5uFD7KTR0RwIeaXlXf9RZPEC56QuDCEM2RVC3OwWPUu2wWEqSNHi+GFnYTRUa04k9SrRXQC972u8DJt7/PYTbPBu34bBYLXIp2pJ6MKFQRvT/JxRsrFR9tumtIvrmHdNGqys/dqVoKrsSEgvv2QOHzANXeWk8jQlFe798NwjNRu1MAWnvb0d2sUMPZgbF1QZeHbpsFAbB4AvPQra0ZAsO7nvGvpfvyPtRJzBl17clJEnb1O93M9pYJ2bYjJjfYEI6HNz0H8py1la5yK+lP2VeKsJ0SJVA1eUmxlZQEQEeFPWUNV7P+uwtSXOq0LBCVMVCTUUJlWD/AaZJJZxM3G1qw==;5:Ji02PliVOpUMxEwZZUrnl1/qcgDhsWLZ7wBNxERq6NsjGLX9W6xI3emTk2hLV2yC9BkJyGQ9ki0YilImNvWg1ktSbFdE7YHqxTf9heELuUQaJ6e/mTocalQOCqCW8s5XlOvC75Lgbn3eiAQ3C1JniDZ49QOAM9KKq1kvXL1ysL8=;7:VzG6xWoIvfVkKhlIlouKmZ2+son61fvLbKUFF7GoE+j02cVpD7fcWQTVog+lSdfk80X9sa3eQgLus+fvJlLDDZQmxjBfOr0YjeHMte3DCcUMkXMiWk4ybnCbCKRU1q6XrD3k5l3ROSiFBOsb5pSZ7g==
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 847d0fae-4327-476e-7eed-08d65c075c73
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(7168020)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:VI1PR04MB5760;
+x-ms-traffictypediagnostic: VI1PR04MB5760:
+x-microsoft-antispam-prvs: <VI1PR04MB5760AEC82725B82BE64D350099AA0@VI1PR04MB5760.eurprd04.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(93006095)(93001095)(3002001)(3231455)(999002)(944501520)(52105112)(6055026)(148016)(149066)(150057)(6041310)(20161123562045)(20161123558120)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:VI1PR04MB5760;BCL:0;PCL:0;RULEID:;SRVR:VI1PR04MB5760;
+x-forefront-prvs: 0879599414
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(346002)(376002)(39860400002)(136003)(366004)(13464003)(199004)(189003)(68736007)(55016002)(66066001)(11346002)(186003)(9686003)(55236004)(53546011)(446003)(2906002)(229853002)(102836004)(26005)(33656002)(6246003)(76176011)(86362001)(2201001)(316002)(575784001)(53946003)(14454004)(53936002)(54906003)(4326008)(7696005)(6506007)(110136005)(99286004)(39060400002)(8936002)(97736004)(25786009)(478600001)(7416002)(14444005)(256004)(81166006)(74316002)(78486014)(81156014)(8676002)(305945005)(7736002)(6436002)(4744004)(106356001)(105586002)(71190400001)(6636002)(71200400001)(2501003)(486006)(6116002)(3846002)(5660300001)(476003)(579004);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB5760;H:VI1PR04MB5726.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: 46VuipMSgdxrs/kjMdkqEjVmrtj7JT2O/lg90l/KAe0bGwtG5DiSKLgy0wzQS0IfDooyvQqwwZiF1AQn0JCcoWf4vUPOt7S9fQ/KPi8nIxp1bHeqfE4SxRdaxTFb4hxTsXJggvhGd11VsIK3FT6HeuUUP696cYQFguw9l3Qamdy4iKqISfmqRrBEFdvjl+5I+Ykd2RSDSDuqLF3xyi00K09HCvBgkgnShRHuMOmFc3JLc6I+4h3ASAjzIqj0xksmY067+IaXRP2E0OfptvTx5xkEzDKLjKgS8S6swBPjoi3dMt77OTXPfoxZx/XbmDGIIuuuiIBkSmkaZYb8MRoadf/i7HIaURFufafCvZoo9Lk=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-MTK:  N
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 847d0fae-4327-476e-7eed-08d65c075c73
+X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Dec 2018 05:46:40.3372
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB5760
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-12-06 at 15:36 +0100, Boris Brezillon wrote:
-> On Thu, 29 Nov 2018 14:29:54 +0800
-> Ryder Lee <ryder.lee@mediatek.com> wrote:
-> 
-> > From: Guochun Mao <guochun.mao@mediatek.com>
-> > 
-> > Replace mtd_device_register with mtd_device_parse_register for
-> > parsing partitions and add ofpart support.
-> 
-> What's the problem with the default partition parser table [1]?
-> 
-> [1]https://elixir.bootlin.com/linux/latest/source/drivers/mtd/mtdpart.c#L793
+Hi Frieder,
 
-No problem here.
-This patch can be dropped.
-Please help review others.
+> -----Original Message-----
+> From: Schrempf Frieder [mailto:frieder.schrempf@kontron.de]
+> Sent: Tuesday, December 4, 2018 7:45 PM
+> To: linux-mtd@lists.infradead.org; boris.brezillon@bootlin.com; linux-
+> spi@vger.kernel.org; Marek Vasut <marek.vasut@gmail.com>; Mark Brown
+> <broonie@kernel.org>; Han Xu <han.xu@nxp.com>
+> Cc: dwmw2@infradead.org; computersforpeace@gmail.com; richard@nod.at;
+> miquel.raynal@bootlin.com; David Wolfe <david.wolfe@nxp.com>; Fabio
+> Estevam <fabio.estevam@nxp.com>; Prabhakar Kushwaha
+> <prabhakar.kushwaha@nxp.com>; Yogesh Narayan Gaur
+> <yogeshnarayan.gaur@nxp.com>; shawnguo@kernel.org; Schrempf Frieder
+> <frieder.schrempf@kontron.de>; linux-kernel@vger.kernel.org
+> Subject: [PATCH v7 3/9] spi: Add a driver for the Freescale/NXP QuadSPI
+> controller
+>=20
+> From: Frieder Schrempf <frieder.schrempf@kontron.de>
+>=20
+> This driver is derived from the SPI NOR driver at mtd/spi-nor/fsl-quadspi=
+.c. It
+> uses the new SPI memory interface of the SPI framework to issue flash mem=
+ory
+> operations to up to four connected flash chips (2 buses with 2 CS each).
+>=20
+> The controller does not support generic SPI messages.
+>=20
+> This patch also disables the build of the "old" driver and reuses its Kco=
+nfig option
+> CONFIG_SPI_FSL_QUADSPI to replace it.
+>=20
+> Signed-off-by: Frieder Schrempf <frieder.schrempf@kontron.de>
+> ---
+>  drivers/mtd/spi-nor/Kconfig  |   9 -
+>  drivers/mtd/spi-nor/Makefile |   1 -
+>  drivers/spi/Kconfig          |  11 +
+>  drivers/spi/Makefile         |   1 +
+>  drivers/spi/spi-fsl-qspi.c   | 966 +++++++++++++++++++++++++++++++++++++=
++
+>  5 files changed, 978 insertions(+), 10 deletions(-)
+>=20
+> diff --git a/drivers/mtd/spi-nor/Kconfig b/drivers/mtd/spi-nor/Kconfig in=
+dex
+> 6cc9c92..d1ca307 100644
+> --- a/drivers/mtd/spi-nor/Kconfig
+> +++ b/drivers/mtd/spi-nor/Kconfig
+> @@ -59,15 +59,6 @@ config SPI_CADENCE_QUADSPI
+>  	  device with a Cadence QSPI controller and want to access the
+>  	  Flash as an MTD device.
+>=20
+> -config SPI_FSL_QUADSPI
+> -	tristate "Freescale Quad SPI controller"
+> -	depends on ARCH_MXC || SOC_LS1021A || ARCH_LAYERSCAPE ||
+> COMPILE_TEST
+> -	depends on HAS_IOMEM
+> -	help
+> -	  This enables support for the Quad SPI controller in master mode.
+> -	  This controller does not support generic SPI. It only supports
+> -	  SPI NOR.
+> -
+>  config SPI_HISI_SFC
+>  	tristate "Hisilicon SPI-NOR Flash Controller(SFC)"
+>  	depends on ARCH_HISI || COMPILE_TEST
+> diff --git a/drivers/mtd/spi-nor/Makefile b/drivers/mtd/spi-nor/Makefile =
+index
+> f4c61d2..3f160c2e3 100644
+> --- a/drivers/mtd/spi-nor/Makefile
+> +++ b/drivers/mtd/spi-nor/Makefile
+> @@ -3,7 +3,6 @@ obj-$(CONFIG_MTD_SPI_NOR)	+=3D spi-nor.o
+>  obj-$(CONFIG_SPI_ASPEED_SMC)	+=3D aspeed-smc.o
+>  obj-$(CONFIG_SPI_ATMEL_QUADSPI)	+=3D atmel-quadspi.o
+>  obj-$(CONFIG_SPI_CADENCE_QUADSPI)	+=3D cadence-quadspi.o
+> -obj-$(CONFIG_SPI_FSL_QUADSPI)	+=3D fsl-quadspi.o
+>  obj-$(CONFIG_SPI_HISI_SFC)	+=3D hisi-sfc.o
+>  obj-$(CONFIG_MTD_MT81xx_NOR)    +=3D mtk-quadspi.o
+>  obj-$(CONFIG_SPI_NXP_SPIFI)	+=3D nxp-spifi.o
+> diff --git a/drivers/spi/Kconfig b/drivers/spi/Kconfig index 7d3a5c9..8c8=
+4186
+> 100644
+> --- a/drivers/spi/Kconfig
+> +++ b/drivers/spi/Kconfig
+> @@ -259,6 +259,17 @@ config SPI_FSL_LPSPI
+>  	help
+>  	  This enables Freescale i.MX LPSPI controllers in master mode.
+>=20
+> +config SPI_FSL_QUADSPI
+> +	tristate "Freescale QSPI controller"
+> +	depends on ARCH_MXC || SOC_LS1021A || ARCH_LAYERSCAPE ||
+> COMPILE_TEST
+> +	depends on HAS_IOMEM
+> +	help
+> +	  This enables support for the Quad SPI controller in master mode.
+> +	  Up to four flash chips can be connected on two buses with two
+> +	  chipselects each.
+> +	  This controller does not support generic SPI messages. It only
+> +	  supports the high-level SPI memory interface.
+> +
+>  config SPI_GPIO
+>  	tristate "GPIO-based bitbanging SPI Master"
+>  	depends on GPIOLIB || COMPILE_TEST
+> diff --git a/drivers/spi/Makefile b/drivers/spi/Makefile index 3575205..5=
+377e61
+> 100644
+> --- a/drivers/spi/Makefile
+> +++ b/drivers/spi/Makefile
+> @@ -44,6 +44,7 @@ obj-$(CONFIG_SPI_FSL_DSPI)		+=3D spi-fsl-
+> dspi.o
+>  obj-$(CONFIG_SPI_FSL_LIB)		+=3D spi-fsl-lib.o
+>  obj-$(CONFIG_SPI_FSL_ESPI)		+=3D spi-fsl-espi.o
+>  obj-$(CONFIG_SPI_FSL_LPSPI)		+=3D spi-fsl-lpspi.o
+> +obj-$(CONFIG_SPI_FSL_QUADSPI)		+=3D spi-fsl-qspi.o
+>  obj-$(CONFIG_SPI_FSL_SPI)		+=3D spi-fsl-spi.o
+>  obj-$(CONFIG_SPI_GPIO)			+=3D spi-gpio.o
+>  obj-$(CONFIG_SPI_IMG_SPFI)		+=3D spi-img-spfi.o
+> diff --git a/drivers/spi/spi-fsl-qspi.c b/drivers/spi/spi-fsl-qspi.c new =
+file mode
+> 100644 index 0000000..f0a3400
+> --- /dev/null
+> +++ b/drivers/spi/spi-fsl-qspi.c
+> @@ -0,0 +1,966 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+> +
+> +/*
+> + * Freescale QuadSPI driver.
+> + *
+> + * Copyright (C) 2013 Freescale Semiconductor, Inc.
+> + * Copyright (C) 2018 Bootlin
+> + * Copyright (C) 2018 exceet electronics GmbH
+> + * Copyright (C) 2018 Kontron Electronics GmbH
+> + *
+> + * Transition to SPI MEM interface:
+> + * Authors:
+> + *     Boris Brezillion <boris.brezillon@bootlin.com>
+> + *     Frieder Schrempf <frieder.schrempf@kontron.de>
+> + *     Yogesh Gaur <yogeshnarayan.gaur@nxp.com>
+> + *     Suresh Gupta <suresh.gupta@nxp.com>
+> + *
+> + * Based on the original fsl-quadspi.c spi-nor driver:
+> + * Author: Freescale Semiconductor, Inc.
+> + *
+> + */
+> +
+> +#include <linux/bitops.h>
+> +#include <linux/clk.h>
+> +#include <linux/completion.h>
+> +#include <linux/delay.h>
+> +#include <linux/err.h>
+> +#include <linux/errno.h>
+> +#include <linux/interrupt.h>
+> +#include <linux/io.h>
+> +#include <linux/iopoll.h>
+> +#include <linux/jiffies.h>
+> +#include <linux/kernel.h>
+> +#include <linux/module.h>
+> +#include <linux/mutex.h>
+> +#include <linux/of.h>
+> +#include <linux/of_device.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/pm_qos.h>
+> +#include <linux/sizes.h>
+> +
+> +#include <linux/spi/spi.h>
+> +#include <linux/spi/spi-mem.h>
+> +
+> +/*
+> + * The driver only uses one single LUT entry, that is updated on
+> + * each call of exec_op(). Index 0 is preset at boot with a basic
+> + * read operation, so let's use the last entry (15).
+> + */
+> +#define	SEQID_LUT			15
+> +
+> +/* Registers used by the driver */
+> +#define QUADSPI_MCR			0x00
+> +#define QUADSPI_MCR_RESERVED_MASK	GENMASK(19, 16)
+> +#define QUADSPI_MCR_MDIS_MASK		BIT(14)
+> +#define QUADSPI_MCR_CLR_TXF_MASK	BIT(11)
+> +#define QUADSPI_MCR_CLR_RXF_MASK	BIT(10)
+> +#define QUADSPI_MCR_DDR_EN_MASK		BIT(7)
+> +#define QUADSPI_MCR_END_CFG_MASK	GENMASK(3, 2)
+> +#define QUADSPI_MCR_SWRSTHD_MASK	BIT(1)
+> +#define QUADSPI_MCR_SWRSTSD_MASK	BIT(0)
+> +
+> +#define QUADSPI_IPCR			0x08
+> +#define QUADSPI_IPCR_SEQID(x)		((x) << 24)
+> +
+> +#define QUADSPI_BUF3CR			0x1c
+> +#define QUADSPI_BUF3CR_ALLMST_MASK	BIT(31)
+> +#define QUADSPI_BUF3CR_ADATSZ(x)	((x) << 8)
+> +#define QUADSPI_BUF3CR_ADATSZ_MASK	GENMASK(15, 8)
+> +
+> +#define QUADSPI_BFGENCR			0x20
+> +#define QUADSPI_BFGENCR_SEQID(x)	((x) << 12)
+> +
+> +#define QUADSPI_BUF0IND			0x30
+> +#define QUADSPI_BUF1IND			0x34
+> +#define QUADSPI_BUF2IND			0x38
+> +#define QUADSPI_SFAR			0x100
+> +
+> +#define QUADSPI_SMPR			0x108
+> +#define QUADSPI_SMPR_DDRSMP_MASK	GENMASK(18, 16)
+> +#define QUADSPI_SMPR_FSDLY_MASK		BIT(6)
+> +#define QUADSPI_SMPR_FSPHS_MASK		BIT(5)
+> +#define QUADSPI_SMPR_HSENA_MASK		BIT(0)
+> +
+> +#define QUADSPI_RBCT			0x110
+> +#define QUADSPI_RBCT_WMRK_MASK		GENMASK(4, 0)
+> +#define QUADSPI_RBCT_RXBRD_USEIPS	BIT(8)
+> +
+> +#define QUADSPI_TBDR			0x154
+> +
+> +#define QUADSPI_SR			0x15c
+> +#define QUADSPI_SR_IP_ACC_MASK		BIT(1)
+> +#define QUADSPI_SR_AHB_ACC_MASK		BIT(2)
+> +
+> +#define QUADSPI_FR			0x160
+> +#define QUADSPI_FR_TFF_MASK		BIT(0)
+> +
+> +#define QUADSPI_SPTRCLR			0x16c
+> +#define QUADSPI_SPTRCLR_IPPTRC		BIT(8)
+> +#define QUADSPI_SPTRCLR_BFPTRC		BIT(0)
+> +
+> +#define QUADSPI_SFA1AD			0x180
+> +#define QUADSPI_SFA2AD			0x184
+> +#define QUADSPI_SFB1AD			0x188
+> +#define QUADSPI_SFB2AD			0x18c
+> +#define QUADSPI_RBDR(x)			(0x200 + ((x) * 4))
+> +
+> +#define QUADSPI_LUTKEY			0x300
+> +#define QUADSPI_LUTKEY_VALUE		0x5AF05AF0
+> +
+> +#define QUADSPI_LCKCR			0x304
+> +#define QUADSPI_LCKER_LOCK		BIT(0)
+> +#define QUADSPI_LCKER_UNLOCK		BIT(1)
+> +
+> +#define QUADSPI_RSER			0x164
+> +#define QUADSPI_RSER_TFIE		BIT(0)
+> +
+> +#define QUADSPI_LUT_BASE		0x310
+> +#define QUADSPI_LUT_OFFSET		(SEQID_LUT * 4 * 4)
+> +#define QUADSPI_LUT_REG(idx) \
+> +	(QUADSPI_LUT_BASE + QUADSPI_LUT_OFFSET + (idx) * 4)
+> +
+> +/* Instruction set for the LUT register */
+> +#define LUT_STOP		0
+> +#define LUT_CMD			1
+> +#define LUT_ADDR		2
+> +#define LUT_DUMMY		3
+> +#define LUT_MODE		4
+> +#define LUT_MODE2		5
+> +#define LUT_MODE4		6
+> +#define LUT_FSL_READ		7
+> +#define LUT_FSL_WRITE		8
+> +#define LUT_JMP_ON_CS		9
+> +#define LUT_ADDR_DDR		10
+> +#define LUT_MODE_DDR		11
+> +#define LUT_MODE2_DDR		12
+> +#define LUT_MODE4_DDR		13
+> +#define LUT_FSL_READ_DDR	14
+> +#define LUT_FSL_WRITE_DDR	15
+> +#define LUT_DATA_LEARN		16
+> +
+> +/*
+> + * The PAD definitions for LUT register.
+> + *
+> + * The pad stands for the number of IO lines [0:3].
+> + * For example, the quad read needs four IO lines,
+> + * so you should use LUT_PAD(4).
+> + */
+> +#define LUT_PAD(x) (fls(x) - 1)
+> +
+> +/*
+> + * Macro for constructing the LUT entries with the following
+> + * register layout:
+> + *
+> + *  ---------------------------------------------------
+> + *  | INSTR1 | PAD1 | OPRND1 | INSTR0 | PAD0 | OPRND0 |
+> + *  ---------------------------------------------------
+> + */
+> +#define LUT_DEF(idx, ins, pad, opr)					\
+> +	((((ins) << 10) | ((pad) << 8) | (opr)) << (((idx) % 2) * 16))
+> +
+> +/* Controller needs driver to swap endianness */
+> +#define QUADSPI_QUIRK_SWAP_ENDIAN	BIT(0)
+> +
+> +/* Controller needs 4x internal clock */
+> +#define QUADSPI_QUIRK_4X_INT_CLK	BIT(1)
+> +
+> +/*
+> + * TKT253890, the controller needs the driver to fill the txfifo with
+> + * 16 bytes at least to trigger a data transfer, even though the extra
+> + * data won't be transferred.
+> + */
+> +#define QUADSPI_QUIRK_TKT253890		BIT(2)
+> +
+> +/* TKT245618, the controller cannot wake up from wait mode */
+> +#define QUADSPI_QUIRK_TKT245618		BIT(3)
+> +
+> +/*
+> + * Controller adds QSPI_AMBA_BASE (base address of the mapped memory)
+> + * internally. No need to add it when setting SFXXAD and SFAR registers
+> +*/
+> +#define QUADSPI_QUIRK_BASE_INTERNAL	BIT(4)
+> +
+> +struct fsl_qspi_devtype_data {
+> +	unsigned int rxfifo;
+> +	unsigned int txfifo;
+> +	unsigned int ahb_buf_size;
+> +	unsigned int quirks;
+> +	bool little_endian;
+> +};
+> +
+> +static const struct fsl_qspi_devtype_data vybrid_data =3D {
+> +	.rxfifo =3D SZ_128,
+> +	.txfifo =3D SZ_64,
+> +	.ahb_buf_size =3D SZ_1K,
+> +	.quirks =3D QUADSPI_QUIRK_SWAP_ENDIAN,
+> +	.little_endian =3D true,
+> +};
+> +
+> +static const struct fsl_qspi_devtype_data imx6sx_data =3D {
+> +	.rxfifo =3D SZ_128,
+> +	.txfifo =3D SZ_512,
+> +	.ahb_buf_size =3D SZ_1K,
+> +	.quirks =3D QUADSPI_QUIRK_4X_INT_CLK | QUADSPI_QUIRK_TKT245618,
+> +	.little_endian =3D true,
+> +};
+> +
+> +static const struct fsl_qspi_devtype_data imx7d_data =3D {
+> +	.rxfifo =3D SZ_512,
+> +	.txfifo =3D SZ_512,
+> +	.ahb_buf_size =3D SZ_1K,
+> +	.quirks =3D QUADSPI_QUIRK_TKT253890 | QUADSPI_QUIRK_4X_INT_CLK,
+> +	.little_endian =3D true,
+> +};
+> +
+> +static const struct fsl_qspi_devtype_data imx6ul_data =3D {
+> +	.rxfifo =3D SZ_128,
+> +	.txfifo =3D SZ_512,
+> +	.ahb_buf_size =3D SZ_1K,
+> +	.quirks =3D QUADSPI_QUIRK_TKT253890 | QUADSPI_QUIRK_4X_INT_CLK,
+> +	.little_endian =3D true,
+> +};
+> +
+> +static const struct fsl_qspi_devtype_data ls1021a_data =3D {
+> +	.rxfifo =3D SZ_128,
+> +	.txfifo =3D SZ_64,
+> +	.ahb_buf_size =3D SZ_1K,
+> +	.quirks =3D 0,
+> +	.little_endian =3D false,
+> +};
+> +
+> +static const struct fsl_qspi_devtype_data ls2080a_data =3D {
+> +	.rxfifo =3D SZ_128,
+> +	.txfifo =3D SZ_64,
+> +	.ahb_buf_size =3D SZ_1K,
+> +	.quirks =3D QUADSPI_QUIRK_TKT253890 |
+> QUADSPI_QUIRK_BASE_INTERNAL,
+> +	.little_endian =3D true,
+> +};
+> +
+> +struct fsl_qspi {
+> +	void __iomem *iobase;
+> +	void __iomem *ahb_addr;
+> +	u32 memmap_phy;
+> +	struct clk *clk, *clk_en;
+> +	struct device *dev;
+> +	struct completion c;
+> +	const struct fsl_qspi_devtype_data *devtype_data;
+> +	struct mutex lock;
+> +	struct pm_qos_request pm_qos_req;
+> +	int selected;
+> +};
+> +
+> +static inline int needs_swap_endian(struct fsl_qspi *q) {
+> +	return q->devtype_data->quirks & QUADSPI_QUIRK_SWAP_ENDIAN; }
+> +
+> +static inline int needs_4x_clock(struct fsl_qspi *q) {
+> +	return q->devtype_data->quirks & QUADSPI_QUIRK_4X_INT_CLK; }
+> +
+> +static inline int needs_fill_txfifo(struct fsl_qspi *q) {
+> +	return q->devtype_data->quirks & QUADSPI_QUIRK_TKT253890; }
+> +
+> +static inline int needs_wakeup_wait_mode(struct fsl_qspi *q) {
+> +	return q->devtype_data->quirks & QUADSPI_QUIRK_TKT245618; }
+> +
+> +static inline int needs_amba_base_offset(struct fsl_qspi *q) {
+> +	return !(q->devtype_data->quirks &
+> QUADSPI_QUIRK_BASE_INTERNAL); }
+> +
+> +/*
+> + * An IC bug makes it necessary to rearrange the 32-bit data.
+> + * Later chips, such as IMX6SLX, have fixed this bug.
+> + */
+> +static inline u32 fsl_qspi_endian_xchg(struct fsl_qspi *q, u32 a) {
+> +	return needs_swap_endian(q) ? __swab32(a) : a; }
+> +
+> +/*
+> + * R/W functions for big- or little-endian registers:
+> + * The QSPI controller's endianness is independent of
+> + * the CPU core's endianness. So far, although the CPU
+> + * core is little-endian the QSPI controller can use
+> + * big-endian or little-endian.
+> + */
+> +static void qspi_writel(struct fsl_qspi *q, u32 val, void __iomem
+> +*addr) {
+> +	if (q->devtype_data->little_endian)
+> +		iowrite32(val, addr);
+> +	else
+> +		iowrite32be(val, addr);
+> +}
+> +
+> +static u32 qspi_readl(struct fsl_qspi *q, void __iomem *addr) {
+> +	if (q->devtype_data->little_endian)
+> +		return ioread32(addr);
+> +
+> +	return ioread32be(addr);
+> +}
+> +
+> +static irqreturn_t fsl_qspi_irq_handler(int irq, void *dev_id) {
+> +	struct fsl_qspi *q =3D dev_id;
+> +	u32 reg;
+> +
+> +	/* clear interrupt */
+> +	reg =3D qspi_readl(q, q->iobase + QUADSPI_FR);
+> +	qspi_writel(q, reg, q->iobase + QUADSPI_FR);
+> +
+> +	if (reg & QUADSPI_FR_TFF_MASK)
+> +		complete(&q->c);
+> +
+> +	dev_dbg(q->dev, "QUADSPI_FR : 0x%.8x:0x%.8x\n", 0, reg);
+> +	return IRQ_HANDLED;
+> +}
+> +
+> +static int fsl_qspi_check_buswidth(struct fsl_qspi *q, u8 width) {
+> +	switch (width) {
+> +	case 1:
+> +	case 2:
+> +	case 4:
+> +		return 0;
+> +	}
+> +
+> +	return -ENOTSUPP;
+> +}
+> +
+> +static bool fsl_qspi_supports_op(struct spi_mem *mem,
+> +				 const struct spi_mem_op *op)
+> +{
+> +	struct fsl_qspi *q =3D spi_controller_get_devdata(mem->spi->master);
+> +	int ret;
+> +
+> +	ret =3D fsl_qspi_check_buswidth(q, op->cmd.buswidth);
+> +
+> +	if (op->addr.nbytes)
+> +		ret |=3D fsl_qspi_check_buswidth(q, op->addr.buswidth);
+> +
+> +	if (op->dummy.nbytes)
+> +		ret |=3D fsl_qspi_check_buswidth(q, op->dummy.buswidth);
+> +
+> +	if (op->data.nbytes)
+> +		ret |=3D fsl_qspi_check_buswidth(q, op->data.buswidth);
+> +
+> +	if (ret)
+> +		return false;
+> +
+> +	/*
+> +	 * The number of instructions needed for the op, needs
+> +	 * to fit into a single LUT entry.
+> +	 */
+> +	if (op->addr.nbytes +
+> +	   (op->dummy.nbytes ? 1:0) +
+> +	   (op->data.nbytes ? 1:0) > 6)
+> +		return false;
+> +
+> +	/* Max 64 dummy clock cycles supported */
+> +	if (op->dummy.nbytes &&
+> +	    (op->dummy.nbytes * 8 / op->dummy.buswidth > 64))
+> +		return false;
+> +
+> +	/* Max data length, check controller limits and alignment */
+> +	if (op->data.dir =3D=3D SPI_MEM_DATA_IN &&
+> +	    (op->data.nbytes > q->devtype_data->ahb_buf_size ||
+> +	     (op->data.nbytes > q->devtype_data->rxfifo - 4 &&
+> +	      !IS_ALIGNED(op->data.nbytes, 8))))
+> +		return false;
+> +
+> +	if (op->data.dir =3D=3D SPI_MEM_DATA_OUT &&
+> +	    op->data.nbytes > q->devtype_data->txfifo)
+> +		return false;
+> +
+> +	return true;
+> +}
+> +
+> +static void fsl_qspi_prepare_lut(struct fsl_qspi *q,
+> +				 const struct spi_mem_op *op)
+> +{
+> +	void __iomem *base =3D q->iobase;
+> +	u32 lutval[4] =3D {};
+> +	int lutidx =3D 1, i;
+> +
+> +	lutval[0] |=3D LUT_DEF(0, LUT_CMD, LUT_PAD(op->cmd.buswidth),
+> +			     op->cmd.opcode);
+> +
+> +	/*
+> +	 * For some unknown reason, using LUT_ADDR doesn't work in some
+> +	 * cases (at least with only one byte long addresses), so
+> +	 * let's use LUT_MODE to write the address bytes one by one
+> +	 */
+> +	for (i =3D 0; i < op->addr.nbytes; i++) {
+> +		u8 addrbyte =3D op->addr.val >> (8 * (op->addr.nbytes - i - 1));
+> +
+> +		lutval[lutidx / 2] |=3D LUT_DEF(lutidx, LUT_MODE,
+> +					      LUT_PAD(op->addr.buswidth),
+> +					      addrbyte);
+> +		lutidx++;
+> +	}
+> +
+> +	if (op->dummy.nbytes) {
+> +		lutval[lutidx / 2] |=3D LUT_DEF(lutidx, LUT_DUMMY,
+> +					      LUT_PAD(op->dummy.buswidth),
+> +					      op->dummy.nbytes * 8 /
+> +					      op->dummy.buswidth);
+> +		lutidx++;
+> +	}
+> +
+> +	if (op->data.nbytes) {
+> +		lutval[lutidx / 2] |=3D LUT_DEF(lutidx,
+> +					      op->data.dir =3D=3D
+> SPI_MEM_DATA_IN ?
+> +					      LUT_FSL_READ : LUT_FSL_WRITE,
+> +					      LUT_PAD(op->data.buswidth),
+> +					      0);
+> +		lutidx++;
+> +	}
+> +
+> +	lutval[lutidx / 2] |=3D LUT_DEF(lutidx, LUT_STOP, 0, 0);
+> +
+> +	/* unlock LUT */
+> +	qspi_writel(q, QUADSPI_LUTKEY_VALUE, q->iobase + QUADSPI_LUTKEY);
+> +	qspi_writel(q, QUADSPI_LCKER_UNLOCK, q->iobase + QUADSPI_LCKCR);
+> +
+> +	/* fill LUT */
+> +	for (i =3D 0; i < ARRAY_SIZE(lutval); i++)
+> +		qspi_writel(q, lutval[i], base + QUADSPI_LUT_REG(i));
+> +
+> +	/* lock LUT */
+> +	qspi_writel(q, QUADSPI_LUTKEY_VALUE, q->iobase + QUADSPI_LUTKEY);
+> +	qspi_writel(q, QUADSPI_LCKER_LOCK, q->iobase + QUADSPI_LCKCR); }
+> +
+> +static int fsl_qspi_clk_prep_enable(struct fsl_qspi *q) {
+> +	int ret;
+> +
+> +	ret =3D clk_prepare_enable(q->clk_en);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret =3D clk_prepare_enable(q->clk);
+> +	if (ret) {
+> +		clk_disable_unprepare(q->clk_en);
+> +		return ret;
+> +	}
+> +
+> +	if (needs_wakeup_wait_mode(q))
+> +		pm_qos_add_request(&q->pm_qos_req,
+> PM_QOS_CPU_DMA_LATENCY, 0);
+> +
+> +	return 0;
+> +}
+> +
+> +static void fsl_qspi_clk_disable_unprep(struct fsl_qspi *q) {
+> +	if (needs_wakeup_wait_mode(q))
+> +		pm_qos_remove_request(&q->pm_qos_req);
+> +
+> +	clk_disable_unprepare(q->clk);
+> +	clk_disable_unprepare(q->clk_en);
+> +}
+> +
+> +/*
+> + * If we have changed the content of the flash by writing or erasing,
+> +or if we
+> + * read from flash with a different offset into the page buffer, we
+> +need to
+> + * invalidate the AHB buffer. If we do not do so, we may read out the
+> +wrong
+> + * data. The spec tells us reset the AHB domain and Serial Flash domain
+> +at
+> + * the same time.
+> + */
+> +static void fsl_qspi_invalidate(struct fsl_qspi *q) {
+> +	u32 reg;
+> +
+> +	reg =3D qspi_readl(q, q->iobase + QUADSPI_MCR);
+> +	reg |=3D QUADSPI_MCR_SWRSTHD_MASK |
+> QUADSPI_MCR_SWRSTSD_MASK;
+> +	qspi_writel(q, reg, q->iobase + QUADSPI_MCR);
+> +
+> +	/*
+> +	 * The minimum delay : 1 AHB + 2 SFCK clocks.
+> +	 * Delay 1 us is enough.
+> +	 */
+> +	udelay(1);
+> +
+> +	reg &=3D ~(QUADSPI_MCR_SWRSTHD_MASK |
+> QUADSPI_MCR_SWRSTSD_MASK);
+> +	qspi_writel(q, reg, q->iobase + QUADSPI_MCR); }
+> +
+> +static void fsl_qspi_select_mem(struct fsl_qspi *q, struct spi_device
+> +*spi) {
+> +	unsigned long rate =3D spi->max_speed_hz;
+> +	int ret;
+> +
+> +	if (q->selected =3D=3D spi->chip_select)
+> +		return;
+> +
+> +	if (needs_4x_clock(q))
+> +		rate *=3D 4;
+> +
+> +	fsl_qspi_clk_disable_unprep(q);
+> +
+> +	ret =3D clk_set_rate(q->clk, rate);
+> +	if (ret)
+> +		return;
+> +
+> +	ret =3D fsl_qspi_clk_prep_enable(q);
+> +	if (ret)
+> +		return;
+> +
+> +	q->selected =3D spi->chip_select;
+> +
+> +	fsl_qspi_invalidate(q);
+> +}
+> +
+> +static void fsl_qspi_read_ahb(struct fsl_qspi *q, const struct
+> +spi_mem_op *op) {
+> +	memcpy_fromio(op->data.buf.in,
+> +		      q->ahb_addr + q->selected * q->devtype_data-
+> >ahb_buf_size,
+> +		      op->data.nbytes);
+> +}
+> +
+> +static void fsl_qspi_fill_txfifo(struct fsl_qspi *q,
+> +				 const struct spi_mem_op *op)
+> +{
+> +	void __iomem *base =3D q->iobase;
+> +	int i;
+> +	u32 val;
+> +
+> +	for (i =3D 0; i < ALIGN_DOWN(op->data.nbytes, 4); i +=3D 4) {
+> +		memcpy(&val, op->data.buf.out + i, 4);
+> +		val =3D fsl_qspi_endian_xchg(q, val);
+> +		qspi_writel(q, val, base + QUADSPI_TBDR);
+> +	}
+> +
+> +	if (i < op->data.nbytes) {
+> +		memcpy(&val, op->data.buf.out + i, op->data.nbytes - i);
+> +		val =3D fsl_qspi_endian_xchg(q, val);
+> +		qspi_writel(q, val, base + QUADSPI_TBDR);
+> +	}
+> +
+> +	if (needs_fill_txfifo(q)) {
+> +		for (i =3D op->data.nbytes; i < 16; i +=3D 4)
+> +			qspi_writel(q, 0, base + QUADSPI_TBDR);
+> +	}
+> +}
+> +
+> +static void fsl_qspi_read_rxfifo(struct fsl_qspi *q,
+> +			  const struct spi_mem_op *op)
+> +{
+> +	void __iomem *base =3D q->iobase;
+> +	int i;
+> +	u8 *buf =3D op->data.buf.in;
+> +	u32 val;
+> +
+> +	for (i =3D 0; i < ALIGN_DOWN(op->data.nbytes, 4); i +=3D 4) {
+> +		val =3D qspi_readl(q, base + QUADSPI_RBDR(i / 4));
+> +		val =3D fsl_qspi_endian_xchg(q, val);
+> +		memcpy(buf + i, &val, 4);
+> +	}
+> +
+> +	if (i < op->data.nbytes) {
+> +		val =3D qspi_readl(q, base + QUADSPI_RBDR(i / 4));
+> +		val =3D fsl_qspi_endian_xchg(q, val);
+> +		memcpy(buf + i, &val, op->data.nbytes - i);
+> +	}
+> +}
+> +
+> +static int fsl_qspi_do_op(struct fsl_qspi *q, const struct spi_mem_op
+> +*op) {
+> +	void __iomem *base =3D q->iobase;
+> +	int err =3D 0;
+> +
+> +	init_completion(&q->c);
+> +
+> +	/*
+> +	 * Always start the sequence at the same index since we update
+> +	 * the LUT at each exec_op() call. And also specify the DATA
+> +	 * length, since it's has not been specified in the LUT.
+> +	 */
+> +	qspi_writel(q, op->data.nbytes | QUADSPI_IPCR_SEQID(SEQID_LUT),
+> +		    base + QUADSPI_IPCR);
+> +
+> +	/* Wait for the interrupt. */
+> +	if (!wait_for_completion_timeout(&q->c, msecs_to_jiffies(1000)))
+> +		err =3D -ETIMEDOUT;
+> +
+> +	if (!err && op->data.nbytes && op->data.dir =3D=3D SPI_MEM_DATA_IN)
+> +		fsl_qspi_read_rxfifo(q, op);
+> +
+> +	return err;
+> +}
+> +
+> +static int fsl_qspi_readl_poll_tout(struct fsl_qspi *q, void __iomem *ba=
+se,
+> +				    u32 mask, u32 delay_us, u32 timeout_us) {
+> +	u32 reg;
+> +
+> +	if (!q->devtype_data->little_endian)
+> +		mask =3D (u32)cpu_to_be32(mask);
+> +
 
-Thanks.
+reg is being used as an un-initialized variable, didn't it needs to be init=
+ialized with some proper value?
 
+> +	return readl_poll_timeout(base, reg, !(reg & mask), delay_us,
+> +				  timeout_us);
+> +}
+> +
+
+--
+Regards
+Yogesh Gaur.
+
+[...]
 
