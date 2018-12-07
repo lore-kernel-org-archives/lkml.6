@@ -2,305 +2,126 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FFC7C65BAF
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 18:21:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A5C7C64EB1
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 18:21:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 07A162083D
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 18:21:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RSbcxYmF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 07A162083D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id DEC5F20868
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 18:21:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DEC5F20868
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726231AbeLGSVx (ORCPT
+        id S1726275AbeLGSV5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 13:21:53 -0500
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:44282 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726115AbeLGSVw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 13:21:52 -0500
-Received: by mail-ot1-f67.google.com with SMTP id f18so4628720otl.11;
-        Fri, 07 Dec 2018 10:21:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=1Y2yo8OsiWnbY72nFqwYgUkTxSavntzX+ongNwc3v8A=;
-        b=RSbcxYmFItEgVw388atFXxpObE5BfVcAHi2W655GIKuRaDAIhndbyirEjg5e0EeMYG
-         gWD8i/CbkdOUcFNpDeu22RkqrbB8yQVJdih1pqVwIZlkwzRhKEOEx6V7pbGIzjvOG8/A
-         rfsbvPbIUKi/gWGe5Q9cUvTsLs0EzG7hXQizD2QtmBWg21Qgq/16b+a72fxICkGxjgY0
-         RD9inU1LyoivUNot86YCCSxR0M5dyos+3DyfRiVCaeS5V0v4bvz9yJztYlPbgPMTiIuR
-         qxmIqQmBc6VTUxLxKemdVQnCGm9qOz4WK3lG5dTvZkBulRrsYE7Y1Cw8q7zqgAkWE6H8
-         dfag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=1Y2yo8OsiWnbY72nFqwYgUkTxSavntzX+ongNwc3v8A=;
-        b=I1ewV/Zipc+YGgDcKrtSTcuEQxQyMgzKltTH7N4FoihBIGCXOaWHeLRaS36jGqnIb4
-         iz2Nct6YRXmxCc/trB/VNRnSEcxzBdOKAKFsAl09FVz2PEK5oZQRgReT8TnfAB7QG0et
-         hFIgOThS8XPSeFLNfnLIdR+XnEGN9tATu58um0e5FSHqWvagPB2UHUVRcxTp3gYbttvm
-         LnF641nkpRyrsmOqUvnX6bDOpAvSVIGHmzKEVnb7ng/Izh+BElzq/cDwkTrjq0Rna+m1
-         tL2LIaHtqnTgXkyxzuCZhKGdtQWchmuVbPhGWaasjRByPY7RzY3qmJ5wCL6uUK0+3ERT
-         MjIA==
-X-Gm-Message-State: AA+aEWafcW3CzliXDqZmKNbItzcZwioikoCNhfRpTX1DvftFm7AXsPAC
-        8iT0YZnQZUD8DI4PyJAAKws=
-X-Google-Smtp-Source: AFSGD/XrDvam8AiPx3M0rT6wq2oPa5vQoxjxDzsEakKG6nwrxiXpEn8H5W0AxMWptPHRB2zL/gMTmA==
-X-Received: by 2002:a9d:628:: with SMTP id 37mr2233414otn.58.1544206911121;
-        Fri, 07 Dec 2018 10:21:51 -0800 (PST)
-Received: from nuclearis2-1.lan (c-98-195-139-126.hsd1.tx.comcast.net. [98.195.139.126])
-        by smtp.gmail.com with ESMTPSA id k207sm2348427oih.58.2018.12.07.10.21.49
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 07 Dec 2018 10:21:50 -0800 (PST)
-From:   Alexandru Gagniuc <mr.nuke.me@gmail.com>
-To:     helgaas@kernel.org
-Cc:     alex_gagniuc@dellteam.com, Austin.Bolen@dell.com,
-        Shyam.Iyer@dell.com, Alexandru Gagniuc <mr.nuke.me@gmail.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Keith Busch <keith.busch@intel.com>,
-        Oza Pawandeep <poza@codeaurora.org>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Frederick Lawler <fred@fredlawl.com>,
-        Lukas Wunner <lukas@wunner.de>, linux-kernel@vger.kernel.org,
-        linux-pci@vger.kernel.org
-Subject: [PATCH v2] PCI: pciehp: Report degraded links via link bandwidth notification
-Date:   Fri,  7 Dec 2018 12:20:00 -0600
-Message-Id: <20181207182021.16344-1-mr.nuke.me@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181129230454.GF178809@google.com>
-References: <20181129230454.GF178809@google.com>
+        Fri, 7 Dec 2018 13:21:57 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:51402 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726115AbeLGSV4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Dec 2018 13:21:56 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9B968EBD;
+        Fri,  7 Dec 2018 10:21:55 -0800 (PST)
+Received: from [10.1.196.62] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 82F803F5AF;
+        Fri,  7 Dec 2018 10:21:53 -0800 (PST)
+Subject: Re: [RFC PATCH v3 4/4] arm64: dts: add msm8996 compatible to gicv3
+To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc:     sudeep.holla@arm.com, tglx@linutronix.de, jason@lakedaemon.net,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        rnayak@codeaurora.org, sboyd@kernel.org, srini@kernel.org,
+        bjorn.andersson@linaro.org, nicolas.dechesne@linaro.org,
+        ctatlor97@gmail.com, vkoul@kernel.org
+References: <20181112103340.24702-1-srinivas.kandagatla@linaro.org>
+ <20181112103340.24702-5-srinivas.kandagatla@linaro.org>
+From:   Marc Zyngier <marc.zyngier@arm.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=marc.zyngier@arm.com; prefer-encrypt=mutual; keydata=
+ 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
+Organization: ARM Ltd
+Message-ID: <47d949da-5e73-8cd9-4446-6e7a4af7f856@arm.com>
+Date:   Fri, 7 Dec 2018 18:21:52 +0000
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
+MIME-Version: 1.0
+In-Reply-To: <20181112103340.24702-5-srinivas.kandagatla@linaro.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A warning is generated when a PCIe device is probed with a degraded
-link, but there was no similar mechanism to warn when the link becomes
-degraded after probing. The Link Bandwidth Notification provides this
-mechanism.
+On 12/11/2018 10:33, Srinivas Kandagatla wrote:
+> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 
-Use the link bandwidth notification interrupt to detect bandwidth
-changes, and rescan the bandwidth, looking for the weakest point. This
-is the same logic used in probe().
+Please write a commit log.
 
-Signed-off-by: Alexandru Gagniuc <mr.nuke.me@gmail.com>
----
-Changes since v1:
- * Layer on top of the pcie port service drivers, instead of hotplug service.
+	M.
 
-This patch needs to be applied on top of:
-	PCI: Add missing include to drivers/pci.h
-
-Anticipated FAQ:
-
-Q: Why is this unconditionally compiled in?
-A: The symmetrical check in pci probe() is also always compiled in.
-
-Q: Why call module_init() instead of adding a call in pcie_init_services() ?
-A: A call in pcie_init_services() also requires a prototype in portdrv.h, a
-non-static implementation in bw_notification.c. Using module_init() is
-functionally equivalent, and takes less code.
-
-Q: Why print only on degraded links and not when a link is back to full speed?
-For symmetry with PCI probe(). Although I see a benefit in conveying that a
-link is back to full speed, I expect this to be extremely rare. Secondary bus
-reset is usually needed to retrain at full bandwidth.
+> ---
+>  arch/arm64/boot/dts/qcom/msm8996.dtsi | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/msm8996.dtsi b/arch/arm64/boot/dts/qcom/msm8996.dtsi
+> index 16c3fc0f4e69..e38da221f9a9 100644
+> --- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
+> @@ -902,7 +902,7 @@
+>  		};
+>  
+>  		intc: interrupt-controller@9bc0000 {
+> -			compatible = "arm,gic-v3";
+> +			compatible = "qcom,msm8996-gic-v3", "arm,gic-v3";
+>  			#interrupt-cells = <3>;
+>  			interrupt-controller;
+>  			#redistributor-regions = <1>;
+> 
 
 
- drivers/pci/pcie/Makefile          |   1 +
- drivers/pci/pcie/bw_notification.c | 107 +++++++++++++++++++++++++++++
- drivers/pci/pcie/portdrv.h         |   4 +-
- drivers/pci/pcie/portdrv_core.c    |  14 ++--
- 4 files changed, 121 insertions(+), 5 deletions(-)
- create mode 100644 drivers/pci/pcie/bw_notification.c
-
-diff --git a/drivers/pci/pcie/Makefile b/drivers/pci/pcie/Makefile
-index ab514083d5d4..f1d7bc1e5efa 100644
---- a/drivers/pci/pcie/Makefile
-+++ b/drivers/pci/pcie/Makefile
-@@ -3,6 +3,7 @@
- # Makefile for PCI Express features and port driver
- 
- pcieportdrv-y			:= portdrv_core.o portdrv_pci.o err.o
-+pcieportdrv-y			+= bw_notification.o
- 
- obj-$(CONFIG_PCIEPORTBUS)	+= pcieportdrv.o
- 
-diff --git a/drivers/pci/pcie/bw_notification.c b/drivers/pci/pcie/bw_notification.c
-new file mode 100644
-index 000000000000..64391ea9a172
---- /dev/null
-+++ b/drivers/pci/pcie/bw_notification.c
-@@ -0,0 +1,107 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+/*
-+ * PCI Express Bandwidth notification services driver
-+ * Author: Alexandru Gagniuc <mr.nuke.me@gmail.com>
-+ *
-+ * Copyright (C) 2018, Dell Inc
-+ *
-+ * The PCIe bandwidth notification provides a way to notify the operating system
-+ * when the link width or data rate changes. This capability is required for all
-+ * root ports and downstream ports supporting links wider than x1 and/or
-+ * multiple link speeds.
-+ *
-+ * This service port driver hooks into the bandwidth notification interrupt and
-+ * warns when links become degraded in operation.
-+ */
-+
-+#include <linux/module.h>
-+
-+#include "../pci.h"
-+#include "portdrv.h"
-+
-+static bool pcie_link_bandwidth_notification_supported(struct pci_dev *dev)
-+{
-+	int ret;
-+	u32 lnk_cap;
-+
-+	ret = pcie_capability_read_dword(dev, PCI_EXP_LNKCAP, &lnk_cap);
-+	return (ret == PCIBIOS_SUCCESSFUL) && (lnk_cap & PCI_EXP_LNKCAP_LBNC);
-+}
-+
-+static void pcie_enable_link_bandwidth_notification(struct pci_dev *dev)
-+{
-+	u16 lnk_ctl;
-+
-+	pcie_capability_read_word(dev, PCI_EXP_LNKCTL, &lnk_ctl);
-+	lnk_ctl |= PCI_EXP_LNKCTL_LBMIE;
-+	pcie_capability_write_word(dev, PCI_EXP_LNKCTL, lnk_ctl);
-+}
-+
-+static void pcie_disable_link_bandwidth_notification(struct pci_dev *dev)
-+{
-+	u16 lnk_ctl;
-+
-+	pcie_capability_read_word(dev, PCI_EXP_LNKCTL, &lnk_ctl);
-+	lnk_ctl &= ~PCI_EXP_LNKCTL_LBMIE;
-+	pcie_capability_write_word(dev, PCI_EXP_LNKCTL, lnk_ctl);
-+}
-+
-+static irqreturn_t pcie_bw_notification_irq(int irq, void *context)
-+{
-+	struct pcie_device *srv = context;
-+	struct pci_dev *port = srv->port;
-+	struct pci_dev *dev;
-+	u16 link_status, events;
-+	int ret;
-+
-+	ret = pcie_capability_read_word(port, PCI_EXP_LNKSTA, &link_status);
-+	events = link_status & PCI_EXP_LNKSTA_LBMS;
-+
-+	if (!events || ret != PCIBIOS_SUCCESSFUL)
-+		return IRQ_NONE;
-+
-+	/* Print status from upstream link partner, not this downstream port. */
-+	list_for_each_entry(dev, &port->subordinate->devices, bus_list)
-+		__pcie_print_link_status(dev, false);
-+
-+	pcie_capability_write_word(port, PCI_EXP_LNKSTA, events);
-+	return IRQ_HANDLED;
-+}
-+
-+static int pcie_bandwidth_notification_probe(struct pcie_device *srv)
-+{
-+	int ret;
-+
-+	/* Single-width or single-speed ports do not have to support this. */
-+	if (!pcie_link_bandwidth_notification_supported(srv->port))
-+		return -ENODEV;
-+
-+	ret = devm_request_irq(&srv->device, srv->irq, pcie_bw_notification_irq,
-+			       IRQF_SHARED, "PCIe BW notif", srv);
-+	if (ret)
-+		return ret;
-+
-+	pcie_enable_link_bandwidth_notification(srv->port);
-+
-+	return 0;
-+}
-+
-+static void pcie_bandwidth_notification_remove(struct pcie_device *srv)
-+{
-+	pcie_disable_link_bandwidth_notification(srv->port);
-+}
-+
-+static struct pcie_port_service_driver pcie_bandwidth_notification_driver = {
-+	.name		= "pcie_bw_notification",
-+	.port_type	= PCI_EXP_TYPE_DOWNSTREAM,
-+	.service	= PCIE_PORT_SERVICE_BwNOTIF,
-+	.probe		= pcie_bandwidth_notification_probe,
-+	.remove		= pcie_bandwidth_notification_remove,
-+};
-+
-+static int __init pcie_bandwidth_notification_service_init(void)
-+{
-+	return pcie_port_service_register(&pcie_bandwidth_notification_driver);
-+}
-+
-+module_init(pcie_bandwidth_notification_service_init);
-diff --git a/drivers/pci/pcie/portdrv.h b/drivers/pci/pcie/portdrv.h
-index e495f04394d0..46652469ffaa 100644
---- a/drivers/pci/pcie/portdrv.h
-+++ b/drivers/pci/pcie/portdrv.h
-@@ -20,8 +20,10 @@
- #define PCIE_PORT_SERVICE_HP		(1 << PCIE_PORT_SERVICE_HP_SHIFT)
- #define PCIE_PORT_SERVICE_DPC_SHIFT	3	/* Downstream Port Containment */
- #define PCIE_PORT_SERVICE_DPC		(1 << PCIE_PORT_SERVICE_DPC_SHIFT)
-+#define PCIE_PORT_SERVICE_BWNOTIF_SHIFT	4	/* Bandwidth notification */
-+#define PCIE_PORT_SERVICE_BwNOTIF	(1 << PCIE_PORT_SERVICE_BWNOTIF_SHIFT)
- 
--#define PCIE_PORT_DEVICE_MAXSERVICES   4
-+#define PCIE_PORT_DEVICE_MAXSERVICES   5
- 
- #ifdef CONFIG_PCIEAER
- int pcie_aer_init(void);
-diff --git a/drivers/pci/pcie/portdrv_core.c b/drivers/pci/pcie/portdrv_core.c
-index f458ac9cb70c..86455ff7ced9 100644
---- a/drivers/pci/pcie/portdrv_core.c
-+++ b/drivers/pci/pcie/portdrv_core.c
-@@ -99,7 +99,7 @@ static int pcie_message_numbers(struct pci_dev *dev, int mask,
-  */
- static int pcie_port_enable_irq_vec(struct pci_dev *dev, int *irqs, int mask)
- {
--	int nr_entries, nvec;
-+	int nr_entries, nvec, pcie_irq;
- 	u32 pme = 0, aer = 0, dpc = 0;
- 
- 	/* Allocate the maximum possible number of MSI/MSI-X vectors */
-@@ -136,9 +136,12 @@ static int pcie_port_enable_irq_vec(struct pci_dev *dev, int *irqs, int mask)
- 	}
- 
- 	/* PME and hotplug share an MSI/MSI-X vector */
--	if (mask & (PCIE_PORT_SERVICE_PME | PCIE_PORT_SERVICE_HP)) {
--		irqs[PCIE_PORT_SERVICE_PME_SHIFT] = pci_irq_vector(dev, pme);
--		irqs[PCIE_PORT_SERVICE_HP_SHIFT] = pci_irq_vector(dev, pme);
-+	if (mask & (PCIE_PORT_SERVICE_PME | PCIE_PORT_SERVICE_HP |
-+		    PCIE_PORT_SERVICE_BwNOTIF)) {
-+		pcie_irq = pci_irq_vector(dev, pme);
-+		irqs[PCIE_PORT_SERVICE_PME_SHIFT] = pcie_irq;
-+		irqs[PCIE_PORT_SERVICE_HP_SHIFT] = pcie_irq;
-+		irqs[PCIE_PORT_SERVICE_BWNOTIF_SHIFT] = pcie_irq;
- 	}
- 
- 	if (mask & PCIE_PORT_SERVICE_AER)
-@@ -250,6 +253,9 @@ static int get_port_device_capability(struct pci_dev *dev)
- 	    pci_aer_available() && services & PCIE_PORT_SERVICE_AER)
- 		services |= PCIE_PORT_SERVICE_DPC;
- 
-+	if (pci_pcie_type(dev) == PCI_EXP_TYPE_DOWNSTREAM)
-+		services |= PCIE_PORT_SERVICE_BwNOTIF;
-+
- 	return services;
- }
- 
 -- 
-2.17.1
-
+Jazz is not dead. It just smells funny...
