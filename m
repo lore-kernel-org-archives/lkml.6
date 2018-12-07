@@ -2,153 +2,138 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59225C07E85
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 16:29:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7A53C64EB1
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 16:31:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2008220837
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 16:29:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 848DF20837
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 16:31:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="QqWh8jvD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2008220837
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sifive.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QURjiv/J"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 848DF20837
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726126AbeLGQ30 (ORCPT
+        id S1726131AbeLGQbT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 11:29:26 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:44570 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726034AbeLGQ3Z (ORCPT
+        Fri, 7 Dec 2018 11:31:19 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:36672 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726018AbeLGQbT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 11:29:25 -0500
-Received: by mail-pl1-f196.google.com with SMTP id k8so2045343pls.11
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Dec 2018 08:29:25 -0800 (PST)
+        Fri, 7 Dec 2018 11:31:19 -0500
+Received: by mail-wr1-f65.google.com with SMTP id u3so4393879wrs.3;
+        Fri, 07 Dec 2018 08:31:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
-        h=date:subject:in-reply-to:cc:from:to:message-id:mime-version
-         :content-transfer-encoding;
-        bh=X2pu8p3WZy3f+AE9epItTKGjPmNG8+ItYYTRAcx7W+g=;
-        b=QqWh8jvDePAOhofuVQh0swZUyA8wlLQxcP6G07/2c8ZcESSxdI9GUqiDoXsymf8GQl
-         rMN5a73555bUpsR0RbLU2GK7F2K9gGwnOwB4Kt3ZjdV3vb2t9Y8FBrmjFQlsCh1r9Cec
-         vokBs5WxtgwVmFlt1gzu23Anf6ODsjc08PotZzDOn588ukXJYHrd7MocKk7z+m5kxeh7
-         tmg1ZdxjC6EhHhP1TxKTjK+/ROTYEoGJta3Z9XdlGuQjtiknQWKbGpi1Fgk3FVfzh7zX
-         +U0oHPhdmIpRjbhUAxLKZP+UHBrVnTcMxLffnOtc/5GdETNFyp3YMr+P9XJBrcMLytud
-         YnFw==
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=teCa7RVUOAmvKrf5c7GaoQcfS9eegjTNzbq90mGFt78=;
+        b=QURjiv/JGYL0XOneHDa7CqmgSBHb7SwULhz3iOSzj3AloTCqc0swf5TiNEkahIR5+O
+         Qc5nmEfhO8IyfXsaEER0aReo1jouxbI4CM8g2r8/C3wJOaVhxG7Kd1+PQH+utdFqX80j
+         GortzKj7WlHStGch9rh9ct864Zkr5TmPl4bA2+39b4Ycxo3h1SS2oZ+x0/AEDZBbZBop
+         RNcEHyMetwjsr9scGOtOV2twDNVEtiXTm7HjYawFvjrp4LvlmcJk0B+Uq64JbCqtIz2V
+         J+GJA8UsOIgIGrDt3FTJ+c/v8hz1WZet2XzYmYnoqM4Ww/FByLB/KN+1qxGDXjgbqaA/
+         NQYQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:subject:in-reply-to:cc:from:to:message-id
-         :mime-version:content-transfer-encoding;
-        bh=X2pu8p3WZy3f+AE9epItTKGjPmNG8+ItYYTRAcx7W+g=;
-        b=p7Ns+rYQ4sUXanoU3+7QCRFKRsKyNkatVQ1pZ/7KdAJNc5L9WonPYrpfOEspKtIg/O
-         w4nHjRVDpHy9cXcC/IXIN4hhafPLmon6oE5aMQ8MGKN6TyLQwFwT5cLsAvZNA72LeRd+
-         O0yo5GUQ+K2EbP9foo6+tsObWb0/GNVlTVyl3js3rKzxMZ2T1v21cJQhfIBZiH05N1nj
-         9EVYWhuKuWRl/pn4hSz09JM7Snqzissg2PhORTYSvf4N7m9UmowPHTuWPnMsAVstRAvw
-         VKEcJJ+RpJE+ukAaE5WHmxyZ39m43FX8z1ouffd8+eegVypvnyKqPCfiCnhQ3vb3A9WP
-         LBZQ==
-X-Gm-Message-State: AA+aEWbqqaMC+2oHLuoYC5EX8IBR94XyHqmazmdYoPkZWqhwe/QoYvor
-        TirulygkiUbAs1BXFUNJspydzWYS120=
-X-Google-Smtp-Source: AFSGD/VPQK3YjMW5KcYamItmXPt3ZkU3p4hQQuC7lNu6PLyR5sqQ/VdrhMHUbVoUIHb/ETybuLhMrw==
-X-Received: by 2002:a17:902:a6:: with SMTP id a35mr2734632pla.201.1544200164102;
-        Fri, 07 Dec 2018 08:29:24 -0800 (PST)
-Received: from localhost ([216.3.10.7])
-        by smtp.gmail.com with ESMTPSA id g2sm4750135pfi.95.2018.12.07.08.29.22
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=teCa7RVUOAmvKrf5c7GaoQcfS9eegjTNzbq90mGFt78=;
+        b=S8D79MXR5uAq6lUhnLxT7gg/WQRNiTCNCMn5m5fmkr/xXq2mU8GyKK6LePnMawn7S4
+         2hVyTh6SPyJWe+zll4U3BPalFxOBNooYtJzVZG/B+eHeBJV6m5OfTCDlf3CBk8VLAOgd
+         rihY5ThW/CWdXgBabZ72MEej5/3EOdrVnwdh36LO02Tx6ruu1t7QzDkEoFsjxWJKHBke
+         QWva4r/hideMGcQlcj12YJTQXzby39s98iQH49O55HsugkzNXkQxYn5NOAArOz2i6oFj
+         L2EV00kjgBQv1BFr6HiwC6sHavYEQJl0F6ytrNZCi7icsLWM3/FxgeJBBoXRVkhF/9W/
+         64zA==
+X-Gm-Message-State: AA+aEWYNozAdPBFejIh3vjbbf/lHMx1fhnScY81UDRCEI+bsurPESDOy
+        jVsQwHrKAJTce62m9aP0lZ3IhJrT
+X-Google-Smtp-Source: AFSGD/XD7FDjNf5BoEdGl5R78oT7jWEqS+Jdf3zqFH3+Vjuy4H/41RZYwTZ8SZJ7mXAOeKIyO12+Dg==
+X-Received: by 2002:adf:f984:: with SMTP id f4mr2413307wrr.234.1544200275999;
+        Fri, 07 Dec 2018 08:31:15 -0800 (PST)
+Received: from [192.168.1.4] (ip-86-49-110-70.net.upcbroadband.cz. [86.49.110.70])
+        by smtp.gmail.com with ESMTPSA id p74sm5525772wmd.29.2018.12.07.08.31.14
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 07 Dec 2018 08:29:23 -0800 (PST)
-Date:   Fri, 07 Dec 2018 08:29:23 -0800 (PST)
-X-Google-Original-Date: Fri, 07 Dec 2018 08:23:54 PST (-0800)
-Subject:     Re: [PATCH 1/4] dt-bindings: Correct RISC-V's timebase-frequency
-In-Reply-To: <1543870651-16669-2-git-send-email-atish.patra@wdc.com>
-CC:     linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
-        aou@eecs.berkeley.edu, atish.patra@wdc.com,
-        daniel.lezcano@linaro.org, devicetree@vger.kernel.org,
-        dmitriy@oss-tech.org, linux-riscv@lists.infradead.org,
-        mark.rutland@arm.com, robh+dt@kernel.org, tglx@linutronix.de,
-        anup@brainfault.org, Damien.LeMoal@wdc.com
-From:   Palmer Dabbelt <palmer@sifive.com>
-To:     atish.patra@wdc.com
-Message-ID: <mhng-a15b587e-3bfe-4568-8262-dc421585bc36@palmer-si-x1c4>
-Mime-Version: 1.0 (MHng)
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+        Fri, 07 Dec 2018 08:31:15 -0800 (PST)
+Subject: Re: [PATCH v3 2/2] dt-binding: spi: Document Renesas R-Car Gen3 RPC
+ controller bindings
+To:     Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Mason Yang <masonccyang@mxic.com.tw>, broonie@kernel.org,
+        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
+        boris.brezillon@bootlin.com, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     juliensu@mxic.com.tw, Simon Horman <horms@verge.net.au>,
+        zhengxunli@mxic.com.tw
+References: <1544181199-3373-1-git-send-email-masonccyang@mxic.com.tw>
+ <1544181199-3373-3-git-send-email-masonccyang@mxic.com.tw>
+ <b89fb13a-4fe2-d3ca-7e12-7ac6b11455f6@cogentembedded.com>
+From:   Marek Vasut <marek.vasut@gmail.com>
+Message-ID: <8564903b-b162-a451-296e-be3ec199e248@gmail.com>
+Date:   Fri, 7 Dec 2018 17:31:14 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <b89fb13a-4fe2-d3ca-7e12-7ac6b11455f6@cogentembedded.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 03 Dec 2018 12:57:28 PST (-0800), atish.patra@wdc.com wrote:
-> From: Palmer Dabbelt <palmer@sifive.com>
->
-> Someone must have read the device tree specification incorrectly,
-> because we were putting timebase-frequency in the wrong place.  This
-> corrects the issue, moving it from
->
-> / {
->         cpus {
->                 timebase-frequency = X;
->         }
-> }
->
-> to
->
-> / {
->         cpus {
->                 cpu@0 {
->                         timebase-frequency = X;
->                 }
->         }
-> }
->
-> This is great, because the timer's frequency should really be a per-cpu
-> quantity on RISC-V systems since there's a timer per CPU.  This should
-> lead to some cleanups in our timer driver.
+On 12/07/2018 05:03 PM, Sergei Shtylyov wrote:
+> Hello!
+> 
+> On 12/07/2018 02:13 PM, Mason Yang wrote:
+> 
+>> Document the bindings used by the Renesas R-Car Gen3 RPC controller.
+>>
+>> Signed-off-by: Mason Yang <masonccyang@mxic.com.tw>
+>> ---
+>>  .../devicetree/bindings/spi/spi-renesas-rpc.txt    | 38 ++++++++++++++++++++++
+>>  1 file changed, 38 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt
+>>
+>> diff --git a/Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt b/Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt
+>> new file mode 100644
+>> index 0000000..a191f70
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt
+>> @@ -0,0 +1,38 @@
+>> +Renesas R-Car Gen3 RPC controller Device Tree Bindings
+>> +------------------------------------------------------
+>> +
+>> +Required properties:
+>> +- compatible: should be "renesas,r8a77995-rpc"
+>> +- #address-cells: should be 1
+>> +- #size-cells: should be 0
+>> +- reg: should contain 2 entries, one for the registers and one for the direct
+>> +       mapping area
+>> +- reg-names: should contain "rpc_regs" and "dirmap"
+> 
+>    Please drop this "rpc_" thing, I think "regs" should be enough.
+> 
+>> +- interrupts: interrupt line connected to the RPC controller
+>> +- clock-names: should contain "clk_rpc"
+> 
+>    Please drop this "clk_" thing. BTW, what's with the RPCD2 clock?
+> 
+>> +- clocks: should contain 1 entries for the module's clock
+>> +- rpc-mode: should contain "rpc-spi-flash" for rpc spi mode or
+>> +			   "rpc-hyperflash" for rpc hyerflash mode.
+> 
+>    I think the prop should be called "renesas,rpc-mode" and the values should be
+> just "spi" and "hyperflash". 
 
-I think I was actually wrong here: the top version is preferred if 
-timebase-frequency is the same between all CPUs, while the bottom is if it's 
-different.
+Like I said before, you can determine the mode from the subnode attached
+to the controller, we don't need special prop for that.
 
-Updating the documentation is still good, because it matches the hardware, but 
-the commit message should be a bit less assertive... :)
-
-> Signed-off-by: Palmer Dabbelt <palmer@sifive.com>
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> Reviewed-by: Rob Herring <robh@kernel.org>
-> ---
->  Documentation/devicetree/bindings/riscv/cpus.txt | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
->
-> diff --git a/Documentation/devicetree/bindings/riscv/cpus.txt b/Documentation/devicetree/bindings/riscv/cpus.txt
-> index adf7b7af..b0b038d6 100644
-> --- a/Documentation/devicetree/bindings/riscv/cpus.txt
-> +++ b/Documentation/devicetree/bindings/riscv/cpus.txt
-> @@ -93,9 +93,9 @@ Linux is allowed to run on.
->          cpus {
->                  #address-cells = <1>;
->                  #size-cells = <0>;
-> -                timebase-frequency = <1000000>;
->                  cpu@0 {
->                          clock-frequency = <1600000000>;
-> +                        timebase-frequency = <1000000>;
->                          compatible = "sifive,rocket0", "riscv";
->                          device_type = "cpu";
->                          i-cache-block-size = <64>;
-> @@ -113,6 +113,7 @@ Linux is allowed to run on.
->                  };
->                  cpu@1 {
->                          clock-frequency = <1600000000>;
-> +                        timebase-frequency = <1000000>;
->                          compatible = "sifive,rocket0", "riscv";
->                          d-cache-block-size = <64>;
->                          d-cache-sets = <64>;
-> @@ -145,6 +146,7 @@ Example: Spike ISA Simulator with 1 Hart
->  This device tree matches the Spike ISA golden model as run with `spike -p1`.
->
->          cpus {
-> +                timebase-frequency = <1000000>;
->                  cpu@0 {
->                          device_type = "cpu";
->                          reg = <0x00000000>;
+-- 
+Best regards,
+Marek Vasut
