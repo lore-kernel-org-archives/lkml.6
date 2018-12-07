@@ -4,68 +4,67 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,
-	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
+	T_DKIMWL_WL_HIGH autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD2EBC64EB1
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 18:35:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FDF6C07E85
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 18:35:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6E9CA20672
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 18:35:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D5B3A20868
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 18:35:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544207715;
-	bh=7kUmXPjWMNLZrT0S4ZvPcTl8RBG3n8vFUulPe3HBqts=;
+	s=default; t=1544207720;
+	bh=tu4YAEX4IERyIg+PTF8ZajZ0J1XI/D0LIumr/49tOzc=;
 	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
-	b=Vfs1j6AkdLNFbzMxQZdcAANSX4s5TtaNq0dRBRwf5BleBTyNKe23s1btt4N8nrNru
-	 8cvFdnc4WC1kI9rvZVF0OXxpsB3ZvuJAqy7NIREgYDBdYx7eKMrn179nAwwb6VsZ2/
-	 ITuaJHqeyXJMROw5TnQCYAfjDPi/UwqaY2OnM/q8=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E9CA20672
+	b=G+1xukG3DzCoQ7D5kesAqYtkMPbWNkRX/aECixGkizlaL7lijHJx43Y8MozSIhaYJ
+	 KNULQeOxhy459O52pbndrmNj6VrEz4zVxajgSM0D+ZHak95aXeZ0q60wuh1uH5SQCg
+	 p5fNmqi1gfpo33gcbyXcSYRu0Zq21195pl7GExbs=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5B3A20868
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726377AbeLGSfO (ORCPT
+        id S1726341AbeLGSfC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 13:35:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54972 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726342AbeLGSfC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 7 Dec 2018 13:35:02 -0500
-Subject: Re: [PULL REQUEST] i2c for 4.20
+Received: from mail.kernel.org ([198.145.29.99]:54928 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726061AbeLGSfC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Dec 2018 13:35:02 -0500
+Subject: Re: [GIT PULL] Please pull NFS client changes
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544207702;
-        bh=7kUmXPjWMNLZrT0S4ZvPcTl8RBG3n8vFUulPe3HBqts=;
+        s=default; t=1544207701;
+        bh=tu4YAEX4IERyIg+PTF8ZajZ0J1XI/D0LIumr/49tOzc=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=lWz8ZXwkO/4+5yXgSlO79VvuqFdpGm/hDL3QEeVCO9GQVf3kHlFlXFudgsUxkfCNa
-         xJ44ZNVg5e7ZF0/h50HwhEUJiRYIc1tbHlNiQRUeV7G0bMIvOBUAZjHLyevn0EIe2X
-         0ItrmWGNr6+5Ttk3St9ocMcotU16p3qPEqS6lKug=
+        b=QLrf1GsEAdMDoC+nNX9vD+VHaXRgY4YwmiJ57oXdR1MC8mAlqd9MbTRELuEwqNeEv
+         Valq9W9gs+lWj11zn3JAiBdBBbH8TTC5EvPU52XusVyrLVZ1Sr/iAPz7p9cFMS0Src
+         /JJCbfb6xZ2OXLHi7J1eh7n5azWZbjgNWVYFkjek=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20181207130848.GA2661@kunai>
-References: <20181207130848.GA2661@kunai>
+In-Reply-To: <af690bb605f8366f8b437ca0171edef42fc63e83.camel@hammerspace.com>
+References: <af690bb605f8366f8b437ca0171edef42fc63e83.camel@hammerspace.com>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20181207130848.GA2661@kunai>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git
- i2c/for-current-fixed
-X-PR-Tracked-Commit-Id: ece27a337d42a3197935711997f2880f0957ed7e
+X-PR-Tracked-Message-Id: <af690bb605f8366f8b437ca0171edef42fc63e83.camel@hammerspace.com>
+X-PR-Tracked-Remote: git://git.linux-nfs.org/projects/trondmy/linux-nfs.git
+ tags/nfs-for-4.20-5
+X-PR-Tracked-Commit-Id: 79462857eb547e5d17fc8445b9768615e02dc1cf
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 52f842ccd615564a75ef45f8a0985ff14a0a61ce
-Message-Id: <20181207183502.15805.82304.pr-tracker-bot@pdx-korg-gitolite-1.ci.codeaurora.org>
-Date:   Fri, 07 Dec 2018 18:35:02 +0000
-To:     Wolfram Sang <wsa@the-dreams.de>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Peter Rosin <peda@axentia.se>,
-        Bartosz Golaszewski <brgl@bgdev.pl>
+X-PR-Merge-Commit-Id: 7f80c7325be49db3fb8b5f343f47691b7999fda7
+Message-Id: <20181207183501.15805.51648.pr-tracker-bot@pdx-korg-gitolite-1.ci.codeaurora.org>
+Date:   Fri, 07 Dec 2018 18:35:01 +0000
+To:     Trond Myklebust <trondmy@hammerspace.com>
+Cc:     "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Fri, 7 Dec 2018 14:08:52 +0100:
+The pull request you sent on Thu, 6 Dec 2018 21:55:54 +0000:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git i2c/for-current-fixed
+> git://git.linux-nfs.org/projects/trondmy/linux-nfs.git tags/nfs-for-4.20-5
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/52f842ccd615564a75ef45f8a0985ff14a0a61ce
+https://git.kernel.org/torvalds/c/7f80c7325be49db3fb8b5f343f47691b7999fda7
 
 Thank you!
 
