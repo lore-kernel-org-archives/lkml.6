@@ -2,129 +2,123 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A074AC07E85
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 20:09:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16D2CC07E85
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 20:13:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6CA3B20868
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 20:09:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6CA3B20868
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id CA5312082D
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 20:13:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA5312082D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=windriver.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726099AbeLGUJh (ORCPT
+        id S1726091AbeLGUNI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 15:09:37 -0500
-Received: from mga01.intel.com ([192.55.52.88]:23490 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726008AbeLGUJg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 15:09:36 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Dec 2018 12:09:36 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,327,1539673200"; 
-   d="scan'208";a="107860138"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.154])
-  by fmsmga008.fm.intel.com with ESMTP; 07 Dec 2018 12:09:35 -0800
-Date:   Fri, 7 Dec 2018 12:09:35 -0800
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Andy Lutomirski <luto@amacapital.net>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        X86 ML <x86@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Josh Triplett <josh@joshtriplett.org>,
-        linux-sgx@vger.kernel.org, haitao.huang@linux.intel.com,
-        Jethro Beekman <jethro@fortanix.com>,
-        "Dr. Greg Wettstein" <greg@enjellic.com>
-Subject: Re: [RFC PATCH v2 4/4] x86/vdso: Add __vdso_sgx_enter_enclave() to
- wrap SGX enclave transitions
-Message-ID: <20181207200935.GE10404@linux.intel.com>
-References: <20181206221922.31012-1-sean.j.christopherson@intel.com>
- <20181206221922.31012-5-sean.j.christopherson@intel.com>
- <CALCETrXRJ645=08fyeoMQ949fLB1TvhsgERFVx5mAHdViEjq8Q@mail.gmail.com>
- <20181207165145.GB10404@linux.intel.com>
- <CALCETrVkEW82PzQZhJ5iS849DLY1gbd8YjH5F7P1J7hgjkjiOQ@mail.gmail.com>
- <20181207190257.GC10404@linux.intel.com>
- <EFA99261-BE93-49DA-9A8F-E6FD28069AFC@amacapital.net>
+        Fri, 7 Dec 2018 15:13:08 -0500
+Received: from mail.windriver.com ([147.11.1.11]:61039 "EHLO
+        mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726041AbeLGUNI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Dec 2018 15:13:08 -0500
+Received: from ALA-HCA.corp.ad.wrs.com ([147.11.189.40])
+        by mail.windriver.com (8.15.2/8.15.1) with ESMTPS id wB7KCxXW023103
+        (version=TLSv1 cipher=AES128-SHA bits=128 verify=FAIL);
+        Fri, 7 Dec 2018 12:13:00 -0800 (PST)
+Received: from yow-cube1.wrs.com (128.224.56.98) by ALA-HCA.corp.ad.wrs.com
+ (147.11.189.40) with Microsoft SMTP Server id 14.3.408.0; Fri, 7 Dec 2018
+ 12:12:59 -0800
+From:   Paul Gortmaker <paul.gortmaker@windriver.com>
+To:     Lee Jones <lee.jones@linaro.org>
+CC:     <linux-kernel@vger.kernel.org>,
+        Paul Gortmaker <paul.gortmaker@windriver.com>,
+        Guennadi Liakhovetski <g.liakhovetski@gmx.de>
+Subject: [PATCH 03/18] mfd: as3711: Make it explicitly non-modular
+Date:   Fri, 7 Dec 2018 15:10:50 -0500
+Message-ID: <1544213465-16259-4-git-send-email-paul.gortmaker@windriver.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1544213465-16259-1-git-send-email-paul.gortmaker@windriver.com>
+References: <1544213465-16259-1-git-send-email-paul.gortmaker@windriver.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <EFA99261-BE93-49DA-9A8F-E6FD28069AFC@amacapital.net>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 07, 2018 at 11:23:10AM -0800, Andy Lutomirski wrote:
-> 
-> > On Dec 7, 2018, at 11:02 AM, Sean Christopherson <sean.j.christopherson@intel.com> wrote:
-> > 
-> >> On Fri, Dec 07, 2018 at 09:56:09AM -0800, Andy Lutomirski wrote:
-> >> On Fri, Dec 7, 2018 at 8:51 AM Sean Christopherson
-> >> <sean.j.christopherson@intel.com> wrote:
-> >>> I like that the exit handler allows userspace to trap/panic with the full
-> >>> call stack in place, and in a dedicated path, i.e. outside of the basic
-> >>> enter/exit code.  An exit handler probably doesn't fundamentally change
-> >>> what userspace can do with respect to debugging/reporting, but I think
-> >>> it would actually simplify some userspace implementations, e.g. I'd use
-> >>> it in my tests like so:
-> >>> 
-> >>> long fault_handler(struct sgx_enclave_exit_info *exit_info, void *tcs, void *priv)
-> >>> {
-> >>>        if (exit_info->leaf == SGX_EEXIT)
-> >>>                return 0;
-> >>> 
-> >>>        <report exception and die/hang>
-> >>> }
-> >>> 
-> >> 
-> >> Hmm.  That't not totally silly, although you could accomplish almost
-> >> the same thing by wrapping the vDSO helper in another function.
-> > 
-> > True, but I think there's value in having the option to intercept an
-> > exception at the exact(ish) point of failure, without having to return
-> > up the stack.
-> > 
-> > The enclave has full access to the process' memory space, including the
-> > untrsuted stack.  It's not too far fetched to envision a scenario where
-> > the enclave corrupts the stack even if the enclave isn't intentionally
-> > using the stack, e.g. the host passes in variable that a points at the
-> > stack instead of whatever memory is supposed to be shared between the
-> > enclave and host.  It'd be nice to have the ability to triage something
-> > like that without having to e.g. configure breakpoints on the stack.
-> 
-> Ah, I see. You’re saying that, if the non-enclave stare is corrupted such
-> that RIP  is okay and RSP still points somewhere reasonable but the return
-> address is garbage, then we can at least get to the fault handler and print
-> something?
+The Kconfig currently controlling compilation of this code is:
 
-Yep.  Even for something more subtle like GPR corruption it could dump the
-entire call stack before attempting to return back up.
+drivers/mfd/Kconfig:config MFD_AS3711
+drivers/mfd/Kconfig:    bool "AMS AS3711"
 
-> This only works if the fault handler pointer itself is okay, though, which
-> somewhat limits the usefulness, given that its pointer is quite likely to
-> be on the stack very close to the return address.
+...meaning that it currently is not being built as a module by anyone.
 
-Yeah, it's not a silver bullet by any means, but it does seem useful for at
-least some scenarios.  Even exploding when invoking the handler instead of
-at a random point might prove useful, e.g. "calling my exit handler exploded,
-maybe my enclave corrupted the stack!".
+Lets remove the modular code that is essentially orphaned, so that
+when reading the driver there is no doubt it is builtin-only.
+
+Since module_init was not in use by this code, the init ordering
+remains unchanged with this commit.
+
+We don't replace module.h with init.h since the file already has that.
+
+Also note that MODULE_DEVICE_TABLE is a no-op for non-modular code.
+
+We also delete the MODULE_LICENSE tag etc. since all that information
+is already contained at the top of the file in the comments.
+
+Cc: Lee Jones <lee.jones@linaro.org>
+Cc: Guennadi Liakhovetski <g.liakhovetski@gmx.de>
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+---
+ drivers/mfd/as3711.c | 14 --------------
+ 1 file changed, 14 deletions(-)
+
+diff --git a/drivers/mfd/as3711.c b/drivers/mfd/as3711.c
+index 67b12417585d..7a74a874b93c 100644
+--- a/drivers/mfd/as3711.c
++++ b/drivers/mfd/as3711.c
+@@ -16,7 +16,6 @@
+ #include <linux/kernel.h>
+ #include <linux/mfd/as3711.h>
+ #include <linux/mfd/core.h>
+-#include <linux/module.h>
+ #include <linux/of.h>
+ #include <linux/regmap.h>
+ #include <linux/slab.h>
+@@ -118,7 +117,6 @@ static const struct of_device_id as3711_of_match[] = {
+ 	{.compatible = "ams,as3711",},
+ 	{}
+ };
+-MODULE_DEVICE_TABLE(of, as3711_of_match);
+ #endif
  
-> I really wish the ENCLU instruction had seen fit to preserve some registers.
+ static int as3711_i2c_probe(struct i2c_client *client,
+@@ -202,8 +200,6 @@ static const struct i2c_device_id as3711_i2c_id[] = {
+ 	{}
+ };
+ 
+-MODULE_DEVICE_TABLE(i2c, as3711_i2c_id);
+-
+ static struct i2c_driver as3711_i2c_driver = {
+ 	.driver = {
+ 		   .name = "as3711",
+@@ -219,13 +215,3 @@ static int __init as3711_i2c_init(void)
+ }
+ /* Initialise early */
+ subsys_initcall(as3711_i2c_init);
+-
+-static void __exit as3711_i2c_exit(void)
+-{
+-	i2c_del_driver(&as3711_i2c_driver);
+-}
+-module_exit(as3711_i2c_exit);
+-
+-MODULE_AUTHOR("Guennadi Liakhovetski <g.liakhovetski@gmx.de>");
+-MODULE_DESCRIPTION("AS3711 PMIC driver");
+-MODULE_LICENSE("GPL v2");
+-- 
+2.7.4
 
-Speaking of preserving registers, the asm blob needs to mark RBX as
-clobbered since it's modified for EEXIT.
