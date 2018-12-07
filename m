@@ -2,144 +2,224 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C525C65BAF
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 20:55:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E525BC07E85
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 21:02:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4DEA120892
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 20:55:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="vCxS6gWs"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4DEA120892
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 7FF582083D
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 21:02:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7FF582083D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726143AbeLGUzd (ORCPT
+        id S1726104AbeLGVCg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 15:55:33 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:54286 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726041AbeLGUzc (ORCPT
+        Fri, 7 Dec 2018 16:02:36 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:40584 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726041AbeLGVCf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 15:55:32 -0500
-Received: by mail-wm1-f66.google.com with SMTP id z18so5601618wmc.4
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Dec 2018 12:55:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=WmUGrvOR9rSIC6K10sYyQi7VScVtxTglX2fTId1pmn0=;
-        b=vCxS6gWspPcBBtI/MDrT77TtrAXsckQ3An1/RFPLxncT0+wVMwg8eCTBiZYQr0oyNR
-         fMZ2hUsbV+s6IKCvPeL8q442p+x/qhoLJxwCbOKrMtVwdEgCgjSjdkMVC+rth0kqLIok
-         P9LkV9WQ4etP/sDFuqBoosOncnXCUgAdyaquyyUtcnishtiFuCqBfmMmc5RRrEfcbZ6q
-         A/jqmKvwDZ8a356E0zis5KgD6rhS/Olk9rfKsXLojBaGsOGQRadbFpZcv2TNHxXjBZDT
-         0hCtsSsTCD552wnlItnWg+UnmhCgAcxNdZ+2xuXwd+lC2nNUc6uA0Efdzb1CdZ+crs7Y
-         i1ow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=WmUGrvOR9rSIC6K10sYyQi7VScVtxTglX2fTId1pmn0=;
-        b=aL1CSPt0CQbz8e0FHbR4a9YDVSOBsGBJpAW5A1NY8K1ilA8HdlAWWQHJ8baLFxcRKl
-         9DNZhzZLyzoRB76mATVhR7elpsMlhzFmwDiG8rQ9wk0sIrf9F2tEbyq9UnPevsUXZuZE
-         yzlzIeoTk1jroLOM4hsjyTCYLKxcjSRhAI+BNlrk8ANSPoznUdN2rWUFCfSIWBY5Mdik
-         +Ct2ycwcKyxmsfpRX07cvDeb462SHVvczPnad0F5xLO3lUsPKbR2s897papjuA+0EWtZ
-         2E3kaU9oXsFmzefisyEtm7CTWJ3tD8rlZmivF8D0ar9+67qz5hl0gsKjn/2w5wjxea7w
-         5mIw==
-X-Gm-Message-State: AA+aEWZUUF6Zj/NJGn0Ilby+qP+dfQntymuy5KFtOguq65xDubcdRl8e
-        2yVFuJ07GfA+s/7u0Ox8YxM=
-X-Google-Smtp-Source: AFSGD/XKiFX8uOiF70MARdYLOKnaYIBh/NRoiZY3ddPkAQGQ01ssNSqlfA5xt7oPy/iFqA4yHrA/pQ==
-X-Received: by 2002:a7b:c191:: with SMTP id y17mr3569097wmi.10.1544216129351;
-        Fri, 07 Dec 2018 12:55:29 -0800 (PST)
-Received: from localhost.localdomain ([2a02:8108:85c0:3a84:1919:ecb4:15a4:d6ba])
-        by smtp.gmail.com with ESMTPSA id k128sm4059413wmd.37.2018.12.07.12.55.28
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 07 Dec 2018 12:55:28 -0800 (PST)
-From:   Michael Straube <straube.linux@gmail.com>
-To:     gregkh@linuxfoundation.org
-Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        Michael Straube <straube.linux@gmail.com>
-Subject: [PATCH 2/2] staging: rtl8188eu: reuse Hal_GetChnlGroup88E()
-Date:   Fri,  7 Dec 2018 21:55:15 +0100
-Message-Id: <20181207205515.7290-2-straube.linux@gmail.com>
-X-Mailer: git-send-email 2.19.2
-In-Reply-To: <20181207205515.7290-1-straube.linux@gmail.com>
-References: <20181207205515.7290-1-straube.linux@gmail.com>
+        Fri, 7 Dec 2018 16:02:35 -0500
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wB7KwqiO002095
+        for <linux-kernel@vger.kernel.org>; Fri, 7 Dec 2018 16:02:34 -0500
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2p7x2ddqmv-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Dec 2018 16:02:33 -0500
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
+        Fri, 7 Dec 2018 21:02:32 -0000
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 7 Dec 2018 21:02:28 -0000
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wB7L2Rbu655632
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 7 Dec 2018 21:02:28 GMT
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D59EFA405C;
+        Fri,  7 Dec 2018 21:02:27 +0000 (GMT)
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 26D37A405F;
+        Fri,  7 Dec 2018 21:02:27 +0000 (GMT)
+Received: from rapoport-lnx (unknown [9.148.204.137])
+        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Fri,  7 Dec 2018 21:02:27 +0000 (GMT)
+Date:   Fri, 7 Dec 2018 23:02:25 +0200
+From:   Mike Rapoport <rppt@linux.ibm.com>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Andreas Schwab <schwab@linux-m68k.org>,
+        Michael Schmitz <schmitzmic@gmail.com>,
+        Sam Creasey <sammy@sammy.net>,
+        Greg Ungerer <gerg@linux-m68k.org>,
+        linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] m68k: Fix memblock-related crashes
+References: <20181207165011.31497-1-geert@linux-m68k.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181207165011.31497-1-geert@linux-m68k.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-TM-AS-GCONF: 00
+x-cbid: 18120721-0020-0000-0000-000002F41F4F
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18120721-0021-0000-0000-000021443822
+Message-Id: <20181207210224.GA19067@rapoport-lnx>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-07_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1812070171
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use Hal_GetChnlGroup88E() instead of duplicating it's code
-in get_rx_power_val_by_reg().
+On Fri, Dec 07, 2018 at 05:50:11PM +0100, Geert Uytterhoeven wrote:
+> When running the kernel in Fast RAM on Atari:
+> 
+>     Ignoring memory chunk at 0x0:0xe00000 before the first chunk
+>     ...
+>     Unable to handle kernel NULL pointer dereference at virtual address (ptrval)
+>     Oops: 00000000
+>     Modules linked in:
+>     PC: [<0069dbac>] free_all_bootmem+0x12c/0x186
+>     SR: 2714  SP: (ptrval)  a2: 005e3314
+>     d0: 00000000    d1: 0000000a    d2: 00000e00    d3: 00000000
+>     d4: 005e1fc0    d5: 0000001a    a0: 01000000    a1: 00000000
+>     Process swapper (pid: 0, task=(ptrval))
+>     Frame format=7 eff addr=00000736 ssw=0505 faddr=00000736
+>     wb 1 stat/addr/data: 0000 00000000 00000000
+>     wb 2 stat/addr/data: 0000 00000000 00000000
+>     wb 3 stat/addr/data: 0000 00000736 00000000
+>     push data: 00000000 00000000 00000000 00000000
+>     Stack from 005e1f84:
+>             00000000 0000000a 027d3260 006b5006 00000000 00000000 00000000 00000000
+>             0004f062 0003a220 0069e272 005e1ff8 0000054c 00000000 00e00000 00000000
+>             00000001 00693cd8 027d3260 0004f062 0003a220 00691be6 00000000 00000000
+>             00000000 00000000 00000000 00000000 006b5006 00000000 00690872
+>     Call Trace: [<0004f062>] printk+0x0/0x18
+>      [<0003a220>] parse_args+0x0/0x2d4
+>      [<0069e272>] memblock_virt_alloc_try_nid+0x0/0xa4
+>      [<00693cd8>] mem_init+0xa/0x5c
+>      [<0004f062>] printk+0x0/0x18
+>      [<0003a220>] parse_args+0x0/0x2d4
+>      [<00691be6>] start_kernel+0x1ca/0x462
+>      [<00690872>] _sinittext+0x872/0x11f8
+>     Code: 7a1a eaae 2270 6db0 0061 ef14 2f01 2f03 <96a9> 0736 2203 e589 d681 e78b d6a9 0732 2f03 2f40 0034 4eb9 0069 b8d0 260e 4fef
+>     Disabling lock debugging due to kernel taint
+>     Kernel panic - not syncing: Attempted to kill the idle task!
+> 
+> As the kernel must run in the memory chunk with the lowest address,
+> ST-RAM is ignored, and removed from the m68k_memory[] array.
+> However, it is not removed from memblock, causing a crash later.
+> 
+> More investigation shows that there are 3 places where memory chunks are
+> ignored, all after the calls to memblock_add() in m68k_parse_bootinfo(),
+> and thus causing crashes:
+>   1. On classic m68k CPUs with a MMU, paging_init() ignores all memory
+>      chunks below the first chunk, cfr. above,
+>   2. On Amigas equipped with a Zorro III bus, config_amiga() ignores all
+>      Zorro II memory,
+>   3. If CONFIG_SINGLE_MEMORY_CHUNK=y, m68k_parse_bootinfo() ignores all
+>      but the first memory chunk.
+> 
+> Fix this by moving the calls to memblock_add() from
+> m68k_parse_bootinfo() to paging_init(), after all ignored memory chunks
+> have been removed from m68k_memory[].
+> 
+> Reported-by: Andreas Schwab <schwab@linux-m68k.org>
+> Fixes: 1008a11590b966b4 ("m68k: switch to MEMBLOCK + NO_BOOTMEM")
+> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> ---
+> As all 3 cases involve ignoring memory chunks, thus not requiring real
+> memory present in the ignored chunks, I managed to test all 3 cases on
+> my Amiga 4000 by using a memfile describing nonexistent memory in the
+> Zorro II or 32-bit address space, below system RAM.
+> 
+> Sun-3 must be broken before this fix, as it fills in m68k_memory[0] in
+> config_sun3(), i.e. after m68k_parse_bootinfo().
+> Sun-3 is not fixed by this fix, as it uses its own paging_init(), not
+> the one in motorola.c.
+> Fixing Sun-3 requires adding memblock_add()/memblock_reserve() calls to
+> the Sun-3 memory management code.
 
-Signed-off-by: Michael Straube <straube.linux@gmail.com>
----
- drivers/staging/rtl8188eu/hal/rf.c              | 17 +++--------------
- .../staging/rtl8188eu/hal/rtl8188e_hal_init.c   |  2 +-
- .../staging/rtl8188eu/include/rtl8188e_hal.h    |  2 ++
- 3 files changed, 6 insertions(+), 15 deletions(-)
+I think that adding memblock_add() to config_sun3 would be sufficient,
+something like the diff below. This will make memblock aware of the
+available physical memory and it seems there no allocations in sun3 before
+paging_init().
 
-diff --git a/drivers/staging/rtl8188eu/hal/rf.c b/drivers/staging/rtl8188eu/hal/rf.c
-index 81e30a1a6bfd..6fe4daea8fd5 100644
---- a/drivers/staging/rtl8188eu/hal/rf.c
-+++ b/drivers/staging/rtl8188eu/hal/rf.c
-@@ -164,20 +164,9 @@ static void get_rx_power_val_by_reg(struct adapter *adapt, u8 channel,
- 			/*  increase power diff defined by Realtek for regulatory */
- 			if (hal_data->pwrGroupCnt == 1)
- 				chnlGroup = 0;
--			if (hal_data->pwrGroupCnt >= hal_data->PGMaxGroup) {
--				if (channel < 3)
--					chnlGroup = 0;
--				else if (channel < 6)
--					chnlGroup = 1;
--				else if (channel < 9)
--					chnlGroup = 2;
--				else if (channel < 12)
--					chnlGroup = 3;
--				else if (channel < 14)
--					chnlGroup = 4;
--				else if (channel == 14)
--					chnlGroup = 5;
--			}
-+			if (hal_data->pwrGroupCnt >= hal_data->PGMaxGroup)
-+				Hal_GetChnlGroup88E(channel, &chnlGroup);
-+
- 			write_val = hal_data->MCSTxPowerLevelOriginalOffset[chnlGroup][index+(rf ? 8 : 0)] +
- 					((index < 2) ? powerbase0[rf] : powerbase1[rf]);
- 			break;
-diff --git a/drivers/staging/rtl8188eu/hal/rtl8188e_hal_init.c b/drivers/staging/rtl8188eu/hal/rtl8188e_hal_init.c
-index 31e80d693f32..d5a1cf92ca6f 100644
---- a/drivers/staging/rtl8188eu/hal/rtl8188e_hal_init.c
-+++ b/drivers/staging/rtl8188eu/hal/rtl8188e_hal_init.c
-@@ -373,7 +373,7 @@ static void Hal_ReadPowerValueFromPROM_8188E(struct txpowerinfo24g *pwrInfo24G,
- 	}
+diff --git a/arch/m68k/sun3/config.c b/arch/m68k/sun3/config.c
+index 542c440..9a5b9dd 100644
+--- a/arch/m68k/sun3/config.c
++++ b/arch/m68k/sun3/config.c
+@@ -150,6 +150,7 @@ void __init config_sun3(void)
+ 
+ 	m68k_num_memory=1;
+         m68k_memory[0].size=*(romvec->pv_sun3mem);
++	memblock_add(memory_start, memory_end - memory_start);
+ 
+ 	sun3_bootmem_alloc(memory_start, memory_end);
  }
  
--static void Hal_GetChnlGroup88E(u8 chnl, u8 *group)
-+void Hal_GetChnlGroup88E(u8 chnl, u8 *group)
- {
- 	if (chnl < 3)			/*  Channel 1-2 */
- 		*group = 0;
-diff --git a/drivers/staging/rtl8188eu/include/rtl8188e_hal.h b/drivers/staging/rtl8188eu/include/rtl8188e_hal.h
-index a86b07d3c82a..eb4655ecf6e0 100644
---- a/drivers/staging/rtl8188eu/include/rtl8188e_hal.h
-+++ b/drivers/staging/rtl8188eu/include/rtl8188e_hal.h
-@@ -329,6 +329,8 @@ struct hal_data_8188e {
- 	u8	UsbRxAggPageTimeout;
- };
- 
-+void Hal_GetChnlGroup88E(u8 chnl, u8 *group);
-+
- /*  rtl8188e_hal_init.c */
- void _8051Reset88E(struct adapter *padapter);
- void rtl8188e_InitializeFirmwareVars(struct adapter *padapter);
+> v3:
+>   - Move memblock_add() after memory block removal instead of sprinkling
+>     memblock_remove() all over the place,
+>   - Remove Suggested-by, Tested-by.
+> 
+> v2:
+>   - Add missing #include <linux/memblock.h>.
+> ---
+>  arch/m68k/kernel/setup_mm.c | 2 --
+>  arch/m68k/mm/motorola.c     | 2 ++
+>  2 files changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/m68k/kernel/setup_mm.c b/arch/m68k/kernel/setup_mm.c
+> index a1a3eaeaf58c960d..ad0195cbe04255ea 100644
+> --- a/arch/m68k/kernel/setup_mm.c
+> +++ b/arch/m68k/kernel/setup_mm.c
+> @@ -164,8 +164,6 @@ static void __init m68k_parse_bootinfo(const struct bi_record *record)
+>  					be32_to_cpu(m->addr);
+>  				m68k_memory[m68k_num_memory].size =
+>  					be32_to_cpu(m->size);
+> -				memblock_add(m68k_memory[m68k_num_memory].addr,
+> -					     m68k_memory[m68k_num_memory].size);
+>  				m68k_num_memory++;
+>  			} else
+>  				pr_warn("%s: too many memory chunks\n",
+> diff --git a/arch/m68k/mm/motorola.c b/arch/m68k/mm/motorola.c
+> index 7497cf30bf1cd41b..3f3d0bf360910c0d 100644
+> --- a/arch/m68k/mm/motorola.c
+> +++ b/arch/m68k/mm/motorola.c
+> @@ -228,6 +228,7 @@ void __init paging_init(void)
+>  
+>  	min_addr = m68k_memory[0].addr;
+>  	max_addr = min_addr + m68k_memory[0].size;
+> +	memblock_add(m68k_memory[0].addr, m68k_memory[0].size);
+>  	for (i = 1; i < m68k_num_memory;) {
+>  		if (m68k_memory[i].addr < min_addr) {
+>  			printk("Ignoring memory chunk at 0x%lx:0x%lx before the first chunk\n",
+> @@ -238,6 +239,7 @@ void __init paging_init(void)
+>  				(m68k_num_memory - i) * sizeof(struct m68k_mem_info));
+>  			continue;
+>  		}
+> +		memblock_add(m68k_memory[i].addr, m68k_memory[i].size);
+>  		addr = m68k_memory[i].addr + m68k_memory[i].size;
+>  		if (addr > max_addr)
+>  			max_addr = addr;
+> -- 
+> 2.17.1
+> 
+
 -- 
-2.19.2
+Sincerely yours,
+Mike.
 
