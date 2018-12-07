@@ -2,136 +2,132 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19982C65BAF
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 00:53:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73E7BC04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 00:59:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CD0B020868
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 00:53:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="NRSs5s4J"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD0B020868
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	by mail.kernel.org (Postfix) with ESMTP id 48232208E7
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 00:59:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 48232208E7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726056AbeLGAxp (ORCPT
+        id S1725988AbeLGA7V (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 19:53:45 -0500
-Received: from ozlabs.org ([203.11.71.1]:47707 "EHLO ozlabs.org"
+        Thu, 6 Dec 2018 19:59:21 -0500
+Received: from mail.hallyn.com ([178.63.66.53]:56028 "EHLO mail.hallyn.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725995AbeLGAxo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 19:53:44 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 439v9K4kQ6z9s4s;
-        Fri,  7 Dec 2018 11:53:41 +1100 (AEDT)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1544144022;
-        bh=5BXN8eBwgorNw7fIjQL714vGUH1Im01QM5L0GwMy8bk=;
-        h=Date:From:To:Cc:Subject:From;
-        b=NRSs5s4JXTo7aYlUgGFQ0q8TonooYoGAWbWzjTOityJTRvVo0HoOYzFzQ2H1FtOgw
-         GZCmmyA4+I84qKL70dfbsGu0QS/dDh1xf9nZUEtCro0WD7iNoBznZPTfhfHISWdPgr
-         tJXQqwrdx5WHlubxnhqyLcCzxw4JVNgksaWZFXfSJFRdP/K4lBKJt9a7JttavILXee
-         iTj1dHz/6MRsm/xphi8BUAyaBTe8r7fwKiPnZo58hfEIOZikeuD7HYAVv91carpO82
-         8KPKmWB83KcLVTjC9SGAizGNk51/HHKuVPwye3fgyrUTYXdnAmbU+mKsrTCd9xpBl3
-         V5ZTlryZF9Cbg==
-Date:   Fri, 7 Dec 2018 11:53:40 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Jonathan Corbet <corbet@lwn.net>, Theodore Ts'o <tytso@mit.edu>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        NeilBrown <neilb@suse.com>, Eric Biggers <ebiggers@google.com>
-Subject: linux-next: manual merge of the jc_docs tree with the fscrypt tree
-Message-ID: <20181207115340.2465a854@canb.auug.org.au>
+        id S1725939AbeLGA7V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 19:59:21 -0500
+Received: by mail.hallyn.com (Postfix, from userid 1001)
+        id 111C3D5; Thu,  6 Dec 2018 18:59:18 -0600 (CST)
+Date:   Thu, 6 Dec 2018 18:59:17 -0600
+From:   "Serge E. Hallyn" <serge@hallyn.com>
+To:     Daniel Colascione <dancol@google.com>
+Cc:     "Serge E. Hallyn" <serge@hallyn.com>,
+        Christian Brauner <christian@brauner.io>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, Jann Horn <jannh@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Tim Murray <timmurray@google.com>,
+        linux-man <linux-man@vger.kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Florian Weimer <fweimer@redhat.com>, tglx@linutronix.de,
+        x86@kernel.org
+Subject: Re: [PATCH v4] signal: add taskfd_send_signal() syscall
+Message-ID: <20181207005917.GA11302@mail.hallyn.com>
+References: <D372C766-572C-4897-8F02-2FD0E72CCFAC@brauner.io>
+ <875zw6bh2z.fsf@xmission.com>
+ <20181206193017.wpxls5p3zgjd6rv2@brauner.io>
+ <871s6u9z6u.fsf@xmission.com>
+ <20181206213152.gvci7ijr3dokew7w@brauner.io>
+ <87o99y72gi.fsf@xmission.com>
+ <20181206223948.gyfdtkgbhtozmpsp@brauner.io>
+ <20181206231742.xxi4ghn24z4h2qki@brauner.io>
+ <20181207003124.GA11160@mail.hallyn.com>
+ <CAKOZuevgF7ObKcVvu-iuNK3xLMX2Ze_S+adBEGNZCdfXRibh1A@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/CEPcu3FO.paRPuD/SljvRJQ"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKOZuevgF7ObKcVvu-iuNK3xLMX2Ze_S+adBEGNZCdfXRibh1A@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/CEPcu3FO.paRPuD/SljvRJQ
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Thu, Dec 06, 2018 at 04:34:54PM -0800, Daniel Colascione wrote:
+> On Thu, Dec 6, 2018 at 4:31 PM Serge E. Hallyn <serge@hallyn.com> wrote:
+> >
+> > On Fri, Dec 07, 2018 at 12:17:45AM +0100, Christian Brauner wrote:
+> > > On Thu, Dec 06, 2018 at 11:39:48PM +0100, Christian Brauner wrote:
+> > > > On Thu, Dec 06, 2018 at 03:46:53PM -0600, Eric W. Biederman wrote:
+> > > > > Christian Brauner <christian@brauner.io> writes:
+> > > > >
+> > > > > >> Your intention is to add the thread case to support pthreads once the
+> > > > > >> process case is sorted out.  So this is something that needs to be made
+> > > > > >> clear.  Did I miss how you plan to handle threads?
+> > > > > >
+> > > > > > Yeah, maybe you missed it in the commit message [2] which is based on a
+> > > > > > discussion with Andy [3] and Arnd [4]:
+> > > > >
+> > > > > Looking at your references I haven't missed it.  You are not deciding
+> > > > > anything as of yet to keep it simple.  Except you are returning
+> > > > > EOPNOTSUPP.  You are very much intending to do something.
+> > > >
+> > > > That was clear all along and was pointed at every occassion in the
+> > > > threads. I even went through the hazzle to give you all of the
+> > > > references when there's lore.kernel.org.
+> > > >
+> > > > >
+> > > > > Decide.  Do you use the flags parameter or is the width of the
+> > > > > target depending on the flags.
+> > >
+> > > Ok, let's try to be constructive. I understand the general concern for
+> > > the future so let's put a contract into the commit message stating that
+> > > the width of the target aka *what is signaled* will be based on a flag
+> > > parameter if we ever extend it:
+> > >
+> > > taskfd_send_signal(fd, SIGSTOP, NULL, TASKFD_PGID);
+> > > taskfd_send_signal(fd, SIGSTOP, NULL, TASKFD_TID);
+> > >
+> > > with the current default being
+> > >
+> > > taskfd_send_signal(fd, SIGSTOP, NULL, TASKFD_PID);
+> > >
+> > > This seems to me the cleanest solution as we only use one type of file
+> > > descriptor. Can everyone be on board with this? If so I'm going to send
+> > > out a new version of the patch.
+> > >
+> > > Christian
+> >
+> > I'm on board with this, but I think you need to also clarify what exactly
+> > the fd stands for.  I think that (a) userspace should not have to care
+> > about the struct pid implementation, and so (b) the procfd should stand
+> > for all the pids.  So when taskfd_send_signal(fd, SIGSTOP, NULL, TASKFD_PGID)
+> > becomes implemented, then open(/proc/5) will pin all three pids, as will
+> > open(/proc/5/task/6).
+> 
+> This change doesn't "pin" any PID, and it makes no sense to make a
+> process FD stand for all its threads. What does that even mean?
 
-Hi all,
+Currently the patch relies on the procfd inode saving a copy to the PIDTYPE_PID
+pid.  I'm not sure offhand, can it go to the PIDTYPE_PGID from that after the
+task has died, or not?   I didn't think so.  If it can then great.
 
-Today's linux-next merge of the jc_docs tree got a conflict in:
+The point is (a) these are details which should not have to bother userspace,
+and (b) how to decide who we're sending the signal to (tid/pid/pgid) should
+be specified in precisely one way.  So either a flag, or comign from the type
+of fd that was opened.
 
-  Documentation/filesystems/index.rst
-
-between commit:
-
-  1b71a6809f96 ("fs-verity: add a documentation file")
-
-from the fscrypt tree and commit:
-
-  7bbfd9ad8eb2 ("Documentation: convert path-lookup from markdown to restur=
-ctured text")
-
-from the jc_docs tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc Documentation/filesystems/index.rst
-index 818390c32be6,ba921bdd5b06..000000000000
---- a/Documentation/filesystems/index.rst
-+++ b/Documentation/filesystems/index.rst
-@@@ -360,13 -360,13 +360,24 @@@ encryption of files and directories
- =20
-      fscrypt
- =20
- +Verity API
- +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
- +
- +A library which filesystems can hook into to support transparent
- +authentication of read-only files.
- +
- +.. toctree::
- +    :maxdepth: 2
- +
- +    fsverity
-++
-+ Pathname lookup
-+ =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-+=20
-+ Pathname lookup in Linux is a complex beast; the document linked below
-+ provides a comprehensive summary for those looking for the details.
-+=20
-+ .. toctree::
-+    :maxdepth: 2
-+=20
-+    path-lookup.rst
-
---Sig_/CEPcu3FO.paRPuD/SljvRJQ
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwJxJQACgkQAVBC80lX
-0GzszQf/YlYmIDVssO51Wa23m+eBSQb4K3ioft83i1KeNuVzYK4KPa4dYKWFQ2jG
-FSLkpr1Ae9cqCggR381K/L/ufDavlEnK7QZlsWX/PbLRzeiHMrxCUwkAeOwDEf4r
-12B4SZLghQ80m5yIdJUh1MToeDLfRVhlv2nBdFL0iTIaYlc2hBuc+sJoKMUxm0mU
-cY9s3By5/JNHIrS0ftB/PKNKFXGToACjvENw/L8xLbVS04Q1MmiI18EGWB3l1Q4S
-AqVWPfBz3qrsQa70lSIjzQ13OpilV775JsegvQKOcOWBT3DlMd1qk+16hNySUbcS
-Y1b0uuLi6kJMwR4cde71W3j3rLMS8Q==
-=V6dG
------END PGP SIGNATURE-----
-
---Sig_/CEPcu3FO.paRPuD/SljvRJQ--
+-serge
