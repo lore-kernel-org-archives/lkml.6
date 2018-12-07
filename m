@@ -2,90 +2,89 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A1E8C07E85
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 09:48:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECCD2C07E85
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 09:48:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B2BE208E7
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 09:48:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B2BE208E7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id B3C1F2083D
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 09:48:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="dCMS4jI+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B3C1F2083D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726038AbeLGJsX (ORCPT
+        id S1726107AbeLGJsZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 04:48:23 -0500
-Received: from foss.arm.com ([217.140.101.70]:40476 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726005AbeLGJsX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 04:48:23 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0D6A7EBD;
-        Fri,  7 Dec 2018 01:48:23 -0800 (PST)
-Received: from arrakis.emea.arm.com (arrakis.cambridge.arm.com [10.1.196.113])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1DD693F59C;
-        Fri,  7 Dec 2018 01:48:21 -0800 (PST)
-Date:   Fri, 7 Dec 2018 09:48:19 +0000
-From:   Catalin Marinas <catalin.marinas@arm.com>
-To:     Oscar Salvador <osalvador@suse.de>
-Cc:     akpm@linux-foundation.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mm, kmemleak: Little optimization while scanning
-Message-ID: <20181207094819.GA23085@arrakis.emea.arm.com>
-References: <20181206131918.25099-1-osalvador@suse.de>
+        Fri, 7 Dec 2018 04:48:25 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:45015 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726003AbeLGJsY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Dec 2018 04:48:24 -0500
+Received: by mail-lj1-f195.google.com with SMTP id k19-v6so2969781lji.11
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Dec 2018 01:48:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=owIMGX0zemiqfnl4vXIAcdx2Vr7Uc7+3UuYHHK/Nyxg=;
+        b=dCMS4jI+Y3Bst45CoAgAvpWA8BB4fyAbzFwoTc40H1nPD/1UXtXLDFCL0Ds+ro16do
+         ejQTltkBHjx1BsTnJpNMVdNmASWVElFa7CVlF1KQjWu+aowrNHM+tpHM9dcXMirw5flH
+         NEJZ2V7lWuWrbedVz+bE4RzgubffZM0bIgjnk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=owIMGX0zemiqfnl4vXIAcdx2Vr7Uc7+3UuYHHK/Nyxg=;
+        b=knqRBbpm/iJipMwF3YbSrtu7GjBPTrWy0yTKotpjjYUO8YMUk7WyLf8NYgYNZDfwD4
+         4BNKpgfGAkDf49qKexl9/imSilELcduRjEVoVtKcECMIEwzqmzzbiq1cpLEMCYUbVY+I
+         rUX4iIXze6Z7tyMWA4oT7VG53fcWtLHwi1BQAZGBMI+dagA++8BopRyXqozfpCKPaaEO
+         HHn4aFd4M5sXdkm3TIDDzVF+fGW8iahj9/PijCZpPVYDD6rqujCRzChHuXzmk9BTyX6v
+         oLqvjGbAz+KX7GOjugvcVENwMcxEP/25S2rVWjR+P+6hhZ9Ten56L1stfcSayMPIlrU/
+         WO0w==
+X-Gm-Message-State: AA+aEWb8m+mxHLln8ot+DXyVHfnqMxmR6Yzd52xV+Fmnk0zG3G6nY4YI
+        z59zCElJYYMMYkqVgb7D1D0bw1V9K4QJCtPyIC4BRw==
+X-Google-Smtp-Source: AFSGD/VijDAlpfR46oznn0VKGkuORUBAhviF4yCihbF8dcOrwpDLW00Y3r2VzwXC09WompECICdaNUxAn84X4tdRI0A=
+X-Received: by 2002:a2e:9e03:: with SMTP id e3-v6mr932812ljk.4.1544176101184;
+ Fri, 07 Dec 2018 01:48:21 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181206131918.25099-1-osalvador@suse.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <1543338018-708-1-git-send-email-hofrat@osadl.org>
+In-Reply-To: <1543338018-708-1-git-send-email-hofrat@osadl.org>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Fri, 7 Dec 2018 10:48:09 +0100
+Message-ID: <CACRpkdaM1j7tXm+rekxWUOuzshfYxHf66mYQYtJLuHq=kpJ6Vw@mail.gmail.com>
+Subject: Re: [PATCH V2] gpio: mt7621: pass mediatek_gpio_bank_probe() failure
+ up the stack
+To:     Nicholas Mc Guire <hofrat@osadl.org>
+Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Sergio Paracuellos <sergio.paracuellos@gmail.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-mediatek@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 06, 2018 at 02:19:18PM +0100, Oscar Salvador wrote:
-> kmemleak_scan() goes through all online nodes and tries
-> to scan all used pages.
-> We can do better and use pfn_to_online_page(), so in case we have
-> CONFIG_MEMORY_HOTPLUG, offlined pages will be skiped automatically.
-> For boxes where CONFIG_MEMORY_HOTPLUG is not present, pfn_to_online_page()
-> will fallback to pfn_valid().
-> 
-> Another little optimization is to check if the page belongs to the node
-> we are currently checking, so in case we have nodes interleaved we will
-> not check the same pfn multiple times.
-> 
-> I ran some tests:
-> 
-> Add some memory to node1 and node2 making it interleaved:
-> 
-> (qemu) object_add memory-backend-ram,id=ram0,size=1G
-> (qemu) device_add pc-dimm,id=dimm0,memdev=ram0,node=1
-> (qemu) object_add memory-backend-ram,id=ram1,size=1G
-> (qemu) device_add pc-dimm,id=dimm1,memdev=ram1,node=2
-> (qemu) object_add memory-backend-ram,id=ram2,size=1G
-> (qemu) device_add pc-dimm,id=dimm2,memdev=ram2,node=1
-> 
-> Then, we offline that memory:
->  # for i in {32..39} ; do echo "offline" > /sys/devices/system/node/node1/memory$i/state;done
->  # for i in {48..55} ; do echo "offline" > /sys/devices/system/node/node1/memory$i/state;don
->  # for i in {40..47} ; do echo "offline" > /sys/devices/system/node/node2/memory$i/state;done
-> 
-> And we run kmemleak_scan:
-> 
->  # echo "scan" > /sys/kernel/debug/kmemleak
-> 
-> before the patch:
-> 
-> kmemleak: time spend: 41596 us
-> 
-> after the patch:
-> 
-> kmemleak: time spend: 34899 us
-> 
-> Signed-off-by: Oscar Salvador <osalvador@suse.de>
+On Tue, Nov 27, 2018 at 6:06 PM Nicholas Mc Guire <hofrat@osadl.org> wrote:
 
-Acked-by: Catalin Marinas <catalin.marinas@arm.com>
+> The error cases of mediatek_gpio_bank_probe() would go unnoticed (except
+> for the dev_err() messages). The probe function should return an error
+> if one of the banks failed to initialize properly indicated by
+> not returning non-0.
+>
+> Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
+> Fixes: 4ba9c3afda41 ("gpio: mt7621: Add a driver for MT7621")
+
+Patch applied with Sean's ACK.
+
+Yours,
+Linus Walleij
