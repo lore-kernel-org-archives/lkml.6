@@ -2,103 +2,303 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7579C07E85
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 16:06:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B05AC64EB1
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 16:08:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 800F92081C
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 16:06:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 800F92081C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=solarflare.com
+	by mail.kernel.org (Postfix) with ESMTP id 0923120882
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 16:08:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ZQkuVQO0";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="oTF0Lly2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0923120882
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726297AbeLGQGk (ORCPT
+        id S1726114AbeLGQIs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 11:06:40 -0500
-Received: from dispatch1-us1.ppe-hosted.com ([148.163.129.52]:54126 "EHLO
-        dispatch1-us1.ppe-hosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726065AbeLGQGj (ORCPT
+        Fri, 7 Dec 2018 11:08:48 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:43086 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726010AbeLGQIr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 11:06:39 -0500
-X-Virus-Scanned: Proofpoint Essentials engine
-Received: from webmail.solarflare.com (webmail.solarflare.com [12.187.104.26])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+        Fri, 7 Dec 2018 11:08:47 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id C3C4260ADD; Fri,  7 Dec 2018 16:08:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1544198926;
+        bh=JF4Kvf3CyXbVmSykK8WssRLQpww15BjS91IDA7J56wI=;
+        h=Subject:From:To:Cc:References:Date:In-Reply-To:From;
+        b=ZQkuVQO0sD2LMqSJEbQgZEYbGP+slrXwxanyv/DGH0aEQEh4TaEeTE6b558VfQpUE
+         4xOH8X8ztyHSRMmtcOn1Lpxk0/5oBeHfkc0e8ynq0grEvatfNQKdBiVOgNKb0TwZP4
+         Bxfhrt+BbL+JDXjWQbl3qsKABMoKfYWqenM8j/Rk=
+Received: from [10.226.60.81] (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mx1-us3.ppe-hosted.com (Proofpoint Essentials ESMTP Server) with ESMTPS id 414EFB40057;
-        Fri,  7 Dec 2018 16:06:38 +0000 (UTC)
-Received: from ec-desktop.uk.solarflarecom.com (10.17.20.45) by
- ocex03.SolarFlarecom.com (10.20.40.36) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Fri, 7 Dec 2018 08:06:34 -0800
-From:   Edward Cree <ecree@solarflare.com>
-Subject: Re: [PATCH v2 0/4] Static calls
-To:     Josh Poimboeuf <jpoimboe@redhat.com>
-References: <cover.1543200841.git.jpoimboe@redhat.com>
-CC:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>
-Message-ID: <0e96ac37-d5c5-86b6-833c-0de01ba18f0d@solarflare.com>
-Date:   Fri, 7 Dec 2018 16:06:32 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+        (Authenticated sender: jhugo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 4DA6C601A1;
+        Fri,  7 Dec 2018 16:08:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1544198925;
+        bh=JF4Kvf3CyXbVmSykK8WssRLQpww15BjS91IDA7J56wI=;
+        h=Subject:From:To:Cc:References:Date:In-Reply-To:From;
+        b=oTF0Lly2HlY122uZ2oFaIya61d8NCsxOKIo0k6nHYhRAKlLku9+dJ3ECnmHbHI4f3
+         wHf1wmdBt3Ipd/uLAhGesh0P97qiMfpC1Alzryfp3cmcEnu5dMg29+LT2tP6iejUrE
+         Z2zbg8uU5czQS7Whbw4laCA4N1YYBAb6pX8l6NZA=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4DA6C601A1
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jhugo@codeaurora.org
+Subject: Re: [PATCH v2] clk: qcom: smd: Add support for MSM8998 rpm clocks
+From:   Jeffrey Hugo <jhugo@codeaurora.org>
+To:     Marc Gonzalez <marc.w.gonzalez@free.fr>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Rob Herring <robh@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        MSM <linux-arm-msm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <1544134310-10227-1-git-send-email-jhugo@codeaurora.org>
+ <be08a9ca-9782-6d10-7c44-523c9e8c56f5@free.fr>
+ <c0c37e37-d7db-8767-6882-0e8f80cab688@codeaurora.org>
+Message-ID: <ba3bbaa9-63ca-fe46-02b2-69bdbca2f152@codeaurora.org>
+Date:   Fri, 7 Dec 2018 09:08:42 -0700
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-In-Reply-To: <cover.1543200841.git.jpoimboe@redhat.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.17.20.45]
-X-TM-AS-Product-Ver: SMEX-12.5.0.1300-8.5.1010-24268.005
-X-TM-AS-Result: No-4.672000-4.000000-10
-X-TMASE-MatchedRID: VfovoVrt/oYDJrf2+hNOhVPjo7D4SFg47f6JAS2hKPjFJnEpmt9OE2WW
-        d1VBI96H+QvemMQMGWw/D4CGpgn7NR+GMJJQ53gz3fn7n/ZHGqZ/aDoolm3GXUYvSDWdWaRhdnl
-        a+4sEPupjq1QXe0nVE2/bkgMClkivkUIGI5Jp9O6PYUYzX2Xjl1AI6wCVrE3vYDnBmMnH0bAG42
-        yGukqJh7C1ePQuNeNe0RugigfesRTxoV3DFZL29RHRbGr1ECgHJPS3/6nvMcdDilB45O77xRk5K
-        K4/zwVM94kvTNM1tWcH4jvnDtS/yk1+zyfzlN7ygxsfzkNRlfLdB/CxWTRRu+rAZ8KTspSzseDy
-        ISflYBoMcOhAxODlIZcjbN19J10h+ZrTzn8+Y5ZbjM+MPZT/hDDB+c7h/UTREeTjIe2tHYdSqsz
-        Zdd/QoLfcZeWoUNRpWswIoFcXV3ojZU2CAxYkI/guCCuaxGC9PA0H4ETs+eV+3BndfXUhXQ==
-X-TM-AS-User-Approved-Sender: No
-X-TM-AS-User-Blocked-Sender: No
-X-TMASE-Result: 10--4.672000-4.000000
-X-TMASE-Version: SMEX-12.5.0.1300-8.5.1010-24268.005
-X-MDID: 1544198798-geKmvpATCBck
+In-Reply-To: <c0c37e37-d7db-8767-6882-0e8f80cab688@codeaurora.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sorry if this has been pointed out before (it's a very long thread), but
- in the out-of-line implementation, it appears that static_call_update()
- never alters key->func.  Am I right in thinking that this should be
- fixed by adding 'WRITE_ONCE(key->func, func);' just after the call to
- arch_static_call_transform() on line 159 of include/linux/static_call.h?
+On 12/7/2018 8:10 AM, Jeffrey Hugo wrote:
+> On 12/7/2018 3:30 AM, Marc Gonzalez wrote:
+>> On 06/12/2018 23:11, Jeffrey Hugo wrote:
+>>
+>>> Add rpm smd clocks, PMIC and bus clocks which are required on MSM8998
+>>> for clients to vote on.
+>>>
+>>> Signed-off-by: Jeffrey Hugo <jhugo@codeaurora.org>
+>>> ---
+>>> v2
+>>> -fix compatible ordering nits per Stephen
+>>>
+>>>   .../devicetree/bindings/clock/qcom,rpmcc.txt       |  1 +
+>>>   drivers/clk/qcom/clk-smd-rpm.c                     | 62 
+>>> ++++++++++++++++++++++
+>>>   include/dt-bindings/clock/qcom,rpmcc.h             |  6 +++
+>>>   3 files changed, 69 insertions(+)
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt 
+>>> b/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
+>>> index 87b4949..944719b 100644
+>>> --- a/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
+>>> +++ b/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
+>>> @@ -16,6 +16,7 @@ Required properties :
+>>>               "qcom,rpmcc-msm8974", "qcom,rpmcc"
+>>>               "qcom,rpmcc-apq8064", "qcom,rpmcc"
+>>>               "qcom,rpmcc-msm8996", "qcom,rpmcc"
+>>> +            "qcom,rpmcc-msm8998", "qcom,rpmcc"
+>>>               "qcom,rpmcc-qcs404", "qcom,rpmcc"
+>>>   - #clock-cells : shall contain 1
+>>> diff --git a/drivers/clk/qcom/clk-smd-rpm.c 
+>>> b/drivers/clk/qcom/clk-smd-rpm.c
+>>> index d3aadae..b1f95a9 100644
+>>> --- a/drivers/clk/qcom/clk-smd-rpm.c
+>>> +++ b/drivers/clk/qcom/clk-smd-rpm.c
+>>> @@ -655,10 +655,72 @@ static int clk_smd_rpm_enable_scaling(struct 
+>>> qcom_smd_rpm *rpm)
+>>>       .num_clks = ARRAY_SIZE(qcs404_clks),
+>>>   };
+>>> +/* msm8998 */
+>>> +DEFINE_CLK_SMD_RPM(msm8998, snoc_clk, snoc_a_clk, 
+>>> QCOM_SMD_RPM_BUS_CLK, 1);
+>>> +DEFINE_CLK_SMD_RPM(msm8998, cnoc_clk, cnoc_a_clk, 
+>>> QCOM_SMD_RPM_BUS_CLK, 2);
+>>> +DEFINE_CLK_SMD_RPM(msm8998, ce1_clk, ce1_a_clk, QCOM_SMD_RPM_CE_CLK, 
+>>> 0);
+>>> +DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8998, div_clk1, div_clk1_a, 0xb);
+>>> +DEFINE_CLK_SMD_RPM(msm8998, ipa_clk, ipa_a_clk, 
+>>> QCOM_SMD_RPM_IPA_CLK, 0);
+>>> +DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8998, bb_clk1, bb_clk1_a, 1);
+>>> +DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8998, bb_clk2, bb_clk2_a, 2);
+>>> +DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(msm8998, bb_clk3_pin, 
+>>> bb_clk3_a_pin, 3);
+>>> +DEFINE_CLK_SMD_RPM(msm8998, mmssnoc_axi_rpm_clk, mmssnoc_axi_rpm_a_clk,
+>>> +           QCOM_SMD_RPM_MMAXI_CLK, 0);
+>>> +DEFINE_CLK_SMD_RPM(msm8998, aggre1_noc_clk, aggre1_noc_a_clk,
+>>> +           QCOM_SMD_RPM_AGGR_CLK, 1);
+>>> +DEFINE_CLK_SMD_RPM(msm8998, aggre2_noc_clk, aggre2_noc_a_clk,
+>>> +           QCOM_SMD_RPM_AGGR_CLK, 2);
+>>> +DEFINE_CLK_SMD_RPM_QDSS(msm8998, qdss_clk, qdss_a_clk,
+>>> +            QCOM_SMD_RPM_MISC_CLK, 1);
+>>> +DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8998, rf_clk1, rf_clk1_a, 4);
+>>> +DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(msm8998, rf_clk2_pin, 
+>>> rf_clk2_a_pin, 5);
+>>> +DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8998, rf_clk3, rf_clk3_a, 6);
+>>> +DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(msm8998, rf_clk3_pin, 
+>>> rf_clk3_a_pin, 6);
+>>> +static struct clk_smd_rpm *msm8998_clks[] = {
+>>> +    [RPM_SMD_SNOC_CLK] = &msm8998_snoc_clk,
+>>> +    [RPM_SMD_SNOC_A_CLK] = &msm8998_snoc_a_clk,
+>>> +    [RPM_SMD_CNOC_CLK] = &msm8998_cnoc_clk,
+>>> +    [RPM_SMD_CNOC_A_CLK] = &msm8998_cnoc_a_clk,
+>>> +    [RPM_SMD_CE1_CLK] = &msm8998_ce1_clk,
+>>> +    [RPM_SMD_CE1_A_CLK] = &msm8998_ce1_a_clk,
+>>> +    [RPM_SMD_DIV_CLK1] = &msm8998_div_clk1,
+>>> +    [RPM_SMD_DIV_A_CLK1] = &msm8998_div_clk1_a,
+>>> +    [RPM_SMD_IPA_CLK] = &msm8998_ipa_clk,
+>>> +    [RPM_SMD_IPA_A_CLK] = &msm8998_ipa_a_clk,
+>>> +    [RPM_SMD_BB_CLK1] = &msm8998_bb_clk1,
+>>> +    [RPM_SMD_BB_CLK1_A] = &msm8998_bb_clk1_a,
+>>> +    [RPM_SMD_BB_CLK2] = &msm8998_bb_clk2,
+>>> +    [RPM_SMD_BB_CLK2_A] = &msm8998_bb_clk2_a,
+>>> +    [RPM_SMD_BB_CLK3_PIN] = &msm8998_bb_clk3_pin,
+>>> +    [RPM_SMD_BB_CLK3_A_PIN] = &msm8998_bb_clk3_a_pin,
+>>> +    [RPM_SMD_MMAXI_CLK] = &msm8998_mmssnoc_axi_rpm_clk,
+>>> +    [RPM_SMD_MMAXI_A_CLK] = &msm8998_mmssnoc_axi_rpm_a_clk,
+>>> +    [RPM_SMD_AGGR1_NOC_CLK] = &msm8998_aggre1_noc_clk,
+>>> +    [RPM_SMD_AGGR1_NOC_A_CLK] = &msm8998_aggre1_noc_a_clk,
+>>> +    [RPM_SMD_AGGR2_NOC_CLK] = &msm8998_aggre2_noc_clk,
+>>> +    [RPM_SMD_AGGR2_NOC_A_CLK] = &msm8998_aggre2_noc_a_clk,
+>>> +    [RPM_SMD_QDSS_CLK] = &msm8998_qdss_clk,
+>>> +    [RPM_SMD_QDSS_A_CLK] = &msm8998_qdss_a_clk,
+>>> +    [RPM_SMD_RF_CLK1] = &msm8998_rf_clk1,
+>>> +    [RPM_SMD_RF_CLK1_A] = &msm8998_rf_clk1_a,
+>>> +    [RPM_SMD_RF_CLK2_PIN] = &msm8998_rf_clk2_pin,
+>>> +    [RPM_SMD_RF_CLK2_A_PIN] = &msm8998_rf_clk2_a_pin,
+>>> +    [RPM_SMD_RF_CLK3] = &msm8998_rf_clk3,
+>>> +    [RPM_SMD_RF_CLK3_A] = &msm8998_rf_clk3_a,
+>>> +    [RPM_SMD_RF_CLK3_PIN] = &msm8998_rf_clk3_pin,
+>>> +    [RPM_SMD_RF_CLK3_A_PIN] = &msm8998_rf_clk3_a_pin,
+>>> +};
+>>> +
+>>> +static const struct rpm_smd_clk_desc rpm_clk_msm8998 = {
+>>> +    .clks = msm8998_clks,
+>>> +    .num_clks = ARRAY_SIZE(msm8998_clks),
+>>> +};
+>>> +
+>>>   static const struct of_device_id rpm_smd_clk_match_table[] = {
+>>>       { .compatible = "qcom,rpmcc-msm8916", .data = &rpm_clk_msm8916 },
+>>>       { .compatible = "qcom,rpmcc-msm8974", .data = &rpm_clk_msm8974 },
+>>>       { .compatible = "qcom,rpmcc-msm8996", .data = &rpm_clk_msm8996 },
+>>> +    { .compatible = "qcom,rpmcc-msm8998", .data = &rpm_clk_msm8998 },
+>>>       { .compatible = "qcom,rpmcc-qcs404",  .data = &rpm_clk_qcs404  },
+>>>       { }
+>>>   };
+>>> diff --git a/include/dt-bindings/clock/qcom,rpmcc.h 
+>>> b/include/dt-bindings/clock/qcom,rpmcc.h
+>>> index 3658b0c..81dbd1f 100644
+>>> --- a/include/dt-bindings/clock/qcom,rpmcc.h
+>>> +++ b/include/dt-bindings/clock/qcom,rpmcc.h
+>>> @@ -127,5 +127,11 @@
+>>>   #define RPM_SMD_BIMC_GPU_A_CLK            77
+>>>   #define RPM_SMD_QPIC_CLK            78
+>>>   #define RPM_SMD_QPIC_CLK_A            79
+>>> +#define RPM_SMD_BB_CLK3_PIN            80
+>>> +#define RPM_SMD_BB_CLK3_A_PIN            81
+>>> +#define RPM_SMD_RF_CLK3                82
+>>> +#define RPM_SMD_RF_CLK3_A            83
+>>> +#define RPM_SMD_RF_CLK3_PIN            84
+>>> +#define RPM_SMD_RF_CLK3_A_PIN            85
+>>>   #endif
+>>>
+>>
+>> What's the difference between RPM_SMD_LN_BB_CLK and RPM_SMD_BB_CLK1?
+>>
+>> $ git grep RPM_SMD_LN_BB_CLK
+>> arch/arm64/boot/dts/qcom/msm8996.dtsi:                  clocks = 
+>> <&rpmcc RPM_SMD_LN_BB_CLK>,
+>> arch/arm64/boot/dts/qcom/msm8996.dtsi:                          
+>> <&rpmcc RPM_SMD_LN_BB_CLK>,
+>> drivers/clk/qcom/clk-smd-rpm.c: [RPM_SMD_LN_BB_CLK] = &msm8996_ln_bb_clk,
+>> drivers/clk/qcom/clk-smd-rpm.c: [RPM_SMD_LN_BB_CLK] = &qcs404_ln_bb_clk,
+>> include/dt-bindings/clock/qcom,rpmcc.h:#define 
+>> RPM_SMD_LN_BB_CLK                        74
+>>
+>>
+>> $ git grep 'RPM_SMD_BB_CLK1\>'
+>> Documentation/devicetree/bindings/sound/qcom,wcd9335.txt:                
+>> <&rpmcc RPM_SMD_BB_CLK1>;
+>> drivers/clk/qcom/clk-smd-rpm.c: [RPM_SMD_BB_CLK1]               = 
+>> &msm8916_bb_clk1,
+>> drivers/clk/qcom/clk-smd-rpm.c: [RPM_SMD_BB_CLK1] = &msm8996_bb_clk1,
+>> drivers/clk/qcom/clk-smd-rpm.c: [RPM_SMD_BB_CLK1] = &msm8998_bb_clk1,
+>> include/dt-bindings/clock/qcom,rpmcc.h:#define 
+>> RPM_SMD_BB_CLK1                          10
+>>
+>>
+>> Because the downstream kernel defines:
+>>
+>> DEFINE_CLK_RPM_SMD_XO_BUFFER(ln_bb_clk1, ln_bb_clk1_ao, LN_BB_CLK1_ID);
+>> DEFINE_CLK_RPM_SMD_XO_BUFFER_PINCTRL(ln_bb_clk1_pin, ln_bb_clk1_pin_ao,
+>>                      LN_BB_CLK1_PIN_ID);
+>> DEFINE_CLK_RPM_SMD_XO_BUFFER(ln_bb_clk2, ln_bb_clk2_ao, LN_BB_CLK2_ID);
+>> DEFINE_CLK_RPM_SMD_XO_BUFFER_PINCTRL(ln_bb_clk2_pin, ln_bb_clk2_pin_ao,
+>>                      LN_BB_CLK2_PIN_ID);
+>> DEFINE_CLK_RPM_SMD_XO_BUFFER(ln_bb_clk3, ln_bb_clk3_ao, LN_BB_CLK3_ID);
+>> DEFINE_CLK_RPM_SMD_XO_BUFFER_PINCTRL(ln_bb_clk3_pin, ln_bb_clk3_pin_ao,
+>>                      LN_BB_CLK3_PIN_ID);
+>>
+>>     CLK_LIST(ln_bb_clk1),
+>>     CLK_LIST(ln_bb_clk1_ao),
+>>     CLK_LIST(ln_bb_clk1_pin),
+>>     CLK_LIST(ln_bb_clk1_pin_ao),
+>>     CLK_LIST(ln_bb_clk2),
+>>     CLK_LIST(ln_bb_clk2_ao),
+>>     CLK_LIST(ln_bb_clk2_pin),
+>>     CLK_LIST(ln_bb_clk2_pin_ao),
+>>     CLK_LIST(ln_bb_clk3),
+>>     CLK_LIST(ln_bb_clk3_ao),
+>>     CLK_LIST(ln_bb_clk3_pin),
+>>     CLK_LIST(ln_bb_clk3_pin_ao),
+>>
+>>
+>> While your patch defines
+>>
+>> DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8998, bb_clk1, bb_clk1_a, 1);
+>> DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8998, bb_clk2, bb_clk2_a, 2);
+>> DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(msm8998, bb_clk3_pin, 
+>> bb_clk3_a_pin, 3);
+>>
+>>     [RPM_SMD_BB_CLK1] = &msm8998_bb_clk1,
+>>     [RPM_SMD_BB_CLK1_A] = &msm8998_bb_clk1_a,
+>>     [RPM_SMD_BB_CLK2] = &msm8998_bb_clk2,
+>>     [RPM_SMD_BB_CLK2_A] = &msm8998_bb_clk2_a,
+>>     [RPM_SMD_BB_CLK3_PIN] = &msm8998_bb_clk3_pin,
+>>     [RPM_SMD_BB_CLK3_A_PIN] = &msm8998_bb_clk3_a_pin,
+>>
+> 
+> Good question.  I don't know.
+> 
+> The downstream ln_bb IDs correspond to the bb IDs used by upstream 8996, 
+> where as the upstream 8996 ln_bb IDs are different.  The IDs seem to be 
+> the important thing, where as the "name" seems to be fairly irrelevant 
+> to the actual handling of the clock.
+> 
+> I haven't yet found documentation other than the downstream code about 
+> these clocks, so I chose to be consistent with 8996.
 
-Some background (why does key->func matter for the
- CONFIG_HAVE_STATIC_CALL_OUTLINE case?): I am experimenting with
- combining these static calls with the 'indirect call wrappers' notion
- that Paolo Abeni has been working on [1], using runtime instrumentation
- to determine a list of potential callees.  (This allows us to cope with
- cases where the callees are in modules, or where different workloads may
- use different sets of callees for a given call site, neither of which is
- handled by Paolo's approach).
-The core of my design looks something like:
+I found some schematics, and they have "ln_bb", so I'll respin with that 
+nomenclature after I have a look at your crash.
 
-static int dynamic_call_xyz(int (*func)(some_args), some_args)
-{
-	if (func == dynamic_call_xyz_1.func)
-		return static_call(dynamic_call_xyz_1, some_args);
-	if (func == dynamic_call_xyz_2.func)
-		return static_call(dynamic_call_xyz_2, some_args);
-	return (*func)(some_args);
-}
+> 
+> Also, as a side note, I limited the list of clocks I enumerated to those 
+> which the downstream driver defined, and were used when grepping the 
+> downstream DT.
+> 
 
-albeit with a bunch of extra (and currently rather ugly) stuff to collect
- the statistics needed to decide what to put in the static call keys, and
- mechanisms (RCU in my current case) to ensure that the static call isn't
- changed between checking its .func and actually calling it.
 
--Ed
-
-PS: not on list, please keep me in CC.
-
-[1] https://lwn.net/Articles/773985/
+-- 
+Jeffrey Hugo
+Qualcomm Datacenter Technologies as an affiliate of Qualcomm 
+Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the
+Code Aurora Forum, a Linux Foundation Collaborative Project.
