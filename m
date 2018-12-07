@@ -2,74 +2,340 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,
-	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EBA8C64EB1
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 21:10:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7ACCDC07E85
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 21:10:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 008222083D
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 21:10:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544217005;
-	bh=G51QpWafA3KuMMRGPw1+aCnQsGh4lV8hM6NyFcvplLk=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
-	b=YWa2qztV+7izZGZpQXA5Xzf2GKSrpPdFyvi2coChAC+MjTqSayhsZPMBpfY+xudoI
-	 T9l9SbFriE7Py2rk9zXxkRFACfDaTf9dhK9tNKC8cyrVu/iOlDWgPNMfoT+YPZ0adi
-	 puB0YvSTd4xUaTDL1LN+a32sh083TR2vNQYp0P+k=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 008222083D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 332F62083D
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 21:10:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 332F62083D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726417AbeLGVKE (ORCPT
+        id S1726434AbeLGVKI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 16:10:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37014 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726399AbeLGVKC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 16:10:02 -0500
-Subject: Re: [GIT PULL] PCI fixes for v4.20
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544217001;
-        bh=G51QpWafA3KuMMRGPw1+aCnQsGh4lV8hM6NyFcvplLk=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=V2eLvoqWxSCQTtcPjt860gFut4fyAUueaAGcWdacQ4lSHmQpewtXIyuyfCtJD6Ilw
-         xJODr7dMOsIDz918Y6meHTQQmWrNtnU6+WzDkrnwp7PyXse7rEzZpzkFlRnC5IEUUi
-         qXPBqDaXOEyqhfzEickeSu+6IkMUWoiGop+bkZ6k=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20181207204453.GA578@google.com>
-References: <20181207204453.GA578@google.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20181207204453.GA578@google.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git
- tags/pci-v4.20-fixes-3
-X-PR-Tracked-Commit-Id: b07b864ee4232b03125992a8f6a490b040adcb6a
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 7b24f6c082b3777749ccd19c9beb8643fa718480
-Message-Id: <20181207211001.8019.50466.pr-tracker-bot@pdx-korg-gitolite-1.ci.codeaurora.org>
-Date:   Fri, 07 Dec 2018 21:10:01 +0000
-To:     Bjorn Helgaas <helgaas@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Patrick Talbert <ptalbert@redhat.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>
+        Fri, 7 Dec 2018 16:10:08 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:59985 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726401AbeLGVKD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Dec 2018 16:10:03 -0500
+Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 960F2657EC183;
+        Sat,  8 Dec 2018 05:10:00 +0800 (CST)
+Received: from S00293818-DELL1.china.huawei.com (10.202.226.54) by
+ DGGEMS414-HUB.china.huawei.com (10.3.19.214) with Microsoft SMTP Server id
+ 14.3.408.0; Sat, 8 Dec 2018 05:09:50 +0800
+From:   Salil Mehta <salil.mehta@huawei.com>
+To:     <davem@davemloft.net>
+CC:     <salil.mehta@huawei.com>, <yisen.zhuang@huawei.com>,
+        <lipeng321@huawei.com>, <mehta.salil@opnsrc.net>,
+        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linuxarm@huawei.com>, Shiju Jose <shiju.jose@huawei.com>,
+        Xiaofei Tan <tanxiaofei@huawei.com>
+Subject: [PATCH net-next 14/14] net: hns3: add handling of RDMA RAS errors
+Date:   Fri, 7 Dec 2018 21:08:11 +0000
+Message-ID: <20181207210811.23844-15-salil.mehta@huawei.com>
+X-Mailer: git-send-email 2.8.3
+In-Reply-To: <20181207210811.23844-1-salil.mehta@huawei.com>
+References: <20181207210811.23844-1-salil.mehta@huawei.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.202.226.54]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Fri, 7 Dec 2018 14:44:53 -0600:
+From: Shiju Jose <shiju.jose@huawei.com>
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git tags/pci-v4.20-fixes-3
+This patch handles the RDMA RAS errors.
+1. Enable RAS interrupt, print error detail info and clear error status.
+2. Do CORE reset to recovery when these non-fatal errors happened.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/7b24f6c082b3777749ccd19c9beb8643fa718480
+Signed-off-by: Xiaofei Tan <tanxiaofei@huawei.com>
+Signed-off-by: Shiju Jose <shiju.jose@huawei.com>
+Signed-off-by: Salil Mehta <salil.mehta@huawei.com>
+---
+ .../net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h |   3 +
+ .../net/ethernet/hisilicon/hns3/hns3pf/hclge_err.c | 185 ++++++++++++++++++++-
+ .../net/ethernet/hisilicon/hns3/hns3pf/hclge_err.h |  12 ++
+ 3 files changed, 199 insertions(+), 1 deletion(-)
 
-Thank you!
-
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h
+index eb91519..b1ee6fe 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h
+@@ -229,6 +229,9 @@ enum hclge_opcode_type {
+ 	HCLGE_QUERY_MSIX_INT_STS_BD_NUM	= 0x1513,
+ 	HCLGE_QUERY_CLEAR_ALL_MPF_MSIX_INT	= 0x1514,
+ 	HCLGE_QUERY_CLEAR_ALL_PF_MSIX_INT	= 0x1515,
++	HCLGE_CONFIG_ROCEE_RAS_INT_EN	= 0x1580,
++	HCLGE_QUERY_CLEAR_ROCEE_RAS_INT = 0x1581,
++	HCLGE_ROCEE_PF_RAS_INT_CMD	= 0x1584,
+ 	HCLGE_IGU_EGU_TNL_INT_EN	= 0x1803,
+ 	HCLGE_IGU_COMMON_INT_EN		= 0x1806,
+ 	HCLGE_TM_QCN_MEM_INT_CFG	= 0x1A14,
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_err.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_err.c
+index 660320d..2b52a51 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_err.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_err.c
+@@ -337,6 +337,30 @@ static const struct hclge_hw_error hclge_ssu_port_based_pf_int[] = {
+ 	{ /* sentinel */ }
+ };
+ 
++static const struct hclge_hw_error hclge_rocee_qmm_ovf_err_int[] = {
++	{ .int_msk = 0, .msg = "rocee qmm ovf: sgid invalid err" },
++	{ .int_msk = 0x4, .msg = "rocee qmm ovf: sgid ovf err" },
++	{ .int_msk = 0x8, .msg = "rocee qmm ovf: smac invalid err" },
++	{ .int_msk = 0xC, .msg = "rocee qmm ovf: smac ovf err" },
++	{ .int_msk = 0x10, .msg = "rocee qmm ovf: cqc invalid err" },
++	{ .int_msk = 0x11, .msg = "rocee qmm ovf: cqc ovf err" },
++	{ .int_msk = 0x12, .msg = "rocee qmm ovf: cqc hopnum err" },
++	{ .int_msk = 0x13, .msg = "rocee qmm ovf: cqc ba0 err" },
++	{ .int_msk = 0x14, .msg = "rocee qmm ovf: srqc invalid err" },
++	{ .int_msk = 0x15, .msg = "rocee qmm ovf: srqc ovf err" },
++	{ .int_msk = 0x16, .msg = "rocee qmm ovf: srqc hopnum err" },
++	{ .int_msk = 0x17, .msg = "rocee qmm ovf: srqc ba0 err" },
++	{ .int_msk = 0x18, .msg = "rocee qmm ovf: mpt invalid err" },
++	{ .int_msk = 0x19, .msg = "rocee qmm ovf: mpt ovf err" },
++	{ .int_msk = 0x1A, .msg = "rocee qmm ovf: mpt hopnum err" },
++	{ .int_msk = 0x1B, .msg = "rocee qmm ovf: mpt ba0 err" },
++	{ .int_msk = 0x1C, .msg = "rocee qmm ovf: qpc invalid err" },
++	{ .int_msk = 0x1D, .msg = "rocee qmm ovf: qpc ovf err" },
++	{ .int_msk = 0x1E, .msg = "rocee qmm ovf: qpc hopnum err" },
++	{ .int_msk = 0x1F, .msg = "rocee qmm ovf: qpc ba0 err" },
++	{ /* sentinel */ }
++};
++
+ static void hclge_log_error(struct device *dev, char *reg,
+ 			    const struct hclge_hw_error *err,
+ 			    u32 err_sts)
+@@ -1023,6 +1047,148 @@ static int hclge_handle_all_ras_errors(struct hclge_dev *hdev)
+ 	return ret;
+ }
+ 
++static int hclge_log_rocee_ovf_error(struct hclge_dev *hdev)
++{
++	struct device *dev = &hdev->pdev->dev;
++	struct hclge_desc desc[2];
++	int ret;
++
++	/* read overflow error status */
++	ret = hclge_cmd_query_error(hdev, &desc[0],
++				    HCLGE_ROCEE_PF_RAS_INT_CMD,
++				    0, 0, 0);
++	if (ret) {
++		dev_err(dev, "failed(%d) to query ROCEE OVF error sts\n", ret);
++		return ret;
++	}
++
++	/* log overflow error */
++	if (le32_to_cpu(desc[0].data[0]) & HCLGE_ROCEE_OVF_ERR_INT_MASK) {
++		const struct hclge_hw_error *err;
++		u32 err_sts;
++
++		err = &hclge_rocee_qmm_ovf_err_int[0];
++		err_sts = HCLGE_ROCEE_OVF_ERR_TYPE_MASK &
++			  le32_to_cpu(desc[0].data[0]);
++		while (err->msg) {
++			if (err->int_msk == err_sts) {
++				dev_warn(dev, "%s [error status=0x%x] found\n",
++					 err->msg,
++					 le32_to_cpu(desc[0].data[0]));
++				break;
++			}
++			err++;
++		}
++	}
++
++	if (le32_to_cpu(desc[0].data[1]) & HCLGE_ROCEE_OVF_ERR_INT_MASK) {
++		dev_warn(dev, "ROCEE TSP OVF [error status=0x%x] found\n",
++			 le32_to_cpu(desc[0].data[1]));
++	}
++
++	if (le32_to_cpu(desc[0].data[2]) & HCLGE_ROCEE_OVF_ERR_INT_MASK) {
++		dev_warn(dev, "ROCEE SCC OVF [error status=0x%x] found\n",
++			 le32_to_cpu(desc[0].data[2]));
++	}
++
++	return 0;
++}
++
++static int hclge_log_and_clear_rocee_ras_error(struct hclge_dev *hdev)
++{
++	enum hnae3_reset_type reset_type = HNAE3_FUNC_RESET;
++	struct hnae3_ae_dev *ae_dev = hdev->ae_dev;
++	struct device *dev = &hdev->pdev->dev;
++	struct hclge_desc desc[2];
++	unsigned int status;
++	int ret;
++
++	/* read RAS error interrupt status */
++	ret = hclge_cmd_query_error(hdev, &desc[0],
++				    HCLGE_QUERY_CLEAR_ROCEE_RAS_INT,
++				    0, 0, 0);
++	if (ret) {
++		dev_err(dev, "failed(%d) to query ROCEE RAS INT SRC\n", ret);
++		/* reset everything for now */
++		HCLGE_SET_DEFAULT_RESET_REQUEST(HNAE3_GLOBAL_RESET);
++		return ret;
++	}
++
++	status = le32_to_cpu(desc[0].data[0]);
++
++	if (status & HCLGE_ROCEE_RERR_INT_MASK)
++		dev_warn(dev, "ROCEE RAS AXI rresp error\n");
++
++	if (status & HCLGE_ROCEE_BERR_INT_MASK)
++		dev_warn(dev, "ROCEE RAS AXI bresp error\n");
++
++	if (status & HCLGE_ROCEE_ECC_INT_MASK) {
++		dev_warn(dev, "ROCEE RAS 2bit ECC error\n");
++		reset_type = HNAE3_GLOBAL_RESET;
++	}
++
++	if (status & HCLGE_ROCEE_OVF_INT_MASK) {
++		ret = hclge_log_rocee_ovf_error(hdev);
++		if (ret) {
++			dev_err(dev, "failed(%d) to process ovf error\n", ret);
++			/* reset everything for now */
++			HCLGE_SET_DEFAULT_RESET_REQUEST(HNAE3_GLOBAL_RESET);
++			return ret;
++		}
++	}
++
++	/* clear error status */
++	hclge_cmd_reuse_desc(&desc[0], false);
++	ret = hclge_cmd_send(&hdev->hw, &desc[0], 1);
++	if (ret) {
++		dev_err(dev, "failed(%d) to clear ROCEE RAS error\n", ret);
++		/* reset everything for now */
++		reset_type = HNAE3_GLOBAL_RESET;
++	}
++
++	HCLGE_SET_DEFAULT_RESET_REQUEST(reset_type);
++
++	return ret;
++}
++
++static int hclge_config_rocee_ras_interrupt(struct hclge_dev *hdev, bool en)
++{
++	struct device *dev = &hdev->pdev->dev;
++	struct hclge_desc desc;
++	int ret;
++
++	if (hdev->pdev->revision < 0x21 || !hnae3_dev_roce_supported(hdev))
++		return 0;
++
++	hclge_cmd_setup_basic_desc(&desc, HCLGE_CONFIG_ROCEE_RAS_INT_EN, false);
++	if (en) {
++		/* enable ROCEE hw error interrupts */
++		desc.data[0] = cpu_to_le32(HCLGE_ROCEE_RAS_NFE_INT_EN);
++		desc.data[1] = cpu_to_le32(HCLGE_ROCEE_RAS_CE_INT_EN);
++
++		hclge_log_and_clear_rocee_ras_error(hdev);
++	}
++	desc.data[2] = cpu_to_le32(HCLGE_ROCEE_RAS_NFE_INT_EN_MASK);
++	desc.data[3] = cpu_to_le32(HCLGE_ROCEE_RAS_CE_INT_EN_MASK);
++
++	ret = hclge_cmd_send(&hdev->hw, &desc, 1);
++	if (ret)
++		dev_err(dev, "failed(%d) to config ROCEE RAS interrupt\n", ret);
++
++	return ret;
++}
++
++static int hclge_handle_rocee_ras_error(struct hnae3_ae_dev *ae_dev)
++{
++	struct hclge_dev *hdev = ae_dev->priv;
++
++	if (test_bit(HCLGE_STATE_RST_HANDLING, &hdev->state) ||
++	    hdev->pdev->revision < 0x21)
++		return HNAE3_NONE_RESET;
++
++	return hclge_log_and_clear_rocee_ras_error(hdev);
++}
++
+ static const struct hclge_hw_blk hw_blk[] = {
+ 	{
+ 	  .msk = BIT(0), .name = "IGU_EGU",
+@@ -1058,6 +1224,7 @@ static const struct hclge_hw_blk hw_blk[] = {
+ int hclge_hw_error_set_state(struct hclge_dev *hdev, bool state)
+ {
+ 	const struct hclge_hw_blk *module = hw_blk;
++	struct device *dev = &hdev->pdev->dev;
+ 	int ret = 0;
+ 
+ 	while (module->name) {
+@@ -1069,6 +1236,10 @@ int hclge_hw_error_set_state(struct hclge_dev *hdev, bool state)
+ 		module++;
+ 	}
+ 
++	ret = hclge_config_rocee_ras_interrupt(hdev, state);
++	if (ret)
++		dev_err(dev, "fail(%d) to configure ROCEE err int\n", ret);
++
+ 	return ret;
+ }
+ 
+@@ -1086,9 +1257,21 @@ pci_ers_result_t hclge_handle_hw_ras_error(struct hnae3_ae_dev *ae_dev)
+ 			 "HNS Non-Fatal RAS error(status=0x%x) identified\n",
+ 			 status);
+ 		hclge_handle_all_ras_errors(hdev);
+-		return PCI_ERS_RESULT_NEED_RESET;
++	} else {
++		if (test_bit(HCLGE_STATE_RST_HANDLING, &hdev->state) ||
++		    hdev->pdev->revision < 0x21)
++			return PCI_ERS_RESULT_RECOVERED;
++	}
++
++	if (status & HCLGE_RAS_REG_ROCEE_ERR_MASK) {
++		dev_warn(dev, "ROCEE uncorrected RAS error identified\n");
++		hclge_handle_rocee_ras_error(ae_dev);
+ 	}
+ 
++	if (status & HCLGE_RAS_REG_NFE_MASK ||
++	    status & HCLGE_RAS_REG_ROCEE_ERR_MASK)
++		return PCI_ERS_RESULT_NEED_RESET;
++
+ 	return PCI_ERS_RESULT_RECOVERED;
+ }
+ 
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_err.h b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_err.h
+index d2077f2..51a7d4e 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_err.h
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_err.h
+@@ -8,6 +8,7 @@
+ 
+ #define HCLGE_RAS_PF_OTHER_INT_STS_REG   0x20B00
+ #define HCLGE_RAS_REG_NFE_MASK   0xFF00
++#define HCLGE_RAS_REG_ROCEE_ERR_MASK   0x3000000
+ 
+ #define HCLGE_VECTOR0_PF_OTHER_INT_STS_REG   0x20800
+ #define HCLGE_VECTOR0_REG_MSIX_MASK   0x1FF00
+@@ -83,6 +84,17 @@
+ #define HCLGE_QCN_ECC_INT_MASK		GENMASK(21, 0)
+ #define HCLGE_NCSI_ECC_INT_MASK		GENMASK(1, 0)
+ 
++#define HCLGE_ROCEE_RAS_NFE_INT_EN		0xF
++#define HCLGE_ROCEE_RAS_CE_INT_EN		0x1
++#define HCLGE_ROCEE_RAS_NFE_INT_EN_MASK		0xF
++#define HCLGE_ROCEE_RAS_CE_INT_EN_MASK		0x1
++#define HCLGE_ROCEE_RERR_INT_MASK		BIT(0)
++#define HCLGE_ROCEE_BERR_INT_MASK		BIT(1)
++#define HCLGE_ROCEE_ECC_INT_MASK		BIT(2)
++#define HCLGE_ROCEE_OVF_INT_MASK		BIT(3)
++#define HCLGE_ROCEE_OVF_ERR_INT_MASK		0x10000
++#define HCLGE_ROCEE_OVF_ERR_TYPE_MASK		0x3F
++
+ enum hclge_err_int_type {
+ 	HCLGE_ERR_INT_MSIX = 0,
+ 	HCLGE_ERR_INT_RAS_CE = 1,
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+2.7.4
+
+
