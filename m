@@ -2,96 +2,93 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 747D7C07E85
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 09:33:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10171C07E85
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 09:33:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 456E120892
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 09:33:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 456E120892
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	by mail.kernel.org (Postfix) with ESMTP id D7C33208E7
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 09:33:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D7C33208E7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726062AbeLGJdG (ORCPT
+        id S1726083AbeLGJdM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 04:33:06 -0500
-Received: from mail-ua1-f65.google.com ([209.85.222.65]:34023 "EHLO
-        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725995AbeLGJdF (ORCPT
+        Fri, 7 Dec 2018 04:33:12 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:54344 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726006AbeLGJdL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 04:33:05 -0500
-Received: by mail-ua1-f65.google.com with SMTP id z23so1188416uam.1;
-        Fri, 07 Dec 2018 01:33:04 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=0Xz8Yr7xxwUL+gvEbf/2Q205o6A+0qsw8dRMIAadsks=;
-        b=bbzX+BX54L+tndi2580pn6VWexk8zzK/+Haq8kgIgXbsjVXzknGcpj74pUEKf0ozSY
-         rP4GMf5VSKHyR1D6lsrYLykma3MaydjOug2dPspf0xEZhL1+S+MloDsbu6AQCO54PDNg
-         u7bckfoM8bhPI3GB3OeSAPEObA1CPB8oV1CFtq4cNvgkZVtr73smgAwQZDwXo+9tJAwm
-         O1ZEtePgb4GK0blki2v7+X7R6wGnIrOQmoBugM4UQlHebIaJsmxu+PmVk6I6UQqlxxa1
-         NZ4AUcZz4QfkGn84g+RxT2Dwww362SBa7XS+MNY3rnfF9bDKfnB4Or6ZP8f6qafyffzQ
-         HlAw==
-X-Gm-Message-State: AA+aEWYtKREbUkX8hdwwkmLUaHcepSS+ns3ZVoVwhgO+Fd0zpNO+pqOR
-        TTfgC+Z8jMJqFAkIEe6t45TsCTsW8+yvUccjszA=
-X-Google-Smtp-Source: AFSGD/WjpZ29qZK5oRYupyTDzvamFqLXN3ioFUg6Lcc46Si3XJ3MjT/91fdDrj5A3CedCLCIq9nUiH2cFp7r+h0YC/k=
-X-Received: by 2002:a9f:364a:: with SMTP id s10mr574511uad.78.1544175183780;
- Fri, 07 Dec 2018 01:33:03 -0800 (PST)
+        Fri, 7 Dec 2018 04:33:11 -0500
+Received: from p4fea4820.dip0.t-ipconnect.de ([79.234.72.32] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1gVCVN-0003n7-N1; Fri, 07 Dec 2018 10:33:05 +0100
+Date:   Fri, 7 Dec 2018 10:33:00 +0100 (CET)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Peter Zijlstra <peterz@infradead.org>
+cc:     Waiman Long <longman@redhat.com>, Ingo Molnar <mingo@redhat.com>,
+        Borislav Petkov <bp@alien8.de>, x86@kernel.org,
+        linux-kernel@vger.kernel.org,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>
+Subject: Re: [PATCH 2/2] x86/speculation: switch_to_cond_stibp on is the
+ likely case
+In-Reply-To: <20181207085209.GB2237@hirez.programming.kicks-ass.net>
+Message-ID: <alpine.DEB.2.21.1812071032270.3743@nanos.tec.linutronix.de>
+References: <1544039368-9009-1-git-send-email-longman@redhat.com> <1544039368-9009-2-git-send-email-longman@redhat.com> <20181206084141.GA13538@hirez.programming.kicks-ass.net> <3732de84-a14f-e32a-61de-29c5965dd405@redhat.com>
+ <20181207085209.GB2237@hirez.programming.kicks-ass.net>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-References: <1543077033-7016-1-git-send-email-hofrat@osadl.org>
-In-Reply-To: <1543077033-7016-1-git-send-email-hofrat@osadl.org>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Fri, 7 Dec 2018 10:32:50 +0100
-Message-ID: <CAMuHMdVe9xdNbMvH+8ZhWJQWKakDM96HEyki2GN6Ebvap9mnUQ@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: rza1: report if devm_kasptrinf() fails
-To:     Nicholas Mc Guire <hofrat@osadl.org>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/mixed; boundary="8323329-1747069377-1544175185=:3743"
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Nicholas,
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-On Sat, Nov 24, 2018 at 5:35 PM Nicholas Mc Guire <hofrat@osadl.org> wrote:
-> devm_kasprintf() may return NULL on failure of internal allocation
-> thus the assignments are not safe if not checked. On error
-> rza1_pinctrl_register() respectively rza1_parse_gpiochip() return
-> negative values so -ENOMEM in the (unlikely) failure case of
-> devm_kasprintf() should be fine here.
->
-> Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
-> Fixes: 5a49b644b307 ("pinctrl: Renesas RZ/A1 pin and gpio controller")
+--8323329-1747069377-1544175185=:3743
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: 8BIT
 
-Thanks for your patch!
+On Fri, 7 Dec 2018, Peter Zijlstra wrote:
+> On Thu, Dec 06, 2018 at 10:38:00AM -0500, Waiman Long wrote:
+> > On 12/06/2018 03:41 AM, Peter Zijlstra wrote:
+> > > On Wed, Dec 05, 2018 at 02:49:28PM -0500, Waiman Long wrote:
+> > >> Since conditional STIBP is the default, it should be treated as
+> > >> the likely case. Changes the use of static_branch_unlikely() to
+> > >> static_branch_likely() for switch_to_cond_stibp.
+> > > So now you're making kernels on 'fixed' or unaffected hardware slower.
+> > 
+> > Good point.
+> > 
+> > The reason I sent out this patch is because of the inconsistency in the
+> > use of likely/unlikely hints.
+> > 
+> > arch/x86/kernel/cpu/bugs.c:156:        if
+> > (static_branch_unlikely(&switch_to_cond_stibp))
+> > arch/x86/kernel/process.c:440:       
+> > static_branch_unlikely(&switch_to_cond_stibp)) {
+> > arch/x86/kernel/process.h:26:        if
+> > (!static_branch_likely(&switch_to_cond_stibp)) {
+> > 
+> > So if we are aiming to optimize for "fixed" or unaffected hardware,
+> > maybe we should modify the likely hint to unlikely then.
+> 
+> Right, I think that makes sense, Thomas?
 
-> The dev_err() for this unlikely case is added so that a failures of
-> rza1_pinctrl_register() respectively rza1_parse_gpiochip() can be
-> understood as currently the negative return value is simply passed up
-> the call stack but it would be hard to identify the cause.
+Yeah, I probably got that wrong in some places. Let me look.
 
-Adding the dev_err() is not needed, as the memory management core
-print a message on memory allocation failures anyway.
-Hence please remove it.
+Thanks,
 
-With the above fixed:
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+	Thomas
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+--8323329-1747069377-1544175185=:3743--
