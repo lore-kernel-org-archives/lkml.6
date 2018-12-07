@@ -2,93 +2,181 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10171C07E85
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 09:33:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D066C64EB1
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 09:33:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D7C33208E7
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 09:33:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D7C33208E7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 0B1AC20989
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 09:33:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="flVRg0VT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B1AC20989
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726083AbeLGJdM (ORCPT
+        id S1726094AbeLGJdQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 04:33:12 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:54344 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726006AbeLGJdL (ORCPT
+        Fri, 7 Dec 2018 04:33:16 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:34821 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726084AbeLGJdO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 04:33:11 -0500
-Received: from p4fea4820.dip0.t-ipconnect.de ([79.234.72.32] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1gVCVN-0003n7-N1; Fri, 07 Dec 2018 10:33:05 +0100
-Date:   Fri, 7 Dec 2018 10:33:00 +0100 (CET)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Peter Zijlstra <peterz@infradead.org>
-cc:     Waiman Long <longman@redhat.com>, Ingo Molnar <mingo@redhat.com>,
-        Borislav Petkov <bp@alien8.de>, x86@kernel.org,
-        linux-kernel@vger.kernel.org,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>
-Subject: Re: [PATCH 2/2] x86/speculation: switch_to_cond_stibp on is the
- likely case
-In-Reply-To: <20181207085209.GB2237@hirez.programming.kicks-ass.net>
-Message-ID: <alpine.DEB.2.21.1812071032270.3743@nanos.tec.linutronix.de>
-References: <1544039368-9009-1-git-send-email-longman@redhat.com> <1544039368-9009-2-git-send-email-longman@redhat.com> <20181206084141.GA13538@hirez.programming.kicks-ass.net> <3732de84-a14f-e32a-61de-29c5965dd405@redhat.com>
- <20181207085209.GB2237@hirez.programming.kicks-ass.net>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Fri, 7 Dec 2018 04:33:14 -0500
+Received: by mail-wm1-f65.google.com with SMTP id c126so3801333wmh.0
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Dec 2018 01:33:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=eMnf6ldCLzSIFExqElBpBbrF0a80ehzcW+zL1qWkQFI=;
+        b=flVRg0VT8rf773axgJskOt6mEUkNuIav3OWtUev+VR6+9kCUHhD3g3pj0/HTPpnT3z
+         bBhTTWDmGD5vM9g2SvRc1ZoQfTrTf92V4niKulYBCp7xqRVQ2IH3L2zlAcpCB/Y8j/V3
+         AiIv7yEWETnT1S3aSofPvO3rg11PapadoELmQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=eMnf6ldCLzSIFExqElBpBbrF0a80ehzcW+zL1qWkQFI=;
+        b=aucNZZgIczPmyxr4A/J93nCE7t8fdBRScOZD1T1tFMwKPBb9cVK+4JPq40NpVWKek1
+         kKRkCw9fbV8Jb+20vcy1u6XUR2hi2hDQImI9gw3oOgHi6YhjeL5yKvVWLqGtz8jyTYTB
+         e4sEdUsCSM86Wo6Z2Xg5Ay1TxZL+glm9WOLDFx3te8+9Cj/SsdDw1ZSVosuBs4eFAM40
+         o5tLY/Pjg2RGgXN+iippgxwsOzgwJADAOcCVGelrFyx0bSjMJYfxnShorPx+BRktRemH
+         o/3jXHrxnCQhsjMF/6VSyAMZ/2HDf91vj2vjCFG7Y/Co1BWT387ArzfbjLPmi6UJ52hp
+         lcaw==
+X-Gm-Message-State: AA+aEWYtMYudM1nsUN8LAZsusM8LKRdIHsZLRnbBwfwMYjw4YM6OZwhD
+        XutK9wdujE5NZNXPaKOMP4a+Rw==
+X-Google-Smtp-Source: AFSGD/V8LYViCHAWSFzE+x9aAPgqaVHDnxTvmIm+FgCPVAuapeKQs8FRRTpoXcQsMPx9wkPNtG8gNQ==
+X-Received: by 2002:a1c:b94b:: with SMTP id j72mr1534084wmf.11.1544175192459;
+        Fri, 07 Dec 2018 01:33:12 -0800 (PST)
+Received: from [192.168.27.209] ([37.157.136.206])
+        by smtp.googlemail.com with ESMTPSA id z12sm3528581wrh.35.2018.12.07.01.33.09
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 07 Dec 2018 01:33:11 -0800 (PST)
+Subject: Re: [PATCH v3] media: venus: add support for key frame
+To:     Tomasz Figa <tfiga@chromium.org>, mgottam@codeaurora.org
+Cc:     Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Alexandre Courbot <acourbot@chromium.org>,
+        vgarodia@codeaurora.org
+References: <1541163476-23249-1-git-send-email-mgottam@codeaurora.org>
+ <CAAFQd5D=hNdkEovonE6GOaYvq9dBbQwSZ=95V9a80e-sLp7cYg@mail.gmail.com>
+ <4767b56f-420b-dc0c-0ae9-44dbf6dcd0b1@linaro.org>
+ <6d765e0d7d6b873e087a3db823cb1b29@codeaurora.org>
+ <CAAFQd5Ask-mw+uEE0OAEabjaAAYcJyCeexaofOAg1bp2NtvpKA@mail.gmail.com>
+From:   Stanimir Varbanov <stanimir.varbanov@linaro.org>
+Message-ID: <0e0cef43-0747-295f-0eef-3e52dc538523@linaro.org>
+Date:   Fri, 7 Dec 2018 11:33:03 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323329-1747069377-1544175185=:3743"
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+In-Reply-To: <CAAFQd5Ask-mw+uEE0OAEabjaAAYcJyCeexaofOAg1bp2NtvpKA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+Hi Hans,
 
---8323329-1747069377-1544175185=:3743
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: 8BIT
-
-On Fri, 7 Dec 2018, Peter Zijlstra wrote:
-> On Thu, Dec 06, 2018 at 10:38:00AM -0500, Waiman Long wrote:
-> > On 12/06/2018 03:41 AM, Peter Zijlstra wrote:
-> > > On Wed, Dec 05, 2018 at 02:49:28PM -0500, Waiman Long wrote:
-> > >> Since conditional STIBP is the default, it should be treated as
-> > >> the likely case. Changes the use of static_branch_unlikely() to
-> > >> static_branch_likely() for switch_to_cond_stibp.
-> > > So now you're making kernels on 'fixed' or unaffected hardware slower.
-> > 
-> > Good point.
-> > 
-> > The reason I sent out this patch is because of the inconsistency in the
-> > use of likely/unlikely hints.
-> > 
-> > arch/x86/kernel/cpu/bugs.c:156:        if
-> > (static_branch_unlikely(&switch_to_cond_stibp))
-> > arch/x86/kernel/process.c:440:       
-> > static_branch_unlikely(&switch_to_cond_stibp)) {
-> > arch/x86/kernel/process.h:26:        if
-> > (!static_branch_likely(&switch_to_cond_stibp)) {
-> > 
-> > So if we are aiming to optimize for "fixed" or unaffected hardware,
-> > maybe we should modify the likely hint to unlikely then.
+On 11/29/18 9:40 PM, Tomasz Figa wrote:
+> On Thu, Nov 29, 2018 at 3:10 AM <mgottam@codeaurora.org> wrote:
+>>
+>>
+>> Hi Stan,
+>>
+>> On 2018-11-29 16:01, Stanimir Varbanov wrote:
+>>> Hi Tomasz,
+>>>
+>>> On 11/3/18 5:01 AM, Tomasz Figa wrote:
+>>>> Hi Malathi,
+>>>>
+>>>> On Fri, Nov 2, 2018 at 9:58 PM Malathi Gottam <mgottam@codeaurora.org>
+>>>> wrote:
+>>>>>
+>>>>> When client requests for a keyframe, set the property
+>>>>> to hardware to generate the sync frame.
+>>>>>
+>>>>> Signed-off-by: Malathi Gottam <mgottam@codeaurora.org>
+>>>>> ---
+>>>>>  drivers/media/platform/qcom/venus/venc_ctrls.c | 20
+>>>>> +++++++++++++++++++-
+>>>>>  1 file changed, 19 insertions(+), 1 deletion(-)
+>>>>>
+>>>>> diff --git a/drivers/media/platform/qcom/venus/venc_ctrls.c
+>>>>> b/drivers/media/platform/qcom/venus/venc_ctrls.c
+>>>>> index 45910172..59fe7fc 100644
+>>>>> --- a/drivers/media/platform/qcom/venus/venc_ctrls.c
+>>>>> +++ b/drivers/media/platform/qcom/venus/venc_ctrls.c
+>>>>> @@ -79,8 +79,10 @@ static int venc_op_s_ctrl(struct v4l2_ctrl *ctrl)
+>>>>>  {
+>>>>>         struct venus_inst *inst = ctrl_to_inst(ctrl);
+>>>>>         struct venc_controls *ctr = &inst->controls.enc;
+>>>>> +       struct hfi_enable en = { .enable = 1 };
+>>>>>         u32 bframes;
+>>>>>         int ret;
+>>>>> +       u32 ptype;
+>>>>>
+>>>>>         switch (ctrl->id) {
+>>>>>         case V4L2_CID_MPEG_VIDEO_BITRATE_MODE:
+>>>>> @@ -173,6 +175,19 @@ static int venc_op_s_ctrl(struct v4l2_ctrl
+>>>>> *ctrl)
+>>>>>
+>>>>>                 ctr->num_b_frames = bframes;
+>>>>>                 break;
+>>>>> +       case V4L2_CID_MPEG_VIDEO_FORCE_KEY_FRAME:
+>>>>> +               mutex_lock(&inst->lock);
+>>>>> +               if (inst->streamon_out && inst->streamon_cap) {
+>>>>
+>>>> We had a discussion on this in v2. I don't remember seeing any
+>>>> conclusion.
+>>>>
+>>>> Obviously the hardware should generate a keyframe naturally when the
+>>>> CAPTURE streaming starts, which is where the encoding starts, but the
+>>>> state of the OUTPUT queue should not affect this.
+>>>>
+>>>> The application is free to stop and start streaming on the OUTPUT
+>>>> queue as it goes and it shouldn't imply any side effects in the
+>>>> encoded bitstream (e.g. a keyframe inserted). So:
+>>>> - a sequence of STREAMOFF(OUTPUT),
+>>>> S_CTRL(V4L2_CID_MPEG_VIDEO_FORCE_KEY_FRAME), STREAMON(OUTPUT) should
+>>>> explicitly generate a keyframe,
+>>>
+>>> I agree with you, but presently we don't follow strictly the stateful
+>>> encoder spec. In this spirit I think proposed patch is applicable to
+>>> the
+>>> current state of the encoder driver, and your comment should be
+>>> addressed in the follow-up patches where we have to re-factor a bit
+>>> start/stop_streaming according to the encoder documentation.
+>>>
+>>> But until then we have to get that patch.
+>>
+>> So I can see that this patch is good implementation of forcing sync
+>> frame
+>> under current encoder state.
+>>
+>> Can you please ack the same.
 > 
-> Right, I think that makes sense, Thomas?
+> Okay, assuming that when you start streaming you naturally get a
+> keyframe, I'm okay with this patch, since it actually fixes the
+> missing key frame request, so from the general encoder interface point
+> of view:
+> 
+> Acked-by: Tomasz Figa <tfiga@chromium.org>
 
-Yeah, I probably got that wrong in some places. Let me look.
+Thanks Tomasz!
 
-Thanks,
+Acked-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
 
-	Thomas
-
---8323329-1747069377-1544175185=:3743--
+-- 
+regards,
+Stan
