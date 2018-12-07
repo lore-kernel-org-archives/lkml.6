@@ -3,147 +3,173 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3818C07E85
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 13:48:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33A4AC07E85
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 13:49:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 678FB20868
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 13:48:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 678FB20868
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id F325A208E7
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 13:49:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F325A208E7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726104AbeLGNs0 (ORCPT
+        id S1726142AbeLGNt1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 08:48:26 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:58286 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725998AbeLGNs0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 08:48:26 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 4549D20CC3; Fri,  7 Dec 2018 14:48:24 +0100 (CET)
-Received: from localhost.localdomain (aaubervilliers-681-1-79-44.w90-88.abo.wanadoo.fr [90.88.21.44])
-        by mail.bootlin.com (Postfix) with ESMTPSA id ED84F20745;
-        Fri,  7 Dec 2018 14:48:13 +0100 (CET)
-From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-To:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Cc:     Eric Anholt <eric@anholt.net>, David Airlie <airlied@linux.ie>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Subject: [PATCH v3] drm/vc4: Add a debugfs entry to disable/enable the load tracker
-Date:   Fri,  7 Dec 2018 14:47:57 +0100
-Message-Id: <20181207134757.32437-1-paul.kocialkowski@bootlin.com>
-X-Mailer: git-send-email 2.19.2
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Fri, 7 Dec 2018 08:49:27 -0500
+Received: from mout.kundenserver.de ([212.227.126.135]:58407 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726008AbeLGNt0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Dec 2018 08:49:26 -0500
+Received: from wuerfel.lan ([109.192.41.194]) by mrelayeu.kundenserver.de
+ (mreue011 [212.227.15.129]) with ESMTPA (Nemesis) id
+ 1Mv3I0-1hM8AV2JMm-00qw7W; Fri, 07 Dec 2018 14:48:59 +0100
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     y2038@lists.linaro.org
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-sh@vger.kernel.org, Baolin Wang <baolin.wang@linaro.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        John Stultz <john.stultz@linaro.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Rich Felker <dalias@libc.org>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH 3/8] sh: remove unused rtc_sh_get/set_time infrastructure
+Date:   Fri,  7 Dec 2018 14:48:19 +0100
+Message-Id: <20181207134824.300024-4-arnd@arndb.de>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20181207134824.300024-1-arnd@arndb.de>
+References: <20181207134824.300024-1-arnd@arndb.de>
+X-Provags-ID: V03:K1:ptjeVIj9pJisn+HaW1swv5AKqW7dc3s5a8wTDbLUJiUakNelqRd
+ ke1RgFvGLb0EiX1wkfOnuCgToqapBlSI88L8VdFZ+FxT8KcharP3dOVcc02tAegIpebPed5
+ 0IBjHTW6ddjW4q0pixDVb+mWTOd9ae5RXfRJrESAYN0nbaOrdjnLVs4smk/2n8SGHGwK7Cs
+ 4bWAPjvAeXJyC4zHHNk+Q==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:GFdkd1pRCsM=:LEEf2ULtxxEAm0xDqCjU/n
+ DGGXXO34JScu2d+ApJqTsz715016BvTEdJD7bRsnvZ8oxQnQfJkbmZBpHJXYcj2fnd8pcOpGH
+ /wJ2vK4zya4DaExuK3nnNsz5+Berf5QQ02euOuYXWovFx+1ADg2G2T38e2bxHBovorlT9YDvu
+ lWudnmcmCzKfBeb1w/PjFaRT8Pn47yFSJ8obIH2gQ2hQTwVLMi/A95qrUUl3AMl274sKb6HdF
+ T/hwvWcxVRJiRf1j6+E5Y8mlZIOVSjH9q2Et8K6TymbA6+Z7Uv4SL3fbbc1u6X9jewAQa7yVb
+ mQw3MH0+mlllXqbJ0vcPOQiH1Pnpg0p5BaK/B6owlYxT9bxyJBZ6QRYvUyoYqCw9bfhsU/SOZ
+ swBNae1BDiRzYhlbgR1ty4th5+4AM7GGB8IMnaIE/9J9tKa/xk8uLNgxMk1D6yq/I2GwQkqqr
+ c28swUoLffuRieAly6gksrRrhBuJr8sEpRKwpaDD4UTAPJaU/3DXZERWssn6MwLq4KnKfLud9
+ LITXUD6m7gbzakwYxWQR8OCiTiyyBrG9ePBpBChl2maKjugdq0TY5D8a7SrTkw2rvPxsUZLmk
+ 2adHkLdjbqKxPvLEt7Xulrh7GJvXf3hXBCEZwDKSmFi/jVnOFNUze9VwV1FtHs0xhTvMcC6+r
+ +UPTBIY/BeMl5jLKCygp5NSNpCsHEJ290h5edYVy3EKVQmdB0G2wz3rf0M1jNQtUBv+jtwx6e
+ f27WiTIRZFJZGmCfApqe5mf+btJsLi18RUV9XA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In order to test whether the load tracker is working as expected, we
-need the ability to compare the commit result with the underrun
-indication. With the load tracker always enabled, commits that are
-expected to trigger an underrun are always rejected, so userspace
-cannot get the actual underrun indication from the hardware.
+All platforms are now converted to RTC drivers, so this has become
+obsolete. The board_time_init() callback still has one caller, but
+could otherwise also get killed.
 
-Add a debugfs entry to disable/enable the load tracker, so that a DRM
-commit expected to trigger an underrun can go through with the load
-tracker disabled. The underrun indication is then available to
-userspace and can be checked against the commit result with the load
-tracker enabled.
+This removes one more usage of the deprecated timespec structure,
+which overflows in y2038.
 
-Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
-This patch is based upon Boris Brezillon's series:
-  drm/vc4: Add a load tracker
+ arch/sh/include/asm/rtc.h |  2 --
+ arch/sh/kernel/time.c     | 69 ---------------------------------------
+ 2 files changed, 71 deletions(-)
 
-Changes since v2:
-* Used the standard debugfs_create_bool instead of reinventing it.
-
-Changes since v1:
-* Moved all the debugfs-related functions and structure to vc4_debugfs.c.
-
- drivers/gpu/drm/vc4/vc4_debugfs.c | 9 +++++++++
- drivers/gpu/drm/vc4/vc4_drv.c     | 2 ++
- drivers/gpu/drm/vc4/vc4_drv.h     | 2 ++
- drivers/gpu/drm/vc4/vc4_kms.c     | 6 +++++-
- 4 files changed, 18 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/vc4/vc4_debugfs.c b/drivers/gpu/drm/vc4/vc4_debugfs.c
-index 7a0003de71ab..7c23f5209f6d 100644
---- a/drivers/gpu/drm/vc4/vc4_debugfs.c
-+++ b/drivers/gpu/drm/vc4/vc4_debugfs.c
-@@ -35,6 +35,15 @@ static const struct drm_info_list vc4_debugfs_list[] = {
- int
- vc4_debugfs_init(struct drm_minor *minor)
- {
-+	struct vc4_dev *vc4 = to_vc4_dev(minor->dev);
-+	struct dentry *dentry;
-+
-+	dentry = debugfs_create_bool("load_tracker", S_IRUGO | S_IWUSR,
-+				     minor->debugfs_root,
-+				     &vc4->load_tracker_enabled);
-+	if (!dentry)
-+		return -ENOMEM;
-+
- 	return drm_debugfs_create_files(vc4_debugfs_list, VC4_DEBUGFS_ENTRIES,
- 					minor->debugfs_root, minor);
- }
-diff --git a/drivers/gpu/drm/vc4/vc4_drv.c b/drivers/gpu/drm/vc4/vc4_drv.c
-index 7195a0bcceb3..12ac971d24d6 100644
---- a/drivers/gpu/drm/vc4/vc4_drv.c
-+++ b/drivers/gpu/drm/vc4/vc4_drv.c
-@@ -290,6 +290,8 @@ static int vc4_drm_bind(struct device *dev)
+diff --git a/arch/sh/include/asm/rtc.h b/arch/sh/include/asm/rtc.h
+index c63555ee1255..fe55fbb181aa 100644
+--- a/arch/sh/include/asm/rtc.h
++++ b/arch/sh/include/asm/rtc.h
+@@ -4,8 +4,6 @@
  
- 	drm_fbdev_generic_setup(drm, 32);
+ void time_init(void);
+ extern void (*board_time_init)(void);
+-extern void (*rtc_sh_get_time)(struct timespec *);
+-extern int (*rtc_sh_set_time)(const time_t);
  
-+	vc4->load_tracker_enabled = true;
-+
- 	return 0;
+ #define RTC_CAP_4_DIGIT_YEAR	(1 << 0)
  
- unbind_all:
-diff --git a/drivers/gpu/drm/vc4/vc4_drv.h b/drivers/gpu/drm/vc4/vc4_drv.h
-index a0fb888604d6..8837d2416aae 100644
---- a/drivers/gpu/drm/vc4/vc4_drv.h
-+++ b/drivers/gpu/drm/vc4/vc4_drv.h
-@@ -188,6 +188,8 @@ struct vc4_dev {
+diff --git a/arch/sh/kernel/time.c b/arch/sh/kernel/time.c
+index fcd5e41977d1..eb0a91270499 100644
+--- a/arch/sh/kernel/time.c
++++ b/arch/sh/kernel/time.c
+@@ -22,75 +22,6 @@
+ #include <asm/clock.h>
+ #include <asm/rtc.h>
  
- 	int power_refcount;
+-/* Dummy RTC ops */
+-static void null_rtc_get_time(struct timespec *tv)
+-{
+-	tv->tv_sec = mktime(2000, 1, 1, 0, 0, 0);
+-	tv->tv_nsec = 0;
+-}
+-
+-static int null_rtc_set_time(const time_t secs)
+-{
+-	return 0;
+-}
+-
+-void (*rtc_sh_get_time)(struct timespec *) = null_rtc_get_time;
+-int (*rtc_sh_set_time)(const time_t) = null_rtc_set_time;
+-
+-void read_persistent_clock(struct timespec *ts)
+-{
+-	rtc_sh_get_time(ts);
+-}
+-
+-#ifdef CONFIG_GENERIC_CMOS_UPDATE
+-int update_persistent_clock(struct timespec now)
+-{
+-	return rtc_sh_set_time(now.tv_sec);
+-}
+-#endif
+-
+-static int rtc_generic_get_time(struct device *dev, struct rtc_time *tm)
+-{
+-	struct timespec tv;
+-
+-	rtc_sh_get_time(&tv);
+-	rtc_time_to_tm(tv.tv_sec, tm);
+-	return 0;
+-}
+-
+-static int rtc_generic_set_time(struct device *dev, struct rtc_time *tm)
+-{
+-	unsigned long secs;
+-
+-	rtc_tm_to_time(tm, &secs);
+-	if ((rtc_sh_set_time == null_rtc_set_time) ||
+-	    (rtc_sh_set_time(secs) < 0))
+-		return -EOPNOTSUPP;
+-
+-	return 0;
+-}
+-
+-static const struct rtc_class_ops rtc_generic_ops = {
+-	.read_time = rtc_generic_get_time,
+-	.set_time = rtc_generic_set_time,
+-};
+-
+-static int __init rtc_generic_init(void)
+-{
+-	struct platform_device *pdev;
+-
+-	if (rtc_sh_get_time == null_rtc_get_time)
+-		return -ENODEV;
+-
+-	pdev = platform_device_register_data(NULL, "rtc-generic", -1,
+-					     &rtc_generic_ops,
+-					     sizeof(rtc_generic_ops));
+-
+-
+-	return PTR_ERR_OR_ZERO(pdev);
+-}
+-device_initcall(rtc_generic_init);
+-
+ void (*board_time_init)(void);
  
-+	bool load_tracker_enabled;
-+
- 	/* Mutex controlling the power refcount. */
- 	struct mutex power_lock;
- 
-diff --git a/drivers/gpu/drm/vc4/vc4_kms.c b/drivers/gpu/drm/vc4/vc4_kms.c
-index f3fd34faa812..e80b1ad5c938 100644
---- a/drivers/gpu/drm/vc4/vc4_kms.c
-+++ b/drivers/gpu/drm/vc4/vc4_kms.c
-@@ -479,6 +479,7 @@ static const struct drm_private_state_funcs vc4_load_tracker_state_funcs = {
- static int
- vc4_atomic_check(struct drm_device *dev, struct drm_atomic_state *state)
- {
-+	struct vc4_dev *vc4 = to_vc4_dev(dev);
- 	int ret;
- 
- 	ret = vc4_ctm_atomic_check(dev, state);
-@@ -489,7 +490,10 @@ vc4_atomic_check(struct drm_device *dev, struct drm_atomic_state *state)
- 	if (ret)
- 		return ret;
- 
--	return vc4_load_tracker_atomic_check(state);
-+	if (vc4->load_tracker_enabled)
-+		return vc4_load_tracker_atomic_check(state);
-+
-+	return 0;
- }
- 
- static const struct drm_mode_config_funcs vc4_mode_funcs = {
+ static void __init sh_late_time_init(void)
 -- 
-2.19.2
+2.18.0
 
