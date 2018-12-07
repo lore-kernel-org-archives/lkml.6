@@ -2,93 +2,101 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84B4BC07E85
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 17:12:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FA82C07E85
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 17:14:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4697320882
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 17:12:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="V89YIUIX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4697320882
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 052DE2082D
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 17:14:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 052DE2082D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726105AbeLGRMO (ORCPT
+        id S1726091AbeLGROv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 12:12:14 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:59814 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726027AbeLGRMO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 12:12:14 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=cveUhY21evAj175EbvLIvaHXmqv3QWYBYVfgJxSvrwM=; b=V89YIUIXoO+LmjEyY/Dz/wS1N
-        H+CSHA89DnsXDIXYQt2ksXbQc2t3E1OCaQ85e8K8FzaXOp24BfiiRoepc2mb9096CNEbx/V4hNZov
-        gMLRkf4dxxbin+x2tI5uE/Dgz8aGXb1nyknlhLkqXuRmS3rzc9xkNJ+V+aSrBJTpbecBvHpri/hIM
-        iGAoscHggz+LLXzdpFkE0tdus0JegCSP6HZk1UPnTyQ6WRBIuqskwVeZdpwsgVKiXvJ1eZNgAtsMP
-        Niu+/Epu5YQ1aovsQCSdvsSn223GFp5ARi6iZOxkT1K8i9Ui3tH2D4Ma4IJpRrNM+0KuVhKCH5PAO
-        xa0DKCP2A==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gVJem-0000g7-K8; Fri, 07 Dec 2018 17:11:16 +0000
-Date:   Fri, 7 Dec 2018 09:11:16 -0800
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Robin Murphy <robin.murphy@arm.com>
-Cc:     Souptick Joarder <jrdr.linux@gmail.com>, akpm@linux-foundation.org,
-        mhocko@suse.com, kirill.shutemov@linux.intel.com, vbabka@suse.cz,
-        riel@surriel.com, sfr@canb.auug.org.au, rppt@linux.vnet.ibm.com,
-        peterz@infradead.org, linux@armlinux.org.uk,
-        iamjoonsoo.kim@lge.com, treding@nvidia.com, keescook@chromium.org,
-        m.szyprowski@samsung.com, stefanr@s5r6.in-berlin.de,
-        hjc@rock-chips.com, heiko@sntech.de, airlied@linux.ie,
-        oleksandr_andrushchenko@epam.com, joro@8bytes.org,
-        pawel@osciak.com, kyungmin.park@samsung.com, mchehab@kernel.org,
-        boris.ostrovsky@oracle.com, jgross@suse.com,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Fri, 7 Dec 2018 12:14:51 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:49828 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726011AbeLGROu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Dec 2018 12:14:50 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0D03715AB;
+        Fri,  7 Dec 2018 09:14:50 -0800 (PST)
+Received: from queper01-lin (queper01-lin.cambridge.arm.com [10.1.195.48])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9D7933F5AF;
+        Fri,  7 Dec 2018 09:14:45 -0800 (PST)
+Date:   Fri, 7 Dec 2018 17:14:40 +0000
+From:   Quentin Perret <quentin.perret@arm.com>
+To:     Georgi Djakov <georgi.djakov@linaro.org>
+Cc:     gregkh@linuxfoundation.org, linux-pm@vger.kernel.org,
+        rjw@rjwysocki.net, robh+dt@kernel.org, mturquette@baylibre.com,
+        khilman@baylibre.com, vincent.guittot@linaro.org,
+        skannan@codeaurora.org, bjorn.andersson@linaro.org,
+        amit.kucheria@linaro.org, seansw@qti.qualcomm.com,
+        daidavid1@codeaurora.org, evgreen@chromium.org,
+        dianders@chromium.org, mark.rutland@arm.com,
+        lorenzo.pieralisi@arm.com, abailon@baylibre.com,
+        maxime.ripard@bootlin.com, arnd@arndb.de, thierry.reding@gmail.com,
+        ksitaraman@nvidia.com, sanjayc@nvidia.com,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
-        linux1394-devel@lists.sourceforge.net,
-        dri-devel@lists.freedesktop.org,
-        linux-rockchip@lists.infradead.org, xen-devel@lists.xen.org,
-        iommu@lists.linux-foundation.org, linux-media@vger.kernel.org
-Subject: Re: [PATCH v3 1/9] mm: Introduce new vm_insert_range API
-Message-ID: <20181207171116.GA29923@bombadil.infradead.org>
-References: <20181206183945.GA20932@jordon-HP-15-Notebook-PC>
- <53bbc095-c9f5-5d6a-6e50-6e060d17eb68@arm.com>
+        linux-arm-msm@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v11 8/8] interconnect: sdm845: Fix build failure after
+ cmd_db API change
+Message-ID: <20181207171437.qmtacurmqg53zzkl@queper01-lin>
+References: <20181207152917.4862-1-georgi.djakov@linaro.org>
+ <20181207152917.4862-9-georgi.djakov@linaro.org>
+ <20181207162733.pdd62qvqzd6xk4nr@queper01-lin>
+ <fb5d11cd-6729-5521-c828-9bfeedba9ce0@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <53bbc095-c9f5-5d6a-6e50-6e060d17eb68@arm.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <fb5d11cd-6729-5521-c828-9bfeedba9ce0@linaro.org>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 07, 2018 at 03:34:56PM +0000, Robin Murphy wrote:
-> > +int vm_insert_range(struct vm_area_struct *vma, unsigned long addr,
-> > +			struct page **pages, unsigned long page_count)
-> > +{
-> > +	unsigned long uaddr = addr;
-> > +	int ret = 0, i;
+On Friday 07 Dec 2018 at 18:47:22 (+0200), Georgi Djakov wrote:
+> Hi Quentin,
 > 
-> Some of the sites being replaced were effectively ensuring that vma and
-> pages were mutually compatible as an initial condition - would it be worth
-> adding something here for robustness, e.g.:
+> On 12/7/18 18:27, Quentin Perret wrote:
+> > Hi Georgi,
+> > 
+> > On Friday 07 Dec 2018 at 17:29:17 (+0200), Georgi Djakov wrote:
+> >> Recently the cmd_db_read_aux_data() function was changed to avoid using
+> >> memcpy and return a pointer instead. Update the code to the new API and
+> >> fix the build failure.
+> >>
+> >> Fixes: ed3cafa79ea7 ("soc: qcom: cmd-db: Stop memcpy()ing in cmd_db_read_aux_data()")
+> >> Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
+> >> ---
+> >>  drivers/interconnect/qcom/sdm845.c | 26 ++++++++++++++------------
+> > 
+> > IIUC this file is introduced by patch 5. Should the fix be squashed
+> > into patch 5 directly ? Just to keep things bisectable.
 > 
-> +	if (page_count != vma_pages(vma))
-> +		return -ENXIO;
+> The reason why i have split it as a separate change is because as a
+> separate change it would be easier to review & test for the people who
+> are already familiar with the rest of the series.
+> 
+> Another minor reason is that a separate patch will also make the life a
+> bit easier for some people who are back-porting this to kernels using
+> the older version of the cmd_db API.
+> 
+> The commit that changed the cmd_db API is not yet in mainline, but in
+> linux-next. I am not sure what is preferred in this case?
 
-I think we want to allow this to be used to populate part of a VMA.
-So perhaps:
+Not sure either but I guess that will depend who gets merged first ...
+If that's the cmd_db change, then you'll need to squash your fix in
+patch 5. If your series goes first, then the fix needs to be applied to
+the cmb_db change.
 
-	if (page_count > vma_pages(vma))
-		return -ENXIO;
+I personally don't mind either way as long as we don't break bisection :-)
 
+Thanks,
+Quentin
