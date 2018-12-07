@@ -2,143 +2,133 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AC17C07E85
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 04:10:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C53BCC07E85
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 04:14:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0931E2082D
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 04:10:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 78CA420892
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 04:14:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CT4eWDuo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0931E2082D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="Dj3/cZ/i"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 78CA420892
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726018AbeLGEJ7 (ORCPT
+        id S1726006AbeLGEOb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 23:09:59 -0500
-Received: from mail-it1-f195.google.com ([209.85.166.195]:39400 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725948AbeLGEJ7 (ORCPT
+        Thu, 6 Dec 2018 23:14:31 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:45539 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725985AbeLGEOa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 23:09:59 -0500
-Received: by mail-it1-f195.google.com with SMTP id a6so5161651itl.4
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Dec 2018 20:09:58 -0800 (PST)
+        Thu, 6 Dec 2018 23:14:30 -0500
+Received: by mail-pf1-f195.google.com with SMTP id g62so1258371pfd.12
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Dec 2018 20:14:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=gMGxKP9EpYLp1lKMHvhKG/caT4xsbFC8UHMQG5UEy8g=;
-        b=CT4eWDuofA+kmCmpLUhcAW5+6xKPILeFPGWZenkeQAjKZt5ouKhJB7CIHKEFlBk8Dw
-         wMdjIkzDG4VfnHQsxJd0ugiWo8u9+GsCDG5YlrhzWGddgYOslrTassGJkXPvtlEeWhtp
-         +uBL/NWtGLjuXooz+kWHecRxWWfexlir4IYcDdIIJO6vxAFtQTWDiUJtGKuf1jr64Kuy
-         e4KuruiotbOorQGuzFgcOUcTURlGVuvQNrNb8XMDBquCaLMZ66KunUmHpMrgptj7252a
-         nWsQSxCaQ5P7SR820nuDec1O3LRxK+Ks9M3yUzHAy9OF/V/8Rw43r/dKRBvXCglpmwRn
-         1AMw==
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:in-reply-to:references:date:message-id
+         :mime-version;
+        bh=P1bt02fANhFdAVD7g2rytmwCWGeqm8IJCrVWqQj7s78=;
+        b=Dj3/cZ/iUTq1qZsvfJiGYeThnLz53HSQxl7LM3jpJxURSmG1u5sPjaV9hfMrnqQNDF
+         OLIKasCBzpFunMGiD4M5Apc3+JDgzdcqhIZtzjn6lnHiX3/nrQXeBlwuyPPsDC7O/nSa
+         wCdz7u/LKUjO/SDuFqlBJ8ZTg47DXRxmpfwIaEm/rjiOD7Y0OuLsump7dFGiRoI0EG2i
+         kXteKiHgel3Ta4jIytsWtplWNS9Ds0b+OKvQFNR5RAKQunJAOvtPudKUPakF5P96Jg1k
+         mwueBj7CBYLiMxTLA0AfRyQnQwL7cj5NvGzNAPFRQjszsye+mzXgs4iF+/2NgNmEgOiR
+         o8dQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=gMGxKP9EpYLp1lKMHvhKG/caT4xsbFC8UHMQG5UEy8g=;
-        b=mNJ+bU1gCfp/tYsDy9UTWMRUUDWbQ6b2xnf+Mb1qEEChKQ/YyDG6brfOrw7XO8QjBA
-         SiraO046OQ34l89IjWyg5k+205ywVhItyTtdOSujcG8cNE0/CNBSdHrnrAh4kIH3X9u8
-         Bl0GjYLAHFwE0aLnxWrF/rMsK8mH//QIGPd1th3C/wG/pBWCjU+Z8K5IpG0It1qWyJxO
-         Pqt7mNdWQ/Zes8xxT5i0oIBXzrycGQhHqG1VnY9ei4ic3nKoyYsKYtjoFhXGrisZ7QlE
-         wYqvaewpzp0vrHKwWhB6eOR+7+dytZvrYo7MiWg9vEYhY5uWPFOc+zk/DMey8N3FgKHq
-         rVag==
-X-Gm-Message-State: AA+aEWbhOGPIsxOyDviWu/QD2sr6eNREuUdym2IfNY8Sa2VeFU5gFjF9
-        it9NY1eaPx4MKcoK3GRfelJJX13CgLBR+jRJ7rU=
-X-Google-Smtp-Source: AFSGD/VAHo+DpmEtN+MEZUoqP3xMFwWy9ddabQMA6OURFVQVyKEB11kvDvoP0HIlpXNGUGEgf3J8VETCDoVtbfCnrrU=
-X-Received: by 2002:a02:13c6:: with SMTP id 189mr513321jaz.117.1544155798051;
- Thu, 06 Dec 2018 20:09:58 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
+         :message-id:mime-version;
+        bh=P1bt02fANhFdAVD7g2rytmwCWGeqm8IJCrVWqQj7s78=;
+        b=g+XQZ015F7jRdTv21cwaXRNiUC0szGKz5ND20VpnB+gcIhaK7xJKQI5ni2dFjU0A8I
+         FYv50bnyqCMVUp8m9UtCr1Lz6TTU+VeryEDoXNUUIqCwjsuazNcFrxrbBBiyjcHOZ8WH
+         Y4dbp1ezXONOQIaUcVmn1Z6Tae28SEGgbzrSM2p3O2F1DX2adl7+y7IOAeRBWosgfmH2
+         gYAvi1+f7AvQclNlHDbLjf6d5Tzp9nhmpUee2NwOcRJYx+N94BYd3bDGymR0C9FKq75J
+         QJEKvRH+Yn8n6brPpDwSKuYo8zFIKY04q25WuipMp04KkHKaXnkbTqWoyiQG9zScOX6V
+         eS7Q==
+X-Gm-Message-State: AA+aEWaUclyumhuJBZKGxQx7hBi78nuvR9SrotiDnLqivNMlf1pT1z/x
+        NGW/2mE962JCw7KRL8AiPwMON0+kMAc=
+X-Google-Smtp-Source: AFSGD/VybCz8JxQe9x0JmayjV9wGDDCoH50TreUVeMuNu6N3kDsDr4uLU4amPeZ2CPDYFfjXa99OdQ==
+X-Received: by 2002:a63:4f20:: with SMTP id d32mr641015pgb.47.1544156069426;
+        Thu, 06 Dec 2018 20:14:29 -0800 (PST)
+Received: from localhost (c-71-197-186-152.hsd1.wa.comcast.net. [71.197.186.152])
+        by smtp.googlemail.com with ESMTPSA id g5sm3009362pgu.57.2018.12.06.20.14.28
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 06 Dec 2018 20:14:28 -0800 (PST)
+From:   Kevin Hilman <khilman@baylibre.com>
+To:     Jerome Brunet <jbrunet@baylibre.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Carlo Caione <carlo@caione.org>
+Cc:     Jerome Brunet <jbrunet@baylibre.com>, linux-mmc@vger.kernel.org,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/4] mmc: meson-gx: chained descriptor fixup and improvements
+In-Reply-To: <20181206151828.24417-1-jbrunet@baylibre.com>
+References: <20181206151828.24417-1-jbrunet@baylibre.com>
+Date:   Thu, 06 Dec 2018 20:14:28 -0800
+Message-ID: <7hva46x9az.fsf@baylibre.com>
 MIME-Version: 1.0
-References: <20181121145429.7582-1-thierry.reding@gmail.com>
- <20181128093950.GG17419@ulmo> <20181205161406.GA26426@ulmo>
-In-Reply-To: <20181205161406.GA26426@ulmo>
-From:   Jassi Brar <jassisinghbrar@gmail.com>
-Date:   Thu, 6 Dec 2018 22:09:46 -0600
-Message-ID: <CABb+yY24MVn54PYW-g9FZbNujyW5TgwwkuMkU3RZRmtjeT5vWw@mail.gmail.com>
-Subject: Re: [PATCH 00/19] mailbox: Device-managed registration
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 5, 2018 at 10:14 AM Thierry Reding <thierry.reding@gmail.com> wrote:
->
-> On Wed, Nov 28, 2018 at 10:39:50AM +0100, Thierry Reding wrote:
-> > On Wed, Nov 21, 2018 at 03:54:10PM +0100, Thierry Reding wrote:
-> > > From: Thierry Reding <treding@nvidia.com>
-> > >
-> > > Hi,
-> > >
-> > > This series of patches adds device-managed registration functions for
-> > > mailbox controllers. A number of drivers can be simplified by making use
-> > > of this new API both in the error cleanup paths in their probe functions
-> > > and in the driver remove implementation.
-> > >
-> > > In addition to adding the new API this series converts all drivers to
-> > > use it. There is also an additional cleanup patch for the mtk-cmdq
-> > > driver that removes some calls to devm_kfree() that are not needed.
-> > >
-> > > Thierry
-> > >
-> > > Thierry Reding (19):
-> > >   mailbox: Add device-managed registration functions
-> > >   mailbox: arm-mhu: Use device-managed registration API
-> > >   mailbox: bcm2835: Use device-managed registration API
-> > >   mailbox: bcm-flexrm: Use device-managed registration API
-> > >   mailbox: bcm-pdc: Use device-managed registration API
-> > >   mailbox: hi3660: Use device-managed registration API
-> > >   mailbox: hi6220: Use device-managed registration API
-> > >   mailbox: imx: Use device-managed registration API
-> > >   mailbox: altera: Use device-managed registration API
-> > >   mailbox: sti: Use device-managed registration API
-> > >   mailbox: xgene-slimpro: Use device-managed registration API
-> > >   mailbox: mtk-cmdq: Use device-managed registration API
-> > >   mailbox: mtk-cmdq: Remove needless devm_kfree() calls
-> > >   mailbox: omap: Use device-managed registration API
-> > >   mailbox: platform-mhu: Use device-managed registration API
-> > >   mailbox: qcom-apcs: Use device-managed registration API
-> > >   mailbox: rockchip: Use device-managed registration API
-> > >   mailbox: stm32-ipcc: Use device-managed registration API
-> > >   mailbox: ti-msgmgr: Use device-managed registration API
-> > >
-> > >  drivers/mailbox/arm_mhu.c               | 12 +----
-> > >  drivers/mailbox/bcm-flexrm-mailbox.c    |  4 +-
-> > >  drivers/mailbox/bcm-pdc-mailbox.c       |  4 +-
-> > >  drivers/mailbox/bcm2835-mailbox.c       | 10 +---
-> > >  drivers/mailbox/hi3660-mailbox.c        | 11 +---
-> > >  drivers/mailbox/hi6220-mailbox.c        | 11 +---
-> > >  drivers/mailbox/imx-mailbox.c           |  3 +-
-> > >  drivers/mailbox/mailbox-altera.c        | 15 +-----
-> > >  drivers/mailbox/mailbox-sti.c           | 13 +----
-> > >  drivers/mailbox/mailbox-xgene-slimpro.c | 11 +---
-> > >  drivers/mailbox/mailbox.c               | 70 +++++++++++++++++++++++++
-> > >  drivers/mailbox/mtk-cmdq-mailbox.c      | 11 +---
-> > >  drivers/mailbox/omap-mailbox.c          |  4 +-
-> > >  drivers/mailbox/platform_mhu.c          | 12 +----
-> > >  drivers/mailbox/qcom-apcs-ipc-mailbox.c |  3 +-
-> > >  drivers/mailbox/rockchip-mailbox.c      | 15 +-----
-> > >  drivers/mailbox/stm32-ipcc.c            |  4 +-
-> > >  drivers/mailbox/ti-msgmgr.c             | 13 +----
-> > >  include/linux/mailbox_controller.h      |  5 ++
-> > >  19 files changed, 92 insertions(+), 139 deletions(-)
-> >
-> > Hi Jassi,
-> >
-> > any comments on this?
->
-> Ping!
->
- This change was due for some time now and is most welcome. Thanks.
-Sorry, for late reply (I have been busy with my move to another city).
+Jerome Brunet <jbrunet@baylibre.com> writes:
 
-Thanks.
+> The goal of the patchset was mainly to address the following warning:
+>
+> WARNING: CPU: 0 PID: 0 at /usr/src/kernel/drivers/mmc/host/meson-gx-mmc.c:1025 meson_mmc_irq+0xc0/0x1e0
+> Modules linked in: crc32_ce crct10dif_ce ipv6 overlay
+> CPU: 0 PID: 0 Comm: swapper/0 Tainted: G        W         4.19.1 #1
+> Hardware name: Some A113 Board (DT)
+> pstate: 40000085 (nZcv daIf -PAN -UAO)
+> pc : meson_mmc_irq+0xc0/0x1e0
+> lr : __handle_irq_event_percpu+0x70/0x180
+> sp : ffff000008003980
+> x29: ffff000008003980 x28: 0000000000000000
+> [...]
+> x1 : ffff80001a71bd40 x0 : 0000000000000000
+> Call trace:
+>  meson_mmc_irq+0xc0/0x1e0
+>  __handle_irq_event_percpu+0x70/0x180
+>  handle_irq_event_percpu+0x34/0x88
+>  handle_irq_event+0x48/0x78
+>  handle_fasteoi_irq+0xa0/0x180
+>  generic_handle_irq+0x24/0x38
+>  __handle_domain_irq+0x5c/0xb8
+>  gic_handle_irq+0x58/0xa8
+>
+> This happens when using the chained descriptor mode. If there is an
+> error, we call mmc_request_done(), loosing any reference to the cmd. It
+> turns out that the chained descriptor does really stops when we do so, at
+
+I think you mean...
+
+s/does really stops/does not really stop/
+
+> least not completly. Most of the time, it can be seen with this harmless
+> warning because the descriptor will raise another unexpected IRQ. On rare
+> occasion, it will completly break the MMC.
+>
+> This is mostly adressed by patch #1.
+> With this fixed, I took (yet) another look at the ultra-high speed modes
+> and the tuning.
+>
+> I came up with new settings in patch 3 and 4. I've tested them on eMMC,
+> sdcard and sdio on the following platforms:
+>  * gxbb p200
+>  * gxl p230, libretech (eMMC only), kvim.
+>  * axg s400
+>
+> So far, these new settings seems to be working great but I think it
+> would be nice if others could test this and provide their feedback.
+> This why  patch 3 and 4 are RFT tagged.
+
+For broader testing, I've added this to my v4.21/testing branch, which
+is included in my integ branch which gets a spin through kernelCI.
+
+Kevin
+
