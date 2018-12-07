@@ -4,67 +4,67 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,
-	T_DKIMWL_WL_HIGH autolearn=unavailable autolearn_force=no version=3.4.0
+	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FDF6C07E85
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 18:35:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD4C4C64EB1
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 18:35:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D5B3A20868
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 18:35:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6FA1C20672
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 18:35:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544207720;
-	bh=tu4YAEX4IERyIg+PTF8ZajZ0J1XI/D0LIumr/49tOzc=;
+	s=default; t=1544207722;
+	bh=euHgTufRxwCoon3ZrPxGnXNjkpg1g4vHReVj76uZttI=;
 	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
-	b=G+1xukG3DzCoQ7D5kesAqYtkMPbWNkRX/aECixGkizlaL7lijHJx43Y8MozSIhaYJ
-	 KNULQeOxhy459O52pbndrmNj6VrEz4zVxajgSM0D+ZHak95aXeZ0q60wuh1uH5SQCg
-	 p5fNmqi1gfpo33gcbyXcSYRu0Zq21195pl7GExbs=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5B3A20868
+	b=Tas3N5VTYIO/tqJCJvBRlq0+vcR49BW4/TjVAMuL7/qvBHu4fp/8hOvG3b3Bq4mT2
+	 x4/rQIr3L2OJf68thmy1Ee4lsEtcCPIihD5ZO5JYBgCzyz706v7Cjva45qetbvMSw7
+	 8Eo/y8LxUYVJ1b8S8Z4D38WEzL9XgzqLaRlbZI0I=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6FA1C20672
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726341AbeLGSfC (ORCPT
+        id S1726390AbeLGSfV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 13:35:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54928 "EHLO mail.kernel.org"
+        Fri, 7 Dec 2018 13:35:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54956 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726061AbeLGSfC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726067AbeLGSfC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 7 Dec 2018 13:35:02 -0500
-Subject: Re: [GIT PULL] Please pull NFS client changes
+Subject: Re: [GIT PULL]: dmaengine fixes for v4.20-rc6
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1544207701;
-        bh=tu4YAEX4IERyIg+PTF8ZajZ0J1XI/D0LIumr/49tOzc=;
+        bh=euHgTufRxwCoon3ZrPxGnXNjkpg1g4vHReVj76uZttI=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=QLrf1GsEAdMDoC+nNX9vD+VHaXRgY4YwmiJ57oXdR1MC8mAlqd9MbTRELuEwqNeEv
-         Valq9W9gs+lWj11zn3JAiBdBBbH8TTC5EvPU52XusVyrLVZ1Sr/iAPz7p9cFMS0Src
-         /JJCbfb6xZ2OXLHi7J1eh7n5azWZbjgNWVYFkjek=
+        b=l6wOtA1XYwhOEzEV6LHbr+THzSmgTIUSaXrQBxOodiTgP2guwjNgpGWc5aZiYUZ1A
+         IfZeo3nXpLJ2dm5rghTHOCzg4XMoRcl+hpQXqkXe0asbwDwiOmJe+LeV958qyZVgwr
+         /OV6SZ8RtuzVRxCEqjy5NMUbEnFzisANsv7b/rIQ=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <af690bb605f8366f8b437ca0171edef42fc63e83.camel@hammerspace.com>
-References: <af690bb605f8366f8b437ca0171edef42fc63e83.camel@hammerspace.com>
+In-Reply-To: <20181207044304.GB2847@vkoul-mobl>
+References: <20181207044304.GB2847@vkoul-mobl>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <af690bb605f8366f8b437ca0171edef42fc63e83.camel@hammerspace.com>
-X-PR-Tracked-Remote: git://git.linux-nfs.org/projects/trondmy/linux-nfs.git
- tags/nfs-for-4.20-5
-X-PR-Tracked-Commit-Id: 79462857eb547e5d17fc8445b9768615e02dc1cf
+X-PR-Tracked-Message-Id: <20181207044304.GB2847@vkoul-mobl>
+X-PR-Tracked-Remote: git://git.infradead.org/users/vkoul/slave-dma.git
+ tags/dmaengine-fix-4.20-rc6
+X-PR-Tracked-Commit-Id: ffe843b18211301ad25893eba09f402c19d12304
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 7f80c7325be49db3fb8b5f343f47691b7999fda7
-Message-Id: <20181207183501.15805.51648.pr-tracker-bot@pdx-korg-gitolite-1.ci.codeaurora.org>
+X-PR-Merge-Commit-Id: c431b42058ecad834d87fea002604dc38feccfd2
+Message-Id: <20181207183501.15805.52608.pr-tracker-bot@pdx-korg-gitolite-1.ci.codeaurora.org>
 Date:   Fri, 07 Dec 2018 18:35:01 +0000
-To:     Trond Myklebust <trondmy@hammerspace.com>
-Cc:     "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>
+To:     Vinod Koul <vkoul@kernel.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        dma <dmaengine@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Thu, 6 Dec 2018 21:55:54 +0000:
+The pull request you sent on Fri, 7 Dec 2018 10:13:04 +0530:
 
-> git://git.linux-nfs.org/projects/trondmy/linux-nfs.git tags/nfs-for-4.20-5
+> git://git.infradead.org/users/vkoul/slave-dma.git tags/dmaengine-fix-4.20-rc6
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/7f80c7325be49db3fb8b5f343f47691b7999fda7
+https://git.kernel.org/torvalds/c/c431b42058ecad834d87fea002604dc38feccfd2
 
 Thank you!
 
