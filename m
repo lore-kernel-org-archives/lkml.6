@@ -2,90 +2,160 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74D0DC07E85
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 09:38:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CAE8EC65BAF
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 09:39:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3448520989
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 09:38:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3448520989
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 91E0E20989
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 09:39:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 91E0E20989
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=citrix.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726019AbeLGJiC (ORCPT
+        id S1726041AbeLGJjT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 04:38:02 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:40298 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725976AbeLGJiB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 04:38:01 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 037B51596;
-        Fri,  7 Dec 2018 01:38:01 -0800 (PST)
-Received: from queper01-lin (queper01-lin.cambridge.arm.com [10.1.195.48])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DFBAE3F59C;
-        Fri,  7 Dec 2018 01:37:59 -0800 (PST)
-Date:   Fri, 7 Dec 2018 09:37:53 +0000
-From:   Quentin Perret <quentin.perret@arm.com>
-To:     "Chen, Hu" <hu1.chen@intel.com>
-Cc:     rjw@rjwysocki.net, Daniel Lezcano <daniel.lezcano@linaro.org>,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
-Subject: Re: [RFC/RFT,v7] cpuidle: New timer events oriented governor for
- tickless systems
-Message-ID: <20181207093751.io5hhmg53camwpzh@queper01-lin>
-References: <2047881.s5VBHReNGT@aspire.rjw.lan>
- <20181207075840.5881-1-hu1.chen@intel.com>
+        Fri, 7 Dec 2018 04:39:19 -0500
+Received: from smtp.eu.citrix.com ([185.25.65.24]:51591 "EHLO
+        SMTP.EU.CITRIX.COM" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725987AbeLGJjT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Dec 2018 04:39:19 -0500
+X-IronPort-AV: E=Sophos;i="5.56,324,1539648000"; 
+   d="scan'208";a="82942895"
+From:   Paul Durrant <Paul.Durrant@citrix.com>
+To:     'Dongli Zhang' <dongli.zhang@oracle.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>
+CC:     "axboe@kernel.dk" <axboe@kernel.dk>,
+        Roger Pau Monne <roger.pau@citrix.com>,
+        "konrad.wilk@oracle.com" <konrad.wilk@oracle.com>
+Subject: RE: [Xen-devel] [PATCH 1/1] xen/blkback: rework connect_ring() to
+ avoid inconsistent xenstore 'ring-page-order' set by malicious blkfront
+Thread-Topic: [Xen-devel] [PATCH 1/1] xen/blkback: rework connect_ring() to
+ avoid inconsistent xenstore 'ring-page-order' set by malicious blkfront
+Thread-Index: AQHUjePlVFCFD2KmD0G9djADL/FCxaVzAuIQ
+Date:   Fri, 7 Dec 2018 09:39:15 +0000
+Message-ID: <742d0e02a1aa4031ad68a9f81fe2bdc4@AMSPEX02CL03.citrite.net>
+References: <1544156284-7756-1-git-send-email-dongli.zhang@oracle.com>
+In-Reply-To: <1544156284-7756-1-git-send-email-dongli.zhang@oracle.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181207075840.5881-1-hu1.chen@intel.com>
-User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Chen,
-
-On Friday 07 Dec 2018 at 15:58:35 (+0800), Chen, Hu wrote:
-> From: Chen Hu <hu1.chen@intel.com>
-> 
-> Hi Rafael,
-> 
-> I run several popular Android performance benchmarks on teov7, using kernel
-> 4.19.0 as my baseline because I happen to work on it. To backport teov7 to
-> kernel 4.19.0, I also backport patch 5f26bdc: "cpuidle: menu: Fix wakeup
-> statistics updates for polling state". The teov7 doesn't show regressions on
-> such perf KPIs.
-> 
-> Compare "4.19 + 5f26bdc" and "4.19 + 5f26bdc + teov7" on Android with Intel
-> Apollo Lake SoC:
-> 
-> Test Case                               Diff after appling teov7
-> Antutu_6                                0.51%
-> GFX5_openGL_Car_Chase                   0.43%
-> GFX5_openGL_Car_Chase_offscreen	        0.25%
-> GFX5_openGL_Manhattan31	                0.75%
-> GFX5_openGL_Manhattan31_1080_offscreen  -0.10%
-> Geekbench3.3                            -0.13%
-> H264_1080P_60FPS                        0.00%
-> H264_2160P_60FPS                        0.00%
-> H265_2K_10bit                           0.00%
-> H265_2K_8bit                            0.00%
-> Resume_time                             1.31%
-> full_boot                               -0.39%
-
-That's really nice that you guys are able to get good test results on
-Android 4.19 that early after the release :-)
-
-Do you happen to run interactive use-cases as well ? I think Jankbench
-is one of the workload most folk care about for example. Also, did you
-manage to measure energy numbers for the above tests ?
-
-FWIW, I'd like to give a go to TEO on an Arm-based setup when I can.
-
-Thanks,
-Quentin
+PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBYZW4tZGV2ZWwgW21haWx0bzp4
+ZW4tZGV2ZWwtYm91bmNlc0BsaXN0cy54ZW5wcm9qZWN0Lm9yZ10gT24gQmVoYWxmDQo+IE9mIERv
+bmdsaSBaaGFuZw0KPiBTZW50OiAwNyBEZWNlbWJlciAyMDE4IDA0OjE4DQo+IFRvOiBsaW51eC1r
+ZXJuZWxAdmdlci5rZXJuZWwub3JnOyB4ZW4tZGV2ZWxAbGlzdHMueGVucHJvamVjdC5vcmc7IGxp
+bnV4LQ0KPiBibG9ja0B2Z2VyLmtlcm5lbC5vcmcNCj4gQ2M6IGF4Ym9lQGtlcm5lbC5kazsgUm9n
+ZXIgUGF1IE1vbm5lIDxyb2dlci5wYXVAY2l0cml4LmNvbT47DQo+IGtvbnJhZC53aWxrQG9yYWNs
+ZS5jb20NCj4gU3ViamVjdDogW1hlbi1kZXZlbF0gW1BBVENIIDEvMV0geGVuL2Jsa2JhY2s6IHJl
+d29yayBjb25uZWN0X3JpbmcoKSB0bw0KPiBhdm9pZCBpbmNvbnNpc3RlbnQgeGVuc3RvcmUgJ3Jp
+bmctcGFnZS1vcmRlcicgc2V0IGJ5IG1hbGljaW91cyBibGtmcm9udA0KPiANCj4gVGhlIHhlbnN0
+b3JlICdyaW5nLXBhZ2Utb3JkZXInIGlzIHVzZWQgZ2xvYmFsbHkgZm9yIGVhY2ggYmxrYmFjayBx
+dWV1ZSBhbmQNCj4gdGhlcmVmb3JlIHNob3VsZCBiZSByZWFkIGZyb20geGVuc3RvcmUgb25seSBv
+bmNlLiBIb3dldmVyLCBpdCBpcyBvYnRhaW5lZA0KPiBpbiByZWFkX3Blcl9yaW5nX3JlZnMoKSB3
+aGljaCBtaWdodCBiZSBjYWxsZWQgbXVsdGlwbGUgdGltZXMgZHVyaW5nIHRoZQ0KPiBpbml0aWFs
+aXphdGlvbiBvZiBlYWNoIGJsa2JhY2sgcXVldWUuDQoNClRoYXQgaXMgY2VydGFpbmx5IHN1Yi1v
+cHRpbWFsLg0KDQo+IA0KPiBJZiB0aGUgYmxrZnJvbnQgaXMgbWFsaWNpb3VzIGFuZCB0aGUgJ3Jp
+bmctcGFnZS1vcmRlcicgaXMgc2V0IGluIGRpZmZlcmVudA0KPiB2YWx1ZSBieSBibGtmcm9udCBl
+dmVyeSB0aW1lIGJlZm9yZSBibGtiYWNrIHJlYWRzIGl0LCB0aGlzIG1heSBlbmQgdXAgYXQNCj4g
+dGhlICJXQVJOX09OKGkgIT0gKFhFTl9CTEtJRl9SRVFTX1BFUl9QQUdFICogYmxraWYtPm5yX3Jp
+bmdfcGFnZXMpKTsiIGluDQo+IHhlbl9ibGtpZl9kaXNjb25uZWN0KCkgd2hlbiBmcm9udGVuZCBp
+cyBkZXN0cm95ZWQuDQoNCkkgY2FuJ3QgYWN0dWFsbHkgc2VlIHdoYXQgdXNlZnVsIGZ1bmN0aW9u
+IGJsa2lmLT5ucl9yaW5nX3BhZ2VzIGFjdHVhbGx5IHBlcmZvcm1zIGFueSBtb3JlLiBQZXJoYXBz
+IHlvdSBjb3VsZCBhY3R1YWxseSBnZXQgcmlkIG9mIGl0Pw0KDQo+IA0KPiBUaGlzIHBhdGNoIHJl
+d29ya3MgY29ubmVjdF9yaW5nKCkgdG8gcmVhZCB4ZW5zdG9yZSAncmluZy1wYWdlLW9yZGVyJyBv
+bmx5DQo+IG9uY2UuDQoNClRoYXQgaXMgY2VydGFpbmx5IGEgZ29vZCB0aGluZyA6LSkNCg0KICBQ
+YXVsDQoNCj4gDQo+IFNpZ25lZC1vZmYtYnk6IERvbmdsaSBaaGFuZyA8ZG9uZ2xpLnpoYW5nQG9y
+YWNsZS5jb20+DQo+IC0tLQ0KPiAgZHJpdmVycy9ibG9jay94ZW4tYmxrYmFjay94ZW5idXMuYyB8
+IDQ5ICsrKysrKysrKysrKysrKysrKysrKysrKy0tLS0tLS0tLQ0KPiAtLS0tLQ0KPiAgMSBmaWxl
+IGNoYW5nZWQsIDMxIGluc2VydGlvbnMoKyksIDE4IGRlbGV0aW9ucygtKQ0KPiANCj4gZGlmZiAt
+LWdpdCBhL2RyaXZlcnMvYmxvY2sveGVuLWJsa2JhY2sveGVuYnVzLmMgYi9kcml2ZXJzL2Jsb2Nr
+L3hlbi0NCj4gYmxrYmFjay94ZW5idXMuYw0KPiBpbmRleCBhNGJjNzRlLi40YThjZTIwIDEwMDY0
+NA0KPiAtLS0gYS9kcml2ZXJzL2Jsb2NrL3hlbi1ibGtiYWNrL3hlbmJ1cy5jDQo+ICsrKyBiL2Ry
+aXZlcnMvYmxvY2sveGVuLWJsa2JhY2sveGVuYnVzLmMNCj4gQEAgLTkxOSwxNCArOTE5LDE1IEBA
+IHN0YXRpYyB2b2lkIGNvbm5lY3Qoc3RydWN0IGJhY2tlbmRfaW5mbyAqYmUpDQo+ICAvKg0KPiAg
+ICogRWFjaCByaW5nIG1heSBoYXZlIG11bHRpIHBhZ2VzLCBkZXBlbmRzIG9uICJyaW5nLXBhZ2Ut
+b3JkZXIiLg0KPiAgICovDQo+IC1zdGF0aWMgaW50IHJlYWRfcGVyX3JpbmdfcmVmcyhzdHJ1Y3Qg
+eGVuX2Jsa2lmX3JpbmcgKnJpbmcsIGNvbnN0IGNoYXINCj4gKmRpcikNCj4gK3N0YXRpYyBpbnQg
+cmVhZF9wZXJfcmluZ19yZWZzKHN0cnVjdCB4ZW5fYmxraWZfcmluZyAqcmluZywgY29uc3QgY2hh
+cg0KPiAqZGlyLA0KPiArCQkJICAgICAgYm9vbCB1c2VfcmluZ19wYWdlX29yZGVyKQ0KPiAgew0K
+PiAgCXVuc2lnbmVkIGludCByaW5nX3JlZltYRU5CVVNfTUFYX1JJTkdfR1JBTlRTXTsNCj4gIAlz
+dHJ1Y3QgcGVuZGluZ19yZXEgKnJlcSwgKm47DQo+ICAJaW50IGVyciwgaSwgajsNCj4gIAlzdHJ1
+Y3QgeGVuX2Jsa2lmICpibGtpZiA9IHJpbmctPmJsa2lmOw0KPiAgCXN0cnVjdCB4ZW5idXNfZGV2
+aWNlICpkZXYgPSBibGtpZi0+YmUtPmRldjsNCj4gLQl1bnNpZ25lZCBpbnQgcmluZ19wYWdlX29y
+ZGVyLCBucl9ncmVmcywgZXZ0Y2huOw0KPiArCXVuc2lnbmVkIGludCBucl9ncmVmcywgZXZ0Y2hu
+Ow0KPiANCj4gIAllcnIgPSB4ZW5idXNfc2NhbmYoWEJUX05JTCwgZGlyLCAiZXZlbnQtY2hhbm5l
+bCIsICIldSIsDQo+ICAJCQkgICZldnRjaG4pOw0KPiBAQCAtOTM2LDI4ICs5MzcsMTggQEAgc3Rh
+dGljIGludCByZWFkX3Blcl9yaW5nX3JlZnMoc3RydWN0IHhlbl9ibGtpZl9yaW5nDQo+ICpyaW5n
+LCBjb25zdCBjaGFyICpkaXIpDQo+ICAJCXJldHVybiBlcnI7DQo+ICAJfQ0KPiANCj4gLQllcnIg
+PSB4ZW5idXNfc2NhbmYoWEJUX05JTCwgZGV2LT5vdGhlcmVuZCwgInJpbmctcGFnZS1vcmRlciIs
+ICIldSIsDQo+IC0JCQkgICZyaW5nX3BhZ2Vfb3JkZXIpOw0KPiAtCWlmIChlcnIgIT0gMSkgew0K
+PiArCW5yX2dyZWZzID0gYmxraWYtPm5yX3JpbmdfcGFnZXM7DQo+ICsNCj4gKwlpZiAoIXVzZV9y
+aW5nX3BhZ2Vfb3JkZXIpIHsNCj4gIAkJZXJyID0geGVuYnVzX3NjYW5mKFhCVF9OSUwsIGRpciwg
+InJpbmctcmVmIiwgIiV1IiwNCj4gJnJpbmdfcmVmWzBdKTsNCj4gIAkJaWYgKGVyciAhPSAxKSB7
+DQo+ICAJCQllcnIgPSAtRUlOVkFMOw0KPiAgCQkJeGVuYnVzX2Rldl9mYXRhbChkZXYsIGVyciwg
+InJlYWRpbmcgJXMvcmluZy1yZWYiLCBkaXIpOw0KPiAgCQkJcmV0dXJuIGVycjsNCj4gIAkJfQ0K
+PiAtCQlucl9ncmVmcyA9IDE7DQo+ICAJfSBlbHNlIHsNCj4gIAkJdW5zaWduZWQgaW50IGk7DQo+
+IA0KPiAtCQlpZiAocmluZ19wYWdlX29yZGVyID4geGVuX2Jsa2lmX21heF9yaW5nX29yZGVyKSB7
+DQo+IC0JCQllcnIgPSAtRUlOVkFMOw0KPiAtCQkJeGVuYnVzX2Rldl9mYXRhbChkZXYsIGVyciwg
+IiVzL3JlcXVlc3QgJWQgcmluZyBwYWdlDQo+IG9yZGVyIGV4Y2VlZCBtYXg6JWQiLA0KPiAtCQkJ
+CQkgZGlyLCByaW5nX3BhZ2Vfb3JkZXIsDQo+IC0JCQkJCSB4ZW5fYmxraWZfbWF4X3Jpbmdfb3Jk
+ZXIpOw0KPiAtCQkJcmV0dXJuIGVycjsNCj4gLQkJfQ0KPiAtDQo+IC0JCW5yX2dyZWZzID0gMSA8
+PCByaW5nX3BhZ2Vfb3JkZXI7DQo+ICAJCWZvciAoaSA9IDA7IGkgPCBucl9ncmVmczsgaSsrKSB7
+DQo+ICAJCQljaGFyIHJpbmdfcmVmX25hbWVbUklOR1JFRl9OQU1FX0xFTl07DQo+IA0KPiBAQCAt
+OTcyLDcgKzk2Myw2IEBAIHN0YXRpYyBpbnQgcmVhZF9wZXJfcmluZ19yZWZzKHN0cnVjdCB4ZW5f
+YmxraWZfcmluZw0KPiAqcmluZywgY29uc3QgY2hhciAqZGlyKQ0KPiAgCQkJfQ0KPiAgCQl9DQo+
+ICAJfQ0KPiAtCWJsa2lmLT5ucl9yaW5nX3BhZ2VzID0gbnJfZ3JlZnM7DQo+IA0KPiAgCWZvciAo
+aSA9IDA7IGkgPCBucl9ncmVmcyAqIFhFTl9CTEtJRl9SRVFTX1BFUl9QQUdFOyBpKyspIHsNCj4g
+IAkJcmVxID0ga3phbGxvYyhzaXplb2YoKnJlcSksIEdGUF9LRVJORUwpOw0KPiBAQCAtMTAzMCw2
+ICsxMDIwLDggQEAgc3RhdGljIGludCBjb25uZWN0X3Jpbmcoc3RydWN0IGJhY2tlbmRfaW5mbyAq
+YmUpDQo+ICAJc2l6ZV90IHhzcGF0aHNpemU7DQo+ICAJY29uc3Qgc2l6ZV90IHhlbnN0b3JlX3Bh
+dGhfZXh0X3NpemUgPSAxMTsgLyogc3VmZmljaWVudCBmb3IgIi9xdWV1ZS0NCj4gTk5OIiAqLw0K
+PiAgCXVuc2lnbmVkIGludCByZXF1ZXN0ZWRfbnVtX3F1ZXVlcyA9IDA7DQo+ICsJYm9vbCB1c2Vf
+cmluZ19wYWdlX29yZGVyID0gZmFsc2U7DQo+ICsJdW5zaWduZWQgaW50IHJpbmdfcGFnZV9vcmRl
+cjsNCj4gDQo+ICAJcHJfZGVidWcoIiVzICVzXG4iLCBfX2Z1bmNfXywgZGV2LT5vdGhlcmVuZCk7
+DQo+IA0KPiBAQCAtMTA3NSw4ICsxMDY3LDI4IEBAIHN0YXRpYyBpbnQgY29ubmVjdF9yaW5nKHN0
+cnVjdCBiYWNrZW5kX2luZm8gKmJlKQ0KPiAgCQkgYmUtPmJsa2lmLT5ucl9yaW5ncywgYmUtPmJs
+a2lmLT5ibGtfcHJvdG9jb2wsIHByb3RvY29sLA0KPiAgCQkgcGVyc19ncmFudHMgPyAicGVyc2lz
+dGVudCBncmFudHMiIDogIiIpOw0KPiANCj4gKwllcnIgPSB4ZW5idXNfc2NhbmYoWEJUX05JTCwg
+ZGV2LT5vdGhlcmVuZCwgInJpbmctcGFnZS1vcmRlciIsICIldSIsDQo+ICsJCQkgICAmcmluZ19w
+YWdlX29yZGVyKTsNCj4gKw0KPiArCWlmIChlcnIgIT0gMSkgew0KPiArCQliZS0+YmxraWYtPm5y
+X3JpbmdfcGFnZXMgPSAxOw0KPiArCX0gZWxzZSB7DQo+ICsJCWlmIChyaW5nX3BhZ2Vfb3JkZXIg
+PiB4ZW5fYmxraWZfbWF4X3Jpbmdfb3JkZXIpIHsNCj4gKwkJCWVyciA9IC1FSU5WQUw7DQo+ICsJ
+CQl4ZW5idXNfZGV2X2ZhdGFsKGRldiwgZXJyLA0KPiArCQkJCQkgInJlcXVlc3RlZCByaW5nIHBh
+Z2Ugb3JkZXIgJWQgZXhjZWVkDQo+IG1heDolZCIsDQo+ICsJCQkJCSByaW5nX3BhZ2Vfb3JkZXIs
+DQo+ICsJCQkJCSB4ZW5fYmxraWZfbWF4X3Jpbmdfb3JkZXIpOw0KPiArCQkJcmV0dXJuIGVycjsN
+Cj4gKwkJfQ0KPiArDQo+ICsJCXVzZV9yaW5nX3BhZ2Vfb3JkZXIgPSB0cnVlOw0KPiArCQliZS0+
+YmxraWYtPm5yX3JpbmdfcGFnZXMgPSAxIDw8IHJpbmdfcGFnZV9vcmRlcjsNCj4gKwl9DQo+ICsN
+Cj4gIAlpZiAoYmUtPmJsa2lmLT5ucl9yaW5ncyA9PSAxKQ0KPiAtCQlyZXR1cm4gcmVhZF9wZXJf
+cmluZ19yZWZzKCZiZS0+YmxraWYtPnJpbmdzWzBdLCBkZXYtDQo+ID5vdGhlcmVuZCk7DQo+ICsJ
+CXJldHVybiByZWFkX3Blcl9yaW5nX3JlZnMoJmJlLT5ibGtpZi0+cmluZ3NbMF0sIGRldi0+b3Ro
+ZXJlbmQsDQo+ICsJCQkJCSAgdXNlX3JpbmdfcGFnZV9vcmRlcik7DQo+ICAJZWxzZSB7DQo+ICAJ
+CXhzcGF0aHNpemUgPSBzdHJsZW4oZGV2LT5vdGhlcmVuZCkgKyB4ZW5zdG9yZV9wYXRoX2V4dF9z
+aXplOw0KPiAgCQl4c3BhdGggPSBrbWFsbG9jKHhzcGF0aHNpemUsIEdGUF9LRVJORUwpOw0KPiBA
+QCAtMTA4OCw3ICsxMTAwLDggQEAgc3RhdGljIGludCBjb25uZWN0X3Jpbmcoc3RydWN0IGJhY2tl
+bmRfaW5mbyAqYmUpDQo+ICAJCWZvciAoaSA9IDA7IGkgPCBiZS0+YmxraWYtPm5yX3JpbmdzOyBp
+KyspIHsNCj4gIAkJCW1lbXNldCh4c3BhdGgsIDAsIHhzcGF0aHNpemUpOw0KPiAgCQkJc25wcmlu
+dGYoeHNwYXRoLCB4c3BhdGhzaXplLCAiJXMvcXVldWUtJXUiLCBkZXYtDQo+ID5vdGhlcmVuZCwg
+aSk7DQo+IC0JCQllcnIgPSByZWFkX3Blcl9yaW5nX3JlZnMoJmJlLT5ibGtpZi0+cmluZ3NbaV0s
+IHhzcGF0aCk7DQo+ICsJCQllcnIgPSByZWFkX3Blcl9yaW5nX3JlZnMoJmJlLT5ibGtpZi0+cmlu
+Z3NbaV0sIHhzcGF0aCwNCj4gKwkJCQkJCSB1c2VfcmluZ19wYWdlX29yZGVyKTsNCj4gIAkJCWlm
+IChlcnIpIHsNCj4gIAkJCQlrZnJlZSh4c3BhdGgpOw0KPiAgCQkJCXJldHVybiBlcnI7DQo+IC0t
+DQo+IDIuNy40DQo+IA0KPiANCj4gX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX18NCj4gWGVuLWRldmVsIG1haWxpbmcgbGlzdA0KPiBYZW4tZGV2ZWxAbGlzdHMu
+eGVucHJvamVjdC5vcmcNCj4gaHR0cHM6Ly9saXN0cy54ZW5wcm9qZWN0Lm9yZy9tYWlsbWFuL2xp
+c3RpbmZvL3hlbi1kZXZlbA0K
