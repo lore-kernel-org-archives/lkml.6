@@ -2,163 +2,118 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B7D0C07E85
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 10:22:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60982C07E85
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 10:22:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DCCDF2083D
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 10:22:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="RHVRUbiF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DCCDF2083D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	by mail.kernel.org (Postfix) with ESMTP id 2DAB3208E7
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 10:22:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2DAB3208E7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726112AbeLGKWN (ORCPT
+        id S1726124AbeLGKWe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 05:22:13 -0500
-Received: from conssluserg-01.nifty.com ([210.131.2.80]:17062 "EHLO
-        conssluserg-01.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725985AbeLGKWN (ORCPT
+        Fri, 7 Dec 2018 05:22:34 -0500
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:9639 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726003AbeLGKWd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 05:22:13 -0500
-Received: from mail-ua1-f42.google.com (mail-ua1-f42.google.com [209.85.222.42]) (authenticated)
-        by conssluserg-01.nifty.com with ESMTP id wB7AM8fp027207;
-        Fri, 7 Dec 2018 19:22:08 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-01.nifty.com wB7AM8fp027207
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1544178129;
-        bh=Yf6AxDu4U7+8MLpvY0iO13bqhI+uAvo7nNS0cd6bD0U=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=RHVRUbiFgFn5gStlm+jBVupTU3D6qRDTREjc4KRmKt+hLa7/TZgLiACUzFAAeOiQp
-         KHeJ0ctjoidumzw1Z1hZY2uWb5EYmK11G3pcX3MoqzD7rQ2PnB2Kx7xgfbbD7pvmXn
-         C3uiifsyHrNKSAAby2XAscm+kKeP5TN7oNSGcOrzD2xZWcHBTxA7hc/Ro3yD5AvT25
-         OI7qOMP9wqP7zzGIhzkVgGpl6XMSWMRoNPQFwH7Oa9FDTeJwJTbO2omsyulQ4HVZyQ
-         YTKhnh8WuOd0Gtnzo/yx01UELyRy7hOcdG8IzSX0Zn3zClzqx91AJcSqHC2MWVmaCY
-         3+oPKO1Nq0KPg==
-X-Nifty-SrcIP: [209.85.222.42]
-Received: by mail-ua1-f42.google.com with SMTP id j3so1221762uap.3;
-        Fri, 07 Dec 2018 02:22:08 -0800 (PST)
-X-Gm-Message-State: AA+aEWa9ilb60J9S3sRXHtPaOXdWT8d6HnCShXGjFmLIut4bWAjrvyF0
-        17DQ2ntk6FRoHp08Z1X3VNfLJ82pVbIl0WQIVAk=
-X-Google-Smtp-Source: AFSGD/Xyv3As9wDc3LB8RvuCVPPmJyXXIjcGuGhZIRjF/hlpaI/od94qpdU0WpYrURNiEjXhLgJCeHeZyC8Rbej5l0M=
-X-Received: by 2002:ab0:6705:: with SMTP id q5mr677500uam.89.1544178127626;
- Fri, 07 Dec 2018 02:22:07 -0800 (PST)
+        Fri, 7 Dec 2018 05:22:33 -0500
+Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id wB7AG82o004599;
+        Fri, 7 Dec 2018 11:21:39 +0100
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2p3w2s9gm8-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Fri, 07 Dec 2018 11:21:39 +0100
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 2F78C31;
+        Fri,  7 Dec 2018 10:21:37 +0000 (GMT)
+Received: from Webmail-eu.st.com (sfhdag6node2.st.com [10.75.127.17])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id E94F829C7;
+        Fri,  7 Dec 2018 10:21:36 +0000 (GMT)
+Received: from SFHDAG3NODE3.st.com (10.75.127.9) by SFHDAG6NODE2.st.com
+ (10.75.127.17) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Fri, 7 Dec
+ 2018 11:21:38 +0100
+Received: from SFHDAG3NODE3.st.com ([fe80::3507:b372:7648:476]) by
+ SFHDAG3NODE3.st.com ([fe80::3507:b372:7648:476%20]) with mapi id
+ 15.00.1347.000; Fri, 7 Dec 2018 11:21:38 +0100
+From:   Benjamin GAIGNARD <benjamin.gaignard@st.com>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Christophe KERELLO <christophe.kerello@st.com>
+CC:     Mark Rutland <mark.rutland@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Mark Vasut <marek.vasut@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        =?utf-8?B?TWlxdcOobCBSYXluYWw=?= <miquel.raynal@bootlin.com>,
+        Brian Norris <computersforpeace@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        "linux-stm32@st-md-mailman.stormreply.com" 
+        <linux-stm32@st-md-mailman.stormreply.com>
+Subject: Re: [Linux-stm32] [ v3 2/3] mtd: rawnand: stm32_fmc2: add STM32 FMC2
+ NAND flash controller driver
+Thread-Topic: [Linux-stm32] [ v3 2/3] mtd: rawnand: stm32_fmc2: add STM32 FMC2
+ NAND flash controller driver
+Thread-Index: AQHUjgwhtEvU4O+eEki5+vhblXR4DaVzAGgA
+Date:   Fri, 7 Dec 2018 10:21:38 +0000
+Message-ID: <dafcda21-fceb-1577-7f1c-41f1009b99a7@st.com>
+References: <1543509663-26128-1-git-send-email-christophe.kerello@st.com>
+ <1543509663-26128-3-git-send-email-christophe.kerello@st.com>
+ <CACRpkdb83-kEwrip+t8g2VVFiREXspfWKQa2=Zd1ah1sSLNHjQ@mail.gmail.com>
+In-Reply-To: <CACRpkdb83-kEwrip+t8g2VVFiREXspfWKQa2=Zd1ah1sSLNHjQ@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.75.127.44]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <078A5EA132870140BCEA3C0D522F978E@st.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-References: <1543823457-32478-1-git-send-email-yamada.masahiro@socionext.com>
- <1543823457-32478-3-git-send-email-yamada.masahiro@socionext.com>
- <80bf0f6e-8f1f-314e-b22d-6e786cf15e45@monstr.eu> <CAK7LNAQBFfaJbFXf5h9LX689RUwA4kSeqPrimVOWDWq0XAVJ_Q@mail.gmail.com>
- <c8283f39-2d68-f7f7-82ee-c0da75755e5b@monstr.eu>
-In-Reply-To: <c8283f39-2d68-f7f7-82ee-c0da75755e5b@monstr.eu>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Fri, 7 Dec 2018 19:21:31 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAROT8u5P1c4cXnDZwxZ-9RDGX_n2Xrbfu0TaPG68-EGzQ@mail.gmail.com>
-Message-ID: <CAK7LNAROT8u5P1c4cXnDZwxZ-9RDGX_n2Xrbfu0TaPG68-EGzQ@mail.gmail.com>
-Subject: Re: [PATCH 2/7] microblaze: adjust the help to the real behavior
-To:     Michal Simek <monstr@monstr.eu>
-Cc:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Michal Simek <michal.simek@xilinx.com>
-Content-Type: text/plain; charset="UTF-8"
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-07_03:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 6, 2018 at 9:54 PM Michal Simek <monstr@monstr.eu> wrote:
->
-> On 06. 12. 18 6:27, Masahiro Yamada wrote:
-> > Hi Michal,
-> >
-> > On Thu, Dec 6, 2018 at 12:41 AM Michal Simek <monstr@monstr.eu> wrote:
-> >>
-> >> On 03. 12. 18 8:50, Masahiro Yamada wrote:
-> >>> "make ARCH=microblaze help" mentions simpleImage.<dt>.unstrip,
-> >>> but it never works because Makefile assumes "system.unstrip" is
-> >>> the name of DT.
-> >>>
-> >>> $ make ARCH=microblaze CROSS_COMPILE=microblaze-linux- simpleImage.system.unstrip
-> >>>   [ snip ]
-> >>> make[1]: *** No rule to make target 'arch/microblaze/boot/dts/system.unstrip.dtb', needed by 'arch/microblaze/boot/dts/system.dtb'.  Stop.
-> >>> make: *** [Makefile;1060: arch/microblaze/boot/dts] Error 2
-> >>> make: *** Waiting for unfinished jobs....
-> >>>
-> >>> Rip off the never-working target.
-> >>>
-> >>> In my understanding, simpleImage.<dt> works like a phony target that
-> >>> generates multiple images. Reflect the behavior to the help message.
-> >>>
-> >>> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> >>> ---
-> >>>
-> >>>  arch/microblaze/Makefile | 4 +---
-> >>>  1 file changed, 1 insertion(+), 3 deletions(-)
-> >>>
-> >>> diff --git a/arch/microblaze/Makefile b/arch/microblaze/Makefile
-> >>> index 0823d29..97e1384 100644
-> >>> --- a/arch/microblaze/Makefile
-> >>> +++ b/arch/microblaze/Makefile
-> >>> @@ -89,9 +89,7 @@ define archhelp
-> >>>    echo '* linux.bin    - Create raw binary'
-> >>>    echo '  linux.bin.gz - Create compressed raw binary'
-> >>>    echo '  linux.bin.ub - Create U-Boot wrapped raw binary'
-> >>> -  echo '  simpleImage.<dt> - ELF image with $(arch)/boot/dts/<dt>.dts linked in'
-> >>> -  echo '                   - stripped elf with fdt blob'
-> >>> -  echo '  simpleImage.<dt>.unstrip - full ELF image with fdt blob'
-> >>> +  echo '  simpleImage.<dt> - Create images with $(arch)/boot/dts/<dt>.dts linked in'
-> >>>    echo '  *_defconfig      - Select default config from arch/microblaze/configs'
-> >>>    echo ''
-> >>>    echo '  Targets with <dt> embed a device tree blob inside the image'
-> >>>
-> >>
-> >> I understand what you are trying to say but I would still like to keep
-> >> information about unstrip file.
-> >> It is correct that it is not build target. It is just generated file and
-> >> message above was used for description what it is.
-> >> Definitely agree that this should be the part of targets but it should
-> >> be in description.
-> >> The same is for missing description for simpleImage.<dt>.strip and
-> >> simpleImage.<dt>.ub files.
-> >>
-> >> Thanks,
-> >> Michal
-> >>
-> >
-> > If we want to be precise to the current behavior,
-> > we could describe more.
-> > (Is it too much?)
-> >
-> >
-> > Architecture specific targets (microblaze):
-> > * linux.bin    - Create raw binary
-> >   linux.bin.gz - Create compressed raw binary
-> >   linux.bin.ub - Create U-Boot wrapped raw binary
-> >   simpleImage.<dt> - Create the following images with
-> > arch/macroblaze/boot/dts/<dt>.dts linked in
->
-> type - microblaze
-> maybe <dtb> here.
-
-
-I will keep <dt> as is.
-
-I see more <dt> references a few lines below:
-
-
-  echo '  Targets with <dt> embed a device tree blob inside the image'
-  echo '  These targets support board with firmware that does not'
-  echo '  support passing a device tree directly. Replace <dt> with the'
-  echo '  name of a dts file from the arch/microblaze/boot/dts/ directory'
-  echo '  (minus the .dts extension).'
-
-
-
-
-
-
--- 
-Best Regards
-Masahiro Yamada
+DQpPbiAxMi83LzE4IDEwOjA2IEFNLCBMaW51cyBXYWxsZWlqIHdyb3RlOg0KPiBIaSBDaHJpc3Rv
+cGhlLA0KPg0KPiBPbiBUaHUsIE5vdiAyOSwgMjAxOCBhdCA1OjQyIFBNIENocmlzdG9waGUgS2Vy
+ZWxsbw0KPiA8Y2hyaXN0b3BoZS5rZXJlbGxvQHN0LmNvbT4gd3JvdGU6DQo+DQo+PiArLyogRk1D
+MiBDb250cm9sbGVyIFJlZ2lzdGVycyAqLw0KPj4gKyNkZWZpbmUgRk1DMl9CQ1IxICAgICAgICAg
+ICAgICAgICAgICAgIDB4MA0KPj4gKyNkZWZpbmUgRk1DMl9QQ1IgICAgICAgICAgICAgICAgICAg
+ICAgIDB4ODANCj4gKC4uLikNCj4+ICsvKiBSZWdpc3RlcjogRk1DMl9CQ1IxICovDQo+PiArI2Rl
+ZmluZSBGTUMyX0JDUjFfRk1DMkVOICAgICAgICAgICAgICAgQklUKDMxKQ0KPiBXZWxsIHRoaXMg
+bG9va3MgbGlrZSBhbiBlc3BlY2lhbGx5IGNsZXZlciByZWdpc3RlciBtYXAgYW5kIGEgc3BlY2lm
+aWMgY2hvaWNlDQo+IG9mIGJpdCAzMSBpbiB0aGUgZmlzdCByZWdpc3RlciB0byBhY3RpdmF0ZSBG
+TUMyLiBSZWdpc3RlcnMgMHgwNCB0aHJ1DQo+IDB4N2MgYXJlIGNvbXBsZXRlbHkgdW51c2VkIHNh
+dmUgZm9yIG9uZSBiaXQuDQo+DQo+IEl0J3MgYWxtb3N0IGxpa2UgdGhpcyBpcyB0aGUgZ29vZCBv
+bGQgRlNNQyBpbnRlZ3JhdGVkIGluIHBhcmFsbGVsIHdpdGggRk1DMiwNCj4gc28gdGhhdCBpZiB5
+b3UgZG9uJ3Qgc2V0IGJpdCAzMSwgdGhpcyBiZWNvbWVzIHNvbWV0aGluZyB0aGF0IGNhbiBiZSB1
+c2VkDQo+IHdpdGggZHJpdmVycy9tdGQvbmFuZC9yYXcvZnNtY19uYW5kLmMsIGFuZCBGTUMyIG1v
+ZGUgaXMgYWN0aXZhdGVkDQo+IGJ5IHNldHRpbmcgdGhpcyBiaXQsIGFjdGl2YXRpbmcgYWxsIHRo
+ZSBuZXcgcmVnaXN0ZXJzLg0KPg0KPiBJdCB3b3VsZG4ndCBzdXJwcmlzZSBtZSBnaXZlbiBob3cg
+SFcgZGVzaWduZXJzIGxpa2UgdG8gd29yay4NCj4NCj4gSXMgdGhpcyB0aGUgY2FzZT8NCg0KTm8s
+IGl0IGlzIHRoZSBzYW1lIHN0b3J5IHRoYW4gZm9yIHN0bWZ4IGRyaXZlciwgaXQgbG9va3MgdG8g
+YmUgdGhlIHNhbWUgDQpmcm9tIHJlZ2lzdGVycw0KDQpwb2ludCBvZiB2aWV3IGJ1dCBpbnRlcm5h
+bCBoYXJkd2FyZSBibG9jayBkZXNpZ24gaXMgY29tcGxldGVseSBkaWZmZXJlbnQuDQoNCj4NCj4g
+SWYgdGhhdCBpcyB0aGUgY2FzZSBJIHRoaW5rIGl0IHNob3VsZCBhdCBsZWFzdCBiZSBtZW50aW9u
+ZWQgaW4gY29tbWl0DQo+IGxvZ3MgYW5kIERUIGJpbmRpbmdzIGFuZCBwb3NzaWJseSBpbiBhIGNv
+bW1lbnQgb24gdGhlIGRyaXZlcg0KPiBpdHNlbGYuDQo+DQo+IFlvdXJzLA0KPiBMaW51cyBXYWxs
+ZWlqDQo+IF9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fDQo+
+IExpbnV4LXN0bTMyIG1haWxpbmcgbGlzdA0KPiBMaW51eC1zdG0zMkBzdC1tZC1tYWlsbWFuLnN0
+b3JtcmVwbHkuY29tDQo+IGh0dHBzOi8vc3QtbWQtbWFpbG1hbi5zdG9ybXJlcGx5LmNvbS9tYWls
+bWFuL2xpc3RpbmZvL2xpbnV4LXN0bTMy
