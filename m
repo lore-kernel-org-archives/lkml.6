@@ -2,112 +2,112 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66011C07E85
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 14:41:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1F34C64EB1
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 14:42:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 349DB20882
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 14:41:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 349DB20882
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id B8077208E7
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 14:42:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544193722;
+	bh=u8r9PCwgDN8ZiAKrxnHicROrFzyj0QtR1Lyfy9IUzEI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=DboyyAPL7rSQhsDTuzmxE2PsKEFB+0PwOsgYwm/O+dxvaVWxS0FALV0Q0Y2NtoZvj
+	 1J4BjPzVsNfxVaaOuNBQykJT8vfLbe2WZLjQeN5kbBS4Lf5NlGtubaKKmoJA4JbhWa
+	 2VTYEjo2lLJVBfHe+xupd0i+ICg4CroD/mjCf3GI=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B8077208E7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726156AbeLGOly (ORCPT
+        id S1726182AbeLGOmB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 09:41:54 -0500
-Received: from mx2.suse.de ([195.135.220.15]:50002 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725998AbeLGOlx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 09:41:53 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id D2AC4AF58;
-        Fri,  7 Dec 2018 14:41:50 +0000 (UTC)
-Subject: Re: [patch for-4.20] Revert "mm, thp: consolidate THP gfp handling
- into alloc_hugepage_direct_gfpmask"
-To:     David Rientjes <rientjes@google.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Andrea Arcangeli <aarcange@redhat.com>,
-        mgorman@techsingularity.net, mhocko@kernel.org,
-        ying.huang@intel.com, s.priebe@profihost.ag,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        alex.williamson@redhat.com, lkp@01.org, kirill@shutemov.name,
+        Fri, 7 Dec 2018 09:42:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38570 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725998AbeLGOmA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Dec 2018 09:42:00 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E01C120882;
+        Fri,  7 Dec 2018 14:41:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544193719;
+        bh=u8r9PCwgDN8ZiAKrxnHicROrFzyj0QtR1Lyfy9IUzEI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=fWSmJ5VmbKlsg5A9EKbdX5VRJBwQxNwdrBA1P2E5niCckRzjaHjAixUniCe6rXNpR
+         CBGQcg7WE5NumybjRF3/DinP55EQtEaKqbHIoT9/OeEuC4x71TBuFuW0Wj2cPCXoJL
+         PFzMHnQBNTNdZhySJKq7CPwIW19GTymQS6FVEzZk=
+Date:   Fri, 7 Dec 2018 15:41:57 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Naresh Kamboju <naresh.kamboju@linaro.org>
+Cc:     mike.kravetz@oracle.com, open list <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        zi.yan@cs.rutgers.edu
-References: <alpine.DEB.2.21.1812051445390.35948@chino.kir.corp.google.com>
- <alpine.DEB.2.21.1812061341130.144733@chino.kir.corp.google.com>
- <alpine.DEB.2.21.1812061343240.144733@chino.kir.corp.google.com>
-From:   Vlastimil Babka <vbabka@suse.cz>
-Openpgp: preference=signencrypt
-Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
- 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
- cqmP8roqufIAj+Ohhzs=
-Message-ID: <296d9813-1dfe-f27c-8d2c-6f140d8a5b0d@suse.cz>
-Date:   Fri, 7 Dec 2018 15:41:49 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
+        Guenter Roeck <linux@roeck-us.net>,
+        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        lkft-triage@lists.linaro.org,
+        linux- stable <stable@vger.kernel.org>,
+        Eric Munson <emunson@mgebm.net>
+Subject: Re: [PATCH 4.9 000/101] 4.9.144-stable review
+Message-ID: <20181207144157.GB20201@kroah.com>
+References: <20181206143011.174892052@linuxfoundation.org>
+ <CA+G9fYtzxd9a=OVr=Uwcouqikpe2EB_WJyuBhO7BX96mYWJ1NQ@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.21.1812061343240.144733@chino.kir.corp.google.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CA+G9fYtzxd9a=OVr=Uwcouqikpe2EB_WJyuBhO7BX96mYWJ1NQ@mail.gmail.com>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/6/18 11:00 PM, David Rientjes wrote:
-> This reverts commit 89c83fb539f95491be80cdd5158e6f0ce329e317.
+On Fri, Dec 07, 2018 at 02:40:26PM +0530, Naresh Kamboju wrote:
+> On Thu, 6 Dec 2018 at 20:15, Greg Kroah-Hartman
+> <gregkh@linuxfoundation.org> wrote:
+> >
+> > This is the start of the stable review cycle for the 4.9.144 release.
+> > There are 101 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> >
+> > Responses should be made by Sat Dec  8 14:29:43 UTC 2018.
+> > Anything received after that time might be too late.
+> >
+> > The whole patch series can be found in one patch at:
+> >         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.144-rc1.gz
+> > or in the git tree and branch at:
+> >         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.9.y
+> > and the diffstat can be found below.
+> >
+> > thanks,
+> >
+> > greg k-h
+> >
+> > Mike Kravetz <mike.kravetz@oracle.com>
+> >     hugetlbfs: check for pgoff value overflow
+> >
+> > Mike Kravetz <mike.kravetz@oracle.com>
+> >     hugetlbfs: fix offset overflow in hugetlbfs mmap
+> >
+> > Mike Kravetz <mike.kravetz@oracle.com>
+> >     mm/hugetlb.c: don't call region_abort if region_chg fails
 > 
-> There are a couple of issues with 89c83fb539f9 independent of its partial 
-> revert in 2f0799a0ffc0 ("mm, thp: restore node-local hugepage 
-> allocations"):
+> Results from Linaro’s test farm.
+> Regressions detected on arm32 and i386.
 > 
-> Firstly, the interaction between alloc_hugepage_direct_gfpmask() and 
-> alloc_pages_vma() is racy wrt __GFP_THISNODE and MPOL_BIND.  
-> alloc_hugepage_direct_gfpmask() makes sure not to set __GFP_THISNODE for 
-> an MPOL_BIND policy but the policy used in alloc_pages_vma() may not be 
-> the same for shared vma policies, triggering the WARN_ON_ONCE() in 
-> policy_node().
+> truncate_above_4GB (2M: 32): FAIL mmap() offset 4GB: Invalid argument
 
-AFAICS 2f0799a0ffc0 removed the policy check in
-alloc_hugepage_direct_gfpmask() comlpetely, so it's not racy and the
-warning will always trigger for a MPOL_BIND policy right now?
+Can this be tracked down to a commit in this tree that caused this
+regression?
+
+thanks,
+
+greg k-h
