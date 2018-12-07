@@ -2,111 +2,105 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5858C64EB1
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 10:17:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE818C07E85
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 10:18:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D2FF2083D
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 10:17:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="GK6UBpEl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D2FF2083D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 8EC8D2083D
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 10:18:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8EC8D2083D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726078AbeLGKRG (ORCPT
+        id S1726045AbeLGKSV convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 05:17:06 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:33805 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726021AbeLGKRF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 05:17:05 -0500
-Received: by mail-lj1-f195.google.com with SMTP id u6-v6so3088687ljd.1
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Dec 2018 02:17:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=u2qwGeTgbyO8t9Qo41jExW00AZ74xr7wwI5DVv3f3KE=;
-        b=GK6UBpElqng5YekyK5Pw3gUODbsP5BZoRKM82vgztarSH6e26Z5uscUFwcDEC2ktFu
-         DmlYkmfY/ShZo7Mu1ijykAjL4Gr27tzxyxJq0uDe8ZdgIOARptXkuUK6P6oXYZ+zNVHO
-         g2x7EsQoy2OaAQZiqGgfDTY0NOSO6a92DCqx8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=u2qwGeTgbyO8t9Qo41jExW00AZ74xr7wwI5DVv3f3KE=;
-        b=G/tfVl78yXpAHuA3gJrumO9sQQPeLxqurrbxbsc4+RBeTvUr/XyE2MD88VI2ymDNsx
-         sWHwLDiofNRlIPP4+QlT4bHKNsN/MpitRPcovkNr37K6ondJQGJJgKD5FN1mtuk7UHTn
-         p+V175ZSe55U0UGFhOKFWPxhRfuXHebgd86gIBzLUk6p+n9FN28Xp0gGi7DHYpV+uegy
-         A+p4sG2igp3/Xv0Z4KjykMrKKjbrOz5eFaygiMYh/uyVU2MytiumGS3SbHXdAyS1ktDd
-         PJoWqoTk6jJYJV4YZBmHDrj6QwCvNzEGUQBc+tFxZyp4YucEEVxn80lr7FURZrkpGZhE
-         OGvA==
-X-Gm-Message-State: AA+aEWbf6M5c8hXtrAGdKvIbDhmodJmsIcUhizEQxbFZc3IDC7mEu9TA
-        Vu8r7ADGt/Aa0mNdBAUBaRm3UtTwQk2dzHjimKWsEw==
-X-Google-Smtp-Source: AFSGD/V2oLQ0Nuk6y6oDbva1kitnEUtEFEMc76OmaRzBcZ3uOfEAcwLOij/Im8eHymzj4xaT5pd5dA9up43dEtWbVww=
-X-Received: by 2002:a2e:994:: with SMTP id 142-v6mr853645ljj.120.1544177823765;
- Fri, 07 Dec 2018 02:17:03 -0800 (PST)
+        Fri, 7 Dec 2018 05:18:21 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:50384 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725989AbeLGKSV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Dec 2018 05:18:21 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 2026920CC5; Fri,  7 Dec 2018 11:18:19 +0100 (CET)
+Received: from xps13 (aaubervilliers-681-1-79-44.w90-88.abo.wanadoo.fr [90.88.21.44])
+        by mail.bootlin.com (Postfix) with ESMTPSA id B4FA72073D;
+        Fri,  7 Dec 2018 11:18:08 +0100 (CET)
+Date:   Fri, 7 Dec 2018 11:18:08 +0100
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Christophe Kerello <christophe.kerello@st.com>
+Cc:     <boris.brezillon@bootlin.com>, <richard@nod.at>,
+        <dwmw2@infradead.org>, <computersforpeace@gmail.com>,
+        <marek.vasut@gmail.com>, <robh+dt@kernel.org>,
+        <mark.rutland@arm.com>, <linux-mtd@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>
+Subject: Re: [ v3 2/3] mtd: rawnand: stm32_fmc2: add STM32 FMC2 NAND flash
+ controller driver
+Message-ID: <20181207111808.144fc3f0@xps13>
+In-Reply-To: <1543509663-26128-3-git-send-email-christophe.kerello@st.com>
+References: <1543509663-26128-1-git-send-email-christophe.kerello@st.com>
+        <1543509663-26128-3-git-send-email-christophe.kerello@st.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-References: <20181128175312.9634-1-matheus.bernardino@usp.br> <20181201165550.51a78366@archlinux>
-In-Reply-To: <20181201165550.51a78366@archlinux>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Fri, 7 Dec 2018 11:16:51 +0100
-Message-ID: <CACRpkdaHSZ-WSGo+CcCrMPc=z4Ofy6oG3kxhTGxQJABEw2DF0w@mail.gmail.com>
-Subject: Re: [PATCH] iio: adc: Replace license text w/ SPDX identifier
-To:     Jonathan Cameron <jic23@kernel.org>
-Cc:     matheus.bernardino@usp.br, Lars-Peter Clausen <lars@metafoo.de>,
-        Michael Hennerich <Michael.Hennerich@analog.com>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Peter Meerwald <pmeerw@pmeerw.net>,
-        Joel Stanley <joel@jms.id.au>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        eugen.hristev@microchip.com,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Jon Mason <jonmason@broadcom.com>,
-        bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>,
-        Support Opensource <support.opensource@diasemi.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Andreas Klinger <ak@it-klinger.de>,
-        "Kim, Milo" <milo.kim@ti.com>, Vladimir Zapolskiy <vz@mleia.com>,
-        Sylvain Lemieux <slemieux.tyco@gmail.com>,
-        Carlo Caione <carlo@caione.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
-        William Breathitt Gray <vilhelm.gray@gmail.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        linux-iio@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-aspeed@lists.ozlabs.org,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        kernel-usp@googlegroups.com, ilucas.ms@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Dec 1, 2018 at 5:56 PM Jonathan Cameron <jic23@kernel.org> wrote:
+Hi Christophe,
 
-> +CC Linus Walleij as one of his files doesn't have a license...
+Christophe Kerello <christophe.kerello@st.com> wrote on Thu, 29 Nov
+2018 17:41:02 +0100:
 
-Sorry about that. I am fine with GPL-2.0 or GPL-2.0+ on
-any of "my" files. Feel free to add it with my Acked-by.
+> The driver adds the support for the STMicroelectronics FMC2 NAND
+> Controller found on STM32MP SOCs.
+> 
+> This patch is based on FMC2 command sequencer.
+> The purpose of the command sequencer is to facilitate the programming
+> and the reading of NAND flash pages with the ECC and to free the CPU
+> of sequencing tasks.
+> It requires one DMA channel for write and two DMA channels for read
+> operations.
+> 
+> Only NAND_ECC_HW mode is actually supported.
+> The driver supports a maximum 8k page size.
+> The following ECC strength and step size are currently supported:
+>  - nand-ecc-strength = <8>, nand-ecc-step-size = <512> (BCH8)
+>  - nand-ecc-strength = <4>, nand-ecc-step-size = <512> (BCH4)
+>  - nand-ecc-strength = <1>, nand-ecc-step-size = <512> (Extended ECC
+>    based on Hamming)
+> 
+> This patch has been tested on Micron MT29F8G08ABACAH4 and
+> MT29F8G16ABACAH4
+> 
+> Signed-off-by: Christophe Kerello <christophe.kerello@st.com>
+> ---
 
-Yours,
-Linus Walleij
+The driver look's good to me. However, Boris contributed new
+cleanups that I would like you to take into account before doing
+another 'deep' review. Please rebase on top of nand/next and have
+a look at the followingcommits. For the ->select_chip() hook, it
+should not be exposed anymore and switches should be handled
+locally by the driver (you have examples).
+
+7a08dbaedd36 mtd: rawnand: Move ->setup_data_interface() to nand_controller_ops
+f2abfeb2078b mtd: rawnand: Move the ->exec_op() method to nand_controller_ops
+7d6c37e90cf9 mtd: rawnand: Deprecate the ->select_chip() hook
+1770022ffa85 mtd: rawnand: ams-delta: Stop implementing ->select_chip()
+653c57c7da08 mtd: rawnand: vf610: Stop implementing ->select_chip()
+2ace451cae22 mtd: rawnand: tegra: Stop implementing ->select_chip()
+b25251414f6e mtd: rawnand: marvell: Stop implementing ->select_chip()
+550b9fc4e3af mtd: rawnand: fsmc: Stop implementing ->select_chip()
+02b4a52604a4 mtd: rawnand: Make ->select_chip() optional when ->exec_op() is implemented
+ae2294b10b0f mtd: rawnand: Pass the CS line to be selected in struct nand_operation
+1d0178593d14 mtd: rawnand: Add nand_[de]select_target() helpers
+
+While at it, could you also address Linus W. comments.
+
+Thanks,
+Miquèl
