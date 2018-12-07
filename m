@@ -2,108 +2,94 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,T_DKIMWL_WL_HIGH,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D693C07E85
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 17:24:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB44EC07E85
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 17:29:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CAC2F2081C
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 17:24:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CAC2F2081C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 92C902081C
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 17:29:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544203792;
+	bh=BLexHCYz4pBzxyxdemxwsOWWmC/HaTcBelUZ2W0n0Ts=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=VH6FYwUXjBSsy4bCd7xbkbyo0tyGDj+S10Gx9h6prT1FgbrOPDxSgrseM8Ak+JnqW
+	 OM68R+qy6Xmoxqh8zdXBgW2N/dBqYYHu4r7bYlL0CPjR1ojTD4iIMXNnj4z+EPlm9p
+	 pXInxa2gbhoHbfQENCukfz+mLMv12DakjJ/DvBs4=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 92C902081C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726144AbeLGRY4 (ORCPT
+        id S1726110AbeLGR3v (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 12:24:56 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:50022 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726061AbeLGRY4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 12:24:56 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C717C15AB;
-        Fri,  7 Dec 2018 09:24:55 -0800 (PST)
-Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 95F9D3F5AF;
-        Fri,  7 Dec 2018 09:24:55 -0800 (PST)
-Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
-        id 15F621AE077B; Fri,  7 Dec 2018 17:25:17 +0000 (GMT)
-Date:   Fri, 7 Dec 2018 17:25:17 +0000
-From:   Will Deacon <will.deacon@arm.com>
-To:     Andrew Murray <andrew.murray@arm.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Richard Henderson <rth@twiddle.net>,
-        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
-        Matt Turner <mattst88@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        Russell King <linux@armlinux.org.uk>, suzuki.poulose@arm.com,
-        robin.murphy@arm.com, Michael Ellerman <mpe@ellerman.id.au>,
-        linux-kernel@vger.kernel.org, linux-alpha@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linuxppc-dev@lists.ozlabs.org, x86@kernel.org
-Subject: Re: [PATCH v3 00/12] perf/core: Generalise event exclusion checking
-Message-ID: <20181207172516.GB2044@edgewater-inn.cambridge.arm.com>
-References: <1544114849-47266-1-git-send-email-andrew.murray@arm.com>
+        Fri, 7 Dec 2018 12:29:51 -0500
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:41763 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726011AbeLGR3v (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Dec 2018 12:29:51 -0500
+Received: by mail-oi1-f195.google.com with SMTP id j21so3972361oii.8;
+        Fri, 07 Dec 2018 09:29:50 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=bPaVo2XfsSQt1zFEhTcHpr1vCcX3L+Bd4NRKaFBxT4c=;
+        b=oQ8sXQxf2iPoIH+rqF0H3iO1Y2ObX6tvghz9FhQq5Kby0Dl6eqxGmttBjI4VXRv5OJ
+         H9bil4ZrU8nwFLoPohR3Nep9yGjsD+OTvBXJdqldSvZjAj0+7suPw9W8bByOOq57gcMC
+         iAHE9csYISAC485vr/E+B5kuq3bL7+jHZdSGiA7MatMWyjo+lELeh+g/YYVWVlIYsWnz
+         xlBGU1HhX4NvIF1DscSu9avDPvYmbrzqbh8U5jugk3NzAnJQeC8l3vg8xiZQZkBOz9Vp
+         9aX4P+9IkhAUhLRGOUaW1UFpq2/f7vOOW1J0U7/hyM4sZn+rQSQujyrPe0ycB/y/vMb0
+         E5Zw==
+X-Gm-Message-State: AA+aEWaNjveO5M0F8lTeqtYbXIU+9axgAoTB6NsDojMMYXnfnqjBC88b
+        SkpqxsAajwCI+kawo++3vu+4e+c=
+X-Google-Smtp-Source: AFSGD/WCJj5YH724MQ04xFAlfeNHAJR6nT5+TJAXSXGX1UMTdtNYqrPHMpN9uZ7WyVCDMhiz/wtpqw==
+X-Received: by 2002:aca:f244:: with SMTP id q65mr1652384oih.50.1544203790270;
+        Fri, 07 Dec 2018 09:29:50 -0800 (PST)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id x9sm1618353otq.73.2018.12.07.09.29.49
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 07 Dec 2018 09:29:49 -0800 (PST)
+Date:   Fri, 7 Dec 2018 11:29:48 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Rajendra Nayak <rnayak@codeaurora.org>
+Cc:     robh@kernel.org, viresh.kumar@linaro.org, sboyd@kernel.org,
+        andy.gross@linaro.org, ulf.hansson@linaro.org,
+        collinsd@codeaurora.org, mka@chromium.org,
+        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Rajendra Nayak <rnayak@codeaurora.org>
+Subject: Re: [PATCH v5 1/8] dt-bindings: opp: Introduce qcom-opp bindings
+Message-ID: <20181207172948.GA4284@bogus>
+References: <20181204052119.806-1-rnayak@codeaurora.org>
+ <20181204052119.806-2-rnayak@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1544114849-47266-1-git-send-email-andrew.murray@arm.com>
-User-Agent: Mutt/1.11.1+30 (d10eec459b35) ()
+In-Reply-To: <20181204052119.806-2-rnayak@codeaurora.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 06, 2018 at 04:47:17PM +0000, Andrew Murray wrote:
-> Many PMU drivers do not have the capability to exclude counting events
-> that occur in specific contexts such as idle, kernel, guest, etc. These
-> drivers indicate this by returning an error in their event_init upon
-> testing the events attribute flags.
+On Tue,  4 Dec 2018 10:51:12 +0530, Rajendra Nayak wrote:
+> On Qualcomm Technologies, Inc. platforms, an OPP node needs
+> to describe an additional level/corner value that is then communicated
+> to a remote microprocessor by the CPU, which then takes some
+> actions (like adjusting voltage values across various rails)
+> based on the value passed.
 > 
-> However this approach requires that each time a new event modifier is
-> added to perf, all the perf drivers need to be modified to indicate that
-> they don't support the attribute. This results in additional boiler-plate
-> code common to many drivers that needs to be maintained. Furthermore the
-> drivers are not consistent with regards to the error value they return
-> when reporting unsupported attributes.
+> Describe these bindings in the qcom-opp bindings document.
 > 
-> This patchset allow PMU drivers to advertise their inability to exclude
-> based on context via a new capability: PERF_PMU_CAP_NO_EXCLUDE. This
-> allows the perf core to reject requests for exclusion events where there
-> is no support in the PMU.
+> Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+> ---
+>  .../devicetree/bindings/opp/qcom-opp.txt      | 25 +++++++++++++++++++
+>  1 file changed, 25 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/opp/qcom-opp.txt
 > 
-> This is a functional change, in particular:
-> 
->  - Some drivers will now additionally (but correctly) report unsupported
->    exclusion flags. It's typical for existing userspace tools such as
->    perf to handle such errors by retrying the system call without the
->    unsupported flags.
-> 
->  - Drivers that do not support any exclusion that previously reported
->    -EPERM or -EOPNOTSUPP will now report -EINVAL - this is consistent
->    with the majority and results in userspace perf retrying without
->    exclusion.
-> 
-> All drivers touched by this patchset have been compile tested.
 
-For the bits under arch/arm/ and drivers/perf:
-
-Acked-by: Will Deacon <will.deacon@arm.com>
-
-Note that I've queued the TX2 uncore PMU for 4.21 [1], which could also
-benefit from your new flag.
-
-Will
-
-[1]
-https://git.kernel.org/pub/scm/linux/kernel/git/will/linux.git/commit/?h=for-next/perf&id=69c32972d59388c041268e8206e8eb1acff29b9a
+Reviewed-by: Rob Herring <robh@kernel.org>
