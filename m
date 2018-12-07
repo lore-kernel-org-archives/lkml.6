@@ -2,100 +2,142 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F339C07E85
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 15:37:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5930C07E85
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 15:43:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2D02620673
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 15:37:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=arista.com header.i=@arista.com header.b="MN6DnKhT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D02620673
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=arista.com
+	by mail.kernel.org (Postfix) with ESMTP id 8A57F20837
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 15:43:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A57F20837
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726109AbeLGPhK (ORCPT
+        id S1726074AbeLGPm7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 10:37:10 -0500
-Received: from mail-ed1-f49.google.com ([209.85.208.49]:43070 "EHLO
-        mail-ed1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726010AbeLGPhJ (ORCPT
+        Fri, 7 Dec 2018 10:42:59 -0500
+Received: from vmicros1.altlinux.org ([194.107.17.57]:53606 "EHLO
+        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726010AbeLGPm7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 10:37:09 -0500
-Received: by mail-ed1-f49.google.com with SMTP id f9so4033138eds.10
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Dec 2018 07:37:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=arista.com; s=googlenew;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=P+REkCDifJLWaMeUuykifcBRoIVlixWZ9NbVmc8rUns=;
-        b=MN6DnKhTH6tIoa1jB+0Y5fo4RAMBlzH4R+K+dgEop/q7IKGYonkhHcv3dET7Khj9ee
-         iW+1gnOcJ/RuXxf6zqZC1d9v3hlEcHiZecHOKtf7iPEW39eCp1M/bnzX+MVd8qX+u/c2
-         0sItJka228DOBwR4qqL6gdetbBd7iR5oVKzcC0SonR6wO1N77iiuepV9xSFukwvPGiQx
-         9n9UKJw6Uue7f68oS8zf3Sn5k+3gdumCL6QCFh1GYSH86/UgGfkjHjSzuFXtJfYnqvWH
-         uZUw3Bsur/yofPHPWCDr2bdArK2gLHZLfvHbpa1hkLkS561NpGBu4y2Es8fjwTMzRS0a
-         LCDQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=P+REkCDifJLWaMeUuykifcBRoIVlixWZ9NbVmc8rUns=;
-        b=Ousi4L4RobXgw00FNCqqJ+wr1wNR3ibY1CGW9OowHJCkEU4tLfztgQMGUW/e2WcJP8
-         0bOkXj6sSI7pK7EDsJmN3w/63USc5J8ygoDaFFYh0MTr0TvpEMYXgw83nVFZQf9Mk/9P
-         rmOd1dn99dn2QchZSZjqJ4OJh0ZeFIhIAjaQphNHqxZmPTrcRYnmrUTIIpIgnq28mF0j
-         3FkcwbYNk80kOztbyvGB87yxwbZOeLXyTfm87VbnyV1+K//5VYsQBFhIJd7hScFEJjfT
-         CufAEui5gSQXVN8JLvTIaETlM/ppiw2ZHexByB3ez5lAD8bvdVI0dvIF84Gy1Y0M5m1X
-         0eFA==
-X-Gm-Message-State: AA+aEWbDt0Dksm1q3dTwop8r6RefeOl5DFMwvZzZUayTmV3fgqmTJ5lf
-        ixyJdgUATOxrICJsbaJrrsXwwg==
-X-Google-Smtp-Source: AFSGD/W55Tt5Im4XeQVHILLIhB+sDGGqwL5aot+5Ih0lXRooUjuPZ0bQKYkdMxnmpebuPxYpkivJnQ==
-X-Received: by 2002:a50:e045:: with SMTP id g5mr2711313edl.152.1544197027828;
-        Fri, 07 Dec 2018 07:37:07 -0800 (PST)
-Received: from [10.83.36.153] ([217.173.96.166])
-        by smtp.gmail.com with ESMTPSA id r8sm1006080edo.11.2018.12.07.07.37.06
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 07 Dec 2018 07:37:07 -0800 (PST)
-Subject: Re: [PATCHv6 0/7] tty: Hold write ldisc sem in tty_reopen()
-To:     Guilherme Piccoli <gpiccoli@canonical.com>,
-        Tycho Andersen <tycho@tycho.ws>
-Cc:     linux-kernel@vger.kernel.org, mpatocka@redhat.com, pasik@iki.fi,
-        peterz@infradead.org
-References: <20181119125208.GC15229@reaktio.net>
- <addf7faa-f6e9-df6b-8dad-4c43b71cfc1e@canonical.com>
- <20181207152309.GA30796@cisco>
- <CAHD1Q_yPbhTYcKwk2PUkoabD+dTqegkVEab7nAvcrgAN10otSQ@mail.gmail.com>
-From:   Dmitry Safonov <dima@arista.com>
-Message-ID: <9c3c1c65-3717-3567-89c5-85d35d89c678@arista.com>
-Date:   Fri, 7 Dec 2018 15:37:06 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Fri, 7 Dec 2018 10:42:59 -0500
+Received: from mua.local.altlinux.org (mua.local.altlinux.org [192.168.1.14])
+        by vmicros1.altlinux.org (Postfix) with ESMTP id A590772CC59;
+        Fri,  7 Dec 2018 18:42:55 +0300 (MSK)
+Received: by mua.local.altlinux.org (Postfix, from userid 508)
+        id 972197CE9E5; Fri,  7 Dec 2018 18:42:55 +0300 (MSK)
+Date:   Fri, 7 Dec 2018 18:42:55 +0300
+From:   "Dmitry V. Levin" <ldv@altlinux.org>
+To:     Michael Ellerman <mpe@ellerman.id.au>
+Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Breno Leitao <leitao@debian.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Eugene Syromyatnikov <esyr@redhat.com>,
+        Elvira Khabirova <lineprinter@altlinux.org>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4] powerpc/ptrace: replace ptrace_report_syscall() with
+ a tracehook call
+Message-ID: <20181207154255.GA28964@altlinux.org>
+References: <20181116121701.14359da0@akathisia>
+ <87ftw12nyn.fsf@concordia.ellerman.id.au>
+ <20181119210139.GA8360@altlinux.org>
+ <87efbe166y.fsf@concordia.ellerman.id.au>
+ <20181203031823.GE11573@altlinux.org>
+ <20181207011946.GA18558@altlinux.org>
+ <87y391k2tq.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-In-Reply-To: <CAHD1Q_yPbhTYcKwk2PUkoabD+dTqegkVEab7nAvcrgAN10otSQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="oyUTqETQ0mS9luUI"
+Content-Disposition: inline
+In-Reply-To: <87y391k2tq.fsf@concordia.ellerman.id.au>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Guilherme, Tucho,
 
-On 12/7/18 3:33 PM, Guilherme Piccoli wrote:
-> Great news Tycho, thanks for pointing this out - in fact, the entire
-> series got merged
-> according
-> to: https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git/log/?h=tty-next
+--oyUTqETQ0mS9luUI
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Yes, Greg kindly took the patches set into -next to increase coverage.
-So far, there is no standing issues known to me.
+On Fri, Dec 07, 2018 at 10:12:49PM +1100, Michael Ellerman wrote:
+> "Dmitry V. Levin" <ldv@altlinux.org> writes:
+> > On Mon, Dec 03, 2018 at 06:18:23AM +0300, Dmitry V. Levin wrote:
+> >> From: Elvira Khabirova <lineprinter@altlinux.org>
+> >>=20
+> >> Arch code should use tracehook_*() helpers, as documented
+> >> in include/linux/tracehook.h,
+> >> ptrace_report_syscall() is not expected to be used outside that file.
+> >>=20
+> >> Co-authored-by: Dmitry V. Levin <ldv@altlinux.org>
+> >> Fixes: 5521eb4bca2d ("powerpc/ptrace: Add support for PTRACE_SYSEMU")
+> >> Signed-off-by: Elvira Khabirova <lineprinter@altlinux.org>
+> >> Signed-off-by: Dmitry V. Levin <ldv@altlinux.org>
+> >> ---
+> >> v4: rewritten to call tracehook_report_syscall_entry() once, compile-t=
+ested
+> >> v3: add a descriptive comment
+> >> v2: explicitly ignore tracehook_report_syscall_entry() return code
+> >>=20
+> >>  arch/powerpc/kernel/ptrace.c | 54 +++++++++++++++++++++++-------------
+> >>  1 file changed, 35 insertions(+), 19 deletions(-)
+> >
+> > Sorry, this patch does not work, please ignore it.
+>=20
+> Hmm OK. Why exactly?
 
-Ping me, if you have any, please.
+Unfortunately, I have no idea why it doesn't work.
+All I can say is it breaks strace because the kernel no longer sends
+syscall entry stops.
 
-Thanks,
-          Dmitry
+> I wrote more or less the same patch, although I used a temporary bool.
+>=20
+> > However, the bug blocks PTRACE_GET_SYSCALL_INFO, so please fix it.
+>=20
+> Sorry, didn't realise it was blocking you.
+
+We are changing ptrace_report_syscall signature to implement
+PTRACE_GET_SYSCALL_INFO, and this is the only place in the kernel besides
+tracehook_report_syscall_*() that invokes ptrace_report_syscall() directly.
+
+> > I'm going to use
+> > 	if (tracehook_report_syscall_entry(regs))
+> > 		return -1;
+> > 	return -1;
+> > in the series until you have a better fix.
+>=20
+> Yeah that's fine by me. I could send that to Linus for 4.20 if you want
+> me to, otherwise I'm fine for you to carry it in your series.
+
+Yes, please.  I'll send a v5 shortly.
+
+
+--=20
+ldv
+
+--oyUTqETQ0mS9luUI
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBCAAGBQJcCpT/AAoJEAVFT+BVnCUIMbMQAL8L5afzlG2FpQERgK3jWn4a
+Z+3/hu+dsem3sacLEskTymxnyV7lCNvHvz4kcvNB/wfwbbsaEScu4RveZIMq86E3
+TCu/kWvfYdrxB/Xux9hoZLyxYG3xhd2Jg8I/4PuHG2p8AeamnykVFqLFXlDxYkJq
+gLmbjUxA0flkXoL+Ts9WyIA6X5FYxWY2zaiVgwZ52QSZt6JoyfmiMMYsvAolRtPP
+1C0pJo1ZbPkBUTRI0FXIbbjik3y5tDX/6grLCcDIMBL8/UYRfFDchHmnBtrAkKk6
+L4XzlNX52qWhj7Zlqy5byF1a8Tlyq1GCaXOVl/d7whTDDy96dWWI5HzONhLlU0RD
+QUfTzthXeReNHBMFPW9w3k+iu9DOmlZSy5q8UBq7m8WlNzSAlxvX5fJaTmJA8E57
+uWq1/Sn5abplHuZuom4hourp8+mOxFfL6jyoeraqYTNKgWm+0vIDqw3CU5sERfty
+f/Fb4OBwzm+VMcuQAa6qO5eQMkN6roaEG4uTS1TpiJNrVJERyUTcIei/q41VPVBU
+vagvDi4wERzCKWF0oA611+EKb4UGOlZ9+nC9eKOOLEckf5uOdOu8CVwFtiK994s5
+vpB7YSejmG85ujZkiAXI11jhOnGZlkmEMRhSk+RyKRTT8PbUurm929qnbdWkuxlU
+DyJAIAZjeq7+uQSRXS/B
+=ekme
+-----END PGP SIGNATURE-----
+
+--oyUTqETQ0mS9luUI--
