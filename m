@@ -2,151 +2,187 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AEDFC04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 00:08:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9429C04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 00:13:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0BE7420868
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 00:08:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7208920868
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 00:13:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="DaWSV3qc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0BE7420868
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Fsuanyn7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7208920868
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725985AbeLGAIw (ORCPT
+        id S1725995AbeLGAN2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 19:08:52 -0500
-Received: from mail-vk1-f193.google.com ([209.85.221.193]:36013 "EHLO
-        mail-vk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725939AbeLGAIv (ORCPT
+        Thu, 6 Dec 2018 19:13:28 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:40049 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725944AbeLGAN1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 19:08:51 -0500
-Received: by mail-vk1-f193.google.com with SMTP id t132so566065vkc.3
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Dec 2018 16:08:50 -0800 (PST)
+        Thu, 6 Dec 2018 19:13:27 -0500
+Received: by mail-pg1-f196.google.com with SMTP id z10so873794pgp.7
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Dec 2018 16:13:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=QuU53HriEhD2Bqcy0v1QBJCSmFzGD7kDr1XJWVgl0pg=;
-        b=DaWSV3qc13uDuWcKghrBzT6hAC/scOfVXedgMkL87g2S4F7y28e8Z3+vFoMllOrFXB
-         9UBQsHm4g9XNeu9DNqjIpAJZmIc6HxR1KqEp9sk/+SEsDNadRqRrzzvBPu/PFCNa1SwL
-         n3sRyq6Wp3HDJa2grdHtGIE9OTd9TaBXv3LSM=
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=KnxtaTSUT4ZjS4fAMsNPM8zLcRZ7oBhSPNZwlUEuE60=;
+        b=Fsuanyn7StOHvNQ7bqa87XghNNfi7t8tRG6DPQ29wYdcadcjjhK1WvOw5TwZMm9kT8
+         UusRXE/8NPcsdRAOJshMLKoSLK9+1f1x4FBuxlvZ7j1tisljcSuWkLq5bCUPBWvbDBjL
+         EWgLp5s6t+38kbidPAGui5DECeNodxSAOpE6Q=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=QuU53HriEhD2Bqcy0v1QBJCSmFzGD7kDr1XJWVgl0pg=;
-        b=gAQHRwAIAxjvn9RX4iNn72SBVpLFxfVUHaYg3UL/D2titrrta7tgdBixRDc0KNL3qm
-         gU6i71h2ah81Er+u3ZsJTW/s4zJ1PUoOAW7n2yxYj+WG43qvnZQZP0du3od77oxwCecI
-         P2wvZsXyBgk2dgj+T3Gyn6juWc4ECb6Ft/CwvWtrWL8Yko+80BEsys5b+2gsMIJZbN0z
-         as/zY8CnZAWoailAOeBqCGsBqi32s8D/wNlvBjOw8K4+RU+Z1FqjlnmP2ZSMZ1Irb0/P
-         MEFKIslKLNo68vnDWboWN90KsscWKa4h6oBLFyWB0Kvn/7JWVDga3aU6QdzKPShgSdbu
-         fINw==
-X-Gm-Message-State: AA+aEWbVlmd5ojeuXCgNsGRdk6lNkb5cnL5iSPNvxFHEB5ySdwHmB8i2
-        XaIIRNk3qsYPpKJYknmzh7zvqd9YgdQ=
-X-Google-Smtp-Source: AFSGD/UHNyEiZwvbp91ngPGQHEM5zC2V2OtPsdPQbo8T5Wz2SWaEplxphK6Z8CncIk2goixLOCwWLw==
-X-Received: by 2002:a1f:a28a:: with SMTP id l132mr3928vke.37.1544141329788;
-        Thu, 06 Dec 2018 16:08:49 -0800 (PST)
-Received: from mail-vs1-f48.google.com (mail-vs1-f48.google.com. [209.85.217.48])
-        by smtp.gmail.com with ESMTPSA id 188sm657084vkr.25.2018.12.06.16.08.48
-        for <linux-kernel@vger.kernel.org>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=KnxtaTSUT4ZjS4fAMsNPM8zLcRZ7oBhSPNZwlUEuE60=;
+        b=AL2VNjREdB+WztYm/0fL536BycyY00Hs/xwvF1waD70I7wCIQAL5UQe70iS5kDf/qh
+         sN+7eyOAz6cdjE/ZZ2OulgK+KconydxgwvF9LPLPyWA6xw3+eFCNtl+FvakeOvNx75fX
+         ebqZBMQAsCCVRkjo2j0Ogv2N40TE71GYh5hqR0dwVMAX28aPp8YNtYCalFxHZGAoQU5N
+         YLV8o0fT1QvmkQS14fBnZ+2E5JZwJThL0Y7BbFJF/3d++pZ0OyGUcXIhUrRlEWH8q23t
+         75VwlFJszxaDa8HtpLFJMQtv9UJEVPgy9vHLliwEpFGNT6zd4Rx4ZbWXnyMTUfgnQJ8E
+         8bXw==
+X-Gm-Message-State: AA+aEWZkIXss/d1MMvqC5mby/M/fAzIK54IspwBybb5wAHOn6BFDbWXI
+        PSDwCHZC+QyvYjqqZatQuwJunQ==
+X-Google-Smtp-Source: AFSGD/VZWz2VDi/kkquokqHoMzDBp+UIdhBOg/qryEpK0PnNYu7HA04acuttCJzs4Q9R7hXz1IMidA==
+X-Received: by 2002:a63:1258:: with SMTP id 24mr56312pgs.114.1544141606581;
+        Thu, 06 Dec 2018 16:13:26 -0800 (PST)
+Received: from smtp.gmail.com ([2620:15c:202:1:534:b7c0:a63c:460c])
+        by smtp.gmail.com with ESMTPSA id o66sm1654437pgo.75.2018.12.06.16.13.13
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 06 Dec 2018 16:08:48 -0800 (PST)
-Received: by mail-vs1-f48.google.com with SMTP id v205so1459522vsc.3
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Dec 2018 16:08:48 -0800 (PST)
-X-Received: by 2002:a67:f955:: with SMTP id u21mr360vsq.149.1544141328353;
- Thu, 06 Dec 2018 16:08:48 -0800 (PST)
+        Thu, 06 Dec 2018 16:13:17 -0800 (PST)
+From:   Brian Norris <briannorris@chromium.org>
+To:     Kalle Valo <kvalo@codeaurora.org>
+Cc:     <linux-kernel@vger.kernel.org>,
+        Amitkumar Karwar <amitkarwar@gmail.com>,
+        Nishant Sarmukadam <nishants@marvell.com>,
+        Ganapathi Bhat <gbhat@marvell.com>,
+        Xinming Hu <huxinming820@gmail.com>,
+        linux-wireless@vger.kernel.org,
+        Brian Norris <briannorris@chromium.org>
+Subject: [RFC PATCH v2 1/2] mwifiex: refactor mwifiex_parse_htinfo() for reuse
+Date:   Thu,  6 Dec 2018 16:12:48 -0800
+Message-Id: <20181207001249.165477-1-briannorris@chromium.org>
+X-Mailer: git-send-email 2.20.0.rc2.403.gdbc3b29805-goog
 MIME-Version: 1.0
-References: <1543996836-16717-1-git-send-email-tdas@codeaurora.org>
-In-Reply-To: <1543996836-16717-1-git-send-email-tdas@codeaurora.org>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Thu, 6 Dec 2018 16:08:36 -0800
-X-Gmail-Original-Message-ID: <CAD=FV=UA3zyjr_VqUcyekWhSOo7rtjEbbcU-E=SZ1e9HNhOyrQ@mail.gmail.com>
-Message-ID: <CAD=FV=UA3zyjr_VqUcyekWhSOo7rtjEbbcU-E=SZ1e9HNhOyrQ@mail.gmail.com>
-Subject: Re: [PATCH] arm64: dts: sdm845: Add lpasscc node
-To:     Taniya Das <tdas@codeaurora.org>
-Cc:     Andy Gross <andy.gross@linaro.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        David Brown <david.brown@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+This function converts some firmware-specific parameters into cfg80211
+'rate_info' structures. It currently assumes it's dealing only with TX
+bitrate, but the RX bitrate looks to be the same, so refactor this
+function to be reusable.
 
-On Wed, Dec 5, 2018 at 12:00 AM Taniya Das <tdas@codeaurora.org> wrote:
->
-> This adds the low pass audio clock controller node to sdm845 based on
-> the example in the bindings.
->
-> Signed-off-by: Taniya Das <tdas@codeaurora.org>
-> ---
->  arch/arm64/boot/dts/qcom/sdm845-mtp.dts | 4 +++-
->  arch/arm64/boot/dts/qcom/sdm845.dtsi    | 8 ++++++++
->  2 files changed, 11 insertions(+), 1 deletion(-)
->
-> diff --git a/arch/arm64/boot/dts/qcom/sdm845-mtp.dts b/arch/arm64/boot/dts/qcom/sdm845-mtp.dts
-> index b3def03..cf73f3c 100644
-> --- a/arch/arm64/boot/dts/qcom/sdm845-mtp.dts
-> +++ b/arch/arm64/boot/dts/qcom/sdm845-mtp.dts
-> @@ -346,7 +346,9 @@
->  &gcc {
->         protected-clocks = <GCC_QSPI_CORE_CLK>,
->                            <GCC_QSPI_CORE_CLK_SRC>,
-> -                          <GCC_QSPI_CNOC_PERIPH_AHB_CLK>;
-> +                          <GCC_QSPI_CNOC_PERIPH_AHB_CLK>,
-> +                          <GCC_LPASS_Q6_AXI_CLK>,
-> +                          <GCC_LPASS_SWAY_CLK>;
->  };
->
->  &i2c10 {
-> diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> index 1419b00..a3db089 100644
-> --- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> @@ -7,6 +7,7 @@
->
->  #include <dt-bindings/clock/qcom,dispcc-sdm845.h>
->  #include <dt-bindings/clock/qcom,gcc-sdm845.h>
-> +#include <dt-bindings/clock/qcom,lpass-sdm845.h>
->  #include <dt-bindings/clock/qcom,rpmh.h>
->  #include <dt-bindings/interrupt-controller/arm-gic.h>
->  #include <dt-bindings/phy/phy-qcom-qusb2.h>
-> @@ -1264,6 +1265,13 @@
->                         #power-domain-cells = <1>;
->                 };
->
-> +               lpasscc: clock-controller@17014000 {
-> +                       compatible = "qcom,sdm845-lpasscc";
-> +                       reg = <0x17014000 0x1f004>, <0x17300000 0x200>;
-> +                       reg-names = "cc", "qdsp6ss";
-> +                       #clock-cells = <1>;
-> +               };
-> +
->                 tsens0: thermal-sensor@c263000 {
+Signed-off-by: Brian Norris <briannorris@chromium.org>
+---
+v2:
+ * no change - just split unrelated (debugfs) patch to its own series
+---
+ .../net/wireless/marvell/mwifiex/cfg80211.c   | 36 ++++++++++---------
+ 1 file changed, 19 insertions(+), 17 deletions(-)
 
-Please keep nodes with a unit address sorted numerically by unit
-address.  0x17014000 should not come before 0xc263000
+diff --git a/drivers/net/wireless/marvell/mwifiex/cfg80211.c b/drivers/net/wireless/marvell/mwifiex/cfg80211.c
+index adc88433faa8..02b80ea232a7 100644
+--- a/drivers/net/wireless/marvell/mwifiex/cfg80211.c
++++ b/drivers/net/wireless/marvell/mwifiex/cfg80211.c
+@@ -1275,27 +1275,27 @@ mwifiex_cfg80211_change_virtual_intf(struct wiphy *wiphy,
+ }
+ 
+ static void
+-mwifiex_parse_htinfo(struct mwifiex_private *priv, u8 tx_htinfo,
++mwifiex_parse_htinfo(struct mwifiex_private *priv, u8 rateinfo, u8 htinfo,
+ 		     struct rate_info *rate)
+ {
+ 	struct mwifiex_adapter *adapter = priv->adapter;
+ 
+ 	if (adapter->is_hw_11ac_capable) {
+ 		/* bit[1-0]: 00=LG 01=HT 10=VHT */
+-		if (tx_htinfo & BIT(0)) {
++		if (htinfo & BIT(0)) {
+ 			/* HT */
+-			rate->mcs = priv->tx_rate;
++			rate->mcs = rateinfo;
+ 			rate->flags |= RATE_INFO_FLAGS_MCS;
+ 		}
+-		if (tx_htinfo & BIT(1)) {
++		if (htinfo & BIT(1)) {
+ 			/* VHT */
+-			rate->mcs = priv->tx_rate & 0x0F;
++			rate->mcs = rateinfo & 0x0F;
+ 			rate->flags |= RATE_INFO_FLAGS_VHT_MCS;
+ 		}
+ 
+-		if (tx_htinfo & (BIT(1) | BIT(0))) {
++		if (htinfo & (BIT(1) | BIT(0))) {
+ 			/* HT or VHT */
+-			switch (tx_htinfo & (BIT(3) | BIT(2))) {
++			switch (htinfo & (BIT(3) | BIT(2))) {
+ 			case 0:
+ 				rate->bw = RATE_INFO_BW_20;
+ 				break;
+@@ -1310,26 +1310,26 @@ mwifiex_parse_htinfo(struct mwifiex_private *priv, u8 tx_htinfo,
+ 				break;
+ 			}
+ 
+-			if (tx_htinfo & BIT(4))
++			if (htinfo & BIT(4))
+ 				rate->flags |= RATE_INFO_FLAGS_SHORT_GI;
+ 
+-			if ((priv->tx_rate >> 4) == 1)
++			if ((rateinfo >> 4) == 1)
+ 				rate->nss = 2;
+ 			else
+ 				rate->nss = 1;
+ 		}
+ 	} else {
+ 		/*
+-		 * Bit 0 in tx_htinfo indicates that current Tx rate
+-		 * is 11n rate. Valid MCS index values for us are 0 to 15.
++		 * Bit 0 in htinfo indicates that current rate is 11n. Valid
++		 * MCS index values for us are 0 to 15.
+ 		 */
+-		if ((tx_htinfo & BIT(0)) && (priv->tx_rate < 16)) {
+-			rate->mcs = priv->tx_rate;
++		if ((htinfo & BIT(0)) && (rateinfo < 16)) {
++			rate->mcs = rateinfo;
+ 			rate->flags |= RATE_INFO_FLAGS_MCS;
+ 			rate->bw = RATE_INFO_BW_20;
+-			if (tx_htinfo & BIT(1))
++			if (htinfo & BIT(1))
+ 				rate->bw = RATE_INFO_BW_40;
+-			if (tx_htinfo & BIT(2))
++			if (htinfo & BIT(2))
+ 				rate->flags |= RATE_INFO_FLAGS_SHORT_GI;
+ 		}
+ 	}
+@@ -1375,7 +1375,8 @@ mwifiex_dump_station_info(struct mwifiex_private *priv,
+ 		sinfo->tx_packets = node->stats.tx_packets;
+ 		sinfo->tx_failed = node->stats.tx_failed;
+ 
+-		mwifiex_parse_htinfo(priv, node->stats.last_tx_htinfo,
++		mwifiex_parse_htinfo(priv, priv->tx_rate,
++				     node->stats.last_tx_htinfo,
+ 				     &sinfo->txrate);
+ 		sinfo->txrate.legacy = node->stats.last_tx_rate * 5;
+ 
+@@ -1401,7 +1402,8 @@ mwifiex_dump_station_info(struct mwifiex_private *priv,
+ 			 HostCmd_ACT_GEN_GET, DTIM_PERIOD_I,
+ 			 &priv->dtim_period, true);
+ 
+-	mwifiex_parse_htinfo(priv, priv->tx_htinfo, &sinfo->txrate);
++	mwifiex_parse_htinfo(priv, priv->tx_rate, priv->tx_htinfo,
++			     &sinfo->txrate);
+ 
+ 	sinfo->signal_avg = priv->bcn_rssi_avg;
+ 	sinfo->rx_bytes = priv->stats.rx_bytes;
+-- 
+2.20.0.rc2.403.gdbc3b29805-goog
 
-Presumably this is the kind of thing that Andy can fix himself when he
-lands stuff (often dts stuff ends up conflicting a bunch anyway), so I
-wouldn't personally post another patch unless I hear from him that he
-wants you to repost.  ...but please keep it in mind for the future.
-
-In any case:
-
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
-
--Doug
