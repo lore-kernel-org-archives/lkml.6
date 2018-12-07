@@ -2,140 +2,144 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36B39C07E85
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 10:53:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 884FDC07E85
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 10:54:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F15C920892
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 10:53:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F15C920892
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
+	by mail.kernel.org (Postfix) with ESMTP id 4F5A620892
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 10:54:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F5A620892
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726022AbeLGKxj (ORCPT
+        id S1726056AbeLGKyA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 05:53:39 -0500
-Received: from mx2.suse.de ([195.135.220.15]:38494 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725985AbeLGKxj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 05:53:39 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id BF62EAF0E;
-        Fri,  7 Dec 2018 10:53:36 +0000 (UTC)
-Subject: Re: [PATCH v4 2/5] scsi: hisi_sas: Relocate some code to reduce
- complexity
-To:     John Garry <john.garry@huawei.com>, jejb@linux.vnet.ibm.com,
-        martin.petersen@oracle.com
-Cc:     linuxarm@huawei.com, linux-kernel@vger.kernel.org,
-        linux-scsi@vger.kernel.org, Xiang Chen <chenxiang66@hisilicon.com>
-References: <1544103284-100497-1-git-send-email-john.garry@huawei.com>
- <1544103284-100497-3-git-send-email-john.garry@huawei.com>
- <c7ec9e23-6da8-35e0-1996-02db3d640f4b@suse.de>
- <2da87e22-1bbc-aff9-c0be-85a3fd8f4393@huawei.com>
- <778770d5-b377-2aaa-c2a0-9c548de74f17@suse.de>
- <0cfe35c7-89c4-b65a-ba25-dfcf5d59a564@huawei.com>
-From:   Johannes Thumshirn <jthumshirn@suse.de>
-Openpgp: preference=signencrypt
-Autocrypt: addr=jthumshirn@suse.de; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <320284bd-bae4-f54f-ec4d-2c44df0f69b4@suse.de>
-Date:   Fri, 7 Dec 2018 11:53:35 +0100
+        Fri, 7 Dec 2018 05:54:00 -0500
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:19838 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725994AbeLGKx7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Dec 2018 05:53:59 -0500
+Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id wB7ApFaX002996;
+        Fri, 7 Dec 2018 11:53:13 +0100
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2p3uhna39j-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Fri, 07 Dec 2018 11:53:13 +0100
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 2152431;
+        Fri,  7 Dec 2018 10:53:12 +0000 (GMT)
+Received: from Webmail-eu.st.com (sfhdag6node2.st.com [10.75.127.17])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id E468F2AB7;
+        Fri,  7 Dec 2018 10:53:11 +0000 (GMT)
+Received: from [10.201.23.29] (10.75.127.47) by SFHDAG6NODE2.st.com
+ (10.75.127.17) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Fri, 7 Dec
+ 2018 11:53:12 +0100
+Subject: Re: [ v3 2/3] mtd: rawnand: stm32_fmc2: add STM32 FMC2 NAND flash
+ controller driver
+To:     Miquel Raynal <miquel.raynal@bootlin.com>
+CC:     <boris.brezillon@bootlin.com>, <richard@nod.at>,
+        <dwmw2@infradead.org>, <computersforpeace@gmail.com>,
+        <marek.vasut@gmail.com>, <robh+dt@kernel.org>,
+        <mark.rutland@arm.com>, <linux-mtd@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>
+References: <1543509663-26128-1-git-send-email-christophe.kerello@st.com>
+ <1543509663-26128-3-git-send-email-christophe.kerello@st.com>
+ <20181207111808.144fc3f0@xps13>
+From:   Christophe Kerello <christophe.kerello@st.com>
+Message-ID: <cb694a48-9b81-1d7d-08ea-910f37772aed@st.com>
+Date:   Fri, 7 Dec 2018 11:53:10 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <0cfe35c7-89c4-b65a-ba25-dfcf5d59a564@huawei.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20181207111808.144fc3f0@xps13>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.75.127.47]
+X-ClientProxiedBy: SFHDAG4NODE2.st.com (10.75.127.11) To SFHDAG6NODE2.st.com
+ (10.75.127.17)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-07_03:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/12/2018 11:07, John Garry wrote:
-> On 06/12/2018 16:20, Johannes Thumshirn wrote:
->> On 06/12/2018 16:37, John Garry wrote:
->>> which is important. Let me know if you disagree and I can change it.
->>
->> Sure, it's your driver. It was just because the patch is even titled
->> "Relocate some code to reduce complexity", so I thought of reducing the
->> complexity for readers even further (like you don't need the line wrap
->> at 80 chars, and so on).
->>
->> Byte,
->>     Johannes
->>
+Hi Miquèl,
+
+This patchset already takes into account new framework modifications 
+done by Boris (3rd batch of cleanups).
+
+The select_chip hook is not used any more in this patchset and 
+exec_op/setup_data_interface hooks have been moved to 
+nand_controller_ops structure.
+
+static const struct nand_controller_ops stm32_fmc2_nand_controller_ops = {
+	.attach_chip = stm32_fmc2_attach_chip,
+	.exec_op = stm32_fmc2_exec_op,
+	.setup_data_interface = stm32_fmc2_setup_interface,
+};
+
+Regards,
+Christophe Kerello.
+
+On 12/7/18 11:18 AM, Miquel Raynal wrote:
+> Hi Christophe,
 > 
-> I would rather not change if you don't mind. When we say "reduce
-> complexity", we are talking about moving the DMA mapping code from the
-> task prep function, as, when we add the DIX-related DMA mapping code,
-> leaving all the DMA mapping code in the task prep function would make it
-> a monster.
-
-Sure
-
-
--- 
-Johannes Thumshirn                            SUSE Labs Filesystems
-jthumshirn@suse.de                                +49 911 74053 689
-SUSE LINUX GmbH, Maxfeldstr. 5, 90409 Nürnberg
-GF: Felix Imendörffer, Jane Smithard, Graham Norton
-HRB 21284 (AG Nürnberg)
-Key fingerprint = EC38 9CAB C2C4 F25D 8600 D0D0 0393 969D 2D76 0850
+> Christophe Kerello <christophe.kerello@st.com> wrote on Thu, 29 Nov
+> 2018 17:41:02 +0100:
+> 
+>> The driver adds the support for the STMicroelectronics FMC2 NAND
+>> Controller found on STM32MP SOCs.
+>>
+>> This patch is based on FMC2 command sequencer.
+>> The purpose of the command sequencer is to facilitate the programming
+>> and the reading of NAND flash pages with the ECC and to free the CPU
+>> of sequencing tasks.
+>> It requires one DMA channel for write and two DMA channels for read
+>> operations.
+>>
+>> Only NAND_ECC_HW mode is actually supported.
+>> The driver supports a maximum 8k page size.
+>> The following ECC strength and step size are currently supported:
+>>   - nand-ecc-strength = <8>, nand-ecc-step-size = <512> (BCH8)
+>>   - nand-ecc-strength = <4>, nand-ecc-step-size = <512> (BCH4)
+>>   - nand-ecc-strength = <1>, nand-ecc-step-size = <512> (Extended ECC
+>>     based on Hamming)
+>>
+>> This patch has been tested on Micron MT29F8G08ABACAH4 and
+>> MT29F8G16ABACAH4
+>>
+>> Signed-off-by: Christophe Kerello <christophe.kerello@st.com>
+>> ---
+> 
+> The driver look's good to me. However, Boris contributed new
+> cleanups that I would like you to take into account before doing
+> another 'deep' review. Please rebase on top of nand/next and have
+> a look at the followingcommits. For the ->select_chip() hook, it
+> should not be exposed anymore and switches should be handled
+> locally by the driver (you have examples).
+> 
+> 7a08dbaedd36 mtd: rawnand: Move ->setup_data_interface() to nand_controller_ops
+> f2abfeb2078b mtd: rawnand: Move the ->exec_op() method to nand_controller_ops
+> 7d6c37e90cf9 mtd: rawnand: Deprecate the ->select_chip() hook
+> 1770022ffa85 mtd: rawnand: ams-delta: Stop implementing ->select_chip()
+> 653c57c7da08 mtd: rawnand: vf610: Stop implementing ->select_chip()
+> 2ace451cae22 mtd: rawnand: tegra: Stop implementing ->select_chip()
+> b25251414f6e mtd: rawnand: marvell: Stop implementing ->select_chip()
+> 550b9fc4e3af mtd: rawnand: fsmc: Stop implementing ->select_chip()
+> 02b4a52604a4 mtd: rawnand: Make ->select_chip() optional when ->exec_op() is implemented
+> ae2294b10b0f mtd: rawnand: Pass the CS line to be selected in struct nand_operation
+> 1d0178593d14 mtd: rawnand: Add nand_[de]select_target() helpers
+> 
+> While at it, could you also address Linus W. comments.
+> 
+> Thanks,
+> Miquèl
+> 
