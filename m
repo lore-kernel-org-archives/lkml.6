@@ -6,38 +6,37 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F404EC64EB1
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 20:15:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CCC5DC07E85
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 20:15:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BD70020892
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 20:15:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD70020892
+	by mail.kernel.org (Postfix) with ESMTP id 98C6220892
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 20:15:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98C6220892
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=windriver.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726304AbeLGUPL (ORCPT
+        id S1726312AbeLGUPe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 15:15:11 -0500
-Received: from mail1.windriver.com ([147.11.146.13]:57425 "EHLO
-        mail1.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726280AbeLGUPG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 15:15:06 -0500
-Received: from ALA-HCA.corp.ad.wrs.com ([147.11.189.40])
-        by mail1.windriver.com (8.15.2/8.15.1) with ESMTPS id wB7KF4Wp029622
+        Fri, 7 Dec 2018 15:15:34 -0500
+Received: from mail5.windriver.com ([192.103.53.11]:59216 "EHLO mail5.wrs.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726065AbeLGUPe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Dec 2018 15:15:34 -0500
+Received: from ALA-HCA.corp.ad.wrs.com (ala-hca.corp.ad.wrs.com [147.11.189.40])
+        by mail5.wrs.com (8.15.2/8.15.2) with ESMTPS id wB7KEVll031359
         (version=TLSv1 cipher=AES128-SHA bits=128 verify=FAIL);
-        Fri, 7 Dec 2018 12:15:04 -0800 (PST)
+        Fri, 7 Dec 2018 12:15:02 -0800
 Received: from yow-cube1.wrs.com (128.224.56.98) by ALA-HCA.corp.ad.wrs.com
  (147.11.189.40) with Microsoft SMTP Server id 14.3.408.0; Fri, 7 Dec 2018
- 12:15:04 -0800
+ 12:14:55 -0800
 From:   Paul Gortmaker <paul.gortmaker@windriver.com>
 To:     Lee Jones <lee.jones@linaro.org>
 CC:     <linux-kernel@vger.kernel.org>,
         Paul Gortmaker <paul.gortmaker@windriver.com>,
-        <patches@opensource.cirrus.com>
-Subject: [PATCH 14/18] mfd: wm831x-i2c: Make it explicitly non-modular
-Date:   Fri, 7 Dec 2018 15:11:01 -0500
-Message-ID: <1544213465-16259-15-git-send-email-paul.gortmaker@windriver.com>
+        Laxman Dewangan <ldewangan@nvidia.com>
+Subject: [PATCH 12/18] mfd: tps80031: Make it explicitly non-modular
+Date:   Fri, 7 Dec 2018 15:10:59 -0500
+Message-ID: <1544213465-16259-13-git-send-email-paul.gortmaker@windriver.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1544213465-16259-1-git-send-email-paul.gortmaker@windriver.com>
 References: <1544213465-16259-1-git-send-email-paul.gortmaker@windriver.com>
@@ -50,8 +49,8 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The Kconfig currently controlling compilation of this code is:
 
-drivers/mfd/Kconfig:config MFD_WM831X_I2C
-drivers/mfd/Kconfig:    bool "Wolfson Microelectronics WM831x/2x PMICs with I2C"
+drivers/mfd/Kconfig:config MFD_TPS80031
+drivers/mfd/Kconfig:    bool "TI TPS80031/TPS80032 Power Management chips"
 
 ...meaning that it currently is not being built as a module by anyone.
 
@@ -65,74 +64,90 @@ code for non-modular drivers.
 Since module_init was not in use by this code, the init ordering
 remains unchanged with this commit.
 
+We don't replace module.h with init.h since the file already has that.
+
 Also note that MODULE_DEVICE_TABLE is a no-op for non-modular code.
 
+We also delete the MODULE_LICENSE tag etc. since all that information
+is already contained at the top of the file in the comments.
+
 Cc: Lee Jones <lee.jones@linaro.org>
-Cc: patches@opensource.cirrus.com
+Cc: Laxman Dewangan <ldewangan@nvidia.com>
 Acked-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
 ---
- drivers/mfd/wm831x-i2c.c | 20 ++------------------
- 1 file changed, 2 insertions(+), 18 deletions(-)
+ drivers/mfd/tps80031.c | 37 ++-----------------------------------
+ 1 file changed, 2 insertions(+), 35 deletions(-)
 
-diff --git a/drivers/mfd/wm831x-i2c.c b/drivers/mfd/wm831x-i2c.c
-index 22f7054d1b28..0f3af42f7268 100644
---- a/drivers/mfd/wm831x-i2c.c
-+++ b/drivers/mfd/wm831x-i2c.c
-@@ -13,7 +13,7 @@
-  */
- 
- #include <linux/kernel.h>
--#include <linux/module.h>
-+#include <linux/init.h>
- #include <linux/i2c.h>
- #include <linux/delay.h>
+diff --git a/drivers/mfd/tps80031.c b/drivers/mfd/tps80031.c
+index 608c7f77830e..865257ade8ac 100644
+--- a/drivers/mfd/tps80031.c
++++ b/drivers/mfd/tps80031.c
+@@ -30,7 +30,6 @@
+ #include <linux/irq.h>
  #include <linux/mfd/core.h>
-@@ -68,15 +68,6 @@ static int wm831x_i2c_probe(struct i2c_client *i2c,
- 	return wm831x_device_init(wm831x, i2c->irq);
+ #include <linux/mfd/tps80031.h>
+-#include <linux/module.h>
+ #include <linux/pm.h>
+ #include <linux/regmap.h>
+ #include <linux/slab.h>
+@@ -516,40 +515,18 @@ static int tps80031_probe(struct i2c_client *client,
+ 	return ret;
  }
  
--static int wm831x_i2c_remove(struct i2c_client *i2c)
+-static int tps80031_remove(struct i2c_client *client)
 -{
--	struct wm831x *wm831x = i2c_get_clientdata(i2c);
+-	struct tps80031 *tps80031 = i2c_get_clientdata(client);
+-	int i;
 -
--	wm831x_device_exit(wm831x);
+-	if (tps80031_power_off_dev == tps80031) {
+-		tps80031_power_off_dev = NULL;
+-		pm_power_off = NULL;
+-	}
 -
+-	mfd_remove_devices(tps80031->dev);
+-
+-	regmap_del_irq_chip(client->irq, tps80031->irq_data);
+-
+-	for (i = 0; i < TPS80031_NUM_SLAVES; i++) {
+-		if (tps80031->clients[i] != client)
+-			i2c_unregister_device(tps80031->clients[i]);
+-	}
 -	return 0;
 -}
 -
- static int wm831x_i2c_suspend(struct device *dev)
- {
- 	struct wm831x *wm831x = dev_get_drvdata(dev);
-@@ -103,7 +94,6 @@ static const struct i2c_device_id wm831x_i2c_id[] = {
- 	{ "wm8326", WM8326 },
+ static const struct i2c_device_id tps80031_id_table[] = {
+ 	{ "tps80031", TPS80031 },
+ 	{ "tps80032", TPS80032 },
  	{ }
  };
--MODULE_DEVICE_TABLE(i2c, wm831x_i2c_id);
+-MODULE_DEVICE_TABLE(i2c, tps80031_id_table);
  
- static const struct dev_pm_ops wm831x_pm_ops = {
- 	.suspend = wm831x_i2c_suspend,
-@@ -115,9 +105,9 @@ static struct i2c_driver wm831x_i2c_driver = {
- 		.name = "wm831x",
- 		.pm = &wm831x_pm_ops,
- 		.of_match_table = of_match_ptr(wm831x_of_match),
-+		.suppress_bind_attrs = true,
+ static struct i2c_driver tps80031_driver = {
+ 	.driver	= {
+-		.name	= "tps80031",
++		.name			= "tps80031",
++		.suppress_bind_attrs	= true,
  	},
- 	.probe = wm831x_i2c_probe,
--	.remove = wm831x_i2c_remove,
- 	.id_table = wm831x_i2c_id,
+ 	.probe		= tps80031_probe,
+-	.remove		= tps80031_remove,
+ 	.id_table	= tps80031_id_table,
  };
  
-@@ -132,9 +122,3 @@ static int __init wm831x_i2c_init(void)
- 	return ret;
+@@ -558,13 +535,3 @@ static int __init tps80031_init(void)
+ 	return i2c_add_driver(&tps80031_driver);
  }
- subsys_initcall(wm831x_i2c_init);
+ subsys_initcall(tps80031_init);
 -
--static void __exit wm831x_i2c_exit(void)
+-static void __exit tps80031_exit(void)
 -{
--	i2c_del_driver(&wm831x_i2c_driver);
+-	i2c_del_driver(&tps80031_driver);
 -}
--module_exit(wm831x_i2c_exit);
+-module_exit(tps80031_exit);
+-
+-MODULE_AUTHOR("Laxman Dewangan <ldewangan@nvidia.com>");
+-MODULE_DESCRIPTION("TPS80031 core driver");
+-MODULE_LICENSE("GPL v2");
 -- 
 2.7.4
 
