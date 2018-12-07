@@ -2,232 +2,174 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B410C07E85
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 12:14:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E642C07E85
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 12:15:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E015B20892
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 12:14:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="CL5A5T0y"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E015B20892
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id D291920989
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 12:15:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D291920989
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726072AbeLGMOg (ORCPT
+        id S1726090AbeLGMPt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 07:14:36 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:56630 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725992AbeLGMOg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 07:14:36 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=CsjCWJPRF5PYiVwchUprywdjHSYH26DBqNxhdM26OuE=; b=CL5A5T0y/+GKq0C0StbLzQbqg
-        MRfQYSxU3NNPKcdG60JmSm7UpYzvYnrROq/3U+LqMxogJInshqyVOLQcfOAGIx+lzyL+nGZ8n0Fc5
-        88Gav9d4+B1fRe8YVvnGE1igYgoC/LC4yqPoEDZ56QD9NKHMd38OiJDYoVSTJotwOII8F39vyaV7q
-        vaF/kE+bNC5UvUl6h8NH532Qw6voqjMWuImNYLE8g2lIrihc+SAV8CcZwgpq95o01W36IBsjutylY
-        h3OlgFvSyDEEo5eyGQD8kAh7Q+oqnsyo3Lar0jQMO0XlMtwoWMWzmHoFij8TRbisXaMNpDK84lrQv
-        tVu8HTJ4Q==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gVF1c-00064c-Js; Fri, 07 Dec 2018 12:14:32 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id D71EF2075BCED; Fri,  7 Dec 2018 13:14:29 +0100 (CET)
-Date:   Fri, 7 Dec 2018 13:14:29 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Bart Van Assche <bvanassche@acm.org>
-Cc:     mingo@redhat.com, tj@kernel.org, longman@redhat.com,
-        johannes.berg@intel.com, linux-kernel@vger.kernel.org,
-        Johannes Berg <johannes@sipsolutions.net>
-Subject: Re: [PATCH v3 17/24] locking/lockdep: Free lock classes that are no
- longer in use
-Message-ID: <20181207121429.GI2237@hirez.programming.kicks-ass.net>
-References: <20181207011148.251812-1-bvanassche@acm.org>
- <20181207011148.251812-18-bvanassche@acm.org>
+        Fri, 7 Dec 2018 07:15:49 -0500
+Received: from foss.arm.com ([217.140.101.70]:43208 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725992AbeLGMPt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Dec 2018 07:15:49 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EC997EBD;
+        Fri,  7 Dec 2018 04:15:48 -0800 (PST)
+Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id BBAF33F5AF;
+        Fri,  7 Dec 2018 04:15:48 -0800 (PST)
+Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
+        id 258EC1AE0BFA; Fri,  7 Dec 2018 12:16:10 +0000 (GMT)
+Date:   Fri, 7 Dec 2018 12:16:10 +0000
+From:   Will Deacon <will.deacon@arm.com>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Catalin Marinas <catalin.marinas@arm.com>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>
+Subject: Re: linux-next: manual merge of the arm64 tree with Linus' tree
+Message-ID: <20181207121609.GA26721@arm.com>
+References: <20181207091847.1db6a48e@canb.auug.org.au>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181207011148.251812-18-bvanassche@acm.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181207091847.1db6a48e@canb.auug.org.au>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 06, 2018 at 05:11:41PM -0800, Bart Van Assche wrote:
-> +	if (WARN_ON_ONCE(!hlock_class(prev)->hash_entry.pprev) ||
-> +	    WARN_ONCE(!hlock_class(next)->hash_entry.pprev,
-> +		      KERN_INFO "Detected use-after-free of lock class %s\n",
-> +		      hlock_class(next)->name)) {
-> +		return 2;
-> +	}
+On Fri, Dec 07, 2018 at 09:18:47AM +1100, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Today's linux-next merge of the arm64 tree got a conflict in:
+> 
+>   arch/arm64/kernel/cpu_errata.c
+> 
+> between commit:
+> 
+>   ce8c80c536da ("arm64: Add workaround for Cortex-A76 erratum 1286807")
+> 
+> from Linus' tree and commit:
+> 
+>   c9460dcb06ee ("arm64: capabilities: Merge entries for ARM64_WORKAROUND_CLEAN_CACHE")
+> 
+> from the arm64 tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
 
-Ah, this is that UaF on ->name, but it only happens when there's already
-been a UaF, so that's fine I suppose. Still a note on that earlier
-Changelog would've been nice I suppose.
+Thanks, Stephen, this looks correct to me. Suzuki -- can you please confirm?
 
-> +/* Must be called with the graph lock held. */
-> +static void remove_class_from_lock_chain(struct lock_chain *chain,
-> +					 struct lock_class *class)
-> +{
-> +	u64 chain_key;
-> +	int i;
-> +
-> +#ifdef CONFIG_PROVE_LOCKING
-> +	for (i = chain->base; i < chain->base + chain->depth; i++) {
-> +		if (chain_hlocks[i] != class - lock_classes)
-> +			continue;
-> +		if (--chain->depth > 0)
- {
-> +			memmove(&chain_hlocks[i], &chain_hlocks[i + 1],
-> +				(chain->base + chain->depth - i) *
-> +				sizeof(chain_hlocks[0]));
- }
+Will
 
-Also, I suppose a comment here that notes we 'leak' chain_hlock[]
-entries would be appropriate here.
-
-If Waiman cares, it is possible to reclaim then by extending the above
-memmove() to cover the _entire_ tail of the array and then going around
-and fixing up all the chain->base 'pointers' that are in the moved part.
-
-> +		/*
-> +		 * Each lock class occurs at most once in a
-> +		 * lock chain so once we found a match we can
-> +		 * break out of this loop.
-> +		 */
-> +		goto recalc;
-> +	}
-> +	/* Since the chain has not been modified, return. */
-> +	return;
-> +
-> +recalc:
-> +	/*
-> +	 * Note: calling hlist_del_rcu() from inside a
-> +	 * hlist_for_each_entry_rcu() loop is safe.
-> +	 */
-> +	if (chain->depth == 0) {
-> +		/* To do: decrease chain count. See also inc_chains(). */
-> +		hlist_del_rcu(&chain->entry);
-> +		return;
-> +	}
-> +	chain_key = 0;
-> +	for (i = chain->base; i < chain->base + chain->depth; i++)
-> +		chain_key = iterate_chain_key(chain_key, chain_hlocks[i] + 1);
-> +	if (chain->chain_key == chain_key)
-> +		return;
-> +	hlist_del_rcu(&chain->entry);
-> +	chain->chain_key = chain_key;
-> +	hlist_add_head_rcu(&chain->entry, chainhashentry(chain_key));
-
-I think this is broken; while hlist_del_rcu() and hlist_add_head_rcu()
-are individually safe against concurrent hlist_for_each_entry_rcu(),
-they cannot be used consecutively like this.
-
-The thing is, hlist_del_rcu() preserves the ->next pointer such that
-a concurrent hlist_for_each_entry_rcu() that happens to be at that entry
-will be able to continue.
-
-But your hlist_add_head_rcu() will overwrite that, so the concurrent
-iterator, which started on one list will continue on another.
-
-There must be an RCU-GP between del_rcu and add_rcu such that the above
-situation cannot happen.
-
-
-> +/*
-> + * Free all lock classes that are on the zapped_classes list. Called as an
-> + * RCU callback function.
-> + */
-> +static void free_zapped_classes(struct callback_head *ch)
-> +{
-> +	struct lock_class *class;
-> +	unsigned long flags;
-> +	int locked;
-> +
-> +	raw_local_irq_save(flags);
-> +	locked = graph_lock();
-
-If this fails; you must not touch any of the state. You don't hold the
-lock after all.
-
-> +	rcu_callback_scheduled = false;
-> +	list_for_each_entry(class, &zapped_classes, lock_entry) {
-> +		reinit_class(class);
-> +		nr_lock_classes--;
-> +	}
-> +	list_splice_init(&zapped_classes, &free_lock_classes);
-> +	if (locked)
-> +		graph_unlock();
-> +	raw_local_irq_restore(flags);
-> +}
-> +
-> +/* Must be called with the graph lock held. */
-> +static void schedule_free_zapped_classes(void)
-> +{
-> +	if (rcu_callback_scheduled)
-> +		return;
-> +	rcu_callback_scheduled = true;
-> +	call_rcu(&free_zapped_classes_rcu_head, free_zapped_classes);
-> +}
-
-But I fear this is fundamentally broken too. In exactly the manner I
-tried to explain earlier.
-
-(sorry, wide(r) terminal required)
-
-It starts out good:
-
-	CPU0			CPU1				CPU2
-
-	rcu_read_lock()
-	// use class
-				zap_class()
-				schedule_free_zapped_classes();
-				  call_rcu();
-
-	rcu_read_lock()
-
-				/* since none of the rcu_read_lock()
-				 * sections we started out with are
-				 * still active; this is where the
-				 * callback _can_ happen */
-
-But then, another user and and removal come in:
-
-	rcu_read_lock();
-
-	// use class						zap_class()
-								  list_add(&entry, &zapped_classes)
-								schedule_free_zapped_classes()
-								  /* no-op, still pending */
-
-				free_zapped_classes()
-				  list_splice(&zapped_classes, &free_lock_classes)
-
-				  *whoops* we just splice'd a class
-				  onto the free list that is still in
-				  use !!
-
-
-	rcu_read_unlock()
-
-
-There's two possible solutions:
-
- - the second schedule_free_zapped_classes() must somehow ensure the
-   call_rcu() callback re-queues itself and waits for yet another GP, or
-
- - you must add classes zapped after the first invocation to a second
-   list.
+> diff --cc arch/arm64/kernel/cpu_errata.c
+> index 6ad715d67df8,bb44635026f8..000000000000
+> --- a/arch/arm64/kernel/cpu_errata.c
+> +++ b/arch/arm64/kernel/cpu_errata.c
+> @@@ -570,21 -570,43 +570,57 @@@ static const struct midr_range arm64_ha
+>   
+>   #endif
+>   
+>  +#ifdef CONFIG_ARM64_WORKAROUND_REPEAT_TLBI
+>  +
+>  +static const struct midr_range arm64_repeat_tlbi_cpus[] = {
+>  +#ifdef CONFIG_QCOM_FALKOR_ERRATUM_1009
+>  +	MIDR_RANGE(MIDR_QCOM_FALKOR_V1, 0, 0, 0, 0),
+>  +#endif
+>  +#ifdef CONFIG_ARM64_ERRATUM_1286807
+>  +	MIDR_RANGE(MIDR_CORTEX_A76, 0, 0, 3, 0),
+>  +#endif
+>  +	{},
+>  +};
+>  +
+>  +#endif
+>  +
+> - const struct arm64_cpu_capabilities arm64_errata[] = {
+> + #ifdef CONFIG_CAVIUM_ERRATUM_27456
+> + static const struct midr_range cavium_erratum_27456_cpus[] = {
+> + 	/* Cavium ThunderX, T88 pass 1.x - 2.1 */
+> + 	MIDR_RANGE(MIDR_THUNDERX, 0, 0, 1, 1),
+> + 	/* Cavium ThunderX, T81 pass 1.0 */
+> + 	MIDR_REV(MIDR_THUNDERX_81XX, 0, 0),
+> + 	{},
+> + };
+> + #endif
+> + 
+> + #ifdef CONFIG_CAVIUM_ERRATUM_30115
+> + static const struct midr_range cavium_erratum_30115_cpus[] = {
+> + 	/* Cavium ThunderX, T88 pass 1.x - 2.2 */
+> + 	MIDR_RANGE(MIDR_THUNDERX, 0, 0, 1, 2),
+> + 	/* Cavium ThunderX, T81 pass 1.0 - 1.2 */
+> + 	MIDR_REV_RANGE(MIDR_THUNDERX_81XX, 0, 0, 2),
+> + 	/* Cavium ThunderX, T83 pass 1.0 */
+> + 	MIDR_REV(MIDR_THUNDERX_83XX, 0, 0),
+> + 	{},
+> + };
+> + #endif
+> + 
+> + #ifdef CONFIG_QCOM_FALKOR_ERRATUM_1003
+> + static const struct arm64_cpu_capabilities qcom_erratum_1003_list[] = {
+> + 	{
+> + 		ERRATA_MIDR_REV(MIDR_QCOM_FALKOR_V1, 0, 0),
+> + 	},
+> + 	{
+> + 		.midr_range.model = MIDR_QCOM_KRYO,
+> + 		.matches = is_kryo_midr,
+> + 	},
+> + 	{},
+> + };
+> + #endif
+> + 
+> + #ifdef CONFIG_ARM64_WORKAROUND_CLEAN_CACHE
+> + static const struct midr_range workaround_clean_cache[] = {
+>   #if	defined(CONFIG_ARM64_ERRATUM_826319) || \
+>   	defined(CONFIG_ARM64_ERRATUM_827319) || \
+>   	defined(CONFIG_ARM64_ERRATUM_824069)
+> @@@ -697,23 -698,17 +712,17 @@@ const struct arm64_cpu_capabilities arm
+>   	},
+>   #ifdef CONFIG_QCOM_FALKOR_ERRATUM_1003
+>   	{
+> - 		.desc = "Qualcomm Technologies Falkor erratum 1003",
+> + 		.desc = "Qualcomm Technologies Falkor/Kryo erratum 1003",
+>   		.capability = ARM64_WORKAROUND_QCOM_FALKOR_E1003,
+> - 		ERRATA_MIDR_REV(MIDR_QCOM_FALKOR_V1, 0, 0),
+> - 	},
+> - 	{
+> - 		.desc = "Qualcomm Technologies Kryo erratum 1003",
+> - 		.capability = ARM64_WORKAROUND_QCOM_FALKOR_E1003,
+> - 		.type = ARM64_CPUCAP_LOCAL_CPU_ERRATUM,
+> - 		.midr_range.model = MIDR_QCOM_KRYO,
+> - 		.matches = is_kryo_midr,
+> + 		.matches = multi_entry_cap_matches,
+> + 		.match_list = qcom_erratum_1003_list,
+>   	},
+>   #endif
+>  -#ifdef CONFIG_QCOM_FALKOR_ERRATUM_1009
+>  +#ifdef CONFIG_ARM64_WORKAROUND_REPEAT_TLBI
+>   	{
+>  -		.desc = "Qualcomm Technologies Falkor erratum 1009",
+>  +		.desc = "Qualcomm erratum 1009, ARM erratum 1286807",
+>   		.capability = ARM64_WORKAROUND_REPEAT_TLBI,
+>  -		ERRATA_MIDR_REV(MIDR_QCOM_FALKOR_V1, 0, 0),
+>  +		ERRATA_MIDR_RANGE_LIST(arm64_repeat_tlbi_cpus),
+>   	},
+>   #endif
+>   #ifdef CONFIG_ARM64_ERRATUM_858921
 
 
