@@ -2,90 +2,125 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9460BC07E85
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 10:38:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E9ECC07E85
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 10:41:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5D4A420838
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 10:38:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D4A420838
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=osadl.org
+	by mail.kernel.org (Postfix) with ESMTP id 541AC20661
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 10:41:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 541AC20661
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amlogic.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726070AbeLGKim (ORCPT
+        id S1726019AbeLGKlb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 05:38:42 -0500
-Received: from www.osadl.org ([62.245.132.105]:36688 "EHLO www.osadl.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726047AbeLGKil (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 05:38:41 -0500
-Received: from debian01.hofrr.at (178.115.242.59.static.drei.at [178.115.242.59])
-        by www.osadl.org (8.13.8/8.13.8/OSADL-2007092901) with ESMTP id wB7AbVAV016632;
-        Fri, 7 Dec 2018 11:37:31 +0100
-From:   Nicholas Mc Guire <hofrat@osadl.org>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Nicholas Mc Guire <hofrat@osadl.org>
-Subject: [PATCH V2] pinctrl: rza1: handle devm_kasprintf() failure cases
-Date:   Fri,  7 Dec 2018 11:34:27 +0100
-Message-Id: <1544178867-13169-1-git-send-email-hofrat@osadl.org>
-X-Mailer: git-send-email 2.1.4
+        Fri, 7 Dec 2018 05:41:31 -0500
+Received: from mail-sz2.amlogic.com ([211.162.65.114]:20458 "EHLO
+        mail-sz2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725985AbeLGKla (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Dec 2018 05:41:30 -0500
+Received: from [10.28.18.115] (10.28.18.115) by mail-sz2.amlogic.com
+ (10.28.11.6) with Microsoft SMTP Server (TLS) id 15.0.1320.4; Fri, 7 Dec 2018
+ 18:41:39 +0800
+Subject: Re: [PATCH v7 2/2] mtd: rawnand: meson: add support for Amlogic NAND
+ flash controller
+To:     Miquel Raynal <miquel.raynal@bootlin.com>,
+        Jianxin Pan <jianxin.pan@amlogic.com>
+CC:     Boris Brezillon <boris.brezillon@bootlin.com>,
+        <linux-mtd@lists.infradead.org>, Yixun Lan <yixun.lan@amlogic.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Carlo Caione <carlo@caione.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Rob Herring <robh@kernel.org>, Jian Hu <jian.hu@amlogic.com>,
+        Hanjie Lin <hanjie.lin@amlogic.com>,
+        Victor Wan <victor.wan@amlogic.com>,
+        <linux-amlogic@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+References: <1542386439-30166-1-git-send-email-jianxin.pan@amlogic.com>
+ <1542386439-30166-3-git-send-email-jianxin.pan@amlogic.com>
+ <20181207102456.1dc67e07@xps13> <20181207104254.0ecfc1e5@xps13>
+From:   Liang Yang <liang.yang@amlogic.com>
+Message-ID: <ac486ae7-7997-6f35-f29c-267c9c6f0f8c@amlogic.com>
+Date:   Fri, 7 Dec 2018 18:41:39 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.2
+MIME-Version: 1.0
+In-Reply-To: <20181207104254.0ecfc1e5@xps13>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.28.18.115]
+X-ClientProxiedBy: mail-sz2.amlogic.com (10.28.11.6) To mail-sz2.amlogic.com
+ (10.28.11.6)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
- devm_kasprintf() may return NULL on failure of internal allocation
-thus the assignments are not safe if not checked. On error
-rza1_pinctrl_register() respectively rza1_parse_gpiochip() return
-negative values so -ENOMEM in the (unlikely) failure case of
-devm_kasprintf() should be fine here.
+Hi Miquel,
 
-Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
-Fixes: 5a49b644b307 ("pinctrl: Renesas RZ/A1 pin and gpio controller")
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
+Appreciate your time.
+I will follow the nand/next and rework some next week as soon as possible.
 
-Problem was located with an experimental coccinelle script
-
-V2: drop the dev_err() messages as requested by Geert Uytterhoeven
-    <geert@linux-m68k.org> - thanks !
-
-Patch was compile tested with: shmobile_defconfig (implies PINCTRL_RZA1=y)
-
-Patch is against 4.20-rc5 (localversion-next is next-20181207)
-
- drivers/pinctrl/pinctrl-rza1.c | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/drivers/pinctrl/pinctrl-rza1.c b/drivers/pinctrl/pinctrl-rza1.c
-index 14eb576..9cfe9d0 100644
---- a/drivers/pinctrl/pinctrl-rza1.c
-+++ b/drivers/pinctrl/pinctrl-rza1.c
-@@ -1225,6 +1225,9 @@ static int rza1_parse_gpiochip(struct rza1_pinctrl *rza1_pctl,
- 	chip->base	= -1;
- 	chip->label	= devm_kasprintf(rza1_pctl->dev, GFP_KERNEL, "%pOFn",
- 					 np);
-+	if (!chip->label)
-+		return -ENOMEM;
-+
- 	chip->ngpio	= of_args.args[2];
- 	chip->of_node	= np;
- 	chip->parent	= rza1_pctl->dev;
-@@ -1326,6 +1329,8 @@ static int rza1_pinctrl_register(struct rza1_pinctrl *rza1_pctl)
- 		pins[i].number = i;
- 		pins[i].name = devm_kasprintf(rza1_pctl->dev, GFP_KERNEL,
- 					      "P%u-%u", port, pin);
-+		if (!pins[i].name)
-+			return -ENOMEM;
- 
- 		if (i % RZA1_PINS_PER_PORT == 0) {
- 			/*
--- 
-2.1.4
-
+On 2018/12/7 17:42, Miquel Raynal wrote:
+> Hi Jianxin,
+> 
+> Miquel Raynal <miquel.raynal@bootlin.com> wrote on Fri, 7 Dec 2018
+> 10:24:56 +0100:
+> 
+>> Hi Jianxin,
+>>
+>> Looks good to me overall, a few comments inline.
+>>
+>> Jianxin Pan <jianxin.pan@amlogic.com> wrote on Sat, 17 Nov 2018
+>> 00:40:38 +0800:
+>>
+>>> From: Liang Yang <liang.yang@amlogic.com>
+>>>
+>>> Add initial support for the Amlogic NAND flash controller which found
+>>> in the Meson-GXBB/GXL/AXG SoCs.
+>>>
+>>> Signed-off-by: Liang Yang <liang.yang@amlogic.com>
+>>> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
+>>> Signed-off-by: Jianxin Pan <jianxin.pan@amlogic.com>
+>>> ---
+>>>   drivers/mtd/nand/raw/Kconfig      |   10 +
+>>>   drivers/mtd/nand/raw/Makefile     |    1 +
+>>>   drivers/mtd/nand/raw/meson_nand.c | 1417 +++++++++++++++++++++++++++++++++++++
+>>>   3 files changed, 1428 insertions(+)
+>>>   create mode 100644 drivers/mtd/nand/raw/meson_nand.c
+>>>
+> 
+> I forgot to mention, Boris has done more cleanup which breaks your
+> patches, please have a look at the following commits in the nand/next
+> branch, they will force you to do some light rework to get the driver
+> building (especially, you should not export the ->select_chip hook anymore):
+> 
+> 7a08dbaedd36 mtd: rawnand: Move ->setup_data_interface() to nand_controller_ops
+> f2abfeb2078b mtd: rawnand: Move the ->exec_op() method to nand_controller_ops
+> 7d6c37e90cf9 mtd: rawnand: Deprecate the ->select_chip() hook
+> 1770022ffa85 mtd: rawnand: ams-delta: Stop implementing ->select_chip()
+> 653c57c7da08 mtd: rawnand: vf610: Stop implementing ->select_chip()
+> 2ace451cae22 mtd: rawnand: tegra: Stop implementing ->select_chip()
+> b25251414f6e mtd: rawnand: marvell: Stop implementing ->select_chip()
+> 550b9fc4e3af mtd: rawnand: fsmc: Stop implementing ->select_chip()
+> 02b4a52604a4 mtd: rawnand: Make ->select_chip() optional when ->exec_op() is implemented
+> ae2294b10b0f mtd: rawnand: Pass the CS line to be selected in struct nand_operation
+> 1d0178593d14 mtd: rawnand: Add nand_[de]select_target() helpers
+> 
+> Thanks,
+> Miquèl
+> 
+> .
+> 
