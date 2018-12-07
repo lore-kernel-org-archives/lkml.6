@@ -2,155 +2,227 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB9F8C07E85
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 09:06:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5727C64EB1
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 09:06:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 842B320892
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 09:06:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 842B320892
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id 54B8C20882
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 09:06:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="jmDmJPTy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 54B8C20882
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726071AbeLGJGY (ORCPT
+        id S1726101AbeLGJGj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 04:06:24 -0500
-Received: from mx2.suse.de ([195.135.220.15]:50254 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725978AbeLGJGX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 04:06:23 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id D9B0CADE0;
-        Fri,  7 Dec 2018 09:06:19 +0000 (UTC)
-Subject: Re: MADV_HUGEPAGE vs. NUMA semantic (was: Re: [LKP] [mm] ac5b2c1891:
- vm-scalability.throughput -61.3% regression)
-To:     Michal Hocko <mhocko@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Andrea Arcangeli <aarcange@redhat.com>,
-        mgorman@techsingularity.net, ying.huang@intel.com,
-        s.priebe@profihost.ag,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        alex.williamson@redhat.com, lkp@01.org,
-        David Rientjes <rientjes@google.com>, kirill@shutemov.name,
-        Andrew Morton <akpm@linux-foundation.org>,
-        zi.yan@cs.rutgers.edu
-References: <CAHk-=whDg5+e2-eXYo-jwC1spt2r7JjLQSaLm4OyfGMQHLTrdw@mail.gmail.com>
- <64a4aec6-3275-a716-8345-f021f6186d9b@suse.cz>
- <20181204104558.GV23260@techsingularity.net>
- <20181205204034.GB11899@redhat.com>
- <CAHk-=whi8Ju-cTDL4cYtwuLA7BYgGJYyy6HVMoknZaLHnRc83g@mail.gmail.com>
- <20181205233632.GE11899@redhat.com>
- <CAHk-=wguXjkbK8BUU998s7HD7AXJgBkuc9JmuNxiN7uGQyfSfQ@mail.gmail.com>
- <CAHk-=wjm9V843eg0uesMrxKnCCq7UfWn8VJ+z-cNztb_0fVW6A@mail.gmail.com>
- <20181206091405.GD1286@dhcp22.suse.cz>
- <CAHk-=whCnERJt8bterD5yXABvoSmoJAx004Y76c82bBHCWbgDg@mail.gmail.com>
- <20181207074954.GR1286@dhcp22.suse.cz>
-From:   Vlastimil Babka <vbabka@suse.cz>
-Openpgp: preference=signencrypt
-Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
- 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
- cqmP8roqufIAj+Ohhzs=
-Message-ID: <779efc07-cac0-5d36-72fc-11d99060cac7@suse.cz>
-Date:   Fri, 7 Dec 2018 10:06:18 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
-MIME-Version: 1.0
-In-Reply-To: <20181207074954.GR1286@dhcp22.suse.cz>
-Content-Type: text/plain; charset=utf-8
+        Fri, 7 Dec 2018 04:06:39 -0500
+Received: from us01smtprelay-2.synopsys.com ([198.182.47.9]:55554 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725988AbeLGJGi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Dec 2018 04:06:38 -0500
+Received: from mailhost.synopsys.com (mailhost3.synopsys.com [10.12.238.238])
+        by smtprelay.synopsys.com (Postfix) with ESMTP id E82CA24E1FDC;
+        Fri,  7 Dec 2018 01:06:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1544173598; bh=3ExysG2zJMdq77Y/mQbCphwGqBq+M4uXhFpDJdrQ7wY=;
+        h=From:To:CC:Subject:Date:References:From;
+        b=jmDmJPTyoV5taaSXnOo22Sk4J7N56bHqXetFQsrruIhyLuCaw0ADhMRys+Wg6lsq0
+         8Gsjg9nsrQ2Y/gn0yEgJdk8FLKhMqA/WSTjPpMXac3IjJCIHGYQJ1nK44DVPpQz4fX
+         nQuuAjIKc3bgd3/T20PbQo8X3ce1RgOk9zSlsRthljigLV9SCNfopaa+lUXzyK4pwL
+         RQEnAJZZ3suB1AS0zMEVcnVZzZPwviWIc6grl6TtKVqVMMsMLPnsVRUMMfLpW+eaW1
+         j/TyPSLN/UyzUDBci/yILzqDuQ1qNj8wXMg5R85HXxiV+ZjAoxZYSzy9I7NP3Eo5e4
+         kgD30H7pty7Ng==
+Received: from US01WEHTC2.internal.synopsys.com (us01wehtc2-vip.internal.synopsys.com [10.12.239.238])
+        by mailhost.synopsys.com (Postfix) with ESMTP id A55EA3D5B;
+        Fri,  7 Dec 2018 01:06:37 -0800 (PST)
+Received: from AM04WEHTCA.internal.synopsys.com (10.116.16.190) by
+ US01WEHTC2.internal.synopsys.com (10.12.239.237) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Fri, 7 Dec 2018 01:06:37 -0800
+Received: from AM04WEMBXA.internal.synopsys.com ([fe80::79c3:55f2:1f20:5bf4])
+ by am04wehtca.internal.synopsys.com ([::1]) with mapi id 14.03.0415.000; Fri,
+ 7 Dec 2018 13:06:34 +0400
+From:   Minas Harutyunyan <minas.harutyunyan@synopsys.com>
+To:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Minas Harutyunyan <minas.harutyunyan@synopsys.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Maynard CABIENTE <maynard.cabiente@raritan.com>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [PATCH] usb: dwc2: Revert "usb: dwc2: Disable all EP's on
+ disconnect"
+Thread-Topic: [PATCH] usb: dwc2: Revert "usb: dwc2: Disable all EP's on
+ disconnect"
+Thread-Index: AQHUgbE8ouTBXi+nzkarEEkfP9zP5Q==
+Date:   Fri, 7 Dec 2018 09:06:33 +0000
+Message-ID: <410670D7E743164D87FA6160E7907A56013A7B47A2@am04wembxa.internal.synopsys.com>
+References: <CGME20181121154518eucas1p2cc7ffd4d071ff420c747e1d0c387ee5d@eucas1p2.samsung.com>
+ <20181121154504.13052-1-m.szyprowski@samsung.com>
+ <410670D7E743164D87FA6160E7907A56013A7AA1EE@am04wembxa.internal.synopsys.com>
+ <20181123144307.GC2970@unbuntlaptop>
+ <410670D7E743164D87FA6160E7907A56013A7B19C2@am04wembxa.internal.synopsys.com>
+ <2b48a7b5-f806-d761-97f6-885ae6c69a7e@samsung.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.116.70.132]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/7/18 8:49 AM, Michal Hocko wrote:
->> But *that* in turn makes for other possible questions:
->>
->>  - if the reason we couldn't get a local hugepage is that we're simply
->> out of local memory (huge *or* small), then maybe a remote hugepage is
->> better.
->>
->>    Note that this now implies that the choice can be an issue of "did
->> the hugepage allocation fail due to fragmentation, or due to the node
->> being low of memory"
-> How exactly do you tell? Many systems are simply low on memory due to
-> caching. A clean pagecache is quite cheap to reclaim but it can be more
-> expensive to fault in. Do we consider it to be a viable target?
-
-Compaction can report if it failed (more precisely: was skipped) due to
-low memory, or for other reasons. It doesn't distinguish how easily
-reclaimable is the memory, but I don't think we should reclaim anything
-(see below).
-
->> and there is the other question that I asked in the other thread
->> (before subject edit):
->>
->>  - how local is the load to begin with?
->>
->>    Relatively shortlived processes - or processes that are explicitly
->> bound to a node - might have different preferences than some
->> long-lived process where the CPU bounces around, and might have
->> different trade-offs for the local vs remote question too.
-> Agreed
-> 
->> So just based on David's numbers, and some wild handwaving on my part,
->> a slightly more complex, but still very sensible default might be
->> something like
->>
->>  1) try to do a cheap local node hugepage allocation
->>
->>     Rationale: everybody agrees this is the best case.
->>
->>     But if that fails:
->>
->>  2) look at compacting and the local node, but not very hard.
->>
->>     If there's lots of memory on the local node, but synchronous
->> compaction doesn't do anything easily, just fall back to small pages.
-> Do we reclaim at this stage or this is mostly GFP_NOWAIT attempt?
-
-I would expect no reclaim, because for non-THP faults we also don't
-reclaim the local node before trying to allocate from remote node. If
-somebody wants such behavior they can enable the node reclaim mode. THP
-faults shouldn't be different in this regard, right?
-
+Hi Marek,=0A=
+=0A=
+On 12/6/2018 7:04 PM, Marek Szyprowski wrote:=0A=
+> Dear Minas,=0A=
+> =0A=
+> On 2018-12-04 13:34, Minas Harutyunyan wrote:=0A=
+>> On 11/23/2018 6:43 PM, Dan Carpenter wrote:=0A=
+>>> Ugh...  We also had a long thread about the v2 patch but it turns out=
+=0A=
+>>> the list was not CC'd.  I should have checked for that.=0A=
+>>>=0A=
+>>> You have to pass a flag to say if the caller holds the lock or not...=
+=0A=
+>>>=0A=
+>>> regards,=0A=
+>>> dan carpenter=0A=
+>>>=0A=
+>> Hi Dan, Marek, Maynard,=0A=
+>>=0A=
+>> Could you please apply bellow patch over follow patches:=0A=
+>>=0A=
+>> dccf1bad4be7 usb: dwc2: Disable all EP's on disconnect=0A=
+>> 6f774b501928 usb: dwc2: Fix ep disable spinlock flow.=0A=
+>>=0A=
+>> Please review and test. Feedback is appreciated :-)=0A=
+> =0A=
+> Okay, I finally managed to find some time to check this. Your diff is=0A=
+> mangled, so I had to manually apply it. Frankly, it is very similar to=0A=
+> the revert I proposed. I've checked it on my test machines and it fixes=
+=0A=
+> the issues. I'm not very happy about the unlock/lock design, but it=0A=
+> should be safe in this case and doesn't make the code even more complex.=
+=0A=
+> Feel free to add a following tag to the final patch:=0A=
+> =0A=
+> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>=0A=
+Thanks for testing.=0A=
+=0A=
+> =0A=
+>> diff --git a/drivers/usb/dwc2/gadget.c b/drivers/usb/dwc2/gadget.c=0A=
+>> index 8eb25e3597b0..db438d13c36a 100644=0A=
+>> --- a/drivers/usb/dwc2/gadget.c=0A=
+>> +++ b/drivers/usb/dwc2/gadget.c=0A=
+>> @@ -3165,8 +3165,6 @@ static void kill_all_requests(struct dwc2_hsotg=0A=
+>> *hsotg,=0A=
+>>                   dwc2_hsotg_txfifo_flush(hsotg, ep->fifo_index);=0A=
+>>    }=0A=
+>>=0A=
+>> -static int dwc2_hsotg_ep_disable(struct usb_ep *ep);=0A=
+>> -=0A=
+>>    /**=0A=
+>>     * dwc2_hsotg_disconnect - disconnect service=0A=
+>>     * @hsotg: The device state.=0A=
+>> @@ -3185,12 +3183,13 @@ void dwc2_hsotg_disconnect(struct dwc2_hsotg *hs=
+otg)=0A=
+>>           hsotg->connected =3D 0;=0A=
+>>           hsotg->test_mode =3D 0;=0A=
+>>=0A=
+>> -       /* all endpoints should be shutdown */=0A=
+>>           for (ep =3D 0; ep < hsotg->num_of_eps; ep++) {=0A=
+>>                   if (hsotg->eps_in[ep])=0A=
+>> -                       dwc2_hsotg_ep_disable(&hsotg->eps_in[ep]->ep);=
+=0A=
+>> +                       kill_all_requests(hsotg, hsotg->eps_in[ep],=0A=
+>> +                                                         -ESHUTDOWN);=
+=0A=
+>>                   if (hsotg->eps_out[ep])=0A=
+>> -                       dwc2_hsotg_ep_disable(&hsotg->eps_out[ep]->ep);=
+=0A=
+>> +                       kill_all_requests(hsotg, hsotg->eps_out[ep],=0A=
+>> +                                                         -ESHUTDOWN);=
+=0A=
+>>           }=0A=
+>>=0A=
+>>           call_gadget(hsotg, disconnect);=0A=
+>> @@ -3234,6 +3233,8 @@ static void dwc2_hsotg_irq_fifoempty(struct=0A=
+>> dwc2_hsotg *hsotg, bool periodic)=0A=
+>>                           GINTSTS_PTXFEMP |  \=0A=
+>>                           GINTSTS_RXFLVL)=0A=
+>>=0A=
+>> +static int dwc2_hsotg_ep_disable(struct usb_ep *ep);=0A=
+>> +=0A=
+>>    /**=0A=
+>>     * dwc2_hsotg_core_init - issue softreset to the core=0A=
+>>     * @hsotg: The device state=0A=
+>> @@ -3258,12 +3259,14 @@ void dwc2_hsotg_core_init_disconnected(struct=0A=
+>> dwc2_hsotg *hsotg,=0A=
+>>                           return;=0A=
+>>           } else {=0A=
+>>                   /* all endpoints should be shutdown */=0A=
+>> +               spin_unlock(&hsotg->lock);=0A=
+>>                   for (ep =3D 1; ep < hsotg->num_of_eps; ep++) {=0A=
+>>                           if (hsotg->eps_in[ep])=0A=
+>>   =0A=
+>> dwc2_hsotg_ep_disable(&hsotg->eps_in[ep]->ep);=0A=
+>>                           if (hsotg->eps_out[ep])=0A=
+>>   =0A=
+>> dwc2_hsotg_ep_disable(&hsotg->eps_out[ep]->ep);=0A=
+>>                   }=0A=
+>> +               spin_lock(&hsotg->lock);=0A=
+>>           }=0A=
+>>=0A=
+>>           /*=0A=
+>> @@ -4072,7 +4075,6 @@ static int dwc2_hsotg_ep_disable(struct usb_ep *ep=
+)=0A=
+>>           unsigned long flags;=0A=
+>>           u32 epctrl_reg;=0A=
+>>           u32 ctrl;=0A=
+>> -       int locked;=0A=
+>>=0A=
+>>           dev_dbg(hsotg->dev, "%s(ep %p)\n", __func__, ep);=0A=
+>>=0A=
+>> @@ -4088,7 +4090,7 @@ static int dwc2_hsotg_ep_disable(struct usb_ep *ep=
+)=0A=
+>>=0A=
+>>           epctrl_reg =3D dir_in ? DIEPCTL(index) : DOEPCTL(index);=0A=
+>>=0A=
+>> -       locked =3D spin_trylock_irqsave(&hsotg->lock, flags);=0A=
+>> +       spin_lock_irqsave(&hsotg->lock, flags);=0A=
+>>=0A=
+>>           ctrl =3D dwc2_readl(hsotg, epctrl_reg);=0A=
+>>=0A=
+>> @@ -4112,8 +4114,7 @@ static int dwc2_hsotg_ep_disable(struct usb_ep *ep=
+)=0A=
+>>           hs_ep->fifo_index =3D 0;=0A=
+>>           hs_ep->fifo_size =3D 0;=0A=
+>>=0A=
+>> -       if (locked)=0A=
+>> -               spin_unlock_irqrestore(&hsotg->lock, flags);=0A=
+>> +       spin_unlock_irqrestore(&hsotg->lock, flags);=0A=
+>>=0A=
+>>           return 0;=0A=
+>>    }=0A=
+>>=0A=
+>> Thanks,=0A=
+>> Minas=0A=
+>>=0A=
+>>=0A=
+> Best regards=0A=
+> =0A=
+=0A=
+Thanks,=0A=
+Minas=0A=
