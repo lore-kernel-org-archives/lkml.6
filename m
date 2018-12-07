@@ -6,37 +6,37 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3416C64EB1
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 21:09:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 348B4C64EB1
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 21:09:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 942A92083D
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 21:09:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 942A92083D
+	by mail.kernel.org (Postfix) with ESMTP id D50CC2083D
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 21:09:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D50CC2083D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726343AbeLGVJs (ORCPT
+        id S1726359AbeLGVJu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 16:09:48 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:15663 "EHLO huawei.com"
+        Fri, 7 Dec 2018 16:09:50 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:15662 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726309AbeLGVJn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726310AbeLGVJn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 7 Dec 2018 16:09:43 -0500
 Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 1C562DA24A21F;
+        by Forcepoint Email with ESMTP id 15EC4ACF80404;
         Sat,  8 Dec 2018 05:09:40 +0800 (CST)
 Received: from S00293818-DELL1.china.huawei.com (10.202.226.54) by
  DGGEMS414-HUB.china.huawei.com (10.3.19.214) with Microsoft SMTP Server id
- 14.3.408.0; Sat, 8 Dec 2018 05:09:33 +0800
+ 14.3.408.0; Sat, 8 Dec 2018 05:09:30 +0800
 From:   Salil Mehta <salil.mehta@huawei.com>
 To:     <davem@davemloft.net>
 CC:     <salil.mehta@huawei.com>, <yisen.zhuang@huawei.com>,
         <lipeng321@huawei.com>, <mehta.salil@opnsrc.net>,
         <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linuxarm@huawei.com>, Shiju Jose <shiju.jose@huawei.com>
-Subject: [PATCH net-next 08/14] net: hns3: deleted logging 1 bit errors
-Date:   Fri, 7 Dec 2018 21:08:05 +0000
-Message-ID: <20181207210811.23844-9-salil.mehta@huawei.com>
+Subject: [PATCH net-next 07/14] net: hns3: add handling of hw ras errors using new set of commands
+Date:   Fri, 7 Dec 2018 21:08:04 +0000
+Message-ID: <20181207210811.23844-8-salil.mehta@huawei.com>
 X-Mailer: git-send-email 2.8.3
 In-Reply-To: <20181207210811.23844-1-salil.mehta@huawei.com>
 References: <20181207210811.23844-1-salil.mehta@huawei.com>
@@ -51,132 +51,653 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Shiju Jose <shiju.jose@huawei.com>
 
-This patch deletes logging 1 bit errors for the following reasons.
-1. AER does not notify 1 bit errors to the device drivers.
-   However AER reports 1 bit errors to the userspace through the
-   trace_aer_event for logging in the rasdaemon.
-2. Firmware clears the status of 1 bit errors in the hw registers.
+1. This patch adds handling of hw ras errors using new set of
+   common commands.
+2. Updated the error message tables to match the register's name and
+   error status returned by the commands.
 
 Signed-off-by: Shiju Jose <shiju.jose@huawei.com>
 Signed-off-by: Salil Mehta <salil.mehta@huawei.com>
 ---
- .../net/ethernet/hisilicon/hns3/hns3pf/hclge_err.c | 37 ----------------------
- 1 file changed, 37 deletions(-)
+ .../net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h |   3 +
+ .../net/ethernet/hisilicon/hns3/hns3pf/hclge_err.c | 489 ++++++++++++++-------
+ .../net/ethernet/hisilicon/hns3/hns3pf/hclge_err.h |   9 +
+ 3 files changed, 331 insertions(+), 170 deletions(-)
 
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h
+index d2fb210..0a0eb6c 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h
+@@ -217,6 +217,9 @@ enum hclge_opcode_type {
+ 	/* Error INT commands */
+ 	HCLGE_TM_SCH_ECC_INT_EN		= 0x0829,
+ 	HCLGE_COMMON_ECC_INT_CFG	= 0x1505,
++	HCLGE_QUERY_RAS_INT_STS_BD_NUM	= 0x1510,
++	HCLGE_QUERY_CLEAR_MPF_RAS_INT	= 0x1511,
++	HCLGE_QUERY_CLEAR_PF_RAS_INT	= 0x1512,
+ 	HCLGE_IGU_EGU_TNL_INT_EN	= 0x1803,
+ 	HCLGE_IGU_COMMON_INT_EN		= 0x1806,
+ 	HCLGE_TM_QCN_MEM_INT_CFG	= 0x1A14,
 diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_err.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_err.c
-index 22e7c5b..7371ae4 100644
+index d1c9f7a..22e7c5b 100644
 --- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_err.c
 +++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_err.c
-@@ -4,42 +4,26 @@
- #include "hclge_err.h"
- 
- static const struct hclge_hw_error hclge_imp_tcm_ecc_int[] = {
--	{ .int_msk = BIT(0), .msg = "imp_itcm0_ecc_1bit_err" },
- 	{ .int_msk = BIT(1), .msg = "imp_itcm0_ecc_mbit_err" },
--	{ .int_msk = BIT(2), .msg = "imp_itcm1_ecc_1bit_err" },
- 	{ .int_msk = BIT(3), .msg = "imp_itcm1_ecc_mbit_err" },
--	{ .int_msk = BIT(4), .msg = "imp_itcm2_ecc_1bit_err" },
- 	{ .int_msk = BIT(5), .msg = "imp_itcm2_ecc_mbit_err" },
--	{ .int_msk = BIT(6), .msg = "imp_itcm3_ecc_1bit_err" },
- 	{ .int_msk = BIT(7), .msg = "imp_itcm3_ecc_mbit_err" },
--	{ .int_msk = BIT(8), .msg = "imp_dtcm0_mem0_ecc_1bit_err" },
- 	{ .int_msk = BIT(9), .msg = "imp_dtcm0_mem0_ecc_mbit_err" },
--	{ .int_msk = BIT(10), .msg = "imp_dtcm0_mem1_ecc_1bit_err" },
- 	{ .int_msk = BIT(11), .msg = "imp_dtcm0_mem1_ecc_mbit_err" },
--	{ .int_msk = BIT(12), .msg = "imp_dtcm1_mem0_ecc_1bit_err" },
+@@ -20,12 +20,7 @@ static const struct hclge_hw_error hclge_imp_tcm_ecc_int[] = {
  	{ .int_msk = BIT(13), .msg = "imp_dtcm1_mem0_ecc_mbit_err" },
--	{ .int_msk = BIT(14), .msg = "imp_dtcm1_mem1_ecc_1bit_err" },
+ 	{ .int_msk = BIT(14), .msg = "imp_dtcm1_mem1_ecc_1bit_err" },
  	{ .int_msk = BIT(15), .msg = "imp_dtcm1_mem1_ecc_mbit_err" },
- 	{ .int_msk = BIT(17), .msg = "imp_itcm4_ecc_mbit_err" },
+-	{ /* sentinel */ }
+-};
+-
+-static const struct hclge_hw_error hclge_imp_itcm4_ecc_int[] = {
+-	{ .int_msk = BIT(0), .msg = "imp_itcm4_ecc_1bit_err" },
+-	{ .int_msk = BIT(1), .msg = "imp_itcm4_ecc_mbit_err" },
++	{ .int_msk = BIT(17), .msg = "imp_itcm4_ecc_mbit_err" },
  	{ /* sentinel */ }
  };
  
- static const struct hclge_hw_error hclge_cmdq_nic_mem_ecc_int[] = {
--	{ .int_msk = BIT(0), .msg = "cmdq_nic_rx_depth_ecc_1bit_err" },
- 	{ .int_msk = BIT(1), .msg = "cmdq_nic_rx_depth_ecc_mbit_err" },
--	{ .int_msk = BIT(2), .msg = "cmdq_nic_tx_depth_ecc_1bit_err" },
- 	{ .int_msk = BIT(3), .msg = "cmdq_nic_tx_depth_ecc_mbit_err" },
--	{ .int_msk = BIT(4), .msg = "cmdq_nic_rx_tail_ecc_1bit_err" },
- 	{ .int_msk = BIT(5), .msg = "cmdq_nic_rx_tail_ecc_mbit_err" },
--	{ .int_msk = BIT(6), .msg = "cmdq_nic_tx_tail_ecc_1bit_err" },
- 	{ .int_msk = BIT(7), .msg = "cmdq_nic_tx_tail_ecc_mbit_err" },
--	{ .int_msk = BIT(8), .msg = "cmdq_nic_rx_head_ecc_1bit_err" },
- 	{ .int_msk = BIT(9), .msg = "cmdq_nic_rx_head_ecc_mbit_err" },
--	{ .int_msk = BIT(10), .msg = "cmdq_nic_tx_head_ecc_1bit_err" },
- 	{ .int_msk = BIT(11), .msg = "cmdq_nic_tx_head_ecc_mbit_err" },
--	{ .int_msk = BIT(12), .msg = "cmdq_nic_rx_addr_ecc_1bit_err" },
+@@ -46,26 +41,14 @@ static const struct hclge_hw_error hclge_cmdq_nic_mem_ecc_int[] = {
  	{ .int_msk = BIT(13), .msg = "cmdq_nic_rx_addr_ecc_mbit_err" },
--	{ .int_msk = BIT(14), .msg = "cmdq_nic_tx_addr_ecc_1bit_err" },
+ 	{ .int_msk = BIT(14), .msg = "cmdq_nic_tx_addr_ecc_1bit_err" },
  	{ .int_msk = BIT(15), .msg = "cmdq_nic_tx_addr_ecc_mbit_err" },
- 	{ .int_msk = BIT(17), .msg = "cmdq_rocee_rx_depth_ecc_mbit_err" },
- 	{ .int_msk = BIT(19), .msg = "cmdq_rocee_tx_depth_ecc_mbit_err" },
-@@ -53,12 +37,6 @@ static const struct hclge_hw_error hclge_cmdq_nic_mem_ecc_int[] = {
+-	{ /* sentinel */ }
+-};
+-
+-static const struct hclge_hw_error hclge_cmdq_rocee_mem_ecc_int[] = {
+-	{ .int_msk = BIT(0), .msg = "cmdq_rocee_rx_depth_ecc_1bit_err" },
+-	{ .int_msk = BIT(1), .msg = "cmdq_rocee_rx_depth_ecc_mbit_err" },
+-	{ .int_msk = BIT(2), .msg = "cmdq_rocee_tx_depth_ecc_1bit_err" },
+-	{ .int_msk = BIT(3), .msg = "cmdq_rocee_tx_depth_ecc_mbit_err" },
+-	{ .int_msk = BIT(4), .msg = "cmdq_rocee_rx_tail_ecc_1bit_err" },
+-	{ .int_msk = BIT(5), .msg = "cmdq_rocee_rx_tail_ecc_mbit_err" },
+-	{ .int_msk = BIT(6), .msg = "cmdq_rocee_tx_tail_ecc_1bit_err" },
+-	{ .int_msk = BIT(7), .msg = "cmdq_rocee_tx_tail_ecc_mbit_err" },
+-	{ .int_msk = BIT(8), .msg = "cmdq_rocee_rx_head_ecc_1bit_err" },
+-	{ .int_msk = BIT(9), .msg = "cmdq_rocee_rx_head_ecc_mbit_err" },
+-	{ .int_msk = BIT(10), .msg = "cmdq_rocee_tx_head_ecc_1bit_err" },
+-	{ .int_msk = BIT(11), .msg = "cmdq_rocee_tx_head_ecc_mbit_err" },
+-	{ .int_msk = BIT(12), .msg = "cmdq_rocee_rx_addr_ecc_1bit_err" },
+-	{ .int_msk = BIT(13), .msg = "cmdq_rocee_rx_addr_ecc_mbit_err" },
+-	{ .int_msk = BIT(14), .msg = "cmdq_rocee_tx_addr_ecc_1bit_err" },
+-	{ .int_msk = BIT(15), .msg = "cmdq_rocee_tx_addr_ecc_mbit_err" },
++	{ .int_msk = BIT(17), .msg = "cmdq_rocee_rx_depth_ecc_mbit_err" },
++	{ .int_msk = BIT(19), .msg = "cmdq_rocee_tx_depth_ecc_mbit_err" },
++	{ .int_msk = BIT(21), .msg = "cmdq_rocee_rx_tail_ecc_mbit_err" },
++	{ .int_msk = BIT(23), .msg = "cmdq_rocee_tx_tail_ecc_mbit_err" },
++	{ .int_msk = BIT(25), .msg = "cmdq_rocee_rx_head_ecc_mbit_err" },
++	{ .int_msk = BIT(27), .msg = "cmdq_rocee_tx_head_ecc_mbit_err" },
++	{ .int_msk = BIT(29), .msg = "cmdq_rocee_rx_addr_ecc_mbit_err" },
++	{ .int_msk = BIT(31), .msg = "cmdq_rocee_tx_addr_ecc_mbit_err" },
+ 	{ /* sentinel */ }
  };
  
- static const struct hclge_hw_error hclge_tqp_int_ecc_int[] = {
--	{ .int_msk = BIT(0), .msg = "tqp_int_cfg_even_ecc_1bit_err" },
--	{ .int_msk = BIT(1), .msg = "tqp_int_cfg_odd_ecc_1bit_err" },
--	{ .int_msk = BIT(2), .msg = "tqp_int_ctrl_even_ecc_1bit_err" },
--	{ .int_msk = BIT(3), .msg = "tqp_int_ctrl_odd_ecc_1bit_err" },
--	{ .int_msk = BIT(4), .msg = "tx_que_scan_int_ecc_1bit_err" },
--	{ .int_msk = BIT(5), .msg = "rx_que_scan_int_ecc_1bit_err" },
- 	{ .int_msk = BIT(6), .msg = "tqp_int_cfg_even_ecc_mbit_err" },
- 	{ .int_msk = BIT(7), .msg = "tqp_int_cfg_odd_ecc_mbit_err" },
- 	{ .int_msk = BIT(8), .msg = "tqp_int_ctrl_even_ecc_mbit_err" },
-@@ -76,9 +54,7 @@ static const struct hclge_hw_error hclge_msix_sram_ecc_int[] = {
+@@ -85,7 +68,13 @@ static const struct hclge_hw_error hclge_tqp_int_ecc_int[] = {
+ 	{ /* sentinel */ }
+ };
  
- static const struct hclge_hw_error hclge_igu_int[] = {
+-static const struct hclge_hw_error hclge_igu_com_err_int[] = {
++static const struct hclge_hw_error hclge_msix_sram_ecc_int[] = {
++	{ .int_msk = BIT(1), .msg = "msix_nic_ecc_mbit_err" },
++	{ .int_msk = BIT(3), .msg = "msix_rocee_ecc_mbit_err" },
++	{ /* sentinel */ }
++};
++
++static const struct hclge_hw_error hclge_igu_int[] = {
  	{ .int_msk = BIT(0), .msg = "igu_rx_buf0_ecc_mbit_err" },
--	{ .int_msk = BIT(1), .msg = "igu_rx_buf0_ecc_1bit_err" },
+ 	{ .int_msk = BIT(1), .msg = "igu_rx_buf0_ecc_1bit_err" },
  	{ .int_msk = BIT(2), .msg = "igu_rx_buf1_ecc_mbit_err" },
--	{ .int_msk = BIT(3), .msg = "igu_rx_buf1_ecc_1bit_err" },
+@@ -93,7 +82,7 @@ static const struct hclge_hw_error hclge_igu_com_err_int[] = {
  	{ /* sentinel */ }
  };
  
-@@ -93,7 +69,6 @@ static const struct hclge_hw_error hclge_igu_egu_tnl_int[] = {
- };
- 
- static const struct hclge_hw_error hclge_ncsi_err_int[] = {
--	{ .int_msk = BIT(0), .msg = "ncsi_tx_ecc_1bit_err" },
- 	{ .int_msk = BIT(1), .msg = "ncsi_tx_ecc_mbit_err" },
+-static const struct hclge_hw_error hclge_igu_egu_tnl_err_int[] = {
++static const struct hclge_hw_error hclge_igu_egu_tnl_int[] = {
+ 	{ .int_msk = BIT(0), .msg = "rx_buf_overflow" },
+ 	{ .int_msk = BIT(1), .msg = "rx_stp_fifo_overflow" },
+ 	{ .int_msk = BIT(2), .msg = "rx_stp_fifo_undeflow" },
+@@ -109,46 +98,7 @@ static const struct hclge_hw_error hclge_ncsi_err_int[] = {
  	{ /* sentinel */ }
  };
-@@ -154,7 +129,6 @@ static const struct hclge_hw_error hclge_ppp_mpf_abnormal_int_st3[] = {
+ 
+-static const struct hclge_hw_error hclge_ppp_mpf_int0[] = {
+-	{ .int_msk = BIT(0), .msg = "vf_vlan_ad_mem_ecc_1bit_err" },
+-	{ .int_msk = BIT(1), .msg = "umv_mcast_group_mem_ecc_1bit_err" },
+-	{ .int_msk = BIT(2), .msg = "umv_key_mem0_ecc_1bit_err" },
+-	{ .int_msk = BIT(3), .msg = "umv_key_mem1_ecc_1bit_err" },
+-	{ .int_msk = BIT(4), .msg = "umv_key_mem2_ecc_1bit_err" },
+-	{ .int_msk = BIT(5), .msg = "umv_key_mem3_ecc_1bit_err" },
+-	{ .int_msk = BIT(6), .msg = "umv_ad_mem_ecc_1bit_err" },
+-	{ .int_msk = BIT(7), .msg = "rss_tc_mode_mem_ecc_1bit_err" },
+-	{ .int_msk = BIT(8), .msg = "rss_idt_mem0_ecc_1bit_err" },
+-	{ .int_msk = BIT(9), .msg = "rss_idt_mem1_ecc_1bit_err" },
+-	{ .int_msk = BIT(10), .msg = "rss_idt_mem2_ecc_1bit_err" },
+-	{ .int_msk = BIT(11), .msg = "rss_idt_mem3_ecc_1bit_err" },
+-	{ .int_msk = BIT(12), .msg = "rss_idt_mem4_ecc_1bit_err" },
+-	{ .int_msk = BIT(13), .msg = "rss_idt_mem5_ecc_1bit_err" },
+-	{ .int_msk = BIT(14), .msg = "rss_idt_mem6_ecc_1bit_err" },
+-	{ .int_msk = BIT(15), .msg = "rss_idt_mem7_ecc_1bit_err" },
+-	{ .int_msk = BIT(16), .msg = "rss_idt_mem8_ecc_1bit_err" },
+-	{ .int_msk = BIT(17), .msg = "rss_idt_mem9_ecc_1bit_err" },
+-	{ .int_msk = BIT(18), .msg = "rss_idt_mem10_ecc_1bit_err" },
+-	{ .int_msk = BIT(19), .msg = "rss_idt_mem11_ecc_1bit_err" },
+-	{ .int_msk = BIT(20), .msg = "rss_idt_mem12_ecc_1bit_err" },
+-	{ .int_msk = BIT(21), .msg = "rss_idt_mem13_ecc_1bit_err" },
+-	{ .int_msk = BIT(22), .msg = "rss_idt_mem14_ecc_1bit_err" },
+-	{ .int_msk = BIT(23), .msg = "rss_idt_mem15_ecc_1bit_err" },
+-	{ .int_msk = BIT(24), .msg = "port_vlan_mem_ecc_1bit_err" },
+-	{ .int_msk = BIT(25), .msg = "mcast_linear_table_mem_ecc_1bit_err" },
+-	{ .int_msk = BIT(26), .msg = "mcast_result_mem_ecc_1bit_err" },
+-	{ .int_msk = BIT(27),
+-		.msg = "flow_director_ad_mem0_ecc_1bit_err" },
+-	{ .int_msk = BIT(28),
+-		.msg = "flow_director_ad_mem1_ecc_1bit_err" },
+-	{ .int_msk = BIT(29),
+-		.msg = "rx_vlan_tag_memory_ecc_1bit_err" },
+-	{ .int_msk = BIT(30),
+-		.msg = "Tx_UP_mapping_config_mem_ecc_1bit_err" },
+-	{ /* sentinel */ }
+-};
+-
+-static const struct hclge_hw_error hclge_ppp_mpf_int1[] = {
++static const struct hclge_hw_error hclge_ppp_mpf_abnormal_int_st1[] = {
+ 	{ .int_msk = BIT(0), .msg = "vf_vlan_ad_mem_ecc_mbit_err" },
+ 	{ .int_msk = BIT(1), .msg = "umv_mcast_group_mem_ecc_mbit_err" },
+ 	{ .int_msk = BIT(2), .msg = "umv_key_mem0_ecc_mbit_err" },
+@@ -193,17 +143,7 @@ static const struct hclge_hw_error hclge_ppp_pf_int[] = {
+ 	{ /* sentinel */ }
  };
  
- static const struct hclge_hw_error hclge_tm_sch_rint[] = {
--	{ .int_msk = BIT(0), .msg = "tm_sch_ecc_1bit_err" },
+-static const struct hclge_hw_error hclge_ppp_mpf_int2[] = {
+-	{ .int_msk = BIT(0), .msg = "hfs_fifo_mem_ecc_1bit_err" },
+-	{ .int_msk = BIT(1), .msg = "rslt_descr_fifo_mem_ecc_1bit_err" },
+-	{ .int_msk = BIT(2), .msg = "tx_vlan_tag_mem_ecc_1bit_err" },
+-	{ .int_msk = BIT(3), .msg = "FD_CN0_memory_ecc_1bit_err" },
+-	{ .int_msk = BIT(4), .msg = "FD_CN1_memory_ecc_1bit_err" },
+-	{ .int_msk = BIT(5), .msg = "GRO_AD_memory_ecc_1bit_err" },
+-	{ /* sentinel */ }
+-};
+-
+-static const struct hclge_hw_error hclge_ppp_mpf_int3[] = {
++static const struct hclge_hw_error hclge_ppp_mpf_abnormal_int_st3[] = {
+ 	{ .int_msk = BIT(0), .msg = "hfs_fifo_mem_ecc_mbit_err" },
+ 	{ .int_msk = BIT(1), .msg = "rslt_descr_fifo_mem_ecc_mbit_err" },
+ 	{ .int_msk = BIT(2), .msg = "tx_vlan_tag_mem_ecc_mbit_err" },
+@@ -213,104 +153,75 @@ static const struct hclge_hw_error hclge_ppp_mpf_int3[] = {
+ 	{ /* sentinel */ }
+ };
+ 
+-struct hclge_tm_sch_ecc_info {
+-	const char *name;
+-};
+-
+-static const struct hclge_tm_sch_ecc_info hclge_tm_sch_ecc_err[7][15] = {
+-	{
+-		{ .name = "QSET_QUEUE_CTRL:PRI_LEN TAB" },
+-		{ .name = "QSET_QUEUE_CTRL:SPA_LEN TAB" },
+-		{ .name = "QSET_QUEUE_CTRL:SPB_LEN TAB" },
+-		{ .name = "QSET_QUEUE_CTRL:WRRA_LEN TAB" },
+-		{ .name = "QSET_QUEUE_CTRL:WRRB_LEN TAB" },
+-		{ .name = "QSET_QUEUE_CTRL:SPA_HPTR TAB" },
+-		{ .name = "QSET_QUEUE_CTRL:SPB_HPTR TAB" },
+-		{ .name = "QSET_QUEUE_CTRL:WRRA_HPTR TAB" },
+-		{ .name = "QSET_QUEUE_CTRL:WRRB_HPTR TAB" },
+-		{ .name = "QSET_QUEUE_CTRL:QS_LINKLIST TAB" },
+-		{ .name = "QSET_QUEUE_CTRL:SPA_TPTR TAB" },
+-		{ .name = "QSET_QUEUE_CTRL:SPB_TPTR TAB" },
+-		{ .name = "QSET_QUEUE_CTRL:WRRA_TPTR TAB" },
+-		{ .name = "QSET_QUEUE_CTRL:WRRB_TPTR TAB" },
+-		{ .name = "QSET_QUEUE_CTRL:QS_DEFICITCNT TAB" },
+-	},
+-	{
+-		{ .name = "ROCE_QUEUE_CTRL:QS_LEN TAB" },
+-		{ .name = "ROCE_QUEUE_CTRL:QS_TPTR TAB" },
+-		{ .name = "ROCE_QUEUE_CTRL:QS_HPTR TAB" },
+-		{ .name = "ROCE_QUEUE_CTRL:QLINKLIST TAB" },
+-		{ .name = "ROCE_QUEUE_CTRL:QCLEN TAB" },
+-	},
+-	{
+-		{ .name = "NIC_QUEUE_CTRL:QS_LEN TAB" },
+-		{ .name = "NIC_QUEUE_CTRL:QS_TPTR TAB" },
+-		{ .name = "NIC_QUEUE_CTRL:QS_HPTR TAB" },
+-		{ .name = "NIC_QUEUE_CTRL:QLINKLIST TAB" },
+-		{ .name = "NIC_QUEUE_CTRL:QCLEN TAB" },
+-	},
+-	{
+-		{ .name = "RAM_CFG_CTRL:CSHAP TAB" },
+-		{ .name = "RAM_CFG_CTRL:PSHAP TAB" },
+-	},
+-	{
+-		{ .name = "SHAPER_CTRL:PSHAP TAB" },
+-	},
+-	{
+-		{ .name = "MSCH_CTRL" },
+-	},
+-	{
+-		{ .name = "TOP_CTRL" },
+-	},
+-};
+-
+-static const struct hclge_hw_error hclge_tm_sch_err_int[] = {
++static const struct hclge_hw_error hclge_tm_sch_rint[] = {
+ 	{ .int_msk = BIT(0), .msg = "tm_sch_ecc_1bit_err" },
  	{ .int_msk = BIT(1), .msg = "tm_sch_ecc_mbit_err" },
- 	{ .int_msk = BIT(2), .msg = "tm_sch_port_shap_sub_fifo_wr_err" },
- 	{ .int_msk = BIT(3), .msg = "tm_sch_port_shap_sub_fifo_rd_err" },
-@@ -222,27 +196,16 @@ static const struct hclge_hw_error hclge_qcn_fifo_rint[] = {
- };
- 
- static const struct hclge_hw_error hclge_qcn_ecc_rint[] = {
--	{ .int_msk = BIT(0), .msg = "qcn_byte_mem_ecc_1bit_err" },
- 	{ .int_msk = BIT(1), .msg = "qcn_byte_mem_ecc_mbit_err" },
--	{ .int_msk = BIT(2), .msg = "qcn_time_mem_ecc_1bit_err" },
- 	{ .int_msk = BIT(3), .msg = "qcn_time_mem_ecc_mbit_err" },
--	{ .int_msk = BIT(4), .msg = "qcn_fb_mem_ecc_1bit_err" },
- 	{ .int_msk = BIT(5), .msg = "qcn_fb_mem_ecc_mbit_err" },
--	{ .int_msk = BIT(6), .msg = "qcn_link_mem_ecc_1bit_err" },
- 	{ .int_msk = BIT(7), .msg = "qcn_link_mem_ecc_mbit_err" },
--	{ .int_msk = BIT(8), .msg = "qcn_rate_mem_ecc_1bit_err" },
- 	{ .int_msk = BIT(9), .msg = "qcn_rate_mem_ecc_mbit_err" },
--	{ .int_msk = BIT(10), .msg = "qcn_tmplt_mem_ecc_1bit_err" },
- 	{ .int_msk = BIT(11), .msg = "qcn_tmplt_mem_ecc_mbit_err" },
--	{ .int_msk = BIT(12), .msg = "qcn_shap_cfg_mem_ecc_1bit_err" },
- 	{ .int_msk = BIT(13), .msg = "qcn_shap_cfg_mem_ecc_mbit_err" },
--	{ .int_msk = BIT(14), .msg = "qcn_gp0_barrel_mem_ecc_1bit_err" },
- 	{ .int_msk = BIT(15), .msg = "qcn_gp0_barrel_mem_ecc_mbit_err" },
--	{ .int_msk = BIT(16), .msg = "qcn_gp1_barrel_mem_ecc_1bit_err" },
- 	{ .int_msk = BIT(17), .msg = "qcn_gp1_barrel_mem_ecc_mbit_err" },
--	{ .int_msk = BIT(18), .msg = "qcn_gp2_barrel_mem_ecc_1bit_err" },
- 	{ .int_msk = BIT(19), .msg = "qcn_gp2_barrel_mem_ecc_mbit_err" },
--	{ .int_msk = BIT(20), .msg = "qcn_gp3_barral_mem_ecc_1bit_err" },
- 	{ .int_msk = BIT(21), .msg = "qcn_gp3_barral_mem_ecc_mbit_err" },
+-	{ .int_msk = BIT(2), .msg = "tm_sch_port_shap_sub_fifo_wr_full_err" },
+-	{ .int_msk = BIT(3), .msg = "tm_sch_port_shap_sub_fifo_rd_empty_err" },
+-	{ .int_msk = BIT(4), .msg = "tm_sch_pg_pshap_sub_fifo_wr_full_err" },
+-	{ .int_msk = BIT(5), .msg = "tm_sch_pg_pshap_sub_fifo_rd_empty_err" },
+-	{ .int_msk = BIT(6), .msg = "tm_sch_pg_cshap_sub_fifo_wr_full_err" },
+-	{ .int_msk = BIT(7), .msg = "tm_sch_pg_cshap_sub_fifo_rd_empty_err" },
+-	{ .int_msk = BIT(8), .msg = "tm_sch_pri_pshap_sub_fifo_wr_full_err" },
+-	{ .int_msk = BIT(9), .msg = "tm_sch_pri_pshap_sub_fifo_rd_empty_err" },
+-	{ .int_msk = BIT(10), .msg = "tm_sch_pri_cshap_sub_fifo_wr_full_err" },
+-	{ .int_msk = BIT(11), .msg = "tm_sch_pri_cshap_sub_fifo_rd_empty_err" },
++	{ .int_msk = BIT(2), .msg = "tm_sch_port_shap_sub_fifo_wr_err" },
++	{ .int_msk = BIT(3), .msg = "tm_sch_port_shap_sub_fifo_rd_err" },
++	{ .int_msk = BIT(4), .msg = "tm_sch_pg_pshap_sub_fifo_wr_err" },
++	{ .int_msk = BIT(5), .msg = "tm_sch_pg_pshap_sub_fifo_rd_err" },
++	{ .int_msk = BIT(6), .msg = "tm_sch_pg_cshap_sub_fifo_wr_err" },
++	{ .int_msk = BIT(7), .msg = "tm_sch_pg_cshap_sub_fifo_rd_err" },
++	{ .int_msk = BIT(8), .msg = "tm_sch_pri_pshap_sub_fifo_wr_err" },
++	{ .int_msk = BIT(9), .msg = "tm_sch_pri_pshap_sub_fifo_rd_err" },
++	{ .int_msk = BIT(10), .msg = "tm_sch_pri_cshap_sub_fifo_wr_err" },
++	{ .int_msk = BIT(11), .msg = "tm_sch_pri_cshap_sub_fifo_rd_err" },
+ 	{ .int_msk = BIT(12),
+-	  .msg = "tm_sch_port_shap_offset_fifo_wr_full_err" },
++	  .msg = "tm_sch_port_shap_offset_fifo_wr_err" },
+ 	{ .int_msk = BIT(13),
+-	  .msg = "tm_sch_port_shap_offset_fifo_rd_empty_err" },
++	  .msg = "tm_sch_port_shap_offset_fifo_rd_err" },
+ 	{ .int_msk = BIT(14),
+-	  .msg = "tm_sch_pg_pshap_offset_fifo_wr_full_err" },
++	  .msg = "tm_sch_pg_pshap_offset_fifo_wr_err" },
+ 	{ .int_msk = BIT(15),
+-	  .msg = "tm_sch_pg_pshap_offset_fifo_rd_empty_err" },
++	  .msg = "tm_sch_pg_pshap_offset_fifo_rd_err" },
+ 	{ .int_msk = BIT(16),
+-	  .msg = "tm_sch_pg_cshap_offset_fifo_wr_full_err" },
++	  .msg = "tm_sch_pg_cshap_offset_fifo_wr_err" },
+ 	{ .int_msk = BIT(17),
+-	  .msg = "tm_sch_pg_cshap_offset_fifo_rd_empty_err" },
++	  .msg = "tm_sch_pg_cshap_offset_fifo_rd_err" },
+ 	{ .int_msk = BIT(18),
+-	  .msg = "tm_sch_pri_pshap_offset_fifo_wr_full_err" },
++	  .msg = "tm_sch_pri_pshap_offset_fifo_wr_err" },
+ 	{ .int_msk = BIT(19),
+-	  .msg = "tm_sch_pri_pshap_offset_fifo_rd_empty_err" },
++	  .msg = "tm_sch_pri_pshap_offset_fifo_rd_err" },
+ 	{ .int_msk = BIT(20),
+-	  .msg = "tm_sch_pri_cshap_offset_fifo_wr_full_err" },
++	  .msg = "tm_sch_pri_cshap_offset_fifo_wr_err" },
+ 	{ .int_msk = BIT(21),
+-	  .msg = "tm_sch_pri_cshap_offset_fifo_rd_empty_err" },
+-	{ .int_msk = BIT(22), .msg = "tm_sch_rq_fifo_wr_full_err" },
+-	{ .int_msk = BIT(23), .msg = "tm_sch_rq_fifo_rd_empty_err" },
+-	{ .int_msk = BIT(24), .msg = "tm_sch_nq_fifo_wr_full_err" },
+-	{ .int_msk = BIT(25), .msg = "tm_sch_nq_fifo_rd_empty_err" },
+-	{ .int_msk = BIT(26), .msg = "tm_sch_roce_up_fifo_wr_full_err" },
+-	{ .int_msk = BIT(27), .msg = "tm_sch_roce_up_fifo_rd_empty_err" },
+-	{ .int_msk = BIT(28), .msg = "tm_sch_rcb_byte_fifo_wr_full_err" },
+-	{ .int_msk = BIT(29), .msg = "tm_sch_rcb_byte_fifo_rd_empty_err" },
+-	{ .int_msk = BIT(30), .msg = "tm_sch_ssu_byte_fifo_wr_full_err" },
+-	{ .int_msk = BIT(31), .msg = "tm_sch_ssu_byte_fifo_rd_empty_err" },
++	  .msg = "tm_sch_pri_cshap_offset_fifo_rd_err" },
++	{ .int_msk = BIT(22), .msg = "tm_sch_rq_fifo_wr_err" },
++	{ .int_msk = BIT(23), .msg = "tm_sch_rq_fifo_rd_err" },
++	{ .int_msk = BIT(24), .msg = "tm_sch_nq_fifo_wr_err" },
++	{ .int_msk = BIT(25), .msg = "tm_sch_nq_fifo_rd_err" },
++	{ .int_msk = BIT(26), .msg = "tm_sch_roce_up_fifo_wr_err" },
++	{ .int_msk = BIT(27), .msg = "tm_sch_roce_up_fifo_rd_err" },
++	{ .int_msk = BIT(28), .msg = "tm_sch_rcb_byte_fifo_wr_err" },
++	{ .int_msk = BIT(29), .msg = "tm_sch_rcb_byte_fifo_rd_err" },
++	{ .int_msk = BIT(30), .msg = "tm_sch_ssu_byte_fifo_wr_err" },
++	{ .int_msk = BIT(31), .msg = "tm_sch_ssu_byte_fifo_rd_err" },
++	{ /* sentinel */ }
++};
++
++static const struct hclge_hw_error hclge_qcn_fifo_rint[] = {
++	{ .int_msk = BIT(0), .msg = "qcn_shap_gp0_sch_fifo_rd_err" },
++	{ .int_msk = BIT(1), .msg = "qcn_shap_gp0_sch_fifo_wr_err" },
++	{ .int_msk = BIT(2), .msg = "qcn_shap_gp1_sch_fifo_rd_err" },
++	{ .int_msk = BIT(3), .msg = "qcn_shap_gp1_sch_fifo_wr_err" },
++	{ .int_msk = BIT(4), .msg = "qcn_shap_gp2_sch_fifo_rd_err" },
++	{ .int_msk = BIT(5), .msg = "qcn_shap_gp2_sch_fifo_wr_err" },
++	{ .int_msk = BIT(6), .msg = "qcn_shap_gp3_sch_fifo_rd_err" },
++	{ .int_msk = BIT(7), .msg = "qcn_shap_gp3_sch_fifo_wr_err" },
++	{ .int_msk = BIT(8), .msg = "qcn_shap_gp0_offset_fifo_rd_err" },
++	{ .int_msk = BIT(9), .msg = "qcn_shap_gp0_offser_fifo_wr_err" },
++	{ .int_msk = BIT(10), .msg = "qcn_shap_gp1_offset_fifo_rd_err" },
++	{ .int_msk = BIT(11), .msg = "qcn_shap_gp1_offset_fifo_wr_err" },
++	{ .int_msk = BIT(12), .msg = "qcn_shap_gp2_offset_fifo_rd_err" },
++	{ .int_msk = BIT(13), .msg = "qcn_shap_gp2_offset_fifo_wr_err" },
++	{ .int_msk = BIT(14), .msg = "qcn_shap_gp3_offset_fifo_rd_err" },
++	{ .int_msk = BIT(15), .msg = "qcn_shap_gp3_offset_fifo_wr_err" },
++	{ .int_msk = BIT(16), .msg = "qcn_byte_info_fifo_rd_err" },
++	{ .int_msk = BIT(17), .msg = "qcn_byte_info_fifo_wr_err" },
  	{ /* sentinel */ }
  };
+ 
+-static const struct hclge_hw_error hclge_qcn_ecc_err_int[] = {
++static const struct hclge_hw_error hclge_qcn_ecc_rint[] = {
+ 	{ .int_msk = BIT(0), .msg = "qcn_byte_mem_ecc_1bit_err" },
+ 	{ .int_msk = BIT(1), .msg = "qcn_byte_mem_ecc_mbit_err" },
+ 	{ .int_msk = BIT(2), .msg = "qcn_time_mem_ecc_1bit_err" },
+@@ -336,6 +247,18 @@ static const struct hclge_hw_error hclge_qcn_ecc_err_int[] = {
+ 	{ /* sentinel */ }
+ };
+ 
++static void hclge_log_error(struct device *dev, char *reg,
++			    const struct hclge_hw_error *err,
++			    u32 err_sts)
++{
++	while (err->msg) {
++		if (err->int_msk & err_sts)
++			dev_warn(dev, "%s %s found [error status=0x%x]\n",
++				 reg, err->msg, err_sts);
++		err++;
++	}
++}
++
+ /* hclge_cmd_query_error: read the error information
+  * @hdev: pointer to struct hclge_dev
+  * @desc: descriptor for describing the command
+@@ -388,7 +311,8 @@ static int hclge_config_common_hw_err_int(struct hclge_dev *hdev, bool en)
+ 		desc[0].data[2] = cpu_to_le32(HCLGE_CMDQ_NIC_ECC_ERR_INT_EN |
+ 					HCLGE_CMDQ_ROCEE_ECC_ERR_INT_EN);
+ 		desc[0].data[3] = cpu_to_le32(HCLGE_IMP_RD_POISON_ERR_INT_EN);
+-		desc[0].data[4] = cpu_to_le32(HCLGE_TQP_ECC_ERR_INT_EN);
++		desc[0].data[4] = cpu_to_le32(HCLGE_TQP_ECC_ERR_INT_EN |
++					      HCLGE_MSIX_SRAM_ECC_ERR_INT_EN);
+ 		desc[0].data[5] = cpu_to_le32(HCLGE_IMP_ITCM4_ECC_ERR_INT_EN);
+ 	}
+ 
+@@ -396,7 +320,8 @@ static int hclge_config_common_hw_err_int(struct hclge_dev *hdev, bool en)
+ 	desc[1].data[2] = cpu_to_le32(HCLGE_CMDQ_NIC_ECC_ERR_INT_EN_MASK |
+ 				HCLGE_CMDQ_ROCEE_ECC_ERR_INT_EN_MASK);
+ 	desc[1].data[3] = cpu_to_le32(HCLGE_IMP_RD_POISON_ERR_INT_EN_MASK);
+-	desc[1].data[4] = cpu_to_le32(HCLGE_TQP_ECC_ERR_INT_EN_MASK);
++	desc[1].data[4] = cpu_to_le32(HCLGE_TQP_ECC_ERR_INT_EN_MASK |
++				      HCLGE_MSIX_SRAM_ECC_ERR_INT_EN_MASK);
+ 	desc[1].data[5] = cpu_to_le32(HCLGE_IMP_ITCM4_ECC_ERR_INT_EN_MASK);
+ 
+ 	ret = hclge_cmd_send(&hdev->hw, &desc[0], 2);
+@@ -564,6 +489,225 @@ static int hclge_config_tm_hw_err_int(struct hclge_dev *hdev, bool en)
+ 	return ret;
+ }
+ 
++#define HCLGE_SET_DEFAULT_RESET_REQUEST(reset_type) \
++	do { \
++		if (ae_dev->ops->set_default_reset_request) \
++			ae_dev->ops->set_default_reset_request(ae_dev, \
++							       reset_type); \
++	} while (0)
++
++/* hclge_handle_mpf_ras_error: handle all main PF RAS errors
++ * @hdev: pointer to struct hclge_dev
++ * @desc: descriptor for describing the command
++ * @num:  number of extended command structures
++ *
++ * This function handles all the main PF RAS errors in the
++ * hw register/s using command.
++ */
++static int hclge_handle_mpf_ras_error(struct hclge_dev *hdev,
++				      struct hclge_desc *desc,
++				      int num)
++{
++	struct hnae3_ae_dev *ae_dev = hdev->ae_dev;
++	struct device *dev = &hdev->pdev->dev;
++	__le32 *desc_data;
++	u32 status;
++	int ret;
++
++	/* query all main PF RAS errors */
++	hclge_cmd_setup_basic_desc(&desc[0], HCLGE_QUERY_CLEAR_MPF_RAS_INT,
++				   true);
++	desc[0].flag |= cpu_to_le16(HCLGE_CMD_FLAG_NEXT);
++
++	ret = hclge_cmd_send(&hdev->hw, &desc[0], num);
++	if (ret) {
++		dev_err(dev, "query all mpf ras int cmd failed (%d)\n", ret);
++		return ret;
++	}
++
++	/* log HNS common errors */
++	status = le32_to_cpu(desc[0].data[0]);
++	if (status) {
++		hclge_log_error(dev, "IMP_TCM_ECC_INT_STS",
++				&hclge_imp_tcm_ecc_int[0], status);
++		HCLGE_SET_DEFAULT_RESET_REQUEST(HNAE3_GLOBAL_RESET);
++	}
++
++	status = le32_to_cpu(desc[0].data[1]);
++	if (status) {
++		hclge_log_error(dev, "CMDQ_MEM_ECC_INT_STS",
++				&hclge_cmdq_nic_mem_ecc_int[0], status);
++		HCLGE_SET_DEFAULT_RESET_REQUEST(HNAE3_GLOBAL_RESET);
++	}
++
++	if ((le32_to_cpu(desc[0].data[2])) & BIT(0)) {
++		dev_warn(dev, "imp_rd_data_poison_err found\n");
++		HCLGE_SET_DEFAULT_RESET_REQUEST(HNAE3_GLOBAL_RESET);
++	}
++
++	status = le32_to_cpu(desc[0].data[3]);
++	if (status) {
++		hclge_log_error(dev, "TQP_INT_ECC_INT_STS",
++				&hclge_tqp_int_ecc_int[0], status);
++		HCLGE_SET_DEFAULT_RESET_REQUEST(HNAE3_CORE_RESET);
++	}
++
++	status = le32_to_cpu(desc[0].data[4]);
++	if (status) {
++		hclge_log_error(dev, "MSIX_ECC_INT_STS",
++				&hclge_msix_sram_ecc_int[0], status);
++		HCLGE_SET_DEFAULT_RESET_REQUEST(HNAE3_CORE_RESET);
++	}
++
++	/* log IGU(Ingress Unit) errors */
++	desc_data = (__le32 *)&desc[3];
++	status = le32_to_cpu(*desc_data) & HCLGE_IGU_INT_MASK;
++	if (status)
++		hclge_log_error(dev, "IGU_INT_STS",
++				&hclge_igu_int[0], status);
++
++	/* log PPP(Programmable Packet Process) errors */
++	desc_data = (__le32 *)&desc[4];
++	status = le32_to_cpu(*(desc_data + 1));
++	if (status)
++		hclge_log_error(dev, "PPP_MPF_ABNORMAL_INT_ST1",
++				&hclge_ppp_mpf_abnormal_int_st1[0], status);
++
++	status = le32_to_cpu(*(desc_data + 3)) & HCLGE_PPP_MPF_INT_ST3_MASK;
++	if (status)
++		hclge_log_error(dev, "PPP_MPF_ABNORMAL_INT_ST3",
++				&hclge_ppp_mpf_abnormal_int_st3[0], status);
++
++	/* log TM(Traffic Manager) errors */
++	desc_data = (__le32 *)&desc[6];
++	status = le32_to_cpu(*desc_data);
++	if (status) {
++		hclge_log_error(dev, "TM_SCH_RINT",
++				&hclge_tm_sch_rint[0], status);
++		HCLGE_SET_DEFAULT_RESET_REQUEST(HNAE3_CORE_RESET);
++	}
++
++	/* log QCN(Quantized Congestion Control) errors */
++	desc_data = (__le32 *)&desc[7];
++	status = le32_to_cpu(*desc_data) & HCLGE_QCN_FIFO_INT_MASK;
++	if (status) {
++		hclge_log_error(dev, "QCN_FIFO_RINT",
++				&hclge_qcn_fifo_rint[0], status);
++		HCLGE_SET_DEFAULT_RESET_REQUEST(HNAE3_CORE_RESET);
++	}
++
++	status = le32_to_cpu(*(desc_data + 1)) & HCLGE_QCN_ECC_INT_MASK;
++	if (status) {
++		hclge_log_error(dev, "QCN_ECC_RINT",
++				&hclge_qcn_ecc_rint[0], status);
++		HCLGE_SET_DEFAULT_RESET_REQUEST(HNAE3_CORE_RESET);
++	}
++
++	/* log NCSI errors */
++	desc_data = (__le32 *)&desc[9];
++	status = le32_to_cpu(*desc_data) & HCLGE_NCSI_ECC_INT_MASK;
++	if (status) {
++		hclge_log_error(dev, "NCSI_ECC_INT_RPT",
++				&hclge_ncsi_err_int[0], status);
++		HCLGE_SET_DEFAULT_RESET_REQUEST(HNAE3_CORE_RESET);
++	}
++
++	/* clear all main PF RAS errors */
++	hclge_cmd_reuse_desc(&desc[0], false);
++	desc[0].flag |= cpu_to_le16(HCLGE_CMD_FLAG_NEXT);
++
++	ret = hclge_cmd_send(&hdev->hw, &desc[0], num);
++	if (ret)
++		dev_err(dev, "clear all mpf ras int cmd failed (%d)\n", ret);
++
++	return ret;
++}
++
++/* hclge_handle_pf_ras_error: handle all PF RAS errors
++ * @hdev: pointer to struct hclge_dev
++ * @desc: descriptor for describing the command
++ * @num:  number of extended command structures
++ *
++ * This function handles all the PF RAS errors in the
++ * hw register/s using command.
++ */
++static int hclge_handle_pf_ras_error(struct hclge_dev *hdev,
++				     struct hclge_desc *desc,
++				     int num)
++{
++	struct device *dev = &hdev->pdev->dev;
++	__le32 *desc_data;
++	u32 status;
++	int ret;
++
++	/* query all PF RAS errors */
++	hclge_cmd_setup_basic_desc(&desc[0], HCLGE_QUERY_CLEAR_PF_RAS_INT,
++				   true);
++	desc[0].flag |= cpu_to_le16(HCLGE_CMD_FLAG_NEXT);
++
++	ret = hclge_cmd_send(&hdev->hw, &desc[0], num);
++	if (ret) {
++		dev_err(dev, "query all pf ras int cmd failed (%d)\n", ret);
++		return ret;
++	}
++
++	/* log IGU(Ingress Unit) EGU(Egress Unit) TNL errors */
++	desc_data = (__le32 *)&desc[1];
++	status = le32_to_cpu(*desc_data) & HCLGE_IGU_EGU_TNL_INT_MASK;
++	if (status)
++		hclge_log_error(dev, "IGU_EGU_TNL_INT_STS",
++				&hclge_igu_egu_tnl_int[0], status);
++
++	/* clear all PF RAS errors */
++	hclge_cmd_reuse_desc(&desc[0], false);
++	desc[0].flag |= cpu_to_le16(HCLGE_CMD_FLAG_NEXT);
++
++	ret = hclge_cmd_send(&hdev->hw, &desc[0], num);
++	if (ret)
++		dev_err(dev, "clear all pf ras int cmd failed (%d)\n", ret);
++
++	return ret;
++}
++
++static int hclge_handle_all_ras_errors(struct hclge_dev *hdev)
++{
++	struct device *dev = &hdev->pdev->dev;
++	u32 mpf_bd_num, pf_bd_num, bd_num;
++	struct hclge_desc desc_bd;
++	struct hclge_desc *desc;
++	int ret;
++
++	/* query the number of registers in the RAS int status */
++	hclge_cmd_setup_basic_desc(&desc_bd, HCLGE_QUERY_RAS_INT_STS_BD_NUM,
++				   true);
++	ret = hclge_cmd_send(&hdev->hw, &desc_bd, 1);
++	if (ret) {
++		dev_err(dev, "fail(%d) to query ras int status bd num\n", ret);
++		return ret;
++	}
++	mpf_bd_num = le32_to_cpu(desc_bd.data[0]);
++	pf_bd_num = le32_to_cpu(desc_bd.data[1]);
++	bd_num = max_t(u32, mpf_bd_num, pf_bd_num);
++
++	desc = kcalloc(bd_num, sizeof(struct hclge_desc), GFP_KERNEL);
++	if (!desc)
++		return -ENOMEM;
++
++	/* handle all main PF RAS errors */
++	ret = hclge_handle_mpf_ras_error(hdev, desc, mpf_bd_num);
++	if (ret) {
++		kfree(desc);
++		return ret;
++	}
++	memset(desc, 0, bd_num * sizeof(struct hclge_desc));
++
++	/* handle all PF RAS errors */
++	ret = hclge_handle_pf_ras_error(hdev, desc, pf_bd_num);
++	kfree(desc);
++
++	return ret;
++}
++
+ static const struct hclge_hw_blk hw_blk[] = {
+ 	{
+ 	  .msk = BIT(0), .name = "IGU_EGU",
+@@ -605,13 +749,18 @@ pci_ers_result_t hclge_handle_hw_ras_error(struct hnae3_ae_dev *ae_dev)
+ {
+ 	struct hclge_dev *hdev = ae_dev->priv;
+ 	struct device *dev = &hdev->pdev->dev;
+-	u32 sts;
++	u32 status;
+ 
+-	sts = hclge_read_dev(&hdev->hw, HCLGE_RAS_PF_OTHER_INT_STS_REG);
++	status = hclge_read_dev(&hdev->hw, HCLGE_RAS_PF_OTHER_INT_STS_REG);
+ 
+-	/* Handling Non-fatal RAS errors */
+-	if (sts & HCLGE_RAS_REG_NFE_MASK)
+-		dev_warn(dev, "HNS Non-Fatal RAS error identified\n");
++	/* Handling Non-fatal HNS RAS errors */
++	if (status & HCLGE_RAS_REG_NFE_MASK) {
++		dev_warn(dev,
++			 "HNS Non-Fatal RAS error(status=0x%x) identified\n",
++			 status);
++		hclge_handle_all_ras_errors(hdev);
++		return PCI_ERS_RESULT_NEED_RESET;
++	}
+ 
+-	return PCI_ERS_RESULT_NEED_RESET;
++	return PCI_ERS_RESULT_RECOVERED;
+ }
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_err.h b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_err.h
+index 9fe1c96..809e698 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_err.h
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_err.h
+@@ -21,6 +21,8 @@
+ #define HCLGE_IMP_RD_POISON_ERR_INT_EN_MASK	0x0100
+ #define HCLGE_TQP_ECC_ERR_INT_EN	0x0FFF
+ #define HCLGE_TQP_ECC_ERR_INT_EN_MASK	0x0FFF
++#define HCLGE_MSIX_SRAM_ECC_ERR_INT_EN_MASK	0x0F000000
++#define HCLGE_MSIX_SRAM_ECC_ERR_INT_EN	0x0F000000
+ #define HCLGE_IGU_ERR_INT_EN	0x0000066F
+ #define HCLGE_IGU_ERR_INT_EN_MASK	0x000F
+ #define HCLGE_IGU_TNL_ERR_INT_EN    0x0002AABF
+@@ -40,6 +42,13 @@
+ #define HCLGE_NCSI_ERR_INT_EN	0x3
+ #define HCLGE_NCSI_ERR_INT_TYPE	0x9
+ 
++#define HCLGE_IGU_INT_MASK		GENMASK(3, 0)
++#define HCLGE_IGU_EGU_TNL_INT_MASK	GENMASK(5, 0)
++#define HCLGE_PPP_MPF_INT_ST3_MASK	GENMASK(5, 0)
++#define HCLGE_QCN_FIFO_INT_MASK		GENMASK(17, 0)
++#define HCLGE_QCN_ECC_INT_MASK		GENMASK(21, 0)
++#define HCLGE_NCSI_ECC_INT_MASK		GENMASK(1, 0)
++
+ enum hclge_err_int_type {
+ 	HCLGE_ERR_INT_MSIX = 0,
+ 	HCLGE_ERR_INT_RAS_CE = 1,
 -- 
 2.7.4
 
