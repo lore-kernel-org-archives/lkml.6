@@ -2,147 +2,154 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2A5AC07E85
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 22:35:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2C68C64EB1
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 22:36:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B3A4920838
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 22:35:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6D2BE20838
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 22:36:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lca.pw header.i=@lca.pw header.b="XlewbJ5l"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B3A4920838
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lca.pw
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="d/TUeHXN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D2BE20838
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726124AbeLGWfB (ORCPT
+        id S1726147AbeLGWgX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 17:35:01 -0500
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:33613 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726008AbeLGWfB (ORCPT
+        Fri, 7 Dec 2018 17:36:23 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:48236 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726041AbeLGWgW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 17:35:01 -0500
-Received: by mail-qt1-f194.google.com with SMTP id l11so6322159qtp.0
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Dec 2018 14:35:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=QDHetqdY6gL2ut6w5hBOClKGYYflCOmIf2piJSnwVCA=;
-        b=XlewbJ5l6u5F0/A8cWX4s+3SHkW1ez1LG4mNrfLVy1fLIciasfhYhYb+jAjQVRhXy+
-         eTwKcOqjxK3Jd1pWNMbVzm7nPJmxgmHxMKdrHrUxRN0ap1pyEx7Xnwy6PghZ/smAFkMn
-         zmasFudqR6QRtvtH0S6XTo4OBlk5q3zkSKlLFmIVU17NCV4E2eIMGk5ibnJEDrcYZ3rh
-         q++WnLXNmvIT9MTh9IuGjoxW0qAuFRDzyULrh6UJzsCQZWgywE4dfUpmPzrapsYVjyFQ
-         ZqQZhetQ3QYEq22E8aWN9PE0t3JLgoPTogBGoNqOvM/SuMbl90dj+X1EhzX2z8Ur5rVs
-         USxQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=QDHetqdY6gL2ut6w5hBOClKGYYflCOmIf2piJSnwVCA=;
-        b=XstM+Fsw1t/VOASJXaiMpq9HoKpbcV5vW8abWn+8E546ZHVPd3HmpbZOqKbNxTP9su
-         mtk9C5GvouO5qlN7UUDYlc8/1Z3kn8K1ne0nQArMOwbpR1awvGYSC0NAUYIqxKyt8kA+
-         47xuyA0QMXgEymjLq2uvWU1PXnNtd2crBjjqc49fNce3tuTiMLAkY6mgiO5IHJGmsxKC
-         TfI5qk8dldLiGudCHBbZwmLd9e9lCVwASuHs30ix/CphzMuTkVW4+faaeKgrFgvrcOHn
-         EO+b3Mz4p9R6oES3llTXI8vWN10SEJKn7f1hIwMbYnMWmdpMh4hTKmS6fJWNe82aG9je
-         rarA==
-X-Gm-Message-State: AA+aEWYC2R8IYTNal6H8sloIKvMz9uGJGt0PD1b5xOOPGtRV+gBPg6w9
-        o542IZwmCWrVr4s+f1ZhL43fEA==
-X-Google-Smtp-Source: AFSGD/WejKshiv7QsC3sfvDuJ4bXWRhcUsf+w02H/MBeBw9vTcjUTcFmTufFIMhbdN/iZ/cqlDZs1Q==
-X-Received: by 2002:ac8:280f:: with SMTP id 15mr3909192qtq.31.1544222100055;
-        Fri, 07 Dec 2018 14:35:00 -0800 (PST)
-Received: from ovpn-121-90.rdu2.redhat.com (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
-        by smtp.gmail.com with ESMTPSA id v53sm2968757qtb.6.2018.12.07.14.34.58
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 07 Dec 2018 14:34:59 -0800 (PST)
-From:   Qian Cai <cai@lca.pw>
-To:     catalin.marinas@arm.com, will.deacon@arm.com
-Cc:     aryabinin@virtuozzo.com, glider@google.com, dvyukov@google.com,
-        arnd@arndb.de, kasan-dev@googlegroups.com, linux-mm@kvack.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Qian Cai <cai@lca.pw>
-Subject: [PATCH] arm64: increase stack size for KASAN_EXTRA
-Date:   Fri,  7 Dec 2018 17:34:49 -0500
-Message-Id: <20181207223449.38808-1-cai@lca.pw>
-X-Mailer: git-send-email 2.17.2 (Apple Git-113)
-In-Reply-To: <721E7B42-2D55-4866-9C1A-3E8D64F33F9C@gmx.us>
-References: <721E7B42-2D55-4866-9C1A-3E8D64F33F9C@gmx.us>
+        Fri, 7 Dec 2018 17:36:22 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wB7MUU8Q115506;
+        Fri, 7 Dec 2018 22:36:02 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=puUfj62l5vpzs+urJqGDB6PhjFnYdMRiQHPte2Ve0hE=;
+ b=d/TUeHXN8DxBwa7L6lwkEa2yEWv/Z3GJNwNZZw0gd2PUmE/BZd5CfG8VZUCFUu1oszwe
+ QfHkNisNtiPu+bK+C1bdS2jIGo0fO6HlPkL7iXjW9O6MrAj2AJCFzk0UywX8U7RPVfX+
+ GUG4hP2lfy8Qs44aHgM8j4PoJzP946HkdacNmVVbjluVTWveiLWNZ33DyF3/y/y6Aw2Z
+ FA6WBD88efxHrLMpQekhaSP7eDDiqoMKomd9jnVpJqgSR+ukN5dnk33PBJDtlrzKo5p6
+ WFU9ZiUdJcnVEIumsQu4q4m3FX7hfRnPhYGLffKudf4UbdYvMJsUR2fpvMkqN44bbnJ+ pg== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by userp2130.oracle.com with ESMTP id 2p3hqug7gp-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 07 Dec 2018 22:36:02 +0000
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wB7Ma1dB007735
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 7 Dec 2018 22:36:02 GMT
+Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id wB7Ma1kM026793;
+        Fri, 7 Dec 2018 22:36:01 GMT
+Received: from [10.39.214.172] (/10.39.214.172)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 07 Dec 2018 22:36:00 +0000
+Subject: Re: [PATCH v4 04/10] sched/fair: Dynamically update cfs_overload_cpus
+To:     Valentin Schneider <valentin.schneider@arm.com>, mingo@redhat.com,
+        peterz@infradead.org
+Cc:     subhra.mazumdar@oracle.com, dhaval.giani@oracle.com,
+        daniel.m.jordan@oracle.com, pavel.tatashin@microsoft.com,
+        matt@codeblueprint.co.uk, umgwanakikbuti@gmail.com,
+        riel@redhat.com, jbacik@fb.com, juri.lelli@redhat.com,
+        vincent.guittot@linaro.org, quentin.perret@arm.com,
+        linux-kernel@vger.kernel.org
+References: <1544131696-2888-1-git-send-email-steven.sistare@oracle.com>
+ <1544131696-2888-5-git-send-email-steven.sistare@oracle.com>
+ <3ec57357-dc4e-be1b-963f-abcf760ecc5a@arm.com>
+From:   Steven Sistare <steven.sistare@oracle.com>
+Organization: Oracle Corporation
+Message-ID: <b72240f1-1067-025c-50ca-b231637d8657@oracle.com>
+Date:   Fri, 7 Dec 2018 17:35:54 -0500
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.2
+MIME-Version: 1.0
+In-Reply-To: <3ec57357-dc4e-be1b-963f-abcf760ecc5a@arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9100 signatures=668679
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1812070180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If the kernel is configured with KASAN_EXTRA, the stack size is
-increasted significantly due to enable this option will set
--fstack-reuse to "none" in GCC [1]. As the results, it could trigger
-stack overrun quite often with 32k stack size compiled using GCC 8. For
-example, this reproducer
+On 12/7/2018 3:20 PM, Valentin Schneider wrote:
+> Hi Steve,
+> 
+> On 06/12/2018 21:28, Steve Sistare wrote:
+> [...]
+>> @@ -3724,6 +3725,28 @@ static inline void update_misfit_status(struct task_struct *p, struct rq *rq)
+>>  	rq->misfit_task_load = task_h_load(p);
+>>  }
+>>  
+>> +static void overload_clear(struct rq *rq)
+> 
+> Nitpicky nit: cfs_overload_{clear, set} might be a bit better, just to
+> explicitly differentiate this from rq->rd->overload. Although I suppose
+> the naming problem will show up again if/when you try to expand this to
+> other classes...
 
-https://github.com/linux-test-project/ltp/blob/master/testcases/kernel/\
-syscalls/madvise/madvise06.c
+This is static within fair.c which is CFS, so I think the name is OK.
 
-could trigger a "corrupted stack end detected inside scheduler" very
-reliably with CONFIG_SCHED_STACK_END_CHECK enabled. Also, See other bug
-reports,
+>> +{
+>> +	struct sparsemask *overload_cpus;
+>> +
+>> +	rcu_read_lock();
+>> +	overload_cpus = rcu_dereference(rq->cfs_overload_cpus);
+>> +	if (overload_cpus)
+>> +		sparsemask_clear_elem(overload_cpus, rq->cpu);
+>> +	rcu_read_unlock();
+>> +}
+>> +
+>> +static void overload_set(struct rq *rq)
+>> +{
+>> +	struct sparsemask *overload_cpus;
+>> +
+>> +	rcu_read_lock();
+>> +	overload_cpus = rcu_dereference(rq->cfs_overload_cpus);
+>> +	if (overload_cpus)
+>> +		sparsemask_set_elem(overload_cpus, rq->cpu);
+>> +	rcu_read_unlock();
+>> +}
+>> +
+>>  #else /* CONFIG_SMP */
+>>  
+>>  #define UPDATE_TG	0x0
+> [...]
+>> @@ -4468,8 +4495,12 @@ static void throttle_cfs_rq(struct cfs_rq *cfs_rq)
+>>  			dequeue = 0;
+>>  	}
+>>  
+>> -	if (!se)
+>> +	if (!se) {
+>>  		sub_nr_running(rq, task_delta);
+>> +		if (prev_nr >= 2 && prev_nr - task_delta < 2)
+>> +			overload_clear(rq);
+>> +
+>> +	}
+> 
+> Eventually it'd be nice to squash those into {add, sub}_nr_running(), but
+> you already mentioned wanting to stick to CFS for now, so I don't think
+> it's *too* much of a big deal.
 
-https://lore.kernel.org/lkml/1542144497.12945.29.camel@gmx.us/
-https://lore.kernel.org/lkml/721E7B42-2D55-4866-9C1A-3E8D64F33F9C@gmx.us/
+Maybe.  It depends on a design decision to be made if/when we add bitmap
+based stealing to other scheduling classes.  Do we maintain one bitmap
+for overloaded CPUs where the overload may be caused by any mix of different
+task classes?  If yes, then the bitmap search for one class such as RT
+will inspect and reject overloaded CPUs that only have CFS tasks, which 
+making the search less efficient.  I am leaning towards a separate bitmap 
+per class to avoid that.
 
-There are just too many functions that could have a large stack with
-KASAN_EXTRA due to large local variables that have been called over and
-over again without being able to reuse the stacks. Some noticiable ones
-are,
-
-size
-7536 shrink_inactive_list
-7440 shrink_page_list
-6560 fscache_stats_show
-3920 jbd2_journal_commit_transaction
-3216 try_to_unmap_one
-3072 migrate_page_move_mapping
-3584 migrate_misplaced_transhuge_page
-3920 ip_vs_lblcr_schedule
-4304 lpfc_nvme_info_show
-3888 lpfc_debugfs_nvmestat_data.constprop
-
-There are other 49 functions are over 2k in size while compiling kernel
-with "-Wframe-larger-than=" on this machine. Hence, it is too much work
-to change Makefiles for each object to compile without
--fsanitize-address-use-after-scope individually.
-
-[1] https://gcc.gnu.org/bugzilla/show_bug.cgi?id=81715#c23
-
-Signed-off-by: Qian Cai <cai@lca.pw>
----
- arch/arm64/include/asm/memory.h | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
-
-diff --git a/arch/arm64/include/asm/memory.h b/arch/arm64/include/asm/memory.h
-index b96442960aea..56562ff01076 100644
---- a/arch/arm64/include/asm/memory.h
-+++ b/arch/arm64/include/asm/memory.h
-@@ -76,12 +76,17 @@
- /*
-  * KASAN requires 1/8th of the kernel virtual address space for the shadow
-  * region. KASAN can bloat the stack significantly, so double the (minimum)
-- * stack size when KASAN is in use.
-+ * stack size when KASAN is in use, and then double it again if KASAN_EXTRA is
-+ * on.
-  */
- #ifdef CONFIG_KASAN
- #define KASAN_SHADOW_SCALE_SHIFT 3
- #define KASAN_SHADOW_SIZE	(UL(1) << (VA_BITS - KASAN_SHADOW_SCALE_SHIFT))
-+#ifdef CONFIG_KASAN_EXTRA
-+#define KASAN_THREAD_SHIFT	2
-+#else
- #define KASAN_THREAD_SHIFT	1
-+#endif /* CONFIG_KASAN_EXTRA */
- #else
- #define KASAN_SHADOW_SIZE	(0)
- #define KASAN_THREAD_SHIFT	0
--- 
-2.17.2 (Apple Git-113)
-
+- Steve
+  
