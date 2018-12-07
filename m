@@ -2,80 +2,187 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C53E6C07E85
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 07:49:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F94BC07E85
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 07:50:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8843320850
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 07:49:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=xenosoft.de header.i=@xenosoft.de header.b="CdTwhn48"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8843320850
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xenosoft.de
+	by mail.kernel.org (Postfix) with ESMTP id 18B4820892
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 07:50:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544169000;
+	bh=6gu7dDw73jBCAyk3SC9eeIUE5hF31ZAaCXQi/wISiJI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=JwsRamLhKb/Vgpbq0tutQb+y3Yb3lt/EQ3xG/DMcrFl7hE1U38XHW9O44SzWEFb98
+	 sH6nhcevkl2e5LfTnMsCRoWvp9o0s2s9zftDaXR7U4Xw31pLoi36yByqOFueABLDv5
+	 3JNevS8MHG/cVdfHiWxVWmyac9rT1fJ7cLloxpYw=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 18B4820892
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726005AbeLGHtI (ORCPT
+        id S1726022AbeLGHt6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 02:49:08 -0500
-Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.54]:35133 "EHLO
-        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725952AbeLGHtI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 02:49:08 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1544168945;
-        s=strato-dkim-0002; d=xenosoft.de;
-        h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:
-        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=Gl/apHLUTNuZTF2PkweCwxqMX9UEFwiI13ErIHyTfqQ=;
-        b=CdTwhn48XWCztcJwzR3WH3Ati/WvVpmdbmEb441ZNLZLKKluZkyf2WyYr6OhUFdlaC
-        wfRLzFnQ1RuU3AjYiekOsfiFI/4upqOfH+cXH1R2brvxRMxTAjC2KWHET7JmOfIkBaBW
-        SJLzlAHkcOqG5dK3INM1Lan8pTsU658MsWI5ixmL9BjHXVByVPHKDZW/ONZ7M3/tauyf
-        N22zM0azIfCEjWk6WD7TV8I9ubBrXBH6itygdZkDXQe8T9JYE4rIeaIWojpSieeWLXjy
-        pRkTHxGVXdOU7wj24UcSminBlhqGosR8PFTobkmBY9xsDI3pO5nphibmN5ICoWw2h+gK
-        qafA==
-X-RZG-AUTH: ":L2QefEenb+UdBJSdRCXu93KJ1bmSGnhMdmOod1DhGN0rBVhd9dFr6KxrfO5Oh7R7b2dxjbphlye1zJi5qqW3t7PS2NPtwqpneosxQ2GK"
-X-RZG-CLASS-ID: mo00
-Received: from [IPv6:2a01:598:b006:4ca9:e4ab:3cb6:b68f:abb5]
-        by smtp.strato.de (RZmta 44.6 AUTH)
-        with ESMTPSA id 404b20uB77mtqPQ
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
-        (Client did not present a certificate);
-        Fri, 7 Dec 2018 08:48:55 +0100 (CET)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (1.0)
-Subject: Re: use generic DMA mapping code in powerpc V4
-From:   Christian Zigotzky <chzigotzky@xenosoft.de>
-X-Mailer: iPhone Mail (15G77)
-In-Reply-To: <20181206193605.GA31255@lst.de>
-Date:   Fri, 7 Dec 2018 08:48:54 +0100
-Cc:     linux-arch@vger.kernel.org,
-        Darren Stevens <darren@stevens-zone.net>,
-        linux-kernel@vger.kernel.org, Julian Margetson <runaway@candw.ms>,
-        linux-mm@kvack.org, iommu@lists.linux-foundation.org,
-        Paul Mackerras <paulus@samba.org>,
-        Olof Johansson <olof@lixom.net>, linuxppc-dev@lists.ozlabs.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <EC9C556C-B445-4E55-80DA-D5A04C701044@xenosoft.de>
-References: <8694431d-c669-b7b9-99fa-e99db5d45a7d@xenosoft.de> <20181130131056.GA5211@lst.de> <25999587-2d91-a63c-ed38-c3fb0075d9f1@xenosoft.de> <c5202d29-863d-1377-0e2d-762203b317e2@xenosoft.de> <58c61afb-290f-6196-c72c-ac7b61b84718@xenosoft.de> <20181204142426.GA2743@lst.de> <ef56d279-f75d-008e-71ba-7068c1b37c48@xenosoft.de> <20181205140550.GA27549@lst.de> <1948cf84-49ab-543c-472c-d18e27751903@xenosoft.de> <9ECD27D6-B039-4253-9FB9-749B41DE4CC6@xenosoft.de> <20181206193605.GA31255@lst.de>
-To:     Christoph Hellwig <hch@lst.de>
+        Fri, 7 Dec 2018 02:49:58 -0500
+Received: from mx2.suse.de ([195.135.220.15]:40500 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725963AbeLGHt6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Dec 2018 02:49:58 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id E74F9B007;
+        Fri,  7 Dec 2018 07:49:55 +0000 (UTC)
+Date:   Fri, 7 Dec 2018 08:49:54 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Andrea Arcangeli <aarcange@redhat.com>,
+        mgorman@techsingularity.net, Vlastimil Babka <vbabka@suse.cz>,
+        ying.huang@intel.com, s.priebe@profihost.ag,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        alex.williamson@redhat.com, lkp@01.org,
+        David Rientjes <rientjes@google.com>, kirill@shutemov.name,
+        Andrew Morton <akpm@linux-foundation.org>,
+        zi.yan@cs.rutgers.edu
+Subject: Re: MADV_HUGEPAGE vs. NUMA semantic (was: Re: [LKP] [mm] ac5b2c1891:
+ vm-scalability.throughput -61.3% regression)
+Message-ID: <20181207074954.GR1286@dhcp22.suse.cz>
+References: <CAHk-=whDg5+e2-eXYo-jwC1spt2r7JjLQSaLm4OyfGMQHLTrdw@mail.gmail.com>
+ <64a4aec6-3275-a716-8345-f021f6186d9b@suse.cz>
+ <20181204104558.GV23260@techsingularity.net>
+ <20181205204034.GB11899@redhat.com>
+ <CAHk-=whi8Ju-cTDL4cYtwuLA7BYgGJYyy6HVMoknZaLHnRc83g@mail.gmail.com>
+ <20181205233632.GE11899@redhat.com>
+ <CAHk-=wguXjkbK8BUU998s7HD7AXJgBkuc9JmuNxiN7uGQyfSfQ@mail.gmail.com>
+ <CAHk-=wjm9V843eg0uesMrxKnCCq7UfWn8VJ+z-cNztb_0fVW6A@mail.gmail.com>
+ <20181206091405.GD1286@dhcp22.suse.cz>
+ <CAHk-=whCnERJt8bterD5yXABvoSmoJAx004Y76c82bBHCWbgDg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=whCnERJt8bterD5yXABvoSmoJAx004Y76c82bBHCWbgDg@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Good to know. Sorry because of the email.
+On Thu 06-12-18 20:31:46, Linus Torvalds wrote:
+> [ Oops. different thread for me due to edited subject, so I saw this
+> after replying to the earlier email by David ]
 
-Sent from my iPhone
+Sorry about that but I really wanted to make the actual discussion about
+semantic clearly distinguished because the thread just grown too large
+with back and forth that didn't lead to anywhere.
 
-> On 6. Dec 2018, at 20:36, Christoph Hellwig <hch@lst.de> wrote:
->=20
->> On Thu, Dec 06, 2018 at 06:10:54PM +0100, Christian Zigotzky wrote:
->> Please don=E2=80=99t merge this code. We are still testing and trying to f=
-igure out where the problems are in the code.
->=20
-> The ones I sent pings for were either tested successfully by you
-> (the zone change) or are trivial cleanups that don't affect your setup.
+> On Thu, Dec 6, 2018 at 1:14 AM Michal Hocko <mhocko@kernel.org> wrote:
+> >
+> > MADV_HUGEPAGE changes the picture because the caller expressed a need
+> > for THP and is willing to go extra mile to get it.
+> 
+> Actually, I think MADV_HUGEPAGE should just be
+> "TRANSPARENT_HUGEPAGE_ALWAYS but only for this vma".
+
+Yes, that is the case and I didn't want to make the description more
+complicated than necessary so I've focused only on the current default.
+But historically we have treated defrag=always and MADV_HUGEPAGE the
+same.
+
+[...]
+> >I believe that something like the below would be sensible
+> >         1) THP on a local node with compaction not giving up too early
+> >         2) THP on a remote node in NOWAIT mode - so no direct
+> >            compaction/reclaim (trigger kswapd/kcompactd only for
+> >            defrag=defer+madvise)
+> >         3) fallback to the base page allocation
+> 
+> That doesn't sound insane to me. That said, the numbers David quoted
+> do fairly strongly imply that local small-pages are actually preferred
+> to any remote THP pages.
+
+As I and others pointed out elsewhere remote penalty is just a part of
+the picture and on its own might be quite misleading. There are other
+aspects (TLB pressure, page tables overhead etc) that might amortize the
+access latency.
+
+> But *that* in turn makes for other possible questions:
+> 
+>  - if the reason we couldn't get a local hugepage is that we're simply
+> out of local memory (huge *or* small), then maybe a remote hugepage is
+> better.
+> 
+>    Note that this now implies that the choice can be an issue of "did
+> the hugepage allocation fail due to fragmentation, or due to the node
+> being low of memory"
+
+How exactly do you tell? Many systems are simply low on memory due to
+caching. A clean pagecache is quite cheap to reclaim but it can be more
+expensive to fault in. Do we consider it to be a viable target?
+
+> 
+> and there is the other question that I asked in the other thread
+> (before subject edit):
+> 
+>  - how local is the load to begin with?
+> 
+>    Relatively shortlived processes - or processes that are explicitly
+> bound to a node - might have different preferences than some
+> long-lived process where the CPU bounces around, and might have
+> different trade-offs for the local vs remote question too.
+
+Agreed
+
+> So just based on David's numbers, and some wild handwaving on my part,
+> a slightly more complex, but still very sensible default might be
+> something like
+> 
+>  1) try to do a cheap local node hugepage allocation
+> 
+>     Rationale: everybody agrees this is the best case.
+> 
+>     But if that fails:
+> 
+>  2) look at compacting and the local node, but not very hard.
+> 
+>     If there's lots of memory on the local node, but synchronous
+> compaction doesn't do anything easily, just fall back to small pages.
+
+Do we reclaim at this stage or this is mostly GFP_NOWAIT attempt?
+
+>     Rationale: local memory is generally more important than THP.
+> 
+>     If that fails (ie local node is simply low on memory):
+> 
+>  3) Try to do remote THP allocation
+> 
+>      Rationale: Ok, we simply didn't have a lot of local memory, so
+> it's not just a question of fragmentation. If it *had* been
+> fragmentation, lots of small local pages would have been better than a
+> remote THP page.
+> 
+>      Oops, remote THP allocation failed (possibly after synchronous
+> remote compaction, but maybe this is where we do kcompactd).
+> 
+>  4) Just do any small page, and do reclaim etc. THP isn't happening,
+> and it's not a priority when you're starting to feel memory pressure.
+
+If 2) doesn't reclaim heavily (e.g. only try to reclaim clean page
+cache) or even do NOWAIT (which would be even better) then I _think_
+this sounds sane.
+
+> In general, I really would want to avoid magic kernel command lines
+> (or sysfs settings, or whatever) making a huge difference in behavior.
+> So I really wish people would see the whole
+> 'transparent_hugepage_flags' thing as a way for kernel developers to
+> try different settings, not as a way for users to tune their loads.
+> 
+> Our default should work as sane defaults, we shouldn't have a "ok,
+> let's have this sysfs tunable and let people make their own
+> decisions". That's a cop-out.
+
+Agreed. I cannot say I am happy with all the ways THP can be tuned. It
+is quite confusing to say the least.
+
+-- 
+Michal Hocko
+SUSE Labs
