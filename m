@@ -2,110 +2,120 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42151C04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 02:42:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FDBCC04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 02:44:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE49A20868
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 02:42:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE49A20868
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 1BC7520868
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 02:44:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SJGT/7VV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1BC7520868
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726036AbeLGCmh (ORCPT
+        id S1726038AbeLGCoZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 21:42:37 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:15649 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725952AbeLGCmh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 21:42:37 -0500
-Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 56F728CE3A4AF;
-        Fri,  7 Dec 2018 10:42:33 +0800 (CST)
-Received: from localhost.localdomain.localdomain (10.175.113.25) by
- DGGEMS407-HUB.china.huawei.com (10.3.19.207) with Microsoft SMTP Server id
- 14.3.408.0; Fri, 7 Dec 2018 10:42:29 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     Johan Hovold <johan@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC:     YueHaibing <yuehaibing@huawei.com>, <linux-usb@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
-Subject: [PATCH -next] USB: serial: mos7840: remove set but not used variables 'number, serial'
-Date:   Fri, 7 Dec 2018 02:50:42 +0000
-Message-ID: <1544151042-120303-1-git-send-email-yuehaibing@huawei.com>
-X-Mailer: git-send-email 1.8.3.1
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
+        Thu, 6 Dec 2018 21:44:25 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:35581 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725939AbeLGCoY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 21:44:24 -0500
+Received: by mail-wr1-f66.google.com with SMTP id 96so2417663wrb.2;
+        Thu, 06 Dec 2018 18:44:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=tU8RiHm05P1blXk/OPWBMPtrN8U4nIicFpULcBRTdYQ=;
+        b=SJGT/7VV7VhXQ/z0IEc1ukMq/+p/9IeKvBeQDSbT1SrgP673ATh0cDHCU254NzjpCs
+         RQOpk5oevNqTplLdUntfnBu/uHAO63PL9DVKuuwHHzMFQ/G3gMwLXxzLr5CwhI0EZeno
+         ANV8dORTFf/8ybCcPmOzU9xv1F+R6NIinx6RDl8y1yXk5U/4LtJyv62WCpKerXjFszbD
+         FZYQGTQ6YgOaS0eQLt6vgGKwhPQ4q9bE0TMBtbdC2pdYsZI92HubwU2fyc2Wl4I4aPsW
+         T5aTnkUzmBPIS/DEqYS61NhO8JaBnDYwRGM6XaK/MoSYHAUnZhrvNVfubmmCG6xRoZbU
+         WGSA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=tU8RiHm05P1blXk/OPWBMPtrN8U4nIicFpULcBRTdYQ=;
+        b=Ef3cn8LKGn5ANK8YqCrvptMhDy/jzeLZtEYUh3CwtrH+ZMEf3cBeXmgkSUgjZlzljF
+         3Lifr7eP5unuMWeI0q1tazAT36fGgiVmMrQNoUUUs+SNOkMJ8Z/hk4enWbvPI0o6sb4p
+         vuLiEOytsdOn3BWC/DJ9+fd+dDkD35cHnJqqiLlwHwBsgz7UVqotLN+wNJPyFRfmGhqL
+         4Sg9klccvWaTbKwGhKeXHy2KRUCZT1fMkauhjf8gaCToUi0fI11TnOzAiDWqRDlyRqNY
+         QxdIqvbH0oGprZovWe49yMu+UgFXDXrcFPVhsDa9Ux8JXwDjYZtmnOlGRNC9cNyflrPR
+         F3nw==
+X-Gm-Message-State: AA+aEWaHTyiZGYFhlkje6Z7D7r7S6ihWL6rq2tVNkhZ9hsRusSao5b55
+        hP/1CwlhfR1fc5p5uz31y46RnmEB7TBfwWvUZyGUAmV0
+X-Google-Smtp-Source: AFSGD/XZS8RVwHvM8u7WkQqbK14kEfizMmkJwIFCq4EqhCeIvSkd3cZSukJnW0P2LGAsuDXcqxg3/gWNn6GcSN1AVXk=
+X-Received: by 2002:a5d:4b01:: with SMTP id v1mr305977wrq.5.1544150662555;
+ Thu, 06 Dec 2018 18:44:22 -0800 (PST)
 MIME-Version: 1.0
-X-Originating-IP: [10.175.113.25]
-X-CFilter-Loop: Reflected
+References: <20181206073545.10967-1-andrew.smirnov@gmail.com> <20181206121550.GA2725@e107981-ln.cambridge.arm.com>
+In-Reply-To: <20181206121550.GA2725@e107981-ln.cambridge.arm.com>
+From:   Andrey Smirnov <andrew.smirnov@gmail.com>
+Date:   Thu, 6 Dec 2018 18:44:11 -0800
+Message-ID: <CAHQ1cqHVjNTQrHi2BgR9k74hKD8Wh93FqMoeZPmNEhGWnEmdjQ@mail.gmail.com>
+Subject: Re: [PATCH v2 0/3] PCIE support for i.MX8MQ
+To:     lorenzo.pieralisi@arm.com
+Cc:     linux-pci@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Chris Healy <cphealy@gmail.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        Dong Aisheng <aisheng.dong@nxp.com>,
+        Richard Zhu <hongxing.zhu@nxp.com>, linux-imx@nxp.com,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh@kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+On Thu, Dec 6, 2018 at 4:15 AM Lorenzo Pieralisi
+<lorenzo.pieralisi@arm.com> wrote:
+>
+> On Wed, Dec 05, 2018 at 11:35:42PM -0800, Andrey Smirnov wrote:
+> > Everyone:
+> >
+> > This series contains changes I made in order to enable support of PCIE
+> > IP block on i.MX8MQ SoCs (full tree can be found at [github-v2]).
+> >
+> > NOTE: The last patch have a Kconfig symbol depenency on [imx8mq-kconfig].
+> >
+> > Changes since [v1]:
+> >
+> >  - Driver changed to use single "fsl,controller-id" property to
+> >    distinguish between two intances of PCIE IP block
+> >
+> >  - All code pertaining to L1SS was dropped to simplify the patch
+> >
+> >  - Documented additions to DT bindings
+> >
+> > Feedback is welcome!
+> >
+> > Thanks,
+> > Andrey Smirnov
+>
+> Andrey,
+>
+> I have applied the patches, I would like to make the CC list in standard
+> format so I kindly ask you firstname/surname for cphealy@gmail.com, I
+> could not find it in the maintainers list but I want to keep the CC
+> list as per patches (I removed the lists, though).
 
-drivers/usb/serial/mos7840.c: In function 'mos7840_send_cmd_write_baud_rate':
-drivers/usb/serial/mos7840.c:1584:16: warning:
- variable 'number' set but not used [-Wunused-but-set-variable]
+Oh, sorry about that! That would be Chris Healy <cphealy@gmail.com>.
+Let me know if anything else is needed.
 
-drivers/usb/serial/mos7840.c: In function 'mos7840_change_port_settings':
-drivers/usb/serial/mos7840.c:1695:21: warning:
- variable 'serial' set but not used [-Wunused-but-set-variable]
-
-'number' never used since introduction in commit 3f5429746d91 ("USB: Moschip
-7840 USB-Serial Driver")
-
-'serial' not used since commit 5833041f1b13 ("USB: serial: remove unnecessary
-reinitialisations of urb->dev")
-
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/usb/serial/mos7840.c | 6 ------
- 1 file changed, 6 deletions(-)
-
-diff --git a/drivers/usb/serial/mos7840.c b/drivers/usb/serial/mos7840.c
-index 6ff6d67..a698d46 100644
---- a/drivers/usb/serial/mos7840.c
-+++ b/drivers/usb/serial/mos7840.c
-@@ -1581,7 +1581,6 @@ static int mos7840_send_cmd_write_baud_rate(struct moschip_port *mos7840_port,
- 	int divisor = 0;
- 	int status;
- 	__u16 Data;
--	unsigned char number;
- 	__u16 clk_sel_val;
- 	struct usb_serial_port *port;
- 
-@@ -1595,8 +1594,6 @@ static int mos7840_send_cmd_write_baud_rate(struct moschip_port *mos7840_port,
- 	if (mos7840_serial_paranoia_check(port->serial, __func__))
- 		return -1;
- 
--	number = mos7840_port->port->port_number;
--
- 	dev_dbg(&port->dev, "%s - baud = %d\n", __func__, baudRate);
- 	/* reset clk_uart_sel in spregOffset */
- 	if (baudRate > 115200) {
-@@ -1692,7 +1689,6 @@ static void mos7840_change_port_settings(struct tty_struct *tty,
- 	int status;
- 	__u16 Data;
- 	struct usb_serial_port *port;
--	struct usb_serial *serial;
- 
- 	if (mos7840_port == NULL)
- 		return;
-@@ -1705,8 +1701,6 @@ static void mos7840_change_port_settings(struct tty_struct *tty,
- 	if (mos7840_serial_paranoia_check(port->serial, __func__))
- 		return;
- 
--	serial = port->serial;
--
- 	if (!mos7840_port->open) {
- 		dev_dbg(&port->dev, "%s - port not opened\n", __func__);
- 		return;
-
-
-
+Thanks,
+Andrey Smirnov
