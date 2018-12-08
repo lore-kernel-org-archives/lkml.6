@@ -2,125 +2,115 @@ Return-Path: <SRS0=1bfu=OR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51A7FC04EB8
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 15:45:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E71ACC04EB8
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 15:46:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 121ED20672
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 15:45:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9ECDE2083D
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 15:46:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="XpmGjPbn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 121ED20672
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MoEeQ0ql"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9ECDE2083D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726213AbeLHPpu (ORCPT
+        id S1726214AbeLHPqq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 8 Dec 2018 10:45:50 -0500
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:54226 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726180AbeLHPpt (ORCPT
+        Sat, 8 Dec 2018 10:46:46 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:33041 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726160AbeLHPqq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 8 Dec 2018 10:45:49 -0500
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id wB8FjRJY086823;
-        Sat, 8 Dec 2018 09:45:27 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1544283927;
-        bh=sNubEZmLX9GLtz40Y78ZtKImyP0i/MBR2DeoShL3eQI=;
-        h=Date:From:To:CC:Subject:References:In-Reply-To;
-        b=XpmGjPbnldQtVCaHJnt8JiSoEo6YW/Rnf8WFNwO3kDdyOpICEJehHZapj1UUOs6j8
-         mYzqj+VB4FT4WFV9I3kkQtXPgg10dYgOx9S0cV/BMpwe/OxCrEa6fjiXxxw5JllLt5
-         6/V+ZvF0Uj2EwDrNJ3b5gwAOv7DkahtfHLa4lgh0=
-Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wB8FjRi8001191
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Sat, 8 Dec 2018 09:45:27 -0600
-Received: from DLEE110.ent.ti.com (157.170.170.21) by DLEE105.ent.ti.com
- (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Sat, 8
- Dec 2018 09:45:27 -0600
-Received: from dlep32.itg.ti.com (157.170.170.100) by DLEE110.ent.ti.com
- (157.170.170.21) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Sat, 8 Dec 2018 09:45:27 -0600
-Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id wB8FjQRZ011911;
-        Sat, 8 Dec 2018 09:45:26 -0600
-Date:   Sat, 8 Dec 2018 09:45:26 -0600
-From:   Nishanth Menon <nm@ti.com>
-To:     Vignesh R <vigneshr@ti.com>
-CC:     Faiz Abbas <faiz_abbas@ti.com>,
-        <linux-arm-kernel@lists.infradead.org>, <t-kristo@ti.com>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <mark.rutland@arm.com>, <ulf.hansson@linaro.org>,
-        <adrian.hunter@intel.com>, <kishon@ti.com>, <robh+dt@kernel.org>,
-        <michal.simek@xilinx.com>
-Subject: Re: [PATCH 1/2] arm64: dts: ti: k3-am654: Add Support for MMC/SD
-Message-ID: <20181208154526.ivbvwvcx6otg7lvh@akan>
-References: <20181207084233.13700-1-faiz_abbas@ti.com>
- <20181207084233.13700-2-faiz_abbas@ti.com>
- <a6aacd53-e1c4-fce0-7712-f276c80bbffc@ti.com>
+        Sat, 8 Dec 2018 10:46:46 -0500
+Received: by mail-wm1-f65.google.com with SMTP id r24so3361329wmh.0
+        for <linux-kernel@vger.kernel.org>; Sat, 08 Dec 2018 07:46:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=L7GQhOnYZ/9ITTatnN1cAFhc2f132GWO/j4E7PzXJkc=;
+        b=MoEeQ0qlk8lK2HFY5wZuBTYmTkRj2V1GDxW8Qk7FWgacrci8nWtEJYzosetPdMMRWx
+         /NjfFWyv+Ue/R7Z11KXN7RxXNZRUsk9ELrWUJRHx+bzh1pgjPDA72LXm9Zwvv/m3VrLi
+         KO869Z7ZBi27Ezo71rrQ6df3++3ciUwHv9+jdFcv2xlrCyYqNodA1a3Yx9UfwGwfoGu2
+         2VhayLS8pS7gLLvX1sA/Qdw+XcPDfkMeNVzbNlyGLzhk52MaowKEGZE+uBFwjLYx9wNq
+         +K/DNpY4UTyNR6PrgVupIMk5kMa/ilY3zLx3fuXQNazKR51dzfuczTKmflOVy5s/T+hO
+         0zSA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
+         :mime-version:content-transfer-encoding;
+        bh=L7GQhOnYZ/9ITTatnN1cAFhc2f132GWO/j4E7PzXJkc=;
+        b=prcWGCufW9+hOaBY/KJglmTCDgrdQtLZs8poiEbvQ2Xc8sg6zl5tF1qhyEL9o5GZKB
+         fQrd+60KSJUNslMiZOfu460y7FMQ3HVr7B4y/oIqBsAUkw7ZEFbBUQnNZgMRNvqcu4x4
+         Rzqh+dMAAh1Z+xT5pRbIsSAT13u0mA4bGvxR/NZChw/Jn0K9YLP70RniXHYN0DxMuDK4
+         HSA4+bqxyyFPuzWkYM/FIdmfGtbXIKlaeQxgD3/zg4dzyWy0JFrfU/d3dkrodWLZhBNt
+         FSoejtE34CR2SCofHC8Way1CRDGlxp+4u9blTkFGQrX7rvSNCJWqYot0LO8bpcBDAJSG
+         t0lw==
+X-Gm-Message-State: AA+aEWaUvf5vf/U+1n/yGDGgo3QDOp4zM7P/SSl+V9uyyu3xl892SzYF
+        OJjh5nMCya99oxCF8ID6pak=
+X-Google-Smtp-Source: AFSGD/Xyiblms4cYzEQCqEbXOREVh2DV4op56OzEiW80YkOLqrBCipD5tsMeepqmJ///o5qy1h76fA==
+X-Received: by 2002:a1c:e287:: with SMTP id z129mr5337638wmg.71.1544284004126;
+        Sat, 08 Dec 2018 07:46:44 -0800 (PST)
+Received: from macbookpro.malat.net (bru31-1-78-225-224-134.fbx.proxad.net. [78.225.224.134])
+        by smtp.gmail.com with ESMTPSA id l37sm15771092wre.69.2018.12.08.07.46.42
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sat, 08 Dec 2018 07:46:43 -0800 (PST)
+Received: by macbookpro.malat.net (Postfix, from userid 1000)
+        id 19C4D11422CD; Sat,  8 Dec 2018 16:46:37 +0100 (CET)
+From:   Mathieu Malaterre <malat@debian.org>
+To:     Michael Ellerman <mpe@ellerman.id.au>
+Cc:     Mathieu Malaterre <malat@debian.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] powerpc/ptrace: Add prototype for function pt_regs_check
+Date:   Sat,  8 Dec 2018 16:46:23 +0100
+Message-Id: <20181208154624.6504-1-malat@debian.org>
+X-Mailer: git-send-email 2.19.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <a6aacd53-e1c4-fce0-7712-f276c80bbffc@ti.com>
-User-Agent: NeoMutt/20171215
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10:56-20181208, Vignesh R wrote:
-> 
-> 
-> On 07/12/18 2:12 PM, Faiz Abbas wrote:
-> > There are two MMC host controller instances present on the TI's
-> > Am654 SOCs. Add device tree nodes for the same.
-> > 
-> > Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
-> > ---
-> >  arch/arm64/boot/dts/ti/k3-am65-main.dtsi | 28 ++++++++++++++++++++++++
-> >  1 file changed, 28 insertions(+)
-> > 
-> > diff --git a/arch/arm64/boot/dts/ti/k3-am65-main.dtsi b/arch/arm64/boot/dts/ti/k3-am65-main.dtsi
-> > index 916434839603..d07212f16a81 100644
-> > --- a/arch/arm64/boot/dts/ti/k3-am65-main.dtsi
-> > +++ b/arch/arm64/boot/dts/ti/k3-am65-main.dtsi
-> > @@ -129,4 +129,32 @@
-> >  		clocks = <&k3_clks 113 1>;
-> >  		power-domains = <&k3_pds 113>;
-> >  	};
-> > +
-> > +	sdhci0: sdhci@4f80000 {
-> > +		compatible = "ti,am654-sdhci-5.1";
-> > +		reg = <0x0 0x4f80000 0x0 0x260>, <0x0 0x4f90000 0x0 0x134>;
-> > +		power-domains = <&k3_pds 47>;
-> > +		clocks = <&k3_clks 47 0>, <&k3_clks 47 1>;
-> > +		clock-names = "clk_ahb", "clk_xin";
-> > +		interrupts = <GIC_SPI 136 IRQ_TYPE_LEVEL_HIGH>;
-> > +		sdhci-caps-mask = <0x80000007 0x0>;
-> > +		mmc-ddr-1_8v;
-> > +		ti,otap-del-sel = <0x2>;
-> > +		ti,trm-icp = <0x8>;
-> > +		status = "disabled";
-> > +	};
-> 
-> Please drop "status=disabled" from dtsi. Can be disabled as required in
-> the board dts.
+`pt_regs_check` is a dummy function, its purpose is to break the build
+if struct pt_regs and struct user_pt_regs don't match.
 
+This function has no functionnal purpose, and will get eliminated at
+link time or after init depending on CONFIG_LD_DEAD_CODE_DATA_ELIMINATION
 
-yes - the standard in k3 is to disable the nodes that are'nt needed in
-board.dtsi.
+This commit adds a prototype to fix warning at W=1:
 
-This is different from "disabled by default" approach in DRA7 or OMAP4
-for example.
+  arch/powerpc/kernel/ptrace.c:3339:13: error: no previous prototype for ‘pt_regs_check’ [-Werror=missing-prototypes]
 
+Suggested-by: Christophe Leroy <christophe.leroy@c-s.fr>
+Signed-off-by: Mathieu Malaterre <malat@debian.org>
+---
+ arch/powerpc/kernel/ptrace.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/arch/powerpc/kernel/ptrace.c b/arch/powerpc/kernel/ptrace.c
+index a398999d0770..341c0060b4c8 100644
+--- a/arch/powerpc/kernel/ptrace.c
++++ b/arch/powerpc/kernel/ptrace.c
+@@ -3338,6 +3338,10 @@ void do_syscall_trace_leave(struct pt_regs *regs)
+ 	user_enter();
+ }
+ 
++void __init pt_regs_check(void);
++/* dummy function, its purpose is to break the build if struct pt_regs and
++ * struct user_pt_regs don't match.
++ */
+ void __init pt_regs_check(void)
+ {
+ 	BUILD_BUG_ON(offsetof(struct pt_regs, gpr) !=
 -- 
-Regards,
-Nishanth Menon
+2.19.2
+
