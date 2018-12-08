@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65DCAC64EB1
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 08:41:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA3EAC04EB8
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 08:42:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3448E20868
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 08:41:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3448E20868
+	by mail.kernel.org (Postfix) with ESMTP id 872F220892
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 08:42:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 872F220892
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726362AbeLHIl6 (ORCPT
+        id S1726368AbeLHImK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 8 Dec 2018 03:41:58 -0500
-Received: from mailgw01.mediatek.com ([210.61.82.183]:63787 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726211AbeLHIl6 (ORCPT
+        Sat, 8 Dec 2018 03:42:10 -0500
+Received: from mailgw02.mediatek.com ([210.61.82.184]:60274 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726149AbeLHImK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 8 Dec 2018 03:41:58 -0500
-X-UUID: 295a30747e084767a176675274b82b5f-20181208
-X-UUID: 295a30747e084767a176675274b82b5f-20181208
-Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw01.mediatek.com
+        Sat, 8 Dec 2018 03:42:10 -0500
+X-UUID: f8599a6e82e34e979c77c4f29482cf2d-20181208
+X-UUID: f8599a6e82e34e979c77c4f29482cf2d-20181208
+Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw02.mediatek.com
         (envelope-from <yong.wu@mediatek.com>)
         (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1859802803; Sat, 08 Dec 2018 16:41:51 +0800
+        with ESMTP id 641199871; Sat, 08 Dec 2018 16:42:04 +0800
 Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
- mtkmbs03n1.mediatek.inc (172.21.101.181) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Sat, 8 Dec 2018 16:41:50 +0800
+ mtkmbs03n2.mediatek.inc (172.21.101.182) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Sat, 8 Dec 2018 16:42:03 +0800
 Received: from localhost.localdomain (10.17.3.153) by MTKCAS06.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Sat, 8 Dec 2018 16:41:49 +0800
+ Transport; Sat, 8 Dec 2018 16:42:02 +0800
 From:   Yong Wu <yong.wu@mediatek.com>
 To:     Joerg Roedel <joro@8bytes.org>,
         Matthias Brugger <matthias.bgg@gmail.com>,
@@ -49,75 +49,74 @@ CC:     Tomasz Figa <tfiga@google.com>, Will Deacon <will.deacon@arm.com>,
         <yingjoe.chen@mediatek.com>, <yong.wu@mediatek.com>,
         <youlin.pei@mediatek.com>, Nicolas Boichat <drinkcat@chromium.org>,
         Arvind Yadav <arvind.yadav.cs@gmail.com>
-Subject: [PATCH v4 07/18] iommu/mediatek: Add bclk can be supported optionally
-Date:   Sat, 8 Dec 2018 16:39:20 +0800
-Message-ID: <1544258371-4600-8-git-send-email-yong.wu@mediatek.com>
+Subject: [PATCH v4 08/18] iommu/mediatek: Add larb-id remapped support
+Date:   Sat, 8 Dec 2018 16:39:21 +0800
+Message-ID: <1544258371-4600-9-git-send-email-yong.wu@mediatek.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1544258371-4600-1-git-send-email-yong.wu@mediatek.com>
 References: <1544258371-4600-1-git-send-email-yong.wu@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain
+X-TM-SNTS-SMTP: B2849508C9D441139B34C01F7A651BA1F57369EF02D4B450316A8F5D7F1946582000:8
 X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In some SoCs, M4U doesn't have its "bclk", it will use the EMI
-clock instead which has always been enabled when entering kernel.
+The larb-id may be remapped in the smi-common, this means the
+larb-id reported in the mtk_iommu_isr isn't the real larb-id,
+
+Take mt8183 as a example:
+                       M4U
+                        |
+---------------------------------------------
+|               SMI common                  |
+-0-----7-----5-----6-----1-----2------3-----4- <- Id remapped
+ |     |     |     |     |     |      |     |
+larb0 larb1 IPU0  IPU1 larb4 larb5  larb6  CCU
+disp  vdec  img   cam   venc  img    cam
+As above, larb0 connects with the id 0 in smi-common.
+          larb1 connects with the id 7 in smi-common.
+          ...
+If the larb-id reported in the isr is 7, actually it's larb1(vdec).
+In order to output the right larb-id in the isr, we add a larb-id
+remapping relationship in this patch.
 
 This also is a preparing patch for mt8183.
 
 Signed-off-by: Yong Wu <yong.wu@mediatek.com>
 ---
- drivers/iommu/mtk_iommu.c | 10 +++++++---
- drivers/iommu/mtk_iommu.h |  3 +++
- 2 files changed, 10 insertions(+), 3 deletions(-)
+ drivers/iommu/mtk_iommu.c | 3 +++
+ drivers/iommu/mtk_iommu.h | 4 ++++
+ 2 files changed, 7 insertions(+)
 
 diff --git a/drivers/iommu/mtk_iommu.c b/drivers/iommu/mtk_iommu.c
-index 8eb110e..eda062a 100644
+index eda062a..8ab3b69 100644
 --- a/drivers/iommu/mtk_iommu.c
 +++ b/drivers/iommu/mtk_iommu.c
-@@ -610,9 +610,11 @@ static int mtk_iommu_probe(struct platform_device *pdev)
- 	if (data->irq < 0)
- 		return data->irq;
+@@ -220,6 +220,9 @@ static irqreturn_t mtk_iommu_isr(int irq, void *dev_id)
+ 	fault_larb = F_MMU0_INT_ID_LARB_ID(regval);
+ 	fault_port = F_MMU0_INT_ID_PORT_ID(regval);
  
--	data->bclk = devm_clk_get(dev, "bclk");
--	if (IS_ERR(data->bclk))
--		return PTR_ERR(data->bclk);
-+	if (data->plat_data->has_bclk) {
-+		data->bclk = devm_clk_get(dev, "bclk");
-+		if (IS_ERR(data->bclk))
-+			return PTR_ERR(data->bclk);
-+	}
- 
- 	larb_nr = of_count_phandle_with_args(dev->of_node,
- 					     "mediatek,larbs", NULL);
-@@ -736,11 +738,13 @@ static int __maybe_unused mtk_iommu_resume(struct device *dev)
- static const struct mtk_iommu_plat_data mt2712_data = {
- 	.m4u_plat     = M4U_MT2712,
- 	.has_4gb_mode = true,
-+	.has_bclk     = true,
- };
- 
- static const struct mtk_iommu_plat_data mt8173_data = {
- 	.m4u_plat     = M4U_MT8173,
- 	.has_4gb_mode = true,
-+	.has_bclk     = true,
- };
- 
- static const struct of_device_id mtk_iommu_of_ids[] = {
++	if (data->plat_data->larbid_remap_enable)
++		fault_larb = data->plat_data->larbid_remapped[fault_larb];
++
+ 	if (report_iommu_fault(&dom->domain, data->dev, fault_iova,
+ 			       write ? IOMMU_FAULT_WRITE : IOMMU_FAULT_READ)) {
+ 		dev_err_ratelimited(
 diff --git a/drivers/iommu/mtk_iommu.h b/drivers/iommu/mtk_iommu.h
-index 5890e55..b8749ac 100644
+index b8749ac..3877050 100644
 --- a/drivers/iommu/mtk_iommu.h
 +++ b/drivers/iommu/mtk_iommu.h
-@@ -44,6 +44,9 @@ enum mtk_iommu_plat {
- struct mtk_iommu_plat_data {
- 	enum mtk_iommu_plat m4u_plat;
- 	bool                has_4gb_mode;
+@@ -47,6 +47,10 @@ struct mtk_iommu_plat_data {
+ 
+ 	/* HW will use the EMI clock if there isn't the "bclk". */
+ 	bool                has_bclk;
 +
-+	/* HW will use the EMI clock if there isn't the "bclk". */
-+	bool                has_bclk;
++	/* The larb-id may be remapped in the smi-common. */
++	bool                larbid_remap_enable;
++	unsigned int        larbid_remapped[MTK_LARB_NR_MAX];
  };
  
  struct mtk_iommu_domain;
