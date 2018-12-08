@@ -2,62 +2,63 @@ Return-Path: <SRS0=1bfu=OR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AB69C04EB8
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 685E2C65BAF
 	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 05:41:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C8DF920837
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 05:41:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0CF9120892
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 05:41:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=brauner.io header.i=@brauner.io header.b="LC3y3AYF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C8DF920837
+	dkim=pass (2048-bit key) header.d=brauner.io header.i=@brauner.io header.b="AxJt8ImQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0CF9120892
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=brauner.io
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726203AbeLHFla (ORCPT
+        id S1726219AbeLHFlb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 8 Dec 2018 00:41:30 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:37032 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726176AbeLHFl2 (ORCPT
+        Sat, 8 Dec 2018 00:41:31 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:41341 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726193AbeLHFla (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 8 Dec 2018 00:41:28 -0500
-Received: by mail-pl1-f196.google.com with SMTP id b5so2780023plr.4
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Dec 2018 21:41:28 -0800 (PST)
+        Sat, 8 Dec 2018 00:41:30 -0500
+Received: by mail-pl1-f195.google.com with SMTP id u6so2773963plm.8
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Dec 2018 21:41:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=brauner.io; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=WQAXgi+j/ERE25d+3D2m/8mS9QlI7vr9w7Yoms9bDb4=;
-        b=LC3y3AYFcTOiQocBdci6gOEGXKaYjc9Bcc68w0/+AsWBafy+FJRddw0NE4tXyQNV0x
-         F7devvizFjwo9/PF54MbR6mYYGSPqjaQ5FGVbb45S2nEj/HtumxtKkrx5NjuwOqDwtAz
-         6DIjpvzxJt8GkkcE0L4hP/unaCX4rIyJK8XBHaLyIjkT1jXWS7pz3CSSo6yA9O28mkNS
-         AU+KRkYv1Z1A7r85vmHZcNCwyoIC5EuuiqLGvXaL6+X//u09Y+wPy/NlDTZRf3K/emrz
-         2qpQzZjtVv/yigmqTx45Jcc1hQatUTVK4t3a03r3sQ/vC0tBcGUR8PFz3z+1VG7GuUi6
-         YO3g==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=0wcwV+ADdWYdNgeENO19WNJQovZabc2cDfiUOdCJpn8=;
+        b=AxJt8ImQyT//+l3F1hGfnh/amfcFPr0+4PCpmiSfddGz2oOqhVXUeR+vjUe0RE7Qzp
+         VvIXRBSYWYRi8FJX9BaABI+w792Nk9/MG3tnMB3FBBXy0rGKLUreuzAqpgAefuqCoaU+
+         ABojBN2lYUI8HvoaSJcUyPt/S8QdXrRwT8jSL+i4ptia1GfVQ6gpHPQi6D3mg9bYkojr
+         w2xptyJ+4tBC9GZAr4d35LJh0xtDR8RZC4vpmmDQAbNLqlte/QqIJQCwIgxHxPeb4dPK
+         1CjsSteVxFTyps62NTG0BEXMn1Xe1hBadnaaxXUW8K2KZfqYp7L6pTSkOCgmFDZV0Jy7
+         vRrg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=WQAXgi+j/ERE25d+3D2m/8mS9QlI7vr9w7Yoms9bDb4=;
-        b=MxHBsSMDO1n0qlb40RqbbAllgEUHBWP9HEArMJRdP2v+uvfH7BjIX9hUy/mRTpnfcM
-         P2S+2Lfa9JP1p0+XjhIOpmBIseB3t1FNOC2O5ew/LXkYTxOkD+iuIvhjwUh1dmUEof1J
-         NmnH5Q0AuFV/PJPJtS+nrnrfZ/14+D7Ec9AVL5JUG0QWKbeg3c6VthoZ3DSF0ZGtIqmX
-         ShwnVVLCsEn4/2KxEixXnEQsCnFOLIs8etR0Q2GgIFwEJLx4oERmM2LJ1RAogzzW5U9e
-         JSR7xCeorpzs+JwXpa5GBpcnbrcqGBTAO4pjqdO0M1GPK9QPOt0rSL6DunXSV6sf71/9
-         8gsQ==
-X-Gm-Message-State: AA+aEWYh384VMcp+Eq2x1Jr9ar1FyKNcjsDbAQJSSfDQ4zP72Eyzp5Xt
-        PWV/cgcmw8H5MJjeDPONla5NlJllvCpDMA==
-X-Google-Smtp-Source: AFSGD/XSUtSs19cIsj7SKuPgUFaA8f9DuF4N118pxS9MMwiUgIwj+kptzogx+281nv/UsVkY8Hxiag==
-X-Received: by 2002:a17:902:ba8b:: with SMTP id k11mr4658133pls.177.1544247687538;
-        Fri, 07 Dec 2018 21:41:27 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=0wcwV+ADdWYdNgeENO19WNJQovZabc2cDfiUOdCJpn8=;
+        b=EwYim/2vYHtdDtNSxRIayLWwOpHJIfKZoWCqcxejsnc6o+MKIWuxUpxFegWc3jfBi1
+         5xGFO9WuDksuss4yqRKnNR5K0z0S25NRbOPQI5cKmPvkfl0MGfCHVlFI/2x45Ym7sXAm
+         3PeYh687n5csvhYW2VZepmL4a0/CSSB8zG7aEs01r4uC+BZ8k+GOo8lk+esFyZcPutMO
+         CD8pgulqGJ5ZNbycOhsSe3SlfsDCnbg0fqHayE2QA128CL7bCA/jq+ol4XioktGTywbr
+         6j2f2Vay0tqZvsP2/w2H/+Qx4hKSAIoBNZlyEzF4+FPlURGUDlaUzLKzYerEYQ455GZh
+         riBA==
+X-Gm-Message-State: AA+aEWb5OK3VxCF6Gjm3DEEaumlv/4j7OuseiqDYptm0J4wG1qrRZqm/
+        5chxTlh71gNp61z9Et1YSF8GxZborYz09Q==
+X-Google-Smtp-Source: AFSGD/VC0mBJzcWGniQoyDTCc9cuWFpFfT5kA3b/o+p4IG/F8ZYIjua2KllW2onL7t4ZX/Qd9Nk9vA==
+X-Received: by 2002:a17:902:8e8a:: with SMTP id bg10mr4763095plb.192.1544247688992;
+        Fri, 07 Dec 2018 21:41:28 -0800 (PST)
 Received: from localhost.localdomain ([208.181.63.202])
-        by smtp.gmail.com with ESMTPSA id b10sm8249946pfj.183.2018.12.07.21.41.25
+        by smtp.gmail.com with ESMTPSA id b10sm8249946pfj.183.2018.12.07.21.41.27
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 07 Dec 2018 21:41:26 -0800 (PST)
+        Fri, 07 Dec 2018 21:41:28 -0800 (PST)
 From:   Christian Brauner <christian@brauner.io>
 To:     linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
         luto@kernel.org, arnd@arndb.de, ebiederm@xmission.com,
@@ -67,10 +68,12 @@ Cc:     jannh@google.com, akpm@linux-foundation.org, oleg@redhat.com,
         linux-fsdevel@vger.kernel.org, dancol@google.com,
         timmurray@google.com, fweimer@redhat.com, tglx@linutronix.de,
         x86@kernel.org, Christian Brauner <christian@brauner.io>
-Subject: [PATCH v5 0/1] signaling processes through pidfds 
-Date:   Sat,  8 Dec 2018 06:40:58 +0100
-Message-Id: <20181208054059.19813-1-christian@brauner.io>
+Subject: [PATCH v5 1/1] signal: add pidfd_send_signal() syscall
+Date:   Sat,  8 Dec 2018 06:40:59 +0100
+Message-Id: <20181208054059.19813-2-christian@brauner.io>
 X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20181208054059.19813-1-christian@brauner.io>
+References: <20181208054059.19813-1-christian@brauner.io>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -78,34 +81,242 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hey everyone,
+The kill() syscall operates on process identifiers (pid). After a process
+has exited its pid can be reused by another process. If a caller sends a
+signal to a reused pid it will end up signaling the wrong process. This
+issue has often surfaced and there has been a push to address this problem [1].
 
-This is v5 of this patchset.
-v5 does not introduce any functional changes since none were requested
-or required in the thread. Instead, it focusses on updated documentation
-making it very clear what the intentions are how to extend this syscall.
+This patch uses file descriptors (fd) from proc/<pid> as stable handles on
+struct pid. Even if a pid is recycled the handle will not change. The fd
+can be used to send signals to the process it refers to.
+Thus, the new syscall pidfd_send_signal() is introduced to solve this
+problem. Instead of pids it operates on process fds (pidfd).
 
-Eric, I dragged Serge into this and we went through the mails and tried
-to very thoroughly address your concerns about whether the width of the
-target should depend on flags or file descriptor types. As far as we
-understand from the threads this was your ultimate worry and also the
-reason why you withheld your agreement to the name of the syscall.
-We have outlined how the syscall is intended to be extended and decided
-that flags (e.g. PIDFD_TYPE_TID, PIDFD_TYPE_PGID) are the way to go. In
-line with this we decided to accept "pidfd_" as prefix for the new
-syscall.
-All concerns we could identify and understand we tried to address. I
-hope this will be sufficient for you to get behind the patch.
-The relevant section in the commit message is titled:
+/* prototype and argument /*
+long pidfd_send_signal(int pidfd, int sig, siginfo_t *info, unsigned int flags);
+
+In addition to the pidfd and signal argument it takes an additional
+siginfo_t and flags argument. If the siginfo_t argument is NULL then
+pidfd_send_signal() is equivalent to kill(<positive-pid>, <signal>). If it
+is not NULL pidfd_send_signal() is equivalent to rt_sigqueueinfo().
+The flags argument is added to allow for future extensions of this syscall.
+It currently needs to be passed as 0. Failing to do so will cause EINVAL.
+
+/* pidfd_send_signal() replaces multiple pid-based syscalls */
+The pidfd_send_signal() syscall currently takes on the job of
+rt_sigqueueinfo(2) and parts of the functionality of kill(2), Namely, when a
+positive pid is passed to kill(2). It will however be possible to also
+replace tgkill(2) and rt_tgsigqueueinfo(2) if this syscall is extended.
 
 /* sending signals to threads (tid) and process groups (pgid) */
+Specifically, the pidfd_send_signal() syscall does currently not operate on
+process groups or threads. This is left for future extensions.
+In order to extend the syscall to allow sending signal to threads and
+process groups appropriately named flags (e.g. PIDFD_TYPE_PGID, and
+PIDFD_TYPE_TID) should be added. This implies that the flags argument will
+determine what is signaled and not the file descriptor itself. Put in other
+words, grouping in this api is a property of the flags argument not a
+property of the file descriptor (cf. [13]).
+When appropriate extensions through the flags argument are added then
+pidfd_send_signal() can additionally replace the part of kill(2) which
+operates on process groups as well as the tgkill(2) and
+rt_tgsigqueueinfo(2) syscalls.
+How such an extension could be implemented has been very roughly sketched
+in [14], [15], and [16]. However, this should not be taken as a commitment
+to a particular implementation. There might be better ways to do it.
+Right now this is intentionally left out to keep this patchset as simple as
+possible (cf. [4]). For example, if a pidfd for a tid from
+/proc/<pid>/task/<tid> is passed EOPNOTSUPP will be returned to give
+userspace a way to detect when I add support for signaling to threads (cf. [10]).
 
-Thanks!
-Christian
+/* naming */
+The syscall had various names throughout iterations of this patchset:
+- procfd_signal()
+- procfd_send_signal()
+- taskfd_send_signal()
+In the last round of reviews it was pointed out that given that if the
+flags argument decides the scope of the signal instead of different types
+of fds it might make sense to either settle for "procfd_" or "pidfd_" as
+prefix. The community was willing to accept either (cf. [17] and [18]).
+Given that one developer expressed strong preference for the "pidfd_"
+prefix (cf. [13] and with other developers less opinionated about the name
+we should settle for "pidfd_" to avoid further bikeshedding.
 
-Christian Brauner (1):
-  signal: add pidfd_send_signal() syscall
+The  "_send_signal" suffix was chosen to reflect the fact that the syscall
+takes on the job of multiple syscalls. It is therefore intentional that the
+name is not reminiscent of neither kill(2) nor rt_sigqueueinfo(2). Not the
+fomer because it might imply that pidfd_send_signal() is a replacement for
+kill(2), and not the latter because it is a hassle to remember the correct
+spelling - especially for non-native speakers - and because it is not
+descriptive enough of what the syscall actually does. The name
+"pidfd_send_signal" makes it very clear that its job is to send signals.
 
+/* O_PATH file descriptors */
+pidfds opened as O_PATH fds cannot be used to send signals to a process
+(cf. [2]). Signaling processes through pidfds is the equivalent of writing
+to a file. Thus, this is not an operation that operates "purely at the file
+descriptor level" as required by the open(2) manpage.
+
+/* zombies */
+Zombies can be signaled just as any other process. No special error will be
+reported since a zombie state is an unreliable state (cf. [3]). However,
+this can be added as an extension through the @flags argument if the need
+ever arises.
+
+/* cross-namespace signals */
+The patch currently enforces that the signaler and signalee either are in
+the same pid namespace or that the signaler's pid namespace is an ancestor
+of the signalee's pid namespace. This is done for the sake of simplicity
+and because it is unclear to what values certain members of struct
+siginfo_t would need to be set to (cf. [5], [6]).
+
+/* compat syscalls */
+It became clear that we would like to avoid adding compat syscalls
+(cf. [7]).  The compat syscall handling is now done in kernel/signal.c
+itself by adding __copy_siginfo_from_user_generic() which lets us avoid
+compat syscalls (cf. [8]). It should be noted that the addition of
+__copy_siginfo_from_user_any() is caused by a bug in the original
+implementation of rt_sigqueueinfo(2) (cf. 12).
+With upcoming rework for syscall handling things might improve
+significantly (cf. [11]) and __copy_siginfo_from_user_any() will not gain
+any additional callers.
+
+/* testing */
+This patch was tested on x64 and x86.
+
+/* userspace usage */
+An asciinema recording for the basic functionality can be found under [9].
+With this patch a process can be killed via:
+
+ #define _GNU_SOURCE
+ #include <errno.h>
+ #include <fcntl.h>
+ #include <signal.h>
+ #include <stdio.h>
+ #include <stdlib.h>
+ #include <string.h>
+ #include <sys/stat.h>
+ #include <sys/syscall.h>
+ #include <sys/types.h>
+ #include <unistd.h>
+
+ static inline int do_pidfd_send_signal(int pidfd, int sig, siginfo_t *info,
+                                         unsigned int flags)
+ {
+ #ifdef __NR_pidfd_send_signal
+         return syscall(__NR_pidfd_send_signal, pidfd, sig, info, flags);
+ #else
+         return -ENOSYS;
+ #endif
+ }
+
+ int main(int argc, char *argv[])
+ {
+         int fd, ret, saved_errno, sig;
+
+         if (argc < 3)
+                 exit(EXIT_FAILURE);
+
+         fd = open(argv[1], O_DIRECTORY | O_CLOEXEC);
+         if (fd < 0) {
+                 printf("%s - Failed to open \"%s\"\n", strerror(errno), argv[1]);
+                 exit(EXIT_FAILURE);
+         }
+
+         sig = atoi(argv[2]);
+
+         printf("Sending signal %d to process %s\n", sig, argv[1]);
+         ret = do_pidfd_send_signal(fd, sig, NULL, 0);
+
+         saved_errno = errno;
+         close(fd);
+         errno = saved_errno;
+
+         if (ret < 0) {
+                 printf("%s - Failed to send signal %d to process %s\n",
+                        strerror(errno), sig, argv[1]);
+                 exit(EXIT_FAILURE);
+         }
+
+         exit(EXIT_SUCCESS);
+ }
+
+[1]:  https://lore.kernel.org/lkml/20181029221037.87724-1-dancol@google.com/
+[2]:  https://lore.kernel.org/lkml/874lbtjvtd.fsf@oldenburg2.str.redhat.com/
+[3]:  https://lore.kernel.org/lkml/20181204132604.aspfupwjgjx6fhva@brauner.io/
+[4]:  https://lore.kernel.org/lkml/20181203180224.fkvw4kajtbvru2ku@brauner.io/
+[5]:  https://lore.kernel.org/lkml/20181121213946.GA10795@mail.hallyn.com/
+[6]:  https://lore.kernel.org/lkml/20181120103111.etlqp7zop34v6nv4@brauner.io/
+[7]:  https://lore.kernel.org/lkml/36323361-90BD-41AF-AB5B-EE0D7BA02C21@amacapital.net/
+[8]:  https://lore.kernel.org/lkml/87tvjxp8pc.fsf@xmission.com/
+[9]:  https://asciinema.org/a/IQjuCHew6bnq1cr78yuMv16cy
+[10]: https://lore.kernel.org/lkml/20181203180224.fkvw4kajtbvru2ku@brauner.io/
+[11]: https://lore.kernel.org/lkml/F53D6D38-3521-4C20-9034-5AF447DF62FF@amacapital.net/
+[12]: https://lore.kernel.org/lkml/87zhtjn8ck.fsf@xmission.com/
+[13]: https://lore.kernel.org/lkml/871s6u9z6u.fsf@xmission.com/
+[14]: https://lore.kernel.org/lkml/20181206231742.xxi4ghn24z4h2qki@brauner.io/
+[15]: https://lore.kernel.org/lkml/20181207003124.GA11160@mail.hallyn.com/
+[16]: https://lore.kernel.org/lkml/20181207015423.4miorx43l3qhppfz@brauner.io/
+[17]: https://lore.kernel.org/lkml/CAGXu5jL8PciZAXvOvCeCU3wKUEB_dU-O3q0tDw4uB_ojMvDEew@mail.gmail.com/
+[18]: https://lore.kernel.org/lkml/20181206222746.GB9224@mail.hallyn.com/
+
+Cc: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: Jann Horn <jannh@google.com>
+Cc: Andy Lutomirsky <luto@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Oleg Nesterov <oleg@redhat.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Florian Weimer <fweimer@redhat.com>
+Signed-off-by: Christian Brauner <christian@brauner.io>
+Reviewed-by: Kees Cook <keescook@chromium.org>
+Acked-by: Arnd Bergmann <arnd@arndb.de>
+Acked-by: Serge Hallyn <serge@hallyn.com>
+Acked-by: Aleksa Sarai <cyphar@cyphar.com>
+---
+Changelog:
+v5:
+- s/may_signal_taskfd/access_taskfd_pidns/g
+- make it clear that process grouping is a property of the @flags argument
+  Eric has argued that he would like to know when we add thread and process
+  group signal support whether grouping will be a property of the file
+  descriptor or the flag argument and he would oppose this until a
+  commitment has been made. It seems that the cleanest strategy is to make
+  grouping a property of the @flags argument.
+  He also argued that in this case the prefix of the syscall should be
+  "pidfd_" (cf. https://lore.kernel.org/lkml/871s6u9z6u.fsf@xmission.com/).
+- use "pidfd_" as prefix for the syscall since grouping will be a property
+  of the @flags argument
+- substantial rewrite of the commit message to reflect the discussion
+v4:
+- updated asciinema to use "taskfd_" prefix
+- s/procfd_send_signal/taskfd_send_signal/g
+- s/proc_is_tgid_procfd/tgid_taskfd_to_pid/b
+- s/proc_is_tid_procfd/tid_taskfd_to_pid/b
+- s/__copy_siginfo_from_user_generic/__copy_siginfo_from_user_any/g
+- make it clear that __copy_siginfo_from_user_any() is a workaround caused
+  by a bug in the original implementation of rt_sigqueueinfo()
+- when spoofing signals turn them into regular kill signals if si_code is
+  set to SI_USER
+- make proc_is_t{g}id_procfd() return struct pid to allow proc_pid() to
+  stay private to fs/proc/
+v3:
+- add __copy_siginfo_from_user_generic() to avoid adding compat syscalls
+- s/procfd_signal/procfd_send_signal/g
+- change type of flags argument from int to unsigned int
+- add comment about what happens to zombies
+- add proc_is_tid_procfd()
+- return EOPNOTSUPP when /proc/<pid>/task/<tid> fd is passed so userspace
+  has a way of knowing that tidfds are not supported currently.
+v2:
+- define __NR_procfd_signal in unistd.h
+- wire up compat syscall
+- s/proc_is_procfd/proc_is_tgid_procfd/g
+- provide stubs when CONFIG_PROC_FS=n
+- move proc_pid() to linux/proc_fs.h header
+- use proc_pid() to grab struct pid from /proc/<pid> fd
+v1:
+- patch introduced
+---
  arch/x86/entry/syscalls/syscall_32.tbl |   1 +
  arch/x86/entry/syscalls/syscall_64.tbl |   1 +
  fs/proc/base.c                         |  20 +++-
@@ -115,6 +326,304 @@ Christian Brauner (1):
  kernel/signal.c                        | 141 +++++++++++++++++++++++--
  7 files changed, 173 insertions(+), 9 deletions(-)
 
+diff --git a/arch/x86/entry/syscalls/syscall_32.tbl b/arch/x86/entry/syscalls/syscall_32.tbl
+index 3cf7b533b3d1..6804c1e84b36 100644
+--- a/arch/x86/entry/syscalls/syscall_32.tbl
++++ b/arch/x86/entry/syscalls/syscall_32.tbl
+@@ -398,3 +398,4 @@
+ 384	i386	arch_prctl		sys_arch_prctl			__ia32_compat_sys_arch_prctl
+ 385	i386	io_pgetevents		sys_io_pgetevents		__ia32_compat_sys_io_pgetevents
+ 386	i386	rseq			sys_rseq			__ia32_sys_rseq
++387	i386	pidfd_send_signal	sys_pidfd_send_signal		__ia32_sys_pidfd_send_signal
+diff --git a/arch/x86/entry/syscalls/syscall_64.tbl b/arch/x86/entry/syscalls/syscall_64.tbl
+index f0b1709a5ffb..aa4b858fa0f1 100644
+--- a/arch/x86/entry/syscalls/syscall_64.tbl
++++ b/arch/x86/entry/syscalls/syscall_64.tbl
+@@ -343,6 +343,7 @@
+ 332	common	statx			__x64_sys_statx
+ 333	common	io_pgetevents		__x64_sys_io_pgetevents
+ 334	common	rseq			__x64_sys_rseq
++335	common	pidfd_send_signal	__x64_sys_pidfd_send_signal
+ 
+ #
+ # x32-specific system call numbers start at 512 to avoid cache impact
+diff --git a/fs/proc/base.c b/fs/proc/base.c
+index ce3465479447..bf680b7b603a 100644
+--- a/fs/proc/base.c
++++ b/fs/proc/base.c
+@@ -716,8 +716,6 @@ static int proc_pid_permission(struct inode *inode, int mask)
+ 	return generic_permission(inode, mask);
+ }
+ 
+-
+-
+ static const struct inode_operations proc_def_inode_operations = {
+ 	.setattr	= proc_setattr,
+ };
+@@ -3038,6 +3036,15 @@ static const struct file_operations proc_tgid_base_operations = {
+ 	.llseek		= generic_file_llseek,
+ };
+ 
++struct pid *tgid_pidfd_to_pid(const struct file *file)
++{
++	if (!d_is_dir(file->f_path.dentry) ||
++	    (file->f_op != &proc_tgid_base_operations))
++		return ERR_PTR(-EBADF);
++
++	return proc_pid(file_inode(file));
++}
++
+ static struct dentry *proc_tgid_base_lookup(struct inode *dir, struct dentry *dentry, unsigned int flags)
+ {
+ 	return proc_pident_lookup(dir, dentry,
+@@ -3422,6 +3429,15 @@ static const struct file_operations proc_tid_base_operations = {
+ 	.llseek		= generic_file_llseek,
+ };
+ 
++struct pid *tid_pidfd_to_pid(const struct file *file)
++{
++	if (!d_is_dir(file->f_path.dentry) ||
++	    (file->f_op != &proc_tid_base_operations))
++		return ERR_PTR(-EBADF);
++
++	return proc_pid(file_inode(file));
++}
++
+ static const struct inode_operations proc_tid_base_inode_operations = {
+ 	.lookup		= proc_tid_base_lookup,
+ 	.getattr	= pid_getattr,
+diff --git a/include/linux/proc_fs.h b/include/linux/proc_fs.h
+index d0e1f1522a78..eb150e5c0ab8 100644
+--- a/include/linux/proc_fs.h
++++ b/include/linux/proc_fs.h
+@@ -73,6 +73,8 @@ struct proc_dir_entry *proc_create_net_single_write(const char *name, umode_t mo
+ 						    int (*show)(struct seq_file *, void *),
+ 						    proc_write_t write,
+ 						    void *data);
++extern struct pid *tgid_pidfd_to_pid(const struct file *file);
++extern struct pid *tid_pidfd_to_pid(const struct file *file);
+ 
+ #else /* CONFIG_PROC_FS */
+ 
+@@ -114,6 +116,16 @@ static inline int remove_proc_subtree(const char *name, struct proc_dir_entry *p
+ #define proc_create_net(name, mode, parent, state_size, ops) ({NULL;})
+ #define proc_create_net_single(name, mode, parent, show, data) ({NULL;})
+ 
++static inline struct pid *tgid_pidfd_to_pid(const struct file *file)
++{
++	return ERR_PTR(-EBADF);
++}
++
++static inline struct pid *tid_pidfd_to_pid(const struct file *file)
++{
++	return ERR_PTR(-EBADF);
++}
++
+ #endif /* CONFIG_PROC_FS */
+ 
+ struct net;
+diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
+index 2ac3d13a915b..fd85b9045a9f 100644
+--- a/include/linux/syscalls.h
++++ b/include/linux/syscalls.h
+@@ -907,6 +907,9 @@ asmlinkage long sys_statx(int dfd, const char __user *path, unsigned flags,
+ 			  unsigned mask, struct statx __user *buffer);
+ asmlinkage long sys_rseq(struct rseq __user *rseq, uint32_t rseq_len,
+ 			 int flags, uint32_t sig);
++asmlinkage long sys_pidfd_send_signal(int pidfd, int sig,
++				       siginfo_t __user *info,
++				       unsigned int flags);
+ 
+ /*
+  * Architecture-specific system calls
+diff --git a/include/uapi/asm-generic/unistd.h b/include/uapi/asm-generic/unistd.h
+index 538546edbfbd..0822abc5927a 100644
+--- a/include/uapi/asm-generic/unistd.h
++++ b/include/uapi/asm-generic/unistd.h
+@@ -738,9 +738,11 @@ __SYSCALL(__NR_statx,     sys_statx)
+ __SC_COMP(__NR_io_pgetevents, sys_io_pgetevents, compat_sys_io_pgetevents)
+ #define __NR_rseq 293
+ __SYSCALL(__NR_rseq, sys_rseq)
++#define __NR_pidfd_send_signal 294
++__SYSCALL(__NR_pidfd_send_signal, sys_pidfd_send_signal)
+ 
+ #undef __NR_syscalls
+-#define __NR_syscalls 294
++#define __NR_syscalls 295
+ 
+ /*
+  * 32 bit systems traditionally used different
+diff --git a/kernel/signal.c b/kernel/signal.c
+index 9a32bc2088c9..3c83d3a5c7c5 100644
+--- a/kernel/signal.c
++++ b/kernel/signal.c
+@@ -19,7 +19,9 @@
+ #include <linux/sched/task.h>
+ #include <linux/sched/task_stack.h>
+ #include <linux/sched/cputime.h>
++#include <linux/file.h>
+ #include <linux/fs.h>
++#include <linux/proc_fs.h>
+ #include <linux/tty.h>
+ #include <linux/binfmts.h>
+ #include <linux/coredump.h>
+@@ -3286,6 +3288,16 @@ COMPAT_SYSCALL_DEFINE4(rt_sigtimedwait, compat_sigset_t __user *, uthese,
+ }
+ #endif
+ 
++static inline void prepare_kill_siginfo(int sig, struct kernel_siginfo *info)
++{
++	clear_siginfo(info);
++	info->si_signo = sig;
++	info->si_errno = 0;
++	info->si_code = SI_USER;
++	info->si_pid = task_tgid_vnr(current);
++	info->si_uid = from_kuid_munged(current_user_ns(), current_uid());
++}
++
+ /**
+  *  sys_kill - send a signal to a process
+  *  @pid: the PID of the process
+@@ -3295,16 +3307,133 @@ SYSCALL_DEFINE2(kill, pid_t, pid, int, sig)
+ {
+ 	struct kernel_siginfo info;
+ 
+-	clear_siginfo(&info);
+-	info.si_signo = sig;
+-	info.si_errno = 0;
+-	info.si_code = SI_USER;
+-	info.si_pid = task_tgid_vnr(current);
+-	info.si_uid = from_kuid_munged(current_user_ns(), current_uid());
++	prepare_kill_siginfo(sig, &info);
+ 
+ 	return kill_something_info(sig, &info, pid);
+ }
+ 
++/*
++ * Verify that the signaler and signalee either are in the same pid namespace
++ * or that the signaler's pid namespace is an ancestor of the signalee's pid
++ * namespace.
++ */
++static bool access_pidfd_pidns(struct pid *pid)
++{
++	struct pid_namespace *active = task_active_pid_ns(current);
++	struct pid_namespace *p = ns_of_pid(pid);
++
++	for (;;) {
++		if (!p)
++			return false;
++		if (p == active)
++			break;
++		p = p->parent;
++	}
++
++	return true;
++}
++
++static int copy_siginfo_from_user_any(kernel_siginfo_t *kinfo, siginfo_t *info)
++{
++#ifdef CONFIG_COMPAT
++	/*
++	 * Avoid hooking up compat syscalls and instead handle necessary
++	 * conversions here. Note, this is a stop-gap measure and should not be
++	 * considered a generic solution.
++	 */
++	if (in_compat_syscall())
++		return copy_siginfo_from_user32(
++			kinfo, (struct compat_siginfo __user *)info);
++#endif
++	return copy_siginfo_from_user(kinfo, info);
++}
++
++/**
++ * sys_pidfd_send_signal - send a signal to a process through a task file
++ *                          descriptor
++ * @pidfd:  the file descriptor of the process
++ * @sig:    signal to be sent
++ * @info:   the signal info
++ * @flags:  future flags to be passed
++ *
++ * The syscall currently only signals via PIDTYPE_PID which covers
++ * kill(<positive-pid>, <signal>. It does not signal threads or process
++ * groups.
++ * In order to extend the syscall to threads and process groups the @flags
++ * argument should be used. In essence, the @flags argument will determine
++ * what is signaled and not the file descriptor itself. Put in other words,
++ * grouping is a property of the flags argument not a property of the file
++ * descriptor.
++ *
++ * Return: 0 on success, negative errno on failure
++ */
++SYSCALL_DEFINE4(pidfd_send_signal, int, pidfd, int, sig,
++		siginfo_t __user *, info, unsigned int, flags)
++{
++	int ret;
++	struct fd f;
++	struct pid *pid;
++	kernel_siginfo_t kinfo;
++
++	/* Enforce flags be set to 0 until we add an extension. */
++	if (flags)
++		return -EINVAL;
++
++	f = fdget_raw(pidfd);
++	if (!f.file)
++		return -EBADF;
++
++	pid = tid_pidfd_to_pid(f.file);
++	if (!IS_ERR(pid)) {
++		/*
++		 * Give userspace a way to detect /proc/<pid>/task/<tid>
++		 * support when we add it.
++		 */
++		ret = -EOPNOTSUPP;
++		goto err;
++	}
++
++	/* Is this a pidfd? */
++	pid = tgid_pidfd_to_pid(f.file);
++	if (IS_ERR(pid)) {
++		ret = PTR_ERR(pid);
++		goto err;
++	}
++
++	ret = -EINVAL;
++	if (!access_pidfd_pidns(pid))
++		goto err;
++
++	if (info) {
++		ret = copy_siginfo_from_user_any(&kinfo, info);
++		if (unlikely(ret))
++			goto err;
++
++		ret = -EINVAL;
++		if (unlikely(sig != kinfo.si_signo))
++			goto err;
++
++		if ((task_pid(current) != pid) &&
++		    (kinfo.si_code >= 0 || kinfo.si_code == SI_TKILL)) {
++			/* Only allow sending arbitrary signals to yourself. */
++			ret = -EPERM;
++			if (kinfo.si_code != SI_USER)
++				goto err;
++
++			/* Turn this into a regular kill signal. */
++			prepare_kill_siginfo(sig, &kinfo);
++		}
++	} else {
++		prepare_kill_siginfo(sig, &kinfo);
++	}
++
++	ret = kill_pid_info(sig, &kinfo, pid);
++
++err:
++	fdput(f);
++	return ret;
++}
++
+ static int
+ do_send_specific(pid_t tgid, pid_t pid, int sig, struct kernel_siginfo *info)
+ {
 -- 
 2.19.1
 
