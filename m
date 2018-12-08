@@ -2,65 +2,64 @@ Return-Path: <SRS0=1bfu=OR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 630ABC04EB8
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 17:17:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B456EC04EB8
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 17:17:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1289020868
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 17:17:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1289020868
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 838502083D
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 17:17:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 838502083D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726189AbeLHRRV (ORCPT
+        id S1726214AbeLHRRs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 8 Dec 2018 12:17:21 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:38761 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726149AbeLHRRV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 8 Dec 2018 12:17:21 -0500
-Received: by mail-lj1-f195.google.com with SMTP id c19-v6so6148477lja.5
-        for <linux-kernel@vger.kernel.org>; Sat, 08 Dec 2018 09:17:20 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=pdAsGr0Y0KeFZkLQHQrrYZiVyn82yoSfEfPbtB32sEk=;
-        b=k1acJ6D3sYbVy5xauuMk2gPKeooKu9TCV63xvdZWSFAJYuiSSMy7rVs8IEVDi7W4zH
-         qcHl6EJy+JdmHfTP9geV0j/eDHdwLTAJey6Bx0K8TSfetecZ5Sdyc3BNnHklbYTgUFM0
-         K6xH/n5ScOkYp27EePqKtRC/RvNGRaT7eRFtptPmMDaNtB6RlrSs3fPDHYcCSF+c/F1L
-         e/rHzgkKh6nugzjL8HBD6sRuMNJavJjEuZLI2xbvwEyLUg+2C2GOdnGf4nzWGk/VomRK
-         Rn9xGW/Bakz8jMdjjF9roXHevYYPC5LSsviX7sBHH9jyAzxEToCaws9qztDEBffdid0i
-         e54w==
-X-Gm-Message-State: AA+aEWZNBhKLBZtSA70b4exrnCxOWmlMESnB6eJMMDJvhbj6LsUm4FeC
-        8Zw11Www6vbC7FrI+VjqDzq1NYZmNkvecOY1XQpOWgFx
-X-Google-Smtp-Source: AFSGD/VndlWuH1c966alRG9QEsksc2eJ7Xgiykj6GL/bnBZ6JEkSjWqAFO2PPHU+7UKTe2egH66GHFjO9RtHJmIHre4=
-X-Received: by 2002:a2e:9017:: with SMTP id h23-v6mr3201946ljg.71.1544289439269;
- Sat, 08 Dec 2018 09:17:19 -0800 (PST)
+        Sat, 8 Dec 2018 12:17:48 -0500
+Received: from verein.lst.de ([213.95.11.211]:40861 "EHLO newverein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726149AbeLHRRs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 8 Dec 2018 12:17:48 -0500
+Received: by newverein.lst.de (Postfix, from userid 2407)
+        id 42CC268AA6; Sat,  8 Dec 2018 18:17:46 +0100 (CET)
+Date:   Sat, 8 Dec 2018 18:17:46 +0100
+From:   Christoph Hellwig <hch@lst.de>
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc:     Rui Salvaterra <rsalvaterra@gmail.com>, hch@lst.de,
+        linux-mm@kvack.org, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: use generic DMA mapping code in powerpc V4
+Message-ID: <20181208171746.GB15228@lst.de>
+References: <CALjTZvZzHSZ=s0W0Pd-MVd7OA0hYxu0LzsZ+GxYybXKoUQQR6Q@mail.gmail.com> <20181130103222.GA23393@lst.de> <CALjTZvZsk0qA+Yxu7S+8pfa5y6rpihnThrHiAKkZMWsdyC-tVg@mail.gmail.com> <42b1408cafe77ebac1b1ad909db237fe34e4d177.camel@kernel.crashing.org>
 MIME-Version: 1.0
-References: <20181207013410.7050-1-mcroce@redhat.com>
-In-Reply-To: <20181207013410.7050-1-mcroce@redhat.com>
-From:   Matteo Croce <mcroce@redhat.com>
-Date:   Sat, 8 Dec 2018 17:16:42 +0000
-Message-ID: <CAGnkfhwTEmcPzi_6-N=ALoaD8u6kmsdSZbXDP1o5nMUpUY3z-Q@mail.gmail.com>
-Subject: Re: [PATCH] vfat: don't read garbage after last dirent
-To:     OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
-Cc:     linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <42b1408cafe77ebac1b1ad909db237fe34e4d177.camel@kernel.crashing.org>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 7, 2018 at 1:34 AM Matteo Croce <mcroce@redhat.com> wrote:
->     the rest of the entries in this directory do notneed to be examined
+On Sun, Dec 02, 2018 at 05:11:02PM +1100, Benjamin Herrenschmidt wrote:
+> Talking of which ... Christoph, not sure if we can do something about
+> this at the DMA API level or keep hacks but some adapters such as the
+> nVidia GPUs have a HW hack we can use to work around their limitations
+> in that case.
+> 
+> They have a register that can program a fixed value for the top bits
+> that they don't support.
+> 
+> This works fine for any linear mapping with an offset, provided they
+> can program the offset in that register and they have enough DMA range
+> to cover all memory from that offset.
+> 
+> I can probably get the info about this from them so we can exploit it
+> in nouveau.
 
-I made a small typo, it should be "do not need"
-
-Regards,
--- 
-Matteo Croce
-per aspera ad upstream
+I think we can expose the direct mapping offset if people care enough,
+we just have to be very careful designing the API.  I'll happily leave
+that to those that actually want to use it, but I'll gladly help
+reviewing it.
