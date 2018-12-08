@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDEA0C04EB8
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 08:43:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92DA3C64EB1
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 08:43:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AADEF20868
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 08:43:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AADEF20868
+	by mail.kernel.org (Postfix) with ESMTP id 59CDE20868
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 08:43:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 59CDE20868
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726411AbeLHInL (ORCPT
+        id S1726333AbeLHInf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 8 Dec 2018 03:43:11 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:20190 "EHLO
+        Sat, 8 Dec 2018 03:43:35 -0500
+Received: from mailgw02.mediatek.com ([210.61.82.184]:5430 "EHLO
         mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726132AbeLHInL (ORCPT
+        with ESMTP id S1726124AbeLHInf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 8 Dec 2018 03:43:11 -0500
-X-UUID: 32a3242e32554dbf9b91094c80a02330-20181208
-X-UUID: 32a3242e32554dbf9b91094c80a02330-20181208
-Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw02.mediatek.com
+        Sat, 8 Dec 2018 03:43:35 -0500
+X-UUID: 0dab31fd19b742cfb6223856853068d2-20181208
+X-UUID: 0dab31fd19b742cfb6223856853068d2-20181208
+Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw02.mediatek.com
         (envelope-from <yong.wu@mediatek.com>)
         (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 472357828; Sat, 08 Dec 2018 16:43:07 +0800
+        with ESMTP id 1939913552; Sat, 08 Dec 2018 16:43:27 +0800
 Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
- mtkmbs03n1.mediatek.inc (172.21.101.181) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Sat, 8 Dec 2018 16:43:06 +0800
+ mtkmbs01n1.mediatek.inc (172.21.101.68) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Sat, 8 Dec 2018 16:43:26 +0800
 Received: from localhost.localdomain (10.17.3.153) by MTKCAS06.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Sat, 8 Dec 2018 16:43:04 +0800
+ Transport; Sat, 8 Dec 2018 16:43:19 +0800
 From:   Yong Wu <yong.wu@mediatek.com>
 To:     Joerg Roedel <joro@8bytes.org>,
         Matthias Brugger <matthias.bgg@gmail.com>,
@@ -49,9 +49,9 @@ CC:     Tomasz Figa <tfiga@google.com>, Will Deacon <will.deacon@arm.com>,
         <yingjoe.chen@mediatek.com>, <yong.wu@mediatek.com>,
         <youlin.pei@mediatek.com>, Nicolas Boichat <drinkcat@chromium.org>,
         Arvind Yadav <arvind.yadav.cs@gmail.com>
-Subject: [PATCH v4 13/18] memory: mtk-smi: Add bus_sel for mt8183
-Date:   Sat, 8 Dec 2018 16:39:26 +0800
-Message-ID: <1544258371-4600-14-git-send-email-yong.wu@mediatek.com>
+Subject: [PATCH v4 14/18] iommu/mediatek: Fix VLD_PA_RANGE register backup when suspend
+Date:   Sat, 8 Dec 2018 16:39:27 +0800
+Message-ID: <1544258371-4600-15-git-send-email-yong.wu@mediatek.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1544258371-4600-1-git-send-email-yong.wu@mediatek.com>
 References: <1544258371-4600-1-git-send-email-yong.wu@mediatek.com>
@@ -63,96 +63,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There are 2 mmu cells in a M4U HW. we could adjust some larbs entering
-mmu0 or mmu1 to balance the bandwidth via the smi-common register
-SMI_BUS_SEL(0x220)(Each larb occupy 2 bits).
+The register VLD_PA_RNG(0x118) was forgot to backup while adding 4GB
+mode support for mt2712. this patch add it.
 
-In mt8183, For better performance, we switch larb1/2/5/7 to enter
-mmu1 while the others still keep enter mmu0.
-
-In mt8173 and mt2712, we don't get the performance issue,
-Keep its default value(0x0), that means all the larbs enter mmu0.
-
+Fixes: 30e2fccf9512 ("iommu/mediatek: Enlarge the validate PA range
+for 4GB mode")
 Signed-off-by: Yong Wu <yong.wu@mediatek.com>
 ---
- drivers/memory/mtk-smi.c | 22 ++++++++++++++++++++--
- 1 file changed, 20 insertions(+), 2 deletions(-)
+ drivers/iommu/mtk_iommu.c | 2 ++
+ drivers/iommu/mtk_iommu.h | 1 +
+ 2 files changed, 3 insertions(+)
 
-diff --git a/drivers/memory/mtk-smi.c b/drivers/memory/mtk-smi.c
-index ee6165e..88eb61a 100644
---- a/drivers/memory/mtk-smi.c
-+++ b/drivers/memory/mtk-smi.c
-@@ -49,6 +49,12 @@
- #define SMI_LARB_NONSEC_CON(id)	(0x380 + ((id) * 4))
- #define F_MMU_EN		BIT(0)
- 
-+/* SMI COMMON */
-+#define SMI_BUS_SEL			0x220
-+#define SMI_BUS_LARB_SHIFT(larbid)	((larbid) << 1)
-+/* All are MMU0 defaultly. Only specialize mmu1 here. */
-+#define F_MMU1_LARB(larbid)		(0x1 << SMI_BUS_LARB_SHIFT(larbid))
-+
- enum mtk_smi_gen {
- 	MTK_SMI_GEN1,
- 	MTK_SMI_GEN2
-@@ -57,6 +63,7 @@ enum mtk_smi_gen {
- struct mtk_smi_common_plat {
- 	enum mtk_smi_gen gen;
- 	bool             has_gals;
-+	u32              bus_sel; /* Balance some larbs to enter mmu0 or mmu1 */
- };
- 
- struct mtk_smi_larb_gen {
-@@ -72,8 +79,8 @@ struct mtk_smi {
- 	struct clk			*clk_apb, *clk_smi;
- 	struct clk			*clk_gals0, *clk_gals1;
- 	struct clk			*clk_async; /*only needed by mt2701*/
--	void __iomem			*smi_ao_base;
--
-+	void __iomem			*smi_ao_base; /* only for gen1 */
-+	void __iomem			*base;	      /* only for gen2 */
- 	const struct mtk_smi_common_plat *plat;
- };
- 
-@@ -409,6 +416,8 @@ static int __maybe_unused mtk_smi_larb_suspend(struct device *dev)
- static const struct mtk_smi_common_plat mtk_smi_common_mt8183 = {
- 	.gen      = MTK_SMI_GEN2,
- 	.has_gals = true,
-+	.bus_sel  = F_MMU1_LARB(1) | F_MMU1_LARB(2) | F_MMU1_LARB(5) |
-+		    F_MMU1_LARB(7),
- };
- 
- static const struct of_device_id mtk_smi_common_of_ids[] = {
-@@ -481,6 +490,11 @@ static int mtk_smi_common_probe(struct platform_device *pdev)
- 		ret = clk_prepare_enable(common->clk_async);
- 		if (ret)
- 			return ret;
-+	} else {
-+		res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+		common->base = devm_ioremap_resource(dev, res);
-+		if (IS_ERR(common->base))
-+			return PTR_ERR(common->base);
- 	}
- 	pm_runtime_enable(dev);
- 	platform_set_drvdata(pdev, common);
-@@ -496,6 +510,7 @@ static int mtk_smi_common_remove(struct platform_device *pdev)
- static int __maybe_unused mtk_smi_common_resume(struct device *dev)
- {
- 	struct mtk_smi *common = dev_get_drvdata(dev);
-+	u32 bus_sel = common->plat->bus_sel;
- 	int ret;
- 
- 	ret = mtk_smi_clk_enable(common);
-@@ -503,6 +518,9 @@ static int __maybe_unused mtk_smi_common_resume(struct device *dev)
- 		dev_err(common->dev, "Failed to enable clock(%d).\n", ret);
- 		return ret;
- 	}
-+
-+	if (common->plat->gen == MTK_SMI_GEN2 && bus_sel)
-+		writel(bus_sel, common->base + SMI_BUS_SEL);
+diff --git a/drivers/iommu/mtk_iommu.c b/drivers/iommu/mtk_iommu.c
+index 1a87a1d..c3b4325 100644
+--- a/drivers/iommu/mtk_iommu.c
++++ b/drivers/iommu/mtk_iommu.c
+@@ -721,6 +721,7 @@ static int __maybe_unused mtk_iommu_suspend(struct device *dev)
+ 	reg->int_control0 = readl_relaxed(base + REG_MMU_INT_CONTROL0);
+ 	reg->int_main_control = readl_relaxed(base + REG_MMU_INT_MAIN_CONTROL);
+ 	reg->ivrp_paddr = readl_relaxed(base + REG_MMU_IVRP_PADDR);
++	reg->vld_pa_range = readl_relaxed(base + REG_MMU_VLD_PA_RNG);
+ 	clk_disable_unprepare(data->bclk);
  	return 0;
  }
+@@ -745,6 +746,7 @@ static int __maybe_unused mtk_iommu_resume(struct device *dev)
+ 	writel_relaxed(reg->int_control0, base + REG_MMU_INT_CONTROL0);
+ 	writel_relaxed(reg->int_main_control, base + REG_MMU_INT_MAIN_CONTROL);
+ 	writel_relaxed(reg->ivrp_paddr, base + REG_MMU_IVRP_PADDR);
++	writel_relaxed(reg->vld_pa_range, base + REG_MMU_VLD_PA_RNG);
+ 	if (m4u_dom)
+ 		writel(m4u_dom->cfg.arm_v7s_cfg.ttbr[0] & MMU_PT_ADDR_MASK,
+ 		       base + REG_MMU_PT_BASE_ADDR);
+diff --git a/drivers/iommu/mtk_iommu.h b/drivers/iommu/mtk_iommu.h
+index 6385dec..17996e0 100644
+--- a/drivers/iommu/mtk_iommu.h
++++ b/drivers/iommu/mtk_iommu.h
+@@ -33,6 +33,7 @@ struct mtk_iommu_suspend_reg {
+ 	u32				int_control0;
+ 	u32				int_main_control;
+ 	u32				ivrp_paddr;
++	u32				vld_pa_range;
+ };
  
+ enum mtk_iommu_plat {
 -- 
 1.9.1
 
