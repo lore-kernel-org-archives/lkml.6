@@ -2,228 +2,125 @@ Return-Path: <SRS0=1bfu=OR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-5.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E232AC04EB8
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 11:02:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 518AFC65BAF
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 11:05:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 86D3020868
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 11:02:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DLDGerE+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 86D3020868
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 126D420892
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 11:05:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544267140;
+	bh=5wbzCEyxCXKgx7HJSF8HM5pU4xO7wYMTxM5OA7Dntzw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
+	b=WqYxd0CgpVUz2dbPHgxhMy5l5POWu9AlIUSKe3V6JX8T6PF+6fe9KVnFSeDH3dt+H
+	 Hn3vAJ4NcbF9CBr9ig5XB6TvnqsfxB7WDwYl5rG39bcm3E5uhdsGObHj25vbwbSJ4M
+	 L0uT4RW14NjLEzMgxj+VxMGPMFoGomtxVQqXlpfk=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 126D420892
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726178AbeLHLCQ (ORCPT
+        id S1726177AbeLHLFj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 8 Dec 2018 06:02:16 -0500
-Received: from mail-it1-f196.google.com ([209.85.166.196]:35777 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726111AbeLHLCP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 8 Dec 2018 06:02:15 -0500
-Received: by mail-it1-f196.google.com with SMTP id p197so11028791itp.0
-        for <linux-kernel@vger.kernel.org>; Sat, 08 Dec 2018 03:02:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=pKhuY8K0tXk/01E+xXWpRIIOF0oqJgx5avrnyW3qPRI=;
-        b=DLDGerE+ClPqJcEb+DaFKzq0iq9aL2tp1Zv6BGcJTJ+ivMpfnA2sLc/A1YAJwkULvm
-         rC0+c7/wZ5GkkF3+WTCikf5K0bji+ECewn2I5IHa0u+RRufP6c2YPv6FujtEJNzNhVJ3
-         YCaCcKsXlYaBlWcueU4PtfFwkmTtqRCUqviPbbkuW9BrTIDm6I6ysBbttLVoEHjEmi4H
-         w5ByTIWRba72nTCLb97HUYVzz/eHb+Crf4fbTy03p7oZ6pObYELlXlH9F116CiVyGULQ
-         n456SMRLEfH2Y1Sa9/mw9OO7omgmVzxBo7R29loiuVWBgM1QGjtDxpZEwAQbhXh/SvDm
-         bsdA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=pKhuY8K0tXk/01E+xXWpRIIOF0oqJgx5avrnyW3qPRI=;
-        b=g07HSZsxf5A/0k9APPAz5G20lqc0FvBT7g2LdKudfBRTvqRrL7xEjpEmnEe9m7G/z3
-         GkNYieClN5SEmxoLef5iDI9XtqqSG2C0cidoJpqtaqr1/OU1ZlEY41AnA49iYgMt6ZWu
-         iTUOQwIP8f2J4IdKBo8JAibGvNFc4lYtVDbKvjzK73bmwLxBWNV/e5oGKLgMzYrNet4V
-         QN1rGJdTHgI/8RkXgUEQQd09uQDnSAo+WPZ535mzPOFxWRRYPe61p8lmCjLaTHBx8ydH
-         antkke/9+/VVQBbcL5IQ+T7uJzA+puKR8fnfEgGcPbGnKIROk3tBVsO1DjnKlRV5Vcuz
-         EWWA==
-X-Gm-Message-State: AA+aEWb6igjxziV5otfAGnIG2YZZrBjgbQmRohwxJSm/2og/D6xEz9kh
-        5vFJbq3ZN7N6gGiihu/E7mOtBoCfFSUx7vHBIyZwBg==
-X-Google-Smtp-Source: AFSGD/X+B+Jr/DFPYqnkXmOv0v59tfX7Hgc38hp34lqTmEVM6v8oj4mA3jKf2oZgZrveWGtORaFs9ycXsAz5uIxNYLk=
-X-Received: by 2002:a05:660c:f94:: with SMTP id x20mr4480151itl.144.1544266934147;
- Sat, 08 Dec 2018 03:02:14 -0800 (PST)
+        Sat, 8 Dec 2018 06:05:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60286 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726111AbeLHLFj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 8 Dec 2018 06:05:39 -0500
+Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1193920700;
+        Sat,  8 Dec 2018 11:05:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544267138;
+        bh=5wbzCEyxCXKgx7HJSF8HM5pU4xO7wYMTxM5OA7Dntzw=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=vFOl9kB7Ym+RDJNxZi1278YwglBOd7cQHT80ONZw7XoLrn7ybjelbuy4knBt6YUnh
+         NOnxIRuAAeRy81UBmmX3ny1gSVZV5ktc7SlUYLlEFpihNVCznnV82DJSnDJboNhO6C
+         XLJzPWptRmLFukKU9RgkDTAcGUqPh774XsbaUtzE=
+Date:   Sat, 8 Dec 2018 11:05:33 +0000
+From:   Jonathan Cameron <jic23@kernel.org>
+To:     Joe Perches <joe@perches.com>
+Cc:     Himanshu Jha <himanshujha199640@gmail.com>,
+        Marcelo Schmitt <marcelo.schmitt1@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>, lars@metafoo.de,
+        Michael.Hennerich@analog.com, knaack.h@gmx.de, pmeerw@pmeerw.net,
+        gregkh@linuxfoundation.org, linux-iio@vger.kernel.org,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        kernel-usp@googlegroups.com
+Subject: Re: [PATCH] staging: iio: ad5933: add binding doc for ad5933
+Message-ID: <20181208110533.07d66422@archlinux>
+In-Reply-To: <772d86622aea17e1c7b5ac05e096f1a129fc86b4.camel@perches.com>
+References: <20181202165712.t6pd6ygq57llf2lr@smtp.gmail.com>
+        <20181202185043.GA2007@himanshu-Vostro-3559>
+        <772d86622aea17e1c7b5ac05e096f1a129fc86b4.camel@perches.com>
+X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-References: <0000000000000e2b4e057c80822f@google.com>
-In-Reply-To: <0000000000000e2b4e057c80822f@google.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Sat, 8 Dec 2018 12:02:02 +0100
-Message-ID: <CACT4Y+Y_jRo5nf7C8k2ZUC4sti+UkBsi79ern2LgbeS186dJ-g@mail.gmail.com>
-Subject: Re: general protection fault in freeary
-To:     syzbot+9d8b6fa6ee7636f350c1@syzkaller.appspotmail.com
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        LKML <linux-kernel@vger.kernel.org>, linux@dominikbrodowski.net,
-        manfred <manfred@colorfullife.com>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Dec 8, 2018 at 11:51 AM syzbot
-<syzbot+9d8b6fa6ee7636f350c1@syzkaller.appspotmail.com> wrote:
->
-> Hello,
->
-> syzbot found the following crash on:
->
-> HEAD commit:    74c4a24df7ca Add linux-next specific files for 20181207
-> git tree:       linux-next
-> console output: https://syzkaller.appspot.com/x/log.txt?x=11a713d5400000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=6e9413388bf37bed
-> dashboard link: https://syzkaller.appspot.com/bug?extid=9d8b6fa6ee7636f350c1
-> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16e19da3400000
+On Sun, 02 Dec 2018 15:22:15 -0800
+Joe Perches <joe@perches.com> wrote:
 
-Hi Manfred,
+> On Mon, 2018-12-03 at 00:20 +0530, Himanshu Jha wrote:
+> > On Sun, Dec 02, 2018 at 02:57:12PM -0200, Marcelo Schmitt wrote:  
+> > > Add a devicetree documentation for the ad5933 and ad5934 impedance
+> > > converter, network analyzer.
+> > > 
+> > > Co-Developed-by: Gabriel Capella <gabriel@capella.pro>  
+> > 
+> > checkpatch spits out:
+> > 
+> > WARNING: Non-standard signature: Co-Developed-by:
+> > 
+> > Co-developed-by Vs Co-Developed-by ?
+> > 
+> > Documentation/process/5.Posting.rst: - Co-developed-by: states that the patch was also created by another developer
+> > Documentation/process/submitting-patches.rst:12) When to use Acked-by:, Cc:, and Co-Developed-by:
+> > 
+> > Confusing! Don't know which one is correct.  
+> 
+> I think neither one.
+> 
+> What's the real purpose or value of it?
+> There isn't one as far as I can tell.
+> 
+> Just use Signed-off-by:
+> 
+> Or maybe add multiple "Authored-by:" if
+> anyone is all that concerned about authorship
+> crediting...
 
-This looks very similar to the one we discussed recently:
-BUG: corrupted list in freeary
-https://syzkaller.appspot.com/bug?id=86ea6558f833e79c46e1e3adb33630d6078ac80a
-https://groups.google.com/forum/#!msg/syzkaller-bugs/MquajglkT3U/LG9O7zhFCAAJ
+This is output of pair programming so only fair to acknowledge
+both developers (or more if a larger group).  Right now
+we have a guide that says Co-developed-by is the way to do that.
+I would stick to that.  If people feel something else makes sense
+then they should propose a change to the documentation and
+hopefully we can reach some agreement on this.
 
-So this may be the "more info" that we were waiting for.
+I'm happy with Co-developed-by in IIO as I think it's a fair
+reflection of what happened. Authored-by would be fine but
+isn't a standard tag documented anywhere.
 
-Looking at the repro:
+Jonathan
+> 
+> 
+> >   
+> > > Signed-off-by: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+> > > Signed-off-by: Gabriel Capella <gabriel@capella.pro>
+> > > ---  
+> > 
+> > Use `./scripts/get_maintainer.pl <your_patch>` to list the DT
+> > maintainers and the relevant mailing list.
+> > 
+> >   
+> 
 
-#{"threaded":true,"collide":true,"repeat":true,"procs":6}
-unshare(0x8020000)
-semget$private(0x0, 0x4007, 0x0)
-
-It looks a super subtle race that does not require anything special
-beyond unshare+semget.
-
-
-
-
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+9d8b6fa6ee7636f350c1@syzkaller.appspotmail.com
->
-> dmaengine-unmap-16          0KB          4KB
-> dmaengine-unmap-2          0KB          3KB
-> kasan: CONFIG_KASAN_INLINE enabled
-> skbuff_fclone_cache          5KB          7KB
-> kasan: GPF could be caused by NULL-ptr deref or user memory access
-> general protection fault: 0000 [#1] PREEMPT SMP KASAN
-> CPU: 1 PID: 21755 Comm: syz-executor0 Not tainted 4.20.0-rc5-next-20181207+
-> #163
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> Google 01/01/2011
-> RIP: 0010:__list_del_entry_valid+0x84/0x100 lib/list_debug.c:51
-> Code: 0f 84 60 01 00 00 48 b8 00 02 00 00 00 00 ad de 49 39 c4 0f 84 39 01
-> 00 00 48 b8 00 00 00 00 00 fc ff df 4c 89 e2 48 c1 ea 03 <80> 3c 02 00 75
-> 5f 49 8b 14 24 48 39 da 0f 85 4e 01 00 00 49 8d 7d
-> RSP: 0018:ffff8881b5ea6ec0 EFLAGS: 00010a06
-> RAX: dffffc0000000000 RBX: ffffffff87dd7df8 RCX: ffffffff8341d7fe
-> RDX: 11699ffffec411b1 RSI: ffffffff8341d556 RDI: ffffffff87dd7e00
-> skbuff_head_cache        539KB       1706KB
-> RBP: ffff8881b5ea6ed8 R08: ffff8881baf76300 R09: fffff5200198e400
-> R10: fffff5200198e400 R11: ffffc9000cc72003 R12: 8b4cfffff6208d8b
-> R13: 48fffff618b58b48 R14: ffff8881b5ea72c0 R15: dffffc0000000000
-> FS:  000000000279f940(0000) GS:ffff8881dad00000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 000000000072c000 CR3: 00000001c031f000 CR4: 00000000001406e0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
->   __list_del_entry include/linux/list.h:117 [inline]
->   list_del include/linux/list.h:125 [inline]
->   unlink_queue ipc/sem.c:786 [inline]
->   freeary+0xe72/0x1a40 ipc/sem.c:1164
-> configfs_dir_cache          0KB          4KB
-> file_lock_cache            0KB          3KB
-> file_lock_ctx              0KB          3KB
-> fsnotify_mark_connector         43KB         55KB
->   free_ipcs+0x9f/0x1c0 ipc/namespace.c:112
->   sem_exit_ns+0x20/0x40 ipc/sem.c:237
->   free_ipc_ns ipc/namespace.c:120 [inline]
->   put_ipc_ns+0x66/0x180 ipc/namespace.c:152
-> net_namespace             52KB         52KB
->   free_nsproxy+0xcf/0x220 kernel/nsproxy.c:180
->   switch_task_namespaces+0xb3/0xd0 kernel/nsproxy.c:229
->   exit_task_namespaces+0x17/0x20 kernel/nsproxy.c:234
->   do_exit+0x1a48/0x2620 kernel/exit.c:866
-> shmem_inode_cache       5754KB       6042KB
-> task_delay_info          112KB        484KB
-> taskstats                152KB        163KB
-> proc_dir_entry           578KB        581KB
->   do_group_exit+0x177/0x440 kernel/exit.c:970
->   get_signal+0x8b0/0x1980 kernel/signal.c:2515
-> pde_opener                 0KB          3KB
->   do_signal+0x9c/0x21c0 arch/x86/kernel/signal.c:816
-> seq_file                 282KB        342KB
-> sigqueue                  39KB        208KB
-> kernfs_node_cache      11484KB      11489KB
-> mnt_cache               5951KB       6436KB
->   exit_to_usermode_loop+0x2e5/0x380 arch/x86/entry/common.c:162
->   prepare_exit_to_usermode arch/x86/entry/common.c:197 [inline]
->   syscall_return_slowpath arch/x86/entry/common.c:268 [inline]
->   do_syscall_64+0x6be/0x820 arch/x86/entry/common.c:293
-> filp                    3938KB       6761KB
->   entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> names_cache            99560KB      99598KB
-> RIP: 0033:0x459f39
-> Code: ff 48 85 f6 0f 84 27 8a fb ff 48 83 ee 10 48 89 4e 08 48 89 3e 48 89
-> d7 4c 89 c2 4d 89 c8 4c 8b 54 24 08 b8 38 00 00 00 0f 05 <48> 85 c0 0f 8c
-> fe 89 fb ff 74 01 c3 31 ed 48 f7 c7 00 00 01 00 75
-> RSP: 002b:00007ffd923f9ef8 EFLAGS: 00000202 ORIG_RAX: 0000000000000038
-> RAX: fffffffffffffff4 RBX: 00007f99b9efc700 RCX: 0000000000459f39
-> RDX: 00007f99b9efc9d0 RSI: 00007f99b9efbdb0 RDI: 00000000003d0f00
-> iint_cache                87KB         91KB
-> RBP: 00007ffd923fa100 R08: 00007f99b9efc700 R09: 00007f99b9efc700
-> R10: 00007f99b9efc9d0 R11: 0000000000000202 R12: 0000000000000000
-> R13: 00007ffd923f9faf R14: 00007f99b9efc9c0 R15: 0000000000000001
-> Modules linked in:
-> ---[ end trace 984887003f1a69a9 ]---
-> RIP: 0010:__list_del_entry_valid+0x84/0x100 lib/list_debug.c:51
-> key_jar                    3KB          7KB
-> Code: 0f 84 60 01 00 00 48 b8 00 02 00 00 00 00 ad de 49 39 c4 0f 84 39 01
-> 00 00 48 b8 00 00 00 00 00 fc ff df 4c 89 e2 48 c1 ea 03 <80> 3c 02 00 75
-> 5f 49 8b 14 24 48 39 da 0f 85 4e 01 00 00 49 8d 7d
-> RSP: 0018:ffff8881b5ea6ec0 EFLAGS: 00010a06
-> RAX: dffffc0000000000 RBX: ffffffff87dd7df8 RCX: ffffffff8341d7fe
-> RDX: 11699ffffec411b1 RSI: ffffffff8341d556 RDI: ffffffff87dd7e00
-> RBP: ffff8881b5ea6ed8 R08: ffff8881baf76300 R09: fffff5200198e400
-> uts_namespace              2KB          7KB
-> R10: fffff5200198e400 R11: ffffc9000cc72003 R12: 8b4cfffff6208d8b
-> R13: 48fffff618b58b48 R14: ffff8881b5ea72c0 R15: dffffc0000000000
-> FS:  000000000279f940(0000) GS:ffff8881dad00000(0000) knlGS:0000000000000000
-> nsproxy                   63KB         75KB
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 000000000072c000 CR3: 00000001c031f000 CR4: 00000000001406e0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
->
->
-> ---
-> This bug is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
->
-> syzbot will keep track of this bug report. See:
-> https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with
-> syzbot.
-> syzbot can test patches for this bug, for details see:
-> https://goo.gl/tpsmEJ#testing-patches
->
-> --
-> You received this message because you are subscribed to the Google Groups "syzkaller-bugs" group.
-> To unsubscribe from this group and stop receiving emails from it, send an email to syzkaller-bugs+unsubscribe@googlegroups.com.
-> To view this discussion on the web visit https://groups.google.com/d/msgid/syzkaller-bugs/0000000000000e2b4e057c80822f%40google.com.
-> For more options, visit https://groups.google.com/d/optout.
