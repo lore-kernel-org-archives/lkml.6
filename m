@@ -2,121 +2,106 @@ Return-Path: <SRS0=1bfu=OR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21035C04EB8
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 11:24:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F51CC04EB8
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 11:31:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D1F6B2146D
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 11:24:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D1F6B2146D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
+	by mail.kernel.org (Postfix) with ESMTP id 178C42082D
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 11:31:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 178C42082D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726156AbeLHLYu (ORCPT
+        id S1726168AbeLHLbi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 8 Dec 2018 06:24:50 -0500
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:50703 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726111AbeLHLYu (ORCPT
+        Sat, 8 Dec 2018 06:31:38 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:56035 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726111AbeLHLbh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 8 Dec 2018 06:24:50 -0500
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 3213580A0B; Sat,  8 Dec 2018 12:24:44 +0100 (CET)
-Date:   Sat, 8 Dec 2018 12:24:47 +0100
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-Cc:     bp@alien8.de, hpa@zytor.com,
-        kernel list <linux-kernel@vger.kernel.org>, mingo@redhat.com,
-        tglx@linutronix.de, x86@kernel.org, jani.nikula@linux.intel.com,
-        rodrigo.vivi@intel.com, intel-gfx@lists.freedesktop.org,
-        chris@chris-wilson.co.uk
-Subject: Re: v4.20-rc1: list_del corruption on thinkpad x220, graphics
- related?
-Message-ID: <20181208112447.GA9663@amd>
-References: <20181108175803.GA10785@amd>
- <154279919462.20217.14259089584802660420@jlahtine-desk.ger.corp.intel.com>
- <20181121115449.GA32455@amd>
- <154296105546.7930.1457928786446716358@jlahtine-desk.ger.corp.intel.com>
- <20181124152352.GA9548@amd>
- <20181208111346.GA5535@amd>
+        Sat, 8 Dec 2018 06:31:37 -0500
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wB8BVUWR2513199
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Sat, 8 Dec 2018 03:31:30 -0800
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wB8BVUOd2513196;
+        Sat, 8 Dec 2018 03:31:30 -0800
+Date:   Sat, 8 Dec 2018 03:31:30 -0800
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Borislav Petkov <tipbot@zytor.com>
+Message-ID: <tip-4b1bacab61aa252d15dde99cd0440a965bd863e5@git.kernel.org>
+Cc:     mingo@kernel.org, bp@suse.de, hpa@zytor.com,
+        linux-kernel@vger.kernel.org, mhiramat@kernel.org,
+        tglx@linutronix.de
+Reply-To: tglx@linutronix.de, mhiramat@kernel.org,
+          linux-kernel@vger.kernel.org, hpa@zytor.com, bp@suse.de,
+          mingo@kernel.org
+In-Reply-To: <20181205162526.GB109259@gmail.com>
+References: <20181205162526.GB109259@gmail.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/cleanups] x86/kprobes: Remove trampoline_handler()
+ prototype
+Git-Commit-ID: 4b1bacab61aa252d15dde99cd0440a965bd863e5
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="UlVJffcvxoiEqYs2"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <20181208111346.GA5535@amd>
-User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Commit-ID:  4b1bacab61aa252d15dde99cd0440a965bd863e5
+Gitweb:     https://git.kernel.org/tip/4b1bacab61aa252d15dde99cd0440a965bd863e5
+Author:     Borislav Petkov <bp@suse.de>
+AuthorDate: Fri, 7 Dec 2018 20:38:09 +0100
+Committer:  Borislav Petkov <bp@suse.de>
+CommitDate: Sat, 8 Dec 2018 12:25:12 +0100
 
---UlVJffcvxoiEqYs2
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+x86/kprobes: Remove trampoline_handler() prototype
 
-On Sat 2018-12-08 12:13:46, Pavel Machek wrote:
-> Hi!
->=20
-> > > > > There's one similar for nouveau in Bugzilla, but it seems like a =
-genuine
-> > > > > memory corruption (1 bit flipped):
-> > > > >=20
-> > > > > https://bugs.freedesktop.org/show_bug.cgi?id=3D84880
-> > > > >=20
-> > > > > Any extra information would be of use :)
-> > > > >=20
-> > > > > Regards, Joonas
-> > > > >=20
-> > > > > PS. Could you open a bug to Bugzilla, it'll help to collect the
-> > > > > information in one consolidated place:
-> > > > >=20
-> > > > > https://01.org/linuxgraphics/documentation/how-report-bugs
-> > > >=20
-> > > > I prefer email... certainly for bugs that can't be reproduced.
-> > >=20
-> > > By adding it to the Bugzilla it may be recognized by somebody else
-> > > who is experiencing a similar issue. Internet points are not deducted
-> > > for submitting bugs in good faith, even if they get closed as
-> > > NOTABUG.
->=20
-> Well, your documentation suggests you'll deduce my internet points:
->=20
-> 	Before filing the bug, please try to reproduce your issue with the
-> 	latest kernel. Use the latest drm-tip branch from
-> 	http://cgit.freedesktop.org/drm-tip and build as instructed on our
-> 	Build Guide.
->=20
-> :-)
+... and make it static. It is called only by the kretprobe_trampoline()
+from asm.
 
-I'd prefer not to run drm-tip. I'll update to 2.6.20-rc5+ and see if
-it re-appears (but it takes long time to reproduce :-().
+It was marked __visible so that it is visible outside of the current
+compilation unit but that is not needed as it is used only in this
+compilation unit.
 
-If you think it is useful, I can try to update my machine to
-linux-next.
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>
+Link: https://lkml.kernel.org/r/20181205162526.GB109259@gmail.com
+---
+ arch/x86/kernel/kprobes/core.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-Best regards,
-									Pavel
-
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---UlVJffcvxoiEqYs2
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlwLqf8ACgkQMOfwapXb+vKwUQCgkfvrUb3l2kZFeBNeyZ3Khz8h
-qsEAoIxZHW8WDt0EU6l1AMXymRya7plv
-=H++O
------END PGP SIGNATURE-----
-
---UlVJffcvxoiEqYs2--
+diff --git a/arch/x86/kernel/kprobes/core.c b/arch/x86/kernel/kprobes/core.c
+index 6480056d370f..308bf103cc73 100644
+--- a/arch/x86/kernel/kprobes/core.c
++++ b/arch/x86/kernel/kprobes/core.c
+@@ -66,8 +66,6 @@
+ 
+ #include "common.h"
+ 
+-void *trampoline_handler(struct pt_regs *regs);
+-
+ DEFINE_PER_CPU(struct kprobe *, current_kprobe) = NULL;
+ DEFINE_PER_CPU(struct kprobe_ctlblk, kprobe_ctlblk);
+ 
+@@ -753,7 +751,7 @@ STACK_FRAME_NON_STANDARD(kretprobe_trampoline);
+ /*
+  * Called from kretprobe_trampoline
+  */
+-__visible __used void *trampoline_handler(struct pt_regs *regs)
++static __used void *trampoline_handler(struct pt_regs *regs)
+ {
+ 	struct kretprobe_instance *ri = NULL;
+ 	struct hlist_head *head, empty_rp;
