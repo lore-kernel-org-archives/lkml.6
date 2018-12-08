@@ -2,227 +2,247 @@ Return-Path: <SRS0=1bfu=OR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BCABC64EB1
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 15:33:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DABACC65BAF
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 15:37:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 075D520700
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 15:33:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S2j4FrA8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 075D520700
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id A248D20892
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 15:37:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544283436;
+	bh=LTPtZ0jsAA2NeY60LDFUERRm7eCX2CAJrtLzCW1LI3w=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
+	b=w7sW+snYGls89k4Rz/NsCoFzuEGV/awgMByHkxmBJxh0K8ADqqDpM3FuYizX8+07z
+	 7xGD62gjze34Q5TZi4QrTKQIXvU9g9F1jv1c04lO9zIqiLkbA8diMZf2ylYbD5RiZ2
+	 PRwyuPZA168fvHdYuICoJY2+5dUonrbWuHSUvleY=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A248D20892
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726202AbeLHPdx (ORCPT
+        id S1726184AbeLHPhP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 8 Dec 2018 10:33:53 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:33714 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726147AbeLHPdx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 8 Dec 2018 10:33:53 -0500
-Received: by mail-pf1-f193.google.com with SMTP id c123so3346473pfb.0;
-        Sat, 08 Dec 2018 07:33:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=tt8+KB3NW2GbzNWfjDFSSXwO839XfkXfkEX/jHuieY4=;
-        b=S2j4FrA81UBY6pa7mX3UNEVBzO+p0Tc9o0/Jhd5ujNjrevCxG1rpAIQx6k9GUBKNbb
-         Vvd1Jiqhsj7xFvKV1JwC2gtCQAZ5JPPj8biwJ74PGJr8jgz6QQ6Yqp4rMYwTy0A8TJya
-         gSM32UnJsPy5R9/nc4K0shp/kCSqV0vWQ4IwT3nNvqvDg+YMTOR9eE/TBX8Ka5Yj08pN
-         afrpf4GdHfzFGv60iP0sEtU3Gcx/73FcGje5E3WlqasD7ikL7JW9WS2IfJlSGJ67MWBi
-         6apGXn41UVxV6X/8oat8zbziv9TOdzzd868hLQdBcEbTBTF74vm19thNtzqWYxqMSwpF
-         T8Fg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=tt8+KB3NW2GbzNWfjDFSSXwO839XfkXfkEX/jHuieY4=;
-        b=Yg17+ssVpofKkk6haUfvED4OD1MrEmQE/KC2/iYegVcWo5E4yqMcicbbQBNvXO2zzc
-         OEE50rY0zdaMXbfd/jcpVwZCa23vLXvdD0YCyucdvwBxuDWkmK3cEgL5dcHq1WVdgrcn
-         YMXgm8bYh+aDgXkY8+6mrTMEq08VMH363x44rPxFfppWyGyoFQloz5G/2d/JBUL90lQw
-         7Ito/OgRPh+kRBvGHAz9YcempIk9UFw56sGu9rPKd+hQaOP6SI+bjK+epZ6DF9W5GhzC
-         RrdRSb07PDF5RDU8V64Wgnr3AwgcyBNIo2hKgE2uDRztdu/3nScuMwQqeqd+b/jHB17c
-         i/cw==
-X-Gm-Message-State: AA+aEWaryv9/RY/U1Mc1dLRNcr3GWn2JBDeX2H/akyzwzdcEbiKUf6uh
-        jGWcdUW9BQZ4RK3mvuw5MtxyzkrE
-X-Google-Smtp-Source: AFSGD/VA2s2s0gNj514jh/6nC2eQAjW7LQupDLOW1lSRJIWhSlpsn9IctUuH5U04422HAkwUC9Axcw==
-X-Received: by 2002:a63:2d82:: with SMTP id t124mr5422921pgt.260.1544283231886;
-        Sat, 08 Dec 2018 07:33:51 -0800 (PST)
-Received: from Shreeya-Patel ([103.212.140.153])
-        by smtp.googlemail.com with ESMTPSA id s37sm7401173pgm.19.2018.12.08.07.33.48
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 08 Dec 2018 07:33:51 -0800 (PST)
-Message-ID: <4a96719b2b779db0990a370e6fa05c83a089ae1a.camel@gmail.com>
-Subject: Re: [PATCH] Revert "Staging: iio: adt7316: Add an extra check for
- 'ret' equals to 0"
-From:   Shreeya Patel <shreeya.patel23498@gmail.com>
-To:     Jonathan Cameron <jic23@kernel.org>
-Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Jeremy Fertic <jeremyfertic@gmail.com>,
-        devel@driverdev.osuosl.org, lars@metafoo.de,
-        Michael.Hennerich@analog.com, linux-iio@vger.kernel.org,
-        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
-        pmeerw@pmeerw.net, knaack.h@gmx.de
-Date:   Sat, 08 Dec 2018 21:03:46 +0530
-In-Reply-To: <20181208111720.068822f9@archlinux>
-References: <20181205014900.4827-1-jeremyfertic@gmail.com>
-         <fccdb26936a9cfcd5134c760cd918929ad3dfa19.camel@gmail.com>
-         <20181205215953.GA2365@r2700x.localdomain>
-         <20181206124047.GH3095@unbuntlaptop>
-         <90e3066edb0616cd20ee019e3f2a392fd3a3f285.camel@gmail.com>
-         <20181208111720.068822f9@archlinux>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
+        Sat, 8 Dec 2018 10:37:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38838 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726147AbeLHPhP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 8 Dec 2018 10:37:15 -0500
+Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 26B6D205C9;
+        Sat,  8 Dec 2018 15:37:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544283433;
+        bh=LTPtZ0jsAA2NeY60LDFUERRm7eCX2CAJrtLzCW1LI3w=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=wxr0MnODsehlnw4F5uIzalG20aLDJOr+E+ldETrEB/rKYXApYKRfrLgwBFiC8Y7vs
+         gMapxbSJMbKXAiHEJiS0CajgNxwzW9llyxphR6ElHNFhBpLwARhbviNIV9ZecMOfKW
+         kDhJNditbzku/7sXfR8fUwVUcnMHW8vNiCsHMIWo=
+Date:   Sat, 8 Dec 2018 15:37:08 +0000
+From:   Jonathan Cameron <jic23@kernel.org>
+To:     Mircea Caprioru <mircea.caprioru@analog.com>
+Cc:     <Michael.Hennerich@analog.com>, <knaack.h@gmx.de>,
+        <lars@metafoo.de>, <pmeerw@pmeerw.net>,
+        <gregkh@linuxfoundation.org>, <linux-kernel@vger.kernel.org>,
+        <linux-iio@vger.kernel.org>, <devel@driverdev.osuosl.org>,
+        Stefan Popa <stefan.popa@analog.com>
+Subject: Re: [PATCH] iio:dac:ad5686: Add AD5310R support
+Message-ID: <20181208153708.4e07154a@archlinux>
+In-Reply-To: <20181206133830.20488-1-mircea.caprioru@analog.com>
+References: <20181206133830.20488-1-mircea.caprioru@analog.com>
+X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 2018-12-08 at 11:17 +0000, Jonathan Cameron wrote:
-> On Sat, 08 Dec 2018 00:07:21 +0530
-> Shreeya Patel <shreeya.patel23498@gmail.com> wrote:
-> 
-> > On Thu, 2018-12-06 at 15:40 +0300, Dan Carpenter wrote:
-> > > On Wed, Dec 05, 2018 at 02:59:53PM -0700, Jeremy Fertic wrote:  
-> > > > On Thu, Dec 06, 2018 at 01:25:55AM +0530, Shreeya Patel
-> > > > wrote:  
-> > > > > On Tue, 2018-12-04 at 18:49 -0700, Jeremy Fertic wrote:  
-> > > > > > This reverts commit
-> > > > > > 00426e99789357dbff7e719a092ce36a3ce49d94.
-> > > > > > 
-> > > > > > i2c_smbus_read_byte() returns 0 when a byte with the value
-> > > > > > 0 is
-> > > > > > read
-> > > > > > from
-> > > > > > the device. This is a valid read so revert the check for 0.
-> > > > > > 
-> > > > > > Signed-off-by: Jeremy Fertic <jeremyfertic@gmail.com>
-> > > > > > ---  
-> > > > > 
-> > > > > Hi Jeremy,
-> > > > > 
-> > > > > As per my understanding, 0 value indicates no error but no
-> > > > > data
-> > > > > read.
-> > > > > Then how can this be a valid case?
-> > > > > 
-> > > > > Can you please make me understand that how can we consider
-> > > > > this
-> > > > > as a
-> > > > > valid case even when no data has been read?  
-> > > 
-> > > It's not reading no data.  It's reading one byte of data and
-> > > returning
-> > > it.
-> > >   
-> > > > > 
-> > > > > 
-> > > > > Thanks  
-> > > > 
-> > > > I'm not sure I understand why the value 0 would indicate no
-> > > > data
-> > > > read.
-> > > > Doesn't that just mean a byte was read with the value 0.  
-> > > 
-> > > Yes.  It does mean that.  Please don't ask rhetorical
-> > > questions...  :(
-> > > This list is full of people who can't resist answering every
-> > > question.
-> > >   
-> > > > For instance, if the input to the adc is 0V. Can you point me
-> > > > to
-> > > > where
-> > > > you're seeing that this would indicate no data read?  
-> > > 
-> > > drivers/i2c/i2c-core-smbus.c
-> > >     88  /**
-> > >     89   * i2c_smbus_read_byte - SMBus "receive byte" protocol
-> > >     90   * @client: Handle to slave device
-> > >     91   *
-> > >     92   * This executes the SMBus "receive byte" protocol,
-> > > returning
-> > > negative errno
-> > >     93   * else the byte received from the device.
-> > >     94   */
-> > >     95  s32 i2c_smbus_read_byte(const struct i2c_client *client)
-> > >     96  {
-> > >     97          union i2c_smbus_data data;
-> > >     98          int status;
-> > >     99  
-> > >    100          status = i2c_smbus_xfer(client->adapter,
-> > > client-  
-> > > > addr, client->flags,  
-> > > 
-> > >    101                                  I2C_SMBUS_READ, 0,
-> > >    102                                  I2C_SMBUS_BYTE, &data);
-> > >    103          return (status < 0) ? status : data.byte;
-> > >                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-> > >    104  }
-> > >    105  EXPORT_SYMBOL(i2c_smbus_read_byte);  
-> > 
-> > Even I had sent the same code to Jonathan and we had a discussion
-> > on
-> > this. 
-> > I asked him that this code clearly shows that there is an error
-> > condition only when status < 0 then why do we need a check for
-> > status =
-> > 0.
-> > 
-> > Then he explained me that 0 isn't an error. The issue is the
-> > silliness
-> > of the i2c interface.
-> > 
-> > Pretty much every other bus returns an error (negative) if less
-> > data is
-> > received than expected.  Most i2c
-> > bus master's do as well but in theory it can return 0 to indicate
-> > no
-> > error but no data read (which doesn't make any sense)
-> > 
-> > 0 doesn't ever happen in reality but it should be handled for
-> > correctness though.
-> > 
-> > So we should wait for what Jonathan has to say on this :)
-> 
-> Yup, I was being an idiot.  Sorry about that!  For some reason I'd
-> gotten it into my head that the particular function we were talking
-> about was i2c_master_send which does indeed do as discussed above.
-> 
-> Apologies for misleading you on this. Definitely a proper idiot
-> moment of me not reading what the code actually was properly, even
-> when you questioned what I was going on about.
+On Thu, 6 Dec 2018 15:38:30 +0200
+Mircea Caprioru <mircea.caprioru@analog.com> wrote:
 
-It was not your mistake!
-There was a confusion because of delay in replying to you from my side.
-So it was just the case of human error :)
+> From: Stefan Popa <stefan.popa@analog.com>
+> 
+> The AD5310R is a single channel DAC with 10-bit precision, which is
+> part of the same family as AD5311R, except that it uses the spi interface
+> instead of i2c. The device has a built-in 2.5V reference which is enabled
+> by default.
+> 
+> Another important difference is that the SPI write command operation is
+> 16 bits long. The first four bits represent the command, while the
+> remaining 12 bits are for data. In the control reg, DB9 and DB10 are used
+> for power-down modes, while DB8 is the REF bit. In order to accommodate
+> this change, a new regmap type was defined and checked accordingly.
+> 
+> Because AD5310R does not have a readback register, the read_raw operation
+> will return "Operation is not supported".
+> 
+> Datasheet:
+> Link: http://www.analog.com/media/en/technical-documentation/data-sheets/AD5310R_5311R.pdf
+> 
+> Signed-off-by: Stefan Popa <stefan.popa@analog.com>
+> Signed-off-by: Mircea Caprioru <mircea.caprioru@analog.com>
+A few comments inline, but mostly just me being fussy about patch presentation
+so applied to the togreg branch of iio.git and pushed out as testing
+for the autobuilders to play with it.
 
+Thanks,
+
+Jonathan
+
+> ---
+>  drivers/iio/dac/ad5686-spi.c | 21 ++++++++++++++++++---
+>  drivers/iio/dac/ad5686.c     | 16 ++++++++++++++++
+>  drivers/iio/dac/ad5686.h     |  7 +++++++
+>  3 files changed, 41 insertions(+), 3 deletions(-)
 > 
-> Thanks to Jeremy for catching this one.
-> 
-> Applied to the togreg branch of iio.git and pushed out as testing for
-> the autobuilders to play with it.
-> 
-> Jonathan
-> 
-> > 
-> > Thanks
-> > 
-> > > You are right.  Commit 00426e997893 ("Staging: iio: adt7316: Add
-> > > an
-> > > extra check for 'ret' equals to 0") needs to be reverted...
-> > > 
-> > > regards,
-> > > dan carpenter
-> > > 
-> > >   
-> 
-> 
+> diff --git a/drivers/iio/dac/ad5686-spi.c b/drivers/iio/dac/ad5686-spi.c
+> index 1df9143f55e9..665fa6bd9ced 100644
+> --- a/drivers/iio/dac/ad5686-spi.c
+> +++ b/drivers/iio/dac/ad5686-spi.c
+> @@ -19,6 +19,12 @@ static int ad5686_spi_write(struct ad5686_state *st,
+>  	u8 tx_len, *buf;
+>  
+>  	switch (st->chip_info->regmap_type) {
+> +	case AD5310_REGMAP:
+> +		st->data[0].d16 = cpu_to_be16(AD5310_CMD(cmd) |
+> +					      val);
+> +		buf = &st->data[0].d8[0];
+> +		tx_len = 2;
+> +		break;
+>  	case AD5683_REGMAP:
+>  		st->data[0].d32 = cpu_to_be32(AD5686_CMD(cmd) |
+>  					      AD5683_DATA(val));
+> @@ -56,10 +62,18 @@ static int ad5686_spi_read(struct ad5686_state *st, u8 addr)
+>  	u8 cmd = 0;
+>  	int ret;
+>  
+> -	if (st->chip_info->regmap_type == AD5686_REGMAP)
+> -		cmd = AD5686_CMD_READBACK_ENABLE;
+> -	else if (st->chip_info->regmap_type == AD5683_REGMAP)
+> +	switch (st->chip_info->regmap_type) {
+
+This is fine, though I'd prefer it done really as rework
+patch without the new device support followed by adding the support
+later in the series.   I prefer to have to do minimum thinking
+whilst reviewing :)
+
+> +	case AD5310_REGMAP:
+> +		return -ENOTSUPP;
+> +	case AD5683_REGMAP:
+>  		cmd = AD5686_CMD_READBACK_ENABLE_V2;
+> +		break;
+> +	case AD5686_REGMAP:
+> +		cmd = AD5686_CMD_READBACK_ENABLE;
+> +		break;
+> +	default:
+> +		return -EINVAL;
+> +	}
+>  
+>  	st->data[0].d32 = cpu_to_be32(AD5686_CMD(cmd) |
+>  				      AD5686_ADDR(addr));
+> @@ -86,6 +100,7 @@ static int ad5686_spi_remove(struct spi_device *spi)
+>  }
+>  
+>  static const struct spi_device_id ad5686_spi_id[] = {
+> +	{"ad5310r", ID_AD5310R},
+>  	{"ad5672r", ID_AD5672R},
+>  	{"ad5676", ID_AD5676},
+>  	{"ad5676r", ID_AD5676R},
+> diff --git a/drivers/iio/dac/ad5686.c b/drivers/iio/dac/ad5686.c
+> index 0e134b13967a..54ff76b93366 100644
+> --- a/drivers/iio/dac/ad5686.c
+> +++ b/drivers/iio/dac/ad5686.c
+> @@ -83,6 +83,10 @@ static ssize_t ad5686_write_dac_powerdown(struct iio_dev *indio_dev,
+>  		st->pwr_down_mask &= ~(0x3 << (chan->channel * 2));
+>  
+>  	switch (st->chip_info->regmap_type) {
+> +	case AD5310_REGMAP:
+> +		shift = 9;
+> +		ref_bit_msk = AD5310_REF_BIT_MSK;
+> +		break;
+>  	case AD5683_REGMAP:
+>  		shift = 13;
+>  		ref_bit_msk = AD5683_REF_BIT_MSK;
+> @@ -221,6 +225,7 @@ static struct iio_chan_spec name[] = {				\
+>  		AD5868_CHANNEL(7, 7, bits, _shift),		\
+>  }
+>  
+> +DECLARE_AD5693_CHANNELS(ad5310r_channels, 10, 2);
+>  DECLARE_AD5693_CHANNELS(ad5311r_channels, 10, 6);
+>  DECLARE_AD5676_CHANNELS(ad5672_channels, 12, 4);
+>  DECLARE_AD5676_CHANNELS(ad5676_channels, 16, 0);
+> @@ -232,6 +237,12 @@ DECLARE_AD5693_CHANNELS(ad5692r_channels, 14, 2);
+>  DECLARE_AD5693_CHANNELS(ad5691r_channels, 12, 4);
+>  
+>  static const struct ad5686_chip_info ad5686_chip_info_tbl[] = {
+> +	[ID_AD5310R] = {
+> +		.channels = ad5310r_channels,
+> +		.int_vref_mv = 2500,
+> +		.num_channels = 1,
+> +		.regmap_type = AD5310_REGMAP,
+> +	},
+>  	[ID_AD5311R] = {
+>  		.channels = ad5311r_channels,
+>  		.int_vref_mv = 2500,
+> @@ -419,6 +430,11 @@ int ad5686_probe(struct device *dev,
+>  	indio_dev->num_channels = st->chip_info->num_channels;
+>  
+>  	switch (st->chip_info->regmap_type) {
+> +	case AD5310_REGMAP:
+> +		cmd = AD5686_CMD_CONTROL_REG;
+> +		ref_bit_msk = AD5310_REF_BIT_MSK;
+> +		st->use_internal_vref = !voltage_uv;
+> +		break;
+>  	case AD5683_REGMAP:
+>  		cmd = AD5686_CMD_CONTROL_REG;
+>  		ref_bit_msk = AD5683_REF_BIT_MSK;
+> diff --git a/drivers/iio/dac/ad5686.h b/drivers/iio/dac/ad5686.h
+> index 57b3c61bfb91..19f6917d4738 100644
+> --- a/drivers/iio/dac/ad5686.h
+> +++ b/drivers/iio/dac/ad5686.h
+> @@ -13,7 +13,10 @@
+>  #include <linux/mutex.h>
+>  #include <linux/kernel.h>
+>  
+> +#define AD5310_CMD(x)				((x) << 12)
+> +
+>  #define AD5683_DATA(x)				((x) << 4)
+> +
+
+I'd rather these white space changes weren't in here, but they are small
+enough it's not all that important.
+
+>  #define AD5686_ADDR(x)				((x) << 16)
+>  #define AD5686_CMD(x)				((x) << 20)
+>  
+> @@ -38,6 +41,8 @@
+>  
+>  #define AD5686_CMD_CONTROL_REG			0x4
+>  #define AD5686_CMD_READBACK_ENABLE_V2		0x5
+> +
+> +#define AD5310_REF_BIT_MSK			BIT(8)
+>  #define AD5683_REF_BIT_MSK			BIT(12)
+>  #define AD5693_REF_BIT_MSK			BIT(12)
+>  
+> @@ -45,6 +50,7 @@
+>   * ad5686_supported_device_ids:
+>   */
+>  enum ad5686_supported_device_ids {
+> +	ID_AD5310R,
+>  	ID_AD5311R,
+>  	ID_AD5671R,
+>  	ID_AD5672R,
+> @@ -72,6 +78,7 @@ enum ad5686_supported_device_ids {
+>  };
+>  
+>  enum ad5686_regmap_type {
+> +	AD5310_REGMAP,
+>  	AD5683_REGMAP,
+>  	AD5686_REGMAP,
+>  	AD5693_REGMAP
+
