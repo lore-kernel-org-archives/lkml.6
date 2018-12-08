@@ -2,288 +2,122 @@ Return-Path: <SRS0=1bfu=OR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75805C04EB8
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 04:48:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B37C9C04EB8
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 05:13:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 11BAF20892
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 04:48:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 696EB20892
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 05:13:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="tkgfdYsj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 11BAF20892
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="dmz5BwRs"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 696EB20892
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726168AbeLHEsL (ORCPT
+        id S1726153AbeLHFNS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 23:48:11 -0500
-Received: from conssluserg-01.nifty.com ([210.131.2.80]:27382 "EHLO
-        conssluserg-01.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726081AbeLHEsL (ORCPT
+        Sat, 8 Dec 2018 00:13:18 -0500
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:42451 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726081AbeLHFNR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 23:48:11 -0500
-Received: from mail-vk1-f177.google.com (mail-vk1-f177.google.com [209.85.221.177]) (authenticated)
-        by conssluserg-01.nifty.com with ESMTP id wB84lgNF002156;
-        Sat, 8 Dec 2018 13:47:43 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-01.nifty.com wB84lgNF002156
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1544244463;
-        bh=VB9bGHxvOCr5E7IqapZQRPhpA80nL13YyrwFsjP0H5A=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=tkgfdYsjt6ilS88JANsIoCMje1wXdXWZVUcq9ti13lU/oI4m/Evy26OqWQ/O7cbyW
-         6lKfYik6ZKIfSG6Xyv9SGAxFd6IgoHhSP77kjS+ZnvxcscUfI1jsASGkRZOfY6hkpl
-         IPrjH24KYqU80U7RV1u49D2l5mmLJ+964v1+y4lVDXkIPM8l1f/D6DrXnQL/iE2g/I
-         ASNKv39H26d3i7ZD2szs0W0X61tywSQW/M13qxC6uP20w7F8Od0t23t1RGN2ftumeM
-         U0rej+86KE7IJr663adAvevhwqRpaZZ+Xq0oR9U+897FAvQeCfKbZqjCmb8ulXBGP3
-         7RPK+iWvw0H8g==
-X-Nifty-SrcIP: [209.85.221.177]
-Received: by mail-vk1-f177.google.com with SMTP id y14so1432842vkd.1;
-        Fri, 07 Dec 2018 20:47:42 -0800 (PST)
-X-Gm-Message-State: AA+aEWYoDkIjKJPSyXbEGQssZGwgSfESJrrgZgIXbtANvfrnNcGMFeKN
-        H1F+4jX6FzjT8/raV32RIkUYP3PVLi34Yr9QpG4=
-X-Google-Smtp-Source: AFSGD/UEzO2QbuCB7Z1lLud5pOTxf1yaKX9QJnznh9Dj+hCdKETu9rIE9yOOTaHdy04vuaiEhkTG2PJs+FVF+ZlsGzI=
-X-Received: by 2002:a1f:6bc8:: with SMTP id k69mr1987537vki.84.1544244461522;
- Fri, 07 Dec 2018 20:47:41 -0800 (PST)
-MIME-Version: 1.0
-References: <20181203213223.16986-1-robh@kernel.org> <20181203213223.16986-2-robh@kernel.org>
-In-Reply-To: <20181203213223.16986-2-robh@kernel.org>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Sat, 8 Dec 2018 13:47:05 +0900
-X-Gmail-Original-Message-ID: <CAK7LNARgyL+Pq+SCkUUKnMny4nDw1L4zEevdzqbyGGAoE+BXUA@mail.gmail.com>
-Message-ID: <CAK7LNARgyL+Pq+SCkUUKnMny4nDw1L4zEevdzqbyGGAoE+BXUA@mail.gmail.com>
-Subject: Re: [PATCH v2 01/34] kbuild: Add support for DT binding schema checks
-To:     Rob Herring <robh@kernel.org>
-Cc:     DTML <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        darknighte@darknighte.com, Frank Rowand <frowand.list@gmail.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        grant.likely@arm.com, kumar.gala@linaro.org,
-        arm-soc <arm@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Sat, 8 Dec 2018 00:13:17 -0500
+Received: by mail-oi1-f196.google.com with SMTP id w13so5105477oiw.9
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Dec 2018 21:13:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=61Bb+nWCTjnAlYvzPgw6H01DWz5Odm+nab79rd34nOU=;
+        b=dmz5BwRsh6u7gq+jHybhXvo+YcJ5jgbwLZV+IGukcUv+pw7T3lhM+yfEEO803UshUL
+         BdVD2pnKlIN4HisXJ/XAauJ5PzZXUt1sZ3ufEJX2KVCSw2wyokT0oNGh5wOUm5G3V2Nv
+         mJ+CZfMZ7Ma7HXtQzRNaBBvwlotoEg28hDa9U=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=61Bb+nWCTjnAlYvzPgw6H01DWz5Odm+nab79rd34nOU=;
+        b=CoBotvyN+RUqk6PTlL4yAEX+7gSTARRQvJBfCUGk18ObCRblj4PiCWS6M70i/SnKLw
+         1ccF2MqDUNGeoL7ytUXAUK3bd97Tzch24Z1DdlHQmE1axsZhsymFxLAVuxxHBIOyzyN7
+         AKFvYkKZY6AD8Oofff/LXVwie5cLE2DiM7Srwtcx8s5dk0/WcfWTOGCGYyQ9Y3/Tnqim
+         pdCQ7B+95SVK+6ikxi54TwEcdRXIlib+3zEnK6hU1FMlB/a4xyDfMZrmkjC/Q2oBLlGd
+         y2UJILTpM36te/jNuOCOnDhVZDSGmmw/gvahTBMN534v31PjZS7Yj525PV7OQ/92tfbK
+         hvZg==
+X-Gm-Message-State: AA+aEWbaD/ttz995LsHSuERfSlo/IujLql11QwI8kLG0L4yV0xy7xH7J
+        lcZDOS0TllYwg8cejOvcAijVwA==
+X-Google-Smtp-Source: AFSGD/W8SgYgQt47bWwnFgxF3zzSaNHoY5GaW1YYvP4qrpTR7Jx8oE2G3BmDR23dw+NmvfE+CSJ1mA==
+X-Received: by 2002:aca:36d5:: with SMTP id d204mr2980601oia.234.1544245996434;
+        Fri, 07 Dec 2018 21:13:16 -0800 (PST)
+Received: from localhost ([2600:1700:141:4960:1524:ebd:d530:a61b])
+        by smtp.gmail.com with ESMTPSA id r9sm3143749otq.81.2018.12.07.21.13.15
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 07 Dec 2018 21:13:15 -0800 (PST)
+From:   Andy Gross <andy.gross@linaro.org>
+To:     arm@kernel.org
+Cc:     linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Olof Johansson <olof@lixom.net>
+Subject: [GIT PULL] Qualcomm ARM64 DT updates for 4.21 - Part 2
+Date:   Fri,  7 Dec 2018 23:13:13 -0600
+Message-Id: <1544245994-4228-1-git-send-email-andy.gross@linaro.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rob,
+The following changes since commit 70827d9f6bc4f481fafe790dd6654ba568526768:
 
+  arm64: dts: qcom: msm8998: Fix compatible of scm node (2018-11-30 07:59:02 -0600)
 
-On Tue, Dec 4, 2018 at 6:32 AM Rob Herring <robh@kernel.org> wrote:
->
-> This adds the build infrastructure for checking DT binding schema
-> documents and validating dts files using the binding schema.
->
-> Check DT binding schema documents:
-> make dt_binding_check
->
-> Build dts files and check using DT binding schema:
-> make dtbs_check
->
-> Optionally, DT_SCHEMA_FILES can passed in with a schema file(s) to use
-> for validation. This makes it easier to find and fix errors generated by
-> a specific schema.
->
-> Currently, the validation targets are separate from a normal build to
-> avoid a hard dependency on the external DT schema project and because
-> there are lots of warnings generated.
->
-> Cc: Jonathan Corbet <corbet@lwn.net>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
-> Cc: Michal Marek <michal.lkml@markovi.net>
-> Cc: linux-doc@vger.kernel.org
-> Cc: devicetree@vger.kernel.org
-> Cc: linux-kbuild@vger.kernel.org
-> Signed-off-by: Rob Herring <robh@kernel.org>
-> ---
->  .gitignore                                   |  1 +
->  Documentation/Makefile                       |  2 +-
->  Documentation/devicetree/bindings/.gitignore |  1 +
->  Documentation/devicetree/bindings/Makefile   | 33 ++++++++++++++++++++
->  Makefile                                     | 11 +++++--
->  scripts/Makefile.lib                         | 24 ++++++++++++--
->  6 files changed, 67 insertions(+), 5 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/.gitignore
->  create mode 100644 Documentation/devicetree/bindings/Makefile
->
-> diff --git a/.gitignore b/.gitignore
-> index 97ba6b79834c..a20ac26aa2f5 100644
-> --- a/.gitignore
-> +++ b/.gitignore
-> @@ -15,6 +15,7 @@
->  *.bin
->  *.bz2
->  *.c.[012]*.*
-> +*.dt.yaml
->  *.dtb
->  *.dtb.S
->  *.dwo
-> diff --git a/Documentation/Makefile b/Documentation/Makefile
-> index 2ca77ad0f238..9786957c6a35 100644
-> --- a/Documentation/Makefile
-> +++ b/Documentation/Makefile
-> @@ -2,7 +2,7 @@
->  # Makefile for Sphinx documentation
->  #
->
-> -subdir-y :=
-> +subdir-y := devicetree/bindings/
->
->  # You can set these variables from the command line.
->  SPHINXBUILD   = sphinx-build
-> diff --git a/Documentation/devicetree/bindings/.gitignore b/Documentation/devicetree/bindings/.gitignore
-> new file mode 100644
-> index 000000000000..d9194c02dd08
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/.gitignore
-> @@ -0,0 +1 @@
-> +*.example.dts
-> diff --git a/Documentation/devicetree/bindings/Makefile b/Documentation/devicetree/bindings/Makefile
-> new file mode 100644
-> index 000000000000..ee0110dd8131
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/Makefile
-> @@ -0,0 +1,33 @@
-> +# SPDX-License-Identifier: GPL-2.0
-> +DT_DOC_CHECKER ?= dt-doc-validate
-> +DT_EXTRACT_EX ?= dt-extract-example
-> +DT_MK_SCHEMA ?= dt-mk-schema
-> +DT_MK_SCHEMA_FLAGS := $(if $(DT_SCHEMA_FILES), -u)
-> +
-> +quiet_cmd_chk_binding = CHKDT   $<
-> +      cmd_chk_binding = (set -e; \
-> +                         $(DT_DOC_CHECKER) $< ; \
-> +                         mkdir -p $(dir $@) ; \
-> +                         $(DT_EXTRACT_EX) $< > $@ )
-> +
-> +$(obj)/%.example.dts: $(src)/%.yaml FORCE
-> +       $(call if_changed,chk_binding)
-> +
-> +DT_TMP_SCHEMA := .schema.yaml.tmp
-> +extra-y += $(DT_TMP_SCHEMA)
-> +
-> +quiet_cmd_mk_schema = SCHEMA  $@
-> +      cmd_mk_schema = mkdir -p $(obj); \
-> +                      rm -f $@; \
-> +                      $(DT_MK_SCHEMA) $(DT_MK_SCHEMA_FLAGS) -o $@ $<
+are available in the git repository at:
 
+  git://git.kernel.org/pub/scm/linux/kernel/git/agross/linux.git tags/qcom-arm64-for-4.21-2
 
-I think '$<' is wrong.
+for you to fetch changes up to 1504b91c819359b574b55c269c850352260b8d19:
 
-'$<' is replaced with the first prerequisite.
+  arm64: dts: msm8996: Use dwc3-qcom glue driver for USB (2018-12-07 14:10:56 -0600)
 
+----------------------------------------------------------------
+Qualcomm ARM64 Updates for v4.21 Part 2
 
-You can easily check what is happening here.
+* Switch to use dwc3-qcom glue driver on MSM8996
+* Fix issue with xo clk name on MSM8998
+* Add cooling maps on MSM8916
+* Add UART nodes on SDM845
+* Add camera subsystem support on MSM8996 and MSM8916
 
-$ cat   Documentation/devicetree/bindings/..schema.yaml.tmp.cmd
-cmd_Documentation/devicetree/bindings/.schema.yaml.tmp := mkdir -p
-Documentation/devicetree/bindings; rm -f
-Documentation/devicetree/bindings/.schema.yaml.tmp; dt-mk-schema  -o
-Documentation/devicetree/bindings/.schema.yaml.tmp
-Documentation/devicetree/bindings/arm/ti/ti,davinci.yaml
+----------------------------------------------------------------
+Andy Gross (1):
+      arm64: dts: qcom: msm8998: Fixup clock to use xo_board
 
+Manu Gautam (1):
+      arm64: dts: msm8996: Use dwc3-qcom glue driver for USB
 
-So, the dt-validater will check only binding from ti,davinci.yaml,
-which is almost useless.
+Matthias Kaehlcke (1):
+      arm64: dts: qcom: sdm845: Add UART nodes
 
+Todor Tomov (6):
+      arm64: dts: qcom: msm8916: Add IOMMU sub-node for VFE context bank
+      arm64: dts: qcom: msm8916: Add CAMSS support
+      arm64: dts: qcom: Add Camera Control Interface pinctrls
+      arm64: dts: qcom: Add pinctrls for camera sensors
+      arm64: dts: qcom: msm8996: Add VFE SMMU node
+      arm64: dts: qcom: msm8996: Add CAMSS support
 
+Viresh Kumar (1):
+      arm64: dts: msm8916: Add all CPUs in cooling maps
 
-If I understand it correctly,
-.schema.yaml.tmp should contain all binding yaml.
-
-
-I fixed it up like follows:
-
-diff --git a/Documentation/devicetree/bindings/Makefile
-b/Documentation/devicetree/bindings/Makefile
-index ee0110d..267458f 100644
---- a/Documentation/devicetree/bindings/Makefile
-+++ b/Documentation/devicetree/bindings/Makefile
-@@ -19,7 +19,7 @@ extra-y += $(DT_TMP_SCHEMA)
- quiet_cmd_mk_schema = SCHEMA  $@
-       cmd_mk_schema = mkdir -p $(obj); \
-                       rm -f $@; \
--                      $(DT_MK_SCHEMA) $(DT_MK_SCHEMA_FLAGS) -o $@ $<
-+                      $(DT_MK_SCHEMA) $(DT_MK_SCHEMA_FLAGS) -o $@
-$(filter-out FORCE, $^)
-
- DT_DOCS = $(shell cd $(srctree)/$(src) && find * -name '*.yaml')
- DT_SCHEMA_FILES ?= $(addprefix $(src)/,$(DT_DOCS))
-
-
-
-Then, I see another error.
-
-
-  SCHEMA  Documentation/devicetree/bindings/.schema.yaml.tmp
-Traceback (most recent call last):
-  File "/home/masahiro/ref/yaml-bindings/tools/dt-mk-schema", line 32,
-in <module>
-    schemas = dtschema.process_schemas(args.schemas, core_schema=(not
-args.useronly))
-  File "/usr/local/lib/python3.5/dist-packages/dtschema-0.0.1-py3.5.egg/dtschema/lib.py",
-line 359, in process_schemas
-    sch = process_schema(os.path.abspath(filename))
-  File "/usr/local/lib/python3.5/dist-packages/dtschema-0.0.1-py3.5.egg/dtschema/lib.py",
-line 314, in process_schema
-    schema = load_schema(filename)
-  File "/usr/local/lib/python3.5/dist-packages/dtschema-0.0.1-py3.5.egg/dtschema/lib.py",
-line 80, in load_schema
-    return yaml.load(f.read())
-  File "/usr/lib/python3.5/codecs.py", line 321, in decode
-    (result, consumed) = self._buffer_decode(data, self.errors, final)
-UnicodeDecodeError: 'utf-8' codec can't decode byte 0xd0 in position
-0: invalid continuation byte
-Documentation/devicetree/bindings/Makefile:33: recipe for target
-'Documentation/devicetree/bindings/.schema.yaml.tmp' failed
-make[1]: *** [Documentation/devicetree/bindings/.schema.yaml.tmp] Error 1
-Makefile:1278: recipe for target 'dt_binding_check' failed
-make: *** [dt_binding_check] Error 2
-
-
-
-
-
-
-
-BTW, I cannot build *.dt.yaml
-
-
-
-  DTC     arch/arm/boot/dts/alpine-db.dt.yaml
-FATAL ERROR: Unknown output format "yaml"
-scripts/Makefile.lib:313: recipe for target
-'arch/arm/boot/dts/alpine-db.dt.yaml' failed
-make[1]: *** [arch/arm/boot/dts/alpine-db.dt.yaml] Error 1
-make[1]: *** Deleting file 'arch/arm/boot/dts/alpine-db.dt.yaml'
-Makefile:1262: recipe for target 'dtbs_check' failed
-
-
-
-
-I use linux-next.
-
-
-script/dtc/dtc does not understand '-O yaml'
-
-
-I also tried the upstream DTC project with no success.
-
-
-Where can I get dtc with yaml support?
-
-
-
-
-
--- 
-Best Regards
-Masahiro Yamada
+ arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi |   6 +-
+ arch/arm64/boot/dts/qcom/msm8916-pins.dtsi   |  76 ++++++++
+ arch/arm64/boot/dts/qcom/msm8916.dtsi        |  97 +++++++++-
+ arch/arm64/boot/dts/qcom/msm8996-pins.dtsi   | 120 ++++++++++++
+ arch/arm64/boot/dts/qcom/msm8996.dtsi        | 162 +++++++++++++++-
+ arch/arm64/boot/dts/qcom/msm8998.dtsi        |   3 +-
+ arch/arm64/boot/dts/qcom/sdm845.dtsi         | 270 +++++++++++++++++++++++++++
+ 7 files changed, 725 insertions(+), 9 deletions(-)
