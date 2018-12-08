@@ -7,55 +7,55 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23C00C07E85
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 01:47:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D290DC07E85
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 01:48:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF81120857
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 01:47:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8FE8D208E7
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 01:48:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="UMS4cpoS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF81120857
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ksCzvV3/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8FE8D208E7
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726139AbeLHBrw (ORCPT
+        id S1726160AbeLHBr7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 20:47:52 -0500
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:44112 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726110AbeLHBrw (ORCPT
+        Fri, 7 Dec 2018 20:47:59 -0500
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:42354 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726140AbeLHBr6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 20:47:52 -0500
-Received: by mail-qt1-f196.google.com with SMTP id n32so6599961qte.11
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Dec 2018 17:47:51 -0800 (PST)
+        Fri, 7 Dec 2018 20:47:58 -0500
+Received: by mail-qt1-f193.google.com with SMTP id d19so6617926qtq.9
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Dec 2018 17:47:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=sFhVeAi7iY+UOG3wtwxTXo49ZgqvorZCSv35bV1qeMY=;
-        b=UMS4cpoST60G6mrh0UTfrRs2NNM3+eLo3gRw1q0JybRTuhidGtYuZJumI9YpCUWYcm
-         aEN2kyN8MHucC4EHOcMNkaNEUj5h4TBh6wS4hNTaAm/18uPO+BEXxma1szPcslcy5P4k
-         IE7HyoDHFl5qniIKRS9rcXvUtXSmihvWJdCC4=
+        bh=BBTZjMKJnf0RVfVAPqiyjnReWdwRQ30PhNrhuhCUb3w=;
+        b=ksCzvV3/lyGVWdT4/ZvE4BzJMSmpFT1rUm8YXYR5p88y3ARTLZVzzevQAxwBUBbtlx
+         xOCEqenZu6KibJtRtBSK2sAklwUvFVHehmcF04ZOgMNvAKvwwxmR8GvTwnwfrLuOiJDu
+         Hft/7Vruxl0fpysZx4k9VFDYTHhYu+J3/fM5U=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=sFhVeAi7iY+UOG3wtwxTXo49ZgqvorZCSv35bV1qeMY=;
-        b=OPvuRGP3kaW2xi3A00AbVpMHFxNKhyAATACq1LaT7zQ2Y2VYdtznkKI+VA7w5UvL7i
-         n0haoD+FyOYpY2uEKl/0mdaqiLz6l44DYW5ywa8+rKXHaPJe1j1J8C4M+jxwUsOil812
-         f6ZVBr8pxgez3cM0Vmupj/2GrTEiG3pK9OgIjxRdo7+BmHfUiFyfTXcpL+hu51N8lClA
-         GWWOKeHz69CBP0V9BZgNCIzKQ1/yp1McCywiSkg6ImZ9MV+FKdKjLTfd1D6DzRu3KeO7
-         mLeGpXOvnlA6VBIsejEp1tkJVdA2r4mXUBsRbGX1et5Yau9kUAaySAOaYvD/29TdCrTQ
-         X0Ug==
-X-Gm-Message-State: AA+aEWbQSMIBk/jjEfsq10kL2HdjZXRRa525LFkY7IZxsbcXVkLSA+vI
-        AWgcpovJo1LV2DgK4Nt6J8S6+2JUXe5BQQ==
-X-Google-Smtp-Source: AFSGD/WxoFWT5htkc9hsohM3MVpc/T2iWOCJ5Jny3Gr7uEyxvls5hxjywTDfv7j14U9KLhiXxt/GnQ==
-X-Received: by 2002:ac8:254c:: with SMTP id 12mr4071312qtn.88.1544233670635;
-        Fri, 07 Dec 2018 17:47:50 -0800 (PST)
+        bh=BBTZjMKJnf0RVfVAPqiyjnReWdwRQ30PhNrhuhCUb3w=;
+        b=hWEtSrs0UxDoGSTKr3E+6neSB3SIBgEgGRFNLLAqBaB7xGuWKdQdHLSoiPT1+rUAQu
+         CQaX95OeNhTtNIELnQstUYO4PRtz2ahZW0oBAK644j8MAjYQDLUucnkqV4+J0imBsaCn
+         WcHYeNqMZ/ZPqh4rl2c0EE7N2UIoRn8iLCHzhVfZ+T5NCJ0ZG+DJl0NIpgD4p2xmQgii
+         sHdoxbp+fUjngg5mKMFgF/ek55RNzTqB8lZGyTttZY3Fzh7E34DrUDfqUJ5qXsUlT9o1
+         9f2ugnrUzKyYz+JdixOKL2dpBIuKh2EItsfDDlXzPf/zstRUcb0T4/AqWPLL8zgt0MH0
+         aqqw==
+X-Gm-Message-State: AA+aEWYk37UcjyMr2XLwSCgWY37lsJFxGxUUrupqEMjoGVyeHhrQ0VmK
+        Pl84zVtQNqoa88Jue7pv95ZjjYl/0sio8g==
+X-Google-Smtp-Source: AFSGD/X6NrD/bimGvXlH7dWLKL26tlCEYpc6oeIi8ycSs/XkEJn5NQPQKWymkvwVvmETiDVw/Y9c0Q==
+X-Received: by 2002:aed:25f2:: with SMTP id y47mr4154360qtc.217.1544233676532;
+        Fri, 07 Dec 2018 17:47:56 -0800 (PST)
 Received: from kdgwill07.nyc.corp.google.com ([2620:0:1003:510:59af:10e9:2d49:6b0a])
-        by smtp.googlemail.com with ESMTPSA id 94sm5604597qks.8.2018.12.07.17.47.49
+        by smtp.googlemail.com with ESMTPSA id 94sm5604597qks.8.2018.12.07.17.47.55
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 07 Dec 2018 17:47:50 -0800 (PST)
+        Fri, 07 Dec 2018 17:47:56 -0800 (PST)
 From:   Kyle Williams <kdgwill@chromium.org>
 X-Google-Original-From: Kyle Williams <kdgwill@google.com>
 To:     linux-kernel@vger.kernel.org
@@ -66,10 +66,17 @@ Cc:     kdgwill@chromium.org,
         Nicolas Boichat <drinkcat@chromium.org>,
         Jon Flatley <jflat@chromium.org>,
         Felipe Balbi <felipe.balbi@linux.intel.com>,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        Kuppuswamy Sathyanarayanan 
+        <sathyanarayanan.kuppuswamy@linux.intel.com>,
+        Harry Pan <harry.pan@intel.com>,
+        Emmanuel Pescosta <emmanuelpescosta099@gmail.com>,
+        Danilo Krummrich <danilokrummrich@dk-develop.de>,
+        Dmitry Fleytman Dmitry Fleytman <dmitry.fleytman@gmail.com>,
         linux-usb@vger.kernel.org
-Subject: [PATCH v3 1/2] USB: quirks: Check device interface LPM capability
-Date:   Fri,  7 Dec 2018 20:47:21 -0500
-Message-Id: <20181208014724.951-2-kdgwill@google.com>
+Subject: [PATCH v3 2/2] USB: quirks: Disable LPM for Logitech UVC devices
+Date:   Fri,  7 Dec 2018 20:47:22 -0500
+Message-Id: <20181208014724.951-3-kdgwill@google.com>
 X-Mailer: git-send-email 2.20.0.rc2.403.gdbc3b29805-goog
 In-Reply-To: <20181208014724.951-1-kdgwill@google.com>
 References: <20181205093902.GA18633@kroah.com>
@@ -83,142 +90,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Kyle Williams <kdgwill@chromium.org>
 
-Description: enable the ability to disable LPM for all devices matched
-by interface information
+Description: Some USB device / host controller combinations seem to have
+problems with Link Power management. In particular it is described that
+the combination of certain Logitech uvc devices and other powered media
+devices such causes 'not enough bandwidth for new device state' error.
+
+This patch enables the USB_QUIRK_NO_LPM quirk entries for all connected
+Logitech UVC devices indicating LPM should remain disabled for the device.
 
 Signed-off-by: Kyle Williams <kdgwill@chromium.org>
 ---
- drivers/usb/core/hub.c | 87 +++++++++++++++++++++++-------------------
- 1 file changed, 48 insertions(+), 39 deletions(-)
+ drivers/usb/core/quirks.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/usb/core/hub.c b/drivers/usb/core/hub.c
-index 0f9381b69a3b..8f366ec4d21b 100644
---- a/drivers/usb/core/hub.c
-+++ b/drivers/usb/core/hub.c
-@@ -365,6 +365,51 @@ static void usb_set_lpm_parameters(struct usb_device *udev)
- 	usb_set_lpm_sel(udev, &udev->u2_params);
- }
+diff --git a/drivers/usb/core/quirks.c b/drivers/usb/core/quirks.c
+index 0690fcff0ea2..bbbb7e6df958 100644
+--- a/drivers/usb/core/quirks.c
++++ b/drivers/usb/core/quirks.c
+@@ -440,7 +440,7 @@ static const struct usb_device_id usb_quirk_list[] = {
+ static const struct usb_device_id usb_interface_quirk_list[] = {
+ 	/* Logitech UVC Cameras */
+ 	{ USB_VENDOR_AND_INTERFACE_INFO(0x046d, USB_CLASS_VIDEO, 1, 0),
+-	  .driver_info = USB_QUIRK_RESET_RESUME },
++	  .driver_info = USB_QUIRK_RESET_RESUME | USB_QUIRK_NO_LPM },
  
-+/*
-+ * There are reports of USB 3.0 devices that say they support USB 2.0 Link PM
-+ * when they're plugged into a USB 2.0 port, but they don't work when LPM is
-+ * enabled.
-+ *
-+ * Only enable USB 2.0 Link PM if the port is internal (hardwired), or the
-+ * device says it supports the new USB 2.0 Link PM errata by setting the BESL
-+ * support bit in the BOS descriptor.
-+ */
-+static void hub_set_initial_usb2_lpm_policy(struct usb_device *udev)
-+{
-+	struct usb_hub *hub = usb_hub_to_struct_hub(udev->parent);
-+	int connect_type = USB_PORT_CONNECT_TYPE_UNKNOWN;
-+
-+	if (!udev->usb2_hw_lpm_capable || !udev->bos)
-+		return;
-+
-+	if (hub)
-+		connect_type = hub->ports[udev->portnum - 1]->connect_type;
-+
-+	if ((udev->bos->ext_cap->bmAttributes & cpu_to_le32(USB_BESL_SUPPORT))
-+			|| connect_type == USB_PORT_CONNECT_TYPE_HARD_WIRED) {
-+		udev->usb2_hw_lpm_allowed = 1;
-+		usb_set_usb2_hardware_lpm(udev, 1);
-+	}
-+}
-+
-+void usb_update_device_lpm(struct usb_hcd *hcd, struct usb_device *udev)
-+{
-+	int retval;
-+
-+	if (udev->wusb == 0 && le16_to_cpu(udev->descriptor.bcdUSB) >= 0x0201) {
-+		retval = usb_get_bos_descriptor(udev);
-+		if (!retval) {
-+			udev->lpm_capable = usb_device_supports_lpm(udev);
-+			usb_set_lpm_parameters(udev);
-+		}
-+	}
-+
-+	/* notify HCD that we have a device connected and addressed */
-+	if (hcd->driver->update_device)
-+		hcd->driver->update_device(hcd, udev);
-+	hub_set_initial_usb2_lpm_policy(udev);
-+}
-+
- /* USB 2.0 spec Section 11.24.4.5 */
- static int get_hub_descriptor(struct usb_device *hdev,
- 		struct usb_hub_descriptor *desc)
-@@ -2295,7 +2340,6 @@ static int usb_enumerate_device_otg(struct usb_device *udev)
- 	return err;
- }
- 
--
- /**
-  * usb_enumerate_device - Read device configs/intfs/otg (usbcore-internal)
-  * @udev: newly addressed device (in ADDRESS state)
-@@ -2351,6 +2395,8 @@ static int usb_enumerate_device(struct usb_device *udev)
- 
- 	usb_detect_interface_quirks(udev);
- 
-+	usb_update_device_lpm(hcd, udev);
-+
- 	return 0;
- }
- 
-@@ -4402,33 +4448,6 @@ static int hub_set_address(struct usb_device *udev, int devnum)
- 	return retval;
- }
- 
--/*
-- * There are reports of USB 3.0 devices that say they support USB 2.0 Link PM
-- * when they're plugged into a USB 2.0 port, but they don't work when LPM is
-- * enabled.
-- *
-- * Only enable USB 2.0 Link PM if the port is internal (hardwired), or the
-- * device says it supports the new USB 2.0 Link PM errata by setting the BESL
-- * support bit in the BOS descriptor.
-- */
--static void hub_set_initial_usb2_lpm_policy(struct usb_device *udev)
--{
--	struct usb_hub *hub = usb_hub_to_struct_hub(udev->parent);
--	int connect_type = USB_PORT_CONNECT_TYPE_UNKNOWN;
--
--	if (!udev->usb2_hw_lpm_capable || !udev->bos)
--		return;
--
--	if (hub)
--		connect_type = hub->ports[udev->portnum - 1]->connect_type;
--
--	if ((udev->bos->ext_cap->bmAttributes & cpu_to_le32(USB_BESL_SUPPORT)) ||
--			connect_type == USB_PORT_CONNECT_TYPE_HARD_WIRED) {
--		udev->usb2_hw_lpm_allowed = 1;
--		usb_set_usb2_hardware_lpm(udev, 1);
--	}
--}
--
- static int hub_enable_device(struct usb_device *udev)
- {
- 	struct usb_hcd *hcd = bus_to_hcd(udev->bus);
-@@ -4779,19 +4798,9 @@ hub_port_init(struct usb_hub *hub, struct usb_device *udev, int port1,
- 
- 	usb_detect_quirks(udev);
- 
--	if (udev->wusb == 0 && le16_to_cpu(udev->descriptor.bcdUSB) >= 0x0201) {
--		retval = usb_get_bos_descriptor(udev);
--		if (!retval) {
--			udev->lpm_capable = usb_device_supports_lpm(udev);
--			usb_set_lpm_parameters(udev);
--		}
--	}
-+	usb_update_device_lpm(hcd, udev);
- 
- 	retval = 0;
--	/* notify HCD that we have a device connected and addressed */
--	if (hcd->driver->update_device)
--		hcd->driver->update_device(hcd, udev);
--	hub_set_initial_usb2_lpm_policy(udev);
- fail:
- 	if (retval) {
- 		hub_port_disable(hub, port1, 0);
+ 	{ }  /* terminating entry must be last */
+ };
 -- 
 2.20.0.rc2.403.gdbc3b29805-goog
 
