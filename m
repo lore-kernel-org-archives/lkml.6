@@ -2,84 +2,90 @@ Return-Path: <SRS0=1bfu=OR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F251CC04EB8
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 16:01:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98E9EC04EB8
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 16:04:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C2F5A2082D
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 16:01:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C2F5A2082D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id 526DA2082D
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 16:04:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="RDWXZBGf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 526DA2082D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726226AbeLHQBs (ORCPT
+        id S1726193AbeLHQET (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 8 Dec 2018 11:01:48 -0500
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:39103 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726160AbeLHQBs (ORCPT
+        Sat, 8 Dec 2018 11:04:19 -0500
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:37498 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726160AbeLHQES (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 8 Dec 2018 11:01:48 -0500
-Received: by mail-qt1-f194.google.com with SMTP id n21so7906979qtl.6;
-        Sat, 08 Dec 2018 08:01:48 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=K26JT2ezNbPOh+TFopWu1l8ZF3ocLZh6AHxGmomMTVA=;
-        b=dsPdtthsNaQ/gYICtIMjzpmvKsr+s+OV7b+aF5DxO3JO4DhYUH/iIrsTYN8FZPvfrq
-         d6AlSX+dnM0d3HmlbWCPKsb7azeMPRPWfVr5MD8zkiJhyQHE0eOk1WsP5ImfljuQ9HU3
-         5xsSoxC+Me53JkHqFIYjNLR1IPGTuLsChmh4yEsv9ssAyt5fZMfMrUbbRuI0DIQO9T40
-         ph07G81EwEcsMEucno3lp22gdD1XTVX5+f3AA/BrfB4YvvjJ49AWlewreGS4WMu7MyvI
-         sNs1bUl9OveXuCJbkybE6LaGMqlRJ46ZUqIQH33nBUrWqkPQ2oeGNiacEDCC/SPXZroN
-         DjFQ==
-X-Gm-Message-State: AA+aEWandIIwtAHkgL8vEDSLjTRwUKvQtSvD+gX+8r9yV/ill6TSKPkx
-        OGUO2ZqvhmcNNdhfnaslpHzJAcRCoyRdnuNNeR/jE+sP
-X-Google-Smtp-Source: AFSGD/XxeFVtHmmGosDonmHdEr38iDer4rV06eTqha2zHatjuKUYquRLONH4mrKTXlOgRIobirK60Ljk/PZ2EhqPb08=
-X-Received: by 2002:ac8:1d12:: with SMTP id d18mr6007787qtl.343.1544284907345;
- Sat, 08 Dec 2018 08:01:47 -0800 (PST)
+        Sat, 8 Dec 2018 11:04:18 -0500
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id wB8G459w027393;
+        Sat, 8 Dec 2018 10:04:05 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1544285045;
+        bh=Ia7ipjQGbGv0wQiqMBWcm45wmGjtcsVODAoKcWAnnQo=;
+        h=Date:From:To:CC:Subject:References:In-Reply-To;
+        b=RDWXZBGffk7ZYW8R9rKUMQwwmZ7oX21t6ACs6nAw8HFqWZfzeTK2hcArpytt/xNZT
+         7hd/veqWsZy5QKAbT4gXM/3dbYXuON1DjBSDqtc7SmCyzN5WZrKaKNGrriiCMnMUo0
+         Ay0A0JzgI2dTfcGvczsz+i4841yFzbV9KgFXF4U8=
+Received: from DLEE107.ent.ti.com (dlee107.ent.ti.com [157.170.170.37])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wB8G4581115190
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Sat, 8 Dec 2018 10:04:05 -0600
+Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE107.ent.ti.com
+ (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Sat, 8
+ Dec 2018 10:04:04 -0600
+Received: from dlep33.itg.ti.com (157.170.170.75) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Sat, 8 Dec 2018 10:04:04 -0600
+Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id wB8G449c023256;
+        Sat, 8 Dec 2018 10:04:04 -0600
+Date:   Sat, 8 Dec 2018 10:04:04 -0600
+From:   Nishanth Menon <nm@ti.com>
+To:     Yangtao Li <tiny.windzz@gmail.com>
+CC:     <t-kristo@ti.com>, <ssantosh@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] firmware: ti_sci: Change to use DEFINE_SHOW_ATTRIBUTE
+ macro
+Message-ID: <20181208160404.h7cuuq6jvafoxa32@akan>
+References: <20181122140519.25166-1-tiny.windzz@gmail.com>
 MIME-Version: 1.0
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Sat, 8 Dec 2018 17:01:30 +0100
-Message-ID: <CAK8P3a20S++xEHTYXXuipZ+YUZc0_EY2bj0JmaDwWdgWoLTROA@mail.gmail.com>
-Subject: [GIT PULL] asm-generic: bugfix for asm/unistd.h
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Guo Ren <ren_guo@c-sky.com>,
-        Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20181122140519.25166-1-tiny.windzz@gmail.com>
+User-Agent: NeoMutt/20171215
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following changes since commit 2e6e902d185027f8e3cb8b7305238f7e35d6a436:
+On 09:05-20181122, Yangtao Li wrote:
+> Use DEFINE_SHOW_ATTRIBUTE macro to simplify the code.
+> 
+> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
 
-  Linux 4.20-rc4 (2018-11-25 14:19:31 -0800)
+Thanks for the same and sorry for responding so late.
 
-are available in the Git repository at:
+[...]
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/arnd/asm-generic.git
-tags/asm-generic-4.20
+Santosh,
+could you pick this up? maybe for next rev or so?
 
-for you to fetch changes up to b7d624ab431227af376787148cd7d474088c03aa:
+Reviewed-by: Nishanth Menon <nm@ti.com>
 
-  asm-generic: unistd.h: fixup broken macro include. (2018-12-06 16:57:47 +0100)
-
-----------------------------------------------------------------
-asm-generic: bugfix for asm/unistd.h
-
-Multiple people reported a bug I introduced in asm-generic/unistd.h
-in 4.20, this is the obvious bugfix to get glibc and others to
-correctly build again on new architectures that no longer provide
-the old fstatat64() family of system calls.
-
-----------------------------------------------------------------
-Guo Ren (1):
-      asm-generic: unistd.h: fixup broken macro include.
-
- include/uapi/asm-generic/unistd.h | 4 ++++
- 1 file changed, 4 insertions(+)
+-- 
+Regards,
+Nishanth Menon
