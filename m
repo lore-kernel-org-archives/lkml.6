@@ -2,231 +2,108 @@ Return-Path: <SRS0=1bfu=OR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81C4EC65BAF
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 16:44:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65F48C04EB8
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 16:46:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 460ED20892
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 16:44:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1FE9620868
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 16:46:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T61bxU2I"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 460ED20892
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="DuHpYSSL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1FE9620868
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=googlemail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726202AbeLHQoT (ORCPT
+        id S1726203AbeLHQq5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 8 Dec 2018 11:44:19 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:40319 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726148AbeLHQoT (ORCPT
+        Sat, 8 Dec 2018 11:46:57 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:39555 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726149AbeLHQq4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 8 Dec 2018 11:44:19 -0500
-Received: by mail-pf1-f195.google.com with SMTP id i12so3372583pfo.7;
-        Sat, 08 Dec 2018 08:44:18 -0800 (PST)
+        Sat, 8 Dec 2018 11:46:56 -0500
+Received: by mail-wm1-f65.google.com with SMTP id f81so7231935wmd.4;
+        Sat, 08 Dec 2018 08:46:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=Fr4i+rQk80cGKL45k8oAJNafJmbFKBOUVzE5zVwQUWo=;
-        b=T61bxU2IECa0byQ6N33lFA3Y34fcWaK46kQSWUjKlQJIcvy/CGGnxato2gSTloaZSG
-         KXWOH3BVEKtVaQ1Dg3bpmTMFuuFvsoNBrOmMEpWyIyS7rc8VAWxi9X6kFenLffu6Yvh+
-         IU8kv70s3lQD7OC4PySbfShqzw5API4KtqNJOgCppeeWIfDPTQ+o2BT5HfT17/Cm+O72
-         V0USOenyuiT/gVTbfuxUPzKdKckYgpfbTFPJW58HFxbjYbzrJHYvYJYlRfhLzkGz5oCd
-         k9KDAbsAOtxKI27jJNoOAwBNkFjKVYG8Kps/+yLjrWAH0tXloE7W7bFd9VpX2/2cVdfZ
-         KHrg==
+        d=googlemail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=pM4FAqUmlNQk5CoUyTd1qnDe/uR77MZL4ayRZ464rPE=;
+        b=DuHpYSSLnPfY2ImKcn1jNXWNz8BqkY0et3zsd1bze1IERm4cQUwIeVM00EDHff6qyN
+         2J6sxik5qqzvh30WtzogVI2lFS3eILZq2A7RBWNNiEDJA8yKPwILbseKGlayPYqWm2/O
+         DM/ZwYpPNXI2r4fknEwbm3CX+FDuxG8D+aHLO9qlXrCb1wAiRuF4NszqAd2TZguxhe5G
+         5A/P1K3+P4Lnj9/5i8vvI9i5BcY6PhdLIZFlzoz352/GV7RX1BGHkLKzgoPX2BKC27PH
+         ycin0ocMg6959cQvd6LBrqM3TUPUlntvTyHsuYikPvC1hf8AgEs2uUIvmXeym6RXYeif
+         4P3w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=Fr4i+rQk80cGKL45k8oAJNafJmbFKBOUVzE5zVwQUWo=;
-        b=Xyzw7Zzh5PYVwfYlmeShHeTRe3W4743g0UIppVtOY156qXX5VG77qFLkf69UTHYKp+
-         96xMmTZyXGtP/dycZZBM/4GvIpKdzZZFnUiORMBqIi2BLrU5A1eCVrR76bNUtJfV/N/y
-         4afGOLeuzBIjEGBAr0Zaxc6haiRTSMeZLbxaE/6GUnktUnSjLk7Uw+3Wx1kuXhqIm2+x
-         MQMuCLlqeVK1gjB9toRp/WLRET7swsV1vxWC6fF9BWQFAZiLVoEBCQgBcJ+PbMcRJmn3
-         qa47SPUFYsg5c75zWx10ymSYuXFEbnPxYgc+lbdHs9serDCRk2MzoNt1ZPGAoJMjeUYH
-         859w==
-X-Gm-Message-State: AA+aEWZ8SZFPjDc+OfsYrXyrtTIDMWPbQBEtWwFvvliBR6oxcuT//Njz
-        rNTDBdqK1TPM1cLbP4g74c0=
-X-Google-Smtp-Source: AFSGD/UMWlr1RH4eXM3OcbJSo0SZMyJEKd6OXfeWi69ZSFjVV9wb2GcjyIXmZ8S7GRMKUeqS1Yzqyw==
-X-Received: by 2002:a63:68c4:: with SMTP id d187mr5527912pgc.11.1544287457901;
-        Sat, 08 Dec 2018 08:44:17 -0800 (PST)
-Received: from Shreeya-Patel ([103.212.140.153])
-        by smtp.googlemail.com with ESMTPSA id w136sm10113626pfd.169.2018.12.08.08.44.14
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 08 Dec 2018 08:44:17 -0800 (PST)
-Message-ID: <043e51316f5acf9004d11ecb77a5485d3fe41494.camel@gmail.com>
-Subject: Re: [PATCH v3 2/3] Staging: iio: adt7316: Move interrupt related
- code
-From:   Shreeya Patel <shreeya.patel23498@gmail.com>
-To:     Jonathan Cameron <jic23@kernel.org>
-Cc:     lars@metafoo.de, Michael.Hennerich@analog.com, knaack.h@gmx.de,
-        pmeerw@pmeerw.net, gregkh@linuxfoundation.org,
-        linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org
-Date:   Sat, 08 Dec 2018 22:14:13 +0530
-In-Reply-To: <20181208161207.47ee755c@archlinux>
-References: <20181208151638.8759-1-shreeya.patel23498@gmail.com>
-         <20181208151638.8759-3-shreeya.patel23498@gmail.com>
-         <20181208161207.47ee755c@archlinux>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=pM4FAqUmlNQk5CoUyTd1qnDe/uR77MZL4ayRZ464rPE=;
+        b=ZBRau1jR9pZjS0tiOZQ/BxmWP7h/F00xeryXOn9yjWvpkGTdpRFP73Xy+vCAHZT456
+         fiiVZpUEEigfqw4BfL0wocD7/4cTKKJWd6sAxJa6dgAsNwnqSKNNnlaupoS5gA6bz39J
+         JXqATbijuJu7MvVfmp+pUKZeBZVoQ+FZf7U5TbmF75kBxz75tCrQEC4Cpya0hsksppXm
+         21AzyPOsMS5XYWtV5uLp1Ezk2dkpADfCLe/t1nrZVTRjEFx+g5DB28GGPNQXah+qEpwD
+         4wJmUn3P1LDnKY7dpPlOZw6H9HS++Vx9+m4niFst0DrpzGypplrsBNBW9oFedsaia6Kc
+         FgoQ==
+X-Gm-Message-State: AA+aEWaiJo9TZcEMFih/5dL15VsEJtQKrNgPYoq6rVCkqdGbPFNYbUvX
+        mWMQxKfE27g80piIG+axqPasMzV3
+X-Google-Smtp-Source: AFSGD/UPq9RtICsuxf6JrvhRkG/J2kFp1Ibcxi8ueiAdsR83/piZeOPtqS0K1WFu5x/JbTnIkZCKlg==
+X-Received: by 2002:a1c:6382:: with SMTP id x124-v6mr5878978wmb.145.1544287614688;
+        Sat, 08 Dec 2018 08:46:54 -0800 (PST)
+Received: from blackbox.darklights.net (p200300DCD73FBA00428D5CFFFEB99DB8.dip0.t-ipconnect.de. [2003:dc:d73f:ba00:428d:5cff:feb9:9db8])
+        by smtp.googlemail.com with ESMTPSA id c9sm11100690wmh.27.2018.12.08.08.46.53
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 08 Dec 2018 08:46:53 -0800 (PST)
+From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+To:     linux-amlogic@lists.infradead.org, khilman@baylibre.com
+Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        devicetree@vger.kernel.org,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: [PATCH 0/3] ARM: dts: meson: add the APB/APB2 busses
+Date:   Sat,  8 Dec 2018 17:45:49 +0100
+Message-Id: <20181208164555.26527-1-martin.blumenstingl@googlemail.com>
+X-Mailer: git-send-email 2.19.2
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 2018-12-08 at 16:12 +0000, Jonathan Cameron wrote:
-> On Sat,  8 Dec 2018 20:46:37 +0530
-> Shreeya Patel <shreeya.patel23498@gmail.com> wrote:
-> 
-> > There is a function adt7316_irq_setup() where irq_type is being
-> > set. It would be good to move devm_request_threaded_irq() function
-> > and assignment of chip->config1 in adt7316_irq_setup() to unclutter
-> > the code in probe function.
-> > 
-> > Signed-off-by: Shreeya Patel <shreeya.patel23498@gmail.com>
-> 
-> As commented below, this didn't end up as tidy as it might have been.
-> It would I think have been simpler before patch 1 or just merged with
-> it.
-> 
-As I was introducing a new function named "adt7316_setup_irq" so I
-thought patch 1 should come first because we are setting up the
-irq_type there.
-But yes, this made the code complex to review.
+This adds the APB bus on Meson8 and Meson8b as well as the APB2 bus on
+Meson6. This is preparation work for adding the Mali GPU which is
+located on theses busses.
 
-I didn't merge both patches because both the patches were having
-different changes. If I would have done that then there was a
-possibility where someone would have said to split the patches.
+Meson6 seems to have it's APB at 0xc8000000 instead of 0xd0000000. The
+region at 0xd0000000 is called APB2 or A9_APB and it has a different
+size (256k) compared to Meson8 and Meson8b (2M).
 
-> Anyhow, I might combine the two whilst applying. However before I do
-> that I'd like to leave this on list for a few days to let Alex
-> or others have time for another look before I apply it.
-> 
+Addresses and sizes are taken from the Amlogic 3.10 kernel sources:
+- Meson6: [0]
+- Meson8: [1]
+- Meson8b: [2]
 
-It's ok, I'll merge both patches and send as a v4 to you. I'll send it
-after 3-4 days so we can get other reviews by that time if there are
-any to come.
 
-My vacation has started so I'll work faster now.
+[0] https://github.com/endlessm/linux-meson/blob/cd4096c3ff4eb5b8a8a5581bb46508601c5470dc/arch/arm/mach-meson6/include/mach/io.h#L61
+[1] https://github.com/endlessm/linux-meson/blob/cd4096c3ff4eb5b8a8a5581bb46508601c5470dc/arch/arm/mach-meson8/include/mach/io.h#L53
+[2] https://github.com/endlessm/linux-meson/blob/cd4096c3ff4eb5b8a8a5581bb46508601c5470dc/arch/arm/mach-meson8b/include/mach/io.h#L53
 
-> All heading in the right direction!
-> 
-> Thanks,
-> 
-> Jonathan
-> 
-> > ---
-> >  drivers/staging/iio/addac/adt7316.c | 34 ++++++++++++++-----------
-> > ----
-> >  1 file changed, 17 insertions(+), 17 deletions(-)
-> > 
-> > diff --git a/drivers/staging/iio/addac/adt7316.c
-> > b/drivers/staging/iio/addac/adt7316.c
-> > index 86b2c3d53588..97dd48153293 100644
-> > --- a/drivers/staging/iio/addac/adt7316.c
-> > +++ b/drivers/staging/iio/addac/adt7316.c
-> > @@ -1807,11 +1807,12 @@ static irqreturn_t
-> > adt7316_event_handler(int irq, void *private)
-> >  	return IRQ_HANDLED;
-> >  }
-> >  
-> > -static int adt7316_setup_irq(struct device *dev, int irq)
-> > +static int adt7316_setup_irq(struct iio_dev *indio_dev)
-> 
-> Hmm. This has ended up a lot more complex than ideal due
-> to the effective two layers of rework.  
-> 
-> I would either have done patches 1 and 2 as one patch or
-> reordered them so the rework preceded the change
-> to DT.  It's not that important but it would have lead
-> to code that was easier to review.
-> 
-> 
-> >  {
-> > -	int irq_type;
-> > +	struct adt7316_chip_info *chip = iio_priv(indio_dev);
-> > +	int irq_type, ret;
-> >  
-> > -	irq_type = irqd_get_trigger_type(irq_get_irq_data(irq));
-> > +	irq_type = irqd_get_trigger_type(irq_get_irq_data(chip-
-> > >bus.irq));
-> >  
-> >  	switch (irq_type) {
-> >  	case IRQF_TRIGGER_HIGH:
-> > @@ -1821,13 +1822,23 @@ static int adt7316_setup_irq(struct device
-> > *dev, int irq)
-> >  	case IRQF_TRIGGER_FALLING:
-> >  		break;
-> >  	default:
-> > -		dev_info(dev, "mode %d unsupported, using
-> > IRQF_TRIGGER_LOW\n",
-> > +		dev_info(&indio_dev->dev, "mode %d unsupported,
-> > using IRQF_TRIGGER_LOW\n",
-> >  			 irq_type);
-> >  		irq_type = IRQF_TRIGGER_LOW;
-> >  		break;
-> >  	}
-> >  
-> > -	return irq_type;
-> > +	ret = devm_request_threaded_irq(&indio_dev->dev, chip-
-> > >bus.irq,
-> > +					NULL,
-> > adt7316_event_handler,
-> > +					irq_type | IRQF_ONESHOT,
-> > +					indio_dev->name,
-> > indio_dev);
-> > +	if (ret)
-> > +		return ret;
-> > +
-> > +	if (irq_type & IRQF_TRIGGER_HIGH)
-> > +		chip->config1 |= ADT7316_INT_POLARITY;
-> > +
-> > +	return ret;
-> >  }
-> >  
-> >  /*
-> > @@ -2124,7 +2135,6 @@ int adt7316_probe(struct device *dev, struct
-> > adt7316_bus *bus,
-> >  {
-> >  	struct adt7316_chip_info *chip;
-> >  	struct iio_dev *indio_dev;
-> > -	int irq_type;
-> >  	int ret = 0;
-> >  
-> >  	indio_dev = devm_iio_device_alloc(dev, sizeof(*chip));
-> > @@ -2168,19 +2178,9 @@ int adt7316_probe(struct device *dev, struct
-> > adt7316_bus *bus,
-> >  	indio_dev->modes = INDIO_DIRECT_MODE;
-> >  
-> >  	if (chip->bus.irq > 0) {
-> > -		irq_type = adt7316_setup_irq(dev, chip->bus.irq);
-> > -
-> > -		ret = devm_request_threaded_irq(dev, chip-
-> > >bus.irq,
-> > -						NULL,
-> > -						adt7316_event_hand
-> > ler,
-> > -						irq_type |
-> > IRQF_ONESHOT,
-> > -						indio_dev->name,
-> > -						indio_dev);
-> > +		ret = adt7316_setup_irq(indio_dev);
-> >  		if (ret)
-> >  			return ret;
-> > -
-> > -		if (irq_type & IRQF_TRIGGER_HIGH)
-> > -			chip->config1 |= ADT7316_INT_POLARITY;
-> >  	}
-> >  
-> >  	ret = chip->bus.write(chip->bus.client, ADT7316_CONFIG1,
-> > chip->config1);
-> 
-> 
+
+Martin Blumenstingl (3):
+  ARM: dts: meson6: add the APB2 bus
+  ARM: dts: meson8: add the APB bus
+  ARM: dts: meson8b: add the APB bus
+
+ arch/arm/boot/dts/meson6.dtsi  | 8 ++++++++
+ arch/arm/boot/dts/meson8.dtsi  | 8 ++++++++
+ arch/arm/boot/dts/meson8b.dtsi | 8 ++++++++
+ 3 files changed, 24 insertions(+)
+
+-- 
+2.19.2
+
