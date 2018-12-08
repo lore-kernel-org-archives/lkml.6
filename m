@@ -2,132 +2,125 @@ Return-Path: <SRS0=1bfu=OR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E0ABC04EB8
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 07:09:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80CCDC04EB8
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 07:16:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B9352082D
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 07:09:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 33C72208E7
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 07:16:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dDa2v986"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B9352082D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="rfIdSzmJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 33C72208E7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726218AbeLHHJ1 (ORCPT
+        id S1726237AbeLHHQp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 8 Dec 2018 02:09:27 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:51666 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726081AbeLHHJ1 (ORCPT
+        Sat, 8 Dec 2018 02:16:45 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:36368 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726121AbeLHHQp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 8 Dec 2018 02:09:27 -0500
-Received: by mail-wm1-f67.google.com with SMTP id s14so6332243wmh.1
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Dec 2018 23:09:24 -0800 (PST)
+        Sat, 8 Dec 2018 02:16:45 -0500
+Received: by mail-ot1-f66.google.com with SMTP id k98so5979544otk.3
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Dec 2018 23:16:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Ek7vo3RvdX0CT8AbAjEa4CaJ5kRaBTm5HswXMMc7hj0=;
-        b=dDa2v9865m9JRu+A4zXuIO2/rSW5rdrkMtaw3TNtzcSjmM04VZIo3z5N3dJimZ+v/X
-         Zv50gFnShfItXEh1DFW5yht5VMj1t1SyqNhnVXIO3Z/vi7beF8X5N4JmKwyJbp6VK3Fs
-         ZN0h7Za6mZ5Kle8cEyvVhIskhMwUVdbqTjUhcYWit1xIENDVfHSrlH6CwQNgTqUezuRb
-         CYuNVZaiO3y2O5UMKkCp/7GIcBo6ltwaUU9bIDm2pCuxUUV/yKjSyV1hSxC79fp+1QSD
-         UP6CRrO5+/1ZA3BcoBfG6yEZY2oagpXujuqJO2FJ6D6MXds8rJapo6wkSyYCorFx8qdB
-         uiMw==
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=C3H6N6h2pzHR9OK+frkAK7GAwYbsLQzo4rb364b097U=;
+        b=rfIdSzmJgJl+9k7qSCRMoqm5IzqvPdFFbgt3urW1engf5UV6h51aYVxAFMmy8RXQRk
+         Vnb3VjqQ881bUOAD/eKJ+/UtoI8XGTeaSkni9gXQgx4iqsTOQKRwYTitrE4mnipZX5mT
+         19UYMAjgYnN8vpcaiKZaw1mzCA1CAzE5Z/dFXk1Rg57qhw7/7hy7XcPyIuhfo+PJTSVf
+         nNPxKJKQBqqGoSz+q62NEVqsVHDd+sUOV9NiWBAFHjasIXHyy1zlDhPzziojV2LxG/l+
+         i+WnLRCR9dGUM823CIhO7BrQWjHrXCphoDxwFmWJpRdunt8PVWqgSBhsbr+OUt/HpyM1
+         4wxQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Ek7vo3RvdX0CT8AbAjEa4CaJ5kRaBTm5HswXMMc7hj0=;
-        b=e5ssX3ZlHu4oNt/2p+SaUuALHNTc1abCd+0bzRCQmrobixT4qn+/SKaWo5QVJS2WzK
-         P6EQoGt9qbSiXz2bJW9BCGi3KtTsiV2I8YLUgRmx+wF9isJJ66WvqZzm6OkxcnNsthLN
-         bLbE7EIJ1XG6TPkE5bUFIf/REeq/XFl5L6kQMBGPdUOKMqbBdVkQ8RSJu14RNu2M/odh
-         CNx57KxTIhmOULj4GTUgOA7WymVtNQ2piD6yTRGSYfmHTM5s8fcYdaX61CHBNyHIDSlf
-         jdY3zYOG+Csg2cH3vuCRrdoDLJp1LTgTNUb+dlFVfRsi8iZQ+ACtFs9ZVOmYvkTb12Rj
-         97EQ==
-X-Gm-Message-State: AA+aEWb7qmX0j/BXRdvDRrGIRDmCuhAH401oXHy/I83bpDRL+yugLODO
-        wmOD1kdEDISOqQgKZ8VsKw==
-X-Google-Smtp-Source: AFSGD/Uk/gC5CO0/Q9sR4wxTFBXSuj1uMtyNrONHllMamXupS2Ogt2YySj+mE0hFtOmg0B1iG6U2Kw==
-X-Received: by 2002:a7b:c24c:: with SMTP id b12mr3979786wmj.29.1544252963578;
-        Fri, 07 Dec 2018 23:09:23 -0800 (PST)
-Received: from localhost (host34-126-dynamic.27-79-r.retail.telecomitalia.it. [79.27.126.34])
-        by smtp.gmail.com with ESMTPSA id i13sm4381732wrw.32.2018.12.07.23.09.22
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 07 Dec 2018 23:09:23 -0800 (PST)
-Date:   Sat, 8 Dec 2018 08:09:22 +0100
-From:   Andrea Righi <righi.andrea@gmail.com>
-To:     Masami Hiramatsu <mhiramat@kernel.org>
-Cc:     "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
-        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Yonghong Song <yhs@fb.com>, Andy Lutomirski <luto@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] kprobes: x86_64: blacklist non-attachable interrupt
- functions
-Message-ID: <20181208070922.GB2237@Dell>
-References: <20181206095648.GA8249@Dell>
- <20181207234731.f52a8c1eff6c0e72c073ad40@kernel.org>
- <20181208010120.c3eda9042912068aecc68317@kernel.org>
- <20181207175805.GA1369@Dell>
- <20181208124859.7318e32abfab4cc6dc2da3a8@kernel.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=C3H6N6h2pzHR9OK+frkAK7GAwYbsLQzo4rb364b097U=;
+        b=tVBl7bZOilPMWkl2dEB5yL9i9Ws9UphZAHCHzg9QmqCFbqPy11P0W8haMgwVS5c8If
+         4ZESEI8diJtEV1g/5ks3/So7+HuZyYVNXOsk4/BP+19cqilh9V+hcNxfYLl+ZW0mGz6f
+         l7pFpyETwnhpJDEgI452cJSORv/Rai/Ae+5/SDwagT2NyK1grYz/uHRySGwhkE3vMDDE
+         /n7V3N4py4P8sKIS+mDGiSGoXx3BmIcI3KRvlodMdxdiyejHJuPB5tVNRO5bEEXme4WW
+         /wpndsiX8jOHbCe8KBWjJl9AHxnUBDhMYp/rhSlYBr/nSMBF8Aif+fIWSN0snsp7CMch
+         GtyA==
+X-Gm-Message-State: AA+aEWaovDfSsIwOSd831I7w31z52NWB9/zBO3ZSsPbLFCsYWL7Xmfa9
+        ex3SmoigsfPMYGl5m6vzkEoMer7m716V5DEeC/K8GQ==
+X-Google-Smtp-Source: AFSGD/XOAgubOhoMN0drX+UMPxy4te6wp21AbEL7xrIylrlHKTXItgaZlWZzROiZ7/YZUoL05LI70u8hJEwX4SnIMKw=
+X-Received: by 2002:a9d:6ac2:: with SMTP id m2mr3331738otq.353.1544253403739;
+ Fri, 07 Dec 2018 23:16:43 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181208124859.7318e32abfab4cc6dc2da3a8@kernel.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20181204001720.26138-1-jhubbard@nvidia.com> <20181204001720.26138-2-jhubbard@nvidia.com>
+ <CAPcyv4h99JVHAS7Q7k3iPPUq+oc1NxHdyBHMjpgyesF1EjVfWA@mail.gmail.com>
+ <a0adcf7c-5592-f003-abc5-a2645eb1d5df@nvidia.com> <CAPcyv4iNtamDAY9raab=iXhSZByecedBpnGybjLM+PuDMwq7SQ@mail.gmail.com>
+ <3c91d335-921c-4704-d159-2975ff3a5f20@nvidia.com> <20181205011519.GV10377@bombadil.infradead.org>
+ <20181205014441.GA3045@redhat.com> <59ca5c4b-fd5b-1fc6-f891-c7986d91908e@nvidia.com>
+ <7b4733be-13d3-c790-ff1b-ac51b505e9a6@nvidia.com> <20181207191620.GD3293@redhat.com>
+ <3c4d46c0-aced-f96f-1bf3-725d02f11b60@nvidia.com>
+In-Reply-To: <3c4d46c0-aced-f96f-1bf3-725d02f11b60@nvidia.com>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Fri, 7 Dec 2018 23:16:32 -0800
+Message-ID: <CAPcyv4hwtMA+4qc6500ucn5vf6fRrNdfyMHru_Jhzx86=1Wwww@mail.gmail.com>
+Subject: Re: [PATCH 1/2] mm: introduce put_user_page*(), placeholder versions
+To:     John Hubbard <jhubbard@nvidia.com>
+Cc:     =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        John Hubbard <john.hubbard@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux MM <linux-mm@kvack.org>, Jan Kara <jack@suse.cz>,
+        tom@talpey.com, Al Viro <viro@zeniv.linux.org.uk>, benve@cisco.com,
+        Christoph Hellwig <hch@infradead.org>,
+        Christopher Lameter <cl@linux.com>,
+        "Dalessandro, Dennis" <dennis.dalessandro@intel.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Michal Hocko <mhocko@kernel.org>,
+        Mike Marciniszyn <mike.marciniszyn@intel.com>,
+        rcampbell@nvidia.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Dec 08, 2018 at 12:48:59PM +0900, Masami Hiramatsu wrote:
-> On Fri, 7 Dec 2018 18:58:05 +0100
-> Andrea Righi <righi.andrea@gmail.com> wrote:
-> 
-> > On Sat, Dec 08, 2018 at 01:01:20AM +0900, Masami Hiramatsu wrote:
-> > > Hi Andrea and Ingo,
-> > > 
-> > > Here is the patch what I meant. I just ran it on qemu-x86, and seemed working.
-> > > After introducing this patch, I will start adding arch_populate_kprobe_blacklist()
-> > > to some arches.
-> > > 
-> > > Thank you,
-> > > 
-> > > [RFC] kprobes: x86/kprobes: Blacklist symbols in arch-defined prohibited area
-> > > 
-> > > From: Masami Hiramatsu <mhiramat@kernel.org>
-> > > 
-> > > Blacklist symbols in arch-defined probe-prohibited areas.
-> > > With this change, user can see all symbols which are prohibited
-> > > to probe in debugfs.
-> > > 
-> > > All archtectures which have custom prohibit areas should define
-> > > its own arch_populate_kprobe_blacklist() function, but unless that,
-> > > all symbols marked __kprobes are blacklisted.
-> > 
-> > What about iterating all symbols and use arch_within_kprobe_blacklist()
-> > to check if we need to blacklist them or not.
-> 
-> Sorry, I don't want to iterate all ksyms since it may take a long time
-> (especially embedded small devices.)
-> 
-> > 
-> > In this way we don't have to introduce an
-> > arch_populate_kprobe_blacklist() for each architecture.
-> 
-> Hmm, I had a same idea, but there are some arch which prohibit probing
-> extable entries (e.g. arm64.) For correctness of the blacklist, I think
-> it should be listed (not entire the function body).
-> I also rather like to remove arch_within_kprobe_blacklist() instead.
+On Fri, Dec 7, 2018 at 4:53 PM John Hubbard <jhubbard@nvidia.com> wrote:
+>
+> On 12/7/18 11:16 AM, Jerome Glisse wrote:
+> > On Thu, Dec 06, 2018 at 06:45:49PM -0800, John Hubbard wrote:
+[..]
+> I see. OK, HMM has done an efficient job of mopping up unused fields, and now we are
+> completely out of space. At this point, after thinking about it carefully, it seems clear
+> that it's time for a single, new field:
+>
+> diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
+> index 5ed8f6292a53..1c789e324da8 100644
+> --- a/include/linux/mm_types.h
+> +++ b/include/linux/mm_types.h
+> @@ -182,6 +182,9 @@ struct page {
+>         /* Usage count. *DO NOT USE DIRECTLY*. See page_ref.h */
+>         atomic_t _refcount;
+>
+> +       /* DMA usage count. See get_user_pages*(), put_user_page*(). */
+> +       atomic_t _dma_pinned_count;
+> +
+>  #ifdef CONFIG_MEMCG
+>         struct mem_cgroup *mem_cgroup;
+>  #endif
+>
+>
+> ...because after all, the reason this is so difficult is that this fix has to work
+> in pretty much every configuration. get_user_pages() use is widespread, it's a very
+> general facility, and...it needs fixing.  And we're out of space.
 
-OK. Thanks.
-
--Andrea
+HMM seems entirely too greedy in this regard. Especially with zero
+upstream users. When can we start to delete the pieces of HMM that
+have no upstream consumers? I would think that would be 4.21 / 5.0 as
+there needs to be some forcing function. We can always re-add pieces
+of HMM with it's users when / if they arrive.
