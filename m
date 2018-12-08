@@ -2,95 +2,99 @@ Return-Path: <SRS0=1bfu=OR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 633CAC04EB8
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 12:48:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5562C04EB8
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 13:11:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 20FAA2081C
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 12:48:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20FAA2081C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
+	by mail.kernel.org (Postfix) with ESMTP id 7EBDB20837
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 13:11:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ly0EHkfH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7EBDB20837
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726164AbeLHMs5 (ORCPT
+        id S1726174AbeLHNLt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 8 Dec 2018 07:48:57 -0500
-Received: from gate.crashing.org ([63.228.1.57]:41836 "EHLO gate.crashing.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726124AbeLHMs4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 8 Dec 2018 07:48:56 -0500
-Received: from localhost (localhost.localdomain [127.0.0.1])
-        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id wAU3HgS0007716;
-        Thu, 29 Nov 2018 21:17:44 -0600
-Message-ID: <53c18168393e3134f7e4120a2528f972b1002c01.camel@kernel.crashing.org>
-Subject: Re: use generic DMA mapping code in powerpc V4
-From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
-To:     Christoph Hellwig <hch@lst.de>, Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Cc:     linux-arch@vger.kernel.org, linux-mm@kvack.org,
-        iommu@lists.linux-foundation.org, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org
-Date:   Fri, 30 Nov 2018 14:17:42 +1100
-In-Reply-To: <20181127074253.GB30186@lst.de>
-References: <20181114082314.8965-1-hch@lst.de>
-         <20181127074253.GB30186@lst.de>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.2 (3.30.2-2.fc29) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Sat, 8 Dec 2018 08:11:49 -0500
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:44879 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726121AbeLHNLt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 8 Dec 2018 08:11:49 -0500
+Received: by mail-qt1-f194.google.com with SMTP id n32so7580972qte.11;
+        Sat, 08 Dec 2018 05:11:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=woh+MkfLHQzFXhkzBgmfQ8EJ6mnVyeDQkKoJcxYaR2M=;
+        b=ly0EHkfHxPpGr6YmHFk5EFn4IRADi1POjsT7ngGgutiogEbHB5U1B3ftUGLr+uK1JJ
+         I7Sjg65VooTtXLBc9PzEobkm5XIgtNeP/TP9+T1W4kZan5HuYIO88toci8T60hMXI6qJ
+         3BxWACNdhAjdToKp9JYOt6MORoKnx9T4sDvIeKBpX7ivqxgTijK+T/Pb46/SsEKRnN+k
+         jpUY5rXdV8WrAq4lEO/N/XPtTWNrM+7xsTEgSq8FmQfYqR+c42MGNZv8DpfwE9DsYgOW
+         l3boKbPW5V3feKok8+F3Vei5UU2zurTgNdsZxY0QXRhZAsTgK3pIXNjKyHjW0nz+NBWA
+         /i9g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=woh+MkfLHQzFXhkzBgmfQ8EJ6mnVyeDQkKoJcxYaR2M=;
+        b=k1vSV89jBhvz0I6R0FxMsI01t42mB91TM8i4hwglBN9nIghvRLGznnhqQw/G8boopT
+         83PijZdu+EnmQy9+Lc9mXmicftR3DYYv0z8v32Rs8MYZVFjEr5F9f6gbG/+Qp5vnfJjJ
+         TeKkHv+e2dLLdW28ZDALC/YzbRTWEzodyocc6yYXalaBJhxGYucklA+woGYBq7zwgsy6
+         ZVnjREflaKjEEwQtzy1ARJQKq40ovFiEYe63sUXvJLsS81g8tI/MM5TPs4xSAPjyEpiq
+         gP/tFdF+fQzqIRxLc38tYgUflUa4Si4TmrWE4UpXAdSrCNlU7gi7EPxLDhj6SuiU0eME
+         Jz3A==
+X-Gm-Message-State: AA+aEWa0Pm1jPkL89HkV6d8W5qFVKqPDg+xMx3DtWixcPnD8gpP40JWz
+        6vaDpivm5BAz1jY+4bsEX+8=
+X-Google-Smtp-Source: AFSGD/Wf6l/dQZNZJa7GIFS99A4CQLW0bLOHZtzLA4ju8VrZr9yUy6vgwAldkLPQluyC3iq4EkNKSg==
+X-Received: by 2002:a0c:9471:: with SMTP id i46mr5395311qvi.120.1544274707985;
+        Sat, 08 Dec 2018 05:11:47 -0800 (PST)
+Received: from gfm-ubuntu ([2804:14c:482:ff6:7125:16d4:3eab:35b4])
+        by smtp.gmail.com with ESMTPSA id c48sm4126072qtd.9.2018.12.08.05.11.46
+        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Sat, 08 Dec 2018 05:11:47 -0800 (PST)
+Date:   Sat, 8 Dec 2018 11:11:44 -0200
+From:   Gabriel Francisco Mandaji <gfmandaji@gmail.com>
+To:     Hans Verkuil <hverkuil@xs4all.nl>
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        lkcamp@lists.libreplanetbr.org
+Subject: Re: [PATCH v4] media: vivid: Improve timestamping
+Message-ID: <20181208131144.GA6645@gfm-ubuntu>
+References: <20181202134538.GA18886@gfm-note>
+ <abdac455-669f-de3d-729d-2c18d188046b@xs4all.nl>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <abdac455-669f-de3d-729d-2c18d188046b@xs4all.nl>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-11-27 at 08:42 +0100, Christoph Hellwig wrote:
-> Any comments?  I'd like to at least get the ball moving on the easy
-> bits.
+Hi Hans,
 
-So I had to cleanup some dust but it works on G5 with and without iommu
-and 32-bit powermacs at least.
+> I decided to accept this patch. The only change I made was to replace the
+> do_div(f_period, 2) by a bit shift.
+> 
+> Thanks for working on this!
 
-We're doing more tests, hopefully mpe can dig out some PASemi and
-NXP/FSL HW as well. I'll try to review & ack the patches over the next
-few days too.
+OK, thanks for accepting the patch! I'll pay attention to those details
+when working on the following patches.
 
-Cheers,
-Ben.
+> Can you look at adding the same support for the video output as well?
+> And also SDR capture (in a separate patch).
 
-> On Wed, Nov 14, 2018 at 09:22:40AM +0100, Christoph Hellwig wrote:
-> > Hi all,
-> > 
-> > this series switches the powerpc port to use the generic swiotlb and
-> > noncoherent dma ops, and to use more generic code for the coherent
-> > direct mapping, as well as removing a lot of dead code.
-> > 
-> > As this series is very large and depends on the dma-mapping tree I've
-> > also published a git tree:
-> > 
-> >     git://git.infradead.org/users/hch/misc.git powerpc-dma.4
-> > 
-> > Gitweb:
-> > 
-> >     http://git.infradead.org/users/hch/misc.git/shortlog/refs/heads/powerpc-dma.4
-> > 
-> > Changes since v3:
-> >  - rebase on the powerpc fixes tree
-> >  - add a new patch to actually make the baseline amigaone config
-> >    configure without warnings
-> >  - only use ZONE_DMA for 64-bit embedded CPUs, on pseries an IOMMU is
-> >    always present
-> >  - fix compile in mem.c for one configuration
-> >  - drop the full npu removal for now, will be resent separately
-> >  - a few git bisection fixes
-> > 
-> > The changes since v1 are to big to list and v2 was not posted in public.
-> > 
-> > _______________________________________________
-> > iommu mailing list
-> > iommu@lists.linux-foundation.org
-> > https://lists.linuxfoundation.org/mailman/listinfo/iommu
-> ---end quoted text---
+Yes, for sure! I probably won't start working on those until next week,
+but I'll start by the video output. It'll hopefully go a lot smoother
+this time.
 
+Regards,
+Gabriel F. Mandaji
