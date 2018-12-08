@@ -2,102 +2,105 @@ Return-Path: <SRS0=1bfu=OR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73914C04EB8
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 17:38:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 766A9C04EB8
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 17:38:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3D10F21104
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 17:38:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D10F21104
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id 3C24720989
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 17:38:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (4096-bit key) header.d=lemmela.net header.i=@lemmela.net header.b="VC56qkky"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C24720989
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lemmela.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726269AbeLHRiJ (ORCPT
+        id S1726319AbeLHRiN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 8 Dec 2018 12:38:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39710 "EHLO mail.kernel.org"
+        Sat, 8 Dec 2018 12:38:13 -0500
+Received: from mail1.kuutio.org ([92.222.216.83]:49672 "EHLO mail1.kuutio.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726181AbeLHRiJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 8 Dec 2018 12:38:09 -0500
-Received: from vmware.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0453B2081C;
-        Sat,  8 Dec 2018 17:38:06 +0000 (UTC)
-Date:   Sat, 8 Dec 2018 12:38:05 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Jiri Olsa <jolsa@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Luis Claudio R. Goncalves" <lclaudio@uudg.org>, ldv@altlinux.org,
-        esyr@redhat.com, Frederic Weisbecker <fweisbec@gmail.com>
-Subject: Re: [PATCH 1/8] perf: Allow to block process in syscall tracepoints
-Message-ID: <20181208123805.1c158665@vmware.local.home>
-In-Reply-To: <20181208104423.GE5289@hirez.programming.kicks-ass.net>
-References: <20181205160509.1168-1-jolsa@kernel.org>
-        <20181205160509.1168-2-jolsa@kernel.org>
-        <20181206081028.GE4234@hirez.programming.kicks-ass.net>
-        <20181206083400.GA13675@hirez.programming.kicks-ass.net>
-        <20181206131946.2c47f556@vmware.local.home>
-        <20181207085839.GC2237@hirez.programming.kicks-ass.net>
-        <20181207072701.5bc564c7@vmware.local.home>
-        <20181207151105.GB5289@hirez.programming.kicks-ass.net>
-        <20181207151433.20bf0399@vmware.local.home>
-        <20181208104423.GE5289@hirez.programming.kicks-ass.net>
-X-Mailer: Claws Mail 3.15.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1726265AbeLHRiL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 8 Dec 2018 12:38:11 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by mail1.kuutio.org (Postfix) with ESMTP id 9832F20929;
+        Sat,  8 Dec 2018 18:38:08 +0100 (CET)
+Authentication-Results: mail1.kuutio.org (amavisd-new);
+        dkim=pass (4096-bit key) reason="pass (just generated, assumed good)"
+        header.d=lemmela.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=lemmela.net; h=
+        references:in-reply-to:x-mailer:message-id:date:date:subject
+        :subject:from:from:received:received; s=dkim; t=1544290687; x=
+        1546882688; bh=jXIX8izX1CAuHrKZL/jrJD5rwgJGf7wij/BFmTD06Lw=; b=V
+        C56qkkyMJYe69QQFeBiWzvF2PiU0dc96IN4LSCOAlbqH58x6mYyhUYJ3XVT5EIOI
+        /pL22kDKb7h2+tGxcBbaMJB9PtroCRjus5rxAhTyTcddmR7zS0o32J9GapTDHQwY
+        OygE4IhXnKZGANbVR7MrirgmA+mbxQC+MQJT8q39+ZGy9MfCTpqbazm3jTJeFEPp
+        2+Q1mGvswMtrTMIDsjMfjT6na/VI5Q7XmvYfN5BPv2LEORGY7HcQSCWXzEacX9vp
+        tQjH/KE4AbLVB4MUvKCLn+3NXhRNgeQ0ExJu5PFRXoGEXVowwyy9TpgsOaYhseCf
+        gV5PTr+1dO+oBV75gWVI0z0cLWiuk4y/SPW04W6PpWqdtnBknEATMtXM3NAcLUv3
+        umeYfqfh6MehdLtGaSAbAVA982f/HmR1+M7mI4RmKBTjFq9686II6wSHXeh3IpKy
+        HaJ6QdWkJNcme4LMDWOpZEn8oSzbjMt2EYCMw+usgUP63iNtPY94wkHzyv3zRRms
+        4xbV3sGpvehZ4IOkbZB4jjWN73L96Iip5t/AO+RaZM286PxWR6B9Wux/f4U3XQ+8
+        dP+G3PJeymchEhuh69EzKtE/IFGZx21mu3sLMDTiGXKGrZVUbMwuts7shrAm6n17
+        YS3IndTphn9aZwB3b/3fJfYvl0cjdrugz3z44pszrM=
+X-Virus-Scanned: amavisd-new at kuutio.org
+Received: from mail1.kuutio.org ([127.0.0.1])
+        by localhost (mail1.kuutio.org [127.0.0.1]) (amavisd-new, port 10024)
+        with LMTP id IR-2xEhYvnHh; Sat,  8 Dec 2018 18:38:07 +0100 (CET)
+Received: from build.kuutio.org (unknown [IPv6:2001:998:13:e4::69])
+        by mail1.kuutio.org (Postfix) with ESMTPSA id 42E4B1FB8E;
+        Sat,  8 Dec 2018 18:38:07 +0100 (CET)
+From:   Oskari Lemmela <oskari@lemmela.net>
+To:     Sebastian Reichel <sre@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Lee Jones <lee.jones@linaro.org>
+Cc:     Quentin Schulz <quentin.schulz@bootlin.com>,
+        devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Oskari Lemmela <oskari@lemmela.net>
+Subject: [PATCH v7 2/9] ARM: dts: axp81x: add AC power supply subnode
+Date:   Sat,  8 Dec 2018 19:36:11 +0200
+Message-Id: <20181208173618.31395-3-oskari@lemmela.net>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20181208173618.31395-1-oskari@lemmela.net>
+References: <20181208173618.31395-1-oskari@lemmela.net>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 8 Dec 2018 11:44:23 +0100
-Peter Zijlstra <peterz@infradead.org> wrote:
+Add AC power supply subnode for AXP81X PMIC.
 
-> It's a tool I haven't used in years, given we have so many better tools
-> around these days.
+Signed-off-by: Oskari Lemmela <oskari@lemmela.net>
+Reviewed-by: Quentin Schulz <quentin.schulz@bootlin.com>
+Reviewed-by: Chen-Yu Tsai <wens@csie.org>
+Tested-by: Vasily Khoruzhick <anarsoul@gmail.com>
+---
+ arch/arm/boot/dts/axp81x.dtsi | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-So because you don't use it, it's useless? As you don't care about lost
-events I can see why you may think there are better tools out there.
-But since those tools don't guarantee no lost events, they are
-obviously not better to those that do care about lost events.
-
-> 
-> > Why do we care about lost events? Because strace records *all* events,
-> > as that's what it does and that's what it always has done. It would be
-> > a break in functionality (a regression) if it were to start losing
-> > events. I use strace to see everything that an application is doing.  
-> 
-> So make a new tool; break the expectation of all events. See if there's
-> anybody that really cares.
-
-Basically you are saying, break strace and see if anyone notices?
-
-> 
-> > When we discussed this at plumbers, Oracle people came to me and said
-> > how awesome it would be to run strace against their database accesses.
-> > The problem today is that strace causes such a large overhead that it
-> > isn't feasible to trace any high speed applications, especially if
-> > there are time restraints involved.  
-> 
-> So have them run that perf thing acme pointed to.
-> 
-> So far nobody's made a good argument for why we cannot have LOST events.
-
-If you don't see the use case, I'm not sure anyone can convince you.
-Again, I like the fact that when I do a strace of an application I know
-that all system calls that the application I'm tracing is recorded. I
-don't need to worry about what happened in the "lost events" space.
-
--- Steve
+diff --git a/arch/arm/boot/dts/axp81x.dtsi b/arch/arm/boot/dts/axp81x.dtsi
+index 043c717dcef1..bd83962d3627 100644
+--- a/arch/arm/boot/dts/axp81x.dtsi
++++ b/arch/arm/boot/dts/axp81x.dtsi
+@@ -48,6 +48,11 @@
+ 	interrupt-controller;
+ 	#interrupt-cells = <1>;
+ 
++	ac_power_supply: ac-power-supply {
++		compatible = "x-powers,axp813-ac-power-supply";
++		status = "disabled";
++	};
++
+ 	axp_adc: adc {
+ 		compatible = "x-powers,axp813-adc";
+ 		#io-channel-cells = <1>;
+-- 
+2.17.1
 
