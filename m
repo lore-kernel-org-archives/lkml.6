@@ -2,109 +2,144 @@ Return-Path: <SRS0=1bfu=OR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B1D4C04EB8
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 14:53:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9054AC04EB8
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 15:05:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D0CC22081C
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 14:53:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D0CC22081C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 4B42C2082D
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 15:05:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B42C2082D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726220AbeLHOxR (ORCPT
+        id S1726176AbeLHPFl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 8 Dec 2018 09:53:17 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:16099 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726140AbeLHOxR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 8 Dec 2018 09:53:17 -0500
-Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id D2C944B8A77C1;
-        Sat,  8 Dec 2018 22:53:11 +0800 (CST)
-Received: from localhost.localdomain.localdomain (10.175.113.25) by
- DGGEMS402-HUB.china.huawei.com (10.3.19.202) with Microsoft SMTP Server id
- 14.3.408.0; Sat, 8 Dec 2018 22:53:05 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <alexander.deucher@amd.com>, <christian.koenig@amd.com>,
-        <David1.Zhou@amd.com>, <airlied@linux.ie>, <leo.liu@amd.com>,
-        <Likun.Gao@amd.com>, <David.Panariti@amd.com>, <shirish.s@amd.com>,
-        <Rex.Zhu@amd.com>, <andrey.grodzovsky@amd.com>
-CC:     YueHaibing <yuehaibing@huawei.com>,
-        <amd-gfx@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>,
-        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
-Subject: [PATCH -next] drm/amdgpu: remove set but not used variable 'grbm_soft_reset'
-Date:   Sat, 8 Dec 2018 15:01:13 +0000
-Message-ID: <1544281273-73940-1-git-send-email-yuehaibing@huawei.com>
-X-Mailer: git-send-email 1.8.3.1
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
+        Sat, 8 Dec 2018 10:05:41 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:57759 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726143AbeLHPFk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 8 Dec 2018 10:05:40 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 5BC20207F0; Sat,  8 Dec 2018 16:05:37 +0100 (CET)
+Received: from qschulz (lfbn-1-2071-46.w90-76.abo.wanadoo.fr [90.76.137.46])
+        by mail.bootlin.com (Postfix) with ESMTPSA id F006E20510;
+        Sat,  8 Dec 2018 16:05:26 +0100 (CET)
+Date:   Sat, 8 Dec 2018 16:05:26 +0100
+From:   Quentin Schulz <quentin.schulz@bootlin.com>
+To:     Lee Jones <lee.jones@linaro.org>
+Cc:     Vasily Khoruzhick <anarsoul@gmail.com>,
+        Oskari Lemmela <oskari@lemmela.net>,
+        Sebastian Reichel <sre@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        linux-pm@vger.kernel.org, devicetree <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        arm-linux <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v6 8/8] mfd: axp20x: Add supported cells for AXP803
+Message-ID: <20181208150526.uceviwfwqskfwovm@qschulz>
+References: <20181120175211.3913-1-oskari@lemmela.net>
+ <20181120175211.3913-9-oskari@lemmela.net>
+ <20181207164011.GI26661@dell>
+ <CA+E=qVe5gau_9A6WsdqDaEJwdJ7EyQ=UcNu0JJV3v=hKAFU7GQ@mail.gmail.com>
+ <20181207192237.GK26661@dell>
 MIME-Version: 1.0
-X-Originating-IP: [10.175.113.25]
-X-CFilter-Loop: Reflected
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="umq566xyw5pxyboh"
+Content-Disposition: inline
+In-Reply-To: <20181207192237.GK26661@dell>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fixes gcc '-Wunused-but-set-variable' warning:
 
-drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c: In function 'gfx_v8_0_pre_soft_reset':
-drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c:4950:27: warning:
- variable 'srbm_soft_reset' set but not used [-Wunused-but-set-variable]
+--umq566xyw5pxyboh
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c: In function 'gfx_v8_0_post_soft_reset':
-drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c:5054:27: warning:
- variable 'srbm_soft_reset' set but not used [-Wunused-but-set-variable]
+Hi Lee,
 
-It never used since introduction in commit d31a501ead7f ("drm/amdgpu: add
-pre_soft_reset ip func") and e4ae0fc33631 ("drm/amdgpu: implement
-gfx8 post_soft_reset")
+On Fri, Dec 07, 2018 at 07:22:37PM +0000, Lee Jones wrote:
+> On Fri, 07 Dec 2018, Vasily Khoruzhick wrote:
+>=20
+> > On Fri, Dec 7, 2018 at 8:40 AM Lee Jones <lee.jones@linaro.org> wrote:
+> >=20
+> > > My OCD-dar is going crazy.
+> > >
+> > > Why haven't you used the same alignment as is already there?
+> > >
+> > > If it starts to run over 80-chars then bring the others back.
+> > >
+> > > Also why is there a single liner shoved in the middle of the
+> > > multi-line entries?  Please move the singles to the top or the
+> > > bottom.
+> >=20
+> > Hi Lee,
+> >=20
+> > Could you please reformat it in the way that makes your OCD-dar happy?
+> > It would be really nice to get
+>=20
+> I'm afraid not, for a multitude of reasons.
+>=20
+> The most important of which surround testing.
+>=20
+> > AC and battery support for APX8x3 merged -- it'll make Pinebook and
+> > Teres-I pretty well supported by mainline kernel.
+>=20
+> That's great.  A worthy cause indeed.  So I'm sure you guys will want
+> to turn the patch around in short order so that it's applied in time
+> for the next merge window.
+>=20
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+Aren't the MFD cells probed in order?
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c b/drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c
-index 1454fc3..8c1ba79 100644
---- a/drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c
-+++ b/drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c
-@@ -4947,14 +4947,13 @@ static bool gfx_v8_0_check_soft_reset(void *handle)
- static int gfx_v8_0_pre_soft_reset(void *handle)
- {
- 	struct amdgpu_device *adev = (struct amdgpu_device *)handle;
--	u32 grbm_soft_reset = 0, srbm_soft_reset = 0;
-+	u32 grbm_soft_reset = 0;
- 
- 	if ((!adev->gfx.grbm_soft_reset) &&
- 	    (!adev->gfx.srbm_soft_reset))
- 		return 0;
- 
- 	grbm_soft_reset = adev->gfx.grbm_soft_reset;
--	srbm_soft_reset = adev->gfx.srbm_soft_reset;
- 
- 	/* stop the rlc */
- 	adev->gfx.rlc.funcs->stop(adev);
-@@ -5051,14 +5050,13 @@ static int gfx_v8_0_soft_reset(void *handle)
- static int gfx_v8_0_post_soft_reset(void *handle)
- {
- 	struct amdgpu_device *adev = (struct amdgpu_device *)handle;
--	u32 grbm_soft_reset = 0, srbm_soft_reset = 0;
-+	u32 grbm_soft_reset = 0;
- 
- 	if ((!adev->gfx.grbm_soft_reset) &&
- 	    (!adev->gfx.srbm_soft_reset))
- 		return 0;
- 
- 	grbm_soft_reset = adev->gfx.grbm_soft_reset;
--	srbm_soft_reset = adev->gfx.srbm_soft_reset;
- 
- 	if (REG_GET_FIELD(grbm_soft_reset, GRBM_SOFT_RESET, SOFT_RESET_CP) ||
- 	    REG_GET_FIELD(grbm_soft_reset, GRBM_SOFT_RESET, SOFT_RESET_CPF) ||
+In that case, it makes little sense to short order them for this
+particular device (X-Powers PMICs in general). It will just make the
+system boot slower because of probe deferring.
 
+Why? As explained by Chen-Yu in v3[1], axp-gpios can be muxed as
+regulators, thus should be probed before axp-regulators. axp-adc is
+often used by axp-battery, axp-usb-power, axp-ac-power, thus should be
+probed beforehand as well.
 
+For the alignment that also triggered your OCD, I can send you a patch
+the day you merge this one if it can help. I sent a few patches for this
+driver that didn't respect the alignment so I'm fine fixing the mfd
+cells (and eventually re-order them as I saw a few axp-gpio cells being
+declared after axp-regulators).
 
+Does that make this patch OK for you, Lee?
+
+Thanks,
+Quentin
+
+[1] https://lkml.org/lkml/2018/10/11/338
+
+--umq566xyw5pxyboh
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEEXeEYjDsJh38OoyMzhLiadT7g8aMFAlwL3bYACgkQhLiadT7g
+8aMzDQ//SP/WNuKOA5RABdv9owyD0gfaSWiEML1W6ovmeEBPfxP6euZcHgnRsgEw
+errjVUNOrlUy1Dn7cDLMhhCYlZuXBjfqlakVRAZpzhI1n0C4jHcERSB5e7Qck9uf
+UwUSmi5rRZF0s2Tk034O/ycv/BkbRbXwPKN9K5j9zsyGYXBjWlw7Vr695E4O9pSc
+69dTwRq1eYUFXlOk6Z8jBwAbMfPq38MgT7TbOq6OhxfW7efsPF4GinGyFfmhYmd/
+C8uJtc+NxXn3XOySpObEAIbl5XL+ugpwT/zVhGz+IdNBX+aJNLWrzpyfK/9U9DEd
+TQye0ezWR8n4navDsuYfYMaPXToXRZRWc/m1yvM+mSkDOAiXBhNZ1+oUPRTiKtnS
+fxx+THTvpUwmNACctbUNRoU5u4QHfyL5A4I3uuiPyU9x3c9WYnB/ycHBxgMVx/0A
+QrH7czW0VeqI598UV7hfNmDwV74ZxcJvCdROQLr5i9KWqknjTYAizvJdK/76MxSh
+fAkA+SHO55y22ivHeJsCha6cIOtbbOVzVjFLeDRm+1MiHNFkacNHglNtC030hE1Z
+LYjKE2hdG8zlL1Ak78Fpam9mZrOtHpwbS+AJpNsdZFA455iqZQfsLI6CY7o/N6E5
+t739gtE19+hwYyaK2cNG9F4eZkVrtnOyNkOMxX1yIUkeMoRHUAE=
+=BKmW
+-----END PGP SIGNATURE-----
+
+--umq566xyw5pxyboh--
