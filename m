@@ -2,185 +2,125 @@ Return-Path: <SRS0=1bfu=OR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EB01C65BAF
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 11:17:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4266BC04EB8
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 11:17:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E64A020892
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 11:17:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544267848;
-	bh=Ye96Xmhtk8Yuga9ks/JGcX/UBHFfWA8u7V66vGiV91U=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=JLSsc0rG3olbxgjH/oCoBn+Ur1nzhbVOU2tFOxw75nLR4M+YSpIInABDzQB7NeEvv
-	 q0gp92ly4fnWboP7Xb4Y6rD9EOL+EbQwvzCpZSceK6EcuEeuaKlMvykHNn8n0dxae4
-	 5l7BiUIE13nts6c12FYaAdZ3zS9WlYJm2x3/vGNQ=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E64A020892
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id C24B720868
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 11:17:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C24B720868
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=physik.fu-berlin.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726186AbeLHLR1 (ORCPT
+        id S1726223AbeLHLRz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 8 Dec 2018 06:17:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34894 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726111AbeLHLR0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 8 Dec 2018 06:17:26 -0500
-Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6644E20661;
-        Sat,  8 Dec 2018 11:17:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544267845;
-        bh=Ye96Xmhtk8Yuga9ks/JGcX/UBHFfWA8u7V66vGiV91U=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=js14xh+mjo9TdrKVc+4gK2+6SEEUApp7k4JObpr1sHE+aziu7g7KHLzwRLMGaeS9g
-         Pu8cwDiV21M7Z0xZBGn1XjZs8WF2xU9CcUfW/eVsKJzfLnPd1T+ksZRCBjDZ0OyS29
-         iK4Q618yKxMpdsgeM96dV0KKtXaxiPaPlJI9uXR8=
-Date:   Sat, 8 Dec 2018 11:17:20 +0000
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Shreeya Patel <shreeya.patel23498@gmail.com>
-Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Jeremy Fertic <jeremyfertic@gmail.com>,
-        devel@driverdev.osuosl.org, lars@metafoo.de,
-        Michael.Hennerich@analog.com, linux-iio@vger.kernel.org,
-        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
-        pmeerw@pmeerw.net, knaack.h@gmx.de
-Subject: Re: [PATCH] Revert "Staging: iio: adt7316: Add an extra check for
- 'ret' equals to 0"
-Message-ID: <20181208111720.068822f9@archlinux>
-In-Reply-To: <90e3066edb0616cd20ee019e3f2a392fd3a3f285.camel@gmail.com>
-References: <20181205014900.4827-1-jeremyfertic@gmail.com>
-        <fccdb26936a9cfcd5134c760cd918929ad3dfa19.camel@gmail.com>
-        <20181205215953.GA2365@r2700x.localdomain>
-        <20181206124047.GH3095@unbuntlaptop>
-        <90e3066edb0616cd20ee019e3f2a392fd3a3f285.camel@gmail.com>
-X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Sat, 8 Dec 2018 06:17:55 -0500
+Received: from outpost1.zedat.fu-berlin.de ([130.133.4.66]:46105 "EHLO
+        outpost1.zedat.fu-berlin.de" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726111AbeLHLRz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 8 Dec 2018 06:17:55 -0500
+Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
+          by outpost.zedat.fu-berlin.de (Exim 4.85)
+          with esmtps (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+          (envelope-from <glaubitz@physik.fu-berlin.de>)
+          id <1gVacH-001OFv-W9>; Sat, 08 Dec 2018 12:17:50 +0100
+Received: from p5dc15772.dip0.t-ipconnect.de ([93.193.87.114] helo=[192.168.178.40])
+          by inpost2.zedat.fu-berlin.de (Exim 4.85)
+          with esmtpsa (TLSv1.2:AES128-SHA:128)
+          (envelope-from <glaubitz@physik.fu-berlin.de>)
+          id <1gVacH-000tMB-P6>; Sat, 08 Dec 2018 12:17:49 +0100
+Subject: Re: [PATCH v3] m68k: Fix memblock-related crashes
+To:     Geert Uytterhoeven <geert@linux-m68k.org>, rppt@linux.ibm.com
+Cc:     Andreas Schwab <schwab@linux-m68k.org>,
+        Michael Schmitz <schmitzmic@gmail.com>,
+        Sam Creasey <sammy@sammy.net>,
+        Greg Ungerer <gerg@linux-m68k.org>,
+        linux-m68k <linux-m68k@lists.linux-m68k.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20181207165011.31497-1-geert@linux-m68k.org>
+ <20181207210224.GA19067@rapoport-lnx>
+ <CAMuHMdVHDn5=3SBvmHSHsY5rCZKgRXRbk258RAKJp8V8__Hi8w@mail.gmail.com>
+From:   John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+Openpgp: preference=signencrypt
+Autocrypt: addr=glaubitz@physik.fu-berlin.de; keydata=
+ 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
+ scOkTAZQGVpD/8AaLH4v1w==
+Message-ID: <4936a921-f506-634f-0c73-e414dc087266@physik.fu-berlin.de>
+Date:   Sat, 8 Dec 2018 12:17:48 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <CAMuHMdVHDn5=3SBvmHSHsY5rCZKgRXRbk258RAKJp8V8__Hi8w@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: 93.193.87.114
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 08 Dec 2018 00:07:21 +0530
-Shreeya Patel <shreeya.patel23498@gmail.com> wrote:
+Hi Geert!
 
-> On Thu, 2018-12-06 at 15:40 +0300, Dan Carpenter wrote:
-> > On Wed, Dec 05, 2018 at 02:59:53PM -0700, Jeremy Fertic wrote:  
-> > > On Thu, Dec 06, 2018 at 01:25:55AM +0530, Shreeya Patel wrote:  
-> > > > On Tue, 2018-12-04 at 18:49 -0700, Jeremy Fertic wrote:  
-> > > > > This reverts commit 00426e99789357dbff7e719a092ce36a3ce49d94.
-> > > > > 
-> > > > > i2c_smbus_read_byte() returns 0 when a byte with the value 0 is
-> > > > > read
-> > > > > from
-> > > > > the device. This is a valid read so revert the check for 0.
-> > > > > 
-> > > > > Signed-off-by: Jeremy Fertic <jeremyfertic@gmail.com>
-> > > > > ---  
-> > > > 
-> > > > Hi Jeremy,
-> > > > 
-> > > > As per my understanding, 0 value indicates no error but no data
-> > > > read.
-> > > > Then how can this be a valid case?
-> > > > 
-> > > > Can you please make me understand that how can we consider this
-> > > > as a
-> > > > valid case even when no data has been read?  
-> > 
-> > It's not reading no data.  It's reading one byte of data and
-> > returning
-> > it.
-> >   
-> > > > 
-> > > > 
-> > > > Thanks  
-> > > 
-> > > I'm not sure I understand why the value 0 would indicate no data
-> > > read.
-> > > Doesn't that just mean a byte was read with the value 0.  
-> > 
-> > Yes.  It does mean that.  Please don't ask rhetorical
-> > questions...  :(
-> > This list is full of people who can't resist answering every
-> > question.
-> >   
-> > > For instance, if the input to the adc is 0V. Can you point me to
-> > > where
-> > > you're seeing that this would indicate no data read?  
-> > 
-> > drivers/i2c/i2c-core-smbus.c
-> >     88  /**
-> >     89   * i2c_smbus_read_byte - SMBus "receive byte" protocol
-> >     90   * @client: Handle to slave device
-> >     91   *
-> >     92   * This executes the SMBus "receive byte" protocol, returning
-> > negative errno
-> >     93   * else the byte received from the device.
-> >     94   */
-> >     95  s32 i2c_smbus_read_byte(const struct i2c_client *client)
-> >     96  {
-> >     97          union i2c_smbus_data data;
-> >     98          int status;
-> >     99  
-> >    100          status = i2c_smbus_xfer(client->adapter, client-  
-> > >addr, client->flags,  
-> >    101                                  I2C_SMBUS_READ, 0,
-> >    102                                  I2C_SMBUS_BYTE, &data);
-> >    103          return (status < 0) ? status : data.byte;
-> >                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-> >    104  }
-> >    105  EXPORT_SYMBOL(i2c_smbus_read_byte);  
-> 
-> Even I had sent the same code to Jonathan and we had a discussion on
-> this. 
-> I asked him that this code clearly shows that there is an error
-> condition only when status < 0 then why do we need a check for status =
-> 0.
-> 
-> Then he explained me that 0 isn't an error. The issue is the silliness
-> of the i2c interface.
-> 
-> Pretty much every other bus returns an error (negative) if less data is
-> received than expected.  Most i2c
-> bus master's do as well but in theory it can return 0 to indicate no
-> error but no data read (which doesn't make any sense)
-> 
-> 0 doesn't ever happen in reality but it should be handled for
-> correctness though.
-> 
-> So we should wait for what Jonathan has to say on this :)
+On 12/8/18 11:51 AM, Geert Uytterhoeven wrote:
+> Anyone who can test this is on Sun-3? Thanks!
 
-Yup, I was being an idiot.  Sorry about that!  For some reason I'd
-gotten it into my head that the particular function we were talking
-about was i2c_master_send which does indeed do as discussed above.
+Theoretically, I can. I have three Sun-3 boxes but I haven't set them
+up for booting a kernel yet. If I manage to find a quick guide for
+getting started, I might be able to fire up a test machine.
 
-Apologies for misleading you on this. Definitely a proper idiot
-moment of me not reading what the code actually was properly, even
-when you questioned what I was going on about.
+Could maybe someone build me a test kernel so I can just focus on setting
+up the machine and its bootserver?
 
-Thanks to Jeremy for catching this one.
+Adrian
 
-Applied to the togreg branch of iio.git and pushed out as testing for
-the autobuilders to play with it.
-
-Jonathan
-
-> 
-> Thanks
-> 
-> > You are right.  Commit 00426e997893 ("Staging: iio: adt7316: Add an
-> > extra check for 'ret' equals to 0") needs to be reverted...
-> > 
-> > regards,
-> > dan carpenter
-> > 
-> >   
-
+-- 
+ .''`.  John Paul Adrian Glaubitz
+: :' :  Debian Developer - glaubitz@debian.org
+`. `'   Freie Universitaet Berlin - glaubitz@physik.fu-berlin.de
+  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
