@@ -2,210 +2,111 @@ Return-Path: <SRS0=1bfu=OR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1ED83C04EB8
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 21:46:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 954A3C64EB1
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 21:46:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C008620881
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 21:46:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C008620881
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 4F5D520850
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 21:46:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544305617;
+	bh=bxQjlTD/toFo7TIcjmD1Vf7Q2DUbI9zj/A7TKnRsmbc=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=FijJ3kpqgXrzRk5J2dGCK5nWagkYoQbeuWhGyOUl1BqJ5q9RkviKchuX/QnpqaE8T
+	 qXcErVJdctpDDMQDbleoch8fO+wMQDaYS8tVIwOhEmWv03/yjoIbygLVe5aBo3B94Y
+	 NTJYblkTylt29Xp+TvVLgA1xRdymBr6nnDjfa/uc=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F5D520850
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726223AbeLHVqt (ORCPT
+        id S1726246AbeLHVqu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 8 Dec 2018 16:46:49 -0500
-Received: from mga09.intel.com ([134.134.136.24]:33278 "EHLO mga09.intel.com"
+        Sat, 8 Dec 2018 16:46:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52602 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725923AbeLHVqt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 8 Dec 2018 16:46:49 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Dec 2018 13:46:46 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,331,1539673200"; 
-   d="gz'50?scan'50,208,50";a="300551241"
-Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
-  by fmsmga006.fm.intel.com with ESMTP; 08 Dec 2018 13:46:43 -0800
-Received: from kbuild by lkp-server01 with local (Exim 4.89)
-        (envelope-from <lkp@intel.com>)
-        id 1gVkQs-00052J-HZ; Sun, 09 Dec 2018 05:46:42 +0800
-Date:   Sun, 9 Dec 2018 05:46:11 +0800
-From:   kbuild test robot <lkp@intel.com>
-To:     Christian Brauner <christian@brauner.io>
-Cc:     kbuild-all@01.org, linux-kernel@vger.kernel.org,
-        linux-api@vger.kernel.org, luto@kernel.org, arnd@arndb.de,
-        ebiederm@xmission.com, serge@hallyn.com, jannh@google.com,
-        akpm@linux-foundation.org, oleg@redhat.com, cyphar@cyphar.com,
-        viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
-        dancol@google.com, timmurray@google.com, linux-man@vger.kernel.org,
-        keescook@chromium.org, fweimer@redhat.com, tglx@linutronix.de,
-        x86@kernel.org, Christian Brauner <christian@brauner.io>
-Subject: Re: [PATCH v4] signal: add taskfd_send_signal() syscall
-Message-ID: <201812090522.Jxt8OHn3%fengguang.wu@intel.com>
-References: <20181206121858.12215-1-christian@brauner.io>
+        id S1725923AbeLHVqu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 8 Dec 2018 16:46:50 -0500
+Received: from sinanubuntu1604.mkjiurmyylmellclgttazegk5f.bx.internal.cloudapp.net (unknown [23.96.15.34])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5B2E820989;
+        Sat,  8 Dec 2018 21:46:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544305609;
+        bh=bxQjlTD/toFo7TIcjmD1Vf7Q2DUbI9zj/A7TKnRsmbc=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=G5TYrlyGrYEIM74qP6upvTuOiPqQa/xFHUItib79j9fQZ+ASOqa9yq+7CNbxMZ3qc
+         6/b2RvHXfwaxcSQjrZb4Kn0XHZ8A41X9pXekCArLqi+lr4vlwr/pig5amNaGY8GcPu
+         L8GfbsCWVPs3ximRZtLNlAvvAGwS/kcX3L1iHB6c=
+From:   Sinan Kaya <okaya@kernel.org>
+To:     linux-acpi@vger.kernel.org
+Cc:     Sinan Kaya <okaya@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>,
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v2 2/3] ACPI / OSL: Allow PCI to be disabled
+Date:   Sat,  8 Dec 2018 21:46:42 +0000
+Message-Id: <20181208214644.5374-2-okaya@kernel.org>
+X-Mailer: git-send-email 2.19.0
+In-Reply-To: <20181208214644.5374-1-okaya@kernel.org>
+References: <20181208214644.5374-1-okaya@kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="huq684BweRXVnRxX"
-Content-Disposition: inline
-In-Reply-To: <20181206121858.12215-1-christian@brauner.io>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Getting ready to allow PCI to be disabled with ACPI enabled. Stub
+out calls that depend on PCI.
 
---huq684BweRXVnRxX
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-Hi Christian,
-
-Thank you for the patch! Perhaps something to improve:
-
-[auto build test WARNING on linus/master]
-[also build test WARNING on v4.20-rc5]
-[cannot apply to next-20181207]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
-
-url:    https://github.com/0day-ci/linux/commits/Christian-Brauner/signal-add-taskfd_send_signal-syscall/20181209-044342
-config: ia64-allnoconfig (attached as .config)
-compiler: ia64-linux-gcc (GCC) 8.1.0
-reproduce:
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # save the attached .config to linux build tree
-        GCC_VERSION=8.1.0 make.cross ARCH=ia64 
-
-All warnings (new ones prefixed by >>):
-
-   <stdin>:1185:2: warning: #warning syscall perf_event_open not implemented [-Wcpp]
-   <stdin>:1239:2: warning: #warning syscall seccomp not implemented [-Wcpp]
-   <stdin>:1317:2: warning: #warning syscall pkey_mprotect not implemented [-Wcpp]
-   <stdin>:1320:2: warning: #warning syscall pkey_alloc not implemented [-Wcpp]
-   <stdin>:1323:2: warning: #warning syscall pkey_free not implemented [-Wcpp]
-   <stdin>:1326:2: warning: #warning syscall statx not implemented [-Wcpp]
-   <stdin>:1332:2: warning: #warning syscall io_pgetevents not implemented [-Wcpp]
-   <stdin>:1335:2: warning: #warning syscall rseq not implemented [-Wcpp]
->> <stdin>:1338:2: warning: #warning syscall taskfd_send_signal not implemented [-Wcpp]
-
+Signed-off-by: Sinan Kaya <okaya@kernel.org>
 ---
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+ drivers/acpi/osl.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
---huq684BweRXVnRxX
-Content-Type: application/gzip
-Content-Disposition: attachment; filename=".config.gz"
-Content-Transfer-Encoding: base64
+diff --git a/drivers/acpi/osl.c b/drivers/acpi/osl.c
+index b48874b8e1ea..0d3ed659cfe8 100644
+--- a/drivers/acpi/osl.c
++++ b/drivers/acpi/osl.c
+@@ -773,6 +773,7 @@ acpi_status
+ acpi_os_read_pci_configuration(struct acpi_pci_id * pci_id, u32 reg,
+ 			       u64 *value, u32 width)
+ {
++#ifdef CONFIG_PCI
+ 	int result, size;
+ 	u32 value32;
+ 
+@@ -799,12 +800,16 @@ acpi_os_read_pci_configuration(struct acpi_pci_id * pci_id, u32 reg,
+ 	*value = value32;
+ 
+ 	return (result ? AE_ERROR : AE_OK);
++#else
++	return AE_SUPPORT;
++#endif
+ }
+ 
+ acpi_status
+ acpi_os_write_pci_configuration(struct acpi_pci_id * pci_id, u32 reg,
+ 				u64 value, u32 width)
+ {
++#ifdef CONFIG_PCI
+ 	int result, size;
+ 
+ 	switch (width) {
+@@ -826,6 +831,9 @@ acpi_os_write_pci_configuration(struct acpi_pci_id * pci_id, u32 reg,
+ 				reg, size, value);
+ 
+ 	return (result ? AE_ERROR : AE_OK);
++#else
++	return AE_SUPPORT;
++#endif
+ }
+ 
+ static void acpi_os_execute_deferred(struct work_struct *work)
+-- 
+2.19.0
 
-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
-
---huq684BweRXVnRxX--
