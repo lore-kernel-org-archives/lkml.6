@@ -7,66 +7,51 @@ X-Spam-Status: No, score=-11.0 required=3.0
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D22D4C04EB8
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 12:30:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38D30C04EB8
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 12:30:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 886A020837
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 12:30:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 886A020837
+	by mail.kernel.org (Postfix) with ESMTP id 06B0420837
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 12:30:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 06B0420837
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726168AbeLHMaj (ORCPT
+        id S1726186AbeLHMao (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 8 Dec 2018 07:30:39 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:56912 "EHLO mail.bootlin.com"
+        Sat, 8 Dec 2018 07:30:44 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:56921 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726121AbeLHMaj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 8 Dec 2018 07:30:39 -0500
+        id S1726121AbeLHMan (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 8 Dec 2018 07:30:43 -0500
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 49DEE20C94; Sat,  8 Dec 2018 13:30:37 +0100 (CET)
+        id DB11220797; Sat,  8 Dec 2018 13:30:41 +0100 (CET)
 Received: from localhost.localdomain (unknown [91.160.177.164])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 061AC20723;
-        Sat,  8 Dec 2018 13:30:37 +0100 (CET)
+        by mail.bootlin.com (Postfix) with ESMTPSA id 89D7B20711;
+        Sat,  8 Dec 2018 13:30:41 +0100 (CET)
 From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     Tudor.Ambarus@microchip.com, marek.vasut@gmail.com,
-        dwmw2@infradead.org, computersforpeace@gmail.com,
-        boris.brezillon@bootlin.com, richard@nod.at,
-        Cyrille.Pitchen@microchip.com
-Cc:     linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [v2] mtd: spi-nor: parse SFDP 4-byte Address Instruction Table
-Date:   Sat,  8 Dec 2018 13:30:35 +0100
-Message-Id: <20181208123035.9924-1-boris.brezillon@bootlin.com>
+To:     Liu Xiang <liu.xiang6@zte.com.cn>, linux-mtd@lists.infradead.org
+Cc:     Boris Brezillon <boris.brezillon@bootlin.com>,
+        marek.vasut@gmail.com, richard@nod.at,
+        linux-kernel@vger.kernel.org, liuxiang_1999@126.com,
+        computersforpeace@gmail.com, dwmw2@infradead.org
+Subject: Re: mtd: spi-nor: Add 4B_OPCODES flag to is25lp256
+Date:   Sat,  8 Dec 2018 13:30:40 +0100
+Message-Id: <20181208123040.10013-1-boris.brezillon@bootlin.com>
 X-Mailer: git-send-email 2.17.1
 X-linux-mtd-patch-notification: thanks
-X-linux-mtd-patch-commit: ea3ce745426a96252f755aebd8a716c4dabc7450
-In-Reply-To: <20181206144330.30860-1-tudor.ambarus@microchip.com>
+X-linux-mtd-patch-commit: d4a390b7325d0cb9406f2204b1a01264bfe5483a
+In-Reply-To: <1542200118-3024-1-git-send-email-liu.xiang6@zte.com.cn>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-12-06 at 14:43:39 UTC,  wrote:
-> From: Cyrille Pitchen <cyrille.pitchen@microchip.com>
+On Wed, 2018-11-14 at 12:55:18 UTC, Liu Xiang wrote:
+> The is25lp256 supports 4-byte opcodes and quad output.
 > 
-> Add support for SFDP (JESD216B) 4-byte Address Instruction Table. This
-> table is optional but when available, we parse it to get the 4-byte
-> address op codes supported by the memory.
-> Using these op codes is stateless as opposed to entering the 4-byte
-> address mode or setting the Base Address Register (BAR).
-> 
-> Flashes that have the 4BAIT table declared can now support
-> SPINOR_OP_PP_1_1_4_4B and SPINOR_OP_PP_1_4_4_4B opcodes.
-> 
-> Tested on MX25L25673G.
-> 
-> Signed-off-by: Cyrille Pitchen <cyrille.pitchen@microchip.com>
-> [tudor.ambarus@microchip.com:
-> - rework erase and page program logic,
-> - pass DMA-able buffer to spi_nor_read_sfdp(),
-> - introduce SPI_NOR_HAS_4BAIT
-> - various minor updates.]
-> Signed-off-by: Tudor Ambarus <tudor.ambarus@microchip.com>
+> Suggested-by: Boris Brezillon <boris.brezillon@bootlin.com>
+> Signed-off-by: Liu Xiang <liu.xiang6@zte.com.cn>
+> Reviewed-by: Tudor Ambarus <tudor.ambarus@microchip.com>
 
 Applied to http://git.infradead.org/linux-mtd.git spi-nor/next, thanks.
 
