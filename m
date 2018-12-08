@@ -6,30 +6,30 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DAE5CC04EB8
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 10:31:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9885C04EB8
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 10:32:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 96B7A20868
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 10:31:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 96B7A20868
+	by mail.kernel.org (Postfix) with ESMTP id 9541820837
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 10:32:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9541820837
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726148AbeLHKbU (ORCPT
+        id S1726165AbeLHKcj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 8 Dec 2018 05:31:20 -0500
-Received: from foss.arm.com ([217.140.101.70]:59016 "EHLO foss.arm.com"
+        Sat, 8 Dec 2018 05:32:39 -0500
+Received: from foss.arm.com ([217.140.101.70]:59064 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726107AbeLHKbU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 8 Dec 2018 05:31:20 -0500
+        id S1726107AbeLHKcj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 8 Dec 2018 05:32:39 -0500
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A3530EBD;
-        Sat,  8 Dec 2018 02:31:19 -0800 (PST)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 860C4EBD;
+        Sat,  8 Dec 2018 02:32:38 -0800 (PST)
 Received: from big-swifty.misterjones.org (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 23EF13F575;
-        Sat,  8 Dec 2018 02:31:14 -0800 (PST)
-Date:   Sat, 08 Dec 2018 10:31:12 +0000
-Message-ID: <8636r8cntb.wl-marc.zyngier@arm.com>
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 30E4A3F575;
+        Sat,  8 Dec 2018 02:32:33 -0800 (PST)
+Date:   Sat, 08 Dec 2018 10:32:31 +0000
+Message-ID: <861s6scnr4.wl-marc.zyngier@arm.com>
 From:   Marc Zyngier <marc.zyngier@arm.com>
 To:     Kristina Martsenko <kristina.martsenko@arm.com>
 Cc:     <linux-arm-kernel@lists.infradead.org>,
@@ -49,10 +49,10 @@ Cc:     <linux-arm-kernel@lists.infradead.org>,
         Suzuki K Poulose <suzuki.poulose@arm.com>,
         Will Deacon <will.deacon@arm.com>,
         <kvmarm@lists.cs.columbia.edu>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v6 03/13] arm64/kvm: consistently handle host HCR_EL2 flags
-In-Reply-To: <20181207183931.4285-4-kristina.martsenko@arm.com>
+Subject: Re: [PATCH v6 04/13] arm64/kvm: hide ptrauth from guests
+In-Reply-To: <20181207183931.4285-5-kristina.martsenko@arm.com>
 References: <20181207183931.4285-1-kristina.martsenko@arm.com>
-        <20181207183931.4285-4-kristina.martsenko@arm.com>
+        <20181207183931.4285-5-kristina.martsenko@arm.com>
 User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
  FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 EasyPG/1.0.0 Emacs/25.1
  (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
@@ -64,29 +64,26 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 07 Dec 2018 18:39:21 +0000,
+On Fri, 07 Dec 2018 18:39:22 +0000,
 Kristina Martsenko <kristina.martsenko@arm.com> wrote:
 > 
 > From: Mark Rutland <mark.rutland@arm.com>
 > 
-> In KVM we define the configuration of HCR_EL2 for a VHE HOST in
-> HCR_HOST_VHE_FLAGS, but we don't have a similar definition for the
-> non-VHE host flags, and open-code HCR_RW. Further, in head.S we
-> open-code the flags for VHE and non-VHE configurations.
+> In subsequent patches we're going to expose ptrauth to the host kernel
+> and userspace, but things are a bit trickier for guest kernels. For the
+> time being, let's hide ptrauth from KVM guests.
 > 
-> In future, we're going to want to configure more flags for the host, so
-> lets add a HCR_HOST_NVHE_FLAGS defintion, and consistently use both
-> HCR_HOST_VHE_FLAGS and HCR_HOST_NVHE_FLAGS in the kvm code and head.S.
-> 
-> We now use mov_q to generate the HCR_EL2 value, as we use when
-> configuring other registers in head.S.
+> Regardless of how well-behaved the guest kernel is, guest userspace
+> could attempt to use ptrauth instructions, triggering a trap to EL2,
+> resulting in noise from kvm_handle_unknown_ec(). So let's write up a
+> handler for the PAC trap, which silently injects an UNDEF into the
+> guest, as if the feature were really missing.
 > 
 > Signed-off-by: Mark Rutland <mark.rutland@arm.com>
 > Signed-off-by: Kristina Martsenko <kristina.martsenko@arm.com>
+> Reviewed-by: Andrew Jones <drjones@redhat.com>
 > Reviewed-by: Christoffer Dall <christoffer.dall@arm.com>
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
 > Cc: Marc Zyngier <marc.zyngier@arm.com>
-> Cc: Will Deacon <will.deacon@arm.com>
 > Cc: kvmarm@lists.cs.columbia.edu
 
 Reviewed-by: Marc Zyngier <marc.zyngier@arm.com>
