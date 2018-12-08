@@ -2,170 +2,464 @@ Return-Path: <SRS0=1bfu=OR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-12.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,WEIRD_PORT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28D0EC07E85
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 00:05:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31335C07E85
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 00:08:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C6EB920892
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 00:05:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="iCsr4LmC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C6EB920892
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
+	by mail.kernel.org (Postfix) with ESMTP id D3B042054F
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 00:08:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D3B042054F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726110AbeLHAFt (ORCPT
+        id S1726098AbeLHAIq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 19:05:49 -0500
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:15288 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726065AbeLHAFs (ORCPT
+        Fri, 7 Dec 2018 19:08:46 -0500
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:45411 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726041AbeLHAIq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 19:05:48 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c0b0ada0000>; Fri, 07 Dec 2018 16:05:46 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Fri, 07 Dec 2018 16:05:47 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Fri, 07 Dec 2018 16:05:47 -0800
-Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL106.nvidia.com
- (172.18.146.12) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Sat, 8 Dec
- 2018 00:05:47 +0000
-Received: from NAM05-DM3-obe.outbound.protection.outlook.com (104.47.49.50) by
- HQMAIL109.nvidia.com (172.20.187.15) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4 via Frontend Transport; Sat, 8 Dec 2018 00:05:47 +0000
-Received: from BYAPR12MB2712.namprd12.prod.outlook.com (20.177.124.13) by
- BYAPR12MB2695.namprd12.prod.outlook.com (20.176.255.224) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1404.19; Sat, 8 Dec 2018 00:05:45 +0000
-Received: from BYAPR12MB2712.namprd12.prod.outlook.com
- ([fe80::2c34:273b:59ad:23d6]) by BYAPR12MB2712.namprd12.prod.outlook.com
- ([fe80::2c34:273b:59ad:23d6%2]) with mapi id 15.20.1404.021; Sat, 8 Dec 2018
- 00:05:44 +0000
-From:   Alexander Van Brunt <avanbrunt@nvidia.com>
-To:     Will Deacon <will.deacon@arm.com>
-CC:     Ashish Mhetre <amhetre@nvidia.com>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        Sachin Nikam <Snikam@nvidia.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH V3] arm64: Don't flush tlb while clearing the accessed bit
-Thread-Topic: [PATCH V3] arm64: Don't flush tlb while clearing the accessed
- bit
-Thread-Index: AQHUb2mK2jioXCSBXUOglXMUWPpsLKU2DOwAgABGE2iAN2VlVIAEmdOAgAAC4fGAABP4t4ABY6SAgABWZTk=
-Date:   Sat, 8 Dec 2018 00:05:44 +0000
-Message-ID: <BYAPR12MB271295B398729E07F31082A7CFAA0@BYAPR12MB2712.namprd12.prod.outlook.com>
-References: <1540805158-618-1-git-send-email-amhetre@nvidia.com>
- <20181029105515.GD14127@arm.com>
- <BN7PR12MB2708B742FD3448589AD0F259CFF30@BN7PR12MB2708.namprd12.prod.outlook.com>
- <BYAPR12MB27129A4EE7BBF57B1CAB5094CFAE0@BYAPR12MB2712.namprd12.prod.outlook.com>
- <20181206191850.GC20796@arm.com>
- <BYAPR12MB271239AAF4A0B79D756850C6CFA90@BYAPR12MB2712.namprd12.prod.outlook.com>
- <BYAPR12MB27120C304F7B085A0CA36124CFA90@BYAPR12MB2712.namprd12.prod.outlook.com>,<20181207175330.GC11430@edgewater-inn.cambridge.arm.com>
-In-Reply-To: <20181207175330.GC11430@edgewater-inn.cambridge.arm.com>
-Accept-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=avanbrunt@nvidia.com; 
-x-originating-ip: [216.228.112.22]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BYAPR12MB2695;6:GxKAZMRCyhOkl6j9PTSSQFsAvhK5pfMzf3DufLIlxcsGZNudddJb+2I1fVBxZPtRlzjkuNKIW3gJodSFxN0r51qpxh1vXsGjNMg2LVDr6Mhwle1Z3H8ySsSML7/LA2SDRlI77vyanfCM+KPPxMI/7dZUxRlxb2tDLWPqTpn1D6V1vFQ9iawy7UFQo4Lg5hQ9XKChDQXXi9R2cRvTvybb/jKc/8mpzQwkraxOiot+1PmQWVofNPUARxNKgYp1Yjk2GwzWfBeLL6X9VWnf2iy6R+94y4mFB18UKTLaK4N4SRMac4UWKI5Tsu1iaulRvmF2A34jfBwsAsWNqWHLbhgWbQLjUs2PNJzJP8vOaxRun+hFINVhTKL6Cr0S1E4VEAPXk5fB9f/G7bEU1eW+zJKwz57bUdeKqfDmer9yR8wsmq2XFsizg4sM9lzrcIIBD+FBjtCd8ge7X/g+Z89WtCOZuA==;5:zaHuFK37GkW3/dU/KosZWDM8hldwiuOVasrtxoxUGlK7Ct3tFN7d+4Y22uUOMJDPWTDsaqVlKdxlgLRSe/ZmoV4VLrjTct9fgvlv8ZCC66rqV7JB4BaUTt7BHmwbyLti8QCOxgLgMuattwAeroi/TPDhuY+bMPFvOIXShooJcA4=;7:uSkJ7V+UdDssvGXfuoFazj1hre9XkS3v7c642Fk/HdkchK7emdd10qwEzgYRfqtS8I9Ci8BdfSqt/5dIXYgYT78SwIk16qakFwWIzm2QWxM3Fwt5Lwn4Fl4ALENRmkHAD96sbqit1RoGnNTL2FnCxA==
-x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
-x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10009020)(136003)(39860400002)(346002)(396003)(376002)(366004)(189003)(199004)(105586002)(6916009)(93886005)(97736004)(106356001)(229853002)(8936002)(6116002)(3846002)(33656002)(5660300001)(81166006)(54906003)(316002)(81156014)(8676002)(6436002)(55016002)(7736002)(74316002)(305945005)(9686003)(4326008)(53936002)(6246003)(478600001)(25786009)(186003)(68736007)(86362001)(476003)(446003)(11346002)(26005)(256004)(14444005)(6506007)(7696005)(99286004)(2906002)(102836004)(66066001)(71200400001)(76176011)(486006)(71190400001)(14454004);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR12MB2695;H:BYAPR12MB2712.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-x-ms-office365-filtering-correlation-id: e844cd0d-fe5d-42aa-6004-08d65ca0e660
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:BYAPR12MB2695;
-x-ms-traffictypediagnostic: BYAPR12MB2695:
-x-microsoft-antispam-prvs: <BYAPR12MB2695DBEAC0A2767D3B52333DCFAB0@BYAPR12MB2695.namprd12.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(10201501046)(3002001)(93006095)(93001095)(3231455)(999002)(944501520)(52105112)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123562045)(20161123560045)(20161123564045)(201708071742011)(7699051)(76991095);SRVR:BYAPR12MB2695;BCL:0;PCL:0;RULEID:;SRVR:BYAPR12MB2695;
-x-forefront-prvs: 0880FB6EC1
-received-spf: None (protection.outlook.com: nvidia.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: fukrr/cHv5D21NMapOcpmDagQ5foT6xt5Lfbht0G2NSzvKoFriiJuDDLny8E2/CQK85byWfkIzPtNY12nVDxc4lWYR7qr+cmAeDDd+TvqslDZwlrJPTgg4004EAocFFdSk8L94xWkpKyJHtFbQS55zbW76JfeZYcUAL+vPjjwAhwudIRSA14rj1JAmxamQ0h32dW3pwerX2rF+1NYzJWLHpbOCkhV24Z8mu158InbywGBVcmpmQFw2+904JPchfFacy+v0hrXkk87Rp67B3hs/TIlktLONDdcYjEY6oKCjmZv3sTYCM7CaGPFV+FCacizs7U0GwSIoDVMeaKy4II9FU+pndieN7Ysy5mjnpDchQ=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: e844cd0d-fe5d-42aa-6004-08d65ca0e660
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Dec 2018 00:05:44.7741
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR12MB2695
-X-OriginatorOrg: Nvidia.com
-Content-Language: en-US
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1544227546; bh=ZF1hFouDXDs4UBLIwuo2/kXizwYZ9ZY2jlI66QU6Hm8=;
-        h=X-PGP-Universal:From:To:CC:Subject:Thread-Topic:Thread-Index:Date:
-         Message-ID:References:In-Reply-To:Accept-Language:X-MS-Has-Attach:
-         X-MS-TNEF-Correlator:authentication-results:x-originating-ip:
-         x-ms-publictraffictype:x-microsoft-exchange-diagnostics:
-         x-ms-exchange-antispam-srfa-diagnostics:
-         x-forefront-antispam-report:
-         x-ms-office365-filtering-correlation-id:x-microsoft-antispam:
-         x-ms-traffictypediagnostic:x-microsoft-antispam-prvs:
-         x-ms-exchange-senderadcheck:x-exchange-antispam-report-cfa-test:
-         x-forefront-prvs:received-spf:x-microsoft-antispam-message-info:
-         spamdiagnosticoutput:spamdiagnosticmetadata:MIME-Version:
-         X-MS-Exchange-CrossTenant-Network-Message-Id:
-         X-MS-Exchange-CrossTenant-originalarrivaltime:
-         X-MS-Exchange-CrossTenant-fromentityheader:
-         X-MS-Exchange-CrossTenant-id:
-         X-MS-Exchange-Transport-CrossTenantHeadersStamped:X-OriginatorOrg:
-         Content-Language:Content-Type:Content-Transfer-Encoding;
-        b=iCsr4LmCeB+xhMcD6Ux9zVxwXyCpgUJqlOnUZK+nPpxpxf+3Joz1vQEOq4PvTF/YV
-         l1QWEZyjW1lrYGPG0uvjPG0Iwo8dWw/m5gNG7urbTqR79E5c4jNqeFZXPtqUcqQluC
-         m9kH3NyGih0QBHhc3PaKTZHrutNGb4wHijgfCsUsOEGfuXjRCPOLkv9pNujmXXawOU
-         SL0i8XdMrkbFYWDgsAyO/Ls983Jco8ntI0p5hG/T40xJrXQEai7b6P3R0WIrzWyDYT
-         Hhvdo01K5uDC4wrp8xtr3uUtK3vSsNduuCd5B+XJf6N8OdZBhXC0+VCR9+oRs60Olr
-         S/rdk4sgLMA/g==
+        Fri, 7 Dec 2018 19:08:46 -0500
+Received: by mail-qk1-f195.google.com with SMTP id y78so3447664qka.12
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Dec 2018 16:08:45 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:organization:user-agent:mime-version
+         :content-transfer-encoding;
+        bh=13mzs8ocSTdtB+u3hnqnZ280c8w0GvfDnW89U2cV/Tg=;
+        b=iMZTAm7GeWreHhofXVV7olT73uyZUkeTdhpiqjMVWz4OVbIrMbTn7EXwQDYaQORpvA
+         ofal2P3bjbWDC3z+IUYLWisBWw2YkE2ihPcddFqZTyTBspq7dNaUbZNIzGAFdBlA14/2
+         PJR25Rs5KeFQ5JGZaRIFVyGtKcrMVcGxY+7toEx98PYdtKSxUUlYPKD4ZZG8AOoPzhzV
+         2poH2xrmiWm45CqMeBaPJ4aUA5rX7tk7PMbfTxUKWXKODZjq06xswHfveD4fKrL/ez69
+         JzHBOqhV7oJPwqWNSItqd32QJtVZ/27K/40cwPK4nJaWTo1pBHUnvFR2WWFHYsgEWx3j
+         mx7w==
+X-Gm-Message-State: AA+aEWayjhy/+wF5NAzC6hBKE0fQqKXN1s8Eoq6WPwOf7PHDOUY1zB4Z
+        xhIHhV5OyutS2i6eaM53VgTHYTTAJ5s=
+X-Google-Smtp-Source: AFSGD/V3r+IGbvcbe9TJjXz1HzZ37Wy1BCqxF//LaJbFIaep3IAE4qlF6Z22MLGCZ38ayOxsCtFabg==
+X-Received: by 2002:a37:4a87:: with SMTP id x129mr3621343qka.142.1544227724519;
+        Fri, 07 Dec 2018 16:08:44 -0800 (PST)
+Received: from dhcp-10-20-1-11.bss.redhat.com ([144.121.20.162])
+        by smtp.gmail.com with ESMTPSA id a90sm3538356qka.30.2018.12.07.16.08.43
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 07 Dec 2018 16:08:43 -0800 (PST)
+Message-ID: <95255117123da3702da585491d2fdd74890937c0.camel@redhat.com>
+Subject: Re: next/master boot bisection: Oops in nouveau driver on jetson-tk1
+From:   Lyude Paul <lyude@redhat.com>
+To:     Guillaume Tucker <guillaume.tucker@collabora.com>,
+        Ben Skeggs <bskeggs@redhat.com>
+Cc:     nouveau@lists.freedesktop.org, David Airlie <airlied@linux.ie>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        kernel@collabora.com, Mark Brown <broonie@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Karol Herbst <kherbst@redhat.com>,
+        Kevin Hilman <khilman@baylibre.com>
+Date:   Fri, 07 Dec 2018 19:08:40 -0500
+In-Reply-To: <89fa50d0-945f-d1ed-ae55-ee947187f209@collabora.com>
+References: <89fa50d0-945f-d1ed-ae55-ee947187f209@collabora.com>
+Organization: Red Hat
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.2 (3.30.2-2.fc29) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> > > My problem with that is it's not really much different to just skippi=
-ng the
-> > > page table update entirely. Skipping the DSB is closer to what is don=
-e on
-> > > x86, where we bound the stale entry time to the next context-switch.
-> > =20
-> > Which of the three implementations is the "that" and "it" in the first =
-sentence?
->
-> that =3D it =3D skipping the whole invalidation + the DSB
+uhhhhhhhhhhhhh
+didn't we fix this weeks ago? with "drm/nouveau: tegra: Call
+nouveau_drm_device_init()"
 
-The TLB is tiny compared to the size of the inactive list. Somehow a TLB ha=
-s to
-not be evicted during the page's life in the inactive list. That is not an =
-easy
-feat except for the hottest of pages.
 
-If there is a context-switch, most of the original thread's TLBs will be
-evicted because TLBs have a hard time to hold two thread's working sets. So=
-, in
-practice, that is almost the same as the x86 guarantee.
+On Fri, 2018-12-07 at 23:31 +0000, Guillaume Tucker wrote:
+> Please find below an automated bisection report for a kernel Oops
+> seen during the initialisation of the nouveau GPU driver on
+> jetson-tk1.
+> 
+> 
+> All the LAVA test jobs for this bisection can be found here:
+> 
+>   
+> http://lava.baylibre.com:10080/scheduler/alljobs?length=25&search=lava-bisect-staging-7366#table
+> 
+> 
+> Here's the beginning of the Oops stack trace:
+> 
+> [    7.485361] [00000064] *pgd=f9e7b835
+> [    7.485372] Internal error: Oops: 17 [#1] SMP ARM
+> [    7.485376] Modules linked in: snd_soc_tegra_rt5640(+)
+> snd_soc_tegra_utils snd_soc_rt5640(+) snd_soc_rl6231 snd_soc_tegra30_ahub
+> snd_hda_tegra snd_soc_core snd_hda_codec snd_hda_core ac97_bus
+> snd_pcm_dmaengine snd_pcm xhci_tegra(+) snd_timer snd soundcore nouveau(+)
+> ttm tegra_devfreq tegra_wdt
+> [    7.542227] CPU: 1 PID: 128 Comm: udevd Not tainted 4.20.0-rc5-next-
+> 20181206 #44
+> [    7.549603] Hardware name: NVIDIA Tegra SoC (Flattened Device Tree)
+> [    7.555859] PC is at drm_plane_register_all+0x18/0x50
+> [    7.560899] LR is at drm_modeset_register_all+0xc/0x6c
+> 
+> 
+> Full log:
+> 
+>   http://lava.baylibre.com:10080/scheduler/job/68628#L816
+> 
+> 
+> The bisection was run from next-20181206 as this is where the
+> issue was discovered on kernelci.org but the patch it found has
+> already been merged in mainline.
+> 
+> Hope this helps!
+> 
+> Guillaume
+> 
+> 
+> -----------8<------------------------8<-----------
+> 
+> 
+> * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+> * This automated bisection report was sent to you on the basis  *
+> * that you may be involved with the breaking commit it has      *
+> * found.  No manual investigation has been done to verify it,   *
+> * and the root cause of the problem may be somewhere else.      *
+> * Hope this helps!                                              *
+> * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+> 
+> Bisection result for next/master (next-20181206) on jetson-tk1
+> 
+>   Good:       84df9525b0c2 Linux 4.19
+>   Bad:        4c92b7b3080d Add linux-next specific files for 20181206
+>   Found:      cfea88a4d866 drm/nouveau: Start using new drm_dev
+> initialization helpers
+> 
+> Checks:
+>   revert:     PASS
+>   verify:     PASS
+> 
+> Parameters:
+>   Tree:       next
+>   URL:        None
+>   Branch:     master
+>   Target:     jetson-tk1
+>   Lab:        lab-baylibre
+>   Config:     multi_v7_defconfig
+>   Plan:       dmesg-nouveau
+> 
+> Breaking commit found:
+> 
+> ----------------------------------------------------------------------------
+> ---
+> commit cfea88a4d86632f28cf80be97079f131645b7869
+> Author: Lyude Paul <lyude@redhat.com>
+> Date:   Wed Aug 22 21:40:07 2018 -0400
+> 
+>     drm/nouveau: Start using new drm_dev initialization helpers
+>     
+>     Per the documentation in drm_get_pci_dev(), this function is deprecated
+>     and shouldn't be used anymore. As it turns out, we're going to need to
+>     stop using drm_get_pci_dev() anyway in order to allow us to turn off the
+>     card before full system shutdowns, otherwise we'll hit race conditions
+>     with userspace while trying to tear down the card on shutdown.
+>     
+>     So, start using drm_dev_get() and drm_dev_put(), and just turn our
+>     load/unload callbacks into open coded init/fini() functions.
+>     
+>     Signed-off-by: Lyude Paul <lyude@redhat.com>
+>     Cc: Karol Herbst <kherbst@redhat.com>
+>     Signed-off-by: Ben Skeggs <bskeggs@redhat.com>
+> 
+> diff --git a/drivers/gpu/drm/nouveau/nouveau_drm.c
+> b/drivers/gpu/drm/nouveau/nouveau_drm.c
+> index 905956809d21..2b2baf6e0e0d 100644
+> --- a/drivers/gpu/drm/nouveau/nouveau_drm.c
+> +++ b/drivers/gpu/drm/nouveau/nouveau_drm.c
+> @@ -458,75 +458,8 @@ nouveau_accel_init(struct nouveau_drm *drm)
+>  	nouveau_bo_move_init(drm);
+>  }
+>  
+> -static int nouveau_drm_probe(struct pci_dev *pdev,
+> -			     const struct pci_device_id *pent)
+> -{
+> -	struct nvkm_device *device;
+> -	struct apertures_struct *aper;
+> -	bool boot = false;
+> -	int ret;
+> -
+> -	if (vga_switcheroo_client_probe_defer(pdev))
+> -		return -EPROBE_DEFER;
+> -
+> -	/* We need to check that the chipset is supported before booting
+> -	 * fbdev off the hardware, as there's no way to put it back.
+> -	 */
+> -	ret = nvkm_device_pci_new(pdev, NULL, "error", true, false, 0,
+> &device);
+> -	if (ret)
+> -		return ret;
+> -
+> -	nvkm_device_del(&device);
+> -
+> -	/* Remove conflicting drivers (vesafb, efifb etc). */
+> -	aper = alloc_apertures(3);
+> -	if (!aper)
+> -		return -ENOMEM;
+> -
+> -	aper->ranges[0].base = pci_resource_start(pdev, 1);
+> -	aper->ranges[0].size = pci_resource_len(pdev, 1);
+> -	aper->count = 1;
+> -
+> -	if (pci_resource_len(pdev, 2)) {
+> -		aper->ranges[aper->count].base = pci_resource_start(pdev, 2);
+> -		aper->ranges[aper->count].size = pci_resource_len(pdev, 2);
+> -		aper->count++;
+> -	}
+> -
+> -	if (pci_resource_len(pdev, 3)) {
+> -		aper->ranges[aper->count].base = pci_resource_start(pdev, 3);
+> -		aper->ranges[aper->count].size = pci_resource_len(pdev, 3);
+> -		aper->count++;
+> -	}
+> -
+> -#ifdef CONFIG_X86
+> -	boot = pdev->resource[PCI_ROM_RESOURCE].flags & IORESOURCE_ROM_SHADOW;
+> -#endif
+> -	if (nouveau_modeset != 2)
+> -		drm_fb_helper_remove_conflicting_framebuffers(aper,
+> "nouveaufb", boot);
+> -	kfree(aper);
+> -
+> -	ret = nvkm_device_pci_new(pdev, nouveau_config, nouveau_debug,
+> -				  true, true, ~0ULL, &device);
+> -	if (ret)
+> -		return ret;
+> -
+> -	pci_set_master(pdev);
+> -
+> -	if (nouveau_atomic)
+> -		driver_pci.driver_features |= DRIVER_ATOMIC;
+> -
+> -	ret = drm_get_pci_dev(pdev, pent, &driver_pci);
+> -	if (ret) {
+> -		nvkm_device_del(&device);
+> -		return ret;
+> -	}
+> -
+> -	return 0;
+> -}
+> -
+>  static int
+> -nouveau_drm_load(struct drm_device *dev, unsigned long flags)
+> +nouveau_drm_device_init(struct drm_device *dev)
+>  {
+>  	struct nouveau_drm *drm;
+>  	int ret;
+> @@ -613,7 +546,7 @@ nouveau_drm_load(struct drm_device *dev, unsigned long
+> flags)
+>  }
+>  
+>  static void
+> -nouveau_drm_unload(struct drm_device *dev)
+> +nouveau_drm_device_fini(struct drm_device *dev)
+>  {
+>  	struct nouveau_drm *drm = nouveau_drm(dev);
+>  
+> @@ -642,18 +575,116 @@ nouveau_drm_unload(struct drm_device *dev)
+>  	kfree(drm);
+>  }
+>  
+> +static int nouveau_drm_probe(struct pci_dev *pdev,
+> +			     const struct pci_device_id *pent)
+> +{
+> +	struct nvkm_device *device;
+> +	struct drm_device *drm_dev;
+> +	struct apertures_struct *aper;
+> +	bool boot = false;
+> +	int ret;
+> +
+> +	if (vga_switcheroo_client_probe_defer(pdev))
+> +		return -EPROBE_DEFER;
+> +
+> +	/* We need to check that the chipset is supported before booting
+> +	 * fbdev off the hardware, as there's no way to put it back.
+> +	 */
+> +	ret = nvkm_device_pci_new(pdev, NULL, "error", true, false, 0,
+> &device);
+> +	if (ret)
+> +		return ret;
+> +
+> +	nvkm_device_del(&device);
+> +
+> +	/* Remove conflicting drivers (vesafb, efifb etc). */
+> +	aper = alloc_apertures(3);
+> +	if (!aper)
+> +		return -ENOMEM;
+> +
+> +	aper->ranges[0].base = pci_resource_start(pdev, 1);
+> +	aper->ranges[0].size = pci_resource_len(pdev, 1);
+> +	aper->count = 1;
+> +
+> +	if (pci_resource_len(pdev, 2)) {
+> +		aper->ranges[aper->count].base = pci_resource_start(pdev, 2);
+> +		aper->ranges[aper->count].size = pci_resource_len(pdev, 2);
+> +		aper->count++;
+> +	}
+> +
+> +	if (pci_resource_len(pdev, 3)) {
+> +		aper->ranges[aper->count].base = pci_resource_start(pdev, 3);
+> +		aper->ranges[aper->count].size = pci_resource_len(pdev, 3);
+> +		aper->count++;
+> +	}
+> +
+> +#ifdef CONFIG_X86
+> +	boot = pdev->resource[PCI_ROM_RESOURCE].flags & IORESOURCE_ROM_SHADOW;
+> +#endif
+> +	if (nouveau_modeset != 2)
+> +		drm_fb_helper_remove_conflicting_framebuffers(aper,
+> "nouveaufb", boot);
+> +	kfree(aper);
+> +
+> +	ret = nvkm_device_pci_new(pdev, nouveau_config, nouveau_debug,
+> +				  true, true, ~0ULL, &device);
+> +	if (ret)
+> +		return ret;
+> +
+> +	pci_set_master(pdev);
+> +
+> +	if (nouveau_atomic)
+> +		driver_pci.driver_features |= DRIVER_ATOMIC;
+> +
+> +	drm_dev = drm_dev_alloc(&driver_pci, &pdev->dev);
+> +	if (IS_ERR(drm_dev)) {
+> +		ret = PTR_ERR(drm_dev);
+> +		goto fail_nvkm;
+> +	}
+> +
+> +	ret = pci_enable_device(pdev);
+> +	if (ret)
+> +		goto fail_drm;
+> +
+> +	drm_dev->pdev = pdev;
+> +	pci_set_drvdata(pdev, drm_dev);
+> +
+> +	ret = nouveau_drm_device_init(drm_dev);
+> +	if (ret)
+> +		goto fail_pci;
+> +
+> +	ret = drm_dev_register(drm_dev, pent->driver_data);
+> +	if (ret)
+> +		goto fail_drm_dev_init;
+> +
+> +	return 0;
+> +
+> +fail_drm_dev_init:
+> +	nouveau_drm_device_fini(drm_dev);
+> +fail_pci:
+> +	pci_disable_device(pdev);
+> +fail_drm:
+> +	drm_dev_put(drm_dev);
+> +fail_nvkm:
+> +	nvkm_device_del(&device);
+> +	return ret;
+> +}
+> +
+>  void
+>  nouveau_drm_device_remove(struct drm_device *dev)
+>  {
+> +	struct pci_dev *pdev = dev->pdev;
+>  	struct nouveau_drm *drm = nouveau_drm(dev);
+>  	struct nvkm_client *client;
+>  	struct nvkm_device *device;
+>  
+> +	drm_dev_unregister(dev);
+> +
+>  	dev->irq_enabled = false;
+>  	client = nvxx_client(&drm->client.base);
+>  	device = nvkm_device_find(client->device);
+> -	drm_put_dev(dev);
+>  
+> +	nouveau_drm_device_fini(dev);
+> +	pci_disable_device(pdev);
+> +	drm_dev_put(dev);
+>  	nvkm_device_del(&device);
+>  }
+>  
+> @@ -1020,8 +1051,6 @@ driver_stub = {
+>  		DRIVER_GEM | DRIVER_MODESET | DRIVER_PRIME | DRIVER_RENDER |
+>  		DRIVER_KMS_LEGACY_CONTEXT,
+>  
+> -	.load = nouveau_drm_load,
+> -	.unload = nouveau_drm_unload,
+>  	.open = nouveau_drm_open,
+>  	.postclose = nouveau_drm_postclose,
+>  	.lastclose = nouveau_vga_lastclose,
+> ----------------------------------------------------------------------------
+> ---
+> 
+> 
+> Git bisection log:
+> 
+> ----------------------------------------------------------------------------
+> ---
+> git bisect start
+> # good: [84df9525b0c27f3ebc2ebb1864fa62a97fdedb7d] Linux 4.19
+> git bisect good 84df9525b0c27f3ebc2ebb1864fa62a97fdedb7d
+> # bad: [4c92b7b3080d8281941ae81c51cd62bb49bdc3d4] Add linux-next specific
+> files for 20181206
+> git bisect bad 4c92b7b3080d8281941ae81c51cd62bb49bdc3d4
+> # bad: [c38239b4be1ac7e4bcf5bbd971353bae51525b8f] Merge branch 'parisc-4.20-
+> 2' of git://git.kernel.org/pub/scm/linux/kernel/git/deller/parisc-linux
+> git bisect bad c38239b4be1ac7e4bcf5bbd971353bae51525b8f
+> # good: [d49f8a52b15bf35db778035340d8a673149f9f93] Merge tag 'scsi-misc' of
+> git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi
+> git bisect good d49f8a52b15bf35db778035340d8a673149f9f93
+> # good: [ac747c0715f29c2be3848b719a1b7e65b07f7b21] Merge tag 'kbuild-v4.20'
+> of git://git.kernel.org/pub/scm/linux/kernel/git/masahiroy/linux-kbuild
+> git bisect good ac747c0715f29c2be3848b719a1b7e65b07f7b21
+> # bad: [46972c03ab667dc298cad0c9db517fb9b1521b5f] Merge tag 'drm-misc-next-
+> fixes-2018-10-10' of git://anongit.freedesktop.org/drm/drm-misc into drm-
+> next
+> git bisect bad 46972c03ab667dc298cad0c9db517fb9b1521b5f
+> # good: [6ac99a328ee16d3f8cc253f1df62623cee3e9ea5] drm/exynos: mixer: Make
+> plane alpha configurable
+> git bisect good 6ac99a328ee16d3f8cc253f1df62623cee3e9ea5
+> # good: [0957dc7097a3f462f6cedb45cf9b9785cc29e5bb] drm/amdgpu: revert "stop
+> using gart_start as offset for the GTT domain"
+> git bisect good 0957dc7097a3f462f6cedb45cf9b9785cc29e5bb
+> # good: [2de0b0a158bf423208c3898522c8fa1c1078df48] Merge tag 'drm/tegra/for-
+> 4.20-rc1' of git://anongit.freedesktop.org/tegra/linux into drm-next
+> git bisect good 2de0b0a158bf423208c3898522c8fa1c1078df48
+> # good: [04b96b63c5640a305e30611def7a9c5fcd7a72cf] drm/msm/dpu: Remove
+> unneeded checks in dpu_crtc.c
+> git bisect good 04b96b63c5640a305e30611def7a9c5fcd7a72cf
+> # good: [6952e3a1dffcb931cf8625aa01642b9afac2af61] Merge branch 'for-
+> upstream/mali-dp' of git://linux-arm.org/linux-ld into drm-next
+> git bisect good 6952e3a1dffcb931cf8625aa01642b9afac2af61
+> # good: [62e681f7dcab746412dce22d4b75b32c5ea38cdb] Merge tag 'drm-msm-fixes-
+> 2018-10-09' of git://people.freedesktop.org/~robclark/linux into drm-next
+> git bisect good 62e681f7dcab746412dce22d4b75b32c5ea38cdb
+> # bad: [7e6191d4360a2df6cf2a2613dcb79680cb943df8] Merge branch 'linux-4.20'
+> of git://github.com/skeggsb/linux into drm-next
+> git bisect bad 7e6191d4360a2df6cf2a2613dcb79680cb943df8
+> # good: [c4cee69a4497d9c6ad8868d63568b30e50cac9e9] drm/nouveau: Fix
+> potential memory leak in nouveau_drm_load()
+> git bisect good c4cee69a4497d9c6ad8868d63568b30e50cac9e9
+> # bad: [a971558c298755d2c07bc5508c65d689471763c8] drm/nouveau/disp: keep
+> track of high-speed state, program into clock
+> git bisect bad a971558c298755d2c07bc5508c65d689471763c8
+> # bad: [4126b99e744b7a29746e201e2be6644d2edf3c56] drm/nouveau/disp: add a
+> way to configure scrambling/tmds for hdmi 2.0
+> git bisect bad 4126b99e744b7a29746e201e2be6644d2edf3c56
+> # bad: [cfea88a4d86632f28cf80be97079f131645b7869] drm/nouveau: Start using
+> new drm_dev initialization helpers
+> git bisect bad cfea88a4d86632f28cf80be97079f131645b7869
+> # first bad commit: [cfea88a4d86632f28cf80be97079f131645b7869] drm/nouveau:
+> Start using new drm_dev initialization helpers
+> ----------------------------------------------------------------------------
+> ---
+-- 
+Cheers,
+	Lyude Paul
 
-The worst case cannot have a large impact because the maximum number of pag=
-es
-that will not have the TLB evicted is the number of pages in the TLB. For
-example, a 1024 entry TLB can at worst result in 4 MB of pages erroneously
-reclaimed. That is not bad on a system with 4+ GB of memory.
-
-We did benchmark the extreme case where half the pages accessed where not
-evicted from the TLB. In the read case, skipping the DSB was ~10% faster th=
-an
-skipping the invalidate or doing the invalidate and the DSB.
-
-Compared to the improvement in the average performance and variability in t=
-he
-other cases we tested, the 10% loss in a carefully crafted test is not as
-important.
