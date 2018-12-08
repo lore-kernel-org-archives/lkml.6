@@ -2,59 +2,70 @@ Return-Path: <SRS0=1bfu=OR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FF72C65BAF
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 12:09:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5E38C04EB8
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 12:10:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EA60320868
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 12:09:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 78B6A20672
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 12:10:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544270954;
-	bh=MNqAi+h0GzVw/uwN1kKOG2YCKEsVTu8/5IqmKcBVR3g=;
+	s=default; t=1544271039;
+	bh=RiRYLWr09MEcKXc9xrhWMx9Ao2fgrpYIzHfa/YR4J8E=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=sPJ4cTPA5PDC/IDTnj9P3qrzFQK+CHzDpj8g8rwDPkrbmQZAOjfTrUkmVxPLUxamu
-	 xbRiifR2rABWmFJtst3X5MjjLyhCxD/sWc/s4fd2e+F2xLk1IHxgchru/vy95xSxti
-	 Gw3NvXt4Cp5DvcuY+pvugJnvSZRrLHBv9y5v6RHs=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA60320868
+	b=ejvg0+8DDUZvfC19wG/AAkIKZSW4iSekdsxXbOxv1YAmvbhn4KJL0phKzRhcPJyYW
+	 ZkvTHg4u4+Q+8LzcAvbaMhoaWjtliuK2k2EPD1YUOomqYO4/ipKPr1jTmga+XkD9T6
+	 VY501ZfUaEI4O1nsCdUkuCxoj/hGAHhZYAkcQoAM=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 78B6A20672
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726217AbeLHMJN (ORCPT
+        id S1726232AbeLHMKh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 8 Dec 2018 07:09:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53932 "EHLO mail.kernel.org"
+        Sat, 8 Dec 2018 07:10:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54736 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726112AbeLHMJM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 8 Dec 2018 07:09:12 -0500
+        id S1726121AbeLHMKh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 8 Dec 2018 07:10:37 -0500
 Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B56C82081C;
-        Sat,  8 Dec 2018 12:09:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2E9A72064D;
+        Sat,  8 Dec 2018 12:10:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544270951;
-        bh=MNqAi+h0GzVw/uwN1kKOG2YCKEsVTu8/5IqmKcBVR3g=;
+        s=default; t=1544271035;
+        bh=RiRYLWr09MEcKXc9xrhWMx9Ao2fgrpYIzHfa/YR4J8E=;
         h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=hj/d5Op/AQd2BQLcqeMfgXdik/UCE63nkbeuFeQ/jEdcKnJPlrNvS24IEpZOb6ta9
-         E9kruG9479wrH+2Wa5WLVgFqjy2nZpT1G5uwcAV5lsQaTYiRRCm6cj8UGnQHTU2/Bq
-         zUVLCKOvePUIEkk4DDnqFFXsHHU3pCq5wXG1YCrk=
-Date:   Sat, 8 Dec 2018 12:09:07 +0000
+        b=2kMnv8zJE/VwFD59nhaCDDTU8/P5ByzgRB8U3zljmhFdHfgpNkK7krEmAYu4vovry
+         MzsqlcGFW1DvbtfGfGIw9BZA1y8tXkkL24phQDjTpvZ4dy3YJW2zWArxgT3wyFUTd/
+         vppzZKigM0VByyX6Tx8blkXr2SecvR6oAFrYPMYM=
+Date:   Sat, 8 Dec 2018 12:10:30 +0000
 From:   Jonathan Cameron <jic23@kernel.org>
 To:     Anson Huang <anson.huang@nxp.com>
 Cc:     "knaack.h@gmx.de" <knaack.h@gmx.de>,
         "lars@metafoo.de" <lars@metafoo.de>,
         "pmeerw@pmeerw.net" <pmeerw@pmeerw.net>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "harinath922@gmail.com" <harinath922@gmail.com>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "martink@posteo.de" <martink@posteo.de>,
+        "rtresidd@electromag.com.au" <rtresidd@electromag.com.au>,
+        "gustavo@embeddedor.com" <gustavo@embeddedor.com>,
         "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         dl-linux-imx <linux-imx@nxp.com>
-Subject: Re: [PATCH V2] iio: light: isl29018: add optional vcc regulator
+Subject: Re: [PATCH 2/2] iio: accell: mma8452: add optional vcc regulator
  operation support
-Message-ID: <20181208120907.4cd1a755@archlinux>
-In-Reply-To: <1544066850-22617-1-git-send-email-Anson.Huang@nxp.com>
-References: <1544066850-22617-1-git-send-email-Anson.Huang@nxp.com>
+Message-ID: <20181208121030.57e081dc@archlinux>
+In-Reply-To: <1544077059-4471-2-git-send-email-Anson.Huang@nxp.com>
+References: <1544077059-4471-1-git-send-email-Anson.Huang@nxp.com>
+        <1544077059-4471-2-git-send-email-Anson.Huang@nxp.com>
 X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -64,106 +75,177 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 6 Dec 2018 03:33:16 +0000
+On Thu, 6 Dec 2018 06:23:33 +0000
 Anson Huang <anson.huang@nxp.com> wrote:
 
-> The light sensor's power supply could be controlled by regulator
-> on some platforms, such as i.MX6Q-SABRESD board, the light sensor
-> isl29023's power supply is controlled by a GPIO fixed regulator,
-> need to make sure the regulator is enabled before any operation of
-> sensor, this patch adds optional vcc regulator operation support.
+> The accelerometer's power supply could be controlled by regulator
+> on some platforms, such as i.MX6Q-SABRESD board, the mma8451's
+> power supply is controlled by a GPIO fixed regulator, need to make
+> sure the regulator is enabled before any communication with mma8451,
+> this patch adds optional vcc regulator operation support.
 > 
 > Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 > ---
-> ChangeLog:
-> 	replace "VDD" with "VCC" since the regulator name is vcc_reg.
-Fabio has raised naming concerns so I'll assume we'll see a v3 with that.
-
-One other comment inline.
-
-Jonathan
-
-> ---
->  drivers/iio/light/isl29018.c | 29 +++++++++++++++++++++++++++++
->  1 file changed, 29 insertions(+)
+>  drivers/iio/accel/mma8452.c | 88 +++++++++++++++++++++++++++++++++++++++++++--
+>  1 file changed, 86 insertions(+), 2 deletions(-)
 > 
-> diff --git a/drivers/iio/light/isl29018.c b/drivers/iio/light/isl29018.c
-> index b45400f..87dcbce 100644
-> --- a/drivers/iio/light/isl29018.c
-> +++ b/drivers/iio/light/isl29018.c
-> @@ -23,6 +23,7 @@
->  #include <linux/mutex.h>
->  #include <linux/delay.h>
->  #include <linux/regmap.h>
+> diff --git a/drivers/iio/accel/mma8452.c b/drivers/iio/accel/mma8452.c
+> index 421a0a8..8f6123f 100644
+> --- a/drivers/iio/accel/mma8452.c
+> +++ b/drivers/iio/accel/mma8452.c
+> @@ -31,6 +31,7 @@
+>  #include <linux/of_device.h>
+>  #include <linux/of_irq.h>
+>  #include <linux/pm_runtime.h>
 > +#include <linux/regulator/consumer.h>
->  #include <linux/slab.h>
->  #include <linux/iio/iio.h>
->  #include <linux/iio/sysfs.h>
-> @@ -95,6 +96,7 @@ struct isl29018_chip {
->  	struct isl29018_scale	scale;
->  	int			prox_scheme;
->  	bool			suspended;
-> +	struct regulator	*vcc_reg;
+>  
+>  #define MMA8452_STATUS				0x00
+>  #define  MMA8452_STATUS_DRDY			(BIT(2) | BIT(1) | BIT(0))
+> @@ -107,6 +108,7 @@ struct mma8452_data {
+>  	u8 data_cfg;
+>  	const struct mma_chip_info *chip_info;
+>  	int sleep_val;
+> +	struct regulator *vcc_reg;
 >  };
 >  
->  static int isl29018_set_integration_time(struct isl29018_chip *chip,
-> @@ -735,6 +737,15 @@ static int isl29018_probe(struct i2c_client *client,
->  
->  	mutex_init(&chip->lock);
->  
-> +	chip->vcc_reg = devm_regulator_get_optional(&client->dev, "vcc");
-> +	if (!IS_ERR(chip->vcc_reg)) {
+>   /**
+> @@ -1533,6 +1535,14 @@ static int mma8452_probe(struct i2c_client *client,
+>  	data->client = client;
+>  	mutex_init(&data->lock);
+>  	data->chip_info = match->data;
+> +	data->vcc_reg = devm_regulator_get_optional(&client->dev, "vcc");
+> +	if (!IS_ERR(data->vcc_reg)) {
 
-We should probably handle the case of deferred explicitly rather than
-assuming all errors mean the regulator hasn't been provided.
+Make sure it's the 'right' error to indicate there isn't a regulator
+rather than a deferred response for example.
 
-> +		err = regulator_enable(chip->vcc_reg);
-> +		if (err) {
-> +			dev_err(&client->dev, "failed to enable VCC regulator\n");
-> +			return err;
-> +		}
-> +	}
-> +
->  	chip->type = dev_id;
->  	chip->calibscale = 1;
->  	chip->ucalibscale = 0;
-> @@ -768,6 +779,7 @@ static int isl29018_probe(struct i2c_client *client,
->  static int isl29018_suspend(struct device *dev)
->  {
->  	struct isl29018_chip *chip = iio_priv(dev_get_drvdata(dev));
-> +	int ret;
->  
->  	mutex_lock(&chip->lock);
->  
-> @@ -777,6 +789,14 @@ static int isl29018_suspend(struct device *dev)
->  	 * So we do not have much to do here.
->  	 */
->  	chip->suspended = true;
-> +	if (!IS_ERR(chip->vcc_reg)) {
-> +		ret = regulator_disable(chip->vcc_reg);
+
+> +		ret = regulator_enable(data->vcc_reg);
 > +		if (ret) {
-> +			dev_err(dev, "failed to disable VCC regulator\n");
-> +			mutex_unlock(&chip->lock);
+> +			dev_err(&client->dev, "failed to enable VCC regulator\n");
 > +			return ret;
 > +		}
 > +	}
 >  
->  	mutex_unlock(&chip->lock);
+>  	ret = i2c_smbus_read_byte_data(client, MMA8452_WHO_AM_I);
+>  	if (ret < 0)
+> @@ -1667,6 +1677,8 @@ static int mma8452_probe(struct i2c_client *client,
+>  static int mma8452_remove(struct i2c_client *client)
+>  {
+>  	struct iio_dev *indio_dev = i2c_get_clientdata(client);
+> +	struct mma8452_data *data = iio_priv(indio_dev);
+> +	int ret;
 >  
-> @@ -790,6 +810,15 @@ static int isl29018_resume(struct device *dev)
+>  	iio_device_unregister(indio_dev);
 >  
->  	mutex_lock(&chip->lock);
+> @@ -1678,6 +1690,14 @@ static int mma8452_remove(struct i2c_client *client)
+>  	mma8452_trigger_cleanup(indio_dev);
+>  	mma8452_standby(iio_priv(indio_dev));
 >  
-> +	if (!IS_ERR(chip->vcc_reg)) {
-> +		err = regulator_enable(chip->vcc_reg);
-> +		if (err) {
-> +			dev_err(dev, "failed to enable VCC regulator\n");
-> +			mutex_unlock(&chip->lock);
-> +			return err;
+> +	if (!IS_ERR(data->vcc_reg)) {
+> +		ret = regulator_disable(data->vcc_reg);
+> +		if (ret) {
+> +			dev_err(&client->dev, "failed to disable VCC regulator\n");
+> +			return ret;
 > +		}
 > +	}
 > +
->  	err = isl29018_chip_init(chip);
->  	if (!err)
->  		chip->suspended = false;
+>  	return 0;
+>  }
+>  
+> @@ -1696,6 +1716,14 @@ static int mma8452_runtime_suspend(struct device *dev)
+>  		return -EAGAIN;
+>  	}
+>  
+> +	if (!IS_ERR(data->vcc_reg)) {
+> +		ret = regulator_disable(data->vcc_reg);
+> +		if (ret) {
+> +			dev_err(dev, "failed to disable VCC regulator\n");
+> +			return ret;
+> +		}
+> +	}
+> +
+>  	return 0;
+>  }
+>  
+> @@ -1705,6 +1733,14 @@ static int mma8452_runtime_resume(struct device *dev)
+>  	struct mma8452_data *data = iio_priv(indio_dev);
+>  	int ret, sleep_val;
+>  
+> +	if (!IS_ERR(data->vcc_reg)) {
+> +		ret = regulator_enable(data->vcc_reg);
+> +		if (ret) {
+> +			dev_err(dev, "failed to enable VCC regulator\n");
+> +			return ret;
+> +		}
+> +	}
+> +
+>  	ret = mma8452_active(data);
+>  	if (ret < 0)
+>  		return ret;
+> @@ -1723,14 +1759,62 @@ static int mma8452_runtime_resume(struct device *dev)
+>  #ifdef CONFIG_PM_SLEEP
+>  static int mma8452_suspend(struct device *dev)
+>  {
+> -	return mma8452_standby(iio_priv(i2c_get_clientdata(
+> +	struct iio_dev *indio_dev = i2c_get_clientdata(to_i2c_client(dev));
+> +	struct mma8452_data *data = iio_priv(indio_dev);
+> +	int ret;
+> +
+> +	if (!IS_ERR(data->vcc_reg)) {
+> +		ret = regulator_enable(data->vcc_reg);
+> +		if (ret) {
+> +			dev_err(dev, "failed to enable VCC regulator\n");
+> +			return ret;
+> +		}
+> +	}
+> +
+> +	ret = mma8452_standby(iio_priv(i2c_get_clientdata(
+>  		to_i2c_client(dev))));
+> +	if (ret)
+> +		return ret;
+> +
+> +	if (!IS_ERR(data->vcc_reg)) {
+> +		ret = regulator_disable(data->vcc_reg);
+> +		if (ret) {
+> +			dev_err(dev, "failed to disable VCC regulator\n");
+> +			return ret;
+> +		}
+> +	}
+> +
+> +	return 0;
+>  }
+>  
+>  static int mma8452_resume(struct device *dev)
+>  {
+> -	return mma8452_active(iio_priv(i2c_get_clientdata(
+> +	struct iio_dev *indio_dev = i2c_get_clientdata(to_i2c_client(dev));
+> +	struct mma8452_data *data = iio_priv(indio_dev);
+> +	int ret;
+> +
+> +	if (!IS_ERR(data->vcc_reg)) {
+> +		ret = regulator_enable(data->vcc_reg);
+> +		if (ret) {
+> +			dev_err(dev, "failed to enable VCC regulator\n");
+> +			return ret;
+> +		}
+> +	}
+> +
+> +	ret = mma8452_active(iio_priv(i2c_get_clientdata(
+>  		to_i2c_client(dev))));
+> +	if (ret)
+> +		return ret;
+> +
+> +	if (!IS_ERR(data->vcc_reg)) {
+> +		ret = regulator_disable(data->vcc_reg);
+> +		if (ret) {
+> +			dev_err(dev, "failed to disable VCC regulator\n");
+> +			return ret;
+> +		}
+> +	}
+> +
+> +	return 0;
+>  }
+>  #endif
+>  
 
