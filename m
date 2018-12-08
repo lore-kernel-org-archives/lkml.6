@@ -2,112 +2,91 @@ Return-Path: <SRS0=1bfu=OR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8686C04EB8
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 11:56:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1D06C65BAF
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 12:05:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ACA4E20868
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 11:56:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544270193;
-	bh=c4IdhB2Kr/QsNRHe/s97dVTkFk+2pK39/ucRTcvhnHI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=FD5pQUnQoWtWpPk2xxu3S9M4Aol089EXwIOL79+0EMY2tVjYguBqaf3O5hrnkHM2x
-	 A/RHUcBvXmliXY0v+re2BpGvChMuKPg6BzSBGseLa/npCNhpNWCsGwJ5jFbNY8wEOg
-	 h44RGDouvm3xYp0QGv5T/s6i/cY1JJZfgRVksgeE=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ACA4E20868
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 6213820868
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 12:05:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JTE4fFiF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6213820868
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726243AbeLHL4c (ORCPT
+        id S1726197AbeLHMFE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 8 Dec 2018 06:56:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49172 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726112AbeLHL4c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 8 Dec 2018 06:56:32 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5E26520673;
-        Sat,  8 Dec 2018 11:56:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544270191;
-        bh=c4IdhB2Kr/QsNRHe/s97dVTkFk+2pK39/ucRTcvhnHI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=E9zmFXz5kbZSL6gyrj3lg1oLQycKG60I5ZKVy4+NUkHqMxUpnQ8NoYZz4KOfYj0ae
-         T3zc5IgnJG2zG8IsQn7Yzv97B9ToGTgzmbF448sjtsQZtgP/Aqx5Ar8ia2T3rmwJII
-         Bx1OS7ir5Nsmtwu5cAGh9b4RgPzdrVdFCXrcixOQ=
-Date:   Sat, 8 Dec 2018 12:56:29 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Laura Abbott <labbott@redhat.com>
-Cc:     stable <stable@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: Process for severe early stable bugs?
-Message-ID: <20181208115629.GA3288@kroah.com>
-References: <c04ea7b1-23f3-f1e0-4f31-07b62abdee24@redhat.com>
+        Sat, 8 Dec 2018 07:05:04 -0500
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:38072 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726112AbeLHMFE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 8 Dec 2018 07:05:04 -0500
+Received: by mail-ed1-f67.google.com with SMTP id h50so5801647ede.5
+        for <linux-kernel@vger.kernel.org>; Sat, 08 Dec 2018 04:05:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=upJ4W9sZXaJvX52jmKfQ0MU6kTlF2DPCYP7RKfK3vyk=;
+        b=JTE4fFiF/IaCbl5cD3qvnNTNYXu8pwCgcEOmiBC2HiFRRhUxImN+ED6Zvuvc2j2aEn
+         2WChYj+62MQGKAJJ2Nbm4E5pmmpu5a/XT1MGNVV5+jCrIbTXBdUGbec9zpVN7fVcchSF
+         9LzmYXbgg8ZNFOKNP4+2fhWLv29ZSErTwP7ePNa20IWA9UyHJjmuVNsZIbOzeXhgYgzR
+         o7UXLVU1YbeCkF/amxyWgEBv79ZSD44O/NVdpsHorPpgpLlYRpALMDek6uf6cK0oCrqw
+         UZf6H/V3NKAyBD7Khdr0izpc9jHMtIiS0ZzSX8blxmNM7wLV7OIclp2q9mxvaza7+8mK
+         1ORQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=upJ4W9sZXaJvX52jmKfQ0MU6kTlF2DPCYP7RKfK3vyk=;
+        b=YHqFgGiUqc8W0ggTllFDgiru05Y9Z3CwCaf3HbJm5HMp8IpYINc5E5yM5Bxq/oCDPh
+         j0AHGpv12rQHCeFeAwN1dsC8iJQ6XN5QuvC2D7sRNBBLqGP2qI4Lgg62ol8QZrCUYWGS
+         WBG0/07DElyYUDVRWxhiwVfvG8kbSp3tkITt28C4yNSeYVXlvT0028F90tk6G5UeQAVN
+         psYsoAqmD7SVrEJxkaITIIrI1lElJcTLsgyUiKCUx4NliRzXYqmif1tzxISaVScHNLj1
+         gsgiJfMamRCDGKJcQZDTG6+6cQhAB3AzxU/s8SAT76gfCSAfDnCF2EJL1cEhVqWVAVpk
+         j4vQ==
+X-Gm-Message-State: AA+aEWY3s7NsZewDC8ulN5en6aUxEMT0oBmJLc4nLj8J0xckwMOk56fe
+        CRwVgTXYTVC6Fy12kY4aVnbYK6X1cXdG7QaPf+cpBXjmBMM=
+X-Google-Smtp-Source: AFSGD/X6SMQXPVPAjgMXuMWPZRs7MbPz43K2YnqoRZGjIpGqgvcnIpKI7d2yqiduV+JYxU5SFlHrtpniU68zwHkQmTY=
+X-Received: by 2002:a50:9ac4:: with SMTP id p62mr5338602edb.179.1544270702165;
+ Sat, 08 Dec 2018 04:05:02 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c04ea7b1-23f3-f1e0-4f31-07b62abdee24@redhat.com>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+From:   Lei Wen <adrian.wenl@gmail.com>
+Date:   Sat, 8 Dec 2018 20:04:50 +0800
+Message-ID: <CALZhoSRaR-eMyr7HKUTDi5oRiJfRZ7x1NRRM49v-nn6U7e9sJg@mail.gmail.com>
+Subject: Coresight etmv4 enable over 32bit kernel
+To:     mathieu.poirier@linaro.org
+Cc:     linux-kernel@vger.kernel.org,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        leiwen@outlook.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 07, 2018 at 04:33:10PM -0800, Laura Abbott wrote:
-> The latest file system corruption issue (Nominally fixed by
-> ffe81d45322c ("blk-mq: fix corruption with direct issue") later
-> fixed by c616cbee97ae ("blk-mq: punt failed direct issue to dispatch
-> list")) brought a lot of rightfully concerned users asking about
-> release schedules. 4.18 went EOL on Nov 21 and Fedora rebased to
-> 4.19.3 on Nov 23. When the issue started getting visibility,
-> users were left with the option of running known EOL 4.18.x
-> kernels or running a 4.19 series that could corrupt their
-> data. Admittedly, the risk of running the EOL kernel was pretty
-> low given how recent it was, but it's still not a great look
-> to tell people to run something marked EOL.
-> 
-> I'm wondering if there's anything we can do to make things easier
-> on kernel consumers. Bugs will certainly happen but it really
-> makes it hard to push the "always run the latest stable" narrative
-> if there isn't a good fallback when things go seriously wrong. I
-> don't actually have a great proposal for a solution here other than
-> retroactively bringing back 4.18 (which I don't think Greg would
-> like) but I figured I should at least bring it up.
+Hi Mathieu,
 
-A nice step forward would have been if someone could have at least
-_told_ the stable maintainer (i.e. me) that there was such a serious bug
-out there.  That didn't happen here and I only found out about it
-accidentally by happening to talk to a developer who was on the bugzilla
-thread at a totally random meeting last Wednesday.
+I am enabling etmv4 coresight over one Cortex-A7 soc, using 32bit kernel.
+And I am following [1] to do experiment regarding the addr_range feature.
+The default addr_range is set as _stext~_etext, and it works fine with
+etb as sink,
+and etm as source. I could see there are valid kernel addresses using OpenCSD.
 
-There was also not an email thread that I could find once I found out
-about the issue.  By that time the bug was fixed and all I could do was
-wait for it to hit Linus's tree (and even then, I had to wait for the
-fix to the fix...)  If I had known about it earlier, I would have
-reverted the change that caused this.
+But while I try to store one small range of address pair, which contain only one
+kernel function. It doesn't behavior like what said in [1], the write
+pointer would
+grows rapidly with the read pointer. And I dump the etb buffer and parse it with
+openCSD, finding that there is no I_ASYNC packet in the dump and is fulled with
+I_NOT_SYNC.
 
-I would start by looking at how we at least notify people of major
-issues like this.  Yes it was complex and originally blamed on both
-btrfs and ext4 changes, and it was dependant on using a brand-new
-.config file which no kernel developers use (and it seems no distro uses
-either, which protected Fedora and others at the least!)
+So my question is why ETB continue to grow when there is no trigger at all?
+Is it normal? I could provide more info if you need it.
 
-There will always be bugs and exceptions and personally I think that the
-rarity of this one was such that it is a rare event and adding the
-requirement that I have to maintain more than one set of stable trees
-for longer isn't going to happen (yeah, I know you said you didn't
-expect that, but I know others mentioned it to me...)
+[1]: https://wiki.linaro.org/WorklingGroups/Kernel/Coresight/traceDecodingWithDS5
 
-So I don't know what to say here other than please tell me about major
-issues like this and don't rely on me getting lucky and hearing about it
-on my own.
-
-thanks,
-
-greg k-h
+Thanks,
+Lei
