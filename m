@@ -4,65 +4,67 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5534EC04EB8
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 06:36:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6726C04EB8
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 06:37:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1502020868
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 06:36:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 793F220868
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 06:37:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="mZf+U1Xt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1502020868
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="gXf1oRGj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 793F220868
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726202AbeLHGgv (ORCPT
+        id S1726220AbeLHGhe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 8 Dec 2018 01:36:51 -0500
-Received: from conssluserg-03.nifty.com ([210.131.2.82]:23479 "EHLO
-        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726111AbeLHGgu (ORCPT
+        Sat, 8 Dec 2018 01:37:34 -0500
+Received: from conssluserg-02.nifty.com ([210.131.2.81]:43931 "EHLO
+        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726111AbeLHGhd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 8 Dec 2018 01:36:50 -0500
-Received: from mail-vk1-f175.google.com (mail-vk1-f175.google.com [209.85.221.175]) (authenticated)
-        by conssluserg-03.nifty.com with ESMTP id wB86aOit026801
-        for <linux-kernel@vger.kernel.org>; Sat, 8 Dec 2018 15:36:24 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com wB86aOit026801
+        Sat, 8 Dec 2018 01:37:33 -0500
+Received: from mail-vs1-f41.google.com (mail-vs1-f41.google.com [209.85.217.41]) (authenticated)
+        by conssluserg-02.nifty.com with ESMTP id wB86bSU4017633
+        for <linux-kernel@vger.kernel.org>; Sat, 8 Dec 2018 15:37:29 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com wB86bSU4017633
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1544250984;
-        bh=6fX3xVjwCchO1nhpz25rURfoq1T4iKEXomymFDqmhO8=;
+        s=dec2015msa; t=1544251049;
+        bh=u+LqDjndI1J1T/fE+BGNpV/dpMJg6P4JHzUUFBEVtSk=;
         h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=mZf+U1XtZqK6GLyIJv8H4y8qALP9wLHggjbapGBaM+EhhKHg3mv4XAFhYdyY5IXRJ
-         YkEJjz3N3GsVl8BkzSweBRjGpLEewLVop9BK5z2l4Au6thxHJl80aZDiNhS1ogt9u1
-         EbxvZw2NtHni0XN31udJeqGeSr1/Erg/6m2Hoc/5nlxLTpEGEN1fhDDQO4vWmtheNv
-         NicGz6Isb/t1ghAWXLYDgVYQ0Qng/DGnzg/3nGxk/k2bY9yJnxFjd6lWl6UifZvaR7
-         wp5ENVOzquNN50W/a+mhFgKoUZEbnl/RvoWOYvo963hFW1wNaCTD/ULzGSJY23h8D3
-         Uy0J0u3ZQrHmA==
-X-Nifty-SrcIP: [209.85.221.175]
-Received: by mail-vk1-f175.google.com with SMTP id t132so1457211vkc.3
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Dec 2018 22:36:24 -0800 (PST)
-X-Gm-Message-State: AA+aEWYCsWE5x/zPN7x9DM3pKm5Swb5/TzWt6vORBZnybxBSji1KqEnr
-        V1QooD0c4CKPEQEryI5UlSFBNkPgA1os4b78Djk=
-X-Google-Smtp-Source: AFSGD/X+m7N/Mg+EFKExbJTUTujo3qCKF2DZB9DBxFPnRC7lLZjJunWqzYJVM5n1WNHvp5d1WWXERiVqwv4n9VfLAYI=
-X-Received: by 2002:a1f:6bc8:: with SMTP id k69mr2067083vki.84.1544250983350;
- Fri, 07 Dec 2018 22:36:23 -0800 (PST)
+        b=gXf1oRGj6aGAqIkLCJ1PuYJB7x4YDArGViFt5RsES3eeI7sijuwm/biYBTQROWdN4
+         HdswTdlEQSOzDXR+4I5Z90X5oX5r6Et5kc1fj524ZUEztc8q4ZiMjj0Sgm1WXS4fJV
+         va5MVH0FwWlVOw/lel2g7uXFApaGTZ0Rx1bgO/Ctv1YcamLd39vs80CAzIh5IL2mKF
+         U5Wd+yF3OXKG+qsF0PK3Gy/aQrOeFlLo9iISo32/qnrksOApLVy6ftsiJcxvOEBQUI
+         Hfs7xw/8afrFqQkGAEYZCcqE76JN/PAAxaJ05pOSaHyam3Vqsv7obE9j/5pISJrK9w
+         S8BxZk+ungz7g==
+X-Nifty-SrcIP: [209.85.217.41]
+Received: by mail-vs1-f41.google.com with SMTP id t17so3775234vsc.8
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Dec 2018 22:37:28 -0800 (PST)
+X-Gm-Message-State: AA+aEWbK8lMkxt/gm79jC7e2t1qntEUcyuVJ0zPls204Qd6+fLVZ2d3B
+        X+nxvHHM2L3Qv718+i7V0jZ6jInsMtcVIsyTT5o=
+X-Google-Smtp-Source: AFSGD/W/+6h6GwFwtUOM8s0q2Y+xsVrOm9dNcSeXgEldbnx4vQYui5QdzKdjTQcv9Q2+1nfQ8FFSgsxe3EBOgxlhiHQ=
+X-Received: by 2002:a67:a858:: with SMTP id r85mr2099845vse.215.1544251047871;
+ Fri, 07 Dec 2018 22:37:27 -0800 (PST)
 MIME-Version: 1.0
 References: <1541990120-9643-1-git-send-email-yamada.masahiro@socionext.com>
- <1541990120-9643-2-git-send-email-yamada.masahiro@socionext.com> <2624257.jg98z2FPBI@blindfold>
-In-Reply-To: <2624257.jg98z2FPBI@blindfold>
+ <1541990120-9643-3-git-send-email-yamada.masahiro@socionext.com> <87k1lia6bd.fsf@concordia.ellerman.id.au>
+In-Reply-To: <87k1lia6bd.fsf@concordia.ellerman.id.au>
 From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Sat, 8 Dec 2018 15:35:47 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQjyWgpnu=qv-55gTL2DWpE93muu3Ksey8wFnWtLOzpbA@mail.gmail.com>
-Message-ID: <CAK7LNAQjyWgpnu=qv-55gTL2DWpE93muu3Ksey8wFnWtLOzpbA@mail.gmail.com>
-Subject: Re: [PATCH 1/2] um: remove -fno-unit-at-a-time workaround for pre-4.0 GCC
-To:     Ingo Molnar <mingo@redhat.com>, X86 ML <x86@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc:     linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+Date:   Sat, 8 Dec 2018 15:36:52 +0900
+X-Gmail-Original-Message-ID: <CAK7LNARbzF9-ZYvX7U76HqC957Fj=U3rmQfCEYXKqZNV8SFmNg@mail.gmail.com>
+Message-ID: <CAK7LNARbzF9-ZYvX7U76HqC957Fj=U3rmQfCEYXKqZNV8SFmNg@mail.gmail.com>
+Subject: Re: [PATCH 2/2] x86, powerpc: remove -funit-at-a-time compiler option entirely
+To:     Ingo Molnar <mingo@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>, X86 ML <x86@kernel.org>
+Cc:     Richard Weinberger <richard@sigma-star.at>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
         "H. Peter Anvin" <hpa@zytor.com>, Borislav Petkov <bp@alien8.de>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Richard Weinberger <richard@nod.at>
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -71,50 +73,49 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 x86 maintainers,
 
-
 Ping.
 
 
 
-On Tue, Nov 13, 2018 at 6:48 PM Richard Weinberger <richard@nod.at> wrote:
+On Mon, Nov 12, 2018 at 8:23 PM Michael Ellerman <mpe@ellerman.id.au> wrote:
 >
-> Am Montag, 12. November 2018, 03:35:19 CET schrieb Masahiro Yamada:
-> > Commit cafa0010cd51 ("Raise the minimum required gcc version to 4.6")
-> > bumped the minimum GCC version to 4.6 for all architectures.
+> Masahiro Yamada <yamada.masahiro@socionext.com> writes:
+>
+> > GCC 4.6 manual says:
 > >
-> > '$(call cc-option,-fno-unit-at-a-time)' is now dead code since
-> > '$(cc-version) -lt 0400' is always false.
+> > -funit-at-a-time
+> >   This option is left for compatibility reasons. -funit-at-a-time has
+> >   no effect, while -fno-unit-at-a-time implies -fno-toplevel-reorder
+> >   and -fno-section-anchors.
+> >   Enabled by default.
 > >
 > > Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 > > ---
 > >
-> >  arch/x86/Makefile.um | 8 ++------
-> >  1 file changed, 2 insertions(+), 6 deletions(-)
+> >  arch/powerpc/Makefile | 4 ----
+> >  arch/x86/Makefile     | 4 ----
+> >  arch/x86/Makefile.um  | 5 -----
+> >  3 files changed, 13 deletions(-)
 > >
-> > diff --git a/arch/x86/Makefile.um b/arch/x86/Makefile.um
-> > index 91085a0..577976b 100644
-> > --- a/arch/x86/Makefile.um
-> > +++ b/arch/x86/Makefile.um
-> > @@ -26,12 +26,8 @@ cflags-y += $(call cc-option,-mpreferred-stack-boundary=2)
-> >  # an unresolved reference.
-> >  cflags-y += -ffreestanding
+> > diff --git a/arch/powerpc/Makefile b/arch/powerpc/Makefile
+> > index 8a2ce14..854199c 100644
+> > --- a/arch/powerpc/Makefile
+> > +++ b/arch/powerpc/Makefile
+> > @@ -228,10 +228,6 @@ KBUILD_CFLAGS += $(call cc-option,-mno-vsx)
+> >  KBUILD_CFLAGS += $(call cc-option,-mno-spe)
+> >  KBUILD_CFLAGS += $(call cc-option,-mspe=no)
 > >
-> > -# Disable unit-at-a-time mode on pre-gcc-4.0 compilers, it makes gcc use
-> > -# a lot more stack due to the lack of sharing of stacklots.  Also, gcc
-> > -# 4.3.0 needs -funit-at-a-time for extern inline functions.
-> > -KBUILD_CFLAGS += $(shell if [ $(cc-version) -lt 0400 ] ; then \
-> > -                     echo $(call cc-option,-fno-unit-at-a-time); \
-> > -                     else echo $(call cc-option,-funit-at-a-time); fi ;)
-> > +# gcc 4.3.0 needs -funit-at-a-time for extern inline functions.
-> > +KBUILD_CFLAGS += $(call cc-option,-funit-at-a-time)
+> > -# Enable unit-at-a-time mode when possible. It shrinks the
+> > -# kernel considerably.
+> > -KBUILD_CFLAGS += $(call cc-option,-funit-at-a-time)
+> > -
 >
-> Acked-by: Richard Weinberger <richard@nod.at>
+> Thanks for cleaning it up.
 >
-> Thanks,
-> //richard
+> Acked-by: Michael Ellerman <mpe@ellerman.id.au>
 >
->
->
+> cheers
+
 
 
 -- 
