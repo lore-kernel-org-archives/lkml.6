@@ -2,240 +2,192 @@ Return-Path: <SRS0=1bfu=OR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,T_DKIMWL_WL_HIGH,T_DKIMWL_WL_MED,URIBL_BLOCKED
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,T_DKIMWL_WL_HIGH
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DAB1C04EB8
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 03:38:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 669E3C04EB8
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 03:42:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F05920837
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 03:38:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="QArGwrnq";
-	dkim=pass (1024-bit key) header.d=fb.onmicrosoft.com header.i=@fb.onmicrosoft.com header.b="HFIPjjeV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F05920837
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=fb.com
+	by mail.kernel.org (Postfix) with ESMTP id 180B620892
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 03:42:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544240537;
+	bh=HpuI/iXOie6DYydNZ/GjJmWFzgjbhpYCqpYKVxtgqWI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
+	b=epMqvc8wXvb99YHl11ypKMf94zhERQ8T83H6MLaUwSLOs67F4pCjaeayon3HIPn0p
+	 xE/aABUMpWJEKWhNg28H2bWEyO33hH4XKgAzRgBCRJBPojkl1C2px4gMN154RvTXsf
+	 dc9yJmOu+6OL9ovlDQTlfRoqvDWT3K0IpIvE1SIM=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 180B620892
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726140AbeLHDiY (ORCPT
+        id S1726150AbeLHDmQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 22:38:24 -0500
-Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:52852 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726077AbeLHDiX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 22:38:23 -0500
-Received: from pps.filterd (m0109333.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id wB83ZL4w008032;
-        Fri, 7 Dec 2018 19:38:00 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : references : in-reply-to : content-type : content-id
- : content-transfer-encoding : mime-version; s=facebook;
- bh=JXgK+w2QkUkqbikSPPh8TLSH/wuRTEHEDcAaKtk1nqA=;
- b=QArGwrnq/9IP5FsUbvYe+jFEkT6MRFzR4l+tovKhbvB0HPTOei+APoL2jZTtUFQa/gsN
- YJgLrqXjltOeILKnP9FqmxCDUitzJn4ojRLPDxendrNcV8dlIcolCgONHY95BQUq8kx1
- 8FVbpmShV6bMCp1Wf6252kRyEynUVY8NGCc= 
-Received: from mail.thefacebook.com ([199.201.64.23])
-        by mx0a-00082601.pphosted.com with ESMTP id 2p84ux854v-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Fri, 07 Dec 2018 19:38:00 -0800
-Received: from prn-mbx02.TheFacebook.com (2620:10d:c081:6::16) by
- prn-hub01.TheFacebook.com (2620:10d:c081:35::125) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.1.1531.3; Fri, 7 Dec 2018 19:37:59 -0800
-Received: from prn-hub04.TheFacebook.com (2620:10d:c081:35::128) by
- prn-mbx02.TheFacebook.com (2620:10d:c081:6::16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.1.1531.3; Fri, 7 Dec 2018 19:37:59 -0800
-Received: from NAM01-BN3-obe.outbound.protection.outlook.com (192.168.54.28)
- by o365-in.thefacebook.com (192.168.16.28) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.1.1531.3
- via Frontend Transport; Fri, 7 Dec 2018 19:37:58 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
- s=selector1-fb-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=JXgK+w2QkUkqbikSPPh8TLSH/wuRTEHEDcAaKtk1nqA=;
- b=HFIPjjeV6ywYkU7FaHDKQ8lvyiR3l/pTbBbMDKYi2bJJbhaVI37TdDN/pCAhT0B22tt5pHIs3BW7YVtgoeq1uyR2OQWbogr3vXDkL8m5n7k91ZGm1e7y1ihgbSi9SPnsSfT5RU/pfqL6CRrw1B/Uk5MYSGXMrFUBOie0nvlyOxo=
-Received: from BY1PR15MB0072.namprd15.prod.outlook.com (10.161.97.153) by
- BY1PR15MB0023.namprd15.prod.outlook.com (10.161.96.25) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1404.22; Sat, 8 Dec 2018 03:37:35 +0000
-Received: from BY1PR15MB0072.namprd15.prod.outlook.com
- ([fe80::c000:b055:d54f:eaf7]) by BY1PR15MB0072.namprd15.prod.outlook.com
- ([fe80::c000:b055:d54f:eaf7%9]) with mapi id 15.20.1404.021; Sat, 8 Dec 2018
- 03:37:35 +0000
-From:   Yonghong Song <yhs@fb.com>
-To:     Roman Gushchin <guroan@gmail.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>
-CC:     Kernel Team <Kernel-team@fb.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Roman Gushchin <guro@fb.com>,
-        "Alexei Starovoitov" <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>
-Subject: Re: [PATCH bpf-next 2/3] bpf: add bpffs pretty print for cgroup local
- storage maps
-Thread-Topic: [PATCH bpf-next 2/3] bpf: add bpffs pretty print for cgroup
- local storage maps
-Thread-Index: AQHUjpCFr18HxXJ79kS1I8yRl7nby6V0MZAA
-Date:   Sat, 8 Dec 2018 03:37:35 +0000
-Message-ID: <60a77f17-6d63-2f73-e0b2-0ca8b5338169@fb.com>
-References: <20181208005315.3500-1-guro@fb.com>
- <20181208005315.3500-2-guro@fb.com>
-In-Reply-To: <20181208005315.3500-2-guro@fb.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: MWHPR12CA0044.namprd12.prod.outlook.com
- (2603:10b6:301:2::30) To BY1PR15MB0072.namprd15.prod.outlook.com
- (2a01:111:e400:507c::25)
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [2620:10d:c090:180::1:1254]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BY1PR15MB0023;20:+ephlV6DH7z6Loankf/DcfdMw7i3W5qbIIr76nRmWF1dw2BZ2ad7pjB6K5eaE7N7s26MpoJzHtxpzkvCLzlN0v0xAwTPXu7VBOEIVdLPTyo5bZ+tzS40Y1A9X8UAGOkv5jAVmogEVcqzWv2oWHMDs7297VWHeZNFCBceH26gGKc=
-x-ms-office365-filtering-correlation-id: f999efba-c983-4c5a-ea3a-08d65cbe7e47
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:BY1PR15MB0023;
-x-ms-traffictypediagnostic: BY1PR15MB0023:
-x-microsoft-antispam-prvs: <BY1PR15MB002394D9D80E1EF04C05F780D3AB0@BY1PR15MB0023.namprd15.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(823302103)(3231455)(999002)(11241501185)(944501520)(52105112)(3002001)(93006095)(93001095)(10201501046)(148016)(149066)(150057)(6041310)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123558120)(201708071742011)(7699051)(76991095);SRVR:BY1PR15MB0023;BCL:0;PCL:0;RULEID:;SRVR:BY1PR15MB0023;
-x-forefront-prvs: 0880FB6EC1
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(366004)(136003)(346002)(376002)(39860400002)(189003)(199004)(106356001)(97736004)(486006)(476003)(11346002)(2616005)(8936002)(5660300001)(6512007)(105586002)(68736007)(99286004)(46003)(446003)(186003)(2906002)(2501003)(478600001)(110136005)(54906003)(6486002)(229853002)(52116002)(76176011)(6436002)(31686004)(102836004)(8676002)(316002)(81166006)(81156014)(6506007)(53546011)(386003)(53936002)(71190400001)(6116002)(71200400001)(305945005)(36756003)(86362001)(31696002)(5024004)(14444005)(256004)(14454004)(25786009)(7736002)(4326008)(6246003)(39060400002)(42262002);DIR:OUT;SFP:1102;SCL:1;SRVR:BY1PR15MB0023;H:BY1PR15MB0072.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: fb.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: rfjQblA1TWko0b3ZRLh5sKbtKtoruVP3CzB/APsO86Cl+k9ITNfiY1Q5N4I8IfC6rtEIfkrUquAfsTtLf/RilKfz6awaBOXujlk9wsvYu9RuH9A2TQBFFGwkZMwjrtOko2nh5j+h44bD3DapnEh2W7wpzhqrJtSVr8kMNZ0PbL/NZqnM85DqZS9sndZUQRKZiy+UCDQ2qze4jzCKdW7xOtu7F+F/qpQzGbFhOhNxN6nNm768f6Pgwe+4NsNyjuVZ9EYcVJKaCacFUGDmbX+fMb1ORjf4oqfC8X8/lf1FOIy4mu+vHa/HcVG6MH6LQv4z6jZ6tR57yjqe2ZIUqDEVhj5f0P/jkqFXPreg1CWTeuk=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <B80489378C5CC947AE30EAFD04151FB8@namprd15.prod.outlook.com>
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: f999efba-c983-4c5a-ea3a-08d65cbe7e47
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Dec 2018 03:37:35.5851
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY1PR15MB0023
-X-OriginatorOrg: fb.com
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-08_01:,,
- signatures=0
-X-Proofpoint-Spam-Reason: safe
-X-FB-Internal: Safe
+        Fri, 7 Dec 2018 22:42:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57700 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726077AbeLHDmP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Dec 2018 22:42:15 -0500
+Received: from devnote (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 130022083D;
+        Sat,  8 Dec 2018 03:42:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544240534;
+        bh=HpuI/iXOie6DYydNZ/GjJmWFzgjbhpYCqpYKVxtgqWI=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=UI3CR0sc49v0mkEZPYfWWBW1aCxiNtmPLIPCf1wOmfmMItWL3rh/CrcypdrXFcFBT
+         BBYmccDlq3z43NnWtuuKXkhH/hzjVonhw8y6TyfT4e/27aFGUwWes9iWH7RxlAmAnw
+         9cWaVlm4mfZIUm1MsmxIK2pySbVY+sWZGSNYmNj4=
+Date:   Sat, 8 Dec 2018 12:42:10 +0900
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Andrea Righi <righi.andrea@gmail.com>
+Cc:     "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
+        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Yonghong Song <yhs@fb.com>, Andy Lutomirski <luto@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] kprobes: x86_64: blacklist non-attachable interrupt
+ functions
+Message-Id: <20181208124210.7f46eb88544e2e3899713052@kernel.org>
+In-Reply-To: <20181207170026.GA1379@Dell>
+References: <20181206095648.GA8249@Dell>
+        <20181207234731.f52a8c1eff6c0e72c073ad40@kernel.org>
+        <20181208010120.c3eda9042912068aecc68317@kernel.org>
+        <20181207170026.GA1379@Dell>
+X-Mailer: Sylpheed 3.5.0 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQoNCk9uIDEyLzcvMTggNDo1MyBQTSwgUm9tYW4gR3VzaGNoaW4gd3JvdGU6DQo+IEltcGxlbWVu
-dCBicGZmcyBwcmV0dHkgcHJpbnRpbmcgZm9yIGNncm91cCBsb2NhbCBzdG9yYWdlIG1hcHMNCj4g
-KGJvdGggc2hhcmVkIGFuZCBwZXItY3B1KS4NCj4gT3V0cHV0IGV4YW1wbGUgKGNhcHR1cmVkIGZv
-ciB0b29scy90ZXN0aW5nL3NlbGZ0ZXN0cy9icGYvbmV0Y250X3Byb2cuYyk6DQo+IA0KPiBTaGFy
-ZWQ6DQo+ICAgICQgY2F0IC9zeXMvZnMvYnBmL21hcF8yDQo+ICAgICMgV0FSTklORyEhIFRoZSBv
-dXRwdXQgaXMgZm9yIGRlYnVnIHB1cnBvc2Ugb25seQ0KPiAgICAjIFdBUk5JTkchISBUaGUgb3V0
-cHV0IGZvcm1hdCB3aWxsIGNoYW5nZQ0KPiAgICB7NDI5NDk2ODU5NCwxfTogezk5OTksMTAzOTg5
-Nn0NCj4gDQo+IFBlci1jcHU6DQo+ICAgICQgY2F0IC9zeXMvZnMvYnBmL21hcF8xDQo+ICAgICMg
-V0FSTklORyEhIFRoZSBvdXRwdXQgaXMgZm9yIGRlYnVnIHB1cnBvc2Ugb25seQ0KPiAgICAjIFdB
-Uk5JTkchISBUaGUgb3V0cHV0IGZvcm1hdCB3aWxsIGNoYW5nZQ0KPiAgICB7NDI5NDk2ODU5NCwx
-fTogew0KPiAgICAJY3B1MDogezAsMCwwLDAsMH0NCj4gICAgCWNwdTE6IHswLDAsMCwwLDB9DQo+
-ICAgIAljcHUyOiB7MSwxMDQsMCwwLDB9DQo+ICAgIAljcHUzOiB7MCwwLDAsMCwwfQ0KPiAgICB9
-DQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBSb21hbiBHdXNoY2hpbiA8Z3Vyb0BmYi5jb20+DQo+IENj
-OiBBbGV4ZWkgU3Rhcm92b2l0b3YgPGFzdEBrZXJuZWwub3JnPg0KPiBDYzogRGFuaWVsIEJvcmtt
-YW5uIDxkYW5pZWxAaW9nZWFyYm94Lm5ldD4NCj4gLS0tDQo+ICAgaW5jbHVkZS9saW51eC9idGYu
-aCAgICAgICAgfCAxMCArKysrKw0KPiAgIGtlcm5lbC9icGYvbG9jYWxfc3RvcmFnZS5jIHwgOTAg
-KysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKy0NCj4gICAyIGZpbGVzIGNoYW5n
-ZWQsIDk5IGluc2VydGlvbnMoKyksIDEgZGVsZXRpb24oLSkNCj4gDQo+IGRpZmYgLS1naXQgYS9p
-bmNsdWRlL2xpbnV4L2J0Zi5oIGIvaW5jbHVkZS9saW51eC9idGYuaA0KPiBpbmRleCA4YzIxOTli
-NWQyNTAuLmFjNjdiYzRjYmZkOSAxMDA2NDQNCj4gLS0tIGEvaW5jbHVkZS9saW51eC9idGYuaA0K
-PiArKysgYi9pbmNsdWRlL2xpbnV4L2J0Zi5oDQo+IEBAIC01LDYgKzUsNyBAQA0KPiAgICNkZWZp
-bmUgX0xJTlVYX0JURl9IIDENCj4gICANCj4gICAjaW5jbHVkZSA8bGludXgvdHlwZXMuaD4NCj4g
-KyNpbmNsdWRlIDx1YXBpL2xpbnV4L2J0Zi5oPg0KPiAgIA0KPiAgIHN0cnVjdCBidGY7DQo+ICAg
-c3RydWN0IGJ0Zl90eXBlOw0KPiBAQCAtNjMsNCArNjQsMTMgQEAgc3RhdGljIGlubGluZSBjb25z
-dCBjaGFyICpidGZfbmFtZV9ieV9vZmZzZXQoY29uc3Qgc3RydWN0IGJ0ZiAqYnRmLA0KPiAgIH0N
-Cj4gICAjZW5kaWYNCj4gICANCj4gK3N0YXRpYyBpbmxpbmUgY29uc3Qgc3RydWN0IGJ0Zl90eXBl
-ICpidGZfb3JpZ190eXBlKGNvbnN0IHN0cnVjdCBidGYgKmJ0ZiwNCj4gKwkJCQkJCSAgIGNvbnN0
-IHN0cnVjdCBidGZfdHlwZSAqdCkNCj4gK3sNCj4gKwl3aGlsZSAodCAmJiBCVEZfSU5GT19LSU5E
-KHQtPmluZm8pID09IEJURl9LSU5EX1RZUEVERUYpDQo+ICsJCXQgPSBidGZfdHlwZV9ieV9pZChi
-dGYsIHQtPnR5cGUpOw0KdGVjaG5pY2FsbHksIHR5cGUgbW9kaWZpZXIgImNvbnN0IiBhbmQgInZv
-bGF0aWxlIiBjYW4gYXBwbHkgdG8gbWVtYmVyIA0KdHlwZSBhcyB3ZWxsLiBCdXQgdGhlc2UgbW9k
-aWZpZXJzIHJlYWxseSBkb24ndCBtYWtlIHNlbnNlIGhlcmUuDQpDb3VsZCB5b3UgYWRkIGEgY29t
-bWVudCBoZXJlIHRvIG1lbnRpb24gdGhhdCB0aGV5IHdpbGwgYmUgdHJlYXRlZA0KYXMgYW4gZXJy
-b3Igc2luY2Ugc3VjaCBhIHByb2dyYW1taW5nIGlzIG5vdCByZWFsbHkgcmVjb21tZW5kZWQ/DQoN
-Cj4gKw0KPiArCXJldHVybiB0Ow0KPiArfQ0KPiArDQo+ICAgI2VuZGlmDQo+IGRpZmYgLS1naXQg
-YS9rZXJuZWwvYnBmL2xvY2FsX3N0b3JhZ2UuYyBiL2tlcm5lbC9icGYvbG9jYWxfc3RvcmFnZS5j
-DQo+IGluZGV4IGI2NTAxN2RlYWQ0NC4uN2I1MWZlMWFiYTNjIDEwMDY0NA0KPiAtLS0gYS9rZXJu
-ZWwvYnBmL2xvY2FsX3N0b3JhZ2UuYw0KPiArKysgYi9rZXJuZWwvYnBmL2xvY2FsX3N0b3JhZ2Uu
-Yw0KPiBAQCAtMSwxMSArMSwxMyBAQA0KPiAgIC8vU1BEWC1MaWNlbnNlLUlkZW50aWZpZXI6IEdQ
-TC0yLjANCj4gICAjaW5jbHVkZSA8bGludXgvYnBmLWNncm91cC5oPg0KPiAgICNpbmNsdWRlIDxs
-aW51eC9icGYuaD4NCj4gKyNpbmNsdWRlIDxsaW51eC9idGYuaD4NCj4gICAjaW5jbHVkZSA8bGlu
-dXgvYnVnLmg+DQo+ICAgI2luY2x1ZGUgPGxpbnV4L2ZpbHRlci5oPg0KPiAgICNpbmNsdWRlIDxs
-aW51eC9tbS5oPg0KPiAgICNpbmNsdWRlIDxsaW51eC9yYnRyZWUuaD4NCj4gICAjaW5jbHVkZSA8
-bGludXgvc2xhYi5oPg0KPiArI2luY2x1ZGUgPHVhcGkvbGludXgvYnRmLmg+DQo+ICAgDQo+ICAg
-REVGSU5FX1BFUl9DUFUoc3RydWN0IGJwZl9jZ3JvdXBfc3RvcmFnZSosIGJwZl9jZ3JvdXBfc3Rv
-cmFnZVtNQVhfQlBGX0NHUk9VUF9TVE9SQUdFX1RZUEVdKTsNCj4gICANCj4gQEAgLTMwOCw2ICsz
-MTAsOTEgQEAgc3RhdGljIGludCBjZ3JvdXBfc3RvcmFnZV9kZWxldGVfZWxlbShzdHJ1Y3QgYnBm
-X21hcCAqbWFwLCB2b2lkICprZXkpDQo+ICAgCXJldHVybiAtRUlOVkFMOw0KPiAgIH0NCj4gICAN
-Cj4gK3N0YXRpYyBpbnQgY2dyb3VwX3N0b3JhZ2VfY2hlY2tfYnRmKGNvbnN0IHN0cnVjdCBicGZf
-bWFwICptYXAsDQo+ICsJCQkJICAgIGNvbnN0IHN0cnVjdCBidGYgKmJ0ZiwNCj4gKwkJCQkgICAg
-Y29uc3Qgc3RydWN0IGJ0Zl90eXBlICprZXlfdHlwZSwNCj4gKwkJCQkgICAgY29uc3Qgc3RydWN0
-IGJ0Zl90eXBlICp2YWx1ZV90eXBlKQ0KPiArew0KPiArCWNvbnN0IHN0cnVjdCBidGZfdHlwZSAq
-c3QsICp0Ow0KPiArCXN0cnVjdCBidGZfbWVtYmVyICptOw0KPiArDQo+ICsJLyogS2V5IGlzIGV4
-cGVjdGVkIHRvIGJlIG9mIHN0cnVjdCBicGZfY2dyb3VwX3N0b3JhZ2Vfa2V5IHR5cGUsDQo+ICsJ
-ICogd2hpY2ggaXM6DQo+ICsJICogc3RydWN0IGJwZl9jZ3JvdXBfc3RvcmFnZV9rZXkgew0KPiAr
-CSAqCV9fdTY0CWNncm91cF9pbm9kZV9pZDsNCj4gKwkgKglfX3UzMglhdHRhY2hfdHlwZTsNCj4g
-KwkgKiB9Ow0KPiArCSAqLw0KPiArDQo+ICsJLyoNCj4gKwkgKiBLZXlfdHlwZSBtdXN0IGJlIGEg
-c3RydWN0dXJlIChvciBhIHR5cGVkZWYgb2YgYSBzdHJ1Y3R1cmUpIHdpdGgNCj4gKwkgKiB0d28g
-bWVtYmVycy4NCj4gKwkgKi8NCj4gKwlzdCA9IGJ0Zl9vcmlnX3R5cGUoYnRmLCBrZXlfdHlwZSk7
-DQo+ICsJaWYgKEJURl9JTkZPX0tJTkQoc3QtPmluZm8pICE9IEJURl9LSU5EX1NUUlVDVCB8fA0K
-PiArCSAgICBCVEZfSU5GT19WTEVOKHN0LT5pbmZvKSAhPSAyKQ0KPiArCQlyZXR1cm4gLUVJTlZB
-TDsNCj4gKw0KPiArCS8qDQo+ICsJICogVGhlIGZpcnN0IGZpZWxkIG11c3QgYmUgYSA2NCBiaXQg
-aW50ZWdlciBhdCAwIG9mZnNldC4NCj4gKwkgKi8NCj4gKwltID0gKHN0cnVjdCBidGZfbWVtYmVy
-ICopKHN0ICsgMSk7DQo+ICsJdCA9IGJ0Zl9vcmlnX3R5cGUoYnRmLCBidGZfdHlwZV9ieV9pZChi
-dGYsIG0tPnR5cGUpKTsNCj4gKwlpZiAoIXQgfHwgQlRGX0lORk9fS0lORCh0LT5pbmZvKSAhPSBC
-VEZfS0lORF9JTlQgfHwgbS0+b2Zmc2V0IHx8DQo+ICsJICAgIHQtPnNpemUgIT0NCj4gKwkgICAg
-RklFTERfU0laRU9GKHN0cnVjdCBicGZfY2dyb3VwX3N0b3JhZ2Vfa2V5LCBjZ3JvdXBfaW5vZGVf
-aWQpKQ0KPiArCQlyZXR1cm4gLUVJTlZBTDsNCg0KV2Ugc2hvdWxkIG5vdCB1c2UgdC0+c2l6ZSBo
-ZXJlLiBUaGUgInQtPnNpemUiIGlzIHRoZSB0eXBlIHNpemUsIGFuZCB0aGUNCnJlYWwgbnVtYmVy
-IG9mIGJpdHMgaGVsZCBieSB0aGUgbWVtYmVyIGlzIEJURl9JTlRfQklUUyguLi4pIHdpdGggdGhl
-IA0KYXJndW1lbnQgb2YgdGhlIHUzMiBpbnQgdmFsdWUgYWZ0ZXIgInQiLg0KDQo+ICsNCj4gKwkv
-Kg0KPiArCSAqIFRoZSBzZWNvbmQgZmllbGQgbXVzdCBiZSBhIDMyIGJpdCBpbnRlZ2VyIGF0IDAg
-b2Zmc2V0Lg0KPiArCSAqLw0KPiArCW0gPSBtICsgMTsNCj4gKwl0ID0gYnRmX29yaWdfdHlwZShi
-dGYsIGJ0Zl90eXBlX2J5X2lkKGJ0ZiwgbS0+dHlwZSkpOw0KPiArCWlmICghdCB8fCBCVEZfSU5G
-T19LSU5EKHQtPmluZm8pICE9IEJURl9LSU5EX0lOVCB8fA0KPiArCSAgICBtLT5vZmZzZXQgIT0g
-b2Zmc2V0b2Yoc3RydWN0IGJwZl9jZ3JvdXBfc3RvcmFnZV9rZXksIGF0dGFjaF90eXBlKSAqDQo+
-ICsJICAgIEJJVFNfUEVSX0JZVEUgfHwgdC0+c2l6ZSAhPQ0KPiArCSAgICBGSUVMRF9TSVpFT0Yo
-c3RydWN0IGJwZl9jZ3JvdXBfc3RvcmFnZV9rZXksIGF0dGFjaF90eXBlKSkNCj4gKwkJcmV0dXJu
-IC1FSU5WQUw7DQoNClRoZSBzYW1lIGlzIGhlcmUuIHQtPnNpemUgc2hvdWxkIG5vdCBiZSB1c2Vk
-Lg0KQlRGX0lOVF9CSVRTKC4uLikgc2hvdWxkIGJlIHVzZWQuDQoNCj4gKw0KPiArCXJldHVybiAw
-Ow0KPiArfQ0KPiArDQo+ICtzdGF0aWMgdm9pZCBjZ3JvdXBfc3RvcmFnZV9zZXFfc2hvd19lbGVt
-KHN0cnVjdCBicGZfbWFwICptYXAsIHZvaWQgKl9rZXksDQo+ICsJCQkJCSBzdHJ1Y3Qgc2VxX2Zp
-bGUgKm0pDQo+ICt7DQo+ICsJZW51bSBicGZfY2dyb3VwX3N0b3JhZ2VfdHlwZSBzdHlwZSA9IGNn
-cm91cF9zdG9yYWdlX3R5cGUobWFwKTsNCj4gKwlzdHJ1Y3QgYnBmX2Nncm91cF9zdG9yYWdlX2tl
-eSAqa2V5ID0gX2tleTsNCj4gKwlzdHJ1Y3QgYnBmX2Nncm91cF9zdG9yYWdlICpzdG9yYWdlOw0K
-PiArCWludCBjcHU7DQo+ICsNCj4gKwlyY3VfcmVhZF9sb2NrKCk7DQo+ICsJc3RvcmFnZSA9IGNn
-cm91cF9zdG9yYWdlX2xvb2t1cChtYXBfdG9fc3RvcmFnZShtYXApLCBrZXksIGZhbHNlKTsNCj4g
-KwlpZiAoIXN0b3JhZ2UpIHsNCj4gKwkJcmN1X3JlYWRfdW5sb2NrKCk7DQo+ICsJCXJldHVybjsN
-Cj4gKwl9DQo+ICsNCj4gKwlidGZfdHlwZV9zZXFfc2hvdyhtYXAtPmJ0ZiwgbWFwLT5idGZfa2V5
-X3R5cGVfaWQsIGtleSwgbSk7DQo+ICsJc3R5cGUgPSBjZ3JvdXBfc3RvcmFnZV90eXBlKG1hcCk7
-DQo+ICsJaWYgKHN0eXBlID09IEJQRl9DR1JPVVBfU1RPUkFHRV9TSEFSRUQpIHsNCj4gKwkJc2Vx
-X3B1dHMobSwgIjogIik7DQo+ICsJCWJ0Zl90eXBlX3NlcV9zaG93KG1hcC0+YnRmLCBtYXAtPmJ0
-Zl92YWx1ZV90eXBlX2lkLA0KPiArCQkJCSAgJlJFQURfT05DRShzdG9yYWdlLT5idWYpLT5kYXRh
-WzBdLCBtKTsNCj4gKwkJc2VxX3B1dHMobSwgIlxuIik7DQo+ICsJfSBlbHNlIHsNCj4gKwkJc2Vx
-X3B1dHMobSwgIjoge1xuIik7DQo+ICsJCWZvcl9lYWNoX3Bvc3NpYmxlX2NwdShjcHUpIHsNCj4g
-KwkJCXNlcV9wcmludGYobSwgIlx0Y3B1JWQ6ICIsIGNwdSk7DQo+ICsJCQlidGZfdHlwZV9zZXFf
-c2hvdyhtYXAtPmJ0ZiwgbWFwLT5idGZfdmFsdWVfdHlwZV9pZCwNCj4gKwkJCQkJICBwZXJfY3B1
-X3B0cihzdG9yYWdlLT5wZXJjcHVfYnVmLCBjcHUpLA0KPiArCQkJCQkgIG0pOw0KPiArCQkJc2Vx
-X3B1dHMobSwgIlxuIik7DQo+ICsJCX0NCj4gKwkJc2VxX3B1dHMobSwgIn1cbiIpOw0KPiArCX0N
-Cj4gKwlyY3VfcmVhZF91bmxvY2soKTsNCj4gK30NCj4gKw0KPiAgIGNvbnN0IHN0cnVjdCBicGZf
-bWFwX29wcyBjZ3JvdXBfc3RvcmFnZV9tYXBfb3BzID0gew0KPiAgIAkubWFwX2FsbG9jID0gY2dy
-b3VwX3N0b3JhZ2VfbWFwX2FsbG9jLA0KPiAgIAkubWFwX2ZyZWUgPSBjZ3JvdXBfc3RvcmFnZV9t
-YXBfZnJlZSwNCj4gQEAgLTMxNSw3ICs0MDIsOCBAQCBjb25zdCBzdHJ1Y3QgYnBmX21hcF9vcHMg
-Y2dyb3VwX3N0b3JhZ2VfbWFwX29wcyA9IHsNCj4gICAJLm1hcF9sb29rdXBfZWxlbSA9IGNncm91
-cF9zdG9yYWdlX2xvb2t1cF9lbGVtLA0KPiAgIAkubWFwX3VwZGF0ZV9lbGVtID0gY2dyb3VwX3N0
-b3JhZ2VfdXBkYXRlX2VsZW0sDQo+ICAgCS5tYXBfZGVsZXRlX2VsZW0gPSBjZ3JvdXBfc3RvcmFn
-ZV9kZWxldGVfZWxlbSwNCj4gLQkubWFwX2NoZWNrX2J0ZiA9IG1hcF9jaGVja19ub19idGYsDQo+
-ICsJLm1hcF9jaGVja19idGYgPSBjZ3JvdXBfc3RvcmFnZV9jaGVja19idGYsDQo+ICsJLm1hcF9z
-ZXFfc2hvd19lbGVtID0gY2dyb3VwX3N0b3JhZ2Vfc2VxX3Nob3dfZWxlbSwNCj4gICB9Ow0KPiAg
-IA0KPiAgIGludCBicGZfY2dyb3VwX3N0b3JhZ2VfYXNzaWduKHN0cnVjdCBicGZfcHJvZyAqcHJv
-Zywgc3RydWN0IGJwZl9tYXAgKl9tYXApDQo+IA0K
+On Fri, 7 Dec 2018 18:00:26 +0100
+Andrea Righi <righi.andrea@gmail.com> wrote:
+
+> On Sat, Dec 08, 2018 at 01:01:20AM +0900, Masami Hiramatsu wrote:
+> > Hi Andrea and Ingo,
+> > 
+> > Here is the patch what I meant. I just ran it on qemu-x86, and seemed working.
+> > After introducing this patch, I will start adding arch_populate_kprobe_blacklist()
+> > to some arches.
+> > 
+> > Thank you,
+> > 
+> > [RFC] kprobes: x86/kprobes: Blacklist symbols in arch-defined prohibited area
+> > 
+> > From: Masami Hiramatsu <mhiramat@kernel.org>
+> > 
+> > Blacklist symbols in arch-defined probe-prohibited areas.
+> > With this change, user can see all symbols which are prohibited
+> > to probe in debugfs.
+> > 
+> > All archtectures which have custom prohibit areas should define
+> > its own arch_populate_kprobe_blacklist() function, but unless that,
+> > all symbols marked __kprobes are blacklisted.
+> > 
+> > Reported-by: Andrea Righi <righi.andrea@gmail.com>
+> > Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+> > ---
+> 
+> [snip]
+> 
+> > +int kprobe_add_ksym_blacklist(unsigned long entry)
+> > +{
+> > +	struct kprobe_blacklist_entry *ent;
+> > +	unsigned long offset = 0, size = 0;
+> > +
+> > +	if (!kernel_text_address(entry) ||
+> > +	    !kallsyms_lookup_size_offset(entry, &size, &offset))
+> > +		return -EINVAL;
+> > +
+> > +	ent = kmalloc(sizeof(*ent), GFP_KERNEL);
+> > +	if (!ent)
+> > +		return -ENOMEM;
+> > +	ent->start_addr = entry - offset;
+> > +	ent->end_addr = entry - offset + size;
+> 
+> Do we need to take offset into account? The code before wasn't using it.
+
+Yes, if we hit an alias symbol (zero-size), we forcibly increment address
+and retry it. In that case, offset will be 1.
+
+> 
+> > +	INIT_LIST_HEAD(&ent->list);
+> > +	list_add_tail(&ent->list, &kprobe_blacklist);
+> > +
+> > +	return (int)size;
+> > +}
+> > +
+> > +/* Add functions in arch defined probe-prohibited area */
+> > +int __weak arch_populate_kprobe_blacklist(void)
+> > +{
+> > +	unsigned long entry;
+> > +	int ret = 0;
+> > +
+> > +	for (entry = (unsigned long)__kprobes_text_start;
+> > +	     entry < (unsigned long)__kprobes_text_end;
+> > +	     entry += ret) {
+> > +		ret = kprobe_add_ksym_blacklist(entry);
+> > +		if (ret < 0)
+> > +			return ret;
+> > +		if (ret == 0)	/* In case of alias symbol */
+> > +			ret = 1;
+
+Here, we incremented.
+
+Thank you,
+
+> > +	}
+> > +	return 0;
+> > +}
+> > +
+> >  /*
+> >   * Lookup and populate the kprobe_blacklist.
+> >   *
+> > @@ -2104,26 +2142,20 @@ NOKPROBE_SYMBOL(dump_kprobe);
+> >  static int __init populate_kprobe_blacklist(unsigned long *start,
+> >  					     unsigned long *end)
+> >  {
+> > +	unsigned long entry;
+> >  	unsigned long *iter;
+> > -	struct kprobe_blacklist_entry *ent;
+> > -	unsigned long entry, offset = 0, size = 0;
+> > +	int ret;
+> >  
+> >  	for (iter = start; iter < end; iter++) {
+> >  		entry = arch_deref_entry_point((void *)*iter);
+> > -
+> > -		if (!kernel_text_address(entry) ||
+> > -		    !kallsyms_lookup_size_offset(entry, &size, &offset))
+> > +		ret = kprobe_add_ksym_blacklist(entry);
+> > +		if (ret == -EINVAL)
+> >  			continue;
+> > -
+> > -		ent = kmalloc(sizeof(*ent), GFP_KERNEL);
+> > -		if (!ent)
+> > -			return -ENOMEM;
+> > -		ent->start_addr = entry;
+> > -		ent->end_addr = entry + size;
+> > -		INIT_LIST_HEAD(&ent->list);
+> > -		list_add_tail(&ent->list, &kprobe_blacklist);
+> > +		if (ret < 0)
+> > +			return ret;
+> >  	}
+> > -	return 0;
+> > +
+> > +	return arch_populate_kprobe_blacklist();
+> >  }
+> >  
+> >  /* Module notifier call back, checking kprobes on the module */
+
+
+-- 
+Masami Hiramatsu <mhiramat@kernel.org>
