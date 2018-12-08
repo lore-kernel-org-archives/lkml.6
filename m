@@ -2,116 +2,110 @@ Return-Path: <SRS0=1bfu=OR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 455E8C07E85
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 00:01:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05AC3C65BAF
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 00:03:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F1BD8214DE
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 00:01:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ossystems-com-br.20150623.gappssmtp.com header.i=@ossystems-com-br.20150623.gappssmtp.com header.b="IpX1/qLt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F1BD8214DE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ossystems.com.br
+	by mail.kernel.org (Postfix) with ESMTP id B5CEB2054F
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 00:03:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544227397;
+	bh=jBTDkw51DkUqeutehCqzibEpVANKtvX3W7HAKjj6dsQ=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=JTIOiZcxNLspy9WOkUA5N6syvHdR7JjHFv9q3ojdiv9Uc8YRKngpOPEC+MuDx3ynL
+	 L4wNzloJLb/Hj+VJuI0WE4VOjtwLwU9GLcH6y6wbLZHZPYaHhlf/K5BbxQJTOh58uh
+	 ggZIE8+3tAIl6HHnZw1El0Avk2HkvxlEk3N4tYD4=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B5CEB2054F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726109AbeLHABk (ORCPT
+        id S1726114AbeLHADQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 19:01:40 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:46206 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726041AbeLHABk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 19:01:40 -0500
-Received: by mail-ot1-f68.google.com with SMTP id w25so5392890otm.13
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Dec 2018 16:01:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ossystems-com-br.20150623.gappssmtp.com; s=20150623;
-        h=from:mime-version:references:in-reply-to:date:message-id:subject:to
-         :cc;
-        bh=4AlXO4Tmj+MGMu7jSdmZ2dMT8ihSwTRyjyCPhPbmVSY=;
-        b=IpX1/qLtQnbjTr72KywcBKWyJcBLnB+Po35UXTz2zIYrtXcNK9Umb100VbBrDtxVbz
-         RgLJZLDGCoCbKf4eoi2vKBcupoqn2IoKpl1rY+aI9ZyGxSNqRlNd2ZWZRO/PSPDA+9n6
-         VQ3CooX8qd/SjuqKjfdw6JR5cKNEPB1KFnCF2KPY52WohnlROdX+sVIkWhyelHdLIoph
-         9rz8U4b7lWfftwLCJg1azluuHTjejSUUx/TFcj8A05pxNDdtml0Xs3VhtygswXyYO4mk
-         lplM3feoTKT3NcpSsov/hS9+DBPiBzySLnFERSW8bFYRD/QzoTNByCSh14Zxo8apBMHr
-         vpLg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:mime-version:references:in-reply-to:date
-         :message-id:subject:to:cc;
-        bh=4AlXO4Tmj+MGMu7jSdmZ2dMT8ihSwTRyjyCPhPbmVSY=;
-        b=K5TxpLVvhJ8gcp6MYZut8b2L8a2vsfjM82t7XuYwt9+fTb6iMbYy82bttwe+Zs0QiE
-         R9do1r3dTFsU0kIG+U0LL8Wyck4Kg1bHZhXRF/O3scp2q6HWJbel/dOGTSjDX+4LEeEU
-         bbE5VvMxy4C+N44ZENoz11sPc5kD4be7cNFLDo86xCSgtCyIBVVYp3ZMdMTZpyxEOhjm
-         o5+iIvBBmwv6Z2dDno8jn/QnZr4UN3vlFW2VHr3s28os1L7a0+2WHSQxFhM+Z88xEuyx
-         084xnreyFNhMLi/Pqc4nECd+v8uffFw6m/2EM3CUoj2Uu5zxWX1X98ca3IZwHTrQZH96
-         +Giw==
-X-Gm-Message-State: AA+aEWauECoicEdm0JmKKeHC5LKMmvTCxdliELWSaHSGlfdBr249MGj+
-        eNK4GD1wHPjzkfNlNKWtkmATnZsG9ppbHQ==
-X-Google-Smtp-Source: AFSGD/Vw7V4HDwZHCILi/m/69sEoUiuZPl+hcpFWcgmhh+yyI+6DJxRn+vbpOmZocF8qyyShGB2NLQ==
-X-Received: by 2002:a9d:64c8:: with SMTP id n8mr2961925otl.115.1544227299192;
-        Fri, 07 Dec 2018 16:01:39 -0800 (PST)
-Received: from mail-oi1-f169.google.com (mail-oi1-f169.google.com. [209.85.167.169])
-        by smtp.gmail.com with ESMTPSA id v1sm2189720otq.80.2018.12.07.16.01.38
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 07 Dec 2018 16:01:38 -0800 (PST)
-From:   Otavio Salvador <otavio.salvador@ossystems.com.br>
-X-Google-Original-From: Otavio Salvador <otavio@ossystems.com.br>
-Received: by mail-oi1-f169.google.com with SMTP id j21so4775729oii.8;
-        Fri, 07 Dec 2018 16:01:38 -0800 (PST)
-X-Received: by 2002:aca:37d5:: with SMTP id e204mr2364152oia.134.1544227297531;
- Fri, 07 Dec 2018 16:01:37 -0800 (PST)
+        Fri, 7 Dec 2018 19:03:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60784 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726041AbeLHADQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Dec 2018 19:03:16 -0500
+Received: from mail.kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 417552054F;
+        Sat,  8 Dec 2018 00:03:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544227395;
+        bh=jBTDkw51DkUqeutehCqzibEpVANKtvX3W7HAKjj6dsQ=;
+        h=From:To:Cc:Subject:Date:From;
+        b=v7iSXbtFF/Ed9eSxglTCuWYLREbQwtUJPkrRJS98wJGve2yTyMrU67Bzn88/lTR38
+         w2fNfOUwp6+GyoIx0+k+PeUbE8SWNo34PF0ZcW0qm36ROVEAzv2Nv0m0UXBuJuWDT0
+         LdF8Fecby605Bwf3SstmO/1817kcPrtLkta2V4jA=
+From:   Stephen Boyd <sboyd@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] clk fixes for v4.20-rc6
+Date:   Fri,  7 Dec 2018 16:03:14 -0800
+Message-Id: <20181208000314.180968-1-sboyd@kernel.org>
+X-Mailer: git-send-email 2.20.0.rc2.403.gdbc3b29805-goog
 MIME-Version: 1.0
-References: <20181206100905.15053-1-otavio@ossystems.com.br> <CAP9ODKoG-XRSOekKJWkD3Wg_dPsS2baRzPhuuJmmoT7-omBOtA@mail.gmail.com>
-In-Reply-To: <CAP9ODKoG-XRSOekKJWkD3Wg_dPsS2baRzPhuuJmmoT7-omBOtA@mail.gmail.com>
-Date:   Fri, 7 Dec 2018 22:01:18 -0200
-X-Gmail-Original-Message-ID: <CAP9ODKpJdGhwN8FHzEZUihWsUu=iig56o0uQQ75kmHeVCRyB9Q@mail.gmail.com>
-Message-ID: <CAP9ODKpJdGhwN8FHzEZUihWsUu=iig56o0uQQ75kmHeVCRyB9Q@mail.gmail.com>
-Subject: Re: [PATCH v2 0/9] Improvements for i.MX7D PICO SoM and its baseboards
-To:     Otavio Salvador <otavio@ossystems.com.br>
-Cc:     linux-arm-kernel@lists.infradead.org,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        devicetree@vger.kernel.org,
-        Kernel development list <linux-kernel@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        NXP Linux Team <linux-imx@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Shawn,
+The following changes since commit 1aefa98b010e9cc7a07046cbcb1237ddad85b708:
 
-On Thu, Dec 6, 2018 at 8:44 AM Otavio Salvador <otavio@ossystems.com.br> wrote:
-> On Thu, Dec 6, 2018 at 8:09 AM Otavio Salvador <otavio@ossystems.com.br> wrote:
-> > This patchset rework the imx7d-pico SoM, its Pi baseboard
-> > and add the Hobbit baseboard support as well.
-> >
-> > Changes in v2:
-> > - replace fsl,uart-has-rtscts with uart-has-rtscts
-> >
-> > Fabio Estevam (8):
-> >   ARM: dts: imx7d-pico: Do not harcode the memory size
-> >   ARM: dts: imx7d-pico: Switch to SPDX identifier
-> >   ARM: dts: imx7d-pico-pi: Move SoM related part to imx7d-pico.dtsi
->
-> I did the rebase; one thing worth mentioning is that I have "ARM: dts:
-> imx7d-pico: Describe the Wifi clock" which is in your fixes tree.
+  clk: qcom: gcc: Fix board clock node name (2018-11-09 14:13:55 -0800)
 
-Do you wish me to resent this now that the "ARM: dts: imx7d-pico:
-Describe the Wifi clock" is on linux-next? If so I can rebase and
-resend. Just let me know how to make it more convenient for you,
-please?
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
+
+for you to fetch changes up to 9a43be9cedd516f188e6333d3b43402386723eff:
+
+  clk: zynqmp: Off by one in zynqmp_is_valid_clock() (2018-12-03 09:54:48 -0800)
+
+----------------------------------------------------------------
+A few clk driver fixes this time:
+
+ - Introduce protected-clock DT binding to fix breakage on qcom sdm845-mtp
+   boards where the qspi clks introduced this merge window cause the
+   firmware on those boards to take down the system if we try to read
+   the clk registers
+
+ - Fix a couple off-by-one errors found by Dan Carpenter
+
+ - Handle failure in zynq fixed factor clk driver to avoid using
+   uninitialized data
+
+----------------------------------------------------------------
+Bjorn Andersson (1):
+      arm64: dts: qcom: sdm845-mtp: Mark protected gcc clocks
+
+Dan Carpenter (3):
+      clk: mvebu: Off by one bugs in cp110_of_clk_get()
+      clk: mmp: Off by one in mmp_clk_add()
+      clk: zynqmp: Off by one in zynqmp_is_valid_clock()
+
+Rajan Vaja (1):
+      clk: zynqmp: handle fixed factor param query error
+
+Stephen Boyd (3):
+      dt-bindings: clk: Introduce 'protected-clocks' property
+      clk: qcom: Support 'protected-clocks' property
+      Merge branch 'clk-protected-binding' into clk-fixes
+
+ .../devicetree/bindings/clock/clock-bindings.txt       | 16 ++++++++++++++++
+ arch/arm64/boot/dts/qcom/sdm845-mtp.dts                |  6 ++++++
+ drivers/clk/mmp/clk.c                                  |  2 +-
+ drivers/clk/mvebu/cp110-system-controller.c            |  4 ++--
+ drivers/clk/qcom/common.c                              | 18 ++++++++++++++++++
+ drivers/clk/zynqmp/clkc.c                              |  5 ++++-
+ 6 files changed, 47 insertions(+), 4 deletions(-)
 
 -- 
-Otavio Salvador                             O.S. Systems
-http://www.ossystems.com.br        http://code.ossystems.com.br
-Mobile: +55 (53) 9 9981-7854          Mobile: +1 (347) 903-9750
+Sent by a computer through tubes
