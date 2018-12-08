@@ -7,55 +7,55 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 190AFC64EB1
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 17:02:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6C85C04EB8
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 17:02:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D00D620868
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 17:02:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 69AAD2081C
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 17:02:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="LU17DI2q"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D00D620868
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="hR2o5iC4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 69AAD2081C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726314AbeLHRCi (ORCPT
+        id S1726322AbeLHRCu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 8 Dec 2018 12:02:38 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:43757 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726290AbeLHRCg (ORCPT
+        Sat, 8 Dec 2018 12:02:50 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:33159 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726268AbeLHRCe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 8 Dec 2018 12:02:36 -0500
-Received: by mail-wr1-f68.google.com with SMTP id r10so6540277wrs.10
-        for <linux-kernel@vger.kernel.org>; Sat, 08 Dec 2018 09:02:34 -0800 (PST)
+        Sat, 8 Dec 2018 12:02:34 -0500
+Received: by mail-wm1-f66.google.com with SMTP id r24so3453616wmh.0
+        for <linux-kernel@vger.kernel.org>; Sat, 08 Dec 2018 09:02:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=7BDdV+2LfEOv90ebMJ7IWK2gg41mit+gJlwgdlxTuVc=;
-        b=LU17DI2qahHMqaJQXOzP8agwl5/WHXt+pRvIXohaL4ByJLN5o7fmrX8MY9gw6tuA1V
-         OQFMKTOjxDkhVXmqRSAEbDUYZDuMVGNRU0CdO0rcdGuB7dgckkXLcZKMgCiJxyG9B2eB
-         6O3Kgpao1vr3bgbMawA1iP+3by/c7J4qXtX5Y=
+        bh=KvtupwCwXR8Q8slD54MYCwBpuj1TGFpcxOPBLUHvICE=;
+        b=hR2o5iC4aEhsnkIzPj4OIYjU9LTPsVxuLVQpifnK1slHocCHFkPJoQYyhmDXiJN/WO
+         DDUCxy4uwTWPTq0Pif7GpdgFp9IvhS5tdKk4aBvyet7YuRVtnxpgA0c1ZLk2R6Wk4Drx
+         eU2iuOUnSXw/jy29fLH6NNdWO3VLMTJ2dbODs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=7BDdV+2LfEOv90ebMJ7IWK2gg41mit+gJlwgdlxTuVc=;
-        b=IjDSS72X5rJpLja95us49GHeKl41Yi/wi2p/eycHMdlZlcFiGQg+ChNeiuYXowS2Tm
-         nujFdoPSR/efCp1hp/szwZkf8hdUqbw8CVX9YgS+rrRnem01P0zHrhHJCgpqlSbbIVHF
-         AiRN8klcJJryAw87b1QP5XECLyHZZEzKFHs+FWBue/knskWBUUgV6sXQw5NmpYWFfcmi
-         16BRRgyZlvC8SZwOdreACSQff0jz03v7/hhs9ZEPpmCx9MM8kpDJFRCoALJTFfn4nCTH
-         svU/B5kFN+6bJsq6GnqaRNmgZdL1TpJOUcLUpnx8ktEEZ0JQ33PPo+Ks6oloKGOpmw8F
-         SQgw==
-X-Gm-Message-State: AA+aEWZ8OfQ9BV/de68Y6oyViWQ84pGQJElU5el/glKIiJN9QnyD5xKC
-        IC1pXfpt3T58CdGnvMCBxKOb9w==
-X-Google-Smtp-Source: AFSGD/VbNYHXX+JW6bwUfEkzdejqlsGdAkV5AHeqd7yvAnD3CO4WbNLC3vhm9xT7rrRK3dxZ7rW0yA==
-X-Received: by 2002:a5d:6889:: with SMTP id h9mr4969911wru.222.1544288554348;
-        Sat, 08 Dec 2018 09:02:34 -0800 (PST)
+        bh=KvtupwCwXR8Q8slD54MYCwBpuj1TGFpcxOPBLUHvICE=;
+        b=kHi+k4EUNeWtBTaennxpH9PGvXXrkaSCzIo9tfCYywVSIWPv1STDyanpesnZEGxf2E
+         NdhmW+zXDqL1EK1DX1/gPw6NygM1+wn0P8urd7guYaeK6gCNOykCcPkHinEkJoM2fvBN
+         1IOgPwyOX7wjvQFwVjYXvAN8815Zc4yN8Cy2z3fuSIPWClwBej/uPntg/oLmzePOs7TE
+         Kwars22Ptu8RjHxDDJWTBShLbTGWakLtw4y/yg1NPAHqtyd6+Mlm3kGIZ/I6S2BwI//6
+         rgW/a4dzTOuaxMoPHr4PiotwsOBg18JucR65yh851IC67uWbr9ZikBUhlqmi8hL/aq8u
+         OkSg==
+X-Gm-Message-State: AA+aEWYGVPLgcKeqAM0VuA6FP4tmbXIA/v/WrxzbP1fM/fy7mQebSUWb
+        2tmN28UTIEzbGP5tSOY8Xi3/GQ==
+X-Google-Smtp-Source: AFSGD/Xgi4xzic6oIrnwzfikvQQ+V4lq3KezNAbwgIju8yUtz8ERmC+RGnmrE9j5WWRhZVmJ59cqnw==
+X-Received: by 2002:a1c:9803:: with SMTP id a3mr5822200wme.69.1544288552242;
+        Sat, 08 Dec 2018 09:02:32 -0800 (PST)
 Received: from localhost.localdomain ([212.45.67.2])
-        by smtp.googlemail.com with ESMTPSA id l20sm17411344wrb.93.2018.12.08.09.02.32
+        by smtp.googlemail.com with ESMTPSA id l20sm17411344wrb.93.2018.12.08.09.02.29
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Sat, 08 Dec 2018 09:02:33 -0800 (PST)
+        Sat, 08 Dec 2018 09:02:31 -0800 (PST)
 From:   Georgi Djakov <georgi.djakov@linaro.org>
 To:     gregkh@linuxfoundation.org, andy.gross@linaro.org, olof@lixom.net,
         arnd@arndb.de, linux-pm@vger.kernel.org
@@ -72,9 +72,9 @@ Cc:     rjw@rjwysocki.net, robh+dt@kernel.org, mturquette@baylibre.com,
         linux-arm-kernel@lists.infradead.org,
         linux-arm-msm@vger.kernel.org, linux-tegra@vger.kernel.org,
         georgi.djakov@linaro.org
-Subject: [PATCH v12 7/7] MAINTAINERS: add a maintainer for the interconnect API
-Date:   Sat,  8 Dec 2018 19:02:16 +0200
-Message-Id: <20181208170216.32555-8-georgi.djakov@linaro.org>
+Subject: [PATCH v12 6/7] arm64: dts: sdm845: Add interconnect provider DT nodes
+Date:   Sat,  8 Dec 2018 19:02:15 +0200
+Message-Id: <20181208170216.32555-7-georgi.djakov@linaro.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181208170216.32555-1-georgi.djakov@linaro.org>
 References: <20181208170216.32555-1-georgi.djakov@linaro.org>
@@ -85,31 +85,31 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add myself as the maintainer of the interconnect API.
+From: David Dai <daidavid1@codeaurora.org>
 
+Add RSC (Resource State Coordinator) provider
+dictating network-on-chip interconnect bus performance
+found on SDM845-based platforms.
+
+Signed-off-by: David Dai <daidavid1@codeaurora.org>
 Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
 ---
- MAINTAINERS | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ arch/arm64/boot/dts/qcom/sdm845.dtsi | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 380e43f585d3..4f426863ff3b 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -7694,6 +7694,16 @@ L:	linux-gpio@vger.kernel.org
- S:	Maintained
- F:	drivers/gpio/gpio-intel-mid.c
- 
-+INTERCONNECT API
-+M:	Georgi Djakov <georgi.djakov@linaro.org>
-+S:	Maintained
-+F:	Documentation/interconnect/
-+F:	Documentation/devicetree/bindings/interconnect/
-+F:	drivers/interconnect/
-+F:	include/dt-bindings/interconnect/
-+F:	include/linux/interconnect-provider.h
-+F:	include/linux/interconnect.h
+diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+index b72bdb0a31a5..b3cd256a154e 100644
+--- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
++++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+@@ -1324,6 +1324,11 @@
+ 				compatible = "qcom,sdm845-rpmh-clk";
+ 				#clock-cells = <1>;
+ 			};
 +
- INVENSENSE MPU-3050 GYROSCOPE DRIVER
- M:	Linus Walleij <linus.walleij@linaro.org>
- L:	linux-iio@vger.kernel.org
++			rsc_hlos: interconnect {
++				compatible = "qcom,sdm845-rsc-hlos";
++				#interconnect-cells = <1>;
++			};
+ 		};
+ 
+ 		intc: interrupt-controller@17a00000 {
