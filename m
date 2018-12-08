@@ -2,112 +2,109 @@ Return-Path: <SRS0=1bfu=OR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6175C64EB1
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 17:38:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD1EEC04EB8
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 17:47:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9ECFF2081C
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 17:38:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (4096-bit key) header.d=lemmela.net header.i=@lemmela.net header.b="t4pZXgu8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9ECFF2081C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lemmela.net
+	by mail.kernel.org (Postfix) with ESMTP id 87ED62082D
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 17:47:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 87ED62082D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726423AbeLHRix (ORCPT
+        id S1726218AbeLHRrg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 8 Dec 2018 12:38:53 -0500
-Received: from mail1.kuutio.org ([92.222.216.83]:49646 "EHLO mail1.kuutio.org"
+        Sat, 8 Dec 2018 12:47:36 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:44844 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726292AbeLHRiM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 8 Dec 2018 12:38:12 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by mail1.kuutio.org (Postfix) with ESMTP id 0B20620926;
-        Sat,  8 Dec 2018 18:38:08 +0100 (CET)
-Authentication-Results: mail1.kuutio.org (amavisd-new);
-        dkim=pass (4096-bit key) reason="pass (just generated, assumed good)"
-        header.d=lemmela.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=lemmela.net; h=
-        references:in-reply-to:x-mailer:message-id:date:date:subject
-        :subject:from:from:received:received; s=dkim; t=1544290687; x=
-        1546882688; bh=j3Vl2TNmgvtTSUry15fj4Q/WOZ4rGD+1mEVBj65G2EA=; b=t
-        4pZXgu8wlYWZF8/qL4FSx1TIP8Lr5sflpdLbhA28cazxnw7ImGo1oVTWoz2To+4C
-        1hMT336VKavUehec3fVShv4vGDL91/EWVfye2MC/dG1PrEnYaysyYeW8jap0xLJ9
-        5QpmHW19GwFM1PQA2lJcC4V55IbTdbw5V6Gf2e6BRL6V7cisXdvRHcj+XPYrMdQ0
-        7CtPgn6/bFRF72fK4vEeNvVSrqcUoGsRdY7LqoZw7OTzMJfHn79PGUAstaSBpAly
-        B5UE24WgxVG2/13K0kZI0RExbwZs/eEAlBR5nu8vUQCtScfIng4S+XxmKeJ6eMge
-        Cjrr4LxWvKAUrTMIg5GEgZfaDFicMvHDEK1bltNE3m/7DEWcSJqUFD7nvVuAEGZf
-        Ji7WsKNJKsb0kKIiszJ6HK9MrzJOmFU3fBfcfmuHigkNu+TjDzsQu86Z9cne4HfP
-        9VbVnqnTKZ3MF/j/dAuaXTm0wol57/GFuzddC+ufSdlEUTjbZqJ0W3zbDfMHL+RO
-        bc5qKBgYilDN7G7bhuGKuWBD+OwFHDgjVMJc4Mc6x1HG1Ape5h5Et0KVArZ2KI0k
-        yxHkl5PMIapVQQ/Z+3H0kWhIsG3YHXOyVPeitT4BgSVCyT3KXN+UKgfMwM7fVVMy
-        ycozXTdol+/Zx9SvTp8SzOi0aeWKLHn8dLRkYvHqng=
-X-Virus-Scanned: amavisd-new at kuutio.org
-Received: from mail1.kuutio.org ([127.0.0.1])
-        by localhost (mail1.kuutio.org [127.0.0.1]) (amavisd-new, port 10024)
-        with LMTP id qfCflTAya_b1; Sat,  8 Dec 2018 18:38:07 +0100 (CET)
-Received: from build.kuutio.org (unknown [IPv6:2001:998:13:e4::69])
-        by mail1.kuutio.org (Postfix) with ESMTPSA id ADA6A1F988;
-        Sat,  8 Dec 2018 18:38:06 +0100 (CET)
-From:   Oskari Lemmela <oskari@lemmela.net>
-To:     Sebastian Reichel <sre@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Lee Jones <lee.jones@linaro.org>
-Cc:     Quentin Schulz <quentin.schulz@bootlin.com>,
-        devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Oskari Lemmela <oskari@lemmela.net>
-Subject: [PATCH v7 1/9] dt-bindings: power: supply: axp20x: add AXP813 AC power DT binding
-Date:   Sat,  8 Dec 2018 19:36:10 +0200
-Message-Id: <20181208173618.31395-2-oskari@lemmela.net>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181208173618.31395-1-oskari@lemmela.net>
-References: <20181208173618.31395-1-oskari@lemmela.net>
+        id S1726168AbeLHRrg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 8 Dec 2018 12:47:36 -0500
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 8BFB6394D58;
+        Sat,  8 Dec 2018 17:47:35 +0000 (UTC)
+Received: from redhat.com (ovpn-120-239.rdu2.redhat.com [10.10.120.239])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 8F80D60BE8;
+        Sat,  8 Dec 2018 17:47:32 +0000 (UTC)
+Date:   Sat, 8 Dec 2018 12:47:30 -0500
+From:   Jerome Glisse <jglisse@redhat.com>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     Dan Williams <dan.j.williams@intel.com>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        John Hubbard <john.hubbard@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux MM <linux-mm@kvack.org>, Jan Kara <jack@suse.cz>,
+        tom@talpey.com, Al Viro <viro@zeniv.linux.org.uk>, benve@cisco.com,
+        Christopher Lameter <cl@linux.com>,
+        "Dalessandro, Dennis" <dennis.dalessandro@intel.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Michal Hocko <mhocko@kernel.org>,
+        Mike Marciniszyn <mike.marciniszyn@intel.com>,
+        rcampbell@nvidia.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH 1/2] mm: introduce put_user_page*(), placeholder versions
+Message-ID: <20181208174730.GB2952@redhat.com>
+References: <3c91d335-921c-4704-d159-2975ff3a5f20@nvidia.com>
+ <20181205011519.GV10377@bombadil.infradead.org>
+ <20181205014441.GA3045@redhat.com>
+ <59ca5c4b-fd5b-1fc6-f891-c7986d91908e@nvidia.com>
+ <7b4733be-13d3-c790-ff1b-ac51b505e9a6@nvidia.com>
+ <20181207191620.GD3293@redhat.com>
+ <3c4d46c0-aced-f96f-1bf3-725d02f11b60@nvidia.com>
+ <CAPcyv4hwtMA+4qc6500ucn5vf6fRrNdfyMHru_Jhzx86=1Wwww@mail.gmail.com>
+ <20181208163353.GA2952@redhat.com>
+ <20181208164825.GA26154@infradead.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181208164825.GA26154@infradead.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Sat, 08 Dec 2018 17:47:35 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The AXP803/AXP813 AC power supply can limit input current and voltage.
+On Sat, Dec 08, 2018 at 08:48:25AM -0800, Christoph Hellwig wrote:
+> On Sat, Dec 08, 2018 at 11:33:53AM -0500, Jerome Glisse wrote:
+> > Patchset to use HMM inside nouveau have already been posted, some
+> > of the bits have already made upstream and more are line up for
+> > next merge window.
+> 
+> Even with that it is a relative fringe feature compared to making
+> something like get_user_pages() that is literally used every to actually
+> work properly.
+> 
+> So I think we need to kick out HMM here and just find another place for
+> it to store data.
+> 
+> And just to make clear that I'm not picking just on this - the same is
+> true to a just a little smaller extent for the pgmap..
 
-Signed-off-by: Oskari Lemmela <oskari@lemmela.net>
-Reviewed-by: Rob Herring <robh@kernel.org>
-Reviewed-by: Quentin Schulz <quentin.schulz@bootlin.com>
-Reviewed-by: Chen-Yu Tsai <wens@csie.org>
-Reviewed-by: Sebastian Reichel <sebastian.reichel@collabora.com>
-Tested-by: Vasily Khoruzhick <anarsoul@gmail.com>
----
- .../devicetree/bindings/power/supply/axp20x_ac_power.txt       | 3 +++
- 1 file changed, 3 insertions(+)
+Most of the user of GUP are well behave (everything under driver/gpu and
+so is mellanox driver and many other) ie they abide by mmu notifier
+invalidation call backs. They are a handfull of device driver that thought
+they could just do GUP and ignore the mmu notifier part and those are the
+one being problematic. So to me it feels like bystander are be shot for no
+good reasons.
 
-diff --git a/Documentation/devicetree/bindings/power/supply/axp20x_ac_power.txt b/Documentation/devicetree/bindings/power/supply/axp20x_ac_power.txt
-index 826e8a879121..7a1fb532abe5 100644
---- a/Documentation/devicetree/bindings/power/supply/axp20x_ac_power.txt
-+++ b/Documentation/devicetree/bindings/power/supply/axp20x_ac_power.txt
-@@ -4,6 +4,7 @@ Required Properties:
-  - compatible: One of:
- 			"x-powers,axp202-ac-power-supply"
- 			"x-powers,axp221-ac-power-supply"
-+			"x-powers,axp813-ac-power-supply"
- 
- This node is a subnode of the axp20x PMIC.
- 
-@@ -13,6 +14,8 @@ reading ADC channels from the AXP20X ADC.
- The AXP22X is only able to tell if an AC power supply is present and
- usable.
- 
-+AXP813/AXP803 are able to limit current and supply voltage
-+
- Example:
- 
- &axp209 {
--- 
-2.17.1
+I proposed an alternative solution to this GUP thing and i don't think it
+is a crazy one and thinking about it we only need to do that for file back
+page so we can leave untouch the anonymous page case. This would put a
+small burden on the user of GUP (by the way i am working on removing GUP
+from drivers/gpu and other well behave driver, patch posted on dri-devel
+for some of the GPU already).
 
+So why not explore my idea and see if they are any roadblock on it.
+
+Cheers,
+Jérôme
