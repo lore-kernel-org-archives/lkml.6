@@ -2,224 +2,125 @@ Return-Path: <SRS0=1bfu=OR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94958C04EB8
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 06:14:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A026C04EB8
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 06:28:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 344072082D
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 06:14:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6C4F520868
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 06:28:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="Nb133ep7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 344072082D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	dkim=pass (1024-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="DwB7QpZa"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C4F520868
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=purestorage.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726182AbeLHGO6 (ORCPT
+        id S1726189AbeLHG2r (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 8 Dec 2018 01:14:58 -0500
-Received: from conssluserg-06.nifty.com ([210.131.2.91]:21219 "EHLO
-        conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726081AbeLHGO5 (ORCPT
+        Sat, 8 Dec 2018 01:28:47 -0500
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:44934 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726081AbeLHG2r (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 8 Dec 2018 01:14:57 -0500
-Received: from mail-vs1-f47.google.com (mail-vs1-f47.google.com [209.85.217.47]) (authenticated)
-        by conssluserg-06.nifty.com with ESMTP id wB86EdV5014213;
-        Sat, 8 Dec 2018 15:14:39 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-06.nifty.com wB86EdV5014213
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1544249680;
-        bh=UOKC8lUhDpKdw5Itm2vDLG/fOl6SE9UaxGtpGgYV4xo=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=Nb133ep72uNob5hqFGg5Ojgvf6fNnuJyValmQJvwjO1SdZ3rgEzuz0iUMWT8CRd22
-         ODtpYyP/vl/KzUiu3CKYmfAKgzRgK49LjnLu2aslRPI1nt97xdOuILbZS3N3bFuLNW
-         /E8ROtQR+3z0KB++VK8ohuRpTfv0w/io9VCWv1MNdktQmuxZArcxOmiX4LIC3o+JWr
-         7bSP6G8ZuYm64jJTbdm5MNnqwAtZnOpgPrUW/bRoVWpiXg+QintmoHYg9LVavzZUBr
-         0lcBAB5ggUyOBwQuDTSeDmFcT222Mu7ly5aIJYVbIF/k01sm1AcUMFAkJmu+uqa99S
-         6zETrA5PQnFCg==
-X-Nifty-SrcIP: [209.85.217.47]
-Received: by mail-vs1-f47.google.com with SMTP id e7so3783713vsc.2;
-        Fri, 07 Dec 2018 22:14:39 -0800 (PST)
-X-Gm-Message-State: AA+aEWY8oBShBFe4ZySI+QJVfY8lBstscO0P9oYr7mAoWlwZ2JZnKH6m
-        uGcfZujn5HK01p8qM/9VaNRanCR7Ot6JaPrhzOw=
-X-Google-Smtp-Source: AFSGD/XBxFMbVZpiXJtMC1TTYK/I9gD8lQg1Te7mYOjpJV9XnQq5yddlHSiYWfMo+VeFxoLa0Lk3h2SCzk8GnIlb5Nk=
-X-Received: by 2002:a67:5f03:: with SMTP id t3mr2186679vsb.155.1544249678616;
- Fri, 07 Dec 2018 22:14:38 -0800 (PST)
+        Sat, 8 Dec 2018 01:28:47 -0500
+Received: by mail-qt1-f194.google.com with SMTP id n32so6970842qte.11
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Dec 2018 22:28:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=purestorage.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=hvh/BCPfuASKONJ+dk/etdYN7REuA0ExxDJTO5XrT4U=;
+        b=DwB7QpZaezUQnxoZf+eTeYf7VWe1jHRlmWql76pV8egsYrEasGT5IYpx2yPsq0tHY6
+         bty+k/tnIhOq3zoPtTp+kDyeSWqD9AoztUIGZmtd/s25BlxhawTxD7ubKpGgX7onOvLA
+         UHozBx+Ol+qgTYMw3dTHG89qFF9PlySZG35jc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=hvh/BCPfuASKONJ+dk/etdYN7REuA0ExxDJTO5XrT4U=;
+        b=n8n/kNzcjbTIWdHTbCKPmeu64pWdjE+G/nq66Nh/BgoIe0koYgC17xorjs5R5dQVXI
+         dXdhgP49JHst5Q1aVUNfbLoXeTUSeQSoJ8IP+7r9JyzNsqGAEJ00xumZnlp8MwSJH2O5
+         6tn5Jy2cn7ArJHAJlvqxcf85bhzB9//6S5cc89zjI0lJlYcIMl3/ddgbZ0znO5lYDXuq
+         DUIRjTbxzZi5EFVU3u8VgqgmE29V6hsuC3qB4AyCkckWTbUnLxcSLnAf0DbhRjC3ediy
+         MnScxSe3DQMgmXoOm43Na3dbFeEsQ4aUKiZ0dFSRT6oHzMkehuxxuwkcvzuihelFb1i8
+         Cdig==
+X-Gm-Message-State: AA+aEWYtxeD0goYYETV1O3cXi3yNB+H3M52BwQ+QMb69CpZH5KwOM+o0
+        C3cub599aJmXeHI4BzzcjK6Guc0nQu8bCKCzw7IbFw==
+X-Google-Smtp-Source: AFSGD/XmkEVF78d6PDZJSazkmetjSADFnz5/p+iVedBBtHQdEq5E24PjaR1uxBRW0CKec8Y2q3nQRUaUnpp6XP2dIv4=
+X-Received: by 2002:ac8:3ae5:: with SMTP id x92mr4960114qte.370.1544250526376;
+ Fri, 07 Dec 2018 22:28:46 -0800 (PST)
 MIME-Version: 1.0
-References: <1543823457-32478-1-git-send-email-yamada.masahiro@socionext.com>
- <19c7bdab-8df8-f7c6-7921-9a4d43dbca64@monstr.eu> <CAK7LNATWSNqZ8uE+teMW+uvDCLXfq6zMTqh_7=ssrPquCLJz8A@mail.gmail.com>
- <938f1368-5e07-0178-5b99-d8331ce216f8@xilinx.com> <18fb7c8b-2b47-eb39-d80b-7137e7db466b@xilinx.com>
-In-Reply-To: <18fb7c8b-2b47-eb39-d80b-7137e7db466b@xilinx.com>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Sat, 8 Dec 2018 15:14:02 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAT-RuvvwGy5Tf01_rWk4EtD0H+y4UPF=aa7B3YB8v692g@mail.gmail.com>
-Message-ID: <CAK7LNAT-RuvvwGy5Tf01_rWk4EtD0H+y4UPF=aa7B3YB8v692g@mail.gmail.com>
-Subject: Re: [PATCH 0/7] microblaze: fix various problems in building boot images
-To:     Michal Simek <michal.simek@xilinx.com>
-Cc:     Michal Simek <monstr@monstr.eu>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        DTML <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
+References: <1543535954-28073-1-git-send-email-jalee@purestorage.com>
+ <cc7cbad6-0e7d-8328-c602-61d659c3a7de@grimberg.me> <CAJX3CtiBs6YOjkP5xGb5yPShvOdmhuD7kx-kBAVL7+YsyEGMyw@mail.gmail.com>
+ <CAJX3CthC6KxH7ZtpSzEGGQTVUgKO6UVkjiMMBV6=OG__UVF43Q@mail.gmail.com>
+ <2055d5b5-2c27-b5a2-e3a0-75146c7bd227@grimberg.me> <20181208020201.GD21523@localhost.localdomain>
+In-Reply-To: <20181208020201.GD21523@localhost.localdomain>
+From:   Jaesoo Lee <jalee@purestorage.com>
+Date:   Fri, 7 Dec 2018 22:28:36 -0800
+Message-ID: <CAJX3CthF7zbxwke7GY5ghZqj=WeNXQM+gKvzdU+7wzmsYcz+eQ@mail.gmail.com>
+Subject: Re: [PATCH] nvme-rdma: complete requests from ->timeout
+To:     keith.busch@intel.com
+Cc:     sagi@grimberg.me, axboe@fb.com, hch@lst.de,
+        linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Prabhath Sajeepa <psajeepa@purestorage.com>,
+        Roland Dreier <roland@purestorage.com>,
+        Ashish Karkare <ashishk@purestorage.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Dec 8, 2018 at 12:20 AM Michal Simek <michal.simek@xilinx.com> wrote:
->
-> On 07. 12. 18 14:29, Michal Simek wrote:
-> > On 07. 12. 18 12:29, Masahiro Yamada wrote:
-> >> On Thu, Dec 6, 2018 at 11:55 PM Michal Simek <monstr@monstr.eu> wrote:
-> >>>
-> >>> On 03. 12. 18 8:50, Masahiro Yamada wrote:
-> >>>> This patch set fixes various issues in microblaze Makefiles.
-> >>>>
-> >>>> BTW, "simpleImage.<dt>" works like a phony target to generate the
-> >>>> following four images, where the first three are just aliases.
-> >>>>
-> >>>>  - arch/microblaze/boot/simpleImage.<dt>:
-> >>>>          identical to arch/microblaze/boot/linux.bin
-> >>>>
-> >>>>  - arch/microblaze/boot/simpleImage.<dt>.unstrip:
-> >>>>          identical to vmlinux
-> >>>>
-> >>>>  - arch/microblaze/boot/simpleImage.<dt>.ub:
-> >>>>          identical to arch/microblaze/boot/linux.bin.ub
-> >>>>
-> >>>>  - arch/microblaze/boot/simpleImage.<dt>.strip:
-> >>>>          stripped vmlinux
-> >>>>
-> >>>> I am not sure how much useful those copies are,
-> >>>> but, I tried my best to keep the same behavior.
-> >>>>
-> >>>> IMHO, I guess DTB=<dt> would be more sensible,
-> >>>> but it is up to Michal.
-> >>>>
-> >>>>
-> >>>>
-> >>>> Masahiro Yamada (7):
-> >>>>   microblaze: fix cleaning of boot images
-> >>>>   microblaze: adjust the help to the real behavior
-> >>>>   microblaze: move "... is ready" message to arch/microblaze/Makefile
-> >>>>   microblaze: fix multiple bugs in arch/microblaze/boot/Makefile
-> >>>>   microblaze: add linux.bin* and simpleImage.* to PHONY
-> >>>>   microblaze: fix race condition in building boot images
-> >>>>   microblaze: remove the unneeded code just in case file copy fails
-> >>>>
-> >>>>  arch/microblaze/Makefile          | 14 +++++++++-----
-> >>>>  arch/microblaze/boot/Makefile     | 33 +++++++++++++++++----------------
-> >>>>  arch/microblaze/boot/dts/Makefile |  5 +----
-> >>>>  3 files changed, 27 insertions(+), 25 deletions(-)
-> >>>>
-> >>>
-> >>> One more thing I have in my mind for a while is that will be good to
-> >>> configure kernel build flags from DT and completely get rid of these
-> >>> symbols.
-> >>>
-> >>> XILINX_MICROBLAZE0_USE_MSR_INSTR
-> >>> XILINX_MICROBLAZE0_USE_PCMP_INSTR
-> >>> XILINX_MICROBLAZE0_USE_BARREL
-> >>> XILINX_MICROBLAZE0_USE_DIV
-> >>> XILINX_MICROBLAZE0_USE_HW_MUL
-> >>> XILINX_MICROBLAZE0_USE_FPU
-> >>>
-> >>> It means setup CPUFLAGS based on extracting that values from DT that it
-> >>> all the time match the hardware.
-> >>> It will also simplify all the CPUFLAGS logic which is in
-> >>> arch/microblaze/Makefile.
-> >>>
-> >>> Do you have any idea how this can be done?
-> >>
-> >>
-> >> I have no idea.
-> >>
-> >> Parsing DTS with sed or something would be possible, but ugly.
-> >>
-> >> In my opinion, the kernel should be multi platform image,
-> >> in other words, it is the least common denominator
-> >> of supported platforms.
-> >>
-> >> So, the kernel should enable all features that may or may not be used
-> >> depending on platform.
-> >>
-> >> I do not know if this works for MB.
-> >
-> > Microblaze is soft core CPU where you can select if you want to have it
-> > with multiplier, divider, barrel shifter, etc.
-> > You can of course say that you don't have them and you have "universal"
-> > kernel but very slow.
-> > That's why user has to setup these configs which are converted to cflags
-> > to say GCC what can be used.
-> > And these configs can be simply parsed from dt.
-> >
-> > For example like this based on dtb (quick hack)
-> >
-> > for i in `echo use-msr-instr use-pcmp-instr use-barrel use-div
-> > use-hw-mul use-fpu`; do
-> >       UPPER=`echo $i | tr '-' '_' | tr '[a-z]' '[A-Z}'`
-> >       echo $i $UPPER;
-> >
-> >       VAR=`fdtget -t i $FILE/arch/microblaze/boot/dts/system.dtb /cpus/cpu@0/
-> > xlnx,$i`
-> >       FLAGS+="CONFIG_XILINX_MICROBLAZE0_${UPPER}=${VAR} "
-> > done
-> >
-> > make $FLAGS
-> >
-> >
-> > When simpleImage is requested dt could be parsed to setup proper build
-> > flags.
->
-> One more thing I found is that I have done these changes
->
-> diff --git a/arch/microblaze/kernel/setup.c b/arch/microblaze/kernel/setup.c
-> index bbd6968ce55b..dc6a6fee3ae2 100644
-> --- a/arch/microblaze/kernel/setup.c
-> +++ b/arch/microblaze/kernel/setup.c
-> @@ -153,11 +153,13 @@ void __init machine_early_init(const char
-> *cmdline, unsigned int ram,
->  #endif
->
->  #if CONFIG_XILINX_MICROBLAZE0_USE_MSR_INSTR
-> +#error MSR is enabled
->         if (msr) {
->                 pr_info("!!!Your kernel has setup MSR instruction but ");
->                 pr_cont("CPU don't have it %x\n", msr);
->         }
->  #else
-> +#error MSR is not enabled
->         if (!msr) {
->                 pr_info("!!!Your kernel not setup MSR instruction but ");
->                 pr_cont("CPU have it %x\n", msr);
->
-> and run MSR with 1
-> make defconfig && make CONFIG_XILINX_MICROBLAZE0_USE_MSR_INSTR=1
-> arch/microblaze/kernel/setup.o
-> it errors #error MSR is enabled
-> and all is good.
->
-> And when I run MSR with 0
-> make defconfig && make CONFIG_XILINX_MICROBLAZE0_USE_MSR_INSTR=0
-> arch/microblaze/kernel/setup.o
-> also getting #error MSR is enabled
-> which is wrong.
->
-> Is there any rule what can be setup at compilation time?
+Now, I see that my patch is not safe and can cause double completions.
+However, I am having a hard time finding out a good solution to
+barrier the racing completions.
 
-You are trying to do very specific things,
-I do not have a clean solution.
+Could you suggest where the fix should go and what should it look
+like? We can provide more details on reproducing this issue if that
+helps.
 
-I do not mind whatever you do in arch-Makefile.
-
-If you look at stack_protector_prepare in arch/powerpc/Makefile,
-it is parsing a file with awk to setup compiler flags.
-
-
--- 
-Best Regards
-Masahiro Yamada
+On Fri, Dec 7, 2018 at 6:04 PM Keith Busch <keith.busch@intel.com> wrote:
+>
+> On Fri, Dec 07, 2018 at 12:05:37PM -0800, Sagi Grimberg wrote:
+> >
+> > > Could you please take a look at this bug and code review?
+> > >
+> > > We are seeing more instances of this bug and found that reconnect_work
+> > > could hang as well, as can be seen from below stacktrace.
+> > >
+> > >   Workqueue: nvme-wq nvme_rdma_reconnect_ctrl_work [nvme_rdma]
+> > >   Call Trace:
+> > >   __schedule+0x2ab/0x880
+> > >   schedule+0x36/0x80
+> > >   schedule_timeout+0x161/0x300
+> > >   ? __next_timer_interrupt+0xe0/0xe0
+> > >   io_schedule_timeout+0x1e/0x50
+> > >   wait_for_completion_io_timeout+0x130/0x1a0
+> > >   ? wake_up_q+0x80/0x80
+> > >   blk_execute_rq+0x6e/0xa0
+> > >   __nvme_submit_sync_cmd+0x6e/0xe0
+> > >   nvmf_connect_admin_queue+0x128/0x190 [nvme_fabrics]
+> > >   ? wait_for_completion_interruptible_timeout+0x157/0x1b0
+> > >   nvme_rdma_start_queue+0x5e/0x90 [nvme_rdma]
+> > >   nvme_rdma_setup_ctrl+0x1b4/0x730 [nvme_rdma]
+> > >   nvme_rdma_reconnect_ctrl_work+0x27/0x70 [nvme_rdma]
+> > >   process_one_work+0x179/0x390
+> > >   worker_thread+0x4f/0x3e0
+> > >   kthread+0x105/0x140
+> > >   ? max_active_store+0x80/0x80
+> > >   ? kthread_bind+0x20/0x20
+> > >
+> > > This bug is produced by setting MTU of RoCE interface to '568' for
+> > > test while running I/O traffics.
+> >
+> > I think that with the latest changes from Keith we can no longer rely
+> > on blk-mq to barrier racing completions. We will probably need
+> > to barrier ourselves in nvme-rdma...
+>
+> You really need to do that anyway. If you were relying on blk-mq to save
+> you from double completions by ending a request in the nvme driver while
+> the lower half can still complete the same one, the only thing preventing
+> data corruption is the probability the request wasn't reallocated for a
+> new command.
