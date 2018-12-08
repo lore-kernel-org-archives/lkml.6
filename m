@@ -2,110 +2,81 @@ Return-Path: <SRS0=1bfu=OR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E699C04EB8
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 08:54:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82EA3C04EB8
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 09:01:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D535920868
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 08:54:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D535920868
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at
+	by mail.kernel.org (Postfix) with ESMTP id 32B4420892
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 09:01:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544259702;
+	bh=RWjRGHWbp/AKC8BsOosgAs038T3Nr9rKjRoG+BTGcZU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=JPiOgQOsYRqrUXSql1U8AwhrxYZMzolrDIZDERyfDsCXWxInyEFk/kNMabkeYu/mk
+	 5Cy+dXrrhfJYul0R8DzJ8VCahRJPn3US/MRb1BTn3xg/E9MFDMMh8QvbgFJe0RPZwH
+	 HHr3oMi2QGzQ+tFq7KacD9U++f7Sgb0PQcuhIfNM=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 32B4420892
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726192AbeLHIyn (ORCPT
+        id S1726227AbeLHJBl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 8 Dec 2018 03:54:43 -0500
-Received: from lithops.sigma-star.at ([195.201.40.130]:48136 "EHLO
-        lithops.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726103AbeLHIyn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 8 Dec 2018 03:54:43 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by lithops.sigma-star.at (Postfix) with ESMTP id 8CCD4608A3B9;
-        Sat,  8 Dec 2018 09:54:40 +0100 (CET)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id kfJK3t4E5t8S; Sat,  8 Dec 2018 09:54:40 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-        by lithops.sigma-star.at (Postfix) with ESMTP id 3604D608A3BA;
-        Sat,  8 Dec 2018 09:54:40 +0100 (CET)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id 6FiBBnNIeLkp; Sat,  8 Dec 2018 09:54:40 +0100 (CET)
-Received: from blindfold.localnet (213-47-184-186.cable.dynamic.surfer.at [213.47.184.186])
-        by lithops.sigma-star.at (Postfix) with ESMTPSA id A1864608A3B9;
-        Sat,  8 Dec 2018 09:54:39 +0100 (CET)
-From:   Richard Weinberger <richard@nod.at>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     Ingo Molnar <mingo@redhat.com>, X86 ML <x86@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        "H. Peter Anvin" <hpa@zytor.com>, Borislav Petkov <bp@alien8.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/2] um: remove -fno-unit-at-a-time workaround for pre-4.0 GCC
-Date:   Sat, 08 Dec 2018 09:54:39 +0100
-Message-ID: <1855895.dlXT8REgUo@blindfold>
-In-Reply-To: <CAK7LNAQjyWgpnu=qv-55gTL2DWpE93muu3Ksey8wFnWtLOzpbA@mail.gmail.com>
-References: <1541990120-9643-1-git-send-email-yamada.masahiro@socionext.com> <2624257.jg98z2FPBI@blindfold> <CAK7LNAQjyWgpnu=qv-55gTL2DWpE93muu3Ksey8wFnWtLOzpbA@mail.gmail.com>
+        Sat, 8 Dec 2018 04:01:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47314 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726103AbeLHJBk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 8 Dec 2018 04:01:40 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9D9E52083D;
+        Sat,  8 Dec 2018 09:01:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544259700;
+        bh=RWjRGHWbp/AKC8BsOosgAs038T3Nr9rKjRoG+BTGcZU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=b1hx6HFiDGE5Yz/ypkRvdIpIqdsd4OqGeSLwLIDTsXousxhlCLG7xHa3jU4oKtEzS
+         Iua//PCGoyzq92I0/VWHIG3rhMPbHiWD+r+OOaxgaUJHtjKsdgXDXlh86SEIbWJG6Z
+         aYYo153+kAxDFiqIifeNs3WrtaqKqY0HGmufdoYs=
+Date:   Sat, 8 Dec 2018 10:01:37 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Ben Hutchings <ben.hutchings@codethink.co.uk>
+Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Chao Yu <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: Re: [PATCH 4.9 100/101] f2fs: fix to do sanity check with
+ cp_pack_start_sum
+Message-ID: <20181208090137.GB28887@kroah.com>
+References: <20181206143011.174892052@linuxfoundation.org>
+ <20181206143018.979787297@linuxfoundation.org>
+ <1544206370.2867.118.camel@codethink.co.uk>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1544206370.2867.118.camel@codethink.co.uk>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Samstag, 8. Dezember 2018, 07:35:47 CET schrieb Masahiro Yamada:
-> x86 maintainers,
-> 
-> 
-> Ping.
-
-I thought you carry this via your kbuild tree.
-That said, I can merge it also via the um tree.
-x86 is of course also fine. :-)
-
-> 
-> 
-> On Tue, Nov 13, 2018 at 6:48 PM Richard Weinberger <richard@nod.at> wrote:
+On Fri, Dec 07, 2018 at 06:12:50PM +0000, Ben Hutchings wrote:
+> On Thu, 2018-12-06 at 15:39 +0100, Greg Kroah-Hartman wrote:
+> > 4.9-stable review patch.  If anyone has any objections, please let me know.
+> > 
+> > ------------------
+> > 
+> > From: Ben Hutchings <ben.hutchings@codethink.co.uk>
 > >
-> > Am Montag, 12. November 2018, 03:35:19 CET schrieb Masahiro Yamada:
-> > > Commit cafa0010cd51 ("Raise the minimum required gcc version to 4.6")
-> > > bumped the minimum GCC version to 4.6 for all architectures.
-> > >
-> > > '$(call cc-option,-fno-unit-at-a-time)' is now dead code since
-> > > '$(cc-version) -lt 0400' is always false.
-> > >
-> > > Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> > > ---
-> > >
-> > >  arch/x86/Makefile.um | 8 ++------
-> > >  1 file changed, 2 insertions(+), 6 deletions(-)
-> > >
-> > > diff --git a/arch/x86/Makefile.um b/arch/x86/Makefile.um
-> > > index 91085a0..577976b 100644
-> > > --- a/arch/x86/Makefile.um
-> > > +++ b/arch/x86/Makefile.um
-> > > @@ -26,12 +26,8 @@ cflags-y += $(call cc-option,-mpreferred-stack-boundary=2)
-> > >  # an unresolved reference.
-> > >  cflags-y += -ffreestanding
-> > >
-> > > -# Disable unit-at-a-time mode on pre-gcc-4.0 compilers, it makes gcc use
-> > > -# a lot more stack due to the lack of sharing of stacklots.  Also, gcc
-> > > -# 4.3.0 needs -funit-at-a-time for extern inline functions.
-> > > -KBUILD_CFLAGS += $(shell if [ $(cc-version) -lt 0400 ] ; then \
-> > > -                     echo $(call cc-option,-fno-unit-at-a-time); \
-> > > -                     else echo $(call cc-option,-funit-at-a-time); fi ;)
-> > > +# gcc 4.3.0 needs -funit-at-a-time for extern inline functions.
-> > > +KBUILD_CFLAGS += $(call cc-option,-funit-at-a-time)
-> >
-> > Acked-by: Richard Weinberger <richard@nod.at>
+> > commit e494c2f995d6181d6e29c4927d68e0f295ecf75b upstream.
+> [...]
+> 
+> I accidentally reset the author for this while backporting it.  The
+> correct author is: Chao Yu <yuchao0@huawei.com>
 
-Thanks,
-//richard
+Thanks for catching this, now fixed up.
 
-
+greg k-h
