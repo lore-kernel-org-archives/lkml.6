@@ -2,90 +2,110 @@ Return-Path: <SRS0=1bfu=OR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98E9EC04EB8
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 16:04:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B76CC65BAF
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 16:07:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 526DA2082D
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 16:04:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="RDWXZBGf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 526DA2082D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	by mail.kernel.org (Postfix) with ESMTP id 6AEC520700
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 16:07:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6AEC520700
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726193AbeLHQET (ORCPT
+        id S1726237AbeLHQG7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 8 Dec 2018 11:04:19 -0500
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:37498 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726160AbeLHQES (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 8 Dec 2018 11:04:18 -0500
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id wB8G459w027393;
-        Sat, 8 Dec 2018 10:04:05 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1544285045;
-        bh=Ia7ipjQGbGv0wQiqMBWcm45wmGjtcsVODAoKcWAnnQo=;
-        h=Date:From:To:CC:Subject:References:In-Reply-To;
-        b=RDWXZBGffk7ZYW8R9rKUMQwwmZ7oX21t6ACs6nAw8HFqWZfzeTK2hcArpytt/xNZT
-         7hd/veqWsZy5QKAbT4gXM/3dbYXuON1DjBSDqtc7SmCyzN5WZrKaKNGrriiCMnMUo0
-         Ay0A0JzgI2dTfcGvczsz+i4841yFzbV9KgFXF4U8=
-Received: from DLEE107.ent.ti.com (dlee107.ent.ti.com [157.170.170.37])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wB8G4581115190
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Sat, 8 Dec 2018 10:04:05 -0600
-Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE107.ent.ti.com
- (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Sat, 8
- Dec 2018 10:04:04 -0600
-Received: from dlep33.itg.ti.com (157.170.170.75) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Sat, 8 Dec 2018 10:04:04 -0600
-Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id wB8G449c023256;
-        Sat, 8 Dec 2018 10:04:04 -0600
-Date:   Sat, 8 Dec 2018 10:04:04 -0600
-From:   Nishanth Menon <nm@ti.com>
-To:     Yangtao Li <tiny.windzz@gmail.com>
-CC:     <t-kristo@ti.com>, <ssantosh@kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] firmware: ti_sci: Change to use DEFINE_SHOW_ATTRIBUTE
- macro
-Message-ID: <20181208160404.h7cuuq6jvafoxa32@akan>
-References: <20181122140519.25166-1-tiny.windzz@gmail.com>
+        Sat, 8 Dec 2018 11:06:59 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:56504 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726160AbeLHQG7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 8 Dec 2018 11:06:59 -0500
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 20E76C057F21;
+        Sat,  8 Dec 2018 16:06:58 +0000 (UTC)
+Received: from localhost (ovpn-200-34.brq.redhat.com [10.40.200.34])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 5ABA1608C3;
+        Sat,  8 Dec 2018 16:06:49 +0000 (UTC)
+Date:   Sat, 8 Dec 2018 17:06:48 +0100
+From:   Jesper Dangaard Brouer <brouer@redhat.com>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     iommu@lists.linux-foundation.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Tariq Toukan <tariqt@mellanox.com>,
+        Ilias Apalodimas <ilias.apalodimas@linaro.org>,
+        Toke =?UTF-8?B?SMO4aWxhbmQtSsO4?= =?UTF-8?B?cmdlbnNlbg==?= 
+        <toke@toke.dk>, Robin Murphy <robin.murphy@arm.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Keith Busch <keith.busch@intel.com>,
+        Jonathan Derrick <jonathan.derrick@intel.com>,
+        linux-pci@vger.kernel.org, linux-ia64@vger.kernel.org,
+        x86@kernel.org, linux-kernel@vger.kernel.org, brouer@redhat.com
+Subject: Re: [RFC] avoid indirect calls for DMA direct mappings v2
+Message-ID: <20181208170648.296fb8a1@redhat.com>
+In-Reply-To: <20181207190720.18517-1-hch@lst.de>
+References: <20181207190720.18517-1-hch@lst.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20181122140519.25166-1-tiny.windzz@gmail.com>
-User-Agent: NeoMutt/20171215
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Sat, 08 Dec 2018 16:06:58 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09:05-20181122, Yangtao Li wrote:
-> Use DEFINE_SHOW_ATTRIBUTE macro to simplify the code.
+On Fri,  7 Dec 2018 11:07:05 -0800
+Christoph Hellwig <hch@lst.de> wrote:
+
+> Hi all,
 > 
-> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+> a while ago Jesper reported major performance regressions due to the
+> spectre v2 mitigations in his XDP forwarding workloads.  A large part
+> of that is due to the DMA mapping API indirect calls.
+> 
+> It turns out that the most common implementation of the DMA API is the
+> direct mapping case, and now that we have merged almost all duplicate
+> implementations of that into a single generic one is easily feasily to
+> direct calls for this fast path.
+> 
+> This series adds consolidate the DMA mapping code by merging the
+> swiotlb case into the dma direct case, and then treats NULL dma_ops
+> as an indicator that that we should directly call the direct mapping
+> case.  This recovers a large part of the retpoline induces XDP slowdown.
+> 
+> This works is based on the dma-mapping tree, so you probably want to
+> want this git tree for testing:
+> 
+>     git://git.infradead.org/users/hch/misc.git dma-direct-calls.2
+> 
+> Gitweb:
+> 
+>     http://git.infradead.org/users/hch/misc.git/shortlog/refs/heads/dma-direct-calls.2
 
-Thanks for the same and sorry for responding so late.
+You can add my:
+ Tested-by: Jesper Dangaard Brouer <brouer@redhat.com>
+or
+ Acked-by: Jesper Dangaard Brouer <brouer@redhat.com>
 
-[...]
+I'm very happy that you work on this.  And I've done micro-benchmark
+testing of the patchset (and branch dma-direct-calls), which I've made
+avail here:
+ https://github.com/xdp-project/xdp-project/blob/master/areas/dma/dma01_test_hellwig_direct_dma.org
 
-Santosh,
-could you pick this up? maybe for next rev or so?
-
-Reviewed-by: Nishanth Menon <nm@ti.com>
+My XDP performance is back, minus the BPF-indirect call, and
+net_rx_action napi->poll, and net_device->ndo_xdp_xmit calls.  I
+verified that manually disabling retpoline for these remaining netstack
+retpoline-calls restore the performance full (well minus 1.5 nanosec).
 
 -- 
-Regards,
-Nishanth Menon
+Best regards,
+  Jesper Dangaard Brouer
+  MSc.CS, Principal Kernel Engineer at Red Hat
+  LinkedIn: http://www.linkedin.com/in/brouer
