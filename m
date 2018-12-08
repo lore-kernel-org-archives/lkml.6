@@ -2,104 +2,148 @@ Return-Path: <SRS0=1bfu=OR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75749C04EB8
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 20:29:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5F3AC04EB8
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 20:30:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 355392083D
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 20:29:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544300944;
-	bh=63XzysPyjU/fSz1E4sS6O8QzyYl9dn9rMAsO5kg6ufE=;
-	h=Subject:To:Cc:References:From:Date:In-Reply-To:List-ID:From;
-	b=e5XskhTPd/2BH6hDX9ax6CPiRIbuMubYromXkW+B8yPsftSfZuBEXWLrxsYEEfsfg
-	 TuCOcsRRdkR5pnVoJ97EXeGFv2t17m/xk4KUdM8yN7dL9UDdsTdQClPTLsQaOlCiJL
-	 gEgQAdrqIdqv5R9F+1CDcHv/WA32EJdNkwTM4zYY=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 355392083D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 863182082D
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 20:30:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 863182082D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726233AbeLHU3D (ORCPT
+        id S1726253AbeLHUam (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 8 Dec 2018 15:29:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34360 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726192AbeLHU3C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 8 Dec 2018 15:29:02 -0500
-Received: from [192.168.0.109] (cpe-174-109-247-98.nc.res.rr.com [174.109.247.98])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2B2692081F;
-        Sat,  8 Dec 2018 20:29:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544300942;
-        bh=63XzysPyjU/fSz1E4sS6O8QzyYl9dn9rMAsO5kg6ufE=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=xVVjqbw9pMydZ/QrQxI2PAJqMcTuqkIfVcZKhsv6e0Jg0ZCFHazujVPxeNNNgBW8P
-         eoz3vK11qFlAnO7B6+FE/MoHcFQSZWHe6OMvHY/3hh0uhrs+j/SUnHHd3AcbU103JX
-         z68nX156rTGYMiu46hww20V9Gx+IRJEKje9h6LBA=
-Subject: Re: [PATCH 2/2] dmaengine: qcom_hidma: assign channel cookie
- correctly
-To:     Shunyong Yang <shunyong.yang@hxt-semitech.com>
-Cc:     andy.gross@linaro.org, david.brown@linaro.org, vkoul@kernel.org,
-        dan.j.williams@intel.com, dmaengine@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Joey Zheng <yu.zheng@hxt-semitech.com>
-References: <81c9fe2de4b5dac1d5b974f5305e35bf1cf5d127.1544156508.git.shunyong.yang@hxt-semitech.com>
- <ea6c6317dabffdcfa28cdb391b50edce98ce875d.1544156508.git.shunyong.yang@hxt-semitech.com>
-From:   Sinan Kaya <okaya@kernel.org>
-Message-ID: <88ef21bd-4e4f-8cce-39b3-53da45740f0f@kernel.org>
-Date:   Sat, 8 Dec 2018 15:28:59 -0500
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.2
-MIME-Version: 1.0
-In-Reply-To: <ea6c6317dabffdcfa28cdb391b50edce98ce875d.1544156508.git.shunyong.yang@hxt-semitech.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Sat, 8 Dec 2018 15:30:42 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:41582 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726218AbeLHUal (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 8 Dec 2018 15:30:41 -0500
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wB8KSxaf045245
+        for <linux-kernel@vger.kernel.org>; Sat, 8 Dec 2018 15:30:40 -0500
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2p8aqg195g-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Sat, 08 Dec 2018 15:30:40 -0500
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <nayna@linux.ibm.com>;
+        Sat, 8 Dec 2018 20:30:38 -0000
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Sat, 8 Dec 2018 20:30:34 -0000
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wB8KUW0859637816
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Sat, 8 Dec 2018 20:30:32 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 27CDD4C04E;
+        Sat,  8 Dec 2018 20:30:32 +0000 (GMT)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id BE13F4C044;
+        Sat,  8 Dec 2018 20:30:28 +0000 (GMT)
+Received: from swastik.ibmuc.com (unknown [9.85.68.82])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Sat,  8 Dec 2018 20:30:28 +0000 (GMT)
+From:   Nayna Jain <nayna@linux.ibm.com>
+To:     linux-integrity@vger.kernel.org
+Cc:     linux-security-module@vger.kernel.org, linux-efi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, zohar@linux.ibm.com,
+        dhowells@redhat.com, jforbes@redhat.com,
+        seth.forshee@canonical.com, kexec@lists.infradead.org,
+        keyrings@vger.kernel.org, vgoyal@redhat.com, ebiederm@xmission.com,
+        mpe@ellerman.id.au, Nayna Jain <nayna@linux.ibm.com>
+Subject: [PATCH v2 0/7] add platform/firmware keys support for kernel verification by IMA 
+Date:   Sun,  9 Dec 2018 01:56:58 +0530
+X-Mailer: git-send-email 2.13.6
+X-TM-AS-GCONF: 00
+x-cbid: 18120820-0008-0000-0000-0000029EC54A
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18120820-0009-0000-0000-0000220934F5
+Message-Id: <20181208202705.18673-1-nayna@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-08_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1812080192
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/6/2018 11:29 PM, Shunyong Yang wrote:
-> When dma_cookie_complete() is called in hidma_process_completed(),
-> dma_cookie_status() will return DMA_COMPLETE in hidma_tx_status(). Then,
-> hidma_txn_is_success() will be called to use channel cookie
-> mchan->last_success to do additional DMA status check. Current code
-> assigns mchan->last_success after dma_cookie_complete(). This causes
-> a race condition of dma_cookie_status() returns DMA_COMPLETE before
-> mchan->last_success is assigned correctly. The race will cause
-> hidma_tx_status() return DMA_ERROR but the transaction is actually a
-> success. Moreover, in async_tx case, it will cause a timeout panic
-> in async_tx_quiesce().
-> 
->   Kernel panic - not syncing: async_tx_quiesce: DMA error waiting for
->   transaction
->   ...
->   Call trace:
->   [<ffff000008089994>] dump_backtrace+0x0/0x1f4
->   [<ffff000008089bac>] show_stack+0x24/0x2c
->   [<ffff00000891e198>] dump_stack+0x84/0xa8
->   [<ffff0000080da544>] panic+0x12c/0x29c
->   [<ffff0000045d0334>] async_tx_quiesce+0xa4/0xc8 [async_tx]
->   [<ffff0000045d03c8>] async_trigger_callback+0x70/0x1c0 [async_tx]
->   [<ffff0000048b7d74>] raid_run_ops+0x86c/0x1540 [raid456]
->   [<ffff0000048bd084>] handle_stripe+0x5e8/0x1c7c [raid456]
->   [<ffff0000048be9ec>] handle_active_stripes.isra.45+0x2d4/0x550 [raid456]
->   [<ffff0000048beff4>] raid5d+0x38c/0x5d0 [raid456]
->   [<ffff000008736538>] md_thread+0x108/0x168
->   [<ffff0000080fb1cc>] kthread+0x10c/0x138
->   [<ffff000008084d34>] ret_from_fork+0x10/0x18
-> 
-> Cc: Joey Zheng<yu.zheng@hxt-semitech.com>
-> Signed-off-by: Shunyong Yang<shunyong.yang@hxt-semitech.com>
+On secure boot enabled systems, a verified kernel may need to kexec
+additional kernels. For example, it may be used as a bootloader needing
+to kexec a target kernel or it may need to kexec a crashdump kernel.
+In such cases, it may want to verify the signature of the next kernel
+image.
 
+It is possible that the new kernel image is signed with third party keys
+which are stored as platform or firmware keys in the 'db' variable. The
+kernel, however, can not directly verify these platform keys, and an
+administrator may therefore not want to trust them for arbitrary usage.
+In order to differentiate platform keys from other keys and provide the
+necessary separation of trust the kernel needs an additional keyring to
+store platform/firmware keys.
 
-Acked-by: Sinan Kaya <okaya@kernel.org>
+The secure boot key database is expected to store the keys as EFI
+Signature List(ESL). The patch set uses David Howells and Josh Boyer's
+patch to access and parse the ESL to extract the certificates and load
+them onto the platform keyring.
 
-to both patches 1/2 and 2/2.
+The last patch in this patch set adds support for IMA-appraisal to
+verify the kexec'ed kernel image based on keys stored in the platform
+keyring.
+
+Changelog:
+
+v0:
+- The original patches loaded the certificates onto the secondary
+  trusted keyring. This patch set defines a new keyring named
+  ".platform" and adds the certificates to this new keyring  
+- removed CONFIG EFI_SIGNATURE_LIST_PARSER and LOAD_UEFI_KEYS
+- moved files from certs/ to security/integrity/platform_certs/
+
+v2:
+- fixed the checkpatch warnings and other formatting as suggested by
+  Mimi Zohar 
+- fixed coding style as suggested by Serge Hallyn in Patch "ima: Support
+  platform keyring for kernel appraisal"
+
+Dave Howells (2):
+  efi: Add EFI signature data types
+  efi: Add an EFI signature blob parser
+
+Josh Boyer (2):
+  efi: Import certificates from UEFI Secure Boot
+  efi: Allow the "db" UEFI variable to be suppressed
+
+Nayna Jain (3):
+  integrity: Define a trusted platform keyring
+  integrity: Load certs to the platform keyring
+  ima: Support platform keyring for kernel appraisal
+
+ include/linux/efi.h                                |  34 ++++
+ security/integrity/Kconfig                         |  11 ++
+ security/integrity/Makefile                        |   5 +
+ security/integrity/digsig.c                        | 115 ++++++++----
+ security/integrity/ima/ima_appraise.c              |  13 +-
+ security/integrity/integrity.h                     |  23 ++-
+ security/integrity/platform_certs/efi_parser.c     | 108 ++++++++++++
+ security/integrity/platform_certs/load_uefi.c      | 196 +++++++++++++++++++++
+ .../integrity/platform_certs/platform_keyring.c    |  62 +++++++
+ 9 files changed, 528 insertions(+), 39 deletions(-)
+ create mode 100644 security/integrity/platform_certs/efi_parser.c
+ create mode 100644 security/integrity/platform_certs/load_uefi.c
+ create mode 100644 security/integrity/platform_certs/platform_keyring.c
+
+-- 
+2.13.6
 
