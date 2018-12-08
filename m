@@ -2,125 +2,455 @@ Return-Path: <SRS0=1bfu=OR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2BD6C04EB8
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 06:56:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5B85C04EB8
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 07:01:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 95E122082D
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 06:56:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 79F7D2082D
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 07:01:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="UNUTlWlk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 95E122082D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="XQMNiwYi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 79F7D2082D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726236AbeLHG4M (ORCPT
+        id S1726193AbeLHHBJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 8 Dec 2018 01:56:12 -0500
-Received: from conssluserg-06.nifty.com ([210.131.2.91]:20748 "EHLO
-        conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726111AbeLHG4L (ORCPT
+        Sat, 8 Dec 2018 02:01:09 -0500
+Received: from smtprelay.synopsys.com ([198.182.47.9]:49150 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726111AbeLHHBJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 8 Dec 2018 01:56:11 -0500
-Received: from mail-vk1-f175.google.com (mail-vk1-f175.google.com [209.85.221.175]) (authenticated)
-        by conssluserg-06.nifty.com with ESMTP id wB86u3vo030299;
-        Sat, 8 Dec 2018 15:56:04 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-06.nifty.com wB86u3vo030299
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1544252164;
-        bh=ITOK08EYvUCvw47kQ32f9mxht24HrpRIOXsJDSTNuZ0=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=UNUTlWlkwnvQo+yP7+wcTEsYDK1aVae00SSgt5p4oXM+CS0Dl2+zxVcH7tCUi/0kU
-         FC812+OwKCOC/fIHsFOqjXGdWQsfVKGT9EkWHX33tqA7pN1MeCDqR/rn5H7NAxPBE/
-         w/JrIdZICWwRStUTptnpkqWhao7lU1OCxC1E3rgFEIqUUuGSzuTA2AHGRJmz+DQ71k
-         ure6DSeQh9mtqk9N9v0TacYK1/uLWirRhCVaTZm2jat2gk3YUSIn0Y6CvoYdZG6WWX
-         no8auhsFufryE+O++LcKMrjt0ykzZiI2NoyR0xWkDJPy+e9yTEddnBF4VHoQOf5BU1
-         sA3WWmlHw4UpQ==
-X-Nifty-SrcIP: [209.85.221.175]
-Received: by mail-vk1-f175.google.com with SMTP id j23so1452171vke.13;
-        Fri, 07 Dec 2018 22:56:04 -0800 (PST)
-X-Gm-Message-State: AA+aEWap2Sf1YtyJGuVa29MFN5O3xkST8yrFPw2QhzyFK1SKkbxYTl5W
-        lMfd9CSKadGQap1Ds9YKpZFqizwGvrYEktisrhM=
-X-Google-Smtp-Source: AFSGD/XIsvYt15cppNhAGGxrKI8cG+QaUjUF1rVNb43upRftZli6nK7Py7XsBIOtALLgvSrIBaywxASh8DdRnDOsSU4=
-X-Received: by 2002:a1f:4d47:: with SMTP id a68mr2078894vkb.34.1544252163323;
- Fri, 07 Dec 2018 22:56:03 -0800 (PST)
-MIME-Version: 1.0
-References: <1543569352-4899-1-git-send-email-yamada.masahiro@socionext.com>
-In-Reply-To: <1543569352-4899-1-git-send-email-yamada.masahiro@socionext.com>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Sat, 8 Dec 2018 15:55:27 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAT3P8JQ9Ej-cDMOEAYYGkSfomRAdEfGVDMuB5foeDdJSA@mail.gmail.com>
-Message-ID: <CAK7LNAT3P8JQ9Ej-cDMOEAYYGkSfomRAdEfGVDMuB5foeDdJSA@mail.gmail.com>
-Subject: Re: [PATCH 1/5] kconfig: remove unneeded setsym label in conf_read_simple()
-To:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
-Cc:     Sam Ravnborg <sam@ravnborg.org>,
-        Ulf Magnusson <ulfalizer@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Sat, 8 Dec 2018 02:01:09 -0500
+Received: from mailhost.synopsys.com (mailhost3.synopsys.com [10.12.238.238])
+        by smtprelay.synopsys.com (Postfix) with ESMTP id BCBA924E218D;
+        Fri,  7 Dec 2018 23:01:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1544252468; bh=RYahgn4rUY3cnJBQ5xG+PVU366NDBdAjqeo48RcbN9w=;
+        h=From:To:Cc:Subject:Date:From;
+        b=XQMNiwYi9hM/PcnOnTqTriWmbOo1pIdZ/fieGg0GMy3izg6jwMtMtWU0ehMQo8dtL
+         Q/sDK0NDstMPkkdQwtfZEpSuvqXhA6C/GVtDASZJ+aRFq57lSl7R9z+j4BuvqiCYGJ
+         jsjH2v05E7v5Z9Xt9Hqbo/xMffoCwYMGLO7GSXyn7PLs0vTqP1Gc6S/69uOHiXEDIK
+         nNBrTj3eEbdM394pXDdwvk/WNPZ9jlpe79hidbHDiLt5VW1UgqEh2qp56oChvdhrvC
+         xjWTaplTqa/07uqYZLjF4CRX9jsJHIBcdnemw+mBzFlYE2MBv0BlcYLBvmnkksPM0d
+         Gc5o/mLD/n1xA==
+Received: from ru20arcgnu1.internal.synopsys.com (ru20arcgnu1.internal.synopsys.com [10.121.9.48])
+        by mailhost.synopsys.com (Postfix) with ESMTP id 5A6DE38C3;
+        Fri,  7 Dec 2018 23:01:07 -0800 (PST)
+From:   Alexey Brodkin <alexey.brodkin@synopsys.com>
+To:     linux-snps-arc@lists.infradead.org
+Cc:     linux-kernel@vger.kernel.org,
+        Vineet Gupta <vineet.gupta1@synopsys.com>,
+        Alexey Brodkin <alexey.brodkin@synopsys.com>,
+        Rob Herring <robh+dt@kernel.org>
+Subject: [PATCH] ARC: Remove 0x prefix from unit-address of node names
+Date:   Sat,  8 Dec 2018 10:01:01 +0300
+Message-Id: <20181208070101.6117-1-abrodkin@synopsys.com>
+X-Mailer: git-send-email 2.16.2
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 30, 2018 at 6:17 PM Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
->
-> The two 'goto setsym' statements are reachable only when sym == NULL.
->
-> The code below the 'setsym:' label does nothing when sym == NULL
-> since there is just one if-block guarded by 'if (sym && ...)'.
->
-> Hence, 'goto setsym' can be replaced with 'continue'.
->
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> ---
+Done automatically with help of:
+----------------------->8------------------------
+sed -i 's/@0x/@/g' arch/arc/boot/dts/*.dts*
+----------------------->8------------------------
 
-Series, applied to linux-kbuild/kconfig.
+Inspired by [1] and the like.
 
+[1] http://kisskb.ellerman.id.au/kisskb/buildresult/13612017/
 
+Signed-off-by: Alexey Brodkin <abrodkin@synopsys.com>
+Cc: Rob Herring <robh+dt@kernel.org>
 
->  scripts/kconfig/confdata.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
->
-> diff --git a/scripts/kconfig/confdata.c b/scripts/kconfig/confdata.c
-> index 91d0a5c..1e35529 100644
-> --- a/scripts/kconfig/confdata.c
-> +++ b/scripts/kconfig/confdata.c
-> @@ -363,7 +363,7 @@ int conf_read_simple(const char *name, int def)
->                                 sym = sym_find(line + 2 + strlen(CONFIG_));
->                                 if (!sym) {
->                                         sym_add_change_count(1);
-> -                                       goto setsym;
-> +                                       continue;
->                                 }
->                         } else {
->                                 sym = sym_lookup(line + 2 + strlen(CONFIG_), 0);
-> @@ -397,7 +397,7 @@ int conf_read_simple(const char *name, int def)
->                                 sym = sym_find(line + strlen(CONFIG_));
->                                 if (!sym) {
->                                         sym_add_change_count(1);
-> -                                       goto setsym;
-> +                                       continue;
->                                 }
->                         } else {
->                                 sym = sym_lookup(line + strlen(CONFIG_), 0);
-> @@ -416,7 +416,7 @@ int conf_read_simple(const char *name, int def)
->
->                         continue;
->                 }
-> -setsym:
-> +
->                 if (sym && sym_is_choice_value(sym)) {
->                         struct symbol *cs = prop_get_symbol(sym_get_choice_prop(sym));
->                         switch (sym->def[def].tri) {
-> --
-> 2.7.4
->
+Signed-off-by: Alexey Brodkin <abrodkin@synopsys.com>
+---
+ arch/arc/boot/dts/abilis_tb10x.dtsi   |  4 ++--
+ arch/arc/boot/dts/axc001.dtsi         |  6 +++---
+ arch/arc/boot/dts/axc003.dtsi         | 14 +++++++-------
+ arch/arc/boot/dts/axc003_idu.dtsi     | 14 +++++++-------
+ arch/arc/boot/dts/axs10x_mb.dtsi      | 22 +++++++++++-----------
+ arch/arc/boot/dts/vdk_axc003.dtsi     |  4 ++--
+ arch/arc/boot/dts/vdk_axc003_idu.dtsi |  4 ++--
+ arch/arc/boot/dts/vdk_axs10x_mb.dtsi  | 14 +++++++-------
+ 8 files changed, 41 insertions(+), 41 deletions(-)
 
-
+diff --git a/arch/arc/boot/dts/abilis_tb10x.dtsi b/arch/arc/boot/dts/abilis_tb10x.dtsi
+index 3121536b25a3..77ac1368a65b 100644
+--- a/arch/arc/boot/dts/abilis_tb10x.dtsi
++++ b/arch/arc/boot/dts/abilis_tb10x.dtsi
+@@ -178,7 +178,7 @@
+ 			clocks = <&ahb_clk>;
+ 		};
+ 
+-		spi0: spi@0xFE010000 {
++		spi0: spi@FE010000 {
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+ 			cell-index = <0>;
+@@ -189,7 +189,7 @@
+ 			interrupts = <26 8>;
+ 			clocks = <&ahb_clk>;
+ 		};
+-		spi1: spi@0xFE011000 {
++		spi1: spi@FE011000 {
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+ 			cell-index = <1>;
+diff --git a/arch/arc/boot/dts/axc001.dtsi b/arch/arc/boot/dts/axc001.dtsi
+index fdc266504ada..37be3bf03ad6 100644
+--- a/arch/arc/boot/dts/axc001.dtsi
++++ b/arch/arc/boot/dts/axc001.dtsi
+@@ -41,7 +41,7 @@
+ 		 * this GPIO block ORs all interrupts on CPU card (creg,..)
+ 		 * to uplink only 1 IRQ to ARC core intc
+ 		 */
+-		dw-apb-gpio@0x2000 {
++		dw-apb-gpio@2000 {
+ 			compatible = "snps,dw-apb-gpio";
+ 			reg = < 0x2000 0x80 >;
+ 			#address-cells = <1>;
+@@ -60,7 +60,7 @@
+ 			};
+ 		};
+ 
+-		debug_uart: dw-apb-uart@0x5000 {
++		debug_uart: dw-apb-uart@5000 {
+ 			compatible = "snps,dw-apb-uart";
+ 			reg = <0x5000 0x100>;
+ 			clock-frequency = <33333000>;
+@@ -88,7 +88,7 @@
+ 	 * avoid duplicating the MB dtsi file given that IRQ from
+ 	 * this intc to cpu intc are different for axs101 and axs103
+ 	 */
+-	mb_intc: dw-apb-ictl@0xe0012000 {
++	mb_intc: dw-apb-ictl@e0012000 {
+ 		#interrupt-cells = <1>;
+ 		compatible = "snps,dw-apb-ictl";
+ 		reg = < 0x0 0xe0012000 0x0 0x200 >;
+diff --git a/arch/arc/boot/dts/axc003.dtsi b/arch/arc/boot/dts/axc003.dtsi
+index d75d65ddf8e3..ffa208a57a0a 100644
+--- a/arch/arc/boot/dts/axc003.dtsi
++++ b/arch/arc/boot/dts/axc003.dtsi
+@@ -55,7 +55,7 @@
+ 		 * this GPIO block ORs all interrupts on CPU card (creg,..)
+ 		 * to uplink only 1 IRQ to ARC core intc
+ 		 */
+-		dw-apb-gpio@0x2000 {
++		dw-apb-gpio@2000 {
+ 			compatible = "snps,dw-apb-gpio";
+ 			reg = < 0x2000 0x80 >;
+ 			#address-cells = <1>;
+@@ -74,7 +74,7 @@
+ 			};
+ 		};
+ 
+-		debug_uart: dw-apb-uart@0x5000 {
++		debug_uart: dw-apb-uart@5000 {
+ 			compatible = "snps,dw-apb-uart";
+ 			reg = <0x5000 0x100>;
+ 			clock-frequency = <33333000>;
+@@ -102,19 +102,19 @@
+ 	 * external DMA buffer located outside of IOC aperture.
+ 	 */
+ 	axs10x_mb {
+-		ethernet@0x18000 {
++		ethernet@18000 {
+ 			dma-coherent;
+ 		};
+ 
+-		ehci@0x40000 {
++		ehci@40000 {
+ 			dma-coherent;
+ 		};
+ 
+-		ohci@0x60000 {
++		ohci@60000 {
+ 			dma-coherent;
+ 		};
+ 
+-		mmc@0x15000 {
++		mmc@15000 {
+ 			dma-coherent;
+ 		};
+ 	};
+@@ -132,7 +132,7 @@
+ 	 * avoid duplicating the MB dtsi file given that IRQ from
+ 	 * this intc to cpu intc are different for axs101 and axs103
+ 	 */
+-	mb_intc: dw-apb-ictl@0xe0012000 {
++	mb_intc: dw-apb-ictl@e0012000 {
+ 		#interrupt-cells = <1>;
+ 		compatible = "snps,dw-apb-ictl";
+ 		reg = < 0x0 0xe0012000 0x0 0x200 >;
+diff --git a/arch/arc/boot/dts/axc003_idu.dtsi b/arch/arc/boot/dts/axc003_idu.dtsi
+index a05bb737ea63..ad795748ac63 100644
+--- a/arch/arc/boot/dts/axc003_idu.dtsi
++++ b/arch/arc/boot/dts/axc003_idu.dtsi
+@@ -62,7 +62,7 @@
+ 		 * this GPIO block ORs all interrupts on CPU card (creg,..)
+ 		 * to uplink only 1 IRQ to ARC core intc
+ 		 */
+-		dw-apb-gpio@0x2000 {
++		dw-apb-gpio@2000 {
+ 			compatible = "snps,dw-apb-gpio";
+ 			reg = < 0x2000 0x80 >;
+ 			#address-cells = <1>;
+@@ -81,7 +81,7 @@
+ 			};
+ 		};
+ 
+-		debug_uart: dw-apb-uart@0x5000 {
++		debug_uart: dw-apb-uart@5000 {
+ 			compatible = "snps,dw-apb-uart";
+ 			reg = <0x5000 0x100>;
+ 			clock-frequency = <33333000>;
+@@ -109,19 +109,19 @@
+ 	 * external DMA buffer located outside of IOC aperture.
+ 	 */
+ 	axs10x_mb {
+-		ethernet@0x18000 {
++		ethernet@18000 {
+ 			dma-coherent;
+ 		};
+ 
+-		ehci@0x40000 {
++		ehci@40000 {
+ 			dma-coherent;
+ 		};
+ 
+-		ohci@0x60000 {
++		ohci@60000 {
+ 			dma-coherent;
+ 		};
+ 
+-		mmc@0x15000 {
++		mmc@15000 {
+ 			dma-coherent;
+ 		};
+ 	};
+@@ -138,7 +138,7 @@
+ 	 * avoid duplicating the MB dtsi file given that IRQ from
+ 	 * this intc to cpu intc are different for axs101 and axs103
+ 	 */
+-	mb_intc: dw-apb-ictl@0xe0012000 {
++	mb_intc: dw-apb-ictl@e0012000 {
+ 		#interrupt-cells = <1>;
+ 		compatible = "snps,dw-apb-ictl";
+ 		reg = < 0x0 0xe0012000 0x0 0x200 >;
+diff --git a/arch/arc/boot/dts/axs10x_mb.dtsi b/arch/arc/boot/dts/axs10x_mb.dtsi
+index 37bafd44e36d..4ead6dc9af2f 100644
+--- a/arch/arc/boot/dts/axs10x_mb.dtsi
++++ b/arch/arc/boot/dts/axs10x_mb.dtsi
+@@ -72,7 +72,7 @@
+ 			};
+ 		};
+ 
+-		gmac: ethernet@0x18000 {
++		gmac: ethernet@18000 {
+ 			#interrupt-cells = <1>;
+ 			compatible = "snps,dwmac";
+ 			reg = < 0x18000 0x2000 >;
+@@ -88,13 +88,13 @@
+ 			mac-address = [00 00 00 00 00 00]; /* Filled in by U-Boot */
+ 		};
+ 
+-		ehci@0x40000 {
++		ehci@40000 {
+ 			compatible = "generic-ehci";
+ 			reg = < 0x40000 0x100 >;
+ 			interrupts = < 8 >;
+ 		};
+ 
+-		ohci@0x60000 {
++		ohci@60000 {
+ 			compatible = "generic-ohci";
+ 			reg = < 0x60000 0x100 >;
+ 			interrupts = < 8 >;
+@@ -118,7 +118,7 @@
+ 		 * dw_mci_pltfm_prepare_command() is used in generic platform
+ 		 * code.
+ 		 */
+-		mmc@0x15000 {
++		mmc@15000 {
+ 			compatible = "altr,socfpga-dw-mshc";
+ 			reg = < 0x15000 0x400 >;
+ 			fifo-depth = < 16 >;
+@@ -129,7 +129,7 @@
+ 			bus-width = < 4 >;
+ 		};
+ 
+-		uart@0x20000 {
++		uart@20000 {
+ 			compatible = "snps,dw-apb-uart";
+ 			reg = <0x20000 0x100>;
+ 			clock-frequency = <33333333>;
+@@ -139,7 +139,7 @@
+ 			reg-io-width = <4>;
+ 		};
+ 
+-		uart@0x21000 {
++		uart@21000 {
+ 			compatible = "snps,dw-apb-uart";
+ 			reg = <0x21000 0x100>;
+ 			clock-frequency = <33333333>;
+@@ -150,7 +150,7 @@
+ 		};
+ 
+ 		/* UART muxed with USB data port (ttyS3) */
+-		uart@0x22000 {
++		uart@22000 {
+ 			compatible = "snps,dw-apb-uart";
+ 			reg = <0x22000 0x100>;
+ 			clock-frequency = <33333333>;
+@@ -160,7 +160,7 @@
+ 			reg-io-width = <4>;
+ 		};
+ 
+-		i2c@0x1d000 {
++		i2c@1d000 {
+ 			compatible = "snps,designware-i2c";
+ 			reg = <0x1d000 0x100>;
+ 			clock-frequency = <400000>;
+@@ -177,7 +177,7 @@
+ 			#sound-dai-cells = <0>;
+ 		};
+ 
+-		i2c@0x1f000 {
++		i2c@1f000 {
+ 			compatible = "snps,designware-i2c";
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+@@ -218,13 +218,13 @@
+ 				};
+ 			};
+ 
+-			eeprom@0x54{
++			eeprom@54{
+ 				compatible = "atmel,24c01";
+ 				reg = <0x54>;
+ 				pagesize = <0x8>;
+ 			};
+ 
+-			eeprom@0x57{
++			eeprom@57{
+ 				compatible = "atmel,24c04";
+ 				reg = <0x57>;
+ 				pagesize = <0x8>;
+diff --git a/arch/arc/boot/dts/vdk_axc003.dtsi b/arch/arc/boot/dts/vdk_axc003.dtsi
+index 0fd6ba985b16..84e8766c8ca2 100644
+--- a/arch/arc/boot/dts/vdk_axc003.dtsi
++++ b/arch/arc/boot/dts/vdk_axc003.dtsi
+@@ -36,7 +36,7 @@
+ 			#interrupt-cells = <1>;
+ 		};
+ 
+-		debug_uart: dw-apb-uart@0x5000 {
++		debug_uart: dw-apb-uart@5000 {
+ 			compatible = "snps,dw-apb-uart";
+ 			reg = <0x5000 0x100>;
+ 			clock-frequency = <2403200>;
+@@ -49,7 +49,7 @@
+ 
+ 	};
+ 
+-	mb_intc: dw-apb-ictl@0xe0012000 {
++	mb_intc: dw-apb-ictl@e0012000 {
+ 		#interrupt-cells = <1>;
+ 		compatible = "snps,dw-apb-ictl";
+ 		reg = < 0xe0012000 0x200 >;
+diff --git a/arch/arc/boot/dts/vdk_axc003_idu.dtsi b/arch/arc/boot/dts/vdk_axc003_idu.dtsi
+index 28956f9a9f3d..eb7e705e8a27 100644
+--- a/arch/arc/boot/dts/vdk_axc003_idu.dtsi
++++ b/arch/arc/boot/dts/vdk_axc003_idu.dtsi
+@@ -44,7 +44,7 @@
+ 			#interrupt-cells = <1>;
+ 		};
+ 
+-		debug_uart: dw-apb-uart@0x5000 {
++		debug_uart: dw-apb-uart@5000 {
+ 			compatible = "snps,dw-apb-uart";
+ 			reg = <0x5000 0x100>;
+ 			clock-frequency = <2403200>;
+@@ -57,7 +57,7 @@
+ 
+ 	};
+ 
+-	mb_intc: dw-apb-ictl@0xe0012000 {
++	mb_intc: dw-apb-ictl@e0012000 {
+ 		#interrupt-cells = <1>;
+ 		compatible = "snps,dw-apb-ictl";
+ 		reg = < 0xe0012000 0x200 >;
+diff --git a/arch/arc/boot/dts/vdk_axs10x_mb.dtsi b/arch/arc/boot/dts/vdk_axs10x_mb.dtsi
+index 48bb4b4cd234..ad18daa7b307 100644
+--- a/arch/arc/boot/dts/vdk_axs10x_mb.dtsi
++++ b/arch/arc/boot/dts/vdk_axs10x_mb.dtsi
+@@ -36,7 +36,7 @@
+ 			};
+ 		};
+ 
+-		ethernet@0x18000 {
++		ethernet@18000 {
+ 			#interrupt-cells = <1>;
+ 			compatible = "snps,dwmac";
+ 			reg = < 0x18000 0x2000 >;
+@@ -49,13 +49,13 @@
+ 			clock-names = "stmmaceth";
+ 		};
+ 
+-		ehci@0x40000 {
++		ehci@40000 {
+ 			compatible = "generic-ehci";
+ 			reg = < 0x40000 0x100 >;
+ 			interrupts = < 8 >;
+ 		};
+ 
+-		uart@0x20000 {
++		uart@20000 {
+ 			compatible = "snps,dw-apb-uart";
+ 			reg = <0x20000 0x100>;
+ 			clock-frequency = <2403200>;
+@@ -65,7 +65,7 @@
+ 			reg-io-width = <4>;
+ 		};
+ 
+-		uart@0x21000 {
++		uart@21000 {
+ 			compatible = "snps,dw-apb-uart";
+ 			reg = <0x21000 0x100>;
+ 			clock-frequency = <2403200>;
+@@ -75,7 +75,7 @@
+ 			reg-io-width = <4>;
+ 		};
+ 
+-		uart@0x22000 {
++		uart@22000 {
+ 			compatible = "snps,dw-apb-uart";
+ 			reg = <0x22000 0x100>;
+ 			clock-frequency = <2403200>;
+@@ -101,7 +101,7 @@
+ 			interrupt-names = "arc_ps2_irq";
+ 		};
+ 
+-		mmc@0x15000 {
++		mmc@15000 {
+ 			compatible = "snps,dw-mshc";
+ 			reg = <0x15000 0x400>;
+ 			fifo-depth = <1024>;
+@@ -119,7 +119,7 @@
+ 	 * This node is intentionally put outside of MB above becase
+ 	 * it maps areas outside of MB's 0xEz-0xFz.
+ 	 */
+-	uio_ev: uio@0xD0000000 {
++	uio_ev: uio@D0000000 {
+ 		compatible = "generic-uio";
+ 		reg = <0xD0000000 0x2000 0xD1000000 0x2000 0x90000000 0x10000000 0xC0000000 0x10000000>;
+ 		reg-names = "ev_gsa", "ev_ctrl", "ev_shared_mem", "ev_code_mem";
 -- 
-Best Regards
-Masahiro Yamada
+2.16.2
+
