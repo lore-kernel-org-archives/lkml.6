@@ -2,56 +2,55 @@ Return-Path: <SRS0=1bfu=OR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	URIBL_SBL,URIBL_SBL_A,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 349A7C65BAF
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 20:31:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07D01C04EB8
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 20:31:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 052F62082D
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 20:31:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 052F62082D
+	by mail.kernel.org (Postfix) with ESMTP id CD9AB2083D
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 20:31:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD9AB2083D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726370AbeLHUbQ (ORCPT
+        id S1726388AbeLHUbX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 8 Dec 2018 15:31:16 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:56668 "EHLO
+        Sat, 8 Dec 2018 15:31:23 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:54632 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726357AbeLHUbO (ORCPT
+        by vger.kernel.org with ESMTP id S1726372AbeLHUbV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 8 Dec 2018 15:31:14 -0500
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wB8KTDh8030654
-        for <linux-kernel@vger.kernel.org>; Sat, 8 Dec 2018 15:31:13 -0500
-Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2p895tcc8f-1
+        Sat, 8 Dec 2018 15:31:21 -0500
+Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wB8KT5fP130958
+        for <linux-kernel@vger.kernel.org>; Sat, 8 Dec 2018 15:31:20 -0500
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2p8m73s9ey-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Sat, 08 Dec 2018 15:31:13 -0500
+        for <linux-kernel@vger.kernel.org>; Sat, 08 Dec 2018 15:31:20 -0500
 Received: from localhost
-        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-kernel@vger.kernel.org> from <nayna@linux.ibm.com>;
-        Sat, 8 Dec 2018 20:31:10 -0000
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        Sat, 8 Dec 2018 20:31:17 -0000
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Sat, 8 Dec 2018 20:31:06 -0000
+        Sat, 8 Dec 2018 20:31:14 -0000
 Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wB8KV53B45744276
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wB8KVDhE42139806
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Sat, 8 Dec 2018 20:31:06 GMT
+        Sat, 8 Dec 2018 20:31:13 GMT
 Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D017D4C044;
-        Sat,  8 Dec 2018 20:31:05 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id C97794C04A;
+        Sat,  8 Dec 2018 20:31:12 +0000 (GMT)
 Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8B07F4C040;
-        Sat,  8 Dec 2018 20:31:02 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id 839014C044;
+        Sat,  8 Dec 2018 20:31:09 +0000 (GMT)
 Received: from swastik.ibmuc.com (unknown [9.85.68.82])
         by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Sat,  8 Dec 2018 20:31:02 +0000 (GMT)
+        Sat,  8 Dec 2018 20:31:09 +0000 (GMT)
 From:   Nayna Jain <nayna@linux.ibm.com>
 To:     linux-integrity@vger.kernel.org
 Cc:     linux-security-module@vger.kernel.org, linux-efi@vger.kernel.org,
@@ -59,17 +58,17 @@ Cc:     linux-security-module@vger.kernel.org, linux-efi@vger.kernel.org,
         dhowells@redhat.com, jforbes@redhat.com,
         seth.forshee@canonical.com, kexec@lists.infradead.org,
         keyrings@vger.kernel.org, vgoyal@redhat.com, ebiederm@xmission.com,
-        mpe@ellerman.id.au, Josh Boyer <jwboyer@fedoraproject.org>
-Subject: [PATCH v2 6/7] efi: Allow the "db" UEFI variable to be suppressed
-Date:   Sun,  9 Dec 2018 01:57:04 +0530
+        mpe@ellerman.id.au, Nayna Jain <nayna@linux.ibm.com>
+Subject: [PATCH v2 7/7] ima: Support platform keyring for kernel appraisal
+Date:   Sun,  9 Dec 2018 01:57:05 +0530
 X-Mailer: git-send-email 2.13.6
 In-Reply-To: <20181208202705.18673-1-nayna@linux.ibm.com>
 References: <20181208202705.18673-1-nayna@linux.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18120820-0012-0000-0000-000002D67D1A
+x-cbid: 18120820-0020-0000-0000-000002F46E43
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18120820-0013-0000-0000-0000210BEAFD
-Message-Id: <20181208202705.18673-7-nayna@linux.ibm.com>
+x-cbparentid: 18120820-0021-0000-0000-00002144896C
+Message-Id: <20181208202705.18673-8-nayna@linux.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-08_06:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -82,99 +81,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Josh Boyer <jwboyer@fedoraproject.org>
+On secure boot enabled systems, the bootloader verifies the kernel
+image and possibly the initramfs signatures based on a set of keys. A
+soft reboot(kexec) of the system, with the same kernel image and
+initramfs, requires access to the original keys to verify the
+signatures.
 
-If a user tells shim to not use the certs/hashes in the UEFI db variable
-for verification purposes, shim will set a UEFI variable called
-MokIgnoreDB. Have the uefi import code look for this and ignore the db
-variable if it is found.
+This patch allows IMA-appraisal access to those original keys, now
+loaded on the platform keyring, needed for verifying the kernel image
+and initramfs signatures.
 
-Signed-off-by: Josh Boyer <jwboyer@fedoraproject.org>
-Signed-off-by: David Howells <dhowells@redhat.com>
-Acked-by: Nayna Jain <nayna@linux.ibm.com>
+Signed-off-by: Nayna Jain <nayna@linux.ibm.com>
+Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
 Acked-by: Serge Hallyn <serge@hallyn.com>
+- replace 'rc' with 'xattr_len' when calling integrity_digsig_verify()
+with INTEGRITY_KEYRING_IMA for readability
+Suggested-by: Serge Hallyn <serge@hallyn.com>
 ---
 Changelog:
 
-v0:
-- No changes
-
 v2:
-- Fixed the checkpatch.pl warnings
+- replace 'rc' with 'xattr_len' when calling integrity_digsig_verify()
+with INTEGRITY_KEYRING_IMA for readability
 
- security/integrity/platform_certs/load_uefi.c | 45 +++++++++++++++++++++------
- 1 file changed, 35 insertions(+), 10 deletions(-)
+ security/integrity/ima/ima_appraise.c | 13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
 
-diff --git a/security/integrity/platform_certs/load_uefi.c b/security/integrity/platform_certs/load_uefi.c
-index acd9db90dde7..8bd2e9b421e1 100644
---- a/security/integrity/platform_certs/load_uefi.c
-+++ b/security/integrity/platform_certs/load_uefi.c
-@@ -16,6 +16,26 @@ static efi_guid_t efi_cert_x509_sha256_guid __initdata =
- static efi_guid_t efi_cert_sha256_guid __initdata = EFI_CERT_SHA256_GUID;
- 
- /*
-+ * Look to see if a UEFI variable called MokIgnoreDB exists and return true if
-+ * it does.
-+ *
-+ * This UEFI variable is set by the shim if a user tells the shim to not use
-+ * the certs/hashes in the UEFI db variable for verification purposes.  If it
-+ * is set, we should ignore the db variable also and the true return indicates
-+ * this.
-+ */
-+static __init bool uefi_check_ignore_db(void)
-+{
-+	efi_status_t status;
-+	unsigned int db = 0;
-+	unsigned long size = sizeof(db);
-+	efi_guid_t guid = EFI_SHIM_LOCK_GUID;
-+
-+	status = efi.get_variable(L"MokIgnoreDB", &guid, NULL, &size, &db);
-+	return status == EFI_SUCCESS;
-+}
-+
-+/*
-  * Get a certificate list blob from the named EFI variable.
-  */
- static __init void *get_cert_list(efi_char16_t *name, efi_guid_t *guid,
-@@ -116,7 +136,9 @@ static __init efi_element_handler_t get_handler_for_dbx(const efi_guid_t *
- }
- 
- /*
-- * Load the certs contained in the UEFI databases
-+ * Load the certs contained in the UEFI databases into the secondary trusted
-+ * keyring and the UEFI blacklisted X.509 cert SHA256 hashes into the blacklist
-+ * keyring.
-  */
- static int __init load_uefi_certs(void)
- {
-@@ -132,15 +154,18 @@ static int __init load_uefi_certs(void)
- 	/* Get db, MokListRT, and dbx.  They might not exist, so it isn't
- 	 * an error if we can't get them.
- 	 */
--	db = get_cert_list(L"db", &secure_var, &dbsize);
--	if (!db) {
--		pr_err("Couldn't get UEFI db list\n");
--	} else {
--		rc = parse_efi_signature_list("UEFI:db",
--					      db, dbsize, get_handler_for_db);
--		if (rc)
--			pr_err("Couldn't parse db signatures: %d\n", rc);
--		kfree(db);
-+	if (!uefi_check_ignore_db()) {
-+		db = get_cert_list(L"db", &secure_var, &dbsize);
-+		if (!db) {
-+			pr_err("MODSIGN: Couldn't get UEFI db list\n");
-+		} else {
-+			rc = parse_efi_signature_list("UEFI:db",
-+					db, dbsize, get_handler_for_db);
-+			if (rc)
-+				pr_err("Couldn't parse db signatures: %d\n",
-+				       rc);
-+			kfree(db);
+diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
+index deec1804a00a..e8f520450895 100644
+--- a/security/integrity/ima/ima_appraise.c
++++ b/security/integrity/ima/ima_appraise.c
+@@ -289,12 +289,21 @@ int ima_appraise_measurement(enum ima_hooks func,
+ 	case EVM_IMA_XATTR_DIGSIG:
+ 		set_bit(IMA_DIGSIG, &iint->atomic_flags);
+ 		rc = integrity_digsig_verify(INTEGRITY_KEYRING_IMA,
+-					     (const char *)xattr_value, rc,
++					     (const char *)xattr_value,
++					     xattr_len,
+ 					     iint->ima_hash->digest,
+ 					     iint->ima_hash->length);
+ 		if (rc == -EOPNOTSUPP) {
+ 			status = INTEGRITY_UNKNOWN;
+-		} else if (rc) {
++			break;
 +		}
- 	}
- 
- 	mok = get_cert_list(L"MokListRT", &mok_var, &moksize);
++		if (rc && func == KEXEC_KERNEL_CHECK)
++			rc = integrity_digsig_verify(INTEGRITY_KEYRING_PLATFORM,
++						     (const char *)xattr_value,
++						     xattr_len,
++						     iint->ima_hash->digest,
++						     iint->ima_hash->length);
++		if (rc) {
+ 			cause = "invalid-signature";
+ 			status = INTEGRITY_FAIL;
+ 		} else {
 -- 
 2.13.6
 
