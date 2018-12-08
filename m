@@ -2,64 +2,64 @@ Return-Path: <SRS0=1bfu=OR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 415E9C04EB8
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 07:07:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E0ABC04EB8
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 07:09:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EA7A621104
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 07:07:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5B9352082D
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 07:09:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P0uE8XnQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA7A621104
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dDa2v986"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B9352082D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726210AbeLHHHW (ORCPT
+        id S1726218AbeLHHJ1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 8 Dec 2018 02:07:22 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:40996 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726081AbeLHHHW (ORCPT
+        Sat, 8 Dec 2018 02:09:27 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:51666 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726081AbeLHHJ1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 8 Dec 2018 02:07:22 -0500
-Received: by mail-wr1-f67.google.com with SMTP id x10so5718344wrs.8
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Dec 2018 23:07:21 -0800 (PST)
+        Sat, 8 Dec 2018 02:09:27 -0500
+Received: by mail-wm1-f67.google.com with SMTP id s14so6332243wmh.1
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Dec 2018 23:09:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=bJXpQ6/tY78A76YIpx1xclmZs77GaNTaxMxQLUrdPWw=;
-        b=P0uE8XnQArYP78Rlknqdozh6kJilrFV+2GplIUboJM/or16TenWNn4ZCk6lvCcz5l/
-         +DmkxZWtbr68EMjCq5hadSvoTIHukRfB6JpeIpSM9JYQQOrWVRUpLDEdaKDZ1naF56UT
-         T5pOfAKiACcnC8LzSUbUXtMjzHGeDjDV2y9dZpTKcOZDxKNxbaURdFShfOTMofk08DDR
-         2hn9LWm6IPYpUIyh0BtBeheIovqi8g2fobVw3tBUw6Ym+SOsIwH3gLUohXbJAakfw9n2
-         J+OSwRD/MHSwNYdTt73IZ/gpaIKGLjzmwoZeU8BuSg0Ys359kT4203s1jout5EuMONnH
-         2LHw==
+        bh=Ek7vo3RvdX0CT8AbAjEa4CaJ5kRaBTm5HswXMMc7hj0=;
+        b=dDa2v9865m9JRu+A4zXuIO2/rSW5rdrkMtaw3TNtzcSjmM04VZIo3z5N3dJimZ+v/X
+         Zv50gFnShfItXEh1DFW5yht5VMj1t1SyqNhnVXIO3Z/vi7beF8X5N4JmKwyJbp6VK3Fs
+         ZN0h7Za6mZ5Kle8cEyvVhIskhMwUVdbqTjUhcYWit1xIENDVfHSrlH6CwQNgTqUezuRb
+         CYuNVZaiO3y2O5UMKkCp/7GIcBo6ltwaUU9bIDm2pCuxUUV/yKjSyV1hSxC79fp+1QSD
+         UP6CRrO5+/1ZA3BcoBfG6yEZY2oagpXujuqJO2FJ6D6MXds8rJapo6wkSyYCorFx8qdB
+         uiMw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=bJXpQ6/tY78A76YIpx1xclmZs77GaNTaxMxQLUrdPWw=;
-        b=D9nyx7SkG2tSZsls+/IsDU8TpHLifxDo6t9zbxI3F8Rrjm1f2N5SnoK4itKy1UcwQt
-         Rfev5PEea+hQ0RjCPCW+BCEd79UjVVeF8zjlU8+mri5LKU3qbc9oQRaVpICjBaTJMz7U
-         B0/grKQo4gtVheQhDExqFsb5IdQ37HtQZ/TYctA3s89aWRGOrI2+Ha2NJa1olvApZ5gv
-         WbNcw5jKErBU9WVGm+s5DHk7Qd+8kxGrccmdhKqtR0w9w6Y3Z7IBX1SLjDiVC2cPtA1z
-         o9dX1C8PDp/WK/j6CDXRIlmZjThyUdpNZrcCFK4UHNe0NlV/XFww6XmuHg3RcbTnxV+P
-         mSaQ==
-X-Gm-Message-State: AA+aEWbEv9BLA9u8qkjGakVNeSC1giDItZ69rIn3d4tZQApzaYhmwnr/
-        AYVqpYSqGtUClj2IHIy+ZUAcwbKZfw==
-X-Google-Smtp-Source: AFSGD/XtacPUh8KlpgBM77UEqrA7/bLmme1eYjQkviBndOw3QUcNm/DJLNCS6RUnUzjiXOC/fx93Iw==
-X-Received: by 2002:a5d:4b01:: with SMTP id v1mr3728278wrq.5.1544252840014;
-        Fri, 07 Dec 2018 23:07:20 -0800 (PST)
+        bh=Ek7vo3RvdX0CT8AbAjEa4CaJ5kRaBTm5HswXMMc7hj0=;
+        b=e5ssX3ZlHu4oNt/2p+SaUuALHNTc1abCd+0bzRCQmrobixT4qn+/SKaWo5QVJS2WzK
+         P6EQoGt9qbSiXz2bJW9BCGi3KtTsiV2I8YLUgRmx+wF9isJJ66WvqZzm6OkxcnNsthLN
+         bLbE7EIJ1XG6TPkE5bUFIf/REeq/XFl5L6kQMBGPdUOKMqbBdVkQ8RSJu14RNu2M/odh
+         CNx57KxTIhmOULj4GTUgOA7WymVtNQ2piD6yTRGSYfmHTM5s8fcYdaX61CHBNyHIDSlf
+         jdY3zYOG+Csg2cH3vuCRrdoDLJp1LTgTNUb+dlFVfRsi8iZQ+ACtFs9ZVOmYvkTb12Rj
+         97EQ==
+X-Gm-Message-State: AA+aEWb7qmX0j/BXRdvDRrGIRDmCuhAH401oXHy/I83bpDRL+yugLODO
+        wmOD1kdEDISOqQgKZ8VsKw==
+X-Google-Smtp-Source: AFSGD/Uk/gC5CO0/Q9sR4wxTFBXSuj1uMtyNrONHllMamXupS2Ogt2YySj+mE0hFtOmg0B1iG6U2Kw==
+X-Received: by 2002:a7b:c24c:: with SMTP id b12mr3979786wmj.29.1544252963578;
+        Fri, 07 Dec 2018 23:09:23 -0800 (PST)
 Received: from localhost (host34-126-dynamic.27-79-r.retail.telecomitalia.it. [79.27.126.34])
-        by smtp.gmail.com with ESMTPSA id g129sm5432736wmf.39.2018.12.07.23.07.18
+        by smtp.gmail.com with ESMTPSA id i13sm4381732wrw.32.2018.12.07.23.09.22
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 07 Dec 2018 23:07:19 -0800 (PST)
-Date:   Sat, 8 Dec 2018 08:07:18 +0100
+        Fri, 07 Dec 2018 23:09:23 -0800 (PST)
+Date:   Sat, 8 Dec 2018 08:09:22 +0100
 From:   Andrea Righi <righi.andrea@gmail.com>
 To:     Masami Hiramatsu <mhiramat@kernel.org>
 Cc:     "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
@@ -72,24 +72,24 @@ Cc:     "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
         linux-kernel@vger.kernel.org
 Subject: Re: [PATCH] kprobes: x86_64: blacklist non-attachable interrupt
  functions
-Message-ID: <20181208070718.GA2237@Dell>
+Message-ID: <20181208070922.GB2237@Dell>
 References: <20181206095648.GA8249@Dell>
  <20181207234731.f52a8c1eff6c0e72c073ad40@kernel.org>
  <20181208010120.c3eda9042912068aecc68317@kernel.org>
- <20181207170026.GA1379@Dell>
- <20181208124210.7f46eb88544e2e3899713052@kernel.org>
+ <20181207175805.GA1369@Dell>
+ <20181208124859.7318e32abfab4cc6dc2da3a8@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181208124210.7f46eb88544e2e3899713052@kernel.org>
+In-Reply-To: <20181208124859.7318e32abfab4cc6dc2da3a8@kernel.org>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Dec 08, 2018 at 12:42:10PM +0900, Masami Hiramatsu wrote:
-> On Fri, 7 Dec 2018 18:00:26 +0100
+On Sat, Dec 08, 2018 at 12:48:59PM +0900, Masami Hiramatsu wrote:
+> On Fri, 7 Dec 2018 18:58:05 +0100
 > Andrea Righi <righi.andrea@gmail.com> wrote:
 > 
 > > On Sat, Dec 08, 2018 at 01:01:20AM +0900, Masami Hiramatsu wrote:
@@ -112,59 +112,22 @@ On Sat, Dec 08, 2018 at 12:42:10PM +0900, Masami Hiramatsu wrote:
 > > > All archtectures which have custom prohibit areas should define
 > > > its own arch_populate_kprobe_blacklist() function, but unless that,
 > > > all symbols marked __kprobes are blacklisted.
-> > > 
-> > > Reported-by: Andrea Righi <righi.andrea@gmail.com>
-> > > Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-> > > ---
 > > 
-> > [snip]
-> > 
-> > > +int kprobe_add_ksym_blacklist(unsigned long entry)
-> > > +{
-> > > +	struct kprobe_blacklist_entry *ent;
-> > > +	unsigned long offset = 0, size = 0;
-> > > +
-> > > +	if (!kernel_text_address(entry) ||
-> > > +	    !kallsyms_lookup_size_offset(entry, &size, &offset))
-> > > +		return -EINVAL;
-> > > +
-> > > +	ent = kmalloc(sizeof(*ent), GFP_KERNEL);
-> > > +	if (!ent)
-> > > +		return -ENOMEM;
-> > > +	ent->start_addr = entry - offset;
-> > > +	ent->end_addr = entry - offset + size;
-> > 
-> > Do we need to take offset into account? The code before wasn't using it.
+> > What about iterating all symbols and use arch_within_kprobe_blacklist()
+> > to check if we need to blacklist them or not.
 > 
-> Yes, if we hit an alias symbol (zero-size), we forcibly increment address
-> and retry it. In that case, offset will be 1.
+> Sorry, I don't want to iterate all ksyms since it may take a long time
+> (especially embedded small devices.)
 > 
 > > 
-> > > +	INIT_LIST_HEAD(&ent->list);
-> > > +	list_add_tail(&ent->list, &kprobe_blacklist);
-> > > +
-> > > +	return (int)size;
-> > > +}
-> > > +
-> > > +/* Add functions in arch defined probe-prohibited area */
-> > > +int __weak arch_populate_kprobe_blacklist(void)
-> > > +{
-> > > +	unsigned long entry;
-> > > +	int ret = 0;
-> > > +
-> > > +	for (entry = (unsigned long)__kprobes_text_start;
-> > > +	     entry < (unsigned long)__kprobes_text_end;
-> > > +	     entry += ret) {
-> > > +		ret = kprobe_add_ksym_blacklist(entry);
-> > > +		if (ret < 0)
-> > > +			return ret;
-> > > +		if (ret == 0)	/* In case of alias symbol */
-> > > +			ret = 1;
+> > In this way we don't have to introduce an
+> > arch_populate_kprobe_blacklist() for each architecture.
 > 
-> Here, we incremented.
-> 
-> Thank you,
+> Hmm, I had a same idea, but there are some arch which prohibit probing
+> extable entries (e.g. arm64.) For correctness of the blacklist, I think
+> it should be listed (not entire the function body).
+> I also rather like to remove arch_within_kprobe_blacklist() instead.
 
-Makes sense, thanks for the clarification.
+OK. Thanks.
 
 -Andrea
