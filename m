@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF28CC65BAF
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:18:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E849C07E85
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:18:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AEAE120661
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:18:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AEAE120661
+	by mail.kernel.org (Postfix) with ESMTP id 1CFD020661
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:18:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1CFD020661
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727049AbeLIWEG (ORCPT
+        id S1726671AbeLIWEE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 17:04:06 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35858 "EHLO
+        Sun, 9 Dec 2018 17:04:04 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36744 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726654AbeLIVzb (ORCPT
+        by vger.kernel.org with ESMTP id S1727191AbeLIWEA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Dec 2018 16:55:31 -0500
+        Sun, 9 Dec 2018 17:04:00 -0500
 Received: from pub.yeoldevic.com ([81.174.156.145] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW72u-0002pp-1s; Sun, 09 Dec 2018 21:55:28 +0000
+        id 1gW73I-0002iq-Il; Sun, 09 Dec 2018 21:55:52 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW72k-0003dT-50; Sun, 09 Dec 2018 21:55:18 +0000
+        id 1gW72c-0003Lh-64; Sun, 09 Dec 2018 21:55:10 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -38,14 +38,14 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org,
-        "Mathias Nyman" <mathias.nyman@linux.intel.com>,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
+        "Alexander Aring" <alex.aring@gmail.com>,
+        "Marcel Holtmann" <marcel@holtmann.org>
 Date:   Sun, 09 Dec 2018 21:50:33 +0000
-Message-ID: <lsq.1544392233.783750066@decadent.org.uk>
+Message-ID: <lsq.1544392233.55747507@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 284/328] xhci: Add missing CAS workaround for Intel
- Sunrise Point xHCI
+Subject: [PATCH 3.16 106/328] mac802154: tx: use put_unaligned_le16 for
+ copy crc
 In-Reply-To: <lsq.1544392232.713909046@decadent.org.uk>
 X-SA-Exim-Connect-IP: 81.174.156.145
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -59,31 +59,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mathias Nyman <mathias.nyman@linux.intel.com>
+From: Alexander Aring <alex.aring@gmail.com>
 
-commit ffe84e01bb1b38c7eb9c6b6da127a6c136d251df upstream.
+commit 061ef8f915988839b12460c47ebfcf3700e124f0 upstream.
 
-The workaround for missing CAS bit is also needed for xHC on Intel
-sunrisepoint PCH. For more details see:
+This patch replaces the memcpy with a put_unaligned_le16. The placement
+of crc inside of PSDU can also be unaligned. With memcpy this can fail
+on some architectures.
 
-Intel 100/c230 series PCH specification update Doc #332692-006 Errata #8
-
-Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Alexander Aring <alex.aring@gmail.com>
+Reported-by: Marcel Holtmann <marcel@holtmann.org>
+Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
+[bwh: Backported to 3.16: adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/usb/host/xhci-pci.c | 2 ++
- 1 file changed, 2 insertions(+)
+ net/mac802154/tx.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
---- a/drivers/usb/host/xhci-pci.c
-+++ b/drivers/usb/host/xhci-pci.c
-@@ -178,6 +178,8 @@ static void xhci_pci_quirks(struct devic
+--- a/net/mac802154/tx.c
++++ b/net/mac802154/tx.c
+@@ -24,6 +24,7 @@
+ #include <linux/netdevice.h>
+ #include <linux/if_arp.h>
+ #include <linux/crc-ccitt.h>
++#include <asm/unaligned.h>
+ 
+ #include <net/ieee802154_netdev.h>
+ #include <net/mac802154.h>
+@@ -95,9 +96,9 @@ netdev_tx_t mac802154_tx(struct mac80215
+ 	mac802154_monitors_rx(mac802154_to_priv(&priv->hw), skb);
+ 
+ 	if (!(priv->hw.flags & IEEE802154_HW_OMIT_CKSUM)) {
+-		__le16 crc = cpu_to_le16(crc_ccitt(0, skb->data, skb->len));
++		u16 crc = crc_ccitt(0, skb->data, skb->len);
+ 
+-		memcpy(skb_put(skb, 2), &crc, 2);
++		put_unaligned_le16(crc, skb_put(skb, 2));
  	}
- 	if (pdev->vendor == PCI_VENDOR_ID_INTEL &&
- 	    (pdev->device == PCI_DEVICE_ID_INTEL_CHERRYVIEW_XHCI ||
-+	     pdev->device == PCI_DEVICE_ID_INTEL_SUNRISEPOINT_LP_XHCI ||
-+	     pdev->device == PCI_DEVICE_ID_INTEL_SUNRISEPOINT_H_XHCI ||
- 	     pdev->device == PCI_DEVICE_ID_INTEL_APL_XHCI ||
- 	     pdev->device == PCI_DEVICE_ID_INTEL_DNV_XHCI))
- 		xhci->quirks |= XHCI_MISSING_CAS;
+ 
+ 	if (skb_cow_head(skb, priv->hw.extra_tx_headroom))
 
