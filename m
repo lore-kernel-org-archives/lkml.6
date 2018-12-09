@@ -6,45 +6,45 @@ X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5E41C07E85
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:09:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C8CBC65BAF
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:09:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B5E922081F
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:09:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B5E922081F
+	by mail.kernel.org (Postfix) with ESMTP id EEE3820661
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:09:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EEE3820661
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727341AbeLIWIN (ORCPT
+        id S1727809AbeLIWJH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 17:08:13 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:37300 "EHLO
+        Sun, 9 Dec 2018 17:09:07 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:37384 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728022AbeLIWIH (ORCPT
+        by vger.kernel.org with ESMTP id S1726641AbeLIWJF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Dec 2018 17:08:07 -0500
+        Sun, 9 Dec 2018 17:09:05 -0500
 Received: from pub.yeoldevic.com ([81.174.156.145] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW73C-0002il-AA; Sun, 09 Dec 2018 21:55:46 +0000
+        id 1gW735-0002ij-1a; Sun, 09 Dec 2018 21:55:39 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW72d-0003PM-U4; Sun, 09 Dec 2018 21:55:11 +0000
+        id 1gW72g-0003Vp-Is; Sun, 09 Dec 2018 21:55:14 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, "Michael Ellerman" <mpe@ellerman.id.au>,
-        "Benjamin Herrenschmidt" <benh@kernel.crashing.org>
+CC:     akpm@linux-foundation.org, "Jia-Ju Bai" <baijiaju1990@gmail.com>,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
 Date:   Sun, 09 Dec 2018 21:50:33 +0000
-Message-ID: <lsq.1544392233.133023113@decadent.org.uk>
+Message-ID: <lsq.1544392233.143845085@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 149/328] powerpc/powernv/pci: Work around races in
- PCI bridge enabling
+Subject: [PATCH 3.16 209/328] usb: misc: uss720: Fix two sleep-in-atomic-context
+ bugs
 In-Reply-To: <lsq.1544392232.713909046@decadent.org.uk>
 X-SA-Exim-Connect-IP: 81.174.156.145
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -58,89 +58,69 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+From: Jia-Ju Bai <baijiaju1990@gmail.com>
 
-commit db2173198b9513f7add8009f225afa1f1c79bcc6 upstream.
+commit bc8acc214d3f1cafebcbcd101a695bbac716595d upstream.
 
-The generic code is racy when multiple children of a PCI bridge try to
-enable it simultaneously.
+async_complete() in uss720.c is a completion handler function for the
+USB driver. So it should not sleep, but it is can sleep according to the
+function call paths (from bottom to top) in Linux-4.16.
 
-This leads to drivers trying to access a device through a
-not-yet-enabled bridge, and this EEH errors under various
-circumstances when using parallel driver probing.
+[FUNC] set_1284_register(GFP_KERNEL)
+drivers/usb/misc/uss720.c, 372:
+  set_1284_register in parport_uss720_frob_control
+drivers/parport/ieee1284.c, 560:
+  [FUNC_PTR]parport_uss720_frob_control in parport_ieee1284_ack_data_avail
+drivers/parport/ieee1284.c, 577:
+  parport_ieee1284_ack_data_avail in parport_ieee1284_interrupt
+./include/linux/parport.h, 474:
+  parport_ieee1284_interrupt in parport_generic_irq
+drivers/usb/misc/uss720.c, 116:
+  parport_generic_irq in async_complete
 
-There is work going on to fix that properly in the PCI core but it
-will take some time.
+[FUNC] get_1284_register(GFP_KERNEL)
+drivers/usb/misc/uss720.c, 382:
+  get_1284_register in parport_uss720_read_status
+drivers/parport/ieee1284.c, 555:
+  [FUNC_PTR]parport_uss720_read_status in parport_ieee1284_ack_data_avail
+drivers/parport/ieee1284.c, 577:
+  parport_ieee1284_ack_data_avail in parport_ieee1284_interrupt
+./include/linux/parport.h, 474:
+  parport_ieee1284_interrupt in parport_generic_irq
+drivers/usb/misc/uss720.c, 116:
+  parport_generic_irq in async_complete
 
-x86 gets away with it because (outside of hotplug), the BIOS enables
-all the bridges at boot time.
+Note that [FUNC_PTR] means a function pointer call is used.
 
-This patch does the same thing on powernv by enabling all bridges that
-have child devices at boot time, thus avoiding subsequent races. It's
-suitable for backporting to stable and distros, while the proper PCI
-fix will probably be significantly more invasive.
+To fix these bugs, GFP_KERNEL is replaced with GFP_ATOMIC.
 
-Signed-off-by: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-[bwh: Backported to 3.16:
- - Use dev_err() instead of pci_err()
- - Adjust context]
+These bugs are found by my static analysis tool DSAC.
+
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- arch/powerpc/platforms/powernv/pci-ioda.c | 37 +++++++++++++++++++++++
- 1 file changed, 37 insertions(+)
+ drivers/usb/misc/uss720.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/arch/powerpc/platforms/powernv/pci-ioda.c
-+++ b/arch/powerpc/platforms/powernv/pci-ioda.c
-@@ -1132,6 +1132,41 @@ static void pnv_pci_ioda_create_dbgfs(vo
- #endif /* CONFIG_DEBUG_FS */
- }
- 
-+static void pnv_pci_enable_bridge(struct pci_bus *bus)
-+{
-+	struct pci_dev *dev = bus->self;
-+	struct pci_bus *child;
-+
-+	/* Empty bus ? bail */
-+	if (list_empty(&bus->devices))
-+		return;
-+
-+	/*
-+	 * If there's a bridge associated with that bus enable it. This works
-+	 * around races in the generic code if the enabling is done during
-+	 * parallel probing. This can be removed once those races have been
-+	 * fixed.
-+	 */
-+	if (dev) {
-+		int rc = pci_enable_device(dev);
-+		if (rc)
-+			dev_err(&dev->dev, "Error enabling bridge (%d)\n", rc);
-+		pci_set_master(dev);
-+	}
-+
-+	/* Perform the same to child busses */
-+	list_for_each_entry(child, &bus->children, node)
-+		pnv_pci_enable_bridge(child);
-+}
-+
-+static void pnv_pci_enable_bridges(void)
-+{
-+	struct pci_controller *hose;
-+
-+	list_for_each_entry(hose, &hose_list, list_node)
-+		pnv_pci_enable_bridge(hose->bus);
-+}
-+
- static void pnv_pci_ioda_fixup(void)
+--- a/drivers/usb/misc/uss720.c
++++ b/drivers/usb/misc/uss720.c
+@@ -392,7 +392,7 @@ static unsigned char parport_uss720_frob
+ 	mask &= 0x0f;
+ 	val &= 0x0f;
+ 	d = (priv->reg[1] & (~mask)) ^ val;
+-	if (set_1284_register(pp, 2, d, GFP_KERNEL))
++	if (set_1284_register(pp, 2, d, GFP_ATOMIC))
+ 		return 0;
+ 	priv->reg[1] = d;
+ 	return d & 0xf;
+@@ -402,7 +402,7 @@ static unsigned char parport_uss720_read
  {
- 	pnv_pci_ioda_setup_PEs();
-@@ -1140,6 +1175,8 @@ static void pnv_pci_ioda_fixup(void)
+ 	unsigned char ret;
  
- 	pnv_pci_ioda_create_dbgfs();
- 
-+	pnv_pci_enable_bridges();
-+
- #ifdef CONFIG_EEH
- 	eeh_probe_mode_set(EEH_PROBE_MODE_DEV);
- 	eeh_addr_cache_build();
+-	if (get_1284_register(pp, 1, &ret, GFP_KERNEL))
++	if (get_1284_register(pp, 1, &ret, GFP_ATOMIC))
+ 		return 0;
+ 	return ret & 0xf8;
+ }
 
