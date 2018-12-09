@@ -6,43 +6,50 @@ X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74E84C07E85
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:07:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E5E9C65BAF
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:07:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 37E302081F
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:07:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37E302081F
+	by mail.kernel.org (Postfix) with ESMTP id 1F03820661
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:07:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F03820661
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727947AbeLIWHy (ORCPT
+        id S1727959AbeLIWH5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 17:07:54 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:37254 "EHLO
+        Sun, 9 Dec 2018 17:07:57 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:37272 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727925AbeLIWHr (ORCPT
+        by vger.kernel.org with ESMTP id S1727945AbeLIWHy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Dec 2018 17:07:47 -0500
+        Sun, 9 Dec 2018 17:07:54 -0500
 Received: from pub.yeoldevic.com ([81.174.156.145] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW73C-0002ia-9k; Sun, 09 Dec 2018 21:55:46 +0000
+        id 1gW73O-0002io-HI; Sun, 09 Dec 2018 21:55:58 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW72d-0003OC-Dx; Sun, 09 Dec 2018 21:55:11 +0000
+        id 1gW72Z-0003G2-Q2; Sun, 09 Dec 2018 21:55:07 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, "Max Filippov" <jcmvbkbc@gmail.com>
+CC:     akpm@linux-foundation.org, "Zhangjin Wu" <wuzhangjin@gmail.com>,
+        "James Hogan" <jhogan@kernel.org>, linux-mips@linux-mips.org,
+        "Huacai Chen" <chenhuacai@gmail.com>,
+        "Ralf Baechle" <ralf@linux-mips.org>,
+        "Fuxin Zhang" <zhangfx@lemote.com>,
+        "Paul Burton" <paul.burton@mips.com>,
+        "Huacai Chen" <chenhc@lemote.com>
 Date:   Sun, 09 Dec 2018 21:50:33 +0000
-Message-ID: <lsq.1544392233.451716203@decadent.org.uk>
+Message-ID: <lsq.1544392233.576643502@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 136/328] xtensa: limit offsets in __loop_cache_{all,page}
+Subject: [PATCH 3.16 049/328] MIPS: Change definition of cpu_relax() for
+ Loongson-3
 In-Reply-To: <lsq.1544392232.713909046@decadent.org.uk>
 X-SA-Exim-Connect-IP: 81.174.156.145
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -56,183 +63,82 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Max Filippov <jcmvbkbc@gmail.com>
+From: Huacai Chen <chenhc@lemote.com>
 
-commit be75de25251f7cf3e399ca1f584716a95510d24a upstream.
+commit a30718868915fbb991a9ae9e45594b059f28e9ae upstream.
 
-When building kernel for xtensa cores with big cache lines (e.g. 128
-bytes or more) __loop_cache_all and __loop_cache_page may generate
-assembly instructions with immediate fields that are too big. This
-results in the following build errors:
+Linux expects that if a CPU modifies a memory location, then that
+modification will eventually become visible to other CPUs in the system.
 
-  arch/xtensa/mm/misc.S: Assembler messages:
-  arch/xtensa/mm/misc.S:464: Error: operand 2 of 'diwbi' has invalid value '256'
-  arch/xtensa/mm/misc.S:464: Error: operand 2 of 'diwbi' has invalid value '384'
-  arch/xtensa/kernel/head.S: Assembler messages:
-  arch/xtensa/kernel/head.S:172: Error: operand 2 of 'diu' has invalid value '256'
-  arch/xtensa/kernel/head.S:172: Error: operand 2 of 'diu' has invalid value '384'
-  arch/xtensa/kernel/head.S:176: Error: operand 2 of 'iiu' has invalid value '256'
-  arch/xtensa/kernel/head.S:176: Error: operand 2 of 'iiu' has invalid value '384'
-  arch/xtensa/kernel/head.S:255: Error: operand 2 of 'diwb' has invalid value '256'
-  arch/xtensa/kernel/head.S:255: Error: operand 2 of 'diwb' has invalid value '384'
+Loongson 3 CPUs include a Store Fill Buffer (SFB) which sits between a
+core & its L1 data cache, queueing memory accesses & allowing for faster
+forwarding of data from pending stores to younger loads from the core.
+Unfortunately the SFB prioritizes loads such that a continuous stream of
+loads may cause a pending write to be buffered indefinitely. This is
+problematic if we end up with 2 CPUs which each perform a store that the
+other polls for - one or both CPUs may end up with their stores buffered
+in the SFB, never reaching cache due to the continuous reads from the
+poll loop. Such a deadlock condition has been observed whilst running
+qspinlock code.
 
-Add parameter max_immed to these macros and use it to limit values of
-immediate operands. Extract common code of these macros into the new
-macro __loop_cache_unroll.
+This patch changes the definition of cpu_relax() to smp_mb() for
+Loongson-3, forcing a flush of the SFB on SMP systems which will cause
+any pending writes to make it as far as the L1 caches where they will
+become visible to other CPUs. If the kernel is not compiled for SMP
+support, this will expand to a barrier() as before.
 
-Signed-off-by: Max Filippov <jcmvbkbc@gmail.com>
-[bwh: Backported to 3.16: adjust context]
+This workaround matches that currently implemented for ARM when
+CONFIG_ARM_ERRATA_754327=y, which was introduced by commit 534be1d5a2da
+("ARM: 6194/1: change definition of cpu_relax() for ARM11MPCore").
+
+Although the workaround is only required when the Loongson 3 SFB
+functionality is enabled, and we only began explicitly enabling that
+functionality in v4.7 with commit 1e820da3c9af ("MIPS: Loongson-3:
+Introduce CONFIG_LOONGSON3_ENHANCEMENT"), existing or future firmware
+may enable the SFB which means we may need the workaround backported to
+earlier kernels too.
+
+[paul.burton@mips.com:
+  - Reword commit message & comment.
+  - Limit stable backport to v3.15+ where we support Loongson 3 CPUs.]
+
+Signed-off-by: Huacai Chen <chenhc@lemote.com>
+Signed-off-by: Paul Burton <paul.burton@mips.com>
+References: 534be1d5a2da ("ARM: 6194/1: change definition of cpu_relax() for ARM11MPCore")
+References: 1e820da3c9af ("MIPS: Loongson-3: Introduce CONFIG_LOONGSON3_ENHANCEMENT")
+Patchwork: https://patchwork.linux-mips.org/patch/19830/
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: James Hogan <jhogan@kernel.org>
+Cc: linux-mips@linux-mips.org
+Cc: Fuxin Zhang <zhangfx@lemote.com>
+Cc: Zhangjin Wu <wuzhangjin@gmail.com>
+Cc: Huacai Chen <chenhuacai@gmail.com>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- arch/xtensa/include/asm/cacheasm.h | 65 ++++++++++++++++++------------
- 1 file changed, 40 insertions(+), 25 deletions(-)
+ arch/mips/include/asm/processor.h | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
---- a/arch/xtensa/include/asm/cacheasm.h
-+++ b/arch/xtensa/include/asm/cacheasm.h
-@@ -31,16 +31,32 @@
-  *
-  */
+--- a/arch/mips/include/asm/processor.h
++++ b/arch/mips/include/asm/processor.h
+@@ -366,7 +366,20 @@ unsigned long get_wchan(struct task_stru
+ #define KSTK_ESP(tsk) (task_pt_regs(tsk)->regs[29])
+ #define KSTK_STATUS(tsk) (task_pt_regs(tsk)->cp0_status)
  
--	.macro	__loop_cache_all ar at insn size line_width
++#ifdef CONFIG_CPU_LOONGSON3
++/*
++ * Loongson-3's SFB (Store-Fill-Buffer) may buffer writes indefinitely when a
++ * tight read loop is executed, because reads take priority over writes & the
++ * hardware (incorrectly) doesn't ensure that writes will eventually occur.
++ *
++ * Since spin loops of any kind should have a cpu_relax() in them, force an SFB
++ * flush from cpu_relax() such that any pending writes will become visible as
++ * expected.
++ */
++#define cpu_relax()	smp_mb()
++#else
+ #define cpu_relax()	barrier()
++#endif
  
--	movi	\ar, 0
-+	.macro	__loop_cache_unroll ar at insn size line_width max_immed
-+
-+	.if	(1 << (\line_width)) > (\max_immed)
-+	.set	_reps, 1
-+	.elseif	(2 << (\line_width)) > (\max_immed)
-+	.set	_reps, 2
-+	.else
-+	.set	_reps, 4
-+	.endif
-+
-+	__loopi	\ar, \at, \size, (_reps << (\line_width))
-+	.set	_index, 0
-+	.rep	_reps
-+	\insn	\ar, _index << (\line_width)
-+	.set	_index, _index + 1
-+	.endr
-+	__endla	\ar, \at, _reps << (\line_width)
-+
-+	.endm
-+
- 
--	__loopi	\ar, \at, \size, (4 << (\line_width))
--	\insn	\ar, 0 << (\line_width)
--	\insn	\ar, 1 << (\line_width)
--	\insn	\ar, 2 << (\line_width)
--	\insn	\ar, 3 << (\line_width)
--	__endla	\ar, \at, 4 << (\line_width)
-+	.macro	__loop_cache_all ar at insn size line_width max_immed
-+
-+	movi	\ar, 0
-+	__loop_cache_unroll \ar, \at, \insn, \size, \line_width, \max_immed
- 
- 	.endm
- 
-@@ -57,14 +73,9 @@
- 	.endm
- 
- 
--	.macro	__loop_cache_page ar at insn line_width
-+	.macro	__loop_cache_page ar at insn line_width max_immed
- 
--	__loopi	\ar, \at, PAGE_SIZE, 4 << (\line_width)
--	\insn	\ar, 0 << (\line_width)
--	\insn	\ar, 1 << (\line_width)
--	\insn	\ar, 2 << (\line_width)
--	\insn	\ar, 3 << (\line_width)
--	__endla	\ar, \at, 4 << (\line_width)
-+	__loop_cache_unroll \ar, \at, \insn, PAGE_SIZE, \line_width, \max_immed
- 
- 	.endm
- 
-@@ -73,7 +84,8 @@
- 
- 	.macro	___unlock_dcache_all ar at
- 
--	__loop_cache_all \ar \at diu XCHAL_DCACHE_SIZE XCHAL_DCACHE_LINEWIDTH
-+	__loop_cache_all \ar \at diu XCHAL_DCACHE_SIZE \
-+		XCHAL_DCACHE_LINEWIDTH 240
- 
- 	.endm
- 
-@@ -83,21 +95,24 @@
- 
- 	.macro	___unlock_icache_all ar at
- 
--	__loop_cache_all \ar \at iiu XCHAL_ICACHE_SIZE XCHAL_ICACHE_LINEWIDTH
-+	__loop_cache_all \ar \at iiu XCHAL_ICACHE_SIZE \
-+		XCHAL_ICACHE_LINEWIDTH 240
- 
- 	.endm
- #endif
- 
- 	.macro	___flush_invalidate_dcache_all ar at
- 
--	__loop_cache_all \ar \at diwbi XCHAL_DCACHE_SIZE XCHAL_DCACHE_LINEWIDTH
-+	__loop_cache_all \ar \at diwbi XCHAL_DCACHE_SIZE \
-+		XCHAL_DCACHE_LINEWIDTH 240
- 
- 	.endm
- 
- 
- 	.macro	___flush_dcache_all ar at
- 
--	__loop_cache_all \ar \at diwb XCHAL_DCACHE_SIZE XCHAL_DCACHE_LINEWIDTH
-+	__loop_cache_all \ar \at diwb XCHAL_DCACHE_SIZE \
-+		XCHAL_DCACHE_LINEWIDTH 240
- 
- 	.endm
- 
-@@ -105,7 +120,7 @@
- 	.macro	___invalidate_dcache_all ar at
- 
- 	__loop_cache_all \ar \at dii __stringify(DCACHE_WAY_SIZE) \
--			 XCHAL_DCACHE_LINEWIDTH
-+			 XCHAL_DCACHE_LINEWIDTH 1020
- 
- 	.endm
- 
-@@ -113,7 +128,7 @@
- 	.macro	___invalidate_icache_all ar at
- 
- 	__loop_cache_all \ar \at iii __stringify(ICACHE_WAY_SIZE) \
--			 XCHAL_ICACHE_LINEWIDTH
-+			 XCHAL_ICACHE_LINEWIDTH 1020
- 
- 	.endm
- 
-@@ -150,27 +165,27 @@
- 
- 	.macro	___flush_invalidate_dcache_page ar as
- 
--	__loop_cache_page \ar \as dhwbi XCHAL_DCACHE_LINEWIDTH
-+	__loop_cache_page \ar \as dhwbi XCHAL_DCACHE_LINEWIDTH 1020
- 
- 	.endm
- 
- 
- 	.macro ___flush_dcache_page ar as
- 
--	__loop_cache_page \ar \as dhwb XCHAL_DCACHE_LINEWIDTH
-+	__loop_cache_page \ar \as dhwb XCHAL_DCACHE_LINEWIDTH 1020
- 
- 	.endm
- 
- 
- 	.macro	___invalidate_dcache_page ar as
- 
--	__loop_cache_page \ar \as dhi XCHAL_DCACHE_LINEWIDTH
-+	__loop_cache_page \ar \as dhi XCHAL_DCACHE_LINEWIDTH 1020
- 
- 	.endm
- 
- 
- 	.macro	___invalidate_icache_page ar as
- 
--	__loop_cache_page \ar \as ihi XCHAL_ICACHE_LINEWIDTH
-+	__loop_cache_page \ar \as ihi XCHAL_ICACHE_LINEWIDTH 1020
- 
- 	.endm
+ /*
+  * Return_address is a replacement for __builtin_return_address(count)
 
