@@ -2,166 +2,99 @@ Return-Path: <SRS0=cWqk=OS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06CDDC07E85
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 21:46:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1CC1C07E85
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 21:49:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BF34920837
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 21:46:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF34920837
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lucaceresoli.net
+	by mail.kernel.org (Postfix) with ESMTP id 78DEB20874
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 21:49:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="JnwfXhZ9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 78DEB20874
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lunn.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726337AbeLIVqY (ORCPT
+        id S1726320AbeLIVtM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 16:46:24 -0500
-Received: from srv-hp10-72.netsons.net ([94.141.22.72]:51107 "EHLO
-        srv-hp10-72.netsons.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726194AbeLIVqX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Dec 2018 16:46:23 -0500
-Received: from [78.134.66.95] (port=60912 helo=[192.168.77.57])
-        by srv-hp10.netsons.net with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <luca@lucaceresoli.net>)
-        id 1gW6u1-005XM0-4s; Sun, 09 Dec 2018 22:46:17 +0100
-From:   Luca Ceresoli <luca@lucaceresoli.net>
-Subject: Re: [PATCH v3] i2c: mux: remove duplicated i2c_algorithm
-To:     Peter Rosin <peda@axentia.se>,
-        Luca Ceresoli <lucaceresoli77@gmail.com>,
-        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Wolfram Sang <wsa@the-dreams.de>
-References: <20181003151928.17713-1-lucaceresoli77@gmail.com>
- <99cfa6a2-9a60-6bdd-2542-9dd78af75758@axentia.se>
- <70c48ade-b2ac-dde8-4b3e-aa4b2f19940a@gmail.com>
- <205e1d73-2318-ecd4-c531-3ff18a0e0005@lucaceresoli.net>
- <55ea59c5-ac9b-ab78-e3a1-edaed099ca15@axentia.se>
-Message-ID: <b35ced90-a905-7bd9-e9d4-4b5e6a0207c4@lucaceresoli.net>
-Date:   Sun, 9 Dec 2018 22:46:19 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Sun, 9 Dec 2018 16:49:12 -0500
+Received: from vps0.lunn.ch ([185.16.172.187]:40321 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726194AbeLIVtM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Dec 2018 16:49:12 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch; s=20171124;
+        h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date; bh=B6Uqkv7tkNjaPq/K0FL2QZYDmLv/KCK0qM71dEwPcIA=;
+        b=JnwfXhZ9RiG6qhPZHFpb1pTRJP9FYedOe5Xwu3+srabZSBWbogHIuKLtrwxk0S+1GRoe4htziarCKLtdj6JAj0ElYEWY/hhnsYcG2qND9+4F0VXq1EvgiL6KNLEIAXLIa2gGh4bPxMGMz+ExHF/9jc21eDIWGy+wQo7KCNEI/00=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.84_2)
+        (envelope-from <andrew@lunn.ch>)
+        id 1gW6wl-0005tU-6v; Sun, 09 Dec 2018 22:49:07 +0100
+Date:   Sun, 9 Dec 2018 22:49:07 +0100
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Heiner Kallweit <hkallweit1@gmail.com>
+Cc:     David Miller <davem@davemloft.net>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Networking <netdev@vger.kernel.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Florian Fainelli <f.fainelli@gmail.com>
+Subject: Re: linux-next: Signed-off-by missing for commits in the net-next
+ tree
+Message-ID: <20181209214907.GC21186@lunn.ch>
+References: <20181210080045.0e67ad79@canb.auug.org.au>
+ <20181209211139.GB21186@lunn.ch>
+ <011f5be3-4bc1-2e64-0ddf-b43b8dbc4dcd@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <55ea59c5-ac9b-ab78-e3a1-edaed099ca15@axentia.se>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - srv-hp10.netsons.net
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - lucaceresoli.net
-X-Get-Message-Sender-Via: srv-hp10.netsons.net: authenticated_id: luca+lucaceresoli.net/only user confirmed/virtual account not confirmed
-X-Authenticated-Sender: srv-hp10.netsons.net: luca@lucaceresoli.net
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <011f5be3-4bc1-2e64-0ddf-b43b8dbc4dcd@gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Peter,
-
-after some pondering, find below my reply.
-
-On 27/11/18 19:51, Peter Rosin wrote:
-> On 2018-11-18 12:13, Luca Ceresoli wrote:
->> Hi Peter,
->>
->> On 10/10/18 17:48, Luca Ceresoli wrote:
->>> Hi Peter,
->>>
->>> On 08/10/2018 23:43, Peter Rosin wrote:
->>>> On 2018-10-03 17:19, Luca Ceresoli wrote:
->>>>> From: Luca Ceresoli <luca@lucaceresoli.net>
->>>>>
->>>>> i2c-mux instantiates one i2c_algorithm for each downstream adapter.
->>>>> However these algorithms are all identical, depending only on the
->>>>> parent adapter.
->>>>>
->>>>> Avoid duplication by hoisting the i2c_algorithm from the adapters to
->>>>> the i2c_mux_core object, and reuse it in all the adapters.
->>>>
->>>> Ouch, while I like the concept of having one i2c_algorithm per mux,
->>>> this patch is not working. Various i2c-mux drivers set the
->>>> muxc->mux_locked variable *after* the i2c_mux_alloc call, and this
->>>> patch breaks such use.
->>
->> I finally had a look into this issue. Three drivers are setting
->> mux_locked after i2c_mux_alloc: i2c-mux-gpmux, i2c-mux-gpio and
->> i2c-mux-pinctrl.
->>
->> i2c-mux-gpmux is trivial to fix.
->>
->> The other two are not trivial because:
->>
->>  1. they compute mux_locked from other variables
->>  2. those variables are stored in the drivers "private" data
->>  3. their private data is stored inside struct i2c_mux_core
->>     (muxc->priv) which exists only after i2c_mux_alloc()
->>
->> In those cases computing mux_locked before i2c_mux_alloc() involves
->> quite invasive changes. It took 3 non-trivial commits just for
->> i2c-mux-gpio, and I still have to look into i2c-mux-pinctrl.
->>
->> So the question is: do we really want to do this?
->>
->> Using the private storage provided by i2c_mux_alloc() is a handy
->> feature, at least for simpler drivers which know in advance the flags
->> they need to set. OTOH I don't like individual drivers to manipulate
->> mux_core flags that look very much like internal data. It makes any
->> change to the i2c mux core harder, since every changed line could have
->> side effects in some drivers, which is what's happening here.
->>
->> What's your opinion about this issue?
+On Sun, Dec 09, 2018 at 10:33:10PM +0100, Heiner Kallweit wrote:
+> On 09.12.2018 22:11, Andrew Lunn wrote:
+> > On Mon, Dec 10, 2018 at 08:00:45AM +1100, Stephen Rothwell wrote:
+> >> Hi all,
+> >>
+> >> Commits
+> >>
+> >>   dc9d38cec71c ("net: phy: mdio-gpio: Add phy_ignore_ta_mask to platform data")
+> >>   04fa26bab06d ("net: phy: mdio-gpio: Add platform_data support for phy_mask")
+> >>
+> >> are missing a Signed-off-by from their author.
+> > 
+> > Hi David.
+> > 
+> > Any idea what happened here? The version in my git repo has SOB.
+> > 
+> > https://patchwork.ozlabs.org/patch/1009811/ also has my SOB.
+> > 
+> Instead of
+> v2
+> --
+> int -> u32 in platform data structure
 > 
-> I obviously don't like that drivers are poking around in struct
-> i2c_mux_core.
+> Signed-off-by: Andrew Lunn <andrew@lunn.ch>
 > 
-> But, your description sounds precisely how I remembered it. The
-> underlying problem is of course that i2c-mux-gpio and
-> i2c-mux-pinctrl do really nasty digs into internal parts of the
-> gpio and the pinctrl subsystems as they *try* to figure out if
-> they should be mux-locked or parent-locked. The result of that
-> digging is not completely reliable, but it solves the issue
-> without help from device-tree properties in at least one case
-> that I know about. However, for that case I also know that there
-> is no risk of regression since I control the distribution of
-> both kernel and .dtb for any upgrade. Anyway, it was done like
-> it was since I at the time did not dare to question the feedback
-> from the device-tree camp, and actually thought it was a good
-> thing, and thus did not push for a device-tree property when
-> Rob complained about the property not describing HW and instead
-> was just working around kernel issues [1]. The mux-locked vs.
-> parent-locked property has been added since. In retrospect, the
-> whole attempt to auto-detect mux-locked or parent-locked was a
-> mistake, and everything would have been so much easier if the
-> device-tree could always just state what the requirement is. At
-> least that's my current thoughts on the matter. Maybe we should
-> attempt to remove the ugly auto-detect code and see if anyone
-> complains?
+> shouldn't it be
+> 
+> Signed-off-by: Andrew Lunn <andrew@lunn.ch>
+> ---
+> v2
+> - int -> u32 in platform data structure
 
-I'd love to remove that code, but this would change existing behavior,
-and the change would go unnoticed until something breaks. Scary.
+Hi Heiner
 
-What about requiring that either "mux-locked" or "parent-locked" is
-specified in DT? If none is specified, the driver would fail loudly at
-probe time and users would stop and fix their DT. Then of course they
-need to _upgrade_ their DT in existing products.
+David said he wanted to see the version history. So i deliberately put
+it above the ---.
 
-> But of course, another aspect is that not everything is DT, so
-> perhaps there is no clean solution?
+I'm just wondering if -- was enough to trigger something in David's
+scripts? Or patchwork. The -- has disappeared in the commit which made
+it into net-next.
 
-Well, platform code would have to be changed like DT, adding 2 flags:
-mux-locked and parent-locked, and exactly one must be set.
-
-This seems to me the safest path. Do you think it is a good idea,
-especially with respect to the device tree camp?
-
-Thanks,
--- 
-Luca
+   Andrew
