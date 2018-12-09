@@ -6,45 +6,46 @@ X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97055C07E85
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 21:55:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6478C65BAF
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 21:55:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6312520661
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 21:55:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6312520661
+	by mail.kernel.org (Postfix) with ESMTP id B220C20837
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 21:55:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B220C20837
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726677AbeLIVzd (ORCPT
+        id S1726779AbeLIVzj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 16:55:33 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:34822 "EHLO
+        Sun, 9 Dec 2018 16:55:39 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35340 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726420AbeLIVzO (ORCPT
+        by vger.kernel.org with ESMTP id S1726536AbeLIVzX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Dec 2018 16:55:14 -0500
+        Sun, 9 Dec 2018 16:55:23 -0500
 Received: from pub.yeoldevic.com ([81.174.156.145] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW72e-0002pr-5K; Sun, 09 Dec 2018 21:55:12 +0000
+        id 1gW72n-0002ib-9y; Sun, 09 Dec 2018 21:55:21 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW72d-0003Om-MZ; Sun, 09 Dec 2018 21:55:11 +0000
+        id 1gW72k-0003dy-Ck; Sun, 09 Dec 2018 21:55:18 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, "Guenter Roeck" <linux@roeck-us.net>,
-        "Lee Jones" <lee.jones@linaro.org>
+CC:     akpm@linux-foundation.org, "syzbot" <syzkaller@googlegroups.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        "Eric Dumazet" <edumazet@google.com>
 Date:   Sun, 09 Dec 2018 21:50:33 +0000
-Message-ID: <lsq.1544392233.356929859@decadent.org.uk>
+Message-ID: <lsq.1544392233.178902176@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 142/328] mfd: sm501: Set coherent_dma_mask when
- creating subdevices
+Subject: [PATCH 3.16 290/328] rtnl: limit IFLA_NUM_TX_QUEUES and
+ IFLA_NUM_RX_QUEUES to 4096
 In-Reply-To: <lsq.1544392232.713909046@decadent.org.uk>
 X-SA-Exim-Connect-IP: 81.174.156.145
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -58,57 +59,54 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Guenter Roeck <linux@roeck-us.net>
+From: Eric Dumazet <edumazet@google.com>
 
-commit 2f606da78230f09cf1a71fde6ee91d0c710fa2b2 upstream.
+commit 0e1d6eca5113858ed2caea61a5adc03c595f6096 upstream.
 
-Instantiating the sm501 OHCI subdevice results in a kernel warning.
+We have an impressive number of syzkaller bugs that are linked
+to the fact that syzbot was able to create a networking device
+with millions of TX (or RX) queues.
 
-sm501-usb sm501-usb: SM501 OHCI
-sm501-usb sm501-usb: new USB bus registered, assigned bus number 1
-WARNING: CPU: 0 PID: 1 at ./include/linux/dma-mapping.h:516
-ohci_init+0x194/0x2d8
-Modules linked in:
+Let's limit the number of RX/TX queues to 4096, this really should
+cover all known cases.
 
-CPU: 0 PID: 1 Comm: swapper Tainted: G        W
-4.18.0-rc7-00178-g0b5b1f9a78b5 #1
-PC is at ohci_init+0x194/0x2d8
-PR is at ohci_init+0x168/0x2d8
-PC  : 8c27844c SP  : 8f81dd94 SR  : 40008001
-TEA : 29613060
-R0  : 00000000 R1  : 00000000 R2  : 00000000 R3  : 00000202
-R4  : 8fa98b88 R5  : 8c277e68 R6  : 00000000 R7  : 00000000
-R8  : 8f965814 R9  : 8c388100 R10 : 8fa98800 R11 : 8fa98928
-R12 : 8c48302c R13 : 8fa98920 R14 : 8c48302c
-MACH: 00000096 MACL: 0000017c GBR : 00000000 PR  : 8c278420
+A separate patch will add various cond_resched() in the loops
+handling sysfs entries at device creation and dismantle.
 
-Call trace:
- [<(ptrval)>] usb_add_hcd+0x1e8/0x6ec
- [<(ptrval)>] _dev_info+0x0/0x54
- [<(ptrval)>] arch_local_save_flags+0x0/0x8
- [<(ptrval)>] arch_local_irq_restore+0x0/0x24
- [<(ptrval)>] ohci_hcd_sm501_drv_probe+0x114/0x2d8
-...
+Tested:
 
-Initialize coherent_dma_mask when creating SM501 subdevices to fix
-the problem.
+lpaa6:~# ip link add gre-4097 numtxqueues 4097 numrxqueues 4097 type ip6gretap
+RTNETLINK answers: Invalid argument
 
-Fixes: b6d6454fdb66f ("mfd: SM501 core driver")
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Lee Jones <lee.jones@linaro.org>
+lpaa6:~# time ip link add gre-4096 numtxqueues 4096 numrxqueues 4096 type ip6gretap
+
+real	0m0.180s
+user	0m0.000s
+sys	0m0.107s
+
+Fixes: 76ff5cc91935 ("rtnl: allow to specify number of rx and tx queues on device creation")
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+[bwh: Backported to 3.16: adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/mfd/sm501.c | 1 +
- 1 file changed, 1 insertion(+)
+ net/core/rtnetlink.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/drivers/mfd/sm501.c
-+++ b/drivers/mfd/sm501.c
-@@ -714,6 +714,7 @@ sm501_create_subdev(struct sm501_devdata
- 	smdev->pdev.name = name;
- 	smdev->pdev.id = sm->pdev_id;
- 	smdev->pdev.dev.parent = sm->dev;
-+	smdev->pdev.dev.coherent_dma_mask = 0xffffffff;
+--- a/net/core/rtnetlink.c
++++ b/net/core/rtnetlink.c
+@@ -1831,6 +1831,12 @@ struct net_device *rtnl_create_link(stru
+ 	else if (ops->get_num_rx_queues)
+ 		num_rx_queues = ops->get_num_rx_queues();
  
- 	if (res_count) {
- 		smdev->pdev.resource = (struct resource *)(smdev+1);
++	if (num_tx_queues < 1 || num_tx_queues > 4096)
++		return ERR_PTR(-EINVAL);
++
++	if (num_rx_queues < 1 || num_rx_queues > 4096)
++		return ERR_PTR(-EINVAL);
++
+ 	err = -ENOMEM;
+ 	dev = alloc_netdev_mqs(ops->priv_size, ifname, ops->setup,
+ 			       num_tx_queues, num_rx_queues);
 
