@@ -2,120 +2,344 @@ Return-Path: <SRS0=cWqk=OS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15C04C65BAF
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 13:54:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C27D4C65BAF
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 13:55:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CD1872081C
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 13:54:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MRouTrVj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD1872081C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 84E772081C
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 13:55:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 84E772081C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726339AbeLINyv (ORCPT
+        id S1726347AbeLINz5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 08:54:51 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:46293 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726276AbeLINyb (ORCPT
+        Sun, 9 Dec 2018 08:55:57 -0500
+Received: from vmicros1.altlinux.org ([194.107.17.57]:49340 "EHLO
+        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726212AbeLINz4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Dec 2018 08:54:31 -0500
-Received: by mail-wr1-f68.google.com with SMTP id l9so7880755wrt.13;
-        Sun, 09 Dec 2018 05:54:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=lduvTdvt6JcEpnSpmltVeafjnok+c/QPakMMBL6iHiM=;
-        b=MRouTrVj72aJHi/oL5sJu3n78v8HyQ4+bSXQ8+nlkavs3lkOMnCAERi4yMuiPEUjq+
-         tFg5gYZ71B+VdAjQl9a47qwL4ecjryE+iITLoGIKJQ11WaIBm4rrucVl62RQvr8xK3bZ
-         wL/152r8VN4PwvaSQMwqef8UKdp6+xKLfsPzPYJLZnOnonCYvl0/FrVeSUV4Aq9775SS
-         pklLzJ4xQFuotaXAmq5XrXrShZeAjZPiH5ygtGeL8NtpJCeDTAB5fCTd5m/oSLlvBjWz
-         abDZKWtJj312UcykC1fLQ1CKwcklpJw2B4pPUGCVQUDOUISdrCdAjRsriUwru9aGsCGE
-         Io5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=lduvTdvt6JcEpnSpmltVeafjnok+c/QPakMMBL6iHiM=;
-        b=aW0iU6kLuSus5mQTHvlhFVI+JT5BrFwF7wb5zktQswSt3WrSkSsIK07qNY9fXGJ9jv
-         py33djFCy/pkW4rdXtuwESs4Bh3W1R1Uu0p4qlNs6RjHG0pxJ9lSmBNOoO9jZ6NWt9L4
-         i9MqeEHYxitjYBCm7k959VBPJbE1GHyswgxlrizy1IJHVNVtxhiitQAojz1QMuRw2z4i
-         7Ba+DytoGyjCitpMQFNzGmIzBdoxPP1IHNbzWycCXJ399YRBb88AG5OzB4UzV9TIxMlE
-         jGEe1NrZopl7+l7/fZJvJJfBHO4E5g/Qx0J0bM5hPbPnV5bRIIPcxJ99ZkPseZgC261T
-         AaBA==
-X-Gm-Message-State: AA+aEWabnRGelLBL4mDF/AHA1OB8E13s9QFlHiQu59fGU+jjl6i7bzig
-        mPEYB0Idu6PK+SkJvESy4dQ=
-X-Google-Smtp-Source: AFSGD/U1f13BFk1GmH1h5GH9qXtgedLUaXOPbXGP/73LQNrgQT/8Uc8bRSqrXCkjn/Yo7Nxfevm9hQ==
-X-Received: by 2002:a5d:524b:: with SMTP id p11mr6700257wrv.147.1544363669513;
-        Sun, 09 Dec 2018 05:54:29 -0800 (PST)
-Received: from gapa-Lenovo-IdeaPad-Y580.home (dgv239.neoplus.adsl.tpnet.pl. [83.23.177.239])
-        by smtp.gmail.com with ESMTPSA id k128sm12271795wmd.37.2018.12.09.05.54.28
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Sun, 09 Dec 2018 05:54:29 -0800 (PST)
-From:   cezary.gapinski@gmail.com
-To:     Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org
-Cc:     Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Amelie Delaunay <amelie.delaunay@st.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Cezary Gapinski <cezary.gapinski@gmail.com>
-Subject: [PATCH 5/5] spi: stm32: add description about STM32F4 bindings
-Date:   Sun,  9 Dec 2018 14:53:56 +0100
-Message-Id: <1544363636-12161-6-git-send-email-cezary.gapinski@gmail.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1544363636-12161-1-git-send-email-cezary.gapinski@gmail.com>
-References: <1544363636-12161-1-git-send-email-cezary.gapinski@gmail.com>
+        Sun, 9 Dec 2018 08:55:56 -0500
+Received: from imap.altlinux.org (imap.altlinux.org [194.107.17.38])
+        by vmicros1.altlinux.org (Postfix) with ESMTP id ACA5972CC59;
+        Sun,  9 Dec 2018 16:55:50 +0300 (MSK)
+Received: from beacon.altlinux.org (unknown [185.6.174.98])
+        by imap.altlinux.org (Postfix) with ESMTPSA id 6B4624A4A29;
+        Sun,  9 Dec 2018 16:55:50 +0300 (MSK)
+From:   Vitaly Chikunov <vt@altlinux.org>
+To:     David Howells <dhowells@redhat.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>, keyrings@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [RFC PATCH] X.509: Parse public key parameters from x509 for akcipher
+Date:   Sun,  9 Dec 2018 16:55:48 +0300
+Message-Id: <20181209135548.26232-1-vt@altlinux.org>
+X-Mailer: git-send-email 2.11.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Cezary Gapinski <cezary.gapinski@gmail.com>
+Some public key algorithms (like ECDSA) keep in parameters field
+important data such as digest and curve OIDs (possibly more for
+different ECDSA variants). Thus, just setting a public key (as
+for RSA) is not enough.
 
-Add description that STM32F4 can be used in compatible property.
-Master Inter-Data Idleness optional property cannot be used in STM32F4.
+Introduce set_params() callback for akcipher which will be used to
+pass BER encoded parameters array, with additional argument of
+algorithm OID.
 
-Signed-off-by: Cezary Gapinski <cezary.gapinski@gmail.com>
+This is done with the intent of adding support for EC-RDSA (ISO/IEC
+14888-3:2018, RFC 7091, and basically ECDSA variant) public keys (which
+will be finally used in IMA subsystem). Thus, also oid_registry.h is
+updated.
+
+Rationale:
+
+- For such keys just setting public key without parameters is
+  meaningless, so it would be possible to add parameters in
+  crypto_akcipher_set_pub_key (and .set_pub_key) calls. But, this will
+  needlessly change API for RSA akcipher. Also, additional callback
+  making it possible to pass parameters after
+  crypto_akcipher_set_priv_key (and .set_priv_key) in the future.
+
+- Algorithm OID is passed to be validated in .set_params callback,
+  otherwise, it could have the wrong value.
+
+- Particular algorithm OIDs are checked in x509_note_params, (because
+  this is called from AlgorithmIdentifier (ASN.1) parser, which is
+  called multiple times, as it's used multiple times in X.509
+  certificate), to distinguish a public key call from a signature call.
+
+Signed-off-by: Vitaly Chikunov <vt@altlinux.org>
 ---
- Documentation/devicetree/bindings/spi/spi-stm32.txt | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ crypto/asymmetric_keys/public_key.c       | 16 +++++++++++++++
+ crypto/asymmetric_keys/x509.asn1          |  2 +-
+ crypto/asymmetric_keys/x509_cert_parser.c | 27 +++++++++++++++++++++++++
+ crypto/testmgr.c                          |  5 +++++
+ crypto/testmgr.h                          |  3 +++
+ include/crypto/akcipher.h                 | 33 +++++++++++++++++++++++++++++++
+ include/crypto/public_key.h               |  4 ++++
+ include/linux/oid_registry.h              |  6 ++++++
+ 8 files changed, 95 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/spi/spi-stm32.txt b/Documentation/devicetree/bindings/spi/spi-stm32.txt
-index 1b3fa2c1..d82755c 100644
---- a/Documentation/devicetree/bindings/spi/spi-stm32.txt
-+++ b/Documentation/devicetree/bindings/spi/spi-stm32.txt
-@@ -7,7 +7,9 @@ from 4 to 32-bit data size. Although it can be configured as master or slave,
- only master is supported by the driver.
+diff --git a/crypto/asymmetric_keys/public_key.c b/crypto/asymmetric_keys/public_key.c
+index f5d85b47fcc6..3bc090b8adef 100644
+--- a/crypto/asymmetric_keys/public_key.c
++++ b/crypto/asymmetric_keys/public_key.c
+@@ -45,6 +45,7 @@ void public_key_free(struct public_key *key)
+ {
+ 	if (key) {
+ 		kfree(key->key);
++		kfree(key->params);
+ 		kfree(key);
+ 	}
+ }
+@@ -124,6 +125,11 @@ static int software_key_query(const struct kernel_pkey_params *params,
+ 	if (ret < 0)
+ 		goto error_free_tfm;
  
- Required properties:
--- compatible: Must be "st,stm32h7-spi".
-+- compatible: Should be one of:
-+  "st,stm32h7-spi"
-+  "st,stm32f4-spi"
- - reg: Offset and length of the device's register set.
- - interrupts: Must contain the interrupt id.
- - clocks: Must contain an entry for spiclk (which feeds the internal clock
-@@ -30,8 +32,9 @@ Child nodes represent devices on the SPI bus
-   See ../spi/spi-bus.txt
++	ret = crypto_akcipher_set_params(tfm, pkey->algo, pkey->params,
++					 pkey->paramlen);
++	if (ret)
++		goto error_free_tfm;
++
+ 	len = crypto_akcipher_maxsize(tfm);
+ 	info->key_size = len * 8;
+ 	info->max_data_size = len;
+@@ -182,6 +188,11 @@ static int software_key_eds_op(struct kernel_pkey_params *params,
+ 	if (ret)
+ 		goto error_free_req;
  
- Optional properties:
--- st,spi-midi-ns: (Master Inter-Data Idleness) minimum time delay in
--		  nanoseconds inserted between two consecutive data frames.
-+- st,spi-midi-ns: Only for STM32H7, (Master Inter-Data Idleness) minimum time
-+		  delay in nanoseconds inserted between two consecutive data
-+		  frames.
++	ret = crypto_akcipher_set_params(tfm, pkey->algo, pkey->params,
++					 pkey->paramlen);
++	if (ret)
++		goto error_free_req;
++
+ 	sg_init_one(&in_sg, in, params->in_len);
+ 	sg_init_one(&out_sg, out, params->out_len);
+ 	akcipher_request_set_crypt(req, &in_sg, &out_sg, params->in_len,
+@@ -263,6 +274,11 @@ int public_key_verify_signature(const struct public_key *pkey,
+ 	if (ret)
+ 		goto error_free_req;
  
++	ret = crypto_akcipher_set_params(tfm, pkey->algo, pkey->params,
++					 pkey->paramlen);
++	if (ret)
++		goto error_free_req;
++
+ 	ret = -ENOMEM;
+ 	outlen = crypto_akcipher_maxsize(tfm);
+ 	output = kmalloc(outlen, GFP_KERNEL);
+diff --git a/crypto/asymmetric_keys/x509.asn1 b/crypto/asymmetric_keys/x509.asn1
+index aae0cde414e2..5c9f4e4a5231 100644
+--- a/crypto/asymmetric_keys/x509.asn1
++++ b/crypto/asymmetric_keys/x509.asn1
+@@ -22,7 +22,7 @@ CertificateSerialNumber ::= INTEGER
  
- Example:
+ AlgorithmIdentifier ::= SEQUENCE {
+ 	algorithm		OBJECT IDENTIFIER ({ x509_note_OID }),
+-	parameters		ANY OPTIONAL
++	parameters		ANY OPTIONAL ({ x509_note_params })
+ }
+ 
+ Name ::= SEQUENCE OF RelativeDistinguishedName
+diff --git a/crypto/asymmetric_keys/x509_cert_parser.c b/crypto/asymmetric_keys/x509_cert_parser.c
+index 991f4d735a4e..16d8936d143b 100644
+--- a/crypto/asymmetric_keys/x509_cert_parser.c
++++ b/crypto/asymmetric_keys/x509_cert_parser.c
+@@ -26,6 +26,9 @@ struct x509_parse_context {
+ 	const void	*cert_start;		/* Start of cert content */
+ 	const void	*key;			/* Key data */
+ 	size_t		key_size;		/* Size of key data */
++	const void	*params;		/* Key parameters */
++	size_t		params_size;		/* Size of key parameters */
++	enum OID	key_algo;		/* Public key algorithm */
+ 	enum OID	last_oid;		/* Last OID encountered */
+ 	enum OID	algo_oid;		/* Algorithm OID */
+ 	unsigned char	nr_mpi;			/* Number of MPIs stored */
+@@ -109,6 +112,13 @@ struct x509_certificate *x509_cert_parse(const void *data, size_t datalen)
+ 
+ 	cert->pub->keylen = ctx->key_size;
+ 
++	cert->pub->params = kmemdup(ctx->params, ctx->params_size, GFP_KERNEL);
++	if (!cert->pub->params)
++		goto error_decode;
++
++	cert->pub->paramlen = ctx->params_size;
++	cert->pub->algo = ctx->key_algo;
++
+ 	/* Grab the signature bits */
+ 	ret = x509_get_sig_params(cert);
+ 	if (ret < 0)
+@@ -401,6 +411,23 @@ int x509_note_subject(void *context, size_t hdrlen,
+ }
+ 
+ /*
++ * Extract parameters for particular keys
++ */
++int x509_note_params(void *context, size_t hdrlen,
++		     unsigned char tag,
++		     const void *value, size_t vlen)
++{
++	struct x509_parse_context *ctx = context;
++
++	if (ctx->last_oid != OID_gost2012PublicKey256 &&
++	    ctx->last_oid != OID_gost2012PublicKey512)
++		return 0;
++	ctx->params = value;
++	ctx->params_size = vlen;
++	return 0;
++}
++
++/*
+  * Extract the data for the public key algorithm
+  */
+ int x509_extract_key_data(void *context, size_t hdrlen,
+diff --git a/crypto/testmgr.c b/crypto/testmgr.c
+index 0f684a414acb..a030526a6609 100644
+--- a/crypto/testmgr.c
++++ b/crypto/testmgr.c
+@@ -2257,6 +2257,11 @@ static int test_akcipher_one(struct crypto_akcipher *tfm,
+ 	if (err)
+ 		goto free_req;
+ 
++	err = crypto_akcipher_set_params(tfm, vecs->algo, vecs->params,
++					 vecs->param_len);
++	if (err)
++		goto free_req;
++
+ 	err = -ENOMEM;
+ 	out_len_max = crypto_akcipher_maxsize(tfm);
+ 	outbuf_enc = kzalloc(out_len_max, GFP_KERNEL);
+diff --git a/crypto/testmgr.h b/crypto/testmgr.h
+index e7e56a8febbc..9855da080eaf 100644
+--- a/crypto/testmgr.h
++++ b/crypto/testmgr.h
+@@ -124,13 +124,16 @@ struct drbg_testvec {
+ 
+ struct akcipher_testvec {
+ 	const unsigned char *key;
++	const unsigned char *params;
+ 	const unsigned char *m;
+ 	const unsigned char *c;
+ 	unsigned int key_len;
++	unsigned int param_len;
+ 	unsigned int m_size;
+ 	unsigned int c_size;
+ 	bool public_key_vec;
+ 	bool siggen_sigver_test;
++	enum OID algo;
+ };
+ 
+ struct kpp_testvec {
+diff --git a/include/crypto/akcipher.h b/include/crypto/akcipher.h
+index afac71119396..d6aba84ed2c4 100644
+--- a/include/crypto/akcipher.h
++++ b/include/crypto/akcipher.h
+@@ -13,6 +13,7 @@
+ #ifndef _CRYPTO_AKCIPHER_H
+ #define _CRYPTO_AKCIPHER_H
+ #include <linux/crypto.h>
++#include <linux/oid_registry.h>
+ 
+ /**
+  * struct akcipher_request - public key request
+@@ -73,6 +74,9 @@ struct crypto_akcipher {
+  * @set_priv_key: Function invokes the algorithm specific set private key
+  *		function, which knows how to decode and interpret
+  *		the BER encoded private key
++ * @set_params: Function invokes the algorithm specific set parameters
++ *		function, which knows how to decode and interpret
++ *		the BER encoded public key
+  * @max_size:	Function returns dest buffer size required for a given key.
+  * @init:	Initialize the cryptographic transformation object.
+  *		This function is used to initialize the cryptographic
+@@ -98,6 +102,8 @@ struct akcipher_alg {
+ 			   unsigned int keylen);
+ 	int (*set_priv_key)(struct crypto_akcipher *tfm, const void *key,
+ 			    unsigned int keylen);
++	int (*set_params)(struct crypto_akcipher *tfm, enum OID algo,
++			  const void *params, unsigned int paramlen);
+ 	unsigned int (*max_size)(struct crypto_akcipher *tfm);
+ 	int (*init)(struct crypto_akcipher *tfm);
+ 	void (*exit)(struct crypto_akcipher *tfm);
+@@ -452,4 +458,31 @@ static inline int crypto_akcipher_set_priv_key(struct crypto_akcipher *tfm,
+ 
+ 	return alg->set_priv_key(tfm, key, keylen);
+ }
++
++/**
++ * crypto_akcipher_set_params() - Invoke set parameters operation
++ *
++ * Function invokes the algorithm specific set parameters function, which
++ * knows how to decode and interpret the encoded parameters
++ *
++ * @tfm:	tfm handle
++ * @algo:	OID of the key algorithm
++ * @params:	BER encoded key parameters
++ * @paramlen:	length of the parameters
++ *
++ * Return: zero on success; error code in case of error
++ */
++static inline int crypto_akcipher_set_params(struct crypto_akcipher *tfm,
++					     enum OID algo,
++					     const void *params,
++					     unsigned int paramlen)
++{
++	struct akcipher_alg *alg = crypto_akcipher_alg(tfm);
++
++	if (alg->set_params)
++		return alg->set_params(tfm, algo, params, paramlen);
++	if (!params || !paramlen)
++		return 0;
++	return -ENOTSUPP;
++}
+ #endif
+diff --git a/include/crypto/public_key.h b/include/crypto/public_key.h
+index be626eac9113..712fe1214b5f 100644
+--- a/include/crypto/public_key.h
++++ b/include/crypto/public_key.h
+@@ -15,6 +15,7 @@
+ #define _LINUX_PUBLIC_KEY_H
+ 
+ #include <linux/keyctl.h>
++#include <linux/oid_registry.h>
+ 
+ /*
+  * Cryptographic data for the public-key subtype of the asymmetric key type.
+@@ -25,6 +26,9 @@
+ struct public_key {
+ 	void *key;
+ 	u32 keylen;
++	enum OID algo;
++	void *params;
++	u32 paramlen;
+ 	bool key_is_private;
+ 	const char *id_type;
+ 	const char *pkey_algo;
+diff --git a/include/linux/oid_registry.h b/include/linux/oid_registry.h
+index d2fa9ca42e9a..e2e323fd4826 100644
+--- a/include/linux/oid_registry.h
++++ b/include/linux/oid_registry.h
+@@ -93,6 +93,12 @@ enum OID {
+ 	OID_authorityKeyIdentifier,	/* 2.5.29.35 */
+ 	OID_extKeyUsage,		/* 2.5.29.37 */
+ 
++	/* EC-RDSA */
++	OID_gost2012PublicKey256,	/* 1.2.643.7.1.1.1.1 */
++	OID_gost2012PublicKey512,	/* 1.2.643.7.1.1.1.2 */
++	OID_gost2012Signature256,	/* 1.2.643.7.1.1.3.2 */
++	OID_gost2012Signature512,	/* 1.2.643.7.1.1.3.3 */
++
+ 	OID__NR
+ };
+ 
 -- 
-2.7.4
+2.11.0
 
