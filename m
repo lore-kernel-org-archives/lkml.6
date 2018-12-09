@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 814BAC07E85
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 21:59:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B63DC65BAF
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 21:59:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 44B1A20661
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 21:59:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 44B1A20661
+	by mail.kernel.org (Postfix) with ESMTP id C1E7E20661
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 21:59:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C1E7E20661
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727151AbeLIV67 (ORCPT
+        id S1727009AbeLIV7C (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 16:58:59 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36232 "EHLO
+        Sun, 9 Dec 2018 16:59:02 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36196 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726753AbeLIVzj (ORCPT
+        by vger.kernel.org with ESMTP id S1726745AbeLIVzj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 9 Dec 2018 16:55:39 -0500
 Received: from pub.yeoldevic.com ([81.174.156.145] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW730-0002iZ-Qs; Sun, 09 Dec 2018 21:55:35 +0000
+        id 1gW730-0002ij-7M; Sun, 09 Dec 2018 21:55:35 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW72h-0003Xp-5b; Sun, 09 Dec 2018 21:55:15 +0000
+        id 1gW72i-0003aP-Gz; Sun, 09 Dec 2018 21:55:16 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -38,15 +38,16 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org,
-        "Shubhrajyoti Datta" <shubhrajyoti.datta@xilinx.com>,
-        "Wolfram Sang" <wsa@the-dreams.de>,
-        "Michal Simek" <michal.simek@xilinx.com>
+        "Alexander Potapenko" <glider@google.com>,
+        syzbot+3fde91d4d394747d6db4@syzkaller.appspotmail.com,
+        "Paolo Abeni" <pabeni@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>
 Date:   Sun, 09 Dec 2018 21:50:33 +0000
-Message-ID: <lsq.1544392233.506931919@decadent.org.uk>
+Message-ID: <lsq.1544392233.255995459@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 222/328] i2c: xiic: Make the start and the byte count
- write atomic
+Subject: [PATCH 3.16 250/328] ip6_tunnel: be careful when accessing the
+ inner header
 In-Reply-To: <lsq.1544392232.713909046@decadent.org.uk>
 X-SA-Exim-Connect-IP: 81.174.156.145
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -60,56 +61,135 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
+From: Paolo Abeni <pabeni@redhat.com>
 
-commit ae7304c3ea28a3ba47a7a8312c76c654ef24967e upstream.
+commit 76c0ddd8c3a683f6e2c6e60e11dc1a1558caf4bc upstream.
 
-Disable interrupts while configuring the transfer and enable them back.
+the ip6 tunnel xmit ndo assumes that the processed skb always
+contains an ip[v6] header, but syzbot has found a way to send
+frames that fall short of this assumption, leading to the following splat:
 
-We have below as the programming sequence
-1. start and slave address
-2. byte count and stop
+BUG: KMSAN: uninit-value in ip6ip6_tnl_xmit net/ipv6/ip6_tunnel.c:1307
+[inline]
+BUG: KMSAN: uninit-value in ip6_tnl_start_xmit+0x7d2/0x1ef0
+net/ipv6/ip6_tunnel.c:1390
+CPU: 0 PID: 4504 Comm: syz-executor558 Not tainted 4.16.0+ #87
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:17 [inline]
+  dump_stack+0x185/0x1d0 lib/dump_stack.c:53
+  kmsan_report+0x142/0x240 mm/kmsan/kmsan.c:1067
+  __msan_warning_32+0x6c/0xb0 mm/kmsan/kmsan_instr.c:683
+  ip6ip6_tnl_xmit net/ipv6/ip6_tunnel.c:1307 [inline]
+  ip6_tnl_start_xmit+0x7d2/0x1ef0 net/ipv6/ip6_tunnel.c:1390
+  __netdev_start_xmit include/linux/netdevice.h:4066 [inline]
+  netdev_start_xmit include/linux/netdevice.h:4075 [inline]
+  xmit_one net/core/dev.c:3026 [inline]
+  dev_hard_start_xmit+0x5f1/0xc70 net/core/dev.c:3042
+  __dev_queue_xmit+0x27ee/0x3520 net/core/dev.c:3557
+  dev_queue_xmit+0x4b/0x60 net/core/dev.c:3590
+  packet_snd net/packet/af_packet.c:2944 [inline]
+  packet_sendmsg+0x7c70/0x8a30 net/packet/af_packet.c:2969
+  sock_sendmsg_nosec net/socket.c:630 [inline]
+  sock_sendmsg net/socket.c:640 [inline]
+  ___sys_sendmsg+0xec0/0x1310 net/socket.c:2046
+  __sys_sendmmsg+0x42d/0x800 net/socket.c:2136
+  SYSC_sendmmsg+0xc4/0x110 net/socket.c:2167
+  SyS_sendmmsg+0x63/0x90 net/socket.c:2162
+  do_syscall_64+0x309/0x430 arch/x86/entry/common.c:287
+  entry_SYSCALL_64_after_hwframe+0x3d/0xa2
+RIP: 0033:0x441819
+RSP: 002b:00007ffe58ee8268 EFLAGS: 00000213 ORIG_RAX: 0000000000000133
+RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000441819
+RDX: 0000000000000002 RSI: 0000000020000100 RDI: 0000000000000003
+RBP: 00000000006cd018 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000213 R12: 0000000000402510
+R13: 00000000004025a0 R14: 0000000000000000 R15: 0000000000000000
 
-In some customer platform there was a lot of interrupts between 1 and 2
-and after slave address (around 7 clock cyles) if 2 is not executed
-then the transaction is nacked.
+Uninit was created at:
+  kmsan_save_stack_with_flags mm/kmsan/kmsan.c:278 [inline]
+  kmsan_internal_poison_shadow+0xb8/0x1b0 mm/kmsan/kmsan.c:188
+  kmsan_kmalloc+0x94/0x100 mm/kmsan/kmsan.c:314
+  kmsan_slab_alloc+0x11/0x20 mm/kmsan/kmsan.c:321
+  slab_post_alloc_hook mm/slab.h:445 [inline]
+  slab_alloc_node mm/slub.c:2737 [inline]
+  __kmalloc_node_track_caller+0xaed/0x11c0 mm/slub.c:4369
+  __kmalloc_reserve net/core/skbuff.c:138 [inline]
+  __alloc_skb+0x2cf/0x9f0 net/core/skbuff.c:206
+  alloc_skb include/linux/skbuff.h:984 [inline]
+  alloc_skb_with_frags+0x1d4/0xb20 net/core/skbuff.c:5234
+  sock_alloc_send_pskb+0xb56/0x1190 net/core/sock.c:2085
+  packet_alloc_skb net/packet/af_packet.c:2803 [inline]
+  packet_snd net/packet/af_packet.c:2894 [inline]
+  packet_sendmsg+0x6454/0x8a30 net/packet/af_packet.c:2969
+  sock_sendmsg_nosec net/socket.c:630 [inline]
+  sock_sendmsg net/socket.c:640 [inline]
+  ___sys_sendmsg+0xec0/0x1310 net/socket.c:2046
+  __sys_sendmmsg+0x42d/0x800 net/socket.c:2136
+  SYSC_sendmmsg+0xc4/0x110 net/socket.c:2167
+  SyS_sendmmsg+0x63/0x90 net/socket.c:2162
+  do_syscall_64+0x309/0x430 arch/x86/entry/common.c:287
+  entry_SYSCALL_64_after_hwframe+0x3d/0xa2
 
-To fix this case make the 2 writes atomic.
+This change addresses the issue adding the needed check before
+accessing the inner header.
 
-Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
-Signed-off-by: Michal Simek <michal.simek@xilinx.com>
-[wsa: added a newline for better readability]
-Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+The ipv4 side of the issue is apparently there since the ipv4 over ipv6
+initial support, and the ipv6 side predates git history.
+
+Fixes: c4d3efafcc93 ("[IPV6] IP6TUNNEL: Add support to IPv4 over IPv6 tunnel.")
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Reported-by: syzbot+3fde91d4d394747d6db4@syzkaller.appspotmail.com
+Tested-by: Alexander Potapenko <glider@google.com>
+Signed-off-by: Paolo Abeni <pabeni@redhat.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+[bwh: Backported to 3.16: adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/i2c/busses/i2c-xiic.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ net/ipv6/ip6_tunnel.c | 13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
 
---- a/drivers/i2c/busses/i2c-xiic.c
-+++ b/drivers/i2c/busses/i2c-xiic.c
-@@ -504,6 +504,7 @@ static void xiic_start_recv(struct xiic_
+--- a/net/ipv6/ip6_tunnel.c
++++ b/net/ipv6/ip6_tunnel.c
+@@ -1085,13 +1085,18 @@ static inline int
+ ip4ip6_tnl_xmit(struct sk_buff *skb, struct net_device *dev)
  {
- 	u8 rx_watermark;
- 	struct i2c_msg *msg = i2c->rx_msg = i2c->tx_msg;
-+	unsigned long flags;
+ 	struct ip6_tnl *t = netdev_priv(dev);
+-	const struct iphdr  *iph = ip_hdr(skb);
++	const struct iphdr  *iph;
+ 	int encap_limit = -1;
+ 	struct flowi6 fl6;
+ 	__u8 dsfield;
+ 	__u32 mtu;
+ 	int err;
  
- 	/* Clear and enable Rx full interrupt. */
- 	xiic_irq_clr_en(i2c, XIIC_INTR_RX_FULL_MASK | XIIC_INTR_TX_ERROR_MASK);
-@@ -519,6 +520,7 @@ static void xiic_start_recv(struct xiic_
- 		rx_watermark = IIC_RX_FIFO_DEPTH;
- 	xiic_setreg8(i2c, XIIC_RFD_REG_OFFSET, rx_watermark - 1);
- 
-+	local_irq_save(flags);
- 	if (!(msg->flags & I2C_M_NOSTART))
- 		/* write the address */
- 		xiic_setreg16(i2c, XIIC_DTR_REG_OFFSET,
-@@ -529,6 +531,8 @@ static void xiic_start_recv(struct xiic_
- 
- 	xiic_setreg16(i2c, XIIC_DTR_REG_OFFSET,
- 		msg->len | ((i2c->nmsgs == 1) ? XIIC_TX_DYN_STOP_MASK : 0));
-+	local_irq_restore(flags);
++	/* ensure we can access the full inner ip header */
++	if (!pskb_may_pull(skb, sizeof(struct iphdr)))
++		return -1;
 +
- 	if (i2c->nmsgs == 1)
- 		/* very last, enable bus not busy as well */
- 		xiic_irq_clr_en(i2c, XIIC_INTR_BNB_MASK);
++	iph = ip_hdr(skb);
+ 	if ((t->parms.proto != IPPROTO_IPIP && t->parms.proto != 0) ||
+ 	    !ip6_tnl_xmit_ctl(t))
+ 		return -1;
+@@ -1126,7 +1131,7 @@ static inline int
+ ip6ip6_tnl_xmit(struct sk_buff *skb, struct net_device *dev)
+ {
+ 	struct ip6_tnl *t = netdev_priv(dev);
+-	struct ipv6hdr *ipv6h = ipv6_hdr(skb);
++	struct ipv6hdr *ipv6h;
+ 	int encap_limit = -1;
+ 	__u16 offset;
+ 	struct flowi6 fl6;
+@@ -1134,6 +1139,10 @@ ip6ip6_tnl_xmit(struct sk_buff *skb, str
+ 	__u32 mtu;
+ 	int err;
+ 
++	if (unlikely(!pskb_may_pull(skb, sizeof(*ipv6h))))
++		return -1;
++
++	ipv6h = ipv6_hdr(skb);
+ 	if ((t->parms.proto != IPPROTO_IPV6 && t->parms.proto != 0) ||
+ 	    !ip6_tnl_xmit_ctl(t) || ip6_tnl_addr_conflict(t, ipv6h))
+ 		return -1;
 
