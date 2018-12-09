@@ -6,44 +6,55 @@ X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46E4BC07E85
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:17:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ACB5CC07E85
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:18:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 10BE020661
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:17:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 10BE020661
+	by mail.kernel.org (Postfix) with ESMTP id 7D3A22081F
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:18:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D3A22081F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727599AbeLIWFY (ORCPT
+        id S1727507AbeLIWEU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 17:05:24 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36932 "EHLO
+        Sun, 9 Dec 2018 17:04:20 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35796 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726452AbeLIWFV (ORCPT
+        by vger.kernel.org with ESMTP id S1726642AbeLIVzb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Dec 2018 17:05:21 -0500
+        Sun, 9 Dec 2018 16:55:31 -0500
 Received: from pub.yeoldevic.com ([81.174.156.145] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW73O-0002ie-9W; Sun, 09 Dec 2018 21:55:58 +0000
+        id 1gW72t-0002ii-QK; Sun, 09 Dec 2018 21:55:28 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW72a-0003Gk-4O; Sun, 09 Dec 2018 21:55:08 +0000
+        id 1gW72k-0003di-7O; Sun, 09 Dec 2018 21:55:18 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, "Mikulas Patocka" <mpatocka@redhat.com>,
-        "Bartlomiej Zolnierkiewicz" <b.zolnierkie@samsung.com>
+CC:     akpm@linux-foundation.org, "Jiri Olsa" <jolsa@redhat.com>,
+        "CAI Qian" <caiqian@redhat.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        "Rob Herring" <robh@kernel.org>, "Ingo Molnar" <mingo@kernel.org>,
+        "Alexander Shishkin" <alexander.shishkin@linux.intel.com>,
+        "Kan Liang" <kan.liang@intel.com>,
+        "Arnaldo Carvalho de Melo" <acme@redhat.com>,
+        "Linus Torvalds" <torvalds@linux-foundation.org>,
+        "Thomas Gleixner" <tglx@linutronix.de>,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+        "Jiri Olsa" <jolsa@kernel.org>
 Date:   Sun, 09 Dec 2018 21:50:33 +0000
-Message-ID: <lsq.1544392233.748191073@decadent.org.uk>
+Message-ID: <lsq.1544392233.479312128@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 058/328] udlfb: fix semaphore value leak
+Subject: [PATCH 3.16 287/328] perf/core: Protect PMU device removal with a
+ 'pmu_bus_running' check, to fix CONFIG_DEBUG_TEST_DRIVER_REMOVE=y kernel
+ panic
 In-Reply-To: <lsq.1544392232.713909046@decadent.org.uk>
 X-SA-Exim-Connect-IP: 81.174.156.145
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -57,129 +68,66 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mikulas Patocka <mpatocka@redhat.com>
+From: Jiri Olsa <jolsa@redhat.com>
 
-commit 9d0aa601e4cd9c0892f90d36e8488d79b72f4073 upstream.
+commit 0933840acf7b65d6d30a5b6089d882afea57aca3 upstream.
 
-I observed that the performance of the udl fb driver degrades over time.
-On a freshly booted machine, it takes 6 seconds to do "ls -la /usr/bin";
-after some time of use, the same operation takes 14 seconds.
+CAI Qian reported a crash in the PMU uncore device removal code,
+enabled by the CONFIG_DEBUG_TEST_DRIVER_REMOVE=y option:
 
-The reason is that the value of "limit_sem" decays over time.
+  https://marc.info/?l=linux-kernel&m=147688837328451
 
-The udl driver uses a semaphore "limit_set" to specify how many free urbs
-are there on dlfb->urbs.list. If the count is zero, the "down" operation
-will sleep until some urbs are added to the freelist.
+The reason for the crash is that perf_pmu_unregister() tries to remove
+a PMU device which is not added at this point. We add PMU devices
+only after pmu_bus is registered, which happens in the
+perf_event_sysfs_init() call and sets the 'pmu_bus_running' flag.
 
-In order to avoid some hypothetical deadlock, the driver will not call
-"up" immediately, but it will offload it to a workqueue. The problem is
-that if we call "schedule_delayed_work" on the same work item multiple
-times, the work item may only be executed once.
+The fix is to get the 'pmu_bus_running' flag state at the point
+the PMU is taken out of the PMU list and remove the device
+later only if it's set.
 
-This is happening:
-* some urb completes
-* dlfb_urb_completion adds it to the free list
-* dlfb_urb_completion calls schedule_delayed_work to schedule the function
-  dlfb_release_urb_work to increase the semaphore count
-* as the urb is on the free list, some other task grabs it and submits it
-* the submitted urb completes, dlfb_urb_completion is called again
-* dlfb_urb_completion calls schedule_delayed_work, but the work is already
-  scheduled, so it does nothing
-* finally, dlfb_release_urb_work is called, it increases the semaphore
-  count by 1, although it should increase it by 2
-
-So, the semaphore count is decreasing over time, and this causes gradual
-performance degradation.
-
-Note that in the current kernel, the "up" function may be called from
-interrupt and it may race with the "down" function called by another
-thread, so we don't have to offload the call of "up" to a workqueue at
-all. This patch removes the workqueue code. The patch also changes
-"down_interruptible" to "down" in dlfb_free_urb_list, so that we will
-clean up the driver properly even if a signal arrives.
-
-With this patch, the performance of udlfb no longer degrades.
-
-Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
-[b.zolnierkie: fix immediatelly -> immediately typo]
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-[bwh: Backported to 3.16: Pointers to struct dlfb_data are named "dev" rather
- than "dlfb"]
+Reported-by: CAI Qian <caiqian@redhat.com>
+Tested-by: CAI Qian <caiqian@redhat.com>
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Kan Liang <kan.liang@intel.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Rob Herring <robh@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: http://lkml.kernel.org/r/20161020111011.GA13361@krava
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+[bwh: Backported to 3.16: no address filter attributes to clean up]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/video/fbdev/udlfb.c | 27 ++-------------------------
- include/video/udlfb.h       |  1 -
- 2 files changed, 2 insertions(+), 26 deletions(-)
-
---- a/drivers/video/fbdev/udlfb.c
-+++ b/drivers/video/fbdev/udlfb.c
-@@ -928,14 +928,6 @@ static void dlfb_free(struct kref *kref)
- 	kfree(dev);
- }
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -6930,7 +6930,10 @@ EXPORT_SYMBOL_GPL(perf_pmu_register);
  
--static void dlfb_release_urb_work(struct work_struct *work)
--{
--	struct urb_node *unode = container_of(work, struct urb_node,
--					      release_urb_work.work);
--
--	up(&unode->dev->urbs.limit_sem);
--}
--
- static void dlfb_free_framebuffer(struct dlfb_data *dev)
+ void perf_pmu_unregister(struct pmu *pmu)
  {
- 	struct fb_info *info = dev->info;
-@@ -1797,14 +1789,7 @@ static void dlfb_urb_completion(struct u
- 	dev->urbs.available++;
- 	spin_unlock_irqrestore(&dev->urbs.lock, flags);
++	int remove_device;
++
+ 	mutex_lock(&pmus_lock);
++	remove_device = pmu_bus_running;
+ 	list_del_rcu(&pmu->entry);
+ 	mutex_unlock(&pmus_lock);
  
--	/*
--	 * When using fb_defio, we deadlock if up() is called
--	 * while another is waiting. So queue to another process.
--	 */
--	if (fb_defio)
--		schedule_delayed_work(&unode->release_urb_work, 0);
--	else
--		up(&dev->urbs.limit_sem);
-+	up(&dev->urbs.limit_sem);
+@@ -6944,8 +6947,10 @@ void perf_pmu_unregister(struct pmu *pmu
+ 	free_percpu(pmu->pmu_disable_count);
+ 	if (pmu->type >= PERF_TYPE_MAX)
+ 		idr_remove(&pmu_idr, pmu->type);
+-	device_del(pmu->dev);
+-	put_device(pmu->dev);
++	if (remove_device) {
++		device_del(pmu->dev);
++		put_device(pmu->dev);
++	}
+ 	free_pmu_context(pmu);
  }
- 
- static void dlfb_free_urb_list(struct dlfb_data *dev)
-@@ -1813,16 +1798,11 @@ static void dlfb_free_urb_list(struct dl
- 	struct list_head *node;
- 	struct urb_node *unode;
- 	struct urb *urb;
--	int ret;
- 	unsigned long flags;
- 
- 	/* keep waiting and freeing, until we've got 'em all */
- 	while (count--) {
--
--		/* Getting interrupted means a leak, but ok at disconnect */
--		ret = down_interruptible(&dev->urbs.limit_sem);
--		if (ret)
--			break;
-+		down(&dev->urbs.limit_sem);
- 
- 		spin_lock_irqsave(&dev->urbs.lock, flags);
- 
-@@ -1862,9 +1842,6 @@ static int dlfb_alloc_urb_list(struct dl
- 			break;
- 		unode->dev = dev;
- 
--		INIT_DELAYED_WORK(&unode->release_urb_work,
--			  dlfb_release_urb_work);
--
- 		urb = usb_alloc_urb(0, GFP_KERNEL);
- 		if (!urb) {
- 			kfree(unode);
---- a/include/video/udlfb.h
-+++ b/include/video/udlfb.h
-@@ -19,7 +19,6 @@ struct dloarea {
- struct urb_node {
- 	struct list_head entry;
- 	struct dlfb_data *dev;
--	struct delayed_work release_urb_work;
- 	struct urb *urb;
- };
- 
+ EXPORT_SYMBOL_GPL(perf_pmu_unregister);
 
