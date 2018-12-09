@@ -2,46 +2,49 @@ Return-Path: <SRS0=cWqk=OS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F798C07E85
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 08:09:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB765C07E85
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 08:17:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4433F20831
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 08:09:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4433F20831
+	by mail.kernel.org (Postfix) with ESMTP id 558BA20989
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 08:17:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 558BA20989
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726134AbeLIIJs (ORCPT
+        id S1726113AbeLIIR0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 03:09:48 -0500
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:50902 "EHLO
+        Sun, 9 Dec 2018 03:17:26 -0500
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:51108 "EHLO
         atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726055AbeLIIJr (ORCPT
+        with ESMTP id S1726059AbeLIIR0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Dec 2018 03:09:47 -0500
+        Sun, 9 Dec 2018 03:17:26 -0500
 Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 9A3E780818; Sun,  9 Dec 2018 09:09:41 +0100 (CET)
-Date:   Sun, 9 Dec 2018 09:09:44 +0100
+        id 0F7BC807E4; Sun,  9 Dec 2018 09:17:19 +0100 (CET)
+Date:   Sun, 9 Dec 2018 09:17:23 +0100
 From:   Pavel Machek <pavel@ucw.cz>
-To:     shuah <shuah@kernel.org>
-Cc:     mchehab@kernel.org, perex@perex.cz, tiwai@suse.com,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        alsa-devel@alsa-project.org
-Subject: Re: [RFC PATCH v8 1/4] media: Media Device Allocator API
-Message-ID: <20181209080944.GA7561@amd>
-References: <cover.1541109584.git.shuah@kernel.org>
- <e474dd16f1d6443c12b1361376193c9d0efcced6.1541109584.git.shuah@kernel.org>
- <20181119085931.GA28607@amd>
- <73c22137-9c7a-75c8-8cd1-3736c63c2d40@kernel.org>
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Baolin Wang <baolin.wang@linaro.org>,
+        Raphael Teysseyre <rteysseyre@gmail.com>,
+        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/4] leds: trigger: Add pattern initialization from
+ Device Tree
+Message-ID: <20181209081722.GB7561@amd>
+References: <1544185974-5932-1-git-send-email-krzk@kernel.org>
+ <1544185974-5932-4-git-send-email-krzk@kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="n8g4imXOkfNTN/H1"
+        protocol="application/pgp-signature"; boundary="dc+cDN39EJAMEtIO"
 Content-Disposition: inline
-In-Reply-To: <73c22137-9c7a-75c8-8cd1-3736c63c2d40@kernel.org>
+In-Reply-To: <1544185974-5932-4-git-send-email-krzk@kernel.org>
 User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -49,62 +52,82 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---n8g4imXOkfNTN/H1
+--dc+cDN39EJAMEtIO
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu 2018-12-06 08:33:14, shuah wrote:
-> On 11/19/18 1:59 AM, Pavel Machek wrote:
-> >On Thu 2018-11-01 18:31:30, shuah@kernel.org wrote:
-> >>From: Shuah Khan <shuah@kernel.org>
-> >>
-> >>Media Device Allocator API to allows multiple drivers share a media dev=
-ice.
-> >>Using this API, drivers can allocate a media device with the shared str=
-uct
-> >>device as the key. Once the media device is allocated by a driver, other
-> >>drivers can get a reference to it. The media device is released when all
-> >>the references are released.
-> >
-> >Sounds like a ... bad idea?
-> >
-> >That's what new "media control" framework is for, no?
-> >
-> >Why do you need this?
+On Fri 2018-12-07 13:32:54, Krzysztof Kozlowski wrote:
+> Allow initialization of pattern used in pattern trigger from Device Tree
+> property.
 >=20
-> Media control framework doesn't address this problem of ownership of the
-> media device when non-media drivers have to own the pipeline. In this cas=
-e,
-> snd-usb owns the audio pipeline when an audio application is using the
-> device. Without this work, media drivers won't be able to tell if snd-usb=
- is
-> using the tuner and owns the media pipeline.
+> This is especially useful for embedded systems where the pattern trigger
+> would be used to indicate the process of boot status in a nice,
+> user-friendly blinking way.  This initialization pattern will be used
+> till user-space is brought up and sets its own pattern, indicating the
+> boot status is for example finished.
 >=20
-> I am going to clarify this in the commit log.
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> ---
+>  drivers/leds/trigger/ledtrig-pattern.c | 18 ++++++++++++++++++
+>  1 file changed, 18 insertions(+)
+>=20
+> diff --git a/drivers/leds/trigger/ledtrig-pattern.c b/drivers/leds/trigge=
+r/ledtrig-pattern.c
+> index 1870cf87afe1..96309d3bc43c 100644
+> --- a/drivers/leds/trigger/ledtrig-pattern.c
+> +++ b/drivers/leds/trigger/ledtrig-pattern.c
+> @@ -11,6 +11,7 @@
+>  #include <linux/leds.h>
+>  #include <linux/module.h>
+>  #include <linux/mutex.h>
+> +#include <linux/of.h>
+>  #include <linux/slab.h>
+>  #include <linux/timer.h>
+> =20
+> @@ -331,6 +332,21 @@ static const struct attribute_group *pattern_trig_gr=
+oups[] =3D {
+>  	NULL,
+>  };
+> =20
+> +static void pattern_init(struct led_classdev *led_cdev)
+> +{
+> +	struct device_node *np =3D dev_of_node(led_cdev->dev);
+> +	const char *pattern;
+> +
+> +	if (!np)
+> +		return;
+> +
+> +	if (!of_property_read_string(np, "linux,trigger-pattern", &pattern)) {
+> +		if (strlen(pattern))
+> +			pattern_trig_store_patterns(led_cdev, pattern,
+> +						    strlen(pattern), false);
+> +	}
+> +}
 
-I guess I'll need the explanation, yes.
+"  if (of_...())
+      return;
 
-How can usb soundcard use the tuner? I thought we'd always have
-userspace component active and moving data between tuner and usb sound
-card?
+   if (!strlen())
+       return"
 
+Check return value of pattern_trig_store_patterns().
 									Pavel
 --=20
 (english) http://www.livejournal.com/~pavelmachek
 (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
 g.html
 
---n8g4imXOkfNTN/H1
+--dc+cDN39EJAMEtIO
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1
 
-iEYEARECAAYFAlwMzcgACgkQMOfwapXb+vIQkwCfboSZoTYly+FjJatgpBdS3bHX
-VlQAn2u6XZ6zbrSsLhKe0NfdcDjS6o4Q
-=rWVL
+iEYEARECAAYFAlwMz5IACgkQMOfwapXb+vKt0gCfRJ7ayW23MMx0p+3b3Q04WCQT
+SYkAnjG0ho7SbuWAkTPa2GD8Ps1q2Prh
+=hXws
 -----END PGP SIGNATURE-----
 
---n8g4imXOkfNTN/H1--
+--dc+cDN39EJAMEtIO--
