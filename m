@@ -6,46 +6,46 @@ X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB9DFC07E85
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 21:57:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB086C65BAF
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 21:57:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8A43820661
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 21:57:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A43820661
+	by mail.kernel.org (Postfix) with ESMTP id 7ABB220661
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 21:57:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7ABB220661
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727054AbeLIV5l (ORCPT
+        id S1727042AbeLIV5k (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 16:57:41 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36268 "EHLO
+        Sun, 9 Dec 2018 16:57:40 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36336 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726760AbeLIVzk (ORCPT
+        by vger.kernel.org with ESMTP id S1726783AbeLIVzk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 9 Dec 2018 16:55:40 -0500
 Received: from pub.yeoldevic.com ([81.174.156.145] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW730-0002po-7a; Sun, 09 Dec 2018 21:55:35 +0000
+        id 1gW734-0002pr-HO; Sun, 09 Dec 2018 21:55:38 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW72h-0003Z2-Mf; Sun, 09 Dec 2018 21:55:15 +0000
+        id 1gW72g-0003WD-OG; Sun, 09 Dec 2018 21:55:14 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, xen-devel@lists.xenproject.org,
-        "Thomas Gleixner" <tglx@linutronix.de>, jgross@suse.com,
-        hpa@zytor.com, "Boris Ostrovsky" <boris.ostrovsky@oracle.com>,
-        "Andy Smith" <andy@strugglers.net>
+CC:     akpm@linux-foundation.org, "Sven Eckelmann" <sven@narfation.org>,
+        "Simon Wunderlich" <sw@simonwunderlich.de>,
+        "Marek Lindner" <mareklindner@neomailbox.ch>
 Date:   Sun, 09 Dec 2018 21:50:33 +0000
-Message-ID: <lsq.1544392233.175880549@decadent.org.uk>
+Message-ID: <lsq.1544392233.389632344@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 233/328] x86/EISA: Don't probe EISA bus for Xen PV guests
+Subject: [PATCH 3.16 213/328] batman-adv: Prevent duplicated gateway_node
+ entry
 In-Reply-To: <lsq.1544392232.713909046@decadent.org.uk>
 X-SA-Exim-Connect-IP: 81.174.156.145
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -59,48 +59,83 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+From: Sven Eckelmann <sven@narfation.org>
 
-commit 6a92b11169a65b3f8cc512c75a252cbd0d096ba0 upstream.
+commit dff9bc42ab0b2d38c5e90ddd79b238fed5b4c7ad upstream.
 
-For unprivileged Xen PV guests this is normal memory and ioremap will
-not be able to properly map it.
+The function batadv_gw_node_add is responsible for adding new gw_node to
+the gateway_list. It is expecting that the caller already checked that
+there is not already an entry with the same key or not.
 
-While at it, since ioremap may return NULL, add a test for pointer's
-validity.
+But the lock for the list is only held when the list is really modified.
+This could lead to duplicated entries because another context could create
+an entry with the same key between the check and the list manipulation.
 
-Reported-by: Andy Smith <andy@strugglers.net>
-Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: hpa@zytor.com
-Cc: xen-devel@lists.xenproject.org
-Cc: jgross@suse.com
-Link: https://lkml.kernel.org/r/20180911195538.23289-1-boris.ostrovsky@oracle.com
+The check and the manipulation of the list must therefore be in the same
+locked code section.
+
+Fixes: c6c8fea29769 ("net: Add batman-adv meshing protocol")
+Signed-off-by: Sven Eckelmann <sven@narfation.org>
+Acked-by: Marek Lindner <mareklindner@neomailbox.ch>
+Signed-off-by: Simon Wunderlich <sw@simonwunderlich.de>
+[bwh: Backported to 3.16: adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- arch/x86/kernel/eisa.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ net/batman-adv/gateway_client.c | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
---- a/arch/x86/kernel/eisa.c
-+++ b/arch/x86/kernel/eisa.c
-@@ -6,11 +6,17 @@
- #include <linux/ioport.h>
- #include <linux/eisa.h>
+--- a/net/batman-adv/gateway_client.c
++++ b/net/batman-adv/gateway_client.c
+@@ -27,6 +27,7 @@
+ #include <linux/ipv6.h>
+ #include <linux/udp.h>
+ #include <linux/if_vlan.h>
++#include <linux/lockdep.h>
  
-+#include <xen/xen.h>
-+
- static __init int eisa_bus_probe(void)
+ /* These are the offsets of the "hw type" and "hw address length" in the dhcp
+  * packet starting at the beginning of the dhcp header
+@@ -398,6 +399,9 @@ out:
+  * @bat_priv: the bat priv with all the soft interface information
+  * @orig_node: originator announcing gateway capabilities
+  * @gateway: announced bandwidth information
++ *
++ * Has to be called with the appropriate locks being acquired
++ * (gw.list_lock).
+  */
+ static void batadv_gw_node_add(struct batadv_priv *bat_priv,
+ 			       struct batadv_orig_node *orig_node,
+@@ -405,6 +409,8 @@ static void batadv_gw_node_add(struct ba
  {
--	void __iomem *p = ioremap(0x0FFFD9, 4);
-+	void __iomem *p;
-+
-+	if (xen_pv_domain() && !xen_initial_domain())
-+		return 0;
+ 	struct batadv_gw_node *gw_node;
  
--	if (readl(p) == 'E' + ('I'<<8) + ('S'<<16) + ('A'<<24))
-+	p = ioremap(0x0FFFD9, 4);
-+	if (p && readl(p) == 'E' + ('I' << 8) + ('S' << 16) + ('A' << 24))
- 		EISA_bus = 1;
- 	iounmap(p);
- 	return 0;
++	lockdep_assert_held(&bat_priv->gw.list_lock);
++
+ 	if (gateway->bandwidth_down == 0)
+ 		return;
+ 
+@@ -421,9 +427,7 @@ static void batadv_gw_node_add(struct ba
+ 	gw_node->orig_node = orig_node;
+ 	atomic_set(&gw_node->refcount, 1);
+ 
+-	spin_lock_bh(&bat_priv->gw.list_lock);
+ 	hlist_add_head_rcu(&gw_node->list, &bat_priv->gw.list);
+-	spin_unlock_bh(&bat_priv->gw.list_lock);
+ 
+ 	batadv_dbg(BATADV_DBG_BATMAN, bat_priv,
+ 		   "Found new gateway %pM -> gw bandwidth: %u.%u/%u.%u MBit\n",
+@@ -479,11 +483,14 @@ void batadv_gw_node_update(struct batadv
+ {
+ 	struct batadv_gw_node *gw_node, *curr_gw = NULL;
+ 
++	spin_lock_bh(&bat_priv->gw.list_lock);
+ 	gw_node = batadv_gw_node_get(bat_priv, orig_node);
+ 	if (!gw_node) {
+ 		batadv_gw_node_add(bat_priv, orig_node, gateway);
++		spin_unlock_bh(&bat_priv->gw.list_lock);
+ 		goto out;
+ 	}
++	spin_unlock_bh(&bat_priv->gw.list_lock);
+ 
+ 	if ((gw_node->bandwidth_down == ntohl(gateway->bandwidth_down)) &&
+ 	    (gw_node->bandwidth_up == ntohl(gateway->bandwidth_up)))
 
