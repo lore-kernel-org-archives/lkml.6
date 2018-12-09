@@ -2,101 +2,161 @@ Return-Path: <SRS0=cWqk=OS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B260C07E85
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 19:58:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1817C65BAF
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 20:06:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BAA4920672
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 19:58:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="CUPwzl2Y"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BAA4920672
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kemnade.info
+	by mail.kernel.org (Postfix) with ESMTP id BA5E720645
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 20:06:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA5E720645
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726295AbeLIT6L (ORCPT
+        id S1726318AbeLIUGG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 14:58:11 -0500
-Received: from mail.andi.de1.cc ([85.214.239.24]:40664 "EHLO
-        h2641619.stratoserver.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726097AbeLIT6L (ORCPT
+        Sun, 9 Dec 2018 15:06:06 -0500
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:39832 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726233AbeLIUGF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Dec 2018 14:58:11 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=kemnade.info; s=20180802; h=Content-Type:MIME-Version:References:
-        In-Reply-To:Message-ID:Subject:To:From:Date:Sender:Reply-To:Cc:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=EKuBaLt8F2fRNvQlvlxleh8O2rLGlcuOcTeLNHUFfjU=; b=CUPwzl2Y2NCW5LR6TVXza8KYx
-        qRI1/Rd0s3JamN4TC3tGWybwR9V+rNwuPVvZe0m15koVfqGFYFcsVYpWFD8oae/42TXft0MPV9Ynx
-        wUGQPf6eXPFTjK5oBmNcUn7mkS7nI3XU1D+iZVjG1yVjMLfQu3Pwi4kJkPuTnyqGXlvhk=;
-Received: from p5dc588d6.dip0.t-ipconnect.de ([93.197.136.214] helo=aktux)
-        by h2641619.stratoserver.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <andreas@kemnade.info>)
-        id 1gW5DO-0008OY-57; Sun, 09 Dec 2018 20:58:10 +0100
-Date:   Sun, 9 Dec 2018 20:58:02 +0100
-From:   Andreas Kemnade <andreas@kemnade.info>
-To:     Johan Hovold <johan@kernel.org>, stable <stable@vger.kernel.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] gnss: sirf: fix activation retry handling
-Message-ID: <20181209205802.081b64f2@aktux>
-In-Reply-To: <20181205102149.21167-1-johan@kernel.org>
-References: <20181205102149.21167-1-johan@kernel.org>
-X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        Sun, 9 Dec 2018 15:06:05 -0500
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id 4290E806FA; Sun,  9 Dec 2018 21:05:57 +0100 (CET)
+Date:   Sun, 9 Dec 2018 21:06:00 +0100
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Josh Triplett <josh@joshtriplett.org>
+Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, x86@kernel.org,
+        platform-driver-x86@vger.kernel.org, dave.hansen@intel.com,
+        sean.j.christopherson@intel.com, nhorman@redhat.com,
+        npmccallum@redhat.com, Alexei Starovoitov <ast@kernel.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Borislav Petkov <bp@suse.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@kernel.org>,
+        "open list:INTEL SGX" <intel-sgx-kernel-dev@lists.01.org>,
+        Janakarajan Natarajan <Janakarajan.Natarajan@amd.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        "open list:KERNEL VIRTUAL MACHINE FOR X86 (KVM/x86)" 
+        <kvm@vger.kernel.org>, Len Brown <len.brown@intel.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        "open list:CRYPTO API" <linux-crypto@vger.kernel.org>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:SPARSE CHECKER" <linux-sparse@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Vikas Shivappa <vikas.shivappa@linux.intel.com>
+Subject: Re: [PATCH v11 00/13] Intel SGX1 support
+Message-ID: <20181209200600.GA11608@amd>
+References: <20180608171216.26521-1-jarkko.sakkinen@linux.intel.com>
+ <20180612105011.GA26931@amd>
+ <20180619145943.GC8034@linux.intel.com>
+ <20180619200414.GA3143@amd>
+ <20180619214833.GA5873@localhost>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/K/BWX42FcyBwOP/rYOWx/7+"; protocol="application/pgp-signature"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="bp/iNruPH9dso1Pn"
+Content-Disposition: inline
+In-Reply-To: <20180619214833.GA5873@localhost>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/K/BWX42FcyBwOP/rYOWx/7+
-Content-Type: text/plain; charset=US-ASCII
+
+--bp/iNruPH9dso1Pn
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi,
+Hi!
 
-On Wed,  5 Dec 2018 11:21:49 +0100
-Johan Hovold <johan@kernel.org> wrote:
+(sorry to bring up old thread).
 
-> Fix activation helper which would return -ETIMEDOUT even if the last
-> retry attempt was successful.
+> > > > > Intel(R) SGX is a set of CPU instructions that can be used by app=
+lications
+> > > > > to set aside private regions of code and data. The code outside t=
+he enclave
+> > > > > is disallowed to access the memory inside the enclave by the CPU =
+access
+> > > > > control.  In a way you can think that SGX provides inverted sandb=
+ox. It
+> > > > > protects the application from a malicious host.
+> > > >=20
+> > > > Do you intend to allow non-root applications to use SGX?
+> > > >=20
+> > > > What are non-evil uses for SGX?
+> > > >=20
+> > > > ...because it is quite useful for some kinds of evil:
+> > >=20
+> > > The default permissions for the device are 600.
+> >=20
+> > Good. This does not belong to non-root.
 >=20
-> Also change the semantics of the retries variable so that it actually
-> holds the number of retries (rather than tries).
+> There are entirely legitimate use cases for using this as an
+> unprivileged user. However, that'll be up to system and distribution
+> policy, which can evolve over time, and it makes sense for the *initial*
+> kernel permission to start out root-only and then adjust permissions via
+> udev.
+
+Agreed.
+
+> > What are some non-evil uses for SGX?
 >=20
-Sounds sane. I rebased my patch series on top of it and improved my
-testing script (the manual on/off toggle in between was not working
-properly)
+> Building a software certificate store. Hardening key-agent software like
+> ssh-agent or gpg-agent. Building a challenge-response authentication
+> system. Providing more assurance that your server infrastructure is
+> uncompromised. Offloading computation to a system without having to
+> fully trust that system.
 
-Regards,
-Andreas
+I think you can do the crypto stuff... as crypto already verifies the
+results. But I don't think you can do the computation offload.
 
---Sig_/K/BWX42FcyBwOP/rYOWx/7+
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+> As one of many possibilities, imagine a distcc that didn't have to trust
+> the compile nodes. The compile nodes could fail to return results at
+> all, but they couldn't alter the results.
+
+distcc on untrusted nodes ... oh yes, that would be great.
+
+Except that you can't do it, right? :-).
+
+First, AFAICT it would be quite hard to get gcc to run under SGX. But
+maybe you have spare month or three and can do it.
+
+But ... you really can't guarantee getting right results. Evil owner
+of the machine might intentionaly overheat the CPU, glitch the power,
+induce single-bit errors using gamma source, ... You can't do it.
+
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--bp/iNruPH9dso1Pn
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
-iQIzBAEBCAAdFiEE7sDbhY5mwNpwYgrAfb1qx03ikyQFAlwNc8oACgkQfb1qx03i
-kyQgAQ/+KJOkalhBleKMdPbcTBg4JTfypb/G3+8liwEP6+GlYv+mXOuEC7nj8sOz
-mwGjuAHoA/fRcJTjtlSPtm7iFHmxzIiu7yLrgiQDAub8Wks8fuX4n8eJRX5I672c
-EZeGXN/1T2LUzuysjxYqU+HJygiJasVEeX//JE6CI7b6A2Hm9LN7kd/d6eRDBS08
-EWwhDa/DGMcQUu+ztMtGAj2DV7bwNZ+zlG7ul2SGgM4e8dIdk93BbFYt6vlqA/oN
-xVC89qKs5sn5SfQTCANxKzZLzk5xAqXDlt5NKhEoyth/gY0cUNXVDMaZi5Dciui6
-3VIv87ACsMUd9Fk7r5a/em+EopQxr07fktahNvhmFC659U8lY5r6RtCD4A2ISOj9
-PgRTk5deA/ea9tlvIP2LOtw7VPxnELHW83ps5EwrPdxLv27cgLtdDAwvfhL7chu9
-jQEWLh9DSWSsGrZ2riFXhdODuHXNPfhWw1XoOHY6WuENSb4L3AJMVhnH987ZGI6q
-7RuEzkH305UjaPks3moy01kNoXfBHcxSfJkRHbvONPTlNDnxTPS4OjZylyBxCsWX
-kLRH262uhlAkuVgDVC546NEEc8j0Lz23R6MLzuE/RdBxo0/Zbnrl51e5TFZXvn8a
-1zRIQxc05ZAXgv5oUdbq5Rf/yQPzG1I8F7J+L3qqcthds1Pe3xw=
-=eEXo
+iEYEARECAAYFAlwNdagACgkQMOfwapXb+vLmBACglfRsX3Mr2i4qikFMap6DH0ZS
+3OwAnj5BaVdvd6w1ipEHlMOQVSTpim9l
+=7YhW
 -----END PGP SIGNATURE-----
 
---Sig_/K/BWX42FcyBwOP/rYOWx/7+--
+--bp/iNruPH9dso1Pn--
