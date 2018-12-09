@@ -6,46 +6,48 @@ X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80CCBC65BAF
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:05:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82FA4C07E85
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:06:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4E84820661
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:05:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E84820661
+	by mail.kernel.org (Postfix) with ESMTP id 4673C20661
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:06:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4673C20661
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727687AbeLIWFz (ORCPT
+        id S1727693AbeLIWF6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 17:05:55 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:37012 "EHLO
+        Sun, 9 Dec 2018 17:05:58 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36998 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726870AbeLIWFw (ORCPT
+        by vger.kernel.org with ESMTP id S1727664AbeLIWFt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Dec 2018 17:05:52 -0500
+        Sun, 9 Dec 2018 17:05:49 -0500
 Received: from pub.yeoldevic.com ([81.174.156.145] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW73H-0002ic-KJ; Sun, 09 Dec 2018 21:55:51 +0000
+        id 1gW735-0002io-1j; Sun, 09 Dec 2018 21:55:39 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW72c-0003ML-I6; Sun, 09 Dec 2018 21:55:10 +0000
+        id 1gW72g-0003Vf-Fi; Sun, 09 Dec 2018 21:55:14 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, "Michal Suchanek" <msuchanek@suse.com>,
-        "Mahesh Salgaonkar" <mahesh@linux.vnet.ibm.com>,
-        "Michael Ellerman" <mpe@ellerman.id.au>
+CC:     akpm@linux-foundation.org,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+        "Mathias Nyman" <mathias.nyman@linux.intel.com>,
+        "Sudip Mukherjee" <sudipm.mukherjee@gmail.com>,
+        "Alan Stern" <stern@rowland.harvard.edu>
 Date:   Sun, 09 Dec 2018 21:50:33 +0000
-Message-ID: <lsq.1544392233.114474681@decadent.org.uk>
+Message-ID: <lsq.1544392233.163798173@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 114/328] powerpc/pseries: Avoid using the size
- greater than RTAS_ERROR_LOG_MAX.
+Subject: [PATCH 3.16 207/328] usb: Avoid use-after-free by flushing
+ endpoints early in usb_set_interface()
 In-Reply-To: <lsq.1544392232.713909046@decadent.org.uk>
 X-SA-Exim-Connect-IP: 81.174.156.145
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -59,36 +61,62 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>
+From: Mathias Nyman <mathias.nyman@linux.intel.com>
 
-commit 74e96bf44f430cf7a01de19ba6cf49b361cdfd6e upstream.
+commit f9a5b4f58b280c1d26255376713c132f93837621 upstream.
 
-The global mce data buffer that used to copy rtas error log is of 2048
-(RTAS_ERROR_LOG_MAX) bytes in size. Before the copy we read
-extended_log_length from rtas error log header, then use max of
-extended_log_length and RTAS_ERROR_LOG_MAX as a size of data to be copied.
-Ideally the platform (phyp) will never send extended error log with
-size > 2048. But if that happens, then we have a risk of buffer overrun
-and corruption. Fix this by using min_t instead.
+The steps taken by usb core to set a new interface is very different from
+what is done on the xHC host side.
 
-Fixes: d368514c3097 ("powerpc: Fix corruption when grabbing FWNMI data")
-Reported-by: Michal Suchanek <msuchanek@suse.com>
-Signed-off-by: Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+xHC hardware will do everything in one go. One command is used to set up
+new endpoints, free old endpoints, check bandwidth, and run the new
+endpoints.
+
+All this is done by xHC when usb core asks the hcd to check for
+available bandwidth. At this point usb core has not yet flushed the old
+endpoints, which will cause use-after-free issues in xhci driver as
+queued URBs are cancelled on a re-allocated endpoint.
+
+To resolve this add a call to usb_disable_interface() which will flush
+the endpoints before calling usb_hcd_alloc_bandwidth()
+
+Additional checks in xhci driver will also be implemented to gracefully
+handle stale URB cancel on freed and re-allocated endpoints
+
+Reported-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
+Acked-by: Alan Stern <stern@rowland.harvard.edu>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- arch/powerpc/platforms/pseries/ras.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/usb/core/message.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
---- a/arch/powerpc/platforms/pseries/ras.c
-+++ b/arch/powerpc/platforms/pseries/ras.c
-@@ -309,7 +309,7 @@ static struct rtas_error_log *fwnmi_get_
- 		int len, error_log_length;
+--- a/drivers/usb/core/message.c
++++ b/drivers/usb/core/message.c
+@@ -1284,6 +1284,11 @@ void usb_enable_interface(struct usb_dev
+  * is submitted that needs that bandwidth.  Some other operating systems
+  * allocate bandwidth early, when a configuration is chosen.
+  *
++ * xHCI reserves bandwidth and configures the alternate setting in
++ * usb_hcd_alloc_bandwidth(). If it fails the original interface altsetting
++ * may be disabled. Drivers cannot rely on any particular alternate
++ * setting being in effect after a failure.
++ *
+  * This call is synchronous, and may not be used in an interrupt context.
+  * Also, drivers must not change altsettings while urbs are scheduled for
+  * endpoints in that interface; all such urbs must first be completed
+@@ -1319,6 +1324,12 @@ int usb_set_interface(struct usb_device
+ 			 alternate);
+ 		return -EINVAL;
+ 	}
++	/*
++	 * usb3 hosts configure the interface in usb_hcd_alloc_bandwidth,
++	 * including freeing dropped endpoint ring buffers.
++	 * Make sure the interface endpoints are flushed before that
++	 */
++	usb_disable_interface(dev, iface, false);
  
- 		error_log_length = 8 + rtas_error_extended_log_length(h);
--		len = max_t(int, error_log_length, RTAS_ERROR_LOG_MAX);
-+		len = min_t(int, error_log_length, RTAS_ERROR_LOG_MAX);
- 		memset(global_mce_data_buf, 0, RTAS_ERROR_LOG_MAX);
- 		memcpy(global_mce_data_buf, h, len);
- 		errhdr = (struct rtas_error_log *)global_mce_data_buf;
+ 	/* Make sure we have enough bandwidth for this alternate interface.
+ 	 * Remove the current alt setting and add the new alt setting.
 
