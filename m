@@ -6,49 +6,45 @@ X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1972EC07E85
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:06:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 198C2C07E85
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:06:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD23A2081F
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:06:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD23A2081F
+	by mail.kernel.org (Postfix) with ESMTP id DADA820661
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:06:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DADA820661
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727718AbeLIWGG (ORCPT
+        id S1727723AbeLIWGN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 17:06:06 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:37036 "EHLO
+        Sun, 9 Dec 2018 17:06:13 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:37046 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727705AbeLIWGC (ORCPT
+        by vger.kernel.org with ESMTP id S1727328AbeLIWGI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Dec 2018 17:06:02 -0500
+        Sun, 9 Dec 2018 17:06:08 -0500
 Received: from pub.yeoldevic.com ([81.174.156.145] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW73O-0002im-HI; Sun, 09 Dec 2018 21:55:58 +0000
+        id 1gW73F-0002po-Li; Sun, 09 Dec 2018 21:55:49 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW72Z-0003Fn-Lu; Sun, 09 Dec 2018 21:55:07 +0000
+        id 1gW72c-0003Mz-Ti; Sun, 09 Dec 2018 21:55:10 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, "Maciej W. Rozycki" <macro@mips.com>,
-        "Paul Burton" <paul.burton@mips.com>,
-        linux-fsdevel@vger.kernel.org,
-        "Ralf Baechle" <ralf@linux-mips.org>,
-        "Alexander Viro" <viro@zeniv.linux.org.uk>,
-        linux-mips@linux-mips.org, "James Hogan" <jhogan@kernel.org>
+CC:     akpm@linux-foundation.org, "Kalle Valo" <kvalo@codeaurora.org>,
+        "=?UTF-8?q?Michael=20B=C3=BCsch?=" <m@bues.ch>
 Date:   Sun, 09 Dec 2018 21:50:33 +0000
-Message-ID: <lsq.1544392233.552325546@decadent.org.uk>
+Message-ID: <lsq.1544392233.468704329@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 046/328] MIPS: Correct the 64-bit DSP accumulator
- register size
+Subject: [PATCH 3.16 122/328] b43legacy/leds: Ensure NUL-termination of
+ LED name string
 In-Reply-To: <lsq.1544392232.713909046@decadent.org.uk>
 X-SA-Exim-Connect-IP: 81.174.156.145
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -62,68 +58,30 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: "Maciej W. Rozycki" <macro@mips.com>
+From: Michael Büsch <m@bues.ch>
 
-commit f5958b4cf4fc38ed4583ab83fb7c4cd1ab05f47b upstream.
+commit 4d77a89e3924b12f4a5628b21237e57ab4703866 upstream.
 
-Use the `unsigned long' rather than `__u32' type for DSP accumulator
-registers, like with the regular MIPS multiply/divide accumulator and
-general-purpose registers, as all are 64-bit in 64-bit implementations
-and using a 32-bit data type leads to contents truncation on context
-saving.
+strncpy might not NUL-terminate the string, if the name equals the buffer size.
+Use strlcpy instead.
 
-Update `arch_ptrace' and `compat_arch_ptrace' accordingly, removing
-casts that are similarly not used with multiply/divide accumulator or
-general-purpose register accesses.
-
-Signed-off-by: Maciej W. Rozycki <macro@mips.com>
-Signed-off-by: Paul Burton <paul.burton@mips.com>
-Fixes: e50c0a8fa60d ("Support the MIPS32 / MIPS64 DSP ASE.")
-Patchwork: https://patchwork.linux-mips.org/patch/19329/
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-Cc: James Hogan <jhogan@kernel.org>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: linux-fsdevel@vger.kernel.org
-Cc: linux-mips@linux-mips.org
-Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Michael Buesch <m@bues.ch>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+[bwh: Backported to 3.16: adjust filename]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- arch/mips/include/asm/processor.h | 2 +-
- arch/mips/kernel/ptrace.c         | 2 +-
- arch/mips/kernel/ptrace32.c       | 2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
+ drivers/net/wireless/b43legacy/leds.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/mips/include/asm/processor.h
-+++ b/arch/mips/include/asm/processor.h
-@@ -143,7 +143,7 @@ struct mips_fpu_struct {
+--- a/drivers/net/wireless/b43legacy/leds.c
++++ b/drivers/net/wireless/b43legacy/leds.c
+@@ -101,7 +101,7 @@ static int b43legacy_register_led(struct
+ 	led->dev = dev;
+ 	led->index = led_index;
+ 	led->activelow = activelow;
+-	strncpy(led->name, name, sizeof(led->name));
++	strlcpy(led->name, name, sizeof(led->name));
  
- #define NUM_DSP_REGS   6
- 
--typedef __u32 dspreg_t;
-+typedef unsigned long dspreg_t;
- 
- struct mips_dsp_state {
- 	dspreg_t	dspr[NUM_DSP_REGS];
---- a/arch/mips/kernel/ptrace.c
-+++ b/arch/mips/kernel/ptrace.c
-@@ -790,7 +790,7 @@ long arch_ptrace(struct task_struct *chi
- 				goto out;
- 			}
- 			dregs = __get_dsp_regs(child);
--			tmp = (unsigned long) (dregs[addr - DSP_BASE]);
-+			tmp = dregs[addr - DSP_BASE];
- 			break;
- 		}
- 		case DSP_CONTROL:
---- a/arch/mips/kernel/ptrace32.c
-+++ b/arch/mips/kernel/ptrace32.c
-@@ -140,7 +140,7 @@ long compat_arch_ptrace(struct task_stru
- 				goto out;
- 			}
- 			dregs = __get_dsp_regs(child);
--			tmp = (unsigned long) (dregs[addr - DSP_BASE]);
-+			tmp = dregs[addr - DSP_BASE];
- 			break;
- 		}
- 		case DSP_CONTROL:
+ 	led->led_dev.name = led->name;
+ 	led->led_dev.default_trigger = default_trigger;
 
