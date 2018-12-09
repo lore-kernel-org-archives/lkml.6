@@ -2,115 +2,87 @@ Return-Path: <SRS0=cWqk=OS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31BF2C65BAF
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 18:27:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72275C07E85
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 18:35:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D835220837
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 18:27:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2465120855
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 18:35:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="EVvCM9Ok"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D835220837
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Lr69Y0ly"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2465120855
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726268AbeLIS1J (ORCPT
+        id S1726236AbeLISf1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 13:27:09 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:42029 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726154AbeLIS1G (ORCPT
+        Sun, 9 Dec 2018 13:35:27 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:37268 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726097AbeLISf1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Dec 2018 13:27:06 -0500
-Received: by mail-ot1-f68.google.com with SMTP id v23so8362061otk.9
-        for <linux-kernel@vger.kernel.org>; Sun, 09 Dec 2018 10:27:05 -0800 (PST)
+        Sun, 9 Dec 2018 13:35:27 -0500
+Received: by mail-lf1-f68.google.com with SMTP id p17so6412920lfh.4
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Dec 2018 10:35:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        d=linux-foundation.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=jSxT4gfHl5WXRc8jU0ThvEUw3na9p8omVU3j1EuQcoI=;
-        b=EVvCM9OkJ6k1PgVutSX4iGp3Vpc3tsjfj3z2VxNIHKYFdeIor/4SliQoSrLfqNT+rJ
-         gMSLZ7ZICplcva/c78Fj/4AMI08aalUJQqwcFaTQrhHWc8TiE+49QI+usIdH4kre0V+C
-         QgXuvQoWhWnnqbos0hpEzYx8OZs2pLBnfbXhnZ/2KuYUpYSjxyeTCt/A6/Y9CnMJt68S
-         eLuEWfLWBS1AYp8qyfPpG2H59aKvGael9eEcdWinA6/O5YyVUP4fvZUZtQpDnbB635UJ
-         blhvbjj5G7yWE4p9eAad9uJkq2gz8z+qcD81GnZw6lYNo+oS6dhYtNHisNw6BIFdcMCc
-         M1mA==
+        bh=YmNcep1cd97uMd2VMhlkDHPCuLWOufiAEQoEz8rf1pk=;
+        b=Lr69Y0lyVnIMxRpSvjXqN+O1I2U9D/IMD/K2rAIofUoe+VVDqDjfa9XfVNAck4G7c3
+         74c4Yk+HScJKwJhgppqJ7G4JwuRpFTeaHkWnxDihzchWhM5eXrEh+XAGqYxnUHE/fh/4
+         B1LEgrkpLPAkm8Iqsl9Rr2WnHOz4flOdKRJaU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=jSxT4gfHl5WXRc8jU0ThvEUw3na9p8omVU3j1EuQcoI=;
-        b=jZji5wy/xeMxHnWxIs96gpBZqZX3hx9OoQsLjdR3bM02xYKZlPjY/9YOK0WiAzL8jh
-         ECeQhvTflLt8+ejjKHc6ud4oM+GivwTY6vvJnV+/eXcmVg55n//AbKWreYZJSaqASxp/
-         OfBzVmzAfePzy/wjJPtLvrX0FKGZk8Oz26s19HC8Tkj0D1nGQcAge1yLG4QISezr5KKK
-         XOH1+tbjLQzJ17TWwK8p10rC1CNO2XkVIVEA5MH0kXxdpDDQYTyR6imJDyiavKdfqqMe
-         jgGgsOK5+bV4yrpw3lnO1CML8KoOTq7le8nfQh0iqhkf8zV48H1Yz9iMlqHrKhZjdgDQ
-         gp0w==
-X-Gm-Message-State: AA+aEWbbCX6wfbmfvCxaN1XbRTmnrm6cfeuv5ckUi2w170hJUUXJ7VGs
-        VT/NHpNfJlwLIZqPkrB4UdXr6PohGMP/SUU9x7dbwXsl
-X-Google-Smtp-Source: AFSGD/X8+1KvDQlELUSop3UJ7OezWWcsah9fWKNMJDo1as5kStMbA0FIVgq4++be7QHuovNSSTg9tIUahWOUq2C9YvA=
-X-Received: by 2002:a9d:6ac2:: with SMTP id m2mr6501766otq.353.1544380025118;
- Sun, 09 Dec 2018 10:27:05 -0800 (PST)
+        bh=YmNcep1cd97uMd2VMhlkDHPCuLWOufiAEQoEz8rf1pk=;
+        b=lcxxVfq5Dy8ITu7APgqWDWjpHDGs2jiPc5OdzXrVFegT/BC8gjSJgLLfR4V0dkAS6z
+         wWvjrrWpRLyz4DdOnT9f7UQNAba/91xC9UmcP7pgG0jBDV09XOf7egjj1HWI2BunBGY0
+         yjQ5w0S4O8bgaPAf2x96JT1hI/ChmEk3h4MxHVm/wuOMm45CTc6Y3BwkEP36+GuFlOjR
+         Z2MLp/q2at8o8mD4roWYpm8jVGKxdfqWtSX79f+AZGB9IEONJ95A5nobt5g9SLHEuCou
+         6X86YgDWzi2fJm6DJQ6V1Fx084VU5sibvEKKSXuzUjRJ75uXpUx22cy9dpV4ugRVm2Wx
+         qwRQ==
+X-Gm-Message-State: AA+aEWZUE9XPqLLJjC9XmCBaeeq+7XNh6LT6W3ss9GmNWFDkHIRLV3Qf
+        00qKjXxvIDPTq16CdZN4ANYWAKx3XTg=
+X-Google-Smtp-Source: AFSGD/Xn5phg6a8Ns3CRdf9junrSKjbfAcvSXvig2HmZj37SB56Yob4cXNEBP14ejySRQcv5xj4djw==
+X-Received: by 2002:a19:d90c:: with SMTP id q12mr4989076lfg.24.1544380524377;
+        Sun, 09 Dec 2018 10:35:24 -0800 (PST)
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com. [209.85.167.47])
+        by smtp.gmail.com with ESMTPSA id 15-v6sm1885433lje.18.2018.12.09.10.35.23
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 09 Dec 2018 10:35:23 -0800 (PST)
+Received: by mail-lf1-f47.google.com with SMTP id f23so6355195lfc.13
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Dec 2018 10:35:23 -0800 (PST)
+X-Received: by 2002:a19:3fcf:: with SMTP id m198mr4949471lfa.106.1544380522888;
+ Sun, 09 Dec 2018 10:35:22 -0800 (PST)
 MIME-Version: 1.0
-References: <6be0835bf256755375f3b5822bf70d74538d1d6e.camel@intel.com> <CAHk-=wgAONwr6pMn+D2OsMZjAB5zNaMWSW5KdTM+L72gGnhV2Q@mail.gmail.com>
-In-Reply-To: <CAHk-=wgAONwr6pMn+D2OsMZjAB5zNaMWSW5KdTM+L72gGnhV2Q@mail.gmail.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Sun, 9 Dec 2018 10:26:54 -0800
-Message-ID: <CAPcyv4jznHRB=BCsm8Y3d-uqDy_OWHSgTsPZoPK-L80FiQftFg@mail.gmail.com>
+References: <6be0835bf256755375f3b5822bf70d74538d1d6e.camel@intel.com>
+ <CAHk-=wgAONwr6pMn+D2OsMZjAB5zNaMWSW5KdTM+L72gGnhV2Q@mail.gmail.com> <CAPcyv4jznHRB=BCsm8Y3d-uqDy_OWHSgTsPZoPK-L80FiQftFg@mail.gmail.com>
+In-Reply-To: <CAPcyv4jznHRB=BCsm8Y3d-uqDy_OWHSgTsPZoPK-L80FiQftFg@mail.gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Sun, 9 Dec 2018 10:35:07 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wi5We7PFBqon-Jy1A59CVoGv2kJMJPixPOxm2Bq4JZX7g@mail.gmail.com>
+Message-ID: <CAHk-=wi5We7PFBqon-Jy1A59CVoGv2kJMJPixPOxm2Bq4JZX7g@mail.gmail.com>
 Subject: Re: [GIT PULL] dax fixes for 4.20-rc6
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Jan Kara <jack@suse.cz>, Matthew Wilcox <willy@infradead.org>
+To:     dan.j.williams@intel.com
+Cc:     Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        linux-nvdimm@lists.01.org, Jan Kara <jack@suse.cz>,
+        Matthew Wilcox <willy@infradead.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ add Willy and Jan ]
+On Sun, Dec 9, 2018 at 10:27 AM Dan Williams <dan.j.williams@intel.com> wrote:
+>
+> I can send a cleanup, do you want one immediately, or is post -rc6 ok?
 
-On Sun, Dec 9, 2018 at 10:02 AM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> On Sat, Dec 8, 2018 at 10:26 PM Williams, Dan J
-> <dan.j.williams@intel.com> wrote:
-> >
-> >   git://git.kernel.org/pub/scm/linux/kernel/git/nvdimm/nvdimm tags/dax-fixes-4.20-rc6
->
-> What's going on with the odd non-exclusive exclusive wait?
->
->         prepare_to_wait_exclusive(wq, &ewait.wait, TASK_UNINTERRUPTIBLE);
->         ...
->         /*
->          * Entry lock waits are exclusive. Wake up the next waiter since
->          * we aren't sure we will acquire the entry lock and thus wake
->          * the next waiter up on unlock.
->          */
->         if (waitqueue_active(wq))
->                 __wake_up(wq, TASK_NORMAL, 1, &ewait.key);
->
-> that seems to make little or no sense.
->
-> Why isn't that prepare_to_wait_exclusive() just a regular
-> prepare_to_wait(), and then the whole "let's wake up anybody else" can
-> be removed?
->
-> I've pulled it, but am awaiting explanation of what looks like some
-> pretty crazy code. I *suspect* it's a copy-and-paste situation where
-> you took the exclusive wait from somewhere else.
+post-rc6 is fine, I'd rather have the patch tested anyway,
 
-Yes, I believe that's true. In the other instances of waiting for an
-entry to be in unlocked there is a guarantee that the waiter will
-attain the lock and perform an unlock + wakeup. In the dax_lock_page()
-path there is the possibility that the inode dies before the lock is
-attained and a subsequent unlock sequence is not guaranteed. So, I
-believe the intent, Willy correct me if I am wrong, was to keep all
-waits "exclusive" for some sense of symmetry, but this one can and
-should be a non-exclusive wait.
-
-I can send a cleanup, do you want one immediately, or is post -rc6 ok?
+                 Linus
