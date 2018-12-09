@@ -2,114 +2,142 @@ Return-Path: <SRS0=cWqk=OS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C200EC07E85
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:30:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E720C07E85
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:32:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8722220661
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:30:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D935C20661
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:32:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="rmd5GnSo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8722220661
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=alliedtelesis.co.nz
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E+nCmQhI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D935C20661
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728870AbeLIW2G (ORCPT
+        id S1726458AbeLIWc0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 17:28:06 -0500
-Received: from gate2.alliedtelesis.co.nz ([202.36.163.20]:37808 "EHLO
-        gate2.alliedtelesis.co.nz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728851AbeLIW17 (ORCPT
+        Sun, 9 Dec 2018 17:32:26 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:37621 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726304AbeLIWc0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Dec 2018 17:27:59 -0500
-Received: from mmarshal3.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 0AB798365A;
-        Mon, 10 Dec 2018 11:27:57 +1300 (NZDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
-        s=mail181024; t=1544394477;
-        bh=an88u2PtLlBV+ahRtZCzfPKmogU4tbRDLJ4DsaAi0rc=;
-        h=From:To:Cc:Subject:Date;
-        b=rmd5GnSoX8TX9QUiF75qDJ9PAmGIR9DTWCbdFV2FfXAmYzAy//Zia8x3hJ4kCMKkP
-         ruyisznB+qHafrP5yfTKUpbyrOr20Qw9OVaPM0TaUMoabns3mcq8TBAN0QzO/pJaU1
-         9SANyDVrJgLtT7TwPdds6T05G7sUhbT1+thO57aP19/rlENFYsVbm163RooXuf2Qp1
-         iz8/ixTgwERl+5bb4a+6b9CorMba7AQql70ujaCaAfEm9M2wYA75/oC+80vG6FM4K/
-         uHHLrO2NcrKTgYBD/PC497KTjfWu2XSUjVDTMvwiPXJyq0xvexbFmkHVdOKbAeVbxc
-         ICgaPQNxwAufA==
-Received-SPF: Fail (domain alliedtelesis.co.nz does not designate 10.32.16.33 as a permitted sender),
-        client-ip=<10.32.16.33>; identity=<darwind@alliedtelesis.co.nz>; helo=<smtp>;
-Received: from smtp (Not Verified[10.32.16.33]) by mmarshal3.atlnz.lc with Trustwave SEG (v7,5,8,10121)
-        id <B5c0d96ec0000>; Mon, 10 Dec 2018 11:27:56 +1300
-Received: from darwind-dl.ws.atlnz.lc (darwind-dl.ws.atlnz.lc [10.33.23.22])
-        by smtp (Postfix) with ESMTP id 6DD5B13EED3;
-        Mon, 10 Dec 2018 11:28:02 +1300 (NZDT)
-Received: by darwind-dl.ws.atlnz.lc (Postfix, from userid 1665)
-        id C1D9B3409B1; Mon, 10 Dec 2018 11:27:56 +1300 (NZDT)
-From:   Darwin Dingel <darwin.dingel@alliedtelesis.co.nz>
-To:     gregkh@linuxfoundation.org, robh+dt@kernel.org
-Cc:     chris.packham@alliedtelesis.co.nz, linux-serial@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Darwin Dingel <darwin.dingel@alliedtelesis.co.nz>
-Subject: [PATCH v3 1/2] dt-bindings: serial: 8250: Add rate limit for serial port input overruns
-Date:   Mon, 10 Dec 2018 11:27:39 +1300
-Message-Id: <20181209222739.15866-1-darwin.dingel@alliedtelesis.co.nz>
-X-Mailer: git-send-email 2.19.2
+        Sun, 9 Dec 2018 17:32:26 -0500
+Received: by mail-lf1-f65.google.com with SMTP id p17so6630098lfh.4;
+        Sun, 09 Dec 2018 14:32:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=aSbfvJCmqfAHFgKylE3VLr16VVPfdibM9zf2CTitOJM=;
+        b=E+nCmQhIR90wXfefO8VAiow2e+ZE4h5e7a9+Ojvj5ehWOC+O3j5fyoGILntutdpY9j
+         WxsyufQda/KjhthwOR3eQTjRqrPpTCCdC5508U64mVuUFVHAvjt1joLZDIvEft++jcxj
+         PKc3Oqcf4yczvNyDdyCwAxBXSVZVxTS9oSoqkC4+DFOQTyPXEsJWtqzX/l9e309Iv42l
+         4fu/wFvFQPZ66GK+glSu33qYxnUEA5lkkuBLBKxFWqU+7hF/fzGzsPgLxOTn6vIipj0x
+         52MayLG6Jtl09NsZ4IC20ClEmirN1Ovf0/+qW93H/kPWIeJvJI4wifLbGmXn7ee2QbMZ
+         SmfQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=aSbfvJCmqfAHFgKylE3VLr16VVPfdibM9zf2CTitOJM=;
+        b=pQgWg+w3Svc60KlvRxdNtBIXER8fIMopUWUTOD6BMWGJYH9vtmmuqqt392RjUxznaq
+         c3NDBr4U8po0EraSMTwVbIyQvPTP9n4PGfQgeIpoGPcQwbGES2Kfn323bLGnoi3fZmeY
+         crqqRFut+9c4o4+9treeaXNvToS2p835MeUb7+XNNXkYhbUEGDcI9GBWS0x8KmsZ3Fi/
+         a1yjrmNkafhv8cXMOoJBWlj0eWxuLSGk2SSmkGk/OGlbHdrXmb9FjZMabZxlZ1gnYMcJ
+         poeCh6POQEUTh3rJGW4vpWW/0NUs8TlsL73jC4naA7BBrO5xBbStKOxoIJFrz8FP/nD0
+         O5bA==
+X-Gm-Message-State: AA+aEWY3ansIu6Zf4kT4LDpoRMvLXmhCY77ojF13kCyfsNvkpFHuKAUR
+        3dCSjNis2Bs2l8SuEtDDbPb49YADaHs=
+X-Google-Smtp-Source: AFSGD/WFKokiYX7TjyI9VrqlGnl+hh1Ja1bpLTqVArL0KU/M6D6yteT6DL1kBUR2K2oLdqf7OJLZBw==
+X-Received: by 2002:a19:c4cc:: with SMTP id u195mr5342648lff.141.1544394743398;
+        Sun, 09 Dec 2018 14:32:23 -0800 (PST)
+Received: from [192.168.10.160] (91-159-62-226.elisa-laajakaista.fi. [91.159.62.226])
+        by smtp.gmail.com with ESMTPSA id x29-v6sm1820387ljb.97.2018.12.09.14.32.22
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 09 Dec 2018 14:32:22 -0800 (PST)
+Subject: Re: [PATCH 2/6] __wr_after_init: write rare for static allocation
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Andy Lutomirski <luto@kernel.org>
+Cc:     linux-arch <linux-arch@vger.kernel.org>,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Kees Cook <keescook@chromium.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Igor Stoppa <igor.stoppa@huawei.com>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Linux-MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <20181204121805.4621-1-igor.stoppa@huawei.com>
+ <20181204121805.4621-3-igor.stoppa@huawei.com>
+ <CALCETrVvoui0vksdt0Y9rdGL5ipEn_FtSXVVUFdH03ZC93cy_A@mail.gmail.com>
+ <20181206094451.GC13538@hirez.programming.kicks-ass.net>
+From:   Igor Stoppa <igor.stoppa@gmail.com>
+Message-ID: <d9382720-3c39-5f10-afcd-dc17727fe4dc@gmail.com>
+Date:   Mon, 10 Dec 2018 00:32:21 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-x-atlnz-ls: pat
+In-Reply-To: <20181206094451.GC13538@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When a serial port continuously experiences input overrun from
-(1) continuous receive characters from remote and or (2) hardware
-issues, its interrupt handler can preempt other tasks especially
-when the system is busy (ie. boot up period). This can cause other
-tasks to get starved of processing time from the CPU.
 
-When this dts binding is enabled and input overrun on the serial port
-is detected, serial port receive will be throttled to give some breathing=
 
-room for processing other tasks. Value provided will be in milliseconds.
+On 06/12/2018 11:44, Peter Zijlstra wrote:
+> On Wed, Dec 05, 2018 at 03:13:56PM -0800, Andy Lutomirski wrote:
+> 
+>>> +       if (op == WR_MEMCPY)
+>>> +               memcpy((void *)wr_poking_addr, (void *)src, len);
+>>> +       else if (op == WR_MEMSET)
+>>> +               memset((u8 *)wr_poking_addr, (u8)src, len);
+>>> +       else if (op == WR_RCU_ASSIGN_PTR)
+>>> +               /* generic version of rcu_assign_pointer */
+>>> +               smp_store_release((void **)wr_poking_addr,
+>>> +                                 RCU_INITIALIZER((void **)src));
+>>> +       kasan_enable_current();
+>>
+>> Hmm.  I suspect this will explode quite badly on sane architectures
+>> like s390.  (In my book, despite how weird s390 is, it has a vastly
+>> nicer model of "user" memory than any other architecture I know
+>> of...).  I think you should use copy_to_user(), etc, instead.  I'm not
+>> entirely sure what the best smp_store_release() replacement is.
+>> Making this change may also mean you can get rid of the
+>> kasan_disable_current().
+> 
+> If you make the MEMCPY one guarantee single-copy atomicity for native
+> words then you're basically done.
+> 
+> smp_store_release() can be implemented with:
+> 
+> 	smp_mb();
+> 	WRITE_ONCE();
+> 
+> So if we make MEMCPY provide the WRITE_ONCE(), all we need is that
+> barrier, which we can easily place at the call site and not overly
+> complicate our interface with this.
 
-&serial0{
-=09overrun-throttle-ms =3D <500>;
-};
+Ok, so the 3rd case (WR_RCU_ASSIGN_PTR) could be handled outside of this 
+function.
+But, since now memcpy() will be replaced by copy_to_user(), can I assume 
+that also copy_to_user() will be atomic, if the destination is properly 
+aligned? On x86_64 it seems yes, however it's not clear to me if this is 
+the outcome of an optimization or if I can expect it to be always true.
 
-Signed-off-by: Darwin Dingel <darwin.dingel@alliedtelesis.co.nz>
----
 
-Notes:
-=20   Changelog
-=20   v1->v2:
-=20   - Separated dts binding to another patch
-=20  =20
-=20   v2->v3:
-=20   - Fixed commit message and reviewed-by fields
-
-=20Documentation/devicetree/bindings/serial/8250.txt | 1 +
-=201 file changed, 1 insertion(+)
-
-diff --git a/Documentation/devicetree/bindings/serial/8250.txt b/Document=
-ation/devicetree/bindings/serial/8250.txt
-index aeb6db4e35c3..da50321da34d 100644
---- a/Documentation/devicetree/bindings/serial/8250.txt
-+++ b/Documentation/devicetree/bindings/serial/8250.txt
-@@ -51,6 +51,7 @@ Optional properties:
-=20- tx-threshold: Specify the TX FIFO low water indication for parts wit=
-h
-=20  programmable TX FIFO thresholds.
-=20- resets : phandle + reset specifier pairs
-+- overrun-throttle-ms : how long to pause uart rx when input overrun is =
-encountered.
-=20
-=20Note:
-=20* fsl,ns16550:
---=20
-2.19.2
+--
+igor
