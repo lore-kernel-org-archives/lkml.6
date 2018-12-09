@@ -6,46 +6,46 @@ X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D77B4C07E85
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:03:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09AC5C65BAF
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:03:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A84D220661
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:03:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A84D220661
+	by mail.kernel.org (Postfix) with ESMTP id CCEAB20661
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:03:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CCEAB20661
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727416AbeLIWDp (ORCPT
+        id S1727424AbeLIWDr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 17:03:45 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35626 "EHLO
+        Sun, 9 Dec 2018 17:03:47 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35620 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726593AbeLIVz2 (ORCPT
+        by vger.kernel.org with ESMTP id S1726589AbeLIVz2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 9 Dec 2018 16:55:28 -0500
 Received: from pub.yeoldevic.com ([81.174.156.145] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW72r-0002iq-A0; Sun, 09 Dec 2018 21:55:25 +0000
+        id 1gW72r-0002il-0M; Sun, 09 Dec 2018 21:55:25 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW72l-0003gy-Fj; Sun, 09 Dec 2018 21:55:19 +0000
+        id 1gW72l-0003h3-Gw; Sun, 09 Dec 2018 21:55:19 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        "Richard Cochran" <richardcochran@gmail.com>
+CC:     akpm@linux-foundation.org, "David Howells" <dhowells@redhat.com>,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+        "Al Viro" <viro@zeniv.linux.org.uk>
 Date:   Sun, 09 Dec 2018 21:50:33 +0000
-Message-ID: <lsq.1544392233.706243610@decadent.org.uk>
+Message-ID: <lsq.1544392233.430055360@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 316/328] ptp: fix Spectre v1 vulnerability
+Subject: [PATCH 3.16 317/328] cachefiles: fix the race between
+ cachefiles_bury_object() and rmdir(2)
 In-Reply-To: <lsq.1544392232.713909046@decadent.org.uk>
 X-SA-Exim-Connect-IP: 81.174.156.145
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -59,62 +59,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+From: Al Viro <viro@zeniv.linux.org.uk>
 
-commit efa61c8cf2950ab5c0e66cff3cabe2a2b24e81ba upstream.
+commit 169b803397499be85bdd1e3d07d6f5e3d4bd669e upstream.
 
-pin_index can be indirectly controlled by user-space, hence leading
-to a potential exploitation of the Spectre variant 1 vulnerability.
+the victim might've been rmdir'ed just before the lock_rename();
+unlike the normal callers, we do not look the source up after the
+parents are locked - we know it beforehand and just recheck that it's
+still the child of what used to be its parent.  Unfortunately,
+the check is too weak - we don't spot a dead directory since its
+->d_parent is unchanged, dentry is positive, etc.  So we sail all
+the way to ->rename(), with hosting filesystems _not_ expecting
+to be asked renaming an rmdir'ed subdirectory.
 
-This issue was detected with the help of Smatch:
+The fix is easy, fortunately - the lock on parent is sufficient for
+making IS_DEADDIR() on child safe.
 
-drivers/ptp/ptp_chardev.c:253 ptp_ioctl() warn: potential spectre issue
-'ops->pin_config' [r] (local cap)
-
-Fix this by sanitizing pin_index before using it to index
-ops->pin_config, and before passing it as an argument to
-function ptp_set_pinfunc(), in which it is used to index
-info->pin_config.
-
-Notice that given that speculation windows are large, the policy is
-to kill the speculation on the first load and not worry if it can be
-completed with a dependent load/store [1].
-
-[1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
-
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-Acked-by: Richard Cochran <richardcochran@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 9ae326a69004 (CacheFiles: A cache that backs onto a mounted filesystem)
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: David Howells <dhowells@redhat.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/ptp/ptp_chardev.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ fs/cachefiles/namei.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/ptp/ptp_chardev.c
-+++ b/drivers/ptp/ptp_chardev.c
-@@ -23,6 +23,8 @@
- #include <linux/sched.h>
- #include <linux/slab.h>
+--- a/fs/cachefiles/namei.c
++++ b/fs/cachefiles/namei.c
+@@ -317,7 +317,7 @@ try_again:
+ 	trap = lock_rename(cache->graveyard, dir);
  
-+#include <linux/nospec.h>
-+
- #include "ptp_private.h"
- 
- static int ptp_disable_pinfunc(struct ptp_clock_info *ops,
-@@ -228,6 +230,7 @@ long ptp_ioctl(struct posix_clock *pc, u
- 			err = -EINVAL;
- 			break;
- 		}
-+		pin_index = array_index_nospec(pin_index, ops->n_pins);
- 		if (mutex_lock_interruptible(&ptp->pincfg_mux))
- 			return -ERESTARTSYS;
- 		pd = ops->pin_config[pin_index];
-@@ -246,6 +249,7 @@ long ptp_ioctl(struct posix_clock *pc, u
- 			err = -EINVAL;
- 			break;
- 		}
-+		pin_index = array_index_nospec(pin_index, ops->n_pins);
- 		if (mutex_lock_interruptible(&ptp->pincfg_mux))
- 			return -ERESTARTSYS;
- 		err = ptp_set_pinfunc(ptp, pin_index, pd.func, pd.chan);
+ 	/* do some checks before getting the grave dentry */
+-	if (rep->d_parent != dir) {
++	if (rep->d_parent != dir || IS_DEADDIR(d_inode(rep))) {
+ 		/* the entry was probably culled when we dropped the parent dir
+ 		 * lock */
+ 		unlock_rename(cache->graveyard, dir);
 
