@@ -6,46 +6,44 @@ X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 461F9C65BAF
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:29:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B8B6C65BAF
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:29:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F32520661
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:29:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F32520661
+	by mail.kernel.org (Postfix) with ESMTP id F09E720661
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:29:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F09E720661
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728977AbeLIW3O (ORCPT
+        id S1728633AbeLIW3a (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 17:29:14 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:34544 "EHLO
+        Sun, 9 Dec 2018 17:29:30 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:34562 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726324AbeLIVzJ (ORCPT
+        by vger.kernel.org with ESMTP id S1726326AbeLIVzJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 9 Dec 2018 16:55:09 -0500
 Received: from pub.yeoldevic.com ([81.174.156.145] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW72Z-0002ig-1V; Sun, 09 Dec 2018 21:55:07 +0000
+        id 1gW72Y-0002il-Re; Sun, 09 Dec 2018 21:55:06 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW72X-0003Ci-Vi; Sun, 09 Dec 2018 21:55:05 +0000
+        id 1gW72Y-0003D8-57; Sun, 09 Dec 2018 21:55:06 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org,
-        "Andy Shevchenko" <andriy.shevchenko@linux.intel.com>,
-        "Olle Liljenzin" <olle@liljenzin.se>
+CC:     akpm@linux-foundation.org, "Takashi Iwai" <tiwai@suse.de>,
+        "Nicholas Mc Guire" <hofrat@osadl.org>
 Date:   Sun, 09 Dec 2018 21:50:33 +0000
-Message-ID: <lsq.1544392233.34811690@decadent.org.uk>
+Message-ID: <lsq.1544392233.938062792@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 008/328] platform/x86: ideapad-laptop: Add
- Y520-15IKBN to no_hw_rfkill
+Subject: [PATCH 3.16 013/328] ALSA: snd-aoa: add of_node_put() in error path
 In-Reply-To: <lsq.1544392232.713909046@decadent.org.uk>
 X-SA-Exim-Connect-IP: 81.174.156.145
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -59,37 +57,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Olle Liljenzin <olle@liljenzin.se>
+From: Nicholas Mc Guire <hofrat@osadl.org>
 
-commit 5d9f40b56630a8702b5f7a61a770f9b73aa07464 upstream.
+commit 222bce5eb88d1af656419db04bcd84b2419fb900 upstream.
 
-Lenovo Legion Y520-15IKBN is yet another Lenovo model that does not
-have an hw rfkill switch, resulting in wifi always reported as hard
-blocked.
+ Both calls to of_find_node_by_name() and of_get_next_child() return a
+node pointer with refcount incremented thus it must be explicidly
+decremented here after the last usage. As we are assured to have a
+refcounted  np  either from the initial
+of_find_node_by_name(NULL, name); or from the of_get_next_child(gpio, np)
+in the while loop if we reached the error code path below, an
+x of_node_put(np) is needed.
 
-Add the model to the list of models without rfkill switch.
-
-Signed-off-by: Olle Liljenzin <olle@liljenzin.se>
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
+Fixes: commit f3d9478b2ce4 ("[ALSA] snd-aoa: add snd-aoa")
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/platform/x86/ideapad-laptop.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ sound/aoa/core/gpio-feature.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/drivers/platform/x86/ideapad-laptop.c
-+++ b/drivers/platform/x86/ideapad-laptop.c
-@@ -860,6 +860,13 @@ static struct dmi_system_id no_hw_rfkill
- 		},
- 	},
- 	{
-+		.ident = "Lenovo Legion Y520-15IKBN",
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "LENOVO"),
-+			DMI_MATCH(DMI_PRODUCT_VERSION, "Lenovo Y520-15IKBN"),
-+		},
-+	},
-+	{
- 		.ident = "Lenovo Yoga 2 11 / 13 / Pro",
- 		.matches = {
- 			DMI_MATCH(DMI_SYS_VENDOR, "LENOVO"),
+--- a/sound/aoa/core/gpio-feature.c
++++ b/sound/aoa/core/gpio-feature.c
+@@ -88,8 +88,10 @@ static struct device_node *get_gpio(char
+ 	}
+ 
+ 	reg = of_get_property(np, "reg", NULL);
+-	if (!reg)
++	if (!reg) {
++		of_node_put(np);
+ 		return NULL;
++	}
+ 
+ 	*gpioptr = *reg;
+ 
 
