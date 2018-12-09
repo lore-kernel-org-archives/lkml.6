@@ -2,91 +2,118 @@ Return-Path: <SRS0=cWqk=OS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE753C07E85
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 23:02:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79B49C07E85
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 23:25:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 94FD220831
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 23:02:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NQ0qH8yN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 94FD220831
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 411912081C
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 23:25:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 411912081C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726698AbeLIXCX (ORCPT
+        id S1726620AbeLIXYz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 18:02:23 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:37579 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726508AbeLIXCW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Dec 2018 18:02:22 -0500
-Received: by mail-pf1-f194.google.com with SMTP id y126so4440959pfb.4
-        for <linux-kernel@vger.kernel.org>; Sun, 09 Dec 2018 15:02:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=D5Oat1hTwep3QcyUUzhhIIbWo+ArAwmB9qovC2BFFIA=;
-        b=NQ0qH8yNMvM8rcj2kzZA/zTuM94nQo2Y5mrAw2Ik3c7GQZbEVpxlefKWaol8KEYonu
-         BpDu8CcrVguM9wEcXGZjaAILY+8Nj2sH/zL881blr1m5DBmQm15b2+syPeDwXFiBlbGq
-         6CohlQJdCI5xPdrJcxzeQ/ovYr8eL9822jyBeXmkiNSqbwG0PMsPhbr/+bvDvbYqD8+3
-         gdRn2A5yJpf05RTNiOhapyEyCk9O6pq78tga3eJb6U56s9L6oE9/5U2uSFE08imcGw8y
-         M6sL9vg8NxV9nzidZRnJSzclbjtgft40Ju8pMaamT1y9cIsrWbNoLzT62SAi5YwtXq0v
-         T/xw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=D5Oat1hTwep3QcyUUzhhIIbWo+ArAwmB9qovC2BFFIA=;
-        b=UvPFw4DpkoAblTYY4NMG64DjuIBTWmdWbkbwnzfv3wDCvDVdTh3FYujasK4b5QHvtw
-         rSyAnPwLABGeeM+v5CC5o3kkKRdkXNLNenYyNkv78NwiKhcGBFYE2Xln7Aqbsxn4F/uQ
-         cj6aFI94dJUrRPjv3CJMcdhUhYAOo1iVaCL5u9MM+ttRNkZYGWw5Z9n/VCvw4JIrHmqb
-         1jjO2y6EvxksEh2iWdCUsmN4FhUs3dCYudcF1xPbq4Mu9NrMT1W495kX1dzj1LmiiPAT
-         7g2ArifrTW65LRqEAAASCUl5c+UdD7XHFCm/vcCZhBZRAKK6s85vbJAunR2bgu/qv//P
-         MJbg==
-X-Gm-Message-State: AA+aEWZPHCtpJrTSBkS9SaAs5hZqpbbhm/cHhNU10WCsfiB8gF1BkNPn
-        bXN54lFSYsnlj3A91kKsW32Mww==
-X-Google-Smtp-Source: AFSGD/VvmJVBeopuZ1ffLyHckP4egtr0JNSa4uiIE75nkdqUf8S1tpFylGl9S2dJenxSgY6gGE2GGw==
-X-Received: by 2002:a62:2f06:: with SMTP id v6mr10322382pfv.216.1544396542132;
-        Sun, 09 Dec 2018 15:02:22 -0800 (PST)
-Received: from [2620:15c:17:3:3a5:23a7:5e32:4598] ([2620:15c:17:3:3a5:23a7:5e32:4598])
-        by smtp.gmail.com with ESMTPSA id n21sm18582015pfg.84.2018.12.09.15.02.21
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 09 Dec 2018 15:02:21 -0800 (PST)
-Date:   Sun, 9 Dec 2018 15:02:21 -0800 (PST)
-From:   David Rientjes <rientjes@google.com>
-X-X-Sender: rientjes@chino.kir.corp.google.com
-To:     Mike Rapoport <rppt@linux.ibm.com>
-cc:     Jonathan Corbet <corbet@lwn.net>, Christoph Lameter <cl@linux.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-doc@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] docs/mm-api: link slab_common.c to "The Slab Cache"
- section
-In-Reply-To: <1544130781-13443-3-git-send-email-rppt@linux.ibm.com>
-Message-ID: <alpine.DEB.2.21.1812091502070.206717@chino.kir.corp.google.com>
-References: <1544130781-13443-1-git-send-email-rppt@linux.ibm.com> <1544130781-13443-3-git-send-email-rppt@linux.ibm.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Sun, 9 Dec 2018 18:24:55 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:50494 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726323AbeLIXYz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Dec 2018 18:24:55 -0500
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 16790368E7;
+        Sun,  9 Dec 2018 23:24:54 +0000 (UTC)
+Received: from vitty.brq.redhat.com.redhat.com (ovpn-204-21.brq.redhat.com [10.40.204.21])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 260A25DAA0;
+        Sun,  9 Dec 2018 23:24:51 +0000 (UTC)
+From:   Vitaly Kuznetsov <vkuznets@redhat.com>
+To:     Ben Hutchings <ben@decadent.org.uk>, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org
+Cc:     akpm@linux-foundation.org, "David S. Miller" <davem@davemloft.net>,
+        Ross Lagerwall <ross.lagerwall@citrix.com>
+Subject: Re: [PATCH 3.16 047/328] xen-netfront: fix queue name setting
+In-Reply-To: <lsq.1544392233.936009164@decadent.org.uk>
+References: <lsq.1544392233.936009164@decadent.org.uk>
+Date:   Mon, 10 Dec 2018 00:24:53 +0100
+Message-ID: <87y38ycmgq.fsf@vitty.brq.redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Sun, 09 Dec 2018 23:24:55 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 6 Dec 2018, Mike Rapoport wrote:
+Ben Hutchings <ben@decadent.org.uk> writes:
 
-> Several functions in mm/slab_common.c have kernel-doc comments, it makes
-> perfect sense to link them to the MM API reference.
-> 
-> Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
+> 3.16.62-rc1 review patch.  If anyone has any objections, please let me know.
+>
+> ------------------
+>
+> From: Vitaly Kuznetsov <vkuznets@redhat.com>
+>
+> commit 2d408c0d4574b01b9ed45e02516888bf925e11a9 upstream.
+>
+> Commit f599c64fdf7d ("xen-netfront: Fix race between device setup and
+> open") changed the initialization order: xennet_create_queues() now
+> happens before we do register_netdev() so using netdev->name in
+> xennet_init_queue() is incorrect, we end up with the following in
+> /proc/interrupts:
+>
+>  60:        139          0   xen-dyn    -event     eth%d-q0-tx
+>  61:        265          0   xen-dyn    -event     eth%d-q0-rx
+>  62:        234          0   xen-dyn    -event     eth%d-q1-tx
+>  63:          1          0   xen-dyn    -event     eth%d-q1-rx
+>
+> and this looks ugly. Actually, using early netdev name (even when it's
+> already set) is also not ideal: nowadays we tend to rename eth devices
+> and queue name may end up not corresponding to the netdev name.
+>
+> Use nodename from xenbus device for queue naming: this can't change in VM's
+> lifetime. Now /proc/interrupts looks like
+>
+>  62:        202          0   xen-dyn    -event     device/vif/0-q0-tx
+>  63:        317          0   xen-dyn    -event     device/vif/0-q0-rx
+>  64:        262          0   xen-dyn    -event     device/vif/0-q1-tx
+>  65:         17          0   xen-dyn    -event     device/vif/0-q1-rx
+>
+> Fixes: f599c64fdf7d ("xen-netfront: Fix race between device setup and open")
+> Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+> Reviewed-by: Ross Lagerwall <ross.lagerwall@citrix.com>
+> Signed-off-by: David S. Miller <davem@davemloft.net>
+> Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+> ---
+>  drivers/net/xen-netfront.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> --- a/drivers/net/xen-netfront.c
+> +++ b/drivers/net/xen-netfront.c
+> @@ -1646,7 +1646,7 @@ static int xennet_init_queue(struct netf
+>  	queue->rx_refill_timer.function = rx_refill_timeout;
+>  
+>  	snprintf(queue->name, sizeof(queue->name), "%s-q%u",
+> -		 queue->info->netdev->name, queue->id);
+> +		 queue->info->xbdev->nodename, queue->id);
+>  
+>  	/* Initialise tx_skbs as a free chain containing every entry. */
+>  	queue->tx_skb_freelist = 0;
+>
 
-Acked-by: David Rientjes <rientjes@google.com>
+We should also take 
+
+commit 21f2706b20100bb3db378461ab9b8e2035309b5b
+Author: Xiao Liang <xiliang@redhat.com>
+Date:   Tue Aug 14 23:21:28 2018 +0800
+
+    xen-netfront: fix warn message as irq device name has '/'
+
+as it fixes an issue introduced by the commit in question. Sorry if this
+is already in your series but I wasn't CCed on it.
+
+-- 
+Vitaly
