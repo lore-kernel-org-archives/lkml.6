@@ -6,45 +6,44 @@ X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CCD7C07E85
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:11:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E6C3C07E85
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:11:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D0A4D20661
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:11:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D0A4D20661
+	by mail.kernel.org (Postfix) with ESMTP id 24D2B20661
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:11:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 24D2B20661
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727945AbeLIWL2 (ORCPT
+        id S1728071AbeLIWLe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 17:11:28 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:37690 "EHLO
+        Sun, 9 Dec 2018 17:11:34 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:37700 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726975AbeLIWL0 (ORCPT
+        by vger.kernel.org with ESMTP id S1726975AbeLIWLb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Dec 2018 17:11:26 -0500
+        Sun, 9 Dec 2018 17:11:31 -0500
 Received: from pub.yeoldevic.com ([81.174.156.145] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW73I-0002im-RD; Sun, 09 Dec 2018 21:55:52 +0000
+        id 1gW73C-0002iq-9o; Sun, 09 Dec 2018 21:55:46 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW72b-0003JZ-8n; Sun, 09 Dec 2018 21:55:09 +0000
+        id 1gW72d-0003P3-QH; Sun, 09 Dec 2018 21:55:11 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, "Dong Aisheng" <aisheng.dong@nxp.com>,
-        "Dan Carpenter" <dan.carpenter@oracle.com>,
-        "Linus Walleij" <linus.walleij@linaro.org>
+CC:     akpm@linux-foundation.org, "Florian Westphal" <fw@strlen.de>,
+        "Pablo Neira Ayuso" <pablo@netfilter.org>
 Date:   Sun, 09 Dec 2018 21:50:33 +0000
-Message-ID: <lsq.1544392233.777812728@decadent.org.uk>
+Message-ID: <lsq.1544392233.158413680@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 085/328] pinctrl: imx: off by one in imx_pinconf_group_dbg_show()
+Subject: [PATCH 3.16 145/328] netfilter: nf_tables: fix register ordering
 In-Reply-To: <lsq.1544392232.713909046@decadent.org.uk>
 X-SA-Exim-Connect-IP: 81.174.156.145
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -58,32 +57,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Florian Westphal <fw@strlen.de>
 
-commit b4859f3edb47825f62d1b2efdd75fe7945996f49 upstream.
+commit d209df3e7f7002d9099fdb0f6df0f972b4386a63 upstream.
 
-The > should really be >= here.  It's harmless because
-pinctrl_generic_get_group() will return a NULL if group is invalid.
+We must register nfnetlink ops last, as that exposes nf_tables to
+userspace.  Without this, we could theoretically get nfnetlink request
+before net->nft state has been initialized.
 
-Fixes: ae75ff814538 ("pinctrl: pinctrl-imx: add imx pinctrl core driver")
-Reported-by: Dong Aisheng <aisheng.dong@nxp.com>
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-[bwh: Backported to 3.16: adjust filename, context]
+Fixes: 99633ab29b213 ("netfilter: nf_tables: complete net namespace support")
+Signed-off-by: Florian Westphal <fw@strlen.de>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+[bwh: Backported to 3.16:
+ - We don't call nft_chain_filter_{init,fini}() or
+   {,un}register_netdevice_notifier()
+ - Adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/pinctrl/pinctrl-imx.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
---- a/drivers/pinctrl/pinctrl-imx.c
-+++ b/drivers/pinctrl/pinctrl-imx.c
-@@ -388,7 +388,7 @@ static void imx_pinconf_group_dbg_show(s
- 	const char *name;
- 	int i, ret;
+--- a/net/netfilter/nf_tables_api.c
++++ b/net/netfilter/nf_tables_api.c
+@@ -4042,6 +4042,10 @@ static int __init nf_tables_module_init(
+ {
+ 	int err;
  
--	if (group > info->ngroups)
-+	if (group >= info->ngroups)
- 		return;
++	err = register_pernet_subsys(&nf_tables_net_ops);
++	if (err < 0)
++		return err;
++
+ 	info = kmalloc(sizeof(struct nft_expr_info) * NFT_RULE_MAXEXPRS,
+ 		       GFP_KERNEL);
+ 	if (info == NULL) {
+@@ -4053,17 +4057,19 @@ static int __init nf_tables_module_init(
+ 	if (err < 0)
+ 		goto err2;
  
- 	seq_printf(s, "\n");
++	/* must be last */
+ 	err = nfnetlink_subsys_register(&nf_tables_subsys);
+ 	if (err < 0)
+ 		goto err3;
+ 
+ 	pr_info("nf_tables: (c) 2007-2009 Patrick McHardy <kaber@trash.net>\n");
+-	return register_pernet_subsys(&nf_tables_net_ops);
++	return err;
+ err3:
+ 	nf_tables_core_module_exit();
+ err2:
+ 	kfree(info);
+ err1:
++	unregister_pernet_subsys(&nf_tables_net_ops);
+ 	return err;
+ }
+ 
 
