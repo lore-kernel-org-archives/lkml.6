@@ -3,54 +3,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 768EFC65BAF
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:05:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D71E1C07E85
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:05:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4367B2081F
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:05:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4367B2081F
+	by mail.kernel.org (Postfix) with ESMTP id A3F9620661
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:05:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A3F9620661
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727585AbeLIWFK (ORCPT
+        id S1727589AbeLIWFU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 17:05:10 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36880 "EHLO
+        Sun, 9 Dec 2018 17:05:20 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36914 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727372AbeLIWFE (ORCPT
+        by vger.kernel.org with ESMTP id S1726452AbeLIWFR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Dec 2018 17:05:04 -0500
+        Sun, 9 Dec 2018 17:05:17 -0500
 Received: from pub.yeoldevic.com ([81.174.156.145] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW73F-0002ia-Lk; Sun, 09 Dec 2018 21:55:49 +0000
+        id 1gW73K-0002ic-9t; Sun, 09 Dec 2018 21:55:54 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW72d-0003NO-3K; Sun, 09 Dec 2018 21:55:11 +0000
+        id 1gW72b-0003Id-2U; Sun, 09 Dec 2018 21:55:09 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org,
-        "Tomas Bortoli" <tomasbortoli@gmail.com>,
-        "Latchesar Ionkov" <lucho@ionkov.net>,
-        "Ron Minnich" <rminnich@sandia.gov>,
-        syzbot+65c6b72f284a39d416b4@syzkaller.appspotmail.com,
-        "Jun Piao" <piaojun@huawei.com>,
-        "Dominique Martinet" <dominique.martinet@cea.fr>,
-        "Eric Van Hensbergen" <ericvh@gmail.com>,
-        "Yiwen Jiang" <jiangyiwen@huawei.com>
+CC:     akpm@linux-foundation.org, "Jens Axboe" <axboe@kernel.dk>,
+        "Mauricio Faria de Oliveira" <mfo@canonical.com>
 Date:   Sun, 09 Dec 2018 21:50:33 +0000
-Message-ID: <lsq.1544392233.892356241@decadent.org.uk>
+Message-ID: <lsq.1544392233.434579274@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 127/328] net/9p/client.c: version pointer uninitialized
+Subject: [PATCH 3.16 081/328] partitions/aix: fix usage of uninitialized
+ lv_info and lvname structures
 In-Reply-To: <lsq.1544392232.713909046@decadent.org.uk>
 X-SA-Exim-Connect-IP: 81.174.156.145
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -64,40 +58,56 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tomas Bortoli <tomasbortoli@gmail.com>
+From: Mauricio Faria de Oliveira <mfo@canonical.com>
 
-commit 7913690dcc5e18e235769fd87c34143072f5dbea upstream.
+commit 14cb2c8a6c5dae57ee3e2da10fa3db2b9087e39e upstream.
 
-The p9_client_version() does not initialize the version pointer. If the
-call to p9pdu_readf() returns an error and version has not been allocated
-in p9pdu_readf(), then the program will jump to the "error" label and will
-try to free the version pointer. If version is not initialized, free()
-will be called with uninitialized, garbage data and will provoke a crash.
+The if-block that sets a successful return value in aix_partition()
+uses 'lvip[].pps_per_lv' and 'n[].name' potentially uninitialized.
 
-Link: http://lkml.kernel.org/r/20180709222943.19503-1-tomasbortoli@gmail.com
-Signed-off-by: Tomas Bortoli <tomasbortoli@gmail.com>
-Reported-by: syzbot+65c6b72f284a39d416b4@syzkaller.appspotmail.com
-Reviewed-by: Jun Piao <piaojun@huawei.com>
-Reviewed-by: Yiwen Jiang <jiangyiwen@huawei.com>
-Cc: Eric Van Hensbergen <ericvh@gmail.com>
-Cc: Ron Minnich <rminnich@sandia.gov>
-Cc: Latchesar Ionkov <lucho@ionkov.net>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Dominique Martinet <dominique.martinet@cea.fr>
+For example, if 'numlvs' is zero or alloc_lvn() fails, neither is
+initialized, but are used anyway if alloc_pvd() succeeds after it.
+
+So, make the alloc_pvd() call conditional on their initialization.
+
+This has been hit when attaching an apparently corrupted/stressed
+AIX LUN, misleading the kernel to pr_warn() invalid data and hang.
+
+    [...] partition (null) (11 pp's found) is not contiguous
+    [...] partition (null) (2 pp's found) is not contiguous
+    [...] partition (null) (3 pp's found) is not contiguous
+    [...] partition (null) (64 pp's found) is not contiguous
+
+Fixes: 6ceea22bbbc8 ("partitions: add aix lvm partition support files")
+Signed-off-by: Mauricio Faria de Oliveira <mfo@canonical.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- net/9p/client.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ block/partitions/aix.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
---- a/net/9p/client.c
-+++ b/net/9p/client.c
-@@ -938,7 +938,7 @@ static int p9_client_version(struct p9_c
- {
- 	int err = 0;
- 	struct p9_req_t *req;
--	char *version;
-+	char *version = NULL;
- 	int msize;
- 
- 	p9_debug(P9_DEBUG_9P, ">>> TVERSION msize %d protocol %d\n",
+--- a/block/partitions/aix.c
++++ b/block/partitions/aix.c
+@@ -177,7 +177,7 @@ int aix_partition(struct parsed_partitio
+ 	u32 vgda_sector = 0;
+ 	u32 vgda_len = 0;
+ 	int numlvs = 0;
+-	struct pvd *pvd;
++	struct pvd *pvd = NULL;
+ 	struct lv_info {
+ 		unsigned short pps_per_lv;
+ 		unsigned short pps_found;
+@@ -231,10 +231,11 @@ int aix_partition(struct parsed_partitio
+ 				if (lvip[i].pps_per_lv)
+ 					foundlvs += 1;
+ 			}
++			/* pvd loops depend on n[].name and lvip[].pps_per_lv */
++			pvd = alloc_pvd(state, vgda_sector + 17);
+ 		}
+ 		put_dev_sector(sect);
+ 	}
+-	pvd = alloc_pvd(state, vgda_sector + 17);
+ 	if (pvd) {
+ 		int numpps = be16_to_cpu(pvd->pp_count);
+ 		int psn_part1 = be32_to_cpu(pvd->psn_part1);
 
