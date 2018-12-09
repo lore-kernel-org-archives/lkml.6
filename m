@@ -7,41 +7,41 @@ X-Spam-Status: No, score=-13.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 675E4C07E85
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 11:49:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94CD0C07E85
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 11:49:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2A80321104
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 11:49:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5AFF320837
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 11:49:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544356170;
-	bh=/Ot7Gzx7qA2GKIHFnhJiOxMrvQy7iQmiBjYCm2bGsZU=;
+	s=default; t=1544356176;
+	bh=7jGy5fK06sx5jssyFS+lxvgyeVglkdKuKLJLqNMGjso=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=f3B1hVVTiZGAd4qGDiKuc+LL9i6rdlRtSymAP/JEr6A2lyKllRoEjy9sBiTMLGtkb
-	 m3cx79OBVACOQrK1ubLOcIqxrI+5zl8YFTPX6sm97NvOgDc3P2dJordtTaqCoWBVxK
-	 hXpaDYlnZKhbEMFzLU/hhn2KIge8GNnzyiNwn24E=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A80321104
+	b=o9r9FP8F2uZekcxptC+F5wR4KfyEVid7JOufXkGABX8FIX7lB1UcJIS5bKzxlurQz
+	 l/Y9vdbKTp+McteY8ULTV7CKsR/JxjvW2fnfNnKjYDUEqdT6jUD8E+Kwo92/66IA1+
+	 EDS2fqfDq8xHBN3uLsD09U6qQdz4kC2hVHYE19TM=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5AFF320837
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726304AbeLILt3 (ORCPT
+        id S1726319AbeLILtb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 06:49:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41178 "EHLO mail.kernel.org"
+        Sun, 9 Dec 2018 06:49:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41272 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726280AbeLILt1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Dec 2018 06:49:27 -0500
+        id S1726301AbeLILt3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Dec 2018 06:49:29 -0500
 Received: from localhost.localdomain (unknown [178.38.170.116])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E060920874;
-        Sun,  9 Dec 2018 11:49:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CDB2B208E7;
+        Sun,  9 Dec 2018 11:49:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544356166;
-        bh=/Ot7Gzx7qA2GKIHFnhJiOxMrvQy7iQmiBjYCm2bGsZU=;
+        s=default; t=1544356168;
+        bh=7jGy5fK06sx5jssyFS+lxvgyeVglkdKuKLJLqNMGjso=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BRgvvmCtyugB6yjwCtG2J4oYWzUwXnMhkVm1AxxHDbwHLTkgALpI69wkRzTQV0lFW
-         db3YmOLAfVFv+1uf5xPX0zx7IgSXRsoW1huDPMeQfOXLrd1uPvUiAQ7egIKaDgol/6
-         CubNMEkgJrFAuzskjnDBO0DpqcZqReZm9VkQfPjo=
+        b=dHKU5dzXojYQ8FKlORxstTVV5p164koa7o3wf68zfpl6RjDhB/77f+SV1Jzn/S/qg
+         4dxdHI1O9dmMCL1jPpDoubgTuZotw1yfRaDIfigi7Cyq6tQfJvbfjOr7hjUGmn6jmZ
+         ZtR7BJ2+9T3VQgvH7mVigLToeCdmddTChXfSIX/o=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
         arm@kernel.org
@@ -49,9 +49,9 @@ Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
         Kukjin Kim <kgene@kernel.org>,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL 3/4] arm64: dts: exynos: Pull for v4.21
-Date:   Sun,  9 Dec 2018 12:49:10 +0100
-Message-Id: <20181209114911.25194-4-krzk@kernel.org>
+Subject: [GIT PULL 4/4] ARM: samsung: SoC/mach for 4.21
+Date:   Sun,  9 Dec 2018 12:49:11 +0100
+Message-Id: <20181209114911.25194-5-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181209114911.25194-1-krzk@kernel.org>
 References: <20181209114911.25194-1-krzk@kernel.org>
@@ -66,25 +66,35 @@ The following changes since commit 651022382c7f8da46cb4872a545ee1da6d097d2a:
 
 are available in the Git repository at:
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-dt64-4.21
+  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-soc-4.21
 
-for you to fetch changes up to 9deffb5ee78e41e2a5d6c448874a24caec6467d0:
+for you to fetch changes up to cafbc79e327f44411b8bd8bdc101b9e6c65ab42a:
 
-  arm64: dts: exynos: Add all CPUs in cooling maps (2018-11-18 15:18:42 +0100)
-
-----------------------------------------------------------------
-Samsung DTS ARM64 changes for v4.21
-
-1. Update DWC3 hardware modules to Exynos5433 specific variant.
-2. Update cooling maps to include all CPU devices in multiple DTS files.
+  ARM: exynos: Remove secondary startup initialization from smp_prepare_cpus (2018-11-18 15:12:50 +0100)
 
 ----------------------------------------------------------------
-Marek Szyprowski (1):
-      arm64: dts: exynos: Update DWC3 modules on Exynos5433 SoCs
+Samsung mach/soc changes for v4.21
 
-Viresh Kumar (1):
-      arm64: dts: exynos: Add all CPUs in cooling maps
+Just cleanups of: legacy way of setting external wakeup interrupts, old
+power management debugging functions and duplicated secondary startup
+initialization.
 
- arch/arm64/boot/dts/exynos/exynos5433-tmu.dtsi | 36 +++++++++++++++++---------
- arch/arm64/boot/dts/exynos/exynos5433.dtsi     | 24 ++++++++++++-----
- 2 files changed, 42 insertions(+), 18 deletions(-)
+----------------------------------------------------------------
+Bartlomiej Zolnierkiewicz (2):
+      ARM: exynos: Remove no longer needed s3c_pm_check_*() calls
+      ARM: samsung: Limit SAMSUNG_PM_DEBUG config option to non-Exynos platforms
+
+Krzysztof Kozlowski (2):
+      ARM: s5pv210: Remove legacy setting of external wakeup interrupts
+      ARM: exynos: Remove legacy setting of external wakeup interrupts
+
+Pankaj Dubey (1):
+      ARM: exynos: Remove secondary startup initialization from smp_prepare_cpus
+
+ arch/arm/mach-exynos/common.h  |  2 --
+ arch/arm/mach-exynos/platsmp.c | 26 --------------------------
+ arch/arm/mach-exynos/suspend.c | 37 ++++++++++++++++---------------------
+ arch/arm/mach-s5pv210/common.h |  1 -
+ arch/arm/mach-s5pv210/pm.c     | 16 ++++++++++++----
+ arch/arm/plat-samsung/Kconfig  |  1 +
+ 6 files changed, 29 insertions(+), 54 deletions(-)
