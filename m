@@ -3,58 +3,55 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ACB5CC07E85
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:18:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCE25C07E85
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:18:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D3A22081F
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:18:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D3A22081F
+	by mail.kernel.org (Postfix) with ESMTP id AC7E620661
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:18:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC7E620661
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727507AbeLIWEU (ORCPT
+        id S1727497AbeLIWET (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 17:04:20 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35796 "EHLO
+        Sun, 9 Dec 2018 17:04:19 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35840 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726642AbeLIVzb (ORCPT
+        by vger.kernel.org with ESMTP id S1726651AbeLIVzb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 9 Dec 2018 16:55:31 -0500
 Received: from pub.yeoldevic.com ([81.174.156.145] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW72t-0002ii-QK; Sun, 09 Dec 2018 21:55:28 +0000
+        id 1gW72r-0002iY-8I; Sun, 09 Dec 2018 21:55:25 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW72k-0003di-7O; Sun, 09 Dec 2018 21:55:18 +0000
+        id 1gW72k-0003fq-UO; Sun, 09 Dec 2018 21:55:18 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, "Jiri Olsa" <jolsa@redhat.com>,
-        "CAI Qian" <caiqian@redhat.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        "Rob Herring" <robh@kernel.org>, "Ingo Molnar" <mingo@kernel.org>,
-        "Alexander Shishkin" <alexander.shishkin@linux.intel.com>,
-        "Kan Liang" <kan.liang@intel.com>,
-        "Arnaldo Carvalho de Melo" <acme@redhat.com>,
-        "Linus Torvalds" <torvalds@linux-foundation.org>,
-        "Thomas Gleixner" <tglx@linutronix.de>,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
-        "Jiri Olsa" <jolsa@kernel.org>
+CC:     akpm@linux-foundation.org,
+        "Ashish Samant" <ashish.samant@oracle.com>,
+        "Joel Becker" <jlbec@evilplan.org>,
+        "Jun Piao" <piaojun@huawei.com>,
+        "Junxiao Bi" <junxiao.bi@oracle.com>,
+        "Changwei Ge" <ge.changwei@h3c.com>,
+        "Joseph Qi" <jiangqi903@gmail.com>,
+        "Mark Fasheh" <mark@fasheh.com>,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
 Date:   Sun, 09 Dec 2018 21:50:33 +0000
-Message-ID: <lsq.1544392233.479312128@decadent.org.uk>
+Message-ID: <lsq.1544392233.626041140@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 287/328] perf/core: Protect PMU device removal with a
- 'pmu_bus_running' check, to fix CONFIG_DEBUG_TEST_DRIVER_REMOVE=y kernel
- panic
+Subject: [PATCH 3.16 302/328] ocfs2: fix locking for res->tracking and
+ dlm->tracking_list
 In-Reply-To: <lsq.1544392232.713909046@decadent.org.uk>
 X-SA-Exim-Connect-IP: 81.174.156.145
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -68,66 +65,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jiri Olsa <jolsa@redhat.com>
+From: Ashish Samant <ashish.samant@oracle.com>
 
-commit 0933840acf7b65d6d30a5b6089d882afea57aca3 upstream.
+commit cbe355f57c8074bc4f452e5b6e35509044c6fa23 upstream.
 
-CAI Qian reported a crash in the PMU uncore device removal code,
-enabled by the CONFIG_DEBUG_TEST_DRIVER_REMOVE=y option:
+In dlm_init_lockres() we access and modify res->tracking and
+dlm->tracking_list without holding dlm->track_lock.  This can cause list
+corruptions and can end up in kernel panic.
 
-  https://marc.info/?l=linux-kernel&m=147688837328451
+Fix this by locking res->tracking and dlm->tracking_list with
+dlm->track_lock instead of dlm->spinlock.
 
-The reason for the crash is that perf_pmu_unregister() tries to remove
-a PMU device which is not added at this point. We add PMU devices
-only after pmu_bus is registered, which happens in the
-perf_event_sysfs_init() call and sets the 'pmu_bus_running' flag.
-
-The fix is to get the 'pmu_bus_running' flag state at the point
-the PMU is taken out of the PMU list and remove the device
-later only if it's set.
-
-Reported-by: CAI Qian <caiqian@redhat.com>
-Tested-by: CAI Qian <caiqian@redhat.com>
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Kan Liang <kan.liang@intel.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Rob Herring <robh@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/20161020111011.GA13361@krava
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-[bwh: Backported to 3.16: no address filter attributes to clean up]
+Link: http://lkml.kernel.org/r/1529951192-4686-1-git-send-email-ashish.samant@oracle.com
+Signed-off-by: Ashish Samant <ashish.samant@oracle.com>
+Reviewed-by: Changwei Ge <ge.changwei@h3c.com>
+Acked-by: Joseph Qi <jiangqi903@gmail.com>
+Acked-by: Jun Piao <piaojun@huawei.com>
+Cc: Mark Fasheh <mark@fasheh.com>
+Cc: Joel Becker <jlbec@evilplan.org>
+Cc: Junxiao Bi <junxiao.bi@oracle.com>
+Cc: Changwei Ge <ge.changwei@h3c.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -6930,7 +6930,10 @@ EXPORT_SYMBOL_GPL(perf_pmu_register);
+ fs/ocfs2/dlm/dlmmaster.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+--- a/fs/ocfs2/dlm/dlmmaster.c
++++ b/fs/ocfs2/dlm/dlmmaster.c
+@@ -599,9 +599,9 @@ static void dlm_init_lockres(struct dlm_
  
- void perf_pmu_unregister(struct pmu *pmu)
- {
-+	int remove_device;
-+
- 	mutex_lock(&pmus_lock);
-+	remove_device = pmu_bus_running;
- 	list_del_rcu(&pmu->entry);
- 	mutex_unlock(&pmus_lock);
+ 	res->last_used = 0;
  
-@@ -6944,8 +6947,10 @@ void perf_pmu_unregister(struct pmu *pmu
- 	free_percpu(pmu->pmu_disable_count);
- 	if (pmu->type >= PERF_TYPE_MAX)
- 		idr_remove(&pmu_idr, pmu->type);
--	device_del(pmu->dev);
--	put_device(pmu->dev);
-+	if (remove_device) {
-+		device_del(pmu->dev);
-+		put_device(pmu->dev);
-+	}
- 	free_pmu_context(pmu);
- }
- EXPORT_SYMBOL_GPL(perf_pmu_unregister);
+-	spin_lock(&dlm->spinlock);
++	spin_lock(&dlm->track_lock);
+ 	list_add_tail(&res->tracking, &dlm->tracking_list);
+-	spin_unlock(&dlm->spinlock);
++	spin_unlock(&dlm->track_lock);
+ 
+ 	memset(res->lvb, 0, DLM_LVB_LEN);
+ 	memset(res->refmap, 0, sizeof(res->refmap));
 
