@@ -6,51 +6,51 @@ X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC5D5C65BAF
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 19:52:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB4CEC07E85
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 19:52:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6819120672
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 19:52:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6B8752082F
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 19:52:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="U1EUqIbq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6819120672
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="U5OSxEku"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B8752082F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kemnade.info
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726451AbeLITwO (ORCPT
+        id S1726439AbeLITwN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 14:52:14 -0500
-Received: from mail.andi.de1.cc ([85.214.239.24]:40654 "EHLO
+        Sun, 9 Dec 2018 14:52:13 -0500
+Received: from mail.andi.de1.cc ([85.214.239.24]:40648 "EHLO
         h2641619.stratoserver.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726413AbeLITwM (ORCPT
+        with ESMTP id S1726400AbeLITwK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Dec 2018 14:52:12 -0500
+        Sun, 9 Dec 2018 14:52:10 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=kemnade.info; s=20180802; h=References:In-Reply-To:Message-Id:Date:Subject:
         Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
         List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=N6GWq2hr3m1Vv8mL0bUfbcsq1gt9cz6i8H7ysbzXvao=; b=U1EUqIbqOYQB7I62qVGILDXVH
-        vsoJ6/UfriDSZE98jKGPpBqDmytqq8fs6r4SHLoeqkmCnC+vp+4VYghx3xWQxWr+dkrLloYjQZBTN
-        HAT7l7ZpveJMe0+0u0z2L7N0nOYRQQANkgwJMR+2ws1ICewq8n/I0wE1UFQ1NT92WFl2Y=;
+         bh=DP3WrD0RNn5/QPCbCSvK5py97Snb6BbQz1Rb9BnrjBk=; b=U5OSxEkuQocy496k+03bU+6Hs
+        JcfeTSV7rqHbERQ+ON+nJaESvXu7Os2/jIvrRkreXba+2LiKf92/nT5lNHnk1j9sTfNu4nKaW9MEr
+        hMMTuaqHB0H8fKf8qLOcE70LffGZJ2fbPQHMjYagLnjv1pVGffrr+304oDxg7qo8BmNcQ=;
 Received: from p200300ccfbead7001a3da2fffebfd33a.dip0.t-ipconnect.de ([2003:cc:fbea:d700:1a3d:a2ff:febf:d33a] helo=aktux)
         by h2641619.stratoserver.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <andreas@kemnade.info>)
-        id 1gW57W-0008KE-NZ; Sun, 09 Dec 2018 20:52:06 +0100
+        id 1gW57W-0008K5-4m; Sun, 09 Dec 2018 20:52:06 +0100
 Received: from andi by aktux with local (Exim 4.89)
         (envelope-from <andreas@kemnade.info>)
-        id 1gW57W-0001NX-Fi; Sun, 09 Dec 2018 20:52:06 +0100
+        id 1gW57V-0001NU-SJ; Sun, 09 Dec 2018 20:52:05 +0100
 From:   Andreas Kemnade <andreas@kemnade.info>
 To:     johan@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         Discussions about the Letux Kernel 
         <letux-kernel@openphoenux.org>
 Cc:     Andreas Kemnade <andreas@kemnade.info>
-Subject: [PATCH v2 5/5] dt-bindings: gnss: add lna-supply property
-Date:   Sun,  9 Dec 2018 20:51:50 +0100
-Message-Id: <20181209195150.5192-6-andreas@kemnade.info>
+Subject: [PATCH v2 4/5] gnss: sirf: add a separate supply for a lna
+Date:   Sun,  9 Dec 2018 20:51:49 +0100
+Message-Id: <20181209195150.5192-5-andreas@kemnade.info>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20181209195150.5192-1-andreas@kemnade.info>
 References: <20181209195150.5192-1-andreas@kemnade.info>
@@ -59,30 +59,80 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add lna-supply property.
+Devices might have a separate lna between antenna output of the gps
+chip and the antenna which might have a separate supply.
 
 Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
 ---
 Changes in v2:
- - reordering
-Original order had a
-Reviewed-by: Rob Herring <robh@kernel.org>
+ - handle lna also if there is no on-off gpio
+ - rebase on changed 2/5
 
- Documentation/devicetree/bindings/gnss/sirfstar.txt | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/gnss/sirf.c | 26 ++++++++++++++++++++++----
+ 1 file changed, 22 insertions(+), 4 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/gnss/sirfstar.txt b/Documentation/devicetree/bindings/gnss/sirfstar.txt
-index f4252b6b660b..8d24f37ea1ba 100644
---- a/Documentation/devicetree/bindings/gnss/sirfstar.txt
-+++ b/Documentation/devicetree/bindings/gnss/sirfstar.txt
-@@ -26,6 +26,7 @@ Required properties (SPI):
+diff --git a/drivers/gnss/sirf.c b/drivers/gnss/sirf.c
+index c64369494afb..d339e8ef2508 100644
+--- a/drivers/gnss/sirf.c
++++ b/drivers/gnss/sirf.c
+@@ -36,6 +36,7 @@ struct sirf_data {
+ 	struct serdev_device *serdev;
+ 	speed_t	speed;
+ 	struct regulator *vcc;
++	struct regulator *lna;
+ 	struct gpio_desc *on_off;
+ 	struct gpio_desc *wakeup;
+ 	int irq;
+@@ -282,21 +283,32 @@ static int sirf_set_active(struct sirf_data *data, bool active)
+ static int sirf_runtime_suspend(struct device *dev)
+ {
+ 	struct sirf_data *data = dev_get_drvdata(dev);
++	int ret = 0;
  
- Optional properties:
+ 	if (!data->on_off)
+-		return regulator_disable(data->vcc);
++		ret = regulator_disable(data->vcc);
++	else
++		ret = sirf_set_active(data, false);
  
-+- lna-supply		: Separate supply for a LNA
- - sirf,onoff-gpios	: GPIO used to power on and off device (pin name: ON_OFF)
- - sirf,wakeup-gpios	: GPIO used to determine device power state
- 			  (pin name: RFPWRUP, WAKEUP)
+-	return sirf_set_active(data, false);
++	if (ret)
++		return ret;
++
++	return regulator_disable(data->lna);
+ }
+ 
+ static int sirf_runtime_resume(struct device *dev)
+ {
+ 	struct sirf_data *data = dev_get_drvdata(dev);
++	int ret;
++
++	ret = regulator_enable(data->lna);
++	if (ret)
++		return ret;
+ 
+ 	if (!data->on_off)
+ 		return regulator_enable(data->vcc);
+-
+-	return sirf_set_active(data, true);
++	else
++		return sirf_set_active(data, true);
+ }
+ 
+ static int __maybe_unused sirf_suspend(struct device *dev)
+@@ -384,6 +396,12 @@ static int sirf_probe(struct serdev_device *serdev)
+ 		goto err_put_device;
+ 	}
+ 
++	data->lna = devm_regulator_get(dev, "lna");
++	if (IS_ERR(data->lna)) {
++		ret = PTR_ERR(data->lna);
++		goto err_put_device;
++	}
++
+ 	data->on_off = devm_gpiod_get_optional(dev, "sirf,onoff",
+ 			GPIOD_OUT_LOW);
+ 	if (IS_ERR(data->on_off))
 -- 
 2.11.0
 
