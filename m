@@ -2,124 +2,67 @@ Return-Path: <SRS0=cWqk=OS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E32C7C07E85
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 11:37:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B8E4C07E85
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 11:49:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A33302081C
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 11:37:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A33302081C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
+	by mail.kernel.org (Postfix) with ESMTP id B8E6A20874
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 11:49:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544356163;
+	bh=M81lS9VhPc4yl/fdTYxCqwkk1R2Hk3sQ5NnKDbX5zsQ=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=hQL329n373ZOs8QO0lON4Cz1kzp/hd2k1TdSnXLux6bhb7F6YEhIp5CNyfTTQYq1o
+	 iNy0AHmU1Qg+V85u1sLN2EaLOFAhL10UGZM35CKzJ2adYy1nHk8KyTzOVgNg0+JJob
+	 rKoiM0gvB1R5B31+5V3h2lioriAU2FjyXrcuqKWU=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B8E6A20874
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726248AbeLILhR (ORCPT
+        id S1726247AbeLILtV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 06:37:17 -0500
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:55535 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726184AbeLILhR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Dec 2018 06:37:17 -0500
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 916F480809; Sun,  9 Dec 2018 12:37:11 +0100 (CET)
-Date:   Sun, 9 Dec 2018 12:37:14 +0100
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc:     shuah <shuah@kernel.org>, perex@perex.cz, tiwai@suse.com,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        alsa-devel@alsa-project.org
-Subject: Re: [RFC PATCH v8 1/4] media: Media Device Allocator API
-Message-ID: <20181209113714.GA21784@amd>
-References: <cover.1541109584.git.shuah@kernel.org>
- <e474dd16f1d6443c12b1361376193c9d0efcced6.1541109584.git.shuah@kernel.org>
- <20181119085931.GA28607@amd>
- <73c22137-9c7a-75c8-8cd1-3736c63c2d40@kernel.org>
- <20181209080944.GA7561@amd>
- <20181209092715.50a7e4e4@coco.lan>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="gKMricLos+KVdGMg"
-Content-Disposition: inline
-In-Reply-To: <20181209092715.50a7e4e4@coco.lan>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        Sun, 9 Dec 2018 06:49:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41066 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726200AbeLILtV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Dec 2018 06:49:21 -0500
+Received: from localhost.localdomain (unknown [178.38.170.116])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0FB822081C;
+        Sun,  9 Dec 2018 11:49:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544356160;
+        bh=M81lS9VhPc4yl/fdTYxCqwkk1R2Hk3sQ5NnKDbX5zsQ=;
+        h=From:To:Cc:Subject:Date:From;
+        b=xnw0cSbkF61NFfPbKDTKBGypK9fCwbWf5iBmO90k1WXP9TT2zfHg+8CtkK5b8cVRN
+         hQQJ9lrFe88SHi3G31AHr0BRQ+WLHqd0c1OkZQHx38SyHyfhIg92I3MW6nVNeklf+1
+         iMhm8IDpX8d7iB0nHRw7VS0IYn/H+alN2J8uLMGY=
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
+        arm@kernel.org
+Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
+        Kukjin Kim <kgene@kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL 0/4] ARM: exynos: Stuff for v4.21
+Date:   Sun,  9 Dec 2018 12:49:07 +0100
+Message-Id: <20181209114911.25194-1-krzk@kernel.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi,
 
---gKMricLos+KVdGMg
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+No dependencies, please pull in any order.
 
-Hi!
+I extended the validity of my key (it was set to expire on March 2019) so
+please run "gpg --refresh-keys".
 
-> > On Thu 2018-12-06 08:33:14, shuah wrote:
-> > > On 11/19/18 1:59 AM, Pavel Machek wrote: =20
-> > > >On Thu 2018-11-01 18:31:30, shuah@kernel.org wrote: =20
-> > > >>From: Shuah Khan <shuah@kernel.org>
-> > > >>
-> > > >>Media Device Allocator API to allows multiple drivers share a media=
- device.
-> > > >>Using this API, drivers can allocate a media device with the shared=
- struct
-> > > >>device as the key. Once the media device is allocated by a driver, =
-other
-> > > >>drivers can get a reference to it. The media device is released whe=
-n all
-> > > >>the references are released. =20
-> > > >
-> > > >Sounds like a ... bad idea?
-> > > >
-> > > >That's what new "media control" framework is for, no?
-> > > >
-> > > >Why do you need this? =20
-> > >=20
-> > > Media control framework doesn't address this problem of ownership of =
-the
-> > > media device when non-media drivers have to own the pipeline. In this=
- case,
-> > > snd-usb owns the audio pipeline when an audio application is using the
-> > > device. Without this work, media drivers won't be able to tell if snd=
--usb is
-> > > using the tuner and owns the media pipeline.
-> > >=20
-> > > I am going to clarify this in the commit log. =20
-> >=20
-> > I guess I'll need the explanation, yes.
-> >=20
-> > How can usb soundcard use the tuner? I thought we'd always have
-> > userspace component active and moving data between tuner and usb sound
-> > card?
->=20
-> It sounds that the description of the patch is not 100%, as it seems
-> that you're not seeing the hole picture.
->=20
-> This is designed to solve a very common usecase for media devices
-> where one physical device (an USB stick) provides both audio
-> and video.
-
-Aha, ok, it makes sense now. Thanks!
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---gKMricLos+KVdGMg
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlwM/moACgkQMOfwapXb+vKOCACcCSevIvvLj57RR7yYVXHr54DH
-emcAoK0Pb/5LFFQjUm/27hJjWMsRwkXQ
-=XydS
------END PGP SIGNATURE-----
-
---gKMricLos+KVdGMg--
+Best regards,
+Krzysztof
