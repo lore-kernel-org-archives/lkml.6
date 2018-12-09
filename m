@@ -2,83 +2,124 @@ Return-Path: <SRS0=cWqk=OS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FC3AC07E85
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 12:01:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB9E8C65BAF
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 12:08:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 540BF20661
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 12:01:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="IAF2cOFh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 540BF20661
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=protonmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 792F820831
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 12:08:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 792F820831
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726277AbeLIMB5 (ORCPT
+        id S1726225AbeLIMIC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 07:01:57 -0500
-Received: from mail-40130.protonmail.ch ([185.70.40.130]:17134 "EHLO
-        mail-40130.protonmail.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726179AbeLIMB4 (ORCPT
+        Sun, 9 Dec 2018 07:08:02 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:57032 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726113AbeLIMIC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Dec 2018 07:01:56 -0500
-Date:   Sun, 09 Dec 2018 12:01:52 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
-        s=default; t=1544356914;
-        bh=K9jf9pPUqR5N9XLTtuPaF0jwIfri7TPoIbpJyf59ovg=;
-        h=Date:To:From:Reply-To:Subject:Feedback-ID:From;
-        b=IAF2cOFhnCME/9I2GW1DHnX+fAx+aqdfY7BnU6rOV7Zm4wREqVQBzSeZYq6/DtKh1
-         Kov7OUQi+lz0v9ck8Hhbps/c5qKZ196xHEWn69ye+2fDCfkwUgD2UDZ9KTZ/9//hg7
-         0846EtL3EF6PwhU3OWm5tr1mKRETaVkD1VAcOQMs=
-To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-From:   =?UTF-8?Q?Ywe_C=C3=A6rlyn?= <ywecrn@protonmail.com>
-Reply-To: =?UTF-8?Q?Ywe_C=C3=A6rlyn?= <ywecrn@protonmail.com>
-Subject: The Fair Pay OS, for an online   Technocracy.
-Message-ID: <gxDKF-zxm3_C2wY7QA2IpZ796QxuswG8lvu5Qk8uFrxPXcOew4vlxTUiFOF3wRisFIOvo7_xfyrMgI750aHShc3lPcuhwHAoguql0VoI2LE=@protonmail.com>
-Feedback-ID: jE8CP55NmWCGfbi9g5qzrOGkxuwuSXpchSI6fmYzjd5UEveHXeJrmiWc0_sgJdqIHM8YAKf9EEyPwffaRmhZ0A==:Ext:ProtonMail
+        Sun, 9 Dec 2018 07:08:02 -0500
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wB9C4XQm106786
+        for <linux-kernel@vger.kernel.org>; Sun, 9 Dec 2018 07:08:01 -0500
+Received: from e31.co.us.ibm.com (e31.co.us.ibm.com [32.97.110.149])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2p8v6u2jsc-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Dec 2018 07:08:00 -0500
+Received: from localhost
+        by e31.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <nayna@linux.ibm.com>;
+        Sun, 9 Dec 2018 12:08:00 -0000
+Received: from b03cxnp07028.gho.boulder.ibm.com (9.17.130.15)
+        by e31.co.us.ibm.com (192.168.1.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Sun, 9 Dec 2018 12:07:57 -0000
+Received: from b03ledav002.gho.boulder.ibm.com (b03ledav002.gho.boulder.ibm.com [9.17.130.233])
+        by b03cxnp07028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wB9C7ugd20840476
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Sun, 9 Dec 2018 12:07:56 GMT
+Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D48DF13604F;
+        Sun,  9 Dec 2018 12:07:56 +0000 (GMT)
+Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E0DC6136055;
+        Sun,  9 Dec 2018 12:07:47 +0000 (GMT)
+Received: from [9.85.68.82] (unknown [9.85.68.82])
+        by b03ledav002.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Sun,  9 Dec 2018 12:07:47 +0000 (GMT)
+Subject: Re: [PATCH v6 4/7] tpm: modify tpm_pcr_read() definition to pass a
+ TPM hash algorithm
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Roberto Sassu <roberto.sassu@huawei.com>
+Cc:     zohar@linux.ibm.com, david.safford@ge.com, monty.wiseman@ge.com,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com
+References: <20181204082138.24600-1-roberto.sassu@huawei.com>
+ <20181204082138.24600-5-roberto.sassu@huawei.com>
+ <20181204234024.GC1233@linux.intel.com>
+From:   Nayna Jain <nayna@linux.ibm.com>
+Date:   Sun, 9 Dec 2018 17:34:25 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20181204234024.GC1233@linux.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18120912-8235-0000-0000-00000E35FAB5
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010199; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000270; SDB=6.01129232; UDB=6.00586684; IPR=6.00909363;
+ MB=3.00024611; MTD=3.00000008; XFM=3.00000015; UTC=2018-12-09 12:08:00
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18120912-8236-0000-0000-000043A476EC
+Message-Id: <ed07e941-947e-1f86-43da-ef15f8eb2eb3@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-09_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=951 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1812090116
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Fair Pay OS, for an online Technocracy.
 
-The Fair Pay OS represents democratic wishes, labour party politics, and wo=
-rk union efforts for fair pay, with the original principle of Fair Pay bein=
-g from monotheism, respecting this, and using a z=C3=ABn-concept of the god=
-h, as spirituality is best understood in the west, with egolessness and tra=
-nscendence, and this concept is the same as Allah Almighty in the east aswe=
-ll, where "muslim" represents the same.
 
-Hoping to take centralized efforts to decentralized areas, for a technoecon=
-omy there, in a finely granluated digital economic flow,
-intergrating all of this in one coherent solution, with one coherent Ibrahi=
-mic background, replacing The Bible, with The Quran, as we still have this =
-revelation intact, and we find it to be what we are looking for.
+On 12/05/2018 05:10 AM, Jarkko Sakkinen wrote:
+> On Tue, Dec 04, 2018 at 09:21:35AM +0100, Roberto Sassu wrote:
+>> Currently the TPM driver allows other kernel subsystems to read only the
+>> SHA1 PCR bank. This patch modifies the parameters of tpm_pcr_read() and
+>> tpm2_pcr_read() to pass a tpm_digest structure, which contains the desired
+>> hash algorithm. Also, since commit 125a22105410 ("tpm: React correctly to
+>> RC_TESTING from TPM 2.0 self tests") removed the call to tpm2_pcr_read(),
+>> the new parameter is expected to be always not NULL.
+>>
+>> Due to the API change, IMA functions have been modified.
+>>
+>> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+>> Acked-by: Mimi Zohar <zohar@linux.ibm.com>
+> Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+>
+> Mimi, Nayna, can you help with testing this (because of the IMA change)?
 
-Conformant with both theocracy and democracy, and is even more democratic, =
- and everybody gets what they want, in what will be an
-online technocracy, with specialists representing the
-people, managed by a l=C3=A9ad. (imam).
 
-This is the practical implementation of 15 years of research, that was top =
-1% research on academia.edu.
+Tested-by: Nayna Jain <nayna@linux.ibm.com>
 
-I hope you will enjoy, and come to understand, or indeed pray to the
-authority of reality.
+Thanks & Regards,
+     - Nayna
 
-An ultimate conclusion on all that is done of politics, in "the age of
-enligthenment"!
 
-Peace.
 
-work-in-progress:
+>
+> /Jarkko
+>
 
-https://www.youtube.com/channel/UCR3gmLVjHS5A702wo4bol_Q/about
