@@ -2,99 +2,114 @@ Return-Path: <SRS0=cWqk=OS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.9 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 099CBC07E85
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 10:49:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83956C07E85
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 11:07:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA05B20837
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 10:49:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mxPdZqee"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA05B20837
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 338AB20831
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 11:07:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 338AB20831
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726218AbeLIKtl (ORCPT
+        id S1726231AbeLILHg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 05:49:41 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:46093 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726132AbeLIKtl (ORCPT
+        Sun, 9 Dec 2018 06:07:36 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:51225 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726079AbeLILHf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Dec 2018 05:49:41 -0500
-Received: by mail-pf1-f196.google.com with SMTP id c73so3978009pfe.13;
-        Sun, 09 Dec 2018 02:49:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=TmWHtMeJzI8vVlByFpCms/DOmRHKGofFb/GbDBbrb88=;
-        b=mxPdZqeeoLJu4CNGAnwvPo1E73SLSI6lN/nPdslAGH50nC8MYKGg28hVeucQ3JsTIT
-         sd8NzsSIkcPX5DI17xwzUb668NnBel21DKLbsuTHvL/hujgDBB9hJWnb2AxEvmOcgWPc
-         FBSPfGU0+rQSORzubnZSefM11sKeiJttn8On80WTGNfGxqpKWWZGYYgEDA3iyA5Mp4Yz
-         c227O2q9gJiZjUhq1gIoKWFPsHScRrWXpq6LxMVLpE5SFTWEr5UFbYyH95S0Lrb+cAym
-         jq+gmpZH463MRiR3jl7THr/0gRTW88aP8r9ZLyFJk0mvJ1bix4u11Oqvsne8EoP9uxU1
-         9zSQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=TmWHtMeJzI8vVlByFpCms/DOmRHKGofFb/GbDBbrb88=;
-        b=pi0SwR37ajuPCgbbF4ODwK66+KZxFbjV87DfbxKufBGNO5Zid80g8z2e6LQMMfhqXM
-         JsJ5iUs5NC09QDVY6LRLTqI4RL8oXW6LgariBXxPIKt/+cA+TucGypskbkjWTjzMsrCo
-         ph+yc6+MUhWo6THm3ILb2GhLDwH1gHBSmynMvRvwO2XCZnoz7vt8iJOqJxjFBtCxBD2v
-         6+dyU3z71uZEoGpyYnR6fWr0UNsqRweZgpLJMbCcs4WxQeCi5TMwS8XNdieP7j14h+/s
-         2ysGHE4El1uuL5FliMlqrnQsRo8AgmuPsyHBc9CdAFcxfPS043i86Dc9H7gWKIUxyAGp
-         7a/A==
-X-Gm-Message-State: AA+aEWbWAvVhJsV+gYaqlEEaVAR/rkKKpNyKO7NXdniFsnHfwLcD3snY
-        2gz+4ZK14P8EdV6Rv6qE65E=
-X-Google-Smtp-Source: AFSGD/WvDwi2fL35V+9Mg3cDvK/CTFT/0uDJAf9SKwpqpRagCUy1shv3bh4y0de1mreY0evEvLulxg==
-X-Received: by 2002:a62:6e07:: with SMTP id j7mr8661564pfc.135.1544352580455;
-        Sun, 09 Dec 2018 02:49:40 -0800 (PST)
-Received: from localhost.localdomain ([27.59.76.117])
-        by smtp.googlemail.com with ESMTPSA id z14sm9711617pgv.47.2018.12.09.02.49.35
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 09 Dec 2018 02:49:39 -0800 (PST)
-From:   Hardik Singh Rathore <hardiksingh.k@gmail.com>
-To:     linux@roeck-us.net
-Cc:     wim@linux-watchdog.org, linux-watchdog@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Hardik Singh Rathore <hardiksingh.k@gmail.com>
-Subject: [PATCH] Watchdog: remove outdated comment
-Date:   Sun,  9 Dec 2018 16:17:26 +0530
-Message-Id: <20181209104726.15610-1-hardiksingh.k@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Sun, 9 Dec 2018 06:07:35 -0500
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wB9B71GB2918366
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Sun, 9 Dec 2018 03:07:01 -0800
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wB9B6vgU2918363;
+        Sun, 9 Dec 2018 03:06:57 -0800
+Date:   Sun, 9 Dec 2018 03:06:57 -0800
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Masahiro Yamada <tipbot@zytor.com>
+Message-ID: <tip-829889ac4a7d26858860c297e64051bd27ce8fbe@git.kernel.org>
+Cc:     bp@suse.de, richard@nod.at, mpe@ellerman.id.au, x86@kernel.org,
+        hpa@zytor.com, tglx@linutronix.de, mingo@redhat.com,
+        yamada.masahiro@socionext.com, linux-kernel@vger.kernel.org,
+        mingo@kernel.org
+Reply-To: tglx@linutronix.de, mingo@kernel.org,
+          linux-kernel@vger.kernel.org, yamada.masahiro@socionext.com,
+          mingo@redhat.com, x86@kernel.org, mpe@ellerman.id.au,
+          richard@nod.at, bp@suse.de, hpa@zytor.com
+In-Reply-To: <1541990120-9643-2-git-send-email-yamada.masahiro@socionext.com>
+References: <1541990120-9643-2-git-send-email-yamada.masahiro@socionext.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/build] x86/um: Remove -fno-unit-at-a-time workaround for
+ pre-4.0 GCC
+Git-Commit-ID: 829889ac4a7d26858860c297e64051bd27ce8fbe
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The lock field doesn't exist in watchdog_device structure.
-It was added by commit f4e9c82f64b5 ("watchdog: Add Locking support")
-and removed by commit b4ffb1909843
-("watchdog: Separate and maintain variables based on variable lifetime")
+Commit-ID:  829889ac4a7d26858860c297e64051bd27ce8fbe
+Gitweb:     https://git.kernel.org/tip/829889ac4a7d26858860c297e64051bd27ce8fbe
+Author:     Masahiro Yamada <yamada.masahiro@socionext.com>
+AuthorDate: Mon, 12 Nov 2018 11:35:19 +0900
+Committer:  Borislav Petkov <bp@suse.de>
+CommitDate: Sun, 9 Dec 2018 11:51:11 +0100
 
-Signed-off-by: Hardik Singh Rathore <hardiksingh.k@gmail.com>
+x86/um: Remove -fno-unit-at-a-time workaround for pre-4.0 GCC
+
+Commit
+
+  cafa0010cd51 ("Raise the minimum required gcc version to 4.6")
+
+bumped the minimum GCC version to 4.6 for all architectures.
+
+'$(call cc-option,-fno-unit-at-a-time)' is now dead code since
+'$(cc-version) -lt 0400' is always false. Remove it.
+
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Acked-by: Richard Weinberger <richard@nod.at>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: linuxppc-dev@lists.ozlabs.org
+Cc: x86-ml <x86@kernel.org>
+Link: https://lkml.kernel.org/r/1541990120-9643-2-git-send-email-yamada.masahiro@socionext.com
 ---
- include/linux/watchdog.h | 3 ---
- 1 file changed, 3 deletions(-)
+ arch/x86/Makefile.um | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
 
-diff --git a/include/linux/watchdog.h b/include/linux/watchdog.h
-index 44985c4a1e86..417d9f37077a 100644
---- a/include/linux/watchdog.h
-+++ b/include/linux/watchdog.h
-@@ -90,9 +90,6 @@ struct watchdog_ops {
-  *
-  * The driver-data field may not be accessed directly. It must be accessed
-  * via the watchdog_set_drvdata and watchdog_get_drvdata helpers.
-- *
-- * The lock field is for watchdog core internal use only and should not be
-- * touched.
-  */
- struct watchdog_device {
- 	int id;
--- 
-2.17.1
-
+diff --git a/arch/x86/Makefile.um b/arch/x86/Makefile.um
+index 91085a08de6c..577976b7d1f8 100644
+--- a/arch/x86/Makefile.um
++++ b/arch/x86/Makefile.um
+@@ -26,12 +26,8 @@ cflags-y += $(call cc-option,-mpreferred-stack-boundary=2)
+ # an unresolved reference.
+ cflags-y += -ffreestanding
+ 
+-# Disable unit-at-a-time mode on pre-gcc-4.0 compilers, it makes gcc use
+-# a lot more stack due to the lack of sharing of stacklots.  Also, gcc
+-# 4.3.0 needs -funit-at-a-time for extern inline functions.
+-KBUILD_CFLAGS += $(shell if [ $(cc-version) -lt 0400 ] ; then \
+-			echo $(call cc-option,-fno-unit-at-a-time); \
+-			else echo $(call cc-option,-funit-at-a-time); fi ;)
++# gcc 4.3.0 needs -funit-at-a-time for extern inline functions.
++KBUILD_CFLAGS += $(call cc-option,-funit-at-a-time)
+ 
+ KBUILD_CFLAGS += $(cflags-y)
+ 
