@@ -2,140 +2,107 @@ Return-Path: <SRS0=cWqk=OS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F616C07E85
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 20:33:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 549FEC67838
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 20:33:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 50B0A20661
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 20:33:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L2tLO/5f"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 50B0A20661
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 1F94C20661
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 20:33:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F94C20661
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726237AbeLIUdA (ORCPT
+        id S1726638AbeLIUdL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 15:33:00 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:42723 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726250AbeLIUbB (ORCPT
+        Sun, 9 Dec 2018 15:33:11 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:42704 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726246AbeLIUdK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Dec 2018 15:31:01 -0500
-Received: by mail-lj1-f195.google.com with SMTP id l15-v6so7756381lja.9;
-        Sun, 09 Dec 2018 12:31:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=f8zEUgX4a8J2cNkJXLbNNOJsQrSudg+v+E4H0iBG8o4=;
-        b=L2tLO/5frf+FmDHilL7lkklum0tOADGKNrlbPEImy7rTdW6dIFbq+/iTCN3MM+XyMM
-         zF6qDVDQEDAIIOJCgMiVwVQrW+D1BVFdYQuHMdn9D4NSTZmxVhOmzBzBcxIk+La97G6N
-         LWtQVlVqJI3mxWIjanVCiWLkDms0z0eajiOW66KwLSlqnlFqKN44Re8qjNCJtl6VCRo7
-         wR2fLU+gMhZKgAixeA6LHltr85W8VLc3ORwtgcZgQHbKvk2vDLI3+j0umcbodaZo9/GD
-         nxQh984onV/xxWF4ii/zSzjdbcXl6pGrVKx9Pr+8lhdjRqVG37AdkqTDj7GzNwFMNJdJ
-         MJNQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=f8zEUgX4a8J2cNkJXLbNNOJsQrSudg+v+E4H0iBG8o4=;
-        b=U8g+ClYb1T0mnV6mA0FcczdiE4Iv8iBD8CTjUogAT7wu25s+joLwYfXdMJJi95EsSM
-         q/adrJdIzBkvVUU35y59fGWdxzaruhnet6AOAvNfi3tTPn1SdnU2vrybvsTebIeH0k6E
-         f3uXHX1w0EEZPf7cEM59kqbY4NfX2CW2Al2Xy9+2WqNOcdgogl7hhDQ2N87lx4P7U32x
-         s/FHeaym2Qbndu4oWG3PhYedI8Wz/6yvGAWSGuUbrfY/nLIL41pwyXMApRzA8qskgEsa
-         kNxdjC6L3oFN+aNRrEdeWqECYAw7IzLVS4VflVGfu0FuSCRqCx/7VSzvMK0EmNro2iZD
-         Ickw==
-X-Gm-Message-State: AA+aEWYKDS8Nv3UAYGMCvTzYrQ681Z/a+yJx30FUMLRL6B1yHLeP3ODX
-        8JaP/ePTvYy0+tvUlrHyFYk=
-X-Google-Smtp-Source: AFSGD/Vl7fz3bDhb7ehdKLU5LYLO5fa8AnIK3dl8FW3WZVyP+S0iUU3YeWfebvRF427nVuO5gyf65A==
-X-Received: by 2002:a2e:9d86:: with SMTP id c6-v6mr5417998ljj.146.1544387459440;
-        Sun, 09 Dec 2018 12:30:59 -0800 (PST)
-Received: from localhost.localdomain (ppp91-79-165-221.pppoe.mtu-net.ru. [91.79.165.221])
-        by smtp.gmail.com with ESMTPSA id c20sm1708346lfj.67.2018.12.09.12.30.58
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 09 Dec 2018 12:30:58 -0800 (PST)
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Joerg Roedel <joro@8bytes.org>
-Cc:     Robin Murphy <robin.murphy@arm.com>,
-        iommu@lists.linux-foundation.org, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v6 02/21] iommu/tegra: gart: Clean up driver probe errors handling
-Date:   Sun,  9 Dec 2018 23:29:31 +0300
-Message-Id: <20181209202950.31486-3-digetx@gmail.com>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181209202950.31486-1-digetx@gmail.com>
-References: <20181209202950.31486-1-digetx@gmail.com>
-MIME-Version: 1.0
+        Sun, 9 Dec 2018 15:33:10 -0500
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wB9KSqo1072666
+        for <linux-kernel@vger.kernel.org>; Sun, 9 Dec 2018 15:33:08 -0500
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2p98m5an2j-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Dec 2018 15:33:08 -0500
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Sun, 9 Dec 2018 20:33:07 -0000
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Sun, 9 Dec 2018 20:33:04 -0000
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wB9KX38B58064988
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Sun, 9 Dec 2018 20:33:03 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 157A64C040;
+        Sun,  9 Dec 2018 20:33:03 +0000 (GMT)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 0E0C14C046;
+        Sun,  9 Dec 2018 20:33:02 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.88.113])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Sun,  9 Dec 2018 20:33:01 +0000 (GMT)
+Subject: Re: [PATCH v6 4/7] tpm: modify tpm_pcr_read() definition to pass a
+ TPM hash algorithm
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Roberto Sassu <roberto.sassu@huawei.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     david.safford@ge.com, monty.wiseman@ge.com,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com
+Date:   Sun, 09 Dec 2018 15:32:51 -0500
+In-Reply-To: <2f6c0365-6c17-2da1-9f5b-3c8e5cc301b2@huawei.com>
+References: <20181204082138.24600-1-roberto.sassu@huawei.com>
+         <20181204082138.24600-5-roberto.sassu@huawei.com>
+         <20181204234024.GC1233@linux.intel.com>
+         <1544041904.4017.8.camel@linux.ibm.com>
+         <1544125756.4017.70.camel@linux.ibm.com>
+         <2f6c0365-6c17-2da1-9f5b-3c8e5cc301b2@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 18120920-0012-0000-0000-000002D6BDB8
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18120920-0013-0000-0000-0000210C2DE6
+Message-Id: <1544387571.3794.17.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-09_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=857 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1812090189
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Properly clean up allocated resources on the drivers probe failure and
-remove unneeded checks.
+On Fri, 2018-12-07 at 15:51 +0100, Roberto Sassu wrote:
+> On 12/6/2018 8:49 PM, Mimi Zohar wrote:
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-Acked-by: Thierry Reding <treding@nvidia.com>
----
- drivers/iommu/tegra-gart.c | 16 ++++++++++------
- 1 file changed, 10 insertions(+), 6 deletions(-)
+> > PCRs for sha1 and sha256 algorithms are being updated and the
+> > measurement list verifies against the SHA1 PCR-10.
+> > 
+> > Roberto, have you added support in ima-evm-utils to validate the other
+> > banks?
+> 
+> I modified IMA LTP.
 
-diff --git a/drivers/iommu/tegra-gart.c b/drivers/iommu/tegra-gart.c
-index ff75cf60117b..1cd470b2beea 100644
---- a/drivers/iommu/tegra-gart.c
-+++ b/drivers/iommu/tegra-gart.c
-@@ -411,9 +411,6 @@ static int tegra_gart_probe(struct platform_device *pdev)
- 	struct device *dev = &pdev->dev;
- 	int ret;
- 
--	if (gart_handle)
--		return -EIO;
--
- 	BUILD_BUG_ON(PAGE_SHIFT != GART_PAGE_SHIFT);
- 
- 	/* the GART memory aperture is required */
-@@ -448,8 +445,7 @@ static int tegra_gart_probe(struct platform_device *pdev)
- 	ret = iommu_device_register(&gart->iommu);
- 	if (ret) {
- 		dev_err(dev, "Failed to register IOMMU\n");
--		iommu_device_sysfs_remove(&gart->iommu);
--		return ret;
-+		goto remove_sysfs;
- 	}
- 
- 	gart->dev = &pdev->dev;
-@@ -463,7 +459,8 @@ static int tegra_gart_probe(struct platform_device *pdev)
- 	gart->savedata = vmalloc(array_size(sizeof(u32), gart->page_count));
- 	if (!gart->savedata) {
- 		dev_err(dev, "failed to allocate context save area\n");
--		return -ENOMEM;
-+		ret = -ENOMEM;
-+		goto unregister_iommu;
- 	}
- 
- 	platform_set_drvdata(pdev, gart);
-@@ -472,6 +469,13 @@ static int tegra_gart_probe(struct platform_device *pdev)
- 	gart_handle = gart;
- 
- 	return 0;
-+
-+unregister_iommu:
-+	iommu_device_unregister(&gart->iommu);
-+remove_sysfs:
-+	iommu_device_sysfs_remove(&gart->iommu);
-+
-+	return ret;
- }
- 
- static const struct dev_pm_ops tegra_gart_pm_ops = {
--- 
-2.19.1
+I'm not finding it.  Was the test for the current code, where the same
+value is being padded for different algorithms, or for walking the
+proposed hash agile format?
+
+Mimi
 
