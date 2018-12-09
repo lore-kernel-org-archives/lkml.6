@@ -2,117 +2,143 @@ Return-Path: <SRS0=cWqk=OS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.9 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11756C65BAF
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 12:14:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B1ACC65BAF
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 12:14:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D127C20831
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 12:14:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D127C20831
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 49C8F20837
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 12:14:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 49C8F20837
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i2se.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726256AbeLIMOY (ORCPT
+        id S1726212AbeLIMOy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 07:14:24 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:37952 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726158AbeLIMOX (ORCPT
+        Sun, 9 Dec 2018 07:14:54 -0500
+Received: from mout.kundenserver.de ([212.227.126.131]:54003 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726131AbeLIMOx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Dec 2018 07:14:23 -0500
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wB9CEJZT124133
-        for <linux-kernel@vger.kernel.org>; Sun, 9 Dec 2018 07:14:20 -0500
-Received: from e31.co.us.ibm.com (e31.co.us.ibm.com [32.97.110.149])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2p8v97td02-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Sun, 09 Dec 2018 07:14:20 -0500
-Received: from localhost
-        by e31.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <nayna@linux.ibm.com>;
-        Sun, 9 Dec 2018 12:14:19 -0000
-Received: from b03cxnp08026.gho.boulder.ibm.com (9.17.130.18)
-        by e31.co.us.ibm.com (192.168.1.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Sun, 9 Dec 2018 12:14:16 -0000
-Received: from b03ledav002.gho.boulder.ibm.com (b03ledav002.gho.boulder.ibm.com [9.17.130.233])
-        by b03cxnp08026.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wB9CEF8M24051868
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Sun, 9 Dec 2018 12:14:15 GMT
-Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3AAE4136053;
-        Sun,  9 Dec 2018 12:14:15 +0000 (GMT)
-Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B12FA13604F;
-        Sun,  9 Dec 2018 12:14:11 +0000 (GMT)
-Received: from [9.85.68.82] (unknown [9.85.68.82])
-        by b03ledav002.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Sun,  9 Dec 2018 12:14:11 +0000 (GMT)
-Subject: Re: [PATCH v6 2/7] tpm: add _head suffix to tcg_efi_specid_event and
- tcg_pcr_event2
-To:     Roberto Sassu <roberto.sassu@huawei.com>,
-        jarkko.sakkinen@linux.intel.com, david.safford@ge.com,
-        monty.wiseman@ge.com
-Cc:     zohar@linux.ibm.com, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com
-References: <20181204082138.24600-1-roberto.sassu@huawei.com>
- <20181204082138.24600-3-roberto.sassu@huawei.com>
-From:   Nayna Jain <nayna@linux.ibm.com>
-Date:   Sun, 9 Dec 2018 17:40:49 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+        Sun, 9 Dec 2018 07:14:53 -0500
+Received: from oxbaltgw09.schlund.de ([172.19.246.15]) by
+ mrelayeu.kundenserver.de (mreue009 [213.165.67.97]) with ESMTPSA (Nemesis) id
+ 1MYNW6-1h1Qtt2V4E-00VPZx; Sun, 09 Dec 2018 13:14:03 +0100
+Date:   Sun, 9 Dec 2018 13:14:01 +0100 (CET)
+From:   Stefan Wahren <stefan.wahren@i2se.com>
+To:     Eric Anholt <eric@anholt.net>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        linux-watchdog@vger.kernel.org
+Cc:     linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        bcm-kernel-feedback-list@broadcom.com,
+        Sebastian Reichel <sre@kernel.org>, linux-pm@vger.kernel.org
+Message-ID: <53380420.68255.1544357641824@email.ionos.de>
+In-Reply-To: <20181130202743.20585-2-eric@anholt.net>
+References: <20181130202743.20585-1-eric@anholt.net>
+ <20181130202743.20585-2-eric@anholt.net>
+Subject: Re: [PATCH v3 1/5] dt-bindings: soc: Add a new binding for the
+ BCM2835 PM node.
 MIME-Version: 1.0
-In-Reply-To: <20181204082138.24600-3-roberto.sassu@huawei.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 18120912-8235-0000-0000-00000E35FAF8
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010199; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000270; SDB=6.01129234; UDB=6.00586685; IPR=6.00909365;
- MB=3.00024611; MTD=3.00000008; XFM=3.00000015; UTC=2018-12-09 12:14:18
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18120912-8236-0000-0000-000043A47991
-Message-Id: <edb2a88c-3f28-59fe-ebc8-4358362c4c3d@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-09_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=635 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1812090117
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Priority: 3
+Importance: Medium
+X-Mailer: Open-Xchange Mailer v7.8.4-Rev47
+X-Originating-Client: open-xchange-appsuite
+X-Provags-ID: V03:K1:mhi5VNbh49HU3iPYNttRAeK16mzFVlsMEWX2Jr0BKNDmRDYir9C
+ T9nxyptjo0mPkH03bjT7OTl518XTHw5TE0HOSujf1M8b8wCG7lbD1LkOJsb/rdgAGDqhBEf
+ /f39FzD6cQN5ZyGkuImO4nJ2gdl8CbRorirUauCwMbJ1d1qagF/0xI5NWS4r3yHur7XMM8t
+ TrPBfNBwGTB4jNw+OU9LQ==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:mTBE6MxyVeI=:CwhDgGnxhEBETMdvQmE88J
+ qW4i88hqGr3+cymJIsWpmfVDsxV6bjimh9z3/5PMA5yz1WBEp/RsU7ZrTRNvdrzdwUfxUMKCB
+ pX5FaJwS+bgPFHOk0oEnFp/Bx+FlZ3nXwvbMr1WrpV6zzRuVYjENV9mqSQ/e0i2y74bUWdxVK
+ hhiT9v5jElD2LeT37MTyh8yQInUfggYDIsflMOS84tgZnkFo0F2KlN7SrkIiYnWIn0iq3MTnM
+ eqagHwYAVwMe6UW3FqxtTeKnM3PAOrtUnPbRZ2kfbgNzvQiGVxI1qexEhTWW+qo7UzQKf0JEB
+ IeYJUABDkRscwMBIuBHUuGva/AcWLJDhneL4o1HT9PdE0AOV95HGrsMyRimsRKwkaGsQWaeQV
+ KvaX2ed1GXmTz3tm9L9mLpG9WjwppyuIlmIEj65a9UiWneapgQ9EbFDCmQCup9wp41WrWp0rb
+ YOfptK0SBC70VYLR/HP884+Yz0ky6X5qhtR5k3kU3Ut65pNHmL2WOmLNMfBYZSV0ti4ojZ0/a
+ eZFSZFm5CaZ9mWmshMo3/GS5GpCsvRi4jypzBfWayjq8gRDR2P8FpGf3EPamAEhyIozk1qq4O
+ qvGAbzV5X3OyPvLpxEcMl8VKtwO6kwtUZ3wgm8c8MZH75NR181X8XXpz7Hnmi3S7lp2ALIxlO
+ 6CHP6Wn6JUyDjVd2pM3mZIJvTjWGZQwgbhguynG0rez96sVf2xy/wSVGMmMa3+fQ0mWYdQrVr
+ VAdzn3lfiQhSvYUSlJwVMrUjuw1nDGktZ/H1aMR0vArOh8Y4YLfGU+fLzzU=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Eric,
 
+[add Sebastian]
 
-On 12/04/2018 01:51 PM, Roberto Sassu wrote:
-> TCG defines two structures, TCG_EfiSpecIDEventStruct and TCG_PCR_EVENT2,
-> which contain variable-sized arrays in the middle of the definition.
->
-> Since these structures are not suitable for type casting, this patch
-> removes structure members after the variable-sized arrays and adds the
-> _head suffix to the structure name, to indicate that the renamed structures
-> do not contain all fields defined by TCG.
->
-> Lastly, given that variable-sized arrays are now in the last position, and
-> given that the size of the arrays cannot be determined in advance, this
-> patch also sets the size of those arrays to zero and removes the definition
-> of TPM2_ACTIVE_PCR_BANKS.
->
-> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> Eric Anholt <eric@anholt.net> hat am 30. November 2018 um 21:27 geschrieben:
+> 
+> 
+> This binding supersedes the bcm2835-pm-wdt binding which only covered
+> enough to provide a watchdog, but the HW block is actually mostly
+> about power domains.
+> 
+> Signed-off-by: Eric Anholt <eric@anholt.net>
+> ---
+>  .../bindings/soc/bcm/brcm,bcm2835-pm.txt      | 42 +++++++++++++++++++
+>  1 file changed, 42 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/soc/bcm/brcm,bcm2835-pm.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/soc/bcm/brcm,bcm2835-pm.txt b/Documentation/devicetree/bindings/soc/bcm/brcm,bcm2835-pm.txt
+> new file mode 100644
+> index 000000000000..7818d33a158f
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/soc/bcm/brcm,bcm2835-pm.txt
+> @@ -0,0 +1,42 @@
+> +BCM2835 PM (Power domains, watchdog)
+> +
+> +The PM block controls power domains and some reset lines, and includes
+> +a watchdog timer.  This binding supersedes the brcm,bcm2835-pm-wdt
+> +binding which covered some of PM's register range and functionality.
+> +
+> +Required properties:
+> +
+> +- compatible:		Should be "brcm,bcm2835-pm"
+> +- reg:			Specifies base physical address and size of the two
+> +			  register ranges ("PM" and "ASYNC_BRIDGE" in that
+> +			  order)
+> +- clocks:		a) v3d: The V3D clock from CPRMAN
+> +			b) peri_image: The PERI_IMAGE clock from CPRMAN
+> +			c) h264: The H264 clock from CPRMAN
+> +			d) isp: The ISP clock from CPRMAN
+> +- #reset-cells: 	Should be 1.  This property follows the reset controller
+> +			  bindings[1].
+> +- #power-domain-cells:	Should be 1.  This property follows the power domain
+> +			  bindings[2].
+> +
+> +Optional properties:
+> +
+> +- timeout-sec:	Contains the watchdog timeout in seconds
+> +
+> +[1] Documentation/devicetree/bindings/reset/reset.txt
+> +[2] Documentation/devicetree/bindings/power/power_domain.txt
+> +
 
+sorry for my late reply. I hope we can take the opportunity of a new binding to fix an old issue of the bcm2835-wdt driver. The watchdog driver sets the pm_power_off callback without checking for "system-power-controller" property [3]. As a result we can't use another poweroff controller like e.g. gpio-poweroff. In downstream this has been workarounded by an additional devicetree property for the gpio-poweroff driver [4]. But this isn't the right way because the issue is in the bcm2835 watchdog driver not in all the other reset controller.
 
-Tested-by: Nayna Jain <nayna@linux.ibm.com>
+Suggested pseudo code:
 
-Thanks & Regards,
-     - Nayna
+if (!pm_power_off) {
+    /* Preserve the old behavior of watchdog driver in case of old DTB */
+    if (!of_device_is_compatible(dev->of.node, "brcm,bcm2835-pm") ||
+        of_device_is_system_power_controller(dev->of.node))
+        pm_power_off = bcm2835_power_off;
+}
 
+Best regards
+Stefan
 
+[3] - https://elixir.bootlin.com/linux/latest/source/Documentation/devicetree/bindings/power/power-controller.txt
+[4] - https://github.com/raspberrypi/linux/commit/f86dcfac0a4e478fee40b5a3729ff1b159ae91ee
