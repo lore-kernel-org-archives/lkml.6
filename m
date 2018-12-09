@@ -6,45 +6,48 @@ X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40A07C65BAF
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:24:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04A1EC65BAF
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:24:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 071C320661
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:24:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 071C320661
+	by mail.kernel.org (Postfix) with ESMTP id BB6BA2081F
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:24:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB6BA2081F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728644AbeLIWYZ (ORCPT
+        id S1728686AbeLIWYf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 17:24:25 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35058 "EHLO
+        Sun, 9 Dec 2018 17:24:35 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:34990 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726483AbeLIVzS (ORCPT
+        by vger.kernel.org with ESMTP id S1726471AbeLIVzR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Dec 2018 16:55:18 -0500
+        Sun, 9 Dec 2018 16:55:17 -0500
 Received: from pub.yeoldevic.com ([81.174.156.145] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW72h-0002iY-Ro; Sun, 09 Dec 2018 21:55:16 +0000
+        id 1gW72h-0002ic-Aq; Sun, 09 Dec 2018 21:55:15 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW72e-0003SQ-Uk; Sun, 09 Dec 2018 21:55:12 +0000
+        id 1gW72e-0003RW-GO; Sun, 09 Dec 2018 21:55:12 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, "Borislav Petkov" <bp@suse.de>,
-        "Thomas Gleixner" <tglx@linutronix.de>
+CC:     akpm@linux-foundation.org, "Andi Kleen" <ak@linux.intel.com>,
+        vbabka@suse.cz, "Michael Hocko" <mhocko@suse.com>,
+        "Thomas Gleixner" <tglx@linutronix.de>,
+        "Christopher Snowhill" <kode54@gmail.com>, x86@kernel.org,
+        "xxxxxx xxxxxx" <xxxxxx@xxxxxx.xxx>
 Date:   Sun, 09 Dec 2018 21:50:33 +0000
-Message-ID: <lsq.1544392233.559911835@decadent.org.uk>
+Message-ID: <lsq.1544392233.357324436@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 176/328] x86/microcode/intel: Add a helper which
- gives the microcode revision
+Subject: [PATCH 3.16 165/328] x86/speculation/l1tf: Increase l1tf memory
+ limit for Nehalem+
 In-Reply-To: <lsq.1544392232.713909046@decadent.org.uk>
 X-SA-Exim-Connect-IP: 81.174.156.145
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -58,172 +61,143 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Borislav Petkov <bp@suse.de>
+From: Andi Kleen <ak@linux.intel.com>
 
-commit 4167709bbf826512a52ebd6aafda2be104adaec9 upstream.
+commit cc51e5428ea54f575d49cfcede1d4cb3a72b4ec4 upstream.
 
-Since on Intel we're required to do CPUID(1) first, before reading
-the microcode revision MSR, let's add a special helper which does the
-required steps so that we don't forget to do them next time, when we
-want to read the microcode revision.
+On Nehalem and newer core CPUs the CPU cache internally uses 44 bits
+physical address space. The L1TF workaround is limited by this internal
+cache address width, and needs to have one bit free there for the
+mitigation to work.
 
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Link: http://lkml.kernel.org/r/20170109114147.5082-4-bp@alien8.de
+Older client systems report only 36bit physical address space so the range
+check decides that L1TF is not mitigated for a 36bit phys/32GB system with
+some memory holes.
+
+But since these actually have the larger internal cache width this warning
+is bogus because it would only really be needed if the system had more than
+43bits of memory.
+
+Add a new internal x86_cache_bits field. Normally it is the same as the
+physical bits field reported by CPUID, but for Nehalem and newerforce it to
+be at least 44bits.
+
+Change the L1TF memory size warning to use the new cache_bits field to
+avoid bogus warnings and remove the bogus comment about memory size.
+
+Fixes: 17dbca119312 ("x86/speculation/l1tf: Add sysfs reporting for l1tf")
+Reported-by: xxxxxx xxxxxx <xxxxxx@xxxxxx.xxx>
+Reported-by: Christopher Snowhill <kode54@gmail.com>
+Signed-off-by: Andi Kleen <ak@linux.intel.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-[bwh: Backported to 3.16:
- - Don't touch prev_rev variable in apply_microcode()
- - Keep using sync_core(), which will alway includes the necessary CPUID
- - Adjust filename, context]
+Cc: x86@kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: Michael Hocko <mhocko@suse.com>
+Cc: vbabka@suse.cz
+Link: https://lkml.kernel.org/r/20180824170351.34874-1-andi@firstfloor.org
+[bwh: Backported to 3.16: adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
---- a/arch/x86/include/asm/microcode_intel.h
-+++ b/arch/x86/include/asm/microcode_intel.h
-@@ -63,6 +63,21 @@ extern int get_matching_sig(unsigned int
- extern int
- update_match_revision(struct microcode_header_intel *mc_header, int rev);
+ arch/x86/include/asm/processor.h |  4 ++-
+ arch/x86/kernel/cpu/bugs.c       | 46 ++++++++++++++++++++++++++++----
+ arch/x86/kernel/cpu/common.c     |  1 +
+ 3 files changed, 45 insertions(+), 6 deletions(-)
+
+--- a/arch/x86/include/asm/processor.h
++++ b/arch/x86/include/asm/processor.h
+@@ -127,6 +127,8 @@ struct cpuinfo_x86 {
+ 	/* Index into per_cpu list: */
+ 	u16			cpu_index;
+ 	u32			microcode;
++	/* Address space bits used by the cache internally */
++	u8			x86_cache_bits;
+ } __attribute__((__aligned__(SMP_CACHE_BYTES)));
  
-+static inline u32 intel_get_microcode_revision(void)
+ #define X86_VENDOR_INTEL	0
+@@ -167,7 +169,7 @@ extern void fpu_detect(struct cpuinfo_x8
+ 
+ static inline unsigned long long l1tf_pfn_limit(void)
+ {
+-	return BIT_ULL(boot_cpu_data.x86_phys_bits - 1 - PAGE_SHIFT);
++	return BIT_ULL(boot_cpu_data.x86_cache_bits - 1 - PAGE_SHIFT);
+ }
+ 
+ extern void early_cpu_init(void);
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -696,6 +696,45 @@ void x86_spec_ctrl_setup_ap(void)
+ 
+ #undef pr_fmt
+ #define pr_fmt(fmt)	"L1TF: " fmt
++/*
++ * These CPUs all support 44bits physical address space internally in the
++ * cache but CPUID can report a smaller number of physical address bits.
++ *
++ * The L1TF mitigation uses the top most address bit for the inversion of
++ * non present PTEs. When the installed memory reaches into the top most
++ * address bit due to memory holes, which has been observed on machines
++ * which report 36bits physical address bits and have 32G RAM installed,
++ * then the mitigation range check in l1tf_select_mitigation() triggers.
++ * This is a false positive because the mitigation is still possible due to
++ * the fact that the cache uses 44bit internally. Use the cache bits
++ * instead of the reported physical bits and adjust them on the affected
++ * machines to 44bit if the reported bits are less than 44.
++ */
++static void override_cache_bits(struct cpuinfo_x86 *c)
 +{
-+	u32 rev, dummy;
++	if (c->x86 != 6)
++		return;
 +
-+	native_wrmsrl(MSR_IA32_UCODE_REV, 0);
-+
-+	/* As documented in the SDM: Do a CPUID 1 here */
-+	sync_core();
-+
-+	/* get the current revision from MSR 0x8B */
-+	native_rdmsr(MSR_IA32_UCODE_REV, dummy, rev);
-+
-+	return rev;
++	switch (c->x86_model) {
++	case INTEL_FAM6_NEHALEM:
++	case INTEL_FAM6_WESTMERE:
++	case INTEL_FAM6_SANDYBRIDGE:
++	case INTEL_FAM6_IVYBRIDGE:
++	case INTEL_FAM6_HASWELL_CORE:
++	case INTEL_FAM6_HASWELL_ULT:
++	case INTEL_FAM6_HASWELL_GT3E:
++	case INTEL_FAM6_BROADWELL_CORE:
++	case INTEL_FAM6_BROADWELL_GT3E:
++	case INTEL_FAM6_SKYLAKE_MOBILE:
++	case INTEL_FAM6_SKYLAKE_DESKTOP:
++	case INTEL_FAM6_KABYLAKE_MOBILE:
++	case INTEL_FAM6_KABYLAKE_DESKTOP:
++		if (c->x86_cache_bits < 44)
++			c->x86_cache_bits = 44;
++		break;
++	}
 +}
 +
- #ifdef CONFIG_MICROCODE_INTEL_EARLY
- extern void __init load_ucode_intel_bsp(void);
- extern void load_ucode_intel_ap(void);
---- a/arch/x86/kernel/cpu/intel.c
-+++ b/arch/x86/kernel/cpu/intel.c
-@@ -14,6 +14,7 @@
- #include <asm/bugs.h>
- #include <asm/cpu.h>
- #include <asm/intel-family.h>
-+#include <asm/microcode_intel.h>
- 
- #ifdef CONFIG_X86_64
- #include <linux/topology.h>
-@@ -103,14 +104,8 @@ static void early_init_intel(struct cpui
- 		(c->x86 == 0x6 && c->x86_model >= 0x0e))
- 		set_cpu_cap(c, X86_FEATURE_CONSTANT_TSC);
- 
--	if (c->x86 >= 6 && !cpu_has(c, X86_FEATURE_IA64)) {
--		unsigned lower_word;
--
--		wrmsr(MSR_IA32_UCODE_REV, 0, 0);
--		/* Required by the SDM */
--		sync_core();
--		rdmsr(MSR_IA32_UCODE_REV, lower_word, c->microcode);
--	}
-+	if (c->x86 >= 6 && !cpu_has(c, X86_FEATURE_IA64))
-+		c->microcode = intel_get_microcode_revision();
- 
- 	/* Now if any of them are set, check the blacklist and clear the lot */
- 	if ((cpu_has(c, X86_FEATURE_SPEC_CTRL) ||
---- a/arch/x86/kernel/cpu/microcode/intel.c
-+++ b/arch/x86/kernel/cpu/microcode/intel.c
-@@ -134,9 +134,9 @@ int apply_microcode(int cpu)
+ static void __init l1tf_select_mitigation(void)
  {
- 	struct microcode_intel *mc_intel;
- 	struct ucode_cpu_info *uci;
--	unsigned int val[2];
- 	int cpu_num = raw_smp_processor_id();
- 	struct cpuinfo_x86 *c = &cpu_data(cpu_num);
-+	u32 rev;
+ 	u64 half_pa;
+@@ -703,16 +742,13 @@ static void __init l1tf_select_mitigatio
+ 	if (!boot_cpu_has_bug(X86_BUG_L1TF))
+ 		return;
  
- 	uci = ucode_cpu_info + cpu;
- 	mc_intel = uci->mc;
-@@ -159,27 +159,22 @@ int apply_microcode(int cpu)
- 	wrmsr(MSR_IA32_UCODE_WRITE,
- 	      (unsigned long) mc_intel->bits,
- 	      (unsigned long) mc_intel->bits >> 16 >> 16);
--	wrmsr(MSR_IA32_UCODE_REV, 0, 0);
- 
--	/* As documented in the SDM: Do a CPUID 1 here */
--	sync_core();
-+	rev = intel_get_microcode_revision();
- 
--	/* get the current revision from MSR 0x8B */
--	rdmsr(MSR_IA32_UCODE_REV, val[0], val[1]);
--
--	if (val[1] != mc_intel->hdr.rev) {
-+	if (rev != mc_intel->hdr.rev) {
- 		pr_err("CPU%d update to revision 0x%x failed\n",
- 		       cpu_num, mc_intel->hdr.rev);
- 		return -1;
- 	}
- 	pr_info("CPU%d updated to revision 0x%x, date = %04x-%02x-%02x\n",
--		cpu_num, val[1],
-+		cpu_num, rev,
- 		mc_intel->hdr.date & 0xffff,
- 		mc_intel->hdr.date >> 24,
- 		(mc_intel->hdr.date >> 16) & 0xff);
- 
--	uci->cpu_sig.rev = val[1];
--	c->microcode = val[1];
-+	uci->cpu_sig.rev = rev;
-+	c->microcode = rev;
- 
- 	return 0;
- }
---- a/arch/x86/kernel/cpu/microcode/intel_early.c
-+++ b/arch/x86/kernel/cpu/microcode/intel_early.c
-@@ -391,15 +391,8 @@ static int collect_cpu_info_early(struct
- 		native_rdmsr(MSR_IA32_PLATFORM_ID, val[0], val[1]);
- 		csig.pf = 1 << ((val[1] >> 18) & 7);
- 	}
--	native_wrmsr(MSR_IA32_UCODE_REV, 0, 0);
- 
--	/* As documented in the SDM: Do a CPUID 1 here */
--	sync_core();
--
--	/* get the current revision from MSR 0x8B */
--	native_rdmsr(MSR_IA32_UCODE_REV, val[0], val[1]);
--
--	csig.rev = val[1];
-+	csig.rev = intel_get_microcode_revision();
- 
- 	uci->cpu_sig = csig;
- 	uci->valid = 1;
-@@ -654,7 +647,7 @@ static int apply_microcode_early(struct
- 				 struct ucode_cpu_info *uci)
- {
- 	struct microcode_intel *mc_intel;
--	unsigned int val[2];
-+	u32 rev;
- 
- 	mc_intel = uci->mc;
- 	if (mc_intel == NULL)
-@@ -664,21 +657,16 @@ static int apply_microcode_early(struct
- 	native_wrmsr(MSR_IA32_UCODE_WRITE,
- 	      (unsigned long) mc_intel->bits,
- 	      (unsigned long) mc_intel->bits >> 16 >> 16);
--	native_wrmsr(MSR_IA32_UCODE_REV, 0, 0);
--
--	/* As documented in the SDM: Do a CPUID 1 here */
--	sync_core();
- 
--	/* get the current revision from MSR 0x8B */
--	native_rdmsr(MSR_IA32_UCODE_REV, val[0], val[1]);
--	if (val[1] != mc_intel->hdr.rev)
-+	rev = intel_get_microcode_revision();
-+	if (rev != mc_intel->hdr.rev)
- 		return -1;
- 
- #ifdef CONFIG_X86_64
- 	/* Flush global tlb. This is precaution. */
- 	flush_tlb_early();
++	override_cache_bits(&boot_cpu_data);
++
+ #if defined(CONFIG_X86_32) && !defined(CONFIG_X86_PAE)
+ 	pr_warn("Kernel not compiled for PAE. No mitigation for L1TF\n");
+ 	return;
  #endif
--	uci->cpu_sig.rev = val[1];
-+	uci->cpu_sig.rev = rev;
  
- 	print_ucode(uci);
+-	/*
+-	 * This is extremely unlikely to happen because almost all
+-	 * systems have far more MAX_PA/2 than RAM can be fit into
+-	 * DIMM slots.
+-	 */
+ 	half_pa = (u64)l1tf_pfn_limit() << PAGE_SHIFT;
+ 	if (e820_any_mapped(half_pa, ULLONG_MAX - half_pa, E820_RAM)) {
+ 		pr_warn("System has more than MAX_PA/2 memory. L1TF mitigation not effective.\n");
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -772,6 +772,7 @@ void get_cpu_cap(struct cpuinfo_x86 *c)
+ 	else if (cpu_has(c, X86_FEATURE_PAE) || cpu_has(c, X86_FEATURE_PSE36))
+ 		c->x86_phys_bits = 36;
+ #endif
++	c->x86_cache_bits = c->x86_phys_bits;
  
+ 	if (c->extended_cpuid_level >= 0x80000007)
+ 		c->x86_power = cpuid_edx(0x80000007);
 
