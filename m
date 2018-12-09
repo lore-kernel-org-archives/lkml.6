@@ -2,151 +2,99 @@ Return-Path: <SRS0=cWqk=OS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 451C1C07E85
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 10:38:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 099CBC07E85
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 10:49:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EDB6A2081F
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 10:38:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AA05B20837
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 10:49:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="khbw9s5m"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EDB6A2081F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=armlinux.org.uk
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mxPdZqee"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA05B20837
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726166AbeLIKh5 (ORCPT
+        id S1726218AbeLIKtl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 05:37:57 -0500
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:33526 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726079AbeLIKh4 (ORCPT
+        Sun, 9 Dec 2018 05:49:41 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:46093 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726132AbeLIKtl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Dec 2018 05:37:56 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=armlinux.org.uk; s=pandora-2014; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=V28/jOgEw0hSqFM6gCHI4O7G2a25ciSSb3eLB7lLxH0=; b=khbw9s5mqaGpgqu5dCT0qs5Tt
-        Cr6A5Zovk6sCyycQ1MT/KMIVtVmEuNPP9UmLBZ03KjFxnW7FK4uQU8Q4qsHj4ius+D3vZ69ikt08x
-        ksav6ojQlSdHZloeLY4hlNYqV0mBcn4h5leXKu5XpjFWDnmv7Z1Nmo7Gx4+wszJoJBMpU=;
-Received: from n2100.armlinux.org.uk ([2001:4d48:ad52:3201:214:fdff:fe10:4f86]:48890)
-        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <linux@armlinux.org.uk>)
-        id 1gVwT5-0002Pc-Hd; Sun, 09 Dec 2018 10:37:47 +0000
-Received: from linux by n2100.armlinux.org.uk with local (Exim 4.90_1)
-        (envelope-from <linux@n2100.armlinux.org.uk>)
-        id 1gVwT0-0001yd-Q6; Sun, 09 Dec 2018 10:37:42 +0000
-Date:   Sun, 9 Dec 2018 10:37:40 +0000
-From:   Russell King - ARM Linux <linux@armlinux.org.uk>
-To:     kbuild test robot <lkp@intel.com>
-Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>, kbuild-all@01.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Kees Cook <keescook@chromium.org>,
-        Emese Revfy <re.emese@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Laura Abbott <labbott@redhat.com>,
-        kernel-hardening@lists.openwall.com
-Subject: Re: [PATCH v3] ARM: smp: add support for per-task stack canaries
-Message-ID: <20181209103740.GB30658@n2100.armlinux.org.uk>
-References: <20181206083257.9596-1-ard.biesheuvel@linaro.org>
- <201812091807.4emRkZ7L%fengguang.wu@intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <201812091807.4emRkZ7L%fengguang.wu@intel.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        Sun, 9 Dec 2018 05:49:41 -0500
+Received: by mail-pf1-f196.google.com with SMTP id c73so3978009pfe.13;
+        Sun, 09 Dec 2018 02:49:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=TmWHtMeJzI8vVlByFpCms/DOmRHKGofFb/GbDBbrb88=;
+        b=mxPdZqeeoLJu4CNGAnwvPo1E73SLSI6lN/nPdslAGH50nC8MYKGg28hVeucQ3JsTIT
+         sd8NzsSIkcPX5DI17xwzUb668NnBel21DKLbsuTHvL/hujgDBB9hJWnb2AxEvmOcgWPc
+         FBSPfGU0+rQSORzubnZSefM11sKeiJttn8On80WTGNfGxqpKWWZGYYgEDA3iyA5Mp4Yz
+         c227O2q9gJiZjUhq1gIoKWFPsHScRrWXpq6LxMVLpE5SFTWEr5UFbYyH95S0Lrb+cAym
+         jq+gmpZH463MRiR3jl7THr/0gRTW88aP8r9ZLyFJk0mvJ1bix4u11Oqvsne8EoP9uxU1
+         9zSQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=TmWHtMeJzI8vVlByFpCms/DOmRHKGofFb/GbDBbrb88=;
+        b=pi0SwR37ajuPCgbbF4ODwK66+KZxFbjV87DfbxKufBGNO5Zid80g8z2e6LQMMfhqXM
+         JsJ5iUs5NC09QDVY6LRLTqI4RL8oXW6LgariBXxPIKt/+cA+TucGypskbkjWTjzMsrCo
+         ph+yc6+MUhWo6THm3ILb2GhLDwH1gHBSmynMvRvwO2XCZnoz7vt8iJOqJxjFBtCxBD2v
+         6+dyU3z71uZEoGpyYnR6fWr0UNsqRweZgpLJMbCcs4WxQeCi5TMwS8XNdieP7j14h+/s
+         2ysGHE4El1uuL5FliMlqrnQsRo8AgmuPsyHBc9CdAFcxfPS043i86Dc9H7gWKIUxyAGp
+         7a/A==
+X-Gm-Message-State: AA+aEWbWAvVhJsV+gYaqlEEaVAR/rkKKpNyKO7NXdniFsnHfwLcD3snY
+        2gz+4ZK14P8EdV6Rv6qE65E=
+X-Google-Smtp-Source: AFSGD/WvDwi2fL35V+9Mg3cDvK/CTFT/0uDJAf9SKwpqpRagCUy1shv3bh4y0de1mreY0evEvLulxg==
+X-Received: by 2002:a62:6e07:: with SMTP id j7mr8661564pfc.135.1544352580455;
+        Sun, 09 Dec 2018 02:49:40 -0800 (PST)
+Received: from localhost.localdomain ([27.59.76.117])
+        by smtp.googlemail.com with ESMTPSA id z14sm9711617pgv.47.2018.12.09.02.49.35
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 09 Dec 2018 02:49:39 -0800 (PST)
+From:   Hardik Singh Rathore <hardiksingh.k@gmail.com>
+To:     linux@roeck-us.net
+Cc:     wim@linux-watchdog.org, linux-watchdog@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Hardik Singh Rathore <hardiksingh.k@gmail.com>
+Subject: [PATCH] Watchdog: remove outdated comment
+Date:   Sun,  9 Dec 2018 16:17:26 +0530
+Message-Id: <20181209104726.15610-1-hardiksingh.k@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Dec 09, 2018 at 06:28:11PM +0800, kbuild test robot wrote:
-> Hi Ard,
-> 
-> I love your patch! Perhaps something to improve:
+The lock field doesn't exist in watchdog_device structure.
+It was added by commit f4e9c82f64b5 ("watchdog: Add Locking support")
+and removed by commit b4ffb1909843
+("watchdog: Separate and maintain variables based on variable lifetime")
 
-Hi,
+Signed-off-by: Hardik Singh Rathore <hardiksingh.k@gmail.com>
+---
+ include/linux/watchdog.h | 3 ---
+ 1 file changed, 3 deletions(-)
 
-This looks to me like a false warning - how can a patch touching arch
-code affect the result of lib/test_ubsan.c?  Please can you double-
-check this result?
-
-Thanks.
-
-> 
-> [auto build test WARNING on arm/for-next]
-> [also build test WARNING on v4.20-rc5]
-> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
-> 
-> url:    https://github.com/0day-ci/linux/commits/Ard-Biesheuvel/ARM-smp-add-support-for-per-task-stack-canaries/20181209-033321
-> base:   git://git.armlinux.org.uk/~rmk/linux-arm.git for-next
-> config: arm-allmodconfig (attached as .config)
-> compiler: arm-linux-gnueabi-gcc (Debian 7.2.0-11) 7.2.0
-> reproduce:
->         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
->         chmod +x ~/bin/make.cross
->         # save the attached .config to linux build tree
->         GCC_VERSION=7.2.0 make.cross ARCH=arm 
-> 
-> All warnings (new ones prefixed by >>):
-> 
->    lib/test_ubsan.c: In function 'test_ubsan_vla_bound_not_positive':
-> >> lib/test_ubsan.c:48:2: warning: ISO C90 forbids variable length array 'buf' [-Wvla]
->      char buf[size];
->      ^~~~
->    lib/test_ubsan.c: In function 'test_ubsan_out_of_bounds':
-> >> lib/test_ubsan.c:64:2: warning: ISO C90 forbids variable length array 'arr' [-Wvla]
->      volatile int arr[i];
->      ^~~~~~~~
-> 
-> vim +/buf +48 lib/test_ubsan.c
-> 
-> 854686f4 Jinbum Park 2018-04-10  44  
-> 854686f4 Jinbum Park 2018-04-10  45  static void test_ubsan_vla_bound_not_positive(void)
-> 854686f4 Jinbum Park 2018-04-10  46  {
-> 854686f4 Jinbum Park 2018-04-10  47  	volatile int size = -1;
-> 854686f4 Jinbum Park 2018-04-10 @48  	char buf[size];
-> 854686f4 Jinbum Park 2018-04-10  49  
-> 854686f4 Jinbum Park 2018-04-10  50  	(void)buf;
-> 854686f4 Jinbum Park 2018-04-10  51  }
-> 854686f4 Jinbum Park 2018-04-10  52  
-> 854686f4 Jinbum Park 2018-04-10  53  static void test_ubsan_shift_out_of_bounds(void)
-> 854686f4 Jinbum Park 2018-04-10  54  {
-> 854686f4 Jinbum Park 2018-04-10  55  	volatile int val = -1;
-> 854686f4 Jinbum Park 2018-04-10  56  	int val2 = 10;
-> 854686f4 Jinbum Park 2018-04-10  57  
-> 854686f4 Jinbum Park 2018-04-10  58  	val2 <<= val;
-> 854686f4 Jinbum Park 2018-04-10  59  }
-> 854686f4 Jinbum Park 2018-04-10  60  
-> 854686f4 Jinbum Park 2018-04-10  61  static void test_ubsan_out_of_bounds(void)
-> 854686f4 Jinbum Park 2018-04-10  62  {
-> 854686f4 Jinbum Park 2018-04-10  63  	volatile int i = 4, j = 5;
-> 854686f4 Jinbum Park 2018-04-10 @64  	volatile int arr[i];
-> 854686f4 Jinbum Park 2018-04-10  65  
-> 854686f4 Jinbum Park 2018-04-10  66  	arr[j] = i;
-> 854686f4 Jinbum Park 2018-04-10  67  }
-> 854686f4 Jinbum Park 2018-04-10  68  
-> 
-> :::::: The code at line 48 was first introduced by commit
-> :::::: 854686f4edf483db1e0d26d972bdb8fb65c8bfaa lib: add testing module for UBSAN
-> 
-> :::::: TO: Jinbum Park <jinb.park7@gmail.com>
-> :::::: CC: Linus Torvalds <torvalds@linux-foundation.org>
-> 
-> ---
-> 0-DAY kernel test infrastructure                Open Source Technology Center
-> https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
-
-
-
+diff --git a/include/linux/watchdog.h b/include/linux/watchdog.h
+index 44985c4a1e86..417d9f37077a 100644
+--- a/include/linux/watchdog.h
++++ b/include/linux/watchdog.h
+@@ -90,9 +90,6 @@ struct watchdog_ops {
+  *
+  * The driver-data field may not be accessed directly. It must be accessed
+  * via the watchdog_set_drvdata and watchdog_get_drvdata helpers.
+- *
+- * The lock field is for watchdog core internal use only and should not be
+- * touched.
+  */
+ struct watchdog_device {
+ 	int id;
 -- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
-According to speedtest.net: 11.9Mbps down 500kbps up
+2.17.1
+
