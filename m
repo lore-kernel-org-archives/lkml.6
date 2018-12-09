@@ -6,45 +6,43 @@ X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 270D3C07E85
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:13:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4F84C65BAF
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:13:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB2E320661
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:13:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB2E320661
+	by mail.kernel.org (Postfix) with ESMTP id 8330020661
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:13:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8330020661
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728405AbeLIWNf (ORCPT
+        id S1728427AbeLIWNm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 17:13:35 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:37924 "EHLO
+        Sun, 9 Dec 2018 17:13:42 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:37938 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726500AbeLIWNc (ORCPT
+        by vger.kernel.org with ESMTP id S1728004AbeLIWNj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Dec 2018 17:13:32 -0500
+        Sun, 9 Dec 2018 17:13:39 -0500
 Received: from pub.yeoldevic.com ([81.174.156.145] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW73N-0002ih-Mu; Sun, 09 Dec 2018 21:55:57 +0000
+        id 1gW73C-0002im-7g; Sun, 09 Dec 2018 21:55:46 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW72a-0003Gv-7D; Sun, 09 Dec 2018 21:55:08 +0000
+        id 1gW72d-0003OR-I2; Sun, 09 Dec 2018 21:55:11 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, "Mikulas Patocka" <mpatocka@redhat.com>,
-        "Bartlomiej Zolnierkiewicz" <b.zolnierkie@samsung.com>
+CC:     akpm@linux-foundation.org, "Richard Weinberger" <richard@nod.at>
 Date:   Sun, 09 Dec 2018 21:50:33 +0000
-Message-ID: <lsq.1544392233.915146703@decadent.org.uk>
+Message-ID: <lsq.1544392233.982921311@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 060/328] udlfb: don't switch if we are switching to
- the same videomode
+Subject: [PATCH 3.16 139/328] ubifs: Fix memory leak in lprobs self-check
 In-Reply-To: <lsq.1544392232.713909046@decadent.org.uk>
 X-SA-Exim-Connect-IP: 81.174.156.145
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -58,75 +56,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mikulas Patocka <mpatocka@redhat.com>
+From: Richard Weinberger <richard@nod.at>
 
-commit 564f1807379298dfdb12ed0d5b25fcb89c238527 upstream.
+commit eef19816ada3abd56d9f20c88794cc2fea83ebb2 upstream.
 
-The udlfb driver reprograms the hardware everytime the user switches the
-console, that makes quite unusable when working on the console.
+Allocate the buffer after we return early.
+Otherwise memory is being leaked.
 
-This patch makes the driver remember the videomode we are in and avoid
-reprogramming the hardware if we switch to the same videomode.
-
-We mask the "activate" field and the "FB_VMODE_SMOOTH_XPAN" flag when
-comparing the videomode, because they cause spurious switches when
-switching to and from the Xserver.
-
-Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-[bwh: Backported to 3.16: Pointer to struct dlfb_data is named "dev" rather
- than "dlfb"]
+Fixes: 1e51764a3c2a ("UBIFS: add new flash file system")
+Signed-off-by: Richard Weinberger <richard@nod.at>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/video/fbdev/udlfb.c | 18 ++++++++++++++++--
- include/video/udlfb.h       |  1 +
- 2 files changed, 17 insertions(+), 2 deletions(-)
+ fs/ubifs/lprops.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
---- a/drivers/video/fbdev/udlfb.c
-+++ b/drivers/video/fbdev/udlfb.c
-@@ -1057,10 +1057,24 @@ static int dlfb_ops_set_par(struct fb_in
- 	int result;
- 	u16 *pix_framebuffer;
- 	int i;
-+	struct fb_var_screeninfo fvs;
-+
-+	/* clear the activate field because it causes spurious miscompares */
-+	fvs = info->var;
-+	fvs.activate = 0;
-+	fvs.vmode &= ~FB_VMODE_SMOOTH_XPAN;
-+
-+	if (!memcmp(&dev->current_mode, &fvs, sizeof(struct fb_var_screeninfo)))
-+		return 0;
- 
- 	result = dlfb_set_video_mode(dev, &info->var);
- 
--	if ((result == 0) && (dev->fb_count == 0)) {
-+	if (result)
-+		return result;
-+
-+	dev->current_mode = fvs;
-+
-+	if (dev->fb_count == 0) {
- 
- 		/* paint greenscreen */
- 
-@@ -1072,7 +1086,7 @@ static int dlfb_ops_set_par(struct fb_in
- 				   info->screen_base);
+--- a/fs/ubifs/lprops.c
++++ b/fs/ubifs/lprops.c
+@@ -1091,10 +1091,6 @@ static int scan_check_cb(struct ubifs_in
+ 		}
  	}
  
--	return result;
-+	return 0;
- }
+-	buf = __vmalloc(c->leb_size, GFP_NOFS, PAGE_KERNEL);
+-	if (!buf)
+-		return -ENOMEM;
+-
+ 	/*
+ 	 * After an unclean unmount, empty and freeable LEBs
+ 	 * may contain garbage - do not scan them.
+@@ -1113,6 +1109,10 @@ static int scan_check_cb(struct ubifs_in
+ 		return LPT_SCAN_CONTINUE;
+ 	}
  
- /* To fonzi the jukebox (e.g. make blanking changes take effect) */
---- a/include/video/udlfb.h
-+++ b/include/video/udlfb.h
-@@ -56,6 +56,7 @@ struct dlfb_data {
- 	atomic_t bytes_identical; /* saved effort with backbuffer comparison */
- 	atomic_t bytes_sent; /* to usb, after compression including overhead */
- 	atomic_t cpu_kcycles_used; /* transpired during pixel processing */
-+	struct fb_var_screeninfo current_mode;
- };
- 
- #define NR_USB_REQUEST_I2C_SUB_IO 0x02
++	buf = __vmalloc(c->leb_size, GFP_NOFS, PAGE_KERNEL);
++	if (!buf)
++		return -ENOMEM;
++
+ 	sleb = ubifs_scan(c, lnum, 0, buf, 0);
+ 	if (IS_ERR(sleb)) {
+ 		ret = PTR_ERR(sleb);
 
