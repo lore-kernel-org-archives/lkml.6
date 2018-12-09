@@ -6,45 +6,46 @@ X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D74CC07E85
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:06:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55687C07E85
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:06:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F05E920661
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:06:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F05E920661
+	by mail.kernel.org (Postfix) with ESMTP id 1F02320831
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:06:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F02320831
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727757AbeLIWGa (ORCPT
+        id S1727771AbeLIWGd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 17:06:30 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:37072 "EHLO
+        Sun, 9 Dec 2018 17:06:33 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:37080 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727511AbeLIWG1 (ORCPT
+        by vger.kernel.org with ESMTP id S1727511AbeLIWGb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Dec 2018 17:06:27 -0500
+        Sun, 9 Dec 2018 17:06:31 -0500
 Received: from pub.yeoldevic.com ([81.174.156.145] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW738-0002iq-GV; Sun, 09 Dec 2018 21:55:43 +0000
+        id 1gW73L-0002ik-EV; Sun, 09 Dec 2018 21:55:55 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW72f-0003Sz-9V; Sun, 09 Dec 2018 21:55:13 +0000
+        id 1gW72a-0003IJ-TJ; Sun, 09 Dec 2018 21:55:08 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, "Steve French" <stfrench@microsoft.com>,
-        "Ronnie Sahlberg" <lsahlber@redhat.com>
+CC:     akpm@linux-foundation.org, "Greg Edwards" <gedwards@ddn.com>,
+        "Jens Axboe" <axboe@kernel.dk>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
 Date:   Sun, 09 Dec 2018 21:50:33 +0000
-Message-ID: <lsq.1544392233.387922735@decadent.org.uk>
+Message-ID: <lsq.1544392233.380026601@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 183/328] smb3: check for and properly advertise
- directory lease support
+Subject: [PATCH 3.16 077/328] scsi: virtio_scsi: fix pi_bytes{out,in} on 4
+ KiB block size devices
 In-Reply-To: <lsq.1544392232.713909046@decadent.org.uk>
 X-SA-Exim-Connect-IP: 81.174.156.145
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -58,55 +59,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Steve French <stfrench@microsoft.com>
+From: Greg Edwards <gedwards@ddn.com>
 
-commit f801568332321e2b1e7a8bd26c3e4913a312a2ec upstream.
+commit cdcdcaae8450a975e7d07e1bfec21f9b8c016d0c upstream.
 
-Although servers will typically ignore unsupported features,
-we should advertise the support for directory leases (as
-Windows e.g. does) in the negotiate protocol capabilities we
-pass to the server, and should check for the server capability
-(CAP_DIRECTORY_LEASING) before sending a lease request for an
-open of a directory.  This will prevent us from accidentally
-sending directory leases to SMB2.1 or SMB2 server for example.
+When the underlying device is a 4 KiB logical block size device with a
+protection interval exponent of 0, i.e. 4096 bytes data + 8 bytes PI, the
+driver miscalculates the pi_bytes{out,in} by a factor of 8x (64 bytes).
 
-Signed-off-by: Steve French <stfrench@microsoft.com>
-Reviewed-by: Ronnie Sahlberg <lsahlber@redhat.com>
-[bwh: Backported to 3.16:
- - Drop changes to smb3any_values, smbdefault_values, smb311_values
- - Adjust context]
+This leads to errors on all reads and writes on 4 KiB logical block size
+devices when CONFIG_BLK_DEV_INTEGRITY is enabled and the
+VIRTIO_SCSI_F_T10_PI feature bit has been negotiated.
+
+Fixes: e6dc783a38ec0 ("virtio-scsi: Enable DIF/DIX modes in SCSI host LLD")
+Acked-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Greg Edwards <gedwards@ddn.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+[bwh: Backported to 3.16: adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
---- a/fs/cifs/smb2ops.c
-+++ b/fs/cifs/smb2ops.c
-@@ -1433,7 +1433,7 @@ struct smb_version_values smb21_values =
- struct smb_version_values smb30_values = {
- 	.version_string = SMB30_VERSION_STRING,
- 	.protocol_id = SMB30_PROT_ID,
--	.req_capabilities = SMB2_GLOBAL_CAP_DFS | SMB2_GLOBAL_CAP_LEASING | SMB2_GLOBAL_CAP_LARGE_MTU,
-+	.req_capabilities = SMB2_GLOBAL_CAP_DFS | SMB2_GLOBAL_CAP_LEASING | SMB2_GLOBAL_CAP_LARGE_MTU | SMB2_GLOBAL_CAP_DIRECTORY_LEASING,
- 	.large_lock_type = 0,
- 	.exclusive_lock_type = SMB2_LOCKFLAG_EXCLUSIVE_LOCK,
- 	.shared_lock_type = SMB2_LOCKFLAG_SHARED_LOCK,
-@@ -1453,7 +1453,7 @@ struct smb_version_values smb30_values =
- struct smb_version_values smb302_values = {
- 	.version_string = SMB302_VERSION_STRING,
- 	.protocol_id = SMB302_PROT_ID,
--	.req_capabilities = SMB2_GLOBAL_CAP_DFS | SMB2_GLOBAL_CAP_LEASING | SMB2_GLOBAL_CAP_LARGE_MTU,
-+	.req_capabilities = SMB2_GLOBAL_CAP_DFS | SMB2_GLOBAL_CAP_LEASING | SMB2_GLOBAL_CAP_LARGE_MTU | SMB2_GLOBAL_CAP_DIRECTORY_LEASING,
- 	.large_lock_type = 0,
- 	.exclusive_lock_type = SMB2_LOCKFLAG_EXCLUSIVE_LOCK,
- 	.shared_lock_type = SMB2_LOCKFLAG_SHARED_LOCK,
---- a/fs/cifs/smb2pdu.c
-+++ b/fs/cifs/smb2pdu.c
-@@ -1211,6 +1211,9 @@ SMB2_open(const unsigned int xid, struct
- 	if (!(server->capabilities & SMB2_GLOBAL_CAP_LEASING) ||
- 	    *oplock == SMB2_OPLOCK_LEVEL_NONE)
- 		req->RequestedOplockLevel = *oplock;
-+	else if (!(server->capabilities & SMB2_GLOBAL_CAP_DIRECTORY_LEASING) &&
-+		  (oparms->create_options & CREATE_NOT_FILE))
-+		req->RequestedOplockLevel = *oplock; /* no srv lease support */
- 	else {
- 		rc = add_lease_context(server, iov, &num_iovecs,
- 				       oparms->fid->lease_key, oplock);
+--- a/drivers/scsi/virtio_scsi.c
++++ b/drivers/scsi/virtio_scsi.c
+@@ -500,9 +500,11 @@ static void virtio_scsi_init_hdr_pi(stru
+ 	bi = blk_get_integrity(rq->rq_disk);
+ 
+ 	if (sc->sc_data_direction == DMA_TO_DEVICE)
+-		cmd_pi->pi_bytesout = blk_rq_sectors(rq) * bi->tuple_size;
++		cmd_pi->pi_bytesout = bio_integrity_bytes(bi,
++							blk_rq_sectors(rq));
+ 	else if (sc->sc_data_direction == DMA_FROM_DEVICE)
+-		cmd_pi->pi_bytesin = blk_rq_sectors(rq) * bi->tuple_size;
++		cmd_pi->pi_bytesin = bio_integrity_bytes(bi,
++							blk_rq_sectors(rq));
+ }
+ 
+ static int virtscsi_queuecommand(struct virtio_scsi *vscsi,
 
