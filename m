@@ -2,71 +2,136 @@ Return-Path: <SRS0=cWqk=OS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A999DC07E85
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 21:11:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC18EC67838
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 21:18:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6856A20661
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 21:11:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="FT6kTS2D"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6856A20661
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lunn.ch
+	by mail.kernel.org (Postfix) with ESMTP id 736B52082D
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 21:18:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 736B52082D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=iki.fi
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726287AbeLIVLq (ORCPT
+        id S1726292AbeLIVSX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 16:11:46 -0500
-Received: from vps0.lunn.ch ([185.16.172.187]:39902 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726194AbeLIVLp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Dec 2018 16:11:45 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch; s=20171124;
-        h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date; bh=om4lC/RlnqSFvOZuMTGFufl6v9UzPXoDo5FJ+xTtWIE=;
-        b=FT6kTS2DGrNSsRLlsLa+qhIilflhbCot6fJkLHUe7IDwW2/FEjHoqjYnegWpODn4DYPxKvibvW0+fAc//8QFo1dKC6x5+wYSeWEKYntCfnB/XMKkJ4KRrPwj+1T4bNEoQ1WHW3xn4/cv3Khp+2rcaMrnwIa6Sz/iKVIO7A99344=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.84_2)
-        (envelope-from <andrew@lunn.ch>)
-        id 1gW6MV-0005gd-7Q; Sun, 09 Dec 2018 22:11:39 +0100
-Date:   Sun, 9 Dec 2018 22:11:39 +0100
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     David Miller <davem@davemloft.net>
-Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Networking <netdev@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Florian Fainelli <f.fainelli@gmail.com>
-Subject: Re: linux-next: Signed-off-by missing for commits in the net-next
- tree
-Message-ID: <20181209211139.GB21186@lunn.ch>
-References: <20181210080045.0e67ad79@canb.auug.org.au>
+        Sun, 9 Dec 2018 16:18:23 -0500
+Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:51058 "EHLO
+        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726194AbeLIVSX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Dec 2018 16:18:23 -0500
+Received: from valkosipuli.localdomain (valkosipuli.retiisi.org.uk [IPv6:2001:1bc8:1a6:d3d5::80:2])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by hillosipuli.retiisi.org.uk (Postfix) with ESMTPS id 2289D634C7F;
+        Sun,  9 Dec 2018 23:17:57 +0200 (EET)
+Received: from sailus by valkosipuli.localdomain with local (Exim 4.89)
+        (envelope-from <sakari.ailus@retiisi.org.uk>)
+        id 1gW6Sa-0000zz-SY; Sun, 09 Dec 2018 23:17:56 +0200
+Date:   Sun, 9 Dec 2018 23:17:56 +0200
+From:   sakari.ailus@iki.fi
+To:     Lubomir Rintel <lkundrak@v3.sk>
+Cc:     jacopo mondi <jacopo@jmondi.org>,
+        "Lad, Prabhakar" <prabhakar.csengg@gmail.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rui Miguel Silva <rmfrfs@gmail.com>,
+        Shunqian Zheng <zhengsq@rock-chips.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Wenyou Yang <wenyou.yang@microchip.com>,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/6] media: v4l2-subdev: stub
+ v4l2_subdev_get_try_format() ??
+Message-ID: <20181209211756.kptepm4a6aufa6vf@valkosipuli.retiisi.org.uk>
+References: <20181128171918.160643-1-lkundrak@v3.sk>
+ <20181128171918.160643-2-lkundrak@v3.sk>
+ <20181203134800.GA2901@w540>
+ <680ea9621883d53712d701a9859ab2677890daca.camel@v3.sk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181210080045.0e67ad79@canb.auug.org.au>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <680ea9621883d53712d701a9859ab2677890daca.camel@v3.sk>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 10, 2018 at 08:00:45AM +1100, Stephen Rothwell wrote:
-> Hi all,
+Hi Lubomir, Jacopo,
+
+On Tue, Dec 04, 2018 at 04:01:43PM +0100, Lubomir Rintel wrote:
+> On Mon, 2018-12-03 at 14:48 +0100, jacopo mondi wrote:
+> > Hi Lubomir,
+> > 
+> >   thanks for the patches
+> > 
+> > On Wed, Nov 28, 2018 at 06:19:13PM +0100, Lubomir Rintel wrote:
+> > > Provide a dummy implementation when configured without
+> > > CONFIG_VIDEO_V4L2_SUBDEV_API to avoid ifdef dance in the drivers
+> > > that can
+> > > be built either with or without the option.
+> > > 
+> > > Suggested-by: Jacopo Mondi <jacopo@jmondi.org>
+> > > Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+> > > ---
+> > >  include/media/v4l2-subdev.h | 11 +++++++++++
+> > >  1 file changed, 11 insertions(+)
+> > > 
+> > > diff --git a/include/media/v4l2-subdev.h b/include/media/v4l2-
+> > > subdev.h
+> > > index 9102d6ca566e..906e28011bb4 100644
+> > > --- a/include/media/v4l2-subdev.h
+> > > +++ b/include/media/v4l2-subdev.h
+> > > @@ -967,6 +967,17 @@ static inline struct v4l2_rect
+> > >  		pad = 0;
+> > >  	return &cfg[pad].try_compose;
+> > >  }
+> > > +
+> > > +#else /* !defined(CONFIG_VIDEO_V4L2_SUBDEV_API) */
+> > > +
+> > > +static inline struct v4l2_mbus_framefmt
+> > > +*v4l2_subdev_get_try_format(struct v4l2_subdev *sd,
+> > > +			    struct v4l2_subdev_pad_config *cfg,
+> > > +			    unsigned int pad)
+> > > +{
+> > > +	return ERR_PTR(-ENOTTY);
+> > > +}
+> > > +
+> > >  #endif
+> > 
+> > While at there, what about doing the same for get_try_crop and
+> > get_try_compose? At lease provide stubs, I let you figure out if
+> > you're willing to fix callers too, it seems there are quite a few of
+> > them though
+> > 
+> > $ git grep v4l2_subdev_get_try* drivers/media/ | grep -v '_format' |
+> > wc -l
+> > 44
 > 
-> Commits
+> I'd be happy to do that. However, the drivers that use those seem to
+> depend on CONFIG_VIDEO_V4L2_SUBDEV_API anyway. Should those
+> dependencies be eventually done away with?
 > 
->   dc9d38cec71c ("net: phy: mdio-gpio: Add phy_ignore_ta_mask to platform data")
->   04fa26bab06d ("net: phy: mdio-gpio: Add platform_data support for phy_mask")
+> Please pardon my ignorance -- I don't actually understand why would
+> anyone disable CONFIG_VIDEO_V4L2_SUBDEV_API.
 > 
-> are missing a Signed-off-by from their author.
+> I'll be following up with a v2 after I get a response from you. It will
+> address locking issues found with smatch: one introduced by my patch
+> and one that was there before.
 
-Hi David.
+Hans wrote a patch that enables VIDEO_V4L2_SUBDEV_API if
+MEDIA_CAMERA_SUPPORT has been selected. So much of these #ifdefs will not
+be needed going forward. It's an RFC for now, but that'd require a lot of
+conditional compiling in drivers.
 
-Any idea what happened here? The version in my git repo has SOB.
+<URL:https://patchwork.linuxtv.org/patch/53370/>
 
-https://patchwork.ozlabs.org/patch/1009811/ also has my SOB.
+The current use of the get_fmt callback serves the regular V4L2 API use, in
+which case getting the try format is not meaningful.
 
-     Thanks
-	Andrew
+-- 
+Regards,
+
+Sakari Ailus
