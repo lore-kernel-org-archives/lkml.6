@@ -2,111 +2,157 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.8 required=3.0 tests=DATE_IN_PAST_06_12,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA094C07E85
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 03:03:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BC56C07E85
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 03:08:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 666EA2081C
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 03:03:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="nXrW2izo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 666EA2081C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	by mail.kernel.org (Postfix) with ESMTP id 3DE4F2081F
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 03:08:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3DE4F2081F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726548AbeLJDDZ (ORCPT
+        id S1726453AbeLJDIO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 22:03:25 -0500
-Received: from ozlabs.org ([203.11.71.1]:43391 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726348AbeLJDDZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Dec 2018 22:03:25 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 43CnvY183Kz9s47;
-        Mon, 10 Dec 2018 14:03:21 +1100 (AEDT)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1544411003;
-        bh=nnAAWMBEd7AQ6zvmkz30OAc90SJnUa16BLMPHNlsBEQ=;
-        h=Date:From:To:Cc:Subject:From;
-        b=nXrW2izoA0S9SCxBSiyldatIDXotRZn7IxYa/LIhGMiqoY1YZ9m7ctSl3FxtIAj5s
-         WVofxcPH74xDGewYwXgmttv/i6rq7beS2JHU4J5D7UhoakbZo5wFr8EozmRlEcgh28
-         FoaMqCXA17Ib5CRsCquiOYtT0TqD+BtFjojmcslSbdYSj75xdr+pXW2h5CWnzqkRPR
-         PVfpRFjdt/KU14bVGJlggMxfPm4Lh/pxMN9zZJtKrT45YiXt82BZn+T6JzByNjxeZ6
-         X4OmASmtvNNi5OTIA2Bxunvx0udHZDeaKwDsxfpuDGOkhdEuMdLeKSmtoAtx2gm+tq
-         uMyRlSgr0pl5Q==
-Date:   Mon, 10 Dec 2018 14:03:20 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Rob Clark <robdclark@gmail.com>, Dave Airlie <airlied@linux.ie>,
-        DRI <dri-devel@lists.freedesktop.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Mamta Shukla <mamtashukla555@gmail.com>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Jordan Crouse <jcrouse@codeaurora.org>
-Subject: linux-next: manual merge of the drm-msm tree with the drm tree
-Message-ID: <20181210140320.5ba2b2e4@canb.auug.org.au>
+        Sun, 9 Dec 2018 22:08:14 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:16102 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726281AbeLJDIO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Dec 2018 22:08:14 -0500
+Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id D778561D22933;
+        Mon, 10 Dec 2018 11:08:10 +0800 (CST)
+Received: from localhost.localdomain (10.175.34.53) by
+ DGGEMS411-HUB.china.huawei.com (10.3.19.211) with Microsoft SMTP Server id
+ 14.3.408.0; Mon, 10 Dec 2018 11:08:04 +0800
+From:   Xue Chaojing <xuechaojing@huawei.com>
+To:     <davem@davemloft.net>
+CC:     <linux-kernel@vger.kernel.org>, <xuechaojing@huawei.com>,
+        <netdev@vger.kernel.org>, <wulike1@huawei.com>,
+        <chiqijun@huawei.com>, <fy.wang@huawei.com>, <tony.qu@huawei.com>,
+        <luoshaokai@huawei.com>
+Subject: [PATCH 1/1] net-next/hinic:optmize rx refill buffer mechanism
+Date:   Sun, 9 Dec 2018 19:14:19 +0000
+Message-ID: <20181209191419.16845-1-xuechaojing@huawei.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/yvq14zz5VR3AAQ0TgU1L9rR"; protocol="application/pgp-signature"
+Content-Type: text/plain
+X-Originating-IP: [10.175.34.53]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/yvq14zz5VR3AAQ0TgU1L9rR
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+There is no need to schedule a different tasklet for refill,
+This patch remove it.
 
-Hi all,
+Suggested-by: Neil Horman <nhorman@redhat.com>
+Signed-off-by: Xue Chaojing <xuechaojing@huawei.com>
+---
+ drivers/net/ethernet/huawei/hinic/hinic_rx.c | 23 +++++---------------
+ drivers/net/ethernet/huawei/hinic/hinic_rx.h |  2 --
+ 2 files changed, 5 insertions(+), 20 deletions(-)
 
-Today's linux-next merge of the drm-msm tree got a conflict in:
+diff --git a/drivers/net/ethernet/huawei/hinic/hinic_rx.c b/drivers/net/ethernet/huawei/hinic/hinic_rx.c
+index f86f2e693224..0098b206e7e9 100644
+--- a/drivers/net/ethernet/huawei/hinic/hinic_rx.c
++++ b/drivers/net/ethernet/huawei/hinic/hinic_rx.c
+@@ -43,6 +43,7 @@
+ #define RX_IRQ_NO_LLI_TIMER             0
+ #define RX_IRQ_NO_CREDIT                0
+ #define RX_IRQ_NO_RESEND_TIMER          0
++#define HINIC_RX_BUFFER_WRITE           16
+ 
+ /**
+  * hinic_rxq_clean_stats - Clean the statistics of specific queue
+@@ -229,7 +230,6 @@ static int rx_alloc_pkts(struct hinic_rxq *rxq)
+ 		wmb();  /* write all the wqes before update PI */
+ 
+ 		hinic_rq_update(rxq->rq, prod_idx);
+-		tasklet_schedule(&rxq->rx_task);
+ 	}
+ 
+ 	return i;
+@@ -258,17 +258,6 @@ static void free_all_rx_skbs(struct hinic_rxq *rxq)
+ 	}
+ }
+ 
+-/**
+- * rx_alloc_task - tasklet for queue allocation
+- * @data: rx queue
+- **/
+-static void rx_alloc_task(unsigned long data)
+-{
+-	struct hinic_rxq *rxq = (struct hinic_rxq *)data;
+-
+-	(void)rx_alloc_pkts(rxq);
+-}
+-
+ /**
+  * rx_recv_jumbo_pkt - Rx handler for jumbo pkt
+  * @rxq: rx queue
+@@ -333,6 +322,7 @@ static int rxq_recv(struct hinic_rxq *rxq, int budget)
+ 	struct hinic_qp *qp = container_of(rxq->rq, struct hinic_qp, rq);
+ 	u64 pkt_len = 0, rx_bytes = 0;
+ 	struct hinic_rq_wqe *rq_wqe;
++	unsigned int free_wqebbs;
+ 	int num_wqes, pkts = 0;
+ 	struct hinic_sge sge;
+ 	struct sk_buff *skb;
+@@ -376,8 +366,9 @@ static int rxq_recv(struct hinic_rxq *rxq, int budget)
+ 		rx_bytes += pkt_len;
+ 	}
+ 
+-	if (pkts)
+-		tasklet_schedule(&rxq->rx_task); /* rx_alloc_pkts */
++	free_wqebbs = hinic_get_rq_free_wqebbs(rxq->rq);
++	if (free_wqebbs > HINIC_RX_BUFFER_WRITE)
++		rx_alloc_pkts(rxq);
+ 
+ 	u64_stats_update_begin(&rxq->rxq_stats.syncp);
+ 	rxq->rxq_stats.pkts += pkts;
+@@ -494,8 +485,6 @@ int hinic_init_rxq(struct hinic_rxq *rxq, struct hinic_rq *rq,
+ 
+ 	sprintf(rxq->irq_name, "hinic_rxq%d", qp->q_id);
+ 
+-	tasklet_init(&rxq->rx_task, rx_alloc_task, (unsigned long)rxq);
+-
+ 	pkts = rx_alloc_pkts(rxq);
+ 	if (!pkts) {
+ 		err = -ENOMEM;
+@@ -512,7 +501,6 @@ int hinic_init_rxq(struct hinic_rxq *rxq, struct hinic_rq *rq,
+ 
+ err_req_rx_irq:
+ err_rx_pkts:
+-	tasklet_kill(&rxq->rx_task);
+ 	free_all_rx_skbs(rxq);
+ 	devm_kfree(&netdev->dev, rxq->irq_name);
+ 	return err;
+@@ -528,7 +516,6 @@ void hinic_clean_rxq(struct hinic_rxq *rxq)
+ 
+ 	rx_free_irq(rxq);
+ 
+-	tasklet_kill(&rxq->rx_task);
+ 	free_all_rx_skbs(rxq);
+ 	devm_kfree(&netdev->dev, rxq->irq_name);
+ }
+diff --git a/drivers/net/ethernet/huawei/hinic/hinic_rx.h b/drivers/net/ethernet/huawei/hinic/hinic_rx.h
+index ab3fabab91b2..f8ed3fa6c8ee 100644
+--- a/drivers/net/ethernet/huawei/hinic/hinic_rx.h
++++ b/drivers/net/ethernet/huawei/hinic/hinic_rx.h
+@@ -42,8 +42,6 @@ struct hinic_rxq {
+ 
+ 	char                    *irq_name;
+ 
+-	struct tasklet_struct   rx_task;
+-
+ 	struct napi_struct      napi;
+ };
+ 
+-- 
+2.17.1
 
-  drivers/gpu/drm/msm/adreno/a5xx_gpu.c
-
-between commit:
-
-  c97ea6a61b5e ("drm: msm: adreno: Use PTR_ERR_OR_ZERO rather than if(IS_ER=
-R(...)) +PTR_ERR")
-
-from the drm tree and commits:
-
-  dadb36b7ec42 ("drm/msm: Add a common function to free kernel buffer objec=
-ts")
-  7799a98edd80 ("drm/msm: Add a name field for gem objects")
-
-from the drm-msm tree.
-
-I fixed it up (I just used the latter version) and can carry the fix as
-necessary. This is now fixed as far as linux-next is concerned, but any
-non trivial conflicts should be mentioned to your upstream maintainer
-when your tree is submitted for merging.  You may also want to consider
-cooperating with the maintainer of the conflicting tree to minimise any
-particularly complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/yvq14zz5VR3AAQ0TgU1L9rR
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwN13gACgkQAVBC80lX
-0Gw4EQf+LTa78benAqBO19IrVd0qbHteZ7MrACogJaKCqq8S7lMSxKm26z7HTi9T
-k3L+PG4uSgZn3NthiFEpSMbwFakCuV5Cow5X+aSu38bXuIw0lmFKQAyrspa+PK4G
-pMGTxOd8sXiBYNYysXKpitXzJVrP6Q/N4uDaJkjy7qPGSQnHPwCa7B5Ryo3yvcSP
-CXrtoT77jlF2MzjSLFtjNz4KdAb9KXU9VcWfREyXncwmZNd+ea4U7GOaABoTOE3p
-MZEBRAxI3VWAqyYAZ9CqgdwhxRtyGpJxhpx9W2ItDIBcecR4tPCngTTODc2nw9R+
-itG6uwpUwGTuFaJotDIafD3im8Mrkg==
-=xEqx
------END PGP SIGNATURE-----
-
---Sig_/yvq14zz5VR3AAQ0TgU1L9rR--
