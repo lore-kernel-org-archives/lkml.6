@@ -6,46 +6,45 @@ X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55687C07E85
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:06:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9990CC65BAF
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:06:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F02320831
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:06:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F02320831
+	by mail.kernel.org (Postfix) with ESMTP id 695EB20661
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:06:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 695EB20661
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727771AbeLIWGd (ORCPT
+        id S1727186AbeLIWGk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 17:06:33 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:37080 "EHLO
+        Sun, 9 Dec 2018 17:06:40 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:37090 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727511AbeLIWGb (ORCPT
+        by vger.kernel.org with ESMTP id S1727204AbeLIWGh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Dec 2018 17:06:31 -0500
+        Sun, 9 Dec 2018 17:06:37 -0500
 Received: from pub.yeoldevic.com ([81.174.156.145] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW73L-0002ik-EV; Sun, 09 Dec 2018 21:55:55 +0000
+        id 1gW735-0002if-7Q; Sun, 09 Dec 2018 21:55:39 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW72a-0003IJ-TJ; Sun, 09 Dec 2018 21:55:08 +0000
+        id 1gW72g-0003VG-7d; Sun, 09 Dec 2018 21:55:14 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, "Greg Edwards" <gedwards@ddn.com>,
-        "Jens Axboe" <axboe@kernel.dk>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
+CC:     akpm@linux-foundation.org, "Mark Brown" <broonie@kernel.org>,
+        "Geert Uytterhoeven" <geert+renesas@glider.be>
 Date:   Sun, 09 Dec 2018 21:50:33 +0000
-Message-ID: <lsq.1544392233.380026601@decadent.org.uk>
+Message-ID: <lsq.1544392233.592516537@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 077/328] scsi: virtio_scsi: fix pi_bytes{out,in} on 4
- KiB block size devices
+Subject: [PATCH 3.16 202/328] spi: rspi: Fix invalid SPI use during system
+ suspend
 In-Reply-To: <lsq.1544392232.713909046@decadent.org.uk>
 X-SA-Exim-Connect-IP: 81.174.156.145
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -59,39 +58,66 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Greg Edwards <gedwards@ddn.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-commit cdcdcaae8450a975e7d07e1bfec21f9b8c016d0c upstream.
+commit c1ca59c22c56930b377a665fdd1b43351887830b upstream.
 
-When the underlying device is a 4 KiB logical block size device with a
-protection interval exponent of 0, i.e. 4096 bytes data + 8 bytes PI, the
-driver miscalculates the pi_bytes{out,in} by a factor of 8x (64 bytes).
+If the SPI queue is running during system suspend, the system may lock
+up.
 
-This leads to errors on all reads and writes on 4 KiB logical block size
-devices when CONFIG_BLK_DEV_INTEGRITY is enabled and the
-VIRTIO_SCSI_F_T10_PI feature bit has been negotiated.
+Fix this by stopping/restarting the queue during system suspend/resume,
+by calling spi_master_suspend()/spi_master_resume() from the PM
+callbacks.  In-kernel users will receive an -ESHUTDOWN error while
+system suspend/resume is in progress.
 
-Fixes: e6dc783a38ec0 ("virtio-scsi: Enable DIF/DIX modes in SCSI host LLD")
-Acked-by: Martin K. Petersen <martin.petersen@oracle.com>
-Signed-off-by: Greg Edwards <gedwards@ddn.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Based on a patch for sh-msiof by Gaku Inami.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 [bwh: Backported to 3.16: adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
---- a/drivers/scsi/virtio_scsi.c
-+++ b/drivers/scsi/virtio_scsi.c
-@@ -500,9 +500,11 @@ static void virtio_scsi_init_hdr_pi(stru
- 	bi = blk_get_integrity(rq->rq_disk);
+ drivers/spi/spi-rspi.c | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
+
+--- a/drivers/spi/spi-rspi.c
++++ b/drivers/spi/spi-rspi.c
+@@ -1158,6 +1158,29 @@ static struct platform_device_id spi_dri
  
- 	if (sc->sc_data_direction == DMA_TO_DEVICE)
--		cmd_pi->pi_bytesout = blk_rq_sectors(rq) * bi->tuple_size;
-+		cmd_pi->pi_bytesout = bio_integrity_bytes(bi,
-+							blk_rq_sectors(rq));
- 	else if (sc->sc_data_direction == DMA_FROM_DEVICE)
--		cmd_pi->pi_bytesin = blk_rq_sectors(rq) * bi->tuple_size;
-+		cmd_pi->pi_bytesin = bio_integrity_bytes(bi,
-+							blk_rq_sectors(rq));
- }
+ MODULE_DEVICE_TABLE(platform, spi_driver_ids);
  
- static int virtscsi_queuecommand(struct virtio_scsi *vscsi,
++#ifdef CONFIG_PM_SLEEP
++static int rspi_suspend(struct device *dev)
++{
++	struct platform_device *pdev = to_platform_device(dev);
++	struct rspi_data *rspi = platform_get_drvdata(pdev);
++
++	return spi_master_suspend(rspi->master);
++}
++
++static int rspi_resume(struct device *dev)
++{
++	struct platform_device *pdev = to_platform_device(dev);
++	struct rspi_data *rspi = platform_get_drvdata(pdev);
++
++	return spi_master_resume(rspi->master);
++}
++
++static SIMPLE_DEV_PM_OPS(rspi_pm_ops, rspi_suspend, rspi_resume);
++#define DEV_PM_OPS	&rspi_pm_ops
++#else
++#define DEV_PM_OPS	NULL
++#endif /* CONFIG_PM_SLEEP */
++
+ static struct platform_driver rspi_driver = {
+ 	.probe =	rspi_probe,
+ 	.remove =	rspi_remove,
+@@ -1165,6 +1188,7 @@ static struct platform_driver rspi_drive
+ 	.driver		= {
+ 		.name = "renesas_spi",
+ 		.owner	= THIS_MODULE,
++		.pm = DEV_PM_OPS,
+ 		.of_match_table = of_match_ptr(rspi_of_match),
+ 	},
+ };
 
