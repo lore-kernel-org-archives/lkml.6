@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6745C65BAF
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:10:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B7D4C65BAF
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:10:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A707D20661
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:10:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A707D20661
+	by mail.kernel.org (Postfix) with ESMTP id 1A21A20661
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:10:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A21A20661
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728169AbeLIWKh (ORCPT
+        id S1728191AbeLIWKw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 17:10:37 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:37580 "EHLO
+        Sun, 9 Dec 2018 17:10:52 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:37608 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726290AbeLIWKg (ORCPT
+        by vger.kernel.org with ESMTP id S1726934AbeLIWKu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Dec 2018 17:10:36 -0500
+        Sun, 9 Dec 2018 17:10:50 -0500
 Received: from pub.yeoldevic.com ([81.174.156.145] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW73L-0002iY-Pk; Sun, 09 Dec 2018 21:55:55 +0000
+        id 1gW73I-0002ir-B1; Sun, 09 Dec 2018 21:55:52 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW72a-0003HK-Dc; Sun, 09 Dec 2018 21:55:08 +0000
+        id 1gW72c-0003MG-GV; Sun, 09 Dec 2018 21:55:10 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -38,13 +38,15 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org,
-        "Steffen Klassert" <steffen.klassert@secunet.com>,
-        "YueHaibing" <yuehaibing@huawei.com>
+        "Valdis Kletnieks" <valdis.kletnieks@vt.edu>,
+        "Mark Brown" <broonie@kernel.org>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        "Charles Keepax" <ckeepax@opensource.cirrus.com>
 Date:   Sun, 09 Dec 2018 21:50:33 +0000
-Message-ID: <lsq.1544392233.865669722@decadent.org.uk>
+Message-ID: <lsq.1544392233.856716508@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 065/328] xfrm: fix 'passing zero to ERR_PTR()' warning
+Subject: [PATCH 3.16 113/328] ASoC: wm8994: Fix missing break in switch
 In-Reply-To: <lsq.1544392232.713909046@decadent.org.uk>
 X-SA-Exim-Connect-IP: 81.174.156.145
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -58,37 +60,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: YueHaibing <yuehaibing@huawei.com>
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
 
-commit 934ffce1343f22ed5e2d0bd6da4440f4848074de upstream.
+commit ad0eaee6195db1db1749dd46b9e6f4466793d178 upstream.
 
-Fix a static code checker warning:
+Add missing break statement in order to prevent the code from falling
+through to the default case.
 
-  net/xfrm/xfrm_policy.c:1836 xfrm_resolve_and_create_bundle() warn: passing zero to 'ERR_PTR'
-
-xfrm_tmpl_resolve return 0 just means no xdst found, return NULL
-instead of passing zero to ERR_PTR.
-
-Fixes: d809ec895505 ("xfrm: do not assume that template resolving always returns xfrms")
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
+Addresses-Coverity-ID: 115050 ("Missing break in switch")
+Reported-by: Valdis Kletnieks <valdis.kletnieks@vt.edu>
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- net/xfrm/xfrm_policy.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ sound/soc/codecs/wm8994.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/xfrm/xfrm_policy.c
-+++ b/net/xfrm/xfrm_policy.c
-@@ -1692,7 +1692,10 @@ xfrm_resolve_and_create_bundle(struct xf
- 	/* Try to instantiate a bundle */
- 	err = xfrm_tmpl_resolve(pols, num_pols, fl, xfrm, family);
- 	if (err <= 0) {
--		if (err != 0 && err != -EAGAIN)
-+		if (err == 0)
-+			return NULL;
-+
-+		if (err != -EAGAIN)
- 			XFRM_INC_STATS(net, LINUX_MIB_XFRMOUTPOLERROR);
- 		return ERR_PTR(err);
- 	}
+--- a/sound/soc/codecs/wm8994.c
++++ b/sound/soc/codecs/wm8994.c
+@@ -2427,7 +2427,7 @@ static int wm8994_set_dai_sysclk(struct
+ 			snd_soc_update_bits(codec, WM8994_POWER_MANAGEMENT_2,
+ 					    WM8994_OPCLK_ENA, 0);
+ 		}
+-		/* fall through */
++		break;
+ 
+ 	default:
+ 		return -EINVAL;
 
