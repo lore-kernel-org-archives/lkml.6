@@ -7,48 +7,50 @@ X-Spam-Status: No, score=-15.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17504C07E85
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 11:16:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C23EBC07E85
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 11:17:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C452020661
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 11:16:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 87DB020831
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 11:17:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544354210;
-	bh=IOvJuu2/ACiZq3Hjj5p7VcW7+wyQqnDwJqDjmzPJhW8=;
+	s=default; t=1544354241;
+	bh=sQR2f1sQXs7tUuesvTAi0EUVvw4D7XPi6nPkvmhi0jM=;
 	h=Date:From:To:Cc:Subject:List-ID:From;
-	b=wBU4NUA6I0g+J1tlQxkT5aVYcBku/ZNur0A6Zz9NEvaLCIWH2SSbmya48/KsI7wxY
-	 hc8n0bF700D77t5Mlywz94gjJVkvYsnUUd5e3+glKbnDZrMgahIYZ6dD+wsSRovogg
-	 DBtodx/b5j2a7QlaqNGYXylWciOEMHraaFI9mXvc=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C452020661
+	b=OTAxvnhsb+PTyvCFzkKrVWi1ETF566hOdJl3HeOFti34YYVoD/bqid3VywdyDU1MB
+	 31DFqrXHBe4wU72ENpDeto6BcB8aWFHsVWCkrxT0PB4ad9fBe2R0AMb44SkDquD5Md
+	 VQlxbAEseyaKarn8YQKhgUbv4GFgbjiyhAoGDdQo=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 87DB020831
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726246AbeLILQt (ORCPT
+        id S1726266AbeLILRU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 06:16:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33358 "EHLO mail.kernel.org"
+        Sun, 9 Dec 2018 06:17:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33552 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726184AbeLILQt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Dec 2018 06:16:49 -0500
+        id S1726230AbeLILRU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Dec 2018 06:17:20 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 53ABB20661;
-        Sun,  9 Dec 2018 11:16:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4B99320661;
+        Sun,  9 Dec 2018 11:17:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544354208;
-        bh=IOvJuu2/ACiZq3Hjj5p7VcW7+wyQqnDwJqDjmzPJhW8=;
+        s=default; t=1544354239;
+        bh=sQR2f1sQXs7tUuesvTAi0EUVvw4D7XPi6nPkvmhi0jM=;
         h=Date:From:To:Cc:Subject:From;
-        b=iMngNx2IcktHoeVdPQjTvDwvfPAQ6e/eJ2yuoAn/OQ5wa6rZ/WdGt6GmLxYtPD5wr
-         t9umWyIUkvoQw9GISxir1Jyzj4UwNqsUZFwd7Lt7yCmNf90jyqeGeZTrjo1ZV+2/aq
-         UHO60ycFDHB9bWYo8zL3gE5DIRrk67G+4jE2lm60=
-Date:   Sun, 9 Dec 2018 12:16:46 +0100
+        b=G/DwUHtLPA9MMRHNYcC3skea5xMXAzp0SQtyJJ+lgsLhdtEkI/Ur6ZRf2FiEYvdQw
+         oHyl4hpryKMfC/+TM3fEK0/DbUKiMnBlQp/zuiWib4xiKyHhj4f9QijVNGRetzU/80
+         A/pFUiwpBvlJOIYchE7MvECS75x+3oA3x39uE7Fs=
+Date:   Sun, 9 Dec 2018 12:17:17 +0100
 From:   Greg KH <gregkh@linuxfoundation.org>
 To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
-Subject: [GIT PULL] USB/PHY driver fixes for 4.20-rc6
-Message-ID: <20181209111646.GB9556@kroah.com>
+Cc:     Jiri Slaby <jslaby@suse.cz>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
+Subject: [GIT PULL] TTY/Serial fixes for 4.20-rc6
+Message-ID: <20181209111717.GA9735@kroah.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -58,67 +60,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following changes since commit 2595646791c319cadfdbf271563aac97d0843dc7:
+The following changes since commit ccda4af0f4b92f7b4c308d3acc262f4a7e3affad:
 
-  Linux 4.20-rc5 (2018-12-02 15:07:55 -0800)
+  Linux 4.20-rc2 (2018-11-11 17:12:31 -0600)
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git tags/usb-4.20-rc6
+  git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git tags/tty-4.20-rc6
 
-for you to fetch changes up to 3caad34eab57e622dad48086af7f89c19001664e:
+for you to fetch changes up to dada6a43b0402eba438a17ac86fdc64ac56a4607:
 
-  Merge tag 'usb-serial-4.20-rc6' of https://git.kernel.org/pub/scm/linux/kernel/git/johan/usb-serial into usb-linus (2018-12-06 18:02:58 +0100)
+  kgdboc: fix KASAN global-out-of-bounds bug in param_set_kgdboc_var() (2018-12-06 15:59:07 +0100)
 
 ----------------------------------------------------------------
-USB fixes for 4.20-rc6
+TTY driver fixes for 4.20-rc6
 
-Here are some small USB fixes for 4.20-rc6
+Here are three small tty driver fixes for 4.20-rc6
 
-The "largest" here are some xhci fixes for reported issues.  Also here
-is a USB core fix, some quirk additions, and a usb-serial fix which
-required the export of one of the tty layer's functions to prevent code
-duplication.  The tty maintainer agreed with this change.
+Nothing major, just some bug fixes for reported issues.  Full details
+are in the shortlog.
 
-All of these have been in linux-next with no reported issues.
+All of these have been in linux-next for a while with no reported
+issues.
 
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ----------------------------------------------------------------
-Alan Stern (1):
-      USB: Fix invalid-free bug in port_over_current_notify()
+Chanho Park (1):
+      tty: do not set TTY_IO_ERROR flag if console port
 
-Alexander Theissen (1):
-      usb: appledisplay: Add 27" Apple Cinema Display
+Macpaul Lin (1):
+      kgdboc: fix KASAN global-out-of-bounds bug in param_set_kgdboc_var()
 
-Greg Kroah-Hartman (1):
-      Merge tag 'usb-serial-4.20-rc6' of https://git.kernel.org/.../johan/usb-serial into usb-linus
+Peter Shih (1):
+      tty: serial: 8250_mtk: always resume the device in probe.
 
-Harry Pan (1):
-      usb: quirk: add no-LPM quirk on SanDisk Ultra Flair device
-
-Johan Hovold (1):
-      USB: serial: console: fix reported terminal settings
-
-Mathias Nyman (1):
-      xhci: Prevent U1/U2 link pm states if exit latency is too long
-
-Mathias Payer (1):
-      USB: check usb_get_extra_descriptor for proper size
-
-Sandeep Singh (1):
-      xhci: workaround CSS timeout on AMD SNPS 3.0 xHC
-
- drivers/tty/tty_io.c            | 11 +++++++++--
- drivers/usb/core/hub.c          |  5 +++--
- drivers/usb/core/quirks.c       |  4 ++++
- drivers/usb/core/usb.c          |  6 +++---
- drivers/usb/host/hwa-hc.c       |  2 +-
- drivers/usb/host/xhci-pci.c     |  4 ++++
- drivers/usb/host/xhci.c         | 42 +++++++++++++++++++++++++++++++++++++----
- drivers/usb/host/xhci.h         |  3 +++
- drivers/usb/misc/appledisplay.c |  1 +
- drivers/usb/serial/console.c    |  2 +-
- include/linux/tty.h             |  1 +
- include/linux/usb.h             |  4 ++--
- 12 files changed, 70 insertions(+), 15 deletions(-)
+ drivers/tty/serial/8250/8250_mtk.c | 16 +++++++---------
+ drivers/tty/serial/kgdboc.c        |  4 ++--
+ drivers/tty/tty_port.c             |  3 ++-
+ 3 files changed, 11 insertions(+), 12 deletions(-)
