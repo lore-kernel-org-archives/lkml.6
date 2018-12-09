@@ -3,47 +3,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59929C65BAF
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:23:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CCB0C07E85
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:23:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 21AB720661
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:23:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 21AB720661
+	by mail.kernel.org (Postfix) with ESMTP id DD40620661
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:23:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD40620661
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728683AbeLIWXx (ORCPT
+        id S1728671AbeLIWXw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 17:23:53 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35044 "EHLO
+        Sun, 9 Dec 2018 17:23:52 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35052 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726478AbeLIVzS (ORCPT
+        by vger.kernel.org with ESMTP id S1726484AbeLIVzS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 9 Dec 2018 16:55:18 -0500
 Received: from pub.yeoldevic.com ([81.174.156.145] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW72h-0002po-IL; Sun, 09 Dec 2018 21:55:15 +0000
+        id 1gW72h-0002ia-Qo; Sun, 09 Dec 2018 21:55:16 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW72e-0003Rv-M1; Sun, 09 Dec 2018 21:55:12 +0000
+        id 1gW72e-0003Qv-9U; Sun, 09 Dec 2018 21:55:12 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, "Felipe Balbi" <balbi@ti.com>
+CC:     akpm@linux-foundation.org, "Peter Zijlstra" <peterz@infradead.org>,
+        "Nicholas Piggin" <npiggin@gmail.com>,
+        "Linus Torvalds" <torvalds@linux-foundation.org>,
+        "Will Deacon" <will.deacon@arm.com>
 Date:   Sun, 09 Dec 2018 21:50:33 +0000
-Message-ID: <lsq.1544392233.927412555@decadent.org.uk>
+Message-ID: <lsq.1544392233.404678133@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 170/328] usb: gadget: udc: net2280: do not rely on
- 'driver' argument
+Subject: [PATCH 3.16 158/328] mm: move tlb_table_flush to tlb_flush_mmu_free
 In-Reply-To: <lsq.1544392232.713909046@decadent.org.uk>
 X-SA-Exim-Connect-IP: 81.174.156.145
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -57,45 +59,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Felipe Balbi <balbi@ti.com>
+From: Nicholas Piggin <npiggin@gmail.com>
 
-commit bfd0ed576dbf9cc71af7dbe42841fc9246524961 upstream.
+commit db7ddef301128dad394f1c0f77027f86ee9a4edb upstream.
 
-future patches will remove the extra 'driver'
-argument to ->udc_stop(), in order to do that,
-we must make sure that our UDC does not rely
-on it first.
+There is no need to call this from tlb_flush_mmu_tlbonly, it logically
+belongs with tlb_flush_mmu_free.  This makes future fixes simpler.
 
-Signed-off-by: Felipe Balbi <balbi@ti.com>
-[bwh: Backported to 3.16: adjust filename, context]
+[ This was originally done to allow code consolidation for the
+  mmu_notifier fix, but it also ends up helping simplify the
+  HAVE_RCU_TABLE_INVALIDATE fix.    - Linus ]
+
+Signed-off-by: Nicholas Piggin <npiggin@gmail.com>
+Acked-by: Will Deacon <will.deacon@arm.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+[bwh: Backported to 3.16: adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/usb/gadget/net2280.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+ mm/memory.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/drivers/usb/gadget/net2280.c
-+++ b/drivers/usb/gadget/net2280.c
-@@ -1956,11 +1956,9 @@ static int net2280_stop(struct usb_gadge
- 	dev = container_of (_gadget, struct net2280, gadget);
- 
- 	spin_lock_irqsave (&dev->lock, flags);
--	stop_activity (dev, driver);
-+	stop_activity(dev, NULL);
- 	spin_unlock_irqrestore (&dev->lock, flags);
- 
--	dev->driver = NULL;
--
- 	net2280_led_active (dev, 0);
- 
- 	/* Disable full-speed test mode */
-@@ -1970,7 +1968,8 @@ static int net2280_stop(struct usb_gadge
- 	device_remove_file (&dev->pdev->dev, &dev_attr_queues);
- 
- 	DEBUG(dev, "unregistered driver '%s'\n",
--			driver ? driver->driver.name : "");
-+	      dev->driver ? dev->driver->driver.name : "");
-+	dev->driver = NULL;
- 
- 	return 0;
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -236,15 +236,15 @@ static void tlb_flush_mmu_tlbonly(struct
+ {
+ 	tlb->need_flush = 0;
+ 	tlb_flush(tlb);
+-#ifdef CONFIG_HAVE_RCU_TABLE_FREE
+-	tlb_table_flush(tlb);
+-#endif
  }
+ 
+ static void tlb_flush_mmu_free(struct mmu_gather *tlb)
+ {
+ 	struct mmu_gather_batch *batch;
+ 
++#ifdef CONFIG_HAVE_RCU_TABLE_FREE
++	tlb_table_flush(tlb);
++#endif
+ 	for (batch = &tlb->local; batch; batch = batch->next) {
+ 		free_pages_and_swap_cache(batch->pages, batch->nr);
+ 		batch->nr = 0;
 
