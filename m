@@ -2,132 +2,86 @@ Return-Path: <SRS0=cWqk=OS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-10.4 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95E5CC07E85
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 14:20:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6555FC07E85
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 14:21:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5999220837
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 14:20:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=xenosoft.de header.i=@xenosoft.de header.b="ZAMwKG37"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5999220837
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xenosoft.de
+	by mail.kernel.org (Postfix) with ESMTP id 0FB6E20672
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 14:21:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0FB6E20672
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726260AbeLIOUP (ORCPT
+        id S1726274AbeLIOVG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 09:20:15 -0500
-Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.53]:28141 "EHLO
-        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726212AbeLIOUP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Dec 2018 09:20:15 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1544365209;
-        s=strato-dkim-0002; d=xenosoft.de;
-        h=In-Reply-To:Date:Message-ID:References:Cc:To:From:Subject:
-        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=Izig/pPPQuLxK5jL7W0j4n45KanWviKmQ9g8KZJM8l8=;
-        b=ZAMwKG37Cfe7FshhLtgjSY+857haaemAl7n1GA81N4T7rPdJnh0YuxraX+umGQ4lVm
-        mohcV+OxNEex2r641pGOZ2ZQeT+yQj8zgs2rAB3g1fxJnz3pIR0qNk/5zpW6OTwRPVmE
-        SLhIZ7t7YdDW+47UZey0Z11U2P3m7P6/2rPzsyvMn06abMz7EyiZxkuX6jjJHRfaPIhj
-        xTQ7gDWVQzPyCCu0V5F5xN7ELixght0E7VIvtwDBKF8dlomqihfbq+bem/DVHDHmSZMQ
-        F5lMzM2B+/6iuHoOKNQtzvi4Sv6rvTv0RifZ0Rw2s2gHvk+CQpQoHvanV2I8GgwdILqr
-        MtZg==
-X-RZG-AUTH: ":L2QefEenb+UdBJSdRCXu93KJ1bmSGnhMdmOod1DhGM4l4Hio94KKxRySfLxnHfJ+Dkjp5G5MdirQj0WG7CkG2pChksbYmBVaDODYdGAm81+XDQ=="
-X-RZG-CLASS-ID: mo00
-Received: from [IPv6:2a02:8109:a400:162c:9dea:b083:ff3d:f1d9]
-        by smtp.strato.de (RZmta 44.6 AUTH)
-        with ESMTPSA id 404b20uB9EK702x
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
-        (Client did not present a certificate);
-        Sun, 9 Dec 2018 15:20:07 +0100 (CET)
-Subject: Re: use generic DMA mapping code in powerpc V4
-From:   Christian Zigotzky <chzigotzky@xenosoft.de>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     linux-arch@vger.kernel.org,
-        Darren Stevens <darren@stevens-zone.net>,
-        linux-kernel@vger.kernel.org, Julian Margetson <runaway@candw.ms>,
-        linux-mm@kvack.org, iommu@lists.linux-foundation.org,
-        Paul Mackerras <paulus@samba.org>,
-        Olof Johansson <olof@lixom.net>, linuxppc-dev@lists.ozlabs.org
-References: <20181129170351.GC27951@lst.de>
- <d0e04a85-f17d-414e-6fea-971414417430@xenosoft.de>
- <20181130105346.GB26765@lst.de>
- <8694431d-c669-b7b9-99fa-e99db5d45a7d@xenosoft.de>
- <20181130131056.GA5211@lst.de>
- <25999587-2d91-a63c-ed38-c3fb0075d9f1@xenosoft.de>
- <c5202d29-863d-1377-0e2d-762203b317e2@xenosoft.de>
- <58c61afb-290f-6196-c72c-ac7b61b84718@xenosoft.de>
- <20181204142426.GA2743@lst.de>
- <ef56d279-f75d-008e-71ba-7068c1b37c48@xenosoft.de>
- <20181205140550.GA27549@lst.de>
- <1948cf84-49ab-543c-472c-d18e27751903@xenosoft.de>
- <5a2ea855-b4b0-e48a-5c3e-c859a8451ca2@xenosoft.de>
- <7B6DDB28-8BF6-4589-84ED-F1D4D13BFED6@xenosoft.de>
- <8a2c4581-0c85-8065-f37e-984755eb31ab@xenosoft.de>
- <424bb228-c9e5-6593-1ab7-5950d9b2bd4e@xenosoft.de>
-Message-ID: <c86d76b4-b199-557e-bc64-4235729c1e72@xenosoft.de>
-Date:   Sun, 9 Dec 2018 15:20:06 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.3
+        Sun, 9 Dec 2018 09:21:06 -0500
+Received: from mga18.intel.com ([134.134.136.126]:61210 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726212AbeLIOVF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Dec 2018 09:21:05 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Dec 2018 06:21:05 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,334,1539673200"; 
+   d="scan'208";a="302327682"
+Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
+  by fmsmga005.fm.intel.com with ESMTP; 09 Dec 2018 06:21:04 -0800
+Received: from kbuild by lkp-server01 with local (Exim 4.89)
+        (envelope-from <lkp@intel.com>)
+        id 1gVzx9-000EcF-QW; Sun, 09 Dec 2018 22:21:03 +0800
+Date:   Sun, 9 Dec 2018 22:20:03 +0800
+From:   kbuild test robot <fengguang.wu@intel.com>
+To:     Grygorii Strashko <grygorii.strashko@ti.com>
+Cc:     kbuild-all@01.org, Kishon Vijay Abraham I <kishon@ti.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] phy: ti: fix semicolon.cocci warnings
+Message-ID: <20181209142003.GA14967@cairo>
+References: <201812092250.Mb2vAlUO%fengguang.wu@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <424bb228-c9e5-6593-1ab7-5950d9b2bd4e@xenosoft.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: de-DE
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <201812092250.Mb2vAlUO%fengguang.wu@intel.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Next step: 602307b034734ce77a05da4b99333a2eaf6b6482 (powerpc/fsl_pci: 
-simplify fsl_pci_dma_set_mask)
+From: kbuild test robot <fengguang.wu@intel.com>
 
-git checkout 602307b034734ce77a05da4b99333a2eaf6b6482
-
-The PASEMI onboard ethernet works and the X5000 boots.
-
--- Christian
+drivers/phy/ti/phy-gmii-sel.c:91:2-3: Unneeded semicolon
 
 
-On 08 December 2018 at 2:47PM, Christian Zigotzky wrote:
-> Next step: e15cd8173ef85e9cc3e2a9c7cc2982f5c1355615 (powerpc/dma: fix 
-> an off-by-one in dma_capable)
->
-> git checkout e15cd8173ef85e9cc3e2a9c7cc2982f5c1355615
->
-> The PASEMI onboard ethernet also works with this commit and the X5000 
-> boots without any problems.
->
-> -- Christian
->
->
-> On 08 December 2018 at 11:29AM, Christian Zigotzky wrote:
->> Next step: 7ebc44c535f6bd726d553756d38b137acc718443 (powerpc/dma: 
->> remove max_direct_dma_addr)
->>
->> git checkout 7ebc44c535f6bd726d553756d38b137acc718443
->>
->> OK, the PASEMI onboard ethernet works and the P5020 board boots.
->>
->> -- Christian
->>
->>
->> On 07 December 2018 at 7:33PM, Christian Zigotzky wrote:
->>> Next step: 13c1fdec5682b6e13257277fa16aa31f342d167d (powerpc/dma: 
->>> move pci_dma_dev_setup_swiotlb to fsl_pci.c)
->>>
->>> git checkout 13c1fdec5682b6e13257277fa16aa31f342d167d
->>>
->>> Result: The PASEMI onboard ethernet works and the P5020 board boots.
->>>
->>> — Christian
->>
->>
->>
->
->
+ Remove unneeded semicolon.
 
+Generated by: scripts/coccinelle/misc/semicolon.cocci
+
+Fixes: 1811851f4e73 ("phy: ti: introduce phy-gmii-sel driver")
+CC: Grygorii Strashko <grygorii.strashko@ti.com>
+Signed-off-by: kbuild test robot <fengguang.wu@intel.com>
+---
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/kishon/linux-phy.git next
+head:   013231475e124abfb61099a42ec18dc2eaadc393
+commit: 1811851f4e736e73f274238f0558d179514bcdc0 [16/25] phy: ti: introduce phy-gmii-sel driver
+
+ phy-gmii-sel.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/drivers/phy/ti/phy-gmii-sel.c
++++ b/drivers/phy/ti/phy-gmii-sel.c
+@@ -88,7 +88,7 @@ static int phy_gmii_sel_mode(struct phy
+ 			 "port%u: unsupported mode: \"%s\". Defaulting to MII.\n",
+ 			 if_phy->id, phy_modes(rgmii_id));
+ 		return -EINVAL;
+-	};
++	}
+ 
+ 	if_phy->phy_if_mode = submode;
+ 
