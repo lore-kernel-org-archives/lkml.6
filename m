@@ -6,47 +6,46 @@ X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCBA7C07E85
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:00:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0175C07E85
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:00:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A933E20645
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:00:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A933E20645
+	by mail.kernel.org (Postfix) with ESMTP id 6150C20645
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:00:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6150C20645
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727207AbeLIWA2 (ORCPT
+        id S1727197AbeLIWA1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 17:00:28 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36020 "EHLO
+        Sun, 9 Dec 2018 17:00:27 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36022 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726703AbeLIVze (ORCPT
+        by vger.kernel.org with ESMTP id S1726702AbeLIVze (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 9 Dec 2018 16:55:34 -0500
 Received: from pub.yeoldevic.com ([81.174.156.145] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW72x-0002pp-JX; Sun, 09 Dec 2018 21:55:31 +0000
+        id 1gW72x-0002iq-RX; Sun, 09 Dec 2018 21:55:32 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW72j-0003bX-74; Sun, 09 Dec 2018 21:55:17 +0000
+        id 1gW72i-0003at-R6; Sun, 09 Dec 2018 21:55:16 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, "Jann Horn" <jannh@google.com>,
-        "Tony Lindgren" <tony@atomide.com>, security@kernel.org,
-        "Will Deacon" <will.deacon@arm.com>,
-        "Bartlomiej Zolnierkiewicz" <b.zolnierkie@samsung.com>,
-        "Tomi Valkeinen" <tomi.valkeinen@ti.com>
+CC:     akpm@linux-foundation.org,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+        "Alan Stern" <stern@rowland.harvard.edu>,
+        syzbot+19c3aaef85a89d451eac@syzkaller.appspotmail.com
 Date:   Sun, 09 Dec 2018 21:50:33 +0000
-Message-ID: <lsq.1544392233.674270191@decadent.org.uk>
+Message-ID: <lsq.1544392233.502563245@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 264/328] fbdev/omapfb: fix omapfb_memory_read infoleak
+Subject: [PATCH 3.16 256/328] USB: handle NULL config in usb_find_alt_setting()
 In-Reply-To: <lsq.1544392232.713909046@decadent.org.uk>
 X-SA-Exim-Connect-IP: 81.174.156.145
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -60,52 +59,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tomi Valkeinen <tomi.valkeinen@ti.com>
+From: Alan Stern <stern@rowland.harvard.edu>
 
-commit 1bafcbf59fed92af58955024452f45430d3898c5 upstream.
+commit c9a4cb204e9eb7fa7dfbe3f7d3a674fa530aa193 upstream.
 
-OMAPFB_MEMORY_READ ioctl reads pixels from the LCD's memory and copies
-them to a userspace buffer. The code has two issues:
+usb_find_alt_setting() takes a pointer to a struct usb_host_config as
+an argument; it searches for an interface with specified interface and
+alternate setting numbers in that config.  However, it crashes if the
+usb_host_config pointer argument is NULL.
 
-- The user provided width and height could be large enough to overflow
-  the calculations
-- The copy_to_user() can copy uninitialized memory to the userspace,
-  which might contain sensitive kernel information.
+Since this is a general-purpose routine, available for use in many
+places, we want to to be more robust.  This patch makes it return NULL
+whenever the config argument is NULL.
 
-Fix these by limiting the width & height parameters, and only copying
-the amount of data that we actually received from the LCD.
-
-Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Reported-by: Jann Horn <jannh@google.com>
-Cc: security@kernel.org
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: Jann Horn <jannh@google.com>
-Cc: Tony Lindgren <tony@atomide.com>
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
+Reported-by: syzbot+19c3aaef85a89d451eac@syzkaller.appspotmail.com
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/video/fbdev/omap2/omapfb/omapfb-ioctl.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/usb/core/usb.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/video/fbdev/omap2/omapfb/omapfb-ioctl.c
-+++ b/drivers/video/fbdev/omap2/omapfb/omapfb-ioctl.c
-@@ -493,6 +493,9 @@ static int omapfb_memory_read(struct fb_
- 	if (!access_ok(VERIFY_WRITE, mr->buffer, mr->buffer_size))
- 		return -EFAULT;
+--- a/drivers/usb/core/usb.c
++++ b/drivers/usb/core/usb.c
+@@ -79,6 +79,8 @@ struct usb_host_interface *usb_find_alt_
+ 	struct usb_interface_cache *intf_cache = NULL;
+ 	int i;
  
-+	if (mr->w > 4096 || mr->h > 4096)
-+		return -EINVAL;
-+
- 	if (mr->w * mr->h * 3 > mr->buffer_size)
- 		return -EINVAL;
- 
-@@ -506,7 +509,7 @@ static int omapfb_memory_read(struct fb_
- 			mr->x, mr->y, mr->w, mr->h);
- 
- 	if (r > 0) {
--		if (copy_to_user(mr->buffer, buf, mr->buffer_size))
-+		if (copy_to_user(mr->buffer, buf, r))
- 			r = -EFAULT;
- 	}
- 
++	if (!config)
++		return NULL;
+ 	for (i = 0; i < config->desc.bNumInterfaces; i++) {
+ 		if (config->intf_cache[i]->altsetting[0].desc.bInterfaceNumber
+ 				== iface_num) {
 
