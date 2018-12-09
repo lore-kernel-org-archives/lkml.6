@@ -2,62 +2,78 @@ Return-Path: <SRS0=cWqk=OS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCB73C07E85
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 16:46:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED35BC07E85
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 17:01:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F8632081F
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 16:46:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F8632081F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=atomide.com
+	by mail.kernel.org (Postfix) with ESMTP id B2B5B20672
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 17:01:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B2B5B20672
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726226AbeLIQqz (ORCPT
+        id S1726157AbeLIRBN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 11:46:55 -0500
-Received: from muru.com ([72.249.23.125]:57006 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726088AbeLIQqy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Dec 2018 11:46:54 -0500
-Received: from atomide.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTPS id 02F1C8102;
-        Sun,  9 Dec 2018 16:46:56 +0000 (UTC)
-Date:   Sun, 9 Dec 2018 08:46:50 -0800
-From:   Tony Lindgren <tony@atomide.com>
-To:     Pavel Machek <pavel@ucw.cz>
-Cc:     kernel list <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-omap@vger.kernel.org, sre@kernel.org, nekit1000@gmail.com,
-        mpartap@gmx.net, merlijn@wizzup.org
-Subject: Re: Droid 4: poweroff does not work? calls
-Message-ID: <20181209164650.GX6707@atomide.com>
-References: <20181209121318.GA24478@amd>
+        Sun, 9 Dec 2018 12:01:13 -0500
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:35085 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726078AbeLIRBM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Dec 2018 12:01:12 -0500
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id 9D31380734; Sun,  9 Dec 2018 18:01:06 +0100 (CET)
+Date:   Sun, 9 Dec 2018 18:01:09 +0100
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Andy Lutomirski <luto@amacapital.net>
+Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        X86 ML <x86@kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        linux-sgx@vger.kernel.org, Dave Hansen <dave.hansen@intel.com>,
+        "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
+        nhorman@redhat.com, npmccallum@redhat.com,
+        "Ayoun, Serge" <serge.ayoun@intel.com>, shay.katz-zamir@intel.com,
+        haitao.huang@linux.intel.com,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Svahn, Kai" <kai.svahn@intel.com>, mark.shanahan@intel.com,
+        Suresh Siddha <suresh.b.siddha@intel.com>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Darren Hart <dvhart@infradead.org>, andy@infradead.org,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v17 18/23] platform/x86: Intel SGX driver
+Message-ID: <20181209170109.amb7h3lfe7dlfabn@devuan>
+References: <20181116010412.23967-1-jarkko.sakkinen@linux.intel.com>
+ <20181116010412.23967-19-jarkko.sakkinen@linux.intel.com>
+ <CALCETrXctxfED1Dr-MuZxFnh5gzTyRL06hRJ_fQnNA8p2S4xEQ@mail.gmail.com>
+ <20181119161917.GF13298@linux.intel.com>
+ <CALCETrX+A4XaEMq3fJqmHUeeDHr_BdWh-Wk3ikXfY=L77BbaGA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181209121318.GA24478@amd>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CALCETrX+A4XaEMq3fJqmHUeeDHr_BdWh-Wk3ikXfY=L77BbaGA@mail.gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Pavel Machek <pavel@ucw.cz> [181209 12:13]:
-> Hi!
+Hi!
+
+> > There would be three types of users:
+> >
+> > 1. Ones that have access to neither of the devices.
+> > 2. Ones that have access to unprivileged. Who are these?
 > 
-> Poweroff does not seem to work on Motorola droid 4 -- it reboots. It
-> seems to be problem "forever", 4.18 and 4.20-rc5 seem to be
-> affected. It is bad, because when your battery is low, you get into
-> reboot loop and discharge it furher, which batteries do not like.
-> 
-> Any ideas, or at least idea how to debug this?
+> Either 0666 (world) or an sgx group.
 
-Hmm can you check if this is happening with usb unloaded or
-unbind? I suspect ohci or musb..
-
-Regards,
-
-Tony
+Sgx group, please. Or even better, what is generic term for sgx? We
+probably want to use that, as sgx is likely trademarked and certainly
+Intelism.
+								Pavel
+-- 
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
