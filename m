@@ -2,50 +2,51 @@ Return-Path: <SRS0=cWqk=OS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=BIGNUM_EMAILS,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CBB4C65BAF
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:10:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1BFDC07E85
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:10:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D79F20661
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:10:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D79F20661
+	by mail.kernel.org (Postfix) with ESMTP id C243D20661
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:10:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C243D20661
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728177AbeLIWKk (ORCPT
+        id S1728189AbeLIWKn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 17:10:40 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:37570 "EHLO
+        Sun, 9 Dec 2018 17:10:43 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:37590 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728116AbeLIWKc (ORCPT
+        by vger.kernel.org with ESMTP id S1727524AbeLIWKm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Dec 2018 17:10:32 -0500
+        Sun, 9 Dec 2018 17:10:42 -0500
 Received: from pub.yeoldevic.com ([81.174.156.145] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW73B-0002pr-Pr; Sun, 09 Dec 2018 21:55:45 +0000
+        id 1gW738-0002if-HB; Sun, 09 Dec 2018 21:55:43 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW72e-0003Qk-7z; Sun, 09 Dec 2018 21:55:12 +0000
+        id 1gW72f-0003Sa-1a; Sun, 09 Dec 2018 21:55:13 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org,
-        "Dan Carpenter" <dan.carpenter@oracle.com>,
-        "John Johansen" <john.johansen@canonical.com>
+CC:     akpm@linux-foundation.org, sironi@amazon.de,
+        "Prarit Bhargava" <prarit@redhat.com>,
+        "Borislav Petkov" <bp@suse.de>, "Tony Luck" <tony.luck@intel.com>,
+        "Thomas Gleixner" <tglx@linutronix.de>
 Date:   Sun, 09 Dec 2018 21:50:33 +0000
-Message-ID: <lsq.1544392233.181027988@decadent.org.uk>
+Message-ID: <lsq.1544392233.894260065@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 156/328] apparmor: remove no-op permission check in
- policy_unpack
+Subject: [PATCH 3.16 178/328] x86/microcode: Make sure boot_cpu_data.microcode
+ is up-to-date
 In-Reply-To: <lsq.1544392232.713909046@decadent.org.uk>
 X-SA-Exim-Connect-IP: 81.174.156.145
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -59,102 +60,60 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: John Johansen <john.johansen@canonical.com>
+From: Prarit Bhargava <prarit@redhat.com>
 
-commit c037bd615885f1d9d3bdb48531bace79fae1505d upstream.
+commit 370a132bb2227ff76278f98370e0e701d86ff752 upstream.
 
-The patch 736ec752d95e: "AppArmor: policy routines for loading and
-unpacking policy" from Jul 29, 2010, leads to the following static
-checker warning:
+When preparing an MCE record for logging, boot_cpu_data.microcode is used
+to read out the microcode revision on the box.
 
-    security/apparmor/policy_unpack.c:410 verify_accept()
-    warn: bitwise AND condition is false here
+However, on systems where late microcode update has happened, the microcode
+revision output in a MCE log record is wrong because
+boot_cpu_data.microcode is not updated when the microcode gets updated.
 
-    security/apparmor/policy_unpack.c:413 verify_accept()
-    warn: bitwise AND condition is false here
+But, the microcode revision saved in boot_cpu_data's microcode member
+should be kept up-to-date, regardless, for consistency.
 
-security/apparmor/policy_unpack.c
-   392  #define DFA_VALID_PERM_MASK             0xffffffff
-   393  #define DFA_VALID_PERM2_MASK            0xffffffff
-   394
-   395  /**
-   396   * verify_accept - verify the accept tables of a dfa
-   397   * @dfa: dfa to verify accept tables of (NOT NULL)
-   398   * @flags: flags governing dfa
-   399   *
-   400   * Returns: 1 if valid accept tables else 0 if error
-   401   */
-   402  static bool verify_accept(struct aa_dfa *dfa, int flags)
-   403  {
-   404          int i;
-   405
-   406          /* verify accept permissions */
-   407          for (i = 0; i < dfa->tables[YYTD_ID_ACCEPT]->td_lolen; i++) {
-   408                  int mode = ACCEPT_TABLE(dfa)[i];
-   409
-   410                  if (mode & ~DFA_VALID_PERM_MASK)
-   411                          return 0;
-   412
-   413                  if (ACCEPT_TABLE2(dfa)[i] & ~DFA_VALID_PERM2_MASK)
-   414                          return 0;
+Make it so.
 
-fixes: 736ec752d95e ("AppArmor: policy routines for loading and unpacking policy")
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: John Johansen <john.johansen@canonical.com>
+Fixes: fa94d0c6e0f3 ("x86/MCE: Save microcode revision in machine check records")
+Signed-off-by: Prarit Bhargava <prarit@redhat.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Tony Luck <tony.luck@intel.com>
+Cc: sironi@amazon.de
+Link: http://lkml.kernel.org/r/20180731112739.32338-1-prarit@redhat.com
+[bwh: Backported to 3.16: adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- security/apparmor/policy_unpack.c | 32 -------------------------------
- 1 file changed, 32 deletions(-)
+ arch/x86/kernel/cpu/microcode/amd.c   | 4 ++++
+ arch/x86/kernel/cpu/microcode/intel.c | 4 ++++
+ 2 files changed, 8 insertions(+)
 
---- a/security/apparmor/policy_unpack.c
-+++ b/security/apparmor/policy_unpack.c
-@@ -290,32 +290,6 @@ static int unpack_strdup(struct aa_ext *
- 	return res;
+--- a/arch/x86/kernel/cpu/microcode/amd.c
++++ b/arch/x86/kernel/cpu/microcode/amd.c
+@@ -231,6 +231,10 @@ int apply_microcode_amd(int cpu)
+ 	uci->cpu_sig.rev = mc_amd->hdr.patch_id;
+ 	c->microcode = mc_amd->hdr.patch_id;
+ 
++	/* Update boot_cpu_data's revision too, if we're on the BSP: */
++	if (c->cpu_index == boot_cpu_data.cpu_index)
++		boot_cpu_data.microcode = mc_amd->hdr.patch_id;
++
+ 	return 0;
  }
  
--#define DFA_VALID_PERM_MASK		0xffffffff
--#define DFA_VALID_PERM2_MASK		0xffffffff
--
--/**
-- * verify_accept - verify the accept tables of a dfa
-- * @dfa: dfa to verify accept tables of (NOT NULL)
-- * @flags: flags governing dfa
-- *
-- * Returns: 1 if valid accept tables else 0 if error
-- */
--static bool verify_accept(struct aa_dfa *dfa, int flags)
--{
--	int i;
--
--	/* verify accept permissions */
--	for (i = 0; i < dfa->tables[YYTD_ID_ACCEPT]->td_lolen; i++) {
--		int mode = ACCEPT_TABLE(dfa)[i];
--
--		if (mode & ~DFA_VALID_PERM_MASK)
--			return 0;
--
--		if (ACCEPT_TABLE2(dfa)[i] & ~DFA_VALID_PERM2_MASK)
--			return 0;
--	}
--	return 1;
--}
+--- a/arch/x86/kernel/cpu/microcode/intel.c
++++ b/arch/x86/kernel/cpu/microcode/intel.c
+@@ -188,6 +188,10 @@ int apply_microcode(int cpu)
+ 	uci->cpu_sig.rev = rev;
+ 	c->microcode = rev;
  
- /**
-  * unpack_dfa - unpack a file rule dfa
-@@ -351,15 +325,9 @@ static struct aa_dfa *unpack_dfa(struct
- 		if (IS_ERR(dfa))
- 			return dfa;
- 
--		if (!verify_accept(dfa, flags))
--			goto fail;
- 	}
- 
- 	return dfa;
--
--fail:
--	aa_put_dfa(dfa);
--	return ERR_PTR(-EPROTO);
++	/* Update boot_cpu_data's revision too, if we're on the BSP: */
++	if (c->cpu_index == boot_cpu_data.cpu_index)
++		boot_cpu_data.microcode = rev;
++
+ 	return 0;
  }
  
- /**
 
