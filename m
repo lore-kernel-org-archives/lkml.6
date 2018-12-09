@@ -6,45 +6,44 @@ X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E5BEC65BAF
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:03:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44A86C07E85
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:03:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3CF3120661
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:03:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3CF3120661
+	by mail.kernel.org (Postfix) with ESMTP id 142F720661
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:03:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 142F720661
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727047AbeLIWDR (ORCPT
+        id S1727228AbeLIWDY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 17:03:17 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35686 "EHLO
+        Sun, 9 Dec 2018 17:03:24 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35682 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726604AbeLIVz2 (ORCPT
+        by vger.kernel.org with ESMTP id S1726602AbeLIVz2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 9 Dec 2018 16:55:28 -0500
 Received: from pub.yeoldevic.com ([81.174.156.145] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW72r-0002ih-9t; Sun, 09 Dec 2018 21:55:25 +0000
+        id 1gW72q-0002ia-UQ; Sun, 09 Dec 2018 21:55:25 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW72k-0003fT-PO; Sun, 09 Dec 2018 21:55:18 +0000
+        id 1gW72l-0003h8-IG; Sun, 09 Dec 2018 21:55:19 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org,
-        "Linus Torvalds" <torvalds@linux-foundation.org>
+CC:     akpm@linux-foundation.org, "David S. Miller" <davem@davemloft.net>,
+        "Heiner Kallweit" <hkallweit1@gmail.com>
 Date:   Sun, 09 Dec 2018 21:50:33 +0000
-Message-ID: <lsq.1544392233.165113920@decadent.org.uk>
+Message-ID: <lsq.1544392233.322765002@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 299/328] Make file credentials available to the
- seqfile interfaces
+Subject: [PATCH 3.16 318/328] r8169: fix NAPI handling under high load
 In-Reply-To: <lsq.1544392232.713909046@decadent.org.uk>
 X-SA-Exim-Connect-IP: 81.174.156.145
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -58,91 +57,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Linus Torvalds <torvalds@linux-foundation.org>
+From: Heiner Kallweit <hkallweit1@gmail.com>
 
-commit 34dbbcdbf63360661ff7bda6c5f52f99ac515f92 upstream.
+commit 6b839b6cf9eada30b086effb51e5d6076bafc761 upstream.
 
-A lot of seqfile users seem to be using things like %pK that uses the
-credentials of the current process, but that is actually completely
-wrong for filesystem interfaces.
+rtl_rx() and rtl_tx() are called only if the respective bits are set
+in the interrupt status register. Under high load NAPI may not be
+able to process all data (work_done == budget) and it will schedule
+subsequent calls to the poll callback.
+rtl_ack_events() however resets the bits in the interrupt status
+register, therefore subsequent calls to rtl8169_poll() won't call
+rtl_rx() and rtl_tx() - chip interrupts are still disabled.
 
-The unix semantics for permission checking files is to check permissions
-at _open_ time, not at read or write time, and that is not just a small
-detail: passing off stdin/stdout/stderr to a suid application and making
-the actual IO happen in privileged context is a classic exploit
-technique.
+Fix this by calling rtl_rx() and rtl_tx() independent of the bits
+set in the interrupt status register. Both functions will detect
+if there's nothing to do for them.
 
-So if we want to be able to look at permissions at read time, we need to
-use the file open credentials, not the current ones.  Normal file
-accesses can just use "f_cred" (or any of the helper functions that do
-that, like file_ns_capable()), but the seqfile interfaces do not have
-any such options.
-
-It turns out that seq_file _does_ save away the user_ns information of
-the file, though.  Since user_ns is just part of the full credential
-information, replace that special case with saving off the cred pointer
-instead, and suddenly seq_file has all the permission information it
-needs.
-
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Fixes: da78dbff2e05 ("r8169: remove work from irq handler.")
+Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- fs/seq_file.c            |  7 ++++---
- include/linux/seq_file.h | 13 ++++---------
- 2 files changed, 8 insertions(+), 12 deletions(-)
+ drivers/net/ethernet/realtek/r8169.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
---- a/fs/seq_file.c
-+++ b/fs/seq_file.c
-@@ -69,9 +69,10 @@ int seq_open(struct file *file, const st
- 	memset(p, 0, sizeof(*p));
- 	mutex_init(&p->lock);
- 	p->op = op;
--#ifdef CONFIG_USER_NS
--	p->user_ns = file->f_cred->user_ns;
--#endif
-+
-+	// No refcounting: the lifetime of 'p' is constrained
-+	// to the lifetime of the file.
-+	p->file = file;
+--- a/drivers/net/ethernet/realtek/r8169.c
++++ b/drivers/net/ethernet/realtek/r8169.c
+@@ -6417,17 +6417,15 @@ static int rtl8169_poll(struct napi_stru
+ 	struct rtl8169_private *tp = container_of(napi, struct rtl8169_private, napi);
+ 	struct net_device *dev = tp->dev;
+ 	u16 enable_mask = RTL_EVENT_NAPI | tp->event_slow;
+-	int work_done= 0;
++	int work_done;
+ 	u16 status;
  
- 	/*
- 	 * Wrappers around seq_open(e.g. swaps_open) need to be
---- a/include/linux/seq_file.h
-+++ b/include/linux/seq_file.h
-@@ -7,13 +7,10 @@
- #include <linux/mutex.h>
- #include <linux/cpumask.h>
- #include <linux/nodemask.h>
-+#include <linux/fs.h>
-+#include <linux/cred.h>
+ 	status = rtl_get_events(tp);
+ 	rtl_ack_events(tp, status & ~tp->event_slow);
  
- struct seq_operations;
--struct file;
--struct path;
--struct inode;
--struct dentry;
--struct user_namespace;
+-	if (status & RTL_EVENT_NAPI_RX)
+-		work_done = rtl_rx(dev, tp, (u32) budget);
++	work_done = rtl_rx(dev, tp, (u32) budget);
  
- struct seq_file {
- 	char *buf;
-@@ -27,9 +24,7 @@ struct seq_file {
- 	struct mutex lock;
- 	const struct seq_operations *op;
- 	int poll_event;
--#ifdef CONFIG_USER_NS
--	struct user_namespace *user_ns;
--#endif
-+	const struct file *file;
- 	void *private;
- };
+-	if (status & RTL_EVENT_NAPI_TX)
+-		rtl_tx(dev, tp);
++	rtl_tx(dev, tp);
  
-@@ -151,7 +146,7 @@ int seq_put_decimal_ll(struct seq_file *
- static inline struct user_namespace *seq_user_ns(struct seq_file *seq)
- {
- #ifdef CONFIG_USER_NS
--	return seq->user_ns;
-+	return seq->file->f_cred->user_ns;
- #else
- 	extern struct user_namespace init_user_ns;
- 	return &init_user_ns;
+ 	if (status & tp->event_slow) {
+ 		enable_mask &= ~tp->event_slow;
 
