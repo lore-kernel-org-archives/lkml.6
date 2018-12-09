@@ -2,108 +2,145 @@ Return-Path: <SRS0=cWqk=OS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6BC5C07E85
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 11:19:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66D51C67838
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 11:27:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 61A8420661
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 11:19:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=scylladb-com.20150623.gappssmtp.com header.i=@scylladb-com.20150623.gappssmtp.com header.b="qtqb8b7m"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61A8420661
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=scylladb.com
+	by mail.kernel.org (Postfix) with ESMTP id 2C32620837
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 11:27:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544354876;
+	bh=RqjeOVfFB97wuWBfSBSZaVbXVb6ONw692OS9qoAZboQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
+	b=aJT3OPkcE0FHCv/rKZd/+/6ddrsARgyUVyZX5D6fuWwsFy4vrr0YKXAJtLcLGXdrT
+	 zCxrwDFrbaTqB/pZFU0OU8SMLhjtTy7QYCefo3ySZZqLhLfPiqS43w/4F3Z/+HKkG+
+	 sMKe68Jjc6WQ7FTlhn+Ftfk4cd4eztek5mjBzzHw=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C32620837
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726290AbeLILT4 (ORCPT
+        id S1726243AbeLIL1w (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 06:19:56 -0500
-Received: from mail-wr1-f51.google.com ([209.85.221.51]:44415 "EHLO
-        mail-wr1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726205AbeLILTz (ORCPT
+        Sun, 9 Dec 2018 06:27:52 -0500
+Received: from casper.infradead.org ([85.118.1.10]:56566 "EHLO
+        casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726198AbeLIL1v (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Dec 2018 06:19:55 -0500
-Received: by mail-wr1-f51.google.com with SMTP id z5so7684154wrt.11
-        for <linux-kernel@vger.kernel.org>; Sun, 09 Dec 2018 03:19:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=scylladb-com.20150623.gappssmtp.com; s=20150623;
-        h=to:from:subject:organization:message-id:date:user-agent
-         :mime-version:content-transfer-encoding:content-language;
-        bh=Dh460xW9kcZcktjxXXqaeV2sn3YJaRvsFIigu3g9zu4=;
-        b=qtqb8b7mJLu0Uuun2iacY8epunXL6jSDxEzWhENPJ2xfipjnuusxLCDprDdlUmoPHj
-         HgFRacjbp+T9picVAIbb08n5hc3d2xLfEOcSt/3384l1ZJBQDzYg23AJauGslUJblq5M
-         gpfhxdg7ZZAyL5iGHd+orbtaG8GsqX5NkGdrUEf8b4PG3LsO/9ZejPMr3YVzLHTTRsxC
-         4HSKNB+M/j7afyDn7ybDZFiNx1p8wiiNoDVRCz3qj7wR6EaUMP3o47yAUVMutvZM8nFh
-         hbgZmo8UcIoavwuBw0xeUeSUwVI9YBwi9O1WP4OWv3qz2dUu3sPWudXM/2JqfqGb0rOU
-         ju5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:from:subject:organization:message-id:date
-         :user-agent:mime-version:content-transfer-encoding:content-language;
-        bh=Dh460xW9kcZcktjxXXqaeV2sn3YJaRvsFIigu3g9zu4=;
-        b=kE6+TePYhcVOttupAxw6b8DuLX2yN537l/jmzwuGD3eC64mS7CsCnH7hyHjW6SjNo9
-         t0SLf9+asMGx50KbAneQ/BfCYFyxCEsJTZA4fwbYuYxu/QU4Bcl18AxbopOQmqW5Bm+3
-         9lh3u/vSyT90rZpCIwaQ68qAJaZaJTgGuXo1A6VOI71+sLFiUTZ29Ojdyw3+m08VuxVC
-         HWYj6oNMGi41jTRTLItm1TofooPO6FHVF9TkDn+5iFau2vwJ68JBn87SuMGsjO+vZcWe
-         Fd+gDgMzKJig5D7523uDK4LYxwm1wS33TaXNEd+Xv9wXNbr2WpNyZYJIU8/MaOfAPbBK
-         BoOw==
-X-Gm-Message-State: AA+aEWbsieUvWh9E4gBirAJOZW69QvRup2eR7/j3ZXwLX9jHIc+RTZqf
-        mJXtfDmXQXCxLSWExKtKhwqz+NFofL8=
-X-Google-Smtp-Source: AFSGD/XFFv4t+Au69QyIEmgRZ+QltRbIgJ8SXWCRFauWvgq81GWuP84wVN8Zt5EtRTMGxaHZj4MJ9g==
-X-Received: by 2002:adf:fc89:: with SMTP id g9mr6521311wrr.96.1544354393801;
-        Sun, 09 Dec 2018 03:19:53 -0800 (PST)
-Received: from avi.cloudius-systems.com (system.cloudius-systems.com. [199.203.229.89])
-        by smtp.gmail.com with ESMTPSA id j202sm23596138wmf.15.2018.12.09.03.19.52
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 09 Dec 2018 03:19:52 -0800 (PST)
-To:     linux-kernel <linux-kernel@vger.kernel.org>, linux-aio@kvack.org,
-        Goldwyn Rodrigues <rgoldwyn@suse.de>
-From:   Avi Kivity <avi@scylladb.com>
-Subject: Spurious EIO on AIO+DIO+RWF_NOWAIT
-Organization: ScyllaDB
-Message-ID: <9bab0f40-5748-f147-efeb-5aac4fd44533@scylladb.com>
-Date:   Sun, 9 Dec 2018 13:19:51 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
+        Sun, 9 Dec 2018 06:27:51 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
+        MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=vQKcvzs2j28Xr+xvAUQTaGc5maZ63ktSNzVQ6E3MUf0=; b=FXwNtHIYSLseCKRrtNQ7rgyuZ/
+        CAt/UZH8HzIBqZz5szfmHeoys5IpW7lCYMrebOxmYn2CkIkNW8Xy6dRhPpDtgTNnWxCn8UoZ+8Mxs
+        v6Po/JrVZlnA5N7UaSgekxBTbjXEw/n4uRvHtWNYK5AiGJzOpPyJKEhdDZNhpmwiuELepIbhqS+Fv
+        9EPAKfFHpLK/eAyU2/euVeVpen09/LZGdDl6AMoH+ylqVTPJggqBgajjqOF6uH7rkVfY3nHOc82u1
+        Rfx0FwJ4iLILK+4zNPZVLOztUsmP5cRd4nqJJ0tEsb+QBjFhefOl4ojd3oI2Qc2LiaMWWgq0HVrSz
+        SuqMJItw==;
+Received: from [179.95.33.236] (helo=coco.lan)
+        by casper.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gVxFN-0002UG-F2; Sun, 09 Dec 2018 11:27:41 +0000
+Date:   Sun, 9 Dec 2018 09:27:36 -0200
+From:   Mauro Carvalho Chehab <mchehab@kernel.org>
+To:     Pavel Machek <pavel@ucw.cz>
+Cc:     shuah <shuah@kernel.org>, perex@perex.cz, tiwai@suse.com,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        alsa-devel@alsa-project.org
+Subject: Re: [RFC PATCH v8 1/4] media: Media Device Allocator API
+Message-ID: <20181209092715.50a7e4e4@coco.lan>
+In-Reply-To: <20181209080944.GA7561@amd>
+References: <cover.1541109584.git.shuah@kernel.org>
+        <e474dd16f1d6443c12b1361376193c9d0efcced6.1541109584.git.shuah@kernel.org>
+        <20181119085931.GA28607@amd>
+        <73c22137-9c7a-75c8-8cd1-3736c63c2d40@kernel.org>
+        <20181209080944.GA7561@amd>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I have an application that receives spurious EIO when running with 
-RWF_NOWAIT enabled. Removing RWF_NOWAIT causes those EIOs to disappear. 
-The application uses AIO+DIO, and errors were seen on both xfs and ext4.
+Em Sun, 9 Dec 2018 09:09:44 +0100
+Pavel Machek <pavel@ucw.cz> escreveu:
 
+> On Thu 2018-12-06 08:33:14, shuah wrote:
+> > On 11/19/18 1:59 AM, Pavel Machek wrote:  
+> > >On Thu 2018-11-01 18:31:30, shuah@kernel.org wrote:  
+> > >>From: Shuah Khan <shuah@kernel.org>
+> > >>
+> > >>Media Device Allocator API to allows multiple drivers share a media device.
+> > >>Using this API, drivers can allocate a media device with the shared struct
+> > >>device as the key. Once the media device is allocated by a driver, other
+> > >>drivers can get a reference to it. The media device is released when all
+> > >>the references are released.  
+> > >
+> > >Sounds like a ... bad idea?
+> > >
+> > >That's what new "media control" framework is for, no?
+> > >
+> > >Why do you need this?  
+> > 
+> > Media control framework doesn't address this problem of ownership of the
+> > media device when non-media drivers have to own the pipeline. In this case,
+> > snd-usb owns the audio pipeline when an audio application is using the
+> > device. Without this work, media drivers won't be able to tell if snd-usb is
+> > using the tuner and owns the media pipeline.
+> > 
+> > I am going to clarify this in the commit log.  
+> 
+> I guess I'll need the explanation, yes.
+> 
+> How can usb soundcard use the tuner? I thought we'd always have
+> userspace component active and moving data between tuner and usb sound
+> card?
 
-I suspect the following code:
+It sounds that the description of the patch is not 100%, as it seems
+that you're not seeing the hole picture.
 
+This is designed to solve a very common usecase for media devices
+where one physical device (an USB stick) provides both audio
+and video.
 
-/*
-  * Process one completed BIO.  No locks are held.
-  */
-static blk_status_t dio_bio_complete(struct dio *dio, struct bio *bio)
-{
-         struct bio_vec *bvec;
-         unsigned i;
-         blk_status_t err = bio->bi_status;
+That's, for example, the case of cameras with microphones and 
+TV USB devices. Those usually expose the audio via standard
+USB Audio Class, and video either via USB Video Class or via
+some proprietary vendor class.
 
-         if (err) {
-                 if (err == BLK_STS_AGAIN && (bio->bi_opf & REQ_NOWAIT))
-                         dio->io_error = -EAGAIN;
-                 else
-                         dio->io_error = -EIO;
-         }
+Due to the way USB Audio Class is handled, it means that two
+independent drivers will provide the pipelines for a single
+physical USB bridge.
 
-Could it be that REQ_NOWAIT was dropped from bio->bi_opf? or that 
-bio->bi_status got changed along the way?
+The same problem also applies to more sophisticated embedded devices,
+like on  SOCs designed to be used on TVs and Set Top Boxes, where the
+hardware pipeline has both audio and video components on it, logically
+mapped into different drivers (using Linux DTV API, V4L2 API and ALSA).
 
+On such kind of devices, it is important to have a way to see
+and control the entire audio and video pipeline present on them 
+through a single media controller device, specially if one wants
+to provide a hardware pipeline within the SoC that won't be 
+copying data between Kernel-userspace.
 
-Reducing the test case may be a lot of work, but I can package a binary 
-using docker if a reproducer is needed. Seen on 4.18.19 and 4.19.something.
+Now, if the audio is implemented on a separate device (like an
+Intel HDA compatible chipset at the motherboard), it should
+be exposed as a separate media controller.
 
+So, for example, a system that has both an USB audio/video
+stick and an Intel HDA-compatible chipset, both exposed via
+the media controller, will have two media controller devices,
+one for each physically independent device.
+
+On the other hand, an SoC designed for TV products will likely
+expose a single media controller, even if each part of the
+pipeline is exposed via independent Linux device drivers.
+
+Thanks,
+Mauro
