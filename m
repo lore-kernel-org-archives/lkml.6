@@ -2,108 +2,106 @@ Return-Path: <SRS0=cWqk=OS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90566C65BAF
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 06:20:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1781DC65BAF
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 06:20:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 52ECB20837
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 06:20:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CF30F2081F
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 06:20:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="Q58Es1dz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 52ECB20837
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EA4GR6tP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF30F2081F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726154AbeLIGUD (ORCPT
+        id S1726211AbeLIGUh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 01:20:03 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:33574 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726066AbeLIGUC (ORCPT
+        Sun, 9 Dec 2018 01:20:37 -0500
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:33432 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726066AbeLIGUh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Dec 2018 01:20:02 -0500
-Received: by mail-pg1-f194.google.com with SMTP id z11so3516445pgu.0
-        for <linux-kernel@vger.kernel.org>; Sat, 08 Dec 2018 22:20:02 -0800 (PST)
+        Sun, 9 Dec 2018 01:20:37 -0500
+Received: by mail-qt1-f194.google.com with SMTP id l11so9064226qtp.0;
+        Sat, 08 Dec 2018 22:20:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=KsUYlcXzKm/UKKYGb/7A7EVppzI14sZkMJSXxWtlLdo=;
-        b=Q58Es1dzUJP02dv0h99RLvwF8q9hSoWlIw8GQFlt+GPdu2XJQD9lItkfzkA1Y0ARDe
-         C8HEL4eu8+OwY/lS9vMSiuU3/H0AcO83V5aPlufx3g849dAWaFB3mB1JD8dP9ZurPbF/
-         bjztVyguEOE0rEMtVvHH5orhoMphLIJQnftjlmblt1yvNqX6J7ATeVSlmJjuN1Dowjtq
-         RWDXGN4EEfzLGAlD71kob7JNUL5JoPmObJR64YK4ElloBeJFZHv3GnS5sI2+JpTHvUlx
-         w/+oFAdgCOxytFPuMbf+4SiHbSQJECZ4gri0P8ecvwxWZdnioYAMT1x/CNIzTjGZ2WFr
-         QmDg==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=BBrT9x6lbdBqPLHun+vpeIcsLQMplwfhFjYdmho9/OQ=;
+        b=EA4GR6tPLbW+R8JXjRBfWqgagkPEC8jNehxDV7rb0n9Cwt15LcXUqVvEkRV1bCBClH
+         EQfXfmeFcFAgXREkz7QP7QCbEBUwoJIOjT3oBjeizHUsx+WTlZnRwgrdFZVUMEQC6g6y
+         EbsXFmsSXJG/as30FZf5m5aORYskuEQetN5w8lp35Y3DNrPttIt+O3aQIL3UbTfDIDao
+         uwT8E69jAknunyZONgq9gihJH8X7hKSqy6sW6Z6Q6G8R0RPRA3MT4fCZ6J4nRu8XZW3s
+         LXFYPu1DHrsYkYrRYBSi6539OhZwlPoyMK4OV+7dATNKt4oXh2yTvOwy1tgrxpkjbDXL
+         zwFQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=KsUYlcXzKm/UKKYGb/7A7EVppzI14sZkMJSXxWtlLdo=;
-        b=t61xQzEJwWmn9QHQ3+fV4qSL5hRTYRqqs8UBJzhMyKHDY0uMc+l5bu99JIgBEdaRL9
-         zWB6TBeAoMw/c8O5pG7HDn+rQy7bBlpm11dBTeGmqVUAwEhM8QcQB0lGUL/B4BsLOU5U
-         LrRZB803/0yWOULiAm/4+HEKDXHc2lZUQnO7OKx4uODeWB0g9gMFtPUzZv09napa1U8j
-         CToZElQcth8lk6M+G1d+9PEdvYpzLVE1qBK5GMu1A1zzvCdvnukwQmpXuuv6wAMPcFOi
-         e9iREVxuNl7bdz5ahEcqDnpQ/F69jiIa7o9PxiwKeomfHVz1lPjIYGOgxcR5M6dFOXXV
-         THrw==
-X-Gm-Message-State: AA+aEWZMwv9t1RkQLR2i4kIXrgv0I2SRxXiyRgRtCyxfreuXUYWCabns
-        gGkb0zyPmb9uPUs9x7pQshtanw==
-X-Google-Smtp-Source: AFSGD/Wa4xKsKXV2NeYzqy6MRwVzC3UT+zhoaEmt1HhU53xC66LFw7zpjXszaZqt1Rn/5SS6M4jZSg==
-X-Received: by 2002:a63:1e17:: with SMTP id e23mr6974841pge.130.1544336401764;
-        Sat, 08 Dec 2018 22:20:01 -0800 (PST)
-Received: from [192.168.1.238] (66.29.188.166.static.utbb.net. [66.29.188.166])
-        by smtp.gmail.com with ESMTPSA id a90sm14897779pfj.109.2018.12.08.22.20.00
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 08 Dec 2018 22:20:00 -0800 (PST)
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH 2/3] sbitmap: ammortize cost of clearing bits
-From:   Jens Axboe <axboe@kernel.dk>
-X-Mailer: iPhone Mail (16C5050a)
-In-Reply-To: <20181209055146.GA17190@roeck-us.net>
-Date:   Sat, 8 Dec 2018 23:19:59 -0700
-Cc:     linux-block@vger.kernel.org, osandov@osandov.com,
-        linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <6AAE999B-AB08-46D0-9DF8-9CED32E6141B@kernel.dk>
-References: <20181130011234.32674-1-axboe@kernel.dk> <20181130011234.32674-3-axboe@kernel.dk> <20181209055146.GA17190@roeck-us.net>
-To:     Guenter Roeck <linux@roeck-us.net>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=BBrT9x6lbdBqPLHun+vpeIcsLQMplwfhFjYdmho9/OQ=;
+        b=jfHMVeKkUTyK5TZW13j+3m8s1iEKX5bmshkcXZ7y+foPQGYn73/5waufWftYtuj75Z
+         PEjwF/j8EkLRfMlGdSY18vu2/7I7OJZ/fkBPTQmqU6h+8J/c2bMD146m6SGek2mSePwC
+         HMnstf+wudva4g/szTAaL7RqsKl78v8Myat1aSUNCDgp5PeTFs6ZvJUR9uhhXCSBKF2D
+         vPGgIuBu5eCuptWODOirUGS87QLMx7X0mtnOM0bwG6zB2nvV7/GQE/gfnF+vX8l7x4OB
+         /kmIZkkDCWiuzghtUA6PhqkPtCCvgvXxcr3zQaUvaG/FKL7B1hiDCKa3k83HKdIbtLT6
+         dJMw==
+X-Gm-Message-State: AA+aEWYooKs3FtpBE/fAv+MqKEMmDqbVSTasIAHVqalxmwH5hPy59hx4
+        HHI0cIRBMFfB44j6ulojGazhDA37ikHA7aeX/Bo=
+X-Google-Smtp-Source: AFSGD/X+pIVMr0+2/bN/k/hvZWLgL5SyOdc9OGtqatl5CW/kCK53QxMG3ens+2jmvE2/j13DWBdGyKNmawQGSU7D/3Q=
+X-Received: by 2002:ac8:6151:: with SMTP id d17mr7672088qtm.194.1544336436035;
+ Sat, 08 Dec 2018 22:20:36 -0800 (PST)
+MIME-Version: 1.0
+References: <20181208214644.5374-1-okaya@kernel.org> <20181208214644.5374-3-okaya@kernel.org>
+In-Reply-To: <20181208214644.5374-3-okaya@kernel.org>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Sun, 9 Dec 2018 08:20:24 +0200
+Message-ID: <CAHp75VeCSPv81Bf2zjgFfD1YW2B6Z0YdhJsGR+Hvrf54mvdOPA@mail.gmail.com>
+Subject: Re: [PATCH v2 3/3] PCI/ACPI: allow ACPI to be built without PCI support
+To:     okaya@kernel.org
+Cc:     ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Robert Moore <robert.moore@intel.com>,
+        "Schmauss, Erik" <erik.schmauss@intel.com>,
+        Jan Kiszka <jan.kiszka@siemens.com>, otavio.pontes@intel.com,
+        Christian Koenig <christian.koenig@amd.com>,
+        =?UTF-8?Q?Christian_K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-pci@vger.kernel.org, devel@acpica.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Dec 8, 2018, at 10:51 PM, Guenter Roeck <linux@roeck-us.net> wrote:
->=20
-> Hi,
->=20
->> On Thu, Nov 29, 2018 at 06:12:33PM -0700, Jens Axboe wrote:
->> sbitmap maintains a set of words that we use to set and clear bits, with
->> each bit representing a tag for blk-mq. Even though we spread the bits
->> out and maintain a hint cache, one particular bit allocated will end up
->> being cleared in the exact same spot.
->>=20
->> This introduces batched clearing of bits. Instead of clearing a given
->> bit, the same bit is set in a cleared/free mask instead. If we fail
->> allocating a bit from a given word, then we check the free mask, and
->> batch move those cleared bits at that time. This trades 64 atomic bitops
->> for 2 cmpxchg().
->>=20
->> In a threaded poll test case, half the overhead of getting and clearing
->> tags is removed with this change. On another poll test case with a
->> single thread, performance is unchanged.
->>=20
->> Signed-off-by: Jens Axboe <axboe@kernel.dk>
->=20
-> This patch results in irq lock inversion warnings when trying to boot
-> from usb drives. This was observed with qemu boots of aarch64, x86, and
-> x86_64 images.
+On Sat, Dec 8, 2018 at 11:46 PM Sinan Kaya <okaya@kernel.org> wrote:
+>
+> We are compiling PCI code today for systems with ACPI and no PCI
+> device present. Remove the useless code and reduce the tight
+> dependency.
 
-This one is a false positive, was already reported last week. Just need to a=
-dd some lockdep annotation for it.=20
+> +#ifdef CONFIG_PCI
+>  struct pci_dev *acpi_get_pci_dev(acpi_handle);
+> +#else
+> +static inline struct pci_dev *acpi_get_pci_dev(acpi_handle hndl)
 
+Can you spell handle fully?
 
+> +{
+> +       return NULL;
+> +}
+> +#endif
+
+-- 
+With Best Regards,
+Andy Shevchenko
