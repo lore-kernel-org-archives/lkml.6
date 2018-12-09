@@ -6,45 +6,45 @@ X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9990CC65BAF
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:06:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72D84C65BAF
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:06:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 695EB20661
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:06:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 695EB20661
+	by mail.kernel.org (Postfix) with ESMTP id 39CA620661
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:06:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 39CA620661
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727186AbeLIWGk (ORCPT
+        id S1727801AbeLIWGr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 17:06:40 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:37090 "EHLO
+        Sun, 9 Dec 2018 17:06:47 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:37110 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727204AbeLIWGh (ORCPT
+        by vger.kernel.org with ESMTP id S1726791AbeLIWGm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Dec 2018 17:06:37 -0500
+        Sun, 9 Dec 2018 17:06:42 -0500
 Received: from pub.yeoldevic.com ([81.174.156.145] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW735-0002if-7Q; Sun, 09 Dec 2018 21:55:39 +0000
+        id 1gW738-0002ie-DN; Sun, 09 Dec 2018 21:55:43 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW72g-0003VG-7d; Sun, 09 Dec 2018 21:55:14 +0000
+        id 1gW72f-0003TJ-G7; Sun, 09 Dec 2018 21:55:13 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, "Mark Brown" <broonie@kernel.org>,
-        "Geert Uytterhoeven" <geert+renesas@glider.be>
+CC:     akpm@linux-foundation.org, "Theodore Ts'o" <tytso@mit.edu>,
+        "Torsten Hilbrich" <torsten.hilbrich@secunet.com>
 Date:   Sun, 09 Dec 2018 21:50:33 +0000
-Message-ID: <lsq.1544392233.592516537@decadent.org.uk>
+Message-ID: <lsq.1544392233.443197486@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 202/328] spi: rspi: Fix invalid SPI use during system
- suspend
+Subject: [PATCH 3.16 187/328] ext4: fix online resize's handling of a
+ too-small final block group
 In-Reply-To: <lsq.1544392232.713909046@decadent.org.uk>
 X-SA-Exim-Connect-IP: 81.174.156.145
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -58,66 +58,59 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Theodore Ts'o <tytso@mit.edu>
 
-commit c1ca59c22c56930b377a665fdd1b43351887830b upstream.
+commit f0a459dec5495a3580f8d784555e6f8f3bf7f263 upstream.
 
-If the SPI queue is running during system suspend, the system may lock
-up.
+Avoid growing the file system to an extent so that the last block
+group is too small to hold all of the metadata that must be stored in
+the block group.
 
-Fix this by stopping/restarting the queue during system suspend/resume,
-by calling spi_master_suspend()/spi_master_resume() from the PM
-callbacks.  In-kernel users will receive an -ESHUTDOWN error while
-system suspend/resume is in progress.
+This problem can be triggered with the following reproducer:
 
-Based on a patch for sh-msiof by Gaku Inami.
+umount /mnt
+mke2fs -F -m0 -b 4096 -t ext4 -O resize_inode,^has_journal \
+	-E resize=1073741824 /tmp/foo.img 128M
+mount /tmp/foo.img /mnt
+truncate --size 1708M /tmp/foo.img
+resize2fs /dev/loop0 295400
+umount /mnt
+e2fsck -fy /tmp/foo.img
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Mark Brown <broonie@kernel.org>
-[bwh: Backported to 3.16: adjust context]
+Reported-by: Torsten Hilbrich <torsten.hilbrich@secunet.com>
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/spi/spi-rspi.c | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+ fs/ext4/resize.c | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
---- a/drivers/spi/spi-rspi.c
-+++ b/drivers/spi/spi-rspi.c
-@@ -1158,6 +1158,29 @@ static struct platform_device_id spi_dri
+--- a/fs/ext4/resize.c
++++ b/fs/ext4/resize.c
+@@ -1957,6 +1957,26 @@ retry:
+ 		}
+ 	}
  
- MODULE_DEVICE_TABLE(platform, spi_driver_ids);
- 
-+#ifdef CONFIG_PM_SLEEP
-+static int rspi_suspend(struct device *dev)
-+{
-+	struct platform_device *pdev = to_platform_device(dev);
-+	struct rspi_data *rspi = platform_get_drvdata(pdev);
++	/*
++	 * Make sure the last group has enough space so that it's
++	 * guaranteed to have enough space for all metadata blocks
++	 * that it might need to hold.  (We might not need to store
++	 * the inode table blocks in the last block group, but there
++	 * will be cases where this might be needed.)
++	 */
++	if ((ext4_group_first_block_no(sb, n_group) +
++	     ext4_group_overhead_blocks(sb, n_group) + 2 +
++	     sbi->s_itb_per_group + sbi->s_cluster_ratio) >= n_blocks_count) {
++		n_blocks_count = ext4_group_first_block_no(sb, n_group);
++		n_group--;
++		n_blocks_count_retry = 0;
++		if (resize_inode) {
++			iput(resize_inode);
++			resize_inode = NULL;
++		}
++		goto retry;
++	}
 +
-+	return spi_master_suspend(rspi->master);
-+}
-+
-+static int rspi_resume(struct device *dev)
-+{
-+	struct platform_device *pdev = to_platform_device(dev);
-+	struct rspi_data *rspi = platform_get_drvdata(pdev);
-+
-+	return spi_master_resume(rspi->master);
-+}
-+
-+static SIMPLE_DEV_PM_OPS(rspi_pm_ops, rspi_suspend, rspi_resume);
-+#define DEV_PM_OPS	&rspi_pm_ops
-+#else
-+#define DEV_PM_OPS	NULL
-+#endif /* CONFIG_PM_SLEEP */
-+
- static struct platform_driver rspi_driver = {
- 	.probe =	rspi_probe,
- 	.remove =	rspi_remove,
-@@ -1165,6 +1188,7 @@ static struct platform_driver rspi_drive
- 	.driver		= {
- 		.name = "renesas_spi",
- 		.owner	= THIS_MODULE,
-+		.pm = DEV_PM_OPS,
- 		.of_match_table = of_match_ptr(rspi_of_match),
- 	},
- };
+ 	/* extend the last group */
+ 	if (n_group == o_group)
+ 		add = n_blocks_count - o_blocks_count;
 
