@@ -2,50 +2,49 @@ Return-Path: <SRS0=cWqk=OS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7853C65BAF
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:04:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D4F9C07E85
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:04:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B6BEC20661
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:04:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B6BEC20661
+	by mail.kernel.org (Postfix) with ESMTP id 0ADEC20661
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:04:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0ADEC20661
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727564AbeLIWEk (ORCPT
+        id S1727148AbeLIWEo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 17:04:40 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36818 "EHLO
+        Sun, 9 Dec 2018 17:04:44 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36824 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726843AbeLIWEj (ORCPT
+        by vger.kernel.org with ESMTP id S1726685AbeLIWEn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Dec 2018 17:04:39 -0500
+        Sun, 9 Dec 2018 17:04:43 -0500
 Received: from pub.yeoldevic.com ([81.174.156.145] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW735-0002ia-2z; Sun, 09 Dec 2018 21:55:39 +0000
+        id 1gW73O-0002pp-KF; Sun, 09 Dec 2018 21:55:58 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW72g-0003Uk-0R; Sun, 09 Dec 2018 21:55:14 +0000
+        id 1gW72a-0003Gg-35; Sun, 09 Dec 2018 21:55:08 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
-        "Ben Hutchings" <ben.hutchings@codethink.co.uk>
+CC:     akpm@linux-foundation.org, "Ladislav Michl" <ladis@linux-mips.org>,
+        "Bernie Thompson" <bernie@plugable.com>,
+        "Bartlomiej Zolnierkiewicz" <b.zolnierkie@samsung.com>
 Date:   Sun, 09 Dec 2018 21:50:33 +0000
-Message-ID: <lsq.1544392233.415106178@decadent.org.uk>
+Message-ID: <lsq.1544392233.352734232@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 197/328] USB: yurex: Fix buffer over-read in
- yurex_write()
+Subject: [PATCH 3.16 057/328] video: udlfb: Fix unaligned access
 In-Reply-To: <lsq.1544392232.713909046@decadent.org.uk>
 X-SA-Exim-Connect-IP: 81.174.156.145
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -59,54 +58,70 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ben Hutchings <ben.hutchings@codethink.co.uk>
+From: Ladislav Michl <ladis@linux-mips.org>
 
-commit 7e10f14ebface44a48275c8d6dc1caae3668d5a9 upstream.
+commit 115e77597efcc94cb1f6cbb7df5cf7ce8feb8632 upstream.
 
-If the written data starts with a digit, yurex_write() tries to parse
-it as an integer using simple_strtoull().  This requires a null-
-terminator, and currently there's no guarantee that there is one.
+Driver generates lots of alignment trap exceptions on ARM.
+Fix that by replacing typecasting of odd addresses with
+byte shifting and remove uneccessary typecasting.
 
-(The sample program at
-https://github.com/NeoCat/YUREX-driver-for-Linux/blob/master/sample/yurex_clock.pl
-writes an integer without a null terminator.  It seems like it must
-have worked by chance!)
-
-Always add a null byte after the written data.  Enlarge the buffer
-to allow for this.
-
-Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Ladislav Michl <ladis@linux-mips.org>
+Cc: Bernie Thompson <bernie@plugable.com>
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 [bwh: Backported to 3.16: adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/usb/misc/yurex.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/video/fbdev/udlfb.c | 23 ++++++++++++-----------
+ 1 file changed, 12 insertions(+), 11 deletions(-)
 
---- a/drivers/usb/misc/yurex.c
-+++ b/drivers/usb/misc/yurex.c
-@@ -437,13 +437,13 @@ static ssize_t yurex_write(struct file *
- {
- 	struct usb_yurex *dev;
- 	int i, set = 0, retval = 0;
--	char buffer[16];
-+	char buffer[16 + 1];
- 	char *data = buffer;
- 	unsigned long long c, c2 = 0;
- 	signed long timeout = 0;
- 	DEFINE_WAIT(wait);
+--- a/drivers/video/fbdev/udlfb.c
++++ b/drivers/video/fbdev/udlfb.c
+@@ -443,9 +443,9 @@ static void dlfb_compress_hline(
  
--	count = min(sizeof(buffer), count);
-+	count = min(sizeof(buffer) - 1, count);
- 	dev = (struct usb_yurex *)file->private_data;
+ 		*cmd++ = 0xAF;
+ 		*cmd++ = 0x6B;
+-		*cmd++ = (uint8_t) ((dev_addr >> 16) & 0xFF);
+-		*cmd++ = (uint8_t) ((dev_addr >> 8) & 0xFF);
+-		*cmd++ = (uint8_t) ((dev_addr) & 0xFF);
++		*cmd++ = dev_addr >> 16;
++		*cmd++ = dev_addr >> 8;
++		*cmd++ = dev_addr;
  
- 	/* verify that we actually have some data to write */
-@@ -462,6 +462,7 @@ static ssize_t yurex_write(struct file *
- 		retval = -EFAULT;
- 		goto error;
- 	}
-+	buffer[count] = 0;
- 	memset(dev->cntl_buffer, CMD_PADDING, YUREX_BUF_SIZE);
+ 		cmd_pixels_count_byte = cmd++; /*  we'll know this later */
+ 		cmd_pixel_start = pixel;
+@@ -462,8 +462,8 @@ static void dlfb_compress_hline(
+ 		while (pixel < cmd_pixel_end) {
+ 			const uint16_t * const repeating_pixel = pixel;
  
- 	switch (buffer[0]) {
+-			*(uint16_t *)cmd = cpu_to_be16p(pixel);
+-			cmd += 2;
++			*cmd++ = *pixel >> 8;
++			*cmd++ = *pixel;
+ 			pixel++;
+ 
+ 			if (unlikely((pixel < cmd_pixel_end) &&
+@@ -1532,15 +1532,16 @@ static int dlfb_parse_vendor_descriptor(
+ 			u8 length;
+ 			u16 key;
+ 
+-			key = le16_to_cpu(*((u16 *) desc));
+-			desc += sizeof(u16);
+-			length = *desc;
+-			desc++;
++			key = *desc++;
++			key |= (u16)*desc++ << 8;
++			length = *desc++;
+ 
+ 			switch (key) {
+ 			case 0x0200: { /* max_area */
+-				u32 max_area;
+-				max_area = le32_to_cpu(*((u32 *)desc));
++				u32 max_area = *desc++;
++				max_area |= (u32)*desc++ << 8;
++				max_area |= (u32)*desc++ << 16;
++				max_area |= (u32)*desc++ << 24;
+ 				pr_warn("DL chip limited to %d pixel modes\n",
+ 					max_area);
+ 				dev->sku_pixel_limit = max_area;
 
