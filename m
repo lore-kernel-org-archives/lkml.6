@@ -6,45 +6,47 @@ X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F28ACC65BAF
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:11:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD090C07E85
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:11:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C3B6E20661
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:11:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C3B6E20661
+	by mail.kernel.org (Postfix) with ESMTP id 8E1E620661
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:11:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E1E620661
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728223AbeLIWLQ (ORCPT
+        id S1728203AbeLIWLL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 17:11:16 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:37656 "EHLO
+        Sun, 9 Dec 2018 17:11:11 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:37638 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728207AbeLIWLM (ORCPT
+        by vger.kernel.org with ESMTP id S1727754AbeLIWLH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Dec 2018 17:11:12 -0500
+        Sun, 9 Dec 2018 17:11:07 -0500
 Received: from pub.yeoldevic.com ([81.174.156.145] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW73O-0002iq-Iw; Sun, 09 Dec 2018 21:55:58 +0000
+        id 1gW73I-0002ij-I7; Sun, 09 Dec 2018 21:55:52 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW72Z-0003Fx-Oc; Sun, 09 Dec 2018 21:55:07 +0000
+        id 1gW72c-0003Lm-7Q; Sun, 09 Dec 2018 21:55:10 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, "Takashi Iwai" <tiwai@suse.de>,
-        "zhang jun" <jun.zhang@intel.com>
+CC:     akpm@linux-foundation.org,
+        "Rabi Narayan Sahoo" <rabinarayans0828@gmail.com>,
+        "Stefan Schmidt" <stefan@datenfreihafen.org>,
+        "Alexander Aring" <aring@mojatatu.com>,
+        "David Palma" <david.palma@ntnu.no>
 Date:   Sun, 09 Dec 2018 21:50:33 +0000
-Message-ID: <lsq.1544392233.171404831@decadent.org.uk>
+Message-ID: <lsq.1544392233.966357251@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 048/328] ALSA: memalloc: Don't exceed over the
- requested size
+Subject: [PATCH 3.16 107/328] net: mac802154: tx: expand tailroom if necessary
 In-Reply-To: <lsq.1544392232.713909046@decadent.org.uk>
 X-SA-Exim-Connect-IP: 81.174.156.145
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -58,48 +60,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Alexander Aring <aring@mojatatu.com>
 
-commit dfef01e150824b0e6da750cacda8958188d29aea upstream.
+commit f9c52831133050c6b82aa8b6831c92da2bbf2a0b upstream.
 
-snd_dma_alloc_pages_fallback() tries to allocate pages again when the
-allocation fails with reduced size.  But the first try actually
-*increases* the size to power-of-two, which may give back a larger
-chunk than the requested size.  This confuses the callers, e.g. sgbuf
-assumes that the size is equal or less, and it may result in a bad
-loop due to the underflow and eventually lead to Oops.
+This patch is necessary if case of AF_PACKET or other socket interface
+which I am aware of it and didn't allocated the necessary room.
 
-The code of this function seems incorrectly assuming the usage of
-get_order().  We need to decrease at first, then align to
-power-of-two.
-
-Reported-and-tested-by: he, bo <bo.he@intel.com>
-Reported-by: zhang jun <jun.zhang@intel.com>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Reported-by: David Palma <david.palma@ntnu.no>
+Reported-by: Rabi Narayan Sahoo <rabinarayans0828@gmail.com>
+Signed-off-by: Alexander Aring <aring@mojatatu.com>
+Signed-off-by: Stefan Schmidt <stefan@datenfreihafen.org>
+[bwh: Backported to 3.16:
+ - Substitute literal number for IEEE802154_FCS_LEN
+ - Adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- sound/core/memalloc.c | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
-
---- a/sound/core/memalloc.c
-+++ b/sound/core/memalloc.c
-@@ -239,16 +239,12 @@ int snd_dma_alloc_pages_fallback(int typ
- 	int err;
+--- a/net/mac802154/tx.c
++++ b/net/mac802154/tx.c
+@@ -96,8 +96,20 @@ netdev_tx_t mac802154_tx(struct mac80215
+ 	mac802154_monitors_rx(mac802154_to_priv(&priv->hw), skb);
  
- 	while ((err = snd_dma_alloc_pages(type, device, size, dmab)) < 0) {
--		size_t aligned_size;
- 		if (err != -ENOMEM)
- 			return err;
- 		if (size <= PAGE_SIZE)
- 			return -ENOMEM;
--		aligned_size = PAGE_SIZE << get_order(size);
--		if (size != aligned_size)
--			size = aligned_size;
--		else
--			size >>= 1;
-+		size >>= 1;
-+		size = PAGE_SIZE << get_order(size);
+ 	if (!(priv->hw.flags & IEEE802154_HW_OMIT_CKSUM)) {
+-		u16 crc = crc_ccitt(0, skb->data, skb->len);
++		struct sk_buff *nskb;
++		u16 crc;
+ 
++		if (unlikely(skb_tailroom(skb) < 2)) {
++			nskb = skb_copy_expand(skb, 0, 2, GFP_ATOMIC);
++			if (likely(nskb)) {
++				consume_skb(skb);
++				skb = nskb;
++			} else {
++				goto err_tx;
++			}
++		}
++
++		crc = crc_ccitt(0, skb->data, skb->len);
+ 		put_unaligned_le16(crc, skb_put(skb, 2));
  	}
- 	if (! dmab->area)
- 		return -ENOMEM;
+ 
 
