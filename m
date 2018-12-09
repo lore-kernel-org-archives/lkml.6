@@ -2,124 +2,80 @@ Return-Path: <SRS0=cWqk=OS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+X-Spam-Status: No, score=-2.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB9E8C65BAF
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 12:08:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9473EC07E85
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 12:13:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 792F820831
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 12:08:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 792F820831
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 59D7D20831
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 12:13:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 59D7D20831
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726225AbeLIMIC (ORCPT
+        id S1726237AbeLIMNV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 07:08:02 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:57032 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726113AbeLIMIC (ORCPT
+        Sun, 9 Dec 2018 07:13:21 -0500
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:56291 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726118AbeLIMNU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Dec 2018 07:08:02 -0500
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wB9C4XQm106786
-        for <linux-kernel@vger.kernel.org>; Sun, 9 Dec 2018 07:08:01 -0500
-Received: from e31.co.us.ibm.com (e31.co.us.ibm.com [32.97.110.149])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2p8v6u2jsc-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Sun, 09 Dec 2018 07:08:00 -0500
-Received: from localhost
-        by e31.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <nayna@linux.ibm.com>;
-        Sun, 9 Dec 2018 12:08:00 -0000
-Received: from b03cxnp07028.gho.boulder.ibm.com (9.17.130.15)
-        by e31.co.us.ibm.com (192.168.1.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Sun, 9 Dec 2018 12:07:57 -0000
-Received: from b03ledav002.gho.boulder.ibm.com (b03ledav002.gho.boulder.ibm.com [9.17.130.233])
-        by b03cxnp07028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wB9C7ugd20840476
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Sun, 9 Dec 2018 12:07:56 GMT
-Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D48DF13604F;
-        Sun,  9 Dec 2018 12:07:56 +0000 (GMT)
-Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E0DC6136055;
-        Sun,  9 Dec 2018 12:07:47 +0000 (GMT)
-Received: from [9.85.68.82] (unknown [9.85.68.82])
-        by b03ledav002.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Sun,  9 Dec 2018 12:07:47 +0000 (GMT)
-Subject: Re: [PATCH v6 4/7] tpm: modify tpm_pcr_read() definition to pass a
- TPM hash algorithm
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Roberto Sassu <roberto.sassu@huawei.com>
-Cc:     zohar@linux.ibm.com, david.safford@ge.com, monty.wiseman@ge.com,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com
-References: <20181204082138.24600-1-roberto.sassu@huawei.com>
- <20181204082138.24600-5-roberto.sassu@huawei.com>
- <20181204234024.GC1233@linux.intel.com>
-From:   Nayna Jain <nayna@linux.ibm.com>
-Date:   Sun, 9 Dec 2018 17:34:25 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+        Sun, 9 Dec 2018 07:13:20 -0500
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id 520228075F; Sun,  9 Dec 2018 13:13:15 +0100 (CET)
+Date:   Sun, 9 Dec 2018 13:13:18 +0100
+From:   Pavel Machek <pavel@ucw.cz>
+To:     kernel list <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-omap@vger.kernel.org, tony@atomide.com, sre@kernel.org,
+        nekit1000@gmail.com, mpartap@gmx.net, merlijn@wizzup.org
+Subject: Droid 4: poweroff does not work? calls
+Message-ID: <20181209121318.GA24478@amd>
 MIME-Version: 1.0
-In-Reply-To: <20181204234024.GC1233@linux.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 18120912-8235-0000-0000-00000E35FAB5
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010199; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000270; SDB=6.01129232; UDB=6.00586684; IPR=6.00909363;
- MB=3.00024611; MTD=3.00000008; XFM=3.00000015; UTC=2018-12-09 12:08:00
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18120912-8236-0000-0000-000043A476EC
-Message-Id: <ed07e941-947e-1f86-43da-ef15f8eb2eb3@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-09_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=951 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1812090116
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="mP3DRpeJDSE+ciuQ"
+Content-Disposition: inline
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
+--mP3DRpeJDSE+ciuQ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 12/05/2018 05:10 AM, Jarkko Sakkinen wrote:
-> On Tue, Dec 04, 2018 at 09:21:35AM +0100, Roberto Sassu wrote:
->> Currently the TPM driver allows other kernel subsystems to read only the
->> SHA1 PCR bank. This patch modifies the parameters of tpm_pcr_read() and
->> tpm2_pcr_read() to pass a tpm_digest structure, which contains the desired
->> hash algorithm. Also, since commit 125a22105410 ("tpm: React correctly to
->> RC_TESTING from TPM 2.0 self tests") removed the call to tpm2_pcr_read(),
->> the new parameter is expected to be always not NULL.
->>
->> Due to the API change, IMA functions have been modified.
->>
->> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
->> Acked-by: Mimi Zohar <zohar@linux.ibm.com>
-> Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
->
-> Mimi, Nayna, can you help with testing this (because of the IMA change)?
+Hi!
 
+Poweroff does not seem to work on Motorola droid 4 -- it reboots. It
+seems to be problem "forever", 4.18 and 4.20-rc5 seem to be
+affected. It is bad, because when your battery is low, you get into
+reboot loop and discharge it furher, which batteries do not like.
 
-Tested-by: Nayna Jain <nayna@linux.ibm.com>
+Any ideas, or at least idea how to debug this?
 
-Thanks & Regards,
-     - Nayna
+Thanks,
+									Pavel
 
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
 
+--mP3DRpeJDSE+ciuQ
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
->
-> /Jarkko
->
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
+iEYEARECAAYFAlwNBt4ACgkQMOfwapXb+vLUqgCgpNoWs1ZF9EPprWwWF0RemEED
+xFEAoJBxpNOAr8LoKxNRLnEQb/j1bA7D
+=Mhar
+-----END PGP SIGNATURE-----
+
+--mP3DRpeJDSE+ciuQ--
