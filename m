@@ -6,46 +6,49 @@ X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A8CAC65BAF
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 21:56:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 617DBC07E85
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 21:56:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1587320661
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 21:56:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1587320661
+	by mail.kernel.org (Postfix) with ESMTP id 1F0A020837
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 21:56:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F0A020837
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726943AbeLIV4I (ORCPT
+        id S1726930AbeLIV4F (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 16:56:08 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36174 "EHLO
+        Sun, 9 Dec 2018 16:56:05 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36032 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726739AbeLIVzi (ORCPT
+        by vger.kernel.org with ESMTP id S1726704AbeLIVzf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Dec 2018 16:55:38 -0500
+        Sun, 9 Dec 2018 16:55:35 -0500
 Received: from pub.yeoldevic.com ([81.174.156.145] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW730-0002io-Eo; Sun, 09 Dec 2018 21:55:35 +0000
+        id 1gW72x-0002il-RL; Sun, 09 Dec 2018 21:55:32 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW72h-0003YM-9D; Sun, 09 Dec 2018 21:55:15 +0000
+        id 1gW72i-0003b8-Vu; Sun, 09 Dec 2018 21:55:16 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org,
-        "Dan Carpenter" <dan.carpenter@oracle.com>,
-        "Guenter Roeck" <linux@roeck-us.net>
+CC:     akpm@linux-foundation.org, "syzbot" <syzkaller@googlegroups.com>,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        "NeilBrown" <neilb@suse.com>, "Hugh Dickins" <hughd@google.com>,
+        "Peter Zijlstra" <peterz@infradead.org>,
+        "Matthew Wilcox" <willy@infradead.org>,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
 Date:   Sun, 09 Dec 2018 21:50:33 +0000
-Message-ID: <lsq.1544392233.965031696@decadent.org.uk>
+Message-ID: <lsq.1544392233.522153350@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 225/328] hwmon: (nct6775) Fix access to fan pulse
- registers
+Subject: [PATCH 3.16 259/328] mm: shmem.c: Correctly annotate new inodes
+ for lockdep
 In-Reply-To: <lsq.1544392232.713909046@decadent.org.uk>
 X-SA-Exim-Connect-IP: 81.174.156.145
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -59,99 +62,126 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Guenter Roeck <linux@roeck-us.net>
+From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
 
-commit c793279c77035053e67937f5743c6ebfc303e7c5 upstream.
+commit b45d71fb89ab8adfe727b9d0ee188ed58582a647 upstream.
 
-Not all fans have a fan pulse register. This can result in reading
-beyond the end of REG_FAN_PULSES and FAN_PULSE_SHIFT arrays,
-and was reported by smatch as possible error.
+Directories and inodes don't necessarily need to be in the same lockdep
+class.  For ex, hugetlbfs splits them out too to prevent false positives
+in lockdep.  Annotate correctly after new inode creation.  If its a
+directory inode, it will be put into a different class.
 
-1672          for (i = 0; i < ARRAY_SIZE(data->rpm); i++) {
-                              ^^^^^^^^^^^^^^^^^^^^^^^^
-			      This is a 7 element array.
-...
-1685                  data->fan_pulses[i] =
-1686                    (nct6775_read_value(data, data->REG_FAN_PULSES[i])
-1687                          >> data->FAN_PULSE_SHIFT[i]) & 0x03;
-                                 ^^^^^^^^^^^^^^^^^^^^^^^^
-				 FAN_PULSE_SHIFT is either 5 or 6
-				 elements.
+This should fix a lockdep splat reported by syzbot:
 
-To fix the problem, we have to ensure that all REG_FAN_PULSES and
-FAN_PULSE_SHIFT have the appropriate length, and that REG_FAN_PULSES
-is only read if the register actually exists.
+> ======================================================
+> WARNING: possible circular locking dependency detected
+> 4.18.0-rc8-next-20180810+ #36 Not tainted
+> ------------------------------------------------------
+> syz-executor900/4483 is trying to acquire lock:
+> 00000000d2bfc8fe (&sb->s_type->i_mutex_key#9){++++}, at: inode_lock
+> include/linux/fs.h:765 [inline]
+> 00000000d2bfc8fe (&sb->s_type->i_mutex_key#9){++++}, at:
+> shmem_fallocate+0x18b/0x12e0 mm/shmem.c:2602
+>
+> but task is already holding lock:
+> 0000000025208078 (ashmem_mutex){+.+.}, at: ashmem_shrink_scan+0xb4/0x630
+> drivers/staging/android/ashmem.c:448
+>
+> which lock already depends on the new lock.
+>
+> -> #2 (ashmem_mutex){+.+.}:
+>        __mutex_lock_common kernel/locking/mutex.c:925 [inline]
+>        __mutex_lock+0x171/0x1700 kernel/locking/mutex.c:1073
+>        mutex_lock_nested+0x16/0x20 kernel/locking/mutex.c:1088
+>        ashmem_mmap+0x55/0x520 drivers/staging/android/ashmem.c:361
+>        call_mmap include/linux/fs.h:1844 [inline]
+>        mmap_region+0xf27/0x1c50 mm/mmap.c:1762
+>        do_mmap+0xa10/0x1220 mm/mmap.c:1535
+>        do_mmap_pgoff include/linux/mm.h:2298 [inline]
+>        vm_mmap_pgoff+0x213/0x2c0 mm/util.c:357
+>        ksys_mmap_pgoff+0x4da/0x660 mm/mmap.c:1585
+>        __do_sys_mmap arch/x86/kernel/sys_x86_64.c:100 [inline]
+>        __se_sys_mmap arch/x86/kernel/sys_x86_64.c:91 [inline]
+>        __x64_sys_mmap+0xe9/0x1b0 arch/x86/kernel/sys_x86_64.c:91
+>        do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+>        entry_SYSCALL_64_after_hwframe+0x49/0xbe
+>
+> -> #1 (&mm->mmap_sem){++++}:
+>        __might_fault+0x155/0x1e0 mm/memory.c:4568
+>        _copy_to_user+0x30/0x110 lib/usercopy.c:25
+>        copy_to_user include/linux/uaccess.h:155 [inline]
+>        filldir+0x1ea/0x3a0 fs/readdir.c:196
+>        dir_emit_dot include/linux/fs.h:3464 [inline]
+>        dir_emit_dots include/linux/fs.h:3475 [inline]
+>        dcache_readdir+0x13a/0x620 fs/libfs.c:193
+>        iterate_dir+0x48b/0x5d0 fs/readdir.c:51
+>        __do_sys_getdents fs/readdir.c:231 [inline]
+>        __se_sys_getdents fs/readdir.c:212 [inline]
+>        __x64_sys_getdents+0x29f/0x510 fs/readdir.c:212
+>        do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+>        entry_SYSCALL_64_after_hwframe+0x49/0xbe
+>
+> -> #0 (&sb->s_type->i_mutex_key#9){++++}:
+>        lock_acquire+0x1e4/0x540 kernel/locking/lockdep.c:3924
+>        down_write+0x8f/0x130 kernel/locking/rwsem.c:70
+>        inode_lock include/linux/fs.h:765 [inline]
+>        shmem_fallocate+0x18b/0x12e0 mm/shmem.c:2602
+>        ashmem_shrink_scan+0x236/0x630 drivers/staging/android/ashmem.c:455
+>        ashmem_ioctl+0x3ae/0x13a0 drivers/staging/android/ashmem.c:797
+>        vfs_ioctl fs/ioctl.c:46 [inline]
+>        file_ioctl fs/ioctl.c:501 [inline]
+>        do_vfs_ioctl+0x1de/0x1720 fs/ioctl.c:685
+>        ksys_ioctl+0xa9/0xd0 fs/ioctl.c:702
+>        __do_sys_ioctl fs/ioctl.c:709 [inline]
+>        __se_sys_ioctl fs/ioctl.c:707 [inline]
+>        __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:707
+>        do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+>        entry_SYSCALL_64_after_hwframe+0x49/0xbe
+>
+> other info that might help us debug this:
+>
+> Chain exists of:
+>   &sb->s_type->i_mutex_key#9 --> &mm->mmap_sem --> ashmem_mutex
+>
+>  Possible unsafe locking scenario:
+>
+>        CPU0                    CPU1
+>        ----                    ----
+>   lock(ashmem_mutex);
+>                                lock(&mm->mmap_sem);
+>                                lock(ashmem_mutex);
+>   lock(&sb->s_type->i_mutex_key#9);
+>
+>  *** DEADLOCK ***
+>
+> 1 lock held by syz-executor900/4483:
+>  #0: 0000000025208078 (ashmem_mutex){+.+.}, at:
+> ashmem_shrink_scan+0xb4/0x630 drivers/staging/android/ashmem.c:448
 
-Fixes: 6c009501ff200 ("hwmon: (nct6775) Add support for NCT6102D/6106D")
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-[bwh: Backported to 3.16:
- - NCT6776_REG_FAN_PULSES covers only 3 fans
- - Adjust context]
+Link: http://lkml.kernel.org/r/20180821231835.166639-1-joel@joelfernandes.org
+Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Reviewed-by: NeilBrown <neilb@suse.com>
+Suggested-by: NeilBrown <neilb@suse.com>
+Cc: Matthew Wilcox <willy@infradead.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Hugh Dickins <hughd@google.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/hwmon/nct6775.c | 27 ++++++++++++++++-----------
- 1 file changed, 16 insertions(+), 11 deletions(-)
+ mm/shmem.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/hwmon/nct6775.c
-+++ b/drivers/hwmon/nct6775.c
-@@ -269,8 +269,9 @@ static const u16 NCT6775_REG_PWM_READ[]
- 
- static const u16 NCT6775_REG_FAN[] = { 0x630, 0x632, 0x634, 0x636, 0x638 };
- static const u16 NCT6775_REG_FAN_MIN[] = { 0x3b, 0x3c, 0x3d };
--static const u16 NCT6775_REG_FAN_PULSES[] = { 0x641, 0x642, 0x643, 0x644, 0 };
--static const u16 NCT6775_FAN_PULSE_SHIFT[] = { 0, 0, 0, 0, 0, 0 };
-+static const u16 NCT6775_REG_FAN_PULSES[NUM_FAN] = {
-+	0x641, 0x642, 0x643, 0x644 };
-+static const u16 NCT6775_FAN_PULSE_SHIFT[NUM_FAN] = { };
- 
- static const u16 NCT6775_REG_TEMP[] = {
- 	0x27, 0x150, 0x250, 0x62b, 0x62c, 0x62d };
-@@ -382,7 +383,8 @@ static const u8 NCT6776_REG_PWM_MODE[] =
- static const u8 NCT6776_PWM_MODE_MASK[] = { 0x01, 0, 0, 0, 0, 0 };
- 
- static const u16 NCT6776_REG_FAN_MIN[] = { 0x63a, 0x63c, 0x63e, 0x640, 0x642 };
--static const u16 NCT6776_REG_FAN_PULSES[] = { 0x644, 0x645, 0x646, 0, 0 };
-+static const u16 NCT6776_REG_FAN_PULSES[NUM_FAN] = {
-+	0x644, 0x645, 0x646 };
- 
- static const u16 NCT6776_REG_WEIGHT_DUTY_BASE[] = {
- 	0x13e, 0x23e, 0x33e, 0x83e, 0x93e, 0xa3e };
-@@ -451,7 +453,7 @@ static const s8 NCT6779_BEEP_BITS[] = {
- 
- static const u16 NCT6779_REG_FAN[] = {
- 	0x4b0, 0x4b2, 0x4b4, 0x4b6, 0x4b8, 0x4ba };
--static const u16 NCT6779_REG_FAN_PULSES[] = {
-+static const u16 NCT6779_REG_FAN_PULSES[NUM_FAN] = {
- 	0x644, 0x645, 0x646, 0x647, 0x648, 0x649 };
- 
- static const u16 NCT6779_REG_CRITICAL_PWM_ENABLE[] = {
-@@ -564,8 +566,8 @@ static const u16 NCT6106_REG_TEMP_CONFIG
- 
- static const u16 NCT6106_REG_FAN[] = { 0x20, 0x22, 0x24 };
- static const u16 NCT6106_REG_FAN_MIN[] = { 0xe0, 0xe2, 0xe4 };
--static const u16 NCT6106_REG_FAN_PULSES[] = { 0xf6, 0xf6, 0xf6, 0, 0 };
--static const u16 NCT6106_FAN_PULSE_SHIFT[] = { 0, 2, 4, 0, 0 };
-+static const u16 NCT6106_REG_FAN_PULSES[] = { 0xf6, 0xf6, 0xf6 };
-+static const u16 NCT6106_FAN_PULSE_SHIFT[] = { 0, 2, 4 };
- 
- static const u8 NCT6106_REG_PWM_MODE[] = { 0xf3, 0xf3, 0xf3 };
- static const u8 NCT6106_PWM_MODE_MASK[] = { 0x01, 0x02, 0x04 };
-@@ -1451,9 +1453,13 @@ static struct nct6775_data *nct6775_upda
- 			if (data->has_fan_min & (1 << i))
- 				data->fan_min[i] = nct6775_read_value(data,
- 					   data->REG_FAN_MIN[i]);
--			data->fan_pulses[i] =
--			  (nct6775_read_value(data, data->REG_FAN_PULSES[i])
--				>> data->FAN_PULSE_SHIFT[i]) & 0x03;
-+
-+			if (data->REG_FAN_PULSES[i]) {
-+				data->fan_pulses[i] =
-+				  (nct6775_read_value(data,
-+						      data->REG_FAN_PULSES[i])
-+				   >> data->FAN_PULSE_SHIFT[i]) & 0x03;
-+			}
- 
- 			nct6775_select_fan_div(dev, data, i, reg);
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -1422,6 +1422,8 @@ static struct inode *shmem_get_inode(str
+ 			mpol_shared_policy_init(&info->policy, NULL);
+ 			break;
  		}
++
++		lockdep_annotate_inode_mutex_key(inode);
+ 	} else
+ 		shmem_free_inode(sb);
+ 	return inode;
 
