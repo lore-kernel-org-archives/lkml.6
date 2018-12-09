@@ -6,44 +6,45 @@ X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41DA7C07E85
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:13:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EAAD8C07E85
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:13:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0EB2420661
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:13:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0EB2420661
+	by mail.kernel.org (Postfix) with ESMTP id B197B20661
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:13:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B197B20661
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728384AbeLIWN0 (ORCPT
+        id S1728398AbeLIWNa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 17:13:26 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:37902 "EHLO
+        Sun, 9 Dec 2018 17:13:30 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:37916 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726765AbeLIWNW (ORCPT
+        by vger.kernel.org with ESMTP id S1726500AbeLIWN2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Dec 2018 17:13:22 -0500
+        Sun, 9 Dec 2018 17:13:28 -0500
 Received: from pub.yeoldevic.com ([81.174.156.145] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW73M-0002ic-S6; Sun, 09 Dec 2018 21:55:56 +0000
+        id 1gW73F-0002ih-GZ; Sun, 09 Dec 2018 21:55:49 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW72a-0003H5-9s; Sun, 09 Dec 2018 21:55:08 +0000
+        id 1gW72d-0003NJ-2Z; Sun, 09 Dec 2018 21:55:11 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, "Mikulas Patocka" <mpatocka@redhat.com>,
-        "Bartlomiej Zolnierkiewicz" <b.zolnierkie@samsung.com>
+CC:     akpm@linux-foundation.org, "Oleg Nesterov" <oleg@redhat.com>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>
 Date:   Sun, 09 Dec 2018 21:50:33 +0000
-Message-ID: <lsq.1544392233.608210304@decadent.org.uk>
+Message-ID: <lsq.1544392233.639849846@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 062/328] udlfb: set optimal write delay
+Subject: [PATCH 3.16 126/328] uprobes: Use synchronize_rcu() not
+ synchronize_sched()
 In-Reply-To: <lsq.1544392232.713909046@decadent.org.uk>
 X-SA-Exim-Connect-IP: 81.174.156.145
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -57,36 +58,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mikulas Patocka <mpatocka@redhat.com>
+From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
 
-commit bb24153a3f13dd0dbc1f8055ad97fe346d598f66 upstream.
+commit 016f8ffc48cb01d1e7701649c728c5d2e737d295 upstream.
 
-The default delay 5 jiffies is too much when the kernel is compiled with
-HZ=100 - it results in jumpy cursor in Xwindow.
+While debugging another bug, I was looking at all the synchronize*()
+functions being used in kernel/trace, and noticed that trace_uprobes was
+using synchronize_sched(), with a comment to synchronize with
+{u,ret}_probe_trace_func(). When looking at those functions, the data is
+protected with "rcu_read_lock()" and not with "rcu_read_lock_sched()". This
+is using the wrong synchronize_*() function.
 
-In order to find out the optimal delay, I benchmarked the driver on
-1280x720x30fps video. I found out that with HZ=1000, 10ms is acceptable,
-but with HZ=250 or HZ=300, we need 4ms, so that the video is played
-without any frame skips.
+Link: http://lkml.kernel.org/r/20180809160553.469e1e32@gandalf.local.home
 
-This patch changes the delay to this value.
-
-Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Fixes: 70ed91c6ec7f8 ("tracing/uprobes: Support ftrace_event_file base multibuffer")
+Acked-by: Oleg Nesterov <oleg@redhat.com>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- include/video/udlfb.h | 2 +-
+ kernel/trace/trace_uprobe.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/include/video/udlfb.h
-+++ b/include/video/udlfb.h
-@@ -88,7 +88,7 @@ struct dlfb_data {
- #define MIN_RAW_PIX_BYTES	2
- #define MIN_RAW_CMD_BYTES	(RAW_HEADER_BYTES + MIN_RAW_PIX_BYTES)
+--- a/kernel/trace/trace_uprobe.c
++++ b/kernel/trace/trace_uprobe.c
+@@ -949,7 +949,7 @@ probe_event_disable(struct trace_uprobe
  
--#define DL_DEFIO_WRITE_DELAY    5 /* fb_deferred_io.delay in jiffies */
-+#define DL_DEFIO_WRITE_DELAY    msecs_to_jiffies(HZ <= 300 ? 4 : 10) /* optimal value for 720p video */
- #define DL_DEFIO_WRITE_DISABLE  (HZ*60) /* "disable" with long delay */
+ 		list_del_rcu(&link->list);
+ 		/* synchronize with u{,ret}probe_trace_func */
+-		synchronize_sched();
++		synchronize_rcu();
+ 		kfree(link);
  
- /* remove these once align.h patch is taken into kernel */
+ 		if (!list_empty(&tu->tp.files))
 
