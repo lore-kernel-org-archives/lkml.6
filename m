@@ -6,43 +6,43 @@ X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB78AC07E85
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:07:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74E84C07E85
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:07:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B862C2081F
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:07:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B862C2081F
+	by mail.kernel.org (Postfix) with ESMTP id 37E302081F
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:07:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37E302081F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727937AbeLIWHt (ORCPT
+        id S1727947AbeLIWHy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 17:07:49 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:37248 "EHLO
+        Sun, 9 Dec 2018 17:07:54 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:37254 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727923AbeLIWHp (ORCPT
+        by vger.kernel.org with ESMTP id S1727925AbeLIWHr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Dec 2018 17:07:45 -0500
+        Sun, 9 Dec 2018 17:07:47 -0500
 Received: from pub.yeoldevic.com ([81.174.156.145] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW73L-0002ii-HJ; Sun, 09 Dec 2018 21:55:55 +0000
+        id 1gW73C-0002ia-9k; Sun, 09 Dec 2018 21:55:46 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW72a-0003Hf-Ik; Sun, 09 Dec 2018 21:55:08 +0000
+        id 1gW72d-0003OC-Dx; Sun, 09 Dec 2018 21:55:11 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, "Takashi Iwai" <tiwai@suse.de>
+CC:     akpm@linux-foundation.org, "Max Filippov" <jcmvbkbc@gmail.com>
 Date:   Sun, 09 Dec 2018 21:50:33 +0000
-Message-ID: <lsq.1544392233.954392961@decadent.org.uk>
+Message-ID: <lsq.1544392233.451716203@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 069/328] ALSA: vxpocket: Fix invalid endian conversions
+Subject: [PATCH 3.16 136/328] xtensa: limit offsets in __loop_cache_{all,page}
 In-Reply-To: <lsq.1544392232.713909046@decadent.org.uk>
 X-SA-Exim-Connect-IP: 81.174.156.145
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -56,62 +56,183 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Max Filippov <jcmvbkbc@gmail.com>
 
-commit 3acd3e3bab95ec3622ff98da313290ee823a0f68 upstream.
+commit be75de25251f7cf3e399ca1f584716a95510d24a upstream.
 
-The endian conversions used in vxp_dma_read() and vxp_dma_write() are
-superfluous and even wrong on big-endian machines, as inw() and outw()
-already do conversions.  Kill them.
+When building kernel for xtensa cores with big cache lines (e.g. 128
+bytes or more) __loop_cache_all and __loop_cache_page may generate
+assembly instructions with immediate fields that are too big. This
+results in the following build errors:
 
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+  arch/xtensa/mm/misc.S: Assembler messages:
+  arch/xtensa/mm/misc.S:464: Error: operand 2 of 'diwbi' has invalid value '256'
+  arch/xtensa/mm/misc.S:464: Error: operand 2 of 'diwbi' has invalid value '384'
+  arch/xtensa/kernel/head.S: Assembler messages:
+  arch/xtensa/kernel/head.S:172: Error: operand 2 of 'diu' has invalid value '256'
+  arch/xtensa/kernel/head.S:172: Error: operand 2 of 'diu' has invalid value '384'
+  arch/xtensa/kernel/head.S:176: Error: operand 2 of 'iiu' has invalid value '256'
+  arch/xtensa/kernel/head.S:176: Error: operand 2 of 'iiu' has invalid value '384'
+  arch/xtensa/kernel/head.S:255: Error: operand 2 of 'diwb' has invalid value '256'
+  arch/xtensa/kernel/head.S:255: Error: operand 2 of 'diwb' has invalid value '384'
+
+Add parameter max_immed to these macros and use it to limit values of
+immediate operands. Extract common code of these macros into the new
+macro __loop_cache_unroll.
+
+Signed-off-by: Max Filippov <jcmvbkbc@gmail.com>
+[bwh: Backported to 3.16: adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- sound/pcmcia/vx/vxp_ops.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ arch/xtensa/include/asm/cacheasm.h | 65 ++++++++++++++++++------------
+ 1 file changed, 40 insertions(+), 25 deletions(-)
 
---- a/sound/pcmcia/vx/vxp_ops.c
-+++ b/sound/pcmcia/vx/vxp_ops.c
-@@ -375,7 +375,7 @@ static void vxp_dma_write(struct vx_core
- 		length >>= 1; /* in 16bit words */
- 		/* Transfer using pseudo-dma. */
- 		for (; length > 0; length--) {
--			outw(cpu_to_le16(*addr), port);
-+			outw(*addr, port);
- 			addr++;
- 		}
- 		addr = (unsigned short *)runtime->dma_area;
-@@ -385,7 +385,7 @@ static void vxp_dma_write(struct vx_core
- 	count >>= 1; /* in 16bit words */
- 	/* Transfer using pseudo-dma. */
- 	for (; count > 0; count--) {
--		outw(cpu_to_le16(*addr), port);
-+		outw(*addr, port);
- 		addr++;
- 	}
- 	vx_release_pseudo_dma(chip);
-@@ -417,7 +417,7 @@ static void vxp_dma_read(struct vx_core
- 		length >>= 1; /* in 16bit words */
- 		/* Transfer using pseudo-dma. */
- 		for (; length > 0; length--)
--			*addr++ = le16_to_cpu(inw(port));
-+			*addr++ = inw(port);
- 		addr = (unsigned short *)runtime->dma_area;
- 		pipe->hw_ptr = 0;
- 	}
-@@ -425,12 +425,12 @@ static void vxp_dma_read(struct vx_core
- 	count >>= 1; /* in 16bit words */
- 	/* Transfer using pseudo-dma. */
- 	for (; count > 1; count--)
--		*addr++ = le16_to_cpu(inw(port));
-+		*addr++ = inw(port);
- 	/* Disable DMA */
- 	pchip->regDIALOG &= ~VXP_DLG_DMAREAD_SEL_MASK;
- 	vx_outb(chip, DIALOG, pchip->regDIALOG);
- 	/* Read the last word (16 bits) */
--	*addr = le16_to_cpu(inw(port));
-+	*addr = inw(port);
- 	/* Disable 16-bit accesses */
- 	pchip->regDIALOG &= ~VXP_DLG_DMA16_SEL_MASK;
- 	vx_outb(chip, DIALOG, pchip->regDIALOG);
+--- a/arch/xtensa/include/asm/cacheasm.h
++++ b/arch/xtensa/include/asm/cacheasm.h
+@@ -31,16 +31,32 @@
+  *
+  */
+ 
+-	.macro	__loop_cache_all ar at insn size line_width
+ 
+-	movi	\ar, 0
++	.macro	__loop_cache_unroll ar at insn size line_width max_immed
++
++	.if	(1 << (\line_width)) > (\max_immed)
++	.set	_reps, 1
++	.elseif	(2 << (\line_width)) > (\max_immed)
++	.set	_reps, 2
++	.else
++	.set	_reps, 4
++	.endif
++
++	__loopi	\ar, \at, \size, (_reps << (\line_width))
++	.set	_index, 0
++	.rep	_reps
++	\insn	\ar, _index << (\line_width)
++	.set	_index, _index + 1
++	.endr
++	__endla	\ar, \at, _reps << (\line_width)
++
++	.endm
++
+ 
+-	__loopi	\ar, \at, \size, (4 << (\line_width))
+-	\insn	\ar, 0 << (\line_width)
+-	\insn	\ar, 1 << (\line_width)
+-	\insn	\ar, 2 << (\line_width)
+-	\insn	\ar, 3 << (\line_width)
+-	__endla	\ar, \at, 4 << (\line_width)
++	.macro	__loop_cache_all ar at insn size line_width max_immed
++
++	movi	\ar, 0
++	__loop_cache_unroll \ar, \at, \insn, \size, \line_width, \max_immed
+ 
+ 	.endm
+ 
+@@ -57,14 +73,9 @@
+ 	.endm
+ 
+ 
+-	.macro	__loop_cache_page ar at insn line_width
++	.macro	__loop_cache_page ar at insn line_width max_immed
+ 
+-	__loopi	\ar, \at, PAGE_SIZE, 4 << (\line_width)
+-	\insn	\ar, 0 << (\line_width)
+-	\insn	\ar, 1 << (\line_width)
+-	\insn	\ar, 2 << (\line_width)
+-	\insn	\ar, 3 << (\line_width)
+-	__endla	\ar, \at, 4 << (\line_width)
++	__loop_cache_unroll \ar, \at, \insn, PAGE_SIZE, \line_width, \max_immed
+ 
+ 	.endm
+ 
+@@ -73,7 +84,8 @@
+ 
+ 	.macro	___unlock_dcache_all ar at
+ 
+-	__loop_cache_all \ar \at diu XCHAL_DCACHE_SIZE XCHAL_DCACHE_LINEWIDTH
++	__loop_cache_all \ar \at diu XCHAL_DCACHE_SIZE \
++		XCHAL_DCACHE_LINEWIDTH 240
+ 
+ 	.endm
+ 
+@@ -83,21 +95,24 @@
+ 
+ 	.macro	___unlock_icache_all ar at
+ 
+-	__loop_cache_all \ar \at iiu XCHAL_ICACHE_SIZE XCHAL_ICACHE_LINEWIDTH
++	__loop_cache_all \ar \at iiu XCHAL_ICACHE_SIZE \
++		XCHAL_ICACHE_LINEWIDTH 240
+ 
+ 	.endm
+ #endif
+ 
+ 	.macro	___flush_invalidate_dcache_all ar at
+ 
+-	__loop_cache_all \ar \at diwbi XCHAL_DCACHE_SIZE XCHAL_DCACHE_LINEWIDTH
++	__loop_cache_all \ar \at diwbi XCHAL_DCACHE_SIZE \
++		XCHAL_DCACHE_LINEWIDTH 240
+ 
+ 	.endm
+ 
+ 
+ 	.macro	___flush_dcache_all ar at
+ 
+-	__loop_cache_all \ar \at diwb XCHAL_DCACHE_SIZE XCHAL_DCACHE_LINEWIDTH
++	__loop_cache_all \ar \at diwb XCHAL_DCACHE_SIZE \
++		XCHAL_DCACHE_LINEWIDTH 240
+ 
+ 	.endm
+ 
+@@ -105,7 +120,7 @@
+ 	.macro	___invalidate_dcache_all ar at
+ 
+ 	__loop_cache_all \ar \at dii __stringify(DCACHE_WAY_SIZE) \
+-			 XCHAL_DCACHE_LINEWIDTH
++			 XCHAL_DCACHE_LINEWIDTH 1020
+ 
+ 	.endm
+ 
+@@ -113,7 +128,7 @@
+ 	.macro	___invalidate_icache_all ar at
+ 
+ 	__loop_cache_all \ar \at iii __stringify(ICACHE_WAY_SIZE) \
+-			 XCHAL_ICACHE_LINEWIDTH
++			 XCHAL_ICACHE_LINEWIDTH 1020
+ 
+ 	.endm
+ 
+@@ -150,27 +165,27 @@
+ 
+ 	.macro	___flush_invalidate_dcache_page ar as
+ 
+-	__loop_cache_page \ar \as dhwbi XCHAL_DCACHE_LINEWIDTH
++	__loop_cache_page \ar \as dhwbi XCHAL_DCACHE_LINEWIDTH 1020
+ 
+ 	.endm
+ 
+ 
+ 	.macro ___flush_dcache_page ar as
+ 
+-	__loop_cache_page \ar \as dhwb XCHAL_DCACHE_LINEWIDTH
++	__loop_cache_page \ar \as dhwb XCHAL_DCACHE_LINEWIDTH 1020
+ 
+ 	.endm
+ 
+ 
+ 	.macro	___invalidate_dcache_page ar as
+ 
+-	__loop_cache_page \ar \as dhi XCHAL_DCACHE_LINEWIDTH
++	__loop_cache_page \ar \as dhi XCHAL_DCACHE_LINEWIDTH 1020
+ 
+ 	.endm
+ 
+ 
+ 	.macro	___invalidate_icache_page ar as
+ 
+-	__loop_cache_page \ar \as ihi XCHAL_ICACHE_LINEWIDTH
++	__loop_cache_page \ar \as ihi XCHAL_ICACHE_LINEWIDTH 1020
+ 
+ 	.endm
 
