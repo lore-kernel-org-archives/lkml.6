@@ -6,46 +6,48 @@ X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 542A0C07E85
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:13:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 113E1C65BAF
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:13:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2418820661
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:13:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2418820661
+	by mail.kernel.org (Postfix) with ESMTP id D63672081F
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:13:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D63672081F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728446AbeLIWNt (ORCPT
+        id S1728240AbeLIWNv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 17:13:49 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:37960 "EHLO
+        Sun, 9 Dec 2018 17:13:51 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:37970 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727125AbeLIWNq (ORCPT
+        by vger.kernel.org with ESMTP id S1728442AbeLIWNt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Dec 2018 17:13:46 -0500
+        Sun, 9 Dec 2018 17:13:49 -0500
 Received: from pub.yeoldevic.com ([81.174.156.145] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW735-0002ir-7J; Sun, 09 Dec 2018 21:55:39 +0000
+        id 1gW738-0002ik-HL; Sun, 09 Dec 2018 21:55:43 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW72g-0003VQ-Ap; Sun, 09 Dec 2018 21:55:14 +0000
+        id 1gW72f-0003SV-07; Sun, 09 Dec 2018 21:55:13 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org,
-        "Laurent Pinchart" <laurent.pinchart@ideasonboard.com>,
-        "Mark Brown" <broonie@linaro.org>,
-        "Geert Uytterhoeven" <geert+renesas@glider.be>
+CC:     akpm@linux-foundation.org, "Borislav Petkov" <bp@suse.de>,
+        "Arjan Van De Ven" <arjan.van.de.ven@intel.com>,
+        "Ashok Raj" <ashok.raj@intel.com>,
+        "Tom Lendacky" <thomas.lendacky@amd.com>,
+        "Thomas Gleixner" <tglx@linutronix.de>
 Date:   Sun, 09 Dec 2018 21:50:33 +0000
-Message-ID: <lsq.1544392233.129699538@decadent.org.uk>
+Message-ID: <lsq.1544392233.420597284@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 204/328] spi: rspi: Fix leaking of unused DMA descriptors
+Subject: [PATCH 3.16 177/328] x86/microcode/intel: Check microcode
+ revision before updating sibling threads
 In-Reply-To: <lsq.1544392232.713909046@decadent.org.uk>
 X-SA-Exim-Connect-IP: 81.174.156.145
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -59,160 +61,73 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Ashok Raj <ashok.raj@intel.com>
 
-commit 3819bc8752367eae0d72fa1c473dc88ea45631a7 upstream.
+commit c182d2b7d0ca48e0d6ff16f7d883161238c447ed upstream.
 
-If dmaengine_prep_slave_sg() or dmaengine_submit() fail, we may leak
-unused DMA descriptors.
+After updating microcode on one of the threads of a core, the other
+thread sibling automatically gets the update since the microcode
+resources on a hyperthreaded core are shared between the two threads.
 
-As per Documentation/dmaengine.txt, once a DMA descriptor has been
-obtained, it must be submitted. Hence:
-  - First prepare and submit all DMA descriptors,
-  - Prepare the SPI controller for DMA,
-  - Start DMA by calling dma_async_issue_pending(),
-  - Make sure to call dmaengine_terminate_all() on all descriptors that
-    haven't completed.
+Check the microcode revision on the CPU before performing a microcode
+update and thus save us the WRMSR 0x79 because it is a particularly
+expensive operation.
 
-Reported-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Mark Brown <broonie@linaro.org>
+[ Borislav: Massage changelog and coding style. ]
+
+Signed-off-by: Ashok Raj <ashok.raj@intel.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Tested-by: Tom Lendacky <thomas.lendacky@amd.com>
+Tested-by: Ashok Raj <ashok.raj@intel.com>
+Cc: Arjan Van De Ven <arjan.van.de.ven@intel.com>
+Link: http://lkml.kernel.org/r/1519352533-15992-2-git-send-email-ashok.raj@intel.com
+Link: https://lkml.kernel.org/r/20180228102846.13447-3-bp@alien8.de
+[bwh: Backported to 3.16:
+ - s/mc->/mc_intel->/
+ - Return 0 in this case
+ - Adjust filename, context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/spi/spi-rspi.c | 94 ++++++++++++++++++++++++++----------------
- 1 file changed, 58 insertions(+), 36 deletions(-)
-
---- a/drivers/spi/spi-rspi.c
-+++ b/drivers/spi/spi-rspi.c
-@@ -472,25 +472,52 @@ static int rspi_dma_transfer(struct rspi
- 	dma_cookie_t cookie;
- 	int ret;
+--- a/arch/x86/kernel/cpu/microcode/intel.c
++++ b/arch/x86/kernel/cpu/microcode/intel.c
+@@ -155,6 +155,18 @@ int apply_microcode(int cpu)
+ 	if (get_matching_mc(mc_intel, cpu) == 0)
+ 		return 0;
  
--	if (tx) {
--		desc_tx = dmaengine_prep_slave_sg(rspi->master->dma_tx,
--					tx->sgl, tx->nents, DMA_TO_DEVICE,
--					DMA_PREP_INTERRUPT | DMA_CTRL_ACK);
--		if (!desc_tx)
--			goto no_dma;
--
--		irq_mask |= SPCR_SPTIE;
--	}
-+	/* First prepare and submit the DMA request(s), as this may fail */
- 	if (rx) {
- 		desc_rx = dmaengine_prep_slave_sg(rspi->master->dma_rx,
- 					rx->sgl, rx->nents, DMA_FROM_DEVICE,
- 					DMA_PREP_INTERRUPT | DMA_CTRL_ACK);
--		if (!desc_rx)
--			goto no_dma;
-+		if (!desc_rx) {
-+			ret = -EAGAIN;
-+			goto no_dma_rx;
-+		}
-+
-+		desc_rx->callback = rspi_dma_complete;
-+		desc_rx->callback_param = rspi;
-+		cookie = dmaengine_submit(desc_rx);
-+		if (dma_submit_error(cookie)) {
-+			ret = cookie;
-+			goto no_dma_rx;
-+		}
- 
- 		irq_mask |= SPCR_SPRIE;
- 	}
- 
-+	if (tx) {
-+		desc_tx = dmaengine_prep_slave_sg(rspi->master->dma_tx,
-+					tx->sgl, tx->nents, DMA_TO_DEVICE,
-+					DMA_PREP_INTERRUPT | DMA_CTRL_ACK);
-+		if (!desc_tx) {
-+			ret = -EAGAIN;
-+			goto no_dma_tx;
-+		}
-+
-+		if (rx) {
-+			/* No callback */
-+			desc_tx->callback = NULL;
-+		} else {
-+			desc_tx->callback = rspi_dma_complete;
-+			desc_tx->callback_param = rspi;
-+		}
-+		cookie = dmaengine_submit(desc_tx);
-+		if (dma_submit_error(cookie)) {
-+			ret = cookie;
-+			goto no_dma_tx;
-+		}
-+
-+		irq_mask |= SPCR_SPTIE;
++	/*
++	 * Save us the MSR write below - which is a particular expensive
++	 * operation - when the other hyperthread has updated the microcode
++	 * already.
++	 */
++	rev = intel_get_microcode_revision();
++	if (rev >= mc_intel->hdr.rev) {
++		uci->cpu_sig.rev = rev;
++		c->microcode = rev;
++		return 0;
 +	}
 +
- 	/*
- 	 * DMAC needs SPxIE, but if SPxIE is set, the IRQ routine will be
- 	 * called. So, this driver disables the IRQ while DMA transfer.
-@@ -503,34 +530,24 @@ static int rspi_dma_transfer(struct rspi
- 	rspi_enable_irq(rspi, irq_mask);
- 	rspi->dma_callbacked = 0;
+ 	/* write microcode via MSR 0x79 */
+ 	wrmsr(MSR_IA32_UCODE_WRITE,
+ 	      (unsigned long) mc_intel->bits,
+--- a/arch/x86/kernel/cpu/microcode/intel_early.c
++++ b/arch/x86/kernel/cpu/microcode/intel_early.c
+@@ -653,6 +653,17 @@ static int apply_microcode_early(struct
+ 	if (mc_intel == NULL)
+ 		return 0;
  
--	if (rx) {
--		desc_rx->callback = rspi_dma_complete;
--		desc_rx->callback_param = rspi;
--		cookie = dmaengine_submit(desc_rx);
--		if (dma_submit_error(cookie))
--			return cookie;
-+	/* Now start DMA */
-+	if (rx)
- 		dma_async_issue_pending(rspi->master->dma_rx);
--	}
--	if (tx) {
--		if (rx) {
--			/* No callback */
--			desc_tx->callback = NULL;
--		} else {
--			desc_tx->callback = rspi_dma_complete;
--			desc_tx->callback_param = rspi;
--		}
--		cookie = dmaengine_submit(desc_tx);
--		if (dma_submit_error(cookie))
--			return cookie;
-+	if (tx)
- 		dma_async_issue_pending(rspi->master->dma_tx);
--	}
- 
- 	ret = wait_event_interruptible_timeout(rspi->wait,
- 					       rspi->dma_callbacked, HZ);
- 	if (ret > 0 && rspi->dma_callbacked)
- 		ret = 0;
--	else if (!ret)
-+	else if (!ret) {
-+		dev_err(&rspi->master->dev, "DMA timeout\n");
- 		ret = -ETIMEDOUT;
-+		if (tx)
-+			dmaengine_terminate_all(rspi->master->dma_tx);
-+		if (rx)
-+			dmaengine_terminate_all(rspi->master->dma_rx);
++	/*
++	 * Save us the MSR write below - which is a particular expensive
++	 * operation - when the other hyperthread has updated the microcode
++	 * already.
++	 */
++	rev = intel_get_microcode_revision();
++	if (rev >= mc_intel->hdr.rev) {
++		uci->cpu_sig.rev = rev;
++		return 0;
 +	}
- 
- 	rspi_disable_irq(rspi, irq_mask);
- 
-@@ -541,11 +558,16 @@ static int rspi_dma_transfer(struct rspi
- 
- 	return ret;
- 
--no_dma:
--	pr_warn_once("%s %s: DMA not available, falling back to PIO\n",
--		     dev_driver_string(&rspi->master->dev),
--		     dev_name(&rspi->master->dev));
--	return -EAGAIN;
-+no_dma_tx:
-+	if (rx)
-+		dmaengine_terminate_all(rspi->master->dma_rx);
-+no_dma_rx:
-+	if (ret == -EAGAIN) {
-+		pr_warn_once("%s %s: DMA not available, falling back to PIO\n",
-+			     dev_driver_string(&rspi->master->dev),
-+			     dev_name(&rspi->master->dev));
-+	}
-+	return ret;
- }
- 
- static void rspi_receive_init(const struct rspi_data *rspi)
++
+ 	/* write microcode via MSR 0x79 */
+ 	native_wrmsr(MSR_IA32_UCODE_WRITE,
+ 	      (unsigned long) mc_intel->bits,
 
