@@ -6,48 +6,44 @@ X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 113E1C65BAF
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:13:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76059C07E85
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:13:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D63672081F
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:13:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D63672081F
+	by mail.kernel.org (Postfix) with ESMTP id 4676820661
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:13:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4676820661
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728240AbeLIWNv (ORCPT
+        id S1728467AbeLIWNz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 17:13:51 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:37970 "EHLO
+        Sun, 9 Dec 2018 17:13:55 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:37984 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728442AbeLIWNt (ORCPT
+        by vger.kernel.org with ESMTP id S1728183AbeLIWNy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Dec 2018 17:13:49 -0500
+        Sun, 9 Dec 2018 17:13:54 -0500
 Received: from pub.yeoldevic.com ([81.174.156.145] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW738-0002ik-HL; Sun, 09 Dec 2018 21:55:43 +0000
+        id 1gW73L-0002ir-76; Sun, 09 Dec 2018 21:55:55 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW72f-0003SV-07; Sun, 09 Dec 2018 21:55:13 +0000
+        id 1gW72a-0003IO-Ud; Sun, 09 Dec 2018 21:55:08 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, "Borislav Petkov" <bp@suse.de>,
-        "Arjan Van De Ven" <arjan.van.de.ven@intel.com>,
-        "Ashok Raj" <ashok.raj@intel.com>,
-        "Tom Lendacky" <thomas.lendacky@amd.com>,
-        "Thomas Gleixner" <tglx@linutronix.de>
+CC:     akpm@linux-foundation.org, "Takashi Iwai" <tiwai@suse.de>,
+        syzbot+619d9f40141d826b097e@syzkaller.appspotmail.com
 Date:   Sun, 09 Dec 2018 21:50:33 +0000
-Message-ID: <lsq.1544392233.420597284@decadent.org.uk>
+Message-ID: <lsq.1544392233.693739044@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 177/328] x86/microcode/intel: Check microcode
- revision before updating sibling threads
+Subject: [PATCH 3.16 078/328] ALSA: virmidi: Fix too long output trigger loop
 In-Reply-To: <lsq.1544392232.713909046@decadent.org.uk>
 X-SA-Exim-Connect-IP: 81.174.156.145
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -61,73 +57,52 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ashok Raj <ashok.raj@intel.com>
+From: Takashi Iwai <tiwai@suse.de>
 
-commit c182d2b7d0ca48e0d6ff16f7d883161238c447ed upstream.
+commit 50e9ffb1996a5d11ff5040a266585bad4ceeca0a upstream.
 
-After updating microcode on one of the threads of a core, the other
-thread sibling automatically gets the update since the microcode
-resources on a hyperthreaded core are shared between the two threads.
+The virmidi output trigger tries to parse the all available bytes and
+process sequencer events as much as possible.  In a normal situation,
+this is supposed to be relatively short, but a program may give a huge
+buffer and it'll take a long time in a single spin lock, which may
+eventually lead to a soft lockup.
 
-Check the microcode revision on the CPU before performing a microcode
-update and thus save us the WRMSR 0x79 because it is a particularly
-expensive operation.
+This patch simply adds a workaround, a cond_resched() call in the loop
+if applicable.  A better solution would be to move the event processor
+into a work, but let's put a duct-tape quickly at first.
 
-[ Borislav: Massage changelog and coding style. ]
-
-Signed-off-by: Ashok Raj <ashok.raj@intel.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Tested-by: Tom Lendacky <thomas.lendacky@amd.com>
-Tested-by: Ashok Raj <ashok.raj@intel.com>
-Cc: Arjan Van De Ven <arjan.van.de.ven@intel.com>
-Link: http://lkml.kernel.org/r/1519352533-15992-2-git-send-email-ashok.raj@intel.com
-Link: https://lkml.kernel.org/r/20180228102846.13447-3-bp@alien8.de
-[bwh: Backported to 3.16:
- - s/mc->/mc_intel->/
- - Return 0 in this case
- - Adjust filename, context]
+Reported-and-tested-by: Dae R. Jeong <threeearcat@gmail.com>
+Reported-by: syzbot+619d9f40141d826b097e@syzkaller.appspotmail.com
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
---- a/arch/x86/kernel/cpu/microcode/intel.c
-+++ b/arch/x86/kernel/cpu/microcode/intel.c
-@@ -155,6 +155,18 @@ int apply_microcode(int cpu)
- 	if (get_matching_mc(mc_intel, cpu) == 0)
- 		return 0;
+ sound/core/seq/seq_virmidi.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+--- a/sound/core/seq/seq_virmidi.c
++++ b/sound/core/seq/seq_virmidi.c
+@@ -163,6 +163,7 @@ static void snd_virmidi_output_trigger(s
+ 	int count, res;
+ 	unsigned char buf[32], *pbuf;
+ 	unsigned long flags;
++	bool check_resched = !in_atomic();
  
-+	/*
-+	 * Save us the MSR write below - which is a particular expensive
-+	 * operation - when the other hyperthread has updated the microcode
-+	 * already.
-+	 */
-+	rev = intel_get_microcode_revision();
-+	if (rev >= mc_intel->hdr.rev) {
-+		uci->cpu_sig.rev = rev;
-+		c->microcode = rev;
-+		return 0;
-+	}
-+
- 	/* write microcode via MSR 0x79 */
- 	wrmsr(MSR_IA32_UCODE_WRITE,
- 	      (unsigned long) mc_intel->bits,
---- a/arch/x86/kernel/cpu/microcode/intel_early.c
-+++ b/arch/x86/kernel/cpu/microcode/intel_early.c
-@@ -653,6 +653,17 @@ static int apply_microcode_early(struct
- 	if (mc_intel == NULL)
- 		return 0;
- 
-+	/*
-+	 * Save us the MSR write below - which is a particular expensive
-+	 * operation - when the other hyperthread has updated the microcode
-+	 * already.
-+	 */
-+	rev = intel_get_microcode_revision();
-+	if (rev >= mc_intel->hdr.rev) {
-+		uci->cpu_sig.rev = rev;
-+		return 0;
-+	}
-+
- 	/* write microcode via MSR 0x79 */
- 	native_wrmsr(MSR_IA32_UCODE_WRITE,
- 	      (unsigned long) mc_intel->bits,
+ 	if (up) {
+ 		vmidi->trigger = 1;
+@@ -200,6 +201,15 @@ static void snd_virmidi_output_trigger(s
+ 					vmidi->event.type = SNDRV_SEQ_EVENT_NONE;
+ 				}
+ 			}
++			if (!check_resched)
++				continue;
++			/* do temporary unlock & cond_resched() for avoiding
++			 * CPU soft lockup, which may happen via a write from
++			 * a huge rawmidi buffer
++			 */
++			spin_unlock_irqrestore(&substream->runtime->lock, flags);
++			cond_resched();
++			spin_lock_irqsave(&substream->runtime->lock, flags);
+ 		}
+ 	out:
+ 		spin_unlock_irqrestore(&substream->runtime->lock, flags);
 
