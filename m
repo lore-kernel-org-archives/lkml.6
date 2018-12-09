@@ -6,47 +6,46 @@ X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25B64C65BAF
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:19:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C97EC07E85
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:20:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E9FC32081F
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:19:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E9FC32081F
+	by mail.kernel.org (Postfix) with ESMTP id 3899820661
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:20:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3899820661
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728334AbeLIWTk (ORCPT
+        id S1728432AbeLIWUA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 17:19:40 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35528 "EHLO
+        Sun, 9 Dec 2018 17:20:00 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35432 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726570AbeLIVz0 (ORCPT
+        by vger.kernel.org with ESMTP id S1726554AbeLIVzZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Dec 2018 16:55:26 -0500
+        Sun, 9 Dec 2018 16:55:25 -0500
 Received: from pub.yeoldevic.com ([81.174.156.145] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW72n-0002ii-AT; Sun, 09 Dec 2018 21:55:21 +0000
+        id 1gW72o-0002ie-4d; Sun, 09 Dec 2018 21:55:22 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW72k-0003eI-GO; Sun, 09 Dec 2018 21:55:18 +0000
+        id 1gW72l-0003gK-4F; Sun, 09 Dec 2018 21:55:19 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org,
-        "Daniel Vetter" <daniel.vetter@ffwll.ch>,
-        "Ville =?UTF-8?Q?Syrj=C3=A4l=C3=A4?=" <ville.syrjala@linux.intel.com>,
-        "Eugeniy Paltsev" <Eugeniy.Paltsev@synopsys.com>
+CC:     akpm@linux-foundation.org, "Ulf Hansson" <ulf.hansson@linaro.org>,
+        "Kalle Valo" <kvalo@codeaurora.org>,
+        "Daniel Mack" <daniel@zonque.org>
 Date:   Sun, 09 Dec 2018 21:50:33 +0000
-Message-ID: <lsq.1544392233.936105759@decadent.org.uk>
+Message-ID: <lsq.1544392233.524116202@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 292/328] drm: fb-helper: Reject all pixel format
- changing requests
+Subject: [PATCH 3.16 308/328] libertas: call into generic suspend code
+ before turning off power
 In-Reply-To: <lsq.1544392232.713909046@decadent.org.uk>
 X-SA-Exim-Connect-IP: 81.174.156.145
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -60,136 +59,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+From: Daniel Mack <daniel@zonque.org>
 
-commit db05c481977599236f12a85e55de9f5ab37b0a2c upstream.
+commit 4f666675cdff0b986195413215eb062b7da6586f upstream.
 
-drm fbdev emulation doesn't support changing the pixel format at all,
-so reject all pixel format changing requests.
+When powering down a SDIO connected card during suspend, make sure to call
+into the generic lbs_suspend() function before pulling the plug. This will
+make sure the card is successfully deregistered from the system to avoid
+communication to the card starving out.
 
-Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-Reviewed-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
-Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-Link: https://patchwork.freedesktop.org/patch/msgid/20181003164538.5534-1-Eugeniy.Paltsev@synopsys.com
+Fixes: 7444a8092906 ("libertas: fix suspend and resume for SDIO connected cards")
+Signed-off-by: Daniel Mack <daniel@zonque.org>
+Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+Acked-by: Kalle Valo <kvalo@codeaurora.org>
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/gpu/drm/drm_fb_helper.c | 91 ++++++++++-----------------------
- 1 file changed, 26 insertions(+), 65 deletions(-)
+ drivers/net/wireless/libertas/if_sdio.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/drivers/gpu/drm/drm_fb_helper.c
-+++ b/drivers/gpu/drm/drm_fb_helper.c
-@@ -750,6 +750,25 @@ int drm_fb_helper_setcmap(struct fb_cmap
- }
- EXPORT_SYMBOL(drm_fb_helper_setcmap);
- 
-+static bool drm_fb_pixel_format_equal(const struct fb_var_screeninfo *var_1,
-+				      const struct fb_var_screeninfo *var_2)
-+{
-+	return var_1->bits_per_pixel == var_2->bits_per_pixel &&
-+	       var_1->grayscale == var_2->grayscale &&
-+	       var_1->red.offset == var_2->red.offset &&
-+	       var_1->red.length == var_2->red.length &&
-+	       var_1->red.msb_right == var_2->red.msb_right &&
-+	       var_1->green.offset == var_2->green.offset &&
-+	       var_1->green.length == var_2->green.length &&
-+	       var_1->green.msb_right == var_2->green.msb_right &&
-+	       var_1->blue.offset == var_2->blue.offset &&
-+	       var_1->blue.length == var_2->blue.length &&
-+	       var_1->blue.msb_right == var_2->blue.msb_right &&
-+	       var_1->transp.offset == var_2->transp.offset &&
-+	       var_1->transp.length == var_2->transp.length &&
-+	       var_1->transp.msb_right == var_2->transp.msb_right;
-+}
+--- a/drivers/net/wireless/libertas/if_sdio.c
++++ b/drivers/net/wireless/libertas/if_sdio.c
+@@ -1369,6 +1369,10 @@ static int if_sdio_suspend(struct device
+ 	if (priv->wol_criteria == EHS_REMOVE_WAKEUP) {
+ 		dev_info(dev, "Suspend without wake params -- powering down card\n");
+ 		if (priv->fw_ready) {
++			ret = lbs_suspend(priv);
++			if (ret)
++				return ret;
 +
- /**
-  * drm_fb_helper_check_var - implementation for ->fb_check_var
-  * @var: screeninfo to check
-@@ -760,7 +779,6 @@ int drm_fb_helper_check_var(struct fb_va
- {
- 	struct drm_fb_helper *fb_helper = info->par;
- 	struct drm_framebuffer *fb = fb_helper->fb;
--	int depth;
- 
- 	if (var->pixclock != 0 || in_dbg_master())
- 		return -EINVAL;
-@@ -777,72 +795,15 @@ int drm_fb_helper_check_var(struct fb_va
- 		return -EINVAL;
- 	}
- 
--	switch (var->bits_per_pixel) {
--	case 16:
--		depth = (var->green.length == 6) ? 16 : 15;
--		break;
--	case 32:
--		depth = (var->transp.length > 0) ? 32 : 24;
--		break;
--	default:
--		depth = var->bits_per_pixel;
--		break;
--	}
--
--	switch (depth) {
--	case 8:
--		var->red.offset = 0;
--		var->green.offset = 0;
--		var->blue.offset = 0;
--		var->red.length = 8;
--		var->green.length = 8;
--		var->blue.length = 8;
--		var->transp.length = 0;
--		var->transp.offset = 0;
--		break;
--	case 15:
--		var->red.offset = 10;
--		var->green.offset = 5;
--		var->blue.offset = 0;
--		var->red.length = 5;
--		var->green.length = 5;
--		var->blue.length = 5;
--		var->transp.length = 1;
--		var->transp.offset = 15;
--		break;
--	case 16:
--		var->red.offset = 11;
--		var->green.offset = 5;
--		var->blue.offset = 0;
--		var->red.length = 5;
--		var->green.length = 6;
--		var->blue.length = 5;
--		var->transp.length = 0;
--		var->transp.offset = 0;
--		break;
--	case 24:
--		var->red.offset = 16;
--		var->green.offset = 8;
--		var->blue.offset = 0;
--		var->red.length = 8;
--		var->green.length = 8;
--		var->blue.length = 8;
--		var->transp.length = 0;
--		var->transp.offset = 0;
--		break;
--	case 32:
--		var->red.offset = 16;
--		var->green.offset = 8;
--		var->blue.offset = 0;
--		var->red.length = 8;
--		var->green.length = 8;
--		var->blue.length = 8;
--		var->transp.length = 8;
--		var->transp.offset = 24;
--		break;
--	default:
-+	/*
-+	 * drm fbdev emulation doesn't support changing the pixel format at all,
-+	 * so reject all pixel format changing requests.
-+	 */
-+	if (!drm_fb_pixel_format_equal(var, &info->var)) {
-+		DRM_DEBUG("fbdev emulation doesn't support changing the pixel format\n");
- 		return -EINVAL;
- 	}
-+
- 	return 0;
- }
- EXPORT_SYMBOL(drm_fb_helper_check_var);
+ 			priv->power_up_on_resume = true;
+ 			if_sdio_power_off(card);
+ 		}
 
