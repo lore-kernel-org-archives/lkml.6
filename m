@@ -2,145 +2,115 @@ Return-Path: <SRS0=cWqk=OS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6976C07E85
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 18:27:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31BF2C65BAF
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 18:27:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6930420865
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 18:27:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D835220837
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 18:27:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=xenosoft.de header.i=@xenosoft.de header.b="HLvXjmZg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6930420865
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xenosoft.de
+	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="EVvCM9Ok"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D835220837
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726245AbeLIS1F (ORCPT
+        id S1726268AbeLIS1J (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 13:27:05 -0500
-Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.54]:32869 "EHLO
-        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726154AbeLIS1E (ORCPT
+        Sun, 9 Dec 2018 13:27:09 -0500
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:42029 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726154AbeLIS1G (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Dec 2018 13:27:04 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1544380021;
-        s=strato-dkim-0002; d=xenosoft.de;
-        h=In-Reply-To:Date:Message-ID:References:Cc:To:From:Subject:
-        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=ZwqB3fEfvgX8g+8jLemdA538IQXdYBFwTvYj1EW8mCc=;
-        b=HLvXjmZgUOMviRdscYIzzS85XqqP5tTxQU8fTyHONzu+v0FH8yGx4CNT9Ci+zlpq0X
-        D8rKqgWQjWmfUrYlYM8BxsA/n9gOwHdU0JoIXxbS6isDD67GyFzlQqSjF2c+BIvYeEGy
-        Pr+Ox72O+gVd/Fppp7eW1zBTCQ3DQJmY6dIyxGlZrDBJJb/QnjItbiaIURJHS4yxpIN1
-        fXggOHokZK0B6NCbfI+s/MuN9SuMwUS9gxsYn2MTEZlPqmNim/cX8xiC8ddaEUf5KF3K
-        /K+w/TFEQxh71H7m8basq9v7lk26BOn6N/WTutVpnEGYqxCDI4emtuf9z6jTdhpHt6v7
-        q4zg==
-X-RZG-AUTH: ":L2QefEenb+UdBJSdRCXu93KJ1bmSGnhMdmOod1DhGM4l4Hio94KKxRySfLxnHfJ+Dkjp5G5MdirQj0WG7Cleh/U4UJXbAwdk7mn3Iw24hmsq"
-X-RZG-CLASS-ID: mo00
-Received: from [IPv6:2a02:8109:a400:162c:a909:518d:b600:96a]
-        by smtp.strato.de (RZmta 44.6 AUTH)
-        with ESMTPSA id 404b20uB9IQw0gp
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
-        (Client did not present a certificate);
-        Sun, 9 Dec 2018 19:26:58 +0100 (CET)
-Subject: Re: use generic DMA mapping code in powerpc V4
-From:   Christian Zigotzky <chzigotzky@xenosoft.de>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     linux-arch@vger.kernel.org,
-        Darren Stevens <darren@stevens-zone.net>,
-        linux-kernel@vger.kernel.org, Julian Margetson <runaway@candw.ms>,
-        linux-mm@kvack.org, iommu@lists.linux-foundation.org,
-        Paul Mackerras <paulus@samba.org>,
-        Olof Johansson <olof@lixom.net>, linuxppc-dev@lists.ozlabs.org
-References: <20181129170351.GC27951@lst.de>
- <d0e04a85-f17d-414e-6fea-971414417430@xenosoft.de>
- <20181130105346.GB26765@lst.de>
- <8694431d-c669-b7b9-99fa-e99db5d45a7d@xenosoft.de>
- <20181130131056.GA5211@lst.de>
- <25999587-2d91-a63c-ed38-c3fb0075d9f1@xenosoft.de>
- <c5202d29-863d-1377-0e2d-762203b317e2@xenosoft.de>
- <58c61afb-290f-6196-c72c-ac7b61b84718@xenosoft.de>
- <20181204142426.GA2743@lst.de>
- <ef56d279-f75d-008e-71ba-7068c1b37c48@xenosoft.de>
- <20181205140550.GA27549@lst.de>
- <1948cf84-49ab-543c-472c-d18e27751903@xenosoft.de>
- <5a2ea855-b4b0-e48a-5c3e-c859a8451ca2@xenosoft.de>
- <7B6DDB28-8BF6-4589-84ED-F1D4D13BFED6@xenosoft.de>
- <8a2c4581-0c85-8065-f37e-984755eb31ab@xenosoft.de>
- <424bb228-c9e5-6593-1ab7-5950d9b2bd4e@xenosoft.de>
- <c86d76b4-b199-557e-bc64-4235729c1e72@xenosoft.de>
-Message-ID: <1ecb7692-f3fb-a246-91f9-2db1b9496305@xenosoft.de>
-Date:   Sun, 9 Dec 2018 19:26:57 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.3
+        Sun, 9 Dec 2018 13:27:06 -0500
+Received: by mail-ot1-f68.google.com with SMTP id v23so8362061otk.9
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Dec 2018 10:27:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=jSxT4gfHl5WXRc8jU0ThvEUw3na9p8omVU3j1EuQcoI=;
+        b=EVvCM9OkJ6k1PgVutSX4iGp3Vpc3tsjfj3z2VxNIHKYFdeIor/4SliQoSrLfqNT+rJ
+         gMSLZ7ZICplcva/c78Fj/4AMI08aalUJQqwcFaTQrhHWc8TiE+49QI+usIdH4kre0V+C
+         QgXuvQoWhWnnqbos0hpEzYx8OZs2pLBnfbXhnZ/2KuYUpYSjxyeTCt/A6/Y9CnMJt68S
+         eLuEWfLWBS1AYp8qyfPpG2H59aKvGael9eEcdWinA6/O5YyVUP4fvZUZtQpDnbB635UJ
+         blhvbjj5G7yWE4p9eAad9uJkq2gz8z+qcD81GnZw6lYNo+oS6dhYtNHisNw6BIFdcMCc
+         M1mA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=jSxT4gfHl5WXRc8jU0ThvEUw3na9p8omVU3j1EuQcoI=;
+        b=jZji5wy/xeMxHnWxIs96gpBZqZX3hx9OoQsLjdR3bM02xYKZlPjY/9YOK0WiAzL8jh
+         ECeQhvTflLt8+ejjKHc6ud4oM+GivwTY6vvJnV+/eXcmVg55n//AbKWreYZJSaqASxp/
+         OfBzVmzAfePzy/wjJPtLvrX0FKGZk8Oz26s19HC8Tkj0D1nGQcAge1yLG4QISezr5KKK
+         XOH1+tbjLQzJ17TWwK8p10rC1CNO2XkVIVEA5MH0kXxdpDDQYTyR6imJDyiavKdfqqMe
+         jgGgsOK5+bV4yrpw3lnO1CML8KoOTq7le8nfQh0iqhkf8zV48H1Yz9iMlqHrKhZjdgDQ
+         gp0w==
+X-Gm-Message-State: AA+aEWbbCX6wfbmfvCxaN1XbRTmnrm6cfeuv5ckUi2w170hJUUXJ7VGs
+        VT/NHpNfJlwLIZqPkrB4UdXr6PohGMP/SUU9x7dbwXsl
+X-Google-Smtp-Source: AFSGD/X8+1KvDQlELUSop3UJ7OezWWcsah9fWKNMJDo1as5kStMbA0FIVgq4++be7QHuovNSSTg9tIUahWOUq2C9YvA=
+X-Received: by 2002:a9d:6ac2:: with SMTP id m2mr6501766otq.353.1544380025118;
+ Sun, 09 Dec 2018 10:27:05 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <c86d76b4-b199-557e-bc64-4235729c1e72@xenosoft.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: de-DE
+References: <6be0835bf256755375f3b5822bf70d74538d1d6e.camel@intel.com> <CAHk-=wgAONwr6pMn+D2OsMZjAB5zNaMWSW5KdTM+L72gGnhV2Q@mail.gmail.com>
+In-Reply-To: <CAHk-=wgAONwr6pMn+D2OsMZjAB5zNaMWSW5KdTM+L72gGnhV2Q@mail.gmail.com>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Sun, 9 Dec 2018 10:26:54 -0800
+Message-ID: <CAPcyv4jznHRB=BCsm8Y3d-uqDy_OWHSgTsPZoPK-L80FiQftFg@mail.gmail.com>
+Subject: Re: [GIT PULL] dax fixes for 4.20-rc6
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Jan Kara <jack@suse.cz>, Matthew Wilcox <willy@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Next step: c1bfcad4b0cf38ce5b00f7ad880d3a13484c123a (dma-mapping, 
-powerpc: simplify the arch dma_set_mask override)
+[ add Willy and Jan ]
 
-Result: No problems with the PASEMI onboard ethernet and with booting 
-the X5000 (P5020 board).
+On Sun, Dec 9, 2018 at 10:02 AM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> On Sat, Dec 8, 2018 at 10:26 PM Williams, Dan J
+> <dan.j.williams@intel.com> wrote:
+> >
+> >   git://git.kernel.org/pub/scm/linux/kernel/git/nvdimm/nvdimm tags/dax-fixes-4.20-rc6
+>
+> What's going on with the odd non-exclusive exclusive wait?
+>
+>         prepare_to_wait_exclusive(wq, &ewait.wait, TASK_UNINTERRUPTIBLE);
+>         ...
+>         /*
+>          * Entry lock waits are exclusive. Wake up the next waiter since
+>          * we aren't sure we will acquire the entry lock and thus wake
+>          * the next waiter up on unlock.
+>          */
+>         if (waitqueue_active(wq))
+>                 __wake_up(wq, TASK_NORMAL, 1, &ewait.key);
+>
+> that seems to make little or no sense.
+>
+> Why isn't that prepare_to_wait_exclusive() just a regular
+> prepare_to_wait(), and then the whole "let's wake up anybody else" can
+> be removed?
+>
+> I've pulled it, but am awaiting explanation of what looks like some
+> pretty crazy code. I *suspect* it's a copy-and-paste situation where
+> you took the exclusive wait from somewhere else.
 
--- Christian
+Yes, I believe that's true. In the other instances of waiting for an
+entry to be in unlocked there is a guarantee that the waiter will
+attain the lock and perform an unlock + wakeup. In the dax_lock_page()
+path there is the possibility that the inode dies before the lock is
+attained and a subsequent unlock sequence is not guaranteed. So, I
+believe the intent, Willy correct me if I am wrong, was to keep all
+waits "exclusive" for some sense of symmetry, but this one can and
+should be a non-exclusive wait.
 
-
-On 09 December 2018 at 3:20PM, Christian Zigotzky wrote:
-> Next step: 602307b034734ce77a05da4b99333a2eaf6b6482 (powerpc/fsl_pci: 
-> simplify fsl_pci_dma_set_mask)
->
-> git checkout 602307b034734ce77a05da4b99333a2eaf6b6482
->
-> The PASEMI onboard ethernet works and the X5000 boots.
->
-> -- Christian
->
->
-> On 08 December 2018 at 2:47PM, Christian Zigotzky wrote:
->> Next step: e15cd8173ef85e9cc3e2a9c7cc2982f5c1355615 (powerpc/dma: fix 
->> an off-by-one in dma_capable)
->>
->> git checkout e15cd8173ef85e9cc3e2a9c7cc2982f5c1355615
->>
->> The PASEMI onboard ethernet also works with this commit and the X5000 
->> boots without any problems.
->>
->> -- Christian
->>
->>
->> On 08 December 2018 at 11:29AM, Christian Zigotzky wrote:
->>> Next step: 7ebc44c535f6bd726d553756d38b137acc718443 (powerpc/dma: 
->>> remove max_direct_dma_addr)
->>>
->>> git checkout 7ebc44c535f6bd726d553756d38b137acc718443
->>>
->>> OK, the PASEMI onboard ethernet works and the P5020 board boots.
->>>
->>> -- Christian
->>>
->>>
->>> On 07 December 2018 at 7:33PM, Christian Zigotzky wrote:
->>>> Next step: 13c1fdec5682b6e13257277fa16aa31f342d167d (powerpc/dma: 
->>>> move pci_dma_dev_setup_swiotlb to fsl_pci.c)
->>>>
->>>> git checkout 13c1fdec5682b6e13257277fa16aa31f342d167d
->>>>
->>>> Result: The PASEMI onboard ethernet works and the P5020 board boots.
->>>>
->>>> — Christian
->>>
->>>
->>>
->>
->>
->
->
-
+I can send a cleanup, do you want one immediately, or is post -rc6 ok?
