@@ -2,72 +2,95 @@ Return-Path: <SRS0=cWqk=OS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E59CC07E85
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 06:35:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47C60C07E85
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 06:35:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C679620831
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 06:35:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C679620831
+	by mail.kernel.org (Postfix) with ESMTP id 0A71B2086E
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 06:35:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A71B2086E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726118AbeLIGfH (ORCPT
+        id S1726169AbeLIGfM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 01:35:07 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:15666 "EHLO huawei.com"
+        Sun, 9 Dec 2018 01:35:12 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:53466 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726066AbeLIGfH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Dec 2018 01:35:07 -0500
-Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 71AE5B388F9C;
+        id S1726066AbeLIGfL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Dec 2018 01:35:11 -0500
+Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 80DD852CA16A;
         Sun,  9 Dec 2018 14:35:03 +0800 (CST)
-Received: from localhost (10.177.31.96) by DGGEMS403-HUB.china.huawei.com
- (10.3.19.203) with Microsoft SMTP Server id 14.3.408.0; Sun, 9 Dec 2018
- 14:34:54 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <dmitry.torokhov@gmail.com>, <matthias.bgg@gmail.com>,
-        <lee.jones@linaro.org>, <chen.zhong@mediatek.com>
-CC:     <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-input@vger.kernel.org>, YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next] input: keyboard: remove duplicated include from mtk-pmic-keys.c
-Date:   Sun, 9 Dec 2018 14:34:40 +0800
-Message-ID: <20181209063440.27820-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
+Received: from [127.0.0.1] (10.177.31.14) by DGGEMS410-HUB.china.huawei.com
+ (10.3.19.210) with Microsoft SMTP Server id 14.3.408.0; Sun, 9 Dec 2018
+ 14:35:00 +0800
+Subject: Re: [PATCH] jffs2: fix invocations of dbg_xattr() for dead
+ jffs2_xattr_ref
+From:   Hou Tao <houtao1@huawei.com>
+To:     <linux-mtd@lists.infradead.org>, <dwmw2@infradead.org>
+CC:     <richard.weinberger@gmail.com>, <boris.brezillon@bootlin.com>,
+        <linux-kernel@vger.kernel.org>
+References: <20181020110753.98407-1-houtao1@huawei.com>
+Message-ID: <bbd62e07-99f7-e198-fc26-8b4a8470b8e9@huawei.com>
+Date:   Sun, 9 Dec 2018 14:34:59 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.177.31.96]
+In-Reply-To: <20181020110753.98407-1-houtao1@huawei.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.31.14]
 X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove duplicated include.
+ping ?
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/input/keyboard/mtk-pmic-keys.c | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/drivers/input/keyboard/mtk-pmic-keys.c b/drivers/input/keyboard/mtk-pmic-keys.c
-index 02c67a1..5027ebb 100644
---- a/drivers/input/keyboard/mtk-pmic-keys.c
-+++ b/drivers/input/keyboard/mtk-pmic-keys.c
-@@ -19,7 +19,6 @@
- #include <linux/input.h>
- #include <linux/interrupt.h>
- #include <linux/platform_device.h>
--#include <linux/kernel.h>
- #include <linux/of.h>
- #include <linux/of_device.h>
- #include <linux/regmap.h>
--- 
-2.7.0
-
+On 2018/10/20 19:07, Hou Tao wrote:
+> When jffs2_xattr_ref is dead, xref->ic or xref->xd will be invalid
+> because these fields will be reused as xref->ino or xref->xid,
+> so access xref->ic->ino or xref->xd->xid will lead to Oops.
+> 
+> Fix the problem by checking whether or not it is a dead xref.
+> 
+> Signed-off-by: Hou Tao <houtao1@huawei.com>
+> ---
+>  fs/jffs2/xattr.c | 9 +++++++--
+>  1 file changed, 7 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/jffs2/xattr.c b/fs/jffs2/xattr.c
+> index 3d40fe02b003..0c4c7891556d 100644
+> --- a/fs/jffs2/xattr.c
+> +++ b/fs/jffs2/xattr.c
+> @@ -550,7 +550,8 @@ static int save_xattr_ref(struct jffs2_sb_info *c, struct jffs2_xattr_ref *ref)
+>  	ref->xseqno = xseqno;
+>  	jffs2_add_physical_node_ref(c, phys_ofs | REF_PRISTINE, PAD(sizeof(rr)), (void *)ref);
+>  
+> -	dbg_xattr("success on saving xref (ino=%u, xid=%u)\n", ref->ic->ino, ref->xd->xid);
+> +	dbg_xattr("success on saving xref (ino=%u, xid=%u)\n",
+> +			je32_to_cpu(rr.ino), je32_to_cpu(rr.xid));
+>  
+>  	return 0;
+>  }
+> @@ -1329,7 +1330,11 @@ int jffs2_garbage_collect_xattr_ref(struct jffs2_sb_info *c, struct jffs2_xattr_
+>  	rc = save_xattr_ref(c, ref);
+>  	if (!rc)
+>  		dbg_xattr("xref (ino=%u, xid=%u) GC'ed from %#08x to %08x\n",
+> -			  ref->ic->ino, ref->xd->xid, old_ofs, ref_offset(ref->node));
+> +				is_xattr_ref_dead(ref) ?
+> +					ref->ino : ref->ic->ino,
+> +				is_xattr_ref_dead(ref) ?
+> +					ref->xid : ref->xd->xid,
+> +				old_ofs, ref_offset(ref->node));
+>   out:
+>  	if (!rc)
+>  		jffs2_mark_node_obsolete(c, raw);
+> 
 
