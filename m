@@ -7,41 +7,41 @@ X-Spam-Status: No, score=-13.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CBF1C67838
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 11:49:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 675E4C07E85
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 11:49:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C459520989
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 11:49:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2A80321104
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 11:49:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544356164;
-	bh=wIZt+jQYqUS6fUV1d8DgP5TSupV7p7p2ygQwl0dXTEg=;
+	s=default; t=1544356170;
+	bh=/Ot7Gzx7qA2GKIHFnhJiOxMrvQy7iQmiBjYCm2bGsZU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=1o8fvp2hYXJ1MUABPUiQuxcprRWiCEyGodnpWZDL3FPn6Ew8pYUA5LSXmudQxx7vP
-	 cRJLIN5gnsTuFElCgRQPKxqfUwO8EF+w2n37Y82biDrjXmkjsEyLQcANa0yy7agcfu
-	 LMSImT9GOv+XfJP45mt6c7VaQF0+xZGWr8K3bqHs=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C459520989
+	b=f3B1hVVTiZGAd4qGDiKuc+LL9i6rdlRtSymAP/JEr6A2lyKllRoEjy9sBiTMLGtkb
+	 m3cx79OBVACOQrK1ubLOcIqxrI+5zl8YFTPX6sm97NvOgDc3P2dJordtTaqCoWBVxK
+	 hXpaDYlnZKhbEMFzLU/hhn2KIge8GNnzyiNwn24E=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A80321104
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726271AbeLILtX (ORCPT
+        id S1726304AbeLILt3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 06:49:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41108 "EHLO mail.kernel.org"
+        Sun, 9 Dec 2018 06:49:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41178 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726200AbeLILtX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Dec 2018 06:49:23 -0500
+        id S1726280AbeLILt1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Dec 2018 06:49:27 -0500
 Received: from localhost.localdomain (unknown [178.38.170.116])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 105982086E;
-        Sun,  9 Dec 2018 11:49:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E060920874;
+        Sun,  9 Dec 2018 11:49:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544356162;
-        bh=wIZt+jQYqUS6fUV1d8DgP5TSupV7p7p2ygQwl0dXTEg=;
+        s=default; t=1544356166;
+        bh=/Ot7Gzx7qA2GKIHFnhJiOxMrvQy7iQmiBjYCm2bGsZU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bvv0DObTdjnAiNNrObhg8N/zUEsJ20oK5aNmOV+JT6W+6wok3V6lyww+Qo5sVbyG0
-         hproRJZPKO8JWyYdatj3Rmjb/Z+/sjnf5v+VNlW1zmn2O4HI5Db654N/YLDauoRhYV
-         gPcWn5MnZn08XjPs613la/3cN+KIiu423cZcH+Pg=
+        b=BRgvvmCtyugB6yjwCtG2J4oYWzUwXnMhkVm1AxxHDbwHLTkgALpI69wkRzTQV0lFW
+         db3YmOLAfVFv+1uf5xPX0zx7IgSXRsoW1huDPMeQfOXLrd1uPvUiAQ7egIKaDgol/6
+         CubNMEkgJrFAuzskjnDBO0DpqcZqReZm9VkQfPjo=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
         arm@kernel.org
@@ -49,9 +49,9 @@ Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
         Kukjin Kim <kgene@kernel.org>,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL 1/4] ARM: defconfig: Exynos for v4.21
-Date:   Sun,  9 Dec 2018 12:49:08 +0100
-Message-Id: <20181209114911.25194-2-krzk@kernel.org>
+Subject: [GIT PULL 3/4] arm64: dts: exynos: Pull for v4.21
+Date:   Sun,  9 Dec 2018 12:49:10 +0100
+Message-Id: <20181209114911.25194-4-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181209114911.25194-1-krzk@kernel.org>
 References: <20181209114911.25194-1-krzk@kernel.org>
@@ -66,26 +66,25 @@ The following changes since commit 651022382c7f8da46cb4872a545ee1da6d097d2a:
 
 are available in the Git repository at:
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-defconfig-4.21
+  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-dt64-4.21
 
-for you to fetch changes up to 24c8e4b85399b00f4ae96e7957b0eeaa374e9380:
+for you to fetch changes up to 9deffb5ee78e41e2a5d6c448874a24caec6467d0:
 
-  ARM: multi_v7_defconfig: Add TOSHIBA TC358764 bridge driver (2018-12-07 20:18:47 +0100)
-
-----------------------------------------------------------------
-Samsung defconfig changes for v4.21
-
-Enable drivers in exynos and multi_v7 defconfigs for MAX8952, MAX8998
-(Samsung UniversalC210 board) and TC358764 (Arndale board).
+  arm64: dts: exynos: Add all CPUs in cooling maps (2018-11-18 15:18:42 +0100)
 
 ----------------------------------------------------------------
-Marek Szyprowski (5):
-      ARM: exynos_defconfig: Add MAX8998 RTC and charger drivers
-      ARM: exynos_defconfig: Add MAX8952 regulator driver
-      ARM: exynos_defconfig: Add TOSHIBA TC358764 bridge driver
-      ARM: multi_v7_defconfig: Add MAX8952 regulator driver
-      ARM: multi_v7_defconfig: Add TOSHIBA TC358764 bridge driver
+Samsung DTS ARM64 changes for v4.21
 
- arch/arm/configs/exynos_defconfig   | 4 ++++
- arch/arm/configs/multi_v7_defconfig | 2 ++
- 2 files changed, 6 insertions(+)
+1. Update DWC3 hardware modules to Exynos5433 specific variant.
+2. Update cooling maps to include all CPU devices in multiple DTS files.
+
+----------------------------------------------------------------
+Marek Szyprowski (1):
+      arm64: dts: exynos: Update DWC3 modules on Exynos5433 SoCs
+
+Viresh Kumar (1):
+      arm64: dts: exynos: Add all CPUs in cooling maps
+
+ arch/arm64/boot/dts/exynos/exynos5433-tmu.dtsi | 36 +++++++++++++++++---------
+ arch/arm64/boot/dts/exynos/exynos5433.dtsi     | 24 ++++++++++++-----
+ 2 files changed, 42 insertions(+), 18 deletions(-)
