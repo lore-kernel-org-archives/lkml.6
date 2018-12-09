@@ -2,118 +2,130 @@ Return-Path: <SRS0=cWqk=OS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79B49C07E85
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 23:25:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39120C07E85
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 23:27:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 411912081C
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 23:25:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 411912081C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id E0AED2081C
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 23:27:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E0AED2081C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726620AbeLIXYz (ORCPT
+        id S1726702AbeLIX12 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 18:24:55 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:50494 "EHLO mx1.redhat.com"
+        Sun, 9 Dec 2018 18:27:28 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:42252 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726323AbeLIXYz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Dec 2018 18:24:55 -0500
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        id S1726323AbeLIX11 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Dec 2018 18:27:27 -0500
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 16790368E7;
-        Sun,  9 Dec 2018 23:24:54 +0000 (UTC)
-Received: from vitty.brq.redhat.com.redhat.com (ovpn-204-21.brq.redhat.com [10.40.204.21])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 260A25DAA0;
-        Sun,  9 Dec 2018 23:24:51 +0000 (UTC)
-From:   Vitaly Kuznetsov <vkuznets@redhat.com>
-To:     Ben Hutchings <ben@decadent.org.uk>, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org
-Cc:     akpm@linux-foundation.org, "David S. Miller" <davem@davemloft.net>,
-        Ross Lagerwall <ross.lagerwall@citrix.com>
-Subject: Re: [PATCH 3.16 047/328] xen-netfront: fix queue name setting
-In-Reply-To: <lsq.1544392233.936009164@decadent.org.uk>
-References: <lsq.1544392233.936009164@decadent.org.uk>
-Date:   Mon, 10 Dec 2018 00:24:53 +0100
-Message-ID: <87y38ycmgq.fsf@vitty.brq.redhat.com>
+        by mx1.redhat.com (Postfix) with ESMTPS id 249B685A04;
+        Sun,  9 Dec 2018 23:27:26 +0000 (UTC)
+Received: from bistromath.localdomain (ovpn-116-33.ams2.redhat.com [10.36.116.33])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 0B2E4608F2;
+        Sun,  9 Dec 2018 23:27:23 +0000 (UTC)
+Date:   Mon, 10 Dec 2018 00:27:22 +0100
+From:   Sabrina Dubroca <sd@queasysnail.net>
+To:     Andrew Lunn <andrew@lunn.ch>
+Cc:     Heiner Kallweit <hkallweit1@gmail.com>,
+        David Miller <davem@davemloft.net>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Networking <netdev@vger.kernel.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Florian Fainelli <f.fainelli@gmail.com>
+Subject: Re: linux-next: Signed-off-by missing for commits in the net-next
+ tree
+Message-ID: <20181209232722.GA4425@bistromath.localdomain>
+References: <20181210080045.0e67ad79@canb.auug.org.au>
+ <20181209211139.GB21186@lunn.ch>
+ <011f5be3-4bc1-2e64-0ddf-b43b8dbc4dcd@gmail.com>
+ <20181209214907.GC21186@lunn.ch>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Sun, 09 Dec 2018 23:24:55 +0000 (UTC)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20181209214907.GC21186@lunn.ch>
+User-Agent: Mutt/1.11.1 (2018-12-01)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Sun, 09 Dec 2018 23:27:27 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Ben Hutchings <ben@decadent.org.uk> writes:
+2018-12-09, 22:49:07 +0100, Andrew Lunn wrote:
+> On Sun, Dec 09, 2018 at 10:33:10PM +0100, Heiner Kallweit wrote:
+> > On 09.12.2018 22:11, Andrew Lunn wrote:
+> > > On Mon, Dec 10, 2018 at 08:00:45AM +1100, Stephen Rothwell wrote:
+> > >> Hi all,
+> > >>
+> > >> Commits
+> > >>
+> > >>   dc9d38cec71c ("net: phy: mdio-gpio: Add phy_ignore_ta_mask to platform data")
+> > >>   04fa26bab06d ("net: phy: mdio-gpio: Add platform_data support for phy_mask")
+> > >>
+> > >> are missing a Signed-off-by from their author.
+> > > 
+> > > Hi David.
+> > > 
+> > > Any idea what happened here? The version in my git repo has SOB.
+> > > 
+> > > https://patchwork.ozlabs.org/patch/1009811/ also has my SOB.
+> > > 
+> > Instead of
+> > v2
+> > --
+> > int -> u32 in platform data structure
+> > 
+> > Signed-off-by: Andrew Lunn <andrew@lunn.ch>
+> > 
+> > shouldn't it be
+> > 
+> > Signed-off-by: Andrew Lunn <andrew@lunn.ch>
+> > ---
+> > v2
+> > - int -> u32 in platform data structure
+> 
+> Hi Heiner
+> 
+> David said he wanted to see the version history. So i deliberately put
+> it above the ---.
+> 
+> I'm just wondering if -- was enough to trigger something in David's
+> scripts? Or patchwork. The -- has disappeared in the commit which made
+> it into net-next.
+> 
+>    Andrew
 
-> 3.16.62-rc1 review patch.  If anyone has any objections, please let me know.
->
-> ------------------
->
-> From: Vitaly Kuznetsov <vkuznets@redhat.com>
->
-> commit 2d408c0d4574b01b9ed45e02516888bf925e11a9 upstream.
->
-> Commit f599c64fdf7d ("xen-netfront: Fix race between device setup and
-> open") changed the initialization order: xennet_create_queues() now
-> happens before we do register_netdev() so using netdev->name in
-> xennet_init_queue() is incorrect, we end up with the following in
-> /proc/interrupts:
->
->  60:        139          0   xen-dyn    -event     eth%d-q0-tx
->  61:        265          0   xen-dyn    -event     eth%d-q0-rx
->  62:        234          0   xen-dyn    -event     eth%d-q1-tx
->  63:          1          0   xen-dyn    -event     eth%d-q1-rx
->
-> and this looks ugly. Actually, using early netdev name (even when it's
-> already set) is also not ideal: nowadays we tend to rename eth devices
-> and queue name may end up not corresponding to the netdev name.
->
-> Use nodename from xenbus device for queue naming: this can't change in VM's
-> lifetime. Now /proc/interrupts looks like
->
->  62:        202          0   xen-dyn    -event     device/vif/0-q0-tx
->  63:        317          0   xen-dyn    -event     device/vif/0-q0-rx
->  64:        262          0   xen-dyn    -event     device/vif/0-q1-tx
->  65:         17          0   xen-dyn    -event     device/vif/0-q1-rx
->
-> Fixes: f599c64fdf7d ("xen-netfront: Fix race between device setup and open")
-> Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
-> Reviewed-by: Ross Lagerwall <ross.lagerwall@citrix.com>
-> Signed-off-by: David S. Miller <davem@davemloft.net>
-> Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
-> ---
->  drivers/net/xen-netfront.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> --- a/drivers/net/xen-netfront.c
-> +++ b/drivers/net/xen-netfront.c
-> @@ -1646,7 +1646,7 @@ static int xennet_init_queue(struct netf
->  	queue->rx_refill_timer.function = rx_refill_timeout;
->  
->  	snprintf(queue->name, sizeof(queue->name), "%s-q%u",
-> -		 queue->info->netdev->name, queue->id);
-> +		 queue->info->xbdev->nodename, queue->id);
->  
->  	/* Initialise tx_skbs as a free chain containing every entry. */
->  	queue->tx_skb_freelist = 0;
->
+If you fetch the mbox from patchwork at
 
-We should also take 
+    https://patchwork.ozlabs.org/patch/1009811/mbox/
 
-commit 21f2706b20100bb3db378461ab9b8e2035309b5b
-Author: Xiao Liang <xiliang@redhat.com>
-Date:   Tue Aug 14 23:21:28 2018 +0800
+it contains:
 
-    xen-netfront: fix warn message as irq device name has '/'
+-------- 8< --------
+v2
+Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
+---
+int -> u32 in platform data structure
 
-as it fixes an issue introduced by the commit in question. Sorry if this
-is already in your series but I wasn't CCed on it.
+Signed-off-by: Andrew Lunn <andrew@lunn.ch>
+---
+[diffstat]
+-------- 8< --------
+
+That's 3 dashes instead of the 2 from your mail. If you "git am" that,
+the sign-off and actual history will get chopped off.
+
+Maybe Stephen's script to detect those missing sign-offs could be run
+as a commit/apply hook by David? This happens regularly, sometimes
+dropping more than just a sign-off.
 
 -- 
-Vitaly
+Sabrina
