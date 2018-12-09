@@ -4,152 +4,243 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.7 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40EF2C07E85
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 06:21:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3A7BC07E85
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 06:22:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C7D372081F
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 06:21:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 697122081F
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 06:22:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=c0d3.blue header.i=@c0d3.blue header.b="Hk0RX1IZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C7D372081F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c0d3.blue
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f93ppxyP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 697122081F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726237AbeLIGVY (ORCPT
+        id S1726135AbeLIGWf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 01:21:24 -0500
-Received: from mail.aperture-lab.de ([138.201.29.205]:44094 "EHLO
-        mail.aperture-lab.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726066AbeLIGVY (ORCPT
+        Sun, 9 Dec 2018 01:22:35 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:36426 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726066AbeLIGWe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Dec 2018 01:21:24 -0500
-X-Greylist: delayed 418 seconds by postgrey-1.27 at vger.kernel.org; Sun, 09 Dec 2018 01:21:21 EST
-From:   =?UTF-8?q?Linus=20L=C3=BCssing?= <linus.luessing@c0d3.blue>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c0d3.blue; s=2018;
-        t=1544336062; h=from:from:sender:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:in-reply-to:
-         references; bh=oNHoiu42/t/ww87E46wJP16iwRyR74KseDxu5fVbDXM=;
-        b=Hk0RX1IZ4A4xusHEMxXqrBC1ik1wUXrq5iAO73QOUgGmSK42RLv8EJlKW0rW1iZYPb05Iw
-        xuopuq4ty3Hf3EzYLYhnZEErlIsFfT1XN05kQSN9Qul0q44SucWKNkiYvGvFSRaYKnyhGQ
-        jETIYZnMMp8p4bgJ8v0NNC8u4C0V1mDIflyEmcNrgFqIQo17/WuvAcV6+T6BxrwtDU02HL
-        JV56tJmf4TPTPbZll5qIqbGxTDUYGDHA5fkEtVxea/WpXAqBl3xgW5C6AGH9eg4UaN+KAL
-        dbFCV8qlff9FuNWy6DX07M2vQI6PtLuQskrdu7oeoJ1nNKGfyhGeHeVPTlqozw==
-To:     netfilter-devel@vger.kernel.org
-Cc:     Pablo Neira Ayuso <pablo@netfilter.org>,
-        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
-        Florian Westphal <fw@strlen.de>,
-        Roopa Prabhu <roopa@cumulusnetworks.com>,
-        Nikolay Aleksandrov <nikolay@cumulusnetworks.com>,
-        "David S . Miller" <davem@davemloft.net>, coreteam@netfilter.org,
-        bridge@lists.linux-foundation.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        =?UTF-8?q?Linus=20L=C3=BCssing?= <linus.luessing@c0d3.blue>
-Subject: [PATCH net-next v2] netfilter: ebtables: avoid resetting limit rule state
-Date:   Sun,  9 Dec 2018 07:14:05 +0100
-Message-Id: <20181209061405.15112-1-linus.luessing@c0d3.blue>
+        Sun, 9 Dec 2018 01:22:34 -0500
+Received: by mail-pf1-f195.google.com with SMTP id b85so3854075pfc.3
+        for <linux-kernel@vger.kernel.org>; Sat, 08 Dec 2018 22:22:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=vrDZhVhESJrgo9I37HsCYlD0UhJd1Z3L7pfxlocMpRY=;
+        b=f93ppxyP+g/HMh0XPcIluZMRvd3Kx7I4fKxPVBGqTntU1ePzIyYb7D4Ghe9PmN7GGP
+         f75ncJBga2sRv89wuyrzpPTl6mLbvBnuM3R46IFORfeYCacCH3Pm8RouZI2YPrxBIR2Z
+         4NVv1f4Re3fVs+3u8+swXH3DByJtcvHXMTDCRABmJvduLRedZrgUxya2cIg/37robvwh
+         jlCsWwr8Ilk/qEOr447gVrIYMrBMQoJlw9Ysc5VW725J4lXZ5JB6NGvfY7Uggg4JfxDM
+         Wh+4xOu/MbxUCGMb9Oa2o57mOnJqLFXBf+s0dtXt3cA5L/GfPBUQ9qSLzT44sYTchEzC
+         TCng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=vrDZhVhESJrgo9I37HsCYlD0UhJd1Z3L7pfxlocMpRY=;
+        b=r6CtC092PKt1sD6lGd4ajGVF8L6kAc6lUakO3lZ2JyL12a+m13hKuaFU21Gi/S0WML
+         +J9rNZ6Ez4jxutJIv5sFucVh3KkgN36BalrSde4MctKAB7nE4uAejviDyL3dK6mbO/FR
+         QZor/7ya/WLe7oLS7spb5BEvVgAnPWaZvjh7jBt8rFsEnKcoCRdfMNPw1dCNXPtznfEu
+         UpyWDzQ/3Eu8GypYxz/Z4HVe9qRB6uCyuUwXvt3FUA5cOycyQHvjPG33/aZCGNw+0SCu
+         MEdjkveC3OGhXrJpf4hi5eIuEZgOzSzKFIPjUL4opZdtFsVpKwJ7V83GP9yt4MP0DbCX
+         PWOg==
+X-Gm-Message-State: AA+aEWZrVTJiDBgJHBNd4zMiIxHLX+UXLHjLlb/P4DDVgstbn+aPnj0Q
+        F8gdl6eGfAOzvsg3/8UZdIbqk93y
+X-Google-Smtp-Source: AFSGD/XO4gVh13T3syywjO/eYJLuwdyIvsSghIlsbQgltVdbi1R3k1ggpuC0qg80BEczY35oF/H9qg==
+X-Received: by 2002:a62:9913:: with SMTP id d19mr7992353pfe.107.1544336553506;
+        Sat, 08 Dec 2018 22:22:33 -0800 (PST)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id x27sm19057521pfe.178.2018.12.08.22.22.31
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 08 Dec 2018 22:22:32 -0800 (PST)
+Subject: Re: [PATCH] nvme: default to 0 poll queues
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        Keith Busch <keith.busch@intel.com>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20181209004953.GA11638@roeck-us.net>
+ <fa7aabad-774b-4e5b-686f-3696762291c1@kernel.dk>
+From:   Guenter Roeck <linux@roeck-us.net>
+Message-ID: <4ad5653b-1cd4-a770-2290-ca032eeb7072@roeck-us.net>
+Date:   Sat, 8 Dec 2018 22:22:31 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=c0d3.blue;
-        s=2018; t=1544336062; h=from:from:sender:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:in-reply-to:
-         references; bh=oNHoiu42/t/ww87E46wJP16iwRyR74KseDxu5fVbDXM=;
-        b=a/DSPdOcQJeJldAo9RRTvPiaBya/2nb1D7UgKe+2KuEifskLbZ7IzD6Dd7blpHW4gwrTae
-        lq5+aMuXdxIO0tzUbcKqMHMNS9lQ6MsBGQK4+MFVQ7BW7T8tzixbbMsrXeS9uZ21Ipn+gz
-        ekwRqufbSv8bDlDuDLieGPybBWoaPpsR9EMeBo5qcjZdQ/dfvQKir/FpbOuc8zV5GkhbMV
-        g8stxjGQ0FfAke7SmXOUam2IoNqcLwy7+hK8onIw9hxzcGDb5WuoUNVPR5sVNckxlwyyqR
-        7oOIPkYa3l+dvzyyYhtyhZx/qQZVg3+vITSdK5F9iRiNXDP33L4wz7NiSCuQMg==
-ARC-Seal: i=1; s=2018; d=c0d3.blue; t=1544336062; a=rsa-sha256; cv=none;
-        b=ZafTox+1Tboge3Mn7To8WKxfwn87ktKPdtIg76a1XaFSRI4yCmGEEfaxP8UVNHH2hvjOlK
-        AUZceFPh9805kb2VuXN/nt3xAOTUZVx/KNKAec4XCunoCLuhdr1XTU1oyEdbfMrKkkL0SV
-        +FkrKeUHbZmHs2NcWmZqTvR5j7YJoLGZ8gda1qpQq8OwvNvfShD4N9gxIeEy+/Au/dP5us
-        TVtQE2EMMcPNcyvZ7MXh2JeNKwTDcNykQ9CVaGuqWUoRmDt30sopfQZG+y7gp1HvT/5GWp
-        STutfZi3HZrZdpziQWeFHgDmV+jGL2as+OW3MqRNEgICZf6HgbAoucG8OvJNHg==
-ARC-Authentication-Results: i=1;
-        ORIGINATING;
-        auth=pass smtp.auth=linus.luessing@c0d3.blue smtp.mailfrom=linus.luessing@c0d3.blue
-Authentication-Results: ORIGINATING;
-        auth=pass smtp.auth=linus.luessing@c0d3.blue smtp.mailfrom=linus.luessing@c0d3.blue
+In-Reply-To: <fa7aabad-774b-4e5b-686f-3696762291c1@kernel.dk>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-So far any changes with ebtables will reset the state of limit rules,
-leading to spikes in traffic. This is especially noticeable if changes
-are done frequently, for instance via a daemon.
+On 12/8/18 9:38 PM, Jens Axboe wrote:
+> On 12/8/18 5:49 PM, Guenter Roeck wrote:
+>> Hi,
+>>
+>> On Mon, Nov 19, 2018 at 08:18:24AM -0700, Jens Axboe wrote:
+>>> We need a better way of configuring this, and given that polling is
+>>> (still) a bit niche, let's default to using 0 poll queues. That way
+>>> we'll have the same read/write/poll behavior as 4.20, and users that
+>>> want to test/use polling are required to do manual configuration of the
+>>> number of poll queues.
+>>>
+>>> Reviewed-by: Christoph Hellwig <hch@lst.de>
+>>> Signed-off-by: Jens Axboe <axboe@kernel.dk>
+>>> ---
+>>
+>> This patch results in a boot stall when booting parisc (hppa) images
+>> from nvme in qemu.
+>>
+>> ...
+>> Fusion MPT SAS Host driver 3.04.20
+>> rcu: INFO: rcu_sched detected stalls on CPUs/tasks:
+>> rcu: 	(detected by 0, t=5252 jiffies, g=141, q=22)
+>> rcu: All QSes seen, last rcu_sched kthread activity 5252 (-66742--71994), jiffies_till_next_fqs=1, root ->qsmask 0x0
+>> kworker/u8:3    R  running task        0    85      2 0x00000004
+>> Workqueue: nvme-reset-wq nvme_reset_work
+>> Backtrace:
+>>   [<10190d20>] show_stack+0x28/0x38
+>>   [<101dd1e0>] sched_show_task.part.3+0xc4/0x144
+>>   [<101dd290>] sched_show_task+0x30/0x38
+>>   [<10221e18>] rcu_check_callbacks+0x760/0x7a4
+>>
+>> rcu: rcu_sched kthread starved for 5252 jiffies! g141 f0x2 RCU_GP_WAIT_FQS(5) ->state=0x0 ->cpu=0
+>> rcu: RCU grace-period kthread stack dump:
+>> rcu_sched       R  running task        0    10      2 0x00000000
+>> Backtrace:
+>>   [<10995b1c>] __schedule+0x214/0x648
+>>   [<10995f94>] schedule+0x44/0xa8
+>>   [<1099a7c4>] schedule_timeout+0x114/0x1a0
+>>   [<10220e70>] rcu_gp_kthread+0x744/0x968
+>>   [<101d5438>] kthread+0x154/0x15c
+>>   [<1019501c>] ret_from_kernel_thread+0x1c/0x24
+>>
+>> [ continued ]
+>>
+>> This is only seen in SMP configurations; non-SMP configurations are ok.
+>> Reverting the patch fixes the problem. v4.20-rcX and earlier kernels
+>> also boot without problems.
+>>
+>> For reference, here is the qemu command line. This is with qemu 3.0.
+>>
+>> qemu-system-hppa -kernel vmlinux -no-reboot \
+>> 	-snapshot \
+>> 	-device nvme,serial=foo,drive=d0 \
+>> 	-drive file=rootfs.ext2,if=none,format=raw,id=d0 \
+>> 	-append 'root=/dev/nvme0n1 rw rootwait panic=-1 console=ttyS0,115200 ' \
+>> 	-nographic -monitor null
+>>
+>> Please let me know if you need additional information.
+> 
+> Hmm, I think the queue reduction case has a logic error. Actually there
+> are two bugs:
+> 
+> 1) Ensure we don't keep overwriting the queue count we ask for
+> 2) Don't include poll_queues in the vectors we need
+> 
+> Untested... And not super pretty. But does this work for you?
+> 
 
-This patch fixes this by bailing out from (re)setting if the limit
-rule was initialized before.
+It solves the boot problem on parisc/hppa. I didn't test with any other architectures.
+Should I run a complete test sequence ?
 
-When sending packets every 250ms for 600s, with a
-"--limit 1/sec --limit-burst 50" rule and a command like this
-in the background:
+Guenter
 
-$ ebtables -N VOIDCHAIN
-$ while true; do ebtables -F VOIDCHAIN; sleep 30; done
-
-The results are:
-
-Before: ~1600 packets
-After: 650 packets
-
-This also aligns the behavior to "xtables-nft-multi ebtables" which uses
-nft_limit instead of ebt_limit. In tests nft_limit did not suffer from
-this issue and rate limited to 650 just fine.
-
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Signed-off-by: Linus Lüssing <linus.luessing@c0d3.blue>
-
----
-
-Changelog v2:
-
-- Adjusted commit message (adjusted title, added test results with
-  nft_limit for comparison)
-- Excluded rate limiting variables from zeroing when passed to userspace
-  by increasing .usersize. This became necessary with 4.11 /
-  commit ec2318904965 ("xtables: extend matches and targets with .usersize")
-- Retested with 4.20-rc4 and current net-next/master (83af01ba1c2d)
-
-v1 was:
-
-"[net-next] bridge: ebtables: Avoid resetting limit rule state"
--> https://lore.kernel.org/patchwork/patch/854802/
----
- net/bridge/netfilter/ebt_limit.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
-
-diff --git a/net/bridge/netfilter/ebt_limit.c b/net/bridge/netfilter/ebt_limit.c
-index 165b9d678cf1..2cf9861c3bce 100644
---- a/net/bridge/netfilter/ebt_limit.c
-+++ b/net/bridge/netfilter/ebt_limit.c
-@@ -69,6 +69,10 @@ static int ebt_limit_mt_check(const struct xt_mtchk_param *par)
- {
- 	struct ebt_limit_info *info = par->matchinfo;
- 
-+	/* Do not reset state on unrelated table changes */
-+	if (info->prev)
-+		return 0;
-+
- 	/* Check for overflow. */
- 	if (info->burst == 0 ||
- 	    user2credits(info->avg * info->burst) < user2credits(info->avg)) {
-@@ -105,7 +109,7 @@ static struct xt_match ebt_limit_mt_reg __read_mostly = {
- 	.match		= ebt_limit_mt,
- 	.checkentry	= ebt_limit_mt_check,
- 	.matchsize	= sizeof(struct ebt_limit_info),
--	.usersize	= offsetof(struct ebt_limit_info, prev),
-+	.usersize	= sizeof(struct ebt_limit_info),
- #ifdef CONFIG_COMPAT
- 	.compatsize	= sizeof(struct ebt_compat_limit_info),
- #endif
--- 
-2.11.0
+> 
+> diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
+> index 7732c4979a4e..fe00e19493ae 100644
+> --- a/drivers/nvme/host/pci.c
+> +++ b/drivers/nvme/host/pci.c
+> @@ -2083,7 +2083,7 @@ static void nvme_calc_io_queues(struct nvme_dev *dev, unsigned int nr_io_queues)
+>   	}
+>   }
+>   
+> -static int nvme_setup_irqs(struct nvme_dev *dev, int nr_io_queues)
+> +static int nvme_setup_irqs(struct nvme_dev *dev, int irq_queues, int pqueues)
+>   {
+>   	struct pci_dev *pdev = to_pci_dev(dev->dev);
+>   	int irq_sets[2];
+> @@ -2100,7 +2100,8 @@ static int nvme_setup_irqs(struct nvme_dev *dev, int nr_io_queues)
+>   	 * IRQ vector needs.
+>   	 */
+>   	do {
+> -		nvme_calc_io_queues(dev, nr_io_queues);
+> +		nvme_calc_io_queues(dev, irq_queues + pqueues);
+> +		pqueues = dev->io_queues[HCTX_TYPE_POLL];
+>   		irq_sets[0] = dev->io_queues[HCTX_TYPE_DEFAULT];
+>   		irq_sets[1] = dev->io_queues[HCTX_TYPE_READ];
+>   		if (!irq_sets[1])
+> @@ -2111,11 +2112,11 @@ static int nvme_setup_irqs(struct nvme_dev *dev, int nr_io_queues)
+>   		 * 1 + 1 queues, just ask for a single vector. We'll share
+>   		 * that between the single IO queue and the admin queue.
+>   		 */
+> -		if (!(result < 0 && nr_io_queues == 1))
+> -			nr_io_queues = irq_sets[0] + irq_sets[1] + 1;
+> +		if (!(result < 0 || irq_queues == 1))
+> +			irq_queues = irq_sets[0] + irq_sets[1] + 1;
+>   
+> -		result = pci_alloc_irq_vectors_affinity(pdev, nr_io_queues,
+> -				nr_io_queues,
+> +		result = pci_alloc_irq_vectors_affinity(pdev, irq_queues,
+> +				irq_queues,
+>   				PCI_IRQ_ALL_TYPES | PCI_IRQ_AFFINITY, &affd);
+>   
+>   		/*
+> @@ -2125,12 +2126,12 @@ static int nvme_setup_irqs(struct nvme_dev *dev, int nr_io_queues)
+>   		 * likely does not. Back down to ask for just one vector.
+>   		 */
+>   		if (result == -ENOSPC) {
+> -			nr_io_queues--;
+> -			if (!nr_io_queues)
+> +			irq_queues--;
+> +			if (!irq_queues)
+>   				return result;
+>   			continue;
+>   		} else if (result == -EINVAL) {
+> -			nr_io_queues = 1;
+> +			irq_queues = 1;
+>   			continue;
+>   		} else if (result <= 0)
+>   			return -EIO;
+> @@ -2144,7 +2145,7 @@ static int nvme_setup_io_queues(struct nvme_dev *dev)
+>   {
+>   	struct nvme_queue *adminq = &dev->queues[0];
+>   	struct pci_dev *pdev = to_pci_dev(dev->dev);
+> -	int result, nr_io_queues;
+> +	int result, want_irqs, nr_io_queues, pqueues;
+>   	unsigned long size;
+>   
+>   	nr_io_queues = max_io_queues();
+> @@ -2185,7 +2186,20 @@ static int nvme_setup_io_queues(struct nvme_dev *dev)
+>   	 */
+>   	pci_free_irq_vectors(pdev);
+>   
+> -	result = nvme_setup_irqs(dev, nr_io_queues);
+> +	/*
+> +	 * If we don't get the number of IO queues we asked for, see if we
+> +	 * need to adjust the number of poll queues down
+> +	 */
+> +	pqueues = poll_queues;
+> +	if (!pqueues)
+> +		want_irqs = nr_io_queues;
+> +	else if (pqueues >= nr_io_queues) {
+> +		want_irqs = 1;
+> +		pqueues = nr_io_queues - 1;
+> +	} else
+> +		want_irqs = nr_io_queues - pqueues;
+> +
+> +	result = nvme_setup_irqs(dev, want_irqs, pqueues);
+>   	if (result <= 0)
+>   		return -EIO;
+>   
+> 
 
