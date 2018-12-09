@@ -6,44 +6,46 @@ X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7C6AC07E85
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:08:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D1E5C07E85
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:08:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A635020661
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:08:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A635020661
+	by mail.kernel.org (Postfix) with ESMTP id 5DEA320661
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:08:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5DEA320661
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727972AbeLIWIP (ORCPT
+        id S1726863AbeLIWIT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 17:08:15 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:37306 "EHLO
+        Sun, 9 Dec 2018 17:08:19 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:37312 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727035AbeLIWIL (ORCPT
+        by vger.kernel.org with ESMTP id S1727690AbeLIWIO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Dec 2018 17:08:11 -0500
+        Sun, 9 Dec 2018 17:08:14 -0500
 Received: from pub.yeoldevic.com ([81.174.156.145] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW73I-0002pp-Fg; Sun, 09 Dec 2018 21:55:52 +0000
+        id 1gW73L-0002pp-EV; Sun, 09 Dec 2018 21:55:55 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW72b-0003K1-Bv; Sun, 09 Dec 2018 21:55:09 +0000
+        id 1gW72a-0003IE-S4; Sun, 09 Dec 2018 21:55:08 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, "Dave Airlie" <airlied@redhat.com>,
-        "Mikulas Patocka" <mpatocka@redhat.com>
+CC:     akpm@linux-foundation.org, "Jens Axboe" <axboe@kernel.dk>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        "Greg Edwards" <gedwards@ddn.com>
 Date:   Sun, 09 Dec 2018 21:50:33 +0000
-Message-ID: <lsq.1544392233.373387121@decadent.org.uk>
+Message-ID: <lsq.1544392233.648818470@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 087/328] udl-kms: handle allocation failure
+Subject: [PATCH 3.16 076/328] block: move bio_integrity_{intervals,bytes}
+ into blkdev.h
 In-Reply-To: <lsq.1544392232.713909046@decadent.org.uk>
 X-SA-Exim-Connect-IP: 81.174.156.145
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -57,87 +59,112 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mikulas Patocka <mpatocka@redhat.com>
+From: Greg Edwards <gedwards@ddn.com>
 
-commit 542bb9788a1f485eb1a2229178f665d8ea166156 upstream.
+commit 359f642700f2ff05d9c94cd9216c97af7b8e9553 upstream.
 
-Allocations larger than PAGE_ALLOC_COSTLY_ORDER are unreliable and they
-may fail anytime. This patch fixes the udl kms driver so that when a large
-alloactions fails, it tries to do multiple smaller allocations.
+This allows bio_integrity_bytes() to be called from drivers instead of
+open coding it.
 
-Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
-Signed-off-by: Dave Airlie <airlied@redhat.com>
-[bwh: Backported to 3.16: adjust context]
+Acked-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Greg Edwards <gedwards@ddn.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+[bwh: Backported to 3.16: bio_integrity_intervals() was called
+ bio_integrity_hw_sectors() and had a different implementation.  Move it
+ without renaming.]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/gpu/drm/udl/udl_main.c | 28 ++++++++++++++++++----------
- 1 file changed, 18 insertions(+), 10 deletions(-)
+ block/bio-integrity.c  | 22 ----------------------
+ include/linux/blkdev.h | 34 ++++++++++++++++++++++++++++++++++
+ 2 files changed, 34 insertions(+), 22 deletions(-)
 
---- a/drivers/gpu/drm/udl/udl_main.c
-+++ b/drivers/gpu/drm/udl/udl_main.c
-@@ -171,17 +171,22 @@ static void udl_free_urb_list(struct drm
- static int udl_alloc_urb_list(struct drm_device *dev, int count, size_t size)
- {
- 	struct udl_device *udl = dev->dev_private;
--	int i = 0;
- 	struct urb *urb;
- 	struct urb_node *unode;
- 	char *buf;
-+	size_t wanted_size = count * size;
+--- a/block/bio-integrity.c
++++ b/block/bio-integrity.c
+@@ -194,32 +194,6 @@ int bio_integrity_enabled(struct bio *bi
+ EXPORT_SYMBOL(bio_integrity_enabled);
  
- 	spin_lock_init(&udl->urbs.lock);
- 
-+retry:
- 	udl->urbs.size = size;
- 	INIT_LIST_HEAD(&udl->urbs.list);
- 
--	while (i < count) {
-+	sema_init(&udl->urbs.limit_sem, 0);
-+	udl->urbs.count = 0;
-+	udl->urbs.available = 0;
-+
-+	while (udl->urbs.count * size < wanted_size) {
- 		unode = kzalloc(sizeof(struct urb_node), GFP_KERNEL);
- 		if (!unode)
- 			break;
-@@ -197,11 +202,16 @@ static int udl_alloc_urb_list(struct drm
- 		}
- 		unode->urb = urb;
- 
--		buf = usb_alloc_coherent(udl->ddev->usbdev, MAX_TRANSFER, GFP_KERNEL,
-+		buf = usb_alloc_coherent(udl->ddev->usbdev, size, GFP_KERNEL,
- 					 &urb->transfer_dma);
- 		if (!buf) {
- 			kfree(unode);
- 			usb_free_urb(urb);
-+			if (size > PAGE_SIZE) {
-+				size /= 2;
-+				udl_free_urb_list(dev);
-+				goto retry;
-+			}
- 			break;
- 		}
- 
-@@ -212,16 +222,14 @@ static int udl_alloc_urb_list(struct drm
- 
- 		list_add_tail(&unode->entry, &udl->urbs.list);
- 
--		i++;
-+		up(&udl->urbs.limit_sem);
-+		udl->urbs.count++;
-+		udl->urbs.available++;
- 	}
- 
--	sema_init(&udl->urbs.limit_sem, i);
--	udl->urbs.count = i;
--	udl->urbs.available = i;
+ /**
+- * bio_integrity_hw_sectors - Convert 512b sectors to hardware ditto
+- * @bi:		blk_integrity profile for device
+- * @sectors:	Number of 512 sectors to convert
+- *
+- * Description: The block layer calculates everything in 512 byte
+- * sectors but integrity metadata is done in terms of the hardware
+- * sector size of the storage device.  Convert the block layer sectors
+- * to physical sectors.
+- */
+-static inline unsigned int bio_integrity_hw_sectors(struct blk_integrity *bi,
+-						    unsigned int sectors)
+-{
+-	/* At this point there are only 512b or 4096b DIF/EPP devices */
+-	if (bi->sector_size == 4096)
+-		return sectors >>= 3;
 -
--	DRM_DEBUG("allocated %d %d byte urbs\n", i, (int) size);
-+	DRM_DEBUG("allocated %d %d byte urbs\n", udl->urbs.count, (int) size);
- 
--	return i;
-+	return udl->urbs.count;
+-	return sectors;
+-}
+-
+-static inline unsigned int bio_integrity_bytes(struct blk_integrity *bi,
+-					       unsigned int sectors)
+-{
+-	return bio_integrity_hw_sectors(bi, sectors) * bi->tuple_size;
+-}
+-
+-/**
+  * bio_integrity_tag_size - Retrieve integrity tag space
+  * @bio:	bio to inspect
+  *
+--- a/include/linux/blkdev.h
++++ b/include/linux/blkdev.h
+@@ -1542,6 +1542,32 @@ queue_max_integrity_segments(struct requ
+ 	return q->limits.max_integrity_segments;
  }
  
- struct urb *udl_get_urb(struct drm_device *dev)
++/**
++ * bio_integrity_hw_sectors - Convert 512b sectors to hardware ditto
++ * @bi:		blk_integrity profile for device
++ * @sectors:	Number of 512 sectors to convert
++ *
++ * Description: The block layer calculates everything in 512 byte
++ * sectors but integrity metadata is done in terms of the hardware
++ * sector size of the storage device.  Convert the block layer sectors
++ * to physical sectors.
++ */
++static inline unsigned int bio_integrity_hw_sectors(struct blk_integrity *bi,
++						    unsigned int sectors)
++{
++	/* At this point there are only 512b or 4096b DIF/EPP devices */
++	if (bi->sector_size == 4096)
++		return sectors >>= 3;
++
++	return sectors;
++}
++
++static inline unsigned int bio_integrity_bytes(struct blk_integrity *bi,
++					       unsigned int sectors)
++{
++	return bio_integrity_hw_sectors(bi, sectors) * bi->tuple_size;
++}
++
+ #else /* CONFIG_BLK_DEV_INTEGRITY */
+ 
+ struct bio;
+@@ -1608,6 +1634,18 @@ static inline bool blk_integrity_is_init
+ {
+ 	return 0;
+ }
++
++static inline unsigned int bio_integrity_hw_sectors(struct blk_integrity *bi,
++						   unsigned int sectors)
++{
++	return 0;
++}
++
++static inline unsigned int bio_integrity_bytes(struct blk_integrity *bi,
++					       unsigned int sectors)
++{
++	return 0;
++}
+ 
+ #endif /* CONFIG_BLK_DEV_INTEGRITY */
+ 
 
