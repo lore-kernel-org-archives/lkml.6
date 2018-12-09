@@ -6,46 +6,43 @@ X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95765C07E85
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:13:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61167C07E85
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:13:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5FDB02081F
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:13:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5FDB02081F
+	by mail.kernel.org (Postfix) with ESMTP id 294E820661
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:13:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 294E820661
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728392AbeLIWNI (ORCPT
+        id S1728173AbeLIWNO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 17:13:08 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:37860 "EHLO
+        Sun, 9 Dec 2018 17:13:14 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:37872 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728374AbeLIWNG (ORCPT
+        by vger.kernel.org with ESMTP id S1727943AbeLIWNK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Dec 2018 17:13:06 -0500
+        Sun, 9 Dec 2018 17:13:10 -0500
 Received: from pub.yeoldevic.com ([81.174.156.145] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW73I-0002ia-RI; Sun, 09 Dec 2018 21:55:53 +0000
+        id 1gW73L-0002im-PW; Sun, 09 Dec 2018 21:55:55 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW72b-0003JH-7i; Sun, 09 Dec 2018 21:55:09 +0000
+        id 1gW72a-0003HP-Ev; Sun, 09 Dec 2018 21:55:08 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org,
-        "Yelena Krivosheev" <yelena@marvell.com>,
-        "Gregory CLEMENT" <gregory.clement@bootlin.com>,
-        "David S. Miller" <davem@davemloft.net>
+CC:     akpm@linux-foundation.org, "Takashi Iwai" <tiwai@suse.de>
 Date:   Sun, 09 Dec 2018 21:50:33 +0000
-Message-ID: <lsq.1544392233.267580063@decadent.org.uk>
+Message-ID: <lsq.1544392233.310329406@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 084/328] net: mvneta: fix mtu change on port without link
+Subject: [PATCH 3.16 066/328] ALSA: seq: Fix poll() error return
 In-Reply-To: <lsq.1544392232.713909046@decadent.org.uk>
 X-SA-Exim-Connect-IP: 81.174.156.145
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -59,33 +56,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Yelena Krivosheev <yelena@marvell.com>
+From: Takashi Iwai <tiwai@suse.de>
 
-commit 8466baf788ec3e18836bd9c91ba0b1a07af25878 upstream.
+commit a49a71f6e25da2acc637fcd31e73debd96ca18f8 upstream.
 
-It is incorrect to enable TX/RX queues (call by mvneta_port_up()) for
-port without link. Indeed MTU change for interface without link causes TX
-queues to stuck.
+The sanity checks in ALSA sequencer and OSS sequencer emulation codes
+return falsely -ENXIO from poll callback.  They should be EPOLLERR
+instead.
 
-Fixes: c5aff18204da ("net: mvneta: driver for Marvell Armada 370/XP
-network unit")
-Signed-off-by: Yelena Krivosheev <yelena@marvell.com>
-[gregory.clement: adding Fixes tags and rewording commit log]
-Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+This was caught thanks to the recent change to the return value.
+
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+[bwh: Backported to 3.16: s/EPOLLERR/POLLERR/]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/net/ethernet/marvell/mvneta.c | 1 -
- 1 file changed, 1 deletion(-)
+ sound/core/seq/oss/seq_oss.c   | 2 +-
+ sound/core/seq/seq_clientmgr.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/net/ethernet/marvell/mvneta.c
-+++ b/drivers/net/ethernet/marvell/mvneta.c
-@@ -2475,7 +2475,6 @@ static int mvneta_change_mtu(struct net_
- 	}
+--- a/sound/core/seq/oss/seq_oss.c
++++ b/sound/core/seq/oss/seq_oss.c
+@@ -194,7 +194,7 @@ odev_poll(struct file *file, poll_table
+ 	struct seq_oss_devinfo *dp;
+ 	dp = file->private_data;
+ 	if (snd_BUG_ON(!dp))
+-		return -ENXIO;
++		return POLLERR;
+ 	return snd_seq_oss_poll(dp, file, wait);
+ }
  
- 	mvneta_start_dev(pp);
--	mvneta_port_up(pp);
+--- a/sound/core/seq/seq_clientmgr.c
++++ b/sound/core/seq/seq_clientmgr.c
+@@ -1110,7 +1110,7 @@ static unsigned int snd_seq_poll(struct
  
- 	netdev_update_features(dev);
+ 	/* check client structures are in place */
+ 	if (snd_BUG_ON(!client))
+-		return -ENXIO;
++		return POLLERR;
  
+ 	if ((snd_seq_file_flags(file) & SNDRV_SEQ_LFLG_INPUT) &&
+ 	    client->data.user.fifo) {
 
