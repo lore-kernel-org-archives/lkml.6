@@ -2,538 +2,145 @@ Return-Path: <SRS0=cWqk=OS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 740D9C67838
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 18:24:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6976C07E85
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 18:27:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2157E20837
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 18:24:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6930420865
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 18:27:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=tycho-ws.20150623.gappssmtp.com header.i=@tycho-ws.20150623.gappssmtp.com header.b="OVHT9tKy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2157E20837
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.ws
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=xenosoft.de header.i=@xenosoft.de header.b="HLvXjmZg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6930420865
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xenosoft.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726284AbeLISYi (ORCPT
+        id S1726245AbeLIS1F (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 13:24:38 -0500
-Received: from mail-io1-f67.google.com ([209.85.166.67]:43748 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726261AbeLISYb (ORCPT
+        Sun, 9 Dec 2018 13:27:05 -0500
+Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.54]:32869 "EHLO
+        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726154AbeLIS1E (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Dec 2018 13:24:31 -0500
-Received: by mail-io1-f67.google.com with SMTP id f10so7049257iop.10
-        for <linux-kernel@vger.kernel.org>; Sun, 09 Dec 2018 10:24:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tycho-ws.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=qEnobRo6+xYButQ0kLOrpR/Mtc0L60fnoJG2SHh2LMk=;
-        b=OVHT9tKyoMXpsTzUiSh8x/LUtMow9X8kLF6wynTrGCnPEHHl9hsOftratRbJSX91G0
-         uoK1tknP6LMu3ytwsMWPaBUg47jb5W3cEk9ADJLIyQg+fZiWbli9To+N/ZxStnKFZ4dV
-         lCUBGmdt+TU9PRqepfwgXl5aG2gSh+u5GaDdFDkyAqbYmYd1n0EKLjPL/DC7lSWDkOCh
-         b4O3NdncFAzirr5duPIlN0hU2HCSwKRzzE6IgpRn/a4+txjpFVzsVFIXKz12RvjQIJC7
-         /FWAu9hjDU1p2YKzYruFFGcX82gjAkRssyV+9cHRsLwZjeUTt474Xs1iJl6OmEtO2jML
-         8p6w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=qEnobRo6+xYButQ0kLOrpR/Mtc0L60fnoJG2SHh2LMk=;
-        b=aSlXsMPlk5GrF2ANKplKg4HZMmDGC/ML3SBQboQJu97AnGLaeHnhF/6kYNuA+1oQuU
-         8YG5HPGlZumFbOk9W4OMpyKKg+7uYidhkHKIJYt6vf+eioIcvs878A9jfeAB3JpL7D9G
-         uNN7Ri4ECB/nwCbrGiwJUatNbff6DMfPPadFxmXqeOv338jJSZbDLHqajdDDqO9OKA2i
-         SvknUrNis5b736oPtNp+VSINlHgJzw8JUeS/fiNClIdCbrmpvV2Nd7tvtk0gUhzFnN+6
-         6q6lqbculMJX7+uaST+zQp5+Y7OE6y9orT775+wGXoOjHuZq8Dtfjek2NRH+lP09vwCR
-         uH+Q==
-X-Gm-Message-State: AA+aEWbiUWy79cnHMxcPpjPkCDv6GEPC6W4QAY8gpPE+cJ/SPXDAGOMs
-        l9BGTWxXepWsWcWxsMZFxQXyog==
-X-Google-Smtp-Source: AFSGD/V2i+ytkpXpBo1dDzUNUGFnLrUON/WrXwCV9RHFzeE1lCQDY93I/VsyWh2KOykv2DABhUQccg==
-X-Received: by 2002:a5d:9654:: with SMTP id d20mr7634243ios.257.1544379869909;
-        Sun, 09 Dec 2018 10:24:29 -0800 (PST)
-Received: from cisco.lan (71-218-133-134.hlrn.qwest.net. [71.218.133.134])
-        by smtp.gmail.com with ESMTPSA id l25sm3270631ioj.68.2018.12.09.10.24.28
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 09 Dec 2018 10:24:29 -0800 (PST)
-From:   Tycho Andersen <tycho@tycho.ws>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Andy Lutomirski <luto@amacapital.net>,
-        Oleg Nesterov <oleg@redhat.com>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Christian Brauner <christian@brauner.io>,
-        Tyler Hicks <tyhicks@canonical.com>,
-        Akihiro Suda <suda.akihiro@lab.ntt.co.jp>,
-        Aleksa Sarai <asarai@suse.de>, Jann Horn <jannh@google.com>,
-        linux-kernel@vger.kernel.org,
-        containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
-        Tycho Andersen <tycho@tycho.ws>
-Subject: [PATCH v10 4/4] samples: add an example of seccomp user trap
-Date:   Sun,  9 Dec 2018 11:24:14 -0700
-Message-Id: <20181209182414.30862-5-tycho@tycho.ws>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181209182414.30862-1-tycho@tycho.ws>
-References: <20181209182414.30862-1-tycho@tycho.ws>
+        Sun, 9 Dec 2018 13:27:04 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1544380021;
+        s=strato-dkim-0002; d=xenosoft.de;
+        h=In-Reply-To:Date:Message-ID:References:Cc:To:From:Subject:
+        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
+        bh=ZwqB3fEfvgX8g+8jLemdA538IQXdYBFwTvYj1EW8mCc=;
+        b=HLvXjmZgUOMviRdscYIzzS85XqqP5tTxQU8fTyHONzu+v0FH8yGx4CNT9Ci+zlpq0X
+        D8rKqgWQjWmfUrYlYM8BxsA/n9gOwHdU0JoIXxbS6isDD67GyFzlQqSjF2c+BIvYeEGy
+        Pr+Ox72O+gVd/Fppp7eW1zBTCQ3DQJmY6dIyxGlZrDBJJb/QnjItbiaIURJHS4yxpIN1
+        fXggOHokZK0B6NCbfI+s/MuN9SuMwUS9gxsYn2MTEZlPqmNim/cX8xiC8ddaEUf5KF3K
+        /K+w/TFEQxh71H7m8basq9v7lk26BOn6N/WTutVpnEGYqxCDI4emtuf9z6jTdhpHt6v7
+        q4zg==
+X-RZG-AUTH: ":L2QefEenb+UdBJSdRCXu93KJ1bmSGnhMdmOod1DhGM4l4Hio94KKxRySfLxnHfJ+Dkjp5G5MdirQj0WG7Cleh/U4UJXbAwdk7mn3Iw24hmsq"
+X-RZG-CLASS-ID: mo00
+Received: from [IPv6:2a02:8109:a400:162c:a909:518d:b600:96a]
+        by smtp.strato.de (RZmta 44.6 AUTH)
+        with ESMTPSA id 404b20uB9IQw0gp
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
+        (Client did not present a certificate);
+        Sun, 9 Dec 2018 19:26:58 +0100 (CET)
+Subject: Re: use generic DMA mapping code in powerpc V4
+From:   Christian Zigotzky <chzigotzky@xenosoft.de>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     linux-arch@vger.kernel.org,
+        Darren Stevens <darren@stevens-zone.net>,
+        linux-kernel@vger.kernel.org, Julian Margetson <runaway@candw.ms>,
+        linux-mm@kvack.org, iommu@lists.linux-foundation.org,
+        Paul Mackerras <paulus@samba.org>,
+        Olof Johansson <olof@lixom.net>, linuxppc-dev@lists.ozlabs.org
+References: <20181129170351.GC27951@lst.de>
+ <d0e04a85-f17d-414e-6fea-971414417430@xenosoft.de>
+ <20181130105346.GB26765@lst.de>
+ <8694431d-c669-b7b9-99fa-e99db5d45a7d@xenosoft.de>
+ <20181130131056.GA5211@lst.de>
+ <25999587-2d91-a63c-ed38-c3fb0075d9f1@xenosoft.de>
+ <c5202d29-863d-1377-0e2d-762203b317e2@xenosoft.de>
+ <58c61afb-290f-6196-c72c-ac7b61b84718@xenosoft.de>
+ <20181204142426.GA2743@lst.de>
+ <ef56d279-f75d-008e-71ba-7068c1b37c48@xenosoft.de>
+ <20181205140550.GA27549@lst.de>
+ <1948cf84-49ab-543c-472c-d18e27751903@xenosoft.de>
+ <5a2ea855-b4b0-e48a-5c3e-c859a8451ca2@xenosoft.de>
+ <7B6DDB28-8BF6-4589-84ED-F1D4D13BFED6@xenosoft.de>
+ <8a2c4581-0c85-8065-f37e-984755eb31ab@xenosoft.de>
+ <424bb228-c9e5-6593-1ab7-5950d9b2bd4e@xenosoft.de>
+ <c86d76b4-b199-557e-bc64-4235729c1e72@xenosoft.de>
+Message-ID: <1ecb7692-f3fb-a246-91f9-2db1b9496305@xenosoft.de>
+Date:   Sun, 9 Dec 2018 19:26:57 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.3
 MIME-Version: 1.0
+In-Reply-To: <c86d76b4-b199-557e-bc64-4235729c1e72@xenosoft.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Content-Language: de-DE
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The idea here is just to give a demonstration of how one could safely use
-the SECCOMP_RET_USER_NOTIF feature to do mount policies. This particular
-policy is (as noted in the comment) not very interesting, but it serves to
-illustrate how one might apply a policy dodging the various TOCTOU issues.
+Next step: c1bfcad4b0cf38ce5b00f7ad880d3a13484c123a (dma-mapping, 
+powerpc: simplify the arch dma_set_mask override)
 
-Signed-off-by: Tycho Andersen <tycho@tycho.ws>
-CC: Kees Cook <keescook@chromium.org>
-CC: Andy Lutomirski <luto@amacapital.net>
-CC: Oleg Nesterov <oleg@redhat.com>
-CC: Eric W. Biederman <ebiederm@xmission.com>
-CC: "Serge E. Hallyn" <serge@hallyn.com>
-CC: Christian Brauner <christian@brauner.io>
-CC: Tyler Hicks <tyhicks@canonical.com>
-CC: Akihiro Suda <suda.akihiro@lab.ntt.co.jp>
----
-v5: new in v5
-v7: updates for v7 API changes
-v8: * add some more comments about what's happening in main() (Kees)
-    * move from ptrace API to SECCOMP_FILTER_FLAG_NEW_LISTENER
-v9: * s/mknod/mount in error message
-    * switch to the SECCOMP_GET_NOTIF_SIZES API
-    * add a note about getting ENOENT from SECCOMP_IOCTL_NOTIF_SEND
----
- samples/seccomp/.gitignore  |   1 +
- samples/seccomp/Makefile    |   7 +-
- samples/seccomp/user-trap.c | 375 ++++++++++++++++++++++++++++++++++++
- 3 files changed, 382 insertions(+), 1 deletion(-)
+Result: No problems with the PASEMI onboard ethernet and with booting 
+the X5000 (P5020 board).
 
-diff --git a/samples/seccomp/.gitignore b/samples/seccomp/.gitignore
-index 78fb78184291..d1e2e817d556 100644
---- a/samples/seccomp/.gitignore
-+++ b/samples/seccomp/.gitignore
-@@ -1,3 +1,4 @@
- bpf-direct
- bpf-fancy
- dropper
-+user-trap
-diff --git a/samples/seccomp/Makefile b/samples/seccomp/Makefile
-index cf34ff6b4065..4920903c8009 100644
---- a/samples/seccomp/Makefile
-+++ b/samples/seccomp/Makefile
-@@ -1,6 +1,6 @@
- # SPDX-License-Identifier: GPL-2.0
- ifndef CROSS_COMPILE
--hostprogs-$(CONFIG_SAMPLE_SECCOMP) := bpf-fancy dropper bpf-direct
-+hostprogs-$(CONFIG_SAMPLE_SECCOMP) := bpf-fancy dropper bpf-direct user-trap
- 
- HOSTCFLAGS_bpf-fancy.o += -I$(objtree)/usr/include
- HOSTCFLAGS_bpf-fancy.o += -idirafter $(objtree)/include
-@@ -16,6 +16,10 @@ HOSTCFLAGS_bpf-direct.o += -I$(objtree)/usr/include
- HOSTCFLAGS_bpf-direct.o += -idirafter $(objtree)/include
- bpf-direct-objs := bpf-direct.o
- 
-+HOSTCFLAGS_user-trap.o += -I$(objtree)/usr/include
-+HOSTCFLAGS_user-trap.o += -idirafter $(objtree)/include
-+user-trap-objs := user-trap.o
-+
- # Try to match the kernel target.
- ifndef CONFIG_64BIT
- 
-@@ -33,6 +37,7 @@ HOSTCFLAGS_bpf-fancy.o += $(MFLAG)
- HOSTLDLIBS_bpf-direct += $(MFLAG)
- HOSTLDLIBS_bpf-fancy += $(MFLAG)
- HOSTLDLIBS_dropper += $(MFLAG)
-+HOSTLDLIBS_user-trap += $(MFLAG)
- endif
- always := $(hostprogs-m)
- endif
-diff --git a/samples/seccomp/user-trap.c b/samples/seccomp/user-trap.c
-new file mode 100644
-index 000000000000..61267cb59c8e
---- /dev/null
-+++ b/samples/seccomp/user-trap.c
-@@ -0,0 +1,375 @@
-+#include <signal.h>
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <unistd.h>
-+#include <errno.h>
-+#include <fcntl.h>
-+#include <string.h>
-+#include <stddef.h>
-+#include <sys/sysmacros.h>
-+#include <sys/types.h>
-+#include <sys/wait.h>
-+#include <sys/socket.h>
-+#include <sys/stat.h>
-+#include <sys/mman.h>
-+#include <sys/syscall.h>
-+#include <sys/user.h>
-+#include <sys/ioctl.h>
-+#include <sys/ptrace.h>
-+#include <sys/mount.h>
-+#include <linux/limits.h>
-+#include <linux/filter.h>
-+#include <linux/seccomp.h>
-+
-+#define ARRAY_SIZE(x) (sizeof(x) / sizeof(*(x)))
-+
-+static int seccomp(unsigned int op, unsigned int flags, void *args)
-+{
-+	errno = 0;
-+	return syscall(__NR_seccomp, op, flags, args);
-+}
-+
-+static int send_fd(int sock, int fd)
-+{
-+	struct msghdr msg = {};
-+	struct cmsghdr *cmsg;
-+	char buf[CMSG_SPACE(sizeof(int))] = {0}, c = 'c';
-+	struct iovec io = {
-+		.iov_base = &c,
-+		.iov_len = 1,
-+	};
-+
-+	msg.msg_iov = &io;
-+	msg.msg_iovlen = 1;
-+	msg.msg_control = buf;
-+	msg.msg_controllen = sizeof(buf);
-+	cmsg = CMSG_FIRSTHDR(&msg);
-+	cmsg->cmsg_level = SOL_SOCKET;
-+	cmsg->cmsg_type = SCM_RIGHTS;
-+	cmsg->cmsg_len = CMSG_LEN(sizeof(int));
-+	*((int *)CMSG_DATA(cmsg)) = fd;
-+	msg.msg_controllen = cmsg->cmsg_len;
-+
-+	if (sendmsg(sock, &msg, 0) < 0) {
-+		perror("sendmsg");
-+		return -1;
-+	}
-+
-+	return 0;
-+}
-+
-+static int recv_fd(int sock)
-+{
-+	struct msghdr msg = {};
-+	struct cmsghdr *cmsg;
-+	char buf[CMSG_SPACE(sizeof(int))] = {0}, c = 'c';
-+	struct iovec io = {
-+		.iov_base = &c,
-+		.iov_len = 1,
-+	};
-+
-+	msg.msg_iov = &io;
-+	msg.msg_iovlen = 1;
-+	msg.msg_control = buf;
-+	msg.msg_controllen = sizeof(buf);
-+
-+	if (recvmsg(sock, &msg, 0) < 0) {
-+		perror("recvmsg");
-+		return -1;
-+	}
-+
-+	cmsg = CMSG_FIRSTHDR(&msg);
-+
-+	return *((int *)CMSG_DATA(cmsg));
-+}
-+
-+static int user_trap_syscall(int nr, unsigned int flags)
-+{
-+	struct sock_filter filter[] = {
-+		BPF_STMT(BPF_LD+BPF_W+BPF_ABS,
-+			offsetof(struct seccomp_data, nr)),
-+		BPF_JUMP(BPF_JMP+BPF_JEQ+BPF_K, nr, 0, 1),
-+		BPF_STMT(BPF_RET+BPF_K, SECCOMP_RET_USER_NOTIF),
-+		BPF_STMT(BPF_RET+BPF_K, SECCOMP_RET_ALLOW),
-+	};
-+
-+	struct sock_fprog prog = {
-+		.len = (unsigned short)ARRAY_SIZE(filter),
-+		.filter = filter,
-+	};
-+
-+	return seccomp(SECCOMP_SET_MODE_FILTER, flags, &prog);
-+}
-+
-+static int handle_req(struct seccomp_notif *req,
-+		      struct seccomp_notif_resp *resp, int listener)
-+{
-+	char path[PATH_MAX], source[PATH_MAX], target[PATH_MAX];
-+	int ret = -1, mem;
-+
-+	resp->id = req->id;
-+	resp->error = -EPERM;
-+	resp->val = 0;
-+
-+	if (req->data.nr != __NR_mount) {
-+		fprintf(stderr, "huh? trapped something besides mount? %d\n", req->data.nr);
-+		return -1;
-+	}
-+
-+	/* Only allow bind mounts. */
-+	if (!(req->data.args[3] & MS_BIND))
-+		return 0;
-+
-+	/*
-+	 * Ok, let's read the task's memory to see where they wanted their
-+	 * mount to go.
-+	 */
-+	snprintf(path, sizeof(path), "/proc/%d/mem", req->pid);
-+	mem = open(path, O_RDONLY);
-+	if (mem < 0) {
-+		perror("open mem");
-+		return -1;
-+	}
-+
-+	/*
-+	 * Now we avoid a TOCTOU: we referred to a pid by its pid, but since
-+	 * the pid that made the syscall may have died, we need to confirm that
-+	 * the pid is still valid after we open its /proc/pid/mem file. We can
-+	 * ask the listener fd this as follows.
-+	 *
-+	 * Note that this check should occur *after* any task-specific
-+	 * resources are opened, to make sure that the task has not died and
-+	 * we're not wrongly reading someone else's state in order to make
-+	 * decisions.
-+	 */
-+	if (ioctl(listener, SECCOMP_IOCTL_NOTIF_ID_VALID, &req->id) < 0) {
-+		fprintf(stderr, "task died before we could map its memory\n");
-+		goto out;
-+	}
-+
-+	/*
-+	 * Phew, we've got the right /proc/pid/mem. Now we can read it. Note
-+	 * that to avoid another TOCTOU, we should read all of the pointer args
-+	 * before we decide to allow the syscall.
-+	 */
-+	if (lseek(mem, req->data.args[0], SEEK_SET) < 0) {
-+		perror("seek");
-+		goto out;
-+	}
-+
-+	ret = read(mem, source, sizeof(source));
-+	if (ret < 0) {
-+		perror("read");
-+		goto out;
-+	}
-+
-+	if (lseek(mem, req->data.args[1], SEEK_SET) < 0) {
-+		perror("seek");
-+		goto out;
-+	}
-+
-+	ret = read(mem, target, sizeof(target));
-+	if (ret < 0) {
-+		perror("read");
-+		goto out;
-+	}
-+
-+	/*
-+	 * Our policy is to only allow bind mounts inside /tmp. This isn't very
-+	 * interesting, because we could do unprivlieged bind mounts with user
-+	 * namespaces already, but you get the idea.
-+	 */
-+	if (!strncmp(source, "/tmp", 4) && !strncmp(target, "/tmp", 4)) {
-+		if (mount(source, target, NULL, req->data.args[3], NULL) < 0) {
-+			ret = -1;
-+			perror("actual mount");
-+			goto out;
-+		}
-+		resp->error = 0;
-+	}
-+
-+	/* Even if we didn't allow it because of policy, generating the
-+	 * response was be a success, because we want to tell the worker EPERM.
-+	 */
-+	ret = 0;
-+
-+out:
-+	close(mem);
-+	return ret;
-+}
-+
-+int main(void)
-+{
-+	int sk_pair[2], ret = 1, status, listener;
-+	pid_t worker = 0 , tracer = 0;
-+
-+	if (socketpair(PF_LOCAL, SOCK_SEQPACKET, 0, sk_pair) < 0) {
-+		perror("socketpair");
-+		return 1;
-+	}
-+
-+	worker = fork();
-+	if (worker < 0) {
-+		perror("fork");
-+		goto close_pair;
-+	}
-+
-+	if (worker == 0) {
-+		listener = user_trap_syscall(__NR_mount,
-+					     SECCOMP_FILTER_FLAG_NEW_LISTENER);
-+		if (listener < 0) {
-+			perror("seccomp");
-+			exit(1);
-+		}
-+
-+		/*
-+		 * Drop privileges. We definitely can't mount as uid 1000.
-+		 */
-+		if (setuid(1000) < 0) {
-+			perror("setuid");
-+			exit(1);
-+		}
-+
-+		/*
-+		 * Send the listener to the parent; also serves as
-+		 * synchronization.
-+		 */
-+		if (send_fd(sk_pair[1], listener) < 0)
-+			exit(1);
-+		close(listener);
-+
-+		if (mkdir("/tmp/foo", 0755) < 0) {
-+			perror("mkdir");
-+			exit(1);
-+		}
-+
-+		/*
-+		 * Try a bad mount just for grins.
-+		 */
-+		if (mount("/dev/sda", "/tmp/foo", NULL, 0, NULL) != -1) {
-+			fprintf(stderr, "huh? mounted /dev/sda?\n");
-+			exit(1);
-+		}
-+
-+		if (errno != EPERM) {
-+			perror("bad error from mount");
-+			exit(1);
-+		}
-+
-+		/*
-+		 * Ok, we expect this one to succeed.
-+		 */
-+		if (mount("/tmp/foo", "/tmp/foo", NULL, MS_BIND, NULL) < 0) {
-+			perror("mount");
-+			exit(1);
-+		}
-+
-+		exit(0);
-+	}
-+
-+	/*
-+	 * Get the listener from the child.
-+	 */
-+	listener = recv_fd(sk_pair[0]);
-+	if (listener < 0)
-+		goto out_kill;
-+
-+	/*
-+	 * Fork a task to handle the requests. This isn't strictly necessary,
-+	 * but it makes the particular writing of this sample easier, since we
-+	 * can just wait ofr the tracee to exit and kill the tracer.
-+	 */
-+	tracer = fork();
-+	if (tracer < 0) {
-+		perror("fork");
-+		goto out_kill;
-+	}
-+
-+	if (tracer == 0) {
-+		struct seccomp_notif *req;
-+		struct seccomp_notif_resp *resp;
-+		struct seccomp_notif_sizes sizes;
-+
-+		if (seccomp(SECCOMP_GET_NOTIF_SIZES, 0, &sizes) < 0) {
-+			perror("seccomp(GET_NOTIF_SIZES)");
-+			goto out_close;
-+		}
-+
-+		req = malloc(sizes.seccomp_notif);
-+		if (!req)
-+			goto out_close;
-+		memset(req, 0, sizeof(*req));
-+
-+		resp = malloc(sizes.seccomp_notif_resp);
-+		if (!resp)
-+			goto out_req;
-+		memset(resp, 0, sizeof(*resp));
-+
-+		while (1) {
-+			if (ioctl(listener, SECCOMP_IOCTL_NOTIF_RECV, req)) {
-+				perror("ioctl recv");
-+				goto out_resp;
-+			}
-+
-+			if (handle_req(req, resp, listener) < 0)
-+				goto out_resp;
-+
-+			/*
-+			 * ENOENT here means that the task may have gotten a
-+			 * signal and restarted the syscall. It's up to the
-+			 * handler to decide what to do in this case, but for
-+			 * the sample code, we just ignore it. Probably
-+			 * something better should happen, like undoing the
-+			 * mount, or keeping track of the args to make sure we
-+			 * don't do it again.
-+			 */
-+			if (ioctl(listener, SECCOMP_IOCTL_NOTIF_SEND, resp) < 0 &&
-+			    errno != ENOENT) {
-+				perror("ioctl send");
-+				goto out_resp;
-+			}
-+		}
-+out_resp:
-+		free(resp);
-+out_req:
-+		free(req);
-+out_close:
-+		close(listener);
-+		exit(1);
-+	}
-+
-+	close(listener);
-+
-+	if (waitpid(worker, &status, 0) != worker) {
-+		perror("waitpid");
-+		goto out_kill;
-+	}
-+
-+	if (umount2("/tmp/foo", MNT_DETACH) < 0 && errno != EINVAL) {
-+		perror("umount2");
-+		goto out_kill;
-+	}
-+
-+	if (remove("/tmp/foo") < 0 && errno != ENOENT) {
-+		perror("remove");
-+		exit(1);
-+	}
-+
-+	if (!WIFEXITED(status) || WEXITSTATUS(status)) {
-+		fprintf(stderr, "worker exited nonzero\n");
-+		goto out_kill;
-+	}
-+
-+	ret = 0;
-+
-+out_kill:
-+	if (tracer > 0)
-+		kill(tracer, SIGKILL);
-+	if (worker > 0)
-+		kill(worker, SIGKILL);
-+
-+close_pair:
-+	close(sk_pair[0]);
-+	close(sk_pair[1]);
-+	return ret;
-+}
--- 
-2.19.1
+-- Christian
+
+
+On 09 December 2018 at 3:20PM, Christian Zigotzky wrote:
+> Next step: 602307b034734ce77a05da4b99333a2eaf6b6482 (powerpc/fsl_pci: 
+> simplify fsl_pci_dma_set_mask)
+>
+> git checkout 602307b034734ce77a05da4b99333a2eaf6b6482
+>
+> The PASEMI onboard ethernet works and the X5000 boots.
+>
+> -- Christian
+>
+>
+> On 08 December 2018 at 2:47PM, Christian Zigotzky wrote:
+>> Next step: e15cd8173ef85e9cc3e2a9c7cc2982f5c1355615 (powerpc/dma: fix 
+>> an off-by-one in dma_capable)
+>>
+>> git checkout e15cd8173ef85e9cc3e2a9c7cc2982f5c1355615
+>>
+>> The PASEMI onboard ethernet also works with this commit and the X5000 
+>> boots without any problems.
+>>
+>> -- Christian
+>>
+>>
+>> On 08 December 2018 at 11:29AM, Christian Zigotzky wrote:
+>>> Next step: 7ebc44c535f6bd726d553756d38b137acc718443 (powerpc/dma: 
+>>> remove max_direct_dma_addr)
+>>>
+>>> git checkout 7ebc44c535f6bd726d553756d38b137acc718443
+>>>
+>>> OK, the PASEMI onboard ethernet works and the P5020 board boots.
+>>>
+>>> -- Christian
+>>>
+>>>
+>>> On 07 December 2018 at 7:33PM, Christian Zigotzky wrote:
+>>>> Next step: 13c1fdec5682b6e13257277fa16aa31f342d167d (powerpc/dma: 
+>>>> move pci_dma_dev_setup_swiotlb to fsl_pci.c)
+>>>>
+>>>> git checkout 13c1fdec5682b6e13257277fa16aa31f342d167d
+>>>>
+>>>> Result: The PASEMI onboard ethernet works and the P5020 board boots.
+>>>>
+>>>> — Christian
+>>>
+>>>
+>>>
+>>
+>>
+>
+>
 
