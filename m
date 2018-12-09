@@ -8,67 +8,67 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 453A5C07E85
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7AD9C65BAF
 	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 19:51:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0527120672
+	by mail.kernel.org (Postfix) with ESMTP id A0C5720672
 	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 19:51:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="nKb6wfX/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0527120672
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="qigJXV7e"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A0C5720672
 Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=googlemail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726344AbeLITvT (ORCPT
+        id S1726359AbeLITvT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Sun, 9 Dec 2018 14:51:19 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:35311 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726311AbeLITvK (ORCPT
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:44257 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726292AbeLITvI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Dec 2018 14:51:10 -0500
-Received: by mail-wr1-f68.google.com with SMTP id 96so8448656wrb.2;
-        Sun, 09 Dec 2018 11:51:09 -0800 (PST)
+        Sun, 9 Dec 2018 14:51:08 -0500
+Received: by mail-wr1-f65.google.com with SMTP id z5so8392216wrt.11;
+        Sun, 09 Dec 2018 11:51:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=googlemail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=urCU7YQjDTJrG7L2Euwj/N64dJUSTa6MEsTdrSmy+1E=;
-        b=nKb6wfX/rw5GoEOT0rpZUQ/Lbm5/f+gtcYsGQ8oKTEAAdvv+KRMIy6wLViagKYuiiJ
-         6aGvbYWt8b3UaDw6TZnsrpCg6o4aRQZNCXi7vlFInG72DPaXaoLlG9nmvLopf6FT10Xo
-         PJGK4/3xFUJzDDZcI7IRGwns+29o8HFNdojMh1ckJ+rQ5Hg0Oy5SRdRm3clsWJ7+hqdo
-         uuAOEs31cKHP+0wLksEHZqwbQYumM4VF2/VU2T6gZ5YWlQr6uAqFosNi6LSIrYTgpvZ6
-         oZpoXYX0F+BI72w2c5lJoYl9QGscssE4Mf2vR39eicvQy1vYXZ6lBJo4XcxAUWPUUe8R
-         rNOQ==
+        bh=uWw97g7ElUgJ2je8JI19vSCNfFEnazDluRAzx8g6jHM=;
+        b=qigJXV7eykLEw2HNvRSnSafNDXB74tVhzTxsoMna/5OFyTN4EHbbjF69nWhsKLz5H7
+         Bl6SLcqokgsLdjP6pm3tlArBxEM0Mh5+XMW8U2R8Jjz86zF7K5f9gr0+mM0mIkSacKZD
+         xaeNDnVtGwmKLhRkHnG3SnEX0AU8SrbtxumT16OGjySJxdAafY1+CkMv0k0XARHKRjox
+         4sYaesWY2NgENwweK5m//iXkcvYAIsFWEwZ9qAzlqvjTbyPE2WbhRy97/YBA3dkKO2Dn
+         vLmX5cequ3KYMDn6l5bjId7bnrrggCwKy46DqP2fU7HHhfMowjYFjnYXKvW+cQ2oGV9x
+         4saw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=urCU7YQjDTJrG7L2Euwj/N64dJUSTa6MEsTdrSmy+1E=;
-        b=M+Z7T1nW2i00e0nDq3+lseagkN/Rn6U1WoAOgwG3vc5gGryAo/30cf0eln5yubfkPH
-         Avvztt/BEK+nrzDoORXjNsF8Yq/1/j18M59WFkobVcoKlMBWuJyzqVwSlaYJYRkQ34Uv
-         E/VDX3YXP87yJCnEF+XWaUThEPENQIWXPIqneNZJy6d1ZDXBv/vqJbNofNs89gFTUmAJ
-         SqUFDMZHwJ92cq+KaH3Knu+0QyjC2I6imnuGQjmkECmF/IPGdNk6d3sqfNSJGT9xZM9J
-         Pkg3kHUHBJSNL9hJBzJv0Mj0RJWW7+1QoYngDewjtCuQkDMn2+JBLIyuhai6s9JNNz5U
-         HF8A==
-X-Gm-Message-State: AA+aEWZ5MY8vpN2XPDuHFu/J/Oz9jDJwhilwusmR1F5N5xD7ik/D0r6C
-        y3AzSd2Se8SHZMoxKyWsgWE=
-X-Google-Smtp-Source: AFSGD/Ucthwo9Mxtp42S1MnvflXgUPHtWaXWEFRfExBiGs+jzi2+kbxRlXUhB7s3Bki3zzDlkCj5mQ==
-X-Received: by 2002:adf:f350:: with SMTP id e16mr7334928wrp.125.1544385068479;
-        Sun, 09 Dec 2018 11:51:08 -0800 (PST)
+        bh=uWw97g7ElUgJ2je8JI19vSCNfFEnazDluRAzx8g6jHM=;
+        b=RAMyEDGDFtvMKAgW+/ddpiVqPtAMiGAfd3kJuYme9KgifAXH67uZQ7DcdskqhwhN3M
+         JShEo9eNRbnX2z6SNntsiKIaK3mJKCkGFB51XB2j0zLOY06Y+k/Bn5jrR/IqDxljStEV
+         rRIAzcVrecSVIbHnKRWtfexggOhf9zCgSCyOxpS+3lspgIH1nmtKvI3iNLLP/xE4sNBR
+         lpAkUvbxQl6TgrZTkHjRBrWV+eweTBVNsceYddhkpq/JkwuRmCZGA3pGQ5v3fV5KzZZb
+         yNWlm9owtOIrq5Sqqtfsoz61qR7+RCrZTJv2Py5qVAiaF3Qtg0UMNrkLEuPhMQ7OuZe9
+         2eig==
+X-Gm-Message-State: AA+aEWYSQ4vpOg2yluTleSeIx6+TBEHFnTZVtl1duuPXZCzA6x3lfSJi
+        7pFfWqozdgP/zzRe7lpf5j8=
+X-Google-Smtp-Source: AFSGD/WuNWoIvyybaMiPYlUdNs8S2clBrxB604ziXFmNaZ4F3Fc5rQZqWqB7gs3uAhxj38Z0YZd5OQ==
+X-Received: by 2002:a05:6000:10d1:: with SMTP id b17mr7593184wrx.306.1544385066607;
+        Sun, 09 Dec 2018 11:51:06 -0800 (PST)
 Received: from blackbox.darklights.net (p200300DCD73FBA00428D5CFFFEB99DB8.dip0.t-ipconnect.de. [2003:dc:d73f:ba00:428d:5cff:feb9:9db8])
-        by smtp.googlemail.com with ESMTPSA id x20sm20270941wme.6.2018.12.09.11.51.07
+        by smtp.googlemail.com with ESMTPSA id x20sm20270941wme.6.2018.12.09.11.51.05
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 09 Dec 2018 11:51:07 -0800 (PST)
+        Sun, 09 Dec 2018 11:51:06 -0800 (PST)
 From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 To:     linux-amlogic@lists.infradead.org, linux-gpio@vger.kernel.org,
         linus.walleij@linaro.org
 Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         jbrunet@baylibre.com, carlo@caione.org,
         Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: [PATCH 6/6] pinctrl: meson: meson8b: add the missing GPIO_GROUPs for BOOT and CARD
-Date:   Sun,  9 Dec 2018 20:50:55 +0100
-Message-Id: <20181209195055.26813-7-martin.blumenstingl@googlemail.com>
+Subject: [PATCH 4/6] pinctrl: meson: meson8: rename the "gpio" function to "gpio_periphs"
+Date:   Sun,  9 Dec 2018 20:50:53 +0100
+Message-Id: <20181209195055.26813-5-martin.blumenstingl@googlemail.com>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181209195055.26813-1-martin.blumenstingl@googlemail.com>
 References: <20181209195055.26813-1-martin.blumenstingl@googlemail.com>
@@ -79,56 +79,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the BOOT and CARD pins as GROUP_GROUPs as well so they can be
-configured in devicetree using groups = BOOTx or groups = CARDx. This
-makes the behavior consistent with other pins inside the same driver as
-well as with the BOOT and CARD pins of the GXBB and GXL pinctrl drivers.
+Rename the existing "gpio" function to "gpio_periphs". This makes it
+consistent with the "gpio_aobus" function. Also GXBB and GXL are also
+using the "gpio_periphs" naming, so this makes the code here consistent
+with other Amlogic pinctrl drivers.
 
-Fixes: 0fefcb6876d0d6 ("pinctrl: Add support for Meson8b")
+No functional changes since thee "gpio" function is currently not used.
+
 Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 ---
- drivers/pinctrl/meson/pinctrl-meson8b.c | 28 +++++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
+ drivers/pinctrl/meson/pinctrl-meson8b.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/pinctrl/meson/pinctrl-meson8b.c b/drivers/pinctrl/meson/pinctrl-meson8b.c
-index b455e0c7a282..c69ca95b1ad5 100644
+index 91cffc051055..b455e0c7a282 100644
 --- a/drivers/pinctrl/meson/pinctrl-meson8b.c
 +++ b/drivers/pinctrl/meson/pinctrl-meson8b.c
-@@ -403,6 +403,34 @@ static struct meson_pmx_group meson8b_cbus_groups[] = {
- 	GPIO_GROUP(GPIOH_8),
- 	GPIO_GROUP(GPIOH_9),
+@@ -622,7 +622,7 @@ static struct meson_pmx_group meson8b_aobus_groups[] = {
+ 	GROUP(i2s_lr_clk_in,	0,	14),
+ };
  
-+	GPIO_GROUP(CARD_0),
-+	GPIO_GROUP(CARD_1),
-+	GPIO_GROUP(CARD_2),
-+	GPIO_GROUP(CARD_3),
-+	GPIO_GROUP(CARD_4),
-+	GPIO_GROUP(CARD_5),
-+	GPIO_GROUP(CARD_6),
-+
-+	GPIO_GROUP(BOOT_0),
-+	GPIO_GROUP(BOOT_1),
-+	GPIO_GROUP(BOOT_2),
-+	GPIO_GROUP(BOOT_3),
-+	GPIO_GROUP(BOOT_4),
-+	GPIO_GROUP(BOOT_5),
-+	GPIO_GROUP(BOOT_6),
-+	GPIO_GROUP(BOOT_7),
-+	GPIO_GROUP(BOOT_8),
-+	GPIO_GROUP(BOOT_9),
-+	GPIO_GROUP(BOOT_10),
-+	GPIO_GROUP(BOOT_11),
-+	GPIO_GROUP(BOOT_12),
-+	GPIO_GROUP(BOOT_13),
-+	GPIO_GROUP(BOOT_14),
-+	GPIO_GROUP(BOOT_15),
-+	GPIO_GROUP(BOOT_16),
-+	GPIO_GROUP(BOOT_17),
-+	GPIO_GROUP(BOOT_18),
-+
- 	GPIO_GROUP(DIF_0_P),
- 	GPIO_GROUP(DIF_0_N),
- 	GPIO_GROUP(DIF_1_P),
+-static const char * const gpio_groups[] = {
++static const char * const gpio_periphs_groups[] = {
+ 	"GPIOX_0", "GPIOX_1", "GPIOX_2", "GPIOX_3", "GPIOX_4",
+ 	"GPIOX_5", "GPIOX_6", "GPIOX_7", "GPIOX_8", "GPIOX_9",
+ 	"GPIOX_10", "GPIOX_11", "GPIOX_16", "GPIOX_17", "GPIOX_18",
+@@ -839,7 +839,7 @@ static const char * const tsin_b_groups[] = {
+ };
+ 
+ static struct meson_pmx_func meson8b_cbus_functions[] = {
+-	FUNCTION(gpio),
++	FUNCTION(gpio_periphs),
+ 	FUNCTION(sd_a),
+ 	FUNCTION(sdxc_a),
+ 	FUNCTION(pcm_a),
 -- 
 2.19.2
 
