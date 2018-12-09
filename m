@@ -6,45 +6,46 @@ X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21CEBC07E85
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:20:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C49BEC07E85
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:21:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E749020661
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:20:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E749020661
+	by mail.kernel.org (Postfix) with ESMTP id 905712081F
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:21:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 905712081F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727828AbeLIWUy (ORCPT
+        id S1727730AbeLIWVE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 17:20:54 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35398 "EHLO
+        Sun, 9 Dec 2018 17:21:04 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35390 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726546AbeLIVzY (ORCPT
+        by vger.kernel.org with ESMTP id S1726544AbeLIVzY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 9 Dec 2018 16:55:24 -0500
 Received: from pub.yeoldevic.com ([81.174.156.145] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW72n-0002il-Vf; Sun, 09 Dec 2018 21:55:22 +0000
+        id 1gW72n-0002ia-Vd; Sun, 09 Dec 2018 21:55:22 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW72l-0003gn-Cr; Sun, 09 Dec 2018 21:55:19 +0000
+        id 1gW72l-0003gd-9w; Sun, 09 Dec 2018 21:55:19 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        "Doug Ledford" <dledford@redhat.com>
+CC:     akpm@linux-foundation.org, "Oliver Neukum" <oneukum@suse.com>,
+        "Alan Stern" <stern@rowland.harvard.edu>,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
 Date:   Sun, 09 Dec 2018 21:50:33 +0000
-Message-ID: <lsq.1544392233.59939410@decadent.org.uk>
+Message-ID: <lsq.1544392233.537788962@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 314/328] RDMA/ucma: Fix Spectre v1 vulnerability
+Subject: [PATCH 3.16 312/328] USB: fix the usbfs flag sanitization for
+ control transfers
 In-Reply-To: <lsq.1544392232.713909046@decadent.org.uk>
 X-SA-Exim-Connect-IP: 81.174.156.145
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -58,51 +59,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+From: Alan Stern <stern@rowland.harvard.edu>
 
-commit a3671a4f973ee9d9621d60166cc3b037c397d604 upstream.
+commit 665c365a77fbfeabe52694aedf3446d5f2f1ce42 upstream.
 
-hdr.cmd can be indirectly controlled by user-space, hence leading to
-a potential exploitation of the Spectre variant 1 vulnerability.
+Commit 7a68d9fb8510 ("USB: usbdevfs: sanitize flags more") checks the
+transfer flags for URBs submitted from userspace via usbfs.  However,
+the check for whether the USBDEVFS_URB_SHORT_NOT_OK flag should be
+allowed for a control transfer was added in the wrong place, before
+the code has properly determined the direction of the control
+transfer.  (Control transfers are special because for them, the
+direction is set by the bRequestType byte of the Setup packet rather
+than direction bit of the endpoint address.)
 
-This issue was detected with the help of Smatch:
+This patch moves code which sets up the allow_short flag for control
+transfers down after is_in has been set to the correct value.
 
-drivers/infiniband/core/ucma.c:1686 ucma_write() warn: potential
-spectre issue 'ucma_cmd_table' [r] (local cap)
-
-Fix this by sanitizing hdr.cmd before using it to index
-ucm_cmd_table.
-
-Notice that given that speculation windows are large, the policy is
-to kill the speculation on the first load and not worry if it can be
-completed with a dependent load/store [1].
-
-[1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
-
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-Signed-off-by: Doug Ledford <dledford@redhat.com>
+Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
+Reported-and-tested-by: syzbot+24a30223a4b609bb802e@syzkaller.appspotmail.com
+Fixes: 7a68d9fb8510 ("USB: usbdevfs: sanitize flags more")
+CC: Oliver Neukum <oneukum@suse.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/infiniband/core/ucma.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/usb/core/devio.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/infiniband/core/ucma.c
-+++ b/drivers/infiniband/core/ucma.c
-@@ -43,6 +43,8 @@
- #include <linux/sysctl.h>
- #include <linux/module.h>
- 
-+#include <linux/nospec.h>
-+
- #include <rdma/rdma_user_cm.h>
- #include <rdma/ib_marshall.h>
- #include <rdma/rdma_cm.h>
-@@ -1540,6 +1542,7 @@ static ssize_t ucma_write(struct file *f
- 
- 	if (hdr.cmd >= ARRAY_SIZE(ucma_cmd_table))
- 		return -EINVAL;
-+	hdr.cmd = array_index_nospec(hdr.cmd, ARRAY_SIZE(ucma_cmd_table));
- 
- 	if (hdr.in + sizeof(hdr) > len)
- 		return -EINVAL;
+--- a/drivers/usb/core/devio.c
++++ b/drivers/usb/core/devio.c
+@@ -1329,8 +1329,6 @@ static int proc_do_submiturb(struct usb_
+ 	u = 0;
+ 	switch(uurb->type) {
+ 	case USBDEVFS_URB_TYPE_CONTROL:
+-		if (is_in)
+-			allow_short = true;
+ 		if (!usb_endpoint_xfer_control(&ep->desc))
+ 			return -EINVAL;
+ 		/* min 8 byte setup packet */
+@@ -1360,6 +1358,8 @@ static int proc_do_submiturb(struct usb_
+ 			is_in = 0;
+ 			uurb->endpoint &= ~USB_DIR_IN;
+ 		}
++		if (is_in)
++			allow_short = true;
+ 		snoop(&ps->dev->dev, "control urb: bRequestType=%02x "
+ 			"bRequest=%02x wValue=%04x "
+ 			"wIndex=%04x wLength=%04x\n",
 
