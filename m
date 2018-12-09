@@ -6,44 +6,46 @@ X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE88BC65BAF
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:14:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69C04C65BAF
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:14:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 80E9220661
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:14:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 80E9220661
+	by mail.kernel.org (Postfix) with ESMTP id 3994320661
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:14:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3994320661
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728542AbeLIWOr (ORCPT
+        id S1728090AbeLIWOv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 17:14:47 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:38104 "EHLO
+        Sun, 9 Dec 2018 17:14:51 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:38112 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727019AbeLIWOp (ORCPT
+        by vger.kernel.org with ESMTP id S1727019AbeLIWOu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Dec 2018 17:14:45 -0500
+        Sun, 9 Dec 2018 17:14:50 -0500
 Received: from pub.yeoldevic.com ([81.174.156.145] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW73M-0002ib-5j; Sun, 09 Dec 2018 21:55:56 +0000
+        id 1gW73F-0002iq-KL; Sun, 09 Dec 2018 21:55:49 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW72a-0003HA-B5; Sun, 09 Dec 2018 21:55:08 +0000
+        id 1gW72c-0003N4-V6; Sun, 09 Dec 2018 21:55:10 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, "Mikulas Patocka" <mpatocka@redhat.com>,
-        "Bartlomiej Zolnierkiewicz" <b.zolnierkie@samsung.com>
+CC:     akpm@linux-foundation.org, "Michael Ellerman" <mpe@ellerman.id.au>,
+        "Tyrel Datwyler" <tyreld@linux.vnet.ibm.com>,
+        "Dan Carpenter" <dan.carpenter@oracle.com>
 Date:   Sun, 09 Dec 2018 21:50:33 +0000
-Message-ID: <lsq.1544392233.247925224@decadent.org.uk>
+Message-ID: <lsq.1544392233.948488025@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 063/328] udlfb: handle allocation failure
+Subject: [PATCH 3.16 123/328] powerpc: Fix size calculation using
+ resource_size()
 In-Reply-To: <lsq.1544392232.713909046@decadent.org.uk>
 X-SA-Exim-Connect-IP: 81.174.156.145
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -57,86 +59,31 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mikulas Patocka <mpatocka@redhat.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-commit 080fb5240bdcabed7387b814139c3ea172d59fc5 upstream.
+commit c42d3be0c06f0c1c416054022aa535c08a1f9b39 upstream.
 
-Allocations larger than PAGE_ALLOC_COSTLY_ORDER are unreliable and they
-may fail anytime. This patch fixes the udlfb driver so that when a large
-alloactions fails, it tries to do multiple smaller allocations.
+The problem is the the calculation should be "end - start + 1" but the
+plus one is missing in this calculation.
 
-Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-[bwh: Backported to 3.16:
- - Pointers to struct dlfb_data are named "dev" rather than "dlfb"
- - Adjust context]
+Fixes: 8626816e905e ("powerpc: add support for MPIC message register API")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Reviewed-by: Tyrel Datwyler <tyreld@linux.vnet.ibm.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/video/fbdev/udlfb.c | 26 +++++++++++++++++---------
- 1 file changed, 17 insertions(+), 9 deletions(-)
+ arch/powerpc/sysdev/mpic_msgr.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/video/fbdev/udlfb.c
-+++ b/drivers/video/fbdev/udlfb.c
-@@ -1851,17 +1851,22 @@ static void dlfb_free_urb_list(struct dl
+--- a/arch/powerpc/sysdev/mpic_msgr.c
++++ b/arch/powerpc/sysdev/mpic_msgr.c
+@@ -196,7 +196,7 @@ static int mpic_msgr_probe(struct platfo
  
- static int dlfb_alloc_urb_list(struct dlfb_data *dev, int count, size_t size)
- {
--	int i = 0;
- 	struct urb *urb;
- 	struct urb_node *unode;
- 	char *buf;
-+	size_t wanted_size = count * size;
- 
- 	spin_lock_init(&dev->urbs.lock);
- 
-+retry:
- 	dev->urbs.size = size;
- 	INIT_LIST_HEAD(&dev->urbs.list);
- 
--	while (i < count) {
-+	sema_init(&dev->urbs.limit_sem, 0);
-+	dev->urbs.count = 0;
-+	dev->urbs.available = 0;
-+
-+	while (dev->urbs.count * size < wanted_size) {
- 		unode = kzalloc(sizeof(struct urb_node), GFP_KERNEL);
- 		if (!unode)
- 			break;
-@@ -1874,11 +1879,16 @@ static int dlfb_alloc_urb_list(struct dl
- 		}
- 		unode->urb = urb;
- 
--		buf = usb_alloc_coherent(dev->udev, MAX_TRANSFER, GFP_KERNEL,
-+		buf = usb_alloc_coherent(dev->udev, size, GFP_KERNEL,
- 					 &urb->transfer_dma);
- 		if (!buf) {
- 			kfree(unode);
- 			usb_free_urb(urb);
-+			if (size > PAGE_SIZE) {
-+				size /= 2;
-+				dlfb_free_urb_list(dev);
-+				goto retry;
-+			}
- 			break;
- 		}
- 
-@@ -1889,14 +1899,12 @@ static int dlfb_alloc_urb_list(struct dl
- 
- 		list_add_tail(&unode->entry, &dev->urbs.list);
- 
--		i++;
-+		up(&dev->urbs.limit_sem);
-+		dev->urbs.count++;
-+		dev->urbs.available++;
- 	}
- 
--	sema_init(&dev->urbs.limit_sem, i);
--	dev->urbs.count = i;
--	dev->urbs.available = i;
--
--	return i;
-+	return dev->urbs.count;
- }
- 
- static struct urb *dlfb_get_urb(struct dlfb_data *dev)
+ 	/* IO map the message register block. */
+ 	of_address_to_resource(np, 0, &rsrc);
+-	msgr_block_addr = ioremap(rsrc.start, rsrc.end - rsrc.start);
++	msgr_block_addr = ioremap(rsrc.start, resource_size(&rsrc));
+ 	if (!msgr_block_addr) {
+ 		dev_err(&dev->dev, "Failed to iomap MPIC message registers");
+ 		return -EFAULT;
 
