@@ -2,91 +2,426 @@ Return-Path: <SRS0=cWqk=OS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.9 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93846C07E85
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 20:47:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97E88C07E85
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 20:51:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 50B8D2081F
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 20:47:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544388421;
-	bh=sh7dVfzoIbVd5gjZKnUOx1M+twYUZifmNnjKJTieU4E=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:List-ID:From;
-	b=q603RiWesfc8bt0TVFKjcIiiBrDfWffhZyDSIeRrVC5EFYAw7Rrz4TVEVg7LPuxDR
-	 ImYdMisBwtwxzBB2bCVmP3AErbI/CgEHrR3ujZusQrKrwPUiukXFSLewzVfkDla3Vz
-	 z/LeC8n59xP9tKEAFc28tAjJpZG+ixA3zRMacMWc=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 50B8D2081F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 343942081C
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 20:51:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 343942081C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726326AbeLIUrA (ORCPT
+        id S1726310AbeLIUv4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 15:47:00 -0500
-Received: from mx2.suse.de ([195.135.220.15]:41986 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726219AbeLIUq7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Dec 2018 15:46:59 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 1C060ADE3;
-        Sun,  9 Dec 2018 20:46:58 +0000 (UTC)
-Date:   Sun, 9 Dec 2018 21:46:57 +0100 (CET)
-From:   Jiri Kosina <jikos@kernel.org>
-To:     Michal Hocko <mhocko@kernel.org>
-cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Andi Kleen <ak@linux.intel.com>, Borislav Petkov <bp@suse.de>,
-        LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org
-Subject: Re: [PATCH] l1tf: drop the swap storage limit restriction when
- l1tf=off
-In-Reply-To: <20181119135149.GN22247@dhcp22.suse.cz>
-Message-ID: <nycvar.YFH.7.76.1812092145510.17216@cbobk.fhfr.pm>
-References: <20181113184910.26697-1-mhocko@kernel.org> <nycvar.YFH.7.76.1811132054521.19754@cbobk.fhfr.pm> <20181114073229.GC23419@dhcp22.suse.cz> <nycvar.YFH.7.76.1811191436140.21108@cbobk.fhfr.pm> <20181119135149.GN22247@dhcp22.suse.cz>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        Sun, 9 Dec 2018 15:51:56 -0500
+Received: from shards.monkeyblade.net ([23.128.96.9]:50372 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726194AbeLIUvz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Dec 2018 15:51:55 -0500
+Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::bf5])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id C12681444E2BD;
+        Sun,  9 Dec 2018 12:51:54 -0800 (PST)
+Date:   Sun, 09 Dec 2018 12:51:54 -0800 (PST)
+Message-Id: <20181209.125154.1052371448735185456.davem@davemloft.net>
+To:     torvalds@linux-foundation.org
+CC:     akpm@linux-foundation.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [GIT] Networking
+From:   David Miller <davem@davemloft.net>
+X-Mailer: Mew version 6.8 on Emacs 26.1
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Sun, 09 Dec 2018 12:51:55 -0800 (PST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 19 Nov 2018, Michal Hocko wrote:
 
-> > > > > +				It also drops the swap size and available
-> > > > > +				RAM limit restriction.
-> > > > 
-> > > > Minor nit: I think this should explicitly mention that those two things 
-> > > > are related to bare metal mitigation, to avoid any confusion (as otherwise 
-> > > > the l1tf cmdline parameter is purely about hypervisor mitigations).
-> > > 
-> > > Do you have any specific wording in mind?
-> > > 
-> > > It also drops the swap size and available RAM limit restrictions on both
-> > > hypervisor and bare metal.
-> > > 
-> > > Sounds better?
-> > > 
-> > > > With that
-> > > > 
-> > > > 	Acked-by: Jiri Kosina <jkosina@suse.cz>
-> > > 
-> > > Thanks!
-> > 
-> > Yes, I think that makes it absolutely clear. Thanks,
-> 
-> OK. Here is the incremental diff on top of the patch. I will fold and
-> repost later this week. I assume people are still catching up after LPC
-> and I do not want to spam them even more.
+A decent batch of fixes here.  I'd say about half are for problems
+that have existed for a while, and half are for new regressions added
+in the 4.20 merge window.
 
-Is this queued anywhere in the meantime please?
+1) Fix 10G SFP phy module detection in mvpp2, from Baruch Siach.
 
-Thanks,
+2) Revert bogus emac driver change, from Benjamin Herrenschmidt.
 
--- 
-Jiri Kosina
-SUSE Labs
+3) Handle BPF exported data structure with pointers when building
+   32-bit userland, from Daniel Borkmann.
 
+4) Memory leak fix in act_police, from Davide Caratti.
+
+5) Check RX checksum offload in RX descriptors properly in aquantia
+   driver, from Dmitry Bogdanov.
+
+6) SKB unlink fix in various spots, from Edward Cree.
+
+7) ndo_dflt_fdb_dump() only works with ethernet, enforce this, from
+   Eric Dumazet.
+
+8) Fix FID leak in mlxsw driver, from Ido Schimmel.
+
+9) IOTLB locking fix in vhost, from Jean-Philippe Brucker.
+
+10) Fix SKB truesize accounting in ipv4/ipv6/netfilter frag memory
+    limits otherwise namespace exit can hang.  From Jiri Wiesner.
+
+11) Address block parsing length fixes in x25 from Martin Schiller.
+
+12) IRQ and ring accounting fixes in bnxt_en, from Michael Chan.
+
+13) For tun interfaces, only iface delete works with rtnl ops, enforce
+    this by disallowing add.  From Nicolas Dichtel.
+
+14) Use after free in liquidio, from Pan Bian.
+
+15) Fix SKB use after passing to netif_receive_skb(), from Prashant Bhole.
+
+16) Static key accounting and other fixes in XPS from Sabrina Dubroca.
+
+17) Partially initialized flow key passed to ip6_route_output(), from
+    Shmulik Ladkani.
+
+18) Fix RTNL deadlock during reset in ibmvnic driver, from Thomas
+    Falcon.
+
+19) Several small TCP fixes (off-by-one on window probe abort, NULL
+    deref in tail loss probe, SNMP mis-estimations) from Yuchung Cheng.
+
+Please pull, thanks a lot!
+
+The following changes since commit 60b548237fed4b4164bab13c994dd9615f6c4323:
+
+  Merge git://git.kernel.org/pub/scm/linux/kernel/git/davem/net (2018-11-28 12:53:48 -0800)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/davem/net.git 
+
+for you to fetch changes up to 35cc3cefc4de90001c9137e2d01dd9d06b11acfb:
+
+  net/sched: cls_flower: Reject duplicated rules also under skip_sw (2018-12-09 11:55:08 -0800)
+
+----------------------------------------------------------------
+Alexei Starovoitov (4):
+      Merge branch 'btf-check-name'
+      bpf: check pending signals while verifying programs
+      bpf: improve verifier branch analysis
+      bpf: add per-insn complexity limit
+
+Alexey Khoroshilov (1):
+      mac80211_hwsim: fix module init error paths for netlink
+
+Anderson Luiz Alves (1):
+      mv88e6060: disable hardware level MAC learning
+
+Baruch Siach (4):
+      net: phy: sfp: correct store of detected link modes
+      net: phy: sfp: correct location of SFP standards
+      net: mvpp2: fix detection of 10G SFP modules
+      net: mvpp2: fix phylink handling of invalid PHY modes
+
+Ben Greear (1):
+      mac80211: Clear beacon_int in ieee80211_do_stop
+
+Benjamin Herrenschmidt (1):
+      Revert "net/ibm/emac: wrong bit is used for STA control"
+
+Christoph Paasch (1):
+      net: Prevent invalid access to skb->prev in __qdisc_drop_all
+
+Colin Ian King (2):
+      liquidio: fix spelling mistake "deferal" -> "deferral"
+      openvswitch: fix spelling mistake "execeeds" -> "exceeds"
+
+Cong Wang (1):
+      mlx5: fix get_ip_proto()
+
+Daniel Borkmann (2):
+      bpf: fix pointer offsets in context for 32 bit
+      Merge branch 'bpf-verifier-resilience'
+
+David Miller (1):
+      bpf: Fix verifier log string check for bad alignment.
+
+David S. Miller (11):
+      Merge branch 'ave-fixes'
+      Merge branch 'xps-fixes'
+      Merge branch 'tcp-fixes-in-timeout-and-retransmission-accounting'
+      Merge branch 'phy-micrel-toggling-reset'
+      Merge branch 'mlx4-fixes'
+      phy: Revert toggling reset changes.
+      Merge tag 'mac80211-for-davem-2018-12-05' of git://git.kernel.org/.../jberg/mac80211
+      Merge git://git.kernel.org/.../bpf/bpf
+      Merge branch 'mlxsw-Various-fixes'
+      Merge branch 'skb-headroom-slab-out-of-bounds'
+      Merge branch 'bnxt_en-Bug-fixes'
+
+Davide Caratti (1):
+      net/sched: act_police: fix memory leak in case of invalid control action
+
+Dmitry Bogdanov (1):
+      net: aquantia: fix rx checksum offload bits
+
+Edward Cree (1):
+      net: use skb_list_del_init() to remove from RX sublists
+
+Emmanuel Grumbach (1):
+      mac80211: ignore NullFunc frames in the duplicate detection
+
+Eran Ben Elisha (1):
+      net/mlx4_en: Change min MTU size to ETH_MIN_MTU
+
+Eric Dumazet (3):
+      rtnetlink: ndo_dflt_fdb_dump() only work for ARPHRD_ETHER devices
+      tcp: Do not underestimate rwnd_limited
+      tcp: lack of available data can also cause TSO defer
+
+Felix Fietkau (2):
+      mac80211: ignore tx status for PS stations in ieee80211_tx_status_ext
+      mac80211: fix reordering of buffered broadcast packets
+
+Florian Fainelli (1):
+      net: dsa: Fix tagging attribute location
+
+Heiner Kallweit (1):
+      net: phy: don't allow __set_phy_supported to add unsupported modes
+
+Ido Schimmel (3):
+      mlxsw: spectrum_nve: Remove easily triggerable warnings
+      mlxsw: spectrum_switchdev: Avoid leaking FID's reference count
+      mlxsw: spectrum_switchdev: Fix VLAN device deletion via ioctl
+
+Jakub Audykowicz (1):
+      sctp: frag_point sanity check
+
+Jason Wang (1):
+      virtio-net: keep vnet header zeroed after processing XDP
+
+Jean-Philippe Brucker (1):
+      vhost: fix IOTLB locking
+
+Jiri Wiesner (1):
+      ipv4: ipv6: netfilter: Adjust the frag mem limit when truesize changes
+
+Joe Stringer (2):
+      bpf: Support sk lookup in netns with id 0
+      bpf: Improve socket lookup reuseport documentation
+
+Johannes Berg (2):
+      cfg80211/mac80211: fix FTM settings across CSA
+      mac80211: fix CSA beacon allocation size
+
+John Hurley (2):
+      nfp: flower: release metadata on offload failure
+      nfp: flower: prevent offload if rhashtable insert fails
+
+Jouni Malinen (1):
+      cfg80211: Fix busy loop regression in ieee80211_ie_split_ric()
+
+Kunihiko Hayashi (3):
+      net: ethernet: ave: Increase descriptors to improve performance
+      net: ethernet: ave: Replace NET_IP_ALIGN with AVE_FRAME_HEADROOM
+      net: ethernet: ave: Add MODULE_AUTHOR and MAINTAINERS entry
+
+Martin KaFai Lau (1):
+      tools/bpf: fix two test_btf unit test cases
+
+Martin Schiller (3):
+      net/x25: fix called/calling length calculation in x25_parse_address_block
+      net/x25: fix null_x25_address handling
+      net/x25: handle call collisions
+
+Matteo Croce (1):
+      macvlan: return correct error value
+
+Michael Chan (4):
+      bnxt_en: Fix CNP CoS queue regression.
+      bnxt_en: Keep track of reserved IRQs.
+      bnxt_en: Fix NQ/CP rings accounting on the new 57500 chips.
+      bnxt_en: Fix _bnxt_get_max_rings() for 57500 chips.
+
+Nicolas Dichtel (1):
+      tun: forbid iface creation with rtnl ops
+
+Nicolas Saenz Julienne (1):
+      ethernet: fman: fix wrong of_node_put() in probe function
+
+Nir Dotan (1):
+      mlxsw: spectrum_router: Relax GRE decap matching check
+
+Or Gerlitz (1):
+      net/sched: cls_flower: Reject duplicated rules also under skip_sw
+
+Pan Bian (1):
+      liquidio: read sc->iq_no before release sc
+
+Prashant Bhole (1):
+      tun: remove skb access after netif_receive_skb
+
+Qian Cai (1):
+      net/core: tidy up an error message
+
+Roman Gushchin (1):
+      bpf: refactor bpf_test_run() to separate own failures and test program result
+
+Sabrina Dubroca (2):
+      net: restore call to netdev_queue_numa_node_write when resetting XPS
+      net: fix XPS static_key accounting
+
+Saeed Mahameed (1):
+      net/mlx4_en: Fix build break when CONFIG_INET is off
+
+Sandipan Das (1):
+      bpf: powerpc64: optimize JIT passes for bpf function calls
+
+Sergey Matyukevich (1):
+      cfg80211: add missing constraint for user-supplied VHT mask
+
+Shmulik Ladkani (1):
+      ipv6: sr: properly initialize flowi6 prior passing to ip6_route_output
+
+Sriram R (1):
+      cfg80211: Prevent regulatory restore during STA disconnect in concurrent interfaces
+
+Stefano Brivio (2):
+      ipv6: Check available headroom in ip6_xmit() even without options
+      neighbour: Avoid writing before skb->head in neigh_hh_output()
+
+Su Yanjun (1):
+      net: 8139cp: fix a BUG triggered by changing mtu with network traffic
+
+Tarick Bedeir (1):
+      net/mlx4_core: Correctly set PFC param if global pause is turned off.
+
+Thierry Reding (1):
+      net: stmmac: Move debugfs init/exit to ->probe()/->remove()
+
+Thomas Falcon (1):
+      net/ibmvnic: Fix RTNL deadlock during device reset
+
+Toni Peltonen (1):
+      bonding: fix 802.3ad state sent to partner when unbinding slave
+
+Vasyl Vavrychuk (1):
+      mac80211_hwsim: Timer should be initialized before device registered
+
+Wei Yongjun (1):
+      mac80211: fix missing unlock on error in ieee80211_mark_sta_auth()
+
+Xin Long (2):
+      sctp: update frag_point when stream_interleave is set
+      sctp: kfree_rcu asoc
+
+Yan-Hsuan Chuang (1):
+      mac80211: fix GFP_KERNEL under tasklet context
+
+Yonghong Song (4):
+      bpf: btf: implement btf_name_valid_identifier()
+      bpf: btf: check name validity for various types
+      tools/bpf: add addition type tests to test_btf
+      tools: bpftool: fix a bitfield pretty print issue
+
+Yoshihiro Shimoda (2):
+      net: phy: Fix not to call phy_resume() if PHY is not attached
+      net: phy: micrel: add toggling phy reset if PHY is not attached
+
+Yuchung Cheng (4):
+      tcp: fix off-by-one bug on aborting window-probing socket
+      tcp: fix SNMP under-estimation on failed retransmission
+      tcp: fix SNMP TCP timeout under-estimation
+      tcp: fix NULL ref in tail loss probe
+
+ Documentation/ABI/testing/sysfs-class-net-dsa             |   2 +-
+ MAINTAINERS                                               |   7 ++
+ arch/powerpc/net/bpf_jit_comp64.c                         |  66 ++++++++++++++
+ drivers/net/bonding/bond_3ad.c                            |   3 +
+ drivers/net/dsa/mv88e6060.c                               |  10 +--
+ drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_b0.c |   2 +-
+ drivers/net/ethernet/broadcom/bnxt/bnxt.c                 |  60 ++++++++++---
+ drivers/net/ethernet/broadcom/bnxt/bnxt.h                 |   1 +
+ drivers/net/ethernet/broadcom/bnxt/bnxt_ulp.c             |   2 +-
+ drivers/net/ethernet/cavium/liquidio/lio_ethtool.c        |   2 +-
+ drivers/net/ethernet/cavium/liquidio/lio_vf_rep.c         |   4 +-
+ drivers/net/ethernet/freescale/fman/fman.c                |   5 +-
+ drivers/net/ethernet/ibm/emac/emac.h                      |   2 +-
+ drivers/net/ethernet/ibm/ibmvnic.c                        |   2 +-
+ drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c           |  34 +++++++-
+ drivers/net/ethernet/mellanox/mlx4/Kconfig                |   2 +-
+ drivers/net/ethernet/mellanox/mlx4/en_ethtool.c           |   4 +-
+ drivers/net/ethernet/mellanox/mlx4/en_netdev.c            |   4 +-
+ drivers/net/ethernet/mellanox/mlx4/mlx4_en.h              |   1 -
+ drivers/net/ethernet/mellanox/mlx5/core/en_rx.c           |   6 +-
+ drivers/net/ethernet/mellanox/mlxsw/spectrum_nve.c        |   4 +-
+ drivers/net/ethernet/mellanox/mlxsw/spectrum_router.c     |   5 +-
+ drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c  |  17 +++-
+ drivers/net/ethernet/netronome/nfp/flower/offload.c       |  18 ++--
+ drivers/net/ethernet/realtek/8139cp.c                     |   5 ++
+ drivers/net/ethernet/socionext/sni_ave.c                  |  24 ++---
+ drivers/net/ethernet/stmicro/stmmac/stmmac_main.c         |  23 ++---
+ drivers/net/macvlan.c                                     |   7 +-
+ drivers/net/phy/phy_device.c                              |  19 ++--
+ drivers/net/phy/sfp-bus.c                                 |   2 +-
+ drivers/net/tun.c                                         |   9 +-
+ drivers/net/virtio_net.c                                  |  14 +--
+ drivers/net/wireless/mac80211_hwsim.c                     |  20 +++--
+ drivers/vhost/vhost.c                                     |   3 -
+ include/linux/filter.h                                    |   7 ++
+ include/linux/sfp.h                                       |   2 +-
+ include/net/neighbour.h                                   |  28 ++++--
+ include/net/sctp/sctp.h                                   |   5 ++
+ include/net/sctp/structs.h                                |   2 +
+ include/uapi/linux/bpf.h                                  |  56 ++++++++----
+ kernel/bpf/btf.c                                          |  82 ++++++++++++++++++
+ kernel/bpf/verifier.c                                     | 103 +++++++++++++++++++---
+ net/bpf/test_run.c                                        |  21 +++--
+ net/core/dev.c                                            |  65 +++++++-------
+ net/core/filter.c                                         |  27 +++---
+ net/core/rtnetlink.c                                      |   3 +
+ net/dsa/master.c                                          |  34 +++++++-
+ net/dsa/slave.c                                           |  28 ------
+ net/ipv4/ip_fragment.c                                    |   7 ++
+ net/ipv4/ip_input.c                                       |   4 +-
+ net/ipv4/tcp_output.c                                     |  45 +++++++---
+ net/ipv4/tcp_timer.c                                      |  10 +--
+ net/ipv6/ip6_input.c                                      |   4 +-
+ net/ipv6/ip6_output.c                                     |  42 ++++-----
+ net/ipv6/netfilter/nf_conntrack_reasm.c                   |   8 +-
+ net/ipv6/reassembly.c                                     |   8 +-
+ net/ipv6/seg6_iptunnel.c                                  |   1 +
+ net/mac80211/cfg.c                                        |   7 +-
+ net/mac80211/iface.c                                      |   2 +
+ net/mac80211/mlme.c                                       |  12 ++-
+ net/mac80211/rx.c                                         |   5 +-
+ net/mac80211/status.c                                     |   2 +
+ net/mac80211/tx.c                                         |   4 +-
+ net/openvswitch/conntrack.c                               |   2 +-
+ net/sched/act_police.c                                    |  24 ++---
+ net/sched/cls_flower.c                                    |  23 +++--
+ net/sched/sch_netem.c                                     |   3 +
+ net/sctp/associola.c                                      |   9 +-
+ net/sctp/chunk.c                                          |   6 ++
+ net/sctp/sm_make_chunk.c                                  |   3 +
+ net/sctp/socket.c                                         |   3 +-
+ net/wireless/mlme.c                                       |   4 +-
+ net/wireless/nl80211.c                                    |   1 +
+ net/wireless/sme.c                                        |   8 +-
+ net/wireless/util.c                                       |   2 +
+ net/x25/af_x25.c                                          |  18 ++--
+ net/x25/x25_in.c                                          |   9 ++
+ tools/bpf/bpftool/btf_dumper.c                            |   6 +-
+ tools/include/uapi/linux/bpf.h                            |  56 ++++++++----
+ tools/testing/selftests/bpf/bpf_helpers.h                 |   4 +-
+ tools/testing/selftests/bpf/test_btf.c                    | 375 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++--
+ tools/testing/selftests/bpf/test_sk_lookup_kern.c         |  18 ++--
+ tools/testing/selftests/bpf/test_verifier.c               |   6 +-
+ 83 files changed, 1225 insertions(+), 368 deletions(-)
