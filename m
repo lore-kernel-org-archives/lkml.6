@@ -6,44 +6,45 @@ X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55E7EC65BAF
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:11:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2135C65BAF
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:11:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 253FC20661
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:11:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 253FC20661
+	by mail.kernel.org (Postfix) with ESMTP id 712102081F
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:11:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 712102081F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728210AbeLIWLN (ORCPT
+        id S1728235AbeLIWLR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 17:11:13 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:37650 "EHLO
+        Sun, 9 Dec 2018 17:11:17 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:37668 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727942AbeLIWLJ (ORCPT
+        by vger.kernel.org with ESMTP id S1728215AbeLIWLP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Dec 2018 17:11:09 -0500
+        Sun, 9 Dec 2018 17:11:15 -0500
 Received: from pub.yeoldevic.com ([81.174.156.145] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW73H-0002pr-KB; Sun, 09 Dec 2018 21:55:51 +0000
+        id 1gW73I-0002po-JN; Sun, 09 Dec 2018 21:55:52 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW72c-0003MQ-JT; Sun, 09 Dec 2018 21:55:10 +0000
+        id 1gW72c-0003M6-Dm; Sun, 09 Dec 2018 21:55:10 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, "Mike Snitzer" <snitzer@redhat.com>
+CC:     akpm@linux-foundation.org, "Anand Jain" <anand.jain@oracle.com>,
+        "Chris Mason" <clm@fb.com>, "David Sterba" <dsterba@suse.cz>,
+        "Anand Jain" <Anand.Jain@oracle.com>
 Date:   Sun, 09 Dec 2018 21:50:33 +0000
-Message-ID: <lsq.1544392233.545839705@decadent.org.uk>
+Message-ID: <lsq.1544392233.294270090@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 115/328] dm cache metadata: save in-core
- policy_hint_size to on-disk superblock
+Subject: [PATCH 3.16 111/328] btrfs: rename total_bytes to avoid confusion
 In-Reply-To: <lsq.1544392232.713909046@decadent.org.uk>
 X-SA-Exim-Connect-IP: 81.174.156.145
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -57,50 +58,48 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mike Snitzer <snitzer@redhat.com>
+From: Anand Jain <Anand.Jain@oracle.com>
 
-commit fd2fa95416188a767a63979296fa3e169a9ef5ec upstream.
+commit 3c1dbdf54a31f4f049a33214c3096595988786bf upstream.
 
-policy_hint_size starts as 0 during __write_initial_superblock().  It
-isn't until the policy is loaded that policy_hint_size is set in-core
-(cmd->policy_hint_size).  But it never got recorded in the on-disk
-superblock because __commit_transaction() didn't deal with transfering
-the in-core cmd->policy_hint_size to the on-disk superblock.
+we are assigning number_devices to the total_bytes,
+that's very confusing for a moment
 
-The in-core cmd->policy_hint_size gets initialized by metadata_open()'s
-__begin_transaction_flags() which re-reads all superblock fields.
-Because the superblock's policy_hint_size was never properly stored, when
-the cache was created, hints_array_available() would always return false
-when re-activating a previously created cache.  This means
-__load_mappings() always considered the hints invalid and never made use
-of the hints (these hints served to optimize).
-
-Another detremental side-effect of this oversight is the cache_check
-utility would fail with: "invalid hint width: 0"
-
-Signed-off-by: Mike Snitzer <snitzer@redhat.com>
+Signed-off-by: Anand Jain <anand.jain@oracle.com>
+Reviewed-by: David Sterba <dsterba@suse.cz>
+Signed-off-by: Chris Mason <clm@fb.com>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/md/dm-cache-metadata.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ fs/btrfs/volumes.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
---- a/drivers/md/dm-cache-metadata.c
-+++ b/drivers/md/dm-cache-metadata.c
-@@ -324,7 +324,7 @@ static int __write_initial_superblock(st
- 	disk_super->version = cpu_to_le32(MAX_CACHE_VERSION);
- 	memset(disk_super->policy_name, 0, sizeof(disk_super->policy_name));
- 	memset(disk_super->policy_version, 0, sizeof(disk_super->policy_version));
--	disk_super->policy_hint_size = 0;
-+	disk_super->policy_hint_size = cpu_to_le32(0);
+--- a/fs/btrfs/volumes.c
++++ b/fs/btrfs/volumes.c
+@@ -2039,7 +2039,7 @@ int btrfs_init_new_device(struct btrfs_r
+ 	struct list_head *devices;
+ 	struct super_block *sb = root->fs_info->sb;
+ 	struct rcu_string *name;
+-	u64 total_bytes;
++	u64 tmp;
+ 	int seeding_dev = 0;
+ 	int ret = 0;
  
- 	__copy_sm_root(cmd, disk_super);
+@@ -2142,13 +2142,13 @@ int btrfs_init_new_device(struct btrfs_r
+ 	if (!blk_queue_nonrot(bdev_get_queue(bdev)))
+ 		root->fs_info->fs_devices->rotating = 1;
  
-@@ -635,6 +635,7 @@ static int __commit_transaction(struct d
- 	disk_super->policy_version[0] = cpu_to_le32(cmd->policy_version[0]);
- 	disk_super->policy_version[1] = cpu_to_le32(cmd->policy_version[1]);
- 	disk_super->policy_version[2] = cpu_to_le32(cmd->policy_version[2]);
-+	disk_super->policy_hint_size = cpu_to_le32(cmd->policy_hint_size);
+-	total_bytes = btrfs_super_total_bytes(root->fs_info->super_copy);
++	tmp = btrfs_super_total_bytes(root->fs_info->super_copy);
+ 	btrfs_set_super_total_bytes(root->fs_info->super_copy,
+-				    total_bytes + device->total_bytes);
++				    tmp + device->total_bytes);
  
- 	disk_super->read_hits = cpu_to_le32(cmd->stats.read_hits);
- 	disk_super->read_misses = cpu_to_le32(cmd->stats.read_misses);
+-	total_bytes = btrfs_super_num_devices(root->fs_info->super_copy);
++	tmp = btrfs_super_num_devices(root->fs_info->super_copy);
+ 	btrfs_set_super_num_devices(root->fs_info->super_copy,
+-				    total_bytes + 1);
++				    tmp + 1);
+ 
+ 	/* add sysfs device entry */
+ 	btrfs_kobj_add_device(root->fs_info, device);
 
