@@ -6,46 +6,44 @@ X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6571C65BAF
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:11:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55E7EC65BAF
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:11:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B403F20661
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:11:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B403F20661
+	by mail.kernel.org (Postfix) with ESMTP id 253FC20661
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:11:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 253FC20661
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727956AbeLIWLH (ORCPT
+        id S1728210AbeLIWLN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 17:11:07 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:37630 "EHLO
+        Sun, 9 Dec 2018 17:11:13 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:37650 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726354AbeLIWLE (ORCPT
+        by vger.kernel.org with ESMTP id S1727942AbeLIWLJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Dec 2018 17:11:04 -0500
+        Sun, 9 Dec 2018 17:11:09 -0500
 Received: from pub.yeoldevic.com ([81.174.156.145] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW73F-0002ij-KK; Sun, 09 Dec 2018 21:55:49 +0000
+        id 1gW73H-0002pr-KB; Sun, 09 Dec 2018 21:55:51 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW72c-0003Mf-Nt; Sun, 09 Dec 2018 21:55:10 +0000
+        id 1gW72c-0003MQ-JT; Sun, 09 Dec 2018 21:55:10 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org,
-        "Thomas Petazzoni" <thomas.petazzoni@bootlin.com>,
-        "Lorenzo Pieralisi" <lorenzo.pieralisi@arm.com>
+CC:     akpm@linux-foundation.org, "Mike Snitzer" <snitzer@redhat.com>
 Date:   Sun, 09 Dec 2018 21:50:33 +0000
-Message-ID: <lsq.1544392233.964329884@decadent.org.uk>
+Message-ID: <lsq.1544392233.545839705@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 118/328] PCI: mvebu: Fix I/O space end address
- calculation
+Subject: [PATCH 3.16 115/328] dm cache metadata: save in-core
+ policy_hint_size to on-disk superblock
 In-Reply-To: <lsq.1544392232.713909046@decadent.org.uk>
 X-SA-Exim-Connect-IP: 81.174.156.145
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -59,32 +57,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+From: Mike Snitzer <snitzer@redhat.com>
 
-commit dfd0309fd7b30a5baffaf47b2fccb88b46d64d69 upstream.
+commit fd2fa95416188a767a63979296fa3e169a9ef5ec upstream.
 
-pcie->realio.end should be the address of last byte of the area,
-therefore using resource_size() of another resource is not correct, we
-must substract 1 to get the address of the last byte.
+policy_hint_size starts as 0 during __write_initial_superblock().  It
+isn't until the policy is loaded that policy_hint_size is set in-core
+(cmd->policy_hint_size).  But it never got recorded in the on-disk
+superblock because __commit_transaction() didn't deal with transfering
+the in-core cmd->policy_hint_size to the on-disk superblock.
 
-Fixes: 11be65472a427 ("PCI: mvebu: Adapt to the new device tree layout")
-Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-[bwh: Backported to 3.16: adjust filename]
+The in-core cmd->policy_hint_size gets initialized by metadata_open()'s
+__begin_transaction_flags() which re-reads all superblock fields.
+Because the superblock's policy_hint_size was never properly stored, when
+the cache was created, hints_array_available() would always return false
+when re-activating a previously created cache.  This means
+__load_mappings() always considered the hints invalid and never made use
+of the hints (these hints served to optimize).
+
+Another detremental side-effect of this oversight is the cache_check
+utility would fail with: "invalid hint width: 0"
+
+Signed-off-by: Mike Snitzer <snitzer@redhat.com>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/pci/host/pci-mvebu.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/md/dm-cache-metadata.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/pci/host/pci-mvebu.c
-+++ b/drivers/pci/host/pci-mvebu.c
-@@ -940,7 +940,7 @@ static int mvebu_pcie_probe(struct platf
- 		pcie->realio.start = PCIBIOS_MIN_IO;
- 		pcie->realio.end = min_t(resource_size_t,
- 					 IO_SPACE_LIMIT,
--					 resource_size(&pcie->io));
-+					 resource_size(&pcie->io) - 1);
- 	} else
- 		pcie->realio = pcie->io;
+--- a/drivers/md/dm-cache-metadata.c
++++ b/drivers/md/dm-cache-metadata.c
+@@ -324,7 +324,7 @@ static int __write_initial_superblock(st
+ 	disk_super->version = cpu_to_le32(MAX_CACHE_VERSION);
+ 	memset(disk_super->policy_name, 0, sizeof(disk_super->policy_name));
+ 	memset(disk_super->policy_version, 0, sizeof(disk_super->policy_version));
+-	disk_super->policy_hint_size = 0;
++	disk_super->policy_hint_size = cpu_to_le32(0);
  
+ 	__copy_sm_root(cmd, disk_super);
+ 
+@@ -635,6 +635,7 @@ static int __commit_transaction(struct d
+ 	disk_super->policy_version[0] = cpu_to_le32(cmd->policy_version[0]);
+ 	disk_super->policy_version[1] = cpu_to_le32(cmd->policy_version[1]);
+ 	disk_super->policy_version[2] = cpu_to_le32(cmd->policy_version[2]);
++	disk_super->policy_hint_size = cpu_to_le32(cmd->policy_hint_size);
+ 
+ 	disk_super->read_hits = cpu_to_le32(cmd->stats.read_hits);
+ 	disk_super->read_misses = cpu_to_le32(cmd->stats.read_misses);
 
