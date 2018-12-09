@@ -2,184 +2,104 @@ Return-Path: <SRS0=cWqk=OS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7B8BC07E85
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 05:15:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45521C07E85
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 05:19:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7254A20831
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 05:15:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F355920831
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 05:19:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="h6ZPR6qw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7254A20831
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sKQk2ahQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F355920831
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726100AbeLIFPo (ORCPT
+        id S1726113AbeLIFTE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 00:15:44 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:32918 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726067AbeLIFPn (ORCPT
+        Sun, 9 Dec 2018 00:19:04 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:39292 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726062AbeLIFTD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Dec 2018 00:15:43 -0500
-Received: by mail-wm1-f67.google.com with SMTP id r24so4118300wmh.0
-        for <linux-kernel@vger.kernel.org>; Sat, 08 Dec 2018 21:15:42 -0800 (PST)
+        Sun, 9 Dec 2018 00:19:03 -0500
+Received: by mail-pl1-f194.google.com with SMTP id 101so3676906pld.6;
+        Sat, 08 Dec 2018 21:19:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=v0xu1+R6NFUqkJT3afutXkCazmWK14VeE+J0TDJ6T5s=;
-        b=h6ZPR6qwVTKR7p1oQdxAo4qfzi61Iq09PhJe9WxyDBhxBacakQPk8xW4wj6Mi88bws
-         jMywYApRodJwxxZeczOJwfdw9NCIo3HKFNE7WzCdOmbiU0eKUNh8kcTCMj4SfzDW4Az4
-         Y6L+ykVULSfBO0Q2CPSAEP2IJbWaonOVQZoRo=
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=uCPeexdJ5AfMKP2nzbz+gP5I2yOBaGAIYFi/XL/QO7M=;
+        b=sKQk2ahQPuOk36dz0Jz9S7nwtD97Fqtor0POPxWSr1VR+pN9LD13l1jwZ+EMIhhXO3
+         BlGtAkH5AMPfcn2ZfeszTgBlR7mQV6BMaHinjjg8UkYqqgalCATwd2T0BLokUuKS9cIb
+         z0ZjYb5JdHEMdG01AjxJyotkojx4iwDHlSrVt7bXlX/STb2CwN5ZmyaApQlYO6CFEE9b
+         CVwTVFbO5cPk9n9FJO1ZHgIhKTaMzZKHeisnxiofZ2hvP+No/HIQw1QPp//UA2pXW5lY
+         N8+pVUENOb8vJalymdG1tqrhuyXdlrDZFsybY3ZHdpL3TNAT19r9sr6ZezJsJDJi0kjL
+         T9Bw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=v0xu1+R6NFUqkJT3afutXkCazmWK14VeE+J0TDJ6T5s=;
-        b=C175As5jJWS87H0ur8ZR0MIeFSgWhbpQjdDb+votgVM8fw77ki/j1p9Hl3/PubJdvw
-         FYYr3PsHmAdsuxWsAyik0uzfVnHcji6ZZVXRQrdZUMC/MadXUprsHVcnvY1OS8YxWoXY
-         kL0qsb8ytHoFEJKXnRX5gWYV987xB3K5zuEeldaowaFtRvXG3RZGNXewIm/lkHdfb6se
-         PxotTUiGUwt4ZJySezo8JVOJcZIhRBB9FclOJykZoktli9XqJuuPJOLyJi+A07/ZoxUl
-         XYnHU92CB7M68/sm8t1+Nup2EDGvpL4DN41NZsSAqkwBXCA+q54gx/hP8MDGN7ZskYV1
-         f+zw==
-X-Gm-Message-State: AA+aEWY3WhCk3s/osmxwZhoKW0yoH+F5qEOsNFSP9RseCoiZZaSBTFT3
-        lEUV65XzA3yhKg6R/q0m0Xsmog==
-X-Google-Smtp-Source: AFSGD/W4bClQPy9VQHPzn3F5iZXaxqMHJAk6o5a88OOegVLNvMgzAqJSzlKynDBvrTgVupYUpz3PCg==
-X-Received: by 2002:a1c:cbc7:: with SMTP id b190mr7179090wmg.13.1544332541491;
-        Sat, 08 Dec 2018 21:15:41 -0800 (PST)
-Received: from macbook.djakov.com ([212.45.67.2])
-        by smtp.googlemail.com with ESMTPSA id h129sm15485147wma.0.2018.12.08.21.15.39
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 08 Dec 2018 21:15:40 -0800 (PST)
-Subject: Re: [PATCH v12 0/7] Introduce on-chip interconnect API
-To:     Olof Johansson <olof@lixom.net>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andy Gross <andy.gross@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>, linux-pm@vger.kernel.org,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Saravana Kannan <skannan@codeaurora.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Amit Kucheria <amit.kucheria@linaro.org>,
-        seansw@qti.qualcomm.com, daidavid1@codeaurora.org,
-        evgreen@chromium.org, Doug Anderson <dianders@chromium.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Alexandre Bailon <abailon@baylibre.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        ksitaraman@nvidia.com, sanjayc@nvidia.com,
-        DTML <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        linux-tegra@vger.kernel.org
-References: <20181208170216.32555-1-georgi.djakov@linaro.org>
- <CAOesGMgZYheG77L_nuNtTA8xY-PtDpseHOKf8kCjusiYsv5Mmw@mail.gmail.com>
-From:   Georgi Djakov <georgi.djakov@linaro.org>
-Message-ID: <19e55a84-08d9-8cfa-02cb-be963f08ca61@linaro.org>
-Date:   Sun, 9 Dec 2018 07:15:35 +0200
-MIME-Version: 1.0
-In-Reply-To: <CAOesGMgZYheG77L_nuNtTA8xY-PtDpseHOKf8kCjusiYsv5Mmw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=uCPeexdJ5AfMKP2nzbz+gP5I2yOBaGAIYFi/XL/QO7M=;
+        b=rGL3g95aRhUHCuz3x/dt4Z9Imim63nUHVXdh8nv4tv96IrVTig2s5h1veWR59eZDYy
+         tH++U/wba4PVK1wVdqJvBUN1IpOEohrh5C4Zh44BAbPYZONSggEswxg1W8IUBEKRu1t1
+         esOQmo2qbA34H3kbg/DseVxYe+RT/c/qO6cC2mAMMjp3W4N9ABJ31fkrhtC8kuVaaPA/
+         w4CuYwrpnWPOz14Ft3VrVn3R5FJS/r0821SmO5P3J+Fv9km8d7j67oKGbTsBJTg3eeq4
+         IVvhFsFkJMJS3B/ug9NX8Y+VcOCj1Pi4tUTfLJG/CTSUV4QLuuQLGF1IiCdZmBwGIurx
+         dqrg==
+X-Gm-Message-State: AA+aEWaXKUETaxLqhFUgwtI29hfjCQbQVTwV8/AFIlzD9lS5Mlt4+yDF
+        KBYwSAOp6kKczjuPlhhG85U=
+X-Google-Smtp-Source: AFSGD/XdZHUg09GAKXVsVDv0T9PM2gm87S4j2GLVIz6IYw2IXMT/T2zUCPfDrd9VH8vi+DO5A9Takg==
+X-Received: by 2002:a17:902:5ac7:: with SMTP id g7mr7879955plm.212.1544332743252;
+        Sat, 08 Dec 2018 21:19:03 -0800 (PST)
+Received: from localhost (68.168.130.77.16clouds.com. [68.168.130.77])
+        by smtp.gmail.com with ESMTPSA id n66sm11913025pfk.19.2018.12.08.21.19.02
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sat, 08 Dec 2018 21:19:02 -0800 (PST)
+From:   Yangtao Li <tiny.windzz@gmail.com>
+To:     dmitry.torokhov@gmail.com
+Cc:     linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Yangtao Li <tiny.windzz@gmail.com>
+Subject: [PATCH v2] Input: i8042 fix refcount leak
+Date:   Sun,  9 Dec 2018 00:19:00 -0500
+Message-Id: <20181209051900.19035-1-tiny.windzz@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Olof,
+use of_node_put() to release the refcount.
 
-On 9.12.18 2:33, Olof Johansson wrote:
-> Hi Georgi,
-> 
-> On Sat, Dec 8, 2018 at 9:02 AM Georgi Djakov <georgi.djakov@linaro.org> wrote:
->>
->> Modern SoCs have multiple processors and various dedicated cores (video, gpu,
->> graphics, modem). These cores are talking to each other and can generate a
->> lot of data flowing through the on-chip interconnects. These interconnect
->> buses could form different topologies such as crossbar, point to point buses,
->> hierarchical buses or use the network-on-chip concept.
->>
->> These buses have been sized usually to handle use cases with high data
->> throughput but it is not necessary all the time and consume a lot of power.
->> Furthermore, the priority between masters can vary depending on the running
->> use case like video playback or CPU intensive tasks.
->>
->> Having an API to control the requirement of the system in terms of bandwidth
->> and QoS, so we can adapt the interconnect configuration to match those by
->> scaling the frequencies, setting link priority and tuning QoS parameters.
->> This configuration can be a static, one-time operation done at boot for some
->> platforms or a dynamic set of operations that happen at run-time.
->>
->> This patchset introduce a new API to get the requirement and configure the
->> interconnect buses across the entire chipset to fit with the current demand.
->> The API is NOT for changing the performance of the endpoint devices, but only
->> the interconnect path in between them.
->>
->> The API is using a consumer/provider-based model, where the providers are
->> the interconnect buses and the consumers could be various drivers.
->> The consumers request interconnect resources (path) to an endpoint and set
->> the desired constraints on this data flow path. The provider(s) receive
->> requests from consumers and aggregate these requests for all master-slave
->> pairs on that path. Then the providers configure each participating in the
->> topology node according to the requested data flow path, physical links and
->> constraints. The topology could be complicated and multi-tiered and is SoC
->> specific.
-> 
-> This patch series description fails to describe why you need a brand
-> new subsystem for this instead of either using one of the current
-> ones, or adapting it to fit the needs you have.
-> 
-> Primarily, I'm wondering what's missing from drivers/devfreq to fit your needs?
+Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+---
+ drivers/input/serio/i8042-sparcio.h | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-The devfreq subsystem seems to be more oriented towards a device (like GPU or CPU) that controls the power/performance characteristics by itself and not the performance of other devices. The main problem of using it is that it's using a reactive approach - for example monitor some performance counters and then reconfigure bandwidth after some bottleneck has already occurred. This is suboptimal and might not work well. The new solution does the opposite by allowing drivers to express their needs in advance and be proactive. Devfreq also does not seem suitable for configuring complex, multi-tiered bus topologies and aggregating constraints provided by drivers.
-
-> The series also doesn't seem to provide any kind of indication how
-> this will be used by end points. You have one driver for one SoC that
-> just contains large tables that are parsed at probe time, but no
-> driver hooks anywhere that will actually change any settings depending
-> on use cases. Also, the bindings as posted don't seem to include any
-> of this kind of information. So it's hard to get a picture of how this
-> is going to be used in reality, which makes it hard to judge whether
-> it is a good solution or not.
-
-Here are links to some of the examples that are on the mailing list already. I really should have  included them in the cover letter. 
-https://lkml.org/lkml/2018/12/7/584
-https://lkml.org/lkml/2018/10/11/499
-https://lkml.org/lkml/2018/9/20/986
-https://lkml.org/lkml/2018/11/22/772
-
-Platforms drivers for different SoCs are available:
-https://lkml.org/lkml/2018/11/17/368
-https://lkml.org/lkml/2018/8/10/380
-There is a discussion on linux-pm about supporting also Tegra platforms in addition to NXP and Qualcomm.
-
-> Overall, exposing all of this to software is obviously a nightmare
-> from a complexity point of view, and one in which it will surely be
-> very very hard to make the system behave properly for generic
-> workloads beyond benchmark tuning.
-
-It allows the consumer drivers to dynamically express their performance needs in the system in a more fine grained way (if they want/need to) and this helps the system to keep the lowest power profile. This has already been done for a long time in various different kernels shipping with Android devices, for example, and basically every vendor uses a different custom approach. So I believe that this is doing the generalization that was needed.
-
-> Having more information about the above would definitely help tell if
-> this whole effort is a step in the right direction, or if it is
-> needless complexity that is better solved in other ways.
-
-Sure, hope that this answers your questions.
-
-Thanks,
-Georgi
-
-> 
-> -Olof
-> 
+diff --git a/drivers/input/serio/i8042-sparcio.h b/drivers/input/serio/i8042-sparcio.h
+index 796289846204..cc6777b4c4ea 100644
+--- a/drivers/input/serio/i8042-sparcio.h
++++ b/drivers/input/serio/i8042-sparcio.h
+@@ -111,13 +111,17 @@ static int __init i8042_platform_init(void)
+ 	struct device_node *root = of_find_node_by_path("/");
+ 
+ 	if (!strcmp(root->name, "SUNW,JavaStation-1")) {
++		of_node_put(root);
+ 		/* Hardcoded values for MrCoffee.  */
+ 		i8042_kbd_irq = i8042_aux_irq = 13 | 0x20;
+ 		kbd_iobase = ioremap(0x71300060, 8);
+ 		if (!kbd_iobase)
+ 			return -ENODEV;
+ 	} else {
+-		int err = platform_driver_register(&sparc_i8042_driver);
++		int err;
++
++		of_node_put(root);
++		err = platform_driver_register(&sparc_i8042_driver);
+ 		if (err)
+ 			return err;
+ 
+-- 
+2.17.0
 
