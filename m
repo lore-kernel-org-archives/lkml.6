@@ -6,47 +6,44 @@ X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A0A9C07E85
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:23:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59929C65BAF
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:23:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 56BBF20661
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:23:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 56BBF20661
+	by mail.kernel.org (Postfix) with ESMTP id 21AB720661
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:23:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 21AB720661
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728650AbeLIWXu (ORCPT
+        id S1728683AbeLIWXx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 17:23:50 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35064 "EHLO
+        Sun, 9 Dec 2018 17:23:53 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35044 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726485AbeLIVzS (ORCPT
+        by vger.kernel.org with ESMTP id S1726478AbeLIVzS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 9 Dec 2018 16:55:18 -0500
 Received: from pub.yeoldevic.com ([81.174.156.145] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW72h-0002ik-Rp; Sun, 09 Dec 2018 21:55:16 +0000
+        id 1gW72h-0002po-IL; Sun, 09 Dec 2018 21:55:15 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW72e-0003SF-Rp; Sun, 09 Dec 2018 21:55:12 +0000
+        id 1gW72e-0003Rv-M1; Sun, 09 Dec 2018 21:55:12 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org,
-        "Johannes Berg" <johannes.berg@intel.com>,
-        "Arunk Khandavalli" <akhandav@codeaurora.org>,
-        "Jouni Malinen" <jouni@codeaurora.org>
+CC:     akpm@linux-foundation.org, "Felipe Balbi" <balbi@ti.com>
 Date:   Sun, 09 Dec 2018 21:50:33 +0000
-Message-ID: <lsq.1544392233.137730742@decadent.org.uk>
+Message-ID: <lsq.1544392233.927412555@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 174/328] cfg80211: nl80211_update_ft_ies() to
- validate NL80211_ATTR_IE
+Subject: [PATCH 3.16 170/328] usb: gadget: udc: net2280: do not rely on
+ 'driver' argument
 In-Reply-To: <lsq.1544392232.713909046@decadent.org.uk>
 X-SA-Exim-Connect-IP: 81.174.156.145
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -60,33 +57,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Arunk Khandavalli <akhandav@codeaurora.org>
+From: Felipe Balbi <balbi@ti.com>
 
-commit 4f0223bfe9c3e62d8f45a85f1ef1b18a8a263ef9 upstream.
+commit bfd0ed576dbf9cc71af7dbe42841fc9246524961 upstream.
 
-nl80211_update_ft_ies() tried to validate NL80211_ATTR_IE with
-is_valid_ie_attr() before dereferencing it, but that helper function
-returns true in case of NULL pointer (i.e., attribute not included).
-This can result to dereferencing a NULL pointer. Fix that by explicitly
-checking that NL80211_ATTR_IE is included.
+future patches will remove the extra 'driver'
+argument to ->udc_stop(), in order to do that,
+we must make sure that our UDC does not rely
+on it first.
 
-Fixes: 355199e02b83 ("cfg80211: Extend support for IEEE 802.11r Fast BSS Transition")
-Signed-off-by: Arunk Khandavalli <akhandav@codeaurora.org>
-Signed-off-by: Jouni Malinen <jouni@codeaurora.org>
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Signed-off-by: Felipe Balbi <balbi@ti.com>
+[bwh: Backported to 3.16: adjust filename, context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- net/wireless/nl80211.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/usb/gadget/net2280.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
---- a/net/wireless/nl80211.c
-+++ b/net/wireless/nl80211.c
-@@ -9185,6 +9185,7 @@ static int nl80211_update_ft_ies(struct
- 		return -EOPNOTSUPP;
+--- a/drivers/usb/gadget/net2280.c
++++ b/drivers/usb/gadget/net2280.c
+@@ -1956,11 +1956,9 @@ static int net2280_stop(struct usb_gadge
+ 	dev = container_of (_gadget, struct net2280, gadget);
  
- 	if (!info->attrs[NL80211_ATTR_MDID] ||
-+	    !info->attrs[NL80211_ATTR_IE] ||
- 	    !is_valid_ie_attr(info->attrs[NL80211_ATTR_IE]))
- 		return -EINVAL;
+ 	spin_lock_irqsave (&dev->lock, flags);
+-	stop_activity (dev, driver);
++	stop_activity(dev, NULL);
+ 	spin_unlock_irqrestore (&dev->lock, flags);
  
+-	dev->driver = NULL;
+-
+ 	net2280_led_active (dev, 0);
+ 
+ 	/* Disable full-speed test mode */
+@@ -1970,7 +1968,8 @@ static int net2280_stop(struct usb_gadge
+ 	device_remove_file (&dev->pdev->dev, &dev_attr_queues);
+ 
+ 	DEBUG(dev, "unregistered driver '%s'\n",
+-			driver ? driver->driver.name : "");
++	      dev->driver ? dev->driver->driver.name : "");
++	dev->driver = NULL;
+ 
+ 	return 0;
+ }
 
