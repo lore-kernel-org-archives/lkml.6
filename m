@@ -6,46 +6,51 @@ X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6478C65BAF
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 21:55:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2ABCCC07E85
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 21:55:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B220C20837
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 21:55:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B220C20837
+	by mail.kernel.org (Postfix) with ESMTP id E486420661
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 21:55:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E486420661
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726779AbeLIVzj (ORCPT
+        id S1726839AbeLIVzr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 16:55:39 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35340 "EHLO
+        Sun, 9 Dec 2018 16:55:47 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35572 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726536AbeLIVzX (ORCPT
+        by vger.kernel.org with ESMTP id S1726577AbeLIVz1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Dec 2018 16:55:23 -0500
+        Sun, 9 Dec 2018 16:55:27 -0500
 Received: from pub.yeoldevic.com ([81.174.156.145] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW72n-0002ib-9y; Sun, 09 Dec 2018 21:55:21 +0000
+        id 1gW72q-0002pr-G9; Sun, 09 Dec 2018 21:55:24 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW72k-0003dy-Ck; Sun, 09 Dec 2018 21:55:18 +0000
+        id 1gW72l-0003hi-TS; Sun, 09 Dec 2018 21:55:19 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, "syzbot" <syzkaller@googlegroups.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        "Eric Dumazet" <edumazet@google.com>
+CC:     akpm@linux-foundation.org, "Andi Kleen" <ak@linux.intel.com>,
+        "Jan Kara" <jack@suse.cz>, "Johannes Weiner" <hannes@cmpxchg.org>,
+        "Andrey Ryabinin" <aryabinin@virtuozzo.com>,
+        "Vasily Averin" <vvs@virtuozzo.com>,
+        "Linus Torvalds" <torvalds@linux-foundation.org>,
+        "Mel Gorman" <mgorman@techsingularity.net>,
+        "Matthew Wilcox" <willy@infradead.org>,
+        "Pavel Tikhomirov" <ptikhomirov@virtuozzo.com>
 Date:   Sun, 09 Dec 2018 21:50:33 +0000
-Message-ID: <lsq.1544392233.178902176@decadent.org.uk>
+Message-ID: <lsq.1544392233.880695492@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 290/328] rtnl: limit IFLA_NUM_TX_QUEUES and
- IFLA_NUM_RX_QUEUES to 4096
+Subject: [PATCH 3.16 325/328] mm: cleancache: fix corruption on missed
+ inode invalidation
 In-Reply-To: <lsq.1544392232.713909046@decadent.org.uk>
 X-SA-Exim-Connect-IP: 81.174.156.145
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -59,54 +64,71 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+From: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
 
-commit 0e1d6eca5113858ed2caea61a5adc03c595f6096 upstream.
+commit 6ff38bd40230af35e446239396e5fc8ebd6a5248 upstream.
 
-We have an impressive number of syzkaller bugs that are linked
-to the fact that syzbot was able to create a networking device
-with millions of TX (or RX) queues.
+If all pages are deleted from the mapping by memory reclaim and also
+moved to the cleancache:
 
-Let's limit the number of RX/TX queues to 4096, this really should
-cover all known cases.
+__delete_from_page_cache
+  (no shadow case)
+  unaccount_page_cache_page
+    cleancache_put_page
+  page_cache_delete
+    mapping->nrpages -= nr
+    (nrpages becomes 0)
 
-A separate patch will add various cond_resched() in the loops
-handling sysfs entries at device creation and dismantle.
+We don't clean the cleancache for an inode after final file truncation
+(removal).
 
-Tested:
+truncate_inode_pages_final
+  check (nrpages || nrexceptional) is false
+    no truncate_inode_pages
+      no cleancache_invalidate_inode(mapping)
 
-lpaa6:~# ip link add gre-4097 numtxqueues 4097 numrxqueues 4097 type ip6gretap
-RTNETLINK answers: Invalid argument
+These way when reading the new file created with same inode we may get
+these trash leftover pages from cleancache and see wrong data instead of
+the contents of the new file.
 
-lpaa6:~# time ip link add gre-4096 numtxqueues 4096 numrxqueues 4096 type ip6gretap
+Fix it by always doing truncate_inode_pages which is already ready for
+nrpages == 0 && nrexceptional == 0 case and just invalidates inode.
 
-real	0m0.180s
-user	0m0.000s
-sys	0m0.107s
-
-Fixes: 76ff5cc91935 ("rtnl: allow to specify number of rx and tx queues on device creation")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Reported-by: syzbot <syzkaller@googlegroups.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+[akpm@linux-foundation.org: add comment, per Jan]
+Link: http://lkml.kernel.org/r/20181112095734.17979-1-ptikhomirov@virtuozzo.com
+Fixes: commit 91b0abe36a7b ("mm + fs: store shadow entries in page cache")
+Signed-off-by: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
+Reviewed-by: Vasily Averin <vvs@virtuozzo.com>
+Reviewed-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
+Reviewed-by: Jan Kara <jack@suse.cz>
+Cc: Johannes Weiner <hannes@cmpxchg.org>
+Cc: Mel Gorman <mgorman@techsingularity.net>
+Cc: Matthew Wilcox <willy@infradead.org>
+Cc: Andi Kleen <ak@linux.intel.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 [bwh: Backported to 3.16: adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- net/core/rtnetlink.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ mm/truncate.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
---- a/net/core/rtnetlink.c
-+++ b/net/core/rtnetlink.c
-@@ -1831,6 +1831,12 @@ struct net_device *rtnl_create_link(stru
- 	else if (ops->get_num_rx_queues)
- 		num_rx_queues = ops->get_num_rx_queues();
+--- a/mm/truncate.c
++++ b/mm/truncate.c
+@@ -461,9 +461,13 @@ void truncate_inode_pages_final(struct a
+ 		 */
+ 		spin_lock_irq(&mapping->tree_lock);
+ 		spin_unlock_irq(&mapping->tree_lock);
+-
+-		truncate_inode_pages(mapping, 0);
+ 	}
++
++	/*
++	 * Cleancache needs notification even if there are no pages or shadow
++	 * entries.
++	 */
++	truncate_inode_pages(mapping, 0);
+ }
+ EXPORT_SYMBOL(truncate_inode_pages_final);
  
-+	if (num_tx_queues < 1 || num_tx_queues > 4096)
-+		return ERR_PTR(-EINVAL);
-+
-+	if (num_rx_queues < 1 || num_rx_queues > 4096)
-+		return ERR_PTR(-EINVAL);
-+
- 	err = -ENOMEM;
- 	dev = alloc_netdev_mqs(ops->priv_size, ifname, ops->setup,
- 			       num_tx_queues, num_rx_queues);
 
