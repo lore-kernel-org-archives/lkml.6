@@ -2,145 +2,137 @@ Return-Path: <SRS0=cWqk=OS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66D51C67838
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 11:27:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2795C07E85
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 11:30:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C32620837
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 11:27:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ACD762064D
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 11:30:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544354876;
-	bh=RqjeOVfFB97wuWBfSBSZaVbXVb6ONw692OS9qoAZboQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=aJT3OPkcE0FHCv/rKZd/+/6ddrsARgyUVyZX5D6fuWwsFy4vrr0YKXAJtLcLGXdrT
-	 zCxrwDFrbaTqB/pZFU0OU8SMLhjtTy7QYCefo3ySZZqLhLfPiqS43w/4F3Z/+HKkG+
-	 sMKe68Jjc6WQ7FTlhn+Ftfk4cd4eztek5mjBzzHw=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C32620837
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	s=default; t=1544355044;
+	bh=GPt1KIS4gJzWl3mQn2Nqo+M6Nx/TfdYVEiAUDXY/ieM=;
+	h=Date:From:To:Subject:References:In-Reply-To:List-ID:From;
+	b=Rvl83m6wb3D1Z1AfUkhmlwA3AnJ8eGdMXokdN7EFjg1LQOxiIb5lyaYAqDig8M+dU
+	 vTlEO3gw4/BNtCfz3TdUq7zXMY7Ns2+K+l76n+ztLmq+i4rvZKpSpcvKZBN89c5i9R
+	 NmFdVAPzvkkCPJ19AZLZK5puKVUd/K6H4Tk8vWf8=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ACD762064D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726243AbeLIL1w (ORCPT
+        id S1726254AbeLILan (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 06:27:52 -0500
-Received: from casper.infradead.org ([85.118.1.10]:56566 "EHLO
-        casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726198AbeLIL1v (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Dec 2018 06:27:51 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
-        MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=vQKcvzs2j28Xr+xvAUQTaGc5maZ63ktSNzVQ6E3MUf0=; b=FXwNtHIYSLseCKRrtNQ7rgyuZ/
-        CAt/UZH8HzIBqZz5szfmHeoys5IpW7lCYMrebOxmYn2CkIkNW8Xy6dRhPpDtgTNnWxCn8UoZ+8Mxs
-        v6Po/JrVZlnA5N7UaSgekxBTbjXEw/n4uRvHtWNYK5AiGJzOpPyJKEhdDZNhpmwiuELepIbhqS+Fv
-        9EPAKfFHpLK/eAyU2/euVeVpen09/LZGdDl6AMoH+ylqVTPJggqBgajjqOF6uH7rkVfY3nHOc82u1
-        Rfx0FwJ4iLILK+4zNPZVLOztUsmP5cRd4nqJJ0tEsb+QBjFhefOl4ojd3oI2Qc2LiaMWWgq0HVrSz
-        SuqMJItw==;
-Received: from [179.95.33.236] (helo=coco.lan)
-        by casper.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gVxFN-0002UG-F2; Sun, 09 Dec 2018 11:27:41 +0000
-Date:   Sun, 9 Dec 2018 09:27:36 -0200
-From:   Mauro Carvalho Chehab <mchehab@kernel.org>
-To:     Pavel Machek <pavel@ucw.cz>
-Cc:     shuah <shuah@kernel.org>, perex@perex.cz, tiwai@suse.com,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        alsa-devel@alsa-project.org
-Subject: Re: [RFC PATCH v8 1/4] media: Media Device Allocator API
-Message-ID: <20181209092715.50a7e4e4@coco.lan>
-In-Reply-To: <20181209080944.GA7561@amd>
-References: <cover.1541109584.git.shuah@kernel.org>
-        <e474dd16f1d6443c12b1361376193c9d0efcced6.1541109584.git.shuah@kernel.org>
-        <20181119085931.GA28607@amd>
-        <73c22137-9c7a-75c8-8cd1-3736c63c2d40@kernel.org>
-        <20181209080944.GA7561@amd>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        Sun, 9 Dec 2018 06:30:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37120 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726198AbeLILam (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Dec 2018 06:30:42 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2BBC12064D;
+        Sun,  9 Dec 2018 11:30:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544355041;
+        bh=GPt1KIS4gJzWl3mQn2Nqo+M6Nx/TfdYVEiAUDXY/ieM=;
+        h=Date:From:To:Subject:References:In-Reply-To:From;
+        b=Vcmnifi6kkgzZR3BZZnz1ulaHvNje7klk9VJxbjGG1unnA74Op/NaRU39WYIagErv
+         akmGWB64Jtj5p8GG0SER1ZmUH5VXwxidDVGo7EBRd9almxJxYgCtMQSgaVIexKN3Y3
+         K9wMioYZkK+PbK6NCo2KEbxFZZMSdat4f5ty/A2s=
+Date:   Sun, 9 Dec 2018 12:30:39 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Laura Abbott <labbott@redhat.com>,
+        stable <stable@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: Process for severe early stable bugs?
+Message-ID: <20181209113039.GA10771@kroah.com>
+References: <c04ea7b1-23f3-f1e0-4f31-07b62abdee24@redhat.com>
+ <20181208115629.GA3288@kroah.com>
+ <20181208171853.GA20708@thunk.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181208171853.GA20708@thunk.org>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Sun, 9 Dec 2018 09:09:44 +0100
-Pavel Machek <pavel@ucw.cz> escreveu:
-
-> On Thu 2018-12-06 08:33:14, shuah wrote:
-> > On 11/19/18 1:59 AM, Pavel Machek wrote:  
-> > >On Thu 2018-11-01 18:31:30, shuah@kernel.org wrote:  
-> > >>From: Shuah Khan <shuah@kernel.org>
-> > >>
-> > >>Media Device Allocator API to allows multiple drivers share a media device.
-> > >>Using this API, drivers can allocate a media device with the shared struct
-> > >>device as the key. Once the media device is allocated by a driver, other
-> > >>drivers can get a reference to it. The media device is released when all
-> > >>the references are released.  
-> > >
-> > >Sounds like a ... bad idea?
-> > >
-> > >That's what new "media control" framework is for, no?
-> > >
-> > >Why do you need this?  
+On Sat, Dec 08, 2018 at 12:18:53PM -0500, Theodore Y. Ts'o wrote:
+> On Sat, Dec 08, 2018 at 12:56:29PM +0100, Greg KH wrote:
+> > A nice step forward would have been if someone could have at least
+> > _told_ the stable maintainer (i.e. me) that there was such a serious bug
+> > out there.  That didn't happen here and I only found out about it
+> > accidentally by happening to talk to a developer who was on the bugzilla
+> > thread at a totally random meeting last Wednesday.
 > > 
-> > Media control framework doesn't address this problem of ownership of the
-> > media device when non-media drivers have to own the pipeline. In this case,
-> > snd-usb owns the audio pipeline when an audio application is using the
-> > device. Without this work, media drivers won't be able to tell if snd-usb is
-> > using the tuner and owns the media pipeline.
-> > 
-> > I am going to clarify this in the commit log.  
+> > There was also not an email thread that I could find once I found out
+> > about the issue.  By that time the bug was fixed and all I could do was
+> > wait for it to hit Linus's tree (and even then, I had to wait for the
+> > fix to the fix...)  If I had known about it earlier, I would have
+> > reverted the change that caused this.
 > 
-> I guess I'll need the explanation, yes.
+> So to be fair, the window between when we *know* what was the change
+> that required reverting and the fix actually being available was very
+> narrow.  For most of the 3-4 weeks when we were trying to track it
+> down --- and the bug had been present in Linus's tree since
+> 4.19-rc1(!) --- we had no idea exactly how big the problem was.
 > 
-> How can usb soundcard use the tuner? I thought we'd always have
-> userspace component active and moving data between tuner and usb sound
-> card?
+> If you want to know about these sorts of things early --- at the
+> moment the moment I and others at $WORK have been trying to track down
+> a problem on a 4.14.x kernel which has symptoms that look ***eerily***
+> similar to Bugzilla #201685.  There was another bug causing mysterious
+> file system corruptions that may also be related that was noticed on
+> an Ubuntu 4.13.x kernel which forced another team to fall back to a
+> 4.4 kernel.  Both of these have caused file system corruptions that
+> resulted in customer visible disruptions.  Ming Lei has now said that
+> there is a theoretical bug which he now believes might be present in
+> blk-mq starting in 4.11.
+> 
+> To make life even more annoying, starting in 4.14.63, disabling blk-mq
+> is no longer even an *option* for virtio-scsi thanks to commit
+> b5b6e8c8d3b4 ("scsi: virtio_scsi: fix IO hang caused by automatic irq
+> vector affinity"), which was backported to 4.14 as of 70b522f163bbb32.
+> We might try reverting that commit and then disabling blk-mq to see if
+> it makes the problem go away.  But the problem happens very rarely ---
+> maybe once a week across a population of 2500 or so VM's, so it would
+> take a long time before we could be certain that any change would fix
+> it in absence of a detailed root cause analysis or a clean repro that
+> can be run in a test environment.
+> 
+> So now you know --- but it's not clear it's going to be helpful.
+> Commit b5b6e8c8d3b4 was fixing another bug, so reverting it isn't
+> necessarily the right thing, especially since we can't yet prove it's
+> the cause of the problem.  It was "interesting" that we forced
+> virtio-scsi to use blk-mq in the middle of a LTS kernel series,
+> though.
 
-It sounds that the description of the patch is not 100%, as it seems
-that you're not seeing the hole picture.
+Yes, this all was very helpful, thank you for the information I
+appreciate it.
 
-This is designed to solve a very common usecase for media devices
-where one physical device (an USB stick) provides both audio
-and video.
+And I will watch out for these issues now.  It's a bit sad that these
+are showing up in 4.14, but it seems that distros are only now starting
+to really use that kernel version (or at least are only now starting to
+report things from it), as it is a year old.  Oh well, can't do much
+about that, I am more worried about the 4.19 issues like Laura was
+talking about as that is the "canary" we need to watch out for more.
 
-That's, for example, the case of cameras with microphones and 
-TV USB devices. Those usually expose the audio via standard
-USB Audio Class, and video either via USB Video Class or via
-some proprietary vendor class.
+> P.P.P.S.  If I were king, I'd be asking for a huge number of kunit
+> tests for block-mq to be developed, and then running them under a
+> Thread Sanitizer.
 
-Due to the way USB Audio Class is handled, it means that two
-independent drivers will provide the pipelines for a single
-physical USB bridge.
+Isn't that what xfs and fio is?  Aren't we running this all the time and
+reporting those issues?  How did this bug not show up on those tests, is
+it just because they didn't run long enough?
 
-The same problem also applies to more sophisticated embedded devices,
-like on  SOCs designed to be used on TVs and Set Top Boxes, where the
-hardware pipeline has both audio and video components on it, logically
-mapped into different drivers (using Linux DTV API, V4L2 API and ALSA).
+Because of those test suites, I was thinking that the block and
+filesystem paths were one of the more well-tested things we had at the
+moment, is this not true?
 
-On such kind of devices, it is important to have a way to see
-and control the entire audio and video pipeline present on them 
-through a single media controller device, specially if one wants
-to provide a hardware pipeline within the SoC that won't be 
-copying data between Kernel-userspace.
+thanks,
 
-Now, if the audio is implemented on a separate device (like an
-Intel HDA compatible chipset at the motherboard), it should
-be exposed as a separate media controller.
-
-So, for example, a system that has both an USB audio/video
-stick and an Intel HDA-compatible chipset, both exposed via
-the media controller, will have two media controller devices,
-one for each physically independent device.
-
-On the other hand, an SoC designed for TV products will likely
-expose a single media controller, even if each part of the
-pipeline is exposed via independent Linux device drivers.
-
-Thanks,
-Mauro
+greg k-h
