@@ -2,142 +2,149 @@ Return-Path: <SRS0=cWqk=OS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E720C07E85
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:32:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E11C2C07E85
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:44:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D935C20661
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:32:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9009920831
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:44:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E+nCmQhI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D935C20661
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="M8gUDnD+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9009920831
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726458AbeLIWc0 (ORCPT
+        id S1726363AbeLIWo1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 17:32:26 -0500
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:37621 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726304AbeLIWc0 (ORCPT
+        Sun, 9 Dec 2018 17:44:27 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:34026 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726268AbeLIWo0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Dec 2018 17:32:26 -0500
-Received: by mail-lf1-f65.google.com with SMTP id p17so6630098lfh.4;
-        Sun, 09 Dec 2018 14:32:24 -0800 (PST)
+        Sun, 9 Dec 2018 17:44:26 -0500
+Received: by mail-pl1-f195.google.com with SMTP id w4so4306760plz.1
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Dec 2018 14:44:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=aSbfvJCmqfAHFgKylE3VLr16VVPfdibM9zf2CTitOJM=;
-        b=E+nCmQhIR90wXfefO8VAiow2e+ZE4h5e7a9+Ojvj5ehWOC+O3j5fyoGILntutdpY9j
-         WxsyufQda/KjhthwOR3eQTjRqrPpTCCdC5508U64mVuUFVHAvjt1joLZDIvEft++jcxj
-         PKc3Oqcf4yczvNyDdyCwAxBXSVZVxTS9oSoqkC4+DFOQTyPXEsJWtqzX/l9e309Iv42l
-         4fu/wFvFQPZ66GK+glSu33qYxnUEA5lkkuBLBKxFWqU+7hF/fzGzsPgLxOTn6vIipj0x
-         52MayLG6Jtl09NsZ4IC20ClEmirN1Ovf0/+qW93H/kPWIeJvJI4wifLbGmXn7ee2QbMZ
-         SmfQ==
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=pdWyWUbFfA+p+N+o5RbHk/Ilb/5UC+AUi5omO6iiXHg=;
+        b=M8gUDnD+TzTl/JFiPXQ7HAwt7VBMGFjagoJTwwEsmv+3ScxVM/WM5Avdy3W+/oZPeP
+         7BTOt1U8suTQ4ER91kJeouf6AvVaup2oC4BiAv/TI4rTm6EytXmpIRRn/w2XIycHOlOK
+         8XZ3/LxJNxej6mHnNJhZEZ70EVYhBTpGjqfIKz4dYdhUMnLm5039wSMtOT0hIE2umNn7
+         UHtWWQ/1516RmFrty2h549ZvePGBeQSM1rnSudFP+RgU03QhDxWjNAjixIL0W8eHxQ4w
+         RSuB8VjwdjrtYhajiVDdGg+G1eXJQ6BQRSKnmDcIkoGsnTuaTge2Z3Y4TfkiB0g+tBW3
+         F2GQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=aSbfvJCmqfAHFgKylE3VLr16VVPfdibM9zf2CTitOJM=;
-        b=pQgWg+w3Svc60KlvRxdNtBIXER8fIMopUWUTOD6BMWGJYH9vtmmuqqt392RjUxznaq
-         c3NDBr4U8po0EraSMTwVbIyQvPTP9n4PGfQgeIpoGPcQwbGES2Kfn323bLGnoi3fZmeY
-         crqqRFut+9c4o4+9treeaXNvToS2p835MeUb7+XNNXkYhbUEGDcI9GBWS0x8KmsZ3Fi/
-         a1yjrmNkafhv8cXMOoJBWlj0eWxuLSGk2SSmkGk/OGlbHdrXmb9FjZMabZxlZ1gnYMcJ
-         poeCh6POQEUTh3rJGW4vpWW/0NUs8TlsL73jC4naA7BBrO5xBbStKOxoIJFrz8FP/nD0
-         O5bA==
-X-Gm-Message-State: AA+aEWY3ansIu6Zf4kT4LDpoRMvLXmhCY77ojF13kCyfsNvkpFHuKAUR
-        3dCSjNis2Bs2l8SuEtDDbPb49YADaHs=
-X-Google-Smtp-Source: AFSGD/WFKokiYX7TjyI9VrqlGnl+hh1Ja1bpLTqVArL0KU/M6D6yteT6DL1kBUR2K2oLdqf7OJLZBw==
-X-Received: by 2002:a19:c4cc:: with SMTP id u195mr5342648lff.141.1544394743398;
-        Sun, 09 Dec 2018 14:32:23 -0800 (PST)
-Received: from [192.168.10.160] (91-159-62-226.elisa-laajakaista.fi. [91.159.62.226])
-        by smtp.gmail.com with ESMTPSA id x29-v6sm1820387ljb.97.2018.12.09.14.32.22
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 09 Dec 2018 14:32:22 -0800 (PST)
-Subject: Re: [PATCH 2/6] __wr_after_init: write rare for static allocation
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Andy Lutomirski <luto@kernel.org>
-Cc:     linux-arch <linux-arch@vger.kernel.org>,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Kees Cook <keescook@chromium.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Igor Stoppa <igor.stoppa@huawei.com>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux-MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <20181204121805.4621-1-igor.stoppa@huawei.com>
- <20181204121805.4621-3-igor.stoppa@huawei.com>
- <CALCETrVvoui0vksdt0Y9rdGL5ipEn_FtSXVVUFdH03ZC93cy_A@mail.gmail.com>
- <20181206094451.GC13538@hirez.programming.kicks-ass.net>
-From:   Igor Stoppa <igor.stoppa@gmail.com>
-Message-ID: <d9382720-3c39-5f10-afcd-dc17727fe4dc@gmail.com>
-Date:   Mon, 10 Dec 2018 00:32:21 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=pdWyWUbFfA+p+N+o5RbHk/Ilb/5UC+AUi5omO6iiXHg=;
+        b=V67kO49d+lYepsZOICWTe9UzJ3flxL1eQnLIb7xEXS85ZdMo/J77Un/ZCuLe793hY0
+         Kgh3auNdznMQjVenvjWUkQHIkukVmUJdQ3OM289UkkxCEKBjXzW/BLtHuYjYEFidnqZs
+         Tt0wl6IbKxtAsNEQrzw+Nwhsk+ZlFDoRo/DSKddl4/3VNnmd5CPxvGsWYOQfWdg9GMTq
+         6Pr0R7CqHFP7TAUTWwPUNKPMYVH0jBf5sqv7Urd+Ko6yBu0F+U9ZCVFInjObVCSjjery
+         Lk04rd2H7jWFurl9seU4UPLMYNkLgqHNYYttVcI85b6hAJhHqmr3Frrsavhpiq254Oo2
+         V4Vw==
+X-Gm-Message-State: AA+aEWbUz0FWD86iJJbJOSs7sDHfY/6Yme5/Fqe0XNJb+xoyOR6KTMaK
+        I/4ihvCFtf6ofPJ34oNGuSYWGg==
+X-Google-Smtp-Source: AFSGD/XMiEJI6S7oY0mvxdq1S1Hjy7QXdJBCNvGQrIItqIHJtdqYohMCX6TmmVXhQjETSclDbsMlnw==
+X-Received: by 2002:a17:902:9345:: with SMTP id g5mr9679600plp.148.1544395465592;
+        Sun, 09 Dec 2018 14:44:25 -0800 (PST)
+Received: from [2620:15c:17:3:3a5:23a7:5e32:4598] ([2620:15c:17:3:3a5:23a7:5e32:4598])
+        by smtp.gmail.com with ESMTPSA id c20sm13482837pfc.92.2018.12.09.14.44.24
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 09 Dec 2018 14:44:24 -0800 (PST)
+Date:   Sun, 9 Dec 2018 14:44:23 -0800 (PST)
+From:   David Rientjes <rientjes@google.com>
+X-X-Sender: rientjes@chino.kir.corp.google.com
+To:     Andrea Arcangeli <aarcange@redhat.com>
+cc:     Michal Hocko <mhocko@kernel.org>, Vlastimil Babka <vbabka@suse.cz>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        ying.huang@intel.com, s.priebe@profihost.ag,
+        mgorman@techsingularity.net,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        alex.williamson@redhat.com, lkp@01.org, kirill@shutemov.name,
+        Andrew Morton <akpm@linux-foundation.org>,
+        zi.yan@cs.rutgers.edu
+Subject: Re: [patch 0/2 for-4.20] mm, thp: fix remote access and allocation
+ regressions
+In-Reply-To: <20181206003126.GA21159@redhat.com>
+Message-ID: <alpine.DEB.2.21.1812091420350.95551@chino.kir.corp.google.com>
+References: <alpine.DEB.2.21.1812031545080.161134@chino.kir.corp.google.com> <bb198d88-27be-0d5c-d871-1ffd26a08e29@suse.cz> <alpine.DEB.2.21.1812041356490.157466@chino.kir.corp.google.com> <20181205090554.GX1286@dhcp22.suse.cz>
+ <alpine.DEB.2.21.1812051142040.240991@chino.kir.corp.google.com> <20181205214542.GC11899@redhat.com> <alpine.DEB.2.21.1812051402150.9633@chino.kir.corp.google.com> <20181206003126.GA21159@redhat.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <20181206094451.GC13538@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, 5 Dec 2018, Andrea Arcangeli wrote:
 
+> > I've must have said this at least six or seven times: fault latency is 
+> 
+> In your original regression report in this thread to Linus:
+> 
+> https://lkml.kernel.org/r/alpine.DEB.2.21.1811281504030.231719@chino.kir.corp.google.com
+> 
+> you said "On a fragmented host, the change itself showed a 13.9%
+> access latency regression on Haswell and up to 40% allocation latency
+>                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> regression. This is more substantial on Naples and Rome.  I also
+> ^^^^^^^^^^
+> measured similar numbers to this for Haswell."
+> 
+> > secondary to the *access* latency.  We want to try hard for MADV_HUGEPAGE 
+> > users to do synchronous compaction and try to make a hugepage available.  
+> 
+> I'm glad you said it six or seven times now, because you forgot to
+> mention in the above email that the "40% allocation/fault latency
+> regression" you reported above, is actually a secondary concern because
+> those must be long lived allocations and we can't yet generate
+> compound pages for free after all..
+> 
 
-On 06/12/2018 11:44, Peter Zijlstra wrote:
-> On Wed, Dec 05, 2018 at 03:13:56PM -0800, Andy Lutomirski wrote:
-> 
->>> +       if (op == WR_MEMCPY)
->>> +               memcpy((void *)wr_poking_addr, (void *)src, len);
->>> +       else if (op == WR_MEMSET)
->>> +               memset((u8 *)wr_poking_addr, (u8)src, len);
->>> +       else if (op == WR_RCU_ASSIGN_PTR)
->>> +               /* generic version of rcu_assign_pointer */
->>> +               smp_store_release((void **)wr_poking_addr,
->>> +                                 RCU_INITIALIZER((void **)src));
->>> +       kasan_enable_current();
->>
->> Hmm.  I suspect this will explode quite badly on sane architectures
->> like s390.  (In my book, despite how weird s390 is, it has a vastly
->> nicer model of "user" memory than any other architecture I know
->> of...).  I think you should use copy_to_user(), etc, instead.  I'm not
->> entirely sure what the best smp_store_release() replacement is.
->> Making this change may also mean you can get rid of the
->> kasan_disable_current().
-> 
-> If you make the MEMCPY one guarantee single-copy atomicity for native
-> words then you're basically done.
-> 
-> smp_store_release() can be implemented with:
-> 
-> 	smp_mb();
-> 	WRITE_ONCE();
-> 
-> So if we make MEMCPY provide the WRITE_ONCE(), all we need is that
-> barrier, which we can easily place at the call site and not overly
-> complicate our interface with this.
+I've been referring to the long history of this discussion, namely my 
+explicit Nacked-by in https://marc.info/?l=linux-kernel&m=153868420126775 
+two months ago stating the 13.9% access latency regression.  The patch was 
+nonetheless still merged and I proposed the revert for the same chief 
+complaint, and it was reverted.
 
-Ok, so the 3rd case (WR_RCU_ASSIGN_PTR) could be handled outside of this 
-function.
-But, since now memcpy() will be replaced by copy_to_user(), can I assume 
-that also copy_to_user() will be atomic, if the destination is properly 
-aligned? On x86_64 it seems yes, however it's not clear to me if this is 
-the outcome of an optimization or if I can expect it to be always true.
+I brought up the access latency issue three months ago in
+https://marc.info/?l=linux-kernel&m=153661012118046 and said allocation 
+latency was a secondary concern, specifically that our users of 
+MADV_HUGEPAGE are willing to accept the increased allocation latency for 
+local hugepages.
 
+> BTW, I never bothered to ask yet, but, did you enable NUMA balancing
+> in your benchmarks? NUMA balancing would fix the access latency very
+> easily too, so that 13.9% access latency must quickly disappear if you
+> correctly have NUMA balancing enabled in a NUMA system.
+> 
 
---
-igor
+No, we do not have CONFIG_NUMA_BALANCING enabled.  The __GFP_THISNODE 
+behavior for hugepages was added in 4.0 for the PPC usecase, not by me.  
+That had nothing to do with the madvise mode: the initial documentation 
+referred to the mode as a way to prevent an increase in rss for configs 
+where "enabled" was set to madvise.  The allocation policy was never about 
+MADV_HUGEPAGE in any 4.x kernel, it was only an indication for certain 
+defrag settings to determine how much work should be done to allocate 
+*local* hugepages at fault.
+
+If you are saying that the change in allocator policy in a patch from 
+Aneesh almost four years ago and has gone unreported by anybody up until a 
+few months ago, I can understand the frustration.  I do, however, support 
+the __GFP_THISNODE change he made because his data shows the same results 
+as mine.
+
+I've suggested a very simple extension, specifically a prctl() mode that 
+is inherited across fork, that would allow a workload to specify that it 
+prefers remote allocations over local compaction/reclaim because it is too 
+large to fit on a single node.  I'd value your feedback for that 
+suggestion to fix your usecase.
