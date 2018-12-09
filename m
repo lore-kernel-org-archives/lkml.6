@@ -6,48 +6,47 @@ X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A26FCC07E85
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:14:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2BE0C07E85
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:14:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D60A20661
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:14:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D60A20661
+	by mail.kernel.org (Postfix) with ESMTP id B1DDF20661
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:14:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1DDF20661
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728157AbeLIWND (ORCPT
+        id S1728484AbeLIWOD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 17:13:03 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:37850 "EHLO
+        Sun, 9 Dec 2018 17:14:03 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:38000 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728020AbeLIWNA (ORCPT
+        by vger.kernel.org with ESMTP id S1727862AbeLIWOB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Dec 2018 17:13:00 -0500
+        Sun, 9 Dec 2018 17:14:01 -0500
 Received: from pub.yeoldevic.com ([81.174.156.145] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW73B-0002ib-NA; Sun, 09 Dec 2018 21:55:45 +0000
+        id 1gW735-0002il-6e; Sun, 09 Dec 2018 21:55:39 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW72e-0003QY-7C; Sun, 09 Dec 2018 21:55:12 +0000
+        id 1gW72g-0003VL-9B; Sun, 09 Dec 2018 21:55:14 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, "Al Viro" <viro@zeniv.linux.org.uk>,
-        "Linus Torvalds" <torvalds@linux-foundation.org>,
-        "Jeff Mahoney" <jeffm@suse.com>,
-        "Eric Biggers" <ebiggers@google.com>,
-        "Jann Horn" <jannh@google.com>
+CC:     akpm@linux-foundation.org,
+        "Laurent Pinchart" <laurent.pinchart@ideasonboard.com>,
+        "Geert Uytterhoeven" <geert+renesas@glider.be>,
+        "Mark Brown" <broonie@linaro.org>
 Date:   Sun, 09 Dec 2018 21:50:33 +0000
-Message-ID: <lsq.1544392233.687730563@decadent.org.uk>
+Message-ID: <lsq.1544392233.806695552@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 155/328] reiserfs: fix broken xattr handling (heap
- corruption, bad retval)
+Subject: [PATCH 3.16 203/328] spi: rspi: Handle dmaengine_prep_slave_sg()
+ failures gracefully
 In-Reply-To: <lsq.1544392232.713909046@decadent.org.uk>
 X-SA-Exim-Connect-IP: 81.174.156.145
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -61,60 +60,97 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jann Horn <jannh@google.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-commit a13f085d111e90469faf2d9965eb39b11c114d7e upstream.
+commit 85912a88c1ebcad04a5cfec971771195ce8d6691 upstream.
 
-This fixes the following issues:
+As typically a shmobile SoC has less DMA channels than devices that can use
+DMA, we may want to prioritize access to the DMA channels in the future.
+This means that dmaengine_prep_slave_sg() may start failing arbitrarily.
 
-- When a buffer size is supplied to reiserfs_listxattr() such that each
-  individual name fits, but the concatenation of all names doesn't fit,
-  reiserfs_listxattr() overflows the supplied buffer.  This leads to a
-  kernel heap overflow (verified using KASAN) followed by an out-of-bounds
-  usercopy and is therefore a security bug.
+Handle dmaengine_prep_slave_sg() failures gracefully by falling back to
+PIO.
 
-- When a buffer size is supplied to reiserfs_listxattr() such that a
-  name doesn't fit, -ERANGE should be returned.  But reiserfs instead just
-  truncates the list of names; I have verified that if the only xattr on a
-  file has a longer name than the supplied buffer length, listxattr()
-  incorrectly returns zero.
-
-With my patch applied, -ERANGE is returned in both cases and the memory
-corruption doesn't happen anymore.
-
-Credit for making me clean this code up a bit goes to Al Viro, who pointed
-out that the ->actor calling convention is suboptimal and should be
-changed.
-
-Link: http://lkml.kernel.org/r/20180802151539.5373-1-jannh@google.com
-Fixes: 48b32a3553a5 ("reiserfs: use generic xattr handlers")
-Signed-off-by: Jann Horn <jannh@google.com>
-Acked-by: Jeff Mahoney <jeffm@suse.com>
-Cc: Eric Biggers <ebiggers@google.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-[bwh: Backported to 3.16:
- - The xattr handler's list operation does the copy, so also update the
-   buffer size we pass to it
- - Adjust context]
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Mark Brown <broonie@linaro.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
---- a/fs/reiserfs/xattr.c
-+++ b/fs/reiserfs/xattr.c
-@@ -822,10 +822,12 @@ static int listxattr_filler(void *buf, c
- 			return 0;
- 		if (b->buf) {
- 			size = handler->list(b->dentry, b->buf + b->pos,
--					 b->size, name, namelen,
-+					 b->size - b->pos, name, namelen,
- 					 handler->flags);
--			if (size > b->size)
-+			if (b->pos + size > b->size) {
-+				b->pos = -ERANGE;
- 				return -ERANGE;
-+			}
- 		} else {
- 			size = handler->list(b->dentry, NULL, 0, name,
- 					     namelen, handler->flags);
+ drivers/spi/spi-rspi.c | 30 ++++++++++++++++++++++--------
+ 1 file changed, 22 insertions(+), 8 deletions(-)
+
+--- a/drivers/spi/spi-rspi.c
++++ b/drivers/spi/spi-rspi.c
+@@ -477,7 +477,7 @@ static int rspi_dma_transfer(struct rspi
+ 					tx->sgl, tx->nents, DMA_TO_DEVICE,
+ 					DMA_PREP_INTERRUPT | DMA_CTRL_ACK);
+ 		if (!desc_tx)
+-			return -EIO;
++			goto no_dma;
+ 
+ 		irq_mask |= SPCR_SPTIE;
+ 	}
+@@ -486,7 +486,7 @@ static int rspi_dma_transfer(struct rspi
+ 					rx->sgl, rx->nents, DMA_FROM_DEVICE,
+ 					DMA_PREP_INTERRUPT | DMA_CTRL_ACK);
+ 		if (!desc_rx)
+-			return -EIO;
++			goto no_dma;
+ 
+ 		irq_mask |= SPCR_SPRIE;
+ 	}
+@@ -540,6 +540,12 @@ static int rspi_dma_transfer(struct rspi
+ 		enable_irq(rspi->rx_irq);
+ 
+ 	return ret;
++
++no_dma:
++	pr_warn_once("%s %s: DMA not available, falling back to PIO\n",
++		     dev_driver_string(&rspi->master->dev),
++		     dev_name(&rspi->master->dev));
++	return -EAGAIN;
+ }
+ 
+ static void rspi_receive_init(const struct rspi_data *rspi)
+@@ -593,8 +599,10 @@ static int rspi_common_transfer(struct r
+ 
+ 	if (rspi->master->can_dma && __rspi_can_dma(rspi, xfer)) {
+ 		/* rx_buf can be NULL on RSPI on SH in TX-only Mode */
+-		return rspi_dma_transfer(rspi, &xfer->tx_sg,
+-					 xfer->rx_buf ? &xfer->rx_sg : NULL);
++		ret = rspi_dma_transfer(rspi, &xfer->tx_sg,
++					xfer->rx_buf ? &xfer->rx_sg : NULL);
++		if (ret != -EAGAIN)
++			return ret;
+ 	}
+ 
+ 	ret = rspi_pio_transfer(rspi, xfer->tx_buf, xfer->rx_buf, xfer->len);
+@@ -648,8 +656,11 @@ static int qspi_transfer_out(struct rspi
+ {
+ 	int ret;
+ 
+-	if (rspi->master->can_dma && __rspi_can_dma(rspi, xfer))
+-		return rspi_dma_transfer(rspi, &xfer->tx_sg, NULL);
++	if (rspi->master->can_dma && __rspi_can_dma(rspi, xfer)) {
++		ret = rspi_dma_transfer(rspi, &xfer->tx_sg, NULL);
++		if (ret != -EAGAIN)
++			return ret;
++	}
+ 
+ 	ret = rspi_pio_transfer(rspi, xfer->tx_buf, NULL, xfer->len);
+ 	if (ret < 0)
+@@ -663,8 +674,11 @@ static int qspi_transfer_out(struct rspi
+ 
+ static int qspi_transfer_in(struct rspi_data *rspi, struct spi_transfer *xfer)
+ {
+-	if (rspi->master->can_dma && __rspi_can_dma(rspi, xfer))
+-		return rspi_dma_transfer(rspi, NULL, &xfer->rx_sg);
++	if (rspi->master->can_dma && __rspi_can_dma(rspi, xfer)) {
++		int ret = rspi_dma_transfer(rspi, NULL, &xfer->rx_sg);
++		if (ret != -EAGAIN)
++			return ret;
++	}
+ 
+ 	return rspi_pio_transfer(rspi, NULL, xfer->rx_buf, xfer->len);
+ }
 
