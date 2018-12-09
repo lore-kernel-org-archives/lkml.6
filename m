@@ -2,134 +2,78 @@ Return-Path: <SRS0=cWqk=OS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79ACBC07E85
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 15:04:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CEADDC67838
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 15:10:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 37E9220865
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 15:04:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="kMkXSqWg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37E9220865
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 9B9D220672
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 15:10:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B9D220672
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726273AbeLIPEB (ORCPT
+        id S1726281AbeLIPKB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 10:04:01 -0500
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:40039 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726227AbeLIPEB (ORCPT
+        Sun, 9 Dec 2018 10:10:01 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:46736 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726227AbeLIPKB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Dec 2018 10:04:01 -0500
-Received: by mail-oi1-f193.google.com with SMTP id t204so7045796oie.7
-        for <linux-kernel@vger.kernel.org>; Sun, 09 Dec 2018 07:04:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:openpgp:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=6wAro+aQhZQfz7d2P5D1XHhlS8lnf90w3dPGgeqlEDM=;
-        b=kMkXSqWgHQuo0bBX8k6M+WmACOk4S/y836UcpbETC1siw5Gvz4lYQC1WoH1Q6WqPt3
-         gMeS2C2ABBNR0lwuIrQpErrPhXKtUDW8q4hWY1DSUj+Sc3lIs0fGlxpTfSw5DwoT2Tb+
-         yRz3I6oahNSSReMM8oxQKpFLlt224lNPCRvPU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=6wAro+aQhZQfz7d2P5D1XHhlS8lnf90w3dPGgeqlEDM=;
-        b=VfoHVH7bgGg+Rg1FqOHnCG6t6RerKCwxteDgDdEMhW5oygbZrHGhDU9is9I+s1KvuK
-         qDhGFpWYi2QDwwSSf+Lx5V0N6TIJMTIEYc930uUkw3FFvwNpiXrkQqnv4uphCDBfeSI8
-         zHyaNeJ5I4asbKAjHKT1bhslXkPwsLj6LMtl4Mi0Wllu1WKneqMhEZHfckIuRkDM7JmO
-         wZdHS7FioMXFqR8Zfjode0DG83yIi7Ci4WL7UkvsFp+BrUpDV6WM2/dgqmuOrvNTDeSj
-         2+IESj/OQisFaY6lmZq0VBfbXj68eIZy6QtoRjUnTwd5ZYqWBsPY95vO1st5RTODTbYm
-         5ZcQ==
-X-Gm-Message-State: AA+aEWZ3twsuyT3bWzaCYiQB3Pq3/Q7+kzFNuZnZX1XuIfKBdemoKZKZ
-        lLL5wTjaJP8/G5VDiF1V7/cRniDtc7gvhQ==
-X-Google-Smtp-Source: AFSGD/UMwVL2bYP11A0hVnkgJnJKzGhrlVmn4rQIQJv6ICbBTR/l3acLYizkrMaqQvgb7sXR7mBIuA==
-X-Received: by 2002:aca:a90f:: with SMTP id s15mr5698057oie.137.1544367839569;
-        Sun, 09 Dec 2018 07:03:59 -0800 (PST)
-Received: from cloudburst.twiddle.net ([187.217.227.243])
-        by smtp.gmail.com with ESMTPSA id z191sm5945690oig.3.2018.12.09.07.03.57
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 09 Dec 2018 07:03:58 -0800 (PST)
-Subject: Re: [PATCH v6 08/13] arm64: expose user PAC bit positions via ptrace
-To:     Kristina Martsenko <kristina.martsenko@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-Cc:     Adam Wallis <awallis@codeaurora.org>,
-        Amit Kachhap <amit.kachhap@arm.com>,
-        Andrew Jones <drjones@redhat.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Christoffer Dall <christoffer.dall@arm.com>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Dave P Martin <dave.martin@arm.com>,
-        Jacob Bramley <jacob.bramley@arm.com>,
-        Kees Cook <keescook@chromium.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ramana Radhakrishnan <ramana.radhakrishnan@arm.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        kvmarm@lists.cs.columbia.edu, linux-kernel@vger.kernel.org
-References: <20181207183931.4285-1-kristina.martsenko@arm.com>
- <20181207183931.4285-9-kristina.martsenko@arm.com>
-From:   Richard Henderson <richard.henderson@linaro.org>
-Openpgp: preference=signencrypt
-Message-ID: <2957cf52-498d-ba62-3be7-33c2e9a2f518@linaro.org>
-Date:   Sun, 9 Dec 2018 09:03:55 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
+        Sun, 9 Dec 2018 10:10:01 -0500
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <colin.king@canonical.com>)
+        id 1gW0h7-0001cd-C0; Sun, 09 Dec 2018 15:08:33 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][clk-next] clk: imx: remove redundant initialization of ret to zero
+Date:   Sun,  9 Dec 2018 15:08:32 +0000
+Message-Id: <20181209150832.9366-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-In-Reply-To: <20181207183931.4285-9-kristina.martsenko@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/7/18 12:39 PM, Kristina Martsenko wrote:
-> From: Mark Rutland <mark.rutland@arm.com>
-> 
-> When pointer authentication is in use, data/instruction pointers have a
-> number of PAC bits inserted into them. The number and position of these
-> bits depends on the configured TCR_ELx.TxSZ and whether tagging is
-> enabled. ARMv8.3 allows tagging to differ for instruction and data
-> pointers.
-> 
-> For userspace debuggers to unwind the stack and/or to follow pointer
-> chains, they need to be able to remove the PAC bits before attempting to
-> use a pointer.
-> 
-> This patch adds a new structure with masks describing the location of
-> the PAC bits in userspace instruction and data pointers (i.e. those
-> addressable via TTBR0), which userspace can query via PTRACE_GETREGSET.
-> By clearing these bits from pointers (and replacing them with the value
-> of bit 55), userspace can acquire the PAC-less versions.
-> 
-> This new regset is exposed when the kernel is built with (user) pointer
-> authentication support, and the address authentication feature is
-> enabled. Otherwise, the regset is hidden.
-> 
-> Signed-off-by: Mark Rutland <mark.rutland@arm.com>
-> Signed-off-by: Kristina Martsenko <kristina.martsenko@arm.com>
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Ramana Radhakrishnan <ramana.radhakrishnan@arm.com>
-> Cc: Will Deacon <will.deacon@arm.com>
-> ---
->  arch/arm64/include/asm/pointer_auth.h |  8 ++++++++
->  arch/arm64/include/uapi/asm/ptrace.h  |  7 +++++++
->  arch/arm64/kernel/ptrace.c            | 38 +++++++++++++++++++++++++++++++++++
->  include/uapi/linux/elf.h              |  1 +
->  4 files changed, 54 insertions(+)
+From: Colin Ian King <colin.king@canonical.com>
 
-Reviewed-by: Richard Henderson <richard.henderson@linaro.org>
+The initialization of ret is redundant as it is being re-assigned to
+the return value from the call to imx8m_clk_composite_compute_dividers.
+Clean this up by removing the initialization.
 
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/clk/imx/clk-composite-8m.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-r~
+diff --git a/drivers/clk/imx/clk-composite-8m.c b/drivers/clk/imx/clk-composite-8m.c
+index 6d9d3714b4df..527ade1d6933 100644
+--- a/drivers/clk/imx/clk-composite-8m.c
++++ b/drivers/clk/imx/clk-composite-8m.c
+@@ -93,7 +93,7 @@ static int imx8m_clk_composite_divider_set_rate(struct clk_hw *hw,
+ 	unsigned long flags = 0;
+ 	int prediv_value;
+ 	int div_value;
+-	int ret = 0;
++	int ret;
+ 	u32 val;
+ 
+ 	ret = imx8m_clk_composite_compute_dividers(rate, parent_rate,
+-- 
+2.19.1
 
