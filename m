@@ -2,85 +2,66 @@ Return-Path: <SRS0=cWqk=OS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6195BC65BAF
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 21:56:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9C2AC07E85
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 21:56:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1CFCD20661
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 21:56:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=thunk.org header.i=@thunk.org header.b="eJWNYhRS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1CFCD20661
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
+	by mail.kernel.org (Postfix) with ESMTP id 8870220661
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 21:56:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8870220661
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726495AbeLIV4r (ORCPT
+        id S1726986AbeLIV4z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 16:56:47 -0500
-Received: from imap.thunk.org ([74.207.234.97]:39476 "EHLO imap.thunk.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726284AbeLIV4q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Dec 2018 16:56:46 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=thunk.org;
-         s=ef5046eb; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=jZLg3biT82SlntlVTN6j4KUpZWNGenpcJI473Dbu0+Y=; b=eJWNYhRSDc8vGaD2iqPZnwFnZi
-        wHl0epNZwpO2FWG6/dbUIosFyDL9wBbd+AlsflXFrLRyEIwlccl/TprKXDikPvSSbLACWBpq8s0bL
-        co2HqZ8IEhJVr0hxCHaCkbgtgIF8HqnEbqw6sUyJ80393/ZYCikRDPSQ1EtNJDkyNr80=;
-Received: from root (helo=callcc.thunk.org)
-        by imap.thunk.org with local-esmtp (Exim 4.89)
-        (envelope-from <tytso@thunk.org>)
-        id 1gW745-0000j1-Hp; Sun, 09 Dec 2018 21:56:41 +0000
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id 7ABE07A442F; Sun,  9 Dec 2018 16:56:40 -0500 (EST)
-Date:   Sun, 9 Dec 2018 16:56:40 -0500
-From:   "Theodore Y. Ts'o" <tytso@mit.edu>
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     linux-fscrypt@vger.kernel.org, linux-crypto@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
-        Richard Weinberger <richard@nod.at>,
-        Paul Crowley <paulcrowley@google.com>,
-        Greg Kaiser <gkaiser@google.com>
-Subject: Re: [PATCH v4] fscrypt: add Adiantum support
-Message-ID: <20181209215640.GC1840@mit.edu>
-Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Eric Biggers <ebiggers@kernel.org>, linux-fscrypt@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        Richard Weinberger <richard@nod.at>,
-        Paul Crowley <paulcrowley@google.com>,
-        Greg Kaiser <gkaiser@google.com>
-References: <20181126192737.129355-1-ebiggers@kernel.org>
+        Sun, 9 Dec 2018 16:56:55 -0500
+Received: from zeniv.linux.org.uk ([195.92.253.2]:39028 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726284AbeLIV4x (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Dec 2018 16:56:53 -0500
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.91 #2 (Red Hat Linux))
+        id 1gW74F-0000z6-LH; Sun, 09 Dec 2018 21:56:51 +0000
+Date:   Sun, 9 Dec 2018 21:56:51 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+Cc:     Tycho Andersen <tycho@tycho.ws>, linux-sparse@vger.kernel.org,
+        kernel-hardening@lists.openwall.com, linux-kernel@vger.kernel.org
+Subject: Re: [RFC v1] copy_{to,from}_user(): only inline when !__CHECKER__
+Message-ID: <20181209215651.GD2217@ZenIV.linux.org.uk>
+References: <20181209204449.18906-1-tycho@tycho.ws>
+ <20181209210220.GB2217@ZenIV.linux.org.uk>
+ <20181209212523.GE30796@cisco>
+ <20181209213951.kumz33u6prb2seqz@ltop.local>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181126192737.129355-1-ebiggers@kernel.org>
+In-Reply-To: <20181209213951.kumz33u6prb2seqz@ltop.local>
 User-Agent: Mutt/1.10.1 (2018-07-13)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: tytso@thunk.org
-X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 26, 2018 at 11:27:37AM -0800, Eric Biggers wrote:
-> From: Eric Biggers <ebiggers@google.com>
-> 
-> Add support for the Adiantum encryption mode to fscrypt.  Adiantum is a
-> tweakable, length-preserving encryption mode with security provably
-> reducible to that of XChaCha12 and AES-256, subject to a security bound.
-> It's also a true wide-block mode, unlike XTS.  See the paper
-> "Adiantum: length-preserving encryption for entry-level processors"
-> (https://eprint.iacr.org/2018/720.pdf) for more details.  Also see
-> commit 059c2a4d8e16 ("crypto: adiantum - add Adiantum support").
+On Sun, Dec 09, 2018 at 10:39:52PM +0100, Luc Van Oostenryck wrote:
 
-Thanks, applied.
-
-					- Ted
+> There are several more or less bad/good solutions, like:
+> * add raw_copy_{to,from}_user() in the list of checked function
+>   (not inlined in most archs).
+> * add a new annotation to force sparse to check the byte count
+>   (I'm thinking about __range__/OP_RANGE or something similar).
+> * do these checks before functions are inlined (but then some
+>   constant count could not yet be seen as constant).
+  * just spell it out in copy_to_user() itself - as in
+#ifdef C_T_U_SIZE_LIMIT
+	if (__builtin_constant_p(count) && count > C_T_U_SIZE_LIMIT)
+		/* something warning-triggering */
+#endif
+in the beginning of copy_from_user().  Or simply
+#ifdef C_T_U_SIZE_LIMIT
+	BUILD_BUG_ON(__builtin_constant_p(count) && count > C_T_U_SIZE_LIMIT);
+#endif
+in there...
