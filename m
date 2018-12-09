@@ -3,48 +3,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1EA4C65BAF
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:02:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28CC3C65BAF
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:02:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BFE8C20672
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:02:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BFE8C20672
+	by mail.kernel.org (Postfix) with ESMTP id EAC1720672
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:02:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EAC1720672
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727344AbeLIWCn (ORCPT
+        id S1727355AbeLIWCq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 17:02:43 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35824 "EHLO
+        Sun, 9 Dec 2018 17:02:46 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35816 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726647AbeLIVzb (ORCPT
+        by vger.kernel.org with ESMTP id S1726646AbeLIVzb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 9 Dec 2018 16:55:31 -0500
 Received: from pub.yeoldevic.com ([81.174.156.145] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW72u-0002ie-7o; Sun, 09 Dec 2018 21:55:28 +0000
+        id 1gW72u-0002ir-7z; Sun, 09 Dec 2018 21:55:28 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW72j-0003cH-La; Sun, 09 Dec 2018 21:55:17 +0000
+        id 1gW72j-0003d6-W1; Sun, 09 Dec 2018 21:55:17 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, "David S. Miller" <davem@davemloft.net>,
-        "Florian Fainelli" <f.fainelli@gmail.com>
+CC:     akpm@linux-foundation.org, "Dexuan Cui" <decui@microsoft.com>,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+        "Haiyang Zhang" <haiyangz@microsoft.com>,
+        "Stephen Hemminger" <sthemmin@microsoft.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>
 Date:   Sun, 09 Dec 2018 21:50:33 +0000
-Message-ID: <lsq.1544392233.900943949@decadent.org.uk>
+Message-ID: <lsq.1544392233.23981975@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 273/328] ax88179_178a: Check for supported
- Wake-on-LAN modes
+Subject: [PATCH 3.16 279/328] Drivers: hv: vmbus: Use get/put_cpu() in
+ vmbus_connect()
 In-Reply-To: <lsq.1544392232.713909046@decadent.org.uk>
 X-SA-Exim-Connect-IP: 81.174.156.145
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -58,32 +61,58 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Florian Fainelli <f.fainelli@gmail.com>
+From: Dexuan Cui <decui@microsoft.com>
 
-commit 5ba6b4aa9a410c5e2c6417df52b5e2118ea9b467 upstream.
+commit 41e270f6898e7502be9fd6920ee0a108ca259d36 upstream.
 
-The driver currently silently accepts unsupported Wake-on-LAN modes
-(other than WAKE_PHY or WAKE_MAGIC) without reporting that to the user,
-which is confusing.
+With CONFIG_DEBUG_PREEMPT=y, I always see this warning:
+BUG: using smp_processor_id() in preemptible [00000000]
 
-Fixes: e2ca90c276e1 ("ax88179_178a: ASIX AX88179_178A USB 3.0/2.0 to gigabit ethernet adapter driver")
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fix the false warning by using get/put_cpu().
+
+Here vmbus_connect() sends a message to the host and waits for the
+host's response. The host will deliver the response message and an
+interrupt on CPU msg->target_vcpu, and later the interrupt handler
+will wake up vmbus_connect(). vmbus_connect() doesn't really have
+to run on the same cpu as CPU msg->target_vcpu, so it's safe to
+call put_cpu() just here.
+
+Signed-off-by: Dexuan Cui <decui@microsoft.com>
+Cc: K. Y. Srinivasan <kys@microsoft.com>
+Cc: Haiyang Zhang <haiyangz@microsoft.com>
+Cc: Stephen Hemminger <sthemmin@microsoft.com>
+Signed-off-by: K. Y. Srinivasan <kys@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+[bwh: Backported to 3.16:
+ - smp_processor_id() is only used once here
+ - Adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/net/usb/ax88179_178a.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/hv/connection.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
---- a/drivers/net/usb/ax88179_178a.c
-+++ b/drivers/net/usb/ax88179_178a.c
-@@ -506,6 +506,9 @@ ax88179_set_wol(struct net_device *net,
- 	struct usbnet *dev = netdev_priv(net);
- 	u8 opt = 0;
+--- a/drivers/hv/connection.c
++++ b/drivers/hv/connection.c
+@@ -68,6 +68,7 @@ static int vmbus_negotiate_version(struc
+ 					__u32 version)
+ {
+ 	int ret = 0;
++	unsigned int cur_cpu;
+ 	struct vmbus_channel_initiate_contact *msg;
+ 	unsigned long flags;
  
-+	if (wolinfo->wolopts & ~(WAKE_PHY | WAKE_MAGIC))
-+		return -EINVAL;
-+
- 	if (wolinfo->wolopts & WAKE_PHY)
- 		opt |= AX_MONITOR_MODE_RWLC;
- 	if (wolinfo->wolopts & WAKE_MAGIC)
+@@ -80,8 +81,11 @@ static int vmbus_negotiate_version(struc
+ 	msg->interrupt_page = virt_to_phys(vmbus_connection.int_page);
+ 	msg->monitor_page1 = virt_to_phys(vmbus_connection.monitor_pages[0]);
+ 	msg->monitor_page2 = virt_to_phys(vmbus_connection.monitor_pages[1]);
+-	if (version == VERSION_WIN8_1)
+-		msg->target_vcpu = hv_context.vp_index[smp_processor_id()];
++	if (version == VERSION_WIN8_1) {
++		cur_cpu = get_cpu();
++		msg->target_vcpu = hv_context.vp_index[cur_cpu];
++		put_cpu();
++	}
+ 
+ 	/*
+ 	 * Add to list before we send the request since we may
 
