@@ -2,107 +2,84 @@ Return-Path: <SRS0=cWqk=OS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11D60C65BAF
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 06:35:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8834FC07E85
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 06:40:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D53CD20831
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 06:35:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D53CD20831
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 2A08720831
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 06:40:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A08720831
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=hygon.cn
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726213AbeLIGfQ (ORCPT
+        id S1726117AbeLIGkF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 01:35:16 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:53501 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726066AbeLIGfO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Dec 2018 01:35:14 -0500
-Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id B143E44CAEA85;
-        Sun,  9 Dec 2018 14:35:09 +0800 (CST)
-Received: from [127.0.0.1] (10.177.31.14) by DGGEMS406-HUB.china.huawei.com
- (10.3.19.206) with Microsoft SMTP Server id 14.3.408.0; Sun, 9 Dec 2018
- 14:35:09 +0800
-Subject: Re: [PATCH] jffs2: ensure wbuf_verify is valid before using it.
-From:   Hou Tao <houtao1@huawei.com>
-To:     <linux-mtd@lists.infradead.org>, <dwmw2@infradead.org>
-CC:     <richard.weinberger@gmail.com>, <boris.brezillon@bootlin.com>,
-        <linux-kernel@vger.kernel.org>, <stable@vger.kernel.org>
-References: <20181020120849.65708-1-houtao1@huawei.com>
-Message-ID: <df5b520c-bc32-e550-4c58-2c79d5e09893@huawei.com>
-Date:   Sun, 9 Dec 2018 14:35:08 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Sun, 9 Dec 2018 01:40:05 -0500
+Received: from [110.188.70.11] ([110.188.70.11]:39828 "EHLO spam2.hygon.cn"
+        rhost-flags-FAIL-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726066AbeLIGkE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Dec 2018 01:40:04 -0500
+Received: from MK-FE.hygon.cn ([172.23.18.61])
+        by spam2.hygon.cn with ESMTP id wB96dPXq001091;
+        Sun, 9 Dec 2018 14:39:25 +0800 (GMT-8)
+        (envelope-from puwen@hygon.cn)
+Received: from cncheex01.Hygon.cn ([172.23.18.10])
+        by MK-FE.hygon.cn with ESMTP id wB96dLYl030500;
+        Sun, 9 Dec 2018 14:39:21 +0800 (GMT-8)
+        (envelope-from puwen@hygon.cn)
+Received: from [192.168.1.193] (172.23.18.44) by cncheex01.Hygon.cn
+ (172.23.18.10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1466.3; Sun, 9 Dec 2018
+ 14:39:24 +0800
+From:   Pu Wen <puwen@hygon.cn>
+Subject: Re: [RFC PATCH] hwmon/k10temp: Add Hygon Dhyana support
+To:     Guenter Roeck <linux@roeck-us.net>
+CC:     <clemens@ladisch.de>, <jdelvare@suse.com>, <bp@alien8.de>,
+        <linux-hwmon@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <1544250808-20462-1-git-send-email-puwen@hygon.cn>
+ <20181208155559.GA27489@roeck-us.net>
+Message-ID: <d91c04e9-71c2-3045-1e31-f2f4cc076e87@hygon.cn>
+Date:   Sun, 9 Dec 2018 14:39:15 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.3
 MIME-Version: 1.0
-In-Reply-To: <20181020120849.65708-1-houtao1@huawei.com>
+In-Reply-To: <20181208155559.GA27489@roeck-us.net>
 Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.31.14]
-X-CFilter-Loop: Reflected
+X-Originating-IP: [172.23.18.44]
+X-ClientProxiedBy: cncheex02.Hygon.cn (172.23.18.12) To cncheex01.Hygon.cn
+ (172.23.18.10)
+X-MAIL: spam2.hygon.cn wB96dPXq001091
+X-DNSRBL: 
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ping ?
+On 2018/12/8 23:56, Guenter Roeck wrote:
+> On Sat, Dec 08, 2018 at 02:33:28PM +0800, Pu Wen wrote:
+>> Add support for Hygon Dhyana family 18h processor for k10temp to get the
+>> temperature. As Hygon Dhyana shares the same function interface with AMD
+>> family 17h, so add Hygon PCI Vendor ID and reuse the code path of AMD.
+>>
+>> Signed-off-by: Pu Wen <puwen@hygon.cn>
+>> Acked-by: Borislav Petkov <bp@suse.de>
+> 
+> Applied to hwmon-next.
 
-On 2018/10/20 20:08, Hou Tao wrote:
-> Now MTD emulated by UBI volumn doesn't allocate wbuf_verify in
-> jffs2_ubivol_setup(), because UBI can do the verifcation itself,
-> so when CONFIG_JFFS2_FS_WBUF_VERIFY is enabled and a MTD device
-> emulated by UBI volumn is used, a Oops will occur as show in the
-> following trace:
-> 
->     general protection fault: 0000 [#1] SMP KASAN PTI
->     CPU: 6 PID: 404 Comm: kworker/6:1 Not tainted 4.19.0-rc8
->     Workqueue: events_long delayed_wbuf_sync
->     RIP: 0010:ubi_io_read+0x156/0x650
->     Call Trace:
->      ubi_eba_read_leb+0x57d/0xba0
->      ubi_leb_read+0xe5/0x1b0
->      gluebi_read+0x10c/0x1a0
->      mtd_read+0x112/0x340
->      jffs2_verify_write+0xef/0x440
->      __jffs2_flush_wbuf+0x3fa/0x3540
->      jffs2_flush_wbuf_gc+0x1b1/0x2e0
->      process_one_work+0x58b/0x11e0
->      worker_thread+0x8f/0xfe0
->      kthread+0x2ae/0x3a0
->      ret_from_fork+0x35/0x40
-> 
-> Fix the problem by checking the validity of wbuf_verify before
-> using it in jffs2_verify_write().
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: 0029da3bf430 ("JFFS2: add UBI support")
-> Signed-off-by: Hou Tao <houtao1@huawei.com>
-> ---
->  fs/jffs2/wbuf.c | 7 +++++++
->  1 file changed, 7 insertions(+)
-> 
-> diff --git a/fs/jffs2/wbuf.c b/fs/jffs2/wbuf.c
-> index c6821a509481..3de45f4559d1 100644
-> --- a/fs/jffs2/wbuf.c
-> +++ b/fs/jffs2/wbuf.c
-> @@ -234,6 +234,13 @@ static int jffs2_verify_write(struct jffs2_sb_info *c, unsigned char *buf,
->  	size_t retlen;
->  	char *eccstr;
->  
-> +	/*
-> +	 * MTD emulated by UBI volume doesn't allocate wbuf_verify,
-> +	 * because it can do the verification itself.
-> +	 */
-> +	if (!c->wbuf_verify)
-> +		return 0;
-> +
->  	ret = mtd_read(c->mtd, ofs, c->wbuf_pagesize, &retlen, c->wbuf_verify);
->  	if (ret && ret != -EUCLEAN && ret != -EBADMSG) {
->  		pr_warn("%s(): Read back of page at %08x failed: %d\n",
-> 
+Thanks a lot.
 
+> If the Hygon CPUs have Tctl/Tdie temperature offsets similar to some
+> of the AMD CPUs, please submit follow-up patches as necessary to add
+> support for it.
+
+Right now Hygon Dhyana CPUs do not have temperature offsets. Of course
+I'll submit follow-up patches if necessary in the future.
+
+-- 
+Regards,
+Pu Wen
