@@ -3,52 +3,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7917C65BAF
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:22:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55AEAC07E85
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:22:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 870082081F
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:22:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 870082081F
+	by mail.kernel.org (Postfix) with ESMTP id 1F69D2081F
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:22:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F69D2081F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728436AbeLIWWI (ORCPT
+        id S1728470AbeLIWWJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 17:22:08 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35220 "EHLO
+        Sun, 9 Dec 2018 17:22:09 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35192 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726520AbeLIVzV (ORCPT
+        by vger.kernel.org with ESMTP id S1726515AbeLIVzV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 9 Dec 2018 16:55:21 -0500
 Received: from pub.yeoldevic.com ([81.174.156.145] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW72l-0002iZ-AI; Sun, 09 Dec 2018 21:55:19 +0000
+        id 1gW72k-0002po-OX; Sun, 09 Dec 2018 21:55:18 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW72h-0003ZG-R3; Sun, 09 Dec 2018 21:55:15 +0000
+        id 1gW72i-0003Zq-62; Sun, 09 Dec 2018 21:55:16 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org,
-        "Dan Carpenter" <dan.carpenter@oracle.com>,
-        "Ronnie Sahlberg" <lsahlber@redhat.com>,
-        "Aurelien Aptel" <aaptel@suse.com>,
-        "Dr Silvio Cesare of InfoSect" <silvio.cesare@gmail.com>,
-        "Steve French" <stfrench@microsoft.com>
+CC:     akpm@linux-foundation.org, "Eric Dumazet" <edumazet@google.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        "syzbot" <syzkaller@googlegroups.com>
 Date:   Sun, 09 Dec 2018 21:50:33 +0000
-Message-ID: <lsq.1544392233.345248489@decadent.org.uk>
+Message-ID: <lsq.1544392233.534264894@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 236/328] cifs: prevent integer overflow in
- nxt_dir_entry()
+Subject: [PATCH 3.16 243/328] ipv6: fix possible use-after-free in ip6_xmit()
 In-Reply-To: <lsq.1544392232.713909046@decadent.org.uk>
 X-SA-Exim-Connect-IP: 81.174.156.145
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -62,41 +58,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Eric Dumazet <edumazet@google.com>
 
-commit 8ad8aa353524d89fa2e09522f3078166ff78ec42 upstream.
+commit bbd6528d28c1b8e80832b3b018ec402b6f5c3215 upstream.
 
-The "old_entry + le32_to_cpu(pDirInfo->NextEntryOffset)" can wrap
-around so I have added a check for integer overflow.
+In the unlikely case ip6_xmit() has to call skb_realloc_headroom(),
+we need to call skb_set_owner_w() before consuming original skb,
+otherwise we risk a use-after-free.
 
-Reported-by: Dr Silvio Cesare of InfoSect <silvio.cesare@gmail.com>
-Reviewed-by: Ronnie Sahlberg <lsahlber@redhat.com>
-Reviewed-by: Aurelien Aptel <aaptel@suse.com>
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Steve French <stfrench@microsoft.com>
+Bring IPv6 in line with what we do in IPv4 to fix this.
+
+Fixes: 1da177e4c3f41 ("Linux-2.6.12-rc2")
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+[bwh: Backported to 3.16: adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- fs/cifs/readdir.c | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
-
---- a/fs/cifs/readdir.c
-+++ b/fs/cifs/readdir.c
-@@ -370,8 +370,15 @@ static char *nxt_dir_entry(char *old_ent
- 
- 		new_entry = old_entry + sizeof(FIND_FILE_STANDARD_INFO) +
- 				pfData->FileNameLength;
--	} else
--		new_entry = old_entry + le32_to_cpu(pDirInfo->NextEntryOffset);
-+	} else {
-+		u32 next_offset = le32_to_cpu(pDirInfo->NextEntryOffset);
-+
-+		if (old_entry + next_offset < old_entry) {
-+			cifs_dbg(VFS, "invalid offset %u\n", next_offset);
-+			return NULL;
-+		}
-+		new_entry = old_entry + next_offset;
-+	}
- 	cifs_dbg(FYI, "new entry %p old entry %p\n", new_entry, old_entry);
- 	/* validate that new_entry is not past end of SMB */
- 	if (new_entry >= end_of_smb) {
+--- a/net/ipv6/ip6_output.c
++++ b/net/ipv6/ip6_output.c
+@@ -183,9 +183,10 @@ int ip6_xmit(struct sock *sk, struct sk_
+ 				kfree_skb(skb);
+ 				return -ENOBUFS;
+ 			}
++			if (skb->sk)
++				skb_set_owner_w(skb2, skb->sk);
+ 			consume_skb(skb);
+ 			skb = skb2;
+-			skb_set_owner_w(skb, sk);
+ 		}
+ 		if (opt->opt_flen)
+ 			ipv6_push_frag_opts(skb, opt, &proto);
 
