@@ -6,50 +6,45 @@ X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57789C65BAF
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:02:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1EA4C65BAF
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:02:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2440520672
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:02:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2440520672
+	by mail.kernel.org (Postfix) with ESMTP id BFE8C20672
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:02:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BFE8C20672
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727335AbeLIWCk (ORCPT
+        id S1727344AbeLIWCn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 17:02:40 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35830 "EHLO
+        Sun, 9 Dec 2018 17:02:43 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35824 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726649AbeLIVzb (ORCPT
+        by vger.kernel.org with ESMTP id S1726647AbeLIVzb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 9 Dec 2018 16:55:31 -0500
 Received: from pub.yeoldevic.com ([81.174.156.145] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW72u-0002ia-7e; Sun, 09 Dec 2018 21:55:28 +0000
+        id 1gW72u-0002ie-7o; Sun, 09 Dec 2018 21:55:28 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW72k-0003dF-1j; Sun, 09 Dec 2018 21:55:18 +0000
+        id 1gW72j-0003cH-La; Sun, 09 Dec 2018 21:55:17 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, "Anton Vorontsov" <anton@enomsg.org>,
-        "Kees Cook" <keescook@chromium.org>,
-        "Joel Fernandes" <joelaf@google.com>,
-        "Colin Cross" <ccross@android.com>,
-        "Tony Luck" <tony.luck@intel.com>,
-        "nixiaoming" <nixiaoming@huawei.com>,
-        "Geliang Tang" <geliangtang@gmail.com>
+CC:     akpm@linux-foundation.org, "David S. Miller" <davem@davemloft.net>,
+        "Florian Fainelli" <f.fainelli@gmail.com>
 Date:   Sun, 09 Dec 2018 21:50:33 +0000
-Message-ID: <lsq.1544392233.474437376@decadent.org.uk>
+Message-ID: <lsq.1544392233.900943949@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 281/328] pstore/ram: Fix failure-path memory leak in
- ramoops_init
+Subject: [PATCH 3.16 273/328] ax88179_178a: Check for supported
+ Wake-on-LAN modes
 In-Reply-To: <lsq.1544392232.713909046@decadent.org.uk>
 X-SA-Exim-Connect-IP: 81.174.156.145
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -63,92 +58,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Kees Cook <keescook@chromium.org>
+From: Florian Fainelli <f.fainelli@gmail.com>
 
-commit bac6f6cda206ad7cbe0c73c35e494377ce9c4749 upstream.
+commit 5ba6b4aa9a410c5e2c6417df52b5e2118ea9b467 upstream.
 
-As reported by nixiaoming, with some minor clarifications:
+The driver currently silently accepts unsupported Wake-on-LAN modes
+(other than WAKE_PHY or WAKE_MAGIC) without reporting that to the user,
+which is confusing.
 
-1) memory leak in ramoops_register_dummy():
-   dummy_data = kzalloc(sizeof(*dummy_data), GFP_KERNEL);
-   but no kfree() if platform_device_register_data() fails.
-
-2) memory leak in ramoops_init():
-   Missing platform_device_unregister(dummy) and kfree(dummy_data)
-   if platform_driver_register(&ramoops_driver) fails.
-
-I've clarified the purpose of ramoops_register_dummy(), and added a
-common cleanup routine for all three failure paths to call.
-
-Reported-by: nixiaoming <nixiaoming@huawei.com>
-Cc: Anton Vorontsov <anton@enomsg.org>
-Cc: Colin Cross <ccross@android.com>
-Cc: Tony Luck <tony.luck@intel.com>
-Cc: Joel Fernandes <joelaf@google.com>
-Cc: Geliang Tang <geliangtang@gmail.com>
-Signed-off-by: Kees Cook <keescook@chromium.org>
-[bwh: Backported to 3.16: adjust context]
+Fixes: e2ca90c276e1 ("ax88179_178a: ASIX AX88179_178A USB 3.0/2.0 to gigabit ethernet adapter driver")
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- fs/pstore/ram.c | 29 +++++++++++++++++++++++++----
- 1 file changed, 25 insertions(+), 4 deletions(-)
+ drivers/net/usb/ax88179_178a.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/fs/pstore/ram.c
-+++ b/fs/pstore/ram.c
-@@ -557,8 +557,22 @@ static struct platform_driver ramoops_dr
- 	},
- };
+--- a/drivers/net/usb/ax88179_178a.c
++++ b/drivers/net/usb/ax88179_178a.c
+@@ -506,6 +506,9 @@ ax88179_set_wol(struct net_device *net,
+ 	struct usbnet *dev = netdev_priv(net);
+ 	u8 opt = 0;
  
--static void ramoops_register_dummy(void)
-+static inline void ramoops_unregister_dummy(void)
- {
-+	platform_device_unregister(dummy);
-+	dummy = NULL;
++	if (wolinfo->wolopts & ~(WAKE_PHY | WAKE_MAGIC))
++		return -EINVAL;
 +
-+	kfree(dummy_data);
-+	dummy_data = NULL;
-+}
-+
-+static void __init ramoops_register_dummy(void)
-+{
-+	/*
-+	 * Prepare a dummy platform data structure to carry the module
-+	 * parameters. If mem_size isn't set, then there are no module
-+	 * parameters, and we can skip this.
-+	 */
- 	if (!mem_size)
- 		return;
- 
-@@ -588,21 +602,28 @@ static void ramoops_register_dummy(void)
- 	if (IS_ERR(dummy)) {
- 		pr_info("could not create platform device: %ld\n",
- 			PTR_ERR(dummy));
-+		dummy = NULL;
-+		ramoops_unregister_dummy();
- 	}
- }
- 
- static int __init ramoops_init(void)
- {
-+	int ret;
-+
- 	ramoops_register_dummy();
--	return platform_driver_register(&ramoops_driver);
-+	ret = platform_driver_register(&ramoops_driver);
-+	if (ret != 0)
-+		ramoops_unregister_dummy();
-+
-+	return ret;
- }
- postcore_initcall(ramoops_init);
- 
- static void __exit ramoops_exit(void)
- {
- 	platform_driver_unregister(&ramoops_driver);
--	platform_device_unregister(dummy);
--	kfree(dummy_data);
-+	ramoops_unregister_dummy();
- }
- module_exit(ramoops_exit);
- 
+ 	if (wolinfo->wolopts & WAKE_PHY)
+ 		opt |= AX_MONITOR_MODE_RWLC;
+ 	if (wolinfo->wolopts & WAKE_MAGIC)
 
