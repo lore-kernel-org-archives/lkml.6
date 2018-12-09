@@ -6,44 +6,46 @@ X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E29C5C07E85
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:00:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D99CC65BAF
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:01:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AE72C20661
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:00:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE72C20661
+	by mail.kernel.org (Postfix) with ESMTP id 1948620672
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:01:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1948620672
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727030AbeLIWA5 (ORCPT
+        id S1727119AbeLIWBA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 17:00:57 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35996 "EHLO
+        Sun, 9 Dec 2018 17:01:00 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35982 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726696AbeLIVze (ORCPT
+        by vger.kernel.org with ESMTP id S1726692AbeLIVze (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 9 Dec 2018 16:55:34 -0500
 Received: from pub.yeoldevic.com ([81.174.156.145] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW72x-0002ir-Ji; Sun, 09 Dec 2018 21:55:31 +0000
+        id 1gW72x-0002if-Ik; Sun, 09 Dec 2018 21:55:31 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW72i-0003ay-S4; Sun, 09 Dec 2018 21:55:16 +0000
+        id 1gW72i-0003aj-O7; Sun, 09 Dec 2018 21:55:16 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, "Yu Zhao" <yuzhao@google.com>,
-        "Mark Brown" <broonie@kernel.org>
+CC:     akpm@linux-foundation.org,
+        "Alan Stern" <stern@rowland.harvard.edu>,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
 Date:   Sun, 09 Dec 2018 21:50:33 +0000
-Message-ID: <lsq.1544392233.259022348@decadent.org.uk>
+Message-ID: <lsq.1544392233.389376705@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 257/328] regulator: fix crash caused by null driver data
+Subject: [PATCH 3.16 254/328] USB: remove LPM management from
+ usb_driver_claim_interface()
 In-Reply-To: <lsq.1544392232.713909046@decadent.org.uk>
 X-SA-Exim-Connect-IP: 81.174.156.145
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -57,38 +59,75 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Yu Zhao <yuzhao@google.com>
+From: Alan Stern <stern@rowland.harvard.edu>
 
-commit fb6de923ca3358a91525552b4907d4cb38730bdd upstream.
+commit c183813fcee44a249339b7c46e1ad271ca1870aa upstream.
 
-dev_set_drvdata() needs to be called before device_register()
-exposes device to userspace. Otherwise kernel crashes after it
-gets null pointer from dev_get_drvdata() when userspace tries
-to access sysfs entries.
+usb_driver_claim_interface() disables and re-enables Link Power
+Management, but it shouldn't do either one, for the reasons listed
+below.  This patch removes the two LPM-related function calls from the
+routine.
 
-[Removed backtrace for length -- broonie]
+The reason for disabling LPM in the analogous function
+usb_probe_interface() is so that drivers won't have to deal with
+unwanted LPM transitions in their probe routine.  But
+usb_driver_claim_interface() doesn't call the driver's probe routine
+(or any other callbacks), so that reason doesn't apply here.
 
-Signed-off-by: Yu Zhao <yuzhao@google.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Furthermore, no driver other than usbfs will ever call
+usb_driver_claim_interface() unless it is already bound to another
+interface in the same device, which means disabling LPM here would be
+redundant.  usbfs doesn't interact with LPM at all.
+
+Lastly, the error return from usb_unlocked_disable_lpm() isn't handled
+properly; the code doesn't clean up its earlier actions before
+returning.
+
+Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
+Fixes: 8306095fd2c1 ("USB: Disable USB 3.0 LPM in critical sections.")
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 [bwh: Backported to 3.16: adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
---- a/drivers/regulator/core.c
-+++ b/drivers/regulator/core.c
-@@ -3470,14 +3470,13 @@ regulator_register(const struct regulato
- 	rdev->dev.parent = dev;
- 	dev_set_name(&rdev->dev, "regulator.%d",
- 		     atomic_inc_return(&regulator_no) - 1);
-+	dev_set_drvdata(&rdev->dev, rdev);
- 	ret = device_register(&rdev->dev);
- 	if (ret != 0) {
- 		put_device(&rdev->dev);
- 		goto clean;
- 	}
+ drivers/usb/core/driver.c | 15 ---------------
+ 1 file changed, 15 deletions(-)
+
+--- a/drivers/usb/core/driver.c
++++ b/drivers/usb/core/driver.c
+@@ -522,7 +522,6 @@ int usb_driver_claim_interface(struct us
+ 	struct device *dev;
+ 	struct usb_device *udev;
+ 	int retval = 0;
+-	int lpm_disable_error = -ENODEV;
  
--	dev_set_drvdata(&rdev->dev, rdev);
+ 	if (!iface)
+ 		return -ENODEV;
+@@ -539,16 +538,6 @@ int usb_driver_claim_interface(struct us
+ 
+ 	iface->condition = USB_INTERFACE_BOUND;
+ 
+-	/* See the comment about disabling LPM in usb_probe_interface(). */
+-	if (driver->disable_hub_initiated_lpm) {
+-		lpm_disable_error = usb_unlocked_disable_lpm(udev);
+-		if (lpm_disable_error) {
+-			dev_err(&iface->dev, "%s Failed to disable LPM for driver %s\n.",
+-					__func__, driver->name);
+-			return -ENOMEM;
+-		}
+-	}
 -
- 	if (config->ena_gpio && gpio_is_valid(config->ena_gpio)) {
- 		ret = regulator_ena_gpio_request(rdev, config);
- 		if (ret != 0) {
+ 	/* Claimed interfaces are initially inactive (suspended) and
+ 	 * runtime-PM-enabled, but only if the driver has autosuspend
+ 	 * support.  Otherwise they are marked active, to prevent the
+@@ -567,10 +556,6 @@ int usb_driver_claim_interface(struct us
+ 	if (device_is_registered(dev))
+ 		retval = device_bind_driver(dev);
+ 
+-	/* Attempt to re-enable USB3 LPM, if the disable was successful. */
+-	if (!lpm_disable_error)
+-		usb_unlocked_enable_lpm(udev);
+-
+ 	return retval;
+ }
+ EXPORT_SYMBOL_GPL(usb_driver_claim_interface);
 
