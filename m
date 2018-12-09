@@ -6,45 +6,44 @@ X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1663C07E85
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:05:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 578E4C65BAF
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:05:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BE27A2081F
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:05:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE27A2081F
+	by mail.kernel.org (Postfix) with ESMTP id 25B8920661
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:05:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 25B8920661
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727622AbeLIWFa (ORCPT
+        id S1727632AbeLIWFd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 17:05:30 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36942 "EHLO
+        Sun, 9 Dec 2018 17:05:33 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36952 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726619AbeLIWF2 (ORCPT
+        by vger.kernel.org with ESMTP id S1726619AbeLIWFb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Dec 2018 17:05:28 -0500
+        Sun, 9 Dec 2018 17:05:31 -0500
 Received: from pub.yeoldevic.com ([81.174.156.145] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW73F-0002il-LA; Sun, 09 Dec 2018 21:55:49 +0000
+        id 1gW73L-0002iZ-GM; Sun, 09 Dec 2018 21:55:55 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW72c-0003Mu-SM; Sun, 09 Dec 2018 21:55:10 +0000
+        id 1gW72a-0003Hp-LP; Sun, 09 Dec 2018 21:55:08 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, "Kalle Valo" <kvalo@codeaurora.org>,
-        "=?UTF-8?q?Michael=20B=C3=BCsch?=" <m@bues.ch>
+CC:     akpm@linux-foundation.org, "Miklos Szeredi" <mszeredi@suse.cz>
 Date:   Sun, 09 Dec 2018 21:50:33 +0000
-Message-ID: <lsq.1544392233.554562122@decadent.org.uk>
+Message-ID: <lsq.1544392233.295324371@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 121/328] b43/leds: Ensure NUL-termination of LED name
- string
+Subject: [PATCH 3.16 071/328] fuse: don't wake up reserved req in
+ fuse_conn_kill()
 In-Reply-To: <lsq.1544392232.713909046@decadent.org.uk>
 X-SA-Exim-Connect-IP: 81.174.156.145
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -58,30 +57,28 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Michael Büsch <m@bues.ch>
+From: Miklos Szeredi <mszeredi@suse.cz>
 
-commit 2aa650d1950fce94f696ebd7db30b8830c2c946f upstream.
+commit 0c4dd4ba1426c599072511dcf95a15ee5e12725b upstream.
 
-strncpy might not NUL-terminate the string, if the name equals the buffer size.
-Use strlcpy instead.
+Waking up reserved_req_waitq from fuse_conn_kill() doesn't make sense since
+we aren't chaging ff->reserved_req here, which is what this waitqueue
+signals.
 
-Signed-off-by: Michael Buesch <m@bues.ch>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
-[bwh: Backported to 3.16: adjust filename]
+Signed-off-by: Miklos Szeredi <mszeredi@suse.cz>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/net/wireless/b43/leds.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/fuse/inode.c | 1 -
+ 1 file changed, 1 deletion(-)
 
---- a/drivers/net/wireless/b43/leds.c
-+++ b/drivers/net/wireless/b43/leds.c
-@@ -131,7 +131,7 @@ static int b43_register_led(struct b43_w
- 	led->wl = dev->wl;
- 	led->index = led_index;
- 	led->activelow = activelow;
--	strncpy(led->name, name, sizeof(led->name));
-+	strlcpy(led->name, name, sizeof(led->name));
- 	atomic_set(&led->state, 0);
+--- a/fs/fuse/inode.c
++++ b/fs/fuse/inode.c
+@@ -387,7 +387,6 @@ void fuse_conn_kill(struct fuse_conn *fc
+ 	kill_fasync(&fc->fasync, SIGIO, POLL_IN);
+ 	wake_up_all(&fc->waitq);
+ 	wake_up_all(&fc->blocked_waitq);
+-	wake_up_all(&fc->reserved_req_waitq);
+ }
+ EXPORT_SYMBOL_GPL(fuse_conn_kill);
  
- 	led->led_dev.name = led->name;
 
