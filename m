@@ -2,118 +2,122 @@ Return-Path: <SRS0=cWqk=OS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.7 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A603C07E85
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 19:01:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5091C07E85
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 19:11:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0ACBD2081C
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 19:01:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 75AB720837
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 19:11:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="CHw6CpTP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0ACBD2081C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=googlemail.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="SLQ7c4tn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75AB720837
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kemnade.info
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726295AbeLITBv (ORCPT
+        id S1726233AbeLITLo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 14:01:51 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:52712 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726088AbeLITBt (ORCPT
+        Sun, 9 Dec 2018 14:11:44 -0500
+Received: from mail.andi.de1.cc ([85.214.239.24]:40470 "EHLO
+        h2641619.stratoserver.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726088AbeLITLn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Dec 2018 14:01:49 -0500
-Received: by mail-wm1-f65.google.com with SMTP id r11-v6so8791640wmb.2;
-        Sun, 09 Dec 2018 11:01:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=OKSka/+/cVpRHh/4vbzTPbz+qQ+/vVf1kkbTmUZ6zvo=;
-        b=CHw6CpTPHF19FzbrESn/kQOq6RBZjBX2S9LWGTvd4Jy5/8hOTLvK5HaSUSsTjyX1xs
-         LGrSGfuk+YX1siefrZpEO2MfetpTNMBJPehrBu1bYDwZk6z7xwYUAwJpXYhqIFYXycZ2
-         mfp5AmwylQj3T79OqV0CnFOGUrte4hj3bZCwmJ4TUren8ZJEeIWaD3JVr0UFENi74RtA
-         28bdnI92HVtRQCuAoYYWN2r9D9dbuxJHM5Ca4uwhxwiGRhjT+RsBdIXFBn3GW/fXz8eQ
-         Si9R+aUBbSZdgu+jIvtCMfGJ53rIeSF7CzDuNBxg0I5a1IE4pWpHFPSC3MsEi8gfLWHe
-         Ak+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=OKSka/+/cVpRHh/4vbzTPbz+qQ+/vVf1kkbTmUZ6zvo=;
-        b=B0PXIeYjemZwSGl4mMmVZTpC4mcCyEdOFWQM1GiAYB+361xR3WzsP1JoRvQQkL5+Ug
-         TcotRwxVItoHcs7yGs2FCc2YGN/yRVM0XUpKx+80/JjBHGVDmDLpc4vF8FWj0U7Wbtr+
-         DufCuFqijCSz9BuExHboXahgABQHperMZsXR9oxn6jLL2O9Wp+02r5ji/Z0+ZsJnjwa1
-         bjuI+nph6X2nwsSA+uG/K5bZ0kEnGyJJW5mguytucxmq+jJ0TQNkfacdsUEP6X05O6+S
-         uouk/6xYnqujnWqeRSW/RQnbLxrWRCc2BQzfzUuJy/26AC2yfupfWXLLtqoCbNTm7g8h
-         9Okg==
-X-Gm-Message-State: AA+aEWZGOX959fPea8lh7arz6YywgdhrumBVak4MZM8axvEqdOn8bfVs
-        wqYo5LRay+BHQ33MXfQUwP1M0fk/
-X-Google-Smtp-Source: AFSGD/X8xBh/cgoJxf6cXn7CZH//Zs45FpKW5F/aGAR9KTjB9/fJPP0PAoWaL249Vj1v8NrGS3Z1TQ==
-X-Received: by 2002:a1c:c64e:: with SMTP id w75mr8724696wmf.46.1544382106224;
-        Sun, 09 Dec 2018 11:01:46 -0800 (PST)
-Received: from blackbox.darklights.net (p200300DCD73FBA00428D5CFFFEB99DB8.dip0.t-ipconnect.de. [2003:dc:d73f:ba00:428d:5cff:feb9:9db8])
-        by smtp.googlemail.com with ESMTPSA id l197sm30560215wma.44.2018.12.09.11.01.45
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 09 Dec 2018 11:01:45 -0800 (PST)
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-To:     linux-usb@vger.kernel.org, hminas@synopsys.com,
-        gregkh@linuxfoundation.org
-Cc:     linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org,
-        Arthur.Petrosyan@synopsys.com, christianshewitt@gmail.com,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        stable@vger.kernel.org
-Subject: [PATCH 1/1] usb: dwc2: disable power_down on Amlogic devices
-Date:   Sun,  9 Dec 2018 20:01:29 +0100
-Message-Id: <20181209190129.11870-2-martin.blumenstingl@googlemail.com>
-X-Mailer: git-send-email 2.19.2
-In-Reply-To: <20181209190129.11870-1-martin.blumenstingl@googlemail.com>
-References: <20181209190129.11870-1-martin.blumenstingl@googlemail.com>
+        Sun, 9 Dec 2018 14:11:43 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=kemnade.info; s=20180802; h=Content-Type:MIME-Version:References:
+        In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=qwhez8KNA6+160PKXUxQh35797RHr4GlnAv6v5ACwVE=; b=SLQ7c4tnL8n75LkdqYUWasEdo
+        2lb3IUibdB+YDohOO/caLyM+NRkz2t/ovPXqbXN7OKUjiVBE5pn/VJcuejA+6akjJckaVoUwS7LNH
+        R7uiuvo/9s5YgAigxT41CFGFyzB3+Fpb3jf0xrLZkTWTta7HYUtivFMDU5kemJmAr14cI=;
+Received: from p5dc588d6.dip0.t-ipconnect.de ([93.197.136.214] helo=aktux)
+        by h2641619.stratoserver.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <andreas@kemnade.info>)
+        id 1gW4UN-0007nZ-TX; Sun, 09 Dec 2018 20:11:40 +0100
+Date:   Sun, 9 Dec 2018 20:11:34 +0100
+From:   Andreas Kemnade <andreas@kemnade.info>
+To:     Johan Hovold <johan@kernel.org>
+Cc:     robh+dt@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Discussions about the Letux Kernel 
+        <letux-kernel@openphoenux.org>
+Subject: Re: [PATCH RFC 5/5] dt-bindings: gnss: add lna-supply property
+Message-ID: <20181209201134.52c16a71@aktux>
+In-Reply-To: <20181205150939.GI15689@localhost>
+References: <20181118215801.12280-1-andreas@kemnade.info>
+        <20181118215801.12280-6-andreas@kemnade.info>
+        <20181205150939.GI15689@localhost>
+X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/3qDgqbcb4MN5ObIRVUBdrTh"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Disable power_down by setting the parameter to
-DWC2_POWER_DOWN_PARAM_NONE. This fixes a problem on various Amlogic
-Meson SoCs where USB devices are only recognized when plugged in before
-booting Linux. A hot-plugged USB device was not detected even though the
-device got power (my USB thumb drive for example has an LED which lit
-up).
+--Sig_/3qDgqbcb4MN5ObIRVUBdrTh
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-A similar fix was implemented for Rockchip SoCs in commit c216765d3a1def
-("usb: dwc2: disable power_down on rockchip devices"). That commit
-suggests that a change in the dwc2 driver is the cause because the
-default value for the "hibernate" parameter (which then got renamed to
-"power_down" to support other modes) was changed in the v4.17 merge
-window with:
-commit 6d23ee9caa6790 ("Merge tag 'usb-for-v4.17' of git://git.kernel.org/pub/scm/linux/kernel/git/balbi/usb into usb-testing").
+On Wed, 5 Dec 2018 16:09:39 +0100
+Johan Hovold <johan@kernel.org> wrote:
 
-Cc: <stable@vger.kernel.org> # 4.19
-Suggested-by: Christian Hewitt <christianshewitt@gmail.com>
-Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
----
- drivers/usb/dwc2/params.c | 1 +
- 1 file changed, 1 insertion(+)
+> On Sun, Nov 18, 2018 at 10:58:01PM +0100, Andreas Kemnade wrote:
+> > Add lna-supply property.
+> >=20
+> > Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+> > ---
+> >  Documentation/devicetree/bindings/gnss/sirfstar.txt | 1 +
+> >  1 file changed, 1 insertion(+)
+> >=20
+> > diff --git a/Documentation/devicetree/bindings/gnss/sirfstar.txt b/Docu=
+mentation/devicetree/bindings/gnss/sirfstar.txt
+> > index 1be7597ae884..9614774d14bc 100644
+> > --- a/Documentation/devicetree/bindings/gnss/sirfstar.txt
+> > +++ b/Documentation/devicetree/bindings/gnss/sirfstar.txt
+> > @@ -30,6 +30,7 @@ Optional properties:
+> >  - sirf,wakeup-gpios	: GPIO used to determine device power state
+> >  			  (pin name: RFPWRUP, WAKEUP)
+> >  - timepulse-gpios	: Time pulse GPIO (pin name: 1PPS, TM)
+> > +- lna-supply		: Separate supply for a LNA =20
+>=20
+> "Supply for external LNA"?
+>=20
+"External" might be misleading:
+- not part of the gps chip itself: yes
+- but might also be inside of the device.
 
-diff --git a/drivers/usb/dwc2/params.c b/drivers/usb/dwc2/params.c
-index 7c1b6938f212..38c813b1d203 100644
---- a/drivers/usb/dwc2/params.c
-+++ b/drivers/usb/dwc2/params.c
-@@ -111,6 +111,7 @@ static void dwc2_set_amlogic_params(struct dwc2_hsotg *hsotg)
- 	p->phy_type = DWC2_PHY_TYPE_PARAM_UTMI;
- 	p->ahbcfg = GAHBCFG_HBSTLEN_INCR8 <<
- 		GAHBCFG_HBSTLEN_SHIFT;
-+	p->power_down = DWC2_POWER_DOWN_PARAM_NONE;
- }
- 
- static void dwc2_set_amcc_params(struct dwc2_hsotg *hsotg)
--- 
-2.19.2
+In case of the GTA04 this includes power supply for an antenna switch
+(operates by plug detection) + internal or external antenna.
 
+Regards,
+Andreas
+
+--Sig_/3qDgqbcb4MN5ObIRVUBdrTh
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEE7sDbhY5mwNpwYgrAfb1qx03ikyQFAlwNaOYACgkQfb1qx03i
+kyRcmhAAuC7k3S9ti4oqnnu8eO00xAeL9wp66vofIRmQbMb6ONYcoJkMQRuPw1Nn
+6F0mCiLwSKqWOMoST/Wk2MFiwTjhwQK4ZBjm5S+VHhIBhVAL17fU/wIluiwM/+1R
+4RDJdFL7Qhy7f2lofdlbe2UpQzp2cxXVDHkzK/BYGBuXZM8qRMm4hikYRIUqqsxo
+1Z13LhaYtsq4mbwMJh/AFvQBN6/3mcBXQ1fgNRJR9dyXQTtlSWTco0Uhs1dskwOQ
+CKaA8vAKzM+THL3y4+N43AZIN4LPDqKESkHTRbHZ84OCHbkJiqWn7SBh9S++OR9h
+NKXe5WVmjeLoxcEpCqV5V3j2EQyDTaP3PwEN/sO56pboiG1OKtFs5bycxT2ih+8i
+LIk1zPxdcQ1s2aM/RckBznkUDdL2OvT79r1y/Dc35VAfK2qxG6H60OdUbdNvP4WO
+9cbyMuNmX4NLQmFAPbPOpO9o/3MxSYWA0SmxodIpVM0/bVgzMla98cJi/gkICxQ/
+mez8wvDeFUAkMdN7Nv/0WM2+TsqM7ry4FtONoE9rYMzZDyaQA09jjQ//VqknrsJL
+QCZJQ/SKdFDdmZ4+6KLPPBYls1WtF6Bbo55ULtGvleeKFhxiUGHChWsOSRoZAUbP
+eSfPITAojXKS8GnbwEVFv0lyshLIcXDMKiZnfJwk21lAN5Ssh6E=
+=Wbat
+-----END PGP SIGNATURE-----
+
+--Sig_/3qDgqbcb4MN5ObIRVUBdrTh--
