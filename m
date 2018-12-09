@@ -2,134 +2,191 @@ Return-Path: <SRS0=cWqk=OS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA849C07E85
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:09:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A0B3C65BAF
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:09:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 79D6F2081F
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:09:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 79D6F2081F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
+	by mail.kernel.org (Postfix) with ESMTP id DD75520661
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:09:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="s+ZrJm6A"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD75520661
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727551AbeLIWJr (ORCPT
+        id S1728126AbeLIWJw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 17:09:47 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:37466 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726314AbeLIWJn (ORCPT
+        Sun, 9 Dec 2018 17:09:52 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:44048 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727755AbeLIWJs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Dec 2018 17:09:43 -0500
-Received: from pub.yeoldevic.com ([81.174.156.145] helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1gW73L-0002io-IL; Sun, 09 Dec 2018 21:55:55 +0000
-Received: from ben by deadeye with local (Exim 4.91)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1gW72a-0003Hu-Mh; Sun, 09 Dec 2018 21:55:08 +0000
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+        Sun, 9 Dec 2018 17:09:48 -0500
+Received: by mail-lf1-f65.google.com with SMTP id z13so6572018lfe.11;
+        Sun, 09 Dec 2018 14:09:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=n+Ya67k3G7QqpGQxiWdPuzLYWBm/bB4xDgItNbG3BA4=;
+        b=s+ZrJm6AVqooMLlRVcKD7boKVIim9Bxa9V9wfBgyMMwAW/FZt7Vnw5tLuq+CDP+MTf
+         wKIQDBEx8iH3Y9fyhRUeT7h3QcySPEVst7PeLoQP32zCiCRG4Wyzo0u1QHyh00DISC2b
+         M8iinQedR4kVPqq9pznWFiez9fwWBm1indpACtdPGY9dynBhULTUVoF68z9vceBHzIOf
+         ABvbvXRCdLK9vXM5znp34NmuNTSWSjHMi7tIbuT/L4CyIZhmBLwhkqfZ45bOKiGcwpxv
+         MBmp1r8HPnOmMTWCVzFRLpUKoEiHla8s1rgMK3kvrf4Lnob2dX3hkAFvaxbzI0upTAOb
+         qCGw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=n+Ya67k3G7QqpGQxiWdPuzLYWBm/bB4xDgItNbG3BA4=;
+        b=oGyYWtxG0D4XYk6AKkjgOFwvNVc9/njLYv/vOA8tlXtE+rSuLWGRDBw9c7ICuw8soy
+         k6PgnN5L9KBXRh6R3goIPwlLeRzotLFiT0OTE7V+JjRupB8r2oZHjY5K7Koc6LJh/NI/
+         us8UO3cnQAvNOWAa+pVITob6DFcgs+nUHeFPXO6gYXGU5/iMH7PZo/hg3Dl8xb0Mahsr
+         ic/AjSaf8j9HO1jZrY2Qej/a1tm7q9c1KhZxEDlIxtiQdoxtxCqNgoi3x/Gqp+SXlG2R
+         t8tErkWthDfmQmNCze4EO4IdL9/xzqaji6lZ79a4pI7f0wjzSVoKnF2p3H0UeVVkjWMq
+         BrAA==
+X-Gm-Message-State: AA+aEWYTPCz9PpSOvTT/vGs2bI2CeQks7Xka8B5LSHIEizkgbgh7XSfS
+        +bgzfOk7SkLANM/OYR0s8B/UEaYD
+X-Google-Smtp-Source: AFSGD/VJSHW72t7Jf7Fe0T8/JuzJXUCSKXCIAaKjUyBlh0Xgl0BRHqSPF9E4eh9gGxA7ZWxRN7xi8g==
+X-Received: by 2002:a19:4bc9:: with SMTP id y192mr5260797lfa.49.1544393385301;
+        Sun, 09 Dec 2018 14:09:45 -0800 (PST)
+Received: from [192.168.10.160] (91-159-62-226.elisa-laajakaista.fi. [91.159.62.226])
+        by smtp.gmail.com with ESMTPSA id s3-v6sm1826756lje.73.2018.12.09.14.09.40
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 09 Dec 2018 14:09:44 -0800 (PST)
+Subject: Re: [PATCH 2/6] __wr_after_init: write rare for static allocation
+To:     Andy Lutomirski <luto@kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Igor Stoppa <igor.stoppa@huawei.com>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Linux-MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <20181204121805.4621-1-igor.stoppa@huawei.com>
+ <20181204121805.4621-3-igor.stoppa@huawei.com>
+ <CALCETrVvoui0vksdt0Y9rdGL5ipEn_FtSXVVUFdH03ZC93cy_A@mail.gmail.com>
+From:   Igor Stoppa <igor.stoppa@gmail.com>
+Message-ID: <8c4c45a5-a4c9-7094-002e-9b6006eb2f9e@gmail.com>
+Date:   Mon, 10 Dec 2018 00:09:40 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-From:   Ben Hutchings <ben@decadent.org.uk>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, "Miklos Szeredi" <mszeredi@suse.cz>
-Date:   Sun, 09 Dec 2018 21:50:33 +0000
-Message-ID: <lsq.1544392233.771535635@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 072/328] fuse: flush requests on umount
-In-Reply-To: <lsq.1544392232.713909046@decadent.org.uk>
-X-SA-Exim-Connect-IP: 81.174.156.145
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+In-Reply-To: <CALCETrVvoui0vksdt0Y9rdGL5ipEn_FtSXVVUFdH03ZC93cy_A@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.16.62-rc1 review patch.  If anyone has any objections, please let me know.
+On 06/12/2018 01:13, Andy Lutomirski wrote:
 
-------------------
+>> +       kasan_disable_current();
+>> +       if (op == WR_MEMCPY)
+>> +               memcpy((void *)wr_poking_addr, (void *)src, len);
+>> +       else if (op == WR_MEMSET)
+>> +               memset((u8 *)wr_poking_addr, (u8)src, len);
+>> +       else if (op == WR_RCU_ASSIGN_PTR)
+>> +               /* generic version of rcu_assign_pointer */
+>> +               smp_store_release((void **)wr_poking_addr,
+>> +                                 RCU_INITIALIZER((void **)src));
+>> +       kasan_enable_current();
+> 
+> Hmm.  I suspect this will explode quite badly on sane architectures
+> like s390.  (In my book, despite how weird s390 is, it has a vastly
+> nicer model of "user" memory than any other architecture I know
+> of...).
 
-From: Miklos Szeredi <mszeredi@suse.cz>
+I see. I can try to setup also a qemu target for s390, for my tests.
+There seems to be a Debian image, to have a fully bootable system.
 
-commit 580640ba5d331eb5631a5de46941c98f5ed90886 upstream.
+> I think you should use copy_to_user(), etc, instead.
 
-Use fuse_abort_conn() instead of fuse_conn_kill() in fuse_put_super().
-This flushes and aborts requests still on any queues.  But since we've
-already reset fc->connected, those requests would not be useful anyway and
-would be flushed when the fuse device is closed.
+I'm having troubles with the "etc" part: as far as I can see, there are 
+both generic and specific support for both copying and clearing 
+user-space memory from kernel, however I couldn't find something that 
+looks like a memset_user().
 
-Next patches will rely on requests being flushed before the superblock is
-destroyed.
+I can of course roll my own, for example iterating copy_to_user() with 
+the support of a pre-allocated static buffer (1 page should be enough).
 
-Use fuse_abort_conn() in cuse_process_init_reply() too, since it makes no
-difference there, and we can get rid of fuse_conn_kill().
+But, before I go down this path, I wanted to confirm that there's really 
+nothing better that I could use.
 
-Signed-off-by: Miklos Szeredi <mszeredi@suse.cz>
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
----
- fs/fuse/cuse.c   |  2 +-
- fs/fuse/fuse_i.h |  2 --
- fs/fuse/inode.c  | 16 +---------------
- 3 files changed, 2 insertions(+), 18 deletions(-)
+If that's really the case, the static buffer instance should be 
+replicated for each core, I think, since each core could be performing 
+its own memset_user() at the same time.
 
---- a/fs/fuse/cuse.c
-+++ b/fs/fuse/cuse.c
-@@ -415,7 +415,7 @@ err_unlock:
- err_region:
- 	unregister_chrdev_region(devt, 1);
- err:
--	fuse_conn_kill(fc);
-+	fuse_abort_conn(fc);
- 	goto out;
- }
- 
---- a/fs/fuse/fuse_i.h
-+++ b/fs/fuse/fuse_i.h
-@@ -804,8 +804,6 @@ void fuse_invalidate_atime(struct inode
-  */
- struct fuse_conn *fuse_conn_get(struct fuse_conn *fc);
- 
--void fuse_conn_kill(struct fuse_conn *fc);
--
- /**
-  * Initialize fuse_conn
-  */
---- a/fs/fuse/inode.c
-+++ b/fs/fuse/inode.c
-@@ -376,27 +376,13 @@ static void fuse_bdi_destroy(struct fuse
- 		bdi_destroy(&fc->bdi);
- }
- 
--void fuse_conn_kill(struct fuse_conn *fc)
--{
--	spin_lock(&fc->lock);
--	fc->connected = 0;
--	fc->blocked = 0;
--	fc->initialized = 1;
--	spin_unlock(&fc->lock);
--	/* Flush all readers on this fs */
--	kill_fasync(&fc->fasync, SIGIO, POLL_IN);
--	wake_up_all(&fc->waitq);
--	wake_up_all(&fc->blocked_waitq);
--}
--EXPORT_SYMBOL_GPL(fuse_conn_kill);
--
- static void fuse_put_super(struct super_block *sb)
- {
- 	struct fuse_conn *fc = get_fuse_conn_super(sb);
- 
- 	fuse_send_destroy(fc);
- 
--	fuse_conn_kill(fc);
-+	fuse_abort_conn(fc);
- 	mutex_lock(&fuse_mutex);
- 	list_del(&fc->entry);
- 	fuse_ctl_remove_conn(fc);
+Alternatively, I could do a loop of WRITE_ONCE(), however I'm not sure 
+how that would work with (lack-of) alignment and might require also a 
+preamble/epilogue to deal with unaligned data?
 
+>  I'm not
+> entirely sure what the best smp_store_release() replacement is.
+> Making this change may also mean you can get rid of the
+> kasan_disable_current().
+> 
+>> +
+>> +       barrier(); /* XXX redundant? */
+> 
+> I think it's redundant.  If unuse_temporary_mm() allows earlier stores
+> to hit the wrong address space, then something is very very wrong, and
+> something is also very very wrong if the optimizer starts moving
+> stores across a function call that is most definitely a barrier.
+
+ok, thanks
+
+>> +
+>> +       unuse_temporary_mm(prev);
+>> +       /* XXX make the verification optional? */
+>> +       if (op == WR_MEMCPY)
+>> +               BUG_ON(memcmp((void *)dst, (void *)src, len));
+>> +       else if (op == WR_MEMSET)
+>> +               BUG_ON(memtst((void *)dst, (u8)src, len));
+>> +       else if (op == WR_RCU_ASSIGN_PTR)
+>> +               BUG_ON(*(unsigned long *)dst != src);
+> 
+> Hmm.  If you allowed cmpxchg or even plain xchg, then these bug_ons
+> would be thoroughly buggy, but maybe they're okay.  But they should,
+> at most, be WARN_ON_ONCE(), 
+
+I have to confess that I do not understand why Nadav's patchset was 
+required to use BUG_ON(), while here it's not correct, not even for 
+memcopy or memset .
+
+Is it because it is single-threaded?
+Or is it because text_poke() is patching code, instead of data?
+I can turn to WARN_ON_ONCE(), but I'd like to understand the reason.
+
+> given that you can trigger them by writing
+> the same addresses from two threads at once, and this isn't even
+> entirely obviously bogus given the presence of smp_store_release().
+
+True, however would it be reasonable to require the use of an explicit 
+writer lock, from the user?
+
+This operation is not exactly fast and should happen seldom; I'm not 
+sure if it's worth supporting cmpxchg. The speedup would be minimal.
+
+I'd rather not implement the locking implicitly, even if it would be 
+possible to detect simultaneous writes, because it might lead to overall 
+inconsistent data.
+
+--
+igor
