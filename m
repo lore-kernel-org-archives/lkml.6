@@ -6,46 +6,50 @@ X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69C04C65BAF
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:14:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B1D9C07E85
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:15:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3994320661
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:14:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3994320661
+	by mail.kernel.org (Postfix) with ESMTP id 49BCE2081F
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:15:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 49BCE2081F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728090AbeLIWOv (ORCPT
+        id S1728551AbeLIWO6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 17:14:51 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:38112 "EHLO
+        Sun, 9 Dec 2018 17:14:58 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:38122 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727019AbeLIWOu (ORCPT
+        by vger.kernel.org with ESMTP id S1727019AbeLIWO5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Dec 2018 17:14:50 -0500
+        Sun, 9 Dec 2018 17:14:57 -0500
 Received: from pub.yeoldevic.com ([81.174.156.145] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW73F-0002iq-KL; Sun, 09 Dec 2018 21:55:49 +0000
+        id 1gW73C-0002io-9q; Sun, 09 Dec 2018 21:55:46 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW72c-0003N4-V6; Sun, 09 Dec 2018 21:55:10 +0000
+        id 1gW72d-0003PW-V5; Sun, 09 Dec 2018 21:55:11 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, "Michael Ellerman" <mpe@ellerman.id.au>,
-        "Tyrel Datwyler" <tyreld@linux.vnet.ibm.com>,
-        "Dan Carpenter" <dan.carpenter@oracle.com>
+CC:     akpm@linux-foundation.org, "Andy Lutomirski" <luto@kernel.org>,
+        "Vitaly Kuznetsov" <vkuznets@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "Thomas Gleixner" <tglx@linutronix.de>,
+        "Josh Poimboeuf" <jpoimboe@redhat.com>,
+        "Borislav Petkov" <bpetkov@suse.de>,
+        "Dmitry Safonov" <dima@arista.com>,
+        "Rian Hunter" <rian@alum.mit.edu>, "Joerg Roedel" <jroedel@suse.de>
 Date:   Sun, 09 Dec 2018 21:50:33 +0000
-Message-ID: <lsq.1544392233.948488025@decadent.org.uk>
+Message-ID: <lsq.1544392233.560950681@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 123/328] powerpc: Fix size calculation using
- resource_size()
+Subject: [PATCH 3.16 150/328] x86/process: Re-export start_thread()
 In-Reply-To: <lsq.1544392232.713909046@decadent.org.uk>
 X-SA-Exim-Connect-IP: 81.174.156.145
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -59,31 +63,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Rian Hunter <rian@alum.mit.edu>
 
-commit c42d3be0c06f0c1c416054022aa535c08a1f9b39 upstream.
+commit dc76803e57cc86589c4efcb5362918f9b0c0436f upstream.
 
-The problem is the the calculation should be "end - start + 1" but the
-plus one is missing in this calculation.
+The consolidation of the start_thread() functions removed the export
+unintentionally. This breaks binfmt handlers built as a module.
 
-Fixes: 8626816e905e ("powerpc: add support for MPIC message register API")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Reviewed-by: Tyrel Datwyler <tyreld@linux.vnet.ibm.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Add it back.
+
+Fixes: e634d8fc792c ("x86-64: merge the standard and compat start_thread() functions")
+Signed-off-by: Rian Hunter <rian@alum.mit.edu>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Borislav Petkov <bpetkov@suse.de>
+Cc: Vitaly Kuznetsov <vkuznets@redhat.com>
+Cc: Joerg Roedel <jroedel@suse.de>
+Cc: Dmitry Safonov <dima@arista.com>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Link: https://lkml.kernel.org/r/20180819230854.7275-1-rian@alum.mit.edu
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- arch/powerpc/sysdev/mpic_msgr.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/kernel/process_64.c | 1 +
+ 1 file changed, 1 insertion(+)
 
---- a/arch/powerpc/sysdev/mpic_msgr.c
-+++ b/arch/powerpc/sysdev/mpic_msgr.c
-@@ -196,7 +196,7 @@ static int mpic_msgr_probe(struct platfo
+--- a/arch/x86/kernel/process_64.c
++++ b/arch/x86/kernel/process_64.c
+@@ -254,6 +254,7 @@ start_thread(struct pt_regs *regs, unsig
+ 	start_thread_common(regs, new_ip, new_sp,
+ 			    __USER_CS, __USER_DS, 0);
+ }
++EXPORT_SYMBOL_GPL(start_thread);
  
- 	/* IO map the message register block. */
- 	of_address_to_resource(np, 0, &rsrc);
--	msgr_block_addr = ioremap(rsrc.start, rsrc.end - rsrc.start);
-+	msgr_block_addr = ioremap(rsrc.start, resource_size(&rsrc));
- 	if (!msgr_block_addr) {
- 		dev_err(&dev->dev, "Failed to iomap MPIC message registers");
- 		return -EFAULT;
+ #ifdef CONFIG_IA32_EMULATION
+ void start_thread_ia32(struct pt_regs *regs, u32 new_ip, u32 new_sp)
 
