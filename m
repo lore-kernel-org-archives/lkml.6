@@ -6,47 +6,45 @@ X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECC11C65BAF
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:17:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52C19C67838
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:17:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BBD542081F
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:17:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BBD542081F
+	by mail.kernel.org (Postfix) with ESMTP id 2327220661
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:17:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2327220661
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727854AbeLIWHJ (ORCPT
+        id S1727815AbeLIWGv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 17:07:09 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:37164 "EHLO
+        Sun, 9 Dec 2018 17:06:51 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:37130 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727274AbeLIWHB (ORCPT
+        by vger.kernel.org with ESMTP id S1726791AbeLIWGt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Dec 2018 17:07:01 -0500
+        Sun, 9 Dec 2018 17:06:49 -0500
 Received: from pub.yeoldevic.com ([81.174.156.145] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW73I-0002if-Jh; Sun, 09 Dec 2018 21:55:52 +0000
+        id 1gW735-0002ik-C3; Sun, 09 Dec 2018 21:55:39 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW72c-0003LS-1O; Sun, 09 Dec 2018 21:55:10 +0000
+        id 1gW72g-0003VV-CU; Sun, 09 Dec 2018 21:55:14 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, "Alexander Aring" <aring@mojatatu.com>,
-        "Rabi Narayan Sahoo" <rabinarayans0828@gmail.com>,
-        "Stefan Schmidt" <stefan@datenfreihafen.org>,
-        "David Palma" <david.palma@ntnu.no>
+CC:     akpm@linux-foundation.org,
+        "Geert Uytterhoeven" <geert+renesas@glider.be>,
+        "Mark Brown" <broonie@kernel.org>
 Date:   Sun, 09 Dec 2018 21:50:33 +0000
-Message-ID: <lsq.1544392233.519503291@decadent.org.uk>
+Message-ID: <lsq.1544392233.8330824@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 103/328] net: 6lowpan: fix reserved space for single
- frames
+Subject: [PATCH 3.16 205/328] spi: rspi: Fix interrupted DMA transfers
 In-Reply-To: <lsq.1544392232.713909046@decadent.org.uk>
 X-SA-Exim-Connect-IP: 81.174.156.145
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -60,57 +58,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alexander Aring <aring@mojatatu.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-commit ac74f87c789af40936a80131c4759f3e72579c3a upstream.
+commit 8dbbaa47b96f6ea5f09f922b4effff3c505cd8cf upstream.
 
-This patch fixes patch add handling to take care tail and headroom for
-single 6lowpan frames. We need to be sure we have a skb with the right
-head and tailroom for single frames. This patch do it by using
-skb_copy_expand() if head and tailroom is not enough allocated by upper
-layer.
+When interrupted, wait_event_interruptible_timeout() returns
+-ERESTARTSYS, and the SPI transfer in progress will fail, as expected:
 
-Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=195059
-Reported-by: David Palma <david.palma@ntnu.no>
-Reported-by: Rabi Narayan Sahoo <rabinarayans0828@gmail.com>
-Signed-off-by: Alexander Aring <aring@mojatatu.com>
-Signed-off-by: Stefan Schmidt <stefan@datenfreihafen.org>
-[bwh: Backported to 3.16:
- - s/ldev/dev/
- - Adjust filename]
+    m25p80 spi0.0: SPI transfer failed: -512
+    spi_master spi0: failed to transfer one message from queue
+
+However, as the underlying DMA transfers may not have completed, all
+subsequent SPI transfers may start to fail:
+
+    spi_master spi0: receive timeout
+    qspi_transfer_out_in() returned -110
+    m25p80 spi0.0: SPI transfer failed: -110
+    spi_master spi0: failed to transfer one message from queue
+
+Fix this by calling dmaengine_terminate_all() not only for timeouts, but
+also for errors.
+
+This can be reproduced on r8a7991/koelsch, using "hd /dev/mtd0" followed
+by CTRL-C.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- net/ieee802154/6lowpan_rtnl.c | 21 ++++++++++++++++++---
- 1 file changed, 18 insertions(+), 3 deletions(-)
+ drivers/spi/spi-rspi.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
---- a/net/ieee802154/6lowpan_rtnl.c
-+++ b/net/ieee802154/6lowpan_rtnl.c
-@@ -388,9 +388,24 @@ static netdev_tx_t lowpan_xmit(struct sk
- 	/* We must take a copy of the skb before we modify/replace the ipv6
- 	 * header as the header could be used elsewhere
- 	 */
--	skb = skb_unshare(skb, GFP_ATOMIC);
--	if (!skb)
--		return NET_XMIT_DROP;
-+	if (unlikely(skb_headroom(skb) < dev->needed_headroom ||
-+		     skb_tailroom(skb) < dev->needed_tailroom)) {
-+		struct sk_buff *nskb;
-+
-+		nskb = skb_copy_expand(skb, dev->needed_headroom,
-+				       dev->needed_tailroom, GFP_ATOMIC);
-+		if (likely(nskb)) {
-+			consume_skb(skb);
-+			skb = nskb;
-+		} else {
-+			kfree_skb(skb);
-+			return NET_XMIT_DROP;
-+		}
-+	} else {
-+		skb = skb_unshare(skb, GFP_ATOMIC);
-+		if (!skb)
-+			return NET_XMIT_DROP;
-+	}
+--- a/drivers/spi/spi-rspi.c
++++ b/drivers/spi/spi-rspi.c
+@@ -538,11 +538,13 @@ static int rspi_dma_transfer(struct rspi
  
- 	ret = lowpan_header(skb, dev);
- 	if (ret < 0) {
+ 	ret = wait_event_interruptible_timeout(rspi->wait,
+ 					       rspi->dma_callbacked, HZ);
+-	if (ret > 0 && rspi->dma_callbacked)
++	if (ret > 0 && rspi->dma_callbacked) {
+ 		ret = 0;
+-	else if (!ret) {
+-		dev_err(&rspi->master->dev, "DMA timeout\n");
+-		ret = -ETIMEDOUT;
++	} else {
++		if (!ret) {
++			dev_err(&rspi->master->dev, "DMA timeout\n");
++			ret = -ETIMEDOUT;
++		}
+ 		if (tx)
+ 			dmaengine_terminate_all(rspi->master->dma_tx);
+ 		if (rx)
 
