@@ -6,47 +6,45 @@ X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36E47C07E85
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:01:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BC88C07E85
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:01:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E871A20672
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:01:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E871A20672
+	by mail.kernel.org (Postfix) with ESMTP id 16F7620661
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:01:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 16F7620661
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727255AbeLIWBm (ORCPT
+        id S1727266AbeLIWBp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 17:01:42 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35942 "EHLO
+        Sun, 9 Dec 2018 17:01:45 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35938 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726676AbeLIVzd (ORCPT
+        by vger.kernel.org with ESMTP id S1726675AbeLIVzd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 9 Dec 2018 16:55:33 -0500
 Received: from pub.yeoldevic.com ([81.174.156.145] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW72w-0002ic-PO; Sun, 09 Dec 2018 21:55:31 +0000
+        id 1gW72w-0002pr-Ox; Sun, 09 Dec 2018 21:55:31 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW72j-0003c1-Gf; Sun, 09 Dec 2018 21:55:17 +0000
+        id 1gW72j-0003bw-F5; Sun, 09 Dec 2018 21:55:17 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, "Peter Wu" <peter@lekensteyn.nl>,
-        "Bjorn Helgaas" <bhelgaas@google.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        "Daniel Drake" <drake@endlessm.com>
+CC:     akpm@linux-foundation.org, "Coly Li" <colyli@suse.de>,
+        "Guoju Fang" <fangguoju@gmail.com>, "Jens Axboe" <axboe@kernel.dk>
 Date:   Sun, 09 Dec 2018 21:50:33 +0000
-Message-ID: <lsq.1544392233.668220791@decadent.org.uk>
+Message-ID: <lsq.1544392233.547842377@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 270/328] PCI: Reprogram bridge prefetch registers on
- resume
+Subject: [PATCH 3.16 269/328] bcache: add separate workqueue for
+ journal_write to avoid deadlock
 In-Reply-To: <lsq.1544392232.713909046@decadent.org.uk>
 X-SA-Exim-Connect-IP: 81.174.156.145
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -60,125 +58,98 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Daniel Drake <drake@endlessm.com>
+From: Guoju Fang <fangguoju@gmail.com>
 
-commit 083874549fdfefa629dfa752785e20427dde1511 upstream.
+commit 0f843e65d9eef4936929bb036c5f771fb261eea4 upstream.
 
-On 38+ Intel-based ASUS products, the NVIDIA GPU becomes unusable after S3
-suspend/resume.  The affected products include multiple generations of
-NVIDIA GPUs and Intel SoCs.  After resume, nouveau logs many errors such
-as:
+After write SSD completed, bcache schedules journal_write work to
+system_wq, which is a public workqueue in system, without WQ_MEM_RECLAIM
+flag. system_wq is also a bound wq, and there may be no idle kworker on
+current processor. Creating a new kworker may unfortunately need to
+reclaim memory first, by shrinking cache and slab used by vfs, which
+depends on bcache device. That's a deadlock.
 
-  fifo: fault 00 [READ] at 0000005555555000 engine 00 [GR] client 04
-        [HUB/FE] reason 4a [] on channel -1 [007fa91000 unknown]
-  DRM: failed to idle channel 0 [DRM]
+This patch create a new workqueue for journal_write with WQ_MEM_RECLAIM
+flag. It's rescuer thread will work to avoid the deadlock.
 
-Similarly, the NVIDIA proprietary driver also fails after resume (black
-screen, 100% CPU usage in Xorg process).  We shipped a sample to NVIDIA for
-diagnosis, and their response indicated that it's a problem with the parent
-PCI bridge (on the Intel SoC), not the GPU.
-
-Runtime suspend/resume works fine, only S3 suspend is affected.
-
-We found a workaround: on resume, rewrite the Intel PCI bridge
-'Prefetchable Base Upper 32 Bits' register (PCI_PREF_BASE_UPPER32).  In the
-cases that I checked, this register has value 0 and we just have to rewrite
-that value.
-
-Linux already saves and restores PCI config space during suspend/resume,
-but this register was being skipped because upon resume, it already has
-value 0 (the correct, pre-suspend value).
-
-Intel appear to have previously acknowledged this behaviour and the
-requirement to rewrite this register:
-https://bugzilla.kernel.org/show_bug.cgi?id=116851#c23
-
-Based on that, rewrite the prefetch register values even when that appears
-unnecessary.
-
-We have confirmed this solution on all the affected models we have in-hands
-(X542UQ, UX533FD, X530UN, V272UN).
-
-Additionally, this solves an issue where r8169 MSI-X interrupts were broken
-after S3 suspend/resume on ASUS X441UAR.  This issue was recently worked
-around in commit 7bb05b85bc2d ("r8169: don't use MSI-X on RTL8106e").  It
-also fixes the same issue on RTL6186evl/8111evl on an Aimfor-tech laptop
-that we had not yet patched.  I suspect it will also fix the issue that was
-worked around in commit 7c53a722459c ("r8169: don't use MSI-X on
-RTL8168g").
-
-Thomas Martitz reports that this change also solves an issue where the AMD
-Radeon Polaris 10 GPU on the HP Zbook 14u G5 is unresponsive after S3
-suspend/resume.
-
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=201069
-Signed-off-by: Daniel Drake <drake@endlessm.com>
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Reviewed-By: Peter Wu <peter@lekensteyn.nl>
+Signed-off-by: Guoju Fang <fangguoju@gmail.com>
+Signed-off-by: Coly Li <colyli@suse.de>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/pci/pci.c | 27 +++++++++++++++++++--------
- 1 file changed, 19 insertions(+), 8 deletions(-)
+ drivers/md/bcache/bcache.h  | 1 +
+ drivers/md/bcache/journal.c | 6 +++---
+ drivers/md/bcache/super.c   | 8 ++++++++
+ 3 files changed, 12 insertions(+), 3 deletions(-)
 
---- a/drivers/pci/pci.c
-+++ b/drivers/pci/pci.c
-@@ -1014,12 +1014,12 @@ int pci_save_state(struct pci_dev *dev)
- EXPORT_SYMBOL(pci_save_state);
+--- a/drivers/md/bcache/bcache.h
++++ b/drivers/md/bcache/bcache.h
+@@ -898,6 +898,7 @@ void bch_prio_write(struct cache *);
+ void bch_write_bdev_super(struct cached_dev *, struct closure *);
  
- static void pci_restore_config_dword(struct pci_dev *pdev, int offset,
--				     u32 saved_val, int retry)
-+				     u32 saved_val, int retry, bool force)
- {
- 	u32 val;
+ extern struct workqueue_struct *bcache_wq;
++extern struct workqueue_struct *bch_journal_wq;
+ extern const char * const bch_cache_modes[];
+ extern struct mutex bch_register_lock;
+ extern struct list_head bch_cache_sets;
+--- a/drivers/md/bcache/journal.c
++++ b/drivers/md/bcache/journal.c
+@@ -454,7 +454,7 @@ static void do_journal_discard(struct ca
  
- 	pci_read_config_dword(pdev, offset, &val);
--	if (val == saved_val)
-+	if (!force && val == saved_val)
- 		return;
- 
- 	for (;;) {
-@@ -1038,25 +1038,36 @@ static void pci_restore_config_dword(str
- }
- 
- static void pci_restore_config_space_range(struct pci_dev *pdev,
--					   int start, int end, int retry)
-+					   int start, int end, int retry,
-+					   bool force)
- {
- 	int index;
- 
- 	for (index = end; index >= start; index--)
- 		pci_restore_config_dword(pdev, 4 * index,
- 					 pdev->saved_config_space[index],
--					 retry);
-+					 retry, force);
- }
- 
- static void pci_restore_config_space(struct pci_dev *pdev)
- {
- 	if (pdev->hdr_type == PCI_HEADER_TYPE_NORMAL) {
--		pci_restore_config_space_range(pdev, 10, 15, 0);
-+		pci_restore_config_space_range(pdev, 10, 15, 0, false);
- 		/* Restore BARs before the command register. */
--		pci_restore_config_space_range(pdev, 4, 9, 10);
--		pci_restore_config_space_range(pdev, 0, 3, 0);
-+		pci_restore_config_space_range(pdev, 4, 9, 10, false);
-+		pci_restore_config_space_range(pdev, 0, 3, 0, false);
-+	} else if (pdev->hdr_type == PCI_HEADER_TYPE_BRIDGE) {
-+		pci_restore_config_space_range(pdev, 12, 15, 0, false);
-+
-+		/*
-+		 * Force rewriting of prefetch registers to avoid S3 resume
-+		 * issues on Intel PCI bridges that occur when these
-+		 * registers are not explicitly written.
-+		 */
-+		pci_restore_config_space_range(pdev, 9, 11, 0, true);
-+		pci_restore_config_space_range(pdev, 0, 8, 0, false);
- 	} else {
--		pci_restore_config_space_range(pdev, 0, 15, 0);
-+		pci_restore_config_space_range(pdev, 0, 15, 0, false);
+ 		closure_get(&ca->set->cl);
+ 		INIT_WORK(&ja->discard_work, journal_discard_work);
+-		schedule_work(&ja->discard_work);
++		queue_work(bch_journal_wq, &ja->discard_work);
  	}
  }
  
+@@ -559,7 +559,7 @@ static void journal_write_done(struct cl
+ 		: &j->w[0];
+ 
+ 	__closure_wake_up(&w->wait);
+-	continue_at_nobarrier(cl, journal_write, system_wq);
++	continue_at_nobarrier(cl, journal_write, bch_journal_wq);
+ }
+ 
+ static void journal_write_unlock(struct closure *cl)
+@@ -592,7 +592,7 @@ static void journal_write_unlocked(struc
+ 		spin_unlock(&c->journal.lock);
+ 
+ 		btree_flush_write(c);
+-		continue_at(cl, journal_write, system_wq);
++		continue_at(cl, journal_write, bch_journal_wq);
+ 		return;
+ 	}
+ 
+--- a/drivers/md/bcache/super.c
++++ b/drivers/md/bcache/super.c
+@@ -56,6 +56,7 @@ static int bcache_major;
+ static DEFINE_IDA(bcache_minor);
+ static wait_queue_head_t unregister_wait;
+ struct workqueue_struct *bcache_wq;
++struct workqueue_struct *bch_journal_wq;
+ 
+ #define BTREE_MAX_PAGES		(256 * 1024 / PAGE_SIZE)
+ 
+@@ -2112,6 +2113,9 @@ static void bcache_exit(void)
+ 		kobject_put(bcache_kobj);
+ 	if (bcache_wq)
+ 		destroy_workqueue(bcache_wq);
++	if (bch_journal_wq)
++		destroy_workqueue(bch_journal_wq);
++
+ 	if (bcache_major)
+ 		unregister_blkdev(bcache_major, "bcache");
+ 	unregister_reboot_notifier(&reboot);
+@@ -2142,6 +2146,10 @@ static int __init bcache_init(void)
+ 	if (!bcache_wq)
+ 		goto err;
+ 
++	bch_journal_wq = alloc_workqueue("bch_journal", WQ_MEM_RECLAIM, 0);
++	if (!bch_journal_wq)
++		goto err;
++
+ 	bcache_kobj = kobject_create_and_add("bcache", fs_kobj);
+ 	if (!bcache_kobj)
+ 		goto err;
 
