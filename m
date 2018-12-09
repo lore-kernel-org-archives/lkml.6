@@ -6,48 +6,49 @@ X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B63DC65BAF
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 21:59:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4736C65BAF
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 21:59:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C1E7E20661
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 21:59:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C1E7E20661
+	by mail.kernel.org (Postfix) with ESMTP id 8957820837
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 21:59:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8957820837
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727009AbeLIV7C (ORCPT
+        id S1727126AbeLIV65 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 16:59:02 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36196 "EHLO
+        Sun, 9 Dec 2018 16:58:57 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36194 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726745AbeLIVzj (ORCPT
+        by vger.kernel.org with ESMTP id S1726744AbeLIVzj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 9 Dec 2018 16:55:39 -0500
 Received: from pub.yeoldevic.com ([81.174.156.145] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW730-0002ij-7M; Sun, 09 Dec 2018 21:55:35 +0000
+        id 1gW730-0002iq-Ue; Sun, 09 Dec 2018 21:55:35 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW72i-0003aP-Gz; Sun, 09 Dec 2018 21:55:16 +0000
+        id 1gW72g-0003Wn-S7; Sun, 09 Dec 2018 21:55:14 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org,
-        "Alexander Potapenko" <glider@google.com>,
-        syzbot+3fde91d4d394747d6db4@syzkaller.appspotmail.com,
-        "Paolo Abeni" <pabeni@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>
+CC:     akpm@linux-foundation.org, "Jann Horn" <jannh@google.com>,
+        "Andy Lutomirski" <luto@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "Thomas Gleixner" <tglx@linutronix.de>,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+        "Borislav Petkov" <bpetkov@suse.de>
 Date:   Sun, 09 Dec 2018 21:50:33 +0000
-Message-ID: <lsq.1544392233.255995459@decadent.org.uk>
+Message-ID: <lsq.1544392233.207550430@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 250/328] ip6_tunnel: be careful when accessing the
- inner header
+Subject: [PATCH 3.16 216/328] x86/process: Don't mix user/kernel regs in
+ 64bit __show_regs()
 In-Reply-To: <lsq.1544392232.713909046@decadent.org.uk>
 X-SA-Exim-Connect-IP: 81.174.156.145
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -61,135 +62,140 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Paolo Abeni <pabeni@redhat.com>
+From: Jann Horn <jannh@google.com>
 
-commit 76c0ddd8c3a683f6e2c6e60e11dc1a1558caf4bc upstream.
+commit 9fe6299dde587788f245e9f7a5a1b296fad4e8c7 upstream.
 
-the ip6 tunnel xmit ndo assumes that the processed skb always
-contains an ip[v6] header, but syzbot has found a way to send
-frames that fall short of this assumption, leading to the following splat:
+When the kernel.print-fatal-signals sysctl has been enabled, a simple
+userspace crash will cause the kernel to write a crash dump that contains,
+among other things, the kernel gsbase into dmesg.
 
-BUG: KMSAN: uninit-value in ip6ip6_tnl_xmit net/ipv6/ip6_tunnel.c:1307
-[inline]
-BUG: KMSAN: uninit-value in ip6_tnl_start_xmit+0x7d2/0x1ef0
-net/ipv6/ip6_tunnel.c:1390
-CPU: 0 PID: 4504 Comm: syz-executor558 Not tainted 4.16.0+ #87
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:17 [inline]
-  dump_stack+0x185/0x1d0 lib/dump_stack.c:53
-  kmsan_report+0x142/0x240 mm/kmsan/kmsan.c:1067
-  __msan_warning_32+0x6c/0xb0 mm/kmsan/kmsan_instr.c:683
-  ip6ip6_tnl_xmit net/ipv6/ip6_tunnel.c:1307 [inline]
-  ip6_tnl_start_xmit+0x7d2/0x1ef0 net/ipv6/ip6_tunnel.c:1390
-  __netdev_start_xmit include/linux/netdevice.h:4066 [inline]
-  netdev_start_xmit include/linux/netdevice.h:4075 [inline]
-  xmit_one net/core/dev.c:3026 [inline]
-  dev_hard_start_xmit+0x5f1/0xc70 net/core/dev.c:3042
-  __dev_queue_xmit+0x27ee/0x3520 net/core/dev.c:3557
-  dev_queue_xmit+0x4b/0x60 net/core/dev.c:3590
-  packet_snd net/packet/af_packet.c:2944 [inline]
-  packet_sendmsg+0x7c70/0x8a30 net/packet/af_packet.c:2969
-  sock_sendmsg_nosec net/socket.c:630 [inline]
-  sock_sendmsg net/socket.c:640 [inline]
-  ___sys_sendmsg+0xec0/0x1310 net/socket.c:2046
-  __sys_sendmmsg+0x42d/0x800 net/socket.c:2136
-  SYSC_sendmmsg+0xc4/0x110 net/socket.c:2167
-  SyS_sendmmsg+0x63/0x90 net/socket.c:2162
-  do_syscall_64+0x309/0x430 arch/x86/entry/common.c:287
-  entry_SYSCALL_64_after_hwframe+0x3d/0xa2
-RIP: 0033:0x441819
-RSP: 002b:00007ffe58ee8268 EFLAGS: 00000213 ORIG_RAX: 0000000000000133
-RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000441819
-RDX: 0000000000000002 RSI: 0000000020000100 RDI: 0000000000000003
-RBP: 00000000006cd018 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000213 R12: 0000000000402510
-R13: 00000000004025a0 R14: 0000000000000000 R15: 0000000000000000
+As suggested by Andy, limit output to pt_regs, FS_BASE and KERNEL_GS_BASE
+in this case.
 
-Uninit was created at:
-  kmsan_save_stack_with_flags mm/kmsan/kmsan.c:278 [inline]
-  kmsan_internal_poison_shadow+0xb8/0x1b0 mm/kmsan/kmsan.c:188
-  kmsan_kmalloc+0x94/0x100 mm/kmsan/kmsan.c:314
-  kmsan_slab_alloc+0x11/0x20 mm/kmsan/kmsan.c:321
-  slab_post_alloc_hook mm/slab.h:445 [inline]
-  slab_alloc_node mm/slub.c:2737 [inline]
-  __kmalloc_node_track_caller+0xaed/0x11c0 mm/slub.c:4369
-  __kmalloc_reserve net/core/skbuff.c:138 [inline]
-  __alloc_skb+0x2cf/0x9f0 net/core/skbuff.c:206
-  alloc_skb include/linux/skbuff.h:984 [inline]
-  alloc_skb_with_frags+0x1d4/0xb20 net/core/skbuff.c:5234
-  sock_alloc_send_pskb+0xb56/0x1190 net/core/sock.c:2085
-  packet_alloc_skb net/packet/af_packet.c:2803 [inline]
-  packet_snd net/packet/af_packet.c:2894 [inline]
-  packet_sendmsg+0x6454/0x8a30 net/packet/af_packet.c:2969
-  sock_sendmsg_nosec net/socket.c:630 [inline]
-  sock_sendmsg net/socket.c:640 [inline]
-  ___sys_sendmsg+0xec0/0x1310 net/socket.c:2046
-  __sys_sendmmsg+0x42d/0x800 net/socket.c:2136
-  SYSC_sendmmsg+0xc4/0x110 net/socket.c:2167
-  SyS_sendmmsg+0x63/0x90 net/socket.c:2162
-  do_syscall_64+0x309/0x430 arch/x86/entry/common.c:287
-  entry_SYSCALL_64_after_hwframe+0x3d/0xa2
+This also moves the bitness-specific logic from show_regs() into
+process_{32,64}.c.
 
-This change addresses the issue adding the needed check before
-accessing the inner header.
-
-The ipv4 side of the issue is apparently there since the ipv4 over ipv6
-initial support, and the ipv6 side predates git history.
-
-Fixes: c4d3efafcc93 ("[IPV6] IP6TUNNEL: Add support to IPv4 over IPv6 tunnel.")
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Reported-by: syzbot+3fde91d4d394747d6db4@syzkaller.appspotmail.com
-Tested-by: Alexander Potapenko <glider@google.com>
-Signed-off-by: Paolo Abeni <pabeni@redhat.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-[bwh: Backported to 3.16: adjust context]
+Fixes: 45807a1df9f5 ("vdso: print fatal signals")
+Signed-off-by: Jann Horn <jannh@google.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Borislav Petkov <bpetkov@suse.de>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Link: https://lkml.kernel.org/r/20180831194151.123586-1-jannh@google.com
+[bwh: Backported to 3.16:
+ - Keep using user_mode_vm() to in 32-bit show_regs()
+ - Also update call to __show_regs() in kmemcheck
+ - Don't add redundant rdmsrl()s in 64-bit __show_regs()
+ - Adjust filenames, context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- net/ipv6/ip6_tunnel.c | 13 +++++++++++--
- 1 file changed, 11 insertions(+), 2 deletions(-)
-
---- a/net/ipv6/ip6_tunnel.c
-+++ b/net/ipv6/ip6_tunnel.c
-@@ -1085,13 +1085,18 @@ static inline int
- ip4ip6_tnl_xmit(struct sk_buff *skb, struct net_device *dev)
- {
- 	struct ip6_tnl *t = netdev_priv(dev);
--	const struct iphdr  *iph = ip_hdr(skb);
-+	const struct iphdr  *iph;
- 	int encap_limit = -1;
- 	struct flowi6 fl6;
- 	__u8 dsfield;
- 	__u32 mtu;
- 	int err;
+--- a/arch/x86/include/asm/kdebug.h
++++ b/arch/x86/include/asm/kdebug.h
+@@ -21,12 +21,22 @@ enum die_val {
+ 	DIE_NMIUNKNOWN,
+ };
  
-+	/* ensure we can access the full inner ip header */
-+	if (!pskb_may_pull(skb, sizeof(struct iphdr)))
-+		return -1;
++enum show_regs_mode {
++	SHOW_REGS_SHORT,
++	/*
++	 * For when userspace crashed, but we don't think it's our fault, and
++	 * therefore don't print kernel registers.
++	 */
++	SHOW_REGS_USER,
++	SHOW_REGS_ALL
++};
 +
-+	iph = ip_hdr(skb);
- 	if ((t->parms.proto != IPPROTO_IPIP && t->parms.proto != 0) ||
- 	    !ip6_tnl_xmit_ctl(t))
- 		return -1;
-@@ -1126,7 +1131,7 @@ static inline int
- ip6ip6_tnl_xmit(struct sk_buff *skb, struct net_device *dev)
- {
- 	struct ip6_tnl *t = netdev_priv(dev);
--	struct ipv6hdr *ipv6h = ipv6_hdr(skb);
-+	struct ipv6hdr *ipv6h;
- 	int encap_limit = -1;
- 	__u16 offset;
- 	struct flowi6 fl6;
-@@ -1134,6 +1139,10 @@ ip6ip6_tnl_xmit(struct sk_buff *skb, str
- 	__u32 mtu;
- 	int err;
+ extern void printk_address(unsigned long address);
+ extern void die(const char *, struct pt_regs *,long);
+ extern int __must_check __die(const char *, struct pt_regs *, long);
+ extern void show_trace(struct task_struct *t, struct pt_regs *regs,
+ 		       unsigned long *sp, unsigned long bp);
+-extern void __show_regs(struct pt_regs *regs, int all);
++extern void __show_regs(struct pt_regs *regs, enum show_regs_mode);
+ extern unsigned long oops_begin(void);
+ extern void oops_end(unsigned long, struct pt_regs *, int signr);
+ #ifdef CONFIG_KEXEC
+--- a/arch/x86/kernel/dumpstack_32.c
++++ b/arch/x86/kernel/dumpstack_32.c
+@@ -123,7 +123,7 @@ void show_regs(struct pt_regs *regs)
+ 	int i;
  
-+	if (unlikely(!pskb_may_pull(skb, sizeof(*ipv6h))))
-+		return -1;
+ 	show_regs_print_info(KERN_EMERG);
+-	__show_regs(regs, !user_mode_vm(regs));
++	__show_regs(regs, user_mode_vm(regs) ? SHOW_REGS_USER : SHOW_REGS_ALL);
+ 
+ 	/*
+ 	 * When in-kernel, we also print out the stack and code at the
+--- a/arch/x86/kernel/dumpstack_64.c
++++ b/arch/x86/kernel/dumpstack_64.c
+@@ -301,7 +301,7 @@ void show_regs(struct pt_regs *regs)
+ 
+ 	sp = regs->sp;
+ 	show_regs_print_info(KERN_DEFAULT);
+-	__show_regs(regs, 1);
++	__show_regs(regs, user_mode(regs) ? SHOW_REGS_USER : SHOW_REGS_ALL);
+ 
+ 	/*
+ 	 * When in-kernel, we also print out the stack and code at the
+--- a/arch/x86/kernel/process_32.c
++++ b/arch/x86/kernel/process_32.c
+@@ -66,7 +66,7 @@ unsigned long thread_saved_pc(struct tas
+ 	return ((unsigned long *)tsk->thread.sp)[3];
+ }
+ 
+-void __show_regs(struct pt_regs *regs, int all)
++void __show_regs(struct pt_regs *regs, enum show_regs_mode mode)
+ {
+ 	unsigned long cr0 = 0L, cr2 = 0L, cr3 = 0L, cr4 = 0L;
+ 	unsigned long d0, d1, d2, d3, d6, d7;
+@@ -95,7 +95,7 @@ void __show_regs(struct pt_regs *regs, i
+ 	printk(KERN_DEFAULT " DS: %04x ES: %04x FS: %04x GS: %04x SS: %04x\n",
+ 	       (u16)regs->ds, (u16)regs->es, (u16)regs->fs, gs, ss);
+ 
+-	if (!all)
++	if (mode != SHOW_REGS_ALL)
+ 		return;
+ 
+ 	cr0 = read_cr0();
+--- a/arch/x86/kernel/process_64.c
++++ b/arch/x86/kernel/process_64.c
+@@ -56,7 +56,7 @@ asmlinkage extern void ret_from_fork(voi
+ __visible DEFINE_PER_CPU_USER_MAPPED(unsigned long, old_rsp);
+ 
+ /* Prints also some state that isn't saved in the pt_regs */
+-void __show_regs(struct pt_regs *regs, int all)
++void __show_regs(struct pt_regs *regs, enum show_regs_mode mode)
+ {
+ 	unsigned long cr0 = 0L, cr2 = 0L, cr3 = 0L, cr4 = 0L, fs, gs, shadowgs;
+ 	unsigned long d0, d1, d2, d3, d6, d7;
+@@ -88,9 +88,15 @@ void __show_regs(struct pt_regs *regs, i
+ 	rdmsrl(MSR_GS_BASE, gs);
+ 	rdmsrl(MSR_KERNEL_GS_BASE, shadowgs);
+ 
+-	if (!all)
++	if (mode == SHOW_REGS_SHORT)
+ 		return;
+ 
++	if (mode == SHOW_REGS_USER) {
++		printk(KERN_DEFAULT "FS:  %016lx GS:  %016lx\n",
++		       fs, shadowgs);
++		return;
++	}
 +
-+	ipv6h = ipv6_hdr(skb);
- 	if ((t->parms.proto != IPPROTO_IPV6 && t->parms.proto != 0) ||
- 	    !ip6_tnl_xmit_ctl(t) || ip6_tnl_addr_conflict(t, ipv6h))
- 		return -1;
+ 	cr0 = read_cr0();
+ 	cr2 = read_cr2();
+ 	cr3 = read_cr3();
+--- a/arch/x86/mm/kmemcheck/error.c
++++ b/arch/x86/mm/kmemcheck/error.c
+@@ -132,7 +132,7 @@ void kmemcheck_error_recall(void)
+ 		break;
+ 	}
+ 
+-	__show_regs(&e->regs, 1);
++	__show_regs(&e->regs, SHOW_REGS_ALL);
+ 	print_stack_trace(&e->trace, 0);
+ }
+ 
 
