@@ -2,121 +2,95 @@ Return-Path: <SRS0=cWqk=OS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DF11C07E85
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 17:24:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08219C07E85
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 17:27:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3017C2081C
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 17:24:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3017C2081C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
+	by mail.kernel.org (Postfix) with ESMTP id A0AA72081C
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 17:27:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A0AA72081C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726201AbeLIRYH (ORCPT
+        id S1726225AbeLIR1G (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 12:24:07 -0500
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:35583 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726078AbeLIRYH (ORCPT
+        Sun, 9 Dec 2018 12:27:06 -0500
+Received: from smtprelay0071.hostedemail.com ([216.40.44.71]:35732 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726096AbeLIR1F (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Dec 2018 12:24:07 -0500
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 3BC8D8076A; Sun,  9 Dec 2018 18:24:01 +0100 (CET)
-Date:   Sun, 9 Dec 2018 18:24:04 +0100
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Tony Lindgren <tony@atomide.com>
-Cc:     kernel list <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-omap@vger.kernel.org, sre@kernel.org, nekit1000@gmail.com,
-        mpartap@gmx.net, merlijn@wizzup.org
-Subject: Re: Droid 4: poweroff does not work? calls
-Message-ID: <20181209172404.GA4593@amd>
-References: <20181209121318.GA24478@amd>
- <20181209164650.GX6707@atomide.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="W/nzBZO5zC0uMSeA"
-Content-Disposition: inline
-In-Reply-To: <20181209164650.GX6707@atomide.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        Sun, 9 Dec 2018 12:27:05 -0500
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay03.hostedemail.com (Postfix) with ESMTP id 6D695837F242;
+        Sun,  9 Dec 2018 17:27:04 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: smoke18_3d98a5283c223
+X-Filterd-Recvd-Size: 2229
+Received: from XPS-9350 (unknown [47.151.153.53])
+        (Authenticated sender: joe@perches.com)
+        by omf06.hostedemail.com (Postfix) with ESMTPA;
+        Sun,  9 Dec 2018 17:27:03 +0000 (UTC)
+Message-ID: <f741ac1808f05f2efe6532491e8b1eb6ac74e260.camel@perches.com>
+Subject: Re: [PATCH] staging: erofs: Add braces to do-while statements
+From:   Joe Perches <joe@perches.com>
+To:     Greg KH <gregkh@linuxfoundation.org>,
+        Thomas Jespersen <laumann.thomas@gmail.com>
+Cc:     gaoxiang25@huawei.com, yuchao0@huawei.com,
+        linux-erofs@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Date:   Sun, 09 Dec 2018 09:27:01 -0800
+In-Reply-To: <20181209162007.GA22432@kroah.com>
+References: <20181209155900.10164-1-laumann.thomas@gmail.com>
+         <20181209162007.GA22432@kroah.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.30.1-1build1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Sun, 2018-12-09 at 17:20 +0100, Greg KH wrote:
+> On Sun, Dec 09, 2018 at 04:59:00PM +0100, Thomas Jespersen wrote:
+> > This fixes warning reported by sparse (with -Wsparse-all).
+> 
+> Why is sparse warning about this?
 
---W/nzBZO5zC0uMSeA
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Probably because it's the kernel preferred style
+to use single statement
 
-On Sun 2018-12-09 08:46:50, Tony Lindgren wrote:
-> * Pavel Machek <pavel@ucw.cz> [181209 12:13]:
-> > Hi!
-> >=20
-> > Poweroff does not seem to work on Motorola droid 4 -- it reboots. It
-> > seems to be problem "forever", 4.18 and 4.20-rc5 seem to be
-> > affected. It is bad, because when your battery is low, you get into
-> > reboot loop and discharge it furher, which batteries do not like.
-> >=20
-> > Any ideas, or at least idea how to debug this?
->=20
-> Hmm can you check if this is happening with usb unloaded or
-> unbind? I suspect ohci or musb..
+	do {
+		<foo>;
+	} while (<bar>);
 
-Ok, let me try: musb unbound, v4.20:
+over
 
-root@devuan:/sys/devices/platform/44000000.ocp/4a0ab000.usb_otg_hs#
-echo 4a0ab000.usb_otg_hs > driver/unbind
+by about a 20:1 ratio.
 
-(I hope I did not pull the USB too late). It rebooted instead of
-poweroff. Now on 4.18:
+> > Signed-off-by: Thomas Jespersen <laumann.thomas@gmail.com>obab
+> > ---
+> >  drivers/staging/erofs/internal.h | 4 ++--
+> >  drivers/staging/erofs/utils.c    | 4 ++--
+> >  2 files changed, 4 insertions(+), 4 deletions(-)
+> > 
+> > diff --git a/drivers/staging/erofs/internal.h b/drivers/staging/erofs/internal.h
+> > index 57575c7f5635..bf180a803446 100644
+> > --- a/drivers/staging/erofs/internal.h
+> > +++ b/drivers/staging/erofs/internal.h
+> > @@ -232,9 +232,9 @@ static inline bool erofs_workgroup_get(struct erofs_workgroup *grp, int *ocnt)
+> >  	/* spin if it is temporarily locked at the reclaim path */
+> >  	if (unlikely(o == locked)) {
+> >  #if defined(CONFIG_SMP) || defined(CONFIG_DEBUG_SPINLOCK)
+> > -		do
+> > +		do {
+> >  			cpu_relax();
+> > -		while (atomic_read(&grp->refcount) == locked);
+> > +		} while (atomic_read(&grp->refcount) == locked);
+> 
+> That looks like valid code to me, why change this?
+> 
+> greg k-h
 
-root@devuan:/sys/devices/platform/44000000.ocp/4a062000.usbhstll# echo
-4a062000.usbhstll > driver/unbind
-root@devuan:/sys/devices/platform/44000000.ocp/4a062000.usbhstll#
-uname -a
-Linux devuan 4.18.0-rc4-88970-gf075a2c-dirty #764 SMP Mon Jul 9
-12:51:47 CEST 2018 armv7l GNU/Linux
-
-I get nice oops doing that:
-
-[  170.705383] ------------[ cut here ]------------
-[  170.710235] WARNING: CPU: 0 PID: 2371 at drivers/clk/clk.c:697
-clk_core_unpre
-pare+0xcc/0xec
-[  170.718749] Unpreparing enabled l3_init_cm:clk:0048:8
-[  170.723968] Modules linked in:
-
-root@devuan:/sys/devices/platform/44000000.ocp/4a064000.usbhshost/4a064800.=
-ohci#
-echo 4a064800.ohci > driver/unbind
-
-=2E.Hmm. I'm not sure how to unbind ehci. Let me try sudo
-poweroff... no, it reboots, too.
-
-Can you check if it works for you?
-
-Thanks,
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---W/nzBZO5zC0uMSeA
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlwNT7QACgkQMOfwapXb+vKzBACffSEF6vwWVha2uJMPdeAzqeP5
-J9IAoJgKqEA/LXbRGiTz5NFIuF3I6xAG
-=1Tt9
------END PGP SIGNATURE-----
-
---W/nzBZO5zC0uMSeA--
