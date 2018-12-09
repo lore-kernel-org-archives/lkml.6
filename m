@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1EEAC65BAF
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:03:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1102DC07E85
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:04:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B224C20661
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:03:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B224C20661
+	by mail.kernel.org (Postfix) with ESMTP id D52E220672
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:04:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D52E220672
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727396AbeLIWDm (ORCPT
+        id S1727189AbeLIWEH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 17:03:42 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35608 "EHLO
+        Sun, 9 Dec 2018 17:04:07 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35846 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726585AbeLIVz2 (ORCPT
+        by vger.kernel.org with ESMTP id S1726652AbeLIVzb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Dec 2018 16:55:28 -0500
+        Sun, 9 Dec 2018 16:55:31 -0500
 Received: from pub.yeoldevic.com ([81.174.156.145] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW72q-0002im-WF; Sun, 09 Dec 2018 21:55:25 +0000
+        id 1gW72u-0002im-0s; Sun, 09 Dec 2018 21:55:28 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW72l-0003hN-Mo; Sun, 09 Dec 2018 21:55:19 +0000
+        id 1gW72k-0003dP-4M; Sun, 09 Dec 2018 21:55:18 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -38,14 +38,17 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org,
-        "Catalin Marinas" <catalin.marinas@arm.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+        "Christoffer Dall" <christoffer.dall@arm.com>,
+        "Marc Zyngier" <marc.zyngier@arm.com>,
+        "Dave Martin" <Dave.Martin@arm.com>,
+        "Mark Rutland" <mark.rutland@arm.com>,
+        "Will Deacon" <will.deacon@arm.com>
 Date:   Sun, 09 Dec 2018 21:50:33 +0000
-Message-ID: <lsq.1544392233.323017567@decadent.org.uk>
+Message-ID: <lsq.1544392233.634299428@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 321/328] cpuidle: Do not access cpuidle_devices when
- !CONFIG_CPU_IDLE
+Subject: [PATCH 3.16 283/328] arm64: KVM: Tighten guest core register
+ access from userspace
 In-Reply-To: <lsq.1544392232.713909046@decadent.org.uk>
 X-SA-Exim-Connect-IP: 81.174.156.145
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -59,57 +62,96 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Catalin Marinas <catalin.marinas@arm.com>
+From: Dave Martin <Dave.Martin@arm.com>
 
-commit 9bd616e3dbedfc103f158197c8ad93678849b1ed upstream.
+commit d26c25a9d19b5976b319af528886f89cf455692d upstream.
 
-The cpuidle_devices per-CPU variable is only defined when CPU_IDLE is
-enabled. Commit c8cc7d4de7a4 ("sched/idle: Reorganize the idle loop")
-removed the #ifdef CONFIG_CPU_IDLE around cpuidle_idle_call() with the
-compiler optimising away __this_cpu_read(cpuidle_devices). However, with
-CONFIG_UBSAN && !CONFIG_CPU_IDLE, this optimisation no longer happens
-and the kernel fails to link since cpuidle_devices is not defined.
+We currently allow userspace to access the core register file
+in about any possible way, including straddling multiple
+registers and doing unaligned accesses.
 
-This patch introduces an accessor function for the current CPU cpuidle
-device (returning NULL when !CONFIG_CPU_IDLE) and uses it in
-cpuidle_idle_call().
+This is not the expected use of the ABI, and nobody is actually
+using it that way. Let's tighten it by explicitly checking
+the size and alignment for each field of the register file.
 
-Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Fixes: 2f4a07c5f9fe ("arm64: KVM: guest one-reg interface")
+Reviewed-by: Christoffer Dall <christoffer.dall@arm.com>
+Reviewed-by: Mark Rutland <mark.rutland@arm.com>
+Signed-off-by: Dave Martin <Dave.Martin@arm.com>
+[maz: rewrote Dave's initial patch to be more easily backported]
+Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- include/linux/cpuidle.h | 3 +++
- kernel/sched/idle.c     | 2 +-
- 2 files changed, 4 insertions(+), 1 deletion(-)
+ arch/arm64/kvm/guest.c | 45 ++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 45 insertions(+)
 
---- a/include/linux/cpuidle.h
-+++ b/include/linux/cpuidle.h
-@@ -146,6 +146,8 @@ extern int cpuidle_play_dead(void);
- extern void cpuidle_use_deepest_state(bool enable);
+--- a/arch/arm64/kvm/guest.c
++++ b/arch/arm64/kvm/guest.c
+@@ -46,6 +46,45 @@ static u64 core_reg_offset_from_id(u64 i
+ 	return id & ~(KVM_REG_ARCH_MASK | KVM_REG_SIZE_MASK | KVM_REG_ARM_CORE);
+ }
  
- extern struct cpuidle_driver *cpuidle_get_cpu_driver(struct cpuidle_device *dev);
-+static inline struct cpuidle_device *cpuidle_get_device(void)
-+{return __this_cpu_read(cpuidle_devices); }
- #else
- static inline void disable_cpuidle(void) { }
- static inline int cpuidle_select(struct cpuidle_driver *drv,
-@@ -179,6 +181,7 @@ static inline int cpuidle_play_dead(void
- static inline void cpuidle_use_deepest_state(bool enable) {}
- static inline struct cpuidle_driver *cpuidle_get_cpu_driver(
- 	struct cpuidle_device *dev) {return NULL; }
-+static inline struct cpuidle_device *cpuidle_get_device(void) {return NULL; }
- #endif
- 
- #ifdef CONFIG_ARCH_NEEDS_CPU_IDLE_COUPLED
---- a/kernel/sched/idle.c
-+++ b/kernel/sched/idle.c
-@@ -76,7 +76,7 @@ void __weak arch_cpu_idle(void)
-  */
- static void cpuidle_idle_call(void)
++static int validate_core_offset(const struct kvm_one_reg *reg)
++{
++	u64 off = core_reg_offset_from_id(reg->id);
++	int size;
++
++	switch (off) {
++	case KVM_REG_ARM_CORE_REG(regs.regs[0]) ...
++	     KVM_REG_ARM_CORE_REG(regs.regs[30]):
++	case KVM_REG_ARM_CORE_REG(regs.sp):
++	case KVM_REG_ARM_CORE_REG(regs.pc):
++	case KVM_REG_ARM_CORE_REG(regs.pstate):
++	case KVM_REG_ARM_CORE_REG(sp_el1):
++	case KVM_REG_ARM_CORE_REG(elr_el1):
++	case KVM_REG_ARM_CORE_REG(spsr[0]) ...
++	     KVM_REG_ARM_CORE_REG(spsr[KVM_NR_SPSR - 1]):
++		size = sizeof(__u64);
++		break;
++
++	case KVM_REG_ARM_CORE_REG(fp_regs.vregs[0]) ...
++	     KVM_REG_ARM_CORE_REG(fp_regs.vregs[31]):
++		size = sizeof(__uint128_t);
++		break;
++
++	case KVM_REG_ARM_CORE_REG(fp_regs.fpsr):
++	case KVM_REG_ARM_CORE_REG(fp_regs.fpcr):
++		size = sizeof(__u32);
++		break;
++
++	default:
++		return -EINVAL;
++	}
++
++	if (KVM_REG_SIZE(reg->id) == size &&
++	    IS_ALIGNED(off, size / sizeof(__u32)))
++		return 0;
++
++	return -EINVAL;
++}
++
+ static int get_core_reg(struct kvm_vcpu *vcpu, const struct kvm_one_reg *reg)
  {
--	struct cpuidle_device *dev = __this_cpu_read(cpuidle_devices);
-+	struct cpuidle_device *dev = cpuidle_get_device();
- 	struct cpuidle_driver *drv = cpuidle_get_cpu_driver(dev);
- 	int next_state, entered_state;
- 	bool broadcast;
+ 	/*
+@@ -65,6 +104,9 @@ static int get_core_reg(struct kvm_vcpu
+ 	    (off + (KVM_REG_SIZE(reg->id) / sizeof(__u32))) >= nr_regs)
+ 		return -ENOENT;
+ 
++	if (validate_core_offset(reg))
++		return -EINVAL;
++
+ 	if (copy_to_user(uaddr, ((u32 *)regs) + off, KVM_REG_SIZE(reg->id)))
+ 		return -EFAULT;
+ 
+@@ -87,6 +129,9 @@ static int set_core_reg(struct kvm_vcpu
+ 	    (off + (KVM_REG_SIZE(reg->id) / sizeof(__u32))) >= nr_regs)
+ 		return -ENOENT;
+ 
++	if (validate_core_offset(reg))
++		return -EINVAL;
++
+ 	if (KVM_REG_SIZE(reg->id) > sizeof(tmp))
+ 		return -EINVAL;
+ 
 
