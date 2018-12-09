@@ -2,199 +2,341 @@ Return-Path: <SRS0=cWqk=OS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+X-Spam-Status: No, score=-2.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8B4EC65BAF
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 19:27:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5BD0C07E85
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 19:39:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E82F20645
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 19:27:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E82F20645
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=denx.de
+	by mail.kernel.org (Postfix) with ESMTP id 40FC22081C
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 19:39:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 40FC22081C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=jmondi.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726248AbeLIT0u (ORCPT
+        id S1726251AbeLITjV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 14:26:50 -0500
-Received: from mail-out.m-online.net ([212.18.0.9]:41970 "EHLO
-        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726219AbeLIT0u (ORCPT
+        Sun, 9 Dec 2018 14:39:21 -0500
+Received: from relay1-d.mail.gandi.net ([217.70.183.193]:50473 "EHLO
+        relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726090AbeLITjV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Dec 2018 14:26:50 -0500
-Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
-        by mail-out.m-online.net (Postfix) with ESMTP id 43Cbmg5N2Mz1qxQ3;
-        Sun,  9 Dec 2018 20:26:43 +0100 (CET)
-Received: from localhost (dynscan1.mnet-online.de [192.168.6.70])
-        by mail.m-online.net (Postfix) with ESMTP id 43Cbmg0Xdrz1qqlD;
-        Sun,  9 Dec 2018 20:26:43 +0100 (CET)
-X-Virus-Scanned: amavisd-new at mnet-online.de
-Received: from mail.mnet-online.de ([192.168.8.182])
-        by localhost (dynscan1.mail.m-online.net [192.168.6.70]) (amavisd-new, port 10024)
-        with ESMTP id DjQLjNZUqY5r; Sun,  9 Dec 2018 20:26:41 +0100 (CET)
-X-Auth-Info: T6YN9DrHuuQFQW/vowv1WxvtZzEtMlXeVytu7eFMubI=
-Received: from [192.168.178.26] (unknown [62.91.37.152])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.mnet-online.de (Postfix) with ESMTPSA;
-        Sun,  9 Dec 2018 20:26:41 +0100 (CET)
-Subject: Re: [PATCH v3 1/4] dt-bindings: interrupt-controller: Actions
- external interrupt controller
-To:     Rob Herring <robh@kernel.org>
-Cc:     marc.zyngier@arm.com, tglx@linutronix.de, jason@lakedaemon.net,
-        mark.rutland@arm.com, afaerber@suse.de, catalin.marinas@arm.com,
-        will.deacon@arm.com, manivannan.sadhasivam@linaro.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, thomas.liau@actions-semi.com,
-        mp-cs@actions-semi.com, linux@cubietech.com,
-        edgar.righi@lsitec.org.br, laisa.costa@lsitec.org.br,
-        guilherme.simoes@lsitec.org.br, mkzuffo@lsi.usp.br,
-        Saravanan Sekar <sravanhome@gmail.com>, pn@denx.de
-References: <20181126100356.2840578-1-pn@denx.de>
- <20181126100356.2840578-2-pn@denx.de> <20181207232934.GA28201@bogus>
-From:   Parthiban Nallathambi <pn@denx.de>
-Organization: DENX Software Engineering GmbH
-Message-ID: <49bb60b8-a51b-a4e8-da29-52f0a951c37b@denx.de>
-Date:   Sun, 9 Dec 2018 20:26:40 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.3
+        Sun, 9 Dec 2018 14:39:21 -0500
+X-Originating-IP: 2.224.242.101
+Received: from w540 (2-224-242-101.ip172.fastwebnet.it [2.224.242.101])
+        (Authenticated sender: jacopo@jmondi.org)
+        by relay1-d.mail.gandi.net (Postfix) with ESMTPSA id 46035240002;
+        Sun,  9 Dec 2018 19:39:14 +0000 (UTC)
+Date:   Sun, 9 Dec 2018 20:39:12 +0100
+From:   jacopo mondi <jacopo@jmondi.org>
+To:     Michael Nazzareno Trimarchi <michael@amarulasolutions.com>
+Cc:     hverkuil@xs4all.nl, Jagan Teki <jagan@amarulasolutions.com>,
+        mchehab@kernel.org, linux-media@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Philipp Zabel <p.zabel@pengutronix.de>
+Subject: Re: Configure video PAL decoder into media pipeline
+Message-ID: <20181209193912.GC12193@w540>
+References: <CAMty3ZAa2_o87YJ=1iak-o-rfZjoYz7PKXM9uGrbHsh6JLOCWw@mail.gmail.com>
+ <850c2502-217c-a9f0-b433-0cd26d0419fd@xs4all.nl>
+ <CAOf5uwkirwRPk3=w1fONLrOpwNqGiJbhh6okDmOTWyKWvW+U1w@mail.gmail.com>
+ <CAOf5uw=d6D4FGZp8iWKdA1+77ZQtkNZwbJStmO+L-NtW4gqfaA@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20181207232934.GA28201@bogus>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="3siQDZowHQqNOShm"
+Content-Disposition: inline
+In-Reply-To: <CAOf5uw=d6D4FGZp8iWKdA1+77ZQtkNZwbJStmO+L-NtW4gqfaA@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Rob,
 
-On 12/8/18 12:29 AM, Rob Herring wrote:
-> On Mon, Nov 26, 2018 at 11:03:53AM +0100, Parthiban Nallathambi wrote:
->> Actions Semi OWL family SoC's provides support for external interrupt
->> controller to be connected and controlled using SIRQ pins. S500, S700
->> and S900 provides 3 SIRQ lines and works independently for 3 external
->> interrupt controllers.
->>
->> Signed-off-by: Parthiban Nallathambi <pn@denx.de>
->> Signed-off-by: Saravanan Sekar <sravanhome@gmail.com>
->> ---
->>  .../interrupt-controller/actions,owl-sirq.txt | 57 +++++++++++++++++++
->>  1 file changed, 57 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/interrupt-controller/actions,owl-sirq.txt
->>
->> diff --git a/Documentation/devicetree/bindings/interrupt-controller/actions,owl-sirq.txt b/Documentation/devicetree/bindings/interrupt-controller/actions,owl-sirq.txt
->> new file mode 100644
->> index 000000000000..b3adc4bddf40
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/interrupt-controller/actions,owl-sirq.txt
->> @@ -0,0 +1,57 @@
->> +Actions Semi Owl SoCs SIRQ interrupt controller
->> +
->> +S500, S700 and S900 SoC's from Actions provides 3 SPI's from GIC,
-> 
-> Listing SoCs here means you have to update this line for every new SoC.
+--3siQDZowHQqNOShm
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Ok, I will mark it as OWL SoC's here.
+Hi Michael, Jagan, Hans,
 
-> 
->> +in which external interrupt controller can be connected. 3 SPI's
->> +45, 46, 47 from GIC are directly exposed as SIRQ. It has
->> +the following properties:
->> +
->> +- inputs three interrupt signal from external interrupt controller
->> +
->> +Required properties:
->> +
->> +- compatible: should be "actions,owl-sirq"
-> 
-> SoC specific compatibles needed.
+On Sat, Dec 08, 2018 at 06:07:04PM +0100, Michael Nazzareno Trimarchi wrote:
+> Hi
+>
+> Down you have my tentative of connection
+>
+> I need to hack a bit to have tuner registered. I'm using imx-media
+>
+> On Sat, Dec 8, 2018 at 12:48 PM Michael Nazzareno Trimarchi
+> <michael@amarulasolutions.com> wrote:
+> >
+> > Hi
+> >
+> > On Fri, Dec 7, 2018 at 1:11 PM Hans Verkuil <hverkuil@xs4all.nl> wrote:
+> > >
+> > > On 12/07/2018 12:51 PM, Jagan Teki wrote:
+> > > > Hi,
+> > > >
+> > > > We have some unconventional setup for parallel CSI design where ana=
+log
+> > > > input data is converted into to digital composite using PAL decoder
+> > > > and it feed to adv7180, camera sensor.
+> > > >
+> > > > Analog input =3D>  Video PAL Decoder =3D> ADV7180 =3D> IPU-CSI0
+> > >
+> > > Just PAL? No NTSC support?
+> > >
+> > For now does not matter. I have registere the TUNER that support it
+> > but seems that media-ctl is not suppose to work with the MEDIA_ENT_F_TU=
+NER
+> >
+> > Is this correct?
+> >
 
-Ok, I will change this into "actions,s700-sirq"
+media-types.rst reports:
 
-> 
->> +- reg: physical base address of the controller and length of memory mapped
->> +  region.
->> +- interrupt-controller: identifies the node as an interrupt controller
->> +- #interrupt-cells: specifies the number of cells needed to encode an interrupt
->> +  source, should be 2.
->> +- actions,sirq-shared-reg: Applicable for S500 and S700 where SIRQ register
->> +  details are maintained at same offset/register.
->> +- actions,sirq-reg-offset: register offset for SIRQ interrupts. When registers are
->> +  shared, all the three offsets will be same (S500 and S700).
-> 
-> These properties should be implied by the compatible string.
+    *  -  ``MEDIA_ENT_F_IF_VID_DECODER``
+       -  IF-PLL video decoder. It receives the IF from a PLL and decodes
+	  the analog TV video signal. This is commonly found on some very
+	  old analog tuners, like Philips MK3 designs. They all contain a
+	  tda9887 (or some software compatible similar chip, like tda9885).
+	  Those devices use a different I2C address than the tuner PLL.
 
-Agreed for sirq-shared-reg.
+Is this what you were looking for?
 
-But for s900 sirq-reg-offset, the register offset will have different values.
-So this shall not be removed.
+> > > >
+> > > > The PAL decoder is I2C based, tda9885 chip. We setup it up via dt
+> > > > bindings and the chip is
+> > > > detected fine.
+> > > >
+> > > > But we need to know, is this to be part of media control subdev
+> > > > pipeline? so-that we can configure pads, links like what we do on
+> > > > conventional pipeline  or it should not to be part of media pipelin=
+e?
+> > >
+> > > Yes, I would say it should be part of the pipeline.
+> > >
+> >
+> > Ok I have created a draft patch to add the adv some new endpoint but
+> > is sufficient to declare tuner type in media control?
+> >
+> > Michael
+> >
+> > > >
+> > > > Please advise for best possible way to fit this into the design.
+> > > >
+> > > > Another observation is since the IPU has more than one sink, source
+> > > > pads, we source or sink the other components on the pipeline but lo=
+ok
+> > > > like the same thing seems not possible with adv7180 since if has on=
+ly
+> > > > one pad. If it has only one pad sourcing to adv7180 from tda9885 se=
+ems
+> > > > not possible, If I'm not mistaken.
+> > >
+> > > Correct, in all cases where the adv7180 is used it is directly connec=
+ted
+> > > to the video input connector on a board.
+> > >
+> > > So to support this the adv7180 driver should be modified to add an in=
+put pad
+> > > so you can connect the decoder. It will be needed at some point anywa=
+y once
+> > > we add support for connector entities.
+> > >
+> > > Regards,
+> > >
+> > >         Hans
+> > >
+> > > >
+> > > > I tried to look for similar design in mainline, but I couldn't find
+> > > > it. is there any design similar to this in mainline?
+> > > >
+> > > > Please let us know if anyone has any suggestions on this.
+> > > >
+>
+> [    3.379129] imx-media: ipu1_vdic:2 -> ipu1_ic_prp:0
+> [    3.384262] imx-media: ipu2_vdic:2 -> ipu2_ic_prp:0
+> [    3.389217] imx-media: ipu1_ic_prp:1 -> ipu1_ic_prpenc:0
+> [    3.394616] imx-media: ipu1_ic_prp:2 -> ipu1_ic_prpvf:0
+> [    3.399867] imx-media: ipu2_ic_prp:1 -> ipu2_ic_prpenc:0
+> [    3.405289] imx-media: ipu2_ic_prp:2 -> ipu2_ic_prpvf:0
+> [    3.410552] imx-media: ipu1_csi0:1 -> ipu1_ic_prp:0
+> [    3.415502] imx-media: ipu1_csi0:1 -> ipu1_vdic:0
+> [    3.420305] imx-media: ipu1_csi0_mux:5 -> ipu1_csi0:0
+> [    3.425427] imx-media: ipu1_csi1:1 -> ipu1_ic_prp:0
+> [    3.430328] imx-media: ipu1_csi1:1 -> ipu1_vdic:0
+> [    3.435142] imx-media: ipu1_csi1_mux:5 -> ipu1_csi1:0
+> [    3.440321] imx-media: adv7180 2-0020:1 -> ipu1_csi0_mux:4
+>
+> with
+>        tuner: tuner@43 {
+>                 compatible =3D "tuner";
+>                 reg =3D <0x43>;
+>                 pinctrl-names =3D "default";
+>                 pinctrl-0 =3D <&pinctrl_tuner>;
+>
+>                 ports {
+>                         #address-cells =3D <1>;
+>                         #size-cells =3D <0>;
+>                         port@1 {
+>                                 reg =3D <1>;
+>
+>                                 tuner_in: endpoint {
 
-> 
->> +- actions,ext-irq-range: Identifies external irq number range in different SoCs.
-> 
-> Why is this needed? It appears to always be the same.
+Nit: This is the tuner output, I would call this "tuner_out"
 
-Yes, I agree for all the existing Owl SoC's this remains same.
+>                                         remote-endpoint =3D <&tuner_out>;
+>                                 };
+>                         };
+>                 };
+>         };
+>
+>         adv7180: camera@20 {
+>                 compatible =3D "adi,adv7180";
 
-In the previous version we defined this as constant in the code. But based on Marc's
-feedback I understood that this value should come from Device Tree instead on hard
-coding in the code.
+One minor thing first: look at the adv7180 bindings documentation, and
+you'll find out that only devices compatible with "adv7180cp" and
+"adv7180st" shall declare a 'ports' node. This is minor issues (also,
+I don't see it enforced in driver's code, but still worth pointing it
+out from the very beginning)
 
-> 
->> +
->> +Example for S900:
->> +
->> +sirq: interrupt-controller@e01b0000 {
->> +	compatible = "actions,owl-sirq";
->> +	reg = <0x0 0xe01b0000 0x0 0x1000>;
->> +	interrupt-controller;
->> +	#interrupt-cells = <3>;
->> +	actions,sirq-offset = <0x200 0x528 0x52c>;
->> +	actions,ext-irq-range = <13 15>;
->> +};
->> +
->> +Example for S700:
-> 
-> Examples are examples, not an enumeration of all possible dts entries. 
-> So 1 should be sufficient.
+>                 reg =3D <0x20>;
+>                 pinctrl-names =3D "default";
+>                 pinctrl-0 =3D <&pinctrl_adv7180>;
+>                 powerdown-gpios =3D <&gpio3 20 GPIO_ACTIVE_LOW>; /* PDEC_=
+PWRDN */
+>
+>                 ports {
+>                         #address-cells =3D <1>;
+>                         #size-cells =3D <0>;
+>
+>                         port@1 {
+>                                 reg =3D <1>;
+>
+>                                 adv7180_to_ipu1_csi0_mux: endpoint {
+>                                         remote-endpoint =3D
+> <&ipu1_csi0_mux_from_parallel_sensor>;
+>                                         bus-width =3D <8>;
+>                                 };
+>                         };
+>
+>                         port@0 {
+>                                 reg =3D <0>;
+>
+>                                 tuner_out: endpoint {
 
-Sure, I will maintain only s700 here.
+Nit: That's an adv7180 endpoint, I would call it 'adv7180_in'
 
-> 
->> +
->> +sirq: interrupt-controller@e01b0000 {
->> +	compatible = "actions,owl-sirq";
->> +	reg = <0x0 0xe01b0000 0x0 0x1000>;
->> +	interrupt-controller;
->> +	#interrupt-cells = <3>;
->> +	actions,sirq-shared-reg;
->> +	actions,sirq-reg-offset = <0x200 0x200 0x200>;
->> +	actions,ext-irq-range = <13 15>;
->> +};
->> +
->> +Example for S500:
->> +
->> +sirq: interrupt-controller@b01b0000 {
->> +	compatible = "actions,owl-sirq";
->> +	reg = <0x0 0xb01b0000 0x0 0x1000>;
->> +	interrupt-controller;
->> +	#interrupt-cells = <3>;
->> +	actions,sirq-shared-reg;
->> +	actions,sirq-offset = <0x200 0x200 0x200>;
->> +	actions,ext-irq-range = <13 15>;
->> +};
->> -- 
->> 2.17.2
->>
-> 
+>                                         remote-endpoint =3D <&tuner_in>;
+>                                 };
+>                         };
+>                 };
+>         };
+>
+> Any help is appreciate
+>
 
--- 
-Thanks,
-Parthiban N
+The adv7180(cp|st) bindings says the device can declare one (or more)
+input endpoints, but that's just to make possible to connect in device
+tree the 7180's device node with the video input port. You can see an
+example in arch/arm64/boot/dts/renesas/r8a77995-draak.dts which is
+similar to what you've done here.
 
-DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-Phone: (+49)-8142-66989-22 Fax: (+49)-8142-66989-80 Email: pn@denx.de
+The video input port does not show up in the media graph, as it is
+just a 'place holder' to describe an input port in DTs, the
+adv7180 driver does not register any sink pad, where to connect any
+video source to.
+
+Your proposed bindings here look almost correct, but to have it
+working for real you should add a sink pad to the adv7180 registered
+media entity (possibly only conditionally to the presence of an input
+endpoint in DTs...). You should then register a subdev-notifier, which
+registers on an async-subdevice that uses the remote endpoint
+connected to your newly registered input pad to find out which device
+you're linked to; then at 'bound' (or possibly 'complete') time
+register a link between the two entities, on which you can operate on
+=66rom userspace.
+
+Your tuner driver for tda9885 (which I don't see in mainline, so I
+assume it's downstream or custom code) should register an async subdevice,
+so that the adv7180 registered subdev-notifier gets matched and your
+callbacks invoked.
+
+If I were you, I would:
+1) Add dt-parsing routine to tda7180, to find out if any input
+endpoint is registered in DT.
+2) If it is, then register a SINK pad, along with the single SOURCE pad
+which is registered today.
+3) When parsing DT, for input endpoints, get a reference to the remote
+endpoint connected to your input and register a subdev-notifier
+4) Fill in the notifier 'bound' callback and register the link to
+your remote device there.
+5) Make sure your tuner driver registers its subdevice with
+v4l2_async_register_subdev()
+
+A good example on how to register subdev notifier is provided in the
+rcsi2_parse_dt() function in rcar-csi2.c driver (I'm quite sure imx
+now uses subdev notifiers from v4.19 on too if you want to have a look
+there).
+
+-- Entering slippery territory here: you might want more inputs on this
+
+To make thing simpler&nicer (TM), if you blindly do what I've suggested
+here, you're going to break all current adv7180 users in mainline :(
+
+That's because the v4l2-async design 'completes' the root notifier,
+only if all subdev-notifiers connected to it have completed first.
+If you add a notifier for the adv7180 input ports unconditionally, and
+to the input port is connected a plain simple "composite-video-connector",
+as all DTs in mainline are doing right now, the newly registered
+subdev-notifier will never complete, as the "composite-video-connector"
+does not register any subdevice to match with. Bummer!
+
+A quick look in the code base, returns me that, in example:
+drivers/gpu/drm/meson/meson_drv.c filters on
+"composite-video-connector" and a few other compatible values. You
+might want to do the same, and register a notifier if and only if the
+remote input endpoint is one of those known not to register a
+subdevice. I'm sure there are other ways to deal with this issue, but
+that's the best I can come up with...
+---
+
+Hope this is reasonably clear and that I'm not misleading you. I had to
+use adv7180 recently, and its single pad design confused me a bit as well :)
+
+Thanks
+  j
+
+> Michael
+>
+> > > > Jagan.
+> > > >
+> > >
+> >
+> >
+> > --
+
+--3siQDZowHQqNOShm
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAABCAAGBQJcDW9gAAoJEHI0Bo8WoVY8kTsP/3lveDuNBVCo7E/WUslJtGm7
+I7mRVZjKARgQsTU806eMeoDThe+XL7+gdujiG+V+9n2R+55tge2IANc1IEFT3gHp
+38bPw0UXD279DzRk9lZGCc5iCIa9EQlSCzpg20uLsPsNuzqpuSYyIbIEn0kUjoq7
+CETACyhDNNz5hN2oATJREReKZYD8mUdBYkWX3pSgXCitMDVism+DYUyt3MeTIgTm
+ieOaLSWBAOcpl7Yfk8nu4eTjlZlL9Z2pjMRTvxvs5T3fZuXXvEd1DiLstHCWY9cK
+r+nk2H5+ZlQO4mA4WAwaurioKWJyI5FBQ0AUpNLz00C/nr2PFHKmmBEbWbe50EYk
+al/nwP6JDOnidE+W8xqdByK6zOg5RRxFT++WL9ffbJKvP2G0TNNaI1mGGXNEZYeG
+GPz8XfYSKy1JlCSu0d5MHxGXaVtDfGYKmVB4rrZWRcAxRJ77LVD7RhTtGihyWBX2
+BgEqkeOejJUT/qETzpxaasEhfeJooH3oIai7SEJp/kSiksTh/VbcJL6bwv/Y3BJC
+iufOImzWX5pPRyMAX/cOM6mzCgpE+n50hOPghpTw7uO+g3q+D4qBU9IMHm9eupLH
+Iv5xon/8TFpeAudhITTizK/T6/7kghIkN7tIapwUUY5G8+7lPZv5UMrp/9DtsgEk
+kr+IcCFDQKYvBz2FaGHz
+=qGAc
+-----END PGP SIGNATURE-----
+
+--3siQDZowHQqNOShm--
