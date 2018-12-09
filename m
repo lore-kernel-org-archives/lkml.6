@@ -6,44 +6,45 @@ X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76059C07E85
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:13:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 828BBC65BAF
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:13:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4676820661
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:13:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4676820661
+	by mail.kernel.org (Postfix) with ESMTP id 5146F20661
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:13:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5146F20661
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728467AbeLIWNz (ORCPT
+        id S1728479AbeLIWN5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 17:13:55 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:37984 "EHLO
+        Sun, 9 Dec 2018 17:13:57 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:37992 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728183AbeLIWNy (ORCPT
+        by vger.kernel.org with ESMTP id S1728206AbeLIWN4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Dec 2018 17:13:54 -0500
+        Sun, 9 Dec 2018 17:13:56 -0500
 Received: from pub.yeoldevic.com ([81.174.156.145] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW73L-0002ir-76; Sun, 09 Dec 2018 21:55:55 +0000
+        id 1gW73P-0002ic-Eh; Sun, 09 Dec 2018 21:55:59 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW72a-0003IO-Ud; Sun, 09 Dec 2018 21:55:08 +0000
+        id 1gW72Z-0003FT-Gc; Sun, 09 Dec 2018 21:55:07 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, "Takashi Iwai" <tiwai@suse.de>,
-        syzbot+619d9f40141d826b097e@syzkaller.appspotmail.com
+CC:     akpm@linux-foundation.org, "Nicholas Mc Guire" <hofrat@osadl.org>,
+        "Wei Xu" <xuwei5@hisilicon.com>
 Date:   Sun, 09 Dec 2018 21:50:33 +0000
-Message-ID: <lsq.1544392233.693739044@decadent.org.uk>
+Message-ID: <lsq.1544392233.646975569@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 078/328] ALSA: virmidi: Fix too long output trigger loop
+Subject: [PATCH 3.16 042/328] ARM: hisi: handle of_iomap and fix missing
+ of_node_put
 In-Reply-To: <lsq.1544392232.713909046@decadent.org.uk>
 X-SA-Exim-Connect-IP: 81.174.156.145
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -57,52 +58,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Nicholas Mc Guire <hofrat@osadl.org>
 
-commit 50e9ffb1996a5d11ff5040a266585bad4ceeca0a upstream.
+commit d396cb185c0337aae5664b250cdd9a73f6eb1503 upstream.
 
-The virmidi output trigger tries to parse the all available bytes and
-process sequencer events as much as possible.  In a normal situation,
-this is supposed to be relatively short, but a program may give a huge
-buffer and it'll take a long time in a single spin lock, which may
-eventually lead to a soft lockup.
+Relying on an unchecked of_iomap() which can return NULL is problematic
+here, an explicit check seems mandatory. Also the call to
+of_find_compatible_node() returns a device node with refcount incremented
+therefor an explicit of_node_put() is needed here.
 
-This patch simply adds a workaround, a cond_resched() call in the loop
-if applicable.  A better solution would be to move the event processor
-into a work, but let's put a duct-tape quickly at first.
-
-Reported-and-tested-by: Dae R. Jeong <threeearcat@gmail.com>
-Reported-by: syzbot+619d9f40141d826b097e@syzkaller.appspotmail.com
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
+Fixes: commit 22bae4290457 ("ARM: hi3xxx: add hotplug support")
+Signed-off-by: Wei Xu <xuwei5@hisilicon.com>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- sound/core/seq/seq_virmidi.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ arch/arm/mach-hisi/hotplug.c | 19 +++++++++++++------
+ 1 file changed, 13 insertions(+), 6 deletions(-)
 
---- a/sound/core/seq/seq_virmidi.c
-+++ b/sound/core/seq/seq_virmidi.c
-@@ -163,6 +163,7 @@ static void snd_virmidi_output_trigger(s
- 	int count, res;
- 	unsigned char buf[32], *pbuf;
- 	unsigned long flags;
-+	bool check_resched = !in_atomic();
+--- a/arch/arm/mach-hisi/hotplug.c
++++ b/arch/arm/mach-hisi/hotplug.c
+@@ -137,13 +137,20 @@ static int hi3xxx_hotplug_init(void)
+ 	struct device_node *node;
  
- 	if (up) {
- 		vmidi->trigger = 1;
-@@ -200,6 +201,15 @@ static void snd_virmidi_output_trigger(s
- 					vmidi->event.type = SNDRV_SEQ_EVENT_NONE;
- 				}
- 			}
-+			if (!check_resched)
-+				continue;
-+			/* do temporary unlock & cond_resched() for avoiding
-+			 * CPU soft lockup, which may happen via a write from
-+			 * a huge rawmidi buffer
-+			 */
-+			spin_unlock_irqrestore(&substream->runtime->lock, flags);
-+			cond_resched();
-+			spin_lock_irqsave(&substream->runtime->lock, flags);
- 		}
- 	out:
- 		spin_unlock_irqrestore(&substream->runtime->lock, flags);
+ 	node = of_find_compatible_node(NULL, NULL, "hisilicon,sysctrl");
+-	if (node) {
+-		ctrl_base = of_iomap(node, 0);
+-		id = HI3620_CTRL;
+-		return 0;
++	if (!node) {
++		id = ERROR_CTRL;
++		return -ENOENT;
+ 	}
+-	id = ERROR_CTRL;
+-	return -ENOENT;
++
++	ctrl_base = of_iomap(node, 0);
++	of_node_put(node);
++	if (!ctrl_base) {
++		id = ERROR_CTRL;
++		return -ENOMEM;
++	}
++
++	id = HI3620_CTRL;
++	return 0;
+ }
+ 
+ void hi3xxx_set_cpu(int cpu, bool enable)
 
