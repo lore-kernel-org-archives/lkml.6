@@ -6,45 +6,47 @@ X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 637A3C65BAF
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 21:57:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CBE8C65BAF
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 21:57:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 31E4E20661
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 21:57:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 31E4E20661
+	by mail.kernel.org (Postfix) with ESMTP id E897020661
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 21:57:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E897020661
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727020AbeLIV5N (ORCPT
+        id S1726822AbeLIVzo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 16:57:13 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36456 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726821AbeLIVzo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 9 Dec 2018 16:55:44 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35566 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726576AbeLIVz1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Dec 2018 16:55:27 -0500
 Received: from pub.yeoldevic.com ([81.174.156.145] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW737-0002pr-N9; Sun, 09 Dec 2018 21:55:42 +0000
+        id 1gW72q-0002ib-Cp; Sun, 09 Dec 2018 21:55:24 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW72f-0003Ts-RT; Sun, 09 Dec 2018 21:55:13 +0000
+        id 1gW72m-0003hr-0m; Sun, 09 Dec 2018 21:55:20 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org,
-        "Steve Wise" <swise@opengridcomputing.com>,
-        "Jason Gunthorpe" <jgg@mellanox.com>
+CC:     akpm@linux-foundation.org, kanda.motohiro@gmail.com,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        "Dave Chinner" <dchinner@redhat.com>,
+        "Christoph Hellwig" <hch@lst.de>
 Date:   Sun, 09 Dec 2018 21:50:33 +0000
-Message-ID: <lsq.1544392233.590575248@decadent.org.uk>
+Message-ID: <lsq.1544392233.761738366@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 194/328] iw_cxgb4: only allow 1 flush on user qps
+Subject: [PATCH 3.16 327/328] xfs: don't fail when converting shortform
+ attr to long form during ATTR_REPLACE
 In-Reply-To: <lsq.1544392232.713909046@decadent.org.uk>
 X-SA-Exim-Connect-IP: 81.174.156.145
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -58,54 +60,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Steve Wise <swise@opengridcomputing.com>
+From: "Darrick J. Wong" <darrick.wong@oracle.com>
 
-commit 308aa2b8f7b7db3332a7d41099fd37851fb793b2 upstream.
+commit 7b38460dc8e4eafba06c78f8e37099d3b34d473c upstream.
 
-Once the qp has been flushed, it cannot be flushed again.  The user qp
-flush logic wasn't enforcing it however.  The bug can cause
-touch-after-free crashes like:
+Kanda Motohiro reported that expanding a tiny xattr into a large xattr
+fails on XFS because we remove the tiny xattr from a shortform fork and
+then try to re-add it after converting the fork to extents format having
+not removed the ATTR_REPLACE flag.  This fails because the attr is no
+longer present, causing a fs shutdown.
 
-Unable to handle kernel paging request for data at address 0x000001ec
-Faulting instruction address: 0xc008000016069100
-Oops: Kernel access of bad area, sig: 11 [#1]
-...
-NIP [c008000016069100] flush_qp+0x80/0x480 [iw_cxgb4]
-LR [c00800001606cd6c] c4iw_modify_qp+0x71c/0x11d0 [iw_cxgb4]
-Call Trace:
-[c00800001606cd6c] c4iw_modify_qp+0x71c/0x11d0 [iw_cxgb4]
-[c00800001606e868] c4iw_ib_modify_qp+0x118/0x200 [iw_cxgb4]
-[c0080000119eae80] ib_security_modify_qp+0xd0/0x3d0 [ib_core]
-[c0080000119c4e24] ib_modify_qp+0xc4/0x2c0 [ib_core]
-[c008000011df0284] iwcm_modify_qp_err+0x44/0x70 [iw_cm]
-[c008000011df0fec] destroy_cm_id+0xcc/0x370 [iw_cm]
-[c008000011ed4358] rdma_destroy_id+0x3c8/0x520 [rdma_cm]
-[c0080000134b0540] ucma_close+0x90/0x1b0 [rdma_ucm]
-[c000000000444da4] __fput+0xe4/0x2f0
+This is derived from the patch in his bug report, but we really
+shouldn't ignore a nonzero retval from the remove call.
 
-So fix flush_qp() to only flush the wq once.
-
-Signed-off-by: Steve Wise <swise@opengridcomputing.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
-[bwh: Backported to 3.16: adjust context]
+Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=199119
+Reported-by: kanda.motohiro@gmail.com
+Reviewed-by: Dave Chinner <dchinner@redhat.com>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
+[bwh: Backported to 3.16: adjust filename]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/infiniband/hw/cxgb4/qp.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ fs/xfs/xfs_attr.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
---- a/drivers/infiniband/hw/cxgb4/qp.c
-+++ b/drivers/infiniband/hw/cxgb4/qp.c
-@@ -1133,6 +1133,12 @@ static void flush_qp(struct c4iw_qp *qhp
- 	schp = to_c4iw_cq(qhp->ibqp.send_cq);
+--- a/fs/xfs/xfs_attr.c
++++ b/fs/xfs/xfs_attr.c
+@@ -540,7 +540,14 @@ xfs_attr_shortform_addname(xfs_da_args_t
+ 		if (args->flags & ATTR_CREATE)
+ 			return(retval);
+ 		retval = xfs_attr_shortform_remove(args);
+-		ASSERT(retval == 0);
++		if (retval)
++			return retval;
++		/*
++		 * Since we have removed the old attr, clear ATTR_REPLACE so
++		 * that the leaf format add routine won't trip over the attr
++		 * not being around.
++		 */
++		args->flags &= ~ATTR_REPLACE;
+ 	}
  
- 	if (qhp->ibqp.uobject) {
-+
-+		/* for user qps, qhp->wq.flushed is protected by qhp->mutex */
-+		if (qhp->wq.flushed)
-+			return;
-+
-+		qhp->wq.flushed = 1;
- 		t4_set_wq_in_error(&qhp->wq);
- 		t4_set_cq_in_error(&rchp->cq);
- 		spin_lock_irqsave(&rchp->comp_handler_lock, flag);
+ 	if (args->namelen >= XFS_ATTR_SF_ENTSIZE_MAX ||
 
