@@ -2,106 +2,109 @@ Return-Path: <SRS0=cWqk=OS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1781DC65BAF
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 06:20:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B6E1C07E85
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 06:20:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF30F2081F
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 06:20:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4E1C52086E
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 06:20:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EA4GR6tP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF30F2081F
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KNjgOlg6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E1C52086E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726211AbeLIGUh (ORCPT
+        id S1726224AbeLIGUu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 01:20:37 -0500
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:33432 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726066AbeLIGUh (ORCPT
+        Sun, 9 Dec 2018 01:20:50 -0500
+Received: from mail-it1-f194.google.com ([209.85.166.194]:54893 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726078AbeLIGUt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Dec 2018 01:20:37 -0500
-Received: by mail-qt1-f194.google.com with SMTP id l11so9064226qtp.0;
-        Sat, 08 Dec 2018 22:20:36 -0800 (PST)
+        Sun, 9 Dec 2018 01:20:49 -0500
+Received: by mail-it1-f194.google.com with SMTP id i145so12900685ita.4;
+        Sat, 08 Dec 2018 22:20:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=BBrT9x6lbdBqPLHun+vpeIcsLQMplwfhFjYdmho9/OQ=;
-        b=EA4GR6tPLbW+R8JXjRBfWqgagkPEC8jNehxDV7rb0n9Cwt15LcXUqVvEkRV1bCBClH
-         EQfXfmeFcFAgXREkz7QP7QCbEBUwoJIOjT3oBjeizHUsx+WTlZnRwgrdFZVUMEQC6g6y
-         EbsXFmsSXJG/as30FZf5m5aORYskuEQetN5w8lp35Y3DNrPttIt+O3aQIL3UbTfDIDao
-         uwT8E69jAknunyZONgq9gihJH8X7hKSqy6sW6Z6Q6G8R0RPRA3MT4fCZ6J4nRu8XZW3s
-         LXFYPu1DHrsYkYrRYBSi6539OhZwlPoyMK4OV+7dATNKt4oXh2yTvOwy1tgrxpkjbDXL
-         zwFQ==
+        bh=ib5jvwf9cWIXq05xPudwRJmlDR7yz2Tfrst7V1mjPLQ=;
+        b=KNjgOlg6nHQEf4M5a/fsheYoESoLhVa8TKCwZeU+ohn4KIaAy7t2tVVT88NodlG2lc
+         ZTnzjDn9cLUzpWpYOimdJNHGwoIjCmq0eM1rPWGGncI4hCca8gRrgdtQb5+09nDQb80I
+         IlyQ9vFsncqVck0IfIlsR+1sjuPk58CQmZnU0UqOerYXEgBYla3yh7Mb0v12vcIj/MqO
+         YwIsN9NDI3gygTKlw2ovRIIePVaiprB8QDiApzb+hlC/j+er/77LPTRklDnkVeXbx5BQ
+         fmrOqpxIa1CcHw6qIsk4T75u2UrUOU6SIyjw6qYDncIG3LQPBM2qkXReTVsPKPSiV6EK
+         b3rw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=BBrT9x6lbdBqPLHun+vpeIcsLQMplwfhFjYdmho9/OQ=;
-        b=jfHMVeKkUTyK5TZW13j+3m8s1iEKX5bmshkcXZ7y+foPQGYn73/5waufWftYtuj75Z
-         PEjwF/j8EkLRfMlGdSY18vu2/7I7OJZ/fkBPTQmqU6h+8J/c2bMD146m6SGek2mSePwC
-         HMnstf+wudva4g/szTAaL7RqsKl78v8Myat1aSUNCDgp5PeTFs6ZvJUR9uhhXCSBKF2D
-         vPGgIuBu5eCuptWODOirUGS87QLMx7X0mtnOM0bwG6zB2nvV7/GQE/gfnF+vX8l7x4OB
-         /kmIZkkDCWiuzghtUA6PhqkPtCCvgvXxcr3zQaUvaG/FKL7B1hiDCKa3k83HKdIbtLT6
-         dJMw==
-X-Gm-Message-State: AA+aEWYooKs3FtpBE/fAv+MqKEMmDqbVSTasIAHVqalxmwH5hPy59hx4
-        HHI0cIRBMFfB44j6ulojGazhDA37ikHA7aeX/Bo=
-X-Google-Smtp-Source: AFSGD/X+pIVMr0+2/bN/k/hvZWLgL5SyOdc9OGtqatl5CW/kCK53QxMG3ens+2jmvE2/j13DWBdGyKNmawQGSU7D/3Q=
-X-Received: by 2002:ac8:6151:: with SMTP id d17mr7672088qtm.194.1544336436035;
- Sat, 08 Dec 2018 22:20:36 -0800 (PST)
+        bh=ib5jvwf9cWIXq05xPudwRJmlDR7yz2Tfrst7V1mjPLQ=;
+        b=NAM5TPvjoj3JNtX5JiESWhaeb3ZnqSwUGy6w/LVBXg8e4yBDIgK17B+pRToCy0KjdM
+         WpfUr11aXT1CgaZvDiWrljjBD87EGfOb+7LltUHmMqMHknpxxg2vovmsBlOLxoEz7P5D
+         3q5st7lqgA/wTV/eKaSwrbimAb0Mu5zLx5d0+iOfRcd49yGJzqWDpA3Dczc98k5e8vcL
+         B57+JFSpPaJhw0MTknjkDiHN7bQAimyHf8pxdOMsR5lmGCz1oY7uvELP5A/NEQKadkOT
+         IfgCbUIvKiU5iUyQSKYA3kwlddlsEH4Qaev/GLolSnxjKH3MKtxlWkZePChuwppBMPcf
+         k0Cg==
+X-Gm-Message-State: AA+aEWYZoX/iUbfeuOGcnTSHBso+GqkBL+AoMpAQA29EspuB1u7906gl
+        0noIt57UQy9dbB8p4kdWX+CIW0Ea6MiAJqZ+Md9SK/Wu
+X-Google-Smtp-Source: AFSGD/WFz+hHyAbTw6G51bndfJKJpTZinA7Oeb8LgmzOw8RbImWIx3Bp3r6uydNftbAvP+LvFc6FtFDMJ7jYgaZQV7M=
+X-Received: by 2002:a02:9d27:: with SMTP id n36mr6908265jak.30.1544336449065;
+ Sat, 08 Dec 2018 22:20:49 -0800 (PST)
 MIME-Version: 1.0
-References: <20181208214644.5374-1-okaya@kernel.org> <20181208214644.5374-3-okaya@kernel.org>
-In-Reply-To: <20181208214644.5374-3-okaya@kernel.org>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Sun, 9 Dec 2018 08:20:24 +0200
-Message-ID: <CAHp75VeCSPv81Bf2zjgFfD1YW2B6Z0YdhJsGR+Hvrf54mvdOPA@mail.gmail.com>
-Subject: Re: [PATCH v2 3/3] PCI/ACPI: allow ACPI to be built without PCI support
-To:     okaya@kernel.org
-Cc:     ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Robert Moore <robert.moore@intel.com>,
-        "Schmauss, Erik" <erik.schmauss@intel.com>,
-        Jan Kiszka <jan.kiszka@siemens.com>, otavio.pontes@intel.com,
-        Christian Koenig <christian.koenig@amd.com>,
-        =?UTF-8?Q?Christian_K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-pci@vger.kernel.org, devel@acpica.org
+References: <20181120161451.21149-1-tiny.windzz@gmail.com>
+In-Reply-To: <20181120161451.21149-1-tiny.windzz@gmail.com>
+From:   Frank Lee <tiny.windzz@gmail.com>
+Date:   Sun, 9 Dec 2018 14:20:26 +0800
+Message-ID: <CAEExFWtiqTgQmMLwvMhx8UvfU9o75jsZkAjBgyHhAOwuemJdNw@mail.gmail.com>
+Subject: Re: [PATCH v3] cpuidle: big.LITTLE: add of_node_put()
+To:     rjw@rjwysocki.net, Daniel Lezcano <daniel.lezcano@linaro.org>,
+        lorenzo.pieralisi@arm.com
+Cc:     linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Dec 8, 2018 at 11:46 PM Sinan Kaya <okaya@kernel.org> wrote:
+On Wed, Nov 21, 2018 at 12:14 AM Yangtao Li <tiny.windzz@gmail.com> wrote:
 >
-> We are compiling PCI code today for systems with ACPI and no PCI
-> device present. Remove the useless code and reduce the tight
-> dependency.
-
-> +#ifdef CONFIG_PCI
->  struct pci_dev *acpi_get_pci_dev(acpi_handle);
-> +#else
-> +static inline struct pci_dev *acpi_get_pci_dev(acpi_handle hndl)
-
-Can you spell handle fully?
-
-> +{
-> +       return NULL;
-> +}
-> +#endif
-
--- 
-With Best Regards,
-Andy Shevchenko
+> of_find_node_by_path() acquires a reference to the node
+> returned by it and that reference needs to be dropped by its caller.
+> bl_idle_init() doesn't do that, so fix it.
+>
+> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+> ---
+> Changes in v3:
+> -update changelog
+> ---
+>  drivers/cpuidle/cpuidle-big_little.c | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/cpuidle/cpuidle-big_little.c b/drivers/cpuidle/cpuidle-big_little.c
+> index db2ede565f1a..650f063ef809 100644
+> --- a/drivers/cpuidle/cpuidle-big_little.c
+> +++ b/drivers/cpuidle/cpuidle-big_little.c
+> @@ -174,8 +174,12 @@ static int __init bl_idle_init(void)
+>         /*
+>          * Initialize the driver just for a compliant set of machines
+>          */
+> -       if (!of_match_node(compatible_machine_match, root))
+> +       if (!of_match_node(compatible_machine_match, root)){
+> +               of_node_put(root);
+>                 return -ENODEV;
+> +       }
+> +
+> +       of_node_put(root);
+>
+>         if (!mcpm_is_available())
+>                 return -EUNATCH;
+> --
+> 2.17.0
+>
+ping......
