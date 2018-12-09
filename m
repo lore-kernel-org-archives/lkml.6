@@ -2,185 +2,142 @@ Return-Path: <SRS0=cWqk=OS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7DBFC65BAF
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 10:21:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB479C07E85
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 10:23:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C14620837
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 10:21:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="yEEglREe"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C14620837
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	by mail.kernel.org (Postfix) with ESMTP id 683E120831
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 10:23:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 683E120831
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726226AbeLIKVr (ORCPT
+        id S1726239AbeLIKXo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 05:21:47 -0500
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:40284 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726079AbeLIKVq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Dec 2018 05:21:46 -0500
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id wB9ALWsW052475;
-        Sun, 9 Dec 2018 04:21:32 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1544350892;
-        bh=XGoiTSNXtYZhMXLAQ7Z8aJBCXAD/iRwvWnB8L11d+UM=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=yEEglREeFboX3dLjfrfLNRtRvfIN+HOejKD9W4hIXLWOFINKIQmokDiVIgRi5HTgp
-         EfH0X4X1aBLfEkW43IDTeToftfzfvfDOJyH8swes68UZ9MQiL8qTsiNsnvYUqm03ow
-         s7j294EqiGefA8O/H6VSaTYKM+JemIu4xK5wMBTw=
-Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wB9ALVNK053583
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Sun, 9 Dec 2018 04:21:32 -0600
-Received: from DFLE100.ent.ti.com (10.64.6.21) by DFLE113.ent.ti.com
- (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Sun, 9
- Dec 2018 04:21:31 -0600
-Received: from dlep32.itg.ti.com (157.170.170.100) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Sun, 9 Dec 2018 04:21:31 -0600
-Received: from a0132425.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id wB9ALQ8L007865;
-        Sun, 9 Dec 2018 04:21:29 -0600
-From:   Vignesh R <vigneshr@ti.com>
-To:     Tero Kristo <t-kristo@ti.com>, Nishanth Menon <nm@ti.com>
-CC:     Rob Herring <robh+dt@kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Vignesh R <vigneshr@ti.com>
-Subject: [PATCH 1/2] arm64: dts: ti: k3-am654: Add McSPI DT nodes
-Date:   Sun, 9 Dec 2018 15:52:21 +0530
-Message-ID: <20181209102222.7624-2-vigneshr@ti.com>
-X-Mailer: git-send-email 2.19.2
-In-Reply-To: <20181209102222.7624-1-vigneshr@ti.com>
-References: <20181209102222.7624-1-vigneshr@ti.com>
+        Sun, 9 Dec 2018 05:23:44 -0500
+Received: from ozlabs.org ([203.11.71.1]:49115 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726079AbeLIKXn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Dec 2018 05:23:43 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 43CMk40qChz9s2P;
+        Sun,  9 Dec 2018 21:23:40 +1100 (AEDT)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     Christoph Hellwig <hch@lst.de>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>
+Cc:     linuxppc-dev@lists.ozlabs.org, iommu@lists.linux-foundation.org,
+        linux-mm@kvack.org, linux-arch@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 12/34] powerpc/cell: move dma direct window setup out of dma_configure
+In-Reply-To: <20181114082314.8965-13-hch@lst.de>
+References: <20181114082314.8965-1-hch@lst.de> <20181114082314.8965-13-hch@lst.de>
+Date:   Sun, 09 Dec 2018 21:23:39 +1100
+Message-ID: <871s6r3sno.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There are 3 instances of McSPI in MCU domain and 4 instances in Main domain.
-Add DT nodes for all McSPI instances present on AM654 SoC.
+Christoph Hellwig <hch@lst.de> writes:
 
-Signed-off-by: Vignesh R <vigneshr@ti.com>
----
- arch/arm64/boot/dts/ti/k3-am65-main.dtsi | 52 ++++++++++++++++++++++++
- arch/arm64/boot/dts/ti/k3-am65-mcu.dtsi  | 30 ++++++++++++++
- 2 files changed, 82 insertions(+)
+> Configure the dma settings at device setup time, and stop playing games
+> with get_pci_dma_ops.  This prepares for using the common dma_configure
+> code later on.
+>
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+>  arch/powerpc/platforms/cell/iommu.c | 20 +++++++++++---------
+>  1 file changed, 11 insertions(+), 9 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/ti/k3-am65-main.dtsi b/arch/arm64/boot/dts/ti/k3-am65-main.dtsi
-index 0a0a8fc5df64..6c71e67b8988 100644
---- a/arch/arm64/boot/dts/ti/k3-am65-main.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-am65-main.dtsi
-@@ -138,4 +138,56 @@
- 		clocks = <&k3_clks 39 0>;
- 		clock-names = "fck";
- 	};
-+
-+	main_spi0: spi@2100000 {
-+		compatible = "ti,am654-mcspi","ti,omap4-mcspi";
-+		reg = <0x0 0x2100000 0x0 0x400>;
-+		interrupts = <GIC_SPI 184 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&k3_clks 137 1>;
-+		power-domains = <&k3_pds 137>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+	};
-+
-+	main_spi1: spi@2110000 {
-+		compatible = "ti,am654-mcspi","ti,omap4-mcspi";
-+		reg = <0x0 0x2110000 0x0 0x400>;
-+		interrupts = <GIC_SPI 185 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&k3_clks 138 1>;
-+		power-domains = <&k3_pds 138>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		assigned-clocks = <&k3_clks 137 1>;
-+		assigned-clock-rates = <48000000>;
-+	};
-+
-+	main_spi2: spi@2120000 {
-+		compatible = "ti,am654-mcspi","ti,omap4-mcspi";
-+		reg = <0x0 0x2120000 0x0 0x400>;
-+		interrupts = <GIC_SPI 186 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&k3_clks 139 1>;
-+		power-domains = <&k3_pds 139>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+	};
-+
-+	main_spi3: spi@2130000 {
-+		compatible = "ti,am654-mcspi","ti,omap4-mcspi";
-+		reg = <0x0 0x2130000 0x0 0x400>;
-+		interrupts = <GIC_SPI 187 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&k3_clks 140 1>;
-+		power-domains = <&k3_pds 140>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+	};
-+
-+	main_spi4: spi@2140000 {
-+		compatible = "ti,am654-mcspi","ti,omap4-mcspi";
-+		reg = <0x0 0x2140000 0x0 0x400>;
-+		interrupts = <GIC_SPI 188 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&k3_clks 141 1>;
-+		power-domains = <&k3_pds 141>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+	};
- };
-diff --git a/arch/arm64/boot/dts/ti/k3-am65-mcu.dtsi b/arch/arm64/boot/dts/ti/k3-am65-mcu.dtsi
-index 1fd027748e1f..1aeae52fb239 100644
---- a/arch/arm64/boot/dts/ti/k3-am65-mcu.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-am65-mcu.dtsi
-@@ -26,4 +26,34 @@
- 		clocks = <&k3_clks 114 1>;
- 		power-domains = <&k3_pds 114>;
- 	};
-+
-+	mcu_spi0: spi@40300000 {
-+		compatible = "ti,am654-mcspi","ti,omap4-mcspi";
-+		reg = <0x0 0x40300000 0x0 0x400>;
-+		interrupts = <GIC_SPI 560 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&k3_clks 142 1>;
-+		power-domains = <&k3_pds 142>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+	};
-+
-+	mcu_spi1: spi@40310000 {
-+		compatible = "ti,am654-mcspi","ti,omap4-mcspi";
-+		reg = <0x0 0x40310000 0x0 0x400>;
-+		interrupts = <GIC_SPI 561 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&k3_clks 143 1>;
-+		power-domains = <&k3_pds 143>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+	};
-+
-+	mcu_spi2: spi@40320000 {
-+		compatible = "ti,am654-mcspi","ti,omap4-mcspi";
-+		reg = <0x0 0x40320000 0x0 0x400>;
-+		interrupts = <GIC_SPI 562 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&k3_clks 144 1>;
-+		power-domains = <&k3_pds 144>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+	};
- };
--- 
-2.19.2
+This one's crashing, haven't dug into why yet:
 
+  [    1.347085] Unable to handle kernel paging request for data at address 0x00000040
+  [    1.391505] Faulting instruction address: 0xc0000000006b6e6c
+  cpu 0x0: Vector: 380 (Data SLB Access) at [c0000007fc9032d0]
+  pc: c0000000006b6e6c: .of_n_addr_cells+0x34/0xc0
+  lr: c000000000070b30: .cell_iommu_get_fixed_address+0x58/0x2b0
+  sp: c0000007fc903560
+  msr: 9000000000009032
+  dar: 40
+  current = 0xc0000007fc8d0000
+  paca    = 0xc000000000f60000	 irqmask: 0x03	 irq_happened: 0x01
+  pid   = 1, comm = swapper/0
+  Linux version 4.20.0-rc2-gcc7x-g1e32f48 (kerkins@p82) (gcc version 7.4.1 20181208 (Custom eb377405ab2d1900)) #1 SMP Sun Dec 9 12:16:48 AEDT 2018
+  enter ? for help
+  [c0000007fc9035f0] c000000000070b30 .cell_iommu_get_fixed_address+0x58/0x2b0
+  [c0000007fc9036c0] c0000000000711ac .cell_dma_dev_setup.part.1+0x24/0x118
+  [c0000007fc903740] c000000000071374 .cell_of_bus_notify+0x6c/0xbc
+  [c0000007fc9037c0] c0000000000e7ef0 .notifier_call_chain+0x90/0xf8
+  [c0000007fc903860] c0000000000e8c2c .blocking_notifier_call_chain+0x84/0xb8
+  [c0000007fc9038f0] c000000000597544 .device_add+0x584/0x7b8
+  [c0000007fc9039c0] c0000000005a0308 .platform_device_add+0x148/0x2f0
+  [c0000007fc903a60] c0000000005a1508 .platform_device_register_full+0x148/0x168
+  [c0000007fc903ae0] c000000000a9a8a0 .__machine_initcall_cell_cell_publish_devices+0x1bc/0x210
+  [c0000007fc903be0] c00000000000eca4 .do_one_initcall+0x64/0x2d8
+  [c0000007fc903cc0] c000000000a844ec .kernel_init_freeable+0x3dc/0x4e4
+  [c0000007fc903da0] c00000000000f06c .kernel_init+0x24/0x150
+  [c0000007fc903e20] c00000000000a9c0 .ret_from_kernel_thread+0x58/0x78
+
+cheers
+
+> diff --git a/arch/powerpc/platforms/cell/iommu.c b/arch/powerpc/platforms/cell/iommu.c
+> index 12352a58072a..cce5bf9515e5 100644
+> --- a/arch/powerpc/platforms/cell/iommu.c
+> +++ b/arch/powerpc/platforms/cell/iommu.c
+> @@ -657,14 +657,21 @@ static const struct dma_map_ops dma_iommu_fixed_ops = {
+>  	.mapping_error	= dma_iommu_mapping_error,
+>  };
+>  
+> +static u64 cell_iommu_get_fixed_address(struct device *dev);
+> +
+>  static void cell_dma_dev_setup(struct device *dev)
+>  {
+> -	if (get_pci_dma_ops() == &dma_iommu_ops)
+> +	if (get_pci_dma_ops() == &dma_iommu_ops) {
+> +		u64 addr = cell_iommu_get_fixed_address(dev);
+> +
+> +		if (addr != OF_BAD_ADDR)
+> +			set_dma_offset(dev, addr + dma_iommu_fixed_base);
+>  		set_iommu_table_base(dev, cell_get_iommu_table(dev));
+> -	else if (get_pci_dma_ops() == &dma_nommu_ops)
+> +	} else if (get_pci_dma_ops() == &dma_nommu_ops) {
+>  		set_dma_offset(dev, cell_dma_nommu_offset);
+> -	else
+> +	} else {
+>  		BUG();
+> +	}
+>  }
+>  
+>  static void cell_pci_dma_dev_setup(struct pci_dev *dev)
+> @@ -950,19 +957,14 @@ static int dma_suported_and_switch(struct device *dev, u64 dma_mask)
+>  {
+>  	if (dma_mask == DMA_BIT_MASK(64) &&
+>  	    cell_iommu_get_fixed_address(dev) != OF_BAD_ADDR) {
+> -		u64 addr = cell_iommu_get_fixed_address(dev) +
+> -			dma_iommu_fixed_base;
+>  		dev_dbg(dev, "iommu: 64-bit OK, using fixed ops\n");
+> -		dev_dbg(dev, "iommu: fixed addr = %llx\n", addr);
+>  		set_dma_ops(dev, &dma_iommu_fixed_ops);
+> -		set_dma_offset(dev, addr);
+>  		return 1;
+>  	}
+>  
+>  	if (dma_iommu_dma_supported(dev, dma_mask)) {
+>  		dev_dbg(dev, "iommu: not 64-bit, using default ops\n");
+> -		set_dma_ops(dev, get_pci_dma_ops());
+> -		cell_dma_dev_setup(dev);
+> +		set_dma_ops(dev, &dma_iommu_ops);
+>  		return 1;
+>  	}
+>  
+> -- 
+> 2.19.1
