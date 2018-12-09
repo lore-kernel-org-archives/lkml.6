@@ -6,45 +6,53 @@ X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3FAAC07E85
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 21:58:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EFBA0C65BAF
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 21:58:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B2FBB20661
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 21:58:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B2FBB20661
+	by mail.kernel.org (Postfix) with ESMTP id BB64520661
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 21:58:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB64520661
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726949AbeLIV6M (ORCPT
+        id S1726893AbeLIV6V (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 16:58:12 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36280 "EHLO
+        Sun, 9 Dec 2018 16:58:21 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36200 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726762AbeLIVzj (ORCPT
+        by vger.kernel.org with ESMTP id S1726746AbeLIVzj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 9 Dec 2018 16:55:39 -0500
 Received: from pub.yeoldevic.com ([81.174.156.145] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW730-0002ii-BF; Sun, 09 Dec 2018 21:55:35 +0000
+        id 1gW730-0002iY-J6; Sun, 09 Dec 2018 21:55:35 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW72h-0003YY-Bv; Sun, 09 Dec 2018 21:55:15 +0000
+        id 1gW72h-0003YT-AB; Sun, 09 Dec 2018 21:55:15 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, "Takashi Iwai" <tiwai@suse.de>,
-        "Takashi Sakamoto" <o-takashi@sakamocchi.jp>
+CC:     akpm@linux-foundation.org,
+        "Dave Hansen" <dave.hansen@linux.intel.com>,
+        "Nadav Amit" <namit@vmware.com>,
+        "Vlastimil Babka" <vbabka@suse.cz>,
+        "Andi Kleen" <ak@linux.intel.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        "Josh Poimboeuf" <jpoimboe@redhat.com>,
+        "Thomas Gleixner" <tglx@linutronix.de>,
+        "Sean Christopherson" <sean.j.christopherson@intel.com>,
+        "Michal Hocko" <mhocko@suse.com>,
+        "Andy Lutomirski" <luto@kernel.org>
 Date:   Sun, 09 Dec 2018 21:50:33 +0000
-Message-ID: <lsq.1544392233.610998990@decadent.org.uk>
+Message-ID: <lsq.1544392233.685418412@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 227/328] ALSA: bebob: use address returned by
- kmalloc() instead of kernel stack for streaming DMA mapping
+Subject: [PATCH 3.16 226/328] x86/mm: Use WRITE_ONCE() when setting PTEs
 In-Reply-To: <lsq.1544392232.713909046@decadent.org.uk>
 X-SA-Exim-Connect-IP: 81.174.156.145
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -58,83 +66,119 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+From: Nadav Amit <namit@vmware.com>
 
-commit 493626f2d87a74e6dbea1686499ed6e7e600484e upstream.
+commit 9bc4f28af75a91aea0ae383f50b0a430c4509303 upstream.
 
-When executing 'fw_run_transaction()' with 'TCODE_WRITE_BLOCK_REQUEST',
-an address of 'payload' argument is used for streaming DMA mapping by
-'firewire_ohci' module if 'size' argument is larger than 8 byte.
-Although in this case the address should not be on kernel stack, current
-implementation of ALSA bebob driver uses data in kernel stack for a cue
-to boot M-Audio devices. This often brings unexpected result, especially
-for a case of CONFIG_VMAP_STACK=y.
+When page-table entries are set, the compiler might optimize their
+assignment by using multiple instructions to set the PTE. This might
+turn into a security hazard if the user somehow manages to use the
+interim PTE. L1TF does not make our lives easier, making even an interim
+non-present PTE a security hazard.
 
-This commit fixes the bug.
+Using WRITE_ONCE() to set PTEs and friends should prevent this potential
+security hazard.
 
-Reference: https://bugzilla.kernel.org/show_bug.cgi?id=201021
-Reference: https://forum.manjaro.org/t/firewire-m-audio-410-driver-wont-load-firmware/51165
-Fixes: a2b2a7798fb6('ALSA: bebob: Send a cue to load firmware for M-Audio Firewire series')
-Signed-off-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+I skimmed the differences in the binary with and without this patch. The
+differences are (obviously) greater when CONFIG_PARAVIRT=n as more
+code optimizations are possible. For better and worse, the impact on the
+binary with this patch is pretty small. Skimming the code did not cause
+anything to jump out as a security hazard, but it seems that at least
+move_soft_dirty_pte() caused set_pte_at() to use multiple writes.
+
+Signed-off-by: Nadav Amit <namit@vmware.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: Vlastimil Babka <vbabka@suse.cz>
+Cc: Sean Christopherson <sean.j.christopherson@intel.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Link: https://lkml.kernel.org/r/20180902181451.80520-1-namit@vmware.com
+[bwh: Backported to 3.16:
+ - Use ACCESS_ONCE() instead of WRITE_ONCE()
+ - Drop changes in pmdp_establish(), native_set_p4d(), pudp_set_access_flags()]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- sound/firewire/bebob/bebob_maudio.c | 24 ++++++++++++++----------
- 1 file changed, 14 insertions(+), 10 deletions(-)
-
---- a/sound/firewire/bebob/bebob_maudio.c
-+++ b/sound/firewire/bebob/bebob_maudio.c
-@@ -96,17 +96,13 @@ int snd_bebob_maudio_load_firmware(struc
- 	struct fw_device *device = fw_parent_device(unit);
- 	int err, rcode;
- 	u64 date;
--	__le32 cues[3] = {
--		cpu_to_le32(MAUDIO_BOOTLOADER_CUE1),
--		cpu_to_le32(MAUDIO_BOOTLOADER_CUE2),
--		cpu_to_le32(MAUDIO_BOOTLOADER_CUE3)
--	};
-+	__le32 *cues;
+--- a/arch/x86/include/asm/pgtable_64.h
++++ b/arch/x86/include/asm/pgtable_64.h
+@@ -44,15 +44,15 @@ struct mm_struct;
+ void set_pte_vaddr_pud(pud_t *pud_page, unsigned long vaddr, pte_t new_pte);
  
- 	/* check date of software used to build */
- 	err = snd_bebob_read_block(unit, INFO_OFFSET_SW_DATE,
- 				   &date, sizeof(u64));
- 	if (err < 0)
--		goto end;
-+		return err;
- 	/*
- 	 * firmware version 5058 or later has date later than "20070401", but
- 	 * 'date' is not null-terminated.
-@@ -114,20 +110,28 @@ int snd_bebob_maudio_load_firmware(struc
- 	if (date < 0x3230303730343031LL) {
- 		dev_err(&unit->device,
- 			"Use firmware version 5058 or later\n");
--		err = -ENOSYS;
--		goto end;
-+		return -ENXIO;
- 	}
  
-+	cues = kmalloc_array(3, sizeof(*cues), GFP_KERNEL);
-+	if (!cues)
-+		return -ENOMEM;
-+
-+	cues[0] = cpu_to_le32(MAUDIO_BOOTLOADER_CUE1);
-+	cues[1] = cpu_to_le32(MAUDIO_BOOTLOADER_CUE2);
-+	cues[2] = cpu_to_le32(MAUDIO_BOOTLOADER_CUE3);
-+
- 	rcode = fw_run_transaction(device->card, TCODE_WRITE_BLOCK_REQUEST,
- 				   device->node_id, device->generation,
- 				   device->max_speed, BEBOB_ADDR_REG_REQ,
--				   cues, sizeof(cues));
-+				   cues, 3 * sizeof(*cues));
-+	kfree(cues);
- 	if (rcode != RCODE_COMPLETE) {
- 		dev_err(&unit->device,
- 			"Failed to send a cue to load firmware\n");
- 		err = -EIO;
- 	}
--end:
-+
- 	return err;
+-static inline void native_pte_clear(struct mm_struct *mm, unsigned long addr,
+-				    pte_t *ptep)
++static inline void native_set_pte(pte_t *ptep, pte_t pte)
+ {
+-	*ptep = native_make_pte(0);
++	ACCESS_ONCE(*ptep) = pte;
  }
  
+-static inline void native_set_pte(pte_t *ptep, pte_t pte)
++static inline void native_pte_clear(struct mm_struct *mm, unsigned long addr,
++				    pte_t *ptep)
+ {
+-	*ptep = pte;
++	native_set_pte(ptep, native_make_pte(0));
+ }
+ 
+ static inline void native_set_pte_atomic(pte_t *ptep, pte_t pte)
+@@ -62,7 +62,7 @@ static inline void native_set_pte_atomic
+ 
+ static inline void native_set_pmd(pmd_t *pmdp, pmd_t pmd)
+ {
+-	*pmdp = pmd;
++	ACCESS_ONCE(*pmdp) = pmd;
+ }
+ 
+ static inline void native_pmd_clear(pmd_t *pmd)
+@@ -98,7 +98,7 @@ static inline pmd_t native_pmdp_get_and_
+ 
+ static inline void native_set_pud(pud_t *pudp, pud_t pud)
+ {
+-	*pudp = pud;
++	ACCESS_ONCE(*pudp) = pud;
+ }
+ 
+ static inline void native_pud_clear(pud_t *pud)
+@@ -131,7 +131,7 @@ static inline pgd_t *native_get_shadow_p
+ 
+ static inline void native_set_pgd(pgd_t *pgdp, pgd_t pgd)
+ {
+-	*pgdp = kaiser_set_shadow_pgd(pgdp, pgd);
++	ACCESS_ONCE(*pgdp) = kaiser_set_shadow_pgd(pgdp, pgd);
+ }
+ 
+ static inline void native_pgd_clear(pgd_t *pgd)
+--- a/arch/x86/mm/pgtable.c
++++ b/arch/x86/mm/pgtable.c
+@@ -242,7 +242,7 @@ static void pgd_mop_up_pmds(struct mm_st
+ 		if (pgd_val(pgd) != 0) {
+ 			pmd_t *pmd = (pmd_t *)pgd_page_vaddr(pgd);
+ 
+-			pgdp[i] = native_make_pgd(0);
++			pgd_clear(&pgdp[i]);
+ 
+ 			paravirt_release_pmd(pgd_val(pgd) >> PAGE_SHIFT);
+ 			pmd_free(mm, pmd);
+@@ -352,7 +352,7 @@ int ptep_set_access_flags(struct vm_area
+ 	int changed = !pte_same(*ptep, entry);
+ 
+ 	if (changed && dirty) {
+-		*ptep = entry;
++		set_pte(ptep, entry);
+ 		pte_update_defer(vma->vm_mm, address, ptep);
+ 	}
+ 
+@@ -369,7 +369,7 @@ int pmdp_set_access_flags(struct vm_area
+ 	VM_BUG_ON(address & ~HPAGE_PMD_MASK);
+ 
+ 	if (changed && dirty) {
+-		*pmdp = entry;
++		set_pmd(pmdp, entry);
+ 		pmd_update_defer(vma->vm_mm, address, pmdp);
+ 		/*
+ 		 * We had a write-protection fault here and changed the pmd
 
