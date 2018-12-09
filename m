@@ -6,44 +6,49 @@ X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D4C9C65BAF
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:06:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1972EC07E85
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:06:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B33520661
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:06:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B33520661
+	by mail.kernel.org (Postfix) with ESMTP id DD23A2081F
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:06:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD23A2081F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727706AbeLIWGB (ORCPT
+        id S1727718AbeLIWGG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 17:06:01 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:37024 "EHLO
+        Sun, 9 Dec 2018 17:06:06 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:37036 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727332AbeLIWF6 (ORCPT
+        by vger.kernel.org with ESMTP id S1727705AbeLIWGC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Dec 2018 17:05:58 -0500
+        Sun, 9 Dec 2018 17:06:02 -0500
 Received: from pub.yeoldevic.com ([81.174.156.145] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW73L-0002iq-IJ; Sun, 09 Dec 2018 21:55:55 +0000
+        id 1gW73O-0002im-HI; Sun, 09 Dec 2018 21:55:58 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW72a-0003Hz-Nu; Sun, 09 Dec 2018 21:55:08 +0000
+        id 1gW72Z-0003Fn-Lu; Sun, 09 Dec 2018 21:55:07 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, "Miklos Szeredi" <mszeredi@redhat.com>,
-        "syzbot" <syzbot+b62f08f4d5857755e3bc@syzkaller.appspotmail.com>
+CC:     akpm@linux-foundation.org, "Maciej W. Rozycki" <macro@mips.com>,
+        "Paul Burton" <paul.burton@mips.com>,
+        linux-fsdevel@vger.kernel.org,
+        "Ralf Baechle" <ralf@linux-mips.org>,
+        "Alexander Viro" <viro@zeniv.linux.org.uk>,
+        linux-mips@linux-mips.org, "James Hogan" <jhogan@kernel.org>
 Date:   Sun, 09 Dec 2018 21:50:33 +0000
-Message-ID: <lsq.1544392233.892501765@decadent.org.uk>
+Message-ID: <lsq.1544392233.552325546@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 073/328] fuse: Fix oops at process_init_reply()
+Subject: [PATCH 3.16 046/328] MIPS: Correct the 64-bit DSP accumulator
+ register size
 In-Reply-To: <lsq.1544392232.713909046@decadent.org.uk>
 X-SA-Exim-Connect-IP: 81.174.156.145
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -57,79 +62,68 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Miklos Szeredi <mszeredi@redhat.com>
+From: "Maciej W. Rozycki" <macro@mips.com>
 
-commit e8f3bd773d22f488724dffb886a1618da85c2966 upstream.
+commit f5958b4cf4fc38ed4583ab83fb7c4cd1ab05f47b upstream.
 
-syzbot is hitting NULL pointer dereference at process_init_reply().
-This is because deactivate_locked_super() is called before response for
-initial request is processed.
+Use the `unsigned long' rather than `__u32' type for DSP accumulator
+registers, like with the regular MIPS multiply/divide accumulator and
+general-purpose registers, as all are 64-bit in 64-bit implementations
+and using a 32-bit data type leads to contents truncation on context
+saving.
 
-Fix this by aborting and waiting for all requests (including FUSE_INIT)
-before resetting fc->sb.
+Update `arch_ptrace' and `compat_arch_ptrace' accordingly, removing
+casts that are similarly not used with multiply/divide accumulator or
+general-purpose register accesses.
 
-Original patch by Tetsuo Handa <penguin-kernel@I-love.SKAURA.ne.jp>.
-
-Reported-by: syzbot <syzbot+b62f08f4d5857755e3bc@syzkaller.appspotmail.com>
-Fixes: e27c9d3877a0 ("fuse: fuse: add time_gran to INIT_OUT")
-Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
-[bwh: Backported to 3.16:
- - Drop second argument to fuse_abort_conn()
- - fuse_wait_aborted() is not needed]
+Signed-off-by: Maciej W. Rozycki <macro@mips.com>
+Signed-off-by: Paul Burton <paul.burton@mips.com>
+Fixes: e50c0a8fa60d ("Support the MIPS32 / MIPS64 DSP ASE.")
+Patchwork: https://patchwork.linux-mips.org/patch/19329/
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: James Hogan <jhogan@kernel.org>
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: linux-fsdevel@vger.kernel.org
+Cc: linux-mips@linux-mips.org
+Cc: linux-kernel@vger.kernel.org
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
---- a/fs/fuse/inode.c
-+++ b/fs/fuse/inode.c
-@@ -380,9 +380,6 @@ static void fuse_put_super(struct super_
- {
- 	struct fuse_conn *fc = get_fuse_conn_super(sb);
+ arch/mips/include/asm/processor.h | 2 +-
+ arch/mips/kernel/ptrace.c         | 2 +-
+ arch/mips/kernel/ptrace32.c       | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
+
+--- a/arch/mips/include/asm/processor.h
++++ b/arch/mips/include/asm/processor.h
+@@ -143,7 +143,7 @@ struct mips_fpu_struct {
  
--	fuse_send_destroy(fc);
--
--	fuse_abort_conn(fc);
- 	mutex_lock(&fuse_mutex);
- 	list_del(&fc->entry);
- 	fuse_ctl_remove_conn(fc);
-@@ -1124,16 +1121,24 @@ static struct dentry *fuse_mount(struct
- 	return mount_nodev(fs_type, flags, raw_data, fuse_fill_super);
- }
+ #define NUM_DSP_REGS   6
  
--static void fuse_kill_sb_anon(struct super_block *sb)
-+static void fuse_sb_destroy(struct super_block *sb)
- {
- 	struct fuse_conn *fc = get_fuse_conn_super(sb);
+-typedef __u32 dspreg_t;
++typedef unsigned long dspreg_t;
  
- 	if (fc) {
-+		fuse_send_destroy(fc);
-+
-+		fuse_abort_conn(fc);
-+
- 		down_write(&fc->killsb);
- 		fc->sb = NULL;
- 		up_write(&fc->killsb);
- 	}
-+}
- 
-+static void fuse_kill_sb_anon(struct super_block *sb)
-+{
-+	fuse_sb_destroy(sb);
- 	kill_anon_super(sb);
- }
- 
-@@ -1156,14 +1161,7 @@ static struct dentry *fuse_mount_blk(str
- 
- static void fuse_kill_sb_blk(struct super_block *sb)
- {
--	struct fuse_conn *fc = get_fuse_conn_super(sb);
--
--	if (fc) {
--		down_write(&fc->killsb);
--		fc->sb = NULL;
--		up_write(&fc->killsb);
--	}
--
-+	fuse_sb_destroy(sb);
- 	kill_block_super(sb);
- }
- 
+ struct mips_dsp_state {
+ 	dspreg_t	dspr[NUM_DSP_REGS];
+--- a/arch/mips/kernel/ptrace.c
++++ b/arch/mips/kernel/ptrace.c
+@@ -790,7 +790,7 @@ long arch_ptrace(struct task_struct *chi
+ 				goto out;
+ 			}
+ 			dregs = __get_dsp_regs(child);
+-			tmp = (unsigned long) (dregs[addr - DSP_BASE]);
++			tmp = dregs[addr - DSP_BASE];
+ 			break;
+ 		}
+ 		case DSP_CONTROL:
+--- a/arch/mips/kernel/ptrace32.c
++++ b/arch/mips/kernel/ptrace32.c
+@@ -140,7 +140,7 @@ long compat_arch_ptrace(struct task_stru
+ 				goto out;
+ 			}
+ 			dregs = __get_dsp_regs(child);
+-			tmp = (unsigned long) (dregs[addr - DSP_BASE]);
++			tmp = dregs[addr - DSP_BASE];
+ 			break;
+ 		}
+ 		case DSP_CONTROL:
 
