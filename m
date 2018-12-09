@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56B04C07E85
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:28:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 050D2C65BAF
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:28:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 22C8120661
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:28:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 22C8120661
+	by mail.kernel.org (Postfix) with ESMTP id C92D320661
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:28:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C92D320661
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726367AbeLIVzK (ORCPT
+        id S1728782AbeLIW2p (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 16:55:10 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:34526 "EHLO
+        Sun, 9 Dec 2018 17:28:45 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:34596 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726300AbeLIVzJ (ORCPT
+        by vger.kernel.org with ESMTP id S1726352AbeLIVzK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Dec 2018 16:55:09 -0500
+        Sun, 9 Dec 2018 16:55:10 -0500
 Received: from pub.yeoldevic.com ([81.174.156.145] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW72Y-0002ij-Qd; Sun, 09 Dec 2018 21:55:06 +0000
+        id 1gW72Y-0002ir-VK; Sun, 09 Dec 2018 21:55:07 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW72Y-0003Cy-2o; Sun, 09 Dec 2018 21:55:06 +0000
+        id 1gW72Y-0003Dc-FD; Sun, 09 Dec 2018 21:55:06 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -38,14 +38,16 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
-        "Christophe JAILLET" <christophe.jaillet@wanadoo.fr>
+        "Bart Van Assche" <bart.vanassche@wdc.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        "Mike Christie" <mchristi@redhat.com>,
+        "Hannes Reinecke" <hare@suse.com>, "Christoph Hellwig" <hch@lst.de>
 Date:   Sun, 09 Dec 2018 21:50:33 +0000
-Message-ID: <lsq.1544392233.463318526@decadent.org.uk>
+Message-ID: <lsq.1544392233.434757862@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 011/328] serial: pxa: Fix an error handling path in
- 'serial_pxa_probe()'
+Subject: [PATCH 3.16 019/328] scsi: target/iscsi: Make iscsit_ta_authentication()
+ respect the output buffer size
 In-Reply-To: <lsq.1544392232.713909046@decadent.org.uk>
 X-SA-Exim-Connect-IP: 81.174.156.145
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -59,31 +61,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+From: Bart Van Assche <bart.vanassche@wdc.com>
 
-commit 95a0e656580fab3128c7bee5f660c50784f53651 upstream.
+commit 35bea5c84fd13c643cce63f0b5cd4b148f8c901d upstream.
 
-If port.line is out of range, we still need to release some resources, or
-we will leak them.
-
-Fixes: afc7851fab83 ("serial: pxa: Fix out-of-bounds access through serial port index")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Fixes: e48354ce078c ("iscsi-target: Add iSCSI fabric support for target v4.1")
+Signed-off-by: Bart Van Assche <bart.vanassche@wdc.com>
+Reviewed-by: Mike Christie <mchristi@redhat.com>
+Cc: Mike Christie <mchristi@redhat.com>
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: Hannes Reinecke <hare@suse.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/tty/serial/pxa.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/target/iscsi/iscsi_target_tpg.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
---- a/drivers/tty/serial/pxa.c
-+++ b/drivers/tty/serial/pxa.c
-@@ -890,7 +890,8 @@ static int serial_pxa_probe(struct platf
- 		goto err_clk;
- 	if (sport->port.line >= ARRAY_SIZE(serial_pxa_ports)) {
- 		dev_err(&dev->dev, "serial%d out of range\n", sport->port.line);
--		return -EINVAL;
-+		ret = -EINVAL;
-+		goto err_clk;
+--- a/drivers/target/iscsi/iscsi_target_tpg.c
++++ b/drivers/target/iscsi/iscsi_target_tpg.c
+@@ -652,8 +652,7 @@ int iscsit_ta_authentication(struct iscs
+ 		none = strstr(buf1, NONE);
+ 		if (none)
+ 			goto out;
+-		strncat(buf1, ",", strlen(","));
+-		strncat(buf1, NONE, strlen(NONE));
++		strlcat(buf1, "," NONE, sizeof(buf1));
+ 		if (iscsi_update_param_value(param, buf1) < 0)
+ 			return -EINVAL;
  	}
- 	snprintf(sport->name, PXA_NAME_LEN - 1, "UART%d", sport->port.line + 1);
- 
 
