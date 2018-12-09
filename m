@@ -6,45 +6,45 @@ X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86305C65BAF
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:25:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCA8BC65BAF
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:25:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 50C7520661
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:25:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 50C7520661
+	by mail.kernel.org (Postfix) with ESMTP id 8E51820661
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:25:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E51820661
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726522AbeLIWY7 (ORCPT
+        id S1728717AbeLIWZM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 17:24:59 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:34978 "EHLO
+        Sun, 9 Dec 2018 17:25:12 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:34932 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726469AbeLIVzR (ORCPT
+        by vger.kernel.org with ESMTP id S1726454AbeLIVzQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Dec 2018 16:55:17 -0500
+        Sun, 9 Dec 2018 16:55:16 -0500
 Received: from pub.yeoldevic.com ([81.174.156.145] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW72h-0002ii-52; Sun, 09 Dec 2018 21:55:15 +0000
+        id 1gW72e-0002il-K5; Sun, 09 Dec 2018 21:55:12 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW72e-0003RR-Fc; Sun, 09 Dec 2018 21:55:12 +0000
+        id 1gW72c-0003LX-2k; Sun, 09 Dec 2018 21:55:10 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, "Andi Kleen" <ak@linux.intel.com>,
-        "Thomas Gleixner" <tglx@linutronix.de>, x86@kernel.org
+CC:     akpm@linux-foundation.org, "Marcel Holtmann" <marcel@holtmann.org>,
+        "Alexander Aring" <alex.aring@gmail.com>,
+        "Varka Bhadram" <varkab@cdac.in>
 Date:   Sun, 09 Dec 2018 21:50:33 +0000
-Message-ID: <lsq.1544392233.84682158@decadent.org.uk>
+Message-ID: <lsq.1544392233.637853056@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 164/328] x86/spectre: Add missing family 6 check to
- microcode check
+Subject: [PATCH 3.16 104/328] mac802154: common tx error path
 In-Reply-To: <lsq.1544392232.713909046@decadent.org.uk>
 X-SA-Exim-Connect-IP: 81.174.156.145
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -58,36 +58,56 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Andi Kleen <ak@linux.intel.com>
+From: Varka Bhadram <varkab@cdac.in>
 
-commit 1ab534e85c93945f7862378d8c8adcf408205b19 upstream.
+commit f55889128a776b51581394b20abd0b470304cf95 upstream.
 
-The check for Spectre microcodes does not check for family 6, only the
-model numbers.
+This patch introduce the common error path on failure of Tx by
+inserting the label 'err_tx'.
 
-Add a family 6 check to avoid ambiguity with other families.
-
-Fixes: a5b296636453 ("x86/cpufeature: Blacklist SPEC_CTRL/PRED_CMD on early Spectre v2 microcodes")
-Signed-off-by: Andi Kleen <ak@linux.intel.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: x86@kernel.org
-Cc: linux-kernel@vger.kernel.org
-Link: https://lkml.kernel.org/r/20180824170351.34874-2-andi@firstfloor.org
+Signed-off-by: Varka Bhadram <varkab@cdac.in>
+Signed-off-by: Alexander Aring <alex.aring@gmail.com>
+Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- arch/x86/kernel/cpu/intel.c | 3 +++
- 1 file changed, 3 insertions(+)
+ net/mac802154/tx.c | 15 ++++++++-------
+ 1 file changed, 8 insertions(+), 7 deletions(-)
 
---- a/arch/x86/kernel/cpu/intel.c
-+++ b/arch/x86/kernel/cpu/intel.c
-@@ -75,6 +75,9 @@ static bool bad_spectre_microcode(struct
- 	if (cpu_has(c, X86_FEATURE_HYPERVISOR))
- 		return false;
+--- a/net/mac802154/tx.c
++++ b/net/mac802154/tx.c
+@@ -89,8 +89,7 @@ netdev_tx_t mac802154_tx(struct mac80215
  
-+	if (c->x86 != 6)
-+		return false;
+ 	if (!(priv->phy->channels_supported[page] & (1 << chan))) {
+ 		WARN_ON(1);
+-		kfree_skb(skb);
+-		return NETDEV_TX_OK;
++		goto err_tx;
+ 	}
+ 
+ 	mac802154_monitors_rx(mac802154_to_priv(&priv->hw), skb);
+@@ -102,12 +101,10 @@ netdev_tx_t mac802154_tx(struct mac80215
+ 		data[1] = crc >> 8;
+ 	}
+ 
+-	if (skb_cow_head(skb, priv->hw.extra_tx_headroom)) {
+-		kfree_skb(skb);
+-		return NETDEV_TX_OK;
+-	}
++	if (skb_cow_head(skb, priv->hw.extra_tx_headroom))
++		goto err_tx;
+ 
+-	work = kzalloc(sizeof(struct xmit_work), GFP_ATOMIC);
++	work = kzalloc(sizeof(*work), GFP_ATOMIC);
+ 	if (!work) {
+ 		kfree_skb(skb);
+ 		return NETDEV_TX_BUSY;
+@@ -128,4 +125,8 @@ netdev_tx_t mac802154_tx(struct mac80215
+ 	queue_work(priv->dev_workqueue, &work->work);
+ 
+ 	return NETDEV_TX_OK;
 +
- 	for (i = 0; i < ARRAY_SIZE(spectre_bad_microcodes); i++) {
- 		if (c->x86_model == spectre_bad_microcodes[i].model &&
- 		    c->x86_mask == spectre_bad_microcodes[i].stepping)
++err_tx:
++	kfree_skb(skb);
++	return NETDEV_TX_OK;
+ }
 
