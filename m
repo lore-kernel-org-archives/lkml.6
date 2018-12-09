@@ -6,45 +6,45 @@ X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35CBDC07E85
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:10:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC147C65BAF
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:10:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 035EA20661
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:10:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 035EA20661
+	by mail.kernel.org (Postfix) with ESMTP id 884752081F
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:10:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 884752081F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728155AbeLIWJ7 (ORCPT
+        id S1727951AbeLIWJ5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 17:09:59 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:37488 "EHLO
+        Sun, 9 Dec 2018 17:09:57 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:37476 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728116AbeLIWJv (ORCPT
+        by vger.kernel.org with ESMTP id S1727911AbeLIWJr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Dec 2018 17:09:51 -0500
+        Sun, 9 Dec 2018 17:09:47 -0500
 Received: from pub.yeoldevic.com ([81.174.156.145] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW73O-0002ii-Jn; Sun, 09 Dec 2018 21:55:58 +0000
+        id 1gW735-0002im-7C; Sun, 09 Dec 2018 21:55:39 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW72a-0003GR-0K; Sun, 09 Dec 2018 21:55:08 +0000
+        id 1gW72g-0003Vk-HH; Sun, 09 Dec 2018 21:55:14 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, "Lars-Peter Clausen" <lars@metafoo.de>,
-        "Jonathan Cameron" <Jonathan.Cameron@huawei.com>,
-        "Alexandru Ardelean" <alexandru.ardelean@analog.com>
+CC:     akpm@linux-foundation.org, "Jia-Ju Bai" <baijiaju1990@gmail.com>,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
 Date:   Sun, 09 Dec 2018 21:50:33 +0000
-Message-ID: <lsq.1544392233.540638513@decadent.org.uk>
+Message-ID: <lsq.1544392233.148942297@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 054/328] iio: ad9523: Fix displayed phase
+Subject: [PATCH 3.16 208/328] usb: host: u132-hcd: Fix a sleep-in-atomic-context
+ bug in u132_get_frame()
 In-Reply-To: <lsq.1544392232.713909046@decadent.org.uk>
 X-SA-Exim-Connect-IP: 81.174.156.145
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -58,33 +58,48 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Lars-Peter Clausen <lars@metafoo.de>
+From: Jia-Ju Bai <baijiaju1990@gmail.com>
 
-commit 5a4e33c1c53ae7d4425f7d94e60e4458a37b349e upstream.
+commit 6d4f268fa132742fe96dad22307c68d237356d88 upstream.
 
-Fix the displayed phase for the ad9523 driver. Currently the most
-significant decimal place is dropped and all other digits are shifted one
-to the left. This is due to a multiplication by 10, which is not necessary,
-so remove it.
+i_usX2Y_subs_startup in usbusx2yaudio.c is a completion handler function
+for the USB driver. So it should not sleep, but it is can sleep
+according to the function call paths (from bottom to top) in Linux-4.16.
 
-Signed-off-by: Lars-Peter Clausen <lars@metafoo.de>
-Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
-Fixes: cd1678f9632 ("iio: frequency: New driver for AD9523 SPI Low Jitter Clock Generator")
-Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+[FUNC] msleep
+drivers/usb/host/u132-hcd.c, 2558:
+	msleep in u132_get_frame
+drivers/usb/core/hcd.c, 2231:
+	[FUNC_PTR]u132_get_frame in usb_hcd_get_frame_number
+drivers/usb/core/usb.c, 822:
+	usb_hcd_get_frame_number in usb_get_current_frame_number
+sound/usb/usx2y/usbusx2yaudio.c, 303:
+	usb_get_current_frame_number in i_usX2Y_urb_complete
+sound/usb/usx2y/usbusx2yaudio.c, 366:
+	i_usX2Y_urb_complete in i_usX2Y_subs_startup
+
+Note that [FUNC_PTR] means a function pointer call is used.
+
+To fix this bug, msleep() is replaced with mdelay().
+
+This bug is found by my static analysis tool DSAC.
+
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/iio/frequency/ad9523.c | 2 +-
+ drivers/usb/host/u132-hcd.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/iio/frequency/ad9523.c
-+++ b/drivers/iio/frequency/ad9523.c
-@@ -641,7 +641,7 @@ static int ad9523_read_raw(struct iio_de
- 		code = (AD9523_CLK_DIST_DIV_PHASE_REV(ret) * 3141592) /
- 			AD9523_CLK_DIST_DIV_REV(ret);
- 		*val = code / 1000000;
--		*val2 = (code % 1000000) * 10;
-+		*val2 = code % 1000000;
- 		return IIO_VAL_INT_PLUS_MICRO;
- 	default:
- 		return -EINVAL;
+--- a/drivers/usb/host/u132-hcd.c
++++ b/drivers/usb/host/u132-hcd.c
+@@ -2569,7 +2569,7 @@ static int u132_get_frame(struct usb_hcd
+ 	} else {
+ 		int frame = 0;
+ 		dev_err(&u132->platform_dev->dev, "TODO: u132_get_frame\n");
+-		msleep(100);
++		mdelay(100);
+ 		return frame;
+ 	}
+ }
 
