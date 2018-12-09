@@ -6,49 +6,44 @@ X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A029C65BAF
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:13:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41DA7C07E85
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:13:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 576CC20661
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:13:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 576CC20661
+	by mail.kernel.org (Postfix) with ESMTP id 0EB2420661
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:13:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0EB2420661
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728371AbeLIWNU (ORCPT
+        id S1728384AbeLIWN0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 17:13:20 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:37896 "EHLO
+        Sun, 9 Dec 2018 17:13:26 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:37902 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728318AbeLIWNS (ORCPT
+        by vger.kernel.org with ESMTP id S1726765AbeLIWNW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Dec 2018 17:13:18 -0500
+        Sun, 9 Dec 2018 17:13:22 -0500
 Received: from pub.yeoldevic.com ([81.174.156.145] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW73O-0002ia-Iv; Sun, 09 Dec 2018 21:55:58 +0000
+        id 1gW73M-0002ic-S6; Sun, 09 Dec 2018 21:55:56 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW72Z-0003Fi-KZ; Sun, 09 Dec 2018 21:55:07 +0000
+        id 1gW72a-0003H5-9s; Sun, 09 Dec 2018 21:55:08 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, linux-mips@linux-mips.org,
-        "James Hogan" <jhogan@kernel.org>,
-        "Ralf Baechle" <ralf@linux-mips.org>,
-        "Alexander Viro" <viro@zeniv.linux.org.uk>,
-        "Paul Burton" <paul.burton@mips.com>,
-        linux-fsdevel@vger.kernel.org, "Maciej W. Rozycki" <macro@mips.com>
+CC:     akpm@linux-foundation.org, "Mikulas Patocka" <mpatocka@redhat.com>,
+        "Bartlomiej Zolnierkiewicz" <b.zolnierkie@samsung.com>
 Date:   Sun, 09 Dec 2018 21:50:33 +0000
-Message-ID: <lsq.1544392233.580426181@decadent.org.uk>
+Message-ID: <lsq.1544392233.608210304@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 045/328] binfmt_elf: Respect error return from
- `regset->active'
+Subject: [PATCH 3.16 062/328] udlfb: set optimal write delay
 In-Reply-To: <lsq.1544392232.713909046@decadent.org.uk>
 X-SA-Exim-Connect-IP: 81.174.156.145
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -62,45 +57,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: "Maciej W. Rozycki" <macro@mips.com>
+From: Mikulas Patocka <mpatocka@redhat.com>
 
-commit 2f819db565e82e5f73cd42b39925098986693378 upstream.
+commit bb24153a3f13dd0dbc1f8055ad97fe346d598f66 upstream.
 
-The regset API documented in <linux/regset.h> defines -ENODEV as the
-result of the `->active' handler to be used where the feature requested
-is not available on the hardware found.  However code handling core file
-note generation in `fill_thread_core_info' interpretes any non-zero
-result from the `->active' handler as the regset requested being active.
-Consequently processing continues (and hopefully gracefully fails later
-on) rather than being abandoned right away for the regset requested.
+The default delay 5 jiffies is too much when the kernel is compiled with
+HZ=100 - it results in jumpy cursor in Xwindow.
 
-Fix the problem then by making the code proceed only if a positive
-result is returned from the `->active' handler.
+In order to find out the optimal delay, I benchmarked the driver on
+1280x720x30fps video. I found out that with HZ=1000, 10ms is acceptable,
+but with HZ=250 or HZ=300, we need 4ms, so that the video is played
+without any frame skips.
 
-Signed-off-by: Maciej W. Rozycki <macro@mips.com>
-Signed-off-by: Paul Burton <paul.burton@mips.com>
-Fixes: 4206d3aa1978 ("elf core dump: notes user_regset")
-Patchwork: https://patchwork.linux-mips.org/patch/19332/
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-Cc: James Hogan <jhogan@kernel.org>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: linux-fsdevel@vger.kernel.org
-Cc: linux-mips@linux-mips.org
-Cc: linux-kernel@vger.kernel.org
+This patch changes the delay to this value.
+
+Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- fs/binfmt_elf.c | 2 +-
+ include/video/udlfb.h | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/binfmt_elf.c
-+++ b/fs/binfmt_elf.c
-@@ -1571,7 +1571,7 @@ static int fill_thread_core_info(struct
- 		const struct user_regset *regset = &view->regsets[i];
- 		do_thread_regset_writeback(t->task, regset);
- 		if (regset->core_note_type && regset->get &&
--		    (!regset->active || regset->active(t->task, regset))) {
-+		    (!regset->active || regset->active(t->task, regset) > 0)) {
- 			int ret;
- 			size_t size = regset->n * regset->size;
- 			void *data = kmalloc(size, GFP_KERNEL);
+--- a/include/video/udlfb.h
++++ b/include/video/udlfb.h
+@@ -88,7 +88,7 @@ struct dlfb_data {
+ #define MIN_RAW_PIX_BYTES	2
+ #define MIN_RAW_CMD_BYTES	(RAW_HEADER_BYTES + MIN_RAW_PIX_BYTES)
+ 
+-#define DL_DEFIO_WRITE_DELAY    5 /* fb_deferred_io.delay in jiffies */
++#define DL_DEFIO_WRITE_DELAY    msecs_to_jiffies(HZ <= 300 ? 4 : 10) /* optimal value for 720p video */
+ #define DL_DEFIO_WRITE_DISABLE  (HZ*60) /* "disable" with long delay */
+ 
+ /* remove these once align.h patch is taken into kernel */
 
