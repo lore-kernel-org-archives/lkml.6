@@ -2,152 +2,278 @@ Return-Path: <SRS0=cWqk=OS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D761AC07E85
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:58:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 455A5C07E85
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 23:00:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9AA06208E7
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:58:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9AA06208E7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id 0A2FE2082F
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 23:00:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A2FE2082F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726627AbeLIW6p (ORCPT
+        id S1726607AbeLIXAv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 17:58:45 -0500
-Received: from mx2.suse.de ([195.135.220.15]:57314 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726337AbeLIW6p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Dec 2018 17:58:45 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 89BD4AC36;
-        Sun,  9 Dec 2018 22:58:43 +0000 (UTC)
-From:   NeilBrown <neilb@suse.com>
-To:     Jonathan Corbet <corbet@lwn.net>
-Date:   Mon, 10 Dec 2018 09:58:37 +1100
-Cc:     linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/2] Documentation: convert path-lookup from markdown to resturctured text
-In-Reply-To: <20181206100912.535b351d@lwn.net>
-References: <87k1l9dgx9.fsf@notabene.neil.brown.name> <87sgzc7v50.fsf@notabene.neil.brown.name> <20181205124644.3f8a452a@lwn.net> <87woonelit.fsf@notabene.neil.brown.name> <20181206100912.535b351d@lwn.net>
-Message-ID: <87h8fmcnoi.fsf@notabene.neil.brown.name>
+        Sun, 9 Dec 2018 18:00:51 -0500
+Received: from vmicros1.altlinux.org ([194.107.17.57]:50458 "EHLO
+        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726337AbeLIXAv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Dec 2018 18:00:51 -0500
+Received: from mua.local.altlinux.org (mua.local.altlinux.org [192.168.1.14])
+        by vmicros1.altlinux.org (Postfix) with ESMTP id 852B572CC66;
+        Mon, 10 Dec 2018 02:00:47 +0300 (MSK)
+Received: by mua.local.altlinux.org (Postfix, from userid 508)
+        id 745977CEF66; Mon, 10 Dec 2018 02:00:47 +0300 (MSK)
+Date:   Mon, 10 Dec 2018 02:00:47 +0300
+From:   "Dmitry V. Levin" <ldv@altlinux.org>
+To:     Shuah Khan <shuah@kernel.org>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Will Drewry <wad@chromium.org>,
+        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] selftests: do not macro-expand failed assertion expressions
+Message-ID: <20181209230047.GA1738@altlinux.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha256; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+I've stumbled over the current macro-expand behaviour of the test
+harness:
 
-On Thu, Dec 06 2018, Jonathan Corbet wrote:
+$ gcc -Wall -xc - <<'__EOF__'
+TEST(macro) {
+	int status = 0;
+	ASSERT_TRUE(WIFSIGNALED(status));
+}
+TEST_HARNESS_MAIN
+__EOF__
+$ ./a.out
+[==========] Running 1 tests from 1 test cases.
+[ RUN      ] global.macro
+<stdin>:4:global.macro:Expected 0 (0) != (((signed char) (((status) & 0x7f) + 1) >> 1) > 0) (0)
+global.macro: Test terminated by assertion
+[     FAIL ] global.macro
+[==========] 0 / 1 tests passed.
+[  FAILED  ]
 
-> On Thu, 06 Dec 2018 08:00:58 +1100
-> NeilBrown <neilb@suse.com> wrote:
->
->> > Is there a reason you used "include" rather than just adding it to the
->> > TOC tree with the rest?=20=20
->>=20
->> Simple.  I didn't know what I was doing, and so randomly made changes un=
-til
->> the result seemed acceptable - then I stopped.  If there is a better
->> way, feel free to tweak that when applying.
->
-> OK, tweaked and applied, thanks.
->
-> jon
+With this change the output of the same test looks much more
+comprehensible:
 
-Thanks...
+[==========] Running 1 tests from 1 test cases.
+[ RUN      ] global.macro
+<stdin>:4:global.macro:Expected 0 (0) != WIFSIGNALED(status) (0)
+global.macro: Test terminated by assertion
+[     FAIL ] global.macro
+[==========] 0 / 1 tests passed.
+[  FAILED  ]
 
-However we now have a stub section "Pathname lookup" which serves only
-to introduce another stub sectoin "Pathname lookup in Linux", which does
-little more than introduce the rest of the section.
-This seems inelegant, and is probably why I went for the "include"
-approach.
+The issue is very similar to the bug fixed in glibc assert(3)
+three years ago:
+https://sourceware.org/bugzilla/show_bug.cgi?id=18604
 
-What would you think of something more like the following?
+Cc: Shuah Khan <shuah@kernel.org>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Andy Lutomirski <luto@amacapital.net>
+Cc: Will Drewry <wad@chromium.org>
+Cc: linux-kselftest@vger.kernel.org
+Signed-off-by: Dmitry V. Levin <ldv@altlinux.org>
+---
+ tools/testing/selftests/kselftest_harness.h | 42 ++++++++++-----------
+ 1 file changed, 21 insertions(+), 21 deletions(-)
 
-Thanks,
-NeilBrown
-
-
-diff --git a/Documentation/filesystems/index.rst b/Documentation/filesystem=
-s/index.rst
-index ba921bdd5b06..605befab300b 100644
-=2D-- a/Documentation/filesystems/index.rst
-+++ b/Documentation/filesystems/index.rst
-@@ -363,8 +363,18 @@ encryption of files and directories.
- Pathname lookup
- =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-=20
-=2DPathname lookup in Linux is a complex beast; the document linked below
-=2Dprovides a comprehensive summary for those looking for the details.
-+
-+This write-up is based on three articles published at lwn.net:
-+
-+- <https://lwn.net/Articles/649115/> Pathname lookup in Linux
-+- <https://lwn.net/Articles/649729/> RCU-walk: faster pathname lookup in L=
-inux
-+- <https://lwn.net/Articles/650786/> A walk among the symlinks
-+
-+Written by Neil Brown with help from Al Viro and Jon Corbet.
-+It has subsequently been updated to reflect changes in the kernel
-+including:
-+
-+- per-directory parallel name lookup.
-=20
- .. toctree::
-    :maxdepth: 2
-diff --git a/Documentation/filesystems/path-lookup.rst b/Documentation/file=
-systems/path-lookup.rst
-index 30a155736afe..9d6b68853f5b 100644
-=2D-- a/Documentation/filesystems/path-lookup.rst
-+++ b/Documentation/filesystems/path-lookup.rst
-@@ -1,18 +1,3 @@
-=2D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-=2DPathname lookup in Linux
-=2D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-=2D
-=2DThis write-up is based on three articles published at lwn.net:
-=2D
-=2D- <https://lwn.net/Articles/649115/> Pathname lookup in Linux
-=2D- <https://lwn.net/Articles/649729/> RCU-walk: faster pathname lookup in=
- Linux
-=2D- <https://lwn.net/Articles/650786/> A walk among the symlinks
-=2D
-=2DWritten by Neil Brown with help from Al Viro and Jon Corbet.
-=2DIt has subsequently been updated to reflect changes in the kernel
-=2Dincluding:
-=2D
-=2D- per-directory parallel name lookup.
-=20
- Introduction to pathname lookup
- =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlwNnh0ACgkQOeye3VZi
-gbnoGBAAjDczYJTC0kacul7i43refFtkjks8ZUBJMNWfY+6Vwt26wUFJxFXUDwA4
-afavTflcD7ESD40GFljq/bwhwHjGI+1AB5Y5o2I8SaTlSUPnzohWQKbg8tgZRVxp
-n9b27wTGvD7kWbXShoGPclfRJsFR04ZW3gughrz0369IyZTO9UByzx/GMbxj/Ejo
-UtHqWQFmh90RTl4ES4Ms3bjVNwSBrBie2ZSAqS2Kqs8gJ38R7gbF/DE2CfHhsKGj
-lT5HF+9UEtb4kwZsn+QoSCqeMbtwKRm3f0KsbhKYNgi0Z0dreSa/d5RH7NFwbPfC
-0TwlcTI/2VxOyDxod4Z6p3CZ7CkQu8BiuRLOZTOaL/0I3GEV+YKEM4lFli9Uy68D
-4jk9Qhgec63FNwn8UXA9LiTAUIHILdoynYXmquZjmIC/FQomgCG6/pilLLM6hMRi
-dw91OCsj4KFCd8oqMfbyjjYo7KwCyBwraDic83GG15eqijv+L0GfqY9mfnMXWXqf
-3Cp9iFsNJnEmX3ZftDqonQiUKQ0BHzN1C2MEbMQyTo0Z/sxrWHitzbpNqb62RtEk
-IdgpZ32p0mvnXnGl2F2gsJJH06P0O+SNtBCer3TeVzvjQd/vmHCbrypoIxJUag+R
-JLJUBRawiwNSATv9rn03GJFgdekypUUKwSxylRg79mNyZfHZpoQ=
-=sKnw
------END PGP SIGNATURE-----
---=-=-=--
+diff --git a/tools/testing/selftests/kselftest_harness.h b/tools/testing/selftests/kselftest_harness.h
+index 6ae3730c4ee3..76d654ef3234 100644
+--- a/tools/testing/selftests/kselftest_harness.h
++++ b/tools/testing/selftests/kselftest_harness.h
+@@ -354,7 +354,7 @@
+  * ASSERT_EQ(expected, measured): expected == measured
+  */
+ #define ASSERT_EQ(expected, seen) \
+-	__EXPECT(expected, seen, ==, 1)
++	__EXPECT(expected, #expected, seen, #seen, ==, 1)
+ 
+ /**
+  * ASSERT_NE(expected, seen)
+@@ -365,7 +365,7 @@
+  * ASSERT_NE(expected, measured): expected != measured
+  */
+ #define ASSERT_NE(expected, seen) \
+-	__EXPECT(expected, seen, !=, 1)
++	__EXPECT(expected, #expected, seen, #seen, !=, 1)
+ 
+ /**
+  * ASSERT_LT(expected, seen)
+@@ -376,7 +376,7 @@
+  * ASSERT_LT(expected, measured): expected < measured
+  */
+ #define ASSERT_LT(expected, seen) \
+-	__EXPECT(expected, seen, <, 1)
++	__EXPECT(expected, #expected, seen, #seen, <, 1)
+ 
+ /**
+  * ASSERT_LE(expected, seen)
+@@ -387,7 +387,7 @@
+  * ASSERT_LE(expected, measured): expected <= measured
+  */
+ #define ASSERT_LE(expected, seen) \
+-	__EXPECT(expected, seen, <=, 1)
++	__EXPECT(expected, #expected, seen, #seen, <=, 1)
+ 
+ /**
+  * ASSERT_GT(expected, seen)
+@@ -398,7 +398,7 @@
+  * ASSERT_GT(expected, measured): expected > measured
+  */
+ #define ASSERT_GT(expected, seen) \
+-	__EXPECT(expected, seen, >, 1)
++	__EXPECT(expected, #expected, seen, #seen, >, 1)
+ 
+ /**
+  * ASSERT_GE(expected, seen)
+@@ -409,7 +409,7 @@
+  * ASSERT_GE(expected, measured): expected >= measured
+  */
+ #define ASSERT_GE(expected, seen) \
+-	__EXPECT(expected, seen, >=, 1)
++	__EXPECT(expected, #expected, seen, #seen, >=, 1)
+ 
+ /**
+  * ASSERT_NULL(seen)
+@@ -419,7 +419,7 @@
+  * ASSERT_NULL(measured): NULL == measured
+  */
+ #define ASSERT_NULL(seen) \
+-	__EXPECT(NULL, seen, ==, 1)
++	__EXPECT(NULL, "NULL", seen, #seen, ==, 1)
+ 
+ /**
+  * ASSERT_TRUE(seen)
+@@ -429,7 +429,7 @@
+  * ASSERT_TRUE(measured): measured != 0
+  */
+ #define ASSERT_TRUE(seen) \
+-	ASSERT_NE(0, seen)
++	__EXPECT(0, "0", seen, #seen, !=, 1)
+ 
+ /**
+  * ASSERT_FALSE(seen)
+@@ -439,7 +439,7 @@
+  * ASSERT_FALSE(measured): measured == 0
+  */
+ #define ASSERT_FALSE(seen) \
+-	ASSERT_EQ(0, seen)
++	__EXPECT(0, "0", seen, #seen, ==, 1)
+ 
+ /**
+  * ASSERT_STREQ(expected, seen)
+@@ -472,7 +472,7 @@
+  * EXPECT_EQ(expected, measured): expected == measured
+  */
+ #define EXPECT_EQ(expected, seen) \
+-	__EXPECT(expected, seen, ==, 0)
++	__EXPECT(expected, #expected, seen, #seen, ==, 0)
+ 
+ /**
+  * EXPECT_NE(expected, seen)
+@@ -483,7 +483,7 @@
+  * EXPECT_NE(expected, measured): expected != measured
+  */
+ #define EXPECT_NE(expected, seen) \
+-	__EXPECT(expected, seen, !=, 0)
++	__EXPECT(expected, #expected, seen, #seen, !=, 0)
+ 
+ /**
+  * EXPECT_LT(expected, seen)
+@@ -494,7 +494,7 @@
+  * EXPECT_LT(expected, measured): expected < measured
+  */
+ #define EXPECT_LT(expected, seen) \
+-	__EXPECT(expected, seen, <, 0)
++	__EXPECT(expected, #expected, seen, #seen, <, 0)
+ 
+ /**
+  * EXPECT_LE(expected, seen)
+@@ -505,7 +505,7 @@
+  * EXPECT_LE(expected, measured): expected <= measured
+  */
+ #define EXPECT_LE(expected, seen) \
+-	__EXPECT(expected, seen, <=, 0)
++	__EXPECT(expected, #expected, seen, #seen, <=, 0)
+ 
+ /**
+  * EXPECT_GT(expected, seen)
+@@ -516,7 +516,7 @@
+  * EXPECT_GT(expected, measured): expected > measured
+  */
+ #define EXPECT_GT(expected, seen) \
+-	__EXPECT(expected, seen, >, 0)
++	__EXPECT(expected, #expected, seen, #seen, >, 0)
+ 
+ /**
+  * EXPECT_GE(expected, seen)
+@@ -527,7 +527,7 @@
+  * EXPECT_GE(expected, measured): expected >= measured
+  */
+ #define EXPECT_GE(expected, seen) \
+-	__EXPECT(expected, seen, >=, 0)
++	__EXPECT(expected, #expected, seen, #seen, >=, 0)
+ 
+ /**
+  * EXPECT_NULL(seen)
+@@ -537,7 +537,7 @@
+  * EXPECT_NULL(measured): NULL == measured
+  */
+ #define EXPECT_NULL(seen) \
+-	__EXPECT(NULL, seen, ==, 0)
++	__EXPECT(NULL, "NULL", seen, #seen, ==, 0)
+ 
+ /**
+  * EXPECT_TRUE(seen)
+@@ -547,7 +547,7 @@
+  * EXPECT_TRUE(measured): 0 != measured
+  */
+ #define EXPECT_TRUE(seen) \
+-	EXPECT_NE(0, seen)
++	__EXPECT(0, "0", seen, #seen, !=, 0)
+ 
+ /**
+  * EXPECT_FALSE(seen)
+@@ -557,7 +557,7 @@
+  * EXPECT_FALSE(measured): 0 == measured
+  */
+ #define EXPECT_FALSE(seen) \
+-	EXPECT_EQ(0, seen)
++	__EXPECT(0, "0", seen, #seen, ==, 0)
+ 
+ /**
+  * EXPECT_STREQ(expected, seen)
+@@ -597,7 +597,7 @@
+ 	if (_metadata->passed && _metadata->step < 255) \
+ 		_metadata->step++;
+ 
+-#define __EXPECT(_expected, _seen, _t, _assert) do { \
++#define __EXPECT(_expected, _expected_str, _seen, _seen_str, _t, _assert) do { \
+ 	/* Avoid multiple evaluation of the cases */ \
+ 	__typeof__(_expected) __exp = (_expected); \
+ 	__typeof__(_seen) __seen = (_seen); \
+@@ -606,8 +606,8 @@
+ 		unsigned long long __exp_print = (uintptr_t)__exp; \
+ 		unsigned long long __seen_print = (uintptr_t)__seen; \
+ 		__TH_LOG("Expected %s (%llu) %s %s (%llu)", \
+-			 #_expected, __exp_print, #_t, \
+-			 #_seen, __seen_print); \
++			 _expected_str, __exp_print, #_t, \
++			 _seen_str, __seen_print); \
+ 		_metadata->passed = 0; \
+ 		/* Ensure the optional handler is triggered */ \
+ 		_metadata->trigger = 1; \
+-- 
+ldv
