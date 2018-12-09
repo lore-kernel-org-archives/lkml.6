@@ -2,126 +2,183 @@ Return-Path: <SRS0=cWqk=OS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 219B8C65BAF
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:01:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36E47C07E85
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:01:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D995820661
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:01:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544392895;
-	bh=+csGDQjAt3wUL5lVWLBnoXCkSIeDhZV22yrAsv9MpsE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=xZnt8oZwSC8iazKhmEZO/geWe2f5vxaIS36gJrsrGWiqyGZjwi+QVN+0PDgC1PL2K
-	 enzBpvZcaJ5d7pS/vHVS8iBaASNuNxqNfOxjV7jYJ/8iEUpVD2mQq4cbP1NBNygdJU
-	 r2MzHYoh02jrB+Uj35BIgrsm9seDs5RSBd5dLWlA=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D995820661
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id E871A20672
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:01:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E871A20672
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727252AbeLIWBd (ORCPT
+        id S1727255AbeLIWBm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 17:01:33 -0500
-Received: from mail-wr1-f48.google.com ([209.85.221.48]:35236 "EHLO
-        mail-wr1-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726678AbeLIWBc (ORCPT
+        Sun, 9 Dec 2018 17:01:42 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35942 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726676AbeLIVzd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Dec 2018 17:01:32 -0500
-Received: by mail-wr1-f48.google.com with SMTP id 96so8617828wrb.2
-        for <linux-kernel@vger.kernel.org>; Sun, 09 Dec 2018 14:01:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=GKkpqZfazBkhIXU6Z7Vj6BGBovitjRIAk7qm7gs95LA=;
-        b=HpAbp23RYmKnvSpxRDRsL23nWgSlyu1LB54dcMzKHM+x8LEja8/MT3IHYVM4m+3veG
-         1tfnk34jjHV92mQyjsMICpjNhqiycLwff+yFbYbwvm/cYGR2cRfteYdbWEl9Vy4h1RuT
-         aG1WSO2SC29sWmPMlnHAOrXjqd1p3dqRMwj/YhT8nZW7XoaMBGfWNNdE5hEpdh68UaS/
-         Q+dyIobtJS3VbJ74vIzcWr7Q4lkenux1aokYBxzgzHEjefTRoi4vq+2qGc9bbG5utf8t
-         AC8VIln5kBdOyzpMs4yQGIf6YPBuX4EFkHvTtHha/i/w79W3zYitBrUHZ/HddbmBhdjQ
-         xc7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=GKkpqZfazBkhIXU6Z7Vj6BGBovitjRIAk7qm7gs95LA=;
-        b=EKHehIHwklAKbf0mxd+UhkWGdfECXRLBjjNWw98l83C9cCTSxgK5+Yvy4sRUAPdE9s
-         owsRoaz8z5WyhuGqTllaD2vs9EtzU738q40HJnbr7wHAPTyvxpBt9sokNV/dJVzLRhS+
-         Jls43Azs/YlMwrKsNczmKPPWMcLRWlf0xq1sCp4lgm9GXtARHm9ajjYaok+tVqt7RHbN
-         FHSNuYgIuyJak515W9oWQmteRxW/LTO//dpMLoEsir2OxKufHVwHXXlrCsfEvpM0/RGk
-         2UCLwUmClUuP5G865Wzh/1WVyOM0cWaB3jSmUBEd7WYffZOhWwLZFxaubNUd3kCfWvgg
-         b40w==
-X-Gm-Message-State: AA+aEWYOdNRaP28Rydzc+IguBuyKSaL1qLC5wR7P5bOCUkPePuPP06Ol
-        Rz4PK9cCmdcGsvqkRCL/h8Q=
-X-Google-Smtp-Source: AFSGD/U1L/+ijcY+EuVeL/YP5jZ5iVBaZmM2amiVTf3qx9n6RZe3kdea8MLi8BJP6Y66jiT3MuRI0Q==
-X-Received: by 2002:adf:f2c6:: with SMTP id d6mr7457400wrp.37.1544392890484;
-        Sun, 09 Dec 2018 14:01:30 -0800 (PST)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id d2sm6648897wrs.97.2018.12.09.14.01.29
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 09 Dec 2018 14:01:29 -0800 (PST)
-Date:   Sun, 9 Dec 2018 23:01:27 +0100
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Masami Hiramatsu <mhiramat@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Andy Lutomirski <luto@amacapital.net>
-Subject: Re: Strange hang with gcc 8 of kprobe multiple_kprobes test
-Message-ID: <20181209220127.GA84159@gmail.com>
-References: <20181203211807.17e03384@vmware.local.home>
- <20181204164007.956a3458c9fd301b3d173eba@kernel.org>
- <20181204170229.4442d43ce956d48619c1d232@kernel.org>
- <20181204081506.GA73770@gmail.com>
- <20181204143830.6c7f8910@vmware.local.home>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+        Sun, 9 Dec 2018 16:55:33 -0500
+Received: from pub.yeoldevic.com ([81.174.156.145] helo=deadeye)
+        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1gW72w-0002ic-PO; Sun, 09 Dec 2018 21:55:31 +0000
+Received: from ben by deadeye with local (Exim 4.91)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1gW72j-0003c1-Gf; Sun, 09 Dec 2018 21:55:17 +0000
+Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
-In-Reply-To: <20181204143830.6c7f8910@vmware.local.home>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+From:   Ben Hutchings <ben@decadent.org.uk>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+CC:     akpm@linux-foundation.org, "Peter Wu" <peter@lekensteyn.nl>,
+        "Bjorn Helgaas" <bhelgaas@google.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        "Daniel Drake" <drake@endlessm.com>
+Date:   Sun, 09 Dec 2018 21:50:33 +0000
+Message-ID: <lsq.1544392233.668220791@decadent.org.uk>
+X-Mailer: LinuxStableQueue (scripts by bwh)
+X-Patchwork-Hint: ignore
+Subject: [PATCH 3.16 270/328] PCI: Reprogram bridge prefetch registers on
+ resume
+In-Reply-To: <lsq.1544392232.713909046@decadent.org.uk>
+X-SA-Exim-Connect-IP: 81.174.156.145
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+3.16.62-rc1 review patch.  If anyone has any objections, please let me know.
 
-* Steven Rostedt <rostedt@goodmis.org> wrote:
+------------------
 
-> On Tue, 4 Dec 2018 09:15:06 +0100
-> Ingo Molnar <mingo@kernel.org> wrote:
-> 
-> > * Masami Hiramatsu <mhiramat@kernel.org> wrote:
-> > 
-> > > I remember I have fixed this, and actually WE did it :-D
-> > > 
-> > > https://lkml.org/lkml/2018/8/23/1203
-> > > 
-> > > Ah, we hit a same bug...
-> > > 
-> > > Ingo, could you pick the patch? Should I resend it?  
-> > 
-> > Indeed: I just picked it up into tip:perf/urgent.
-> > 
-> > It's my bad: I missed the original submission due to Steve's feedback 
-> > which I mistook as a request for another iteration, while he only 
-> > commented on the reason for the original breakage and gave his 
-> > Reviewed-by ...
-> > 
-> 
-> Sorry for the confusion. The patch and code was quite complex, and I
-> was documenting what I thought of the patch (and the bug), so that my
-> Reviewed-by had a bit more meaning.
+From: Daniel Drake <drake@endlessm.com>
 
-It was totally welcome when I read it the second time - and it's my bad I 
-was reading too quickly first time around ;-)
+commit 083874549fdfefa629dfa752785e20427dde1511 upstream.
 
-So please keep doing it whenever you find the time! :)
+On 38+ Intel-based ASUS products, the NVIDIA GPU becomes unusable after S3
+suspend/resume.  The affected products include multiple generations of
+NVIDIA GPUs and Intel SoCs.  After resume, nouveau logs many errors such
+as:
 
-Thanks,
+  fifo: fault 00 [READ] at 0000005555555000 engine 00 [GR] client 04
+        [HUB/FE] reason 4a [] on channel -1 [007fa91000 unknown]
+  DRM: failed to idle channel 0 [DRM]
 
-	Ingo
+Similarly, the NVIDIA proprietary driver also fails after resume (black
+screen, 100% CPU usage in Xorg process).  We shipped a sample to NVIDIA for
+diagnosis, and their response indicated that it's a problem with the parent
+PCI bridge (on the Intel SoC), not the GPU.
+
+Runtime suspend/resume works fine, only S3 suspend is affected.
+
+We found a workaround: on resume, rewrite the Intel PCI bridge
+'Prefetchable Base Upper 32 Bits' register (PCI_PREF_BASE_UPPER32).  In the
+cases that I checked, this register has value 0 and we just have to rewrite
+that value.
+
+Linux already saves and restores PCI config space during suspend/resume,
+but this register was being skipped because upon resume, it already has
+value 0 (the correct, pre-suspend value).
+
+Intel appear to have previously acknowledged this behaviour and the
+requirement to rewrite this register:
+https://bugzilla.kernel.org/show_bug.cgi?id=116851#c23
+
+Based on that, rewrite the prefetch register values even when that appears
+unnecessary.
+
+We have confirmed this solution on all the affected models we have in-hands
+(X542UQ, UX533FD, X530UN, V272UN).
+
+Additionally, this solves an issue where r8169 MSI-X interrupts were broken
+after S3 suspend/resume on ASUS X441UAR.  This issue was recently worked
+around in commit 7bb05b85bc2d ("r8169: don't use MSI-X on RTL8106e").  It
+also fixes the same issue on RTL6186evl/8111evl on an Aimfor-tech laptop
+that we had not yet patched.  I suspect it will also fix the issue that was
+worked around in commit 7c53a722459c ("r8169: don't use MSI-X on
+RTL8168g").
+
+Thomas Martitz reports that this change also solves an issue where the AMD
+Radeon Polaris 10 GPU on the HP Zbook 14u G5 is unresponsive after S3
+suspend/resume.
+
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=201069
+Signed-off-by: Daniel Drake <drake@endlessm.com>
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Reviewed-By: Peter Wu <peter@lekensteyn.nl>
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+---
+ drivers/pci/pci.c | 27 +++++++++++++++++++--------
+ 1 file changed, 19 insertions(+), 8 deletions(-)
+
+--- a/drivers/pci/pci.c
++++ b/drivers/pci/pci.c
+@@ -1014,12 +1014,12 @@ int pci_save_state(struct pci_dev *dev)
+ EXPORT_SYMBOL(pci_save_state);
+ 
+ static void pci_restore_config_dword(struct pci_dev *pdev, int offset,
+-				     u32 saved_val, int retry)
++				     u32 saved_val, int retry, bool force)
+ {
+ 	u32 val;
+ 
+ 	pci_read_config_dword(pdev, offset, &val);
+-	if (val == saved_val)
++	if (!force && val == saved_val)
+ 		return;
+ 
+ 	for (;;) {
+@@ -1038,25 +1038,36 @@ static void pci_restore_config_dword(str
+ }
+ 
+ static void pci_restore_config_space_range(struct pci_dev *pdev,
+-					   int start, int end, int retry)
++					   int start, int end, int retry,
++					   bool force)
+ {
+ 	int index;
+ 
+ 	for (index = end; index >= start; index--)
+ 		pci_restore_config_dword(pdev, 4 * index,
+ 					 pdev->saved_config_space[index],
+-					 retry);
++					 retry, force);
+ }
+ 
+ static void pci_restore_config_space(struct pci_dev *pdev)
+ {
+ 	if (pdev->hdr_type == PCI_HEADER_TYPE_NORMAL) {
+-		pci_restore_config_space_range(pdev, 10, 15, 0);
++		pci_restore_config_space_range(pdev, 10, 15, 0, false);
+ 		/* Restore BARs before the command register. */
+-		pci_restore_config_space_range(pdev, 4, 9, 10);
+-		pci_restore_config_space_range(pdev, 0, 3, 0);
++		pci_restore_config_space_range(pdev, 4, 9, 10, false);
++		pci_restore_config_space_range(pdev, 0, 3, 0, false);
++	} else if (pdev->hdr_type == PCI_HEADER_TYPE_BRIDGE) {
++		pci_restore_config_space_range(pdev, 12, 15, 0, false);
++
++		/*
++		 * Force rewriting of prefetch registers to avoid S3 resume
++		 * issues on Intel PCI bridges that occur when these
++		 * registers are not explicitly written.
++		 */
++		pci_restore_config_space_range(pdev, 9, 11, 0, true);
++		pci_restore_config_space_range(pdev, 0, 8, 0, false);
+ 	} else {
+-		pci_restore_config_space_range(pdev, 0, 15, 0);
++		pci_restore_config_space_range(pdev, 0, 15, 0, false);
+ 	}
+ }
+ 
+
