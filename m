@@ -2,164 +2,127 @@ Return-Path: <SRS0=cWqk=OS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E41FAC07E85
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 14:45:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3B93C07E85
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 14:53:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9BD9E2081C
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 14:45:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B5C9F20831
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 14:53:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mg8YVYyS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9BD9E2081C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="CvaoG/fm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B5C9F20831
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726275AbeLIOpP (ORCPT
+        id S1726274AbeLIOxZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 09:45:15 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:36331 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726234AbeLIOpP (ORCPT
+        Sun, 9 Dec 2018 09:53:25 -0500
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:36610 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726234AbeLIOxZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Dec 2018 09:45:15 -0500
-Received: by mail-lf1-f66.google.com with SMTP id a16so6185025lfg.3;
-        Sun, 09 Dec 2018 06:45:13 -0800 (PST)
+        Sun, 9 Dec 2018 09:53:25 -0500
+Received: by mail-oi1-f196.google.com with SMTP id x23so7052304oix.3
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Dec 2018 06:53:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=n8rvZRrhr8S716ZEGYPUCY0jiZKk7w2IaFybvj3M1Hs=;
-        b=mg8YVYySiNGg1bOcpz/lX4nZMO9CbQlYreW7llCvr0CGeZ0oBpe3LZrVxAibM6IGoH
-         sWJdixdtPsrRDE8Mt7ib+TwtoeTqpCALrwbl4MW+Zfo2m3TrDVSavSOJijyuciIln3in
-         EUXmtf5j68blDGr/0QaRIlQh2r0tNMVuZJYZPhlKuVPW3yNqS1dFBb0P4z9RdlXy6F+F
-         9pJGlERIqvC/+cNdSAa/KviPjgb1dbTCSGiBvmzUsp2lCKHxcn4mqbsDRNAQtjRyS9XU
-         NBsM7a8J+iEN81UnsMcemfZ0hfseJCQCbTgs1eqlA0JbHe/wW4nZb+t2pJcRG/BfeUDi
-         gERg==
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:openpgp:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=l0srbhcHbgQlVQPBg/OmvSTJKddNhV75fpIIOgujBA0=;
+        b=CvaoG/fmDfncOFK6yG+4XoSdBzrF6mDuqA1riqO40E1LOhXjNhgw/07jpMbkAK/lf5
+         2iiQf3q0zQZ6soCrWxBk02Kv6fQqutTGgNYFlo39WgmjvLnRnqJjDDSLcyXY4LfdqQne
+         rCdFOyMj/00B+R1+9O4E3WtTNxM7QiS06iNvM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=n8rvZRrhr8S716ZEGYPUCY0jiZKk7w2IaFybvj3M1Hs=;
-        b=PnqDbbN1snYVyVH5zIWimOm7+vFv+qPh2ENGWCkzSVy+sWLz2P64plNIRe2dB7dusi
-         edMNwqM4lvneBjsIHaLQKO6aPdmX7eW99LVwHJ4931WXl9N3zacKEQd5zznEUfTacR7/
-         LqT6rA8OG59fkXizCP76r0A2yeaV/InhswlY/T9D8eyGu62MK2s1b6QC/Dx5GhU+6zHZ
-         0alIQISvaiA1sjXwwvc/aU3LfEGDMapcAE3oi4DjZjo+1KFI4/HZrbWfey+x2JYMbjbp
-         hqWhUqbqDYrZ3Ao/lbC2Ju1NSVCnnrhm5VfM+7eGPs45yNKQGM8LNvy0h5CQwyaFhhPG
-         iNEg==
-X-Gm-Message-State: AA+aEWaA5GlhDPFaFKwQ9Ggz9VgQpYdWqx3R02a4+JkijVWVNvpIAlSm
-        bDAqTAtkx6Cne7F23b6wqvY1RscZQF3Mjd2/0Ss=
-X-Google-Smtp-Source: AFSGD/X+FLPMJ+7YEXtQdCWnvQF8H4oOeOba+ik7SqKRJaTIUcXdrakMPXGcPqgvAk1/9IyvU7dtQS+ZOtJftrkVO2o=
-X-Received: by 2002:a19:1a14:: with SMTP id a20mr4610304lfa.1.1544366712444;
- Sun, 09 Dec 2018 06:45:12 -0800 (PST)
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=l0srbhcHbgQlVQPBg/OmvSTJKddNhV75fpIIOgujBA0=;
+        b=irUiF4lpVv6Bz5oO80zU7Lz4Z9T1gAyb0VuCg/o7689WK1S441hz7aXY3Y6WaLKbw8
+         IjKklWpeqqsFg/AUq5vD/Y2+wKcvroQgqn6qv5cdAnKKiBXynzTbp4SFr2kiBrSd95fF
+         qTqxpePb4nuKODguT0qbfxncbdUTuCjYBuH64gm4yeQi0DaBqcUgiQnKoz5LBUUcPW4Z
+         7mn/C+KvNk1GA52hqc3fiwWok91RL928kNBd/Khwc9arySOlyV8EDAYQTDm5AIqaK8i9
+         ASdVW96ftqYmAiL0FdGOIuCecInSfGbZhfqFOX1H6Md3Nwe+byNUjj3zmoBByfLYYr/n
+         bvcA==
+X-Gm-Message-State: AA+aEWbnWOVousB0O3c6OKymwRtm9ClcEVTPV6kuPAvLg7Yh9e4/x65k
+        zkQ5VKp29UH+qLTLUXE59sqPwcF/KOVPhg==
+X-Google-Smtp-Source: AFSGD/UVlr0Kv4PvCnMh7I/QBzCULLaJ0qmswwYgcWIcziOm7A6Pi+Hcn0bCIgEeiGGQ1rcE7uK4ag==
+X-Received: by 2002:aca:915:: with SMTP id 21mr5566298oij.163.1544367203794;
+        Sun, 09 Dec 2018 06:53:23 -0800 (PST)
+Received: from cloudburst.twiddle.net ([187.217.227.243])
+        by smtp.gmail.com with ESMTPSA id e8sm3987807otq.17.2018.12.09.06.53.21
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 09 Dec 2018 06:53:23 -0800 (PST)
+Subject: Re: [PATCH v6 04/13] arm64/kvm: hide ptrauth from guests
+To:     Kristina Martsenko <kristina.martsenko@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+Cc:     Adam Wallis <awallis@codeaurora.org>,
+        Amit Kachhap <amit.kachhap@arm.com>,
+        Andrew Jones <drjones@redhat.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Christoffer Dall <christoffer.dall@arm.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Dave P Martin <dave.martin@arm.com>,
+        Jacob Bramley <jacob.bramley@arm.com>,
+        Kees Cook <keescook@chromium.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ramana Radhakrishnan <ramana.radhakrishnan@arm.com>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        kvmarm@lists.cs.columbia.edu, linux-kernel@vger.kernel.org
+References: <20181207183931.4285-1-kristina.martsenko@arm.com>
+ <20181207183931.4285-5-kristina.martsenko@arm.com>
+From:   Richard Henderson <richard.henderson@linaro.org>
+Openpgp: preference=signencrypt
+Message-ID: <57966497-d21c-5439-e4ba-d75f5552282f@linaro.org>
+Date:   Sun, 9 Dec 2018 08:53:19 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-References: <CGME20181130093318eucas1p24feb8e649c8f244ce149a7f87e43c828@eucas1p2.samsung.com>
- <1543570361-3168-1-git-send-email-huijin.park@samsung.com> <20181130195607.GA27411@vader>
-In-Reply-To: <20181130195607.GA27411@vader>
-From:   Huijin Park <bbanghj.park@gmail.com>
-Date:   Sun, 9 Dec 2018 23:44:59 +0900
-Message-ID: <CAMy0x0kYs7-oK7__GK0uqaNdAwyH_y3RG+misbyKc2f=cgDeAA@mail.gmail.com>
-Subject: Re: [PATCH,1/2] genhd: avoid overflow of sectors in disk_stats
-To:     osandov@osandov.com
-Cc:     huijin.park@samsung.com, adilger.kernel@dilger.ca,
-        michaelcallahan@fb.com, osandov@fb.com, js07.lee@samsung.com,
-        linux-block@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20181207183931.4285-5-kristina.martsenko@arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Omar Sandoval,
+On 12/7/18 12:39 PM, Kristina Martsenko wrote:
+> From: Mark Rutland <mark.rutland@arm.com>
+> 
+> In subsequent patches we're going to expose ptrauth to the host kernel
+> and userspace, but things are a bit trickier for guest kernels. For the
+> time being, let's hide ptrauth from KVM guests.
+> 
+> Regardless of how well-behaved the guest kernel is, guest userspace
+> could attempt to use ptrauth instructions, triggering a trap to EL2,
+> resulting in noise from kvm_handle_unknown_ec(). So let's write up a
+> handler for the PAC trap, which silently injects an UNDEF into the
+> guest, as if the feature were really missing.
 
-On Sat, Dec 1, 2018 at 4:56 AM Omar Sandoval <osandov@osandov.com> wrote:
->
-> On Fri, Nov 30, 2018 at 04:32:40AM -0500, Huijin Park wrote:
-> > From: "huijin.park" <huijin.park@samsung.com>
-> >
-> > This patch changes the 'sectors' type to an u64.
-> > In 32 bit system, the 'sectors' can accumulate up to about 2TiB.
-> > If a 32 bit system makes i/o over 2TiB while running,
-> > the 'sectors' will overflow.
-> > As a result, the part_stat_read(sectors), the diskstats in proc and
-> > the (lifetime|session)_write_kbytes in sysfs return invalid statistic.
->
-> What about parsers which expect it to be an unsigned long? E.g., iostat:
-> https://github.com/sysstat/sysstat/blob/v12.1.1/rd_stats.c#L736
->
-> At least with glibc, scanf seems to truncate sanely, but this appears to
-> be undefined.
+Reviewing the long thread that accompanied v5, I thought we were *not* going to
+trap PAuth instructions from the guest.
 
-The glibc APIs such as scanf and strtoul set return value and errno
-to ULONG_MAX and ERANGE in overflow case.
-I think ULONG_MAX and ERANGE are better than reset to zero because
-of overflow. At least, application can notice overflow with errno.
-Besides nowadays, a 32 bit is not enough size to show
-an i/o accumulated size.
-I met a problem like below. So I suggested this patch.
+In particular, the OS distribution may legitimately be built to include
+hint-space nops.  This includes XPACLRI, which is used by the C++ exception
+unwinder and not controlled by SCTLR_EL1.EnI{A,B}.
 
-sh-3.2# mount | grep p19
-/dev/mmcblk0p19 on /ext4_dir type ext4 (rw,relatime,data=ordered)
-sh-3.2# cat /sys/fs/ext4/mmcblk0p19/session_write_kbytes
-2147467268
-sh-3.2# cat /sys/fs/ext4/mmcblk0p19/lifetime_write_kbytes
-2147568561
-sh-3.2# dd if=/dev/zero of=/ext4_dir/temp.bin bs=1M count=20 oflag=sync
-20+0 records in
-20+0 records out
-20971520 bytes (21 MB) copied,
-0.621939 s, 33.7 MB/s
-sh-3.2# cat /sys/fs/ext4/mmcblk0p19/session_write_kbytes
-4524
-sh-3.2# cat /sys/fs/ext4/mmcblk0p19/lifetime_write_kbytes
-105817
+It seems like the header comment here, and
 
->
-> > Signed-off-by: huijin.park <huijin.park@samsung.com>
-> > ---
-> >  block/genhd.c         |    6 +++---
-> >  include/linux/genhd.h |    2 +-
-> >  2 files changed, 4 insertions(+), 4 deletions(-)
-> >
-> > diff --git a/block/genhd.c b/block/genhd.c
-> > index 0145bcb..7518dcd 100644
-> > --- a/block/genhd.c
-> > +++ b/block/genhd.c
-> > @@ -1343,10 +1343,10 @@ static int diskstats_show(struct seq_file *seqf, void *v)
-> >               part_stat_unlock();
-> >               part_in_flight(gp->queue, hd, inflight);
-> >               seq_printf(seqf, "%4d %7d %s "
-> > -                        "%lu %lu %lu %u "
-> > -                        "%lu %lu %lu %u "
-> > +                        "%lu %lu %llu %u "
-> > +                        "%lu %lu %llu %u "
-> >                          "%u %u %u "
-> > -                        "%lu %lu %lu %u\n",
-> > +                        "%lu %lu %llu %u\n",
-> >                          MAJOR(part_devt(hd)), MINOR(part_devt(hd)),
-> >                          disk_name(gp, hd->partno, buf),
-> >                          part_stat_read(hd, ios[STAT_READ]),
-> > diff --git a/include/linux/genhd.h b/include/linux/genhd.h
-> > index 0c5ee17..5bf86f9 100644
-> > --- a/include/linux/genhd.h
-> > +++ b/include/linux/genhd.h
-> > @@ -84,7 +84,7 @@ struct partition {
-> >
-> >  struct disk_stats {
-> >       u64 nsecs[NR_STAT_GROUPS];
-> > -     unsigned long sectors[NR_STAT_GROUPS];
-> > +     u64 sectors[NR_STAT_GROUPS];
-> >       unsigned long ios[NR_STAT_GROUPS];
-> >       unsigned long merges[NR_STAT_GROUPS];
-> >       unsigned long io_ticks;
-> > --
-> > 1.7.9.5
-> >
+> +/*
+> + * Guest usage of a ptrauth instruction (which the guest EL1 did not turn into
+> + * a NOP).
+> + */
+> +static int kvm_handle_ptrauth(struct kvm_vcpu *vcpu, struct kvm_run *run)
+> +
 
-Thanks,
-Huijin
+here, need updating.
+
+
+r~
