@@ -2,124 +2,112 @@ Return-Path: <SRS0=cWqk=OS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.9 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 594D6C07E85
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 21:33:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51B13C07E85
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 21:37:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0439B2081F
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 21:33:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G/q135oq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0439B2081F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 10D012081C
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 21:37:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 10D012081C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gmx.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726300AbeLIVdZ (ORCPT
+        id S1726291AbeLIVho (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 16:33:25 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:45784 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726194AbeLIVdZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Dec 2018 16:33:25 -0500
-Received: by mail-wr1-f67.google.com with SMTP id b14so8533944wru.12;
-        Sun, 09 Dec 2018 13:33:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=857ZMMoXI/CAkwGPUnJFZGF2TVpq19l2iPMEMaiv08w=;
-        b=G/q135oqwjztASIzmlRBfwTihpy9EwGxvPUGoYHGKtiCdi7MPpiTRRELYNuz1trS1s
-         tewoXrfZPIRgNirlyyAGmmg/CcvaAAWk2sea20t+5irziYkEcQG3TQtih8SRGPdZzQzn
-         tjZP8M5OdZu98Q9I5PCjZdVp66DT3dpBn0PyQK329+twd8WUS0s0ak4i3M+lFAxdoBPX
-         bFV3SCStLNE2QQjdHopflAqrTzMiee2SgykRiOaW/zxIS4hW1qOeW+s5rdxVhY7XC551
-         nK39BScO+EpJXPYLMz3a4ug0LueIPksr19QXp/TzZ0p+APcoUwg49liiTXos0+OuwhT0
-         0/3g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=857ZMMoXI/CAkwGPUnJFZGF2TVpq19l2iPMEMaiv08w=;
-        b=PGvHOYa+po0aIWnog7b/1xboa3gilvaxQ/mJ/VsTZcvpcan0AFpRx1cYDb0nYqbInh
-         0qtUIZ83fJSlvNdZS14nXZ6TfBAr5H8UZrmmhPt/2fJjnQz6i+gWuL6hJhPv8O/5czV7
-         0Gj7kiGXbdAw6FmPWn4rRoi8mlwWBrdLziRDaucwCzDkKnREYwYGVCvYfuHKmSYK6OYd
-         WbQkh15H18AM/2rXQvkJjgDf6D+690F82n8nZ2KShsqAFYcvW9K5bdI+IrjRWOtQ/h7a
-         rLhi/qyz3DROMcaQfKwewSCtAzRYyj7amNarAlEW2GF1FVene6j/3sLxAAnqDidLwL+X
-         BlLA==
-X-Gm-Message-State: AA+aEWblc35PlGX+mQTSUmSgBy3A2G5QcTbCNnfLt+WHci4RJWuzHgpa
-        nrhTu0j/K0F0l5OGR+f/x08=
-X-Google-Smtp-Source: AFSGD/U0DLFmuLSeXjAfNtgngkUm1KSKIFpRGt+GL17mySchF8+h39abNamPXYQI1xG5rW1DTl1qeg==
-X-Received: by 2002:a5d:6907:: with SMTP id t7mr7686592wru.226.1544391202550;
-        Sun, 09 Dec 2018 13:33:22 -0800 (PST)
-Received: from ?IPv6:2003:ea:8bcf:e300:2cf2:1fe3:239e:489f? (p200300EA8BCFE3002CF21FE3239E489F.dip0.t-ipconnect.de. [2003:ea:8bcf:e300:2cf2:1fe3:239e:489f])
-        by smtp.googlemail.com with ESMTPSA id u204sm20878210wmu.30.2018.12.09.13.33.21
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 09 Dec 2018 13:33:21 -0800 (PST)
-Subject: Re: linux-next: Signed-off-by missing for commits in the net-next
- tree
-To:     Andrew Lunn <andrew@lunn.ch>, David Miller <davem@davemloft.net>
-Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Networking <netdev@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Florian Fainelli <f.fainelli@gmail.com>
-References: <20181210080045.0e67ad79@canb.auug.org.au>
- <20181209211139.GB21186@lunn.ch>
-From:   Heiner Kallweit <hkallweit1@gmail.com>
-Message-ID: <011f5be3-4bc1-2e64-0ddf-b43b8dbc4dcd@gmail.com>
-Date:   Sun, 9 Dec 2018 22:33:10 +0100
+        Sun, 9 Dec 2018 16:37:44 -0500
+Received: from mout.gmx.net ([212.227.15.19]:44173 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726194AbeLIVho (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Dec 2018 16:37:44 -0500
+Received: from [10.1.1.220] ([125.120.80.114]) by mail.gmx.com (mrgmx003
+ [212.227.17.184]) with ESMTPSA (Nemesis) id 0MLujU-1gXDkn0KWC-007nd1; Sun, 09
+ Dec 2018 22:37:33 +0100
+Subject: Re: [PATCH] staging: erofs: Add braces to do-while statements
+To:     Thomas Jespersen <laumann.thomas@gmail.com>
+Cc:     gaoxiang25@huawei.com, yuchao0@huawei.com,
+        gregkh@linuxfoundation.org, linux-erofs@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org
+References: <20181209155900.10164-1-laumann.thomas@gmail.com>
+From:   Gao Xiang <hsiangkao@gmx.com>
+Message-ID: <5db45ff8-ea1a-10f3-fc63-f1918818c9ce@gmx.com>
+Date:   Mon, 10 Dec 2018 05:37:27 +0800
 User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
  Thunderbird/60.3.3
 MIME-Version: 1.0
-In-Reply-To: <20181209211139.GB21186@lunn.ch>
+In-Reply-To: <20181209155900.10164-1-laumann.thomas@gmail.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Provags-ID: V03:K1:eZNvgb51EpxmGLISM+xYs4Ip+S97XE1qWF6Hw80nt41Dmp7yRiA
+ hoWiX1JJY6l0PxPE2RvQqPO9VRUT5taEcqjQwqzB+hBXglIMAIxNbFBFQ2nfOAvULF7FBiM
+ 8c0b2mrsAVuXwrBd48fZozQ7QaSRS2g8h/S6jSwKfmNRfwE4mv06ankElHYGNuXeRB8+ZV9
+ xY2sSFtEHdKeencj+c5iQ==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:pGn5yHpBCzg=:2KAl0dNUnNCZzJ6mFa1QL2
+ pRAhWKKqMy+rhJN5qyEqm167/fJP65zfDuus2C7S4rAdmSlx21WBQTOyhckhVh1F5ZR8m8UdX
+ 1zrJ4YNSE5CapCiACOFe3fjR6SxyQ/dDTnZ3WQTj/oIZ/l4K3i3OaquXggTMpV89ZEuKkDEf/
+ dsEwswf879NFuDeKsskWmOKTyZ90u150cfUnXHsZK2hIrxl1u7hJrU0TeCWMZULSjYfJun+kd
+ K6XnGC4GaleZznhyMDOmj2On2gipsgiZnofUjQwKcpEIR0wlHcaytYWxyLPN5lsYadU1q8hkW
+ e1umg7AinRxxpvUEKTZ7/WgSehjKREmkRHyMw2kcobWvhQ4/ptbgHZkEyQ9fo9oTlPXajAz1u
+ nmFqehhqX1oii6lF9DQezzyAeJqG47asZzagSV0/YMjiV4ygo8Y7egku0Jj1JmGqq+FhYIR8E
+ izWdpVEEtsKwO5huaDiOYMpu/VxF7Dpn0S7k3UEcvp0JM2ZGZLBWEM6RNHg1T+rF1rA5+oCdA
+ RvcU5N38QHKZNg7y2le66VXyAk8wTzxrGnxsgGVEepqH8+vD5WlUzBdfmAx62HfbDHOb9q5wF
+ dtsnUSlWGxb9l8nPPindHZrHQ6q64gjHaEjh8oZz4RiYZFZstAl98B8+1b0D3rcXmtGMV0KNp
+ 760wg7xrDwyWUZPT7OBRyXII2yOvfsHGZ+40osbj1WcexJn9P8KhCwVEeFBMzrwBwVlLOAbYq
+ oZ67M+nglG/xVHz5F1vq0RPbYZMmYhiH2tTta8XpYnyLMJUVGO8ZEdXc1nzClPRSJpt8ECVqU
+ hT8TeWFxUTAdWzF4HzTZ/8PZeo5dH4OrnjytJGVLj37nl2Wy3KuGFl5XVPRKovD+aGCCqtHvj
+ cmImwqStK4kTLpUM9TR6/peWI04caLAK50ThuF/LGvzcUAHVLBiZyJJbxudTvH
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09.12.2018 22:11, Andrew Lunn wrote:
-> On Mon, Dec 10, 2018 at 08:00:45AM +1100, Stephen Rothwell wrote:
->> Hi all,
->>
->> Commits
->>
->>   dc9d38cec71c ("net: phy: mdio-gpio: Add phy_ignore_ta_mask to platform data")
->>   04fa26bab06d ("net: phy: mdio-gpio: Add platform_data support for phy_mask")
->>
->> are missing a Signed-off-by from their author.
-> 
-> Hi David.
-> 
-> Any idea what happened here? The version in my git repo has SOB.
-> 
-> https://patchwork.ozlabs.org/patch/1009811/ also has my SOB.
-> 
-Instead of
-v2
---
-int -> u32 in platform data structure
+[oops... I found Thomas sent the exactly the same email again.]
 
-Signed-off-by: Andrew Lunn <andrew@lunn.ch>
+On 2018/12/9 23:59, Thomas Jespersen wrote:
+> This fixes warning reported by sparse (with -Wsparse-all).
+>
+> Signed-off-by: Thomas Jespersen <laumann.thomas@gmail.com>
+> ---
+>  drivers/staging/erofs/internal.h | 4 ++--
+>  drivers/staging/erofs/utils.c    | 4 ++--
+>  2 files changed, 4 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/staging/erofs/internal.h b/drivers/staging/erofs/internal.h
+> index 57575c7f5635..bf180a803446 100644
+> --- a/drivers/staging/erofs/internal.h
+> +++ b/drivers/staging/erofs/internal.h
+> @@ -232,9 +232,9 @@ static inline bool erofs_workgroup_get(struct erofs_workgroup *grp, int *ocnt)
+>  	/* spin if it is temporarily locked at the reclaim path */
+>  	if (unlikely(o == locked)) {
+>  #if defined(CONFIG_SMP) || defined(CONFIG_DEBUG_SPINLOCK)
+> -		do
+> +		do {
+>  			cpu_relax();
+> -		while (atomic_read(&grp->refcount) == locked);
+> +		} while (atomic_read(&grp->refcount) == locked);
+>  #endif
+>  		goto repeat;
+>  	}
 
-shouldn't it be
+Could you please check the latest source code? I cannot find the above code...
 
-Signed-off-by: Andrew Lunn <andrew@lunn.ch>
----
-v2
-- int -> u32 in platform data structure
+So I think this patch cannot be applied directly :(
 
-?
+https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git/tree/drivers/staging/erofs/internal.h?h=staging-next#n260
 
-Heiner
->      Thanks
-> 	Andrew
-> 
+
+... and why you send this patch without modification...
+
+https://lists.ozlabs.org/pipermail/linux-erofs/2018-December/001099.html
+
+https://lists.ozlabs.org/pipermail/linux-erofs/2018-December/001100.html
+
+
+Thanks,
+
+Gao Xiang
 
