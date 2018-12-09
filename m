@@ -2,158 +2,123 @@ Return-Path: <SRS0=cWqk=OS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3424AC07E85
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:45:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E178C67838
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:46:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 025832081C
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:45:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 025832081C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.com
+	by mail.kernel.org (Postfix) with ESMTP id 36CBA2081C
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:46:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=fredlawl-com.20150623.gappssmtp.com header.i=@fredlawl-com.20150623.gappssmtp.com header.b="xxShai0K"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 36CBA2081C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fredlawl.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726393AbeLIWpz (ORCPT
+        id S1726428AbeLIWqk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 17:45:55 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:40166 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726268AbeLIWpz (ORCPT
+        Sun, 9 Dec 2018 17:46:40 -0500
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:38865 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726268AbeLIWqj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Dec 2018 17:45:55 -0500
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: sre)
-        with ESMTPSA id 3E2FE2667CA
-Received: by earth.universe (Postfix, from userid 1000)
-        id 110BB3C08D6; Sun,  9 Dec 2018 23:45:51 +0100 (CET)
-Date:   Sun, 9 Dec 2018 23:45:51 +0100
-From:   Sebastian Reichel <sebastian.reichel@collabora.com>
-To:     Keerthy <j-keerthy@ti.com>
-Cc:     tony@atomide.com, lee.jones@linaro.org, linux-omap@vger.kernel.org,
-        linux-kernel@vger.kernel.org, t-kristo@ti.com, ladis@linux-mips.org
-Subject: Re: [PATCH v3] mfd: tps65218: Use devm_regmap_add_irq_chip and clean
- up  error path in probe
-Message-ID: <20181209224551.3nouziwxu5kc5s7a@earth.universe>
-References: <1544363971-28061-1-git-send-email-j-keerthy@ti.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="46vp3x4hcrfmaouo"
-Content-Disposition: inline
-In-Reply-To: <1544363971-28061-1-git-send-email-j-keerthy@ti.com>
-User-Agent: NeoMutt/20180716
+        Sun, 9 Dec 2018 17:46:39 -0500
+Received: by mail-oi1-f196.google.com with SMTP id a77so7552196oii.5
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Dec 2018 14:46:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fredlawl-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id;
+        bh=guAieEX3tnWHuuM1l8KzNMGuDYrTMkG1L3tUfFzs1SM=;
+        b=xxShai0KajxFgh0/VSCAlsn3fDuzfhHfpfoD40ifgx/381jEBgNQBcpK/t6kViJTcQ
+         TP4gKm2asshj+a97qW77hB9To4ksVun+et79b4r6DBGl768mqN+fz3sMlBGT2c67f4o6
+         0NEjCNZ/t+KuZek23xwHl4XgmH26fIQnaAZIzZT6rPwprQp8+rf+bNpYaf7Xm0ZwMdbQ
+         TMtQeYJ73U0P1rCENmo6mnZP8QojmHR6KsfjdkgDSlj/Lg/boklpNo4hvLhPdMhPxW7z
+         V5eDNMb+K9l9Odt/rPzsyhnlDDghT+w+cuqB0m1eFfLa6d9J6I0VTxDhnzauBr5H+A8g
+         wksw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=guAieEX3tnWHuuM1l8KzNMGuDYrTMkG1L3tUfFzs1SM=;
+        b=QLF+X0xzzOJYSoAWQVP1HU3dzbtIfol4H/21bArmcJnWkngErXu3Pqcnk12Y0W76eB
+         DW6Intz1Dz612vph5f7SjA2OtitvQuy0BOg3hrsX3DJ5EcqbX60hd4TlWQmTZ8HLgSPR
+         e4R99ShrkJs4JmLYE/JVM7Nu2d+RId0Kwst2XKeTDNAUxULeFbHq+qYWlipOOvbVyOOu
+         aKFh8mvURGnfzSf1WtEMH8LW7NSY+fwZtQR/Eh5gFSrQLDlVaac7n5X3il3Sc7vJwggb
+         0P8lJFmH2q41IRe7ZOhX9y+AsLa6F7+9S49FHSChItVIO+4lB9bDIu/qyWQF4zOrQuFu
+         aElg==
+X-Gm-Message-State: AA+aEWanlIzCx9drvlPf29KjqnMrvFMq0XkPL6avBh04SzUxWYQy8Jqw
+        yxp226gJvQV51v383kIYxFHGxg==
+X-Google-Smtp-Source: AFSGD/WubISG1uQFa6RUJfFbxT0euSoeTyWtixN6znufigZydWaf0gAyZCVkz7cMa8Rs2wwxSTSUpA==
+X-Received: by 2002:aca:d64d:: with SMTP id n74mr5931462oig.199.1544395598444;
+        Sun, 09 Dec 2018 14:46:38 -0800 (PST)
+Received: from ubuntu-fredlawl.attlocal.net ([2600:1702:3be0:4340:e5c0:b776:5e38:6371])
+        by smtp.gmail.com with ESMTPSA id c23sm4339179otn.21.2018.12.09.14.46.36
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 09 Dec 2018 14:46:37 -0800 (PST)
+From:   Frederick Lawler <fred@fredlawl.com>
+To:     helgaas@kernel.org
+Cc:     linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+        ptalbert@redhat.com, Frederick Lawler <fred@fredlawl.com>
+Subject: [PATCH] PCI/ASPM: Remove unused lists from struct pcie_link_state
+Date:   Sun,  9 Dec 2018 16:45:50 -0600
+Message-Id: <20181209224550.18931-1-fred@fredlawl.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+ASPM does not make use of the children or link LIST_HEADs declared in
+struct pcie_link_state and defined in alloc_pcie_link_state(). Therefore,
+remove these lists.
 
---46vp3x4hcrfmaouo
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+No functional change intended.
 
-Hi,
+Signed-off-by: Frederick Lawler <fred@fredlawl.com>
+---
+ drivers/pci/pcie/aspm.c | 6 ------
+ 1 file changed, 6 deletions(-)
 
-On Sun, Dec 09, 2018 at 07:29:31PM +0530, Keerthy wrote:
-> Use devm_regmap_add_irq_chip and clean up error path in probe
-> and also the remove function.
->=20
-> Reported-by: Christian Hohnstaedt <Christian.Hohnstaedt@wago.com>
-> Signed-off-by: Keerthy <j-keerthy@ti.com>
-> ---
+diff --git a/drivers/pci/pcie/aspm.c b/drivers/pci/pcie/aspm.c
+index dcb29cb76dc6..2330ebf6df72 100644
+--- a/drivers/pci/pcie/aspm.c
++++ b/drivers/pci/pcie/aspm.c
+@@ -53,8 +53,6 @@ struct pcie_link_state {
+ 	struct pcie_link_state *root;	/* pointer to the root port link */
+ 	struct pcie_link_state *parent;	/* pointer to the parent Link state */
+ 	struct list_head sibling;	/* node in link_list */
+-	struct list_head children;	/* list of child link states */
+-	struct list_head link;		/* node in parent's children list */
+ 
+ 	/* ASPM state */
+ 	u32 aspm_support:7;		/* Supported ASPM state */
+@@ -850,8 +848,6 @@ static struct pcie_link_state *alloc_pcie_link_state(struct pci_dev *pdev)
+ 		return NULL;
+ 
+ 	INIT_LIST_HEAD(&link->sibling);
+-	INIT_LIST_HEAD(&link->children);
+-	INIT_LIST_HEAD(&link->link);
+ 	link->pdev = pdev;
+ 	link->downstream = pci_function_0(pdev->subordinate);
+ 
+@@ -877,7 +873,6 @@ static struct pcie_link_state *alloc_pcie_link_state(struct pci_dev *pdev)
+ 
+ 		link->parent = parent;
+ 		link->root = link->parent->root;
+-		list_add(&link->link, &parent->children);
+ 	}
+ 
+ 	list_add(&link->sibling, &link_list);
+@@ -1001,7 +996,6 @@ void pcie_aspm_exit_link_state(struct pci_dev *pdev)
+ 	/* All functions are removed, so just disable ASPM for the link */
+ 	pcie_config_aspm_link(link, 0);
+ 	list_del(&link->sibling);
+-	list_del(&link->link);
+ 	/* Clock PM is for endpoint device */
+ 	free_link_state(link);
+ 
+-- 
+2.17.1
 
-Reviewed-by: Sebastian Reichel <sebastian.reichel@collabora.com>
-
--- Sebastian
-
->=20
-> Changes in v2:
->=20
->   * Cleaned up remove function as well.
->=20
-> Changes in v3:
->=20
->   * Deleted the remove function which was just returning 0
->=20
->  drivers/mfd/tps65218.c | 24 +++---------------------
->  1 file changed, 3 insertions(+), 21 deletions(-)
->=20
-> diff --git a/drivers/mfd/tps65218.c b/drivers/mfd/tps65218.c
-> index 910f569..8bcdecf 100644
-> --- a/drivers/mfd/tps65218.c
-> +++ b/drivers/mfd/tps65218.c
-> @@ -235,9 +235,9 @@ static int tps65218_probe(struct i2c_client *client,
-> =20
->  	mutex_init(&tps->tps_lock);
-> =20
-> -	ret =3D regmap_add_irq_chip(tps->regmap, tps->irq,
-> -			IRQF_ONESHOT, 0, &tps65218_irq_chip,
-> -			&tps->irq_data);
-> +	ret =3D devm_regmap_add_irq_chip(&client->dev, tps->regmap, tps->irq,
-> +				       IRQF_ONESHOT, 0, &tps65218_irq_chip,
-> +				       &tps->irq_data);
->  	if (ret < 0)
->  		return ret;
-> =20
-> @@ -253,26 +253,9 @@ static int tps65218_probe(struct i2c_client *client,
->  			      ARRAY_SIZE(tps65218_cells), NULL, 0,
->  			      regmap_irq_get_domain(tps->irq_data));
-> =20
-> -	if (ret < 0)
-> -		goto err_irq;
-> -
-> -	return 0;
-> -
-> -err_irq:
-> -	regmap_del_irq_chip(tps->irq, tps->irq_data);
-> -
->  	return ret;
->  }
-> =20
-> -static int tps65218_remove(struct i2c_client *client)
-> -{
-> -	struct tps65218 *tps =3D i2c_get_clientdata(client);
-> -
-> -	regmap_del_irq_chip(tps->irq, tps->irq_data);
-> -
-> -	return 0;
-> -}
-> -
->  static const struct i2c_device_id tps65218_id_table[] =3D {
->  	{ "tps65218", TPS65218 },
->  	{ },
-> @@ -285,7 +268,6 @@ static int tps65218_remove(struct i2c_client *client)
->  		.of_match_table =3D of_tps65218_match_table,
->  	},
->  	.probe		=3D tps65218_probe,
-> -	.remove		=3D tps65218_remove,
->  	.id_table       =3D tps65218_id_table,
->  };
-> =20
-> --=20
-> 1.9.1
->=20
-
---46vp3x4hcrfmaouo
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlwNmxUACgkQ2O7X88g7
-+pr4ew//Sz8SQqfvzGLLwlUXV7FTeDS3AzeHfdls0UbKgEitpt/NW9uf/lJPF35k
-pp3KA0TCyjcNGyoIHxJ43M3+zd9I5HD2u8zJTMrN5f7U9pYlZ9K4egoj7GyuK/MM
-hO6nFiD5fNS6FS3VtEwuD6xJVtdBO3qOU3rDkwysTeIfVIyQBIjt2DXxhsY+BSJe
-UrxU9ibi97UMvPK47O4m8Yv7ndULhwF3tE0q6ng9H0XwLsb/arpmcxajjn1/R89b
-vIS9RWy8ZUH2JO0aADsXgPqHQz4YW7wri2bkiGZK61isZ24Nhhxa2RBwaCHpKGSz
-HF99KY8q5KYHQx12HecOg2sfhLNDc4uVzzThl9WYgqT4NpksvbZD6x4GzF54Kjnj
-gUpwnSsV2xdMvp2fFMc90LwruOOrp7qgqe9KfKhysbnhMEXrozpDHTQ1bhAk9ZAu
-m/Anopl304sN7Y/NaRkw+TI1Be8yeHtDJs+fsv3+tZjeca5bQPje3Okc9qkBEc++
-wjbTpmGgPOxGLi6as/77+Trk+o+bxyUFV/ZDhZQFLp0hYByKVN8o/fE2qBT6XRKh
-a6m5aX0K2BfUhAeUPcnXQCr4rDKALKQOAjfSc+G7IJ5k+cHJnw7dDn3GRT+XI/V4
-ondOjOT0249ZG0VSxpw6xv2HcChT6blKBOzpZJspESmZqjSXLnM=
-=dD04
------END PGP SIGNATURE-----
-
---46vp3x4hcrfmaouo--
