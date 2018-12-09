@@ -6,46 +6,45 @@ X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49171C07E85
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:26:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBEBDC07E85
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:26:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 17DB920661
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:26:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 17DB920661
+	by mail.kernel.org (Postfix) with ESMTP id AC06320661
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:26:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC06320661
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728767AbeLIW0M (ORCPT
+        id S1728647AbeLIW0X (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 17:26:12 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:34846 "EHLO
+        Sun, 9 Dec 2018 17:26:23 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:34812 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726433AbeLIVzP (ORCPT
+        by vger.kernel.org with ESMTP id S1726416AbeLIVzO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Dec 2018 16:55:15 -0500
+        Sun, 9 Dec 2018 16:55:14 -0500
 Received: from pub.yeoldevic.com ([81.174.156.145] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW72e-0002ik-EI; Sun, 09 Dec 2018 21:55:12 +0000
+        id 1gW72d-0002po-WB; Sun, 09 Dec 2018 21:55:12 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW72b-0003Km-Kl; Sun, 09 Dec 2018 21:55:09 +0000
+        id 1gW72d-0003OW-JO; Sun, 09 Dec 2018 21:55:11 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org,
-        "Dan Carpenter" <dan.carpenter@oracle.com>,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
+CC:     akpm@linux-foundation.org, "Kees Cook" <keescook@chromium.org>,
+        "Silvio Cesare" <silvio.cesare@gmail.com>,
+        "Richard Weinberger" <richard@nod.at>
 Date:   Sun, 09 Dec 2018 21:50:33 +0000
-Message-ID: <lsq.1544392233.800582261@decadent.org.uk>
+Message-ID: <lsq.1544392233.170628969@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 095/328] uio: potential double frees if
- __uio_register_device() fails
+Subject: [PATCH 3.16 140/328] ubifs: Check data node size before truncate
 In-Reply-To: <lsq.1544392232.713909046@decadent.org.uk>
 X-SA-Exim-Connect-IP: 81.174.156.145
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -59,43 +58,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Richard Weinberger <richard@nod.at>
 
-commit f019f07ecf6a6b8bd6d7853bce70925d90af02d1 upstream.
+commit 95a22d2084d72ea067d8323cc85677dba5d97cae upstream.
 
-The uio_unregister_device() function assumes that if "info->uio_dev" is
-non-NULL that means "info" is fully allocated.  Setting info->uio_de
-has to be the last thing in the function.
+Check whether the size is within bounds before using it.
+If the size is not correct, abort and dump the bad data node.
 
-In the current code, if request_threaded_irq() fails then we return with
-info->uio_dev set to non-NULL but info is not fully allocated and it can
-lead to double frees.
-
-Fixes: beafc54c4e2f ("UIO: Add the User IO core code")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Silvio Cesare <silvio.cesare@gmail.com>
+Fixes: 1e51764a3c2ac ("UBIFS: add new flash file system")
+Reported-by: Silvio Cesare <silvio.cesare@gmail.com>
+Signed-off-by: Richard Weinberger <richard@nod.at>
+Reviewed-by: Kees Cook <keescook@chromium.org>
+Signed-off-by: Richard Weinberger <richard@nod.at>
+[bwh: Backported to 3.16: Drop first argument to ubifs_err()]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/uio/uio.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ fs/ubifs/journal.c | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
 
---- a/drivers/uio/uio.c
-+++ b/drivers/uio/uio.c
-@@ -852,8 +852,6 @@ int __uio_register_device(struct module
- 	if (ret)
- 		goto err_uio_dev_add_attributes;
- 
--	info->uio_dev = idev;
--
- 	if (info->irq && (info->irq != UIO_IRQ_CUSTOM)) {
- 		ret = devm_request_irq(idev->dev, info->irq, uio_interrupt,
- 				  info->irq_flags, info->name, idev);
-@@ -861,6 +859,7 @@ int __uio_register_device(struct module
- 			goto err_request_irq;
- 	}
- 
-+	info->uio_dev = idev;
- 	return 0;
- 
- err_request_irq:
+--- a/fs/ubifs/journal.c
++++ b/fs/ubifs/journal.c
+@@ -1186,7 +1186,16 @@ int ubifs_jnl_truncate(struct ubifs_info
+ 		else if (err)
+ 			goto out_free;
+ 		else {
+-			if (le32_to_cpu(dn->size) <= dlen)
++			int dn_len = le32_to_cpu(dn->size);
++
++			if (dn_len <= 0 || dn_len > UBIFS_BLOCK_SIZE) {
++				ubifs_err("bad data node (block %u, inode %lu)",
++					  blk, inode->i_ino);
++				ubifs_dump_node(c, dn);
++				goto out_free;
++			}
++
++			if (dn_len <= dlen)
+ 				dlen = 0; /* Nothing to do */
+ 			else {
+ 				int compr_type = le16_to_cpu(dn->compr_type);
 
