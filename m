@@ -6,49 +6,45 @@ X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 617DBC07E85
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 21:56:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8229DC07E85
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 21:56:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F0A020837
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 21:56:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F0A020837
+	by mail.kernel.org (Postfix) with ESMTP id 4F48F20837
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 21:56:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F48F20837
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726930AbeLIV4F (ORCPT
+        id S1726903AbeLIV4B (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 16:56:05 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36032 "EHLO
+        Sun, 9 Dec 2018 16:56:01 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35926 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726704AbeLIVzf (ORCPT
+        by vger.kernel.org with ESMTP id S1726668AbeLIVzd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Dec 2018 16:55:35 -0500
+        Sun, 9 Dec 2018 16:55:33 -0500
 Received: from pub.yeoldevic.com ([81.174.156.145] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW72x-0002il-RL; Sun, 09 Dec 2018 21:55:32 +0000
+        id 1gW72w-0002ib-D2; Sun, 09 Dec 2018 21:55:30 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW72i-0003b8-Vu; Sun, 09 Dec 2018 21:55:16 +0000
+        id 1gW72j-0003c6-ID; Sun, 09 Dec 2018 21:55:17 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, "syzbot" <syzkaller@googlegroups.com>,
-        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        "NeilBrown" <neilb@suse.com>, "Hugh Dickins" <hughd@google.com>,
-        "Peter Zijlstra" <peterz@infradead.org>,
-        "Matthew Wilcox" <willy@infradead.org>,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
+CC:     akpm@linux-foundation.org,
+        "Herbert Xu" <herbert@gondor.apana.org.au>,
+        "Leonard Crestez" <leonard.crestez@nxp.com>
 Date:   Sun, 09 Dec 2018 21:50:33 +0000
-Message-ID: <lsq.1544392233.522153350@decadent.org.uk>
+Message-ID: <lsq.1544392233.601734521@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 259/328] mm: shmem.c: Correctly annotate new inodes
- for lockdep
+Subject: [PATCH 3.16 271/328] crypto: mxs-dcp - Fix wait logic on chan threads
 In-Reply-To: <lsq.1544392232.713909046@decadent.org.uk>
 X-SA-Exim-Connect-IP: 81.174.156.145
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -62,126 +58,151 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
+From: Leonard Crestez <leonard.crestez@nxp.com>
 
-commit b45d71fb89ab8adfe727b9d0ee188ed58582a647 upstream.
+commit d80771c08363ad7fbf0f56f5301e7ca65065c582 upstream.
 
-Directories and inodes don't necessarily need to be in the same lockdep
-class.  For ex, hugetlbfs splits them out too to prevent false positives
-in lockdep.  Annotate correctly after new inode creation.  If its a
-directory inode, it will be put into a different class.
+When compiling with CONFIG_DEBUG_ATOMIC_SLEEP=y the mxs-dcp driver
+prints warnings such as:
 
-This should fix a lockdep splat reported by syzbot:
+WARNING: CPU: 0 PID: 120 at kernel/sched/core.c:7736 __might_sleep+0x98/0x9c
+do not call blocking ops when !TASK_RUNNING; state=1 set at [<8081978c>] dcp_chan_thread_sha+0x3c/0x2ec
 
-> ======================================================
-> WARNING: possible circular locking dependency detected
-> 4.18.0-rc8-next-20180810+ #36 Not tainted
-> ------------------------------------------------------
-> syz-executor900/4483 is trying to acquire lock:
-> 00000000d2bfc8fe (&sb->s_type->i_mutex_key#9){++++}, at: inode_lock
-> include/linux/fs.h:765 [inline]
-> 00000000d2bfc8fe (&sb->s_type->i_mutex_key#9){++++}, at:
-> shmem_fallocate+0x18b/0x12e0 mm/shmem.c:2602
->
-> but task is already holding lock:
-> 0000000025208078 (ashmem_mutex){+.+.}, at: ashmem_shrink_scan+0xb4/0x630
-> drivers/staging/android/ashmem.c:448
->
-> which lock already depends on the new lock.
->
-> -> #2 (ashmem_mutex){+.+.}:
->        __mutex_lock_common kernel/locking/mutex.c:925 [inline]
->        __mutex_lock+0x171/0x1700 kernel/locking/mutex.c:1073
->        mutex_lock_nested+0x16/0x20 kernel/locking/mutex.c:1088
->        ashmem_mmap+0x55/0x520 drivers/staging/android/ashmem.c:361
->        call_mmap include/linux/fs.h:1844 [inline]
->        mmap_region+0xf27/0x1c50 mm/mmap.c:1762
->        do_mmap+0xa10/0x1220 mm/mmap.c:1535
->        do_mmap_pgoff include/linux/mm.h:2298 [inline]
->        vm_mmap_pgoff+0x213/0x2c0 mm/util.c:357
->        ksys_mmap_pgoff+0x4da/0x660 mm/mmap.c:1585
->        __do_sys_mmap arch/x86/kernel/sys_x86_64.c:100 [inline]
->        __se_sys_mmap arch/x86/kernel/sys_x86_64.c:91 [inline]
->        __x64_sys_mmap+0xe9/0x1b0 arch/x86/kernel/sys_x86_64.c:91
->        do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
->        entry_SYSCALL_64_after_hwframe+0x49/0xbe
->
-> -> #1 (&mm->mmap_sem){++++}:
->        __might_fault+0x155/0x1e0 mm/memory.c:4568
->        _copy_to_user+0x30/0x110 lib/usercopy.c:25
->        copy_to_user include/linux/uaccess.h:155 [inline]
->        filldir+0x1ea/0x3a0 fs/readdir.c:196
->        dir_emit_dot include/linux/fs.h:3464 [inline]
->        dir_emit_dots include/linux/fs.h:3475 [inline]
->        dcache_readdir+0x13a/0x620 fs/libfs.c:193
->        iterate_dir+0x48b/0x5d0 fs/readdir.c:51
->        __do_sys_getdents fs/readdir.c:231 [inline]
->        __se_sys_getdents fs/readdir.c:212 [inline]
->        __x64_sys_getdents+0x29f/0x510 fs/readdir.c:212
->        do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
->        entry_SYSCALL_64_after_hwframe+0x49/0xbe
->
-> -> #0 (&sb->s_type->i_mutex_key#9){++++}:
->        lock_acquire+0x1e4/0x540 kernel/locking/lockdep.c:3924
->        down_write+0x8f/0x130 kernel/locking/rwsem.c:70
->        inode_lock include/linux/fs.h:765 [inline]
->        shmem_fallocate+0x18b/0x12e0 mm/shmem.c:2602
->        ashmem_shrink_scan+0x236/0x630 drivers/staging/android/ashmem.c:455
->        ashmem_ioctl+0x3ae/0x13a0 drivers/staging/android/ashmem.c:797
->        vfs_ioctl fs/ioctl.c:46 [inline]
->        file_ioctl fs/ioctl.c:501 [inline]
->        do_vfs_ioctl+0x1de/0x1720 fs/ioctl.c:685
->        ksys_ioctl+0xa9/0xd0 fs/ioctl.c:702
->        __do_sys_ioctl fs/ioctl.c:709 [inline]
->        __se_sys_ioctl fs/ioctl.c:707 [inline]
->        __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:707
->        do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
->        entry_SYSCALL_64_after_hwframe+0x49/0xbe
->
-> other info that might help us debug this:
->
-> Chain exists of:
->   &sb->s_type->i_mutex_key#9 --> &mm->mmap_sem --> ashmem_mutex
->
->  Possible unsafe locking scenario:
->
->        CPU0                    CPU1
->        ----                    ----
->   lock(ashmem_mutex);
->                                lock(&mm->mmap_sem);
->                                lock(ashmem_mutex);
->   lock(&sb->s_type->i_mutex_key#9);
->
->  *** DEADLOCK ***
->
-> 1 lock held by syz-executor900/4483:
->  #0: 0000000025208078 (ashmem_mutex){+.+.}, at:
-> ashmem_shrink_scan+0xb4/0x630 drivers/staging/android/ashmem.c:448
+The problem is that blocking ops will manipulate current->state
+themselves so it is not allowed to call them between
+set_current_state(TASK_INTERRUPTIBLE) and schedule().
 
-Link: http://lkml.kernel.org/r/20180821231835.166639-1-joel@joelfernandes.org
-Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
-Reported-by: syzbot <syzkaller@googlegroups.com>
-Reviewed-by: NeilBrown <neilb@suse.com>
-Suggested-by: NeilBrown <neilb@suse.com>
-Cc: Matthew Wilcox <willy@infradead.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Hugh Dickins <hughd@google.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Fix this by converting the per-chan mutex to a spinlock (it only
+protects tiny list ops anyway) and rearranging the wait logic so that
+callbacks are called current->state as TASK_RUNNING. Those callbacks
+will indeed call blocking ops themselves so this is required.
+
+Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- mm/shmem.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/crypto/mxs-dcp.c | 53 +++++++++++++++++++++++-----------------
+ 1 file changed, 30 insertions(+), 23 deletions(-)
 
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -1422,6 +1422,8 @@ static struct inode *shmem_get_inode(str
- 			mpol_shared_policy_init(&info->policy, NULL);
- 			break;
- 		}
+--- a/drivers/crypto/mxs-dcp.c
++++ b/drivers/crypto/mxs-dcp.c
+@@ -63,7 +63,7 @@ struct dcp {
+ 	struct dcp_coherent_block	*coh;
+ 
+ 	struct completion		completion[DCP_MAX_CHANS];
+-	struct mutex			mutex[DCP_MAX_CHANS];
++	spinlock_t			lock[DCP_MAX_CHANS];
+ 	struct task_struct		*thread[DCP_MAX_CHANS];
+ 	struct crypto_queue		queue[DCP_MAX_CHANS];
+ };
+@@ -349,13 +349,20 @@ static int dcp_chan_thread_aes(void *dat
+ 
+ 	int ret;
+ 
+-	do {
+-		__set_current_state(TASK_INTERRUPTIBLE);
++	while (!kthread_should_stop()) {
++		set_current_state(TASK_INTERRUPTIBLE);
+ 
+-		mutex_lock(&sdcp->mutex[chan]);
++		spin_lock(&sdcp->lock[chan]);
+ 		backlog = crypto_get_backlog(&sdcp->queue[chan]);
+ 		arq = crypto_dequeue_request(&sdcp->queue[chan]);
+-		mutex_unlock(&sdcp->mutex[chan]);
++		spin_unlock(&sdcp->lock[chan]);
 +
-+		lockdep_annotate_inode_mutex_key(inode);
- 	} else
- 		shmem_free_inode(sb);
- 	return inode;
++		if (!backlog && !arq) {
++			schedule();
++			continue;
++		}
++
++		set_current_state(TASK_RUNNING);
+ 
+ 		if (backlog)
+ 			backlog->complete(backlog, -EINPROGRESS);
+@@ -363,11 +370,8 @@ static int dcp_chan_thread_aes(void *dat
+ 		if (arq) {
+ 			ret = mxs_dcp_aes_block_crypt(arq);
+ 			arq->complete(arq, ret);
+-			continue;
+ 		}
+-
+-		schedule();
+-	} while (!kthread_should_stop());
++	}
+ 
+ 	return 0;
+ }
+@@ -407,9 +411,9 @@ static int mxs_dcp_aes_enqueue(struct ab
+ 	rctx->ecb = ecb;
+ 	actx->chan = DCP_CHAN_CRYPTO;
+ 
+-	mutex_lock(&sdcp->mutex[actx->chan]);
++	spin_lock(&sdcp->lock[actx->chan]);
+ 	ret = crypto_enqueue_request(&sdcp->queue[actx->chan], &req->base);
+-	mutex_unlock(&sdcp->mutex[actx->chan]);
++	spin_unlock(&sdcp->lock[actx->chan]);
+ 
+ 	wake_up_process(sdcp->thread[actx->chan]);
+ 
+@@ -645,13 +649,20 @@ static int dcp_chan_thread_sha(void *dat
+ 	struct ahash_request *req;
+ 	int ret, fini;
+ 
+-	do {
+-		__set_current_state(TASK_INTERRUPTIBLE);
++	while (!kthread_should_stop()) {
++		set_current_state(TASK_INTERRUPTIBLE);
+ 
+-		mutex_lock(&sdcp->mutex[chan]);
++		spin_lock(&sdcp->lock[chan]);
+ 		backlog = crypto_get_backlog(&sdcp->queue[chan]);
+ 		arq = crypto_dequeue_request(&sdcp->queue[chan]);
+-		mutex_unlock(&sdcp->mutex[chan]);
++		spin_unlock(&sdcp->lock[chan]);
++
++		if (!backlog && !arq) {
++			schedule();
++			continue;
++		}
++
++		set_current_state(TASK_RUNNING);
+ 
+ 		if (backlog)
+ 			backlog->complete(backlog, -EINPROGRESS);
+@@ -663,12 +674,8 @@ static int dcp_chan_thread_sha(void *dat
+ 			ret = dcp_sha_req_to_buf(arq);
+ 			fini = rctx->fini;
+ 			arq->complete(arq, ret);
+-			if (!fini)
+-				continue;
+ 		}
+-
+-		schedule();
+-	} while (!kthread_should_stop());
++	}
+ 
+ 	return 0;
+ }
+@@ -726,9 +733,9 @@ static int dcp_sha_update_fx(struct ahas
+ 		rctx->init = 1;
+ 	}
+ 
+-	mutex_lock(&sdcp->mutex[actx->chan]);
++	spin_lock(&sdcp->lock[actx->chan]);
+ 	ret = crypto_enqueue_request(&sdcp->queue[actx->chan], &req->base);
+-	mutex_unlock(&sdcp->mutex[actx->chan]);
++	spin_unlock(&sdcp->lock[actx->chan]);
+ 
+ 	wake_up_process(sdcp->thread[actx->chan]);
+ 	mutex_unlock(&actx->mutex);
+@@ -984,7 +991,7 @@ static int mxs_dcp_probe(struct platform
+ 	platform_set_drvdata(pdev, sdcp);
+ 
+ 	for (i = 0; i < DCP_MAX_CHANS; i++) {
+-		mutex_init(&sdcp->mutex[i]);
++		spin_lock_init(&sdcp->lock[i]);
+ 		init_completion(&sdcp->completion[i]);
+ 		crypto_init_queue(&sdcp->queue[i], 50);
+ 	}
 
