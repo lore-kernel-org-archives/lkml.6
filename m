@@ -6,44 +6,46 @@ X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E6C3C07E85
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:11:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 822EEC65BAF
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:11:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 24D2B20661
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:11:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 24D2B20661
+	by mail.kernel.org (Postfix) with ESMTP id 5285E20661
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:11:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5285E20661
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728071AbeLIWLe (ORCPT
+        id S1728270AbeLIWLh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 17:11:34 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:37700 "EHLO
+        Sun, 9 Dec 2018 17:11:37 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:37710 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726975AbeLIWLb (ORCPT
+        by vger.kernel.org with ESMTP id S1728257AbeLIWLf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Dec 2018 17:11:31 -0500
+        Sun, 9 Dec 2018 17:11:35 -0500
 Received: from pub.yeoldevic.com ([81.174.156.145] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW73C-0002iq-9o; Sun, 09 Dec 2018 21:55:46 +0000
+        id 1gW735-0002iY-0J; Sun, 09 Dec 2018 21:55:39 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW72d-0003P3-QH; Sun, 09 Dec 2018 21:55:11 +0000
+        id 1gW72g-0003Vu-Kk; Sun, 09 Dec 2018 21:55:14 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, "Florian Westphal" <fw@strlen.de>,
-        "Pablo Neira Ayuso" <pablo@netfilter.org>
+CC:     akpm@linux-foundation.org, "Ira Weiny" <ira.weiny@intel.com>,
+        "Aaron Knister" <aaron.s.knister@nasa.gov>,
+        "Jason Gunthorpe" <jgg@mellanox.com>
 Date:   Sun, 09 Dec 2018 21:50:33 +0000
-Message-ID: <lsq.1544392233.158413680@decadent.org.uk>
+Message-ID: <lsq.1544392233.367793181@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 145/328] netfilter: nf_tables: fix register ordering
+Subject: [PATCH 3.16 210/328] IB/ipoib: Avoid a race condition between
+ start_xmit and cm_rep_handler
 In-Reply-To: <lsq.1544392232.713909046@decadent.org.uk>
 X-SA-Exim-Connect-IP: 81.174.156.145
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -57,55 +59,73 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Florian Westphal <fw@strlen.de>
+From: Aaron Knister <aaron.s.knister@nasa.gov>
 
-commit d209df3e7f7002d9099fdb0f6df0f972b4386a63 upstream.
+commit 816e846c2eb9129a3e0afa5f920c8bbc71efecaa upstream.
 
-We must register nfnetlink ops last, as that exposes nf_tables to
-userspace.  Without this, we could theoretically get nfnetlink request
-before net->nft state has been initialized.
+Inside of start_xmit() the call to check if the connection is up and the
+queueing of the packets for later transmission is not atomic which leaves
+a window where cm_rep_handler can run, set the connection up, dequeue
+pending packets and leave the subsequently queued packets by start_xmit()
+sitting on neigh->queue until they're dropped when the connection is torn
+down. This only applies to connected mode. These dropped packets can
+really upset TCP, for example, and cause multi-minute delays in
+transmission for open connections.
 
-Fixes: 99633ab29b213 ("netfilter: nf_tables: complete net namespace support")
-Signed-off-by: Florian Westphal <fw@strlen.de>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
-[bwh: Backported to 3.16:
- - We don't call nft_chain_filter_{init,fini}() or
-   {,un}register_netdevice_notifier()
- - Adjust context]
+Here's the code in start_xmit where we check to see if the connection is
+up:
+
+       if (ipoib_cm_get(neigh)) {
+               if (ipoib_cm_up(neigh)) {
+                       ipoib_cm_send(dev, skb, ipoib_cm_get(neigh));
+                       goto unref;
+               }
+       }
+
+The race occurs if cm_rep_handler execution occurs after the above
+connection check (specifically if it gets to the point where it acquires
+priv->lock to dequeue pending skb's) but before the below code snippet in
+start_xmit where packets are queued.
+
+       if (skb_queue_len(&neigh->queue) < IPOIB_MAX_PATH_REC_QUEUE) {
+               push_pseudo_header(skb, phdr->hwaddr);
+               spin_lock_irqsave(&priv->lock, flags);
+               __skb_queue_tail(&neigh->queue, skb);
+               spin_unlock_irqrestore(&priv->lock, flags);
+       } else {
+               ++dev->stats.tx_dropped;
+               dev_kfree_skb_any(skb);
+       }
+
+The patch acquires the netif tx lock in cm_rep_handler for the section
+where it sets the connection up and dequeues and retransmits deferred
+skb's.
+
+Fixes: 839fcaba355a ("IPoIB: Connected mode experimental support")
+Signed-off-by: Aaron Knister <aaron.s.knister@nasa.gov>
+Tested-by: Ira Weiny <ira.weiny@intel.com>
+Reviewed-by: Ira Weiny <ira.weiny@intel.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
---- a/net/netfilter/nf_tables_api.c
-+++ b/net/netfilter/nf_tables_api.c
-@@ -4042,6 +4042,10 @@ static int __init nf_tables_module_init(
- {
- 	int err;
+ drivers/infiniband/ulp/ipoib/ipoib_cm.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+--- a/drivers/infiniband/ulp/ipoib/ipoib_cm.c
++++ b/drivers/infiniband/ulp/ipoib/ipoib_cm.c
+@@ -996,12 +996,14 @@ static int ipoib_cm_rep_handler(struct i
  
-+	err = register_pernet_subsys(&nf_tables_net_ops);
-+	if (err < 0)
-+		return err;
-+
- 	info = kmalloc(sizeof(struct nft_expr_info) * NFT_RULE_MAXEXPRS,
- 		       GFP_KERNEL);
- 	if (info == NULL) {
-@@ -4053,17 +4057,19 @@ static int __init nf_tables_module_init(
- 	if (err < 0)
- 		goto err2;
+ 	skb_queue_head_init(&skqueue);
  
-+	/* must be last */
- 	err = nfnetlink_subsys_register(&nf_tables_subsys);
- 	if (err < 0)
- 		goto err3;
++	netif_tx_lock_bh(p->dev);
+ 	spin_lock_irq(&priv->lock);
+ 	set_bit(IPOIB_FLAG_OPER_UP, &p->flags);
+ 	if (p->neigh)
+ 		while ((skb = __skb_dequeue(&p->neigh->queue)))
+ 			__skb_queue_tail(&skqueue, skb);
+ 	spin_unlock_irq(&priv->lock);
++	netif_tx_unlock_bh(p->dev);
  
- 	pr_info("nf_tables: (c) 2007-2009 Patrick McHardy <kaber@trash.net>\n");
--	return register_pernet_subsys(&nf_tables_net_ops);
-+	return err;
- err3:
- 	nf_tables_core_module_exit();
- err2:
- 	kfree(info);
- err1:
-+	unregister_pernet_subsys(&nf_tables_net_ops);
- 	return err;
- }
- 
+ 	while ((skb = __skb_dequeue(&skqueue))) {
+ 		skb->dev = p->dev;
 
