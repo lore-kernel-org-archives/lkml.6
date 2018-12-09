@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55BA2C65BAF
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:27:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BDA63C07E85
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:27:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 246752081F
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:27:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 246752081F
+	by mail.kernel.org (Postfix) with ESMTP id 8C2E62081F
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:27:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C2E62081F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728724AbeLIW1a (ORCPT
+        id S1728249AbeLIW1r (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 17:27:30 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:34682 "EHLO
+        Sun, 9 Dec 2018 17:27:47 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:34658 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726387AbeLIVzM (ORCPT
+        by vger.kernel.org with ESMTP id S1726379AbeLIVzL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Dec 2018 16:55:12 -0500
+        Sun, 9 Dec 2018 16:55:11 -0500
 Received: from pub.yeoldevic.com ([81.174.156.145] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW72b-0002il-Qm; Sun, 09 Dec 2018 21:55:09 +0000
+        id 1gW72Y-0002ih-RA; Sun, 09 Dec 2018 21:55:06 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW72Z-0003EV-0H; Sun, 09 Dec 2018 21:55:07 +0000
+        id 1gW72Y-0003Cn-0Z; Sun, 09 Dec 2018 21:55:06 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -38,13 +38,14 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
-        "Dan Carpenter" <dan.carpenter@oracle.com>
+        "Darren Hart (VMware)" <dvhart@infradead.org>,
+        "Takashi Iwai" <tiwai@suse.de>
 Date:   Sun, 09 Dec 2018 21:50:33 +0000
-Message-ID: <lsq.1544392233.53554730@decadent.org.uk>
+Message-ID: <lsq.1544392233.528781821@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 030/328] vmci: type promotion bug in qp_host_get_user_memory()
+Subject: [PATCH 3.16 009/328] platform/x86: ideapad-laptop: Apply
+ no_hw_rfkill to Y20-15IKBM, too
 In-Reply-To: <lsq.1544392232.713909046@decadent.org.uk>
 X-SA-Exim-Connect-IP: 81.174.156.145
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -58,41 +59,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Takashi Iwai <tiwai@suse.de>
 
-commit 7fb2fd4e25fc1fb10dcb30b5519de257cfeae84c upstream.
+commit 58e73aa177850babb947555257fd4f79e5275cf1 upstream.
 
-The problem is that if get_user_pages_fast() fails and returns a
-negative error code, it gets type promoted to a high positive value and
-treated as a success.
+The commit 5d9f40b56630 ("platform/x86: ideapad-laptop: Add
+Y520-15IKBN to no_hw_rfkill") added the entry for Y20-15IKBN, and it
+turned out that another variant, Y20-15IKBM, also requires the
+no_hw_rfkill.
 
-Fixes: 06164d2b72aa ("VMCI: queue pairs implementation.")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-[bwh: Backported to 3.16: adjust context]
+Trim the last letter from the string so that it matches to both
+Y20-15IKBN and Y20-15IKBM models.
+
+Bugzilla: https://bugzilla.opensuse.org/show_bug.cgi?id=1098626
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Darren Hart (VMware) <dvhart@infradead.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/misc/vmw_vmci/vmci_queue_pair.c | 4 ++--
+ drivers/platform/x86/ideapad-laptop.c | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/misc/vmw_vmci/vmci_queue_pair.c
-+++ b/drivers/misc/vmw_vmci/vmci_queue_pair.c
-@@ -735,7 +735,7 @@ static int qp_host_get_user_memory(u64 p
- 	retval = get_user_pages_fast((uintptr_t) produce_uva,
- 				     produce_q->kernel_if->num_pages, 1,
- 				     produce_q->kernel_if->u.h.header_page);
--	if (retval < produce_q->kernel_if->num_pages) {
-+	if (retval < (int)produce_q->kernel_if->num_pages) {
- 		pr_warn("get_user_pages(produce) failed (retval=%d)", retval);
- 		qp_release_pages(produce_q->kernel_if->u.h.header_page,
- 				 retval, false);
-@@ -746,7 +746,7 @@ static int qp_host_get_user_memory(u64 p
- 	retval = get_user_pages_fast((uintptr_t) consume_uva,
- 				     consume_q->kernel_if->num_pages, 1,
- 				     consume_q->kernel_if->u.h.header_page);
--	if (retval < consume_q->kernel_if->num_pages) {
-+	if (retval < (int)consume_q->kernel_if->num_pages) {
- 		pr_warn("get_user_pages(consume) failed (retval=%d)", retval);
- 		qp_release_pages(consume_q->kernel_if->u.h.header_page,
- 				 retval, false);
+--- a/drivers/platform/x86/ideapad-laptop.c
++++ b/drivers/platform/x86/ideapad-laptop.c
+@@ -860,10 +860,10 @@ static struct dmi_system_id no_hw_rfkill
+ 		},
+ 	},
+ 	{
+-		.ident = "Lenovo Legion Y520-15IKBN",
++		.ident = "Lenovo Legion Y520-15IKB",
+ 		.matches = {
+ 			DMI_MATCH(DMI_SYS_VENDOR, "LENOVO"),
+-			DMI_MATCH(DMI_PRODUCT_VERSION, "Lenovo Y520-15IKBN"),
++			DMI_MATCH(DMI_PRODUCT_VERSION, "Lenovo Y520-15IKB"),
+ 		},
+ 	},
+ 	{
 
