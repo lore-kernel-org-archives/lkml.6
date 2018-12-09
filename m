@@ -2,106 +2,161 @@ Return-Path: <SRS0=cWqk=OS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44A86C07E85
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:03:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EBCFC07E85
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:03:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 142F720661
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:03:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 142F720661
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
+	by mail.kernel.org (Postfix) with ESMTP id 045DA20661
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:03:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544393010;
+	bh=Rf43K54ogS258ol5X66usGQBwG82ZC4Qrk5E1V3uT3U=;
+	h=Date:From:To:Cc:Subject:List-ID:From;
+	b=uKDh5x+h6vApFXp6bnRm0bxqIDbG9BrHxhji4FEnEpjslXZc+GTZrplGagJKYPAud
+	 YjxZ2ZUPKiFNRoNDlDOuF98mxO578jcTtYsOjkcX1ABTQJZpAQYR8oY3p6AHSq1e6F
+	 sOV7WaGMPhQN+u7ELjOSyzgAZcgux4OV5ZFGp95U=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 045DA20661
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727228AbeLIWDY (ORCPT
+        id S1727381AbeLIWD2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 17:03:24 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35682 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726602AbeLIVz2 (ORCPT
+        Sun, 9 Dec 2018 17:03:28 -0500
+Received: from mail-wm1-f47.google.com ([209.85.128.47]:40737 "EHLO
+        mail-wm1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726602AbeLIWDZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Dec 2018 16:55:28 -0500
-Received: from pub.yeoldevic.com ([81.174.156.145] helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1gW72q-0002ia-UQ; Sun, 09 Dec 2018 21:55:25 +0000
-Received: from ben by deadeye with local (Exim 4.91)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1gW72l-0003h8-IG; Sun, 09 Dec 2018 21:55:19 +0000
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+        Sun, 9 Dec 2018 17:03:25 -0500
+Received: by mail-wm1-f47.google.com with SMTP id q26so9263636wmf.5
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Dec 2018 14:03:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=X5zk8nsK4IIMAtm01wdoqwoc6SRKa04AZ9pN5M4A7Nk=;
+        b=kDA5Gs5jN0dgRc7lFEHPD7iUWMTgzBkGLqEv3d2G9WJnl+PRdyCsFLDw2ly0d8NqIt
+         1Xx29HgwurVVMagoocTyOKuvjMYlMUOMRi4pIe4btZ/TRdWeP4YTjbeu5kSNPJQZoohG
+         aTd/qnd0zNgT8m+ywDGN8z3G82DTkBo064GmRX1zHNNYlisqxdfFr8k07zx9pE+i7pZ5
+         HZTF0HlcHqyZC6gJtJe1IAsnWjqAyzKI6Fi8gOAKi6Xjx4QWjoYpoGjrgODJcxohAI/p
+         ITxx/xDwx5TwEZWKXlMuHlSljZdhx1x2NiEUk8BI6UUwWih+cd6/WuaS40uwuvj+cktB
+         7yKQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mime-version:content-disposition:user-agent;
+        bh=X5zk8nsK4IIMAtm01wdoqwoc6SRKa04AZ9pN5M4A7Nk=;
+        b=qZhw5Xt++fvZF/NG5IuVknB0ylPt9vTSQjfNEdoBSCuM/iH2eLC0kx5sHj0I9B9qrJ
+         82ZsTy8fepI0ecvENrrANlE1q6j5QJqBReLEhFEU5r8j81I4bAIjbYWPk1dx6zMr2J2o
+         oEcnylQcchvnRUWMuIR3wGImb3TofDdP005/y83rJvWm95zCj5nKYW4YcdUBMOPjHlMo
+         zWd/FGxPNhfVPQ/vcM988srBRZ9Pqd6bhGqw1E2I99F5fGWn28IbnUU4trQ30o41tpUF
+         0gzIPv5prcaej1DN8MFeASe83KfuTSYL9l5kcj+O36NHXzLnwEWYaflOhxNQEs3zkJhM
+         lelw==
+X-Gm-Message-State: AA+aEWY4DVzqVGaDj8TYfwiPMlrNczrlZoiPsib8M1AiOrIr2xUJ3Or/
+        MYG75mrZLfKbGQHzcc1fqD0=
+X-Google-Smtp-Source: AFSGD/VTn6ALF9lvm34Iu/V03J2KvA7T5ooY/7jJisYmDSJwJz6zNY0qFR2vDrLlgAaBPr3+ecpy7g==
+X-Received: by 2002:a1c:be11:: with SMTP id o17mr8342094wmf.111.1544393003366;
+        Sun, 09 Dec 2018 14:03:23 -0800 (PST)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id x20sm20849681wme.6.2018.12.09.14.03.22
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 09 Dec 2018 14:03:22 -0800 (PST)
+Date:   Sun, 9 Dec 2018 23:03:20 +0100
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Arnaldo Carvalho de Melo <acme@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: [GIT PULL] kprobes fixes
+Message-ID: <20181209220320.GA84693@gmail.com>
 MIME-Version: 1.0
-From:   Ben Hutchings <ben@decadent.org.uk>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, "David S. Miller" <davem@davemloft.net>,
-        "Heiner Kallweit" <hkallweit1@gmail.com>
-Date:   Sun, 09 Dec 2018 21:50:33 +0000
-Message-ID: <lsq.1544392233.322765002@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 318/328] r8169: fix NAPI handling under high load
-In-Reply-To: <lsq.1544392232.713909046@decadent.org.uk>
-X-SA-Exim-Connect-IP: 81.174.156.145
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.16.62-rc1 review patch.  If anyone has any objections, please let me know.
+Linus,
 
-------------------
+Please pull the latest perf-urgent-for-linus git tree from:
 
-From: Heiner Kallweit <hkallweit1@gmail.com>
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git perf-urgent-for-linus
 
-commit 6b839b6cf9eada30b086effb51e5d6076bafc761 upstream.
+   # HEAD: a50480cb6d61d5c5fc13308479407b628b6bc1c5 kprobes/x86: Blacklist non-attachable interrupt functions
 
-rtl_rx() and rtl_tx() are called only if the respective bits are set
-in the interrupt status register. Under high load NAPI may not be
-able to process all data (work_done == budget) and it will schedule
-subsequent calls to the poll callback.
-rtl_ack_events() however resets the bits in the interrupt status
-register, therefore subsequent calls to rtl8169_poll() won't call
-rtl_rx() and rtl_tx() - chip interrupts are still disabled.
+Two kprobes fixes: a blacklist fix and an instruction patching related 
+corruption fix.
 
-Fix this by calling rtl_rx() and rtl_tx() independent of the bits
-set in the interrupt status register. Both functions will detect
-if there's nothing to do for them.
+ Thanks,
 
-Fixes: da78dbff2e05 ("r8169: remove work from irq handler.")
-Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
----
- drivers/net/ethernet/realtek/r8169.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+	Ingo
 
---- a/drivers/net/ethernet/realtek/r8169.c
-+++ b/drivers/net/ethernet/realtek/r8169.c
-@@ -6417,17 +6417,15 @@ static int rtl8169_poll(struct napi_stru
- 	struct rtl8169_private *tp = container_of(napi, struct rtl8169_private, napi);
- 	struct net_device *dev = tp->dev;
- 	u16 enable_mask = RTL_EVENT_NAPI | tp->event_slow;
--	int work_done= 0;
-+	int work_done;
- 	u16 status;
+------------------>
+Andrea Righi (1):
+      kprobes/x86: Blacklist non-attachable interrupt functions
+
+Masami Hiramatsu (1):
+      kprobes/x86: Fix instruction patching corruption when copying more than one RIP-relative instruction
+
+
+ arch/x86/entry/entry_64.S     | 4 ++++
+ arch/x86/kernel/kprobes/opt.c | 2 +-
+ 2 files changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/arch/x86/entry/entry_64.S b/arch/x86/entry/entry_64.S
+index ce25d84023c0..1f0efdb7b629 100644
+--- a/arch/x86/entry/entry_64.S
++++ b/arch/x86/entry/entry_64.S
+@@ -566,6 +566,7 @@ ENTRY(interrupt_entry)
  
- 	status = rtl_get_events(tp);
- 	rtl_ack_events(tp, status & ~tp->event_slow);
+ 	ret
+ END(interrupt_entry)
++_ASM_NOKPROBE(interrupt_entry)
  
--	if (status & RTL_EVENT_NAPI_RX)
--		work_done = rtl_rx(dev, tp, (u32) budget);
-+	work_done = rtl_rx(dev, tp, (u32) budget);
  
--	if (status & RTL_EVENT_NAPI_TX)
--		rtl_tx(dev, tp);
-+	rtl_tx(dev, tp);
+ /* Interrupt entry/exit. */
+@@ -766,6 +767,7 @@ native_irq_return_ldt:
+ 	jmp	native_irq_return_iret
+ #endif
+ END(common_interrupt)
++_ASM_NOKPROBE(common_interrupt)
  
- 	if (status & tp->event_slow) {
- 		enable_mask &= ~tp->event_slow;
-
+ /*
+  * APIC interrupts.
+@@ -780,6 +782,7 @@ ENTRY(\sym)
+ 	call	\do_sym	/* rdi points to pt_regs */
+ 	jmp	ret_from_intr
+ END(\sym)
++_ASM_NOKPROBE(\sym)
+ .endm
+ 
+ /* Make sure APIC interrupt handlers end up in the irqentry section: */
+@@ -960,6 +963,7 @@ ENTRY(\sym)
+ 
+ 	jmp	error_exit
+ 	.endif
++_ASM_NOKPROBE(\sym)
+ END(\sym)
+ .endm
+ 
+diff --git a/arch/x86/kernel/kprobes/opt.c b/arch/x86/kernel/kprobes/opt.c
+index 40b16b270656..6adf6e6c2933 100644
+--- a/arch/x86/kernel/kprobes/opt.c
++++ b/arch/x86/kernel/kprobes/opt.c
+@@ -189,7 +189,7 @@ static int copy_optimized_instructions(u8 *dest, u8 *src, u8 *real)
+ 	int len = 0, ret;
+ 
+ 	while (len < RELATIVEJUMP_SIZE) {
+-		ret = __copy_instruction(dest + len, src + len, real, &insn);
++		ret = __copy_instruction(dest + len, src + len, real + len, &insn);
+ 		if (!ret || !can_boost(&insn, src + len))
+ 			return -EINVAL;
+ 		len += ret;
