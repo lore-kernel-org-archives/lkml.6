@@ -2,110 +2,132 @@ Return-Path: <SRS0=cWqk=OS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57756C07E85
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 14:14:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95E5CC07E85
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 14:20:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 09F1F20831
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 14:14:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5999220837
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 14:20:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kkEoA5th"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 09F1F20831
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=xenosoft.de header.i=@xenosoft.de header.b="ZAMwKG37"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5999220837
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xenosoft.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726256AbeLIOOE (ORCPT
+        id S1726260AbeLIOUP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 09:14:04 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:39947 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726212AbeLIOOD (ORCPT
+        Sun, 9 Dec 2018 09:20:15 -0500
+Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.53]:28141 "EHLO
+        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726212AbeLIOUP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Dec 2018 09:14:03 -0500
-Received: by mail-pl1-f195.google.com with SMTP id u18so3973854plq.7;
-        Sun, 09 Dec 2018 06:14:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=6MaKgahVa6qEuLgFsB+JPNTIpF5/GVHshk4v8l6kes0=;
-        b=kkEoA5thCOwzbEv7EouDynEKUje6KDOitY2f0ESHp5746XWddgC2/iWYp+32UQGO0l
-         dZQZdMuVjDeIptcoX7ofI5NqCs0ipIqfJ/lrEVRYxV5gs/eWICJVhIMIiENj/6pXZ8oU
-         0jwBAZReKBllotRPdn1RF9P0cyGU6yw+Pmv6mBFbnjWiDaHbdMMr2h4GjCFxQTZNi1CY
-         Df/iDEevcKWeEEADy5Hfn8F6Zil0t4G7FwWDcScDc3egr0EpTKZ/FeeQSWIHhYgCsnrI
-         qQJSMY2UlxNqjzsduP8yFSJh/lNqhdCON+sSST+PZnRCMlslnYYKrzZ8tHCEnRBvsSEq
-         9Knw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=6MaKgahVa6qEuLgFsB+JPNTIpF5/GVHshk4v8l6kes0=;
-        b=rozlfMQWegWc2Ngp0yo13HkCwCdTjUNRxRrgBIS0Ac87hu0UKcrbEQUaffW2H1Lw0a
-         5K15L5CX+ekOkLIIQAK00KIxjsaRD+P6mLuz7O2rY8exsp6zTTfEidwkG3nLsEE6g4v5
-         tuSSkaDHaFeMxxQxYoA4A+X0sZiJSHZlxliKGYCUwa8W29vYRw9CApzv8VuSMFm0SvLk
-         Wj8ai/vO5Y5MX6tc1/EAdQr9OvnDe5vryLwIZ0/4G+Ne/9bn2jkW44ty3v5u+z5r+1cC
-         LX9YISv+5rgsi4Um4OdUxXZRJgy89InCgA32UzCpR2yB8Sk1w3xwYnRPWixkhk7GuDLu
-         5CRA==
-X-Gm-Message-State: AA+aEWbX6k1OwYAEMcHcLzzwiqbpxz9sQAiocqwub/4qwN3IT0ENtz6V
-        VOcfPyq3JKLc4d1f/8XAVtdmaEVY
-X-Google-Smtp-Source: AFSGD/X0Y4p5wHzOijyD76a/dERW9SoP/F9HWrs7A9PG3g4jRC5wh/xO0Q1gcwENj1ZmXpoJnQJs1g==
-X-Received: by 2002:a17:902:7443:: with SMTP id e3mr8777673plt.304.1544364841944;
-        Sun, 09 Dec 2018 06:14:01 -0800 (PST)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id k63sm13565073pfc.76.2018.12.09.06.14.00
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 09 Dec 2018 06:14:01 -0800 (PST)
-Subject: Re: [PATCH] Watchdog: remove outdated comment
-To:     Hardik Singh Rathore <hardiksingh.k@gmail.com>
-Cc:     wim@linux-watchdog.org, linux-watchdog@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20181209104726.15610-1-hardiksingh.k@gmail.com>
-From:   Guenter Roeck <linux@roeck-us.net>
-Message-ID: <18f7e9ee-0d8f-7c73-cdc0-7826e912d33a@roeck-us.net>
-Date:   Sun, 9 Dec 2018 06:13:59 -0800
+        Sun, 9 Dec 2018 09:20:15 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1544365209;
+        s=strato-dkim-0002; d=xenosoft.de;
+        h=In-Reply-To:Date:Message-ID:References:Cc:To:From:Subject:
+        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
+        bh=Izig/pPPQuLxK5jL7W0j4n45KanWviKmQ9g8KZJM8l8=;
+        b=ZAMwKG37Cfe7FshhLtgjSY+857haaemAl7n1GA81N4T7rPdJnh0YuxraX+umGQ4lVm
+        mohcV+OxNEex2r641pGOZ2ZQeT+yQj8zgs2rAB3g1fxJnz3pIR0qNk/5zpW6OTwRPVmE
+        SLhIZ7t7YdDW+47UZey0Z11U2P3m7P6/2rPzsyvMn06abMz7EyiZxkuX6jjJHRfaPIhj
+        xTQ7gDWVQzPyCCu0V5F5xN7ELixght0E7VIvtwDBKF8dlomqihfbq+bem/DVHDHmSZMQ
+        F5lMzM2B+/6iuHoOKNQtzvi4Sv6rvTv0RifZ0Rw2s2gHvk+CQpQoHvanV2I8GgwdILqr
+        MtZg==
+X-RZG-AUTH: ":L2QefEenb+UdBJSdRCXu93KJ1bmSGnhMdmOod1DhGM4l4Hio94KKxRySfLxnHfJ+Dkjp5G5MdirQj0WG7CkG2pChksbYmBVaDODYdGAm81+XDQ=="
+X-RZG-CLASS-ID: mo00
+Received: from [IPv6:2a02:8109:a400:162c:9dea:b083:ff3d:f1d9]
+        by smtp.strato.de (RZmta 44.6 AUTH)
+        with ESMTPSA id 404b20uB9EK702x
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
+        (Client did not present a certificate);
+        Sun, 9 Dec 2018 15:20:07 +0100 (CET)
+Subject: Re: use generic DMA mapping code in powerpc V4
+From:   Christian Zigotzky <chzigotzky@xenosoft.de>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     linux-arch@vger.kernel.org,
+        Darren Stevens <darren@stevens-zone.net>,
+        linux-kernel@vger.kernel.org, Julian Margetson <runaway@candw.ms>,
+        linux-mm@kvack.org, iommu@lists.linux-foundation.org,
+        Paul Mackerras <paulus@samba.org>,
+        Olof Johansson <olof@lixom.net>, linuxppc-dev@lists.ozlabs.org
+References: <20181129170351.GC27951@lst.de>
+ <d0e04a85-f17d-414e-6fea-971414417430@xenosoft.de>
+ <20181130105346.GB26765@lst.de>
+ <8694431d-c669-b7b9-99fa-e99db5d45a7d@xenosoft.de>
+ <20181130131056.GA5211@lst.de>
+ <25999587-2d91-a63c-ed38-c3fb0075d9f1@xenosoft.de>
+ <c5202d29-863d-1377-0e2d-762203b317e2@xenosoft.de>
+ <58c61afb-290f-6196-c72c-ac7b61b84718@xenosoft.de>
+ <20181204142426.GA2743@lst.de>
+ <ef56d279-f75d-008e-71ba-7068c1b37c48@xenosoft.de>
+ <20181205140550.GA27549@lst.de>
+ <1948cf84-49ab-543c-472c-d18e27751903@xenosoft.de>
+ <5a2ea855-b4b0-e48a-5c3e-c859a8451ca2@xenosoft.de>
+ <7B6DDB28-8BF6-4589-84ED-F1D4D13BFED6@xenosoft.de>
+ <8a2c4581-0c85-8065-f37e-984755eb31ab@xenosoft.de>
+ <424bb228-c9e5-6593-1ab7-5950d9b2bd4e@xenosoft.de>
+Message-ID: <c86d76b4-b199-557e-bc64-4235729c1e72@xenosoft.de>
+Date:   Sun, 9 Dec 2018 15:20:06 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+ Thunderbird/60.3.3
 MIME-Version: 1.0
-In-Reply-To: <20181209104726.15610-1-hardiksingh.k@gmail.com>
+In-Reply-To: <424bb228-c9e5-6593-1ab7-5950d9b2bd4e@xenosoft.de>
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Language: de-DE
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/9/18 2:47 AM, Hardik Singh Rathore wrote:
-> The lock field doesn't exist in watchdog_device structure.
-> It was added by commit f4e9c82f64b5 ("watchdog: Add Locking support")
-> and removed by commit b4ffb1909843
-> ("watchdog: Separate and maintain variables based on variable lifetime")
-> 
-> Signed-off-by: Hardik Singh Rathore <hardiksingh.k@gmail.com>
+Next step: 602307b034734ce77a05da4b99333a2eaf6b6482 (powerpc/fsl_pci: 
+simplify fsl_pci_dma_set_mask)
 
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+git checkout 602307b034734ce77a05da4b99333a2eaf6b6482
 
-> ---
->   include/linux/watchdog.h | 3 ---
->   1 file changed, 3 deletions(-)
-> 
-> diff --git a/include/linux/watchdog.h b/include/linux/watchdog.h
-> index 44985c4a1e86..417d9f37077a 100644
-> --- a/include/linux/watchdog.h
-> +++ b/include/linux/watchdog.h
-> @@ -90,9 +90,6 @@ struct watchdog_ops {
->    *
->    * The driver-data field may not be accessed directly. It must be accessed
->    * via the watchdog_set_drvdata and watchdog_get_drvdata helpers.
-> - *
-> - * The lock field is for watchdog core internal use only and should not be
-> - * touched.
->    */
->   struct watchdog_device {
->   	int id;
-> 
+The PASEMI onboard ethernet works and the X5000 boots.
+
+-- Christian
+
+
+On 08 December 2018 at 2:47PM, Christian Zigotzky wrote:
+> Next step: e15cd8173ef85e9cc3e2a9c7cc2982f5c1355615 (powerpc/dma: fix 
+> an off-by-one in dma_capable)
+>
+> git checkout e15cd8173ef85e9cc3e2a9c7cc2982f5c1355615
+>
+> The PASEMI onboard ethernet also works with this commit and the X5000 
+> boots without any problems.
+>
+> -- Christian
+>
+>
+> On 08 December 2018 at 11:29AM, Christian Zigotzky wrote:
+>> Next step: 7ebc44c535f6bd726d553756d38b137acc718443 (powerpc/dma: 
+>> remove max_direct_dma_addr)
+>>
+>> git checkout 7ebc44c535f6bd726d553756d38b137acc718443
+>>
+>> OK, the PASEMI onboard ethernet works and the P5020 board boots.
+>>
+>> -- Christian
+>>
+>>
+>> On 07 December 2018 at 7:33PM, Christian Zigotzky wrote:
+>>> Next step: 13c1fdec5682b6e13257277fa16aa31f342d167d (powerpc/dma: 
+>>> move pci_dma_dev_setup_swiotlb to fsl_pci.c)
+>>>
+>>> git checkout 13c1fdec5682b6e13257277fa16aa31f342d167d
+>>>
+>>> Result: The PASEMI onboard ethernet works and the P5020 board boots.
+>>>
+>>> — Christian
+>>
+>>
+>>
+>
+>
 
