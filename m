@@ -6,45 +6,45 @@ X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70503C07E85
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:16:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58AC4C65BAF
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:16:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4096320661
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:16:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4096320661
+	by mail.kernel.org (Postfix) with ESMTP id 27F0520661
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:16:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 27F0520661
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728023AbeLIWIH (ORCPT
+        id S1727370AbeLIWHq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 17:08:07 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:37260 "EHLO
+        Sun, 9 Dec 2018 17:07:46 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:37236 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727929AbeLIWHt (ORCPT
+        by vger.kernel.org with ESMTP id S1727295AbeLIWHm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Dec 2018 17:07:49 -0500
+        Sun, 9 Dec 2018 17:07:42 -0500
 Received: from pub.yeoldevic.com ([81.174.156.145] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW73G-0002ib-VG; Sun, 09 Dec 2018 21:55:51 +0000
+        id 1gW738-0002ij-8s; Sun, 09 Dec 2018 21:55:42 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW72c-0003MV-Kz; Sun, 09 Dec 2018 21:55:10 +0000
+        id 1gW72f-0003TO-Hn; Sun, 09 Dec 2018 21:55:13 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, "Steve French" <stfrench@gmail.com>,
-        "Steve French" <stfrench@microsoft.com>,
-        "Aurelien Aptel" <aaptel@suse.com>
+CC:     akpm@linux-foundation.org, "Theodore Ts'o" <tytso@mit.edu>,
+        "Maxim Malkov" <malkov@ispras.ru>
 Date:   Sun, 09 Dec 2018 21:50:33 +0000
-Message-ID: <lsq.1544392233.428764261@decadent.org.uk>
+Message-ID: <lsq.1544392233.737294888@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 116/328] smb3: fill in statfs fsid and correct namelen
+Subject: [PATCH 3.16 188/328] ext4: prevent online resize with backup
+ superblock
 In-Reply-To: <lsq.1544392232.713909046@decadent.org.uk>
 X-SA-Exim-Connect-IP: 81.174.156.145
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -58,113 +58,65 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Steve French <stfrench@microsoft.com>
+From: Theodore Ts'o <tytso@mit.edu>
 
-commit 21ba3845b59c733a79ed4fe1c4f3732e7ece9df7 upstream.
+commit 011fa99404bea3f5d897c4983f6bd51170e3b18f upstream.
 
-Fil in the correct namelen (typically 255 not 4096) in the
-statfs response and also fill in a reasonably unique fsid
-(in this case taken from the volume id, and the creation time
-of the volume).
+Prevent BUG or corrupted file systems after the following:
 
-In the case of the POSIX statfs all fields are now filled in,
-and in the case of non-POSIX mounts, all fields are filled
-in which can be.
+mkfs.ext4 /dev/vdc 100M
+mount -t ext4 -o sb=40961 /dev/vdc /vdc
+resize2fs /dev/vdc
 
-Signed-off-by: Steve French <stfrench@gmail.com>
-Reviewed-by: Aurelien Aptel <aaptel@suse.com>
-[bwh: Backported to 3.16: Only use cifs_tcon::vol_{serial_number,create_time}
- if CONFIG_CIFS_SMB2 is enabled]
+We previously prevented online resizing using the old resize ioctl.
+Move the code to ext4_resize_begin(), so the check applies for all of
+the resize ioctl's.
+
+Reported-by: Maxim Malkov <malkov@ispras.ru>
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- fs/cifs/cifsfs.c  | 18 ++++++++++--------
- fs/cifs/smb2ops.c |  2 ++
- fs/cifs/smb2pdu.c |  8 ++++++++
- fs/cifs/smb2pdu.h | 11 +++++++++++
- 4 files changed, 31 insertions(+), 8 deletions(-)
+ fs/ext4/resize.c | 24 ++++++++++++------------
+ 1 file changed, 12 insertions(+), 12 deletions(-)
 
---- a/fs/cifs/cifsfs.c
-+++ b/fs/cifs/cifsfs.c
-@@ -190,14 +190,18 @@ cifs_statfs(struct dentry *dentry, struc
+--- a/fs/ext4/resize.c
++++ b/fs/ext4/resize.c
+@@ -24,6 +24,18 @@ int ext4_resize_begin(struct super_block
+ 		return -EPERM;
  
- 	xid = get_xid();
+ 	/*
++	 * If we are not using the primary superblock/GDT copy don't resize,
++         * because the user tools have no way of handling this.  Probably a
++         * bad time to do it anyways.
++         */
++	if (EXT4_SB(sb)->s_sbh->b_blocknr !=
++	    le32_to_cpu(EXT4_SB(sb)->s_es->s_first_data_block)) {
++		ext4_warning(sb, "won't resize using backup superblock at %llu",
++			(unsigned long long)EXT4_SB(sb)->s_sbh->b_blocknr);
++		return -EPERM;
++	}
++
++	/*
+ 	 * We are not allowed to do online-resizing on a filesystem mounted
+ 	 * with error, because it can destroy the filesystem easily.
+ 	 */
+@@ -758,18 +770,6 @@ static int add_new_gdb(handle_t *handle,
+ 		       "EXT4-fs: ext4_add_new_gdb: adding group block %lu\n",
+ 		       gdb_num);
  
 -	/*
--	 * PATH_MAX may be too long - it would presumably be total path,
--	 * but note that some servers (includinng Samba 3) have a shorter
--	 * maximum path.
--	 *
--	 * Instead could get the real value via SMB_QUERY_FS_ATTRIBUTE_INFO.
--	 */
--	buf->f_namelen = PATH_MAX;
-+	if (le32_to_cpu(tcon->fsAttrInfo.MaxPathNameComponentLength) > 0)
-+		buf->f_namelen =
-+		       le32_to_cpu(tcon->fsAttrInfo.MaxPathNameComponentLength);
-+	else
-+		buf->f_namelen = PATH_MAX;
-+
-+#ifdef CONFIG_CIFS_SMB2
-+	buf->f_fsid.val[0] = tcon->vol_serial_number;
-+	/* are using part of create time for more randomness, see man statfs */
-+	buf->f_fsid.val[1] =  (int)le64_to_cpu(tcon->vol_create_time);
-+#endif
-+
- 	buf->f_files = 0;	/* undefined */
- 	buf->f_ffree = 0;	/* unlimited */
- 
---- a/fs/cifs/smb2ops.c
-+++ b/fs/cifs/smb2ops.c
-@@ -263,6 +263,8 @@ smb3_qfs_tcon(const unsigned int xid, st
- 	SMB2_QFS_attr(xid, tcon, fid.persistent_fid, fid.volatile_fid,
- 			FS_DEVICE_INFORMATION);
- 	SMB2_QFS_attr(xid, tcon, fid.persistent_fid, fid.volatile_fid,
-+			FS_VOLUME_INFORMATION);
-+	SMB2_QFS_attr(xid, tcon, fid.persistent_fid, fid.volatile_fid,
- 			FS_SECTOR_SIZE_INFORMATION); /* SMB3 specific */
- 	SMB2_close(xid, tcon, fid.persistent_fid, fid.volatile_fid);
- 	return;
---- a/fs/cifs/smb2pdu.c
-+++ b/fs/cifs/smb2pdu.c
-@@ -2614,6 +2614,9 @@ SMB2_QFS_attr(const unsigned int xid, st
- 	} else if (level == FS_SECTOR_SIZE_INFORMATION) {
- 		max_len = sizeof(struct smb3_fs_ss_info);
- 		min_len = sizeof(struct smb3_fs_ss_info);
-+	} else if (level == FS_VOLUME_INFORMATION) {
-+		max_len = sizeof(struct smb3_fs_vol_info) + MAX_VOL_LABEL_LEN;
-+		min_len = sizeof(struct smb3_fs_vol_info);
- 	} else {
- 		cifs_dbg(FYI, "Invalid qfsinfo level %d\n", level);
- 		return -EINVAL;
-@@ -2650,6 +2653,11 @@ SMB2_QFS_attr(const unsigned int xid, st
- 		tcon->ss_flags = le32_to_cpu(ss_info->Flags);
- 		tcon->perf_sector_size =
- 			le32_to_cpu(ss_info->PhysicalBytesPerSectorForPerf);
-+	} else if (level == FS_VOLUME_INFORMATION) {
-+		struct smb3_fs_vol_info *vol_info = (struct smb3_fs_vol_info *)
-+			(offset + (char *)rsp);
-+		tcon->vol_serial_number = vol_info->VolumeSerialNumber;
-+		tcon->vol_create_time = vol_info->VolumeCreationTime;
- 	}
- 
- qfsattr_exit:
---- a/fs/cifs/smb2pdu.h
-+++ b/fs/cifs/smb2pdu.h
-@@ -946,6 +946,17 @@ struct smb3_fs_ss_info {
- 	__le32 ByteOffsetForPartitionAlignment;
- } __packed;
- 
-+/* volume info struct - see MS-FSCC 2.5.9 */
-+#define MAX_VOL_LABEL_LEN	32
-+struct smb3_fs_vol_info {
-+	__le64	VolumeCreationTime;
-+	__u32	VolumeSerialNumber;
-+	__le32	VolumeLabelLength; /* includes trailing null */
-+	__u8	SupportsObjects; /* True if eg like NTFS, supports objects */
-+	__u8	Reserved;
-+	__u8	VolumeLabel[0]; /* variable len */
-+} __packed;
-+
- /* partial list of QUERY INFO levels */
- #define FILE_DIRECTORY_INFORMATION	1
- #define FILE_FULL_DIRECTORY_INFORMATION 2
+-	 * If we are not using the primary superblock/GDT copy don't resize,
+-         * because the user tools have no way of handling this.  Probably a
+-         * bad time to do it anyways.
+-         */
+-	if (EXT4_SB(sb)->s_sbh->b_blocknr !=
+-	    le32_to_cpu(EXT4_SB(sb)->s_es->s_first_data_block)) {
+-		ext4_warning(sb, "won't resize using backup superblock at %llu",
+-			(unsigned long long)EXT4_SB(sb)->s_sbh->b_blocknr);
+-		return -EPERM;
+-	}
+-
+ 	gdb_bh = sb_bread(sb, gdblock);
+ 	if (!gdb_bh)
+ 		return -EIO;
 
