@@ -5,61 +5,60 @@ X-Spam-Level:
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F57CC07E85
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 20:31:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36C7CC07E85
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 20:31:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E3B222082F
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 20:31:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D4FE120661
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 20:31:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PwOW4eOx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E3B222082F
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P8fwAGJg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D4FE120661
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726449AbeLIUbY (ORCPT
+        id S1726490AbeLIUb2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 15:31:24 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:34755 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726417AbeLIUbT (ORCPT
+        Sun, 9 Dec 2018 15:31:28 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:45150 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726444AbeLIUbZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Dec 2018 15:31:19 -0500
-Received: by mail-lf1-f66.google.com with SMTP id p6so6529451lfc.1;
-        Sun, 09 Dec 2018 12:31:18 -0800 (PST)
+        Sun, 9 Dec 2018 15:31:25 -0500
+Received: by mail-lj1-f194.google.com with SMTP id s5-v6so7733680ljd.12;
+        Sun, 09 Dec 2018 12:31:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=HTX3y++j0yuzOQfGcZM+ZpkGPkoc/4Fc3P4h/vDhnhU=;
-        b=PwOW4eOxH84dTAPcK9LinSL7WK9NILopnHvJHBRdEzevZekZuRtPja2yhoGWqe0Zn+
-         Dgk78aymTSHLiwBQ86uBt2ItRJQRXHkV29M3JXMJZaTSDBbSWOmER13QjN/PC1E9ClRG
-         nL6W8HVy6W6gsPJShAm97BA4ZpG6fwkpVS1qvOSEmPsyv03R9txFAjY+M/769D/llUD+
-         aEqNgsnhO4eanAOB5PooWb8LAhjDY3L0NuQPWmIFlYX9Ej6AOjV+7Go87oyKR/TFz/Up
-         PLCF4vYNjO0CkyXfiJ7ihknXHSL2MiFPcajNRJbIrKJHaXK47qnIx6lvSMFZGbPITozL
-         X7gQ==
+        bh=1a4OJ0pMub/+4OQ5vBaj/FGKXBfZbEHYOH7ILj8c9js=;
+        b=P8fwAGJgtfhyB3SQfEMo2YTQu5kN18A1V6M1/BXdlbOqmvc/gISaHtUUmv4EUNyV4Y
+         CXzC2dhv+VDESK/atqMWjKpC8yxupLEEq6rekBW7OdzK6Nm91yQQNGNpuoiSqHRt0BmU
+         sw9+tBdnhl2o468qlPvWEFnw4+Pr+X4rj1AHolFR08HmA5AzSviLmg4mEkOw+eyCCBEJ
+         7mGUxSTJ1miSNAsz4vYjSJ1r1fKl3LIHWrCta26cTg4LzTmt2pHg8pB1lL6Mi28/HBg2
+         mrPvAvnBMkA1wM6e60VwFSUmScxg6QtvKrY99QNF7gw3zgPGqy/oBhLfD83nslv82Rxv
+         0AVA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=HTX3y++j0yuzOQfGcZM+ZpkGPkoc/4Fc3P4h/vDhnhU=;
-        b=MhXKtLWe5ugkG+pLLi25kJFn2TeaZ7Kzb1y6eUrdkyKUGoZE9+5M8cv9KmF5IP73mn
-         kOOO8SZ1K4HTDLhEX4HIZiCZytZqIWidqZaW5rI5Fel9UF0KMfewqXQNlOBEHXBfejs2
-         nwcYMxB2sC5nmXyIer6G11rAQC+sCa2oMqpAFMSOhMOkvn5FIiVZ7sZXMCQgwQ2RHIJN
-         /YTR8Kmz7/Hb7IQBpgpNqyMEo5hAYFqaXGDvFj22QYHVS612JsGhwT//UdzgY2Z0OQR3
-         nMUbrSWY1mbKIUzPNyrAwsKqneqseMQWnFHeRemKD+gYLWlKwMImjFWWM0MTL2k25Jtc
-         toTw==
-X-Gm-Message-State: AA+aEWZTu5dpE74iDgZUi+tpGR1VEs3kjXPL8f0wI0om/xDtEM11cD9D
-        VEovFxRo7IvfskrWwuBMFg0=
-X-Google-Smtp-Source: AFSGD/X8ROvl3TQhQlFaB2t92jR3+4ZJUvLSfOZN5LtTu3mnlHcY2FxQ4OPqud/e4dpKMZGdOTJzMw==
-X-Received: by 2002:a19:914b:: with SMTP id y11mr4926814lfj.98.1544387477463;
-        Sun, 09 Dec 2018 12:31:17 -0800 (PST)
+        bh=1a4OJ0pMub/+4OQ5vBaj/FGKXBfZbEHYOH7ILj8c9js=;
+        b=TFJTzxFAnhug8TuPnq5NT/dk7AftStIv96ShLNBY1B1tE8LxqdhYWZ1hY/gRl1EH7F
+         Eeof6wgcS1Wrc17dlB+mGsfWmjPK6arl3EQT6YmmeYLhZK+qEgyb2wvrDRBHFk/j7ejK
+         f3gmT08Dk8z/njpeDc7O8ZHx+0Q1O8GMLLPSM6RyLxW8Uzs8OCT+M0nCbcBJH6V5KTBv
+         3cGS4BK4+aGKBy6aQdt2vrR85bayNTmIP94n29300HN/+gR60JRVymAJSls6ed9dFox/
+         4gNBA6mkw3/0GxzZM+LZo6IZ/YJzki3Zvg2AH3VO2atHuIr9gYHb7xKr0Ko3ifU6iVYy
+         COrQ==
+X-Gm-Message-State: AA+aEWY86b8VfP8R2sxPBOGEFZGUumGbuY23EDLxVBgl0VrceFjLLypC
+        uoFrqM4p9Q4HiXBmVRUSD38=
+X-Google-Smtp-Source: AFSGD/WpWdP2ePwrXwMKZpIc26KV3lZVJGuPu5rHO8cYiQ4SC/Igpyro0zQ4fz5uFYyhrcERF8qLOg==
+X-Received: by 2002:a2e:5747:: with SMTP id r7-v6mr5392527ljd.141.1544387482340;
+        Sun, 09 Dec 2018 12:31:22 -0800 (PST)
 Received: from localhost.localdomain (ppp91-79-165-221.pppoe.mtu-net.ru. [91.79.165.221])
-        by smtp.gmail.com with ESMTPSA id c20sm1708346lfj.67.2018.12.09.12.31.16
+        by smtp.gmail.com with ESMTPSA id c20sm1708346lfj.67.2018.12.09.12.31.21
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 09 Dec 2018 12:31:16 -0800 (PST)
+        Sun, 09 Dec 2018 12:31:21 -0800 (PST)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -67,9 +66,9 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
 Cc:     Robin Murphy <robin.murphy@arm.com>,
         iommu@lists.linux-foundation.org, devicetree@vger.kernel.org,
         linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v6 17/21] iommu/tegra: gart: Don't use managed resources
-Date:   Sun,  9 Dec 2018 23:29:46 +0300
-Message-Id: <20181209202950.31486-18-digetx@gmail.com>
+Subject: [PATCH v6 21/21] iommu/tegra: gart: Perform code refactoring
+Date:   Sun,  9 Dec 2018 23:29:50 +0300
+Message-Id: <20181209202950.31486-22-digetx@gmail.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181209202950.31486-1-digetx@gmail.com>
 References: <20181209202950.31486-1-digetx@gmail.com>
@@ -80,73 +79,445 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-GART is a part of the Memory Controller driver that is always built-in,
-hence there is no benefit from the use of managed resources.
+Removed redundant safety-checks in the code and some debug code that
+isn't actually very useful for debugging, like enormous pagetable dump
+on each fault. The majority of the changes are code reshuffling,
+variables/whitespaces clean up and removal of debug messages that
+duplicate messages of the IOMMU-core.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-Acked-by: Thierry Reding <treding@nvidia.com>
 ---
- drivers/iommu/tegra-gart.c | 12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
+ drivers/iommu/tegra-gart.c | 244 +++++++++++++++----------------------
+ 1 file changed, 96 insertions(+), 148 deletions(-)
 
 diff --git a/drivers/iommu/tegra-gart.c b/drivers/iommu/tegra-gart.c
-index 1be595d15e7e..99afdbf8860c 100644
+index 71de54aa845c..c732c6a2a165 100644
 --- a/drivers/iommu/tegra-gart.c
 +++ b/drivers/iommu/tegra-gart.c
-@@ -173,7 +173,7 @@ static int gart_iommu_attach_dev(struct iommu_domain *domain,
- 	struct gart_client *client, *c;
- 	int err = 0;
+@@ -1,5 +1,5 @@
+ /*
+- * IOMMU API for GART in Tegra20
++ * IOMMU API for Graphics Address Relocation Table on Tegra20
+  *
+  * Copyright (c) 2010-2012, NVIDIA CORPORATION.  All rights reserved.
+  *
+@@ -31,70 +31,63 @@
  
--	client = devm_kzalloc(gart->dev, sizeof(*c), GFP_KERNEL);
-+	client = kzalloc(sizeof(*c), GFP_KERNEL);
- 	if (!client)
- 		return -ENOMEM;
- 	client->dev = dev;
-@@ -199,7 +199,7 @@ static int gart_iommu_attach_dev(struct iommu_domain *domain,
- 	return 0;
+ #include <soc/tegra/mc.h>
  
- fail:
--	devm_kfree(gart->dev, client);
-+	kfree(client);
- 	spin_unlock(&gart->client_lock);
- 	return err;
+-/* bitmap of the page sizes currently supported */
+-#define GART_IOMMU_PGSIZES	(SZ_4K)
+-
+ #define GART_REG_BASE		0x24
+ #define GART_CONFIG		(0x24 - GART_REG_BASE)
+ #define GART_ENTRY_ADDR		(0x28 - GART_REG_BASE)
+ #define GART_ENTRY_DATA		(0x2c - GART_REG_BASE)
+-#define GART_ENTRY_PHYS_ADDR_VALID	(1 << 31)
++
++#define GART_ENTRY_PHYS_ADDR_VALID	BIT(31)
+ 
+ #define GART_PAGE_SHIFT		12
+ #define GART_PAGE_SIZE		(1 << GART_PAGE_SHIFT)
+-#define GART_PAGE_MASK						\
+-	(~(GART_PAGE_SIZE - 1) & ~GART_ENTRY_PHYS_ADDR_VALID)
++#define GART_PAGE_MASK		GENMASK(30, GART_PAGE_SHIFT)
++
++/* bitmap of the page sizes currently supported */
++#define GART_IOMMU_PGSIZES	(GART_PAGE_SIZE)
+ 
+ struct gart_device {
+ 	void __iomem		*regs;
+ 	u32			*savedata;
+-	u32			page_count;	/* total remappable size */
+-	dma_addr_t		iovmm_base;	/* offset to vmm_area */
++	unsigned long		iovmm_base;	/* offset to vmm_area start */
++	unsigned long		iovmm_end;	/* offset to vmm_area end */
+ 	spinlock_t		pte_lock;	/* for pagetable */
+ 	spinlock_t		dom_lock;	/* for active domain */
+ 	unsigned int		active_devices;	/* number of active devices */
+ 	struct iommu_domain	*active_domain;	/* current active domain */
+-	struct device		*dev;
+-
+ 	struct iommu_device	iommu;		/* IOMMU Core handle */
++	struct device		*dev;
+ };
+ 
+ static struct gart_device *gart_handle; /* unique for a system */
+ 
+ static bool gart_debug;
+ 
+-#define GART_PTE(_pfn)						\
+-	(GART_ENTRY_PHYS_ADDR_VALID | ((_pfn) << PAGE_SHIFT))
+-
+ /*
+  * Any interaction between any block on PPSB and a block on APB or AHB
+  * must have these read-back to ensure the APB/AHB bus transaction is
+  * complete before initiating activity on the PPSB block.
+  */
+-#define FLUSH_GART_REGS(gart)	((void)readl((gart)->regs + GART_CONFIG))
++#define FLUSH_GART_REGS(gart)	readl_relaxed((gart)->regs + GART_CONFIG)
+ 
+ #define for_each_gart_pte(gart, iova)					\
+ 	for (iova = gart->iovmm_base;					\
+-	     iova < gart->iovmm_base + GART_PAGE_SIZE * gart->page_count; \
++	     iova < gart->iovmm_end;					\
+ 	     iova += GART_PAGE_SIZE)
+ 
+ static inline void gart_set_pte(struct gart_device *gart,
+-				unsigned long offs, u32 pte)
++				unsigned long iova, unsigned long pte)
+ {
+-	writel(offs, gart->regs + GART_ENTRY_ADDR);
+-	writel(pte, gart->regs + GART_ENTRY_DATA);
+-
+-	dev_dbg(gart->dev, "%s %08lx:%08x\n",
+-		 pte ? "map" : "unmap", offs, pte & GART_PAGE_MASK);
++	writel_relaxed(iova, gart->regs + GART_ENTRY_ADDR);
++	writel_relaxed(pte, gart->regs + GART_ENTRY_DATA);
  }
-@@ -214,7 +214,7 @@ static void __gart_iommu_detach_dev(struct iommu_domain *domain,
- 	list_for_each_entry(c, &gart->client, list) {
- 		if (c->dev == dev) {
- 			list_del(&c->list);
--			devm_kfree(gart->dev, c);
-+			kfree(c);
- 			if (list_empty(&gart->client))
- 				gart->active_domain = NULL;
- 			dev_dbg(gart->dev, "Detached %s\n", dev_name(dev));
-@@ -461,7 +461,7 @@ struct gart_device *tegra_gart_probe(struct device *dev,
+ 
+ static inline unsigned long gart_read_pte(struct gart_device *gart,
+-					  unsigned long offs)
++					  unsigned long iova)
+ {
+ 	unsigned long pte;
+ 
+-	writel(offs, gart->regs + GART_ENTRY_ADDR);
+-	pte = readl(gart->regs + GART_ENTRY_DATA);
++	writel_relaxed(iova, gart->regs + GART_ENTRY_ADDR);
++	pte = readl_relaxed(gart->regs + GART_ENTRY_DATA);
+ 
+ 	return pte;
+ }
+@@ -106,49 +99,20 @@ static void do_gart_setup(struct gart_device *gart, const u32 *data)
+ 	for_each_gart_pte(gart, iova)
+ 		gart_set_pte(gart, iova, data ? *(data++) : 0);
+ 
+-	writel(1, gart->regs + GART_CONFIG);
++	writel_relaxed(1, gart->regs + GART_CONFIG);
+ 	FLUSH_GART_REGS(gart);
+ }
+ 
+-#ifdef DEBUG
+-static void gart_dump_table(struct gart_device *gart)
+-{
+-	unsigned long iova;
+-	unsigned long flags;
+-
+-	spin_lock_irqsave(&gart->pte_lock, flags);
+-	for_each_gart_pte(gart, iova) {
+-		unsigned long pte;
+-
+-		pte = gart_read_pte(gart, iova);
+-
+-		dev_dbg(gart->dev, "%s %08lx:%08lx\n",
+-			(GART_ENTRY_PHYS_ADDR_VALID & pte) ? "v" : " ",
+-			iova, pte & GART_PAGE_MASK);
+-	}
+-	spin_unlock_irqrestore(&gart->pte_lock, flags);
+-}
+-#else
+-static inline void gart_dump_table(struct gart_device *gart)
++static inline bool gart_iova_range_invalid(struct gart_device *gart,
++					   unsigned long iova, size_t bytes)
+ {
++	return unlikely(iova < gart->iovmm_base || bytes != GART_PAGE_SIZE ||
++			iova + bytes > gart->iovmm_end);
+ }
+-#endif
+ 
+-static inline bool gart_iova_range_valid(struct gart_device *gart,
+-					 unsigned long iova, size_t bytes)
++static inline bool gart_pte_valid(struct gart_device *gart, unsigned long iova)
+ {
+-	unsigned long iova_start, iova_end, gart_start, gart_end;
+-
+-	iova_start = iova;
+-	iova_end = iova_start + bytes - 1;
+-	gart_start = gart->iovmm_base;
+-	gart_end = gart_start + gart->page_count * GART_PAGE_SIZE - 1;
+-
+-	if (iova_start < gart_start)
+-		return false;
+-	if (iova_end > gart_end)
+-		return false;
+-	return true;
++	return !!(gart_read_pte(gart, iova) & GART_ENTRY_PHYS_ADDR_VALID);
+ }
+ 
+ static int gart_iommu_attach_dev(struct iommu_domain *domain,
+@@ -191,7 +155,6 @@ static void gart_iommu_detach_dev(struct iommu_domain *domain,
+ 
+ static struct iommu_domain *gart_iommu_domain_alloc(unsigned type)
+ {
+-	struct gart_device *gart = gart_handle;
+ 	struct iommu_domain *domain;
+ 
+ 	if (type != IOMMU_DOMAIN_UNMANAGED)
+@@ -199,9 +162,8 @@ static struct iommu_domain *gart_iommu_domain_alloc(unsigned type)
+ 
+ 	domain = kzalloc(sizeof(*domain), GFP_KERNEL);
+ 	if (domain) {
+-		domain->geometry.aperture_start = gart->iovmm_base;
+-		domain->geometry.aperture_end = gart->iovmm_base +
+-					gart->page_count * GART_PAGE_SIZE - 1;
++		domain->geometry.aperture_start = gart_handle->iovmm_base;
++		domain->geometry.aperture_end = gart_handle->iovmm_end - 1;
+ 		domain->geometry.force_aperture = true;
+ 	}
+ 
+@@ -214,34 +176,44 @@ static void gart_iommu_domain_free(struct iommu_domain *domain)
+ 	kfree(domain);
+ }
+ 
++static int __gart_iommu_map(struct gart_device *gart, unsigned long iova,
++			    unsigned long pa)
++{
++	if (unlikely(gart_debug && gart_pte_valid(gart, iova))) {
++		dev_err(gart->dev, "Page entry is in-use\n");
++		return -EINVAL;
++	}
++
++	gart_set_pte(gart, iova, GART_ENTRY_PHYS_ADDR_VALID | pa);
++
++	return 0;
++}
++
+ static int gart_iommu_map(struct iommu_domain *domain, unsigned long iova,
+ 			  phys_addr_t pa, size_t bytes, int prot)
+ {
+ 	struct gart_device *gart = gart_handle;
+-	unsigned long flags;
+-	unsigned long pfn;
+-	unsigned long pte;
++	int ret;
+ 
+-	if (!gart_iova_range_valid(gart, iova, bytes))
++	if (gart_iova_range_invalid(gart, iova, bytes))
+ 		return -EINVAL;
+ 
+-	spin_lock_irqsave(&gart->pte_lock, flags);
+-	pfn = __phys_to_pfn(pa);
+-	if (!pfn_valid(pfn)) {
+-		dev_err(gart->dev, "Invalid page: %pa\n", &pa);
+-		spin_unlock_irqrestore(&gart->pte_lock, flags);
++	spin_lock(&gart->pte_lock);
++	ret = __gart_iommu_map(gart, iova, (unsigned long) pa);
++	spin_unlock(&gart->pte_lock);
++
++	return ret;
++}
++
++static int __gart_iommu_unmap(struct gart_device *gart, unsigned long iova)
++{
++	if (unlikely(gart_debug && !gart_pte_valid(gart, iova))) {
++		dev_err(gart->dev, "Page entry is invalid\n");
+ 		return -EINVAL;
+ 	}
+-	if (gart_debug) {
+-		pte = gart_read_pte(gart, iova);
+-		if (pte & GART_ENTRY_PHYS_ADDR_VALID) {
+-			spin_unlock_irqrestore(&gart->pte_lock, flags);
+-			dev_err(gart->dev, "Page entry is in-use\n");
+-			return -EBUSY;
+-		}
+-	}
+-	gart_set_pte(gart, iova, GART_PTE(pfn));
+-	spin_unlock_irqrestore(&gart->pte_lock, flags);
++
++	gart_set_pte(gart, iova, 0);
++
+ 	return 0;
+ }
+ 
+@@ -249,15 +221,16 @@ static size_t gart_iommu_unmap(struct iommu_domain *domain, unsigned long iova,
+ 			       size_t bytes)
+ {
+ 	struct gart_device *gart = gart_handle;
+-	unsigned long flags;
++	int err;
+ 
+-	if (!gart_iova_range_valid(gart, iova, bytes))
++	if (gart_iova_range_invalid(gart, iova, bytes))
+ 		return 0;
+ 
+-	spin_lock_irqsave(&gart->pte_lock, flags);
+-	gart_set_pte(gart, iova, 0);
+-	spin_unlock_irqrestore(&gart->pte_lock, flags);
+-	return bytes;
++	spin_lock(&gart->pte_lock);
++	err = __gart_iommu_unmap(gart, iova);
++	spin_unlock(&gart->pte_lock);
++
++	return err ? 0 : bytes;
+ }
+ 
+ static phys_addr_t gart_iommu_iova_to_phys(struct iommu_domain *domain,
+@@ -265,24 +238,15 @@ static phys_addr_t gart_iommu_iova_to_phys(struct iommu_domain *domain,
+ {
+ 	struct gart_device *gart = gart_handle;
+ 	unsigned long pte;
+-	phys_addr_t pa;
+-	unsigned long flags;
+ 
+-	if (!gart_iova_range_valid(gart, iova, 0))
++	if (gart_iova_range_invalid(gart, iova, GART_PAGE_SIZE))
+ 		return -EINVAL;
+ 
+-	spin_lock_irqsave(&gart->pte_lock, flags);
++	spin_lock(&gart->pte_lock);
+ 	pte = gart_read_pte(gart, iova);
+-	spin_unlock_irqrestore(&gart->pte_lock, flags);
++	spin_unlock(&gart->pte_lock);
+ 
+-	pa = (pte & GART_PAGE_MASK);
+-	if (!pfn_valid(__phys_to_pfn(pa))) {
+-		dev_err(gart->dev, "No entry for %08llx:%pa\n",
+-			 (unsigned long long)iova, &pa);
+-		gart_dump_table(gart);
+-		return -EINVAL;
+-	}
+-	return pa;
++	return pte & GART_PAGE_MASK;
+ }
+ 
+ static bool gart_iommu_capable(enum iommu_cap cap)
+@@ -322,9 +286,7 @@ static int gart_iommu_of_xlate(struct device *dev,
+ 
+ static void gart_iommu_sync(struct iommu_domain *domain)
+ {
+-	struct gart_device *gart = gart_handle;
+-
+-	FLUSH_GART_REGS(gart);
++	FLUSH_GART_REGS(gart_handle);
+ }
+ 
+ static const struct iommu_ops gart_iommu_ops = {
+@@ -347,24 +309,19 @@ static const struct iommu_ops gart_iommu_ops = {
+ 
+ int tegra_gart_suspend(struct gart_device *gart)
+ {
+-	unsigned long iova;
+ 	u32 *data = gart->savedata;
+-	unsigned long flags;
++	unsigned long iova;
+ 
+-	spin_lock_irqsave(&gart->pte_lock, flags);
+ 	for_each_gart_pte(gart, iova)
+ 		*(data++) = gart_read_pte(gart, iova);
+-	spin_unlock_irqrestore(&gart->pte_lock, flags);
++
+ 	return 0;
+ }
+ 
+ int tegra_gart_resume(struct gart_device *gart)
+ {
+-	unsigned long flags;
+-
+-	spin_lock_irqsave(&gart->pte_lock, flags);
+ 	do_gart_setup(gart, gart->savedata);
+-	spin_unlock_irqrestore(&gart->pte_lock, flags);
++
+ 	return 0;
+ }
+ 
+@@ -373,9 +330,8 @@ struct gart_device *tegra_gart_probe(struct device *dev,
+ 				     struct tegra_mc *mc)
+ {
+ 	struct gart_device *gart;
+-	struct resource *res_remap;
+-	void __iomem *gart_regs;
+-	int ret;
++	struct resource *res;
++	int err;
+ 
+ 	BUILD_BUG_ON(PAGE_SHIFT != GART_PAGE_SHIFT);
+ 
+@@ -384,53 +340,45 @@ struct gart_device *tegra_gart_probe(struct device *dev,
+ 		return NULL;
+ 
+ 	/* the GART memory aperture is required */
+-	res_remap = platform_get_resource(to_platform_device(dev),
+-					  IORESOURCE_MEM, 1);
+-	if (!res_remap) {
+-		dev_err(dev, "GART memory aperture expected\n");
++	res = platform_get_resource(to_platform_device(dev), IORESOURCE_MEM, 1);
++	if (!res) {
++		dev_err(dev, "Memory aperture resource unavailable\n");
  		return ERR_PTR(-ENXIO);
  	}
  
--	gart = devm_kzalloc(dev, sizeof(*gart), GFP_KERNEL);
-+	gart = kzalloc(sizeof(*gart), GFP_KERNEL);
- 	if (!gart) {
- 		dev_err(dev, "failed to allocate gart_device\n");
+ 	gart = kzalloc(sizeof(*gart), GFP_KERNEL);
+-	if (!gart) {
+-		dev_err(dev, "failed to allocate gart_device\n");
++	if (!gart)
  		return ERR_PTR(-ENOMEM);
-@@ -470,7 +470,7 @@ struct gart_device *tegra_gart_probe(struct device *dev,
- 	ret = iommu_device_sysfs_add(&gart->iommu, dev, NULL, "gart");
- 	if (ret) {
- 		dev_err(dev, "Failed to register IOMMU in sysfs\n");
--		return ERR_PTR(ret);
-+		goto free_gart;
- 	}
+-	}
+ 
+-	ret = iommu_device_sysfs_add(&gart->iommu, dev, NULL, "gart");
+-	if (ret) {
+-		dev_err(dev, "Failed to register IOMMU in sysfs\n");
++	gart_handle = gart;
++
++	gart->dev = dev;
++	gart->regs = mc->regs + GART_REG_BASE;
++	gart->iovmm_base = res->start;
++	gart->iovmm_end = res->end + 1;
++	spin_lock_init(&gart->pte_lock);
++	spin_lock_init(&gart->dom_lock);
++
++	do_gart_setup(gart, NULL);
++
++	err = iommu_device_sysfs_add(&gart->iommu, dev, NULL, "gart");
++	if (err)
+ 		goto free_gart;
+-	}
  
  	iommu_device_set_ops(&gart->iommu, &gart_iommu_ops);
-@@ -508,6 +508,8 @@ struct gart_device *tegra_gart_probe(struct device *dev,
- 	iommu_device_unregister(&gart->iommu);
- remove_sysfs:
- 	iommu_device_sysfs_remove(&gart->iommu);
-+free_gart:
-+	kfree(gart);
+ 	iommu_device_set_fwnode(&gart->iommu, dev->fwnode);
  
- 	return ERR_PTR(ret);
+-	ret = iommu_device_register(&gart->iommu);
+-	if (ret) {
+-		dev_err(dev, "Failed to register IOMMU\n");
++	err = iommu_device_register(&gart->iommu);
++	if (err)
+ 		goto remove_sysfs;
+-	}
+ 
+-	gart->dev = dev;
+-	gart_regs = mc->regs + GART_REG_BASE;
+-	spin_lock_init(&gart->pte_lock);
+-	spin_lock_init(&gart->dom_lock);
+-	gart->regs = gart_regs;
+-	gart->iovmm_base = (dma_addr_t)res_remap->start;
+-	gart->page_count = (resource_size(res_remap) >> GART_PAGE_SHIFT);
+-
+-	gart->savedata = vmalloc(array_size(sizeof(u32), gart->page_count));
++	gart->savedata = vmalloc(resource_size(res) / GART_PAGE_SIZE *
++				 sizeof(u32));
+ 	if (!gart->savedata) {
+-		dev_err(dev, "failed to allocate context save area\n");
+-		ret = -ENOMEM;
++		err = -ENOMEM;
+ 		goto unregister_iommu;
+ 	}
+ 
+-	do_gart_setup(gart, NULL);
+-
+-	gart_handle = gart;
+-
+ 	return gart;
+ 
+ unregister_iommu:
+@@ -440,7 +388,7 @@ struct gart_device *tegra_gart_probe(struct device *dev,
+ free_gart:
+ 	kfree(gart);
+ 
+-	return ERR_PTR(ret);
++	return ERR_PTR(err);
  }
+ 
+ module_param(gart_debug, bool, 0644);
 -- 
 2.19.1
 
