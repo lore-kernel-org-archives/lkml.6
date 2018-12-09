@@ -6,45 +6,45 @@ X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 625D1C65BAF
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:23:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69441C65BAF
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:23:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 34C5520661
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:23:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 34C5520661
+	by mail.kernel.org (Postfix) with ESMTP id 3A6B120661
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:23:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A6B120661
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728615AbeLIWXl (ORCPT
+        id S1728603AbeLIWXi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 17:23:41 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35076 "EHLO
+        Sun, 9 Dec 2018 17:23:38 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35070 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726489AbeLIVzS (ORCPT
+        by vger.kernel.org with ESMTP id S1726488AbeLIVzS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 9 Dec 2018 16:55:18 -0500
 Received: from pub.yeoldevic.com ([81.174.156.145] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW72h-0002ih-Qp; Sun, 09 Dec 2018 21:55:16 +0000
+        id 1gW72h-0002if-Pf; Sun, 09 Dec 2018 21:55:16 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW72e-0003RG-E5; Sun, 09 Dec 2018 21:55:12 +0000
+        id 1gW72e-0003SA-Q8; Sun, 09 Dec 2018 21:55:12 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        "Guenter Roeck" <linux@roeck-us.net>
+CC:     akpm@linux-foundation.org, "David S. Miller" <davem@davemloft.net>,
+        "Sabrina Dubroca" <sd@queasysnail.net>
 Date:   Sun, 09 Dec 2018 21:50:33 +0000
-Message-ID: <lsq.1544392233.137971348@decadent.org.uk>
+Message-ID: <lsq.1544392233.271758364@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 162/328] hwmon: (nct6775) Fix potential Spectre v1
+Subject: [PATCH 3.16 173/328] ipv6: fix cleanup ordering for pingv6
+ registration
 In-Reply-To: <lsq.1544392232.713909046@decadent.org.uk>
 X-SA-Exim-Connect-IP: 81.174.156.145
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -58,50 +58,54 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+From: Sabrina Dubroca <sd@queasysnail.net>
 
-commit d49dbfade96d5b0863ca8a90122a805edd5ef50a upstream.
+commit a03dc36bdca6b614651fedfcd8559cf914d2d21d upstream.
 
-val can be indirectly controlled by user-space, hence leading to
-a potential exploitation of the Spectre variant 1 vulnerability.
+Commit 6d0bfe226116 ("net: ipv6: Add IPv6 support to the ping socket.")
+contains an error in the cleanup path of inet6_init(): when
+proto_register(&pingv6_prot, 1) fails, we try to unregister
+&pingv6_prot. When rawv6_init() fails, we skip unregistering
+&pingv6_prot.
 
-This issue was detected with the help of Smatch:
+Example of panic (triggered by faking a failure of
+ proto_register(&pingv6_prot, 1)):
 
-vers/hwmon/nct6775.c:2698 store_pwm_weight_temp_sel() warn: potential
-spectre issue 'data->temp_src' [r]
+    general protection fault: 0000 [#1] PREEMPT SMP KASAN PTI
+    [...]
+    RIP: 0010:__list_del_entry_valid+0x79/0x160
+    [...]
+    Call Trace:
+     proto_unregister+0xbb/0x550
+     ? trace_preempt_on+0x6f0/0x6f0
+     ? sock_no_shutdown+0x10/0x10
+     inet6_init+0x153/0x1b8
 
-Fix this by sanitizing val before using it to index data->temp_src
-
-Notice that given that speculation windows are large, the policy is
-to kill the speculation on the first load and not worry if it can be
-completed with a dependent load/store [1].
-
-[1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
-
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-[bwh: Backported to 3.16: adjust context]
+Fixes: 6d0bfe226116 ("net: ipv6: Add IPv6 support to the ping socket.")
+Signed-off-by: Sabrina Dubroca <sd@queasysnail.net>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/hwmon/nct6775.c | 2 ++
- 1 file changed, 2 insertions(+)
+ net/ipv6/af_inet6.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/hwmon/nct6775.c
-+++ b/drivers/hwmon/nct6775.c
-@@ -57,6 +57,7 @@
- #include <linux/mutex.h>
- #include <linux/acpi.h>
- #include <linux/io.h>
-+#include <linux/nospec.h>
- #include "lm75.h"
+--- a/net/ipv6/af_inet6.c
++++ b/net/ipv6/af_inet6.c
+@@ -860,14 +860,14 @@ static int __init inet6_init(void)
  
- #define USE_ALTERNATE
-@@ -2438,6 +2439,7 @@ store_pwm_weight_temp_sel(struct device
- 		return err;
- 	if (val > NUM_TEMP)
- 		return -EINVAL;
-+	val = array_index_nospec(val, NUM_TEMP + 1);
- 	if (val && (!(data->have_temp & (1 << (val - 1))) ||
- 		    !data->temp_src[val - 1]))
- 		return -EINVAL;
+ 	err = proto_register(&pingv6_prot, 1);
+ 	if (err)
+-		goto out_unregister_ping_proto;
++		goto out_unregister_raw_proto;
+ 
+ 	/* We MUST register RAW sockets before we create the ICMP6,
+ 	 * IGMP6, or NDISC control sockets.
+ 	 */
+ 	err = rawv6_init();
+ 	if (err)
+-		goto out_unregister_raw_proto;
++		goto out_unregister_ping_proto;
+ 
+ 	/* Register the family here so that the init calls below will
+ 	 * be able to create sockets. (?? is this dangerous ??)
 
