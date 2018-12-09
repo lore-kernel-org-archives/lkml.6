@@ -6,57 +6,57 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42570C07E85
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 14:58:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41961C07E85
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 14:59:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F0AC420831
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 14:58:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 01C2C20831
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 14:59:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="kzW+2FAO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F0AC420831
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="QkwNnTPW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 01C2C20831
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726278AbeLIO6M (ORCPT
+        id S1726280AbeLIO7s (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 09:58:12 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:46827 "EHLO
+        Sun, 9 Dec 2018 09:59:48 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:43611 "EHLO
         mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726227AbeLIO6M (ORCPT
+        with ESMTP id S1726227AbeLIO7r (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Dec 2018 09:58:12 -0500
-Received: by mail-ot1-f66.google.com with SMTP id w25so8052538otm.13
-        for <linux-kernel@vger.kernel.org>; Sun, 09 Dec 2018 06:58:11 -0800 (PST)
+        Sun, 9 Dec 2018 09:59:47 -0500
+Received: by mail-ot1-f66.google.com with SMTP id a11so8089225otr.10
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Dec 2018 06:59:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=subject:to:cc:references:from:openpgp:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=ltVeZ/P0fjNFoHs2uLxtUuxFtbSdGvlCvYAVu+C1jHQ=;
-        b=kzW+2FAOszZhqRq21zKhBEN9yDSNxY2sefaEGTxs1W8np3y3DWg6hmnowQQATcpog9
-         JLtPr1OsGWKif3CDX5741vAxicE+Hdt/4NQih1VgqVXfrFCnCKDsfgGh4pSEU/hccJEA
-         Pl6MIdldNNqQNOQ/badZuT2D0iS/b5tA8uhZI=
+        bh=cNDhZFMf/+5Sbma1vzSzIDHZ8WGRRV+Q1JX55LNm8NU=;
+        b=QkwNnTPW7guKA6TNhaSpmx5XBNdLO9Tvl2Ihnn9dEn7DMEPOjDoAH5kBI5p/gEU+z+
+         qwLFSx4c9ztkQaABHSRZ/m3KDz7RvGZoaT+cMjKOegI/ViayN3vN1uDJyd9HtsM5TosX
+         EeZx/s1nhUahsgkzxAs56Vq92fEWUEOCFoV00=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
          :date:user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=ltVeZ/P0fjNFoHs2uLxtUuxFtbSdGvlCvYAVu+C1jHQ=;
-        b=W+9ygM/eC5O9RtsDhTm8XZblK3mOfYg+0Civ7lsotgx9zG8nIbvK/DZTihogAONjWp
-         1ZMgeBcQzdbSiCJ3aifUNtOkFIJLmEWsk0M1b/GKM76iI+MdaGU2MebapA9I18V196gn
-         NxH9toEznNKzuRi/jXdmdhzqTONHB+4dpMbGFJ2d+HPYs4YWn39EPMhwX2UMoV6xEy/p
-         vU/7MEOrZ7hj+pjflz1MVbrvF+nwY4wr2LOYCYy74MURRKiQ/gipx1D6jHXxVsa87Zyd
-         soFZBMhYwfVpMhXIAqawKlIctqbTT0+2XSEURqjoR3QH4pMQRFUE++DYLGXnJMn1uxnL
-         rd/A==
-X-Gm-Message-State: AA+aEWb7r1GavCtszG717ZZj0Y5l4e3gsOMh4aldc5YeXjGG8HNfiAG1
-        cItkXshwLnsIFae1AgF7TIHUVLr9FUjrNw==
-X-Google-Smtp-Source: AFSGD/VdxKTolqnSzuBHpTys/odbEWXjAVQbXfqpD3xsp+21suaHSQlCcI4wkzE1zjio1lBVBEIzUQ==
-X-Received: by 2002:a9d:5e8c:: with SMTP id f12mr6731220otl.343.1544367491069;
-        Sun, 09 Dec 2018 06:58:11 -0800 (PST)
+        bh=cNDhZFMf/+5Sbma1vzSzIDHZ8WGRRV+Q1JX55LNm8NU=;
+        b=DVrqtbLrMvJ4jpaKdL0cHc8o1N2xUGpIxfy2nTsRkx55X4GGP4L4rd+VmBvMEMEjSC
+         OJMjCFd6LsJgtQEwVL9eEgPK9b+id0XQNSefUgk1qFGWgPN9FwRymplQcTh0XXD90vYv
+         knWYvyEJHo/QfCJAavtEbmvn/3mdJ3ZhKxLOEknIJ5kwV4v1LEiflkI7ElXo6m6qQ2ql
+         XMd+2dyjck9AKU+SaiKNYUl/E8IOu9i6e+6FeLgFJ0GBpUElBiy6OYjizXctMjff/hH0
+         hpwsMDL8ZptKAQVK4ngWyM+BYcvx1Nm2WF8aTNe8CQ3Q2pkULPI85MdTssRe07sYgYUY
+         2UQw==
+X-Gm-Message-State: AA+aEWZ9s2YlOh0yp/ZLjuLMkEG2d+c+pQ6Bgzvj9aerQBVfGgE+cDe3
+        FJZMxTYmqaMqvOVEol0hgwQEarkXvFJIcQ==
+X-Google-Smtp-Source: AFSGD/WKa/GERQKFIJs5Uxt7J2h8aSHjXtJ/MN5F3cnq1fK3q9qywU91Uh/JaobsBM2PhkDzCbWqXw==
+X-Received: by 2002:a9d:72a:: with SMTP id 39mr6888134ote.134.1544367586327;
+        Sun, 09 Dec 2018 06:59:46 -0800 (PST)
 Received: from cloudburst.twiddle.net ([187.217.227.243])
-        by smtp.gmail.com with ESMTPSA id l204sm4570498oia.54.2018.12.09.06.58.08
+        by smtp.gmail.com with ESMTPSA id h24sm6360742otm.72.2018.12.09.06.59.44
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 09 Dec 2018 06:58:10 -0800 (PST)
-Subject: Re: [PATCH v6 06/13] arm64/cpufeature: detect pointer authentication
+        Sun, 09 Dec 2018 06:59:45 -0800 (PST)
+Subject: Re: [PATCH v6 07/13] arm64: add basic pointer authentication support
 To:     Kristina Martsenko <kristina.martsenko@arm.com>,
         linux-arm-kernel@lists.infradead.org
 Cc:     Adam Wallis <awallis@codeaurora.org>,
@@ -76,15 +76,15 @@ Cc:     Adam Wallis <awallis@codeaurora.org>,
         Will Deacon <will.deacon@arm.com>,
         kvmarm@lists.cs.columbia.edu, linux-kernel@vger.kernel.org
 References: <20181207183931.4285-1-kristina.martsenko@arm.com>
- <20181207183931.4285-7-kristina.martsenko@arm.com>
+ <20181207183931.4285-8-kristina.martsenko@arm.com>
 From:   Richard Henderson <richard.henderson@linaro.org>
 Openpgp: preference=signencrypt
-Message-ID: <12e20237-a6a7-bb4c-ad34-7b645a50e680@linaro.org>
-Date:   Sun, 9 Dec 2018 08:58:06 -0600
+Message-ID: <0cd3ea5e-c705-7e14-bac0-900a4ca7782c@linaro.org>
+Date:   Sun, 9 Dec 2018 08:59:42 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.3.1
 MIME-Version: 1.0
-In-Reply-To: <20181207183931.4285-7-kristina.martsenko@arm.com>
+In-Reply-To: <20181207183931.4285-8-kristina.martsenko@arm.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -96,32 +96,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 On 12/7/18 12:39 PM, Kristina Martsenko wrote:
 > From: Mark Rutland <mark.rutland@arm.com>
 > 
-> So that we can dynamically handle the presence of pointer authentication
-> functionality, wire up probing code in cpufeature.c.
+> This patch adds basic support for pointer authentication, allowing
+> userspace to make use of APIAKey, APIBKey, APDAKey, APDBKey, and
+> APGAKey. The kernel maintains key values for each process (shared by all
+> threads within), which are initialised to random values at exec() time.
 > 
-> From ARMv8.3 onwards, ID_AA64ISAR1 is no longer entirely RES0, and now
-> has four fields describing the presence of pointer authentication
-> functionality:
-> 
-> * APA - address authentication present, using an architected algorithm
-> * API - address authentication present, using an IMP DEF algorithm
-> * GPA - generic authentication present, using an architected algorithm
-> * GPI - generic authentication present, using an IMP DEF algorithm
-> 
-> This patch checks for both address and generic authentication,
-> separately. It is assumed that if all CPUs support an IMP DEF algorithm,
-> the same algorithm is used across all CPUs.
+> The ID_AA64ISAR1_EL1.{APA,API,GPA,GPI} fields are exposed to userspace,
+> to describe that pointer authentication instructions are available and
+> that the kernel is managing the keys. Two new hwcaps are added for the
+> same reason: PACA (for address authentication) and PACG (for generic
+> authentication).
 > 
 > Signed-off-by: Mark Rutland <mark.rutland@arm.com>
 > Signed-off-by: Kristina Martsenko <kristina.martsenko@arm.com>
+> Tested-by: Adam Wallis <awallis@codeaurora.org>
 > Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Ramana Radhakrishnan <ramana.radhakrishnan@arm.com>
 > Cc: Suzuki K Poulose <suzuki.poulose@arm.com>
 > Cc: Will Deacon <will.deacon@arm.com>
 > ---
->  arch/arm64/include/asm/cpucaps.h    |  8 +++-
->  arch/arm64/include/asm/cpufeature.h | 12 +++++
->  arch/arm64/kernel/cpufeature.c      | 90 +++++++++++++++++++++++++++++++++++++
->  3 files changed, 109 insertions(+), 1 deletion(-)
+>  arch/arm64/include/asm/pointer_auth.h | 75 +++++++++++++++++++++++++++++++++++
+>  arch/arm64/include/asm/thread_info.h  |  4 ++
+>  arch/arm64/include/uapi/asm/hwcap.h   |  2 +
+>  arch/arm64/kernel/cpufeature.c        | 13 ++++++
+>  arch/arm64/kernel/cpuinfo.c           |  2 +
+>  arch/arm64/kernel/process.c           |  4 ++
+>  6 files changed, 100 insertions(+)
+>  create mode 100644 arch/arm64/include/asm/pointer_auth.h
 
 Reviewed-by: Richard Henderson <richard.henderson@linaro.org>
 
