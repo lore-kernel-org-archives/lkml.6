@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77D12C07E85
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:13:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95765C07E85
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:13:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 47D3620661
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:13:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 47D3620661
+	by mail.kernel.org (Postfix) with ESMTP id 5FDB02081F
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:13:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5FDB02081F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728002AbeLIWNA (ORCPT
+        id S1728392AbeLIWNI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 17:13:00 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:37842 "EHLO
+        Sun, 9 Dec 2018 17:13:08 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:37860 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726320AbeLIWM5 (ORCPT
+        by vger.kernel.org with ESMTP id S1728374AbeLIWNG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Dec 2018 17:12:57 -0500
+        Sun, 9 Dec 2018 17:13:06 -0500
 Received: from pub.yeoldevic.com ([81.174.156.145] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW73R-0002ir-2l; Sun, 09 Dec 2018 21:56:01 +0000
+        id 1gW73I-0002ia-RI; Sun, 09 Dec 2018 21:55:53 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW72Z-0003FE-CW; Sun, 09 Dec 2018 21:55:07 +0000
+        id 1gW72b-0003JH-7i; Sun, 09 Dec 2018 21:55:09 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -38,13 +38,14 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
-        "Johan Hovold" <johan@kernel.org>
+        "Yelena Krivosheev" <yelena@marvell.com>,
+        "Gregory CLEMENT" <gregory.clement@bootlin.com>,
+        "David S. Miller" <davem@davemloft.net>
 Date:   Sun, 09 Dec 2018 21:50:33 +0000
-Message-ID: <lsq.1544392233.207139767@decadent.org.uk>
+Message-ID: <lsq.1544392233.267580063@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 039/328] tty: fix termios input-speed encoding
+Subject: [PATCH 3.16 084/328] net: mvneta: fix mtu change on port without link
 In-Reply-To: <lsq.1544392232.713909046@decadent.org.uk>
 X-SA-Exim-Connect-IP: 81.174.156.145
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -58,35 +59,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Johan Hovold <johan@kernel.org>
+From: Yelena Krivosheev <yelena@marvell.com>
 
-commit fada18c48d774b9e837928ecdce6a5d5fdd11ee7 upstream.
+commit 8466baf788ec3e18836bd9c91ba0b1a07af25878 upstream.
 
-Make sure to clear the CIBAUD bits before OR-ing the new mask when
-encoding the termios input baud rate.
+It is incorrect to enable TX/RX queues (call by mvneta_port_up()) for
+port without link. Indeed MTU change for interface without link causes TX
+queues to stuck.
 
-This could otherwise lead to an incorrect input rate being reported back
-and incidentally set on subsequent termios updates.
-
-Fixes: edc6afc54968 ("[PATCH] tty: switch to ktermios and new framework")
-Signed-off-by: Johan Hovold <johan@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-[bwh: Backported to 3.16: adjust filename]
+Fixes: c5aff18204da ("net: mvneta: driver for Marvell Armada 370/XP
+network unit")
+Signed-off-by: Yelena Krivosheev <yelena@marvell.com>
+[gregory.clement: adding Fixes tags and rewording commit log]
+Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/tty/tty_ioctl.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/net/ethernet/marvell/mvneta.c | 1 -
+ 1 file changed, 1 deletion(-)
 
---- a/drivers/tty/tty_ioctl.c
-+++ b/drivers/tty/tty_ioctl.c
-@@ -419,6 +419,9 @@ void tty_termios_encode_baud_rate(struct
- 		ibinput = 1;	/* An input speed was specified */
- #endif
- 	termios->c_cflag &= ~CBAUD;
-+#ifdef IBSHIFT
-+	termios->c_cflag &= ~(CBAUD << IBSHIFT);
-+#endif
+--- a/drivers/net/ethernet/marvell/mvneta.c
++++ b/drivers/net/ethernet/marvell/mvneta.c
+@@ -2475,7 +2475,6 @@ static int mvneta_change_mtu(struct net_
+ 	}
  
- 	/*
- 	 *	Our goal is to find a close match to the standard baud rate
+ 	mvneta_start_dev(pp);
+-	mvneta_port_up(pp);
+ 
+ 	netdev_update_features(dev);
+ 
 
