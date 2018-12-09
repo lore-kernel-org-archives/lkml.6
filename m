@@ -7,59 +7,59 @@ X-Spam-Status: No, score=-11.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E9B5C07E85
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 23:02:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE753C07E85
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 23:02:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 61E742081F
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 23:02:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 94FD220831
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 23:02:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="F6Wzr6nY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61E742081F
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NQ0qH8yN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 94FD220831
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726668AbeLIXCD (ORCPT
+        id S1726698AbeLIXCX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 18:02:03 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:46164 "EHLO
+        Sun, 9 Dec 2018 18:02:23 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:37579 "EHLO
         mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726619AbeLIXCC (ORCPT
+        with ESMTP id S1726508AbeLIXCW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Dec 2018 18:02:02 -0500
-Received: by mail-pf1-f194.google.com with SMTP id c73so4419057pfe.13
-        for <linux-kernel@vger.kernel.org>; Sun, 09 Dec 2018 15:02:02 -0800 (PST)
+        Sun, 9 Dec 2018 18:02:22 -0500
+Received: by mail-pf1-f194.google.com with SMTP id y126so4440959pfb.4
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Dec 2018 15:02:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:from:to:cc:subject:in-reply-to:message-id:references
          :user-agent:mime-version;
-        bh=4xiM69Ri1+YEOaZxsVKSi1HDZ8z+4OcwG0v9rvp4EEY=;
-        b=F6Wzr6nYejv64AeC1tfELeTm4Nb1ZvsM+Tf3FnKesb6He4AkQ4BEidMXGCRAfLB9aC
-         26Uuu4qoHDZ4T2JR23bw9QSu5C0rq03y+z6zoZPJQQi8kvGxkYh6jlBYv141tny3uSh8
-         rVchmPQypIK/2QPjYkUO7mLCWsWLYrW3kejW/H7vhsDcBt86LFPiCbXMhR5wDC1uhSsr
-         3fNCMWpyEAldQ03ne7UtQr+sNobwKEhFyu7UNYgLTF5PTYAxtCSRAJ3lJemEX6sYr6ae
-         5J6voF6eVeu4LOqzbV57x1/xa8kzp8FPufNrlXVWH+EofWtK6JSZzu+Fn9WgLAwJskHI
-         wiQQ==
+        bh=D5Oat1hTwep3QcyUUzhhIIbWo+ArAwmB9qovC2BFFIA=;
+        b=NQ0qH8yNMvM8rcj2kzZA/zTuM94nQo2Y5mrAw2Ik3c7GQZbEVpxlefKWaol8KEYonu
+         BpDu8CcrVguM9wEcXGZjaAILY+8Nj2sH/zL881blr1m5DBmQm15b2+syPeDwXFiBlbGq
+         6CohlQJdCI5xPdrJcxzeQ/ovYr8eL9822jyBeXmkiNSqbwG0PMsPhbr/+bvDvbYqD8+3
+         gdRn2A5yJpf05RTNiOhapyEyCk9O6pq78tga3eJb6U56s9L6oE9/5U2uSFE08imcGw8y
+         M6sL9vg8NxV9nzidZRnJSzclbjtgft40Ju8pMaamT1y9cIsrWbNoLzT62SAi5YwtXq0v
+         T/xw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
          :references:user-agent:mime-version;
-        bh=4xiM69Ri1+YEOaZxsVKSi1HDZ8z+4OcwG0v9rvp4EEY=;
-        b=m4mBY8toZpWHu87+5FL27iSXCUSQTVpy08Lplu/Tl9fcke1w1/NqJTqqCuLVOz7z+M
-         v297JnjZmNXo1feruS28QB6+9cAPI25k6ZWRGBY8Uife7G5fAS8bBIM+s2gNDNQ9of2T
-         d9Cds20D29YzEAiWC04ibpavYJIyewDxVNHXI7MefHJAmGK2a3X4OX+mSk2SD/BZarAR
-         8Iub/pnZS2lOqvUiCUix5j4V2BkPlaD84tDzq4iasyZkUSnzeSlnuB5qdORWsFkwxNSc
-         SEn73zXPbwsbmIvwWTuqkTyfeTMBYtBhYN4Z4K+8dbZRArnHyt0v27v/elXPgEXYbUFA
-         RFYA==
-X-Gm-Message-State: AA+aEWYLuq7jab2wWkuLYaaqluK8zLxpzdB/PsA5hrg3YQ7YCMYL8zI/
-        2nfMeMXZTQcI+UcLyLGn60ejiA==
-X-Google-Smtp-Source: AFSGD/Ws/ius5rek515zFhAt8FWEblbGjV3iFAGzg0AZdNSWtDwzWby4JN6zElN5SgbZa3r3JbJJqg==
-X-Received: by 2002:a62:4bcf:: with SMTP id d76mr10712174pfj.170.1544396521823;
-        Sun, 09 Dec 2018 15:02:01 -0800 (PST)
+        bh=D5Oat1hTwep3QcyUUzhhIIbWo+ArAwmB9qovC2BFFIA=;
+        b=UvPFw4DpkoAblTYY4NMG64DjuIBTWmdWbkbwnzfv3wDCvDVdTh3FYujasK4b5QHvtw
+         rSyAnPwLABGeeM+v5CC5o3kkKRdkXNLNenYyNkv78NwiKhcGBFYE2Xln7Aqbsxn4F/uQ
+         cj6aFI94dJUrRPjv3CJMcdhUhYAOo1iVaCL5u9MM+ttRNkZYGWw5Z9n/VCvw4JIrHmqb
+         1jjO2y6EvxksEh2iWdCUsmN4FhUs3dCYudcF1xPbq4Mu9NrMT1W495kX1dzj1LmiiPAT
+         7g2ArifrTW65LRqEAAASCUl5c+UdD7XHFCm/vcCZhBZRAKK6s85vbJAunR2bgu/qv//P
+         MJbg==
+X-Gm-Message-State: AA+aEWZPHCtpJrTSBkS9SaAs5hZqpbbhm/cHhNU10WCsfiB8gF1BkNPn
+        bXN54lFSYsnlj3A91kKsW32Mww==
+X-Google-Smtp-Source: AFSGD/VvmJVBeopuZ1ffLyHckP4egtr0JNSa4uiIE75nkdqUf8S1tpFylGl9S2dJenxSgY6gGE2GGw==
+X-Received: by 2002:a62:2f06:: with SMTP id v6mr10322382pfv.216.1544396542132;
+        Sun, 09 Dec 2018 15:02:22 -0800 (PST)
 Received: from [2620:15c:17:3:3a5:23a7:5e32:4598] ([2620:15c:17:3:3a5:23a7:5e32:4598])
-        by smtp.gmail.com with ESMTPSA id i123sm14945950pfg.164.2018.12.09.15.02.00
+        by smtp.gmail.com with ESMTPSA id n21sm18582015pfg.84.2018.12.09.15.02.21
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 09 Dec 2018 15:02:00 -0800 (PST)
-Date:   Sun, 9 Dec 2018 15:02:00 -0800 (PST)
+        Sun, 09 Dec 2018 15:02:21 -0800 (PST)
+Date:   Sun, 9 Dec 2018 15:02:21 -0800 (PST)
 From:   David Rientjes <rientjes@google.com>
 X-X-Sender: rientjes@chino.kir.corp.google.com
 To:     Mike Rapoport <rppt@linux.ibm.com>
@@ -69,11 +69,11 @@ cc:     Jonathan Corbet <corbet@lwn.net>, Christoph Lameter <cl@linux.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         linux-doc@vger.kernel.org, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] slab: make kmem_cache_create{_usercopy} description
- proper kernel-doc
-In-Reply-To: <1544130781-13443-2-git-send-email-rppt@linux.ibm.com>
-Message-ID: <alpine.DEB.2.21.1812091501460.206717@chino.kir.corp.google.com>
-References: <1544130781-13443-1-git-send-email-rppt@linux.ibm.com> <1544130781-13443-2-git-send-email-rppt@linux.ibm.com>
+Subject: Re: [PATCH 2/2] docs/mm-api: link slab_common.c to "The Slab Cache"
+ section
+In-Reply-To: <1544130781-13443-3-git-send-email-rppt@linux.ibm.com>
+Message-ID: <alpine.DEB.2.21.1812091502070.206717@chino.kir.corp.google.com>
+References: <1544130781-13443-1-git-send-email-rppt@linux.ibm.com> <1544130781-13443-3-git-send-email-rppt@linux.ibm.com>
 User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -84,9 +84,8 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 On Thu, 6 Dec 2018, Mike Rapoport wrote:
 
-> Add the description for kmem_cache_create, fixup the return value paragraph
-> and make both kmem_cache_create and add the second '*' to the comment
-> opening.
+> Several functions in mm/slab_common.c have kernel-doc comments, it makes
+> perfect sense to link them to the MM API reference.
 > 
 > Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
 
