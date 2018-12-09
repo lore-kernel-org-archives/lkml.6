@@ -6,45 +6,45 @@ X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99B05C65BAF
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:21:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 906BAC65BAF
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:21:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6BF812081F
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:21:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6BF812081F
+	by mail.kernel.org (Postfix) with ESMTP id 5F0DA20661
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:21:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F0DA20661
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728198AbeLIWVk (ORCPT
+        id S1728242AbeLIWVn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 17:21:40 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35226 "EHLO
+        Sun, 9 Dec 2018 17:21:43 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35214 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726524AbeLIVzW (ORCPT
+        by vger.kernel.org with ESMTP id S1726519AbeLIVzW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 9 Dec 2018 16:55:22 -0500
 Received: from pub.yeoldevic.com ([81.174.156.145] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW72l-0002ie-9z; Sun, 09 Dec 2018 21:55:19 +0000
+        id 1gW72l-0002iY-9h; Sun, 09 Dec 2018 21:55:19 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW72h-0003ZC-PR; Sun, 09 Dec 2018 21:55:15 +0000
+        id 1gW72i-0003a5-Am; Sun, 09 Dec 2018 21:55:16 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org,
+CC:     akpm@linux-foundation.org, "Alan Cox" <alan@linux.intel.com>,
         "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
         "Gustavo A. R. Silva" <gustavo@embeddedor.com>
 Date:   Sun, 09 Dec 2018 21:50:33 +0000
-Message-ID: <lsq.1544392233.477480182@decadent.org.uk>
+Message-ID: <lsq.1544392233.972721412@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 235/328] misc: hmc6352: fix potential Spectre v1
+Subject: [PATCH 3.16 246/328] tty: vt_ioctl: fix potential Spectre v1
 In-Reply-To: <lsq.1544392232.713909046@decadent.org.uk>
 X-SA-Exim-Connect-IP: 81.174.156.145
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -60,17 +60,17 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
 
-commit de916736aaaadddbd6061472969f667b14204aa9 upstream.
+commit e97267cb4d1ee01ca0929638ec0fcbb0904f903d upstream.
 
-val is indirectly controlled by user-space, hence leading to a
-potential exploitation of the Spectre variant 1 vulnerability.
+vsa.console is indirectly controlled by user-space, hence leading to
+a potential exploitation of the Spectre variant 1 vulnerability.
 
 This issue was detected with the help of Smatch:
 
-drivers/misc/hmc6352.c:54 compass_store() warn: potential spectre issue
-'map' [r]
+drivers/tty/vt/vt_ioctl.c:711 vt_ioctl() warn: potential spectre issue
+'vc_cons' [r]
 
-Fix this by sanitizing val before using it to index map
+Fix this by sanitizing vsa.console before using it to index vc_cons
 
 Notice that given that speculation windows are large, the policy is
 to kill the speculation on the first load and not worry if it can be
@@ -79,28 +79,31 @@ completed with a dependent load/store [1].
 [1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
 
 Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Reviewed-by: Alan Cox <alan@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/misc/hmc6352.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/tty/vt/vt_ioctl.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/drivers/misc/hmc6352.c
-+++ b/drivers/misc/hmc6352.c
-@@ -27,6 +27,7 @@
- #include <linux/err.h>
- #include <linux/delay.h>
- #include <linux/sysfs.h>
+--- a/drivers/tty/vt/vt_ioctl.c
++++ b/drivers/tty/vt/vt_ioctl.c
+@@ -31,6 +31,8 @@
+ #include <asm/io.h>
+ #include <asm/uaccess.h>
+ 
 +#include <linux/nospec.h>
- 
- static DEFINE_MUTEX(compass_mutex);
- 
-@@ -50,6 +51,7 @@ static int compass_store(struct device *
- 		return ret;
- 	if (val >= strlen(map))
- 		return -EINVAL;
-+	val = array_index_nospec(val, strlen(map));
- 	mutex_lock(&compass_mutex);
- 	ret = compass_command(c, map[val]);
- 	mutex_unlock(&compass_mutex);
++
+ #include <linux/kbd_kern.h>
+ #include <linux/vt_kern.h>
+ #include <linux/kbd_diacr.h>
+@@ -703,6 +705,8 @@ int vt_ioctl(struct tty_struct *tty,
+ 		if (vsa.console == 0 || vsa.console > MAX_NR_CONSOLES)
+ 			ret = -ENXIO;
+ 		else {
++			vsa.console = array_index_nospec(vsa.console,
++							 MAX_NR_CONSOLES + 1);
+ 			vsa.console--;
+ 			console_lock();
+ 			ret = vc_allocate(vsa.console);
 
