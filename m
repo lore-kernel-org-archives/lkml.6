@@ -6,49 +6,46 @@ X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1102DC07E85
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:04:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2411CC65BAF
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:04:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D52E220672
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:04:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D52E220672
+	by mail.kernel.org (Postfix) with ESMTP id E6FCF20661
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:04:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E6FCF20661
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727189AbeLIWEH (ORCPT
+        id S1727458AbeLIWEK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 17:04:07 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35846 "EHLO
+        Sun, 9 Dec 2018 17:04:10 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35788 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726652AbeLIVzb (ORCPT
+        by vger.kernel.org with ESMTP id S1726637AbeLIVza (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Dec 2018 16:55:31 -0500
+        Sun, 9 Dec 2018 16:55:30 -0500
 Received: from pub.yeoldevic.com ([81.174.156.145] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW72u-0002im-0s; Sun, 09 Dec 2018 21:55:28 +0000
+        id 1gW72t-0002ib-Fi; Sun, 09 Dec 2018 21:55:27 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW72k-0003dP-4M; Sun, 09 Dec 2018 21:55:18 +0000
+        id 1gW72k-0003eZ-Jw; Sun, 09 Dec 2018 21:55:18 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org,
-        "Christoffer Dall" <christoffer.dall@arm.com>,
-        "Marc Zyngier" <marc.zyngier@arm.com>,
-        "Dave Martin" <Dave.Martin@arm.com>,
-        "Mark Rutland" <mark.rutland@arm.com>,
-        "Will Deacon" <will.deacon@arm.com>
+CC:     akpm@linux-foundation.org, "Ralf Baechle" <ralf@linux-mips.org>,
+        "Paul Burton" <paul.burton@mips.com>,
+        "Maciej W. Rozycki" <macro@linux-mips.org>
 Date:   Sun, 09 Dec 2018 21:50:33 +0000
-Message-ID: <lsq.1544392233.634299428@decadent.org.uk>
+Message-ID: <lsq.1544392233.100726603@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 283/328] arm64: KVM: Tighten guest core register
- access from userspace
+Subject: [PATCH 3.16 295/328] MIPS: memset: Fix CPU_DADDI_WORKAROUNDS
+ `small_fixup' regression
 In-Reply-To: <lsq.1544392232.713909046@decadent.org.uk>
 X-SA-Exim-Connect-IP: 81.174.156.145
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -62,96 +59,67 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dave Martin <Dave.Martin@arm.com>
+From: "Maciej W. Rozycki" <macro@linux-mips.org>
 
-commit d26c25a9d19b5976b319af528886f89cf455692d upstream.
+commit 148b9aba99e0bbadf361747d21456e1589015f74 upstream.
 
-We currently allow userspace to access the core register file
-in about any possible way, including straddling multiple
-registers and doing unaligned accesses.
+Fix a commit 8a8158c85e1e ("MIPS: memset.S: EVA & fault support for
+small_memset") regression and remove assembly warnings:
 
-This is not the expected use of the ABI, and nobody is actually
-using it that way. Let's tighten it by explicitly checking
-the size and alignment for each field of the register file.
+arch/mips/lib/memset.S: Assembler messages:
+arch/mips/lib/memset.S:243: Warning: Macro instruction expanded into multiple instructions in a branch delay slot
 
-Fixes: 2f4a07c5f9fe ("arm64: KVM: guest one-reg interface")
-Reviewed-by: Christoffer Dall <christoffer.dall@arm.com>
-Reviewed-by: Mark Rutland <mark.rutland@arm.com>
-Signed-off-by: Dave Martin <Dave.Martin@arm.com>
-[maz: rewrote Dave's initial patch to be more easily backported]
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
+triggering with the CPU_DADDI_WORKAROUNDS option set and this code:
+
+	PTR_SUBU	a2, t1, a0
+	jr		ra
+	 PTR_ADDIU	a2, 1
+
+This is because with that option in place the DADDIU instruction, which
+the PTR_ADDIU CPP macro expands to, becomes a GAS macro, which in turn
+expands to an LI/DADDU (or actually ADDIU/DADDU) sequence:
+
+ 13c:	01a4302f 	dsubu	a2,t1,a0
+ 140:	03e00008 	jr	ra
+ 144:	24010001 	li	at,1
+ 148:	00c1302d 	daddu	a2,a2,at
+	...
+
+Correct this by switching off the `noreorder' assembly mode and letting
+GAS schedule this jump's delay slot, as there is nothing special about
+it that would require manual scheduling.  With this change in place
+correct code is produced:
+
+ 13c:	01a4302f 	dsubu	a2,t1,a0
+ 140:	24010001 	li	at,1
+ 144:	03e00008 	jr	ra
+ 148:	00c1302d 	daddu	a2,a2,at
+	...
+
+Signed-off-by: Maciej W. Rozycki <macro@linux-mips.org>
+Signed-off-by: Paul Burton <paul.burton@mips.com>
+Fixes: 8a8158c85e1e ("MIPS: memset.S: EVA & fault support for small_memset")
+Patchwork: https://patchwork.linux-mips.org/patch/20833/
+Cc: Ralf Baechle <ralf@linux-mips.org>
+[bwh: Backported to 3.16: adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- arch/arm64/kvm/guest.c | 45 ++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 45 insertions(+)
+ arch/mips/lib/memset.S | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/arch/arm64/kvm/guest.c
-+++ b/arch/arm64/kvm/guest.c
-@@ -46,6 +46,45 @@ static u64 core_reg_offset_from_id(u64 i
- 	return id & ~(KVM_REG_ARCH_MASK | KVM_REG_SIZE_MASK | KVM_REG_ARM_CORE);
- }
+--- a/arch/mips/lib/memset.S
++++ b/arch/mips/lib/memset.S
+@@ -213,9 +213,11 @@
+ 	 nop
  
-+static int validate_core_offset(const struct kvm_one_reg *reg)
-+{
-+	u64 off = core_reg_offset_from_id(reg->id);
-+	int size;
-+
-+	switch (off) {
-+	case KVM_REG_ARM_CORE_REG(regs.regs[0]) ...
-+	     KVM_REG_ARM_CORE_REG(regs.regs[30]):
-+	case KVM_REG_ARM_CORE_REG(regs.sp):
-+	case KVM_REG_ARM_CORE_REG(regs.pc):
-+	case KVM_REG_ARM_CORE_REG(regs.pstate):
-+	case KVM_REG_ARM_CORE_REG(sp_el1):
-+	case KVM_REG_ARM_CORE_REG(elr_el1):
-+	case KVM_REG_ARM_CORE_REG(spsr[0]) ...
-+	     KVM_REG_ARM_CORE_REG(spsr[KVM_NR_SPSR - 1]):
-+		size = sizeof(__u64);
-+		break;
-+
-+	case KVM_REG_ARM_CORE_REG(fp_regs.vregs[0]) ...
-+	     KVM_REG_ARM_CORE_REG(fp_regs.vregs[31]):
-+		size = sizeof(__uint128_t);
-+		break;
-+
-+	case KVM_REG_ARM_CORE_REG(fp_regs.fpsr):
-+	case KVM_REG_ARM_CORE_REG(fp_regs.fpcr):
-+		size = sizeof(__u32);
-+		break;
-+
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	if (KVM_REG_SIZE(reg->id) == size &&
-+	    IS_ALIGNED(off, size / sizeof(__u32)))
-+		return 0;
-+
-+	return -EINVAL;
-+}
-+
- static int get_core_reg(struct kvm_vcpu *vcpu, const struct kvm_one_reg *reg)
- {
- 	/*
-@@ -65,6 +104,9 @@ static int get_core_reg(struct kvm_vcpu
- 	    (off + (KVM_REG_SIZE(reg->id) / sizeof(__u32))) >= nr_regs)
- 		return -ENOENT;
+ .Lsmall_fixup\@:
++	.set		reorder
+ 	PTR_SUBU	a2, t1, a0
++	PTR_ADDIU	a2, 1
+ 	jr		ra
+-	 PTR_ADDIU	a2, 1
++	.set		noreorder
  
-+	if (validate_core_offset(reg))
-+		return -EINVAL;
-+
- 	if (copy_to_user(uaddr, ((u32 *)regs) + off, KVM_REG_SIZE(reg->id)))
- 		return -EFAULT;
- 
-@@ -87,6 +129,9 @@ static int set_core_reg(struct kvm_vcpu
- 	    (off + (KVM_REG_SIZE(reg->id) / sizeof(__u32))) >= nr_regs)
- 		return -ENOENT;
- 
-+	if (validate_core_offset(reg))
-+		return -EINVAL;
-+
- 	if (KVM_REG_SIZE(reg->id) > sizeof(tmp))
- 		return -EINVAL;
+ 	.endm
  
 
