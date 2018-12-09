@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DCFEC67838
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 21:57:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6ADF1C67838
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 21:57:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6DB9620661
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 21:57:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6DB9620661
+	by mail.kernel.org (Postfix) with ESMTP id 3946020837
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 21:57:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3946020837
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727037AbeLIV52 (ORCPT
+        id S1727024AbeLIV51 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 16:57:28 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36366 "EHLO
+        Sun, 9 Dec 2018 16:57:27 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36386 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726789AbeLIVzl (ORCPT
+        by vger.kernel.org with ESMTP id S1726794AbeLIVzl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 9 Dec 2018 16:55:41 -0500
 Received: from pub.yeoldevic.com ([81.174.156.145] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW735-0002ii-1a; Sun, 09 Dec 2018 21:55:39 +0000
+        id 1gW735-0002pp-6h; Sun, 09 Dec 2018 21:55:39 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW72g-0003Va-E7; Sun, 09 Dec 2018 21:55:14 +0000
+        id 1gW72f-0003US-Uv; Sun, 09 Dec 2018 21:55:13 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -38,15 +38,14 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org,
-        "Mathias Nyman" <mathias.nyman@linux.intel.com>,
-        "Alan Stern" <stern@rowland.harvard.edu>,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+        "=?UTF-8?q?Maxence=20Dupr=C3=A8s?=" <xpros64@hotmail.fr>
 Date:   Sun, 09 Dec 2018 21:50:33 +0000
-Message-ID: <lsq.1544392233.1679372@decadent.org.uk>
+Message-ID: <lsq.1544392233.961076591@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 206/328] usb: Don't die twice if PCI xhci host is not
- responding in resume
+Subject: [PATCH 3.16 196/328] USB: add quirk for WORLDE Controller KS49 or
+ Prodipe MIDI 49C USB controller
 In-Reply-To: <lsq.1544392232.713909046@decadent.org.uk>
 X-SA-Exim-Connect-IP: 81.174.156.145
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -60,33 +59,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mathias Nyman <mathias.nyman@linux.intel.com>
+From: Maxence Duprès <xpros64@hotmail.fr>
 
-commit f3dc41c5d22b2ca14a0802a65d8cdc33a3882d4e upstream.
+commit 9b83a1c301ad6d24988a128c69b42cbaaf537d82 upstream.
 
-usb_hc_died() should only be called once, and with the primary HCD
-as parameter. It will mark both primary and secondary hcd's dead.
+WORLDE Controller KS49 or Prodipe MIDI 49C USB controller
+cause a -EPROTO error, a communication restart and loop again.
 
-Remove the extra call to usb_cd_died with the shared hcd as parameter.
+This issue has already been fixed for KS25.
+https://lore.kernel.org/patchwork/patch/753077/
 
-Fixes: ff9d78b36f76 ("USB: Set usb_hcd->state and flags for shared roothubs")
-Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
-Acked-by: Alan Stern <stern@rowland.harvard.edu>
+I just add device 201 for KS49 in quirks.c to get it works.
+
+Signed-off-by: Laurent Roux <xpros64@hotmail.fr>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/usb/core/hcd-pci.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/usb/core/quirks.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/drivers/usb/core/hcd-pci.c
-+++ b/drivers/usb/core/hcd-pci.c
-@@ -528,8 +528,6 @@ static int resume_common(struct device *
- 				event == PM_EVENT_RESTORE);
- 		if (retval) {
- 			dev_err(dev, "PCI post-resume error %d!\n", retval);
--			if (hcd->shared_hcd)
--				usb_hc_died(hcd->shared_hcd);
- 			usb_hc_died(hcd);
- 		}
- 	}
+--- a/drivers/usb/core/quirks.c
++++ b/drivers/usb/core/quirks.c
+@@ -37,6 +37,10 @@ static const struct usb_device_id usb_qu
+ 	/* CBM - Flash disk */
+ 	{ USB_DEVICE(0x0204, 0x6025), .driver_info = USB_QUIRK_RESET_RESUME },
+ 
++	/* WORLDE Controller KS49 or Prodipe MIDI 49C USB controller */
++	{ USB_DEVICE(0x0218, 0x0201), .driver_info =
++			USB_QUIRK_CONFIG_INTF_STRINGS },
++
+ 	/* WORLDE easy key (easykey.25) MIDI controller  */
+ 	{ USB_DEVICE(0x0218, 0x0401), .driver_info =
+ 			USB_QUIRK_CONFIG_INTF_STRINGS },
 
