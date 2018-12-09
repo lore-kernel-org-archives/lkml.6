@@ -6,44 +6,43 @@ X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB60EC07E85
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:04:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA3D8C65BAF
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:04:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 78D5420672
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:04:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 78D5420672
+	by mail.kernel.org (Postfix) with ESMTP id 988BB20672
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:04:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 988BB20672
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727517AbeLIWEW (ORCPT
+        id S1727531AbeLIWE0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 17:04:22 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36768 "EHLO
+        Sun, 9 Dec 2018 17:04:26 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36784 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726697AbeLIWEN (ORCPT
+        by vger.kernel.org with ESMTP id S1726697AbeLIWEZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Dec 2018 17:04:13 -0500
+        Sun, 9 Dec 2018 17:04:25 -0500
 Received: from pub.yeoldevic.com ([81.174.156.145] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW73M-0002pr-S3; Sun, 09 Dec 2018 21:55:56 +0000
+        id 1gW73L-0002po-I6; Sun, 09 Dec 2018 21:55:55 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW72a-0003H0-8e; Sun, 09 Dec 2018 21:55:08 +0000
+        id 1gW72a-0003Hk-KA; Sun, 09 Dec 2018 21:55:08 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, "Mikulas Patocka" <mpatocka@redhat.com>,
-        "Bartlomiej Zolnierkiewicz" <b.zolnierkie@samsung.com>
+CC:     akpm@linux-foundation.org, "Takashi Iwai" <tiwai@suse.de>
 Date:   Sun, 09 Dec 2018 21:50:33 +0000
-Message-ID: <lsq.1544392233.277462318@decadent.org.uk>
+Message-ID: <lsq.1544392233.51103197@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 061/328] udlfb: make a local copy of fb_ops
+Subject: [PATCH 3.16 070/328] ALSA: cs5535audio: Fix invalid endian conversion
 In-Reply-To: <lsq.1544392232.713909046@decadent.org.uk>
 X-SA-Exim-Connect-IP: 81.174.156.145
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -57,47 +56,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mikulas Patocka <mpatocka@redhat.com>
+From: Takashi Iwai <tiwai@suse.de>
 
-commit 2c29cfc3eaf11779176bf41475cfca49bccba11c upstream.
+commit 69756930f2de0457d51db7d505a1e4f40e9fd116 upstream.
 
-The defio subsystem overwrites the method fb_osp->mmap. That method is
-stored in module's static data - and that means that if we have multiple
-diplaylink adapters, they will over write each other's method.
+One place in cs5535audio_build_dma_packets() does an extra conversion
+via cpu_to_le32(); namely jmpprd_addr is passed to setup_prd() ops,
+which writes the value via cs_writel().  That is, the callback does
+the conversion by itself, and we don't need to convert beforehand.
 
-In order to avoid interference between multiple adapters, we copy the
-fb_ops structure to a device-local memory.
+This patch fixes that bogus conversion.
 
-Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-[bwh: Backported to 3.16: Pointer to struct dlfb_data is named "dev" rather
- than "dlfb"]
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/video/fbdev/udlfb.c | 3 ++-
- include/video/udlfb.h       | 1 +
- 2 files changed, 3 insertions(+), 1 deletion(-)
+ sound/pci/cs5535audio/cs5535audio.h     | 6 +++---
+ sound/pci/cs5535audio/cs5535audio_pcm.c | 4 ++--
+ 2 files changed, 5 insertions(+), 5 deletions(-)
 
---- a/drivers/video/fbdev/udlfb.c
-+++ b/drivers/video/fbdev/udlfb.c
-@@ -1680,7 +1680,8 @@ static void dlfb_init_framebuffer_work(s
- 	dev->info = info;
- 	info->par = dev;
- 	info->pseudo_palette = dev->pseudo_palette;
--	info->fbops = &dlfb_ops;
-+	dev->ops = dlfb_ops;
-+	info->fbops = &dev->ops;
+--- a/sound/pci/cs5535audio/cs5535audio.h
++++ b/sound/pci/cs5535audio/cs5535audio.h
+@@ -66,9 +66,9 @@ struct cs5535audio_dma_ops {
+ };
  
- 	retval = fb_alloc_cmap(&info->cmap, 256, 0);
- 	if (retval < 0) {
---- a/include/video/udlfb.h
-+++ b/include/video/udlfb.h
-@@ -51,6 +51,7 @@ struct dlfb_data {
- 	int base8;
- 	u32 pseudo_palette[256];
- 	int blank_mode; /*one of FB_BLANK_ */
-+	struct fb_ops ops;
- 	/* blit-only rendering path metrics, exposed through sysfs */
- 	atomic_t bytes_rendered; /* raw pixel-bytes driver asked to render */
- 	atomic_t bytes_identical; /* saved effort with backbuffer comparison */
+ struct cs5535audio_dma_desc {
+-	u32 addr;
+-	u16 size;
+-	u16 ctlreserved;
++	__le32 addr;
++	__le16 size;
++	__le16 ctlreserved;
+ };
+ 
+ struct cs5535audio_dma {
+--- a/sound/pci/cs5535audio/cs5535audio_pcm.c
++++ b/sound/pci/cs5535audio/cs5535audio_pcm.c
+@@ -158,8 +158,8 @@ static int cs5535audio_build_dma_packets
+ 	lastdesc->addr = cpu_to_le32((u32) dma->desc_buf.addr);
+ 	lastdesc->size = 0;
+ 	lastdesc->ctlreserved = cpu_to_le16(PRD_JMP);
+-	jmpprd_addr = cpu_to_le32(lastdesc->addr +
+-				  (sizeof(struct cs5535audio_dma_desc)*periods));
++	jmpprd_addr = (u32)dma->desc_buf.addr +
++		sizeof(struct cs5535audio_dma_desc) * periods;
+ 
+ 	dma->substream = substream;
+ 	dma->period_bytes = period_bytes;
 
