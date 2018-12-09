@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4154EC65BAF
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:26:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58440C65BAF
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:26:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 139C020661
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:26:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 139C020661
+	by mail.kernel.org (Postfix) with ESMTP id 29CAE2081F
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 22:26:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 29CAE2081F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728790AbeLIW0j (ORCPT
+        id S1728795AbeLIW0n (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 17:26:39 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:34710 "EHLO
+        Sun, 9 Dec 2018 17:26:43 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:34728 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726394AbeLIVzN (ORCPT
+        by vger.kernel.org with ESMTP id S1726399AbeLIVzM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Dec 2018 16:55:13 -0500
+        Sun, 9 Dec 2018 16:55:12 -0500
 Received: from pub.yeoldevic.com ([81.174.156.145] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW72b-0002ir-M5; Sun, 09 Dec 2018 21:55:09 +0000
+        id 1gW72b-0002ih-LD; Sun, 09 Dec 2018 21:55:09 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gW72Z-0003Ep-5d; Sun, 09 Dec 2018 21:55:07 +0000
+        id 1gW72Y-0003Dq-JE; Sun, 09 Dec 2018 21:55:06 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -38,13 +38,15 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org,
-        "Thierry Reding" <thierry.reding@gmail.com>,
-        "Vignesh R" <vigneshr@ti.com>
+        "Mauro Carvalho Chehab" <mchehab+samsung@kernel.org>,
+        "Sylwester Nawrocki" <s.nawrocki@samsung.com>,
+        "Dan Carpenter" <dan.carpenter@oracle.com>
 Date:   Sun, 09 Dec 2018 21:50:33 +0000
-Message-ID: <lsq.1544392233.209980543@decadent.org.uk>
+Message-ID: <lsq.1544392233.95153042@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 034/328] pwm: tiehrpwm: Fix disabling of output of PWMs
+Subject: [PATCH 3.16 022/328] media: exynos4-is: Prevent NULL pointer
+ dereference in __isp_video_try_fmt()
 In-Reply-To: <lsq.1544392232.713909046@decadent.org.uk>
 X-SA-Exim-Connect-IP: 81.174.156.145
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -58,36 +60,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Vignesh R <vigneshr@ti.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-commit 38dabd91ff0bde33352ca3cc65ef515599b77a05 upstream.
+commit 7c1b9a5aeed91bef98988ac0fcf38c8c1f4f9a3a upstream.
 
-pwm-tiehrpwm driver disables PWM output by putting it in low output
-state via active AQCSFRC register in ehrpwm_pwm_disable(). But, the
-AQCSFRC shadow register is not updated. Therefore, when shadow AQCSFRC
-register is re-enabled in ehrpwm_pwm_enable() (say to enable second PWM
-output), previous settings are lost as shadow register value is loaded
-into active register. This results in things like PWMA getting enabled
-automatically, when PWMB is enabled and vice versa. Fix this by
-updating AQCSFRC shadow register as well during ehrpwm_pwm_disable().
+This patch fixes potential NULL pointer dereference as indicated
+by the following static checker warning:
 
-Fixes: 19891b20e7c2 ("pwm: pwm-tiehrpwm: PWM driver support for EHRPWM")
-Signed-off-by: Vignesh R <vigneshr@ti.com>
-Signed-off-by: Thierry Reding <thierry.reding@gmail.com>
+drivers/media/platform/exynos4-is/fimc-isp-video.c:408 isp_video_try_fmt_mplane()
+error: NULL dereference inside function '__isp_video_try_fmt(isp, &f->fmt.pix_mp, (0))()'.
+
+Fixes: 34947b8aebe3: ("[media] exynos4-is: Add the FIMC-IS ISP capture DMA driver")
+
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/pwm/pwm-tiehrpwm.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/media/platform/exynos4-is/fimc-isp-video.c | 11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
---- a/drivers/pwm/pwm-tiehrpwm.c
-+++ b/drivers/pwm/pwm-tiehrpwm.c
-@@ -378,6 +378,8 @@ static void ehrpwm_pwm_disable(struct pw
- 		aqcsfrc_mask = AQCSFRC_CSFA_MASK;
- 	}
+--- a/drivers/media/platform/exynos4-is/fimc-isp-video.c
++++ b/drivers/media/platform/exynos4-is/fimc-isp-video.c
+@@ -390,12 +390,17 @@ static void __isp_video_try_fmt(struct f
+ 				struct v4l2_pix_format_mplane *pixm,
+ 				const struct fimc_fmt **fmt)
+ {
+-	*fmt = fimc_isp_find_format(&pixm->pixelformat, NULL, 2);
++	const struct fimc_fmt *__fmt;
++
++	__fmt = fimc_isp_find_format(&pixm->pixelformat, NULL, 2);
++
++	if (fmt)
++		*fmt = __fmt;
  
-+	/* Update shadow register first before modifying active register */
-+	ehrpwm_modify(pc->mmio_base, AQCSFRC, aqcsfrc_mask, aqcsfrc_val);
+ 	pixm->colorspace = V4L2_COLORSPACE_SRGB;
+ 	pixm->field = V4L2_FIELD_NONE;
+-	pixm->num_planes = (*fmt)->memplanes;
+-	pixm->pixelformat = (*fmt)->fourcc;
++	pixm->num_planes = __fmt->memplanes;
++	pixm->pixelformat = __fmt->fourcc;
  	/*
- 	 * Changes to immediate action on Action Qualifier. This puts
- 	 * Action Qualifier control on PWM output from next TBCLK
+ 	 * TODO: double check with the docmentation these width/height
+ 	 * constraints are correct.
 
