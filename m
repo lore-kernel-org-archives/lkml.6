@@ -2,344 +2,142 @@ Return-Path: <SRS0=cWqk=OS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C27D4C65BAF
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 13:55:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2356EC07E85
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 13:59:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 84E772081C
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 13:55:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 84E772081C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org
+	by mail.kernel.org (Postfix) with ESMTP id D20892081C
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 13:59:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="H4wTgEde"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D20892081C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726347AbeLINz5 (ORCPT
+        id S1726254AbeLIN7q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 08:55:57 -0500
-Received: from vmicros1.altlinux.org ([194.107.17.57]:49340 "EHLO
-        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726212AbeLINz4 (ORCPT
+        Sun, 9 Dec 2018 08:59:46 -0500
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:44104 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726212AbeLIN7q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Dec 2018 08:55:56 -0500
-Received: from imap.altlinux.org (imap.altlinux.org [194.107.17.38])
-        by vmicros1.altlinux.org (Postfix) with ESMTP id ACA5972CC59;
-        Sun,  9 Dec 2018 16:55:50 +0300 (MSK)
-Received: from beacon.altlinux.org (unknown [185.6.174.98])
-        by imap.altlinux.org (Postfix) with ESMTPSA id 6B4624A4A29;
-        Sun,  9 Dec 2018 16:55:50 +0300 (MSK)
-From:   Vitaly Chikunov <vt@altlinux.org>
-To:     David Howells <dhowells@redhat.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>, keyrings@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [RFC PATCH] X.509: Parse public key parameters from x509 for akcipher
-Date:   Sun,  9 Dec 2018 16:55:48 +0300
-Message-Id: <20181209135548.26232-1-vt@altlinux.org>
-X-Mailer: git-send-email 2.11.0
+        Sun, 9 Dec 2018 08:59:46 -0500
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id wB9DxZn8004157;
+        Sun, 9 Dec 2018 07:59:35 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1544363975;
+        bh=cQGJATknFebdvu1l+E3sACVYJTbr8QcM5yBcb1TsSQM=;
+        h=From:To:CC:Subject:Date;
+        b=H4wTgEdeQ2BSyz7ZHMju4sEEopwC+AN15IaiEOpvdF4DyGXC8rK+ZzcXL1CNY6a5w
+         Zf+zjrfxKUuBOGhKvECA6hGzY0HJUhGYypQOM6sGo2cXW8Djc+WFUnLVtF3W/8dIjh
+         kGBJyknAG2eUb9GhgxmnVm1JJ8Ue0v0RqoFQ9ZoA=
+Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wB9DxZi1130908
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Sun, 9 Dec 2018 07:59:35 -0600
+Received: from DFLE115.ent.ti.com (10.64.6.36) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Sun, 9
+ Dec 2018 07:59:35 -0600
+Received: from dflp33.itg.ti.com (10.64.6.16) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Sun, 9 Dec 2018 07:59:35 -0600
+Received: from ula0393675.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id wB9DxWIe025309;
+        Sun, 9 Dec 2018 07:59:33 -0600
+From:   Keerthy <j-keerthy@ti.com>
+To:     <tony@atomide.com>, <lee.jones@linaro.org>
+CC:     <linux-omap@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <sebastian.reichel@collabora.com>, <t-kristo@ti.com>,
+        <j-keerthy@ti.com>, <ladis@linux-mips.org>
+Subject: [PATCH v3] mfd: tps65218: Use devm_regmap_add_irq_chip and clean up  error path in probe
+Date:   Sun, 9 Dec 2018 19:29:31 +0530
+Message-ID: <1544363971-28061-1-git-send-email-j-keerthy@ti.com>
+X-Mailer: git-send-email 1.9.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some public key algorithms (like ECDSA) keep in parameters field
-important data such as digest and curve OIDs (possibly more for
-different ECDSA variants). Thus, just setting a public key (as
-for RSA) is not enough.
+Use devm_regmap_add_irq_chip and clean up error path in probe
+and also the remove function.
 
-Introduce set_params() callback for akcipher which will be used to
-pass BER encoded parameters array, with additional argument of
-algorithm OID.
-
-This is done with the intent of adding support for EC-RDSA (ISO/IEC
-14888-3:2018, RFC 7091, and basically ECDSA variant) public keys (which
-will be finally used in IMA subsystem). Thus, also oid_registry.h is
-updated.
-
-Rationale:
-
-- For such keys just setting public key without parameters is
-  meaningless, so it would be possible to add parameters in
-  crypto_akcipher_set_pub_key (and .set_pub_key) calls. But, this will
-  needlessly change API for RSA akcipher. Also, additional callback
-  making it possible to pass parameters after
-  crypto_akcipher_set_priv_key (and .set_priv_key) in the future.
-
-- Algorithm OID is passed to be validated in .set_params callback,
-  otherwise, it could have the wrong value.
-
-- Particular algorithm OIDs are checked in x509_note_params, (because
-  this is called from AlgorithmIdentifier (ASN.1) parser, which is
-  called multiple times, as it's used multiple times in X.509
-  certificate), to distinguish a public key call from a signature call.
-
-Signed-off-by: Vitaly Chikunov <vt@altlinux.org>
+Reported-by: Christian Hohnstaedt <Christian.Hohnstaedt@wago.com>
+Signed-off-by: Keerthy <j-keerthy@ti.com>
 ---
- crypto/asymmetric_keys/public_key.c       | 16 +++++++++++++++
- crypto/asymmetric_keys/x509.asn1          |  2 +-
- crypto/asymmetric_keys/x509_cert_parser.c | 27 +++++++++++++++++++++++++
- crypto/testmgr.c                          |  5 +++++
- crypto/testmgr.h                          |  3 +++
- include/crypto/akcipher.h                 | 33 +++++++++++++++++++++++++++++++
- include/crypto/public_key.h               |  4 ++++
- include/linux/oid_registry.h              |  6 ++++++
- 8 files changed, 95 insertions(+), 1 deletion(-)
 
-diff --git a/crypto/asymmetric_keys/public_key.c b/crypto/asymmetric_keys/public_key.c
-index f5d85b47fcc6..3bc090b8adef 100644
---- a/crypto/asymmetric_keys/public_key.c
-+++ b/crypto/asymmetric_keys/public_key.c
-@@ -45,6 +45,7 @@ void public_key_free(struct public_key *key)
- {
- 	if (key) {
- 		kfree(key->key);
-+		kfree(key->params);
- 		kfree(key);
- 	}
- }
-@@ -124,6 +125,11 @@ static int software_key_query(const struct kernel_pkey_params *params,
+Changes in v2:
+
+  * Cleaned up remove function as well.
+
+Changes in v3:
+
+  * Deleted the remove function which was just returning 0
+
+ drivers/mfd/tps65218.c | 24 +++---------------------
+ 1 file changed, 3 insertions(+), 21 deletions(-)
+
+diff --git a/drivers/mfd/tps65218.c b/drivers/mfd/tps65218.c
+index 910f569..8bcdecf 100644
+--- a/drivers/mfd/tps65218.c
++++ b/drivers/mfd/tps65218.c
+@@ -235,9 +235,9 @@ static int tps65218_probe(struct i2c_client *client,
+ 
+ 	mutex_init(&tps->tps_lock);
+ 
+-	ret = regmap_add_irq_chip(tps->regmap, tps->irq,
+-			IRQF_ONESHOT, 0, &tps65218_irq_chip,
+-			&tps->irq_data);
++	ret = devm_regmap_add_irq_chip(&client->dev, tps->regmap, tps->irq,
++				       IRQF_ONESHOT, 0, &tps65218_irq_chip,
++				       &tps->irq_data);
  	if (ret < 0)
- 		goto error_free_tfm;
+ 		return ret;
  
-+	ret = crypto_akcipher_set_params(tfm, pkey->algo, pkey->params,
-+					 pkey->paramlen);
-+	if (ret)
-+		goto error_free_tfm;
-+
- 	len = crypto_akcipher_maxsize(tfm);
- 	info->key_size = len * 8;
- 	info->max_data_size = len;
-@@ -182,6 +188,11 @@ static int software_key_eds_op(struct kernel_pkey_params *params,
- 	if (ret)
- 		goto error_free_req;
+@@ -253,26 +253,9 @@ static int tps65218_probe(struct i2c_client *client,
+ 			      ARRAY_SIZE(tps65218_cells), NULL, 0,
+ 			      regmap_irq_get_domain(tps->irq_data));
  
-+	ret = crypto_akcipher_set_params(tfm, pkey->algo, pkey->params,
-+					 pkey->paramlen);
-+	if (ret)
-+		goto error_free_req;
-+
- 	sg_init_one(&in_sg, in, params->in_len);
- 	sg_init_one(&out_sg, out, params->out_len);
- 	akcipher_request_set_crypt(req, &in_sg, &out_sg, params->in_len,
-@@ -263,6 +274,11 @@ int public_key_verify_signature(const struct public_key *pkey,
- 	if (ret)
- 		goto error_free_req;
- 
-+	ret = crypto_akcipher_set_params(tfm, pkey->algo, pkey->params,
-+					 pkey->paramlen);
-+	if (ret)
-+		goto error_free_req;
-+
- 	ret = -ENOMEM;
- 	outlen = crypto_akcipher_maxsize(tfm);
- 	output = kmalloc(outlen, GFP_KERNEL);
-diff --git a/crypto/asymmetric_keys/x509.asn1 b/crypto/asymmetric_keys/x509.asn1
-index aae0cde414e2..5c9f4e4a5231 100644
---- a/crypto/asymmetric_keys/x509.asn1
-+++ b/crypto/asymmetric_keys/x509.asn1
-@@ -22,7 +22,7 @@ CertificateSerialNumber ::= INTEGER
- 
- AlgorithmIdentifier ::= SEQUENCE {
- 	algorithm		OBJECT IDENTIFIER ({ x509_note_OID }),
--	parameters		ANY OPTIONAL
-+	parameters		ANY OPTIONAL ({ x509_note_params })
+-	if (ret < 0)
+-		goto err_irq;
+-
+-	return 0;
+-
+-err_irq:
+-	regmap_del_irq_chip(tps->irq, tps->irq_data);
+-
+ 	return ret;
  }
  
- Name ::= SEQUENCE OF RelativeDistinguishedName
-diff --git a/crypto/asymmetric_keys/x509_cert_parser.c b/crypto/asymmetric_keys/x509_cert_parser.c
-index 991f4d735a4e..16d8936d143b 100644
---- a/crypto/asymmetric_keys/x509_cert_parser.c
-+++ b/crypto/asymmetric_keys/x509_cert_parser.c
-@@ -26,6 +26,9 @@ struct x509_parse_context {
- 	const void	*cert_start;		/* Start of cert content */
- 	const void	*key;			/* Key data */
- 	size_t		key_size;		/* Size of key data */
-+	const void	*params;		/* Key parameters */
-+	size_t		params_size;		/* Size of key parameters */
-+	enum OID	key_algo;		/* Public key algorithm */
- 	enum OID	last_oid;		/* Last OID encountered */
- 	enum OID	algo_oid;		/* Algorithm OID */
- 	unsigned char	nr_mpi;			/* Number of MPIs stored */
-@@ -109,6 +112,13 @@ struct x509_certificate *x509_cert_parse(const void *data, size_t datalen)
- 
- 	cert->pub->keylen = ctx->key_size;
- 
-+	cert->pub->params = kmemdup(ctx->params, ctx->params_size, GFP_KERNEL);
-+	if (!cert->pub->params)
-+		goto error_decode;
-+
-+	cert->pub->paramlen = ctx->params_size;
-+	cert->pub->algo = ctx->key_algo;
-+
- 	/* Grab the signature bits */
- 	ret = x509_get_sig_params(cert);
- 	if (ret < 0)
-@@ -401,6 +411,23 @@ int x509_note_subject(void *context, size_t hdrlen,
- }
- 
- /*
-+ * Extract parameters for particular keys
-+ */
-+int x509_note_params(void *context, size_t hdrlen,
-+		     unsigned char tag,
-+		     const void *value, size_t vlen)
-+{
-+	struct x509_parse_context *ctx = context;
-+
-+	if (ctx->last_oid != OID_gost2012PublicKey256 &&
-+	    ctx->last_oid != OID_gost2012PublicKey512)
-+		return 0;
-+	ctx->params = value;
-+	ctx->params_size = vlen;
-+	return 0;
-+}
-+
-+/*
-  * Extract the data for the public key algorithm
-  */
- int x509_extract_key_data(void *context, size_t hdrlen,
-diff --git a/crypto/testmgr.c b/crypto/testmgr.c
-index 0f684a414acb..a030526a6609 100644
---- a/crypto/testmgr.c
-+++ b/crypto/testmgr.c
-@@ -2257,6 +2257,11 @@ static int test_akcipher_one(struct crypto_akcipher *tfm,
- 	if (err)
- 		goto free_req;
- 
-+	err = crypto_akcipher_set_params(tfm, vecs->algo, vecs->params,
-+					 vecs->param_len);
-+	if (err)
-+		goto free_req;
-+
- 	err = -ENOMEM;
- 	out_len_max = crypto_akcipher_maxsize(tfm);
- 	outbuf_enc = kzalloc(out_len_max, GFP_KERNEL);
-diff --git a/crypto/testmgr.h b/crypto/testmgr.h
-index e7e56a8febbc..9855da080eaf 100644
---- a/crypto/testmgr.h
-+++ b/crypto/testmgr.h
-@@ -124,13 +124,16 @@ struct drbg_testvec {
- 
- struct akcipher_testvec {
- 	const unsigned char *key;
-+	const unsigned char *params;
- 	const unsigned char *m;
- 	const unsigned char *c;
- 	unsigned int key_len;
-+	unsigned int param_len;
- 	unsigned int m_size;
- 	unsigned int c_size;
- 	bool public_key_vec;
- 	bool siggen_sigver_test;
-+	enum OID algo;
- };
- 
- struct kpp_testvec {
-diff --git a/include/crypto/akcipher.h b/include/crypto/akcipher.h
-index afac71119396..d6aba84ed2c4 100644
---- a/include/crypto/akcipher.h
-+++ b/include/crypto/akcipher.h
-@@ -13,6 +13,7 @@
- #ifndef _CRYPTO_AKCIPHER_H
- #define _CRYPTO_AKCIPHER_H
- #include <linux/crypto.h>
-+#include <linux/oid_registry.h>
- 
- /**
-  * struct akcipher_request - public key request
-@@ -73,6 +74,9 @@ struct crypto_akcipher {
-  * @set_priv_key: Function invokes the algorithm specific set private key
-  *		function, which knows how to decode and interpret
-  *		the BER encoded private key
-+ * @set_params: Function invokes the algorithm specific set parameters
-+ *		function, which knows how to decode and interpret
-+ *		the BER encoded public key
-  * @max_size:	Function returns dest buffer size required for a given key.
-  * @init:	Initialize the cryptographic transformation object.
-  *		This function is used to initialize the cryptographic
-@@ -98,6 +102,8 @@ struct akcipher_alg {
- 			   unsigned int keylen);
- 	int (*set_priv_key)(struct crypto_akcipher *tfm, const void *key,
- 			    unsigned int keylen);
-+	int (*set_params)(struct crypto_akcipher *tfm, enum OID algo,
-+			  const void *params, unsigned int paramlen);
- 	unsigned int (*max_size)(struct crypto_akcipher *tfm);
- 	int (*init)(struct crypto_akcipher *tfm);
- 	void (*exit)(struct crypto_akcipher *tfm);
-@@ -452,4 +458,31 @@ static inline int crypto_akcipher_set_priv_key(struct crypto_akcipher *tfm,
- 
- 	return alg->set_priv_key(tfm, key, keylen);
- }
-+
-+/**
-+ * crypto_akcipher_set_params() - Invoke set parameters operation
-+ *
-+ * Function invokes the algorithm specific set parameters function, which
-+ * knows how to decode and interpret the encoded parameters
-+ *
-+ * @tfm:	tfm handle
-+ * @algo:	OID of the key algorithm
-+ * @params:	BER encoded key parameters
-+ * @paramlen:	length of the parameters
-+ *
-+ * Return: zero on success; error code in case of error
-+ */
-+static inline int crypto_akcipher_set_params(struct crypto_akcipher *tfm,
-+					     enum OID algo,
-+					     const void *params,
-+					     unsigned int paramlen)
-+{
-+	struct akcipher_alg *alg = crypto_akcipher_alg(tfm);
-+
-+	if (alg->set_params)
-+		return alg->set_params(tfm, algo, params, paramlen);
-+	if (!params || !paramlen)
-+		return 0;
-+	return -ENOTSUPP;
-+}
- #endif
-diff --git a/include/crypto/public_key.h b/include/crypto/public_key.h
-index be626eac9113..712fe1214b5f 100644
---- a/include/crypto/public_key.h
-+++ b/include/crypto/public_key.h
-@@ -15,6 +15,7 @@
- #define _LINUX_PUBLIC_KEY_H
- 
- #include <linux/keyctl.h>
-+#include <linux/oid_registry.h>
- 
- /*
-  * Cryptographic data for the public-key subtype of the asymmetric key type.
-@@ -25,6 +26,9 @@
- struct public_key {
- 	void *key;
- 	u32 keylen;
-+	enum OID algo;
-+	void *params;
-+	u32 paramlen;
- 	bool key_is_private;
- 	const char *id_type;
- 	const char *pkey_algo;
-diff --git a/include/linux/oid_registry.h b/include/linux/oid_registry.h
-index d2fa9ca42e9a..e2e323fd4826 100644
---- a/include/linux/oid_registry.h
-+++ b/include/linux/oid_registry.h
-@@ -93,6 +93,12 @@ enum OID {
- 	OID_authorityKeyIdentifier,	/* 2.5.29.35 */
- 	OID_extKeyUsage,		/* 2.5.29.37 */
- 
-+	/* EC-RDSA */
-+	OID_gost2012PublicKey256,	/* 1.2.643.7.1.1.1.1 */
-+	OID_gost2012PublicKey512,	/* 1.2.643.7.1.1.1.2 */
-+	OID_gost2012Signature256,	/* 1.2.643.7.1.1.3.2 */
-+	OID_gost2012Signature512,	/* 1.2.643.7.1.1.3.3 */
-+
- 	OID__NR
+-static int tps65218_remove(struct i2c_client *client)
+-{
+-	struct tps65218 *tps = i2c_get_clientdata(client);
+-
+-	regmap_del_irq_chip(tps->irq, tps->irq_data);
+-
+-	return 0;
+-}
+-
+ static const struct i2c_device_id tps65218_id_table[] = {
+ 	{ "tps65218", TPS65218 },
+ 	{ },
+@@ -285,7 +268,6 @@ static int tps65218_remove(struct i2c_client *client)
+ 		.of_match_table = of_tps65218_match_table,
+ 	},
+ 	.probe		= tps65218_probe,
+-	.remove		= tps65218_remove,
+ 	.id_table       = tps65218_id_table,
  };
  
 -- 
-2.11.0
+1.9.1
 
