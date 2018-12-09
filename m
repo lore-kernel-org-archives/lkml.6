@@ -2,108 +2,118 @@ Return-Path: <SRS0=cWqk=OS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-7.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31E49C65BAF
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 21:57:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96BDDC07E85
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 21:57:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0022420661
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 21:57:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0022420661
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
+	by mail.kernel.org (Postfix) with ESMTP id 5C30E20661
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 21:57:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=tycho-ws.20150623.gappssmtp.com header.i=@tycho-ws.20150623.gappssmtp.com header.b="ZEhtSkiX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C30E20661
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.ws
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727000AbeLIV5E (ORCPT
+        id S1726658AbeLIV5G (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 16:57:04 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36462 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726823AbeLIVzo (ORCPT
+        Sun, 9 Dec 2018 16:57:06 -0500
+Received: from mail-it1-f195.google.com ([209.85.166.195]:38316 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726284AbeLIV5B (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Dec 2018 16:55:44 -0500
-Received: from pub.yeoldevic.com ([81.174.156.145] helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1gW738-0002po-6G; Sun, 09 Dec 2018 21:55:42 +0000
-Received: from ben by deadeye with local (Exim 4.91)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1gW72f-0003Te-Mf; Sun, 09 Dec 2018 21:55:13 +0000
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+        Sun, 9 Dec 2018 16:57:01 -0500
+Received: by mail-it1-f195.google.com with SMTP id h65so15055482ith.3
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Dec 2018 13:57:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tycho-ws.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=c/cnaM220S28BS2KbGZCXC1k1x5flclpFTmyoOR7ZIs=;
+        b=ZEhtSkiXIFJ7B9+CT1JGwXwrrFhMMV1vH/w6af0khL1UB8ONozOo3ReizRsAre44A8
+         Fmoz0p2q4WV1pg3WgU0U/AY2/wgfsdABgEgHCvUGOKgZ5dGV5NzY60ir107pIUjv4x6Z
+         8nxWkDHbbFE/UKAzAfH5G7Luyc56RCaV6TMuzlSFoZ2caZ8JKA0ibf5GMCVBYcOygqFC
+         hY1jYOpNAELy8E2IDofVpoaWBLkWK0bG7R8rfu88NRWgNY+SeWT0prFBtQTdYJ6OzzMZ
+         iCfrznjp/T+QmvV4p8DnWsrxkeHyOXx32ZwiiXfa4wIM4p7RVLBPhU6bCn2x+bbsJaui
+         +DVQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=c/cnaM220S28BS2KbGZCXC1k1x5flclpFTmyoOR7ZIs=;
+        b=fjiicAvUI8mCpYqYlS9ljNbkmWZkoB5eBGTCw9C322EJ/7jmdwEYSDhh4x5S1p2IwN
+         fzDzJ3nWmZZwUzXgZRNR4YQJ761YRbpReYZoHB9SA+jFMOHpBxklpR3Aajzv9QbDky3e
+         fpfqwUN7dgkZTuDqI/nEpAsk/nF9DkWnH6DRE/k1M4QNOJmIQEgpvU0WpOrQlSr4XuFT
+         yUH77fB90tRg8AS/WOO6+9wygQ1mkKulycgUGJiu4Hupi3k0VctwzQEKHNWdNoof9W7p
+         B2rPVjMKrTR9NbNzVXXEcu2v3JWdFuQHjMpdcCcd660CTE6Uj3XTw2MIJBbtLcvitaMk
+         CmGA==
+X-Gm-Message-State: AA+aEWaqF/UaL0BpBEqTdz/xVT3yEYgmDfxcnDb0NjAL6+ezscupqfYa
+        wou5OPT1VWuXlPsx2TFiFz/Q4g==
+X-Google-Smtp-Source: AFSGD/UB1uWJSCyMzUdh0t9RcXO/TcSTq+dOz/wnUZrgy7jyY9BJwUcFRot9Pwpfl4HmNYpF0SI4dg==
+X-Received: by 2002:a24:2e94:: with SMTP id i142mr8628721ita.157.1544392620217;
+        Sun, 09 Dec 2018 13:57:00 -0800 (PST)
+Received: from cisco (71-218-133-134.hlrn.qwest.net. [71.218.133.134])
+        by smtp.gmail.com with ESMTPSA id m11sm5225375itb.24.2018.12.09.13.56.59
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 09 Dec 2018 13:56:59 -0800 (PST)
+Date:   Sun, 9 Dec 2018 14:56:58 -0700
+From:   Tycho Andersen <tycho@tycho.ws>
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     linux-sparse@vger.kernel.org, kernel-hardening@lists.openwall.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC v1] copy_{to,from}_user(): only inline when !__CHECKER__
+Message-ID: <20181209215658.GG30796@cisco>
+References: <20181209204449.18906-1-tycho@tycho.ws>
+ <20181209210220.GB2217@ZenIV.linux.org.uk>
+ <20181209212523.GE30796@cisco>
+ <20181209214600.GC2217@ZenIV.linux.org.uk>
 MIME-Version: 1.0
-From:   Ben Hutchings <ben@decadent.org.uk>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, "Jason Gunthorpe" <jgg@mellanox.com>,
-        "Jann Horn" <jannh@google.com>
-Date:   Sun, 09 Dec 2018 21:50:33 +0000
-Message-ID: <lsq.1544392233.983655782@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 191/328] RDMA/ucma: check fd type in ucma_migrate_id()
-In-Reply-To: <lsq.1544392232.713909046@decadent.org.uk>
-X-SA-Exim-Connect-IP: 81.174.156.145
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181209214600.GC2217@ZenIV.linux.org.uk>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.16.62-rc1 review patch.  If anyone has any objections, please let me know.
+On Sun, Dec 09, 2018 at 09:46:00PM +0000, Al Viro wrote:
+> On Sun, Dec 09, 2018 at 02:25:23PM -0700, Tycho Andersen wrote:
+> 
+> > > Which sparse checks do not trigger?  Explain, please - as it is, I had been
+> > > unable to guess what could "specifically looks for a call instruction" refer
+> > > to.
+> > 
+> > In sparse.c there's check_call_instruction(), which is triggered when
+> > there's an instruction of OP_CALL type in the basic block. This simply
+> > compares against the name of the call target to determine whether or
+> > not to call check_ctu().
+> 
+> Oh, that Linus' experiment with "look for huge constant size argument
+> to memcpy() et.al."?  Frankly, it's not only the wrong place to put the
+> checks, but breaking inlining loses the _real_ "known constant size"
+> checks in there.
+> 
+> I don't know if the check_ctu thing has ever caught a bug...  What kind of
+> checks do you want to add?  Because this place is almost certainly wrong
+> for anything useful...
 
-------------------
+Yeah, agreed that the static size check doesn't seem particularly
+useful. I linked to these in the other mail, but the top two patches
+here are what I was playing with:
 
-From: Jann Horn <jannh@google.com>
+https://github.com/tych0/sparse/commits/check-as-infoleaks
 
-commit 0d23ba6034b9cf48b8918404367506da3e4b3ee5 upstream.
+> If anything, I would suggest simulating this behaviour with something like
+> 	if (__builtin_constant_p(size) && size > something)
+> 		/* something that would trigger a warning */
+> _inside_ copy_from_user()/copy_to_user() and to hell with name-recognizing
+> magic...
 
-The current code grabs the private_data of whatever file descriptor
-userspace has supplied and implicitly casts it to a `struct ucma_file *`,
-potentially causing a type confusion.
+Hmm. I wonder if we couldn't do some size checking with the argument
+like this instead. Thanks for the idea, I'll play around with it.
 
-This is probably fine in practice because the pointer is only used for
-comparisons, it is never actually dereferenced; and even in the
-comparisons, it is unlikely that a file from another filesystem would have
-a ->private_data pointer that happens to also be valid in this context.
-But ->private_data is not always guaranteed to be a valid pointer to an
-object owned by the file's filesystem; for example, some filesystems just
-cram numbers in there.
-
-Check the type of the supplied file descriptor to be safe, analogous to how
-other places in the kernel do it.
-
-Fixes: 88314e4dda1e ("RDMA/cma: add support for rdma_migrate_id()")
-Signed-off-by: Jann Horn <jannh@google.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
----
- drivers/infiniband/core/ucma.c | 6 ++++++
- 1 file changed, 6 insertions(+)
-
---- a/drivers/infiniband/core/ucma.c
-+++ b/drivers/infiniband/core/ucma.c
-@@ -113,6 +113,8 @@ static DEFINE_MUTEX(mut);
- static DEFINE_IDR(ctx_idr);
- static DEFINE_IDR(multicast_idr);
- 
-+static const struct file_operations ucma_fops;
-+
- static inline struct ucma_context *_ucma_find_context(int id,
- 						      struct ucma_file *file)
- {
-@@ -1448,6 +1450,10 @@ static ssize_t ucma_migrate_id(struct uc
- 	f = fdget(cmd.fd);
- 	if (!f.file)
- 		return -ENOENT;
-+	if (f.file->f_op != &ucma_fops) {
-+		ret = -EINVAL;
-+		goto file_put;
-+	}
- 
- 	/* Validate current fd and prevent destruction of id. */
- 	ctx = ucma_get_ctx(f.file->private_data, cmd.id);
-
+Tycho
