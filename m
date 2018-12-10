@@ -2,109 +2,101 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5A2BC04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 05:53:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97F0FC04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 05:58:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C9932082F
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 05:53:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="NYyjKQ6x"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C9932082F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	by mail.kernel.org (Postfix) with ESMTP id 53D7F2082F
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 05:58:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 53D7F2082F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726474AbeLJFxz (ORCPT
+        id S1726470AbeLJF6N convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 00:53:55 -0500
-Received: from ozlabs.org ([203.11.71.1]:53899 "EHLO ozlabs.org"
+        Mon, 10 Dec 2018 00:58:13 -0500
+Received: from mga02.intel.com ([134.134.136.20]:32798 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726430AbeLJFxz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 00:53:55 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 43CshJ2r4nz9s2P;
-        Mon, 10 Dec 2018 16:53:52 +1100 (AEDT)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1544421232;
-        bh=vQR6kZHj+umKZpKMQnXseUo6Fxca4xW8RRbWdL6h30I=;
-        h=Date:From:To:Cc:Subject:From;
-        b=NYyjKQ6xq1SQURr2pn74wSDG4v/bmoWogJszm+cu2wEtMZ3MUiDAceOcbTz0blMC8
-         xb6DY0gIiMZuctUxJZ+Jtua+3BgUToc93h8fqiRrdV/WXfZzk2BGXumRYINgBlcErB
-         KpcZwN04YdC+90R7zVBT7PvVbDH6z/MCFGKQ1FYboI+cUgMjSR/sYEgNenp8FWuTDF
-         EQcfUIrPrpYw81I86SgVdCBGiZs78Laf93EphxeUHR7UyeIAFclnOsyW3kA+qUgrC7
-         3ReoWXgmnVO0c+A05zivYemWTkL2h16nJPVhXqTZa7bV38xWj5Nnkmo+OchVLwFh1c
-         Wwc/6Zr5Y3rig==
-Date:   Mon, 10 Dec 2018 16:53:51 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Greg KH <greg@kroah.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Dmitry Osipenko <digetx@gmail.com>,
-        Colin Ian King <colin.king@canonical.com>
-Subject: linux-next: manual merge of the staging tree with the v4l-dvb tree
-Message-ID: <20181210165351.0976c1f8@canb.auug.org.au>
+        id S1726100AbeLJF6M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Dec 2018 00:58:12 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Dec 2018 21:58:12 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,337,1539673200"; 
+   d="scan'208";a="100259592"
+Received: from fmsmsx104.amr.corp.intel.com ([10.18.124.202])
+  by orsmga008.jf.intel.com with ESMTP; 09 Dec 2018 21:58:11 -0800
+Received: from shsmsx104.ccr.corp.intel.com (10.239.4.70) by
+ fmsmsx104.amr.corp.intel.com (10.18.124.202) with Microsoft SMTP Server (TLS)
+ id 14.3.408.0; Sun, 9 Dec 2018 21:58:08 -0800
+Received: from shsmsx101.ccr.corp.intel.com ([169.254.1.201]) by
+ SHSMSX104.ccr.corp.intel.com ([169.254.5.203]) with mapi id 14.03.0415.000;
+ Mon, 10 Dec 2018 13:58:03 +0800
+From:   "Liu, Chuansheng" <chuansheng.liu@intel.com>
+To:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+CC:     "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "pmladek@suse.com" <pmladek@suse.com>,
+        "sergey.senozhatsky@gmail.com" <sergey.senozhatsky@gmail.com>,
+        "rostedt@goodmis.org" <rostedt@goodmis.org>,
+        "dvyukov@google.com" <dvyukov@google.com>,
+        "penguin-kernel@I-love.SAKURA.ne.jp" 
+        <penguin-kernel@i-love.sakura.ne.jp>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH] kernel/hung_task.c: force ignore_loglevel before panic
+Thread-Topic: [PATCH] kernel/hung_task.c: force ignore_loglevel before panic
+Thread-Index: AdSQSf5rRH8ZTwaTR0Kl+UXxB6vgiP//fUMA//93HeA=
+Date:   Mon, 10 Dec 2018 05:58:02 +0000
+Message-ID: <27240C0AC20F114CBF8149A2696CBE4A6015A8D9@SHSMSX101.ccr.corp.intel.com>
+References: <27240C0AC20F114CBF8149A2696CBE4A6015A889@SHSMSX101.ccr.corp.intel.com>
+ <20181210054622.GA6291@jagdpanzerIV>
+In-Reply-To: <20181210054622.GA6291@jagdpanzerIV>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ctpclassification: CTP_NT
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiNjMzZjUyOGEtYmI4Yy00NjM0LTg1OGMtNjc5MDUyODJmNjMwIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoic3BKZit5NEx3dUpzVWhjYlZ6YkpGSTRcL0pNM1NZSUV5eUdldFdXWjhWdmZJdHIrbStNblg5bzU4R0ZYMjA0MHUifQ==
+dlp-product: dlpe-windows
+dlp-version: 11.0.400.15
+dlp-reaction: no-action
+x-originating-ip: [10.239.127.40]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/mt+iqN82aymKltl3QQK8+IE"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/mt+iqN82aymKltl3QQK8+IE
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
 
-Today's linux-next merge of the staging tree got a conflict in:
+> -----Original Message-----
+> From: Sergey Senozhatsky [mailto:sergey.senozhatsky.work@gmail.com]
+> Sent: Monday, December 10, 2018 1:46 PM
+> To: Liu, Chuansheng <chuansheng.liu@intel.com>
+> Cc: akpm@linux-foundation.org; pmladek@suse.com;
+> sergey.senozhatsky@gmail.com; rostedt@goodmis.org; dvyukov@google.com;
+> penguin-kernel@I-love.SAKURA.ne.jp; linux-kernel@vger.kernel.org
+> Subject: Re: [PATCH] kernel/hung_task.c: force ignore_loglevel before panic
+> 
+> On (12/10/18 05:40), Liu, Chuansheng wrote:
+> > @@ -130,6 +130,13 @@ static void check_hung_task(struct task_struct *t,
+> unsigned long timeout)
+> >                         init_utsname()->version);
+> >                 pr_err("\"echo 0 > /proc/sys/kernel/hung_task_timeout_secs\""
+> >                         " disables this message.\n");
+> > +               /* When sysctl_hung_task_panic is set, we have to force
+> > +                * ignore_loglevel to get really useful hung task
+> > +                * information.
+> > +                */
+> > +               if (sysctl_hung_task_panic && !ignore_loglevel)
+> > +                       ignore_loglevel = true;
+> 
+> 		console_verbose()?
 
-  drivers/staging/media/tegra-vde/tegra-vde.c
-
-between commit:
-
-  91dc5e91edf7 ("media: staging: tegra-vde: Replace debug messages with tra=
-ce points")
-
-from the v4l-dvb tree and commit:
-
-  9483804a725a ("media: staging: tegra-vde: print long unsigned using %lu f=
-ormat specifier")
-
-from the staging tree.
-
-I fixed it up (the former removed the code updated by the latter, so I
-did that) and can carry the fix as necessary. This is now fixed as far
-as linux-next is concerned, but any non trivial conflicts should be
-mentioned to your upstream maintainer when your tree is submitted for
-merging.  You may also want to consider cooperating with the maintainer
-of the conflicting tree to minimise any particularly complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/mt+iqN82aymKltl3QQK8+IE
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwN/28ACgkQAVBC80lX
-0GwU5ggAoJPT0uHIP4eu2lYmOFyhI7q+GZtNz8JZr7FHY0pdGclpF/Qzd1NPko5w
-XaktE9coLcwRKOyzDE8MXQ9nSghVDVghK3y2FHmd+W6AhnDm5Q3AAiRX6bgc+0Er
-YJZjk/kdPJE/4E5aQGWqDjzWUsqyIUfU3s4SCY6xpNIKjbJRcQ8EnS6Rm8vQjsnn
-Uo2ah41mSZphMjSBd0zFzfg5FpQrCX90PwVNu40WIeAbVZfE9jJDtz7yvvVf9FGY
-tZC+4+rKSzEG0r7Q90hqXr8eu8iXP7CS23hwBj9zHbBX2VJhcjAuJkf2Sl67MVMd
-9CEW8xmOIlrFxp8x+FIBV1uJaeiL/A==
-=uGek
------END PGP SIGNATURE-----
-
---Sig_/mt+iqN82aymKltl3QQK8+IE--
+Thanks Sergey, it is really my need. I will prepare for a new version of patch:)
