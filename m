@@ -2,185 +2,205 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F83EC04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 03:51:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7298C04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 03:55:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 016062081F
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 03:51:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 016062081F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+	by mail.kernel.org (Postfix) with ESMTP id 850E12081F
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 03:55:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 850E12081F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=katsuster.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726374AbeLJDvm (ORCPT
+        id S1726355AbeLJDzV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 22:51:42 -0500
-Received: from ozlabs.org ([203.11.71.1]:39177 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726098AbeLJDvm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Dec 2018 22:51:42 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 43Cpz75ClMz9s47;
-        Mon, 10 Dec 2018 14:51:31 +1100 (AEDT)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-From:   Michael Ellerman <mpe@ellerman.id.au>
-To:     Andrew Murray <andrew.murray@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Richard Henderson <rth@twiddle.net>,
-        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
-        Matt Turner <mattst88@gmail.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        Russell King <linux@armlinux.org.uk>, suzuki.poulose@arm.com,
-        robin.murphy@arm.com
-Cc:     linux-kernel@vger.kernel.org, linux-alpha@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linuxppc-dev@lists.ozlabs.org, x86@kernel.org
-Subject: Re: [PATCH v3 09/12] powerpc: perf/core: use PERF_PMU_CAP_NO_EXCLUDE for exclude incapable PMUs
-In-Reply-To: <1544114849-47266-10-git-send-email-andrew.murray@arm.com>
-References: <1544114849-47266-1-git-send-email-andrew.murray@arm.com> <1544114849-47266-10-git-send-email-andrew.murray@arm.com>
-Date:   Mon, 10 Dec 2018 14:51:31 +1100
-Message-ID: <87bm5uf398.fsf@concordia.ellerman.id.au>
+        Sun, 9 Dec 2018 22:55:21 -0500
+Received: from www1102.sakura.ne.jp ([219.94.129.142]:56389 "EHLO
+        www1102.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726098AbeLJDzU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Dec 2018 22:55:20 -0500
+Received: from fsav106.sakura.ne.jp (fsav106.sakura.ne.jp [27.133.134.233])
+        by www1102.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id wBA3tIgf031017;
+        Mon, 10 Dec 2018 12:55:18 +0900 (JST)
+        (envelope-from katsuhiro@katsuster.net)
+Received: from www1102.sakura.ne.jp (219.94.129.142)
+ by fsav106.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav106.sakura.ne.jp);
+ Mon, 10 Dec 2018 12:55:18 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav106.sakura.ne.jp)
+Received: from [192.168.1.2] (199.247.151.153.ap.dti.ne.jp [153.151.247.199])
+        (authenticated bits=0)
+        by www1102.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id wBA3t9QS030987
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
+        Mon, 10 Dec 2018 12:55:17 +0900 (JST)
+        (envelope-from katsuhiro@katsuster.net)
+Subject: Re: [PATCH v2 0/7] add UniPhier DVB Frontend system support
+To:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
+Cc:     linux-media@vger.kernel.org,
+        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
+        Jassi Brar <jaswinder.singh@linaro.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Michael Ira Krufky <mkrufky@linuxtv.org>,
+        Sean Young <sean@mess.org>, Brad Love <brad@nextdimension.cc>
+References: <20180808052519.14528-1-suzuki.katsuhiro@socionext.com>
+ <000301d43ffe$9e6e9f80$db4bde80$@socionext.com>
+ <20181207121716.17521ac2@coco.lan>
+From:   Katsuhiro Suzuki <katsuhiro@katsuster.net>
+Message-ID: <75775717-e5b3-e08a-ff4d-760b81031717@katsuster.net>
+Date:   Mon, 10 Dec 2018 12:55:08 +0900
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.3
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20181207121716.17521ac2@coco.lan>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Andrew Murray <andrew.murray@arm.com> writes:
+Hello Mauro,
 
-> For PowerPC PMUs that do not support context exclusion let's
-> advertise the PERF_PMU_CAP_NO_EXCLUDE capability. This ensures that
-> perf will prevent us from handling events where any exclusion flags
-> are set. Let's also remove the now unnecessary check for exclusion
-> flags.
->
-> Signed-off-by: Andrew Murray <andrew.murray@arm.com>
-> ---
->  arch/powerpc/perf/hv-24x7.c | 10 +---------
->  arch/powerpc/perf/hv-gpci.c | 10 +---------
->  arch/powerpc/perf/imc-pmu.c | 19 +------------------
->  3 files changed, 3 insertions(+), 36 deletions(-)
+Thank you for reviewing. Actually, I leaved Socionext at October
+this year. I tried to find next person that maintain these patches
+before leaving Socionext but I could not find.
 
-Looks good.
+And unfortunately, I cannot test and refine these DVB patches
+because Socionext evaluation boards that can receive ISDB are not
+sell and SoC specification is not public.
 
-Acked-by: Michael Ellerman <mpe@ellerman.id.au> (powerpc)
+So it's better to drop my UniPhier DVB patches, I think...
 
-cheers
+Best Regards,
+---
+Katsuhiro Suzuki
 
-> diff --git a/arch/powerpc/perf/hv-24x7.c b/arch/powerpc/perf/hv-24x7.c
-> index 72238ee..d2b8e60 100644
-> --- a/arch/powerpc/perf/hv-24x7.c
-> +++ b/arch/powerpc/perf/hv-24x7.c
-> @@ -1306,15 +1306,6 @@ static int h_24x7_event_init(struct perf_event *event)
->  		return -EINVAL;
->  	}
->  
-> -	/* unsupported modes and filters */
-> -	if (event->attr.exclude_user   ||
-> -	    event->attr.exclude_kernel ||
-> -	    event->attr.exclude_hv     ||
-> -	    event->attr.exclude_idle   ||
-> -	    event->attr.exclude_host   ||
-> -	    event->attr.exclude_guest)
-> -		return -EINVAL;
-> -
->  	/* no branch sampling */
->  	if (has_branch_stack(event))
->  		return -EOPNOTSUPP;
-> @@ -1577,6 +1568,7 @@ static struct pmu h_24x7_pmu = {
->  	.start_txn   = h_24x7_event_start_txn,
->  	.commit_txn  = h_24x7_event_commit_txn,
->  	.cancel_txn  = h_24x7_event_cancel_txn,
-> +	.capabilities = PERF_PMU_CAP_NO_EXCLUDE,
->  };
->  
->  static int hv_24x7_init(void)
-> diff --git a/arch/powerpc/perf/hv-gpci.c b/arch/powerpc/perf/hv-gpci.c
-> index 43fabb3..735e77b 100644
-> --- a/arch/powerpc/perf/hv-gpci.c
-> +++ b/arch/powerpc/perf/hv-gpci.c
-> @@ -232,15 +232,6 @@ static int h_gpci_event_init(struct perf_event *event)
->  		return -EINVAL;
->  	}
->  
-> -	/* unsupported modes and filters */
-> -	if (event->attr.exclude_user   ||
-> -	    event->attr.exclude_kernel ||
-> -	    event->attr.exclude_hv     ||
-> -	    event->attr.exclude_idle   ||
-> -	    event->attr.exclude_host   ||
-> -	    event->attr.exclude_guest)
-> -		return -EINVAL;
-> -
->  	/* no branch sampling */
->  	if (has_branch_stack(event))
->  		return -EOPNOTSUPP;
-> @@ -285,6 +276,7 @@ static struct pmu h_gpci_pmu = {
->  	.start       = h_gpci_event_start,
->  	.stop        = h_gpci_event_stop,
->  	.read        = h_gpci_event_update,
-> +	.capabilities = PERF_PMU_CAP_NO_EXCLUDE,
->  };
->  
->  static int hv_gpci_init(void)
-> diff --git a/arch/powerpc/perf/imc-pmu.c b/arch/powerpc/perf/imc-pmu.c
-> index 1fafc32b..1dbb0ee 100644
-> --- a/arch/powerpc/perf/imc-pmu.c
-> +++ b/arch/powerpc/perf/imc-pmu.c
-> @@ -473,15 +473,6 @@ static int nest_imc_event_init(struct perf_event *event)
->  	if (event->hw.sample_period)
->  		return -EINVAL;
->  
-> -	/* unsupported modes and filters */
-> -	if (event->attr.exclude_user   ||
-> -	    event->attr.exclude_kernel ||
-> -	    event->attr.exclude_hv     ||
-> -	    event->attr.exclude_idle   ||
-> -	    event->attr.exclude_host   ||
-> -	    event->attr.exclude_guest)
-> -		return -EINVAL;
-> -
->  	if (event->cpu < 0)
->  		return -EINVAL;
->  
-> @@ -748,15 +739,6 @@ static int core_imc_event_init(struct perf_event *event)
->  	if (event->hw.sample_period)
->  		return -EINVAL;
->  
-> -	/* unsupported modes and filters */
-> -	if (event->attr.exclude_user   ||
-> -	    event->attr.exclude_kernel ||
-> -	    event->attr.exclude_hv     ||
-> -	    event->attr.exclude_idle   ||
-> -	    event->attr.exclude_host   ||
-> -	    event->attr.exclude_guest)
-> -		return -EINVAL;
-> -
->  	if (event->cpu < 0)
->  		return -EINVAL;
->  
-> @@ -1069,6 +1051,7 @@ static int update_pmu_ops(struct imc_pmu *pmu)
->  	pmu->pmu.stop = imc_event_stop;
->  	pmu->pmu.read = imc_event_update;
->  	pmu->pmu.attr_groups = pmu->attr_groups;
-> +	pmu->pmu.capabilities = PERF_PMU_CAP_NO_EXCLUDE;
->  	pmu->attr_groups[IMC_FORMAT_ATTR] = &imc_format_group;
->  
->  	switch (pmu->domain) {
-> -- 
-> 2.7.4
+On 2018/12/07 23:17, Mauro Carvalho Chehab wrote:
+> Hi Katsuhiro-san,
+> 
+> Em Thu, 30 Aug 2018 10:13:11 +0900
+> "Katsuhiro Suzuki" <suzuki.katsuhiro@socionext.com> escreveu:
+> 
+>> Hello Mauro,
+>>
+>> This is ping...
+> 
+> Sorry for taking a long time to look into it.
+> 
+> Reviewing new drivers take some time, and need to be done right.
+> 
+> I usually let the sub-maintainers to do a first look, but they
+> probably missed this one. So, let me copy them. Hopefully they
+> can do review on it soon.
+> 
+> I'll try to do a review myself, but I won't be able to do it
+> until mid next week.
+> 
+> Regards,
+> Mauro
+> 
+>>
+>>> -----Original Message-----
+>>> From: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
+>>> Sent: Wednesday, August 8, 2018 2:25 PM
+>>> To: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>;
+>>> linux-media@vger.kernel.org
+>>> Cc: Masami Hiramatsu <masami.hiramatsu@linaro.org>; Jassi Brar
+>>> <jaswinder.singh@linaro.org>; linux-arm-kernel@lists.infradead.org;
+>>> linux-kernel@vger.kernel.org; Suzuki, Katsuhiro
+>>> <suzuki.katsuhiro@socionext.com>
+>>> Subject: [PATCH v2 0/7] add UniPhier DVB Frontend system support
+>>>
+>>> This series adds support for DVB Frontend system named HSC support
+>>> for UniPhier LD11/LD20 SoCs. This driver supports MPEG2-TS serial
+>>> signal input from external demodulator and DMA MPEG2-TS stream data
+>>> onto memory.
+>>>
+>>> UniPhier HSC driver provides many ports of TS input. Since the HSC
+>>> has mixed register map for those ports. It hard to split each register
+>>> areas.
+>>>
+>>> ---
+>>>
+>>> Changes from v1:
+>>>    DT bindings
+>>>      - Fix mistakes of spelling
+>>>      - Rename uniphier,hsc.txt -> socionext,uniphier-hsc.txt
+>>>    Kconfig, Makefile
+>>>      - Add COMPILE_TEST, REGMAP_MMIO
+>>>      - Add $(srctree) to include path option
+>>>    Headers
+>>>      - Split large patch
+>>>      - Remove more unused definitions
+>>>      - Remove unneeded const
+>>>      - Replace enum that has special value into #define
+>>>      - Remove weird macro from register definitions
+>>>      - Remove field_get/prop inline functions
+>>>    Modules
+>>>      - Split register definitions, function prototypes
+>>>      - Fix include lines
+>>>      - Fix depended config
+>>>      - Remove redundant conditions
+>>>      - Drop adapter patches, and need no patches to build
+>>>      - Merge uniphier-adapter.o into each adapter drivers
+>>>      - Split 3 modules (core, ld11, ld20) to build adapter drivers as
+>>>        module
+>>>      - Fix compile error if build as module
+>>>      - Use hardware spec table to remove weird macro from register
+>>>        definitions
+>>>      - Use usleep_range instead of msleep
+>>>      - Use shift and mask instead of field_get/prop inline functions
+>>>
+>>> Katsuhiro Suzuki (7):
+>>>    media: uniphier: add DT bindings documentation for UniPhier HSC
+>>>    media: uniphier: add DMA common file of HSC
+>>>    media: uniphier: add CSS common file of HSC
+>>>    media: uniphier: add TS common file of HSC
+>>>    media: uniphier: add ucode load common file of HSC
+>>>    media: uniphier: add platform driver module of HSC
+>>>    media: uniphier: add LD11/LD20 HSC support
+>>>
+>>>   .../bindings/media/socionext,uniphier-hsc.txt |  38 ++
+>>>   drivers/media/platform/Kconfig                |   1 +
+>>>   drivers/media/platform/Makefile               |   2 +
+>>>   drivers/media/platform/uniphier/Kconfig       |  19 +
+>>>   drivers/media/platform/uniphier/Makefile      |   5 +
+>>>   drivers/media/platform/uniphier/hsc-core.c    | 515 ++++++++++++++++++
+>>>   drivers/media/platform/uniphier/hsc-css.c     | 250 +++++++++
+>>>   drivers/media/platform/uniphier/hsc-dma.c     | 212 +++++++
+>>>   drivers/media/platform/uniphier/hsc-ld11.c    | 273 ++++++++++
+>>>   drivers/media/platform/uniphier/hsc-reg.h     | 272 +++++++++
+>>>   drivers/media/platform/uniphier/hsc-ts.c      | 127 +++++
+>>>   drivers/media/platform/uniphier/hsc-ucode.c   | 416 ++++++++++++++
+>>>   drivers/media/platform/uniphier/hsc.h         | 389 +++++++++++++
+>>>   13 files changed, 2519 insertions(+)
+>>>   create mode 100644
+>>> Documentation/devicetree/bindings/media/socionext,uniphier-hsc.txt
+>>>   create mode 100644 drivers/media/platform/uniphier/Kconfig
+>>>   create mode 100644 drivers/media/platform/uniphier/Makefile
+>>>   create mode 100644 drivers/media/platform/uniphier/hsc-core.c
+>>>   create mode 100644 drivers/media/platform/uniphier/hsc-css.c
+>>>   create mode 100644 drivers/media/platform/uniphier/hsc-dma.c
+>>>   create mode 100644 drivers/media/platform/uniphier/hsc-ld11.c
+>>>   create mode 100644 drivers/media/platform/uniphier/hsc-reg.h
+>>>   create mode 100644 drivers/media/platform/uniphier/hsc-ts.c
+>>>   create mode 100644 drivers/media/platform/uniphier/hsc-ucode.c
+>>>   create mode 100644 drivers/media/platform/uniphier/hsc.h
+>>>
+>>> --
+>>> 2.18.0
+>>
+>>
+>>
+> 
+> 
+> 
+> Thanks,
+> Mauro
+> 
+
