@@ -2,114 +2,125 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99E1DC04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 09:30:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BF38C04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 09:30:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5DF9D20855
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 09:30:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544434238;
-	bh=s0L2ctp383dyFhHV7ZVo1lYfPGGW+6kPPONxHu26wHs=;
-	h=From:To:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=wk2H1MApZrJib+6wUjb4JnEvRpGSqj7fByNS4kLZg5ImWWOURZSBeVh+DRYmchK1l
-	 wad6FenZIvtxqNFKwNJJTbP7/OJpyG0NVnXPd0NzIjS1NqcJSYfV/1vFLxoCc4uxN8
-	 L71SUU3pArsWQgwkMvb5D6DAS5eEWXktm9h/TwLA=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5DF9D20855
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 3817220821
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 09:30:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3817220821
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727146AbeLJJaO (ORCPT
+        id S1727228AbeLJJaw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 04:30:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51890 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727123AbeLJJaM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 04:30:12 -0500
-Received: from PC-kkoz.proceq.com (unknown [213.160.61.66])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2742720874;
-        Mon, 10 Dec 2018 09:30:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544434211;
-        bh=s0L2ctp383dyFhHV7ZVo1lYfPGGW+6kPPONxHu26wHs=;
-        h=From:To:Subject:Date:In-Reply-To:References:From;
-        b=IwYZ/JK3Sy2ktaNRx/FmMqy2hsxS6Kp4oDZd+Q3aFF3ZSyEsCQIWxAt6In+Rmdzjx
-         hIzWkrvXWqvTQz1MpR/MXcf8L3YYe9BnDZ5hRJYSF9F1WbnEZsqAxIqSb55lGEpJgO
-         rDTCyvq7GshrWpsqX+A5XB0nNX73+An7pEIVogGg=
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Baolin Wang <baolin.wang@linaro.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/5] led: triggers: Add LED_INIT_DEFAULT_TRIGGER flag
-Date:   Mon, 10 Dec 2018 10:29:58 +0100
-Message-Id: <1544434201-14190-3-git-send-email-krzk@kernel.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1544434201-14190-1-git-send-email-krzk@kernel.org>
-References: <1544434201-14190-1-git-send-email-krzk@kernel.org>
+        Mon, 10 Dec 2018 04:30:52 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:60950 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726563AbeLJJaw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Dec 2018 04:30:52 -0500
+Received: from 1.general.cking.uk.vpn ([10.172.193.212])
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_128_CBC_SHA1:16)
+        (Exim 4.76)
+        (envelope-from <colin.king@canonical.com>)
+        id 1gWHtr-0006kA-5h; Mon, 10 Dec 2018 09:30:51 +0000
+Subject: Re: [PATCH][drm-next] drm/selftest: fix spelling mistake "dimention"
+ -> "dimenstion"
+From:   Colin Ian King <colin.king@canonical.com>
+To:     David Airlie <airlied@linux.ie>,
+        Thomas Hellstrom <thellstrom@vmware.com>,
+        Deepak Rawat <drawat@vmware.com>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        dri-devel@lists.freedesktop.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20181210092619.4016-1-colin.king@canonical.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=colin.king@canonical.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <503e3826-6e73-3875-f22d-4da25a37fcf4@canonical.com>
+Date:   Mon, 10 Dec 2018 09:30:50 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+MIME-Version: 1.0
+In-Reply-To: <20181210092619.4016-1-colin.king@canonical.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Ooops, $SUBJECT should be:
 
-Add the flag LED_INIT_DEFAULT_TRIGGER for indicating that trigger
-being set is a default trigger for the LED class device, and
-thus it should be initialized with settings provided in the fwnode.
+"drm/selftest: fix spelling mistake "dimention" -> "dimension"
 
-Set the flag in the led_trigger_set_default(). It is expected to be
-cleared in the activate() op of a trigger after trigger fwnode
-initialization data is parsed and applied. This should happen only
-once after LED class device registration, to allow leaving triggers
-in the idle state on re-apply and let the users apply their own
-settings without being interfered with the default ones.
-
-Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Acked-by: Pavel Machek <pavel@ucw.cz>
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- drivers/leds/led-triggers.c | 2 ++
- include/linux/leds.h        | 1 +
- 2 files changed, 3 insertions(+)
-
-diff --git a/drivers/leds/led-triggers.c b/drivers/leds/led-triggers.c
-index 52b12e601ebe..9421222ca7a0 100644
---- a/drivers/leds/led-triggers.c
-+++ b/drivers/leds/led-triggers.c
-@@ -201,10 +201,12 @@ void led_trigger_set_default(struct led_classdev *led_cdev)
- 	down_write(&led_cdev->trigger_lock);
- 	list_for_each_entry(trig, &trigger_list, next_trig) {
- 		if (!strcmp(led_cdev->default_trigger, trig->name)) {
-+			led_cdev->flags |= LED_INIT_DEFAULT_TRIGGER;
- 			led_trigger_set(led_cdev, trig);
- 			break;
- 		}
- 	}
-+
- 	up_write(&led_cdev->trigger_lock);
- 	up_read(&triggers_list_lock);
- }
-diff --git a/include/linux/leds.h b/include/linux/leds.h
-index 580cbaef789a..5263f87e1d2c 100644
---- a/include/linux/leds.h
-+++ b/include/linux/leds.h
-@@ -51,6 +51,7 @@ struct led_classdev {
- #define LED_PANIC_INDICATOR	BIT(20)
- #define LED_BRIGHT_HW_CHANGED	BIT(21)
- #define LED_RETAIN_AT_SHUTDOWN	BIT(22)
-+#define LED_INIT_DEFAULT_TRIGGER BIT(23)
- 
- 	/* set_brightness_work / blink_timer flags, atomic, private. */
- 	unsigned long		work_flags;
--- 
-2.7.4
+On 10/12/2018 09:26, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> There is a spelling mistake in a pr_err message, fix this.
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/gpu/drm/selftests/test-drm_damage_helper.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/selftests/test-drm_damage_helper.c b/drivers/gpu/drm/selftests/test-drm_damage_helper.c
+> index a2f753205a3e..9d2bcdf8bc29 100644
+> --- a/drivers/gpu/drm/selftests/test-drm_damage_helper.c
+> +++ b/drivers/gpu/drm/selftests/test-drm_damage_helper.c
+> @@ -53,7 +53,7 @@ static bool check_damage_clip(struct drm_plane_state *state, struct drm_rect *r,
+>  	int src_y2 = (state->src.y2 >> 16) + !!(state->src.y2 & 0xFFFF);
+>  
+>  	if (x1 >= x2 || y1 >= y2) {
+> -		pr_err("Cannot have damage clip with no dimention.\n");
+> +		pr_err("Cannot have damage clip with no dimension.\n");
+>  		return false;
+>  	}
+>  
+> 
 
