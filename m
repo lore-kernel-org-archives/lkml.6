@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5512EC5CFFE
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 17:47:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42C76C04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 17:47:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 291FE2082F
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 17:47:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 291FE2082F
+	by mail.kernel.org (Postfix) with ESMTP id 10BAA2082F
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 17:47:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 10BAA2082F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729057AbeLJRrT (ORCPT
+        id S1729089AbeLJRr1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 12:47:19 -0500
-Received: from foss.arm.com ([217.140.101.70]:59810 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727324AbeLJRrQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 12:47:16 -0500
+        Mon, 10 Dec 2018 12:47:27 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:59822 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729044AbeLJRrR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Dec 2018 12:47:17 -0500
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E6881EBD;
-        Mon, 10 Dec 2018 09:47:15 -0800 (PST)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EC7F21682;
+        Mon, 10 Dec 2018 09:47:16 -0800 (PST)
 Received: from filthy-habits.cambridge.arm.com (filthy-habits.cambridge.arm.com [10.1.196.62])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 29AFA3F6A8;
-        Mon, 10 Dec 2018 09:47:15 -0800 (PST)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2FD523F6A8;
+        Mon, 10 Dec 2018 09:47:16 -0800 (PST)
 From:   Marc Zyngier <marc.zyngier@arm.com>
 To:     Andrew Morton <akpm@linux-foundation.org>
 Cc:     linux-kernel@vger.kernel.org, Will Deacon <will.deacon@arm.com>
-Subject: [RESEND PATCH 1/2] scripts/decodecode: Set ARCH when running natively on arm/arm64
-Date:   Mon, 10 Dec 2018 17:46:58 +0000
-Message-Id: <20181210174659.31054-2-marc.zyngier@arm.com>
+Subject: [RESEND PATCH 2/2] scripts/decode_stacktrace: Only strip base path when a prefix of the path
+Date:   Mon, 10 Dec 2018 17:46:59 +0000
+Message-Id: <20181210174659.31054-3-marc.zyngier@arm.com>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181210174659.31054-1-marc.zyngier@arm.com>
 References: <20181210174659.31054-1-marc.zyngier@arm.com>
@@ -44,39 +44,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When running decodecode natively on arm64, ARCH is likely not to be set,
-and we end-up with .4byte instead of .inst when generating the disassembly.
+Running something like:
 
-Similar effects would occur if running natively on a 32bit ARM platform,
-although that's even less popular.
+	decodecode vmlinux .
 
-A simple workaround is to populate ARCH when it is not set and that we're
-running on an arm/arm64 system.
+leads to interested results where not only the leading "." gets stripped
+from the displayed paths, but also anywhere in the string, displaying
+something like:
 
-Acked-by: Will Deacon <will.deacon@arm.com>
+	kvm_vcpu_check_block (arch/arm64/kvm/virt/kvm/kvm_mainc:2141)
+
+which doesn't help further processing.
+
+Fix it by only stripping the base path if it is a prefix of the path.
+
 Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
 ---
- scripts/decodecode | 7 +++++++
- 1 file changed, 7 insertions(+)
+ scripts/decode_stacktrace.sh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/scripts/decodecode b/scripts/decodecode
-index 9cef558528aa..ba8b8d5834e6 100755
---- a/scripts/decodecode
-+++ b/scripts/decodecode
-@@ -60,6 +60,13 @@ case $width in
- 4) type=4byte ;;
- esac
+diff --git a/scripts/decode_stacktrace.sh b/scripts/decode_stacktrace.sh
+index 64220e36ce3b..98a7d63a723e 100755
+--- a/scripts/decode_stacktrace.sh
++++ b/scripts/decode_stacktrace.sh
+@@ -78,7 +78,7 @@ parse_symbol() {
+ 	fi
  
-+if [ -z "$ARCH" ]; then
-+    case `uname -m` in
-+	aarch64*) ARCH=arm64 ;;
-+	arm*) ARCH=arm ;;
-+    esac
-+fi
-+
- disas() {
- 	${CROSS_COMPILE}as $AFLAGS -o $1.o $1.s > /dev/null 2>&1
+ 	# Strip out the base of the path
+-	code=${code//$basepath/""}
++	code=${code//^$basepath/""}
  
+ 	# In the case of inlines, move everything to same line
+ 	code=${code//$'\n'/' '}
 -- 
 2.19.1
 
