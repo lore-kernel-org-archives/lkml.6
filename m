@@ -2,158 +2,108 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90C2CC04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 06:32:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27693C04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 06:32:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 53F4D205C9
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 06:32:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 53F4D205C9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id E1232205C9
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 06:32:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="CcBoI1dY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1232205C9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726484AbeLJGcH (ORCPT
+        id S1726536AbeLJGcb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 01:32:07 -0500
-Received: from smtp.nue.novell.com ([195.135.221.5]:59976 "EHLO
-        smtp.nue.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726100AbeLJGcH (ORCPT
-        <rfc822;groupwise-linux-kernel@vger.kernel.org:0:0>);
-        Mon, 10 Dec 2018 01:32:07 -0500
-Received: from emea4-mta.ukb.novell.com ([10.120.13.87])
-        by smtp.nue.novell.com with ESMTP (TLS encrypted); Mon, 10 Dec 2018 07:32:04 +0100
-Received: from linux-l9pv.suse (nwb-a10-snat.microfocus.com [10.120.13.202])
-        by emea4-mta.ukb.novell.com with ESMTP (TLS encrypted); Mon, 10 Dec 2018 06:31:58 +0000
-Date:   Mon, 10 Dec 2018 14:31:53 +0800
-From:   joeyli <jlee@suse.com>
-To:     Chen Yu <yu.c.chen@intel.com>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>, linux-kernel@vger.kernel.org,
-        Lenny Szubowicz <lszubowi@redhat.com>,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>,
-        Rui Zhang <rui.zhang@intel.com>, linux-acpi@vger.kernel.org
-Subject: Re: [PATCH][RFC v2] ACPI: acpi_pad: Do not launch acpi_pad threads
- on idle cpus
-Message-ID: <20181210063153.GO5327@linux-l9pv.suse>
-References: <1525521202-32519-1-git-send-email-yu.c.chen@intel.com>
+        Mon, 10 Dec 2018 01:32:31 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:54841 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726487AbeLJGcb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Dec 2018 01:32:31 -0500
+Received: by mail-wm1-f68.google.com with SMTP id a62so2224185wmh.4
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Dec 2018 22:32:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=eOUDufZKznOjTsLXEXn9EV+3WYmTeiSrLsED1U7BNF0=;
+        b=CcBoI1dYyMyvBv6CJOIbhB+5/DD6/wgj3v0dy0yhsCUMUvg2bvmKjiXkffiwK6KYXH
+         MfuKfozAM6VG8+b/uVRFXG7jam4pFWXVIFHTMEgmb+lbVbhO/L/BlqcsrLO0mEydCxjV
+         APUsqSGBo8IO5mrCIdsMpQWUhiS6eB3+jEVcc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=eOUDufZKznOjTsLXEXn9EV+3WYmTeiSrLsED1U7BNF0=;
+        b=EH5YSI6VqRxtsCpqxtivvFwbyENnUnFqSrKrkbwknUi3JrJtW+5BfOis2GdScFswgt
+         jV5/vQm349ioyuhaYd0nsw/Al+l9doweh4Ir2eJrp3/JqHil+oP1cC1pzFAU/VIiVIT5
+         OSMz7lxQMoS5McFbDYd3FPc28WiZGohi6o6q2DT9QSzztbS1CJscrHzN6C5YJyNIaUkn
+         fTA/X38SYU7eaUbmBKmDwvRvYUZJtfXLrl6THf3g1jFxIIfwVDc5f3nEVdRbXiVQLewY
+         ZdqjP1YN9h1SjbIib0nYIHJreG1AmfFyYB/elTOB9DJt2eZIzBevO7jtPP3WjUECH10S
+         E+/g==
+X-Gm-Message-State: AA+aEWaXMlpCTYFZZsxzXBhMzLCl/AcxaH3ysWjeMbcm1cm4xHhAgDT0
+        s/Urp7BxushTd47KilkWX7pH62QeGfY=
+X-Google-Smtp-Source: AFSGD/WBOZx6C+4fo8lNoqglfbNISVzKBnI+2mAt/RMd/UveRuYPjn93p545usZ/g4+4uoi9WZX3Dw==
+X-Received: by 2002:a1c:544f:: with SMTP id p15mr9223939wmi.37.1544423549361;
+        Sun, 09 Dec 2018 22:32:29 -0800 (PST)
+Received: from dell (host109-155-202-221.range109-155.btcentralplus.com. [109.155.202.221])
+        by smtp.gmail.com with ESMTPSA id a12sm10085215wrm.45.2018.12.09.22.32.28
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 09 Dec 2018 22:32:28 -0800 (PST)
+Date:   Mon, 10 Dec 2018 06:32:26 +0000
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Oskari Lemmela <oskari@lemmela.net>
+Cc:     Chen-Yu Tsai <wens@csie.org>,
+        Quentin Schulz <quentin.schulz@bootlin.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v8 1/2] mfd: axp20x: Re-align mfd cell entries
+Message-ID: <20181210063226.GQ26661@dell>
+References: <20181208175847.32068-1-oskari@lemmela.net>
+ <20181208175847.32068-2-oskari@lemmela.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <1525521202-32519-1-git-send-email-yu.c.chen@intel.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181208175847.32068-2-oskari@lemmela.net>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Chen Yu and ACPI experts,
+On Sat, 08 Dec 2018, Oskari Lemmela wrote:
 
-On Sat, May 05, 2018 at 07:53:22PM +0800, Chen Yu wrote:
-> According to current implementation of acpi_pad driver,
-> it does not make sense to spawn any power saving threads
-> on the cpus which are already idle - it might bring
-> unnecessary overhead on these idle cpus and causes power
-> waste. So verify the condition that if the number of 'busy'
-> cpus exceeds the amount of the 'forced idle' cpus is met.
-> This is applicable due to round-robin attribute of the
-> power saving threads, otherwise ignore the setting/ACPI
-> notification.
+> From: Chen-Yu Tsai <wens@csie.org>
 > 
-> Suggested-by: Lenny Szubowicz <lszubowi@redhat.com>
-> Suggested-by: Len Brown <lenb@kernel.org>
-> Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-> Cc: Lenny Szubowicz <lszubowi@redhat.com>
-> Cc: Len Brown <lenb@kernel.org>
-> Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>
-> Cc: Rui Zhang <rui.zhang@intel.com>
-> Cc: linux-acpi@vger.kernel.org
-> Signed-off-by: Chen Yu <yu.c.chen@intel.com>
-
-Do you have any news for this patch? Why it did not merged by kernel
-maineline?
-
-Thanks a lot!
-Joey Lee
-
+> In the axp20x driver, the various mfd_cell lists had varying amounts
+> of indentation, sometimes even within the same list. For the axp288,
+> there's no alignment at all.
+> 
+> Re-align the right hand side of the assignments with the least amount
+> of tabs possible. Also collapse the closing bracket and the opening
+> bracket of the next entry onto the same line for the axp288, to be
+> consistent with all the other mfd_cell lists.
+> 
+> This patch is whitespace change only. No functionality is modified.
+> 
+> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+> Signed-off-by: Oskari Lemmela <oskari@lemmela.net>
 > ---
->  drivers/acpi/acpi_pad.c | 52 ++++++++++++++++++++++++++++++++++++++++++++++++-
->  1 file changed, 51 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/acpi/acpi_pad.c b/drivers/acpi/acpi_pad.c
-> index 552c1f7..515e60e 100644
-> --- a/drivers/acpi/acpi_pad.c
-> +++ b/drivers/acpi/acpi_pad.c
-> @@ -254,12 +254,62 @@ static void set_power_saving_task_num(unsigned int num)
->  	}
->  }
->  
-> +/*
-> + * Extra acpi_pad threads should not be created until
-> + * the requested idle count is less than/equals to the
-> + * number of the busy cpus - it does not make sense to
-> + * throttle the idle cpus.
-> + */
-> +#define SAMPLE_INTERVAL_JIF	20
-> +
-> +static u64 get_idle_time(int cpu)
-> +{
-> +	u64 idle, idle_usecs = -1ULL;
-> +
-> +	idle_usecs = get_cpu_idle_time_us(cpu, NULL);
-> +
-> +	if (idle_usecs == -1ULL)
-> +		idle = kcpustat_cpu(cpu).cpustat[CPUTIME_IDLE];
-> +	else
-> +		idle = idle_usecs * NSEC_PER_USEC;
-> +
-> +	return idle;
-> +}
-> +
-> +static bool idle_nr_valid(unsigned int num_cpus)
-> +{
-> +	int busy_nr = 0, i = 0, load_thresh = 100 - idle_pct;
-> +
-> +	if (!num_cpus)
-> +		return true;
-> +
-> +	for_each_online_cpu(i) {
-> +		u64 wall_time, idle_time;
-> +		unsigned int elapsed_delta, idle_delta, load;
-> +
-> +		wall_time = jiffies64_to_nsecs(get_jiffies_64());
-> +		idle_time = get_idle_time(i);
-> +		/* Wait and see... */
-> +		schedule_timeout_uninterruptible(SAMPLE_INTERVAL_JIF);
-> +
-> +		idle_delta = get_idle_time(i) - idle_time;
-> +		elapsed_delta = jiffies64_to_nsecs(get_jiffies_64()) - wall_time;
-> +		idle_delta = (idle_delta > elapsed_delta) ? elapsed_delta : idle_delta;
-> +		load = 100 * (elapsed_delta - idle_delta) / elapsed_delta;
-> +		if (load >= load_thresh)
-> +			busy_nr++;
-> +	}
-> +
-> +	return (busy_nr >= num_cpus) ? true : false;
-> +}
-> +
->  static void acpi_pad_idle_cpus(unsigned int num_cpus)
->  {
->  	get_online_cpus();
->  
->  	num_cpus = min_t(unsigned int, num_cpus, num_online_cpus());
-> -	set_power_saving_task_num(num_cpus);
-> +	if (idle_nr_valid(num_cpus))
-> +		set_power_saving_task_num(num_cpus);
->  
->  	put_online_cpus();
->  }
-> -- 
-> 2.7.4
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-acpi" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>  drivers/mfd/axp20x.c | 107 +++++++++++++++++++++----------------------
+>  1 file changed, 51 insertions(+), 56 deletions(-)
+
+Applied, thanks.
+
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
