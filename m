@@ -2,145 +2,109 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29530C5CFFE
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 16:28:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFEACC5CFFE
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 16:28:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D970C20821
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 16:28:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pefGxJ1w"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D970C20821
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 9CC0821479
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 16:28:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9CC0821479
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kontron.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727967AbeLJQ2B (ORCPT
+        id S1727999AbeLJQ2v convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 11:28:01 -0500
-Received: from mail-it1-f194.google.com ([209.85.166.194]:37794 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727935AbeLJQ2B (ORCPT
+        Mon, 10 Dec 2018 11:28:51 -0500
+Received: from skedge03.snt-world.com ([91.208.41.68]:42594 "EHLO
+        skedge03.snt-world.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727246AbeLJQ2v (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 11:28:01 -0500
-Received: by mail-it1-f194.google.com with SMTP id b5so19093553iti.2;
-        Mon, 10 Dec 2018 08:28:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=rq61FvlLTrrBLq40FzRBJbUAVudtRm7lWLwCmjfQZrk=;
-        b=pefGxJ1wdWrCKqMIH/RWxtn6Wuw8rTjsxbi8ePQJjoKwPfNhQt30rxwMys5fbbrQzt
-         /ajFJNdFjhSElyNWLLk6n8BB6t1JtPH2O+Pl3oXj+CHp8DzwRhD3935pgN5rhN3DWGFx
-         enJxn6GNVqt01Cxv3+VVWKjXpiN8HYmu0YsrYVkTtIQn4yTf46lUmUDP6tJiaHkm3Oe+
-         L8lMt5KPaJPlppSkyQlzW6fxi8BJ7cUkEZt9KEiKLmr1+PcJU9D7xc6YNQ2+AGaOd58Q
-         HKo3zwlSWCKeN3ZCAs+hHe/cIzkXhwmP7uNmXVI7naqQIHYO1i4YerW2EFL255wZkdI7
-         pNfA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=rq61FvlLTrrBLq40FzRBJbUAVudtRm7lWLwCmjfQZrk=;
-        b=Av1rG3n0WM4ZYioWPSJRytUzh7BnK4LO36eRpIohJFs4xLrYJH80ffWILQjZtkUcfN
-         gfZu063LdXnuTq1gRMKaY97UP0Ip+xaGbrKgFfJRGODjgiYCUMDkbf95kVDLaqQFd+QM
-         9hQsu9H30SxTTCPR2mErvSlNymH8cVNYuJGrd662szw1pLvuNv8S5f2t1qLfDnWAtp1G
-         dTdHdhRzSshuioBPadjeM6wJH1HsA9PGMEp5x4NRVC93cJPpTqqI84riVnMjOvdoSC89
-         zHlWnovpmhJMQyqmu4ngdJawTlIcCZ9BiGFRVyeSsdd7WwbXTu66sh6GOt5AinQ197hG
-         wh6A==
-X-Gm-Message-State: AA+aEWYGughhGUGMECUB7PZVCUdC2ju2xNs4UQUkdRt+NS+n9/D00Qfe
-        no1Ts5g2e7jx/fpEKuKcDs2/2z+OChpOxe/3aagBBFH4kcs=
-X-Google-Smtp-Source: AFSGD/UtUcvZNe3jXrL9v/Cfw5manMyFZ06OJ6tVFeNwDlyQbE5C7Y2GOKRFKSnIOS8U4jhF/K5TG1d404w+3XLUCGc=
-X-Received: by 2002:a02:6c90:: with SMTP id w138mr11958588jab.60.1544459280133;
- Mon, 10 Dec 2018 08:28:00 -0800 (PST)
+        Mon, 10 Dec 2018 11:28:51 -0500
+Received: from sntmail11s.snt-is.com (unknown [10.203.32.181])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by skedge03.snt-world.com (Postfix) with ESMTPS id 63F5A67A655;
+        Mon, 10 Dec 2018 17:28:48 +0100 (CET)
+Received: from sntmail12r.snt-is.com (10.203.32.182) by sntmail11s.snt-is.com
+ (10.203.32.181) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1466.3; Mon, 10 Dec
+ 2018 17:28:48 +0100
+Received: from sntmail12r.snt-is.com ([fe80::e551:8750:7bba:3305]) by
+ sntmail12r.snt-is.com ([fe80::e551:8750:7bba:3305%5]) with mapi id
+ 15.01.1466.003; Mon, 10 Dec 2018 17:28:48 +0100
+From:   Schrempf Frieder <frieder.schrempf@kontron.de>
+To:     Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+CC:     "boris.brezillon@bootlin.com" <boris.brezillon@bootlin.com>,
+        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        "broonie@kernel.org" <broonie@kernel.org>,
+        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
+        Schrempf Frieder <frieder.schrempf@kontron.de>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: [PATCH 0/5] Prepare devicetrees for the new FSL QSPI driver
+Thread-Topic: [PATCH 0/5] Prepare devicetrees for the new FSL QSPI driver
+Thread-Index: AQHUkKVtG6It8sv/EE6xXPNZqAZcLA==
+Date:   Mon, 10 Dec 2018 16:28:47 +0000
+Message-ID: <1544459182-23655-1-git-send-email-frieder.schrempf@kontron.de>
+Accept-Language: de-DE, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [172.25.9.43]
+x-c2processedorg: 51b406b7-48a2-4d03-b652-521f56ac89f3
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-References: <20181120161451.21149-1-tiny.windzz@gmail.com> <ed0c146f-0a47-ef56-f919-4887d6a69001@linaro.org>
-In-Reply-To: <ed0c146f-0a47-ef56-f919-4887d6a69001@linaro.org>
-From:   Frank Lee <tiny.windzz@gmail.com>
-Date:   Tue, 11 Dec 2018 00:27:49 +0800
-Message-ID: <CAEExFWta3+EfvGODb58R8_3-=iMwJet0iGPY9zu8LmWFEMV2Fg@mail.gmail.com>
-Subject: Re: [PATCH v3] cpuidle: big.LITTLE: add of_node_put()
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc:     rjw@rjwysocki.net, lorenzo.pieralisi@arm.com,
-        linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-SnT-MailScanner-Information: Please contact the ISP for more information
+X-SnT-MailScanner-ID: 63F5A67A655.AE867
+X-SnT-MailScanner: Found to be clean
+X-SnT-MailScanner-SpamCheck: 
+X-SnT-MailScanner-From: frieder.schrempf@kontron.de
+X-SnT-MailScanner-To: boris.brezillon@bootlin.com, broonie@kernel.org,
+        devicetree@vger.kernel.org, fabio.estevam@nxp.com,
+        kernel@pengutronix.de, linux-arm-kernel@lists.infradead.org,
+        linux-imx@nxp.com, linux-kernel@vger.kernel.org,
+        linux-mtd@lists.infradead.org, linux-spi@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 10, 2018 at 7:59 PM Daniel Lezcano
-<daniel.lezcano@linaro.org> wrote:
->
->
-> Hi Yangtao,
->
->
-> On 20/11/2018 17:14, Yangtao Li wrote:
-> > of_find_node_by_path() acquires a reference to the node
-> > returned by it and that reference needs to be dropped by its caller.
-> > bl_idle_init() doesn't do that, so fix it.
-> >
-> > Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
-> > ---
-> > Changes in v3:
-> > -update changelog
-> > ---
-> >  drivers/cpuidle/cpuidle-big_little.c | 6 +++++-
-> >  1 file changed, 5 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/cpuidle/cpuidle-big_little.c b/drivers/cpuidle/cpu=
-idle-big_little.c
-> > index db2ede565f1a..650f063ef809 100644
-> > --- a/drivers/cpuidle/cpuidle-big_little.c
-> > +++ b/drivers/cpuidle/cpuidle-big_little.c
-> > @@ -174,8 +174,12 @@ static int __init bl_idle_init(void)
-> >       /*
-> >        * Initialize the driver just for a compliant set of machines
-> >        */
-> > -     if (!of_match_node(compatible_machine_match, root))
-> > +     if (!of_match_node(compatible_machine_match, root)){
-> > +             of_node_put(root);
-> >               return -ENODEV;
-> > +     }
-> > +
-> > +     of_node_put(root);
->
-> Don't duplicate the of_node_put.
->
-> I suggest:
->
-> const struct of_device_id *match_id;
->
-> [ ... ]
->
->
-> match_id =3D of_match_node(compatible_machine_match, root);
->
-> of_node_put(root);
->
-> if (!match_id)
->         return -ENODEV;
->
->
-Thank you for your suggestion, the new one has been sent.
+From: Frieder Schrempf <frieder.schrempf@kontron.de>
 
-Yours,
-Yangtao
-> >       if (!mcpm_is_available())
-> >               return -EUNATCH;
-> >
->
->
-> --
->  <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software for A=
-RM SoCs
->
-> Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-> <http://twitter.com/#!/linaroorg> Twitter |
-> <http://www.linaro.org/linaro-blog/> Blog
->
+We have prepared a new driver for the FSL QSPI controller that works under
+the SPI framework. The current devicetrees are broken because they use an
+inconsistent scheme for assigning the reg properties.
+
+As, in contrast to the current driver, the new driver will use the reg
+properties to select the correct chip, we need to fix them.
+
+We also add spi-[tx/rx]-bus-width to make sure the full buswidth will be used
+and while at it clean up and remove some unused properties.
+
+Frieder Schrempf (5):
+  arm64: dts: Remove unused properties from FSL QSPI driver nodes
+  ARM: dts: Remove unused properties from FSL QSPI driver nodes
+  ARM: dts: imx6sx-sdb: Fix the reg properties for the FSL QSPI nodes
+  arm64: dts: Add spi-[tx/rx]-bus-width for the FSL QSPI controller
+  ARM: dts: Add spi-[tx/rx]-bus-width for the FSL QSPI controller
+
+ arch/arm/boot/dts/imx6sx-sdb-reva.dts              | 8 ++++++--
+ arch/arm/boot/dts/imx6sx-sdb.dts                   | 8 ++++++--
+ arch/arm/boot/dts/imx6ul-14x14-evk.dtsi            | 2 ++
+ arch/arm/boot/dts/ls1021a-moxa-uc-8410a.dts        | 5 ++---
+ arch/arm64/boot/dts/freescale/fsl-ls1043a-qds.dts  | 3 ++-
+ arch/arm64/boot/dts/freescale/fsl-ls1046a-qds.dts  | 4 ++--
+ arch/arm64/boot/dts/freescale/fsl-ls1046a-rdb.dts  | 6 ++++--
+ arch/arm64/boot/dts/freescale/fsl-ls208xa-qds.dtsi | 4 ++++
+ 8 files changed, 28 insertions(+), 12 deletions(-)
+
+-- 
+2.7.4
