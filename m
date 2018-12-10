@@ -2,70 +2,66 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIMWL_WL_MED,
+X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIMWL_WL_MED,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83BC8C5CFFE
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 19:57:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A021C04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 19:57:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A86A20821
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 19:57:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 324CE20821
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 19:57:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="ndhEasR9";
-	dkim=pass (1024-bit key) header.d=fb.onmicrosoft.com header.i=@fb.onmicrosoft.com header.b="ahz55d77"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A86A20821
+	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="EegwcohK";
+	dkim=pass (1024-bit key) header.d=fb.onmicrosoft.com header.i=@fb.onmicrosoft.com header.b="BZadifZV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 324CE20821
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=fb.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729315AbeLJT5F (ORCPT
+        id S1729583AbeLJT5K (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 14:57:05 -0500
-Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:43554 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728567AbeLJT5E (ORCPT
+        Mon, 10 Dec 2018 14:57:10 -0500
+Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:53994 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727515AbeLJT5I (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 14:57:04 -0500
-Received: from pps.filterd (m0044012.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id wBAJtOXO019892;
-        Mon, 10 Dec 2018 11:56:42 -0800
+        Mon, 10 Dec 2018 14:57:08 -0500
+Received: from pps.filterd (m0001255.ppops.net [127.0.0.1])
+        by mx0b-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id wBAJqDGf001574;
+        Mon, 10 Dec 2018 11:56:49 -0800
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : content-type : content-id :
- content-transfer-encoding : mime-version; s=facebook;
- bh=O2MZf8PFryxrUTyGRl1a/jMCEVlZdy2f49K3aKySW/I=;
- b=ndhEasR97gm0YK9cUqdNtGeXSaqCT5Lo0WtN4j11T1lOX0x3ycmvaGkBW34xQH4OMLS6
- HgdwXFieqvadkpixW3Hd+umB+4wW8TGvEOyB2zvXWTIQy+paI8jDmiXNQ+2aAmzKrOM+
- xNUsVlHSI97DQaCCIscJRdR3Or6JvvH3RZs= 
-Received: from mail.thefacebook.com ([199.201.64.23])
-        by mx0a-00082601.pphosted.com with ESMTP id 2p9wdt8c2j-6
+ : date : message-id : references : in-reply-to : content-type : content-id
+ : content-transfer-encoding : mime-version; s=facebook;
+ bh=+FNCJWdBA81ASjo1OySqRyE4xCSjIdBqWIxIX+sATt4=;
+ b=EegwcohKwT6nhNFkATQZyLOcJflaFVvbeqOlGZVGa7UjQbcTJ9cTErFRlQ129QMmwtie
+ wtAdX+KG0T/0Ue15CBaWqooX9b473y0Sunf6udwIzpSVoLG7wqnv1kI5pxwGbr6XZCfx
+ DbhZ4TKCs/xvVzvbG8a8RNXtQTpjRdb/kCA= 
+Received: from maileast.thefacebook.com ([199.201.65.23])
+        by mx0b-00082601.pphosted.com with ESMTP id 2p9wbygcsu-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Mon, 10 Dec 2018 11:56:42 -0800
-Received: from prn-mbx06.TheFacebook.com (2620:10d:c081:6::20) by
- prn-hub06.TheFacebook.com (2620:10d:c081:35::130) with Microsoft SMTP Server
+        Mon, 10 Dec 2018 11:56:49 -0800
+Received: from frc-hub01.TheFacebook.com (2620:10d:c021:18::171) by
+ frc-hub04.TheFacebook.com (2620:10d:c021:18::174) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.1.1531.3; Mon, 10 Dec 2018 11:56:31 -0800
-Received: from prn-hub04.TheFacebook.com (2620:10d:c081:35::128) by
- prn-mbx06.TheFacebook.com (2620:10d:c081:6::20) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.1.1531.3; Mon, 10 Dec 2018 11:56:31 -0800
-Received: from NAM04-SN1-obe.outbound.protection.outlook.com (192.168.54.28)
- by o365-in.thefacebook.com (192.168.16.28) with Microsoft SMTP Server
+ 15.1.1531.3; Mon, 10 Dec 2018 11:56:48 -0800
+Received: from NAM05-CO1-obe.outbound.protection.outlook.com (192.168.183.28)
+ by o365-in.thefacebook.com (192.168.177.71) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.1.1531.3
- via Frontend Transport; Mon, 10 Dec 2018 11:56:31 -0800
+ via Frontend Transport; Mon, 10 Dec 2018 11:56:47 -0800
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
  s=selector1-fb-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=O2MZf8PFryxrUTyGRl1a/jMCEVlZdy2f49K3aKySW/I=;
- b=ahz55d77r6FGa9SL/IvdZvx4I393LlM33CYMWupXH2j3847zKoxAxKmntk7avrrRQQ0wsSTc1Og5SQNBNXvXF9GgzIa84wJiQBzwjWfAo4Pq6+7IwOGud/uoROVZDZhNHcgsZlvcwvDGSMnvOjm36f9snvk5gzZeZbh/jShLGWQ=
+ bh=+FNCJWdBA81ASjo1OySqRyE4xCSjIdBqWIxIX+sATt4=;
+ b=BZadifZVi9Vm23IRPelZKiL5ZIcfnH5Zb8Z0FwzcFP4xiKVXO8YIhWcyY0P4La7MXWFjv3q301HAVXVonYCptOE7IBp6lCESW1kl6nktThi22VW2WbkwBjVfmxrvkY/2nbezu1YQSHu/xQniGByxGiqp9BiaQZ23YIaOAOGXgq0=
 Received: from MWHPR15MB1134.namprd15.prod.outlook.com (10.175.2.12) by
- MWHPR15MB1885.namprd15.prod.outlook.com (10.174.98.23) with Microsoft SMTP
+ MWHPR15MB1695.namprd15.prod.outlook.com (10.175.142.16) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1404.17; Mon, 10 Dec 2018 19:56:28 +0000
+ 15.20.1404.20; Mon, 10 Dec 2018 19:56:45 +0000
 Received: from MWHPR15MB1134.namprd15.prod.outlook.com
  ([fe80::911d:ed1a:7e45:6434]) by MWHPR15MB1134.namprd15.prod.outlook.com
  ([fe80::911d:ed1a:7e45:6434%4]) with mapi id 15.20.1404.026; Mon, 10 Dec 2018
- 19:56:28 +0000
+ 19:56:45 +0000
 From:   Dave Watson <davejwatson@fb.com>
 To:     Herbert Xu <herbert@gondor.apana.org.au>,
         Junaid Shahid <junaids@google.com>,
@@ -75,46 +71,48 @@ CC:     Doron Roberts-Kedes <doronrk@fb.com>,
         Sabrina Dubroca <sd@queasysnail.net>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         Stephan Mueller <smueller@chronox.de>
-Subject: [PATCH 00/12] x86/crypto: gcmaes AVX scatter/gather support
-Thread-Topic: [PATCH 00/12] x86/crypto: gcmaes AVX scatter/gather support
-Thread-Index: AQHUkMJwKbtVtUN9HEO2eLhKcPP8Dg==
-Date:   Mon, 10 Dec 2018 19:56:28 +0000
-Message-ID: <cover.1544471415.git.davejwatson@fb.com>
+Subject: [PATCH 01/12] x86/crypto: aesni: Merge GCM_ENC_DEC
+Thread-Topic: [PATCH 01/12] x86/crypto: aesni: Merge GCM_ENC_DEC
+Thread-Index: AQHUkMJ6xP0r8ydjBkyA4IbebGQ+og==
+Date:   Mon, 10 Dec 2018 19:56:45 +0000
+Message-ID: <17695fd0e5b88220bf69e130497d88a7ef799ba6.1544471415.git.davejwatson@fb.com>
+References: <cover.1544471415.git.davejwatson@fb.com>
+In-Reply-To: <cover.1544471415.git.davejwatson@fb.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
 user-agent: NeoMutt/20180716
-x-clientproxiedby: CO2PR04CA0172.namprd04.prod.outlook.com
- (2603:10b6:104:4::26) To MWHPR15MB1134.namprd15.prod.outlook.com
+x-clientproxiedby: CO2PR05CA0080.namprd05.prod.outlook.com
+ (2603:10b6:102:2::48) To MWHPR15MB1134.namprd15.prod.outlook.com
  (2603:10b6:320:22::12)
 x-ms-exchange-messagesentrepresentingtype: 1
 x-originating-ip: [2620:10d:c090:180::1:2261]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;MWHPR15MB1885;20:PG5r/J1ZJOU/jHYi6etYxuhXzdP6Xy5QAhtXYfaSCkY55IR8e3KCKMHNfG8j/YKm82wy3qGVpvaccGX+eNgHf5ytLW2PC0LKfiw0pN/LeoOTGxWEBRyJcqi4/74UlIp9LHW2cc4KP8lwpC9GHbcD+EcrX9y051q34WN3IIwbK4Y=
-x-ms-office365-filtering-correlation-id: b93731c7-0f40-4087-ced3-08d65ed992be
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:MWHPR15MB1885;
-x-ms-traffictypediagnostic: MWHPR15MB1885:
-x-microsoft-antispam-prvs: <MWHPR15MB1885DBEAF2B00674D7D99DE1DDA50@MWHPR15MB1885.namprd15.prod.outlook.com>
+x-microsoft-exchange-diagnostics: 1;MWHPR15MB1695;20:sXYO7GQvWwJghG4a8tFHI+w547tFJ9F7JpeJ/cxS6PzAdhl8ch+MEshPzedrWg1uv2NgFJkJtJ45An9NYh/sHEm3FJSM9i9w+WRGWYF+TjeVZIMiwTiTfRVazL78FK2VPwE1I+VlVtmFO2g6HRUgLu1zd76n3JT8VoVgZqVFV94=
+x-ms-office365-filtering-correlation-id: 4082922a-4e46-4b42-c071-08d65ed99ca3
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:MWHPR15MB1695;
+x-ms-traffictypediagnostic: MWHPR15MB1695:
+x-microsoft-antispam-prvs: <MWHPR15MB1695DAC3701D62202BADA01BDDA50@MWHPR15MB1695.namprd15.prod.outlook.com>
 x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230017)(999002)(11241501185)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(3231472)(944501520)(52105112)(3002001)(10201501046)(148016)(149066)(150057)(6041310)(20161123558120)(20161123562045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(201708071742011)(7699051)(76991095);SRVR:MWHPR15MB1885;BCL:0;PCL:0;RULEID:;SRVR:MWHPR15MB1885;
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231455)(999002)(11241501185)(944501520)(52105112)(10201501046)(3002001)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123564045)(20161123562045)(20161123560045)(201708071742011)(7699051)(76991095);SRVR:MWHPR15MB1695;BCL:0;PCL:0;RULEID:;SRVR:MWHPR15MB1695;
 x-forefront-prvs: 08828D20BC
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(376002)(346002)(136003)(39860400002)(396003)(199004)(189003)(54906003)(97736004)(7736002)(6486002)(486006)(110136005)(6116002)(86362001)(316002)(58126008)(305945005)(8936002)(106356001)(386003)(186003)(6506007)(46003)(105586002)(2616005)(81156014)(102836004)(5660300001)(99286004)(81166006)(476003)(8676002)(2906002)(6436002)(52116002)(36756003)(25786009)(68736007)(4326008)(53936002)(14454004)(256004)(14444005)(6512007)(71200400001)(71190400001)(478600001)(2501003);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR15MB1885;H:MWHPR15MB1134.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(376002)(346002)(366004)(136003)(396003)(189003)(199004)(6486002)(52116002)(2501003)(6436002)(76176011)(68736007)(7736002)(186003)(118296001)(102836004)(14454004)(8936002)(6506007)(46003)(386003)(8676002)(97736004)(106356001)(54906003)(58126008)(81166006)(316002)(86362001)(575784001)(5660300001)(110136005)(105586002)(81156014)(478600001)(14444005)(71200400001)(256004)(305945005)(6116002)(486006)(71190400001)(4326008)(53946003)(25786009)(36756003)(6512007)(2906002)(11346002)(476003)(53936002)(99286004)(4744004)(2616005)(446003)(569006);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR15MB1695;H:MWHPR15MB1134.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
 received-spf: None (protection.outlook.com: fb.com does not designate
  permitted sender hosts)
-x-microsoft-antispam-message-info: xVj7rXiEq2tXWYprKLMUYFne7yAtB7I1mPUDiYgXChtSJdl9h2/13t7JnCDx92y+3UGTizzix8UFH7fi0s8VGlipoJw1MFCX7cKHQLHuUfWL4JCp2LJBeL/dHOwcYIWJtv5z5y2VmeCcXf2pgkb0kbD1wj64SWp1f4oFLdfhSWIUzb9XJ6GOBzZSCjD2bbZtxfJXFhQuv3g/SR07dtmqK5IFIZjimpf/ZJwwVeYEKXZUklr0/tEwg98J+bc4ApTygCrMwENnqnMbn0TEYr0IU5A/Jmip08CsEeZWwEOwjyDb1gz1snccZWfeDHXt7M/d
+x-microsoft-antispam-message-info: BuFA9AJLrl5jxhJsFeA2vpsFl8/fi2YC1C6umjp0KsEKJwiaE4reUmTLHVyl7b4mDXM1TfGAdkjFIPmosxTvUGfdD/N0BhfuRllfRpbFJKDj99lsQ2ezcSsvdm3O6FadByw8HuxZ8Ug+8hNZNQIf5uu0jhyYfI7XHmd3FmRlmHtBp1D3bpnPTVF0A0ko8pIyTovX864mzUpv7adOFD4GffXd1h1OrRZkrupSRCJYKCtud0tZMTrZAuppUHEKKs6uSuDv7Cg96c/ykGFnwR7s7NFpqkJDg0BwWncfTk6dVephv9C97y2c4g2oQSaPIXn9
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="us-ascii"
-Content-ID: <914379E01B9F9E4695BA62F75999E850@namprd15.prod.outlook.com>
+Content-ID: <B4C8641B0C51A441A01D972A58CEECBC@namprd15.prod.outlook.com>
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: b93731c7-0f40-4087-ced3-08d65ed992be
-X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Dec 2018 19:56:28.6719
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4082922a-4e46-4b42-c071-08d65ed99ca3
+X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Dec 2018 19:56:45.5661
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR15MB1885
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR15MB1695
 X-OriginatorOrg: fb.com
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-10_07:,,
  signatures=0
@@ -125,36 +123,1170 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch set refactors the x86 aes/gcm AVX crypto routines to
-support true scatter/gather by adding gcm_enc/dec_update methods.
+The GCM_ENC_DEC routines for AVX and AVX2 are identical, except they
+call separate sub-macros.  Pass the macros as arguments, and merge them.
+This facilitates additional refactoring, by requiring changes in only
+one place.
 
-It is similar to the previous SSE patchset starting at e1fd316f. =20
-Unlike the SSE routines, the AVX routines did not support
-keysize 192 & 256, this patchset also adds support for those
-keysizes.
+The GCM_ENC_DEC macro was moved above the CONFIG_AS_AVX* ifdefs,
+since it will be used by both AVX and AVX2.
 
-The final patch updates the C glue code, passing everything through
-the crypt_by_sg() function instead of the previous memcpy based
-routines.
+Signed-off-by: Dave Watson <davejwatson@fb.com>
+---
+ arch/x86/crypto/aesni-intel_avx-x86_64.S | 951 ++++++++---------------
+ 1 file changed, 318 insertions(+), 633 deletions(-)
 
-Dave Watson (12):
-  x86/crypto: aesni: Merge GCM_ENC_DEC
-  x86/crypto: aesni: Introduce gcm_context_data
-  x86/crypto: aesni: Macro-ify func save/restore
-  x86/crypto: aesni: support 256 byte keys in avx asm
-  x86/crypto: aesni: Add GCM_COMPLETE macro
-  x86/crypto: aesni: Split AAD hash calculation to separate macro
-  x86/crypto: aesni: Merge avx precompute functions
-  x86/crypto: aesni: Fill in new context data structures
-  x86/crypto: aesni: Move ghash_mul to GCM_COMPLETE
-  x86/crypto: aesni: Introduce READ_PARTIAL_BLOCK macro
-  x86/crypto: aesni: Introduce partial block macro
-  x86/crypto: aesni: Add scatter/gather avx stubs, and use them in C
-
- arch/x86/crypto/aesni-intel_avx-x86_64.S | 2125 ++++++++++------------
- arch/x86/crypto/aesni-intel_glue.c       |  353 ++--
- 2 files changed, 1117 insertions(+), 1361 deletions(-)
-
+diff --git a/arch/x86/crypto/aesni-intel_avx-x86_64.S b/arch/x86/crypto/aes=
+ni-intel_avx-x86_64.S
+index 1985ea0b551b..318135a77975 100644
+--- a/arch/x86/crypto/aesni-intel_avx-x86_64.S
++++ b/arch/x86/crypto/aesni-intel_avx-x86_64.S
+@@ -280,6 +280,320 @@ VARIABLE_OFFSET =3D 16*8
+                 vaesenclast 16*10(arg1), \XMM0, \XMM0
+ .endm
+=20
++# combined for GCM encrypt and decrypt functions
++# clobbering all xmm registers
++# clobbering r10, r11, r12, r13, r14, r15
++.macro  GCM_ENC_DEC INITIAL_BLOCKS GHASH_8_ENCRYPT_8_PARALLEL GHASH_LAST_8=
+ GHASH_MUL ENC_DEC
++
++        #the number of pushes must equal STACK_OFFSET
++        push    %r12
++        push    %r13
++        push    %r14
++        push    %r15
++
++        mov     %rsp, %r14
++
++
++
++
++        sub     $VARIABLE_OFFSET, %rsp
++        and     $~63, %rsp                  # align rsp to 64 bytes
++
++
++        vmovdqu  HashKey(arg1), %xmm13      # xmm13 =3D HashKey
++
++        mov     arg4, %r13                  # save the number of bytes of =
+plaintext/ciphertext
++        and     $-16, %r13                  # r13 =3D r13 - (r13 mod 16)
++
++        mov     %r13, %r12
++        shr     $4, %r12
++        and     $7, %r12
++        jz      _initial_num_blocks_is_0\@
++
++        cmp     $7, %r12
++        je      _initial_num_blocks_is_7\@
++        cmp     $6, %r12
++        je      _initial_num_blocks_is_6\@
++        cmp     $5, %r12
++        je      _initial_num_blocks_is_5\@
++        cmp     $4, %r12
++        je      _initial_num_blocks_is_4\@
++        cmp     $3, %r12
++        je      _initial_num_blocks_is_3\@
++        cmp     $2, %r12
++        je      _initial_num_blocks_is_2\@
++
++        jmp     _initial_num_blocks_is_1\@
++
++_initial_num_blocks_is_7\@:
++        \INITIAL_BLOCKS  7, %xmm12, %xmm13, %xmm14, %xmm15, %xmm11, %xmm9,=
+ %xmm1, %xmm2, %xmm3, %xmm4, %xmm5, %xmm6, %xmm7, %xmm8, %xmm10, %xmm0, \EN=
+C_DEC
++        sub     $16*7, %r13
++        jmp     _initial_blocks_encrypted\@
++
++_initial_num_blocks_is_6\@:
++        \INITIAL_BLOCKS  6, %xmm12, %xmm13, %xmm14, %xmm15, %xmm11, %xmm9,=
+ %xmm1, %xmm2, %xmm3, %xmm4, %xmm5, %xmm6, %xmm7, %xmm8, %xmm10, %xmm0, \EN=
+C_DEC
++        sub     $16*6, %r13
++        jmp     _initial_blocks_encrypted\@
++
++_initial_num_blocks_is_5\@:
++        \INITIAL_BLOCKS  5, %xmm12, %xmm13, %xmm14, %xmm15, %xmm11, %xmm9,=
+ %xmm1, %xmm2, %xmm3, %xmm4, %xmm5, %xmm6, %xmm7, %xmm8, %xmm10, %xmm0, \EN=
+C_DEC
++        sub     $16*5, %r13
++        jmp     _initial_blocks_encrypted\@
++
++_initial_num_blocks_is_4\@:
++        \INITIAL_BLOCKS  4, %xmm12, %xmm13, %xmm14, %xmm15, %xmm11, %xmm9,=
+ %xmm1, %xmm2, %xmm3, %xmm4, %xmm5, %xmm6, %xmm7, %xmm8, %xmm10, %xmm0, \EN=
+C_DEC
++        sub     $16*4, %r13
++        jmp     _initial_blocks_encrypted\@
++
++_initial_num_blocks_is_3\@:
++        \INITIAL_BLOCKS  3, %xmm12, %xmm13, %xmm14, %xmm15, %xmm11, %xmm9,=
+ %xmm1, %xmm2, %xmm3, %xmm4, %xmm5, %xmm6, %xmm7, %xmm8, %xmm10, %xmm0, \EN=
+C_DEC
++        sub     $16*3, %r13
++        jmp     _initial_blocks_encrypted\@
++
++_initial_num_blocks_is_2\@:
++        \INITIAL_BLOCKS  2, %xmm12, %xmm13, %xmm14, %xmm15, %xmm11, %xmm9,=
+ %xmm1, %xmm2, %xmm3, %xmm4, %xmm5, %xmm6, %xmm7, %xmm8, %xmm10, %xmm0, \EN=
+C_DEC
++        sub     $16*2, %r13
++        jmp     _initial_blocks_encrypted\@
++
++_initial_num_blocks_is_1\@:
++        \INITIAL_BLOCKS  1, %xmm12, %xmm13, %xmm14, %xmm15, %xmm11, %xmm9,=
+ %xmm1, %xmm2, %xmm3, %xmm4, %xmm5, %xmm6, %xmm7, %xmm8, %xmm10, %xmm0, \EN=
+C_DEC
++        sub     $16*1, %r13
++        jmp     _initial_blocks_encrypted\@
++
++_initial_num_blocks_is_0\@:
++        \INITIAL_BLOCKS  0, %xmm12, %xmm13, %xmm14, %xmm15, %xmm11, %xmm9,=
+ %xmm1, %xmm2, %xmm3, %xmm4, %xmm5, %xmm6, %xmm7, %xmm8, %xmm10, %xmm0, \EN=
+C_DEC
++
++
++_initial_blocks_encrypted\@:
++        cmp     $0, %r13
++        je      _zero_cipher_left\@
++
++        sub     $128, %r13
++        je      _eight_cipher_left\@
++
++
++
++
++        vmovd   %xmm9, %r15d
++        and     $255, %r15d
++        vpshufb SHUF_MASK(%rip), %xmm9, %xmm9
++
++
++_encrypt_by_8_new\@:
++        cmp     $(255-8), %r15d
++        jg      _encrypt_by_8\@
++
++
++
++        add     $8, %r15b
++        \GHASH_8_ENCRYPT_8_PARALLEL      %xmm0, %xmm10, %xmm11, %xmm12, %x=
+mm13, %xmm14, %xmm9, %xmm1, %xmm2, %xmm3, %xmm4, %xmm5, %xmm6, %xmm7, %xmm8=
+, %xmm15, out_order, \ENC_DEC
++        add     $128, %r11
++        sub     $128, %r13
++        jne     _encrypt_by_8_new\@
++
++        vpshufb SHUF_MASK(%rip), %xmm9, %xmm9
++        jmp     _eight_cipher_left\@
++
++_encrypt_by_8\@:
++        vpshufb SHUF_MASK(%rip), %xmm9, %xmm9
++        add     $8, %r15b
++        \GHASH_8_ENCRYPT_8_PARALLEL      %xmm0, %xmm10, %xmm11, %xmm12, %x=
+mm13, %xmm14, %xmm9, %xmm1, %xmm2, %xmm3, %xmm4, %xmm5, %xmm6, %xmm7, %xmm8=
+, %xmm15, in_order, \ENC_DEC
++        vpshufb SHUF_MASK(%rip), %xmm9, %xmm9
++        add     $128, %r11
++        sub     $128, %r13
++        jne     _encrypt_by_8_new\@
++
++        vpshufb SHUF_MASK(%rip), %xmm9, %xmm9
++
++
++
++
++_eight_cipher_left\@:
++        \GHASH_LAST_8    %xmm0, %xmm10, %xmm11, %xmm12, %xmm13, %xmm14, %x=
+mm15, %xmm1, %xmm2, %xmm3, %xmm4, %xmm5, %xmm6, %xmm7, %xmm8
++
++
++_zero_cipher_left\@:
++        cmp     $16, arg4
++        jl      _only_less_than_16\@
++
++        mov     arg4, %r13
++        and     $15, %r13                            # r13 =3D (arg4 mod 1=
+6)
++
++        je      _multiple_of_16_bytes\@
++
++        # handle the last <16 Byte block seperately
++
++
++        vpaddd   ONE(%rip), %xmm9, %xmm9             # INCR CNT to get Yn
++        vpshufb SHUF_MASK(%rip), %xmm9, %xmm9
++        ENCRYPT_SINGLE_BLOCK    %xmm9                # E(K, Yn)
++
++        sub     $16, %r11
++        add     %r13, %r11
++        vmovdqu (arg3, %r11), %xmm1                  # receive the last <1=
+6 Byte block
++
++        lea     SHIFT_MASK+16(%rip), %r12
++        sub     %r13, %r12                           # adjust the shuffle =
+mask pointer to be
++						     # able to shift 16-r13 bytes (r13 is the
++						     # number of bytes in plaintext mod 16)
++        vmovdqu (%r12), %xmm2                        # get the appropriate=
+ shuffle mask
++        vpshufb %xmm2, %xmm1, %xmm1                  # shift right 16-r13 =
+bytes
++        jmp     _final_ghash_mul\@
++
++_only_less_than_16\@:
++        # check for 0 length
++        mov     arg4, %r13
++        and     $15, %r13                            # r13 =3D (arg4 mod 1=
+6)
++
++        je      _multiple_of_16_bytes\@
++
++        # handle the last <16 Byte block separately
++
++
++        vpaddd  ONE(%rip), %xmm9, %xmm9              # INCR CNT to get Yn
++        vpshufb SHUF_MASK(%rip), %xmm9, %xmm9
++        ENCRYPT_SINGLE_BLOCK    %xmm9                # E(K, Yn)
++
++
++        lea     SHIFT_MASK+16(%rip), %r12
++        sub     %r13, %r12                           # adjust the shuffle =
+mask pointer to be
++						     # able to shift 16-r13 bytes (r13 is the
++						     # number of bytes in plaintext mod 16)
++
++_get_last_16_byte_loop\@:
++        movb    (arg3, %r11),  %al
++        movb    %al,  TMP1 (%rsp , %r11)
++        add     $1, %r11
++        cmp     %r13,  %r11
++        jne     _get_last_16_byte_loop\@
++
++        vmovdqu  TMP1(%rsp), %xmm1
++
++        sub     $16, %r11
++
++_final_ghash_mul\@:
++        .if  \ENC_DEC =3D=3D  DEC
++        vmovdqa %xmm1, %xmm2
++        vpxor   %xmm1, %xmm9, %xmm9                  # Plaintext XOR E(K, =
+Yn)
++        vmovdqu ALL_F-SHIFT_MASK(%r12), %xmm1        # get the appropriate=
+ mask to
++						     # mask out top 16-r13 bytes of xmm9
++        vpand   %xmm1, %xmm9, %xmm9                  # mask out top 16-r13=
+ bytes of xmm9
++        vpand   %xmm1, %xmm2, %xmm2
++        vpshufb SHUF_MASK(%rip), %xmm2, %xmm2
++        vpxor   %xmm2, %xmm14, %xmm14
++	#GHASH computation for the last <16 Byte block
++        \GHASH_MUL       %xmm14, %xmm13, %xmm0, %xmm10, %xmm11, %xmm5, %xm=
+m6
++        sub     %r13, %r11
++        add     $16, %r11
++        .else
++        vpxor   %xmm1, %xmm9, %xmm9                  # Plaintext XOR E(K, =
+Yn)
++        vmovdqu ALL_F-SHIFT_MASK(%r12), %xmm1        # get the appropriate=
+ mask to
++						     # mask out top 16-r13 bytes of xmm9
++        vpand   %xmm1, %xmm9, %xmm9                  # mask out top 16-r13=
+ bytes of xmm9
++        vpshufb SHUF_MASK(%rip), %xmm9, %xmm9
++        vpxor   %xmm9, %xmm14, %xmm14
++	#GHASH computation for the last <16 Byte block
++        \GHASH_MUL       %xmm14, %xmm13, %xmm0, %xmm10, %xmm11, %xmm5, %xm=
+m6
++        sub     %r13, %r11
++        add     $16, %r11
++        vpshufb SHUF_MASK(%rip), %xmm9, %xmm9        # shuffle xmm9 back t=
+o output as ciphertext
++        .endif
++
++
++        #############################
++        # output r13 Bytes
++        vmovq   %xmm9, %rax
++        cmp     $8, %r13
++        jle     _less_than_8_bytes_left\@
++
++        mov     %rax, (arg2 , %r11)
++        add     $8, %r11
++        vpsrldq $8, %xmm9, %xmm9
++        vmovq   %xmm9, %rax
++        sub     $8, %r13
++
++_less_than_8_bytes_left\@:
++        movb    %al, (arg2 , %r11)
++        add     $1, %r11
++        shr     $8, %rax
++        sub     $1, %r13
++        jne     _less_than_8_bytes_left\@
++        #############################
++
++_multiple_of_16_bytes\@:
++        mov     arg7, %r12                           # r12 =3D aadLen (num=
+ber of bytes)
++        shl     $3, %r12                             # convert into number=
+ of bits
++        vmovd   %r12d, %xmm15                        # len(A) in xmm15
++
++        shl     $3, arg4                             # len(C) in bits  (*1=
+28)
++        vmovq   arg4, %xmm1
++        vpslldq $8, %xmm15, %xmm15                   # xmm15 =3D len(A)|| =
+0x0000000000000000
++        vpxor   %xmm1, %xmm15, %xmm15                # xmm15 =3D len(A)||l=
+en(C)
++
++        vpxor   %xmm15, %xmm14, %xmm14
++        \GHASH_MUL       %xmm14, %xmm13, %xmm0, %xmm10, %xmm11, %xmm5, %xm=
+m6    # final GHASH computation
++        vpshufb SHUF_MASK(%rip), %xmm14, %xmm14      # perform a 16Byte sw=
+ap
++
++        mov     arg5, %rax                           # rax =3D *Y0
++        vmovdqu (%rax), %xmm9                        # xmm9 =3D Y0
++
++        ENCRYPT_SINGLE_BLOCK    %xmm9                # E(K, Y0)
++
++        vpxor   %xmm14, %xmm9, %xmm9
++
++
++
++_return_T\@:
++        mov     arg8, %r10              # r10 =3D authTag
++        mov     arg9, %r11              # r11 =3D auth_tag_len
++
++        cmp     $16, %r11
++        je      _T_16\@
++
++        cmp     $8, %r11
++        jl      _T_4\@
++
++_T_8\@:
++        vmovq   %xmm9, %rax
++        mov     %rax, (%r10)
++        add     $8, %r10
++        sub     $8, %r11
++        vpsrldq $8, %xmm9, %xmm9
++        cmp     $0, %r11
++        je     _return_T_done\@
++_T_4\@:
++        vmovd   %xmm9, %eax
++        mov     %eax, (%r10)
++        add     $4, %r10
++        sub     $4, %r11
++        vpsrldq     $4, %xmm9, %xmm9
++        cmp     $0, %r11
++        je     _return_T_done\@
++_T_123\@:
++        vmovd     %xmm9, %eax
++        cmp     $2, %r11
++        jl     _T_1\@
++        mov     %ax, (%r10)
++        cmp     $2, %r11
++        je     _return_T_done\@
++        add     $2, %r10
++        sar     $16, %eax
++_T_1\@:
++        mov     %al, (%r10)
++        jmp     _return_T_done\@
++
++_T_16\@:
++        vmovdqu %xmm9, (%r10)
++
++_return_T_done\@:
++        mov     %r14, %rsp
++
++        pop     %r15
++        pop     %r14
++        pop     %r13
++        pop     %r12
++.endm
++
+ #ifdef CONFIG_AS_AVX
+ ##########################################################################=
+#####
+ # GHASH_MUL MACRO to implement: Data*HashKey mod (128,127,126,121,0)
+@@ -1210,322 +1524,6 @@ _initial_blocks_done\@:
+=20
+ .endm
+=20
+-
+-# combined for GCM encrypt and decrypt functions
+-# clobbering all xmm registers
+-# clobbering r10, r11, r12, r13, r14, r15
+-.macro  GCM_ENC_DEC_AVX     ENC_DEC
+-
+-        #the number of pushes must equal STACK_OFFSET
+-        push    %r12
+-        push    %r13
+-        push    %r14
+-        push    %r15
+-
+-        mov     %rsp, %r14
+-
+-
+-
+-
+-        sub     $VARIABLE_OFFSET, %rsp
+-        and     $~63, %rsp                  # align rsp to 64 bytes
+-
+-
+-        vmovdqu  HashKey(arg1), %xmm13      # xmm13 =3D HashKey
+-
+-        mov     arg4, %r13                  # save the number of bytes of =
+plaintext/ciphertext
+-        and     $-16, %r13                  # r13 =3D r13 - (r13 mod 16)
+-
+-        mov     %r13, %r12
+-        shr     $4, %r12
+-        and     $7, %r12
+-        jz      _initial_num_blocks_is_0\@
+-
+-        cmp     $7, %r12
+-        je      _initial_num_blocks_is_7\@
+-        cmp     $6, %r12
+-        je      _initial_num_blocks_is_6\@
+-        cmp     $5, %r12
+-        je      _initial_num_blocks_is_5\@
+-        cmp     $4, %r12
+-        je      _initial_num_blocks_is_4\@
+-        cmp     $3, %r12
+-        je      _initial_num_blocks_is_3\@
+-        cmp     $2, %r12
+-        je      _initial_num_blocks_is_2\@
+-
+-        jmp     _initial_num_blocks_is_1\@
+-
+-_initial_num_blocks_is_7\@:
+-        INITIAL_BLOCKS_AVX  7, %xmm12, %xmm13, %xmm14, %xmm15, %xmm11, %xm=
+m9, %xmm1, %xmm2, %xmm3, %xmm4, %xmm5, %xmm6, %xmm7, %xmm8, %xmm10, %xmm0, =
+\ENC_DEC
+-        sub     $16*7, %r13
+-        jmp     _initial_blocks_encrypted\@
+-
+-_initial_num_blocks_is_6\@:
+-        INITIAL_BLOCKS_AVX  6, %xmm12, %xmm13, %xmm14, %xmm15, %xmm11, %xm=
+m9, %xmm1, %xmm2, %xmm3, %xmm4, %xmm5, %xmm6, %xmm7, %xmm8, %xmm10, %xmm0, =
+\ENC_DEC
+-        sub     $16*6, %r13
+-        jmp     _initial_blocks_encrypted\@
+-
+-_initial_num_blocks_is_5\@:
+-        INITIAL_BLOCKS_AVX  5, %xmm12, %xmm13, %xmm14, %xmm15, %xmm11, %xm=
+m9, %xmm1, %xmm2, %xmm3, %xmm4, %xmm5, %xmm6, %xmm7, %xmm8, %xmm10, %xmm0, =
+\ENC_DEC
+-        sub     $16*5, %r13
+-        jmp     _initial_blocks_encrypted\@
+-
+-_initial_num_blocks_is_4\@:
+-        INITIAL_BLOCKS_AVX  4, %xmm12, %xmm13, %xmm14, %xmm15, %xmm11, %xm=
+m9, %xmm1, %xmm2, %xmm3, %xmm4, %xmm5, %xmm6, %xmm7, %xmm8, %xmm10, %xmm0, =
+\ENC_DEC
+-        sub     $16*4, %r13
+-        jmp     _initial_blocks_encrypted\@
+-
+-_initial_num_blocks_is_3\@:
+-        INITIAL_BLOCKS_AVX  3, %xmm12, %xmm13, %xmm14, %xmm15, %xmm11, %xm=
+m9, %xmm1, %xmm2, %xmm3, %xmm4, %xmm5, %xmm6, %xmm7, %xmm8, %xmm10, %xmm0, =
+\ENC_DEC
+-        sub     $16*3, %r13
+-        jmp     _initial_blocks_encrypted\@
+-
+-_initial_num_blocks_is_2\@:
+-        INITIAL_BLOCKS_AVX  2, %xmm12, %xmm13, %xmm14, %xmm15, %xmm11, %xm=
+m9, %xmm1, %xmm2, %xmm3, %xmm4, %xmm5, %xmm6, %xmm7, %xmm8, %xmm10, %xmm0, =
+\ENC_DEC
+-        sub     $16*2, %r13
+-        jmp     _initial_blocks_encrypted\@
+-
+-_initial_num_blocks_is_1\@:
+-        INITIAL_BLOCKS_AVX  1, %xmm12, %xmm13, %xmm14, %xmm15, %xmm11, %xm=
+m9, %xmm1, %xmm2, %xmm3, %xmm4, %xmm5, %xmm6, %xmm7, %xmm8, %xmm10, %xmm0, =
+\ENC_DEC
+-        sub     $16*1, %r13
+-        jmp     _initial_blocks_encrypted\@
+-
+-_initial_num_blocks_is_0\@:
+-        INITIAL_BLOCKS_AVX  0, %xmm12, %xmm13, %xmm14, %xmm15, %xmm11, %xm=
+m9, %xmm1, %xmm2, %xmm3, %xmm4, %xmm5, %xmm6, %xmm7, %xmm8, %xmm10, %xmm0, =
+\ENC_DEC
+-
+-
+-_initial_blocks_encrypted\@:
+-        cmp     $0, %r13
+-        je      _zero_cipher_left\@
+-
+-        sub     $128, %r13
+-        je      _eight_cipher_left\@
+-
+-
+-
+-
+-        vmovd   %xmm9, %r15d
+-        and     $255, %r15d
+-        vpshufb SHUF_MASK(%rip), %xmm9, %xmm9
+-
+-
+-_encrypt_by_8_new\@:
+-        cmp     $(255-8), %r15d
+-        jg      _encrypt_by_8\@
+-
+-
+-
+-        add     $8, %r15b
+-        GHASH_8_ENCRYPT_8_PARALLEL_AVX      %xmm0, %xmm10, %xmm11, %xmm12,=
+ %xmm13, %xmm14, %xmm9, %xmm1, %xmm2, %xmm3, %xmm4, %xmm5, %xmm6, %xmm7, %x=
+mm8, %xmm15, out_order, \ENC_DEC
+-        add     $128, %r11
+-        sub     $128, %r13
+-        jne     _encrypt_by_8_new\@
+-
+-        vpshufb SHUF_MASK(%rip), %xmm9, %xmm9
+-        jmp     _eight_cipher_left\@
+-
+-_encrypt_by_8\@:
+-        vpshufb SHUF_MASK(%rip), %xmm9, %xmm9
+-        add     $8, %r15b
+-        GHASH_8_ENCRYPT_8_PARALLEL_AVX      %xmm0, %xmm10, %xmm11, %xmm12,=
+ %xmm13, %xmm14, %xmm9, %xmm1, %xmm2, %xmm3, %xmm4, %xmm5, %xmm6, %xmm7, %x=
+mm8, %xmm15, in_order, \ENC_DEC
+-        vpshufb SHUF_MASK(%rip), %xmm9, %xmm9
+-        add     $128, %r11
+-        sub     $128, %r13
+-        jne     _encrypt_by_8_new\@
+-
+-        vpshufb SHUF_MASK(%rip), %xmm9, %xmm9
+-
+-
+-
+-
+-_eight_cipher_left\@:
+-        GHASH_LAST_8_AVX    %xmm0, %xmm10, %xmm11, %xmm12, %xmm13, %xmm14,=
+ %xmm15, %xmm1, %xmm2, %xmm3, %xmm4, %xmm5, %xmm6, %xmm7, %xmm8
+-
+-
+-_zero_cipher_left\@:
+-        cmp     $16, arg4
+-        jl      _only_less_than_16\@
+-
+-        mov     arg4, %r13
+-        and     $15, %r13                            # r13 =3D (arg4 mod 1=
+6)
+-
+-        je      _multiple_of_16_bytes\@
+-
+-        # handle the last <16 Byte block seperately
+-
+-
+-        vpaddd   ONE(%rip), %xmm9, %xmm9             # INCR CNT to get Yn
+-        vpshufb SHUF_MASK(%rip), %xmm9, %xmm9
+-        ENCRYPT_SINGLE_BLOCK    %xmm9                # E(K, Yn)
+-
+-        sub     $16, %r11
+-        add     %r13, %r11
+-        vmovdqu (arg3, %r11), %xmm1                  # receive the last <1=
+6 Byte block
+-
+-        lea     SHIFT_MASK+16(%rip), %r12
+-        sub     %r13, %r12                           # adjust the shuffle =
+mask pointer to be
+-						     # able to shift 16-r13 bytes (r13 is the
+-						     # number of bytes in plaintext mod 16)
+-        vmovdqu (%r12), %xmm2                        # get the appropriate=
+ shuffle mask
+-        vpshufb %xmm2, %xmm1, %xmm1                  # shift right 16-r13 =
+bytes
+-        jmp     _final_ghash_mul\@
+-
+-_only_less_than_16\@:
+-        # check for 0 length
+-        mov     arg4, %r13
+-        and     $15, %r13                            # r13 =3D (arg4 mod 1=
+6)
+-
+-        je      _multiple_of_16_bytes\@
+-
+-        # handle the last <16 Byte block seperately
+-
+-
+-        vpaddd  ONE(%rip), %xmm9, %xmm9              # INCR CNT to get Yn
+-        vpshufb SHUF_MASK(%rip), %xmm9, %xmm9
+-        ENCRYPT_SINGLE_BLOCK    %xmm9                # E(K, Yn)
+-
+-
+-        lea     SHIFT_MASK+16(%rip), %r12
+-        sub     %r13, %r12                           # adjust the shuffle =
+mask pointer to be
+-						     # able to shift 16-r13 bytes (r13 is the
+-						     # number of bytes in plaintext mod 16)
+-
+-_get_last_16_byte_loop\@:
+-        movb    (arg3, %r11),  %al
+-        movb    %al,  TMP1 (%rsp , %r11)
+-        add     $1, %r11
+-        cmp     %r13,  %r11
+-        jne     _get_last_16_byte_loop\@
+-
+-        vmovdqu  TMP1(%rsp), %xmm1
+-
+-        sub     $16, %r11
+-
+-_final_ghash_mul\@:
+-        .if  \ENC_DEC =3D=3D  DEC
+-        vmovdqa %xmm1, %xmm2
+-        vpxor   %xmm1, %xmm9, %xmm9                  # Plaintext XOR E(K, =
+Yn)
+-        vmovdqu ALL_F-SHIFT_MASK(%r12), %xmm1        # get the appropriate=
+ mask to
+-						     # mask out top 16-r13 bytes of xmm9
+-        vpand   %xmm1, %xmm9, %xmm9                  # mask out top 16-r13=
+ bytes of xmm9
+-        vpand   %xmm1, %xmm2, %xmm2
+-        vpshufb SHUF_MASK(%rip), %xmm2, %xmm2
+-        vpxor   %xmm2, %xmm14, %xmm14
+-	#GHASH computation for the last <16 Byte block
+-        GHASH_MUL_AVX       %xmm14, %xmm13, %xmm0, %xmm10, %xmm11, %xmm5, =
+%xmm6
+-        sub     %r13, %r11
+-        add     $16, %r11
+-        .else
+-        vpxor   %xmm1, %xmm9, %xmm9                  # Plaintext XOR E(K, =
+Yn)
+-        vmovdqu ALL_F-SHIFT_MASK(%r12), %xmm1        # get the appropriate=
+ mask to
+-						     # mask out top 16-r13 bytes of xmm9
+-        vpand   %xmm1, %xmm9, %xmm9                  # mask out top 16-r13=
+ bytes of xmm9
+-        vpshufb SHUF_MASK(%rip), %xmm9, %xmm9
+-        vpxor   %xmm9, %xmm14, %xmm14
+-	#GHASH computation for the last <16 Byte block
+-        GHASH_MUL_AVX       %xmm14, %xmm13, %xmm0, %xmm10, %xmm11, %xmm5, =
+%xmm6
+-        sub     %r13, %r11
+-        add     $16, %r11
+-        vpshufb SHUF_MASK(%rip), %xmm9, %xmm9        # shuffle xmm9 back t=
+o output as ciphertext
+-        .endif
+-
+-
+-        #############################
+-        # output r13 Bytes
+-        vmovq   %xmm9, %rax
+-        cmp     $8, %r13
+-        jle     _less_than_8_bytes_left\@
+-
+-        mov     %rax, (arg2 , %r11)
+-        add     $8, %r11
+-        vpsrldq $8, %xmm9, %xmm9
+-        vmovq   %xmm9, %rax
+-        sub     $8, %r13
+-
+-_less_than_8_bytes_left\@:
+-        movb    %al, (arg2 , %r11)
+-        add     $1, %r11
+-        shr     $8, %rax
+-        sub     $1, %r13
+-        jne     _less_than_8_bytes_left\@
+-        #############################
+-
+-_multiple_of_16_bytes\@:
+-        mov     arg7, %r12                           # r12 =3D aadLen (num=
+ber of bytes)
+-        shl     $3, %r12                             # convert into number=
+ of bits
+-        vmovd   %r12d, %xmm15                        # len(A) in xmm15
+-
+-        shl     $3, arg4                             # len(C) in bits  (*1=
+28)
+-        vmovq   arg4, %xmm1
+-        vpslldq $8, %xmm15, %xmm15                   # xmm15 =3D len(A)|| =
+0x0000000000000000
+-        vpxor   %xmm1, %xmm15, %xmm15                # xmm15 =3D len(A)||l=
+en(C)
+-
+-        vpxor   %xmm15, %xmm14, %xmm14
+-        GHASH_MUL_AVX       %xmm14, %xmm13, %xmm0, %xmm10, %xmm11, %xmm5, =
+%xmm6    # final GHASH computation
+-        vpshufb SHUF_MASK(%rip), %xmm14, %xmm14      # perform a 16Byte sw=
+ap
+-
+-        mov     arg5, %rax                           # rax =3D *Y0
+-        vmovdqu (%rax), %xmm9                        # xmm9 =3D Y0
+-
+-        ENCRYPT_SINGLE_BLOCK    %xmm9                # E(K, Y0)
+-
+-        vpxor   %xmm14, %xmm9, %xmm9
+-
+-
+-
+-_return_T\@:
+-        mov     arg8, %r10              # r10 =3D authTag
+-        mov     arg9, %r11              # r11 =3D auth_tag_len
+-
+-        cmp     $16, %r11
+-        je      _T_16\@
+-
+-        cmp     $8, %r11
+-        jl      _T_4\@
+-
+-_T_8\@:
+-        vmovq   %xmm9, %rax
+-        mov     %rax, (%r10)
+-        add     $8, %r10
+-        sub     $8, %r11
+-        vpsrldq $8, %xmm9, %xmm9
+-        cmp     $0, %r11
+-        je     _return_T_done\@
+-_T_4\@:
+-        vmovd   %xmm9, %eax
+-        mov     %eax, (%r10)
+-        add     $4, %r10
+-        sub     $4, %r11
+-        vpsrldq     $4, %xmm9, %xmm9
+-        cmp     $0, %r11
+-        je     _return_T_done\@
+-_T_123\@:
+-        vmovd     %xmm9, %eax
+-        cmp     $2, %r11
+-        jl     _T_1\@
+-        mov     %ax, (%r10)
+-        cmp     $2, %r11
+-        je     _return_T_done\@
+-        add     $2, %r10
+-        sar     $16, %eax
+-_T_1\@:
+-        mov     %al, (%r10)
+-        jmp     _return_T_done\@
+-
+-_T_16\@:
+-        vmovdqu %xmm9, (%r10)
+-
+-_return_T_done\@:
+-        mov     %r14, %rsp
+-
+-        pop     %r15
+-        pop     %r14
+-        pop     %r13
+-        pop     %r12
+-.endm
+-
+-
+ #############################################################
+ #void   aesni_gcm_precomp_avx_gen2
+ #        (gcm_data     *my_ctx_data,
+@@ -1593,7 +1591,7 @@ ENDPROC(aesni_gcm_precomp_avx_gen2)
+ #				Valid values are 16 (most likely), 12 or 8. */
+ ##########################################################################=
+#####
+ ENTRY(aesni_gcm_enc_avx_gen2)
+-        GCM_ENC_DEC_AVX     ENC
++        GCM_ENC_DEC INITIAL_BLOCKS_AVX GHASH_8_ENCRYPT_8_PARALLEL_AVX GHAS=
+H_LAST_8_AVX GHASH_MUL_AVX ENC
+ 	ret
+ ENDPROC(aesni_gcm_enc_avx_gen2)
+=20
+@@ -1614,7 +1612,7 @@ ENDPROC(aesni_gcm_enc_avx_gen2)
+ #				Valid values are 16 (most likely), 12 or 8. */
+ ##########################################################################=
+#####
+ ENTRY(aesni_gcm_dec_avx_gen2)
+-        GCM_ENC_DEC_AVX     DEC
++        GCM_ENC_DEC INITIAL_BLOCKS_AVX GHASH_8_ENCRYPT_8_PARALLEL_AVX GHAS=
+H_LAST_8_AVX GHASH_MUL_AVX DEC
+ 	ret
+ ENDPROC(aesni_gcm_dec_avx_gen2)
+ #endif /* CONFIG_AS_AVX */
+@@ -2536,319 +2534,6 @@ _initial_blocks_done\@:
+=20
+=20
+=20
+-# combined for GCM encrypt and decrypt functions
+-# clobbering all xmm registers
+-# clobbering r10, r11, r12, r13, r14, r15
+-.macro  GCM_ENC_DEC_AVX2     ENC_DEC
+-
+-        #the number of pushes must equal STACK_OFFSET
+-        push    %r12
+-        push    %r13
+-        push    %r14
+-        push    %r15
+-
+-        mov     %rsp, %r14
+-
+-
+-
+-
+-        sub     $VARIABLE_OFFSET, %rsp
+-        and     $~63, %rsp                         # align rsp to 64 bytes
+-
+-
+-        vmovdqu  HashKey(arg1), %xmm13             # xmm13 =3D HashKey
+-
+-        mov     arg4, %r13                         # save the number of by=
+tes of plaintext/ciphertext
+-        and     $-16, %r13                         # r13 =3D r13 - (r13 mo=
+d 16)
+-
+-        mov     %r13, %r12
+-        shr     $4, %r12
+-        and     $7, %r12
+-        jz      _initial_num_blocks_is_0\@
+-
+-        cmp     $7, %r12
+-        je      _initial_num_blocks_is_7\@
+-        cmp     $6, %r12
+-        je      _initial_num_blocks_is_6\@
+-        cmp     $5, %r12
+-        je      _initial_num_blocks_is_5\@
+-        cmp     $4, %r12
+-        je      _initial_num_blocks_is_4\@
+-        cmp     $3, %r12
+-        je      _initial_num_blocks_is_3\@
+-        cmp     $2, %r12
+-        je      _initial_num_blocks_is_2\@
+-
+-        jmp     _initial_num_blocks_is_1\@
+-
+-_initial_num_blocks_is_7\@:
+-        INITIAL_BLOCKS_AVX2  7, %xmm12, %xmm13, %xmm14, %xmm15, %xmm11, %x=
+mm9, %xmm1, %xmm2, %xmm3, %xmm4, %xmm5, %xmm6, %xmm7, %xmm8, %xmm10, %xmm0,=
+ \ENC_DEC
+-        sub     $16*7, %r13
+-        jmp     _initial_blocks_encrypted\@
+-
+-_initial_num_blocks_is_6\@:
+-        INITIAL_BLOCKS_AVX2  6, %xmm12, %xmm13, %xmm14, %xmm15, %xmm11, %x=
+mm9, %xmm1, %xmm2, %xmm3, %xmm4, %xmm5, %xmm6, %xmm7, %xmm8, %xmm10, %xmm0,=
+ \ENC_DEC
+-        sub     $16*6, %r13
+-        jmp     _initial_blocks_encrypted\@
+-
+-_initial_num_blocks_is_5\@:
+-        INITIAL_BLOCKS_AVX2  5, %xmm12, %xmm13, %xmm14, %xmm15, %xmm11, %x=
+mm9, %xmm1, %xmm2, %xmm3, %xmm4, %xmm5, %xmm6, %xmm7, %xmm8, %xmm10, %xmm0,=
+ \ENC_DEC
+-        sub     $16*5, %r13
+-        jmp     _initial_blocks_encrypted\@
+-
+-_initial_num_blocks_is_4\@:
+-        INITIAL_BLOCKS_AVX2  4, %xmm12, %xmm13, %xmm14, %xmm15, %xmm11, %x=
+mm9, %xmm1, %xmm2, %xmm3, %xmm4, %xmm5, %xmm6, %xmm7, %xmm8, %xmm10, %xmm0,=
+ \ENC_DEC
+-        sub     $16*4, %r13
+-        jmp     _initial_blocks_encrypted\@
+-
+-_initial_num_blocks_is_3\@:
+-        INITIAL_BLOCKS_AVX2  3, %xmm12, %xmm13, %xmm14, %xmm15, %xmm11, %x=
+mm9, %xmm1, %xmm2, %xmm3, %xmm4, %xmm5, %xmm6, %xmm7, %xmm8, %xmm10, %xmm0,=
+ \ENC_DEC
+-        sub     $16*3, %r13
+-        jmp     _initial_blocks_encrypted\@
+-
+-_initial_num_blocks_is_2\@:
+-        INITIAL_BLOCKS_AVX2  2, %xmm12, %xmm13, %xmm14, %xmm15, %xmm11, %x=
+mm9, %xmm1, %xmm2, %xmm3, %xmm4, %xmm5, %xmm6, %xmm7, %xmm8, %xmm10, %xmm0,=
+ \ENC_DEC
+-        sub     $16*2, %r13
+-        jmp     _initial_blocks_encrypted\@
+-
+-_initial_num_blocks_is_1\@:
+-        INITIAL_BLOCKS_AVX2  1, %xmm12, %xmm13, %xmm14, %xmm15, %xmm11, %x=
+mm9, %xmm1, %xmm2, %xmm3, %xmm4, %xmm5, %xmm6, %xmm7, %xmm8, %xmm10, %xmm0,=
+ \ENC_DEC
+-        sub     $16*1, %r13
+-        jmp     _initial_blocks_encrypted\@
+-
+-_initial_num_blocks_is_0\@:
+-        INITIAL_BLOCKS_AVX2  0, %xmm12, %xmm13, %xmm14, %xmm15, %xmm11, %x=
+mm9, %xmm1, %xmm2, %xmm3, %xmm4, %xmm5, %xmm6, %xmm7, %xmm8, %xmm10, %xmm0,=
+ \ENC_DEC
+-
+-
+-_initial_blocks_encrypted\@:
+-        cmp     $0, %r13
+-        je      _zero_cipher_left\@
+-
+-        sub     $128, %r13
+-        je      _eight_cipher_left\@
+-
+-
+-
+-
+-        vmovd   %xmm9, %r15d
+-        and     $255, %r15d
+-        vpshufb SHUF_MASK(%rip), %xmm9, %xmm9
+-
+-
+-_encrypt_by_8_new\@:
+-        cmp     $(255-8), %r15d
+-        jg      _encrypt_by_8\@
+-
+-
+-
+-        add     $8, %r15b
+-        GHASH_8_ENCRYPT_8_PARALLEL_AVX2      %xmm0, %xmm10, %xmm11, %xmm12=
+, %xmm13, %xmm14, %xmm9, %xmm1, %xmm2, %xmm3, %xmm4, %xmm5, %xmm6, %xmm7, %=
+xmm8, %xmm15, out_order, \ENC_DEC
+-        add     $128, %r11
+-        sub     $128, %r13
+-        jne     _encrypt_by_8_new\@
+-
+-        vpshufb SHUF_MASK(%rip), %xmm9, %xmm9
+-        jmp     _eight_cipher_left\@
+-
+-_encrypt_by_8\@:
+-        vpshufb SHUF_MASK(%rip), %xmm9, %xmm9
+-        add     $8, %r15b
+-        GHASH_8_ENCRYPT_8_PARALLEL_AVX2      %xmm0, %xmm10, %xmm11, %xmm12=
+, %xmm13, %xmm14, %xmm9, %xmm1, %xmm2, %xmm3, %xmm4, %xmm5, %xmm6, %xmm7, %=
+xmm8, %xmm15, in_order, \ENC_DEC
+-        vpshufb SHUF_MASK(%rip), %xmm9, %xmm9
+-        add     $128, %r11
+-        sub     $128, %r13
+-        jne     _encrypt_by_8_new\@
+-
+-        vpshufb SHUF_MASK(%rip), %xmm9, %xmm9
+-
+-
+-
+-
+-_eight_cipher_left\@:
+-        GHASH_LAST_8_AVX2    %xmm0, %xmm10, %xmm11, %xmm12, %xmm13, %xmm14=
+, %xmm15, %xmm1, %xmm2, %xmm3, %xmm4, %xmm5, %xmm6, %xmm7, %xmm8
+-
+-
+-_zero_cipher_left\@:
+-        cmp     $16, arg4
+-        jl      _only_less_than_16\@
+-
+-        mov     arg4, %r13
+-        and     $15, %r13                            # r13 =3D (arg4 mod 1=
+6)
+-
+-        je      _multiple_of_16_bytes\@
+-
+-        # handle the last <16 Byte block seperately
+-
+-
+-        vpaddd   ONE(%rip), %xmm9, %xmm9             # INCR CNT to get Yn
+-        vpshufb SHUF_MASK(%rip), %xmm9, %xmm9
+-        ENCRYPT_SINGLE_BLOCK    %xmm9                # E(K, Yn)
+-
+-        sub     $16, %r11
+-        add     %r13, %r11
+-        vmovdqu (arg3, %r11), %xmm1                  # receive the last <1=
+6 Byte block
+-
+-        lea     SHIFT_MASK+16(%rip), %r12
+-        sub     %r13, %r12                           # adjust the shuffle =
+mask pointer
+-						     # to be able to shift 16-r13 bytes
+-						     # (r13 is the number of bytes in plaintext mod 16)
+-        vmovdqu (%r12), %xmm2                        # get the appropriate=
+ shuffle mask
+-        vpshufb %xmm2, %xmm1, %xmm1                  # shift right 16-r13 =
+bytes
+-        jmp     _final_ghash_mul\@
+-
+-_only_less_than_16\@:
+-        # check for 0 length
+-        mov     arg4, %r13
+-        and     $15, %r13                            # r13 =3D (arg4 mod 1=
+6)
+-
+-        je      _multiple_of_16_bytes\@
+-
+-        # handle the last <16 Byte block seperately
+-
+-
+-        vpaddd  ONE(%rip), %xmm9, %xmm9              # INCR CNT to get Yn
+-        vpshufb SHUF_MASK(%rip), %xmm9, %xmm9
+-        ENCRYPT_SINGLE_BLOCK    %xmm9                # E(K, Yn)
+-
+-
+-        lea     SHIFT_MASK+16(%rip), %r12
+-        sub     %r13, %r12                           # adjust the shuffle =
+mask pointer to be
+-						     # able to shift 16-r13 bytes (r13 is the
+-						     # number of bytes in plaintext mod 16)
+-
+-_get_last_16_byte_loop\@:
+-        movb    (arg3, %r11),  %al
+-        movb    %al,  TMP1 (%rsp , %r11)
+-        add     $1, %r11
+-        cmp     %r13,  %r11
+-        jne     _get_last_16_byte_loop\@
+-
+-        vmovdqu  TMP1(%rsp), %xmm1
+-
+-        sub     $16, %r11
+-
+-_final_ghash_mul\@:
+-        .if  \ENC_DEC =3D=3D  DEC
+-        vmovdqa %xmm1, %xmm2
+-        vpxor   %xmm1, %xmm9, %xmm9                  # Plaintext XOR E(K, =
+Yn)
+-        vmovdqu ALL_F-SHIFT_MASK(%r12), %xmm1        # get the appropriate=
+ mask to mask out top 16-r13 bytes of xmm9
+-        vpand   %xmm1, %xmm9, %xmm9                  # mask out top 16-r13=
+ bytes of xmm9
+-        vpand   %xmm1, %xmm2, %xmm2
+-        vpshufb SHUF_MASK(%rip), %xmm2, %xmm2
+-        vpxor   %xmm2, %xmm14, %xmm14
+-	#GHASH computation for the last <16 Byte block
+-        GHASH_MUL_AVX2       %xmm14, %xmm13, %xmm0, %xmm10, %xmm11, %xmm5,=
+ %xmm6
+-        sub     %r13, %r11
+-        add     $16, %r11
+-        .else
+-        vpxor   %xmm1, %xmm9, %xmm9                  # Plaintext XOR E(K, =
+Yn)
+-        vmovdqu ALL_F-SHIFT_MASK(%r12), %xmm1        # get the appropriate=
+ mask to mask out top 16-r13 bytes of xmm9
+-        vpand   %xmm1, %xmm9, %xmm9                  # mask out top 16-r13=
+ bytes of xmm9
+-        vpshufb SHUF_MASK(%rip), %xmm9, %xmm9
+-        vpxor   %xmm9, %xmm14, %xmm14
+-	#GHASH computation for the last <16 Byte block
+-        GHASH_MUL_AVX2       %xmm14, %xmm13, %xmm0, %xmm10, %xmm11, %xmm5,=
+ %xmm6
+-        sub     %r13, %r11
+-        add     $16, %r11
+-        vpshufb SHUF_MASK(%rip), %xmm9, %xmm9        # shuffle xmm9 back t=
+o output as ciphertext
+-        .endif
+-
+-
+-        #############################
+-        # output r13 Bytes
+-        vmovq   %xmm9, %rax
+-        cmp     $8, %r13
+-        jle     _less_than_8_bytes_left\@
+-
+-        mov     %rax, (arg2 , %r11)
+-        add     $8, %r11
+-        vpsrldq $8, %xmm9, %xmm9
+-        vmovq   %xmm9, %rax
+-        sub     $8, %r13
+-
+-_less_than_8_bytes_left\@:
+-        movb    %al, (arg2 , %r11)
+-        add     $1, %r11
+-        shr     $8, %rax
+-        sub     $1, %r13
+-        jne     _less_than_8_bytes_left\@
+-        #############################
+-
+-_multiple_of_16_bytes\@:
+-        mov     arg7, %r12                           # r12 =3D aadLen (num=
+ber of bytes)
+-        shl     $3, %r12                             # convert into number=
+ of bits
+-        vmovd   %r12d, %xmm15                        # len(A) in xmm15
+-
+-        shl     $3, arg4                             # len(C) in bits  (*1=
+28)
+-        vmovq   arg4, %xmm1
+-        vpslldq $8, %xmm15, %xmm15                   # xmm15 =3D len(A)|| =
+0x0000000000000000
+-        vpxor   %xmm1, %xmm15, %xmm15                # xmm15 =3D len(A)||l=
+en(C)
+-
+-        vpxor   %xmm15, %xmm14, %xmm14
+-        GHASH_MUL_AVX2       %xmm14, %xmm13, %xmm0, %xmm10, %xmm11, %xmm5,=
+ %xmm6    # final GHASH computation
+-        vpshufb SHUF_MASK(%rip), %xmm14, %xmm14              # perform a 1=
+6Byte swap
+-
+-        mov     arg5, %rax                           # rax =3D *Y0
+-        vmovdqu (%rax), %xmm9                        # xmm9 =3D Y0
+-
+-        ENCRYPT_SINGLE_BLOCK    %xmm9                # E(K, Y0)
+-
+-        vpxor   %xmm14, %xmm9, %xmm9
+-
+-
+-
+-_return_T\@:
+-        mov     arg8, %r10              # r10 =3D authTag
+-        mov     arg9, %r11              # r11 =3D auth_tag_len
+-
+-        cmp     $16, %r11
+-        je      _T_16\@
+-
+-        cmp     $8, %r11
+-        jl      _T_4\@
+-
+-_T_8\@:
+-        vmovq   %xmm9, %rax
+-        mov     %rax, (%r10)
+-        add     $8, %r10
+-        sub     $8, %r11
+-        vpsrldq $8, %xmm9, %xmm9
+-        cmp     $0, %r11
+-        je     _return_T_done\@
+-_T_4\@:
+-        vmovd   %xmm9, %eax
+-        mov     %eax, (%r10)
+-        add     $4, %r10
+-        sub     $4, %r11
+-        vpsrldq     $4, %xmm9, %xmm9
+-        cmp     $0, %r11
+-        je     _return_T_done\@
+-_T_123\@:
+-        vmovd     %xmm9, %eax
+-        cmp     $2, %r11
+-        jl     _T_1\@
+-        mov     %ax, (%r10)
+-        cmp     $2, %r11
+-        je     _return_T_done\@
+-        add     $2, %r10
+-        sar     $16, %eax
+-_T_1\@:
+-        mov     %al, (%r10)
+-        jmp     _return_T_done\@
+-
+-_T_16\@:
+-        vmovdqu %xmm9, (%r10)
+-
+-_return_T_done\@:
+-        mov     %r14, %rsp
+-
+-        pop     %r15
+-        pop     %r14
+-        pop     %r13
+-        pop     %r12
+-.endm
+-
+-
+ #############################################################
+ #void   aesni_gcm_precomp_avx_gen4
+ #        (gcm_data     *my_ctx_data,
+@@ -2918,7 +2603,7 @@ ENDPROC(aesni_gcm_precomp_avx_gen4)
+ #				Valid values are 16 (most likely), 12 or 8. */
+ ##########################################################################=
+#####
+ ENTRY(aesni_gcm_enc_avx_gen4)
+-        GCM_ENC_DEC_AVX2     ENC
++        GCM_ENC_DEC INITIAL_BLOCKS_AVX2 GHASH_8_ENCRYPT_8_PARALLEL_AVX2 GH=
+ASH_LAST_8_AVX2 GHASH_MUL_AVX2 ENC
+ 	ret
+ ENDPROC(aesni_gcm_enc_avx_gen4)
+=20
+@@ -2939,7 +2624,7 @@ ENDPROC(aesni_gcm_enc_avx_gen4)
+ #				Valid values are 16 (most likely), 12 or 8. */
+ ##########################################################################=
+#####
+ ENTRY(aesni_gcm_dec_avx_gen4)
+-        GCM_ENC_DEC_AVX2     DEC
++        GCM_ENC_DEC INITIAL_BLOCKS_AVX2 GHASH_8_ENCRYPT_8_PARALLEL_AVX2 GH=
+ASH_LAST_8_AVX2 GHASH_MUL_AVX2 DEC
+ 	ret
+ ENDPROC(aesni_gcm_dec_avx_gen4)
+=20
 --=20
 2.17.1
 
