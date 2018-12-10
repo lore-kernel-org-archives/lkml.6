@@ -2,98 +2,142 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 358B9C04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 22:24:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2AA1C67839
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 22:24:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 015C52082F
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 22:24:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 015C52082F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 813E720880
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 22:24:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544480696;
+	bh=8GzBDr3IF05sb1PvOTqA+jHGxjPF7TVcwt9aEuUlBwQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=mQa5ycBjioET8WAu7w27JSTm1X/NxpHnlZFwnGqG60M1qMuh0fZMANC7q7Jtar6ti
+	 iMOL+FlTpueL12ODtuHp0AO54B/oFLO77xqFAg8fU120XTmn6EEG53v8Ho5hFAmOyz
+	 B1SEr1DU08s9EdrvFpF6A7mYcC94RdSO5OUUcDU8=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 813E720880
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729118AbeLJWYM (ORCPT
+        id S1729435AbeLJWYz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 17:24:12 -0500
-Received: from mga14.intel.com ([192.55.52.115]:45578 "EHLO mga14.intel.com"
+        Mon, 10 Dec 2018 17:24:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52714 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727833AbeLJWYL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 17:24:11 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Dec 2018 14:24:11 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,339,1539673200"; 
-   d="scan'208";a="282518796"
-Received: from ahduyck-desk1.jf.intel.com ([10.7.198.76])
-  by orsmga005.jf.intel.com with ESMTP; 10 Dec 2018 14:24:10 -0800
-Message-ID: <00810f93b199c524378b5c963d49bd798c5d9843.camel@linux.intel.com>
-Subject: Re: [driver-core PATCH v8 2/9] driver core: Establish order of
- operations for device_add and device_del via bitflag
-From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        "Luis R. Rodriguez" <mcgrof@kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Tejun Heo <tj@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux-pm mailing list <linux-pm@vger.kernel.org>,
-        jiangshanlai@gmail.com, "Rafael J. Wysocki" <rafael@kernel.org>,
-        "Brown, Len" <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
-        zwisler@kernel.org, Dave Jiang <dave.jiang@intel.com>,
-        bvanassche@acm.org
-Date:   Mon, 10 Dec 2018 14:24:10 -0800
-In-Reply-To: <CAPcyv4hrML3SKnFP9UANC-hdTrpnOx4nWX=b-yhLsLuujL5oAA@mail.gmail.com>
-References: <154403054034.11544.3978949383914046587.stgit@ahduyck-desk1.jf.intel.com>
-         <154403072403.11544.10419282512791659652.stgit@ahduyck-desk1.jf.intel.com>
-         <CAPcyv4jH_Op-xHTd2FwQizPaWFx_2FE-pVsOLLmZAEK8EVPrYg@mail.gmail.com>
-         <15b6817fd945a1622afe673b46b028bacefad72b.camel@linux.intel.com>
-         <CAPcyv4i1RTrKYX0YpyCRE=pqt3pHBRiCGQq1wYUriLjKKTVA7A@mail.gmail.com>
-         <bd92d0a3ff60097bf4424ff4c556a5369e66da6d.camel@linux.intel.com>
-         <CAPcyv4jDG_2VwFr4oDGCURFrA=B0Bs2HGN9exLE47vDj0P3_8A@mail.gmail.com>
-         <CAPcyv4hrML3SKnFP9UANC-hdTrpnOx4nWX=b-yhLsLuujL5oAA@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-2.fc28) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1726024AbeLJWYz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Dec 2018 17:24:55 -0500
+Received: from localhost (unknown [69.71.4.100])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id CA46F2082F;
+        Mon, 10 Dec 2018 22:24:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544480694;
+        bh=8GzBDr3IF05sb1PvOTqA+jHGxjPF7TVcwt9aEuUlBwQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=p/xZ21JMR9j4tF0BjajlBcch/e7wrIEV1MJ82mLUSo3FgL/hY54+NV8P6smqjCt2w
+         m/df6HtJyUuuiMXy5oR+9GQarUEl+Ys/3hH6fSelszpZ6Byi+03M+C4ojiyNpOKZtI
+         yEf4Rgz0mMLoefLdLcPRRCRcpVQlJdHiAPJdiONY=
+Date:   Mon, 10 Dec 2018 16:24:52 -0600
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     "Grumbach, Emmanuel" <emmanuel.grumbach@intel.com>
+Cc:     "bjorn@helgaas.com" <bjorn@helgaas.com>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "Mertarg10@gmail.com" <Mertarg10@gmail.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: Fwd: [Bug 201647] New: Intel Wireless card 3165 does not get
+ detected but bluetooth works
+Message-ID: <20181210222452.GC85090@google.com>
+References: <bug-201647-193951@https.bugzilla.kernel.org/>
+ <CABhMZUXc4FS-f52ZDsErEhbkm_jjEz+kn75YO5Tuvp42Qm+1xw@mail.gmail.com>
+ <20181128211959.GB178809@google.com>
+ <0BA3FCBA62E2DC44AF3030971E174FB3013373E4A3@HASMSX112.ger.corp.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0BA3FCBA62E2DC44AF3030971E174FB3013373E4A3@HASMSX112.ger.corp.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2018-12-10 at 13:23 -0800, Dan Williams wrote:
-> On Mon, Dec 10, 2018 at 1:15 PM Dan Williams <dan.j.williams@intel.com> wrote:
+On Sun, Dec 02, 2018 at 06:57:35AM +0000, Grumbach, Emmanuel wrote:
+> > On Fri, Nov 09, 2018 at 03:43:06PM -0600, Bjorn Helgaas wrote:
+> > > ---------- Forwarded message ---------
+> > > From: <bugzilla-daemon@bugzilla.kernel.org>
+> > > Date: Fri, Nov 9, 2018 at 4:10 AM
+> > > Subject: [Bug 201647] New: Intel Wireless card 3165 does not get
+> > > detected but bluetooth works
+> > >
+> > > https://bugzilla.kernel.org/show_bug.cgi?id=201647
+> > >
+> > >             Bug ID: 201647
+> > >            Summary: Intel Wireless card 3165 does not get detected but
+> > >                     bluetooth works
+> > >            Product: Drivers
+> > >            Version: 2.5
+> > >     Kernel Version: 4.19.1
+> > >           Hardware: Intel
+> > >                 OS: Linux
+> > >               Tree: Mainline
+> > >             Status: NEW
+> > >           Severity: high
+> > >           Priority: P1
+> > >          Component: PCI
+> > >           Assignee: drivers_pci@kernel-bugs.osdl.org
+> > >           Reporter: Mertarg10@gmail.com
+> > >         Regression: No
+> > >
+> > > This bug affects most of the devices with a Celeron N4000 and an Intel
+> > > wifi 3165 Ac adapter.
+> > >
+> > > When using Linux wifi is not working however, Bluetooth is working
+> > > fine.  Also, Bluetooth part of this chip is connected via btusb and
+> > > the wifi part of this chip is connected via PCIe.
 > > 
-> > On Mon, Dec 10, 2018 at 12:58 PM Alexander Duyck
-> > <alexander.h.duyck@linux.intel.com> wrote:
-> 
-> [..]
-> > > Also the context for the two functions seems to be a bit different. In
-> > > the case of __device_attach_driver the device_lock is already held. In
-> > > __driver_attach the lock on the device isn't taken until after a match
-> > > has been found.
+> > Can you attach a screenshot of the Windows 10 device manager info for the
+> > wifi adapter to the bugzilla?  If you can get a raw hex dump of its config
+> > space, that would be awesome.
 > > 
-> > Yes, I was only pattern matching when looking at the context of where
-> > dev->dead is checked in __driver_attach() and wondering why it was
-> > checked outside of __device_attach_driver()
+> > Also attach a copy of your kernel .config file (typically in /boot/).
+> > 
+> > My only guess is that maybe the system keeps wifi completely powered
+> > down and uses hotplug to add it when needed.  [1] mentions wifi being on
+> > pcibus 1 under Windows.  Your lspci does show bridge 00:13.0 leading to bus
+> > 01, but Linux doesn't find any devices on bus 01.
+> > 
+> > Hotplug could be done via either acpiphp (ACPI mediated hotplug) or pciehp
+> > (native PCIe hotplug).  Your dmesg shows you do have acpiphp.
+> > 
+> > I can't tell about pciehp (your .config will show that), but I think pciehp will
+> > only claim bridges where SltCap contains HotPlug+, and yours shows HotPlug-
+> > , so I don't think pciehp will do anything on your system.
+> > 
+> > Even if the system does use hotplug, I don't know what mechanism the OS
+> > would use to wake up the device, since we don't know it even exists.  I guess
+> > there could be some magic switch accessible via USB.
+> > But if that were the case, I'm sure Emmanuel would know about it.
 > 
-> ...and now I realize the bigger point of your concern, we need to
-> check dev->dead after acquiring the device_lock otherwise the race is
-> back. We can defer that consolidation, but the larger concern of
-> making it internal to __device_attach_driver() still stands.
+> Hm... Don't be so sure... :)
+> I don't think we have anything as fancy as this.
+> I guess you can try to dig into the BIOS settings?
+> I have heard of such a switch that would make the device disappear.
 
-I'm still not a fan of moving it into __device_attach_driver. I would
-much rather pull out the dev->driver check and instead place that in
-__device_attach_async_helper.
+It's worth looking, but I don't understand how a BIOS switch would
+solve this problem.  I assume that with the same BIOS settings,
+Windows works and Linux fails.
 
-The __device_attach function as I said took the device_lock and had
-already checked dev->driver. So in the non-async path it shouldn't be
-possible for dev->driver to ever be set anyway. In addition
-__device_attach_driver is called once for each driver on a given bus,
-so dropping the test should reduce driver load time since it is one
-less test that has to be performed per driver.
+Maybe there would be a clue in an acpidump from affected machines,
+e.g., maybe we'd see some kind of ACPI hotplug notification.  That
+seems like a long shot because we do have acpiphp in the kernel, and
+it *should* be handling such notifications, but it could always be
+broken.
 
+The Windows device manager info (requested above) would be
+interesting.
+
+Bjorn
