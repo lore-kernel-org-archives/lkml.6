@@ -2,182 +2,101 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9578AC04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 06:49:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B6F9C04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 06:50:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 505732082F
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 06:49:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 505732082F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by mail.kernel.org (Postfix) with ESMTP id 510B820672
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 06:50:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 510B820672
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726587AbeLJGtR (ORCPT
+        id S1726614AbeLJGuM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 01:49:17 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:23653 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726442AbeLJGtQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 01:49:16 -0500
-X-UUID: 213959fed1614c4e97bfc9b7cd114a2e-20181210
-X-UUID: 213959fed1614c4e97bfc9b7cd114a2e-20181210
-Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw02.mediatek.com
-        (envelope-from <long.cheng@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1056328416; Mon, 10 Dec 2018 11:48:26 +0800
-Received: from mtkcas09.mediatek.inc (172.21.101.178) by
- mtkmbs08n1.mediatek.inc (172.21.101.55) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Mon, 10 Dec 2018 11:47:57 +0800
-Received: from localhost.localdomain (10.17.3.153) by mtkcas09.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Mon, 10 Dec 2018 11:47:56 +0800
-From:   Long Cheng <long.cheng@mediatek.com>
-To:     Vinod Koul <vkoul@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        "Mark Rutland" <mark.rutland@arm.com>,
-        Ryder Lee <ryder.lee@mediatek.com>
-CC:     Matthias Brugger <matthias.bgg@gmail.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        Sean Wang <sean.wang@mediatek.com>,
-        Sean Wang <sean.wang@kernel.org>, <dmaengine@vger.kernel.org>,
-        <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-serial@vger.kernel.org>,
-        <srv_heupstream@mediatek.com>,
-        Yingjoe Chen <yingjoe.chen@mediatek.com>,
-        YT Shen <yt.shen@mediatek.com>,
-        Long Cheng <long.cheng@mediatek.com>
-Subject: [resend PATCH v4 2/2] arm: dts: mt2712: add uart APDMA to device tree
-Date:   Mon, 10 Dec 2018 11:47:45 +0800
-Message-ID: <1544413665-1222-3-git-send-email-long.cheng@mediatek.com>
-X-Mailer: git-send-email 1.7.9.5
-In-Reply-To: <1544413665-1222-1-git-send-email-long.cheng@mediatek.com>
-References: <1544413665-1222-1-git-send-email-long.cheng@mediatek.com>
+        Mon, 10 Dec 2018 01:50:12 -0500
+Received: from pegase1.c-s.fr ([93.17.236.30]:56513 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726442AbeLJGuL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Dec 2018 01:50:11 -0500
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 43CtxF65dqz9v6LW;
+        Mon, 10 Dec 2018 07:50:09 +0100 (CET)
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id 7c8gn_KO7hqw; Mon, 10 Dec 2018 07:50:09 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 43CtxF5W2Vz9v6LV;
+        Mon, 10 Dec 2018 07:50:09 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 2DDF38B79A;
+        Mon, 10 Dec 2018 07:50:10 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id IcsyDM7uwaby; Mon, 10 Dec 2018 07:50:10 +0100 (CET)
+Received: from po14163vm.idsi0.si.c-s.fr (po15451.idsi0.si.c-s.fr [172.25.231.2])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 0A5828B74C;
+        Mon, 10 Dec 2018 07:50:10 +0100 (CET)
+Received: by po14163vm.idsi0.si.c-s.fr (Postfix, from userid 0)
+        id C8242716D9; Mon, 10 Dec 2018 06:50:09 +0000 (UTC)
+Message-Id: <a9c14a1ca37b82dbe015d259cd60d8aea9e7847a.1544336305.git.christophe.leroy@c-s.fr>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [PATCH v3] powerpc/uaccess: fix warning/error with access_ok()
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Date:   Mon, 10 Dec 2018 06:50:09 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-1. add uart APDMA controller device node
-2. add uart 0/1/2/3/4/5 DMA function
+With the following piece of code, the following compilation warning
+is encountered:
 
-Signed-off-by: Long Cheng <long.cheng@mediatek.com>
+	if (_IOC_DIR(ioc) != _IOC_NONE) {
+		int verify = _IOC_DIR(ioc) & _IOC_READ ? VERIFY_WRITE : VERIFY_READ;
+
+		if (!access_ok(verify, ioarg, _IOC_SIZE(ioc))) {
+
+drivers/platform/test/dev.c: In function 'my_ioctl':
+drivers/platform/test/dev.c:219:7: warning: unused variable 'verify' [-Wunused-variable]
+   int verify = _IOC_DIR(ioc) & _IOC_READ ? VERIFY_WRITE : VERIFY_READ;
+
+This patch fixes it by referencing 'type' in the macro allthough
+doing nothing with it.
+
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
 ---
- arch/arm64/boot/dts/mediatek/mt2712e.dtsi |   50 +++++++++++++++++++++++++++++
- 1 file changed, 50 insertions(+)
+ v3: not changing __access_ok() anymyre, only referencing type in access_ok()
 
-diff --git a/arch/arm64/boot/dts/mediatek/mt2712e.dtsi b/arch/arm64/boot/dts/mediatek/mt2712e.dtsi
-index 976d92a..a59728b 100644
---- a/arch/arm64/boot/dts/mediatek/mt2712e.dtsi
-+++ b/arch/arm64/boot/dts/mediatek/mt2712e.dtsi
-@@ -300,6 +300,9 @@
- 		interrupts = <GIC_SPI 127 IRQ_TYPE_LEVEL_LOW>;
- 		clocks = <&baud_clk>, <&sys_clk>;
- 		clock-names = "baud", "bus";
-+		dmas = <&apdma 10
-+			&apdma 11>;
-+		dma-names = "tx", "rx";
- 		status = "disabled";
- 	};
+ v2: fixed the three direct users of __access_ok()
+
+ arch/powerpc/include/asm/uaccess.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/powerpc/include/asm/uaccess.h b/arch/powerpc/include/asm/uaccess.h
+index 15bea9a0f260..ebc0b916dcf9 100644
+--- a/arch/powerpc/include/asm/uaccess.h
++++ b/arch/powerpc/include/asm/uaccess.h
+@@ -63,7 +63,7 @@ static inline int __access_ok(unsigned long addr, unsigned long size,
+ #endif
  
-@@ -378,6 +381,38 @@
- 		status = "disabled";
- 	};
+ #define access_ok(type, addr, size)		\
+-	(__chk_user_ptr(addr),			\
++	(__chk_user_ptr(addr), (void)(type),		\
+ 	 __access_ok((__force unsigned long)(addr), (size), get_fs()))
  
-+	apdma: dma-controller@11000400 {
-+		compatible = "mediatek,mt2712-uart-dma",
-+			     "mediatek,mt6577-uart-dma";
-+		reg = <0 0x11000400 0 0x80>,
-+		      <0 0x11000480 0 0x80>,
-+		      <0 0x11000500 0 0x80>,
-+		      <0 0x11000580 0 0x80>,
-+		      <0 0x11000600 0 0x80>,
-+		      <0 0x11000680 0 0x80>,
-+		      <0 0x11000700 0 0x80>,
-+		      <0 0x11000780 0 0x80>,
-+		      <0 0x11000800 0 0x80>,
-+		      <0 0x11000880 0 0x80>,
-+		      <0 0x11000900 0 0x80>,
-+		      <0 0x11000980 0 0x80>;
-+		interrupts = <GIC_SPI 103 IRQ_TYPE_LEVEL_LOW>,
-+			     <GIC_SPI 104 IRQ_TYPE_LEVEL_LOW>,
-+			     <GIC_SPI 105 IRQ_TYPE_LEVEL_LOW>,
-+			     <GIC_SPI 106 IRQ_TYPE_LEVEL_LOW>,
-+			     <GIC_SPI 107 IRQ_TYPE_LEVEL_LOW>,
-+			     <GIC_SPI 108 IRQ_TYPE_LEVEL_LOW>,
-+			     <GIC_SPI 109 IRQ_TYPE_LEVEL_LOW>,
-+			     <GIC_SPI 110 IRQ_TYPE_LEVEL_LOW>,
-+			     <GIC_SPI 111 IRQ_TYPE_LEVEL_LOW>,
-+			     <GIC_SPI 112 IRQ_TYPE_LEVEL_LOW>,
-+			     <GIC_SPI 113 IRQ_TYPE_LEVEL_LOW>,
-+			     <GIC_SPI 114 IRQ_TYPE_LEVEL_LOW>;
-+		clocks = <&pericfg CLK_PERI_AP_DMA>;
-+		clock-names = "apdma";
-+		#dma-cells = <1>;
-+	};
-+
- 	uart0: serial@11002000 {
- 		compatible = "mediatek,mt2712-uart",
- 			     "mediatek,mt6577-uart";
-@@ -385,6 +420,9 @@
- 		interrupts = <GIC_SPI 91 IRQ_TYPE_LEVEL_LOW>;
- 		clocks = <&baud_clk>, <&sys_clk>;
- 		clock-names = "baud", "bus";
-+		dmas = <&apdma 0
-+			&apdma 1>;
-+		dma-names = "tx", "rx";
- 		status = "disabled";
- 	};
- 
-@@ -395,6 +433,9 @@
- 		interrupts = <GIC_SPI 92 IRQ_TYPE_LEVEL_LOW>;
- 		clocks = <&baud_clk>, <&sys_clk>;
- 		clock-names = "baud", "bus";
-+		dmas = <&apdma 2
-+			&apdma 3>;
-+		dma-names = "tx", "rx";
- 		status = "disabled";
- 	};
- 
-@@ -405,6 +446,9 @@
- 		interrupts = <GIC_SPI 93 IRQ_TYPE_LEVEL_LOW>;
- 		clocks = <&baud_clk>, <&sys_clk>;
- 		clock-names = "baud", "bus";
-+		dmas = <&apdma 4
-+			&apdma 5>;
-+		dma-names = "tx", "rx";
- 		status = "disabled";
- 	};
- 
-@@ -415,6 +459,9 @@
- 		interrupts = <GIC_SPI 94 IRQ_TYPE_LEVEL_LOW>;
- 		clocks = <&baud_clk>, <&sys_clk>;
- 		clock-names = "baud", "bus";
-+		dmas = <&apdma 6
-+			&apdma 7>;
-+		dma-names = "tx", "rx";
- 		status = "disabled";
- 	};
- 
-@@ -629,6 +676,9 @@
- 		interrupts = <GIC_SPI 126 IRQ_TYPE_LEVEL_LOW>;
- 		clocks = <&baud_clk>, <&sys_clk>;
- 		clock-names = "baud", "bus";
-+		dmas = <&apdma 8
-+			&apdma 9>;
-+		dma-names = "tx", "rx";
- 		status = "disabled";
- 	};
- 
+ /*
 -- 
-1.7.9.5
+2.13.3
 
