@@ -2,169 +2,144 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21753C04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 09:06:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4300AC04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 09:06:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D9F6E2081F
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 09:06:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D9F6E2081F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 01AD72081F
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 09:06:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544432807;
+	bh=PxADLcgj8fnGACM5AT3LL43voCoIW5+Ztd1k7V7tr4Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=kSQr9TiOlRjd7sX60VrMiOxkHZzjDDANmdaLpSp5x4aXB2MHkedgt7HMSSYS9IJMw
+	 A+LA7fFKXsFfqO4lnPmPDC9ZRP0aRcZI1E9jTi4XMCvaJWeZiiDe7/JoF9MpfinGPN
+	 qZgDQMz5c3qcXWPPBGdAFNTmXFl27haMl6JiGRbU=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 01AD72081F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727008AbeLJJGK (ORCPT
+        id S1727019AbeLJJGp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 04:06:10 -0500
-Received: from foss.arm.com ([217.140.101.70]:49104 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726667AbeLJJGK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 04:06:10 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 77E481596;
-        Mon, 10 Dec 2018 01:06:09 -0800 (PST)
-Received: from localhost (e113682-lin.copenhagen.arm.com [10.32.144.41])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DCE733F575;
-        Mon, 10 Dec 2018 01:06:08 -0800 (PST)
-Date:   Mon, 10 Dec 2018 10:06:07 +0100
-From:   Christoffer Dall <christoffer.dall@arm.com>
-To:     Suzuki K Poulose <suzuki.poulose@arm.com>
-Cc:     Punit Agrawal <punit.agrawal@arm.com>,
-        kvmarm@lists.cs.columbia.edu, marc.zyngier@arm.com,
-        will.deacon@arm.com, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, punitagrawal@gmail.com,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>
-Subject: Re: [PATCH v9 5/8] KVM: arm64: Support PUD hugepage in
- stage2_is_exec()
-Message-ID: <20181210090607.GF30263@e113682-lin.lund.arm.com>
-References: <20181031175745.18650-1-punit.agrawal@arm.com>
- <20181031175745.18650-6-punit.agrawal@arm.com>
- <20181101133848.GL12057@e113682-lin.lund.arm.com>
- <5fddc14d-f6b6-bb97-5f5d-8e1e05e5da95@arm.com>
+        Mon, 10 Dec 2018 04:06:45 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:40794 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726841AbeLJJGp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Dec 2018 04:06:45 -0500
+Received: by mail-lj1-f196.google.com with SMTP id n18-v6so8874092lji.7;
+        Mon, 10 Dec 2018 01:06:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=OGi8y75XTtmgxAc6Cgl66CnLfTeNH7UtZegJNN7vxlM=;
+        b=WZjdPKyJ6/7K6c4ml/rgWDYgsH80SQz5Y2I+NKKQs8MRCWt03rdSnVpvhj7TjGQXTg
+         U7gu40VGfWuW1uqcc/okLys4qLanagGQ1Vap7k8B4hZxfC9msqUDRJoPqCr9uORKqUa5
+         cSk67nXhFzUlk6rdEK4nvhe0MsEuvT9aI/0+YjJqtnRCI5fSNo4lzkjgvsqbXfpAVzSE
+         6Fq+rV47jv4ziXw18LCE8mM4w3Gv0+GMhK5ajNlzr7fZcAwywyhYe2LJnsRZqCceD71W
+         a8YOYEcBjMOgMepeXp+A1WY1KYinkUZ4+++B8Kw+gk4aF+6Vm3yS26fjRqfjrDKEaCnz
+         lnPw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=OGi8y75XTtmgxAc6Cgl66CnLfTeNH7UtZegJNN7vxlM=;
+        b=uGFdyMWEabF5JS0BG1o/qN2ox7udcPoEGAo8ETwUCndCV5PjCo8/C+f4NE24m1W9fc
+         Pwkdy4Nk4C66ur7tDcsde+q8d1OlYUfEbkTL8yj/vRIidck2vqEygVrBQ0o3fbVishLA
+         bHMej4AEW4YfAm84S7JSr8rwu+7ra5HoUJM/ppVbonsZnNW6zQAPbqBZ/ph8o2QDc/o4
+         68ANCtgJXfcunHuO1rBpPcRxTliNcgSohW4vPjXQYdaKHmtXRJOMfLNplB2ExOpxS6wk
+         IG5+ghOuZmWHbmkXsHK7ySBOuV40RLlq3Bk+y3bA1B6pMykSYdCOLh49Yfd981FnAOgc
+         Q5Vw==
+X-Gm-Message-State: AA+aEWbc1ahB9a95mtneEFc4+joDV0Z0jloQLEliOX0uYLi+M6YYUnpK
+        z42einXXFiQdqNAnhpnXlcI=
+X-Google-Smtp-Source: AFSGD/W7k3absNqO2dB5ZmTSzJuT6Lu/FD+fQ6Xk1H4Kh55FDFnZZyeUCVLz425C4j+6DTMgTOE3tQ==
+X-Received: by 2002:a2e:9b84:: with SMTP id z4-v6mr6378184lji.93.1544432802336;
+        Mon, 10 Dec 2018 01:06:42 -0800 (PST)
+Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
+        by smtp.gmail.com with ESMTPSA id y11-v6sm2011859ljc.85.2018.12.10.01.06.41
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 10 Dec 2018 01:06:41 -0800 (PST)
+Received: from johan by xi.terra with local (Exim 4.91)
+        (envelope-from <johan@kernel.org>)
+        id 1gWHWk-0006Rd-1b; Mon, 10 Dec 2018 10:06:58 +0100
+Date:   Mon, 10 Dec 2018 10:06:58 +0100
+From:   Johan Hovold <johan@kernel.org>
+To:     Tore Anderson <tore@fud.no>
+Cc:     Johan Hovold <johan@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH] USB: serial: option: add HP lt4132
+Message-ID: <20181210090658.GC31358@localhost>
+References: <20181208180510.19235-1-tore@fud.no>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <5fddc14d-f6b6-bb97-5f5d-8e1e05e5da95@arm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20181208180510.19235-1-tore@fud.no>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 05, 2018 at 05:57:51PM +0000, Suzuki K Poulose wrote:
+On Sat, Dec 08, 2018 at 07:05:12PM +0100, Tore Anderson wrote:
+> The HP lt4132 is a rebranded Huawei ME906s-158 LTE modem.
 > 
-> 
-> On 01/11/2018 13:38, Christoffer Dall wrote:
-> >On Wed, Oct 31, 2018 at 05:57:42PM +0000, Punit Agrawal wrote:
-> >>In preparation for creating PUD hugepages at stage 2, add support for
-> >>detecting execute permissions on PUD page table entries. Faults due to
-> >>lack of execute permissions on page table entries is used to perform
-> >>i-cache invalidation on first execute.
-> >>
-> >>Provide trivial implementations of arm32 helpers to allow sharing of
-> >>code.
-> >>
-> >>Signed-off-by: Punit Agrawal <punit.agrawal@arm.com>
-> >>Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-> >>Cc: Christoffer Dall <christoffer.dall@arm.com>
-> >>Cc: Marc Zyngier <marc.zyngier@arm.com>
-> >>Cc: Russell King <linux@armlinux.org.uk>
-> >>Cc: Catalin Marinas <catalin.marinas@arm.com>
-> >>Cc: Will Deacon <will.deacon@arm.com>
-> >>---
-> >>  arch/arm/include/asm/kvm_mmu.h         |  6 +++
-> >>  arch/arm64/include/asm/kvm_mmu.h       |  5 +++
-> >>  arch/arm64/include/asm/pgtable-hwdef.h |  2 +
-> >>  virt/kvm/arm/mmu.c                     | 53 +++++++++++++++++++++++---
-> >>  4 files changed, 61 insertions(+), 5 deletions(-)
-> >>
-> >>diff --git a/arch/arm/include/asm/kvm_mmu.h b/arch/arm/include/asm/kvm_mmu.h
-> >>index 37bf85d39607..839a619873d3 100644
-> >>--- a/arch/arm/include/asm/kvm_mmu.h
-> >>+++ b/arch/arm/include/asm/kvm_mmu.h
-> >>@@ -102,6 +102,12 @@ static inline bool kvm_s2pud_readonly(pud_t *pud)
-> >>  	return false;
-> >>  }
-> >>+static inline bool kvm_s2pud_exec(pud_t *pud)
-> >>+{
-> >>+	BUG();
-> >
-> >nit: I think this should be WARN() now :)
-> >
-> >>+	return false;
-> >>+}
-> >>+
-> >>  static inline pte_t kvm_s2pte_mkwrite(pte_t pte)
-> >>  {
-> >>  	pte_val(pte) |= L_PTE_S2_RDWR;
-> >>diff --git a/arch/arm64/include/asm/kvm_mmu.h b/arch/arm64/include/asm/kvm_mmu.h
-> >>index 8da6d1b2a196..c755b37b3f92 100644
-> >>--- a/arch/arm64/include/asm/kvm_mmu.h
-> >>+++ b/arch/arm64/include/asm/kvm_mmu.h
-> >>@@ -261,6 +261,11 @@ static inline bool kvm_s2pud_readonly(pud_t *pudp)
-> >>  	return kvm_s2pte_readonly((pte_t *)pudp);
-> >>  }
-> >>+static inline bool kvm_s2pud_exec(pud_t *pudp)
-> >>+{
-> >>+	return !(READ_ONCE(pud_val(*pudp)) & PUD_S2_XN);
-> >>+}
-> >>+
-> >>  #define hyp_pte_table_empty(ptep) kvm_page_empty(ptep)
-> >>  #ifdef __PAGETABLE_PMD_FOLDED
-> >>diff --git a/arch/arm64/include/asm/pgtable-hwdef.h b/arch/arm64/include/asm/pgtable-hwdef.h
-> >>index 1d7d8da2ef9b..336e24cddc87 100644
-> >>--- a/arch/arm64/include/asm/pgtable-hwdef.h
-> >>+++ b/arch/arm64/include/asm/pgtable-hwdef.h
-> >>@@ -193,6 +193,8 @@
-> >>  #define PMD_S2_RDWR		(_AT(pmdval_t, 3) << 6)   /* HAP[2:1] */
-> >>  #define PMD_S2_XN		(_AT(pmdval_t, 2) << 53)  /* XN[1:0] */
-> >>+#define PUD_S2_XN		(_AT(pudval_t, 2) << 53)  /* XN[1:0] */
-> >>+
-> >>  /*
-> >>   * Memory Attribute override for Stage-2 (MemAttr[3:0])
-> >>   */
-> >>diff --git a/virt/kvm/arm/mmu.c b/virt/kvm/arm/mmu.c
-> >>index 1c669c3c1208..8e44dccd1b47 100644
-> >>--- a/virt/kvm/arm/mmu.c
-> >>+++ b/virt/kvm/arm/mmu.c
-> >>@@ -1083,23 +1083,66 @@ static int stage2_set_pmd_huge(struct kvm *kvm, struct kvm_mmu_memory_cache
-> >>  	return 0;
-> >>  }
-> >>-static bool stage2_is_exec(struct kvm *kvm, phys_addr_t addr)
-> >>+/*
-> >>+ * stage2_get_leaf_entry - walk the stage2 VM page tables and return
-> >>+ * true if a valid and present leaf-entry is found. A pointer to the
-> >>+ * leaf-entry is returned in the appropriate level variable - pudpp,
-> >>+ * pmdpp, ptepp.
-> >>+ */
-> >>+static bool stage2_get_leaf_entry(struct kvm *kvm, phys_addr_t addr,
-> >>+				  pud_t **pudpp, pmd_t **pmdpp, pte_t **ptepp)
-> >
-> >Do we need this type madness or could this just return a u64 pointer
-> >(NULL if nothing is found) and pass that to kvm_s2pte_exec (because we
-> >know it's the same bit we need to check regardless of the pgtable level
-> >on both arm and arm64)?
-> >
-> >Or do we consider that bad for some reason?
-> 
-> Practically, yes the bit positions are same and thus we should be able
-> to do this assuming that it is just a pte. When we get to independent stage2
-> pgtable implementation which treats all page table entries as a single type
-> with a level information, we should be able to get rid of these.
-> But since we have followed the Linux way of page-table manipulation where we
-> have "level" specific accessors. The other option is open code the walking
-> sequence from the pgd to the leaf entry everywhere.
-> 
-> I am fine with changing this code, if you like.
-> 
+> The interface with protocol 0x16 is "CDC ECM & NCM" according to the *.inf
+> files included with the Windows driver. Attaching the option driver to it
+> doesn't result in a /dev/ttyUSB* device being created, so I've excluded it.
+> Note that it is also excluded for corresponding Huawei-branded devices, cf.
+> commit d544db293a44a.
 
-Meh, it just looked a bit over-engineered to me when I originally looked
-at the patches, but you're right, they align with the rest of the
-implementation.
+> Signed-off-by: Tore Anderson <tore@fud.no>
+> Cc: stable@vger.kernel.org
+> ---
+>  drivers/usb/serial/option.c | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+> 
+> diff --git a/drivers/usb/serial/option.c b/drivers/usb/serial/option.c
+> index e24ff16d4147..1a6fa4726def 100644
+> --- a/drivers/usb/serial/option.c
+> +++ b/drivers/usb/serial/option.c
+> @@ -552,6 +552,10 @@ static void option_instat_callback(struct urb *urb);
+>  #define WETELECOM_PRODUCT_6802			0x6802
+>  #define WETELECOM_PRODUCT_WMD300		0x6803
+>  
+> +/* HP products */
+> +#define HP_VENDOR_ID				0x03f0
+> +#define HP_PRODUCT_LT4132			0xa31d /* Huawei ME906s-158 */
+> +
+>  
+>  /* Device flags */
+>  
+> @@ -1941,6 +1945,11 @@ static const struct usb_device_id option_ids[] = {
+>  	{ USB_DEVICE_AND_INTERFACE_INFO(WETELECOM_VENDOR_ID, WETELECOM_PRODUCT_6802, 0xff, 0xff, 0xff) },
+>  	{ USB_DEVICE_AND_INTERFACE_INFO(WETELECOM_VENDOR_ID, WETELECOM_PRODUCT_WMD300, 0xff, 0xff, 0xff) },
+>  	{ USB_DEVICE_AND_INTERFACE_INFO(0x03f0, 0x421d, 0xff, 0xff, 0xff) }, /* HP lt2523 (Novatel E371) */
+> +	{ USB_DEVICE_AND_INTERFACE_INFO(HP_VENDOR_ID, HP_PRODUCT_LT4132, 0xff, 0x06, 0x10) },
+> +	{ USB_DEVICE_AND_INTERFACE_INFO(HP_VENDOR_ID, HP_PRODUCT_LT4132, 0xff, 0x06, 0x12) },
+> +	{ USB_DEVICE_AND_INTERFACE_INFO(HP_VENDOR_ID, HP_PRODUCT_LT4132, 0xff, 0x06, 0x13) },
+> +	{ USB_DEVICE_AND_INTERFACE_INFO(HP_VENDOR_ID, HP_PRODUCT_LT4132, 0xff, 0x06, 0x14) },
+> +	{ USB_DEVICE_AND_INTERFACE_INFO(HP_VENDOR_ID, HP_PRODUCT_LT4132, 0xff, 0x06, 0x1b) },
+
+I replaced the defines with numerical constants as we're trying to move
+away from using the former (and also for consistency with the current HP
+entry just above):
+
+-       { USB_DEVICE_AND_INTERFACE_INFO(0x03f0, 0x421d, 0xff, 0xff, 0xff) }, /* HP lt2523 (Novatel E371) */
++       { USB_DEVICE_AND_INTERFACE_INFO(0x03f0, 0x421d, 0xff, 0xff, 0xff) },    /* HP lt2523 (Novatel E371) */
++       { USB_DEVICE_AND_INTERFACE_INFO(0x03f0, 0xa31d, 0xff, 0x06, 0x10) },    /* HP lt4132 (Huawei ME906s-158) */
++       { USB_DEVICE_AND_INTERFACE_INFO(0x03f0, 0xa31d, 0xff, 0x06, 0x12) },
++       { USB_DEVICE_AND_INTERFACE_INFO(0x03f0, 0xa31d, 0xff, 0x06, 0x13) },
++       { USB_DEVICE_AND_INTERFACE_INFO(0x03f0, 0xa31d, 0xff, 0x06, 0x14) },
++       { USB_DEVICE_AND_INTERFACE_INFO(0x03f0, 0xa31d, 0xff, 0x06, 0x1b) },
+
+Now applied.
 
 Thanks,
-
-    Christoffer
+Johan
