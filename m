@@ -6,29 +6,29 @@ X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E801C5CFFE
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 21:24:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B81BFC5CFFE
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 21:25:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A5E220821
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 21:24:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A5E220821
+	by mail.kernel.org (Postfix) with ESMTP id 80E2E20821
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 21:25:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 80E2E20821
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728959AbeLJVYt (ORCPT
+        id S1729074AbeLJVZD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 16:24:49 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:34422 "EHLO
+        Mon, 10 Dec 2018 16:25:03 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:34430 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727665AbeLJVYs (ORCPT
+        with ESMTP id S1727665AbeLJVZC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 16:24:48 -0500
+        Mon, 10 Dec 2018 16:25:02 -0500
 Received: from p4fea4820.dip0.t-ipconnect.de ([79.234.72.32] helo=nanos)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tglx@linutronix.de>)
-        id 1gWT2j-0004aN-80; Mon, 10 Dec 2018 22:24:45 +0100
-Date:   Mon, 10 Dec 2018 22:24:44 +0100 (CET)
+        id 1gWT2y-0004bV-DR; Mon, 10 Dec 2018 22:25:00 +0100
+Date:   Mon, 10 Dec 2018 22:24:59 +0100 (CET)
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     Vitaly Kuznetsov <vkuznets@redhat.com>
 cc:     kvm@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
@@ -39,11 +39,11 @@ cc:     kvm@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
         Stephen Hemminger <sthemmin@microsoft.com>, x86@kernel.org,
         "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
         Eduardo Habkost <ehabkost@redhat.com>
-Subject: Re: [PATCH v2 1/7] x86/hyper-v: Do some housekeeping in
- hyperv-tlfs.h
-In-Reply-To: <20181210172159.410-2-vkuznets@redhat.com>
-Message-ID: <alpine.DEB.2.21.1812102224320.1667@nanos.tec.linutronix.de>
-References: <20181210172159.410-1-vkuznets@redhat.com> <20181210172159.410-2-vkuznets@redhat.com>
+Subject: Re: [PATCH v2 2/7] x86/hyper-v: Drop HV_X64_CONFIGURE_PROFILER
+ definition
+In-Reply-To: <20181210172159.410-3-vkuznets@redhat.com>
+Message-ID: <alpine.DEB.2.21.1812102224480.1667@nanos.tec.linutronix.de>
+References: <20181210172159.410-1-vkuznets@redhat.com> <20181210172159.410-3-vkuznets@redhat.com>
 User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -57,12 +57,9 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 On Mon, 10 Dec 2018, Vitaly Kuznetsov wrote:
 
-> hyperv-tlfs.h is a bit messy: CPUID feature bits are not always sorted,
-> it's hard to get which CPUID they belong to, some items are duplicated
-> (e.g. HV_X64_MSR_CRASH_CTL_NOTIFY/HV_CRASH_CTL_CRASH_NOTIFY).
-> 
-> Do some housekeeping work. While on it, replace all (1 << X) with BIT(X)
-> macro.
+> BIT(13) in HYPERV_CPUID_FEATURES.EBX is described as "ConfigureProfiler" in
+> TLFS v4.0 but starting 5.0 it is replaced with 'Reserved'. As we don't
+> currently us it in kernel it can just be dropped.
 > 
 > Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
 > Reviewed-by: Michael Kelley <mikelley@microsoft.com>
