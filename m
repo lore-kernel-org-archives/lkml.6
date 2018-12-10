@@ -2,78 +2,112 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A602C04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 11:26:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F08DC04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 11:27:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 18A1E20870
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 11:26:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 18A1E20870
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id D7DA420880
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 11:27:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D7DA420880
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727450AbeLJL0u (ORCPT
+        id S1727467AbeLJL1K (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 06:26:50 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:36840 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726847AbeLJL0u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 06:26:50 -0500
-Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 0CFA48DC86A89;
-        Mon, 10 Dec 2018 19:26:46 +0800 (CST)
-Received: from localhost (10.177.31.96) by DGGEMS402-HUB.china.huawei.com
- (10.3.19.202) with Microsoft SMTP Server id 14.3.408.0; Mon, 10 Dec 2018
- 19:26:38 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <davem@davemloft.net>, <pabeni@redhat.com>, <idosch@mellanox.com>,
-        <ktkhai@virtuozzo.com>, <lucien.xin@gmail.com>,
-        <petrm@mellanox.com>
-CC:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-        YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH net-next] ipvlan: Remove a useless comparison
-Date:   Mon, 10 Dec 2018 19:25:38 +0800
-Message-ID: <20181210112538.16324-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
+        Mon, 10 Dec 2018 06:27:10 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:57741 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726847AbeLJL1K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Dec 2018 06:27:10 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 93AAA20CE3; Mon, 10 Dec 2018 12:27:07 +0100 (CET)
+Received: from bbrezillon (unknown [91.160.177.164])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 373E420711;
+        Mon, 10 Dec 2018 12:27:07 +0100 (CET)
+Date:   Mon, 10 Dec 2018 12:27:07 +0100
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>
+Cc:     "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        "broonie@kernel.org" <broonie@kernel.org>,
+        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
+        "vigneshr@ti.com" <vigneshr@ti.com>,
+        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "robh@kernel.org" <robh@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
+        "frieder.schrempf@exceet.de" <frieder.schrempf@exceet.de>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v5 3/7] mtd: spi-nor: add opcodes for octal Read/Write
+ commands
+Message-ID: <20181210122707.3416095c@bbrezillon>
+In-Reply-To: <VI1PR04MB5726164D7E52B013FF2F135B99A50@VI1PR04MB5726.eurprd04.prod.outlook.com>
+References: <1543826226-30898-1-git-send-email-yogeshnarayan.gaur@nxp.com>
+        <1543826226-30898-4-git-send-email-yogeshnarayan.gaur@nxp.com>
+        <20181210115717.01ad2e60@bbrezillon>
+        <VI1PR04MB5726164D7E52B013FF2F135B99A50@VI1PR04MB5726.eurprd04.prod.outlook.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.177.31.96]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix following gcc warning:
+On Mon, 10 Dec 2018 11:17:20 +0000
+Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com> wrote:
 
-drivers/net/ipvlan/ipvlan_main.c:543:12: warning:
- comparison is always false due to limited range of data type [-Wtype-limits]
+> Hi Boris,
+> 
+> > -----Original Message-----
+> > From: Boris Brezillon [mailto:boris.brezillon@bootlin.com]
+> > Sent: Monday, December 10, 2018 4:27 PM
+> > To: Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>
+> > Cc: linux-mtd@lists.infradead.org; broonie@kernel.org;
+> > marek.vasut@gmail.com; vigneshr@ti.com; linux-spi@vger.kernel.org;
+> > devicetree@vger.kernel.org; robh@kernel.org; mark.rutland@arm.com;
+> > shawnguo@kernel.org; linux-arm-kernel@lists.infradead.org;
+> > computersforpeace@gmail.com; frieder.schrempf@exceet.de; linux-
+> > kernel@vger.kernel.org
+> > Subject: Re: [PATCH v5 3/7] mtd: spi-nor: add opcodes for octal Read/Write
+> > commands
+> > 
+> > On Mon, 3 Dec 2018 08:39:18 +0000
+> > Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com> wrote:
+> >   
+> > > - Add opcodes for octal I/O commands
+> > >   * Read  : 1-1-8 and 1-8-8 protocol
+> > >   * Write : 1-1-8 and 1-8-8 protocol
+> > >   * opcodes for 4-byte address mode command
+> > >
+> > > - Entry of macros in _convert_3to4_xxx function
+> > >
+> > > - Add flag specifying flash support octal read commands.
+> > >
+> > > Signed-off-by: Vignesh R <vigneshr@ti.com>
+> > > Signed-off-by: Yogesh Gaur <yogeshnarayan.gaur@nxp.com>  
+> > 
+> > Looks like the SoB and Author lines do not match
+> > 
+> > Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com> vs Yogesh Gaur
+> > <yogeshnarayan.gaur@nxp.com>
+> > 
+> > Can you find a way to make them match?  
+> I am sending the patches with my smtp server of OutlookOffice and in that my user name is "Yogesh Narayan Gaur" and in gitconfig of my Linux machine I set user name as "Yogesh Gaur".
+> Is it mandatory to have same Author name in SoB and Author lines, if yes I would change the settings in gitconfig file.
 
-'mode' is a u16 variable, IPVLAN_MODE_L2 is zero,
-the comparison is always false
+We have scripts that check that the author/committer has its SoB,
+depending on how strict the check is, it might complaint that SoB an
+author/committer do not match, so yes, please change gitconfig to make
+them match.
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/net/ipvlan/ipvlan_main.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thanks,
 
-diff --git a/drivers/net/ipvlan/ipvlan_main.c b/drivers/net/ipvlan/ipvlan_main.c
-index 4a94956..162a337 100644
---- a/drivers/net/ipvlan/ipvlan_main.c
-+++ b/drivers/net/ipvlan/ipvlan_main.c
-@@ -535,7 +535,7 @@ static int ipvlan_nl_validate(struct nlattr *tb[], struct nlattr *data[],
- 	if (data[IFLA_IPVLAN_MODE]) {
- 		u16 mode = nla_get_u16(data[IFLA_IPVLAN_MODE]);
- 
--		if (mode < IPVLAN_MODE_L2 || mode >= IPVLAN_MODE_MAX)
-+		if (mode >= IPVLAN_MODE_MAX)
- 			return -EINVAL;
- 	}
- 	if (data[IFLA_IPVLAN_FLAGS]) {
--- 
-2.7.0
-
-
+Boris
