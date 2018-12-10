@@ -2,164 +2,146 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
-	DKIM_INVALID,DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09DA7C04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 23:12:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2690EC5CFFE
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 23:12:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA59320821
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 23:12:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QsepZqgD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA59320821
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id E69B120821
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 23:12:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E69B120821
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joshtriplett.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730000AbeLJXMT (ORCPT
+        id S1730042AbeLJXM3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 18:12:19 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:34934 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726841AbeLJXMS (ORCPT
+        Mon, 10 Dec 2018 18:12:29 -0500
+Received: from relay4-d.mail.gandi.net ([217.70.183.196]:41575 "EHLO
+        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726841AbeLJXM3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 18:12:18 -0500
-Received: by mail-lj1-f195.google.com with SMTP id x85-v6so11269482ljb.2;
-        Mon, 10 Dec 2018 15:12:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=HUkVQVVj/jbRWJc36SBKKWUFDbhEi+Pzqwit5TLxls0=;
-        b=QsepZqgDnVPDyULumJO53KHW0MfKDyySgxvy7rqejng1kZBQmOwgZLNfg+t3mOa+ha
-         GmSe6LoQmiuywFjnLSv83mI5RQXIZ6spuQTkcE45UfgH39ZsWK6v/qBdkNKO0mwUYi+z
-         60UOK3DuHLIpxzSeq8rl/Lr61Et4/GP6B+StLEbEoTIPP80uCGDWlLCdH2S8BzuRLq7l
-         MDA/DLbZ0c1jPuYWQNqOR1qBW6oxkw1g5In7StrTqX+CYLVRKkfzTm07d1JkRj47WS1g
-         xUHI3JlR2VjxLJAcWkHbjTi+TPfhFV6fFxOSHtQsbf4eoiTkFPQHt+MS0a8yz2ZkE7uW
-         lmKw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=HUkVQVVj/jbRWJc36SBKKWUFDbhEi+Pzqwit5TLxls0=;
-        b=fM+wSiwcCiSw/YG/ryKwkmqvnIBC7MD/qkJhnn2+D9ERCuvSrnrUD52mAM8YLm3KvM
-         amf/c6RgCYHH97wvY+brloAUo8dHeRIELuIN+gin5+7zLHccHxg1MDk+vWInZlwEzvKj
-         PpSgLe6NI+IHN+cuHZjHmxGXOjbLkWLDvqLgkgz8jwPLYDG//sHQzJgr+i6pr9vdjqpX
-         oEwzFSA77N3qBIe+2EXFvXkfV29fqqbADii3erjvHUp1c17m502B5rxpguZ7LkeJwQrr
-         K2JQAojiVXSEdhi4dyPdOL5hl7nc8ZfcW0DNsgHY46I3YfYGC2UAacs9kSt4cvKYkABc
-         RjCg==
-X-Gm-Message-State: AA+aEWYAvdMhQOMBMDGghj7dQ8C8ugnLvVitw3FPIlk76MZPWK+VGQHC
-        kYr44AXdOnYradm5JDK3Hjlvxf4jCmytiQ==
-X-Google-Smtp-Source: AFSGD/VZj4vEWr7VAYzO7aGRhTTmCUwtmGMnb3Vf89i/lbcNyM0gFxNRIn2r967RPM2vH/i+rUq+Wg==
-X-Received: by 2002:a2e:a202:: with SMTP id h2-v6mr8217629ljm.72.1544483536719;
-        Mon, 10 Dec 2018 15:12:16 -0800 (PST)
-Received: from localhost.localdomain (broadband-77-37-232-150.ip.moscow.rt.ru. [77.37.232.150])
-        by smtp.gmail.com with ESMTPSA id s24sm2286193lfc.30.2018.12.10.15.12.15
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 10 Dec 2018 15:12:15 -0800 (PST)
-From:   Darya Litvintseva <litv.daria@gmail.com>
-Cc:     alex.mikhalevich@gmail.com, litv.daria@gmail.com,
+        Mon, 10 Dec 2018 18:12:29 -0500
+X-Originating-IP: 134.134.139.72
+Received: from localhost (jfdmzpr03-ext.jf.intel.com [134.134.139.72])
+        (Authenticated sender: josh@joshtriplett.org)
+        by relay4-d.mail.gandi.net (Postfix) with ESMTPSA id 8E241E0002;
+        Mon, 10 Dec 2018 23:12:05 +0000 (UTC)
+Date:   Mon, 10 Dec 2018 15:12:00 -0800
+From:   Josh Triplett <josh@joshtriplett.org>
+To:     Pavel Machek <pavel@ucw.cz>
+Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, x86@kernel.org,
+        platform-driver-x86@vger.kernel.org, dave.hansen@intel.com,
+        sean.j.christopherson@intel.com, nhorman@redhat.com,
+        npmccallum@redhat.com, Alexei Starovoitov <ast@kernel.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Borislav Petkov <bp@suse.de>,
         "David S. Miller" <davem@davemloft.net>,
-        Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] net: fix braces and comments codestyle
-Date:   Tue, 11 Dec 2018 02:11:39 +0300
-Message-Id: <20181210231140.5280-1-litv.daria@gmail.com>
-X-Mailer: git-send-email 2.19.1
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@kernel.org>,
+        "open list:INTEL SGX" <intel-sgx-kernel-dev@lists.01.org>,
+        Janakarajan Natarajan <Janakarajan.Natarajan@amd.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        "open list:KERNEL VIRTUAL MACHINE FOR X86 (KVM/x86)" 
+        <kvm@vger.kernel.org>, Len Brown <len.brown@intel.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        "open list:CRYPTO API" <linux-crypto@vger.kernel.org>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:SPARSE CHECKER" <linux-sparse@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Vikas Shivappa <vikas.shivappa@linux.intel.com>
+Subject: Re: [PATCH v11 00/13] Intel SGX1 support
+Message-ID: <20181210231159.GA10718@localhost>
+References: <20180608171216.26521-1-jarkko.sakkinen@linux.intel.com>
+ <20180612105011.GA26931@amd>
+ <20180619145943.GC8034@linux.intel.com>
+ <20180619200414.GA3143@amd>
+ <20180619214833.GA5873@localhost>
+ <20181209200600.GA11608@amd>
+ <20181210074717.GA9880@localhost>
+ <20181210082704.GA14594@amd>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To:     unlisted-recipients:; (no To-header on input)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181210082704.GA14594@amd>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Signed-off-by: Darya Litvintseva <litv.daria@gmail.com>
----
- net/ethernet/eth.c | 23 ++++++++---------------
- 1 file changed, 8 insertions(+), 15 deletions(-)
+On Mon, Dec 10, 2018 at 09:27:04AM +0100, Pavel Machek wrote:
+> On Sun 2018-12-09 23:47:17, Josh Triplett wrote:
+> > On Sun, Dec 09, 2018 at 09:06:00PM +0100, Pavel Machek wrote:
+> > ...
+> > > > > > The default permissions for the device are 600.
+> > > > > 
+> > > > > Good. This does not belong to non-root.
+> > > > 
+> > > > There are entirely legitimate use cases for using this as an
+> > > > unprivileged user. However, that'll be up to system and distribution
+> > > > policy, which can evolve over time, and it makes sense for the *initial*
+> > > > kernel permission to start out root-only and then adjust permissions via
+> > > > udev.
+> > > 
+> > > Agreed.
+> > > 
+> > > > Building a software certificate store. Hardening key-agent software like
+> > > > ssh-agent or gpg-agent. Building a challenge-response authentication
+> > > > system. Providing more assurance that your server infrastructure is
+> > > > uncompromised. Offloading computation to a system without having to
+> > > > fully trust that system.
+> > > 
+> > > I think you can do the crypto stuff... as crypto already verifies the
+> > > results. But I don't think you can do the computation offload.
+> > 
+> > You can, as long as you can do attestation.
+> 
+> You can not, because random errors are very easy to trigger for person
+> with physical access,
 
-diff --git a/net/ethernet/eth.c b/net/ethernet/eth.c
-index fd8faa0dfa61..3b430e245d58 100644
---- a/net/ethernet/eth.c
-+++ b/net/ethernet/eth.c
-@@ -90,9 +90,7 @@ int eth_header(struct sk_buff *skb, struct net_device *dev,
- 	else
- 		eth->h_proto = htons(len);
- 
--	/*
--	 *      Set the source hardware address.
--	 */
-+	/* Set the source hardware address.*/
- 
- 	if (!saddr)
- 		saddr = dev->dev_addr;
-@@ -103,9 +101,7 @@ int eth_header(struct sk_buff *skb, struct net_device *dev,
- 		return ETH_HLEN;
- 	}
- 
--	/*
--	 *      Anyway, the loopback-device should never use this function...
--	 */
-+	/* Anyway, the loopback-device should never use this function... */
- 
- 	if (dev->flags & (IFF_LOOPBACK | IFF_NOARP)) {
- 		eth_zero_addr(eth->h_dest);
-@@ -170,13 +166,11 @@ __be16 eth_type_trans(struct sk_buff *skb, struct net_device *dev)
- 			skb->pkt_type = PACKET_BROADCAST;
- 		else
- 			skb->pkt_type = PACKET_MULTICAST;
--	}
--	else if (unlikely(!ether_addr_equal_64bits(eth->h_dest,
-+	} else if (unlikely(!ether_addr_equal_64bits(eth->h_dest,
- 						   dev->dev_addr)))
- 		skb->pkt_type = PACKET_OTHERHOST;
- 
--	/*
--	 * Some variants of DSA tagging don't have an ethertype field
-+	/* Some variants of DSA tagging don't have an ethertype field
- 	 * at all, so we check here whether one of those tagging
- 	 * variants has been configured on the receiving interface,
- 	 * and if so, set skb->protocol without looking at the packet.
-@@ -187,8 +181,7 @@ __be16 eth_type_trans(struct sk_buff *skb, struct net_device *dev)
- 	if (likely(eth_proto_is_802_3(eth->h_proto)))
- 		return eth->h_proto;
- 
--	/*
--	 *      This is a magic hack to spot IPX packets. Older Novell breaks
-+	/*      This is a magic hack to spot IPX packets. Older Novell breaks
- 	 *      the protocol design and runs IPX over 802.3 without an 802.2 LLC
- 	 *      layer. We look for FFFF which isn't a used 802.2 SSAP/DSAP. This
- 	 *      won't work for fault tolerant netware but does for the rest.
-@@ -197,8 +190,7 @@ __be16 eth_type_trans(struct sk_buff *skb, struct net_device *dev)
- 	if (sap && *sap == 0xFFFF)
- 		return htons(ETH_P_802_3);
- 
--	/*
--	 *      Real 802.2 LLC
-+	/* Real 802.2 LLC
- 	 */
- 	return htons(ETH_P_802_2);
- }
-@@ -212,6 +204,7 @@ EXPORT_SYMBOL(eth_type_trans);
- int eth_header_parse(const struct sk_buff *skb, unsigned char *haddr)
- {
- 	const struct ethhdr *eth = eth_hdr(skb);
-+
- 	memcpy(haddr, eth->h_source, ETH_ALEN);
- 	return ETH_ALEN;
- }
-@@ -355,7 +348,7 @@ void ether_setup(struct net_device *dev)
- {
- 	dev->header_ops		= &eth_header_ops;
- 	dev->type		= ARPHRD_ETHER;
--	dev->hard_header_len 	= ETH_HLEN;
-+	dev->hard_header_len	= ETH_HLEN;
- 	dev->min_header_len	= ETH_HLEN;
- 	dev->mtu		= ETH_DATA_LEN;
- 	dev->min_mtu		= ETH_MIN_MTU;
--- 
-2.19.1
+Random errors can also just happen, so if you're concerned about that
+you might want to build each object on two different machines and
+compare. Good luck generating the *same* random errors on two machines.
 
+(And, of course, someone can also DoS you in any number of other ways,
+such as accepting data and then never sending back a result. So you'll
+need timeouts and failovers.)
+
+> > > > As one of many possibilities, imagine a distcc that didn't have to trust
+> > > > the compile nodes. The compile nodes could fail to return results at
+> > > > all, but they couldn't alter the results.
+> > > 
+> > > distcc on untrusted nodes ... oh yes, that would be great.
+> > > 
+> > > Except that you can't do it, right? :-).
+> > > 
+> > > First, AFAICT it would be quite hard to get gcc to run under SGX. But
+> > > maybe you have spare month or three and can do it.
+> > 
+> > Assuming you don't need to #include files, gcc seems quite simple to run
+> > in an enclave: data in, computation inside, data out.
+> 
+> So is there a plan to run dynamically linked binaries inside enclave?
+
+I've seen some approaches for that, but you could also just statically
+link your compiler. (Since you'd need attestation for all the individual
+libraries, you'd need to know the versions of all those libraries, so
+you might as well just statically link.)
+
+> Or maybe even python/shell scripts? It looked to me like virtual
+> memory will be "interesting" for enclaves.
+
+Memory management doesn't seem that hard to deal with.
