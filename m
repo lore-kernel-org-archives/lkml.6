@@ -2,86 +2,124 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9CE1C04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 18:17:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59148C5CFFE
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 18:19:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C1862084C
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 18:17:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C1862084C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id 235B42081F
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 18:19:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544465972;
+	bh=kfiG3E+Ret1IPfA6Go5d4DjWNjhNqN6msivj2nxfM7E=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=HY/sH/LYFbFZ3lLe9aa7GgHxKfEG53fq5ljTJWGy9wG6Z0gsFILPnPj1/bXgELkrP
+	 BummNLJ5Qptx8pv/5YB88KabQXJmWWtAnFH46RhtL4KKj4dLrnRGpIZ5TJnTkwImnH
+	 /quqqOyTDzKIjli1bWBtv6h1i46lx1NIGAB6W+nU=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 235B42081F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728375AbeLJSRd (ORCPT
+        id S1728515AbeLJSTb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 13:17:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37196 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726699AbeLJSRd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 13:17:33 -0500
-Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7C87720672;
-        Mon, 10 Dec 2018 18:17:31 +0000 (UTC)
-Date:   Mon, 10 Dec 2018 13:17:29 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Feng Tang <feng.tang@intel.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Kees Cook <keescook@chromium.org>,
-        Borislav Petkov <bp@suse.de>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Petr Mladek <pmladek@suse.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Sasha Levin <sashal@kernel.org>, stable@kernel.org
-Subject: Re: [PATCH v4] panic: Avoid the extra noise dmesg
-Message-ID: <20181210131729.04b8e0d3@gandalf.local.home>
-In-Reply-To: <1544176279-77828-1-git-send-email-feng.tang@intel.com>
-References: <1544176279-77828-1-git-send-email-feng.tang@intel.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Mon, 10 Dec 2018 13:19:31 -0500
+Received: from mx2.suse.de ([195.135.220.15]:37126 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726699AbeLJSTa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Dec 2018 13:19:30 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 719EFAD6B;
+        Mon, 10 Dec 2018 18:19:28 +0000 (UTC)
+Date:   Mon, 10 Dec 2018 19:19:26 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Zaslonko Mikhail <zaslonko@linux.ibm.com>
+Cc:     Mikhail Zaslonko <zaslonko@linux.ibm.com>,
+        akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, Pavel.Tatashin@microsoft.com,
+        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
+        gerald.schaefer@de.ibm.com
+Subject: Re: [PATCH 1/1] mm, memory_hotplug: Initialize struct pages for the
+ full memory section
+Message-ID: <20181210162410.GT1286@dhcp22.suse.cz>
+References: <20181210130712.30148-1-zaslonko@linux.ibm.com>
+ <20181210130712.30148-2-zaslonko@linux.ibm.com>
+ <20181210132451.GO1286@dhcp22.suse.cz>
+ <bcf681ea-7944-0a16-fbd4-c79ab176e638@linux.bm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <bcf681ea-7944-0a16-fbd4-c79ab176e638@linux.bm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri,  7 Dec 2018 17:51:19 +0800
-Feng Tang <feng.tang@intel.com> wrote:
+On Mon 10-12-18 16:45:37, Zaslonko Mikhail wrote:
+> Hello,
+> 
+> On 10.12.2018 14:24, Michal Hocko wrote:
+[...]
+> > Why do we need to restrict this to the highest zone? In other words, why
+> > cannot we do what I was suggesting earlier [1]. What does prevent other
+> > zones to have an incomplete section boundary?
+> 
+> Well, as you were also suggesting earlier: 'If we do not have a zone which
+> spans the rest of the section'. I'm not sure how else we should verify that.
 
-> When kernel panic happens, it will first print the panic call stack,
-> then the ending msg like:
-> 
-> [   35.743249] ---[ end Kernel panic - not syncing: Fatal exception
-> [   35.749975] ------------[ cut here ]------------
-> 
-> The above message are very useful for debugging.
-> 
-> But if system is configured to not reboot on panic, say the "panic_timeout"
-> parameter equals 0, it will likely print out many noisy message like
-> WARN() call stack for each and every CPU except the panic one, messages
-> like below:
+I am not sure I follow here. Why cannot we simply drop end_pfn check and
+keep the rest?
 
+> Moreover, I was able to recreate the problem only with the highest zone
+> (memory end is not on the section boundary).
 
-> Keeping the interrupt disabled will avoid the noisy message.
-> 
-> When code runs to this point, it means user has chosed to not reboot, or
-> do any special handling by using the panic notifier method, the only reason
-> to enable the interrupt may be sysrq migic key and panic_blink function
-> (though may not work even with irq enabled). 
-> 
-> So make the irq disabled by default and add a cmdline parameter
-> "panic_keep_irq_on" to turn it on when needed.
-> 
-> Signed-off-by: Feng Tang <feng.tang@intel.com>
->
+What exactly prevents exactmap memmap to generate these unfinished zones?
 
-Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+> > [1] http://lkml.kernel.org/r/20181105183533.GQ4361@dhcp22.suse.cz
+> > 
+> >> Signed-off-by: Mikhail Zaslonko <zaslonko@linux.ibm.com>
+> >> Reviewed-by: Gerald Schaefer <gerald.schaefer@de.ibm.com>
+> >> Cc: <stable@vger.kernel.org>
+> >> ---
+> >>  mm/page_alloc.c | 15 +++++++++++++++
+> >>  1 file changed, 15 insertions(+)
+> >>
+> >> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+> >> index 2ec9cc407216..41ef5508e5f1 100644
+> >> --- a/mm/page_alloc.c
+> >> +++ b/mm/page_alloc.c
+> >> @@ -5542,6 +5542,21 @@ void __meminit memmap_init_zone(unsigned long size, int nid, unsigned long zone,
+> >>  			cond_resched();
+> >>  		}
+> >>  	}
+> >> +#ifdef CONFIG_SPARSEMEM
+> >> +	/*
+> >> +	 * If there is no zone spanning the rest of the section
+> >> +	 * then we should at least initialize those pages. Otherwise we
+> >> +	 * could blow up on a poisoned page in some paths which depend
+> >> +	 * on full sections being initialized (e.g. memory hotplug).
+> >> +	 */
+> >> +	if (end_pfn == max_pfn) {
+> >> +		while (end_pfn % PAGES_PER_SECTION) {
+> >> +			__init_single_page(pfn_to_page(end_pfn), end_pfn, zone,
+> >> +					   nid);
+> >> +			end_pfn++;
+> >> +		}
+> >> +	}
+> >> +#endif
+> >>  }
+> >>  
+> >>  #ifdef CONFIG_ZONE_DEVICE
+> >> -- 
+> >> 2.16.4
+> > 
+> 
+> Thanks,
+> Mikhail Zaslonko
 
--- Steve
+-- 
+Michal Hocko
+SUSE Labs
