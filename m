@@ -2,122 +2,132 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F32DBC04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 09:05:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F317EC04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 09:05:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA1C720855
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 09:05:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B8D2F2086E
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 09:05:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="jt1J7aQy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA1C720855
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="lWE35Nc7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B8D2F2086E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726950AbeLJJFL (ORCPT
+        id S1726980AbeLJJF1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 04:05:11 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:37768 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726667AbeLJJFK (ORCPT
+        Mon, 10 Dec 2018 04:05:27 -0500
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:40868 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726888AbeLJJF0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 04:05:10 -0500
-Received: by mail-wm1-f68.google.com with SMTP id g67so10274239wmd.2
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Dec 2018 01:05:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=acAAxuC8xw1vTrdEMgWFf+3ymowNGDjPcrhaXEGaw/k=;
-        b=jt1J7aQyGQlJI3EAKqTBItpaPYQr688BavuyAc1+va5mHIYQwqWazQN6De0z89j3+s
-         yVGuuXZF791gkZG9rMGo966zlZF0sy25P5URvAf5V77O9lTV+tdH20U45zoEC5pJ7db/
-         mML7K3qJ9sw4qMK+09+oOp6k5MQM3RK2hPfp0qVGbkBFVY80aX8iK62ccYm9M8ANtXsV
-         5AOstZOIeVtqw9MQuZp7yOGIOMrmgFCCbdrVHgfdbKhAAhJLzb8H59xh5iaVYw5k5rpG
-         8JFSSP+pdhT8FK2l1c99UeyY9yrTXmf7TmWSyCwd3U03ZmPcoIu7fyZZSMDcn2p5otP+
-         TMlA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=acAAxuC8xw1vTrdEMgWFf+3ymowNGDjPcrhaXEGaw/k=;
-        b=KhjEXFMVvTLG6IOch4yoMX8k+dA7Jf5icPkWL2g6/xpZ8TKrdds1wENGqe9pOz7ckz
-         nP12u1zzE+jq6xVzS356aZjF/4H3DzG7ob4fFReZWPkcq1S2belRsKwgDVYbx69C9gs5
-         m8NxedUiaqLzxPhHEBuSmTc4sRUz0BHswG40GQrRVNRE+1CbjBvqtKSumF91mLmW0gkz
-         4rsymU7Wr+EKqwENU1Wu+RDW49ecGYL3+05nHepwX8b5WHituXIb5Xv2fwyzNLuI46b7
-         6LgYl7RUigcmyq8ZpzsRka/uIr6Utf43jphZ3BYtlL5lRSeH6lKk3yMhWYgMtmWhX0sy
-         bF2w==
-X-Gm-Message-State: AA+aEWYEByKLn40oSDBRnkajFropVtPxz45USyRoMxvuXMtfsgDa33qd
-        7v+HjOi49U3mzikt4hQ/9UVGkb/RHbasxg==
-X-Google-Smtp-Source: AFSGD/WwDn7wNpxnXfrYlXOznRcRKD+iMC5hbzSFdAA/4q2QjwKIvN0sVQqBy4Pu5KcJY4BK5C9y8Q==
-X-Received: by 2002:a1c:cbc7:: with SMTP id b190mr10597829wmg.13.1544432709087;
-        Mon, 10 Dec 2018 01:05:09 -0800 (PST)
-Received: from localhost.localdomain (abo-99-183-68.mtp.modulonet.fr. [85.68.183.99])
-        by smtp.gmail.com with ESMTPSA id s202sm11066031wme.40.2018.12.10.01.05.08
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 10 Dec 2018 01:05:08 -0800 (PST)
-From:   Maxime Jourdan <mjourdan@baylibre.com>
-To:     Neil Armstrong <narmstrong@baylibre.com>
-Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, dri-devel@lists.freedesktop.org
-Subject: [PATCH] drm/meson: remove firmware framebuffers
-Date:   Mon, 10 Dec 2018 10:04:48 +0100
-Message-Id: <20181210090448.4301-1-mjourdan@baylibre.com>
-X-Mailer: git-send-email 2.19.2
+        Mon, 10 Dec 2018 04:05:26 -0500
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id wBA95LEt012471;
+        Mon, 10 Dec 2018 03:05:21 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1544432721;
+        bh=xV6FldpFFpO6M9GWTAr3at4a/xcErUyJPBpvusF48zo=;
+        h=Subject:To:References:CC:From:Date:In-Reply-To;
+        b=lWE35Nc7PQRgp9sFhtBLwpXmLt/z1Y5IGYbGqAj4uPD9R+/4vF6fd1TLpbs/fvfGQ
+         ocSRW/PEW0hcMvMp0mILhrj1rqHo8itV7zgTktOyESv5TYqhX5tlFozV83r8bChfRH
+         rlKlMIXIPx/gNHIyE7Unpse7fME9vIXeNr5NeXAo=
+Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wBA95LkA024745
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 10 Dec 2018 03:05:21 -0600
+Received: from DLEE108.ent.ti.com (157.170.170.38) by DLEE100.ent.ti.com
+ (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Mon, 10
+ Dec 2018 03:05:21 -0600
+Received: from dlep32.itg.ti.com (157.170.170.100) by DLEE108.ent.ti.com
+ (157.170.170.38) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Mon, 10 Dec 2018 03:05:21 -0600
+Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id wBA95IFB030643;
+        Mon, 10 Dec 2018 03:05:18 -0600
+Subject: Re: [PATCH 2/3] dt-bindings: usb: keystone-usb: Add ti,am654-dwc3
+ support
+To:     Vignesh R <vigneshr@ti.com>
+References: <1544023171-5796-1-git-send-email-rogerq@ti.com>
+ <1544023171-5796-3-git-send-email-rogerq@ti.com>
+ <ec72e316-46c1-69f6-ae5b-0fbf297a9327@ti.com>
+CC:     <balbi@kernel.org>, <tony@atomide.com>, <robh+dt@kernel.org>,
+        <nsekhar@ti.com>, <t-kristo@ti.com>, <linux-omap@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-usb@vger.kernel.org>
+From:   Roger Quadros <rogerq@ti.com>
+Message-ID: <5C0E2C4E.7030302@ti.com>
+Date:   Mon, 10 Dec 2018 11:05:18 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
+ Thunderbird/38.6.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <ec72e316-46c1-69f6-ae5b-0fbf297a9327@ti.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In case we are using simplefb or another conflicting framebuffer, make
-the call to drm_fb_helper_remove_conflicting_framebuffers()
+Hi Vignesh,
 
-Signed-off-by: Maxime Jourdan <mjourdan@baylibre.com>
----
- drivers/gpu/drm/meson/meson_drv.c | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+On 06/12/18 12:32, Vignesh R wrote:
+> Hi Roger,
+> 
+> On 05/12/18 8:49 PM, Roger Quadros wrote:
+>> The AM654 SoC from TI contains a DWC3 controller. Add
+>> support for it.
+>>
+>> Signed-off-by: Roger Quadros <rogerq@ti.com>
+>> ---
+>>  Documentation/devicetree/bindings/usb/keystone-usb.txt | 4 ++--
+>>  1 file changed, 2 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/usb/keystone-usb.txt b/Documentation/devicetree/bindings/usb/keystone-usb.txt
+>> index f96e09f..fa29ff8 100644
+>> --- a/Documentation/devicetree/bindings/usb/keystone-usb.txt
+>> +++ b/Documentation/devicetree/bindings/usb/keystone-usb.txt
+>> @@ -3,7 +3,7 @@ TI Keystone Soc USB Controller
+>>  DWC3 GLUE
+>>  
+>>  Required properties:
+>> - - compatible: should be "ti,keystone-dwc3".
+>> + - compatible: should be "ti,keystone-dwc3" or "ti,am654-dwc3".
+> 
+> Convention is to have one compatible per line:
+>  compatible: Should be
+> 	"ti,am654-dwc3" for AM654 SoCs
+> 	"ti,keystone-dwc3" for K2 SoCs
+> 
 
-diff --git a/drivers/gpu/drm/meson/meson_drv.c b/drivers/gpu/drm/meson/meson_drv.c
-index d3443125e661..82fbd7ae80e4 100644
---- a/drivers/gpu/drm/meson/meson_drv.c
-+++ b/drivers/gpu/drm/meson/meson_drv.c
-@@ -159,6 +159,22 @@ static void meson_vpu_init(struct meson_drm *priv)
- 	writel_relaxed(0x20000, priv->io_base + _REG(VPU_WRARB_MODE_L2C1));
- }
- 
-+static void meson_remove_framebuffers(void)
-+{
-+        struct apertures_struct *ap;
-+
-+        ap = alloc_apertures(1);
-+        if (!ap)
-+                return;
-+
-+        /* The framebuffer can be located anywhere in RAM */
-+        ap->ranges[0].base = 0;
-+        ap->ranges[0].size = ~0;
-+
-+        drm_fb_helper_remove_conflicting_framebuffers(ap, "meson-drm-fb", false);
-+        kfree(ap);
-+}
-+
- static int meson_drv_bind_master(struct device *dev, bool has_components)
- {
- 	struct platform_device *pdev = to_platform_device(dev);
-@@ -242,6 +258,9 @@ static int meson_drv_bind_master(struct device *dev, bool has_components)
- 	if (ret)
- 		goto free_drm;
- 
-+	/* Remove early framebuffers (ie. simplefb) */
-+	meson_remove_framebuffers();
-+
- 	drm_mode_config_init(drm);
- 	drm->mode_config.max_width = 3840;
- 	drm->mode_config.max_height = 2160;
+OK. Will fix it up. Thanks.
+
+cheers,
+-roger
+
+> 
+> 
+>>   - #address-cells, #size-cells : should be '1' if the device has sub-nodes
+>>     with 'reg' property.
+>>   - reg : Address and length of the register set for the USB subsystem on
+>> @@ -21,7 +21,7 @@ SoCs only:
+>>  - clock-names:		Must be "usb".
+>>  
+>>  
+>> -The following are mandatory properties for Keystone 2 66AK2G SoCs only:
+>> +The following are mandatory properties for 66AK2G and AM654:
+>>  
+>>  - power-domains:	Should contain a phandle to a PM domain provider node
+>>  			and an args specifier containing the USB device id
+>>
+> 
+
 -- 
-2.19.2
-
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
