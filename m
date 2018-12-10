@@ -6,30 +6,30 @@ X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCEA0C5CFFE
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 17:22:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D721C5CFFE
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 17:22:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 863372064D
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 17:22:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 863372064D
+	by mail.kernel.org (Postfix) with ESMTP id 17E7F2064D
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 17:22:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 17E7F2064D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728951AbeLJRWM (ORCPT
+        id S1729013AbeLJRWO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 12:22:12 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:37286 "EHLO mx1.redhat.com"
+        Mon, 10 Dec 2018 12:22:14 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:42650 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726602AbeLJRWJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 12:22:09 -0500
+        id S1728935AbeLJRWM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Dec 2018 12:22:12 -0500
 Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 453DC307EAA1;
-        Mon, 10 Dec 2018 17:22:09 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id CED8CC049588;
+        Mon, 10 Dec 2018 17:22:11 +0000 (UTC)
 Received: from vitty.brq.redhat.com (unknown [10.43.2.155])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id CB20D608E6;
-        Mon, 10 Dec 2018 17:22:06 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 778F1608EF;
+        Mon, 10 Dec 2018 17:22:09 +0000 (UTC)
 From:   Vitaly Kuznetsov <vkuznets@redhat.com>
 To:     kvm@vger.kernel.org
 Cc:     Paolo Bonzini <pbonzini@redhat.com>,
@@ -40,42 +40,118 @@ Cc:     Paolo Bonzini <pbonzini@redhat.com>,
         Stephen Hemminger <sthemmin@microsoft.com>, x86@kernel.org,
         "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
         Eduardo Habkost <ehabkost@redhat.com>
-Subject: [PATCH v2 2/7] x86/hyper-v: Drop HV_X64_CONFIGURE_PROFILER definition
-Date:   Mon, 10 Dec 2018 18:21:54 +0100
-Message-Id: <20181210172159.410-3-vkuznets@redhat.com>
+Subject: [PATCH v2 3/7] x86/kvm/hyper-v: Introduce nested_get_evmcs_version() helper
+Date:   Mon, 10 Dec 2018 18:21:55 +0100
+Message-Id: <20181210172159.410-4-vkuznets@redhat.com>
 In-Reply-To: <20181210172159.410-1-vkuznets@redhat.com>
 References: <20181210172159.410-1-vkuznets@redhat.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Mon, 10 Dec 2018 17:22:09 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Mon, 10 Dec 2018 17:22:11 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-BIT(13) in HYPERV_CPUID_FEATURES.EBX is described as "ConfigureProfiler" in
-TLFS v4.0 but starting 5.0 it is replaced with 'Reserved'. As we don't
-currently us it in kernel it can just be dropped.
+The upcoming KVM_GET_SUPPORTED_HV_CPUID ioctl will need to return
+Enlightened VMCS version in HYPERV_CPUID_NESTED_FEATURES.EAX when
+it was enabled.
 
 Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
-Reviewed-by: Michael Kelley <mikelley@microsoft.com>
 ---
- arch/x86/include/asm/hyperv-tlfs.h | 1 -
- 1 file changed, 1 deletion(-)
+ arch/x86/include/asm/kvm_host.h |  1 +
+ arch/x86/kvm/svm.c              |  7 +++++++
+ arch/x86/kvm/vmx.c              | 24 +++++++++++++++++-------
+ 3 files changed, 25 insertions(+), 7 deletions(-)
 
-diff --git a/arch/x86/include/asm/hyperv-tlfs.h b/arch/x86/include/asm/hyperv-tlfs.h
-index 9e6f70e989c2..11546619a65c 100644
---- a/arch/x86/include/asm/hyperv-tlfs.h
-+++ b/arch/x86/include/asm/hyperv-tlfs.h
-@@ -93,7 +93,6 @@
- #define HV_X64_ACCESS_STATS			BIT(8)
- #define HV_X64_DEBUGGING			BIT(11)
- #define HV_X64_CPU_POWER_MANAGEMENT		BIT(12)
--#define HV_X64_CONFIGURE_PROFILER		BIT(13)
+diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+index e1a40e649cdc..184669d48d80 100644
+--- a/arch/x86/include/asm/kvm_host.h
++++ b/arch/x86/include/asm/kvm_host.h
+@@ -1185,6 +1185,7 @@ struct kvm_x86_ops {
  
- /*
-  * Feature identification. EDX indicates which miscellaneous features
+ 	int (*nested_enable_evmcs)(struct kvm_vcpu *vcpu,
+ 				   uint16_t *vmcs_version);
++	uint16_t (*nested_get_evmcs_version)(struct kvm_vcpu *vcpu);
+ };
+ 
+ struct kvm_arch_async_pf {
+diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
+index 0e21ccc46792..472f950ccab7 100644
+--- a/arch/x86/kvm/svm.c
++++ b/arch/x86/kvm/svm.c
+@@ -7037,6 +7037,12 @@ static int svm_unregister_enc_region(struct kvm *kvm,
+ 	return ret;
+ }
+ 
++static uint16_t nested_get_evmcs_version(struct kvm_vcpu *vcpu)
++{
++	/* Not supported */
++	return 0;
++}
++
+ static int nested_enable_evmcs(struct kvm_vcpu *vcpu,
+ 				   uint16_t *vmcs_version)
+ {
+@@ -7175,6 +7181,7 @@ static struct kvm_x86_ops svm_x86_ops __ro_after_init = {
+ 	.mem_enc_unreg_region = svm_unregister_enc_region,
+ 
+ 	.nested_enable_evmcs = nested_enable_evmcs,
++	.nested_get_evmcs_version = nested_get_evmcs_version,
+ };
+ 
+ static int __init svm_init(void)
+diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
+index 4555077d69ce..f5d865e88095 100644
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -1605,6 +1605,21 @@ static inline void evmcs_sanitize_exec_ctrls(struct vmcs_config *vmcs_conf) {}
+ static inline void evmcs_touch_msr_bitmap(void) {}
+ #endif /* IS_ENABLED(CONFIG_HYPERV) */
+ 
++static uint16_t nested_get_evmcs_version(struct kvm_vcpu *vcpu)
++{
++	struct vcpu_vmx *vmx = to_vmx(vcpu);
++	/*
++	 * vmcs_version represents the range of supported Enlightened VMCS
++	 * versions: lower 8 bits is the minimal version, higher 8 bits is the
++	 * maximum supported version. KVM supports versions from 1 to
++	 * KVM_EVMCS_VERSION.
++	 */
++	if (vmx->nested.enlightened_vmcs_enabled)
++		return (KVM_EVMCS_VERSION << 8) | 1;
++
++	return 0;
++}
++
+ static int nested_enable_evmcs(struct kvm_vcpu *vcpu,
+ 			       uint16_t *vmcs_version)
+ {
+@@ -1616,14 +1631,8 @@ static int nested_enable_evmcs(struct kvm_vcpu *vcpu,
+ 
+ 	vmx->nested.enlightened_vmcs_enabled = true;
+ 
+-	/*
+-	 * vmcs_version represents the range of supported Enlightened VMCS
+-	 * versions: lower 8 bits is the minimal version, higher 8 bits is the
+-	 * maximum supported version. KVM supports versions from 1 to
+-	 * KVM_EVMCS_VERSION.
+-	 */
+ 	if (vmcs_version)
+-		*vmcs_version = (KVM_EVMCS_VERSION << 8) | 1;
++		*vmcs_version = nested_get_evmcs_version(vcpu);
+ 
+ 	vmx->nested.msrs.pinbased_ctls_high &= ~EVMCS1_UNSUPPORTED_PINCTRL;
+ 	vmx->nested.msrs.entry_ctls_high &= ~EVMCS1_UNSUPPORTED_VMENTRY_CTRL;
+@@ -15107,6 +15116,7 @@ static struct kvm_x86_ops vmx_x86_ops __ro_after_init = {
+ 	.enable_smi_window = enable_smi_window,
+ 
+ 	.nested_enable_evmcs = nested_enable_evmcs,
++	.nested_get_evmcs_version = nested_get_evmcs_version,
+ };
+ 
+ static void vmx_cleanup_l1d_flush(void)
 -- 
 2.19.2
 
