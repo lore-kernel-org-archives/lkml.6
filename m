@@ -2,172 +2,299 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.9 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79596C04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 21:11:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28C43C67839
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 21:13:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4119720672
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 21:11:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4119720672
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id E000420672
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 21:13:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E000420672
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729163AbeLJVLP (ORCPT
+        id S1729077AbeLJVNE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 16:11:15 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:47495 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727143AbeLJVLO (ORCPT
+        Mon, 10 Dec 2018 16:13:04 -0500
+Received: from mout.kundenserver.de ([212.227.17.10]:36305 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728303AbeLJVNE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 16:11:14 -0500
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wBAL9tt63541073
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Mon, 10 Dec 2018 13:09:55 -0800
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wBAL9sDJ3541070;
-        Mon, 10 Dec 2018 13:09:54 -0800
-Date:   Mon, 10 Dec 2018 13:09:54 -0800
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Michal Hocko <tipbot@zytor.com>
-Message-ID: <tip-f4abaa98c4575cc06ea5e1a593e3bc2c8de8ef48@git.kernel.org>
-Cc:     linux-mm@kvack.org, mhocko@suse.com, bp@suse.de,
-        pasha.tatashin@soleen.com, mingo@kernel.org,
-        torvalds@linux-foundation.org, dave.hansen@intel.com,
-        linux-kernel@vger.kernel.org, tglx@linutronix.de,
-        ak@linux.intel.com, jkosina@suse.cz, hpa@zytor.com
-Reply-To: linux-mm@kvack.org, mingo@kernel.org, mhocko@suse.com,
-          bp@suse.de, pasha.tatashin@soleen.com, tglx@linutronix.de,
-          linux-kernel@vger.kernel.org, dave.hansen@intel.com,
-          torvalds@linux-foundation.org, hpa@zytor.com, jkosina@suse.cz,
-          ak@linux.intel.com
-In-Reply-To: <20181113184910.26697-1-mhocko@kernel.org>
-References: <20181113184910.26697-1-mhocko@kernel.org>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/pti] x86/speculation/l1tf: Drop the swap storage limit
- restriction when l1tf=off
-Git-Commit-ID: f4abaa98c4575cc06ea5e1a593e3bc2c8de8ef48
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Mon, 10 Dec 2018 16:13:04 -0500
+Received: from wuerfel.lan ([109.192.41.194]) by mrelayeu.kundenserver.de
+ (mreue106 [212.227.15.145]) with ESMTPA (Nemesis) id
+ 1M58OQ-1gVMOL3P2y-001AvP; Mon, 10 Dec 2018 22:12:33 +0100
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     Eric Anholt <eric@anholt.net>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        Tara Null <tn@fastmail.net>,
+        linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] staging: vchiq: rework remove_event handling
+Date:   Mon, 10 Dec 2018 22:11:58 +0100
+Message-Id: <20181210211231.4084251-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.20.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+X-Provags-ID: V03:K1:Qy/+4ZfSLzA8az2nBv7MNP8W5PmCaWXwLTxQ5PX9KmzGRsVcWqN
+ oN7V3HDjK3fUaJxUwYOgN3Ux6MydnpyxhadJ6rP6NN9YDT2EOqDk8DHEWxVdy4mWcev5qjq
+ hI/Ij/38EVuYy9kpAOCjYGOApvZkxHg3hLGXWFShKIXJgz+pGGKdYmrr8G2Ilaze3nVygvZ
+ QIKysNREwM8ccCrb/9KfQ==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:796iQkfXSdo=:Z1NVAwbOeU7FM4ov35ifzY
+ 8cQc0CqrBbCfoBzhuSNmIfCXmTkkd9T0J+kvFRIojiGHddCv1ssF2rKbJkVCEbNubADdHGy6P
+ VlKf4vFqUYNsbwSfY9Ya9edwkLDp4qZ6OzNsaCbULaU2UO/G29AE1LuGhdUuMMncXQy34QN/j
+ iG/ZUVVo1Vq5j04bXRpjJq4TX8WUwMEthJt1wt2YLqhthy06Tgjh9PdzfIBo0gx8NazEmCwdf
+ Rv/OUv5KhOthvhlFPRHSg+p4dOP/31ad4IcQfUJ+meBoP3CMYssT7rh1rXQwYDVeKB19l/MyL
+ qLzV1uvnsiUor1nvJ3HnbY7Wm2Ysjv21/Qz07zNlWniQ5mJNZyomQexVfSQNMTpi8uwXtUEyu
+ OZeSyK7dVQfSJjjsqgg0bIdCKLn9Fv9BSyaUTliJzX/wOT0nbfywFMWQYhPzfd4WFldtAZu9i
+ 3/33xgikZAYODGsjFai7dvDhH09cH6dqf+TKbCLsoB272LE+5lW4JgzaEgxcR9rdP/a0J6XnL
+ S4ty2FH5QjT6nAF1utwRey7A81b0/reC+i/+IRBPlweAGmyPk1cCNC1lGdMKbh6ybFdTHIF5v
+ uXS3rXERJWLtL3uB3OTBVPuP6QK7OTWj7nWqVnvuFh/SL9gX/MmP7S9H3zpMN1AIuqcRlbDLx
+ E71KYaXpOIwcbx0+2JqrpXZtEkROgbBlOEOGqRskzl9cg6PClFRFvrIcNZJ/wfBNDj0hihksU
+ VPzjL/P/i6ZmaoEhO1yr3qBLGdlKwA0OMbr3PQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  f4abaa98c4575cc06ea5e1a593e3bc2c8de8ef48
-Gitweb:     https://git.kernel.org/tip/f4abaa98c4575cc06ea5e1a593e3bc2c8de8ef48
-Author:     Michal Hocko <mhocko@suse.com>
-AuthorDate: Tue, 13 Nov 2018 19:49:10 +0100
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Mon, 10 Dec 2018 22:07:02 +0100
+I had started the removal of semaphores in this driver without knowing
+that Nicolas Saenz Julienne also worked on this. In case of the "remote
+event" infrastructure, my solution seemed significantly better, so I'm
+proposing this as a change on top.
 
-x86/speculation/l1tf: Drop the swap storage limit restriction when l1tf=off
+The problem with using either semaphores or completions here is that
+it's an overly complex way of waking up a thread, and it looks like the
+'count' of the semaphore can easily get out of sync, even though I found
+it hard to come up with a specific example.
 
-Swap storage is restricted to max_swapfile_size (~16TB on x86_64) whenever
-the system is deemed affected by L1TF vulnerability. Even though the limit
-is quite high for most deployments it seems to be too restrictive for
-deployments which are willing to live with the mitigation disabled.
+Changing it to a 'wait_queue_head_t' instead of a completion simplifies
+this by letting us wait directly on the 'event->fired' variable that is
+set by the videocore.
 
-We have a customer to deploy 8x 6,4TB PCIe/NVMe SSD swap devices which is
-clearly out of the limit.
+Another simplification is passing the wait queue directly into the helper
+functions instead of going through the fragile logic of recording the
+offset inside of a structure as part of a shared memory variable. This
+also avoids one uncached memory read and should be faster.
 
-Drop the swap restriction when l1tf=off is specified. It also doesn't make
-much sense to warn about too much memory for the l1tf mitigation when it is
-forcefully disabled by the administrator.
+Note that I'm changing it back to 'killable' after the previous patch
+changed 'killable' to 'interruptible', apparently based on a misunderstanding
+of the subtle down_interruptible() macro override in vchiq_killable.h.
 
-[ tglx: Folded the documentation delta change ]
-
-Fixes: 377eeaa8e11f ("x86/speculation/l1tf: Limit swap file size to MAX_PA/2")
-Signed-off-by: Michal Hocko <mhocko@suse.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Pavel Tatashin <pasha.tatashin@soleen.com>
-Acked-by: Jiri Kosina <jkosina@suse.cz>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Borislav Petkov <bp@suse.de>
-Cc: <linux-mm@kvack.org>
-Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/20181113184910.26697-1-mhocko@kernel.org
+Fixes: f27e47bc6b8b ("staging: vchiq: use completions instead of semaphores")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- Documentation/admin-guide/kernel-parameters.txt | 3 +++
- Documentation/admin-guide/l1tf.rst              | 6 +++++-
- arch/x86/kernel/cpu/bugs.c                      | 3 ++-
- arch/x86/mm/init.c                              | 2 +-
- 4 files changed, 11 insertions(+), 3 deletions(-)
+ .../interface/vchiq_arm/vchiq_core.c          | 63 +++++++------------
+ .../interface/vchiq_arm/vchiq_core.h          | 12 ++--
+ 2 files changed, 30 insertions(+), 45 deletions(-)
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 05a252e5178d..835e422572eb 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -2095,6 +2095,9 @@
- 			off
- 				Disables hypervisor mitigations and doesn't
- 				emit any warnings.
-+				It also drops the swap size and available
-+				RAM limit restriction on both hypervisor and
-+				bare metal.
+diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
+index 482b5daf6c0c..eda3004a0c6a 100644
+--- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
++++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
+@@ -417,26 +417,23 @@ vchiq_set_conn_state(VCHIQ_STATE_T *state, VCHIQ_CONNSTATE_T newstate)
+ }
  
- 			Default is 'flush'.
+ static inline void
+-remote_event_create(REMOTE_EVENT_T *event)
++remote_event_create(wait_queue_head_t *wq, REMOTE_EVENT_T *event)
+ {
+ 	event->armed = 0;
+ 	/* Don't clear the 'fired' flag because it may already have been set
+ 	** by the other side. */
++	init_waitqueue_head(wq);
+ }
  
-diff --git a/Documentation/admin-guide/l1tf.rst b/Documentation/admin-guide/l1tf.rst
-index b85dd80510b0..2e65e6cb033e 100644
---- a/Documentation/admin-guide/l1tf.rst
-+++ b/Documentation/admin-guide/l1tf.rst
-@@ -405,6 +405,9 @@ time with the option "l1tf=". The valid arguments for this option are:
+ static inline int
+-remote_event_wait(VCHIQ_STATE_T *state, REMOTE_EVENT_T *event)
++remote_event_wait(wait_queue_head_t *wq, REMOTE_EVENT_T *event)
+ {
+ 	if (!event->fired) {
+ 		event->armed = 1;
+ 		dsb(sy);
+-		if (!event->fired) {
+-			if (wait_for_completion_interruptible(
+-					(struct completion *)
+-					((char *)state + event->event))) {
+-				event->armed = 0;
+-				return 0;
+-			}
++		if (wait_event_killable(*wq, event->fired)) {
++			event->armed = 0;
++			return 0;
+ 		}
+ 		event->armed = 0;
+ 		wmb();
+@@ -447,26 +444,26 @@ remote_event_wait(VCHIQ_STATE_T *state, REMOTE_EVENT_T *event)
+ }
  
-   off		Disables hypervisor mitigations and doesn't emit any
- 		warnings.
-+		It also drops the swap size and available RAM limit restrictions
-+                on both hypervisor and bare metal.
-+
-   ============  =============================================================
+ static inline void
+-remote_event_signal_local(VCHIQ_STATE_T *state, REMOTE_EVENT_T *event)
++remote_event_signal_local(wait_queue_head_t *wq, REMOTE_EVENT_T *event)
+ {
+ 	event->armed = 0;
+-	complete((struct completion *)((char *)state + event->event));
++	wake_up_all(wq);
+ }
  
- The default is 'flush'. For details about L1D flushing see :ref:`l1d_flush`.
-@@ -576,7 +579,8 @@ Default mitigations
-   The kernel default mitigations for vulnerable processors are:
+ static inline void
+-remote_event_poll(VCHIQ_STATE_T *state, REMOTE_EVENT_T *event)
++remote_event_poll(wait_queue_head_t *wq, REMOTE_EVENT_T *event)
+ {
+ 	if (event->fired && event->armed)
+-		remote_event_signal_local(state, event);
++		remote_event_signal_local(wq, event);
+ }
  
-   - PTE inversion to protect against malicious user space. This is done
--    unconditionally and cannot be controlled.
-+    unconditionally and cannot be controlled. The swap storage is limited
-+    to ~16TB.
+ void
+ remote_event_pollall(VCHIQ_STATE_T *state)
+ {
+-	remote_event_poll(state, &state->local->sync_trigger);
+-	remote_event_poll(state, &state->local->sync_release);
+-	remote_event_poll(state, &state->local->trigger);
+-	remote_event_poll(state, &state->local->recycle);
++	remote_event_poll(&state->sync_trigger_event, &state->local->sync_trigger);
++	remote_event_poll(&state->sync_release_event, &state->local->sync_release);
++	remote_event_poll(&state->trigger_event, &state->local->trigger);
++	remote_event_poll(&state->recycle_event, &state->local->recycle);
+ }
  
-   - L1D conditional flushing on VMENTER when EPT is enabled for
-     a guest.
-diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
-index a68b32cb845a..58689ac64440 100644
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -1002,7 +1002,8 @@ static void __init l1tf_select_mitigation(void)
- #endif
+ /* Round up message sizes so that any space at the end of a slot is always big
+@@ -550,7 +547,7 @@ request_poll(VCHIQ_STATE_T *state, VCHIQ_SERVICE_T *service, int poll_type)
+ 	wmb();
  
- 	half_pa = (u64)l1tf_pfn_limit() << PAGE_SHIFT;
--	if (e820__mapped_any(half_pa, ULLONG_MAX - half_pa, E820_TYPE_RAM)) {
-+	if (l1tf_mitigation != L1TF_MITIGATION_OFF &&
-+			e820__mapped_any(half_pa, ULLONG_MAX - half_pa, E820_TYPE_RAM)) {
- 		pr_warn("System has more than MAX_PA/2 memory. L1TF mitigation not effective.\n");
- 		pr_info("You may make it effective by booting the kernel with mem=%llu parameter.\n",
- 				half_pa);
-diff --git a/arch/x86/mm/init.c b/arch/x86/mm/init.c
-index ef99f3892e1f..427a955a2cf2 100644
---- a/arch/x86/mm/init.c
-+++ b/arch/x86/mm/init.c
-@@ -931,7 +931,7 @@ unsigned long max_swapfile_size(void)
+ 	/* ... and ensure the slot handler runs. */
+-	remote_event_signal_local(state, &state->local->trigger);
++	remote_event_signal_local(&state->trigger_event, &state->local->trigger);
+ }
  
- 	pages = generic_max_swapfile_size();
+ /* Called from queue_message, by the slot handler and application threads,
+@@ -1069,7 +1066,7 @@ queue_message_sync(VCHIQ_STATE_T *state, VCHIQ_SERVICE_T *service,
+ 		(mutex_lock_killable(&state->sync_mutex) != 0))
+ 		return VCHIQ_RETRY;
  
--	if (boot_cpu_has_bug(X86_BUG_L1TF)) {
-+	if (boot_cpu_has_bug(X86_BUG_L1TF) && l1tf_mitigation != L1TF_MITIGATION_OFF) {
- 		/* Limit the swap file size to MAX_PA/2 for L1TF workaround */
- 		unsigned long long l1tf_limit = l1tf_pfn_limit();
- 		/*
+-	remote_event_wait(state, &local->sync_release);
++	remote_event_wait(&state->sync_release_event, &local->sync_release);
+ 
+ 	rmb();
+ 
+@@ -1887,7 +1884,7 @@ slot_handler_func(void *v)
+ 	while (1) {
+ 		DEBUG_COUNT(SLOT_HANDLER_COUNT);
+ 		DEBUG_TRACE(SLOT_HANDLER_LINE);
+-		remote_event_wait(state, &local->trigger);
++		remote_event_wait(&state->trigger_event, &local->trigger);
+ 
+ 		rmb();
+ 
+@@ -1976,7 +1973,7 @@ recycle_func(void *v)
+ 		return -ENOMEM;
+ 
+ 	while (1) {
+-		remote_event_wait(state, &local->recycle);
++		remote_event_wait(&state->recycle_event, &local->recycle);
+ 
+ 		process_free_queue(state, found, length);
+ 	}
+@@ -1998,7 +1995,7 @@ sync_func(void *v)
+ 		int type;
+ 		unsigned int localport, remoteport;
+ 
+-		remote_event_wait(state, &local->sync_trigger);
++		remote_event_wait(&state->sync_trigger_event, &local->sync_trigger);
+ 
+ 		rmb();
+ 
+@@ -2193,11 +2190,6 @@ vchiq_init_state(VCHIQ_STATE_T *state, VCHIQ_SLOT_ZERO_T *slot_zero)
+ 
+ 	init_completion(&state->connect);
+ 	mutex_init(&state->mutex);
+-	init_completion(&state->trigger_event);
+-	init_completion(&state->recycle_event);
+-	init_completion(&state->sync_trigger_event);
+-	init_completion(&state->sync_release_event);
+-
+ 	mutex_init(&state->slot_mutex);
+ 	mutex_init(&state->recycle_mutex);
+ 	mutex_init(&state->sync_mutex);
+@@ -2229,24 +2221,17 @@ vchiq_init_state(VCHIQ_STATE_T *state, VCHIQ_SLOT_ZERO_T *slot_zero)
+ 	state->data_use_count = 0;
+ 	state->data_quota = state->slot_queue_available - 1;
+ 
+-	local->trigger.event = offsetof(VCHIQ_STATE_T, trigger_event);
+-	remote_event_create(&local->trigger);
++	remote_event_create(&state->trigger_event, &local->trigger);
+ 	local->tx_pos = 0;
+-
+-	local->recycle.event = offsetof(VCHIQ_STATE_T, recycle_event);
+-	remote_event_create(&local->recycle);
++	remote_event_create(&state->recycle_event, &local->recycle);
+ 	local->slot_queue_recycle = state->slot_queue_available;
+-
+-	local->sync_trigger.event = offsetof(VCHIQ_STATE_T, sync_trigger_event);
+-	remote_event_create(&local->sync_trigger);
+-
+-	local->sync_release.event = offsetof(VCHIQ_STATE_T, sync_release_event);
+-	remote_event_create(&local->sync_release);
++	remote_event_create(&state->sync_trigger_event, &local->sync_trigger);
++	remote_event_create(&state->sync_release_event, &local->sync_release);
+ 
+ 	/* At start-of-day, the slot is empty and available */
+ 	((VCHIQ_HEADER_T *)SLOT_DATA_FROM_INDEX(state, local->slot_sync))->msgid
+ 		= VCHIQ_MSGID_PADDING;
+-	remote_event_signal_local(state, &local->sync_release);
++	remote_event_signal_local(&state->sync_release_event, &local->sync_release);
+ 
+ 	local->debug[DEBUG_ENTRIES] = DEBUG_MAX;
+ 
+diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.h b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.h
+index b76281f7510e..aae2c59700bd 100644
+--- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.h
++++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.h
+@@ -37,6 +37,7 @@
+ #include <linux/mutex.h>
+ #include <linux/completion.h>
+ #include <linux/kthread.h>
++#include <linux/wait.h>
+ 
+ #include "vchiq_cfg.h"
+ 
+@@ -262,8 +263,7 @@ typedef struct vchiq_bulk_queue_struct {
+ typedef struct remote_event_struct {
+ 	int armed;
+ 	int fired;
+-	/* Contains offset from the beginning of the VCHIQ_STATE_T structure */
+-	u32 event;
++	u32 __unused;
+ } REMOTE_EVENT_T;
+ 
+ typedef struct opaque_platform_state_t *VCHIQ_PLATFORM_STATE_T;
+@@ -426,16 +426,16 @@ struct vchiq_state_struct {
+ 	struct task_struct *sync_thread;
+ 
+ 	/* Local implementation of the trigger remote event */
+-	struct completion trigger_event;
++	wait_queue_head_t trigger_event;
+ 
+ 	/* Local implementation of the recycle remote event */
+-	struct completion recycle_event;
++	wait_queue_head_t recycle_event;
+ 
+ 	/* Local implementation of the sync trigger remote event */
+-	struct completion sync_trigger_event;
++	wait_queue_head_t sync_trigger_event;
+ 
+ 	/* Local implementation of the sync release remote event */
+-	struct completion sync_release_event;
++	wait_queue_head_t sync_release_event;
+ 
+ 	char *tx_data;
+ 	char *rx_data;
+-- 
+2.20.0
+
