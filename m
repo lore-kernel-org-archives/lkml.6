@@ -7,65 +7,68 @@ X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5354AC04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 19:28:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77FC5C04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 19:28:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1330A2084C
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 19:28:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2EF542081F
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 19:28:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="SbcvbUBs"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1330A2084C
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Lc9EzU24"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2EF542081F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729284AbeLJT2u (ORCPT
+        id S1729296AbeLJT2z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 14:28:50 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:37901 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729240AbeLJT2s (ORCPT
+        Mon, 10 Dec 2018 14:28:55 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:35981 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727959AbeLJT2w (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 14:28:48 -0500
-Received: by mail-pf1-f193.google.com with SMTP id q1so5872477pfi.5
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Dec 2018 11:28:47 -0800 (PST)
+        Mon, 10 Dec 2018 14:28:52 -0500
+Received: by mail-pl1-f194.google.com with SMTP id g9so5707251plo.3
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Dec 2018 11:28:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=GtvLm796l9zcE9X2QBqdH2TSAhlWDzcyKdXJhnax1GQ=;
-        b=SbcvbUBs3XLl+G10G8MFMNI4d7f8wmpLTOmABXYclImDe4+FXR1kfab/zOpfUk/ZHw
-         oJOrqBNVIztI7T0Eyel8TgKwkX4R+Oqb5CHi67A9ZuoaYPg2Mx1pOJEMbSCknWFKUFCs
-         VBnH8S8TamVtt8kEF7+1BYy+JcdXtexa8d6qA=
+        bh=QZ0tyfZnGvjpbWtr89ZKYBzaN6Xe9Xhg1mJsVCa/ksM=;
+        b=Lc9EzU24knz08asR/2bms8b39TemF10gfZ4o3wNYCYZnNMpDEOp2+JF5FewmXDtC3+
+         th5zfEs3SzkEfpbgbNYhmnA26/3gJID3pLXobilkbywT7pJ/M0svtbs/7QCTJM5GNhuO
+         z6fYkGTxVFgzigHsYlSY5AvoceqYx8CWyzfTI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=GtvLm796l9zcE9X2QBqdH2TSAhlWDzcyKdXJhnax1GQ=;
-        b=F4o/S01rmzn5BXtwRySSpuK3CnpUqNHnmPbOH8QZcdV6yKTmOoWiMy0gDxZ/DmTgGc
-         kwtFlKh3Fdf6h7O4H95lARfheSlQKlnRtCi6hdo5SKSgNjz2CvBShF+487ABe1HB3AHA
-         uWJPDioB3RbezIstcqEfJGv0H+bkFVVa+Jlqt6Mnk+7Drh8EQ0ymdT9QQPAFJGgwnfGf
-         mW2Gr4DidPqYSButubCGyalURmA2X42TEc3x3V++QNWgvnoV+pDw3KSeOrEd3sqQg4eb
-         bfH/LYfvLCSpTvFTBUuqOgKY1z/EXpJoZJChdDhJw5YXkRf70t2e04BltkDKwgfs6iQt
-         dvkA==
-X-Gm-Message-State: AA+aEWbKcUK8DxNF7Tut5FF+rDbkUYJ45hFXzZfLGQsPZpzwpm+f4LvT
-        yUI3XRfQrQxOMH56HkWTfxfGZwFztMU=
-X-Google-Smtp-Source: AFSGD/WCNtjXmH01+xpfLN5kQJ5yFcbacaCGl2O9P/sd3tuT6FUeXsmum6BLD5g41Qksl+sWze4l/g==
-X-Received: by 2002:a65:4ccb:: with SMTP id n11mr12181072pgt.257.1544470126680;
-        Mon, 10 Dec 2018 11:28:46 -0800 (PST)
+        bh=QZ0tyfZnGvjpbWtr89ZKYBzaN6Xe9Xhg1mJsVCa/ksM=;
+        b=JenlFb6D0NgEjLJAZtLlEPmHTf8zMN7XKlcdGT82siOSLymeI1FAGCHBei8kEKnu7c
+         huroe93SYI3OWdpYLoTHOKhOK4Q8KtkxN2/BwQMgML9WW1EIG3iIleGQi6uYxlFojxNz
+         kpiWDVuj9Rrj/05qDCE8uir99zh4Y+em+Q6Sl/zfrG6ReNDMWFIy6sOG7tDWdhGyMtdu
+         tfcLO6n04aqtQFJbpmMiimKwYpCNjWeS0wUfRKaEpEW9uRIotjKX1qEHsDqAh8zN/XuP
+         O/vAu2lPRs7JXj5J0aIVv3RuQadp+vwZ3Ffb1ZHV8SiumaAXkgrw9pn8dXFVjTTJH7FN
+         kQtQ==
+X-Gm-Message-State: AA+aEWYLX2D18HmyMKQ6JlmZcaqCnnc+Z3+qmNe6UvLZ/sGiKD39sDph
+        um0jb17YYHoxgdwLsFImbOMs5Q==
+X-Google-Smtp-Source: AFSGD/WN+ftgH6xDdXlgm+0jsupDe6kboXmaYdHdqlVVX5QFOknSEe1OzNOP6stjgcM3wdnGVmoRBQ==
+X-Received: by 2002:a17:902:b112:: with SMTP id q18mr13260675plr.255.1544470132025;
+        Mon, 10 Dec 2018 11:28:52 -0800 (PST)
 Received: from evgreen2.mtv.corp.google.com ([2620:15c:202:201:ffda:7716:9afc:1301])
-        by smtp.gmail.com with ESMTPSA id v12sm18318674pgg.41.2018.12.10.11.28.45
+        by smtp.gmail.com with ESMTPSA id v12sm18318674pgg.41.2018.12.10.11.28.50
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 10 Dec 2018 11:28:46 -0800 (PST)
+        Mon, 10 Dec 2018 11:28:51 -0800 (PST)
 From:   Evan Green <evgreen@chromium.org>
 To:     Andy Gross <andy.gross@linaro.org>,
         Kishon Vijay Abraham I <kishon@ti.com>
 Cc:     Douglas Anderson <dianders@chromium.org>,
         Stephen Boyd <swboyd@chromium.org>,
-        Evan Green <evgreen@chromium.org>, devicetree@vger.kernel.org,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>, linux-kernel@vger.kernel.org
-Subject: [PATCH v7 1/5] dt-bindings: phy-qcom-qmp: Fix register underspecification
-Date:   Mon, 10 Dec 2018 11:28:22 -0800
-Message-Id: <20181210192826.241350-2-evgreen@chromium.org>
+        Evan Green <evgreen@chromium.org>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        Rob Herring <robh@kernel.org>, Can Guo <cang@codeaurora.org>,
+        linux-kernel@vger.kernel.org,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Manu Gautam <mgautam@codeaurora.org>
+Subject: [PATCH v7 2/5] phy: qcom-qmp: Utilize fully-specified DT registers
+Date:   Mon, 10 Dec 2018 11:28:23 -0800
+Message-Id: <20181210192826.241350-3-evgreen@chromium.org>
 X-Mailer: git-send-email 2.18.1
 In-Reply-To: <20181210192826.241350-1-evgreen@chromium.org>
 References: <20181210192826.241350-1-evgreen@chromium.org>
@@ -74,137 +77,156 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add register regions for the second lane of dual-lane nodes.
-This additional specification is needed so that the driver can stop
-reaching beyond the tx and rx register allocations to get at the
-second lane registers in a dual-lane PHY.
+Utilize the newly fixed up DT bindings to get the tx2 and rx2 register
+regions for the second lane of dual-lane PHYs. Before this change,
+the driver was simply using lane one's register region and adding
+0x400, which reached well beyond the DT-specified register
+allocation. This would have been a crash were it not for the page size
+on ARM64. Fix the driver not to rely on the magic of virtual memory by
+using the newly specified DT register regions for tx2 and rx2.
 
-While in there, document #clock-cells as optional for PHYs that don't
-provide a pipe clock. Also, document the pcs_misc register region, which
-was being quietly supplied and used.
+In order to support existing device trees, this change also contains a
+fallback mode for when those new register regions don't exist, which
+reverts to the original behavior of overreaching and prints a complaint.
 
 Signed-off-by: Evan Green <evgreen@chromium.org>
 Reviewed-by: Douglas Anderson <dianders@chromium.org>
-Reviewed-by: Rob Herring <robh@kernel.org>
-
 ---
+As Doug mentioned, this should land before the dts patches land, otherwise
+the old driver code will use the tx2 register region as pcs_misc.
 
 Changes in v7: None
 Changes in v6: None
-Changes in v5:
-- Fix incorrect register value in example, copied from real life!
-
-Changes in v4:
-- Remove "status" from DT binding example (Rob)
-
+Changes in v5: None
+Changes in v4: None
 Changes in v3: None
-Changes in v2:
-- Added dt bindings change, corresponding driver fixup, and USB PHY fixup
+Changes in v2: None
 
- .../devicetree/bindings/phy/qcom-qmp-phy.txt  | 69 +++++++++++++++++--
- 1 file changed, 62 insertions(+), 7 deletions(-)
+ drivers/phy/qualcomm/phy-qcom-qmp.c | 51 +++++++++++++++++++++--------
+ 1 file changed, 38 insertions(+), 13 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/phy/qcom-qmp-phy.txt b/Documentation/devicetree/bindings/phy/qcom-qmp-phy.txt
-index adf20b2bdf715..c7a71e67ebdf5 100644
---- a/Documentation/devicetree/bindings/phy/qcom-qmp-phy.txt
-+++ b/Documentation/devicetree/bindings/phy/qcom-qmp-phy.txt
-@@ -25,7 +25,7 @@ Required properties:
-   - For all others:
-     - The reg-names property shouldn't be defined.
+diff --git a/drivers/phy/qualcomm/phy-qcom-qmp.c b/drivers/phy/qualcomm/phy-qcom-qmp.c
+index 514db7248a5d0..8204d55e2d650 100644
+--- a/drivers/phy/qualcomm/phy-qcom-qmp.c
++++ b/drivers/phy/qualcomm/phy-qcom-qmp.c
+@@ -72,6 +72,9 @@
  
-- - #clock-cells: must be 1
-+ - #clock-cells: must be 1 (PCIe and USB3 PHYs only)
-     - Phy pll outputs a bunch of clocks for Tx, Rx and Pipe
-       interface (for pipe based PHYs). These clock are then gate-controlled
-       by gcc.
-@@ -70,22 +70,26 @@ Required nodes:
-  - Each device node of QMP phy is required to have as many child nodes as
-    the number of lanes the PHY has.
+ #define MAX_PROP_NAME				32
  
--Required properties for child node:
-+Required properties for child nodes of PCIe PHYs (one child per lane):
-  - reg: list of offset and length pairs of register sets for PHY blocks -
--	- index 0: tx
--	- index 1: rx
--	- index 2: pcs
--	- index 3: pcs_misc (optional)
-+	tx, rx, pcs, and pcs_misc (optional).
-+ - #phy-cells: must be 0
++/* Define the assumed distance between lanes for underspecified device trees. */
++#define QMP_PHY_LEGACY_LANE_STRIDE		0x400
++
+ struct qmp_phy_init_tbl {
+ 	unsigned int offset;
+ 	unsigned int val;
+@@ -733,9 +736,6 @@ struct qmp_phy_cfg {
+ 	bool has_phy_dp_com_ctrl;
+ 	/* true, if PHY has secondary tx/rx lanes to be configured */
+ 	bool is_dual_lane_phy;
+-	/* Register offset of secondary tx/rx lanes for USB DP combo PHY */
+-	unsigned int tx_b_lane_offset;
+-	unsigned int rx_b_lane_offset;
  
-+Required properties for a single "lanes" child node of non-PCIe PHYs:
-+ - reg: list of offset and length pairs of register sets for PHY blocks
-+	For 1-lane devices:
-+		tx, rx, pcs, and (optionally) pcs_misc
-+	For 2-lane devices:
-+		tx0, rx0, pcs, tx1, rx1, and (optionally) pcs_misc
-  - #phy-cells: must be 0
+ 	/* true, if PCS block has no separate SW_RESET register */
+ 	bool no_pcs_sw_reset;
+@@ -748,6 +748,8 @@ struct qmp_phy_cfg {
+  * @tx: iomapped memory space for lane's tx
+  * @rx: iomapped memory space for lane's rx
+  * @pcs: iomapped memory space for lane's pcs
++ * @tx2: iomapped memory space for second lane's tx (in dual lane PHYs)
++ * @rx2: iomapped memory space for second lane's rx (in dual lane PHYs)
+  * @pcs_misc: iomapped memory space for lane's pcs_misc
+  * @pipe_clk: pipe lock
+  * @index: lane index
+@@ -759,6 +761,8 @@ struct qmp_phy {
+ 	void __iomem *tx;
+ 	void __iomem *rx;
+ 	void __iomem *pcs;
++	void __iomem *tx2;
++	void __iomem *rx2;
+ 	void __iomem *pcs_misc;
+ 	struct clk *pipe_clk;
+ 	unsigned int index;
+@@ -975,8 +979,6 @@ static const struct qmp_phy_cfg qmp_v3_usb3phy_cfg = {
  
-+Required properties for child node of PCIe and USB3 qmp phys:
-  - clocks: a list of phandles and clock-specifier pairs,
- 	   one for each entry in clock-names.
-  - clock-names: Must contain following for pcie and usb qmp phys:
- 		 "pipe<lane-number>" for pipe clock specific to each lane.
-  - clock-output-names: Name of the PHY clock that will be the parent for
- 		       the above pipe clock.
+ 	.has_phy_dp_com_ctrl	= true,
+ 	.is_dual_lane_phy	= true,
+-	.tx_b_lane_offset	= 0x400,
+-	.rx_b_lane_offset	= 0x400,
+ };
+ 
+ static const struct qmp_phy_cfg qmp_v3_usb3_uniphy_cfg = {
+@@ -1031,9 +1033,6 @@ static const struct qmp_phy_cfg sdm845_ufsphy_cfg = {
+ 	.mask_pcs_ready		= PCS_READY,
+ 
+ 	.is_dual_lane_phy	= true,
+-	.tx_b_lane_offset	= 0x400,
+-	.rx_b_lane_offset	= 0x400,
 -
- 	For "qcom,ipq8074-qmp-pcie-phy":
- 		- "pcie20_phy0_pipe_clk"	Pipe Clock parent
- 			(or)
-@@ -135,3 +139,54 @@ Example:
- 		...
- 		...
- 	};
+ 	.no_pcs_sw_reset	= true,
+ };
+ 
+@@ -1238,12 +1237,12 @@ static int qcom_qmp_phy_init(struct phy *phy)
+ 	qcom_qmp_phy_configure(tx, cfg->regs, cfg->tx_tbl, cfg->tx_tbl_num);
+ 	/* Configuration for other LANE for USB-DP combo PHY */
+ 	if (cfg->is_dual_lane_phy)
+-		qcom_qmp_phy_configure(tx + cfg->tx_b_lane_offset, cfg->regs,
++		qcom_qmp_phy_configure(qphy->tx2, cfg->regs,
+ 				       cfg->tx_tbl, cfg->tx_tbl_num);
+ 
+ 	qcom_qmp_phy_configure(rx, cfg->regs, cfg->rx_tbl, cfg->rx_tbl_num);
+ 	if (cfg->is_dual_lane_phy)
+-		qcom_qmp_phy_configure(rx + cfg->rx_b_lane_offset, cfg->regs,
++		qcom_qmp_phy_configure(qphy->rx2, cfg->regs,
+ 				       cfg->rx_tbl, cfg->rx_tbl_num);
+ 
+ 	qcom_qmp_phy_configure(pcs, cfg->regs, cfg->pcs_tbl, cfg->pcs_tbl_num);
+@@ -1615,8 +1614,9 @@ int qcom_qmp_phy_create(struct device *dev, struct device_node *np, int id)
+ 
+ 	/*
+ 	 * Get memory resources for each phy lane:
+-	 * Resources are indexed as: tx -> 0; rx -> 1; pcs -> 2; and
+-	 * pcs_misc (optional) -> 3.
++	 * Resources are indexed as: tx -> 0; rx -> 1; pcs -> 2.
++	 * For dual lane PHYs: tx2 -> 3, rx2 -> 4, pcs_misc (optional) -> 5
++	 * For single lane PHYs: pcs_misc (optional) -> 3.
+ 	 */
+ 	qphy->tx = of_iomap(np, 0);
+ 	if (!qphy->tx)
+@@ -1630,7 +1630,32 @@ int qcom_qmp_phy_create(struct device *dev, struct device_node *np, int id)
+ 	if (!qphy->pcs)
+ 		return -ENOMEM;
+ 
+-	qphy->pcs_misc = of_iomap(np, 3);
++	/*
++	 * If this is a dual-lane PHY, then there should be registers for the
++	 * second lane. Some old device trees did not specify this, so fall
++	 * back to old legacy behavior of assuming they can be reached at an
++	 * offset from the first lane.
++	 */
++	if (qmp->cfg->is_dual_lane_phy) {
++		qphy->tx2 = of_iomap(np, 3);
++		qphy->rx2 = of_iomap(np, 4);
++		if (!qphy->tx2 || !qphy->rx2) {
++			dev_warn(dev,
++				 "Underspecified device tree, falling back to legacy register regions\n");
 +
-+	phy@88eb000 {
-+		compatible = "qcom,sdm845-qmp-usb3-uni-phy";
-+		reg = <0x88eb000 0x18c>;
-+		#clock-cells = <1>;
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges;
++			/* In the old version, pcs_misc is at index 3. */
++			qphy->pcs_misc = qphy->tx2;
++			qphy->tx2 = qphy->tx + QMP_PHY_LEGACY_LANE_STRIDE;
++			qphy->rx2 = qphy->rx + QMP_PHY_LEGACY_LANE_STRIDE;
 +
-+		clocks = <&gcc GCC_USB3_SEC_PHY_AUX_CLK>,
-+			 <&gcc GCC_USB_PHY_CFG_AHB2PHY_CLK>,
-+			 <&gcc GCC_USB3_SEC_CLKREF_CLK>,
-+			 <&gcc GCC_USB3_SEC_PHY_COM_AUX_CLK>;
-+		clock-names = "aux", "cfg_ahb", "ref", "com_aux";
++		} else {
++			qphy->pcs_misc = of_iomap(np, 5);
++		}
 +
-+		resets = <&gcc GCC_USB3PHY_PHY_SEC_BCR>,
-+			 <&gcc GCC_USB3_PHY_SEC_BCR>;
-+		reset-names = "phy", "common";
++	} else {
++		qphy->pcs_misc = of_iomap(np, 3);
++	}
 +
-+		lane@88eb200 {
-+			reg = <0x88eb200 0x128>,
-+			      <0x88eb400 0x1fc>,
-+			      <0x88eb800 0x218>,
-+			      <0x88eb600 0x70>;
-+			#phy-cells = <0>;
-+			clocks = <&gcc GCC_USB3_SEC_PHY_PIPE_CLK>;
-+			clock-names = "pipe0";
-+			clock-output-names = "usb3_uni_phy_pipe_clk_src";
-+		};
-+	};
-+
-+	phy@1d87000 {
-+		compatible = "qcom,sdm845-qmp-ufs-phy";
-+		reg = <0x1d87000 0x18c>;
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges;
-+		clock-names = "ref",
-+			      "ref_aux";
-+		clocks = <&gcc GCC_UFS_MEM_CLKREF_CLK>,
-+			 <&gcc GCC_UFS_PHY_PHY_AUX_CLK>;
-+
-+		lanes@1d87400 {
-+			reg = <0x1d87400 0x108>,
-+			      <0x1d87600 0x1e0>,
-+			      <0x1d87c00 0x1dc>,
-+			      <0x1d87800 0x108>,
-+			      <0x1d87a00 0x1e0>;
-+			#phy-cells = <0>;
-+		};
-+	};
+ 	if (!qphy->pcs_misc)
+ 		dev_vdbg(dev, "PHY pcs_misc-reg not used\n");
+ 
 -- 
 2.18.1
 
