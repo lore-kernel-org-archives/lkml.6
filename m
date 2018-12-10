@@ -2,115 +2,112 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 939F6C67838
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 09:55:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 308BAC04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 09:57:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5AC102082D
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 09:55:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EA95F2081C
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 09:57:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YhmkUrdl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5AC102082D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="N7Av88g1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA95F2081C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726818AbeLJJz1 (ORCPT
+        id S1726844AbeLJJ5C (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 04:55:27 -0500
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:46510 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726146AbeLJJz1 (ORCPT
+        Mon, 10 Dec 2018 04:57:02 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:44788 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726146AbeLJJ5C (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 04:55:27 -0500
-Received: by mail-ot1-f65.google.com with SMTP id w25so9759044otm.13;
-        Mon, 10 Dec 2018 01:55:26 -0800 (PST)
+        Mon, 10 Dec 2018 04:57:02 -0500
+Received: by mail-pl1-f195.google.com with SMTP id k8so4998289pls.11
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Dec 2018 01:57:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=kMcPA0ob+XfedqoJIIULHLRD9wmQcHKGn0mWTn8zXpo=;
-        b=YhmkUrdl/bxr3Ay64gcsQSNx1Z99tA+eLteFwEpw9FtdxcG6mgceX6EJYhnqvb3msy
-         NzUA5Etd2C3HvBEq+Vxg3ucuf8S7A7N/IRZfMiVQEPnQC8RAURh2vLAX+LpT21TxVAoI
-         CRNQh3ineEuFsSlWwF5TUExuvcd5LK0Owufi+ytjnrjcVPNU5fewEBzU59r50mN4Zy6X
-         lj2kFzuUidZs8zNNyP4/PpPy2M35fbwTlT4AvHQrgxvM3BUhjs3A25oNTe5Gt5/aadxV
-         9NwRkOTRi+sLqyPqKCjLd7VUJ9j51576+4tnQwoVQbeCzwRJ8Gef5fGOeqBdYwCCItYV
-         yhOw==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=aSomdyy3EaiujdjdjsH4y6F6EHOmtCoGU51caHsh8d4=;
+        b=N7Av88g1UvjcPjim8avN81M3OjXNaLJ0Fm1sxgdz8Eq2ngWZs03oDbbCo5PfdQOuM1
+         N5krfWb0w3XswkGmbz8whbg3mIVJOHP7F5+yrejxk9KbX/zR0+EJdW9Xqt0KFeA0qMoA
+         btF+ZZI3CI0IOr+26iGEKtVLbuR8/JrKqTqGg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=kMcPA0ob+XfedqoJIIULHLRD9wmQcHKGn0mWTn8zXpo=;
-        b=KVAXHR+6zLwWFoyfwhSzDCUvQU6h+5/FMkc77n3FTBVNrr0uSQPT0FAlu520dbGczX
-         ZSRPbXHgcFEXsrtzqyCDy6XKRMZ9CYKWMdD1gHcobjJqGFqcTwX0o2NQYFBijhEd2ykd
-         EUHzgk1Xafy1VgSuoOOO4vGRT/g7PWgq3/nutmVSvMUxhHKq9buy5EoCNGvkKUn7jfLa
-         gltHTMMppOBAR6645yIdOu7NdIYfYIVv9Cz7R4qgakSc9mPPYBqhYnq/vmaOZ4b0KlFw
-         gwZxS0v8e5taxEO3KOoxcvnja9HBU4UjE6WcleRWAvDOOlfbKTxezwPf8QAsdc6biJj1
-         QGTQ==
-X-Gm-Message-State: AA+aEWYHBzsTGLMIhDmR9mF/2QkbVzTQndZhf5WgDA+H3hAuKp7sntZH
-        UBuBIzNurtYVaBzW4UHrYlnjSfwuB+Spw+Uqjz4=
-X-Google-Smtp-Source: AFSGD/U7Xxf8ypgt6BWr7FxYizqiKHZ/rYmZAAQFfMsy7DvYjc5DNLjLs5kXKqW4YORpePhSeYVBYnM213WNZK9KUdY=
-X-Received: by 2002:a9d:401:: with SMTP id 1mr7909584otc.78.1544435726240;
- Mon, 10 Dec 2018 01:55:26 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=aSomdyy3EaiujdjdjsH4y6F6EHOmtCoGU51caHsh8d4=;
+        b=PsJxzbVfKAoiq1dNJbEdKDERB+sB72gmClMyCe/3ZoefZvn2jBdLUx0kDCW4nJKDMn
+         MHAZJVFOZcteoy0zCqY5Lp0VQSSMPeSY6jYoxmXbXCK1UMGf9a0cPtozHA267yhtz1P2
+         HNAnCfh7ABekXrv58Xy1BmsdYFNGg9ARyPaOLnybTHbPdQy9ZWpRQ/LkYfkn7s9THIWH
+         C9ooXqHZU5YVE3Kd18C/rjkm6CFM1TReGK0SZTaC8Z8QPhytWam/dYaABkJJjY27Mp6y
+         uXIvjXatcWnMolAwtnmOhe/Ki2izomdTa1Pe/HOVrXLmUj8jeijctsh9DBIyqKzakqAU
+         MX3w==
+X-Gm-Message-State: AA+aEWZCkwctnqUatz7VG3iW47A3KeUQxZ1ncZ1pm4XHoGkAS04AqS9U
+        1GJVx85o8OLuM8fC3Q6YVlUR
+X-Google-Smtp-Source: AFSGD/X/T5V1y6iWHcpu64JIzsF7hljVycLkNOjZ1OkL1i4+ZYIL4AzPPYkLsfXETBRrk2ym/Vq8Qg==
+X-Received: by 2002:a17:902:d911:: with SMTP id c17mr7354836plz.151.1544435821756;
+        Mon, 10 Dec 2018 01:57:01 -0800 (PST)
+Received: from Mani-XPS-13-9360 ([2409:4072:91e:2c01:40e1:a028:b090:9e12])
+        by smtp.gmail.com with ESMTPSA id p7sm26710697pfj.72.2018.12.10.01.56.53
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 10 Dec 2018 01:57:01 -0800 (PST)
+Date:   Mon, 10 Dec 2018 15:26:50 +0530
+From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To:     Marc Zyngier <marc.zyngier@arm.com>
+Cc:     olof@lixom.net, arnd@arndb.de, robh+dt@kernel.org,
+        tglx@linutronix.de, jason@lakedaemon.net,
+        daniel.lezcano@linaro.org, gregkh@linuxfoundation.org,
+        jslaby@suse.com, afaerber@suse.de,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-serial@vger.kernel.org,
+        amit.kucheria@linaro.org, linus.walleij@linaro.org,
+        zhao_steven@263.net, overseas.sales@unisoc.com
+Subject: Re: [PATCH v3 08/15] irqchip: Add RDA8810PL interrupt driver
+Message-ID: <20181210095650.GA12397@Mani-XPS-13-9360>
+References: <20181128135106.9255-1-manivannan.sadhasivam@linaro.org>
+ <20181128135106.9255-9-manivannan.sadhasivam@linaro.org>
+ <9debdd34-0c4a-a0a3-a284-b6372c2f7fd5@arm.com>
 MIME-Version: 1.0
-References: <1544425869-8188-1-git-send-email-Anson.Huang@nxp.com>
-In-Reply-To: <1544425869-8188-1-git-send-email-Anson.Huang@nxp.com>
-From:   Fabio Estevam <festevam@gmail.com>
-Date:   Mon, 10 Dec 2018 07:55:19 -0200
-Message-ID: <CAOMZO5AJv=DtqSsKKQLX10GQC64NNoWkmYKSs+sM0Jjb8ugFVQ@mail.gmail.com>
-Subject: Re: [PATCH V2] iio: magnetometer: mag3110: add optional vdd/vddio
- regulator operation support
-To:     Yongcai Huang <anson.huang@nxp.com>
-Cc:     Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald <pmeerw@pmeerw.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, linux-iio@vger.kernel.org,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        NXP Linux Team <linux-imx@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <9debdd34-0c4a-a0a3-a284-b6372c2f7fd5@arm.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Anson,
+Hi Marc,
 
-On Mon, Dec 10, 2018 at 5:17 AM Anson Huang <anson.huang@nxp.com> wrote:
+On Mon, Dec 10, 2018 at 09:39:13AM +0000, Marc Zyngier wrote:
+> On 28/11/2018 13:50, Manivannan Sadhasivam wrote:
+> > Add interrupt driver for RDA Micro RDA8810PL SoC.
+> > 
+> > Signed-off-by: Andreas Färber <afaerber@suse.de>
+> > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> 
+> Reviewed-by: Marc Zyngier <marc.zyngier@arm.com>
+> 
+> Given the dependency on the platform Kconfig entry, how do you want this
+> to be merged?
+> 
 
-> +       data->vdd_reg = devm_regulator_get_optional(&client->dev, "vdd");
-> +       if (!IS_ERR(data->vdd_reg)) {
-> +               ret = regulator_enable(data->vdd_reg);
-> +               if (ret) {
-> +                       dev_err(&client->dev, "failed to enable VDD regulator\n");
-> +                       return ret;
-> +               }
-> +       } else if (data->vdd_reg == ERR_PTR(-EPROBE_DEFER)) {
-> +               return -EPROBE_DEFER;
-> +       }
-> +
-> +       data->vddio_reg = devm_regulator_get_optional(&client->dev, "vddio");
-> +       if (!IS_ERR(data->vddio_reg)) {
-> +               ret = regulator_enable(data->vddio_reg);
-> +               if (ret) {
-> +                       dev_err(&client->dev, "failed to enable VDDIO regulator\n");
-> +                       return ret;
+Hmmm, I think I can just move the platform Kconfig change to SoC changes
+in next revision so that you can apply the driver independently.
 
-In the case of error you should disable the vdd_reg regulator.
+Regards,
+Mani
 
-> +               }
-> +       } else if (data->vddio_reg == ERR_PTR(-EPROBE_DEFER)) {
-> +               return -EPROBE_DEFER;
-> +       }
-> +
->         ret = i2c_smbus_read_byte_data(client, MAG3110_WHO_AM_I);
->         if (ret < 0)
->                 return ret;
-
-and here you should disable vddio_reg.
+> Thanks,
+> 
+> 	M.
+> -- 
+> Jazz is not dead. It just smells funny...
