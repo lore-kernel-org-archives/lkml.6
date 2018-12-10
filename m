@@ -2,193 +2,133 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44A3CC04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 13:23:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50064C04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 13:24:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D2CC520880
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 13:23:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="uro4dsrz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D2CC520880
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	by mail.kernel.org (Postfix) with ESMTP id 0ED0620880
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 13:24:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544448296;
+	bh=6ZZDzH6gdVDTl7y3r2QRzljknKB05IFEXMej0qIWNcg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=FFJkSFPAsg9Pvdrdl18oquK9G3uvgjzUhAtXv5jh3G7Pfv5ketBIxjq7gHNCcz37J
+	 TmS/0w/1X+GXm6CBWmrqXp8fO4Bulb4eveuW6R0CU/xGJonX8rfvHlDS2TOr23wEEw
+	 Fn1H8Am3bbCqarr3gtTL5DC7E6UmVQGvwQkbKSN4=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0ED0620880
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727404AbeLJNXE (ORCPT
+        id S1727315AbeLJNYy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 08:23:04 -0500
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:50024 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726867AbeLJNXE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 08:23:04 -0500
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id wBADN1Eg080016;
-        Mon, 10 Dec 2018 07:23:01 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1544448181;
-        bh=WpMjXMYFVh1qiGLvf6EdeivBn7nJVkLUWaq6vk8RTX8=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=uro4dsrzqAbDO+q8KQU6T30bhZkmlrQLTriDnXfyLOxMRE4Bu3LeAdsWDMMXsY/AJ
-         Nc5mmFGCaS5QJTV0/xnYuX1ljv5Oy07Ywe/nckYYoXdilV8y/U91Pp6fIdDWR68UqP
-         7qynCAdE9MjBwUzsp3eMr7YA94X4RSMlEJivwFlo=
-Received: from DLEE102.ent.ti.com (dlee102.ent.ti.com [157.170.170.32])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wBADN1wH026831
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 10 Dec 2018 07:23:01 -0600
-Received: from DLEE107.ent.ti.com (157.170.170.37) by DLEE102.ent.ti.com
- (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Mon, 10
- Dec 2018 07:23:00 -0600
-Received: from dlep32.itg.ti.com (157.170.170.100) by DLEE107.ent.ti.com
- (157.170.170.37) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Mon, 10 Dec 2018 07:23:00 -0600
-Received: from [172.24.190.215] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id wBADMwgW025594;
-        Mon, 10 Dec 2018 07:22:59 -0600
-Subject: Re: [PATCH] mmc: sdhci-omap: Workaround errata regarding SDR104/HS200
- tuning failures (i929)
-To:     Ulf Hansson <ulf.hansson@linaro.org>
-CC:     Kishon <kishon@ti.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Adrian Hunter <adrian.hunter@intel.com>
-References: <20181129190503.6040-1-faiz_abbas@ti.com>
- <cb1e8e88-4c9d-741d-79cd-57b03c5e0808@ti.com>
- <c4704766-7a58-8aa4-6bc0-b9373b15096c@ti.com>
- <CAPDyKFqMW+tMaVsS_c=kPztZRjX97Nzr2W0egvDkyzkpWckHRA@mail.gmail.com>
-From:   Faiz Abbas <faiz_abbas@ti.com>
-Message-ID: <d1ae4e93-4b17-9574-00b1-bfa268cb7574@ti.com>
-Date:   Mon, 10 Dec 2018 18:55:46 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Mon, 10 Dec 2018 08:24:54 -0500
+Received: from mx2.suse.de ([195.135.220.15]:56294 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726324AbeLJNYy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Dec 2018 08:24:54 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 33371AE0B;
+        Mon, 10 Dec 2018 13:24:52 +0000 (UTC)
+Date:   Mon, 10 Dec 2018 14:24:51 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Mikhail Zaslonko <zaslonko@linux.ibm.com>
+Cc:     akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, Pavel.Tatashin@microsoft.com,
+        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
+        gerald.schaefer@de.ibm.com
+Subject: Re: [PATCH 1/1] mm, memory_hotplug: Initialize struct pages for the
+ full memory section
+Message-ID: <20181210132451.GO1286@dhcp22.suse.cz>
+References: <20181210130712.30148-1-zaslonko@linux.ibm.com>
+ <20181210130712.30148-2-zaslonko@linux.ibm.com>
 MIME-Version: 1.0
-In-Reply-To: <CAPDyKFqMW+tMaVsS_c=kPztZRjX97Nzr2W0egvDkyzkpWckHRA@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181210130712.30148-2-zaslonko@linux.ibm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Uffe,
+On Mon 10-12-18 14:07:12, Mikhail Zaslonko wrote:
+> If memory end is not aligned with the sparse memory section boundary, the
+> mapping of such a section is only partly initialized.
 
-On 05/12/18 7:20 PM, Ulf Hansson wrote:
-> On Fri, 30 Nov 2018 at 06:53, Faiz Abbas <faiz_abbas@ti.com> wrote:
->>
->> Hi Kishon,
->>
->> On 30/11/18 10:10 AM, Kishon Vijay Abraham I wrote:
->>> Hi Faiz,
->>>
->>> On 30/11/18 12:35 AM, Faiz Abbas wrote:
->>>> Errata i929 in certain OMAP5/DRA7XX/AM57XX silicon revisions
->>>> (SPRZ426D - November 2014 - Revised February 2018 [1]) mentions
->>>> unexpected tuning pattern errors. A small failure band may be present
->>>> in the tuning range which may be missed by the current algorithm.
->>>> Furthermore, the failure bands vary with temperature leading to
->>>> different optimum tuning values for different temperatures.
->>>>
->>>> As suggested in the related Application Report (SPRACA9B - October 2017
->>>> - Revised July 2018 [2]), tuning should be done in two stages.
->>>> In stage 1, assign the optimum ratio in the maximum pass window for the
->>>> current temperature. In stage 2, if the chosen value is close to the
->>>> small failure band, move away from it in the appropriate direction.
->>>>
->>>> References:
->>>> [1] http://www.ti.com/lit/pdf/sprz426
->>>> [2] http://www.ti.com/lit/pdf/SPRACA9
->>>>
->>>> Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
->>>> ---
->>>>  drivers/mmc/host/Kconfig      |  2 +
->>>>  drivers/mmc/host/sdhci-omap.c | 90 ++++++++++++++++++++++++++++++++++-
->>>>  2 files changed, 91 insertions(+), 1 deletion(-)
->>>>
->>>> diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
->>>> index 1b58739d9744..6d3553f06f27 100644
->>>> --- a/drivers/mmc/host/Kconfig
->>>> +++ b/drivers/mmc/host/Kconfig
->>>> @@ -969,6 +969,8 @@ config MMC_SDHCI_XENON
->>>>  config MMC_SDHCI_OMAP
->>>>      tristate "TI SDHCI Controller Support"
->>>>      depends on MMC_SDHCI_PLTFM && OF
->>>> +    select THERMAL
->>>> +    select TI_SOC_THERMAL
->>>>      help
->>>>        This selects the Secure Digital Host Controller Interface (SDHCI)
->>>>        support present in TI's DRA7 SOCs. The controller supports
->>>> diff --git a/drivers/mmc/host/sdhci-omap.c b/drivers/mmc/host/sdhci-omap.c
->>>> index b3cb39d0db6f..9ccce7ef3a60 100644
->>>> --- a/drivers/mmc/host/sdhci-omap.c
->>>> +++ b/drivers/mmc/host/sdhci-omap.c
->>>> @@ -27,6 +27,7 @@
->>>>  #include <linux/regulator/consumer.h>
->>>>  #include <linux/pinctrl/consumer.h>
->>>>  #include <linux/sys_soc.h>
->>>> +#include <linux/thermal.h>
->>>>
->>>>  #include "sdhci-pltfm.h"
->>>>
->>>> @@ -286,14 +287,18 @@ static int sdhci_omap_execute_tuning(struct mmc_host *mmc, u32 opcode)
->>>>      struct sdhci_host *host = mmc_priv(mmc);
->>>>      struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
->>>>      struct sdhci_omap_host *omap_host = sdhci_pltfm_priv(pltfm_host);
->>>> +    struct thermal_zone_device *thermal_dev;
->>>>      struct device *dev = omap_host->dev;
->>>>      struct mmc_ios *ios = &mmc->ios;
->>>>      u32 start_window = 0, max_window = 0;
->>>> +    bool single_point_failure = false;
->>>>      u8 cur_match, prev_match = 0;
->>>>      u32 length = 0, max_len = 0;
->>>>      u32 phase_delay = 0;
->>>> +    int temperature;
->>>>      int ret = 0;
->>>>      u32 reg;
->>>> +    int i;
->>>>
->>>>      /* clock tuning is not needed for upto 52MHz */
->>>>      if (ios->clock <= 52000000)
->>>> @@ -303,6 +308,16 @@ static int sdhci_omap_execute_tuning(struct mmc_host *mmc, u32 opcode)
->>>>      if (ios->timing == MMC_TIMING_UHS_SDR50 && !(reg & CAPA2_TSDR50))
->>>>              return 0;
->>>>
->>>> +    thermal_dev = thermal_zone_get_zone_by_name("cpu_thermal");
->>>> +    if (IS_ERR(thermal_dev)) {
->>>> +            dev_err(dev, "Unable to get thermal zone for tuning\n");
->>>> +            return PTR_ERR(thermal_dev);
->>>> +    }
->>>
->>> Can't we get thermal zone once during probe?
->>>
->>
->> Tuning is also (ideally) supposed to happen only once per enumeration.
->> Also it doesn't make sense to get a thermal zone for lower speed systems
->> that won't do tuning.
+It would be great to mention how you can end up in the situation like
+this(a user provided memmap or a strange HW). 
+
+> This may lead to
+> VM_BUG_ON due to uninitialized struct page access from
+> is_mem_section_removable() or test_pages_in_a_zone() function triggered by
+> memory_hotplug sysfs handlers:
 > 
-> Currently sdhci-omap calls pm_runtime_get_sync() during probe, and
-> then keeps the host device runtime resumed until ->remove() is called
-> on it. I assume you are going to change that, at some point!?
+>  page:000003d082008000 is uninitialized and poisoned
+>  page dumped because: VM_BUG_ON_PAGE(PagePoisoned(p))
+>  Call Trace:
+>  ([<0000000000385b26>] test_pages_in_a_zone+0xde/0x160)
+>   [<00000000008f15c4>] show_valid_zones+0x5c/0x190
+>   [<00000000008cf9c4>] dev_attr_show+0x34/0x70
+>   [<0000000000463ad0>] sysfs_kf_seq_show+0xc8/0x148
+>   [<00000000003e4194>] seq_read+0x204/0x480
+>   [<00000000003b53ea>] __vfs_read+0x32/0x178
+>   [<00000000003b55b2>] vfs_read+0x82/0x138
+>   [<00000000003b5be2>] ksys_read+0x5a/0xb0
+>   [<0000000000b86ba0>] system_call+0xdc/0x2d8
+>  Last Breaking-Event-Address:
+>   [<0000000000385b26>] test_pages_in_a_zone+0xde/0x160
+>  Kernel panic - not syncing: Fatal exception: panic_on_oops
 > 
-> In other words, what will happen to the host device when it becomes
-> runtime suspended? Is re-tuning needed when it gets runtime resumed,
-> which is the case for many other sdhci variants?
+> Fix the problem by initializing the last memory section of the highest zone
+> in memmap_init_zone() till the very end, even if it goes beyond the zone
+> end.
 
-There are no plans to support runtime_suspend()/resume() any time in the
-near future. If its ok with you, I would like to get this patch in
-without any changes. We can change it in case a need for
-runtime_suspend()/_resume() does arise.
+Why do we need to restrict this to the highest zone? In other words, why
+cannot we do what I was suggesting earlier [1]. What does prevent other
+zones to have an incomplete section boundary?
 
-Thanks,
-Faiz
+[1] http://lkml.kernel.org/r/20181105183533.GQ4361@dhcp22.suse.cz
 
+> Signed-off-by: Mikhail Zaslonko <zaslonko@linux.ibm.com>
+> Reviewed-by: Gerald Schaefer <gerald.schaefer@de.ibm.com>
+> Cc: <stable@vger.kernel.org>
+> ---
+>  mm/page_alloc.c | 15 +++++++++++++++
+>  1 file changed, 15 insertions(+)
+> 
+> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+> index 2ec9cc407216..41ef5508e5f1 100644
+> --- a/mm/page_alloc.c
+> +++ b/mm/page_alloc.c
+> @@ -5542,6 +5542,21 @@ void __meminit memmap_init_zone(unsigned long size, int nid, unsigned long zone,
+>  			cond_resched();
+>  		}
+>  	}
+> +#ifdef CONFIG_SPARSEMEM
+> +	/*
+> +	 * If there is no zone spanning the rest of the section
+> +	 * then we should at least initialize those pages. Otherwise we
+> +	 * could blow up on a poisoned page in some paths which depend
+> +	 * on full sections being initialized (e.g. memory hotplug).
+> +	 */
+> +	if (end_pfn == max_pfn) {
+> +		while (end_pfn % PAGES_PER_SECTION) {
+> +			__init_single_page(pfn_to_page(end_pfn), end_pfn, zone,
+> +					   nid);
+> +			end_pfn++;
+> +		}
+> +	}
+> +#endif
+>  }
+>  
+>  #ifdef CONFIG_ZONE_DEVICE
+> -- 
+> 2.16.4
 
-
-
+-- 
+Michal Hocko
+SUSE Labs
