@@ -2,183 +2,122 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00FBAC04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 13:31:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F317C04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 13:32:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AEF3F2084E
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 13:31:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D9B1A20870
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 13:32:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="LoB9VraD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AEF3F2084E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="LYxjm2Np"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D9B1A20870
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727583AbeLJNbt (ORCPT
+        id S1727608AbeLJNc2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 08:31:49 -0500
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:38268 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726902AbeLJNbt (ORCPT
+        Mon, 10 Dec 2018 08:32:28 -0500
+Received: from smtprelay.synopsys.com ([198.182.47.9]:41268 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726902AbeLJNc2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 08:31:49 -0500
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id wBADVGpp114475;
-        Mon, 10 Dec 2018 07:31:16 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1544448676;
-        bh=ENeKuHivQJ95bWleVk2747Bk8AeS95413Q0GLP55crw=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=LoB9VraDxq3RWg+ngjDru2EMwAtuoWLZ9ULkwYIRdqLTWpCSh4KFlYuzk0MF37Cfy
-         4v1SxrlqOz3CbjOcNiHSZuy8pSI9Q0TBH6YTCZrWybFFBrZrHjr1/hIlZ5yZM8EwMU
-         HEfJ55CQ+ax1KLr9h0Z20p1TfkOYX7GBR4x/DNF8=
-Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wBADVGvZ035402
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 10 Dec 2018 07:31:16 -0600
-Received: from DLEE100.ent.ti.com (157.170.170.30) by DLEE103.ent.ti.com
- (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Mon, 10
- Dec 2018 07:31:16 -0600
-Received: from dflp32.itg.ti.com (10.64.6.15) by DLEE100.ent.ti.com
- (157.170.170.30) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Mon, 10 Dec 2018 07:31:16 -0600
-Received: from [172.24.190.215] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id wBADVCdg002809;
-        Mon, 10 Dec 2018 07:31:12 -0600
-Subject: Re: [PATCH 2/2] arm64: dts: ti: k3-am654-base-board: Add MMC/SD
- support
-To:     Sekhar Nori <nsekhar@ti.com>, Nishanth Menon <nm@ti.com>
-CC:     <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <mark.rutland@arm.com>,
-        <robh+dt@kernel.org>, <t-kristo@ti.com>, <kishon@ti.com>,
-        <ulf.hansson@linaro.org>, <adrian.hunter@intel.com>,
-        <michal.simek@xilinx.com>, Tony Lindgren <tony@atomide.com>,
-        Arnd Bergmann <arnd@arndb.de>
-References: <20181207084233.13700-1-faiz_abbas@ti.com>
- <20181207084233.13700-3-faiz_abbas@ti.com>
- <20181208155427.jmidz4vsw4k4qj36@akan>
- <c1dd9783-84dc-9dad-ea94-9a14a4ad814d@ti.com>
- <20181210120647.i3ply3p7umvedb3u@akan>
- <66f9d53b-abec-0a28-8eae-ecb99b075db4@ti.com>
-From:   Faiz Abbas <faiz_abbas@ti.com>
-Message-ID: <a73337c2-977c-c9a8-141e-cf91a4591cbc@ti.com>
-Date:   Mon, 10 Dec 2018 19:03:59 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <66f9d53b-abec-0a28-8eae-ecb99b075db4@ti.com>
-Content-Type: text/plain; charset="utf-8"
+        Mon, 10 Dec 2018 08:32:28 -0500
+Received: from mailhost.synopsys.com (mailhost1.synopsys.com [10.12.238.239])
+        by smtprelay.synopsys.com (Postfix) with ESMTP id D9B7524E104E;
+        Mon, 10 Dec 2018 05:32:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1544448747; bh=q/Eh/bwff1PE72kU0WgxsGhKyHP0ggHVgzpesG4IHLw=;
+        h=From:To:CC:Subject:Date:References:In-Reply-To:From;
+        b=LYxjm2Npf7Ulc+vKJ3buyKmOtErDAdZVdJVtal4bV1qeD2mAtUdil9dsSRjPRUmyc
+         /AmL+C311cZyALY3ouBuVRD+hV6ZQlYOEh2Rn3hvSYn6RpnLY5AOrGEDcKrTNsIrrG
+         88OB2OllODg1tv1oqhm8FvUYnAu8j2IhNfvyTlGOCSsNFKsngTZVFwoRjC30gYioez
+         IJAEmuMGr6fnhlsQeiqQawBaabwRLaOLLGkRs0e6Q0PiA6SgAEthW1eKxVM+qSC1qZ
+         gPgK5e6AfvxqgEHQtKUEaRiAVTXnKSS0so6YwlfaUmQhdKXxUxOI3cFBhzCulgUOGB
+         aVn6E3k//wd+Q==
+Received: from US01WEHTC3.internal.synopsys.com (us01wehtc3.internal.synopsys.com [10.15.84.232])
+        by mailhost.synopsys.com (Postfix) with ESMTP id C6F095C63;
+        Mon, 10 Dec 2018 05:32:27 -0800 (PST)
+Received: from DE02WEHTCA.internal.synopsys.com (10.225.19.92) by
+ US01WEHTC3.internal.synopsys.com (10.15.84.232) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Mon, 10 Dec 2018 05:32:27 -0800
+Received: from DE02WEMBXB.internal.synopsys.com ([fe80::95ce:118a:8321:a099])
+ by DE02WEHTCA.internal.synopsys.com ([::1]) with mapi id 14.03.0415.000; Mon,
+ 10 Dec 2018 14:32:25 +0100
+From:   Alexey Brodkin <alexey.brodkin@synopsys.com>
+To:     "robh+dt@kernel.org" <robh+dt@kernel.org>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "vineet.gupta1@synopsys.com" <vineet.gupta1@synopsys.com>,
+        "linux-snps-arc@lists.infradead.org" 
+        <linux-snps-arc@lists.infradead.org>
+Subject: Re: [PATCH] ARC: Remove 0x prefix from unit-address of node names
+Thread-Topic: [PATCH] ARC: Remove 0x prefix from unit-address of node names
+Thread-Index: AQHUjsPO+AXeE3WDFkC/l78UXo/lhKV36raAgAAAj4A=
+Date:   Mon, 10 Dec 2018 13:32:24 +0000
+Message-ID: <4a4b91fe634bd4352604743b3dfba245ee92a92c.camel@synopsys.com>
+References: <20181208070101.6117-1-abrodkin@synopsys.com>
+         <CAL_JsqK+gRtkNe4eeu_jzzMVTO5u=a30SZZFNShxn3o6rjTQYQ@mail.gmail.com>
+In-Reply-To: <CAL_JsqK+gRtkNe4eeu_jzzMVTO5u=a30SZZFNShxn3o6rjTQYQ@mail.gmail.com>
+Accept-Language: en-US, ru-RU
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Evolution 3.30.2 (3.30.2-2.fc29) 
+x-originating-ip: [10.121.8.96]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <BAB36835AF4CF64F8B8A78CCBA5A369F@internal.synopsys.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On 10/12/18 6:10 PM, Sekhar Nori wrote:
-> Hi Nishanth,
-> 
-> On 10/12/18 5:36 PM, Nishanth Menon wrote:
->> On 13:33-20181210, Sekhar Nori wrote:
->>> On 08/12/18 9:24 PM, Nishanth Menon wrote:
->>>> On 14:12-20181207, Faiz Abbas wrote:
->>>>
->>>>> +
->>>>> +&sdhci0 {
->>>>> +	status = "okay";
->>>>> +	pinctrl-names = "default";
->>>>> +	pinctrl-0 = <&main_mmc0_pins_default>;
->>>>> +	bus-width = <8>;
->>>>> +	non-removable;
->>>>> +	ti,driver-strength-ohm = <50>;
->>>>
->>>> ^^
->>>>
->>>>> +};
->>>>> +
->>>>> +&sdhci1 {
->>>>> +	status = "okay";
->>>>> +	pinctrl-names = "default";
->>>>> +	pinctrl-0 = <&main_mmc1_pins_default>;
->>>>> +	ti,driver-strength-ohm = <50>;
->>>>
->>>> NAK.
->>>>
->>>> $ git checkout next-20181207
->>>> $ git grep ti,driver-strength-ohm Documentation
->>>> $
->>>>
->>>> Nada.. And.. I think "new phy binding" probably introduces this.
->>>> [1] https://patchwork.kernel.org/project/linux-mmc/list/?series=53185
->>>>
->>>> If your patches are'nt really ready, please send them as RFC, I am not
->>>> really in a mood to track the status of every single driver subsystem.
->>>>
->>>> If your binding is not in linux next at the baremin, as far as I am
->>>> concerned, this is not ready, and should be RFC.
->>>
->>> No, RFC does not say "do not merge" or "this has dependencies". RFC is
->>> used to invite a stronger review when introducing a new concept. Its
->>> fair game to apply patches marked RFC if maintainer is okay with the
->>> content.
->>
->> True, fair enough.. RFC is request for comments. Anyways, that is
->> besides the point.
->>>
->>> Dependencies are either noted in cover-letter or below the patch
->>> tear-line. With what you are asking, looks like patches need to be
->>> resubmitted once dependencies are cleared, even if there is no change in
->>> the content itself. This will be additional work.
->>
->> Yes please. There would be other dts changes that are probably ready and
->> I really wont be tracking everything happening on other drivers. If the
->> binding is present at least in next, it is a good indication of things
->> clean and ready to go.
-> 
-> Agree that bindings should be in linux-next before device-tree files are
-> merged.
-> 
->>
->>>
->>> That said, if it makes life convenient for you, you can impose such a
->>> rule for patches you need to handle. But I think it will take some
->>> getting used for developers who send patches to you as I don't think
->>> this is a norm elsewhere.
->>>
->>> Adding Tony and Arnd as well, in case I have missed some recently
->>> accepted convention.
->>
->>
->> I have'nt looked at any conventions, The style I prefer to follow when I do
->> submissions: It is my job to get the bindings in, until then my actual
->> dts is just "request for comments". Only after the bindings are merged
->> do I formally submit dts - simply because I dont expect dts maintainer
->> to track what happened to my driver's binding and discussions there of.
-> 
-> Ok.
-> 
->>
->> Seriously, is'nt it really reasonable for dts maintainer to check every
->> single driver's development status in 15 different mailing lists?
->> Because, it sounds like what you are asking. At least I wont have time
->> for it..
->>
->>
->> I really am curious how Arnd / Tony actually pull this one off.. If they
->> have continous cron job for checking if your patch is ready... I doubt
->> it..
-> 
-> I think you can rely on the author to tell you when something is> actually ready to be merged (and you can tell him/her to remind you).
-
-Yes. I will ping Nishanth once the bindings are in next.
-
-Thanks,
-Faiz
+SGkgUm9iLA0KDQpPbiBNb24sIDIwMTgtMTItMTAgYXQgMDc6MzAgLTA2MDAsIFJvYiBIZXJyaW5n
+IHdyb3RlOg0KPiBPbiBTYXQsIERlYyA4LCAyMDE4IGF0IDE6MDEgQU0gQWxleGV5IEJyb2RraW4N
+Cj4gPGFsZXhleS5icm9ka2luQHN5bm9wc3lzLmNvbT4gd3JvdGU6DQo+ID4gRG9uZSBhdXRvbWF0
+aWNhbGx5IHdpdGggaGVscCBvZjoNCj4gPiAtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLT44LS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tDQo+ID4gc2VkIC1pICdzL0AweC9AL2cnIGFyY2gvYXJjL2Jvb3Qv
+ZHRzLyouZHRzKg0KPiA+IC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tPjgtLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0NCj4gPiANCj4gPiBJbnNwaXJlZCBieSBbMV0gYW5kIHRoZSBsaWtlLg0KPiA+IA0K
+PiA+IFsxXSANCj4gPiBodHRwczovL3VybGRlZmVuc2UucHJvb2Zwb2ludC5jb20vdjIvdXJsP3U9
+aHR0cC0zQV9fa2lzc2tiLmVsbGVybWFuLmlkLmF1X2tpc3NrYl9idWlsZHJlc3VsdF8xMzYxMjAx
+N18mZD1Ed0lCYVEmYz1EUEw2X1hfNkprWEZ4N0FYV3FCMHRnJnI9bHFkZWVTU0VlczBHRkREbDY1
+NmVWaVhPN2JyZVM1NXl0V2tocGs1UjgxSSZtPXp4X21KNUd6QU1JMzItaXFjWFppTDhRenJnNzlE
+ejRjeE5GNzJWWWhRbDAmcz1Kd2JGY0ZtbkpSRUNsX3o3alFHbDA2ODdVcE9ScTkzOTVtZ1JibzFP
+d0ZFJmU9DQo+ID4gDQo+ID4gU2lnbmVkLW9mZi1ieTogQWxleGV5IEJyb2RraW4gPGFicm9ka2lu
+QHN5bm9wc3lzLmNvbT4NCj4gPiBDYzogUm9iIEhlcnJpbmcgPHJvYmgrZHRAa2VybmVsLm9yZz4N
+Cj4gPiANCj4gPiBTaWduZWQtb2ZmLWJ5OiBBbGV4ZXkgQnJvZGtpbiA8YWJyb2RraW5Ac3lub3Bz
+eXMuY29tPg0KPiA+IC0tLQ0KPiA+ICBhcmNoL2FyYy9ib290L2R0cy9hYmlsaXNfdGIxMHguZHRz
+aSAgIHwgIDQgKystLQ0KPiA+ICBhcmNoL2FyYy9ib290L2R0cy9heGMwMDEuZHRzaSAgICAgICAg
+IHwgIDYgKysrLS0tDQo+ID4gIGFyY2gvYXJjL2Jvb3QvZHRzL2F4YzAwMy5kdHNpICAgICAgICAg
+fCAxNCArKysrKysrLS0tLS0tLQ0KPiA+ICBhcmNoL2FyYy9ib290L2R0cy9heGMwMDNfaWR1LmR0
+c2kgICAgIHwgMTQgKysrKysrKy0tLS0tLS0NCj4gPiAgYXJjaC9hcmMvYm9vdC9kdHMvYXhzMTB4
+X21iLmR0c2kgICAgICB8IDIyICsrKysrKysrKysrLS0tLS0tLS0tLS0NCj4gPiAgYXJjaC9hcmMv
+Ym9vdC9kdHMvdmRrX2F4YzAwMy5kdHNpICAgICB8ICA0ICsrLS0NCj4gPiAgYXJjaC9hcmMvYm9v
+dC9kdHMvdmRrX2F4YzAwM19pZHUuZHRzaSB8ICA0ICsrLS0NCj4gPiAgYXJjaC9hcmMvYm9vdC9k
+dHMvdmRrX2F4czEweF9tYi5kdHNpICB8IDE0ICsrKysrKystLS0tLS0tDQo+ID4gIDggZmlsZXMg
+Y2hhbmdlZCwgNDEgaW5zZXJ0aW9ucygrKSwgNDEgZGVsZXRpb25zKC0pDQo+ID4gDQo+ID4gZGlm
+ZiAtLWdpdCBhL2FyY2gvYXJjL2Jvb3QvZHRzL2FiaWxpc190YjEweC5kdHNpIGIvYXJjaC9hcmMv
+Ym9vdC9kdHMvYWJpbGlzX3RiMTB4LmR0c2kNCj4gPiBpbmRleCAzMTIxNTM2YjI1YTMuLjc3YWMx
+MzY4YTY1YiAxMDA2NDQNCj4gPiAtLS0gYS9hcmNoL2FyYy9ib290L2R0cy9hYmlsaXNfdGIxMHgu
+ZHRzaQ0KPiA+ICsrKyBiL2FyY2gvYXJjL2Jvb3QvZHRzL2FiaWxpc190YjEweC5kdHNpDQo+ID4g
+QEAgLTE3OCw3ICsxNzgsNyBAQA0KPiA+ICAgICAgICAgICAgICAgICAgICAgICAgIGNsb2NrcyA9
+IDwmYWhiX2Nsaz47DQo+ID4gICAgICAgICAgICAgICAgIH07DQo+ID4gDQo+ID4gLSAgICAgICAg
+ICAgICAgIHNwaTA6IHNwaUAweEZFMDEwMDAwIHsNCj4gPiArICAgICAgICAgICAgICAgc3BpMDog
+c3BpQEZFMDEwMDAwIHsNCj4gDQo+IFRoaXMgc2hvdWxkIGJlIGxvd2VyY2FzZSB0b28uDQo+IA0K
+PiA+ICAgICAgICAgICAgICAgICAgICAgICAgICNhZGRyZXNzLWNlbGxzID0gPDE+Ow0KPiA+ICAg
+ICAgICAgICAgICAgICAgICAgICAgICNzaXplLWNlbGxzID0gPDA+Ow0KPiA+ICAgICAgICAgICAg
+ICAgICAgICAgICAgIGNlbGwtaW5kZXggPSA8MD47DQo+IA0KPiBbLi4uXQ0KPiANCj4gPiBAQCAt
+MTE5LDcgKzExOSw3IEBADQo+ID4gICAgICAgICAgKiBUaGlzIG5vZGUgaXMgaW50ZW50aW9uYWxs
+eSBwdXQgb3V0c2lkZSBvZiBNQiBhYm92ZSBiZWNhc2UNCj4gPiAgICAgICAgICAqIGl0IG1hcHMg
+YXJlYXMgb3V0c2lkZSBvZiBNQidzIDB4RXotMHhGei4NCj4gPiAgICAgICAgICAqLw0KPiA+IC0g
+ICAgICAgdWlvX2V2OiB1aW9AMHhEMDAwMDAwMCB7DQo+ID4gKyAgICAgICB1aW9fZXY6IHVpb0BE
+MDAwMDAwMCB7DQo+IA0KPiBsb3dlcmNhc2UNCj4gDQo+ID4gICAgICAgICAgICAgICAgIGNvbXBh
+dGlibGUgPSAiZ2VuZXJpYy11aW8iOw0KPiA+ICAgICAgICAgICAgICAgICByZWcgPSA8MHhEMDAw
+MDAwMCAweDIwMDAgMHhEMTAwMDAwMCAweDIwMDAgMHg5MDAwMDAwMCAweDEwMDAwMDAwIDB4QzAw
+MDAwMDAgMHgxMDAwMDAwMD47DQoNCkkgZ3Vlc3MgcmVhbCBhZGRyZXNzZXMgc2hvdWxkIGJlIGxv
+d2VyLWNhc2UgdG9vLCByaWdodD8NCg0KLUFsZXhleQ0K
