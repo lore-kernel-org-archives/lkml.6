@@ -2,213 +2,132 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D9C4C5CFFE
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 16:29:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70EDCC5CFFE
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 16:30:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F046620821
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 16:29:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3425820870
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 16:30:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="uq3qjHXb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F046620821
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="PnMRjqZl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3425820870
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728300AbeLJQ3x (ORCPT
+        id S1728422AbeLJQaS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 11:29:53 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:37056 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728235AbeLJQ3w (ORCPT
+        Mon, 10 Dec 2018 11:30:18 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:36242 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728363AbeLJQaR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 11:29:52 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wBAGT3cw019766;
-        Mon, 10 Dec 2018 16:29:20 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=ToB+Ad+zEJQFDU/JB1ZnLazxG6pF45Z+w/OqWPIp/wA=;
- b=uq3qjHXbkmwNkxIGfHj9SFYnryj9e1xM2AjXXgI72OEupYV8sEPt/KshYgh8aNFkmW+u
- 1hcFSzVMdyGN/3sSW5R2is34uS8heVC74bnGK6b3omKfm7W12/n656vJvMYZ26wxi06t
- rXKUY7bEHm6V59IqRivCZ3ijXjl1KQM3bGSgbNFUjfmbRQWIp52K7f46rml8ptPSykYT
- 9wZnorsviFtPpeobcviSokj/8yW9GCmOLIQ+6rRNOs61Mdb/wxMkVnW480Xp5+5Jaozp
- UF9iht7xre26hIeFqI2I9yh8JIuoyUJ1XicAQ6pt4fPYeTJlO/hfwSuix6x2BuP/RDzP mw== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by userp2130.oracle.com with ESMTP id 2p85cty0gn-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 10 Dec 2018 16:29:20 +0000
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wBAGTJnS008909
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 10 Dec 2018 16:29:20 GMT
-Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id wBAGTI5l026931;
-        Mon, 10 Dec 2018 16:29:18 GMT
-Received: from [10.152.35.100] (/10.152.35.100)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 10 Dec 2018 08:29:18 -0800
-Subject: Re: [PATCH v4 00/10] steal tasks to improve CPU utilization
-To:     Vincent Guittot <vincent.guittot@linaro.org>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        subhra.mazumdar@oracle.com, Dhaval Giani <dhaval.giani@oracle.com>,
-        daniel.m.jordan@oracle.com, pavel.tatashin@microsoft.com,
-        Matt Fleming <matt@codeblueprint.co.uk>,
-        Mike Galbraith <umgwanakikbuti@gmail.com>,
-        Rik van Riel <riel@redhat.com>, Josef Bacik <jbacik@fb.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Quentin Perret <quentin.perret@arm.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-References: <1544131696-2888-1-git-send-email-steven.sistare@oracle.com>
- <CAKfTPtBuAsbF2r8wSigM=ckpKCqj0hcHbi+y3ZAaC7dqYcFY2g@mail.gmail.com>
-From:   Steven Sistare <steven.sistare@oracle.com>
-Organization: Oracle Corporation
-Message-ID: <df0197ac-d4eb-437e-1176-dbc9b23a94bb@oracle.com>
-Date:   Mon, 10 Dec 2018 11:29:08 -0500
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.3
+        Mon, 10 Dec 2018 11:30:17 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=zEsOiUzkbEW8saZNsMSivBg6BdsTy4R+5g/ZTmLpSgg=; b=PnMRjqZleQwDHG5nYauUuOaIC
+        s7cheZD42BFjMIg2W0DR3cYKGiUJP/gXgO1OZEMTYWKPWm3Z//9mE7jX+nlX5vd7Ur5IcVYAL/J5F
+        GaucJwMOsXhUgDO8/vgEZLIl/nK8NRNmtrkhcIGwS6oQevanwWvhKyi85UVdm++8MMdjFrlb3UYR4
+        /nakFjPfS87rtNRxV+0xRe1mtPd3vM4Mn7k6r+JY0R8BWB4MC3u59cBOWw8i7YWIUkDRH2nQ8k9wB
+        oB1OwarPG8XcKNC/eS6VwuJkqe4l5enZeldadJjb9w6AQ4jg7XaEXrb5v4K2osx+wpeDqGYUpbJRy
+        smFMLb3eQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gWORf-0001fB-D8; Mon, 10 Dec 2018 16:30:11 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 109CD2075BD14; Mon, 10 Dec 2018 17:30:09 +0100 (CET)
+Date:   Mon, 10 Dec 2018 17:30:09 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        David Rientjes <rientjes@google.com>,
+        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        Daniel Vetter <daniel.vetter@intel.com>
+Subject: Re: [PATCH 2/4] kernel.h: Add non_block_start/end()
+Message-ID: <20181210163009.GR5289@hirez.programming.kicks-ass.net>
+References: <20181210103641.31259-1-daniel.vetter@ffwll.ch>
+ <20181210103641.31259-3-daniel.vetter@ffwll.ch>
+ <20181210141337.GQ1286@dhcp22.suse.cz>
+ <20181210144711.GN5289@hirez.programming.kicks-ass.net>
+ <20181210150159.GR1286@dhcp22.suse.cz>
+ <20181210152253.GP5289@hirez.programming.kicks-ass.net>
+ <20181210162010.GS1286@dhcp22.suse.cz>
 MIME-Version: 1.0
-In-Reply-To: <CAKfTPtBuAsbF2r8wSigM=ckpKCqj0hcHbi+y3ZAaC7dqYcFY2g@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9103 signatures=668679
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1812100148
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181210162010.GS1286@dhcp22.suse.cz>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/10/2018 11:10 AM, Vincent Guittot wrote:
-> Hi Steven,
+On Mon, Dec 10, 2018 at 05:20:10PM +0100, Michal Hocko wrote:
+> > OK, no real objections to the thing.  Just so long we're all on the same
+> > page as to what it does and doesn't do ;-)
 > 
-> On Thu, 6 Dec 2018 at 22:38, Steve Sistare <steven.sistare@oracle.com> wrote:
->>
->> When a CPU has no more CFS tasks to run, and idle_balance() fails to
->> find a task, then attempt to steal a task from an overloaded CPU in the
->> same LLC. Maintain and use a bitmap of overloaded CPUs to efficiently
->> identify candidates.  To minimize search time, steal the first migratable
->> task that is found when the bitmap is traversed.  For fairness, search
->> for migratable tasks on an overloaded CPU in order of next to run.
->>
->> This simple stealing yields a higher CPU utilization than idle_balance()
->> alone, because the search is cheap, so it may be called every time the CPU
->> is about to go idle.  idle_balance() does more work because it searches
->> widely for the busiest queue, so to limit its CPU consumption, it declines
->> to search if the system is too busy.  Simple stealing does not offload the
->> globally busiest queue, but it is much better than running nothing at all.
->>
->> The bitmap of overloaded CPUs is a new type of sparse bitmap, designed to
->> reduce cache contention vs the usual bitmap when many threads concurrently
->> set, clear, and visit elements.
->>
->> Patch 1 defines the sparsemask type and its operations.
->>
->> Patches 2, 3, and 4 implement the bitmap of overloaded CPUs.
->>
->> Patches 5 and 6 refactor existing code for a cleaner merge of later
->>   patches.
->>
->> Patches 7 and 8 implement task stealing using the overloaded CPUs bitmap.
->>
->> Patch 9 disables stealing on systems with more than 2 NUMA nodes for the
->> time being because of performance regressions that are not due to stealing
->> per-se.  See the patch description for details.
->>
->> Patch 10 adds schedstats for comparing the new behavior to the old, and
->>   provided as a convenience for developers only, not for integration.
->>
->> The patch series is based on kernel 4.20.0-rc1.  It compiles, boots, and
->> runs with/without each of CONFIG_SCHED_SMT, CONFIG_SMP, CONFIG_SCHED_DEBUG,
->> and CONFIG_PREEMPT.  It runs without error with CONFIG_DEBUG_PREEMPT +
->> CONFIG_SLUB_DEBUG + CONFIG_DEBUG_PAGEALLOC + CONFIG_DEBUG_MUTEXES +
->> CONFIG_DEBUG_SPINLOCK + CONFIG_DEBUG_ATOMIC_SLEEP.  CPU hot plug and CPU
->> bandwidth control were tested.
->>
->> Stealing improves utilization with only a modest CPU overhead in scheduler
->> code.  In the following experiment, hackbench is run with varying numbers
->> of groups (40 tasks per group), and the delta in /proc/schedstat is shown
->> for each run, averaged per CPU, augmented with these non-standard stats:
->>
->>   %find - percent of time spent in old and new functions that search for
->>     idle CPUs and tasks to steal and set the overloaded CPUs bitmap.
->>
->>   steal - number of times a task is stolen from another CPU.
->>
->> X6-2: 1 socket * 10 cores * 2 hyperthreads = 20 CPUs
->> Intel(R) Xeon(R) CPU E5-2630 v4 @ 2.20GHz
->> hackbench <grps> process 100000
->> sched_wakeup_granularity_ns=15000000
->>
->>   baseline
->>   grps  time  %busy  slice   sched   idle     wake %find  steal
->>   1    8.084  75.02   0.10  105476  46291    59183  0.31      0
->>   2   13.892  85.33   0.10  190225  70958   119264  0.45      0
->>   3   19.668  89.04   0.10  263896  87047   176850  0.49      0
->>   4   25.279  91.28   0.10  322171  94691   227474  0.51      0
->>   8   47.832  94.86   0.09  630636 144141   486322  0.56      0
->>
->>   new
->>   grps  time  %busy  slice   sched   idle     wake %find  steal  %speedup
->>   1    5.938  96.80   0.24   31255   7190    24061  0.63   7433  36.1
->>   2   11.491  99.23   0.16   74097   4578    69512  0.84  19463  20.9
->>   3   16.987  99.66   0.15  115824   1985   113826  0.77  24707  15.8
->>   4   22.504  99.80   0.14  167188   2385   164786  0.75  29353  12.3
->>   8   44.441  99.86   0.11  389153   1616   387401  0.67  38190   7.6
->>
->> Elapsed time improves by 8 to 36%, and CPU busy utilization is up
->> by 5 to 22% hitting 99% for 2 or more groups (80 or more tasks).
->> The cost is at most 0.4% more find time.
-> 
-> I have run some hackbench tests on my hikey arm64 octo cores with your
-> patchset. My original intent was to send a tested-by but I have some
-> performances regressions.
-> This hikey is the smp one and not the asymetric hikey960 that Valentin
-> used for his tests
-> The sched domain topology is
-> domain-0: span=0-3 level=MC  and domain-0: span=4-7 level=MC
-> domain-1: span=0-7 level=DIE
-> 
-> I have run 12 times hackbench -g $j -P -l 2000 with j equals to 1 2 3 4 8
-> 
-> grps  time
-> 1      1.396
-> 2      2.699
-> 3      3.617
-> 4      4.498
-> 8      7.721
-> 
-> Then after disabling STEAL in sched_feature with echo NO_STEAL >
-> /sys/kernel/debug/sched_features , the results become:
-> grps  time
-> 1      1.217
-> 2      1.973
-> 3      2.855
-> 4      3.932
-> 8      7.674
-> 
-> I haven't looked in details about some possible reasons of such
-> difference yet and haven't collected the stats that you added with
-> patch 10.
-> Have you got a script to collect and post process them ?
-> 
-> Regards,
-> Vincent
+> I am not really sure whether there are other potential users besides
+> this one and whether the check as such is justified.
 
-Thanks Vincent.  What is the value of /proc/sys/kernel/sched_wakeup_granularity_ns?
-Try 15000000.  Your 8-core system is heavily overloaded with 40 * groups tasks,
-and I suspect preemptions are killing performance.
+It's a debug option...
 
-I have a python script to post-process schedstat files, but it does many things
-and is large and I am not ready to share it.  I can write a short bash script if
-that would help.
+> > I suppose you could extend the check to include schedule_debug() as
+> > well, maybe something like:
+> 
+> Do you mean to make the check cheaper?
 
-- Steve
+Nah, so the patch only touched might_sleep(), the below touches
+schedule().
+
+If there were a patch that hits schedule() without going through a
+might_sleep() (rare in practise I think, but entirely possible) then you
+won't get a splat without something like the below on top.
+
+> > diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> > index f66920173370..b1aaa278f1af 100644
+> > --- a/kernel/sched/core.c
+> > +++ b/kernel/sched/core.c
+> > @@ -3278,13 +3278,18 @@ static noinline void __schedule_bug(struct task_struct *prev)
+> >  /*
+> >   * Various schedule()-time debugging checks and statistics:
+> >   */
+> > -static inline void schedule_debug(struct task_struct *prev)
+> > +static inline void schedule_debug(struct task_struct *prev, bool preempt)
+> >  {
+> >  #ifdef CONFIG_SCHED_STACK_END_CHECK
+> >  	if (task_stack_end_corrupted(prev))
+> >  		panic("corrupted stack end detected inside scheduler\n");
+> >  #endif
+> >  
+> > +#ifdef CONFIG_DEBUG_ATOMIC_SLEEP
+> > +	if (!preempt && prev->state && prev->non_block_count)
+> > +		// splat
+> > +#endif
+> > +
+> >  	if (unlikely(in_atomic_preempt_off())) {
+> >  		__schedule_bug(prev);
+> >  		preempt_count_set(PREEMPT_DISABLED);
+> > @@ -3391,7 +3396,7 @@ static void __sched notrace __schedule(bool preempt)
+> >  	rq = cpu_rq(cpu);
+> >  	prev = rq->curr;
+> >  
+> > -	schedule_debug(prev);
+> > +	schedule_debug(prev, preempt);
+> >  
+> >  	if (sched_feat(HRTICK))
+> >  		hrtick_clear(rq);
+> 
+> -- 
+> Michal Hocko
+> SUSE Labs
