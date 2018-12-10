@@ -2,126 +2,136 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0FE4C04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 21:36:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0136C04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 21:36:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9BE2C2082F
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 21:36:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Mj/tubEB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9BE2C2082F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id B19462084E
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 21:36:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544477818;
+	bh=n0vhkUlLbGMAru4y4wqR/TMS+g1WDWkZEhh/m2tNA90=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=o94oeDv6aTC5kaaROF8RKZyCcXDYAD4m5Otcp7+6RfUIp9r4m137p+Lrr27hlqN0h
+	 ITyTdfjBXel7bhmKqv1owSP0DPHCTYB074rmSxW6JmNu9c7CLiU80lVllfOV2Cc3f3
+	 Am3cciOcAydPEGW6L57CvBOwlmcZ+LP0vib+pmp0=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B19462084E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730003AbeLJVgx (ORCPT
+        id S1730020AbeLJVg5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 16:36:53 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:52290 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727496AbeLJVgw (ORCPT
+        Mon, 10 Dec 2018 16:36:57 -0500
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:46204 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727225AbeLJVgy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 16:36:52 -0500
-Received: by mail-wm1-f67.google.com with SMTP id r11-v6so163737wmb.2
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Dec 2018 13:36:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=zIQjiS4QCt4AkoDN+Y9dTrrxkvV6/u+IfiXkC0gUyBg=;
-        b=Mj/tubEBwQdrt0/+vE/YdBpflj5r3F2Nc4s1CgotndK/33d9LnAH3D4BuY6Cyrf+6U
-         A+nQrPDvK3Jcw3PEv0JNkE02qFMl9TDw2hDbmCTLr+JG2WYpqVWIoZS66wg82TLbwRPK
-         WveVklOg4cQqe5A9EMJBRylRWHMt99VUyVtxM=
+        Mon, 10 Dec 2018 16:36:54 -0500
+Received: by mail-oi1-f193.google.com with SMTP id x202so10254676oif.13;
+        Mon, 10 Dec 2018 13:36:53 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=zIQjiS4QCt4AkoDN+Y9dTrrxkvV6/u+IfiXkC0gUyBg=;
-        b=kA1Es6GeAXXpoOl31bOjfJT6uMH8F3GbxxwGQ567aKhmxYYxU5NAfh+LmaJEUcz9nk
-         UuA/sRCQGOFjk6fL/70yaQaURO/yNC70Xp4MJcSVO4cmoSm+LHWqETGWZisnzIy5kc8k
-         etlHWSMxkWe4xAzbp8SuB6VijzHsxgkd6TgjYQuKJAal/x56lipiI+5LnzXWzGdXSdyQ
-         we4lRIs0/xWkjv6e3+LkM4mt61xMZo6e+bk1KMhnd6WIhm1bmM7Un0H6r/78HdaZGZfB
-         uQB+CKPPW1cxuAE/yfB24MGJLPuRBKM4bSJs+UVLb1hTMtmPHtP7lSckzNB1m4nLbu5R
-         U97Q==
-X-Gm-Message-State: AA+aEWZYBNJN0bHhqp+Zo7S+o/yySmO4dPJYFf23nxcHm0gqvNZa7lMU
-        ugYqQhDUqur5SwM73/L292cjbw==
-X-Google-Smtp-Source: AFSGD/Wtg8Ru7N+irRF39jEpwysxPX9IcjyxT5sNrl2UYL7DEQUcU5tjvAtObaagmWl0YnaJxnKbTg==
-X-Received: by 2002:a1c:7fca:: with SMTP id a193mr73744wmd.36.1544477811099;
-        Mon, 10 Dec 2018 13:36:51 -0800 (PST)
-Received: from [192.168.1.8] (hst-221-5.medicom.bg. [84.238.221.5])
-        by smtp.googlemail.com with ESMTPSA id a1sm8494192wrw.76.2018.12.10.13.36.49
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 10 Dec 2018 13:36:50 -0800 (PST)
-Subject: Re: [GIT PULL] Qualcomm Driver updates for 4.21 - Part 2
-To:     Andy Gross <andy.gross@linaro.org>
-Cc:     arm@kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Olof Johansson <olof@lixom.net>
-References: <1544245994-4228-1-git-send-email-andy.gross@linaro.org>
- <1544245994-4228-2-git-send-email-andy.gross@linaro.org>
- <c575fb97-4b19-5143-66f8-3a4874aa7c17@linaro.org>
- <20181210190513.GA25288@hector.attlocal.net>
-From:   Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Message-ID: <84d1b299-2898-2df3-8b78-f9510f7bc229@linaro.org>
-Date:   Mon, 10 Dec 2018 23:36:48 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=dr8hiCyXQo1hX2X5cWuN+3q50xv31unul6ES2t08gWQ=;
+        b=b4CBCNIBD4qHDcquWq8V2GmPk8K+qYv/R8K88/4wPGEr6OrmFY/E8V/M+wf5/Kjh7X
+         dd/1D1M4YqlowpN9VbXMyjB5mirgJndxe6j+HAqHFfZ7WH5gCmuYgNa0AU9Q+18H9NtT
+         xc4lrMrPbxsbud1k9L15zexoZx6EMpfzbmNPICNj8qHEkkIgHFwoMzPf/sRd75mADouf
+         aYKbL9GgJVV8EtLBE86S6T+neuM4GH8wrDwLzE4B+Ggs1L3mP4Zm+SjydvU0txmFnMRB
+         DfZDmHc0m/WY1j1j6Omy/Q02iJ0pQjXnlKWs0LuuoMkO93cEOQV3pUF9dKaaXtn9CR1f
+         Xf1g==
+X-Gm-Message-State: AA+aEWZeJIIswYSvobPDwMF6PsjNCaw+/8i0NspHNdj0/9H6LaTua3Ey
+        7k2LgVnrYJgr3Guk439ybHxDWc12XqnE795WJCg=
+X-Google-Smtp-Source: AFSGD/V68YN4KJdP+oM/xNtL9uLLfSwoeX+Ydrgm6FK2g8sG5+h2zscYEIHBxqi95P28qyjJIHQqV8UI4ogvC6ndEgU=
+X-Received: by 2002:aca:b642:: with SMTP id g63mr7945600oif.195.1544477813386;
+ Mon, 10 Dec 2018 13:36:53 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20181210190513.GA25288@hector.attlocal.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <3514439.dzOWKx1Cjx@aspire.rjw.lan> <20181210122104.GL5289@hirez.programming.kicks-ass.net>
+In-Reply-To: <20181210122104.GL5289@hirez.programming.kicks-ass.net>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Mon, 10 Dec 2018 22:36:40 +0100
+Message-ID: <CAJZ5v0j-a6cHayRtcsUPbUTBT0iBSUvmcUy6pfSSvUVcTMBxbw@mail.gmail.com>
+Subject: Re: [PATCH v2] cpuidle: Add 'above' and 'below' idle state metrics
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Doug Smythies <dsmythies@telus.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Giovanni Gherdovich <ggherdovich@suse.cz>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Dec 10, 2018 at 1:21 PM Peter Zijlstra <peterz@infradead.org> wrote:
+>
+> On Mon, Dec 10, 2018 at 12:30:23PM +0100, Rafael J. Wysocki wrote:
+> > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> >
+> > Add two new metrics for CPU idle states, "above" and "below", to count
+> > the number of times the given state had been asked for (or entered
+> > from the kernel's perspective), but the observed idle duration turned
+> > out to be too short or too long for it (respectively).
+> >
+> > These metrics help to estimate the quality of the CPU idle governor
+> > in use.
+> >
+> > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+>
+> > @@ -260,6 +262,33 @@ int cpuidle_enter_state(struct cpuidle_d
+> >               dev->last_residency = (int)diff;
+> >               dev->states_usage[entered_state].time += dev->last_residency;
+> >               dev->states_usage[entered_state].usage++;
+> > +
+> > +             if (diff < drv->states[entered_state].target_residency) {
+> > +                     for (i = entered_state - 1; i >= 0; i--) {
+> > +                             if (drv->states[i].disabled ||
+> > +                                 dev->states_usage[i].disable)
+> > +                                     continue;
+> > +
+> > +                             /* Shallower states are enabled, so update. */
+> > +                             dev->states_usage[entered_state].above++;
+> > +                             break;
+> > +                     }
+> > +             } else if (diff > delay) {
+> > +                     for (i = entered_state + 1; i < drv->state_count; i++) {
+> > +                             if (drv->states[i].disabled ||
+> > +                                 dev->states_usage[i].disable)
+> > +                                     continue;
+> > +
+> > +                             /*
+> > +                              * Update if a deeper state would have been a
+> > +                              * better match for the observed idle duration.
+> > +                              */
+> > +                             if (diff - delay >= drv->states[i].target_residency)
+> > +                                     dev->states_usage[entered_state].below++;
+> > +
+> > +                             break;
+> > +                     }
+> > +             }
+>
+> One question on this; why is this tracked unconditionally?
 
+Because I didn't quite see how to make that conditional in a sensible way.
 
-On 10.12.18 г. 21:05 ч., Andy Gross wrote:
-> On Mon, Dec 10, 2018 at 02:20:47PM +0200, Stanimir Varbanov wrote:
->> Hi Andy,
->>
->> On 12/8/18 7:13 AM, Andy Gross wrote:
->>> The following changes since commit b601f73130a375c912d9f2ec93c5f3cea5d6a3da:
->>>
->>>    drm: msm: Check cmd_db_read_aux_data() for failure (2018-11-29 17:41:53 -0600)
->>>
->>> are available in the git repository at:
->>>
->>>    git://git.kernel.org/pub/scm/linux/kernel/git/agross/linux.git tags/qcom-drivers-for-4.21-2
->>>
->>> for you to fetch changes up to 92def04bd7b46f5b186f985d5c9d3804858c3c2f:
->>>
->>>    MAINTAINERS: Change Todor Tomov's email address (2018-12-05 16:45:34 -0600)
->>>
->>> ----------------------------------------------------------------
->>> Qualcomm ARM Based Driver Updates for v4.21 Part 2
->>>
->>> * Fix MAINTAINERS email address for Todor
->>> * Fix SCM compilation error
->>>
->>> ----------------------------------------------------------------
->>> Jonathan Marek (1):
->>>        firmware: qcom: scm: fix compilation error when disabled
->>>
->>> Todor Tomov (1):
->>>        MAINTAINERS: Change Todor Tomov's email address
->>
->> I saw this patch is applied also in media_tree.git, not sure that is
->> problem though.
-> 
-> Which one?  The maintainer or the scm?
+These things are counters and counting with the help of tracepoints
+isn't particularly convenient (and one needs debugfs to be there to
+use tracepoints and they require root access etc).
 
-the maintainer one.
+> Would not a tracepoint be better?; then there is no overhead in the
+> normal case where nobody gives a crap about these here numbers.
 
-regards,
-Stan
+There is an existing tracepoint that in principle could be used to
+produce this information, but it is such a major PITA in practice that
+nobody does that.  Guess why. :-)
+
+Also, the "usage" and "time" counters are there in sysfs, so why not these two?
+
+And is the overhead really that horrible?
