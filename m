@@ -2,126 +2,163 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CE33C04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 12:03:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 681C2C04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 12:03:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0FF0C20821
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 12:03:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0FF0C20821
+	by mail.kernel.org (Postfix) with ESMTP id 384D82086D
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 12:03:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 384D82086D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727451AbeLJMDh (ORCPT
+        id S1727501AbeLJMDp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 07:03:37 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:52498 "EHLO
+        Mon, 10 Dec 2018 07:03:45 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:52518 "EHLO
         foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727058AbeLJMDh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 07:03:37 -0500
+        id S1727058AbeLJMDo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Dec 2018 07:03:44 -0500
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AC19715AB;
-        Mon, 10 Dec 2018 04:03:36 -0800 (PST)
-Received: from arrakis.emea.arm.com (arrakis.cambridge.arm.com [10.1.196.113])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 71F693F6A8;
-        Mon, 10 Dec 2018 04:03:33 -0800 (PST)
-Date:   Mon, 10 Dec 2018 12:03:30 +0000
-From:   Catalin Marinas <catalin.marinas@arm.com>
-To:     Richard Henderson <richard.henderson@linaro.org>
-Cc:     Kristina Martsenko <kristina.martsenko@arm.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Mark Rutland <mark.rutland@arm.com>,
-        Andrew Jones <drjones@redhat.com>,
-        Jacob Bramley <jacob.bramley@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Adam Wallis <awallis@codeaurora.org>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Christoffer Dall <christoffer.dall@arm.com>,
-        kvmarm@lists.cs.columbia.edu, Cyrill Gorcunov <gorcunov@gmail.com>,
-        Ramana Radhakrishnan <ramana.radhakrishnan@arm.com>,
-        Amit Kachhap <amit.kachhap@arm.com>,
-        Dave P Martin <dave.martin@arm.com>,
-        linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>,
-        Steve Capper <Steve.Capper@arm.com>
-Subject: Re: [PATCH v6 08/13] arm64: expose user PAC bit positions via ptrace
-Message-ID: <20181210120330.GB4048@arrakis.emea.arm.com>
-References: <20181207183931.4285-1-kristina.martsenko@arm.com>
- <20181207183931.4285-9-kristina.martsenko@arm.com>
- <a31ca10a-ee1a-71fb-2c3d-a6184e12b543@linaro.org>
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E40A415AD;
+        Mon, 10 Dec 2018 04:03:43 -0800 (PST)
+Received: from [10.1.196.75] (e110467-lin.cambridge.arm.com [10.1.196.75])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5885E3F6A8;
+        Mon, 10 Dec 2018 04:03:42 -0800 (PST)
+Subject: Re: [PATCH v4] iommu/dma: Use NUMA aware memory allocations in
+ __iommu_dma_alloc_pages()
+To:     John Garry <john.garry@huawei.com>, joro@8bytes.org
+Cc:     will.deacon@arm.com, linux-kernel@vger.kernel.org,
+        iommu@lists.linux-foundation.org, ganapatrao.kulkarni@cavium.com,
+        hch@lst.de, m.szyprowski@samsung.com, linuxarm@huawei.com
+References: <1543576440-222098-1-git-send-email-john.garry@huawei.com>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <f973d8ea-66b4-68bd-c5e9-af0c94c85c11@arm.com>
+Date:   Mon, 10 Dec 2018 12:03:40 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a31ca10a-ee1a-71fb-2c3d-a6184e12b543@linaro.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <1543576440-222098-1-git-send-email-john.garry@huawei.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Dec 09, 2018 at 09:41:31AM -0600, Richard Henderson wrote:
-> On 12/7/18 12:39 PM, Kristina Martsenko wrote:
-> > When pointer authentication is in use, data/instruction pointers have a
-> > number of PAC bits inserted into them. The number and position of these
-> > bits depends on the configured TCR_ELx.TxSZ and whether tagging is
-> > enabled. ARMv8.3 allows tagging to differ for instruction and data
-> > pointers.
+On 30/11/2018 11:14, John Garry wrote:
+> From: Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com>
 > 
-> At this point I think it's worth starting a discussion about pointer tagging,
-> and how we can make it controllable and not mandatory.
+> Change function __iommu_dma_alloc_pages() to allocate pages for DMA from
+> respective device NUMA node. The ternary operator which would be for
+> alloc_pages_node() is tidied along with this.
 > 
-> With this patch set, we are enabling 7 authentication bits: [54:48].
+> The motivation for this change is to have a policy for page allocation
+> consistent with direct DMA mapping, which attempts to allocate pages local
+> to the device, as mentioned in [1].
 > 
-> However, it won't be too long before someone implements support for
-> ARMv8.2-LVA, at which point, without changes to mandatory pointer tagging, we
-> will only have 3 authentication bits: [54:52].  This seems useless and easily
-> brute-force-able.
-
-Such support is already here (about to be queued):
-
-https://lore.kernel.org/linux-arm-kernel/20181206225042.11548-1-steve.capper@arm.com/
-
-> I assume that pointer tagging is primarily used by Android, since I'm not aware
-> of anything else that uses it at all.
-
-I would expect it to be enabled more widely (Linux distros), though only
-the support for instructions currently in the NOP space.
-
-> Unfortunately, there is no obvious path to making this optional that does not
-> break compatibility with Documentation/arm64/tagged-pointers.txt.
-
-There is also the ARMv8.5 MTE (memory tagging) which relies on tagged
-pointers.
-
-> I've been thinking that there ought to be some sort of global setting, akin to
-> /proc/sys/kernel/randomize_va_space, as well as a prctl which an application
-> could use to selectively enable TBI/TBID for an application that actually uses
-> tagging.
-
-An alternative would be to allow the opt-in to 52-bit VA, leaving it at
-48-bit by default. However, it has the problem of changing the PAC size
-and not being able to return.
-
-> The global /proc setting allows the default to remain 1, which would let any
-> application using tagging to continue working.  If there are none, the sysadmin
-> can set the default to 0.  Going forward, applications could be updated to use
-> the prctl, allowing more systems to set the default to 0.
+> In addition, for certain workloads it has been observed a marginal
+> performance improvement. The patch caused an observation of 0.9% average
+> throughput improvement for running tcrypt with HiSilicon crypto engine.
 > 
-> FWIW, pointer authentication continues to work when enabling TBI, but not the
-> other way around.  Thus the prctl could be used to enable TBI at any point, but
-> if libc is built with PAuth, there's no way to turn it back off again.
+> We also include a modification to use kvzalloc() for kzalloc()/vzalloc()
+> combination.
+> 
+> [1] https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1692998.html
 
-This may work but, as you said, TBI is user ABI at this point, we can't
-take it away now (at the time we didn't forsee the pauth).
+Reviewed-by: Robin Murphy <robin.murphy@arm.com>
 
-Talking briefly with Will/Kristina/Mark, I think the best option is to
-make 52-bit VA default off in the kernel config. Whoever needs it
-enabled (enterprise systems) should be aware of the reduced PAC bits. I
-don't really think we have a better solution.
-
--- 
-Catalin
+> Signed-off-by: Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com>
+> [JPG: Added kvzalloc(), drop pages ** being device local, remove ternary operator, update message]
+> Signed-off-by: John Garry <john.garry@huawei.com>
+> ---
+> Difference:
+> v1->v2:
+> - Add Ganapatrao's tag and change author
+> 
+> v2->v3:
+> - removed ternary operator
+> - stopped making pages ** allocation local to device
+> 
+> v3->v4:
+> - Update commit message to include motivation for patch, including
+>    headline performance improvement for test.
+> 
+> Some notes:
+> This patch was originally posted by Ganapatrao in [2].
+> 
+> However, after initial review, it was never reposted (due to lack of
+> cycles, I think). In addition, the functionality in its sibling patches
+> were merged through patches, as mentioned in [2]; this also refers to a
+> discussion on device local allocations vs CPU local allocations for DMA
+> pool, and which is better [1].
+> 
+> However, as mentioned in [1], dma_alloc_coherent() uses the locality
+> information from the device - as in direct DMA - so this patch is just
+> applying this same policy.
+> 
+> And from some testing, mentioned in commit message, shows marginal
+> improvement.
+> 
+> [2] https://lore.kernel.org/patchwork/patch/833004/
+> [3] https://lkml.org/lkml/2018/8/22/391
+> 
+> diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
+> index d1b0475..4afb1a8 100644
+> --- a/drivers/iommu/dma-iommu.c
+> +++ b/drivers/iommu/dma-iommu.c
+> @@ -449,20 +449,17 @@ static void __iommu_dma_free_pages(struct page **pages, int count)
+>   	kvfree(pages);
+>   }
+>   
+> -static struct page **__iommu_dma_alloc_pages(unsigned int count,
+> -		unsigned long order_mask, gfp_t gfp)
+> +static struct page **__iommu_dma_alloc_pages(struct device *dev,
+> +		unsigned int count, unsigned long order_mask, gfp_t gfp)
+>   {
+>   	struct page **pages;
+> -	unsigned int i = 0, array_size = count * sizeof(*pages);
+> +	unsigned int i = 0, nid = dev_to_node(dev);
+>   
+>   	order_mask &= (2U << MAX_ORDER) - 1;
+>   	if (!order_mask)
+>   		return NULL;
+>   
+> -	if (array_size <= PAGE_SIZE)
+> -		pages = kzalloc(array_size, GFP_KERNEL);
+> -	else
+> -		pages = vzalloc(array_size);
+> +	pages = kvzalloc(count * sizeof(*pages), GFP_KERNEL);
+>   	if (!pages)
+>   		return NULL;
+>   
+> @@ -481,10 +478,12 @@ static struct page **__iommu_dma_alloc_pages(unsigned int count,
+>   		for (order_mask &= (2U << __fls(count)) - 1;
+>   		     order_mask; order_mask &= ~order_size) {
+>   			unsigned int order = __fls(order_mask);
+> +			gfp_t alloc_flags = gfp;
+>   
+>   			order_size = 1U << order;
+> -			page = alloc_pages((order_mask - order_size) ?
+> -					   gfp | __GFP_NORETRY : gfp, order);
+> +			if (order_mask > order_size)
+> +				alloc_flags |= __GFP_NORETRY;
+> +			page = alloc_pages_node(nid, alloc_flags, order);
+>   			if (!page)
+>   				continue;
+>   			if (!order)
+> @@ -569,7 +568,8 @@ struct page **iommu_dma_alloc(struct device *dev, size_t size, gfp_t gfp,
+>   		alloc_sizes = min_size;
+>   
+>   	count = PAGE_ALIGN(size) >> PAGE_SHIFT;
+> -	pages = __iommu_dma_alloc_pages(count, alloc_sizes >> PAGE_SHIFT, gfp);
+> +	pages = __iommu_dma_alloc_pages(dev, count, alloc_sizes >> PAGE_SHIFT,
+> +					gfp);
+>   	if (!pages)
+>   		return NULL;
+>   
+> 
