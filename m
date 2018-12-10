@@ -2,112 +2,69 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AEE5C04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 21:28:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C961C04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 21:28:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E311020821
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 21:28:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E311020821
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id 3889C20821
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 21:28:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3889C20821
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729847AbeLJV2Z (ORCPT
+        id S1729895AbeLJV2q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 16:28:25 -0500
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:38947 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728059AbeLJV2Z (ORCPT
+        Mon, 10 Dec 2018 16:28:46 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:34470 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728059AbeLJV2p (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 16:28:25 -0500
-Received: by mail-qt1-f196.google.com with SMTP id n21so14098996qtl.6;
-        Mon, 10 Dec 2018 13:28:23 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=VQ22ZuQTTIWWjE+USpSR/19LZETkCyIRRdD7xwKsPgI=;
-        b=YsPeVXTVNW0faJpiMZDujVzfPxTAYFI9hOXtqZ+D+VEqcn8IroGg/KQZcIDGuIRTfN
-         V0CE60cdYoehEOr3T6b9zeXz8dzn1HWmvQH12peWIt7gAOAF0BqsQQBNkRydpnfoRCk0
-         lsRjD0Drqb7ZGDmjgZGA0oMLaXyifEuW+qI8n1klemh4923l5SEMfW8DaQc8mpLf5GL3
-         Qq8k9F9YalL11wY8PGCx/7QS9B5at9ZsPyWsjNPc4w9HM/KTCAM9G+3Z66iiAXdRo37/
-         jZVqonr5l8OAtOkkvyYxMPywtZ5Q1erW2RMTUC2PEtiBwz4rZKS/cHrBCcBiiFuRT6Vl
-         BhkQ==
-X-Gm-Message-State: AA+aEWYSXsNy4gRGcL2qe5wmVo7wjRh4GlZGnoJVRxvjft7PixIvtoxu
-        2oOTxurui8Yt7z79FOceP1GvYWKI8CVOI/PQ6TM=
-X-Google-Smtp-Source: AFSGD/XgHekhBVEO1znX1LRditjvT/DZ89+mMkGrBi0egNT/tkysP6Pwc8VswEnUtgFZkhgdnpaibhgNWaE0oXRAAUo=
-X-Received: by 2002:a0c:dc0f:: with SMTP id s15mr12910049qvk.40.1544477303209;
- Mon, 10 Dec 2018 13:28:23 -0800 (PST)
+        Mon, 10 Dec 2018 16:28:45 -0500
+Received: from p4fea4820.dip0.t-ipconnect.de ([79.234.72.32] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1gWT67-0004hh-Ey; Mon, 10 Dec 2018 22:28:15 +0100
+Date:   Mon, 10 Dec 2018 22:28:14 +0100 (CET)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Arnd Bergmann <arnd@arndb.de>
+cc:     Dave Hansen <dave.hansen@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, Oscar Salvador <osalvador@suse.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Stefan Agner <stefan@agner.ch>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] x86: mm: remove unused variable
+In-Reply-To: <20181210205309.2794444-1-arnd@arndb.de>
+Message-ID: <alpine.DEB.2.21.1812102227590.1667@nanos.tec.linutronix.de>
+References: <20181210205309.2794444-1-arnd@arndb.de>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-References: <20181210205215.2703138-1-arnd@arndb.de> <1544475666.185366.378.camel@acm.org>
-In-Reply-To: <1544475666.185366.378.camel@acm.org>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Mon, 10 Dec 2018 22:28:05 +0100
-Message-ID: <CAK8P3a0MShhjPMUdNs=CTqOJ-ovDPczYiQFL9c2M2dOUQ4yK7w@mail.gmail.com>
-Subject: Re: [PATCH] scsi: qla2xxx: fix unused function warning
-To:     bvanassche@acm.org
-Cc:     qla2xxx-upstream@qlogic.com, jejb@linux.ibm.com,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        loberman@redhat.com,
-        Himanshu Madhani <himanshu.madhani@cavium.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>, hmadhani@marvell.com,
-        quinn.tran@cavium.com, Hannes Reinecke <hare@suse.de>,
-        Jens Axboe <axboe@kernel.dk>, darren.trapp@cavium.com,
-        William.Kuzeja@stratus.com,
-        linux-scsi <linux-scsi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 10, 2018 at 10:01 PM Bart Van Assche <bvanassche@acm.org> wrote:
->
-> On Mon, 2018-12-10 at 21:51 +0100, Arnd Bergmann wrote:
-> > In what seems to be a mismatch between the scsi-fixes branch and
-> > the scsi-mkp/for-next branch, a newly introduced variable from
-> > one patch got obsoleted in another one:
-> >
-> > drivers/scsi/qla2xxx/qla_os.c: In function '__qla2x00_abort_all_cmds':
-> > drivers/scsi/qla2xxx/qla_os.c:1791:11: error: unused variable 'status' [-Werror=unused-variable]
-> >
-> > Remove the variable again.
-> >
-> > Fixes: c4e521b654e1 ("scsi: qla2xxx: Split the __qla2x00_abort_all_cmds() function")
-> > Fixes: f2ffd4e5bc7b ("scsi: qla2xxx: Timeouts occur on surprise removal of QLogic adapter")
-> > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> > ---
-> > Maybe check carefully that the merge in linux-next is otherwise correct
-> > ---
-> >  drivers/scsi/qla2xxx/qla_os.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/scsi/qla2xxx/qla_os.c b/drivers/scsi/qla2xxx/qla_os.c
-> > index 63c47bc7ae59..db331cb5ba3c 100644
-> > --- a/drivers/scsi/qla2xxx/qla_os.c
-> > +++ b/drivers/scsi/qla2xxx/qla_os.c
-> > @@ -1788,7 +1788,7 @@ static void qla2x00_abort_srb(struct qla_qpair *qp, srb_t *sp, const int res,
-> >  static void
-> >  __qla2x00_abort_all_cmds(struct qla_qpair *qp, int res)
-> >  {
-> > -     int cnt, status;
-> > +     int cnt;
-> >       unsigned long flags;
-> >       srb_t *sp;
-> >       scsi_qla_host_t *vha = qp->vha;
->
-> When I prepared commit c4e521b654e1 I verified that my patch did not produce any
-> warnings when building with W=1. So something must be wrong at your side. Did you
-> perhaps start from linux-next to prepare this patch? If so, please submit this
-> patch to Stephen Rothwell.
+On Mon, 10 Dec 2018, Arnd Bergmann wrote:
 
-Yes, I tried to make clear that the two branches are fine by themselves, sorry
-if I was still ambiguous. The patch is currently only needed on linux-next
-as far as I can tell, but we should avoid getting the same error when the
-branches are merged in mainline.
+> A recent change dropped the only user of the variable, which should
+> now be removed as well to avoid this warning:
+> 
+> arch/x86/mm/init_32.c: In function 'arch_remove_memory':
+> arch/x86/mm/init_32.c:867:15: error: unused variable 'zone' [-Werror=unused-variable]
+> 
+> Fixes: dd99d07f818b ("mm, memory_hotplug: move zone/pages handling to offline stage")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-        Arnd
+Acked-by: Thomas Gleixner <tglx@linutronix.de>
