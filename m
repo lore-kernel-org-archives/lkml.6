@@ -2,197 +2,164 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64200C04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 12:06:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C318C04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 12:07:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D8D62084E
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 12:06:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 51B952084E
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 12:07:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=virtuozzo.com header.i=@virtuozzo.com header.b="XTuI76cq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D8D62084E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=virtuozzo.com
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Kj+il6zE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 51B952084E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727512AbeLJMG5 (ORCPT
+        id S1727534AbeLJMHT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 07:06:57 -0500
-Received: from mail-bgr052101130054.outbound.protection.outlook.com ([52.101.130.54]:44878
-        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727146AbeLJMG4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 07:06:56 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=virtuozzo.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=giSFzG2jXr8TVyLTb92WzxXUstalmwRZOgLDU9PAcac=;
- b=XTuI76cq/7gOsX8IB7eiAvJid9DCh/bMpZ3oq/tMybjv0cIx+5lgWZcwN/iJrYrSddYDZ5u2YkTaZ9ap1x0l+UmMEMDgCe0D6DH1TqRMkQJ25pxcqlacDqhg7Ot5zPd0BMrIgONK8cWUUx05h/QZ91i6XUkIUTieprKk4/zAJYM=
-Received: from DB8PR08MB4092.eurprd08.prod.outlook.com (20.179.10.210) by
- DB8PR08MB4106.eurprd08.prod.outlook.com (20.179.11.12) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1404.17; Mon, 10 Dec 2018 12:06:41 +0000
-Received: from DB8PR08MB4092.eurprd08.prod.outlook.com
- ([fe80::d41:d012:1944:5810]) by DB8PR08MB4092.eurprd08.prod.outlook.com
- ([fe80::d41:d012:1944:5810%6]) with mapi id 15.20.1404.026; Mon, 10 Dec 2018
- 12:06:41 +0000
-From:   Roman Kagan <rkagan@virtuozzo.com>
-To:     Vitaly Kuznetsov <vkuznets@redhat.com>
-CC:     "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        =?iso-8859-2?Q?Radim_Kr=E8m=E1=F8?= <rkrcmar@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>
-Subject: Re: [PATCH v2 3/4] x86/kvm/hyper-v: direct mode for synthetic timers
-Thread-Topic: [PATCH v2 3/4] x86/kvm/hyper-v: direct mode for synthetic timers
-Thread-Index: AQHUhZ9mV1oam64KnkyNE5PKjfame6V39lwA
-Date:   Mon, 10 Dec 2018 12:06:41 +0000
-Message-ID: <20181210120637.GA13294@rkaganb.sw.ru>
-References: <20181126154732.23025-1-vkuznets@redhat.com>
- <20181126154732.23025-4-vkuznets@redhat.com>
-In-Reply-To: <20181126154732.23025-4-vkuznets@redhat.com>
-Accept-Language: en-US, ru-RU
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mutt/1.10.1 (2018-07-13)
-mail-followup-to: =?iso-8859-2?Q?Roman_Kagan_<rkagan@virtuozzo.com>,=09Vitaly_Kuznetsov_<vk?=
- =?iso-8859-2?Q?uznets@redhat.com>,_kvm@vger.kernel.org,=09Paolo_Bonzini_<?=
- =?iso-8859-2?Q?pbonzini@redhat.com>,=09Radim_Kr=E8m=E1=F8_<rkrcmar@redhat?=
- =?iso-8859-2?Q?.com>,=09linux-kernel@vger.kernel.org,=09"K._Y._Srinivasan?=
- =?iso-8859-2?Q?"_<kys@microsoft.com>,=09Haiyang_Zhang_<haiyangz@microsoft?=
- =?iso-8859-2?Q?.com>,=09Stephen_Hemminger_<sthemmin@microsoft.com>,_x86@k?=
- =?iso-8859-2?Q?ernel.org,=09"Michael_Kelley_(EOSG)"_<Michael.H.Kelley@mic?=
- =?iso-8859-2?Q?rosoft.com>?=
-x-originating-ip: [185.231.240.5]
-x-clientproxiedby: HE1P18901CA0006.EURP189.PROD.OUTLOOK.COM
- (2603:10a6:3:8b::16) To DB8PR08MB4092.eurprd08.prod.outlook.com
- (2603:10a6:10:ab::18)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=rkagan@virtuozzo.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DB8PR08MB4106;7:gEjOy9nJqQN+1ZccgqoixSJV+BSTjiXpS1jlAaWnkxjnTbtExfSMUGAD7kEbZgE0Sy3KkGywuiJF5WksAEpbpK/4lSNTvCjdKXahJcK0edwPb1szWH737LRrDKI8UGxkGd/xets9GgyR/vNNjYNyIg==;20:C1TgznpEHj8ntIgrPmVFeuPp1EluEle4lehgv21GyEC9YviYb2OICo6taeQhRyZc9WXaOVE8aUS0gufx90zYfyklyfSk7Nbae7DtiuRarqJ27VNj8y65rF29xkVkswwS0xECDklJmJJyTp9JX7tiT4+QuCK030+muhzY2pqWWsQ=
-x-ms-office365-filtering-correlation-id: 6f9d706c-bd34-461d-e635-08d65e97f206
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:DB8PR08MB4106;
-x-ms-traffictypediagnostic: DB8PR08MB4106:|DB8PR08MB4106:
-x-microsoft-antispam-prvs: <DB8PR08MB4106CD1B43FF992E6F7D4C4DC9A50@DB8PR08MB4106.eurprd08.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(10201501046)(93006095)(93001095)(3002001)(3231455)(999002)(944501520)(52105112)(148016)(149066)(150057)(6041310)(20161123564045)(20161123558120)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(201708071742011)(7699051)(76991095);SRVR:DB8PR08MB4106;BCL:0;PCL:0;RULEID:;SRVR:DB8PR08MB4106;
-x-forefront-prvs: 08828D20BC
-x-forefront-antispam-report: SFV:SPM;SFS:(10019020)(346002)(136003)(366004)(376002)(39840400004)(396003)(189003)(199004)(11346002)(1076002)(53936002)(446003)(6116002)(476003)(14454004)(2906002)(3846002)(316002)(478600001)(486006)(25786009)(58126008)(229853002)(54906003)(6916009)(7736002)(66066001)(305945005)(14444005)(5660300001)(6436002)(6486002)(102836004)(7416002)(26005)(36756003)(71190400001)(71200400001)(52116002)(186003)(86362001)(386003)(6506007)(9686003)(106356001)(76176011)(6246003)(81166006)(105586002)(81156014)(99286004)(8936002)(8676002)(256004)(68736007)(4326008)(33656002)(97736004)(6512007)(33896004)(30126002);DIR:OUT;SFP:1501;SCL:5;SRVR:DB8PR08MB4106;H:DB8PR08MB4092.eurprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: virtuozzo.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: xK6XlAwAjzBZCVT1nbTfjgOa2fraCSlUIfGXll2IBOI1oapjQGX2ndx1hvcoDiON42Hr3xygsy8MGIFk0nXfq4dCb1bEIDwPRE2wvK2W9hPhRhdOYfEeo0xnlL0pxigD53ZjOLtMPK+6idF2MVFjYGCXGKw0etg8payLuu67i22cD0XECUfEBxGid4JJ3CzF9PwnoSEvvFaf3IxDA9ezciquUgI2Q29mOOOGqRG8MF6h5ZxXQ+0rN/LDi9lN4744s+UGF1wNomijyy2bvRgLa0Lv9cOqkmqR/1fw5dhXY2swmEBKxZAI5MvtRC6T+j2JW82Xrpu1HOzAC9y16xLidWXN3aNaMyzon4g+4IroUxcazVhVKz3m45JVR/GIf7aYN00EC+r45xzVUbJLSHN6ZivMvN9g+M25b3UjPVnjBsXtXEfOnV9haU0bLXE4SD9f5wdthgsgoykKpeZwzFJ9wcaiBw70tN0rgRkld/vB6xrO+La7Wcgm7etZ/MK6Cd9e
-spamdiagnosticoutput: 1:22
-Content-Type: text/plain; charset="iso-8859-2"
-Content-ID: <969B5E1A2AE93D469E1AE256DAD37BFA@eurprd08.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        Mon, 10 Dec 2018 07:07:19 -0500
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:39548 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727172AbeLJMHS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Dec 2018 07:07:18 -0500
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id wBAC6klv060754;
+        Mon, 10 Dec 2018 06:06:47 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1544443607;
+        bh=SoIHMtUTNlfSVDIq9B3xkSQBtFVNdE1rVVqkyNUwkbY=;
+        h=Date:From:To:CC:Subject:References:In-Reply-To;
+        b=Kj+il6zEk3LprbloS0GylZFl7IlYxPosj43YMYau3UDWeaJCa4d7/5sbzgBDXJ1SC
+         A/tPzsk0cU6ab3ciGAA8U3vlHKfwFFoawA68DKvR3u9BS7xhKG0ZhZO6S8RmNHxYxa
+         bUALwwsiz+51xzUt6+yuMqf4zwEDapQrMXBEy6ik=
+Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wBAC6kgf081800
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 10 Dec 2018 06:06:46 -0600
+Received: from DFLE100.ent.ti.com (10.64.6.21) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Mon, 10
+ Dec 2018 06:06:46 -0600
+Received: from dlep32.itg.ti.com (157.170.170.100) by DFLE100.ent.ti.com
+ (10.64.6.21) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Mon, 10 Dec 2018 06:06:46 -0600
+Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id wBAC6kT9008560;
+        Mon, 10 Dec 2018 06:06:46 -0600
+Date:   Mon, 10 Dec 2018 06:06:48 -0600
+From:   Nishanth Menon <nm@ti.com>
+To:     Sekhar Nori <nsekhar@ti.com>
+CC:     Faiz Abbas <faiz_abbas@ti.com>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <mark.rutland@arm.com>,
+        <robh+dt@kernel.org>, <t-kristo@ti.com>, <kishon@ti.com>,
+        <ulf.hansson@linaro.org>, <adrian.hunter@intel.com>,
+        <michal.simek@xilinx.com>, Tony Lindgren <tony@atomide.com>,
+        Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH 2/2] arm64: dts: ti: k3-am654-base-board: Add MMC/SD
+ support
+Message-ID: <20181210120647.i3ply3p7umvedb3u@akan>
+References: <20181207084233.13700-1-faiz_abbas@ti.com>
+ <20181207084233.13700-3-faiz_abbas@ti.com>
+ <20181208155427.jmidz4vsw4k4qj36@akan>
+ <c1dd9783-84dc-9dad-ea94-9a14a4ad814d@ti.com>
 MIME-Version: 1.0
-X-OriginatorOrg: virtuozzo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6f9d706c-bd34-461d-e635-08d65e97f206
-X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Dec 2018 12:06:41.8698
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 0bc7f26d-0264-416e-a6fc-8352af79c58f
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB8PR08MB4106
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <c1dd9783-84dc-9dad-ea94-9a14a4ad814d@ti.com>
+User-Agent: NeoMutt/20171215
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 26, 2018 at 04:47:31PM +0100, Vitaly Kuznetsov wrote:
-> Turns out Hyper-V on KVM (as of 2016) will only use synthetic timers
-> if direct mode is available. With direct mode we notify the guest by
-> asserting APIC irq instead of sending a SynIC message.
->=20
-> The implementation uses existing vec_bitmap for letting lapic code
-> know that we're interested in the particular IRQ's EOI request. We assume
-> that the same APIC irq won't be used by the guest for both direct mode
-> stimer and as sint source (especially with AutoEOI semantics). It is
-> unclear how things should be handled if that's not true.
->=20
-> Direct mode is also somewhat less expensive; in my testing
-> stimer_send_msg() takes not less than 1500 cpu cycles and
-> stimer_notify_direct() can usually be done in 300-400. WS2016 without
-> Hyper-V, however, always sticks to non-direct version.
->=20
-> Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
-> ---
-> - Changes since v1: avoid open-coding stimer_mark_pending() in
->   kvm_hv_synic_send_eoi() [Paolo Bonzini]
-> ---
->  arch/x86/kvm/hyperv.c    | 67 +++++++++++++++++++++++++++++++++++-----
->  arch/x86/kvm/trace.h     | 10 +++---
->  arch/x86/kvm/x86.c       |  1 +
->  include/uapi/linux/kvm.h |  1 +
->  4 files changed, 67 insertions(+), 12 deletions(-)
->=20
-> diff --git a/arch/x86/kvm/hyperv.c b/arch/x86/kvm/hyperv.c
-> index eaec15c738df..9533133be566 100644
-> --- a/arch/x86/kvm/hyperv.c
-> +++ b/arch/x86/kvm/hyperv.c
-> @@ -38,6 +38,9 @@
-> =20
->  #define KVM_HV_MAX_SPARSE_VCPU_SET_BITS DIV_ROUND_UP(KVM_MAX_VCPUS, 64)
-> =20
-> +static void stimer_mark_pending(struct kvm_vcpu_hv_stimer *stimer,
-> +				bool vcpu_kick);
-> +
->  static inline u64 synic_read_sint(struct kvm_vcpu_hv_synic *synic, int s=
-int)
->  {
->  	return atomic64_read(&synic->sint[sint]);
-> @@ -53,8 +56,21 @@ static inline int synic_get_sint_vector(u64 sint_value=
-)
->  static bool synic_has_vector_connected(struct kvm_vcpu_hv_synic *synic,
->  				      int vector)
->  {
-> +	struct kvm_vcpu *vcpu =3D synic_to_vcpu(synic);
-> +	struct kvm_vcpu_hv *hv_vcpu =3D vcpu_to_hv_vcpu(vcpu);
-> +	struct kvm_vcpu_hv_stimer *stimer;
->  	int i;
-> =20
-> +	for (i =3D 0; i < ARRAY_SIZE(hv_vcpu->stimer); i++) {
-> +		stimer =3D &hv_vcpu->stimer[i];
-> +		if (stimer->config.enable && stimer->config.direct_mode &&
-> +		    stimer->config.apic_vector =3D=3D vector)
-> +			return true;
-> +	}
-> +
-> +	if (vector < HV_SYNIC_FIRST_VALID_VECTOR)
-> +		return false;
-> +
->  	for (i =3D 0; i < ARRAY_SIZE(synic->sint); i++) {
->  		if (synic_get_sint_vector(synic_read_sint(synic, i)) =3D=3D vector)
->  			return true;
-> @@ -80,14 +96,14 @@ static bool synic_has_vector_auto_eoi(struct kvm_vcpu=
-_hv_synic *synic,
->  static void synic_update_vector(struct kvm_vcpu_hv_synic *synic,
->  				int vector)
->  {
-> -	if (vector < HV_SYNIC_FIRST_VALID_VECTOR)
-> -		return;
-> -
->  	if (synic_has_vector_connected(synic, vector))
->  		__set_bit(vector, synic->vec_bitmap);
->  	else
->  		__clear_bit(vector, synic->vec_bitmap);
-> =20
-> +	if (vector < HV_SYNIC_FIRST_VALID_VECTOR)
-> +		return;
-> +
+On 13:33-20181210, Sekhar Nori wrote:
+> On 08/12/18 9:24 PM, Nishanth Menon wrote:
+> > On 14:12-20181207, Faiz Abbas wrote:
+> > 
+> >> +
+> >> +&sdhci0 {
+> >> +	status = "okay";
+> >> +	pinctrl-names = "default";
+> >> +	pinctrl-0 = <&main_mmc0_pins_default>;
+> >> +	bus-width = <8>;
+> >> +	non-removable;
+> >> +	ti,driver-strength-ohm = <50>;
+> > 
+> > ^^
+> > 
+> >> +};
+> >> +
+> >> +&sdhci1 {
+> >> +	status = "okay";
+> >> +	pinctrl-names = "default";
+> >> +	pinctrl-0 = <&main_mmc1_pins_default>;
+> >> +	ti,driver-strength-ohm = <50>;
+> > 
+> > NAK.
+> > 
+> > $ git checkout next-20181207
+> > $ git grep ti,driver-strength-ohm Documentation
+> > $
+> > 
+> > Nada.. And.. I think "new phy binding" probably introduces this.
+> > [1] https://patchwork.kernel.org/project/linux-mmc/list/?series=53185
+> > 
+> > If your patches are'nt really ready, please send them as RFC, I am not
+> > really in a mood to track the status of every single driver subsystem.
+> > 
+> > If your binding is not in linux next at the baremin, as far as I am
+> > concerned, this is not ready, and should be RFC.
+> 
+> No, RFC does not say "do not merge" or "this has dependencies". RFC is
+> used to invite a stronger review when introducing a new concept. Its
+> fair game to apply patches marked RFC if maintainer is okay with the
+> content.
 
-Just noticed that the patch seems to assume that "direct" timers are
-allowed to use any vectors including 0-15.  I guess this is incorrect,
-and instead stimer_set_config should error out on direct mode with a
-vector less than HV_SYNIC_FIRST_VALID_VECTOR.
+True, fair enough.. RFC is request for comments. Anyways, that is
+besides the point.
+> 
+> Dependencies are either noted in cover-letter or below the patch
+> tear-line. With what you are asking, looks like patches need to be
+> resubmitted once dependencies are cleared, even if there is no change in
+> the content itself. This will be additional work.
 
-Roman.
+Yes please. There would be other dts changes that are probably ready and
+I really wont be tracking everything happening on other drivers. If the
+binding is present at least in next, it is a good indication of things
+clean and ready to go.
+
+> 
+> That said, if it makes life convenient for you, you can impose such a
+> rule for patches you need to handle. But I think it will take some
+> getting used for developers who send patches to you as I don't think
+> this is a norm elsewhere.
+> 
+> Adding Tony and Arnd as well, in case I have missed some recently
+> accepted convention.
+
+
+I have'nt looked at any conventions, The style I prefer to follow when I do
+submissions: It is my job to get the bindings in, until then my actual
+dts is just "request for comments". Only after the bindings are merged
+do I formally submit dts - simply because I dont expect dts maintainer
+to track what happened to my driver's binding and discussions there of.
+
+Seriously, is'nt it really reasonable for dts maintainer to check every
+single driver's development status in 15 different mailing lists?
+Because, it sounds like what you are asking. At least I wont have time
+for it..
+
+
+I really am curious how Arnd / Tony actually pull this one off.. If they
+have continous cron job for checking if your patch is ready... I doubt
+it..
+
+-- 
+Regards,
+Nishanth Menon
