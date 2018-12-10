@@ -2,114 +2,415 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE5CFC5CFFE
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 21:42:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35106C04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 21:42:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 99AB720855
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 21:42:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 99AB720855
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id E0BCE2082F
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 21:42:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E0BCE2082F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730162AbeLJVmM (ORCPT
+        id S1730173AbeLJVmP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 10 Dec 2018 16:42:15 -0500
+Received: from mout.kundenserver.de ([212.227.17.13]:45159 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726562AbeLJVmM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 10 Dec 2018 16:42:12 -0500
-Received: from mga17.intel.com ([192.55.52.151]:4805 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727896AbeLJVmK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 16:42:10 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Dec 2018 13:42:10 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,339,1539673200"; 
-   d="scan'208";a="117241378"
-Received: from rchatre-mobl.amr.corp.intel.com (HELO [10.24.14.96]) ([10.24.14.96])
-  by orsmga002.jf.intel.com with ESMTP; 10 Dec 2018 13:42:10 -0800
-Subject: Re: [PATCH] x86/resctrl: Fix rdt_find_domain() return value checks
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     tglx@linutronix.de, fenghua.yu@intel.com, tony.luck@intel.com,
-        jithu.joseph@intel.com, mingo@redhat.com, hpa@zytor.com,
-        x86@kernel.org, linux-kernel@vger.kernel.org
-References: <d932648504b745cb51c4a440710c7a1ca9830eca.1543427858.git.reinette.chatre@intel.com>
- <20181210191311.GC5482@zn.tnic>
- <40422756-cef4-38b1-8554-c99e7bcb7765@intel.com>
- <20181210210436.GI5482@zn.tnic>
-From:   Reinette Chatre <reinette.chatre@intel.com>
-Message-ID: <3b097a0a-bcc5-1929-eb50-0e251ebc1152@intel.com>
-Date:   Mon, 10 Dec 2018 13:42:10 -0800
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+Received: from wuerfel.lan ([109.192.41.194]) by mrelayeu.kundenserver.de
+ (mreue106 [212.227.15.145]) with ESMTPA (Nemesis) id
+ 1MnqbU-1hFzaf1XY2-00pPgx; Mon, 10 Dec 2018 22:40:39 +0100
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Bastien Nocera <hadess@hadess.net>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Larry Finger <Larry.Finger@lwfinger.net>,
+        linux-kernel@vger.kernel.org, devel@driverdev.osuosl.org,
+        Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH 2/3] staging: rtl8723bs: change pwrctrl lock to a mutex
+Date:   Mon, 10 Dec 2018 22:40:31 +0100
+Message-Id: <20181210214032.1441224-2-arnd@arndb.de>
+X-Mailer: git-send-email 2.20.0
+In-Reply-To: <20181210214032.1441224-1-arnd@arndb.de>
+References: <20181210214032.1441224-1-arnd@arndb.de>
 MIME-Version: 1.0
-In-Reply-To: <20181210210436.GI5482@zn.tnic>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:kU1YSpPI7NDX/q8rJpemaYBk8HvXSD+Yp4i/IoNfBKOnI/YSig0
+ sX87HBIXAZ6sUVuoUpdNWswnQRxfouD8R/rR+vebZso1GB6Vngzi1qTw8D05IYhqzMCKEXj
+ hoQ8d9vxGRt35fL1nZW4/dZdGS5MxiNcQ1SE3lQVjCGMTPNHeV2OLXK1nE/iegXTKH0Vp/h
+ TcjYFiskyawWAuKryVRsw==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:pIjIbR75Yyg=:0csEZgsHJx2zbI9ivV4MxV
+ qjKn6rxG2i8nz+NvtHQg2+4M46HAM5RsA57hMosk5Qv17qFsgD4qI5my/yDlmQy+Ooj31F8bs
+ 48R6olKfZ28JFivsXJjFL+cGuKdkTc8RvbiBNbcTV1QBTMQPLemtjepOUZHh/EjOCB60rZLuL
+ YKn5oA6MJ7ThEVFrANiktXQj8XpK73JEqhVNLA4lZfJ0Kw3O/Efxn5bFzankJfXiHR8ErZSzo
+ bsdhwT346Q10pShIV1fu5qWNFvSzVgtVdcRCXBtyzVgoDBMlHzZNGvmTBME9h5+cYBuv4FS8x
+ Yov6/ZF2ExUphvcrPWXwQkiNhK0Dh3xqbzRzURUU4218wbbQXczMlAbR2LnyStr5+umnYoYcD
+ n3kleGpdYiFgdxym8o5F3TSXeMK5002vZF9Q2/878DeUqzaffMOt+eO+ZsLYdZ+/ieo1Z8xYW
+ YXGXm9OjbvEsDCBUpxB8c8uVMZjAtShyaKxSaqdEKvovb6dU5F844lM02q2+D3CbLiDbwHsnm
+ kRIqThOEEjLdgxU/EKWQsqSKsGJX8bwKj1UbwhfG/2aOVdI75SyVGOjsrBQ5QStJkb7REQXtW
+ Pk/62YTFjEO3Hp4wsp2iJpa37nVyzZ5JsWdUWaYcNrAgASP9Z/zZnfZH/VJW84Mh8k+P5utWb
+ fP1yWjGfG+2ic0aeXL5y5cJSePV9dYAQlNK0XOORnrDOlxatPnPkIQg5SBI6XFxWC04ga1htx
+ 0sJuoHRnPLcOKyOE3SFS6c2TTIdDjx1GmbgOWg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Boris,
+This semaphore is used like a mutex, so it should use the regular
+mutex API, as we do in the other copies of this driver.
 
-On 12/10/2018 1:04 PM, Borislav Petkov wrote:
-> On Mon, Dec 10, 2018 at 12:42:14PM -0800, Reinette Chatre wrote:
->> Would you be ok if the above is changed to
->>
->> if (id < 0)
->>         return ERR_PTR(-ENOENT);
->>
->> as part of this patch?
-> 
-> Yap.
-> 
->> Looking at rdtgroup_mondata_show() is does seem as though ENOENT is the
->> actual intended error value,
-> 
-> #define ENOENT           2      /* No such file or directory */
-> 
->> although ENODEV could perhaps also be considered since such a result
->> reflects that a particular cache instance could not be found.
-> 
-> #define ENODEV          19      /* No such device */
-> 
-> Yeah, they both kinda look ok to me and in the end of the day, the thing
-> that matters most is pinpointing the place in the code which causes the
-> error.
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/staging/rtl8723bs/core/rtw_cmd.c      |  4 +-
+ drivers/staging/rtl8723bs/core/rtw_pwrctrl.c  | 73 +++++++++----------
+ .../staging/rtl8723bs/include/rtw_pwrctrl.h   |  3 +-
+ 3 files changed, 40 insertions(+), 40 deletions(-)
 
-Thank you for the sanity check. I think ENODEV may reflect the issue
-better and will do so in the next version. This would not affect the
-current code (quoted below) that subsequently translates the error to
-ENOENT.
+diff --git a/drivers/staging/rtl8723bs/core/rtw_cmd.c b/drivers/staging/rtl8723bs/core/rtw_cmd.c
+index 3d206c33eafa..984db6f2217c 100644
+--- a/drivers/staging/rtl8723bs/core/rtw_cmd.c
++++ b/drivers/staging/rtl8723bs/core/rtw_cmd.c
+@@ -1621,7 +1621,7 @@ static void rtw_lps_change_dtim_hdl(struct adapter *padapter, u8 dtim)
+ 	if (rtw_btcoex_IsBtControlLps(padapter) == true)
+ 		return;
+ 
+-	down(&pwrpriv->lock);
++	mutex_lock(&pwrpriv->lock);
+ 
+ 	if (pwrpriv->dtim != dtim) {
+ 		DBG_871X("change DTIM from %d to %d, bFwCurrentInPSMode =%d, ps_mode =%d\n", pwrpriv->dtim, dtim,
+@@ -1638,7 +1638,7 @@ static void rtw_lps_change_dtim_hdl(struct adapter *padapter, u8 dtim)
+ 		rtw_hal_set_hwreg(padapter, HW_VAR_H2C_FW_PWRMODE, (u8 *)(&ps_mode));
+ 	}
+ 
+-	up(&pwrpriv->lock);
++	mutex_unlock(&pwrpriv->lock);
+ }
+ 
+ static void rtw_dm_ra_mask_hdl(struct adapter *padapter, struct sta_info *psta)
+diff --git a/drivers/staging/rtl8723bs/core/rtw_pwrctrl.c b/drivers/staging/rtl8723bs/core/rtw_pwrctrl.c
+index a0d8fbeecf9b..b7dd5fec9b31 100644
+--- a/drivers/staging/rtl8723bs/core/rtw_pwrctrl.c
++++ b/drivers/staging/rtl8723bs/core/rtw_pwrctrl.c
+@@ -45,9 +45,9 @@ void ips_enter(struct adapter *padapter)
+ 
+ 	rtw_btcoex_IpsNotify(padapter, pwrpriv->ips_mode_req);
+ 
+-	down(&pwrpriv->lock);
++	mutex_lock(&pwrpriv->lock);
+ 	_ips_enter(padapter);
+-	up(&pwrpriv->lock);
++	mutex_unlock(&pwrpriv->lock);
+ }
+ 
+ int _ips_leave(struct adapter *padapter)
+@@ -85,9 +85,9 @@ int ips_leave(struct adapter *padapter)
+ 	if (!is_primary_adapter(padapter))
+ 		return _SUCCESS;
+ 
+-	down(&pwrpriv->lock);
++	mutex_lock(&pwrpriv->lock);
+ 	ret = _ips_leave(padapter);
+-	up(&pwrpriv->lock);
++	mutex_unlock(&pwrpriv->lock);
+ 
+ 	if (_SUCCESS == ret)
+ 		rtw_btcoex_IpsNotify(padapter, IPS_NONE);
+@@ -158,9 +158,9 @@ void rtw_ps_processor(struct adapter *padapter)
+ 	struct debug_priv *pdbgpriv = &psdpriv->drv_dbg;
+ 	u32 ps_deny = 0;
+ 
+-	down(&adapter_to_pwrctl(padapter)->lock);
++	mutex_lock(&adapter_to_pwrctl(padapter)->lock);
+ 	ps_deny = rtw_ps_deny_get(padapter);
+-	up(&adapter_to_pwrctl(padapter)->lock);
++	mutex_unlock(&adapter_to_pwrctl(padapter)->lock);
+ 	if (ps_deny != 0) {
+ 		DBG_871X(FUNC_ADPT_FMT ": ps_deny = 0x%08X, skip power save!\n",
+ 			FUNC_ADPT_ARG(padapter), ps_deny);
+@@ -413,7 +413,7 @@ void rtw_set_ps_mode(struct adapter *padapter, u8 ps_mode, u8 smart_ps, u8 bcn_a
+ 			return;
+ 
+ 
+-	down(&pwrpriv->lock);
++	mutex_lock(&pwrpriv->lock);
+ 
+ 	/* if (pwrpriv->pwr_mode == PS_MODE_ACTIVE) */
+ 	if (ps_mode == PS_MODE_ACTIVE) {
+@@ -494,7 +494,7 @@ void rtw_set_ps_mode(struct adapter *padapter, u8 ps_mode, u8 smart_ps, u8 bcn_a
+ 		}
+ 	}
+ 
+-	up(&pwrpriv->lock);
++	mutex_unlock(&pwrpriv->lock);
+ }
+ 
+ /*
+@@ -628,11 +628,11 @@ void LeaveAllPowerSaveModeDirect(struct adapter *Adapter)
+ 			return;
+ 		}
+ 
+-		down(&pwrpriv->lock);
++		mutex_lock(&pwrpriv->lock);
+ 
+ 		rtw_set_rpwm(Adapter, PS_STATE_S4);
+ 
+-		up(&pwrpriv->lock);
++		mutex_unlock(&pwrpriv->lock);
+ 
+ 		rtw_lps_ctrl_wk_cmd(pri_padapter, LPS_CTRL_LEAVE, 0);
+ 	} else{
+@@ -696,7 +696,7 @@ void LPS_Leave_check(
+ 	cond_resched();
+ 
+ 	while (1) {
+-		down(&pwrpriv->lock);
++		mutex_lock(&pwrpriv->lock);
+ 
+ 		if ((padapter->bSurpriseRemoved == true)
+ 			|| (padapter->hw_init_completed == false)
+@@ -704,7 +704,7 @@ void LPS_Leave_check(
+ 			)
+ 			bReady = true;
+ 
+-		up(&pwrpriv->lock);
++		mutex_unlock(&pwrpriv->lock);
+ 
+ 		if (true == bReady)
+ 			break;
+@@ -732,11 +732,10 @@ void cpwm_int_hdl(
+ 
+ 	pwrpriv = adapter_to_pwrctl(padapter);
+ 
+-	down(&pwrpriv->lock);
++	mutex_lock(&pwrpriv->lock);
+ 
+ 	if (pwrpriv->rpwm < PS_STATE_S2) {
+ 		DBG_871X("%s: Redundant CPWM Int. RPWM = 0x%02X CPWM = 0x%02x\n", __func__, pwrpriv->rpwm, pwrpriv->cpwm);
+-		up(&pwrpriv->lock);
+ 		goto exit;
+ 	}
+ 
+@@ -751,9 +750,9 @@ void cpwm_int_hdl(
+ 			complete(&padapter->xmitpriv.xmit_comp);
+ 	}
+ 
+-	up(&pwrpriv->lock);
+-
+ exit:
++	mutex_unlock(&pwrpriv->lock);
++
+ 	RT_TRACE(_module_rtl871x_pwrctrl_c_, _drv_notice_,
+ 			 ("cpwm_int_hdl: cpwm = 0x%02x\n", pwrpriv->cpwm));
+ }
+@@ -783,12 +782,12 @@ static void rpwmtimeout_workitem_callback(struct work_struct *work)
+ 	padapter = dvobj->if1;
+ /* 	DBG_871X("+%s: rpwm = 0x%02X cpwm = 0x%02X\n", __func__, pwrpriv->rpwm, pwrpriv->cpwm); */
+ 
+-	down(&pwrpriv->lock);
++	mutex_lock(&pwrpriv->lock);
+ 	if ((pwrpriv->rpwm == pwrpriv->cpwm) || (pwrpriv->cpwm >= PS_STATE_S2)) {
+ 		DBG_871X("%s: rpwm = 0x%02X cpwm = 0x%02X CPWM done!\n", __func__, pwrpriv->rpwm, pwrpriv->cpwm);
+ 		goto exit;
+ 	}
+-	up(&pwrpriv->lock);
++	mutex_unlock(&pwrpriv->lock);
+ 
+ 	if (rtw_read8(padapter, 0x100) != 0xEA) {
+ 		struct reportpwrstate_parm report;
+@@ -800,7 +799,7 @@ static void rpwmtimeout_workitem_callback(struct work_struct *work)
+ 		return;
+ 	}
+ 
+-	down(&pwrpriv->lock);
++	mutex_lock(&pwrpriv->lock);
+ 
+ 	if ((pwrpriv->rpwm == pwrpriv->cpwm) || (pwrpriv->cpwm >= PS_STATE_S2)) {
+ 		DBG_871X("%s: cpwm =%d, nothing to do!\n", __func__, pwrpriv->cpwm);
+@@ -811,7 +810,7 @@ static void rpwmtimeout_workitem_callback(struct work_struct *work)
+ 	pwrpriv->brpwmtimeout = false;
+ 
+ exit:
+-	up(&pwrpriv->lock);
++	mutex_unlock(&pwrpriv->lock);
+ }
+ 
+ /*
+@@ -867,7 +866,7 @@ s32 rtw_register_task_alive(struct adapter *padapter, u32 task)
+ 	pwrctrl = adapter_to_pwrctl(padapter);
+ 	pslv = PS_STATE_S2;
+ 
+-	down(&pwrctrl->lock);
++	mutex_lock(&pwrctrl->lock);
+ 
+ 	register_task_alive(pwrctrl, task);
+ 
+@@ -884,7 +883,7 @@ s32 rtw_register_task_alive(struct adapter *padapter, u32 task)
+ 		}
+ 	}
+ 
+-	up(&pwrctrl->lock);
++	mutex_unlock(&pwrctrl->lock);
+ 
+ 	if (_FAIL == res)
+ 		if (pwrctrl->cpwm >= PS_STATE_S2)
+@@ -920,7 +919,7 @@ void rtw_unregister_task_alive(struct adapter *padapter, u32 task)
+ 			pslv = PS_STATE_S2;
+ 	}
+ 
+-	down(&pwrctrl->lock);
++	mutex_lock(&pwrctrl->lock);
+ 
+ 	unregister_task_alive(pwrctrl, task);
+ 
+@@ -936,7 +935,7 @@ void rtw_unregister_task_alive(struct adapter *padapter, u32 task)
+ 
+ 	}
+ 
+-	up(&pwrctrl->lock);
++	mutex_unlock(&pwrctrl->lock);
+ }
+ 
+ /*
+@@ -962,7 +961,7 @@ s32 rtw_register_tx_alive(struct adapter *padapter)
+ 	pwrctrl = adapter_to_pwrctl(padapter);
+ 	pslv = PS_STATE_S2;
+ 
+-	down(&pwrctrl->lock);
++	mutex_lock(&pwrctrl->lock);
+ 
+ 	register_task_alive(pwrctrl, XMIT_ALIVE);
+ 
+@@ -979,7 +978,7 @@ s32 rtw_register_tx_alive(struct adapter *padapter)
+ 		}
+ 	}
+ 
+-	up(&pwrctrl->lock);
++	mutex_unlock(&pwrctrl->lock);
+ 
+ 	if (_FAIL == res)
+ 		if (pwrctrl->cpwm >= PS_STATE_S2)
+@@ -1011,7 +1010,7 @@ s32 rtw_register_cmd_alive(struct adapter *padapter)
+ 	pwrctrl = adapter_to_pwrctl(padapter);
+ 	pslv = PS_STATE_S2;
+ 
+-	down(&pwrctrl->lock);
++	mutex_lock(&pwrctrl->lock);
+ 
+ 	register_task_alive(pwrctrl, CMD_ALIVE);
+ 
+@@ -1028,7 +1027,7 @@ s32 rtw_register_cmd_alive(struct adapter *padapter)
+ 		}
+ 	}
+ 
+-	up(&pwrctrl->lock);
++	mutex_unlock(&pwrctrl->lock);
+ 
+ 	if (_FAIL == res)
+ 		if (pwrctrl->cpwm >= PS_STATE_S2)
+@@ -1061,7 +1060,7 @@ void rtw_unregister_tx_alive(struct adapter *padapter)
+ 			pslv = PS_STATE_S2;
+ 	}
+ 
+-	down(&pwrctrl->lock);
++	mutex_lock(&pwrctrl->lock);
+ 
+ 	unregister_task_alive(pwrctrl, XMIT_ALIVE);
+ 
+@@ -1076,7 +1075,7 @@ void rtw_unregister_tx_alive(struct adapter *padapter)
+ 				rtw_set_rpwm(padapter, pslv);
+ 	}
+ 
+-	up(&pwrctrl->lock);
++	mutex_unlock(&pwrctrl->lock);
+ }
+ 
+ /*
+@@ -1103,7 +1102,7 @@ void rtw_unregister_cmd_alive(struct adapter *padapter)
+ 			pslv = PS_STATE_S2;
+ 	}
+ 
+-	down(&pwrctrl->lock);
++	mutex_lock(&pwrctrl->lock);
+ 
+ 	unregister_task_alive(pwrctrl, CMD_ALIVE);
+ 
+@@ -1119,14 +1118,14 @@ void rtw_unregister_cmd_alive(struct adapter *padapter)
+ 		}
+ 	}
+ 
+-	up(&pwrctrl->lock);
++	mutex_unlock(&pwrctrl->lock);
+ }
+ 
+ void rtw_init_pwrctrl_priv(struct adapter *padapter)
+ {
+ 	struct pwrctrl_priv *pwrctrlpriv = adapter_to_pwrctl(padapter);
+ 
+-	sema_init(&pwrctrlpriv->lock, 1);
++	mutex_init(&pwrctrlpriv->lock);
+ 	sema_init(&pwrctrlpriv->check_32k_lock, 1);
+ 	pwrctrlpriv->rf_pwrstate = rf_on;
+ 	pwrctrlpriv->ips_enter_cnts = 0;
+@@ -1357,13 +1356,13 @@ void rtw_ps_deny(struct adapter *padapter, enum PS_DENY_REASON reason)
+ 
+ 	pwrpriv = adapter_to_pwrctl(padapter);
+ 
+-	down(&pwrpriv->lock);
++	mutex_lock(&pwrpriv->lock);
+ 	if (pwrpriv->ps_deny & BIT(reason)) {
+ 		DBG_871X(FUNC_ADPT_FMT ": [WARNING] Reason %d had been set before!!\n",
+ 			FUNC_ADPT_ARG(padapter), reason);
+ 	}
+ 	pwrpriv->ps_deny |= BIT(reason);
+-	up(&pwrpriv->lock);
++	mutex_unlock(&pwrpriv->lock);
+ 
+ /* 	DBG_871X("-" FUNC_ADPT_FMT ": Now PS deny for 0x%08X\n", */
+ /* 		FUNC_ADPT_ARG(padapter), pwrpriv->ps_deny); */
+@@ -1383,13 +1382,13 @@ void rtw_ps_deny_cancel(struct adapter *padapter, enum PS_DENY_REASON reason)
+ 
+ 	pwrpriv = adapter_to_pwrctl(padapter);
+ 
+-	down(&pwrpriv->lock);
++	mutex_lock(&pwrpriv->lock);
+ 	if ((pwrpriv->ps_deny & BIT(reason)) == 0) {
+ 		DBG_871X(FUNC_ADPT_FMT ": [ERROR] Reason %d had been canceled before!!\n",
+ 			FUNC_ADPT_ARG(padapter), reason);
+ 	}
+ 	pwrpriv->ps_deny &= ~BIT(reason);
+-	up(&pwrpriv->lock);
++	mutex_unlock(&pwrpriv->lock);
+ 
+ /* 	DBG_871X("-" FUNC_ADPT_FMT ": Now PS deny for 0x%08X\n", */
+ /* 		FUNC_ADPT_ARG(padapter), pwrpriv->ps_deny); */
+diff --git a/drivers/staging/rtl8723bs/include/rtw_pwrctrl.h b/drivers/staging/rtl8723bs/include/rtw_pwrctrl.h
+index 72df6cffe62e..abf48ae01900 100644
+--- a/drivers/staging/rtl8723bs/include/rtw_pwrctrl.h
++++ b/drivers/staging/rtl8723bs/include/rtw_pwrctrl.h
+@@ -7,6 +7,7 @@
+ #ifndef __RTW_PWRCTRL_H_
+ #define __RTW_PWRCTRL_H_
+ 
++#include <linux/mutex.h>
+ 
+ #define FW_PWR0	0
+ #define FW_PWR1		1
+@@ -207,7 +208,7 @@ typedef struct pno_scan_info
+ 
+ struct pwrctrl_priv
+ {
+-	_pwrlock	lock;
++	struct mutex lock;
+ 	_pwrlock	check_32k_lock;
+ 	volatile u8 rpwm; /*  requested power state for fw */
+ 	volatile u8 cpwm; /*  fw current power state. updated when 1. read from HCPWM 2. driver lowers power level */
+-- 
+2.20.0
 
-> And looking at that particular part:
-> 
->         r = &rdt_resources_all[resid];
->         d = rdt_find_domain(r, domid, NULL);
->         if (!d) {
->                 ret = -ENOENT;
->                 goto out;
->         }
-> 
-> You *could* put in there something like:
-> 
-> 	seq_printf(m, "Cannot find a domain for resource ID: %d\n", domid);
-> 
-> and this way it is perfectly clear which error path it is.
-> 
-> :-)
-> 
-
-From what I understand this scenario should never happen - at the time
-knowledge of the resource instance is removed then these mondata files
-referring to it will be removed also. Even so, I'd prefer not to make
-any user visible changes without a specific requirement or need to do
-so. In this case ENOENT is the only error code returned during this user
-space interaction so from what I can tell it is currently clear which
-error path it is.
-
-Reinette
