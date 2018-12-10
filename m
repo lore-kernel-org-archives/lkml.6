@@ -2,92 +2,97 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4469C04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 21:25:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F50CC04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 21:26:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A1EB520821
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 21:25:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1EB520821
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+	by mail.kernel.org (Postfix) with ESMTP id 3CD5A20821
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 21:26:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3CD5A20821
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728959AbeLJVZ6 (ORCPT
+        id S1729176AbeLJV0Z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 16:25:58 -0500
-Received: from gateway34.websitewelcome.com ([192.185.148.140]:14980 "EHLO
-        gateway34.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727665AbeLJVZ6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 16:25:58 -0500
-Received: from cm14.websitewelcome.com (cm14.websitewelcome.com [100.42.49.7])
-        by gateway34.websitewelcome.com (Postfix) with ESMTP id 9A54832FEB
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Dec 2018 15:20:32 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id WSyegV935kBj6WSyegP9vt; Mon, 10 Dec 2018 15:20:32 -0600
-X-Authority-Reason: nr=8
-Received: from [189.250.70.203] (port=42490 helo=[192.168.1.76])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1gWSye-003taT-9O; Mon, 10 Dec 2018 15:20:32 -0600
-Subject: Re: [PATCH] ipv4: Fix potential Spectre v1 vulnerability
-To:     David Miller <davem@davemloft.net>
-Cc:     kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20181210184124.GA24497@embeddedor>
- <20181210.121130.912436244375054028.davem@davemloft.net>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Message-ID: <8a46aa91-107e-2a4b-64f2-e1307c456592@embeddedor.com>
-Date:   Mon, 10 Dec 2018 15:20:25 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Mon, 10 Dec 2018 16:26:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34702 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727473AbeLJV0Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Dec 2018 16:26:24 -0500
+Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6F5A520821;
+        Mon, 10 Dec 2018 21:26:23 +0000 (UTC)
+Date:   Mon, 10 Dec 2018 16:26:21 -0500
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Linux Trace Devel <linux-trace-devel@vger.kernel.org>,
+        Jiri Olsa <jolsa@redhat.com>, Ingo Molnar <mingo@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>
+Subject: Re: [PATCH] tools/lib/traceevent: Fix processing of dereferenced
+ args in bprintk events
+Message-ID: <20181210162621.2050475a@gandalf.local.home>
+In-Reply-To: <20181210184807.GA26445@kernel.org>
+References: <20181210134522.3f71e2ca@gandalf.local.home>
+        <20181210184807.GA26445@kernel.org>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20181210.121130.912436244375054028.davem@davemloft.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.70.203
-X-Source-L: No
-X-Exim-ID: 1gWSye-003taT-9O
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.1.76]) [189.250.70.203]:42490
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 5
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, 10 Dec 2018 15:48:07 -0300
+Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
 
-
-On 12/10/18 2:11 PM, David Miller wrote:
-
->>
->> Cc: stable@vger.kernel.org
->> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> Em Mon, Dec 10, 2018 at 01:45:22PM -0500, Steven Rostedt escreveu:
+> > From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+> > 
+> > In the case that a bprintk event has a dereferenced pointer that is stored
+> > as a string, and there's more values to process (more args), the arg was not
+> > updated to point to the next arg after processing the dereferenced pointer,
+> > and it screwed up what was to be displayed.  
 > 
-> Applied and queued up for -stable.
+> Thanks, applied.
+>  
+> > Cc: stable@vger.kernel.org
+> > Fixes: 7db96bb49629 ("tools lib traceevent: Handle new pointer processing of bprint strings")  
+
+Arnaldo,
+
+It seems that I cut and pasted the sha1 of the "fixes" part wrong. Can
+you add a "3". That is, the above should have been: 37db96bb49629
+
+Thanks,
+
+-- Steve
+
 > 
-> Please do not CC: stable for networking bug fixes, thank you.
+> > Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+> > ---
+> >  tools/lib/traceevent/event-parse.c | 1 +
+> >  1 file changed, 1 insertion(+)
+> > 
+> > diff --git a/tools/lib/traceevent/event-parse.c b/tools/lib/traceevent/event-parse.c
+> > index 3692f29fee46..70144b98141c 100644
+> > --- a/tools/lib/traceevent/event-parse.c
+> > +++ b/tools/lib/traceevent/event-parse.c
+> > @@ -4970,6 +4970,7 @@ static void pretty_print(struct trace_seq *s, void *data, int size, struct tep_e
+> >  
+> >  				if (arg->type == TEP_PRINT_BSTRING) {
+> >  					trace_seq_puts(s, arg->string.string);
+> > +					arg = arg->next;
+> >  					break;
+> >  				}
+> >  
+> > -- 
+> > 2.19.1  
 > 
 
-OK. I've got it.
-
-Thanks
---
-Gustavo
