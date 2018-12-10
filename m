@@ -2,230 +2,120 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FAKE_REPLY_C,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C008C5CFFE
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 18:13:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68C1EC04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 18:13:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 09BF12084C
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 18:13:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544465608;
-	bh=ROevhMeyWXDwNDM5BjziXs57IerK+hHEjBuLv1h13UE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ttKt6jUBkE8gthPKfwDMP0OU1VXidBV0aaB1Y5FRhFaS6VL+yqBpTuijuluiYl8pS
-	 f4F9LWL2A279EMOq2WhVKGY4t8n+FH6dy0UyqJMAMb/K9G3tM6m29oca+TeLd8Ds3c
-	 Iy5B2YMcnWwnkz3ZQL06mrSyvCV74Amx96N22C7Q=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 09BF12084C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 34AEA20672
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 18:13:42 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="KgMC49wL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 34AEA20672
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=alien8.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729127AbeLJSN1 (ORCPT
+        id S1729148AbeLJSNl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 13:13:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36336 "EHLO mail.kernel.org"
+        Mon, 10 Dec 2018 13:13:41 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:54938 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729039AbeLJSNY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 13:13:24 -0500
-Received: from sinanubuntu1604.mkjiurmyylmellclgttazegk5f.bx.internal.cloudapp.net (unknown [40.121.107.154])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        id S1727842AbeLJSNk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Dec 2018 13:13:40 -0500
+Received: from zn.tnic (p200300EC2BCAD0009567F52EDB121050.dip0.t-ipconnect.de [IPv6:2003:ec:2bca:d000:9567:f52e:db12:1050])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6D1242081F;
-        Mon, 10 Dec 2018 18:13:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544465603;
-        bh=ROevhMeyWXDwNDM5BjziXs57IerK+hHEjBuLv1h13UE=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=evFcXsNzjyupQJEakJk1iWn1fUWNAKQA1G3HP46TEwz/WcJ0agMxs2o8xhpDcSCpI
-         6uzRWZTQn9YEICJsMVXgqPCVwtS672Bd9+yfajRNvpwZZlgYwTaS3GPYf1jPvLCHsy
-         WEeb7SoxHnmKsbaINCepM7hq7xTZ7yWTEE9CWj5o=
-From:   Sinan Kaya <okaya@kernel.org>
-To:     linux-acpi@vger.kernel.org
-Cc:     Sinan Kaya <okaya@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        x86@kernel.org (maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)),
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Robert Moore <robert.moore@intel.com>,
-        Erik Schmauss <erik.schmauss@intel.com>,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        Jan Kiszka <jan.kiszka@siemens.com>,
-        "=?UTF-8?q?Christian=20K=C3=B6nig?=" 
-        <ckoenig.leichtzumerken@gmail.com>,
-        Otavio Pontes <otavio.pontes@intel.com>,
-        linux-kernel@vger.kernel.org (open list:X86 ARCHITECTURE (32-BIT AND
-        64-BIT)), linux-pci@vger.kernel.org (open list:PCI SUBSYSTEM),
-        devel@acpica.org (open list:ACPI COMPONENT ARCHITECTURE (ACPICA))
-Subject: [PATCH v3 3/3] PCI/ACPI: Allow ACPI to be built without PCI support
-Date:   Mon, 10 Dec 2018 18:13:15 +0000
-Message-Id: <20181210181315.5023-3-okaya@kernel.org>
-X-Mailer: git-send-email 2.19.0
-In-Reply-To: <20181210181315.5023-1-okaya@kernel.org>
-References: <20181210181315.5023-1-okaya@kernel.org>
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id E2CE11EC0B1A;
+        Mon, 10 Dec 2018 19:13:37 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1544465618;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:references;
+        bh=P19QeK6plAEIGvb1LDOsVLw3v1JZABEzVD/6ru26FRI=;
+        b=KgMC49wLnDFBHHVSSRGoOQHZVMTGthQzIKyzJUKFrPkxf/yloTd7QNP0DAzXY1SeWJDs1b
+        ahMokNmhHGhvjpXnsuPgDPcS+J9XQfTzOz++6M6tWKAUWyXw3yfMIiAJdHefVGSFTt6YZO
+        I+btCLMnrhkR4IHDGF58pfDgv6pkMT0=
+Date:   Mon, 10 Dec 2018 19:13:28 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Paolo Bonzini <pbonzini@redhat.com>
+Cc:     Eduardo Habkost <ehabkost@redhat.com>,
+        =?utf-8?B?SsO2cmcgUsO2ZGVs?= <joro@8bytes.org>,
+        Andre Przywara <andre.przywara@arm.com>,
+        kvm ML <kvm@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Tom Lendacky <thomas.lendacky@amd.com>
+Subject: Re: kvm: RDTSCP on AMD
+Message-ID: <20181210181328.GA762@zn.tnic>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Spam: Yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We are compiling PCI code today for systems with ACPI and no PCI
-device present. Remove the useless code and reduce the tight
-dependency.
+Reviving an old thread here.
 
-Signed-off-by: Sinan Kaya <okaya@kernel.org>
----
- arch/x86/include/asm/pci_x86.h | 7 +++++++
- drivers/acpi/Kconfig           | 1 -
- drivers/acpi/Makefile          | 2 +-
- drivers/acpi/internal.h        | 5 +++++
- drivers/pci/Makefile           | 2 +-
- include/acpi/acpi_drivers.h    | 7 +++++++
- include/linux/acpi.h           | 7 +++++++
- include/linux/pci.h            | 4 ++++
- 8 files changed, 32 insertions(+), 3 deletions(-)
+On Wed, Jul 06, 2016 at 11:27:16PM +0200, Paolo Bonzini wrote:
+> On 06/07/2016 19:34, Eduardo Habkost wrote:
+> >> > Nothing is needed in the kernel actually.  You can skip the intercept
+> >> > by running the guest with MSR_TSC_AUX set to the guest's expected value.
+> >> >  Which KVM does, except that it's botched so I need to apply the
+> >> > patch in https://lkml.org/lkml/2016/4/13/802.
+> > Do you mean -cpu Opteron_G*,+rdtscp will be buggy on Linux v4.5?
+> > (v4.5 reports rdtscp as supported in GET_SUPPORTED_CPUID)
+> > 
+> > Can we do something to make QEMU detect the buggy kernel before
+> > allowing rdtscp to be enabled, or should we just tell people to
+> > upgrade their kernel?
+> 
+> We usually just tell people to use the latest stable kernel.
+> 
+> Adding new CPU models is not a big deal, in fact it's almost easier than
+> getting compat properties right. :)
 
-diff --git a/arch/x86/include/asm/pci_x86.h b/arch/x86/include/asm/pci_x86.h
-index 959d618dbb17..73bb404f4d2a 100644
---- a/arch/x86/include/asm/pci_x86.h
-+++ b/arch/x86/include/asm/pci_x86.h
-@@ -121,7 +121,14 @@ extern void __init dmi_check_pciprobe(void);
- extern void __init dmi_check_skip_isa_align(void);
- 
- /* some common used subsys_initcalls */
-+#ifdef CONFIG_PCI
- extern int __init pci_acpi_init(void);
-+#else
-+static inline int  __init pci_acpi_init(void)
-+{
-+	return -EINVAL;
-+}
-+#endif
- extern void __init pcibios_irq_init(void);
- extern int __init pcibios_init(void);
- extern int pci_legacy_init(void);
-diff --git a/drivers/acpi/Kconfig b/drivers/acpi/Kconfig
-index 7cea769c37df..a0abcb3bd673 100644
---- a/drivers/acpi/Kconfig
-+++ b/drivers/acpi/Kconfig
-@@ -9,7 +9,6 @@ config ARCH_SUPPORTS_ACPI
- menuconfig ACPI
- 	bool "ACPI (Advanced Configuration and Power Interface) Support"
- 	depends on ARCH_SUPPORTS_ACPI
--	depends on PCI
- 	select PNP
- 	default y if X86
- 	help
-diff --git a/drivers/acpi/Makefile b/drivers/acpi/Makefile
-index edc039313cd6..7c6afc111d76 100644
---- a/drivers/acpi/Makefile
-+++ b/drivers/acpi/Makefile
-@@ -39,7 +39,7 @@ acpi-y				+= processor_core.o
- acpi-$(CONFIG_ARCH_MIGHT_HAVE_ACPI_PDC) += processor_pdc.o
- acpi-y				+= ec.o
- acpi-$(CONFIG_ACPI_DOCK)	+= dock.o
--acpi-y				+= pci_root.o pci_link.o pci_irq.o
-+acpi-$(CONFIG_PCI)		+= pci_root.o pci_link.o pci_irq.o
- obj-$(CONFIG_ACPI_MCFG)		+= pci_mcfg.o
- acpi-y				+= acpi_lpss.o acpi_apd.o
- acpi-y				+= acpi_platform.o
-diff --git a/drivers/acpi/internal.h b/drivers/acpi/internal.h
-index 530a3f675490..b7060dae2789 100644
---- a/drivers/acpi/internal.h
-+++ b/drivers/acpi/internal.h
-@@ -25,8 +25,13 @@ int acpi_osi_init(void);
- acpi_status acpi_os_initialize1(void);
- void init_acpi_device_notify(void);
- int acpi_scan_init(void);
-+#ifdef CONFIG_PCI
- void acpi_pci_root_init(void);
- void acpi_pci_link_init(void);
-+#else
-+static inline void acpi_pci_root_init(void) {}
-+static inline void acpi_pci_link_init(void) {}
-+#endif
- void acpi_processor_init(void);
- void acpi_platform_init(void);
- void acpi_pnp_init(void);
-diff --git a/drivers/pci/Makefile b/drivers/pci/Makefile
-index f2bda77a2df1..657d642fcc67 100644
---- a/drivers/pci/Makefile
-+++ b/drivers/pci/Makefile
-@@ -11,6 +11,7 @@ ifdef CONFIG_PCI
- obj-$(CONFIG_PROC_FS)		+= proc.o
- obj-$(CONFIG_SYSFS)		+= slot.o
- obj-$(CONFIG_OF)		+= of.o
-+obj-$(CONFIG_ACPI)		+= pci-acpi.o
- endif
- 
- obj-$(CONFIG_PCI_QUIRKS)	+= quirks.o
-@@ -20,7 +21,6 @@ obj-$(CONFIG_PCI_MSI)		+= msi.o
- obj-$(CONFIG_PCI_ATS)		+= ats.o
- obj-$(CONFIG_PCI_IOV)		+= iov.o
- obj-$(CONFIG_PCI_BRIDGE_EMUL)	+= pci-bridge-emul.o
--obj-$(CONFIG_ACPI)		+= pci-acpi.o
- obj-$(CONFIG_PCI_LABEL)		+= pci-label.o
- obj-$(CONFIG_X86_INTEL_MID)	+= pci-mid.o
- obj-$(CONFIG_PCI_SYSCALL)	+= syscall.o
-diff --git a/include/acpi/acpi_drivers.h b/include/acpi/acpi_drivers.h
-index 14499757338f..de1804aeaf69 100644
---- a/include/acpi/acpi_drivers.h
-+++ b/include/acpi/acpi_drivers.h
-@@ -88,7 +88,14 @@ int acpi_pci_link_free_irq(acpi_handle handle);
- 
- struct pci_bus;
- 
-+#ifdef CONFIG_PCI
- struct pci_dev *acpi_get_pci_dev(acpi_handle);
-+#else
-+static inline struct pci_dev *acpi_get_pci_dev(acpi_handle handle)
-+{
-+	return NULL;
-+}
-+#endif
- 
- /* Arch-defined function to add a bus to the system */
- 
-diff --git a/include/linux/acpi.h b/include/linux/acpi.h
-index ed80f147bd50..eb1fdf4c196a 100644
---- a/include/linux/acpi.h
-+++ b/include/linux/acpi.h
-@@ -340,7 +340,14 @@ struct pci_dev;
- int acpi_pci_irq_enable (struct pci_dev *dev);
- void acpi_penalize_isa_irq(int irq, int active);
- bool acpi_isa_irq_available(int irq);
-+#ifdef CONFIG_PCI
- void acpi_penalize_sci_irq(int irq, int trigger, int polarity);
-+#else
-+static inline void acpi_penalize_sci_irq(int irq, int trigger,
-+					int polarity)
-+{
-+}
-+#endif
- void acpi_pci_irq_disable (struct pci_dev *dev);
- 
- extern int ec_read(u8 addr, u8 *val);
-diff --git a/include/linux/pci.h b/include/linux/pci.h
-index 11c71c4ecf75..51a5a5217667 100644
---- a/include/linux/pci.h
-+++ b/include/linux/pci.h
-@@ -1960,7 +1960,11 @@ int pcibios_set_pcie_reset_state(struct pci_dev *dev,
- 				 enum pcie_reset_state state);
- int pcibios_add_device(struct pci_dev *dev);
- void pcibios_release_device(struct pci_dev *dev);
-+#ifdef CONFIG_PCI
- void pcibios_penalize_isa_irq(int irq, int active);
-+#else
-+static inline void pcibios_penalize_isa_irq(int irq, int active) {}
-+#endif
- int pcibios_alloc_irq(struct pci_dev *dev);
- void pcibios_free_irq(struct pci_dev *dev);
- resource_size_t pcibios_default_alignment(void);
+Ok, can we finally revert
+
+  33b5e8c03ae7 ("target-i386: Disable rdtscp on Opteron_G* CPU models")
+
+in the qemu tree?
+
+Three years should be enough by now for
+
+  46896c73c1a4 ("KVM: svm: add support for RDTSCP")
+
+to have percolated downstream.
+
+Btw, its commit message talks about Linux not using RDTSCP but that will
+change soon. :-)
+
+Oh, and the EPYC qemu CPU model has CPUID_EXT2_RDTSCP and works just
+fine when patching in RDTSCP:
+
+[    0.543197] apply_alternatives: feat: 3*32+18, old: (read_tsc+0x0/0x10 (ffffffff8101d1c0) len: 5), repl: (ffffffff824e6d33, len: 5), pad: 3
+[    0.544448] ffffffff8101d1c0: old_insn: 0f 31 90 90 90
+[    0.545023] ffffffff824e6d33: rpl_insn: 0f ae e8 0f 31
+[    0.545598] ffffffff8101d1c0: final_insn: 0f ae e8 0f 31
+[    0.546193] apply_alternatives: feat: 1*32+27, old: (read_tsc+0x0/0x10 (ffffffff8101d1c0) len: 5), repl: (ffffffff824e6d38, len: 3), pad: 3
+[    0.547195] ffffffff8101d1c0: old_insn: 0f ae e8 0f 31
+[    0.547775] ffffffff824e6d38: rpl_insn: 0f 01 f9
+[    0.548307] ffffffff8101d1c0: final_insn: 0f 01 f9 66 90
+
+That final_insn which gets patched to by the alternatives is
+
+ffffffff8101d1c0:       0f 01 f9                rdtscp
+ffffffff8101d1c3:       66 90                   xchg %ax,%ax
+
+Thx.
+
 -- 
-2.19.0
+Regards/Gruss,
+    Boris.
 
+Good mailing practices for 400: avoid top-posting and trim the reply.
