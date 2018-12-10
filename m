@@ -2,136 +2,113 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA565C5CFFE
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 22:13:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 050D2C04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 22:18:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 778FE20821
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 22:13:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 778FE20821
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=atomide.com
+	by mail.kernel.org (Postfix) with ESMTP id B059320821
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 22:18:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544480310;
+	bh=3mauFr4t4ujcCEY2Kq5nfGUi7cD3ZKlkfdF3tz4bBRU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=j6hYf3763AisqJ4Qqxvj6omyRpER4m03fYuh+RFXWq0bIQL+zgF0NCQJMamz9lbz4
+	 yymNgsm8T2VXG2j95ep8yOpLX7xMyQmtV/ao0irBysfxKxs5ayFPkRUFkrz/nzXcCe
+	 yLa9ld4vWVbXUjo3Q3kpMMtUXHeT+CiZ/CU7HdsY=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B059320821
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729770AbeLJWNo (ORCPT
+        id S1728776AbeLJWS3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 17:13:44 -0500
-Received: from muru.com ([72.249.23.125]:57180 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727146AbeLJWNl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 17:13:41 -0500
-Received: from hillo.muru.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTP id 363DF8132;
-        Mon, 10 Dec 2018 22:13:43 +0000 (UTC)
-From:   Tony Lindgren <tony@atomide.com>
-To:     linux-omap@vger.kernel.org
-Cc:     Dave Gerlach <d-gerlach@ti.com>, Faiz Abbas <faiz_abbas@ti.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Keerthy <j-keerthy@ti.com>, Nishanth Menon <nm@ti.com>,
-        Suman Anna <s-anna@ti.com>, Tero Kristo <t-kristo@ti.com>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Peter Ujfalusi <peter.ujfalusi@ti.com>
-Subject: [PATCH 2/2] bus: ti-sysc: Check for no-reset and no-idle flags at the child level
-Date:   Mon, 10 Dec 2018 14:13:34 -0800
-Message-Id: <20181210221334.24982-2-tony@atomide.com>
-X-Mailer: git-send-email 2.19.2
-In-Reply-To: <20181210221334.24982-1-tony@atomide.com>
-References: <20181210221334.24982-1-tony@atomide.com>
+        Mon, 10 Dec 2018 17:18:29 -0500
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:35717 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726562AbeLJWS3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Dec 2018 17:18:29 -0500
+Received: by mail-oi1-f193.google.com with SMTP id v6so10410822oif.2;
+        Mon, 10 Dec 2018 14:18:28 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=ZVmaNxU28RZRbtYzOac5EiHZYnbg7QMeLMNiI/ZFWhU=;
+        b=k7+tcOe7DYcHqCn/X06JISw+AIc12b7LYOt1gtATK2Cr968TXkGhyRC3kuBpNS0GUK
+         cgdPjk3qhdxFI3daWh9L/8s4AAMlmRJgppVeg5Hn9yXyTxn4qF5hXkN2FCoBHiJGvR+Y
+         FHrZO8zdEOPttwnMdaLV7XAQ0+OY7BjBT0ns5mKGVAWBTgBAN2l3SffFnXQyNe10VpyQ
+         ZI60TmqTfJ5YWZqBtPNLx0jDagFVfwlYgqdf/RmUKrUdZ0/DwBJ5MYnGOLK7PX8uepyq
+         x75qLgMSsTpBRhg0YWxJx7nHrxQzmKnL+WIDFE03ZVCaONKAxm68UWYwh/7xT1SDU6MN
+         LLrQ==
+X-Gm-Message-State: AA+aEWYEnP+ISooSpgvc0UGivnNB9N+LH4HYNbRgDMAEYuj7PYpxIsjh
+        U1b+u17y0vNeJS1VKLA1wg==
+X-Google-Smtp-Source: AFSGD/UlgDCJ1x2oIz2waE1mkWw0r1GD/2yoS1FQ2EhKNF3Naxg8stJ+LTjZKvREb+zqWxDIx/Tv7Q==
+X-Received: by 2002:aca:3a55:: with SMTP id h82mr8911536oia.86.1544480307362;
+        Mon, 10 Dec 2018 14:18:27 -0800 (PST)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id r17sm5887977otn.0.2018.12.10.14.18.26
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 10 Dec 2018 14:18:26 -0800 (PST)
+Date:   Mon, 10 Dec 2018 16:18:26 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Abel Vesa <abel.vesa@nxp.com>
+Cc:     Lucas Stach <l.stach@pengutronix.de>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Aisheng Dong <aisheng.dong@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        "patchwork-lst@pengutronix.de" <patchwork-lst@pengutronix.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Abel Vesa <abelvesa@linux.com>, Abel Vesa <abel.vesa@nxp.com>
+Subject: Re: [PATCH v5 2/6] arm64: add basic DTS for i.MX8MQ
+Message-ID: <20181210221826.GA21311@bogus>
+References: <1544365552-30270-1-git-send-email-abel.vesa@nxp.com>
+ <1544365552-30270-3-git-send-email-abel.vesa@nxp.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1544365552-30270-3-git-send-email-abel.vesa@nxp.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With ti-sysc, we need to now have the device tree properties for
-ti,no-reset-on-init and ti,no-idle-on-init at the module level instead
-of the child device level.
+On Sun, 9 Dec 2018 14:26:07 +0000, Abel Vesa wrote:
+> From: Lucas Stach <l.stach@pengutronix.de>
+> 
+> This adds the basic DTS for the i.MX8MQ.
+> For now only the following peripherals are supported:
+> - IOMUXC (pin controller)
+> - CCM (clock controller)
+> - GPIO
+> - UART
+> - uSDHC (SD/eMMC controller)
+> - FEC (ethernet controller)
+> - i2c
+> 
+> This is enough to get a very basic board support up and running.
+> 
+> One known limitation is that the driver for the GPC interrupt
+> controller is still missing, rendering the CPU sleep states unusable
+> as there is nothing waking them up anymore.
+> 
+> Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
+> Reviewed-by: Dong Aisheng <Aisheng.dong@nxp.com>
+> ---
+>  Documentation/devicetree/bindings/arm/fsl.txt  |   4 +
+>  arch/arm64/boot/dts/freescale/imx8mq-pinfunc.h | 623 +++++++++++++++++++++++++
+>  arch/arm64/boot/dts/freescale/imx8mq.dtsi      | 392 ++++++++++++++++
+>  3 files changed, 1019 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/freescale/imx8mq-pinfunc.h
+>  create mode 100644 arch/arm64/boot/dts/freescale/imx8mq.dtsi
+> 
 
-Let's check for these properties at the child device level to enable
-quirks, and warn about moving the properties to the module level.
-
-Otherwise am335x-evm based boards tagging gpio1 with ti,no-reset-on-init
-will have their DDR power disabled if wired up in such a tricky way.
-
-Note that this should not be an issue for earlier kernels as we don't
-rely on this until the dts files have been updated to probe with ti-sysc
-interconnect target driver.
-
-Cc: Peter Ujfalusi <peter.ujfalusi@ti.com>
-Reported-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
----
- drivers/bus/ti-sysc.c | 32 +++++++++++++++++++++++++-------
- 1 file changed, 25 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/bus/ti-sysc.c b/drivers/bus/ti-sysc.c
---- a/drivers/bus/ti-sysc.c
-+++ b/drivers/bus/ti-sysc.c
-@@ -91,6 +91,9 @@ struct sysc {
- 	struct delayed_work idle_work;
- };
- 
-+static void sysc_parse_dts_quirks(struct sysc *ddata, struct device_node *np,
-+				  bool is_child);
-+
- void sysc_write(struct sysc *ddata, int offset, u32 value)
- {
- 	writel_relaxed(value, ddata->module_va + offset);
-@@ -379,6 +382,7 @@ static int sysc_check_one_child(struct sysc *ddata,
- 		dev_warn(ddata->dev, "really a child ti,hwmods property?");
- 
- 	sysc_check_quirk_stdout(ddata, np);
-+	sysc_parse_dts_quirks(ddata, np, true);
- 
- 	return 0;
- }
-@@ -1279,23 +1283,37 @@ static const struct sysc_dts_quirk sysc_dts_quirks[] = {
- 	  .mask = SYSC_QUIRK_NO_RESET_ON_INIT, },
- };
- 
--static int sysc_init_dts_quirks(struct sysc *ddata)
-+static void sysc_parse_dts_quirks(struct sysc *ddata, struct device_node *np,
-+				  bool is_child)
- {
--	struct device_node *np = ddata->dev->of_node;
- 	const struct property *prop;
--	int i, len, error;
--	u32 val;
--
--	ddata->legacy_mode = of_get_property(np, "ti,hwmods", NULL);
-+	int i, len;
- 
- 	for (i = 0; i < ARRAY_SIZE(sysc_dts_quirks); i++) {
--		prop = of_get_property(np, sysc_dts_quirks[i].name, &len);
-+		const char *name = sysc_dts_quirks[i].name;
-+
-+		prop = of_get_property(np, name, &len);
- 		if (!prop)
- 			continue;
- 
- 		ddata->cfg.quirks |= sysc_dts_quirks[i].mask;
-+		if (is_child) {
-+			dev_warn(ddata->dev,
-+				 "dts flag should be at module level for %s\n",
-+				 name);
-+		}
- 	}
-+}
-+
-+static int sysc_init_dts_quirks(struct sysc *ddata)
-+{
-+	struct device_node *np = ddata->dev->of_node;
-+	int error;
-+	u32 val;
-+
-+	ddata->legacy_mode = of_get_property(np, "ti,hwmods", NULL);
- 
-+	sysc_parse_dts_quirks(ddata, np, false);
- 	error = of_property_read_u32(np, "ti,sysc-delay-us", &val);
- 	if (!error) {
- 		if (val > 255) {
--- 
-2.19.2
+Reviewed-by: Rob Herring <robh@kernel.org>
