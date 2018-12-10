@@ -2,45 +2,54 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95CE1C04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 18:32:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CDD2DC5CFFE
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 18:32:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6544E2082F
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 18:32:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6544E2082F
+	by mail.kernel.org (Postfix) with ESMTP id 9644520870
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 18:32:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="EtqQxdIo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9644520870
 Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728874AbeLJScp (ORCPT
+        id S1728909AbeLJScq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 13:32:45 -0500
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:51428 "EHLO
+        Mon, 10 Dec 2018 13:32:46 -0500
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:51438 "EHLO
         fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728191AbeLJSco (ORCPT
+        with ESMTP id S1728870AbeLJScp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 13:32:44 -0500
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id wBAIWUTx095501;
-        Mon, 10 Dec 2018 12:32:30 -0600
-Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wBAIWUHh124326
+        Mon, 10 Dec 2018 13:32:45 -0500
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id wBAIWNpJ095311;
+        Mon, 10 Dec 2018 12:32:23 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1544466743;
+        bh=kwxgW5hrxxyvv5BsKvPXkFnltap/3pj5q/x0IItJdH8=;
+        h=From:To:CC:Subject:Date;
+        b=EtqQxdIoW7DqCpn7nKZuC84HL+ECZ1o9xoSJoURgDt096jHjhVRWKxuofb87kKX1F
+         qYMgdbXrro6d1uIvWCrnmB5I2ZvcLe3UoJc7ATUsuAt818948X8WXQkIVxyZ6psply
+         TuDf5CBzFy34QyPlqnq4++H8tTxuXheLrR1ywRkA=
+Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wBAIWNaM101797
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 10 Dec 2018 12:32:30 -0600
-Received: from DFLE100.ent.ti.com (10.64.6.21) by DFLE115.ent.ti.com
- (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
+        Mon, 10 Dec 2018 12:32:23 -0600
+Received: from DFLE103.ent.ti.com (10.64.6.24) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Mon, 10
- Dec 2018 12:32:30 -0600
-Received: from dflp32.itg.ti.com (10.64.6.15) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_0,
+ Dec 2018 12:32:23 -0600
+Received: from dflp32.itg.ti.com (10.64.6.15) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_0,
  cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Mon, 10 Dec 2018 12:32:30 -0600
+ Mon, 10 Dec 2018 12:32:23 -0600
 Received: from a0230074-OptiPlex-7010.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id wBAIWJdO020318;
-        Mon, 10 Dec 2018 12:32:27 -0600
+        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id wBAIWJdM020318;
+        Mon, 10 Dec 2018 12:32:20 -0600
 From:   Faiz Abbas <faiz_abbas@ti.com>
 To:     <linux-kernel@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
@@ -48,50 +57,64 @@ To:     <linux-kernel@vger.kernel.org>,
 CC:     <ulf.hansson@linaro.org>, <robh+dt@kernel.org>,
         <mark.rutland@arm.com>, <adrian.hunter@intel.com>,
         <michal.simek@xilinx.com>, <kishon@ti.com>, <faiz_abbas@ti.com>
-Subject: [PATCH v3 2/3] dt-bindings: mmc: sdhci-of-arasan: Add deprecated message for AM65
-Date:   Tue, 11 Dec 2018 00:05:06 +0530
-Message-ID: <20181210183507.9617-3-faiz_abbas@ti.com>
+Subject: [PATCH v3 0/3] Add driver Support for MMCSD on AM654x
+Date:   Tue, 11 Dec 2018 00:05:04 +0530
+Message-ID: <20181210183507.9617-1-faiz_abbas@ti.com>
 X-Mailer: git-send-email 2.19.2
-In-Reply-To: <20181210183507.9617-1-faiz_abbas@ti.com>
-References: <20181210183507.9617-1-faiz_abbas@ti.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit 26a4f38d1316 ("dt-bindings: mmc: sdhci-of-arasan: Add new
-compatible for AM654 MMC PHY") added a new compatible for supporting
-controllers on TI's AM65x SOCs. It turns out that the controller is
-not compatible with the arasan driver's phy and consumer model as it
-requires some phy registers for core sdhci functionality. This calls
-for the binding to branch out to a new driver.
+The following patches add driver support for MMCSD on TI's AM654
+platforms.
 
-Therefore, add a deprecated message for the ti,am654-sdhci-5.1 binding.
+Previously I had added the support to sdhci-of-arasan driver with
+a separate phy driver[1]. Since then it has turned out that tuning
+operation (for HS200, HS400 and SDR104 speed modes) will require
+configuration of phy registers. This completely breaks the model of
+the sdhci-of-arasan driver which relies on a separate driver to
+configure the phy register space.
 
-Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
----
- Documentation/devicetree/bindings/mmc/arasan,sdhci.txt | 4 ++++
- 1 file changed, 4 insertions(+)
+Because of this, I am creating a new driver with both the sdhci and
+phy register spaces. This helps me use the phy registers in a future
+patch that adds tuning support.
 
-diff --git a/Documentation/devicetree/bindings/mmc/arasan,sdhci.txt b/Documentation/devicetree/bindings/mmc/arasan,sdhci.txt
-index e2effe17f05e..1edbb049cccb 100644
---- a/Documentation/devicetree/bindings/mmc/arasan,sdhci.txt
-+++ b/Documentation/devicetree/bindings/mmc/arasan,sdhci.txt
-@@ -16,6 +16,10 @@ Required Properties:
-     - "rockchip,rk3399-sdhci-5.1", "arasan,sdhci-5.1": rk3399 eMMC PHY
-       For this device it is strongly suggested to include arasan,soc-ctl-syscon.
-     - "ti,am654-sdhci-5.1", "arasan,sdhci-5.1": TI AM654 MMC PHY
-+	Note: This binding has been deprecated and moved to [5].
-+
-+  [5] Documentation/devicetree/bindings/mmc/sdhci-am654.txt
-+
-   - reg: From mmc bindings: Register location and length.
-   - clocks: From clock bindings: Handles to clock inputs.
-   - clock-names: From clock bindings: Tuple including "clk_xin" and "clk_ahb"
+DT patches will be posted in a separate series.
+
+Changes in v3:
+ 1. Removed reference to clk_ahb as its not being used.
+ 2. Added comment for pm_runtime being used for enabling
+    clocks.
+
+Changes in v2:
+ 1. Reset OTAP delay back to default value in init.
+ 2. Improved patch description for patch 2.
+ 3. Minor style fixes.
+
+[1] driver and phy patches posted before
+    https://patchwork.kernel.org/project/linux-mmc/list/?series=26623
+
+Faiz Abbas (3):
+  dt-bindings: mmc: sdhci-am654: Document bindings for the host
+    controllers on TI's AM654 SOCs
+  dt-bindings: mmc: sdhci-of-arasan: Add deprecated message for am65
+  mmc: sdhci_am654: Add Initial Support for AM654 SDHCI driver
+
+ .../devicetree/bindings/mmc/arasan,sdhci.txt  |   4 +
+ .../devicetree/bindings/mmc/sdhci-am654.txt   |  37 ++
+ drivers/mmc/host/Kconfig                      |  12 +
+ drivers/mmc/host/Makefile                     |   1 +
+ drivers/mmc/host/sdhci-of-arasan.c            |  46 ---
+ drivers/mmc/host/sdhci_am654.c                | 374 ++++++++++++++++++
+ 6 files changed, 428 insertions(+), 46 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/mmc/sdhci-am654.txt
+ create mode 100644 drivers/mmc/host/sdhci_am654.c
+
 -- 
 2.19.2
 
