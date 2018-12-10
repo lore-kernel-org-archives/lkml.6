@@ -2,129 +2,106 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88D93C04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 12:23:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A35C4C04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 12:25:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5D48320870
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 12:23:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D48320870
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
+	by mail.kernel.org (Postfix) with ESMTP id 7FED62086D
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 12:25:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7FED62086D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tuxdriver.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727666AbeLJMXH (ORCPT
+        id S1727246AbeLJMZU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 07:23:07 -0500
-Received: from pegase1.c-s.fr ([93.17.236.30]:38184 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727190AbeLJMXH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 07:23:07 -0500
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 43D2KP3cZGz9v6Jl;
-        Mon, 10 Dec 2018 13:23:05 +0100 (CET)
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id IiZp27ydnH8M; Mon, 10 Dec 2018 13:23:05 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 43D2KP2ryCz9v6Jj;
-        Mon, 10 Dec 2018 13:23:05 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id E72998B7B0;
-        Mon, 10 Dec 2018 13:23:05 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id P3U917INE2Et; Mon, 10 Dec 2018 13:23:05 +0100 (CET)
-Received: from po14163vm.idsi0.si.c-s.fr (po15451.idsi0.si.c-s.fr [172.25.231.2])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id C86F28B7A9;
-        Mon, 10 Dec 2018 13:23:05 +0100 (CET)
-Received: by po14163vm.idsi0.si.c-s.fr (Postfix, from userid 0)
-        id B0171716F0; Mon, 10 Dec 2018 12:23:05 +0000 (UTC)
-Message-Id: <77dc61d57af91aa944f2416fefaa5cc27016d796.1544444552.git.christophe.leroy@c-s.fr>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH] powerpc/mm: define an empty slice_init_new_context_exec()
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date:   Mon, 10 Dec 2018 12:23:05 +0000 (UTC)
+        Mon, 10 Dec 2018 07:25:20 -0500
+Received: from charlotte.tuxdriver.com ([70.61.120.58]:52366 "EHLO
+        smtp.tuxdriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726324AbeLJMZU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Dec 2018 07:25:20 -0500
+Received: from cpe-2606-a000-111b-405a-a193-cb97-58ba-1c15.dyn6.twc.com ([2606:a000:111b:405a:a193:cb97:58ba:1c15] helo=localhost)
+        by smtp.tuxdriver.com with esmtpsa (TLSv1:AES256-SHA:256)
+        (Exim 4.63)
+        (envelope-from <nhorman@tuxdriver.com>)
+        id 1gWKcT-0001Vg-1L; Mon, 10 Dec 2018 07:25:17 -0500
+Date:   Mon, 10 Dec 2018 07:24:36 -0500
+From:   Neil Horman <nhorman@tuxdriver.com>
+To:     Xin Long <lucien.xin@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, network dev <netdev@vger.kernel.org>,
+        linux-sctp@vger.kernel.org, davem@davemloft.net,
+        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
+Subject: Re: [PATCH net] sctp: initialize sin6_flowinfo for ipv6 addrs in
+ sctp_inet6addr_event
+Message-ID: <20181210122436.GA4499@hmswarspite.think-freely.org>
+References: <4c3dc15beee77a541042f79f35702574347dffc9.1544436052.git.lucien.xin@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4c3dc15beee77a541042f79f35702574347dffc9.1544436052.git.lucien.xin@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Define slice_init_new_context_exec() at all time to avoid
-
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
----
- arch/powerpc/include/asm/slice.h     | 14 +++++++++-----
- arch/powerpc/mm/mmu_context_nohash.c |  2 --
- 2 files changed, 9 insertions(+), 7 deletions(-)
-
-diff --git a/arch/powerpc/include/asm/slice.h b/arch/powerpc/include/asm/slice.h
-index a595461c9cb0..44816cbc4198 100644
---- a/arch/powerpc/include/asm/slice.h
-+++ b/arch/powerpc/include/asm/slice.h
-@@ -10,6 +10,10 @@
- #include <asm/nohash/32/slice.h>
- #endif
- 
-+#ifndef __ASSEMBLY__
-+
-+struct mm_struct;
-+
- #ifdef CONFIG_PPC_MM_SLICES
- 
- #ifdef CONFIG_HUGETLB_PAGE
-@@ -18,10 +22,6 @@
- #define HAVE_ARCH_UNMAPPED_AREA
- #define HAVE_ARCH_UNMAPPED_AREA_TOPDOWN
- 
--#ifndef __ASSEMBLY__
--
--struct mm_struct;
--
- unsigned long slice_get_unmapped_area(unsigned long addr, unsigned long len,
- 				      unsigned long flags, unsigned int psize,
- 				      int topdown);
-@@ -34,8 +34,12 @@ void slice_set_range_psize(struct mm_struct *mm, unsigned long start,
- void slice_init_new_context_exec(struct mm_struct *mm);
- void slice_setup_new_exec(void);
- 
--#endif /* __ASSEMBLY__ */
-+#else /* CONFIG_PPC_MM_SLICES */
-+
-+static inline void slice_init_new_context_exec(struct mm_struct *mm) {}
- 
- #endif /* CONFIG_PPC_MM_SLICES */
- 
-+#endif /* __ASSEMBLY__ */
-+
- #endif /* _ASM_POWERPC_SLICE_H */
-diff --git a/arch/powerpc/mm/mmu_context_nohash.c b/arch/powerpc/mm/mmu_context_nohash.c
-index 431ecf37f17c..22d71a58167f 100644
---- a/arch/powerpc/mm/mmu_context_nohash.c
-+++ b/arch/powerpc/mm/mmu_context_nohash.c
-@@ -372,7 +372,6 @@ int init_new_context(struct task_struct *t, struct mm_struct *mm)
- {
- 	pr_hard("initing context for mm @%p\n", mm);
- 
--#ifdef	CONFIG_PPC_MM_SLICES
- 	/*
- 	 * We have MMU_NO_CONTEXT set to be ~0. Hence check
- 	 * explicitly against context.id == 0. This ensures that we properly
-@@ -382,7 +381,6 @@ int init_new_context(struct task_struct *t, struct mm_struct *mm)
- 	 */
- 	if (mm->context.id == 0)
- 		slice_init_new_context_exec(mm);
--#endif
- 	mm->context.id = MMU_NO_CONTEXT;
- 	mm->context.active = 0;
- 	pte_frag_set(&mm->context, NULL);
--- 
-2.13.3
+On Mon, Dec 10, 2018 at 06:00:52PM +0800, Xin Long wrote:
+> syzbot reported a kernel-infoleak, which is caused by an uninitialized
+> field(sin6_flowinfo) of addr->a.v6 in sctp_inet6addr_event().
+> The call trace is as below:
+> 
+>   BUG: KMSAN: kernel-infoleak in _copy_to_user+0x19a/0x230 lib/usercopy.c:33
+>   CPU: 1 PID: 8164 Comm: syz-executor2 Not tainted 4.20.0-rc3+ #95
+>   Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+>   Google 01/01/2011
+>   Call Trace:
+>     __dump_stack lib/dump_stack.c:77 [inline]
+>     dump_stack+0x32d/0x480 lib/dump_stack.c:113
+>     kmsan_report+0x12c/0x290 mm/kmsan/kmsan.c:683
+>     kmsan_internal_check_memory+0x32a/0xa50 mm/kmsan/kmsan.c:743
+>     kmsan_copy_to_user+0x78/0xd0 mm/kmsan/kmsan_hooks.c:634
+>     _copy_to_user+0x19a/0x230 lib/usercopy.c:33
+>     copy_to_user include/linux/uaccess.h:183 [inline]
+>     sctp_getsockopt_local_addrs net/sctp/socket.c:5998 [inline]
+>     sctp_getsockopt+0x15248/0x186f0 net/sctp/socket.c:7477
+>     sock_common_getsockopt+0x13f/0x180 net/core/sock.c:2937
+>     __sys_getsockopt+0x489/0x550 net/socket.c:1939
+>     __do_sys_getsockopt net/socket.c:1950 [inline]
+>     __se_sys_getsockopt+0xe1/0x100 net/socket.c:1947
+>     __x64_sys_getsockopt+0x62/0x80 net/socket.c:1947
+>     do_syscall_64+0xcf/0x110 arch/x86/entry/common.c:291
+>     entry_SYSCALL_64_after_hwframe+0x63/0xe7
+> 
+> sin6_flowinfo is not really used by SCTP, so it will be fixed by simply
+> setting it to 0.
+> 
+> The issue exists since very beginning.
+> Thanks Alexander for the reproducer provided.
+> 
+> Reported-by: syzbot+ad5d327e6936a2e284be@syzkaller.appspotmail.com
+> Signed-off-by: Xin Long <lucien.xin@gmail.com>
+> ---
+>  net/sctp/ipv6.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/net/sctp/ipv6.c b/net/sctp/ipv6.c
+> index fc6c5e4..7f0539d 100644
+> --- a/net/sctp/ipv6.c
+> +++ b/net/sctp/ipv6.c
+> @@ -101,6 +101,7 @@ static int sctp_inet6addr_event(struct notifier_block *this, unsigned long ev,
+>  		if (addr) {
+>  			addr->a.v6.sin6_family = AF_INET6;
+>  			addr->a.v6.sin6_port = 0;
+> +			addr->a.v6.sin6_flowinfo = 0;
+>  			addr->a.v6.sin6_addr = ifa->addr;
+>  			addr->a.v6.sin6_scope_id = ifa->idev->dev->ifindex;
+>  			addr->valid = 1;
+> -- 
+> 2.1.0
+> 
+> 
+Acked-by: Neil Horman <nhorman@tuxdriver.com>
 
