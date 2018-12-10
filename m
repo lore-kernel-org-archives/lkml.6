@@ -2,186 +2,88 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.7 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A471C5CFFE
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 11:44:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2E64C04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 11:47:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2B29820880
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 11:44:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B29820880
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by mail.kernel.org (Postfix) with ESMTP id B000020880
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 11:47:33 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="QRrEOPQz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B000020880
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=verge.net.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727578AbeLJLoE (ORCPT
+        id S1727596AbeLJLrc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 06:44:04 -0500
-Received: from mailgw01.mediatek.com ([210.61.82.183]:4940 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726146AbeLJLoE (ORCPT
+        Mon, 10 Dec 2018 06:47:32 -0500
+Received: from kirsty.vergenet.net ([202.4.237.240]:41201 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727369AbeLJLrc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 06:44:04 -0500
-X-UUID: 78d59e2f836d44699d08c7e812b31ef2-20181210
-X-UUID: 78d59e2f836d44699d08c7e812b31ef2-20181210
-Received: from mtkmrs01.mediatek.inc [(172.21.131.159)] by mailgw01.mediatek.com
-        (envelope-from <jjian.zhou@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1090352921; Mon, 10 Dec 2018 19:43:57 +0800
-Received: from mtkcas09.mediatek.inc (172.21.101.178) by
- mtkmbs08n1.mediatek.inc (172.21.101.55) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Mon, 10 Dec 2018 19:43:56 +0800
-Received: from localhost.localdomain (10.17.3.153) by mtkcas09.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Mon, 10 Dec 2018 19:43:55 +0800
-From:   Jjian Zhou <jjian.zhou@mediatek.com>
-To:     Ulf Hansson <ulf.hansson@linaro.org>
-CC:     Matthias Brugger <matthias.bgg@gmail.com>,
-        Chaotian Jing <chaotian.jing@mediatek.com>,
-        Ryder Lee <ryder.lee@mediatek.com>,
-        jjian zhou <jjian.zhou@mediatek.com>,
-        Sean Wang <sean.wang@mediatek.com>,
-        <linux-mmc@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <srv_heupstream@mediatek.com>, <linux-kernel@vger.kernel.org>,
-        Yong Mao <yong.mao@mediatek.com>
-Subject: [PATCH v3] mmc: mediatek: Add MMC_CAP_SDIO_IRQ support
-Date:   Mon, 10 Dec 2018 19:43:53 +0800
-Message-ID: <1544442233-20303-1-git-send-email-jjian.zhou@mediatek.com>
-X-Mailer: git-send-email 1.9.1
+        Mon, 10 Dec 2018 06:47:32 -0500
+Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
+        by kirsty.vergenet.net (Postfix) with ESMTPA id CC0DD25BED1;
+        Mon, 10 Dec 2018 22:47:29 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
+        t=1544442450; bh=tSVaXCukbgorCqiFxHfZ+CVrQcmhnfis+Qg8vIjvVqU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=QRrEOPQzlXVK3FIvdlrEAvs0wTUyjC/0lqVzrZz+bGLNCcOXEBMY3zqaLp6JLzpSn
+         nU3eG8FCFeZeDljOuuF9Xb8/godwXOV7Kf3fSH0/aUOUsS55cSR4OHWVIuvE2yZXMf
+         KD6VENDUr3v4OVpbBf/Kq/ovdqrq4yO3v8kSCGPU=
+Received: by reginn.horms.nl (Postfix, from userid 7100)
+        id 4224F9402E1; Mon, 10 Dec 2018 12:47:28 +0100 (CET)
+Date:   Mon, 10 Dec 2018 12:47:28 +0100
+From:   Simon Horman <horms@verge.net.au>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 4/4] soc: renesas: rcar-sysc: Fix power domain control
+ after system resume
+Message-ID: <20181210114727.patvtrdtpzobzqgt@verge.net.au>
+References: <20181205153945.13767-1-geert+renesas@glider.be>
+ <20181205153945.13767-5-geert+renesas@glider.be>
+ <20181205212112.2ls6ta27ok3yiyco@verge.net.au>
+ <CAMuHMdW9kt3QyoJRkKA6c8OpCB7N-jEAo=qcxjhmy3nD2a0A9Q@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdW9kt3QyoJRkKA6c8OpCB7N-jEAo=qcxjhmy3nD2a0A9Q@mail.gmail.com>
+Organisation: Horms Solutions BV
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: jjian zhou <jjian.zhou@mediatek.com>
+On Thu, Dec 06, 2018 at 09:22:24AM +0100, Geert Uytterhoeven wrote:
+> Hi Simon,
+> 
+> On Wed, Dec 5, 2018 at 10:21 PM Simon Horman <horms@verge.net.au> wrote:
+> > On Wed, Dec 05, 2018 at 04:39:45PM +0100, Geert Uytterhoeven wrote:
+> > > To control power to a power domain, the System Controller (SYSC) needs
+> > > the corresponding interrupt source to be enabled, but masked, to prevent
+> > > the CPU from receiving it.
+> > >
+> > > Currently this is handled in the driver's probe() routine, and set up
+> > > for every domain present, even if it will not be controlled directly by
+> > > SYSC (CPU domains are powered through the APMU on R-Car Gen2 and later).
+> > >
+> > > On R-Car Gen3, PSCI powers down the SoC during system suspend, thus
+> > > loosing any configured interrupt state.  Hence after system resume, power
+> > > domains not controlled through the APMU (e.g. A3IR, A3VC, A3VP) fail to
+> > > power up.
+> >
+> > I corrected the spelling of losing when applying this patch.
+> 
+> Checkpatch complained about that as well, so I did some investigation, and
+> decided to keep it... Was I wrong?
 
-This patch enables support SDIO IRQs. It enables
-MMC_CAP_SDIO_IRQ & MMC_CAP2_SDIO_IRQ_NOTHREAD
-and implement the ->ack_sdio_irq callback.
-
-Signed-off-by: Jjian Zhou <jjian.zhou@mediatek.com>
-Signed-off-by: Chaotian Jing <chaotian.jing@mediatek.com>
-Signed-off-by: Yong Mao <yong.mao@mediatek.com>
----
- drivers/mmc/host/mtk-sd.c | 49 ++++++++++++++++++++++++++++++++++++++++++++---
- 1 file changed, 46 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/mmc/host/mtk-sd.c b/drivers/mmc/host/mtk-sd.c
-index 6334cc7..40a1848 100644
---- a/drivers/mmc/host/mtk-sd.c
-+++ b/drivers/mmc/host/mtk-sd.c
-@@ -1114,6 +1114,7 @@ static void msdc_start_command(struct msdc_host *host,
- 		struct mmc_request *mrq, struct mmc_command *cmd)
- {
- 	u32 rawcmd;
-+	unsigned long flags;
-
- 	WARN_ON(host->cmd);
- 	host->cmd = cmd;
-@@ -1131,7 +1132,10 @@ static void msdc_start_command(struct msdc_host *host,
- 	cmd->error = 0;
- 	rawcmd = msdc_cmd_prepare_raw_cmd(host, mrq, cmd);
-
-+	spin_lock_irqsave(&host->lock, flags);
- 	sdr_set_bits(host->base + MSDC_INTEN, cmd_ints_mask);
-+	spin_unlock_irqrestore(&host->lock, flags);
-+
- 	writel(cmd->arg, host->base + SDC_ARG);
- 	writel(rawcmd, host->base + SDC_CMD);
- }
-@@ -1351,6 +1355,27 @@ static void msdc_request_timeout(struct work_struct *work)
- 	}
- }
-
-+static void msdc_enable_sdio_irq(struct mmc_host *mmc, int enb)
-+{
-+	unsigned long flags;
-+	struct msdc_host *host = mmc_priv(mmc);
-+
-+	if (enb)
-+		pm_runtime_get_sync(host->dev);
-+
-+	spin_lock_irqsave(&host->lock, flags);
-+	if (enb)
-+		sdr_set_bits(host->base + MSDC_INTEN, MSDC_INTEN_SDIOIRQ);
-+	else
-+		sdr_clr_bits(host->base + MSDC_INTEN, MSDC_INTEN_SDIOIRQ);
-+	spin_unlock_irqrestore(&host->lock, flags);
-+
-+	if (!enb) {
-+		pm_runtime_mark_last_busy(host->dev);
-+		pm_runtime_put_autosuspend(host->dev);
-+	}
-+}
-+
- static irqreturn_t msdc_irq(int irq, void *dev_id)
- {
- 	struct msdc_host *host = (struct msdc_host *) dev_id;
-@@ -1373,7 +1398,12 @@ static irqreturn_t msdc_irq(int irq, void *dev_id)
- 		data = host->data;
- 		spin_unlock_irqrestore(&host->lock, flags);
-
--		if (!(events & event_mask))
-+		if ((events & event_mask) & MSDC_INT_SDIOIRQ) {
-+			msdc_enable_sdio_irq(host->mmc, 0);
-+			sdio_signal_irq(host->mmc);
-+		}
-+
-+		if (!(events & (event_mask & ~MSDC_INT_SDIOIRQ)))
- 			break;
-
- 		if (!mrq) {
-@@ -1493,8 +1523,11 @@ static void msdc_init_hw(struct msdc_host *host)
- 	 */
- 	sdr_set_bits(host->base + SDC_CFG, SDC_CFG_SDIO);
-
--	/* disable detect SDIO device interrupt function */
--	sdr_clr_bits(host->base + SDC_CFG, SDC_CFG_SDIOIDE);
-+	/* Config SDIO device detect interrupt function */
-+	if (host->mmc->caps & MMC_CAP_SDIO_IRQ)
-+		sdr_set_bits(host->base + SDC_CFG, SDC_CFG_SDIOIDE);
-+	else
-+		sdr_clr_bits(host->base + SDC_CFG, SDC_CFG_SDIOIDE);
-
- 	/* Configure to default data timeout */
- 	sdr_set_field(host->base + SDC_CFG, SDC_CFG_DTOC, 3);
-@@ -2013,6 +2046,11 @@ static void msdc_hw_reset(struct mmc_host *mmc)
- 	sdr_clr_bits(host->base + EMMC_IOCON, 1);
- }
-
-+static void msdc_ack_sdio_irq(struct mmc_host *mmc)
-+{
-+	msdc_enable_sdio_irq(mmc, 1);
-+}
-+
- static const struct mmc_host_ops mt_msdc_ops = {
- 	.post_req = msdc_post_req,
- 	.pre_req = msdc_pre_req,
-@@ -2020,6 +2058,8 @@ static void msdc_hw_reset(struct mmc_host *mmc)
- 	.set_ios = msdc_ops_set_ios,
- 	.get_ro = mmc_gpio_get_ro,
- 	.get_cd = mmc_gpio_get_cd,
-+	.enable_sdio_irq = msdc_enable_sdio_irq,
-+	.ack_sdio_irq = msdc_ack_sdio_irq,
- 	.start_signal_voltage_switch = msdc_ops_switch_volt,
- 	.card_busy = msdc_card_busy,
- 	.execute_tuning = msdc_execute_tuning,
-@@ -2147,6 +2187,9 @@ static int msdc_drv_probe(struct platform_device *pdev)
- 	else
- 		mmc->f_min = DIV_ROUND_UP(host->src_clk_freq, 4 * 4095);
-
-+	if (mmc->caps & MMC_CAP_SDIO_IRQ)
-+		mmc->caps2 |= MMC_CAP2_SDIO_IRQ_NOTHREAD;
-+
- 	mmc->caps |= MMC_CAP_ERASE | MMC_CAP_CMD23;
- 	/* MMC core transfer sizes tunable parameters */
- 	mmc->max_segs = MAX_BD_NUM;
---
-1.9.1
-
+I will not claim to be an expert but  at the time I thought
+checkpatch was right.
