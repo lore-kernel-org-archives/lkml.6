@@ -2,142 +2,155 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3340C04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 11:18:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27F7EC04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 11:23:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C33472086D
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 11:18:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C33472086D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	by mail.kernel.org (Postfix) with ESMTP id E38D52084E
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 11:23:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E38D52084E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727415AbeLJLS6 (ORCPT
+        id S1727057AbeLJLXd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 06:18:58 -0500
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:39800 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726706AbeLJLS5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 06:18:57 -0500
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id wBABIamf104994;
-        Mon, 10 Dec 2018 05:18:36 -0600
-Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wBABIaW7007476
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 10 Dec 2018 05:18:36 -0600
-Received: from DLEE108.ent.ti.com (157.170.170.38) by DLEE109.ent.ti.com
- (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Mon, 10
- Dec 2018 05:18:36 -0600
-Received: from dlep33.itg.ti.com (157.170.170.75) by DLEE108.ent.ti.com
- (157.170.170.38) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Mon, 10 Dec 2018 05:18:36 -0600
-Received: from [172.24.190.89] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id wBABIWup012385;
-        Mon, 10 Dec 2018 05:18:33 -0600
-Subject: Re: [PATCH 3/3] mtd: spi-nor: cadence-quadspi: Add support for Octal
- SPI controller
-To:     Boris Brezillon <boris.brezillon@bootlin.com>
-CC:     Marek Vasut <marek.vasut@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Yogesh Gaur <yogeshnarayan.gaur@nxp.com>,
-        Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
-        <linux-mtd@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20181003165603.2579-1-vigneshr@ti.com>
- <20181003165603.2579-4-vigneshr@ti.com> <20181210094513.6282d55e@bbrezillon>
-From:   Vignesh R <vigneshr@ti.com>
-Message-ID: <f6c3a649-f580-513d-644d-5010b3b5cf0b@ti.com>
-Date:   Mon, 10 Dec 2018 16:49:29 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Mon, 10 Dec 2018 06:23:33 -0500
+Received: from mail.us.es ([193.147.175.20]:50350 "EHLO mail.us.es"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726847AbeLJLXd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Dec 2018 06:23:33 -0500
+Received: from antivirus1-rhel7.int (unknown [192.168.2.11])
+        by mail.us.es (Postfix) with ESMTP id A5504443824
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Dec 2018 12:23:30 +0100 (CET)
+Received: from antivirus1-rhel7.int (localhost [127.0.0.1])
+        by antivirus1-rhel7.int (Postfix) with ESMTP id 5925ADA4D1
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Dec 2018 12:23:30 +0100 (CET)
+Received: by antivirus1-rhel7.int (Postfix, from userid 99)
+        id 3BF61DA80D; Mon, 10 Dec 2018 12:23:30 +0100 (CET)
+Received: from antivirus1-rhel7.int (localhost [127.0.0.1])
+        by antivirus1-rhel7.int (Postfix) with ESMTP id 75866DA4F6;
+        Mon, 10 Dec 2018 12:23:23 +0100 (CET)
+Received: from 192.168.1.97 (192.168.1.97)
+ by antivirus1-rhel7.int (F-Secure/fsigk_smtp/550/antivirus1-rhel7.int);
+ Mon, 10 Dec 2018 12:23:23 +0100 (CET)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/antivirus1-rhel7.int)
+Received: from us.es (sys.soleta.eu [212.170.55.40])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: 1984lsi)
+        by entrada.int (Postfix) with ESMTPSA id 441EF4265A4C;
+        Mon, 10 Dec 2018 12:23:23 +0100 (CET)
+Date:   Mon, 10 Dec 2018 12:23:22 +0100
+X-SMTPAUTHUS: auth mail.us.es
+From:   Pablo Neira Ayuso <pablo@netfilter.org>
+To:     Linus =?iso-8859-1?Q?L=FCssing?= <linus.luessing@c0d3.blue>
+Cc:     netfilter-devel@vger.kernel.org,
+        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
+        Florian Westphal <fw@strlen.de>,
+        Roopa Prabhu <roopa@cumulusnetworks.com>,
+        Nikolay Aleksandrov <nikolay@cumulusnetworks.com>,
+        "David S . Miller" <davem@davemloft.net>, coreteam@netfilter.org,
+        bridge@lists.linux-foundation.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v2] netfilter: ebtables: avoid resetting limit
+ rule state
+Message-ID: <20181210112322.rxndlqmfckctbhjm@salvia>
+References: <20181209061405.15112-1-linus.luessing@c0d3.blue>
 MIME-Version: 1.0
-In-Reply-To: <20181210094513.6282d55e@bbrezillon>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181209061405.15112-1-linus.luessing@c0d3.blue>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/12/18 2:15 PM, Boris Brezillon wrote:
-> On Wed, 3 Oct 2018 22:26:03 +0530
-> Vignesh R <vigneshr@ti.com> wrote:
-> 
->> Cadence OSPI controller IP supports Octal IO (x8 IO lines),
->> It also has an integrated PHY. IP register layout is very
->> similar to existing QSPI IP except for additional bits to support Octal
->> and Octal DDR mode. Therefore, extend current driver to support Octal
->> mode.
->>
->> Signed-off-by: Vignesh R <vigneshr@ti.com>
->> ---
->>  drivers/mtd/spi-nor/cadence-quadspi.c | 9 +++++++++
->>  1 file changed, 9 insertions(+)
->>
->> diff --git a/drivers/mtd/spi-nor/cadence-quadspi.c b/drivers/mtd/spi-nor/cadence-quadspi.c
->> index e24db817154e..48b00e75a879 100644
->> --- a/drivers/mtd/spi-nor/cadence-quadspi.c
->> +++ b/drivers/mtd/spi-nor/cadence-quadspi.c
->> @@ -101,6 +101,7 @@ struct cqspi_st {
->>  #define CQSPI_INST_TYPE_SINGLE			0
->>  #define CQSPI_INST_TYPE_DUAL			1
->>  #define CQSPI_INST_TYPE_QUAD			2
->> +#define CQSPI_INST_TYPE_OCTAL			3
->>  
->>  #define CQSPI_DUMMY_CLKS_PER_BYTE		8
->>  #define CQSPI_DUMMY_BYTES_MAX			4
->> @@ -898,6 +899,9 @@ static int cqspi_set_protocol(struct spi_nor *nor, const int read)
->>  		case SNOR_PROTO_1_1_4:
->>  			f_pdata->data_width = CQSPI_INST_TYPE_QUAD;
->>  			break;
->> +		case SNOR_PROTO_1_1_8:
->> +			f_pdata->data_width = CQSPI_INST_TYPE_OCTAL;
->> +			break;
->>  		default:
->>  			return -EINVAL;
->>  		}
->> @@ -1205,6 +1209,7 @@ static int cqspi_setup_flash(struct cqspi_st *cqspi, struct device_node *np)
->>  			SNOR_HWCAPS_READ_FAST |
->>  			SNOR_HWCAPS_READ_1_1_2 |
->>  			SNOR_HWCAPS_READ_1_1_4 |
->> +			SNOR_HWCAPS_READ_1_1_8 |
-> 
-> Is this really supported on qspi versions of this IP? I guess not given
-> the description in the commit message and the name of the new
-> compatible (ospi instead of qspi).
+Hi Linus,
 
-No, qspi version does not support Octal mode. I guess you are pointing
-out its logically wrong for driver with "*-qspi" compatible to declare
-SNOR_HWCAPS_READ_1_1_8 capability.
-Will update patch to declare SNOR_HWCAPS_READ_1_1_8 based on compatible.
-
+On Sun, Dec 09, 2018 at 07:14:05AM +0100, Linus Lüssing wrote:
+> So far any changes with ebtables will reset the state of limit rules,
+> leading to spikes in traffic. This is especially noticeable if changes
+> are done frequently, for instance via a daemon.
 > 
->>  			SNOR_HWCAPS_PP,
->>  	};
->>  	struct platform_device *pdev = cqspi->pdev;
->> @@ -1456,6 +1461,10 @@ static const struct of_device_id cqspi_dt_ids[] = {
->>  		.compatible = "ti,k2g-qspi",
->>  		.data = (void *)CQSPI_NEEDS_WR_DELAY,
->>  	},
->> +	{
->> +		.compatible = "ti,am654-ospi",
->> +		.data = (void *)CQSPI_NEEDS_WR_DELAY,
->> +	},
->>  	{ /* end of table */ }
->>  };
->>  
+> This patch fixes this by bailing out from (re)setting if the limit
+> rule was initialized before.
 > 
+> When sending packets every 250ms for 600s, with a
+> "--limit 1/sec --limit-burst 50" rule and a command like this
+> in the background:
+> 
+> $ ebtables -N VOIDCHAIN
+> $ while true; do ebtables -F VOIDCHAIN; sleep 30; done
+> 
+> The results are:
+> 
+> Before: ~1600 packets
+> After: 650 packets
+> 
+> This also aligns the behavior to "xtables-nft-multi ebtables" which uses
+> nft_limit instead of ebt_limit. In tests nft_limit did not suffer from
+> this issue and rate limited to 650 just fine.
+> 
+> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+> Signed-off-by: Linus Lüssing <linus.luessing@c0d3.blue>
+> 
+> ---
+> 
+> Changelog v2:
+> 
+> - Adjusted commit message (adjusted title, added test results with
+>   nft_limit for comparison)
+> - Excluded rate limiting variables from zeroing when passed to userspace
+>   by increasing .usersize. This became necessary with 4.11 /
+>   commit ec2318904965 ("xtables: extend matches and targets with .usersize")
+> - Retested with 4.20-rc4 and current net-next/master (83af01ba1c2d)
+> 
+> v1 was:
+> 
+> "[net-next] bridge: ebtables: Avoid resetting limit rule state"
+> -> https://lore.kernel.org/patchwork/patch/854802/
+> ---
+>  net/bridge/netfilter/ebt_limit.c | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
+> 
+> diff --git a/net/bridge/netfilter/ebt_limit.c b/net/bridge/netfilter/ebt_limit.c
+> index 165b9d678cf1..2cf9861c3bce 100644
+> --- a/net/bridge/netfilter/ebt_limit.c
+> +++ b/net/bridge/netfilter/ebt_limit.c
+> @@ -69,6 +69,10 @@ static int ebt_limit_mt_check(const struct xt_mtchk_param *par)
+>  {
+>  	struct ebt_limit_info *info = par->matchinfo;
+>  
+> +	/* Do not reset state on unrelated table changes */
+> +	if (info->prev)
+> +		return 0;
 
--- 
-Regards
-Vignesh
+Hm, still I don't think we can follow this path, even if it works.
+
+This means we trust userspace in what it sets for info->prev.
+
+Using ebtables-nft (instead of ebtables-legacy) fixes this problem,
+without this patch.
+
+> +
+>  	/* Check for overflow. */
+>  	if (info->burst == 0 ||
+>  	    user2credits(info->avg * info->burst) < user2credits(info->avg)) {
+> @@ -105,7 +109,7 @@ static struct xt_match ebt_limit_mt_reg __read_mostly = {
+>  	.match		= ebt_limit_mt,
+>  	.checkentry	= ebt_limit_mt_check,
+>  	.matchsize	= sizeof(struct ebt_limit_info),
+> -	.usersize	= offsetof(struct ebt_limit_info, prev),
+> +	.usersize	= sizeof(struct ebt_limit_info),
+>  #ifdef CONFIG_COMPAT
+>  	.compatsize	= sizeof(struct ebt_compat_limit_info),
+>  #endif
+> -- 
+> 2.11.0
+> 
