@@ -2,130 +2,102 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43856C04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 23:13:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5484BC04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 23:14:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E9CAE20821
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 23:13:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="h+RKq05+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E9CAE20821
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	by mail.kernel.org (Postfix) with ESMTP id 15F5B20821
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 23:14:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544483643;
+	bh=2sRYBZlKceqrmYcBlm0j9j6+oUlkecwrQkbMPHKeoWE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=apUt4EuNO8ZMyS3kHdMctaUi7z3U2Y+RpkouHD0Dsl4he9szNuPxqlx02REUk+hK0
+	 Wy327zXXDRGob9UQUkGBPLgeUNkbY4VrJoj6Tzh+70pqetujAMdy0U0XiGVhooj5SM
+	 884s+VJoOL8CB+79889AQwv4J3F3TEdCgAUhiock=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 15F5B20821
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730060AbeLJXNZ (ORCPT
+        id S1727061AbeLJXOC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 18:13:25 -0500
-Received: from ozlabs.org ([203.11.71.1]:40235 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727626AbeLJXNZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 18:13:25 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 43DJlk3Yt6z9s4s;
-        Tue, 11 Dec 2018 10:13:22 +1100 (AEDT)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1544483602;
-        bh=HFQ+rMfvFmZjZzpMfZy+HVrnkQF3H3JXVDFgdR87BZg=;
-        h=Date:From:To:Cc:Subject:From;
-        b=h+RKq05+AZis9qW1pld4cCXW25Dy3TD5AtABgUH1M0A87oKjOwntesZEqi/Mg1QxX
-         T05JHJbRxlIqepDDUo4qjqgG93E5jovYjQrYp4niuWZtigt5mbQyQ8xx8Xvm3bOWKr
-         EU75p2Pw/kzrn4B070Wc+SwtJZBDjzUMy2Hl8PlUmRnYVPEq+CR4Wjls1zGa8RpFST
-         NR3J3rc+4Z+lKXO/4gDMM2gEizT/TQggMUyAtZ+Kv60AFH6ul3dUT0jww3AsadUgas
-         0D32y0M+SwFs2oP4iebWuc9h//PTsb8bK/jVaaO85IxbI+vZ4jgHS7MnPXb34O7CRL
-         GuKQG3D5Y5Z/w==
-Date:   Tue, 11 Dec 2018 10:13:22 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Jaegeuk Kim <jaegeuk@kernel.org>, Theodore Ts'o <tytso@mit.edu>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Chandan Rajendra <chandan@linux.vnet.ibm.com>
-Subject: linux-next: manual merge of the f2fs tree with the fscrypt tree
-Message-ID: <20181211101322.438946fe@canb.auug.org.au>
+        Mon, 10 Dec 2018 18:14:02 -0500
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:47087 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727626AbeLJXOB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Dec 2018 18:14:01 -0500
+Received: by mail-oi1-f194.google.com with SMTP id x202so10455814oif.13;
+        Mon, 10 Dec 2018 15:14:01 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=OQ2NGOdowaEu9JZPmiczBUyABSOTJVXCfejhysEMLL0=;
+        b=A9OS+Z87q4j3xPoCgsMmmFV39upDc50wlaaO5Uq1+qJultCmaWqY4TxhchgvNR5zAx
+         U21uya8C9iDE7c5JlfhfN7PL1YgI4rFxpzKkF9licqctb3CGoHqN/XEMGt5DO1qCpmzY
+         dmPhPje5tcF/31HUxWAOMbkIbca4vrVz0tZwcHkFM9iLsy/sDF7jvCBR3EO+blPOn6Mw
+         uImfhBRinN8UdPkb4pWWsH2L4eCK6hsvVgKtgXgy/8nGSig51TiX+SbusbtV0vA+CHqW
+         yuPaudcYF5PUn32LhDTS24tHtmwBYDOpCoPywUCMmjNg6AH2Fy6bJgu4UNdACG6ysCD0
+         XvHw==
+X-Gm-Message-State: AA+aEWbF8N/nQC2iy7iceh8DxZ28RaONgsIGFMs0U6TP67RqgMhgDTGi
+        ROxIWx9dmwVHlmT1nm/AMA==
+X-Google-Smtp-Source: AFSGD/UChiZfXl+MVC5iJjlgm4QG5S1nM+C0ZbgplcYWvyMBtJaXN7fuymvLlQr/XRGU4qnwSkSxyg==
+X-Received: by 2002:aca:3d4:: with SMTP id 203mr5206oid.315.1544483640611;
+        Mon, 10 Dec 2018 15:14:00 -0800 (PST)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id x127sm6048833oia.20.2018.12.10.15.13.59
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 10 Dec 2018 15:13:59 -0800 (PST)
+Date:   Mon, 10 Dec 2018 17:13:59 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Miquel Raynal <miquel.raynal@bootlin.com>
+Cc:     Gregory Clement <gregory.clement@bootlin.com>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
+        Maxime Chevallier <maxime.chevallier@bootlin.com>,
+        Nadav Haklai <nadavh@marvell.com>,
+        Marcin Wojtas <mw@semihalf.com>,
+        Grzegorz Jaszczyk <jaz@semihalf.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>
+Subject: Re: [PATCH v3 5/8] dt-bindings: phy: mvebu-comphy: extend the file
+ to describe a3700 bindings
+Message-ID: <20181210231359.GA26329@bogus>
+References: <20181204191730.11516-1-miquel.raynal@bootlin.com>
+ <20181204191730.11516-6-miquel.raynal@bootlin.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/mzvSQGkDD/xe951vhGipX7/"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181204191730.11516-6-miquel.raynal@bootlin.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/mzvSQGkDD/xe951vhGipX7/
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Tue,  4 Dec 2018 20:17:27 +0100, Miquel Raynal wrote:
+> Current file describe COMPHY bindings for the IP available on the
+> CP110 of Armada 7k/8k. Bindings are very close (and serve the same
+> purpose) as the new Armada 3700 COMPHY driver so update this file to
+> describe both. Also add an example of how to use this second
+> compatible (same as for the ESPRESSObin).
+> 
+> While doing so, enhance a bit the file by adding upper case where
+> needed.
+> 
+> Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
+> ---
+>  .../bindings/phy/phy-mvebu-comphy.txt         | 65 +++++++++++++++----
+>  1 file changed, 53 insertions(+), 12 deletions(-)
+> 
 
-Hi all,
-
-Today's linux-next merge of the f2fs tree got a conflict in:
-
-  fs/f2fs/dir.c
-
-between commit:
-
-  848a010287e6 ("f2fs: use IS_ENCRYPTED() to check encryption status")
-
-from the fscrypt tree and commit:
-
-  4e240d1bab1e ("f2fs: check memory boundary by insane namelen")
-
-from the f2fs tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc fs/f2fs/dir.c
-index cf9e2564388d,c0c845da12fa..000000000000
---- a/fs/f2fs/dir.c
-+++ b/fs/f2fs/dir.c
-@@@ -808,7 -808,18 +808,18 @@@ int f2fs_fill_dentries(struct dir_conte
-  		de_name.name =3D d->filename[bit_pos];
-  		de_name.len =3D le16_to_cpu(de->name_len);
- =20
-+ 		/* check memory boundary before moving forward */
-+ 		bit_pos +=3D GET_DENTRY_SLOTS(le16_to_cpu(de->name_len));
-+ 		if (unlikely(bit_pos > d->max)) {
-+ 			f2fs_msg(sbi->sb, KERN_WARNING,
-+ 				"%s: corrupted namelen=3D%d, run fsck to fix.",
-+ 				__func__, le16_to_cpu(de->name_len));
-+ 			set_sbi_flag(sbi, SBI_NEED_FSCK);
-+ 			err =3D -EINVAL;
-+ 			goto out;
-+ 		}
-+=20
- -		if (f2fs_encrypted_inode(d->inode)) {
- +		if (IS_ENCRYPTED(d->inode)) {
-  			int save_len =3D fstr->len;
- =20
-  			err =3D fscrypt_fname_disk_to_usr(d->inode,
-
---Sig_/mzvSQGkDD/xe951vhGipX7/
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwO8xIACgkQAVBC80lX
-0Gy9JggAm9oZZAeRq13RI5i6WlpVoydGB0NRXvHe+d/ThDkZhonr0FoQBKgYM20U
-LXdp6oryxnL5XxREFtEaJR3HwBNLnDZtaGLFmmaQrnbwz3vh0CCqgh6F1xWRW3lP
-FaDUMUUK7MKlyzKDXvjPmIzT8euCbRtDvvOZpGw7nWCBFBhLQZaFKezehGTifBAk
-Vr0vJpRflY1WIKHzBAp4zybC2oHx6jf4t02kYBSSMXkZ9iOLye8xrVOgShcKf1uq
-X3iCRiNGdpLx/xri9dw/GvShfyP4UdTm9cvQ8Fb8PSNXeQO6hvQKZi7vsiHRj3/U
-OZu0lid6qy4UfKLIfDyiAIbjp48ItA==
-=s6Vc
------END PGP SIGNATURE-----
-
---Sig_/mzvSQGkDD/xe951vhGipX7/--
+Reviewed-by: Rob Herring <robh@kernel.org>
