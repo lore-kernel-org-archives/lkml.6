@@ -2,103 +2,97 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33542C04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 20:40:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01C69C04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 20:42:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ECCD320821
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 20:40:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ECCD320821
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id AF39220821
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 20:42:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF39220821
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729468AbeLJUkA (ORCPT
+        id S1729314AbeLJUmQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 15:40:00 -0500
-Received: from mout.kundenserver.de ([212.227.126.131]:54873 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727598AbeLJUkA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 15:40:00 -0500
-Received: from wuerfel.lan ([109.192.41.194]) by mrelayeu.kundenserver.de
- (mreue012 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1MiMIY-1h8HGH1VCw-00fWBg; Mon, 10 Dec 2018 21:39:47 +0100
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     Johannes Berg <johannes.berg@intel.com>,
-        Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
-        Luca Coelho <luciano.coelho@intel.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Intel Linux Wireless <linuxwifi@intel.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sara Sharon <sara.sharon@intel.com>,
-        Shahar S Matityahu <shahar.s.matityahu@intel.com>,
-        Lior Cohen <lior2.cohen@intel.com>,
-        Shaul Triebitz <shaul.triebitz@intel.com>,
-        Haim Dreyfuss <haim.dreyfuss@intel.com>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] iwlwifi: fix false-positive maybe-uninitialized warning
-Date:   Mon, 10 Dec 2018 21:39:06 +0100
-Message-Id: <20181210203945.2147135-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.18.0
-X-Provags-ID: V03:K1:O/jKqBh1BL1p5TCwdbxUlYQTDOi/eGS8hsSGhgVOJ3Hb2mqCxtZ
- sDu/MKNTk2oKcaWhF/gOxcQtpTJ0wIq2If56JTi1mxXA8j5APMt59ZrDWlTga4NYUAT4+3W
- 8IfjbckCL1/Le77pS4a1h+et4r8BKUK0ZQDbEbrvrCRKbHJedZEJOT4X8wSMsyW+fhWFlqz
- 22f8lgD9TCv0iI7NqNJJQ==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:gm+OUDBcYAo=:xHdWXU3ZePBqCxTGkWAdpy
- huhsvYIqIuzHqGxzKKN+2hCDNJ3/VTEJ3S0ELXH++umaoSo9oTHbaEKwBBrlW69EpeCHxAjZY
- +/wwhsGC4yLpqVGs/nJH2dqXyQl4flPLQNyF3AWhnoSjxBZamtCKCKtfpl771k0ojn4Vdz2+l
- XLhknLrmtbzHJBPj5fUzYtGUun1QBwqwKrQ0nxc6R9TFyUV1BuADzvF9CYiy/MJmfwjKIPxPf
- yMjeKkwiF403jcZDknkGFaxDlsAQIdGYqYx4h9LjkediBiMhJfPe3zh50BUnY0ItKbA6OYe0O
- EzIVVE1cTFM/ejHo4l/NK9Av5w4N3Uk2ekH/0AGBXiRHXIQgwDb6GJiNdaZpynXcRKSW5Pm1o
- zcUIBUFyXugMXBIEavfKAyF95TvRucznTI79nG4uI5m03F3u2waVgVyEnUpI0JVzBawElp9WT
- XUgBm2fHTvOkm0+d/cBhICun9XixekYBC7cX286XFo2LJMCI3xBOzdLwcNdqeCrVXyQ6JuWbT
- A2bFsKw/ZOAnAiZc0hHA6STJHW0XBnnEtE3O0Ixz3kEkCKgsEjRjPOxcyHSCZvlYmQWCRWlOJ
- 8125dGvr33F+giiASqNVojTb6y8/2tlGU4DWjiSvF7+4eBMriZcJb3nY4H79GRzSl2C1mUAt/
- 40XsLDUilVdFSkt7RZ2iMoZjQpa2pXWIAplokTHVaU3VO9HywxU623G2ohYo1f8Du93cFk6/B
- Lv4y9tAH4aQiVeACfD5ErZY4WMOxFtONj2FMew==
+        Mon, 10 Dec 2018 15:42:16 -0500
+Received: from mga11.intel.com ([192.55.52.93]:46031 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727598AbeLJUmP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Dec 2018 15:42:15 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Dec 2018 12:42:15 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,339,1539673200"; 
+   d="scan'208";a="117229612"
+Received: from rchatre-mobl.amr.corp.intel.com (HELO [10.24.14.96]) ([10.24.14.96])
+  by orsmga002.jf.intel.com with ESMTP; 10 Dec 2018 12:42:14 -0800
+Subject: Re: [PATCH] x86/resctrl: Fix rdt_find_domain() return value checks
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     tglx@linutronix.de, fenghua.yu@intel.com, tony.luck@intel.com,
+        jithu.joseph@intel.com, mingo@redhat.com, hpa@zytor.com,
+        x86@kernel.org, linux-kernel@vger.kernel.org
+References: <d932648504b745cb51c4a440710c7a1ca9830eca.1543427858.git.reinette.chatre@intel.com>
+ <20181210191311.GC5482@zn.tnic>
+From:   Reinette Chatre <reinette.chatre@intel.com>
+Message-ID: <40422756-cef4-38b1-8554-c99e7bcb7765@intel.com>
+Date:   Mon, 10 Dec 2018 12:42:14 -0800
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20181210191311.GC5482@zn.tnic>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With CONFIG_NO_AUTO_INLINE, we run into a silly warning when
-gcc fails to remember that n_profiles is constant across
-the function call to iwl_mvm_sar_set_profile:
+Hi Boris,
 
-drivers/net/wireless/intel/iwlwifi/mvm/fw.c: In function 'iwl_mvm_sar_get_ewrd_table':
-drivers/net/wireless/intel/iwlwifi/mvm/fw.c:746:9: error: 'ret' may be used uninitialized in this function [-Werror=maybe-uninitialized]
+On 12/10/2018 11:13 AM, Borislav Petkov wrote:
+> On Wed, Nov 28, 2018 at 10:20:27AM -0800, Reinette Chatre wrote:
+>> rdt_find_domain() may return an ERR_PTR(), NULL, or a pointer to struct
+>> rdt_domain. It is thus required that the return value be checked for the
+>> possibility of an ERR_PTR as well as NULL.
+> 
+> Well, it returns ERR_PTR(id) but code which uses ERR_PTR passes in an -E
+> value, for example ERR_PTR(-EINVAL) or so, and not an id.
+> 
+> And that might work now if id fits within that MAX_ERRNO range - I'm
+> looking at include/linux/err.h - but that's still fragile.
+> 
 
-Marking that function 'inline' avoids the warning.
+Thank you for catching this.
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/net/wireless/intel/iwlwifi/mvm/fw.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+It does seem as though things work at this time since rdt_find_domain()
+contains:
 
-diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/fw.c b/drivers/net/wireless/intel/iwlwifi/mvm/fw.c
-index c5168abe107c..07676408146b 100644
---- a/drivers/net/wireless/intel/iwlwifi/mvm/fw.c
-+++ b/drivers/net/wireless/intel/iwlwifi/mvm/fw.c
-@@ -629,10 +629,10 @@ static int iwl_mvm_config_ltr(struct iwl_mvm *mvm)
- }
- 
- #ifdef CONFIG_ACPI
--static int iwl_mvm_sar_set_profile(struct iwl_mvm *mvm,
--				   union acpi_object *table,
--				   struct iwl_mvm_sar_profile *profile,
--				   bool enabled)
-+static inline int iwl_mvm_sar_set_profile(struct iwl_mvm *mvm,
-+					   union acpi_object *table,
-+					   struct iwl_mvm_sar_profile *profile,
-+					   bool enabled)
- {
- 	int i;
- 
--- 
-2.18.0
+if (id < 0)
+        return ERR_PTR(id);
+
+and from what I can tell the only possible negative value of id is -1.
+
+As you note, this is fragile. Additionally the error, if intending to
+use -E values, does not reflect the error (since -1 would mean EPERM).
+
+Would you be ok if the above is changed to
+
+if (id < 0)
+        return ERR_PTR(-ENOENT);
+
+as part of this patch?
+
+Looking at rdtgroup_mondata_show() is does seem as though ENOENT is the
+actual intended error value, although ENODEV could perhaps also be
+considered since such a result reflects that a particular cache instance
+could not be found.
+
+Thank you!
+
+Reinette
 
