@@ -7,36 +7,36 @@ X-Spam-Status: No, score=-7.6 required=3.0 tests=DKIM_ADSP_ALL,DKIM_INVALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1ED3C67839
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 18:42:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17B76C04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 18:42:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B6D1F2081F
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 18:42:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CF59D2081F
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 18:42:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=plaes.org header.i=@plaes.org header.b="SyfUTFuc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B6D1F2081F
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=plaes.org header.i=@plaes.org header.b="SSlONadq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF59D2081F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=plaes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728700AbeLJSme (ORCPT
+        id S1728784AbeLJSmk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 13:42:34 -0500
-Received: from plaes.org ([188.166.43.21]:55170 "EHLO plaes.org"
+        Mon, 10 Dec 2018 13:42:40 -0500
+Received: from plaes.org ([188.166.43.21]:55212 "EHLO plaes.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728562AbeLJSma (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 13:42:30 -0500
+        id S1728590AbeLJSmb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Dec 2018 13:42:31 -0500
 Received: from localhost (unknown [213.204.46.240])
-        by plaes.org (Postfix) with ESMTPSA id 287604195C;
-        Mon, 10 Dec 2018 18:42:28 +0000 (UTC)
+        by plaes.org (Postfix) with ESMTPSA id 4325B41A4E;
+        Mon, 10 Dec 2018 18:42:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=plaes.org; s=mail;
-        t=1544467348; bh=rL1R6deG8R4m86FOSDKOCU7rxrxi6SE5YJnbhqg7w48=;
+        t=1544467349; bh=vgPjZKkLtR2foKSb2/aM4T0Y7TjESGFmLL0vu1Bjlms=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SyfUTFucZNxHfb6zdMH+nBz7AF5svNHDzNRiiTY4Sz9vRSBQlkK6da+gAnMUei6+B
-         cllyP3Xlc1/FqQ48+2yGeUTubaVoVdaYtzN5pHc6tj0tBTxfMxpNjCnZ+C7OYihnSE
-         1MT30MRD2wWYTG6V2ZItqx89sUyQ09VTCSUub/CneifpKrNKeAfkVs7fRts3UbsmdQ
-         Cn1cLj+vKMJVoaJrEh9sKz+68FFZqTnPrg/oq26QqG4p9Q+VNGCrMv/qaugKH0jajz
-         aNPGZPw3QAoNsOwCg5z1UR64LBDTgvia75OP4haDR2ryy7fSWN4cQ1kqIO77dnb7Uo
-         dM37smIMKCmhw==
+        b=SSlONadqlrWBkWFxCwIDBGKMqR2fOnLh6DiMMPI1+GERy527ZbbyHi5k2tgL6EiQz
+         g+zoaz1Vjz8OauAvYxz4zGpKR6vZD5bhYw3S9Mo7r/cwfnfQ9DEbzoPlntPpcwktPv
+         WtvAOoW481at0T+dWPXQ9BQ1+cej9rGiDaYYeggIO8mkw2/gKU63lo+pYXRbyn+B1L
+         g6MHz5a7PD/KcYJHTO9Zc79lTStwJnQ/tQci6Rcz5NBlRWg7Kt//IFsGEWBeAvGhKv
+         LM79EGbxf2wAksGr7hk1DD3MZ+Km32PjhwJ7BrLnp29YEFUmJkFWPgYJOxo7lGXkLr
+         1j5s117nrDs/w==
 From:   Priit Laes <plaes@plaes.org>
 To:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -48,9 +48,9 @@ To:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
         Olliver Schinagl <oliver@schinagl.nl>,
         linux-sunxi <linux-sunxi@googlegroups.com>
 Cc:     Priit Laes <plaes@plaes.org>
-Subject: [PATCH 6/8] regulator: dts: enable soft-start and ramp delay for the OLinuXino Lime2
-Date:   Mon, 10 Dec 2018 20:42:17 +0200
-Message-Id: <b76e1964fee095164ed9313e9f57d4d4318c083f.1544466940.git-series.plaes@plaes.org>
+Subject: [PATCH 8/8] mfd: axp20x: use explicit bit defines
+Date:   Mon, 10 Dec 2018 20:42:19 +0200
+Message-Id: <2098c0aece09761bf975e72eaa75cba92a4e463d.1544466940.git-series.plaes@plaes.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <cover.4110554ae84987dedb8b58888a8a63d6b7f98c72.1544466940.git-series.plaes@plaes.org>
 References: <cover.4110554ae84987dedb8b58888a8a63d6b7f98c72.1544466940.git-series.plaes@plaes.org>
@@ -63,30 +63,27 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Olliver Schinagl <oliver@schinagl.nl>
 
-The OLinuXino Lime2 has a big capacitor on its LDO3 output. It is
-actually too large, causing the PMIC to shutdown when toggling the LDO3.
-
-By enabling soft-start and ramp delay we increase the time for the
-capacitor to charge lowering the current drain on the power regulator.
+The AXP20X_OFF define is an actual specific bit, define it as such.
 
 Signed-off-by: Olliver Schinagl <oliver@schinagl.nl>
 Signed-off-by: Priit Laes <plaes@plaes.org>
+Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
 ---
- arch/arm/boot/dts/sun7i-a20-olinuxino-lime2.dts | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/mfd/axp20x.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/sun7i-a20-olinuxino-lime2.dts b/arch/arm/boot/dts/sun7i-a20-olinuxino-lime2.dts
-index 55c9086..4e1c590 100644
---- a/arch/arm/boot/dts/sun7i-a20-olinuxino-lime2.dts
-+++ b/arch/arm/boot/dts/sun7i-a20-olinuxino-lime2.dts
-@@ -232,6 +232,8 @@
- 	regulator-min-microvolt = <2800000>;
- 	regulator-max-microvolt = <2800000>;
- 	regulator-name = "vddio-csi0";
-+	regulator-soft-start;
-+	regulator-ramp-delay = <1600>;
- };
+diff --git a/drivers/mfd/axp20x.c b/drivers/mfd/axp20x.c
+index c3f3dbd..d183ed8 100644
+--- a/drivers/mfd/axp20x.c
++++ b/drivers/mfd/axp20x.c
+@@ -30,7 +30,7 @@
+ #include <linux/regmap.h>
+ #include <linux/regulator/consumer.h>
  
- &reg_ldo4 {
+-#define AXP20X_OFF	0x80
++#define AXP20X_OFF	BIT(7)
+ 
+ #define AXP806_REG_ADDR_EXT_ADDR_MASTER_MODE	0
+ #define AXP806_REG_ADDR_EXT_ADDR_SLAVE_MODE	BIT(4)
 -- 
 git-series 0.9.1
