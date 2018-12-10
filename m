@@ -2,126 +2,109 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.7 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16FD6C04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 11:12:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A60F6C04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 11:14:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA7DA2086D
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 11:12:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6527320870
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 11:14:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="phgxi0CT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA7DA2086D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=verge.net.au
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eB4rFUSp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6527320870
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727356AbeLJLM3 (ORCPT
+        id S1727223AbeLJLOY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 06:12:29 -0500
-Received: from kirsty.vergenet.net ([202.4.237.240]:40675 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726716AbeLJLM3 (ORCPT
+        Mon, 10 Dec 2018 06:14:24 -0500
+Received: from mail-io1-f65.google.com ([209.85.166.65]:38724 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726693AbeLJLOX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 06:12:29 -0500
-Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id 3062825B7DC;
-        Mon, 10 Dec 2018 22:12:25 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
-        t=1544440345; bh=oRoU1UtWG/hI2sAcfvjea8bkUbn17Pq3e+Jpna+LddI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=phgxi0CTBMi1DTjVtsTkARUZs8Y+JxwjNDhNdG5Eo+HHO7J3YQdvUWvwdw8Vcazkv
-         a2Rua12uj1v9EoivlakOXeyZ88Wlg3/R1Fl6JLDg0VfbtlHM5WVHodlI9z1Tr1az92
-         g+yRRZI9HmagkS9futK/GHru3ZjlJnASvIXQzkiw=
-Received: by reginn.horms.nl (Postfix, from userid 7100)
-        id 8D7B59402E1; Mon, 10 Dec 2018 12:12:23 +0100 (CET)
-Date:   Mon, 10 Dec 2018 12:12:23 +0100
-From:   Simon Horman <horms@verge.net.au>
-To:     Rob Herring <robh@kernel.org>
-Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, Kumar Gala <kumar.gala@linaro.org>,
-        ARM-SoC Maintainers <arm@kernel.org>,
-        Sean Hudson <darknighte@darknighte.com>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "open list:MEDIA DRIVERS FOR RENESAS - FCP" 
-        <linux-renesas-soc@vger.kernel.org>,
-        Grant Likely <grant.likely@arm.com>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v2 26/34] dt-bindings: arm: Convert Renesas board/soc
- bindings to json-schema
-Message-ID: <20181210111223.fstjmazyo3vof7kc@verge.net.au>
-References: <20181203213223.16986-1-robh@kernel.org>
- <20181203213223.16986-27-robh@kernel.org>
- <20181204144822.uqonsto45u7ysdu5@verge.net.au>
- <CAMuHMdV5brJyAmP0Bj7Bp7wruLNM1tSWkj_AyN5HCx4vdg-nrg@mail.gmail.com>
- <CAL_JsqJX9eb58piavQayXM5j5GXxsGxmy93m5oRKtghMFvkhuA@mail.gmail.com>
- <20181205194419.p6u56h57yk63xshj@verge.net.au>
- <CAL_JsqKHwYhHSb7GNFgOtBCqEeMshbRnU+0ONe_yW8OOiRC=SA@mail.gmail.com>
+        Mon, 10 Dec 2018 06:14:23 -0500
+Received: by mail-io1-f65.google.com with SMTP id l14so8379287ioj.5;
+        Mon, 10 Dec 2018 03:14:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=E9TMhNozQqHbA08pE2WjLjvAZD1L8IN3UjBBwzGYzzw=;
+        b=eB4rFUSp+HnWCsFErQwDPW1UyHhSVTCUDEoMvYQ8kKWwLzOn0vRMmtwuBxD3h+goiV
+         Ms+ygNkyiQSSrThV7SPDyMD8+MXKdTrRMfGsxruKVinju5sYoAm5TVp2URjH4dZ9Eic4
+         btTbke6o540KdCqPGDRSsQh6QYtXJdBgxySIpW9skaWM38Vkkc52EceV598fh+zPOCew
+         Ob+YXiCtv/yo92jGzoU9nTslqH5pd/zRkOB0jqLAnHrneMApthgLEJoQ8C+Ve6kqZtkO
+         x0r8M6V5ytBUz9HVQOiVkp8LkIql+iseHjI4zMIFMURALWhqFp2//ZMbSXem/wfZ+VG8
+         siHg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=E9TMhNozQqHbA08pE2WjLjvAZD1L8IN3UjBBwzGYzzw=;
+        b=SHryM3vld46aQnDJIkqN9j9FN8Zv30dCtLO60aLglxWcXUQnA9bGFMyoTGBePb+W7Q
+         gamGXC/px0pYdfDuuWt3oEB3Mcpn/6DJItfZR45+7GJH9Usl8oisS2UvNE7WcrFjWLGt
+         cFIv47fmoos0vPuZxYuLjSfpSgQPs3E416nmffvUKXniVwbuQ8u3rVz29Jyf4Adsgmxb
+         q5omMFN6Eod4lOp+KkT4s3U0jx5vYsrgQ4yzrxqKeu1J805GBSK9MwM62SaiVrgfYUvt
+         FJD5GGI6RRHcOoB9JLQRWsBLOjlAtU1JGgr6iEEckK7QqoDi3ZjMatOSKYW1QsaM734L
+         GaEg==
+X-Gm-Message-State: AA+aEWbqGV4v7aoie5/0lseiXQyJbJOpcxqEblSJLVmZqZmDyf/YrX9C
+        vdVLM3RAAQtlV4r3k4hn348LunyVojHdSGk9TGs=
+X-Google-Smtp-Source: AFSGD/UPDZsjF/zyY8s+BleHIPEv7vEDcDEUoBsj2khPCIVvDtJHqm/vVSrnn1Ju894p/JwRbsIIyioK6k0RNeO4mlY=
+X-Received: by 2002:a6b:2b95:: with SMTP id r143mr9477175ior.217.1544440462853;
+ Mon, 10 Dec 2018 03:14:22 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAL_JsqKHwYhHSb7GNFgOtBCqEeMshbRnU+0ONe_yW8OOiRC=SA@mail.gmail.com>
-Organisation: Horms Solutions BV
-User-Agent: NeoMutt/20170113 (1.7.2)
+References: <20181210102312.31364-1-lhenriques@suse.com>
+In-Reply-To: <20181210102312.31364-1-lhenriques@suse.com>
+From:   Ilya Dryomov <idryomov@gmail.com>
+Date:   Mon, 10 Dec 2018 12:14:11 +0100
+Message-ID: <CAOi1vP87vHcjmUXxzQAOuhrPrB==em9tXAocgfRsSWo5M3jtXw@mail.gmail.com>
+Subject: Re: [PATCH] ceph: make 'nocopyfrom' a default mount option
+To:     Luis Henriques <lhenriques@suse.com>
+Cc:     "Yan, Zheng" <zyan@redhat.com>, Sage Weil <sage@redhat.com>,
+        Gregory Farnum <gfarnum@redhat.com>,
+        Ceph Development <ceph-devel@vger.kernel.org>,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 06, 2018 at 01:38:42PM -0600, Rob Herring wrote:
-> On Wed, Dec 5, 2018 at 1:44 PM Simon Horman <horms@verge.net.au> wrote:
-> >
-> > On Tue, Dec 04, 2018 at 09:08:57AM -0600, Rob Herring wrote:
-> > > On Tue, Dec 4, 2018 at 8:57 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> > > >
-> > > > Hi Simon,
-> > > >
-> > > > On Tue, Dec 4, 2018 at 3:48 PM Simon Horman <horms@verge.net.au> wrote:
-> > > > > On Mon, Dec 03, 2018 at 03:32:15PM -0600, Rob Herring wrote:
-> > > > > > Convert Renesas SoC bindings to DT schema format using json-schema.
-> > > > > >
-> > > > > > Cc: Simon Horman <horms@verge.net.au>
-> > > > > > Cc: Magnus Damm <magnus.damm@gmail.com>
-> > > > > > Cc: Mark Rutland <mark.rutland@arm.com>
-> > > > > > Cc: linux-renesas-soc@vger.kernel.org
-> > > > > > Cc: devicetree@vger.kernel.org
-> > > > > > Signed-off-by: Rob Herring <robh@kernel.org>
-> > > > > > ---
-> > > > > >  .../devicetree/bindings/arm/shmobile.txt      | 151 ------------
-> > > > > >  .../devicetree/bindings/arm/shmobile.yaml     | 218 ++++++++++++++++++
-> > > > > >  2 files changed, 218 insertions(+), 151 deletions(-)
-> > > > > >  delete mode 100644 Documentation/devicetree/bindings/arm/shmobile.txt
-> > > > > >  create mode 100644 Documentation/devicetree/bindings/arm/shmobile.yaml
-> > > > >
-> > > > > Hi Rob,
-> > > > >
-> > > > > what is this based on? I get a conflict when applying the .txt change
-> > > > > and if I knew the base for this patch it would be rather easy to work
-> > > > > out what has changed.
-> > >
-> > > 4.20-rc2
-> > >
-> > > > >
-> > > > > Also, should we do an s/shmobile.txt/shmobile.yaml/ in MAINTAINERS?
-> > >
-> > > Yes. Though it was pointed out that get_maintainers.pl can pull emails
-> > > out of this file. We'd need to get that to work by default though.
-> > >
-> > > > Probably even s/shmobile.yaml/renesas.yaml/, while at it?
-> > >
-> > > Sure, if that's what you all want.
-> >
-> > How about this?
-> 
-> LGTM
+On Mon, Dec 10, 2018 at 11:23 AM Luis Henriques <lhenriques@suse.com> wrote:
+>
+> Since we found a problem with the 'copy-from' operation after objects have
+> been truncated, offloading object copies to OSDs should be discouraged
+> until the issue is fixed.
+>
+> Thus, this patch adds the 'nocopyfrom' mount option to the default mount
+> options which effectily means that remote copies won't be done in
+> copy_file_range unless they are explicitly enabled at mount time.
+>
+> Link: https://tracker.ceph.com/issues/37378
+> Signed-off-by: Luis Henriques <lhenriques@suse.com>
+> ---
+>  fs/ceph/super.h | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+>
+> diff --git a/fs/ceph/super.h b/fs/ceph/super.h
+> index c005a5400f2e..79a265ba9200 100644
+> --- a/fs/ceph/super.h
+> +++ b/fs/ceph/super.h
+> @@ -42,7 +42,9 @@
+>  #define CEPH_MOUNT_OPT_NOQUOTADF       (1<<13) /* no root dir quota in statfs */
+>  #define CEPH_MOUNT_OPT_NOCOPYFROM      (1<<14) /* don't use RADOS 'copy-from' op */
+>
+> -#define CEPH_MOUNT_OPT_DEFAULT    CEPH_MOUNT_OPT_DCACHE
+> +#define CEPH_MOUNT_OPT_DEFAULT                 \
+> +       (CEPH_MOUNT_OPT_DCACHE |                \
+> +        CEPH_MOUNT_OPT_NOCOPYFROM)
+>
+>  #define ceph_set_mount_opt(fsc, opt) \
+>         (fsc)->mount_options->flags |= CEPH_MOUNT_OPT_##opt;
 
-Thanks.
+Thanks Luis, I'll pick it up for 4.20.
 
-As my tree is already closed for v4.21 I have applied this for v4.22.
+                Ilya
