@@ -2,196 +2,86 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B589C04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 10:55:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A75EBC04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 10:57:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2291420989
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 10:55:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2291420989
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 79C2520821
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 10:57:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 79C2520821
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727225AbeLJKzW (ORCPT
+        id S1727232AbeLJK5d (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 05:55:22 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:51182 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726614AbeLJKzV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 05:55:21 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 150561596;
-        Mon, 10 Dec 2018 02:55:21 -0800 (PST)
-Received: from [10.1.196.62] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EBE423F6A8;
-        Mon, 10 Dec 2018 02:55:17 -0800 (PST)
-Subject: Re: [PATCH v4 2/4] irqchip/gic: common: add support to device tree
- based quirks
-To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc:     sudeep.holla@arm.com, tglx@linutronix.de, jason@lakedaemon.net,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        rnayak@codeaurora.org, sboyd@kernel.org,
-        bjorn.andersson@linaro.org, nicolas.dechesne@linaro.org,
-        ctatlor97@gmail.com, vkoul@kernel.org, robh+dt@kernel.org,
-        devicetree@vger.kernel.org
-References: <20181210102309.8207-1-srinivas.kandagatla@linaro.org>
- <20181210102309.8207-3-srinivas.kandagatla@linaro.org>
-From:   Marc Zyngier <marc.zyngier@arm.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=marc.zyngier@arm.com; prefer-encrypt=mutual; keydata=
- xsFNBE6Jf0UBEADLCxpix34Ch3kQKA9SNlVQroj9aHAEzzl0+V8jrvT9a9GkK+FjBOIQz4KE
- g+3p+lqgJH4NfwPm9H5I5e3wa+Scz9wAqWLTT772Rqb6hf6kx0kKd0P2jGv79qXSmwru28vJ
- t9NNsmIhEYwS5eTfCbsZZDCnR31J6qxozsDHpCGLHlYym/VbC199Uq/pN5gH+5JHZyhyZiNW
- ozUCjMqC4eNW42nYVKZQfbj/k4W9xFfudFaFEhAf/Vb1r6F05eBP1uopuzNkAN7vqS8XcgQH
- qXI357YC4ToCbmqLue4HK9+2mtf7MTdHZYGZ939OfTlOGuxFW+bhtPQzsHiW7eNe0ew0+LaL
- 3wdNzT5abPBscqXWVGsZWCAzBmrZato+Pd2bSCDPLInZV0j+rjt7MWiSxEAEowue3IcZA++7
- ifTDIscQdpeKT8hcL+9eHLgoSDH62SlubO/y8bB1hV8JjLW/jQpLnae0oz25h39ij4ijcp8N
- t5slf5DNRi1NLz5+iaaLg4gaM3ywVK2VEKdBTg+JTg3dfrb3DH7ctTQquyKun9IVY8AsxMc6
- lxl4HxrpLX7HgF10685GG5fFla7R1RUnW5svgQhz6YVU33yJjk5lIIrrxKI/wLlhn066mtu1
- DoD9TEAjwOmpa6ofV6rHeBPehUwMZEsLqlKfLsl0PpsJwov8TQARAQABzSNNYXJjIFp5bmdp
- ZXIgPG1hcmMuenluZ2llckBhcm0uY29tPsLBewQTAQIAJQIbAwYLCQgHAwIGFQgCCQoLBBYC
- AwECHgECF4AFAk6NvYYCGQEACgkQI9DQutE9ekObww/+NcUATWXOcnoPflpYG43GZ0XjQLng
- LQFjBZL+CJV5+1XMDfz4ATH37cR+8gMO1UwmWPv5tOMKLHhw6uLxGG4upPAm0qxjRA/SE3LC
- 22kBjWiSMrkQgv5FDcwdhAcj8A+gKgcXBeyXsGBXLjo5UQOGvPTQXcqNXB9A3ZZN9vS6QUYN
- TXFjnUnzCJd+PVI/4jORz9EUVw1q/+kZgmA8/GhfPH3xNetTGLyJCJcQ86acom2liLZZX4+1
- 6Hda2x3hxpoQo7pTu+XA2YC4XyUstNDYIsE4F4NVHGi88a3N8yWE+Z7cBI2HjGvpfNxZnmKX
- 6bws6RQ4LHDPhy0yzWFowJXGTqM/e79c1UeqOVxKGFF3VhJJu1nMlh+5hnW4glXOoy/WmDEM
- UMbl9KbJUfo+GgIQGMp8mwgW0vK4HrSmevlDeMcrLdfbbFbcZLNeFFBn6KqxFZaTd+LpylIH
- bOPN6fy1Dxf7UZscogYw5Pt0JscgpciuO3DAZo3eXz6ffj2NrWchnbj+SpPBiH4srfFmHY+Y
- LBemIIOmSqIsjoSRjNEZeEObkshDVG5NncJzbAQY+V3Q3yo9og/8ZiaulVWDbcpKyUpzt7pv
- cdnY3baDE8ate/cymFP5jGJK++QCeA6u6JzBp7HnKbngqWa6g8qDSjPXBPCLmmRWbc5j0lvA
- 6ilrF8nOwU0ETol/RQEQAM/2pdLYCWmf3rtIiP8Wj5NwyjSL6/UrChXtoX9wlY8a4h3EX6E3
- 64snIJVMLbyr4bwdmPKULlny7T/R8dx/mCOWu/DztrVNQiXWOTKJnd/2iQblBT+W5W8ep/nS
- w3qUIckKwKdplQtzSKeE+PJ+GMS+DoNDDkcrVjUnsoCEr0aK3cO6g5hLGu8IBbC1CJYSpple
- VVb/sADnWF3SfUvJ/l4K8Uk4B4+X90KpA7U9MhvDTCy5mJGaTsFqDLpnqp/yqaT2P7kyMG2E
- w+eqtVIqwwweZA0S+tuqput5xdNAcsj2PugVx9tlw/LJo39nh8NrMxAhv5aQ+JJ2I8UTiHLX
- QvoC0Yc/jZX/JRB5r4x4IhK34Mv5TiH/gFfZbwxd287Y1jOaD9lhnke1SX5MXF7eCT3cgyB+
- hgSu42w+2xYl3+rzIhQqxXhaP232t/b3ilJO00ZZ19d4KICGcakeiL6ZBtD8TrtkRiewI3v0
- o8rUBWtjcDRgg3tWx/PcJvZnw1twbmRdaNvsvnlapD2Y9Js3woRLIjSAGOijwzFXSJyC2HU1
- AAuR9uo4/QkeIrQVHIxP7TJZdJ9sGEWdeGPzzPlKLHwIX2HzfbdtPejPSXm5LJ026qdtJHgz
- BAb3NygZG6BH6EC1NPDQ6O53EXorXS1tsSAgp5ZDSFEBklpRVT3E0NrDABEBAAHCwV8EGAEC
- AAkFAk6Jf0UCGwwACgkQI9DQutE9ekMLBQ//U+Mt9DtFpzMCIHFPE9nNlsCm75j22lNiw6mX
- mx3cUA3pl+uRGQr/zQC5inQNtjFUmwGkHqrAw+SmG5gsgnM4pSdYvraWaCWOZCQCx1lpaCOl
- MotrNcwMJTJLQGc4BjJyOeSH59HQDitKfKMu/yjRhzT8CXhys6R0kYMrEN0tbe1cFOJkxSbV
- 0GgRTDF4PKyLT+RncoKxQe8lGxuk5614aRpBQa0LPafkirwqkUtxsPnarkPUEfkBlnIhAR8L
- kmneYLu0AvbWjfJCUH7qfpyS/FRrQCoBq9QIEcf2v1f0AIpA27f9KCEv5MZSHXGCdNcbjKw1
- 39YxYZhmXaHFKDSZIC29YhQJeXWlfDEDq6nIhvurZy3mSh2OMQgaIoFexPCsBBOclH8QUtMk
- a3jW/qYyrV+qUq9Wf3SKPrXf7B3xB332jFCETbyZQXqmowV+2b3rJFRWn5hK5B+xwvuxKyGq
- qDOGjof2dKl2zBIxbFgOclV7wqCVkhxSJi/QaOj2zBqSNPXga5DWtX3ekRnJLa1+ijXxmdjz
- hApihi08gwvP5G9fNGKQyRETePEtEAWt0b7dOqMzYBYGRVr7uS4uT6WP7fzOwAJC4lU7ZYWZ
- yVshCa0IvTtp1085RtT3qhh9mobkcZ+7cQOY+Tx2RGXS9WeOh2jZjdoWUv6CevXNQyOUXMM=
-Organization: ARM Ltd
-Message-ID: <da39d3af-b8e4-1b5e-cdf4-54dd9e955a0b@arm.com>
-Date:   Mon, 10 Dec 2018 10:55:15 +0000
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
+        Mon, 10 Dec 2018 05:57:33 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:56140 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726167AbeLJK5c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Dec 2018 05:57:32 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 9FBB420CEB; Mon, 10 Dec 2018 11:57:30 +0100 (CET)
+Received: from bbrezillon (unknown [91.160.177.164])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 8C22C20CE8;
+        Mon, 10 Dec 2018 11:57:17 +0100 (CET)
+Date:   Mon, 10 Dec 2018 11:57:17 +0100
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>
+Cc:     "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        "broonie@kernel.org" <broonie@kernel.org>,
+        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
+        "vigneshr@ti.com" <vigneshr@ti.com>,
+        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "robh@kernel.org" <robh@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
+        "frieder.schrempf@exceet.de" <frieder.schrempf@exceet.de>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v5 3/7] mtd: spi-nor: add opcodes for octal Read/Write
+ commands
+Message-ID: <20181210115717.01ad2e60@bbrezillon>
+In-Reply-To: <1543826226-30898-4-git-send-email-yogeshnarayan.gaur@nxp.com>
+References: <1543826226-30898-1-git-send-email-yogeshnarayan.gaur@nxp.com>
+        <1543826226-30898-4-git-send-email-yogeshnarayan.gaur@nxp.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20181210102309.8207-3-srinivas.kandagatla@linaro.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/12/2018 10:23, Srinivas Kandagatla wrote:
-> This patch adds support to device tree based quirks based on
-> device tree compatible string.
+On Mon, 3 Dec 2018 08:39:18 +0000
+Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com> wrote:
+
+> - Add opcodes for octal I/O commands
+>   * Read  : 1-1-8 and 1-8-8 protocol
+>   * Write : 1-1-8 and 1-8-8 protocol
+>   * opcodes for 4-byte address mode command
 > 
-> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-> ---
->  drivers/irqchip/irq-gic-common.c | 12 ++++++++++++
->  drivers/irqchip/irq-gic-common.h |  3 +++
->  drivers/irqchip/irq-gic-v3.c     |  5 +++++
->  3 files changed, 20 insertions(+)
+> - Entry of macros in _convert_3to4_xxx function
 > 
-> diff --git a/drivers/irqchip/irq-gic-common.c b/drivers/irqchip/irq-gic-common.c
-> index 01e673c680cd..3c93c6f4d1f1 100644
-> --- a/drivers/irqchip/irq-gic-common.c
-> +++ b/drivers/irqchip/irq-gic-common.c
-> @@ -36,6 +36,18 @@ void gic_set_kvm_info(const struct gic_kvm_info *info)
->  	gic_kvm_info = info;
->  }
->  
-> +void gic_enable_of_quirks(const struct device_node *np,
-> +			  const struct gic_quirk *quirks, void *data)
-> +{
-> +	for (; quirks->desc; quirks++) {
-
-So you expect quirks->desc to be NULL at some point, just like for any
-other quirk table we have.
-
-> +		if (!of_device_is_compatible(np, quirks->compatible))
-> +			continue;
-> +		if (quirks->init(data))
-> +			pr_info("GIC: enabling workaround for %s\n",
-> +				quirks->desc);
-> +	}
-> +}
-> +
->  void gic_enable_quirks(u32 iidr, const struct gic_quirk *quirks,
->  		void *data)
->  {
-> diff --git a/drivers/irqchip/irq-gic-common.h b/drivers/irqchip/irq-gic-common.h
-> index 3919cd7c5285..97e58fb6c232 100644
-> --- a/drivers/irqchip/irq-gic-common.h
-> +++ b/drivers/irqchip/irq-gic-common.h
-> @@ -23,6 +23,7 @@
->  
->  struct gic_quirk {
->  	const char *desc;
-> +	const char *compatible;
->  	bool (*init)(void *data);
->  	u32 iidr;
->  	u32 mask;
-> @@ -35,6 +36,8 @@ void gic_dist_config(void __iomem *base, int gic_irqs,
->  void gic_cpu_config(void __iomem *base, void (*sync_access)(void));
->  void gic_enable_quirks(u32 iidr, const struct gic_quirk *quirks,
->  		void *data);
-> +void gic_enable_of_quirks(const struct device_node *np,
-> +			  const struct gic_quirk *quirks, void *data);
->  
->  void gic_set_kvm_info(const struct gic_kvm_info *info);
->  
-> diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
-> index 29e9d47be97d..c95796fa4de6 100644
-> --- a/drivers/irqchip/irq-gic-v3.c
-> +++ b/drivers/irqchip/irq-gic-v3.c
-> @@ -1271,6 +1271,9 @@ static void __init gic_of_setup_kvm_info(struct device_node *node)
->  	gic_set_kvm_info(&gic_v3_kvm_info);
->  }
->  
-> +static const struct gic_quirk gic_quirks[] = {
-> +};
-
-... and yet here you provide an empty table. That's not going to work
-very well. You definitely need to have an empty entry at the end of the
-array, always.
-
-I guess you want to test your code on a non affected platform, and I'm
-pretty sure you'll see it exploding.
-
-> +
->  static int __init gic_of_init(struct device_node *node, struct device_node *parent)
->  {
->  	void __iomem *dist_base;
-> @@ -1318,6 +1321,8 @@ static int __init gic_of_init(struct device_node *node, struct device_node *pare
->  	if (of_property_read_u64(node, "redistributor-stride", &redist_stride))
->  		redist_stride = 0;
->  
-> +	gic_enable_of_quirks(node, gic_quirks, &gic_data);
-> +
->  	err = gic_init_bases(dist_base, rdist_regs, nr_redist_regions,
->  			     redist_stride, &node->fwnode);
->  	if (err)
+> - Add flag specifying flash support octal read commands.
 > 
+> Signed-off-by: Vignesh R <vigneshr@ti.com>
+> Signed-off-by: Yogesh Gaur <yogeshnarayan.gaur@nxp.com>
+
+Looks like the SoB and Author lines do not match
+
+Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>
+vs
+Yogesh Gaur <yogeshnarayan.gaur@nxp.com>
+
+Can you find a way to make them match?
 
 Thanks,
 
-	M.
--- 
-Jazz is not dead. It just smells funny...
+Boris
