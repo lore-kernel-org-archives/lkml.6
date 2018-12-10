@@ -2,167 +2,120 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F8BDC65BAF
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 08:53:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15A14C04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 08:55:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 317F82082F
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 08:53:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CD4CF2082F
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 08:55:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=armh.onmicrosoft.com header.i=@armh.onmicrosoft.com header.b="Y79b9Zdv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 317F82082F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Iiyj8+Qn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD4CF2082F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726811AbeLJIxy (ORCPT
+        id S1726716AbeLJIzl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 03:53:54 -0500
-Received: from mail-eopbgr20078.outbound.protection.outlook.com ([40.107.2.78]:19456
-        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726753AbeLJIxm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 03:53:42 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
- s=selector1-arm-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ax5wr/LLTzArrQzAW+0ktKaeNZlMP1UEmzjHHWvSqko=;
- b=Y79b9Zdv4aMTSAFQNsgnHC9dZusuSUWAqhMdwuWyXv86b9HtBF/zwRjtmHx8Ic1dXqq98gBt6RkzlMPjcajmmZZ+r5AyB9tMKpozUA3YOdq7PKvXMqOipm1k8sc9AsBlNatNpJrtkERzJqHydzN8muzdfvPfAStjtMjjF1XYbNs=
-Received: from AM3PR08MB0611.eurprd08.prod.outlook.com (10.163.188.149) by
- AM3PR08MB0261.eurprd08.prod.outlook.com (10.161.35.22) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1404.19; Mon, 10 Dec 2018 08:53:37 +0000
-Received: from AM3PR08MB0611.eurprd08.prod.outlook.com
- ([fe80::38d5:d5ee:b90c:901c]) by AM3PR08MB0611.eurprd08.prod.outlook.com
- ([fe80::38d5:d5ee:b90c:901c%4]) with mapi id 15.20.1404.026; Mon, 10 Dec 2018
- 08:53:37 +0000
-From:   "james qian wang (Arm Technology China)" <james.qian.wang@arm.com>
-To:     Brian Starkey <Brian.Starkey@arm.com>
-CC:     Liviu Dudau <Liviu.Dudau@arm.com>,
-        "Jonathan Chai (Arm Technology China)" <Jonathan.Chai@arm.com>,
-        "Julien Yin (Arm Technology China)" <Julien.Yin@arm.com>,
-        "thomas Sun (Arm Technology China)" <thomas.Sun@arm.com>,
-        Alexandru-Cosmin Gheorghe <Alexandru-Cosmin.Gheorghe@arm.com>,
-        "Lowry Li (Arm Technology China)" <Lowry.Li@arm.com>,
-        nd <nd@arm.com>, Ayan Halder <Ayan.Halder@arm.com>,
-        "Tiannan Zhu (Arm Technology China)" <Tiannan.Zhu@arm.com>,
-        "Jin Gao (Arm Technology China)" <Jin.Gao@arm.com>,
-        "Yiqi Kang (Arm Technology China)" <Yiqi.Kang@arm.com>,
-        "maarten.lankhorst@linux.intel.com" 
-        <maarten.lankhorst@linux.intel.com>,
-        "maxime.ripard@bootlin.com" <maxime.ripard@bootlin.com>,
-        "sean@poorly.run" <sean@poorly.run>,
-        "airlied@linux.ie" <airlied@linux.ie>,
-        "malidp@foss.arm.com" <malidp@foss.arm.com>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v1 9/9] MAINTAINERS: Add maintainer for arm komeda driver
-Thread-Topic: [PATCH v1 9/9] MAINTAINERS: Add maintainer for arm komeda driver
-Thread-Index: AQHUjIQbKMr93tXBlkCa4E/cbgjDyg==
-Date:   Mon, 10 Dec 2018 08:53:37 +0000
-Message-ID: <20181210085323.GA8863@james-ThinkStation-P300>
-References: <20181205101635.7696-1-james.qian.wang@arm.com>
- <20181205101635.7696-10-james.qian.wang@arm.com>
- <20181205115915.aakaiqpjxs62b3xl@DESKTOP-E1NTVVP.localdomain>
-In-Reply-To: <20181205115915.aakaiqpjxs62b3xl@DESKTOP-E1NTVVP.localdomain>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mutt/1.9.4 (2018-02-28)
-x-originating-ip: [113.29.88.7]
-x-clientproxiedby: SYBPR01CA0094.ausprd01.prod.outlook.com
- (2603:10c6:10:3::34) To AM3PR08MB0611.eurprd08.prod.outlook.com
- (2a01:111:e400:c408::21)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=james.qian.wang@arm.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM3PR08MB0261;6:2upDeYvuuNpNOK0eB93Oqz3AZFrO0x23k0J1jSsus0WcYiFGE8IuYFixKxnVAYuXCvHzcwC9ZZFqVzAWjmr2Cez30IKJ3hr3Md9IMc9tb0JWnqxEXZ9RHsM1fQsdnkdl8ztyN3HNP+b9G2SXhl4+jDPXQq0AMr6bbIFxOsLNSFEnhovzYOOQBCIUtTJm/tM0UDwD19MUUNpC2QCjK/P4ivv4VT7xP85NcAjKPn2ZJK6a7oUOf3ds/ZknDqaVeBsvxiUeQyhe9f0DF/yALwk1MLtgIJ+sB1lZMdk0pI9NOxgA+UqHyWTaai/3/ggp3rx074miBqD19tMSjthfX1tL3Be40k4V89qbr87Y6p782VEKyDHHo6LDtftXMVpRbik1okma4aLHuJKBARaEupjIiUT3KBHXexqnRnE2yXG3nS10GYydgTY0Pvcjw5JorEcbrm6U7+27YWHIkzd0ptZURQ==;5:0V+JpkOV2/kRWUOmoUrOaGHZyT1Akyo/k1x/IG/BO3vOZphLq7ewK9PFV2I+MAz0BujorEpxOSDEGkPqdRnJtY16Kf4iQfqlhorcyQBG8oLW6QZI2Kf3bCo2qI8MmjINyTgjd6AD3jb8URwVgR/LL5a0WhmL+VrtrZcWZb65eIA=;7:tRqdD4CbJOsIOpwMe/iOU1EoY7O8RPnhS1QM44YmaR366ratYPKolzV8fILBNQR+zYvQb2r0XmpGFcVOH+OJSlhLQfRxY1ctCv5Xd/EUkui9H7DRbYtxMxgl/h/JPC/GX5LyBbXaxsNxQUE9DZsB6A==
-x-ms-office365-filtering-correlation-id: 2ce221c2-e940-49cc-9657-08d65e7cf935
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(7168020)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM3PR08MB0261;
-x-ms-traffictypediagnostic: AM3PR08MB0261:
-nodisclaimer: True
-x-microsoft-antispam-prvs: <AM3PR08MB0261A89C1524CA2C36CB0013B3A50@AM3PR08MB0261.eurprd08.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(3231455)(999002)(944501520)(52105112)(3002001)(93006095)(93001095)(6055026)(148016)(149066)(150057)(6041310)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123564045)(20161123560045)(201708071742011)(7699051)(76991095);SRVR:AM3PR08MB0261;BCL:0;PCL:0;RULEID:;SRVR:AM3PR08MB0261;
-x-forefront-prvs: 08828D20BC
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(7916004)(346002)(376002)(39860400002)(136003)(396003)(366004)(199004)(189003)(14454004)(3846002)(6512007)(6116002)(6506007)(6486002)(386003)(1076002)(8936002)(76176011)(81156014)(33716001)(86362001)(316002)(102836004)(5660300001)(8676002)(229853002)(106356001)(52116002)(6636002)(446003)(54906003)(66066001)(105586002)(33656002)(9686003)(81166006)(4326008)(55236004)(7736002)(58126008)(305945005)(6246003)(2906002)(99286004)(14444005)(68736007)(25786009)(11346002)(476003)(478600001)(6862004)(6436002)(186003)(486006)(33896004)(71190400001)(71200400001)(53936002)(97736004)(256004)(26005)(18370500001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM3PR08MB0261;H:AM3PR08MB0611.eurprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: arm.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: SXn6y7xfaZl1J0kTKLOVI871gS/1j54FhORumxZzmaJdxJuWwwtSwgPZGAE16FJcyMLz168HAWk+iORB+V4qhGTpLmNWHvlRTuz/lT5Zo+JzWRJ0IGvgkF1VrdIQjCCvCD2cT3Yh1qNLSZWwoKq7CzSajNB9qLvDx/bj3mcbDocxSJxsE5irn+2gHFFKsOE+POL8UctISGveqAkLqiSbMq2f++UG6bhecfkp/kP7nit0TQT62Sw1ngSaEehfcuFsOQJTeaNOVaHsG7v0+qbTkfVY0K0mUZLcZTKbNPTfyXE7nBKe3p2a3XfbiaBjGfVs
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <92329407A8DD974B8BCD4DC764B102C1@eurprd08.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        Mon, 10 Dec 2018 03:55:41 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:49372 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726572AbeLJIzl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Dec 2018 03:55:41 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=7NJVooFTIsQ1sLkf0iscEhELwDGD/ToFRglzg8miKq0=; b=Iiyj8+QnmYLqIGGVuq//ASid1
+        FgobeVzTq1ckKSaJ7bRoyUhcT3ZNDVmh6qHg5+xRraqRVuMWRX1MPc9bJV5fjtANCXXXudqtnr3wa
+        Stj0H1iaezgqN8EfWOorQt8MZiMOrFmKsDvK6IlMHD+wKHVAvxCpf1gkkTUNibCMqZG2nHZ+WFm3w
+        TwuGhVKRnZrtIborVj7qx5PQP4L+2XXMkrwlZV3+4v7SIAOXKOGrfUK6Q88nMCjIGL2cemBOodsJ0
+        mLVJpOHOR+k9ecv4W5Ao+iPqeqmuJxzPqHbc5jIXxANkztnJqlsDaBqRSvd8/bPYktG9IiAMeLkcr
+        1uZGkqZ3A==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gWHLj-0002MZ-1S; Mon, 10 Dec 2018 08:55:35 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 56C20207261A3; Mon, 10 Dec 2018 09:55:32 +0100 (CET)
+Date:   Mon, 10 Dec 2018 09:55:32 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Nadav Amit <nadav.amit@gmail.com>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Linux-MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andy Lutomirski <luto@kernel.org>
+Subject: Re: Should this_cpu_read() be volatile?
+Message-ID: <20181210085532.GG5289@hirez.programming.kicks-ass.net>
+References: <20181203224920.GQ10377@bombadil.infradead.org>
+ <C377D9EF-A0F4-4142-8145-6942DC29A353@gmail.com>
+ <EB579DAE-B25F-4869-8529-8586DF4AECFF@gmail.com>
+ <20181206102559.GG13538@hirez.programming.kicks-ass.net>
+ <55B665E1-3F64-4D87-B779-D1B4AFE719A9@gmail.com>
+ <20181207084550.GA2237@hirez.programming.kicks-ass.net>
+ <C29C792A-3F47-482D-B0D8-99EABEDF8882@gmail.com>
+ <C064896E-268A-4462-8D51-E43C1CF10104@gmail.com>
+ <20181208105220.GF5289@hirez.programming.kicks-ass.net>
+ <5DE00B41-835C-4E68-B192-2A3C7ACB4392@gmail.com>
 MIME-Version: 1.0
-X-OriginatorOrg: arm.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2ce221c2-e940-49cc-9657-08d65e7cf935
-X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Dec 2018 08:53:37.2490
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: f34e5979-57d9-4aaa-ad4d-b122a662184d
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM3PR08MB0261
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5DE00B41-835C-4E68-B192-2A3C7ACB4392@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 05, 2018 at 07:59:17PM +0800, Brian Starkey wrote:
-> Hi James,
->=20
-> On Wed, Dec 05, 2018 at 10:20:13AM +0000, james qian wang (Arm Technology=
- China) wrote:
-> > Signed-off-by: James (Qian) Wang <james.qian.wang@arm.com>
-> > ---
-> >  MAINTAINERS | 8 ++++++++
-> >  1 file changed, 8 insertions(+)
-> >=20
-> > diff --git a/MAINTAINERS b/MAINTAINERS
-> > index 254b7b267731..9e44c2c2e234 100644
-> > --- a/MAINTAINERS
-> > +++ b/MAINTAINERS
-> > @@ -1132,6 +1132,14 @@ S:	Supported
-> >  F:	drivers/gpu/drm/arm/
-> >  F:	Documentation/devicetree/bindings/display/arm,malidp.txt
-> > =20
-> > +ARM KOMEDA DRM-KMS DRIVER
->=20
-> The list is meant to be in alphabetical order, so I think this entry
-> should be before the MALI-DP one.
->=20
-> Perhaps we should make the Mali-DP "F:" rule more specific too. At
-> the moment any changes under display/komeda will match that too (so
-> Liviu and myself are returned by get_maintainer.pl for Komeda
-> patches).
->
+On Sun, Dec 09, 2018 at 04:57:43PM -0800, Nadav Amit wrote:
+> > On Dec 8, 2018, at 2:52 AM, Peter Zijlstra <peterz@infradead.org> wrote:
 
-OK, will fix it in the next version.
+> > My patch proposed here:
+> > 
+> >  https://marc.info/?l=linux-mm&m=154409548410209
+> > 
+> > would actually fix that one I think, preempt_count() uses
+> > raw_cpu_read_4() which will loose the volatile with that patch.
 
-> > +M:	James (Qian) Wang <james.qian.wang@arm.com>
-> > +M:	Mali DP Maintainers <malidp@foss.arm.com>
-> > +S:	Supported
-> > +F:	drivers/gpu/drm/arm/display/komeda
->=20
-> This one should have a trailing slash to include the directory tree.
->=20
-> Cheers,
-> -Brian
->=20
+> I tested the patch you referenced, and it certainly improves the situation
+> for reads, but there are still small and big issues lying around.
 
-Yes, thank you
+I'm sure :-(, this has been 'festering' for a long while it seems. And
+esp. on x86 specific code, where for a long time we all assumed the
+various per-cpu APIs were in fact the same (which turns out to very much
+not be true).
 
-> > +F:	Documentation/devicetree/bindings/display/arm/arm,komeda.txt
-> > +F:	Documentation/gpu/komeda-kms.rst
-> > +
-> >  ARM MFM AND FLOPPY DRIVERS
-> >  M:	Ian Molton <spyro@f2s.com>
-> >  S:	Maintained
-> > --=20
-> > 2.17.1
-> >=20
+> The biggest one is that (I think) smp_processor_id() should apparently use
+> __this_cpu_read().
+
+Agreed, and note that this will also improve code generation on !x86.
+
+However, I'm not sure the current !debug definition:
+
+#define smp_processor_id() raw_smp_processor_id()
+
+is actually correct. Where raw_smp_processor_id() must be
+this_cpu_read() to avoid CSE, we actually want to allow CSE on
+smp_processor_id() etc..
+
+> There are all kind of other smaller issues, such as set_irq_regs() and
+> get_irq_regs(), which should run with disabled interrupts. They affect the
+> generated code in do_IRQ() and others.
+> 
+> But beyond that, there are so many places in the code that use
+> this_cpu_read() while IRQs are guaranteed to be disabled. For example
+> arch/x86/mm/tlb.c is full with this_cpu_read/write() and almost(?) all
+> should be running with interrupts disabled. Having said that, in my build
+> only flush_tlb_func_common() was affected.
+
+This all feels like something static analysis could help with; such
+tools would also make sense for !x86 where the difference between the
+various per-cpu accessors is even bigger.
+
