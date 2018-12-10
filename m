@@ -7,72 +7,69 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ABE8DC04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 10:37:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3F63C5CFFE
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 10:37:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 669062082F
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 10:37:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7FCA72082F
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 10:37:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="icP2AHNm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 669062082F
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="ZnZyWQMH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7FCA72082F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727319AbeLJKg7 (ORCPT
+        id S1727336AbeLJKhH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 05:36:59 -0500
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:41402 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726146AbeLJKgz (ORCPT
+        Mon, 10 Dec 2018 05:37:07 -0500
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:46553 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727271AbeLJKgx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 05:36:55 -0500
-Received: by mail-ed1-f67.google.com with SMTP id z28so9014705edi.8
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Dec 2018 02:36:54 -0800 (PST)
+        Mon, 10 Dec 2018 05:36:53 -0500
+Received: by mail-ed1-f68.google.com with SMTP id o10so8995733edt.13
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Dec 2018 02:36:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=ffwll.ch; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=c6Z9o1UxIwE7Qp4GM9ozZMxGfybJeBYWvC+NX0jB8Ig=;
-        b=icP2AHNmcD+B4xLZa9BqY9xY3/IFbnZyMH88+fTJ6npgQP++AoT86deQ+1xEADFajI
-         lv4tzBLHCpf4+pdhpXVTVHN6gGHV6ApiDf4REPSgiGhykR/Kvu5HBWTVUjq3FxwLwJDg
-         CL0fC11rqPywTMOksfy8+IKeWwhPykofEf6os=
+        bh=XEsctnSJl6ojJTv9Gu+kKqy9VNezjsl3TRV+ARV/mkc=;
+        b=ZnZyWQMH6WIayzR/QKbBPP6+0b9sXHlAARJt64WBv2Unoue68evGiPArqIPwCa/XLM
+         7p0ILYs2uj3fACNC8YILBa+TPUR2csiYsBl0GkHkJapOJlF8MCR3+Y+/Zh8S4grK4BOt
+         384VE9HqGSj3KwckvLatg1ved/XePWOFAfv40=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=c6Z9o1UxIwE7Qp4GM9ozZMxGfybJeBYWvC+NX0jB8Ig=;
-        b=dLTa4Zha6W5YAgSROOZrd+GZb5Fxw2IvhbPtPFquUndOvvti+1h1zD7bn+ivXDKbp4
-         S+r2anJGMwLXAZwesO0D4RYChMaPQWaaDNVsMCsZqGNzRd8xEt0OFua1tbMx6SmKoIhC
-         6A/oJ0EH3TwBNHgSRQz/Qrvb1gL/+ginVDZd6vjvjYcdQTU/Xgm1D6AcA3Xxg7EJPdDc
-         lmGxmVqnSqIaMS2K0FOednzd+bbdwY6yHoDlvMbCqcYTB6o4z88L5d9kusJr/oNAhFTP
-         b+B9HXAHYUKqnl0yr3BINjeL7qEfDtaYPWSsaYk+WJ6Pzs06HmNez+E70OZa0Rk6rWjK
-         nDlw==
-X-Gm-Message-State: AA+aEWbkvz+np84vvREOZKojfWyzmhCIUOaRlcOg43JPDwPnUh8al+Fe
-        pK5QfbMP2AKfRjNW2QusllnQ+g==
-X-Google-Smtp-Source: AFSGD/WNv+B6hLRHpjT8x6yzaStntdhgvwRTQuAgi9i8Mb9b50a073LY+g1tBOIcIFzXaTLDqBi5ig==
-X-Received: by 2002:a50:8f44:: with SMTP id 62mr10781951edy.264.1544438213379;
-        Mon, 10 Dec 2018 02:36:53 -0800 (PST)
+        bh=XEsctnSJl6ojJTv9Gu+kKqy9VNezjsl3TRV+ARV/mkc=;
+        b=mtpU4U44goXDj6m65H5dVSd6yor+XrKcrS0kxrXweA8OqHEYSEUr94dNMHoScmuJMJ
+         0Av9OeiWN1YNW90S1lXDw5+pd32v5oSwWYVVQOZtijjJ1ggYnDgMMe1f+LBq3jCTjHO/
+         jfXS4++pjxCDkIPxdShaOG3tatqRBjtE/NlXJSNT72YZSCU3jwq+9GXJydhQ+UhIDMBv
+         2ktZ/d/Zp5Okm8LGrrIjUX1MoJijaH2Ar/UG1Givzw9AbJLmdZdxwnjsKgdFPJu22AEA
+         T+DfZOePXbBZZUh7Gh9ztjwUHsdLD0RhreBHsZQ3O1O4ZESBefuSQNe/LYBIOk8hHFfi
+         OoMQ==
+X-Gm-Message-State: AA+aEWZEMqTiCpO49KNZwF76fwmhrE3hhusQJtg3bG2o1vdKfJxvAwpV
+        9VHVY7IpzyASQ2xiLwvSpsWxUA==
+X-Google-Smtp-Source: AFSGD/Uk9Y35fLYH2MG6TLt5GU2n4GMlNtntTdbUScLCDF73rMg9GXcbK7pjTLciIvgEi+Dvmd7bgA==
+X-Received: by 2002:a17:906:55a:: with SMTP id k26-v6mr9502822eja.218.1544438210804;
+        Mon, 10 Dec 2018 02:36:50 -0800 (PST)
 Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
-        by smtp.gmail.com with ESMTPSA id q50sm3223862edd.66.2018.12.10.02.36.52
+        by smtp.gmail.com with ESMTPSA id q50sm3223862edd.66.2018.12.10.02.36.49
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 10 Dec 2018 02:36:52 -0800 (PST)
+        Mon, 10 Dec 2018 02:36:50 -0800 (PST)
 From:   Daniel Vetter <daniel.vetter@ffwll.ch>
 To:     Intel Graphics Development <intel-gfx@lists.freedesktop.org>
 Cc:     DRI Development <dri-devel@lists.freedesktop.org>,
         LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
         Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Chris Wilson <chris@chris-wilson.co.uk>,
         Andrew Morton <akpm@linux-foundation.org>,
-        David Rientjes <rientjes@google.com>,
-        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
         Michal Hocko <mhocko@suse.com>,
+        David Rientjes <rientjes@google.com>,
         =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
         Daniel Vetter <daniel.vetter@intel.com>
-Subject: [PATCH 4/4] mm, notifier: Add a lockdep map for invalidate_range_start
-Date:   Mon, 10 Dec 2018 11:36:41 +0100
-Message-Id: <20181210103641.31259-5-daniel.vetter@ffwll.ch>
+Subject: [PATCH 2/4] kernel.h: Add non_block_start/end()
+Date:   Mon, 10 Dec 2018 11:36:39 +0100
+Message-Id: <20181210103641.31259-3-daniel.vetter@ffwll.ch>
 X-Mailer: git-send-email 2.20.0.rc1
 In-Reply-To: <20181210103641.31259-1-daniel.vetter@ffwll.ch>
 References: <20181210103641.31259-1-daniel.vetter@ffwll.ch>
@@ -84,90 +81,104 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is a similar idea to the fs_reclaim fake lockdep lock. It's
-fairly easy to provoke a specific notifier to be run on a specific
-range: Just prep it, and then munmap() it.
+In some special cases we must not block, but there's not a
+spinlock, preempt-off, irqs-off or similar critical section already
+that arms the might_sleep() debug checks. Add a non_block_start/end()
+pair to annotate these.
 
-A bit harder, but still doable, is to provoke the mmu notifiers for
-all the various callchains that might lead to them. But both at the
-same time is really hard to reliable hit, especially when you want to
-exercise paths like direct reclaim or compaction, where it's not
-easy to control what exactly will be unmapped.
+This will be used in the oom paths of mmu-notifiers, where blocking is
+not allowed to make sure there's forward progress.
 
-By introducing a lockdep map to tie them all together we allow lockdep
-to see a lot more dependencies, without having to actually hit them
-in a single challchain while testing.
+Suggested by Michal Hocko.
 
-Aside: Since I typed this to test i915 mmu notifiers I've only rolled
-this out for the invaliate_range_start callback. If there's
-interest, we should probably roll this out to all of them. But my
-undestanding of core mm is seriously lacking, and I'm not clear on
-whether we need a lockdep map for each callback, or whether some can
-be shared.
-
-v2: Use lock_map_acquire/release() like fs_reclaim, to avoid confusion
-with this being a real mutex (Chris Wilson).
-
-Cc: Chris Wilson <chris@chris-wilson.co.uk>
 Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: David Rientjes <rientjes@google.com>
-Cc: "Jérôme Glisse" <jglisse@redhat.com>
 Cc: Michal Hocko <mhocko@suse.com>
+Cc: David Rientjes <rientjes@google.com>
 Cc: "Christian König" <christian.koenig@amd.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
-Cc: Mike Rapoport <rppt@linux.vnet.ibm.com>
+Cc: "Jérôme Glisse" <jglisse@redhat.com>
 Cc: linux-mm@kvack.org
 Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
 ---
- include/linux/mmu_notifier.h | 6 ++++++
- mm/mmu_notifier.c            | 7 +++++++
- 2 files changed, 13 insertions(+)
+ include/linux/kernel.h | 10 +++++++++-
+ include/linux/sched.h  |  4 ++++
+ kernel/sched/core.c    |  6 +++---
+ 3 files changed, 16 insertions(+), 4 deletions(-)
 
-diff --git a/include/linux/mmu_notifier.h b/include/linux/mmu_notifier.h
-index 9893a6432adf..19be442606c6 100644
---- a/include/linux/mmu_notifier.h
-+++ b/include/linux/mmu_notifier.h
-@@ -12,6 +12,10 @@ struct mmu_notifier_ops;
+diff --git a/include/linux/kernel.h b/include/linux/kernel.h
+index d6aac75b51ba..c2cf31515b3d 100644
+--- a/include/linux/kernel.h
++++ b/include/linux/kernel.h
+@@ -251,7 +251,9 @@ extern int _cond_resched(void);
+  * might_sleep - annotation for functions that can sleep
+  *
+  * this macro will print a stack trace if it is executed in an atomic
+- * context (spinlock, irq-handler, ...).
++ * context (spinlock, irq-handler, ...). Additional sections where blocking is
++ * not allowed can be annotated with non_block_start() and non_block_end()
++ * pairs.
+  *
+  * This is a useful debugging help to be able to catch problems early and not
+  * be bitten later when the calling function happens to sleep when it is not
+@@ -260,6 +262,10 @@ extern int _cond_resched(void);
+ # define might_sleep() \
+ 	do { __might_sleep(__FILE__, __LINE__, 0); might_resched(); } while (0)
+ # define sched_annotate_sleep()	(current->task_state_change = 0)
++# define non_block_start() \
++	do { current->non_block_count++; } while (0)
++# define non_block_end() \
++	do { WARN_ON(current->non_block_count-- == 0); } while (0)
+ #else
+   static inline void ___might_sleep(const char *file, int line,
+ 				   int preempt_offset) { }
+@@ -267,6 +273,8 @@ extern int _cond_resched(void);
+ 				   int preempt_offset) { }
+ # define might_sleep() do { might_resched(); } while (0)
+ # define sched_annotate_sleep() do { } while (0)
++# define non_block_start() do { } while (0)
++# define non_block_end() do { } while (0)
+ #endif
  
- #ifdef CONFIG_MMU_NOTIFIER
+ #define might_sleep_if(cond) do { if (cond) might_sleep(); } while (0)
+diff --git a/include/linux/sched.h b/include/linux/sched.h
+index ecffd4e37453..41249dbf8f27 100644
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -916,6 +916,10 @@ struct task_struct {
+ 	struct mutex_waiter		*blocked_on;
+ #endif
  
-+#ifdef CONFIG_LOCKDEP
-+extern struct lockdep_map __mmu_notifier_invalidate_range_start_map;
++#ifdef CONFIG_DEBUG_ATOMIC_SLEEP
++	int				non_block_count;
 +#endif
 +
- /*
-  * The mmu notifier_mm structure is allocated and installed in
-  * mm->mmu_notifier_mm inside the mm_take_all_locks() protected
-@@ -267,8 +271,10 @@ static inline void mmu_notifier_change_pte(struct mm_struct *mm,
- static inline void mmu_notifier_invalidate_range_start(struct mm_struct *mm,
- 				  unsigned long start, unsigned long end)
- {
-+	lock_map_acquire(&__mmu_notifier_invalidate_range_start_map);
- 	if (mm_has_notifiers(mm))
- 		__mmu_notifier_invalidate_range_start(mm, start, end, true);
-+	lock_map_release(&__mmu_notifier_invalidate_range_start_map);
- }
+ #ifdef CONFIG_TRACE_IRQFLAGS
+ 	unsigned int			irq_events;
+ 	unsigned long			hardirq_enable_ip;
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index 6fedf3a98581..969d7a71f30c 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -6113,7 +6113,7 @@ void ___might_sleep(const char *file, int line, int preempt_offset)
+ 	rcu_sleep_check();
  
- static inline int mmu_notifier_invalidate_range_start_nonblock(struct mm_struct *mm,
-diff --git a/mm/mmu_notifier.c b/mm/mmu_notifier.c
-index a50ed7d1ecef..c91d58fe388b 100644
---- a/mm/mmu_notifier.c
-+++ b/mm/mmu_notifier.c
-@@ -23,6 +23,13 @@
- /* global SRCU for all MMs */
- DEFINE_STATIC_SRCU(srcu);
+ 	if ((preempt_count_equals(preempt_offset) && !irqs_disabled() &&
+-	     !is_idle_task(current)) ||
++	     !is_idle_task(current) && !current->non_block_count) ||
+ 	    system_state == SYSTEM_BOOTING || system_state > SYSTEM_RUNNING ||
+ 	    oops_in_progress)
+ 		return;
+@@ -6129,8 +6129,8 @@ void ___might_sleep(const char *file, int line, int preempt_offset)
+ 		"BUG: sleeping function called from invalid context at %s:%d\n",
+ 			file, line);
+ 	printk(KERN_ERR
+-		"in_atomic(): %d, irqs_disabled(): %d, pid: %d, name: %s\n",
+-			in_atomic(), irqs_disabled(),
++		"in_atomic(): %d, irqs_disabled(): %d, non_block: %d, pid: %d, name: %s\n",
++			in_atomic(), irqs_disabled(), current->non_block_count,
+ 			current->pid, current->comm);
  
-+#ifdef CONFIG_LOCKDEP
-+struct lockdep_map __mmu_notifier_invalidate_range_start_map = {
-+	.name = "mmu_notifier_invalidate_range_start"
-+};
-+EXPORT_SYMBOL_GPL(__mmu_notifier_invalidate_range_start_map);
-+#endif
-+
- /*
-  * This function allows mmu_notifier::release callback to delay a call to
-  * a function that will free appropriate resources. The function must be
+ 	if (task_stack_end_corrupted(current))
 -- 
 2.20.0.rc1
 
