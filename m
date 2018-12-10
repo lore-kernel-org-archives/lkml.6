@@ -2,104 +2,98 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7238DC04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 08:34:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D1B9C04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 08:34:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C043208A3
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 08:34:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="S/fWnvX8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C043208A3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
+	by mail.kernel.org (Postfix) with ESMTP id C71082081F
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 08:34:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544430853;
+	bh=aVifK2kxtOs86Ua+9PYLk503errWF7w4ACy8S7TvXzs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=Ltlz7RaHN+fjeq/vCe0DLl7B55mLn/m3J6lIOCERqsqX7GXhzst+u6469eIoww5i2
+	 fzpJD4wDl0PLCvI8Gq+XOUfTy2J1wn3hYbKyUUmTiGBTNAMOsIQNeaIXJ6uAPjbao7
+	 quNf0NqJWfat68m8uTnm5QobsEXqWdyOmBdSWouw=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C71082081F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726572AbeLJId7 (ORCPT
+        id S1726619AbeLJIeM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 03:33:59 -0500
-Received: from smtprelay.synopsys.com ([198.182.60.111]:55896 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726029AbeLJId6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 03:33:58 -0500
-Received: from mailhost.synopsys.com (mailhost3.synopsys.com [10.12.238.238])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id 75E4410C0ACD;
-        Mon, 10 Dec 2018 00:33:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1544430838; bh=5q+ynvF0TSnTidDyZhzqa6eoCZKSSla1DNvQpWaILZA=;
-        h=From:To:Cc:Subject:Date:From;
-        b=S/fWnvX8VrlVFVPeI61zdc5CJr6ZtVn1L6dkVeHeaIKGHtGauGli/yqt/FL3kElSr
-         pIJGs8pZbJJAYqR5PqiTuBFNkKm0Kbc5yXKgratKh0rGJ0elsi20yufLlvd0fiKBf+
-         3TCQ09Iw5Gr1CCYYbbMv+gI67WOK4L+S6/Mwqy/9IXaTruw13H/CJKvLEN0/4l1aXw
-         kplyYj6ifMg6LFb8XC1rLl4+WNZ98mhWU8p8kJElKqTgeeVay8cJJFPdXgTwztJvLp
-         i2vL5dS0A0iu0HYFyJEKpAz0s1XFHYT7Y2ZUiwhFmAon0QcRBEJshOgpy8u32BHQys
-         yHHdqotrGdejQ==
-Received: from ru20arcgnu1.internal.synopsys.com (ru20arcgnu1.internal.synopsys.com [10.121.9.48])
-        by mailhost.synopsys.com (Postfix) with ESMTP id 71FC93D6B;
-        Mon, 10 Dec 2018 00:33:56 -0800 (PST)
-From:   Alexey Brodkin <alexey.brodkin@synopsys.com>
-To:     stable@vger.kernel.org
-Cc:     linux-snps-arc@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Alexey Brodkin <alexey.brodkin@synopsys.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kevin Hilman <khilman@baylibre.com>
-Subject: [PATCH] ARC: [zebu] Remove CONFIG_INITRAMFS_SOURCE from defconfigs
-Date:   Mon, 10 Dec 2018 11:33:49 +0300
-Message-Id: <20181210083349.35728-1-abrodkin@synopsys.com>
-X-Mailer: git-send-email 2.16.2
+        Mon, 10 Dec 2018 03:34:12 -0500
+Received: from mx2.suse.de ([195.135.220.15]:53560 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726029AbeLJIeM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Dec 2018 03:34:12 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id E81F5AD75;
+        Mon, 10 Dec 2018 08:34:09 +0000 (UTC)
+Date:   Mon, 10 Dec 2018 09:34:09 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     David Rientjes <rientjes@google.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        mgorman@techsingularity.net, Vlastimil Babka <vbabka@suse.cz>,
+        ying.huang@intel.com, s.priebe@profihost.ag,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        alex.williamson@redhat.com, lkp@01.org, kirill@shutemov.name,
+        Andrew Morton <akpm@linux-foundation.org>,
+        zi.yan@cs.rutgers.edu
+Subject: Re: [patch for-4.20] Revert "mm, thp: consolidate THP gfp handling
+ into alloc_hugepage_direct_gfpmask"
+Message-ID: <20181210083409.GJ1286@dhcp22.suse.cz>
+References: <alpine.DEB.2.21.1812051445390.35948@chino.kir.corp.google.com>
+ <alpine.DEB.2.21.1812061341130.144733@chino.kir.corp.google.com>
+ <alpine.DEB.2.21.1812061343240.144733@chino.kir.corp.google.com>
+ <20181207080515.GT1286@dhcp22.suse.cz>
+ <alpine.DEB.2.21.1812071450270.173448@chino.kir.corp.google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.21.1812071450270.173448@chino.kir.corp.google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Zebu boards were added in v4.9 and then renamed to "haps" in v4.10.
+On Fri 07-12-18 15:05:28, David Rientjes wrote:
+> On Fri, 7 Dec 2018, Michal Hocko wrote:
+[...]
+> > > Secondly, prior to 89c83fb539f9, alloc_pages_vma() implemented a somewhat 
+> > > different policy for hugepage allocations, which were allocated through 
+> > > alloc_hugepage_vma().  For hugepage allocations, if the allocating 
+> > > process's node is in the set of allowed nodes, allocate with 
+> > > __GFP_THISNODE for that node (for MPOL_PREFERRED, use that node with 
+> > > __GFP_THISNODE instead).
+> > 
+> > Why is it wrong to fallback to an explicitly configured mbind mask?
+> > 
+> 
+> The new_page() case is similar to the shmem_alloc_hugepage() case.  Prior 
+> to 89c83fb539f9 ("mm, thp: consolidate THP gfp handling into 
+> alloc_hugepage_direct_gfpmask"), shmem_alloc_hugepage() did 
+> alloc_pages_vma() with hugepage == true, which effected a different 
+> allocation policy: if the node current is running on is allowed by the 
+> policy, use __GFP_THISNODE (considering ac5b2c18911ff is reverted, which 
+> it is in Linus's tree).
+> 
+> After 89c83fb539f9, we lose that and can fallback to remote memory.  Since 
+> the discussion is on-going wrt the NUMA aspects of hugepage allocations, 
+> it's better to have a stable 4.20 tree while that is being worked out and 
+> likely deserves separate patches for both new_page() and 
+> shmem_alloc_hugepage().  For the latter specifically, I assume it would be 
+> nice to get an Acked-by by Kirill who implemented shmem_alloc_hugepage() 
+> with hugepage == true back in 4.8 that also had the __GFP_THISNODE 
+> behavior before the allocation policy is suddenly changed.
 
-Thus backporting
-commit 64234961c145 (ARC: configs: Remove CONFIG_INITRAMFS_SOURCE from defconfigs)
-we missed "zebu" defconfigs in v4.9.
+This should be a part of the changelog.
 
-Note this is only applicable to "linux-4.9.y"!
-
-Spotted by KerneCI, see [1].
-
-[1] https://storage.kernelci.org/stable/linux-4.9.y/v4.9.144/arc/zebu_hs_smp_defconfig/build.log
-
-Signed-off-by: Alexey Brodkin <abrodkin@synopsys.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Kevin Hilman <khilman@baylibre.com>
----
- arch/arc/configs/zebu_hs_defconfig     | 1 -
- arch/arc/configs/zebu_hs_smp_defconfig | 1 -
- 2 files changed, 2 deletions(-)
-
-diff --git a/arch/arc/configs/zebu_hs_defconfig b/arch/arc/configs/zebu_hs_defconfig
-index 9f6166be7145..3346829b02bb 100644
---- a/arch/arc/configs/zebu_hs_defconfig
-+++ b/arch/arc/configs/zebu_hs_defconfig
-@@ -11,7 +11,6 @@ CONFIG_NAMESPACES=y
- # CONFIG_UTS_NS is not set
- # CONFIG_PID_NS is not set
- CONFIG_BLK_DEV_INITRD=y
--CONFIG_INITRAMFS_SOURCE="../../arc_initramfs_hs/"
- CONFIG_EXPERT=y
- CONFIG_PERF_EVENTS=y
- # CONFIG_COMPAT_BRK is not set
-diff --git a/arch/arc/configs/zebu_hs_smp_defconfig b/arch/arc/configs/zebu_hs_smp_defconfig
-index 44e9693f4257..4471f9c37d7e 100644
---- a/arch/arc/configs/zebu_hs_smp_defconfig
-+++ b/arch/arc/configs/zebu_hs_smp_defconfig
-@@ -11,7 +11,6 @@ CONFIG_NAMESPACES=y
- # CONFIG_UTS_NS is not set
- # CONFIG_PID_NS is not set
- CONFIG_BLK_DEV_INITRD=y
--CONFIG_INITRAMFS_SOURCE="../../arc_initramfs_hs/"
- CONFIG_EMBEDDED=y
- CONFIG_PERF_EVENTS=y
- # CONFIG_VM_EVENT_COUNTERS is not set
 -- 
-2.16.2
-
+Michal Hocko
+SUSE Labs
