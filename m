@@ -2,114 +2,95 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C246DC04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 21:42:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90741C04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 21:44:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 889772082F
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 21:42:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 889772082F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id 4FAE62084E
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 21:44:45 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="iXyAFh3E"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4FAE62084E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729763AbeLJVmn (ORCPT
+        id S1728300AbeLJVoo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 16:42:43 -0500
-Received: from mout.kundenserver.de ([217.72.192.73]:54123 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726562AbeLJVmn (ORCPT
+        Mon, 10 Dec 2018 16:44:44 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:35040 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726562AbeLJVon (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 16:42:43 -0500
-Received: from wuerfel.lan ([109.192.41.194]) by mrelayeu.kundenserver.de
- (mreue108 [212.227.15.145]) with ESMTPA (Nemesis) id
- 1MkHIV-1hCQmt2ewD-00kfvI; Mon, 10 Dec 2018 22:42:30 +0100
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     William Hubbs <w.d.hubbs@gmail.com>,
-        Chris Brannon <chris@the-brannons.com>,
-        Kirk Reiser <kirk@reisers.ca>,
-        Samuel Thibault <samuel.thibault@ens-lyon.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>, speakup@linux-speakup.org,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] staging: speakup: change semaphore to completion
-Date:   Mon, 10 Dec 2018 22:41:50 +0100
-Message-Id: <20181210214225.1497552-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.20.0
+        Mon, 10 Dec 2018 16:44:43 -0500
+Received: by mail-pf1-f196.google.com with SMTP id z9so6037996pfi.2
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Dec 2018 13:44:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=Q/LNkITI6Mo00J9iVRX70fKCzr1sV4kHJirNir7Hw5E=;
+        b=iXyAFh3E3oigxUa5uYeSGAQCGcrf13cPQEJBqIBuI9upstTBdM5bP2igSIoanHfjv2
+         XZhpulwOxUuNq+Z5B2ZOQ6peURFOeItO3fOgBcjrN/4KwlHVHfgKG9YmAI0J6MabzxVg
+         LKoags1R4zDMIxOkBWiBM18Vya7OdqSXHu1gJ2qtxTHxmMkxkWIyS7GxNA8HV4liqXPL
+         SVKOtcr3EUlmJjYiZkNQnyAOmvSCpKZJ38o4Ee/X8OTDY+o9+BQ3svPe0cHYP1sYK/H8
+         yYIKit/AoJ26+6d6teoCtl0I+mQowr3x0infaTdR7KAVXuRWGbWEpOslqdMZB25rGfq9
+         bxuQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Q/LNkITI6Mo00J9iVRX70fKCzr1sV4kHJirNir7Hw5E=;
+        b=q3P0Kcd79CLXbWaKUpWNCDvHOl2jQ4xqn/dfbVWtMBlyPby7I7Oh+DQb4TcsW+tgcK
+         bTYvbBXQxrIPCo4v+iM5MV4EYnhRTaP/47Tsfd8X+K2vHBm0LOrlRBiCc/PNAlb+V+O9
+         UvL301T4HuM1+DUsdJnY3RVjeaZQ5Sxu2Pv0nUs+GjjL+O29YB+REtd9tBmL/heR/cnR
+         zK7w5N5PpQldSjA7Xqz5cYacMPvfZ36ZMNgyR2caaRrYKJ9L+eB2p1V1HzpyqkmOgVvX
+         vkRnbq2dIFd5dUxeintK7PyTv9V1m+wEqr9jEsC6c4MD/OEA/AI8KP2vxF+i96SV0vTW
+         B/0w==
+X-Gm-Message-State: AA+aEWaxfdvtldatG1j8nTb2ZDG+lGwdTkjqBo9MCHPOZpkxOrwJGvH9
+        bxx0og60EvrwOvkNYp4KI9T/+V7xMrwbSw==
+X-Google-Smtp-Source: AFSGD/VxET1oVt24BqIeyvVIB9B9KDrV/eZ1ANkti5jRWK7TaQob+R5u44BJACGZzOlho23GjXhRNg==
+X-Received: by 2002:a63:bd1a:: with SMTP id a26mr12159678pgf.121.1544478282281;
+        Mon, 10 Dec 2018 13:44:42 -0800 (PST)
+Received: from [192.168.1.121] (66.29.188.166.static.utbb.net. [66.29.188.166])
+        by smtp.gmail.com with ESMTPSA id 64sm16187094pff.101.2018.12.10.13.44.40
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 10 Dec 2018 13:44:41 -0800 (PST)
+Subject: Re: [PATCH] mtip32xx: avoid using semaphores
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Johannes Thumshirn <jthumshirn@suse.de>,
+        Hannes Reinecke <hare@suse.de>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20181210213459.1147671-1-arnd@arndb.de>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <6caf6fa4-15e5-a7ec-cec4-69e5ad70c090@kernel.dk>
+Date:   Mon, 10 Dec 2018 14:44:39 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:p0k/nIw7k0tY2MW1KRKA/Yj5hMBdiphv3HwUyonquexwTrPZArU
- JPzq84mGW44V/N+yU4EQjxaUqSTNC73WSH7VoB/unYHDi73ibNJltsGtxB0ElC0va3xGwZD
- CsjdlSEvmYpHg1ZhcnTecAjLw2WbtJUNZlncArMqTd5r8tBx/qVAH5bBDKHrQBlbAbPmAym
- UACJ5EBSGmaYydCbv5rwg==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:ii1a6NuNR0A=:n//Fa2Zy49zgNcCT7KbsoB
- uU+WjdB3O+kQMoBQXXfH8tYH16rqzSzvT59jpbfBROdsTdGvIV7ttx9KrF6Q+vhvfyxEEzt4A
- vnOrTgrHWkhGLQGHzO7vAvM+5RX9IRjBmTbNw8kyj66zpYJwDqfOhJpv0p4Iqqvp1pvdyJoDO
- f+4YeUXUFpWzZLVzaWKnjYFbml7ddw4+0NsF+CAocQLM6kqqxXlRgAFLOpfDodibSXSPv45Zb
- WVH0jvXSkJb+tyFZc3KjA/g5Qke7vaRI5vBDBsUtFJPM0gi9qvoF5/oMIM3mEA7GAB4U4iJBO
- NRVrdUO5W/VlXD9dKj9xhRa4w5l+aBe2yGeGUgIm0aWB1zZ66hldzSHGTWa0BQOd8ytG3PB9S
- G+0VcCLwKAxXtwg5aN7BX8u58Dg0po2t9nj0OWpcdhtMN8LpXsWD7NXwn8jrTwplGFjkTpVgm
- nz9bvXTpMsDa9WvryXS5QwXKfHwQs0pIsDyQ+SFdQ/JSx0hl4rkHFyVM9oT5H0iMWMNrHTINa
- wPi+JQuRX7/HjDERFnoiOeQX10l8flEjopnH0mpr2EuZmTIvUP0Cz0LPEsW5B5QZkpf9XXmbj
- 4Gcre3q8TPSz5pFmWndoxKzj8Zzo9pdJjpYCb/XBKFmYVopd0mCw9jXGTTwXmP63b4p9LvbLX
- ugImL2XX6eg+9+jq3GNHGOCYRtuP5AtoUur1oggH60DeySrHTDOMpFIS4muZd0GsWNKW9JYH3
- eH+krsds4y/D4B+pg11rzBnpQaS8Sv3pPVG5XA==
+In-Reply-To: <20181210213459.1147671-1-arnd@arndb.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In this driver, both function the same way, but we want to eventually
-kill off semaphores, so a completion is the better choice here.
+On 12/10/18 2:34 PM, Arnd Bergmann wrote:
+> The "cmd_slot_unal" semaphore is never used in a blocking way
+> but only as an atomic counter. Change the code to using
+> atomic_dec_if_positive() as a better API.
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/staging/speakup/spk_ttyio.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+Looks good to me. We should also convert the return to blk-mq
+when we hit failure here to BLK_STS_DEV_RESOURCE, but that's
+a separate patch.
 
-diff --git a/drivers/staging/speakup/spk_ttyio.c b/drivers/staging/speakup/spk_ttyio.c
-index 979e3ae249c1..c92bbd05516e 100644
---- a/drivers/staging/speakup/spk_ttyio.c
-+++ b/drivers/staging/speakup/spk_ttyio.c
-@@ -10,7 +10,7 @@
- 
- struct spk_ldisc_data {
- 	char buf;
--	struct semaphore sem;
-+	struct completion completion;
- 	bool buf_free;
- };
- 
-@@ -55,7 +55,7 @@ static int spk_ttyio_ldisc_open(struct tty_struct *tty)
- 	if (!ldisc_data)
- 		return -ENOMEM;
- 
--	sema_init(&ldisc_data->sem, 0);
-+	init_completion(&ldisc_data->completion);
- 	ldisc_data->buf_free = true;
- 	speakup_tty->disc_data = ldisc_data;
- 
-@@ -95,7 +95,7 @@ static int spk_ttyio_receive_buf2(struct tty_struct *tty,
- 
- 	ldisc_data->buf = cp[0];
- 	ldisc_data->buf_free = false;
--	up(&ldisc_data->sem);
-+	complete(&ldisc_data->completion);
- 
- 	return 1;
- }
-@@ -286,7 +286,8 @@ static unsigned char ttyio_in(int timeout)
- 	struct spk_ldisc_data *ldisc_data = speakup_tty->disc_data;
- 	char rv;
- 
--	if (down_timeout(&ldisc_data->sem, usecs_to_jiffies(timeout)) == -ETIME) {
-+	if (wait_for_completion_timeout(&ldisc_data->completion,
-+					usecs_to_jiffies(timeout)) == 0) {
- 		if (timeout)
- 			pr_warn("spk_ttyio: timeout (%d)  while waiting for input\n",
- 				timeout);
 -- 
-2.20.0
+Jens Axboe
 
