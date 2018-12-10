@@ -2,123 +2,130 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CD8EC67839
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 16:04:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA56DC67839
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 16:05:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B59E204FD
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 16:04:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B59E204FD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 96F6F204FD
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 16:05:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 96F6F204FD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amlogic.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728442AbeLJQE3 (ORCPT
+        id S1728460AbeLJQFD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 11:04:29 -0500
-Received: from mga18.intel.com ([134.134.136.126]:16399 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726585AbeLJQE2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 11:04:28 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Dec 2018 08:04:28 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,339,1539673200"; 
-   d="scan'208";a="300931525"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.154])
-  by fmsmga006.fm.intel.com with ESMTP; 10 Dec 2018 08:04:27 -0800
-Date:   Mon, 10 Dec 2018 08:04:27 -0800
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        X86 ML <x86@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Rik van Riel <riel@surriel.com>,
-        Yu-cheng Yu <yu-cheng.yu@intel.com>,
-        Ingo Molnar <mingo@kernel.org>
-Subject: Re: [PATCH v2] x86/fault: Decode and print #PF oops in human
- readable form
-Message-ID: <20181210160427.GA15686@linux.intel.com>
-References: <20181207184423.1962-1-sean.j.christopherson@intel.com>
- <20181207195223.23968-1-sean.j.christopherson@intel.com>
- <CAHk-=wgtN9nQBimLuOmBxY8eYqDRhNeBOW_uvnhqtZSFycyHuA@mail.gmail.com>
- <20181207220646.GH10404@linux.intel.com>
- <CAHk-=wizzTem4B3muo+DV5JqPBD0n1JJ8-NDjyY1fn-N4WYHCg@mail.gmail.com>
- <CALCETrUu=qO4tHkk-QxKD_j687hKV56X9JvYv1YsdgtOy0urmQ@mail.gmail.com>
+        Mon, 10 Dec 2018 11:05:03 -0500
+Received: from mail-sh2.amlogic.com ([58.32.228.45]:52645 "EHLO
+        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726261AbeLJQFC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Dec 2018 11:05:02 -0500
+Received: from localhost.localdomain (10.18.11.217) by mail-sh2.amlogic.com
+ (10.18.11.6) with Microsoft SMTP Server id 15.0.1320.4; Tue, 11 Dec 2018
+ 00:05:12 +0800
+From:   Jianxin Pan <jianxin.pan@amlogic.com>
+To:     Jerome Brunet <jbrunet@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>
+CC:     Jianxin Pan <jianxin.pan@amlogic.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Carlo Caione <carlo@caione.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Yixun Lan <yixun.lan@amlogic.com>,
+        Liang Yang <liang.yang@amlogic.com>,
+        Jian Hu <jian.hu@amlogic.com>,
+        Qiufang Dai <qiufang.dai@amlogic.com>,
+        Hanjie Lin <hanjie.lin@amlogic.com>,
+        Victor Wan <victor.wan@amlogic.com>,
+        <linux-clk@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+Subject: [PATCH RESEND v7 0/4] clk: meson: add a sub EMMC clock controller support
+Date:   Tue, 11 Dec 2018 00:04:32 +0800
+Message-ID: <1544457877-51301-1-git-send-email-jianxin.pan@amlogic.com>
+X-Mailer: git-send-email 1.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CALCETrUu=qO4tHkk-QxKD_j687hKV56X9JvYv1YsdgtOy0urmQ@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain
+X-Originating-IP: [10.18.11.217]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 07, 2018 at 03:57:10PM -0800, Andy Lutomirski wrote:
-> On Fri, Dec 7, 2018 at 2:14 PM Linus Torvalds
-> <torvalds@linux-foundation.org> wrote:
-> >
-> > On Fri, Dec 7, 2018 at 2:06 PM Sean Christopherson
-> > <sean.j.christopherson@intel.com> wrote:
-> > >
-> > > Looking at it again, my own personal preference would be to swap the order
-> > > of the #PF lines.
-> >
-> > Yeah, probably.
-> >
-> > Also:
-> >
-> > > [  160.246820] BUG: unable to handle kernel paging request at ffffbeef00000000
-> > > [  160.247517] #PF: supervisor-privileged instruction fetch from kernel code
-> > > [  160.248085] #PF: error_code(0x0010) - not-present page
-> >
-> > With this form, I think the "kernel" in the first line is actually
-> > misleading. Yes, it's a #PF for the kernel, but then the "kernel" on
-> > the second line talks about what mode we were in when it happened, so
-> > we have two different meanings of "kernel" on two adjacent lines.
-> 
-> I'm okay with this variant.  I have a slight preference for:
-> 
-> #PF: supervisor-privileged instruction fetch from kernel code
-> #PF error_code: 0x0010 [READ]
+This driver will add a MMC clock controller driver support.
+The original idea about adding a clock controller is during the
+discussion in the NAND driver mainline effort[1].
 
-[INSTR], but I get the gist :)
+This driver is tested in the S400 board (AXG platform) with NAND driver.
 
-> Which is what we'd get from Sean's patch plus my patch here:
-> 
-> https://git.kernel.org/pub/scm/linux/kernel/git/luto/linux.git/commit/?h=x86/mm&id=ccfb1941f90153818c07fb1a7dc22121a970d252
-> 
-> Sean, what do you think?
+Changes since v6 [7]:
+ - add one based support for sclk divier
+ - alloc sclk in probe for multiple instance
+ - fix coding styles
 
-Munging the two concepts is my least favorite approach.  Printing the
-individual bits becomes redundant (with the first line) in many cases,
-and superfluous in other cases, e.g. [PROT] is effectively implied by
-[RSVD], [PK] and [SGX].
+Changes since v5 [6]:
+ - remove divider ops with .init and use sclk_div instead
+ - drop CLK_DIVIDER_ROUND_CLOSEST in mux and div
+ - drop the useless type cast 
 
-In the example above, printing "[INSTR]" doesn't provide any new info
-since the line above already states it was an instruction fetch, and
-it never provides a human-readable message describing *why* the fault
-occurred.
+Changes since v4 [5]:
+ - use struct parm in phase delay driver
+ - remove 0 delay releted part in phase delay driver
+ - don't rebuild the parent name once again
+ - add divider ops with .init
 
-It'd be more palatable if we printed the negative case for PROT, e.g.
-"[!PROT]", but that re-opens the discussion on which bits should be
-printed in the negative case.  Like Ingo said, it's rather arbitrary
-that USER=1 instead of SUPERVISOR=1.
+Changes since v3 [4]:
+ - separate clk-phase-delay driver
+ - replace clk_get_rate() with clk_hw_get_rate()
+ - collect Rob's R-Y
+ - drop 'meson-' prefix from compatible string
 
-> > So maybe  that "BUG: unable to handle kernel paging request" message
-> > should be something like
-> >
-> >   "BUG: unable to handle page fault for address ffffbeef00000000"
-> >
-> > instead? Does that make sense to people?
-> 
-> Yes please.
+ Changes since v2 [3]:
+ - squash dt-binding clock-id patch
+ - update license
+ - fix alignment
+ - construct a clk register helper() function
+
+Changes since v1 [2]:
+ - implement phase clock
+ - update compatible name
+ - adjust file name
+ - divider probe() into small functions, and re-use them
+
+[1] https://lkml.kernel.org/r/20180628090034.0637a062@xps13
+[2] https://lkml.kernel.org/r/20180703145716.31860-1-yixun.lan@amlogic.com
+[3] https://lkml.kernel.org/r/20180710163658.6175-1-yixun.lan@amlogic.com
+[4] https://lkml.kernel.org/r/20180712211244.11428-1-yixun.lan@amlogic.com
+[5] https://lkml.kernel.org/r/20180809070724.11935-4-yixun.lan@amlogic.com
+[6] https://lkml.kernel.org/r/1539839245-13793-1-git-send-email-jianxin.pan@amlogic.com
+[7] https://lkml.kernel.org/r/1541089855-19356-1-git-send-email-jianxin.pan@amlogic.com
+Yixun Lan (3):
+  clk: meson: add emmc sub clock phase delay driver
+  clk: meson: add DT documentation for emmc clock controller
+  clk: meson: add sub MMC clock controller driver
+  clk: meson: add one based divider support for sclk divider
+
+ .../devicetree/bindings/clock/amlogic,mmc-clkc.txt |  39 +++
+ drivers/clk/meson/Kconfig                          |  10 +
+ drivers/clk/meson/Makefile                         |   3 +-
+ drivers/clk/meson/clk-phase-delay.c                |  64 +++++
+ drivers/clk/meson/clkc-audio.h                     |   1 +
+ drivers/clk/meson/clkc.h                           |  13 +
+ drivers/clk/meson/mmc-clkc.c                       | 313 +++++++++++++++++++++
+ drivers/clk/meson/sclk-div.c                       |  28 +-
+ include/dt-bindings/clock/amlogic,mmc-clkc.h       |  17 ++
+ 9 files changed, 477 insertions(+), 11 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/amlogic,mmc-clkc.txt
+ create mode 100644 drivers/clk/meson/clk-phase-delay.c
+ create mode 100644 drivers/clk/meson/mmc-clkc.c
+ create mode 100644 include/dt-bindings/clock/amlogic,mmc-clkc.h
+
+-- 
+1.9.1
+
