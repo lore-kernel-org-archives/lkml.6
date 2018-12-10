@@ -2,129 +2,85 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E50EC04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 14:22:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36AA8C5CFFE
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 14:25:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 53E1A2086D
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 14:22:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E793B2086D
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 14:25:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="VDjkM5O3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 53E1A2086D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b="UnJ2bqte"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E793B2086D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=posteo.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727858AbeLJOWM (ORCPT
+        id S1727782AbeLJOZt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 09:22:12 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:34121 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727580AbeLJOWL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 09:22:11 -0500
-Received: by mail-ot1-f66.google.com with SMTP id t5so10555331otk.1
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Dec 2018 06:22:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:openpgp:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=l4J1rNwiRfY2atde+pNuC/RCOGv0XvhLnWyTfm8Kx6o=;
-        b=VDjkM5O3nKtNwOdTGGUS50kGy2mre1CwAriJZw6w4tTFULajmo+DAhviWwa3j2iEeC
-         YFLl5Gj8YWvO11HgjsUWNxj4CiYs1DdLIL2E4MfwOM8aves3WvSvskmEg2YRa+37Ka0w
-         N/e2zcfBU0oYLp/ab2e/P0CXfJr7KwVBtrF8s=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=l4J1rNwiRfY2atde+pNuC/RCOGv0XvhLnWyTfm8Kx6o=;
-        b=rI0+ngyBM5lQ5tEn4+O38km072zrAdHZhaOacHFPPaHPp+p8RFgQ9daJnSdyjYeBPI
-         i0Wx8cdbIKepYfLMSTqwPGvVR0ND4FWA125JA2FYdQNEmy5C425A86bQyVfewDV6fITH
-         7Y2oUnivUDiUYmUaPxLElchAakAEMT51EyEuSRCoxKcVY67RFp/rzteGAjzrIzZyiRv2
-         NevnlcLl+pYjrGMv387EsGkHs3QIwEQuKZ3DeVV8jRy9FI0AXNA2IZkmBQ/ZdOz7LVnD
-         4piSseFWvoDSONVQWyEi2rjLheWnQ2ocWfASoXHHJMUwrwphaIoLzhR3vSLev0SJgaSG
-         uJzw==
-X-Gm-Message-State: AA+aEWb6XgsOgDekA3/vxpaYmnKQWfR3IGwG52DtsRdGYboGFP052cBr
-        GyuPSo+YKJKaPCE1nbYiUHiesQoWRWpN4Q==
-X-Google-Smtp-Source: AFSGD/UOxM2x7WK6gkfI6r6Qaia7FeCuytHyl3UQp9MmQQewhmjOgm6aVq/ASsKhAgyx4rMy7nhtxw==
-X-Received: by 2002:a9d:42c:: with SMTP id 41mr9300029otc.41.1544451730481;
-        Mon, 10 Dec 2018 06:22:10 -0800 (PST)
-Received: from cloudburst.twiddle.net ([187.217.227.243])
-        by smtp.gmail.com with ESMTPSA id m2sm9077478otp.34.2018.12.10.06.22.08
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 10 Dec 2018 06:22:09 -0800 (PST)
-Subject: Re: [PATCH v6 08/13] arm64: expose user PAC bit positions via ptrace
-To:     Catalin Marinas <catalin.marinas@arm.com>
-Cc:     Kristina Martsenko <kristina.martsenko@arm.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Mark Rutland <mark.rutland@arm.com>,
-        Andrew Jones <drjones@redhat.com>,
-        Jacob Bramley <jacob.bramley@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Adam Wallis <awallis@codeaurora.org>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Christoffer Dall <christoffer.dall@arm.com>,
-        kvmarm@lists.cs.columbia.edu, Cyrill Gorcunov <gorcunov@gmail.com>,
-        Ramana Radhakrishnan <ramana.radhakrishnan@arm.com>,
-        Amit Kachhap <amit.kachhap@arm.com>,
-        Dave P Martin <dave.martin@arm.com>,
-        linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>,
-        Steve Capper <Steve.Capper@arm.com>
-References: <20181207183931.4285-1-kristina.martsenko@arm.com>
- <20181207183931.4285-9-kristina.martsenko@arm.com>
- <a31ca10a-ee1a-71fb-2c3d-a6184e12b543@linaro.org>
- <20181210120330.GB4048@arrakis.emea.arm.com>
-From:   Richard Henderson <richard.henderson@linaro.org>
-Openpgp: preference=signencrypt
-Message-ID: <ba48e082-3e47-43bc-77d1-97d741c59284@linaro.org>
-Date:   Mon, 10 Dec 2018 08:22:06 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
-MIME-Version: 1.0
-In-Reply-To: <20181210120330.GB4048@arrakis.emea.arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Mon, 10 Dec 2018 09:25:49 -0500
+Received: from mout01.posteo.de ([185.67.36.65]:58577 "EHLO mout01.posteo.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727396AbeLJOZt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Dec 2018 09:25:49 -0500
+Received: from submission (posteo.de [89.146.220.130]) 
+        by mout01.posteo.de (Postfix) with ESMTPS id 58EE4160062
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Dec 2018 15:25:46 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=posteo.de; s=2017;
+        t=1544451946; bh=ZbdLLynQFF4YAxEpdc4KubVeNp+GKs+sQWGzNGrKTr0=;
+        h=From:To:Cc:Subject:Date:From;
+        b=UnJ2bqteHT6GAKQyad+nhF2ClOPeA4nhJ/NiuLdiCVQrA83/YkEGuRhnLZ84OhKE6
+         yVS66ylzh21yQiHbBKsSJjEcXMdnclLhqQQoq8Oht5WluOhvTB6Ukaywq4VUXKVvAd
+         TgdyLWj/NorToVQqOOz1loeC8QaYHrZ9KFpFiLjy7t0l78stbs279UxHrj8dMoWItQ
+         qsl0KtRHAJHTFIcNkLV+v33cRTZxGMi3s5hpg2qt2duh4S6nLAXnOxxTzYmWM+HLOh
+         HmQ5sZMg+faBcBSUobWRLPEV7aPFTPRInRNglYtTmeZxqQ6RP44/fbFi3wghxuVrRY
+         fRzviDmUMZbrw==
+Received: from customer (localhost [127.0.0.1])
+        by submission (posteo.de) with ESMTPSA id 43D52w6vsmz6tmK;
+        Mon, 10 Dec 2018 15:25:44 +0100 (CET)
+From:   Martin Kepplinger <martink@posteo.de>
+To:     jic23@kernel.org, knaack.h@gmx.de, lars@metafoo.de,
+        pmeerw@pmeerw.net
+Cc:     linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Martin Kepplinger <martink@posteo.de>
+Subject: [PATCH] iio: accel: mma9551_core: prevent using uninitialized variable
+Date:   Mon, 10 Dec 2018 15:25:32 +0100
+Message-Id: <20181210142532.15315-1-martink@posteo.de>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/10/18 6:03 AM, Catalin Marinas wrote:
->> However, it won't be too long before someone implements support for
->> ARMv8.2-LVA, at which point, without changes to mandatory pointer tagging, we
->> will only have 3 authentication bits: [54:52].  This seems useless and easily
->> brute-force-able.
-> 
-> Such support is already here (about to be queued):
-> 
-> https://lore.kernel.org/linux-arm-kernel/20181206225042.11548-1-steve.capper@arm.com/
+mma9551_gpio_config()'s switch statement sets the uninitialized pol_mask
+variable but doesn't have default settings. Said function can therefore
+be called in a way to use the uninitialized variable (at least in case
+enum mma9551_gpio_pin is extended with unhandled values).
 
-Thanks for the pointer.
+While things should be fine now, this initializes pol_mask just to prevent
+failure.
 
->> Unfortunately, there is no obvious path to making this optional that does not
->> break compatibility with Documentation/arm64/tagged-pointers.txt.
-> 
-> There is also the ARMv8.5 MTE (memory tagging) which relies on tagged
-> pointers.
+Signed-off-by: Martin Kepplinger <martink@posteo.de>
+---
+ drivers/iio/accel/mma9551_core.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-So it does.  I hadn't read through that extension completely before.
+diff --git a/drivers/iio/accel/mma9551_core.c b/drivers/iio/accel/mma9551_core.c
+index c34c5ce8123b..2fc79b14888b 100644
+--- a/drivers/iio/accel/mma9551_core.c
++++ b/drivers/iio/accel/mma9551_core.c
+@@ -539,7 +539,8 @@ EXPORT_SYMBOL(mma9551_update_config_bits);
+ int mma9551_gpio_config(struct i2c_client *client, enum mma9551_gpio_pin pin,
+ 			u8 app_id, u8 bitnum, int polarity)
+ {
+-	u8 reg, pol_mask, pol_val;
++	u8 reg, pol_val;
++	u8 pol_mask = 0;
+ 	int ret;
+ 
+ 	if (pin > mma9551_gpio_max) {
+-- 
+2.11.0
 
-> An alternative would be to allow the opt-in to 52-bit VA, leaving it at
-> 48-bit by default. However, it has the problem of changing the PAC size
-> and not being able to return.
-
-Perhaps the opt-in should be at exec time, with ELF flags (or equivalent) on
-the application.  Because, as you say, changing the shape of the PAC in the
-middle of execution is in general not possible.
-
-It isn't perfect, since old kernels won't fail to exec an application setting
-flags that can't be supported.  And it requires tooling changes.
-
-
-r~
