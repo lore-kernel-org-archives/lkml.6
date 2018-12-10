@@ -7,54 +7,54 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E79D5C04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 08:53:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D485C04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 08:53:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD0D120855
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 08:53:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1AB732082F
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 08:53:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="bxt7r7e1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD0D120855
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="E+7cjU7r"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1AB732082F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726691AbeLJIxZ (ORCPT
+        id S1726709AbeLJIxb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 03:53:25 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:41710 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726572AbeLJIxY (ORCPT
+        Mon, 10 Dec 2018 03:53:31 -0500
+Received: from mail-wr1-f48.google.com ([209.85.221.48]:43674 "EHLO
+        mail-wr1-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726526AbeLJIx3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 03:53:24 -0500
-Received: by mail-wr1-f68.google.com with SMTP id x10so9538678wrs.8
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Dec 2018 00:53:23 -0800 (PST)
+        Mon, 10 Dec 2018 03:53:29 -0500
+Received: by mail-wr1-f48.google.com with SMTP id r10so9531181wrs.10
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Dec 2018 00:53:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=39wBlDXGyPZlvdOM4v0qZ1Ghil7xJLHLF05MaMBQC4c=;
-        b=bxt7r7e1AGI4295LFa3jazbFqPFJ32MDDhQyDn4+GuLOA0SEIMz9uk5rORpI2g3oZN
-         qDMO3WpYTVfLKNe8SNjhp0YhRcwg2b6cjABzskwJK1WY2p+BK0xRMR3B0NehJEMpd2LE
-         HL5EBnL+r1UUHKvB2FEbsUt2ojc/XuzWq95W4=
+        bh=/Mqm5NLjImIYS16X8WHi66jKS9/dDWkoWlmg3vq+u2w=;
+        b=E+7cjU7rX2G9g9Nq8/CJhtZLY5S59gQoL1eK7hZw1mzGeJ/Kky+rSwd5ze4gH8UGR9
+         gp5ojQC+RiYTFeKxyQB1Y2hks+6DVXQy0ma9PODdhZ8Se1wtHiUfBevJZPAD6eK4K927
+         yCW6LRV1J+mY/KgYBTorp3JtPy3kLev760zYU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=39wBlDXGyPZlvdOM4v0qZ1Ghil7xJLHLF05MaMBQC4c=;
-        b=X9+eTCgBe049Soovy1WhuDz2QgmL3RS/sXPqSJxuzI6FG8RZdfoVoUppfxZH0ocoAx
-         wJwuCWPmrJbijsa1Mz3tndIbaUn85/H42Zmiu/NScZyRzz6rXXDEOkX/4PDBhnkZqF9P
-         1dmip+IaRl6PZnZw+3TK+E0hLQfuPx89MYiE6Z24k5GIu0myP8hIGv9i1z67pDbPcW6m
-         m+NsycQVuVvDYyYvsfwCFMMYJj5pFNYvl2aD5o9PoG7erbFc7l8R29TjOtUbsFP/XIAW
-         3t0D/AE0W1hrTpJb5lzC3ZK0IFiHwvcVmKthEgrQuKo4z6rIz5eU7+/H3bfGS2fcPItM
-         UXqA==
-X-Gm-Message-State: AA+aEWaZlDf39rbP7WOk/nRJJlkn2lN2v81flFEAvC+CE7+flvcZjscV
-        Am5b6e2VqqJv1zCDss8BJ2mq0w==
-X-Google-Smtp-Source: AFSGD/UCxOAAimwOtRz+m3ihM9FavjpRssg34v7WWRaeSby5HSzfleS40mAdMNyu1M2pfger1AN2sw==
-X-Received: by 2002:adf:be0f:: with SMTP id n15mr9403212wrh.267.1544432002659;
-        Mon, 10 Dec 2018 00:53:22 -0800 (PST)
+        bh=/Mqm5NLjImIYS16X8WHi66jKS9/dDWkoWlmg3vq+u2w=;
+        b=PQdIamPu5guGzgHoU3Fs7cp5TPAkVvAXsOtpD4RE674YIVKm1w0L3o/AYqXkP09qvN
+         4uOxzJddpWaZtMBVPPUJTUqMjfqpkAipB10+fC7DR6RK9CSMZ79bBU+wr1YribI7oiJl
+         wvehpzwY77upXjuTCrHje964BoPzdEmQMWHfMBzK2hI3Hgqt9sH36DGx6AX+EhtUCAR/
+         zv++u1b0x56DrXZ97Fym/kTBA7jr988ZuieqEfYQfr+xnmSsm0Ar+3vGQlVX9/QprXbS
+         D5KPFzAmsFzi1+En+9dmcowaQ/sHmg+oj/LoiHD8HrX38yYoqMPB3HXGkrUa/SFRbxeH
+         0BHg==
+X-Gm-Message-State: AA+aEWbBW2o8ayg2AEGLWAHh6YOkVjhjDLjP7PzBkHNfcV5gvrXJYkzQ
+        upj/B80fQbDDyyRaYwo5MTWX3Q==
+X-Google-Smtp-Source: AFSGD/WPgXPGcjOT22vKEf7fhaElrgakgys59BHMqv1SZWyeJCkmuEYPB8VY8K1uPxjjFztAZsamRQ==
+X-Received: by 2002:adf:d112:: with SMTP id a18mr9614787wri.17.1544432006964;
+        Mon, 10 Dec 2018 00:53:26 -0800 (PST)
 Received: from localhost.localdomain ([209.250.228.18])
-        by smtp.gmail.com with ESMTPSA id m4sm9097351wml.2.2018.12.10.00.53.18
+        by smtp.gmail.com with ESMTPSA id m4sm9097351wml.2.2018.12.10.00.53.22
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 10 Dec 2018 00:53:21 -0800 (PST)
+        Mon, 10 Dec 2018 00:53:26 -0800 (PST)
 From:   Leo Yan <leo.yan@linaro.org>
 To:     Arnaldo Carvalho de Melo <acme@kernel.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
@@ -65,9 +65,9 @@ To:     Arnaldo Carvalho de Melo <acme@kernel.org>,
         Coresight ML <coresight@lists.linaro.org>
 Cc:     Leo Yan <leo.yan@linaro.org>, Mike Leach <mike.leach@linaro.org>,
         Robert Walker <robert.walker@arm.com>
-Subject: [PATCH v2 1/6] perf cs-etm: Correct packets swapping in cs_etm__flush()
-Date:   Mon, 10 Dec 2018 16:52:56 +0800
-Message-Id: <1544431981-24144-2-git-send-email-leo.yan@linaro.org>
+Subject: [PATCH v2 2/6] perf cs-etm: Avoid stale branch samples when flush packet
+Date:   Mon, 10 Dec 2018 16:52:57 +0800
+Message-Id: <1544431981-24144-3-git-send-email-leo.yan@linaro.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1544431981-24144-1-git-send-email-leo.yan@linaro.org>
 References: <1544431981-24144-1-git-send-email-leo.yan@linaro.org>
@@ -76,50 +76,105 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The structure cs_etm_queue uses 'prev_packet' to point to previous
-packet, this can be used to combine with new coming packet to generate
-samples.
+At the end of trace buffer handling, function cs_etm__flush() is invoked
+to flush any remaining branch stack entries.  As a side effect, it also
+generates branch sample, because the 'etmq->packet' doesn't contains any
+new coming packet but point to one stale packet after packets swapping,
+so it wrongly makes synthesize branch samples with stale packet info.
 
-In function cs_etm__flush() it swaps packets only when the flag
-'etm->synth_opts.last_branch' is true, this means that it will not
-swap packets if without option '--itrace=il' to generate last branch
-entries; thus for this case the 'prev_packet' doesn't point to the
-correct previous packet and the stale packet still will be used to
-generate sequential sample.  Thus if dump trace with 'perf script'
-command we can see the incorrect flow with the stale packet's address
-info.
+We could review below detailed flow which causes issue:
 
-This patch corrects packets swapping in cs_etm__flush(); except using
-the flag 'etm->synth_opts.last_branch' it also checks the another flag
-'etm->sample_branches', if any flag is true then it swaps packets so
-can save correct content to 'prev_packet'.  Finally this can fix the
-wrong program flow dumping issue.
+  Packet1: start_addr=0xffff000008b1fbf0 end_addr=0xffff000008b1fbfc
+  Packet2: start_addr=0xffff000008b1fb5c end_addr=0xffff000008b1fb6c
 
-The patch has a minor refactoring to use 'etm->synth_opts.last_branch'
-instead of 'etmq->etm->synth_opts.last_branch' for condition checking,
-this is consistent with that is done in cs_etm__sample().
+  step 1: cs_etm__sample():
+	sample: ip=(0xffff000008b1fbfc-4) addr=0xffff000008b1fb5c
 
-Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+  step 2: flush packet in cs_etm__run_decoder():
+	cs_etm__run_decoder()
+	  `-> err = cs_etm__flush(etmq, false);
+	sample: ip=(0xffff000008b1fb6c-4) addr=0xffff000008b1fbf0
+
+Packet1 and packet2 are two continuous packets, when packet2 is the new
+coming packet, cs_etm__sample() generates branch sample for these two
+packets and use [packet1::end_addr - 4 => packet2::start_addr] as branch
+jump flow, thus we can see the first generated branch sample in step 1.
+At the end of cs_etm__sample() it swaps packets so 'etm->prev_packet'=
+packet2 and 'etm->packet'=packet1, so far it's okay for branch sample.
+
+If packet2 is the last one packet in trace buffer, even there have no
+any new coming packet, cs_etm__run_decoder() invokes cs_etm__flush() to
+flush branch stack entries as expected, but it also generates branch
+samples by taking 'etm->packet' as a new coming packet, thus the branch
+jump flow is as [packet2::end_addr - 4 =>  packet1::start_addr]; this
+is the second sample which is generated in step 2.  So actually the
+second sample is a stale sample and we should not generate it.
+
+This patch introduces a new function cs_etm__end_block(), at the end of
+trace block this function is invoked to only flush branch stack entries
+and thus can avoid to generate branch sample for stale packet.
+
+Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
 Cc: Mike Leach <mike.leach@linaro.org>
 Cc: Robert Walker <robert.walker@arm.com>
 Signed-off-by: Leo Yan <leo.yan@linaro.org>
 ---
- tools/perf/util/cs-etm.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/perf/util/cs-etm.c | 35 ++++++++++++++++++++++++++++++++++-
+ 1 file changed, 34 insertions(+), 1 deletion(-)
 
 diff --git a/tools/perf/util/cs-etm.c b/tools/perf/util/cs-etm.c
-index 23159c33..789707b 100644
+index 789707b..ffc4fe5 100644
 --- a/tools/perf/util/cs-etm.c
 +++ b/tools/perf/util/cs-etm.c
-@@ -1042,7 +1042,7 @@ static int cs_etm__flush(struct cs_etm_queue *etmq)
+@@ -1055,6 +1055,39 @@ static int cs_etm__flush(struct cs_etm_queue *etmq)
+ 	return err;
+ }
+ 
++static int cs_etm__end_block(struct cs_etm_queue *etmq)
++{
++	int err;
++
++	/*
++	 * It has no new packet coming and 'etmq->packet' contains the stale
++	 * packet which was set at the previous time with packets swapping;
++	 * so skip to generate branch sample to avoid stale packet.
++	 *
++	 * For this case only flush branch stack and generate a last branch
++	 * event for the branches left in the circular buffer at the end of
++	 * the trace.
++	 */
++	if (etmq->etm->synth_opts.last_branch &&
++	    etmq->prev_packet->sample_type == CS_ETM_RANGE) {
++		/*
++		 * Use the address of the end of the last reported execution
++		 * range.
++		 */
++		u64 addr = cs_etm__last_executed_instr(etmq->prev_packet);
++
++		err = cs_etm__synth_instruction_sample(
++			etmq, addr,
++			etmq->period_instructions);
++		if (err)
++			return err;
++
++		etmq->period_instructions = 0;
++	}
++
++	return 0;
++}
++
+ static int cs_etm__run_decoder(struct cs_etm_queue *etmq)
+ {
+ 	struct cs_etm_auxtrace *etm = etmq->etm;
+@@ -1137,7 +1170,7 @@ static int cs_etm__run_decoder(struct cs_etm_queue *etmq)
+ 
+ 		if (err == 0)
+ 			/* Flush any remaining branch stack entries */
+-			err = cs_etm__flush(etmq);
++			err = cs_etm__end_block(etmq);
  	}
  
- swap_packet:
--	if (etmq->etm->synth_opts.last_branch) {
-+	if (etm->sample_branches || etm->synth_opts.last_branch) {
- 		/*
- 		 * Swap PACKET with PREV_PACKET: PACKET becomes PREV_PACKET for
- 		 * the next incoming packet.
+ 	return err;
 -- 
 2.7.4
 
