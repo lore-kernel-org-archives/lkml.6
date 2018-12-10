@@ -1,75 +1,77 @@
-Return-Path: <SRS0=cWqk=OS=vger.kernel.org=linux-kernel-owner@kernel.org>
+Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7366FC65BAF
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 23:45:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA627C07E85
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 00:27:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3881620672
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Dec 2018 23:45:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544399119;
-	bh=m7C1hPTuyNhZcJpdxK1HdTb/h2FJW04otTceHX1YfNg=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
-	b=rrqC00acQoJzh/vh7rUbWVhxNcGWEnC+pN7m38qnTtIp3WrlQT83eYDZYIPHbdsfO
-	 qinf2JWATST3cheJCTj7wT6yVRkLMaxfHAw+B1lrGcxgHQApi7skWT/ZkKi6d6Uanw
-	 UzerKKAbmVsnnBd0OZumNattgJySwIkT0HEqNoO0=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3881620672
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 804522064D
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 00:27:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 804522064D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726775AbeLIXpS (ORCPT
+        id S1726352AbeLJA1P (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 18:45:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39368 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726304AbeLIXpC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Dec 2018 18:45:02 -0500
-Subject: Re: [GIT PULL] EFI fixes
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544399102;
-        bh=m7C1hPTuyNhZcJpdxK1HdTb/h2FJW04otTceHX1YfNg=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=uN2fMiyKXlZZhXSt43ExRgke+ToYHegG/pR3NA026v07tDP8HNlDrrdpKpXY0kbiq
-         v0Ul5P5TTH/PyKSDV+v1JVyH1a8NkyGohkKeEzmqIKpcWGiEOckX3SJ3LlSiv56gMo
-         uvf6koHVMMJr51XUQWGVnotXA2F7yV6RjrIxIo8c=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20181209215921.GA64177@gmail.com>
-References: <20181209215921.GA64177@gmail.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20181209215921.GA64177@gmail.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git
- efi-urgent-for-linus
-X-PR-Tracked-Commit-Id: 79c2206d369b87b19ac29cb47601059b6bf5c291
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 4b04e73a78c5c89dc1a75fb35dea6c947c1d2ac7
-Message-Id: <20181209234501.29575.99220.pr-tracker-bot@pdx-korg-gitolite-1.ci.codeaurora.org>
-Date:   Sun, 09 Dec 2018 23:45:01 +0000
-To:     Ingo Molnar <mingo@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        linux-efi@vger.kernel.org
+        Sun, 9 Dec 2018 19:27:15 -0500
+Received: from shards.monkeyblade.net ([23.128.96.9]:53328 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726268AbeLJA1O (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Dec 2018 19:27:14 -0500
+Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::bf5])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id DC78F144C6663;
+        Sun,  9 Dec 2018 16:27:13 -0800 (PST)
+Date:   Sun, 09 Dec 2018 16:27:11 -0800 (PST)
+Message-Id: <20181209.162711.1872275132406981860.davem@davemloft.net>
+To:     andrew@lunn.ch
+Cc:     sfr@canb.auug.org.au, netdev@vger.kernel.org,
+        linux-next@vger.kernel.org, linux-kernel@vger.kernel.org,
+        f.fainelli@gmail.com
+Subject: Re: linux-next: Signed-off-by missing for commits in the net-next
+ tree
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20181209211139.GB21186@lunn.ch>
+References: <20181210080045.0e67ad79@canb.auug.org.au>
+        <20181209211139.GB21186@lunn.ch>
+X-Mailer: Mew version 6.8 on Emacs 26.1
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Sun, 09 Dec 2018 16:27:14 -0800 (PST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Sun, 9 Dec 2018 22:59:21 +0100:
+From: Andrew Lunn <andrew@lunn.ch>
+Date: Sun, 9 Dec 2018 22:11:39 +0100
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git efi-urgent-for-linus
+> On Mon, Dec 10, 2018 at 08:00:45AM +1100, Stephen Rothwell wrote:
+>> Hi all,
+>> 
+>> Commits
+>> 
+>>   dc9d38cec71c ("net: phy: mdio-gpio: Add phy_ignore_ta_mask to platform data")
+>>   04fa26bab06d ("net: phy: mdio-gpio: Add platform_data support for phy_mask")
+>> 
+>> are missing a Signed-off-by from their author.
+> 
+> Hi David.
+> 
+> Any idea what happened here? The version in my git repo has SOB.
+> 
+> https://patchwork.ozlabs.org/patch/1009811/ also has my SOB.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/4b04e73a78c5c89dc1a75fb35dea6c947c1d2ac7
+I wonder if "git am" ate it. :-/
 
-Thank you!
+Yeah it's the '--' I think.
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+
