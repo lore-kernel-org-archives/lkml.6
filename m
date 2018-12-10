@@ -3,414 +3,113 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35106C04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 21:42:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C246DC04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 21:42:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E0BCE2082F
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 21:42:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E0BCE2082F
+	by mail.kernel.org (Postfix) with ESMTP id 889772082F
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 21:42:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 889772082F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730173AbeLJVmP (ORCPT
+        id S1729763AbeLJVmn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 16:42:15 -0500
-Received: from mout.kundenserver.de ([212.227.17.13]:45159 "EHLO
+        Mon, 10 Dec 2018 16:42:43 -0500
+Received: from mout.kundenserver.de ([217.72.192.73]:54123 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726562AbeLJVmM (ORCPT
+        with ESMTP id S1726562AbeLJVmn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 16:42:12 -0500
+        Mon, 10 Dec 2018 16:42:43 -0500
 Received: from wuerfel.lan ([109.192.41.194]) by mrelayeu.kundenserver.de
- (mreue106 [212.227.15.145]) with ESMTPA (Nemesis) id
- 1MnqbU-1hFzaf1XY2-00pPgx; Mon, 10 Dec 2018 22:40:39 +0100
+ (mreue108 [212.227.15.145]) with ESMTPA (Nemesis) id
+ 1MkHIV-1hCQmt2ewD-00kfvI; Mon, 10 Dec 2018 22:42:30 +0100
 From:   Arnd Bergmann <arnd@arndb.de>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Bastien Nocera <hadess@hadess.net>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Larry Finger <Larry.Finger@lwfinger.net>,
-        linux-kernel@vger.kernel.org, devel@driverdev.osuosl.org,
-        Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH 2/3] staging: rtl8723bs: change pwrctrl lock to a mutex
-Date:   Mon, 10 Dec 2018 22:40:31 +0100
-Message-Id: <20181210214032.1441224-2-arnd@arndb.de>
+To:     William Hubbs <w.d.hubbs@gmail.com>,
+        Chris Brannon <chris@the-brannons.com>,
+        Kirk Reiser <kirk@reisers.ca>,
+        Samuel Thibault <samuel.thibault@ens-lyon.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>, speakup@linux-speakup.org,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] staging: speakup: change semaphore to completion
+Date:   Mon, 10 Dec 2018 22:41:50 +0100
+Message-Id: <20181210214225.1497552-1-arnd@arndb.de>
 X-Mailer: git-send-email 2.20.0
-In-Reply-To: <20181210214032.1441224-1-arnd@arndb.de>
-References: <20181210214032.1441224-1-arnd@arndb.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:kU1YSpPI7NDX/q8rJpemaYBk8HvXSD+Yp4i/IoNfBKOnI/YSig0
- sX87HBIXAZ6sUVuoUpdNWswnQRxfouD8R/rR+vebZso1GB6Vngzi1qTw8D05IYhqzMCKEXj
- hoQ8d9vxGRt35fL1nZW4/dZdGS5MxiNcQ1SE3lQVjCGMTPNHeV2OLXK1nE/iegXTKH0Vp/h
- TcjYFiskyawWAuKryVRsw==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:pIjIbR75Yyg=:0csEZgsHJx2zbI9ivV4MxV
- qjKn6rxG2i8nz+NvtHQg2+4M46HAM5RsA57hMosk5Qv17qFsgD4qI5my/yDlmQy+Ooj31F8bs
- 48R6olKfZ28JFivsXJjFL+cGuKdkTc8RvbiBNbcTV1QBTMQPLemtjepOUZHh/EjOCB60rZLuL
- YKn5oA6MJ7ThEVFrANiktXQj8XpK73JEqhVNLA4lZfJ0Kw3O/Efxn5bFzankJfXiHR8ErZSzo
- bsdhwT346Q10pShIV1fu5qWNFvSzVgtVdcRCXBtyzVgoDBMlHzZNGvmTBME9h5+cYBuv4FS8x
- Yov6/ZF2ExUphvcrPWXwQkiNhK0Dh3xqbzRzURUU4218wbbQXczMlAbR2LnyStr5+umnYoYcD
- n3kleGpdYiFgdxym8o5F3TSXeMK5002vZF9Q2/878DeUqzaffMOt+eO+ZsLYdZ+/ieo1Z8xYW
- YXGXm9OjbvEsDCBUpxB8c8uVMZjAtShyaKxSaqdEKvovb6dU5F844lM02q2+D3CbLiDbwHsnm
- kRIqThOEEjLdgxU/EKWQsqSKsGJX8bwKj1UbwhfG/2aOVdI75SyVGOjsrBQ5QStJkb7REQXtW
- Pk/62YTFjEO3Hp4wsp2iJpa37nVyzZ5JsWdUWaYcNrAgASP9Z/zZnfZH/VJW84Mh8k+P5utWb
- fP1yWjGfG+2ic0aeXL5y5cJSePV9dYAQlNK0XOORnrDOlxatPnPkIQg5SBI6XFxWC04ga1htx
- 0sJuoHRnPLcOKyOE3SFS6c2TTIdDjx1GmbgOWg==
+X-Provags-ID: V03:K1:p0k/nIw7k0tY2MW1KRKA/Yj5hMBdiphv3HwUyonquexwTrPZArU
+ JPzq84mGW44V/N+yU4EQjxaUqSTNC73WSH7VoB/unYHDi73ibNJltsGtxB0ElC0va3xGwZD
+ CsjdlSEvmYpHg1ZhcnTecAjLw2WbtJUNZlncArMqTd5r8tBx/qVAH5bBDKHrQBlbAbPmAym
+ UACJ5EBSGmaYydCbv5rwg==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:ii1a6NuNR0A=:n//Fa2Zy49zgNcCT7KbsoB
+ uU+WjdB3O+kQMoBQXXfH8tYH16rqzSzvT59jpbfBROdsTdGvIV7ttx9KrF6Q+vhvfyxEEzt4A
+ vnOrTgrHWkhGLQGHzO7vAvM+5RX9IRjBmTbNw8kyj66zpYJwDqfOhJpv0p4Iqqvp1pvdyJoDO
+ f+4YeUXUFpWzZLVzaWKnjYFbml7ddw4+0NsF+CAocQLM6kqqxXlRgAFLOpfDodibSXSPv45Zb
+ WVH0jvXSkJb+tyFZc3KjA/g5Qke7vaRI5vBDBsUtFJPM0gi9qvoF5/oMIM3mEA7GAB4U4iJBO
+ NRVrdUO5W/VlXD9dKj9xhRa4w5l+aBe2yGeGUgIm0aWB1zZ66hldzSHGTWa0BQOd8ytG3PB9S
+ G+0VcCLwKAxXtwg5aN7BX8u58Dg0po2t9nj0OWpcdhtMN8LpXsWD7NXwn8jrTwplGFjkTpVgm
+ nz9bvXTpMsDa9WvryXS5QwXKfHwQs0pIsDyQ+SFdQ/JSx0hl4rkHFyVM9oT5H0iMWMNrHTINa
+ wPi+JQuRX7/HjDERFnoiOeQX10l8flEjopnH0mpr2EuZmTIvUP0Cz0LPEsW5B5QZkpf9XXmbj
+ 4Gcre3q8TPSz5pFmWndoxKzj8Zzo9pdJjpYCb/XBKFmYVopd0mCw9jXGTTwXmP63b4p9LvbLX
+ ugImL2XX6eg+9+jq3GNHGOCYRtuP5AtoUur1oggH60DeySrHTDOMpFIS4muZd0GsWNKW9JYH3
+ eH+krsds4y/D4B+pg11rzBnpQaS8Sv3pPVG5XA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This semaphore is used like a mutex, so it should use the regular
-mutex API, as we do in the other copies of this driver.
+In this driver, both function the same way, but we want to eventually
+kill off semaphores, so a completion is the better choice here.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- drivers/staging/rtl8723bs/core/rtw_cmd.c      |  4 +-
- drivers/staging/rtl8723bs/core/rtw_pwrctrl.c  | 73 +++++++++----------
- .../staging/rtl8723bs/include/rtw_pwrctrl.h   |  3 +-
- 3 files changed, 40 insertions(+), 40 deletions(-)
+ drivers/staging/speakup/spk_ttyio.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/staging/rtl8723bs/core/rtw_cmd.c b/drivers/staging/rtl8723bs/core/rtw_cmd.c
-index 3d206c33eafa..984db6f2217c 100644
---- a/drivers/staging/rtl8723bs/core/rtw_cmd.c
-+++ b/drivers/staging/rtl8723bs/core/rtw_cmd.c
-@@ -1621,7 +1621,7 @@ static void rtw_lps_change_dtim_hdl(struct adapter *padapter, u8 dtim)
- 	if (rtw_btcoex_IsBtControlLps(padapter) == true)
- 		return;
+diff --git a/drivers/staging/speakup/spk_ttyio.c b/drivers/staging/speakup/spk_ttyio.c
+index 979e3ae249c1..c92bbd05516e 100644
+--- a/drivers/staging/speakup/spk_ttyio.c
++++ b/drivers/staging/speakup/spk_ttyio.c
+@@ -10,7 +10,7 @@
  
--	down(&pwrpriv->lock);
-+	mutex_lock(&pwrpriv->lock);
+ struct spk_ldisc_data {
+ 	char buf;
+-	struct semaphore sem;
++	struct completion completion;
+ 	bool buf_free;
+ };
  
- 	if (pwrpriv->dtim != dtim) {
- 		DBG_871X("change DTIM from %d to %d, bFwCurrentInPSMode =%d, ps_mode =%d\n", pwrpriv->dtim, dtim,
-@@ -1638,7 +1638,7 @@ static void rtw_lps_change_dtim_hdl(struct adapter *padapter, u8 dtim)
- 		rtw_hal_set_hwreg(padapter, HW_VAR_H2C_FW_PWRMODE, (u8 *)(&ps_mode));
- 	}
+@@ -55,7 +55,7 @@ static int spk_ttyio_ldisc_open(struct tty_struct *tty)
+ 	if (!ldisc_data)
+ 		return -ENOMEM;
  
--	up(&pwrpriv->lock);
-+	mutex_unlock(&pwrpriv->lock);
+-	sema_init(&ldisc_data->sem, 0);
++	init_completion(&ldisc_data->completion);
+ 	ldisc_data->buf_free = true;
+ 	speakup_tty->disc_data = ldisc_data;
+ 
+@@ -95,7 +95,7 @@ static int spk_ttyio_receive_buf2(struct tty_struct *tty,
+ 
+ 	ldisc_data->buf = cp[0];
+ 	ldisc_data->buf_free = false;
+-	up(&ldisc_data->sem);
++	complete(&ldisc_data->completion);
+ 
+ 	return 1;
  }
- 
- static void rtw_dm_ra_mask_hdl(struct adapter *padapter, struct sta_info *psta)
-diff --git a/drivers/staging/rtl8723bs/core/rtw_pwrctrl.c b/drivers/staging/rtl8723bs/core/rtw_pwrctrl.c
-index a0d8fbeecf9b..b7dd5fec9b31 100644
---- a/drivers/staging/rtl8723bs/core/rtw_pwrctrl.c
-+++ b/drivers/staging/rtl8723bs/core/rtw_pwrctrl.c
-@@ -45,9 +45,9 @@ void ips_enter(struct adapter *padapter)
- 
- 	rtw_btcoex_IpsNotify(padapter, pwrpriv->ips_mode_req);
- 
--	down(&pwrpriv->lock);
-+	mutex_lock(&pwrpriv->lock);
- 	_ips_enter(padapter);
--	up(&pwrpriv->lock);
-+	mutex_unlock(&pwrpriv->lock);
- }
- 
- int _ips_leave(struct adapter *padapter)
-@@ -85,9 +85,9 @@ int ips_leave(struct adapter *padapter)
- 	if (!is_primary_adapter(padapter))
- 		return _SUCCESS;
- 
--	down(&pwrpriv->lock);
-+	mutex_lock(&pwrpriv->lock);
- 	ret = _ips_leave(padapter);
--	up(&pwrpriv->lock);
-+	mutex_unlock(&pwrpriv->lock);
- 
- 	if (_SUCCESS == ret)
- 		rtw_btcoex_IpsNotify(padapter, IPS_NONE);
-@@ -158,9 +158,9 @@ void rtw_ps_processor(struct adapter *padapter)
- 	struct debug_priv *pdbgpriv = &psdpriv->drv_dbg;
- 	u32 ps_deny = 0;
- 
--	down(&adapter_to_pwrctl(padapter)->lock);
-+	mutex_lock(&adapter_to_pwrctl(padapter)->lock);
- 	ps_deny = rtw_ps_deny_get(padapter);
--	up(&adapter_to_pwrctl(padapter)->lock);
-+	mutex_unlock(&adapter_to_pwrctl(padapter)->lock);
- 	if (ps_deny != 0) {
- 		DBG_871X(FUNC_ADPT_FMT ": ps_deny = 0x%08X, skip power save!\n",
- 			FUNC_ADPT_ARG(padapter), ps_deny);
-@@ -413,7 +413,7 @@ void rtw_set_ps_mode(struct adapter *padapter, u8 ps_mode, u8 smart_ps, u8 bcn_a
- 			return;
- 
- 
--	down(&pwrpriv->lock);
-+	mutex_lock(&pwrpriv->lock);
- 
- 	/* if (pwrpriv->pwr_mode == PS_MODE_ACTIVE) */
- 	if (ps_mode == PS_MODE_ACTIVE) {
-@@ -494,7 +494,7 @@ void rtw_set_ps_mode(struct adapter *padapter, u8 ps_mode, u8 smart_ps, u8 bcn_a
- 		}
- 	}
- 
--	up(&pwrpriv->lock);
-+	mutex_unlock(&pwrpriv->lock);
- }
- 
- /*
-@@ -628,11 +628,11 @@ void LeaveAllPowerSaveModeDirect(struct adapter *Adapter)
- 			return;
- 		}
- 
--		down(&pwrpriv->lock);
-+		mutex_lock(&pwrpriv->lock);
- 
- 		rtw_set_rpwm(Adapter, PS_STATE_S4);
- 
--		up(&pwrpriv->lock);
-+		mutex_unlock(&pwrpriv->lock);
- 
- 		rtw_lps_ctrl_wk_cmd(pri_padapter, LPS_CTRL_LEAVE, 0);
- 	} else{
-@@ -696,7 +696,7 @@ void LPS_Leave_check(
- 	cond_resched();
- 
- 	while (1) {
--		down(&pwrpriv->lock);
-+		mutex_lock(&pwrpriv->lock);
- 
- 		if ((padapter->bSurpriseRemoved == true)
- 			|| (padapter->hw_init_completed == false)
-@@ -704,7 +704,7 @@ void LPS_Leave_check(
- 			)
- 			bReady = true;
- 
--		up(&pwrpriv->lock);
-+		mutex_unlock(&pwrpriv->lock);
- 
- 		if (true == bReady)
- 			break;
-@@ -732,11 +732,10 @@ void cpwm_int_hdl(
- 
- 	pwrpriv = adapter_to_pwrctl(padapter);
- 
--	down(&pwrpriv->lock);
-+	mutex_lock(&pwrpriv->lock);
- 
- 	if (pwrpriv->rpwm < PS_STATE_S2) {
- 		DBG_871X("%s: Redundant CPWM Int. RPWM = 0x%02X CPWM = 0x%02x\n", __func__, pwrpriv->rpwm, pwrpriv->cpwm);
--		up(&pwrpriv->lock);
- 		goto exit;
- 	}
- 
-@@ -751,9 +750,9 @@ void cpwm_int_hdl(
- 			complete(&padapter->xmitpriv.xmit_comp);
- 	}
- 
--	up(&pwrpriv->lock);
--
- exit:
-+	mutex_unlock(&pwrpriv->lock);
-+
- 	RT_TRACE(_module_rtl871x_pwrctrl_c_, _drv_notice_,
- 			 ("cpwm_int_hdl: cpwm = 0x%02x\n", pwrpriv->cpwm));
- }
-@@ -783,12 +782,12 @@ static void rpwmtimeout_workitem_callback(struct work_struct *work)
- 	padapter = dvobj->if1;
- /* 	DBG_871X("+%s: rpwm = 0x%02X cpwm = 0x%02X\n", __func__, pwrpriv->rpwm, pwrpriv->cpwm); */
- 
--	down(&pwrpriv->lock);
-+	mutex_lock(&pwrpriv->lock);
- 	if ((pwrpriv->rpwm == pwrpriv->cpwm) || (pwrpriv->cpwm >= PS_STATE_S2)) {
- 		DBG_871X("%s: rpwm = 0x%02X cpwm = 0x%02X CPWM done!\n", __func__, pwrpriv->rpwm, pwrpriv->cpwm);
- 		goto exit;
- 	}
--	up(&pwrpriv->lock);
-+	mutex_unlock(&pwrpriv->lock);
- 
- 	if (rtw_read8(padapter, 0x100) != 0xEA) {
- 		struct reportpwrstate_parm report;
-@@ -800,7 +799,7 @@ static void rpwmtimeout_workitem_callback(struct work_struct *work)
- 		return;
- 	}
- 
--	down(&pwrpriv->lock);
-+	mutex_lock(&pwrpriv->lock);
- 
- 	if ((pwrpriv->rpwm == pwrpriv->cpwm) || (pwrpriv->cpwm >= PS_STATE_S2)) {
- 		DBG_871X("%s: cpwm =%d, nothing to do!\n", __func__, pwrpriv->cpwm);
-@@ -811,7 +810,7 @@ static void rpwmtimeout_workitem_callback(struct work_struct *work)
- 	pwrpriv->brpwmtimeout = false;
- 
- exit:
--	up(&pwrpriv->lock);
-+	mutex_unlock(&pwrpriv->lock);
- }
- 
- /*
-@@ -867,7 +866,7 @@ s32 rtw_register_task_alive(struct adapter *padapter, u32 task)
- 	pwrctrl = adapter_to_pwrctl(padapter);
- 	pslv = PS_STATE_S2;
- 
--	down(&pwrctrl->lock);
-+	mutex_lock(&pwrctrl->lock);
- 
- 	register_task_alive(pwrctrl, task);
- 
-@@ -884,7 +883,7 @@ s32 rtw_register_task_alive(struct adapter *padapter, u32 task)
- 		}
- 	}
- 
--	up(&pwrctrl->lock);
-+	mutex_unlock(&pwrctrl->lock);
- 
- 	if (_FAIL == res)
- 		if (pwrctrl->cpwm >= PS_STATE_S2)
-@@ -920,7 +919,7 @@ void rtw_unregister_task_alive(struct adapter *padapter, u32 task)
- 			pslv = PS_STATE_S2;
- 	}
- 
--	down(&pwrctrl->lock);
-+	mutex_lock(&pwrctrl->lock);
- 
- 	unregister_task_alive(pwrctrl, task);
- 
-@@ -936,7 +935,7 @@ void rtw_unregister_task_alive(struct adapter *padapter, u32 task)
- 
- 	}
- 
--	up(&pwrctrl->lock);
-+	mutex_unlock(&pwrctrl->lock);
- }
- 
- /*
-@@ -962,7 +961,7 @@ s32 rtw_register_tx_alive(struct adapter *padapter)
- 	pwrctrl = adapter_to_pwrctl(padapter);
- 	pslv = PS_STATE_S2;
- 
--	down(&pwrctrl->lock);
-+	mutex_lock(&pwrctrl->lock);
- 
- 	register_task_alive(pwrctrl, XMIT_ALIVE);
- 
-@@ -979,7 +978,7 @@ s32 rtw_register_tx_alive(struct adapter *padapter)
- 		}
- 	}
- 
--	up(&pwrctrl->lock);
-+	mutex_unlock(&pwrctrl->lock);
- 
- 	if (_FAIL == res)
- 		if (pwrctrl->cpwm >= PS_STATE_S2)
-@@ -1011,7 +1010,7 @@ s32 rtw_register_cmd_alive(struct adapter *padapter)
- 	pwrctrl = adapter_to_pwrctl(padapter);
- 	pslv = PS_STATE_S2;
- 
--	down(&pwrctrl->lock);
-+	mutex_lock(&pwrctrl->lock);
- 
- 	register_task_alive(pwrctrl, CMD_ALIVE);
- 
-@@ -1028,7 +1027,7 @@ s32 rtw_register_cmd_alive(struct adapter *padapter)
- 		}
- 	}
- 
--	up(&pwrctrl->lock);
-+	mutex_unlock(&pwrctrl->lock);
- 
- 	if (_FAIL == res)
- 		if (pwrctrl->cpwm >= PS_STATE_S2)
-@@ -1061,7 +1060,7 @@ void rtw_unregister_tx_alive(struct adapter *padapter)
- 			pslv = PS_STATE_S2;
- 	}
- 
--	down(&pwrctrl->lock);
-+	mutex_lock(&pwrctrl->lock);
- 
- 	unregister_task_alive(pwrctrl, XMIT_ALIVE);
- 
-@@ -1076,7 +1075,7 @@ void rtw_unregister_tx_alive(struct adapter *padapter)
- 				rtw_set_rpwm(padapter, pslv);
- 	}
- 
--	up(&pwrctrl->lock);
-+	mutex_unlock(&pwrctrl->lock);
- }
- 
- /*
-@@ -1103,7 +1102,7 @@ void rtw_unregister_cmd_alive(struct adapter *padapter)
- 			pslv = PS_STATE_S2;
- 	}
- 
--	down(&pwrctrl->lock);
-+	mutex_lock(&pwrctrl->lock);
- 
- 	unregister_task_alive(pwrctrl, CMD_ALIVE);
- 
-@@ -1119,14 +1118,14 @@ void rtw_unregister_cmd_alive(struct adapter *padapter)
- 		}
- 	}
- 
--	up(&pwrctrl->lock);
-+	mutex_unlock(&pwrctrl->lock);
- }
- 
- void rtw_init_pwrctrl_priv(struct adapter *padapter)
- {
- 	struct pwrctrl_priv *pwrctrlpriv = adapter_to_pwrctl(padapter);
- 
--	sema_init(&pwrctrlpriv->lock, 1);
-+	mutex_init(&pwrctrlpriv->lock);
- 	sema_init(&pwrctrlpriv->check_32k_lock, 1);
- 	pwrctrlpriv->rf_pwrstate = rf_on;
- 	pwrctrlpriv->ips_enter_cnts = 0;
-@@ -1357,13 +1356,13 @@ void rtw_ps_deny(struct adapter *padapter, enum PS_DENY_REASON reason)
- 
- 	pwrpriv = adapter_to_pwrctl(padapter);
- 
--	down(&pwrpriv->lock);
-+	mutex_lock(&pwrpriv->lock);
- 	if (pwrpriv->ps_deny & BIT(reason)) {
- 		DBG_871X(FUNC_ADPT_FMT ": [WARNING] Reason %d had been set before!!\n",
- 			FUNC_ADPT_ARG(padapter), reason);
- 	}
- 	pwrpriv->ps_deny |= BIT(reason);
--	up(&pwrpriv->lock);
-+	mutex_unlock(&pwrpriv->lock);
- 
- /* 	DBG_871X("-" FUNC_ADPT_FMT ": Now PS deny for 0x%08X\n", */
- /* 		FUNC_ADPT_ARG(padapter), pwrpriv->ps_deny); */
-@@ -1383,13 +1382,13 @@ void rtw_ps_deny_cancel(struct adapter *padapter, enum PS_DENY_REASON reason)
- 
- 	pwrpriv = adapter_to_pwrctl(padapter);
- 
--	down(&pwrpriv->lock);
-+	mutex_lock(&pwrpriv->lock);
- 	if ((pwrpriv->ps_deny & BIT(reason)) == 0) {
- 		DBG_871X(FUNC_ADPT_FMT ": [ERROR] Reason %d had been canceled before!!\n",
- 			FUNC_ADPT_ARG(padapter), reason);
- 	}
- 	pwrpriv->ps_deny &= ~BIT(reason);
--	up(&pwrpriv->lock);
-+	mutex_unlock(&pwrpriv->lock);
- 
- /* 	DBG_871X("-" FUNC_ADPT_FMT ": Now PS deny for 0x%08X\n", */
- /* 		FUNC_ADPT_ARG(padapter), pwrpriv->ps_deny); */
-diff --git a/drivers/staging/rtl8723bs/include/rtw_pwrctrl.h b/drivers/staging/rtl8723bs/include/rtw_pwrctrl.h
-index 72df6cffe62e..abf48ae01900 100644
---- a/drivers/staging/rtl8723bs/include/rtw_pwrctrl.h
-+++ b/drivers/staging/rtl8723bs/include/rtw_pwrctrl.h
-@@ -7,6 +7,7 @@
- #ifndef __RTW_PWRCTRL_H_
- #define __RTW_PWRCTRL_H_
- 
-+#include <linux/mutex.h>
- 
- #define FW_PWR0	0
- #define FW_PWR1		1
-@@ -207,7 +208,7 @@ typedef struct pno_scan_info
- 
- struct pwrctrl_priv
- {
--	_pwrlock	lock;
-+	struct mutex lock;
- 	_pwrlock	check_32k_lock;
- 	volatile u8 rpwm; /*  requested power state for fw */
- 	volatile u8 cpwm; /*  fw current power state. updated when 1. read from HCPWM 2. driver lowers power level */
+@@ -286,7 +286,8 @@ static unsigned char ttyio_in(int timeout)
+ 	struct spk_ldisc_data *ldisc_data = speakup_tty->disc_data;
+ 	char rv;
+ 
+-	if (down_timeout(&ldisc_data->sem, usecs_to_jiffies(timeout)) == -ETIME) {
++	if (wait_for_completion_timeout(&ldisc_data->completion,
++					usecs_to_jiffies(timeout)) == 0) {
+ 		if (timeout)
+ 			pr_warn("spk_ttyio: timeout (%d)  while waiting for input\n",
+ 				timeout);
 -- 
 2.20.0
 
