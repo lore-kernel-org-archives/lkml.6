@@ -2,113 +2,201 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DE2CC5CFFE
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 17:39:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A69C2C67839
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 17:42:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E2A72082F
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 17:39:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E2A72082F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 6EB9C2082F
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 17:42:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="GsuWvruC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6EB9C2082F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728912AbeLJRjR (ORCPT
+        id S1728914AbeLJRmj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 12:39:17 -0500
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:36151 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727057AbeLJRjQ (ORCPT
+        Mon, 10 Dec 2018 12:42:39 -0500
+Received: from mail-yw1-f66.google.com ([209.85.161.66]:45848 "EHLO
+        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727399AbeLJRmi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 12:39:16 -0500
-Received: by mail-qk1-f195.google.com with SMTP id o125so6976291qkf.3
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Dec 2018 09:39:16 -0800 (PST)
+        Mon, 10 Dec 2018 12:42:38 -0500
+Received: by mail-yw1-f66.google.com with SMTP id d190so4285595ywd.12
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Dec 2018 09:42:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=JSpYpdzswhfp4WwsgF2r5oqMU8q48/dm77jqDgp8BRc=;
+        b=GsuWvruCNLtYJ63Li2ml3g72qanjyrf+v9yarbMbJdQ45bmYYyYPqAQ28mhtLetr3W
+         xikMWA36BrnM3xLXtKCpoDrv9Cz80yOoVfTMModyWaR2H+ywCvRIw3CPBZdCRapMXg4Z
+         wEIePecMX5ZEG+LaCxuBmPSeVqjtrX0Bj2hqs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp
-         :organization:message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=0Tzw+bPbD552yre4ofe6O8Z7D/IxI1vXcVBweiDlGPY=;
-        b=pu/JISFdnqaTNSzheZikCyFx7jN5Ocpzt3P8yI1dJe2QWVpIsss3qGho+zEMNHxy/J
-         7O/23ZJUiWEhORf0nan0KR4r6QFLwR8oYiFaa9X+xRP/7gi4imSb7c4Nn5kOmIgB2hTy
-         ScY9iOngu0Gyx+UIx7ejRbvCVcWLR9HV0tH8/PEF0Yrraesl3jSzNLpGD3wsI/pgGwzN
-         bAWQzsC3PFIjIaR/kCABocDb1c1CrqtxXvQhO1cRRwsVqWyZmjo87VcPNlq+/LnXJ4o6
-         p0hbKhWcXrMndwdHFN3wVQMEiAi5VzmoB80+VQI6R2jntWJMjsB3iVQK2sTgBiPKVkCZ
-         //bg==
-X-Gm-Message-State: AA+aEWaovADRcVKTlQNjveI5UGK+0DZS6p88Kir6cDFuBigO4v107UxQ
-        BVR97AGCSLTeRlt81XE+wj7yLXKTpwtXNQ==
-X-Google-Smtp-Source: AFSGD/XSNd2iZ7i9gvHnF5qO8nxwbSi3Qt+i5lewbU62qJMvNeD75kQvOhygVrT/EWC3r0QcQAwRfQ==
-X-Received: by 2002:a37:7e86:: with SMTP id z128mr11326487qkc.20.1544463555817;
-        Mon, 10 Dec 2018 09:39:15 -0800 (PST)
-Received: from [10.150.73.190] (122.sub-174-228-2.myvzw.com. [174.228.2.122])
-        by smtp.gmail.com with ESMTPSA id u50sm7886787qta.23.2018.12.10.09.39.14
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=JSpYpdzswhfp4WwsgF2r5oqMU8q48/dm77jqDgp8BRc=;
+        b=m3o9BiTQCiQhGbKtuxX3mMR4ZeHGZaetdlg1MqyBXjCnQp7mtimhosDzQ0srP1kzGC
+         OtzkdPfhNj7fNTqiWHlBDVOF6Mtfr/OXUDHS0CV2+c2y+wOepkOCliUCCcbC9HYRUSh+
+         kVfpfl2P5/c145wHIFHr6poknnCh34zJ2utzJMSjYNQxqHnsZx4Og5UfaI29riWr0EO8
+         NYzhwOhAI2fkodmBrrzU295iSCxkkJpodxBiQyAVZQnGxFnImgtDVu/XZECCiJmTxh9a
+         2hl5qv2iBzjYFuMawc89InYm+IjUllOhwGnmgcd7MlgXrpnXtARUt8+igDh9opdB75og
+         WbgQ==
+X-Gm-Message-State: AA+aEWazkSYtfYHToo4rPhNhjuvToJ5yVmVIyPr89iIXz10ue0ERvN3G
+        7z55/HD2jGYDiuNInNNY7Wo+1pq+TFg=
+X-Google-Smtp-Source: AFSGD/WqFskpSuCt0QJelgX2bU2tSPd5Nw3Co28nNRRu1i//BezVGLO+R69NYTPg7aBoNa+gLTKlvw==
+X-Received: by 2002:a81:5404:: with SMTP id i4mr13397401ywb.364.1544463757232;
+        Mon, 10 Dec 2018 09:42:37 -0800 (PST)
+Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com. [209.85.219.179])
+        by smtp.gmail.com with ESMTPSA id v78sm5046012ywa.103.2018.12.10.09.42.36
+        for <linux-kernel@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 10 Dec 2018 09:39:14 -0800 (PST)
-Subject: Re: Official Linux system wrapper library?
-To:     Jonathan Corbet <corbet@lwn.net>,
-        Randy Dunlap <rdunlap@infradead.org>
-Cc:     Greg KH <gregkh@linuxfoundation.org>,
-        Daniel Colascione <dancol@google.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Joel Fernandes <joelaf@google.com>,
-        Linux API <linux-api@vger.kernel.org>
-References: <CAKOZuesB4R=dCz4merWQN0FSCGrXmOgUUr4ienSbStBJguNv8g@mail.gmail.com>
- <20181110192027.GA29892@kroah.com>
- <cd4717c4-4950-7513-726d-2e1873aeceb5@redhat.com>
- <20181112023630.GA20359@kroah.com> <20181112090828.2573987d@lwn.net>
- <b3d765e1-69a0-d4f0-b04a-40c19df8111c@infradead.org>
- <20181210092706.1aa54432@lwn.net>
-From:   Carlos O'Donell <carlos@redhat.com>
-Openpgp: preference=signencrypt
-Organization: Red Hat
-Message-ID: <f3db1a75-e6f2-06a8-5264-a6807b7b4538@redhat.com>
-Date:   Mon, 10 Dec 2018 12:39:12 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Mon, 10 Dec 2018 09:42:36 -0800 (PST)
+Received: by mail-yb1-f179.google.com with SMTP id b4so2563692ybg.9
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Dec 2018 09:42:36 -0800 (PST)
+X-Received: by 2002:a5b:2cd:: with SMTP id h13mr12999317ybp.403.1544463755432;
+ Mon, 10 Dec 2018 09:42:35 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20181210092706.1aa54432@lwn.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20181105145619.6395-1-tiny.windzz@gmail.com>
+In-Reply-To: <20181105145619.6395-1-tiny.windzz@gmail.com>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Mon, 10 Dec 2018 09:42:23 -0800
+X-Gmail-Original-Message-ID: <CAGXu5jLHyCWcoWq29MOSRFs298cA+EO=cfo2Hr7N=Hi7GxbLbQ@mail.gmail.com>
+Message-ID: <CAGXu5jLHyCWcoWq29MOSRFs298cA+EO=cfo2Hr7N=Hi7GxbLbQ@mail.gmail.com>
+Subject: Re: [PATCH] net/bluetooth: Change to use DEFINE_SHOW_ATTRIBUTE macro
+To:     Yangtao Li <tiny.windzz@gmail.com>
+Cc:     Marcel Holtmann <marcel@holtmann.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Denys Vlasenko <dvlasenk@redhat.com>,
+        linux-bluetooth@vger.kernel.org,
+        Network Development <netdev@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/10/18 11:27 AM, Jonathan Corbet wrote:
-> On Sat, 8 Dec 2018 20:38:56 -0800
-> Randy Dunlap <rdunlap@infradead.org> wrote:
-> 
->> On 11/12/18 8:08 AM, Jonathan Corbet wrote:
->>> On Sun, 11 Nov 2018 18:36:30 -0800
->>> Greg KH <gregkh@linuxfoundation.org> wrote:
->>>   
->>>> We should have a checklist.  That's a great idea.  Now to find someone
->>>> to write it... :)  
->>>
->>> Do we think the LPC session might have the right people to create such a
->>> thing?  If so, I can try to put together a coherent presentation of the
->>> result.  
->>
->> Hi,
->> Did anything ever happen with this syscall checklist suggestion?
-> 
-> No, we really didn't have the right people around to do that,
-> unfortunately.  
+On Mon, Nov 5, 2018 at 6:56 AM Yangtao Li <tiny.windzz@gmail.com> wrote:
+>
+> Use DEFINE_SHOW_ATTRIBUTE macro to simplify the code.
+>
+> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
 
-We already have Documentation/process/adding-syscalls.rst.
+Reviewed-by: Kees Cook <keescook@chromium.org>
 
-The documentation there is quite thorough.
+-Kees
 
-It lists things that people commonly forget e.g. email linux-api@vger.kernel.org.
+> ---
+>  net/bluetooth/l2cap_core.c  | 12 +-----------
+>  net/bluetooth/rfcomm/core.c | 12 +-----------
+>  net/bluetooth/rfcomm/sock.c | 12 +-----------
+>  net/bluetooth/sco.c         | 12 +-----------
+>  4 files changed, 4 insertions(+), 44 deletions(-)
+>
+> diff --git a/net/bluetooth/l2cap_core.c b/net/bluetooth/l2cap_core.c
+> index d17a4736e47c..38d92ced5fb5 100644
+> --- a/net/bluetooth/l2cap_core.c
+> +++ b/net/bluetooth/l2cap_core.c
+> @@ -7615,17 +7615,7 @@ static int l2cap_debugfs_show(struct seq_file *f, void *p)
+>         return 0;
+>  }
+>
+> -static int l2cap_debugfs_open(struct inode *inode, struct file *file)
+> -{
+> -       return single_open(file, l2cap_debugfs_show, inode->i_private);
+> -}
+> -
+> -static const struct file_operations l2cap_debugfs_fops = {
+> -       .open           = l2cap_debugfs_open,
+> -       .read           = seq_read,
+> -       .llseek         = seq_lseek,
+> -       .release        = single_release,
+> -};
+> +DEFINE_SHOW_ATTRIBUTE(l2cap_debugfs);
+>
+>  static struct dentry *l2cap_debugfs;
+>
+> diff --git a/net/bluetooth/rfcomm/core.c b/net/bluetooth/rfcomm/core.c
+> index b98225d65e87..1a635df80643 100644
+> --- a/net/bluetooth/rfcomm/core.c
+> +++ b/net/bluetooth/rfcomm/core.c
+> @@ -2166,17 +2166,7 @@ static int rfcomm_dlc_debugfs_show(struct seq_file *f, void *x)
+>         return 0;
+>  }
+>
+> -static int rfcomm_dlc_debugfs_open(struct inode *inode, struct file *file)
+> -{
+> -       return single_open(file, rfcomm_dlc_debugfs_show, inode->i_private);
+> -}
+> -
+> -static const struct file_operations rfcomm_dlc_debugfs_fops = {
+> -       .open           = rfcomm_dlc_debugfs_open,
+> -       .read           = seq_read,
+> -       .llseek         = seq_lseek,
+> -       .release        = single_release,
+> -};
+> +DEFINE_SHOW_ATTRIBUTE(rfcomm_dlc_debugfs);
+>
+>  static struct dentry *rfcomm_dlc_debugfs;
+>
+> diff --git a/net/bluetooth/rfcomm/sock.c b/net/bluetooth/rfcomm/sock.c
+> index d606e9212291..aa0db1d1bd9b 100644
+> --- a/net/bluetooth/rfcomm/sock.c
+> +++ b/net/bluetooth/rfcomm/sock.c
+> @@ -1020,17 +1020,7 @@ static int rfcomm_sock_debugfs_show(struct seq_file *f, void *p)
+>         return 0;
+>  }
+>
+> -static int rfcomm_sock_debugfs_open(struct inode *inode, struct file *file)
+> -{
+> -       return single_open(file, rfcomm_sock_debugfs_show, inode->i_private);
+> -}
+> -
+> -static const struct file_operations rfcomm_sock_debugfs_fops = {
+> -       .open           = rfcomm_sock_debugfs_open,
+> -       .read           = seq_read,
+> -       .llseek         = seq_lseek,
+> -       .release        = single_release,
+> -};
+> +DEFINE_SHOW_ATTRIBUTE(rfcomm_sock_debugfs);
+>
+>  static struct dentry *rfcomm_sock_debugfs;
+>
+> diff --git a/net/bluetooth/sco.c b/net/bluetooth/sco.c
+> index 8f0f9279eac9..529b38996d8b 100644
+> --- a/net/bluetooth/sco.c
+> +++ b/net/bluetooth/sco.c
+> @@ -1173,17 +1173,7 @@ static int sco_debugfs_show(struct seq_file *f, void *p)
+>         return 0;
+>  }
+>
+> -static int sco_debugfs_open(struct inode *inode, struct file *file)
+> -{
+> -       return single_open(file, sco_debugfs_show, inode->i_private);
+> -}
+> -
+> -static const struct file_operations sco_debugfs_fops = {
+> -       .open           = sco_debugfs_open,
+> -       .read           = seq_read,
+> -       .llseek         = seq_lseek,
+> -       .release        = single_release,
+> -};
+> +DEFINE_SHOW_ATTRIBUTE(sco_debugfs);
+>
+>  static struct dentry *sco_debugfs;
+>
+> --
+> 2.17.0
+>
 
-Would it be acceptable to attempt to collate per-libc information
-into the adding-syscalls.rst under a new section called:
-
-"Integration with libc"
 
 -- 
-Cheers,
-Carlos.
+Kees Cook
