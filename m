@@ -2,115 +2,229 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14B55C04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 19:06:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65238C04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 19:07:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D1E932082F
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 19:06:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D1E932082F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
+	by mail.kernel.org (Postfix) with ESMTP id 199F32146D
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 19:07:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="pPZBi0zY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 199F32146D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727835AbeLJTGz (ORCPT
+        id S1729096AbeLJTH5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 14:06:55 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:46080 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726324AbeLJTGz (ORCPT
+        Mon, 10 Dec 2018 14:07:57 -0500
+Received: from aserp2130.oracle.com ([141.146.126.79]:56710 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727949AbeLJTH5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 14:06:55 -0500
-Received: from office.codethink.co.uk ([148.252.241.226] helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1gWQtI-0000OK-Su; Mon, 10 Dec 2018 19:06:52 +0000
-Received: from ben by deadeye with local (Exim 4.91)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1gWQtI-0005pJ-2N; Mon, 10 Dec 2018 19:06:52 +0000
-Message-ID: <d17c45bcaf44c02fa716c2dc862119278e0262ca.camel@decadent.org.uk>
-Subject: Re: [PATCH 3.16 000/328] 3.16.62-rc1 review
-From:   Ben Hutchings <ben@decadent.org.uk>
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        torvalds@linux-foundation.org, akpm@linux-foundation.org
-Date:   Mon, 10 Dec 2018 19:06:41 +0000
-In-Reply-To: <20181210165414.GA25566@roeck-us.net>
-References: <lsq.1544392232.713909046@decadent.org.uk>
-         <20181210165414.GA25566@roeck-us.net>
-Content-Type: multipart/signed; micalg="pgp-sha512";
-        protocol="application/pgp-signature"; boundary="=-Y9wkW1Lv/DjJAH21shRQ"
-User-Agent: Evolution 3.30.2-1 
-Mime-Version: 1.0
-X-SA-Exim-Connect-IP: 148.252.241.226
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+        Mon, 10 Dec 2018 14:07:57 -0500
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wBAIwvCa107260;
+        Mon, 10 Dec 2018 19:05:48 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id; s=corp-2018-07-02;
+ bh=2KK4DyxCFqvuBhLTZRLxVOGLLo0wGS6RJFjzILw/5dQ=;
+ b=pPZBi0zYRWkV+Fjf2Z5X8MTmHBghQGIUP1vzodQC4tcW5LErkr3ArJ0n7ztwizukcCzq
+ glrkCOn7dTXUYmRBrrJzhFb01n6JYLh/20IhBKT4X8pnHkABUmej1hhUIy8BvpKiaoQb
+ 6h6tE8jYOBn+E/4jb3ImJVBs4rSU+bABpt7b/YcFmzurMJ7t9xi0L8rxNVIK7WMtLm1T
+ uTyHXYves6HKXbDuCBQoOm3hPQwbERREgX16oR0jxLF7MmTgHnmFk3WSKv3BZkdENQw5
+ +rrFmm+uQh8GA7JcE23dncsl73x7T6mSfD+aO8LeNDOAvy/ny54rymt5uE2GbTLA1mNv og== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by aserp2130.oracle.com with ESMTP id 2p83fe00vf-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 10 Dec 2018 19:05:48 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wBAJ5fsp025518
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 10 Dec 2018 19:05:42 GMT
+Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wBAJ5fBj022703;
+        Mon, 10 Dec 2018 19:05:41 GMT
+Received: from marawils-linux.us.oracle.com (/10.141.196.37)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 10 Dec 2018 11:05:41 -0800
+From:   Maran Wilson <maran.wilson@oracle.com>
+To:     x86@kernel.org, xen-devel@lists.xenproject.org,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        pbonzini@redhat.com, jgross@suse.com
+Cc:     boris.ostrovsky@oracle.com, bp@suse.de,
+        dave.hansen@linux.intel.com, davem@davemloft.net,
+        gregkh@linuxfoundation.org, hpa@zytor.com, jpoimboe@redhat.com,
+        kirill.shutemov@linux.intel.com, luto@kernel.org,
+        mchehab@kernel.org, mingo@redhat.com, rdunlap@infradead.org,
+        tglx@linutronix.de, thomas.lendacky@amd.com, hch@infradead.org,
+        roger.pau@citrix.com, rkrcmar@redhat.com, maran.wilson@oracle.com
+Subject: [PATCH v9 0/7] KVM: x86: Allow Qemu/KVM to use PVH entry point
+Date:   Mon, 10 Dec 2018 11:05:34 -0800
+Message-Id: <1544468734-32763-1-git-send-email-maran.wilson@oracle.com>
+X-Mailer: git-send-email 1.8.3.1
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9103 signatures=668679
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1812100169
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+For certain applications it is desirable to rapidly boot a KVM virtual
+machine. In cases where legacy hardware and software support within the
+guest is not needed, Qemu should be able to boot directly into the
+uncompressed Linux kernel binary without the need to run firmware.
 
---=-Y9wkW1Lv/DjJAH21shRQ
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+There already exists an ABI to allow this for Xen PVH guests and the ABI
+is supported by Linux and FreeBSD:
 
-On Mon, 2018-12-10 at 08:54 -0800, Guenter Roeck wrote:
-> On Sun, Dec 09, 2018 at 09:50:32PM +0000, Ben Hutchings wrote:
-> > This is the start of the stable review cycle for the 3.16.62 release.
-> > There are 328 patches in this series, which will be posted as responses
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> >=20
-> > Responses should be made by Fri Dec 14 18:00:00 UTC 2018.
-> > Anything received after that time might be too late.
-> >=20
->=20
-> Build results:
-> 	total: 136 pass: 135 fail: 1
+   https://xenbits.xen.org/docs/unstable/misc/pvh.html
 
-This is the i386 perf build which never succeeded yet, right?
+This patch series would enable Qemu to use that same entry point for
+booting KVM guests.
 
-> Failed builds:=20
-> 	i386:tools/perf=20
-> Qemu test results:
-> 	total: 219 pass: 219 fail: 0
->=20
-> Details are available at https://kerneltests.org/builders/.
+Changes from v8:
 
-Thanks for checking.
+ * Removed unused KVM_GUEST_PVH symbol.
 
-Ben.
+Changes from v7:
 
---=20
-Ben Hutchings
-Beware of bugs in the above code;
-I have only proved it correct, not tried it. - Donald Knuth
+ (No functional changes from v7 other than rebasing to latest upstream) 
+ * Added Review-by tags as provided by Juergen Gross (1,2,3,6,7)
+ * Rebasing to upstream 4.18 caused a minor conflict in patch 4 that had
+   to be hand merged due to this patch:
+      1fe8388 xen: share start flags between PV and PVH
+   I just had to make sure we were accounting for the xen_start_flags
+   in the new code path.
+ * Rebasing to upstream 4.20-rc4 caused a few minor conflicts in patches
+   2,3,5,7 that needed to be resolved by hand. The conflicts were due to
+   upstream non-functional code cleanup changes in arch/x86/xen/Makefile
+   and arch/x86/platform/pvh/enlighten.c due to these patches:
+      28c11b0 x86/xen: Move pv irq related functions under CONFIG_XEN_PV
+              umbrella
+      357d291 x86/xen: Fix boot loader version reported for PVH guests
+      3cfa210 xen: don't include <xen/xen.h> from <asm/io.h> and
+              <asm/dma-mapping.h>
+ * Qemu and qboot RFC patches have been posted to show one example of how
+   this functionality can be used. Some preliminary numbers are available
+   in those cover letters showing the KVM guest boot time improvement.
+      Qemu:
+      http://lists.nongnu.org/archive/html/qemu-devel/2018-12/msg00957.html
+      qboot:
+      http://lists.nongnu.org/archive/html/qemu-devel/2018-12/msg00953.html
+
+Changes from v6:
+
+ * Addressed issues caught by the kbuild test robot:
+    - Restored an #include line that had been dropped by mistake (patch 4)
+    - Removed a pair of #include lines that were no longer needed in a
+      common code file and causing problems for certain 32-bit configs
+      (patchs 4 and 7)
+
+Changes from v5:
+
+ * The interface changes to the x86/HVM start info layout have
+   now been accepted into the Xen tree.
+ * Rebase and merge upstream PVH file changes.
+ * (Patch 6) Synced up to the final version of the header file that was
+             acked and pulled into the Xen tree.
+ * (Patch 1) Fixed typo and removed redundant "def_bool n" line.
+
+Changes from v4:
+
+Note: I've withheld Juergen's earlier "Reviewed-by" tags from patches
+1 and 7 since there were minor changes (mostly just addition of
+CONFIG_KVM_GUEST_PVH as requested) that came afterwards.
+
+ * Changed subject prefix from RFC to PATCH
+ * Added CONFIG_KVM_GUEST_PVH as suggested
+ * Relocated the PVH common files to
+   arch/x86/platform/pvh/{enlighten.c,head.S}
+ * Realized I also needed to move the objtool override for those files
+ * Updated a few code comments per reviewer feedback
+ * Sent out a patch of the hvm_start_info struct changes against the Xen
+   tree since that is the canonical copy of the header. Discussions on
+   that thread have resulted in some (non-functional) updates to
+   start_info.h (patch 6/7) and those changes are reflected here as well
+   in order to keep the files in sync. The header file has since been
+   ack'ed for the Xen tree by Jan Beulich.
+
+Changes from v3:
+
+ * Implemented Juergen's suggestion for refactoring and moving the PVH
+   code so that CONFIG_XEN is no longer required for booting KVM guests
+   via the PVH entry point.
+   Functionally, nothing has changed from V3 really, but the patches
+   look completely different now because of all the code movement and
+   refactoring. Some of these patches can be combined, but I've left
+   them very small in some cases to make the refactoring and code
+   movement easier to review.
+   My approach for refactoring has been to create a PVH entry layer that
+   still has understanding and knowledge about Xen vs non-Xen guest types
+   so that it can make run time decisions to handle either case, as
+   opposed to going all the way and re-writing it to be a completely
+   hypervisor agnostic and architecturally pure layer that is separate
+   from guest type details. The latter seemed a bit overkill in this
+   situation. And I've handled the complexity of having to support
+   Qemu/KVM boot of kernels compiled with or without CONFIG_XEN via a
+   pair of xen specific __weak routines that can be overridden in kernels
+   that support Xen guests. Importantly, the __weak routines are for
+   xen specific code only (not generic "guest type" specific code) so
+   there is no clashing between xen version of the strong routine and,
+   say, a KVM version of the same routine. But I'm sure there are many
+   ways to skin this cat, so I'm open to alternate suggestions if there
+   is a compelling reason for not using __weak in this situation.
+
+Changes from v2:
+
+ * All structures (including memory map table entries) are padded and
+   aligned to an 8 byte boundary.
+
+ * Removed the "packed" attributes and made changes to comments as
+   suggested by Jan.
+
+Changes from v1:
+
+ * Adopted Paolo's suggestion for defining a v2 PVH ABI that includes the
+   e820 map instead of using the second module entry to pass the table.
+
+ * Cleaned things up a bit to reduce the number of xen vs non-xen special
+   cases.
 
 
+Maran Wilson (7):
+  xen/pvh: Split CONFIG_XEN_PVH into CONFIG_PVH and CONFIG_XEN_PVH
+  xen/pvh: Move PVH entry code out of Xen specific tree
+  xen/pvh: Create a new file for Xen specific PVH code
+  xen/pvh: Move Xen specific PVH VM initialization out of common file
+  xen/pvh: Move Xen code for getting mem map via hcall out of common
+    file
+  xen/pvh: Add memory map pointer to hvm_start_info struct
+  KVM: x86: Allow Qemu/KVM to use PVH entry point
 
---=-Y9wkW1Lv/DjJAH21shRQ
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
+ MAINTAINERS                                     |   1 +
+ arch/x86/Kbuild                                 |   2 +
+ arch/x86/Kconfig                                |   6 ++
+ arch/x86/kernel/head_64.S                       |   2 +-
+ arch/x86/platform/pvh/Makefile                  |   5 +
+ arch/x86/platform/pvh/enlighten.c               | 137 ++++++++++++++++++++++++
+ arch/x86/{xen/xen-pvh.S => platform/pvh/head.S} |   0
+ arch/x86/xen/Kconfig                            |   3 +-
+ arch/x86/xen/Makefile                           |   2 -
+ arch/x86/xen/enlighten_pvh.c                    |  94 ++++------------
+ include/xen/interface/hvm/start_info.h          |  63 ++++++++++-
+ include/xen/xen.h                               |   3 +
+ 12 files changed, 237 insertions(+), 81 deletions(-)
+ create mode 100644 arch/x86/platform/pvh/Makefile
+ create mode 100644 arch/x86/platform/pvh/enlighten.c
+ rename arch/x86/{xen/xen-pvh.S => platform/pvh/head.S} (100%)
 
------BEGIN PGP SIGNATURE-----
+-- 
+2.16.1
 
-iQIzBAABCgAdFiEErCspvTSmr92z9o8157/I7JWGEQkFAlwOuUIACgkQ57/I7JWG
-EQkOkBAAxY+M5gGvl5rVOXxIbeYPkNsSIGE7zrnXVMD/aKyQsAGvRQ+FO5oA/5g5
-WUxKX+BuopbHj5XytWLQheQhM/M0PEEZT4o+a1UhWacXMEobZ33o9KZAqhlAt6NF
-jhjfPMMu3Oa/+NKfajzX0gPthmrr2Y4VRUK9ooWUzDQlRdYEpV05eSRxBW16HSbZ
-iDzUyA6BKP+KrDKUAas97nZJWLAGUdBu/OzIPvXa1N5pOL4q6LRzrmbgKJEHp/6h
-BdDpERqggEmveAwesasA+7gGjPYnoEMMvSW/Xojs/ybf7hzyeCtMsgIRb6msmLM0
-0c11vweyp61RtEoRwmDqqkCBD7bPjenvLO7sAqxWFbhvyv/90uq86hDKpruEpHKv
-5doOEiJd39zmSGvnB3aSTmNzvTZYvfr7IEDM76yasCVm4O7jCVPbwaMjEM9k1UX6
-mLXbwHNMfn74r4LPdNeGtQAY6qb9g3Ui0bJCODbDw806u+Kl/PXRoyFQZIqK9dsi
-J4q8FC0uuJoM6CTIebGgDK7hBMskDMKiSImBGstmk/gtoKCnuQ4hPVp7R1Wvt/qm
-kNSH0ROC5QuPWcvF5gAC8Dbzt5XkbpETdbNnur7LwdOwn/LO1+2WhiHiBNjc363P
-UxUPYnLgxotepWqTMjpL+JykAQaSzHKhkbUj/D0jitbmzJX78A4=
-=xWtx
------END PGP SIGNATURE-----
-
---=-Y9wkW1Lv/DjJAH21shRQ--
