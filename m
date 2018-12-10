@@ -2,128 +2,154 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54207C04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 22:41:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 244BBC04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 22:41:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E4D2A2081F
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 22:41:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D627B2081F
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 22:41:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="BwfldLDE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E4D2A2081F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="YF3Q5GwI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D627B2081F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=fb.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729606AbeLJWlU (ORCPT
+        id S1729714AbeLJWlf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 17:41:20 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:37808 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727903AbeLJWlU (ORCPT
+        Mon, 10 Dec 2018 17:41:35 -0500
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:36698 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727903AbeLJWlf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 17:41:20 -0500
-Received: by mail-ot1-f68.google.com with SMTP id 40so12125893oth.4
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Dec 2018 14:41:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=6QO5FkdFrvOmB29K8zC59kisxltF23kVUGp0IVrwNB0=;
-        b=BwfldLDE2UnFywDQwyonvVDxA10ngkDnsWkVQnGN2hnTCUO7YD9sjqXaBtKXehSpCa
-         tltmJekrRFBU9VYtFV2Jgsy6AmkFJp6ctEmUCpKLBa2f0mRybHt63wY43r6PzpZfSWRg
-         G/oGX8HII6cb3he9f++CnC91ceFUhB+KI+YHSE1NGgJggxxI0rbqLqyDdMtUo9i/cjVM
-         4hX5VtcWUoUw39fqbwaaZ4MamD6XOoDQq0KNwFFiqlj6lVUi9pxLCOsrZArJlwm3Kv3Z
-         pJJr64F9gvawc0u6dD7LDQktUL9vVKq1oSkJHJWDBTzevV1x2tpFVdOWFAgt3K60mrqw
-         cBZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=6QO5FkdFrvOmB29K8zC59kisxltF23kVUGp0IVrwNB0=;
-        b=Fzz7OmEmHRrun4mhr8GV32zu1aR8UJbYDgJB3Y0SWuKYJcP0MPquiE/cO2iNN3Vnus
-         fQmU2dyQ9UfpBQlAAQuCyl82OtRg4dy/y3Hu1v7GIrFKWIUWYmZQulSLoaWTwaqvpW3y
-         oL4MpTzhA8fS9qImUP4JL4Rh5OuMqdF1StvWSWrQfq8LDiaR3kpOpnsTieRfybaKW3i4
-         J6hGCLa7ooYyGRFci0nBu4pyOTyoZvNO7s/GF9ELzAn/LnoMHct5uCkba7SIPT0G9WO1
-         h99dBgeI2wtRqs6EQYVkwbEsfJQy2Uk0Yr3T5g22r+F+6BE/oQcBVIR4t6Vbkh3MwTfV
-         QXRw==
-X-Gm-Message-State: AA+aEWY9hFuQoSYFr6oep4cMMe7qaF03eOktiIL094IlxkDkkynb2/UN
-        mtzvWStB5aAYmoebJ02ALcKITzaqW0r+5SVw8HC9aw==
-X-Google-Smtp-Source: AFSGD/W5AnPXmp/nrkUrkTx/8dkzrOlXifgKbRFWCTvLd1AR2wdsD43evxhZidHm1ru8Zi5anSJEE5sCRhCwvp4rty8=
-X-Received: by 2002:a9d:5cc2:: with SMTP id r2mr9990013oti.367.1544481679140;
- Mon, 10 Dec 2018 14:41:19 -0800 (PST)
+        Mon, 10 Dec 2018 17:41:35 -0500
+Received: from pps.filterd (m0044010.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id wBAMZ7S2005189
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Dec 2018 14:41:34 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type; s=facebook;
+ bh=dLElzSdHMTcAhV0wX0WRVUowNerbbcAl+7NItdgtBSM=;
+ b=YF3Q5GwIJ0cZJe+sTvbOZ/E/OgibWAvxX6FgtUqsVVZQ6U3yDDXpyP9o7qFeBH8KNnY7
+ trNP80lLNoAL7mxxjQCuaJ1KsigAlWDfGULu0wuE18EawSz61bsODF4b/9UE/W3g9GnO
+ Ul6IpKGi8jzw9GSx4eZ/G5NDsESKCBfg2sI= 
+Received: from mail.thefacebook.com ([199.201.64.23])
+        by mx0a-00082601.pphosted.com with ESMTP id 2pa0ntg37h-3
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Dec 2018 14:41:34 -0800
+Received: from mx-out.facebook.com (2620:10d:c081:10::13) by
+ mail.thefacebook.com (2620:10d:c081:35::127) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA) id 15.1.1531.3;
+ Mon, 10 Dec 2018 14:41:33 -0800
+Received: by devvm4117.prn2.facebook.com (Postfix, from userid 167582)
+        id 532D54BEC11A; Mon, 10 Dec 2018 14:41:27 -0800 (PST)
+Smtp-Origin-Hostprefix: devvm
+From:   Vijay Khemka <vijaykhemka@fb.com>
+Smtp-Origin-Hostname: devvm4117.prn2.facebook.com
+To:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Joel Stanley <joel@jms.id.au>,
+        Andrew Jeffery <andrew@aj.id.au>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-aspeed@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>
+CC:     <vijaykhemka@fb.com>,
+        "openbmc @ lists . ozlabs . org" <openbmc@lists.ozlabs.org>
+Smtp-Origin-Cluster: prn2c23
+Subject: [PATCH] ARM: dts: aspeed: Add sensors devices for Facebook
+Date:   Mon, 10 Dec 2018 14:41:16 -0800
+Message-ID: <20181210224116.3396252-1-vijaykhemka@fb.com>
+X-Mailer: git-send-email 2.17.1
+X-FB-Internal: Safe
 MIME-Version: 1.0
-References: <154403054034.11544.3978949383914046587.stgit@ahduyck-desk1.jf.intel.com>
- <154403072403.11544.10419282512791659652.stgit@ahduyck-desk1.jf.intel.com>
- <CAPcyv4jH_Op-xHTd2FwQizPaWFx_2FE-pVsOLLmZAEK8EVPrYg@mail.gmail.com>
- <15b6817fd945a1622afe673b46b028bacefad72b.camel@linux.intel.com>
- <CAPcyv4i1RTrKYX0YpyCRE=pqt3pHBRiCGQq1wYUriLjKKTVA7A@mail.gmail.com>
- <bd92d0a3ff60097bf4424ff4c556a5369e66da6d.camel@linux.intel.com>
- <CAPcyv4jDG_2VwFr4oDGCURFrA=B0Bs2HGN9exLE47vDj0P3_8A@mail.gmail.com>
- <CAPcyv4hrML3SKnFP9UANC-hdTrpnOx4nWX=b-yhLsLuujL5oAA@mail.gmail.com> <00810f93b199c524378b5c963d49bd798c5d9843.camel@linux.intel.com>
-In-Reply-To: <00810f93b199c524378b5c963d49bd798c5d9843.camel@linux.intel.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Mon, 10 Dec 2018 14:41:07 -0800
-Message-ID: <CAPcyv4h0hk3VCCDSMNR72S9BWVMP514byGf3TWwp1Z7bQ2wi5g@mail.gmail.com>
-Subject: Re: [driver-core PATCH v8 2/9] driver core: Establish order of
- operations for device_add and device_del via bitflag
-To:     alexander.h.duyck@linux.intel.com
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        "Luis R. Rodriguez" <mcgrof@kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Tejun Heo <tj@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux-pm mailing list <linux-pm@vger.kernel.org>,
-        jiangshanlai@gmail.com, "Rafael J. Wysocki" <rafael@kernel.org>,
-        "Brown, Len" <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
-        zwisler@kernel.org, Dave Jiang <dave.jiang@intel.com>,
-        bvanassche@acm.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-10_08:,,
+ signatures=0
+X-Proofpoint-Spam-Reason: safe
+X-FB-Internal: Safe
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 10, 2018 at 2:24 PM Alexander Duyck
-<alexander.h.duyck@linux.intel.com> wrote:
->
-> On Mon, 2018-12-10 at 13:23 -0800, Dan Williams wrote:
-> > On Mon, Dec 10, 2018 at 1:15 PM Dan Williams <dan.j.williams@intel.com> wrote:
-> > >
-> > > On Mon, Dec 10, 2018 at 12:58 PM Alexander Duyck
-> > > <alexander.h.duyck@linux.intel.com> wrote:
-> >
-> > [..]
-> > > > Also the context for the two functions seems to be a bit different. In
-> > > > the case of __device_attach_driver the device_lock is already held. In
-> > > > __driver_attach the lock on the device isn't taken until after a match
-> > > > has been found.
-> > >
-> > > Yes, I was only pattern matching when looking at the context of where
-> > > dev->dead is checked in __driver_attach() and wondering why it was
-> > > checked outside of __device_attach_driver()
-> >
-> > ...and now I realize the bigger point of your concern, we need to
-> > check dev->dead after acquiring the device_lock otherwise the race is
-> > back. We can defer that consolidation, but the larger concern of
-> > making it internal to __device_attach_driver() still stands.
->
-> I'm still not a fan of moving it into __device_attach_driver. I would
-> much rather pull out the dev->driver check and instead place that in
-> __device_attach_async_helper.
->
-> The __device_attach function as I said took the device_lock and had
-> already checked dev->driver. So in the non-async path it shouldn't be
-> possible for dev->driver to ever be set anyway.
+Added ADC and other sensor devices in Facebook Tiogapass device tree.
 
-True.
+Signed-off-by: Vijay Khemka <vijaykhemka@fb.com>
+---
+ .../dts/aspeed-bmc-facebook-tiogapass.dts     | 33 +++++++++++++++++--
+ 1 file changed, 31 insertions(+), 2 deletions(-)
 
-> In addition
-> __device_attach_driver is called once for each driver on a given bus,
-> so dropping the test should reduce driver load time since it is one
-> less test that has to be performed per driver.
+diff --git a/arch/arm/boot/dts/aspeed-bmc-facebook-tiogapass.dts b/arch/arm/boot/dts/aspeed-bmc-facebook-tiogapass.dts
+index f8e7b71af7e6..d9d7f208788a 100644
+--- a/arch/arm/boot/dts/aspeed-bmc-facebook-tiogapass.dts
++++ b/arch/arm/boot/dts/aspeed-bmc-facebook-tiogapass.dts
+@@ -21,6 +21,25 @@
+ 	memory@80000000 {
+ 		reg = <0x80000000 0x20000000>;
+ 	};
++	iio-hwmon {
++		compatible = "iio-hwmon";
++		oemname0 = "MB_P3V3";
++		oemname1 = "MB_P5V";
++		oemname2 = "MB_P12V";
++		oemname3 = "MB_P1V05";
++		oemname4 = "MB_PVNN_PCH_STBY";
++		oemname5 = "MB_P3V3_STBY";
++		oemname6 = "MB_P5V_STBY";
++		io-channels = <&adc 0>, <&adc 1>, <&adc 2>, <&adc 3>,
++					<&adc 4>, <&adc 5>, <&adc 6>;
++	};
++
++	iio-hwmon-battery {
++		oemname0 = "MB_P3V_BAT";
++		compatible = "iio-hwmon";
++		io-channels = <&adc 7>;
++	};
++
+ };
+ 
+ &fmc {
+@@ -64,6 +83,10 @@
+ 	use-ncsi;
+ };
+ 
++&adc {
++	status = "okay";
++};
++
+ &i2c0 {
+ 	status = "okay";
+ 	//Airmax Conn B, CPU0 PIROM, CPU1 PIROM
+@@ -122,6 +145,10 @@
+ 
+ &i2c8 {
+ 	status = "okay";
++	tmp421@1f {
++		compatible = "ti,tmp421";
++		reg = <0x1f>;
++	};
+ 	//Mezz Sensor SMBus
+ };
+ 
+@@ -134,13 +161,15 @@
+ 	status = "okay";
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&pinctrl_pwm0_default &pinctrl_pwm1_default>;
++	oemname0 = "System_Fan_Connector_1";
++	oemname1 = "System_Fan_Connector_3";
+ 	fan@0 {
+ 		reg = <0x00>;
+ 		aspeed,fan-tach-ch = /bits/ 8 <0x00>;
+ 	};
+ 
+ 	fan@1 {
+-		reg = <0x00>;
+-		aspeed,fan-tach-ch = /bits/ 8 <0x01>;
++		reg = <0x01>;
++		aspeed,fan-tach-ch = /bits/ 8 <0x02>;
+ 	};
+ };
+-- 
+2.17.1
 
-Ok. You can add my Reviewed-by.
