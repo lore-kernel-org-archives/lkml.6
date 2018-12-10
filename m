@@ -7,54 +7,55 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94943C04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 17:37:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4F7FC5CFFE
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 17:37:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5EA0520851
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 17:37:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7C6712082F
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 17:37:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="LYP/0cOg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5EA0520851
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="aiFQWEIj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C6712082F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728598AbeLJRhX (ORCPT
+        id S1728645AbeLJRhc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 12:37:23 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:40440 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728555AbeLJRhW (ORCPT
+        Mon, 10 Dec 2018 12:37:32 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:43700 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727635AbeLJRha (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 12:37:22 -0500
-Received: by mail-pf1-f196.google.com with SMTP id i12so5720223pfo.7
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Dec 2018 09:37:21 -0800 (PST)
+        Mon, 10 Dec 2018 12:37:30 -0500
+Received: by mail-pg1-f194.google.com with SMTP id v28so5276394pgk.10
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Dec 2018 09:37:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=ve2dYgrCZ5Tle2sJqAhn9PzIY+bLP3s6YNDsILvoiZc=;
-        b=LYP/0cOgbYK2nuTZi3UJj5tE6bBV7bMqxBkzrvcG0JwpitEI8gurlVUXxCV1K5T6bH
-         9dD74F1YiYMpWDoDRmL+v/ag9WgP8e7xEHLcPRbM4+QXtIBuQ2J6icUpPP0cCAfKBeFs
-         SKG0VT9WQOO1cb2rhdQM9z5x0jznpwl6Xi4y0=
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=M9evsXiKq/f6/hJaxP4dc1I6TBIm55n2snnXtgBmQsE=;
+        b=aiFQWEIjTJqW5cD7Yifwd/cRFPWpT7tiaTUq+kaUIWFy0HwQMtOX3GpS2TY6QncD83
+         xIyp2/KlBjj2fU2RhRTaDkGyXH8y2luxRHobxBqsFr94fCG5abwR0KIzT6MfTa6dCUF4
+         8qL0zmJxxdTS2bElMGhenfLNz1A8igc9c2RFc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=ve2dYgrCZ5Tle2sJqAhn9PzIY+bLP3s6YNDsILvoiZc=;
-        b=SE7pos0yNXb3HsHrVKmW0suCsqdFI8WpohGlvvypBOWjJsUelCYfEytZJQmld8TD6y
-         4C090rZpcdh/CBPd0AmjI/hxSkYiexgsV6+kgVrIYTYG3JzVMSkZDEjO5qAwC9VV3d29
-         B5kKE7+fbXtJY5qm7x1UyVNVg4dLr/csYdHa6BpOi3mhThTyynvShn77IyTjPCD5Lxo8
-         edxFbpHa77piiQAB2jsOXeOvLibXSq9ZEdMKW+xXuzHCBTKw5vK8TUHMt7PFkXpllXgF
-         qbMeLVAr/KA2qGseeqFnilV2J9MATmRbTWPduVjecFS3TQdwSEK0G+3ExQFrLJbYO0G/
-         ecPw==
-X-Gm-Message-State: AA+aEWbjP/UQKj/rr3qZQLeb4Lh7MdZzbgSOGLhlhg4/Q6b+/Z9fAanE
-        SJdQt0YyRvd1IkzebZcRPwfI
-X-Google-Smtp-Source: AFSGD/VCP41P+oi6oAUSJ5qVFaUMQwfwdDsobUxtD/1d6CKrDLV5is0oFowj+9K3e3Pk7BMNQt6akw==
-X-Received: by 2002:a63:181c:: with SMTP id y28mr11299843pgl.75.1544463441170;
-        Mon, 10 Dec 2018 09:37:21 -0800 (PST)
+         :references:mime-version:content-transfer-encoding;
+        bh=M9evsXiKq/f6/hJaxP4dc1I6TBIm55n2snnXtgBmQsE=;
+        b=ADdlklNXWOnYyMUMGd85PcIJjWl6a9LZ0MAlrw0tLPTZLnoeqeZcg+xiUi1k5VijQV
+         FcPJRaJHE0QvLevLseWve+g8bEm6+IOM4OI39cZXwXldy3/asOmocloQKyKKU6NifTUg
+         Jq+PHAiIQDiFqD3jlx9YK+GPybr7+xjIe9fmVDxb0BaShCvBY3OLtZZV9BNpim1kEg17
+         Fu0mGSyI55NR2D1aXW1506rNWyKOdXquP9vK8H9mvhxu5E0Ou/PDAkoIo9llyl0nGvwg
+         X1mTm09UrE1rW/VYYUYWDvqj21SoVgbtcZ40J1hvp91Qqt8QV8O8c0DRJsO+c+LrcdvN
+         8ywg==
+X-Gm-Message-State: AA+aEWYmrzDe4+bDJRjVee8YbkC5TddetNUowcZ+fUh6tF8O+ZF1tADp
+        1z5kKXKGmRwI8rNLdUXqXs3y
+X-Google-Smtp-Source: AFSGD/UPhilp6RoQCxzrZ4fn66yfTtsY05W92EFkRCn1VJXgMwOc38i3haqhB0UUU/eE2THEbXf0dg==
+X-Received: by 2002:a62:f907:: with SMTP id o7mr12906043pfh.244.1544463449240;
+        Mon, 10 Dec 2018 09:37:29 -0800 (PST)
 Received: from localhost.localdomain ([2409:4072:91e:2c01:40e1:a028:b090:9e12])
-        by smtp.gmail.com with ESMTPSA id q1sm15998396pfb.96.2018.12.10.09.37.13
+        by smtp.gmail.com with ESMTPSA id q1sm15998396pfb.96.2018.12.10.09.37.21
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 10 Dec 2018 09:37:20 -0800 (PST)
+        Mon, 10 Dec 2018 09:37:28 -0800 (PST)
 From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 To:     olof@lixom.net, arnd@arndb.de, robh+dt@kernel.org,
         tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com,
@@ -66,51 +67,56 @@ Cc:     linux-unisoc@lists.infradead.org, afaerber@suse.de,
         amit.kucheria@linaro.org, linus.walleij@linaro.org,
         zhao_steven@263.net,
         Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH v4 09/15] dt-bindings: timer: Document RDA8810PL SoC timer
-Date:   Mon, 10 Dec 2018 23:05:44 +0530
-Message-Id: <20181210173550.29643-10-manivannan.sadhasivam@linaro.org>
+Subject: [PATCH v4 10/15] ARM: dts: rda8810pl: Add timer support
+Date:   Mon, 10 Dec 2018 23:05:45 +0530
+Message-Id: <20181210173550.29643-11-manivannan.sadhasivam@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181210173550.29643-1-manivannan.sadhasivam@linaro.org>
 References: <20181210173550.29643-1-manivannan.sadhasivam@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Document RDA Micro RDA8810PL SoC timer.
+Add timer support for RDA Micro RDA8810PL SoC.
 
+Signed-off-by: Andreas Färber <afaerber@suse.de>
 Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 ---
- .../bindings/timer/rda,8810pl-timer.txt       | 20 +++++++++++++++++++
- 1 file changed, 20 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/timer/rda,8810pl-timer.txt
+ arch/arm/boot/dts/rda8810pl.dtsi | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/timer/rda,8810pl-timer.txt b/Documentation/devicetree/bindings/timer/rda,8810pl-timer.txt
-new file mode 100644
-index 000000000000..4db542c9a0fd
---- /dev/null
-+++ b/Documentation/devicetree/bindings/timer/rda,8810pl-timer.txt
-@@ -0,0 +1,20 @@
-+RDA Micro RDA8810PL Timer
+diff --git a/arch/arm/boot/dts/rda8810pl.dtsi b/arch/arm/boot/dts/rda8810pl.dtsi
+index 15547b138977..84baa4c0a14c 100644
+--- a/arch/arm/boot/dts/rda8810pl.dtsi
++++ b/arch/arm/boot/dts/rda8810pl.dtsi
+@@ -6,6 +6,8 @@
+  * Copyright (c) 2018 Manivannan Sadhasivam
+  */
+ 
++#include <dt-bindings/interrupt-controller/irq.h>
 +
-+Required properties:
-+- compatible      :  "rda,8810pl-timer"
-+- reg             :  Offset and length of the register set for the device.
-+- interrupts      :  Should contain two interrupts.
-+- interrupt-names :  Should be "hwtimer", "ostimer".
+ / {
+ 	compatible = "rda,8810pl";
+ 	interrupt-parent = <&intc>;
+@@ -50,6 +52,14 @@
+ 		#address-cells = <1>;
+ 		#size-cells = <1>;
+ 		ranges = <0x0 0x20900000 0x100000>;
 +
-+Example:
-+
-+		apb@20900000 {
-+			compatible = "simple-bus";
-+			...
-+			timer@10000 {
-+				compatible = "rda,8810pl-timer";
-+				reg = <0x10000 0x1000>;
-+				interrupts = <16 IRQ_TYPE_LEVEL_HIGH>,
-+					     <17 IRQ_TYPE_LEVEL_HIGH>;
-+				interrupt-names = "hwtimer", "ostimer";
-+			};
++		timer@10000 {
++			compatible = "rda,8810pl-timer";
++			reg = <0x10000 0x1000>;
++			interrupts = <16 IRQ_TYPE_LEVEL_HIGH>,
++				     <17 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "hwtimer", "ostimer";
++		};
+ 	};
+ 
+ 	apb@20a00000 {
 -- 
 2.17.1
 
