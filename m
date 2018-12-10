@@ -2,136 +2,84 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40774C5CFFE
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 18:39:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C86C4C04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 18:42:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 049BC2081F
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 18:39:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 848FC2081F
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 18:41:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Pi77QwRy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 049BC2081F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="LPTREAWh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 848FC2081F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=alien8.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728580AbeLJSjs (ORCPT
+        id S1728357AbeLJSl6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 13:39:48 -0500
-Received: from mail-pg1-f176.google.com ([209.85.215.176]:34201 "EHLO
-        mail-pg1-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728357AbeLJSjs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 13:39:48 -0500
-Received: by mail-pg1-f176.google.com with SMTP id 17so5369758pgg.1
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Dec 2018 10:39:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=0gk/YzIRmbKGFTJELUol/CatLTFz8rHh+8fPG3iiadA=;
-        b=Pi77QwRyUhqJL5MKDYGkKDhPigwsHeC8Z/tffB3pAQs2mj+AywxUd6vgmXJ3tckqWD
-         enIydYK9TxFP0y4JX4GvYywIp4PVj5WYGMaYE6wzI3wbcUHF4JtVCjKGxEilw4aIUe6a
-         xgM2W3FMlpiKcKTRoN12vod6+vmKHoEcHd6iuo078uNnIvirx/TPLjqNINnUTFDqpoU8
-         dyF4JJxRZLfW3C8XuSbHPNNBb1HalV6+bQVu86YFhmaCZEyPx8IXfhb+YCt5Vvr9/iR2
-         Ft/+bBWrOcBtIOOHPN9lGZvuF4E3TF12ps52yKHmGv+Jq4Y01/ZXMsc2mJf1uGvcMHhg
-         v0tg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=0gk/YzIRmbKGFTJELUol/CatLTFz8rHh+8fPG3iiadA=;
-        b=hnQsLuzJSk0nlKTIwFlCqSUJrCTtkIoYGGiMBLZKDRIZVgOPdAmBJ1dAY53avKaSzd
-         5OyAMlnjLP+LlTakCNOwv3FgxepfWIor6PGnlNxTLfHMrY1vz5Rw/+c+YOxV8m41D65e
-         R6BjAveKyo2iMYtpAM5AL6NksZHHKHj8PbK7iQA0lWakkT3akNOzDp7QVIXUQ6UJzrVu
-         VzdvE7KK4urs0ZYEsKFrZeQ4hdYyxZI8/F4qU7QR8cDA7xl4/8vtigwfuGtj9yHIQvAI
-         a4Jtfg9m8KGsBbX+Ry3jkPj2SYZVd36RKhgvfEDyQtGDDqJeSE6Ht+ktEG11Cf31aceu
-         8zTw==
-X-Gm-Message-State: AA+aEWYAr5YTvxfkWxI1tASpPwF1eWNHsihJr8JYE8GDYQZMfaDfa4tQ
-        r4IpaE0E81T2zO/dmudv2DaYuVqdiSnk5NNhO1I=
-X-Google-Smtp-Source: AFSGD/UKogr7YrvEbogz8yAX/V71bcT3UbZuTbeQQTkp2kRntJ7Q4FqQpD4ifZ+tU1VhP7aVeTY9tH2xSWzwngUiBFQ=
-X-Received: by 2002:a63:fe0a:: with SMTP id p10mr11640313pgh.265.1544467187390;
- Mon, 10 Dec 2018 10:39:47 -0800 (PST)
+        Mon, 10 Dec 2018 13:41:58 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:60386 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727027AbeLJSl6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Dec 2018 13:41:58 -0500
+Received: from zn.tnic (p200300EC2BCAD0009567F52EDB121050.dip0.t-ipconnect.de [IPv6:2003:ec:2bca:d000:9567:f52e:db12:1050])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id D40AD1EC0322;
+        Mon, 10 Dec 2018 19:41:56 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1544467317;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=Lsc5XnsBlWvPoGh9DvSS5jGKkkhEcBBln6b+h+ZfpPs=;
+        b=LPTREAWh041mFDJVUR8AkWOI1ZFbTul0tppHJNnLYn5LhrjS3599aONXqjyl3IqhbwlRb8
+        fDnuDQclIkiUcnbthOpFYJKBVGN2prIo8GD0YgJbfnOezblg/KT12dI4haEz04JRLwl+LW
+        3ykXd2wnyWeW0hAr0IPKvt4NNrX30kg=
+Date:   Mon, 10 Dec 2018 19:41:53 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Eduardo Habkost <ehabkost@redhat.com>
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        =?utf-8?B?SsO2cmcgUsO2ZGVs?= <joro@8bytes.org>,
+        Andre Przywara <andre.przywara@arm.com>,
+        kvm ML <kvm@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Tom Lendacky <thomas.lendacky@amd.com>
+Subject: Re: kvm: RDTSCP on AMD
+Message-ID: <20181210184153.GB5482@zn.tnic>
+References: <20181210181328.GA762@zn.tnic>
+ <20181210183730.GJ4669@habkost.net>
 MIME-Version: 1.0
-References: <CAHk-=wgHSX8x6mOB0xZibbg-xc3veqsQEnHZ1+3H2DbO5MU5Rw@mail.gmail.com>
- <CAHp75Vf6Au7yY4zdn5=qMjMvDKCi-LVAW45sjzB5f0C+m3VYHw@mail.gmail.com> <CAHk-=wgO2U0rGtLf-3Ym6dUKgavhNPZxHP7Gg8LuG8GgFaxKFA@mail.gmail.com>
-In-Reply-To: <CAHk-=wgO2U0rGtLf-3Ym6dUKgavhNPZxHP7Gg8LuG8GgFaxKFA@mail.gmail.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Mon, 10 Dec 2018 20:39:35 +0200
-Message-ID: <CAHp75VdCMJVp9A=W+_jppR4ai6Uk8y+A4u1b6-FN=neR=v=xNg@mail.gmail.com>
-Subject: Re: Linux 4.20-rc6
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Darren Hart <dvhart@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20181210183730.GJ4669@habkost.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-(Oops, forgot to Cc Darren, fixing)
+On Mon, Dec 10, 2018 at 04:37:30PM -0200, Eduardo Habkost wrote:
+> It isn't as simply as reverting commit 33b5e8c03ae7, but we can
+> surely re-add RDTSCP on pc-*-4.0 and newer.
 
-On Mon, Dec 10, 2018 at 7:46 PM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> On Mon, Dec 10, 2018 at 1:52 AM Andy Shevchenko
-> <andy.shevchenko@gmail.com> wrote:
-> >
-> > Linus, due to my vacation schedule and possibility that Darren might
-> > be also busy with some stuff, would be okay to send PR this week, for
-> > example?
->
-> Oh, absolutely.
+Sure. If you could only point me to an example how to add that to
+pc-*-4.0 and newer, I'll gladly cook up a patch and test it.
 
-Thanks for elaborated answer!
+> I thought we added documentation mentioning the minimum kernel
+> version required by QEMU, but I can't find it.  In either case,
+> it seems reasonable to require Linux 4.5 or newer on newer
+> machine-types.
 
->
-> And I want to make it clear that this is not something you ever need
-> to even ask about, or make some "special case". It is absolutely
-> always true that any submaintainer can send pull requests for the next
-> merge window early.
->
-> To avoid any confusion, I do ask for a couple of simple things if you
-> send a pull request before the merge window opens:
->
->  - make it very clear and _explicit_ in the pull request that this is
-> for the next merge window.
->
->    In other words, don't make me unnecessarily upset about "this is
-> much too late in the rc series to send something this big" by making
-> it a small note at the end.
->
->    This could still be something lik [GIT PULL] in the subject line,
-> but on the very first line say "For the next merge window" or
-> something. Don't make it subtle or something I might not notice before
-> I start getting upset at how big a pull request you're sending me
-> during rc6+.
->
->  - don't use it as an excuse to send two or more bigger merge window
-> pulls. An early pull is not an excuse to then have a second big pull
-> with other changes.
->
->    Second (and third) pulls are obviously fine, but they should either
-> be starting the calming-down period, or be about other things entirely
-> (some groups send 5-10 pull requests that are independent).
->
->    I don't want to get the feeling that there is a "this is partial
-> work, there will be more" pattern.
->
-> Anyway, people have done this in the past, and I don't mind it at all.
-> Send pull requests early if they are all done and ready.
->
-> You don't even need to have a vacation excuse, you can just say "I'm
-> done, this is already in linux-next and it's passed testing etc, it's
-> not some unbaked thing that I just want to get rid of early"
->
->                   Linus
+When you say "require" does that mean, one puts it in a text file
+somewhere in the qemu sources or do we enforce it somehow?
 
-
+Thx.
 
 -- 
-With Best Regards,
-Andy Shevchenko
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
