@@ -2,107 +2,158 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FROM_LOCAL_NOVOWEL,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FF27C04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 21:30:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D628C04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 21:31:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3268520821
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 21:30:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Mc1KjDtN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3268520821
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id D012020821
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 21:31:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D012020821
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729817AbeLJVaA (ORCPT
+        id S1729858AbeLJVb2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 16:30:00 -0500
-Received: from mail-yb1-f196.google.com ([209.85.219.196]:46691 "EHLO
-        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728088AbeLJV37 (ORCPT
+        Mon, 10 Dec 2018 16:31:28 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:42516 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728088AbeLJVb1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 16:29:59 -0500
-Received: by mail-yb1-f196.google.com with SMTP id f9so2298401ybm.13
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Dec 2018 13:29:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=OR+kNOdJJZefBxuym1baYASOQoEnD7Kg+lrvxzn9dGw=;
-        b=Mc1KjDtNlEBVGka92nkdz5d7r6I8QU63hCYI0c/EfE1F/yBP0Z34NqUOFUYC+sFw6F
-         52UG2JdxUu+C0puoWHOyulqNEpPNKbj6UBIgpEQjyMUKcI/dOtYm/MqnKHh0nh+5QGT7
-         jVorMlyDWdPutSspZiAv+jwgd+cbQK2PHL34ry1F7wAY3bv+S4HjCDxEaRwfjtvVzq4j
-         cD3VgWpLqnN4X0DpR3WvpileMUxnnuqoGENvC94mh5DVylW7XmWmgI4hv0raHUgexQjs
-         zqKqKdAIiDSpZfTL0M8FX8IttpG3I2mVDByL8uqkqqs5PZu9m4O69wSxq6ZQbejvMDtV
-         kxdw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=OR+kNOdJJZefBxuym1baYASOQoEnD7Kg+lrvxzn9dGw=;
-        b=GcCsPKEdny0Nd07eSq5KctysrgMzORL4twLFcU28NjYkxd5TAiLAQU5dagg/yJmRFe
-         28cooqrVXVO7BpuuKVXVQoYz9vgxDUgIGfe8/yYRq5Zh/tePwmlCmmNjh7ozEHgxrHHx
-         7TuVqkJTcyeqiB1IPZ0rtgTSYjXA0ei2d2tqF3ynCixefUI0pDUfRwXej09qco3z2sFC
-         z3lBfbY0PE82zH2IPozH3qw8SJo24NnLovaJUagKprEhCCPLAThAzqRzrdypSrD+GI3S
-         YclPXoea1jr8FMMTKDJ5hIFaUdPCIxNWWSCMDK8B4aKa9OuMKBfGhYNsFdSB10y0RTAV
-         QzKQ==
-X-Gm-Message-State: AA+aEWY/HguHpKNlHX1dw2xXeYtm6bW+8s15Fz2hahvih+WTJHWjJNeN
-        Xm2y7+ZROMCX+HP3Uz+ISLOwQe6rcZd1IRZnNIwuWg==
-X-Google-Smtp-Source: AFSGD/WCm+L4uAhERoWcvLI6V6XFWB1Od04CFSXDF1qpjG+cg2rxFA2oWEOheNQQveAjI3Clwz9FDvfmlOz3TKaNr7w=
-X-Received: by 2002:a25:19c2:: with SMTP id 185-v6mr13979746ybz.445.1544477398702;
- Mon, 10 Dec 2018 13:29:58 -0800 (PST)
-MIME-Version: 1.0
-References: <20181210042352.GA6092@altlinux.org> <20181210043041.GS6131@altlinux.org>
- <CAMo8Bf+s6xObgYoOOR0NTQZR-ReBbXmNv_5Jf=jX7J+bnDsTYQ@mail.gmail.com>
- <20181210125315.GB11942@altlinux.org> <CAMo8BfLbk8wfUNVZ_Qa9XVTtg4f5k5Wj6LFauroheheoTCJPxw@mail.gmail.com>
- <20181210202402.GA18101@altlinux.org> <20181210203036.GA18150@altlinux.org>
-In-Reply-To: <20181210203036.GA18150@altlinux.org>
-From:   Max Filippov <jcmvbkbc@gmail.com>
-Date:   Mon, 10 Dec 2018 13:29:46 -0800
-Message-ID: <CAMo8BfL1ENxo__XouYg6pNja-fe21yF_hXrPhMi82nf8J9TZOA@mail.gmail.com>
-Subject: Re: [PATCH v5 19/25] xtensa: define syscall_get_* functions
-To:     ldv@altlinux.org
-Cc:     oleg@redhat.com, Andrew Lutomirski <luto@kernel.org>,
-        lineprinter@altlinux.org, esyr@redhat.com,
-        Chris Zankel <chris@zankel.net>,
-        Paul Moore <paul@paul-moore.com>, eparis@redhat.com,
-        linux-xtensa@linux-xtensa.org, linux-audit@redhat.com,
-        LKML <linux-kernel@vger.kernel.org>
+        Mon, 10 Dec 2018 16:31:27 -0500
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBALOREY110027
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Dec 2018 16:31:26 -0500
+Received: from e33.co.us.ibm.com (e33.co.us.ibm.com [32.97.110.151])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2p9w9yfkxc-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Dec 2018 16:31:26 -0500
+Received: from localhost
+        by e33.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <jejb@linux.ibm.com>;
+        Mon, 10 Dec 2018 21:31:25 -0000
+Received: from b03cxnp08027.gho.boulder.ibm.com (9.17.130.19)
+        by e33.co.us.ibm.com (192.168.1.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 10 Dec 2018 21:31:20 -0000
+Received: from b03ledav004.gho.boulder.ibm.com (b03ledav004.gho.boulder.ibm.com [9.17.130.235])
+        by b03cxnp08027.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBALVJ7s28049432
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 10 Dec 2018 21:31:19 GMT
+Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C2C2078063;
+        Mon, 10 Dec 2018 21:31:19 +0000 (GMT)
+Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 2AFB178069;
+        Mon, 10 Dec 2018 21:31:17 +0000 (GMT)
+Received: from [153.66.254.194] (unknown [9.80.236.69])
+        by b03ledav004.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Mon, 10 Dec 2018 21:31:16 +0000 (GMT)
+Subject: Re: [PATCH] scsi: qla2xxx: fix unused function warning
+From:   James Bottomley <jejb@linux.ibm.com>
+To:     Arnd Bergmann <arnd@arndb.de>, bvanassche@acm.org
+Cc:     qla2xxx-upstream@qlogic.com,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        loberman@redhat.com,
+        Himanshu Madhani <himanshu.madhani@cavium.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>, hmadhani@marvell.com,
+        quinn.tran@cavium.com, Hannes Reinecke <hare@suse.de>,
+        Jens Axboe <axboe@kernel.dk>, darren.trapp@cavium.com,
+        William.Kuzeja@stratus.com,
+        linux-scsi <linux-scsi@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Date:   Mon, 10 Dec 2018 13:31:15 -0800
+In-Reply-To: <CAK8P3a0MShhjPMUdNs=CTqOJ-ovDPczYiQFL9c2M2dOUQ4yK7w@mail.gmail.com>
+References: <20181210205215.2703138-1-arnd@arndb.de>
+         <1544475666.185366.378.camel@acm.org>
+         <CAK8P3a0MShhjPMUdNs=CTqOJ-ovDPczYiQFL9c2M2dOUQ4yK7w@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18121021-0036-0000-0000-00000A6880A0
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010210; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000270; SDB=6.01129898; UDB=6.00587084; IPR=6.00910031;
+ MB=3.00024646; MTD=3.00000008; XFM=3.00000015; UTC=2018-12-10 21:31:24
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18121021-0037-0000-0000-000049EDD87C
+Message-Id: <1544477475.2753.26.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-10_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=978 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1812100191
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 10, 2018 at 12:30 PM Dmitry V. Levin <ldv@altlinux.org> wrote:
-> On Mon, Dec 10, 2018 at 11:24:02PM +0300, Dmitry V. Levin wrote:
-> > On Mon, Dec 10, 2018 at 12:14:37PM -0800, Max Filippov wrote:
-> > > On Mon, Dec 10, 2018 at 4:53 AM Dmitry V. Levin <ldv@altlinux.org> wrote:
-> > > > On Sun, Dec 09, 2018 at 09:02:50PM -0800, Max Filippov wrote:
-> > > > > How should we synchronize our changes?
-> > > >
-> > > > No problem, I can revert to the previous edition of this patch
-> > > > that just adds syscall_get_arch.
-> > > > Alternatively, you can just take that couple of patches (v5 18/25
-> > > > and v2 15/15) into your tree.
-> > >
-> > > Sure I can do the second. Will it work for v2 16/15 that changes
-> > > syscall_get_arch adding an argument to it?
-> >
-> > No, I'm afraid it won't work for v2 16/15 (aka v5 22/25), which means
-> > I'd have to keep them in the series.
->
-> You can surely take them into your tree, but I'll have to keep them
-> in the series because of that change of syscall_get_arch signature.
-> Sorry for confusion.
+On Mon, 2018-12-10 at 22:28 +0100, Arnd Bergmann wrote:
+> On Mon, Dec 10, 2018 at 10:01 PM Bart Van Assche <bvanassche@acm.org>
+> wrote:
+> > 
+> > On Mon, 2018-12-10 at 21:51 +0100, Arnd Bergmann wrote:
+> > > In what seems to be a mismatch between the scsi-fixes branch and
+> > > the scsi-mkp/for-next branch, a newly introduced variable from
+> > > one patch got obsoleted in another one:
+> > > 
+> > > drivers/scsi/qla2xxx/qla_os.c: In function
+> > > '__qla2x00_abort_all_cmds':
+> > > drivers/scsi/qla2xxx/qla_os.c:1791:11: error: unused variable
+> > > 'status' [-Werror=unused-variable]
+> > > 
+> > > Remove the variable again.
+> > > 
+> > > Fixes: c4e521b654e1 ("scsi: qla2xxx: Split the
+> > > __qla2x00_abort_all_cmds() function")
+> > > Fixes: f2ffd4e5bc7b ("scsi: qla2xxx: Timeouts occur on surprise
+> > > removal of QLogic adapter")
+> > > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> > > ---
+> > > Maybe check carefully that the merge in linux-next is otherwise
+> > > correct
+> > > ---
+> > >  drivers/scsi/qla2xxx/qla_os.c | 2 +-
+> > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > > 
+> > > diff --git a/drivers/scsi/qla2xxx/qla_os.c
+> > > b/drivers/scsi/qla2xxx/qla_os.c
+> > > index 63c47bc7ae59..db331cb5ba3c 100644
+> > > --- a/drivers/scsi/qla2xxx/qla_os.c
+> > > +++ b/drivers/scsi/qla2xxx/qla_os.c
+> > > @@ -1788,7 +1788,7 @@ static void qla2x00_abort_srb(struct
+> > > qla_qpair *qp, srb_t *sp, const int res,
+> > >  static void
+> > >  __qla2x00_abort_all_cmds(struct qla_qpair *qp, int res)
+> > >  {
+> > > -     int cnt, status;
+> > > +     int cnt;
+> > >       unsigned long flags;
+> > >       srb_t *sp;
+> > >       scsi_qla_host_t *vha = qp->vha;
+> > 
+> > When I prepared commit c4e521b654e1 I verified that my patch did
+> > not produce any
+> > warnings when building with W=1. So something must be wrong at your
+> > side. Did you
+> > perhaps start from linux-next to prepare this patch? If so, please
+> > submit this
+> > patch to Stephen Rothwell.
+> 
+> Yes, I tried to make clear that the two branches are fine by
+> themselves, sorry if I was still ambiguous. The patch is currently
+> only needed on linux-next as far as I can tell, but we should avoid
+> getting the same error when the branches are merged in mainline.
 
-Ok, no problem, I'll take them. I'm planning to merge this branch into the
-for-next in a couple of days, let's see how it goes after that.
+It should be fixed in linux-next as of the next release.  It was just a
+problem with the original merge which I fixed when I did my version of
+it.
 
--- 
-Thanks.
--- Max
+James
+
