@@ -4,159 +4,132 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC7C8C04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 20:44:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97069C67839
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 20:44:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A559F2084C
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 20:44:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A559F2084C
+	by mail.kernel.org (Postfix) with ESMTP id 5FFFE20821
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 20:44:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5FFFE20821
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729592AbeLJUoC (ORCPT
+        id S1729688AbeLJUoW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 15:44:02 -0500
-Received: from mout.kundenserver.de ([217.72.192.74]:45991 "EHLO
+        Mon, 10 Dec 2018 15:44:22 -0500
+Received: from mout.kundenserver.de ([217.72.192.74]:59387 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728753AbeLJUoC (ORCPT
+        with ESMTP id S1727351AbeLJUoU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 15:44:02 -0500
+        Mon, 10 Dec 2018 15:44:20 -0500
 Received: from wuerfel.lan ([109.192.41.194]) by mrelayeu.kundenserver.de
  (mreue107 [212.227.15.145]) with ESMTPA (Nemesis) id
- 1MdNLi-1h5W6X4C1o-00ZS5E; Mon, 10 Dec 2018 21:43:42 +0100
+ 1Mz9EL-1hR9vT0bkR-00wE1f; Mon, 10 Dec 2018 21:44:04 +0100
 From:   Arnd Bergmann <arnd@arndb.de>
 To:     arm@kernel.org, Lubomir Rintel <lkundrak@v3.sk>
 Cc:     Arnd Bergmann <arnd@arndb.de>,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 1/2] ARM: mmp: fix timer_init calls
-Date:   Mon, 10 Dec 2018 21:43:01 +0100
-Message-Id: <20181210204340.2269622-1-arnd@arndb.de>
+Subject: [PATCH 2/2] ARM: mmp: fix pxa168_device_usb_phy use on aspenite
+Date:   Mon, 10 Dec 2018 21:43:02 +0100
+Message-Id: <20181210204340.2269622-2-arnd@arndb.de>
 X-Mailer: git-send-email 2.20.0
+In-Reply-To: <20181210204340.2269622-1-arnd@arndb.de>
+References: <20181210204340.2269622-1-arnd@arndb.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:p4KIKsdMkroejDb6VC93k97xs9//yUmHuhfFoJCeiMAQlbuCsIy
- S6jtk4rYpwv1xnRbYm+dBLsUsNq35C20kqAJZG4Bt5sWZZkImV6hvOibu1B01Ep83CFsUi7
- /Qo8KJ3R087aa2UswogSGWIJH6IwPExXplLIEhoC0KpQjH6xI5hBgd21EXv/bqE0fcLMThV
- 0FI3BHHT8tr94EZ67RsYw==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:bPzUQHTr9Gs=:y6iZ2wrVmt64qDoEn2HE7I
- Km/DQy/dwZnx3yB8MAqd3t2YTmGY1iaQmK/kNtBtIwF37kDnywl6M+oVfNJpuXWkHHjJE1mFZ
- dZQfxhbu1VwPnEN9NULCviJcHEsXc8ikI1SXJnlxIgxkk/7Y85jn1d1jw/VmcGNDyJN5OaTmr
- ODWaVJEic+21u1y64DZ6Ox92gsgRZOa/wOrSyEzbi56RgAxKevLYUqxvzk8Bk9LHd3PTc+cjw
- GQjjLYFdom4kU67IOJimhOUAneFToWhGw/QIyw4kX7NxNvyKDvHg849qxIan1OCVKvONBTt3a
- 58XIz4xC90ApFpiJMFI7cMlB5iDFv5f/jWi1jaRjOk15mGKhR7FZIQXrMZDuXDzyb6ANwSL3C
- fRpmUqb//g+GAffwK5Y0SK8kLRo/yaj7zryyaBO7pkg84z9TdpN/4avTeaRt4aBv61tbIFViO
- SBYcgmbVmAYW3ACWws5ZeQU0gQsVRc9xQJKKElQS96JQMnLJzBG185L9Fk6mBiuYEeVXLHqIk
- uel2QmDoEOzevqRzdsmhhoD7OswN0cccJvOB/nly9nye8M56qyIjwr2A7yQFxnu3Bx+UE04Di
- kgrmihLJD/WeIkmWjdZjkpkKL9gHR4w3mq6bW2ArKnmTbX3vNdwQUburh4qq7GAKVYXnvuuql
- yie8edyQHEdxSsL6ZliWx0oumDWbuh6qA29J1dcogxy6Q8cRgpodh6f+sI2t5gB+/oRWpl27C
- CWbDUmhp85H2UTNtdAjO5QesLiiE5vLrmD/z2g==
+X-Provags-ID: V03:K1:066X8609S8rRazQMCxM0FQnLP8YBYE3tBO/JFQU/o9qGK62sZEZ
+ qnkHhV6WydiLmZjK6EPxbr7ntdTB1Hjf2f+DRGjcZ29jjc4BbT2kLtOiYiOKR1WEdO53qVD
+ BD5c+EyteTSOTmrfUA1RcosJq+JwInpv7Nxp9SlKAIjQ8cgUjIauG7s8oDiuyx2ArM5OKmD
+ /3SwebMridHGZxB4OmrwQ==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:Al2IwXHE/Ao=:OWxv5MAfZta7Ray7LT/eCZ
+ DWOeYtzaektrlbfMIsguch7FKeGQeBBSrQQg+GUmYuGmoy85WzZKmsdR2RSYiZ0orgV1YynkS
+ kFMXBH0OcI0mlexGgcHWsArbQuubbvwtTuZMxgk0A6yF9aY5kAS7fcbrHcQRhBhbH6SQd6xSg
+ I4GWBul94I5vhz4zFIUHyQHBhAMg7xQ/MBSnbRN3r44x6W8rv5+C0ziUPcp/UaOFrH8suJ7AQ
+ OmTFFZXiqy7fTvMYEmOP9qcHrOkRRrUy1jPfgxyPH4+6jg9aLP4Y2Pb8e8tnbZUGe6+C6fk2H
+ vGK4dxbff4AgLesJgLnEQEg8dClRQXmeYENMisCiYVPOkrXP7AS3GWiFnl9WAi27AJ7XiHSJ1
+ XWDOqBnfX69fNKPtYedDnwOHCgXYUm9bt4QeuNKELBaRZfWM1pwoJEmwKt/e3TCxksvUYrT+Y
+ BNAJJb6SEvy2767vciVaLaUrd/AeNngECLzFRMdqh2cbg8WRStpKWBtU6m8Q1RKCmJzULSU8H
+ X0emm/aZQfmgt1dbtuNA9dB3m5BWLqtFquEms6iIQs8yBp8Cw98lLFci/DNb5tP0i/9n2s/ju
+ W2i1c4TkjI2E02eKaMj1MUfmkvGBRw/6K2YAUyAiy8wLoko7dgD5THSCIQzYbkrQzAsTS/iL/
+ TXUHTcnT46CvemYhMdVv0A0RCMHKiA2iTxbJ86B0KrZM3Gnyi1SMvKWwq3+FDQ+6cevGsDli8
+ CAsolcFHCXWDjb781orIRecfTpbbtY9FJ+SrTQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The change to passing the timer frequency as a function argument
-was a good idea, but caused a build failure for one user that
-was missed in the update:
+This one ended up in the wrong header file, causing a build failure
+on at least one platform:
 
-arch/arm/mach-mmp/time.c: In function 'mmp_dt_init_timer':
-arch/arm/mach-mmp/time.c:242:2: error: implicit declaration of function 'timer_init'; did you mean 'hrtimer_init'? [-Werror=implicit-function-declaration]
+arch/arm/mach-mmp/aspenite.c: In function 'common_init':
+arch/arm/mach-mmp/aspenite.c:260:28: error: 'pxa168_device_usb_phy' undeclared (first use in this function); did you mean 'pxa168_device_ssp5'?
 
-Change that as well to fix the build error, and rename the
-function to put it into a proper namespace and make it clearer
-what is actually going on.
+We can just include both the pxa168.h and pxa910.h headers to make
+that work, which gets us to the next failure:
 
-I saw that the high 6500000 HZ frequency was previously only
-set with CONFIG_MMP2, but is now also used with MMP (pxa910),
-so I'm changing that back here. Please make sure that the
-frequencies are all correct now.
+arch/arm/mach-mmp/aspenite.o: In function `common_init':
+aspenite.c:(.init.text+0x1c0): undefined reference to `pxa168_device_usb_phy'
 
-Fixes: f36797ee4380 ("ARM: mmp/mmp2: dt: enable the clock")
+This is solved by using the matching ifdef check around the
+USB device registration, enabling them only when either USB
+host or gadget mode are enabled.
+
+Fixes: a225daf72ee7 ("ARM: mmp: add a pxa-usb-phy device")
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- arch/arm/mach-mmp/common.h | 2 +-
- arch/arm/mach-mmp/mmp2.c   | 2 +-
- arch/arm/mach-mmp/pxa168.c | 2 +-
- arch/arm/mach-mmp/pxa910.c | 2 +-
- arch/arm/mach-mmp/time.c   | 4 ++--
- 5 files changed, 6 insertions(+), 6 deletions(-)
+ arch/arm/mach-mmp/aspenite.c | 3 +++
+ arch/arm/mach-mmp/ttc_dkb.c  | 2 ++
+ 2 files changed, 5 insertions(+)
 
-diff --git a/arch/arm/mach-mmp/common.h b/arch/arm/mach-mmp/common.h
-index 5ac2851ef5d3..483b8b6d3005 100644
---- a/arch/arm/mach-mmp/common.h
-+++ b/arch/arm/mach-mmp/common.h
-@@ -2,7 +2,7 @@
- #include <linux/reboot.h>
- #define ARRAY_AND_SIZE(x)	(x), ARRAY_SIZE(x)
+diff --git a/arch/arm/mach-mmp/aspenite.c b/arch/arm/mach-mmp/aspenite.c
+index 23f99976b5f5..75b2d7db643e 100644
+--- a/arch/arm/mach-mmp/aspenite.c
++++ b/arch/arm/mach-mmp/aspenite.c
+@@ -29,6 +29,7 @@
+ #include "addr-map.h"
+ #include "mfp-pxa168.h"
+ #include "pxa168.h"
++#include "pxa910.h"
+ #include "irqs.h"
+ #include "common.h"
  
--extern void timer_init(int irq, unsigned long rate);
-+extern void mmp_timer_init(int irq, unsigned long rate);
+@@ -256,6 +257,7 @@ static void __init common_init(void)
+ 	/* off-chip devices */
+ 	platform_device_register(&smc91x_device);
  
- extern void __init mmp_map_io(void);
- extern void mmp_restart(enum reboot_mode, const char *);
-diff --git a/arch/arm/mach-mmp/mmp2.c b/arch/arm/mach-mmp/mmp2.c
-index fb3e7e32c882..726c1a642dea 100644
---- a/arch/arm/mach-mmp/mmp2.c
-+++ b/arch/arm/mach-mmp/mmp2.c
-@@ -134,7 +134,7 @@ void __init mmp2_timer_init(void)
- 	clk_rst = APBC_APBCLK | APBC_FNCLK | APBC_FNCLKSEL(1);
- 	__raw_writel(clk_rst, APBC_TIMERS);
- 
--	timer_init(IRQ_MMP2_TIMER1, 6500000);
-+	mmp_timer_init(IRQ_MMP2_TIMER1, 6500000);
++#if IS_ENABLED(CONFIG_USB_SUPPORT)
+ #if IS_ENABLED(CONFIG_PHY_PXA_USB)
+ 	platform_device_register(&pxa168_device_usb_phy);
+ #endif
+@@ -263,6 +265,7 @@ static void __init common_init(void)
+ #if IS_ENABLED(CONFIG_USB_EHCI_MV)
+ 	pxa168_add_usb_host(&pxa168_sph_pdata);
+ #endif
++#endif
  }
  
- /* on-chip devices */
-diff --git a/arch/arm/mach-mmp/pxa168.c b/arch/arm/mach-mmp/pxa168.c
-index 77a358165a56..cdcf65ace3f9 100644
---- a/arch/arm/mach-mmp/pxa168.c
-+++ b/arch/arm/mach-mmp/pxa168.c
-@@ -79,7 +79,7 @@ void __init pxa168_timer_init(void)
- 	/* 3.25MHz, bus/functional clock enabled, release reset */
- 	__raw_writel(TIMER_CLK_RST, APBC_TIMERS);
+ MACHINE_START(ASPENITE, "PXA168-based Aspenite Development Platform")
+diff --git a/arch/arm/mach-mmp/ttc_dkb.c b/arch/arm/mach-mmp/ttc_dkb.c
+index 767dcb23ee1c..09b53ace08ac 100644
+--- a/arch/arm/mach-mmp/ttc_dkb.c
++++ b/arch/arm/mach-mmp/ttc_dkb.c
+@@ -282,6 +282,7 @@ static void __init ttc_dkb_init(void)
+ 				 sizeof(struct pxa_gpio_platform_data));
+ 	platform_add_devices(ARRAY_AND_SIZE(ttc_dkb_devices));
  
--	timer_init(IRQ_PXA168_TIMER1, 6500000);
-+	mmp_timer_init(IRQ_PXA168_TIMER1, 3250000);
- }
++#if IS_ENABLED(CONFIG_USB_SUPPORT)
+ #if IS_ENABLED(CONFIG_PHY_PXA_USB)
+ 	platform_device_register(&pxa168_device_usb_phy);
+ #endif
+@@ -300,6 +301,7 @@ static void __init ttc_dkb_init(void)
+ 	pxa168_device_u2ootg.dev.platform_data = &ttc_usb_pdata;
+ 	platform_device_register(&pxa168_device_u2ootg);
+ #endif
++#endif
  
- void pxa168_clear_keypad_wakeup(void)
-diff --git a/arch/arm/mach-mmp/pxa910.c b/arch/arm/mach-mmp/pxa910.c
-index 1ccbba9ac495..d30a7d12bc98 100644
---- a/arch/arm/mach-mmp/pxa910.c
-+++ b/arch/arm/mach-mmp/pxa910.c
-@@ -116,7 +116,7 @@ void __init pxa910_timer_init(void)
- 	__raw_writel(APBC_APBCLK | APBC_RST, APBC_TIMERS);
- 	__raw_writel(TIMER_CLK_RST, APBC_TIMERS);
- 
--	timer_init(IRQ_PXA910_AP1_TIMER1);
-+	mmp_timer_init(IRQ_PXA910_AP1_TIMER1, 3250000);
- }
- 
- /* on-chip devices */
-diff --git a/arch/arm/mach-mmp/time.c b/arch/arm/mach-mmp/time.c
-index eab0fd8a7343..f9c295154b94 100644
---- a/arch/arm/mach-mmp/time.c
-+++ b/arch/arm/mach-mmp/time.c
-@@ -184,7 +184,7 @@ static struct irqaction timer_irq = {
- 	.dev_id		= &ckevt,
- };
- 
--void __init timer_init(int irq, unsigned long rate)
-+void __init mmp_timer_init(int irq, unsigned long rate)
- {
- 	timer_config();
- 
-@@ -239,7 +239,7 @@ void __init mmp_dt_init_timer(void)
- 		ret = -ENOMEM;
- 		goto out;
- 	}
--	timer_init(irq, rate);
-+	mmp_timer_init(irq, rate);
- 	return;
- out:
- 	pr_err("Failed to get timer from device tree with error:%d\n", ret);
+ #if IS_ENABLED(CONFIG_MMP_DISP)
+ 	add_disp();
 -- 
 2.20.0
 
