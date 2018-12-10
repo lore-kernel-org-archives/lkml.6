@@ -2,180 +2,279 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC426C04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 06:54:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4CD4C04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 06:55:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 70DDF2081C
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 06:54:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544424872;
-	bh=lNIFJX4VyV0/RCb52HAnk/Baq8kRfNS2e/hYAIDDzrU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:List-ID:From;
-	b=fhuHBUly6HxnoOY8NJ4J9/8WklwYryHlf4mSxYltaCDOInZ2hGp1kNaWWK+0lrQ07
-	 qgmPNWjuol+loFAZgMICvVvldSjxAbjqLqcawD82eWNFuxZ2OLSJarSPh4nDS9N2mq
-	 YZaW5F4ZoLlEMupTaV5X8OfGyG6XtyGipA3ijJX8=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 70DDF2081C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 3F9452081C
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 06:55:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (4096-bit key) header.d=lemmela.net header.i=@lemmela.net header.b="InMYU2Xs"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F9452081C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lemmela.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726581AbeLJGyb (ORCPT
+        id S1726599AbeLJGz6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 01:54:31 -0500
-Received: from mga02.intel.com ([134.134.136.20]:47638 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726292AbeLJGya (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 01:54:30 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Dec 2018 22:54:29 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,337,1539673200"; 
-   d="asc'?scan'208";a="302470539"
-Received: from pipin.fi.intel.com (HELO localhost) ([10.237.72.175])
-  by fmsmga005.fm.intel.com with ESMTP; 09 Dec 2018 22:54:25 -0800
-From:   Felipe Balbi <balbi@kernel.org>
-To:     Anurag Kumar Vulisha <anuragku@xilinx.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Shuah Khan <shuah@kernel.org>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Johan Hovold <johan@kernel.org>,
-        Jaejoong Kim <climbbb.kim@gmail.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Roger Quadros <rogerq@ti.com>,
-        Manu Gautam <mgautam@codeaurora.org>,
-        "martin.petersen\@oracle.com" <martin.petersen@oracle.com>,
-        Bart Van Assche <bvanassche@acm.org>,
-        Mike Christie <mchristi@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Colin Ian King <colin.king@canonical.com>
-Cc:     "linux-usb\@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "v.anuragkumar\@gmail.com" <v.anuragkumar@gmail.com>,
-        Thinh Nguyen <thinhn@synopsys.com>,
-        Tejas Joglekar <tejas.joglekar@synopsys.com>,
-        Ajay Yugalkishore Pandey <APANDEY@xilinx.com>
-Subject: RE: [PATCH v7 09/10] usb: dwc3: Check for IOC/LST bit in both event->status and TRB->ctrl fields
-In-Reply-To: <BL0PR02MB56331B2ECFFEB96A99936C32A7AB0@BL0PR02MB5633.namprd02.prod.outlook.com>
-References: <1543662811-5194-1-git-send-email-anurag.kumar.vulisha@xilinx.com> <1543662811-5194-10-git-send-email-anurag.kumar.vulisha@xilinx.com> <875zw82vfj.fsf@linux.intel.com> <BL0PR02MB563352F83A80E3B92347A7A4A7A80@BL0PR02MB5633.namprd02.prod.outlook.com> <874lbpx3vg.fsf@linux.intel.com> <BL0PR02MB56331B2ECFFEB96A99936C32A7AB0@BL0PR02MB5633.namprd02.prod.outlook.com>
-Date:   Mon, 10 Dec 2018 08:54:13 +0200
-Message-ID: <87pnu927oq.fsf@linux.intel.com>
+        Mon, 10 Dec 2018 01:55:58 -0500
+Received: from [80.88.177.70] ([80.88.177.70]:53302 "EHLO mail2.kuutio.org"
+        rhost-flags-FAIL-FAIL-OK-OK) by vger.kernel.org with ESMTP
+        id S1726292AbeLJGz5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Dec 2018 01:55:57 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by mail2.kuutio.org (Postfix) with ESMTP id 300114D1F52;
+        Mon, 10 Dec 2018 08:55:52 +0200 (EET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=lemmela.net; h=
+        content-language:content-transfer-encoding:content-type
+        :content-type:in-reply-to:mime-version:user-agent:date:date
+        :message-id:from:from:references:subject:subject:received
+        :received; s=dkim; t=1544424947; x=1547016948; bh=+gbn97yV/CYpLr
+        L0nP3X8fbkMIjGu7Scgx/e4BVDhoI=; b=InMYU2Xsq0zJ0M9vW2qVcV/i23e7cc
+        Voq4gn9zTf6984AS143zNevcc+aaDtA7/rWhfkwqplCWIpUOk2lDgmE7XmxKOZsB
+        jKHSAWq3aqoljS/HOxiOXvwiDsLLn2ZolXoOz7w1adEYAFLloMqiMhLjUeN3WiLR
+        dhE471aZ+S5UurMqJnNcSW/FdS+sH9d+HHUZFdPh6xrTNT3CSBFdUo5nqSJ47lFa
+        jH5e2Dno/X4w4fOUEXeQE2AjlEaxJfkOtoHG3ol9bNM+528zlu71Fs64F3Tc69E8
+        yJJBFLrg041o4HrOwIkopDwn8LqFbixwx2CRHEODtfzVgY1zMWFzdCG2eFt2vfSW
+        HIaddkWLB1dPgBei8n3DpizlL0jZzkZtEUsWx9Bbsfs2YkiWQLeO5b9hVNsBVZuT
+        dBqZ8m8MsmCYQmiyEAZ2OdsdjUUxRbomISy3fPJkIU4vKU4AuiJbGIeWVhUn9kK8
+        eM77/GaOtntLxqHD9oPuQ0wZNEg8Wqf79o2npctPib6vr+6sq63TZZedUHI0KQCS
+        uH5nS6bfQoPH4BIUwlvWhCUq3buwYyyDjW+4++gQqwgj4iwEG9FkbtajljxTlGki
+        dkZVMBLt/T+KAUDt36IjrNiG0XbN1MFLHsQJLlxGv5zG6Uyc/VZl/xV5+Vrv6v8Y
+        l+bom4F1HkWrM=
+X-Virus-Scanned: amavisd-new at kuutio.org
+Received: from mail2.kuutio.org ([127.0.0.1])
+        by localhost (mail2.kuutio.org [127.0.0.1]) (amavisd-new, port 10024)
+        with LMTP id Z56O8pZAWHAp; Mon, 10 Dec 2018 08:55:47 +0200 (EET)
+Received: from [IPv6:2001:998:13:e1::139] (unknown [IPv6:2001:998:13:e1::139])
+        by mail2.kuutio.org (Postfix) with ESMTPSA id 7098E4D1F51;
+        Mon, 10 Dec 2018 08:55:47 +0200 (EET)
+Subject: Re: [PATCH v8 1/2] mfd: axp20x: Re-align mfd cell entries
+To:     Lee Jones <lee.jones@linaro.org>
+Cc:     Chen-Yu Tsai <wens@csie.org>,
+        Quentin Schulz <quentin.schulz@bootlin.com>,
+        linux-kernel@vger.kernel.org
+References: <20181208175847.32068-1-oskari@lemmela.net>
+ <20181208175847.32068-2-oskari@lemmela.net> <20181210063642.GT26661@dell>
+From:   =?UTF-8?Q?Oskari_Lemmel=c3=a4?= <oskari@lemmela.net>
+Message-ID: <c77951e6-46d9-d48a-b5bb-33bb9d00a929@lemmela.net>
+Date:   Mon, 10 Dec 2018 08:55:47 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha256; protocol="application/pgp-signature"
+In-Reply-To: <20181210063642.GT26661@dell>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+Hi Lee,
 
-
-Hi,
-
-Anurag Kumar Vulisha <anuragku@xilinx.com> writes:
-> HI Felipe,
+On 10.12.2018 8.36, Lee Jones wrote:
+> On Sat, 08 Dec 2018, Oskari Lemmela wrote:
 >
->>-----Original Message-----
->>From: Felipe Balbi [mailto:balbi@kernel.org]
->>Sent: Friday, December 07, 2018 11:42 AM
->>To: Anurag Kumar Vulisha <anuragku@xilinx.com>; Greg Kroah-Hartman
->><gregkh@linuxfoundation.org>; Shuah Khan <shuah@kernel.org>; Alan Stern
->><stern@rowland.harvard.edu>; Johan Hovold <johan@kernel.org>; Jaejoong Kim
->><climbbb.kim@gmail.com>; Benjamin Herrenschmidt <benh@kernel.crashing.org=
->;
->>Roger Quadros <rogerq@ti.com>; Manu Gautam <mgautam@codeaurora.org>;
->>martin.petersen@oracle.com; Bart Van Assche <bvanassche@acm.org>; Mike
->>Christie <mchristi@redhat.com>; Matthew Wilcox <willy@infradead.org>; Col=
-in Ian
->>King <colin.king@canonical.com>
->>Cc: linux-usb@vger.kernel.org; linux-kernel@vger.kernel.org;
->>v.anuragkumar@gmail.com; Thinh Nguyen <thinhn@synopsys.com>; Tejas Joglek=
-ar
->><tejas.joglekar@synopsys.com>; Ajay Yugalkishore Pandey <APANDEY@xilinx.c=
-om>
->>Subject: RE: [PATCH v7 09/10] usb: dwc3: Check for IOC/LST bit in both ev=
-ent->status
->>and TRB->ctrl fields
+>> From: Chen-Yu Tsai <wens@csie.org>
 >>
+>> In the axp20x driver, the various mfd_cell lists had varying amounts
+>> of indentation, sometimes even within the same list. For the axp288,
+>> there's no alignment at all.
 >>
->>Hi,
+>> Re-align the right hand side of the assignments with the least amount
+>> of tabs possible. Also collapse the closing bracket and the opening
+>> bracket of the next entry onto the same line for the axp288, to be
+>> consistent with all the other mfd_cell lists.
 >>
->>Anurag Kumar Vulisha <anuragku@xilinx.com> writes:
->>>>> @@ -2286,7 +2286,12 @@ static int
->>>>dwc3_gadget_ep_reclaim_completed_trb(struct dwc3_ep *dep,
->>>>>  	if (event->status & DEPEVT_STATUS_SHORT && !chain)
->>>>>  		return 1;
->>>>>
->>>>> -	if (event->status & (DEPEVT_STATUS_IOC | DEPEVT_STATUS_LST))
->>>>> +	if ((event->status & DEPEVT_STATUS_IOC) &&
->>>>> +	    (trb->ctrl & DWC3_TRB_CTRL_IOC))
->>>>> +		return 1;
->>>>
->>>>this shouldn't be necessary. According to databook, event->status
->>>>contains the bits from the completed TRB.  Which means that
->>>>event->status & IOC will always be equal to trb->ctrl & IOC.
->>>>
->>> Thanks for reviewing this patch. Lets consider an example where a
->>> request has num_sgs > 0 and each sg is mapped to a TRB and the last
->>> TRB has the IOC bit set. Once the controller is done with the
->>> transfer, it  generates XferInProgress for the last TRB (since IOC bit
->>> is set). As a part of trb reclaim process
->>> dwc3_gadget_ep_reclaim_trb_sg() calls
->>> dwc3_gadget_ep_reclaim_completed_trb() for req->num_sgs times. Since
->>> the event already has the IOC bit set, the loop is exited from the
->>> loop at the very first TRB and the remaining TRBs (mapped to the sglist=
-) are left
->>unhandled.
->>> To avoid this we modified the code to exit only if both TRB & event
->>> has the IOC bit set.
+>> This patch is whitespace change only. No functionality is modified.
 >>
->>Seems like IOC case should just test for chain flag as well:
->>
+>> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+>> Signed-off-by: Oskari Lemmela <oskari@lemmela.net>
+> Why is Oskari Lemmela's SoB here?
 >
-> Okay. Along with this logic the code for updating chain bit should also b=
-e modified I guess.
+> You both authored this alignment patch?
+I picked up Chen-Yu's patch from
+https://github.com/wens/linux/commit/b99cec26bae2835a0374463570ea9ea26b034afa.
+I should have mentioned it cover letter.
 
-not really
+Chen-Yu is correct author. I'm just sending his patch.
 
-> Since the IOC bit is also set when there are not enough TRBs available, t=
-he code should be
-> modified to not set DWC3_TRB_CTRL_CHN bit when the IOC bit is set. I will=
- update below
-> changes along with your suggestions and resend the patches.
-
-no. Actually I don't think we're allowed to split a scatter/gather like
-that. I did that quite a while ago, but I don't think we're allowed to
-do so. What we should do, in that case, is not even queue that request
-until we have enough for all members of the scatter/gather. But that's a
-separate patch, anyway.
-
-=2D-=20
-balbi
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEElLzh7wn96CXwjh2IzL64meEamQYFAlwODZcACgkQzL64meEa
-mQZaSRAAyNq2TKRZPznYqR/04p9Aip5KW/VtDfvM217J4J67CMszeRiJ131FHbeX
-43JRSgZ2ThO2MSvIAhMDld50AmVfyh/5Um9lrYBWk2NZijYazNYb1rGO2dQoOoRI
-VR0SO9dEbjHpWx1Wq971KdHX9zYmqFvcWlwgvVxf2wItBOBwhPw3vQcNkCgq/tEc
-A6+Hr+JAZdsARTopcQfJSxYluyT/6xYLzzI5dC9jztUkZb45gfU6aV2L0OHHbEBK
-5xCWPrW1qZIYI1AGi075Sli9XfsPogut4YZ5vATHb5+PQDLMB9W3h82HF+GH7azL
-EClmX5EPdd7VyPUPaFEPaP2Yra8uVEeuRe/VyS8He0Kndq/kMJIuFTAYRSycYnRL
-0DaWpnVA7MLaHBDcUdQeNXtXR1O+V90igNjOhXuAqaWuJ/TJdkEWNsJrmN15vDHu
-GJrhRq09H3myDkUfUurLJfU7Zx5Lqi7ylhIF7Jbrb/jCAm3MNeAusm2rY5Zfo1m5
-uzNER9fdltlzPspE/57APXlQIbCEKftapyOFdwxGwNPpIgzpBBWwbNG3oOfI1VsR
-1keznt8hxZQuAXNDJNbzgiw5IsZQSI/dcxmC+Son/h1Fpv985ht7ytkRsSaoBLXZ
-K59+Q3T25qT5HvmEE7ESJMCxFvcBKSny4qF6XHBCiIL7TNUIbAY=
-=FGqq
------END PGP SIGNATURE-----
---=-=-=--
+>
+>> ---
+>>  drivers/mfd/axp20x.c | 107 +++++++++++++++++++++----------------------
+>>  1 file changed, 51 insertions(+), 56 deletions(-)
+>>
+>> diff --git a/drivers/mfd/axp20x.c b/drivers/mfd/axp20x.c
+>> index dfc3cff1d08b..8037b4e01ed6 100644
+>> --- a/drivers/mfd/axp20x.c
+>> +++ b/drivers/mfd/axp20x.c
+>> @@ -640,9 +640,9 @@ static const struct mfd_cell axp221_cells[] = {
+>>  
+>>  static const struct mfd_cell axp223_cells[] = {
+>>  	{
+>> -		.name			= "axp221-pek",
+>> -		.num_resources		= ARRAY_SIZE(axp22x_pek_resources),
+>> -		.resources		= axp22x_pek_resources,
+>> +		.name		= "axp221-pek",
+>> +		.num_resources	= ARRAY_SIZE(axp22x_pek_resources),
+>> +		.resources	= axp22x_pek_resources,
+>>  	}, {
+>>  		.name		= "axp22x-adc",
+>>  		.of_compatible	= "x-powers,axp221-adc",
+>> @@ -650,7 +650,7 @@ static const struct mfd_cell axp223_cells[] = {
+>>  		.name		= "axp20x-battery-power-supply",
+>>  		.of_compatible	= "x-powers,axp221-battery-power-supply",
+>>  	}, {
+>> -		.name			= "axp20x-regulator",
+>> +		.name		= "axp20x-regulator",
+>>  	}, {
+>>  		.name		= "axp20x-ac-power-supply",
+>>  		.of_compatible	= "x-powers,axp221-ac-power-supply",
+>> @@ -666,9 +666,9 @@ static const struct mfd_cell axp223_cells[] = {
+>>  
+>>  static const struct mfd_cell axp152_cells[] = {
+>>  	{
+>> -		.name			= "axp20x-pek",
+>> -		.num_resources		= ARRAY_SIZE(axp152_pek_resources),
+>> -		.resources		= axp152_pek_resources,
+>> +		.name		= "axp20x-pek",
+>> +		.num_resources	= ARRAY_SIZE(axp152_pek_resources),
+>> +		.resources	= axp152_pek_resources,
+>>  	},
+>>  };
+>>  
+>> @@ -697,84 +697,79 @@ static const struct resource axp288_charger_resources[] = {
+>>  
+>>  static const struct mfd_cell axp288_cells[] = {
+>>  	{
+>> -		.name = "axp288_adc",
+>> -		.num_resources = ARRAY_SIZE(axp288_adc_resources),
+>> -		.resources = axp288_adc_resources,
+>> -	},
+>> -	{
+>> -		.name = "axp288_extcon",
+>> -		.num_resources = ARRAY_SIZE(axp288_extcon_resources),
+>> -		.resources = axp288_extcon_resources,
+>> -	},
+>> -	{
+>> -		.name = "axp288_charger",
+>> -		.num_resources = ARRAY_SIZE(axp288_charger_resources),
+>> -		.resources = axp288_charger_resources,
+>> -	},
+>> -	{
+>> -		.name = "axp288_fuel_gauge",
+>> -		.num_resources = ARRAY_SIZE(axp288_fuel_gauge_resources),
+>> -		.resources = axp288_fuel_gauge_resources,
+>> -	},
+>> -	{
+>> -		.name = "axp221-pek",
+>> -		.num_resources = ARRAY_SIZE(axp288_power_button_resources),
+>> -		.resources = axp288_power_button_resources,
+>> -	},
+>> -	{
+>> -		.name = "axp288_pmic_acpi",
+>> +		.name		= "axp288_adc",
+>> +		.num_resources	= ARRAY_SIZE(axp288_adc_resources),
+>> +		.resources	= axp288_adc_resources,
+>> +	}, {
+>> +		.name		= "axp288_extcon",
+>> +		.num_resources	= ARRAY_SIZE(axp288_extcon_resources),
+>> +		.resources	= axp288_extcon_resources,
+>> +	}, {
+>> +		.name		= "axp288_charger",
+>> +		.num_resources	= ARRAY_SIZE(axp288_charger_resources),
+>> +		.resources	= axp288_charger_resources,
+>> +	}, {
+>> +		.name		= "axp288_fuel_gauge",
+>> +		.num_resources	= ARRAY_SIZE(axp288_fuel_gauge_resources),
+>> +		.resources	= axp288_fuel_gauge_resources,
+>> +	}, {
+>> +		.name		= "axp221-pek",
+>> +		.num_resources	= ARRAY_SIZE(axp288_power_button_resources),
+>> +		.resources	= axp288_power_button_resources,
+>> +	}, {
+>> +		.name		= "axp288_pmic_acpi",
+>>  	},
+>>  };
+>>  
+>>  static const struct mfd_cell axp803_cells[] = {
+>>  	{
+>> -		.name			= "axp221-pek",
+>> -		.num_resources		= ARRAY_SIZE(axp803_pek_resources),
+>> -		.resources		= axp803_pek_resources,
+>> +		.name		= "axp221-pek",
+>> +		.num_resources	= ARRAY_SIZE(axp803_pek_resources),
+>> +		.resources	= axp803_pek_resources,
+>>  	},
+>> -	{	.name			= "axp20x-regulator" },
+>> +	{	.name		= "axp20x-regulator" },
+>>  };
+>>  
+>>  static const struct mfd_cell axp806_self_working_cells[] = {
+>>  	{
+>> -		.name			= "axp221-pek",
+>> -		.num_resources		= ARRAY_SIZE(axp806_pek_resources),
+>> -		.resources		= axp806_pek_resources,
+>> +		.name		= "axp221-pek",
+>> +		.num_resources	= ARRAY_SIZE(axp806_pek_resources),
+>> +		.resources	= axp806_pek_resources,
+>>  	},
+>> -	{	.name			= "axp20x-regulator" },
+>> +	{	.name		= "axp20x-regulator" },
+>>  };
+>>  
+>>  static const struct mfd_cell axp806_cells[] = {
+>>  	{
+>> -		.id			= 2,
+>> -		.name			= "axp20x-regulator",
+>> +		.id		= 2,
+>> +		.name		= "axp20x-regulator",
+>>  	},
+>>  };
+>>  
+>>  static const struct mfd_cell axp809_cells[] = {
+>>  	{
+>> -		.name			= "axp221-pek",
+>> -		.num_resources		= ARRAY_SIZE(axp809_pek_resources),
+>> -		.resources		= axp809_pek_resources,
+>> +		.name		= "axp221-pek",
+>> +		.num_resources	= ARRAY_SIZE(axp809_pek_resources),
+>> +		.resources	= axp809_pek_resources,
+>>  	}, {
+>> -		.id			= 1,
+>> -		.name			= "axp20x-regulator",
+>> +		.id		= 1,
+>> +		.name		= "axp20x-regulator",
+>>  	},
+>>  };
+>>  
+>>  static const struct mfd_cell axp813_cells[] = {
+>>  	{
+>> -		.name			= "axp221-pek",
+>> -		.num_resources		= ARRAY_SIZE(axp803_pek_resources),
+>> -		.resources		= axp803_pek_resources,
+>> +		.name		= "axp221-pek",
+>> +		.num_resources	= ARRAY_SIZE(axp803_pek_resources),
+>> +		.resources	= axp803_pek_resources,
+>>  	}, {
+>> -		.name			= "axp20x-regulator",
+>> +		.name		= "axp20x-regulator",
+>>  	}, {
+>> -		.name			= "axp20x-gpio",
+>> -		.of_compatible		= "x-powers,axp813-gpio",
+>> +		.name		= "axp20x-gpio",
+>> +		.of_compatible	= "x-powers,axp813-gpio",
+>>  	}, {
+>> -		.name			= "axp813-adc",
+>> -		.of_compatible		= "x-powers,axp813-adc",
+>> +		.name		= "axp813-adc",
+>> +		.of_compatible	= "x-powers,axp813-adc",
+>>  	}, {
+>>  		.name		= "axp20x-battery-power-supply",
+>>  		.of_compatible	= "x-powers,axp813-battery-power-supply",
+Thanks,
+Oskari
