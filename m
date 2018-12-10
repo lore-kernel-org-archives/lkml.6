@@ -6,57 +6,57 @@ X-Spam-Status: No, score=-5.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C000BC04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 09:25:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E580BC65BAF
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 09:25:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E95520821
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 09:25:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E95520821
+	by mail.kernel.org (Postfix) with ESMTP id B3DFF20821
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 09:25:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B3DFF20821
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=opensource.cirrus.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726756AbeLJJZp (ORCPT
+        id S1726928AbeLJJZz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 04:25:45 -0500
-Received: from mx0b-001ae601.pphosted.com ([67.231.152.168]:54310 "EHLO
-        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726292AbeLJJZo (ORCPT
+        Mon, 10 Dec 2018 04:25:55 -0500
+Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:46562 "EHLO
+        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726292AbeLJJZz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 04:25:44 -0500
-Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
-        by mx0b-001ae601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id wBA9Ot5f028752;
-        Mon, 10 Dec 2018 03:25:41 -0600
+        Mon, 10 Dec 2018 04:25:55 -0500
+Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
+        by mx0a-001ae601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id wBA9Okeb016776;
+        Mon, 10 Dec 2018 03:25:53 -0600
 Authentication-Results: ppops.net;
         spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
-Received: from mail4.cirrus.com ([87.246.98.35])
-        by mx0b-001ae601.pphosted.com with ESMTP id 2p8b8vt71v-1;
-        Mon, 10 Dec 2018 03:25:41 -0600
+Received: from mail1.cirrus.com (mail1.cirrus.com [141.131.3.20])
+        by mx0a-001ae601.pphosted.com with ESMTP id 2p8c86j6mm-1;
+        Mon, 10 Dec 2018 03:25:53 -0600
 Received: from EX17.ad.cirrus.com (unknown [172.20.9.81])
-        by mail4.cirrus.com (Postfix) with ESMTP id 7DDC4650F632;
-        Mon, 10 Dec 2018 03:29:22 -0600 (CST)
+        by mail1.cirrus.com (Postfix) with ESMTP id ED74E611C8C7;
+        Mon, 10 Dec 2018 03:25:52 -0600 (CST)
 Received: from imbe.wolfsonmicro.main (198.61.95.81) by EX17.ad.cirrus.com
  (172.20.9.81) with Microsoft SMTP Server id 14.3.408.0; Mon, 10 Dec 2018
- 09:25:40 +0000
+ 09:25:52 +0000
 Received: from imbe.wolfsonmicro.main (imbe.wolfsonmicro.main [198.61.95.81])
-        by imbe.wolfsonmicro.main (8.14.4/8.14.4) with ESMTP id wBA9Pd6H023860; Mon,
- 10 Dec 2018 09:25:40 GMT
-Date:   Mon, 10 Dec 2018 09:25:39 +0000
+        by imbe.wolfsonmicro.main (8.14.4/8.14.4) with ESMTP id wBA9Pqgq023868; Mon,
+ 10 Dec 2018 09:25:52 GMT
+Date:   Mon, 10 Dec 2018 09:25:52 +0000
 From:   Charles Keepax <ckeepax@opensource.cirrus.com>
 To:     Paul Gortmaker <paul.gortmaker@windriver.com>
 CC:     Lee Jones <lee.jones@linaro.org>, <linux-kernel@vger.kernel.org>,
         <patches@opensource.cirrus.com>
-Subject: Re: [PATCH 13/18] mfd: wm831x-spi: Make it explicitly non-modular
-Message-ID: <20181210092539.GK16508@imbe.wolfsonmicro.main>
+Subject: Re: [PATCH 14/18] mfd: wm831x-i2c: Make it explicitly non-modular
+Message-ID: <20181210092552.GL16508@imbe.wolfsonmicro.main>
 References: <1544213465-16259-1-git-send-email-paul.gortmaker@windriver.com>
- <1544213465-16259-14-git-send-email-paul.gortmaker@windriver.com>
+ <1544213465-16259-15-git-send-email-paul.gortmaker@windriver.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <1544213465-16259-14-git-send-email-paul.gortmaker@windriver.com>
+In-Reply-To: <1544213465-16259-15-git-send-email-paul.gortmaker@windriver.com>
 User-Agent: Mutt/1.5.20 (2009-12-10)
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
  suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=949 adultscore=0
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=840 adultscore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
  definitions=main-1812100087
 Sender: linux-kernel-owner@vger.kernel.org
@@ -64,11 +64,11 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 07, 2018 at 03:11:00PM -0500, Paul Gortmaker wrote:
+On Fri, Dec 07, 2018 at 03:11:01PM -0500, Paul Gortmaker wrote:
 > The Kconfig currently controlling compilation of this code is:
 > 
-> drivers/mfd/Kconfig:config MFD_WM831X_SPI
-> drivers/mfd/Kconfig:    bool "Wolfson Microelectronics WM831x/2x PMICs with SPI"
+> drivers/mfd/Kconfig:config MFD_WM831X_I2C
+> drivers/mfd/Kconfig:    bool "Wolfson Microelectronics WM831x/2x PMICs with I2C"
 > 
 > ...meaning that it currently is not being built as a module by anyone.
 > 
@@ -83,9 +83,6 @@ On Fri, Dec 07, 2018 at 03:11:00PM -0500, Paul Gortmaker wrote:
 > remains unchanged with this commit.
 > 
 > Also note that MODULE_DEVICE_TABLE is a no-op for non-modular code.
-> 
-> We also delete the MODULE_LICENSE tag etc. since all that information
-> is already contained at the top of the file in the comments.
 > 
 > Cc: Lee Jones <lee.jones@linaro.org>
 > Cc: patches@opensource.cirrus.com
