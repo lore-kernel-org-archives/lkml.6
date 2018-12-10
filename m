@@ -6,44 +6,39 @@ X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 571CDC67839
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 16:28:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D12AC04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 16:29:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 278AE20821
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 16:28:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 278AE20821
+	by mail.kernel.org (Postfix) with ESMTP id 3BFE82082F
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 16:29:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3BFE82082F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kontron.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728096AbeLJQ25 convert rfc822-to-8bit (ORCPT
+        id S1728024AbeLJQ2z convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 11:28:57 -0500
-Received: from skedge04.snt-world.com ([91.208.41.69]:59266 "EHLO
-        skedge04.snt-world.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728001AbeLJQ24 (ORCPT
+        Mon, 10 Dec 2018 11:28:55 -0500
+Received: from skedge03.snt-world.com ([91.208.41.68]:42618 "EHLO
+        skedge03.snt-world.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727417AbeLJQ2w (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 11:28:56 -0500
+        Mon, 10 Dec 2018 11:28:52 -0500
 Received: from sntmail10s.snt-is.com (unknown [10.203.32.183])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by skedge04.snt-world.com (Postfix) with ESMTPS id 0E7DC67A7D4;
-        Mon, 10 Dec 2018 17:28:51 +0100 (CET)
+        by skedge03.snt-world.com (Postfix) with ESMTPS id 513A567A65D;
+        Mon, 10 Dec 2018 17:28:49 +0100 (CET)
 Received: from sntmail12r.snt-is.com (10.203.32.182) by sntmail10s.snt-is.com
  (10.203.32.183) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1466.3; Mon, 10 Dec
- 2018 17:28:50 +0100
+ 2018 17:28:48 +0100
 Received: from sntmail12r.snt-is.com ([fe80::e551:8750:7bba:3305]) by
  sntmail12r.snt-is.com ([fe80::e551:8750:7bba:3305%5]) with mapi id
- 15.01.1466.003; Mon, 10 Dec 2018 17:28:50 +0100
+ 15.01.1466.003; Mon, 10 Dec 2018 17:28:48 +0100
 From:   Schrempf Frieder <frieder.schrempf@kontron.de>
-To:     Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
+To:     Shawn Guo <shawnguo@kernel.org>, Li Yang <leoyang.li@nxp.com>,
         Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Li Yang <leoyang.li@nxp.com>
+        Mark Rutland <mark.rutland@arm.com>
 CC:     "boris.brezillon@bootlin.com" <boris.brezillon@bootlin.com>,
         "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
         "broonie@kernel.org" <broonie@kernel.org>,
@@ -53,13 +48,13 @@ CC:     "boris.brezillon@bootlin.com" <boris.brezillon@bootlin.com>,
         <linux-arm-kernel@lists.infradead.org>,
         "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: [PATCH 5/5] ARM: dts: Add spi-[tx/rx]-bus-width for the FSL QSPI
- controller
-Thread-Topic: [PATCH 5/5] ARM: dts: Add spi-[tx/rx]-bus-width for the FSL QSPI
- controller
-Thread-Index: AQHUkKVuiNsYeIaXhkWu56AzznJiLA==
-Date:   Mon, 10 Dec 2018 16:28:50 +0000
-Message-ID: <1544459182-23655-6-git-send-email-frieder.schrempf@kontron.de>
+Subject: [PATCH 2/5] ARM: dts: Remove unused properties from FSL QSPI driver
+ nodes
+Thread-Topic: [PATCH 2/5] ARM: dts: Remove unused properties from FSL QSPI
+ driver nodes
+Thread-Index: AQHUkKVtHHdcUdYrJk+Dz++VKi/z+w==
+Date:   Mon, 10 Dec 2018 16:28:48 +0000
+Message-ID: <1544459182-23655-3-git-send-email-frieder.schrempf@kontron.de>
 References: <1544459182-23655-1-git-send-email-frieder.schrempf@kontron.de>
 In-Reply-To: <1544459182-23655-1-git-send-email-frieder.schrempf@kontron.de>
 Accept-Language: de-DE, en-US
@@ -72,17 +67,15 @@ Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
 X-SnT-MailScanner-Information: Please contact the ISP for more information
-X-SnT-MailScanner-ID: 0E7DC67A7D4.A4222
+X-SnT-MailScanner-ID: 513A567A65D.AE626
 X-SnT-MailScanner: Found to be clean
 X-SnT-MailScanner-SpamCheck: 
 X-SnT-MailScanner-From: frieder.schrempf@kontron.de
 X-SnT-MailScanner-To: boris.brezillon@bootlin.com, broonie@kernel.org,
-        devicetree@vger.kernel.org, fabio.estevam@nxp.com,
-        kernel@pengutronix.de, leoyang.li@nxp.com,
-        linux-arm-kernel@lists.infradead.org, linux-imx@nxp.com,
-        linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org,
-        linux-spi@vger.kernel.org, mark.rutland@arm.com, robh+dt@kernel.org,
-        s.hauer@pengutronix.de, shawnguo@kernel.org
+        devicetree@vger.kernel.org, leoyang.li@nxp.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-mtd@lists.infradead.org, linux-spi@vger.kernel.org,
+        mark.rutland@arm.com, robh+dt@kernel.org, shawnguo@kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -90,86 +83,28 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Frieder Schrempf <frieder.schrempf@kontron.de>
 
-We will move the FSL QSPI driver to the SPI framework soon. To
-prepare and to make sure the full buswidth is used (as it is with
-the current driver), let's add the right properties.
+The properties 'bus-num', 'fsl,spi-num-chipselects' and
+'fsl,spi-flash-chipselects' were never read by the driver
+and can be removed.
 
 Signed-off-by: Frieder Schrempf <frieder.schrempf@kontron.de>
 ---
- arch/arm/boot/dts/imx6sx-sdb-reva.dts       | 4 ++++
- arch/arm/boot/dts/imx6sx-sdb.dts            | 4 ++++
- arch/arm/boot/dts/imx6ul-14x14-evk.dtsi     | 2 ++
- arch/arm/boot/dts/ls1021a-moxa-uc-8410a.dts | 2 ++
- 4 files changed, 12 insertions(+)
+ arch/arm/boot/dts/ls1021a-moxa-uc-8410a.dts | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/arch/arm/boot/dts/imx6sx-sdb-reva.dts b/arch/arm/boot/dts/imx6sx-sdb-reva.dts
-index 344abc2..9997156 100644
---- a/arch/arm/boot/dts/imx6sx-sdb-reva.dts
-+++ b/arch/arm/boot/dts/imx6sx-sdb-reva.dts
-@@ -132,6 +132,8 @@
- 		#size-cells = <1>;
- 		compatible = "spansion,s25fl128s", "jedec,spi-nor";
- 		spi-max-frequency = <66000000>;
-+		spi-rx-bus-width = <4>;
-+		spi-tx-bus-width = <4>;
- 	};
- 
- 	flash1: s25fl128s@2 {
-@@ -140,5 +142,7 @@
- 		#size-cells = <1>;
- 		compatible = "spansion,s25fl128s", "jedec,spi-nor";
- 		spi-max-frequency = <66000000>;
-+		spi-rx-bus-width = <4>;
-+		spi-tx-bus-width = <4>;
- 	};
- };
-diff --git a/arch/arm/boot/dts/imx6sx-sdb.dts b/arch/arm/boot/dts/imx6sx-sdb.dts
-index 5a39703..9acfda8 100644
---- a/arch/arm/boot/dts/imx6sx-sdb.dts
-+++ b/arch/arm/boot/dts/imx6sx-sdb.dts
-@@ -117,6 +117,8 @@
- 		#size-cells = <1>;
- 		compatible = "micron,n25q256a", "jedec,spi-nor";
- 		spi-max-frequency = <29000000>;
-+		spi-rx-bus-width = <4>;
-+		spi-tx-bus-width = <4>;
- 		reg = <0>;
- 	};
- 
-@@ -125,6 +127,8 @@
- 		#size-cells = <1>;
- 		compatible = "micron,n25q256a", "jedec,spi-nor";
- 		spi-max-frequency = <29000000>;
-+		spi-rx-bus-width = <4>;
-+		spi-tx-bus-width = <4>;
- 		reg = <2>;
- 	};
- };
-diff --git a/arch/arm/boot/dts/imx6ul-14x14-evk.dtsi b/arch/arm/boot/dts/imx6ul-14x14-evk.dtsi
-index 32a0723..c2c9a2a 100644
---- a/arch/arm/boot/dts/imx6ul-14x14-evk.dtsi
-+++ b/arch/arm/boot/dts/imx6ul-14x14-evk.dtsi
-@@ -176,6 +176,8 @@
- 		#size-cells = <1>;
- 		compatible = "micron,n25q256a";
- 		spi-max-frequency = <29000000>;
-+		spi-rx-bus-width = <4>;
-+		spi-tx-bus-width = <4>;
- 		reg = <0>;
- 	};
- };
 diff --git a/arch/arm/boot/dts/ls1021a-moxa-uc-8410a.dts b/arch/arm/boot/dts/ls1021a-moxa-uc-8410a.dts
-index 6bb7ce0..6a83f30 100644
+index d01f64b..6bb7ce0 100644
 --- a/arch/arm/boot/dts/ls1021a-moxa-uc-8410a.dts
 +++ b/arch/arm/boot/dts/ls1021a-moxa-uc-8410a.dts
-@@ -211,6 +211,8 @@
- 		#address-cells = <1>;
- 		#size-cells = <1>;
- 		spi-max-frequency = <20000000>;
-+		spi-rx-bus-width = <4>;
-+		spi-tx-bus-width = <4>;
- 		reg = <0>;
+@@ -203,9 +203,6 @@
+ };
  
- 		partitions@0 {
+ &qspi {
+-	bus-num = <0>;
+-	fsl,spi-num-chipselects = <2>;
+-	fsl,spi-flash-chipselects = <0>;
+ 	fsl,qspi-has-second-chip;
+ 	status = "okay";
+ 
 -- 
 2.7.4
