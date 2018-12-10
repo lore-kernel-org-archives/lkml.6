@@ -2,132 +2,156 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13BBCC04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 13:28:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95CC7C04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 13:28:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CE8072084E
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 13:28:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ycXOerql"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE8072084E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	by mail.kernel.org (Postfix) with ESMTP id 66D4E20870
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 13:28:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 66D4E20870
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727503AbeLJN2L (ORCPT
+        id S1727521AbeLJN2P (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 08:28:11 -0500
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:57488 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727440AbeLJN2J (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 08:28:09 -0500
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id wBADRoEC007067;
-        Mon, 10 Dec 2018 07:27:50 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1544448470;
-        bh=JW4TH8hgq7AM1mcRb3UP0uz5sNmGSd6Mt0fB3WIi3pA=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=ycXOerqlibfLZ1TAeddcO8xCrqw8AwwogdTFKaAxLwro8QLwatnXOuJPwDJsMfHHz
-         +Jgs6WZYF6XvWaIkcSW7uFGE0eSAZYRcq90SyFrjbi3QWaHhOdne2cjlQdPWtI0vvC
-         WOSnjR2GXwXkuEx6Wx5jnpUGrxUnJag6WqtrUutw=
-Received: from DFLE101.ent.ti.com (dfle101.ent.ti.com [10.64.6.22])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wBADRobf031423
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 10 Dec 2018 07:27:50 -0600
-Received: from DFLE112.ent.ti.com (10.64.6.33) by DFLE101.ent.ti.com
- (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Mon, 10
- Dec 2018 07:27:50 -0600
-Received: from dflp32.itg.ti.com (10.64.6.15) by DFLE112.ent.ti.com
- (10.64.6.33) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Mon, 10 Dec 2018 07:27:50 -0600
-Received: from [172.24.190.215] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id wBADRkNF030324;
-        Mon, 10 Dec 2018 07:27:47 -0600
-Subject: Re: [PATCH 1/2] arm64: dts: ti: k3-am654: Add Support for MMC/SD
-To:     Nishanth Menon <nm@ti.com>, Vignesh R <vigneshr@ti.com>
-CC:     <linux-arm-kernel@lists.infradead.org>, <t-kristo@ti.com>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <mark.rutland@arm.com>, <ulf.hansson@linaro.org>,
-        <adrian.hunter@intel.com>, <kishon@ti.com>, <robh+dt@kernel.org>,
-        <michal.simek@xilinx.com>
-References: <20181207084233.13700-1-faiz_abbas@ti.com>
- <20181207084233.13700-2-faiz_abbas@ti.com>
- <a6aacd53-e1c4-fce0-7712-f276c80bbffc@ti.com>
- <20181208154526.ivbvwvcx6otg7lvh@akan>
-From:   Faiz Abbas <faiz_abbas@ti.com>
-Message-ID: <044fa725-9b6d-e331-ee10-664e59128e64@ti.com>
-Date:   Mon, 10 Dec 2018 19:00:34 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Mon, 10 Dec 2018 08:28:15 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:33446 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726687AbeLJN2N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Dec 2018 08:28:13 -0500
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id E8F35811A9;
+        Mon, 10 Dec 2018 13:28:12 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.131])
+        by smtp.corp.redhat.com (Postfix) with SMTP id E94F01A7D4;
+        Mon, 10 Dec 2018 13:28:07 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+        oleg@redhat.com; Mon, 10 Dec 2018 14:28:12 +0100 (CET)
+Date:   Mon, 10 Dec 2018 14:28:07 +0100
+From:   Oleg Nesterov <oleg@redhat.com>
+To:     "Dmitry V. Levin" <ldv@altlinux.org>
+Cc:     Michael Ellerman <mpe@ellerman.id.au>,
+        Elvira Khabirova <lineprinter@altlinux.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Breno Leitao <leitao@debian.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Eugene Syromyatnikov <esyr@redhat.com>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6] powerpc/ptrace: replace ptrace_report_syscall() with
+ a tracehook call
+Message-ID: <20181210132806.GA4177@redhat.com>
+References: <20181116121701.14359da0@akathisia>
+ <87ftw12nyn.fsf@concordia.ellerman.id.au>
+ <20181119210139.GA8360@altlinux.org>
+ <87efbe166y.fsf@concordia.ellerman.id.au>
+ <20181203031823.GE11573@altlinux.org>
+ <20181207011946.GA18558@altlinux.org>
+ <87y391k2tq.fsf@concordia.ellerman.id.au>
+ <20181207154255.GA28964@altlinux.org>
+ <20181207155605.GB28964@altlinux.org>
+ <20181207185226.GB31278@altlinux.org>
 MIME-Version: 1.0
-In-Reply-To: <20181208154526.ivbvwvcx6otg7lvh@akan>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181207185226.GB31278@altlinux.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Mon, 10 Dec 2018 13:28:13 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Nishanth,
+On 12/07, Dmitry V. Levin wrote:
+>
+> Please make either v5 or v6 edition of this fix, or any similar fix,
+> into v4.20.
 
-On 08/12/18 9:15 PM, Nishanth Menon wrote:
-> On 10:56-20181208, Vignesh R wrote:
->>
->>
->> On 07/12/18 2:12 PM, Faiz Abbas wrote:
->>> There are two MMC host controller instances present on the TI's
->>> Am654 SOCs. Add device tree nodes for the same.
->>>
->>> Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
->>> ---
->>>  arch/arm64/boot/dts/ti/k3-am65-main.dtsi | 28 ++++++++++++++++++++++++
->>>  1 file changed, 28 insertions(+)
->>>
->>> diff --git a/arch/arm64/boot/dts/ti/k3-am65-main.dtsi b/arch/arm64/boot/dts/ti/k3-am65-main.dtsi
->>> index 916434839603..d07212f16a81 100644
->>> --- a/arch/arm64/boot/dts/ti/k3-am65-main.dtsi
->>> +++ b/arch/arm64/boot/dts/ti/k3-am65-main.dtsi
->>> @@ -129,4 +129,32 @@
->>>  		clocks = <&k3_clks 113 1>;
->>>  		power-domains = <&k3_pds 113>;
->>>  	};
->>> +
->>> +	sdhci0: sdhci@4f80000 {
->>> +		compatible = "ti,am654-sdhci-5.1";
->>> +		reg = <0x0 0x4f80000 0x0 0x260>, <0x0 0x4f90000 0x0 0x134>;
->>> +		power-domains = <&k3_pds 47>;
->>> +		clocks = <&k3_clks 47 0>, <&k3_clks 47 1>;
->>> +		clock-names = "clk_ahb", "clk_xin";
->>> +		interrupts = <GIC_SPI 136 IRQ_TYPE_LEVEL_HIGH>;
->>> +		sdhci-caps-mask = <0x80000007 0x0>;
->>> +		mmc-ddr-1_8v;
->>> +		ti,otap-del-sel = <0x2>;
->>> +		ti,trm-icp = <0x8>;
->>> +		status = "disabled";
->>> +	};
->>
->> Please drop "status=disabled" from dtsi. Can be disabled as required in
->> the board dts.
-> 
-> 
-> yes - the standard in k3 is to disable the nodes that are'nt needed in
-> board.dtsi.
-> 
-> This is different from "disabled by default" approach in DRA7 or OMAP4
-> for example.
-> 
+IIUC, v5 above means
 
-Ok. Will fix in v2.
+	[PATCH v5 23/25] powerpc/ptrace: replace ptrace_report_syscall() with a tracehook call
 
-Thanks,
-Faiz
+you sent in another series...
+
+>  long do_syscall_trace_enter(struct pt_regs *regs)
+>  {
+> +	struct thread_info *ti;
+> +	u32 cached_flags;
+> +
+>  	user_exit();
+>  
+> -	if (test_thread_flag(TIF_SYSCALL_EMU)) {
+> -		ptrace_report_syscall(regs);
+> -		/*
+> -		 * Returning -1 will skip the syscall execution. We want to
+> -		 * avoid clobbering any register also, thus, not 'gotoing'
+> -		 * skip label.
+> -		 */
+> -		return -1;
+> -	}
+> +	ti = current_thread_info();
+> +	cached_flags = READ_ONCE(ti->flags) &
+> +		       (_TIF_SYSCALL_EMU | _TIF_SYSCALL_TRACE |
+> +			_TIF_SYSCALL_TRACEPOINT);
+>  
+> -	/*
+> -	 * The tracer may decide to abort the syscall, if so tracehook
+> -	 * will return !0. Note that the tracer may also just change
+> -	 * regs->gpr[0] to an invalid syscall number, that is handled
+> -	 * below on the exit path.
+> -	 */
+> -	if (test_thread_flag(TIF_SYSCALL_TRACE) &&
+> -	    tracehook_report_syscall_entry(regs))
+> -		goto skip;
+> +	if (cached_flags & (_TIF_SYSCALL_EMU | _TIF_SYSCALL_TRACE)) {
+> +		int rc = tracehook_report_syscall_entry(regs);
+> +
+> +		if (unlikely(cached_flags & _TIF_SYSCALL_EMU)) {
+> +			/*
+> +			 * A nonzero return code from
+> +			 * tracehook_report_syscall_entry() tells us
+> +			 * to prevent the syscall execution, but
+> +			 * we are not going to execute it anyway.
+> +			 *
+> +			 * Returning -1 will skip the syscall execution.
+> +			 * We want to avoid clobbering any register also,
+> +			 * thus, not 'gotoing' skip label.
+> +			 */
+> +			return -1;
+> +		}
+> +
+> +		if (rc) {
+> +			/*
+> +			 * The tracer decided to abort the syscall.
+> +			 * Note that the tracer may also just change
+> +			 * regs->gpr[0] to an invalid syscall number,
+> +			 * that is handled below on the exit path.
+> +			 */
+> +			goto skip;
+> +		}
+> +	}
+>  
+>  	/* Run seccomp after ptrace; allow it to set gpr[3]. */
+>  	if (do_seccomp(regs))
+> @@ -3293,7 +3309,7 @@ long do_syscall_trace_enter(struct pt_regs *regs)
+>  	if (regs->gpr[0] >= NR_syscalls)
+>  		goto skip;
+>  
+> -	if (unlikely(test_thread_flag(TIF_SYSCALL_TRACEPOINT)))
+> +	if (unlikely(cached_flags & _TIF_SYSCALL_TRACEPOINT))
+
+I will leave this to maintainers, but to me this change looks good and imo it
+also cleanups the code.
+
+However I am not sure cached_flags should include _TIF_SYSCALL_TRACEPOINT. If
+nothing else, the caller can sleep in ptrace_stop() unpredictably long and
+TIF_SYSCALL_TRACEPOINT can be set/cleared meanwhile.
+
+Oleg.
+
