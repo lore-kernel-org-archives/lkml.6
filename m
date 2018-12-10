@@ -2,115 +2,132 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3672BC04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 10:26:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59758C5CFFE
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 10:27:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EDAF121479
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 10:26:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EDAF121479
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 1B49120870
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 10:27:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="DBmHbzHN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B49120870
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726729AbeLJK0s (ORCPT
+        id S1726935AbeLJK1G (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 05:26:48 -0500
-Received: from foss.arm.com ([217.140.101.70]:50564 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726545AbeLJK0s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 05:26:48 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9D91F15AB;
-        Mon, 10 Dec 2018 02:26:45 -0800 (PST)
-Received: from [10.1.196.93] (en101.cambridge.arm.com [10.1.196.93])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 356EA3F6A8;
-        Mon, 10 Dec 2018 02:26:44 -0800 (PST)
-Subject: Re: [PATCH v9 1/8] KVM: arm/arm64: Share common code in
- user_mem_abort()
-To:     Christoffer Dall <christoffer.dall@arm.com>
-Cc:     Anshuman Khandual <anshuman.khandual@arm.com>,
-        kvmarm@lists.cs.columbia.edu, marc.zyngier@arm.com,
-        will.deacon@arm.com, linux-kernel@vger.kernel.org,
-        punitagrawal@gmail.com, linux-arm-kernel@lists.infradead.org
-References: <20181031175745.18650-1-punit.agrawal@arm.com>
- <20181031175745.18650-2-punit.agrawal@arm.com>
- <ad4b316a-054f-24d9-d32d-8fbe7972b5ad@arm.com>
- <8fd34e5f-7d75-4de2-3fee-d6d70805685c@arm.com>
- <20181210085616.GB30263@e113682-lin.lund.arm.com>
-From:   Suzuki K Poulose <suzuki.poulose@arm.com>
-Message-ID: <525e88a4-b3af-3d7c-ac08-5461b8aa9e51@arm.com>
-Date:   Mon, 10 Dec 2018 10:26:42 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Mon, 10 Dec 2018 05:27:06 -0500
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:44938 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726619AbeLJK1G (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Dec 2018 05:27:06 -0500
+Received: by mail-ed1-f65.google.com with SMTP id y56so8968400edd.11
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Dec 2018 02:27:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=YvEiIPdGs1H4UNwUr5kXxKhGDM8LgMBdM2br7i3LoLw=;
+        b=DBmHbzHNGmRUOzkZ6hbbt422zoOmdhF7Mpg7D1xy2Tau2IX3WQkUhEcOQKoUe0BHEr
+         2W1QJhGVqeE/PFBsTtR2Cgc1vjvyhW3K8MfTBhUrZwWoOeT2zFvKPltQrx5brB7taWaU
+         R4zkcjtyllNMYdVKI1Ks437gPPKnSI7lvVrvg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=YvEiIPdGs1H4UNwUr5kXxKhGDM8LgMBdM2br7i3LoLw=;
+        b=cbUrj74Sc3kZqwuoe+jS6giByrZ2o1R2DNlB87JI2+ySyxfzt8KrFZp9L59Cp0/Rmz
+         XmWM2sOyRjj6fr4ujtddvuvXMmMzJFBXwr/1wpMyQMr0VsrDYUB+XqUiDkeUQ3vxDS1K
+         fgZAlBEM9lNeh7UO/tuvPZrRS0tyvU/xrPL0Op1nyj76xsPsfGI8ZXG8DfRjctgZvMRJ
+         HhhHHABeEbAATxUZO9PZ3BPoT1ScEmZA/4dDJvw3m7LvzgO9kT12zDbgXWjTEW37QKC/
+         Y1kDOGNf8Owp5doBw2vAPFf8x7uZmxj/IU8v4kyP+eT+0uKHUNpsPdGEIZ8LxADznMOD
+         19uw==
+X-Gm-Message-State: AA+aEWaTMrd/0tWgiskKlSbpWaDX/FSewAWI5SHAQ8oN1y84iiXkzxrg
+        YE9bp082e7aKnIl5o4RB9E2vxQ==
+X-Google-Smtp-Source: AFSGD/UAQJgwMfBHZZmnESmHf2MqKl6psny8cuUNXxE4118UDXSGrA9Ui8Wk9r8A07FSiRpkjBdHzQ==
+X-Received: by 2002:a05:6402:758:: with SMTP id p24mr6854492edy.92.1544437623976;
+        Mon, 10 Dec 2018 02:27:03 -0800 (PST)
+Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
+        by smtp.gmail.com with ESMTPSA id t26sm3320934eda.22.2018.12.10.02.27.02
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 10 Dec 2018 02:27:03 -0800 (PST)
+Date:   Mon, 10 Dec 2018 11:27:01 +0100
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     YueHaibing <yuehaibing@huawei.com>
+Cc:     Dave Airlie <airlied@redhat.com>, David Airlie <airlied@linux.ie>,
+        Sam Bobroff <sbobroff@linux.ibm.com>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH -next] drm/ast: Remove set but not used variable 'bo'
+Message-ID: <20181210102701.GP21184@phenom.ffwll.local>
+Mail-Followup-To: YueHaibing <yuehaibing@huawei.com>,
+        Dave Airlie <airlied@redhat.com>, David Airlie <airlied@linux.ie>,
+        Sam Bobroff <sbobroff@linux.ibm.com>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+References: <1544258185-50430-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
-In-Reply-To: <20181210085616.GB30263@e113682-lin.lund.arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1544258185-50430-1-git-send-email-yuehaibing@huawei.com>
+X-Operating-System: Linux phenom 4.18.0-2-amd64 
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 10/12/2018 08:56, Christoffer Dall wrote:
-> On Mon, Dec 03, 2018 at 01:37:37PM +0000, Suzuki K Poulose wrote:
->> Hi Anshuman,
->>
->> On 03/12/2018 12:11, Anshuman Khandual wrote:
->>>
->>>
->>> On 10/31/2018 11:27 PM, Punit Agrawal wrote:
->>>> The code for operations such as marking the pfn as dirty, and
->>>> dcache/icache maintenance during stage 2 fault handling is duplicated
->>>> between normal pages and PMD hugepages.
->>>>
->>>> Instead of creating another copy of the operations when we introduce
->>>> PUD hugepages, let's share them across the different pagesizes.
->>>>
->>>> Signed-off-by: Punit Agrawal <punit.agrawal@arm.com>
->>>> Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
->>>> Cc: Christoffer Dall <christoffer.dall@arm.com>
->>>> Cc: Marc Zyngier <marc.zyngier@arm.com>
->>>> ---
->>>>   virt/kvm/arm/mmu.c | 49 ++++++++++++++++++++++++++++------------------
->>>>   1 file changed, 30 insertions(+), 19 deletions(-)
->>>>
->>>> diff --git a/virt/kvm/arm/mmu.c b/virt/kvm/arm/mmu.c
->>>> index 5eca48bdb1a6..59595207c5e1 100644
->>>> --- a/virt/kvm/arm/mmu.c
->>>> +++ b/virt/kvm/arm/mmu.c
->>>> @@ -1475,7 +1475,7 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
->>>>   			  unsigned long fault_status)
->>>>   {
->>>>   	int ret;
->>>> -	bool write_fault, exec_fault, writable, hugetlb = false, force_pte = false;
->>>> +	bool write_fault, exec_fault, writable, force_pte = false;
->>>>   	unsigned long mmu_seq;
->>>>   	gfn_t gfn = fault_ipa >> PAGE_SHIFT;
->>>>   	struct kvm *kvm = vcpu->kvm;
->>>> @@ -1484,7 +1484,7 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
->>>>   	kvm_pfn_t pfn;
->>>>   	pgprot_t mem_type = PAGE_S2;
->>>>   	bool logging_active = memslot_is_logging(memslot);
->>>> -	unsigned long flags = 0;
->>>> +	unsigned long vma_pagesize, flags = 0;
->>>
->>> A small nit s/vma_pagesize/pagesize. Why call it VMA ? Its implicit.
->>
->> May be we could call it mapsize. pagesize is confusing.
->>
+On Sat, Dec 08, 2018 at 08:36:25AM +0000, YueHaibing wrote:
+> Fixes gcc '-Wunused-but-set-variable' warning:
 > 
-> I'm ok with mapsize.  I see the vma_pagesize name coming from the fact
-> that this is initially set to the return value from vma_kernel_pagesize.
+> drivers/gpu/drm/ast/ast_fb.c: In function 'astfb_create':
+> drivers/gpu/drm/ast/ast_fb.c:194:17: warning:
+>  variable 'bo' set but not used [-Wunused-but-set-variable]
 > 
-> I have not problems with either vma_pagesize or mapsize.
+> It never used since introduction in commit 312fec1405dd ("drm: Initial KMS
+> driver for AST (ASpeed Technologies) 2000 series (v2)")
+> 
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 
-Ok, I will retain the vma_pagesize to avoid unnecessary changes to the patch.
+Applied, thanks.
+-Daniel
 
-Thanks
-Suzuki
+> ---
+>  drivers/gpu/drm/ast/ast_fb.c | 2 --
+>  1 file changed, 2 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/ast/ast_fb.c b/drivers/gpu/drm/ast/ast_fb.c
+> index de26df0..c2e4136 100644
+> --- a/drivers/gpu/drm/ast/ast_fb.c
+> +++ b/drivers/gpu/drm/ast/ast_fb.c
+> @@ -191,7 +191,6 @@ static int astfb_create(struct drm_fb_helper *helper,
+>  	int size, ret;
+>  	void *sysram;
+>  	struct drm_gem_object *gobj = NULL;
+> -	struct ast_bo *bo = NULL;
+>  	mode_cmd.width = sizes->surface_width;
+>  	mode_cmd.height = sizes->surface_height;
+>  	mode_cmd.pitches[0] = mode_cmd.width * ((sizes->surface_bpp + 7)/8);
+> @@ -206,7 +205,6 @@ static int astfb_create(struct drm_fb_helper *helper,
+>  		DRM_ERROR("failed to create fbcon backing object %d\n", ret);
+>  		return ret;
+>  	}
+> -	bo = gem_to_ast_bo(gobj);
+>  
+>  	sysram = vmalloc(size);
+>  	if (!sysram)
+> 
+> 
+> 
+
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
