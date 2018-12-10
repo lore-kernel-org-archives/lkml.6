@@ -2,359 +2,235 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7D11C04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 15:05:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A765C65BB3
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 15:06:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E5E120672
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 15:05:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4A11020672
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 15:06:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nokia.onmicrosoft.com header.i=@nokia.onmicrosoft.com header.b="qwObSNhK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E5E120672
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nokia.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="gYUdTEfJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A11020672
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=armlinux.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727847AbeLJPF3 (ORCPT
+        id S1727965AbeLJPG1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 10:05:29 -0500
-Received: from mail-eopbgr140105.outbound.protection.outlook.com ([40.107.14.105]:45634
-        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726978AbeLJPF2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 10:05:28 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nokia.onmicrosoft.com;
- s=selector1-nokia-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=edIp+aqyaMQywj8lZl4k2cLT186xBR7S/o6IMS7TmDk=;
- b=qwObSNhKu+7Z71QHJYt0q8mkjrmRObCeqzt1a7i/8APDD3ftINXX4UEzNgrEzbj0ULOg7a6VYVqQ4gEVXepq218hebY40Qw7r77DrWd1S3+/IixT9UJqwjeP+lJHze1qgb+sxtVAsnSJpaU4STbZlfPdkaC0LWkyvOkf7570Y60=
-Received: from HE1PR07MB3434.eurprd07.prod.outlook.com (10.170.247.141) by
- HE1PR07MB3338.eurprd07.prod.outlook.com (10.170.247.13) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1425.9; Mon, 10 Dec 2018 15:05:23 +0000
-Received: from HE1PR07MB3434.eurprd07.prod.outlook.com
- ([fe80::e491:596c:4d4e:ffdb]) by HE1PR07MB3434.eurprd07.prod.outlook.com
- ([fe80::e491:596c:4d4e:ffdb%2]) with mapi id 15.20.1425.016; Mon, 10 Dec 2018
- 15:05:23 +0000
-From:   "Adamski, Krzysztof (Nokia - PL/Wroclaw)" 
-        <krzysztof.adamski@nokia.com>
-To:     Wolfram Sang <wsa@the-dreams.de>,
-        "Sverdlin, Alexander (Nokia - DE/Ulm)" <alexander.sverdlin@nokia.com>
-CC:     "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Tobias Jordan <Tobias.Jordan@elektrobit.com>,
-        Peter Rosin <peda@axentia.se>
-Subject: [PATCH 3/3] i2c-axxia: support sequence command mode
-Thread-Topic: [PATCH 3/3] i2c-axxia: support sequence command mode
-Thread-Index: AQHUkJnGbS63ysGb7E6mOzAbaTpNEg==
-Date:   Mon, 10 Dec 2018 15:05:23 +0000
-Message-ID: <8515ba7093f5be3ad7bd31d68efedcbe17958282.1544453688.git.krzysztof.adamski@nokia.com>
-References: <cover.1544453688.git.krzysztof.adamski@nokia.com>
-In-Reply-To: <cover.1544453688.git.krzysztof.adamski@nokia.com>
-Accept-Language: pl-PL, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: HE1PR02CA0113.eurprd02.prod.outlook.com
- (2603:10a6:7:29::42) To HE1PR07MB3434.eurprd07.prod.outlook.com
- (2603:10a6:7:2c::13)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=krzysztof.adamski@nokia.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [131.228.32.190]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;HE1PR07MB3338;6:uzIzGJsh1JaYNf0Nq6ewmTL6cWDa/sGCp6lhqeAh+8iqblFiWJ8ZsmLf58rQr1xx4dFmlMf+BZBVGbcaWY7VpE4Bf1oW9BpMU0n8tp0yzOfr59WmQge5YJjhirRRBmV4mJoPg8iyYS6nNbKOAqNLNoi4fc1IBDNwPisf9u94HtdOfhfJCfgibHspeu0C6/P2A5zNMWc5EzwF4guNU+GYZEjlNSfEUyf6NLOLK3edDtyrTRiug6g5ctMG34Y/+YzbtbiPS7dV44r6WM/RMaptfNSmz1UcUWH3HFLj5Bo+K85XamIlrgrjwbwCkYskvktljzigbqhJCP36PFdEV/k0U6lFv8KM9VsM0s+oTfcS2F1tyUMWjHtopOkj1dddiGKL++lnxxhowCeARtP8WLDj4gJfoeTcs8G8MdNdWI2kOThG3CpMB9qLXM14sr2amc+4XuAVbDayKw+izpDOkjCRTA==;5:jLLvfa6195wc/udQqPPL3ejT5Z5w9G55UA2TqRQTgHMTV29AktBERToIlvSQZmFjlerxJD0rnP7YkFyL6iyiXFhWM/xmG9fP7AOZMw7SHkEPCJLJ6cM+GVa1J97YLgBbLqdP3fPahhi5n5laPj8f2ZRsID7xvA0/KGFhHLJjQ3k=;7:qSpJ1KHYR7HtvRayD5DIjrcyO0gOYJ6q7umsskXU0JohRTtvnbp3j5tOn+GhT7aCkOkLyqKeEc/CWP1oGV9N4qOvjnHtt3eyDaoO6EqmcGEWantlVEScfAgyrqF6R4OcSQTYM49d3SYYOAkfa87yYQ==
-x-ms-office365-filtering-correlation-id: 26909b10-30fd-4256-f5aa-08d65eb0e8e4
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:HE1PR07MB3338;
-x-ms-traffictypediagnostic: HE1PR07MB3338:
-x-microsoft-antispam-prvs: <HE1PR07MB3338E15880557698957AA825EFA50@HE1PR07MB3338.eurprd07.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231455)(999002)(11241501185)(806100)(944501520)(52105112)(3002001)(10201501046)(6055026)(148016)(149066)(150057)(6041310)(20161123564045)(20161123562045)(20161123560045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:HE1PR07MB3338;BCL:0;PCL:0;RULEID:;SRVR:HE1PR07MB3338;
-x-forefront-prvs: 08828D20BC
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(366004)(346002)(39860400002)(136003)(376002)(199004)(189003)(68736007)(81166006)(8676002)(8936002)(256004)(81156014)(11346002)(4326008)(5660300001)(6486002)(486006)(476003)(446003)(2616005)(305945005)(25786009)(6436002)(76176011)(575784001)(99286004)(86362001)(2906002)(52116002)(6636002)(316002)(71190400001)(6116002)(3846002)(110136005)(54906003)(71200400001)(14454004)(551934003)(66066001)(106356001)(97736004)(118296001)(105586002)(6512007)(7736002)(186003)(53936002)(478600001)(14444005)(6506007)(102836004)(36756003)(26005)(386003);DIR:OUT;SFP:1102;SCL:1;SRVR:HE1PR07MB3338;H:HE1PR07MB3434.eurprd07.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nokia.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: cW+KK6wrrM+ssAI6JfDJkMVmnOCWnC5XuD3aCeIhSP14Ub/mjE3urDrfgvnrBhgUHAFNnmDy+VwfFsxVeGJmbFqYVliVyCDhL+c8+ySlubMQ45Bt1GZhqmq9ldL3pxbiFjm8ot0CrLBVP5ZJPMS59QKc0YqYvHxO/SdbSxaZSWp8BVTMPndWLGJZCr/HvPknPTQ/IhXQjaP/JJywvdVpS0V8uX+DTjBKaMlV/gFSQ3kxf3q+wZx4PTbSxiUs+Zu+6WRLbeLqtCjo/V69f+ZAqDqATT0U8BTwRlB17CPYKUFGcVFbcKs0MCw5Zc1aQEjS
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-1"
-Content-ID: <5BA719FC6E688A4F92C22D826E1A4A0F@eurprd07.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        Mon, 10 Dec 2018 10:06:27 -0500
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:52946 "EHLO
+        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726978AbeLJPG0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Dec 2018 10:06:26 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=armlinux.org.uk; s=pandora-2014; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=4GuqSKY6uJELXXF4HdEubR423WKhWObkR4oB3tErzw4=; b=gYUdTEfJbSUBmsBE8nBM8nCXI
+        ehWFi+KCqX9/X+yiYcFB05r3owBJAkfefmmEcUIkZ0awi1CHwsnVjeh+Udds3OJNLz+zQX6EpRC0X
+        o5iV250ikzdnioI2yfnPJF4qAVLc6ziphzse9y8+2uw4J9JVCLToHtUo6a+xOughG4NEk=;
+Received: from n2100.armlinux.org.uk ([2002:4e20:1eda:1:214:fdff:fe10:4f86]:56510)
+        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.90_1)
+        (envelope-from <linux@armlinux.org.uk>)
+        id 1gWN8B-0000wU-3P; Mon, 10 Dec 2018 15:05:59 +0000
+Received: from linux by n2100.armlinux.org.uk with local (Exim 4.90_1)
+        (envelope-from <linux@n2100.armlinux.org.uk>)
+        id 1gWN86-0002sP-4I; Mon, 10 Dec 2018 15:05:54 +0000
+Date:   Mon, 10 Dec 2018 15:05:51 +0000
+From:   Russell King - ARM Linux <linux@armlinux.org.uk>
+To:     Robin Murphy <robin.murphy@arm.com>
+Cc:     Rafael David Tinoco <rafael.tinoco@linaro.org>,
+        Rich Felker <dalias@libc.org>, linux-ia64@vger.kernel.org,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        linux-sh@vger.kernel.org,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Ram Pai <linuxram@us.ibm.com>, linux-mips@vger.kernel.org,
+        linux-mm@kvack.org, Khalid Aziz <khalid.aziz@oracle.com>,
+        Paul Mackerras <paulus@samba.org>,
+        "H . Peter Anvin" <hpa@zytor.com>, sparclinux@vger.kernel.org,
+        linux-s390@vger.kernel.org,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Michael Ellerman <mpe@ellerman.id.au>, x86@kernel.org,
+        Ingo Molnar <mingo@redhat.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        James Hogan <jhogan@kernel.org>,
+        Anthony Yznaga <anthony.yznaga@oracle.com>,
+        Nitin Gupta <ngupta@vflare.org>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        Joerg Roedel <jroedel@suse.de>,
+        Juergen Gross <jgross@suse.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Andy Lutomirski <luto@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-arm-kernel@lists.infradead.org,
+        Christophe Leroy <christophe.leroy@c-s.fr>,
+        Tony Luck <tony.luck@intel.com>, Jiri Kosina <jkosina@suse.cz>,
+        linux-kernel@vger.kernel.org, Ralf Baechle <ralf@linux-mips.org>,
+        Minchan Kim <minchan@kernel.org>,
+        Paul Burton <paul.burton@mips.com>,
+        "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        linuxppc-dev@lists.ozlabs.org,
+        "David S . Miller" <davem@davemloft.net>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+Subject: Re: [PATCH] mm/zsmalloc.c: Fix zsmalloc 32-bit PAE support
+Message-ID: <20181210150551.GE30658@n2100.armlinux.org.uk>
+References: <20181210142105.6750-1-rafael.tinoco@linaro.org>
+ <4da655ec-a1ac-c524-1eb4-5cbd18b265ef@arm.com>
 MIME-Version: 1.0
-X-OriginatorOrg: nokia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 26909b10-30fd-4256-f5aa-08d65eb0e8e4
-X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Dec 2018 15:05:23.6709
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 5d471751-9675-428d-917b-70f44f9630b0
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1PR07MB3338
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4da655ec-a1ac-c524-1eb4-5cbd18b265ef@arm.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In order to comply with SMBus specification, the Axxia I=B2C module will
-abort the multi message transfer if the delay between finishing sending
-one message and starting another is longer than 25ms. Unfortunately it
-isn't that hard to trigger this situation on a busy system. In order to
-fix this problem, we should make sure hardware does whole transaction
-without waiting for software to fill some data.
+On Mon, Dec 10, 2018 at 02:35:55PM +0000, Robin Murphy wrote:
+> On 10/12/2018 14:21, Rafael David Tinoco wrote:
+> >On 32-bit systems, zsmalloc uses HIGHMEM and, when PAE is enabled, the
+> >physical frame number might be so big that zsmalloc obj encoding (to
+> >location) will break, causing:
+> >
+> >BUG: KASAN: null-ptr-deref in zs_map_object+0xa4/0x2bc
+> >Read of size 4 at addr 00000000 by task mkfs.ext4/623
+> >CPU: 2 PID: 623 Comm: mkfs.ext4 Not tainted 4.19.0-rc8-00017-g8239bc6d3307-dirty #15
+> >Hardware name: Generic DT based system
+> >[<c0418f7c>] (unwind_backtrace) from [<c0410ca4>] (show_stack+0x20/0x24)
+> >[<c0410ca4>] (show_stack) from [<c16bd540>] (dump_stack+0xbc/0xe8)
+> >[<c16bd540>] (dump_stack) from [<c06cab74>] (kasan_report+0x248/0x390)
+> >[<c06cab74>] (kasan_report) from [<c06c94e8>] (__asan_load4+0x78/0xb4)
+> >[<c06c94e8>] (__asan_load4) from [<c06ddc24>] (zs_map_object+0xa4/0x2bc)
+> >[<c06ddc24>] (zs_map_object) from [<bf0bbbd8>] (zram_bvec_rw.constprop.2+0x324/0x8e4 [zram])
+> >[<bf0bbbd8>] (zram_bvec_rw.constprop.2 [zram]) from [<bf0bc3cc>] (zram_make_request+0x234/0x46c [zram])
+> >[<bf0bc3cc>] (zram_make_request [zram]) from [<c09aff9c>] (generic_make_request+0x304/0x63c)
+> >[<c09aff9c>] (generic_make_request) from [<c09b0320>] (submit_bio+0x4c/0x1c8)
+> >[<c09b0320>] (submit_bio) from [<c0743570>] (submit_bh_wbc.constprop.15+0x238/0x26c)
+> >[<c0743570>] (submit_bh_wbc.constprop.15) from [<c0746cf8>] (__block_write_full_page+0x524/0x76c)
+> >[<c0746cf8>] (__block_write_full_page) from [<c07472c4>] (block_write_full_page+0x1bc/0x1d4)
+> >[<c07472c4>] (block_write_full_page) from [<c0748eb4>] (blkdev_writepage+0x24/0x28)
+> >[<c0748eb4>] (blkdev_writepage) from [<c064a780>] (__writepage+0x44/0x78)
+> >[<c064a780>] (__writepage) from [<c064b50c>] (write_cache_pages+0x3b8/0x800)
+> >[<c064b50c>] (write_cache_pages) from [<c064dd78>] (generic_writepages+0x74/0xa0)
+> >[<c064dd78>] (generic_writepages) from [<c0748e64>] (blkdev_writepages+0x18/0x1c)
+> >[<c0748e64>] (blkdev_writepages) from [<c064e890>] (do_writepages+0x68/0x134)
+> >[<c064e890>] (do_writepages) from [<c06368a4>] (__filemap_fdatawrite_range+0xb0/0xf4)
+> >[<c06368a4>] (__filemap_fdatawrite_range) from [<c0636b68>] (file_write_and_wait_range+0x64/0xd0)
+> >[<c0636b68>] (file_write_and_wait_range) from [<c0747af8>] (blkdev_fsync+0x54/0x84)
+> >[<c0747af8>] (blkdev_fsync) from [<c0739dac>] (vfs_fsync_range+0x70/0xd4)
+> >[<c0739dac>] (vfs_fsync_range) from [<c0739e98>] (do_fsync+0x4c/0x80)
+> >[<c0739e98>] (do_fsync) from [<c073a26c>] (sys_fsync+0x1c/0x20)
+> >[<c073a26c>] (sys_fsync) from [<c0401000>] (ret_fast_syscall+0x0/0x2c)
+> >
+> >when trying to decode (the pfn) and map the object.
+> >
+> >That happens because one architecture might not re-define
+> >MAX_PHYSMEM_BITS, like in this ARM 32-bit w/ LPAE enabled example. For
+> >32-bit systems, if not re-defined, MAX_POSSIBLE_PHYSMEM_BITS will
+> >default to BITS_PER_LONG (32) in most cases, and, with PAE enabled,
+> >_PFN_BITS might be wrong: which may cause obj variable to overflow if
+> >frame number is in HIGHMEM and referencing a page above the 4GB
+> >watermark.
+> >
+> >commit 6e00ec00b1a7 ("staging: zsmalloc: calculate MAX_PHYSMEM_BITS if
+> >not defined") realized MAX_PHYSMEM_BITS depended on SPARSEMEM headers
+> >and "fixed" it by calculating it using BITS_PER_LONG if SPARSEMEM wasn't
+> >used, like in the example given above.
+> >
+> >Systems with potential for PAE exist for a long time and assuming
+> >BITS_PER_LONG seems inadequate. Defining MAX_PHYSMEM_BITS looks better,
+> >however it is NOT a constant anymore for x86.
+> >
+> >SO, instead, MAX_POSSIBLE_PHYSMEM_BITS should be defined by every
+> >architecture using zsmalloc, together with a sanity check for
+> >MAX_POSSIBLE_PHYSMEM_BITS being too big on 32-bit systems.
+> >
+> >Link: https://bugs.linaro.org/show_bug.cgi?id=3765#c17
+> >Signed-off-by: Rafael David Tinoco <rafael.tinoco@linaro.org>
+> >---
+> >  arch/arm/include/asm/pgtable-2level-types.h |  2 ++
+> >  arch/arm/include/asm/pgtable-3level-types.h |  2 ++
+> >  arch/arm64/include/asm/pgtable-types.h      |  2 ++
+> >  arch/ia64/include/asm/page.h                |  2 ++
+> >  arch/mips/include/asm/page.h                |  2 ++
+> >  arch/powerpc/include/asm/mmu.h              |  2 ++
+> >  arch/s390/include/asm/page.h                |  2 ++
+> >  arch/sh/include/asm/page.h                  |  2 ++
+> >  arch/sparc/include/asm/page_32.h            |  2 ++
+> >  arch/sparc/include/asm/page_64.h            |  2 ++
+> >  arch/x86/include/asm/pgtable-2level_types.h |  2 ++
+> >  arch/x86/include/asm/pgtable-3level_types.h |  3 +-
+> >  arch/x86/include/asm/pgtable_64_types.h     |  4 +--
+> >  mm/zsmalloc.c                               | 35 +++++++++++----------
+> >  14 files changed, 45 insertions(+), 19 deletions(-)
+> >
+> >diff --git a/arch/arm/include/asm/pgtable-2level-types.h b/arch/arm/include/asm/pgtable-2level-types.h
+> >index 66cb5b0e89c5..552dba411324 100644
+> >--- a/arch/arm/include/asm/pgtable-2level-types.h
+> >+++ b/arch/arm/include/asm/pgtable-2level-types.h
+> >@@ -64,4 +64,6 @@ typedef pteval_t pgprot_t;
+> >  #endif /* STRICT_MM_TYPECHECKS */
+> >+#define MAX_POSSIBLE_PHYSMEM_BITS 32
+> >+
+> >  #endif	/* _ASM_PGTABLE_2LEVEL_TYPES_H */
+> >diff --git a/arch/arm/include/asm/pgtable-3level-types.h b/arch/arm/include/asm/pgtable-3level-types.h
+> >index 921aa30259c4..664c39e6517c 100644
+> >--- a/arch/arm/include/asm/pgtable-3level-types.h
+> >+++ b/arch/arm/include/asm/pgtable-3level-types.h
+> >@@ -67,4 +67,6 @@ typedef pteval_t pgprot_t;
+> >  #endif	/* STRICT_MM_TYPECHECKS */
+> >+#define MAX_POSSIBLE_PHYSMEM_BITS 36
+> 
+> Nit: with LPAE, physical addresses go up to 40 bits, not just 36.
 
-Fortunately, in addition to Manual mode that is currently used by the
-driver to perform I=B2C transfers, the module supports also so called
-Sequence mode. In this mode, the module automatically performs
-predefined sequence of operations - it sends a slave address, transmits
-specified number of bytes from the FIFO, changes transfer direction,
-resends the slave address and then reads specified number of bytes to
-FIFO. While very inflexible, this does fit a most common case of multi
-message transfer - the one where you first write a register number you
-want to read and then read it.
+Right, with that set at 40, we get:
 
-To use this mode effectively, a number of conditions must be met to
-ensure the transaction does fit the predefined sequence. In case this is
-not the case, a fallback to manual mode is used.
+#define _PFN_BITS               (MAX_POSSIBLE_PHYSMEM_BITS - PAGE_SHIFT)
 
-The initialization of this mode is very similar to Manual mode. The most
-notable difference is different bit in the Master Interrupt Status
-designating finishing of transaction. Also some of the errors, like TSS,
-cannot happen in this mode.
+== 28
 
-While it is possible to support transactions requesting a read of any
-size (RFL interrupt will be generated when FIFO size is not enough) the
-TFL interrupt is not available in this mode, thus the write part of the
-transaction cannot exceed FIFO_SIZE (8).
+#define OBJ_TAG_BITS 1
+#define OBJ_INDEX_BITS  (BITS_PER_LONG - _PFN_BITS - OBJ_TAG_BITS)
 
-Note that in case of a NAK during transaction, the NA/ND status bits
-will be set before STOP command is generated, triggering an interrupt
-while the controller is still busy. Current solution for this problem is
-to actively wait for this command to stop before leaving xfer callback.
+== 3
 
-Signed-off-by: Krzysztof Adamski <krzysztof.adamski@nokia.com>
----
- drivers/i2c/busses/i2c-axxia.c | 100 ++++++++++++++++++++++++++++++---
- 1 file changed, 93 insertions(+), 7 deletions(-)
+#define ZS_MAX_ZSPAGE_ORDER 2
+#define ZS_MAX_PAGES_PER_ZSPAGE (_AC(1, UL) << ZS_MAX_ZSPAGE_ORDER)
 
-diff --git a/drivers/i2c/busses/i2c-axxia.c b/drivers/i2c/busses/i2c-axxia.=
-c
-index 35258321e81b..64779819a948 100644
---- a/drivers/i2c/busses/i2c-axxia.c
-+++ b/drivers/i2c/busses/i2c-axxia.c
-@@ -12,6 +12,7 @@
-  */
- #include <linux/clk.h>
- #include <linux/clkdev.h>
-+#include <linux/delay.h>
- #include <linux/err.h>
- #include <linux/i2c.h>
- #include <linux/init.h>
-@@ -25,6 +26,7 @@
- #define I2C_XFER_TIMEOUT    (msecs_to_jiffies(250))
- #define I2C_STOP_TIMEOUT    (msecs_to_jiffies(100))
- #define FIFO_SIZE           8
-+#define SEQ_LEN             2
-=20
- #define GLOBAL_CONTROL		0x00
- #define   GLOBAL_MST_EN         BIT(0)
-@@ -51,6 +53,7 @@
- #define   CMD_BUSY		(1<<3)
- #define   CMD_MANUAL		(0x00 | CMD_BUSY)
- #define   CMD_AUTO		(0x01 | CMD_BUSY)
-+#define   CMD_SEQUENCE		(0x02 | CMD_BUSY)
- #define MST_RX_XFER		0x2c
- #define MST_TX_XFER		0x30
- #define MST_ADDR_1		0x34
-@@ -87,7 +90,9 @@
-  * axxia_i2c_dev - I2C device context
-  * @base: pointer to register struct
-  * @msg: pointer to current message
-- * @msg_xfrd: number of bytes transferred in msg
-+ * @msg_r: pointer to current read message (sequence transfer)
-+ * @msg_xfrd: number of bytes transferred in tx_fifo
-+ * @msg_xfrd_r: number of bytes transferred in rx_fifo
-  * @msg_err: error code for completed message
-  * @msg_complete: xfer completion object
-  * @dev: device reference
-@@ -98,7 +103,9 @@
- struct axxia_i2c_dev {
- 	void __iomem *base;
- 	struct i2c_msg *msg;
-+	struct i2c_msg *msg_r;
- 	size_t msg_xfrd;
-+	size_t msg_xfrd_r;
- 	int msg_err;
- 	struct completion msg_complete;
- 	struct device *dev;
-@@ -227,14 +234,14 @@ static int i2c_m_recv_len(const struct i2c_msg *msg)
-  */
- static int axxia_i2c_empty_rx_fifo(struct axxia_i2c_dev *idev)
- {
--	struct i2c_msg *msg =3D idev->msg;
-+	struct i2c_msg *msg =3D idev->msg_r;
- 	size_t rx_fifo_avail =3D readl(idev->base + MST_RX_FIFO);
--	int bytes_to_transfer =3D min(rx_fifo_avail, msg->len - idev->msg_xfrd);
-+	int bytes_to_transfer =3D min(rx_fifo_avail, msg->len - idev->msg_xfrd_r)=
-;
-=20
- 	while (bytes_to_transfer-- > 0) {
- 		int c =3D readl(idev->base + MST_DATA);
-=20
--		if (idev->msg_xfrd =3D=3D 0 && i2c_m_recv_len(msg)) {
-+		if (idev->msg_xfrd_r =3D=3D 0 && i2c_m_recv_len(msg)) {
- 			/*
- 			 * Check length byte for SMBus block read
- 			 */
-@@ -247,7 +254,7 @@ static int axxia_i2c_empty_rx_fifo(struct axxia_i2c_dev=
- *idev)
- 			msg->len =3D 1 + c;
- 			writel(msg->len, idev->base + MST_RX_XFER);
- 		}
--		msg->buf[idev->msg_xfrd++] =3D c;
-+		msg->buf[idev->msg_xfrd_r++] =3D c;
- 	}
-=20
- 	return 0;
-@@ -287,7 +294,7 @@ static irqreturn_t axxia_i2c_isr(int irq, void *_dev)
- 	}
-=20
- 	/* RX FIFO needs service? */
--	if (i2c_m_rd(idev->msg) && (status & MST_STATUS_RFL))
-+	if (i2c_m_rd(idev->msg_r) && (status & MST_STATUS_RFL))
- 		axxia_i2c_empty_rx_fifo(idev);
-=20
- 	/* TX FIFO needs service? */
-@@ -320,9 +327,12 @@ static irqreturn_t axxia_i2c_isr(int irq, void *_dev)
- 	} else if (status & MST_STATUS_SNS) {
- 		/* Transfer done */
- 		i2c_int_disable(idev, ~MST_STATUS_TSS);
--		if (i2c_m_rd(idev->msg) && idev->msg_xfrd < idev->msg->len)
-+		if (i2c_m_rd(idev->msg_r) && idev->msg_xfrd_r < idev->msg_r->len)
- 			axxia_i2c_empty_rx_fifo(idev);
- 		complete(&idev->msg_complete);
-+	} else if (status & MST_STATUS_SS) {
-+		/* Auto/Sequence transfer done */
-+		complete(&idev->msg_complete);
- 	} else if (status & MST_STATUS_TSS) {
- 		/* Transfer timeout */
- 		idev->msg_err =3D -ETIMEDOUT;
-@@ -363,6 +373,62 @@ static void axxia_i2c_set_addr(struct axxia_i2c_dev *i=
-dev, struct i2c_msg *msg)
- 	writel(addr_2, idev->base + MST_ADDR_2);
- }
-=20
-+/* The NAK interrupt will be sent _before_ issuing STOP command
-+ * so the controller might still be busy processing it. No
-+ * interrupt will be sent at the end so we have to poll for it
-+ */
-+static void axxia_i2c_handle_seq_nak(struct axxia_i2c_dev *idev)
-+{
-+	while (readl(idev->base + MST_COMMAND) & CMD_BUSY)
-+		udelay(100);
-+}
-+
-+static int axxia_i2c_xfer_seq(struct axxia_i2c_dev *idev, struct i2c_msg m=
-sgs[])
-+{
-+	u32 int_mask =3D MST_STATUS_ERR | MST_STATUS_SS | MST_STATUS_RFL;
-+	u32 rlen =3D i2c_m_recv_len(&msgs[1]) ? I2C_SMBUS_BLOCK_MAX : msgs[1].len=
-;
-+	unsigned long time_left;
-+
-+	axxia_i2c_set_addr(idev, &msgs[0]);
-+
-+	writel(msgs[0].len, idev->base + MST_TX_XFER);
-+	writel(rlen, idev->base + MST_RX_XFER);
-+
-+	idev->msg =3D &msgs[0];
-+	idev->msg_r =3D &msgs[1];
-+	idev->msg_xfrd =3D 0;
-+	idev->msg_xfrd_r =3D 0;
-+	axxia_i2c_fill_tx_fifo(idev);
-+
-+	writel(CMD_SEQUENCE, idev->base + MST_COMMAND);
-+
-+	reinit_completion(&idev->msg_complete);
-+	i2c_int_enable(idev, int_mask);
-+
-+	time_left =3D wait_for_completion_timeout(&idev->msg_complete,
-+						I2C_XFER_TIMEOUT);
-+
-+	i2c_int_disable(idev, int_mask);
-+
-+	axxia_i2c_empty_rx_fifo(idev);
-+
-+	if (idev->msg_err =3D=3D -ENXIO)
-+		axxia_i2c_handle_seq_nak(idev);
-+	else if (readl(idev->base + MST_COMMAND) & CMD_BUSY)
-+		dev_warn(idev->dev, "busy after xfer\n");
-+
-+	if (time_left =3D=3D 0) {
-+		idev->msg_err =3D -ETIMEDOUT;
-+		i2c_recover_bus(&idev->adapter);
-+		axxia_i2c_init(idev);
-+	}
-+
-+	if (unlikely(idev->msg_err) && idev->msg_err !=3D -ENXIO)
-+		axxia_i2c_init(idev);
-+
-+	return idev->msg_err;
-+}
-+
- static int axxia_i2c_xfer_msg(struct axxia_i2c_dev *idev, struct i2c_msg *=
-msg)
- {
- 	u32 int_mask =3D MST_STATUS_ERR | MST_STATUS_SNS;
-@@ -371,7 +437,9 @@ static int axxia_i2c_xfer_msg(struct axxia_i2c_dev *ide=
-v, struct i2c_msg *msg)
- 	unsigned int wt_value;
-=20
- 	idev->msg =3D msg;
-+	idev->msg_r =3D msg;
- 	idev->msg_xfrd =3D 0;
-+	idev->msg_xfrd_r =3D 0;
- 	reinit_completion(&idev->msg_complete);
-=20
- 	axxia_i2c_set_addr(idev, msg);
-@@ -452,6 +520,18 @@ static int axxia_i2c_stop(struct axxia_i2c_dev *idev)
- 	return 0;
- }
-=20
-+/* This function checks if the msgs[] array contains messages compatible w=
-ith
-+ * Sequence mode of operation. This mode assumes there will be exactly one
-+ * write of non-zero length followed by exactly one read of non-zero lengt=
-h,
-+ * both targeted at the same client device.
-+ */
-+static bool axxia_i2c_sequence_ok(struct i2c_msg msgs[], int num)
-+{
-+	return num =3D=3D SEQ_LEN && !i2c_m_rd(&msgs[0]) && i2c_m_rd(&msgs[1]) &&
-+	       msgs[0].len > 0 && msgs[0].len <=3D FIFO_SIZE &&
-+	       msgs[1].len > 0 && msgs[0].addr =3D=3D msgs[1].addr;
-+}
-+
- static int
- axxia_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[], int num)
- {
-@@ -460,6 +540,12 @@ axxia_i2c_xfer(struct i2c_adapter *adap, struct i2c_ms=
-g msgs[], int num)
- 	int ret =3D 0;
-=20
- 	idev->msg_err =3D 0;
-+
-+	if (axxia_i2c_sequence_ok(msgs, num)) {
-+		ret =3D axxia_i2c_xfer_seq(idev, msgs);
-+		return ret ? : SEQ_LEN;
-+	}
-+
- 	i2c_int_enable(idev, MST_STATUS_TSS);
-=20
- 	for (i =3D 0; ret =3D=3D 0 && i < num; ++i)
---=20
-2.17.2
+== 4
 
+#define ZS_MIN_ALLOC_SIZE \
+        MAX(32, (ZS_MAX_PAGES_PER_ZSPAGE << PAGE_SHIFT >> OBJ_INDEX_BITS))
+
+== 4 << 12 >> 3 = 2048
+
+or half-page allocations.
+
+Given this in Documentation/vm/zsmalloc.rst:
+
+On the other hand, if we just use single
+(0-order) pages, it would suffer from very high fragmentation --
+any object of size PAGE_SIZE/2 or larger would occupy an entire page.
+This was one of the major issues with its predecessor (xvmalloc).
+
+It seems that would not be acceptable, so I have to ask whether
+using an unsigned long to store PFN + object ID is really acceptable.
+Maybe the real solution to this problem is to stop using an
+unsigned long to contain both the PFN and object ID?
+
+-- 
+RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
+According to speedtest.net: 11.9Mbps down 500kbps up
