@@ -2,82 +2,127 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4F42C5CFFE
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 21:51:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36E2EC04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 21:51:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A2B472081F
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 21:51:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A2B472081F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 03F3B2084E
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 21:51:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 03F3B2084E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729092AbeLJVvO (ORCPT
+        id S1729259AbeLJVvb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 16:51:14 -0500
-Received: from mga03.intel.com ([134.134.136.65]:51797 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726392AbeLJVvO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 16:51:14 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Dec 2018 13:51:13 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,339,1539673200"; 
-   d="scan'208";a="124705909"
-Received: from agluck-desk.sc.intel.com (HELO agluck-desk) ([10.3.52.160])
-  by fmsmga002.fm.intel.com with ESMTP; 10 Dec 2018 13:51:13 -0800
-Date:   Mon, 10 Dec 2018 13:51:13 -0800
-From:   "Luck, Tony" <tony.luck@intel.com>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     iommu@lists.linux-foundation.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Jesper Dangaard Brouer <brouer@redhat.com>,
-        Tariq Toukan <tariqt@mellanox.com>,
-        Ilias Apalodimas <ilias.apalodimas@linaro.org>,
-        Toke =?iso-8859-1?Q?H=F8iland-J=F8rgensen?= <toke@toke.dk>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Keith Busch <keith.busch@intel.com>,
-        Jonathan Derrick <jonathan.derrick@intel.com>,
-        linux-pci@vger.kernel.org, linux-ia64@vger.kernel.org,
-        x86@kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC] avoid indirect calls for DMA direct mappings v2
-Message-ID: <20181210215113.GA22180@agluck-desk>
-References: <20181207190720.18517-1-hch@lst.de>
+        Mon, 10 Dec 2018 16:51:31 -0500
+Received: from mout.kundenserver.de ([212.227.126.187]:56677 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726392AbeLJVv3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Dec 2018 16:51:29 -0500
+Received: from wuerfel.lan ([109.192.41.194]) by mrelayeu.kundenserver.de
+ (mreue011 [212.227.15.129]) with ESMTPA (Nemesis) id
+ 1MyK1E-1hO8Kz12Bo-00yezZ; Mon, 10 Dec 2018 22:51:21 +0100
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>, Mikko Perttunen <cyndis@kapsi.fi>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        Emil Goode <emil.fsw@goode.io>,
+        dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] host1x: cdma: use completion instead of semaphore
+Date:   Mon, 10 Dec 2018 22:51:04 +0100
+Message-Id: <20181210215119.1903413-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.20.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181207190720.18517-1-hch@lst.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:7EBsahQJYudKcKazxeDZGdA0caFoz2zabrf/Qng4QK5t51gXv8u
+ UUhpztgjMtfRlsZaaVEOibIiABtmkoUiZDnXmbkj1lzOZLsZaDAtlxF7Tjxhzf6hhGE9/B8
+ IZK11iZ5en4GGrYSO4201x3UQCivBnJBwxukUyWy2FFoKZN1sFWszEdioSwez5gYGPbWx8M
+ iaDpN4Sa+ecxeXRBWeJWw==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:eHBUJP/nSLo=:V4F7JHLli8DkSC8gjvEEdH
+ tl+i0ESFOh6h63CjBxBSEAO4idjjsG+bwsA+owve9Q9FToMcn2uwth1RsyAin+lllCYwO748M
+ QABfl62XlyXttZSWPaY0cQa0+6UY/G8TTpokmsKC4E6nUf6FBCuEXAfupBWsuAYEpMQa7bsVK
+ 9Jd8pQDJSTe3On6DeVB77PFUQ/F/DGsJfIyU+BQjoI+c/OyEbcipiLJcynXNbiYfDBqqvPYYA
+ HK2SBLZUXAnqL1dRKC6GbrIjLjT4AX7K8eUWLdPSJIrb9ZeJc7T/5OfqkqBahQdPZt87qMhNU
+ Kh02yxm6snHxhkL0pTeLEclPJV/zWI9iNNuE0tfFH/qiY9PG8gqkSVl080DHd+YLMj6iqhehj
+ s+7o6AuKPW5rd9NZzFE7uvQml2q1ocR1KnKpuR4zaJ6KAqZqw8ETFs9rntt5AQHpSGRvhuowF
+ ei+ID3HwmxWNriydQLvD26uQQz0AXJyhUSJ8oKflVvNrl2X+P6+NPPYSBEVvKW3Xtf0apkuqg
+ m69ixipGShBbhEyWIKBem4scO3/wC/wySH8R+soAdtt8hCpmVa6xgZVJws4/aDwK6vJgyAd8h
+ YxzWS64Z9TpPVzEk/MuBQfjB1YJp1qQlQ7+UOpOPylBZfm4CKC4kZgbbMv6nFCCXn+hif+z5O
+ FplfPH8imVQy5NPISPtAE8BKu1SjBriRo2+16wwKXaXl/jojjbWqm2hWlabS43BZ4ziz/HjlP
+ l2BiFhBQqu7eYnzlz3dm+++yrSwhEDoZh0T9DQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 07, 2018 at 11:07:05AM -0800, Christoph Hellwig wrote:
-> This works is based on the dma-mapping tree, so you probably want to
-> want this git tree for testing:
-> 
->     git://git.infradead.org/users/hch/misc.git dma-direct-calls.2
+In this usage, the two are completely equivalent, but the
+completion documents better what is going on, and we generally
+try to avoid semaphores these days.
 
-Pulled this tree. Got HEAD
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/gpu/host1x/cdma.c | 6 +++---
+ drivers/gpu/host1x/cdma.h | 4 ++--
+ 2 files changed, 5 insertions(+), 5 deletions(-)
 
-	33b9fc015171 ("dma-mapping: bypass indirect calls for dma-direct")
+diff --git a/drivers/gpu/host1x/cdma.c b/drivers/gpu/host1x/cdma.c
+index 6bfb3e6f43d7..bdc80a303cec 100644
+--- a/drivers/gpu/host1x/cdma.c
++++ b/drivers/gpu/host1x/cdma.c
+@@ -204,7 +204,7 @@ unsigned int host1x_cdma_wait_locked(struct host1x_cdma *cdma,
+ 		cdma->event = event;
+ 
+ 		mutex_unlock(&cdma->lock);
+-		down(&cdma->sem);
++		wait_for_completion(&cdma->complete);
+ 		mutex_lock(&cdma->lock);
+ 	}
+ 
+@@ -308,7 +308,7 @@ static void update_cdma_locked(struct host1x_cdma *cdma)
+ 
+ 	if (signal) {
+ 		cdma->event = CDMA_EVENT_NONE;
+-		up(&cdma->sem);
++		complete(&cdma->complete);
+ 	}
+ }
+ 
+@@ -410,7 +410,7 @@ int host1x_cdma_init(struct host1x_cdma *cdma)
+ 	int err;
+ 
+ 	mutex_init(&cdma->lock);
+-	sema_init(&cdma->sem, 0);
++	init_completion(&cdma->complete);
+ 
+ 	INIT_LIST_HEAD(&cdma->sync_queue);
+ 
+diff --git a/drivers/gpu/host1x/cdma.h b/drivers/gpu/host1x/cdma.h
+index c628070b94d7..ba790f9bfebc 100644
+--- a/drivers/gpu/host1x/cdma.h
++++ b/drivers/gpu/host1x/cdma.h
+@@ -20,7 +20,7 @@
+ #define __HOST1X_CDMA_H
+ 
+ #include <linux/sched.h>
+-#include <linux/semaphore.h>
++#include <linux/completion.h>
+ #include <linux/list.h>
+ 
+ struct host1x_syncpt;
+@@ -70,7 +70,7 @@ enum cdma_event {
+ 
+ struct host1x_cdma {
+ 	struct mutex lock;		/* controls access to shared state */
+-	struct semaphore sem;		/* signalled when event occurs */
++	struct completion complete;	/* signalled when event occurs */
+ 	enum cdma_event event;		/* event that sem is waiting for */
+ 	unsigned int slots_used;	/* pb slots used in current submit */
+ 	unsigned int slots_free;	/* pb slots free in current submit */
+-- 
+2.20.0
 
-But the ia64 build fails with:
-
-arch/ia64/mm/init.c:75:21: warning: 'enum dma_data_direction' declared inside parameter list [enabled by default]
-arch/ia64/mm/init.c:75:21: warning: its scope is only this definition or declaration, which is probably not what you want [enabled by default]
-arch/ia64/mm/init.c:75:40: error: parameter 4 ('dir') has incomplete type
-arch/ia64/mm/init.c:74:6: error: function declaration isn't a prototype [-Werror=strict-prototypes]
-arch/ia64/mm/init.c: In function 'arch_sync_dma_for_cpu':
-arch/ia64/mm/init.c:77:2: error: implicit declaration of function '__phys_to_pfn' [-Werror=implicit-function-declaration]
-
--Tony
