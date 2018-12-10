@@ -2,145 +2,117 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B423C04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 12:14:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 769B7C04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 12:20:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3D1DA2084E
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 12:14:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D1DA2084E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.com
+	by mail.kernel.org (Postfix) with ESMTP id 34BCD2086D
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 12:20:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="U6Lw3Nve"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 34BCD2086D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727572AbeLJMOu (ORCPT
+        id S1727598AbeLJMUx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 07:14:50 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:42308 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726606AbeLJMOt (ORCPT
+        Mon, 10 Dec 2018 07:20:53 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:36163 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727139AbeLJMUw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 07:14:49 -0500
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: eballetbo)
-        with ESMTPSA id B6193260251
-From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
-To:     linux-kernel@vger.kernel.org, robert.jarzmik@free.fr,
-        daniel.thompson@linaro.org, lee.jones@linaro.org
-Cc:     kernel@collabora.com, heiko@sntech.de, stable@vger.kernel.org,
-        u.kleine-koenig@pengutronix.de, linux-pwm@vger.kernel.org,
-        linux-fbdev@vger.kernel.org,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        dri-devel@lists.freedesktop.org, Jingoo Han <jingoohan1@gmail.com>
-Subject: [RESEND PATCH v3] backlight: pwm_bl: Fix brightness levels for non-DT case.
-Date:   Mon, 10 Dec 2018 13:14:37 +0100
-Message-Id: <20181210121437.30170-1-enric.balletbo@collabora.com>
-X-Mailer: git-send-email 2.19.2
+        Mon, 10 Dec 2018 07:20:52 -0500
+Received: by mail-wm1-f66.google.com with SMTP id a18so11057395wmj.1
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Dec 2018 04:20:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=dFpbuq0ulV8OVvLVss/W51LDqN9dtTy0/RMmjeONnFg=;
+        b=U6Lw3Nve638F4eL/Fjpf3rErRNpwi+jrV4PJyiUIk1L26zK3TZC02jHYt7EajMjdud
+         7BIx+B1BRr2lErZqL32qcrKOWtaudoog1M64bdkQ7ikmGlhA/fqIJ9XwoFEdc5tKKSJJ
+         gLVERcWuNVTsJbPHt90lYgv7RAR3M1PQHzv/k=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=dFpbuq0ulV8OVvLVss/W51LDqN9dtTy0/RMmjeONnFg=;
+        b=WDLfHVjz4Yj//kbv4yuKbs/aEdo8Bzl1f8K1dyPCi93UGTcK2wpq49x4Q4N7+53fCX
+         PkhUVLjK6KpZuRzrro+oE/MD4sRs0PHqmK7bLPU9Z3p0V0AEQqeDp4hFjH1jKQ8VvSkw
+         JKlHQpTnBvqCskQlwQTKOjtlYVAF/lT6UBsAQTUmbSeWgULMzr8rsKI1nKhtQjg3vghE
+         a06huYyNTlfScWbT0rVkHsm8KTWOHZr0gFA2mWYznIZ5FtauAi3Xv2CVgpK18g174Dcj
+         g4bavmXEC/3NDjEX0cFHTeBtu+L2pf89Em8h66gM+JuiOs4IZypb+YSz2shDXZ+/e0Qh
+         346Q==
+X-Gm-Message-State: AA+aEWYT8xeFOdtYRLUXKDaG6LysT2gj4EsSIq+rHWaJr9BtYl9JWtPU
+        lB/YZViyqpcMNdwXS3RQ2938GQ==
+X-Google-Smtp-Source: AFSGD/WmZvpe/89UmFKCkavxAA1K3KbmB66oX27OJgmSA2VOy/7wbhkQ+xNiaHJWk+KsOPWfHswR9Q==
+X-Received: by 2002:a7b:c04e:: with SMTP id u14mr9498661wmc.133.1544444450156;
+        Mon, 10 Dec 2018 04:20:50 -0800 (PST)
+Received: from [192.168.27.209] (mx2.mm-sol.com. [217.18.243.227])
+        by smtp.googlemail.com with ESMTPSA id k128sm17022687wmd.37.2018.12.10.04.20.48
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 10 Dec 2018 04:20:49 -0800 (PST)
+Subject: Re: [GIT PULL] Qualcomm Driver updates for 4.21 - Part 2
+To:     Andy Gross <andy.gross@linaro.org>, arm@kernel.org
+Cc:     linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Olof Johansson <olof@lixom.net>
+References: <1544245994-4228-1-git-send-email-andy.gross@linaro.org>
+ <1544245994-4228-2-git-send-email-andy.gross@linaro.org>
+From:   Stanimir Varbanov <stanimir.varbanov@linaro.org>
+Message-ID: <c575fb97-4b19-5143-66f8-3a4874aa7c17@linaro.org>
+Date:   Mon, 10 Dec 2018 14:20:47 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <1544245994-4228-2-git-send-email-andy.gross@linaro.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit '88ba95bedb79 ("backlight: pwm_bl: Compute brightness of LED
-linearly to human eye")' allows the possibility to compute a default
-brightness table when there isn't the brightness-levels property in the
-DT. Unfortunately the changes made broke the pwm backlight for the
-non-DT boards.
+Hi Andy,
 
-Usually, the non-DT boards don't pass the brightness levels via platform
-data, instead, it sets the max_brightness in their platform data and the
-driver calculates the level without a table. The offending patch assumed
-that when there is no brightness levels table we should create one, but this
-is clearly wrong for the non-DT case.
+On 12/8/18 7:13 AM, Andy Gross wrote:
+> The following changes since commit b601f73130a375c912d9f2ec93c5f3cea5d6a3da:
+> 
+>   drm: msm: Check cmd_db_read_aux_data() for failure (2018-11-29 17:41:53 -0600)
+> 
+> are available in the git repository at:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/agross/linux.git tags/qcom-drivers-for-4.21-2
+> 
+> for you to fetch changes up to 92def04bd7b46f5b186f985d5c9d3804858c3c2f:
+> 
+>   MAINTAINERS: Change Todor Tomov's email address (2018-12-05 16:45:34 -0600)
+> 
+> ----------------------------------------------------------------
+> Qualcomm ARM Based Driver Updates for v4.21 Part 2
+> 
+> * Fix MAINTAINERS email address for Todor
+> * Fix SCM compilation error
+> 
+> ----------------------------------------------------------------
+> Jonathan Marek (1):
+>       firmware: qcom: scm: fix compilation error when disabled
+> 
+> Todor Tomov (1):
+>       MAINTAINERS: Change Todor Tomov's email address
 
-After this patch the code handles the DT and the non-DT case taking in
-consideration also if max_brightness is set or not.
+I saw this patch is applied also in media_tree.git, not sure that is
+problem though.
 
-Fixes: 88ba95bedb79 ("backlight: pwm_bl: Compute brightness of LED linearly to human eye")
-Cc: <stable@vger.kernel.org>
-Reported-by: Robert Jarzmik <robert.jarzmik@free.fr>
-Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Tested-by: Robert Jarzmik <robert.jarzmik@free.fr>
-Acked-by: Daniel Thompson <daniel.thompson@linaro.org>
----
-
-Changes in v3:
-- Fixed some typos in commit message.
-- Removed ' in Fixes tag.
-
-Changes in v2:
-- Rebase on top of mainline
-- Add Tested-by and Acked-by tags.
-
- drivers/video/backlight/pwm_bl.c | 41 +++++++++++++++++++++++++++-----
- 1 file changed, 35 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/video/backlight/pwm_bl.c b/drivers/video/backlight/pwm_bl.c
-index b7b5b31f3824..feb90764a811 100644
---- a/drivers/video/backlight/pwm_bl.c
-+++ b/drivers/video/backlight/pwm_bl.c
-@@ -568,7 +568,30 @@ static int pwm_backlight_probe(struct platform_device *pdev)
- 		goto err_alloc;
- 	}
- 
--	if (!data->levels) {
-+	if (data->levels) {
-+		/*
-+		 * For the DT case, only when brightness levels is defined
-+		 * data->levels is filled. For the non-DT case, data->levels
-+		 * can come from platform data, however is not usual.
-+		 */
-+		for (i = 0; i <= data->max_brightness; i++) {
-+			if (data->levels[i] > pb->scale)
-+				pb->scale = data->levels[i];
-+
-+			pb->levels = data->levels;
-+		}
-+	} else if (!data->max_brightness) {
-+		/*
-+		 * If no brightness levels are provided and max_brightness is
-+		 * not set, use the default brightness table. For the DT case,
-+		 * max_brightness is set to 0 when brightness levels is not
-+		 * specified. For the non-DT case, max_brightness is usually
-+		 * set to some value.
-+		 */
-+
-+		/* Get the PWM period (in nanoseconds) */
-+		pwm_get_state(pb->pwm, &state);
-+
- 		ret = pwm_backlight_brightness_default(&pdev->dev, data,
- 						       state.period);
- 		if (ret < 0) {
-@@ -576,13 +599,19 @@ static int pwm_backlight_probe(struct platform_device *pdev)
- 				"failed to setup default brightness table\n");
- 			goto err_alloc;
- 		}
--	}
- 
--	for (i = 0; i <= data->max_brightness; i++) {
--		if (data->levels[i] > pb->scale)
--			pb->scale = data->levels[i];
-+		for (i = 0; i <= data->max_brightness; i++) {
-+			if (data->levels[i] > pb->scale)
-+				pb->scale = data->levels[i];
- 
--		pb->levels = data->levels;
-+			pb->levels = data->levels;
-+		}
-+	} else {
-+		/*
-+		 * That only happens for the non-DT case, where platform data
-+		 * sets the max_brightness value.
-+		 */
-+		pb->scale = data->max_brightness;
- 	}
- 
- 	pb->lth_brightness = data->lth_brightness * (state.period / pb->scale);
 -- 
-2.19.2
-
+regards,
+Stan
