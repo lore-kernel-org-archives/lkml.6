@@ -2,81 +2,77 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9607C04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 04:21:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 031BBC67838
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 04:23:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 904F52081C
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 04:21:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 904F52081C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id BD3942081C
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 04:23:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD3942081C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726397AbeLJEVK (ORCPT
+        id S1726415AbeLJEXg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 23:21:10 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:44734 "EHLO mx1.redhat.com"
+        Sun, 9 Dec 2018 23:23:36 -0500
+Received: from mga18.intel.com ([134.134.136.126]:6513 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726098AbeLJEVK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Dec 2018 23:21:10 -0500
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 928A6308212C;
-        Mon, 10 Dec 2018 04:21:09 +0000 (UTC)
-Received: from localhost.localdomain (ovpn-12-111.pek2.redhat.com [10.72.12.111])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 3382B19C7B;
-        Mon, 10 Dec 2018 04:20:57 +0000 (UTC)
-Subject: Re: [PATCH 1/2 v8] resource: add the new I/O resource descriptor
- 'IORES_DESC_RESERVED'
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     Dave Young <dyoung@redhat.com>, linux-kernel@vger.kernel.org,
-        kexec@lists.infradead.org, x86@kernel.org,
-        linux-ia64@vger.kernel.org, linux-efi@vger.kernel.org,
-        tglx@linutronix.de, mingo@redhat.com, akpm@linux-foundation.org,
-        dave.hansen@linux.intel.com, luto@kernel.org, peterz@infradead.org,
-        ard.biesheuvel@linaro.org, tony.luck@intel.com,
-        fenghua.yu@intel.com, bhe@redhat.com,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Toshi Kani <toshi.kani@hp.com>,
-        Dan Williams <dan.j.williams@intel.com>
-References: <20181129080956.20776-1-lijiang@redhat.com>
- <20181129080956.20776-2-lijiang@redhat.com>
- <20181130033703.GA23624@dhcp-128-65.nay.redhat.com>
- <bbf6352b-b060-4cb8-dfd2-99166b0149a7@redhat.com>
- <20181206201147.GG3986@zn.tnic>
-From:   lijiang <lijiang@redhat.com>
-Message-ID: <4e3ec0fd-f26a-2684-23e5-b2a068326248@redhat.com>
-Date:   Mon, 10 Dec 2018 12:20:55 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1726098AbeLJEXe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Dec 2018 23:23:34 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Dec 2018 20:23:33 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,337,1539673200"; 
+   d="scan'208";a="106195606"
+Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
+  by fmsmga007.fm.intel.com with ESMTP; 09 Dec 2018 20:23:32 -0800
+Received: from kbuild by lkp-server01 with local (Exim 4.89)
+        (envelope-from <lkp@intel.com>)
+        id 1gWD6S-0009Ly-2H; Mon, 10 Dec 2018 12:23:32 +0800
+Date:   Mon, 10 Dec 2018 12:23:12 +0800
+From:   kbuild test robot <lkp@intel.com>
+To:     Tomasz Duszynski <tduszyns@gmail.com>
+Cc:     kbuild-all@01.org, linux-iio@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        robh+dt@kernel.org, jic23@jic23.retrosnub.co.uk,
+        a.brauchli@elementarea.net, Tomasz Duszynski <tduszyns@gmail.com>
+Subject: Re: [PATCH v2 2/3] iio: chemical: add support for Sensirion SPS30
+ sensor
+Message-ID: <201812101217.mLlmhLgt%fengguang.wu@intel.com>
+References: <20181206210443.21052-3-tduszyns@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20181206201147.GG3986@zn.tnic>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Mon, 10 Dec 2018 04:21:09 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181206210443.21052-3-tduszyns@gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-在 2018年12月07日 04:11, Borislav Petkov 写道:
-> On Fri, Nov 30, 2018 at 03:04:44PM +0800, lijiang wrote:
->> I have noticed the changes on x86, but for IA64, i'm not sure whether it should do the same
->> thing, so keep it as before.
->>
->> If IA64 people would like to give any comment, that will be appreciated.
-> 
-> I think you should not touch ia64 and not make Tony unnecessarily power
-> up the old rust.
-> 
-> :-)
-> 
-Ok, it's good to me. And i will get rid of these changes for ia64 in patch v9.
+Hi Tomasz,
 
-Thanks.
-Lianbo
+Thank you for the patch! Perhaps something to improve:
+
+[auto build test WARNING on iio/togreg]
+[also build test WARNING on v4.20-rc6 next-20181207]
+[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+
+url:    https://github.com/0day-ci/linux/commits/Tomasz-Duszynski/add-support-for-Sensirion-SPS30-PM-sensor/20181209-204432
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git togreg
+
+
+coccinelle warnings: (new ones prefixed by >>)
+
+>> drivers/iio/chemical/sps30.c:115:2-3: Unneeded semicolon
+
+Please review and possibly fold the followup patch.
+
+---
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
