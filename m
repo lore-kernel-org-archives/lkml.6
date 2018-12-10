@@ -2,763 +2,344 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1344CC5CFFE
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 20:15:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15BDAC04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 20:16:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8FA742082F
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 20:15:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="GGFpXtfd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8FA742082F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	by mail.kernel.org (Postfix) with ESMTP id A51F32084C
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 20:16:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A51F32084C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729299AbeLJUPC (ORCPT
+        id S1729788AbeLJUQK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 15:15:02 -0500
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:56680 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726607AbeLJUPB (ORCPT
+        Mon, 10 Dec 2018 15:16:10 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:45606 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726392AbeLJUQJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 15:15:01 -0500
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id wBAKEw0p109890;
-        Mon, 10 Dec 2018 14:14:58 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1544472898;
-        bh=5Bb8Zl8msoX8gkeIkzcFZWwo1Bi9eE00HVoGAR5cfxc=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=GGFpXtfdeJEVCa1/HMVsGj2hZ/h7FHXtZU0PvmEdDj/ALg6Y/l8POlAzZz/A59El/
-         MTGsqSdQKxayqPIRxRwskXCOnhW5n+I6tFViAzJLFsiIo+CdHE77EwPgmtF4G5x37i
-         +ysWXSczBYljMY92Cr2H2F83KPgOIfqw9bZM0HmM=
-Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wBAKEwM4072465
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 10 Dec 2018 14:14:58 -0600
-Received: from DFLE102.ent.ti.com (10.64.6.23) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Mon, 10
- Dec 2018 14:14:58 -0600
-Received: from dlep33.itg.ti.com (157.170.170.75) by DFLE102.ent.ti.com
- (10.64.6.23) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Mon, 10 Dec 2018 14:14:58 -0600
-Received: from [172.22.102.68] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id wBAKEw1i019146;
-        Mon, 10 Dec 2018 14:14:58 -0600
-Subject: Re: [PATCH 2/2] iio: adc: Add the TI ads124s08 ADC code
-To:     Jonathan Cameron <jic23@kernel.org>
-CC:     <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <robh+dt@kernel.org>
-References: <20181204175955.8259-1-dmurphy@ti.com>
- <20181204175955.8259-2-dmurphy@ti.com> <20181208115609.1311188a@archlinux>
-From:   Dan Murphy <dmurphy@ti.com>
-Message-ID: <b6690112-9862-8178-14d4-c4a65b201c29@ti.com>
-Date:   Mon, 10 Dec 2018 14:14:55 -0600
+        Mon, 10 Dec 2018 15:16:09 -0500
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBAKDv4s098802
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Dec 2018 15:16:06 -0500
+Received: from e32.co.us.ibm.com (e32.co.us.ibm.com [32.97.110.150])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2p9v1t0n7q-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Dec 2018 15:16:06 -0500
+Received: from localhost
+        by e32.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <mwb@linux.vnet.ibm.com>;
+        Mon, 10 Dec 2018 20:16:05 -0000
+Received: from b03cxnp08027.gho.boulder.ibm.com (9.17.130.19)
+        by e32.co.us.ibm.com (192.168.1.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 10 Dec 2018 20:16:03 -0000
+Received: from b03ledav003.gho.boulder.ibm.com (b03ledav003.gho.boulder.ibm.com [9.17.130.234])
+        by b03cxnp08027.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBAKG2gk17498264
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 10 Dec 2018 20:16:02 GMT
+Received: from b03ledav003.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 748EB6A057;
+        Mon, 10 Dec 2018 20:16:02 +0000 (GMT)
+Received: from b03ledav003.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B7C7A6A04D;
+        Mon, 10 Dec 2018 20:16:01 +0000 (GMT)
+Received: from oc5000245537.ibm.com (unknown [9.53.179.223])
+        by b03ledav003.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Mon, 10 Dec 2018 20:16:01 +0000 (GMT)
+Subject: Re: [PATCH] pseries/hotplug: Add more delay in pseries_cpu_die while
+ waiting for rtas-stop
+To:     Thiago Jung Bauermann <bauerman@linux.ibm.com>,
+        ego@linux.vnet.ibm.com
+Cc:     Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Tyrel Datwyler <tyreld@linux.vnet.ibm.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Vaidyanathan Srinivasan <svaidy@linux.vnet.ibm.com>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+References: <1544095908-2414-1-git-send-email-ego@linux.vnet.ibm.com>
+ <87a7li5zv2.fsf@morokweng.localdomain> <20181207104311.GA11431@in.ibm.com>
+ <20181207120346.GB11431@in.ibm.com> <87va443fm3.fsf@morokweng.localdomain>
+From:   Michael Bringmann <mwb@linux.vnet.ibm.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=mwb@linux.vnet.ibm.com; prefer-encrypt=mutual; keydata=
+ xsBNBFcY7GcBCADzw3en+yzo9ASFGCfldVkIg95SAMPK0myXp2XJYET3zT45uBsX/uj9/2nA
+ lBmXXeOSXnPfJ9V3vtiwcfATnWIsVt3tL6n1kqikzH9nXNxZT7MU/7gqzWZngMAWh/GJ9qyg
+ DTOZdjsvdUNUWxtiLvBo7y+reA4HjlQhwhYxxvCpXBeRoF0qDWfQ8DkneemqINzDZPwSQ7zY
+ t4F5iyN1I9GC5RNK8Y6jiKmm6bDkrrbtXPOtzXKs0J0FqWEIab/u3BDrRP3STDVPdXqViHua
+ AjEzthQbGZm0VCxI4a7XjMi99g614/qDcXZCs00GLZ/VYIE8hB9C5Q+l66S60PLjRrxnABEB
+ AAHNLU1pY2hhZWwgVy4gQnJpbmdtYW5uIDxtd2JAbGludXgudm5ldC5pYm0uY29tPsLAeAQT
+ AQIAIgUCVxjsZwIbAwYLCQgHAwIGFQgCCQoLBBYCAwECHgECF4AACgkQSEdag3dpuTI0NAf8
+ CKYTDKQLgOSjVrU2L5rM4lXaJRmQV6oidD3vIhKSnWRvPq9C29ifRG6ri20prTHAlc0vycgm
+ 41HHg0y2vsGgNXGTWC2ObemoZBI7mySXe/7Tq5mD/semGzOp0YWZ7teqrkiSR8Bw0p+LdE7K
+ QmT7tpjjvuhrtQ3RRojUYcuy1nWUsc4D+2cxsnZslsx84FUKxPbLagDgZmgBhUw/sUi40s6S
+ AkdViVCVS0WANddLIpG0cfdsV0kCae/XdjK3mRK6drFKv1z+QFjvOhc8QIkkxFD0da9w3tJj
+ oqnqHFV5gLcHO6/wizPx/NV90y6RngeBORkQiRFWxTXS4Oj9GVI/Us7ATQRXGOxnAQgAmJ5Y
+ ikTWrMWPfiveUacETyEhWVl7u8UhZcx3yy2te8O0ay7t9fYcZgIEfQPPVVus89acIXlG3wYL
+ DDPvb21OprLxi+ZJ2a0S5we+LcSWN1jByxJlbWBq+/LcMtGAOhNLpysY1gD0Y4UW/eKS+TFZ
+ 562qKC3k1dBvnV9JXCgeS1taYFxRdVAn+2DwK3nuyG/DDq/XgJ5BtmyC3MMx8CiW3POj+O+l
+ 6SedIeAfZlZ7/xhijx82g93h07VavUQRwMZgZFsqmuxBxVGiav2HB+dNvs3PFB087Pvc9OHe
+ qhajPWOP/gNLMmvBvknn1NToM9a8/E8rzcIZXoYs4RggRRYh6wARAQABwsBfBBgBAgAJBQJX
+ GOxnAhsMAAoJEEhHWoN3abky+RUH/jE08/r5QzaNKYeVhu0uVbgXu5fsxqr2cAxhf+KuwT3T
+ efhEP2alarxzUZdEh4MsG6c+X2NYLbD3cryiXxVx/7kSAJEFQJfA5P06g8NLR25Qpq9BLsN7
+ ++dxQ+CLKzSEb1X24hYAJZpOhS8ev3ii+M/XIo+olDBKuTaTgB6elrg3CaxUsVgLBJ+jbRkW
+ yQe2S5f/Ja1ThDpSSLLWLiLK/z7+gaqwhnwjQ8Z8Y9D2itJQcj4itHilwImsqwLG7SxzC0NX
+ IQ5KaAFYdRcOgwR8VhhkOIVd70ObSZU+E4pTET1WDz4o65xZ89yfose1No0+r5ht/xWOOrh8
+ 53/hcWvxHVs=
+Organization: IBM Linux Technology Center
+Date:   Mon, 10 Dec 2018 14:16:01 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20181208115609.1311188a@archlinux>
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <87va443fm3.fsf@morokweng.localdomain>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+X-TM-AS-GCONF: 00
+x-cbid: 18121020-0004-0000-0000-000014C0240E
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010209; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000270; SDB=6.01129873; UDB=6.00587069; IPR=6.00910006;
+ MB=3.00024644; MTD=3.00000008; XFM=3.00000015; UTC=2018-12-10 20:16:04
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18121020-0005-0000-0000-000089CE4796
+Message-Id: <06dfb955-6af9-ae23-3919-9bee447cfcdc@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-10_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1812100180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Jonathan
+I have asked Scott Mayes to take a look at one of these crashes from
+the phyp side.  I will let you know if he finds anything notable.
 
-Thanks for the review
+Michael
 
-On 12/08/2018 05:56 AM, Jonathan Cameron wrote:
-> On Tue, 4 Dec 2018 11:59:55 -0600
-> Dan Murphy <dmurphy@ti.com> wrote:
+On 12/07/2018 08:40 PM, Thiago Jung Bauermann wrote:
 > 
->> Introduce the TI ADS124S08 and the ADS124S06 ADC
->> devices from TI.  The ADS124S08 is the 12 channel ADC
->> and the ADS124S06 is the 6 channel ADC device
+> Gautham R Shenoy <ego@linux.vnet.ibm.com> writes:
+>> On Fri, Dec 07, 2018 at 04:13:11PM +0530, Gautham R Shenoy wrote:
+>>> Sure. I will test the patch and report back.
 >>
->> These devices share a common datasheet:
->> http://www.ti.com/lit/gpn/ads124s08
+>> I added the following debug patch on top of your patch, and after an
+>> hour's run, the system crashed. Appending the log at the end.
+> 
+> Thank you very much for testing! Your debug patch was very helpful as
+> well.
+> 
+>> I suppose we still need to increase the number of tries since we wait
+>> only for 2.5ms looping before giving up.
+> 
+> Do you think it would have helped? In the debug output you posted I
+> would have expected the following message to show up if the loop
+> finished too early, and it didn't:
+> 
+> "Querying DEAD? cpu %i (%i) shows %i\n"
+> 
+> So I don't think increasing the loop length would have made a
+> difference. In fact, the call to smp_query_cpu_stopped() always
+> succeeded on the first iteration.
+> 
+> I think there is something else going on which we don't fully understand
+> yet. From your other email:
+> 
+>> I agree that the Kernel has to respect RTAS's restriction. The PAPR
+>> v2.8.1, Requirement R1-7.2.3-8 under section 7.2.3 says the following:
 >>
->> Signed-off-by: Dan Murphy <dmurphy@ti.com>
-> Various minor things inline.
-> 
-
-No worries.  I believe I used the ADS8688 driver as a reference so that driver
-may need to be updated as well
-
-> Thanks,
-> 
-> Jonathan
-> 
->> ---
->>  drivers/iio/adc/Kconfig        |  10 +
->>  drivers/iio/adc/Makefile       |   1 +
->>  drivers/iio/adc/ti-ads124s08.c | 437 +++++++++++++++++++++++++++++++++
->>  3 files changed, 448 insertions(+)
->>  create mode 100644 drivers/iio/adc/ti-ads124s08.c
+>>     "The stop-self service needs to be serialized with calls to the
+>>      stop-self, start-cpu, and set-power-level services. The OS must
+>>      be able to call RTAS services on other processors while the
+>>      processor is stopped or being stopped"
 >>
->> diff --git a/drivers/iio/adc/Kconfig b/drivers/iio/adc/Kconfig
->> index a52fea8749a9..e8c5686e6716 100644
->> --- a/drivers/iio/adc/Kconfig
->> +++ b/drivers/iio/adc/Kconfig
->> @@ -887,6 +887,16 @@ config TI_ADS8688
->>  	  This driver can also be built as a module. If so, the module will be
->>  	  called ti-ads8688.
->>  
->> +config TI_ADS124S08
->> +	tristate "Texas Instruments ADS124S08"
->> +	depends on SPI && OF
->> +	help
->> +	  If you say yes here you get support for Texas Instruments ADS124S08
->> +	  and ADS124S06 ADC chips
->> +
->> +	  This driver can also be built as a module. If so, the module will be
->> +	  called ti-ads124s08.
->> +
->>  config TI_AM335X_ADC
->>  	tristate "TI's AM335X ADC driver"
->>  	depends on MFD_TI_AM335X_TSCADC && HAS_DMA
->> diff --git a/drivers/iio/adc/Makefile b/drivers/iio/adc/Makefile
->> index a6e6a0b659e2..d70293abfdba 100644
->> --- a/drivers/iio/adc/Makefile
->> +++ b/drivers/iio/adc/Makefile
->> @@ -79,6 +79,7 @@ obj-$(CONFIG_TI_ADC161S626) += ti-adc161s626.o
->>  obj-$(CONFIG_TI_ADS1015) += ti-ads1015.o
->>  obj-$(CONFIG_TI_ADS7950) += ti-ads7950.o
->>  obj-$(CONFIG_TI_ADS8688) += ti-ads8688.o
->> +obj-$(CONFIG_TI_ADS124S08) += ti-ads124s08.o
->>  obj-$(CONFIG_TI_AM335X_ADC) += ti_am335x_adc.o
->>  obj-$(CONFIG_TI_TLC4541) += ti-tlc4541.o
->>  obj-$(CONFIG_TWL4030_MADC) += twl4030-madc.o
->> diff --git a/drivers/iio/adc/ti-ads124s08.c b/drivers/iio/adc/ti-ads124s08.c
->> new file mode 100644
->> index 000000000000..b6fc93f37355
->> --- /dev/null
->> +++ b/drivers/iio/adc/ti-ads124s08.c
->> @@ -0,0 +1,437 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +// TI ADS124S0X chip family driver
->> +// Copyright (C) 2018 Texas Instruments Incorporated - http://www.ti.com/
-> An oddity of current kernel style is that typically only the spdx
-> line is // 
+>> Thus the onus is on the OS to ensure that there are no concurrent rtas
+>> calls with "stop-self" token.
 > 
-> The rest are a normal kernel multiline comment.
-
-Ack.  Finding it is up to the maintainer here on the preference so I will change it.
-
+> As you say perhaps there's another call to stop-self, start-cpu or
+> set-power-level being made concurrently. I don't currently see how more
+> than one stop-self or start-cpu call could be in flight at the same time
+> given that there are a number of locks being grabbed during CPU hotplug
+> and unplug. OTOH the CPU that actually calls stop-self doesn't seem to
+> grab any locks itself so it's a possibility.
 > 
->> +
->> +#include <linux/err.h>
->> +#include <linux/delay.h>
->> +#include <linux/device.h>
->> +#include <linux/kernel.h>
->> +#include <linux/module.h>
->> +#include <linux/of.h>
->> +#include <linux/of_gpio.h>
->> +#include <linux/slab.h>
->> +#include <linux/sysfs.h>
->> +
->> +#include <linux/gpio/consumer.h>
->> +#include <linux/regulator/consumer.h>
->> +#include <linux/spi/spi.h>
->> +
->> +#include <linux/iio/iio.h>
->> +#include <linux/iio/buffer.h>
->> +#include <linux/iio/trigger_consumer.h>
->> +#include <linux/iio/triggered_buffer.h>
->> +#include <linux/iio/sysfs.h>
->> +
->> +#define ADS124S08_ID		0x00
->> +#define ADS124S06_ID		0x01
+> As for set-power-level, it's only used in the case of PCI hotplug from
+> what I can see, and that isn't part of the picture in this case, right?
 > 
-> Use an enum for these as the actual values don't matter, only that
-> they are unique.
+> We could address this problem directly by adding another lock separate
+> from rtas.lock to serialize just these calls. The challenge is with
+> stop-self, because the CPU calling it will never return to release the
+> lock. Is it possible to grab a lock (or down a semaphore) in the CPU
+> calling stop-self and then release the lock (or up the semaphore) in the
+> CPU running pseries_cpu_die()?
 > 
-
-Ack.  Is there a preference on using the sentinnal or not?
-
->> +
->> +/* Commands */
->> +#define ADS124S_CMD_NOP		0x00
-> Why this shorter prefix? Are all ADS124S parts
-> compatible with this list? 
+>>> There's also a race between the CPU driving the unplug and the CPU
+>>> being unplugged which I think is not easy for the CPU being
+>>> unplugged to win, which makes the busy loop in pseries_cpu_die() a
+>>> bit fragile. I describe the race in the patch description.
+>>>
+>>> My solution to make the race less tight is to make the CPU driving
+>>> the unplug to only start the busy loop only after the CPU being
+>>> unplugged is in the CPU_STATE_OFFLINE state. At that point, we know
+>>> that it either is about to call RTAS or it already has.
+>>
+>> Ah, yes this is good optimization. Though, I think we ought to
+>> unconditionally wait until the target CPU has woken up from CEDE and
+>> changed its state to CPU_STATE_OFFLINE. After if PROD failed, then we
+>> would have caught it in dlpar_offline_cpu() itself.
 > 
-
-Ack.  Yes the 124S are all compatible since there are only 2 ATM.
-
-
->> +#define ADS124S_CMD_WAKEUP	0x02
->> +#define ADS124S_CMD_PWRDWN	0x04
->> +#define ADS124S_CMD_RESET	0x06
->> +#define ADS124S_CMD_START	0x08
->> +#define ADS124S_CMD_STOP	0x0a
->> +#define ADS124S_CMD_SYOCAL	0x16
->> +#define ADS124S_CMD_SYGCAL	0x17
->> +#define ADS124S_CMD_SFOCAL	0x19
->> +#define ADS124S_CMD_RDATA	0x12
->> +#define ADS124S_CMD_RREG	0x20
->> +#define ADS124S_CMD_WREG	0x40
->> +
->> +/* Registers */
->> +#define ADS124S0X_ID		0x00
-> Avoid wild cards in naming.  It always goes wrong when
-> along comes another part that is similar but not quite the
-> same yet fits in your naming scheme.  Just pick a part
-> and name after that.
-
-The issue is that there are some registers below that are S08 only
-and do not apply to the S06.
-
-This is why I choose the wild card.  I can use the 08 since that has a master set.
-Unless I can keep the 0X
-
+> I recently saw a QEMU-implemented hcall (H_LOGICAL_CI_LOAD) return
+> success when it had been given an invalid memory address to load from,
+> so my confidence in the error reporting of hcalls is a bit shaken. :-)
 > 
->> +#define ADS124S0X_STATUS	0x01
->> +#define ADS124S0X_INPUT_MUX	0x02
->> +#define ADS124S0X_PGA		0x03
->> +#define ADS124S0X_DATA_RATE	0x04
->> +#define ADS124S0X_REF		0x05
->> +#define ADS124S0X_IDACMAG	0x06
->> +#define ADS124S0X_IDACMUX	0x07
->> +#define ADS124S0X_VBIAS		0x08
->> +#define ADS124S0X_SYS		0x09
->> +#define ADS124S0X_OFCAL0	0x0a
->> +#define ADS124S0X_OFCAL1	0x0b
->> +#define ADS124S0X_OFCAL2	0x0c
->> +#define ADS124S0X_FSCAL0	0x0d
->> +#define ADS124S0X_FSCAL1	0x0e
->> +#define ADS124S0X_FSCAL2	0x0f
->> +#define ADS124S0X_GPIODAT	0x10
->> +#define ADS124S0X_GPIOCON	0x11
->> +
->> +/* ADS124S0x common channels */
->> +#define ADS124S0X_AIN0		0x00
->> +#define ADS124S0X_AIN1		0x01
->> +#define ADS124S0X_AIN2		0x02
->> +#define ADS124S0X_AIN3		0x03
->> +#define ADS124S0X_AIN4		0x04
->> +#define ADS124S0X_AIN5		0x05
->> +#define ADS124S08_AINCOM	0x0c
->> +/* ADS124S08 only channels */
->> +#define ADS124S08_AIN6		0x06
->> +#define ADS124S08_AIN7		0x07
->> +#define ADS124S08_AIN8		0x08
->> +#define ADS124S08_AIN9		0x09
->> +#define ADS124S08_AIN10		0x0a
->> +#define ADS124S08_AIN11		0x0b
->> +#define ADS124S0X_MAX_CHANNELS	12
->> +
->> +#define ADS124S0X_POS_MUX_SHIFT	0x04
->> +#define ADS124S_INT_REF		0x09
->> +
->> +#define ADS124S_START_REG_MASK	0x1f
->> +#define ADS124S_NUM_BYTES_MASK	0x1f
->> +
->> +#define ADS124S_START_CONV	0x01
->> +#define ADS124S_STOP_CONV	0x00
->> +
->> +struct ads124s_chip_info {
->> +	const struct iio_chan_spec *channels;
->> +	unsigned int num_channels;
->> +};
->> +
->> +struct ads124s_private {
->> +	const struct ads124s_chip_info	*chip_info;
->> +	struct gpio_desc *reset_gpio;
->> +	struct spi_device *spi;
->> +	struct regulator *reg;
->> +	struct mutex lock;
->> +	unsigned int vref_mv;
->> +	u8 data[ADS124S0X_MAX_CHANNELS];
-> This will break in horrible ways on spi controllers using DMA.
-> The data buffer needs to be in it's own cacheline to avoid
-> possibly overwriting data in the rest of this structure.
+> In that case the CPU would wait forever for the CPU state to change. If
+> you believe 100 ms is too short a timeout, we could make it 500 ms or
+> even 1s. What do you think?
 > 
-> ___cache_line_aligned is your friend.   Wolfram did a very
-> good talk on this issue at elce. 
-> https://events.linuxfoundation.org/wp-content/uploads/2017/12/20181023-Wolfram-Sang-ELCE18-safe_dma_buffers.pdf
+>> cpu 112 (hwid 112) Ready to die...
+>> [DEBUG] Waited for CPU 112 to enter rtas: tries=0, time=65
+>> cpu 113 (hwid 113) Ready to die...
+>> [DEBUG] Waited for CPU 113 to enter rtas: tries=0, time=1139
+>> cpu 114 (hwid 114) Ready to die...
+>> [DEBUG] Waited for CPU 114 to enter rtas: tries=0, time=1036
+>> cpu 115 (hwid 115) Ready to die...
+>> [DEBUG] Waited for CPU 115 to enter rtas: tries=0, time=133
+>> cpu 116 (hwid 116) Ready to die...
+>> [DEBUG] Waited for CPU 116 to enter rtas: tries=0, time=1231
+>> cpu 117 (hwid 117) Ready to die...
+>> [DEBUG] Waited for CPU 117 to enter rtas: tries=0, time=1231
+>> cpu 118 (hwid 118) Ready to die...
+>> [DEBUG] Waited for CPU 118 to enter rtas: tries=0, time=1231
+>> cpu 119 (hwid 119) Ready to die...
+>> [DEBUG] Waited for CPU 119 to enter rtas: tries=0, time=1131
+>> cpu 104 (hwid 104) Ready to die...
+>> [DEBUG] Waited for CPU 104 to enter rtas: tries=0, time=40
 > 
-> There's a video on youtube as well.
+> Interesting, so 1.2 ms can pass before the dying CPU actually gets close
+> to making the stop-self call. And even in those cases the retry loop is
+> succeeding on the first try! So this shows that changing the code to
+> wait for the CPU_STATE_OFFLINE state is worth it.
 > 
-> He was addressing i2c, but the arguments still hold and unlike
-> i2c, spi has always had dma controllers who assume they have
-> dma safe buffers.
+>> ******* RTAS CALL BUFFER CORRUPTION *******
+>> 393: rtas32_call_buff_ptr=
+>>     0000 0060 0000 0060 0000 0060 0000 0060 [...`...`...`...`]
+>>     0000 0060 0000 0060 0000 0060 0000 0060 [...`...`...`...`]
+>>     0000 0060 0000 0060 0000 0060 0000 0060 [...`...`...`...`]
+>>     0000 0060 0800 E07F ACA7 0000 0000 00C0 [...`............]
+>>     2500 0000 0000 0000 0000 0000 0000 0000 [%...............]
+>>     0000 0000 0000 0000 0000 0000 306E 7572 [............0nur]
+>>     4800 0008 .... .... .... .... .... .... [H...........0nur]
+>> 394: rtas64_map_buff_ptr=
+>>     0000 0000 5046 5743 0000 0000 4F44 4500 [....PFWC....ODE.]
+>>     0000 0000 6000 0000 0000 0000 0000 0069 [....`..........i]
+>>     0000 0000 0000 0000 0000 0000 0000 0000 [................]
+>>     0000 0000 0000 0005 0000 0000 0000 0001 [................]
+>>     0000 0000 1A00 0000 0000 0000 0000 0000 [................]
+>>     0000 0000 8018 6398 0000 0000 0300 00C0 [......c.........]
+>>     0000 0000 .... .... .... .... .... .... [......c.........]
 > 
-
-ACK.  I will look into this.  Probably will do something similar to the 8688 buffer
-
->> +};
->> +
->> +#define ADS124S_CHAN(index)					\
->> +{								\
->> +	.type = IIO_VOLTAGE,					\
->> +	.indexed = 1,						\
->> +	.channel = index,					\
->> +	.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),		\
+> Ah! I never saw this error message. So indeed the kernel is causing RTAS
+> to blow up. Perhaps it would be useful to instrument more RTAS calls
+> (especially start-cpu and set-power-level) to see if it's one of them
+> that is being called at the time this corruption happens.
 > 
-> It looks like you started adding scale but didn't finish doing so.
-> It's definitely a good thing to have so please see if that can be
-> added for V2.
-
-Yes I did but could not figure out how to apply it to this part. I will investigate this in v2
-
+>> cpu 105 (hwid 105) Ready to die...
+>> Bad kernel stack pointer 1fafb6c0 at 0
+>> Oops: Bad kernel stack pointer, sig: 6 [#1]
+>> LE SMP NR_CPUS=2048 NUMA pSeries
+>> Modules linked in:
+>> CPU: 105 PID: 0 Comm: swapper/105 Not tainted 4.20.0-rc5-thiago+ #45
+>> NIP:  0000000000000000 LR: 0000000000000000 CTR: 00000000007829c8
+>> REGS: c00000001e63bd30 TRAP: 0700   Not tainted  (4.20.0-rc5-thiago+)
+>> MSR:  8000000000081000 <SF,ME>  CR: 28000004  XER: 00000010
+>> CFAR: 000000001ec153f0 IRQMASK: 8000000000009033
+>> GPR00: 0000000000000000 000000001fafb6c0 000000001ec236a0 0000000000000040
+>> GPR04: 00000000000000c0 0000000000000080 00046c4fb4842557 00000000000000cd
+>> GPR08: 000000000001f400 000000001ed035dc 0000000000000000 0000000000000000
+>> GPR12: 0000000000000000 c00000001eb5e480 c0000003a1b53f90 000000001eea3e20
+>> GPR16: 0000000000000000 c0000006fd845100 c00000000004c8b0 c0000000013d5300
+>> GPR20: c0000006fd845300 0000000000000008 c0000000019d2cf8 c0000000013d6888
+>> GPR24: 0000000000000069 c0000000013d688c 0000000000000002 c0000000013d688c
+>> GPR28: c0000000019cecf0 0000000000000348 0000000000000000 0000000000000000
+>> NIP [0000000000000000]           (null)
+>> LR [0000000000000000]           (null)
+>> Call Trace:
+>> Instruction dump:
+>> XXXXXXXX XXXXXXXX XXXXXXXX XXXXXXXX XXXXXXXX XXXXXXXX XXXXXXXX XXXXXXXX
+>> XXXXXXXX XXXXXXXX XXXXXXXX XXXXXXXX 60000000 60000000 60000000 60000000
+>> ---[ end trace 1aa3b4936949457e ]---
 > 
->> +	.scan_index = index,					\
->> +	.scan_type = {						\
->> +		.sign = 'u',					\
->> +		.realbits = 24,					\
->> +		.storagebits = 24,				\
->> +		.endianness = IIO_BE,				\
->> +	},							\
->> +}
->> +
->> +static const struct iio_chan_spec ads124s06_channels[] = {
->> +	ADS124S_CHAN(0),
->> +	ADS124S_CHAN(1),
->> +	ADS124S_CHAN(2),
->> +	ADS124S_CHAN(3),
->> +	ADS124S_CHAN(4),
->> +	ADS124S_CHAN(5),
->> +};
->> +
->> +static const struct iio_chan_spec ads124s08_channels[] = {
->> +	ADS124S_CHAN(0),
->> +	ADS124S_CHAN(1),
->> +	ADS124S_CHAN(2),
->> +	ADS124S_CHAN(3),
->> +	ADS124S_CHAN(4),
->> +	ADS124S_CHAN(5),
->> +	ADS124S_CHAN(6),
->> +	ADS124S_CHAN(7),
->> +	ADS124S_CHAN(8),
->> +	ADS124S_CHAN(9),
->> +	ADS124S_CHAN(10),
->> +	ADS124S_CHAN(11),
->> +};
->> +
->> +static const struct ads124s_chip_info ads124s_chip_info_tbl[] = {
->> +	[ADS124S08_ID] = {
->> +		.channels = ads124s08_channels,
->> +		.num_channels = ARRAY_SIZE(ads124s08_channels),
->> +	},
->> +	[ADS124S06_ID] = {
->> +		.channels = ads124s06_channels,
->> +		.num_channels = ARRAY_SIZE(ads124s06_channels),
->> +	},
->> +};
->> +
->> +static void ads124s_fill_nop(u8 *data, int start, int count)
->> +{
->> +	int i;
->> +
->> +	for (i = start; i <= count; i++)
->> +		data[i] = ADS124S_CMD_NOP;
+> Ok, so at about the time CPU 105 makes the stop-self call there is this
+> RTAS call buffer corruption and this bad kernel stack pointer in CPU 105.
+> We need to understand better what is causing this.
 > 
-> memset
+>> Bad kernel stack pointer 1fafb4b0 at 1ec15004
+>> rcu: INFO: rcu_sched detected stalls on CPUs/tasks:
+>> rcu:    88-...!: (0 ticks this GP) idle=2ce/1/0x4000000000000000 softirq=28076/28076 fqs=78
+>> rcu:    (detected by 72, t=10866 jiffies, g=180529, q=2526)
+>> Sending NMI from CPU 72 to CPUs 88:
+>> CPU 88 didn't respond to backtrace IPI, inspecting paca.
+>> irq_soft_mask: 0x01 in_mce: 0 in_nmi: 0 current: 22978 (drmgr)
+>> Back trace of paca->saved_r1 (0xc0000006f94ab750) (possibly stale):
+>> Call Trace:
+>> [c0000006f94ab750] [c0000006f94ab790] 0xc0000006f94ab790 (unreliable)
+>> [c0000006f94ab930] [c0000000000373f8] va_rtas_call_unlocked+0xc8/0xe0
+>> [c0000006f94ab950] [c000000000037a98] rtas_call+0x98/0x200
+>> [c0000006f94ab9a0] [c0000000000d7d28] smp_query_cpu_stopped+0x58/0xe0
+>> [c0000006f94aba20] [c0000000000d9dbc] pseries_cpu_die+0x1ec/0x240
+>> [c0000006f94abad0] [c00000000004f284] __cpu_die+0x44/0x60
+>> [c0000006f94abaf0] [c0000000000d8e10] dlpar_cpu_remove+0x160/0x340
+>> [c0000006f94abbc0] [c0000000000d9184] dlpar_cpu_release+0x74/0x100
+>> [c0000006f94abc10] [c000000000025a74] arch_cpu_release+0x44/0x70
+>> [c0000006f94abc30] [c0000000009bd1bc] cpu_release_store+0x4c/0x80
+>> [c0000006f94abc60] [c0000000009ae000] dev_attr_store+0x40/0x70
+>> [c0000006f94abc80] [c000000000495810] sysfs_kf_write+0x70/0xb0
+>> [c0000006f94abca0] [c00000000049453c] kernfs_fop_write+0x17c/0x250
+>> [c0000006f94abcf0] [c0000000003ccb6c] __vfs_write+0x4c/0x1f0
+>> [c0000006f94abd80] [c0000000003ccf74] vfs_write+0xd4/0x240
+>> [c0000006f94abdd0] [c0000000003cd338] ksys_write+0x68/0x110
+>> [c0000006f94abe20] [c00000000000b288] system_call+0x5c/0x70
 > 
-
-ACK
-
->> +
->> +};
->> +
->> +static int ads124s_write_cmd(struct iio_dev *indio_dev, u8 command)
->> +{
->> +	struct ads124s_private *priv = iio_priv(indio_dev);
->> +	struct spi_transfer t[] = {
->> +		{
->> +			.tx_buf = &priv->data[0],
->> +			.len = 1,
->> +		}
->> +	};
->> +
->> +	priv->data[0] = command;
->> +
->> +	return spi_sync_transfer(priv->spi, t, ARRAY_SIZE(t));
+> So CPU 88 is the one driving the hot unplug and waiting for CPU 105 to
+> die. But it is stuck inside RTAS. Perhaps because of the call buffer
+> corruption?
 > 
-> spi_write?
-
-ACK
-
+>> rcu: rcu_sched kthread starved for 10709 jiffies! g180529 f0x0 RCU_GP_WAIT_FQS(5) ->state=0x402 ->cpu=72
+>> rcu: RCU grace-period kthread stack dump:
+>> rcu_sched       I    0    11      2 0x00000808
+>> Call Trace:
+>> [c0000000061ab840] [c0000003a4a84800] 0xc0000003a4a84800 (unreliable)
+>> [c0000000061aba20] [c00000000001e24c] __switch_to+0x2dc/0x430
+>> [c0000000061aba80] [c000000000e5fb94] __schedule+0x3d4/0xa20
+>> [c0000000061abb50] [c000000000e6022c] schedule+0x4c/0xc0
+>> [c0000000061abb80] [c000000000e64ffc] schedule_timeout+0x1dc/0x4e0
+>> [c0000000061abc80] [c0000000001af40c] rcu_gp_kthread+0xc3c/0x11f0
+>> [c0000000061abdb0] [c00000000013c7c8] kthread+0x168/0x1b0
+>> [c0000000061abe20] [c00000000000b658] ret_from_kernel_thread+0x5c/0x64
 > 
->> +}
->> +
->> +static int ads124s_write_reg(struct iio_dev *indio_dev, u8 reg, u8 data)
->> +{
->> +	struct ads124s_private *priv = iio_priv(indio_dev);
->> +	struct spi_transfer t[] = {
->> +		{
->> +			.tx_buf = &priv->data[0],
->> +			.len = 3,
->> +		}
->> +	};
->> +
->> +	priv->data[0] = ADS124S_CMD_WREG | reg;
->> +	priv->data[1] = 0x0;
->> +	priv->data[2] = data;
->> +
->> +	return spi_sync_transfer(priv->spi, t, ARRAY_SIZE(t));
+> I don't know what to make of CPU 72. :-)  Perhaps it's the one making
+> the other "rogue" RTAS call interfering with stop-self in CPU 105?
 > 
-> spi_write?
+> It must be some RTAS call made with rtas_call_unlocked, because CPU 88
+> is holding the RTAS lock.
 > 
-
-ACK
-
->> +}
->> +
->> +static int ads124s_reset(struct iio_dev *indio_dev)
->> +{
->> +	struct ads124s_private *priv = iio_priv(indio_dev);
->> +
->> +	if (priv->reset_gpio) {
->> +		gpiod_direction_output(priv->reset_gpio, 0);
-> I'd expect that gpio to always be in the output
-> direction, so just being controlled here.
+> -- Thiago Jung Bauermann
+> IBM Linux Technology Center
 > 
-> So gpiod_set_value
-
-ACK
-
-> 
->> +		udelay(200);
->> +		gpiod_direction_output(priv->reset_gpio, 1);
->> +	} else {
->> +		return ads124s_write_cmd(indio_dev, ADS124S_CMD_RESET);
->> +	}
->> +
->> +	return 0;
->> +};
->> +
->> +static int ads124s_read(struct iio_dev *indio_dev, unsigned int chan)
->> +{
->> +	struct ads124s_private *priv = iio_priv(indio_dev);
->> +	int ret;
->> +	u32 tmp;
->> +	struct spi_transfer t[] = {
->> +		{
->> +			.tx_buf = &priv->data[0],
->> +			.len = 4,
->> +			.cs_change = 1,
->> +		}, {
->> +			.tx_buf = &priv->data[1],
->> +			.rx_buf = &priv->data[1],
->> +			.len = 4,
->> +		},
->> +	};
-> 
-> Pity we don't have a spi_write_the_read_with_cs or
-> something like that.  I wonder how common this structure is?
-
-This is common with this part and the ads8688 and another spi part I am working on for CAN.
-
-I just don't know if there are any parts that hold CS for more then one data xfer.
-
-> 
->> +
->> +	priv->data[0] = ADS124S_CMD_RDATA;
->> +	ads124s_fill_nop(priv->data, 1, 3);
->> +
->> +	ret = spi_sync_transfer(priv->spi, t, ARRAY_SIZE(t));
->> +	if (ret < 0)
->> +		return ret;
->> +
->> +	tmp = priv->data[2] << 16 | priv->data[3] << 8 | priv->data[4];
->> +
->> +	return tmp;
->> +}
->> +
->> +static int ads124s_read_raw(struct iio_dev *indio_dev,
->> +			    struct iio_chan_spec const *chan,
->> +			    int *val, int *val2, long m)
->> +{
->> +	struct ads124s_private *priv = iio_priv(indio_dev);
->> +	int ret;
->> +
->> +	mutex_lock(&priv->lock);
->> +	switch (m) {
->> +	case IIO_CHAN_INFO_RAW:
->> +		ret = ads124s_write_reg(indio_dev, ADS124S0X_INPUT_MUX,
->> +					chan->channel);
->> +		if (ret) {
->> +			dev_err(&priv->spi->dev, "Set ADC CH failed\n");
-> 
-> You are eating a bus error in favour of -EINVAL.  Please don't!
-
-ACK.  I was debating on setting ret here so I will set ret and return that instead.
-Rinse and repeat for the ones below too.
-
-> 
->> +			goto out;
->> +		}
->> +
->> +		ret = ads124s_write_cmd(indio_dev, ADS124S_START_CONV);
->> +		if (ret) {
->> +			dev_err(&priv->spi->dev, "Start ADC converions failed\n");
->> +			goto out;
->> +		}
->> +
->> +		ret = ads124s_read(indio_dev, chan->channel);
->> +		if (ret < 0) {
->> +			dev_err(&priv->spi->dev, "Read ADC failed\n");
->> +			goto out;
->> +		} else
->> +			*val = ret;
-> 
-> This is the same code block as found in the buffered version below.  Factor
-> it out to a utility function and use it both paths.
-
-It is not exactly the same but I will see where I can consolidate the code.
-The buffered version loops through and reads every channel this reads just one.
-
-> 
->> +
->> +		ret = ads124s_write_cmd(indio_dev, ADS124S_STOP_CONV);
->> +		if (ret) {
->> +			dev_err(&priv->spi->dev, "Stop ADC converions failed\n");
->> +			goto out;
->> +		}
->> +
->> +		mutex_unlock(&priv->lock);
->> +		if (ret < 0)
->> +			return ret;
-> Given you need to unlock in both this path and the error path, cleaner
-> to just set ret here and break.  Then return ret below having set
-> it appropriately in the error paths.
-
-ACK.  Similar to the above.
-
->> +
->> +		return IIO_VAL_INT;
->> +	default:
->> +		break;
->> +	}
->> +out:
->> +	mutex_unlock(&priv->lock);
->> +	return -EINVAL;
->> +}
->> +
->> +static const struct iio_info ads124s_info = {
->> +	.read_raw = &ads124s_read_raw,
->> +};
->> +
->> +static irqreturn_t ads124s_trigger_handler(int irq, void *p)
->> +{
->> +	struct iio_poll_func *pf = p;
->> +	struct iio_dev *indio_dev = pf->indio_dev;
->> +	struct ads124s_private *priv = iio_priv(indio_dev);
->> +	u16 buffer[ADS124S0X_MAX_CHANNELS];
-> 
-> There is an unfortunate oddity in how push_to_buffers_with_timestamp
-> works in that it builds the data for the kfifo inline in the buffer
-> provided.  Thus that buffer has to have room for the channels and
-> the 64 bit timestamp.
-
-Hmmm.  This is like the 8688.  I am starting to think the 8688 needs to be updated.
-
-> 
->> +	int i, j = 0;
->> +	int ret;
->> +
->> +	for (i = 0; i < indio_dev->masklength; i++) {
->> +		if (!test_bit(i, indio_dev->active_scan_mask))
-> 
-> for_each_bit_set 
-
-Same as above.  But I can change it.
-
-> 
->> +			continue;
->> +
->> +		ret = ads124s_write_reg(indio_dev, ADS124S0X_INPUT_MUX, i);
-> 
-> Does this need to be rewritten if the channel is already correct?
-
-This is an iterative loop so the channel should be different each time 0 - 12
-
-> 
->> +		if (ret)
->> +			dev_err(&priv->spi->dev, "Set ADC CH failed\n");
->> +
->> +		ret = ads124s_write_cmd(indio_dev, ADS124S_START_CONV);
->> +		if (ret)
->> +			dev_err(&priv->spi->dev, "Start ADC converions failed\n");
->> +
->> +		buffer[j] = ads124s_read(indio_dev, i);
->> +		ret = ads124s_write_cmd(indio_dev, ADS124S_STOP_CONV);
->> +		if (ret)
->> +			dev_err(&priv->spi->dev, "Stop ADC converions failed\n");
->> +
->> +		j++;
->> +	}
->> +
->> +	iio_push_to_buffers_with_timestamp(indio_dev, buffer,
->> +			pf->timestamp);
->> +
->> +	iio_trigger_notify_done(indio_dev->trig);
->> +
->> +	return IRQ_HANDLED;
->> +}
->> +
->> +static int ads124s_probe(struct spi_device *spi)
->> +{
->> +	struct ads124s_private *ads124s_priv;
->> +	struct iio_dev *indio_dev;
->> +	int ret;
->> +
->> +	indio_dev = devm_iio_device_alloc(&spi->dev, sizeof(*ads124s_priv));
->> +	if (indio_dev == NULL)
->> +		return -ENOMEM;
->> +
->> +	ads124s_priv = iio_priv(indio_dev);
->> +
->> +	ads124s_priv->reg = devm_regulator_get_optional(&spi->dev, "vref");
->> +	if (!IS_ERR(ads124s_priv->reg)) {
->> +		ret = regulator_enable(ads124s_priv->reg);
->> +		if (ret)
->> +			return ret;
-> 
-> 	As mentioned below, use devm_add_action_or_reset to provide
-> 	automatic disabling of this regulator letting you used managed
-> 	cleanup throughout. 
-
-ACK.  will look into these APIs
-
-> 
->> +
->> +		ads124s_priv->vref_mv = regulator_get_voltage(ads124s_priv->reg);
-> 
-> This doesn't actually seem to be used...  As a general rule the only time you 
-> want to read this is to provide a scale value.  As that isn't a fast path
-> it's better to read it where needed in case the value is changing (not unusual
-> during boot up if the voltage is being used for several things).
-
-I will look into this if I add the scale otherwise I will remove it.
-
-> 
->> +		if (ads124s_priv->vref_mv <= 0)
->> +			goto err_regulator_disable;
->> +	} else {
->> +		/* Use internal reference */
->> +		ads124s_priv->vref_mv = 0;
->> +	}
->> +
->> +	ads124s_priv->reset_gpio = devm_gpiod_get_optional(&spi->dev,
->> +						   "reset", GPIOD_OUT_LOW);
->> +	if (IS_ERR(ads124s_priv->reset_gpio))
->> +		dev_info(&spi->dev, "Reset GPIO not defined\n");
->> +
->> +	ads124s_priv->chip_info = &ads124s_chip_info_tbl[spi_get_device_id(spi)->driver_data];
->> +
->> +	spi_set_drvdata(spi, indio_dev);
->> +
->> +	ads124s_priv->spi = spi;
->> +
->> +	indio_dev->name = spi_get_device_id(spi)->name;
->> +	indio_dev->dev.parent = &spi->dev;
->> +	indio_dev->dev.of_node = spi->dev.of_node;
->> +	indio_dev->modes = INDIO_DIRECT_MODE;
->> +	indio_dev->channels = ads124s_priv->chip_info->channels;
->> +	indio_dev->num_channels = ads124s_priv->chip_info->num_channels;
->> +	indio_dev->info = &ads124s_info;
->> +
->> +	mutex_init(&ads124s_priv->lock);
->> +
->> +	ret = iio_triggered_buffer_setup(indio_dev, NULL,
->> +					 ads124s_trigger_handler, NULL);
->> +	if (ret < 0) {
->> +		dev_err(&spi->dev, "iio triggered buffer setup failed\n");
->> +		goto err_regulator_disable;
->> +	}
->> +
->> +	ads124s_reset(indio_dev);
->> +
->> +	ret = iio_device_register(indio_dev);
->> +	if (ret)
->> +		goto err_buffer_cleanup;
->> +
->> +	return 0;
->> +
->> +err_buffer_cleanup:
->> +	iio_triggered_buffer_cleanup(indio_dev);
->> +
->> +err_regulator_disable:
->> +	if (!IS_ERR(ads124s_priv->reg))
->> +		regulator_disable(ads124s_priv->reg);
->> +
->> +	return ret;
->> +}
->> +
->> +static int ads124s_remove(struct spi_device *spi)
->> +{
->> +	struct iio_dev *indio_dev = spi_get_drvdata(spi);
->> +
->> +	iio_device_unregister(indio_dev);
->> +	iio_triggered_buffer_cleanup(indio_dev);
-> Both of these functions can be automatically cleaned
-> up if you use the devm_ variants of the registration functions
-> which makes me suspicious..  Ah. The regulator disable
-> is missing.
-
-Ack.  Regulator is based on above
-
-> 
-> You can move to fully managed if you use devm_add_action_or_reset
-> to turn the regulator off.
-> 
->> +
->> +	return 0;
->> +}
->> +
->> +static const struct spi_device_id ads124s_id[] = {
->> +	{ "ads124s08", ADS124S08_ID },
->> +	{ "ads124s06", ADS124S06_ID },
->> +	{ }
->> +};
->> +MODULE_DEVICE_TABLE(spi, ads124s_id);
->> +
->> +static const struct of_device_id ads124s_of_table[] = {
->> +	{ .compatible = "ti,ads124s08" },
->> +	{ .compatible = "ti,ads124s06" },
-> 
-> It's trivial but numerical order preferred as it makes it
-> obvious where to add new devices later.
-
-Actually I based these off the ID read from the device.
-The S08 ID is 0x0 and the S06 is 0x1.  Bit I can reorder this since it just the compatible.
-
-Dan
-
-> 
->> +	{ },
->> +};
->> +MODULE_DEVICE_TABLE(of, ads124s_of_table);
->> +
->> +static struct spi_driver ads124s_driver = {
->> +	.driver = {
->> +		.name	= "ads124s",
->> +		.of_match_table = ads124s_of_table,
->> +	},
->> +	.probe		= ads124s_probe,
->> +	.remove		= ads124s_remove,
->> +	.id_table	= ads124s_id,
->> +};
->> +module_spi_driver(ads124s_driver);
->> +
->> +MODULE_AUTHOR("Dan Murphy <dmuprhy@ti.com>");
->> +MODULE_DESCRIPTION("TI TI_ADS12S0X ADC");
->> +MODULE_LICENSE("GPL v2");
-> 
-
 
 -- 
-------------------
-Dan Murphy
+Michael W. Bringmann
+Linux Technology Center
+IBM Corporation
+Tie-Line  363-5196
+External: (512) 286-5196
+Cell:       (512) 466-0650
+mwb@linux.vnet.ibm.com
+
