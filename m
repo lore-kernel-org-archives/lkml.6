@@ -2,168 +2,155 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48845C5CFFE
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 12:53:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BA5DC04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 12:54:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0BDBB20855
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 12:53:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0BDBB20855
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org
+	by mail.kernel.org (Postfix) with ESMTP id 3996720855
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 12:54:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3996720855
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727282AbeLJMxT (ORCPT
+        id S1726928AbeLJMyX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 07:53:19 -0500
-Received: from vmicros1.altlinux.org ([194.107.17.57]:50630 "EHLO
-        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726392AbeLJMxS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 07:53:18 -0500
-Received: from mua.local.altlinux.org (mua.local.altlinux.org [192.168.1.14])
-        by vmicros1.altlinux.org (Postfix) with ESMTP id 1809472CC66;
-        Mon, 10 Dec 2018 15:53:16 +0300 (MSK)
-Received: by mua.local.altlinux.org (Postfix, from userid 508)
-        id 082A17CF1D0; Mon, 10 Dec 2018 15:53:15 +0300 (MSK)
-Date:   Mon, 10 Dec 2018 15:53:15 +0300
-From:   "Dmitry V. Levin" <ldv@altlinux.org>
-To:     Max Filippov <jcmvbkbc@gmail.com>
-Cc:     oleg@redhat.com, Andrew Lutomirski <luto@kernel.org>,
-        lineprinter@altlinux.org, esyr@redhat.com,
-        Chris Zankel <chris@zankel.net>,
-        Paul Moore <paul@paul-moore.com>, eparis@redhat.com,
-        linux-xtensa@linux-xtensa.org, linux-audit@redhat.com,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v5 19/25] xtensa: define syscall_get_* functions
-Message-ID: <20181210125315.GB11942@altlinux.org>
-References: <20181210042352.GA6092@altlinux.org>
- <20181210043041.GS6131@altlinux.org>
- <CAMo8Bf+s6xObgYoOOR0NTQZR-ReBbXmNv_5Jf=jX7J+bnDsTYQ@mail.gmail.com>
+        Mon, 10 Dec 2018 07:54:23 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:53286 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726392AbeLJMyW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Dec 2018 07:54:22 -0500
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 3427F3082E4E;
+        Mon, 10 Dec 2018 12:54:22 +0000 (UTC)
+Received: from vitty.brq.redhat.com.redhat.com (unknown [10.43.2.155])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 0A7E25DA63;
+        Mon, 10 Dec 2018 12:54:19 +0000 (UTC)
+From:   Vitaly Kuznetsov <vkuznets@redhat.com>
+To:     Roman Kagan <rkagan@virtuozzo.com>
+Cc:     "kvm\@vger.kernel.org" <kvm@vger.kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        "x86\@kernel.org" <x86@kernel.org>,
+        "Michael Kelley \(EOSG\)" <Michael.H.Kelley@microsoft.com>
+Subject: Re: [PATCH v2 3/4] x86/kvm/hyper-v: direct mode for synthetic timers
+In-Reply-To: <20181210120637.GA13294@rkaganb.sw.ru>
+References: <20181126154732.23025-1-vkuznets@redhat.com> <20181126154732.23025-4-vkuznets@redhat.com> <20181210120637.GA13294@rkaganb.sw.ru>
+Date:   Mon, 10 Dec 2018 13:54:18 +0100
+Message-ID: <87va41czk5.fsf@vitty.brq.redhat.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="ZfOjI3PrQbgiZnxM"
-Content-Disposition: inline
-In-Reply-To: <CAMo8Bf+s6xObgYoOOR0NTQZR-ReBbXmNv_5Jf=jX7J+bnDsTYQ@mail.gmail.com>
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Mon, 10 Dec 2018 12:54:22 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Roman Kagan <rkagan@virtuozzo.com> writes:
 
---ZfOjI3PrQbgiZnxM
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> On Mon, Nov 26, 2018 at 04:47:31PM +0100, Vitaly Kuznetsov wrote:
+>> Turns out Hyper-V on KVM (as of 2016) will only use synthetic timers
+>> if direct mode is available. With direct mode we notify the guest by
+>> asserting APIC irq instead of sending a SynIC message.
+>> 
+>> The implementation uses existing vec_bitmap for letting lapic code
+>> know that we're interested in the particular IRQ's EOI request. We assume
+>> that the same APIC irq won't be used by the guest for both direct mode
+>> stimer and as sint source (especially with AutoEOI semantics). It is
+>> unclear how things should be handled if that's not true.
+>> 
+>> Direct mode is also somewhat less expensive; in my testing
+>> stimer_send_msg() takes not less than 1500 cpu cycles and
+>> stimer_notify_direct() can usually be done in 300-400. WS2016 without
+>> Hyper-V, however, always sticks to non-direct version.
+>> 
+>> Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+>> ---
+>> - Changes since v1: avoid open-coding stimer_mark_pending() in
+>>   kvm_hv_synic_send_eoi() [Paolo Bonzini]
+>> ---
+>>  arch/x86/kvm/hyperv.c    | 67 +++++++++++++++++++++++++++++++++++-----
+>>  arch/x86/kvm/trace.h     | 10 +++---
+>>  arch/x86/kvm/x86.c       |  1 +
+>>  include/uapi/linux/kvm.h |  1 +
+>>  4 files changed, 67 insertions(+), 12 deletions(-)
+>> 
+>> diff --git a/arch/x86/kvm/hyperv.c b/arch/x86/kvm/hyperv.c
+>> index eaec15c738df..9533133be566 100644
+>> --- a/arch/x86/kvm/hyperv.c
+>> +++ b/arch/x86/kvm/hyperv.c
+>> @@ -38,6 +38,9 @@
+>>  
+>>  #define KVM_HV_MAX_SPARSE_VCPU_SET_BITS DIV_ROUND_UP(KVM_MAX_VCPUS, 64)
+>>  
+>> +static void stimer_mark_pending(struct kvm_vcpu_hv_stimer *stimer,
+>> +				bool vcpu_kick);
+>> +
+>>  static inline u64 synic_read_sint(struct kvm_vcpu_hv_synic *synic, int sint)
+>>  {
+>>  	return atomic64_read(&synic->sint[sint]);
+>> @@ -53,8 +56,21 @@ static inline int synic_get_sint_vector(u64 sint_value)
+>>  static bool synic_has_vector_connected(struct kvm_vcpu_hv_synic *synic,
+>>  				      int vector)
+>>  {
+>> +	struct kvm_vcpu *vcpu = synic_to_vcpu(synic);
+>> +	struct kvm_vcpu_hv *hv_vcpu = vcpu_to_hv_vcpu(vcpu);
+>> +	struct kvm_vcpu_hv_stimer *stimer;
+>>  	int i;
+>>  
+>> +	for (i = 0; i < ARRAY_SIZE(hv_vcpu->stimer); i++) {
+>> +		stimer = &hv_vcpu->stimer[i];
+>> +		if (stimer->config.enable && stimer->config.direct_mode &&
+>> +		    stimer->config.apic_vector == vector)
+>> +			return true;
+>> +	}
+>> +
+>> +	if (vector < HV_SYNIC_FIRST_VALID_VECTOR)
+>> +		return false;
+>> +
+>>  	for (i = 0; i < ARRAY_SIZE(synic->sint); i++) {
+>>  		if (synic_get_sint_vector(synic_read_sint(synic, i)) == vector)
+>>  			return true;
+>> @@ -80,14 +96,14 @@ static bool synic_has_vector_auto_eoi(struct kvm_vcpu_hv_synic *synic,
+>>  static void synic_update_vector(struct kvm_vcpu_hv_synic *synic,
+>>  				int vector)
+>>  {
+>> -	if (vector < HV_SYNIC_FIRST_VALID_VECTOR)
+>> -		return;
+>> -
+>>  	if (synic_has_vector_connected(synic, vector))
+>>  		__set_bit(vector, synic->vec_bitmap);
+>>  	else
+>>  		__clear_bit(vector, synic->vec_bitmap);
+>>  
+>> +	if (vector < HV_SYNIC_FIRST_VALID_VECTOR)
+>> +		return;
+>> +
+>
+> Just noticed that the patch seems to assume that "direct" timers are
+> allowed to use any vectors including 0-15.  I guess this is incorrect,
+> and instead stimer_set_config should error out on direct mode with a
+> vector less than HV_SYNIC_FIRST_VALID_VECTOR.
 
-Hi,
+The spec is really vague about this and I'm not sure that this has
+anything to do with HV_SYNIC_FIRST_VALID_VECTOR (as these are actually
+not "synic" vectors, I *think* that SynIC doesn't even need to be
+enabled to make them work).
 
-On Sun, Dec 09, 2018 at 09:02:50PM -0800, Max Filippov wrote:
-> Hello,
->=20
-> On Sun, Dec 9, 2018 at 8:30 PM Dmitry V. Levin <ldv@altlinux.org> wrote:
-> > syscall_get_* functions are required to be implemented on all
-> > architectures in order to extend the generic ptrace API with
-> > PTRACE_GET_SYSCALL_INFO request.
-> >
-> > This adds all 5 syscall_get_* functions on xtensa as documented
-> > in asm-generic/syscall.h: syscall_get_nr, syscall_get_arguments,
-> > syscall_get_error, syscall_get_return_value, and syscall_get_arch.
->=20
-> I have this set of functions plus syscall_set_arguments implemented
-> for syscall tracing here:
->   https://github.com/jcmvbkbc/linux-xtensa/commit/0023f56298cc92ce47e61b1=
-b5dd1038f7be4f826
+I checked and Hyper-V 2016 uses vector '0xff', not sure if it proves
+your point :-)
 
-Good, but we also need syscall_get_arch for PTRACE_GET_SYSCALL_INFO.
+Do you envision any issues in KVM if we keep allowing vectors <
+HV_SYNIC_FIRST_VALID_VECTOR?
 
-> How should we synchronize our changes?
-
-No problem, I can revert to the previous edition of this patch
-that just adds syscall_get_arch.
-Alternatively, you can just take that couple of patches (v5 18/25
-and v2 15/15) into your tree.
-
-> > diff --git a/arch/xtensa/include/asm/syscall.h b/arch/xtensa/include/as=
-m/syscall.h
-> > index 3673ff1f1bc5..d529c855a144 100644
-> > --- a/arch/xtensa/include/asm/syscall.h
-> > +++ b/arch/xtensa/include/asm/syscall.h
->=20
-> [...]
->=20
-> > +static inline void
-> > +syscall_get_arguments(struct task_struct *task, struct pt_regs *regs,
-> > +                     unsigned int i, unsigned int n, unsigned long *ar=
-gs)
-> > +{
-> > +       switch (i) {
-> > +       case 0:
-> > +               if (!n--)
-> > +                       break;
-> > +               *args++ =3D regs->areg[6];
-> > +               /* fall through */
-> > +       case 1:
-> > +               if (!n--)
-> > +                       break;
-> > +               *args++ =3D regs->areg[3];
-> > +               /* fall through */
-> > +       case 2:
-> > +               if (!n--)
-> > +                       break;
-> > +               *args++ =3D regs->areg[4];
-> > +               /* fall through */
-> > +       case 3:
-> > +               if (!n--)
-> > +                       break;
-> > +               *args++ =3D regs->areg[5];
-> > +               /* fall through */
-> > +       case 4:
-> > +               if (!n--)
-> > +                       break;
-> > +               *args++ =3D regs->areg[8];
-> > +               /* fall through */
-> > +       case 5:
-> > +               if (!n--)
-> > +                       break;
-> > +               *args++ =3D regs->areg[9];
-> > +               /* fall through */
-> > +       case 6:
-> > +               if (!n--)
-> > +                       break;
-> > +               /* fall through */
-> > +       default:
-> > +               BUG();
->=20
-> A WARN should be enough.
-
-This is what most of other architectures do in syscall_get_arguments,
-but I agree that a WARN_ON_ONCE should be enough.
-
-
---=20
-ldv
-
---ZfOjI3PrQbgiZnxM
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBCAAGBQJcDmG7AAoJEAVFT+BVnCUIhGIP/32iKpH8RLMA1WrbXALNOCuh
-wcxCW0Mzb/aRijNYBqQyOhTeAwcBPWp/+aRgqLsFCRWU7iyDsyD1qUv2hFYemAi1
-EqfeOV4DJZLAIlz2ROH8rdaKQQs6L3HPbWDxNsRAk5jgmN/r8nv4+6POW9UQRkOI
-oFwdUq5YzP3X/tZsG6+rprhQZrGZOr5DHPgz/2C5k3o/TKJdjufbapP149Peaj0W
-ctY4SreEn5uLTWidJ731ICJDD9qx2zTIOYfUXuMscgDbR4wKzzmIotDorw96txYM
-JUlQAfNiAUNqbpUfXvlq55Lbz2/rYOaYEuysgSuVpoWmHk1FvE747gKGH8R66d+I
-ou+oifi9d3B6GF7CidVuNRL62QA+Aa65kA5Wuc0Evmcr6oALd6csL3cnPZQbpnGn
-ZVPtuRiBO1qVzhCKXJwP0/sTAFaklpI0/HCQmw2xR50QpB/RvACMGX70nLeOKPgb
-CCw3eomqe4u+ZwrTMfPIjygWhZpbkU/9+5jCkr0LTajco4Wrv8mh4TTCQuSxzVah
-UKaiwCPKOx9FQbwc9U8it7oOCdIgZhjobEva3H7EO/7s4zz5ZjMFuOV7na2rNsup
-7xs/eCWSfg3E747YMgxAmLjg3/2hK8qX7No0YiOzniJasAeLuBnrEQD+UM4I8qVk
-JTd5EE/RQ6VRdbbyJitp
-=ILNw
------END PGP SIGNATURE-----
-
---ZfOjI3PrQbgiZnxM--
+-- 
+Vitaly
