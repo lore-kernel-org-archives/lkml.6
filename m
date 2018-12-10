@@ -2,204 +2,180 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.9 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B838DC04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 18:31:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2D51C5CFFE
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 18:31:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 693B32082F
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 18:31:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="V6FNSpb4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 693B32082F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id B05122082F
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 18:31:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B05122082F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728723AbeLJSbD (ORCPT
+        id S1728793AbeLJSbv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 13:31:03 -0500
-Received: from mail-yb1-f196.google.com ([209.85.219.196]:45742 "EHLO
-        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726602AbeLJSbC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 13:31:02 -0500
-Received: by mail-yb1-f196.google.com with SMTP id r11so682308ybp.12
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Dec 2018 10:31:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=iA42g67ZeF2f0BIHYiAYHOROCe7Y9bSviJot/Pl1+cI=;
-        b=V6FNSpb44JkrkegSAcTiw6h4iAGrn+wAc2OTmo/MnVF6evWhyHiXp/wJLl7sES8qYI
-         iRMaDqX1pz2vFstnzCmN0leY90sUdML9tF2u1TEdoB9TTFwEIb/yhnxpIWwrV5h95o2u
-         SkzrIHC3Ye31cp3E0K7ayg4QWGHMbxnESWuw8vDOw5LRwx7em3+KHfOUvt0wLzbOSnLP
-         pbmIUaUyGelfDs9aYp65v2b8XG1ie5KVvHvW/mh5/8OxfwBbrMtNv67uZHol0lCnJIhq
-         eSARPLeVfmMSriEJckr+i64nYxHS5DZJG6WEmYKU/mNo9ldbXXYopvHLCQpkLXkMu9s+
-         iMOQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=iA42g67ZeF2f0BIHYiAYHOROCe7Y9bSviJot/Pl1+cI=;
-        b=a0K/udPgKSMc+yLvlc2Lp1PnpAGhImbUeyYu9xMKeRTBBtotXzkCNtVHLp7/unEIq7
-         x48ZWvhcTdaIoFU45Bf8nWizMA54eymqyrVH6HskzdEvAB/ex5a7EHi+MUue5ldhdrQ9
-         P/QJz29MRyb7oeY3nRhrlE7U+JsjygovMqsRPbFTA872liWeBHNUewWbQ/lAkaBrzmvk
-         HqkjbJg4//8/IT71fLtdgteXDUlMI1pszg4OBcP09HrWho7sroNCvRMu44bxdB1bCcDI
-         bmcx97D/dAKeuQS2EYMvSR6itGzK8BeDm9U9hoHcT7obAE8gF5D1oy0veKxZ5eup0PPA
-         HOHw==
-X-Gm-Message-State: AA+aEWbA/DV1j59A6IRsNF74pqHs3XZ/4NwPKfCZ4CH/NK1aMmZ+350x
-        b7usVGRZ0OjVMUoRtSwmQMI/IevjU3KvEUCULDG8PQ==
-X-Google-Smtp-Source: AFSGD/VjyU46iDstD2Y/21Yc+ilQA48xRBLeHE1rq13FOVL+1/abKuUuYzuBFePteakLyB84cczEhd2c4WQ7xWS/lMI=
-X-Received: by 2002:a25:4442:: with SMTP id r63mr12915747yba.110.1544466660620;
- Mon, 10 Dec 2018 10:31:00 -0800 (PST)
+        Mon, 10 Dec 2018 13:31:51 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:60476 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726602AbeLJSbv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Dec 2018 13:31:51 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8C4D715BF;
+        Mon, 10 Dec 2018 10:31:50 -0800 (PST)
+Received: from [10.1.194.37] (e113632-lin.cambridge.arm.com [10.1.194.37])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 77E8F3F6A8;
+        Mon, 10 Dec 2018 10:31:49 -0800 (PST)
+Subject: Re: [PATCH v2] mailbox: Hi3660: Fixup mailbox state machine
+ malfunction issue
+To:     Kevin Wangtao <kevin.wangtao@hisilicon.com>,
+        jassisinghbrar@gmail.com
+Cc:     linux-kernel@vger.kernel.org, leo.yan@linaro.org,
+        gengyanping@hisilicon.com, suzhuangluan@hisilicon.com
+References: <1543809309-61169-1-git-send-email-kevin.wangtao@hisilicon.com>
+ <1543817588-82411-1-git-send-email-kevin.wangtao@hisilicon.com>
+From:   Valentin Schneider <valentin.schneider@arm.com>
+Message-ID: <d3ede0ab-b635-344c-faba-a9b1531b7f05@arm.com>
+Date:   Mon, 10 Dec 2018 18:31:47 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-References: <20181127121849.23975-1-enric.balletbo@collabora.com>
- <20181127121849.23975-7-enric.balletbo@collabora.com> <CABXOdTd3_KGfJG-E7UBgnxKJcyFNVZ2FqdqH6y-G0gkEUZjk0Q@mail.gmail.com>
-In-Reply-To: <CABXOdTd3_KGfJG-E7UBgnxKJcyFNVZ2FqdqH6y-G0gkEUZjk0Q@mail.gmail.com>
-From:   Guenter Roeck <groeck@google.com>
-Date:   Mon, 10 Dec 2018 10:30:49 -0800
-Message-ID: <CABXOdTdQ74KTn-GKGdw=KEwwHXhY3uyO-e_CA9=rMAi_eLkaBg@mail.gmail.com>
-Subject: Re: [PATCH v3 6/8] mfd / platform: cros_ec: instantiate only if th EC
- has a VBC NVRAM.
-To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Cc:     Lee Jones <lee.jones@linaro.org>,
-        Gwendal Grignou <gwendal@chromium.org>,
-        Nicolas Boichat <drinkcat@chromium.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Guenter Roeck <groeck@chromium.org>, kernel@collabora.com,
-        Benson Leung <bleung@chromium.org>,
-        Olof Johansson <olof@lixom.net>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1543817588-82411-1-git-send-email-kevin.wangtao@hisilicon.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 10, 2018 at 10:15 AM Guenter Roeck <groeck@google.com> wrote:
->
-> On Tue, Nov 27, 2018 at 4:19 AM Enric Balletbo i Serra
-> <enric.balletbo@collabora.com> wrote:
-> >
-> > The cros-ec-vbc driver is DT-only and there is a DT property that
-> > indicates if the EC has the VCB NVRAM, in such case instantiate the
-> > driver but don't instantiate on the other cases.
-> >
-> > To do this move the check code to its parent instead of play with the
-> > attribute group visibility. This changes a bit the actual behaviour.
-> > Before the patch if an EC doesn't have a VBC NVRAM an empty vbc folder
-> > is created in /sys/class/chromeos/<ec device>, after the patch the empty
-> > folder is not created, so, the folder is only created if the vbc is set.
-> >
-> > Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
->
-> Reviewed-by: Guenter Roeck <groeck@chromium.org>
->
-Forgot to mention: It would be nice if the subject would mention what
-is only instantiated if there is a VBC NVRAM, and there is a typo (th
-instead of the).
+Hi,
 
-Guenter
+On 03/12/2018 06:13, Kevin Wangtao wrote:
+> Current mailbox driver of Hi3660 release the mailbox directly
+> before sending a new message which may cause last message lost
+> and next message sending doesn't take effect actually.
+> 
+> This patch fixes this issue by following the right process below,
+> each time before sending a message, mailbox driver will check
+> whether the mailbox is in ready state, if last message has been
+> acknowledged, mailbox driver will clear the ack state to turn
+> the mailbox to ready state again.
+> 
+> Signed-off-by: Kevin Wangtao <kevin.wangtao@hisilicon.com>
 
-> > ---
-> >
-> > Changes in v3:
-> > - Fixed build error as reported by kbuild test robot.
-> >
-> > Changes in v2:
-> > - Remove unnecessary IS_ENABLED.
-> > - Remove dev_err message telling that VBC is found.
-> > - Use dev_warn instead of dev_err as the error is ignored.
-> >
-> >  drivers/mfd/cros_ec_dev.c             | 19 ++++++++++++++++++-
-> >  drivers/platform/chrome/cros_ec_vbc.c | 16 ----------------
-> >  2 files changed, 18 insertions(+), 17 deletions(-)
-> >
-> > diff --git a/drivers/mfd/cros_ec_dev.c b/drivers/mfd/cros_ec_dev.c
-> > index d9b16ce79319..1ba98a32715e 100644
-> > --- a/drivers/mfd/cros_ec_dev.c
-> > +++ b/drivers/mfd/cros_ec_dev.c
-> > @@ -21,6 +21,7 @@
-> >  #include <linux/mfd/core.h>
-> >  #include <linux/module.h>
-> >  #include <linux/mod_devicetable.h>
-> > +#include <linux/of_platform.h>
-> >  #include <linux/platform_device.h>
-> >  #include <linux/pm.h>
-> >  #include <linux/slab.h>
-> > @@ -386,12 +387,16 @@ static const struct mfd_cell cros_ec_platform_cells[] = {
-> >         { .name = "cros-ec-debugfs" },
-> >         { .name = "cros-ec-lightbar" },
-> >         { .name = "cros-ec-sysfs" },
-> > -       { .name = "cros-ec-vbc" },
-> > +};
-> > +
-> > +static const struct mfd_cell cros_ec_vbc_cells[] = {
-> > +       { .name = "cros-ec-vbc" }
-> >  };
-> >
-> >  static int ec_device_probe(struct platform_device *pdev)
-> >  {
-> >         int retval = -ENOMEM;
-> > +       struct device_node *node;
-> >         struct device *dev = &pdev->dev;
-> >         struct cros_ec_platform *ec_platform = dev_get_platdata(dev);
-> >         struct cros_ec_dev *ec = devm_kzalloc(dev, sizeof(*ec), GFP_KERNEL);
-> > @@ -479,6 +484,18 @@ static int ec_device_probe(struct platform_device *pdev)
-> >                          "failed to add cros-ec platform devices: %d\n",
-> >                          retval);
-> >
-> > +       /* Check whether this EC instance has a VBC NVRAM */
-> > +       node = ec->ec_dev->dev->of_node;
-> > +       if (of_property_read_bool(node, "google,has-vbc-nvram")) {
-> > +               retval = mfd_add_devices(ec->dev, PLATFORM_DEVID_AUTO,
-> > +                                        cros_ec_vbc_cells,
-> > +                                        ARRAY_SIZE(cros_ec_vbc_cells),
-> > +                                        NULL, 0, NULL);
-> > +               if (retval)
-> > +                       dev_warn(ec->dev, "failed to add VBC devices: %d\n",
-> > +                                retval);
-> > +       }
-> > +
-> >         return 0;
-> >
-> >  failed:
-> > diff --git a/drivers/platform/chrome/cros_ec_vbc.c b/drivers/platform/chrome/cros_ec_vbc.c
-> > index da3bbf05e86f..af9bfe6f385c 100644
-> > --- a/drivers/platform/chrome/cros_ec_vbc.c
-> > +++ b/drivers/platform/chrome/cros_ec_vbc.c
-> > @@ -108,21 +108,6 @@ static ssize_t vboot_context_write(struct file *filp, struct kobject *kobj,
-> >         return data_sz;
-> >  }
-> >
-> > -static umode_t cros_ec_vbc_is_visible(struct kobject *kobj,
-> > -                                     struct bin_attribute *a, int n)
-> > -{
-> > -       struct device *dev = container_of(kobj, struct device, kobj);
-> > -       struct cros_ec_dev *ec = to_cros_ec_dev(dev);
-> > -       struct device_node *np = ec->ec_dev->dev->of_node;
-> > -
-> > -       if (IS_ENABLED(CONFIG_OF) && np) {
-> > -               if (of_property_read_bool(np, "google,has-vbc-nvram"))
-> > -                       return a->attr.mode;
-> > -       }
-> > -
-> > -       return 0;
-> > -}
-> > -
-> >  static BIN_ATTR_RW(vboot_context, 16);
-> >
-> >  static struct bin_attribute *cros_ec_vbc_bin_attrs[] = {
-> > @@ -133,7 +118,6 @@ static struct bin_attribute *cros_ec_vbc_bin_attrs[] = {
-> >  struct attribute_group cros_ec_vbc_attr_group = {
-> >         .name = "vbc",
-> >         .bin_attrs = cros_ec_vbc_bin_attrs,
-> > -       .is_bin_visible = cros_ec_vbc_is_visible,
-> >  };
-> >
-> >  static int cros_ec_vbc_probe(struct platform_device *pd)
-> > --
-> > 2.19.1
-> >
+Validated using sysbench at each OPP ([1]). Test passes with patch and fails
+without:
+
+| CPU  |     OPP | Base | Patch |
+|------+---------+------+-------|
+| CPU0 |  533000 |  104 |   104 |
+| CPU0 |  999000 |  104 |   201 |
+| CPU0 |  140200 |  285 |   285 |
+| CPU0 | 1709000 |  285 |   349 |
+| CPU0 | 1844000 |  377 |   377 |
+|------+---------+------+-------|
+| CPU4 |  903000 |  249 |   248 |
+| CPU4 | 1421000 |  249 |   394 |
+| CPU4 | 1805000 |  500 |   500 |
+| CPU4 | 2112000 |  499 |   583 |
+| CPU4 | 2362000 |  653 |   654 |
+
+We need this pretty badly, otherwise frequency setting is a coin toss.
+
+Tested-by: Valentin Schneider <valentin.schneider@arm.com>
+
+Thanks,
+Valentin
+
+
+
+[1]: https://github.com/ARM-software/lisa/blob/next/lisa/tests/kernel/cpufreq/sanity.py#L23
+
+Ran the above with this script on each kernel:
+
+----->8-----
+#!/usr/bin/env python3
+
+from lisa.env import TestEnv
+from lisa.tests.kernel.cpufreq.sanity import UserspaceSanity
+
+te = TestEnv.from_cli()
+
+print(UserspaceSanity.from_testenv(te).test_performance_sanity())
+-----8<-----
+
+
+> ---
+> Changes v1 -> v2:
+>  - update commit message
+> 
+>  drivers/mailbox/hi3660-mailbox.c | 22 ++++++++++------------
+>  1 file changed, 10 insertions(+), 12 deletions(-)
+> 
+> diff --git a/drivers/mailbox/hi3660-mailbox.c b/drivers/mailbox/hi3660-mailbox.c
+> index 3eea6b6..035b71a 100644
+> --- a/drivers/mailbox/hi3660-mailbox.c
+> +++ b/drivers/mailbox/hi3660-mailbox.c
+> @@ -38,6 +38,7 @@
+>  #define MBOX_AUTOMATIC_ACK		1
+>  
+>  #define MBOX_STATE_IDLE			BIT(4)
+> +#define MBOX_STATE_READY		BIT(5)
+>  #define MBOX_STATE_ACK			BIT(7)
+>  
+>  #define MBOX_MSG_LEN			8
+> @@ -91,8 +92,8 @@ static int hi3660_mbox_check_state(struct mbox_chan *chan)
+>  	unsigned long val;
+>  	unsigned int ret;
+>  
+> -	/* Mailbox is idle so directly bail out */
+> -	if (readl(base + MBOX_MODE_REG) & MBOX_STATE_IDLE)
+> +	/* Mailbox is ready to use */
+> +	if (readl(base + MBOX_MODE_REG) & MBOX_STATE_READY)
+>  		return 0;
+>  
+>  	/* Wait for acknowledge from remote */
+> @@ -103,9 +104,9 @@ static int hi3660_mbox_check_state(struct mbox_chan *chan)
+>  		return ret;
+>  	}
+>  
+> -	/* Ensure channel is released */
+> -	writel(0xffffffff, base + MBOX_IMASK_REG);
+> -	writel(BIT(mchan->ack_irq), base + MBOX_SRC_REG);
+> +	/* clear ack state, mailbox will get back to ready state */
+> +	writel(BIT(mchan->ack_irq), base + MBOX_ICLR_REG);
+> +
+>  	return 0;
+>  }
+>  
+> @@ -160,10 +161,6 @@ static int hi3660_mbox_startup(struct mbox_chan *chan)
+>  {
+>  	int ret;
+>  
+> -	ret = hi3660_mbox_check_state(chan);
+> -	if (ret)
+> -		return ret;
+> -
+>  	ret = hi3660_mbox_unlock(chan);
+>  	if (ret)
+>  		return ret;
+> @@ -183,10 +180,11 @@ static int hi3660_mbox_send_data(struct mbox_chan *chan, void *msg)
+>  	void __iomem *base = MBOX_BASE(mbox, ch);
+>  	u32 *buf = msg;
+>  	unsigned int i;
+> +	int ret;
+>  
+> -	/* Ensure channel is released */
+> -	writel_relaxed(0xffffffff, base + MBOX_IMASK_REG);
+> -	writel_relaxed(BIT(mchan->ack_irq), base + MBOX_SRC_REG);
+> +	ret = hi3660_mbox_check_state(chan);
+> +	if (ret)
+> +		return ret;
+>  
+>  	/* Clear mask for destination interrupt */
+>  	writel_relaxed(~BIT(mchan->dst_irq), base + MBOX_IMASK_REG);
+> 
