@@ -2,95 +2,136 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83618C04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 23:24:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38F76C5CFFE
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 23:24:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 422E42081F
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 23:24:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544484266;
-	bh=TkmMmwwlsQC/gky4gATSzucvBtXZ2oeNoS96Eprkhy0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=lMFEGG1Ak2Lrs6Wi4f0LjTrO0YOXEb1JuouRokaqaV+R1Hc+E20R6IA4A6XcTg+KF
-	 rKkXZ5Zqm7U5NvskYPbc0sFdxzM1O4C83PLiVuO9Dicr8FivosC/LMlSnLaCjVD/9c
-	 m8YasVDRSJmZ6GPBEH/gqab0pJ5w9svvBF+lKfaQ=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 422E42081F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id F373920855
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 23:24:33 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="C8d+JWVx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F373920855
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730139AbeLJXYZ (ORCPT
+        id S1730152AbeLJXYc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 18:24:25 -0500
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:34684 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726693AbeLJXYY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 18:24:24 -0500
-Received: by mail-ot1-f65.google.com with SMTP id t5so12261665otk.1;
-        Mon, 10 Dec 2018 15:24:24 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=KyIqd7jyECXOxDIXVZlg/O5Qa59I+DIa+Q5Wb+3up3I=;
-        b=VjSN0p95v6pP56foQucg3YxRkmDsI+8eT3vSp/EAMu/oqaXzpchoSxYhPteOQYNtgJ
-         omh8ey1pCbW9Hd3xSdPWWssoj1Gjw/txj7D42gZUOICR1Zdizxcs4jrKzDAQ7dY2nP3i
-         peld18YvQo/AhCXoLaRhInHVv7mk+2XjDPjizk5EX4STCckKk1oNDjGXp9Iz0gu9yPVX
-         k2h2qLa8msy1STs6j5t2+ljbcZB/n3TDipQJm7VgdEoUZ/dTIRjGB5X8B5kb7mkg9nTB
-         xOmAn30J6tkqL8oOeHHLNmpimt7OjFZDkcua0J/qSh6hY/uIKClUoBzzL241Z195aug3
-         A1HQ==
-X-Gm-Message-State: AA+aEWZ+7cKW6ufD5OYcXx4/x/Q/EAP454g49J3HVZ/5PRS72/Iu+uOK
-        6RlYItpf4Wge9wq9YI7/Ig==
-X-Google-Smtp-Source: AFSGD/Ws1YHh3olY3PBcXpCqOH7s/gd26/9gyrW0EEeawJnBMoQ0EKgDrzJAtlkAqPn9C3omeS4hsA==
-X-Received: by 2002:a9d:6a41:: with SMTP id h1mr10187527otn.332.1544484263982;
-        Mon, 10 Dec 2018 15:24:23 -0800 (PST)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id c22sm6165897otr.31.2018.12.10.15.24.23
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 10 Dec 2018 15:24:23 -0800 (PST)
-Date:   Mon, 10 Dec 2018 17:24:23 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Jagan Teki <jagan@amarulasolutions.com>
-Cc:     Yong Deng <yong.deng@magewell.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Chen-Yu Tsai <wens@csie.org>, linux-media@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-sunxi <linux-sunxi@googlegroups.com>,
-        linux-amarula@amarulasolutions.com,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        Jagan Teki <jagan@amarulasolutions.com>
-Subject: Re: [PATCH v3 1/6] dt-bindings: media: sun6i: Add A64 CSI compatible
-Message-ID: <20181210232423.GA13891@bogus>
-References: <20181210115246.8188-1-jagan@amarulasolutions.com>
- <20181210115246.8188-2-jagan@amarulasolutions.com>
+        Mon, 10 Dec 2018 18:24:32 -0500
+Received: from ozlabs.org ([203.11.71.1]:43337 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729403AbeLJXYb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Dec 2018 18:24:31 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 43DK0V0yKXz9s4s;
+        Tue, 11 Dec 2018 10:24:26 +1100 (AEDT)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1544484269;
+        bh=iMkv0YgdsAJD2Z5BsKb7PYIrWaYDZZemTp1NdmGIZvg=;
+        h=Date:From:To:Cc:Subject:From;
+        b=C8d+JWVxE4W9FNztcvEhVkb+gn4+d89ZvNgap+sM545PoKlpipbL8ALq8sglGGN/p
+         kJp2RQlVSSihIDwfQLLNRN6jQil53Hi8LIEBfUW8/IZ0dhhXpbMaakC/JgRVzdB+ZK
+         iFruJ10Od53b/tzS7u+BF/qRYy4ES2sZKRiTEZssxszIOH758CJ0yvH6ixzHuVe8aD
+         d+Qk37pxmCrHxnLaZKDdnkH/ggIOJmvxgi2Io6p+GYUZ+M81UzE3KIp4RwWWppkyYh
+         iWvDxut+BUncn42Ntaiintxd+TYNjW5NtAqivn7ZfesgIJJ8QKW0Ih05BXUKJZrcD5
+         U4dCyJ05sIEzQ==
+Date:   Tue, 11 Dec 2018 10:24:25 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Artem Bityutskiy <dedekind1@gmail.com>,
+        Theodore Ts'o <tytso@mit.edu>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Chandan Rajendra <chandan@linux.vnet.ibm.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Richard Weinberger <richard@nod.at>
+Subject: linux-next: manual merge of the ubifs tree with the fscrypt tree
+Message-ID: <20181211102425.7019f0a7@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181210115246.8188-2-jagan@amarulasolutions.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/qQcqP08b_uPJnFcH_vmeX+6"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 10 Dec 2018 17:22:41 +0530, Jagan Teki wrote:
-> Allwinner A64 CSI has single channel time-multiplexed BT.656
-> CMOS sensor interface like H3 but work by lowering clock than
-> default mod clock.
-> 
-> Add a compatible string for it.
-> 
-> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> ---
->  Documentation/devicetree/bindings/media/sun6i-csi.txt | 1 +
->  1 file changed, 1 insertion(+)
-> 
+--Sig_/qQcqP08b_uPJnFcH_vmeX+6
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Hi all,
+
+Today's linux-next merge of the ubifs tree got a conflict in:
+
+  fs/ubifs/Kconfig
+
+between commit:
+
+  6956097c429a ("fscrypt: remove filesystem specific build config option")
+
+from the fscrypt tree and commit:
+
+  1341551f1e2a ("ubifs: CONFIG_UBIFS_FS_AUTHENTICATION should depend on UBI=
+FS_FS")
+
+from the ubifs tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc fs/ubifs/Kconfig
+index ff7ea6f04555,bc1e082d921d..000000000000
+--- a/fs/ubifs/Kconfig
++++ b/fs/ubifs/Kconfig
+@@@ -65,9 -60,20 +62,9 @@@ config UBIFS_FS_XATT
+ =20
+  	  If unsure, say Y.
+ =20
+ -config UBIFS_FS_ENCRYPTION
+ -	bool "UBIFS Encryption"
+ -	depends on UBIFS_FS_XATTR && BLOCK
+ -	select FS_ENCRYPTION
+ -	default n
+ -	help
+ -	  Enable encryption of UBIFS files and directories. This
+ -	  feature is similar to ecryptfs, but it is more memory
+ -	  efficient since it avoids caching the encrypted and
+ -	  decrypted pages in the page cache.
+ -
+  config UBIFS_FS_SECURITY
+  	bool "UBIFS Security Labels"
+- 	depends on UBIFS_FS && UBIFS_FS_XATTR
++ 	depends on UBIFS_FS_XATTR
+  	default y
+  	help
+  	  Security labels provide an access control facility to support Linux
+
+--Sig_/qQcqP08b_uPJnFcH_vmeX+6
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwO9akACgkQAVBC80lX
+0GyGbgf8CLWZGlV8J9ZBbK1QuRaPR7q2rzhrIiTbo6KelMCuYJo0mhzCDceAOTQA
+LqndlGl6i3lBL4NAuH76RBbUWsvmTHrXR2Mhvb/o/fodQX0u7nYuuETmY3pKwB9d
+98DIW3BpFOoLN3tqaf7QxFiESKXlprHEbQ+2nBcPEjXMnGYkdbQJRQ9Io6dt5z/C
+j8b6L/c/2LMQO/AMY9+ErkpG1+FJURYASbsYaR4Jash6/VBnenFHMfDWojRSq8M8
+laKNdN0ci5o/aEOopFHFAca+xS7yOK8SQlgZI6bzwrTsS7YgWIrwD+7JA+GowT86
+7F1Th4PjRVWsSaaYv1r0y4N8ClPW/w==
+=xNnl
+-----END PGP SIGNATURE-----
+
+--Sig_/qQcqP08b_uPJnFcH_vmeX+6--
