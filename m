@@ -3,122 +3,156 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21703C5CFFE
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 16:21:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03BE9C04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 16:22:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E3E9220821
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 16:21:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E3E9220821
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org
+	by mail.kernel.org (Postfix) with ESMTP id C331920821
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 16:22:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C331920821
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rowland.harvard.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727491AbeLJQVg (ORCPT
+        id S1727709AbeLJQWd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 11:21:36 -0500
-Received: from vmicros1.altlinux.org ([194.107.17.57]:36222 "EHLO
-        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726392AbeLJQVf (ORCPT
+        Mon, 10 Dec 2018 11:22:33 -0500
+Received: from iolanthe.rowland.org ([192.131.102.54]:60826 "HELO
+        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with SMTP id S1726841AbeLJQWd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 11:21:35 -0500
-Received: from mua.local.altlinux.org (mua.local.altlinux.org [192.168.1.14])
-        by vmicros1.altlinux.org (Postfix) with ESMTP id 5FBDC72CC66;
-        Mon, 10 Dec 2018 19:21:32 +0300 (MSK)
-Received: by mua.local.altlinux.org (Postfix, from userid 508)
-        id 50DDE7CF2BB; Mon, 10 Dec 2018 19:21:32 +0300 (MSK)
-Date:   Mon, 10 Dec 2018 19:21:32 +0300
-From:   "Dmitry V. Levin" <ldv@altlinux.org>
-To:     Oleg Nesterov <oleg@redhat.com>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Elvira Khabirova <lineprinter@altlinux.org>,
-        Eugene Syromyatnikov <esyr@redhat.com>,
-        Kees Cook <keescook@chromium.org>,
-        Jann Horn <jannh@google.com>, linux-api@vger.kernel.org,
-        strace-devel@lists.strace.io, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 24/25] ptrace: add PTRACE_GET_SYSCALL_INFO request
-Message-ID: <20181210162131.GG14149@altlinux.org>
-References: <20181210042352.GA6092@altlinux.org>
- <20181210043126.GX6131@altlinux.org>
- <20181210141107.GB4177@redhat.com>
+        Mon, 10 Dec 2018 11:22:33 -0500
+Received: (qmail 4067 invoked by uid 2102); 10 Dec 2018 11:22:31 -0500
+Received: from localhost (sendmail-bs@127.0.0.1)
+  by localhost with SMTP; 10 Dec 2018 11:22:31 -0500
+Date:   Mon, 10 Dec 2018 11:22:31 -0500 (EST)
+From:   Alan Stern <stern@rowland.harvard.edu>
+X-X-Sender: stern@iolanthe.rowland.org
+To:     "Paul E. McKenney" <paulmck@linux.ibm.com>
+cc:     David Goldblatt <davidtgoldblatt@gmail.com>,
+        <mathieu.desnoyers@efficios.com>,
+        Florian Weimer <fweimer@redhat.com>, <triegel@redhat.com>,
+        <libc-alpha@sourceware.org>, <andrea.parri@amarulasolutions.com>,
+        <will.deacon@arm.com>, <peterz@infradead.org>,
+        <boqun.feng@gmail.com>, <npiggin@gmail.com>, <dhowells@redhat.com>,
+        <j.alglave@ucl.ac.uk>, <luc.maranget@inria.fr>, <akiyks@gmail.com>,
+        <dlustig@nvidia.com>, <linux-arch@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] Linux: Implement membarrier function
+In-Reply-To: <20181206215405.GL4170@linux.ibm.com>
+Message-ID: <Pine.LNX.4.44L0.1812101113430.1562-100000@iolanthe.rowland.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="uQr8t48UFsdbeI+V"
-Content-Disposition: inline
-In-Reply-To: <20181210141107.GB4177@redhat.com>
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, 6 Dec 2018, Paul E. McKenney wrote:
 
---uQr8t48UFsdbeI+V
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> Hello, David,
+> 
+> I took a crack at extending LKMM to accommodate what I think would
+> support what you have in your paper.  Please see the very end of this
+> email for a patch against the "dev" branch of my -rcu tree.
+> 
+> This gives the expected result for the following three litmus tests,
+> but is probably deficient or otherwise misguided in other ways.  I have
+> added the LKMM maintainers on CC for their amusement.  ;-)
+> 
+> Thoughts?
 
-On Mon, Dec 10, 2018 at 03:11:07PM +0100, Oleg Nesterov wrote:
-> On 12/10, Dmitry V. Levin wrote:
-> >
-> > +struct ptrace_syscall_info {
-> > +	__u8 op;	/* PTRACE_SYSCALL_INFO_* */
-> > +	__u8 __pad0[3];
-> > +	__u32 arch;
-> > +	__u64 instruction_pointer;
-> > +	__u64 stack_pointer;
-> > +	__u64 frame_pointer;
-> > +	union {
-> > +		struct {
-> > +			__u64 nr;
-> > +			__u64 args[6];
-> > +		} entry;
-> > +		struct {
-> > +			__s64 rval;
-> > +			__u8 is_error;
-> > +			__u8 __pad1[7];
-> > +		} exit;
-> > +		struct {
-> > +			__u64 nr;
-> > +			__u64 args[6];
-> > +			__u32 ret_data;
-> > +			__u8 __pad2[4];
-> > +		} seccomp;
-> > +	};
-> > +};
->=20
-> Could you explain why ptrace_syscall_info needs __pad{0,1,2} ? I simply c=
-an't
-> understand why...
+Since sys_membarrier() provides a heavyweight barrier comparable to 
+synchronize_rcu(), the memory model should treat the two in the same 
+way.  That's what this patch does.
 
-I suppose the idea behind the use of these pads was to make the structure
-arch-independent.
+The corresponding critical section would be any region of code bounded
+by compiler barriers.  Since the LKMM doesn't currently handle plain
+accesses, the effect is the same as if a compiler barrier were present
+between each pair of instructions.  Basically, each instruction acts as
+its own critical section.  Therefore the patch below defines memb-rscsi
+as the trivial identity relation.  When plain accesses and compiler 
+barriers are added to the memory model, a different definition will be 
+needed.
 
-I don't think we really need to keep it exactly the same on all
-architectures - the only practical requirement is to avoid any compat
-issues, but I don't mind keeping the structure arch-independent.
+This gives the correct results for the three C-Goldblat-memb-* litmus 
+tests in Paul's email.
+
+Alan
+
+PS: The patch below is meant to apply on top of the SRCU patches, which
+are not yet in the mainline kernel.
 
 
---=20
-ldv
 
---uQr8t48UFsdbeI+V
-Content-Type: application/pgp-signature; name="signature.asc"
+Index: usb-4.x/tools/memory-model/linux-kernel.bell
+===================================================================
+--- usb-4.x.orig/tools/memory-model/linux-kernel.bell
++++ usb-4.x/tools/memory-model/linux-kernel.bell
+@@ -24,6 +24,7 @@ instructions RMW[{'once,'acquire,'releas
+ enum Barriers = 'wmb (*smp_wmb*) ||
+ 		'rmb (*smp_rmb*) ||
+ 		'mb (*smp_mb*) ||
++		'memb (*sys_membarrier*) ||
+ 		'rcu-lock (*rcu_read_lock*)  ||
+ 		'rcu-unlock (*rcu_read_unlock*) ||
+ 		'sync-rcu (*synchronize_rcu*) ||
+Index: usb-4.x/tools/memory-model/linux-kernel.cat
+===================================================================
+--- usb-4.x.orig/tools/memory-model/linux-kernel.cat
++++ usb-4.x/tools/memory-model/linux-kernel.cat
+@@ -33,7 +33,7 @@ let mb = ([M] ; fencerel(Mb) ; [M]) |
+ 	([M] ; po? ; [LKW] ; fencerel(After-spinlock) ; [M]) |
+ 	([M] ; po ; [UL] ; (co | po) ; [LKW] ;
+ 		fencerel(After-unlock-lock) ; [M])
+-let gp = po ; [Sync-rcu | Sync-srcu] ; po?
++let gp = po ; [Sync-rcu | Sync-srcu | Memb] ; po?
+ 
+ let strong-fence = mb | gp
+ 
+@@ -102,8 +102,10 @@ acyclic pb as propagation
+  *)
+ let rcu-gp = [Sync-rcu]		(* Compare with gp *)
+ let srcu-gp = [Sync-srcu]
++let memb-gp = [Memb]
+ let rcu-rscsi = rcu-rscs^-1
+ let srcu-rscsi = srcu-rscs^-1
++let memb-rscsi = id
+ 
+ (*
+  * The synchronize_rcu() strong fence is special in that it can order not
+@@ -119,15 +121,19 @@ let rcu-link = po? ; hb* ; pb* ; prop ;
+  * the synchronize_srcu() and srcu_read_[un]lock() calls refer to the same
+  * struct srcu_struct location.
+  *)
+-let rec rcu-fence = rcu-gp | srcu-gp |
++let rec rcu-fence = rcu-gp | srcu-gp | memb-gp |
+ 	(rcu-gp ; rcu-link ; rcu-rscsi) |
+ 	((srcu-gp ; rcu-link ; srcu-rscsi) & loc) |
++	(memb-gp ; rcu-link ; memb-rscsi) |
+ 	(rcu-rscsi ; rcu-link ; rcu-gp) |
+ 	((srcu-rscsi ; rcu-link ; srcu-gp) & loc) |
++	(memb-rscsi ; rcu-link ; memb-gp) |
+ 	(rcu-gp ; rcu-link ; rcu-fence ; rcu-link ; rcu-rscsi) |
+ 	((srcu-gp ; rcu-link ; rcu-fence ; rcu-link ; srcu-rscsi) & loc) |
++	(memb-gp ; rcu-link ; rcu-fence ; rcu-link ; memb-rscsi) |
+ 	(rcu-rscsi ; rcu-link ; rcu-fence ; rcu-link ; rcu-gp) |
+ 	((srcu-rscsi ; rcu-link ; rcu-fence ; rcu-link ; srcu-gp) & loc) |
++	(memb-rscsi ; rcu-link ; rcu-fence ; rcu-link ; memb-gp) |
+ 	(rcu-fence ; rcu-link ; rcu-fence)
+ 
+ (* rb orders instructions just as pb does *)
+Index: usb-4.x/tools/memory-model/linux-kernel.def
+===================================================================
+--- usb-4.x.orig/tools/memory-model/linux-kernel.def
++++ usb-4.x/tools/memory-model/linux-kernel.def
+@@ -20,6 +20,7 @@ smp_store_mb(X,V) { __store{once}(X,V);
+ smp_mb() { __fence{mb}; }
+ smp_rmb() { __fence{rmb}; }
+ smp_wmb() { __fence{wmb}; }
++smp_memb() { __fence{memb}; }
+ smp_mb__before_atomic() { __fence{before-atomic}; }
+ smp_mb__after_atomic() { __fence{after-atomic}; }
+ smp_mb__after_spinlock() { __fence{after-spinlock}; }
 
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBCAAGBQJcDpKLAAoJEAVFT+BVnCUIQyQQAJcBexpZkT3KJAUbsDkRfHtd
-gkDtUKrgIj6BpEzYUbIn6I8dXNIqyFMJGSh4lMWnhFbDXeHIQ91fNUoH5q/MifC7
-PfbzH6ibiOTzflv/1/oTKLJ1RhzITuIlQQb6Xd/3BV+WEhPDs77tNJtPpgIlv+oK
-z3Xa/mw3f0RXSAYpuvtCG1IiwWJMoy5YjpLBAWnldCxVH/jeiPU5xoSYl1DKo6Y+
-YeNiM/mCEbaYzDWmAPiE5Mntarj3uT2g4XTLnuIFJo38z8jYp3QZwToMcYBFK0zx
-i6NbYJ6oaiuUSCZMSM3X8NP2EsmmhVRi+3wc8WnzjqYbLqXa4f47aHunO/S17Bog
-/8N5RexkAUM86J3Ho+SMZT3cDFi398vxb2f5gFN6DIPt4GLQYZaefJTc2hWvI7x4
-xIm7+27/kSIURbcyVs7g/BtxjApz7kcY5ed3Uh5p2Z9HIxW4/TYiyRhh4P8oRddA
-WEWTJaohjwF/QO3VJg7RbzTn2OsCTAX8KfzsEKTxsIIsNWeG+wHm1SSUsmvq+1ep
-bDWVq09gvMogfl+U1qdpPhMlyXf5oTAZ9C64ZsUQZGtq0P8PG5M0a3VlT3fhktNV
-yCGY93i50BA/fN8aBdMo+oyj8UIP1tZpuY0Lm6QjcNw8lPdBipEDCEi0+cPFwAmc
-djVNelGXhg9dLjWz5UgP
-=2aij
------END PGP SIGNATURE-----
-
---uQr8t48UFsdbeI+V--
