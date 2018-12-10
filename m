@@ -2,97 +2,93 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01C69C04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 20:42:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D631C5CFFE
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 20:42:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF39220821
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 20:42:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF39220821
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 5527720821
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 20:42:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5527720821
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729314AbeLJUmQ (ORCPT
+        id S1729507AbeLJUmX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 15:42:16 -0500
-Received: from mga11.intel.com ([192.55.52.93]:46031 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727598AbeLJUmP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 15:42:15 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Dec 2018 12:42:15 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,339,1539673200"; 
-   d="scan'208";a="117229612"
-Received: from rchatre-mobl.amr.corp.intel.com (HELO [10.24.14.96]) ([10.24.14.96])
-  by orsmga002.jf.intel.com with ESMTP; 10 Dec 2018 12:42:14 -0800
-Subject: Re: [PATCH] x86/resctrl: Fix rdt_find_domain() return value checks
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     tglx@linutronix.de, fenghua.yu@intel.com, tony.luck@intel.com,
-        jithu.joseph@intel.com, mingo@redhat.com, hpa@zytor.com,
-        x86@kernel.org, linux-kernel@vger.kernel.org
-References: <d932648504b745cb51c4a440710c7a1ca9830eca.1543427858.git.reinette.chatre@intel.com>
- <20181210191311.GC5482@zn.tnic>
-From:   Reinette Chatre <reinette.chatre@intel.com>
-Message-ID: <40422756-cef4-38b1-8554-c99e7bcb7765@intel.com>
-Date:   Mon, 10 Dec 2018 12:42:14 -0800
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 10 Dec 2018 15:42:23 -0500
+Received: from mout.kundenserver.de ([212.227.126.135]:33207 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727598AbeLJUmW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Dec 2018 15:42:22 -0500
+Received: from wuerfel.lan ([109.192.41.194]) by mrelayeu.kundenserver.de
+ (mreue009 [212.227.15.129]) with ESMTPA (Nemesis) id
+ 1MIdW9-1gisRL3YBR-00Ehbx; Mon, 10 Dec 2018 21:42:10 +0100
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hans.verkuil@cisco.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Ettore Chimenti <ek5.chimenti@gmail.com>,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] media: seco-cec: fix RC_CORE dependency
+Date:   Mon, 10 Dec 2018 21:41:40 +0100
+Message-Id: <20181210204208.2223571-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.20.0
 MIME-Version: 1.0
-In-Reply-To: <20181210191311.GC5482@zn.tnic>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:Pyr2z/JPJNokWqHGPq/aD0EypsRv48+YISaicVzZoAvAsQWAQTG
+ Hhp8iD5wFDGiixfWA7mKnUrvXwPXHHX1gbKn6hPRK6nrb1FQjzR/xlEa5pRANT8cuyk4F9k
+ 3xlOhkpHb3yClYAsV8Umfk3wgOGbxrZL1FgJcoMLDbRc6zh79Hobd2dudy81b/Ru81EMdxR
+ MfkkFHRjo4h6V4lE3Ma8Q==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:X/PAKrcotEQ=:cvvOBf2vOZ2e5m/Q6lgWoS
+ 4k1WDEf8/UmK5oObTilF0OqCaPHwImZPAQtlZ/sM3wp9FzIoBVfISwmjBjeLGpeDDA4sL/gg4
+ 2hwBPyr6qncyuYn/KD/5kQu2Ac7oQS+1c2ZBlqZ9awoGfZn+zHlxd29cu30oGkTphAni9kRvh
+ StmNsiDfaC0m/iulJxttDkgDLWCZG046yNBT3s1l1acfhz7k7FqGQJeg64bkHI5cmzTjgVvZ4
+ DUfP2bKOuUy/BV2xhoeEqy1eNVHQk7cp8Ue7X5PdGm/IUaqOYx4AiLYeuHAoqDCzu9Wvy6XlO
+ 8NSoSsViknJOsvsvXZcXG6a351E6IbZDhXtIgNk7MyWSs4HaEebRjuECw+BUOGMyWqAOTcAVP
+ HfLf+bdsVW4hYaKIkWxYcsy2e7hGPRgLkaBuq8pwhHbP2AhL8oJO5lWNT/Jd56D4zKSKMPM+9
+ q/oKY4nsyC2lR36FhBDAZ7EINY5eaoVeTBW9TPDZ2IBumuQTveF5+3JrMChb8pPwHzll2q5DE
+ Rik9FLuX/+2zObY1VyzWFlw7ll1EV5qiU5obVm2udPz0uRTAZjJjIAsvxZ4nYA9ssV3GLHRH2
+ Kl0q5vDFlVyv2QUuypPKKhvK822jyUQD5qKYUPFbvK6GpChnCYeUuMc3pXw0Y8GtGpAoncsEf
+ Y8hTrDw6mPMjRC+VpcGcIsw9KG9g6aQAim8qIvI/MyD29D7XbM3S3CbZGnH+G9kgRbXT0DuvP
+ tUnYr4dVPt88nsCqIpltLXW1CKY9KS1zfVJ0AA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Boris,
+All other drivers that need RC_CORE have a dependency rather than using
+'select', so we should do the same here to avoid circular dependencies
+as well as this warning about missing dependencies:
 
-On 12/10/2018 11:13 AM, Borislav Petkov wrote:
-> On Wed, Nov 28, 2018 at 10:20:27AM -0800, Reinette Chatre wrote:
->> rdt_find_domain() may return an ERR_PTR(), NULL, or a pointer to struct
->> rdt_domain. It is thus required that the return value be checked for the
->> possibility of an ERR_PTR as well as NULL.
-> 
-> Well, it returns ERR_PTR(id) but code which uses ERR_PTR passes in an -E
-> value, for example ERR_PTR(-EINVAL) or so, and not an id.
-> 
-> And that might work now if id fits within that MAX_ERRNO range - I'm
-> looking at include/linux/err.h - but that's still fragile.
-> 
+WARNING: unmet direct dependencies detected for RC_CORE
+  Depends on [n]: INPUT [=n]
+  Selected by [y]:
+  - VIDEO_SECO_RC [=y] && MEDIA_SUPPORT [=y] && CEC_PLATFORM_DRIVERS [=y] && VIDEO_SECO_CEC [=y]
 
-Thank you for catching this.
+Fixes: daef95769b3a ("media: seco-cec: add Consumer-IR support")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/media/platform/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-It does seem as though things work at this time since rdt_find_domain()
-contains:
-
-if (id < 0)
-        return ERR_PTR(id);
-
-and from what I can tell the only possible negative value of id is -1.
-
-As you note, this is fragile. Additionally the error, if intending to
-use -E values, does not reflect the error (since -1 would mean EPERM).
-
-Would you be ok if the above is changed to
-
-if (id < 0)
-        return ERR_PTR(-ENOENT);
-
-as part of this patch?
-
-Looking at rdtgroup_mondata_show() is does seem as though ENOENT is the
-actual intended error value, although ENODEV could perhaps also be
-considered since such a result reflects that a particular cache instance
-could not be found.
-
-Thank you!
-
-Reinette
+diff --git a/drivers/media/platform/Kconfig b/drivers/media/platform/Kconfig
+index ea3306341edf..d501c6b3b380 100644
+--- a/drivers/media/platform/Kconfig
++++ b/drivers/media/platform/Kconfig
+@@ -641,7 +641,7 @@ config VIDEO_SECO_CEC
+ config VIDEO_SECO_RC
+ 	bool "SECO Boards IR RC5 support"
+ 	depends on VIDEO_SECO_CEC
+-	select RC_CORE
++	depends on RC_CORE
+ 	help
+ 	  If you say yes here you will get support for the
+ 	  SECO Boards Consumer-IR in seco-cec driver.
+-- 
+2.20.0
 
