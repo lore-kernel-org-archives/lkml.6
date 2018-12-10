@@ -2,164 +2,128 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C318C04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 12:07:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 488BFC04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 12:12:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 51B952084E
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 12:07:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Kj+il6zE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 51B952084E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	by mail.kernel.org (Postfix) with ESMTP id 114B220870
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 12:12:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 114B220870
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amlogic.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727534AbeLJMHT (ORCPT
+        id S1727507AbeLJMMV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 07:07:19 -0500
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:39548 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727172AbeLJMHS (ORCPT
+        Mon, 10 Dec 2018 07:12:21 -0500
+Received: from mail-sz2.amlogic.com ([211.162.65.114]:40892 "EHLO
+        mail-sz2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727172AbeLJMMV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 07:07:18 -0500
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id wBAC6klv060754;
-        Mon, 10 Dec 2018 06:06:47 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1544443607;
-        bh=SoIHMtUTNlfSVDIq9B3xkSQBtFVNdE1rVVqkyNUwkbY=;
-        h=Date:From:To:CC:Subject:References:In-Reply-To;
-        b=Kj+il6zEk3LprbloS0GylZFl7IlYxPosj43YMYau3UDWeaJCa4d7/5sbzgBDXJ1SC
-         A/tPzsk0cU6ab3ciGAA8U3vlHKfwFFoawA68DKvR3u9BS7xhKG0ZhZO6S8RmNHxYxa
-         bUALwwsiz+51xzUt6+yuMqf4zwEDapQrMXBEy6ik=
-Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wBAC6kgf081800
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 10 Dec 2018 06:06:46 -0600
-Received: from DFLE100.ent.ti.com (10.64.6.21) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Mon, 10
- Dec 2018 06:06:46 -0600
-Received: from dlep32.itg.ti.com (157.170.170.100) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Mon, 10 Dec 2018 06:06:46 -0600
-Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id wBAC6kT9008560;
-        Mon, 10 Dec 2018 06:06:46 -0600
-Date:   Mon, 10 Dec 2018 06:06:48 -0600
-From:   Nishanth Menon <nm@ti.com>
-To:     Sekhar Nori <nsekhar@ti.com>
-CC:     Faiz Abbas <faiz_abbas@ti.com>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <mark.rutland@arm.com>,
-        <robh+dt@kernel.org>, <t-kristo@ti.com>, <kishon@ti.com>,
-        <ulf.hansson@linaro.org>, <adrian.hunter@intel.com>,
-        <michal.simek@xilinx.com>, Tony Lindgren <tony@atomide.com>,
-        Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH 2/2] arm64: dts: ti: k3-am654-base-board: Add MMC/SD
- support
-Message-ID: <20181210120647.i3ply3p7umvedb3u@akan>
-References: <20181207084233.13700-1-faiz_abbas@ti.com>
- <20181207084233.13700-3-faiz_abbas@ti.com>
- <20181208155427.jmidz4vsw4k4qj36@akan>
- <c1dd9783-84dc-9dad-ea94-9a14a4ad814d@ti.com>
+        Mon, 10 Dec 2018 07:12:21 -0500
+Received: from [10.28.18.115] (10.28.18.115) by mail-sz2.amlogic.com
+ (10.28.11.6) with Microsoft SMTP Server (TLS) id 15.0.1320.4; Mon, 10 Dec
+ 2018 20:12:39 +0800
+Subject: Re: [PATCH v7 2/2] mtd: rawnand: meson: add support for Amlogic NAND
+ flash controller
+To:     Boris Brezillon <boris.brezillon@bootlin.com>
+CC:     Miquel Raynal <miquel.raynal@bootlin.com>,
+        Jianxin Pan <jianxin.pan@amlogic.com>,
+        <linux-mtd@lists.infradead.org>, Yixun Lan <yixun.lan@amlogic.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Carlo Caione <carlo@caione.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Rob Herring <robh@kernel.org>, Jian Hu <jian.hu@amlogic.com>,
+        Hanjie Lin <hanjie.lin@amlogic.com>,
+        Victor Wan <victor.wan@amlogic.com>,
+        <linux-amlogic@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+References: <1542386439-30166-1-git-send-email-jianxin.pan@amlogic.com>
+ <1542386439-30166-3-git-send-email-jianxin.pan@amlogic.com>
+ <20181207102456.1dc67e07@xps13>
+ <823825a3-86fb-9a20-ae29-85cc52d44093@amlogic.com>
+ <20181210123809.5ade45c4@bbrezillon>
+From:   Liang Yang <liang.yang@amlogic.com>
+Message-ID: <79a797c2-f37f-7f7c-e907-2d3c2283ec2d@amlogic.com>
+Date:   Mon, 10 Dec 2018 20:12:39 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <c1dd9783-84dc-9dad-ea94-9a14a4ad814d@ti.com>
-User-Agent: NeoMutt/20171215
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+In-Reply-To: <20181210123809.5ade45c4@bbrezillon>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.28.18.115]
+X-ClientProxiedBy: mail-sz2.amlogic.com (10.28.11.6) To mail-sz2.amlogic.com
+ (10.28.11.6)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 13:33-20181210, Sekhar Nori wrote:
-> On 08/12/18 9:24 PM, Nishanth Menon wrote:
-> > On 14:12-20181207, Faiz Abbas wrote:
-> > 
-> >> +
-> >> +&sdhci0 {
-> >> +	status = "okay";
-> >> +	pinctrl-names = "default";
-> >> +	pinctrl-0 = <&main_mmc0_pins_default>;
-> >> +	bus-width = <8>;
-> >> +	non-removable;
-> >> +	ti,driver-strength-ohm = <50>;
-> > 
-> > ^^
-> > 
-> >> +};
-> >> +
-> >> +&sdhci1 {
-> >> +	status = "okay";
-> >> +	pinctrl-names = "default";
-> >> +	pinctrl-0 = <&main_mmc1_pins_default>;
-> >> +	ti,driver-strength-ohm = <50>;
-> > 
-> > NAK.
-> > 
-> > $ git checkout next-20181207
-> > $ git grep ti,driver-strength-ohm Documentation
-> > $
-> > 
-> > Nada.. And.. I think "new phy binding" probably introduces this.
-> > [1] https://patchwork.kernel.org/project/linux-mmc/list/?series=53185
-> > 
-> > If your patches are'nt really ready, please send them as RFC, I am not
-> > really in a mood to track the status of every single driver subsystem.
-> > 
-> > If your binding is not in linux next at the baremin, as far as I am
-> > concerned, this is not ready, and should be RFC.
+
+
+On 2018/12/10 19:38, Boris Brezillon wrote:
+> On Mon, 10 Dec 2018 19:23:46 +0800
+> Liang Yang <liang.yang@amlogic.com> wrote:
 > 
-> No, RFC does not say "do not merge" or "this has dependencies". RFC is
-> used to invite a stronger review when introducing a new concept. Its
-> fair game to apply patches marked RFC if maintainer is okay with the
-> content.
-
-True, fair enough.. RFC is request for comments. Anyways, that is
-besides the point.
+>>>> +			mtd->ecc_stats.failed++;
+>>>> +			continue;
+>>>> +		}
+>>>> +		mtd->ecc_stats.corrected += ECC_ERR_CNT(*info);
+>>>> +		bitflips = max_t(u32, bitflips, ECC_ERR_CNT(*info));
+>>>> +	}
+>>>
+>>> Are you sure you handle correctly empty pages with bf?
+>>>    
+>> if scramble is enable, i would say yes here.
+>> when scramble is disabled, i am considering how to use the helper
+>> nand_check_erased_ecc_chunk, but it seems that i can't get the ecc
+>> bytes which is caculated by ecc engine.by the way, nfc dma doesn't send
+>> out the ecc parity bytes.
 > 
-> Dependencies are either noted in cover-letter or below the patch
-> tear-line. With what you are asking, looks like patches need to be
-> resubmitted once dependencies are cleared, even if there is no change in
-> the content itself. This will be additional work.
-
-Yes please. There would be other dts changes that are probably ready and
-I really wont be tracking everything happening on other drivers. If the
-binding is present at least in next, it is a good indication of things
-clean and ready to go.
-
+> Even if the ECC engine is disabled?
 > 
-> That said, if it makes life convenient for you, you can impose such a
-> rule for patches you need to handle. But I think it will take some
-> getting used for developers who send patches to you as I don't think
-> this is a norm elsewhere.
+No.
+When ECC engine is disabled, it can read the ecc parity bytes ; but 
+there is another problem that i need to consider how code struct looks 
+better when reading error with ecc opened and then try to raw read.
+Is there a good idea?
+
+>> so i would suggest using scramble.
+>>
 > 
-> Adding Tony and Arnd as well, in case I have missed some recently
-> accepted convention.
-
-
-I have'nt looked at any conventions, The style I prefer to follow when I do
-submissions: It is my job to get the bindings in, until then my actual
-dts is just "request for comments". Only after the bindings are merged
-do I formally submit dts - simply because I dont expect dts maintainer
-to track what happened to my driver's binding and discussions there of.
-
-Seriously, is'nt it really reasonable for dts maintainer to check every
-single driver's development status in 15 different mailing lists?
-Because, it sounds like what you are asking. At least I wont have time
-for it..
-
-
-I really am curious how Arnd / Tony actually pull this one off.. If they
-have continous cron job for checking if your patch is ready... I doubt
-it..
-
--- 
-Regards,
-Nishanth Menon
+> No, please don't force people to use the scrambler.
+> 
+>>>> +
+>>>> +const void *
+>>>> +meson_nand_op_get_dma_safe_output_buf(const struct nand_op_instr *instr)
+>>>> +{
+>>>> +	if (WARN_ON(instr->type != NAND_OP_DATA_OUT_INSTR))
+>>>> +		return NULL;
+>>>> +
+>>>> +	if (virt_addr_valid(instr->ctx.data.buf.out) &&
+>>>> +	    !object_is_on_stack(instr->ctx.data.buf.out))
+>>>
+>>> Can you please create helpers for that? I guess it will help removing
+>>> these checks once the core will have a DMA-safe approach.
+>>>    
+>> I will use below definition:
+>> #define BUFFER_IS_DMA_SAFE(x)	\
+>> 	(virt_addr_valid((x)) && (!object_is_on_stack((x))))
+>>
+>> Is it ok?
+> 
+> Please define a function, not a macro.
+> ok
+> .
+> 
