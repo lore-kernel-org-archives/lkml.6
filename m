@@ -2,89 +2,112 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
+X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4478BC04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 21:28:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AEE5C04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 21:28:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F18662084E
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 21:28:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544477284;
-	bh=lZviD4PUdzrhBrZMWeI+haJWBfYChjA8SOhGaFmyfUs=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=LpR+uyXP/ZT7SaC7F8EgXWQKSIHBepl1ChRVUFj/0HaQPCDN7b1tqMNcQhCb+Li3r
-	 1EkKcwECGNbXgiBtMW4sfy0vddf1vUOtUkT221YnSBtE0PiuxJGCH7nCic4SFRv9Jb
-	 ePwPrqh9EVSEvNEi9fJSut8CspJMVeSawmEN5uSw=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F18662084E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id E311020821
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 21:28:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E311020821
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729887AbeLJV2C (ORCPT
+        id S1729847AbeLJV2Z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 16:28:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35362 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729862AbeLJV2C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 16:28:02 -0500
-Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 48D7B20821;
-        Mon, 10 Dec 2018 21:27:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544477281;
-        bh=lZviD4PUdzrhBrZMWeI+haJWBfYChjA8SOhGaFmyfUs=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=Q2zFGCc69UNbPCC1WAO9yOlWKbh33xEd8gfdmkES/XIz34Azm5GunUZ5G0+46lsxd
-         uiwATbgKI7zGhAgI3Cgln6MyxVwlWBrLLJdCzgKtcerqea5VO4ZGb/LnHyTSTw91XH
-         zBRUJHfTnLI0nG9ST2Fq0yISNH3LerrSDGIhcurI=
-Date:   Mon, 10 Dec 2018 21:27:56 +0000
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     Marcelo Schmitt <marcelo.schmitt1@gmail.com>, lars@metafoo.de,
-        Michael.Hennerich@analog.com, knaack.h@gmx.de, pmeerw@pmeerw.net,
-        stefan.popa@analog.com, alexandru.Ardelean@analog.com,
-        linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org, kernel-usp@googlegroups.com,
-        Dragos Bogdan <dragos.bogdan@analog.com>
-Subject: Re: [PATCH 0/3] Add devicetree support for ad5933
-Message-ID: <20181210212756.7e444b4f@archlinux>
-In-Reply-To: <20181208211043.GA25188@kroah.com>
-References: <cover.1544292845.git.marcelo.schmitt1@gmail.com>
-        <CAAX=9sVrbu2U9go_d1G5=rGRa9AYT+betx9gyKWNXXU4adg4Bg@mail.gmail.com>
-        <20181208211043.GA25188@kroah.com>
-X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Mon, 10 Dec 2018 16:28:25 -0500
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:38947 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728059AbeLJV2Z (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Dec 2018 16:28:25 -0500
+Received: by mail-qt1-f196.google.com with SMTP id n21so14098996qtl.6;
+        Mon, 10 Dec 2018 13:28:23 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=VQ22ZuQTTIWWjE+USpSR/19LZETkCyIRRdD7xwKsPgI=;
+        b=YsPeVXTVNW0faJpiMZDujVzfPxTAYFI9hOXtqZ+D+VEqcn8IroGg/KQZcIDGuIRTfN
+         V0CE60cdYoehEOr3T6b9zeXz8dzn1HWmvQH12peWIt7gAOAF0BqsQQBNkRydpnfoRCk0
+         lsRjD0Drqb7ZGDmjgZGA0oMLaXyifEuW+qI8n1klemh4923l5SEMfW8DaQc8mpLf5GL3
+         Qq8k9F9YalL11wY8PGCx/7QS9B5at9ZsPyWsjNPc4w9HM/KTCAM9G+3Z66iiAXdRo37/
+         jZVqonr5l8OAtOkkvyYxMPywtZ5Q1erW2RMTUC2PEtiBwz4rZKS/cHrBCcBiiFuRT6Vl
+         BhkQ==
+X-Gm-Message-State: AA+aEWYSXsNy4gRGcL2qe5wmVo7wjRh4GlZGnoJVRxvjft7PixIvtoxu
+        2oOTxurui8Yt7z79FOceP1GvYWKI8CVOI/PQ6TM=
+X-Google-Smtp-Source: AFSGD/XgHekhBVEO1znX1LRditjvT/DZ89+mMkGrBi0egNT/tkysP6Pwc8VswEnUtgFZkhgdnpaibhgNWaE0oXRAAUo=
+X-Received: by 2002:a0c:dc0f:: with SMTP id s15mr12910049qvk.40.1544477303209;
+ Mon, 10 Dec 2018 13:28:23 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20181210205215.2703138-1-arnd@arndb.de> <1544475666.185366.378.camel@acm.org>
+In-Reply-To: <1544475666.185366.378.camel@acm.org>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Mon, 10 Dec 2018 22:28:05 +0100
+Message-ID: <CAK8P3a0MShhjPMUdNs=CTqOJ-ovDPczYiQFL9c2M2dOUQ4yK7w@mail.gmail.com>
+Subject: Re: [PATCH] scsi: qla2xxx: fix unused function warning
+To:     bvanassche@acm.org
+Cc:     qla2xxx-upstream@qlogic.com, jejb@linux.ibm.com,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        loberman@redhat.com,
+        Himanshu Madhani <himanshu.madhani@cavium.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>, hmadhani@marvell.com,
+        quinn.tran@cavium.com, Hannes Reinecke <hare@suse.de>,
+        Jens Axboe <axboe@kernel.dk>, darren.trapp@cavium.com,
+        William.Kuzeja@stratus.com,
+        linux-scsi <linux-scsi@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 8 Dec 2018 22:10:43 +0100
-Greg KH <gregkh@linuxfoundation.org> wrote:
+On Mon, Dec 10, 2018 at 10:01 PM Bart Van Assche <bvanassche@acm.org> wrote:
+>
+> On Mon, 2018-12-10 at 21:51 +0100, Arnd Bergmann wrote:
+> > In what seems to be a mismatch between the scsi-fixes branch and
+> > the scsi-mkp/for-next branch, a newly introduced variable from
+> > one patch got obsoleted in another one:
+> >
+> > drivers/scsi/qla2xxx/qla_os.c: In function '__qla2x00_abort_all_cmds':
+> > drivers/scsi/qla2xxx/qla_os.c:1791:11: error: unused variable 'status' [-Werror=unused-variable]
+> >
+> > Remove the variable again.
+> >
+> > Fixes: c4e521b654e1 ("scsi: qla2xxx: Split the __qla2x00_abort_all_cmds() function")
+> > Fixes: f2ffd4e5bc7b ("scsi: qla2xxx: Timeouts occur on surprise removal of QLogic adapter")
+> > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> > ---
+> > Maybe check carefully that the merge in linux-next is otherwise correct
+> > ---
+> >  drivers/scsi/qla2xxx/qla_os.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/scsi/qla2xxx/qla_os.c b/drivers/scsi/qla2xxx/qla_os.c
+> > index 63c47bc7ae59..db331cb5ba3c 100644
+> > --- a/drivers/scsi/qla2xxx/qla_os.c
+> > +++ b/drivers/scsi/qla2xxx/qla_os.c
+> > @@ -1788,7 +1788,7 @@ static void qla2x00_abort_srb(struct qla_qpair *qp, srb_t *sp, const int res,
+> >  static void
+> >  __qla2x00_abort_all_cmds(struct qla_qpair *qp, int res)
+> >  {
+> > -     int cnt, status;
+> > +     int cnt;
+> >       unsigned long flags;
+> >       srb_t *sp;
+> >       scsi_qla_host_t *vha = qp->vha;
+>
+> When I prepared commit c4e521b654e1 I verified that my patch did not produce any
+> warnings when building with W=1. So something must be wrong at your side. Did you
+> perhaps start from linux-next to prepare this patch? If so, please submit this
+> patch to Stephen Rothwell.
 
-> On Sat, Dec 08, 2018 at 04:56:45PM -0200, Marcelo Schmitt wrote:
-> > Parts of this work came from contributions of Alexandru Ardelean and
-> > Dragos Bogdan, I and Gabriel would like to thank for the insights
-> > provided by their previous patches. Maybe it would be the case to add
-> > them as co-authors of this patch set.  
-> 
-> That's what the Co-developed-by: tag is for, please use it :)
-> 
-Alexandru, Dragos.  No idea how involved you were in the actual
-patch...
+Yes, I tried to make clear that the two branches are fine by themselves, sorry
+if I was still ambiguous. The patch is currently only needed on linux-next
+as far as I can tell, but we should avoid getting the same error when the
+branches are merged in mainline.
 
-Work amongst amongst the 4 of you what you would like to do and
-let us know!
-
-Patches look fine, though we need to let the DT maintainers have a few
-days at least to get around to looking if they want to (they don't always
-on simple bindings like these).
-
-Jonathan
- 
+        Arnd
