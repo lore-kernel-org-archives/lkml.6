@@ -2,132 +2,170 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70EDCC5CFFE
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 16:30:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F6C4C04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 16:30:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3425820870
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 16:30:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="PnMRjqZl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3425820870
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 5D97B20821
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 16:30:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D97B20821
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728422AbeLJQaS (ORCPT
+        id S1728552AbeLJQaY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 11:30:18 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:36242 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728363AbeLJQaR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 11:30:17 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=zEsOiUzkbEW8saZNsMSivBg6BdsTy4R+5g/ZTmLpSgg=; b=PnMRjqZleQwDHG5nYauUuOaIC
-        s7cheZD42BFjMIg2W0DR3cYKGiUJP/gXgO1OZEMTYWKPWm3Z//9mE7jX+nlX5vd7Ur5IcVYAL/J5F
-        GaucJwMOsXhUgDO8/vgEZLIl/nK8NRNmtrkhcIGwS6oQevanwWvhKyi85UVdm++8MMdjFrlb3UYR4
-        /nakFjPfS87rtNRxV+0xRe1mtPd3vM4Mn7k6r+JY0R8BWB4MC3u59cBOWw8i7YWIUkDRH2nQ8k9wB
-        oB1OwarPG8XcKNC/eS6VwuJkqe4l5enZeldadJjb9w6AQ4jg7XaEXrb5v4K2osx+wpeDqGYUpbJRy
-        smFMLb3eQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gWORf-0001fB-D8; Mon, 10 Dec 2018 16:30:11 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 109CD2075BD14; Mon, 10 Dec 2018 17:30:09 +0100 (CET)
-Date:   Mon, 10 Dec 2018 17:30:09 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
-        DRI Development <dri-devel@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        David Rientjes <rientjes@google.com>,
-        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        Daniel Vetter <daniel.vetter@intel.com>
-Subject: Re: [PATCH 2/4] kernel.h: Add non_block_start/end()
-Message-ID: <20181210163009.GR5289@hirez.programming.kicks-ass.net>
-References: <20181210103641.31259-1-daniel.vetter@ffwll.ch>
- <20181210103641.31259-3-daniel.vetter@ffwll.ch>
- <20181210141337.GQ1286@dhcp22.suse.cz>
- <20181210144711.GN5289@hirez.programming.kicks-ass.net>
- <20181210150159.GR1286@dhcp22.suse.cz>
- <20181210152253.GP5289@hirez.programming.kicks-ass.net>
- <20181210162010.GS1286@dhcp22.suse.cz>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181210162010.GS1286@dhcp22.suse.cz>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Mon, 10 Dec 2018 11:30:24 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:58252 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728373AbeLJQaV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Dec 2018 11:30:21 -0500
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 7FD204E916;
+        Mon, 10 Dec 2018 16:30:20 +0000 (UTC)
+Received: from llong.com (dhcp-17-223.bos.redhat.com [10.18.17.223])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 0191D5C1B4;
+        Mon, 10 Dec 2018 16:30:14 +0000 (UTC)
+From:   Waiman Long <longman@redhat.com>
+To:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     kasan-dev@googlegroups.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org,
+        Alexander Potapenko <glider@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Waiman Long <longman@redhat.com>
+Subject: [PATCH] mm/page_alloc: Don't call kasan_free_pages() at deferred mem init
+Date:   Mon, 10 Dec 2018 11:29:48 -0500
+Message-Id: <1544459388-8736-1-git-send-email-longman@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Mon, 10 Dec 2018 16:30:20 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 10, 2018 at 05:20:10PM +0100, Michal Hocko wrote:
-> > OK, no real objections to the thing.  Just so long we're all on the same
-> > page as to what it does and doesn't do ;-)
-> 
-> I am not really sure whether there are other potential users besides
-> this one and whether the check as such is justified.
+When CONFIG_KASAN is enabled on large memory SMP systems, the deferrred
+pages initialization can take a long time. Below were the reported init
+times on a 8-socket 96-core 4TB IvyBridge system.
 
-It's a debug option...
+  1) Non-debug kernel without CONFIG_KASAN
+     [    8.764222] node 1 initialised, 132086516 pages in 7027ms
 
-> > I suppose you could extend the check to include schedule_debug() as
-> > well, maybe something like:
-> 
-> Do you mean to make the check cheaper?
+  2) Debug kernel with CONFIG_KASAN
+     [  146.288115] node 1 initialised, 132075466 pages in 143052ms
 
-Nah, so the patch only touched might_sleep(), the below touches
-schedule().
+So the page init time in a debug kernel was 20X of the non-debug kernel.
+The long init time can be problematic as the page initialization is
+done with interrupt disabled. In this particular case, it caused the
+appearance of following warning messages as well as NMI backtraces
+of all the cores that were doing the initialization.
 
-If there were a patch that hits schedule() without going through a
-might_sleep() (rare in practise I think, but entirely possible) then you
-won't get a splat without something like the below on top.
+[   68.240049] rcu: INFO: rcu_sched detected stalls on CPUs/tasks:
+[   68.241000] rcu: 	25-...0: (100 ticks this GP) idle=b72/1/0x4000000000000000 softirq=915/915 fqs=16252
+[   68.241000] rcu: 	44-...0: (95 ticks this GP) idle=49a/1/0x4000000000000000 softirq=788/788 fqs=16253
+[   68.241000] rcu: 	54-...0: (104 ticks this GP) idle=03a/1/0x4000000000000000 softirq=721/825 fqs=16253
+[   68.241000] rcu: 	60-...0: (103 ticks this GP) idle=cbe/1/0x4000000000000000 softirq=637/740 fqs=16253
+[   68.241000] rcu: 	72-...0: (105 ticks this GP) idle=786/1/0x4000000000000000 softirq=536/641 fqs=16253
+[   68.241000] rcu: 	84-...0: (99 ticks this GP) idle=292/1/0x4000000000000000 softirq=537/537 fqs=16253
+[   68.241000] rcu: 	111-...0: (104 ticks this GP) idle=bde/1/0x4000000000000000 softirq=474/476 fqs=16253
+[   68.241000] rcu: 	(detected by 13, t=65018 jiffies, g=249, q=2)
 
-> > diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-> > index f66920173370..b1aaa278f1af 100644
-> > --- a/kernel/sched/core.c
-> > +++ b/kernel/sched/core.c
-> > @@ -3278,13 +3278,18 @@ static noinline void __schedule_bug(struct task_struct *prev)
-> >  /*
-> >   * Various schedule()-time debugging checks and statistics:
-> >   */
-> > -static inline void schedule_debug(struct task_struct *prev)
-> > +static inline void schedule_debug(struct task_struct *prev, bool preempt)
-> >  {
-> >  #ifdef CONFIG_SCHED_STACK_END_CHECK
-> >  	if (task_stack_end_corrupted(prev))
-> >  		panic("corrupted stack end detected inside scheduler\n");
-> >  #endif
-> >  
-> > +#ifdef CONFIG_DEBUG_ATOMIC_SLEEP
-> > +	if (!preempt && prev->state && prev->non_block_count)
-> > +		// splat
-> > +#endif
-> > +
-> >  	if (unlikely(in_atomic_preempt_off())) {
-> >  		__schedule_bug(prev);
-> >  		preempt_count_set(PREEMPT_DISABLED);
-> > @@ -3391,7 +3396,7 @@ static void __sched notrace __schedule(bool preempt)
-> >  	rq = cpu_rq(cpu);
-> >  	prev = rq->curr;
-> >  
-> > -	schedule_debug(prev);
-> > +	schedule_debug(prev, preempt);
-> >  
-> >  	if (sched_feat(HRTICK))
-> >  		hrtick_clear(rq);
-> 
-> -- 
-> Michal Hocko
-> SUSE Labs
+The long init time was mainly caused by the call to kasan_free_pages() to
+poison the newly initialized pages. On a 4TB system, we are talking about
+almost 500GB of memory probably on the same node.
+
+In reality, we may not need to poison the newly initialized pages before
+they are ever allocated. So KASAN poisoning of freed pages before the
+completion of deferred memory initialization is now disabled. Those
+pages will be properly poisoned when they are allocated or freed after
+deferred pages initialization is done.
+
+With this change, the new page initialization time became:
+
+[   21.948010] node 1 initialised, 132075466 pages in 18702ms
+
+This was still about double the non-debug kernel time, but was much
+better than before.
+
+Signed-off-by: Waiman Long <longman@redhat.com>
+---
+ mm/page_alloc.c | 37 +++++++++++++++++++++++++++++--------
+ 1 file changed, 29 insertions(+), 8 deletions(-)
+
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index 2ec9cc4..941161d 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -294,6 +294,32 @@ bool pm_suspended_storage(void)
+ int page_group_by_mobility_disabled __read_mostly;
+ 
+ #ifdef CONFIG_DEFERRED_STRUCT_PAGE_INIT
++/*
++ * During boot we initialize deferred pages on-demand, as needed, but once
++ * page_alloc_init_late() has finished, the deferred pages are all initialized,
++ * and we can permanently disable that path.
++ */
++static DEFINE_STATIC_KEY_TRUE(deferred_pages);
++
++/*
++ * Calling kasan_free_pages() only after deferred memory initialization
++ * has completed. Poisoning pages during deferred memory init will greatly
++ * lengthen the process and cause problem in large memory systems as the
++ * deferred pages initialization is done with interrupt disabled.
++ *
++ * Assuming that there will be no reference to those newly initialized
++ * pages before they are ever allocated, this should have no effect on
++ * KASAN memory tracking as the poison will be properly inserted at page
++ * allocation time. The only corner case is when pages are allocated by
++ * on-demand allocation and then freed again before the deferred pages
++ * initialization is done, but this is not likely to happen.
++ */
++static inline void kasan_free_nondeferred_pages(struct page *page, int order)
++{
++	if (!static_branch_unlikely(&deferred_pages))
++		kasan_free_pages(page, order);
++}
++
+ /* Returns true if the struct page for the pfn is uninitialised */
+ static inline bool __meminit early_page_uninitialised(unsigned long pfn)
+ {
+@@ -335,6 +361,8 @@ static inline bool __meminit early_page_uninitialised(unsigned long pfn)
+ 	return false;
+ }
+ #else
++#define kasan_free_nondeferred_pages(p, o)	kasan_free_pages(p, o)
++
+ static inline bool early_page_uninitialised(unsigned long pfn)
+ {
+ 	return false;
+@@ -1037,7 +1065,7 @@ static __always_inline bool free_pages_prepare(struct page *page,
+ 	arch_free_page(page, order);
+ 	kernel_poison_pages(page, 1 << order, 0);
+ 	kernel_map_pages(page, 1 << order, 0);
+-	kasan_free_pages(page, order);
++	kasan_free_nondeferred_pages(page, order);
+ 
+ 	return true;
+ }
+@@ -1606,13 +1634,6 @@ static int __init deferred_init_memmap(void *data)
+ }
+ 
+ /*
+- * During boot we initialize deferred pages on-demand, as needed, but once
+- * page_alloc_init_late() has finished, the deferred pages are all initialized,
+- * and we can permanently disable that path.
+- */
+-static DEFINE_STATIC_KEY_TRUE(deferred_pages);
+-
+-/*
+  * If this zone has deferred pages, try to grow it by initializing enough
+  * deferred pages to satisfy the allocation specified by order, rounded up to
+  * the nearest PAGES_PER_SECTION boundary.  So we're adding memory in increments
+-- 
+1.8.3.1
+
