@@ -2,115 +2,123 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08CFCC04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 09:00:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13698C04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 09:00:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C90342082F
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 09:00:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C90342082F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id D4E8520865
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 09:00:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D4E8520865
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726860AbeLJJAE (ORCPT
+        id S1726872AbeLJJAz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 04:00:04 -0500
-Received: from foss.arm.com ([217.140.101.70]:48938 "EHLO foss.arm.com"
+        Mon, 10 Dec 2018 04:00:55 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:50889 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726769AbeLJJAE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 04:00:04 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id ACB321596;
-        Mon, 10 Dec 2018 01:00:03 -0800 (PST)
-Received: from localhost (e113682-lin.copenhagen.arm.com [10.32.144.41])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4648C3F575;
-        Mon, 10 Dec 2018 01:00:03 -0800 (PST)
-Date:   Mon, 10 Dec 2018 10:00:01 +0100
-From:   Christoffer Dall <christoffer.dall@arm.com>
-To:     Suzuki K Poulose <suzuki.poulose@arm.com>
-Cc:     Anshuman Khandual <anshuman.khandual@arm.com>,
-        Punit Agrawal <punit.agrawal@arm.com>,
-        kvmarm@lists.cs.columbia.edu, marc.zyngier@arm.com,
-        will.deacon@arm.com, linux-kernel@vger.kernel.org,
-        punitagrawal@gmail.com, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v9 2/8] KVM: arm/arm64: Re-factor setting the Stage 2
- entry to exec on fault
-Message-ID: <20181210090001.GD30263@e113682-lin.lund.arm.com>
-References: <20181031175745.18650-1-punit.agrawal@arm.com>
- <20181031175745.18650-3-punit.agrawal@arm.com>
- <12212830-ffc6-a0e0-5de6-3e6a15ed7141@arm.com>
- <f078ae84-9906-4394-957f-8f041b08827f@arm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f078ae84-9906-4394-957f-8f041b08827f@arm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        id S1726531AbeLJJAy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Dec 2018 04:00:54 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 6D51820CE8; Mon, 10 Dec 2018 10:00:52 +0100 (CET)
+Received: from aptenodytes (aaubervilliers-681-1-79-44.w90-88.abo.wanadoo.fr [90.88.21.44])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 57D8A20E31;
+        Mon, 10 Dec 2018 10:00:34 +0100 (CET)
+Message-ID: <c276fb045ab285c0907c4831f3b71a31f09cd4a5.camel@bootlin.com>
+Subject: Re: [linux-sunxi] [PATCH v2 15/15] arm64: dts: allwinner: a64: Add
+ Video Engine node
+From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+To:     Jernej =?UTF-8?Q?=C5=A0krabec?= <jernej.skrabec@gmail.com>,
+        linux-sunxi@googlegroups.com
+Cc:     linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        devel@driverdev.osuosl.org,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>
+Date:   Mon, 10 Dec 2018 10:00:34 +0100
+In-Reply-To: <2823800.C4zEU5jiS7@jernej-laptop>
+References: <20181205092444.29497-1-paul.kocialkowski@bootlin.com>
+         <20181205092444.29497-16-paul.kocialkowski@bootlin.com>
+         <2823800.C4zEU5jiS7@jernej-laptop>
+Organization: Bootlin
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 05, 2018 at 10:47:10AM +0000, Suzuki K Poulose wrote:
-> 
-> 
-> On 03/12/2018 13:32, Anshuman Khandual wrote:
-> >
-> >
-> >On 10/31/2018 11:27 PM, Punit Agrawal wrote:
-> >>Stage 2 fault handler marks a page as executable if it is handling an
-> >>execution fault or if it was a permission fault in which case the
-> >>executable bit needs to be preserved.
-> >>
-> >>The logic to decide if the page should be marked executable is
-> >>duplicated for PMD and PTE entries. To avoid creating another copy
-> >>when support for PUD hugepages is introduced refactor the code to
-> >>share the checks needed to mark a page table entry as executable.
-> >>
-> >>Signed-off-by: Punit Agrawal <punit.agrawal@arm.com>
-> >>Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-> >>Cc: Christoffer Dall <christoffer.dall@arm.com>
-> >>Cc: Marc Zyngier <marc.zyngier@arm.com>
-> >>---
-> >>  virt/kvm/arm/mmu.c | 28 +++++++++++++++-------------
-> >>  1 file changed, 15 insertions(+), 13 deletions(-)
-> >>
-> >>diff --git a/virt/kvm/arm/mmu.c b/virt/kvm/arm/mmu.c
-> >>index 59595207c5e1..6912529946fb 100644
-> >>--- a/virt/kvm/arm/mmu.c
-> >>+++ b/virt/kvm/arm/mmu.c
-> >>@@ -1475,7 +1475,8 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
-> >>  			  unsigned long fault_status)
-> >>  {
-> >>  	int ret;
-> >>-	bool write_fault, exec_fault, writable, force_pte = false;
-> >>+	bool write_fault, writable, force_pte = false;
-> >>+	bool exec_fault, needs_exec;
-> >
-> >New line not required, still within 80 characters.
-> >
-> >>  	unsigned long mmu_seq;
-> >>  	gfn_t gfn = fault_ipa >> PAGE_SHIFT;
-> >>  	struct kvm *kvm = vcpu->kvm;
-> >>@@ -1598,19 +1599,25 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
-> >>  	if (exec_fault)
-> >>  		invalidate_icache_guest_page(pfn, vma_pagesize);
-> >>+	/*
-> >>+	 * If we took an execution fault we have made the
-> >>+	 * icache/dcache coherent above and should now let the s2
-> >
-> >Coherent or invalidated with invalidate_icache_guest_page ?
-> 
-> We also do clean_dcache above if needed. So that makes sure
-> the data is coherent. Am I missing something here ?
-> 
+Hi,
 
-I think you've got it right.  We have made the icache coherent with the
-data/instructions in the page by invalidating the icache.  I think the
-comment is ok either way.
+On Fri, 2018-12-07 at 22:22 +0100, Jernej Škrabec wrote:
+> Hi!
+> 
+> Dne sreda, 05. december 2018 ob 10:24:44 CET je Paul Kocialkowski napisal(a):
+> > This adds the Video Engine node for the A64. Since it can map the whole
+> > DRAM range, there is no particular need for a reserved memory node
+> > (unlike platforms preceding the A33).
+> > 
+> > Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+> > ---
+> >  arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 11 +++++++++++
+> >  1 file changed, 11 insertions(+)
+> > 
+> > diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+> > b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi index
+> > 8557d52c7c99..8d024c10d7cb 100644
+> > --- a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+> > +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+> > @@ -397,6 +397,17 @@
+> >  			};
+> >  		};
+> > 
+> > +		video-codec@1c0e000 {
+> > +			compatible = "allwinner,sun50i-h5-video-engine";
+> 
+> You meant A64 instead of H5, right?
 
-Thanks,
+Ah yes definitely, that's a mistake right here.
 
-    Christoffer
+I'll send a follow-up patch for switching the compatible to describe
+the a64 instead of the h5. In practice, having the a64 use the h5
+compatible doesn't cause any issue, but it should be fixed
+nevertheless.
+
+Cheers,
+
+Paul
+
+> Best regards,
+> Jernej
+> 
+> > +			reg = <0x01c0e000 0x1000>;
+> > +			clocks = <&ccu CLK_BUS_VE>, <&ccu CLK_VE>,
+> > +				 <&ccu CLK_DRAM_VE>;
+> > +			clock-names = "ahb", "mod", "ram";
+> > +			resets = <&ccu RST_BUS_VE>;
+> > +			interrupts = <GIC_SPI 58 IRQ_TYPE_LEVEL_HIGH>;
+> > +			allwinner,sram = <&ve_sram 1>;
+> > +		};
+> > +
+> >  		mmc0: mmc@1c0f000 {
+> >  			compatible = "allwinner,sun50i-a64-mmc";
+> >  			reg = <0x01c0f000 0x1000>;
+> 
+> 
+> 
+-- 
+Paul Kocialkowski, Bootlin (formerly Free Electrons)
+Embedded Linux and kernel engineering
+https://bootlin.com
+
