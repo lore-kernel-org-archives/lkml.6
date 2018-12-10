@@ -2,256 +2,108 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0028FC5CFFE
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 21:41:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EF52C04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 21:41:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B35D72082F
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 21:41:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B35D72082F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 6BA882082F
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 21:41:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6BA882082F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziswiler.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730131AbeLJVlg (ORCPT
+        id S1730145AbeLJVlo convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 16:41:36 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:36344 "EHLO mx1.redhat.com"
+        Mon, 10 Dec 2018 16:41:44 -0500
+Received: from mout.perfora.net ([74.208.4.196]:45169 "EHLO mout.perfora.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730045AbeLJVlN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 16:41:13 -0500
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 79439C014177;
-        Mon, 10 Dec 2018 21:41:11 +0000 (UTC)
-Received: from llong.com (dhcp-17-223.bos.redhat.com [10.18.17.223])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id DA9C25C225;
-        Mon, 10 Dec 2018 21:41:09 +0000 (UTC)
-From:   Waiman Long <longman@redhat.com>
-To:     Tejun Heo <tj@kernel.org>, Li Zefan <lizefan@huawei.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Johannes Weiner <hannes@cmpxchg.org>
-Cc:     cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-api@vger.kernel.org,
-        Roman Gushchin <guro@fb.com>, Jens Axboe <axboe@kernel.dk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dennis Zhou <dennis@kernel.org>,
-        Shakeel Butt <shakeelb@google.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Waiman Long <longman@redhat.com>
-Subject: [PATCH v5 2/5] cgroup: Allow reenabling of controller in bypass mode
-Date:   Mon, 10 Dec 2018 16:40:55 -0500
-Message-Id: <1544478058-24252-3-git-send-email-longman@redhat.com>
-In-Reply-To: <1544478058-24252-1-git-send-email-longman@redhat.com>
-References: <1544478058-24252-1-git-send-email-longman@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Mon, 10 Dec 2018 21:41:12 +0000 (UTC)
+        id S1730045AbeLJVln (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Dec 2018 16:41:43 -0500
+Received: from [10.185.195.207] ([178.197.229.26]) by mrelay.perfora.net
+ (mreueus001 [74.208.5.2]) with ESMTPSA (Nemesis) id 0LkRO1-1h33680TbX-00cS83;
+ Mon, 10 Dec 2018 22:41:31 +0100
+Date:   Mon, 10 Dec 2018 22:41:24 +0100
+User-Agent: K-9 Mail for Android
+In-Reply-To: <20181128092404.GF17419@ulmo>
+References: <20181101015230.27310-1-marcel@ziswiler.com> <20181101015230.27310-3-marcel@ziswiler.com> <20181101084152.GS7636@tbergstrom-lnx.Nvidia.com> <20181128092404.GF17419@ulmo>
+MIME-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: 8BIT
+Subject: Re: [PATCH v1 2/3] clk: tegra: ignore unused vfir clock shared with uartb
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>
+CC:     linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org
+From:   Marcel Ziswiler <marcel@ziswiler.com>
+Message-ID: <929FC681-E2DE-42FA-803A-AEDBD9779523@ziswiler.com>
+X-Provags-ID: V03:K1:F1lgV2Kan2hAx36regNTdHl76cuonDjifIzlJlZZ9y0d+PoN2+w
+ A3PQz7mMaCo1AVPSTaLQY3hEMPdDO8Gudj6NsMLQGQkJHIV5XMs7vW1BMBpJKnXlyLLaFay
+ zECU5f2+ardWY9cowPYwgB57rGj9oYlCI/+ens546J4ZXU6uiJqubx8NkL0+fGPirl7WDsg
+ WwLB4Rl7dUSEEBcEeLGmA==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:xo0u5yJSHwM=:fLdmI7bNH7q/f1fjwhgHa9
+ ARuhngCOinsdfWj46wqqYzAAJhrpW0mm4R5yt6dMEHfyFsgxeib7fAI7A28gX0tU5mnTAMC7z
+ /X/of72e6/jMwfZpwch841b0Hf68FscG8JEGeaUq2SNQT1+bXga/aZicPTpDyCsIQHavgHETy
+ 0nb0Vi6zubCrMUroRyhthyw2HUImfjXaMGzG8jWiglGMpd2hz3f2oXdYo9WnAGNTUDg6f16Zy
+ JAAh9MXvHp7XKnl1BDsnem04FK0Gvyi/tCCenRwta6ZSZbf+7geAUxhkb1yLBqpayPWMjK9qV
+ T0kXVtXtaf7zMUlYGjzPivExTIfJ1amdSDdoWwKpNQ1oDYzjkjhhwITDC7MLz7zqvQaG1Febe
+ QdV5b6WQDrPWVsHDVxVyVLdo26TN5BqEndHtffqMJPMfY4FTKU1Y7yYwFGXrtLrC7z1XMIsya
+ Hgh2JghMHssnO/bf6MYYFoCgZsure4LuqHMivr06KUE9g6R1fkI2hG8nnK7VET0iwEJgLyqkC
+ m7IMiFcVr5FWDqd/wu90SIJdnJxJvdOVys30ILHfRtTZ5Q2SZ8jv+YwhkVbf9008TctI3duUH
+ JfvRanpJ4wJpUZoJVrHlD3UxG96rbgTaiWCfEaBICYGez7VrVoDniS4eabo8v9XVFZlSIuvhg
+ UDaEXfluniAD+SGsFtWVdPN81KeBL1873pL/R0v+Q2jJBk4K3Skbgu+pGmjzU5EiR/0Ee2Nnr
+ XtiVV8uSEyzxRj0BzQUMQeOpoTU6EqZpZB3OdQZyeDvc+3XsKJAiUymi6kA=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Bypassable controllers set to bypass mode in the parent's
-"cgroup.subtree_control" can now be optionally enabled by writing the
-controller name with the '+' prefix to "cgroup.controllers". Using the
-'#' prefix will reset it back to the bypass state.
 
-This capability allows a cgroup parent to individually enable bypassable
-controllers in a subset of its children instead of either all or none
-of them. This increases the flexibility each controller has in shaping
-the effective cgroup hierarchy to best suit its need.
 
-Signed-off-by: Waiman Long <longman@redhat.com>
----
- include/linux/cgroup-defs.h |   7 +++
- kernel/cgroup/cgroup.c      | 109 ++++++++++++++++++++++++++++++++++++++++++--
- 2 files changed, 113 insertions(+), 3 deletions(-)
+On November 28, 2018 10:24:04 AM GMT+01:00, Thierry Reding <thierry.reding@gmail.com> wrote:
+>On Thu, Nov 01, 2018 at 10:41:52AM +0200, Peter De Schrijver wrote:
+>> On Thu, Nov 01, 2018 at 02:52:29AM +0100, Marcel Ziswiler wrote:
+>> > From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+>> > 
+>> > As UARTB and VFIR share their clock enable bit it is rather unwise
+>for
+>> > the kernel to turn off the VFIR one should that be unused (and
+>> > potentially vice versa but so far there anyway is no VFIR driver).
+>> > 
+>> > Without this patch trying to use UARTB with the regular 8250 driver
+>> > will freeze as soon as ttyS1 is accessed after boot. Luckily, using
+>the
+>> > high-speed Tegra serial driver won't exhibit the issue as clocks
+>are
+>> > dynamically enabled/disabled on every access.
+>> > 
+>> > This has been reproduced both on Apalis T30 as well as Apalis TK1
+>but
+>> > may be an issue on all Tegra UARTB's which share the clock enable
+>with
+>> > VFIR.
+>> > 
+>> 
+>> Ah.. the correct fix for this is to initialize the enable_refcnt
+>based on the
+>> hw state. This is done in 9619dba8325fce098bbc9ee2911d1b0150fec0c9
+>for
+>> periph gate clocks, but obviously also applies to normal periph
+>clocks.
+>
+>Hi Marcel,
+>
+>were you going to send a new version with the alternative fix as
+>suggested by Peter?
 
-diff --git a/include/linux/cgroup-defs.h b/include/linux/cgroup-defs.h
-index 5bff798..ab1b355 100644
---- a/include/linux/cgroup-defs.h
-+++ b/include/linux/cgroup-defs.h
-@@ -388,6 +388,13 @@ struct cgroup {
- 	u16 old_subtree_ss_mask;
- 	u16 old_subtree_bypass;
- 
-+	/*
-+	 * The bitmask of subsystems that are set in its parent's
-+	 * ->subtree_bypass and explicitly enabled in this cgroup.
-+	 */
-+	u16 enable_ss_mask;
-+	u16 old_enable_ss_mask;
-+
- 	/* Private pointers for each registered subsystem */
- 	struct cgroup_subsys_state __rcu *subsys[CGROUP_SUBSYS_COUNT];
- 
-diff --git a/kernel/cgroup/cgroup.c b/kernel/cgroup/cgroup.c
-index 8a729e4..7aa77b1 100644
---- a/kernel/cgroup/cgroup.c
-+++ b/kernel/cgroup/cgroup.c
-@@ -424,7 +424,7 @@ static u16 cgroup_control(struct cgroup *cgrp, bool show_bypass)
- 	u16 root_ss_mask = cgrp->root->subsys_mask;
- 
- 	if (parent) {
--		u16 ss_mask = parent->subtree_control;
-+		u16 ss_mask = parent->subtree_control|cgrp->enable_ss_mask;
- 
- 		if (show_bypass)
- 			ss_mask |= parent->subtree_bypass;
-@@ -447,7 +447,7 @@ static u16 cgroup_ss_mask(struct cgroup *cgrp, bool show_bypass)
- 	struct cgroup *parent = cgroup_parent(cgrp);
- 
- 	if (parent) {
--		u16 ss_mask = parent->subtree_ss_mask;
-+		u16 ss_mask = parent->subtree_ss_mask|cgrp->enable_ss_mask;
- 
- 
- 		if (show_bypass)
-@@ -2874,6 +2874,7 @@ static void cgroup_save_control(struct cgroup *cgrp)
- 		dsct->old_subtree_control = dsct->subtree_control;
- 		dsct->old_subtree_ss_mask = dsct->subtree_ss_mask;
- 		dsct->old_subtree_bypass  = dsct->subtree_bypass;
-+		dsct->old_enable_ss_mask  = dsct->enable_ss_mask;
- 		dsct->old_dom_cgrp = dsct->dom_cgrp;
- 	}
- }
-@@ -2919,6 +2920,7 @@ static void cgroup_restore_control(struct cgroup *cgrp)
- 		dsct->subtree_control = dsct->old_subtree_control;
- 		dsct->subtree_ss_mask = dsct->old_subtree_ss_mask;
- 		dsct->subtree_bypass  = dsct->old_subtree_bypass;
-+		dsct->enable_ss_mask  = dsct->old_enable_ss_mask;
- 		dsct->dom_cgrp = dsct->old_dom_cgrp;
- 	}
- }
-@@ -3197,7 +3199,8 @@ static ssize_t cgroup_subtree_control_write(struct kernfs_open_file *of,
- 	}
- 
- 	cgroup_for_each_live_child(child, cgrp)
--		child_enable |= child->subtree_control|child->subtree_bypass;
-+		child_enable |= child->subtree_control|child->subtree_bypass|
-+				child->enable_ss_mask;
- 
- 	/*
- 	 * Cannot change the state of a controller if enabled in children.
-@@ -3230,6 +3233,105 @@ static ssize_t cgroup_subtree_control_write(struct kernfs_open_file *of,
- 	return ret ?: nbytes;
- }
- 
-+/*
-+ * Change bypass status of controllers for a cgroup in the default hierarchy.
-+ */
-+static ssize_t cgroup_controllers_write(struct kernfs_open_file *of,
-+					char *buf, size_t nbytes,
-+					loff_t off)
-+{
-+	u16 enable = 0, bypass = 0;
-+	struct cgroup *cgrp, *parent;
-+	struct cgroup_subsys *ss;
-+	char *tok;
-+	int ssid, ret;
-+
-+	/*
-+	 * Parse input - space separated list of subsystem names prefixed
-+	 * with either + or #.
-+	 */
-+	buf = strstrip(buf);
-+	while ((tok = strsep(&buf, " "))) {
-+		if (tok[0] == '\0')
-+			continue;
-+		do_each_subsys_mask(ss, ssid, ~cgrp_dfl_inhibit_ss_mask) {
-+			if (!cgroup_ssid_enabled(ssid) ||
-+			    strcmp(tok + 1, ss->name))
-+				continue;
-+
-+			if (*tok == '+') {
-+				enable |= 1 << ssid;
-+				bypass &= ~(1 << ssid);
-+			} else if (*tok == '#') {
-+				bypass |= 1 << ssid;
-+				enable &= ~(1 << ssid);
-+			} else {
-+				return -EINVAL;
-+			}
-+			break;
-+		} while_each_subsys_mask();
-+		if (ssid == CGROUP_SUBSYS_COUNT)
-+			return -EINVAL;
-+	}
-+
-+	cgrp = cgroup_kn_lock_live(of->kn, true);
-+	if (!cgrp)
-+		return -ENODEV;
-+
-+	/*
-+	 * Write to root cgroup's controllers file is not allowed.
-+	 */
-+	parent = cgroup_parent(cgrp);
-+	if (!parent) {
-+		ret = -EINVAL;
-+		goto out_unlock;
-+	}
-+
-+	/*
-+	 * Only controllers set into bypass mode in the parent cgroup
-+	 * can be specified here.
-+	 */
-+	if (~parent->subtree_bypass & (enable|bypass)) {
-+		ret = -ENOENT;
-+		goto out_unlock;
-+	}
-+
-+	/*
-+	 * Mask off irrelevant bits.
-+	 */
-+	enable &= ~cgrp->enable_ss_mask;
-+	bypass &=  cgrp->enable_ss_mask;
-+
-+	if (!(enable|bypass)) {
-+		ret = 0;
-+		goto out_unlock;
-+	}
-+
-+	/*
-+	 * We cannot change the bypass state of a controller that is enabled
-+	 * in subtree_control.
-+	 */
-+	if ((cgrp->subtree_control|cgrp->subtree_bypass) & (enable|bypass)) {
-+		ret = -EBUSY;
-+		goto out_unlock;
-+	}
-+
-+	/* Save and update control masks and prepare csses */
-+	cgroup_save_control(cgrp);
-+
-+	cgrp->enable_ss_mask |= enable;
-+	cgrp->enable_ss_mask &= ~bypass;
-+
-+	ret = cgroup_apply_control(cgrp);
-+	cgroup_finalize_control(cgrp, ret);
-+	kernfs_activate(cgrp->kn);
-+	ret = 0;
-+
-+out_unlock:
-+	cgroup_kn_unlock(of->kn);
-+	return ret ?: nbytes;
-+}
-+
- /**
-  * cgroup_enable_threaded - make @cgrp threaded
-  * @cgrp: the target cgroup
-@@ -4573,6 +4675,7 @@ static ssize_t cgroup_threads_write(struct kernfs_open_file *of,
- 	{
- 		.name = "cgroup.controllers",
- 		.seq_show = cgroup_controllers_show,
-+		.write = cgroup_controllers_write,
- 	},
- 	{
- 		.name = "cgroup.subtree_control",
--- 
-1.8.3.1
+Yes, sorry. Let me look at that now.
 
+>Thierry
