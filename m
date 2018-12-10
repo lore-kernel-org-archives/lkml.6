@@ -2,180 +2,186 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E38A3C5CFFE
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 11:41:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A471C5CFFE
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 11:44:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AC39620880
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 11:41:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC39620880
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
+	by mail.kernel.org (Postfix) with ESMTP id 2B29820880
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 11:44:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B29820880
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727531AbeLJLlc (ORCPT
+        id S1727578AbeLJLoE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 06:41:32 -0500
-Received: from pegase1.c-s.fr ([93.17.236.30]:58666 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726146AbeLJLlb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 06:41:31 -0500
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 43D1PP4NhCz9tylK;
-        Mon, 10 Dec 2018 12:41:29 +0100 (CET)
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id RLSczNLKkF5q; Mon, 10 Dec 2018 12:41:29 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 43D1PP3VQ7z9tylJ;
-        Mon, 10 Dec 2018 12:41:29 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 000878B7A9;
-        Mon, 10 Dec 2018 12:41:29 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id gTaV2tp9ZEjP; Mon, 10 Dec 2018 12:41:29 +0100 (CET)
-Received: from po14163vm.idsi0.si.c-s.fr (po15451.idsi0.si.c-s.fr [172.25.231.2])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id CBDCC8B74C;
-        Mon, 10 Dec 2018 12:41:29 +0100 (CET)
-Received: by po14163vm.idsi0.si.c-s.fr (Postfix, from userid 0)
-        id A857D716EF; Mon, 10 Dec 2018 11:41:29 +0000 (UTC)
-Message-Id: <33dbb34cea199dc003cf5b7581faf905d546e0cf.1544441989.git.christophe.leroy@c-s.fr>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH] powerpc/83xx: handle machine check caused by watchdog timer
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date:   Mon, 10 Dec 2018 11:41:29 +0000 (UTC)
+        Mon, 10 Dec 2018 06:44:04 -0500
+Received: from mailgw01.mediatek.com ([210.61.82.183]:4940 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726146AbeLJLoE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Dec 2018 06:44:04 -0500
+X-UUID: 78d59e2f836d44699d08c7e812b31ef2-20181210
+X-UUID: 78d59e2f836d44699d08c7e812b31ef2-20181210
+Received: from mtkmrs01.mediatek.inc [(172.21.131.159)] by mailgw01.mediatek.com
+        (envelope-from <jjian.zhou@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 1090352921; Mon, 10 Dec 2018 19:43:57 +0800
+Received: from mtkcas09.mediatek.inc (172.21.101.178) by
+ mtkmbs08n1.mediatek.inc (172.21.101.55) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Mon, 10 Dec 2018 19:43:56 +0800
+Received: from localhost.localdomain (10.17.3.153) by mtkcas09.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Mon, 10 Dec 2018 19:43:55 +0800
+From:   Jjian Zhou <jjian.zhou@mediatek.com>
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+CC:     Matthias Brugger <matthias.bgg@gmail.com>,
+        Chaotian Jing <chaotian.jing@mediatek.com>,
+        Ryder Lee <ryder.lee@mediatek.com>,
+        jjian zhou <jjian.zhou@mediatek.com>,
+        Sean Wang <sean.wang@mediatek.com>,
+        <linux-mmc@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <srv_heupstream@mediatek.com>, <linux-kernel@vger.kernel.org>,
+        Yong Mao <yong.mao@mediatek.com>
+Subject: [PATCH v3] mmc: mediatek: Add MMC_CAP_SDIO_IRQ support
+Date:   Mon, 10 Dec 2018 19:43:53 +0800
+Message-ID: <1544442233-20303-1-git-send-email-jjian.zhou@mediatek.com>
+X-Mailer: git-send-email 1.9.1
+MIME-Version: 1.0
+Content-Type: text/plain
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When the watchdog timer is set in interrupt mode, it causes a
-machine check when it times out. The purpose of this mode is to
-ease debugging, not to crash the kernel and reboot the machine.
+From: jjian zhou <jjian.zhou@mediatek.com>
 
-This patch implements a special handling for that, in order to not
-crash the kernel if the watchdog times out while in interrupt or
-within the idle task.
+This patch enables support SDIO IRQs. It enables
+MMC_CAP_SDIO_IRQ & MMC_CAP2_SDIO_IRQ_NOTHREAD
+and implement the ->ack_sdio_irq callback.
 
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+Signed-off-by: Jjian Zhou <jjian.zhou@mediatek.com>
+Signed-off-by: Chaotian Jing <chaotian.jing@mediatek.com>
+Signed-off-by: Yong Mao <yong.mao@mediatek.com>
 ---
- arch/powerpc/include/asm/cputable.h |  1 +
- arch/powerpc/include/asm/reg.h      |  2 ++
- arch/powerpc/kernel/cputable.c      | 10 ++++++----
- arch/powerpc/platforms/83xx/misc.c  | 16 ++++++++++++++++
- 4 files changed, 25 insertions(+), 4 deletions(-)
+ drivers/mmc/host/mtk-sd.c | 49 ++++++++++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 46 insertions(+), 3 deletions(-)
 
-diff --git a/arch/powerpc/include/asm/cputable.h b/arch/powerpc/include/asm/cputable.h
-index a0395ccbbe9e..d05f0c28e515 100644
---- a/arch/powerpc/include/asm/cputable.h
-+++ b/arch/powerpc/include/asm/cputable.h
-@@ -44,6 +44,7 @@ extern int machine_check_e500(struct pt_regs *regs);
- extern int machine_check_e200(struct pt_regs *regs);
- extern int machine_check_47x(struct pt_regs *regs);
- int machine_check_8xx(struct pt_regs *regs);
-+int machine_check_83xx(struct pt_regs *regs);
- 
- extern void cpu_down_flush_e500v2(void);
- extern void cpu_down_flush_e500mc(void);
-diff --git a/arch/powerpc/include/asm/reg.h b/arch/powerpc/include/asm/reg.h
-index 0d2139a0d5b9..1c98ef1f2d5b 100644
---- a/arch/powerpc/include/asm/reg.h
-+++ b/arch/powerpc/include/asm/reg.h
-@@ -769,6 +769,8 @@
- #define   SRR1_PROGTRAP		0x00020000 /* Trap */
- #define   SRR1_PROGADDR		0x00010000 /* SRR0 contains subsequent addr */
- 
-+#define   SRR1_MCE_MCP		0x00080000 /* Machine check signal caused interrupt */
+diff --git a/drivers/mmc/host/mtk-sd.c b/drivers/mmc/host/mtk-sd.c
+index 6334cc7..40a1848 100644
+--- a/drivers/mmc/host/mtk-sd.c
++++ b/drivers/mmc/host/mtk-sd.c
+@@ -1114,6 +1114,7 @@ static void msdc_start_command(struct msdc_host *host,
+ 		struct mmc_request *mrq, struct mmc_command *cmd)
+ {
+ 	u32 rawcmd;
++	unsigned long flags;
+
+ 	WARN_ON(host->cmd);
+ 	host->cmd = cmd;
+@@ -1131,7 +1132,10 @@ static void msdc_start_command(struct msdc_host *host,
+ 	cmd->error = 0;
+ 	rawcmd = msdc_cmd_prepare_raw_cmd(host, mrq, cmd);
+
++	spin_lock_irqsave(&host->lock, flags);
+ 	sdr_set_bits(host->base + MSDC_INTEN, cmd_ints_mask);
++	spin_unlock_irqrestore(&host->lock, flags);
 +
- #define SPRN_HSRR0	0x13A	/* Save/Restore Register 0 */
- #define SPRN_HSRR1	0x13B	/* Save/Restore Register 1 */
- #define   HSRR1_DENORM		0x00100000 /* Denorm exception */
-diff --git a/arch/powerpc/kernel/cputable.c b/arch/powerpc/kernel/cputable.c
-index 2da01340c84c..1eab54bc6ee9 100644
---- a/arch/powerpc/kernel/cputable.c
-+++ b/arch/powerpc/kernel/cputable.c
-@@ -1141,6 +1141,7 @@ static struct cpu_spec __initdata cpu_specs[] = {
- 		.machine_check		= machine_check_generic,
- 		.platform		= "ppc603",
- 	},
-+#ifdef CONFIG_PPC_83xx
- 	{	/* e300c1 (a 603e core, plus some) on 83xx */
- 		.pvr_mask		= 0x7fff0000,
- 		.pvr_value		= 0x00830000,
-@@ -1151,7 +1152,7 @@ static struct cpu_spec __initdata cpu_specs[] = {
- 		.icache_bsize		= 32,
- 		.dcache_bsize		= 32,
- 		.cpu_setup		= __setup_cpu_603,
--		.machine_check		= machine_check_generic,
-+		.machine_check		= machine_check_83xx,
- 		.platform		= "ppc603",
- 	},
- 	{	/* e300c2 (an e300c1 core, plus some, minus FPU) on 83xx */
-@@ -1165,7 +1166,7 @@ static struct cpu_spec __initdata cpu_specs[] = {
- 		.icache_bsize		= 32,
- 		.dcache_bsize		= 32,
- 		.cpu_setup		= __setup_cpu_603,
--		.machine_check		= machine_check_generic,
-+		.machine_check		= machine_check_83xx,
- 		.platform		= "ppc603",
- 	},
- 	{	/* e300c3 (e300c1, plus one IU, half cache size) on 83xx */
-@@ -1179,7 +1180,7 @@ static struct cpu_spec __initdata cpu_specs[] = {
- 		.icache_bsize		= 32,
- 		.dcache_bsize		= 32,
- 		.cpu_setup		= __setup_cpu_603,
--		.machine_check		= machine_check_generic,
-+		.machine_check		= machine_check_83xx,
- 		.num_pmcs		= 4,
- 		.oprofile_cpu_type	= "ppc/e300",
- 		.oprofile_type		= PPC_OPROFILE_FSL_EMB,
-@@ -1196,12 +1197,13 @@ static struct cpu_spec __initdata cpu_specs[] = {
- 		.icache_bsize		= 32,
- 		.dcache_bsize		= 32,
- 		.cpu_setup		= __setup_cpu_603,
--		.machine_check		= machine_check_generic,
-+		.machine_check		= machine_check_83xx,
- 		.num_pmcs		= 4,
- 		.oprofile_cpu_type	= "ppc/e300",
- 		.oprofile_type		= PPC_OPROFILE_FSL_EMB,
- 		.platform		= "ppc603",
- 	},
-+#endif
- 	{	/* default match, we assume split I/D cache & TB (non-601)... */
- 		.pvr_mask		= 0x00000000,
- 		.pvr_value		= 0x00000000,
-diff --git a/arch/powerpc/platforms/83xx/misc.c b/arch/powerpc/platforms/83xx/misc.c
-index d75c9816a5c9..3e591d159413 100644
---- a/arch/powerpc/platforms/83xx/misc.c
-+++ b/arch/powerpc/platforms/83xx/misc.c
-@@ -150,3 +150,19 @@ void __init mpc83xx_setup_arch(void)
- 
- 	mpc83xx_setup_pci();
+ 	writel(cmd->arg, host->base + SDC_ARG);
+ 	writel(rawcmd, host->base + SDC_CMD);
  }
-+
-+int machine_check_83xx(struct pt_regs *regs)
+@@ -1351,6 +1355,27 @@ static void msdc_request_timeout(struct work_struct *work)
+ 	}
+ }
+
++static void msdc_enable_sdio_irq(struct mmc_host *mmc, int enb)
 +{
-+	u32 mask = 1 << (31 - IPIC_MCP_WDT);
++	unsigned long flags;
++	struct msdc_host *host = mmc_priv(mmc);
 +
-+	if (!(regs->msr & SRR1_MCE_MCP) || !(ipic_get_mcp_status() & mask))
-+		return machine_check_generic(regs);
-+	ipic_clear_mcp_status(mask);
++	if (enb)
++		pm_runtime_get_sync(host->dev);
 +
-+	if (debugger_fault_handler(regs))
-+		return 1;
++	spin_lock_irqsave(&host->lock, flags);
++	if (enb)
++		sdr_set_bits(host->base + MSDC_INTEN, MSDC_INTEN_SDIOIRQ);
++	else
++		sdr_clr_bits(host->base + MSDC_INTEN, MSDC_INTEN_SDIOIRQ);
++	spin_unlock_irqrestore(&host->lock, flags);
 +
-+	die("Watchdog NMI Reset", regs, 0);
-+
-+	return 1;
++	if (!enb) {
++		pm_runtime_mark_last_busy(host->dev);
++		pm_runtime_put_autosuspend(host->dev);
++	}
 +}
--- 
-2.13.3
++
+ static irqreturn_t msdc_irq(int irq, void *dev_id)
+ {
+ 	struct msdc_host *host = (struct msdc_host *) dev_id;
+@@ -1373,7 +1398,12 @@ static irqreturn_t msdc_irq(int irq, void *dev_id)
+ 		data = host->data;
+ 		spin_unlock_irqrestore(&host->lock, flags);
+
+-		if (!(events & event_mask))
++		if ((events & event_mask) & MSDC_INT_SDIOIRQ) {
++			msdc_enable_sdio_irq(host->mmc, 0);
++			sdio_signal_irq(host->mmc);
++		}
++
++		if (!(events & (event_mask & ~MSDC_INT_SDIOIRQ)))
+ 			break;
+
+ 		if (!mrq) {
+@@ -1493,8 +1523,11 @@ static void msdc_init_hw(struct msdc_host *host)
+ 	 */
+ 	sdr_set_bits(host->base + SDC_CFG, SDC_CFG_SDIO);
+
+-	/* disable detect SDIO device interrupt function */
+-	sdr_clr_bits(host->base + SDC_CFG, SDC_CFG_SDIOIDE);
++	/* Config SDIO device detect interrupt function */
++	if (host->mmc->caps & MMC_CAP_SDIO_IRQ)
++		sdr_set_bits(host->base + SDC_CFG, SDC_CFG_SDIOIDE);
++	else
++		sdr_clr_bits(host->base + SDC_CFG, SDC_CFG_SDIOIDE);
+
+ 	/* Configure to default data timeout */
+ 	sdr_set_field(host->base + SDC_CFG, SDC_CFG_DTOC, 3);
+@@ -2013,6 +2046,11 @@ static void msdc_hw_reset(struct mmc_host *mmc)
+ 	sdr_clr_bits(host->base + EMMC_IOCON, 1);
+ }
+
++static void msdc_ack_sdio_irq(struct mmc_host *mmc)
++{
++	msdc_enable_sdio_irq(mmc, 1);
++}
++
+ static const struct mmc_host_ops mt_msdc_ops = {
+ 	.post_req = msdc_post_req,
+ 	.pre_req = msdc_pre_req,
+@@ -2020,6 +2058,8 @@ static void msdc_hw_reset(struct mmc_host *mmc)
+ 	.set_ios = msdc_ops_set_ios,
+ 	.get_ro = mmc_gpio_get_ro,
+ 	.get_cd = mmc_gpio_get_cd,
++	.enable_sdio_irq = msdc_enable_sdio_irq,
++	.ack_sdio_irq = msdc_ack_sdio_irq,
+ 	.start_signal_voltage_switch = msdc_ops_switch_volt,
+ 	.card_busy = msdc_card_busy,
+ 	.execute_tuning = msdc_execute_tuning,
+@@ -2147,6 +2187,9 @@ static int msdc_drv_probe(struct platform_device *pdev)
+ 	else
+ 		mmc->f_min = DIV_ROUND_UP(host->src_clk_freq, 4 * 4095);
+
++	if (mmc->caps & MMC_CAP_SDIO_IRQ)
++		mmc->caps2 |= MMC_CAP2_SDIO_IRQ_NOTHREAD;
++
+ 	mmc->caps |= MMC_CAP_ERASE | MMC_CAP_CMD23;
+ 	/* MMC core transfer sizes tunable parameters */
+ 	mmc->max_segs = MAX_BD_NUM;
+--
+1.9.1
 
