@@ -7,68 +7,67 @@ X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45A64C04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 19:29:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35634C5CFFE
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 19:29:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0528C2084C
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 19:29:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E54A12081F
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 19:29:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="T5fZuKD5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0528C2084C
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="VCpnFlH4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E54A12081F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729328AbeLJT3A (ORCPT
+        id S1729338AbeLJT3F (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 14:29:00 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:45700 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729308AbeLJT27 (ORCPT
+        Mon, 10 Dec 2018 14:29:05 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:33773 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729330AbeLJT3C (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 14:28:59 -0500
-Received: by mail-pf1-f195.google.com with SMTP id g62so5861258pfd.12
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Dec 2018 11:28:58 -0800 (PST)
+        Mon, 10 Dec 2018 14:29:02 -0500
+Received: by mail-pg1-f195.google.com with SMTP id z11so5435323pgu.0
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Dec 2018 11:29:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=gs0TgIJlRi1fcRzieQN8vIKDbS1pjM9AVMbx4uE7Nus=;
-        b=T5fZuKD5TKY7zC4yAOel4JOzkomIqRAGvV98YfPcUIVZWtTN1OOf1XKnnCsNJQ5XVv
-         YBqlm3BwSTwALoPsQZ/Op6+h5KtlxfvFaqst+mJBq+X4VHErfUtu/Rfaa8y4aeb/iDCh
-         hY7FScGbSq/zd/8hw58HLAafyO8fZWm/a/GNk=
+        bh=mDpKJVPFIVctgingBaL+8pLspjfVJhTZ7MqaisuyuDE=;
+        b=VCpnFlH4C1CnLladVa5VvpEjml578hiMborkF683xWusR3xapzDb3OUfI4s+DowuNH
+         OIYq+YvWPMAhB2TaBFiJBrXoMyRadgDLGRsPGryBo1cDN2kZarzCN15Bqw1gXCzpk7w7
+         LoI/XwWqbkPSNhn9JlJ2zogiOY4r4f9gB/lMU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=gs0TgIJlRi1fcRzieQN8vIKDbS1pjM9AVMbx4uE7Nus=;
-        b=maaGUpFUD6B7ynuNd0nPJ/JVr5warpgvDTYh0AoacwTqbuP+2yRk1ZQbxFBLU41qSY
-         JvEJXBfSJT3EQUXYw8QFfiuwPRevxSXkUYdm7sU9FSFZudmOqaZZZ0cqeOqtoEAef1t9
-         XU6Jc8tcR8a7CuUcb/x032K7MswFrag0WaKj2mNT9e1To0ZRAyp1mZQI+XdmWjVyHEWw
-         Y1ioIRKIg9cruW2vjm4aOu63KHwTAiHBUn+uilIcfErvX0XKAxQSOk92Un5F5sXec++i
-         mEZuHZK+hO8CWNy/rr+StDnwOBv162VzEv1bEbiMEjzGRt13xJI7bPZAm8BsfUX4rWQd
-         P5Rg==
-X-Gm-Message-State: AA+aEWabOtD8FzRmlRWYSjCE8+Mzb47caEvth6891hY4mpFys7KAnnh4
-        Th6imeTpaw8npL0nXSaa7/mA6g==
-X-Google-Smtp-Source: AFSGD/XBv2353VDPfQ9LKdSIRrTD6S47ocs4GcvBx3+5x+F71BK68FvPSPRWDGF0lwcKrPIBQ6zGRg==
-X-Received: by 2002:aa7:810c:: with SMTP id b12mr13396676pfi.44.1544470138454;
-        Mon, 10 Dec 2018 11:28:58 -0800 (PST)
+        bh=mDpKJVPFIVctgingBaL+8pLspjfVJhTZ7MqaisuyuDE=;
+        b=dNponEu1YSVO67iT3CwIuIkUXrTT2hoPohTqszLhGOOysZXykU3FJpPTUrrnN2nciU
+         SqUPaRJ0MvFApsa/+YkZFRnUTCOLUR0vpb7F3zbnee3C0zl11UbSkL2WyB/9OQK7C811
+         kEyNFg8xo7RugXgNgy2xxTC7pOt8AJ3irlZ+ozPcYiUxMZyOrsaPs3jPSMjjqiW2w3Kw
+         Wb50PK0WLNVOYrjCJEXNkRCiZCQs7/SBJZ3tzk4FEKhuZf1e1Cso7ymtVcDYxLNHHMPb
+         nVX0RixyvC8yedwqfRpVov/LwSJb86W2SMx01BppRGuduEstIGb0X8cjXhs5vQzs8KgI
+         U6oQ==
+X-Gm-Message-State: AA+aEWa+05DcOy+K8Jq9nH32QFQ3a4qGJRZScftwQ2HXPE4tISgpjIAJ
+        RnZibOZGaVmAcxw5QzVLTdrSrg==
+X-Google-Smtp-Source: AFSGD/XHItHnkkv7vn+uPeHL/fQZ3QWixmY7XvJEavjxJ3AeNmTj1OatAtJZuR1/x0Ds0YoC2dOcAA==
+X-Received: by 2002:a62:1c06:: with SMTP id c6mr13224519pfc.157.1544470141072;
+        Mon, 10 Dec 2018 11:29:01 -0800 (PST)
 Received: from evgreen2.mtv.corp.google.com ([2620:15c:202:201:ffda:7716:9afc:1301])
-        by smtp.gmail.com with ESMTPSA id v12sm18318674pgg.41.2018.12.10.11.28.57
+        by smtp.gmail.com with ESMTPSA id v12sm18318674pgg.41.2018.12.10.11.28.59
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 10 Dec 2018 11:28:57 -0800 (PST)
+        Mon, 10 Dec 2018 11:29:00 -0800 (PST)
 From:   Evan Green <evgreen@chromium.org>
 To:     Andy Gross <andy.gross@linaro.org>,
         Kishon Vijay Abraham I <kishon@ti.com>
 Cc:     Douglas Anderson <dianders@chromium.org>,
         Stephen Boyd <swboyd@chromium.org>,
-        Can Guo <cang@codeaurora.org>,
         Evan Green <evgreen@chromium.org>, devicetree@vger.kernel.org,
         linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
         Rob Herring <robh+dt@kernel.org>,
         David Brown <david.brown@linaro.org>,
         Mark Rutland <mark.rutland@arm.com>, linux-soc@vger.kernel.org
-Subject: [PATCH v7 4/5] arm64: dts: qcom: sdm845: Add UFS nodes for sdm845-mtp
-Date:   Mon, 10 Dec 2018 11:28:25 -0800
-Message-Id: <20181210192826.241350-5-evgreen@chromium.org>
+Subject: [PATCH v7 5/5] arm64: dts: qcom: sdm845: Add USB PHY lane two
+Date:   Mon, 10 Dec 2018 11:28:26 -0800
+Message-Id: <20181210192826.241350-6-evgreen@chromium.org>
 X-Mailer: git-send-email 2.18.1
 In-Reply-To: <20181210192826.241350-1-evgreen@chromium.org>
 References: <20181210192826.241350-1-evgreen@chromium.org>
@@ -77,54 +76,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Can Guo <cang@codeaurora.org>
+Add the second lane registers for the USB PHY, now that the
+QMP phy bindings have been updated. This way the driver can stop
+reaching beyond its register region to get at the second lane.
 
-Enable the UFS host controller and PHY on sdm845-mtp.
-
-Signed-off-by: Can Guo <cang@codeaurora.org>
 Signed-off-by: Evan Green <evgreen@chromium.org>
-Reviewed-by: Vivek Gautam <vivek.gautam@codeaurora.org>
 Reviewed-by: Douglas Anderson <dianders@chromium.org>
-
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
 
-Changes in v7: None
-Changes in v6:
-- Fix renamed nodes in MTP (Bjorn)
+Changes in v7:
+ - Rebased on top of phy/next
 
+Changes in v6: None
 Changes in v5: None
 Changes in v4: None
-Changes in v3: None
+Changes in v3:
+ - Removed erroneous fixup for USB UniPro PHY, which is not dual lane (Doug)
+
 Changes in v2: None
 
- arch/arm64/boot/dts/qcom/sdm845-mtp.dts | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ arch/arm64/boot/dts/qcom/sdm845.dtsi | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/qcom/sdm845-mtp.dts b/arch/arm64/boot/dts/qcom/sdm845-mtp.dts
-index eedfaf8922e2a..707134f84fe1b 100644
---- a/arch/arm64/boot/dts/qcom/sdm845-mtp.dts
-+++ b/arch/arm64/boot/dts/qcom/sdm845-mtp.dts
-@@ -356,6 +356,20 @@
- 	status = "okay";
- };
+diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+index 4ad4eaf1d61ce..dcc362b6cf04d 100644
+--- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
++++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+@@ -1185,10 +1185,12 @@
+ 				 <&gcc GCC_USB3_PHY_PRIM_BCR>;
+ 			reset-names = "phy", "common";
  
-+&ufs_mem_hc {
-+	status = "okay";
-+
-+	vcc-supply = <&vreg_l20a_2p95>;
-+	vcc-max-microamp = <600000>;
-+};
-+
-+&ufs_mem_phy {
-+	status = "okay";
-+
-+	vdda-phy-supply = <&vdda_ufs1_core>;
-+	vdda-pll-supply = <&vdda_ufs1_1p2>;
-+};
-+
- &usb_1 {
- 	status = "okay";
- };
+-			usb_1_ssphy: lane@88e9200 {
++			usb_1_ssphy: lanes@88e9200 {
+ 				reg = <0x88e9200 0x128>,
+ 				      <0x88e9400 0x200>,
+ 				      <0x88e9c00 0x218>,
++				      <0x88e9600 0x128>,
++				      <0x88e9800 0x200>,
+ 				      <0x88e9a00 0x100>;
+ 				#phy-cells = <0>;
+ 				clocks = <&gcc GCC_USB3_PRIM_PHY_PIPE_CLK>;
 -- 
 2.18.1
 
