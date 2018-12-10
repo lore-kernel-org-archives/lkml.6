@@ -2,117 +2,153 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51EFFC04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 07:05:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F767C04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 07:09:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 13CF2205C9
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 07:05:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2EE53205C9
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 07:09:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="EwujdJb4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 13CF2205C9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="oxjPm4LQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2EE53205C9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726593AbeLJHFU (ORCPT
+        id S1726539AbeLJHJu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 02:05:20 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:33237 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726292AbeLJHFU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 02:05:20 -0500
-Received: by mail-wm1-f66.google.com with SMTP id r24so5871059wmh.0
-        for <linux-kernel@vger.kernel.org>; Sun, 09 Dec 2018 23:05:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=MDv/MAnv9rSBfZiz91T2afQ7f8hkEN6CAhnlHAwM96c=;
-        b=EwujdJb4mE+dE+zexV5b+mY6tW18zktVTWVNWcEJVbulj49zEvS/0z3/q4hCXx2Hud
-         fr3WsPNRrwJf2o9zOTw8xT4eoia4aTsrXyagpu09c4enkpKrOnM0KPkZ/FanPteSIygq
-         0rFo4Wtbdn+RmafqCUlYk92HzuSoMwLh5zyqs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=MDv/MAnv9rSBfZiz91T2afQ7f8hkEN6CAhnlHAwM96c=;
-        b=TlKnZ+5dLJKOFibnakar4GL8VqZuAm1EyaO0gNWEzvZ9DT+xZGV0gd2WpFwaoccepk
-         /HIMzvRbEd9g/zQHIZkQrExX4pLYcxXzO+Aw78nv85hgXEYFPklGNwzoytXm2ZxfyZWX
-         Xwaq4h64YR2M9+Wq5ebBuk40YS02ZA4XQGay+qrFZyx/IehXLnohKpcX7HlKyjgCpU6w
-         aw3IBMd1DqpWhfw4DZhQIoKETKKi8TK4hEMEy3ltpGuDlnSIQQWJHZJomykG8DmyqR6Q
-         Irdnduvcau1nm3xQrJPPASjryY6nlRQ1NHXx4s6LzndRo6tjjfMUydHa8o7Bw3x7DwhQ
-         PvfA==
-X-Gm-Message-State: AA+aEWZtMW67bNZLafkpS+2DCbbMhb4zdtYhoosd1vN5ggYKLmeUB98a
-        Kb4GS3ysRYUkpBb4KCY+s+Dxrw==
-X-Google-Smtp-Source: AFSGD/VxXZWZnTUPXR4HvFemT+DhN37RxrLgOiGRttBmDkWgIuCizI9g3uUyuBLkkPkxPHbunkz+/g==
-X-Received: by 2002:a1c:67c2:: with SMTP id b185mr8691780wmc.96.1544425518568;
-        Sun, 09 Dec 2018 23:05:18 -0800 (PST)
-Received: from dell (host109-155-202-221.range109-155.btcentralplus.com. [109.155.202.221])
-        by smtp.gmail.com with ESMTPSA id p74sm12753325wmd.29.2018.12.09.23.05.17
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 09 Dec 2018 23:05:17 -0800 (PST)
-Date:   Mon, 10 Dec 2018 07:05:16 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Oskari =?iso-8859-1?Q?Lemmel=E4?= <oskari@lemmela.net>
-Cc:     Chen-Yu Tsai <wens@csie.org>,
-        Quentin Schulz <quentin.schulz@bootlin.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v8 1/2] mfd: axp20x: Re-align mfd cell entries
-Message-ID: <20181210070516.GW26661@dell>
-References: <20181208175847.32068-1-oskari@lemmela.net>
- <20181208175847.32068-2-oskari@lemmela.net>
- <20181210063642.GT26661@dell>
- <c77951e6-46d9-d48a-b5bb-33bb9d00a929@lemmela.net>
+        Mon, 10 Dec 2018 02:09:50 -0500
+Received: from ozlabs.org ([203.11.71.1]:35081 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726292AbeLJHJt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Dec 2018 02:09:49 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 43CvMs28Bxz9s47;
+        Mon, 10 Dec 2018 18:09:45 +1100 (AEDT)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1544425786;
+        bh=/jbQTIRYHuHACMPNz83Mb/rTBzfuXa8XB6k4Kf/xmsI=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=oxjPm4LQ/33DhacERNa99rfx35YnAVc9SRYPR0PASUxFbhbC3Sh3hkUXGyBNnKObM
+         AqGXUYWWL7YSpUnUkcurOYB0bNz5gAmti/aExM5mZilildbNWGSIca3U8EelSZoP2X
+         bLbyKT1mw0uoMZUa8Iykj0LhzpfjZqb/y3OXRuqh/IokqZtjsUQZSyGOoe1EgCeSJa
+         eq2TG+9EBPxPRc70Z4s2u5RR1JRgITKWynsIosKRZdPC5coYfK82p0DsAI9Uq74N7n
+         P3wYuw4YlF+7rDe1VdZ/wWbp+tpqerM+3TrWwtyGAiCw98lJCvDl/YZxdYF4waqH/5
+         DSBmzrxvWIo1A==
+Date:   Mon, 10 Dec 2018 18:09:44 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Bill Kuzeja <William.Kuzeja@stratus.com>
+Subject: Re: linux-next: manual merge of the scsi-mkp tree with Linus' tree
+Message-ID: <20181210180944.0fb13ead@canb.auug.org.au>
+In-Reply-To: <20181210171716.77cbf9fe@canb.auug.org.au>
+References: <20181210171716.77cbf9fe@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <c77951e6-46d9-d48a-b5bb-33bb9d00a929@lemmela.net>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/tWFfAALYS_p+LreYcNwSvG0"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 10 Dec 2018, Oskari Lemmelä wrote:
-> On 10.12.2018 8.36, Lee Jones wrote:
-> > On Sat, 08 Dec 2018, Oskari Lemmela wrote:
-> >
-> >> From: Chen-Yu Tsai <wens@csie.org>
-> >>
-> >> In the axp20x driver, the various mfd_cell lists had varying amounts
-> >> of indentation, sometimes even within the same list. For the axp288,
-> >> there's no alignment at all.
-> >>
-> >> Re-align the right hand side of the assignments with the least amount
-> >> of tabs possible. Also collapse the closing bracket and the opening
-> >> bracket of the next entry onto the same line for the axp288, to be
-> >> consistent with all the other mfd_cell lists.
-> >>
-> >> This patch is whitespace change only. No functionality is modified.
-> >>
-> >> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
-> >> Signed-off-by: Oskari Lemmela <oskari@lemmela.net>
-> > Why is Oskari Lemmela's SoB here?
-> >
-> > You both authored this alignment patch?
-> I picked up Chen-Yu's patch from
-> https://github.com/wens/linux/commit/b99cec26bae2835a0374463570ea9ea26b034afa.
-> I should have mentioned it cover letter.
-> 
-> Chen-Yu is correct author. I'm just sending his patch.
+--Sig_/tWFfAALYS_p+LreYcNwSvG0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-That's fine.  Thanks for the explanation.
+Hi all,
 
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+On Mon, 10 Dec 2018 17:17:16 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> I fixed it up (see below) and can carry the fix as necessary. This
+
+See below :-)
+
+Also I accidentally left the declaration of "status" in __qla2x00_abort_all=
+_cmds().
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc drivers/scsi/qla2xxx/qla_os.c
+index f92196ec5489,643cd7c0efc1..000000000000
+--- a/drivers/scsi/qla2xxx/qla_os.c
++++ b/drivers/scsi/qla2xxx/qla_os.c
+@@@ -1742,6 -1746,41 +1742,49 @@@ qla2x00_loop_reset(scsi_qla_host_t *vha
+  	return QLA_SUCCESS;
+  }
+ =20
++ static void qla2x00_abort_srb(struct qla_qpair *qp, srb_t *sp, const int =
+res,
++ 			      unsigned long *flags)
++ 	__releases(qp->qp_lock_ptr)
++ 	__acquires(qp->qp_lock_ptr)
++ {
++ 	scsi_qla_host_t *vha =3D qp->vha;
++ 	struct qla_hw_data *ha =3D vha->hw;
++=20
++ 	if (sp->type =3D=3D SRB_NVME_CMD || sp->type =3D=3D SRB_NVME_LS) {
++ 		if (!sp_get(sp)) {
++ 			/* got sp */
++ 			spin_unlock_irqrestore(qp->qp_lock_ptr, *flags);
++ 			qla_nvme_abort(ha, sp, res);
++ 			spin_lock_irqsave(qp->qp_lock_ptr, *flags);
++ 		}
++ 	} else if (GET_CMD_SP(sp) && !ha->flags.eeh_busy &&
++ 		   !test_bit(ABORT_ISP_ACTIVE, &vha->dpc_flags) &&
++ 		   !qla2x00_isp_reg_stat(ha) && sp->type =3D=3D SRB_SCSI_CMD) {
++ 		/*
++ 		 * Don't abort commands in adapter during EEH recovery as it's
++ 		 * not accessible/responding.
++ 		 *
++ 		 * Get a reference to the sp and drop the lock. The reference
++ 		 * ensures this sp->done() call and not the call in
++ 		 * qla2xxx_eh_abort() ends the SCSI cmd (with result 'res').
++ 		 */
++ 		if (!sp_get(sp)) {
+++			int status;
+++
++ 			spin_unlock_irqrestore(qp->qp_lock_ptr, *flags);
+ -			qla2xxx_eh_abort(GET_CMD_SP(sp));
+++			status =3D qla2xxx_eh_abort(GET_CMD_SP(sp));
++ 			spin_lock_irqsave(qp->qp_lock_ptr, *flags);
+++			/*
+++			 * Get rid of extra reference causedby early
+++			 * exit from qla2xxx_eh_abort
+++			 */
+++			if (status =3D=3D FAST_IO_FAIL)
+++				atomic_dec(&sp->ref_count);
++ 		}
++ 	}
++ 	sp->done(sp, res);
++ }
++=20
+  static void
+  __qla2x00_abort_all_cmds(struct qla_qpair *qp, int res)
+  {
+
+--Sig_/tWFfAALYS_p+LreYcNwSvG0
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwOETgACgkQAVBC80lX
+0GxOmAgAjYkb1y2sk+o5lldWva1EcGz3nDY9D91DZjFOlH3WDHQkAyHUg4zXhsDh
+9SCren51iBIn8vG0vE8t9O2dyiEt6WXY6JdMwfhef0tauHS8T9oAIUHeFDYsKz+1
+4yMqS5nuOGm/QfosW+T/xNEQxyc7HxJ/FQybt/np3syKETcuNfqj2+e2V0sit1U8
+sVt7hhE7fabTTpUMEwNkepb9Lyr59boqv5Dtc/UvERjKbZ9F9C4+2FV9K8vlQ8J0
+lIC8qDTWLlD2DmpWp2ep+Kxi0EdzmNVM1NNlMTAaRSJd3yLM47yvZ9rTlxoJ1y9N
+04cA0FMfPQxuy869dtVGX96E45QLMg==
+=nohu
+-----END PGP SIGNATURE-----
+
+--Sig_/tWFfAALYS_p+LreYcNwSvG0--
