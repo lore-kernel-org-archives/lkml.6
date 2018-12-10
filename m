@@ -2,90 +2,213 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0160C5CFFE
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 16:29:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D9C4C5CFFE
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 16:29:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 74B2320821
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 16:29:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F046620821
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 16:29:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="IEROJNbv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 74B2320821
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="uq3qjHXb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F046620821
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728195AbeLJQ31 (ORCPT
+        id S1728300AbeLJQ3x (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 11:29:27 -0500
-Received: from conssluserg-05.nifty.com ([210.131.2.90]:40859 "EHLO
-        conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727473AbeLJQ30 (ORCPT
+        Mon, 10 Dec 2018 11:29:53 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:37056 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728235AbeLJQ3w (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 11:29:26 -0500
-Received: from mail-ua1-f54.google.com (mail-ua1-f54.google.com [209.85.222.54]) (authenticated)
-        by conssluserg-05.nifty.com with ESMTP id wBAGTJ10024901
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 01:29:19 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-05.nifty.com wBAGTJ10024901
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1544459360;
-        bh=CXX+95DKqqnT35MwxNl8T/REB4ekxPgFR8Dewad1Jxk=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=IEROJNbvlbn+wKqcKRc/YtSU/ceGhayJiJE0ujHrenxXEVThQlaU8eWFwnnt8DtIH
-         7yeSRGsXu+Gv0vieDzBzJC91NN6CeaC3VQMtAuo1KnYONYhL/4p76j08paFpr72JYz
-         E/zNdJ/knkTx22MvcxlO/r7SunUhW154Bf0Y8SoOj1cwd5+TLB0zS4TGReiGpjiZCl
-         KnrFsddRs9ybiwIqiobEYhC6WXR4z8lk+h4v0HzE4yPgrwfb1TXiaCFHYRJOEySRH6
-         jqmPMHGhI57xd6h8V5iRQzWISQ1ZcxJZDEwI1kqX7cHAbK8mVtXJssgIxSyX3Hjf5c
-         Gya+IOdmoFrmQ==
-X-Nifty-SrcIP: [209.85.222.54]
-Received: by mail-ua1-f54.google.com with SMTP id z11so4023825uaa.10
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Dec 2018 08:29:19 -0800 (PST)
-X-Gm-Message-State: AA+aEWbtGswqSeOfuCFuTBU4MljOzDxvAgPtQc+DylPntFELoAwyRPhf
-        ZXcdTNTFgP0VQX2DgroWlnnQIoAWYUTPzVZW/cg=
-X-Google-Smtp-Source: AFSGD/WNvgAjt0ApjwrM/hg2NEMhZD1oqIWVLdax0+xuN6WvgybiVf08Ub1knt/oTFxuNskny5su0vVNZJcAfRTe+iY=
-X-Received: by 2002:ab0:3402:: with SMTP id z2mr5711166uap.6.1544459358492;
- Mon, 10 Dec 2018 08:29:18 -0800 (PST)
+        Mon, 10 Dec 2018 11:29:52 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wBAGT3cw019766;
+        Mon, 10 Dec 2018 16:29:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=ToB+Ad+zEJQFDU/JB1ZnLazxG6pF45Z+w/OqWPIp/wA=;
+ b=uq3qjHXbkmwNkxIGfHj9SFYnryj9e1xM2AjXXgI72OEupYV8sEPt/KshYgh8aNFkmW+u
+ 1hcFSzVMdyGN/3sSW5R2is34uS8heVC74bnGK6b3omKfm7W12/n656vJvMYZ26wxi06t
+ rXKUY7bEHm6V59IqRivCZ3ijXjl1KQM3bGSgbNFUjfmbRQWIp52K7f46rml8ptPSykYT
+ 9wZnorsviFtPpeobcviSokj/8yW9GCmOLIQ+6rRNOs61Mdb/wxMkVnW480Xp5+5Jaozp
+ UF9iht7xre26hIeFqI2I9yh8JIuoyUJ1XicAQ6pt4fPYeTJlO/hfwSuix6x2BuP/RDzP mw== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by userp2130.oracle.com with ESMTP id 2p85cty0gn-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 10 Dec 2018 16:29:20 +0000
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wBAGTJnS008909
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 10 Dec 2018 16:29:20 GMT
+Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id wBAGTI5l026931;
+        Mon, 10 Dec 2018 16:29:18 GMT
+Received: from [10.152.35.100] (/10.152.35.100)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 10 Dec 2018 08:29:18 -0800
+Subject: Re: [PATCH v4 00/10] steal tasks to improve CPU utilization
+To:     Vincent Guittot <vincent.guittot@linaro.org>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        subhra.mazumdar@oracle.com, Dhaval Giani <dhaval.giani@oracle.com>,
+        daniel.m.jordan@oracle.com, pavel.tatashin@microsoft.com,
+        Matt Fleming <matt@codeblueprint.co.uk>,
+        Mike Galbraith <umgwanakikbuti@gmail.com>,
+        Rik van Riel <riel@redhat.com>, Josef Bacik <jbacik@fb.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Quentin Perret <quentin.perret@arm.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+References: <1544131696-2888-1-git-send-email-steven.sistare@oracle.com>
+ <CAKfTPtBuAsbF2r8wSigM=ckpKCqj0hcHbi+y3ZAaC7dqYcFY2g@mail.gmail.com>
+From:   Steven Sistare <steven.sistare@oracle.com>
+Organization: Oracle Corporation
+Message-ID: <df0197ac-d4eb-437e-1176-dbc9b23a94bb@oracle.com>
+Date:   Mon, 10 Dec 2018 11:29:08 -0500
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.3
 MIME-Version: 1.0
-References: <CAK7LNAToKE7dv8UHOhQhJN+6Q6qVs=noQvLedGCEQszSgmVvXg@mail.gmail.com>
-In-Reply-To: <CAK7LNASah-5o_sAUw=DDwfKhY=rYXZ1dmeX+d_HhKNMGqKLLAQ@mail.gmail.com>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Tue, 11 Dec 2018 01:28:42 +0900
-X-Gmail-Original-Message-ID: <CAK7LNASV9cSq9xk-PuDi3TzhjAP8KQmMz+XJdz2HW98Uf48rsw@mail.gmail.com>
-Message-ID: <CAK7LNASV9cSq9xk-PuDi3TzhjAP8KQmMz+XJdz2HW98Uf48rsw@mail.gmail.com>
-Subject: Re: [GIT PULL] ARM: dts: uniphier: UniPhier DT updates for v4.21
-To:     arm-soc <arm@kernel.org>, Olof Johansson <olof@lixom.net>,
-        Arnd Bergmann <arnd@arndb.de>
-Cc:     linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAKfTPtBuAsbF2r8wSigM=ckpKCqj0hcHbi+y3ZAaC7dqYcFY2g@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9103 signatures=668679
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1812100148
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 11, 2018 at 1:24 AM Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
->
-> Hi Arnd, Olof,
->
-> Please pull UniPhier DT updates for the v4.20 MW.
->
-> In this cycle, I queued up all arm/arm64 changes
-> into a single branch to avoid build errors.
->
-> Thanks!
+On 12/10/2018 11:10 AM, Vincent Guittot wrote:
+> Hi Steven,
+> 
+> On Thu, 6 Dec 2018 at 22:38, Steve Sistare <steven.sistare@oracle.com> wrote:
+>>
+>> When a CPU has no more CFS tasks to run, and idle_balance() fails to
+>> find a task, then attempt to steal a task from an overloaded CPU in the
+>> same LLC. Maintain and use a bitmap of overloaded CPUs to efficiently
+>> identify candidates.  To minimize search time, steal the first migratable
+>> task that is found when the bitmap is traversed.  For fairness, search
+>> for migratable tasks on an overloaded CPU in order of next to run.
+>>
+>> This simple stealing yields a higher CPU utilization than idle_balance()
+>> alone, because the search is cheap, so it may be called every time the CPU
+>> is about to go idle.  idle_balance() does more work because it searches
+>> widely for the busiest queue, so to limit its CPU consumption, it declines
+>> to search if the system is too busy.  Simple stealing does not offload the
+>> globally busiest queue, but it is much better than running nothing at all.
+>>
+>> The bitmap of overloaded CPUs is a new type of sparse bitmap, designed to
+>> reduce cache contention vs the usual bitmap when many threads concurrently
+>> set, clear, and visit elements.
+>>
+>> Patch 1 defines the sparsemask type and its operations.
+>>
+>> Patches 2, 3, and 4 implement the bitmap of overloaded CPUs.
+>>
+>> Patches 5 and 6 refactor existing code for a cleaner merge of later
+>>   patches.
+>>
+>> Patches 7 and 8 implement task stealing using the overloaded CPUs bitmap.
+>>
+>> Patch 9 disables stealing on systems with more than 2 NUMA nodes for the
+>> time being because of performance regressions that are not due to stealing
+>> per-se.  See the patch description for details.
+>>
+>> Patch 10 adds schedstats for comparing the new behavior to the old, and
+>>   provided as a convenience for developers only, not for integration.
+>>
+>> The patch series is based on kernel 4.20.0-rc1.  It compiles, boots, and
+>> runs with/without each of CONFIG_SCHED_SMT, CONFIG_SMP, CONFIG_SCHED_DEBUG,
+>> and CONFIG_PREEMPT.  It runs without error with CONFIG_DEBUG_PREEMPT +
+>> CONFIG_SLUB_DEBUG + CONFIG_DEBUG_PAGEALLOC + CONFIG_DEBUG_MUTEXES +
+>> CONFIG_DEBUG_SPINLOCK + CONFIG_DEBUG_ATOMIC_SLEEP.  CPU hot plug and CPU
+>> bandwidth control were tested.
+>>
+>> Stealing improves utilization with only a modest CPU overhead in scheduler
+>> code.  In the following experiment, hackbench is run with varying numbers
+>> of groups (40 tasks per group), and the delta in /proc/schedstat is shown
+>> for each run, averaged per CPU, augmented with these non-standard stats:
+>>
+>>   %find - percent of time spent in old and new functions that search for
+>>     idle CPUs and tasks to steal and set the overloaded CPUs bitmap.
+>>
+>>   steal - number of times a task is stolen from another CPU.
+>>
+>> X6-2: 1 socket * 10 cores * 2 hyperthreads = 20 CPUs
+>> Intel(R) Xeon(R) CPU E5-2630 v4 @ 2.20GHz
+>> hackbench <grps> process 100000
+>> sched_wakeup_granularity_ns=15000000
+>>
+>>   baseline
+>>   grps  time  %busy  slice   sched   idle     wake %find  steal
+>>   1    8.084  75.02   0.10  105476  46291    59183  0.31      0
+>>   2   13.892  85.33   0.10  190225  70958   119264  0.45      0
+>>   3   19.668  89.04   0.10  263896  87047   176850  0.49      0
+>>   4   25.279  91.28   0.10  322171  94691   227474  0.51      0
+>>   8   47.832  94.86   0.09  630636 144141   486322  0.56      0
+>>
+>>   new
+>>   grps  time  %busy  slice   sched   idle     wake %find  steal  %speedup
+>>   1    5.938  96.80   0.24   31255   7190    24061  0.63   7433  36.1
+>>   2   11.491  99.23   0.16   74097   4578    69512  0.84  19463  20.9
+>>   3   16.987  99.66   0.15  115824   1985   113826  0.77  24707  15.8
+>>   4   22.504  99.80   0.14  167188   2385   164786  0.75  29353  12.3
+>>   8   44.441  99.86   0.11  389153   1616   387401  0.67  38190   7.6
+>>
+>> Elapsed time improves by 8 to 36%, and CPU busy utilization is up
+>> by 5 to 22% hitting 99% for 2 or more groups (80 or more tasks).
+>> The cost is at most 0.4% more find time.
+> 
+> I have run some hackbench tests on my hikey arm64 octo cores with your
+> patchset. My original intent was to send a tested-by but I have some
+> performances regressions.
+> This hikey is the smp one and not the asymetric hikey960 that Valentin
+> used for his tests
+> The sched domain topology is
+> domain-0: span=0-3 level=MC  and domain-0: span=4-7 level=MC
+> domain-1: span=0-7 level=DIE
+> 
+> I have run 12 times hackbench -g $j -P -l 2000 with j equals to 1 2 3 4 8
+> 
+> grps  time
+> 1      1.396
+> 2      2.699
+> 3      3.617
+> 4      4.498
+> 8      7.721
+> 
+> Then after disabling STEAL in sched_feature with echo NO_STEAL >
+> /sys/kernel/debug/sched_features , the results become:
+> grps  time
+> 1      1.217
+> 2      1.973
+> 3      2.855
+> 4      3.932
+> 8      7.674
+> 
+> I haven't looked in details about some possible reasons of such
+> difference yet and haven't collected the stats that you added with
+> patch 10.
+> Have you got a script to collect and post process them ?
+> 
+> Regards,
+> Vincent
 
+Thanks Vincent.  What is the value of /proc/sys/kernel/sched_wakeup_granularity_ns?
+Try 15000000.  Your 8-core system is heavily overloaded with 40 * groups tasks,
+and I suspect preemptions are killing performance.
 
-Sorry, please discard this.
+I have a python script to post-process schedstat files, but it does many things
+and is large and I am not ready to share it.  I can write a short bash script if
+that would help.
 
-Looks like I accidentally hit the send-button
-before finishing it.
-
-
-
-
--- 
-Best Regards
-Masahiro Yamada
+- Steve
