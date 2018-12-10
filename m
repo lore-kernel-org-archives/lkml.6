@@ -2,90 +2,102 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB969C5CFFE
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 11:31:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE694C04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 11:32:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B26542084E
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 11:31:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B26542084E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+	by mail.kernel.org (Postfix) with ESMTP id 8D97C2084E
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 11:32:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D97C2084E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727495AbeLJLbz (ORCPT
+        id S1727512AbeLJLcy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 06:31:55 -0500
-Received: from cloudserver094114.home.pl ([79.96.170.134]:59201 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726146AbeLJLbz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 06:31:55 -0500
-Received: from 79.184.252.35.ipv4.supernova.orange.pl (79.184.252.35) (HELO aspire.rjw.lan)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.183)
- id d4144038bcab2e97; Mon, 10 Dec 2018 12:31:53 +0100
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     Frank Lee <tiny.windzz@gmail.com>
-Cc:     Daniel Lezcano <daniel.lezcano@linaro.org>,
-        lorenzo.pieralisi@arm.com, linux-pm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] cpuidle: big.LITTLE: add of_node_put()
-Date:   Mon, 10 Dec 2018 12:31:37 +0100
-Message-ID: <3143453.Hr4lRPQaf4@aspire.rjw.lan>
-In-Reply-To: <CAEExFWtiqTgQmMLwvMhx8UvfU9o75jsZkAjBgyHhAOwuemJdNw@mail.gmail.com>
-References: <20181120161451.21149-1-tiny.windzz@gmail.com> <CAEExFWtiqTgQmMLwvMhx8UvfU9o75jsZkAjBgyHhAOwuemJdNw@mail.gmail.com>
+        Mon, 10 Dec 2018 06:32:54 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:51878 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726146AbeLJLcx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Dec 2018 06:32:53 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7279F15AB;
+        Mon, 10 Dec 2018 03:32:53 -0800 (PST)
+Received: from queper01-lin.cambridge.arm.com (queper01-lin.cambridge.arm.com [10.1.195.48])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3D9923F6A8;
+        Mon, 10 Dec 2018 03:32:52 -0800 (PST)
+From:   Quentin Perret <quentin.perret@arm.com>
+To:     vireshk@kernel.org, nm@ti.com, sboyd@kernel.org
+Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [RFC PATCH] PM / OPP: Always expose one supply in debugfs
+Date:   Mon, 10 Dec 2018 11:32:47 +0000
+Message-Id: <20181210113247.11412-1-quentin.perret@arm.com>
+X-Mailer: git-send-email 2.19.2
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sunday, December 9, 2018 7:20:26 AM CET Frank Lee wrote:
-> On Wed, Nov 21, 2018 at 12:14 AM Yangtao Li <tiny.windzz@gmail.com> wrote:
-> >
-> > of_find_node_by_path() acquires a reference to the node
-> > returned by it and that reference needs to be dropped by its caller.
-> > bl_idle_init() doesn't do that, so fix it.
-> >
-> > Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
-> > ---
-> > Changes in v3:
-> > -update changelog
-> > ---
-> >  drivers/cpuidle/cpuidle-big_little.c | 6 +++++-
-> >  1 file changed, 5 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/cpuidle/cpuidle-big_little.c b/drivers/cpuidle/cpuidle-big_little.c
-> > index db2ede565f1a..650f063ef809 100644
-> > --- a/drivers/cpuidle/cpuidle-big_little.c
-> > +++ b/drivers/cpuidle/cpuidle-big_little.c
-> > @@ -174,8 +174,12 @@ static int __init bl_idle_init(void)
-> >         /*
-> >          * Initialize the driver just for a compliant set of machines
-> >          */
-> > -       if (!of_match_node(compatible_machine_match, root))
-> > +       if (!of_match_node(compatible_machine_match, root)){
-> > +               of_node_put(root);
-> >                 return -ENODEV;
-> > +       }
-> > +
-> > +       of_node_put(root);
-> >
-> >         if (!mcpm_is_available())
-> >                 return -EUNATCH;
-> > --
-> > 2.17.0
-> >
-> ping......
+On some platforms, the opp_table->regulator_count field is kept at zero
+even though opp->supplies is always allocated. However, the loop used to
+display the supplies in the debugfs doesn't deal correctly with this,
+which results in the supplies not being displayed in debugfs on those
+platforms.
 
-I've been waiting for the maintainers of this driver to speak up.
+Fix this by making sure to always display at least once supply in
+debugfs.
 
-I'll pick up the patch later today or tomorrow unless there are objections.
+Signed-off-by: Quentin Perret <quentin.perret@arm.com>
+
+---
+
+This has been observed on Juno r2 which uses SCPI and Hikey960 which
+uses DT. I am not particularly familiar with that part of the code, so
+I'm not sure if this is even remotely correct (hence the RFC tag).
+
+I first thought setting opp_table->regulator_count to 1 would be the
+right fix but that causes other issues. This fix seems to work OK on
+Juno and Hikey960, at least.
+
+Feedback is welcome :-)
 
 Thanks,
-Rafael
+Quentin
+---
+ drivers/opp/debugfs.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/opp/debugfs.c b/drivers/opp/debugfs.c
+index e6828e5f81b0..2c14564575cb 100644
+--- a/drivers/opp/debugfs.c
++++ b/drivers/opp/debugfs.c
+@@ -40,9 +40,9 @@ static bool opp_debug_create_supplies(struct dev_pm_opp *opp,
+ 				      struct dentry *pdentry)
+ {
+ 	struct dentry *d;
+-	int i;
++	int i = 0;
+ 
+-	for (i = 0; i < opp_table->regulator_count; i++) {
++	do {
+ 		char name[15];
+ 
+ 		snprintf(name, sizeof(name), "supply-%d", i);
+@@ -68,7 +68,9 @@ static bool opp_debug_create_supplies(struct dev_pm_opp *opp,
+ 		if (!debugfs_create_ulong("u_amp", S_IRUGO, d,
+ 					  &opp->supplies[i].u_amp))
+ 			return false;
+-	}
++
++		i++;
++	} while (i < opp_table->regulator_count);
+ 
+ 	return true;
+ }
+-- 
+2.19.2
 
