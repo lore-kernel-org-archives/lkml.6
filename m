@@ -6,26 +6,26 @@ X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F69BC04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 21:33:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B3BFC04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 21:33:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 49E122084E
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 21:33:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 49E122084E
+	by mail.kernel.org (Postfix) with ESMTP id 0F89420821
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 21:33:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F89420821
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729943AbeLJVdR (ORCPT
+        id S1729963AbeLJVdu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 16:33:17 -0500
-Received: from mout.kundenserver.de ([212.227.126.131]:56225 "EHLO
+        Mon, 10 Dec 2018 16:33:50 -0500
+Received: from mout.kundenserver.de ([212.227.126.187]:56351 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728088AbeLJVdQ (ORCPT
+        with ESMTP id S1728088AbeLJVdu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 16:33:16 -0500
+        Mon, 10 Dec 2018 16:33:50 -0500
 Received: from wuerfel.lan ([109.192.41.194]) by mrelayeu.kundenserver.de
  (mreue002 [212.227.15.129]) with ESMTPA (Nemesis) id
- 0MYXbd-1h1USP0gqn-00V4z7; Mon, 10 Dec 2018 22:33:04 +0100
+ 0M9j3f-1gbilr2rtP-00D1Ct; Mon, 10 Dec 2018 22:33:36 +0100
 From:   Arnd Bergmann <arnd@arndb.de>
 To:     Adaptec OEM Raid Solutions <aacraid@microsemi.com>,
         "James E.J. Bottomley" <jejb@linux.ibm.com>,
@@ -38,100 +38,256 @@ Cc:     Arnd Bergmann <arnd@arndb.de>,
         Dan Carpenter <dan.carpenter@oracle.com>,
         Johannes Thumshirn <jthumshirn@suse.de>,
         linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 1/2] scsi: aacraid: change wait_sem to a completion
-Date:   Mon, 10 Dec 2018 22:32:40 +0100
-Message-Id: <20181210213301.1065510-1-arnd@arndb.de>
+Subject: [PATCH 2/2] scsi: aacraid: change event_wait to a completion
+Date:   Mon, 10 Dec 2018 22:32:41 +0100
+Message-Id: <20181210213301.1065510-2-arnd@arndb.de>
 X-Mailer: git-send-email 2.20.0
+In-Reply-To: <20181210213301.1065510-1-arnd@arndb.de>
+References: <20181210213301.1065510-1-arnd@arndb.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:sUhRvsNkbv6cbFas1m2MplSdrFOrDEQ6+R0mIh7jg0wiP5NCG0V
- yJT/YZz08+8fgORLZW7tuwhGvT5bUDRIuXpubzhLTG+6y1yK5fh5KG+2EwagpWPUd/UjbK+
- c7LDOPktu9PmXKMzA3tA9JfR1bbdZpit3mFpLI5p2Tgx4ACUBc5L++9YdYAErfmJhiD/R/2
- JiBkrqObkVr2N61MjgOJA==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:vsc4rWV+O24=:XXB5ADPvQAly2V/zBz66To
- Ml42TKPBeVZItq7v2mKxOf31qI74kwwN2EYBwJOnpUV9awp+VkRvQL47DN5Ar6Xf6PAsKnx3n
- nKULmm4ivM2ibc07SUQh2M2oBMiPTgQXqGP4wqbVFD6RCb3xcp247Ai7XtFnRLgWt+/mFo/Ow
- Jf77BdTd4N/f/2ZOBtbYrNQknyq+L5evFK5o0Er5vF5v9+klb5xjcYOe75KtUYf44mZw6UgKp
- I1hKFjbfRa1dyWorz8cq4Vyej7a0otl35FP7qDPU7cWeZwjZHcQ2usIendKJaiY+S6KBIanme
- 6/FIJZULVvUd9FvktwIY7gDgh5u+JQtt77tjQ8qdUUQcLsgNpVIym3IbO/f13jBZWCfLS+bqv
- j3dIFBVwXS0UwJBQwD/7dNaUXXGuhrlKanAahOwqOiEjx72uJhZaAYCltPEf9MgHXV1+3jLxi
- ZGaFh2tjzpf85Einlphdv6VldnB9j8S1K27YM5ANM5FYgieAycwPToeCydjHRvgDBBfrWee6m
- AtKZouHDjW5Xz0Wu3PiZ/O9vptPoeztQDcPZJrG/ATXLBWKbtePtNtRodUpLIkw12wQo/Jl08
- KYX7IzusQeaG+12wX7gw9yRYrcYwvi6YAVxRr7jWfGbCCT0fRxyJ1xL0o1ISJx96+nyBlR6Z7
- 07+pyQ8y7SZazIPfdkXU+gOq2C7ir8RujdfxpPp4fxbYlI+PNhFqMRJBnGXrPTw5quaOK21QO
- 9szt7rv4LWbnDc52xOX8ctOLTKaKeecDPRXgvg==
+X-Provags-ID: V03:K1:kxdNZyNNJz19uuP6Iwhkdm+DBfCJ9YU8YmmGGgZSnvEPkbRYe4M
+ l2boWkj9TelrH9D4+PQNkmvck4aJ9PWcNERJQr1LkxWliwGm8F3SvTMvoBQ2wcM0p8wVgQD
+ +qzqzW8lFPppo+GaXKfFDibwBCia+nKSgg20lWO0k0xHIRnYZ3zG/+rkz/2pp2wVZOFZzrn
+ WdnbnC+ASEqZmB/w2DwMQ==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:hwMhN/bSMqw=:w1J/3KC1u7cdXiIRChjDfN
+ T5RXxQFbu4Ub42STk185IYJ+/2y9CB/D2E1IQjezvIcMlKv1ayusss/zdP+eZDJLUB8Gt8sxY
+ g63vM7mO7uQiYhNLoU281kvE90Mnx2wmZF1QT2/SBSEBPMeBFYeXhUTMuu3jnE8dr+KM1hYWi
+ crGEWDnPjKClh44Yo96C83k4I1YqP5pSreO7lEXwrtpqng/9yjXkNqsodvWOOiT1iOLTSf2p3
+ AfOBaZI1hF9GxN4jwg53rW9r0unQEQ7xRxYQKO0l8vPK8TmM895fAzfNcSOyr2rQpiKT8hePY
+ k6EKSUyg9HOr1mXgC2mdc+TQxPQlXxWuNfNI9JFGFg87vAzP20TtOrGiuqZxjawdII3XV0zmw
+ wwwm7qtM/LZLyR8ud7irMvIxrZ2xWlBo3PX4I1eyWVqwAG/Q+N7trOKar6pSEF3acHTwi9S6c
+ oSReo1Vtm3nJvlaozRjivxNeZ/v+O7y5iYfm3dTspMgBWRx3Fusda4IsmpYBffi/pLPEdRpGW
+ HXjdcyE8bPw4dcPku0BaLirzilB9N75WQGg9sWfOgp4tycR2VAhsL5vFCJD/k/2A0ZfQetxP9
+ Ny6uB5ZsLLwL3sIr2oh0qy4kxwHntsAGuKES9rSccVe49tB+LhiWW5UCtfap+21nzlRn3JZtU
+ Wv3BumiYCuPSfdC50Geyg4x9xIcUrc1Xu1h/NCgWLkOZjrC+djyKIMgT6/tBoV/IdkQQXhR/O
+ bORjjH/Y7e6Rk535A9tFY+gjY8/1kTH/uZ8afg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The wait_sem member is used like a completion, so we should
-use the respective API. The behavior is unchanged.
+The event_wait semaphore has completion semantics, so we can
+change it over to the completion interface for clarity without
+changing the behavior.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- drivers/scsi/aacraid/aacraid.h  | 2 +-
- drivers/scsi/aacraid/commctrl.c | 4 ++--
- drivers/scsi/aacraid/commsup.c  | 4 ++--
- 3 files changed, 5 insertions(+), 5 deletions(-)
+ drivers/scsi/aacraid/aacraid.h  |  3 ++-
+ drivers/scsi/aacraid/commctrl.c |  1 -
+ drivers/scsi/aacraid/commsup.c  | 15 +++++++--------
+ drivers/scsi/aacraid/dpcsup.c   | 19 +++++++++----------
+ drivers/scsi/aacraid/linit.c    |  2 +-
+ drivers/scsi/aacraid/src.c      |  2 +-
+ 6 files changed, 20 insertions(+), 22 deletions(-)
 
 diff --git a/drivers/scsi/aacraid/aacraid.h b/drivers/scsi/aacraid/aacraid.h
-index 39eb415987fc..531a0b9a58f8 100644
+index 531a0b9a58f8..3291d1c16864 100644
 --- a/drivers/scsi/aacraid/aacraid.h
 +++ b/drivers/scsi/aacraid/aacraid.h
-@@ -1241,7 +1241,7 @@ struct aac_fib_context {
- 	u32			unique;		// unique value representing this context
- 	ulong			jiffies;	// used for cleanup - dmb changed to ulong
- 	struct list_head	next;		// used to link context's into a linked list
--	struct semaphore	wait_sem;	// this is used to wait for the next fib to arrive.
-+	struct completion	completion;	// this is used to wait for the next fib to arrive.
- 	int			wait;		// Set to true when thread is in WaitForSingleObject
- 	unsigned long		count;		// total number of FIBs on FibList
- 	struct list_head	fib_list;	// this holds fibs and their attachd hw_fibs
+@@ -40,6 +40,7 @@
+ #define nblank(x) _nblank(x)[0]
+ 
+ #include <linux/interrupt.h>
++#include <linux/completion.h>
+ #include <linux/pci.h>
+ #include <scsi/scsi_host.h>
+ 
+@@ -1313,7 +1314,7 @@ struct fib {
+ 	 *	This is the event the sendfib routine will wait on if the
+ 	 *	caller did not pass one and this is synch io.
+ 	 */
+-	struct semaphore	event_wait;
++	struct completion	event_wait;
+ 	spinlock_t		event_lock;
+ 
+ 	u32			done;	/* gets set to 1 when fib is complete */
 diff --git a/drivers/scsi/aacraid/commctrl.c b/drivers/scsi/aacraid/commctrl.c
-index 25f6600d6c09..6a6ad9477786 100644
+index 6a6ad9477786..e2899ff7913e 100644
 --- a/drivers/scsi/aacraid/commctrl.c
 +++ b/drivers/scsi/aacraid/commctrl.c
-@@ -203,7 +203,7 @@ static int open_getadapter_fib(struct aac_dev * dev, void __user *arg)
- 		/*
- 		 *	Initialize the mutex used to wait for the next AIF.
- 		 */
--		sema_init(&fibctx->wait_sem, 0);
-+		init_completion(&fibctx->completion);
- 		fibctx->wait = 0;
- 		/*
- 		 *	Initialize the fibs and set the count of fibs on
-@@ -335,7 +335,7 @@ static int next_getadapter_fib(struct aac_dev * dev, void __user *arg)
- 			ssleep(1);
- 		}
- 		if (f.wait) {
--			if(down_interruptible(&fibctx->wait_sem) < 0) {
-+			if (wait_for_completion_interruptible(&fibctx->completion) < 0) {
- 				status = -ERESTARTSYS;
- 			} else {
- 				/* Lock again and retry */
+@@ -41,7 +41,6 @@
+ #include <linux/blkdev.h>
+ #include <linux/delay.h> /* ssleep prototype */
+ #include <linux/kthread.h>
+-#include <linux/semaphore.h>
+ #include <linux/uaccess.h>
+ #include <scsi/scsi_host.h>
+ 
 diff --git a/drivers/scsi/aacraid/commsup.c b/drivers/scsi/aacraid/commsup.c
-index 1e77d96a18f2..7ed51a77e39d 100644
+index 7ed51a77e39d..d5a6aa9676c8 100644
 --- a/drivers/scsi/aacraid/commsup.c
 +++ b/drivers/scsi/aacraid/commsup.c
-@@ -1828,7 +1828,7 @@ int aac_check_health(struct aac_dev * aac)
- 			 * Set the event to wake up the
- 			 * thread that will waiting.
+@@ -44,7 +44,6 @@
+ #include <linux/delay.h>
+ #include <linux/kthread.h>
+ #include <linux/interrupt.h>
+-#include <linux/semaphore.h>
+ #include <linux/bcd.h>
+ #include <scsi/scsi.h>
+ #include <scsi/scsi_host.h>
+@@ -189,7 +188,7 @@ int aac_fib_setup(struct aac_dev * dev)
+ 		fibptr->hw_fib_va = hw_fib;
+ 		fibptr->data = (void *) fibptr->hw_fib_va->data;
+ 		fibptr->next = fibptr+1;	/* Forward chain the fibs */
+-		sema_init(&fibptr->event_wait, 0);
++		init_completion(&fibptr->event_wait);
+ 		spin_lock_init(&fibptr->event_lock);
+ 		hw_fib->header.XferState = cpu_to_le32(0xffffffff);
+ 		hw_fib->header.SenderSize =
+@@ -623,7 +622,7 @@ int aac_fib_send(u16 command, struct fib *fibptr, unsigned long size,
+ 		}
+ 		if (wait) {
+ 			fibptr->flags |= FIB_CONTEXT_FLAG_WAIT;
+-			if (down_interruptible(&fibptr->event_wait)) {
++			if (wait_for_completion_interruptible(&fibptr->event_wait)) {
+ 				fibptr->flags &= ~FIB_CONTEXT_FLAG_WAIT;
+ 				return -EFAULT;
+ 			}
+@@ -659,7 +658,7 @@ int aac_fib_send(u16 command, struct fib *fibptr, unsigned long size,
+ 			 * hardware failure has occurred.
  			 */
--			up(&fibctx->wait_sem);
-+			complete(&fibctx->completion);
- 		} else {
- 			printk(KERN_WARNING "aifd: didn't allocate NewFib.\n");
- 			kfree(fib);
-@@ -2165,7 +2165,7 @@ static void wakeup_fibctx_threads(struct aac_dev *dev,
- 		 * Set the event to wake up the
- 		 * thread that is waiting.
- 		 */
--		up(&fibctx->wait_sem);
-+		complete(&fibctx->completion);
+ 			unsigned long timeout = jiffies + (180 * HZ); /* 3 minutes */
+-			while (down_trylock(&fibptr->event_wait)) {
++			while (!try_wait_for_completion(&fibptr->event_wait)) {
+ 				int blink;
+ 				if (time_is_before_eq_jiffies(timeout)) {
+ 					struct aac_queue * q = &dev->queues->queue[AdapNormCmdQueue];
+@@ -689,9 +688,9 @@ int aac_fib_send(u16 command, struct fib *fibptr, unsigned long size,
+ 				 */
+ 				schedule();
+ 			}
+-		} else if (down_interruptible(&fibptr->event_wait)) {
++		} else if (wait_for_completion_interruptible(&fibptr->event_wait)) {
+ 			/* Do nothing ... satisfy
+-			 * down_interruptible must_check */
++			 * wait_for_completion_interruptible must_check */
+ 		}
  
- 		entry = entry->next;
- 	}
+ 		spin_lock_irqsave(&fibptr->event_lock, flags);
+@@ -777,7 +776,7 @@ int aac_hba_send(u8 command, struct fib *fibptr, fib_callback callback,
+ 			return -EFAULT;
+ 
+ 		fibptr->flags |= FIB_CONTEXT_FLAG_WAIT;
+-		if (down_interruptible(&fibptr->event_wait))
++		if (wait_for_completion_interruptible(&fibptr->event_wait))
+ 			fibptr->done = 2;
+ 		fibptr->flags &= ~(FIB_CONTEXT_FLAG_WAIT);
+ 
+@@ -1538,7 +1537,7 @@ static int _aac_reset_adapter(struct aac_dev *aac, int forced, u8 reset_type)
+ 		  || fib->flags & FIB_CONTEXT_FLAG_WAIT) {
+ 			unsigned long flagv;
+ 			spin_lock_irqsave(&fib->event_lock, flagv);
+-			up(&fib->event_wait);
++			complete(&fib->event_wait);
+ 			spin_unlock_irqrestore(&fib->event_lock, flagv);
+ 			schedule();
+ 			retval = 0;
+diff --git a/drivers/scsi/aacraid/dpcsup.c b/drivers/scsi/aacraid/dpcsup.c
+index ddc69738375f..40a771dd1c0e 100644
+--- a/drivers/scsi/aacraid/dpcsup.c
++++ b/drivers/scsi/aacraid/dpcsup.c
+@@ -38,7 +38,6 @@
+ #include <linux/slab.h>
+ #include <linux/completion.h>
+ #include <linux/blkdev.h>
+-#include <linux/semaphore.h>
+ 
+ #include "aacraid.h"
+ 
+@@ -129,7 +128,7 @@ unsigned int aac_response_normal(struct aac_queue * q)
+ 			spin_lock_irqsave(&fib->event_lock, flagv);
+ 			if (!fib->done) {
+ 				fib->done = 1;
+-				up(&fib->event_wait);
++				complete(&fib->event_wait);
+ 			}
+ 			spin_unlock_irqrestore(&fib->event_lock, flagv);
+ 
+@@ -376,16 +375,16 @@ unsigned int aac_intr_normal(struct aac_dev *dev, u32 index, int isAif,
+ 				start_callback = 1;
+ 			} else {
+ 				unsigned long flagv;
+-				int complete = 0;
++				int completed = 0;
+ 
+ 				dprintk((KERN_INFO "event_wait up\n"));
+ 				spin_lock_irqsave(&fib->event_lock, flagv);
+ 				if (fib->done == 2) {
+ 					fib->done = 1;
+-					complete = 1;
++					completed = 1;
+ 				} else {
+ 					fib->done = 1;
+-					up(&fib->event_wait);
++					complete(&fib->event_wait);
+ 				}
+ 				spin_unlock_irqrestore(&fib->event_lock, flagv);
+ 
+@@ -395,7 +394,7 @@ unsigned int aac_intr_normal(struct aac_dev *dev, u32 index, int isAif,
+ 					mflags);
+ 
+ 				FIB_COUNTER_INCREMENT(aac_config.NativeRecved);
+-				if (complete)
++				if (completed)
+ 					aac_fib_complete(fib);
+ 			}
+ 		} else {
+@@ -428,16 +427,16 @@ unsigned int aac_intr_normal(struct aac_dev *dev, u32 index, int isAif,
+ 				start_callback = 1;
+ 			} else {
+ 				unsigned long flagv;
+-				int complete = 0;
++				int completed = 0;
+ 
+ 				dprintk((KERN_INFO "event_wait up\n"));
+ 				spin_lock_irqsave(&fib->event_lock, flagv);
+ 				if (fib->done == 2) {
+ 					fib->done = 1;
+-					complete = 1;
++					completed = 1;
+ 				} else {
+ 					fib->done = 1;
+-					up(&fib->event_wait);
++					complete(&fib->event_wait);
+ 				}
+ 				spin_unlock_irqrestore(&fib->event_lock, flagv);
+ 
+@@ -447,7 +446,7 @@ unsigned int aac_intr_normal(struct aac_dev *dev, u32 index, int isAif,
+ 					mflags);
+ 
+ 				FIB_COUNTER_INCREMENT(aac_config.NormalRecved);
+-				if (complete)
++				if (completed)
+ 					aac_fib_complete(fib);
+ 			}
+ 		}
+diff --git a/drivers/scsi/aacraid/linit.c b/drivers/scsi/aacraid/linit.c
+index 42defee90eb2..1c5d54c2f031 100644
+--- a/drivers/scsi/aacraid/linit.c
++++ b/drivers/scsi/aacraid/linit.c
+@@ -1560,7 +1560,7 @@ static void __aac_shutdown(struct aac_dev * aac)
+ 			struct fib *fib = &aac->fibs[i];
+ 			if (!(fib->hw_fib_va->header.XferState & cpu_to_le32(NoResponseExpected | Async)) &&
+ 			    (fib->hw_fib_va->header.XferState & cpu_to_le32(ResponseExpected)))
+-				up(&fib->event_wait);
++				complete(&fib->event_wait);
+ 		}
+ 		kthread_stop(aac->thread);
+ 		aac->thread = NULL;
+diff --git a/drivers/scsi/aacraid/src.c b/drivers/scsi/aacraid/src.c
+index 7a51ccfa8662..8377aec0649d 100644
+--- a/drivers/scsi/aacraid/src.c
++++ b/drivers/scsi/aacraid/src.c
+@@ -106,7 +106,7 @@ static irqreturn_t aac_src_intr_message(int irq, void *dev_id)
+ 			spin_lock_irqsave(&dev->sync_fib->event_lock, sflags);
+ 			if (dev->sync_fib->flags & FIB_CONTEXT_FLAG_WAIT) {
+ 				dev->management_fib_count--;
+-				up(&dev->sync_fib->event_wait);
++				complete(&dev->sync_fib->event_wait);
+ 			}
+ 			spin_unlock_irqrestore(&dev->sync_fib->event_lock,
+ 						sflags);
 -- 
 2.20.0
 
