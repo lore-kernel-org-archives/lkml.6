@@ -2,143 +2,175 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44B8AC04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 04:30:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AFA1C67838
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 04:30:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 08EF32082F
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 04:30:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Gk7wej82"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 08EF32082F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id 0A0652082F
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 04:30:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A0652082F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726758AbeLJEao (ORCPT
+        id S1726668AbeLJEas (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 23:30:44 -0500
-Received: from aserp2130.oracle.com ([141.146.126.79]:57382 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726733AbeLJEal (ORCPT
+        Sun, 9 Dec 2018 23:30:48 -0500
+Received: from vmicros1.altlinux.org ([194.107.17.57]:39846 "EHLO
+        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726280AbeLJEao (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Dec 2018 23:30:41 -0500
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wBA4SvlE183892;
-        Mon, 10 Dec 2018 04:30:19 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=LZe0diQtVrs49/aC6pDftkvnoPmktMBHW+MlNxMM8Ok=;
- b=Gk7wej82v4BiTOU8839Aq7VChgAGQdtkQaWJxNETnm7CuLkbrmD3WWB+BP6rlYXY6vez
- qvXpkwCfPQae3Jp+WJgj0P/7iSVziqWU/8heD+ih3E01hsyrnSNYwMN/VgkomXDPSkyr
- 1CQkTdD/V2Yxos37xiOUX09o/oiwNWikLZ/D6glOqwZM/3WUO5nj8mgJMBEx2MrH2s3n
- QXH1FiQB4HXYNOidU/3enHqAy9RjVJ/aRPb/129zLPU02yqfP+GGAJA3sEWZkt2b8EPm
- KZYw3uMowIWpIclTsoZlz9Rp4Wa9oT2UaGA9z6NV0RGPuVn+giSO1STqLIl4lx0oexC5 qQ== 
-Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
-        by aserp2130.oracle.com with ESMTP id 2p83fduu5m-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 10 Dec 2018 04:30:19 +0000
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id wBA4UJiC020024
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 10 Dec 2018 04:30:19 GMT
-Received: from abhmp0009.oracle.com (abhmp0009.oracle.com [141.146.116.15])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id wBA4UHOH022588;
-        Mon, 10 Dec 2018 04:30:17 GMT
-Received: from localhost (/67.169.218.210)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Sun, 09 Dec 2018 20:30:17 -0800
-Date:   Sun, 9 Dec 2018 20:30:15 -0800
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Bob Liu <bob.liu@oracle.com>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Allison Henderson <allison.henderson@oracle.com>,
-        linux-block@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        martin.petersen@oracle.com, shirley.ma@oracle.com
-Subject: Re: [RFC PATCH v1 0/7] Block/XFS: Support alternative mirror device
- retry
-Message-ID: <20181210043015.GS24487@magnolia>
-References: <1543376991-5764-1-git-send-email-allison.henderson@oracle.com>
- <20181128053303.GL6311@dastard>
- <20181128074544.GA20702@infradead.org>
- <f7bf5329-e756-1edb-af3f-41aca02691fe@oracle.com>
+        Sun, 9 Dec 2018 23:30:44 -0500
+Received: from mua.local.altlinux.org (mua.local.altlinux.org [192.168.1.14])
+        by vmicros1.altlinux.org (Postfix) with ESMTP id CF52B72CC70;
+        Mon, 10 Dec 2018 07:30:41 +0300 (MSK)
+Received: by mua.local.altlinux.org (Postfix, from userid 508)
+        id C1D4D7CEFE9; Mon, 10 Dec 2018 07:30:41 +0300 (MSK)
+Date:   Mon, 10 Dec 2018 07:30:41 +0300
+From:   "Dmitry V. Levin" <ldv@altlinux.org>
+To:     Max Filippov <jcmvbkbc@gmail.com>, Oleg Nesterov <oleg@redhat.com>,
+        Andy Lutomirski <luto@kernel.org>
+Cc:     Elvira Khabirova <lineprinter@altlinux.org>,
+        Eugene Syromyatnikov <esyr@redhat.com>,
+        Chris Zankel <chris@zankel.net>,
+        Paul Moore <paul@paul-moore.com>,
+        Eric Paris <eparis@redhat.com>, linux-xtensa@linux-xtensa.org,
+        linux-audit@redhat.com, linux-kernel@vger.kernel.org
+Subject: [PATCH v5 19/25] xtensa: define syscall_get_* functions
+Message-ID: <20181210043041.GS6131@altlinux.org>
+References: <20181210042352.GA6092@altlinux.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <f7bf5329-e756-1edb-af3f-41aca02691fe@oracle.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9102 signatures=668679
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1812100042
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Dec 08, 2018 at 10:49:44PM +0800, Bob Liu wrote:
-> On 11/28/18 3:45 PM, Christoph Hellwig wrote:
-> > On Wed, Nov 28, 2018 at 04:33:03PM +1100, Dave Chinner wrote:
-> >> 	- how does propagation through stacked layers work?
-> > 
-> > The only way it works is by each layering driving it.  Thus my
-> > recommendation above bilding on your earlier one to use an index
-> > that is filled by the driver at I/O completion time.
-> > 
-> > E.g.
-> > 
-> > 	bio_init:		bi_leg = -1
-> > 
-> > 	raid1:			submit bio to lower driver
-> > 	raid 1 completion:	set bi_leg to 0 or 1
-> > 
-> > Now if we want to allow stacking we need to save/restore bi_leg
-> > before submitting to the underlying device.  Which is possible,
-> > but quite a bit of work in the drivers.
-> > 
-> 
-> I found it's still very challenge while writing the code.
-> save/restore bi_leg may not enough because the drivers don't know how to do fs-metadata verify.
-> 
-> E.g two layer raid1 stacking
-> 
-> fs:                  md0(copies:2)
->                      /          \
-> layer1/raid1   md1(copies:2)    md2(copies:2)
->                   /    \          /     \
-> layer2/raid1   dev0   dev1      dev2    dev3
-> 
-> Assume dev2 is corrupted
->  => md2: don't know how to do fs-metadata verify. 
->    => md0: fs verify fail, retry md1(preserve md2).
-> Then md2 will never be retried even dev3 may also has the right copy.
-> Unless the upper layer device(md0) can know the amount of copy is 4 instead of 2? 
-> And need a way to handle the mapping.
-> Did I miss something? Thanks!
+syscall_get_* functions are required to be implemented on all
+architectures in order to extend the generic ptrace API with
+PTRACE_GET_SYSCALL_INFO request.
 
-<shrug> It seems reasonable to me that the raid1 layer should set the
-number of retries to (number of raid1 mirrors) * min(retry count of all
-mirrors) so that the upper layer device (md0) would advertise 4 retry
-possibilities instead of 2.
+This adds all 5 syscall_get_* functions on xtensa as documented
+in asm-generic/syscall.h: syscall_get_nr, syscall_get_arguments,
+syscall_get_error, syscall_get_return_value, and syscall_get_arch.
 
---D
+Cc: Max Filippov <jcmvbkbc@gmail.com>
+Cc: Oleg Nesterov <oleg@redhat.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Elvira Khabirova <lineprinter@altlinux.org>
+Cc: Eugene Syromyatnikov <esyr@redhat.com>
+Cc: Chris Zankel <chris@zankel.net>
+Cc: Paul Moore <paul@paul-moore.com>
+Cc: Eric Paris <eparis@redhat.com>
+Cc: linux-xtensa@linux-xtensa.org
+Cc: linux-audit@redhat.com
+Signed-off-by: Dmitry V. Levin <ldv@altlinux.org>
+---
 
+Notes:
+    v5: added syscall_get_nr, syscall_get_arguments, syscall_get_error,
+        and syscall_get_return_value
+    v2: added Acked-by
+    v1: added syscall_get_arch
 
-> -Bob
-> 
-> >> 	- is it generic/abstract enough to be able to work with
-> >> 	  RAID5/6 to trigger verification/recovery from the parity
-> >> 	  information in the stripe?
-> > 
-> > If we get the non -1 bi_leg for paritity raid this is an inidicator
-> > that parity rebuild needs to happen.  For multi-parity setups we could
-> > also use different levels there.
-> > 
-> 
+ arch/xtensa/include/asm/syscall.h | 69 +++++++++++++++++++++++++++++++
+ include/uapi/linux/audit.h        |  1 +
+ 2 files changed, 70 insertions(+)
+
+diff --git a/arch/xtensa/include/asm/syscall.h b/arch/xtensa/include/asm/syscall.h
+index 3673ff1f1bc5..d529c855a144 100644
+--- a/arch/xtensa/include/asm/syscall.h
++++ b/arch/xtensa/include/asm/syscall.h
+@@ -8,6 +8,75 @@
+  * Copyright (C) 2001 - 2007 Tensilica Inc.
+  */
+ 
++#include <uapi/linux/audit.h>
++
++static inline int
++syscall_get_nr(struct task_struct *task, struct pt_regs *regs)
++{
++	return regs->syscall;
++}
++
++static inline void
++syscall_get_arguments(struct task_struct *task, struct pt_regs *regs,
++		      unsigned int i, unsigned int n, unsigned long *args)
++{
++	switch (i) {
++	case 0:
++		if (!n--)
++			break;
++		*args++ = regs->areg[6];
++		/* fall through */
++	case 1:
++		if (!n--)
++			break;
++		*args++ = regs->areg[3];
++		/* fall through */
++	case 2:
++		if (!n--)
++			break;
++		*args++ = regs->areg[4];
++		/* fall through */
++	case 3:
++		if (!n--)
++			break;
++		*args++ = regs->areg[5];
++		/* fall through */
++	case 4:
++		if (!n--)
++			break;
++		*args++ = regs->areg[8];
++		/* fall through */
++	case 5:
++		if (!n--)
++			break;
++		*args++ = regs->areg[9];
++		/* fall through */
++	case 6:
++		if (!n--)
++			break;
++		/* fall through */
++	default:
++		BUG();
++	}
++}
++
++static inline long
++syscall_get_error(struct task_struct *task, struct pt_regs *regs)
++{
++	return IS_ERR_VALUE(regs->areg[2]) ? regs->areg[2] : 0;
++
++static inline long
++syscall_get_return_value(struct task_struct *task, struct pt_regs *regs)
++{
++	return regs->areg[2];
++}
++
++static inline int
++syscall_get_arch(void)
++{
++	return AUDIT_ARCH_XTENSA;
++}
++
+ struct pt_regs;
+ asmlinkage long xtensa_ptrace(long, long, long, long);
+ asmlinkage long xtensa_sigreturn(struct pt_regs*);
+diff --git a/include/uapi/linux/audit.h b/include/uapi/linux/audit.h
+index 1e9808f3a240..bcc0619b046f 100644
+--- a/include/uapi/linux/audit.h
++++ b/include/uapi/linux/audit.h
+@@ -425,6 +425,7 @@ enum {
+ #define AUDIT_ARCH_TILEGX32	(EM_TILEGX|__AUDIT_ARCH_LE)
+ #define AUDIT_ARCH_TILEPRO	(EM_TILEPRO|__AUDIT_ARCH_LE)
+ #define AUDIT_ARCH_X86_64	(EM_X86_64|__AUDIT_ARCH_64BIT|__AUDIT_ARCH_LE)
++#define AUDIT_ARCH_XTENSA	(EM_XTENSA)
+ 
+ #define AUDIT_PERM_EXEC		1
+ #define AUDIT_PERM_WRITE	2
+-- 
+ldv
