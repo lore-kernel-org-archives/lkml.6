@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 641D8C07E85
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 02:03:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2565C07E85
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 02:03:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 287B12064D
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 02:03:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 287B12064D
+	by mail.kernel.org (Postfix) with ESMTP id 6931020837
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 02:03:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6931020837
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726538AbeLJCDF (ORCPT
+        id S1726577AbeLJCDJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 21:03:05 -0500
+        Sun, 9 Dec 2018 21:03:09 -0500
 Received: from mga06.intel.com ([134.134.136.31]:8030 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726515AbeLJCDB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Dec 2018 21:03:01 -0500
+        id S1726515AbeLJCDG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Dec 2018 21:03:06 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Dec 2018 18:03:01 -0800
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Dec 2018 18:03:06 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,336,1539673200"; 
-   d="scan'208";a="300767205"
+   d="scan'208";a="300767235"
 Received: from allen-box.sh.intel.com ([10.239.161.122])
-  by fmsmga006.fm.intel.com with ESMTP; 09 Dec 2018 18:02:58 -0800
+  by fmsmga006.fm.intel.com with ESMTP; 09 Dec 2018 18:03:03 -0800
 From:   Lu Baolu <baolu.lu@linux.intel.com>
 To:     Joerg Roedel <joro@8bytes.org>,
         David Woodhouse <dwmw2@infradead.org>
@@ -41,9 +41,9 @@ Cc:     ashok.raj@intel.com, sanjay.k.kumar@intel.com,
         iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
         Lu Baolu <baolu.lu@linux.intel.com>,
         Jacob Pan <jacob.jun.pan@linux.intel.com>
-Subject: [PATCH v6 09/12] iommu/vt-d: Setup context and enable RID2PASID support
-Date:   Mon, 10 Dec 2018 09:59:03 +0800
-Message-Id: <20181210015906.27929-10-baolu.lu@linux.intel.com>
+Subject: [PATCH v6 11/12] iommu/vt-d: Shared virtual address in scalable mode
+Date:   Mon, 10 Dec 2018 09:59:05 +0800
+Message-Id: <20181210015906.27929-12-baolu.lu@linux.intel.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181210015906.27929-1-baolu.lu@linux.intel.com>
 References: <20181210015906.27929-1-baolu.lu@linux.intel.com>
@@ -52,8 +52,8 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch enables the translation for requests without PASID in
-the scalable mode by setting up the root and context entries.
+This patch enables the current SVA (Shared Virtual Address)
+implementation to work in the scalable mode.
 
 Cc: Ashok Raj <ashok.raj@intel.com>
 Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>
@@ -63,218 +63,224 @@ Signed-off-by: Liu Yi L <yi.l.liu@intel.com>
 Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
 Reviewed-by: Ashok Raj <ashok.raj@intel.com>
 ---
- drivers/iommu/intel-iommu.c | 136 ++++++++++++++++++++++++++++--------
- drivers/iommu/intel-pasid.h |   1 +
- include/linux/intel-iommu.h |   1 +
- 3 files changed, 108 insertions(+), 30 deletions(-)
+ drivers/iommu/intel-iommu.c | 38 ------------------------
+ drivers/iommu/intel-pasid.c |  2 +-
+ drivers/iommu/intel-pasid.h |  1 -
+ drivers/iommu/intel-svm.c   | 58 ++++++++++++-------------------------
+ include/linux/intel-iommu.h |  9 +-----
+ 5 files changed, 20 insertions(+), 88 deletions(-)
 
 diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
-index 55c4ffda1246..21e5f1b9a2ca 100644
+index 21e5f1b9a2ca..4552166c553b 100644
 --- a/drivers/iommu/intel-iommu.c
 +++ b/drivers/iommu/intel-iommu.c
-@@ -1197,6 +1197,8 @@ static void iommu_set_root_entry(struct intel_iommu *iommu)
- 	unsigned long flag;
- 
- 	addr = virt_to_phys(iommu->root_entry);
-+	if (sm_supported(iommu))
-+		addr |= DMA_RTADDR_SMT;
- 
- 	raw_spin_lock_irqsave(&iommu->register_lock, flag);
- 	dmar_writeq(iommu->reg + DMAR_RTADDR_REG, addr);
-@@ -1918,6 +1920,56 @@ static void domain_exit(struct dmar_domain *domain)
- 	free_domain_mem(domain);
- }
- 
-+/*
-+ * Get the PASID directory size for scalable mode context entry.
-+ * Value of X in the PDTS field of a scalable mode context entry
-+ * indicates PASID directory with 2^(X + 7) entries.
-+ */
-+static inline unsigned long context_get_sm_pds(struct pasid_table *table)
-+{
-+	int pds, max_pde;
-+
-+	max_pde = table->max_pasid >> PASID_PDE_SHIFT;
-+	pds = find_first_bit((unsigned long *)&max_pde, MAX_NR_PASID_BITS);
-+	if (pds < 7)
-+		return 0;
-+
-+	return pds - 7;
-+}
-+
-+/*
-+ * Set the RID_PASID field of a scalable mode context entry. The
-+ * IOMMU hardware will use the PASID value set in this field for
-+ * DMA translations of DMA requests without PASID.
-+ */
-+static inline void
-+context_set_sm_rid2pasid(struct context_entry *context, unsigned long pasid)
-+{
-+	context->hi |= pasid & ((1 << 20) - 1);
-+	context->hi |= (1 << 20);
-+}
-+
-+/*
-+ * Set the DTE(Device-TLB Enable) field of a scalable mode context
-+ * entry.
-+ */
-+static inline void context_set_sm_dte(struct context_entry *context)
-+{
-+	context->lo |= (1 << 2);
-+}
-+
-+/*
-+ * Set the PRE(Page Request Enable) field of a scalable mode context
-+ * entry.
-+ */
-+static inline void context_set_sm_pre(struct context_entry *context)
-+{
-+	context->lo |= (1 << 4);
-+}
-+
-+/* Convert value to context PASID directory size field coding. */
-+#define context_pdts(pds)	(((pds) & 0x7) << 9)
-+
- static int domain_context_mapping_one(struct dmar_domain *domain,
- 				      struct intel_iommu *iommu,
- 				      struct pasid_table *table,
-@@ -1928,8 +1980,7 @@ static int domain_context_mapping_one(struct dmar_domain *domain,
- 	struct device_domain_info *info = NULL;
- 	struct context_entry *context;
- 	unsigned long flags;
--	struct dma_pte *pgd;
--	int ret, agaw;
-+	int ret;
- 
- 	WARN_ON(did == 0);
- 
-@@ -1975,41 +2026,67 @@ static int domain_context_mapping_one(struct dmar_domain *domain,
- 		}
- 	}
- 
--	pgd = domain->pgd;
--
- 	context_clear_entry(context);
--	context_set_domain_id(context, did);
- 
--	/*
--	 * Skip top levels of page tables for iommu which has less agaw
--	 * than default.  Unnecessary for PT mode.
--	 */
--	if (translation != CONTEXT_TT_PASS_THROUGH) {
--		for (agaw = domain->agaw; agaw > iommu->agaw; agaw--) {
--			ret = -ENOMEM;
--			pgd = phys_to_virt(dma_pte_addr(pgd));
--			if (!dma_pte_present(pgd))
--				goto out_unlock;
--		}
-+	if (sm_supported(iommu)) {
-+		unsigned long pds;
- 
--		info = iommu_support_dev_iotlb(domain, iommu, bus, devfn);
--		if (info && info->ats_supported)
--			translation = CONTEXT_TT_DEV_IOTLB;
--		else
--			translation = CONTEXT_TT_MULTI_LEVEL;
-+		WARN_ON(!table);
-+
-+		/* Setup the PASID DIR pointer: */
-+		pds = context_get_sm_pds(table);
-+		context->lo = (u64)virt_to_phys(table->table) |
-+				context_pdts(pds);
-+
-+		/* Setup the RID_PASID field: */
-+		context_set_sm_rid2pasid(context, PASID_RID2PASID);
- 
--		context_set_address_root(context, virt_to_phys(pgd));
--		context_set_address_width(context, agaw);
--	} else {
- 		/*
--		 * In pass through mode, AW must be programmed to
--		 * indicate the largest AGAW value supported by
--		 * hardware. And ASR is ignored by hardware.
-+		 * Setup the Device-TLB enable bit and Page request
-+		 * Enable bit:
- 		 */
--		context_set_address_width(context, iommu->msagaw);
-+		info = iommu_support_dev_iotlb(domain, iommu, bus, devfn);
-+		if (info && info->ats_supported)
-+			context_set_sm_dte(context);
-+		if (info && info->pri_supported)
-+			context_set_sm_pre(context);
-+	} else {
-+		struct dma_pte *pgd = domain->pgd;
-+		int agaw;
-+
-+		context_set_domain_id(context, did);
-+		context_set_translation_type(context, translation);
-+
-+		if (translation != CONTEXT_TT_PASS_THROUGH) {
-+			/*
-+			 * Skip top levels of page tables for iommu which has
-+			 * less agaw than default. Unnecessary for PT mode.
-+			 */
-+			for (agaw = domain->agaw; agaw > iommu->agaw; agaw--) {
-+				ret = -ENOMEM;
-+				pgd = phys_to_virt(dma_pte_addr(pgd));
-+				if (!dma_pte_present(pgd))
-+					goto out_unlock;
-+			}
-+
-+			info = iommu_support_dev_iotlb(domain, iommu, bus, devfn);
-+			if (info && info->ats_supported)
-+				translation = CONTEXT_TT_DEV_IOTLB;
-+			else
-+				translation = CONTEXT_TT_MULTI_LEVEL;
-+
-+			context_set_address_root(context, virt_to_phys(pgd));
-+			context_set_address_width(context, agaw);
-+		} else {
-+			/*
-+			 * In pass through mode, AW must be programmed to
-+			 * indicate the largest AGAW value supported by
-+			 * hardware. And ASR is ignored by hardware.
-+			 */
-+			context_set_address_width(context, iommu->msagaw);
-+		}
- 	}
- 
--	context_set_translation_type(context, translation);
- 	context_set_fault_enable(context);
- 	context_set_present(context);
- 	domain_flush_cache(domain, context, sizeof(*context));
-@@ -5180,7 +5257,6 @@ static void intel_iommu_put_resv_regions(struct device *dev,
+@@ -5257,18 +5257,6 @@ static void intel_iommu_put_resv_regions(struct device *dev,
  }
  
  #ifdef CONFIG_INTEL_IOMMU_SVM
--#define MAX_NR_PASID_BITS (20)
- static inline unsigned long intel_iommu_get_pts(struct device *dev)
+-static inline unsigned long intel_iommu_get_pts(struct device *dev)
+-{
+-	int pts, max_pasid;
+-
+-	max_pasid = intel_pasid_get_dev_max_id(dev);
+-	pts = find_first_bit((unsigned long *)&max_pasid, MAX_NR_PASID_BITS);
+-	if (pts < 5)
+-		return 0;
+-
+-	return pts - 5;
+-}
+-
+ int intel_iommu_enable_pasid(struct intel_iommu *iommu, struct intel_svm_dev *sdev)
  {
- 	int pts, max_pasid;
+ 	struct device_domain_info *info;
+@@ -5300,33 +5288,7 @@ int intel_iommu_enable_pasid(struct intel_iommu *iommu, struct intel_svm_dev *sd
+ 	sdev->sid = PCI_DEVID(info->bus, info->devfn);
+ 
+ 	if (!(ctx_lo & CONTEXT_PASIDE)) {
+-		if (iommu->pasid_state_table)
+-			context[1].hi = (u64)virt_to_phys(iommu->pasid_state_table);
+-		context[1].lo = (u64)virt_to_phys(info->pasid_table->table) |
+-			intel_iommu_get_pts(sdev->dev);
+-
+-		wmb();
+-		/* CONTEXT_TT_MULTI_LEVEL and CONTEXT_TT_DEV_IOTLB are both
+-		 * extended to permit requests-with-PASID if the PASIDE bit
+-		 * is set. which makes sense. For CONTEXT_TT_PASS_THROUGH,
+-		 * however, the PASIDE bit is ignored and requests-with-PASID
+-		 * are unconditionally blocked. Which makes less sense.
+-		 * So convert from CONTEXT_TT_PASS_THROUGH to one of the new
+-		 * "guest mode" translation types depending on whether ATS
+-		 * is available or not. Annoyingly, we can't use the new
+-		 * modes *unless* PASIDE is set. */
+-		if ((ctx_lo & CONTEXT_TT_MASK) == (CONTEXT_TT_PASS_THROUGH << 2)) {
+-			ctx_lo &= ~CONTEXT_TT_MASK;
+-			if (info->ats_supported)
+-				ctx_lo |= CONTEXT_TT_PT_PASID_DEV_IOTLB << 2;
+-			else
+-				ctx_lo |= CONTEXT_TT_PT_PASID << 2;
+-		}
+ 		ctx_lo |= CONTEXT_PASIDE;
+-		if (iommu->pasid_state_table)
+-			ctx_lo |= CONTEXT_DINVE;
+-		if (info->pri_supported)
+-			ctx_lo |= CONTEXT_PRS;
+ 		context[0].lo = ctx_lo;
+ 		wmb();
+ 		iommu->flush.flush_context(iommu, sdev->did, sdev->sid,
+diff --git a/drivers/iommu/intel-pasid.c b/drivers/iommu/intel-pasid.c
+index c3dcf4dc2496..53fe5248d8f1 100644
+--- a/drivers/iommu/intel-pasid.c
++++ b/drivers/iommu/intel-pasid.c
+@@ -286,7 +286,7 @@ static inline void pasid_clear_entry(struct pasid_entry *pe)
+ 	WRITE_ONCE(pe->val[7], 0);
+ }
+ 
+-void intel_pasid_clear_entry(struct device *dev, int pasid)
++static void intel_pasid_clear_entry(struct device *dev, int pasid)
+ {
+ 	struct pasid_entry *pe;
+ 
 diff --git a/drivers/iommu/intel-pasid.h b/drivers/iommu/intel-pasid.h
-index d6f4fead4491..55bb8715329d 100644
+index 512c63ec8a22..23537b3f34e3 100644
 --- a/drivers/iommu/intel-pasid.h
 +++ b/drivers/iommu/intel-pasid.h
-@@ -17,6 +17,7 @@
- #define PASID_PTE_PRESENT		1
- #define PDE_PFN_MASK			PAGE_MASK
- #define PASID_PDE_SHIFT			6
-+#define MAX_NR_PASID_BITS		20
+@@ -58,7 +58,6 @@ void intel_pasid_free_table(struct device *dev);
+ struct pasid_table *intel_pasid_get_table(struct device *dev);
+ int intel_pasid_get_dev_max_id(struct device *dev);
+ struct pasid_entry *intel_pasid_get_entry(struct device *dev, int pasid);
+-void intel_pasid_clear_entry(struct device *dev, int pasid);
+ int intel_pasid_setup_first_level(struct intel_iommu *iommu,
+ 				  struct device *dev, pgd_t *pgd,
+ 				  int pasid, u16 did, int flags);
+diff --git a/drivers/iommu/intel-svm.c b/drivers/iommu/intel-svm.c
+index 9b6771a89207..935712ebda79 100644
+--- a/drivers/iommu/intel-svm.c
++++ b/drivers/iommu/intel-svm.c
+@@ -29,10 +29,6 @@
  
- /*
-  * Domain ID reserved for pasid entries programmed for first-level
+ #include "intel-pasid.h"
+ 
+-#define PASID_ENTRY_P		BIT_ULL(0)
+-#define PASID_ENTRY_FLPM_5LP	BIT_ULL(9)
+-#define PASID_ENTRY_SRE		BIT_ULL(11)
+-
+ static irqreturn_t prq_event_thread(int irq, void *d);
+ 
+ struct pasid_state_entry {
+@@ -248,20 +244,6 @@ static void intel_invalidate_range(struct mmu_notifier *mn,
+ 			      (end - start + PAGE_SIZE - 1) >> VTD_PAGE_SHIFT, 0, 0);
+ }
+ 
+-
+-static void intel_flush_pasid_dev(struct intel_svm *svm, struct intel_svm_dev *sdev, int pasid)
+-{
+-	struct qi_desc desc;
+-
+-	desc.qw0 = QI_PC_TYPE | QI_PC_DID(sdev->did) |
+-			QI_PC_PASID_SEL | QI_PC_PASID(pasid);
+-	desc.qw1 = 0;
+-	desc.qw2 = 0;
+-	desc.qw3 = 0;
+-
+-	qi_submit_sync(&desc, svm->iommu);
+-}
+-
+ static void intel_mm_release(struct mmu_notifier *mn, struct mm_struct *mm)
+ {
+ 	struct intel_svm *svm = container_of(mn, struct intel_svm, notifier);
+@@ -281,8 +263,7 @@ static void intel_mm_release(struct mmu_notifier *mn, struct mm_struct *mm)
+ 	 */
+ 	rcu_read_lock();
+ 	list_for_each_entry_rcu(sdev, &svm->devs, list) {
+-		intel_pasid_clear_entry(sdev->dev, svm->pasid);
+-		intel_flush_pasid_dev(svm, sdev, svm->pasid);
++		intel_pasid_tear_down_entry(svm->iommu, sdev->dev, svm->pasid);
+ 		intel_flush_svm_range_dev(svm, sdev, 0, -1, 0, !svm->mm);
+ 	}
+ 	rcu_read_unlock();
+@@ -301,11 +282,9 @@ static LIST_HEAD(global_svm_list);
+ int intel_svm_bind_mm(struct device *dev, int *pasid, int flags, struct svm_dev_ops *ops)
+ {
+ 	struct intel_iommu *iommu = intel_svm_device_to_iommu(dev);
+-	struct pasid_entry *entry;
+ 	struct intel_svm_dev *sdev;
+ 	struct intel_svm *svm = NULL;
+ 	struct mm_struct *mm = NULL;
+-	u64 pasid_entry_val;
+ 	int pasid_max;
+ 	int ret;
+ 
+@@ -414,22 +393,22 @@ int intel_svm_bind_mm(struct device *dev, int *pasid, int flags, struct svm_dev_
+ 				kfree(sdev);
+ 				goto out;
+ 			}
+-			pasid_entry_val = (u64)__pa(mm->pgd) | PASID_ENTRY_P;
+-		} else
+-			pasid_entry_val = (u64)__pa(init_mm.pgd) |
+-					  PASID_ENTRY_P | PASID_ENTRY_SRE;
+-		if (cpu_feature_enabled(X86_FEATURE_LA57))
+-			pasid_entry_val |= PASID_ENTRY_FLPM_5LP;
+-
+-		entry = intel_pasid_get_entry(dev, svm->pasid);
+-		WRITE_ONCE(entry->val[0], pasid_entry_val);
+-
+-		/*
+-		 * Flush PASID cache when a PASID table entry becomes
+-		 * present.
+-		 */
+-		if (cap_caching_mode(iommu->cap))
+-			intel_flush_pasid_dev(svm, sdev, svm->pasid);
++		}
++
++		spin_lock(&iommu->lock);
++		ret = intel_pasid_setup_first_level(iommu, dev,
++				mm ? mm->pgd : init_mm.pgd,
++				svm->pasid, FLPT_DEFAULT_DID,
++				mm ? 0 : PASID_FLAG_SUPERVISOR_MODE);
++		spin_unlock(&iommu->lock);
++		if (ret) {
++			if (mm)
++				mmu_notifier_unregister(&svm->notifier, mm);
++			intel_pasid_free_id(svm->pasid);
++			kfree(svm);
++			kfree(sdev);
++			goto out;
++		}
+ 
+ 		list_add_tail(&svm->list, &global_svm_list);
+ 	}
+@@ -475,10 +454,9 @@ int intel_svm_unbind_mm(struct device *dev, int pasid)
+ 				 * to use. We have a *shared* PASID table, because it's
+ 				 * large and has to be physically contiguous. So it's
+ 				 * hard to be as defensive as we might like. */
+-				intel_flush_pasid_dev(svm, sdev, svm->pasid);
++				intel_pasid_tear_down_entry(iommu, dev, svm->pasid);
+ 				intel_flush_svm_range_dev(svm, sdev, 0, -1, 0, !svm->mm);
+ 				kfree_rcu(sdev, rcu);
+-				intel_pasid_clear_entry(dev, svm->pasid);
+ 
+ 				if (list_empty(&svm->devs)) {
+ 					intel_pasid_free_id(svm->pasid);
 diff --git a/include/linux/intel-iommu.h b/include/linux/intel-iommu.h
-index cb3ebda47fa7..5fdd33ed2cce 100644
+index 4ad62396e81e..cfcf9c1e1872 100644
 --- a/include/linux/intel-iommu.h
 +++ b/include/linux/intel-iommu.h
-@@ -258,6 +258,7 @@
+@@ -54,14 +54,7 @@
+ #define CONTEXT_TT_MULTI_LEVEL	0
+ #define CONTEXT_TT_DEV_IOTLB	1
+ #define CONTEXT_TT_PASS_THROUGH 2
+-/* Extended context entry types */
+-#define CONTEXT_TT_PT_PASID	4
+-#define CONTEXT_TT_PT_PASID_DEV_IOTLB 5
+-#define CONTEXT_TT_MASK (7ULL << 2)
+-
+-#define CONTEXT_DINVE		(1ULL << 8)
+-#define CONTEXT_PRS		(1ULL << 9)
+-#define CONTEXT_PASIDE		(1ULL << 11)
++#define CONTEXT_PASIDE		BIT_ULL(3)
  
- /* DMA_RTADDR_REG */
- #define DMA_RTADDR_RTT (((u64)1) << 11)
-+#define DMA_RTADDR_SMT (((u64)1) << 10)
- 
- /* CCMD_REG */
- #define DMA_CCMD_ICC (((u64)1) << 63)
+ /*
+  * Intel IOMMU register specification per version 1.0 public spec.
 -- 
 2.17.1
 
