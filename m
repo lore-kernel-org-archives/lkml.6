@@ -2,179 +2,195 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85715C65BB3
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 13:45:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BF24C04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 13:46:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C1C62084E
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 13:45:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1031F2084E
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 13:46:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NzDeZ9Ku"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C1C62084E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="kVJ7XqYj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1031F2084E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727764AbeLJNpu (ORCPT
+        id S1727771AbeLJNqL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 08:45:50 -0500
-Received: from mail-oi1-f179.google.com ([209.85.167.179]:39253 "EHLO
-        mail-oi1-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726305AbeLJNpu (ORCPT
+        Mon, 10 Dec 2018 08:46:11 -0500
+Received: from mail-vs1-f67.google.com ([209.85.217.67]:40197 "EHLO
+        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726305AbeLJNqL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 08:45:50 -0500
-Received: by mail-oi1-f179.google.com with SMTP id i6so8969281oia.6;
-        Mon, 10 Dec 2018 05:45:49 -0800 (PST)
+        Mon, 10 Dec 2018 08:46:11 -0500
+Received: by mail-vs1-f67.google.com with SMTP id z3so6637160vsf.7
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Dec 2018 05:46:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=zZyLLUhZXcYJ2LtJLGESHBqFDN04cjKgYPLf3lUGB3w=;
-        b=NzDeZ9KudDpiXL9cdONJSrPvKBsw5xsCqlcR36gRoKo7fa3HU8xHnR7sDtDApmo7By
-         78Yv7t8uaY0AVR2yAs/0NOq4fHbkiF3cdlS/NVfLC2XBKdJPs03wvHz5oGiEs1j2NgFa
-         ZiZzDJh8lx/Y5U9BgFARDcjBu4wBhz9MSTOOQxK/Y4vw9OfRfHLzcyGO/98wx+cMjptz
-         eiVzZ1tQ57KZFCyNkcugCAZL/+lB5o8wdR8V23hYlxMKJ082ob2+P3ZGL/ru9U7HQI75
-         bXuBZahoJqwzfmM+IpO9vCHnKTNjeR7KLlTPBc2xt0KMkckofr/Et8CT3giTkJ5Yjwtt
-         q27g==
+        bh=6TV7ajHQsygfOEecGhhDayNdG27ntonuMDY16Zvsb7Y=;
+        b=kVJ7XqYjbPzhe2StSThCmPfqPBL03g0MUjvMYVBniCbzwc5mUvQ810PdHdSOmRmoDD
+         9FUzmufzbOlWlj/gFACKiqSR8HAJEbgMb/GW+Q8VbyStpNNXci/oF8nRdzvKKzm3k3N2
+         XxM4X33iAoWw6vZH8/UUnfEfrPal7uAuluKNQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=zZyLLUhZXcYJ2LtJLGESHBqFDN04cjKgYPLf3lUGB3w=;
-        b=MhMBgMcajl9W3GeB4Scx1xcWUnhjBHdWX52fzgwWWZ3KfuN8boa45YyTD0p2wum7kH
-         6+Qwm7YCpzSsPxxnyXTBMlA+0WkOPsZpyUy3x6c6s1vGo7MBxgqcm5KfGs5Y68YVzprj
-         zl5ZsnffrQkFMx5cHagp6pF36h56F5lP/v/Z5e8ieafVnIGgoVrGS/yLwyJJUYD7rq8H
-         q31c28gaCMutwuxS7Ed2ks1kJvpdiWCoQjm2AS5me2SHQUQZ12Ul2JGQK6pDLm3b76bN
-         zstcVaY3KKS6Eh4JVdQkxgJNTHFV76on+AFJ9F02Jqd+NoUU6zVMhEVUCqaHQM9ScqnW
-         aQWw==
-X-Gm-Message-State: AA+aEWbg7J+XXTPNgg2tn1Nw6apta7y+18X9xF91dpnZxy+4ZIo0FZkd
-        ABeZbEmmMWmA4Dy+YULW3rQ06d7ObDULvXABUoI=
-X-Google-Smtp-Source: AFSGD/VyqY0leLtqw14agbiYFVZ8Dv7/cBcu+Dcc7nQUmMczgwsozhrzRAXtZK/d9d42XPDYqP2jGBqoqqjc15n9DZs=
-X-Received: by 2002:aca:ad14:: with SMTP id w20mr7145422oie.3.1544449548608;
- Mon, 10 Dec 2018 05:45:48 -0800 (PST)
+        bh=6TV7ajHQsygfOEecGhhDayNdG27ntonuMDY16Zvsb7Y=;
+        b=Qp/vwZqAtC+kg7yomqKYPEoCACDfm79QOWZ+Qwuq6qfZvOe25yw1K04kFsmB2cT5an
+         nFWDeJLr/0jXZRSG1PKWSBypRucqlgPTEPXB9zVaG4du7K5ZeKOBlTTNJTIN630QR28S
+         QK1p9+iipGr8pTUM0d38lJrHX8aJC+oAjHx/f8xBlmXb43DXcq9SmJ47c+YNrVDwCPV4
+         PWsSeApzrxipLeE1EtjKd/gEy70SNlRJ2xTPap36LvU/avNJRy4m0rwuZS+yUVhAkBDb
+         tZCroVu3cNQuAB3tfjh8Hp/7fhDTTbSeUMvSZyRBHL9RyhKezzOqoQiq4gB5txenjq33
+         JVeg==
+X-Gm-Message-State: AA+aEWYhhznRd0+CiO5b+vHiZREI1DkwIFZMN4ARukN7ok51rlP3w4jM
+        SYuzl4Ub7U87PbV3fMgTnFQya0elo2P06jt3JOyQIw==
+X-Google-Smtp-Source: AFSGD/WqhP+z2IZA8Bjhl5O5yFK1V9OXTinxbuUOIscjrqln2fvJwGy0kWFWdQ2CdEVnnWwMgrxRJc3nZWmSPgYeaCQ=
+X-Received: by 2002:a67:b245:: with SMTP id s5mr5452247vsh.200.1544449569692;
+ Mon, 10 Dec 2018 05:46:09 -0800 (PST)
 MIME-Version: 1.0
-Received: by 2002:a4a:2819:0:0:0:0:0 with HTTP; Mon, 10 Dec 2018 05:45:47
- -0800 (PST)
-In-Reply-To: <5534B7D4-A5D9-4F44-9620-970A7F9EC140@linaro.org>
-References: <20181119103424.3853-1-paolo.valente@linaro.org>
- <20181120162816.GV2509588@devbig004.ftw2.facebook.com> <25296DAE-73EC-46CC-9A98-A8B7E9017BB7@linaro.org>
- <7D7FAB43-5F62-4402-A9B3-E7C2E30AE680@linaro.org> <20181130184256.GI2509588@devbig004.ftw2.facebook.com>
- <5534B7D4-A5D9-4F44-9620-970A7F9EC140@linaro.org>
-From:   Angelo Ruocco <angelo.ruocco.90@gmail.com>
-Date:   Mon, 10 Dec 2018 14:45:47 +0100
-Message-ID: <CADiTV-29TmkB5-k=TtQfoJqjP2Qv7GSsGLXAPBaTB6DoQ+6yyw@mail.gmail.com>
-Subject: Re: [PATCH V2 00/10] unify the interface of the proportional-share
- policy in blkio/io
-To:     Paolo Valente <paolo.valente@linaro.org>
-Cc:     "'Paolo Valente' via bfq-iosched" <bfq-iosched@googlegroups.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Li Zefan <lizefan@huawei.com>,
-        Angelo Ruocco <angeloruocco90@gmail.com>,
-        Dennis Zhou <dennis@kernel.org>,
-        Josef Bacik <josef@toxicpanda.com>,
-        Liu Bo <bo.liu@linux.alibaba.com>,
-        Bart Van Assche <bvanassche@acm.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ulf.hansson@linaro.org, linus.walleij@linaro.org,
-        broonie@kernel.org, oleksandr@natalenko.name,
-        cgroups@vger.kernel.org, linux-doc@vger.kernel.org,
-        Jonathan Corbet <corbet@lwn.net>
+References: <20181129190503.6040-1-faiz_abbas@ti.com> <cb1e8e88-4c9d-741d-79cd-57b03c5e0808@ti.com>
+ <c4704766-7a58-8aa4-6bc0-b9373b15096c@ti.com> <CAPDyKFqMW+tMaVsS_c=kPztZRjX97Nzr2W0egvDkyzkpWckHRA@mail.gmail.com>
+ <d1ae4e93-4b17-9574-00b1-bfa268cb7574@ti.com>
+In-Reply-To: <d1ae4e93-4b17-9574-00b1-bfa268cb7574@ti.com>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Mon, 10 Dec 2018 14:45:33 +0100
+Message-ID: <CAPDyKFrLzEfGKkC3K9znjJUKO1MUjdBpaL0HEtHYOzbAgNO-fg@mail.gmail.com>
+Subject: Re: [PATCH] mmc: sdhci-omap: Workaround errata regarding SDR104/HS200
+ tuning failures (i929)
+To:     Faiz Abbas <faiz_abbas@ti.com>
+Cc:     Kishon <kishon@ti.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Adrian Hunter <adrian.hunter@intel.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-11-30 19:53 GMT+01:00, Paolo Valente <paolo.valente@linaro.org>:
+On Mon, 10 Dec 2018 at 14:23, Faiz Abbas <faiz_abbas@ti.com> wrote:
 >
+> Hi Uffe,
 >
->> Il giorno 30 nov 2018, alle ore 19:42, Tejun Heo <tj@kernel.org> ha
->> scritto:
->>
->> Hello, Paolo.
->>
->> On Fri, Nov 30, 2018 at 07:23:24PM +0100, Paolo Valente wrote:
->>>> Then we understood that exactly the same happens with throttling, in
->>>> case the latter is activated on different devices w.r.t. bfq.
->>>>
->>>> In addition, the same may happen, in the near future, with the
->>>> bandwidth controller Josef is working on.  If the controller can be
->>>> configured per device, as with throttling, then statistics may differ,
->>>> for the same interface files, between bfq, throttling and that
->>>> controller.
->>
->> So, regardless of how all these are implemented, what's presented to
->> user should be consistent and clear.  There's no other way around it.
->> Only what's relevant should be visible to userspace.
->>
->>> have you had time to look into this?  Any improvement to this
->>> interface is ok for us. We are only interested in finally solving this
->>> interface issue, as, for what concerns us directly, it has been
->>> preventing legacy code to use bfq for years.
->>
->> Unfortunately, I don't have any implementation proposal, but we can't
->> show things this way to userspace.
->>
+> On 05/12/18 7:20 PM, Ulf Hansson wrote:
+> > On Fri, 30 Nov 2018 at 06:53, Faiz Abbas <faiz_abbas@ti.com> wrote:
+> >>
+> >> Hi Kishon,
+> >>
+> >> On 30/11/18 10:10 AM, Kishon Vijay Abraham I wrote:
+> >>> Hi Faiz,
+> >>>
+> >>> On 30/11/18 12:35 AM, Faiz Abbas wrote:
+> >>>> Errata i929 in certain OMAP5/DRA7XX/AM57XX silicon revisions
+> >>>> (SPRZ426D - November 2014 - Revised February 2018 [1]) mentions
+> >>>> unexpected tuning pattern errors. A small failure band may be present
+> >>>> in the tuning range which may be missed by the current algorithm.
+> >>>> Furthermore, the failure bands vary with temperature leading to
+> >>>> different optimum tuning values for different temperatures.
+> >>>>
+> >>>> As suggested in the related Application Report (SPRACA9B - October 2017
+> >>>> - Revised July 2018 [2]), tuning should be done in two stages.
+> >>>> In stage 1, assign the optimum ratio in the maximum pass window for the
+> >>>> current temperature. In stage 2, if the chosen value is close to the
+> >>>> small failure band, move away from it in the appropriate direction.
+> >>>>
+> >>>> References:
+> >>>> [1] http://www.ti.com/lit/pdf/sprz426
+> >>>> [2] http://www.ti.com/lit/pdf/SPRACA9
+> >>>>
+> >>>> Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
+> >>>> ---
+> >>>>  drivers/mmc/host/Kconfig      |  2 +
+> >>>>  drivers/mmc/host/sdhci-omap.c | 90 ++++++++++++++++++++++++++++++++++-
+> >>>>  2 files changed, 91 insertions(+), 1 deletion(-)
+> >>>>
+> >>>> diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
+> >>>> index 1b58739d9744..6d3553f06f27 100644
+> >>>> --- a/drivers/mmc/host/Kconfig
+> >>>> +++ b/drivers/mmc/host/Kconfig
+> >>>> @@ -969,6 +969,8 @@ config MMC_SDHCI_XENON
+> >>>>  config MMC_SDHCI_OMAP
+> >>>>      tristate "TI SDHCI Controller Support"
+> >>>>      depends on MMC_SDHCI_PLTFM && OF
+> >>>> +    select THERMAL
+> >>>> +    select TI_SOC_THERMAL
+> >>>>      help
+> >>>>        This selects the Secure Digital Host Controller Interface (SDHCI)
+> >>>>        support present in TI's DRA7 SOCs. The controller supports
+> >>>> diff --git a/drivers/mmc/host/sdhci-omap.c b/drivers/mmc/host/sdhci-omap.c
+> >>>> index b3cb39d0db6f..9ccce7ef3a60 100644
+> >>>> --- a/drivers/mmc/host/sdhci-omap.c
+> >>>> +++ b/drivers/mmc/host/sdhci-omap.c
+> >>>> @@ -27,6 +27,7 @@
+> >>>>  #include <linux/regulator/consumer.h>
+> >>>>  #include <linux/pinctrl/consumer.h>
+> >>>>  #include <linux/sys_soc.h>
+> >>>> +#include <linux/thermal.h>
+> >>>>
+> >>>>  #include "sdhci-pltfm.h"
+> >>>>
+> >>>> @@ -286,14 +287,18 @@ static int sdhci_omap_execute_tuning(struct mmc_host *mmc, u32 opcode)
+> >>>>      struct sdhci_host *host = mmc_priv(mmc);
+> >>>>      struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+> >>>>      struct sdhci_omap_host *omap_host = sdhci_pltfm_priv(pltfm_host);
+> >>>> +    struct thermal_zone_device *thermal_dev;
+> >>>>      struct device *dev = omap_host->dev;
+> >>>>      struct mmc_ios *ios = &mmc->ios;
+> >>>>      u32 start_window = 0, max_window = 0;
+> >>>> +    bool single_point_failure = false;
+> >>>>      u8 cur_match, prev_match = 0;
+> >>>>      u32 length = 0, max_len = 0;
+> >>>>      u32 phase_delay = 0;
+> >>>> +    int temperature;
+> >>>>      int ret = 0;
+> >>>>      u32 reg;
+> >>>> +    int i;
+> >>>>
+> >>>>      /* clock tuning is not needed for upto 52MHz */
+> >>>>      if (ios->clock <= 52000000)
+> >>>> @@ -303,6 +308,16 @@ static int sdhci_omap_execute_tuning(struct mmc_host *mmc, u32 opcode)
+> >>>>      if (ios->timing == MMC_TIMING_UHS_SDR50 && !(reg & CAPA2_TSDR50))
+> >>>>              return 0;
+> >>>>
+> >>>> +    thermal_dev = thermal_zone_get_zone_by_name("cpu_thermal");
+> >>>> +    if (IS_ERR(thermal_dev)) {
+> >>>> +            dev_err(dev, "Unable to get thermal zone for tuning\n");
+> >>>> +            return PTR_ERR(thermal_dev);
+> >>>> +    }
+> >>>
+> >>> Can't we get thermal zone once during probe?
+> >>>
+> >>
+> >> Tuning is also (ideally) supposed to happen only once per enumeration.
+> >> Also it doesn't make sense to get a thermal zone for lower speed systems
+> >> that won't do tuning.
+> >
+> > Currently sdhci-omap calls pm_runtime_get_sync() during probe, and
+> > then keeps the host device runtime resumed until ->remove() is called
+> > on it. I assume you are going to change that, at some point!?
+> >
+> > In other words, what will happen to the host device when it becomes
+> > runtime suspended? Is re-tuning needed when it gets runtime resumed,
+> > which is the case for many other sdhci variants?
 >
-> Well, this is not very helpful to move forward :)
->
-> Let me try to repeat the problem, to try to help you help us unblock
-> the situation.
->
-> If we have multiple entities attached to the same interface output
-> file, you don't find it clear that each entity shows the number it
-> wants to show.  But you have no idea either of how that differentiated
-> information should be shown.  Is this the situation, or is the problem
-> somewhere 'above' this level?
->
-> If the problem is as I described it, here are some proposal attempts:
-> 1) Do you want file sharing to be allowed only if all entities will
-> output the same number?  (this seems excessive, but maybe it makes
-> sense)
-> 2) Do you want only one number to be shown, equal to the sum of the
-> numbers of each entity?  (in some cases, this may make sense)
-> 3) Do you prefer an average?
-> 4) Do you have any other idea, even if just germinal?
+> There are no plans to support runtime_suspend()/resume() any time in the
+> near future. If its ok with you, I would like to get this patch in
+> without any changes. We can change it in case a need for
+> runtime_suspend()/_resume() does arise.
 
-To further add to what Paolo said and better expose the problem, I'd like to
-say that all those proposals have issues.
-If we only allow "same output" cftypes to be shared then we lose all the
-flexibility of this solution, and we need a way for an entity to know other
-entities internal variables beforehand, which sounds at least very hard, and
-maybe is not even an acceptable thing to do.
-To put the average, sum or some other mathematical function in the file only
-makes sense for certain cftypes, so also doesn't sound like a good idea. In
-fact I can think of scenarios where only seeing the different values of the
-entities makes sense for a user.
+Right, I am okay with that. Due to recent changes to sdhci-omap
+$subject patch doesn't apply, can you please rebase!?
 
-I understand that the problem is inconsistency: having a file that behaves
-differently depending on the situation, and the only way to prevent this I can
-think of is to *always* show the entity owner of a certain file (or part of the
-output), even when the output would be the same among entities or when the
-file is not currently shared but could be. Can this be an acceptable solution?
+Additionally, I realized that we should fold in patch updating the DT
+doc for sdhci-omap, adding the property for the thermal zone. I
+regards to that, I am wondering if "cpu_thermal", is really the
+correct name of the zone. The point is, I am guessing the zone could
+change along with the SoCs/platforms.
 
-Angelo
-
->
-> Looking forward to your feedback,
-> Paolo
->
->
->> Thanks.
->>
->> --
->> tejun
->>
->> --
->> You received this message because you are subscribed to the Google Groups
->> "bfq-iosched" group.
->> To unsubscribe from this group and stop receiving emails from it, send an
->> email to bfq-iosched+unsubscribe@googlegroups.com.
->> For more options, visit https://groups.google.com/d/optout.
->
->
+Kind regards
+Uffe
