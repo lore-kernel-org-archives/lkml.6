@@ -2,77 +2,73 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 785E9C04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 23:42:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F127AC04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 23:43:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2CE872084C
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 23:42:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B2CB820851
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 23:43:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D4Uwe+/F"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2CE872084C
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K3UwiBqI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B2CB820851
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729678AbeLJXma (ORCPT
+        id S1730196AbeLJXnK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 18:42:30 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:50556 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726607AbeLJXm3 (ORCPT
+        Mon, 10 Dec 2018 18:43:10 -0500
+Received: from mail-it1-f195.google.com ([209.85.166.195]:34808 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726607AbeLJXnJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 18:42:29 -0500
-Received: by mail-wm1-f67.google.com with SMTP id n190so401972wmd.0
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Dec 2018 15:42:27 -0800 (PST)
+        Mon, 10 Dec 2018 18:43:09 -0500
+Received: by mail-it1-f195.google.com with SMTP id x124so9304149itd.1;
+        Mon, 10 Dec 2018 15:43:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=hO2cM2zJi2SuG74ItghQmHcUUIbBMcVFUOPugxeMdTA=;
-        b=D4Uwe+/FGkJWgRKtRmHkha7/QFdVvZPK2oWRBYR+TjxjNw0IMeDrNhcTjkSPL837A1
-         g1caxuYpXAcRq+jx6X2db/caO0xSXbNKzd2BklpFapORg0YIwtTnvIaH/YpEayr0uJ4Q
-         +AMfSvsj13k6GeJku+S0vYys3cmmywXyQZ3u6fCZ3kjdcdvxPstlGS1zYxdL8lTo1Z0b
-         Nu/m0a80qc4931Oa63Lq3lI4Koccp6xKjtQsX5i1Ps75WbY3BFVKjry+akJqUoA1ErnK
-         Ru4QAM0bZYnKuRxfM3ZFyggB/9j8N2rRorXjzhh2Cfxp9EMuqkoxdoxEVTrX0CxaWh+X
-         kp4A==
+        bh=E4yM4WyPy3yPiJETQPYVe1V9tP+X3065yLRYA97Pk1I=;
+        b=K3UwiBqI9+zlDAliqKvgsyxDGa4zDaGPCSSdmVK4nvMmBo1JSxnnAwivvnA8oKsp+Q
+         VsDJnSAh1GmDga4cZOV9o+5eweT56Usyhp+mKtkHl1KtaEaLp8HsgYnwGkYoBQ0hp5Uz
+         EbfyUJO6EyObefFnbUQZEEtkXqcnfCarjLXpJm5RRDZA9ANHRZyEpWmIMedgYrKqy2ic
+         ZWVKZClfni2KtkvC095tc2bvwsU0lvOGUvFK6AhHYEeZ0RZRlb+up55DvpFQpZ4eH9CG
+         tywIXqTA9CvKSurfl7L4HFadaEHj8xwQ5i50msrjPgNaTB2vUNFTEBMZVrbTcO0gaSXr
+         KmOQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=hO2cM2zJi2SuG74ItghQmHcUUIbBMcVFUOPugxeMdTA=;
-        b=reDItP/IqPl0R2wqC0enTT+aOurQPFSH3qY0nrDc16neRqjImH2c35Ig+Q8Bd3kN2Q
-         SSNYPUvVeg3n6UW5AZqjyGOvp/hPSvvhd+VcdRj9dyTGBG/cGa8cedmP2ELEaXSSL+Gs
-         n4AoahofpLlSNW//erpxGRoUmymIWfzK3X1ljkkNFevBj0w6fYWoRYCP2eLqhlXHKJK9
-         Hld370PnnNpQ2DAW9jl/hCRY0RM7GzBRZ9iKoVQV+NH5svlEQs/PjsZb2YepbPOkJo2Q
-         q/MJaAbz9I3aNXiv5G3XBhTEQPjmoxWAIytOoCSq1HEuxkatMYOcw1u2c4bI/ybwoROA
-         RSxQ==
-X-Gm-Message-State: AA+aEWYqNlldkK0RwHDj2CUKUXudcy5fXLhfE0+eXWeoNSCyofB8OjRz
-        0uKFiU+jGFjD18WQHBjTQ0c=
-X-Google-Smtp-Source: AFSGD/XReIxxjfQivP4agXyI0ORXNpTBnFp3+rQGFmRAXtLGdCcJh3RigDDJAS17GnZegebQ5Ij5tw==
-X-Received: by 2002:a1c:e513:: with SMTP id c19mr317226wmh.101.1544485346375;
-        Mon, 10 Dec 2018 15:42:26 -0800 (PST)
-Received: from localhost.localdomain ([2a01:4f8:10b:24a5::2])
-        by smtp.gmail.com with ESMTPSA id a6sm279729wmh.10.2018.12.10.15.42.25
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 10 Dec 2018 15:42:25 -0800 (PST)
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Harry Wentland <harry.wentland@amd.com>,
-        Leo Li <sunpeng.li@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        "David (ChunMing) Zhou" <David1.Zhou@amd.com>
-Cc:     amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH] drm/amd/display: Pass app_tf by value rather than by reference
-Date:   Mon, 10 Dec 2018 16:42:01 -0700
-Message-Id: <20181210234201.4850-1-natechancellor@gmail.com>
-X-Mailer: git-send-email 2.20.0
+        bh=E4yM4WyPy3yPiJETQPYVe1V9tP+X3065yLRYA97Pk1I=;
+        b=tvY1k4zPcTdeDGgmkZdVLujqc8+ZjINmWfbMca7YEL9aL0a5b0YJyMsNPTWc0nW8uF
+         UIh0QK3cit0C6/GW5T30ZYVze0swii5OTrR3tB2v4lHzmMB0LgUs6DCfcsZZLtwEb0Pn
+         k15VT1G+/JS0b3eo364Zeryofk/kkijD1Mg6ZBFjvCvM/BN+U5ytU1tfN+m0jcqE1vzA
+         OuqZVE9DKbdSVL1mi/JCNZGC0hvNEO3li7ryQdZeY0pimR//WATEXVe+FosVepllw1WS
+         h7QeEO9OgCXzcLZRtkJr8M9t3x0ccvdF6vILnlb34eQxHQQO+/fqPJJh8n8p6O3KCHUc
+         dZhQ==
+X-Gm-Message-State: AA+aEWYEuRPcoWYzovVhNiRbiHK5WYrYFyqLvFHQZqx+OrOEvHoEgTzR
+        +EsDhmkAuiJ00B2Uc9cI9DUo4e+Ry2A=
+X-Google-Smtp-Source: AFSGD/XPjee+Yf2HLztlba+PjVCEPwtSDEAF3cQVjballZZP3Qz5ungsj63/OnXeLEUSNG0h6Tq6lg==
+X-Received: by 2002:a05:660c:10:: with SMTP id q16mr355524itj.51.1544485388422;
+        Mon, 10 Dec 2018 15:43:08 -0800 (PST)
+Received: from tower.thefacebook.com ([2620:10d:c090:200::4:375a])
+        by smtp.gmail.com with ESMTPSA id e68sm625346ite.7.2018.12.10.15.43.06
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 10 Dec 2018 15:43:07 -0800 (PST)
+From:   Roman Gushchin <guroan@gmail.com>
+X-Google-Original-From: Roman Gushchin <guro@fb.com>
+To:     netdev@vger.kernel.org
+Cc:     kernel-team@fb.com, linux-kernel@vger.kernel.org,
+        Yonghong Song <yhs@fb.com>, Martin Lau <kafai@fb.com>,
+        Roman Gushchin <guro@fb.com>
+Subject: [PATCH v2 bpf-next 0/3] bpffs pretty print for cgroup local storage
+Date:   Mon, 10 Dec 2018 15:42:59 -0800
+Message-Id: <20181210234302.31327-1-guro@fb.com>
+X-Mailer: git-send-email 2.19.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -80,90 +76,28 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Clang warns when an expression that equals zero is used as a null
-pointer constant (in lieu of NULL):
+This patchset implements bpffs pretty printing for cgroup local storage maps.
 
-drivers/gpu/drm/amd/amdgpu/../display/amdgpu_dm/amdgpu_dm.c:4435:3:
-warning: expression which evaluates to zero treated as a null pointer
-constant of type 'const enum color_transfer_func *'
-[-Wnon-literal-null-conversion]
-                TRANSFER_FUNC_UNKNOWN,
-                ^~~~~~~~~~~~~~~~~~~~~
-1 warning generated.
+v2->v1:
+  - fixed size checks in cgroup_storage_check_btf(),
+  based on input from Yonghong and Martin
+  - implemented and used btf_type_is_reg_int(), suggested by Martin
 
-This warning is caused by commit bb47de736661 ("drm/amdgpu: Set FreeSync
-state using drm VRR properties") and it could be solved by using NULL
-instead of TRANSFER_FUNC_UNKNOWN or casting TRANSFER_FUNC_UNKNOWN as a
-pointer. However, after looking into it, there doesn't appear to be a
-good reason to pass app_tf by reference as it is never mutated along the
-way. This is the only code path in which app_tf is used:
+Roman Gushchin (3):
+  bpf: pass struct btf pointer to the map_check_btf() callback
+  bpf: add bpffs pretty print for cgroup local storage maps
+  selftests/bpf: add btf annotations for cgroup_local_storage maps
 
-mod_freesync_build_vrr_infopacket ->
-    build_vrr_infopacket_v2 ->
-        build_vrr_infopacket_fs2_data
+ include/linux/bpf.h                       |  3 +
+ include/linux/btf.h                       |  1 +
+ kernel/bpf/arraymap.c                     |  1 +
+ kernel/bpf/btf.c                          | 22 ++++++
+ kernel/bpf/local_storage.c                | 93 ++++++++++++++++++++++-
+ kernel/bpf/lpm_trie.c                     |  1 +
+ kernel/bpf/syscall.c                      |  3 +-
+ tools/testing/selftests/bpf/netcnt_prog.c |  6 ++
+ 8 files changed, 128 insertions(+), 2 deletions(-)
 
-Neither mod_freesync_build_vrr_infopacket or build_vrr_infopacket_v2
-modify app_tf's value and build_vrr_infopacket_fs2_data expects just
-the value so we can avoid dereferencing anything by just passing in
-app_tf's value to mod_freesync_build_vrr_infopacket and
-build_vrr_infopacket_v2.
-
-There is no functional change because build_vrr_infopacket_fs2_data
-doesn't do anything if TRANSFER_FUNC_UNKNOWN is passed to it, the same
-as not calling build_vrr_infopacket_fs2_data at all like before this
-change when NULL was used for app_tf.
-
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
----
- drivers/gpu/drm/amd/display/modules/freesync/freesync.c | 7 +++----
- drivers/gpu/drm/amd/display/modules/inc/mod_freesync.h  | 2 +-
- 2 files changed, 4 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/gpu/drm/amd/display/modules/freesync/freesync.c b/drivers/gpu/drm/amd/display/modules/freesync/freesync.c
-index 620a171620ee..520665a9d81a 100644
---- a/drivers/gpu/drm/amd/display/modules/freesync/freesync.c
-+++ b/drivers/gpu/drm/amd/display/modules/freesync/freesync.c
-@@ -656,7 +656,7 @@ static void build_vrr_infopacket_v1(enum signal_type signal,
- 
- static void build_vrr_infopacket_v2(enum signal_type signal,
- 		const struct mod_vrr_params *vrr,
--		const enum color_transfer_func *app_tf,
-+		enum color_transfer_func app_tf,
- 		struct dc_info_packet *infopacket)
- {
- 	unsigned int payload_size = 0;
-@@ -664,8 +664,7 @@ static void build_vrr_infopacket_v2(enum signal_type signal,
- 	build_vrr_infopacket_header_v2(signal, infopacket, &payload_size);
- 	build_vrr_infopacket_data(vrr, infopacket);
- 
--	if (app_tf != NULL)
--		build_vrr_infopacket_fs2_data(*app_tf, infopacket);
-+	build_vrr_infopacket_fs2_data(app_tf, infopacket);
- 
- 	build_vrr_infopacket_checksum(&payload_size, infopacket);
- 
-@@ -676,7 +675,7 @@ void mod_freesync_build_vrr_infopacket(struct mod_freesync *mod_freesync,
- 		const struct dc_stream_state *stream,
- 		const struct mod_vrr_params *vrr,
- 		enum vrr_packet_type packet_type,
--		const enum color_transfer_func *app_tf,
-+		enum color_transfer_func app_tf,
- 		struct dc_info_packet *infopacket)
- {
- 	/* SPD info packet for FreeSync */
-diff --git a/drivers/gpu/drm/amd/display/modules/inc/mod_freesync.h b/drivers/gpu/drm/amd/display/modules/inc/mod_freesync.h
-index 949a8b62aa98..063af6258fd9 100644
---- a/drivers/gpu/drm/amd/display/modules/inc/mod_freesync.h
-+++ b/drivers/gpu/drm/amd/display/modules/inc/mod_freesync.h
-@@ -145,7 +145,7 @@ void mod_freesync_build_vrr_infopacket(struct mod_freesync *mod_freesync,
- 		const struct dc_stream_state *stream,
- 		const struct mod_vrr_params *vrr,
- 		enum vrr_packet_type packet_type,
--		const enum color_transfer_func *app_tf,
-+		enum color_transfer_func app_tf,
- 		struct dc_info_packet *infopacket);
- 
- void mod_freesync_build_vrr_params(struct mod_freesync *mod_freesync,
 -- 
-2.20.0
+2.19.2
 
