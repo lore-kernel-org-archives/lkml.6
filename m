@@ -2,57 +2,169 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 649A9C67838
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 09:05:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21753C04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 09:06:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3234820855
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 09:05:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3234820855
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=8bytes.org
+	by mail.kernel.org (Postfix) with ESMTP id D9F6E2081F
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 09:06:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D9F6E2081F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726992AbeLJJFb (ORCPT
+        id S1727008AbeLJJGK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 04:05:31 -0500
-Received: from 8bytes.org ([81.169.241.247]:52872 "EHLO theia.8bytes.org"
+        Mon, 10 Dec 2018 04:06:10 -0500
+Received: from foss.arm.com ([217.140.101.70]:49104 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726888AbeLJJF2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 04:05:28 -0500
-Received: by theia.8bytes.org (Postfix, from userid 1000)
-        id 1D5543AA; Mon, 10 Dec 2018 10:05:27 +0100 (CET)
-Date:   Mon, 10 Dec 2018 10:05:26 +0100
-From:   Joerg Roedel <joro@8bytes.org>
-To:     John Garry <john.garry@huawei.com>
-Cc:     robin.murphy@arm.com, will.deacon@arm.com,
-        linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org,
-        ganapatrao.kulkarni@cavium.com, hch@lst.de,
-        m.szyprowski@samsung.com, linuxarm@huawei.com
-Subject: Re: [PATCH v4] iommu/dma: Use NUMA aware memory allocations in
- __iommu_dma_alloc_pages()
-Message-ID: <20181210090526.GP16835@8bytes.org>
-References: <1543576440-222098-1-git-send-email-john.garry@huawei.com>
- <df449701-5ecb-26c7-cb17-b3fe03cc29e7@huawei.com>
+        id S1726667AbeLJJGK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Dec 2018 04:06:10 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 77E481596;
+        Mon, 10 Dec 2018 01:06:09 -0800 (PST)
+Received: from localhost (e113682-lin.copenhagen.arm.com [10.32.144.41])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DCE733F575;
+        Mon, 10 Dec 2018 01:06:08 -0800 (PST)
+Date:   Mon, 10 Dec 2018 10:06:07 +0100
+From:   Christoffer Dall <christoffer.dall@arm.com>
+To:     Suzuki K Poulose <suzuki.poulose@arm.com>
+Cc:     Punit Agrawal <punit.agrawal@arm.com>,
+        kvmarm@lists.cs.columbia.edu, marc.zyngier@arm.com,
+        will.deacon@arm.com, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, punitagrawal@gmail.com,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>
+Subject: Re: [PATCH v9 5/8] KVM: arm64: Support PUD hugepage in
+ stage2_is_exec()
+Message-ID: <20181210090607.GF30263@e113682-lin.lund.arm.com>
+References: <20181031175745.18650-1-punit.agrawal@arm.com>
+ <20181031175745.18650-6-punit.agrawal@arm.com>
+ <20181101133848.GL12057@e113682-lin.lund.arm.com>
+ <5fddc14d-f6b6-bb97-5f5d-8e1e05e5da95@arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <df449701-5ecb-26c7-cb17-b3fe03cc29e7@huawei.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <5fddc14d-f6b6-bb97-5f5d-8e1e05e5da95@arm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 07, 2018 at 05:57:42PM +0000, John Garry wrote:
-> A friendly reminder. Can you please let me know your position on this patch?
+On Wed, Dec 05, 2018 at 05:57:51PM +0000, Suzuki K Poulose wrote:
+> 
+> 
+> On 01/11/2018 13:38, Christoffer Dall wrote:
+> >On Wed, Oct 31, 2018 at 05:57:42PM +0000, Punit Agrawal wrote:
+> >>In preparation for creating PUD hugepages at stage 2, add support for
+> >>detecting execute permissions on PUD page table entries. Faults due to
+> >>lack of execute permissions on page table entries is used to perform
+> >>i-cache invalidation on first execute.
+> >>
+> >>Provide trivial implementations of arm32 helpers to allow sharing of
+> >>code.
+> >>
+> >>Signed-off-by: Punit Agrawal <punit.agrawal@arm.com>
+> >>Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> >>Cc: Christoffer Dall <christoffer.dall@arm.com>
+> >>Cc: Marc Zyngier <marc.zyngier@arm.com>
+> >>Cc: Russell King <linux@armlinux.org.uk>
+> >>Cc: Catalin Marinas <catalin.marinas@arm.com>
+> >>Cc: Will Deacon <will.deacon@arm.com>
+> >>---
+> >>  arch/arm/include/asm/kvm_mmu.h         |  6 +++
+> >>  arch/arm64/include/asm/kvm_mmu.h       |  5 +++
+> >>  arch/arm64/include/asm/pgtable-hwdef.h |  2 +
+> >>  virt/kvm/arm/mmu.c                     | 53 +++++++++++++++++++++++---
+> >>  4 files changed, 61 insertions(+), 5 deletions(-)
+> >>
+> >>diff --git a/arch/arm/include/asm/kvm_mmu.h b/arch/arm/include/asm/kvm_mmu.h
+> >>index 37bf85d39607..839a619873d3 100644
+> >>--- a/arch/arm/include/asm/kvm_mmu.h
+> >>+++ b/arch/arm/include/asm/kvm_mmu.h
+> >>@@ -102,6 +102,12 @@ static inline bool kvm_s2pud_readonly(pud_t *pud)
+> >>  	return false;
+> >>  }
+> >>+static inline bool kvm_s2pud_exec(pud_t *pud)
+> >>+{
+> >>+	BUG();
+> >
+> >nit: I think this should be WARN() now :)
+> >
+> >>+	return false;
+> >>+}
+> >>+
+> >>  static inline pte_t kvm_s2pte_mkwrite(pte_t pte)
+> >>  {
+> >>  	pte_val(pte) |= L_PTE_S2_RDWR;
+> >>diff --git a/arch/arm64/include/asm/kvm_mmu.h b/arch/arm64/include/asm/kvm_mmu.h
+> >>index 8da6d1b2a196..c755b37b3f92 100644
+> >>--- a/arch/arm64/include/asm/kvm_mmu.h
+> >>+++ b/arch/arm64/include/asm/kvm_mmu.h
+> >>@@ -261,6 +261,11 @@ static inline bool kvm_s2pud_readonly(pud_t *pudp)
+> >>  	return kvm_s2pte_readonly((pte_t *)pudp);
+> >>  }
+> >>+static inline bool kvm_s2pud_exec(pud_t *pudp)
+> >>+{
+> >>+	return !(READ_ONCE(pud_val(*pudp)) & PUD_S2_XN);
+> >>+}
+> >>+
+> >>  #define hyp_pte_table_empty(ptep) kvm_page_empty(ptep)
+> >>  #ifdef __PAGETABLE_PMD_FOLDED
+> >>diff --git a/arch/arm64/include/asm/pgtable-hwdef.h b/arch/arm64/include/asm/pgtable-hwdef.h
+> >>index 1d7d8da2ef9b..336e24cddc87 100644
+> >>--- a/arch/arm64/include/asm/pgtable-hwdef.h
+> >>+++ b/arch/arm64/include/asm/pgtable-hwdef.h
+> >>@@ -193,6 +193,8 @@
+> >>  #define PMD_S2_RDWR		(_AT(pmdval_t, 3) << 6)   /* HAP[2:1] */
+> >>  #define PMD_S2_XN		(_AT(pmdval_t, 2) << 53)  /* XN[1:0] */
+> >>+#define PUD_S2_XN		(_AT(pudval_t, 2) << 53)  /* XN[1:0] */
+> >>+
+> >>  /*
+> >>   * Memory Attribute override for Stage-2 (MemAttr[3:0])
+> >>   */
+> >>diff --git a/virt/kvm/arm/mmu.c b/virt/kvm/arm/mmu.c
+> >>index 1c669c3c1208..8e44dccd1b47 100644
+> >>--- a/virt/kvm/arm/mmu.c
+> >>+++ b/virt/kvm/arm/mmu.c
+> >>@@ -1083,23 +1083,66 @@ static int stage2_set_pmd_huge(struct kvm *kvm, struct kvm_mmu_memory_cache
+> >>  	return 0;
+> >>  }
+> >>-static bool stage2_is_exec(struct kvm *kvm, phys_addr_t addr)
+> >>+/*
+> >>+ * stage2_get_leaf_entry - walk the stage2 VM page tables and return
+> >>+ * true if a valid and present leaf-entry is found. A pointer to the
+> >>+ * leaf-entry is returned in the appropriate level variable - pudpp,
+> >>+ * pmdpp, ptepp.
+> >>+ */
+> >>+static bool stage2_get_leaf_entry(struct kvm *kvm, phys_addr_t addr,
+> >>+				  pud_t **pudpp, pmd_t **pmdpp, pte_t **ptepp)
+> >
+> >Do we need this type madness or could this just return a u64 pointer
+> >(NULL if nothing is found) and pass that to kvm_s2pte_exec (because we
+> >know it's the same bit we need to check regardless of the pgtable level
+> >on both arm and arm64)?
+> >
+> >Or do we consider that bad for some reason?
+> 
+> Practically, yes the bit positions are same and thus we should be able
+> to do this assuming that it is just a pte. When we get to independent stage2
+> pgtable implementation which treats all page table entries as a single type
+> with a level information, we should be able to get rid of these.
+> But since we have followed the Linux way of page-table manipulation where we
+> have "level" specific accessors. The other option is open code the walking
+> sequence from the pgd to the leaf entry everywhere.
+> 
+> I am fine with changing this code, if you like.
+> 
 
-I am waiting for a Reviewed-by or at least Acked-by from Robin on it
-before I put it in my tree.
+Meh, it just looked a bit over-engineered to me when I originally looked
+at the patches, but you're right, they align with the rest of the
+implementation.
 
+Thanks,
 
-Regards,
-
-	Joerg
+    Christoffer
