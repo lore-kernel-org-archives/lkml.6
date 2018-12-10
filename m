@@ -2,188 +2,122 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D1B8C07E85
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 00:57:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99294C65BAF
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 01:06:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 538D82081F
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 00:57:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 554702064D
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 01:06:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZXRIHmUQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 538D82081F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=vmware.com header.i=@vmware.com header.b="BFVkdtAc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 554702064D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vmware.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726409AbeLJA5t (ORCPT
+        id S1726391AbeLJBGn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 19:57:49 -0500
-Received: from mail-pf1-f176.google.com ([209.85.210.176]:36494 "EHLO
-        mail-pf1-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726317AbeLJA5s (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Dec 2018 19:57:48 -0500
-Received: by mail-pf1-f176.google.com with SMTP id b85so4535314pfc.3
-        for <linux-kernel@vger.kernel.org>; Sun, 09 Dec 2018 16:57:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=q7/lCL9FJdyhz/T1CmCRiZjq32YE0nsxJB+Y/sBlV3g=;
-        b=ZXRIHmUQ5TiGwj3GnTIu3I6rlLVW++ahpF2g0aGsK/0vHZMAwGPNlltIxQLNzhcfEw
-         AD5anQSWRvtsakjUzd9A7muAP68PZK7ggIds88hHmE8+iiskHhWN+NMmzGjGLWSNuFkW
-         1089qZdBXaa7vQf+T3D+oRhtovmZh4eOiyMMfNzPqTHkoczEU+EaM0WXWcambTwxixY/
-         3Kr8/TkpnwvscB4OLn1RpjeQorKeKUJrvrioqBux/J7T18zQL+kSBdwYS/diR4f0cMP5
-         aD0u1oVo6hnGxMojiaJkc5gDYqCdSt2G724VAUg4BnvMpkDV1ODpfsGaigwQ0wc5bgYc
-         GXtA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=q7/lCL9FJdyhz/T1CmCRiZjq32YE0nsxJB+Y/sBlV3g=;
-        b=FErNvGJg1V0CBy5eZl06bMLUP3OIMdeIxSWNTLVS1hXcGPTp3F+w4c005l+RLKRWlV
-         ctZNsAP8zaE8BkB19wnYJpu9moxVkWWrjeolnZuE2uPPTw0ymdJPQLdcySW70Mv5mT5U
-         kRYIFqq4WC2s1Pi+bhXkSiMLwUsgb2NphtTqyAJjFS0kbBPhjFDo5cZsbxpc+Km41hSo
-         RsWYC67tLUdTnIxA0ZFbiiYq1TX9rhLMR3LwVYOQZm5Le+loiqtcrODer99DEQIh+o42
-         qeW6H5Nphz2Ql/91MZFQIdrHvshJVgsDRcQlCxpVJwBhMZc7Ob7v5M660mANLyiLv/W8
-         QMeQ==
-X-Gm-Message-State: AA+aEWY0UzNkqda6TKdnR5AY29Bv4Drm7+PifRFwRqIsqMv6VRcnj6zk
-        eTc5/tByX8Yyvgmgnlcto5I=
-X-Google-Smtp-Source: AFSGD/WDmNx03wI15bjO6ktwaefn1HmxQPZgsfhy3p6kvJjJJ0fqXA5ufseYgubDmTKVKFZzj1wYEw==
-X-Received: by 2002:a62:7892:: with SMTP id t140mr10370777pfc.237.1544403466252;
-        Sun, 09 Dec 2018 16:57:46 -0800 (PST)
-Received: from [10.2.19.70] ([208.91.2.1])
-        by smtp.gmail.com with ESMTPSA id k137sm17297319pfd.56.2018.12.09.16.57.44
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 09 Dec 2018 16:57:45 -0800 (PST)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 12.1 \(3445.101.1\))
-Subject: Re: Should this_cpu_read() be volatile?
-From:   Nadav Amit <nadav.amit@gmail.com>
-In-Reply-To: <20181208105220.GF5289@hirez.programming.kicks-ass.net>
-Date:   Sun, 9 Dec 2018 16:57:43 -0800
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Linux-MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        Sun, 9 Dec 2018 20:06:43 -0500
+Received: from mail-eopbgr760088.outbound.protection.outlook.com ([40.107.76.88]:15320
+        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726255AbeLJBGm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Dec 2018 20:06:42 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vmware.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=iNrA4eGlGX3LHmPNZedTTjxSt42II+phEoXoROiLYjg=;
+ b=BFVkdtAcdzoJrSDr1JzZz1i3wYNa2X5hue0XvHHyow92PU/X0zlo55xYjxjL6tLMZlarfSPYkx2pUazi25hR9cYdtyZw9TWXJ9y95exsGbg/H5B6Lsp+7vqs/WQtcYewkwyASm7YpLc7cVJS3qGxpO/3H0m4MoKdjlMwupnyoP8=
+Received: from BYAPR05MB4776.namprd05.prod.outlook.com (52.135.233.146) by
+ BYAPR05MB4741.namprd05.prod.outlook.com (52.135.233.95) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1425.12; Mon, 10 Dec 2018 01:06:37 +0000
+Received: from BYAPR05MB4776.namprd05.prod.outlook.com
+ ([fe80::9155:fea7:9c0c:68c7]) by BYAPR05MB4776.namprd05.prod.outlook.com
+ ([fe80::9155:fea7:9c0c:68c7%3]) with mapi id 15.20.1425.016; Mon, 10 Dec 2018
+ 01:06:36 +0000
+From:   Nadav Amit <namit@vmware.com>
+To:     Peter Zijlstra <peterz@infradead.org>,
         Ingo Molnar <mingo@redhat.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         Andy Lutomirski <luto@kernel.org>
+CC:     LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Damian Tometzki <linux_dti@icloud.com>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>
+Subject: Re: [PATCH v7 00/14] x86/alternative: text_poke() enhancements
+Thread-Topic: [PATCH v7 00/14] x86/alternative: text_poke() enhancements
+Thread-Index: AQHUjHfNFAwJWv67fk2Sd9DXTZtwfqVxfPmAgAWzSIA=
+Date:   Mon, 10 Dec 2018 01:06:36 +0000
+Message-ID: <5CE7C382-F25F-49B3-A2A5-4E3EA0A221DF@vmware.com>
+References: <20181205013408.47725-1-namit@vmware.com>
+ <20181206100337.GF13538@hirez.programming.kicks-ass.net>
+In-Reply-To: <20181206100337.GF13538@hirez.programming.kicks-ass.net>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=namit@vmware.com; 
+x-originating-ip: [208.91.2.1]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BYAPR05MB4741;20:f98VYs23fOhKn1Stn8KKEWZ7K31Lbs0lismEW3AQ5+oRJKgaC6XfkzRwzfyj8VeoUd2bEUg+03t9zAdejlHFiIwYsS/0rKMud5UmZSFwsuR8dLDVEDeo+uWnqx813GRkTbXY3BrPzwwE2nru2jZQ4Y/EfQ/nngciHWUuQ5BAPBc=
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 9c26e210-7d74-4978-ab87-08d65e3bbbfc
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:BYAPR05MB4741;
+x-ms-traffictypediagnostic: BYAPR05MB4741:
+x-microsoft-antispam-prvs: <BYAPR05MB4741E97FF65DC9EC942B6A97D0A50@BYAPR05MB4741.namprd05.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231455)(999002)(944501520)(52105112)(3002001)(93006095)(93001095)(10201501046)(148016)(149066)(150057)(6041310)(20161123558120)(20161123562045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(201708071742011)(7699051)(76991095);SRVR:BYAPR05MB4741;BCL:0;PCL:0;RULEID:;SRVR:BYAPR05MB4741;
+x-forefront-prvs: 08828D20BC
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(366004)(136003)(376002)(396003)(346002)(199004)(189003)(102836004)(5660300001)(305945005)(81166006)(8676002)(7416002)(7736002)(8936002)(53546011)(68736007)(33656002)(81156014)(6506007)(99286004)(316002)(106356001)(110136005)(105586002)(54906003)(36756003)(76176011)(66066001)(186003)(6486002)(26005)(229853002)(6512007)(6436002)(6116002)(3846002)(71200400001)(71190400001)(97736004)(83716004)(82746002)(446003)(25786009)(11346002)(2616005)(86362001)(486006)(478600001)(476003)(256004)(14444005)(6246003)(4326008)(53936002)(2906002)(14454004)(39060400002);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR05MB4741;H:BYAPR05MB4776.namprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: vmware.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: uqx+Zvm4mFnVRxc/gVnazo0yhQS86srR+XtPgO0dyB1EWYrdQjYBY8pjFHfAqKNHCMemxTKIoFt9FOy7sy7jdXa3Nx+iIwrqCzT82NQwemEIgDrB1BVGLINCHZ0n+B9DFjhORLp03rax2PId3B9H90BSuAp/nTc5++Vg6lPFFdWU8M19V1yTw4mOGZNEHWF+/Q8ZXv39snNeM3C6Q/O2MBo6xO6S8QOCyX/oKFIhP5r6X82o2Q7uejMTc/CPXp81SAX0AOB/oPMDiB0hDvbppnz5kmGMUqGI+icUlkYRvMQFJ4hjjyVyBlDpOtrpEifG
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <924F07255CE10D4F9CDD7FF3667E505E@namprd05.prod.outlook.com>
 Content-Transfer-Encoding: quoted-printable
-Message-Id: <5DE00B41-835C-4E68-B192-2A3C7ACB4392@gmail.com>
-References: <20181203161352.GP10377@bombadil.infradead.org>
- <4F09425C-C9AB-452F-899C-3CF3D4B737E1@gmail.com>
- <20181203224920.GQ10377@bombadil.infradead.org>
- <C377D9EF-A0F4-4142-8145-6942DC29A353@gmail.com>
- <EB579DAE-B25F-4869-8529-8586DF4AECFF@gmail.com>
- <20181206102559.GG13538@hirez.programming.kicks-ass.net>
- <55B665E1-3F64-4D87-B779-D1B4AFE719A9@gmail.com>
- <20181207084550.GA2237@hirez.programming.kicks-ass.net>
- <C29C792A-3F47-482D-B0D8-99EABEDF8882@gmail.com>
- <C064896E-268A-4462-8D51-E43C1CF10104@gmail.com>
- <20181208105220.GF5289@hirez.programming.kicks-ass.net>
-To:     Peter Zijlstra <peterz@infradead.org>
-X-Mailer: Apple Mail (2.3445.101.1)
+MIME-Version: 1.0
+X-OriginatorOrg: vmware.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9c26e210-7d74-4978-ab87-08d65e3bbbfc
+X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Dec 2018 01:06:36.3702
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b39138ca-3cee-4b4a-a4d6-cd83d9dd62f0
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR05MB4741
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> On Dec 8, 2018, at 2:52 AM, Peter Zijlstra <peterz@infradead.org> =
-wrote:
+> On Dec 6, 2018, at 2:03 AM, Peter Zijlstra <peterz@infradead.org> wrote:
 >=20
-> On Fri, Dec 07, 2018 at 04:40:52PM -0800, Nadav Amit wrote:
+> On Tue, Dec 04, 2018 at 05:33:54PM -0800, Nadav Amit wrote:
+>> Which leads me to (b) - the patch-set is big "enough" IMHO. Indeed,
+>> there are open security issues in the kernel when it comes to W^X.  But
+>> some people would want to use Andy's temporary mm-struct for other uses.
+>> So additional security hardening may be left for future patches.
 >=20
->>> I'm actually having difficulty finding the this_cpu_read() in any of =
-the
->>> functions you mention, so I cannot make any concrete suggestions =
-other
->>> than pointing at the alternative functions available.
->>=20
->>=20
->> So I got deeper into the code to understand a couple of differences. =
-In the
->> case of select_idle_sibling(), the patch (Peter=E2=80=99s) increase =
-the function
->> code size by 123 bytes (over the baseline of 986). The per-cpu =
-variable is
->> called through the following call chain:
->>=20
->> 	select_idle_sibling()
->> 	=3D> select_idle_cpu()
->> 	=3D> local_clock()
->> 	=3D> raw_smp_processor_id()
->>=20
->> And results in 2 more calls to sched_clock_cpu(), as the compiler =
-assumes
->> the processor id changes in between (which obviously wouldn=E2=80=99t =
-happen).
+> Yes, at the very least we should get the first 7 patches merged, since
+> they work and clean up the text poking irrespective of all that W^X
+> munging.
 >=20
-> That is the thing with raw_smp_processor_id(), it is allowed to be =
-used
-> in preemptible context, and there it _obviously_ can change between
-> subsequent invocations.
->=20
-> So again, this change is actually good.
->=20
-> If we want to fix select_idle_cpu(), we should maybe not use
-> local_clock() there but use sched_clock_cpu() with a stable argument,
-> this code runs with IRQs disabled and therefore the CPU number is =
-stable
-> for us here.
->=20
->> There may be more changes around, which I didn=E2=80=99t fully =
-analyze. But
->> the very least reading the processor id should not get =
-=E2=80=9Cvolatile=E2=80=9D.
->>=20
->> As for finish_task_switch(), the impact is only few bytes, but still
->> unnecessary. It appears that with your patch preempt_count() causes =
-multiple
->> reads of __preempt_count in this code:
->>=20
->>       if (WARN_ONCE(preempt_count() !=3D 2*PREEMPT_DISABLE_OFFSET,
->>                     "corrupted preempt_count: %s/%d/0x%x\n",
->>                     current->comm, current->pid, preempt_count()))
->>               preempt_count_set(FORK_PREEMPT_COUNT);
->=20
-> My patch proposed here:
->=20
->  https://marc.info/?l=3Dlinux-mm&m=3D154409548410209
->=20
-> would actually fix that one I think, preempt_count() uses
-> raw_cpu_read_4() which will loose the volatile with that patch.
+> (also, I think you lost my ACK)
 
-Sorry for the spam from yesterday. That what happens when I try to write
-emails on my phone while I=E2=80=99m distracted.
+Sorry for that. I will add.
 
-I tested the patch you referenced, and it certainly improves the =
-situation
-for reads, but there are still small and big issues lying around.
+But first, Thomas, Andy, are you ok with going with the first 7 patches?
 
-The biggest one is that (I think) smp_processor_id() should apparently =
-use
-__this_cpu_read(). Anyhow, when preemption checks are on, it is =
-validated
-that smp_processor_id() is not used while preemption is enabled, and =
-IRQs
-are not supposed to change its value. Otherwise the generated code of =
-many
-functions is affected.
+IIRC, you are the one who asked to add the handling of modules, since it wa=
+s
+not clear whether some synchronization is needed after the poking (that is
+done w/memcpy in this early stage).
 
-There are all kind of other smaller issues, such as set_irq_regs() and
-get_irq_regs(), which should run with disabled interrupts. They affect =
-the
-generated code in do_IRQ() and others.
-
-But beyond that, there are so many places in the code that use
-this_cpu_read() while IRQs are guaranteed to be disabled. For example
-arch/x86/mm/tlb.c is full with this_cpu_read/write() and almost(?) all
-should be running with interrupts disabled. Having said that, in my =
-build
-only flush_tlb_func_common() was affected.
+I can add synchronization if needed until the rest of the series gets in.
 
