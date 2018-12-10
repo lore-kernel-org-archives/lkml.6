@@ -6,82 +6,90 @@ X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7341EC04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 20:54:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A571C04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 20:54:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3CE172082F
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 20:54:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3CE172082F
+	by mail.kernel.org (Postfix) with ESMTP id 1BADC2084C
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 20:54:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1BADC2084C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729781AbeLJUyJ (ORCPT
+        id S1729804AbeLJUyU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 15:54:09 -0500
-Received: from mout.kundenserver.de ([212.227.126.187]:59053 "EHLO
+        Mon, 10 Dec 2018 15:54:20 -0500
+Received: from mout.kundenserver.de ([217.72.192.73]:58651 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727632AbeLJUyI (ORCPT
+        with ESMTP id S1726677AbeLJUyU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 15:54:08 -0500
+        Mon, 10 Dec 2018 15:54:20 -0500
 Received: from wuerfel.lan ([109.192.41.194]) by mrelayeu.kundenserver.de
- (mreue009 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1M3UhO-1gVuKd2gpG-000dPp; Mon, 10 Dec 2018 21:53:57 +0100
+ (mreue109 [212.227.15.145]) with ESMTPA (Nemesis) id
+ 1MtOSu-1hJDBU36WE-00uq8N; Mon, 10 Dec 2018 21:53:14 +0100
 From:   Arnd Bergmann <arnd@arndb.de>
-To:     Ajay Gupta <ajayg@nvidia.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>, Wolfram Sang <wsa@the-dreams.de>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] i2c: nvidia-gpu: mark resume function as __maybe_unused
-Date:   Mon, 10 Dec 2018 21:53:45 +0100
-Message-Id: <20181210205356.2846843-1-arnd@arndb.de>
+To:     Dave Hansen <dave.hansen@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org
+Cc:     Oscar Salvador <osalvador@suse.com>, Arnd Bergmann <arnd@arndb.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Stefan Agner <stefan@agner.ch>, linux-kernel@vger.kernel.org
+Subject: [PATCH] x86: mm: remove unused variable
+Date:   Mon, 10 Dec 2018 21:53:02 +0100
+Message-Id: <20181210205309.2794444-1-arnd@arndb.de>
 X-Mailer: git-send-email 2.20.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:CW+VANAtXIQWNcjOIY2sMeZksNODDoahiQkGAfk66JxUMkQimGA
- kIfAvvUthrNtlOyOrtdDG9aVQu4UH+QJJVA46A+nyN8MJpFgzWiTkUl6Pt6qfsQzbKTHd/F
- g0MtgtdjF7Xyi6vGs7LTH7ihBQk0Ro1vrLfEGCkROCYP+Sx/mKanYx0BRSQCbiFsClGROyF
- UjaKr/zkKamJN/+ecAxuQ==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:XNgpvOIInRw=:qNWIII9vjbt321CDM8kL49
- 5qS/ajGqVA1mBDIEl6UAPvZUB0DrcBHw546djLqQnGSjFbBPeOsJsTrjqMFAl1OpKZlLWFN21
- jG0ZWDssc8WbDFWhuDRrKDctsGSYiLD8RtP4p5nqmXh103T2LPazxDnEx33AlKYsnDPVaFe3y
- uS/XBfgh+6/RanRvhmpvDD1RLfmfxPzYRu4aCbcHO6gJu0wdedGA0citB04DlKRgQN+wzcGk+
- 7T3uR1EH5c4zOkIcynWSt1kT6de9BwbwsNXHhFXil/nHTNry8lWrIIhcc61w/LxWa3EiKGU/r
- b7q/4I03vyxhFgV3IAu4MBvFbKFwiP8SkU/nELlmJbedC5/TF9lusI88oQR11YAan1QjyPfwh
- MGdPl64WZAGaqwT6Q9YykdTTU0MAcVWVbTi9lnjsxGTgR4ZU2b7TyAc7malp1Za82S6YCPgZh
- 98PBf/Xyizep9naiguEiNuB4MzJAPZbU4nkETN+7sPcvXFBTDQjhLMp1VyHISzV0zx84o3iJ5
- 9doB33bwkV2cFIywxJKwontLM4UuxJ+RAWCDi7kCt72WWcZVQICazYiomY4snkjWGJn7cLhOQ
- GFc2vm4B2TGNZtixmNp9N/B17PG2NQSIo8mAYVTSg7NAngduxk8n0YvxnOBj5F61qEBCeEH4l
- d5HMNJOBcaVRW3I6pt+XszRXRFoyH0i916Jfa5ZKPGARQnIXgctY7VFlBBvb5Cqp3SipAtDPf
- mbmqTP7h7CuslLjQWpnXqtuS57IYENOEOj6pKg==
+X-Provags-ID: V03:K1:yCH03GP4qhHadJnzsehxhfFpcyMSm8NyfRszg1Xwscl4maIXqMZ
+ bP+8lbM8NYB2UwXPxazPsohiReP4Ab21cK2+xph73iJRpcfMfXGHYb8lU4jmXj48lYX6VY4
+ XSRLGC0D3H1MDlEAjFU75dotK3288oB3YNaF3ltFiTe1ur4dBmad7QEUNqzNa/ZaVeXklG4
+ LMCBAgFzmQHtKHFADoqUQ==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:LI/pbccW/cs=:SFoAhw4/LlAAeg4yLDGDTh
+ qP2zKgGBkCDLF5+YlD2M2MegTAdB6/G1KEtvvPoBwlv4EH1/DW8VTk2NTaA/JullJXAlY6O46
+ Whakxpn48COmZNODZPJL77m1jCXLrhdycDrE96aDuRZkURdI+UFvVoXHZt4Y7uZp6yKmwrxd0
+ NN9oKTO5NWYtAnCbGdwDpg6EWcsNqzBmLwL64gGjCwXzRIPaeQGgY7TFn/seM2RWaCxYCqAwo
+ 9v/N5+Ic19ZtsW3IAUAppLs4q9Lc5JlQ+4FC5d34KRlBzQMFqG9yyh/aycnjnzyDnTG1x+ssU
+ +pb5h+D4ZmyRYFBGuWwFdo753AqUkjQeReVV4jbheMAoeA6ahbJhPCOBw+oxjJlcUiRvMP9xf
+ R13WBxwAjeGkmDHGWvTmZcUjavtsAGHIiyoZtQntwXiRh7z7azWyMnYm+Nw3yxK6jvdFMePDR
+ OADLrRauKdwmrdecdqTmLUSSI8RcXA/csTp4KGflT+008u9nFb5m6XYb5BYP5gP0iUb3ZWDaC
+ 9XBBSa21iD9iL0rnYOg19IIz14tuQw3WmILQURzzus2dBQoZWLUCtDzAEORYd5NqAd8KmtTR3
+ W/oUFLi4PJ9fO7/Fv7jNnQ6rBdlMKBXj7f3/JpWIXO4UN+Qg8Mtrq/v/+x8W0tPBhVm0EcQ8S
+ RHyPt7UDc/QhOVRKRXb0/zI5FcBMvtU6hgA0/Ue8NmVO1PKE4T8Mpjaumob/3SSZxHec5+il8
+ SA0yyCT29GWhE9M7BZZUUWk1X+8Q7qAJjFizIQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When CONFIG_PM is disabled, this is needed to avoid a harmless
-unused-function warning:
+A recent change dropped the only user of the variable, which should
+now be removed as well to avoid this warning:
 
-drivers/i2c/busses/i2c-nvidia-gpu.c:345:12: error: 'gpu_i2c_resume' defined but not used [-Werror=unused-function]
+arch/x86/mm/init_32.c: In function 'arch_remove_memory':
+arch/x86/mm/init_32.c:867:15: error: unused variable 'zone' [-Werror=unused-variable]
 
-Fixes: c71bcdcb42a7 ("i2c: add i2c bus driver for NVIDIA GPU")
+Fixes: dd99d07f818b ("mm, memory_hotplug: move zone/pages handling to offline stage")
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- drivers/i2c/busses/i2c-nvidia-gpu.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/mm/init_32.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/i2c/busses/i2c-nvidia-gpu.c b/drivers/i2c/busses/i2c-nvidia-gpu.c
-index e99c3bb58351..4e67d5ed480e 100644
---- a/drivers/i2c/busses/i2c-nvidia-gpu.c
-+++ b/drivers/i2c/busses/i2c-nvidia-gpu.c
-@@ -342,7 +342,7 @@ static void gpu_i2c_remove(struct pci_dev *pdev)
- 	pci_free_irq_vectors(pdev);
- }
- 
--static int gpu_i2c_resume(struct device *dev)
-+static __maybe_unused int gpu_i2c_resume(struct device *dev)
+diff --git a/arch/x86/mm/init_32.c b/arch/x86/mm/init_32.c
+index 0b8c7b0033d2..c75c26497c4f 100644
+--- a/arch/x86/mm/init_32.c
++++ b/arch/x86/mm/init_32.c
+@@ -864,7 +864,6 @@ int arch_remove_memory(int nid, u64 start, u64 size, struct vmem_altmap *altmap)
  {
- 	struct gpu_i2c_dev *i2cd = dev_get_drvdata(dev);
+ 	unsigned long start_pfn = start >> PAGE_SHIFT;
+ 	unsigned long nr_pages = size >> PAGE_SHIFT;
+-	struct zone *zone;
  
+ 	return remove_sections(nid, start_pfn, nr_pages, altmap);
+ }
 -- 
 2.20.0
 
