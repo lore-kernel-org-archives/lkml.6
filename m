@@ -2,100 +2,116 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00EF5C04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 13:40:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC3F5C04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 13:44:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F80620855
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 13:40:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544449201;
-	bh=qoxjddS7BhzXuN0dXrsJok5Y0tEf1PtnXxr5pBq1vvE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=EEZrwX/gE9HqGDXNhjTX5CNLri1alyUjYuV0TgQfDVcnx9tqVpYofh6Seg60FQN0O
-	 tmB4c2xdnLYVRmogyL3jNk2+/lvTxZByDMduEeOoyiyohZJrQ4n9XbT0iTc7WHUI6N
-	 AQVP6fgXV1DmMxQ9DG6JRdXl3o/mQqDSEFoIiBD4=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F80620855
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 8A1382084E
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 13:44:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Eo1314Vo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A1382084E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727694AbeLJNkA (ORCPT
+        id S1727522AbeLJNn7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 08:40:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58748 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727374AbeLJNkA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 08:40:00 -0500
-Received: from quaco.ghostprotocols.net (unknown [190.15.121.82])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 134F42084E;
-        Mon, 10 Dec 2018 13:39:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544449199;
-        bh=qoxjddS7BhzXuN0dXrsJok5Y0tEf1PtnXxr5pBq1vvE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=jHWBey+vc+1XfaoO738B6eY3ikSSRbkFCg+zUrXNMXlM7whhgNZ3L+vTcBf0kmLLc
-         TvrdkMHEKwNgUR/QOj1WJGEM8opAmysPp8+odKPb47lo4NYxo+jYD3CHTUFYZwR3Xg
-         j+ALWEIuE8bo4djx7VwTJEr7c3i43oRgFlWN/bWc=
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id 02AE54042C; Mon, 10 Dec 2018 10:39:55 -0300 (-03)
-Date:   Mon, 10 Dec 2018 10:39:55 -0300
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Adrian Hunter <adrian.hunter@intel.com>
-Cc:     Jiri Olsa <jolsa@redhat.com>, linux-kernel@vger.kernel.org,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-Subject: Re: [PATCH] perf auxtrace: Alter addr_filter__entire_dso() to work
- if there are no symbols
-Message-ID: <20181210133955.GF32567@kernel.org>
-References: <20181127084634.12469-1-adrian.hunter@intel.com>
- <20181127124226.GC15747@kernel.org>
- <67587a92-200c-ac7a-67bd-20df06cdd41b@intel.com>
+        Mon, 10 Dec 2018 08:43:59 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:44898 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726911AbeLJNn7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Dec 2018 08:43:59 -0500
+Received: by mail-pl1-f194.google.com with SMTP id k8so5267460pls.11
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Dec 2018 05:43:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=qJe0lFdLiJyGkTG0oQdocR5mjS1UsdR4VanVd0I9Q8w=;
+        b=Eo1314VoNon8bLdZlyfwfUAf1ykCo8qmhZGLSdKegOTdsmsRlb+PlpcVhmJti/SdmV
+         iiLeXMGuBH5IDJlzSfsHOxUisOx3SVX/N2rfk2SZODlB6x3gHNvsQmKOyxZwszpZwsSh
+         ARNmQNFDDJ2Tlm9gIb4WoGUGpuCnX5nieZOIA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=qJe0lFdLiJyGkTG0oQdocR5mjS1UsdR4VanVd0I9Q8w=;
+        b=LWij1P+K7mMrUZ5i0tpXo0oxiBAvK7MIfE7YSrOoMamFP98mi3pEIT3JT3YU4LSDrT
+         jQxNa9IbNuWcYM6pkhg+AGSoJKZ8lIQLikSg6s7jzE97V55AKigz7ZuPoFOdONUiGyNj
+         9ErTRB0mI1Fosfuity9pWKs1ptMmciG8aCfhDJIIOxaaS+4yL9ECVLL9w/GbfiMSXabJ
+         qVhmMRGZbmKz9D/jHe5QxKxs04GwU8ZRNbryeECL9rr3cA3cow/im51PRTzh4CXAS+km
+         VYeABU9VveMgHVO6PgaGfHKk0LraFEdcFnT2gdirf2gLf6pG4jsETujxJnHk5hSthyG+
+         YgSw==
+X-Gm-Message-State: AA+aEWb8LDMhpvMOXkiEOsdIVgkVcnKq5cdaGarvRlP1vZbobwC48jKY
+        boguU6mr6UUqrt8MfySfpBae
+X-Google-Smtp-Source: AFSGD/UHb5IGpz9bGG8llAfD90QCB9DY7MrCtdfQS9mYFp/z8hgMIhSCbvWZQ4NN1bFXRAjiikY6aA==
+X-Received: by 2002:a17:902:142:: with SMTP id 60mr12556491plb.330.1544449438254;
+        Mon, 10 Dec 2018 05:43:58 -0800 (PST)
+Received: from Mani-XPS-13-9360 ([2409:4072:91e:2c01:40e1:a028:b090:9e12])
+        by smtp.gmail.com with ESMTPSA id v5sm22756891pgn.5.2018.12.10.05.43.51
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 10 Dec 2018 05:43:57 -0800 (PST)
+Date:   Mon, 10 Dec 2018 19:13:48 +0530
+From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To:     Parthiban Nallathambi <pn@denx.de>
+Cc:     afaerber@suse.de, robh+dt@kernel.org, mark.rutland@arm.com,
+        wsa@the-dreams.de, linux-arm-kernel@lists.infradead.org,
+        linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux@cubietech.com,
+        thomas.liau@actions-semi.com
+Subject: Re: [PATCH v2 1/4] dt-bindings: i2c: Add S700 support for Actions
+ Semi Soc's
+Message-ID: <20181210134348.GA25368@Mani-XPS-13-9360>
+References: <20181126185821.2480449-1-pn@denx.de>
+ <20181126185821.2480449-2-pn@denx.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <67587a92-200c-ac7a-67bd-20df06cdd41b@intel.com>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181126185821.2480449-2-pn@denx.de>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Mon, Dec 10, 2018 at 03:17:05PM +0200, Adrian Hunter escreveu:
-> On 27/11/18 2:42 PM, Arnaldo Carvalho de Melo wrote:
-> > Em Tue, Nov 27, 2018 at 10:46:34AM +0200, Adrian Hunter escreveu:
-> >> addr_filter__entire_dso() uses the first and last symbols from a dso,
-> >> and so does not work when there are no symbols.  Alter it to filter the
-> >> whole file instead.
+On Mon, Nov 26, 2018 at 07:58:18PM +0100, Parthiban Nallathambi wrote:
+> Add s700 compatible string to Actions Semi SoC dt-bindings.
+> 
+> Signed-off-by: Parthiban Nallathambi <pn@denx.de>
+> ---
+>  Documentation/devicetree/bindings/i2c/i2c-owl.txt | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/i2c/i2c-owl.txt b/Documentation/devicetree/bindings/i2c/i2c-owl.txt
+> index b743fe444e9f..dfa1197e0dbf 100644
+> --- a/Documentation/devicetree/bindings/i2c/i2c-owl.txt
+> +++ b/Documentation/devicetree/bindings/i2c/i2c-owl.txt
+> @@ -2,7 +2,7 @@ Actions Semiconductor Owl I2C controller
+>  
+>  Required properties:
+>  
+> -- compatible        : Should be "actions,s900-i2c".
+> +- compatible        : Should be "actions,s700-i2c" or "actions,s900-i2c".
 
-> > I'm splitting this patch into a first prep one that renames and exports
-> > the static function dso__data_file_size() and a second that does what
-> > this commig log message states.
+Since this driver will also support S500 in future, the above could be
+phrased as:
 
-> > The reason is that sometimes we find out that the main part of the patch
-> > is wrong and we then decide to revert the patch, only to realize that
-> > the exported function is by that time already used elsewhere.
- 
-> Thanks for looking at this, but did it get lost?  I don't see it in your tree.
+compatible:	Should be one of the following:
 
-Yeah, my bad, thanks for the reminder, did the split and added to my
-perf/core branch,
+		- "actions,s700-i2c" for S700 SoC
+		- "actions,s900-i2c" for S900 SoC
 
-Also I'm adding this:
+Regards,
+Mani
 
-  Cc: Masami Hiramatsu <mhiramat@kernel.org>
-  Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
-  Fixes: 1b36c03e3569 ("perf record: Add support for using symbols in address filters")
-
-So that people that were involved in the patch that introduced this
-feature gets notified of this fix, also for backporters to take notice,
-please try to do this in the future.
-
-Thanks,
-
-- Arnaldo
+>  - reg               : Offset and length of the register set for the device.
+>  - #address-cells    : Should be 1.
+>  - #size-cells       : Should be 0.
+> -- 
+> 2.17.2
+> 
