@@ -6,40 +6,37 @@ X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AFA1C67838
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 04:30:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74B59C04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 04:30:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A0652082F
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 04:30:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A0652082F
+	by mail.kernel.org (Postfix) with ESMTP id 46CC72082F
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 04:30:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 46CC72082F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726668AbeLJEas (ORCPT
+        id S1726790AbeLJEax (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 23:30:48 -0500
-Received: from vmicros1.altlinux.org ([194.107.17.57]:39846 "EHLO
+        Sun, 9 Dec 2018 23:30:53 -0500
+Received: from vmicros1.altlinux.org ([194.107.17.57]:39934 "EHLO
         vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726280AbeLJEao (ORCPT
+        with ESMTP id S1726451AbeLJEat (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Dec 2018 23:30:44 -0500
+        Sun, 9 Dec 2018 23:30:49 -0500
 Received: from mua.local.altlinux.org (mua.local.altlinux.org [192.168.1.14])
-        by vmicros1.altlinux.org (Postfix) with ESMTP id CF52B72CC70;
-        Mon, 10 Dec 2018 07:30:41 +0300 (MSK)
+        by vmicros1.altlinux.org (Postfix) with ESMTP id BF78072CC6C;
+        Mon, 10 Dec 2018 07:30:46 +0300 (MSK)
 Received: by mua.local.altlinux.org (Postfix, from userid 508)
-        id C1D4D7CEFE9; Mon, 10 Dec 2018 07:30:41 +0300 (MSK)
-Date:   Mon, 10 Dec 2018 07:30:41 +0300
+        id B6DFC7CEFE9; Mon, 10 Dec 2018 07:30:46 +0300 (MSK)
+Date:   Mon, 10 Dec 2018 07:30:46 +0300
 From:   "Dmitry V. Levin" <ldv@altlinux.org>
-To:     Max Filippov <jcmvbkbc@gmail.com>, Oleg Nesterov <oleg@redhat.com>,
+To:     Guan Xuetao <gxt@pku.edu.cn>, Oleg Nesterov <oleg@redhat.com>,
         Andy Lutomirski <luto@kernel.org>
 Cc:     Elvira Khabirova <lineprinter@altlinux.org>,
         Eugene Syromyatnikov <esyr@redhat.com>,
-        Chris Zankel <chris@zankel.net>,
-        Paul Moore <paul@paul-moore.com>,
-        Eric Paris <eparis@redhat.com>, linux-xtensa@linux-xtensa.org,
-        linux-audit@redhat.com, linux-kernel@vger.kernel.org
-Subject: [PATCH v5 19/25] xtensa: define syscall_get_* functions
-Message-ID: <20181210043041.GS6131@altlinux.org>
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v5 20/25] Move EM_UNICORE to uapi/linux/elf-em.h
+Message-ID: <20181210043046.GT6131@altlinux.org>
 References: <20181210042352.GA6092@altlinux.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -49,128 +46,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-syscall_get_* functions are required to be implemented on all
-architectures in order to extend the generic ptrace API with
-PTRACE_GET_SYSCALL_INFO request.
+This should never have been defined in the arch tree to begin with,
+and now uapi/linux/audit.h header is going to use EM_UNICORE
+in order to define AUDIT_ARCH_UNICORE which is needed to implement
+syscall_get_arch() which in turn is required to extend
+the generic ptrace API with PTRACE_GET_SYSCALL_INFO request.
 
-This adds all 5 syscall_get_* functions on xtensa as documented
-in asm-generic/syscall.h: syscall_get_nr, syscall_get_arguments,
-syscall_get_error, syscall_get_return_value, and syscall_get_arch.
-
-Cc: Max Filippov <jcmvbkbc@gmail.com>
+Cc: Guan Xuetao <gxt@pku.edu.cn>
 Cc: Oleg Nesterov <oleg@redhat.com>
 Cc: Andy Lutomirski <luto@kernel.org>
 Cc: Elvira Khabirova <lineprinter@altlinux.org>
 Cc: Eugene Syromyatnikov <esyr@redhat.com>
-Cc: Chris Zankel <chris@zankel.net>
-Cc: Paul Moore <paul@paul-moore.com>
-Cc: Eric Paris <eparis@redhat.com>
-Cc: linux-xtensa@linux-xtensa.org
-Cc: linux-audit@redhat.com
 Signed-off-by: Dmitry V. Levin <ldv@altlinux.org>
 ---
 
 Notes:
-    v5: added syscall_get_nr, syscall_get_arguments, syscall_get_error,
-        and syscall_get_return_value
-    v2: added Acked-by
-    v1: added syscall_get_arch
+    v5: added Cc
 
- arch/xtensa/include/asm/syscall.h | 69 +++++++++++++++++++++++++++++++
- include/uapi/linux/audit.h        |  1 +
- 2 files changed, 70 insertions(+)
+ arch/unicore32/include/asm/elf.h | 3 +--
+ include/uapi/linux/elf-em.h      | 1 +
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/xtensa/include/asm/syscall.h b/arch/xtensa/include/asm/syscall.h
-index 3673ff1f1bc5..d529c855a144 100644
---- a/arch/xtensa/include/asm/syscall.h
-+++ b/arch/xtensa/include/asm/syscall.h
-@@ -8,6 +8,75 @@
-  * Copyright (C) 2001 - 2007 Tensilica Inc.
+diff --git a/arch/unicore32/include/asm/elf.h b/arch/unicore32/include/asm/elf.h
+index 829042d07722..ae66dc1be49e 100644
+--- a/arch/unicore32/include/asm/elf.h
++++ b/arch/unicore32/include/asm/elf.h
+@@ -19,6 +19,7 @@
+  * ELF register definitions..
   */
+ #include <asm/ptrace.h>
++#include <linux/elf-em.h>
  
-+#include <uapi/linux/audit.h>
-+
-+static inline int
-+syscall_get_nr(struct task_struct *task, struct pt_regs *regs)
-+{
-+	return regs->syscall;
-+}
-+
-+static inline void
-+syscall_get_arguments(struct task_struct *task, struct pt_regs *regs,
-+		      unsigned int i, unsigned int n, unsigned long *args)
-+{
-+	switch (i) {
-+	case 0:
-+		if (!n--)
-+			break;
-+		*args++ = regs->areg[6];
-+		/* fall through */
-+	case 1:
-+		if (!n--)
-+			break;
-+		*args++ = regs->areg[3];
-+		/* fall through */
-+	case 2:
-+		if (!n--)
-+			break;
-+		*args++ = regs->areg[4];
-+		/* fall through */
-+	case 3:
-+		if (!n--)
-+			break;
-+		*args++ = regs->areg[5];
-+		/* fall through */
-+	case 4:
-+		if (!n--)
-+			break;
-+		*args++ = regs->areg[8];
-+		/* fall through */
-+	case 5:
-+		if (!n--)
-+			break;
-+		*args++ = regs->areg[9];
-+		/* fall through */
-+	case 6:
-+		if (!n--)
-+			break;
-+		/* fall through */
-+	default:
-+		BUG();
-+	}
-+}
-+
-+static inline long
-+syscall_get_error(struct task_struct *task, struct pt_regs *regs)
-+{
-+	return IS_ERR_VALUE(regs->areg[2]) ? regs->areg[2] : 0;
-+
-+static inline long
-+syscall_get_return_value(struct task_struct *task, struct pt_regs *regs)
-+{
-+	return regs->areg[2];
-+}
-+
-+static inline int
-+syscall_get_arch(void)
-+{
-+	return AUDIT_ARCH_XTENSA;
-+}
-+
- struct pt_regs;
- asmlinkage long xtensa_ptrace(long, long, long, long);
- asmlinkage long xtensa_sigreturn(struct pt_regs*);
-diff --git a/include/uapi/linux/audit.h b/include/uapi/linux/audit.h
-index 1e9808f3a240..bcc0619b046f 100644
---- a/include/uapi/linux/audit.h
-+++ b/include/uapi/linux/audit.h
-@@ -425,6 +425,7 @@ enum {
- #define AUDIT_ARCH_TILEGX32	(EM_TILEGX|__AUDIT_ARCH_LE)
- #define AUDIT_ARCH_TILEPRO	(EM_TILEPRO|__AUDIT_ARCH_LE)
- #define AUDIT_ARCH_X86_64	(EM_X86_64|__AUDIT_ARCH_64BIT|__AUDIT_ARCH_LE)
-+#define AUDIT_ARCH_XTENSA	(EM_XTENSA)
+ typedef unsigned long elf_greg_t;
+ typedef unsigned long elf_freg_t[3];
+@@ -28,8 +29,6 @@ typedef elf_greg_t elf_gregset_t[ELF_NGREG];
  
- #define AUDIT_PERM_EXEC		1
- #define AUDIT_PERM_WRITE	2
+ typedef struct fp_state elf_fpregset_t;
+ 
+-#define EM_UNICORE		110
+-
+ #define R_UNICORE_NONE		0
+ #define R_UNICORE_PC24		1
+ #define R_UNICORE_ABS32		2
+diff --git a/include/uapi/linux/elf-em.h b/include/uapi/linux/elf-em.h
+index f392dd9d07f7..2533bb1db3ef 100644
+--- a/include/uapi/linux/elf-em.h
++++ b/include/uapi/linux/elf-em.h
+@@ -37,6 +37,7 @@
+ #define EM_ARCOMPACT	93	/* ARCompact processor */
+ #define EM_XTENSA	94	/* Tensilica Xtensa Architecture */
+ #define EM_BLACKFIN     106     /* ADI Blackfin Processor */
++#define EM_UNICORE	110	/* UniCore-32 */
+ #define EM_ALTERA_NIOS2	113	/* Altera Nios II soft-core processor */
+ #define EM_TI_C6000	140	/* TI C6X DSPs */
+ #define EM_HEXAGON	164	/* QUALCOMM Hexagon */
 -- 
 ldv
