@@ -3,181 +3,124 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E77F0C04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 19:03:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 790E3C04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 19:03:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A64F620672
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 19:03:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A64F620672
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 443F520672
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 19:03:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 443F520672
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728918AbeLJTDM (ORCPT
+        id S1728966AbeLJTDh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 14:03:12 -0500
-Received: from foss.arm.com ([217.140.101.70]:60986 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727302AbeLJTDM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 14:03:12 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5F91AEBD;
-        Mon, 10 Dec 2018 11:03:11 -0800 (PST)
-Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 2F8613F6A8;
-        Mon, 10 Dec 2018 11:03:11 -0800 (PST)
-Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
-        id CAF441AE0CD4; Mon, 10 Dec 2018 19:03:33 +0000 (GMT)
-Date:   Mon, 10 Dec 2018 19:03:33 +0000
-From:   Will Deacon <will.deacon@arm.com>
-To:     Mark Rutland <mark.rutland@arm.com>
-Cc:     mingo@kernel.org, linux-kernel@vger.kernel.org,
-        akpm@linux-foundation.org, anders.roxell@linaro.org,
-        boqun.feng@gmail.com, naresh.kamboju@linaro.org,
-        peterz@infradead.org
-Subject: Re: [PATCH 2/2] locking/atomics: Check atomic headers with sha1sum
-Message-ID: <20181210190333.GB28127@edgewater-inn.cambridge.arm.com>
-References: <20181210175035.45096-1-mark.rutland@arm.com>
- <20181210175035.45096-3-mark.rutland@arm.com>
+        Mon, 10 Dec 2018 14:03:37 -0500
+Received: from gateway23.websitewelcome.com ([192.185.49.184]:28498 "EHLO
+        gateway23.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726024AbeLJTDg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Dec 2018 14:03:36 -0500
+X-Greylist: delayed 1325 seconds by postgrey-1.27 at vger.kernel.org; Mon, 10 Dec 2018 14:03:36 EST
+Received: from cm14.websitewelcome.com (cm14.websitewelcome.com [100.42.49.7])
+        by gateway23.websitewelcome.com (Postfix) with ESMTP id C6EBEEB2F
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Dec 2018 12:41:30 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id WQUkgRsvvkBj6WQUkgLv27; Mon, 10 Dec 2018 12:41:30 -0600
+X-Authority-Reason: nr=8
+Received: from [189.250.70.203] (port=36268 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1gWQUj-001EIf-23; Mon, 10 Dec 2018 12:41:30 -0600
+Date:   Mon, 10 Dec 2018 12:41:24 -0600
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     "David S. Miller" <davem@davemloft.net>,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] ipv4: Fix potential Spectre v1 vulnerability
+Message-ID: <20181210184124.GA24497@embeddedor>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181210175035.45096-3-mark.rutland@arm.com>
-User-Agent: Mutt/1.11.1+30 (d10eec459b35) ()
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.70.203
+X-Source-L: No
+X-Exim-ID: 1gWQUj-001EIf-23
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.250.70.203]:36268
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 5
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 10, 2018 at 05:50:35PM +0000, Mark Rutland wrote:
-> We currently check the atomic headers at build-time to ensure they
-> haven't been modified directly, and these checks require regenerating
-> the headers in full. As this takes a few seconds, even when
-> parallelized, this is too slow to run for every kernel build.
-> 
-> Instead, we can generate a hash of each header as we generate them,
-> which we can cheaply check at build time (~0.16s for all headers).
-> 
-> This patch does so, updating headers with their hashes using the new
-> gen-atomics.sh script. As some users apparently build the kernel wihout
-> coreutils, lacking sha1sum, the checks are skipped in this case.
-> Presumably, most developers have a working coreutils installation.
-> 
-> Signed-off-by: Mark Rutland <mark.rutland@arm.com>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Boqun Feng <boqun.feng@gmail.com>
-> Cc: Ingo Molnar <mingo@kernel.org>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Will Deacon <will.deacon@arm.com>
-> ---
->  include/asm-generic/atomic-instrumented.h |  1 +
->  include/asm-generic/atomic-long.h         |  1 +
->  include/linux/atomic-fallback.h           |  1 +
->  scripts/atomic/check-atomics.sh           | 26 ++++++++++++++++++++------
->  scripts/atomic/gen-atomics.sh             | 20 ++++++++++++++++++++
->  5 files changed, 43 insertions(+), 6 deletions(-)
->  create mode 100755 scripts/atomic/gen-atomics.sh
-> 
-> diff --git a/include/asm-generic/atomic-instrumented.h b/include/asm-generic/atomic-instrumented.h
-> index b8f5b35216e1..e8730c6b9fe2 100644
-> --- a/include/asm-generic/atomic-instrumented.h
-> +++ b/include/asm-generic/atomic-instrumented.h
-> @@ -1785,3 +1785,4 @@ atomic64_dec_if_positive(atomic64_t *v)
->  })
->  
->  #endif /* _ASM_GENERIC_ATOMIC_INSTRUMENTED_H */
-> +// b29b625d5de9280f680e42c7be859b55b15e5f6a
-> diff --git a/include/asm-generic/atomic-long.h b/include/asm-generic/atomic-long.h
-> index a833d385a70b..881c7e27af28 100644
-> --- a/include/asm-generic/atomic-long.h
-> +++ b/include/asm-generic/atomic-long.h
-> @@ -1010,3 +1010,4 @@ atomic_long_dec_if_positive(atomic_long_t *v)
->  
->  #endif /* CONFIG_64BIT */
->  #endif /* _ASM_GENERIC_ATOMIC_LONG_H */
-> +// 77558968132ce4f911ad53f6f52ce423006f6268
-> diff --git a/include/linux/atomic-fallback.h b/include/linux/atomic-fallback.h
-> index 1c02c0112fbb..a7d240e465c0 100644
-> --- a/include/linux/atomic-fallback.h
-> +++ b/include/linux/atomic-fallback.h
-> @@ -2292,3 +2292,4 @@ atomic64_dec_if_positive(atomic64_t *v)
->  #define atomic64_cond_read_relaxed(v, c) smp_cond_load_relaxed(&(v)->counter, (c))
->  
->  #endif /* _LINUX_ATOMIC_FALLBACK_H */
-> +// 25de4a2804d70f57e994fe3b419148658bb5378a
-> diff --git a/scripts/atomic/check-atomics.sh b/scripts/atomic/check-atomics.sh
-> index c30101cddf2d..cfa0c2f71c84 100755
-> --- a/scripts/atomic/check-atomics.sh
-> +++ b/scripts/atomic/check-atomics.sh
-> @@ -7,13 +7,27 @@ ATOMICDIR=$(dirname $0)
->  ATOMICTBL=${ATOMICDIR}/atomics.tbl
->  LINUXDIR=${ATOMICDIR}/../..
->  
-> +echo '' | sha1sum - > /dev/null 2>&1
-> +if [ $? -ne 0 ]; then
-> +	printf "sha1sum not available, skipping atomic header checks.\n"
-> +	exit 0
-> +fi
-> +
->  cat <<EOF |
-> -gen-atomic-instrumented.sh      asm-generic/atomic-instrumented.h
-> -gen-atomic-long.sh              asm-generic/atomic-long.h
-> -gen-atomic-fallback.sh          linux/atomic-fallback.h
-> +asm-generic/atomic-instrumented.h
-> +asm-generic/atomic-long.h
-> +linux/atomic-fallback.h
->  EOF
-> -while read script header; do
-> -	if ! (${ATOMICDIR}/${script} ${ATOMICTBL} | diff - ${LINUXDIR}/include/${header} > /dev/null); then
-> -		printf "warning: include/${header} is out-of-date.\n"
-> +while read header; do
-> +	OLDSUM="$(tail -n 1 ${LINUXDIR}/include/${header})"
-> +	OLDSUM="${OLDSUM#// }"
-> +
-> +	NEWSUM="$(head -n -1 ${LINUXDIR}/include/${header} | sha1sum)"
-> +	NEWSUM="${NEWSUM%% *}"
+vr.vifi is indirectly controlled by user-space, hence leading to
+a potential exploitation of the Spectre variant 1 vulnerability.
 
-Here we're relying on head and tail being available, but it looks like
-they're also part of coreutils, so that should be fine.
+This issue was detected with the help of Smatch:
 
-> +
-> +	if [ "${OLDSUM}" != "${NEWSUM}" ]; then
-> +		printf "warning: generated include/${header} has been modified.\n"
->  	fi
->  done
-> +
-> +exit 0
-> diff --git a/scripts/atomic/gen-atomics.sh b/scripts/atomic/gen-atomics.sh
-> new file mode 100755
-> index 000000000000..27400b0cd732
-> --- /dev/null
-> +++ b/scripts/atomic/gen-atomics.sh
-> @@ -0,0 +1,20 @@
-> +#!/bin/sh
-> +# SPDX-License-Identifier: GPL-2.0
-> +#
-> +# Generate atomic headers
-> +
-> +ATOMICDIR=$(dirname $0)
-> +ATOMICTBL=${ATOMICDIR}/atomics.tbl
-> +LINUXDIR=${ATOMICDIR}/../..
-> +
-> +cat <<EOF |
-> +gen-atomic-instrumented.sh      asm-generic/atomic-instrumented.h
-> +gen-atomic-long.sh              asm-generic/atomic-long.h
-> +gen-atomic-fallback.sh          linux/atomic-fallback.h
-> +EOF
-> +while read script header; do
-> +	${ATOMICDIR}/${script} ${ATOMICTBL} > ${LINUXDIR}/include/${header}
-> +	HASH="$(sha1sum ${LINUXDIR}/include/${header})"
-> +	HASH="${HASH%% *}"
-> +	printf "// %s\n" "${HASH}" >> ${LINUXDIR}/include/${header}
-> +done
+net/ipv4/ipmr.c:1616 ipmr_ioctl() warn: potential spectre issue 'mrt->vif_table' [r] (local cap)
+net/ipv4/ipmr.c:1690 ipmr_compat_ioctl() warn: potential spectre issue 'mrt->vif_table' [r] (local cap)
 
-Thanks, this looks sensible to me:
+Fix this by sanitizing vr.vifi before using it to index mrt->vif_table'
 
-Acked-by: Will Deacon <will.deacon@arm.com>
+Notice that given that speculation windows are large, the policy is
+to kill the speculation on the first load and not worry if it can be
+completed with a dependent load/store [1].
 
-Will
+[1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
+
+Cc: stable@vger.kernel.org
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ net/ipv4/ipmr.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/net/ipv4/ipmr.c b/net/ipv4/ipmr.c
+index ea04e38f56e9..8c03fb05d3e6 100644
+--- a/net/ipv4/ipmr.c
++++ b/net/ipv4/ipmr.c
+@@ -69,6 +69,8 @@
+ #include <net/nexthop.h>
+ #include <net/switchdev.h>
+ 
++#include <linux/nospec.h>
++
+ struct ipmr_rule {
+ 	struct fib_rule		common;
+ };
+@@ -1612,6 +1614,7 @@ int ipmr_ioctl(struct sock *sk, int cmd, void __user *arg)
+ 			return -EFAULT;
+ 		if (vr.vifi >= mrt->maxvif)
+ 			return -EINVAL;
++		vr.vifi = array_index_nospec(vr.vifi, mrt->maxvif);
+ 		read_lock(&mrt_lock);
+ 		vif = &mrt->vif_table[vr.vifi];
+ 		if (VIF_EXISTS(mrt, vr.vifi)) {
+@@ -1686,6 +1689,7 @@ int ipmr_compat_ioctl(struct sock *sk, unsigned int cmd, void __user *arg)
+ 			return -EFAULT;
+ 		if (vr.vifi >= mrt->maxvif)
+ 			return -EINVAL;
++		vr.vifi = array_index_nospec(vr.vifi, mrt->maxvif);
+ 		read_lock(&mrt_lock);
+ 		vif = &mrt->vif_table[vr.vifi];
+ 		if (VIF_EXISTS(mrt, vr.vifi)) {
+-- 
+2.17.1
+
