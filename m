@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AE1DC5CFFE
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 19:09:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63426C5CFFE
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 19:09:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5DE202084C
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 19:09:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 12E482082F
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 19:09:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="u+QSnPbG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5DE202084C
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="oBLACdtv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 12E482082F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729197AbeLJTJM (ORCPT
+        id S1729215AbeLJTJQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 14:09:12 -0500
-Received: from aserp2130.oracle.com ([141.146.126.79]:58026 "EHLO
+        Mon, 10 Dec 2018 14:09:16 -0500
+Received: from aserp2130.oracle.com ([141.146.126.79]:58078 "EHLO
         aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728060AbeLJTJK (ORCPT
+        with ESMTP id S1729196AbeLJTJN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 14:09:10 -0500
+        Mon, 10 Dec 2018 14:09:13 -0500
 Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wBAJ8mQ4115781;
+        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wBAJ8nKW115853;
         Mon, 10 Dec 2018 19:08:54 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references; s=corp-2018-07-02;
- bh=XBklHy8vSHYQYcjsPcyXmhV+Oh6uMBhDLfgsg3Z1Ag4=;
- b=u+QSnPbGy6deX1wrTEW4l9lnD9Zzczd3E/mftArdy2BA62qC2e3DIOPh6O89DzMGYPzf
- SiA4LMl5EtfKWRVM8HH5VgxnwjnKoeiWk+ODvCYeZcKZGMFySXf5UeHKglkzQScCOdyJ
- 5KE52nvkoqO7JPdJb6lQz8srm/fNyPhjiiGHTUFMHDwxLYUGFpPa8uJMaUEbpX6/y/cE
- /N1TLd0nvmrKQ7tHxyeVRtqTpBzL1RoqXTeiXYGYX8FrjKeRNHJf10/Jc6ZpImbRceWc
- VyI73YhtVgS3QXheLT0IU+vw55MdZDiowG4TSJH9plCmdzcFsgvig/3wWMwfWGEZAxxA tQ== 
+ bh=r+EJebpnfrk/sWr6hWd1Ab7LVK03r8tKPcKLYy60yB0=;
+ b=oBLACdtvYCNiRAd/eeuakcbkSeNj3uEx/yoEksT2LXEEaUzGU9VlB/E15TpuPuz0tLso
+ yEWIp/y48F2JfHLDAlfn99GkkFJwMmJSOQwlbasMgfDHtBRkuLq8m6AqtFwvRsuHjEc4
+ gdyLYAoMGUKaH58H9FsNDe20q7zbR3WLhpWZlcSgvKZKgVPw1OKt5ZHsw15UK2CVQEJq
+ tTeW8zh8OaYfkVmOrGcEWDiC1oddNKLkigaOFMCiemvT2bV9bqG7nF9KPTHduhoKLofD
+ qTAg2AK+4FQmHhLdzNSM3YC+8xm9ZNarjDoEmwwKby6W00ZHEkbm/I+0rRuR7CNyb72C Bg== 
 Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by aserp2130.oracle.com with ESMTP id 2p83fe01d4-1
+        by aserp2130.oracle.com with ESMTP id 2p83fe01d8-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
         Mon, 10 Dec 2018 19:08:54 +0000
 Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wBAJ8rV2006370
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wBAJ8r1d006397
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
         Mon, 10 Dec 2018 19:08:53 GMT
 Received: from abhmp0015.oracle.com (abhmp0015.oracle.com [141.146.116.21])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id wBAJ8qTX018717;
-        Mon, 10 Dec 2018 19:08:52 GMT
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id wBAJ8re6018718;
+        Mon, 10 Dec 2018 19:08:53 GMT
 Received: from marawils-linux.us.oracle.com (/10.141.196.37)
         by default (Oracle Beehive Gateway v4.0)
         with ESMTP ; Mon, 10 Dec 2018 11:08:52 -0800
@@ -58,9 +58,9 @@ To:     x86@kernel.org, xen-devel@lists.xenproject.org,
 Cc:     boris.ostrovsky@oracle.com, tglx@linutronix.de, mingo@redhat.com,
         hpa@zytor.com, roger.pau@citrix.com, rkrcmar@redhat.com,
         maran.wilson@oracle.com
-Subject: [PATCH v9 3/7] xen/pvh: Create a new file for Xen specific PVH code
-Date:   Mon, 10 Dec 2018 11:08:44 -0800
-Message-Id: <1544468926-737-1-git-send-email-maran.wilson@oracle.com>
+Subject: [PATCH v9 4/7] xen/pvh: Move Xen specific PVH VM initialization out of common file
+Date:   Mon, 10 Dec 2018 11:08:45 -0800
+Message-Id: <1544468926-737-2-git-send-email-maran.wilson@oracle.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1544468734-32763-1-git-send-email-maran.wilson@oracle.com>
 References: <1544468734-32763-1-git-send-email-maran.wilson@oracle.com>
@@ -77,64 +77,123 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 We need to refactor PVH entry code so that support for other hypervisors
 like Qemu/KVM can be added more easily.
 
-The first step in that direction is to create a new file that will
-eventually hold the Xen specific routines.
+This patch moves the small block of code used for initializing Xen PVH
+virtual machines into the Xen specific file. This initialization is not
+going to be needed for Qemu/KVM guests. Moving it out of the common file
+is going to allow us to compile kernels in the future without CONFIG_XEN
+that are still capable of being booted as a Qemu/KVM guest via the PVH
+entry point.
 
 Signed-off-by: Maran Wilson <maran.wilson@oracle.com>
+Reviewed-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 Reviewed-by: Juergen Gross <jgross@suse.com>
 ---
- arch/x86/platform/pvh/enlighten.c |  5 ++---
- arch/x86/xen/Makefile             |  2 ++
- arch/x86/xen/enlighten_pvh.c      | 10 ++++++++++
- 3 files changed, 14 insertions(+), 3 deletions(-)
- create mode 100644 arch/x86/xen/enlighten_pvh.c
+ arch/x86/platform/pvh/enlighten.c | 29 ++++++++++++++++++++---------
+ arch/x86/xen/enlighten_pvh.c      | 22 +++++++++++++++++++++-
+ include/xen/xen.h                 |  3 +++
+ 3 files changed, 44 insertions(+), 10 deletions(-)
 
 diff --git a/arch/x86/platform/pvh/enlighten.c b/arch/x86/platform/pvh/enlighten.c
-index 02e3ab7ff242..491932991202 100644
+index 491932991202..637bd74ba32d 100644
 --- a/arch/x86/platform/pvh/enlighten.c
 +++ b/arch/x86/platform/pvh/enlighten.c
-@@ -18,10 +18,9 @@
- /*
-  * PVH variables.
-  *
-- * xen_pvh pvh_bootparams and pvh_start_info need to live in data segment
-- * since they are used after startup_{32|64}, which clear .bss, are invoked.
-+ * pvh_bootparams and pvh_start_info need to live in the data segment since
-+ * they are used after startup_{32|64}, which clear .bss, are invoked.
-  */
--bool xen_pvh __attribute__((section(".data"))) = 0;
- struct boot_params pvh_bootparams __attribute__((section(".data")));
- struct hvm_start_info pvh_start_info __attribute__((section(".data")));
+@@ -81,27 +81,38 @@ static void __init init_pvh_bootparams(void)
+ 	x86_init.acpi.get_root_pointer = pvh_get_root_pointer;
+ }
  
-diff --git a/arch/x86/xen/Makefile b/arch/x86/xen/Makefile
-index b239922f6c6c..084de77a109e 100644
---- a/arch/x86/xen/Makefile
-+++ b/arch/x86/xen/Makefile
-@@ -36,6 +36,8 @@ obj-$(CONFIG_XEN_PV)		+= multicalls.o
- obj-$(CONFIG_XEN_PV)		+= xen-asm.o
- obj-$(CONFIG_XEN_PV)		+= xen-asm_$(BITS).o
- 
-+obj-$(CONFIG_XEN_PVH)		+= enlighten_pvh.o
-+
- obj-$(CONFIG_EVENT_TRACING)	+= trace.o
- 
- obj-$(CONFIG_SMP)		+= smp.o
-diff --git a/arch/x86/xen/enlighten_pvh.c b/arch/x86/xen/enlighten_pvh.c
-new file mode 100644
-index 000000000000..6be7bc719b38
---- /dev/null
-+++ b/arch/x86/xen/enlighten_pvh.c
-@@ -0,0 +1,10 @@
-+// SPDX-License-Identifier: GPL-2.0
-+#include <linux/types.h>
++/*
++ * If we are trying to boot a Xen PVH guest, it is expected that the kernel
++ * will have been configured to provide the required override for this routine.
++ */
++void __init __weak xen_pvh_init(void)
++{
++	xen_raw_printk("Error: Missing xen PVH initialization\n");
++	BUG();
++}
 +
 +/*
-+ * PVH variables.
-+ *
-+ * The variable xen_pvh needs to live in the data segment since it is used
-+ * after startup_{32|64} is invoked, which will clear the .bss segment.
++ * When we add support for other hypervisors like Qemu/KVM, this routine can
++ * selectively invoke the appropriate initialization based on guest type.
 + */
-+bool xen_pvh __attribute__((section(".data"))) = 0;
++static void hypervisor_specific_init(void)
++{
++	xen_pvh_init();
++}
++
+ /*
+  * This routine (and those that it might call) should not use
+  * anything that lives in .bss since that segment will be cleared later.
+  */
+ void __init xen_prepare_pvh(void)
+ {
+-	u32 msr;
+-	u64 pfn;
+-
+ 	if (pvh_start_info.magic != XEN_HVM_START_MAGIC_VALUE) {
+ 		xen_raw_printk("Error: Unexpected magic value (0x%08x)\n",
+ 				pvh_start_info.magic);
+ 		BUG();
+ 	}
+ 
+-	xen_pvh = 1;
+-	xen_start_flags = pvh_start_info.flags;
+-
+-	msr = cpuid_ebx(xen_cpuid_base() + 2);
+-	pfn = __pa(hypercall_page);
+-	wrmsr_safe(msr, (u32)pfn, (u32)(pfn >> 32));
++	hypervisor_specific_init();
+ 
+ 	init_pvh_bootparams();
+ }
+diff --git a/arch/x86/xen/enlighten_pvh.c b/arch/x86/xen/enlighten_pvh.c
+index 6be7bc719b38..41a7d6ad74e0 100644
+--- a/arch/x86/xen/enlighten_pvh.c
++++ b/arch/x86/xen/enlighten_pvh.c
+@@ -1,5 +1,12 @@
+ // SPDX-License-Identifier: GPL-2.0
+-#include <linux/types.h>
++#include <linux/acpi.h>
++
++#include <asm/io_apic.h>
++#include <asm/hypervisor.h>
++
++#include <xen/xen.h>
++#include <asm/xen/interface.h>
++#include <asm/xen/hypercall.h>
+ 
+ /*
+  * PVH variables.
+@@ -8,3 +15,16 @@
+  * after startup_{32|64} is invoked, which will clear the .bss segment.
+  */
+ bool xen_pvh __attribute__((section(".data"))) = 0;
++
++void __init xen_pvh_init(void)
++{
++	u32 msr;
++	u64 pfn;
++
++	xen_pvh = 1;
++	xen_start_flags = pvh_start_info.flags;
++
++	msr = cpuid_ebx(xen_cpuid_base() + 2);
++	pfn = __pa(hypercall_page);
++	wrmsr_safe(msr, (u32)pfn, (u32)(pfn >> 32));
++}
+diff --git a/include/xen/xen.h b/include/xen/xen.h
+index d7a2678da77f..0e2156786ad2 100644
+--- a/include/xen/xen.h
++++ b/include/xen/xen.h
+@@ -29,6 +29,9 @@ extern bool xen_pvh;
+ 
+ extern uint32_t xen_start_flags;
+ 
++#include <xen/interface/hvm/start_info.h>
++extern struct hvm_start_info pvh_start_info;
++
+ #ifdef CONFIG_XEN_DOM0
+ #include <xen/interface/xen.h>
+ #include <asm/xen/hypervisor.h>
 -- 
 2.16.1
 
