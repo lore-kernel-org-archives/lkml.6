@@ -2,155 +2,189 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12A07C04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 15:25:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 399CEC04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 15:27:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A977F20672
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 15:25:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Z40oXd6B"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A977F20672
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id EB0F72082F
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 15:27:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB0F72082F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728006AbeLJPZ4 (ORCPT
+        id S1728050AbeLJP1x (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 10:25:56 -0500
-Received: from mail-vs1-f67.google.com ([209.85.217.67]:40519 "EHLO
-        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727313AbeLJPZ4 (ORCPT
+        Mon, 10 Dec 2018 10:27:53 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:33620 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727914AbeLJP1x (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 10:25:56 -0500
-Received: by mail-vs1-f67.google.com with SMTP id z3so6856225vsf.7
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Dec 2018 07:25:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=HF4hfINd4Yhl2TbYXFboHSnZPv2lNGdpqIEXQpMFPOk=;
-        b=Z40oXd6BdhjlzNxglv/y1C/RwwEp6uRoS6MRhWlp1ofEwjxw0uK07RuUmOIOPJIgab
-         NJhsKu8biKMiPdfUiY3+xyEP5MTcrb3wlgQft04AQv377/dBTXxlEdM71Kx7z9+/W+w2
-         IAv3BG8JfaZhgwWnBpDmBcKQWVc4wsXMsmKfo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=HF4hfINd4Yhl2TbYXFboHSnZPv2lNGdpqIEXQpMFPOk=;
-        b=nvfaV/qjBNbDTqLBlm6z+u/cZj84thphKW/enh6jvoRHLRawOLq9gL7pTNrJr2PzQM
-         OtRdfL/Af6z40jshb+4RHMLFpZw/s6VgfawX5nyj1nz+KyTNww0MrfRqIljuvdCVYJxx
-         6pdEqCRkAeuyrAvjAp1bBTPOsvACS38n/B09iRCwrt4vNAFLCa7BBnqswgKtEGxTu4Ht
-         z41bi48jI/BuJNvPf8UYlMk4J+fYFKEiTvVUj2mza3tK5AI/r8N7uEp8RHLjvxmL/kwE
-         zleE+uxsclTaYSZEtqMfRz94a2w+UonH1Fakv0wWQUJQXEZx8zvNCzYBkYRCuRJ54K8i
-         VKJQ==
-X-Gm-Message-State: AA+aEWboS7Kr93oddXjaKbZskmI1HD2rl1PS/Q9zkTNVfkrJPpcFHKoU
-        1h7y8ubkbqBW6QRt529UVr0nfVrd6sIV/08EdyEBwo2V4EgUKg==
-X-Google-Smtp-Source: AFSGD/VLkFCbog+9JaE5s6T0oO6Qx/mNPiCrn0+r+UguuKKgu4yitGcrQUmr7MN2kqy0e/Vd21lZvIsITzzNb/59yLA=
-X-Received: by 2002:a67:b245:: with SMTP id s5mr5640068vsh.200.1544455554691;
- Mon, 10 Dec 2018 07:25:54 -0800 (PST)
+        Mon, 10 Dec 2018 10:27:53 -0500
+Received: from localhost ([127.0.0.1] helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtp (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1gWNTK-0006I9-Vi; Mon, 10 Dec 2018 16:27:51 +0100
+Message-Id: <20181210152311.986181245@linutronix.de>
+User-Agent: quilt/0.65
+Date:   Mon, 10 Dec 2018 16:23:06 +0100
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     LKML <linux-kernel@vger.kernel.org>
+Cc:     Stefan Liebler <stli@linux.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Darren Hart <dvhart@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>
+Subject: [patch] futex: Cure exit race
 MIME-Version: 1.0
-References: <20181129190503.6040-1-faiz_abbas@ti.com> <cb1e8e88-4c9d-741d-79cd-57b03c5e0808@ti.com>
- <c4704766-7a58-8aa4-6bc0-b9373b15096c@ti.com> <CAPDyKFqMW+tMaVsS_c=kPztZRjX97Nzr2W0egvDkyzkpWckHRA@mail.gmail.com>
- <d1ae4e93-4b17-9574-00b1-bfa268cb7574@ti.com> <CAPDyKFrLzEfGKkC3K9znjJUKO1MUjdBpaL0HEtHYOzbAgNO-fg@mail.gmail.com>
- <e19a5c39-028e-8dda-aa0a-3968a213cd47@ti.com>
-In-Reply-To: <e19a5c39-028e-8dda-aa0a-3968a213cd47@ti.com>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Mon, 10 Dec 2018 16:25:18 +0100
-Message-ID: <CAPDyKFoO7tn1Xdu9ROqRVjZ1SZnzXcxduB97OQtmz2d2E_epUQ@mail.gmail.com>
-Subject: Re: [PATCH] mmc: sdhci-omap: Workaround errata regarding SDR104/HS200
- tuning failures (i929)
-To:     Faiz Abbas <faiz_abbas@ti.com>
-Cc:     Kishon <kishon@ti.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Adrian Hunter <adrian.hunter@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 10 Dec 2018 at 15:04, Faiz Abbas <faiz_abbas@ti.com> wrote:
->
-> Hi,
->
-> On 10/12/18 7:15 PM, Ulf Hansson wrote:
-> > On Mon, 10 Dec 2018 at 14:23, Faiz Abbas <faiz_abbas@ti.com> wrote:
-> >>
-> >> Hi Uffe,
-> >>
-> >> On 05/12/18 7:20 PM, Ulf Hansson wrote:
-> >>> On Fri, 30 Nov 2018 at 06:53, Faiz Abbas <faiz_abbas@ti.com> wrote:
-> >>>>
-> >>>> Hi Kishon,
-> >>>>
-> >>>> On 30/11/18 10:10 AM, Kishon Vijay Abraham I wrote:
-> >>>>> Hi Faiz,
-> >>>>>
-> >>>>> On 30/11/18 12:35 AM, Faiz Abbas wrote:
-> >>>>>> Errata i929 in certain OMAP5/DRA7XX/AM57XX silicon revisions
-> >>>>>> (SPRZ426D - November 2014 - Revised February 2018 [1]) mentions
-> >>>>>> unexpected tuning pattern errors. A small failure band may be present
-> >>>>>> in the tuning range which may be missed by the current algorithm.
-> >>>>>> Furthermore, the failure bands vary with temperature leading to
-> >>>>>> different optimum tuning values for different temperatures.
-> >>>>>>
-> >>>>>> As suggested in the related Application Report (SPRACA9B - October 2017
-> >>>>>> - Revised July 2018 [2]), tuning should be done in two stages.
-> >>>>>> In stage 1, assign the optimum ratio in the maximum pass window for the
-> >>>>>> current temperature. In stage 2, if the chosen value is close to the
-> >>>>>> small failure band, move away from it in the appropriate direction.
-> >>>>>>
-> >>>>>> References:
-> >>>>>> [1] http://www.ti.com/lit/pdf/sprz426
-> >>>>>> [2] http://www.ti.com/lit/pdf/SPRACA9
-> >>>>>>
-> >>>>>> Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
-> >>>>>> ---
-> ...
-> >>>>>
-> >>>>> Can't we get thermal zone once during probe?
-> >>>>>
-> >>>>
-> >>>> Tuning is also (ideally) supposed to happen only once per enumeration.
-> >>>> Also it doesn't make sense to get a thermal zone for lower speed systems
-> >>>> that won't do tuning.
-> >>>
-> >>> Currently sdhci-omap calls pm_runtime_get_sync() during probe, and
-> >>> then keeps the host device runtime resumed until ->remove() is called
-> >>> on it. I assume you are going to change that, at some point!?
-> >>>
-> >>> In other words, what will happen to the host device when it becomes
-> >>> runtime suspended? Is re-tuning needed when it gets runtime resumed,
-> >>> which is the case for many other sdhci variants?
-> >>
-> >> There are no plans to support runtime_suspend()/resume() any time in the
-> >> near future. If its ok with you, I would like to get this patch in
-> >> without any changes. We can change it in case a need for
-> >> runtime_suspend()/_resume() does arise.
-> >
-> > Right, I am okay with that. Due to recent changes to sdhci-omap
-> > $subject patch doesn't apply, can you please rebase!?
-> >
-> > Additionally, I realized that we should fold in patch updating the DT
-> > doc for sdhci-omap, adding the property for the thermal zone. I
-> > regards to that, I am wondering if "cpu_thermal", is really the
-> > correct name of the zone. The point is, I am guessing the zone could
-> > change along with the SoCs/platforms.
-> >
->
-> As you have probably noticed, we are introducing a new driver
-> (sdhci_am654) for newer platforms. I don't foresee using sdhci-omap
-> driver with any other platforms. In case we do use it, we can add the dt
-> property at that point of time and default to "cpu_thermal" to maintain
-> dt compatibility.
->
-> Will rebase and send v2 if you are ok with above.
+Stefan reported, that the glibc tst-robustpi4 test case fails
+occasionally. That case creates the following race between
+sys_exit() and sys_futex(LOCK_PI):
 
-I see, but you still need to update the DT doc for sdhci-omap.
+ CPU0				CPU1
 
-Kind regards
-Uffe
+ sys_exit()			sys_futex()
+  do_exit()			 futex_lock_pi()
+   exit_signals(tsk)		  No waiters:
+    tsk->flags |= PF_EXITING;	  *uaddr == 0x00000PID
+  mm_release(tsk)		  Set waiter bit
+   exit_robust_list(tsk) {	  *uaddr = 0x80000PID;
+      Set owner died		  attach_to_pi_owner() {
+    *uaddr = 0xC0000000;	   tsk = get_task(PID);
+   }				   if (!tsk->flags & PF_EXITING) {
+  ...				     attach();
+  tsk->flags |= PF_EXITPIDONE;	   } else {
+				     if (!(tsk->flags & PF_EXITPIDONE))
+				       return -EAGAIN;
+				     return -ESRCH; <--- FAIL
+				   }
+
+ESRCH is returned all the way to user space, which triggers the glibc test
+case assert. Returning ESRCH unconditionally is wrong here because the user
+space value has been changed by the exiting task to 0xC0000000, i.e. the
+FUTEX_OWNER_DIED bit is set and the futex PID value has been cleared. This
+is a valid state and the kernel has to handle it, i.e. taking the futex.
+
+Cure it by rereading the user space value when PF_EXITING and PF_EXITPIDONE
+is set in the task which owns the futex. If the value has changed, let
+the kernel retry the operation, which includes all regular sanity checks
+and correctly handles the FUTEX_OWNER_DIED case.
+
+If it hasn't changed, then return ESRCH as there is no way to distinguish
+this case from malfunctioning user space. This happens when the exiting
+task did not have a robust list, the robust list was corrupted or the user
+space value in the futex was simply bogus.
+
+Reported-by: Stefan Liebler <stli@linux.ibm.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Darren Hart <dvhart@infradead.org>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: stable@vger.kernel.org
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=200467
+---
+ kernel/futex.c |   57 +++++++++++++++++++++++++++++++++++++++++++++++++++++----
+ 1 file changed, 53 insertions(+), 4 deletions(-)
+
+--- a/kernel/futex.c
++++ b/kernel/futex.c
+@@ -1148,11 +1148,60 @@ static int attach_to_pi_state(u32 __user
+ 	return ret;
+ }
+ 
++static int handle_exit_race(u32 __user *uaddr, u32 uval, struct task_struct *tsk)
++{
++	u32 uval2;
++
++	/*
++	 * If PF_EXITPIDONE is not yet set try again.
++	 */
++	if (!(tsk->flags & PF_EXITPIDONE))
++		return -EAGAIN;
++
++	/*
++	 * Reread the user space value to handle the following situation:
++	 *
++	 * CPU0				CPU1
++	 *
++	 * sys_exit()			sys_futex()
++	 *  do_exit()			 futex_lock_pi()
++	 *   exit_signals(tsk)		  No waiters:
++	 *    tsk->flags |= PF_EXITING;	  *uaddr == 0x00000PID
++	 *  mm_release(tsk)		  Set waiter bit
++	 *   exit_robust_list(tsk) {	  *uaddr = 0x80000PID;
++	 *      Set owner died		  attach_to_pi_owner() {
++	 *    *uaddr = 0xC0000000;	   tsk = get_task(PID);
++	 *   }				   if (!tsk->flags & PF_EXITING) {
++	 *  ...				     attach();
++	 *  tsk->flags |= PF_EXITPIDONE;   } else {
++	 *				     if (!(tsk->flags & PF_EXITPIDONE))
++	 *				       return -EAGAIN;
++	 *				     return -ESRCH; <--- FAIL
++	 *				   }
++	 *
++	 * Returning ESRCH unconditionally is wrong here because the
++	 * user space value has been changed by the exiting task.
++	 */
++	if (get_futex_value_locked(&uval2, uaddr))
++		return -EFAULT;
++
++	/* If the user space value has changed, try again. */
++	if (uval2 != uval)
++		return -EAGAIN;
++
++	/*
++	 * The exiting task did not have a robust list, the robust list was
++	 * corrupted or the user space value in *uaddr is simply bogus.
++	 * Give up and tell user space.
++	 */
++	return -ESRCH;
++}
++
+ /*
+  * Lookup the task for the TID provided from user space and attach to
+  * it after doing proper sanity checks.
+  */
+-static int attach_to_pi_owner(u32 uval, union futex_key *key,
++static int attach_to_pi_owner(u32 __user *uaddr, u32 uval, union futex_key *key,
+ 			      struct futex_pi_state **ps)
+ {
+ 	pid_t pid = uval & FUTEX_TID_MASK;
+@@ -1187,7 +1236,7 @@ static int attach_to_pi_owner(u32 uval,
+ 		 * set, we know that the task has finished the
+ 		 * cleanup:
+ 		 */
+-		int ret = (p->flags & PF_EXITPIDONE) ? -ESRCH : -EAGAIN;
++		int ret = handle_exit_race(uaddr, uval, p);
+ 
+ 		raw_spin_unlock_irq(&p->pi_lock);
+ 		put_task_struct(p);
+@@ -1244,7 +1293,7 @@ static int lookup_pi_state(u32 __user *u
+ 	 * We are the first waiter - try to look up the owner based on
+ 	 * @uval and attach to it.
+ 	 */
+-	return attach_to_pi_owner(uval, key, ps);
++	return attach_to_pi_owner(uaddr, uval, key, ps);
+ }
+ 
+ static int lock_pi_update_atomic(u32 __user *uaddr, u32 uval, u32 newval)
+@@ -1352,7 +1401,7 @@ static int futex_lock_pi_atomic(u32 __us
+ 	 * attach to the owner. If that fails, no harm done, we only
+ 	 * set the FUTEX_WAITERS bit in the user space variable.
+ 	 */
+-	return attach_to_pi_owner(uval, key, ps);
++	return attach_to_pi_owner(uaddr, uval, key, ps);
+ }
+ 
+ /**
+
+
