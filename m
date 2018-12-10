@@ -2,96 +2,124 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2087FC04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 07:00:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63611C04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 07:04:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF98E2081C
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 07:00:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 22C422081C
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 07:04:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="FFI5Lkks"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF98E2081C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="iA50/dXj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 22C422081C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726545AbeLJHAy (ORCPT
+        id S1726538AbeLJHEL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 02:00:54 -0500
-Received: from ozlabs.org ([203.11.71.1]:52337 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726292AbeLJHAy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 02:00:54 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 43Cv9b6wbtz9s47;
-        Mon, 10 Dec 2018 18:00:51 +1100 (AEDT)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1544425252;
-        bh=rZgqStAivzKjfpwunFK3mv0C8iCQw3Y1tZ8naAVncH0=;
-        h=Date:From:To:Cc:Subject:From;
-        b=FFI5LkksZOdD4zOQWRb1Etf0pcSc+IOh8+KE3hoKktHXZ7y56qf436O20J769KfDN
-         zI+rTR3yC0ig0e3RYopqgm+QpZwW1RHjTVCuqbPrtG3Nvclr5WN7zLYPt9toLU4vqL
-         6knsArq4khxmT9qAxWMLMhYu38ndU2qI2r0qQi/0P2d2n0NnUnxe/+C/RaHCoGG1ub
-         jvsxhodkKasbWs0CwtZX2gkgc/oGgw2Gc+du710IMfFTB90Vh2naDtgazOL8ligXLO
-         gLoSXkE61z05ZOl3Fz5r9cQ/u52G0sV/f9dmS5zvlj9Z2xwttfuZm/G462JEadwQIW
-         xx8ErICZJOhaA==
-Date:   Mon, 10 Dec 2018 18:00:22 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Vladimir Zapolskiy <vz@mleia.com>
-Subject: linux-next: build failure after merge of the gpio tree
-Message-ID: <20181210180022.0c78ad5a@canb.auug.org.au>
+        Mon, 10 Dec 2018 02:04:11 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:44815 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726292AbeLJHEK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Dec 2018 02:04:10 -0500
+Received: by mail-wr1-f68.google.com with SMTP id z5so9221305wrt.11
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Dec 2018 23:04:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=l3c5fRTXs67eQRKWMdaSSRPs43Nqu/ShmikYsV8fbyw=;
+        b=iA50/dXjA1qHwyNN6Z8WNpPgeoWLBj+mbMx47VXmdGYCzs40xDlUOCldCfiOeXShjC
+         DAbVKXoYx+ap9NXCG2nOx+xLm8HklrqMtOcmiVhj70lMfIZFWqfO2/0tnD9k46ZO4bEa
+         eXVVE5uv03dVr98RtbtszEFD++huZlHVstxkU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=l3c5fRTXs67eQRKWMdaSSRPs43Nqu/ShmikYsV8fbyw=;
+        b=NH7d3VuDQ+UFVe6mRrCITAQ+xorl2eg8EvQQ0GGGb/ds3WkESRClfgQyrc7NGtBYg+
+         hcdJMb0crbZYYCq6+fTDP6BWYvzFh77GotiHlzJ0k2bcswh0bV/sJVfu+VcpEt2payiZ
+         ScZdjjyMf1vSTMa9pbGcKKjr8aQ0B+5ev/AizjbhZ4gIFmM2IHe4n9jk7qR1IIyu5PeH
+         zIpCX3LnqgNO3JtBKjm0UZh5RNUPgwftAbmFAgdcBfQte9LZOHa84caeIoh18+S/rIbd
+         ucGD3KKlvqwUOBQGNmQ4nPppJc6VfPnfN0jzIWI4m0/02/fC8Yt9rcjpty76mnZv/vWd
+         FskA==
+X-Gm-Message-State: AA+aEWZEi1fmY9ORCF493XBhAC1+vtAi4CFf203Ue06/jUFCiHqU9fgX
+        dYB3QQSoOQtbih8Spo3OYy1PVA==
+X-Google-Smtp-Source: AFSGD/Um/ZUUIqoBW4sOx9zScGIbE6yzpVLynKKjqAGNsfDCjFasqNwWLwVnZApTjkbZR5vNCXobVQ==
+X-Received: by 2002:a5d:6487:: with SMTP id r7mr9086848wru.263.1544425448883;
+        Sun, 09 Dec 2018 23:04:08 -0800 (PST)
+Received: from dell (host109-155-202-221.range109-155.btcentralplus.com. [109.155.202.221])
+        by smtp.gmail.com with ESMTPSA id h16sm31710016wrb.62.2018.12.09.23.04.07
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 09 Dec 2018 23:04:08 -0800 (PST)
+Date:   Mon, 10 Dec 2018 07:04:06 +0000
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Chen-Yu Tsai <wens@csie.org>
+Cc:     oskari@lemmela.net, Quentin Schulz <quentin.schulz@bootlin.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v8 2/2] mfd: axp20x: Add supported cells for AXP803
+Message-ID: <20181210070406.GV26661@dell>
+References: <20181208175847.32068-1-oskari@lemmela.net>
+ <20181208175847.32068-3-oskari@lemmela.net>
+ <20181210063534.GS26661@dell>
+ <CAGb2v6797iHnQ_JxU6yheO1YSOeEgVcXMbXAgnsroE8PaJ=YJw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/YpuvXW0_4+PuRGoAsHwMDxi"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAGb2v6797iHnQ_JxU6yheO1YSOeEgVcXMbXAgnsroE8PaJ=YJw@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/YpuvXW0_4+PuRGoAsHwMDxi
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Mon, 10 Dec 2018, Chen-Yu Tsai wrote:
 
-Hi Linus,
+> On Mon, Dec 10, 2018 at 2:35 PM Lee Jones <lee.jones@linaro.org> wrote:
+> >
+> > On Sat, 08 Dec 2018, Oskari Lemmela wrote:
+> >
+> > > Parts of the AXP803 are compatible with their counterparts on the AXP813.
+> > > These include the GPIO, ADC, AC and battery power supplies.
+> > >
+> > > Signed-off-by: Oskari Lemmela <oskari@lemmela.net>
+> > > Reviewed-by: Chen-Yu Tsai <wens@csie.org>
+> > > Tested-by: Vasily Khoruzhick <anarsoul@gmail.com>
+> > > Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+> >
+> > I'm happy to fix this, but ...
+> >
+> > Can you explain these tags for me please?
+> >
+> > Specifically the last one.
+> >
+> > Why does Chen-Yu Tsai have an SoB there?
+> 
+> I picked his patch to rebase off the previous one, and reworked the ordering.
+> I then pushed it onto GitHub [1], but didn't get around to sending it to the
+> mailing lists. Oskari said on IRC that he would handle it.
+> 
+> I'm not sure what would be appropriate here though? Oskari's first SoB should
+> be kept, since he's the original author. Maybe he should've added his SoB
+> again as the final entry? Either way I suppose it would be confusing without
+> any explanation.
 
-After merging the gpio tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Yes, I agree, but thanks for taking the time to do so.
 
-ERROR: "irq_chip_retrigger_hierarchy" [drivers/gpio/gpio-lpc18xx.ko] undefi=
-ned!
+Let's leave it as it is.
 
-Caused by commit
+> [1] https://github.com/wens/linux/commit/951afe2dc32086174ab07a1a997d748f69bf5bf2
+> [2] https://freenode.irclog.whitequark.org/linux-sunxi/2018-12-08#23644905;
 
-  5ddabfe8d3de ("gpio: lpc18xx: add GPIO pin interrupt controller support")
-
-I have used the gpio tree from next-20181207 for today.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/YpuvXW0_4+PuRGoAsHwMDxi
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwODwYACgkQAVBC80lX
-0Gy7jQgAnXFUhHY/EojI3ykFwgz/U5dcKvARyDN+vG3T7aqMG+3cPhD7xg9PEdXm
-ap8dZMiwsS8ocJLEq2G8uaX98V7Ur3Nj48/95ogzxJL3tUH7+eZrsAJRK0qyIJuZ
-tKgyKMMmPCFp6aVuIQkKSg3Zx2mLxyr4QshsQ0b0O0okYqMxUTVsiiTpqb3m/+B8
-20geVZKEBMWNbhlvpsAqzc6xuajdnwSzIfMqYqGUJQAUxXSAX5m0j8dawQKobZTA
-vs9p0lotlI8UyUByzL51qxN+S54lBzCbMbL3WyQkIsBOmZcE0WQ/sGv3+ywiJpbz
-SyEFRIiAsObYgBcnvI2rEq153aRMwQ==
-=8O8E
------END PGP SIGNATURE-----
-
---Sig_/YpuvXW0_4+PuRGoAsHwMDxi--
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
