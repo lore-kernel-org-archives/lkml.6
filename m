@@ -2,358 +2,146 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22647C07E85
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 02:12:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B6F8C07E85
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 02:44:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BF3EE2081C
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 02:12:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 26C082082F
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 02:44:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TKvHdNQK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF3EE2081C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="OvxtBFTx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 26C082082F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726404AbeLJCMw (ORCPT
+        id S1726374AbeLJChX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 21:12:52 -0500
-Received: from mail-it1-f195.google.com ([209.85.166.195]:54671 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726335AbeLJCMv (ORCPT
+        Sun, 9 Dec 2018 21:37:23 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:43191 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726281AbeLJChW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Dec 2018 21:12:51 -0500
-Received: by mail-it1-f195.google.com with SMTP id i145so15139939ita.4;
-        Sun, 09 Dec 2018 18:12:50 -0800 (PST)
+        Sun, 9 Dec 2018 21:37:22 -0500
+Received: by mail-pg1-f194.google.com with SMTP id v28so4244794pgk.10
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Dec 2018 18:37:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Og1uaRxJh0Rp9cXcJUtdP1WBd+9All/3Lpb76ynmCBw=;
-        b=TKvHdNQK2CMz5Fzyt22qpMdVKw7BsgZ+maijY6EGQQlqnrQiK8oGun9iNFcGrz/tYS
-         0+qW0R+ypSpL7OSxkf/wcoBm89AdxnzqNY/eednK0VaB0OAoxdlB2OBgQRBSzJnsHHIU
-         9/3LSLKjtf4asdvggoGOhXeY2nrbbg+Vpzz2tYSlWK4CI+DlTTR1ayFVHM7iLGxAV6MB
-         tYvVY6gFfpfN6VhQJHuCNpt7bgdMAByN4rZmYoMMm0CyDIBbY9ZBLfX3cXdnZzbX5lW6
-         9MQa0ycsMxViHGfBARBRzRTeHWokea7T0xa+7h88LD+m0IJEV5lqRrujSpVMxum/Vhz9
-         F0SQ==
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=2I3FgBsmgwiN9LGZSFfLY9YBknYQAXhTGYoZTcvMOeY=;
+        b=OvxtBFTxwTPsjINYGxGsZHKHM9cnzDHKUz+TbNJUWl89598FhUfFxtq0++JmogoZGA
+         32kxneoeJOeWhUG8WPKg2omtlYUDP9yYQumWml+zSlo0eZ7kQtiPflL4Tg6yFBuVSu+h
+         2zx4wj/1jEZZKFT8DC6jBluowQ0JNrc2tAsOc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Og1uaRxJh0Rp9cXcJUtdP1WBd+9All/3Lpb76ynmCBw=;
-        b=EdpWcMCA4PJA0yleh/OR55lBlBaO5Vr0xu1B05yL/JZ1MUdDt6dRkNAjBddK2hEuER
-         +vbOt6ji+Gj5APcrc6dfHke+FXg6slwtCtvYkPWMFM8d8xng9ni63eOh9nIfiQ045RnG
-         nILLexQHiXER4XtkBehGRiI9C1+lBtBQdqWN+RiXwGUe+W6UCT5maNoiy3Qk9dFNy/wM
-         bIjCWvSzMD4JfzfAv0JyUE/RWuz2nWM8ZzclbVE3eBDo+kwMrzTKXRF2ABWi6xnNCAjW
-         JSP2hvqVQ/5dv/o87DiPiG+FN6PuHNw3TCuJCsdLB6x1QJ5KAKAo2/+i1KgQLRvhm0xK
-         YCLA==
-X-Gm-Message-State: AA+aEWaqnEWz4wHBEr7wwUxhSGnct4d4iYQM1TKEohKagpQE/0oQl6LD
-        X8OmhrRGQRaVysN9dSZ0d48ogkaSbQp3/1tUGSU=
-X-Google-Smtp-Source: AFSGD/Xa5kt3u3OQqhyNtOGvR8b1SPquDxW03xBmVhUN7EKjCCYWm6+EXFxHHNwIgA5dbmKTlsU9gyDJLlX3H4unvJQ=
-X-Received: by 2002:a24:6b90:: with SMTP id v138mr8838446itc.86.1544407970038;
- Sun, 09 Dec 2018 18:12:50 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=2I3FgBsmgwiN9LGZSFfLY9YBknYQAXhTGYoZTcvMOeY=;
+        b=Cvo82hU4QAfY3qQAMOysrY9BLsL6xKiKa+Igp1duFG8VPidzudUvzFSNxDAWhtkk4O
+         UQYhg1UnGNZK6CRzX7uMicjAQD2Y7HT+JwsZCjL7k1kN6B2YZXyGjFzgkklRYGGEXsfW
+         bl73Bhzba0FBQRAVrhuPou/C/MccH6H5ns23JarHz+n8Y3Pa+Sv1Wv0UhtTSmm0eYaBO
+         numApcxtRgBB+S4Hn3mGvOFU+rzcOFi8cjcsGfHfNMYj3AmyNkm6lbh1DdiJjIJO6tds
+         Tyh6HP7+SVjEoSo+3GS+gPrp8Ib1rFYpZ06amxJv4IkhHjIH/TCrYbUmhr0hB9whyZlO
+         d8yQ==
+X-Gm-Message-State: AA+aEWasE5E0U8ZBXXxrrL8lZ1tHDb+8eJkXSrR8YlGwtS5Bf6TNJ16z
+        +iXVpJeN9pnKy/wXU8lggLe4WleEqBo=
+X-Google-Smtp-Source: AFSGD/XDUMnHU6xAWigk+/BK+Z/MT1yGo7fcn9wsB0iNbxQCbdxNfiix92W69vXBOh1pqeeDKTwNVg==
+X-Received: by 2002:a63:e80e:: with SMTP id s14mr9395032pgh.30.1544409441635;
+        Sun, 09 Dec 2018 18:37:21 -0800 (PST)
+Received: from tictac2.mtv.corp.google.com ([2620:15c:202:1:c8e0:70d7:4be7:a36])
+        by smtp.gmail.com with ESMTPSA id 84sm18400660pfk.134.2018.12.09.18.37.20
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 09 Dec 2018 18:37:20 -0800 (PST)
+From:   Douglas Anderson <dianders@chromium.org>
+To:     Jason Wessel <jason.wessel@windriver.com>,
+        Daniel Thompson <daniel.thompson@linaro.org>
+Cc:     briannorris@chromium.org, Douglas Anderson <dianders@chromium.org>,
+        kgdb-bugreport@lists.sourceforge.net, linux-kernel@vger.kernel.org
+Subject: [PATCH] debug: Allow forcing entering debug mode on panic/exception
+Date:   Sun,  9 Dec 2018 18:36:49 -0800
+Message-Id: <20181210023649.229271-1-dianders@chromium.org>
+X-Mailer: git-send-email 2.20.0.rc2.403.gdbc3b29805-goog
 MIME-Version: 1.0
-References: <1542535751-16079-1-git-send-email-pawell@cadence.com>
- <1542535751-16079-9-git-send-email-pawell@cadence.com> <5BFE8883.7090802@ti.com>
-In-Reply-To: <5BFE8883.7090802@ti.com>
-From:   Peter Chen <hzpeterchen@gmail.com>
-Date:   Mon, 10 Dec 2018 10:12:38 +0800
-Message-ID: <CAL411-oKvu3EADStit=JtbcxVzM_fFGF2uPn67-wmXxPzUK6GQ@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 08/15] usb:cdns3: Implements device operations part
- of the API
-To:     rogerq@ti.com
-Cc:     pawell@cadence.com, devicetree@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>,
-        adouglas@cadence.com, jbergsagel@ti.com, nsekhar@ti.com, nm@ti.com,
-        sureshp@cadence.com, peter.chen@nxp.com, pjez@cadence.com,
-        kurahul@cadence.com, balbi@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> > +static struct cdns3_endpoint *cdns3_find_available_ss_ep(struct cdns3_device *priv_dev,
-> > +                                                      struct usb_endpoint_descriptor *desc)
->
-> why is this function called ss_ep? This doesn't seem like only for superspeed endpoints.
->
+Ever since commit 5516fd7b92a7 ("debug: prevent entering debug mode on
+panic/exception.") (yes, years ago) my kgdb workflow has been broken.
+On Chrome OS we have 'kernel.panic = -1' in
+'/etc/sysctl.d/00-sysctl.conf'.  That means that when userspace starts
+up it will tell the kernel "please reboot on panic".  ...and so when I
+get a panic then the system reboots instead of letting me debug it.
 
-Yes, it is for all speed.
+While I could go in an change the 'sysctl.conf' and I could go in and
+hack the kernel myself, these things are inconvenient.  I either need
+to keep a private kernel patch or or remember to edit a file every
+time I install an updated version of Chrome OS.  What is convenient
+(for me) is to have a CONFIG option that makes kgdb override the panic
+request.  This is because the Chrome OS build system makes it very
+easy for me to add some extra CONFIG "fragments" to my debug kernels.
 
-> > +{
-> > +     struct usb_ep *ep;
-> > +     struct cdns3_endpoint *priv_ep;
-> > +
-> > +     list_for_each_entry(ep, &priv_dev->gadget.ep_list, ep_list) {
-> > +             unsigned long num;
-> > +             int ret;
-> > +             /* ep name pattern likes epXin or epXout */
-> > +             char c[2] = {ep->name[2], '\0'};
-> > +
-> > +             ret = kstrtoul(c, 10, &num);
-> > +             if (ret)
-> > +                     return ERR_PTR(ret);
-> > +
-> > +             priv_ep = ep_to_cdns3_ep(ep);
-> > +             if (cdns3_ep_dir_is_correct(desc, priv_ep)) {
-> > +                     if (!(priv_ep->flags & EP_USED)) {
-> > +                             priv_ep->num  = num;
-> > +                             priv_ep->flags |= EP_USED;
-> > +                             return priv_ep;
-> > +                     }
-> > +             }
-> > +     }
-> > +     return ERR_PTR(-ENOENT);
-> > +}
-> > +
-> > +static struct usb_ep *cdns3_gadget_match_ep(struct usb_gadget *gadget,
-> > +                                         struct usb_endpoint_descriptor *desc,
-> > +                                         struct usb_ss_ep_comp_descriptor *comp_desc)
-> > +{
-> > +     struct cdns3_device *priv_dev = gadget_to_cdns3_device(gadget);
-> > +     struct cdns3_endpoint *priv_ep;
-> > +     unsigned long flags;
-> > +
-> > +     priv_ep = cdns3_find_available_ss_ep(priv_dev, desc);
-> > +     if (IS_ERR(priv_ep)) {
-> > +             dev_err(&priv_dev->dev, "no available ep\n");
-> > +             return NULL;
-> > +     }
-> > +
-> > +     dev_dbg(&priv_dev->dev, "match endpoint: %s\n", priv_ep->name);
-> > +
-> > +     spin_lock_irqsave(&priv_dev->lock, flags);
-> > +     priv_ep->endpoint.desc = desc;
-> > +     priv_ep->dir  = usb_endpoint_dir_in(desc) ? USB_DIR_IN : USB_DIR_OUT;
-> > +     priv_ep->type = usb_endpoint_type(desc);
-> > +
-> > +     list_add_tail(&priv_ep->ep_match_pending_list,
-> > +                   &priv_dev->ep_match_list);
-> > +     spin_unlock_irqrestore(&priv_dev->lock, flags);
-> > +     return &priv_ep->endpoint;
-> > +}
->
-> Why do you need a custom match_ep?
-> doesn't usb_ep_autoconfig suffice?
->
-> You can check if EP is claimed or not by checking the ep->claimed flag.
->
+Hopefully having this extra config option is OK and useful to others
+who would also prefer to make sure that kgdb is always entered on a
+panic no matter what userspace might request.
 
-It is a special requirement for this IP, the EP type and MaxPacketSize
-changing can't be done at runtime, eg, at ep->enable. See below commit
-for detail.
+Signed-off-by: Douglas Anderson <dianders@chromium.org>
+---
 
-    usb: cdns3: gadget: configure all endpoints before set configuration
+ kernel/debug/debug_core.c |  5 +++--
+ lib/Kconfig.kgdb          | 10 ++++++++++
+ 2 files changed, 13 insertions(+), 2 deletions(-)
 
-    Cadence IP has one limitation that all endpoints must be configured
-    (Type & MaxPacketSize) before setting configuration through hardware
-    register, it means we can't change endpoints configuration after
-    set_configuration.
+diff --git a/kernel/debug/debug_core.c b/kernel/debug/debug_core.c
+index 65c0f1363788..d4a38543fcdd 100644
+--- a/kernel/debug/debug_core.c
++++ b/kernel/debug/debug_core.c
+@@ -703,7 +703,8 @@ kgdb_handle_exception(int evector, int signo, int ecode, struct pt_regs *regs)
+ 	 * reboot on panic. We don't want to get stuck waiting for input
+ 	 * on such systems, especially if its "just" an oops.
+ 	 */
+-	if (signo != SIGTRAP && panic_timeout)
++	if (!IS_ENABLED(CONFIG_KGDB_ALWAYS_ENTER_ON_PANIC) &&
++	    signo != SIGTRAP && panic_timeout)
+ 		return 1;
+ 
+ 	memset(ks, 0, sizeof(struct kgdb_state));
+@@ -843,7 +844,7 @@ static int kgdb_panic_event(struct notifier_block *self,
+ 	 * panic_timeout indicates the system should automatically
+ 	 * reboot on panic.
+ 	 */
+-	if (panic_timeout)
++	if (!IS_ENABLED(CONFIG_KGDB_ALWAYS_ENTER_ON_PANIC) && panic_timeout)
+ 		return NOTIFY_DONE;
+ 
+ 	if (dbg_kdb_mode)
+diff --git a/lib/Kconfig.kgdb b/lib/Kconfig.kgdb
+index ab4ff0eea776..f12c6e1394c6 100644
+--- a/lib/Kconfig.kgdb
++++ b/lib/Kconfig.kgdb
+@@ -67,6 +67,16 @@ config KGDB_LOW_LEVEL_TRAP
+          exception handler which will allow kgdb to step through a
+          notify handler.
+ 
++config KGDB_ALWAYS_ENTER_ON_PANIC
++       bool "KGDB: Enter kgdb on panic even if reboot specified"
++       default n
++       help
++         If kgdb is enabled and the system is configured to reboot on
++         panic then there's a question of whether we should drop into
++         kgdb on panic or whether we should reboot on panic.  If you
++         say yes here then we'll enter kgdb.  If you say no here then
++         we'll reboot.
++
+ config KGDB_KDB
+ 	bool "KGDB_KDB: include kdb frontend for kgdb"
+ 	default n
+-- 
+2.20.0.rc2.403.gdbc3b29805-goog
 
-    In this patch, we add non-control endpoint through usb_ss->ep_match_list,
-    which is added when the gadget driver uses usb_ep_autoconfig to configure
-    specific endpoint; When the udc driver receives set_configurion request,
-    it goes through usb_ss->ep_match_list, and configure all endpoints
-    accordingly.
-
-    At usb_ep_ops.enable/disable, we only enable and disable endpoint through
-    ep_cfg register which can be changed after set_configuration, and do
-    some software operation accordingly.
-
-
-> > +
-> > +/**
-> > + * cdns3_gadget_get_frame Returns number of actual ITP frame
-> > + * @gadget: gadget object
-> > + *
-> > + * Returns number of actual ITP frame
-> > + */
-> > +static int cdns3_gadget_get_frame(struct usb_gadget *gadget)
-> > +{
-> > +     struct cdns3_device *priv_dev = gadget_to_cdns3_device(gadget);
-> > +
-> > +     return readl(&priv_dev->regs->usb_iptn);
-> > +}
-> > +
-> > +static int cdns3_gadget_wakeup(struct usb_gadget *gadget)
-> > +{
-> > +     return 0;
-> > +}
-> > +
-> > +static int cdns3_gadget_set_selfpowered(struct usb_gadget *gadget,
-> > +                                     int is_selfpowered)
-> > +{
-> > +     struct cdns3_device *priv_dev = gadget_to_cdns3_device(gadget);
-> > +     unsigned long flags;
-> > +
-> > +     spin_lock_irqsave(&priv_dev->lock, flags);
-> > +     gadget->is_selfpowered = !!is_selfpowered;
-> > +     spin_unlock_irqrestore(&priv_dev->lock, flags);
-> > +     return 0;
-> > +}
-> > +
-> > +static int cdns3_gadget_pullup(struct usb_gadget *gadget, int is_on)
-> > +{
-> > +     struct cdns3_device *priv_dev = gadget_to_cdns3_device(gadget);
-> > +
-> > +     if (!priv_dev->start_gadget)
-> > +             return 0;
-> > +
-> > +     if (is_on)
-> > +             writel(USB_CONF_DEVEN, &priv_dev->regs->usb_conf);
-> > +     else
-> > +             writel(USB_CONF_DEVDS, &priv_dev->regs->usb_conf);
-> > +
-> > +     return 0;
-> > +}
-> > +
-> >  static void cdns3_gadget_config(struct cdns3_device *priv_dev)
-> >  {
-> >       struct cdns3_usb_regs __iomem *regs = priv_dev->regs;
-> > @@ -74,6 +231,95 @@ static void cdns3_gadget_config(struct cdns3_device *priv_dev)
-> >       writel(USB_CONF_DEVEN, &regs->usb_conf);
-> >  }
-> >
-> > +/**
-> > + * cdns3_gadget_udc_start Gadget start
-> > + * @gadget: gadget object
-> > + * @driver: driver which operates on this gadget
-> > + *
-> > + * Returns 0 on success, error code elsewhere
-> > + */
-> > +static int cdns3_gadget_udc_start(struct usb_gadget *gadget,
-> > +                               struct usb_gadget_driver *driver)
-> > +{
-> > +     struct cdns3_device *priv_dev = gadget_to_cdns3_device(gadget);
-> > +     unsigned long flags;
-> > +
-> > +     if (priv_dev->gadget_driver) {
-> > +             dev_err(&priv_dev->dev, "%s is already bound to %s\n",
-> > +                     priv_dev->gadget.name,
-> > +                     priv_dev->gadget_driver->driver.name);
-> > +             return -EBUSY;
-> > +     }
->
-> Not sure if this check is required. UDC core should be doing that.
->
-
-Yes, UDC core has done this.
-
-> > +
-> > +     spin_lock_irqsave(&priv_dev->lock, flags);
-> > +     priv_dev->gadget_driver = driver;
-> > +     if (!priv_dev->start_gadget)
-> > +             goto unlock;
-> > +
-> > +     cdns3_gadget_config(priv_dev);
-> > +unlock:
-> > +     spin_unlock_irqrestore(&priv_dev->lock, flags);
-> > +     return 0;
-> > +}
-> > +
-> > +/**
-> > + * cdns3_gadget_udc_stop Stops gadget
-> > + * @gadget: gadget object
-> > + *
-> > + * Returns 0
-> > + */
-> > +static int cdns3_gadget_udc_stop(struct usb_gadget *gadget)
-> > +{
-> > +     struct cdns3_device *priv_dev = gadget_to_cdns3_device(gadget);
-> > +     struct cdns3_endpoint *priv_ep, *temp_ep;
-> > +     u32 bEndpointAddress;
-> > +     struct usb_ep *ep;
-> > +     int ret = 0;
-> > +     int i;
-> > +
-> > +     priv_dev->gadget_driver = NULL;
-> > +     list_for_each_entry_safe(priv_ep, temp_ep, &priv_dev->ep_match_list,
-> > +                              ep_match_pending_list) {
-> > +             list_del(&priv_ep->ep_match_pending_list);
-> > +             priv_ep->flags &= ~EP_USED;
-> > +     }
-> > +
-> > +     priv_dev->onchip_mem_allocated_size = 0;
-> > +     priv_dev->out_mem_is_allocated = 0;
-> > +     priv_dev->gadget.speed = USB_SPEED_UNKNOWN;
-> > +
-> > +     for (i = 0; i < priv_dev->ep_nums ; i++)
-> > +             cdns3_free_trb_pool(priv_dev->eps[i]);
-> > +
-> > +     if (!priv_dev->start_gadget)
-> > +             return 0;
->
-> This looks tricky. Why do we need this flag?
-
-We only start the gadget (enable clocks) when the VBUS is on, so if we load
-class driver without VBUS, we only do  software .bind but without
-hardware operation.
-
->
-> > +
-> > +     list_for_each_entry(ep, &priv_dev->gadget.ep_list, ep_list) {
-> > +             priv_ep = ep_to_cdns3_ep(ep);
-> > +             bEndpointAddress = priv_ep->num | priv_ep->dir;
-> > +             cdns3_select_ep(priv_dev, bEndpointAddress);
-> > +             writel(EP_CMD_EPRST, &priv_dev->regs->ep_cmd);
-> > +             ret = cdns3_handshake(&priv_dev->regs->ep_cmd,
-> > +                                   EP_CMD_EPRST, 0, 100);
-> > +     }
-> > +
-> > +     /* disable interrupt for device */
-> > +     writel(0, &priv_dev->regs->usb_ien);
-> > +     writel(USB_CONF_DEVDS, &priv_dev->regs->usb_conf);
->
-> where are you requesting the interrupt? Looks like it should be done in
-> udc_start() no?
->
-
-Yes, it is at udc_start.
-
-Peter
-
-> > +
-> > +     return ret;
-> > +}
->
-> Can we combine cdns3_gadget_udc_start() and cdns3_gadget_udc_start()
-> with cdns3_gadget_start() and cdns3_gadget_stop() respectively so that
-> cdns3_gadget_config() and cleanup() is done at one place.
->
-> > +
-> > +static const struct usb_gadget_ops cdns3_gadget_ops = {
-> > +     .get_frame = cdns3_gadget_get_frame,
-> > +     .wakeup = cdns3_gadget_wakeup,
-> > +     .set_selfpowered = cdns3_gadget_set_selfpowered,
-> > +     .pullup = cdns3_gadget_pullup,
-> > +     .udc_start = cdns3_gadget_udc_start,
-> > +     .udc_stop = cdns3_gadget_udc_stop,
-> > +     .match_ep = cdns3_gadget_match_ep,
-> > +};
-> > +
-> >  /**
-> >   * cdns3_init_ep Initializes software endpoints of gadget
-> >   * @cdns3: extended gadget object
-> > @@ -184,8 +430,7 @@ static int __cdns3_gadget_init(struct cdns3 *cdns)
-> >       /* fill gadget fields */
-> >       priv_dev->gadget.max_speed = USB_SPEED_SUPER;
-> >       priv_dev->gadget.speed = USB_SPEED_UNKNOWN;
-> > -     //TODO: Add implementation of cdns3_gadget_ops
-> > -     //priv_dev->gadget.ops = &cdns3_gadget_ops;
-> > +     priv_dev->gadget.ops = &cdns3_gadget_ops;
-> >       priv_dev->gadget.name = "usb-ss-gadget";
-> >       priv_dev->gadget.sg_supported = 1;
-> >       priv_dev->is_connected = 0;
-> >
->
-> cheers,
-> -roger
->
-> --
-> Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-> Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
