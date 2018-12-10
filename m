@@ -2,226 +2,147 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADFBDC04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 09:45:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B1B4C04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 09:47:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7237721104
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 09:45:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7237721104
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 42FDB2082F
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 09:47:16 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="sA3Y49Rh";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="kKW3CHCH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 42FDB2082F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kroah.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727134AbeLJJpa (ORCPT
+        id S1726622AbeLJJrP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 04:45:30 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:36130 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727027AbeLJJp0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 04:45:26 -0500
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 6880D81F0E;
-        Mon, 10 Dec 2018 09:45:25 +0000 (UTC)
-Received: from jason-ThinkPad-T450s.redhat.com (ovpn-12-196.pek2.redhat.com [10.72.12.196])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 8A0C960C65;
-        Mon, 10 Dec 2018 09:45:22 +0000 (UTC)
-From:   Jason Wang <jasowang@redhat.com>
-To:     mst@redhat.com, jasowang@redhat.com, kvm@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Jintack Lim <jintack@cs.columbia.edu>
-Subject: [PATCH net 4/4] vhost: log dirty page correctly
-Date:   Mon, 10 Dec 2018 17:44:54 +0800
-Message-Id: <20181210094454.21144-5-jasowang@redhat.com>
-In-Reply-To: <20181210094454.21144-1-jasowang@redhat.com>
-References: <20181210094454.21144-1-jasowang@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Mon, 10 Dec 2018 09:45:25 +0000 (UTC)
+        Mon, 10 Dec 2018 04:47:15 -0500
+Received: from out1-smtp.messagingengine.com ([66.111.4.25]:39985 "EHLO
+        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726136AbeLJJrO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Dec 2018 04:47:14 -0500
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
+        by mailout.nyi.internal (Postfix) with ESMTP id E54E021C6B;
+        Mon, 10 Dec 2018 04:47:10 -0500 (EST)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute6.internal (MEProxy); Mon, 10 Dec 2018 04:47:10 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm2; bh=DJdTaTtOkt6Ns79KYaJ1+KscWcU
+        gxpoRZMSY0rrYm3E=; b=sA3Y49Rhjr9zel5HEOiOd7VHapgD2/vmRoDD8GhyVGz
+        qzekbmtxIN/BPMQPLQkx2US7BtCbjEYOTA9UwkCR3+lI4N5j6jRLwTCP9gYWNHuL
+        w6AmS8TQNhx2i1hrUoG0TPSm0Z2t85PEq2RbjenAmosluWAQzy4RAIjxkIRpv2xC
+        RARfO1aiqviLfV2+yy2t+iOL40EsRhSQ0tEreMU0sbpjn9JC3KNwPD4imeBNJjnq
+        m7+Xhiei0vs1Y71aY8s9/nYmB1ck1gj7U6ki+dIoSWuP6RiohrsAa92GoypN4nhp
+        QaklQ6FKeIoFw/TJoaSx0298nXLO98z5xWJAWj89Wpg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=DJdTaT
+        tOkt6Ns79KYaJ1+KscWcUgxpoRZMSY0rrYm3E=; b=kKW3CHCHsGEiBE7ZTSusXA
+        l+9rLqY89788+YkjMnoHeVzVqLY+3w3GjAio33spPtYUPXBMiWhyh61KaYNjprw8
+        DPLrKpRHQeKxQiVfSmRKsBVVPXUnwKmG9cmxILgA35tEQNwomL7oj+Y5Ws0Y6Jc+
+        uKYfZPHN2CBANnA36TlQ0a55aSlU9E0gBxruQRq7ZUm7GiPVY695d23yKfGA+1ZN
+        B8v1I6bFd5nlv+oDBsyFqJQ3Dvd/6TO+TsmPFwJaAWPFUijTKLNVpOmHcwTETP5V
+        THKrruNd1HdPVMvwaa8AByJv57x3V2tIKoVgS1gC8bKi3b+zRZ7oyWaPg4XL4O/g
+        ==
+X-ME-Sender: <xms:HTYOXKwRUBab3JAcUxye7QletGON-k7y14ohaFFU9ZiESnGqzmwdXw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedtkedrudeghedgtdeiucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfquhhtnecuuegrihhlohhuthemucef
+    tddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvuffkfh
+    ggtggujggfsehttdertddtredvnecuhfhrohhmpefirhgvghcumffjuceoghhrvghgsehk
+    rhhorghhrdgtohhmqeenucfkphepkeefrdekiedrkeelrddutdejnecurfgrrhgrmhepmh
+    grihhlfhhrohhmpehgrhgvgheskhhrohgrhhdrtghomhenucevlhhushhtvghrufhiiigv
+    pedt
+X-ME-Proxy: <xmx:HTYOXFG27Pnbdgp3UhFE-vr9QY4pMgjB4PrC9mSL1RJI89uzf4Hecg>
+    <xmx:HTYOXKhci5pxyUtSmep3smV_zkUYS-0NI9gKsgAdNKYoZodfoT_Zbg>
+    <xmx:HTYOXI-sT0XoycLos8P0N-xYP_uFDPS5fzWZgfSorKa--7YCJw-Yug>
+    <xmx:HTYOXJpwjxfekrkw-g7zMkYwXvRLyDRJZ99_Gi0NxRDt96hJ9as9sQ>
+    <xmx:HTYOXP84zd6EoaB-a1SbMfEZgGbU3rtpHK89T64RjhC81-QeWiBc6w>
+    <xmx:HjYOXJdiQEMpXHTyYTecBoGzP_uFk5f-jERxgazyIny3KChe3oMybg>
+Received: from localhost (5356596b.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 1B5E5103C6;
+        Mon, 10 Dec 2018 04:47:09 -0500 (EST)
+Date:   Mon, 10 Dec 2018 10:47:07 +0100
+From:   Greg KH <greg@kroah.com>
+To:     Dexuan Cui <decui@microsoft.com>
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        KY Srinivasan <kys@microsoft.com>
+Subject: Re: linux-next: manual merge of the char-misc tree with the
+ char-misc.current tree
+Message-ID: <20181210094707.GA22095@kroah.com>
+References: <20181204153513.1e799336@canb.auug.org.au>
+ <20181204074241.GB27141@kroah.com>
+ <PU1P153MB01699DCE042ACB59AADCC8D3BFAF0@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <PU1P153MB01699DCE042ACB59AADCC8D3BFAF0@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Vhost dirty page logging API is designed to sync through GPA. But we
-try to log GIOVA when device IOTLB is enabled. This is wrong and may
-lead to missing data after migration.
+On Tue, Dec 04, 2018 at 08:46:41AM +0000, Dexuan Cui wrote:
+> > From: Greg KH <greg@kroah.com>
+> > Sent: Monday, December 3, 2018 11:43 PM
+> > On Tue, Dec 04, 2018 at 03:35:13PM +1100, Stephen Rothwell wrote:
+> > > Hi all,
+> > >
+> > > Today's linux-next merge of the char-misc tree got a conflict in:
+> > >
+> > >   drivers/hv/channel_mgmt.c
+> > >
+> > > between commit:
+> > >
+> > >   37c2578c0c40 ("Drivers: hv: vmbus: Offload the handling of channels to
+> > two workqueues")
+> > >
+> > > from the char-misc.current tree and commit:
+> > >
+> > >   4d3c5c69191f ("Drivers: hv: vmbus: Remove the useless API
+> > vmbus_get_outgoing_channel()")
+> > >
+> > > from the char-misc tree.
+> > >
+> > > I fixed it up (I used the former version where they conflicted) and can
+> > > carry the fix as necessary. This is now fixed as far as linux-next is
+> Hi Stephen, 
+> Thank you! I can confirm your rebase for next-20181204 is correct:
+> 37c2578c0c40 ("Drivers: hv: vmbus: Offload the handling of channels to two workqueues")
+> 
+> > > concerned, but any non trivial conflicts should be mentioned to your
+> > > upstream maintainer when your tree is submitted for merging.  You may
+> > > also want to consider cooperating with the maintainer of the conflicting
+> > > tree to minimise any particularly complex conflicts.
+> > 
+> > Yeah, this is a mess, I'll wait for the hyper-v developers to send me a
+> > fixup patch for handling this merge issue, as they know it is happening
+> > :(
+> > 
+> > greg k-h
+> 
+> Since Stephen has fixed the merge issue correctly, I guess I may not need to send a fixup
+> patch for linux-next.git. If I didn't get it right, please let me know which tree/branch I
+> should work on to send a fixup patch.
+> 
+> It looks the conflict here happened because the two related patches, which modify
+> the same functions, went into different branches of char-misc.git. I didn't realize this
+> could happen... Sorry. The lesson I learnt is that I should not submit an urgent fix
+> with an unimportant clean-up patch at the same time, when they can cause a conflict.
 
-To solve this issue, when logging with device IOTLB enabled, we will:
+I have done the merge in my char-misc-next branch, can you verify that I
+got it correct?
 
-1) reuse the device IOTLB translation result of GIOVA->HVA mapping to
-   get HVA, for writable descriptor, get HVA through iovec. For used
-   ring update, translate its GIOVA to HVA
-2) traverse the GPA->HVA mapping to get the possible GPA and log
-   through GPA. Pay attention this reverse mapping is not guaranteed
-   to be unique, so we should log each possible GPA in this case.
+thanks,
 
-This fix the failure of scp to guest during migration. In -next, we
-will probably support passing GIOVA->GPA instead of GIOVA->HVA.
-
-Fixes: 6b1e6cc7855b ("vhost: new device IOTLB API")
-Reported-by: Jintack Lim <jintack@cs.columbia.edu>
-Cc: Jintack Lim <jintack@cs.columbia.edu>
-Signed-off-by: Jason Wang <jasowang@redhat.com>
----
- drivers/vhost/net.c   |  3 +-
- drivers/vhost/vhost.c | 78 +++++++++++++++++++++++++++++++++++--------
- drivers/vhost/vhost.h |  3 +-
- 3 files changed, 68 insertions(+), 16 deletions(-)
-
-diff --git a/drivers/vhost/net.c b/drivers/vhost/net.c
-index 5f272ab4d5b4..754ca22efb43 100644
---- a/drivers/vhost/net.c
-+++ b/drivers/vhost/net.c
-@@ -1196,7 +1196,8 @@ static void handle_rx(struct vhost_net *net)
- 		if (nvq->done_idx > VHOST_NET_BATCH)
- 			vhost_net_signal_used(nvq);
- 		if (unlikely(vq_log))
--			vhost_log_write(vq, vq_log, log, vhost_len);
-+			vhost_log_write(vq, vq_log, log, vhost_len,
-+					vq->iov, in);
- 		total_len += vhost_len;
- 		if (unlikely(vhost_exceeds_weight(++recv_pkts, total_len))) {
- 			vhost_poll_queue(&vq->poll);
-diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
-index 55e5aa662ad5..8ab279720a2b 100644
---- a/drivers/vhost/vhost.c
-+++ b/drivers/vhost/vhost.c
-@@ -1733,11 +1733,66 @@ static int log_write(void __user *log_base,
- 	return r;
- }
- 
-+static int log_write_hva(struct vhost_virtqueue *vq, u64 hva, u64 len)
-+{
-+	struct vhost_umem *umem = vq->umem;
-+	struct vhost_umem_node *u;
-+	u64 gpa;
-+	int r;
-+	bool hit = false;
-+
-+	list_for_each_entry(u, &umem->umem_list, link) {
-+		if (u->userspace_addr < hva &&
-+		    u->userspace_addr + u->size >=
-+		    hva + len) {
-+			gpa = u->start + hva - u->userspace_addr;
-+			r = log_write(vq->log_base, gpa, len);
-+			if (r < 0)
-+				return r;
-+			hit = true;
-+		}
-+	}
-+
-+	/* No reverse mapping, should be a bug */
-+	WARN_ON(!hit);
-+	return 0;
-+}
-+
-+static void log_used(struct vhost_virtqueue *vq, u64 used_offset, u64 len)
-+{
-+	struct iovec iov[64];
-+	int i, ret;
-+
-+	if (!vq->iotlb) {
-+		log_write(vq->log_base, vq->log_addr + used_offset, len);
-+		return;
-+	}
-+
-+	ret = translate_desc(vq, (u64)vq->used + used_offset, len, iov, 64,
-+			     VHOST_ACCESS_WO);
-+	WARN_ON(ret < 0);
-+
-+	for (i = 0; i < ret; i++) {
-+		ret = log_write_hva(vq, (u64)iov[i].iov_base, iov[i].iov_len);
-+		WARN_ON(ret);
-+	}
-+}
-+
- int vhost_log_write(struct vhost_virtqueue *vq, struct vhost_log *log,
--		    unsigned int log_num, u64 len)
-+		    unsigned int log_num, u64 len, struct iovec *iov, int count)
- {
- 	int i, r;
- 
-+	if (vq->iotlb) {
-+		for (i = 0; i < count; i++) {
-+			r = log_write_hva(vq, (u64)iov[i].iov_base,
-+					  iov[i].iov_len);
-+			if (r < 0)
-+				return r;
-+		}
-+		return 0;
-+	}
-+
- 	/* Make sure data written is seen before log. */
- 	smp_wmb();
- 	for (i = 0; i < log_num; ++i) {
-@@ -1769,9 +1824,8 @@ static int vhost_update_used_flags(struct vhost_virtqueue *vq)
- 		smp_wmb();
- 		/* Log used flag write. */
- 		used = &vq->used->flags;
--		log_write(vq->log_base, vq->log_addr +
--			  (used - (void __user *)vq->used),
--			  sizeof vq->used->flags);
-+		log_used(vq, (used - (void __user *)vq->used),
-+			 sizeof vq->used->flags);
- 		if (vq->log_ctx)
- 			eventfd_signal(vq->log_ctx, 1);
- 	}
-@@ -1789,9 +1843,8 @@ static int vhost_update_avail_event(struct vhost_virtqueue *vq, u16 avail_event)
- 		smp_wmb();
- 		/* Log avail event write */
- 		used = vhost_avail_event(vq);
--		log_write(vq->log_base, vq->log_addr +
--			  (used - (void __user *)vq->used),
--			  sizeof *vhost_avail_event(vq));
-+		log_used(vq, (used - (void __user *)vq->used),
-+			 sizeof *vhost_avail_event(vq));
- 		if (vq->log_ctx)
- 			eventfd_signal(vq->log_ctx, 1);
- 	}
-@@ -2191,10 +2244,8 @@ static int __vhost_add_used_n(struct vhost_virtqueue *vq,
- 		/* Make sure data is seen before log. */
- 		smp_wmb();
- 		/* Log used ring entry write. */
--		log_write(vq->log_base,
--			  vq->log_addr +
--			   ((void __user *)used - (void __user *)vq->used),
--			  count * sizeof *used);
-+		log_used(vq, ((void __user *)used - (void __user *)vq->used),
-+			 count * sizeof *used);
- 	}
- 	old = vq->last_used_idx;
- 	new = (vq->last_used_idx += count);
-@@ -2236,9 +2287,8 @@ int vhost_add_used_n(struct vhost_virtqueue *vq, struct vring_used_elem *heads,
- 		/* Make sure used idx is seen before log. */
- 		smp_wmb();
- 		/* Log used index update. */
--		log_write(vq->log_base,
--			  vq->log_addr + offsetof(struct vring_used, idx),
--			  sizeof vq->used->idx);
-+		log_used(vq, offsetof(struct vring_used, idx),
-+			 sizeof vq->used->idx);
- 		if (vq->log_ctx)
- 			eventfd_signal(vq->log_ctx, 1);
- 	}
-diff --git a/drivers/vhost/vhost.h b/drivers/vhost/vhost.h
-index 466ef7542291..1b675dad5e05 100644
---- a/drivers/vhost/vhost.h
-+++ b/drivers/vhost/vhost.h
-@@ -205,7 +205,8 @@ bool vhost_vq_avail_empty(struct vhost_dev *, struct vhost_virtqueue *);
- bool vhost_enable_notify(struct vhost_dev *, struct vhost_virtqueue *);
- 
- int vhost_log_write(struct vhost_virtqueue *vq, struct vhost_log *log,
--		    unsigned int log_num, u64 len);
-+		    unsigned int log_num, u64 len,
-+		    struct iovec *iov, int count);
- int vq_iotlb_prefetch(struct vhost_virtqueue *vq);
- 
- struct vhost_msg_node *vhost_new_msg(struct vhost_virtqueue *vq, int type);
--- 
-2.17.1
-
+greg k-h
