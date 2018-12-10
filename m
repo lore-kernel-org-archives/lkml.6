@@ -2,96 +2,116 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC544C04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 21:14:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA684C04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 21:15:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8347620672
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 21:14:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8347620672
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ab.jp.nec.com
+	by mail.kernel.org (Postfix) with ESMTP id A95FD20672
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 21:15:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="i/ujtq7e"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A95FD20672
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729172AbeLJVO2 (ORCPT
+        id S1729368AbeLJVPK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 16:14:28 -0500
-Received: from tyo162.gate.nec.co.jp ([114.179.232.162]:36476 "EHLO
-        tyo162.gate.nec.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727501AbeLJVO1 (ORCPT
+        Mon, 10 Dec 2018 16:15:10 -0500
+Received: from mail-it1-f195.google.com ([209.85.166.195]:39358 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726959AbeLJVPK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 16:14:27 -0500
-Received: from mailgate02.nec.co.jp ([114.179.233.122])
-        by tyo162.gate.nec.co.jp (8.15.1/8.15.1) with ESMTPS id wBALDe2B002137
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Tue, 11 Dec 2018 06:13:40 +0900
-Received: from mailsv01.nec.co.jp (mailgate-v.nec.co.jp [10.204.236.94])
-        by mailgate02.nec.co.jp (8.15.1/8.15.1) with ESMTP id wBALDecV022619;
-        Tue, 11 Dec 2018 06:13:40 +0900
-Received: from mail02.kamome.nec.co.jp (mail02.kamome.nec.co.jp [10.25.43.5])
-        by mailsv01.nec.co.jp (8.15.1/8.15.1) with ESMTP id wBALDeQQ014850;
-        Tue, 11 Dec 2018 06:13:40 +0900
-Received: from bpxc99gp.gisp.nec.co.jp ([10.38.151.138] [10.38.151.138]) by mail01b.kamome.nec.co.jp with ESMTP id BT-MMP-517067; Tue, 11 Dec 2018 06:10:42 +0900
-Received: from BPXM09GP.gisp.nec.co.jp ([10.38.151.201]) by
- BPXC10GP.gisp.nec.co.jp ([10.38.151.138]) with mapi id 14.03.0319.002; Tue,
- 11 Dec 2018 06:10:41 +0900
-From:   Kazuhito Hagio <k-hagio@ab.jp.nec.com>
-To:     Borislav Petkov <bp@alien8.de>, lijiang <lijiang@redhat.com>
-CC:     "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "bhe@redhat.com" <bhe@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "kexec@lists.infradead.org" <kexec@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "dyoung@redhat.com" <dyoung@redhat.com>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>
-Subject: RE: [PATCH 1/2 v2] kdump: add the vmcoreinfo documentation
-Thread-Topic: [PATCH 1/2 v2] kdump: add the vmcoreinfo documentation
-Thread-Index: AQHUjKXemQXNLRGc+UGdsBH5ZuUNaqVwM/AQgAeJRICAAK+kgA==
-Date:   Mon, 10 Dec 2018 21:10:41 +0000
-Message-ID: <4AE2DC15AC0B8543882A74EA0D43DBEC03564659@BPXM09GP.gisp.nec.co.jp>
-References: <20181202030839.29945-1-lijiang@redhat.com>
- <20181202030839.29945-2-lijiang@redhat.com> <20181203150809.GA4794@zn.tnic>
- <779dbae7-f6e2-e9e4-bdd0-0a9e6ec62487@redhat.com>
- <20181205113032.GF29510@zn.tnic>
- <3d1a7e68-34c5-d118-fe09-7c9bc14cce84@redhat.com>
- <4AE2DC15AC0B8543882A74EA0D43DBEC0356426E@BPXM09GP.gisp.nec.co.jp>
- <20181210183221.GA5482@zn.tnic>
-In-Reply-To: <20181210183221.GA5482@zn.tnic>
-Accept-Language: ja-JP, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [143.101.135.49]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Mon, 10 Dec 2018 16:15:10 -0500
+Received: by mail-it1-f195.google.com with SMTP id a6so213165itl.4
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Dec 2018 13:15:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=e3TVMDzvf7NesvUIZPej8IInDcQsHDhk2sIidxJ8T1s=;
+        b=i/ujtq7eIS1ndLedPAZHD3aCPFZ9KsUwfwoCESJ6xRSQEWzigU2IDhSqz/Zrv5dFWi
+         WokAjcZPEyl8W7PI9vPogX1tSu74ssT1L/xJV4tLoeKnrx6X4CErXYi7aSWsLzD0AbPz
+         YJAafOqtb8qnrvIzlvtveRNShVR7jq7kQSYOLA3l0rKdUbqE/hux9wkOYwAlHXaGXaOC
+         h9gjPeOIRuLb1oV7Uj2kX6wpaiP6uoQ1GrzVp0vj/75741nLHY6RplZuSrLR9Q9dKnjN
+         d97ZHPkrwwkSO7QDDQs3axwLgodo3zsxcxubG1aQlKcHrAd0ZlAe6RFiDW2mCiUqLs8M
+         FH0A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=e3TVMDzvf7NesvUIZPej8IInDcQsHDhk2sIidxJ8T1s=;
+        b=XgPBMrCqJGG/AzHGnuPLKCU4w80FMc32cJNC/AZhrR4v4cmZyz01HEoOu7elRKuQnB
+         NF4JKWHtb3mRutnlRJlJXnzme2zoProW8nhWZMIkSuxOMkTc/GhKOQ+sGLFqfe73HphY
+         WNGUZrMcX9sCg/vOXG19paE6YUjY0VjrETFRZGfkW/5f+2GbFu6aatTWEK8/BaRwQLJP
+         F+WUEXyEKjweIFGpkt4P6dQFa1sw1RMngSqFXy5IfloLs6PnlZsRbKbTiAjOr1tkkasO
+         xEqLF4fuA1wcSTKQVbFJ38DDzNyaS/oUo/pTus5EGGRFfRXM7XFcCLHt3/4pfZ+4bt3o
+         /JqQ==
+X-Gm-Message-State: AA+aEWaP5kf7x2CxZoTS5NPrkCXIel0UZupxekovFT49/BJdtngraquN
+        Lshv316uo3x9VEOWOW5jqy5Qo3D96VycUNAQsQSMOg==
+X-Google-Smtp-Source: AFSGD/Wh6fCK68+oEV74ecI17bJ+S0Y/SMykGYC4cf4Ah0gflIpdIqX6/4NFjEj8vEIExGOLAppQF6+v7WXx7LEqE7Y=
+X-Received: by 2002:a02:93c2:: with SMTP id z60mr12367208jah.51.1544476508673;
+ Mon, 10 Dec 2018 13:15:08 -0800 (PST)
 MIME-Version: 1.0
-X-TM-AS-MML: disable
+References: <20181210205929.3213516-1-arnd@arndb.de>
+In-Reply-To: <20181210205929.3213516-1-arnd@arndb.de>
+From:   Andrey Konovalov <andreyknvl@google.com>
+Date:   Mon, 10 Dec 2018 22:14:57 +0100
+Message-ID: <CAAeHK+y_ySWM7NLsAvX7UzeBjYdofQHGgG_xbOMwX_pVsQJJKA@mail.gmail.com>
+Subject: Re: [PATCH] kasan: add missing Kconfig dependencies
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>, gor@linux.ibm.com,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-LS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gPiBtYWtlZHVtcGZpbGUgZG9lc24ndCBoYXZl
-IGFueSBzd2l0Y2ggd2hpY2ggZHVtcHMgVk1DT1JFSU5GTyBmcm9tIGtjb3JlDQo+ID4gZm9yIG5v
-dy4gKEknbSB0aGlua2luZyB0byBoYXZlIG1ha2VkdW1wZmlsZSBkdW1wIGl0IGFzIGRlYnVnIG1l
-c3NhZ2UsDQo+ID4gdGhvdWdoLikNCj4gDQo+IE1pZ2h0IGJlIHVzZWZ1bCBhcyBwZW9wbGUgYXJl
-IGxvb2tpbmcgaW50byB1c2luZyBWTUNPUkVJTkZPIHdoZW4NCj4gZGVidWdnaW5nIGEgbGl2ZSBr
-ZXJuZWwuLi4NCg0KTm93IG1ha2VkdW1wZmlsZSBpbiAnZGV2ZWwnIGJyYW5jaCBjYW4gcHJpbnQg
-Vk1DT1JFSU5GTyBpbiAvcHJvYy9rY29yZQ0KYXMgZGVidWcgbWVzc2FnZSB3aXRoIHRoZSBmb2xs
-b3dpbmcgY29tbWFuZDoNCg0KIyAuL21ha2VkdW1wZmlsZSAtLW1lbS11c2FnZSAvcHJvYy9rY29y
-ZSAtRA0KLi4uDQpWTUNPUkVJTkZPICAgOg0KICBPU1JFTEVBU0U9NC4yMC4wLTAucmMyLmdpdDAu
-MS5mYzMwLng4Nl82NA0KICBQQUdFU0laRT00MDk2DQpwYWdlX3NpemUgICAgOiA0MDk2DQogIFNZ
-TUJPTChpbml0X3V0c19ucyk9ZmZmZmZmZmY4NDIxMzU0MA0KICAuLi4NCg0KQWxzbywgaXQgc2Vl
-bXMgdGhhdCByZWNlbnQgY3Jhc2ggdXRpbGl0eSBpbiBnaXQgcmVwbyB3aXRoIGtlcm5lbCA0LjE5
-DQpvciBuZXdlciBjYW4gZHVtcCBpdCB3aXRoICdoZWxwIC1uJyBjb21tYW5kOg0KDQojIC4vY3Jh
-c2ggdm1saW51eCAvcHJvYy9rY29yZQ0KLi4uDQpjcmFzaD4gaGVscCAtbg0KLi4uDQogIEVsZjY0
-X05oZHI6DQogICAgICBuX25hbWVzejogMTEgKCJWTUNPUkVJTkZPIikNCiAgICAgIG5fZGVzY3N6
-OiAxOTU1DQogICAgICAgIG5fdHlwZTogMCAodW5rbm93bikNCg0KICAgICAgT1NSRUxFQVNFPTQu
-MjAuMC0wLnJjMi5naXQwLjEuZmMzMC54ODZfNjQNCiAgICAgIFBBR0VTSVpFPTQwOTYNCiAgICAg
-IFNZTUJPTChpbml0X3V0c19ucyk9ZmZmZmZmZmY4NDIxMzU0MA0KICAgICAgLi4uDQoNClRoYW5r
-cywNCkthenUNCg==
+On Mon, Dec 10, 2018 at 9:59 PM Arnd Bergmann <arnd@arndb.de> wrote:
+>
+> Building with CONFIG_KASAN=y when neither KASAN_GENERIC nor KASAN_SW_TAGS
+> can be selected leads to a build error:
+>
+> arch/arm64/mm/kasan_init.c: In function 'kasan_pte_populate':
+> arch/arm64/mm/kasan_init.c:106:28: error: 'KASAN_SHADOW_INIT' undeclared (first use in this function); did you mean 'KASAN_SHADOW_END'?
+>
+> We should really only allow enabling KASAN when all its dependencies
+> are met as it was before the introduction of CONFIG_KASAN_SW_TAGS.
+>
+> Fixes: b8440cc16515 ("kasan: add CONFIG_KASAN_GENERIC and CONFIG_KASAN_SW_TAGS")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
+Hi Arnd,
+
+Is this a patch against linux-next? The issue has been addressed by
+v13 of the patchset, which is now in the mm tree and should end up in
+the linux-next soon AFAIU.
+
+Thanks!
+
+> ---
+>  lib/Kconfig.kasan | 2 ++
+>  1 file changed, 2 insertions(+)
+>
+> diff --git a/lib/Kconfig.kasan b/lib/Kconfig.kasan
+> index b5d0cbfce4a1..83286bca2f70 100644
+> --- a/lib/Kconfig.kasan
+> +++ b/lib/Kconfig.kasan
+> @@ -15,6 +15,8 @@ if HAVE_ARCH_KASAN
+>
+>  config KASAN
+>         bool "KASAN: runtime memory debugger"
+> +       depends on CC_HAS_KASAN_GENERIC || CC_HAS_KASAN_SW_TAGS
+> +       depends on (SLUB && SYSFS) || (SLAB && !DEBUG_SLAB)
+>         help
+>           Enables KASAN (KernelAddressSANitizer) - runtime memory debugger,
+>           designed to find out-of-bounds accesses and use-after-free bugs.
+> --
+> 2.20.0
+>
