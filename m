@@ -6,38 +6,40 @@ X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2C13C04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 04:30:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3A7CC67838
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 04:30:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A36F82081C
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 04:30:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A36F82081C
+	by mail.kernel.org (Postfix) with ESMTP id 76CF72081C
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 04:30:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 76CF72081C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726669AbeLJEaO (ORCPT
+        id S1726687AbeLJEaT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 23:30:14 -0500
-Received: from vmicros1.altlinux.org ([194.107.17.57]:39232 "EHLO
+        Sun, 9 Dec 2018 23:30:19 -0500
+Received: from vmicros1.altlinux.org ([194.107.17.57]:39324 "EHLO
         vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726652AbeLJEaN (ORCPT
+        with ESMTP id S1726475AbeLJEaR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Dec 2018 23:30:13 -0500
+        Sun, 9 Dec 2018 23:30:17 -0500
 Received: from mua.local.altlinux.org (mua.local.altlinux.org [192.168.1.14])
-        by vmicros1.altlinux.org (Postfix) with ESMTP id 7F42472CC66;
-        Mon, 10 Dec 2018 07:30:11 +0300 (MSK)
+        by vmicros1.altlinux.org (Postfix) with ESMTP id 48CBA72CC66;
+        Mon, 10 Dec 2018 07:30:15 +0300 (MSK)
 Received: by mua.local.altlinux.org (Postfix, from userid 508)
-        id 58BC67CEFE9; Mon, 10 Dec 2018 07:30:11 +0300 (MSK)
-Date:   Mon, 10 Dec 2018 07:30:11 +0300
+        id 3AD897CEFE9; Mon, 10 Dec 2018 07:30:15 +0300 (MSK)
+Date:   Mon, 10 Dec 2018 07:30:15 +0300
 From:   "Dmitry V. Levin" <ldv@altlinux.org>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>,
+To:     Paul Burton <paul.burton@mips.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        James Hogan <jhogan@kernel.org>,
         Oleg Nesterov <oleg@redhat.com>,
         Andy Lutomirski <luto@kernel.org>
 Cc:     Elvira Khabirova <lineprinter@altlinux.org>,
         Eugene Syromyatnikov <esyr@redhat.com>,
-        linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v5 13/25] m68k: add asm/syscall.h
-Message-ID: <20181210043010.GM6131@altlinux.org>
+        linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v5 14/25] mips: define syscall_get_error()
+Message-ID: <20181210043014.GN6131@altlinux.org>
 References: <20181210042352.GA6092@altlinux.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -47,77 +49,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-syscall_get_* functions are required to be implemented on all
-architectures in order to extend the generic ptrace API with
-PTRACE_GET_SYSCALL_INFO request.
+syscall_get_error() is required to be implemented on all
+architectures in addition to already implemented syscall_get_nr(),
+syscall_get_arguments(), syscall_get_return_value(), and
+syscall_get_arch() functions in order to extend the generic
+ptrace API with PTRACE_GET_SYSCALL_INFO request.
 
-This introduces asm/syscall.h on m68k implementing all 5 syscall_get_*
-functions as documented in asm-generic/syscall.h: syscall_get_nr,
-syscall_get_arguments, syscall_get_error, syscall_get_return_value,
-and syscall_get_arch.
-
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Paul Burton <paul.burton@mips.com>
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: James Hogan <jhogan@kernel.org>
 Cc: Oleg Nesterov <oleg@redhat.com>
 Cc: Andy Lutomirski <luto@kernel.org>
 Cc: Elvira Khabirova <lineprinter@altlinux.org>
 Cc: Eugene Syromyatnikov <esyr@redhat.com>
-Cc: linux-m68k@lists.linux-m68k.org
+Cc: linux-mips@vger.kernel.org
 Signed-off-by: Dmitry V. Levin <ldv@altlinux.org>
 ---
+ arch/mips/include/asm/syscall.h | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-Notes:
-    v5: added syscall_get_nr, syscall_get_arguments, syscall_get_error,
-        and syscall_get_return_value
-    v1: added syscall_get_arch
-
- arch/m68k/include/asm/syscall.h | 39 +++++++++++++++++++++++++++++++++
- 1 file changed, 39 insertions(+)
- create mode 100644 arch/m68k/include/asm/syscall.h
-
-diff --git a/arch/m68k/include/asm/syscall.h b/arch/m68k/include/asm/syscall.h
-new file mode 100644
-index 000000000000..75a24cf90620
---- /dev/null
-+++ b/arch/m68k/include/asm/syscall.h
-@@ -0,0 +1,39 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef _ASM_M68K_SYSCALL_H
-+#define _ASM_M68K_SYSCALL_H
-+
-+#include <uapi/linux/audit.h>
-+
-+static inline int
-+syscall_get_nr(struct task_struct *task, struct pt_regs *regs)
+diff --git a/arch/mips/include/asm/syscall.h b/arch/mips/include/asm/syscall.h
+index 6cf8ffb5367e..04ab927ff47d 100644
+--- a/arch/mips/include/asm/syscall.h
++++ b/arch/mips/include/asm/syscall.h
+@@ -89,6 +89,12 @@ static inline unsigned long mips_get_syscall_arg(unsigned long *arg,
+ 	unreachable();
+ }
+ 
++static inline long syscall_get_error(struct task_struct *task,
++				     struct pt_regs *regs)
 +{
-+	return regs->orig_d0;
++	return regs->regs[7] ? -regs->regs[2] : 0;
 +}
 +
-+static inline void
-+syscall_get_arguments(struct task_struct *task, struct pt_regs *regs,
-+		      unsigned int i, unsigned int n, unsigned long *args)
-+{
-+	BUG_ON(i + n > 6);
-+	memcpy(args, &regs->d1 + i, n * sizeof(args[0]));
-+}
-+
-+static inline long
-+syscall_get_error(struct task_struct *task, struct pt_regs *regs)
-+{
-+	return IS_ERR_VALUE(regs->d0) ? regs->d0 : 0;
-+}
-+
-+static inline long
-+syscall_get_return_value(struct task_struct *task, struct pt_regs *regs)
-+{
-+	return regs->d0;
-+}
-+
-+static inline int
-+syscall_get_arch(void)
-+{
-+	return AUDIT_ARCH_M68K;
-+}
-+
-+#endif	/* _ASM_M68K_SYSCALL_H */
+ static inline long syscall_get_return_value(struct task_struct *task,
+ 					    struct pt_regs *regs)
+ {
 -- 
 ldv
