@@ -7,65 +7,66 @@ X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C6E4C5CFFE
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 19:09:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BA09C04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 19:10:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB1662084C
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 19:09:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BD7752084E
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 19:10:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="J5iKEHFB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB1662084C
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="RZsQJGwa"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD7752084E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729235AbeLJTJa (ORCPT
+        id S1729138AbeLJTKG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 14:09:30 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:33878 "EHLO
+        Mon, 10 Dec 2018 14:10:06 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:34418 "EHLO
         userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729196AbeLJTJ3 (ORCPT
+        with ESMTP id S1727156AbeLJTKG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 14:09:29 -0500
+        Mon, 10 Dec 2018 14:10:06 -0500
 Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wBAJ8XAd158173;
-        Mon, 10 Dec 2018 19:09:18 GMT
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wBAJ8WVb158142;
+        Mon, 10 Dec 2018 19:09:48 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references; s=corp-2018-07-02;
- bh=v8ElQo36acSY7SAhGGWfVQofnvhe0dm2xG42jd4iTls=;
- b=J5iKEHFBQQEqEStCE/qlOMI5TJvMtxuuumz3tkcJVIgKLFoxCP0eHlCiRHVRCUQmkY3g
- NPSMGFEZD+/jkl8JEVXkxLSU2f6XLmRKDR/rTxsd2Mv/HZa1yPqZ8mlSUXK84vK0mlmu
- oSeVUkAxZ1Nub4TymFpE6TpfflIGmad7ZfoyMKk2AAowgKVA6oxyDkMGzuosAapIosvH
- RQg5N5xUBDz3a86Ccq7lw/FTimMDKDvIH9QPlA3X34+ZavnNRDCS5HunnW9xJlFRWodJ
- Af7pHV2naTriSVhKCu+SdZy0Ze+cSWSCk+c9oj9pJQk/6QsT4YD7lriE+I8iV3a3ila6 wQ== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by userp2130.oracle.com with ESMTP id 2p85ctyw26-1
+ bh=e2xVc/HkEiF1UxbONEUODMxPLCpybomt3hGIki/DEyY=;
+ b=RZsQJGwaqli+/65ru+18DGDc/IRT8Kn7ePB1FguqBMe/XMAr5rLPjfmOwSxl9bF6r7+D
+ uvbHq9/BDyFUl7MWcFuSbhj5HcxmfDr3pakImC2LEcy7rrYwAMYksIw3z+VgHog8KL92
+ eF7zM0hS1g79nK1yKk63NpM2GhS9Z40y75jyaUgi991qPWa4c+B34sDfB4JGoYSmqcVF
+ wNdVbqjn7XiB2MGMbEP0NSEBN2no3HS6xM97uxO0WxiuPcsFFteZzxLLSf0mRPkE/+A1
+ I6OW9iUZjT73bdNTgXX+t/bSaQH1DeTR/HmKRbvYcqmuKJFx0pyK7VSos6KR23NmU3Vt 5g== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by userp2130.oracle.com with ESMTP id 2p85ctyw4a-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 10 Dec 2018 19:09:18 +0000
+        Mon, 10 Dec 2018 19:09:48 +0000
 Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wBAJ9HS9007777
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id wBAJ9hRr005616
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 10 Dec 2018 19:09:17 GMT
-Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id wBAJ9H1f018962;
-        Mon, 10 Dec 2018 19:09:17 GMT
+        Mon, 10 Dec 2018 19:09:43 GMT
+Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id wBAJ9gfS019169;
+        Mon, 10 Dec 2018 19:09:42 GMT
 Received: from marawils-linux.us.oracle.com (/10.141.196.37)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 10 Dec 2018 11:09:16 -0800
+        with ESMTP ; Mon, 10 Dec 2018 11:09:42 -0800
 From:   Maran Wilson <maran.wilson@oracle.com>
-To:     xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, pbonzini@redhat.com, jgross@suse.com
-Cc:     JBeulich@suse.com, roger.pau@citrix.com,
-        boris.ostrovsky@oracle.com, rkrcmar@redhat.com,
-        maran.wilson@oracle.com
-Subject: [PATCH v9 6/7] xen/pvh: Add memory map pointer to hvm_start_info struct
-Date:   Mon, 10 Dec 2018 11:09:11 -0800
-Message-Id: <1544468951-882-1-git-send-email-maran.wilson@oracle.com>
+To:     x86@kernel.org, linux-kernel@vger.kernel.org,
+        xen-devel@lists.xenproject.org, kvm@vger.kernel.org,
+        pbonzini@redhat.com, jgross@suse.com
+Cc:     tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
+        roger.pau@citrix.com, boris.ostrovsky@oracle.com,
+        rkrcmar@redhat.com, maran.wilson@oracle.com
+Subject: [PATCH v9 7/7] KVM: x86: Allow Qemu/KVM to use PVH entry point
+Date:   Mon, 10 Dec 2018 11:09:35 -0800
+Message-Id: <1544468975-971-1-git-send-email-maran.wilson@oracle.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1544468734-32763-1-git-send-email-maran.wilson@oracle.com>
 References: <1544468734-32763-1-git-send-email-maran.wilson@oracle.com>
 X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9103 signatures=668679
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=549
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
  adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.0.1-1810050000 definitions=main-1812100170
 Sender: linux-kernel-owner@vger.kernel.org
@@ -73,124 +74,145 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The start info structure that is defined as part of the x86/HVM direct boot
-ABI and used for starting Xen PVH guests would be more versatile if it also
-included a way to pass information about the memory map to the guest. This
-would allow KVM guests to share the same entry point.
+For certain applications it is desirable to rapidly boot a KVM virtual
+machine. In cases where legacy hardware and software support within the
+guest is not needed, Qemu should be able to boot directly into the
+uncompressed Linux kernel binary without the need to run firmware.
+
+There already exists an ABI to allow this for Xen PVH guests and the ABI
+is supported by Linux and FreeBSD:
+
+   https://xenbits.xen.org/docs/unstable/misc/pvh.html
+
+This patch enables Qemu to use that same entry point for booting KVM
+guests.
 
 Signed-off-by: Maran Wilson <maran.wilson@oracle.com>
+Suggested-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Suggested-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Tested-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
 Reviewed-by: Juergen Gross <jgross@suse.com>
 ---
- include/xen/interface/hvm/start_info.h | 63 +++++++++++++++++++++++++++++++++-
- 1 file changed, 62 insertions(+), 1 deletion(-)
+ arch/x86/Kbuild                   |  2 +-
+ arch/x86/platform/pvh/Makefile    |  4 ++--
+ arch/x86/platform/pvh/enlighten.c | 42 +++++++++++++++++++++++++++++----------
+ 3 files changed, 34 insertions(+), 14 deletions(-)
 
-diff --git a/include/xen/interface/hvm/start_info.h b/include/xen/interface/hvm/start_info.h
-index 648415976ead..50af9ea2ff1e 100644
---- a/include/xen/interface/hvm/start_info.h
-+++ b/include/xen/interface/hvm/start_info.h
-@@ -33,7 +33,7 @@
-  *    | magic          | Contains the magic value XEN_HVM_START_MAGIC_VALUE
-  *    |                | ("xEn3" with the 0x80 bit of the "E" set).
-  *  4 +----------------+
-- *    | version        | Version of this structure. Current version is 0. New
-+ *    | version        | Version of this structure. Current version is 1. New
-  *    |                | versions are guaranteed to be backwards-compatible.
-  *  8 +----------------+
-  *    | flags          | SIF_xxx flags.
-@@ -48,6 +48,15 @@
-  * 32 +----------------+
-  *    | rsdp_paddr     | Physical address of the RSDP ACPI data structure.
-  * 40 +----------------+
-+ *    | memmap_paddr   | Physical address of the (optional) memory map. Only
-+ *    |                | present in version 1 and newer of the structure.
-+ * 48 +----------------+
-+ *    | memmap_entries | Number of entries in the memory map table. Zero
-+ *    |                | if there is no memory map being provided. Only
-+ *    |                | present in version 1 and newer of the structure.
-+ * 52 +----------------+
-+ *    | reserved       | Version 1 and newer only.
-+ * 56 +----------------+
-  *
-  * The layout of each entry in the module structure is the following:
-  *
-@@ -62,13 +71,51 @@
-  *    | reserved       |
-  * 32 +----------------+
-  *
-+ * The layout of each entry in the memory map table is as follows:
-+ *
-+ *  0 +----------------+
-+ *    | addr           | Base address
-+ *  8 +----------------+
-+ *    | size           | Size of mapping in bytes
-+ * 16 +----------------+
-+ *    | type           | Type of mapping as defined between the hypervisor
-+ *    |                | and guest. See XEN_HVM_MEMMAP_TYPE_* values below.
-+ * 20 +----------------|
-+ *    | reserved       |
-+ * 24 +----------------+
-+ *
-  * The address and sizes are always a 64bit little endian unsigned integer.
-  *
-  * NB: Xen on x86 will always try to place all the data below the 4GiB
-  * boundary.
-+ *
-+ * Version numbers of the hvm_start_info structure have evolved like this:
-+ *
-+ * Version 0:  Initial implementation.
-+ *
-+ * Version 1:  Added the memmap_paddr/memmap_entries fields (plus 4 bytes of
-+ *             padding) to the end of the hvm_start_info struct. These new
-+ *             fields can be used to pass a memory map to the guest. The
-+ *             memory map is optional and so guests that understand version 1
-+ *             of the structure must check that memmap_entries is non-zero
-+ *             before trying to read the memory map.
-  */
- #define XEN_HVM_START_MAGIC_VALUE 0x336ec578
+diff --git a/arch/x86/Kbuild b/arch/x86/Kbuild
+index 2089e4414300..c625f57472f7 100644
+--- a/arch/x86/Kbuild
++++ b/arch/x86/Kbuild
+@@ -7,7 +7,7 @@ obj-$(CONFIG_KVM) += kvm/
+ # Xen paravirtualization support
+ obj-$(CONFIG_XEN) += xen/
  
-+/*
-+ * The values used in the type field of the memory map table entries are
-+ * defined below and match the Address Range Types as defined in the "System
-+ * Address Map Interfaces" section of the ACPI Specification. Please refer to
-+ * section 15 in version 6.2 of the ACPI spec: http://uefi.org/specifications
-+ */
-+#define XEN_HVM_MEMMAP_TYPE_RAM       1
-+#define XEN_HVM_MEMMAP_TYPE_RESERVED  2
-+#define XEN_HVM_MEMMAP_TYPE_ACPI      3
-+#define XEN_HVM_MEMMAP_TYPE_NVS       4
-+#define XEN_HVM_MEMMAP_TYPE_UNUSABLE  5
-+#define XEN_HVM_MEMMAP_TYPE_DISABLED  6
-+#define XEN_HVM_MEMMAP_TYPE_PMEM      7
+-obj-$(CONFIG_XEN_PVH) += platform/pvh/
++obj-$(CONFIG_PVH) += platform/pvh/
+ 
+ # Hyper-V paravirtualization support
+ obj-$(subst m,y,$(CONFIG_HYPERV)) += hyperv/
+diff --git a/arch/x86/platform/pvh/Makefile b/arch/x86/platform/pvh/Makefile
+index 9fd25efcd2a3..5dec5067c9fb 100644
+--- a/arch/x86/platform/pvh/Makefile
++++ b/arch/x86/platform/pvh/Makefile
+@@ -1,5 +1,5 @@
+ # SPDX-License-Identifier: GPL-2.0
+ OBJECT_FILES_NON_STANDARD_head.o := y
+ 
+-obj-$(CONFIG_XEN_PVH) += enlighten.o
+-obj-$(CONFIG_XEN_PVH) += head.o
++obj-$(CONFIG_PVH) += enlighten.o
++obj-$(CONFIG_PVH) += head.o
+diff --git a/arch/x86/platform/pvh/enlighten.c b/arch/x86/platform/pvh/enlighten.c
+index 8040b3fbf545..62f5c7045944 100644
+--- a/arch/x86/platform/pvh/enlighten.c
++++ b/arch/x86/platform/pvh/enlighten.c
+@@ -8,6 +8,8 @@
+ #include <asm/e820/api.h>
+ #include <asm/x86_init.h>
+ 
++#include <asm/xen/interface.h>
 +
+ #include <xen/xen.h>
+ #include <xen/interface/hvm/start_info.h>
+ 
+@@ -40,11 +42,28 @@ void __init __weak mem_map_via_hcall(struct boot_params *ptr __maybe_unused)
+ 	BUG();
+ }
+ 
+-static void __init init_pvh_bootparams(void)
++static void __init init_pvh_bootparams(bool xen_guest)
+ {
+ 	memset(&pvh_bootparams, 0, sizeof(pvh_bootparams));
+ 
+-	mem_map_via_hcall(&pvh_bootparams);
++	if ((pvh_start_info.version > 0) && (pvh_start_info.memmap_entries)) {
++		struct hvm_memmap_table_entry *ep;
++		int i;
++
++		ep = __va(pvh_start_info.memmap_paddr);
++		pvh_bootparams.e820_entries = pvh_start_info.memmap_entries;
++
++		for (i = 0; i < pvh_bootparams.e820_entries ; i++, ep++) {
++			pvh_bootparams.e820_table[i].addr = ep->addr;
++			pvh_bootparams.e820_table[i].size = ep->size;
++			pvh_bootparams.e820_table[i].type = ep->type;
++		}
++	} else if (xen_guest) {
++		mem_map_via_hcall(&pvh_bootparams);
++	} else {
++		/* Non-xen guests are not supported by version 0 */
++		BUG();
++	}
+ 
+ 	if (pvh_bootparams.e820_entries < E820_MAX_ENTRIES_ZEROPAGE - 1) {
+ 		pvh_bootparams.e820_table[pvh_bootparams.e820_entries].addr =
+@@ -75,7 +94,7 @@ static void __init init_pvh_bootparams(void)
+ 	 * environment (i.e. hardware_subarch 0).
+ 	 */
+ 	pvh_bootparams.hdr.version = (2 << 8) | 12;
+-	pvh_bootparams.hdr.type_of_loader = (9 << 4) | 0; /* Xen loader */
++	pvh_bootparams.hdr.type_of_loader = ((xen_guest ? 0x9 : 0xb) << 4) | 0;
+ 
+ 	x86_init.acpi.get_root_pointer = pvh_get_root_pointer;
+ }
+@@ -90,13 +109,10 @@ void __init __weak xen_pvh_init(void)
+ 	BUG();
+ }
+ 
+-/*
+- * When we add support for other hypervisors like Qemu/KVM, this routine can
+- * selectively invoke the appropriate initialization based on guest type.
+- */
+-static void hypervisor_specific_init(void)
++static void hypervisor_specific_init(bool xen_guest)
+ {
+-	xen_pvh_init();
++	if (xen_guest)
++		xen_pvh_init();
+ }
+ 
  /*
-  * C representation of the x86/HVM start info layout.
-  *
-@@ -86,6 +133,13 @@ struct hvm_start_info {
-     uint64_t cmdline_paddr;     /* Physical address of the command line.     */
-     uint64_t rsdp_paddr;        /* Physical address of the RSDP ACPI data    */
-                                 /* structure.                                */
-+    /* All following fields only present in version 1 and newer */
-+    uint64_t memmap_paddr;      /* Physical address of an array of           */
-+                                /* hvm_memmap_table_entry.                   */
-+    uint32_t memmap_entries;    /* Number of entries in the memmap table.    */
-+                                /* Value will be zero if there is no memory  */
-+                                /* map being provided.                       */
-+    uint32_t reserved;          /* Must be zero.                             */
- };
- 
- struct hvm_modlist_entry {
-@@ -95,4 +149,11 @@ struct hvm_modlist_entry {
-     uint64_t reserved;
- };
- 
-+struct hvm_memmap_table_entry {
-+    uint64_t addr;              /* Base address of the memory region         */
-+    uint64_t size;              /* Size of the memory region in bytes        */
-+    uint32_t type;              /* Mapping type                              */
-+    uint32_t reserved;          /* Must be zero for Version 1.               */
-+};
+@@ -105,13 +121,17 @@ static void hypervisor_specific_init(void)
+  */
+ void __init xen_prepare_pvh(void)
+ {
 +
- #endif /* __XEN_PUBLIC_ARCH_X86_HVM_START_INFO_H__ */
++	u32 msr = xen_cpuid_base();
++	bool xen_guest = !!msr;
++
+ 	if (pvh_start_info.magic != XEN_HVM_START_MAGIC_VALUE) {
+ 		xen_raw_printk("Error: Unexpected magic value (0x%08x)\n",
+ 				pvh_start_info.magic);
+ 		BUG();
+ 	}
+ 
+-	hypervisor_specific_init();
++	hypervisor_specific_init(xen_guest);
+ 
+-	init_pvh_bootparams();
++	init_pvh_bootparams(xen_guest);
+ }
 -- 
 2.16.1
 
