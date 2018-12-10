@@ -2,114 +2,292 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 643DDC04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 20:31:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FC44C04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 20:32:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2DA7C20672
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 20:31:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2DA7C20672
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id DAF9F2084E
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 20:32:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544473951;
+	bh=icdKAKWLKILkUMrl8DPI7tdNHotP/+sT5fsAccQdbOM=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=0c5O/79UDhG5zhv8cPSQXKLflC+b7OUKS5DlxMD6kdnLJBLvCg3G+fw8Env2y+6OK
+	 /acaF0iecTHK2TZ80HOode7Uf5cCCuAcqu45nJC0wIu1UmSVkNdXdjJGOBl0cIuccN
+	 SHjvZayzRVf7I6DDA4uCas1lrDgcJ4jYczXN2090=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DAF9F2084E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728949AbeLJUb5 (ORCPT
+        id S1729298AbeLJUc3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 15:31:57 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:36182 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727494AbeLJUb5 (ORCPT
+        Mon, 10 Dec 2018 15:32:29 -0500
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:42134 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727494AbeLJUc2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 15:31:57 -0500
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBAKScpR138822
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Dec 2018 15:31:56 -0500
-Received: from e31.co.us.ibm.com (e31.co.us.ibm.com [32.97.110.149])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2p9v1t16da-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Dec 2018 15:31:55 -0500
-Received: from localhost
-        by e31.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <bauerman@linux.ibm.com>;
-        Mon, 10 Dec 2018 20:31:54 -0000
-Received: from b03cxnp08027.gho.boulder.ibm.com (9.17.130.19)
-        by e31.co.us.ibm.com (192.168.1.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 10 Dec 2018 20:31:51 -0000
-Received: from b03ledav004.gho.boulder.ibm.com (b03ledav004.gho.boulder.ibm.com [9.17.130.235])
-        by b03cxnp08027.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBAKVoUP30081044
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 10 Dec 2018 20:31:50 GMT
-Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 88BEF7805E;
-        Mon, 10 Dec 2018 20:31:50 +0000 (GMT)
-Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 0C2007805F;
-        Mon, 10 Dec 2018 20:31:47 +0000 (GMT)
-Received: from morokweng.localdomain (unknown [9.85.129.222])
-        by b03ledav004.gho.boulder.ibm.com (Postfix) with ESMTPS;
-        Mon, 10 Dec 2018 20:31:47 +0000 (GMT)
-References: <1544095908-2414-1-git-send-email-ego@linux.vnet.ibm.com> <87a7li5zv2.fsf@morokweng.localdomain> <20181207104311.GA11431@in.ibm.com> <20181207120346.GB11431@in.ibm.com> <87va443fm3.fsf@morokweng.localdomain> <06dfb955-6af9-ae23-3919-9bee447cfcdc@linux.vnet.ibm.com>
-User-agent: mu4e 1.0; emacs 26.1
-From:   Thiago Jung Bauermann <bauerman@linux.ibm.com>
-To:     Michael Bringmann <mwb@linux.vnet.ibm.com>
-Cc:     ego@linux.vnet.ibm.com, Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Tyrel Datwyler <tyreld@linux.vnet.ibm.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Vaidyanathan Srinivasan <svaidy@linux.vnet.ibm.com>,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] pseries/hotplug: Add more delay in pseries_cpu_die while waiting for rtas-stop
-In-reply-to: <06dfb955-6af9-ae23-3919-9bee447cfcdc@linux.vnet.ibm.com>
-Date:   Mon, 10 Dec 2018 18:31:43 -0200
+        Mon, 10 Dec 2018 15:32:28 -0500
+Received: by mail-oi1-f195.google.com with SMTP id w13so10115364oiw.9;
+        Mon, 10 Dec 2018 12:32:28 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Z/1koWbCGQMD5zy9wBBmxwZQ1rWEBMNYAqc6ECB9skQ=;
+        b=EZdfOm4+IcjVM0URs8bSUmrj6jDcD99nd7+8lFHv5co7VnH5WxIMfiDryqDx5bSG7t
+         aHGaSWSSpvu0XtYaAURIH+PMcqg7TvM+WCAD4efisNuWpoEqvd7k54CcK6Er5KbLsCdp
+         G1me37U8qKTUJYByIhpOpWNeHAPviptaNQAxXCHbBz183PuNgqIK1Js606NMzx9ru/80
+         lQ7Q4VoWkRgiHIatPF7G2k8EKh1I3d7Eh0wifd99S3a5QKFl6FhDn47EsbJ5Et/tYZdR
+         DqI/N1KKStIwoPVGHFBrRXzZ/IOkjqkv/5TMa57QLGu3Z/YApo+/cOFPx8oihF2Nfc9+
+         6Bmw==
+X-Gm-Message-State: AA+aEWbdaHQ5cWxMqkeEr6oA3iJL6f7yL1XWl0m9OUftI1tDPNOPx2R7
+        L3rfM1Z1wgTDMYDSOmlmLPSZRpQ=
+X-Google-Smtp-Source: AFSGD/UTOysIXvcEQiFKuCHLs2ATAjNMwlkcajeldIQbdkDgNta5snxM1Nr638bmDd8Q/+Ck51b8Lw==
+X-Received: by 2002:aca:684a:: with SMTP id d71mr7974897oic.264.1544473947171;
+        Mon, 10 Dec 2018 12:32:27 -0800 (PST)
+Received: from xps15.herring.priv (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.googlemail.com with ESMTPSA id a66sm6223860oib.42.2018.12.10.12.32.25
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 10 Dec 2018 12:32:26 -0800 (PST)
+From:   Rob Herring <robh@kernel.org>
+To:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Sean Hudson <darknighte@darknighte.com>,
+        Frank Rowand <frowand.list@gmail.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linuxppc-dev@lists.ozlabs.org, Grant Likely <grant.likely@arm.com>,
+        Kumar Gala <kumar.gala@linaro.org>, arm@kernel.org,
+        Jonathan Corbet <corbet@lwn.net>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        linux-doc@vger.kernel.org, linux-kbuild@vger.kernel.org
+Subject: [PATCH v3] kbuild: Add support for DT binding schema checks
+Date:   Mon, 10 Dec 2018 14:32:25 -0600
+Message-Id: <20181210203225.11179-1-robh@kernel.org>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-AS-GCONF: 00
-x-cbid: 18121020-8235-0000-0000-00000E369D28
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010209; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000270; SDB=6.01129878; UDB=6.00587072; IPR=6.00910011;
- MB=3.00024645; MTD=3.00000008; XFM=3.00000015; UTC=2018-12-10 20:31:53
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18121020-8236-0000-0000-000043A83019
-Message-Id: <87a7ld3yz4.fsf@morokweng.localdomain>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-10_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=722 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1812100183
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This adds the build infrastructure for checking DT binding schema
+documents and validating dts files using the binding schema.
 
-Hello Michael,
+Check DT binding schema documents:
+make dt_binding_check
 
-Michael Bringmann <mwb@linux.vnet.ibm.com> writes:
+Build dts files and check using DT binding schema:
+make dtbs_check
 
-> I have asked Scott Mayes to take a look at one of these crashes from
-> the phyp side.  I will let you know if he finds anything notable.
+Optionally, DT_SCHEMA_FILES can passed in with a schema file(s) to use
+for validation. This makes it easier to find and fix errors generated by
+a specific schema.
 
-Thanks! It might make sense to test whether booting with
-cede_offline=off makes the bug go away.
+Currently, the validation targets are separate from a normal build to
+avoid a hard dependency on the external DT schema project and because
+there are lots of warnings generated.
 
-One suspicion I have is regarding the code handling CPU_STATE_INACTIVE.
-From what I understand, it is a powerpc-specific CPU state and from the
-perspective of the generic CPU hotplug state machine, inactive CPUs are
-already fully offline. Which means that the locking performed by the
-generic code state machine doesn't apply to transitioning CPUs from
-INACTIVE to OFFLINE state. Perhaps the bug is that there is more than
-one CPU making that transition at the same time? That would cause two
-CPUs to call RTAS stop-self.
+Cc: Jonathan Corbet <corbet@lwn.net>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Michal Marek <michal.lkml@markovi.net>
+Cc: linux-doc@vger.kernel.org
+Cc: devicetree@vger.kernel.org
+Cc: linux-kbuild@vger.kernel.org
+Signed-off-by: Rob Herring <robh@kernel.org>
+---
+v3:
+- Fix error causing only 1st schema file to get used.
+- Add a more useful error message when dtc is missing YAML support 
+telling the user they need to install libyaml devel package.
 
-I haven't checked whether this is really possible or not, though. It's
-just a conjecture.
+ 
+ .gitignore                                   |  1 +
+ Documentation/Makefile                       |  2 +-
+ Documentation/devicetree/bindings/.gitignore |  1 +
+ Documentation/devicetree/bindings/Makefile   | 33 +++++++++++++++++
+ Makefile                                     | 11 ++++--
+ scripts/Makefile.lib                         | 37 ++++++++++++++++++--
+ 6 files changed, 80 insertions(+), 5 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/.gitignore
+ create mode 100644 Documentation/devicetree/bindings/Makefile
 
---
-Thiago Jung Bauermann
-IBM Linux Technology Center
+diff --git a/.gitignore b/.gitignore
+index 97ba6b79834c..a20ac26aa2f5 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -15,6 +15,7 @@
+ *.bin
+ *.bz2
+ *.c.[012]*.*
++*.dt.yaml
+ *.dtb
+ *.dtb.S
+ *.dwo
+diff --git a/Documentation/Makefile b/Documentation/Makefile
+index 2ca77ad0f238..9786957c6a35 100644
+--- a/Documentation/Makefile
++++ b/Documentation/Makefile
+@@ -2,7 +2,7 @@
+ # Makefile for Sphinx documentation
+ #
+ 
+-subdir-y :=
++subdir-y := devicetree/bindings/
+ 
+ # You can set these variables from the command line.
+ SPHINXBUILD   = sphinx-build
+diff --git a/Documentation/devicetree/bindings/.gitignore b/Documentation/devicetree/bindings/.gitignore
+new file mode 100644
+index 000000000000..d9194c02dd08
+--- /dev/null
++++ b/Documentation/devicetree/bindings/.gitignore
+@@ -0,0 +1 @@
++*.example.dts
+diff --git a/Documentation/devicetree/bindings/Makefile b/Documentation/devicetree/bindings/Makefile
+new file mode 100644
+index 000000000000..43f8657ab070
+--- /dev/null
++++ b/Documentation/devicetree/bindings/Makefile
+@@ -0,0 +1,33 @@
++# SPDX-License-Identifier: GPL-2.0
++DT_DOC_CHECKER ?= dt-doc-validate
++DT_EXTRACT_EX ?= dt-extract-example
++DT_MK_SCHEMA ?= dt-mk-schema
++DT_MK_SCHEMA_FLAGS := $(if $(DT_SCHEMA_FILES), -u)
++
++quiet_cmd_chk_binding = CHKDT   $<
++      cmd_chk_binding = (set -e; \
++                         $(DT_DOC_CHECKER) $< ; \
++                         mkdir -p $(dir $@) ; \
++                         $(DT_EXTRACT_EX) $< > $@ )
++
++$(obj)/%.example.dts: $(src)/%.yaml FORCE
++	$(call if_changed,chk_binding)
++
++DT_TMP_SCHEMA := .schema.yaml.tmp
++extra-y += $(DT_TMP_SCHEMA)
++
++quiet_cmd_mk_schema = SCHEMA  $@
++      cmd_mk_schema = mkdir -p $(obj); \
++                      rm -f $@; \
++                      $(DT_MK_SCHEMA) $(DT_MK_SCHEMA_FLAGS) -o $@ $(filter-out FORCE, $^)
++
++DT_DOCS = $(shell cd $(srctree)/$(src) && find * -name '*.yaml')
++DT_SCHEMA_FILES ?= $(addprefix $(src)/,$(DT_DOCS))
++
++extra-y += $(patsubst $(src)/%.yaml,%.example.dts, $(DT_SCHEMA_FILES))
++extra-y += $(patsubst $(src)/%.yaml,%.example.dtb, $(DT_SCHEMA_FILES))
++
++$(obj)/$(DT_TMP_SCHEMA): | $(addprefix $(obj)/,$(patsubst $(src)/%.yaml,%.example.dtb, $(DT_SCHEMA_FILES)))
++
++$(obj)/$(DT_TMP_SCHEMA): $(addprefix $(srctree)/, $(DT_SCHEMA_FILES)) FORCE
++	$(call if_changed,mk_schema)
+diff --git a/Makefile b/Makefile
+index 2f36db897895..ff59adf43300 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1232,10 +1232,13 @@ ifneq ($(dtstree),)
+ %.dtb: prepare3 scripts_dtc
+ 	$(Q)$(MAKE) $(build)=$(dtstree) $(dtstree)/$@
+ 
+-PHONY += dtbs dtbs_install
++PHONY += dtbs dtbs_install dt_binding_check
+ dtbs: prepare3 scripts_dtc
+ 	$(Q)$(MAKE) $(build)=$(dtstree)
+ 
++dtbs_check: prepare3 dt_binding_check
++	$(Q)$(MAKE) $(build)=$(dtstree) CHECK_DTBS=1
++
+ dtbs_install:
+ 	$(Q)$(MAKE) $(dtbinst)=$(dtstree)
+ 
+@@ -1249,6 +1252,9 @@ PHONY += scripts_dtc
+ scripts_dtc: scripts_basic
+ 	$(Q)$(MAKE) $(build)=scripts/dtc
+ 
++dt_binding_check: scripts_dtc
++	$(Q)$(MAKE) $(build)=Documentation/devicetree/bindings
++
+ # ---------------------------------------------------------------------------
+ # Modules
+ 
+@@ -1611,7 +1617,8 @@ clean: $(clean-dirs)
+ 	$(call cmd,rmfiles)
+ 	@find $(if $(KBUILD_EXTMOD), $(KBUILD_EXTMOD), .) $(RCS_FIND_IGNORE) \
+ 		\( -name '*.[aios]' -o -name '*.ko' -o -name '.*.cmd' \
+-		-o -name '*.ko.*' -o -name '*.dtb' -o -name '*.dtb.S' \
++		-o -name '*.ko.*' \
++		-o -name '*.dtb' -o -name '*.dtb.S' -o -name '*.dt.yaml' \
+ 		-o -name '*.dwo' -o -name '*.lst' \
+ 		-o -name '*.su'  \
+ 		-o -name '.*.d' -o -name '.*.tmp' -o -name '*.mod.c' \
+diff --git a/scripts/Makefile.lib b/scripts/Makefile.lib
+index 8fe4468f9bda..6a3450b20041 100644
+--- a/scripts/Makefile.lib
++++ b/scripts/Makefile.lib
+@@ -61,6 +61,11 @@ real-obj-m := $(foreach m, $(obj-m), $(if $(strip $($(m:.o=-objs)) $($(m:.o=-y))
+ extra-y				+= $(dtb-y)
+ extra-$(CONFIG_OF_ALL_DTBS)	+= $(dtb-)
+ 
++ifneq ($(CHECK_DTBS),)
++extra-y += $(patsubst %.dtb,%.dt.yaml, $(dtb-y))
++extra-$(CONFIG_OF_ALL_DTBS) += $(patsubst %.dtb,%.dt.yaml, $(dtb-))
++endif
++
+ # Add subdir path
+ 
+ extra-y		:= $(addprefix $(obj)/,$(extra-y))
+@@ -284,13 +289,41 @@ $(obj)/%.dtb.S: $(obj)/%.dtb FORCE
+ quiet_cmd_dtc = DTC     $@
+ cmd_dtc = mkdir -p $(dir ${dtc-tmp}) ; \
+ 	$(HOSTCC) -E $(dtc_cpp_flags) -x assembler-with-cpp -o $(dtc-tmp) $< ; \
+-	$(DTC) -O dtb -o $@ -b 0 \
++	$(DTC) -O $(2) -o $@ -b 0 \
+ 		$(addprefix -i,$(dir $<) $(DTC_INCLUDE)) $(DTC_FLAGS) \
+ 		-d $(depfile).dtc.tmp $(dtc-tmp) ; \
+ 	cat $(depfile).pre.tmp $(depfile).dtc.tmp > $(depfile)
+ 
+ $(obj)/%.dtb: $(src)/%.dts $(DTC) FORCE
+-	$(call if_changed_dep,dtc)
++	$(call if_changed_dep,dtc,dtb)
++
++DT_CHECKER ?= dt-validate
++DT_BINDING_DIR := Documentation/devicetree/bindings
++DT_TMP_SCHEMA := $(objtree)/$(DT_BINDING_DIR)/.schema.yaml.tmp
++
++quiet_cmd_dtb_check =	CHECK   $@
++      cmd_dtb_check =	$(DT_CHECKER) -p $(DT_TMP_SCHEMA) $@ ;
++
++define rule_dtc_dt_yaml
++	$(call cmd_and_fixdep,dtc,yaml)		\
++	$(call echo-cmd,dtb_check) $(cmd_dtb_check)
++endef
++
++cmd_dtc_yaml_chk = \
++	if ! echo "/dts-v1/; /{};" | $(DTC) -I dts -O yaml > /dev/null ; then \
++		echo "*"; \
++		echo "* dtc needs libyaml for DT schema validation support."; \
++		echo "* Install the necessary libyaml development package from your distro."; \
++		echo "*"; \
++		false; \
++	fi; \
++	touch $@
++
++$(objtree)/scripts/dtc/.dtc-yaml-chk.tmp: $(DTC) FORCE
++	$(call if_changed,dtc_yaml_chk)
++
++$(obj)/%.dt.yaml: $(src)/%.dts $(DTC) $(DT_TMP_SCHEMA) FORCE | $(objtree)/scripts/dtc/.dtc-yaml-chk.tmp
++	$(call if_changed_rule,dtc_dt_yaml)
+ 
+ dtc-tmp = $(subst $(comma),_,$(dot-target).dts.tmp)
+ 
+-- 
+2.19.1
 
