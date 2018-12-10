@@ -3,85 +3,97 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1316C04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 08:22:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9779C04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 08:25:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BC48F2081F
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 08:22:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC48F2081F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 81A9120865
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 08:25:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 81A9120865
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=electromag.com.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726531AbeLJIWW (ORCPT
+        id S1726519AbeLJIZ6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 03:22:22 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:48871 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726029AbeLJIWW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 03:22:22 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id E523120CE8; Mon, 10 Dec 2018 09:22:18 +0100 (CET)
-Received: from bbrezillon (unknown [91.160.177.164])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 9AF1720CE3;
-        Mon, 10 Dec 2018 09:22:08 +0100 (CET)
-Date:   Mon, 10 Dec 2018 09:22:08 +0100
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>
-Cc:     Mark Brown <broonie@kernel.org>, Vignesh R <vigneshr@ti.com>,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
-        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "robh@kernel.org" <robh@kernel.org>,
+        Mon, 10 Dec 2018 03:25:58 -0500
+Received: from anchovy2.45ru.net.au ([203.30.46.146]:42229 "EHLO
+        anchovy2.45ru.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726029AbeLJIZ5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Dec 2018 03:25:57 -0500
+X-Greylist: delayed 399 seconds by postgrey-1.27 at vger.kernel.org; Mon, 10 Dec 2018 03:25:57 EST
+Received: (qmail 16128 invoked by uid 5089); 10 Dec 2018 08:19:16 -0000
+Received: by simscan 1.2.0 ppid: 15968, pid: 15969, t: 0.0583s
+         scanners: regex: 1.2.0 attach: 1.2.0 clamav: 0.88.3/m:40/d:1950
+Received: from unknown (HELO ?192.168.0.122?) (preid@electromag.com.au@203.59.235.95)
+  by anchovy3.45ru.net.au with ESMTPA; 10 Dec 2018 08:19:16 -0000
+Subject: Re: [PATCH V2] iio: magnetometer: mag3110: add optional vdd/vddio
+ regulator operation support
+To:     Anson Huang <anson.huang@nxp.com>,
+        "jic23@kernel.org" <jic23@kernel.org>,
+        "knaack.h@gmx.de" <knaack.h@gmx.de>,
+        "lars@metafoo.de" <lars@metafoo.de>,
+        "pmeerw@pmeerw.net" <pmeerw@pmeerw.net>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
         "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
-        "frieder.schrempf@exceet.de" <frieder.schrempf@exceet.de>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v5 0/7] spi: add support for octal mode
-Message-ID: <20181210092208.0971c3be@bbrezillon>
-In-Reply-To: <VI1PR04MB572641541BB83E587541BBD099A50@VI1PR04MB5726.eurprd04.prod.outlook.com>
-References: <1543826226-30898-1-git-send-email-yogeshnarayan.gaur@nxp.com>
-        <20181203101937.7b01a0ad@bbrezillon>
-        <214dadd9-859c-ca88-1aff-1c83fcfa3c0b@ti.com>
-        <20181205134618.56223758@bbrezillon>
-        <VI1PR04MB572646B71C6CB7BAAB4A1E1999A90@VI1PR04MB5726.eurprd04.prod.outlook.com>
-        <20181206074554.0ec0aecb@bbrezillon>
-        <VI1PR04MB572620BB57CB01A352904BB999A90@VI1PR04MB5726.eurprd04.prod.outlook.com>
-        <20181206202956.GG3084@sirena.org.uk>
-        <VI1PR04MB572641541BB83E587541BBD099A50@VI1PR04MB5726.eurprd04.prod.outlook.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "festevam@gmail.com" <festevam@gmail.com>
+Cc:     dl-linux-imx <linux-imx@nxp.com>
+References: <1544425869-8188-1-git-send-email-Anson.Huang@nxp.com>
+From:   Phil Reid <preid@electromag.com.au>
+Message-ID: <71e3e6b1-0821-aff9-df58-7f4425c3c75a@electromag.com.au>
+Date:   Mon, 10 Dec 2018 16:19:14 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <1544425869-8188-1-git-send-email-Anson.Huang@nxp.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-AU
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Yogesh,
+G'day Anson,
 
-On Mon, 10 Dec 2018 04:13:28 +0000
-Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com> wrote:
-
-> Hi Mark,
+On 10/12/2018 3:17 PM, Anson Huang wrote:
+> The magnetometer's power supply could be controlled by regulator
+> on some platforms, such as i.MX6Q-SABRESD board, the mag3110's
+> power supply is controlled by a GPIO fixed regulator, need to make
+> sure the regulator is enabled before any communication with mag3110,
+> this patch adds optional vdd/vddio regulator operation support.
 > 
-> Patch has been resend [1], this patch is depends on the series of patch[2] and this series has been applied by Boris already.
 
-You're still not asking the right person. Every patches touching
-things in drivers/mtd/ should be taken by me (or another MTD
-maintainer), and patches touching things in drivers/spi/ should be
-taken by Mark. So, the patch you're pointing to should be applied by
-me. Plus, I told you I would apply it after 4.21-rc1 because I don't
-want to deal with the mtd -> spi dependency.
+[snip]
 
-Please be patient.
+> +
+> +	data->vdd_reg = devm_regulator_get_optional(&client->dev, "vdd");
+> +	if (!IS_ERR(data->vdd_reg)) {
+> +		ret = regulator_enable(data->vdd_reg);
+> +		if (ret) {
+> +			dev_err(&client->dev, "failed to enable VDD regulator\n");
+> +			return ret;
+> +		}
+> +	} else if (data->vdd_reg == ERR_PTR(-EPROBE_DEFER)) {
+> +		return -EPROBE_DEFER;
+> +	}
+> +
+IANAE, but normally the return pattern for devm_regulator_get_optional
 
-Regards,
+if (!IS_ERR(reg)) {
+     regulator_enable ...
+} else {
+     ret = PTR_ERR(reg);
+     if (ret != -ENODEV)
+         return ret;
+}
 
-Boris
+
+
+-- 
+Regards
+Phil
