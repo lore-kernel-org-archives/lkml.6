@@ -2,211 +2,191 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D268EC04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 20:16:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49FF9C5CFFE
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 20:16:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 879CA2145D
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 20:16:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F30F52082F
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 20:16:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="YMSHMvXO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 879CA2145D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=alien8.de
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eYc0LjH8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F30F52082F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729818AbeLJUQl (ORCPT
+        id S1729832AbeLJUQu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 15:16:41 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:45546 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726392AbeLJUQk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 15:16:40 -0500
-Received: from zn.tnic (p200300EC2BCAD0002992494E33A10E64.dip0.t-ipconnect.de [IPv6:2003:ec:2bca:d000:2992:494e:33a1:e64])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 55C311EC0322;
-        Mon, 10 Dec 2018 21:16:38 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1544472998;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=vJVoCEbVQTKjndn2sfQ0TIxUjDGxPv9bnp8WpazORJ4=;
-        b=YMSHMvXONrJMzIOYA9CjEk3C5ssb3TISvNWOVwCsz3oB5dAGeh8oHl8Ib5zHrpUwK1z9uM
-        rcPe6lZQDB9r2zJS1GfGKBmMTujmuMgkkE3sn822AOY7UWszKJOIji6w4QpXDeZ+XpuMkE
-        ABCLrLBagHWxDftSXoZXGYGN27hX7ps=
-Date:   Mon, 10 Dec 2018 21:16:26 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Eduardo Habkost <ehabkost@redhat.com>
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        =?utf-8?B?SsO2cmcgUsO2ZGVs?= <joro@8bytes.org>,
-        Andre Przywara <andre.przywara@arm.com>,
-        kvm ML <kvm@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Tom Lendacky <thomas.lendacky@amd.com>
-Subject: Re: kvm: RDTSCP on AMD
-Message-ID: <20181210201626.GE5482@zn.tnic>
-References: <20181210181328.GA762@zn.tnic>
- <20181210183730.GJ4669@habkost.net>
- <20181210184153.GB5482@zn.tnic>
- <20181210194725.GM4669@habkost.net>
+        Mon, 10 Dec 2018 15:16:50 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:33786 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729819AbeLJUQu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Dec 2018 15:16:50 -0500
+Received: by mail-pf1-f196.google.com with SMTP id c123so5945460pfb.0
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Dec 2018 12:16:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=CWVSHlk6CMHRnPu6u2b/PB5tgOQRwFYvwCBYJcDywf4=;
+        b=eYc0LjH8rBJP7HDJPSv8JFzUsRRKq1FoqqgQfTlDfh3APEvMsy8x4I7mFablnnkMpJ
+         3Hhf4KN4B87Q7yk5hUCekaXo7/eow6cXEWwsu9X3wngxVzaezdStwPqyZql+ReGCY2Vc
+         f26YjwLiBLWdH19nuV1sXfO514aCrhKClMKjTnJiTY5W9BFIlxOBWdEEQszSVAG9/Fpq
+         SwgQU727yTEUTINy7jKQkHZujzpKWMqnlfrTj1Uxo87o4yT5kD1sKA2fbQEhRcqHixqZ
+         3dSodag/eEnfPCAeLepLvIaxlPIWig/FXlGTLPnKrN7Ed5oIQfLqVpoo1EKnMck78+57
+         2H0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=CWVSHlk6CMHRnPu6u2b/PB5tgOQRwFYvwCBYJcDywf4=;
+        b=QaF9rPy9c9vrBOFr8aQ/qrYNujPv74B0yrOmzJ1OOf3zK3tqqtFu3c7umOIbZT3f7s
+         OSwIvDH0Eo8dVNZ+7pqANlbhiN2SLGfDnokCeh/bCowjhRF5OqlFNB7qZqW+LChM5OA7
+         GzWhXV6GY5AsZNpdc5Tbuisr1vhAoo+yO/EvPyOHQsSLA9Vs09d4dmC2PVWb5+zo2iIb
+         EVm4V+bGje4IzyRBizyx9gCpe1/n7ABuvryVe5w6y8LK7KrQEQ3z/S7sXTr7Q8K0hCYw
+         ff9hyR2aJ3Khp3xr4gOX8xKyJyFhyS5xOqX6toLmrZU7g7FKLPH3+4KGSiArcGRhCXAM
+         NS3Q==
+X-Gm-Message-State: AA+aEWZ1SErUCkKC6/eY9EgFd7INXa0K29amVLyiSq7YVKexx2Y8KclW
+        PIAzsAtvtyJdvGGC9BshwIQg/wlj
+X-Google-Smtp-Source: AFSGD/VpITeq3pcMoo7IOXKti/6WM/h9EpgwSg3Hm7jCc8xlXAdf2MJMENEdQkBtcyCvog3bfmRkeg==
+X-Received: by 2002:a63:604f:: with SMTP id u76mr12137517pgb.401.1544473008256;
+        Mon, 10 Dec 2018 12:16:48 -0800 (PST)
+Received: from [10.67.49.9] ([192.19.223.250])
+        by smtp.googlemail.com with ESMTPSA id u78sm27795478pfi.2.2018.12.10.12.16.46
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 10 Dec 2018 12:16:47 -0800 (PST)
+Subject: Re: [PATCH v2 1/2] perf tools: Make find_vdso_map() more modular
+To:     Jiri Olsa <jolsa@redhat.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Kim Phillips <kim.phillips@arm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
+        Thomas Richter <tmricht@linux.ibm.com>,
+        rmk+kernel@armlinux.org.uk, l.stach@pengutronix.de
+References: <20181025175508.6967-1-f.fainelli@gmail.com>
+ <20181025175508.6967-2-f.fainelli@gmail.com> <20181127093105.GC8908@krava>
+From:   Florian Fainelli <f.fainelli@gmail.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
+ 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
+ HGuUuzv+GKZ6nsysJw==
+Message-ID: <710f2a6d-8e8d-11bd-13a0-04cba9ebeba5@gmail.com>
+Date:   Mon, 10 Dec 2018 12:16:39 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
+In-Reply-To: <20181127093105.GC8908@krava>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20181210194725.GM4669@habkost.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 10, 2018 at 05:47:25PM -0200, Eduardo Habkost wrote:
-> On Mon, Dec 10, 2018 at 07:41:53PM +0100, Borislav Petkov wrote:
-> > On Mon, Dec 10, 2018 at 04:37:30PM -0200, Eduardo Habkost wrote:
-> > > It isn't as simply as reverting commit 33b5e8c03ae7, but we can
-> > > surely re-add RDTSCP on pc-*-4.0 and newer.
-> > 
-> > Sure. If you could only point me to an example how to add that to
-> > pc-*-4.0 and newer, I'll gladly cook up a patch and test it.
+On 11/27/18 1:31 AM, Jiri Olsa wrote:
+> On Thu, Oct 25, 2018 at 10:55:07AM -0700, Florian Fainelli wrote:
+>> In preparation for checking that the vectors page on the ARM
+>> architecture, refactor the find_vdso_map() function to accept finding an
+>> arbitrary string and create a dedicated helper function for that under
+>> util/find-map.c and update find_vdso_map() to use it.
+>>
+>> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+>> ---
+>>  tools/perf/util/find-map.c      | 31 +++++++++++++++++++++++++++++++
+>>  tools/perf/util/find-vdso-map.c | 30 +++---------------------------
+>>  2 files changed, 34 insertions(+), 27 deletions(-)
+>>  create mode 100644 tools/perf/util/find-map.c
+>>
+>> diff --git a/tools/perf/util/find-map.c b/tools/perf/util/find-map.c
+>> new file mode 100644
+>> index 000000000000..19a3431a7b2a
+>> --- /dev/null
+>> +++ b/tools/perf/util/find-map.c
+>> @@ -0,0 +1,31 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +static int find_map(void **start, void **end, const char *name)
+>> +{
+>> +	FILE *maps;
+>> +	char line[128];
+>> +	int found = 0;
+>> +
+>> +	maps = fopen("/proc/self/maps", "r");
+>> +	if (!maps) {
+>> +		fprintf(stderr, "vdso: cannot open maps\n");
+>> +		return -1;
+>> +	}
+>> +
+>> +	while (!found && fgets(line, sizeof(line), maps)) {
+>> +		int m = -1;
+>> +
+>> +		/* We care only about private r-x mappings. */
+>> +		if (2 != sscanf(line, "%p-%p r-xp %*x %*x:%*x %*u %n",
+>> +				start, end, &m))
+>> +			continue;
+>> +		if (m < 0)
+>> +			continue;
+>> +
+>> +		if (!strncmp(&line[m], name, strlen(name)))
+>> +			found = 1;
+>> +	}
+>> +
+>> +	fclose(maps);
+>> +	return !found;
+>> +}
 > 
-> Sorry, I forgot to reply to this part.
-> 
-> See commit 33b5e8c03ae7 for reference.  The differences will be:
-> * Instead of removing RDTSCP from builtin_x86_defs, you'll be adding it.
-> * Instead of adding rdtscp=on entries to PC_COMPAT_2_4, you'll
->   be adding rdtscp=off entries to PC_COMPAT_3_1.
-> 
-> PC_COMPAT_3_1 is added by the patch that creates the 4.0
-> machine-types.  You can find it on my machine-next branch at:
-> 
->   http://github.com/ehabkost/qemu
+> please keep just one object for both.. looks to me like
+> it coud go to util.c.. or just find-map.c if there's
+> a reason to have this separated
 
-Thanks for the patient explanation, diff below ontop of your branch.
+The reason for keeping both implementations separate is because
+VDSO__MAP_NAME may not be defined/applicable for all architectures, so
+instead of having them have to define VDSO__MAP_NAME just to get that
+file to build, they would only include find-map.c to get access to
+find_map() and then search for specific tokens.
 
-It is notable to point out that Opteron_G2 - it being family 0xf, model
-6 - should not deal with RDTSCP as it doesn't have it.
-
-Although looking at the docs, they say it does but I *have* a K8 laptop
-which I just checked and it *doesn't* have RDTSCP in CPUID. So lemme
-clarify that aspect first with folks. :)
-
----
-diff --git a/include/hw/i386/pc.h b/include/hw/i386/pc.h
-index 9d29c4b1df2a..ebc28e816b04 100644
---- a/include/hw/i386/pc.h
-+++ b/include/hw/i386/pc.h
-@@ -296,6 +296,19 @@ bool e820_get_entry(int, uint32_t, uint64_t *, uint64_t *);
- 
- #define PC_COMPAT_3_1 \
-     HW_COMPAT_3_1 \
-+    {\
-+        .driver   = "Opteron_G3" "-" TYPE_X86_CPU,\
-+        .property = "rdtscp",\
-+        .value    = "off",\
-+    },{\
-+        .driver   = "Opteron_G4" "-" TYPE_X86_CPU,\
-+        .property = "rdtscp",\
-+        .value    = "off",\
-+    },{\
-+        .driver   = "Opteron_G5" "-" TYPE_X86_CPU,\
-+        .property = "rdtscp",\
-+        .value    = "off",\
-+    },
- 
- #define PC_COMPAT_3_0 \
-     HW_COMPAT_3_0 \
-@@ -527,10 +540,6 @@ bool e820_get_entry(int, uint32_t, uint64_t *, uint64_t *);
-         .driver   = "qemu32" "-" TYPE_X86_CPU,\
-         .property = "popcnt",\
-         .value    = "on",\
--    },{\
--        .driver   = "Opteron_G2" "-" TYPE_X86_CPU,\
--        .property = "rdtscp",\
--        .value    = "on",\
-     },{\
-         .driver   = "Opteron_G3" "-" TYPE_X86_CPU,\
-         .property = "rdtscp",\
-diff --git a/qemu-doc.texi b/qemu-doc.texi
-index f7ad1dfe4b69..913b2ef68d54 100644
---- a/qemu-doc.texi
-+++ b/qemu-doc.texi
-@@ -37,6 +37,7 @@
- * QEMU System emulator for non PC targets::
- * QEMU Guest Agent::
- * QEMU User space emulator::
-+* System requirements::
- * Implementation notes::
- * Deprecated features::
- * Supported build platforms::
-@@ -2813,6 +2814,13 @@ Act as if the host page size was 'pagesize' bytes
- Run the emulation in single step mode.
- @end table
- 
-+@node System requirements
-+@chapter System requirements
-+
-+@section KVM kernel module
-+
-+On x86_64 hosts, the default set of CPU features enabled by the KVM accelerator
-+require the host to be running Linux v4.5 or newer.
- 
- @include qemu-tech.texi
- 
-diff --git a/target/i386/cpu.c b/target/i386/cpu.c
-index f81d35e1f914..a7def11b27cd 100644
---- a/target/i386/cpu.c
-+++ b/target/i386/cpu.c
-@@ -2706,7 +2706,6 @@ static X86CPUDefinition builtin_x86_defs[] = {
-             CPUID_DE | CPUID_FP87,
-         .features[FEAT_1_ECX] =
-             CPUID_EXT_CX16 | CPUID_EXT_SSE3,
--        /* Missing: CPUID_EXT2_RDTSCP */
-         .features[FEAT_8000_0001_EDX] =
-             CPUID_EXT2_LM | CPUID_EXT2_NX | CPUID_EXT2_SYSCALL,
-         .features[FEAT_8000_0001_ECX] =
-@@ -2730,9 +2729,9 @@ static X86CPUDefinition builtin_x86_defs[] = {
-         .features[FEAT_1_ECX] =
-             CPUID_EXT_POPCNT | CPUID_EXT_CX16 | CPUID_EXT_MONITOR |
-             CPUID_EXT_SSE3,
--        /* Missing: CPUID_EXT2_RDTSCP */
-         .features[FEAT_8000_0001_EDX] =
--            CPUID_EXT2_LM | CPUID_EXT2_NX | CPUID_EXT2_SYSCALL,
-+            CPUID_EXT2_LM | CPUID_EXT2_NX | CPUID_EXT2_SYSCALL |
-+            CPUID_EXT2_RDTSCP,
-         .features[FEAT_8000_0001_ECX] =
-             CPUID_EXT3_MISALIGNSSE | CPUID_EXT3_SSE4A |
-             CPUID_EXT3_ABM | CPUID_EXT3_SVM | CPUID_EXT3_LAHF_LM,
-@@ -2757,10 +2756,9 @@ static X86CPUDefinition builtin_x86_defs[] = {
-             CPUID_EXT_POPCNT | CPUID_EXT_SSE42 | CPUID_EXT_SSE41 |
-             CPUID_EXT_CX16 | CPUID_EXT_SSSE3 | CPUID_EXT_PCLMULQDQ |
-             CPUID_EXT_SSE3,
--        /* Missing: CPUID_EXT2_RDTSCP */
-         .features[FEAT_8000_0001_EDX] =
-             CPUID_EXT2_LM | CPUID_EXT2_PDPE1GB | CPUID_EXT2_NX |
--            CPUID_EXT2_SYSCALL,
-+            CPUID_EXT2_SYSCALL | CPUID_EXT2_RDTSCP,
-         .features[FEAT_8000_0001_ECX] =
-             CPUID_EXT3_FMA4 | CPUID_EXT3_XOP |
-             CPUID_EXT3_3DNOWPREFETCH | CPUID_EXT3_MISALIGNSSE |
-@@ -2788,10 +2786,9 @@ static X86CPUDefinition builtin_x86_defs[] = {
-             CPUID_EXT_AES | CPUID_EXT_POPCNT | CPUID_EXT_SSE42 |
-             CPUID_EXT_SSE41 | CPUID_EXT_CX16 | CPUID_EXT_FMA |
-             CPUID_EXT_SSSE3 | CPUID_EXT_PCLMULQDQ | CPUID_EXT_SSE3,
--        /* Missing: CPUID_EXT2_RDTSCP */
-         .features[FEAT_8000_0001_EDX] =
-             CPUID_EXT2_LM | CPUID_EXT2_PDPE1GB | CPUID_EXT2_NX |
--            CPUID_EXT2_SYSCALL,
-+            CPUID_EXT2_SYSCALL | CPUID_EXT2_RDTSCP,
-         .features[FEAT_8000_0001_ECX] =
-             CPUID_EXT3_TBM | CPUID_EXT3_FMA4 | CPUID_EXT3_XOP |
-             CPUID_EXT3_3DNOWPREFETCH | CPUID_EXT3_MISALIGNSSE |
-
+Would you prefer if find_map() was moved to tools/perf/util/util.c?
 -- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+Florian
