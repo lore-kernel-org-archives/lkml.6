@@ -7,43 +7,39 @@ X-Spam-Status: No, score=-11.9 required=3.0
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A83A5C04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 19:33:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C64E8C5CFFE
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 19:33:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 66F2420821
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 19:33:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 66F2420821
+	by mail.kernel.org (Postfix) with ESMTP id 7F1342084C
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 19:33:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F1342084C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729383AbeLJTdh (ORCPT
+        id S1729398AbeLJTdl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 14:33:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47638 "EHLO mail.kernel.org"
+        Mon, 10 Dec 2018 14:33:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47654 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729353AbeLJTdg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 14:33:36 -0500
+        id S1729354AbeLJTdh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Dec 2018 14:33:37 -0500
 Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0FD8720880;
+        by mail.kernel.org (Postfix) with ESMTPSA id 32211208E7;
         Mon, 10 Dec 2018 19:33:36 +0000 (UTC)
 Received: from rostedt by gandalf.local.home with local (Exim 4.91)
         (envelope-from <rostedt@goodmis.org>)
-        id 1gWRJ9-0002rK-32; Mon, 10 Dec 2018 14:33:35 -0500
-Message-Id: <20181210193334.998050515@goodmis.org>
+        id 1gWRJ9-0002rr-8F; Mon, 10 Dec 2018 14:33:35 -0500
+Message-Id: <20181210193335.140567461@goodmis.org>
 User-Agent: quilt/0.65
-Date:   Mon, 10 Dec 2018 14:30:10 -0500
+Date:   Mon, 10 Dec 2018 14:30:11 -0500
 From:   Steven Rostedt <rostedt@goodmis.org>
 To:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org
 Cc:     Ingo Molnar <mingo@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        linuxppc-dev@lists.ozlabs.org
-Subject: [PATCH 3/6] powerpc/frace: Use ftrace_graph_get_ret_stack() instead of
- curr_ret_stack
+        sparclinux@vger.kernel.org, "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4/6] sparc64: Use ftrace_graph_get_ret_stack() instead of curr_ret_stack
 References: <20181210193007.655970639@goodmis.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-15
@@ -72,48 +68,71 @@ longer give the ret_stack entry that holds the return address. To access
 that, architectures must now use ftrace_graph_get_ret_stack() to get the
 associated ret_stack that matches the saved return address.
 
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: Paul Mackerras <paulus@samba.org>
-Cc: Michael Ellerman <mpe@ellerman.id.au>
-Cc: linuxppc-dev@lists.ozlabs.org
+Cc: sparclinux@vger.kernel.org
+Cc: "David S. Miller" <davem@davemloft.net>
 Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 ---
- arch/powerpc/kernel/process.c | 13 +++++++++----
- 1 file changed, 9 insertions(+), 4 deletions(-)
+ arch/sparc/kernel/perf_event.c | 8 +++++---
+ arch/sparc/kernel/stacktrace.c | 8 +++++---
+ arch/sparc/kernel/traps_64.c   | 7 ++++---
+ 3 files changed, 14 insertions(+), 9 deletions(-)
 
-diff --git a/arch/powerpc/kernel/process.c b/arch/powerpc/kernel/process.c
-index 96f34730010f..ce393df243aa 100644
---- a/arch/powerpc/kernel/process.c
-+++ b/arch/powerpc/kernel/process.c
-@@ -2061,9 +2061,10 @@ void show_stack(struct task_struct *tsk, unsigned long *stack)
- 	int count = 0;
- 	int firstframe = 1;
+diff --git a/arch/sparc/kernel/perf_event.c b/arch/sparc/kernel/perf_event.c
+index 47c871394ccb..6de7c684c29f 100644
+--- a/arch/sparc/kernel/perf_event.c
++++ b/arch/sparc/kernel/perf_event.c
+@@ -1767,9 +1767,11 @@ void perf_callchain_kernel(struct perf_callchain_entry_ctx *entry,
+ 		perf_callchain_store(entry, pc);
  #ifdef CONFIG_FUNCTION_GRAPH_TRACER
--	int curr_frame = current->curr_ret_stack;
-+	struct ftrace_ret_stack *ret_stack;
- 	extern void return_to_handler(void);
- 	unsigned long rth = (unsigned long)return_to_handler;
-+	int curr_frame = 0;
- #endif
- 
- 	sp = (unsigned long) stack;
-@@ -2089,9 +2090,13 @@ void show_stack(struct task_struct *tsk, unsigned long *stack)
- 			printk("["REG"] ["REG"] %pS", sp, ip, (void *)ip);
- #ifdef CONFIG_FUNCTION_GRAPH_TRACER
- 			if ((ip == rth) && curr_frame >= 0) {
--				pr_cont(" (%pS)",
--				       (void *)current->ret_stack[curr_frame].ret);
--				curr_frame--;
-+				ret_stack = ftrace_graph_get_ret_stack(current,
-+								  curr_frame++);
-+				if (ret_stack)
-+					pr_cont(" (%pS)",
-+						(void *)ret_stack->ret);
-+				else
-+					curr_frame = -1;
+ 		if ((pc + 8UL) == (unsigned long) &return_to_handler) {
+-			int index = current->curr_ret_stack;
+-			if (current->ret_stack && index >= graph) {
+-				pc = current->ret_stack[index - graph].ret;
++			struct ftrace_ret_stack *ret_stack;
++			ret_stack = ftrace_graph_get_ret_stack(current,
++							       graph);
++			if (ret_stack) {
++				pc = ret_stack->ret;
+ 				perf_callchain_store(entry, pc);
+ 				graph++;
  			}
- #endif
- 			if (firstframe)
+diff --git a/arch/sparc/kernel/stacktrace.c b/arch/sparc/kernel/stacktrace.c
+index be4c14cccc05..dd654e651500 100644
+--- a/arch/sparc/kernel/stacktrace.c
++++ b/arch/sparc/kernel/stacktrace.c
+@@ -57,9 +57,11 @@ static void __save_stack_trace(struct thread_info *tp,
+ 			trace->entries[trace->nr_entries++] = pc;
+ #ifdef CONFIG_FUNCTION_GRAPH_TRACER
+ 			if ((pc + 8UL) == (unsigned long) &return_to_handler) {
+-				int index = t->curr_ret_stack;
+-				if (t->ret_stack && index >= graph) {
+-					pc = t->ret_stack[index - graph].ret;
++				struct ftrace_ret_stack *ret_stack;
++				ret_stack = ftrace_graph_get_ret_stack(t,
++								       graph);
++				if (ret_stack) {
++					pc = ret_stack->ret;
+ 					if (trace->nr_entries <
+ 					    trace->max_entries)
+ 						trace->entries[trace->nr_entries++] = pc;
+diff --git a/arch/sparc/kernel/traps_64.c b/arch/sparc/kernel/traps_64.c
+index aa624ed79db1..0cd02a64a451 100644
+--- a/arch/sparc/kernel/traps_64.c
++++ b/arch/sparc/kernel/traps_64.c
+@@ -2502,9 +2502,10 @@ void show_stack(struct task_struct *tsk, unsigned long *_ksp)
+ 		printk(" [%016lx] %pS\n", pc, (void *) pc);
+ #ifdef CONFIG_FUNCTION_GRAPH_TRACER
+ 		if ((pc + 8UL) == (unsigned long) &return_to_handler) {
+-			int index = tsk->curr_ret_stack;
+-			if (tsk->ret_stack && index >= graph) {
+-				pc = tsk->ret_stack[index - graph].ret;
++			struct ftrace_ret_stack *ret_stack;
++			ret_stack = ftrace_graph_get_ret_stack(tsk, graph);
++			if (ret_stack) {
++				pc = ret_stack->ret;
+ 				printk(" [%016lx] %pS\n", pc, (void *) pc);
+ 				graph++;
+ 			}
 -- 
 2.19.1
 
