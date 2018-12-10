@@ -2,76 +2,118 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1600DC04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 11:47:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C70ADC04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 11:53:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB03920880
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 11:47:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 860BE2145D
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 11:53:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="hDM5PxA9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB03920880
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=verge.net.au
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="gqjySLsF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 860BE2145D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727615AbeLJLr4 (ORCPT
+        id S1727627AbeLJLxa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 06:47:56 -0500
-Received: from kirsty.vergenet.net ([202.4.237.240]:41218 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727597AbeLJLr4 (ORCPT
+        Mon, 10 Dec 2018 06:53:30 -0500
+Received: from mail-wr1-f52.google.com ([209.85.221.52]:42400 "EHLO
+        mail-wr1-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726697AbeLJLxa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 06:47:56 -0500
-Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id 7CD1C25BED1;
-        Mon, 10 Dec 2018 22:47:53 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
-        t=1544442473; bh=LKIeaLmdOqi4nzjknhWOEiBc61tzs+nV98+LQa+pTnI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=hDM5PxA9h6jexWUVfpcjWElJY0u0yiNdixHOMCeayZH/NbZlso95QroxpkWfSdF0+
-         zwBAxr9eIzgLo19/XSVHP5XKW+2HiCnrlEpHeQGmXm95jtBKiyWJRRIjig3DogFhXZ
-         Er/wIrSrbir5eUscxy/oeZrHYeepc4/JIFG/lsYQ=
-Received: by reginn.horms.nl (Postfix, from userid 7100)
-        id F1C9C9402E1; Mon, 10 Dec 2018 12:47:51 +0100 (CET)
-Date:   Mon, 10 Dec 2018 12:47:51 +0100
-From:   Simon Horman <horms@verge.net.au>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 0/4] soc: renesas: rcar-sysc: Miscellaneous fixes and
- cleanups
-Message-ID: <20181210114751.65amaa7b7tjtcp5w@verge.net.au>
-References: <20181205153945.13767-1-geert+renesas@glider.be>
- <CAMuHMdU89s997JhFpWOaDTFohcy4+Ym5deUUuv1EO7EybdJrkg@mail.gmail.com>
+        Mon, 10 Dec 2018 06:53:30 -0500
+Received: by mail-wr1-f52.google.com with SMTP id q18so10152801wrx.9
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Dec 2018 03:53:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=CrjHwcuROIb2yaHjWhbPdQUeR2mzVfHSy4hu2P4P2YM=;
+        b=gqjySLsFWbjDh5S/oJf9ihN5ukXUQ0uZminWG3GS+B4kBMIfeYK12YxQa44ofGoZtl
+         J/NUqHB3sJ+Ht8TX7zOhKxTjij9w0j2lpsD9vMN9huZ+04MJWKIRg50rq8dFOc6fTAJV
+         7YxMRDJgCEM3Ort9TtHOqF7hvfjHZA4M7bcd0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=CrjHwcuROIb2yaHjWhbPdQUeR2mzVfHSy4hu2P4P2YM=;
+        b=Iy3Gaw3RbJ4a4aE00doTiQz1dsX3tDVziAovCMHBev00V9Y15BixD86XVp7sPj2bvO
+         F4LK676Je2jZ++PCb3ncaBo9uPyJvjiA0uyH5a2E8VaoDI58thIzb/t48foDAWO981S7
+         mp+D00et8jTbUGzUnrsjgnsI5bOpmPpcHnvKHtcyJFxhzTfFVv3BnkIcJ0wH6ZyldYfW
+         CJUMIrRal5aqJGCyn/hldRfjBEE+rq+q5Y2cFuZtmZS2/I7X3IO0oeH0Met04+b0/y4R
+         jZ5mWkQOBkgXRDLiDnfYTt4TJjU6i7fxYYoSx2yT5d4+cpe1+XSMhvg2MqKdVf0KuixE
+         jt9g==
+X-Gm-Message-State: AA+aEWappMb+6aqLobMv00hlIZAX9gRSFYKQEatTFsjYvzMaQqv/An5n
+        JjlhRqbABtvWHkTSIVNmOx/6uA==
+X-Google-Smtp-Source: AFSGD/Xg5dlEHx0sqv/GAzXC/PYVrTNVwS/ru98fByEDIf2fuH9Z+t8M5fNdnbA6dA0lKKcMqY7m2Q==
+X-Received: by 2002:adf:8068:: with SMTP id 95mr9524972wrk.181.1544442808329;
+        Mon, 10 Dec 2018 03:53:28 -0800 (PST)
+Received: from localhost.localdomain (ip-162-59.sn-213-198.clouditalia.com. [213.198.162.59])
+        by smtp.gmail.com with ESMTPSA id b16sm7869243wrm.41.2018.12.10.03.53.26
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 10 Dec 2018 03:53:27 -0800 (PST)
+From:   Jagan Teki <jagan@amarulasolutions.com>
+To:     Yong Deng <yong.deng@magewell.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Chen-Yu Tsai <wens@csie.org>, linux-media@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-sunxi <linux-sunxi@googlegroups.com>,
+        linux-amarula@amarulasolutions.com,
+        Michael Trimarchi <michael@amarulasolutions.com>
+Cc:     Jagan Teki <jagan@amarulasolutions.com>
+Subject: [PATCH v3 0/6] media/sun6i: Allwinner A64 CSI support
+Date:   Mon, 10 Dec 2018 17:22:40 +0530
+Message-Id: <20181210115246.8188-1-jagan@amarulasolutions.com>
+X-Mailer: git-send-email 2.18.0.321.gffc6fa0e3
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdU89s997JhFpWOaDTFohcy4+Ym5deUUuv1EO7EybdJrkg@mail.gmail.com>
-Organisation: Horms Solutions BV
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 06, 2018 at 10:02:07AM +0100, Geert Uytterhoeven wrote:
-> On Wed, Dec 5, 2018 at 4:39 PM Geert Uytterhoeven
-> <geert+renesas@glider.be> wrote:
-> > This series (against renesas-devel-20181204-v4.20-rc5) contains
-> > miscellaneous fixes and cleanups for the R-Car SYSC driver.
-> >
-> > This has been tested on R-Car Gen2 (H2 and M2-W) and R-Car Gen3 (H3
-> > ES1.0, H3 ES2.0, M3-W, M3-N, D3, E3, and V3M) (without 3DG).
-> >
-> > This not been tested on R-Car H1 and R-Car V3H.
-> 
-> Now tested on R-Car H1 (Marzen), with no ill effects on secondary CPU
-> boot and CPU hotplug.
+This series support CSI on Allwinner A64.
 
-Thanks for following-up, good to know.
+Allwinner A64 CSI has single channel time-multiplexed BT.656
+CMOS sensor interface like H3 but work by lowering clock than
+default mod clock.
+
+Changes for v3:
+- update dt-bindings for A64
+- set mod clock via csi driver
+- remove assign clocks from dtsi
+- remove i2c-gpio opendrian
+- fix avdd and dovdd supplies
+- remove vcc-csi pin group supply
+
+Note: This series created on top of H3 changes [1]
+
+[1] https://patchwork.kernel.org/cover/10705905/
+
+Any inputs,
+Jagan. 
+
+Jagan Teki (6):
+  dt-bindings: media: sun6i: Add A64 CSI compatible
+  media: sun6i: Add A64 compatible support
+  media: sun6i: Set 300MHz mod clock for A64
+  arm64: dts: allwinner: a64: Add A64 CSI controller
+  arm64: dts: allwinner: a64: Add pinmux setting for CSI MCLK on PE1
+  arm64: dts: allwinner: a64-amarula-relic: Add OV5640 camera node
+
+ .../devicetree/bindings/media/sun6i-csi.txt   |  1 +
+ .../allwinner/sun50i-a64-amarula-relic.dts    | 53 +++++++++++++++++++
+ arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 25 +++++++++
+ .../platform/sunxi/sun6i-csi/sun6i_csi.c      |  6 +++
+ 4 files changed, 85 insertions(+)
+
+-- 
+2.18.0.321.gffc6fa0e3
+
