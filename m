@@ -7,272 +7,135 @@ X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79F62C04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 06:36:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95426C04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 06:38:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 333922084D
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 06:36:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 502B82082F
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 06:38:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="VyaibUWa"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 333922084D
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Di/n32i0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 502B82082F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726531AbeLJGgr (ORCPT
+        id S1726554AbeLJGi6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 01:36:47 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:33421 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726100AbeLJGgq (ORCPT
+        Mon, 10 Dec 2018 01:38:58 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:44796 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726100AbeLJGi5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 01:36:46 -0500
-Received: by mail-wm1-f67.google.com with SMTP id r24so5827221wmh.0
-        for <linux-kernel@vger.kernel.org>; Sun, 09 Dec 2018 22:36:44 -0800 (PST)
+        Mon, 10 Dec 2018 01:38:57 -0500
+Received: by mail-wr1-f68.google.com with SMTP id z5so9169122wrt.11
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Dec 2018 22:38:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:content-transfer-encoding:in-reply-to
          :user-agent;
-        bh=5nW0+AXCnOmTYOaeKSoFzMPPtmMBiSViwM5H1sH2Xho=;
-        b=VyaibUWaKB90VAwPBAUy0mdKYYTuSJJgZ24mZ/jC7t4F7GIIunbbFaCojRD5D9+m5b
-         Z2bp1Jws2Tr3BSjnoGwcgrT0Jj2pWf2oxbg13DfRCbUZbn+MHdb0i/He3cUbiUR6T8iz
-         XrtgSOo04DNrylhtF5ATSDnzYhRVv5iwrCFZM=
+        bh=pvrR+VaVCx5fOzI3ao59RjiYJnrfT9XJJoLAOvvO+uw=;
+        b=Di/n32i032S3gsp2E7WYLYTMzapLCJzztStLV/l/GRg3lzpUEzGGeK3zb08qKtQ6Ad
+         Y5UkGqziKXxd1c1IueqVfv835cKdfh0Zpt7g4FJQCEdvIjczaDV9f8VJ438S+u+SN6da
+         QqmHMMiri3PWE/YTsz09wdI8t4x8HtgrHs+n4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:content-transfer-encoding
          :in-reply-to:user-agent;
-        bh=5nW0+AXCnOmTYOaeKSoFzMPPtmMBiSViwM5H1sH2Xho=;
-        b=A6x8++YEJ4x0L6a0vDrEBC5Wr7+mTK86GT9PLx/iRUr75qU6dfbnOJjlDEH/omAzwk
-         wTgBcK7Hkw/lVNZmQkj1E3gkU3+xeG/CjtZkPLzzh3MjrhtFIh+YvpG0+MQU7Q+jkq/r
-         28hDcPttkMZqohXRi0qT8VtBmHI4CajgV01kXaUN0ExiuvOASiCDM4LkGqmwQ73g0sg2
-         u6Qnd8cTHYIg0RJ4eAhDxikeTzuTFeBDGEtav7WRPFN3CWV2+q96eDrxBcbgt4df2m2o
-         ShWKkIsHHTKfJskNWXuanR6A+3wB9UYy2NUFxjweKxVeZNszSNfdgAOYWb+sEPocufm0
-         zesg==
-X-Gm-Message-State: AA+aEWZc2hdEusCu+o4rz0XMQXSUyZPtCBsE8vdEJ3HI1eriphTkbQjN
-        2E2lYhwYwx4kfSwYOUZRnY08vw==
-X-Google-Smtp-Source: AFSGD/WP+I1DkulLRnjs9AB+cCxnzM1MpW8v9iAwRXPzQFynH77AmKs0rDjmKJYhPV9MqTW7erMocA==
-X-Received: by 2002:a1c:2902:: with SMTP id p2mr1048714wmp.19.1544423804177;
-        Sun, 09 Dec 2018 22:36:44 -0800 (PST)
+        bh=pvrR+VaVCx5fOzI3ao59RjiYJnrfT9XJJoLAOvvO+uw=;
+        b=MYcZ6jsR0zo6ZkVQpJs5gh3M9tCEOBgy35CvIRWe1vIN6e9dJybJSzybQJCRJObqNb
+         wK/FueGxlIi2AssuH1drqoh1+VAcGg6XnrJAH6/LaauJ/7LXYFoU4g+l6F7M02iAGY8X
+         P2IBHoRy+c4myuDIA8+LMpkp+fhHghlrBocoZ4gZ5mxYBy9Kpiuuq+QXJjZ/pyJP0u7f
+         WvY2qeBFTp0R72sQSUXkmH5ZGeYeIeKn8lXRW9SiVCBJh37VqawCLnFi8rFMK7gMHFTE
+         PbjgLRnjq2Bc0d936vVpZYLyI2cuu/eVtWHvM6SYxSnupIVyQXTInLET0qyPk40M1wxZ
+         iMBg==
+X-Gm-Message-State: AA+aEWaxFkNkR6iKl5Mdi0flww+DFKJLhSfFOldyjc00ZCxVh4674def
+        tO8l57qlg2SBcokRtEJEbqcumC9sKf4=
+X-Google-Smtp-Source: AFSGD/V2nx3ESd+Akqq0Zg+uRUygqBU7Gz1xFBRQHmbkYwfhcnWJyfwaneVPOYHQEhpnGwXZ0D4Mkg==
+X-Received: by 2002:a5d:558a:: with SMTP id i10mr8266848wrv.287.1544423935768;
+        Sun, 09 Dec 2018 22:38:55 -0800 (PST)
 Received: from dell (host109-155-202-221.range109-155.btcentralplus.com. [109.155.202.221])
-        by smtp.gmail.com with ESMTPSA id v4sm8898612wme.6.2018.12.09.22.36.43
+        by smtp.gmail.com with ESMTPSA id r77sm20649055wmd.22.2018.12.09.22.38.54
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 09 Dec 2018 22:36:43 -0800 (PST)
-Date:   Mon, 10 Dec 2018 06:36:42 +0000
+        Sun, 09 Dec 2018 22:38:55 -0800 (PST)
+Date:   Mon, 10 Dec 2018 06:38:53 +0000
 From:   Lee Jones <lee.jones@linaro.org>
-To:     Oskari Lemmela <oskari@lemmela.net>
-Cc:     Chen-Yu Tsai <wens@csie.org>,
-        Quentin Schulz <quentin.schulz@bootlin.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v8 1/2] mfd: axp20x: Re-align mfd cell entries
-Message-ID: <20181210063642.GT26661@dell>
-References: <20181208175847.32068-1-oskari@lemmela.net>
- <20181208175847.32068-2-oskari@lemmela.net>
+To:     Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        patches@opensource.cirrus.com
+Subject: Re: [PATCH 17/18] mfd: wm8350-core: drop unused MODULE_ tags from
+ non-modular code
+Message-ID: <20181210063853.GU26661@dell>
+References: <1544213465-16259-1-git-send-email-paul.gortmaker@windriver.com>
+ <1544213465-16259-18-git-send-email-paul.gortmaker@windriver.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181208175847.32068-2-oskari@lemmela.net>
+In-Reply-To: <1544213465-16259-18-git-send-email-paul.gortmaker@windriver.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 08 Dec 2018, Oskari Lemmela wrote:
+On Fri, 07 Dec 2018, Paul Gortmaker wrote:
 
-> From: Chen-Yu Tsai <wens@csie.org>
+> The Kconfig currently controlling compilation of this code is:
 > 
-> In the axp20x driver, the various mfd_cell lists had varying amounts
-> of indentation, sometimes even within the same list. For the axp288,
-> there's no alignment at all.
+> drivers/mfd/Kconfig:config MFD_WM8350
+> drivers/mfd/Kconfig:    bool
 > 
-> Re-align the right hand side of the assignments with the least amount
-> of tabs possible. Also collapse the closing bracket and the opening
-> bracket of the next entry onto the same line for the axp288, to be
-> consistent with all the other mfd_cell lists.
+> ...meaning that it currently is not being built as a module by anyone.
 > 
-> This patch is whitespace change only. No functionality is modified.
+> Lets remove the couple traces of modular infrastructure use, so that
+> when reading the driver there is no doubt it is builtin-only.
 > 
-> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
-> Signed-off-by: Oskari Lemmela <oskari@lemmela.net>
+> We delete the MODULE_LICENSE tag etc. since all that information
+> is already contained at the top of the file in the comments.
+> 
+> We replace module.h with init.h and export.h ; the latter since the
+> file does export some symbols.
+> 
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Lee Jones <lee.jones@linaro.org>
+> Cc: patches@opensource.cirrus.com
+> Acked-by: Linus Walleij <linus.walleij@linaro.org>
+> Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
 
-Why is Oskari Lemmela's SoB here?
+When you submit this patch again (collecting more Acks or
+what-have-you), please re-order your tags chronologically.
 
-You both authored this alignment patch?
+Your SoB here should represent the first time you submitted the patch,
+therefore it would be impossible for Linus to review the patch on the
+ML *before* you sent it.
 
 > ---
->  drivers/mfd/axp20x.c | 107 +++++++++++++++++++++----------------------
->  1 file changed, 51 insertions(+), 56 deletions(-)
+>  drivers/mfd/wm8350-core.c | 6 ++----
+>  1 file changed, 2 insertions(+), 4 deletions(-)
 > 
-> diff --git a/drivers/mfd/axp20x.c b/drivers/mfd/axp20x.c
-> index dfc3cff1d08b..8037b4e01ed6 100644
-> --- a/drivers/mfd/axp20x.c
-> +++ b/drivers/mfd/axp20x.c
-> @@ -640,9 +640,9 @@ static const struct mfd_cell axp221_cells[] = {
+> diff --git a/drivers/mfd/wm8350-core.c b/drivers/mfd/wm8350-core.c
+> index 8a07c5634aee..e6434a4d7439 100644
+> --- a/drivers/mfd/wm8350-core.c
+> +++ b/drivers/mfd/wm8350-core.c
+> @@ -13,7 +13,8 @@
+>   */
 >  
->  static const struct mfd_cell axp223_cells[] = {
->  	{
-> -		.name			= "axp221-pek",
-> -		.num_resources		= ARRAY_SIZE(axp22x_pek_resources),
-> -		.resources		= axp22x_pek_resources,
-> +		.name		= "axp221-pek",
-> +		.num_resources	= ARRAY_SIZE(axp22x_pek_resources),
-> +		.resources	= axp22x_pek_resources,
->  	}, {
->  		.name		= "axp22x-adc",
->  		.of_compatible	= "x-powers,axp221-adc",
-> @@ -650,7 +650,7 @@ static const struct mfd_cell axp223_cells[] = {
->  		.name		= "axp20x-battery-power-supply",
->  		.of_compatible	= "x-powers,axp221-battery-power-supply",
->  	}, {
-> -		.name			= "axp20x-regulator",
-> +		.name		= "axp20x-regulator",
->  	}, {
->  		.name		= "axp20x-ac-power-supply",
->  		.of_compatible	= "x-powers,axp221-ac-power-supply",
-> @@ -666,9 +666,9 @@ static const struct mfd_cell axp223_cells[] = {
->  
->  static const struct mfd_cell axp152_cells[] = {
->  	{
-> -		.name			= "axp20x-pek",
-> -		.num_resources		= ARRAY_SIZE(axp152_pek_resources),
-> -		.resources		= axp152_pek_resources,
-> +		.name		= "axp20x-pek",
-> +		.num_resources	= ARRAY_SIZE(axp152_pek_resources),
-> +		.resources	= axp152_pek_resources,
->  	},
->  };
->  
-> @@ -697,84 +697,79 @@ static const struct resource axp288_charger_resources[] = {
->  
->  static const struct mfd_cell axp288_cells[] = {
->  	{
-> -		.name = "axp288_adc",
-> -		.num_resources = ARRAY_SIZE(axp288_adc_resources),
-> -		.resources = axp288_adc_resources,
-> -	},
-> -	{
-> -		.name = "axp288_extcon",
-> -		.num_resources = ARRAY_SIZE(axp288_extcon_resources),
-> -		.resources = axp288_extcon_resources,
-> -	},
-> -	{
-> -		.name = "axp288_charger",
-> -		.num_resources = ARRAY_SIZE(axp288_charger_resources),
-> -		.resources = axp288_charger_resources,
-> -	},
-> -	{
-> -		.name = "axp288_fuel_gauge",
-> -		.num_resources = ARRAY_SIZE(axp288_fuel_gauge_resources),
-> -		.resources = axp288_fuel_gauge_resources,
-> -	},
-> -	{
-> -		.name = "axp221-pek",
-> -		.num_resources = ARRAY_SIZE(axp288_power_button_resources),
-> -		.resources = axp288_power_button_resources,
-> -	},
-> -	{
-> -		.name = "axp288_pmic_acpi",
-> +		.name		= "axp288_adc",
-> +		.num_resources	= ARRAY_SIZE(axp288_adc_resources),
-> +		.resources	= axp288_adc_resources,
-> +	}, {
-> +		.name		= "axp288_extcon",
-> +		.num_resources	= ARRAY_SIZE(axp288_extcon_resources),
-> +		.resources	= axp288_extcon_resources,
-> +	}, {
-> +		.name		= "axp288_charger",
-> +		.num_resources	= ARRAY_SIZE(axp288_charger_resources),
-> +		.resources	= axp288_charger_resources,
-> +	}, {
-> +		.name		= "axp288_fuel_gauge",
-> +		.num_resources	= ARRAY_SIZE(axp288_fuel_gauge_resources),
-> +		.resources	= axp288_fuel_gauge_resources,
-> +	}, {
-> +		.name		= "axp221-pek",
-> +		.num_resources	= ARRAY_SIZE(axp288_power_button_resources),
-> +		.resources	= axp288_power_button_resources,
-> +	}, {
-> +		.name		= "axp288_pmic_acpi",
->  	},
->  };
->  
->  static const struct mfd_cell axp803_cells[] = {
->  	{
-> -		.name			= "axp221-pek",
-> -		.num_resources		= ARRAY_SIZE(axp803_pek_resources),
-> -		.resources		= axp803_pek_resources,
-> +		.name		= "axp221-pek",
-> +		.num_resources	= ARRAY_SIZE(axp803_pek_resources),
-> +		.resources	= axp803_pek_resources,
->  	},
-> -	{	.name			= "axp20x-regulator" },
-> +	{	.name		= "axp20x-regulator" },
->  };
->  
->  static const struct mfd_cell axp806_self_working_cells[] = {
->  	{
-> -		.name			= "axp221-pek",
-> -		.num_resources		= ARRAY_SIZE(axp806_pek_resources),
-> -		.resources		= axp806_pek_resources,
-> +		.name		= "axp221-pek",
-> +		.num_resources	= ARRAY_SIZE(axp806_pek_resources),
-> +		.resources	= axp806_pek_resources,
->  	},
-> -	{	.name			= "axp20x-regulator" },
-> +	{	.name		= "axp20x-regulator" },
->  };
->  
->  static const struct mfd_cell axp806_cells[] = {
->  	{
-> -		.id			= 2,
-> -		.name			= "axp20x-regulator",
-> +		.id		= 2,
-> +		.name		= "axp20x-regulator",
->  	},
->  };
->  
->  static const struct mfd_cell axp809_cells[] = {
->  	{
-> -		.name			= "axp221-pek",
-> -		.num_resources		= ARRAY_SIZE(axp809_pek_resources),
-> -		.resources		= axp809_pek_resources,
-> +		.name		= "axp221-pek",
-> +		.num_resources	= ARRAY_SIZE(axp809_pek_resources),
-> +		.resources	= axp809_pek_resources,
->  	}, {
-> -		.id			= 1,
-> -		.name			= "axp20x-regulator",
-> +		.id		= 1,
-> +		.name		= "axp20x-regulator",
->  	},
->  };
->  
->  static const struct mfd_cell axp813_cells[] = {
->  	{
-> -		.name			= "axp221-pek",
-> -		.num_resources		= ARRAY_SIZE(axp803_pek_resources),
-> -		.resources		= axp803_pek_resources,
-> +		.name		= "axp221-pek",
-> +		.num_resources	= ARRAY_SIZE(axp803_pek_resources),
-> +		.resources	= axp803_pek_resources,
->  	}, {
-> -		.name			= "axp20x-regulator",
-> +		.name		= "axp20x-regulator",
->  	}, {
-> -		.name			= "axp20x-gpio",
-> -		.of_compatible		= "x-powers,axp813-gpio",
-> +		.name		= "axp20x-gpio",
-> +		.of_compatible	= "x-powers,axp813-gpio",
->  	}, {
-> -		.name			= "axp813-adc",
-> -		.of_compatible		= "x-powers,axp813-adc",
-> +		.name		= "axp813-adc",
-> +		.of_compatible	= "x-powers,axp813-adc",
->  	}, {
->  		.name		= "axp20x-battery-power-supply",
->  		.of_compatible	= "x-powers,axp813-battery-power-supply",
+>  #include <linux/kernel.h>
+> -#include <linux/module.h>
+> +#include <linux/init.h>
+> +#include <linux/export.h>
+>  #include <linux/slab.h>
+>  #include <linux/bug.h>
+>  #include <linux/device.h>
+> @@ -466,6 +467,3 @@ void wm8350_device_exit(struct wm8350 *wm8350)
+>  	wm8350_irq_exit(wm8350);
+>  }
+>  EXPORT_SYMBOL_GPL(wm8350_device_exit);
+> -
+> -MODULE_DESCRIPTION("WM8350 AudioPlus PMIC core driver");
+> -MODULE_LICENSE("GPL");
 
 -- 
 Lee Jones [李琼斯]
