@@ -2,257 +2,101 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E356C04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 17:21:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D7A3C04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 17:22:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0FF6A2064D
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 17:21:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="w1qiH8v/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0FF6A2064D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id F09B12064D
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 17:22:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F09B12064D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728877AbeLJRVN (ORCPT
+        id S1728530AbeLJRWE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 12:21:13 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:41222 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727735AbeLJRVK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 12:21:10 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wBAHJRM1028778;
-        Mon, 10 Dec 2018 17:20:40 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=GwOT0W1CBpEYAJBAtzeaX0Dn2T6FgkGuua78Z3L0n0E=;
- b=w1qiH8v/h6I9QIGri8bdzBtbDjfblNcz/MuJV8duJPKKF1PMhNq+iYo08YGAXAMIGSfR
- vMOHTdkGswNQ4s70sECPB55cYQH3CcSZe4fx3I49ANv5GdYuQz8q9nWPyM7a/U/VEb3+
- bFWphVC38By4cxcnJE44guJb3mQCgo+8VzGtOYbZlY+RmSOkmCrdoxICxvsVCVKUlB9z
- BTkCONY6vqWMijA8a+suAh1IRPBvstiJCT/O8+QkBwhntYYbbdb5U+rgh3xdkLAPMcQN
- rJ4xNbzamB2UV2x/H7e3iS4EjRw0LHBxSpabcvs5bGOXTDZS87OrDWzQTb9g14nIaPVy zw== 
-Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
-        by userp2120.oracle.com with ESMTP id 2p86kqq8kt-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 10 Dec 2018 17:20:40 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id wBAHKdeG021704
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 10 Dec 2018 17:20:39 GMT
-Received: from abhmp0006.oracle.com (abhmp0006.oracle.com [141.146.116.12])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wBAHKcQT021555;
-        Mon, 10 Dec 2018 17:20:38 GMT
-Received: from [10.152.35.100] (/10.152.35.100)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 10 Dec 2018 09:20:38 -0800
-Subject: Re: [PATCH v4 00/10] steal tasks to improve CPU utilization
-To:     Vincent Guittot <vincent.guittot@linaro.org>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        subhra.mazumdar@oracle.com, Dhaval Giani <dhaval.giani@oracle.com>,
-        daniel.m.jordan@oracle.com, pavel.tatashin@microsoft.com,
-        Matt Fleming <matt@codeblueprint.co.uk>,
-        Mike Galbraith <umgwanakikbuti@gmail.com>,
-        Rik van Riel <riel@redhat.com>, Josef Bacik <jbacik@fb.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Quentin Perret <quentin.perret@arm.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-References: <1544131696-2888-1-git-send-email-steven.sistare@oracle.com>
- <CAKfTPtBuAsbF2r8wSigM=ckpKCqj0hcHbi+y3ZAaC7dqYcFY2g@mail.gmail.com>
- <df0197ac-d4eb-437e-1176-dbc9b23a94bb@oracle.com>
- <CAKfTPtBh59Wt3+JiZ168WRAZ+AEsS+-GTqXzeUZTKQPcDAJ73g@mail.gmail.com>
- <CAKfTPtCePEwUDyH1on+fJbuUEBYR8v7U4doL-N-ymdT3woD7OA@mail.gmail.com>
-From:   Steven Sistare <steven.sistare@oracle.com>
-Organization: Oracle Corporation
-Message-ID: <2ba354cf-72ec-ff81-0050-85e84c98b0c8@oracle.com>
-Date:   Mon, 10 Dec 2018 12:20:30 -0500
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.3
+        Mon, 10 Dec 2018 12:22:04 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:36110 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726602AbeLJRWE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Dec 2018 12:22:04 -0500
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id D4D47C0587D1;
+        Mon, 10 Dec 2018 17:22:03 +0000 (UTC)
+Received: from vitty.brq.redhat.com (unknown [10.43.2.155])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id F18386090D;
+        Mon, 10 Dec 2018 17:22:00 +0000 (UTC)
+From:   Vitaly Kuznetsov <vkuznets@redhat.com>
+To:     kvm@vger.kernel.org
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        linux-kernel@vger.kernel.org, Roman Kagan <rkagan@virtuozzo.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>, x86@kernel.org,
+        "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
+        Eduardo Habkost <ehabkost@redhat.com>
+Subject: [PATCH v2 0/7] x86/kvm/hyper-v: Implement KVM_GET_SUPPORTED_HV_CPUID
+Date:   Mon, 10 Dec 2018 18:21:52 +0100
+Message-Id: <20181210172159.410-1-vkuznets@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <CAKfTPtCePEwUDyH1on+fJbuUEBYR8v7U4doL-N-ymdT3woD7OA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9103 signatures=668679
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1812100155
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Mon, 10 Dec 2018 17:22:04 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/10/2018 12:08 PM, Vincent Guittot wrote:
-> On Mon, 10 Dec 2018 at 17:33, Vincent Guittot
-> <vincent.guittot@linaro.org> wrote:
->>
->> On Mon, 10 Dec 2018 at 17:29, Steven Sistare <steven.sistare@oracle.com> wrote:
->>>
->>> On 12/10/2018 11:10 AM, Vincent Guittot wrote:
->>>> Hi Steven,
->>>>
->>>> On Thu, 6 Dec 2018 at 22:38, Steve Sistare <steven.sistare@oracle.com> wrote:
->>>>>
->>>>> When a CPU has no more CFS tasks to run, and idle_balance() fails to
->>>>> find a task, then attempt to steal a task from an overloaded CPU in the
->>>>> same LLC. Maintain and use a bitmap of overloaded CPUs to efficiently
->>>>> identify candidates.  To minimize search time, steal the first migratable
->>>>> task that is found when the bitmap is traversed.  For fairness, search
->>>>> for migratable tasks on an overloaded CPU in order of next to run.
->>>>>
->>>>> This simple stealing yields a higher CPU utilization than idle_balance()
->>>>> alone, because the search is cheap, so it may be called every time the CPU
->>>>> is about to go idle.  idle_balance() does more work because it searches
->>>>> widely for the busiest queue, so to limit its CPU consumption, it declines
->>>>> to search if the system is too busy.  Simple stealing does not offload the
->>>>> globally busiest queue, but it is much better than running nothing at all.
->>>>>
->>>>> The bitmap of overloaded CPUs is a new type of sparse bitmap, designed to
->>>>> reduce cache contention vs the usual bitmap when many threads concurrently
->>>>> set, clear, and visit elements.
->>>>>
->>>>> Patch 1 defines the sparsemask type and its operations.
->>>>>
->>>>> Patches 2, 3, and 4 implement the bitmap of overloaded CPUs.
->>>>>
->>>>> Patches 5 and 6 refactor existing code for a cleaner merge of later
->>>>>   patches.
->>>>>
->>>>> Patches 7 and 8 implement task stealing using the overloaded CPUs bitmap.
->>>>>
->>>>> Patch 9 disables stealing on systems with more than 2 NUMA nodes for the
->>>>> time being because of performance regressions that are not due to stealing
->>>>> per-se.  See the patch description for details.
->>>>>
->>>>> Patch 10 adds schedstats for comparing the new behavior to the old, and
->>>>>   provided as a convenience for developers only, not for integration.
->>>>>
->>>>> The patch series is based on kernel 4.20.0-rc1.  It compiles, boots, and
->>>>> runs with/without each of CONFIG_SCHED_SMT, CONFIG_SMP, CONFIG_SCHED_DEBUG,
->>>>> and CONFIG_PREEMPT.  It runs without error with CONFIG_DEBUG_PREEMPT +
->>>>> CONFIG_SLUB_DEBUG + CONFIG_DEBUG_PAGEALLOC + CONFIG_DEBUG_MUTEXES +
->>>>> CONFIG_DEBUG_SPINLOCK + CONFIG_DEBUG_ATOMIC_SLEEP.  CPU hot plug and CPU
->>>>> bandwidth control were tested.
->>>>>
->>>>> Stealing improves utilization with only a modest CPU overhead in scheduler
->>>>> code.  In the following experiment, hackbench is run with varying numbers
->>>>> of groups (40 tasks per group), and the delta in /proc/schedstat is shown
->>>>> for each run, averaged per CPU, augmented with these non-standard stats:
->>>>>
->>>>>   %find - percent of time spent in old and new functions that search for
->>>>>     idle CPUs and tasks to steal and set the overloaded CPUs bitmap.
->>>>>
->>>>>   steal - number of times a task is stolen from another CPU.
->>>>>
->>>>> X6-2: 1 socket * 10 cores * 2 hyperthreads = 20 CPUs
->>>>> Intel(R) Xeon(R) CPU E5-2630 v4 @ 2.20GHz
->>>>> hackbench <grps> process 100000
->>>>> sched_wakeup_granularity_ns=15000000
->>>>>
->>>>>   baseline
->>>>>   grps  time  %busy  slice   sched   idle     wake %find  steal
->>>>>   1    8.084  75.02   0.10  105476  46291    59183  0.31      0
->>>>>   2   13.892  85.33   0.10  190225  70958   119264  0.45      0
->>>>>   3   19.668  89.04   0.10  263896  87047   176850  0.49      0
->>>>>   4   25.279  91.28   0.10  322171  94691   227474  0.51      0
->>>>>   8   47.832  94.86   0.09  630636 144141   486322  0.56      0
->>>>>
->>>>>   new
->>>>>   grps  time  %busy  slice   sched   idle     wake %find  steal  %speedup
->>>>>   1    5.938  96.80   0.24   31255   7190    24061  0.63   7433  36.1
->>>>>   2   11.491  99.23   0.16   74097   4578    69512  0.84  19463  20.9
->>>>>   3   16.987  99.66   0.15  115824   1985   113826  0.77  24707  15.8
->>>>>   4   22.504  99.80   0.14  167188   2385   164786  0.75  29353  12.3
->>>>>   8   44.441  99.86   0.11  389153   1616   387401  0.67  38190   7.6
->>>>>
->>>>> Elapsed time improves by 8 to 36%, and CPU busy utilization is up
->>>>> by 5 to 22% hitting 99% for 2 or more groups (80 or more tasks).
->>>>> The cost is at most 0.4% more find time.
->>>>
->>>> I have run some hackbench tests on my hikey arm64 octo cores with your
->>>> patchset. My original intent was to send a tested-by but I have some
->>>> performances regressions.
->>>> This hikey is the smp one and not the asymetric hikey960 that Valentin
->>>> used for his tests
->>>> The sched domain topology is
->>>> domain-0: span=0-3 level=MC  and domain-0: span=4-7 level=MC
->>>> domain-1: span=0-7 level=DIE
->>>>
->>>> I have run 12 times hackbench -g $j -P -l 2000 with j equals to 1 2 3 4 8
->>>>
->>>> grps  time
->>>> 1      1.396
->>>> 2      2.699
->>>> 3      3.617
->>>> 4      4.498
->>>> 8      7.721
->>>>
->>>> Then after disabling STEAL in sched_feature with echo NO_STEAL >
->>>> /sys/kernel/debug/sched_features , the results become:
->>>> grps  time
->>>> 1      1.217
->>>> 2      1.973
->>>> 3      2.855
->>>> 4      3.932
->>>> 8      7.674
->>>>
->>>> I haven't looked in details about some possible reasons of such
->>>> difference yet and haven't collected the stats that you added with
->>>> patch 10.
->>>> Have you got a script to collect and post process them ?
->>>>
->>>> Regards,
->>>> Vincent
->>>
->>> Thanks Vincent.  What is the value of /proc/sys/kernel/sched_wakeup_granularity_ns?
->>
->> it's 4000000
->>
->>> Try 15000000.  Your 8-core system is heavily overloaded with 40 * groups tasks,
->>> and I suspect preemptions are killing performance.
->>
->> ok. I'm going to run the tests with the proposed value
-> 
-> Results look better after changing /proc/sys/kernel/sched_wakeup_granularity_ns
-> 
-> With STEAL
-> grps  time
-> 1      0.869
-> 2      1.646
-> 3      2.395
-> 4      3.163
-> 8      6.199
-> 
-> after echo NO_STEAL > /sys/kernel/debug/sched_features
-> grps  time
-> 1      0.928
-> 2      1.770
-> 3      2.597
-> 4      3.407
-> 8      6.431
-> 
-> There is a 7% improvement with steal and the larger value for
-> /proc/sys/kernel/sched_wakeup_granularity_ns for all groups
-> Should we set the STEAL feature disabled by default as this provides
-> benefit only when changing sched_wakeup_granularity_ns value from
-> default value?
+Changes since v1:
+- Add Michael's R-b tags.
+- Document KVM_GET_SUPPORTED_HV_CPUID and KVM_CAP_HYPERV_CPUID.
+- Fix error handling in kvm_vcpu_ioctl_get_hv_cpuid().
+- Check for -E2BIG in the selftest. PATCH6 is added to support the change.
 
-The preemption effect is load dependent, and only bites on heavily loaded 
-systems with long run queues *and* crazy high context switch rates with 
-tiny timeslices, like hackbench. STEAL by default, with the default
-sched_wakeup_granularity_ns, is suitable for realistic conditions IMO.
+As suggested by Paolo, introduce new KVM_GET_SUPPORTED_HV_CPUID returning
+all Hyper-V CPUID feature leaves, this way we won't need to add a new
+KVM_CAP_HYPERV_* for every new Hyper-V enlightenment we implement in
+KVM.
 
-Also, the red hat tuned.service sets sched_wakeup_granularity_ns = 15000000.
+(Using the existing KVM_GET_SUPPORTED_CPUID doesn't seem to be possible:
+Hyper-V CPUID feature leaves intersect with KVM's (e.g. 0x40000000,
+0x40000001) and we would probably confuse userspace in case we decide to
+return these twice).
 
-Independent of this work, we really need another easy to run scheduler benchmark 
-that is more realistic than hackbench.
+This patch series also does some housekeeping work in hyperv-tlfs.h, adds a
+simple selftest (that's how I actually checked that the newly added ioctl
+works) and removes recently added KVM_CAP_HYPERV_STIMER_DIRECT before it's
+too late.
 
-- Steve
+Vitaly Kuznetsov (7):
+  x86/hyper-v: Do some housekeeping in hyperv-tlfs.h
+  x86/hyper-v: Drop HV_X64_CONFIGURE_PROFILER definition
+  x86/kvm/hyper-v: Introduce nested_get_evmcs_version() helper
+  x86/kvm/hyper-v: Introduce KVM_GET_SUPPORTED_HV_CPUID
+  x86/kvm/hyper-v: Drop KVM_CAP_HYPERV_STIMER_DIRECT
+  KVM: selftests: implement an unchecked version of vcpu_ioctl()
+  KVM: selftests: Add hyperv_cpuid test
+
+ Documentation/virtual/kvm/api.txt             |  57 ++++++
+ arch/x86/include/asm/hyperv-tlfs.h            | 185 +++++++++---------
+ arch/x86/include/asm/kvm_host.h               |   1 +
+ arch/x86/kvm/hyperv.c                         | 125 +++++++++++-
+ arch/x86/kvm/hyperv.h                         |   2 +
+ arch/x86/kvm/svm.c                            |   7 +
+ arch/x86/kvm/vmx.c                            |  24 ++-
+ arch/x86/kvm/x86.c                            |  21 +-
+ include/uapi/linux/kvm.h                      |   5 +-
+ tools/testing/selftests/kvm/Makefile          |   1 +
+ .../testing/selftests/kvm/include/kvm_util.h  |   2 +
+ tools/testing/selftests/kvm/lib/kvm_util.c    |  14 +-
+ .../selftests/kvm/x86_64/hyperv_cpuid.c       | 157 +++++++++++++++
+ 13 files changed, 493 insertions(+), 108 deletions(-)
+ create mode 100644 tools/testing/selftests/kvm/x86_64/hyperv_cpuid.c
+
+-- 
+2.19.2
+
