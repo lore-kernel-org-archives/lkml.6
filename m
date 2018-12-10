@@ -2,74 +2,128 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=-14.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A6C0C04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 23:43:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94713C04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 23:46:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 411A22146D
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 23:43:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 411A22146D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
+	by mail.kernel.org (Postfix) with ESMTP id 4B8252084C
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 23:46:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PgfxBZBU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B8252084C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729627AbeLJXnz (ORCPT
+        id S1728283AbeLJXqG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 18:43:55 -0500
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:51736 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727594AbeLJXny (ORCPT
+        Mon, 10 Dec 2018 18:46:06 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:54018 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726261AbeLJXqG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 18:43:54 -0500
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id C974A80723; Tue, 11 Dec 2018 00:43:47 +0100 (CET)
-Date:   Tue, 11 Dec 2018 00:43:51 +0100
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     LKML <linux-kernel@vger.kernel.org>, x86@kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Jiri Kosina <jkosina@suse.cz>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Casey Schaufler <casey.schaufler@intel.com>,
-        Asit Mallick <asit.k.mallick@intel.com>,
-        Arjan van de Ven <arjan@linux.intel.com>,
-        Jon Masters <jcm@redhat.com>,
-        Waiman Long <longman9394@gmail.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Dave Stewart <david.c.stewart@intel.com>,
-        Kees Cook <keescook@chromium.org>
-Subject: Re: [patch V2 00/28] x86/speculation: Remedy the STIBP/IBPB overhead
-Message-ID: <20181210234349.elfilxsowujzhvaa@devuan>
-References: <20181125183328.318175777@linutronix.de>
+        Mon, 10 Dec 2018 18:46:06 -0500
+Received: by mail-wm1-f68.google.com with SMTP id y1so392852wmi.3
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Dec 2018 15:46:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Mv5ufnWLxJZ4fXnXEJXRJ6dgjU1RzzdkZk3YwlQVhCA=;
+        b=PgfxBZBUTG4gQH3kpGfzGusp37R47AkwkkhXy/JjyJLfLboAnC2Wyxem/3/swDYFR+
+         fDj+7zwZoNg4trpKjiufFLt+XDUWyK9hpmU83JJPx/3rnKS0b09O/Yt4AD9MIrs8wQTu
+         GDNjUf/vfX8lK+gx1mfuX4gGVh+xvGBz4U/e4mHLspDZDG8zzUUzPJVK4DX36ZHRbqoV
+         09hIWoTEp2BP9xxqbBk60xhNEfGZhPrBKM2+yKm0Zk1y5cOo7biorUoUmtfI6WJSSssL
+         61AR7Wt8GhWrqjJoV5W1YYMevafBZXoq1GSXS8q45PgyNOhDJrNhgU8nZx39Ef0123wM
+         a0pA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Mv5ufnWLxJZ4fXnXEJXRJ6dgjU1RzzdkZk3YwlQVhCA=;
+        b=Rq05lLIWZmeofikloMo6xT41MaCLs3bqMOfuZeqMGlaLPFxq5082eiG793a/pzhqsX
+         RAuHJd3vVlJku7qW0qGOUmIGtmSupqJSoEoHNsJ7Dkx0QV9CHM7e+sHf+Zn6uSIgO/u7
+         ceAbBBeD7r4JrERmLaP6r04Lb1rG+z0ZDPTblwxN6g3+Yt3Pen2WO7dddVPYOX1UK53W
+         xwSAAIPfTJGWbd8kwaUIOVkdJ+vMTqJyGrQZG5sI3M5xkwALSLNsKnN4K4kfSiDEFsdt
+         x8L8S1ivLo/l9KM/YTWT2iDLw3QfgK6X1tSvpsqE+jQ4c0AoTMGTpeYqJFS+wsxLQvnE
+         WPeg==
+X-Gm-Message-State: AA+aEWYoK3N8pS2Niz88qVZGQPZ36qyCfQQxbNLJUrizjMn21TTwF0s4
+        OAqqOq0X2oa569GqeptIzX8=
+X-Google-Smtp-Source: AFSGD/VxzVnXdMxuaYnOCKy3VcYg8CjO07C0D1x+yWFsNh5+teBLV/mAl0DF1bAgpnky0Segpqmi3A==
+X-Received: by 2002:a1c:4046:: with SMTP id n67mr288841wma.123.1544485564550;
+        Mon, 10 Dec 2018 15:46:04 -0800 (PST)
+Received: from localhost.localdomain ([2a01:4f8:10b:24a5::2])
+        by smtp.gmail.com with ESMTPSA id c14sm299879wme.13.2018.12.10.15.46.03
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 10 Dec 2018 15:46:03 -0800 (PST)
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>
+Cc:     "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Nathan Chancellor <natechancellor@gmail.com>
+Subject: [PATCH] x86/pgtable: Always inline p4d_index
+Date:   Mon, 10 Dec 2018 16:45:38 -0700
+Message-Id: <20181210234538.5405-1-natechancellor@gmail.com>
+X-Mailer: git-send-email 2.20.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181125183328.318175777@linutronix.de>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi!
+When building an allyesconfig build with Clang, the kernel fails to link
+arch/x86/platform/efi/efi_64.o because of a failed BUILD_BUG_ON:
 
->  Documentation/admin-guide/kernel-parameters.txt |   56 ++
->  Documentation/userspace-api/spec_ctrl.rst       |    9 
+ld: arch/x86/platform/efi/efi_64.o: in function `efi_sync_low_kernel_mappings':
+(.text+0x8e5): undefined reference to `__compiletime_assert_277'
 
-Could we name this speculation.rst instead? _ is inconsistent, and
-spec could be shorthand for other stuff, too...
-								Pavel
+Since there are several BUILD_BUG_ONs in efi_64.c, I isolated it down to
+the following:
 
+    BUILD_BUG_ON(p4d_index(EFI_VA_END) != p4d_index(MODULES_END));
+
+After some research, it turns out that there is a new config option
+called NO_AUTO_INLINE, which adds '-fno-inline-functions' to
+KBUILD_CFLAGS so that the compiler does not auto inline small functions,
+which causes this BUILD_BUG_ON to fail because p4d_index is no longer an
+integer constant expression.
+
+According to the help text of the config, functions explicitly marked
+inline should still be inlined. As it turns out, GCC and Clang both
+support '-fno-inline-functions' but Clang only inlines functions when
+they are marked with an always inline annotation[1].
+
+Since it's expected that p4d_index should always be inlined so that its
+value can be evaluated at build time, mark it as __always_inline.
+
+[1]: https://github.com/llvm-mirror/clang/blob/master/lib/Frontend/CompilerInvocation.cpp#L637-L656
+
+Link: https://github.com/ClangBuiltLinux/linux/issues/256
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+---
+ arch/x86/include/asm/pgtable.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/x86/include/asm/pgtable.h b/arch/x86/include/asm/pgtable.h
+index 40616e805292..f78e53382498 100644
+--- a/arch/x86/include/asm/pgtable.h
++++ b/arch/x86/include/asm/pgtable.h
+@@ -918,7 +918,7 @@ static inline int p4d_bad(p4d_t p4d)
+ }
+ #endif  /* CONFIG_PGTABLE_LEVELS > 3 */
+ 
+-static inline unsigned long p4d_index(unsigned long address)
++static __always_inline unsigned long p4d_index(unsigned long address)
+ {
+ 	return (address >> P4D_SHIFT) & (PTRS_PER_P4D - 1);
+ }
 -- 
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+2.20.0
+
