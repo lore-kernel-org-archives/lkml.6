@@ -2,243 +2,372 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6DB5C67839
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 21:50:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE579C04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 21:50:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6825B2084C
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 21:50:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6825B2084C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id 898D72084C
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 21:50:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="nlaOT0kh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 898D72084C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728737AbeLJVuK (ORCPT
+        id S1728949AbeLJVuf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 16:50:10 -0500
-Received: from mout.kundenserver.de ([217.72.192.75]:37385 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726392AbeLJVuK (ORCPT
+        Mon, 10 Dec 2018 16:50:35 -0500
+Received: from mail-yw1-f65.google.com ([209.85.161.65]:42021 "EHLO
+        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728776AbeLJVue (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 16:50:10 -0500
-Received: from wuerfel.lan ([109.192.41.194]) by mrelayeu.kundenserver.de
- (mreue108 [212.227.15.145]) with ESMTPA (Nemesis) id
- 1Mg6i8-1h63FD1cP0-00hb38; Mon, 10 Dec 2018 22:49:57 +0100
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     Bjorn Helgaas <bhelgaas@google.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Lukas Wunner <lukas@wunner.de>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Tyrel Datwyler <tyreld@linux.vnet.ibm.com>,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] pci: ibmphp_hpc: turn semaphores into completions or mutexes
-Date:   Mon, 10 Dec 2018 22:49:10 +0100
-Message-Id: <20181210214955.1826522-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.20.0
+        Mon, 10 Dec 2018 16:50:34 -0500
+Received: by mail-yw1-f65.google.com with SMTP id x2so4600319ywc.9
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Dec 2018 13:50:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=eTVcSvhpAgwmKB1Jf/hYQbWGQNKohYq7VY90I+fEOtU=;
+        b=nlaOT0khll0L8fcNRKCV3rciMRYEJ8l9HL8V+YhRVFFfi2EsZrG+/SEuspMzNLXSod
+         4W0oChwRi7AVNuc3GBS+Mwo/1qh7XeNCa0RxvV7lwGb0do+jn47iNBQjaqVcMh1++oD+
+         ifUD2lU9SRC/BXMSm3YxYlud118rNorHHeI6DWUORMnKnzCz6mifeXYYO7e8Z6TSv771
+         bwknBmCecyAVaXGi/euKI0vJnKlx1l/X5SibsyVpGnIC/fpWHwKFCvrEgMr2lUHAU4GK
+         3SfKnre5S3zAh+I9dWyIHqIxFz/nAgMGfFzlVtxmdyKYVPoNoMaKuccqw1L3aH5m4XAG
+         YLpQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=eTVcSvhpAgwmKB1Jf/hYQbWGQNKohYq7VY90I+fEOtU=;
+        b=Tcb4l+XpN8XORr8cPLZmUc3CpS96fdHF3XecG1qjuVI5lpQpFRR5cF1SXXH8EFKMH9
+         1enPgK9sIBWcCzPxtu3gTlRbBOjJE7mRpD5aGuR+ng/eJMd5T2iCPJsLEHGYGYmlhyTu
+         BBqTQ/8Ks/s7lwiF8AeeSLtULYVCg0qa5RhRdTw/94QgYlr9kx8aCu+e5LUJHd7CKkrF
+         CFzn1BHlAqrmxhl47m0vlDBWfJ2VHJQSfcVJbmD+gAP/9vZPkrlXVjCddF8XZSgJEY6W
+         vFfjVUl2TJZJjoAYVOjGyIKbaBIU/QMsEngizX3nms+Kwg5hnI2/JRtjZvdRRr4jK3or
+         pAbw==
+X-Gm-Message-State: AA+aEWYIJGWaBpd3PNSOGOCzggMqD9mmN9oEvhHrVZTqCGMs7MsDOlgn
+        GXvXL0vpWjxzS0Pj4+chym7DqEmUCBXPB7t5YFtsRklRo+E=
+X-Google-Smtp-Source: AFSGD/W0MFn6pj/Z+GAX0kXbvA/pXKGmVLTUB8MND+impBNDwzQ64YmoWSyRLF5LQV/ph0yoEN3aqI0s+K1I+S8nR1g=
+X-Received: by 2002:a81:4853:: with SMTP id v80mr14225700ywa.266.1544478633289;
+ Mon, 10 Dec 2018 13:50:33 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:qhve+nZpkFnqRZRfGZVu9wzsBEgdK1F2PWrbJbyJ3XpojC+cco0
- V80XYv4X5dfRUpzMMckq+FB/pPHzOGzsnBVtE2tzwVZCPysus5SIHvqbVe1vW1b23afkheR
- POlXgF87a9EjHrzd3BzNITPKQQgjf/FzTyvyiZtw8TSMTdz07aTa4TjWjf2ApgdJAgPf7k5
- evMPrA2/j7aULWqc9GMLw==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:edl0Oj4NHg0=:OgJmciwDIzp20J2h6R+Mnc
- PYXPnRVEISUN1oF3Kh7JbpYeDxC8i2AjPmTQL2MwCJ8wNdsvChC/8ER97pYqnxJWZQMlnHato
- YT0nNREFpzAtl4OmW+ok4T6g0cAciZG2tHxVbuk+QqC1XiIh25Bfcw0dyOjg5+KmlZIawN7Mq
- jCo0h/qFpXMeLzrqQCpGc6xbzcgsCfJ796Yf6RO06hfWDdlPTUzJnS3r920HehAM/kXhNYEk/
- Cl5bw+qY+Z1+fIoTySLd2vQ8T3BXwzaucf4skDUOFwY8sJkacQij393VEbncRNNI4OFYA4yxW
- ikroMD/Mw7GSeQAlkadyZA1ezWpFKMlTqdu9lZn58IT6pyX4RfCXFUJcbpxb852bS52HFQ1B9
- DrZwb0wMIPk65nSMEDCA1AlZTrnzZrMkGvN6vUHa5hUSfI7GGFhg6h4+nRM1UMMehSLuL+zHL
- Wos/4RUxEpsr9o5veTOaSp4914F8izmjRQJo59I7F6fB8aFmGR6EvvaQyHXu2/FPsLLn6JiBv
- nKibCaKufexCT5+IHm+o54v/M+cm5uUuAipYLYTRbudCpHrvUUKGryJcrCAgBO0LRbZWGgrT6
- yfkG2yPmSMcbYnLT3ibkiAG73dORPHWwXOxF1/VQlyfbXkemFCoVbj8NfYvEhWvuhFtzrgjo1
- uqZl3cMbnwa6DG5d85NLM/sERCC96gECM+Ir33BV5Mzam1XgTLT0K1khISfcPnzZeBqLD7xkM
- PNPGRyHI7QycP4S+dttNiJJj4Z9xGs6qZy+Z2A==
+References: <20181127121849.23975-1-enric.balletbo@collabora.com>
+ <20181127121849.23975-6-enric.balletbo@collabora.com> <CABXOdTfxHU0ad9F0ieCLbMpxVDgdiANmu3ai35WFWUj85gvbWA@mail.gmail.com>
+ <87b2e544-756d-87bb-7102-267d9babc636@collabora.com> <CABXOdTcb+D7_o0CLvuMwu1jmpVeWBS-D6Kk8R4ry_Ti5KZdycQ@mail.gmail.com>
+ <CAFqH_51gYwAaw_e+ggh4+M2HU7_A73cYTAUuMnvn6Ab7K35H3g@mail.gmail.com>
+In-Reply-To: <CAFqH_51gYwAaw_e+ggh4+M2HU7_A73cYTAUuMnvn6Ab7K35H3g@mail.gmail.com>
+From:   Guenter Roeck <groeck@google.com>
+Date:   Mon, 10 Dec 2018 13:50:22 -0800
+Message-ID: <CABXOdTcpiVRxxr1D-vnubk-ALNrvoU0oVM7Cyr58soz_DOZPhQ@mail.gmail.com>
+Subject: Re: [PATCH v3 5/8] mfd / platform: cros_ec: move device sysfs
+ attributes to its own driver.
+To:     Enric Balletbo Serra <eballetbo@gmail.com>
+Cc:     Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Gwendal Grignou <gwendal@chromium.org>,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Guenter Roeck <groeck@chromium.org>, kernel@collabora.com,
+        Benson Leung <bleung@chromium.org>,
+        Olof Johansson <olof@lixom.net>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The sem_exit variable is conceptually a completion, so it should
-be called that.
+On Mon, Dec 10, 2018 at 1:27 PM Enric Balletbo Serra
+<eballetbo@gmail.com> wrote:
+>
+> Missatge de Guenter Roeck <groeck@google.com> del dia dl., 10 de des.
+> 2018 a les 19:34:
+> >
+> > On Mon, Dec 10, 2018 at 10:22 AM Enric Balletbo i Serra
+> > <enric.balletbo@collabora.com> wrote:
+> > >
+> > > Hi Guenter,
+> > >
+> > > On 10/12/18 19:13, Guenter Roeck wrote:
+> > > > On Tue, Nov 27, 2018 at 4:19 AM Enric Balletbo i Serra
+> > > > <enric.balletbo@collabora.com> wrote:
+> > > >>
+> > > >> The entire way how cros debugfs attibutes are created is broken.
+> > > >> cros_ec_sysfs should be its own driver and its attributes should be
+> > > >> associated with the sysfs driver not the mfd driver.
+> > > >>
+> > > >> The patch also adds the sysfs documentation.
+> > > >>
+> > > >> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+> > > >> ---
+> > > >>
+> > > >> Changes in v3:
+> > > >> - Do not print ec_platform name as is with dev_err is enough.
+> > > >>
+> > > >> Changes in v2:
+> > > >> - Create the attributes directly instead of use the attach/detach callbacks.
+> > > >>
+> > > >>  .../ABI/testing/sysfs-class-chromeos          | 32 +++++++++++++++++
+> > > >>  drivers/mfd/Kconfig                           |  1 -
+> > > >>  drivers/mfd/cros_ec_dev.c                     |  7 +---
+> > > >>  drivers/platform/chrome/Kconfig               | 14 ++++++--
+> > > >>  drivers/platform/chrome/Makefile              |  3 +-
+> > > >>  drivers/platform/chrome/cros_ec_sysfs.c       | 36 ++++++++++++++++++-
+> > > >>  include/linux/mfd/cros_ec.h                   |  3 --
+> > > >>  7 files changed, 80 insertions(+), 16 deletions(-)
+> > > >>  create mode 100644 Documentation/ABI/testing/sysfs-class-chromeos
+> > > >>
+> > > >> diff --git a/Documentation/ABI/testing/sysfs-class-chromeos b/Documentation/ABI/testing/sysfs-class-chromeos
+> > > >> new file mode 100644
+> > > >> index 000000000000..a5399c4ca82d
+> > > >> --- /dev/null
+> > > >> +++ b/Documentation/ABI/testing/sysfs-class-chromeos
+> > > >> @@ -0,0 +1,32 @@
+> > > >> +What:          /sys/class/chromeos/<cros-ec>/flashinfo
+> > > >
+> > > > Why "<cros-ec>" and not "cros_ec" ?
+> > > >
+> > >
+> > > Maybe will be more clear if I use <cros-ec-name>?
+> > >
+> > > Actually <cros-ec-name> can be cros_ec or cros_pd. I put between <> to indicate
+> > > that is not the literal name.
+> > >
+> > Should that be mentioned somewhere ? Readers of this document won't
+> > know what it stands for.
+> >
+>
+> I assumed that <something> is the standard de facto, although I don't
+> see that documented anywhere. If you do a grep it is extensively used.
+> I.e:
+>
+> stable/sysfs-class-infiniband:199:What:
+> /sys/class/infiniband/<device-name>/ports/<port-num>/hw_counters/lifespan
+> testing/sysfs-class-power:3:What:
+> /sys/class/power_supply/<supply_name>/manufacturer
+> ... and many others
+>
+That makes sense if the name is determined by the driver, and there
+are many drivers and no fixed name(s). Here we have exactly two
+possible names.
 
-Similarly, the semOperations semaphore is a simple mutex, and
-can be changed into that, respectively.
+> Maybe add a new entry at the beginning?
+>
+> What:          /sys/class/chromeos/<cros-ec-name>
+> ...
+> Description:
+>               The cros-ec device name, i.e. cros_ec or cros_pd.
+>
+How about {cros_ec,cros_pd} instead of <cros-ec> ?
+I see that used a few times where the names are well defined.
 
-With both converted, the ibmphp_hpc_initvars() function is no longer
-used and can be removed.
+Thanks,
+Guenter
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/pci/hotplug/ibmphp.h      |  1 -
- drivers/pci/hotplug/ibmphp_core.c |  2 --
- drivers/pci/hotplug/ibmphp_hpc.c  | 47 +++++++++----------------------
- 3 files changed, 14 insertions(+), 36 deletions(-)
-
-diff --git a/drivers/pci/hotplug/ibmphp.h b/drivers/pci/hotplug/ibmphp.h
-index b89f850c3a4e..e90a4ebf6550 100644
---- a/drivers/pci/hotplug/ibmphp.h
-+++ b/drivers/pci/hotplug/ibmphp.h
-@@ -378,7 +378,6 @@ int ibmphp_add_pfmem_from_mem(struct resource_node *);
- struct bus_node *ibmphp_find_res_bus(u8);
- void ibmphp_print_test(void);	/* for debugging purposes */
- 
--void ibmphp_hpc_initvars(void);
- int ibmphp_hpc_readslot(struct slot *, u8, u8 *);
- int ibmphp_hpc_writeslot(struct slot *, u8);
- void ibmphp_lock_operations(void);
-diff --git a/drivers/pci/hotplug/ibmphp_core.c b/drivers/pci/hotplug/ibmphp_core.c
-index 5752b57198e3..e04b17d81e38 100644
---- a/drivers/pci/hotplug/ibmphp_core.c
-+++ b/drivers/pci/hotplug/ibmphp_core.c
-@@ -1312,8 +1312,6 @@ static int __init ibmphp_init(void)
- 
- 	ibmphp_debug = debug;
- 
--	ibmphp_hpc_initvars();
--
- 	for (i = 0; i < 16; i++)
- 		irqs[i] = 0;
- 
-diff --git a/drivers/pci/hotplug/ibmphp_hpc.c b/drivers/pci/hotplug/ibmphp_hpc.c
-index 752c384cbd4c..508a62a6b5f9 100644
---- a/drivers/pci/hotplug/ibmphp_hpc.c
-+++ b/drivers/pci/hotplug/ibmphp_hpc.c
-@@ -15,13 +15,13 @@
- 
- #include <linux/wait.h>
- #include <linux/time.h>
-+#include <linux/completion.h>
- #include <linux/delay.h>
- #include <linux/module.h>
- #include <linux/pci.h>
- #include <linux/init.h>
- #include <linux/mutex.h>
- #include <linux/sched.h>
--#include <linux/semaphore.h>
- #include <linux/kthread.h>
- #include "ibmphp.h"
- 
-@@ -88,10 +88,10 @@ static int to_debug = 0;
- //----------------------------------------------------------------------------
- // global variables
- //----------------------------------------------------------------------------
--static struct mutex sem_hpcaccess;	// lock access to HPC
--static struct semaphore semOperations;	// lock all operations and
-+static DEFINE_MUTEX(sem_hpcaccess);	// lock access to HPC
-+static DEFINE_MUTEX(operations_mutex);	// lock all operations and
- 					// access to data structures
--static struct semaphore sem_exit;	// make sure polling thread goes away
-+static DECLARE_COMPLETION(exit_complete); // make sure polling thread goes away
- static struct task_struct *ibmphp_poll_thread;
- //----------------------------------------------------------------------------
- // local function prototypes
-@@ -109,23 +109,6 @@ static int hpc_wait_ctlr_notworking(int, struct controller *, void __iomem *, u8
- //----------------------------------------------------------------------------
- 
- 
--/*----------------------------------------------------------------------
--* Name:    ibmphp_hpc_initvars
--*
--* Action:  initialize semaphores and variables
--*---------------------------------------------------------------------*/
--void __init ibmphp_hpc_initvars(void)
--{
--	debug("%s - Entry\n", __func__);
--
--	mutex_init(&sem_hpcaccess);
--	sema_init(&semOperations, 1);
--	sema_init(&sem_exit, 0);
--	to_debug = 0;
--
--	debug("%s - Exit\n", __func__);
--}
--
- /*----------------------------------------------------------------------
- * Name:    i2c_ctrl_read
- *
-@@ -780,7 +763,7 @@ void free_hpc_access(void)
- *---------------------------------------------------------------------*/
- void ibmphp_lock_operations(void)
- {
--	down(&semOperations);
-+	mutex_lock(&operations_mutex);
- 	to_debug = 1;
- }
- 
-@@ -790,7 +773,7 @@ void ibmphp_lock_operations(void)
- void ibmphp_unlock_operations(void)
- {
- 	debug("%s - Entry\n", __func__);
--	up(&semOperations);
-+	mutex_unlock(&operations_mutex);
- 	to_debug = 0;
- 	debug("%s - Exit\n", __func__);
- }
-@@ -816,7 +799,7 @@ static int poll_hpc(void *data)
- 
- 	while (!kthread_should_stop()) {
- 		/* try to get the lock to do some kind of hardware access */
--		down(&semOperations);
-+		mutex_lock(&operations_mutex);
- 
- 		switch (poll_state) {
- 		case POLL_LATCH_REGISTER:
-@@ -871,13 +854,13 @@ static int poll_hpc(void *data)
- 			break;
- 		case POLL_SLEEP:
- 			/* don't sleep with a lock on the hardware */
--			up(&semOperations);
-+			mutex_unlock(&operations_mutex);
- 			msleep(POLL_INTERVAL_SEC * 1000);
- 
- 			if (kthread_should_stop())
- 				goto out_sleep;
- 
--			down(&semOperations);
-+			mutex_lock(&operations_mutex);
- 
- 			if (poll_count >= POLL_LATCH_CNT) {
- 				poll_count = 0;
-@@ -887,12 +870,12 @@ static int poll_hpc(void *data)
- 			break;
- 		}
- 		/* give up the hardware semaphore */
--		up(&semOperations);
-+		mutex_unlock(&operations_mutex);
- 		/* sleep for a short time just for good measure */
- out_sleep:
- 		msleep(100);
- 	}
--	up(&sem_exit);
-+	complete(&exit_complete);
- 	debug("%s - Exit\n", __func__);
- 	return 0;
- }
-@@ -1060,9 +1043,9 @@ void __exit ibmphp_hpc_stop_poll_thread(void)
- 	debug("after locking operations\n");
- 
- 	// wait for poll thread to exit
--	debug("before sem_exit down\n");
--	down(&sem_exit);
--	debug("after sem_exit down\n");
-+	debug("before exit_complete down\n");
-+	wait_for_completion(&exit_complete);
-+	debug("after exit_completion down\n");
- 
- 	// cleanup
- 	debug("before free_hpc_access\n");
-@@ -1070,8 +1053,6 @@ void __exit ibmphp_hpc_stop_poll_thread(void)
- 	debug("after free_hpc_access\n");
- 	ibmphp_unlock_operations();
- 	debug("after unlock operations\n");
--	up(&sem_exit);
--	debug("after sem exit up\n");
- 
- 	debug("%s - Exit\n", __func__);
- }
--- 
-2.20.0
-
+> > Thanks,
+> > Guenter
+> >
+> > > >> +Date:          August 2015
+> > > >> +KernelVersion: 4.2
+> > > >> +Description:
+> > > >> +               Show the EC flash information.
+> > > >> +
+> > > >> +What:          /sys/class/chromeos/<cros-ec>/kb_wake_angle
+> > > >> +Date:          March 2018
+> > > >> +KernelVersion: 4.17
+> > > >> +Description:
+> > > >> +               Control the keyboard wake lid angle. Values are between
+> > > >> +               0 and 360. This file will also show the keyboard wake lid
+> > > >> +               angle by querying the hardware.
+> > > >> +
+> > > >> +What:          /sys/class/chromeos/<cros-ec>/reboot
+> > > >> +Date:          August 2015
+> > > >> +KernelVersion: 4.2
+> > > >> +Description:
+> > > >> +               Tell the EC to reboot in various ways. Options are:
+> > > >> +               "cancel": Cancel a pending reboot.
+> > > >> +               "ro": Jump to RO without rebooting.
+> > > >> +               "rw": Jump to RW without rebooting.
+> > > >> +               "cold": Cold reboot.
+> > > >> +               "disable-jump": Disable jump until next reboot.
+> > > >> +               "hibernate": Hibernate the EC.
+> > > >> +               "at-shutdown": Reboot after an AP shutdown.
+> > > >> +
+> > > >> +What:          /sys/class/chromeos/<cros-ec>/version
+> > > >> +Date:          August 2015
+> > > >> +KernelVersion: 4.2
+> > > >> +Description:
+> > > >> +               Show the information about the EC software and hardware.
+> > > >> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+> > > >> index 8c5dfdce4326..089ffb408918 100644
+> > > >> --- a/drivers/mfd/Kconfig
+> > > >> +++ b/drivers/mfd/Kconfig
+> > > >> @@ -214,7 +214,6 @@ config MFD_CROS_EC
+> > > >>  config MFD_CROS_EC_CHARDEV
+> > > >>          tristate "Chrome OS Embedded Controller userspace device interface"
+> > > >>          depends on MFD_CROS_EC
+> > > >> -        select CROS_EC_CTL
+> > > >>          ---help---
+> > > >>            This driver adds support to talk with the ChromeOS EC from userspace.
+> > > >>
+> > > >> diff --git a/drivers/mfd/cros_ec_dev.c b/drivers/mfd/cros_ec_dev.c
+> > > >> index 50ba8e0fb4ec..d9b16ce79319 100644
+> > > >> --- a/drivers/mfd/cros_ec_dev.c
+> > > >> +++ b/drivers/mfd/cros_ec_dev.c
+> > > >> @@ -34,15 +34,9 @@
+> > > >>  #define CROS_MAX_DEV 128
+> > > >>  static int ec_major;
+> > > >>
+> > > >> -static const struct attribute_group *cros_ec_groups[] = {
+> > > >> -       &cros_ec_attr_group,
+> > > >> -       NULL,
+> > > >> -};
+> > > >> -
+> > > >>  static struct class cros_class = {
+> > > >>         .owner          = THIS_MODULE,
+> > > >>         .name           = "chromeos",
+> > > >> -       .dev_groups     = cros_ec_groups,
+> > > >>  };
+> > > >>
+> > > >>  /* Basic communication */
+> > > >> @@ -391,6 +385,7 @@ static const struct mfd_cell cros_usbpd_charger_cells[] = {
+> > > >>  static const struct mfd_cell cros_ec_platform_cells[] = {
+> > > >>         { .name = "cros-ec-debugfs" },
+> > > >>         { .name = "cros-ec-lightbar" },
+> > > >> +       { .name = "cros-ec-sysfs" },
+> > > >>         { .name = "cros-ec-vbc" },
+> > > >>  };
+> > > >>
+> > > >> diff --git a/drivers/platform/chrome/Kconfig b/drivers/platform/chrome/Kconfig
+> > > >> index 4e4232b47764..b709cc5173a2 100644
+> > > >> --- a/drivers/platform/chrome/Kconfig
+> > > >> +++ b/drivers/platform/chrome/Kconfig
+> > > >> @@ -49,9 +49,6 @@ config CHROMEOS_TBMC
+> > > >>           To compile this driver as a module, choose M here: the
+> > > >>           module will be called chromeos_tbmc.
+> > > >>
+> > > >> -config CROS_EC_CTL
+> > > >> -        tristate
+> > > >> -
+> > > >>  config CROS_EC_I2C
+> > > >>         tristate "ChromeOS Embedded Controller (I2C)"
+> > > >>         depends on MFD_CROS_EC && I2C
+> > > >> @@ -142,4 +139,15 @@ config CROS_EC_DEBUGFS
+> > > >>           To compile this driver as a module, choose M here: the
+> > > >>           module will be called cros_ec_debugfs.
+> > > >>
+> > > >> +config CROS_EC_SYSFS
+> > > >> +       tristate "ChromeOS EC control and information through sysfs"
+> > > >> +       depends on MFD_CROS_EC_CHARDEV && SYSFS
+> > > >> +       default y
+> > > >
+> > > > In practice this is limited to MFD_CROS_EC_CHARDEV, meaning it will be
+> > > > set to m if MFD_CROS_EC_CHARDEV=m.
+> > > > Not sure what is better here, but for consistency I would prefer
+> > > > "default MFD_CROS_EC_CHARDEV" (or default y
+> > > > in the entire series).
+> > > >
+> > >
+> > > Right, makes sense that if the MFD_CROS_EC_CHARDEV is selected set also those by
+> > > default. Will prepare a new version with that small change.
+> > >
+> > > >> +       help
+> > > >> +         This option exposes some sysfs attributes to control and get
+> > > >> +         information from ChromeOS EC.
+> > > >> +
+> > > >> +         To compile this driver as a module, choose M here: the
+> > > >> +         module will be called cros_ec_sysfs.
+> > > >> +
+> > > >>  endif # CHROMEOS_PLATFORMS
+> > > >> diff --git a/drivers/platform/chrome/Makefile b/drivers/platform/chrome/Makefile
+> > > >> index 12a5c4d18c17..fdbee501931b 100644
+> > > >> --- a/drivers/platform/chrome/Makefile
+> > > >> +++ b/drivers/platform/chrome/Makefile
+> > > >> @@ -3,8 +3,6 @@
+> > > >>  obj-$(CONFIG_CHROMEOS_LAPTOP)          += chromeos_laptop.o
+> > > >>  obj-$(CONFIG_CHROMEOS_PSTORE)          += chromeos_pstore.o
+> > > >>  obj-$(CONFIG_CHROMEOS_TBMC)            += chromeos_tbmc.o
+> > > >> -cros_ec_ctl-objs                       := cros_ec_sysfs.o
+> > > >> -obj-$(CONFIG_CROS_EC_CTL)              += cros_ec_ctl.o
+> > > >>  obj-$(CONFIG_CROS_EC_I2C)              += cros_ec_i2c.o
+> > > >>  obj-$(CONFIG_CROS_EC_SPI)              += cros_ec_spi.o
+> > > >>  cros_ec_lpcs-objs                      := cros_ec_lpc.o cros_ec_lpc_reg.o
+> > > >> @@ -15,3 +13,4 @@ obj-$(CONFIG_CROS_KBD_LED_BACKLIGHT)  += cros_kbd_led_backlight.o
+> > > >>  obj-$(CONFIG_CROS_EC_LIGHTBAR)         += cros_ec_lightbar.o
+> > > >>  obj-$(CONFIG_CROS_EC_VBC)              += cros_ec_vbc.o
+> > > >>  obj-$(CONFIG_CROS_EC_DEBUGFS)          += cros_ec_debugfs.o
+> > > >> +obj-$(CONFIG_CROS_EC_SYSFS)            += cros_ec_sysfs.o
+> > > >> diff --git a/drivers/platform/chrome/cros_ec_sysfs.c b/drivers/platform/chrome/cros_ec_sysfs.c
+> > > >> index f34a50121064..0ff5aa30c070 100644
+> > > >> --- a/drivers/platform/chrome/cros_ec_sysfs.c
+> > > >> +++ b/drivers/platform/chrome/cros_ec_sysfs.c
+> > > >> @@ -34,6 +34,8 @@
+> > > >>  #include <linux/types.h>
+> > > >>  #include <linux/uaccess.h>
+> > > >>
+> > > >> +#define DRV_NAME "cros-ec-sysfs"
+> > > >> +
+> > > >>  /* Accessor functions */
+> > > >>
+> > > >>  static ssize_t reboot_show(struct device *dev,
+> > > >> @@ -353,7 +355,39 @@ struct attribute_group cros_ec_attr_group = {
+> > > >>         .attrs = __ec_attrs,
+> > > >>         .is_visible = cros_ec_ctrl_visible,
+> > > >>  };
+> > > >> -EXPORT_SYMBOL(cros_ec_attr_group);
+> > > >> +
+> > > >> +static int cros_ec_sysfs_probe(struct platform_device *pd)
+> > > >> +{
+> > > >> +       struct cros_ec_dev *ec_dev = dev_get_drvdata(pd->dev.parent);
+> > > >> +       struct device *dev = &pd->dev;
+> > > >> +       int ret;
+> > > >> +
+> > > >> +       ret = sysfs_create_group(&ec_dev->class_dev.kobj, &cros_ec_attr_group);
+> > > >> +       if (ret < 0)
+> > > >> +               dev_err(dev, "failed to create attributes. err=%d\n", ret);
+> > > >> +
+> > > >> +       return ret;
+> > > >> +}
+> > > >> +
+> > > >> +static int cros_ec_sysfs_remove(struct platform_device *pd)
+> > > >> +{
+> > > >> +       struct cros_ec_dev *ec_dev = dev_get_drvdata(pd->dev.parent);
+> > > >> +
+> > > >> +       sysfs_remove_group(&ec_dev->class_dev.kobj, &cros_ec_attr_group);
+> > > >> +
+> > > >> +       return 0;
+> > > >> +}
+> > > >> +
+> > > >> +static struct platform_driver cros_ec_sysfs_driver = {
+> > > >> +       .driver = {
+> > > >> +               .name = DRV_NAME,
+> > > >> +       },
+> > > >> +       .probe = cros_ec_sysfs_probe,
+> > > >> +       .remove = cros_ec_sysfs_remove,
+> > > >> +};
+> > > >> +
+> > > >> +module_platform_driver(cros_ec_sysfs_driver);
+> > > >>
+> > > >>  MODULE_LICENSE("GPL");
+> > > >>  MODULE_DESCRIPTION("ChromeOS EC control driver");
+> > > >> +MODULE_ALIAS("platform:" DRV_NAME);
+> > > >> diff --git a/include/linux/mfd/cros_ec.h b/include/linux/mfd/cros_ec.h
+> > > >> index 3e4401e2ceea..f718ad9c2132 100644
+> > > >> --- a/include/linux/mfd/cros_ec.h
+> > > >> +++ b/include/linux/mfd/cros_ec.h
+> > > >> @@ -323,7 +323,4 @@ int cros_ec_get_next_event(struct cros_ec_device *ec_dev, bool *wake_event);
+> > > >>   */
+> > > >>  u32 cros_ec_get_host_event(struct cros_ec_device *ec_dev);
+> > > >>
+> > > >> -/* sysfs stuff */
+> > > >> -extern struct attribute_group cros_ec_attr_group;
+> > > >> -
+> > > >>  #endif /* __LINUX_MFD_CROS_EC_H */
+> > > >> --
+> > > >> 2.19.1
+> > > >>
+> > > >
