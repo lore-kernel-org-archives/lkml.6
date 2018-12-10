@@ -2,100 +2,81 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46955C04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 18:37:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26BD1C04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 18:38:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 174C82081F
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 18:37:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 174C82081F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id E8D892084C
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 18:38:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E8D892084C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728313AbeLJShd (ORCPT
+        id S1728444AbeLJSi0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 13:37:33 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:41484 "EHLO mx1.redhat.com"
+        Mon, 10 Dec 2018 13:38:26 -0500
+Received: from mga02.intel.com ([134.134.136.20]:50049 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727593AbeLJShd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 13:37:33 -0500
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 15AF530014CC;
-        Mon, 10 Dec 2018 18:37:33 +0000 (UTC)
-Received: from localhost (ovpn-116-63.gru2.redhat.com [10.97.116.63])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 48054600D7;
-        Mon, 10 Dec 2018 18:37:32 +0000 (UTC)
-Date:   Mon, 10 Dec 2018 16:37:30 -0200
-From:   Eduardo Habkost <ehabkost@redhat.com>
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        =?iso-8859-1?Q?J=F6rg_R=F6del?= <joro@8bytes.org>,
-        Andre Przywara <andre.przywara@arm.com>,
-        kvm ML <kvm@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Tom Lendacky <thomas.lendacky@amd.com>
-Subject: Re: kvm: RDTSCP on AMD
-Message-ID: <20181210183730.GJ4669@habkost.net>
-References: <20181210181328.GA762@zn.tnic>
+        id S1726614AbeLJSiZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Dec 2018 13:38:25 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Dec 2018 10:38:25 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,339,1539673200"; 
+   d="scan'208";a="282469086"
+Received: from anambiar-mobl1.amr.corp.intel.com (HELO [10.252.192.151]) ([10.252.192.151])
+  by orsmga005.jf.intel.com with ESMTP; 10 Dec 2018 10:38:24 -0800
+Subject: Re: linux-next: manual merge of the net-next tree with the net tree
+To:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        David Miller <davem@davemloft.net>,
+        Networking <netdev@vger.kernel.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Or Gerlitz <ogerlitz@mellanox.com>,
+        aul Blakey <paulb@mellanox.com>
+References: <20181210123633.4a0e4409@canb.auug.org.au>
+From:   "Nambiar, Amritha" <amritha.nambiar@intel.com>
+Message-ID: <35edf438-0a07-83e3-be6d-5989007b683a@intel.com>
+Date:   Mon, 10 Dec 2018 10:38:24 -0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.3
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181210181328.GA762@zn.tnic>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Mon, 10 Dec 2018 18:37:33 +0000 (UTC)
+In-Reply-To: <20181210123633.4a0e4409@canb.auug.org.au>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 10, 2018 at 07:13:28PM +0100, Borislav Petkov wrote:
-> Reviving an old thread here.
+On 12/9/2018 5:36 PM, Stephen Rothwell wrote:
+> Hi all,
 > 
-> On Wed, Jul 06, 2016 at 11:27:16PM +0200, Paolo Bonzini wrote:
-> > On 06/07/2016 19:34, Eduardo Habkost wrote:
-> > >> > Nothing is needed in the kernel actually.  You can skip the intercept
-> > >> > by running the guest with MSR_TSC_AUX set to the guest's expected value.
-> > >> >  Which KVM does, except that it's botched so I need to apply the
-> > >> > patch in https://lkml.org/lkml/2016/4/13/802.
-> > > Do you mean -cpu Opteron_G*,+rdtscp will be buggy on Linux v4.5?
-> > > (v4.5 reports rdtscp as supported in GET_SUPPORTED_CPUID)
-> > > 
-> > > Can we do something to make QEMU detect the buggy kernel before
-> > > allowing rdtscp to be enabled, or should we just tell people to
-> > > upgrade their kernel?
-> > 
-> > We usually just tell people to use the latest stable kernel.
-> > 
-> > Adding new CPU models is not a big deal, in fact it's almost easier than
-> > getting compat properties right. :)
+> Today's linux-next merge of the net-next tree got a conflict in:
 > 
-> Ok, can we finally revert
+>   net/sched/cls_flower.c
 > 
->   33b5e8c03ae7 ("target-i386: Disable rdtscp on Opteron_G* CPU models")
+> between commit:
 > 
-> in the qemu tree?
+>   35cc3cefc4de ("net/sched: cls_flower: Reject duplicated rules also under skip_sw")
 > 
-> Three years should be enough by now for
+> from the net tree and commit:
 > 
->   46896c73c1a4 ("KVM: svm: add support for RDTSCP")
+>   5c72299fba9d ("net: sched: cls_flower: Classify packets using port ranges")
 > 
-> to have percolated downstream.
+> from the net-next tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+> 
 
-That's Linux v4.5, released in March 2016.
-
-It isn't as simply as reverting commit 33b5e8c03ae7, but we can
-surely re-add RDTSCP on pc-*-4.0 and newer.
-
-I thought we added documentation mentioning the minimum kernel
-version required by QEMU, but I can't find it.  In either case,
-it seems reasonable to require Linux 4.5 or newer on newer
-machine-types.
-
--- 
-Eduardo
+Looks good to me. Thanks!
