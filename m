@@ -6,89 +6,95 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FEB7C04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 17:43:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C78EC04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 17:44:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 531A620851
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 17:43:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 531A620851
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 3EE832082F
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 17:44:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3EE832082F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728925AbeLJRnd (ORCPT
+        id S1728945AbeLJRoA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 12:43:33 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:47600 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727399AbeLJRnc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 12:43:32 -0500
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 2334BC057F9F;
-        Mon, 10 Dec 2018 17:43:32 +0000 (UTC)
-Received: from vitty.brq.redhat.com.redhat.com (unknown [10.43.2.155])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 35C3D5D962;
-        Mon, 10 Dec 2018 17:43:29 +0000 (UTC)
-From:   Vitaly Kuznetsov <vkuznets@redhat.com>
-To:     Michael Kelley <mikelley@microsoft.com>,
-        "K . Y . Srinivasan" <kys@microsoft.com>
-Cc:     will.deacon@arm.com, catalin.marinas@armm.com,
-        mark.rutland@arm.com, marc.zyngier@arm.com,
-        linux-arm-kernel@lists.infradead.org, gregkh@linuxfoundation.org,
-        linux-kernel@vger.kernel.org, devel@linuxdriverproject.org,
-        olaf@aepfle.de, apw@canonical.com, jasowang@redhat.com,
-        sthemmin@microsoft.com
-Subject: Re: [PATCH 1/4] arm64: hyperv: Add core Hyper-V include files
-In-Reply-To: <20181122031059.16338-1-kys@linuxonhyperv.com>
-References: <20181122030914.16274-1-kys@linuxonhyperv.com> <20181122031059.16338-1-kys@linuxonhyperv.com>
-Date:   Mon, 10 Dec 2018 18:43:27 +0100
-Message-ID: <87mupdcm68.fsf@vitty.brq.redhat.com>
+        Mon, 10 Dec 2018 12:44:00 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:34038 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727071AbeLJRn7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Dec 2018 12:43:59 -0500
+Received: from p4fea4820.dip0.t-ipconnect.de ([79.234.72.32] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1gWPb2-0000sA-Us; Mon, 10 Dec 2018 18:43:57 +0100
+Date:   Mon, 10 Dec 2018 18:43:51 +0100 (CET)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Peter Zijlstra <peterz@infradead.org>
+cc:     LKML <linux-kernel@vger.kernel.org>,
+        Stefan Liebler <stli@linux.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>
+Subject: Re: [patch] futex: Cure exit race
+In-Reply-To: <20181210160205.GQ5289@hirez.programming.kicks-ass.net>
+Message-ID: <alpine.DEB.2.21.1812101824070.1667@nanos.tec.linutronix.de>
+References: <20181210152311.986181245@linutronix.de> <20181210160205.GQ5289@hirez.programming.kicks-ass.net>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Mon, 10 Dec 2018 17:43:32 +0000 (UTC)
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-kys@linuxonhyperv.com writes:
+On Mon, 10 Dec 2018, Peter Zijlstra wrote:
+> On Mon, Dec 10, 2018 at 04:23:06PM +0100, Thomas Gleixner wrote:
+> There is another callers of futex_lock_pi_atomic(),
+> futex_proxy_trylock_atomic(), which is part of futex_requeue(), that too
+> does a retry loop on -EAGAIN.
+> 
+> And there is another caller of attach_to_pi_owner(): lookup_pi_state(),
+> and that too is in futex_requeue() and handles the retry case properly.
+> 
+> Yes, this all looks good.
+> 
+> Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 
-> +
-> +static inline u64 hv_read_tsc_page_tsc(const struct ms_hyperv_tsc_page *tsc_pg,
-> +				       u64 *cur_tsc)
-> +{
-> +	u64	scale, offset;
-> +	u32	sequence;
-> +
-> +	/*
-> +	 * The protocol for reading Hyper-V TSC page is specified in Hypervisor
-> +	 * Top-Level Functional Specification.  To get the reference time we
-> +	 * must do the following:
-> +	 * - READ ReferenceTscSequence
-> +	 *   A special '0' value indicates the time source is unreliable and we
-> +	 *   need to use something else.
-> +	 * - ReferenceTime =
-> +	 *     ((HWclock val) * ReferenceTscScale) >> 64) + ReferenceTscOffset
-> +	 * - READ ReferenceTscSequence again. In case its value has changed
-> +	 *   since our first reading we need to discard ReferenceTime and repeat
-> +	 *   the whole sequence as the hypervisor was updating the page in
-> +	 *   between.
-> +	 */
-> +	do {
-> +		sequence = READ_ONCE(tsc_pg->tsc_sequence);
+Bah. The little devil in the unconcious part of my brain insisted on
+thinking further about that EAGAIN loop even despite my attempt to page
+that futex horrors out again immediately after sending that patch.
 
-(sorry if this was already discussed before)
+There is another related issue which is even worse than just mildly
+confusing user space:
 
-Current x86 code doing this actually checks for '0' here (note the
-comment about this special value above):
+   task1(SCHED_OTHER)
+   sys_exit()
+     do_exit()
+      exit_mm()
+       task1->flags |= PF_EXITING;
 
-		sequence = READ_ONCE(tsc_pg->tsc_sequence);
-		if (!sequence)
-			return U64_MAX;
+   ---> preemption
 
-Was it removed intentionally (and we need to fix the comment then)? 
+   task2(SCHED_FIFO)
+     sys_futex(LOCK_PI)
+       ....
+       attach_to_pi_owner() {
+         ...
+         if (!task1->flags & PF_EXITING) {
+           attach();
+         } else {
+              if (!(tsk->flags & PF_EXITPIDONE))
+	         return -EAGAIN;
 
--- 
-Vitaly
+Now assume UP or both tasks pinned on the same CPU. That results in a
+livelock because task2 is going to loop forever.
+
+No immediate idea how to cure that one w/o creating a mess.
+
+Thanks,
+
+	tglx
