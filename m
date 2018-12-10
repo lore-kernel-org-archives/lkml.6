@@ -2,152 +2,99 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57E3FC04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 07:43:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 797B4C04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 07:47:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F8C92081F
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 07:42:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F8C92081F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goldelico.com
+	by mail.kernel.org (Postfix) with ESMTP id 343BD20855
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 07:47:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544428033;
+	bh=mz00spIBHmLS6UXligirxC7HBp4NwhhqDFw9HuVnzM8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=myznUeBWn6iWJQXB3zZU8An+uus9aLlpkeQyrK9kdBHM1PrcsybV6jK+qgeC1B/C1
+	 wwlglODXNgFTAWo7kgTYNPqeBHTkJNT6IGvnzqH3cYvX9ElXTj7VgCp6RkkRHC4vea
+	 xtJG2U7RibInygbtfXKmaZX2JtG4yAqpvEvrLhzE=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 343BD20855
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726292AbeLJHm6 convert rfc822-to-8bit (ORCPT
+        id S1726255AbeLJHrM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 02:42:58 -0500
-Received: from mo4-p00-ob.smtp.rzone.de ([81.169.146.161]:25843 "EHLO
-        mo4-p00-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726029AbeLJHm6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 02:42:58 -0500
-X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMgPgp8VKxflSZ1P34KBp5hRw/qOxWRk4dCyh+3cT6eo6dYPn7/hui19zvYhTXI9T/Rws9qN1"
-X-RZG-CLASS-ID: mo00
-Received: from [IPv6:2001:16b8:264d:f100:746c:60ac:be83:9114]
-        by smtp.strato.de (RZmta 44.6 AUTH)
-        with ESMTPSA id k03348uBA7gkv4O
-        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
-        (Client did not present a certificate);
-        Mon, 10 Dec 2018 08:42:46 +0100 (CET)
-Content-Type: text/plain; charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
-Subject: Re: [Letux-kernel] [PATCH v2 4/5] gnss: sirf: add a separate supply for a lna
-From:   "H. Nikolaus Schaller" <hns@goldelico.com>
-In-Reply-To: <20181209195150.5192-5-andreas@kemnade.info>
-Date:   Mon, 10 Dec 2018 08:42:48 +0100
-Cc:     Johan Hovold <johan@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Discussions about the Letux Kernel 
-        <letux-kernel@openphoenux.org>
-Content-Transfer-Encoding: 8BIT
-Message-Id: <918A20A2-30F4-45C8-9883-038DE57716C3@goldelico.com>
-References: <20181209195150.5192-1-andreas@kemnade.info> <20181209195150.5192-5-andreas@kemnade.info>
-To:     Andreas Kemnade <andreas@kemnade.info>
-X-Mailer: Apple Mail (2.3124)
+        Mon, 10 Dec 2018 02:47:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33036 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726050AbeLJHrL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Dec 2018 02:47:11 -0500
+Received: from localhost (unknown [77.138.135.184])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6B98F2081F;
+        Mon, 10 Dec 2018 07:47:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544428031;
+        bh=mz00spIBHmLS6UXligirxC7HBp4NwhhqDFw9HuVnzM8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Q21bEvGAUHdCQY3nCUTpHAYWQisaD2Du5oim9uDERwqfF9Qx4ezfM51p2Q5jxWNGo
+         sLknip9U+Ds1nJPlWL2AU6wbFbj1IRh0IPv9S0QaDnL8iL8XWkOYOiCktYraPPHnVC
+         kWZskqCfRLoh+ZaI7+uMquYlF16zjJC8ZL2+bfaY=
+Date:   Mon, 10 Dec 2018 09:47:05 +0200
+From:   Leon Romanovsky <leon@kernel.org>
+To:     YueHaibing <yuehaibing@huawei.com>
+Cc:     dledford@redhat.com, jgg@ziepe.ca, linux-kernel@vger.kernel.org,
+        linux-rdma@vger.kernel.org
+Subject: Re: [PATCH -next] IB/mlx5: remove duplicated include from mlx5_ib.h
+Message-ID: <20181210074705.GD3933@mtr-leonro.mtl.com>
+References: <20181210072759.26128-1-yuehaibing@huawei.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="xo44VMWPx7vlQ2+2"
+Content-Disposition: inline
+In-Reply-To: <20181210072759.26128-1-yuehaibing@huawei.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
 
-> Am 09.12.2018 um 20:51 schrieb Andreas Kemnade <andreas@kemnade.info>:
-> 
-> Devices might have a separate lna between antenna output of the gps
+--xo44VMWPx7vlQ2+2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-some nitpicking: the LNA (low noise amplifier) is between the antenna
-and the GPS receiver. Therefore:
-
-s/between antenna output of the gps/between antenna input of the gps/
-
-Otherwise fine!
-
-BR and thanks,
-Nikolaus
-
-> chip and the antenna which might have a separate supply.
-> 
-> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+On Mon, Dec 10, 2018 at 03:27:59PM +0800, YueHaibing wrote:
+> Remove duplicated include.
+>
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 > ---
-> Changes in v2:
-> - handle lna also if there is no on-off gpio
-> - rebase on changed 2/5
-> 
-> drivers/gnss/sirf.c | 26 ++++++++++++++++++++++----
-> 1 file changed, 22 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/gnss/sirf.c b/drivers/gnss/sirf.c
-> index c64369494afb..d339e8ef2508 100644
-> --- a/drivers/gnss/sirf.c
-> +++ b/drivers/gnss/sirf.c
-> @@ -36,6 +36,7 @@ struct sirf_data {
-> 	struct serdev_device *serdev;
-> 	speed_t	speed;
-> 	struct regulator *vcc;
-> +	struct regulator *lna;
-> 	struct gpio_desc *on_off;
-> 	struct gpio_desc *wakeup;
-> 	int irq;
-> @@ -282,21 +283,32 @@ static int sirf_set_active(struct sirf_data *data, bool active)
-> static int sirf_runtime_suspend(struct device *dev)
-> {
-> 	struct sirf_data *data = dev_get_drvdata(dev);
-> +	int ret = 0;
-> 
-> 	if (!data->on_off)
-> -		return regulator_disable(data->vcc);
-> +		ret = regulator_disable(data->vcc);
-> +	else
-> +		ret = sirf_set_active(data, false);
-> 
-> -	return sirf_set_active(data, false);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return regulator_disable(data->lna);
-> }
-> 
-> static int sirf_runtime_resume(struct device *dev)
-> {
-> 	struct sirf_data *data = dev_get_drvdata(dev);
-> +	int ret;
-> +
-> +	ret = regulator_enable(data->lna);
-> +	if (ret)
-> +		return ret;
-> 
-> 	if (!data->on_off)
-> 		return regulator_enable(data->vcc);
-> -
-> -	return sirf_set_active(data, true);
-> +	else
-> +		return sirf_set_active(data, true);
-> }
-> 
-> static int __maybe_unused sirf_suspend(struct device *dev)
-> @@ -384,6 +396,12 @@ static int sirf_probe(struct serdev_device *serdev)
-> 		goto err_put_device;
-> 	}
-> 
-> +	data->lna = devm_regulator_get(dev, "lna");
-> +	if (IS_ERR(data->lna)) {
-> +		ret = PTR_ERR(data->lna);
-> +		goto err_put_device;
-> +	}
-> +
-> 	data->on_off = devm_gpiod_get_optional(dev, "sirf,onoff",
-> 			GPIOD_OUT_LOW);
-> 	if (IS_ERR(data->on_off))
-> -- 
-> 2.11.0
-> 
-> _______________________________________________
-> http://projects.goldelico.com/p/gta04-kernel/
-> Letux-kernel mailing list
-> Letux-kernel@openphoenux.org
-> http://lists.goldelico.com/mailman/listinfo.cgi/letux-kernel
+>  drivers/infiniband/hw/mlx5/mlx5_ib.h | 1 -
+>  1 file changed, 1 deletion(-)
+>
 
+Thanks,
+Acked-by: Leon Romanovsky <leonro@mellanox.com>
+
+--xo44VMWPx7vlQ2+2
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBAgAGBQJcDhn5AAoJEORje4g2clin4ecP/25J+S3sNfiveM55tBd5IRvX
+viCV0tOmHz0vdgUAA6oYvJjUxz23ugeM3rUfE9oneUausF4QMjn2OaiJpL1li2rl
+yNgHIHTjCaId2+4Zjo9AQpeJg8iyTLdrKK3bER/1s63gadcWRctRgzImc5caKHbq
+69chEHpV/ke2jTiVi3gwj4/DY2G/YHhuizmgldfioVwHqablwPps0V8qZezat4GP
+acslU0fHHMaYdLAgf3aKMJcn+cgdHoc9jFcYlrax2ejaCpGz1Vjoeqck7jCDoQ1c
+JDMthgcID2i1PEkrLsQLKE9PkwE1q1iP5zIwAkte2mMWF6x18Nec7ZEYoLfZApdG
+FzWBha4JRx7XaRIBPPbwSaCs7ILT/njzGtnkPdbR+LL7WJaIR5uIKq1FakssXW/E
+2tZ1YVphjOGm22CaDG08TggGy8NK4EKvBzabon12/g7+vI2+hzcMA569VfccVrYd
+CsuGr/0ikprgyphGLXIHyaBQxEn/Rz1DuQyEZ9r3Vt77/FKR00ifKGq8pei55XSo
+fW340gb9No8SBefiK0zF7bFif8Aj4dIJsxFiadMMTR2Zmcfir5LO8DBNHBqg4keb
+IWJL4IvUGgqjRL0rsmxF/P5g1Qb/OGb408or3zEFoL2m/LeEoOmmqF7RBDlKczw/
+nJeLY6IRj/xb4FqJmUib
+=So03
+-----END PGP SIGNATURE-----
+
+--xo44VMWPx7vlQ2+2--
