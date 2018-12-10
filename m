@@ -2,164 +2,116 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93CC6C04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 13:52:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CACDBC04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 13:53:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3AEB62086D
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 13:52:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8ED5F2086D
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 13:53:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lca.pw header.i=@lca.pw header.b="mQ0IrP52"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3AEB62086D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lca.pw
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="DQ/8yQFF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8ED5F2086D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727310AbeLJNwe (ORCPT
+        id S1727501AbeLJNxV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 08:52:34 -0500
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:44550 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726791AbeLJNwd (ORCPT
+        Mon, 10 Dec 2018 08:53:21 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:36195 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727185AbeLJNxU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 08:52:33 -0500
-Received: by mail-qk1-f196.google.com with SMTP id n12so6457664qkh.11
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Dec 2018 05:52:32 -0800 (PST)
+        Mon, 10 Dec 2018 08:53:20 -0500
+Received: by mail-pg1-f195.google.com with SMTP id n2so5005600pgm.3
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Dec 2018 05:53:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=8RbBHMlHC4MBAxHJ/VKYOqUPgKWsUsgjDHJ/6QsaCV4=;
-        b=mQ0IrP52cV3hOoqcWLeYg1PX6fs9QsNDlX6cQlAXGsO4doPFW969At55QsnHgFaGDA
-         u+ddBCkDjiqLEwyD5rX28kEIZJkQtb1+c+8IIhK8a8222JRMc6P/YQUmqgvL6ar1PGiq
-         fvByncSn08DCn06qSPc7wZXNqWGYzTHgMz+Cbe+eL4PPUm1UTS0z6bX56QiO76fY68Aj
-         6wb9gcVpX1KRQPgJdWuKbr11jG88BaMSt9qEZ88zw4HsZhaFuM54ASuRjorwYrHgImLx
-         KKLfOlReA81HL3hXlipz7/gIq4O/ucKawGYEHTFDdh199eAgaYAmwmW9iftqTUfAFmZ3
-         mSqg==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=xYkuV0k8aBBeyyBaATPTKd/YixCx26NfJlDybN3AfPU=;
+        b=DQ/8yQFFgOLJajz3T9XE/oiQ5JAzwHBGCRgvnrhldOwbhDkGb/+V19hy3dCELu6zcp
+         xa369bg+/uuE2bZj69zZwyd068dtpuRk4i8z1z4LXuan2SqgjkMWPTbEVHNY2oOMds0C
+         1y0xzyjiTQPWbn8Gzg2adQ2zjMMjENeFyPvRk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=8RbBHMlHC4MBAxHJ/VKYOqUPgKWsUsgjDHJ/6QsaCV4=;
-        b=Vao+tEhUdNfrHpUvK0Gm99NiRESlxJbBHo5iFg5C5AGaDIUU+DSOGFumXY15iw97E/
-         hCMXg5gD9VJYPnxVtk0B7jH5SdbFU+BurLUrfsX3lzF8giaxT7Gfc9elfdH8MWbWb9gC
-         DSivKITAbXBvzgVhq4aCA02RAtA74WfjeGK5hDOhPOdmr8+e/OxNkxpd9JxX+9VVvxCi
-         /9qXoJz8Si43DkNXKTNM4T080kXusCBluA8thOriL8BFTZM3lpUh1W+Du5zl7Rbdnqn3
-         6JC6/6jg4GDuMzDiIq1ZqM3ETZPWyVjb9A/sthi8uuGYDhd6iZ4jcCd7yLB+MGQqVZrz
-         T3+w==
-X-Gm-Message-State: AA+aEWZHMj+AwIOEIcR8rHzmBgIRyEeMJJJPW7n2pPXy74TomGtmCsN8
-        oQjFzYHm9be5mIhTuJavubxNTA==
-X-Google-Smtp-Source: AFSGD/U3hLsfUNTIL9SOo9dVZOP6/1WAjGlUmNPzoyhYTIIpXgqBrKN9XyeX5Rl+OJCvGospEWwsnQ==
-X-Received: by 2002:ae9:ef14:: with SMTP id d20mr11141349qkg.147.1544449952499;
-        Mon, 10 Dec 2018 05:52:32 -0800 (PST)
-Received: from ovpn-121-90.rdu2.redhat.com (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
-        by smtp.gmail.com with ESMTPSA id j33sm7104854qte.38.2018.12.10.05.52.31
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 10 Dec 2018 05:52:31 -0800 (PST)
-From:   Qian Cai <cai@lca.pw>
-To:     akpm@linux-foundation.org
-Cc:     mark.rutland@arm.com, marc.zyngier@arm.com,
-        daniel.lezcano@linaro.org, tglx@linutronix.de,
-        peterz@infradead.org, mingo@kernel.org, longman@redhat.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Qian Cai <cai@lca.pw>
-Subject: [RESEND PATCH v2] clocksource/arm_arch_timer: fix a lockdep warning
-Date:   Mon, 10 Dec 2018 08:52:28 -0500
-Message-Id: <20181210135228.49751-1-cai@lca.pw>
-X-Mailer: git-send-email 2.17.2 (Apple Git-113)
-In-Reply-To: <1543877121-4098-1-git-send-email-cai@gmx.us>
-References: <1543877121-4098-1-git-send-email-cai@gmx.us>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=xYkuV0k8aBBeyyBaATPTKd/YixCx26NfJlDybN3AfPU=;
+        b=gAnlkrKvqOOPRDDhGb7QToFHeJu38SCYhx/HVxwBob++YAg7d2Z3BXiqEiNQdR6dYN
+         IhAf/UA0uhklaQQkKVWCGqX0NWdtucFRdOv+NZL90ENnbFvxaxys6qlhxPgywSyScFOq
+         P0E7IghBpQt/1GonNxa58ddwxPwKuGwT57rhV+nXoWJe6o50ZaC6eyEn1mlmHbdGqNXl
+         c4jpv+Nh7GI3p4BvXyJMEcmRVYAVEjCDUr66tqe3VpMGTh9as4D2isZfmRrJ++iXm/zt
+         hyAWCSLkmMpa0E6/93BH/YA1bqHOmtP2/7sdd9Kqa7bh3fbH4zOKXs3bUNg/P+OLWNHQ
+         kI4g==
+X-Gm-Message-State: AA+aEWYDmBtZAvdgfYnVUAiFmAdjCP/t4+Url+GZ4dRSBJs4od0I3K1l
+        ZpN1o7o1qLAvqqNsoxXLpQST
+X-Google-Smtp-Source: AFSGD/Wt9gRb0DhY+iLQ1M7UOj8U44kU8/3yaK9jSLAB9nMUjtht8RCP/ez0PhQucquiIZ5nClEquA==
+X-Received: by 2002:a63:b94c:: with SMTP id v12mr10872025pgo.221.1544449999806;
+        Mon, 10 Dec 2018 05:53:19 -0800 (PST)
+Received: from Mani-XPS-13-9360 ([2409:4072:91e:2c01:40e1:a028:b090:9e12])
+        by smtp.gmail.com with ESMTPSA id l3sm20824651pga.92.2018.12.10.05.53.13
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 10 Dec 2018 05:53:19 -0800 (PST)
+Date:   Mon, 10 Dec 2018 19:23:09 +0530
+From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To:     Parthiban Nallathambi <pn@denx.de>
+Cc:     afaerber@suse.de, robh+dt@kernel.org, mark.rutland@arm.com,
+        wsa@the-dreams.de, linux-arm-kernel@lists.infradead.org,
+        linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux@cubietech.com,
+        thomas.liau@actions-semi.com
+Subject: Re: [PATCH v2 2/4] i2c: Add Actions Semiconductor Owl family S700
+ I2C support
+Message-ID: <20181210135309.GD25368@Mani-XPS-13-9360>
+References: <20181126185821.2480449-1-pn@denx.de>
+ <20181126185821.2480449-3-pn@denx.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181126185821.2480449-3-pn@denx.de>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Booting this Huawei TaiShan 2280 arm64 server generated this lockdep
-warning.
+On Mon, Nov 26, 2018 at 07:58:19PM +0100, Parthiban Nallathambi wrote:
+> Add S700 to the list of devices supported by Owl I2C driver.
+> 
+> Add Actions Semiconductor Owl family S900 I2C driver.
 
-[    0.000000]  lockdep_assert_cpus_held+0x50/0x60
-[    0.000000]  static_key_enable_cpuslocked+0x30/0xe8
-[    0.000000]  arch_timer_check_ool_workaround+0x128/0x2d0
-[    0.000000]  arch_timer_acpi_init+0x274/0x6ac
-[    0.000000]  acpi_table_parse+0x1ac/0x218
-[    0.000000]  __acpi_probe_device_table+0x164/0x1ec
-[    0.000000]  timer_probe+0x1bc/0x254
-[    0.000000]  time_init+0x44/0x98
-[    0.000000]  start_kernel+0x4ec/0x7d4
+S700 ;-)
 
-This is due to the commit cb538267ea1e ("jump_label/lockdep: Assert we hold
-the hotplug lock for _cpuslocked() operations").
+> 
+> Signed-off-by: Parthiban Nallathambi <pn@denx.de>
 
-Since it is applying a global workaround to all CPUs here, it did not hold
-any CPU locks in this path.
+With the change in subject,
 
-arch_timer_acpi_init
-  arch_timer_check_ool_workaround(ate_match_acpi_oem_info, table)
-    arch_timer_enable_workaround(wa, local = false)
-      for_each_possible_cpu()
-	per_cpu()
+Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 
-There is also another path did not have any CPU lock.
+Cheers,
+Mani
 
-time_init
-  clocksource_probe
-    arch_timer_of_init
-      arch_timer_check_ool_workaround(ate_match_dt, np)
-        arch_timer_enable_workaround(wa, local = false)
-
-When hot-adding a CPU, it will go with a slightly different route.
-
-arch_timer_starting_cpu
-  __arch_timer_setup
-    arch_timer_check_ool_workaround(ate_match_local_cap_id, NULL)
-      arch_timer_enable_workaround(wa, local = true)
-        __this_cpu_write()
-
-Hence, deal with them differently.
-
-Fixes: 450f9689f294 (clocksource/arm_arch_timer: Use
-static_branch_enable_cpuslocked())
-Signed-off-by: Qian Cai <cai@lca.pw>
----
-
-v2: fix the root cause instead of a workaround.
-
- drivers/clocksource/arm_arch_timer.c | 15 +++++++++------
- 1 file changed, 9 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/clocksource/arm_arch_timer.c b/drivers/clocksource/arm_arch_timer.c
-index 9a7d4dc00b6e..81dca7d31d13 100644
---- a/drivers/clocksource/arm_arch_timer.c
-+++ b/drivers/clocksource/arm_arch_timer.c
-@@ -492,17 +492,20 @@ void arch_timer_enable_workaround(const struct arch_timer_erratum_workaround *wa
- 
- 	if (local) {
- 		__this_cpu_write(timer_unstable_counter_workaround, wa);
-+
-+		/*
-+		 * Use the locked version, as we're called from the CPU
-+		 * hotplug framework. Otherwise, we end-up in
-+		 * deadlock-land.
-+		 */
-+		static_branch_enable_cpuslocked(&arch_timer_read_ool_enabled);
- 	} else {
- 		for_each_possible_cpu(i)
- 			per_cpu(timer_unstable_counter_workaround, i) = wa;
-+		/* A global workaround is not on the CPU hotplug path. */
-+		static_branch_enable(&arch_timer_read_ool_enabled);
- 	}
- 
--	/*
--	 * Use the locked version, as we're called from the CPU
--	 * hotplug framework. Otherwise, we end-up in deadlock-land.
--	 */
--	static_branch_enable_cpuslocked(&arch_timer_read_ool_enabled);
--
- 	/*
- 	 * Don't use the vdso fastpath if errata require using the
- 	 * out-of-line counter accessor. We may change our mind pretty
--- 
-2.17.2 (Apple Git-113)
-
+> ---
+>  drivers/i2c/busses/i2c-owl.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/i2c/busses/i2c-owl.c b/drivers/i2c/busses/i2c-owl.c
+> index 96b4572e6d9c..b6b5a495118b 100644
+> --- a/drivers/i2c/busses/i2c-owl.c
+> +++ b/drivers/i2c/busses/i2c-owl.c
+> @@ -475,6 +475,7 @@ static int owl_i2c_probe(struct platform_device *pdev)
+>  }
+>  
+>  static const struct of_device_id owl_i2c_of_match[] = {
+> +	{ .compatible = "actions,s700-i2c" },
+>  	{ .compatible = "actions,s900-i2c" },
+>  	{ /* sentinel */ }
+>  };
+> -- 
+> 2.17.2
+> 
