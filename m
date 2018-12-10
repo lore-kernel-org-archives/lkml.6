@@ -6,36 +6,39 @@ X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E584BC5CFFE
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 21:04:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED115C04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 21:04:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A6CB82082F
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 21:04:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A6CB82082F
+	by mail.kernel.org (Postfix) with ESMTP id B94F72082F
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 21:04:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B94F72082F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730061AbeLJVEH (ORCPT
+        id S1730045AbeLJVEE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 16:04:07 -0500
-Received: from sauhun.de ([88.99.104.3]:36716 "EHLO pokefinder.org"
+        Mon, 10 Dec 2018 16:04:04 -0500
+Received: from sauhun.de ([88.99.104.3]:36710 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729921AbeLJVDS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1729910AbeLJVDS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 10 Dec 2018 16:03:18 -0500
 Received: from localhost (p54B335CF.dip0.t-ipconnect.de [84.179.53.207])
-        by pokefinder.org (Postfix) with ESMTPSA id A7ECC4C3C71;
-        Mon, 10 Dec 2018 22:03:16 +0100 (CET)
+        by pokefinder.org (Postfix) with ESMTPSA id E8F174C3C6E;
+        Mon, 10 Dec 2018 22:03:15 +0100 (CET)
 From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
 To:     linux-i2c@vger.kernel.org
 Cc:     linux-renesas-soc@vger.kernel.org,
         Hans de Goede <hdegoede@redhat.com>,
         linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Jun Nie <jun.nie@linaro.org>, Shawn Guo <shawnguo@kernel.org>,
-        linux-kernel@vger.kernel.org
-Subject: [RFC/RFT 05/10] i2c: zx2967: use core helper to mark adapter suspended
-Date:   Mon, 10 Dec 2018 22:03:03 +0100
-Message-Id: <20181210210310.12677-6-wsa+renesas@sang-engineering.com>
+        Kamal Dasu <kdasu.kdev@gmail.com>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Gregory Fong <gregory.0xf0@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        bcm-kernel-feedback-list@broadcom.com, linux-kernel@vger.kernel.org
+Subject: [RFC/RFT 04/10] i2c: brcmstb: use core helper to mark adapter suspended
+Date:   Mon, 10 Dec 2018 22:03:02 +0100
+Message-Id: <20181210210310.12677-5-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20181210210310.12677-1-wsa+renesas@sang-engineering.com>
 References: <20181210210310.12677-1-wsa+renesas@sang-engineering.com>
@@ -44,53 +47,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Rejecting transfers should be handled by the core. Also, this will
-ensure proper locking which was forgotten in this open coded version
-and make sure resume mark is set after enabling clocks (not before).
+Rejecting transfers should be handled by the core.
 
 Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- drivers/i2c/busses/i2c-zx2967.c | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
+ drivers/i2c/busses/i2c-brcmstb.c | 13 ++-----------
+ 1 file changed, 2 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/i2c/busses/i2c-zx2967.c b/drivers/i2c/busses/i2c-zx2967.c
-index b8f9e020d80e..9fa48bbe0719 100644
---- a/drivers/i2c/busses/i2c-zx2967.c
-+++ b/drivers/i2c/busses/i2c-zx2967.c
-@@ -66,7 +66,6 @@ struct zx2967_i2c {
- 	int			msg_rd;
- 	u8			*cur_trans;
- 	u8			access_cnt;
--	bool			is_suspended;
- 	int			error;
+diff --git a/drivers/i2c/busses/i2c-brcmstb.c b/drivers/i2c/busses/i2c-brcmstb.c
+index 826d32049996..05c822e5a3f6 100644
+--- a/drivers/i2c/busses/i2c-brcmstb.c
++++ b/drivers/i2c/busses/i2c-brcmstb.c
+@@ -170,7 +170,6 @@ struct brcmstb_i2c_dev {
+ 	struct bsc_regs *bsc_regmap;
+ 	struct i2c_adapter adapter;
+ 	struct completion done;
+-	bool is_suspended;
+ 	u32 clk_freq_hz;
+ 	int data_regsz;
  };
+@@ -467,9 +466,6 @@ static int brcmstb_i2c_xfer(struct i2c_adapter *adapter,
+ 	int xfersz = brcmstb_i2c_get_xfersz(dev);
+ 	u32 cond, cond_per_msg;
  
-@@ -313,9 +312,6 @@ static int zx2967_i2c_xfer(struct i2c_adapter *adap,
- 	int ret;
- 	int i;
- 
--	if (i2c->is_suspended)
+-	if (dev->is_suspended)
 -		return -EBUSY;
 -
- 	zx2967_set_addr(i2c, msgs->addr);
- 
+ 	/* Loop through all messages */
  	for (i = 0; i < num; i++) {
-@@ -470,7 +466,7 @@ static int __maybe_unused zx2967_i2c_suspend(struct device *dev)
+ 		pmsg = &msgs[i];
+@@ -689,10 +685,7 @@ static int brcmstb_i2c_suspend(struct device *dev)
  {
- 	struct zx2967_i2c *i2c = dev_get_drvdata(dev);
+ 	struct brcmstb_i2c_dev *i2c_dev = dev_get_drvdata(dev);
  
--	i2c->is_suspended = true;
-+	i2c_mark_adapter_suspended(&i2c->adap, true);
- 	clk_disable_unprepare(i2c->clk);
- 
+-	i2c_lock_bus(&i2c_dev->adapter, I2C_LOCK_ROOT_ADAPTER);
+-	i2c_dev->is_suspended = true;
+-	i2c_unlock_bus(&i2c_dev->adapter, I2C_LOCK_ROOT_ADAPTER);
+-
++	i2c_mark_adapter_suspended(&i2c_dev->adapter, true);
  	return 0;
-@@ -480,8 +476,8 @@ static int __maybe_unused zx2967_i2c_resume(struct device *dev)
- {
- 	struct zx2967_i2c *i2c = dev_get_drvdata(dev);
+ }
  
--	i2c->is_suspended = false;
- 	clk_prepare_enable(i2c->clk);
-+	i2c_mark_adapter_suspended(&i2c->adap, false);
+@@ -700,10 +693,8 @@ static int brcmstb_i2c_resume(struct device *dev)
+ {
+ 	struct brcmstb_i2c_dev *i2c_dev = dev_get_drvdata(dev);
+ 
+-	i2c_lock_bus(&i2c_dev->adapter, I2C_LOCK_ROOT_ADAPTER);
+ 	brcmstb_i2c_set_bsc_reg_defaults(i2c_dev);
+-	i2c_dev->is_suspended = false;
+-	i2c_unlock_bus(&i2c_dev->adapter, I2C_LOCK_ROOT_ADAPTER);
++	i2c_mark_adapter_suspended(&i2c_dev->adapter, false);
  
  	return 0;
  }
