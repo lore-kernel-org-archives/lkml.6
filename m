@@ -2,132 +2,106 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9ED6CC6783B
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 15:57:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 318EFC6783B
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 15:57:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A2AC20851
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 15:57:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A2AC20851
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id D2FB02082F
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 15:57:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PR0IPxN1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D2FB02082F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728403AbeLJP5K (ORCPT
+        id S1728414AbeLJP5m (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 10:57:10 -0500
-Received: from mx2.suse.de ([195.135.220.15]:37742 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728187AbeLJP5J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 10:57:09 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id E38CBAC3D;
-        Mon, 10 Dec 2018 15:57:06 +0000 (UTC)
-Date:   Mon, 10 Dec 2018 16:57:05 +0100
-From:   Petr Mladek <pmladek@suse.com>
-To:     Feng Tang <feng.tang@intel.com>
-Cc:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        akpm@linux-foundation.org, bp@suse.de, keescook@chromium.org,
-        mm-commits@vger.kernel.org, sergey.senozhatsky@gmail.com,
-        stable@vger.kernel.org, tglx@linutronix.de,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Sasha Levin <sashal@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>, linux-kernel@vger.kernel.org
-Subject: Re: + panic-avoid-the-extra-noise-dmesg.patch added to -mm tree
-Message-ID: <20181210155705.qowbi7xvszzfonzk@pathway.suse.cz>
-References: <20181204154936.wbgcovzpc54n6dvs@shbuild888>
- <20181205022654.GA503@jagdpanzerIV>
- <20181205024713.nqyt6qiamokq7qtl@shbuild888>
- <20181205025728.GC503@jagdpanzerIV>
- <20181205052912.GA423@jagdpanzerIV>
- <20181205080044.GA11190@jagdpanzerIV>
- <20181205154620.4dqtledc2duhrp2c@shbuild888>
- <20181206035825.jz2bfh3errj23rjq@shbuild888>
- <20181207095004.GB3729@jagdpanzerIV>
- <20181210094554.z5n7dmkrnlcpygg4@shbuild888>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181210094554.z5n7dmkrnlcpygg4@shbuild888>
-User-Agent: NeoMutt/20170421 (1.8.2)
+        Mon, 10 Dec 2018 10:57:42 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:35410 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728187AbeLJP5m (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Dec 2018 10:57:42 -0500
+Received: by mail-pg1-f195.google.com with SMTP id s198so5160188pgs.2;
+        Mon, 10 Dec 2018 07:57:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=BCzBEDnhGYv6fZASQRuRyKhaGNE9/GQGK22qyWfyntw=;
+        b=PR0IPxN16V6LRWivt8Fva1q+zJj3QkgelDJ6IUNdDdx78gYBQcOQWuHvpwPMS7Ixql
+         a02RsPZAAFnBT0w16vJOkN8I9fTDxLOjCPN6ttPXuDJc9Ghd5YY/F9H2LlLG8iiIV2fL
+         j6AZn8WRNIsY+cvtUKAMmJeuXlumkM9GlcRiFQqFNKchZaT1rduGHfHpu7ijpgl7od1H
+         4ceB3jlqvZ1zl6tEpj+W1onpP8WU4+AtdomNzygU/2Ad/z9sxYumbR4RIkHMmxIFdqJy
+         iM+rBp3uMh0yNaEjVFA5wy3fJry67PjZJcOSJ/C4rT21Sefa3R/PDcC2hjHErBjiqfqD
+         jGhQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=BCzBEDnhGYv6fZASQRuRyKhaGNE9/GQGK22qyWfyntw=;
+        b=tks9wGhbnyGdSQoD4ZKjEi+vu7uRnJGmsZb7c4UzbgIEEefyH7wx8wO5PJR9pqRQJk
+         PCc1GvdbraG0htQ8uiLUNwBtzUO5kuiQS7vKNUglVBp0T7TLDn/crpXx8aJxR2We3zcT
+         qQXE97SlcYvKNb5WNDUvlJz3HCAdGJJn+s+jPCnXsL2mRlxvbCCXsgEtrlmNLX/pFWIO
+         XFF2k0mAg1MfmwxprASVi4MvZ+iCGZyljrdtYRHZJZyHtifEAuvhRK5S3zYckeqbcYwN
+         8YVzQpE+YOCVSW/dyJY5SQmoaHXi8u3XOOEA57OCAKQneWPt8Yx9dHtDj2//VEUjw6HU
+         Yb4A==
+X-Gm-Message-State: AA+aEWaKOBH7e2mrGxHB0rK8JQuW72w1UWL7KRFOiR5axkMQOq3nXuSG
+        dhD5PpxncE/AC5r8KNM/v68=
+X-Google-Smtp-Source: AFSGD/WTiR73ZsmMFoEiXOhPXHfvgEHX95f7h4Qe14GpKbC0cT+DPS/xt9Rv4m+jNdgAx7QFhBmYLA==
+X-Received: by 2002:a63:ee0e:: with SMTP id e14mr11115020pgi.8.1544457461616;
+        Mon, 10 Dec 2018 07:57:41 -0800 (PST)
+Received: from localhost (68.168.130.77.16clouds.com. [68.168.130.77])
+        by smtp.gmail.com with ESMTPSA id x26sm14665000pfn.50.2018.12.10.07.57.40
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 10 Dec 2018 07:57:40 -0800 (PST)
+From:   Yangtao Li <tiny.windzz@gmail.com>
+To:     davem@davemloft.net
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Yangtao Li <tiny.windzz@gmail.com>
+Subject: [PATCH] fjes: convert to DEFINE_SHOW_ATTRIBUTE
+Date:   Mon, 10 Dec 2018 10:57:38 -0500
+Message-Id: <20181210155738.20721-1-tiny.windzz@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 2018-12-10 17:45:54, Feng Tang wrote:
-> Hi Sergey,
-> 
-> + lkml.
-> 
-> On Fri, Dec 07, 2018 at 06:50:04PM +0900, Sergey Senozhatsky wrote:
-> > On (12/06/18 11:58), Feng Tang wrote:
-> > > > Same here, I tried on several platforms and hardly get the sysrq magic key
-> > > > working, though it works while system is running.
-> > > > 
-> > > > And it make me wondering if those workqueue dependent led blinking code
-> > > > can still really work.
-> > > 
-> > > Also, IMHO, if we need a panic blink method, it should better be simple
-> > > and robust with only HW registers access plus delay function, as I'm not
-> > > sure if the scheduling can still work. 
-> > > 
-> > > Anyway, can I propose to make the "local_irq_enable" conditional and off
-> > > by default, and add a warning.
-> > 
-> > I'm not sure what to do about this. I think that the behaviour is platform
-> > specific. For instance, arm64 keeps secondary CPUs in a busy loop
-> > 	while (1)
-> > 		cpu_relax();
-> 
-> Yes, it's similar to x86's handling for non-panic CPU.
-> 
-> > 
-> > (masked out) and on panic_cpu disables only SDEI (interrupts from firmware,
-> > if I got it right); so it seems that arm64 can handle IRQs after panic. And
-> > if there are platforms that handle IRQ (including sysrq) after panic, then
-> > both options - making printk a noop or keeping local irqs off - maybe can
-> > cause some problems. Or maybe not. We better ask arch people.
-> 
-> Yes, this is very valid concern. And after Petr and you raised it, I did
-> some experiments with 3 x86 platforms at my hand, one Apollolake IOT device
-> with serial console, one IvyBridge laptop and one Kabylake NUC, the magic key
-> all works well before panic, and fails after panic. But I did remember the
-> PageUp/PageDown key worked on some laptop years ago. And you actually raised a
-> good question: what do we expect for the post-panic kernel?
+Use DEFINE_SHOW_ATTRIBUTE macro to simplify the code.
 
-I am not sure why it does not work. But it would be nice if sysrq
-worked.
+Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+---
+ drivers/net/fjes/fjes_debugfs.c | 14 +-------------
+ 1 file changed, 1 insertion(+), 13 deletions(-)
 
+diff --git a/drivers/net/fjes/fjes_debugfs.c b/drivers/net/fjes/fjes_debugfs.c
+index 30052ebd52bf..7fed88ea27a5 100644
+--- a/drivers/net/fjes/fjes_debugfs.c
++++ b/drivers/net/fjes/fjes_debugfs.c
+@@ -62,19 +62,7 @@ static int fjes_dbg_status_show(struct seq_file *m, void *v)
+ 
+ 	return 0;
+ }
+-
+-static int fjes_dbg_status_open(struct inode *inode, struct file *file)
+-{
+-	return single_open(file, fjes_dbg_status_show, inode->i_private);
+-}
+-
+-static const struct file_operations fjes_dbg_status_fops = {
+-	.owner		= THIS_MODULE,
+-	.open		= fjes_dbg_status_open,
+-	.read		= seq_read,
+-	.llseek		= seq_lseek,
+-	.release	= single_release,
+-};
++DEFINE_SHOW_ATTRIBUTE(fjes_dbg_status);
+ 
+ void fjes_dbg_adapter_init(struct fjes_adapter *adapter)
+ {
+-- 
+2.17.0
 
-> For the v4 patch, my thought is, for experienced developers to make
-> sysrq/panic_blink work, it's easy to add "panic_keep_irq_on" to kernel cmdline,
-> or runtime change it by
->  "echo Y > /sys/module/kernel/parameters/panic_keep_irq_on"
-> while for normal user, they can by default see the clean panic call stack
-> either on a screen or a serial console.
-
-I see this problematic from two reasons:
-
-First, the blinking and especially sysrq might be handy but they
-are disabled by default. It is too late to do anything when the
-system is panicing.
-
-Second, new parameters or configure options should be avoided
-whenever possible. They are easy to implement but the are less
-easy to use. The current amount of them is already overhelming.
-
-
-I still think that calming down printk() is acceptable when
-it can be restored from sysrq.
-
-I think that only few people might be interested into debugging
-post-panic problems. We could print a warning for them about
-that printk() has got disabled.
-
-Best Regards,
-Petr
