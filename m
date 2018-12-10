@@ -2,140 +2,171 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 364DBC04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 20:11:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8EF2C04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 20:11:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EA1582082F
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 20:11:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="QffokOpy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA1582082F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=fb.com
+	by mail.kernel.org (Postfix) with ESMTP id 720342082F
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 20:11:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 720342082F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=windriver.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729222AbeLJUK7 (ORCPT
+        id S1729256AbeLJULU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 15:10:59 -0500
-Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:42822 "EHLO
-        mx0b-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726911AbeLJUK7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 15:10:59 -0500
-Received: from pps.filterd (m0109331.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id wBAK482u032718
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Dec 2018 12:10:58 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : mime-version : content-type; s=facebook;
- bh=9S7Huczn8dJSngKp1fJ/ZoCzFYxIA5gUIBVyYjRoTLU=;
- b=QffokOpyfi//hL2IyemcfdcwlDfvIq0yw8youxXiGgk8ozHdIb3a+NMgeAb+pZeJuHJk
- tf9L+bMva4W69EOkSj6d0lVEJo+lxr5La1gj0kI8gxVe/u/GtrWjRCU/Nr7nvGWgndHQ
- WPouJKSlCvn/rY25BDmyH/jfyCNV7aA7W68= 
-Received: from mail.thefacebook.com ([199.201.64.23])
-        by mx0a-00082601.pphosted.com with ESMTP id 2p9vdprmnd-10
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Dec 2018 12:10:58 -0800
-Received: from mx-out.facebook.com (2620:10d:c081:10::13) by
- mail.thefacebook.com (2620:10d:c081:35::130) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA) id 15.1.1531.3;
- Mon, 10 Dec 2018 12:08:24 -0800
-Received: by devvm4117.prn2.facebook.com (Postfix, from userid 167582)
-        id 7035E4BDB09B; Mon, 10 Dec 2018 12:08:15 -0800 (PST)
-Smtp-Origin-Hostprefix: devvm
-From:   Vijay Khemka <vijaykhemka@fb.com>
-Smtp-Origin-Hostname: devvm4117.prn2.facebook.com
-To:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Joel Stanley <joel@jms.id.au>,
-        Andrew Jeffery <andrew@aj.id.au>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-aspeed@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>
-CC:     <vijaykhemka@fb.com>,
-        "openbmc @ lists . ozlabs . org" <openbmc@lists.ozlabs.org>
-Smtp-Origin-Cluster: prn2c23
-Subject: [PATCH 1/2] ARM: dts: aspeed: Add KCS & lpc ctrl for Facebook
-Date:   Mon, 10 Dec 2018 12:07:51 -0800
-Message-ID: <20181210200753.3018124-1-vijaykhemka@fb.com>
-X-Mailer: git-send-email 2.17.1
-X-FB-Internal: Safe
+        Mon, 10 Dec 2018 15:11:20 -0500
+Received: from mail5.windriver.com ([192.103.53.11]:36166 "EHLO mail5.wrs.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726687AbeLJULT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Dec 2018 15:11:19 -0500
+Received: from ALA-HCA.corp.ad.wrs.com (ala-hca.corp.ad.wrs.com [147.11.189.40])
+        by mail5.wrs.com (8.15.2/8.15.2) with ESMTPS id wBAKAK8c006993
+        (version=TLSv1 cipher=AES128-SHA bits=128 verify=FAIL);
+        Mon, 10 Dec 2018 12:10:35 -0800
+Received: from yow-pgortmak-d1.corp.ad.wrs.com (128.224.56.57) by
+ ALA-HCA.corp.ad.wrs.com (147.11.189.40) with Microsoft SMTP Server id
+ 14.3.408.0; Mon, 10 Dec 2018 12:10:10 -0800
+Received: by yow-pgortmak-d1.corp.ad.wrs.com (Postfix, from userid 1000)        id
+ CE68A2E0922; Mon, 10 Dec 2018 15:10:09 -0500 (EST)
+Date:   Mon, 10 Dec 2018 15:10:09 -0500
+From:   Paul Gortmaker <paul.gortmaker@windriver.com>
+To:     Lee Jones <lee.jones@linaro.org>
+CC:     <linux-kernel@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        <patches@opensource.cirrus.com>,
+        Charles Keepax <ckeepax@opensource.cirrus.com>
+Subject: Re: [PATCH 17/18] mfd: wm8350-core: drop unused MODULE_ tags from
+ non-modular code
+Message-ID: <20181210201009.GD11670@windriver.com>
+References: <1544213465-16259-1-git-send-email-paul.gortmaker@windriver.com>
+ <1544213465-16259-18-git-send-email-paul.gortmaker@windriver.com>
+ <20181210063853.GU26661@dell>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-10_07:,,
- signatures=0
-X-Proofpoint-Spam-Reason: safe
-X-FB-Internal: Safe
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20181210063853.GU26661@dell>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Added kcs device and lpc ctrl device to enable LPC clock in Facebook
-Tiogapass device tree.
+[Re: [PATCH 17/18] mfd: wm8350-core: drop unused MODULE_ tags from non-modular code] On 10/12/2018 (Mon 06:38) Lee Jones wrote:
 
-Signed-off-by: Vijay Khemka <vijaykhemka@fb.com>
----
- .../dts/aspeed-bmc-facebook-tiogapass.dts     | 30 +++++++++++++++++++
- 1 file changed, 30 insertions(+)
+> On Fri, 07 Dec 2018, Paul Gortmaker wrote:
 
-diff --git a/arch/arm/boot/dts/aspeed-bmc-facebook-tiogapass.dts b/arch/arm/boot/dts/aspeed-bmc-facebook-tiogapass.dts
-index d9d7f208788a..9544fa2c1822 100644
---- a/arch/arm/boot/dts/aspeed-bmc-facebook-tiogapass.dts
-+++ b/arch/arm/boot/dts/aspeed-bmc-facebook-tiogapass.dts
-@@ -21,6 +21,18 @@
- 	memory@80000000 {
- 		reg = <0x80000000 0x20000000>;
- 	};
-+
-+	reserved-memory {
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges;
-+
-+		flash_memory: region@98000000 {
-+			no-map;
-+			reg = <0x98000000 0x04000000>; /* 64M */
-+		};
-+	};
-+
- 	iio-hwmon {
- 		compatible = "iio-hwmon";
- 		oemname0 = "MB_P3V3";
-@@ -62,6 +74,12 @@
- 	};
- };
+[...]
+
+> > Cc: Linus Walleij <linus.walleij@linaro.org>
+> > Cc: Lee Jones <lee.jones@linaro.org>
+> > Cc: patches@opensource.cirrus.com
+> > Acked-by: Linus Walleij <linus.walleij@linaro.org>
+> > Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+> 
+> When you submit this patch again (collecting more Acks or
+> what-have-you), please re-order your tags chronologically.
+
+Thanks. Will do.  Here is v3 --> v3a ; adding the orphan function
+removal rightfully requested by Charles.  With an ack or two on this,
+I will send a v4 with all Acks and in order after SOB, and hopefully
+we are done here, and can avoid a v5 of this series.
+
+Thanks for your patience everyone.
+Paul.
+--
+
+
+From 4711117ed697823f61974bdea5678e6ce225cf9b Mon Sep 17 00:00:00 2001
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Date: Wed, 6 Jul 2016 16:46:39 -0400
+Subject: [PATCH] mfd: wm8350-core: drop unused module infrastructure from
+ non-modular code
+
+The Kconfig currently controlling compilation of this code is:
+
+drivers/mfd/Kconfig:config MFD_WM8350
+drivers/mfd/Kconfig:    bool
+
+...meaning that it currently is not being built as a module by anyone.
+
+Lets remove the couple traces of modular infrastructure use, so that
+when reading the driver there is no doubt it is builtin-only.
+
+We delete the MODULE_LICENSE tag etc. since all that information
+is already contained at the top of the file in the comments.
+
+We replace module.h with init.h and export.h ; the latter since the
+file does export some symbols.
+
+Previous demodularizaion work has made wm8350_device_exit() no longer
+used, so it is also removed from the 8350 core code.
+
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: Charles Keepax <ckeepax@opensource.cirrus.com>
+Cc: Lee Jones <lee.jones@linaro.org>
+Cc: patches@opensource.cirrus.com
+Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+
+diff --git a/drivers/mfd/wm8350-core.c b/drivers/mfd/wm8350-core.c
+index 8a07c5634aee..9e1070f26b11 100644
+--- a/drivers/mfd/wm8350-core.c
++++ b/drivers/mfd/wm8350-core.c
+@@ -13,7 +13,8 @@
+  */
  
-+&lpc_ctrl {
-+	status = "okay";
-+	memory-region = <&flash_memory>;
-+	flash = <&spi1>;
-+};
-+
- &uart1 {
- 	// Host Console
- 	status = "okay";
-@@ -75,6 +93,18 @@
- 	status = "okay";
- };
+ #include <linux/kernel.h>
+-#include <linux/module.h>
++#include <linux/init.h>
++#include <linux/export.h>
+ #include <linux/slab.h>
+ #include <linux/bug.h>
+ #include <linux/device.h>
+@@ -442,30 +443,3 @@ int wm8350_device_init(struct wm8350 *wm8350, int irq,
+ 	return ret;
+ }
+ EXPORT_SYMBOL_GPL(wm8350_device_init);
+-
+-void wm8350_device_exit(struct wm8350 *wm8350)
+-{
+-	int i;
+-
+-	for (i = 0; i < ARRAY_SIZE(wm8350->pmic.led); i++)
+-		platform_device_unregister(wm8350->pmic.led[i].pdev);
+-
+-	for (i = 0; i < ARRAY_SIZE(wm8350->pmic.pdev); i++)
+-		platform_device_unregister(wm8350->pmic.pdev[i]);
+-
+-	platform_device_unregister(wm8350->wdt.pdev);
+-	platform_device_unregister(wm8350->rtc.pdev);
+-	platform_device_unregister(wm8350->power.pdev);
+-	platform_device_unregister(wm8350->hwmon.pdev);
+-	platform_device_unregister(wm8350->gpio.pdev);
+-	platform_device_unregister(wm8350->codec.pdev);
+-
+-	if (wm8350->irq_base)
+-		free_irq(wm8350->irq_base + WM8350_IRQ_AUXADC_DATARDY, wm8350);
+-
+-	wm8350_irq_exit(wm8350);
+-}
+-EXPORT_SYMBOL_GPL(wm8350_device_exit);
+-
+-MODULE_DESCRIPTION("WM8350 AudioPlus PMIC core driver");
+-MODULE_LICENSE("GPL");
+diff --git a/include/linux/mfd/wm8350/core.h b/include/linux/mfd/wm8350/core.h
+index 509481d9cf19..202d9bde2c7c 100644
+--- a/include/linux/mfd/wm8350/core.h
++++ b/include/linux/mfd/wm8350/core.h
+@@ -643,7 +643,6 @@ struct wm8350_platform_data {
+  */
+ int wm8350_device_init(struct wm8350 *wm8350, int irq,
+ 		       struct wm8350_platform_data *pdata);
+-void wm8350_device_exit(struct wm8350 *wm8350);
  
-+&kcs2 {
-+	// BMC KCS channel 2
-+	status = "okay";
-+	kcs_addr = <0xca8>;
-+};
-+
-+&kcs3 {
-+	// BMC KCS channel 3
-+	status = "okay";
-+	kcs_addr = <0xca2>;
-+};
-+
- &mac0 {
- 	status = "okay";
- 
+ /*
+  * WM8350 device IO
 -- 
-2.17.1
+2.7.4
 
