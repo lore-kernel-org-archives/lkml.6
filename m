@@ -3,103 +3,84 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C147C04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 20:24:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE990C04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 20:30:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD62E2084C
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 20:24:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD62E2084C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org
+	by mail.kernel.org (Postfix) with ESMTP id 8F26A20672
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 20:30:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F26A20672
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729430AbeLJUYF (ORCPT
+        id S1729327AbeLJUai (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 15:24:05 -0500
-Received: from vmicros1.altlinux.org ([194.107.17.57]:50114 "EHLO
-        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728182AbeLJUYF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 15:24:05 -0500
-Received: from mua.local.altlinux.org (mua.local.altlinux.org [192.168.1.14])
-        by vmicros1.altlinux.org (Postfix) with ESMTP id 333DE72CC66;
-        Mon, 10 Dec 2018 23:24:02 +0300 (MSK)
-Received: by mua.local.altlinux.org (Postfix, from userid 508)
-        id 27D457CF426; Mon, 10 Dec 2018 23:24:02 +0300 (MSK)
-Date:   Mon, 10 Dec 2018 23:24:02 +0300
-From:   "Dmitry V. Levin" <ldv@altlinux.org>
-To:     Max Filippov <jcmvbkbc@gmail.com>
-Cc:     Oleg Nesterov <oleg@redhat.com>,
-        Andrew Lutomirski <luto@kernel.org>,
-        Elvira Khabirova <lineprinter@altlinux.org>,
-        Eugene Syromyatnikov <esyr@redhat.com>,
-        Chris Zankel <chris@zankel.net>,
-        Paul Moore <paul@paul-moore.com>,
-        Eric Paris <eparis@redhat.com>, linux-xtensa@linux-xtensa.org,
-        linux-audit@redhat.com, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v5 19/25] xtensa: define syscall_get_* functions
-Message-ID: <20181210202402.GA18101@altlinux.org>
-References: <20181210042352.GA6092@altlinux.org>
- <20181210043041.GS6131@altlinux.org>
- <CAMo8Bf+s6xObgYoOOR0NTQZR-ReBbXmNv_5Jf=jX7J+bnDsTYQ@mail.gmail.com>
- <20181210125315.GB11942@altlinux.org>
- <CAMo8BfLbk8wfUNVZ_Qa9XVTtg4f5k5Wj6LFauroheheoTCJPxw@mail.gmail.com>
+        Mon, 10 Dec 2018 15:30:38 -0500
+Received: from foss.arm.com ([217.140.101.70]:34138 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729057AbeLJUai (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Dec 2018 15:30:38 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B0DEDEBD;
+        Mon, 10 Dec 2018 12:30:37 -0800 (PST)
+Received: from [10.1.197.21] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B7D433F59C;
+        Mon, 10 Dec 2018 12:30:34 -0800 (PST)
+Subject: Re: [PATCH v6 04/13] arm64/kvm: hide ptrauth from guests
+To:     Richard Henderson <richard.henderson@linaro.org>
+Cc:     linux-arm-kernel@lists.infradead.org,
+        Adam Wallis <awallis@codeaurora.org>,
+        Amit Kachhap <amit.kachhap@arm.com>,
+        Andrew Jones <drjones@redhat.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Christoffer Dall <christoffer.dall@arm.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Dave P Martin <dave.martin@arm.com>,
+        Jacob Bramley <jacob.bramley@arm.com>,
+        Kees Cook <keescook@chromium.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ramana Radhakrishnan <ramana.radhakrishnan@arm.com>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        kvmarm@lists.cs.columbia.edu, linux-kernel@vger.kernel.org
+References: <20181207183931.4285-1-kristina.martsenko@arm.com>
+ <20181207183931.4285-5-kristina.martsenko@arm.com>
+ <57966497-d21c-5439-e4ba-d75f5552282f@linaro.org>
+ <a2eb07e5-6663-aede-fb75-cc91cf3fffa5@arm.com>
+ <1f179017-4237-0d36-7adc-0a1470b5fd46@linaro.org>
+From:   Kristina Martsenko <kristina.martsenko@arm.com>
+Message-ID: <60a6ca4b-cfe9-1ed3-dce6-9f58575240ba@arm.com>
+Date:   Mon, 10 Dec 2018 20:30:33 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="k+w/mQv8wyuph6w0"
-Content-Disposition: inline
-In-Reply-To: <CAMo8BfLbk8wfUNVZ_Qa9XVTtg4f5k5Wj6LFauroheheoTCJPxw@mail.gmail.com>
+In-Reply-To: <1f179017-4237-0d36-7adc-0a1470b5fd46@linaro.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 10/12/2018 20:22, Richard Henderson wrote:
+> On 12/10/18 2:12 PM, Kristina Martsenko wrote:
+>> The plan was to disable trapping, yes. However, after that thread there
+>> was a retrospective change applied to the architecture, such that the
+>> XPACLRI (and XPACD/XPACI) instructions are no longer trapped by
+>> HCR_EL2.API. (The public documentation on this has not been updated
+>> yet.) This means that no HINT-space instructions should trap anymore.
+> 
+> Ah, thanks for the update.  I'll update my QEMU patch set.
+> 
+>>> It seems like the header comment here, and
+>> Sorry, which header comment?
+> 
+> Sorry, the patch commit message.
 
---k+w/mQv8wyuph6w0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Ah ok. Still seems correct.
 
-On Mon, Dec 10, 2018 at 12:14:37PM -0800, Max Filippov wrote:
-> On Mon, Dec 10, 2018 at 4:53 AM Dmitry V. Levin <ldv@altlinux.org> wrote:
-> > On Sun, Dec 09, 2018 at 09:02:50PM -0800, Max Filippov wrote:
-> > > How should we synchronize our changes?
-> >
-> > No problem, I can revert to the previous edition of this patch
-> > that just adds syscall_get_arch.
-> > Alternatively, you can just take that couple of patches (v5 18/25
-> > and v2 15/15) into your tree.
->=20
-> Sure I can do the second. Will it work for v2 16/15 that changes
-> syscall_get_arch adding an argument to it?
-
-No, I'm afraid it won't work for v2 16/15 (aka v5 22/25), which means
-I'd have to keep them in the series.
-
-
---=20
-ldv
-
---k+w/mQv8wyuph6w0
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBCAAGBQJcDsthAAoJEAVFT+BVnCUIDEMQAKlzFK2DLfgXd+Pyf5nmLsHC
-J7sKHGVvkhwIFX+bCznFKT/kw7tcW8qdLPJipjQPRMzK3+YLImq488p5Iegh806D
-vSJVfKSbj/ss29DEkZozCdwXIjLDbbj7yGQjpCTAtJ0aiPYV6iEV6kzxejoXjTta
-U5AxGUL4SvCciP3tx6Nzoo8vQMh4gnHadFoSo/svEeBwFZDmJ+6lBr8zUBdg+63U
-hYs5SJl/38kAZu1+ZV3DPq3iyJZIb8LBWLaA0tIQ7LJNy50QPrsg09B9z/pnROKg
-2ZJfMjsTqOHuEp7dfQ5l/8e63Emc83b7j0w8+9QEB83ITvFVpyqkoGIyjBqjqpXG
-p7bBOcuEs8Vpx7vG5pcN+SSBNh5TJBqZEy0XKC3zYuV6FCtptjj/o/EpFsyGnrcp
-NuobIKvkGA4rZj876aPOzFsa0O+mjzsbqYd8Kgf2Wllv9S3Gfe4IckkULaL3RlB4
-ffACMISTItqYbFUyXrstAsAyYEXlifGuO5IkI1PKFJ92MsahEDntImwtM0A+Fqgp
-vb30ZEbWAkDs2SB5p+6QxDjwYipn3tS+yj5AzH3L4H4iuPAUHaoukLKOIMLgk/Cq
-/4i4/rfwftEQ7G1bcNzny/LQLI74NYUK5P+uxfx+A2qHPINRQCcUDw+X7tCTrLVN
-LKCmv+5ECo2I31TQ43eI
-=x+NR
------END PGP SIGNATURE-----
-
---k+w/mQv8wyuph6w0--
+Kristina
