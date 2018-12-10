@@ -6,186 +6,159 @@ X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 120C1C04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 17:19:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EFB0C5CFFE
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 17:19:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D7F4A2082F
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 17:19:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D7F4A2082F
+	by mail.kernel.org (Postfix) with ESMTP id 5E46B2082F
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 17:19:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E46B2082F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727982AbeLJRTM (ORCPT
+        id S1728648AbeLJRTU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 12:19:12 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:37000 "EHLO mx1.redhat.com"
+        Mon, 10 Dec 2018 12:19:20 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:59292 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728379AbeLJRNf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1728384AbeLJRNf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 10 Dec 2018 12:13:35 -0500
 Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 2FB8E3154866;
+        by mx1.redhat.com (Postfix) with ESMTPS id 5217C2BEAE;
         Mon, 10 Dec 2018 17:13:35 +0000 (UTC)
 Received: from horse.redhat.com (unknown [10.18.25.234])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id C72D2605CF;
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 04CFE600D6;
         Mon, 10 Dec 2018 17:13:34 +0000 (UTC)
 Received: by horse.redhat.com (Postfix, from userid 10451)
-        id 76162224267; Mon, 10 Dec 2018 12:13:30 -0500 (EST)
+        id 814A722426A; Mon, 10 Dec 2018 12:13:30 -0500 (EST)
 From:   Vivek Goyal <vgoyal@redhat.com>
 To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         kvm@vger.kernel.org
 Cc:     vgoyal@redhat.com, miklos@szeredi.hu, stefanha@redhat.com,
         dgilbert@redhat.com, sweil@redhat.com, swhiteho@redhat.com
-Subject: [PATCH 28/52] Do fallocate() to grow file before mapping for file growing writes
-Date:   Mon, 10 Dec 2018 12:12:54 -0500
-Message-Id: <20181210171318.16998-29-vgoyal@redhat.com>
+Subject: [PATCH 31/52] dax: Pass dax_dev to dax_writeback_mapping_range()
+Date:   Mon, 10 Dec 2018 12:12:57 -0500
+Message-Id: <20181210171318.16998-32-vgoyal@redhat.com>
 In-Reply-To: <20181210171318.16998-1-vgoyal@redhat.com>
 References: <20181210171318.16998-1-vgoyal@redhat.com>
 X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Mon, 10 Dec 2018 17:13:35 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Mon, 10 Dec 2018 17:13:35 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-How to handle file growing writes. For now, this patch does fallocate() to
-grow file and then map it using dax. We need to figure out what's the best
-way to handle it.
+Right now dax_writeback_mapping_range() is passed a bdev and dax_dev
+is searched from that bdev name.
 
-This patch does fallocate() and setup mapping operations in
-fuse_dax_write_iter(), instead of iomap_begin(). I don't have access to file
-pointer needed to send a message to fuse daemon in iomap_begin().
-
-Dave Chinner has expressed concers with this approach as this is not
-atomic. If guest crashes after falloc() but before data was written,
-user will think that filesystem lost its data. So this is still an
-outstanding issue.
+virtio-fs does not have a bdev. So pass in dax_dev also to
+dax_writeback_mapping_range(). If dax_dev is passed in, bdev is not
+used otherwise dax_dev is searched using bdev.
 
 Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
 ---
- fs/fuse/file.c | 71 +++++++++++++++++++++++++++++++++++++++++++++-------------
- 1 file changed, 55 insertions(+), 16 deletions(-)
+ fs/dax.c            | 16 ++++++++++------
+ fs/ext4/inode.c     |  2 +-
+ fs/xfs/xfs_aops.c   |  2 +-
+ include/linux/dax.h |  6 ++++--
+ 4 files changed, 16 insertions(+), 10 deletions(-)
 
-diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-index 94ad76382a6f..41d773ba2c72 100644
---- a/fs/fuse/file.c
-+++ b/fs/fuse/file.c
-@@ -28,6 +28,9 @@ INTERVAL_TREE_DEFINE(struct fuse_dax_mapping,
-                      rb, __u64, __subtree_last,
-                      START, LAST, static inline, fuse_dax_interval_tree);
- 
-+static long __fuse_file_fallocate(struct file *file, int mode,
-+					loff_t offset, loff_t length);
-+
- static int fuse_send_open(struct fuse_conn *fc, u64 nodeid, struct file *file,
- 			  int opcode, struct fuse_open_out *outargp)
+diff --git a/fs/dax.c b/fs/dax.c
+index 6431c3aba182..1ae3a60c17d4 100644
+--- a/fs/dax.c
++++ b/fs/dax.c
+@@ -911,12 +911,12 @@ static int dax_writeback_one(struct xa_state *xas, struct dax_device *dax_dev,
+  * on persistent storage prior to completion of the operation.
+  */
+ int dax_writeback_mapping_range(struct address_space *mapping,
+-		struct block_device *bdev, struct writeback_control *wbc)
++		struct block_device *bdev, struct dax_device *dax_dev,
++		struct writeback_control *wbc)
  {
-@@ -1819,6 +1822,22 @@ static ssize_t fuse_dax_write_iter(struct kiocb *iocb, struct iov_iter *from)
- 	/* TODO file_update_time() but we don't want metadata I/O */
+ 	XA_STATE(xas, &mapping->i_pages, wbc->range_start >> PAGE_SHIFT);
+ 	struct inode *inode = mapping->host;
+ 	pgoff_t end_index = wbc->range_end >> PAGE_SHIFT;
+-	struct dax_device *dax_dev;
+ 	void *entry;
+ 	int ret = 0;
+ 	unsigned int scanned = 0;
+@@ -927,9 +927,12 @@ int dax_writeback_mapping_range(struct address_space *mapping,
+ 	if (!mapping->nrexceptional || wbc->sync_mode != WB_SYNC_ALL)
+ 		return 0;
  
- 	/* TODO handle growing the file */
-+	/* Grow file here if need be. iomap_begin() does not have access
-+	 * to file pointer
-+	 */
-+	if (iov_iter_rw(from) == WRITE &&
-+	    ((iocb->ki_pos + iov_iter_count(from)) > i_size_read(inode))) {
-+		ret = __fuse_file_fallocate(iocb->ki_filp, 0, iocb->ki_pos,
-+						iov_iter_count(from));
-+		if (ret < 0) {
-+			printk("fallocate(offset=0x%llx length=0x%lx)"
-+			" failed. err=%ld\n", iocb->ki_pos,
-+			iov_iter_count(from), ret);
-+			goto out;
-+		}
-+		pr_debug("fallocate(offset=0x%llx length=0x%lx)"
-+		" succeed. ret=%ld\n", iocb->ki_pos, iov_iter_count(from), ret);
+-	dax_dev = dax_get_by_host(bdev->bd_disk->disk_name);
+-	if (!dax_dev)
+-		return -EIO;
++	if (bdev) {
++		WARN_ON(dax_dev);
++		dax_dev = dax_get_by_host(bdev->bd_disk->disk_name);
++		if (!dax_dev)
++			return -EIO;
 +	}
  
- 	ret = dax_iomap_rw(iocb, from, &fuse_iomap_ops);
+ 	trace_dax_writeback_range(inode, xas.xa_index, end_index);
  
-@@ -3331,8 +3350,12 @@ fuse_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
+@@ -951,7 +954,8 @@ int dax_writeback_mapping_range(struct address_space *mapping,
+ 		xas_lock_irq(&xas);
+ 	}
+ 	xas_unlock_irq(&xas);
+-	put_dax(dax_dev);
++	if (bdev)
++		put_dax(dax_dev);
+ 	trace_dax_writeback_range_done(inode, xas.xa_index, end_index);
  	return ret;
  }
+diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+index 22a9d8159720..3569c260a3bd 100644
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -2978,7 +2978,7 @@ static int ext4_dax_writepages(struct address_space *mapping,
+ 	percpu_down_read(&sbi->s_journal_flag_rwsem);
+ 	trace_ext4_writepages(inode, wbc);
  
--static long fuse_file_fallocate(struct file *file, int mode, loff_t offset,
--				loff_t length)
-+/*
-+ * This variant does not take any inode lock and if locking is required,
-+ * caller is supposed to hold lock
-+ */
-+static long __fuse_file_fallocate(struct file *file, int mode,
-+					loff_t offset, loff_t length)
+-	ret = dax_writeback_mapping_range(mapping, inode->i_sb->s_bdev, wbc);
++	ret = dax_writeback_mapping_range(mapping, inode->i_sb->s_bdev, NULL, wbc);
+ 	trace_ext4_writepages_result(inode, wbc, ret,
+ 				     nr_to_write - wbc->nr_to_write);
+ 	percpu_up_read(&sbi->s_journal_flag_rwsem);
+diff --git a/fs/xfs/xfs_aops.c b/fs/xfs/xfs_aops.c
+index 338b9d9984e0..b1947beec50a 100644
+--- a/fs/xfs/xfs_aops.c
++++ b/fs/xfs/xfs_aops.c
+@@ -951,7 +951,7 @@ xfs_dax_writepages(
  {
- 	struct fuse_file *ff = file->private_data;
- 	struct inode *inode = file_inode(file);
-@@ -3346,8 +3369,6 @@ static long fuse_file_fallocate(struct file *file, int mode, loff_t offset,
- 		.mode = mode
- 	};
- 	int err;
--	bool lock_inode = !(mode & FALLOC_FL_KEEP_SIZE) ||
--			   (mode & FALLOC_FL_PUNCH_HOLE);
- 
- 	if (mode & ~(FALLOC_FL_KEEP_SIZE | FALLOC_FL_PUNCH_HOLE))
- 		return -EOPNOTSUPP;
-@@ -3355,17 +3376,13 @@ static long fuse_file_fallocate(struct file *file, int mode, loff_t offset,
- 	if (fc->no_fallocate)
- 		return -EOPNOTSUPP;
- 
--	if (lock_inode) {
--		inode_lock(inode);
--		if (mode & FALLOC_FL_PUNCH_HOLE) {
--			loff_t endbyte = offset + length - 1;
--			err = filemap_write_and_wait_range(inode->i_mapping,
--							   offset, endbyte);
--			if (err)
--				goto out;
--
--			fuse_sync_writes(inode);
--		}
-+	if (mode & FALLOC_FL_PUNCH_HOLE) {
-+		loff_t endbyte = offset + length - 1;
-+		err = filemap_write_and_wait_range(inode->i_mapping, offset,
-+							endbyte);
-+		if (err)
-+			goto out;
-+		fuse_sync_writes(inode);
- 	}
- 
- 	if (!(mode & FALLOC_FL_KEEP_SIZE))
-@@ -3401,9 +3418,31 @@ static long fuse_file_fallocate(struct file *file, int mode, loff_t offset,
- 	if (!(mode & FALLOC_FL_KEEP_SIZE))
- 		clear_bit(FUSE_I_SIZE_UNSTABLE, &fi->state);
- 
-+	return err;
-+}
-+
-+static long fuse_file_fallocate(struct file *file, int mode, loff_t offset,
-+				loff_t length)
-+{
-+	struct fuse_file *ff = file->private_data;
-+	struct inode *inode = file_inode(file);
-+	struct fuse_conn *fc = ff->fc;
-+	int err;
-+	bool lock_inode = !(mode & FALLOC_FL_KEEP_SIZE) ||
-+			   (mode & FALLOC_FL_PUNCH_HOLE);
-+
-+	if (mode & ~(FALLOC_FL_KEEP_SIZE | FALLOC_FL_PUNCH_HOLE))
-+		return -EOPNOTSUPP;
-+
-+	if (fc->no_fallocate)
-+		return -EOPNOTSUPP;
-+
- 	if (lock_inode)
--		inode_unlock(inode);
-+		inode_lock(inode);
- 
-+	err = __fuse_file_fallocate(file, mode, offset, length);
-+	if (lock_inode)
-+		inode_unlock(inode);
- 	return err;
+ 	xfs_iflags_clear(XFS_I(mapping->host), XFS_ITRUNCATED);
+ 	return dax_writeback_mapping_range(mapping,
+-			xfs_find_bdev_for_inode(mapping->host), wbc);
++			xfs_find_bdev_for_inode(mapping->host), NULL, wbc);
  }
  
+ STATIC int
+diff --git a/include/linux/dax.h b/include/linux/dax.h
+index 450b28db9533..a8461841f148 100644
+--- a/include/linux/dax.h
++++ b/include/linux/dax.h
+@@ -85,7 +85,8 @@ static inline void fs_put_dax(struct dax_device *dax_dev)
+ 
+ struct dax_device *fs_dax_get_by_bdev(struct block_device *bdev);
+ int dax_writeback_mapping_range(struct address_space *mapping,
+-		struct block_device *bdev, struct writeback_control *wbc);
++		struct block_device *bdev, struct dax_device *dax_dev,
++		struct writeback_control *wbc);
+ 
+ struct page *dax_layout_busy_page(struct address_space *mapping);
+ bool dax_lock_mapping_entry(struct page *page);
+@@ -117,7 +118,8 @@ static inline struct page *dax_layout_busy_page(struct address_space *mapping)
+ }
+ 
+ static inline int dax_writeback_mapping_range(struct address_space *mapping,
+-		struct block_device *bdev, struct writeback_control *wbc)
++		struct block_device *bdev, struct dax_device *dax_dev,
++		struct writeback_control *wbc)
+ {
+ 	return -EOPNOTSUPP;
+ }
 -- 
 2.13.6
 
