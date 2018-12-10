@@ -2,220 +2,138 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A04EC04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 10:18:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D655C04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 10:18:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4B31220821
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 10:18:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1420120870
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 10:18:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="QKLRXLD/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B31220821
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="COe6NzDr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1420120870
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726985AbeLJKS0 (ORCPT
+        id S1727013AbeLJKSh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 05:18:26 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:40342 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726923AbeLJKSY (ORCPT
+        Mon, 10 Dec 2018 05:18:37 -0500
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:41551 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726994AbeLJKSh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 05:18:24 -0500
-Received: by mail-wm1-f66.google.com with SMTP id q26so10529294wmf.5
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Dec 2018 02:18:22 -0800 (PST)
+        Mon, 10 Dec 2018 05:18:37 -0500
+Received: by mail-ed1-f65.google.com with SMTP id z28so8968525edi.8
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Dec 2018 02:18:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=e5cPfgHDBHHlkjbuTeNtqtIw6P84dpCVt6Hg5wYdwqA=;
-        b=QKLRXLD/jdS3rGDLrtslRH4R3nAzGm5M/A2nq7vzlony70KclBc6cedyYWJFWAG1Ri
-         k8Iwygku1dVgNGuoBK4wQX+26jx0cn7XQElLxbo1QXsNdgtB+t+rcXOU1wRt2srRg8RE
-         vCAXBXYGcsWl4hXsNudJo+Ur3ZTm77J97qLFk=
+        d=ffwll.ch; s=google;
+        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=NAyoTtRLEgV/ZLu0j1afB7pOEypu3oJUgTQbmtuJru0=;
+        b=COe6NzDrrA/t2I/UCH4hq/awqlSSzs/7g0b2lq/KwCoczu9lwnG+T3X9mEJ/7EsRph
+         pRRX2BXh1ocjoY76TBEFQeYiE5HJJRyCKdgEzeJEz0XvUDpeQeqQPKXmbQRn7+2EEKBN
+         9cG8u6IeD+lzVsp3WbZSijWOIt7WDf0Wp/f6A=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :message-id:date:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=e5cPfgHDBHHlkjbuTeNtqtIw6P84dpCVt6Hg5wYdwqA=;
-        b=mzUlgPT/d5UlrTQGFb+GXDWogcRxcQDcpGgxWhy1Z2msrSFNNN0LFh7thhHW9Pp6xT
-         aznVE1XN0fT3R+fWp+uqmZw5ojRHi0a6+EOQ1x2rlaoRfdKs8hf8DuqxuLSZdoP5HIRk
-         WR6Oakk7gTjkAo3btzktW/zMoiG+cDJFSN2MupkpyZvo0YVk5hsIiqQEpG8UT7M7m6V3
-         SX0PKd/2aGJzrpucQyAIFh9sdi0wETgCqshaq0riNs3mtlHHlLpN2zFmIPy+RHKLR3kP
-         jKd/GRPTQcT8Slw/OID0LkEbmdJJUrMnDpwkZ43ouAt0obf8WPCFGQCegGoFOWNlEvwy
-         miQg==
-X-Gm-Message-State: AA+aEWZ83TplTFaL7jYal5BSj7ua4w8C1cFYxgR+jM/zmY8bwLngz4vW
-        0Q97mmo4Q3kLNLEn58nnmHdnWg==
-X-Google-Smtp-Source: AFSGD/WjbmefNG6dovYhgaq6NDUkxSluSfylpVTJX+jsr4BJiX5TiR92FF/5UyHC4hybqdjBKOteXw==
-X-Received: by 2002:a1c:e046:: with SMTP id x67mr9702713wmg.122.1544437101203;
-        Mon, 10 Dec 2018 02:18:21 -0800 (PST)
-Received: from [10.44.66.8] ([212.45.67.2])
-        by smtp.googlemail.com with ESMTPSA id k135sm17922945wmd.42.2018.12.10.02.18.18
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 10 Dec 2018 02:18:20 -0800 (PST)
-Subject: Re: [PATCH v10 0/8] Introduce on-chip interconnect API
-To:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     evgreen@chromium.org, Linux PM <linux-pm@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Saravana Kannan <skannan@codeaurora.org>,
-        bjorn.andersson@linaro.org,
-        Amit Kucheria <amit.kucheria@linaro.org>,
-        seansw@qti.qualcomm.com, daidavid1@codeaurora.org,
-        Mark Rutland <mark.rutland@arm.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        abailon@baylibre.com, maxime.ripard@bootlin.com,
-        Arnd Bergmann <arnd@arndb.de>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        ksitaraman@nvidia.com, sanjayc@nvidia.com,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        linux-tegra@vger.kernel.org, Doug Anderson <dianders@chromium.org>
-References: <20181127180349.29997-1-georgi.djakov@linaro.org>
- <CAE=gft4jUjr3oDAZrM=-orLM-YoVAwa+e=crDDC_p9ArGE1dig@mail.gmail.com>
- <20181206145547.GA7884@kroah.com>
- <CAJZ5v0gP50tmq4ZzB7LLSaWGWjGjK31y=qFg5PS9B7c2XQ+DyQ@mail.gmail.com>
-From:   Georgi Djakov <georgi.djakov@linaro.org>
-Openpgp: preference=signencrypt
-Autocrypt: addr=georgi.djakov@linaro.org; prefer-encrypt=mutual; keydata=
- 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
- KEmKjLDvB0pePJkdTw==
-Message-ID: <6923d6ed-e357-b083-1830-8396d788efe5@linaro.org>
-Date:   Mon, 10 Dec 2018 12:18:17 +0200
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=NAyoTtRLEgV/ZLu0j1afB7pOEypu3oJUgTQbmtuJru0=;
+        b=ect3aRn58k36QYAegvPTOgA0YqgA8m2AMJppgmzjIDpQ5sPRn7now5nBUum4qYxHoh
+         f3ehWGVakhnIPlYzawt/h2wx25ChBf3IHHtnBDzomShiL0QuRzOdjghWTjxHYCq2dpyp
+         34/D8pP+rdHHDxNWXDpKDn50Jxox2hgqaWea6MKPYsh9DoR5wnACaeqe4Ky0txYTcvJ/
+         3P+JFK5uSWgWO7OlDVnZWaK76ipHkXOv8Fp8ONT7G/9jrAyK6RZyjV5eQqCwjpWI/+iw
+         NWJOU0AUfZiOO2erNUPBlQwL/cobASZoCh0s/8zmv9Wgx9szcCHbqBKPmmzbpDYaDTnU
+         uJhw==
+X-Gm-Message-State: AA+aEWbkBTkYBWOC34rY2DG/wpQ5R3n51gLiVxcs2JTXXGYDHhvVVer6
+        wRutGZsYu6WIbr+O792O0OWyWg==
+X-Google-Smtp-Source: AFSGD/V9fF2TbVZ1jalCYbRCvHzMPjr9qO6Ad4XOIj4FTsBRF7KGerf/R9vlp1Mygh8H1j8uYe5XUA==
+X-Received: by 2002:a17:906:37da:: with SMTP id o26-v6mr9251480ejc.179.1544437115071;
+        Mon, 10 Dec 2018 02:18:35 -0800 (PST)
+Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
+        by smtp.gmail.com with ESMTPSA id c11-v6sm1726157ejm.67.2018.12.10.02.18.33
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 10 Dec 2018 02:18:34 -0800 (PST)
+Date:   Mon, 10 Dec 2018 11:18:32 +0100
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Daniel Vetter <daniel.vetter@ffwll.ch>,
+        LKML <linux-kernel@vger.kernel.org>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        Ramalingam C <ramalingam.c@intel.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Daniel Vetter <daniel.vetter@intel.com>
+Subject: Re: [PATCH] drivers/base: use a worker for sysfs unbind
+Message-ID: <20181210101832.GN21184@phenom.ffwll.local>
+Mail-Followup-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        Ramalingam C <ramalingam.c@intel.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Daniel Vetter <daniel.vetter@intel.com>
+References: <20181210084653.7268-1-daniel.vetter@ffwll.ch>
+ <20181210100634.GA8836@kroah.com>
 MIME-Version: 1.0
-In-Reply-To: <CAJZ5v0gP50tmq4ZzB7LLSaWGWjGjK31y=qFg5PS9B7c2XQ+DyQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181210100634.GA8836@kroah.com>
+X-Operating-System: Linux phenom 4.18.0-2-amd64 
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rafael,
-
-On 12/10/18 11:04, Rafael J. Wysocki wrote:
-> On Thu, Dec 6, 2018 at 3:55 PM Greg KH <gregkh@linuxfoundation.org> wrote:
->>
->> On Wed, Dec 05, 2018 at 12:41:35PM -0800, Evan Green wrote:
->>> On Tue, Nov 27, 2018 at 10:03 AM Georgi Djakov <georgi.djakov@linaro.org> wrote:
->>>>
->>>> Modern SoCs have multiple processors and various dedicated cores (video, gpu,
->>>> graphics, modem). These cores are talking to each other and can generate a
->>>> lot of data flowing through the on-chip interconnects. These interconnect
->>>> buses could form different topologies such as crossbar, point to point buses,
->>>> hierarchical buses or use the network-on-chip concept.
->>>>
->>>> These buses have been sized usually to handle use cases with high data
->>>> throughput but it is not necessary all the time and consume a lot of power.
->>>> Furthermore, the priority between masters can vary depending on the running
->>>> use case like video playback or CPU intensive tasks.
->>>>
->>>> Having an API to control the requirement of the system in terms of bandwidth
->>>> and QoS, so we can adapt the interconnect configuration to match those by
->>>> scaling the frequencies, setting link priority and tuning QoS parameters.
->>>> This configuration can be a static, one-time operation done at boot for some
->>>> platforms or a dynamic set of operations that happen at run-time.
->>>>
->>>> This patchset introduce a new API to get the requirement and configure the
->>>> interconnect buses across the entire chipset to fit with the current demand.
->>>> The API is NOT for changing the performance of the endpoint devices, but only
->>>> the interconnect path in between them.
->>>
->>> For what it's worth, we are ready to land this in Chrome OS. I think
->>> this series has been very well discussed and reviewed, hasn't changed
->>> much in the last few spins, and is in good enough shape to use as a
->>> base for future patches. Georgi's also done a great job reaching out
->>> to other SoC vendors, and there appears to be enough consensus that
->>> this framework will be usable by more than just Qualcomm. There are
->>> also several drivers out on the list trying to add patches to use this
->>> framework, with more to come, so it made sense (to us) to get this
->>> base framework nailed down. In my experiments this is an important
->>> piece of the overall power management story, especially on systems
->>> that are mostly idle.
->>>
->>> I'll continue to track changes to this series and we will ultimately
->>> reconcile with whatever happens upstream, but I thought it was worth
->>> sending this note to express our "thumbs up" towards this framework.
->>
->> Looks like a v11 will be forthcoming, so I'll wait for that one to apply
->> it to the tree if all looks good.
+On Mon, Dec 10, 2018 at 11:06:34AM +0100, Greg Kroah-Hartman wrote:
+> On Mon, Dec 10, 2018 at 09:46:53AM +0100, Daniel Vetter wrote:
+> > Drivers might want to remove some sysfs files, which needs the same
+> > locks and ends up angering lockdep. Relevant snippet of the stack
+> > trace:
+> > 
+> >   kernfs_remove_by_name_ns+0x3b/0x80
+> >   bus_remove_driver+0x92/0xa0
+> >   acpi_video_unregister+0x24/0x40
+> >   i915_driver_unload+0x42/0x130 [i915]
+> >   i915_pci_remove+0x19/0x30 [i915]
+> >   pci_device_remove+0x36/0xb0
+> >   device_release_driver_internal+0x185/0x250
+> >   unbind_store+0xaf/0x180
+> >   kernfs_fop_write+0x104/0x190
+> > 
+> > I've stumbled over this because some new patches by Ram connect the
+> > snd-hda-intel unload (where we do use sysfs unbind) with the locking
+> > chains in the i915 unload code (but without creating a new loop),
+> > which upset our CI. But the bug is already there and can be easily
+> > reproduced by unbind i915 directly.
 > 
-> I'm honestly not sure if it is ready yet.
-> 
-> New versions are coming on and on, which may make such an impression,
-> but we had some discussion on it at the LPC and some serious questions
-> were asked during it, for instance regarding the DT binding introduced
-> here.  I'm not sure how this particular issue has been addressed here,
-> for example.
+> This is odd, why wouldn't any driver hit this issue?  And why now since
+> you say this is triggerable today?
 
-There have been no changes in bindings since v4 (other than squashing
-consumer and provider bindings into a single patch and fixing typos).
+The above backtrace is triggered by unbinding i915 on current upstream
+kernels. Note: Will crash later on rather badly in the
+fbdev/fbcon/vtconsole hell, but that's separate issue (which can be worked
+around by first unbinding fbcon manually through sysfs).
 
-The last DT comment was on v9 [1] where Rob wanted confirmation from
-other SoC vendors that this works for them too. And now we have that
-confirmation and there are patches posted on the list [2].
+> I know scsi was doing some strange things like trying to remove the
+> device itself from a sysfs callback on the device, which requires it to
+> just call a different kobject function created just for that type of
+> thing.  Would that also make sense to do here instead of your workqueue?
 
-The second thing (also discussed at LPC) was about possible cases where
-some consumer drivers can't calculate how much bandwidth they actually
-need and how to address that. The proposal was to extend the OPP
-bindings with one more property, but this is not part of this patchset.
-It is a future step that needs more discussion on the mailing list. If a
-driver really needs some bandwidth data now, it should be put into the
-driver and not in DT. After we have enough consumers, we can discuss
-again if it makes sense to extract something into DT or not.
+Note how we blow up on unregistering sw device instances supported by i915
+in entirely different subsystems. I guess most drivers just have sysfs
+files for their own stuff, where this is done as you describe. The problem
+is that there's an awful lot of unrelated stuff hanging off i915.
 
-Thanks,
-Georgi
+Or maybe acpi_video is busted, and should be using a different function.
+You haven't said which one, and I have no idea which one it is ...
 
-[1] https://lkml.org/lkml/2018/9/25/939
-[2] https://lkml.org/lkml/2018/11/28/12
+And in case the context wasn't clear: This is unbinding the i915 pci
+driver which triggers the above lockdep splat recursion.
+
+Thanks, Daniel
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
