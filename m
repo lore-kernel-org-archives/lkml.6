@@ -2,123 +2,81 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13698C04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 09:00:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82FD5C04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 09:01:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D4E8520865
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 09:00:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D4E8520865
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 49FC62082F
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 09:01:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 49FC62082F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726872AbeLJJAz (ORCPT
+        id S1726881AbeLJJBs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 04:00:55 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:50889 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726531AbeLJJAy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 04:00:54 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 6D51820CE8; Mon, 10 Dec 2018 10:00:52 +0100 (CET)
-Received: from aptenodytes (aaubervilliers-681-1-79-44.w90-88.abo.wanadoo.fr [90.88.21.44])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 57D8A20E31;
-        Mon, 10 Dec 2018 10:00:34 +0100 (CET)
-Message-ID: <c276fb045ab285c0907c4831f3b71a31f09cd4a5.camel@bootlin.com>
-Subject: Re: [linux-sunxi] [PATCH v2 15/15] arm64: dts: allwinner: a64: Add
- Video Engine node
-From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-To:     Jernej =?UTF-8?Q?=C5=A0krabec?= <jernej.skrabec@gmail.com>,
-        linux-sunxi@googlegroups.com
-Cc:     linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        devel@driverdev.osuosl.org,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>
-Date:   Mon, 10 Dec 2018 10:00:34 +0100
-In-Reply-To: <2823800.C4zEU5jiS7@jernej-laptop>
-References: <20181205092444.29497-1-paul.kocialkowski@bootlin.com>
-         <20181205092444.29497-16-paul.kocialkowski@bootlin.com>
-         <2823800.C4zEU5jiS7@jernej-laptop>
-Organization: Bootlin
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Mon, 10 Dec 2018 04:01:48 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:48996 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726531AbeLJJBr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Dec 2018 04:01:47 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 59E4B1596;
+        Mon, 10 Dec 2018 01:01:47 -0800 (PST)
+Received: from localhost (e113682-lin.copenhagen.arm.com [10.32.144.41])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BEB343F575;
+        Mon, 10 Dec 2018 01:01:46 -0800 (PST)
+Date:   Mon, 10 Dec 2018 10:01:45 +0100
+From:   Christoffer Dall <christoffer.dall@arm.com>
+To:     Anshuman Khandual <anshuman.khandual@arm.com>
+Cc:     Punit Agrawal <punit.agrawal@arm.com>,
+        kvmarm@lists.cs.columbia.edu, suzuki.poulose@arm.com,
+        marc.zyngier@arm.com, Catalin Marinas <catalin.marinas@arm.com>,
+        will.deacon@arm.com, linux-kernel@vger.kernel.org,
+        Russell King <linux@armlinux.org.uk>, punitagrawal@gmail.com,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v9 3/8] KVM: arm/arm64: Introduce helpers to manipulate
+ page table entries
+Message-ID: <20181210090145.GE30263@e113682-lin.lund.arm.com>
+References: <20181031175745.18650-1-punit.agrawal@arm.com>
+ <20181031175745.18650-4-punit.agrawal@arm.com>
+ <396402d5-fddf-ab72-01c4-80dd1a0d4d44@arm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <396402d5-fddf-ab72-01c4-80dd1a0d4d44@arm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On Fri, 2018-12-07 at 22:22 +0100, Jernej Škrabec wrote:
-> Hi!
+On Mon, Dec 03, 2018 at 07:20:08PM +0530, Anshuman Khandual wrote:
 > 
-> Dne sreda, 05. december 2018 ob 10:24:44 CET je Paul Kocialkowski napisal(a):
-> > This adds the Video Engine node for the A64. Since it can map the whole
-> > DRAM range, there is no particular need for a reserved memory node
-> > (unlike platforms preceding the A33).
+> 
+> On 10/31/2018 11:27 PM, Punit Agrawal wrote:
+> > Introduce helpers to abstract architectural handling of the conversion
+> > of pfn to page table entries and marking a PMD page table entry as a
+> > block entry.
+> 
+> Why is this necessary ? we would still need to access PMD, PUD as is
+> without any conversion. IOW KVM knows the breakdown of the page table
+> at various levels. Is this something required from generic KVM code ?
+>   
 > > 
-> > Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-> > ---
-> >  arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 11 +++++++++++
-> >  1 file changed, 11 insertions(+)
-> > 
-> > diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-> > b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi index
-> > 8557d52c7c99..8d024c10d7cb 100644
-> > --- a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-> > +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-> > @@ -397,6 +397,17 @@
-> >  			};
-> >  		};
-> > 
-> > +		video-codec@1c0e000 {
-> > +			compatible = "allwinner,sun50i-h5-video-engine";
+> > The helpers are introduced in preparation for supporting PUD hugepages
+> > at stage 2 - which are supported on arm64 but do not exist on arm.
 > 
-> You meant A64 instead of H5, right?
-
-Ah yes definitely, that's a mistake right here.
-
-I'll send a follow-up patch for switching the compatible to describe
-the a64 instead of the h5. In practice, having the a64 use the h5
-compatible doesn't cause any issue, but it should be fixed
-nevertheless.
-
-Cheers,
-
-Paul
-
-> Best regards,
-> Jernej
+> Some of these patches (including the earlier two) are good on it's
+> own. Do we have still mention in commit message about the incoming PUD
+> enablement as the reason for these cleanup patches ?
 > 
-> > +			reg = <0x01c0e000 0x1000>;
-> > +			clocks = <&ccu CLK_BUS_VE>, <&ccu CLK_VE>,
-> > +				 <&ccu CLK_DRAM_VE>;
-> > +			clock-names = "ahb", "mod", "ram";
-> > +			resets = <&ccu RST_BUS_VE>;
-> > +			interrupts = <GIC_SPI 58 IRQ_TYPE_LEVEL_HIGH>;
-> > +			allwinner,sram = <&ve_sram 1>;
-> > +		};
-> > +
-> >  		mmc0: mmc@1c0f000 {
-> >  			compatible = "allwinner,sun50i-a64-mmc";
-> >  			reg = <0x01c0f000 0x1000>;
-> 
-> 
-> 
--- 
-Paul Kocialkowski, Bootlin (formerly Free Electrons)
-Embedded Linux and kernel engineering
-https://bootlin.com
 
+Does it hurt?  What is your concern here?
+
+
+Thanks,
+
+    Christoffer
