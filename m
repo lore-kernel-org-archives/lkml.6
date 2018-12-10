@@ -6,50 +6,49 @@ X-Spam-Status: No, score=-0.6 required=3.0 tests=FROM_LOCAL_HEX,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62DCFC65BAF
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 07:49:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09B91C04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 07:49:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2CFD92081F
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 07:49:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2CFD92081F
+	by mail.kernel.org (Postfix) with ESMTP id BEFEC20855
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 07:49:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BEFEC20855
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726517AbeLJHtE (ORCPT
+        id S1726545AbeLJHtH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 02:49:04 -0500
-Received: from mail-io1-f69.google.com ([209.85.166.69]:43521 "EHLO
-        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726158AbeLJHtD (ORCPT
+        Mon, 10 Dec 2018 02:49:07 -0500
+Received: from mail-io1-f72.google.com ([209.85.166.72]:34182 "EHLO
+        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726209AbeLJHtE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 02:49:03 -0500
-Received: by mail-io1-f69.google.com with SMTP id k4so10490054ioc.10
+        Mon, 10 Dec 2018 02:49:04 -0500
+Received: by mail-io1-f72.google.com with SMTP id y19so10523142ioq.1
         for <linux-kernel@vger.kernel.org>; Sun, 09 Dec 2018 23:49:03 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=AffpOObK+6hbkxl9D9m3W2gl8zOZBlO+JLKeIvuBjhs=;
-        b=G1ifLTEYuznJcFQFEprDo+Jt7etGn1zaHFlkJL7TAIg25Q1kChdqBbGJH6ut4U95xG
-         Pej3vt8BRxxkk7yNeitvPRz+1kgCvRRf3mp188iiFBTisjz3X8jd9IemLqet1JGCTT1+
-         vXjxMAF+40zTiSKXVaydX4WO9jdIchcbe+892Q99Q/htGQ1SxPtKS/2MBx13KOlYg7g2
-         dawkcS71GvPl1GB9A0NHxfKcnE8WZu7qwcX3ejkQlsoRB21meZL/Rrlyh0/kS0G87ZlP
-         WHjr3ByUVspqzJbn4b107+Tol437KgZjj7xIy6rt/reJCeKNZUlyW7oEI/kBG9Qp8zZc
-         JYPA==
-X-Gm-Message-State: AA+aEWZJRxSTuv2hn2TE7AZDbgxZN/v/vF+u3x/aubnzAUlT7BN9rsvy
-        VOiuMnGE0kqaom8Z98Lih4DMJBFdugX4UtTtAFyUU40rc4R7
-X-Google-Smtp-Source: AFSGD/UECkz1sY1iovffKkXvEMeTM4LQdkE/PNjMxqGqxwka0gB5UJ11Rg53eb+ssqTBJhMmn7Gu1ZMcExP4J2es+rcp51aoSRjN
+        bh=fskeLgDIlTWoRRDITccqr/L2+yuEhPN362olBBjX+KM=;
+        b=kD8fwoAfbrnfPBddhsDCwEn06vkHfZjKL7DWCPPMLGFbv+4zuLwlOsS4yjycqyBfoO
+         iJ/JjpY+zdaVozpw1tYpu6WBxlInEAmdg72YwQpgAS6wXcmsVb5/V1Xnx4ZkDXQH3PlH
+         fbRt8Rak6CWOAi+NfvGc1bg1qu/Opv70SOcklsFTzPFWaTDsYts1XhzLoE2lYJUKwzvK
+         jk78btENcPVVBpAxrGxNhOKN2Q8n4kVkHbw7PemVGCimgSuoK/l7HRLbkbXiLppN410T
+         OwhjnTFLAh+MoaSHpQKEXnGEfaRiORekuMaRC0HgfOfBy7zUre8PgJh74yxKtH1FX+gn
+         X6Ug==
+X-Gm-Message-State: AA+aEWbo+JfGADckhLKs0U21DzFXx9IEv6zPYJtDu2P6RyFf5eZFugey
+        Tcf8rlbPeOCC4gY4Q38JmFFcRFNBjBNGihRe8Aqij97VEXoW
+X-Google-Smtp-Source: AFSGD/WxQ9vIH4JqYOTS2Ugv1CsNBjK4E5rI6kKzdZQwP5lS+AAeKdWCyeozSbmijpgpoexr2DEbkzz4ioBnyxO57aM5Yh5X4W4i
 MIME-Version: 1.0
-X-Received: by 2002:a6b:cd8d:: with SMTP id d135mr8599042iog.19.1544428142820;
- Sun, 09 Dec 2018 23:49:02 -0800 (PST)
-Date:   Sun, 09 Dec 2018 23:49:02 -0800
+X-Received: by 2002:a02:4596:: with SMTP id o22mr9575456jad.12.1544428143007;
+ Sun, 09 Dec 2018 23:49:03 -0800 (PST)
+Date:   Sun, 09 Dec 2018 23:49:03 -0800
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000d58636057ca63247@google.com>
-Subject: WARNING in xfrm_policy_inexact_gc_tree
-From:   syzbot <syzbot+0b2f1bc876d301440d44@syzkaller.appspotmail.com>
-To:     davem@davemloft.net, herbert@gondor.apana.org.au,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        steffen.klassert@secunet.com, syzkaller-bugs@googlegroups.com
+Message-ID: <000000000000d86774057ca63295@google.com>
+Subject: KASAN: use-after-free Read in get_disk_and_module
+From:   syzbot <syzbot+b00e02299cdecb22b288@syzkaller.appspotmail.com>
+To:     axboe@kernel.dk, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -62,64 +61,136 @@ syzbot found the following crash on:
 
 HEAD commit:    74c4a24df7ca Add linux-next specific files for 20181207
 git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=17bbea7d400000
+console output: https://syzkaller.appspot.com/x/log.txt?x=171e9125400000
 kernel config:  https://syzkaller.appspot.com/x/.config?x=6e9413388bf37bed
-dashboard link: https://syzkaller.appspot.com/bug?extid=0b2f1bc876d301440d44
+dashboard link: https://syzkaller.appspot.com/bug?extid=b00e02299cdecb22b288
 compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
 
 Unfortunately, I don't have any reproducer for this crash yet.
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+0b2f1bc876d301440d44@syzkaller.appspotmail.com
+Reported-by: syzbot+b00e02299cdecb22b288@syzkaller.appspotmail.com
 
-IPv6: ADDRCONF(NETDEV_UP): veth0: link is not ready
-IPv6: ADDRCONF(NETDEV_UP): veth1: link is not ready
-IPv6: ADDRCONF(NETDEV_CHANGE): veth1: link becomes ready
-IPv6: ADDRCONF(NETDEV_CHANGE): veth0: link becomes ready
-8021q: adding VLAN 0 to HW filter on device team0
-WARNING: CPU: 0 PID: 13116 at net/xfrm/xfrm_policy.c:1066  
-xfrm_policy_inexact_gc_tree+0x233/0x280 net/xfrm/xfrm_policy.c:1066
-Kernel panic - not syncing: panic_on_warn set ...
-CPU: 0 PID: 13116 Comm: kworker/u4:10 Not tainted 4.20.0-rc5-next-20181207+  
-#163
+QAT: Invalid ioctl
+QAT: Invalid ioctl
+QAT: Invalid ioctl
+__loop_clr_fd: partition scan of loop3 failed (rc=-22)
+==================================================================
+BUG: KASAN: use-after-free in get_disk_and_module+0xd5/0xf0  
+block/genhd.c:1493
+Read of size 8 at addr ffff8881b4f24f58 by task blkid/21934
+
+CPU: 0 PID: 21934 Comm: blkid Not tainted 4.20.0-rc5-next-20181207+ #163
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
 Google 01/01/2011
-Workqueue: netns cleanup_net
 Call Trace:
   __dump_stack lib/dump_stack.c:77 [inline]
   dump_stack+0x244/0x39d lib/dump_stack.c:113
-  panic+0x2ad/0x632 kernel/panic.c:214
-  __warn.cold.8+0x20/0x4f kernel/panic.c:571
-  report_bug+0x254/0x2d0 lib/bug.c:186
-  fixup_bug arch/x86/kernel/traps.c:178 [inline]
-  do_error_trap+0x11b/0x200 arch/x86/kernel/traps.c:271
-  do_invalid_op+0x36/0x40 arch/x86/kernel/traps.c:290
-  invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:969
-RIP: 0010:xfrm_policy_inexact_gc_tree+0x233/0x280  
-net/xfrm/xfrm_policy.c:1066
-Code: 00 5b 41 5c 41 5d 41 5e 41 5f 5d c3 e8 d6 00 ae fa 0f b6 9d 2b ff ff  
-ff 31 ff 89 de e8 96 01 ae fa 84 db 74 8c e8 bd 00 ae fa <0f> 0b eb 83 48  
-8d 7d 98 e8 e0 00 f2 fa e9 d0 fe ff ff e8 36 00 f2
-RSP: 0018:ffff88819c307108 EFLAGS: 00010293
-RAX: ffff8881be8a82c0 RBX: 0000000000000001 RCX: ffffffff86d1f6ea
-RDX: 0000000000000000 RSI: ffffffff86d1f6f3 RDI: 0000000000000001
-RBP: ffff88819c3071f0 R08: ffff8881be8a82c0 R09: 0000000000000008
-R10: 0000000000000e65 R11: ffff8881be8a82c0 R12: dffffc0000000000
-R13: ffffed1033860e31 R14: ffff8881be45a330 R15: ffff8881bf82cdc8
-  __xfrm_policy_inexact_prune_bin+0x123/0x420 net/xfrm/xfrm_policy.c:1079
-  xfrm_policy_fini+0x473/0x650 net/xfrm/xfrm_policy.c:3887
-  xfrm_net_exit+0x1d/0x70 net/xfrm/xfrm_policy.c:3928
-  ops_exit_list.isra.5+0xb0/0x160 net/core/net_namespace.c:153
-  cleanup_net+0x555/0xb10 net/core/net_namespace.c:551
-  process_one_work+0xc90/0x1c40 kernel/workqueue.c:2153
-kobject: 'loop5' (00000000d2e25176): kobject_uevent_env
-kobject: 'loop5' (00000000d2e25176): fill_kobj_path: path  
-= '/devices/virtual/block/loop5'
-  worker_thread+0x17f/0x1390 kernel/workqueue.c:2296
-  kthread+0x35a/0x440 kernel/kthread.c:246
-  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:352
-Kernel Offset: disabled
-Rebooting in 86400 seconds..
+  print_address_description.cold.4+0x9/0x1ff mm/kasan/report.c:187
+  kasan_report.cold.5+0x1b/0x39 mm/kasan/report.c:317
+  __asan_report_load8_noabort+0x14/0x20 mm/kasan/generic_report.c:135
+  get_disk_and_module+0xd5/0xf0 block/genhd.c:1493
+  get_gendisk+0x17a/0x380 block/genhd.c:855
+  bdev_get_gendisk fs/block_dev.c:1092 [inline]
+  __blkdev_get+0x467/0x13b0 fs/block_dev.c:1487
+  blkdev_get+0xc1/0xb50 fs/block_dev.c:1643
+  blkdev_open+0x1fb/0x280 fs/block_dev.c:1801
+  do_dentry_open+0x499/0x1250 fs/open.c:771
+  vfs_open+0xa0/0xd0 fs/open.c:880
+  do_last fs/namei.c:3418 [inline]
+  path_openat+0x12bc/0x5150 fs/namei.c:3534
+  do_filp_open+0x255/0x380 fs/namei.c:3564
+  do_sys_open+0x568/0x780 fs/open.c:1063
+  __do_sys_open fs/open.c:1081 [inline]
+  __se_sys_open fs/open.c:1076 [inline]
+  __x64_sys_open+0x7e/0xc0 fs/open.c:1076
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x7fe787296120
+Code: 48 8b 15 1b 4d 2b 00 f7 d8 64 89 02 83 c8 ff c3 90 90 90 90 90 90 90  
+90 90 90 83 3d d5 a4 2b 00 00 75 10 b8 02 00 00 00 0f 05 <48> 3d 01 f0 ff  
+ff 73 31 c3 48 83 ec 08 e8 5e 8c 01 00 48 89 04 24
+RSP: 002b:00007fffed985768 EFLAGS: 00000246 ORIG_RAX: 0000000000000002
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007fe787296120
+RDX: 00007fffed987f1f RSI: 0000000000000000 RDI: 00007fffed987f1f
+RBP: 0000000000000000 R08: 0000000000000078 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000939030
+R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000005
+
+Allocated by task 21892:
+  save_stack+0x43/0xd0 mm/kasan/common.c:73
+  set_track mm/kasan/common.c:85 [inline]
+  kasan_kmalloc+0xcb/0xd0 mm/kasan/common.c:482
+  kmem_cache_alloc_node_trace+0x14f/0x740 mm/slab.c:3650
+  kmalloc_node include/linux/slab.h:583 [inline]
+  kzalloc_node include/linux/slab.h:751 [inline]
+  __alloc_disk_node+0xc9/0x510 block/genhd.c:1446
+  loop_add+0x453/0xa20 drivers/block/loop.c:1935
+  loop_probe+0x18d/0x1d0 drivers/block/loop.c:2041
+  kobj_lookup+0x264/0x460 drivers/base/map.c:124
+  get_gendisk+0x4c/0x380 block/genhd.c:847
+  bdev_get_gendisk fs/block_dev.c:1092 [inline]
+  __blkdev_get+0x467/0x13b0 fs/block_dev.c:1487
+  blkdev_get+0xc1/0xb50 fs/block_dev.c:1643
+  blkdev_open+0x1fb/0x280 fs/block_dev.c:1801
+  do_dentry_open+0x499/0x1250 fs/open.c:771
+  vfs_open+0xa0/0xd0 fs/open.c:880
+  do_last fs/namei.c:3418 [inline]
+  path_openat+0x12bc/0x5150 fs/namei.c:3534
+  do_filp_open+0x255/0x380 fs/namei.c:3564
+  do_sys_open+0x568/0x780 fs/open.c:1063
+  __do_sys_open fs/open.c:1081 [inline]
+  __se_sys_open fs/open.c:1076 [inline]
+  __x64_sys_open+0x7e/0xc0 fs/open.c:1076
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+Freed by task 21924:
+  save_stack+0x43/0xd0 mm/kasan/common.c:73
+  set_track mm/kasan/common.c:85 [inline]
+  __kasan_slab_free+0x102/0x150 mm/kasan/common.c:444
+  kasan_slab_free+0xe/0x10 mm/kasan/common.c:452
+  __cache_free mm/slab.c:3485 [inline]
+  kfree+0xcf/0x230 mm/slab.c:3804
+  disk_release+0x1f2/0x250 block/genhd.c:1304
+  device_release+0x7e/0x210 drivers/base/core.c:919
+  kobject_cleanup lib/kobject.c:662 [inline]
+  kobject_release lib/kobject.c:691 [inline]
+  kref_put include/linux/kref.h:70 [inline]
+  kobject_put.cold.9+0x287/0x2e4 lib/kobject.c:708
+  put_disk+0x23/0x30 block/genhd.c:1511
+  loop_remove+0x92/0xc0 drivers/block/loop.c:1990
+  loop_control_ioctl+0x3f2/0x480 drivers/block/loop.c:2086
+  vfs_ioctl fs/ioctl.c:46 [inline]
+  file_ioctl fs/ioctl.c:509 [inline]
+  do_vfs_ioctl+0x1de/0x1790 fs/ioctl.c:696
+  ksys_ioctl+0xa9/0xd0 fs/ioctl.c:713
+  __do_sys_ioctl fs/ioctl.c:720 [inline]
+  __se_sys_ioctl fs/ioctl.c:718 [inline]
+  __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:718
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+The buggy address belongs to the object at ffff8881b4f249c0
+  which belongs to the cache kmalloc-2k of size 2048
+The buggy address is located 1432 bytes inside of
+  2048-byte region [ffff8881b4f249c0, ffff8881b4f251c0)
+The buggy address belongs to the page:
+page:ffffea0006d3c900 count:1 mapcount:0 mapping:ffff8881da800c40  
+index:0xffff8881b4f25240 compound_mapcount: 0
+flags: 0x2fffc0000010200(slab|head)
+raw: 02fffc0000010200 ffffea000707b388 ffffea00075d4688 ffff8881da800c40
+raw: ffff8881b4f25240 ffff8881b4f24140 0000000100000002 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+  ffff8881b4f24e00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+  ffff8881b4f24e80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+> ffff8881b4f24f00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                                                     ^
+  ffff8881b4f24f80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+  ffff8881b4f25000: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
 
 
 ---
