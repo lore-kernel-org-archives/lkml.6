@@ -2,124 +2,110 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBF39C04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 06:16:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8619C04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 06:17:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A0B5F20672
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 06:16:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AB63C2084D
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 06:17:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="g29925gT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A0B5F20672
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="FJKWfJvf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB63C2084D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726535AbeLJGQk (ORCPT
+        id S1726548AbeLJGRU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 01:16:40 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:54506 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726404AbeLJGQk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 01:16:40 -0500
-Received: by mail-wm1-f68.google.com with SMTP id a62so2193977wmh.4
-        for <linux-kernel@vger.kernel.org>; Sun, 09 Dec 2018 22:16:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=PbJwxQUzTE/UyEN2i6C98e48JCS+XOpPs+LaaL0XlQY=;
-        b=g29925gTNUh8hi1KXX7yPrvThITSjsc+EqvvtA9BfPAKq2ZT5q3edLDUU9z24lnLkw
-         39qlsbqUFl/awFkVOOH07plucfcDFQdyWuVwP7B81qMlJr2xX3DRsYpdUo7/Ma63Z/gN
-         g/IPRxnhTlXHbPVtGzhcDZeQSydxUJ71HrmkM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=PbJwxQUzTE/UyEN2i6C98e48JCS+XOpPs+LaaL0XlQY=;
-        b=N2sk5cAr/Z48XhpyPezMgADXorxa4t1vPfGTw/CDHneYVhLtS7jGVBoofcgqJvxL68
-         H5jqSeVVNkkO+MAXFd1lXooYL1rA7gob01pZ5MJr7kV/Bm7CFxC51XY9dZOMKRHYXxVa
-         gfdM7fTsbyQhXdzAfB7Dppb5CHDh7nZ29ARbnewDEGSLH/0NAEhiez6RzDNu1zAoPtii
-         0Fu1kbLumi3UUaZbkbXBl7IZeUlHL1jtwlmoeXV13NB8es/ARBYEP+dIq5eRtr/JeJ5m
-         flUqaHm9SWHM5EM/rHb2EYZI1CZx3s3XtWmVkbONiFb0TzIcQMD+mmE9dHFIBzhKkcFa
-         s4Ig==
-X-Gm-Message-State: AA+aEWYMH4oVXhYajaG5mtTWCdf4HVEs4g0CusMYvUpUx8Ux8Pfpbza/
-        UOfja96KwTqPbde8G8jtNB2/Psy/Kqs=
-X-Google-Smtp-Source: AFSGD/XyItO8k5L9fG7x0e8Z1fPgNJoH6rcs+Unh6SHJmdOrDvn4YtMCtQpYdVW/qVysIdbv3jcd8g==
-X-Received: by 2002:a7b:cb96:: with SMTP id m22mr9750264wmi.39.1544422597742;
-        Sun, 09 Dec 2018 22:16:37 -0800 (PST)
-Received: from dell (host109-155-202-221.range109-155.btcentralplus.com. [109.155.202.221])
-        by smtp.gmail.com with ESMTPSA id q185sm13080565wmg.14.2018.12.09.22.16.36
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 09 Dec 2018 22:16:37 -0800 (PST)
-Date:   Mon, 10 Dec 2018 06:16:38 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc:     Philippe Schenker <dev@pschenker.ch>, jic23@kernel.org,
-        marcel.ziswiler@toradex.com, stefan@agner.ch,
-        Philippe Schenker <philippe.schenker@toradex.com>,
-        Max Krummenacher <max.krummenacher@toradex.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v3 1/4] mfd: stmpe: Move ADC related defines to header of
- mfd
-Message-ID: <20181210061638.GM26661@dell>
-References: <20181123142411.8921-1-dev@pschenker.ch>
- <20181128091532.GU4272@dell>
- <20181209045241.GF211094@dtor-ws>
+        Mon, 10 Dec 2018 01:17:20 -0500
+Received: from ozlabs.org ([203.11.71.1]:37295 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726368AbeLJGRU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Dec 2018 01:17:20 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 43CtCK2GFLz9s2P;
+        Mon, 10 Dec 2018 17:17:17 +1100 (AEDT)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1544422637;
+        bh=Hq0tUq/9gZFUoO7PiL63FR2OQWQf/Pef+GvHF9nhtDQ=;
+        h=Date:From:To:Cc:Subject:From;
+        b=FJKWfJvfZeDSNU5K6jVlYDPPAEjNZKo2tkgMloKJgZpWpXAaHf2yowcYI+whYyIl5
+         u9bciMKfMbj/wh+dp44oxhOFQ5cEjRMaKsyZ/nJkWZVTOLE/Wciv4GlXYrWeNDV21G
+         WNKA/8asaOrt5jcjwQf03g8UZseu+gXBSveh1DwC6hT0yI9TN3/KUdI3tayHbq+Lea
+         4MAemL19fl3gm+Y/lE56aUTFa3XjaLzjNNg3DIeNUFdEHmmO5T16TU5N16B2HJse5z
+         GsfeNua4AuWT6AkSfqW3lHytv0QiFiGDlOpjqf4tP1KqqWcchsigKcgvd08DB2ardR
+         RlJE4bOTke8tw==
+Date:   Mon, 10 Dec 2018 17:17:16 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Bill Kuzeja <William.Kuzeja@stratus.com>
+Subject: linux-next: manual merge of the scsi-mkp tree with Linus' tree
+Message-ID: <20181210171716.77cbf9fe@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181209045241.GF211094@dtor-ws>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/.QX.aC5b=vRQG9v3VMFWp5_"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 08 Dec 2018, Dmitry Torokhov wrote:
+--Sig_/.QX.aC5b=vRQG9v3VMFWp5_
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> On Wed, Nov 28, 2018 at 09:15:32AM +0000, Lee Jones wrote:
-> > On Fri, 23 Nov 2018, Philippe Schenker wrote:
-> > 
-> > > Move defines that are ADC related to the header of the overlying mfd,
-> > > so they can be used from multiple sub-devices.
-> > > 
-> > > Signed-off-by: Philippe Schenker <philippe.schenker@toradex.com>
-> > > ---
-> > > 
-> > > Changes in v3:
-> > >  - None
-> > > 
-> > > Changes in v2:
-> > >  - This is a new added commit. Separate commit for moving the defines out of
-> > >    drivers/input/touchscreen/stmpe-ts.c to overlying mfd-device drivers/mfd/stmpe.c
-> > >  - Pre-fix defines with STMPE_
-> > > 
-> > >  drivers/input/touchscreen/stmpe-ts.c | 34 +++++++++++-----------------
-> > >  include/linux/mfd/stmpe.h            | 11 +++++++++
-> > 
-> > Acked-by: Lee Jones <lee.jones@linaro.org>
-> 
-> The series seem to be heading towards MFD or IIO, so I assume this patch
-> will be merged through one of these trees.
-> 
-> Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Hi Martin,
 
-I'd be happy to take it.
+Today's linux-next merge of the scsi-mkp tree got a conflict in:
 
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+  drivers/scsi/qla2xxx/qla_os.c
+
+between commit:
+
+  f2ffd4e5bc7b ("scsi: qla2xxx: Timeouts occur on surprise removal of QLogi=
+c adapter")
+
+from Linus' tree and commit:
+
+  c4e521b654e1 ("scsi: qla2xxx: Split the __qla2x00_abort_all_cmds() functi=
+on")
+
+from the scsi-mkp tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/.QX.aC5b=vRQG9v3VMFWp5_
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwOBOwACgkQAVBC80lX
+0GxCaggAiC9eDxDQr+82IFhFUHwEP2mzZMc5qErB/+z3ZBTmgzu2y596/BQUk9tg
+sd1tTX+FWg4emXgaGXZOOyQajUl/TDqx+X3vbVkKU1/R0Pu9t7cfbqQKHH1r2xN3
+1RRZqVARS71H5iikfBphzpQ8Ja8ONC4YzNDGVCcwFSYM4k8Kw9VU7K4B24ZDoPzc
+K/D9LpANwS1pw4dJbOxSC62E+CIaumEcfckiW+xlrF7AYQ0SmJElrKH//kc1ugwP
+FZpzOWi3Q0g61iQKB/SXYFf/7aOOmGinT9WbliMs7qanjngwgcuOzBscwQmHhNnv
+qbIeWUeUo7OnHGO95w6Q9CPy5VaWMw==
+=HLOB
+-----END PGP SIGNATURE-----
+
+--Sig_/.QX.aC5b=vRQG9v3VMFWp5_--
