@@ -2,90 +2,185 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C642C04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 03:43:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F83EC04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 03:51:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 42E5F2081C
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 03:43:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="L8SeP0js"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 42E5F2081C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	by mail.kernel.org (Postfix) with ESMTP id 016062081F
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 03:51:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 016062081F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726303AbeLJDn0 (ORCPT
+        id S1726374AbeLJDvm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 22:43:26 -0500
-Received: from ozlabs.org ([203.11.71.1]:36725 "EHLO ozlabs.org"
+        Sun, 9 Dec 2018 22:51:42 -0500
+Received: from ozlabs.org ([203.11.71.1]:39177 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726098AbeLJDn0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Dec 2018 22:43:26 -0500
+        id S1726098AbeLJDvm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Dec 2018 22:51:42 -0500
 Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 43Cpnl3qldz9s2P;
-        Mon, 10 Dec 2018 14:43:23 +1100 (AEDT)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1544413403;
-        bh=YXGWnNErFgdigwDAg5TtcRSnEcnVzN1UmooQRnpLhtc=;
-        h=Date:From:To:Cc:Subject:From;
-        b=L8SeP0jse2pgNXxMpECui5B1IcAYWg78zkyVOkdF49KtuvV+1UmvacJdX8t4leHt9
-         iqE/pW7cZTfukiL9XwRRwUhFTtNStMddSv93KZMny/X3Uc4mQddkIUi1wqTWbJNFy7
-         MuX08veqqoBmhHi+ac5wRXS6U1ZrIt8JzzeKIu2Ui11mjSRIfuQ4SrwooDn8SIY7ZL
-         WdOYazDf9/fTGG75ppS9uZ4CV3GVhnoOUc1XPShb+UqFeHFG3n98He7u6Cq/Tq9Bzh
-         Cd61Iv8xKpguM6+JVjtbfA265C4AEKWTXyLyUSokULVb9EkqMdjC/SKldsX16Thodk
-         7nX3FlG8zQDoQ==
-Date:   Mon, 10 Dec 2018 14:43:22 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Alasdair G Kergon <agk@redhat.com>,
-        Mike Snitzer <snitzer@redhat.com>, Jens Axboe <axboe@kernel.dk>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: manual merge of the device-mapper tree with the block
- tree
-Message-ID: <20181210144322.11a94d25@canb.auug.org.au>
+        by ozlabs.org (Postfix) with ESMTPSA id 43Cpz75ClMz9s47;
+        Mon, 10 Dec 2018 14:51:31 +1100 (AEDT)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     Andrew Murray <andrew.murray@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Richard Henderson <rth@twiddle.net>,
+        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
+        Matt Turner <mattst88@gmail.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
+        Russell King <linux@armlinux.org.uk>, suzuki.poulose@arm.com,
+        robin.murphy@arm.com
+Cc:     linux-kernel@vger.kernel.org, linux-alpha@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linuxppc-dev@lists.ozlabs.org, x86@kernel.org
+Subject: Re: [PATCH v3 09/12] powerpc: perf/core: use PERF_PMU_CAP_NO_EXCLUDE for exclude incapable PMUs
+In-Reply-To: <1544114849-47266-10-git-send-email-andrew.murray@arm.com>
+References: <1544114849-47266-1-git-send-email-andrew.murray@arm.com> <1544114849-47266-10-git-send-email-andrew.murray@arm.com>
+Date:   Mon, 10 Dec 2018 14:51:31 +1100
+Message-ID: <87bm5uf398.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/q1Kzo215pGJ.Yz=WAKt/TmG"; protocol="application/pgp-signature"
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/q1Kzo215pGJ.Yz=WAKt/TmG
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Andrew Murray <andrew.murray@arm.com> writes:
 
-Hi all,
+> For PowerPC PMUs that do not support context exclusion let's
+> advertise the PERF_PMU_CAP_NO_EXCLUDE capability. This ensures that
+> perf will prevent us from handling events where any exclusion flags
+> are set. Let's also remove the now unnecessary check for exclusion
+> flags.
+>
+> Signed-off-by: Andrew Murray <andrew.murray@arm.com>
+> ---
+>  arch/powerpc/perf/hv-24x7.c | 10 +---------
+>  arch/powerpc/perf/hv-gpci.c | 10 +---------
+>  arch/powerpc/perf/imc-pmu.c | 19 +------------------
+>  3 files changed, 3 insertions(+), 36 deletions(-)
 
-It appears that there are a series of shared patches between the block
-and device-mapper trees that are not the same commits.  I assume that the
-block tree has been rebased, while the device mapper tree that was based
-(or includes) part of the block tree has not bee rebased (yet).
+Looks good.
 
---=20
-Cheers,
-Stephen Rothwell
+Acked-by: Michael Ellerman <mpe@ellerman.id.au> (powerpc)
 
---Sig_/q1Kzo215pGJ.Yz=WAKt/TmG
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+cheers
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwN4NoACgkQAVBC80lX
-0GzgFQf/Z2uhvvJPpOXS8XrLFxX1pyCbkodorwcp5uWcu75NJjCBPIF14IJgJnAy
-5MDfbhriOEW5ofrzWsjUSIOyXusWNZv1nfIRP1cMVOb4x8ijDaV3I1BpKojRHmCz
-IlbiRk37UrK6NGjBHjZB6M5C10Q/H4VbRFYT8WxZe70xzhwyRHjLRSYrAe+tqTcQ
-Yb0UBsEQ4gMryFgah63xCOVDb6n6XwyyFu88S5Jv/WptZo6qaEvCAoFNE0CRMOy8
-4B627C2z1EKq8sExN06CByiCRMCKaVvb79nhf8KuORGDGQZsry6eoHFMHjoLNZWj
-fF8MT4TWXgmECMz3hRdtXlZ/BX3VWg==
-=l2pd
------END PGP SIGNATURE-----
-
---Sig_/q1Kzo215pGJ.Yz=WAKt/TmG--
+> diff --git a/arch/powerpc/perf/hv-24x7.c b/arch/powerpc/perf/hv-24x7.c
+> index 72238ee..d2b8e60 100644
+> --- a/arch/powerpc/perf/hv-24x7.c
+> +++ b/arch/powerpc/perf/hv-24x7.c
+> @@ -1306,15 +1306,6 @@ static int h_24x7_event_init(struct perf_event *event)
+>  		return -EINVAL;
+>  	}
+>  
+> -	/* unsupported modes and filters */
+> -	if (event->attr.exclude_user   ||
+> -	    event->attr.exclude_kernel ||
+> -	    event->attr.exclude_hv     ||
+> -	    event->attr.exclude_idle   ||
+> -	    event->attr.exclude_host   ||
+> -	    event->attr.exclude_guest)
+> -		return -EINVAL;
+> -
+>  	/* no branch sampling */
+>  	if (has_branch_stack(event))
+>  		return -EOPNOTSUPP;
+> @@ -1577,6 +1568,7 @@ static struct pmu h_24x7_pmu = {
+>  	.start_txn   = h_24x7_event_start_txn,
+>  	.commit_txn  = h_24x7_event_commit_txn,
+>  	.cancel_txn  = h_24x7_event_cancel_txn,
+> +	.capabilities = PERF_PMU_CAP_NO_EXCLUDE,
+>  };
+>  
+>  static int hv_24x7_init(void)
+> diff --git a/arch/powerpc/perf/hv-gpci.c b/arch/powerpc/perf/hv-gpci.c
+> index 43fabb3..735e77b 100644
+> --- a/arch/powerpc/perf/hv-gpci.c
+> +++ b/arch/powerpc/perf/hv-gpci.c
+> @@ -232,15 +232,6 @@ static int h_gpci_event_init(struct perf_event *event)
+>  		return -EINVAL;
+>  	}
+>  
+> -	/* unsupported modes and filters */
+> -	if (event->attr.exclude_user   ||
+> -	    event->attr.exclude_kernel ||
+> -	    event->attr.exclude_hv     ||
+> -	    event->attr.exclude_idle   ||
+> -	    event->attr.exclude_host   ||
+> -	    event->attr.exclude_guest)
+> -		return -EINVAL;
+> -
+>  	/* no branch sampling */
+>  	if (has_branch_stack(event))
+>  		return -EOPNOTSUPP;
+> @@ -285,6 +276,7 @@ static struct pmu h_gpci_pmu = {
+>  	.start       = h_gpci_event_start,
+>  	.stop        = h_gpci_event_stop,
+>  	.read        = h_gpci_event_update,
+> +	.capabilities = PERF_PMU_CAP_NO_EXCLUDE,
+>  };
+>  
+>  static int hv_gpci_init(void)
+> diff --git a/arch/powerpc/perf/imc-pmu.c b/arch/powerpc/perf/imc-pmu.c
+> index 1fafc32b..1dbb0ee 100644
+> --- a/arch/powerpc/perf/imc-pmu.c
+> +++ b/arch/powerpc/perf/imc-pmu.c
+> @@ -473,15 +473,6 @@ static int nest_imc_event_init(struct perf_event *event)
+>  	if (event->hw.sample_period)
+>  		return -EINVAL;
+>  
+> -	/* unsupported modes and filters */
+> -	if (event->attr.exclude_user   ||
+> -	    event->attr.exclude_kernel ||
+> -	    event->attr.exclude_hv     ||
+> -	    event->attr.exclude_idle   ||
+> -	    event->attr.exclude_host   ||
+> -	    event->attr.exclude_guest)
+> -		return -EINVAL;
+> -
+>  	if (event->cpu < 0)
+>  		return -EINVAL;
+>  
+> @@ -748,15 +739,6 @@ static int core_imc_event_init(struct perf_event *event)
+>  	if (event->hw.sample_period)
+>  		return -EINVAL;
+>  
+> -	/* unsupported modes and filters */
+> -	if (event->attr.exclude_user   ||
+> -	    event->attr.exclude_kernel ||
+> -	    event->attr.exclude_hv     ||
+> -	    event->attr.exclude_idle   ||
+> -	    event->attr.exclude_host   ||
+> -	    event->attr.exclude_guest)
+> -		return -EINVAL;
+> -
+>  	if (event->cpu < 0)
+>  		return -EINVAL;
+>  
+> @@ -1069,6 +1051,7 @@ static int update_pmu_ops(struct imc_pmu *pmu)
+>  	pmu->pmu.stop = imc_event_stop;
+>  	pmu->pmu.read = imc_event_update;
+>  	pmu->pmu.attr_groups = pmu->attr_groups;
+> +	pmu->pmu.capabilities = PERF_PMU_CAP_NO_EXCLUDE;
+>  	pmu->attr_groups[IMC_FORMAT_ATTR] = &imc_format_group;
+>  
+>  	switch (pmu->domain) {
+> -- 
+> 2.7.4
