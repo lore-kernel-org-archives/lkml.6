@@ -2,245 +2,151 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28B5EC04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 17:08:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 528AAC04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 17:10:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D14DE20821
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 17:08:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1373220821
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 17:10:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="DRuFz2nU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D14DE20821
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="RxaNN9iQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1373220821
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728189AbeLJRIf (ORCPT
+        id S1728091AbeLJRKH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 12:08:35 -0500
-Received: from mail-it1-f194.google.com ([209.85.166.194]:35314 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727524AbeLJRIf (ORCPT
+        Mon, 10 Dec 2018 12:10:07 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:51872 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727356AbeLJRKH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 12:08:35 -0500
-Received: by mail-it1-f194.google.com with SMTP id p197so19352826itp.0
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Dec 2018 09:08:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=06WxHLOs1CQ6TpxVoIGrdGQ7xObL4lchMLZMsBSijKg=;
-        b=DRuFz2nUQBWlWDWu+K8VMiWa8aLSs/rQoeyQdw0x/2A6AOSeOGvHIjH904gGMhWDi0
-         80HmonLjgIeJgAmm52qT/L08v5/GwaW3cWbYksZ+H0C/GLSz9jL2pj2fmIgTjxovlN/e
-         JLTS1WVksW/mRz6v7Y/CEQFu06HDqzBiI/1c4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=06WxHLOs1CQ6TpxVoIGrdGQ7xObL4lchMLZMsBSijKg=;
-        b=Tjbo/BizMjrygDOAWPYLhfFD+QKWdr8IcqEUeT9XwyzxMKGxHj7ldgm9HeHngjDRsH
-         IDVXLeLuv1Xs6MgM220b8Q4QER2pBDaoPpbXGUhCndXoHZrooWHs1Etq/vLi+x19JpGR
-         kM5t0Us3nI/4gJGp+SOSCOXvcrqW7cvNUai1SMn2LTsx3D7a8NuEICWwzJ9GGDZoc1O9
-         jF/qTQKrNzth8hB3THcEutUir0VRsZiZQFLaqmXUC9IN6ahGIQ1OSJ62m1GCqgRAJOgG
-         3b5qaMvY0+UMo8NKfbYL7YVh84Sn7gArKzsyGkK1NB0Qrlh5NIB5dCR7T7Hdhd4CUUxq
-         L+zw==
-X-Gm-Message-State: AA+aEWYB9gkvrIlzzaf9aEk6AHct55pIR+buw8JfXyYzolNHvjaDt4dD
-        qJpxHYpyWgUk+KuhRMHdO2reikPrheeXHzfFmLNRMA==
-X-Google-Smtp-Source: AFSGD/XLOyGaJAKG039ZFGCWmhM5Nw9wXDdLzNtKGR+5bKamzj1cxkvpkMo62GJSjZedUVykDo96d69IUPAhxEdwgYQ=
-X-Received: by 2002:a24:a20e:: with SMTP id j14mr12102274itf.14.1544461713973;
- Mon, 10 Dec 2018 09:08:33 -0800 (PST)
+        Mon, 10 Dec 2018 12:10:07 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wBAH9Vrk056230;
+        Mon, 10 Dec 2018 17:09:57 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=9Qhk1Zm2iUha5mKf95eBfiEwbjgmLqYHH2B4/tm++sE=;
+ b=RxaNN9iQ7h3uC8ewIqza/5iCQOmfEwQ+q51mgxqO2x4f2B6QxbgvH4EO5at/WnK6PZv4
+ K8E1NgmOZ+6bes05hesYGnH/ryuP/im9lc4bgJVh1/0TCcfN8i1F4pql6c2yl3yZ207U
+ /ZpyIskfyQYfc7W2gF6w4n2mUnrjgG6ECpLuKaL2pIqMoBh/I94mr/ruUK/Em397rcod
+ rVnC8Pn5bUdBFQPq30KgAkXfXFLEIbQVAcSu21wfpzY3+npgjBs55XtH57D9KdhwGqkn
+ o5o9UUEySsp2R44x5wyeXE1EmEpGURvX8fpByf/QfGwNYsyK4dwcpj68VZDOWB8VDdl2 qQ== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by userp2130.oracle.com with ESMTP id 2p85cty8t0-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 10 Dec 2018 17:09:57 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wBAH9uMi027585
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 10 Dec 2018 17:09:56 GMT
+Received: from abhmp0009.oracle.com (abhmp0009.oracle.com [141.146.116.15])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wBAH9uaE014743;
+        Mon, 10 Dec 2018 17:09:56 GMT
+Received: from [10.211.47.70] (/10.211.47.70)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 10 Dec 2018 09:09:55 -0800
+Subject: Re: [PATCH v2 2/2] swiotlb: checking whether swiotlb buffer is full
+ with io_tlb_used
+To:     Dongli Zhang <dongli.zhang@oracle.com>,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
+Cc:     konrad.wilk@oracle.com, hch@lst.de, m.szyprowski@samsung.com,
+        robin.murphy@arm.com
+References: <1544402278-8175-1-git-send-email-dongli.zhang@oracle.com>
+ <1544402278-8175-2-git-send-email-dongli.zhang@oracle.com>
+From:   Joe Jin <joe.jin@oracle.com>
+Message-ID: <912321c7-5f27-bfec-b4d9-3d50efeed356@oracle.com>
+Date:   Mon, 10 Dec 2018 09:09:55 -0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
+ Gecko/20100101 Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <1544131696-2888-1-git-send-email-steven.sistare@oracle.com>
- <CAKfTPtBuAsbF2r8wSigM=ckpKCqj0hcHbi+y3ZAaC7dqYcFY2g@mail.gmail.com>
- <df0197ac-d4eb-437e-1176-dbc9b23a94bb@oracle.com> <CAKfTPtBh59Wt3+JiZ168WRAZ+AEsS+-GTqXzeUZTKQPcDAJ73g@mail.gmail.com>
-In-Reply-To: <CAKfTPtBh59Wt3+JiZ168WRAZ+AEsS+-GTqXzeUZTKQPcDAJ73g@mail.gmail.com>
-From:   Vincent Guittot <vincent.guittot@linaro.org>
-Date:   Mon, 10 Dec 2018 18:08:22 +0100
-Message-ID: <CAKfTPtCePEwUDyH1on+fJbuUEBYR8v7U4doL-N-ymdT3woD7OA@mail.gmail.com>
-Subject: Re: [PATCH v4 00/10] steal tasks to improve CPU utilization
-To:     steven.sistare@oracle.com
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        subhra.mazumdar@oracle.com, Dhaval Giani <dhaval.giani@oracle.com>,
-        daniel.m.jordan@oracle.com, pavel.tatashin@microsoft.com,
-        Matt Fleming <matt@codeblueprint.co.uk>,
-        Mike Galbraith <umgwanakikbuti@gmail.com>,
-        Rik van Riel <riel@redhat.com>, Josef Bacik <jbacik@fb.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Quentin Perret <quentin.perret@arm.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1544402278-8175-2-git-send-email-dongli.zhang@oracle.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9103 signatures=668679
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1812100154
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 10 Dec 2018 at 17:33, Vincent Guittot
-<vincent.guittot@linaro.org> wrote:
->
-> On Mon, 10 Dec 2018 at 17:29, Steven Sistare <steven.sistare@oracle.com> wrote:
-> >
-> > On 12/10/2018 11:10 AM, Vincent Guittot wrote:
-> > > Hi Steven,
-> > >
-> > > On Thu, 6 Dec 2018 at 22:38, Steve Sistare <steven.sistare@oracle.com> wrote:
-> > >>
-> > >> When a CPU has no more CFS tasks to run, and idle_balance() fails to
-> > >> find a task, then attempt to steal a task from an overloaded CPU in the
-> > >> same LLC. Maintain and use a bitmap of overloaded CPUs to efficiently
-> > >> identify candidates.  To minimize search time, steal the first migratable
-> > >> task that is found when the bitmap is traversed.  For fairness, search
-> > >> for migratable tasks on an overloaded CPU in order of next to run.
-> > >>
-> > >> This simple stealing yields a higher CPU utilization than idle_balance()
-> > >> alone, because the search is cheap, so it may be called every time the CPU
-> > >> is about to go idle.  idle_balance() does more work because it searches
-> > >> widely for the busiest queue, so to limit its CPU consumption, it declines
-> > >> to search if the system is too busy.  Simple stealing does not offload the
-> > >> globally busiest queue, but it is much better than running nothing at all.
-> > >>
-> > >> The bitmap of overloaded CPUs is a new type of sparse bitmap, designed to
-> > >> reduce cache contention vs the usual bitmap when many threads concurrently
-> > >> set, clear, and visit elements.
-> > >>
-> > >> Patch 1 defines the sparsemask type and its operations.
-> > >>
-> > >> Patches 2, 3, and 4 implement the bitmap of overloaded CPUs.
-> > >>
-> > >> Patches 5 and 6 refactor existing code for a cleaner merge of later
-> > >>   patches.
-> > >>
-> > >> Patches 7 and 8 implement task stealing using the overloaded CPUs bitmap.
-> > >>
-> > >> Patch 9 disables stealing on systems with more than 2 NUMA nodes for the
-> > >> time being because of performance regressions that are not due to stealing
-> > >> per-se.  See the patch description for details.
-> > >>
-> > >> Patch 10 adds schedstats for comparing the new behavior to the old, and
-> > >>   provided as a convenience for developers only, not for integration.
-> > >>
-> > >> The patch series is based on kernel 4.20.0-rc1.  It compiles, boots, and
-> > >> runs with/without each of CONFIG_SCHED_SMT, CONFIG_SMP, CONFIG_SCHED_DEBUG,
-> > >> and CONFIG_PREEMPT.  It runs without error with CONFIG_DEBUG_PREEMPT +
-> > >> CONFIG_SLUB_DEBUG + CONFIG_DEBUG_PAGEALLOC + CONFIG_DEBUG_MUTEXES +
-> > >> CONFIG_DEBUG_SPINLOCK + CONFIG_DEBUG_ATOMIC_SLEEP.  CPU hot plug and CPU
-> > >> bandwidth control were tested.
-> > >>
-> > >> Stealing improves utilization with only a modest CPU overhead in scheduler
-> > >> code.  In the following experiment, hackbench is run with varying numbers
-> > >> of groups (40 tasks per group), and the delta in /proc/schedstat is shown
-> > >> for each run, averaged per CPU, augmented with these non-standard stats:
-> > >>
-> > >>   %find - percent of time spent in old and new functions that search for
-> > >>     idle CPUs and tasks to steal and set the overloaded CPUs bitmap.
-> > >>
-> > >>   steal - number of times a task is stolen from another CPU.
-> > >>
-> > >> X6-2: 1 socket * 10 cores * 2 hyperthreads = 20 CPUs
-> > >> Intel(R) Xeon(R) CPU E5-2630 v4 @ 2.20GHz
-> > >> hackbench <grps> process 100000
-> > >> sched_wakeup_granularity_ns=15000000
-> > >>
-> > >>   baseline
-> > >>   grps  time  %busy  slice   sched   idle     wake %find  steal
-> > >>   1    8.084  75.02   0.10  105476  46291    59183  0.31      0
-> > >>   2   13.892  85.33   0.10  190225  70958   119264  0.45      0
-> > >>   3   19.668  89.04   0.10  263896  87047   176850  0.49      0
-> > >>   4   25.279  91.28   0.10  322171  94691   227474  0.51      0
-> > >>   8   47.832  94.86   0.09  630636 144141   486322  0.56      0
-> > >>
-> > >>   new
-> > >>   grps  time  %busy  slice   sched   idle     wake %find  steal  %speedup
-> > >>   1    5.938  96.80   0.24   31255   7190    24061  0.63   7433  36.1
-> > >>   2   11.491  99.23   0.16   74097   4578    69512  0.84  19463  20.9
-> > >>   3   16.987  99.66   0.15  115824   1985   113826  0.77  24707  15.8
-> > >>   4   22.504  99.80   0.14  167188   2385   164786  0.75  29353  12.3
-> > >>   8   44.441  99.86   0.11  389153   1616   387401  0.67  38190   7.6
-> > >>
-> > >> Elapsed time improves by 8 to 36%, and CPU busy utilization is up
-> > >> by 5 to 22% hitting 99% for 2 or more groups (80 or more tasks).
-> > >> The cost is at most 0.4% more find time.
-> > >
-> > > I have run some hackbench tests on my hikey arm64 octo cores with your
-> > > patchset. My original intent was to send a tested-by but I have some
-> > > performances regressions.
-> > > This hikey is the smp one and not the asymetric hikey960 that Valentin
-> > > used for his tests
-> > > The sched domain topology is
-> > > domain-0: span=0-3 level=MC  and domain-0: span=4-7 level=MC
-> > > domain-1: span=0-7 level=DIE
-> > >
-> > > I have run 12 times hackbench -g $j -P -l 2000 with j equals to 1 2 3 4 8
-> > >
-> > > grps  time
-> > > 1      1.396
-> > > 2      2.699
-> > > 3      3.617
-> > > 4      4.498
-> > > 8      7.721
-> > >
-> > > Then after disabling STEAL in sched_feature with echo NO_STEAL >
-> > > /sys/kernel/debug/sched_features , the results become:
-> > > grps  time
-> > > 1      1.217
-> > > 2      1.973
-> > > 3      2.855
-> > > 4      3.932
-> > > 8      7.674
-> > >
-> > > I haven't looked in details about some possible reasons of such
-> > > difference yet and haven't collected the stats that you added with
-> > > patch 10.
-> > > Have you got a script to collect and post process them ?
-> > >
-> > > Regards,
-> > > Vincent
-> >
-> > Thanks Vincent.  What is the value of /proc/sys/kernel/sched_wakeup_granularity_ns?
->
-> it's 4000000
->
-> > Try 15000000.  Your 8-core system is heavily overloaded with 40 * groups tasks,
-> > and I suspect preemptions are killing performance.
->
-> ok. I'm going to run the tests with the proposed value
+On 12/9/18 4:37 PM, Dongli Zhang wrote:
+> This patch uses io_tlb_used to help check whether swiotlb buffer is full.
+> io_tlb_used is no longer used for only debugfs. It is also used to help
+> optimize swiotlb_tbl_map_single().
+> 
+> Suggested-by: Joe Jin <joe.jin@oracle.com>
+> Signed-off-by: Dongli Zhang <dongli.zhang@oracle.com>
 
-Results look better after changing /proc/sys/kernel/sched_wakeup_granularity_ns
+Reviewed-by: Joe Jin <joe.jin@oracle.com>
 
-With STEAL
-grps  time
-1      0.869
-2      1.646
-3      2.395
-4      3.163
-8      6.199
+> ---
+>  kernel/dma/swiotlb.c | 10 ++++------
+>  1 file changed, 4 insertions(+), 6 deletions(-)
+> 
+> diff --git a/kernel/dma/swiotlb.c b/kernel/dma/swiotlb.c
+> index 3979c2c..9300341 100644
+> --- a/kernel/dma/swiotlb.c
+> +++ b/kernel/dma/swiotlb.c
+> @@ -76,12 +76,10 @@ static phys_addr_t io_tlb_start, io_tlb_end;
+>   */
+>  static unsigned long io_tlb_nslabs;
+>  
+> -#ifdef CONFIG_DEBUG_FS
+>  /*
+>   * The number of used IO TLB block
+>   */
+>  static unsigned long io_tlb_used;
+> -#endif
+>  
+>  /*
+>   * This is a free list describing the number of free entries available from
+> @@ -489,6 +487,10 @@ phys_addr_t swiotlb_tbl_map_single(struct device *hwdev,
+>  	 * request and allocate a buffer from that IO TLB pool.
+>  	 */
+>  	spin_lock_irqsave(&io_tlb_lock, flags);
+> +
+> +	if (unlikely(nslots > io_tlb_nslabs - io_tlb_used))
+> +		goto not_found;
+> +
+>  	index = ALIGN(io_tlb_index, stride);
+>  	if (index >= io_tlb_nslabs)
+>  		index = 0;
+> @@ -538,9 +540,7 @@ phys_addr_t swiotlb_tbl_map_single(struct device *hwdev,
+>  		dev_warn(hwdev, "swiotlb buffer is full (sz: %zd bytes)\n", size);
+>  	return SWIOTLB_MAP_ERROR;
+>  found:
+> -#ifdef CONFIG_DEBUG_FS
+>  	io_tlb_used += nslots;
+> -#endif
+>  	spin_unlock_irqrestore(&io_tlb_lock, flags);
+>  
+>  	/*
+> @@ -602,9 +602,7 @@ void swiotlb_tbl_unmap_single(struct device *hwdev, phys_addr_t tlb_addr,
+>  		for (i = index - 1; (OFFSET(i, IO_TLB_SEGSIZE) != IO_TLB_SEGSIZE -1) && io_tlb_list[i]; i--)
+>  			io_tlb_list[i] = ++count;
+>  
+> -#ifdef CONFIG_DEBUG_FS
+>  		io_tlb_used -= nslots;
+> -#endif
+>  	}
+>  	spin_unlock_irqrestore(&io_tlb_lock, flags);
+>  }
+> 
 
-after echo NO_STEAL > /sys/kernel/debug/sched_features
-grps  time
-1      0.928
-2      1.770
-3      2.597
-4      3.407
-8      6.431
 
-There is a 7% improvement with steal and the larger value for
-/proc/sys/kernel/sched_wakeup_granularity_ns for all groups
-Should we set the STEAL feature disabled by default as this provides
-benefit only when changing sched_wakeup_granularity_ns value from
-default value?
-
->
-> >
-> > I have a python script to post-process schedstat files, but it does many things
-> > and is large and I am not ready to share it.  I can write a short bash script if
-> > that would help.
->
-> It was mainly in case you wanted the figures of these statistics
->
-> Vincent
->
-> >
-> > - Steve
+-- 
+Oracle <http://www.oracle.com>
+Joe Jin | Software Development Director 
+ORACLE | Linux and Virtualization
+500 Oracle Parkway Redwood City, CA US 94065
