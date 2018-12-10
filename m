@@ -2,314 +2,132 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DE06C67839
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 15:55:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9ED6CC6783B
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 15:57:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 34C9420989
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 15:55:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544457323;
-	bh=tdWexW1Em2QodRxbR0688bp4OOd6b37LaRogcjCXLQ8=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=CpQf5sN/Uorjj9Qq1IOrn1b2SnDDEzQEJkSSc8BNxHcrQIHXUVmFjK5D4IeXawAk7
-	 qSApEGsPovpJkFu0sKfgs5vIdaXhyTT1TEiIRMerysPb1gxCVDOPC08sc04EME46ch
-	 LpXTzg0tpVVxfcOj7pEw+XC6XFAC5rKJHrAG97Aw=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 34C9420989
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 6A2AC20851
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 15:57:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A2AC20851
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728396AbeLJPzW (ORCPT
+        id S1728403AbeLJP5K (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 10:55:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41942 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728187AbeLJPzW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 10:55:22 -0500
-Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2D56B20851;
-        Mon, 10 Dec 2018 15:55:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544457320;
-        bh=tdWexW1Em2QodRxbR0688bp4OOd6b37LaRogcjCXLQ8=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=VHPCCWjM+xyX0xQvBVkHWlE/CTNadjBibh+Fx6AaPoaXhV001GGtkgaew1uuYHopP
-         dLGv59342si/I1E9t5gCzNxmBKWmYbPfaYqzboxJnStHz+Cp/bOAkvkF3vM/LprAtQ
-         oUHRJ+sKgPM9iop4dHFYe+ghq1lMeYyqT8TazAFs=
-Received: by mail-qt1-f180.google.com with SMTP id n32so12761135qte.11;
-        Mon, 10 Dec 2018 07:55:20 -0800 (PST)
-X-Gm-Message-State: AA+aEWamVOIO8bsMu8+r49LKk+fSvaXmQVLF7JgNuZoYmSGBt0AKdKLm
-        zOgl1HDmiZgz4K4/QDz6eHKXI4ubOFZ33iL1Rg==
-X-Google-Smtp-Source: AFSGD/WdL3jH1aB2r9XkwGH03MZ292O51eVgVHWN8vXa/0befR9IQoem6DmJxhW5WLlW09pkSQBDXEKgsydwEU2bHRM=
-X-Received: by 2002:ac8:6b18:: with SMTP id w24mr12721557qts.144.1544457319305;
- Mon, 10 Dec 2018 07:55:19 -0800 (PST)
+        Mon, 10 Dec 2018 10:57:10 -0500
+Received: from mx2.suse.de ([195.135.220.15]:37742 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728187AbeLJP5J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Dec 2018 10:57:09 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id E38CBAC3D;
+        Mon, 10 Dec 2018 15:57:06 +0000 (UTC)
+Date:   Mon, 10 Dec 2018 16:57:05 +0100
+From:   Petr Mladek <pmladek@suse.com>
+To:     Feng Tang <feng.tang@intel.com>
+Cc:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        akpm@linux-foundation.org, bp@suse.de, keescook@chromium.org,
+        mm-commits@vger.kernel.org, sergey.senozhatsky@gmail.com,
+        stable@vger.kernel.org, tglx@linutronix.de,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Sasha Levin <sashal@kernel.org>,
+        Andi Kleen <ak@linux.intel.com>, linux-kernel@vger.kernel.org
+Subject: Re: + panic-avoid-the-extra-noise-dmesg.patch added to -mm tree
+Message-ID: <20181210155705.qowbi7xvszzfonzk@pathway.suse.cz>
+References: <20181204154936.wbgcovzpc54n6dvs@shbuild888>
+ <20181205022654.GA503@jagdpanzerIV>
+ <20181205024713.nqyt6qiamokq7qtl@shbuild888>
+ <20181205025728.GC503@jagdpanzerIV>
+ <20181205052912.GA423@jagdpanzerIV>
+ <20181205080044.GA11190@jagdpanzerIV>
+ <20181205154620.4dqtledc2duhrp2c@shbuild888>
+ <20181206035825.jz2bfh3errj23rjq@shbuild888>
+ <20181207095004.GB3729@jagdpanzerIV>
+ <20181210094554.z5n7dmkrnlcpygg4@shbuild888>
 MIME-Version: 1.0
-References: <20181203213223.16986-1-robh@kernel.org> <20181203213223.16986-2-robh@kernel.org>
- <CAK7LNARgyL+Pq+SCkUUKnMny4nDw1L4zEevdzqbyGGAoE+BXUA@mail.gmail.com>
-In-Reply-To: <CAK7LNARgyL+Pq+SCkUUKnMny4nDw1L4zEevdzqbyGGAoE+BXUA@mail.gmail.com>
-From:   Rob Herring <robh@kernel.org>
-Date:   Mon, 10 Dec 2018 09:55:08 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqLhNq2LWffT5XK9nd+p_7oYacMmsQidP_cmjkd7DsNmNQ@mail.gmail.com>
-Message-ID: <CAL_JsqLhNq2LWffT5XK9nd+p_7oYacMmsQidP_cmjkd7DsNmNQ@mail.gmail.com>
-Subject: Re: [PATCH v2 01/34] kbuild: Add support for DT binding schema checks
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Sean Hudson <darknighte@darknighte.com>,
-        Frank Rowand <frowand.list@gmail.com>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Grant Likely <grant.likely@arm.com>,
-        Kumar Gala <kumar.gala@linaro.org>,
-        ARM-SoC Maintainers <arm@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181210094554.z5n7dmkrnlcpygg4@shbuild888>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 7, 2018 at 10:47 PM Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
->
-> Hi Rob,
->
->
-> On Tue, Dec 4, 2018 at 6:32 AM Rob Herring <robh@kernel.org> wrote:
-> >
-> > This adds the build infrastructure for checking DT binding schema
-> > documents and validating dts files using the binding schema.
-> >
-> > Check DT binding schema documents:
-> > make dt_binding_check
-> >
-> > Build dts files and check using DT binding schema:
-> > make dtbs_check
-> >
-> > Optionally, DT_SCHEMA_FILES can passed in with a schema file(s) to use
-> > for validation. This makes it easier to find and fix errors generated by
-> > a specific schema.
-> >
-> > Currently, the validation targets are separate from a normal build to
-> > avoid a hard dependency on the external DT schema project and because
-> > there are lots of warnings generated.
-> >
-> > Cc: Jonathan Corbet <corbet@lwn.net>
-> > Cc: Mark Rutland <mark.rutland@arm.com>
-> > Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
-> > Cc: Michal Marek <michal.lkml@markovi.net>
-> > Cc: linux-doc@vger.kernel.org
-> > Cc: devicetree@vger.kernel.org
-> > Cc: linux-kbuild@vger.kernel.org
-> > Signed-off-by: Rob Herring <robh@kernel.org>
-> > ---
-> >  .gitignore                                   |  1 +
-> >  Documentation/Makefile                       |  2 +-
-> >  Documentation/devicetree/bindings/.gitignore |  1 +
-> >  Documentation/devicetree/bindings/Makefile   | 33 ++++++++++++++++++++
-> >  Makefile                                     | 11 +++++--
-> >  scripts/Makefile.lib                         | 24 ++++++++++++--
-> >  6 files changed, 67 insertions(+), 5 deletions(-)
-> >  create mode 100644 Documentation/devicetree/bindings/.gitignore
-> >  create mode 100644 Documentation/devicetree/bindings/Makefile
-> >
-> > diff --git a/.gitignore b/.gitignore
-> > index 97ba6b79834c..a20ac26aa2f5 100644
-> > --- a/.gitignore
-> > +++ b/.gitignore
-> > @@ -15,6 +15,7 @@
-> >  *.bin
-> >  *.bz2
-> >  *.c.[012]*.*
-> > +*.dt.yaml
-> >  *.dtb
-> >  *.dtb.S
-> >  *.dwo
-> > diff --git a/Documentation/Makefile b/Documentation/Makefile
-> > index 2ca77ad0f238..9786957c6a35 100644
-> > --- a/Documentation/Makefile
-> > +++ b/Documentation/Makefile
-> > @@ -2,7 +2,7 @@
-> >  # Makefile for Sphinx documentation
-> >  #
-> >
-> > -subdir-y :=
-> > +subdir-y := devicetree/bindings/
-> >
-> >  # You can set these variables from the command line.
-> >  SPHINXBUILD   = sphinx-build
-> > diff --git a/Documentation/devicetree/bindings/.gitignore b/Documentation/devicetree/bindings/.gitignore
-> > new file mode 100644
-> > index 000000000000..d9194c02dd08
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/.gitignore
-> > @@ -0,0 +1 @@
-> > +*.example.dts
-> > diff --git a/Documentation/devicetree/bindings/Makefile b/Documentation/devicetree/bindings/Makefile
-> > new file mode 100644
-> > index 000000000000..ee0110dd8131
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/Makefile
-> > @@ -0,0 +1,33 @@
-> > +# SPDX-License-Identifier: GPL-2.0
-> > +DT_DOC_CHECKER ?= dt-doc-validate
-> > +DT_EXTRACT_EX ?= dt-extract-example
-> > +DT_MK_SCHEMA ?= dt-mk-schema
-> > +DT_MK_SCHEMA_FLAGS := $(if $(DT_SCHEMA_FILES), -u)
-> > +
-> > +quiet_cmd_chk_binding = CHKDT   $<
-> > +      cmd_chk_binding = (set -e; \
-> > +                         $(DT_DOC_CHECKER) $< ; \
-> > +                         mkdir -p $(dir $@) ; \
-> > +                         $(DT_EXTRACT_EX) $< > $@ )
-> > +
-> > +$(obj)/%.example.dts: $(src)/%.yaml FORCE
-> > +       $(call if_changed,chk_binding)
-> > +
-> > +DT_TMP_SCHEMA := .schema.yaml.tmp
-> > +extra-y += $(DT_TMP_SCHEMA)
-> > +
-> > +quiet_cmd_mk_schema = SCHEMA  $@
-> > +      cmd_mk_schema = mkdir -p $(obj); \
-> > +                      rm -f $@; \
-> > +                      $(DT_MK_SCHEMA) $(DT_MK_SCHEMA_FLAGS) -o $@ $<
->
->
-> I think '$<' is wrong.
->
-> '$<' is replaced with the first prerequisite.
+On Mon 2018-12-10 17:45:54, Feng Tang wrote:
+> Hi Sergey,
+> 
+> + lkml.
+> 
+> On Fri, Dec 07, 2018 at 06:50:04PM +0900, Sergey Senozhatsky wrote:
+> > On (12/06/18 11:58), Feng Tang wrote:
+> > > > Same here, I tried on several platforms and hardly get the sysrq magic key
+> > > > working, though it works while system is running.
+> > > > 
+> > > > And it make me wondering if those workqueue dependent led blinking code
+> > > > can still really work.
+> > > 
+> > > Also, IMHO, if we need a panic blink method, it should better be simple
+> > > and robust with only HW registers access plus delay function, as I'm not
+> > > sure if the scheduling can still work. 
+> > > 
+> > > Anyway, can I propose to make the "local_irq_enable" conditional and off
+> > > by default, and add a warning.
+> > 
+> > I'm not sure what to do about this. I think that the behaviour is platform
+> > specific. For instance, arm64 keeps secondary CPUs in a busy loop
+> > 	while (1)
+> > 		cpu_relax();
+> 
+> Yes, it's similar to x86's handling for non-panic CPU.
+> 
+> > 
+> > (masked out) and on panic_cpu disables only SDEI (interrupts from firmware,
+> > if I got it right); so it seems that arm64 can handle IRQs after panic. And
+> > if there are platforms that handle IRQ (including sysrq) after panic, then
+> > both options - making printk a noop or keeping local irqs off - maybe can
+> > cause some problems. Or maybe not. We better ask arch people.
+> 
+> Yes, this is very valid concern. And after Petr and you raised it, I did
+> some experiments with 3 x86 platforms at my hand, one Apollolake IOT device
+> with serial console, one IvyBridge laptop and one Kabylake NUC, the magic key
+> all works well before panic, and fails after panic. But I did remember the
+> PageUp/PageDown key worked on some laptop years ago. And you actually raised a
+> good question: what do we expect for the post-panic kernel?
 
-Indeed.
+I am not sure why it does not work. But it would be nice if sysrq
+worked.
 
-> You can easily check what is happening here.
->
-> $ cat   Documentation/devicetree/bindings/..schema.yaml.tmp.cmd
-> cmd_Documentation/devicetree/bindings/.schema.yaml.tmp := mkdir -p
-> Documentation/devicetree/bindings; rm -f
-> Documentation/devicetree/bindings/.schema.yaml.tmp; dt-mk-schema  -o
-> Documentation/devicetree/bindings/.schema.yaml.tmp
-> Documentation/devicetree/bindings/arm/ti/ti,davinci.yaml
->
->
-> So, the dt-validater will check only binding from ti,davinci.yaml,
-> which is almost useless.
->
->
->
-> If I understand it correctly,
-> .schema.yaml.tmp should contain all binding yaml.
->
->
-> I fixed it up like follows:
->
-> diff --git a/Documentation/devicetree/bindings/Makefile
-> b/Documentation/devicetree/bindings/Makefile
-> index ee0110d..267458f 100644
-> --- a/Documentation/devicetree/bindings/Makefile
-> +++ b/Documentation/devicetree/bindings/Makefile
-> @@ -19,7 +19,7 @@ extra-y += $(DT_TMP_SCHEMA)
->  quiet_cmd_mk_schema = SCHEMA  $@
->        cmd_mk_schema = mkdir -p $(obj); \
->                        rm -f $@; \
-> -                      $(DT_MK_SCHEMA) $(DT_MK_SCHEMA_FLAGS) -o $@ $<
-> +                      $(DT_MK_SCHEMA) $(DT_MK_SCHEMA_FLAGS) -o $@
-> $(filter-out FORCE, $^)
 
-Thanks, I incorporated this fix.
+> For the v4 patch, my thought is, for experienced developers to make
+> sysrq/panic_blink work, it's easy to add "panic_keep_irq_on" to kernel cmdline,
+> or runtime change it by
+>  "echo Y > /sys/module/kernel/parameters/panic_keep_irq_on"
+> while for normal user, they can by default see the clean panic call stack
+> either on a screen or a serial console.
 
->
->  DT_DOCS = $(shell cd $(srctree)/$(src) && find * -name '*.yaml')
->  DT_SCHEMA_FILES ?= $(addprefix $(src)/,$(DT_DOCS))
->
->
->
-> Then, I see another error.
+I see this problematic from two reasons:
 
-I fixed this with this change:
+First, the blinking and especially sysrq might be handy but they
+are disabled by default. It is too late to do anything when the
+system is panicing.
 
-@@ -27,7 +27,7 @@ DT_SCHEMA_FILES ?= $(addprefix $(src)/,$(DT_DOCS))
- extra-y += $(patsubst $(src)/%.yaml,%.example.dts, $(DT_SCHEMA_FILES))
- extra-y += $(patsubst $(src)/%.yaml,%.example.dtb, $(DT_SCHEMA_FILES))
+Second, new parameters or configure options should be avoided
+whenever possible. They are easy to implement but the are less
+easy to use. The current amount of them is already overhelming.
 
--$(obj)/$(DT_TMP_SCHEMA): $(addprefix $(obj)/,$(patsubst
-$(src)/%.yaml,%.example.dtb, $(DT_SCHEMA_FILES)))
-+$(obj)/$(DT_TMP_SCHEMA): | $(addprefix $(obj)/,$(patsubst
-$(src)/%.yaml,%.example.dtb, $(DT_SCHEMA_FILES)))
 
- $(obj)/$(DT_TMP_SCHEMA): $(addprefix $(srctree)/, $(DT_SCHEMA_FILES)) FORCE
-        $(call if_changed,mk_schema)
+I still think that calming down printk() is acceptable when
+it can be restored from sysrq.
 
->
->
->   SCHEMA  Documentation/devicetree/bindings/.schema.yaml.tmp
-> Traceback (most recent call last):
->   File "/home/masahiro/ref/yaml-bindings/tools/dt-mk-schema", line 32,
-> in <module>
->     schemas = dtschema.process_schemas(args.schemas, core_schema=(not
-> args.useronly))
->   File "/usr/local/lib/python3.5/dist-packages/dtschema-0.0.1-py3.5.egg/dtschema/lib.py",
-> line 359, in process_schemas
->     sch = process_schema(os.path.abspath(filename))
->   File "/usr/local/lib/python3.5/dist-packages/dtschema-0.0.1-py3.5.egg/dtschema/lib.py",
-> line 314, in process_schema
->     schema = load_schema(filename)
->   File "/usr/local/lib/python3.5/dist-packages/dtschema-0.0.1-py3.5.egg/dtschema/lib.py",
-> line 80, in load_schema
->     return yaml.load(f.read())
->   File "/usr/lib/python3.5/codecs.py", line 321, in decode
->     (result, consumed) = self._buffer_decode(data, self.errors, final)
-> UnicodeDecodeError: 'utf-8' codec can't decode byte 0xd0 in position
-> 0: invalid continuation byte
-> Documentation/devicetree/bindings/Makefile:33: recipe for target
-> 'Documentation/devicetree/bindings/.schema.yaml.tmp' failed
-> make[1]: *** [Documentation/devicetree/bindings/.schema.yaml.tmp] Error 1
-> Makefile:1278: recipe for target 'dt_binding_check' failed
-> make: *** [dt_binding_check] Error 2
->
->
->
->
->
->
->
-> BTW, I cannot build *.dt.yaml
->
->
->
->   DTC     arch/arm/boot/dts/alpine-db.dt.yaml
-> FATAL ERROR: Unknown output format "yaml"
-> scripts/Makefile.lib:313: recipe for target
-> 'arch/arm/boot/dts/alpine-db.dt.yaml' failed
-> make[1]: *** [arch/arm/boot/dts/alpine-db.dt.yaml] Error 1
-> make[1]: *** Deleting file 'arch/arm/boot/dts/alpine-db.dt.yaml'
-> Makefile:1262: recipe for target 'dtbs_check' failed
->
->
->
->
-> I use linux-next.
->
->
-> script/dtc/dtc does not understand '-O yaml'
->
->
-> I also tried the upstream DTC project with no success.
->
->
-> Where can I get dtc with yaml support?
+I think that only few people might be interested into debugging
+post-panic problems. We could print a warning for them about
+that printk() has got disabled.
 
-You need libyaml and its headers. I'll try to make this a better error
-message. For now, libyaml is optional so we don't break everyone just
-building dtbs.
-
-Rob
+Best Regards,
+Petr
