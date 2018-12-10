@@ -2,103 +2,96 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C2B3C5CFFE
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 17:31:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 942B8C04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 17:31:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C3DAB2081F
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 17:31:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4B9D52064D
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 17:31:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="HFqHq6b2";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="TOeD1S51"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C3DAB2081F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="VFm5rigX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B9D52064D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728036AbeLJRbE (ORCPT
+        id S1728125AbeLJRbQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 12:31:04 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:37116 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726687AbeLJRbC (ORCPT
+        Mon, 10 Dec 2018 12:31:16 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:53746 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726649AbeLJRbQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 12:31:02 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 5094360A33; Mon, 10 Dec 2018 17:31:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1544463061;
-        bh=Rm48TMtEqo+i+SNX4708GD3xygjw1+jcuWX8RW+KyRk=;
-        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-        b=HFqHq6b2Mpv9JQBq3WVRdhAhUjVManZOjbFDBTUEB76K+NKs2psgi/QuS03Umkt4y
-         dBAnEIDeU6/kLNgruh3uICPrAeB+eC7Y/DFQug6BASptLdU8KRgTlZU4yi+BmmhBj6
-         +iyAOB189yeXgCCuy1hwOV8u76QN9/OFhMJ4kpmU=
-Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: kvalo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id A375760115;
-        Mon, 10 Dec 2018 17:30:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1544463060;
-        bh=Rm48TMtEqo+i+SNX4708GD3xygjw1+jcuWX8RW+KyRk=;
-        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-        b=TOeD1S51PEhGa/xCeZbSC2yOMxN21EDj9tzBDF/7P0B0wAP4DryJkYYtkmNSrSRpM
-         Ry0IadzXcXtJHiIzZlFT0kRDJmRgT3CbpiI5BnPp7g8Pz44eHl4v3ETsEElLdpbZh3
-         7YEysib6B8gsmcn5KAOinpcgjB5fxW/2ibpDvBw8=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A375760115
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-From:   Kalle Valo <kvalo@codeaurora.org>
-To:     Pavel Machek <pavel@ucw.cz>
-Cc:     jacek.anaszewski@gmail.com, linux-leds@vger.kernel.org,
-        kernel list <linux-kernel@vger.kernel.org>,
-        davem@davemloft.net, linux-wireless@vger.kernel.org,
-        netdev@vger.kernel.org
-Subject: Re: trigger named just "tx" in drivers/net/wireless/atmel/at76c50x-usb.c
-References: <20181201143144.GC31631@amd> <87lg57f182.fsf@codeaurora.org>
-        <20181209200844.GA12756@amd>
-Date:   Mon, 10 Dec 2018 19:30:56 +0200
-In-Reply-To: <20181209200844.GA12756@amd> (Pavel Machek's message of "Sun, 9
-        Dec 2018 21:08:44 +0100")
-Message-ID: <87zhtd1e7j.fsf@kamboji.qca.qualcomm.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
+        Mon, 10 Dec 2018 12:31:16 -0500
+Received: by mail-wm1-f68.google.com with SMTP id y1so11769541wmi.3
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Dec 2018 09:31:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=VLGXbMLXFoz/PeOjsLaNCCdrhPWO4x+DiFmgKwzM058=;
+        b=VFm5rigXvN3QPpqKHgw/nfdsz4FKzlME9/ua0rt/+kg/XlhoOGAoggeRWfDJa4GiiR
+         /l3CcJQcQweWN1zLcrVkxG3i5k5ci8CBaN2GKtkPUNie3PQMyLUkcdtrfErgjrRFnAv4
+         xW+cEnaFAUUB5yFfYFn7gqG3C7Na6+1+cXKws=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=VLGXbMLXFoz/PeOjsLaNCCdrhPWO4x+DiFmgKwzM058=;
+        b=CKsYgbiEuaGr4IS64N2Bc/tZBm8bWalY+GYf+mJCM16YqaKBgUPCNEEuGxUXXXgzA+
+         O0wBQ+iEEKarCexBRQ+L9Eju1L2pb42LCLEomCNm1i8rwv1meMPciHo/WMsQYW88XUsJ
+         5zk46CHnzM2JQqt/jFHhiGhc5CHOoPDFZqbYgT/+8I+XWFhI+3Mw1H0U0CW0DefBVx5d
+         gB/og+HDNjWn3GGB+wBAs4LZdYkUE5MGciDc11/8ZfBsDHcFb+dJXYp6LKT3qN21MtNi
+         EPBJavDpKVgu+1d0WOzaaCZAx7Gw8dfPAHBDbqVkCoHwG8k8hNSu6/SdzVqE1KSxxXxa
+         cmFQ==
+X-Gm-Message-State: AA+aEWa1ZBakt7Y0Q20kghKwJ0Wlz80GO9+uvFuBiObH8EPKtlSF39YT
+        /Q1VXEs6s+TqxHbSuZbFpIr0AQ==
+X-Google-Smtp-Source: AFSGD/UVafmELIMKcDHu855jPQmLDGhws0NDWyvZ4I5XDc4UG3b8La94WzTRZDIS5OqpqZX0I0Voug==
+X-Received: by 2002:a7b:c1d7:: with SMTP id a23mr10792177wmj.48.1544463073980;
+        Mon, 10 Dec 2018 09:31:13 -0800 (PST)
+Received: from dell (host109-155-202-221.range109-155.btcentralplus.com. [109.155.202.221])
+        by smtp.gmail.com with ESMTPSA id w8sm11704230wrv.7.2018.12.10.09.31.13
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 10 Dec 2018 09:31:13 -0800 (PST)
+Date:   Mon, 10 Dec 2018 17:31:11 +0000
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Frank Lee <tiny.windzz@gmail.com>
+Cc:     linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mfd: fix small typo
+Message-ID: <20181210173111.GC4497@dell>
+References: <20181101154153.23042-1-tiny.windzz@gmail.com>
+ <CAEExFWuoVpKmaGKCUVcORXirBLKwA-z+sHuWVMY4Hc8ptpdPTQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAEExFWuoVpKmaGKCUVcORXirBLKwA-z+sHuWVMY4Hc8ptpdPTQ@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Pavel Machek <pavel@ucw.cz> writes:
+On Tue, 11 Dec 2018, Frank Lee wrote:
 
-> On Mon 2018-12-03 10:45:01, Kalle Valo wrote:
->> Pavel Machek <pavel@ucw.cz> writes:
->> 
->> > While grepping something else, I came across LED trigger that is named
->> > just "tx".
->> >
->> > That's a bit too generic afaict?
->> >
->> > +++ b/drivers/net/wireless/atmel/at76c50x-usb.c
->> > @@ -520,7 +520,7 @@ static int at76_usbdfu_download(struct usb_device
->> > *udev, u8 *buf, u32 size,
->> >  static int tx_activity;
->> >   static void at76_ledtrig_tx_timerfunc(struct timer_list *unused);
->> >    static DEFINE_TIMER(ledtrig_tx_timer, at76_ledtrig_tx_timerfunc);
->> >    -DEFINE_LED_TRIGGER(ledtrig_tx);
->> >    +DEFINE_LED_TRIGGER(ledtrig_tx); /* Hey! "tx" is a bit too generic
->> >    name for a trigger! */
->> 
->> This is an ancient driver, my guess is that nobody uses it anymore. I
->> should orphan it and maybe even remove it at some point.
->
-> Are you willing to add a fixme there? I really don't want people to
-> copy that example.
+> ping.......
 
-Sure, patches welcome.
+Please don't do that.
+
+If you think your patch has been missed, then please send it again as
+a [RESEND].  In this case you will need to fix the $SUBJECT line too.
+To see what it should look like do the following:
+
+  `git log --oneline -- drivers/mfd`
+
+Once fixed, s/[PATCH]/[RESEND/ and resubmit it.
 
 -- 
-Kalle Valo
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
