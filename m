@@ -4,39 +4,39 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.6 required=3.0 tests=DKIM_ADSP_ALL,DKIM_INVALID,
 	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06E83C5CFFE
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 18:43:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD800C04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 18:43:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B42BA2081F
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 18:43:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A59BC2081F
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 18:43:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=plaes.org header.i=@plaes.org header.b="TNhQU2+9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B42BA2081F
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=plaes.org header.i=@plaes.org header.b="O0WRi/yd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A59BC2081F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=plaes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728873AbeLJSmy (ORCPT
+        id S1728975AbeLJSnH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 13:42:54 -0500
-Received: from plaes.org ([188.166.43.21]:55146 "EHLO plaes.org"
+        Mon, 10 Dec 2018 13:43:07 -0500
+Received: from plaes.org ([188.166.43.21]:55100 "EHLO plaes.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726024AbeLJSm3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 13:42:29 -0500
+        id S1727071AbeLJSm2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Dec 2018 13:42:28 -0500
 Received: from localhost (unknown [213.204.46.240])
-        by plaes.org (Postfix) with ESMTPSA id 085D9418DE;
-        Mon, 10 Dec 2018 18:42:27 +0000 (UTC)
+        by plaes.org (Postfix) with ESMTPSA id DA06C41289;
+        Mon, 10 Dec 2018 18:42:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=plaes.org; s=mail;
-        t=1544467347; bh=kVazWeoBJTH1RfagB16nCXnVFLnAlX8uPnX2O4aNcZU=;
+        t=1544467346; bh=f2mcC9Dpd0QYLyRmz8so1Ckg3Nv64+LbaTC/FIJ10Ik=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TNhQU2+9kiHzHr2r0eh6QDKGwUgrDmxrva4AMNBAcOfaUCyc53Kc4MyL6DYlXAh+A
-         QRpeLQ5jXhGAebKYSttBEOGHFI9WhVhYVw4mvulJLtXH7YaWP63OzFu3XuphamuXxw
-         XXLvsVzoL7SzkVanAn4f6lehF2h9HgihvTiKBl51R+wLJERaKZwxUWuwcCoVGBboQX
-         IvVKNEf/pou53ZKd34DtVR8hoMCNS09NeMJ/yvJXcVYygSVhfyIaqkced1ATpsv/jl
-         IVvYs87x6UQxJ7drFbtCnMFPveYLrqg6I0n5PQTONtsCt+SBFG7x0+z4ap30+McPS5
-         4+ncvWx5W5GHw==
+        b=O0WRi/ydRMrVKhFvfrIp9rdhWemlVVSJizeZzDNYiH9lyZrQZiTltvzHazv628ABN
+         ik2L4ipxvpqsfKM/qbJQ4CbD8bTRBZo9cWM3WNL4y7d/3dl54cr6sVi3idNrpzbbQs
+         T7H1+TJiSgY7E4vI9oKsPFY8YwktCr81J5QHkbThIzhLh7v0FS3BNneH3+Nx5I1QaC
+         6PyyrBpTTy5dFGZT3jqn7S+sFel22dumtTbCGSLSEY+NPjgk0Jq3O9FZM4Lq/H9Cng
+         3O/KEY46u5lIuRWND//h5WUyFLRJ68BLGkiN3+vERefiOOU+t0F7boHxKgxF+W6AgA
+         LEk5vNM2DmaBA==
 From:   Priit Laes <plaes@plaes.org>
 To:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -48,9 +48,9 @@ To:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
         Olliver Schinagl <oliver@schinagl.nl>,
         linux-sunxi <linux-sunxi@googlegroups.com>
 Cc:     Priit Laes <plaes@plaes.org>
-Subject: [PATCH 4/8] regulator: axp20x: add software based soft_start for AXP209 LDO3
-Date:   Mon, 10 Dec 2018 20:42:15 +0200
-Message-Id: <c77b37b68b18a299cafd282ef1edf3434eabeb2d.1544466940.git-series.plaes@plaes.org>
+Subject: [PATCH 2/8] regulator: axp20x: add support for set_ramp_delay for AXP209
+Date:   Mon, 10 Dec 2018 20:42:13 +0200
+Message-Id: <2bfe47f173fe72a30b0036dcdeebc2123962ff33.1544466940.git-series.plaes@plaes.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <cover.4110554ae84987dedb8b58888a8a63d6b7f98c72.1544466940.git-series.plaes@plaes.org>
 References: <cover.4110554ae84987dedb8b58888a8a63d6b7f98c72.1544466940.git-series.plaes@plaes.org>
@@ -63,123 +63,135 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Olliver Schinagl <oliver@schinagl.nl>
 
-In the past, there have been words on various lists that if LDO3 is
-disabled in u-boot, but enabled in the DTS, the axp209 driver would
-fail to continue/hang. Several enable/disable patches have been
-issues to devicetree's in both the kernel and u-boot to address
-this issue.
+The AXP209 supports ramping up voltages on several regulators such as
+DCDC2 and LDO3.
 
-What really happened however, was that the AXP209 shuts down without
-a notice and without setting an interrupt. This is caused when LDO3
-gets overloaded, for example with large capacitors on the LDO3 output.
+This patch adds preliminary support for the regulator-ramp-delay property
+for these 2 regulators. Note that the voltage ramp only works when
+regulator is already enabled. E.g. when going from say 0.7 V to 3.6 V.
 
-Normally, we would expect that AXP209 would source 200 mA as per
-datasheet and set and trigger an interrupt when being overloaded.
-For some reason however, this does not happen.
+When turning on the regulator, no voltage ramp is performed in hardware.
 
-As a work-around, we use the soft-start constraint of the regulator
-node to first bring up the LDO3 to the lowest possible voltage and
-then enable the LDO. After that, we can set the requested voltage
-as usual.
-
-Combining this setting with the regulator-ramp-delay allows LDO3 to
-enable voltage slowly and staggered, potentially reducing overall
-inrush current.
+What this means, is that if the bootloader brings up the voltage at 0.7 V,
+the ramp delay property is properly applied. If however, the bootloader
+leaves the power off, no ramp delay is applied when the power is
+enabled by the regulator framework.
 
 Signed-off-by: Olliver Schinagl <oliver@schinagl.nl>
 Signed-off-by: Priit Laes <plaes@plaes.org>
 ---
- drivers/regulator/axp20x-regulator.c | 57 ++++++++++++++++++++++++++++-
- 1 file changed, 56 insertions(+), 1 deletion(-)
+ drivers/regulator/axp20x-regulator.c | 85 +++++++++++++++++++++++++++++-
+ 1 file changed, 85 insertions(+)
 
 diff --git a/drivers/regulator/axp20x-regulator.c b/drivers/regulator/axp20x-regulator.c
-index 1d9fa62..e8a895b 100644
+index 9a2db28..1d9fa62 100644
 --- a/drivers/regulator/axp20x-regulator.c
 +++ b/drivers/regulator/axp20x-regulator.c
-@@ -14,6 +14,7 @@
-  */
+@@ -51,6 +51,17 @@
+ #define AXP20X_PWR_OUT_DCDC2_MASK	BIT_MASK(4)
+ #define AXP20X_PWR_OUT_LDO3_MASK	BIT_MASK(6)
  
- #include <linux/bitops.h>
-+#include <linux/delay.h>
- #include <linux/err.h>
- #include <linux/init.h>
- #include <linux/mfd/axp20x.h>
-@@ -23,6 +24,7 @@
- #include <linux/platform_device.h>
- #include <linux/regmap.h>
- #include <linux/regulator/driver.h>
-+#include <linux/regulator/machine.h>
- #include <linux/regulator/of_regulator.h>
++#define AXP20X_DCDC2_LDO3_V_RAMP_DCDC2_RATE_MASK	BIT_MASK(0)
++#define AXP20X_DCDC2_LDO3_V_RAMP_DCDC2_RATE(x) \
++	((x) << 0)
++#define AXP20X_DCDC2_LDO3_V_RAMP_LDO3_RATE_MASK		BIT_MASK(1)
++#define AXP20X_DCDC2_LDO3_V_RAMP_LDO3_RATE(x) \
++	((x) << 1)
++#define AXP20X_DCDC2_LDO3_V_RAMP_DCDC2_EN_MASK		BIT_MASK(2)
++#define AXP20X_DCDC2_LDO3_V_RAMP_DCDC2_EN		BIT(2)
++#define AXP20X_DCDC2_LDO3_V_RAMP_LDO3_EN_MASK		BIT_MASK(3)
++#define AXP20X_DCDC2_LDO3_V_RAMP_LDO3_EN		BIT(3)
++
+ #define AXP20X_LDO4_V_OUT_1250mV_START	0x0
+ #define AXP20X_LDO4_V_OUT_1250mV_STEPS	0
+ #define AXP20X_LDO4_V_OUT_1250mV_END	\
+@@ -346,6 +357,79 @@
+ 		.ops		= &axp20x_ops_range,				\
+ 	}
  
- #define AXP20X_GPIO0_FUNC_MASK		GENMASK(3, 0)
-@@ -430,6 +432,59 @@ static int axp20x_set_ramp_delay(struct regulator_dev *rdev, int ramp)
- 	return regmap_update_bits(axp20x->regmap, reg, mask, cfg);
- }
- 
-+static int axp20x_regulator_enable_regmap(struct regulator_dev *rdev)
++static const int axp209_dcdc2_ldo3_slew_rates[] = {
++	1600,
++	 800,
++};
++
++static int axp20x_set_ramp_delay(struct regulator_dev *rdev, int ramp)
 +{
 +	struct axp20x_dev *axp20x = rdev_get_drvdata(rdev);
 +	const struct regulator_desc *desc = rdev->desc;
++	u8 reg, mask, enable, cfg = 0xff;
++	const int *slew_rates;
++	int rate_count = 0;
 +
 +	if (!rdev)
 +		return -EINVAL;
 +
 +	switch (axp20x->variant) {
 +	case AXP209_ID:
-+		if ((desc->id == AXP20X_LDO3) &&
-+		    rdev->constraints && rdev->constraints->soft_start) {
-+			int v_out;
-+			int ret;
-+
-+			/*
-+			 * On some boards, the LDO3 can be overloaded when
-+			 * turning on, causing the entire PMIC to shutdown
-+			 * without warning. Turning it on at the minimal voltage
-+			 * and then setting the voltage to the requested value
-+			 * works reliably.
-+			 */
-+			if (regulator_is_enabled_regmap(rdev))
-+				break;
-+
-+			v_out = regulator_get_voltage_sel_regmap(rdev);
-+			if (v_out < 0)
-+				return v_out;
-+
-+			if (v_out == 0)
-+				break;
-+
-+			ret = regulator_set_voltage_sel_regmap(rdev, 0x00);
-+			/*
-+			 * A small pause is needed between
-+			 * setting the voltage and enabling the LDO to give the
-+			 * internal state machine time to process the request.
-+			 */
-+			usleep_range(1000, 5000);
-+			ret |= regulator_enable_regmap(rdev);
-+			ret |= regulator_set_voltage_sel_regmap(rdev, v_out);
-+
-+			return ret;
++		if (desc->id == AXP20X_DCDC2) {
++			rate_count = ARRAY_SIZE(axp209_dcdc2_ldo3_slew_rates);
++			reg = AXP20X_DCDC2_LDO3_V_RAMP;
++			mask = AXP20X_DCDC2_LDO3_V_RAMP_DCDC2_RATE_MASK |
++			       AXP20X_DCDC2_LDO3_V_RAMP_DCDC2_EN_MASK;
++			enable = (ramp > 0) ?
++				 AXP20X_DCDC2_LDO3_V_RAMP_DCDC2_EN :
++				 !AXP20X_DCDC2_LDO3_V_RAMP_DCDC2_EN;
++			break;
 +		}
-+		break;
++
++		if (desc->id == AXP20X_LDO3) {
++			slew_rates = axp209_dcdc2_ldo3_slew_rates;
++			rate_count = ARRAY_SIZE(axp209_dcdc2_ldo3_slew_rates);
++			reg = AXP20X_DCDC2_LDO3_V_RAMP;
++			mask = AXP20X_DCDC2_LDO3_V_RAMP_LDO3_RATE_MASK |
++			       AXP20X_DCDC2_LDO3_V_RAMP_LDO3_EN_MASK;
++			enable = (ramp > 0) ?
++				 AXP20X_DCDC2_LDO3_V_RAMP_LDO3_EN :
++				 !AXP20X_DCDC2_LDO3_V_RAMP_LDO3_EN;
++			break;
++		}
++
++		if (rate_count > 0)
++			break;
++
++		/* fall through */
 +	default:
-+		/* No quirks */
-+		break;
++		/* Not supported for this regulator */
++		return -ENOTSUPP;
 +	}
 +
-+	return regulator_enable_regmap(rdev);
-+};
++	if (ramp == 0) {
++		cfg = enable;
++	} else {
++		int i;
++
++		for (i = 0; i < rate_count; i++) {
++			if (ramp <= slew_rates[i])
++				cfg = AXP20X_DCDC2_LDO3_V_RAMP_LDO3_RATE(i);
++			else
++				break;
++		}
++
++		if (cfg == 0xff) {
++			dev_err(axp20x->dev, "unsupported ramp value %d", ramp);
++			return -EINVAL;
++		}
++
++		cfg |= enable;
++	}
++
++	return regmap_update_bits(axp20x->regmap, reg, mask, cfg);
++}
 +
  static const struct regulator_ops axp20x_ops_fixed = {
  	.list_voltage		= regulator_list_voltage_linear,
  };
-@@ -447,7 +502,7 @@ static const struct regulator_ops axp20x_ops = {
- 	.set_voltage_sel	= regulator_set_voltage_sel_regmap,
- 	.get_voltage_sel	= regulator_get_voltage_sel_regmap,
- 	.list_voltage		= regulator_list_voltage_linear,
--	.enable			= regulator_enable_regmap,
-+	.enable			= axp20x_regulator_enable_regmap,
+@@ -366,6 +450,7 @@ static const struct regulator_ops axp20x_ops = {
+ 	.enable			= regulator_enable_regmap,
  	.disable		= regulator_disable_regmap,
  	.is_enabled		= regulator_is_enabled_regmap,
- 	.set_ramp_delay		= axp20x_set_ramp_delay,
++	.set_ramp_delay		= axp20x_set_ramp_delay,
+ };
+ 
+ static const struct regulator_ops axp20x_ops_sw = {
 -- 
 git-series 0.9.1
