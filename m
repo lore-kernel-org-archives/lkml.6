@@ -2,147 +2,114 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3072C67839
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 16:02:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCF0CC6783B
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 16:03:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 820AF2082F
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 16:02:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6FCCE2082F
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 16:03:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="XUBVYZVQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 820AF2082F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gc394AWx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6FCCE2082F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727663AbeLJQCP (ORCPT
+        id S1728360AbeLJQDb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 11:02:15 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:59784 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727186AbeLJQCO (ORCPT
+        Mon, 10 Dec 2018 11:03:31 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:45110 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726585AbeLJQDa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 11:02:14 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=4EKVW+hAfSkSgUcESSFHuIL80PpQuXuWr+0DFFQ5DB8=; b=XUBVYZVQhFxRsAy/nSISdnQPI
-        ETyGkz8ZGNDq175W6v6gc5/k2VIud+MRFeCqQOD/U+SX253lZPsSPDkuMdTgMOkteuOZ0lwPLl2yc
-        0mUBZ1WM0yRBRsutWILKIkEd82Bt9DfNutOmeruKAxhSlRg5aYphQ87f26HPbKLfQzcwKZrLZNiHO
-        KpgrqZfxrneD954GNvRbU17poaMOPgV+NWHuFzmIXDuWuYMI8QS5V2xGpijavyzalXJAmQ8toWkaL
-        A9YRhZabPDPanldBj4yzfrKs4E2JSv0LUXhvrpQe7bdPVTPv7r0Aek7xRH6C1FwjDuuVcHmS5TaXz
-        2QV5N+OpQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gWO0V-0004oV-D3; Mon, 10 Dec 2018 16:02:07 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id D714D2075BE71; Mon, 10 Dec 2018 17:02:05 +0100 (CET)
-Date:   Mon, 10 Dec 2018 17:02:05 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Stefan Liebler <stli@linux.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>
-Subject: Re: [patch] futex: Cure exit race
-Message-ID: <20181210160205.GQ5289@hirez.programming.kicks-ass.net>
-References: <20181210152311.986181245@linutronix.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181210152311.986181245@linutronix.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Mon, 10 Dec 2018 11:03:30 -0500
+Received: by mail-pl1-f196.google.com with SMTP id a14so5438581plm.12
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Dec 2018 08:03:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=fGIARFtgCjNaTeWMW52dUjZPMdUwiznQnVtKUxB4PtA=;
+        b=gc394AWx7F09NXioH7PBgXrqkEArK84xUOSPCjsORTVZZRemod0D0kiA8aAvIibOfA
+         IQy8hPrYfT5vveQDaghzKpicTpdii05YtbOucM05eL8oi4FNVbXkp/w767SGLTrf/xoz
+         wCxIRkNipz3g/4YZMKjGVNqBkJSK8v3fcIECs0kwH56CDJfSNhge+VqQdwKSidMju8Ke
+         Vc4172Hmn+MIOeHWzWTTz4uyXImlkfCSDxWPy+09oi3TwHOqQa3SS2h171aJLMguVn8s
+         GtZTvnSZN3eLt+TONU+zqDFrtX6JSxPLtHnQRWRJPEVxUpVdssIxyv4WVKODP76z4VMw
+         +fUA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=fGIARFtgCjNaTeWMW52dUjZPMdUwiznQnVtKUxB4PtA=;
+        b=c0cERlK6b/BMABvr80jniKKTQ8g54dxo+ks6ud6TW+tXqyczqWK9Or5ufMWhsic9Nd
+         2rd0CObFSy3WDQnfcbGJUUXpsO0A6Fwenpp6s7NHOPtzRlCueOuBkQJ08C9zN1JKQk47
+         1It3knm2ZqF9A3yjDhw9wMS1IveYPRHzrGmorwl5Qo0aLmph/nUplJlsqOMAvGrjM0yN
+         jn8+n33byfwrpg/MiQYX44D2DhZ8YsJpXsVLw9yQG5CluSoNwMKwqSuQzSOUHa0U04au
+         w5EAvgMYW+8X/NRyw/EaiJmHr43dEJLsNbQY6CmmA5o0otdLdWEXKQH0oPSsEIKZcoAG
+         IYGA==
+X-Gm-Message-State: AA+aEWadCbgtrX2YDJH4918AsdGmBFfM5KvqKg+IqUARFaK4d7Ue1lGo
+        DasA/WYPJXbOqbpryoLUYDg=
+X-Google-Smtp-Source: AFSGD/VEdttNnqeHddlBWxSHWyH1IzuOHX7eH/gGLuvx7mp0c4zDHgDIAQ9Qgj0PDBI+IWHdPiYziA==
+X-Received: by 2002:a17:902:6b84:: with SMTP id p4mr12846814plk.282.1544457809380;
+        Mon, 10 Dec 2018 08:03:29 -0800 (PST)
+Received: from localhost (68.168.130.77.16clouds.com. [68.168.130.77])
+        by smtp.gmail.com with ESMTPSA id o13sm14618751pfk.57.2018.12.10.08.03.28
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 10 Dec 2018 08:03:28 -0800 (PST)
+From:   Yangtao Li <tiny.windzz@gmail.com>
+To:     jakub.kicinski@netronome.com, davem@davemloft.net
+Cc:     linux-kernel@vger.kernel.org, Yangtao Li <tiny.windzz@gmail.com>
+Subject: [PATCH] bpf: convert to DEFINE_SHOW_ATTRIBUTE
+Date:   Mon, 10 Dec 2018 11:03:27 -0500
+Message-Id: <20181210160327.20811-1-tiny.windzz@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 10, 2018 at 04:23:06PM +0100, Thomas Gleixner wrote:
+Use DEFINE_SHOW_ATTRIBUTE macro to simplify the code.
 
->  kernel/futex.c |   57 +++++++++++++++++++++++++++++++++++++++++++++++++++++----
->  1 file changed, 53 insertions(+), 4 deletions(-)
-> 
-> --- a/kernel/futex.c
-> +++ b/kernel/futex.c
-> @@ -1148,11 +1148,60 @@ static int attach_to_pi_state(u32 __user
->  	return ret;
->  }
->  
-> +static int handle_exit_race(u32 __user *uaddr, u32 uval, struct task_struct *tsk)
-> +{
-> +	u32 uval2;
-> +
-> +	/*
-> +	 * If PF_EXITPIDONE is not yet set try again.
-> +	 */
-> +	if (!(tsk->flags & PF_EXITPIDONE))
-> +		return -EAGAIN;
-> +
-> +	/*
-> +	 * Reread the user space value to handle the following situation:
-> +	 *
-> +	 * CPU0				CPU1
-> +	 *
-> +	 * sys_exit()			sys_futex()
-> +	 *  do_exit()			 futex_lock_pi()
-> +	 *   exit_signals(tsk)		  No waiters:
-> +	 *    tsk->flags |= PF_EXITING;	  *uaddr == 0x00000PID
-> +	 *  mm_release(tsk)		  Set waiter bit
-> +	 *   exit_robust_list(tsk) {	  *uaddr = 0x80000PID;
+Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+---
+ drivers/net/netdevsim/bpf.c | 16 ++--------------
+ 1 file changed, 2 insertions(+), 14 deletions(-)
 
-Just to clarify; this is: sys_futex() <- futex_lock_pi() <-
-futex_lock_pi_atomic(), where we do:
+diff --git a/drivers/net/netdevsim/bpf.c b/drivers/net/netdevsim/bpf.c
+index cb3518474f0e..14b4d9774708 100644
+--- a/drivers/net/netdevsim/bpf.c
++++ b/drivers/net/netdevsim/bpf.c
+@@ -48,7 +48,7 @@ struct nsim_bpf_bound_map {
+ 	struct list_head l;
+ };
+ 
+-static int nsim_debugfs_bpf_string_read(struct seq_file *file, void *data)
++static int nsim_bpf_string_show(struct seq_file *file, void *data)
+ {
+ 	const char **str = file->private;
+ 
+@@ -57,19 +57,7 @@ static int nsim_debugfs_bpf_string_read(struct seq_file *file, void *data)
+ 
+ 	return 0;
+ }
+-
+-static int nsim_debugfs_bpf_string_open(struct inode *inode, struct file *f)
+-{
+-	return single_open(f, nsim_debugfs_bpf_string_read, inode->i_private);
+-}
+-
+-static const struct file_operations nsim_bpf_string_fops = {
+-	.owner = THIS_MODULE,
+-	.open = nsim_debugfs_bpf_string_open,
+-	.release = single_release,
+-	.read = seq_read,
+-	.llseek = seq_lseek
+-};
++DEFINE_SHOW_ATTRIBUTE(nsim_bpf_string);
+ 
+ static int
+ nsim_bpf_verify_insn(struct bpf_verifier_env *env, int insn_idx, int prev_insn)
+-- 
+2.17.0
 
-  lock_pi_update_atomic(); // changes the futex word
-  attach_to_pi_owner(); // possibly returns ESRCH after changing the word
-
-
-> +	 *      Set owner died		  attach_to_pi_owner() {
-> +	 *    *uaddr = 0xC0000000;	   tsk = get_task(PID);
-> +	 *   }				   if (!tsk->flags & PF_EXITING) {
-> +	 *  ...				     attach();
-> +	 *  tsk->flags |= PF_EXITPIDONE;   } else {
-> +	 *				     if (!(tsk->flags & PF_EXITPIDONE))
-> +	 *				       return -EAGAIN;
-> +	 *				     return -ESRCH; <--- FAIL
-> +	 *				   }
-> +	 *
-> +	 * Returning ESRCH unconditionally is wrong here because the
-> +	 * user space value has been changed by the exiting task.
-> +	 */
-> +	if (get_futex_value_locked(&uval2, uaddr))
-> +		return -EFAULT;
-> +
-> +	/* If the user space value has changed, try again. */
-> +	if (uval2 != uval)
-> +		return -EAGAIN;
-
-And this then goes back to futex_lock_pi(), which does a retry loop.
-
-> +	/*
-> +	 * The exiting task did not have a robust list, the robust list was
-> +	 * corrupted or the user space value in *uaddr is simply bogus.
-> +	 * Give up and tell user space.
-> +	 */
-> +	return -ESRCH;
-
-If it is unchanged; -ESRCH is a valid return value.
-
-> +}
-
-There is another callers of futex_lock_pi_atomic(),
-futex_proxy_trylock_atomic(), which is part of futex_requeue(), that too
-does a retry loop on -EAGAIN.
-
-And there is another caller of attach_to_pi_owner(): lookup_pi_state(),
-and that too is in futex_requeue() and handles the retry case properly.
-
-Yes, this all looks good.
-
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
