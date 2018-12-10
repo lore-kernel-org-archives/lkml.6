@@ -2,177 +2,196 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-8.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0944CC04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 11:00:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D27DEC04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 11:01:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B544920821
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 11:00:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544439625;
-	bh=jrhcDjbM4FKghdzVOuIOU/72KfiM/mn4IZWwZIaO7sM=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=qumIyrwlDRmV2NQDgh7zU+KFb7VXtT+oTcUsot4MbZMZQmV/6TagtttMfz2WSRS41
-	 565YKRldGhDjjxIvRq0kuHrKNAkQrkEYcKI1dZdzRwW5OMMiHJzT4S6oCXFYiN6BdU
-	 jaHYw7Ohedeurm47rmoO1gCtfijdaWMRvb74F9Wg=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B544920821
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 94D412086D
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 11:01:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 94D412086D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727277AbeLJLAY (ORCPT
+        id S1727301AbeLJLBV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 06:00:24 -0500
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:45380 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726167AbeLJLAY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 06:00:24 -0500
-Received: by mail-ot1-f65.google.com with SMTP id 32so9924813ota.12;
-        Mon, 10 Dec 2018 03:00:23 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=X/+dClSdBlla52jf3QowD3wbou2cchoH4bGFzHz0u/k=;
-        b=TSpTUG1pyc2epuz5UzKrSj0Ia02vprcjbxAx5Jr8gQB2gypKU1i0cCPAAjDvcTBkQ8
-         s3clF3VCV0Qd4OYIcHebwl74jTqaUmGhgBZD0S5+N9h9YkOnfXlFfxWz03004U8NkrkC
-         cZlzmspdqqsTODhtAfl7QljHVM7D/y6H3v97BtkkMUxNxJBYgzGBpKUI/kpF7/awS0Me
-         mtaFLLN9v6SCvHQb+hDBmvoKG90opaFRpQTinmht2CfOny3CAif2WdwoBmsJP24APbwB
-         6RUAr4g6XvRFNJm+D2S60vEo1rGWh02McQSa0Lxj0TuZ7HnM3tNod6AQBw0NSu248rWD
-         SPvg==
-X-Gm-Message-State: AA+aEWZYINgEJVoiUsHmF1+orwavj2dmM1Kr0T2pDxW6k8gQNOGAtsYD
-        0ywtNhuh8JguxDYS12FpUbr0Ts0ZnVqinHLDBfg=
-X-Google-Smtp-Source: AFSGD/VeZdcx/nVA21SMosYJzlAOWETh+wlWBzTwGOr4LVE2RRemXGJxYYPFLfmTvMu9kzm37AIbk3RnslJndCLUkjA=
-X-Received: by 2002:a9d:2062:: with SMTP id n89mr7791089ota.244.1544439623012;
- Mon, 10 Dec 2018 03:00:23 -0800 (PST)
+        Mon, 10 Dec 2018 06:01:21 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:51316 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726167AbeLJLBV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Dec 2018 06:01:21 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4051A1596;
+        Mon, 10 Dec 2018 03:01:20 -0800 (PST)
+Received: from localhost (e113682-lin.copenhagen.arm.com [10.32.144.41])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A54523F6A8;
+        Mon, 10 Dec 2018 03:01:19 -0800 (PST)
+Date:   Mon, 10 Dec 2018 12:01:17 +0100
+From:   Christoffer Dall <christoffer.dall@arm.com>
+To:     Suzuki K Poulose <suzuki.poulose@arm.com>
+Cc:     Anshuman Khandual <anshuman.khandual@arm.com>,
+        kvmarm@lists.cs.columbia.edu, marc.zyngier@arm.com,
+        will.deacon@arm.com, linux-kernel@vger.kernel.org,
+        punitagrawal@gmail.com, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v9 1/8] KVM: arm/arm64: Share common code in
+ user_mem_abort()
+Message-ID: <20181210110117.GN30263@e113682-lin.lund.arm.com>
+References: <20181031175745.18650-1-punit.agrawal@arm.com>
+ <20181031175745.18650-2-punit.agrawal@arm.com>
+ <ad4b316a-054f-24d9-d32d-8fbe7972b5ad@arm.com>
+ <8fd34e5f-7d75-4de2-3fee-d6d70805685c@arm.com>
+ <20181210085616.GB30263@e113682-lin.lund.arm.com>
+ <f6410472-9af7-4b41-3809-3cf691e795e6@arm.com>
 MIME-Version: 1.0
-References: <20181127180349.29997-1-georgi.djakov@linaro.org>
- <CAE=gft4jUjr3oDAZrM=-orLM-YoVAwa+e=crDDC_p9ArGE1dig@mail.gmail.com>
- <20181206145547.GA7884@kroah.com> <CAJZ5v0gP50tmq4ZzB7LLSaWGWjGjK31y=qFg5PS9B7c2XQ+DyQ@mail.gmail.com>
- <6923d6ed-e357-b083-1830-8396d788efe5@linaro.org>
-In-Reply-To: <6923d6ed-e357-b083-1830-8396d788efe5@linaro.org>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Mon, 10 Dec 2018 12:00:11 +0100
-Message-ID: <CAJZ5v0jZMqFwYgnfRz04ELLRk=0U8Uv=acw0t9Azxk_HYL0gSQ@mail.gmail.com>
-Subject: Re: [PATCH v10 0/8] Introduce on-chip interconnect API
-To:     Georgi Djakov <georgi.djakov@linaro.org>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        evgreen@chromium.org, Linux PM <linux-pm@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Saravana Kannan <skannan@codeaurora.org>,
-        bjorn.andersson@linaro.org,
-        Amit Kucheria <amit.kucheria@linaro.org>,
-        seansw@qti.qualcomm.com, daidavid1@codeaurora.org,
-        Mark Rutland <mark.rutland@arm.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        abailon@baylibre.com, maxime.ripard@bootlin.com,
-        Arnd Bergmann <arnd@arndb.de>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        ksitaraman@nvidia.com, sanjayc@nvidia.com,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        linux-tegra@vger.kernel.org, Doug Anderson <dianders@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f6410472-9af7-4b41-3809-3cf691e795e6@arm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 10, 2018 at 11:18 AM Georgi Djakov <georgi.djakov@linaro.org> wrote:
->
-> Hi Rafael,
->
-> On 12/10/18 11:04, Rafael J. Wysocki wrote:
-> > On Thu, Dec 6, 2018 at 3:55 PM Greg KH <gregkh@linuxfoundation.org> wrote:
+On Mon, Dec 10, 2018 at 10:47:42AM +0000, Suzuki K Poulose wrote:
+> 
+> 
+> On 10/12/2018 08:56, Christoffer Dall wrote:
+> >On Mon, Dec 03, 2018 at 01:37:37PM +0000, Suzuki K Poulose wrote:
+> >>Hi Anshuman,
 > >>
-> >> On Wed, Dec 05, 2018 at 12:41:35PM -0800, Evan Green wrote:
-> >>> On Tue, Nov 27, 2018 at 10:03 AM Georgi Djakov <georgi.djakov@linaro.org> wrote:
-> >>>>
-> >>>> Modern SoCs have multiple processors and various dedicated cores (video, gpu,
-> >>>> graphics, modem). These cores are talking to each other and can generate a
-> >>>> lot of data flowing through the on-chip interconnects. These interconnect
-> >>>> buses could form different topologies such as crossbar, point to point buses,
-> >>>> hierarchical buses or use the network-on-chip concept.
-> >>>>
-> >>>> These buses have been sized usually to handle use cases with high data
-> >>>> throughput but it is not necessary all the time and consume a lot of power.
-> >>>> Furthermore, the priority between masters can vary depending on the running
-> >>>> use case like video playback or CPU intensive tasks.
-> >>>>
-> >>>> Having an API to control the requirement of the system in terms of bandwidth
-> >>>> and QoS, so we can adapt the interconnect configuration to match those by
-> >>>> scaling the frequencies, setting link priority and tuning QoS parameters.
-> >>>> This configuration can be a static, one-time operation done at boot for some
-> >>>> platforms or a dynamic set of operations that happen at run-time.
-> >>>>
-> >>>> This patchset introduce a new API to get the requirement and configure the
-> >>>> interconnect buses across the entire chipset to fit with the current demand.
-> >>>> The API is NOT for changing the performance of the endpoint devices, but only
-> >>>> the interconnect path in between them.
+> >>On 03/12/2018 12:11, Anshuman Khandual wrote:
 > >>>
-> >>> For what it's worth, we are ready to land this in Chrome OS. I think
-> >>> this series has been very well discussed and reviewed, hasn't changed
-> >>> much in the last few spins, and is in good enough shape to use as a
-> >>> base for future patches. Georgi's also done a great job reaching out
-> >>> to other SoC vendors, and there appears to be enough consensus that
-> >>> this framework will be usable by more than just Qualcomm. There are
-> >>> also several drivers out on the list trying to add patches to use this
-> >>> framework, with more to come, so it made sense (to us) to get this
-> >>> base framework nailed down. In my experiments this is an important
-> >>> piece of the overall power management story, especially on systems
-> >>> that are mostly idle.
 > >>>
-> >>> I'll continue to track changes to this series and we will ultimately
-> >>> reconcile with whatever happens upstream, but I thought it was worth
-> >>> sending this note to express our "thumbs up" towards this framework.
+> >>>On 10/31/2018 11:27 PM, Punit Agrawal wrote:
+> >>>>The code for operations such as marking the pfn as dirty, and
+> >>>>dcache/icache maintenance during stage 2 fault handling is duplicated
+> >>>>between normal pages and PMD hugepages.
+> >>>>
+> >>>>Instead of creating another copy of the operations when we introduce
+> >>>>PUD hugepages, let's share them across the different pagesizes.
+> >>>>
+> >>>>Signed-off-by: Punit Agrawal <punit.agrawal@arm.com>
+> >>>>Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> >>>>Cc: Christoffer Dall <christoffer.dall@arm.com>
+> >>>>Cc: Marc Zyngier <marc.zyngier@arm.com>
+> >>>>---
+> >>>>  virt/kvm/arm/mmu.c | 49 ++++++++++++++++++++++++++++------------------
+> >>>>  1 file changed, 30 insertions(+), 19 deletions(-)
+> >>>>
+> >>>>diff --git a/virt/kvm/arm/mmu.c b/virt/kvm/arm/mmu.c
+> >>>>index 5eca48bdb1a6..59595207c5e1 100644
+> >>>>--- a/virt/kvm/arm/mmu.c
+> >>>>+++ b/virt/kvm/arm/mmu.c
+> >>>>@@ -1475,7 +1475,7 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
+> >>>>  			  unsigned long fault_status)
+> >>>>  {
+> >>>>  	int ret;
+> >>>>-	bool write_fault, exec_fault, writable, hugetlb = false, force_pte = false;
+> >>>>+	bool write_fault, exec_fault, writable, force_pte = false;
+> >>>>  	unsigned long mmu_seq;
+> >>>>  	gfn_t gfn = fault_ipa >> PAGE_SHIFT;
+> >>>>  	struct kvm *kvm = vcpu->kvm;
+> >>>>@@ -1484,7 +1484,7 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
+> >>>>  	kvm_pfn_t pfn;
+> >>>>  	pgprot_t mem_type = PAGE_S2;
+> >>>>  	bool logging_active = memslot_is_logging(memslot);
+> >>>>-	unsigned long flags = 0;
+> >>>>+	unsigned long vma_pagesize, flags = 0;
+> >>>
+> >>>A small nit s/vma_pagesize/pagesize. Why call it VMA ? Its implicit.
 > >>
-> >> Looks like a v11 will be forthcoming, so I'll wait for that one to apply
-> >> it to the tree if all looks good.
+> >>May be we could call it mapsize. pagesize is confusing.
+> >>
 > >
-> > I'm honestly not sure if it is ready yet.
+> >I'm ok with mapsize.  I see the vma_pagesize name coming from the fact
+> >that this is initially set to the return value from vma_kernel_pagesize.
 > >
-> > New versions are coming on and on, which may make such an impression,
-> > but we had some discussion on it at the LPC and some serious questions
-> > were asked during it, for instance regarding the DT binding introduced
-> > here.  I'm not sure how this particular issue has been addressed here,
-> > for example.
->
-> There have been no changes in bindings since v4 (other than squashing
-> consumer and provider bindings into a single patch and fixing typos).
->
-> The last DT comment was on v9 [1] where Rob wanted confirmation from
-> other SoC vendors that this works for them too. And now we have that
-> confirmation and there are patches posted on the list [2].
+> >I have not problems with either vma_pagesize or mapsize.
+> >
+> >>>
+> >>>>  	write_fault = kvm_is_write_fault(vcpu);
+> >>>>  	exec_fault = kvm_vcpu_trap_is_iabt(vcpu);
+> >>>>@@ -1504,10 +1504,16 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
+> >>>>  		return -EFAULT;
+> >>>>  	}
+> >>>>-	if (vma_kernel_pagesize(vma) == PMD_SIZE && !logging_active) {
+> >>>>-		hugetlb = true;
+> >>>>+	vma_pagesize = vma_kernel_pagesize(vma);
+> >>>>+	if (vma_pagesize == PMD_SIZE && !logging_active) {
+> >>>>  		gfn = (fault_ipa & PMD_MASK) >> PAGE_SHIFT;
+> >>>>  	} else {
+> >>>>+		/*
+> >>>>+		 * Fallback to PTE if it's not one of the Stage 2
+> >>>>+		 * supported hugepage sizes
+> >>>>+		 */
+> >>>>+		vma_pagesize = PAGE_SIZE;
+> >>>
+> >>>This seems redundant and should be dropped. vma_kernel_pagesize() here either
+> >>>calls hugetlb_vm_op_pagesize (via hugetlb_vm_ops->pagesize) or simply returns
+> >>>PAGE_SIZE. The vm_ops path is taken if the QEMU VMA covering any given HVA is
+> >>>backed either by HugeTLB pages or simply normal pages. vma_pagesize would
+> >>>either has a value of PMD_SIZE (HugeTLB hstate based) or PAGE_SIZE. Hence if
+> >>>its not PMD_SIZE it must be PAGE_SIZE which should not be assigned again.
+> >>
+> >>We may want to force using the PTE mappings when logging_active (e.g, migration
+> >>?) to prevent keep tracking of huge pages. So the check is still valid.
+> >>
+> >>
+> >
+> >Agreed, and let's not try additionally change the logic and flow with
+> >this patch.
+> >
+> >>>
+> >>>>+
+> >>>>  		/*
+> >>>>  		 * Pages belonging to memslots that don't have the same
+> >>>>  		 * alignment for userspace and IPA cannot be mapped using
+> >>>>@@ -1573,23 +1579,33 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
+> >>>>  	if (mmu_notifier_retry(kvm, mmu_seq))
+> >>>>  		goto out_unlock;
+> >>>>-	if (!hugetlb && !force_pte)
+> >>>>-		hugetlb = transparent_hugepage_adjust(&pfn, &fault_ipa);
+> >>>>+	if (vma_pagesize == PAGE_SIZE && !force_pte) {
+> >>>>+		/*
+> >>>>+		 * Only PMD_SIZE transparent hugepages(THP) are
+> >>>>+		 * currently supported. This code will need to be
+> >>>>+		 * updated to support other THP sizes.
+> >>>>+		 */
+> >>>
+> >>>This comment belongs to transparent_hugepage_adjust() but not here.
+> >>
+> >>I think this is relevant here than in thp_adjust, unless we rename
+> >>the function below to something generic, handle_hugepage_adjust().
+> >>
+> >
+> >Agreed.
+> >
+> >>>>+		if (transparent_hugepage_adjust(&pfn, &fault_ipa))
+> >>>>+			vma_pagesize = PMD_SIZE;
+> >>>
+> >>>IIUC transparent_hugepage_adjust() is only getting called here. Instead of
+> >>>returning 'true' when it is able to detect a huge page backing and doing
+> >>>an adjustment there after, it should rather return THP size (PMD_SIZE) to
+> >>>accommodate probable multi size THP support in future .
+> >>
+> >>That makes sense.
+> >>
+> >
+> >That's fine.
+> >
+> 
+> Btw, after a further thought, since we don't have any THP support for anything
+> other than PMD_SIZE, I am dropping the above suggestion. We need to make changes
+> in our stage2 page table manipulation code anyway to support the new sizes. So
+> this could be addressed when we get there, to keep the changes minimal and
+> specific to the PUD huge page support.
+> 
+> 
 
-OK
-
-> The second thing (also discussed at LPC) was about possible cases where
-> some consumer drivers can't calculate how much bandwidth they actually
-> need and how to address that. The proposal was to extend the OPP
-> bindings with one more property, but this is not part of this patchset.
-> It is a future step that needs more discussion on the mailing list. If a
-> driver really needs some bandwidth data now, it should be put into the
-> driver and not in DT. After we have enough consumers, we can discuss
-> again if it makes sense to extract something into DT or not.
-
-That's fine by me.
-
-Admittedly, I have some reservations regarding the extent to which
-this approach will turn out to be useful in practice, but I guess as
-long as there is enough traction, the best way to find out it to try
-and see. :-)
-
-From now on I will assume that this series is going to be applied by Greg.
+Sounds good to me.
 
 Thanks,
-Rafael
+
+    Christoffer
