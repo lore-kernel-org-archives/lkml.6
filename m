@@ -2,84 +2,99 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.6 required=3.0 tests=DKIM_ADSP_ALL,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C86C4C04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 18:42:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7D28C04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 18:42:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 848FC2081F
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 18:41:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7135B2086D
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 18:42:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="LPTREAWh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 848FC2081F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=alien8.de
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=plaes.org header.i=@plaes.org header.b="AtlBjAQt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7135B2086D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=plaes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728357AbeLJSl6 (ORCPT
+        id S1728484AbeLJSm1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 13:41:58 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:60386 "EHLO mail.skyhub.de"
+        Mon, 10 Dec 2018 13:42:27 -0500
+Received: from plaes.org ([188.166.43.21]:55062 "EHLO plaes.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727027AbeLJSl6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 13:41:58 -0500
-Received: from zn.tnic (p200300EC2BCAD0009567F52EDB121050.dip0.t-ipconnect.de [IPv6:2003:ec:2bca:d000:9567:f52e:db12:1050])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id D40AD1EC0322;
-        Mon, 10 Dec 2018 19:41:56 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1544467317;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=Lsc5XnsBlWvPoGh9DvSS5jGKkkhEcBBln6b+h+ZfpPs=;
-        b=LPTREAWh041mFDJVUR8AkWOI1ZFbTul0tppHJNnLYn5LhrjS3599aONXqjyl3IqhbwlRb8
-        fDnuDQclIkiUcnbthOpFYJKBVGN2prIo8GD0YgJbfnOezblg/KT12dI4haEz04JRLwl+LW
-        3ykXd2wnyWeW0hAr0IPKvt4NNrX30kg=
-Date:   Mon, 10 Dec 2018 19:41:53 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Eduardo Habkost <ehabkost@redhat.com>
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        =?utf-8?B?SsO2cmcgUsO2ZGVs?= <joro@8bytes.org>,
-        Andre Przywara <andre.przywara@arm.com>,
-        kvm ML <kvm@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Tom Lendacky <thomas.lendacky@amd.com>
-Subject: Re: kvm: RDTSCP on AMD
-Message-ID: <20181210184153.GB5482@zn.tnic>
-References: <20181210181328.GA762@zn.tnic>
- <20181210183730.GJ4669@habkost.net>
+        id S1726024AbeLJSm0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Dec 2018 13:42:26 -0500
+Received: from localhost (unknown [213.204.46.240])
+        by plaes.org (Postfix) with ESMTPSA id AE34440302;
+        Mon, 10 Dec 2018 18:42:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=plaes.org; s=mail;
+        t=1544467344; bh=fTb19bShObdTgbAkz3Z+05tI/7iVObx7qNqh1LH392I=;
+        h=From:To:Cc:Subject:Date:From;
+        b=AtlBjAQtndCAVH6bxmAlruUaZWXSjUlrD1E7PmUQuTvFq6pMuzMI2A8U+i8KX98kC
+         1zEe6dD50noHmnLRrZLGbg6wwvNeTNt7fzBanUkXcJ3pIva9D4MstYg+/BoAvQKVmo
+         f+2qwnLx4ndIQjDOvhYTBW0zrZrGWp+2tp9U00G83pZa34mrW+BIZrBPwzc+moCZEH
+         pctpxHYidVcUb32io5OlwE1Be1o68uJYDAJxRyOdilwMEBjCTUWiFg9bMYyUMkaMGJ
+         G3C2jJO1xXlXNtZzi9/ekunyZFVIDcm+9vMTGEyl/89h37RH/jli1iL4xxKT0hCeZb
+         yLniGxhtyf7xg==
+From:   Priit Laes <plaes@plaes.org>
+To:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Olliver Schinagl <oliver@schinagl.nl>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Cc:     Priit Laes <plaes@plaes.org>
+Subject: [PATCH 0/8] This is a second edition of a series that implements voltage
+Date:   Mon, 10 Dec 2018 20:42:11 +0200
+Message-Id: <cover.4110554ae84987dedb8b58888a8a63d6b7f98c72.1544466940.git-series.plaes@plaes.org>
+X-Mailer: git-send-email 2.19.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20181210183730.GJ4669@habkost.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 10, 2018 at 04:37:30PM -0200, Eduardo Habkost wrote:
-> It isn't as simply as reverting commit 33b5e8c03ae7, but we can
-> surely re-add RDTSCP on pc-*-4.0 and newer.
+ramping for AXP209 DCDC2 and LDO3 regulators and software
+based soft-start for AXP209 LDO3 regulator.
 
-Sure. If you could only point me to an example how to add that to
-pc-*-4.0 and newer, I'll gladly cook up a patch and test it.
+Both features are needed to work around a PMIC shutdown when
+toggling LDO3 on certain boards with high capacitance on the
+LDO3 output.
 
-> I thought we added documentation mentioning the minimum kernel
-> version required by QEMU, but I can't find it.  In either case,
-> it seems reasonable to require Linux 4.5 or newer on newer
-> machine-types.
+Similar features (or workarounds) have been also implemented
+on u-boot side [1].
 
-When you say "require" does that mean, one puts it in a text file
-somewhere in the qemu sources or do we enforce it somehow?
+Changes since v1:
+- Rebased on top of next and dropped already merged patches.
+- Dropped LDO4 full range devicetree change for Lime2 (prev patch 9)
+  in favor of general pin-bank regulator dependency [2].
+- Fixed paths in devicetree bindings (patch 3)
+- Added note about software based soft-start for LDO3 (patch 5)
 
-Thx.
+[1] https://lists.denx.de/pipermail/u-boot/2018-November/348612.html
+[2] http://lists.infradead.org/pipermail/linux-arm-kernel/2018-December/618459.html
 
+Olliver Schinagl (8):
+  mfd: axp20x: name voltage ramping define properly
+  regulator: axp20x: add support for set_ramp_delay for AXP209
+  dt-bindings: mfd: axp20x: add support for regulator-ramp-delay for AXP209
+  regulator: axp20x: add software based soft_start for AXP209 LDO3
+  dt-bindings: mfd: axp20x: Add software based soft_start for AXP209 LDO3
+  regulator: dts: enable soft-start and ramp delay for the OLinuXino Lime2
+  mfd: axp20x: Clean up included headers
+  mfd: axp20x: use explicit bit defines
+
+ Documentation/devicetree/bindings/mfd/axp20x.txt |   9 +-
+ arch/arm/boot/dts/sun7i-a20-olinuxino-lime2.dts  |   2 +-
+ drivers/mfd/axp20x.c                             |  13 +-
+ drivers/regulator/axp20x-regulator.c             | 142 +++++++++++++++-
+ include/linux/mfd/axp20x.h                       |   4 +-
+ 5 files changed, 161 insertions(+), 9 deletions(-)
+
+base-commit: 14cf8c1d5b90a0cf6a8ba51ef59db8da8c7a2622
 -- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+git-series 0.9.1
