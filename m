@@ -4,58 +4,58 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29DADC04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 11:53:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 291A7C5CFFE
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 11:53:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E47C72086D
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 11:53:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E4D4E20821
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 11:53:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="n0lVMIhf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E47C72086D
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="YjpI9uyv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E4D4E20821
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727734AbeLJLxp (ORCPT
+        id S1727722AbeLJLxn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 06:53:45 -0500
-Received: from mail-wm1-f46.google.com ([209.85.128.46]:52153 "EHLO
-        mail-wm1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727694AbeLJLxm (ORCPT
+        Mon, 10 Dec 2018 06:53:43 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:56066 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727651AbeLJLxf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 06:53:42 -0500
-Received: by mail-wm1-f46.google.com with SMTP id s14so10654986wmh.1
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Dec 2018 03:53:40 -0800 (PST)
+        Mon, 10 Dec 2018 06:53:35 -0500
+Received: by mail-wm1-f68.google.com with SMTP id y139so10556518wmc.5
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Dec 2018 03:53:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=amarulasolutions.com; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=xKc4rpirIDSNGgBaxIhfJAOtD80I9o5vCC89+wiWkHs=;
-        b=n0lVMIhf/pt2IhkdEtL/kB0UPnc12c5yZJO8z1mlEQchur8xRLpaFk1VbVOvFlJQ1g
-         Mj92rLsdzeV6FTj2vMCaJnKQjTuqWrx1tUfhMFiacFRjso4P91fpKg6jExzPm7lVjBc3
-         APnAy8mCqdqqm1rIvJ+0Dfbuilzxi1Cq3itL4=
+        bh=+Bcn7Nsev8NGAHdGxA2CyTs91LsMBI3kRpXrLo25w3c=;
+        b=YjpI9uyvVGMO6LS5MdUtlDjNGajW/FxA6Mjmxj1N7ULm0sxFRRnvPJwI+Da0lyCCuh
+         0emA8jKtCTc3w14tUfuYj0DaorNBATkK+WEDslNItPHrlDC8DHcoery6lyYKzUgcxgDw
+         72oUss0aiUtgGOdirmzlx8LGQ4/4v1CNXMjyM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=xKc4rpirIDSNGgBaxIhfJAOtD80I9o5vCC89+wiWkHs=;
-        b=R5P2fUg8XOePlkn0ZNIfR6mQ1Dls688w9++g7XqZIKKLuhZ0tp7QaIBN2E1Wp2xFrl
-         FZTmIQbnb75eseCZqh9PHdubSiQvusb0pS8L2W990UdqYtXwYTq81qmk/yqCDeRxwKgD
-         Oaiyz62y1an7aBfLOGH0ih7Dr7C2bv4LzILZrfzvQv4jX+5AgMgcjs6mmHiPVM2sPTdC
-         z4HJPoAC996GPhF5JnQ1T5CsIdwIqXmqgGXybs3HjfJwDZ+8hsY+QtHgwufwx84FMi0S
-         tsRMi7CP9vMSv0JJTFty2YH5BTrrHUl0PnJJj3bP6lzCzMnDtNI8+3J/XRH646V45PWH
-         Xj2A==
-X-Gm-Message-State: AA+aEWavlClhaxMpaMzuB3qUXBz4LdhpCWHZMAEzUEOf5jbS7EJCY/9v
-        39Or92KfpUBZp4n/CbSHber1Lw==
-X-Google-Smtp-Source: AFSGD/WnBP1Yq/JRouF0m4at1X0DT0N5cwK9FxnDzEubdisXhm7dXDnKqLaqkQ+t2zSaxIkyjtCAbA==
-X-Received: by 2002:a1c:d912:: with SMTP id q18mr10093519wmg.122.1544442819830;
-        Mon, 10 Dec 2018 03:53:39 -0800 (PST)
+        bh=+Bcn7Nsev8NGAHdGxA2CyTs91LsMBI3kRpXrLo25w3c=;
+        b=kqzf2iCgeEYKNIA6YJL214gIxmjWwX5LQEnnoUolGfI9+SDdOUO26B8vcYbhjlAe1U
+         /9mjkSoHRW39kxXh+PrHhJoItTI8MCry0D+OTfcM4OjCpO9MKF+ovfRR7qNWP+AcGmat
+         ZNLoqFukQm6BKTya8FlTIOtObp2YtEP2nhi//Yk/rjXLJ5rqbUQtXJnvSiIuSifSrB7Q
+         Ahj8AE0RDFba7uLLqcHSyC/9aYsaapHv1JBATxDLYKLbT09bBvarzbHd85HsBgK9XZrF
+         A7CSSX2PedZwKZTJz+PjOj7temD/B8LPX7h+zuSVgW8S8XUqEAP65V7DAU7U2PyN+OrU
+         8sSg==
+X-Gm-Message-State: AA+aEWaaYqNREzp2CRuFTaRfAV/YlbizoiSXN8N935Q1O/jCxQquDu48
+        5JpN73ehlEk6HSBahBxN0ZeReg==
+X-Google-Smtp-Source: AFSGD/WneMvv8yoBR7/U/wN5Xra1d6NpoFupLgw9CXDW+dAJHlajBAGIBUqpgVAnXY/wCmr+DuSI6g==
+X-Received: by 2002:a1c:ac85:: with SMTP id v127mr9183651wme.62.1544442813661;
+        Mon, 10 Dec 2018 03:53:33 -0800 (PST)
 Received: from localhost.localdomain (ip-162-59.sn-213-198.clouditalia.com. [213.198.162.59])
-        by smtp.gmail.com with ESMTPSA id b16sm7869243wrm.41.2018.12.10.03.53.37
+        by smtp.gmail.com with ESMTPSA id b16sm7869243wrm.41.2018.12.10.03.53.32
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 10 Dec 2018 03:53:38 -0800 (PST)
+        Mon, 10 Dec 2018 03:53:33 -0800 (PST)
 From:   Jagan Teki <jagan@amarulasolutions.com>
 To:     Yong Deng <yong.deng@magewell.com>,
         Mauro Carvalho Chehab <mchehab@kernel.org>,
@@ -69,9 +69,9 @@ To:     Yong Deng <yong.deng@magewell.com>,
         linux-amarula@amarulasolutions.com,
         Michael Trimarchi <michael@amarulasolutions.com>
 Cc:     Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH v3 6/6] arm64: dts: allwinner: a64-amarula-relic: Add OV5640 camera node
-Date:   Mon, 10 Dec 2018 17:22:46 +0530
-Message-Id: <20181210115246.8188-7-jagan@amarulasolutions.com>
+Subject: [PATCH v3 3/6] media: sun6i: Set 300MHz mod clock for A64
+Date:   Mon, 10 Dec 2018 17:22:43 +0530
+Message-Id: <20181210115246.8188-4-jagan@amarulasolutions.com>
 X-Mailer: git-send-email 2.18.0.321.gffc6fa0e3
 In-Reply-To: <20181210115246.8188-1-jagan@amarulasolutions.com>
 References: <20181210115246.8188-1-jagan@amarulasolutions.com>
@@ -82,94 +82,30 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Amarula A64-Relic board by default bound with OV5640 camera,
-so add support for it with below pin information.
-
-- PE13, PE12 via i2c-gpio bitbanging
-- CLK_CSI_MCLK as external clock
-- PE1 as external clock pin muxing
-- ALDO1 as AVDD supply
-- DLDO3 as DOVDD supply
-- ELDO3 as DVDD supply
-- PE14 gpio for reset pin
-- PE15 gpio for powerdown pin
+The default CSI_SCLK seems unable to drive the sensor to capture
+the image, so update it to working clock rate 300MHz for A64.
 
 Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
 ---
- .../allwinner/sun50i-a64-amarula-relic.dts    | 53 +++++++++++++++++++
- 1 file changed, 53 insertions(+)
+ drivers/media/platform/sunxi/sun6i-csi/sun6i_csi.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-amarula-relic.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-amarula-relic.dts
-index 6cb2b7f0c817..ea6286ce5de3 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-a64-amarula-relic.dts
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-amarula-relic.dts
-@@ -22,6 +22,41 @@
- 		stdout-path = "serial0:115200n8";
- 	};
+diff --git a/drivers/media/platform/sunxi/sun6i-csi/sun6i_csi.c b/drivers/media/platform/sunxi/sun6i-csi/sun6i_csi.c
+index bbe45e893722..4b872800b244 100644
+--- a/drivers/media/platform/sunxi/sun6i-csi/sun6i_csi.c
++++ b/drivers/media/platform/sunxi/sun6i-csi/sun6i_csi.c
+@@ -822,6 +822,11 @@ static int sun6i_csi_resource_request(struct sun6i_csi_dev *sdev,
+ 		return PTR_ERR(sdev->clk_mod);
+ 	}
  
-+	i2c-csi {
-+		compatible = "i2c-gpio";
-+		sda-gpios = <&pio 4 13 GPIO_ACTIVE_HIGH>; /* CSI-SDA: PE13 */
-+		scl-gpios = <&pio 4 12 GPIO_ACTIVE_HIGH>; /* CSI-SCK: PE12 */
-+		i2c-gpio,delay-us = <5>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
++	/* A64 need 300MHz mod clock to operate properly */
++	if (of_device_is_compatible(pdev->dev.of_node,
++				    "allwinner,sun50i-a64-csi"))
++		clk_set_rate_exclusive(sdev->clk_mod, 300000000);
 +
-+		ov5640: camera@3c {
-+			compatible = "ovti,ov5640";
-+			reg = <0x3c>;
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&csi_mclk_pin>;
-+			clocks = <&ccu CLK_CSI_MCLK>;
-+			clock-names = "xclk";
-+
-+			AVDD-supply = <&reg_aldo1>;
-+			DOVDD-supply = <&reg_dldo3>;
-+			DVDD-supply = <&reg_eldo3>;
-+			reset-gpios = <&pio 4 14 GPIO_ACTIVE_LOW>; /* CSI-RST-R: PE14 */
-+			powerdown-gpios = <&pio 4 15 GPIO_ACTIVE_HIGH>; /* CSI-STBY-R: PE15 */
-+
-+			port {
-+				ov5640_ep: endpoint {
-+					remote-endpoint = <&csi_ep>;
-+					bus-width = <8>;
-+					hsync-active = <1>; /* Active high */
-+					vsync-active = <0>; /* Active low */
-+					data-active = <1>;  /* Active high */
-+					pclk-sample = <1>;  /* Rising */
-+				};
-+			};
-+		};
-+	};
-+
- 	wifi_pwrseq: wifi-pwrseq {
- 		compatible = "mmc-pwrseq-simple";
- 		clocks = <&rtc 1>;
-@@ -30,6 +65,24 @@
- 	};
- };
- 
-+&csi {
-+	status = "okay";
-+
-+	port {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		csi_ep: endpoint {
-+			remote-endpoint = <&ov5640_ep>;
-+			bus-width = <8>;
-+			hsync-active = <1>; /* Active high */
-+			vsync-active = <0>; /* Active low */
-+			data-active = <1>;  /* Active high */
-+			pclk-sample = <1>;  /* Rising */
-+		};
-+	};
-+};
-+
- &ehci0 {
- 	status = "okay";
- };
+ 	sdev->clk_ram = devm_clk_get(&pdev->dev, "ram");
+ 	if (IS_ERR(sdev->clk_ram)) {
+ 		dev_err(&pdev->dev, "Unable to acquire dram-csi clock\n");
 -- 
 2.18.0.321.gffc6fa0e3
 
