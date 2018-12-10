@@ -2,97 +2,91 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BEB95C04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 20:38:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE0B4C04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 20:39:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7E05720821
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 20:38:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E05720821
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id 6353C20821
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 20:39:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="gEtCVHQn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6353C20821
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=alien8.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728804AbeLJUiu (ORCPT
+        id S1728992AbeLJUjb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 15:38:50 -0500
-Received: from mout.kundenserver.de ([212.227.17.10]:54079 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727538AbeLJUiu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 15:38:50 -0500
-Received: from wuerfel.lan ([109.192.41.194]) by mrelayeu.kundenserver.de
- (mreue109 [212.227.15.145]) with ESMTPA (Nemesis) id
- 1MVNEv-1gvRIs3oFL-00SL7E; Mon, 10 Dec 2018 21:38:42 +0100
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     Mark Brown <broonie@kernel.org>
-Cc:     cyrille.pitchen@microchip.com, Arnd Bergmann <arnd@arndb.de>,
-        stable@vger.kernel.org,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Piotr Bugalski <bugalski.piotr@gmail.com>,
-        linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] mtd: atmel-quadspi: disallow building on ebsa110
-Date:   Mon, 10 Dec 2018 21:38:16 +0100
-Message-Id: <20181210203837.2118450-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.18.0
-X-Provags-ID: V03:K1:dnNz1D1MsvnysDMUO24uu0P5e145KMttEK7BE/MvIaeQLbJ7tPG
- 6Td3avJLC+cCyBNIecdoFydoo3D2lnwVCdhb2ZbXItagJm2ofxClw450rFgGGOrKuGG8x4M
- f6YIJ4EBr24eRrRUzfKl0h4IFdTnjjjCW/Das2WIBMZO9Vcjj9K60i5gzJZHvqRstzzU99c
- 10UGvo4SM7kBIaFaaUBgA==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:NDXrki2CU3M=:I02ouvXrUZBVAXMhXCOK9W
- WJpfZfQyym8Z7gBOay4UibE7QSwu8ge2jX9Dh4aEEUvzKxGpDHf1cL7OOTT9fWRqj6WVpfL1S
- eNkP8ctNmcdc6etsHsw76bHFNgYqz5dafy04mun4EBw+kHmva1yqJq2mnGIuXc0x6FKMGf4aM
- XNtMPd9W/T/+MKYmObyZsTKX9CLJjc8l3tk8cOAg3JRVYwc3HMvdSxXVWPQUXHf+koa+g7yfY
- K5Ee1+XZ430kEPWehTDjRDZ5ic4B0se/xah0zmxt8tx9sNOUcUAAEnN96M8JiIrzU+1Dwwh/Y
- iqfYqtiaBcLPF5GoPoc+LUnVrSwjLoizWiRbalgKNCYZVHZoKgrW9zCO1+w5YBBhaqyMx2LQv
- 6sq5rjgFJ3CId1QlEyc+SR0iNyocwUANuds4412RgzCe/BX4OSetNnnPSYONBD032rd++fcqf
- uV+CMdc6nqdGXH+jKukFXPezr5CQaYsoB2IawZotn7AYse2QGk/21FRRPEMt9fh641K3AOGPa
- +YrXQwc75NeCVaM+JJLlEAWOFdXr209ROBiSWLgAcwklemH5EmC+m7co79mO1vcAW/6pFRMfK
- vyJP0biBKdJB9dZ+WBgNlNenrNHDNqxPKMRhHRjpMCOcu9LG9LOIHdKfupa8aQ8XU+PtTu6yt
- UKCMVewMXHAI5uHq8Lo3s5ecZwb7/4wepI9Y3eVGoclZUB93Oxz9/xBpzTFJaPDV9rm1IWXz4
- sB9n8chl24l3R6tvOMi9S60JOMGOIhjGCYoGWw==
+        Mon, 10 Dec 2018 15:39:31 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:48772 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727538AbeLJUja (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Dec 2018 15:39:30 -0500
+Received: from zn.tnic (p200300EC2BCAD0002992494E33A10E64.dip0.t-ipconnect.de [IPv6:2003:ec:2bca:d000:2992:494e:33a1:e64])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 5D1271EC0322;
+        Mon, 10 Dec 2018 21:39:29 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1544474369;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=T9dJK1dJDLxwF0hMYTkQ7FOF1X08CZLPSdQ9bMWgXs8=;
+        b=gEtCVHQnDRBph3P6my8Fr8Yxi0PftCDN7PAjP0j1kk2lZ7WQ37pz9n5qj6V5XvDpkfAWX9
+        2sEn/f2upLK/waH/TiydYABEGkR75V1ggtGVSixGW7zedjpgYbmYB+PgbOWlODwjgDnlB1
+        PHnB+QyrXq52rvAwI8HfyRXZsEpX5Tw=
+Date:   Mon, 10 Dec 2018 21:39:25 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Eduardo Habkost <ehabkost@redhat.com>
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        =?utf-8?B?SsO2cmcgUsO2ZGVs?= <joro@8bytes.org>,
+        Andre Przywara <andre.przywara@arm.com>,
+        kvm ML <kvm@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        "Daniel P. Berrange" <berrange@redhat.com>,
+        Eric Blake <eblake@redhat.com>
+Subject: Re: kvm: RDTSCP on AMD
+Message-ID: <20181210203925.GG5482@zn.tnic>
+References: <20181210181328.GA762@zn.tnic>
+ <20181210183730.GJ4669@habkost.net>
+ <20181210184153.GB5482@zn.tnic>
+ <20181210190600.GK4669@habkost.net>
+ <20181210194258.GD5482@zn.tnic>
+ <20181210200843.GN4669@habkost.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20181210200843.GN4669@habkost.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I ran into a link-time error with the atmel-quadspi driver on the
-EBSA110 platform:
+On Mon, Dec 10, 2018 at 06:08:43PM -0200, Eduardo Habkost wrote:
+> | The Opteron_G2, OpteronG3, Opteron_G4, and Opteron_G5 CPU
+> | models require KVM support for RDTSCP, which was added on
+> | Linux 4.5.
 
-drivers/mtd/built-in.o: In function `atmel_qspi_run_command':
-:(.text+0x1ee3c): undefined reference to `_memcpy_toio'
-:(.text+0x1ee48): undefined reference to `_memcpy_fromio'
+I've added that to the current diff:
 
-The problem is that _memcpy_toio/_memcpy_fromio are not available on
-that platform, and we have to prevent building the driver there.
+"The OpteronG[345] CPU models require KVM support for RDTSCP, which was
+added with Linux 4.5."
 
-In case we want to backport this to older kernels: between linux-4.8
-and linux-4.20, the Kconfig entry was in drivers/mtd/spi-nor/Kconfig
-but had the same problem.
+In the meantime, I tried executing RDTSCP on a K8 laptop and it gave
+SIGILL so I'd say the AMD docs have a typo and family 0xf - at least the
+A-E revisions of which model 6 is a part of - doesn't have RDTSCP.
 
-Link: https://lore.kernel.org/patchwork/patch/812860/
-Fixes: 161aaab8a067 ("mtd: atmel-quadspi: add driver for Atmel QSPI controller")
-Cc: stable@vger.kernel.org
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/spi/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+But let's see...
 
-diff --git a/drivers/spi/Kconfig b/drivers/spi/Kconfig
-index 55d5ffb50750..9f89cb134549 100644
---- a/drivers/spi/Kconfig
-+++ b/drivers/spi/Kconfig
-@@ -93,7 +93,7 @@ config SPI_AT91_USART
- 
- config SPI_ATMEL_QUADSPI
- 	tristate "Atmel Quad SPI Controller"
--	depends on ARCH_AT91 || (ARM && COMPILE_TEST)
-+	depends on ARCH_AT91 || (ARM && COMPILE_TEST && !ARCH_EBSA110)
- 	depends on OF && HAS_IOMEM
- 	help
- 	  This enables support for the Quad SPI controller in master mode.
+Thx.
+
 -- 
-2.18.0
+Regards/Gruss,
+    Boris.
 
+Good mailing practices for 400: avoid top-posting and trim the reply.
