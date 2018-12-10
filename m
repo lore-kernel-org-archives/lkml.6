@@ -2,130 +2,189 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37C47C04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 14:30:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73F23C65BB3
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 14:31:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E59C320672
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 14:30:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b="nBigxgGA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E59C320672
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=posteo.de
+	by mail.kernel.org (Postfix) with ESMTP id 44A2420672
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 14:31:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 44A2420672
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727920AbeLJOai (ORCPT
+        id S1727935AbeLJObV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 09:30:38 -0500
-Received: from mout02.posteo.de ([185.67.36.66]:35805 "EHLO mout02.posteo.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727778AbeLJOai (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 09:30:38 -0500
-Received: from submission (posteo.de [89.146.220.130]) 
-        by mout02.posteo.de (Postfix) with ESMTPS id 4162F240104
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Dec 2018 15:30:35 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=posteo.de; s=2017;
-        t=1544452235; bh=OT0x+EZbu5RBI4lKT8Jadh6V8lsSLrhlFYfbrrruxqA=;
-        h=Subject:To:Cc:From:Openpgp:Autocrypt:Date:From;
-        b=nBigxgGA0o7wZUNcc2WHe9pkLfgnlniif0vLWcTsZQIPxqf4bRUNtVa68VlygYppP
-         OZhtC9ubf3ByBXyJFI5AQpRxXDnFsC36lf0DVwLnBpLnS1ivfSoq03Q8OJa9JRH/sB
-         zAMZ2IX6z8ew6UWHAT4MwZpHdl4qQKBTXalY7mcJu8dwTKMzC2PmRtib/TmByQYAEU
-         Gwf6CNqczyFYBFrPQMilfnLtZSQrfiukAAYzTXh/WbtmVcO/h3KFnywVZUPtCqGwXK
-         2b3nbHS1sO9zxJs8Mqm/Mf2M8yUhTxeCpprVWvSeJlcRzrJcyAS4/ZEI0VFlnEStYD
-         270ItsIoxyqmw==
-Received: from customer (localhost [127.0.0.1])
-        by submission (posteo.de) with ESMTPSA id 43D58S0dJcz9rxV;
-        Mon, 10 Dec 2018 15:30:31 +0100 (CET)
-Subject: Re: [PATCH V2 2/2] iio: accell: mma8452: add optional vdd/vddio
- regulator operation support
-To:     Anson Huang <anson.huang@nxp.com>,
-        "jic23@kernel.org" <jic23@kernel.org>,
-        "knaack.h@gmx.de" <knaack.h@gmx.de>,
-        "lars@metafoo.de" <lars@metafoo.de>,
-        "pmeerw@pmeerw.net" <pmeerw@pmeerw.net>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "rtresidd@electromag.com.au" <rtresidd@electromag.com.au>,
-        "gustavo@embeddedor.com" <gustavo@embeddedor.com>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "festevam@gmail.com" <festevam@gmail.com>
-Cc:     dl-linux-imx <linux-imx@nxp.com>
-References: <1544426368-16415-1-git-send-email-Anson.Huang@nxp.com>
- <1544426368-16415-2-git-send-email-Anson.Huang@nxp.com>
-From:   Martin Kepplinger <martink@posteo.de>
-Openpgp: preference=signencrypt
-Autocrypt: addr=martink@posteo.de; keydata=
- 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
-Message-ID: <0412034a-989b-1d57-a356-1fc3e87a0a91@posteo.de>
-Date:   Mon, 10 Dec 2018 15:30:31 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Mon, 10 Dec 2018 09:31:21 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:55154 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726791AbeLJObU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Dec 2018 09:31:20 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E807B1596;
+        Mon, 10 Dec 2018 06:31:19 -0800 (PST)
+Received: from e119884-lin.cambridge.arm.com (e119884-lin.cambridge.arm.com [10.1.196.72])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 837193F575;
+        Mon, 10 Dec 2018 06:31:15 -0800 (PST)
+From:   Vincenzo Frascino <vincenzo.frascino@arm.com>
+To:     linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
+        linux-mm@kvack.org, linux-arch@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Kees Cook <keescook@chromium.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Chintan Pandya <cpandya@codeaurora.org>,
+        Jacob Bramley <Jacob.Bramley@arm.com>,
+        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
+        Andrey Konovalov <andreyknvl@google.com>,
+        Lee Smith <Lee.Smith@arm.com>,
+        Kostya Serebryany <kcc@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
+        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+        Evgeniy Stepanov <eugenis@google.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Subject: [RFC][PATCH 0/3] arm64 relaxed ABI
+Date:   Mon, 10 Dec 2018 14:30:41 +0000
+Message-Id: <20181210143044.12714-1-vincenzo.frascino@arm.com>
+X-Mailer: git-send-email 2.19.2
+In-Reply-To: <cover.1544445454.git.andreyknvl@google.com>
+References: <cover.1544445454.git.andreyknvl@google.com>
 MIME-Version: 1.0
-In-Reply-To: <1544426368-16415-2-git-send-email-Anson.Huang@nxp.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10.12.18 08:25, Anson Huang wrote:
-> The accelerometer's power supply could be controlled by regulator
-> on some platforms, such as i.MX6Q-SABRESD board, the mma8451's
-> power supply is controlled by a GPIO fixed regulator, need to make
-> sure the regulator is enabled before any communication with mma8451,
-> this patch adds optional vdd/vddio regulator operation support.
-> 
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+On arm64 the TCR_EL1.TBI0 bit has been set since Linux 3.x hence
+the userspace (EL0) is allowed to set a non-zero value in the top
+byte but the resulting pointers are not allowed at the user-kernel
+syscall ABI boundary.
 
-Acked-by: Martin Kepplinger <martink@posteo.de>
+This patchset proposes a relaxation of the ABI and a mechanism to
+advertise it to the userspace via an AT_FLAGS.
+
+The rationale behind the choice of AT_FLAGS is that the Unix System V
+ABI defines AT_FLAGS as "flags", leaving some degree of freedom in
+interpretation.
+There are two previous attempts of using AT_FLAGS in the Linux Kernel
+for different reasons: the first was more generic and was used to expose
+the support for the GNU STACK NX feature [1] and the second was done for
+the MIPS architecture and was used to expose the support of "MIPS ABI
+Extension for IEEE Std 754 Non-Compliant Interlinking" [2].
+Both the changes are currently _not_ merged in mainline.
+The only architecture that reserves some of the bits in AT_FLAGS is
+currently MIPS, which introduced the concept of platform specific ABI
+(psABI) reserving the top-byte [3].
+
+When ARM64_AT_FLAGS_SYSCALL_TBI is set the kernel is advertising
+to the userspace that a relaxed ABI is supported hence this type
+of pointers are now allowed to be passed to the syscalls when they are
+in memory ranges obtained by anonymous mmap() or brk().
+
+The userspace _must_ verify that the flag is set before passing tagged
+pointers to the syscalls allowed by this relaxation.
+
+More in general, exposing the ARM64_AT_FLAGS_SYSCALL_TBI flag and mandating
+to the software to check that the feature is present, before using the
+associated functionality, it provides a degree of control on the decision
+of disabling such a feature in future without consequently breaking the
+userspace.
+
+The change required a modification of the elf common code, because in Linux
+the AT_FLAGS are currently set to zero by default by the kernel.
+
+The newly added flag has been verified on arm64 using the code below.
+#include <stdio.h>
+#include <stdbool.h>
+#include <sys/auxv.h>
+
+#define ARM64_AT_FLAGS_SYSCALL_TBI     (1 << 0)
+
+bool arm64_syscall_tbi_is_present(void)
+{
+        unsigned long at_flags = getauxval(AT_FLAGS);
+        if (at_flags & ARM64_AT_FLAGS_SYSCALL_TBI)
+                return true;
+
+        return false;
+}
+
+void main()
+{
+        if (arm64_syscall_tbi_is_present())
+                printf("ARM64_AT_FLAGS_SYSCALL_TBI is present\n");
+}
+
+This patchset should be merged together with [4].
+
+[1] https://patchwork.ozlabs.org/patch/579578/
+[2] https://lore.kernel.org/patchwork/cover/618280/
+[3] ftp://www.linux-mips.org/pub/linux/mips/doc/ABI/psABI_mips3.0.pdf
+[4] https://patchwork.kernel.org/cover/10674351/
+
+ABI References:
+---------------
+Sco SysV ABI: http://www.sco.com/developers/gabi/2003-12-17/contents.html
+PowerPC AUXV: http://openpowerfoundation.org/wp-content/uploads/resources/leabi/content/dbdoclet.50655242_98651.html
+AMD64 ABI: https://www.cs.tufts.edu/comp/40-2012f/readings/amd64-abi.pdf
+x86 ABI: https://www.uclibc.org/docs/psABI-i386.pdf
+MIPS ABI: ftp://www.linux-mips.org/pub/linux/mips/doc/ABI/psABI_mips3.0.pdf
+ARM ABI: http://infocenter.arm.com/help/topic/com.arm.doc.ihi0044f/IHI0044F_aaelf.pdf
+SPARC ABI: http://math-atlas.sourceforge.net/devel/assembly/abi_sysV_sparc.pdf
+
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Robin Murphy <robin.murphy@arm.com>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Kate Stewart <kstewart@linuxfoundation.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+Cc: Shuah Khan <shuah@kernel.org>
+Cc: Chintan Pandya <cpandya@codeaurora.org>
+Cc: Jacob Bramley <Jacob.Bramley@arm.com>
+Cc: Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>
+Cc: Andrey Konovalov <andreyknvl@google.com>
+Cc: Lee Smith <Lee.Smith@arm.com>
+Cc: Kostya Serebryany <kcc@google.com>
+Cc: Dmitry Vyukov <dvyukov@google.com>,
+Cc: Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>
+Cc: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+Cc: Evgeniy Stepanov <eugenis@google.com>
+CC: Alexander Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
+
+Vincenzo Frascino (3):
+  elf: Make AT_FLAGS arch configurable
+  arm64: Define Documentation/arm64/elf_at_flags.txt
+  arm64: elf: Advertise relaxed ABI
+
+ Documentation/arm64/elf_at_flags.txt  | 111 ++++++++++++++++++++++++++
+ arch/arm64/include/asm/atflags.h      |   7 ++
+ arch/arm64/include/asm/elf.h          |   5 ++
+ arch/arm64/include/uapi/asm/atflags.h |   8 ++
+ fs/binfmt_elf.c                       |   6 +-
+ fs/binfmt_elf_fdpic.c                 |   6 +-
+ fs/compat_binfmt_elf.c                |   5 ++
+ 7 files changed, 146 insertions(+), 2 deletions(-)
+ create mode 100644 Documentation/arm64/elf_at_flags.txt
+ create mode 100644 arch/arm64/include/asm/atflags.h
+ create mode 100644 arch/arm64/include/uapi/asm/atflags.h
+
+-- 
+2.19.2
 
