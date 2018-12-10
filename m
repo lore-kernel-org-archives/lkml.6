@@ -3,245 +3,189 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82F8BC04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 17:18:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 120C1C04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 17:19:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 458BD2082F
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 17:18:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 458BD2082F
+	by mail.kernel.org (Postfix) with ESMTP id D7F4A2082F
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 17:19:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D7F4A2082F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729069AbeLJRSg (ORCPT
+        id S1727982AbeLJRTM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 12:18:36 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:45586 "EHLO mx1.redhat.com"
+        Mon, 10 Dec 2018 12:19:12 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:37000 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728375AbeLJRNf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1728379AbeLJRNf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 10 Dec 2018 12:13:35 -0500
 Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 0B494284B1;
+        by mx1.redhat.com (Postfix) with ESMTPS id 2FB8E3154866;
         Mon, 10 Dec 2018 17:13:35 +0000 (UTC)
 Received: from horse.redhat.com (unknown [10.18.25.234])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 99D4E60158;
+        by smtp.corp.redhat.com (Postfix) with ESMTP id C72D2605CF;
         Mon, 10 Dec 2018 17:13:34 +0000 (UTC)
 Received: by horse.redhat.com (Postfix, from userid 10451)
-        id 5A9CA224260; Mon, 10 Dec 2018 12:13:30 -0500 (EST)
+        id 76162224267; Mon, 10 Dec 2018 12:13:30 -0500 (EST)
 From:   Vivek Goyal <vgoyal@redhat.com>
 To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         kvm@vger.kernel.org
 Cc:     vgoyal@redhat.com, miklos@szeredi.hu, stefanha@redhat.com,
         dgilbert@redhat.com, sweil@redhat.com, swhiteho@redhat.com
-Subject: [PATCH 22/52] Create a list of free memory ranges
-Date:   Mon, 10 Dec 2018 12:12:48 -0500
-Message-Id: <20181210171318.16998-23-vgoyal@redhat.com>
+Subject: [PATCH 28/52] Do fallocate() to grow file before mapping for file growing writes
+Date:   Mon, 10 Dec 2018 12:12:54 -0500
+Message-Id: <20181210171318.16998-29-vgoyal@redhat.com>
 In-Reply-To: <20181210171318.16998-1-vgoyal@redhat.com>
 References: <20181210171318.16998-1-vgoyal@redhat.com>
 X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Mon, 10 Dec 2018 17:13:35 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Mon, 10 Dec 2018 17:13:35 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Divide the dax memory range into fixed size ranges (2MB for now) and put
-them in a list. This will track free ranges. Once an inode requires a
-free range, we will take one from here and put it in interval-tree
-of ranges assigned to inode.
+How to handle file growing writes. For now, this patch does fallocate() to
+grow file and then map it using dax. We need to figure out what's the best
+way to handle it.
+
+This patch does fallocate() and setup mapping operations in
+fuse_dax_write_iter(), instead of iomap_begin(). I don't have access to file
+pointer needed to send a message to fuse daemon in iomap_begin().
+
+Dave Chinner has expressed concers with this approach as this is not
+atomic. If guest crashes after falloc() but before data was written,
+user will think that filesystem lost its data. So this is still an
+outstanding issue.
 
 Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
 ---
- fs/fuse/fuse_i.h    | 14 +++++++++
- fs/fuse/inode.c     | 81 ++++++++++++++++++++++++++++++++++++++++++++++++++++-
- fs/fuse/virtio_fs.c |  2 ++
- 3 files changed, 96 insertions(+), 1 deletion(-)
+ fs/fuse/file.c | 71 +++++++++++++++++++++++++++++++++++++++++++++-------------
+ 1 file changed, 55 insertions(+), 16 deletions(-)
 
-diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-index b9880be690bd..f0775d76e31f 100644
---- a/fs/fuse/fuse_i.h
-+++ b/fs/fuse/fuse_i.h
-@@ -46,6 +46,10 @@
- /** Number of page pointers embedded in fuse_req */
- #define FUSE_REQ_INLINE_PAGES 1
+diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+index 94ad76382a6f..41d773ba2c72 100644
+--- a/fs/fuse/file.c
++++ b/fs/fuse/file.c
+@@ -28,6 +28,9 @@ INTERVAL_TREE_DEFINE(struct fuse_dax_mapping,
+                      rb, __u64, __subtree_last,
+                      START, LAST, static inline, fuse_dax_interval_tree);
  
-+/* Default memory range size, 2MB */
-+#define FUSE_DAX_MEM_RANGE_SZ	(2*1024*1024)
-+#define FUSE_DAX_MEM_RANGE_PAGES	(FUSE_DAX_MEM_RANGE_SZ/PAGE_SIZE)
++static long __fuse_file_fallocate(struct file *file, int mode,
++					loff_t offset, loff_t length);
 +
- /** List of active connections */
- extern struct list_head fuse_conn_list;
+ static int fuse_send_open(struct fuse_conn *fc, u64 nodeid, struct file *file,
+ 			  int opcode, struct fuse_open_out *outargp)
+ {
+@@ -1819,6 +1822,22 @@ static ssize_t fuse_dax_write_iter(struct kiocb *iocb, struct iov_iter *from)
+ 	/* TODO file_update_time() but we don't want metadata I/O */
  
-@@ -83,6 +87,9 @@ struct fuse_forget_link {
- 
- /** Translation information for file offsets to DAX window offsets */
- struct fuse_dax_mapping {
-+	/* Will connect in fc->free_ranges to keep track of free memory */
-+	struct list_head list;
-+
-        /** Position in DAX window */
-        u64 window_offset;
- 
-@@ -816,6 +823,13 @@ struct fuse_conn {
- 
- 	/** DAX device, non-NULL if DAX is supported */
- 	struct dax_device *dax_dev;
-+
-+	/*
-+	 * DAX Window Free Ranges. TODO: This might not be best place to store
-+	 * this free list
+ 	/* TODO handle growing the file */
++	/* Grow file here if need be. iomap_begin() does not have access
++	 * to file pointer
 +	 */
-+	unsigned long nr_free_ranges;
-+	struct list_head free_ranges;
- };
++	if (iov_iter_rw(from) == WRITE &&
++	    ((iocb->ki_pos + iov_iter_count(from)) > i_size_read(inode))) {
++		ret = __fuse_file_fallocate(iocb->ki_filp, 0, iocb->ki_pos,
++						iov_iter_count(from));
++		if (ret < 0) {
++			printk("fallocate(offset=0x%llx length=0x%lx)"
++			" failed. err=%ld\n", iocb->ki_pos,
++			iov_iter_count(from), ret);
++			goto out;
++		}
++		pr_debug("fallocate(offset=0x%llx length=0x%lx)"
++		" succeed. ret=%ld\n", iocb->ki_pos, iov_iter_count(from), ret);
++	}
  
- static inline struct fuse_conn *get_fuse_conn_super(struct super_block *sb)
-diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-index d2afce377fd4..403360e352d8 100644
---- a/fs/fuse/inode.c
-+++ b/fs/fuse/inode.c
-@@ -22,6 +22,8 @@
- #include <linux/exportfs.h>
- #include <linux/posix_acl.h>
- #include <linux/pid_namespace.h>
-+#include <linux/dax.h>
-+#include <linux/pfn_t.h>
+ 	ret = dax_iomap_rw(iocb, from, &fuse_iomap_ops);
  
- MODULE_AUTHOR("Miklos Szeredi <miklos@szeredi.hu>");
- MODULE_DESCRIPTION("Filesystem in Userspace");
-@@ -607,6 +609,69 @@ static void fuse_pqueue_init(struct fuse_pqueue *fpq)
- 	fpq->connected = 1;
+@@ -3331,8 +3350,12 @@ fuse_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
+ 	return ret;
  }
  
-+static void fuse_free_dax_mem_ranges(struct list_head *mem_list)
-+{
-+	struct fuse_dax_mapping *range, *temp;
-+
-+	/* Free All allocated elements */
-+	list_for_each_entry_safe(range, temp, mem_list, list) {
-+		list_del(&range->list);
-+		kfree(range);
-+	}
+-static long fuse_file_fallocate(struct file *file, int mode, loff_t offset,
+-				loff_t length)
++/*
++ * This variant does not take any inode lock and if locking is required,
++ * caller is supposed to hold lock
++ */
++static long __fuse_file_fallocate(struct file *file, int mode,
++					loff_t offset, loff_t length)
+ {
+ 	struct fuse_file *ff = file->private_data;
+ 	struct inode *inode = file_inode(file);
+@@ -3346,8 +3369,6 @@ static long fuse_file_fallocate(struct file *file, int mode, loff_t offset,
+ 		.mode = mode
+ 	};
+ 	int err;
+-	bool lock_inode = !(mode & FALLOC_FL_KEEP_SIZE) ||
+-			   (mode & FALLOC_FL_PUNCH_HOLE);
+ 
+ 	if (mode & ~(FALLOC_FL_KEEP_SIZE | FALLOC_FL_PUNCH_HOLE))
+ 		return -EOPNOTSUPP;
+@@ -3355,17 +3376,13 @@ static long fuse_file_fallocate(struct file *file, int mode, loff_t offset,
+ 	if (fc->no_fallocate)
+ 		return -EOPNOTSUPP;
+ 
+-	if (lock_inode) {
+-		inode_lock(inode);
+-		if (mode & FALLOC_FL_PUNCH_HOLE) {
+-			loff_t endbyte = offset + length - 1;
+-			err = filemap_write_and_wait_range(inode->i_mapping,
+-							   offset, endbyte);
+-			if (err)
+-				goto out;
+-
+-			fuse_sync_writes(inode);
+-		}
++	if (mode & FALLOC_FL_PUNCH_HOLE) {
++		loff_t endbyte = offset + length - 1;
++		err = filemap_write_and_wait_range(inode->i_mapping, offset,
++							endbyte);
++		if (err)
++			goto out;
++		fuse_sync_writes(inode);
+ 	}
+ 
+ 	if (!(mode & FALLOC_FL_KEEP_SIZE))
+@@ -3401,9 +3418,31 @@ static long fuse_file_fallocate(struct file *file, int mode, loff_t offset,
+ 	if (!(mode & FALLOC_FL_KEEP_SIZE))
+ 		clear_bit(FUSE_I_SIZE_UNSTABLE, &fi->state);
+ 
++	return err;
 +}
 +
-+static int fuse_dax_mem_range_init(struct fuse_conn *fc,
-+				   struct dax_device *dax_dev)
++static long fuse_file_fallocate(struct file *file, int mode, loff_t offset,
++				loff_t length)
 +{
-+	long nr_pages, nr_ranges;
-+	void *kaddr;
-+	pfn_t pfn;
-+	struct fuse_dax_mapping *range;
-+	LIST_HEAD(mem_ranges);
-+	phys_addr_t phys_addr;
-+	int ret = 0, id;
-+	size_t dax_size = -1;
-+	unsigned long allocated_ranges = 0, i;
++	struct fuse_file *ff = file->private_data;
++	struct inode *inode = file_inode(file);
++	struct fuse_conn *fc = ff->fc;
++	int err;
++	bool lock_inode = !(mode & FALLOC_FL_KEEP_SIZE) ||
++			   (mode & FALLOC_FL_PUNCH_HOLE);
 +
-+	id = dax_read_lock();
-+	nr_pages = dax_direct_access(dax_dev, 0, PHYS_PFN(dax_size), &kaddr,
-+					&pfn);
-+	dax_read_unlock(id);
-+	if (nr_pages < 0) {
-+		pr_debug("dax_direct_access() returned %ld\n", nr_pages);
-+		return nr_pages;
-+	}
++	if (mode & ~(FALLOC_FL_KEEP_SIZE | FALLOC_FL_PUNCH_HOLE))
++		return -EOPNOTSUPP;
 +
-+	phys_addr = pfn_t_to_phys(pfn);
-+	nr_ranges = nr_pages/FUSE_DAX_MEM_RANGE_PAGES;
-+	printk("fuse_dax_mem_range_init(): dax mapped %ld pages. nr_ranges=%ld\n", nr_pages, nr_ranges);
++	if (fc->no_fallocate)
++		return -EOPNOTSUPP;
 +
-+	for (i = 0; i < nr_ranges; i++) {
-+		range = kzalloc(sizeof(struct fuse_dax_mapping), GFP_KERNEL);
-+		if (!range) {
-+			pr_debug("memory allocation for mem_range failed.\n");
-+			ret = -ENOMEM;
-+			goto out_err;
-+		}
-+		/* TODO: This offset only works if virtio-fs driver is not
-+		 * having some memory hidden at the beginning. This needs
-+		 * better handling
-+		 */
-+		range->window_offset = i * FUSE_DAX_MEM_RANGE_SZ;
-+		range->length = FUSE_DAX_MEM_RANGE_SZ;
-+		list_add_tail(&range->list, &mem_ranges);
-+		allocated_ranges++;
-+	}
-+
-+	list_replace_init(&mem_ranges, &fc->free_ranges);
-+	fc->nr_free_ranges = allocated_ranges;
-+	return 0;
-+out_err:
-+	/* Free All allocated elements */
-+	fuse_free_dax_mem_ranges(&mem_ranges);
-+	return ret;
-+}
-+
- void fuse_conn_init(struct fuse_conn *fc, struct user_namespace *user_ns,
- 			struct dax_device *dax_dev,
- 			const struct fuse_iqueue_ops *fiq_ops, void *fiq_priv)
-@@ -636,6 +701,7 @@ void fuse_conn_init(struct fuse_conn *fc, struct user_namespace *user_ns,
- 	fc->pid_ns = get_pid_ns(task_active_pid_ns(current));
- 	fc->dax_dev = dax_dev;
- 	fc->user_ns = get_user_ns(user_ns);
-+	INIT_LIST_HEAD(&fc->free_ranges);
+ 	if (lock_inode)
+-		inode_unlock(inode);
++		inode_lock(inode);
+ 
++	err = __fuse_file_fallocate(file, mode, offset, length);
++	if (lock_inode)
++		inode_unlock(inode);
+ 	return err;
  }
- EXPORT_SYMBOL_GPL(fuse_conn_init);
  
-@@ -644,6 +710,8 @@ void fuse_conn_put(struct fuse_conn *fc)
- 	if (refcount_dec_and_test(&fc->count)) {
- 		if (fc->destroy_req)
- 			fuse_request_free(fc->destroy_req);
-+		if (fc->dax_dev)
-+			fuse_free_dax_mem_ranges(&fc->free_ranges);
- 		put_pid_ns(fc->pid_ns);
- 		put_user_ns(fc->user_ns);
- 		fc->release(fc);
-@@ -1136,9 +1204,17 @@ int fuse_fill_super_common(struct super_block *sb,
- 	fuse_conn_init(fc, sb->s_user_ns, dax_dev, fiq_ops, fiq_priv);
- 	fc->release = fuse_free_conn;
- 
-+	if (dax_dev) {
-+		err = fuse_dax_mem_range_init(fc, dax_dev);
-+		if (err) {
-+			pr_debug("fuse_dax_mem_range_init() returned %d\n", err);
-+			goto err_put_conn;
-+		}
-+	}
-+
- 	fud = fuse_dev_alloc(fc);
- 	if (!fud)
--		goto err_put_conn;
-+		goto err_free_ranges;
- 
- 	fc->dev = sb->s_dev;
- 	fc->sb = sb;
-@@ -1211,6 +1287,9 @@ int fuse_fill_super_common(struct super_block *sb,
- 	dput(root_dentry);
-  err_dev_free:
- 	fuse_dev_free(fud);
-+ err_free_ranges:
-+	if (dax_dev)
-+		fuse_free_dax_mem_ranges(&fc->free_ranges);
-  err_put_conn:
- 	fuse_conn_put(fc);
- 	sb->s_fs_info = NULL;
-diff --git a/fs/fuse/virtio_fs.c b/fs/fuse/virtio_fs.c
-index ef1469b38a6d..c79c9a885253 100644
---- a/fs/fuse/virtio_fs.c
-+++ b/fs/fuse/virtio_fs.c
-@@ -451,6 +451,8 @@ static long virtio_fs_direct_access(struct dax_device *dax_dev, pgoff_t pgoff,
- 	phys_addr_t offset = PFN_PHYS(pgoff);
- 	size_t max_nr_pages = fs->window_len/PAGE_SIZE - pgoff;
- 
-+	pr_debug("virtio_fs_direct_access(): called. nr_pages=%ld max_nr_pages=%ld\n", nr_pages, max_nr_pages);
-+
- 	if (kaddr)
- 		*kaddr = fs->window_kaddr + offset;
- 	if (pfn)
 -- 
 2.13.6
 
