@@ -2,93 +2,91 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D631C5CFFE
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 20:42:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB20CC04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 20:42:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5527720821
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 20:42:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5527720821
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id 990D020821
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 20:42:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 990D020821
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729507AbeLJUmX (ORCPT
+        id S1729543AbeLJUmf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 15:42:23 -0500
-Received: from mout.kundenserver.de ([212.227.126.135]:33207 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727598AbeLJUmW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 15:42:22 -0500
-Received: from wuerfel.lan ([109.192.41.194]) by mrelayeu.kundenserver.de
- (mreue009 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1MIdW9-1gisRL3YBR-00Ehbx; Mon, 10 Dec 2018 21:42:10 +0100
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hans.verkuil@cisco.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Ettore Chimenti <ek5.chimenti@gmail.com>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] media: seco-cec: fix RC_CORE dependency
-Date:   Mon, 10 Dec 2018 21:41:40 +0100
-Message-Id: <20181210204208.2223571-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.20.0
+        Mon, 10 Dec 2018 15:42:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46844 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729509AbeLJUmf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Dec 2018 15:42:35 -0500
+Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id BBC8B2086D;
+        Mon, 10 Dec 2018 20:42:34 +0000 (UTC)
+Received: from rostedt by gandalf.local.home with local (Exim 4.91)
+        (envelope-from <rostedt@goodmis.org>)
+        id 1gWSNt-0003k0-R8; Mon, 10 Dec 2018 15:42:33 -0500
+Message-Id: <20181210204233.752634083@goodmis.org>
+User-Agent: quilt/0.65
+Date:   Mon, 10 Dec 2018 15:41:28 -0500
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        stable@vger.kernel.org
+Subject: [PATCH 2/2] tracing: Fix memory leak in set_trigger_filter()
+References: <20181210204126.603121253@goodmis.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:Pyr2z/JPJNokWqHGPq/aD0EypsRv48+YISaicVzZoAvAsQWAQTG
- Hhp8iD5wFDGiixfWA7mKnUrvXwPXHHX1gbKn6hPRK6nrb1FQjzR/xlEa5pRANT8cuyk4F9k
- 3xlOhkpHb3yClYAsV8Umfk3wgOGbxrZL1FgJcoMLDbRc6zh79Hobd2dudy81b/Ru81EMdxR
- MfkkFHRjo4h6V4lE3Ma8Q==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:X/PAKrcotEQ=:cvvOBf2vOZ2e5m/Q6lgWoS
- 4k1WDEf8/UmK5oObTilF0OqCaPHwImZPAQtlZ/sM3wp9FzIoBVfISwmjBjeLGpeDDA4sL/gg4
- 2hwBPyr6qncyuYn/KD/5kQu2Ac7oQS+1c2ZBlqZ9awoGfZn+zHlxd29cu30oGkTphAni9kRvh
- StmNsiDfaC0m/iulJxttDkgDLWCZG046yNBT3s1l1acfhz7k7FqGQJeg64bkHI5cmzTjgVvZ4
- DUfP2bKOuUy/BV2xhoeEqy1eNVHQk7cp8Ue7X5PdGm/IUaqOYx4AiLYeuHAoqDCzu9Wvy6XlO
- 8NSoSsViknJOsvsvXZcXG6a351E6IbZDhXtIgNk7MyWSs4HaEebRjuECw+BUOGMyWqAOTcAVP
- HfLf+bdsVW4hYaKIkWxYcsy2e7hGPRgLkaBuq8pwhHbP2AhL8oJO5lWNT/Jd56D4zKSKMPM+9
- q/oKY4nsyC2lR36FhBDAZ7EINY5eaoVeTBW9TPDZ2IBumuQTveF5+3JrMChb8pPwHzll2q5DE
- Rik9FLuX/+2zObY1VyzWFlw7ll1EV5qiU5obVm2udPz0uRTAZjJjIAsvxZ4nYA9ssV3GLHRH2
- Kl0q5vDFlVyv2QUuypPKKhvK822jyUQD5qKYUPFbvK6GpChnCYeUuMc3pXw0Y8GtGpAoncsEf
- Y8hTrDw6mPMjRC+VpcGcIsw9KG9g6aQAim8qIvI/MyD29D7XbM3S3CbZGnH+G9kgRbXT0DuvP
- tUnYr4dVPt88nsCqIpltLXW1CKY9KS1zfVJ0AA==
+Content-Type: text/plain; charset=ISO-8859-15
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-All other drivers that need RC_CORE have a dependency rather than using
-'select', so we should do the same here to avoid circular dependencies
-as well as this warning about missing dependencies:
+From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
 
-WARNING: unmet direct dependencies detected for RC_CORE
-  Depends on [n]: INPUT [=n]
-  Selected by [y]:
-  - VIDEO_SECO_RC [=y] && MEDIA_SUPPORT [=y] && CEC_PLATFORM_DRIVERS [=y] && VIDEO_SECO_CEC [=y]
+When create_event_filter() fails in set_trigger_filter(), the filter may
+still be allocated and needs to be freed. The caller expects the
+data->filter to be updated with the new filter, even if the new filter
+failed (we could add an error message by setting set_str parameter of
+create_event_filter(), but that's another update).
 
-Fixes: daef95769b3a ("media: seco-cec: add Consumer-IR support")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+But because the error would just exit, filter was left hanging and
+nothing could free it.
+
+Found by kmemleak detector.
+
+Cc: Tom Zanussi <tom.zanussi@linux.intel.com>
+Cc: stable@vger.kernel.org
+Fixes: bac5fb97a173a ("tracing: Add and use generic set_trigger_filter() implementation")
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 ---
- drivers/media/platform/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ kernel/trace/trace_events_trigger.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/media/platform/Kconfig b/drivers/media/platform/Kconfig
-index ea3306341edf..d501c6b3b380 100644
---- a/drivers/media/platform/Kconfig
-+++ b/drivers/media/platform/Kconfig
-@@ -641,7 +641,7 @@ config VIDEO_SECO_CEC
- config VIDEO_SECO_RC
- 	bool "SECO Boards IR RC5 support"
- 	depends on VIDEO_SECO_CEC
--	select RC_CORE
-+	depends on RC_CORE
- 	help
- 	  If you say yes here you will get support for the
- 	  SECO Boards Consumer-IR in seco-cec driver.
+diff --git a/kernel/trace/trace_events_trigger.c b/kernel/trace/trace_events_trigger.c
+index 2152d1e530cb..cd12ecb66eb9 100644
+--- a/kernel/trace/trace_events_trigger.c
++++ b/kernel/trace/trace_events_trigger.c
+@@ -732,8 +732,10 @@ int set_trigger_filter(char *filter_str,
+ 
+ 	/* The filter is for the 'trigger' event, not the triggered event */
+ 	ret = create_event_filter(file->event_call, filter_str, false, &filter);
+-	if (ret)
+-		goto out;
++	/*
++	 * If create_event_filter() fails, filter still needs to be freed.
++	 * Which the calling code will do with data->filter.
++	 */
+  assign:
+ 	tmp = rcu_access_pointer(data->filter);
+ 
 -- 
-2.20.0
+2.19.1
+
 
