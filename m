@@ -3,92 +3,104 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 868A2C04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 20:59:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB611C5CFFE
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 21:00:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4338F2082F
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 20:59:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4338F2082F
+	by mail.kernel.org (Postfix) with ESMTP id B5BCF2082F
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 21:00:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B5BCF2082F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729863AbeLJU7j (ORCPT
+        id S1729887AbeLJVAB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 15:59:39 -0500
-Received: from mout.kundenserver.de ([212.227.17.24]:49195 "EHLO
+        Mon, 10 Dec 2018 16:00:01 -0500
+Received: from mout.kundenserver.de ([212.227.126.135]:50355 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727538AbeLJU7j (ORCPT
+        with ESMTP id S1727538AbeLJVAA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 15:59:39 -0500
+        Mon, 10 Dec 2018 16:00:00 -0500
 Received: from wuerfel.lan ([109.192.41.194]) by mrelayeu.kundenserver.de
- (mreue109 [212.227.15.145]) with ESMTPA (Nemesis) id
- 1M1HmG-1gTiYq0UyA-002sOD; Mon, 10 Dec 2018 21:59:30 +0100
+ (mreue012 [212.227.15.129]) with ESMTPA (Nemesis) id
+ 1MnWx3-1hDX7B0wuj-00jatI; Mon, 10 Dec 2018 21:59:56 +0100
 From:   Arnd Bergmann <arnd@arndb.de>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Andrey Konovalov <andreyknvl@google.com>,
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>, Stephen Boyd <swboyd@chromium.org>,
+        Timur Tabi <timur@codeaurora.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>,
+        Evan Green <evgreen@chromium.org>,
+        linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH] kasan: add missing Kconfig dependencies
-Date:   Mon, 10 Dec 2018 21:58:54 +0100
-Message-Id: <20181210205929.3213516-1-arnd@arndb.de>
+Subject: [PATCH] pinctrl: msm: mark PM functions as __maybe_unused
+Date:   Mon, 10 Dec 2018 21:59:45 +0100
+Message-Id: <20181210205955.3254660-1-arnd@arndb.de>
 X-Mailer: git-send-email 2.20.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:xoNhphRHQXdkYZP/b5IOxlR5jcfQmSAzvNH38P4crTBcPNi0nIo
- MhBVhTi7TVoksmicOymmYEelaKjqAuK6pg3r5mgRNWTK6UV7UN5lozRDOShD7HMxOi54D9w
- zUXggJUqlKpgg9MWUoEeI2X0A/uX7KZBAzquYiVDeBrrF9XQRAIgvuEfGuVsZTVEPG1roU7
- cUCwkweTi/cIoiGEOeR9w==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:+BQSkXC+a68=:Jtp8V7phoEFy6iZ0l5IrJ1
- NTjvLrTQdPO/HG2Jcl9LSOnfJW8UlN/o9VZsWo3UsGUyrzseE0/zwJptj8K4l+d1YRP+rRnnh
- jBoaKt47+5H9Ck1rHhc7/w+vpqeyrNXsGi/XmFo8CPa8uxM/8v4EbSZsGOzL/BDCqTaRg+Xi/
- S+uTAr2xdhpxxlSkTECF6ZNIDZ5KVV4zqttulmpoNId1vgVC2xrdpOrNddm9LRDDHZQdqX8XR
- wKika1H4sZ3FNqBQz6/JWSeV2V+8FsHGrQOZy9zgKrAkBcwXLz75PmYBgY/RV/LyY9aDy57+j
- IiHzZzwZ7v68833sTHj8YknxAkCcG2B1qCpgG5QW8LTZfg56PixEeff8I96U3xq60Ya1sr4bh
- LFrmwq2XJ4M7TJi+3lFU6jnuroSk03S9628zIGtoQkneEA1KADXLpOpBYBEEv4wafQU55txSG
- 6ZxFesgZ0UOftb+vX6ojVB0J/xVcpIjh7T/MfVkUrc/x+aHOtpXA6wFsC8/2By/PoJNF63Tt/
- e1xZ8HTytPCUtAGcyDUlninBppMxDdK/PDN/oIFL1CXjf+3p9b1qbGluKqbRshj2K1qabpR27
- 4oxB+A58kPOPCfOYKd9ihln+0ei09MDKPCtZjnFuAkWMgk3d9S1OTM8rCTri/Yy4Ngnto/jsK
- K5pQtiZxxkiuPd1ZskIxAASvbe9j8JBhhhUIFryWzVa1we4iEoOAetNJK6uxZDWIoLTVlyGeT
- 0ifbvbxxt+ijV9GtF6A8KGJOXAIYV2Epgvje7Q==
+X-Provags-ID: V03:K1:xGnY+Tz4mS0nI0F6dcf1GCsrhPj67IExbLpe9y/GFJxfpEnAMqx
+ 76oAA7L0SxJS7k2Zz/MfCziSdX/jtTn/ieutpTt++oMmsmhhiOKaBC/fBjJBbqiGaukXXLG
+ g5lyeLZg/jVWWrIFgwgWA5gD6k9GEyMpxHT18l6ltpSsfDkJUY3MEQyZ9fdr3b/AuS1KFoP
+ kctMdQ9DnZBC2au/bDdfg==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:hn4ltawq2Mc=:cVi0eOPx6XbQ5n0O33f9rI
+ t28ZbvMJco+LyPJi0Xih9J7+PTQPafUcpEOVQzOL5D2xDQJq6Id/ev1UWzwUdvCDF9ZOMjR64
+ TGjr5uV9/UGAYyK39BX5GVEQFtJoAWTGX1CCbN6OLr2N/UbUjKRhVhrlCNav3G2x5b2XF9jwp
+ 1zgJJiJT0YpwwgnA5Xi4qwhmIJyKOfkupm5WtaVEk2DUJC2c9SL2DotddohMq6wKi2zPC8ja5
+ EJJZRr/n987qa7lCl0U4f12qJ/sODMwUV0bNXbERellyyPlyYNAdsLha6YAFdmOihwIn8iXmB
+ LtTQWpon6FoZPQzIh5KrY4H7lHdCQNCrpgczPr09kplZyuizpwTGbGPKaqpthVSpDI/+Nw0c9
+ J109Wk/+1y6HV6ZWcgf5S0NnUsTZjOUXnuQVxIQyOU4NDnBxjlSqDSr0PWo1vGr/L36hpwyRO
+ 9JVsHp3Iq8Llsqk0C/PcrD0azTXxFcSTAwH6MdNlpyAl5hVku7gxIndl3GUsOB2rnsxV442Pq
+ quMnuugzKDfWQ/4vSqwennyPLR26q1uU8wCOdaw/9LGXkuinPSqVUgcV4uk1Mkm0gami0cZvq
+ VcCn+yRFRpPrn1Bot0GNxClc8o/bnbE4fFmmOuFy1NN4cKnL9AM8NYG/b8qDrUG0zS6jPzRNf
+ dLvaZhrqdxiSvNJN7XDx00vG0JUSeEPzEWjuOwM6epmexmfB9IiDitnWqsFLsDeF/To6BXuob
+ J1ID8lFS8uITRUgm4IWU12IpknFW1g5aSZbQFg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Building with CONFIG_KASAN=y when neither KASAN_GENERIC nor KASAN_SW_TAGS
-can be selected leads to a build error:
+Without CONFIG_PM_SLEEP, we get annoyting warnings about unused functions:
 
-arch/arm64/mm/kasan_init.c: In function 'kasan_pte_populate':
-arch/arm64/mm/kasan_init.c:106:28: error: 'KASAN_SHADOW_INIT' undeclared (first use in this function); did you mean 'KASAN_SHADOW_END'?
+drivers/pinctrl/qcom/pinctrl-msm.c:1082:12: error: 'msm_pinctrl_resume' defined but not used [-Werror=unused-function]
+ static int msm_pinctrl_resume(struct device *dev)
+            ^~~~~~~~~~~~~~~~~~
+drivers/pinctrl/qcom/pinctrl-msm.c:1075:12: error: 'msm_pinctrl_suspend' defined but not used [-Werror=unused-function]
+ static int msm_pinctrl_suspend(struct device *dev)
 
-We should really only allow enabling KASAN when all its dependencies
-are met as it was before the introduction of CONFIG_KASAN_SW_TAGS.
+Mark them as __maybe_unused to shut up the warning and silently drop
+the functions without having to add ugly #ifdefs.
 
-Fixes: b8440cc16515 ("kasan: add CONFIG_KASAN_GENERIC and CONFIG_KASAN_SW_TAGS")
+Fixes: 977d057ad346 ("pinctrl: msm: Add sleep pinctrl state transitions")
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- lib/Kconfig.kasan | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/pinctrl/qcom/pinctrl-msm.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/lib/Kconfig.kasan b/lib/Kconfig.kasan
-index b5d0cbfce4a1..83286bca2f70 100644
---- a/lib/Kconfig.kasan
-+++ b/lib/Kconfig.kasan
-@@ -15,6 +15,8 @@ if HAVE_ARCH_KASAN
+diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinctrl-msm.c
+index 87cbebe217fd..ee8119879c4c 100644
+--- a/drivers/pinctrl/qcom/pinctrl-msm.c
++++ b/drivers/pinctrl/qcom/pinctrl-msm.c
+@@ -1072,14 +1072,14 @@ static void msm_pinctrl_setup_pm_reset(struct msm_pinctrl *pctrl)
+ 		}
+ }
  
- config KASAN
- 	bool "KASAN: runtime memory debugger"
-+	depends on CC_HAS_KASAN_GENERIC || CC_HAS_KASAN_SW_TAGS
-+	depends on (SLUB && SYSFS) || (SLAB && !DEBUG_SLAB)
- 	help
- 	  Enables KASAN (KernelAddressSANitizer) - runtime memory debugger,
- 	  designed to find out-of-bounds accesses and use-after-free bugs.
+-static int msm_pinctrl_suspend(struct device *dev)
++static __maybe_unused int msm_pinctrl_suspend(struct device *dev)
+ {
+ 	struct msm_pinctrl *pctrl = dev_get_drvdata(dev);
+ 
+ 	return pinctrl_force_sleep(pctrl->pctrl);
+ }
+ 
+-static int msm_pinctrl_resume(struct device *dev)
++static __maybe_unused int msm_pinctrl_resume(struct device *dev)
+ {
+ 	struct msm_pinctrl *pctrl = dev_get_drvdata(dev);
+ 
 -- 
 2.20.0
 
