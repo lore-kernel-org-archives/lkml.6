@@ -2,89 +2,64 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5517AC04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 07:50:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A01BBC65BAF
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 07:50:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 246A7205C9
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 07:50:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 246A7205C9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lge.com
+	by mail.kernel.org (Postfix) with ESMTP id 55396204FD
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 07:50:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 55396204FD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726618AbeLJHuP (ORCPT
+        id S1726635AbeLJHuZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 02:50:15 -0500
-Received: from lgeamrelo11.lge.com ([156.147.23.51]:36680 "EHLO
-        lgeamrelo11.lge.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726210AbeLJHuP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 02:50:15 -0500
-Received: from unknown (HELO lgeamrelo02.lge.com) (156.147.1.126)
-        by 156.147.23.51 with ESMTP; 10 Dec 2018 16:50:13 +0900
-X-Original-SENDERIP: 156.147.1.126
-X-Original-MAILFROM: chanho.min@lge.com
-Received: from unknown (HELO kernel.lge.com) (165.186.175.97)
-        by 156.147.1.126 with ESMTP; 10 Dec 2018 16:50:13 +0900
-X-Original-SENDERIP: 165.186.175.97
-X-Original-MAILFROM: chanho.min@lge.com
-From:   Chanho Min <chanho.min@lge.com>
-To:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Kees Cook <keescook@chromium.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Michal Hocko <mhocko@suse.com>,
-        Alexei Starovoitov <ast@kernel.org>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Seungho Park <seungho1.park@lge.com>,
-        Chanho Min <chanho.min@lge.com>
-Subject: [PATCH] exec: make prepare_bprm_creds static
-Date:   Mon, 10 Dec 2018 16:49:54 +0900
-Message-Id: <1544428194-2431-1-git-send-email-chanho.min@lge.com>
-X-Mailer: git-send-email 2.1.4
+        Mon, 10 Dec 2018 02:50:25 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:51419 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726210AbeLJHuZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Dec 2018 02:50:25 -0500
+Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 53C677816CEB0;
+        Mon, 10 Dec 2018 15:50:22 +0800 (CST)
+Received: from [127.0.0.1] (10.142.68.147) by DGGEMS414-HUB.china.huawei.com
+ (10.3.19.214) with Microsoft SMTP Server id 14.3.408.0; Mon, 10 Dec 2018
+ 15:50:22 +0800
+Subject: Re: Disable RT_GROUP_SCHED in PREEMPT_RT_FULL
+To:     zhang jianwei <jianwei_z@foxmail.com>, tglx <tglx@linutronix.de>,
+        efault <efault@gmx.de>, <linux-rt-users@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <tencent_4E2198ADDEAE31C784F2AD886A44A9E3C605@qq.com>
+From:   gengdongjiu <gengdongjiu@huawei.com>
+Message-ID: <194aa1b6-0d98-d4ef-397a-a6ddca02cc6a@huawei.com>
+Date:   Mon, 10 Dec 2018 15:50:20 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <tencent_4E2198ADDEAE31C784F2AD886A44A9E3C605@qq.com>
+Content-Type: text/plain; charset="gb18030"
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.142.68.147]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-prepare_bprm_creds is not used outside exec.c, so there's no reason for it
-to have external linkage.
+Loop RT kernel Mailing lists.
 
-Signed-off-by: Chanho Min <chanho.min@lge.com>
----
- fs/exec.c               | 2 +-
- include/linux/binfmts.h | 1 -
- 2 files changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/fs/exec.c b/fs/exec.c
-index fc281b7..b6c9e5f 100644
---- a/fs/exec.c
-+++ b/fs/exec.c
-@@ -1399,7 +1399,7 @@ EXPORT_SYMBOL(finalize_exec);
-  * Or, if exec fails before, free_bprm() should release ->cred and
-  * and unlock.
-  */
--int prepare_bprm_creds(struct linux_binprm *bprm)
-+static int prepare_bprm_creds(struct linux_binprm *bprm)
- {
- 	if (mutex_lock_interruptible(&current->signal->cred_guard_mutex))
- 		return -ERESTARTNOINTR;
-diff --git a/include/linux/binfmts.h b/include/linux/binfmts.h
-index e9f5fe6..6a9e43d 100644
---- a/include/linux/binfmts.h
-+++ b/include/linux/binfmts.h
-@@ -138,7 +138,6 @@ extern int transfer_args_to_stack(struct linux_binprm *bprm,
- extern int bprm_change_interp(const char *interp, struct linux_binprm *bprm);
- extern int copy_strings_kernel(int argc, const char *const *argv,
- 			       struct linux_binprm *bprm);
--extern int prepare_bprm_creds(struct linux_binprm *bprm);
- extern void install_exec_creds(struct linux_binprm *bprm);
- extern void set_binfmt(struct linux_binfmt *new);
- extern ssize_t read_code(struct file *, unsigned long, loff_t, size_t);
--- 
-2.1.4
+On 2018/12/10 1:04, zhang jianwei wrote:
+> hi Thomas and Mike，
+> i say you disabled the RT_GROUP_SCHED in RT kernel because of strange cpu stall was observed. currently, in my projects, I need enable RT_GROUP_SCHED in RT kernel. I’d like to know how to reproduce the strange cpu stall in order to fix this bug. can you guys give me some advice  about how to fix this problem.
+> Thanks in advance!
+> 
+> 
+> patched mentioned 
+> https://lore.kernel.org/patchwork/patch/313215/
+> 
+> 
 
