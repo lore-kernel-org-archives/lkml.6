@@ -2,363 +2,243 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1D7CC04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 21:45:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6DB5C67839
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 21:50:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7CE3C2082F
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 21:45:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="ov3oLr17"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7CE3C2082F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
+	by mail.kernel.org (Postfix) with ESMTP id 6825B2084C
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 21:50:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6825B2084C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728638AbeLJVpT (ORCPT
+        id S1728737AbeLJVuK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 16:45:19 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:38441 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726562AbeLJVpT (ORCPT
+        Mon, 10 Dec 2018 16:50:10 -0500
+Received: from mout.kundenserver.de ([217.72.192.75]:37385 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726392AbeLJVuK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 16:45:19 -0500
-Received: by mail-wm1-f66.google.com with SMTP id m22so177219wml.3
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Dec 2018 13:45:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=+Z4cJNoUDdc4GPxswmj6JsPzEmpLOhjva3HgqoYU28o=;
-        b=ov3oLr178GAc65keIkipFB3wQNL9ciYd02Xuww2EJDHQzve8gSIHiNq6zG1XHy4v/1
-         jWNFFIs2HVtScTGluIFmlGJECpxr03MsvrqvCJe4KyuDjEeQG04zI14gXxDF611TAFy5
-         1/kPduDO6MAK99C2aGqm+7o0jLV3iboBTWZ6g=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=+Z4cJNoUDdc4GPxswmj6JsPzEmpLOhjva3HgqoYU28o=;
-        b=eyPglMqCCK4tB3jHcAn6ubOqLZW1kRAyT2ziukBGR2D6h6nI0m/61HqCo/zbOsoRDZ
-         acvIPdOxNzwDG0Cb66W58NjVDQVHI9fWtuDiUX1nSVkvAa9jmH47V2HWOC026pgT55/+
-         7vvx9N9YOlt0QoVLQVVHNY0F1jgIS/J9V59XQChY07kGrZPpkfHTB1J/l4qcF0a5eUdy
-         WRbcY6QzdiST4Y0qKF7vyQMU9nMJv4IrFcmyz6eVNCwnkiegX9e5nXAPNdS2s7ULZ2Gw
-         fFiligawthg1+i/iW6HWLpz0WjkuEwdLHKefDRLQ2rSmSBbBbDP6qJHXxjBQRqqPVerH
-         Wfgg==
-X-Gm-Message-State: AA+aEWaGDf8ErGdYh7OvFpV0SSqOcSRQftgpv/wwOG9uhl6gwPj9SGVo
-        2yWNyrCQ4u3vkrUssGAl8sFim0U9M55wK78A47LFoA==
-X-Google-Smtp-Source: AFSGD/VkT/aYmFkffulAZbBBVN0AS4Ef6keGWyInndG3R1xQ+mC6QpuM462QHY5UKF7Wx4c1XqiOibvaexpXrGu1qdk=
-X-Received: by 2002:a1c:b456:: with SMTP id d83mr58223wmf.115.1544478314321;
- Mon, 10 Dec 2018 13:45:14 -0800 (PST)
+        Mon, 10 Dec 2018 16:50:10 -0500
+Received: from wuerfel.lan ([109.192.41.194]) by mrelayeu.kundenserver.de
+ (mreue108 [212.227.15.145]) with ESMTPA (Nemesis) id
+ 1Mg6i8-1h63FD1cP0-00hb38; Mon, 10 Dec 2018 22:49:57 +0100
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     Bjorn Helgaas <bhelgaas@google.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Lukas Wunner <lukas@wunner.de>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Tyrel Datwyler <tyreld@linux.vnet.ibm.com>,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] pci: ibmphp_hpc: turn semaphores into completions or mutexes
+Date:   Mon, 10 Dec 2018 22:49:10 +0100
+Message-Id: <20181210214955.1826522-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.20.0
 MIME-Version: 1.0
-References: <CAMty3ZAa2_o87YJ=1iak-o-rfZjoYz7PKXM9uGrbHsh6JLOCWw@mail.gmail.com>
- <850c2502-217c-a9f0-b433-0cd26d0419fd@xs4all.nl> <CAOf5uwkirwRPk3=w1fONLrOpwNqGiJbhh6okDmOTWyKWvW+U1w@mail.gmail.com>
- <CAOf5uw=d6D4FGZp8iWKdA1+77ZQtkNZwbJStmO+L-NtW4gqfaA@mail.gmail.com> <20181209193912.GC12193@w540>
-In-Reply-To: <20181209193912.GC12193@w540>
-From:   Michael Nazzareno Trimarchi <michael@amarulasolutions.com>
-Date:   Mon, 10 Dec 2018 22:45:02 +0100
-Message-ID: <CAOf5uwncWDqLsAvQ1H0xN1qQRA_NBt=m2Ncuz_3_nCRhFptpAw@mail.gmail.com>
-Subject: Re: Configure video PAL decoder into media pipeline
-To:     jacopo@jmondi.org
-Cc:     hverkuil@xs4all.nl, Jagan Teki <jagan@amarulasolutions.com>,
-        mchehab@kernel.org, linux-media@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Philipp Zabel <p.zabel@pengutronix.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:qhve+nZpkFnqRZRfGZVu9wzsBEgdK1F2PWrbJbyJ3XpojC+cco0
+ V80XYv4X5dfRUpzMMckq+FB/pPHzOGzsnBVtE2tzwVZCPysus5SIHvqbVe1vW1b23afkheR
+ POlXgF87a9EjHrzd3BzNITPKQQgjf/FzTyvyiZtw8TSMTdz07aTa4TjWjf2ApgdJAgPf7k5
+ evMPrA2/j7aULWqc9GMLw==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:edl0Oj4NHg0=:OgJmciwDIzp20J2h6R+Mnc
+ PYXPnRVEISUN1oF3Kh7JbpYeDxC8i2AjPmTQL2MwCJ8wNdsvChC/8ER97pYqnxJWZQMlnHato
+ YT0nNREFpzAtl4OmW+ok4T6g0cAciZG2tHxVbuk+QqC1XiIh25Bfcw0dyOjg5+KmlZIawN7Mq
+ jCo0h/qFpXMeLzrqQCpGc6xbzcgsCfJ796Yf6RO06hfWDdlPTUzJnS3r920HehAM/kXhNYEk/
+ Cl5bw+qY+Z1+fIoTySLd2vQ8T3BXwzaucf4skDUOFwY8sJkacQij393VEbncRNNI4OFYA4yxW
+ ikroMD/Mw7GSeQAlkadyZA1ezWpFKMlTqdu9lZn58IT6pyX4RfCXFUJcbpxb852bS52HFQ1B9
+ DrZwb0wMIPk65nSMEDCA1AlZTrnzZrMkGvN6vUHa5hUSfI7GGFhg6h4+nRM1UMMehSLuL+zHL
+ Wos/4RUxEpsr9o5veTOaSp4914F8izmjRQJo59I7F6fB8aFmGR6EvvaQyHXu2/FPsLLn6JiBv
+ nKibCaKufexCT5+IHm+o54v/M+cm5uUuAipYLYTRbudCpHrvUUKGryJcrCAgBO0LRbZWGgrT6
+ yfkG2yPmSMcbYnLT3ibkiAG73dORPHWwXOxF1/VQlyfbXkemFCoVbj8NfYvEhWvuhFtzrgjo1
+ uqZl3cMbnwa6DG5d85NLM/sERCC96gECM+Ir33BV5Mzam1XgTLT0K1khISfcPnzZeBqLD7xkM
+ PNPGRyHI7QycP4S+dttNiJJj4Z9xGs6qZy+Z2A==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jacopo
+The sem_exit variable is conceptually a completion, so it should
+be called that.
 
-Let's see what I have done
+Similarly, the semOperations semaphore is a simple mutex, and
+can be changed into that, respectively.
 
-On Sun, Dec 9, 2018 at 8:39 PM jacopo mondi <jacopo@jmondi.org> wrote:
->
-> Hi Michael, Jagan, Hans,
->
-> On Sat, Dec 08, 2018 at 06:07:04PM +0100, Michael Nazzareno Trimarchi wrote:
-> > Hi
-> >
-> > Down you have my tentative of connection
-> >
-> > I need to hack a bit to have tuner registered. I'm using imx-media
-> >
-> > On Sat, Dec 8, 2018 at 12:48 PM Michael Nazzareno Trimarchi
-> > <michael@amarulasolutions.com> wrote:
-> > >
-> > > Hi
-> > >
-> > > On Fri, Dec 7, 2018 at 1:11 PM Hans Verkuil <hverkuil@xs4all.nl> wrote:
-> > > >
-> > > > On 12/07/2018 12:51 PM, Jagan Teki wrote:
-> > > > > Hi,
-> > > > >
-> > > > > We have some unconventional setup for parallel CSI design where analog
-> > > > > input data is converted into to digital composite using PAL decoder
-> > > > > and it feed to adv7180, camera sensor.
-> > > > >
-> > > > > Analog input =>  Video PAL Decoder => ADV7180 => IPU-CSI0
-> > > >
-> > > > Just PAL? No NTSC support?
-> > > >
-> > > For now does not matter. I have registere the TUNER that support it
-> > > but seems that media-ctl is not suppose to work with the MEDIA_ENT_F_TUNER
-> > >
-> > > Is this correct?
-> > >
->
-> media-types.rst reports:
->
->     *  -  ``MEDIA_ENT_F_IF_VID_DECODER``
->        -  IF-PLL video decoder. It receives the IF from a PLL and decodes
->           the analog TV video signal. This is commonly found on some very
->           old analog tuners, like Philips MK3 designs. They all contain a
->           tda9887 (or some software compatible similar chip, like tda9885).
->           Those devices use a different I2C address than the tuner PLL.
->
-> Is this what you were looking for?
->
-> > > > >
-> > > > > The PAL decoder is I2C based, tda9885 chip. We setup it up via dt
-> > > > > bindings and the chip is
-> > > > > detected fine.
-> > > > >
-> > > > > But we need to know, is this to be part of media control subdev
-> > > > > pipeline? so-that we can configure pads, links like what we do on
-> > > > > conventional pipeline  or it should not to be part of media pipeline?
-> > > >
-> > > > Yes, I would say it should be part of the pipeline.
-> > > >
-> > >
-> > > Ok I have created a draft patch to add the adv some new endpoint but
-> > > is sufficient to declare tuner type in media control?
-> > >
-> > > Michael
-> > >
-> > > > >
-> > > > > Please advise for best possible way to fit this into the design.
-> > > > >
-> > > > > Another observation is since the IPU has more than one sink, source
-> > > > > pads, we source or sink the other components on the pipeline but look
-> > > > > like the same thing seems not possible with adv7180 since if has only
-> > > > > one pad. If it has only one pad sourcing to adv7180 from tda9885 seems
-> > > > > not possible, If I'm not mistaken.
-> > > >
-> > > > Correct, in all cases where the adv7180 is used it is directly connected
-> > > > to the video input connector on a board.
-> > > >
-> > > > So to support this the adv7180 driver should be modified to add an input pad
-> > > > so you can connect the decoder. It will be needed at some point anyway once
-> > > > we add support for connector entities.
-> > > >
-> > > > Regards,
-> > > >
-> > > >         Hans
-> > > >
-> > > > >
-> > > > > I tried to look for similar design in mainline, but I couldn't find
-> > > > > it. is there any design similar to this in mainline?
-> > > > >
-> > > > > Please let us know if anyone has any suggestions on this.
-> > > > >
-> >
-> > [    3.379129] imx-media: ipu1_vdic:2 -> ipu1_ic_prp:0
-> > [    3.384262] imx-media: ipu2_vdic:2 -> ipu2_ic_prp:0
-> > [    3.389217] imx-media: ipu1_ic_prp:1 -> ipu1_ic_prpenc:0
-> > [    3.394616] imx-media: ipu1_ic_prp:2 -> ipu1_ic_prpvf:0
-> > [    3.399867] imx-media: ipu2_ic_prp:1 -> ipu2_ic_prpenc:0
-> > [    3.405289] imx-media: ipu2_ic_prp:2 -> ipu2_ic_prpvf:0
-> > [    3.410552] imx-media: ipu1_csi0:1 -> ipu1_ic_prp:0
-> > [    3.415502] imx-media: ipu1_csi0:1 -> ipu1_vdic:0
-> > [    3.420305] imx-media: ipu1_csi0_mux:5 -> ipu1_csi0:0
-> > [    3.425427] imx-media: ipu1_csi1:1 -> ipu1_ic_prp:0
-> > [    3.430328] imx-media: ipu1_csi1:1 -> ipu1_vdic:0
-> > [    3.435142] imx-media: ipu1_csi1_mux:5 -> ipu1_csi1:0
-> > [    3.440321] imx-media: adv7180 2-0020:1 -> ipu1_csi0_mux:4
-> >
-> > with
-> >        tuner: tuner@43 {
-> >                 compatible = "tuner";
-> >                 reg = <0x43>;
-> >                 pinctrl-names = "default";
-> >                 pinctrl-0 = <&pinctrl_tuner>;
-> >
-> >                 ports {
-> >                         #address-cells = <1>;
-> >                         #size-cells = <0>;
-> >                         port@1 {
-> >                                 reg = <1>;
-> >
-> >                                 tuner_in: endpoint {
->
-> Nit: This is the tuner output, I would call this "tuner_out"
->
+With both converted, the ibmphp_hpc_initvars() function is no longer
+used and can be removed.
 
-Done
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/pci/hotplug/ibmphp.h      |  1 -
+ drivers/pci/hotplug/ibmphp_core.c |  2 --
+ drivers/pci/hotplug/ibmphp_hpc.c  | 47 +++++++++----------------------
+ 3 files changed, 14 insertions(+), 36 deletions(-)
 
-> >                                         remote-endpoint = <&tuner_out>;
-> >                                 };
-> >                         };
-> >                 };
-> >         };
-> >
-> >         adv7180: camera@20 {
-> >                 compatible = "adi,adv7180";
->
-> One minor thing first: look at the adv7180 bindings documentation, and
-> you'll find out that only devices compatible with "adv7180cp" and
-> "adv7180st" shall declare a 'ports' node. This is minor issues (also,
-> I don't see it enforced in driver's code, but still worth pointing it
-> out from the very beginning)
->
-> >                 reg = <0x20>;
-> >                 pinctrl-names = "default";
-> >                 pinctrl-0 = <&pinctrl_adv7180>;
-> >                 powerdown-gpios = <&gpio3 20 GPIO_ACTIVE_LOW>; /* PDEC_PWRDN */
-> >
-> >                 ports {
-> >                         #address-cells = <1>;
-> >                         #size-cells = <0>;
-> >
-> >                         port@1 {
-> >                                 reg = <1>;
-> >
-> >                                 adv7180_to_ipu1_csi0_mux: endpoint {
-> >                                         remote-endpoint =
-> > <&ipu1_csi0_mux_from_parallel_sensor>;
-> >                                         bus-width = <8>;
-> >                                 };
-> >                         };
-> >
-> >                         port@0 {
-> >                                 reg = <0>;
-> >
-> >                                 tuner_out: endpoint {
->
-> Nit: That's an adv7180 endpoint, I would call it 'adv7180_in'
->
-
-Done
-
-> >                                         remote-endpoint = <&tuner_in>;
-> >                                 };
-> >                         };
-> >                 };
-> >         };
-> >
-> > Any help is appreciate
-> >
->
-> The adv7180(cp|st) bindings says the device can declare one (or more)
-> input endpoints, but that's just to make possible to connect in device
-> tree the 7180's device node with the video input port. You can see an
-> example in arch/arm64/boot/dts/renesas/r8a77995-draak.dts which is
-> similar to what you've done here.
->
-> The video input port does not show up in the media graph, as it is
-> just a 'place holder' to describe an input port in DTs, the
-> adv7180 driver does not register any sink pad, where to connect any
-> video source to.
->
-> Your proposed bindings here look almost correct, but to have it
-> working for real you should add a sink pad to the adv7180 registered
-> media entity (possibly only conditionally to the presence of an input
-> endpoint in DTs...). You should then register a subdev-notifier, which
-> registers on an async-subdevice that uses the remote endpoint
-> connected to your newly registered input pad to find out which device
-> you're linked to; then at 'bound' (or possibly 'complete') time
-> register a link between the two entities, on which you can operate on
-> from userspace.
->
-> Your tuner driver for tda9885 (which I don't see in mainline, so I
-> assume it's downstream or custom code) should register an async subdevice,
-> so that the adv7180 registered subdev-notifier gets matched and your
-> callbacks invoked.
->
-> If I were you, I would:
-> 1) Add dt-parsing routine to tda7180, to find out if any input
-> endpoint is registered in DT.
-
-Done
-
-> 2) If it is, then register a SINK pad, along with the single SOURCE pad
-> which is registered today.
-
-Done
-
-> 3) When parsing DT, for input endpoints, get a reference to the remote
-> endpoint connected to your input and register a subdev-notifier
-
-Done
-
-> 4) Fill in the notifier 'bound' callback and register the link to
-> your remote device there.
-
-Both are subdevice that has not a v4l2_device, so bound is not called from two
-sub-device. Is this expected?
-
-
-> 5) Make sure your tuner driver registers its subdevice with
-> v4l2_async_register_subdev()
->
-> A good example on how to register subdev notifier is provided in the
-> rcsi2_parse_dt() function in rcar-csi2.c driver (I'm quite sure imx
-> now uses subdev notifiers from v4.19 on too if you want to have a look
-> there).
-
-Already seen it
-
->
-> -- Entering slippery territory here: you might want more inputs on this
->
-> To make thing simpler&nicer (TM), if you blindly do what I've suggested
-> here, you're going to break all current adv7180 users in mainline :(
->
-> That's because the v4l2-async design 'completes' the root notifier,
-> only if all subdev-notifiers connected to it have completed first.
-> If you add a notifier for the adv7180 input ports unconditionally, and
-
-I don't get to complete. So let's proceed by step
-
-Michael
-
-> to the input port is connected a plain simple "composite-video-connector",
-> as all DTs in mainline are doing right now, the newly registered
-> subdev-notifier will never complete, as the "composite-video-connector"
-> does not register any subdevice to match with. Bummer!
->
-> A quick look in the code base, returns me that, in example:
-> drivers/gpu/drm/meson/meson_drv.c filters on
-> "composite-video-connector" and a few other compatible values. You
-> might want to do the same, and register a notifier if and only if the
-> remote input endpoint is one of those known not to register a
-> subdevice. I'm sure there are other ways to deal with this issue, but
-> that's the best I can come up with...
-> ---
->
-> Hope this is reasonably clear and that I'm not misleading you. I had to
-> use adv7180 recently, and its single pad design confused me a bit as well :)
->
-> Thanks
->   j
->
-> > Michael
-> >
-> > > > > Jagan.
-> > > > >
-> > > >
-> > >
-> > >
-> > > --
-
-
-
+diff --git a/drivers/pci/hotplug/ibmphp.h b/drivers/pci/hotplug/ibmphp.h
+index b89f850c3a4e..e90a4ebf6550 100644
+--- a/drivers/pci/hotplug/ibmphp.h
++++ b/drivers/pci/hotplug/ibmphp.h
+@@ -378,7 +378,6 @@ int ibmphp_add_pfmem_from_mem(struct resource_node *);
+ struct bus_node *ibmphp_find_res_bus(u8);
+ void ibmphp_print_test(void);	/* for debugging purposes */
+ 
+-void ibmphp_hpc_initvars(void);
+ int ibmphp_hpc_readslot(struct slot *, u8, u8 *);
+ int ibmphp_hpc_writeslot(struct slot *, u8);
+ void ibmphp_lock_operations(void);
+diff --git a/drivers/pci/hotplug/ibmphp_core.c b/drivers/pci/hotplug/ibmphp_core.c
+index 5752b57198e3..e04b17d81e38 100644
+--- a/drivers/pci/hotplug/ibmphp_core.c
++++ b/drivers/pci/hotplug/ibmphp_core.c
+@@ -1312,8 +1312,6 @@ static int __init ibmphp_init(void)
+ 
+ 	ibmphp_debug = debug;
+ 
+-	ibmphp_hpc_initvars();
+-
+ 	for (i = 0; i < 16; i++)
+ 		irqs[i] = 0;
+ 
+diff --git a/drivers/pci/hotplug/ibmphp_hpc.c b/drivers/pci/hotplug/ibmphp_hpc.c
+index 752c384cbd4c..508a62a6b5f9 100644
+--- a/drivers/pci/hotplug/ibmphp_hpc.c
++++ b/drivers/pci/hotplug/ibmphp_hpc.c
+@@ -15,13 +15,13 @@
+ 
+ #include <linux/wait.h>
+ #include <linux/time.h>
++#include <linux/completion.h>
+ #include <linux/delay.h>
+ #include <linux/module.h>
+ #include <linux/pci.h>
+ #include <linux/init.h>
+ #include <linux/mutex.h>
+ #include <linux/sched.h>
+-#include <linux/semaphore.h>
+ #include <linux/kthread.h>
+ #include "ibmphp.h"
+ 
+@@ -88,10 +88,10 @@ static int to_debug = 0;
+ //----------------------------------------------------------------------------
+ // global variables
+ //----------------------------------------------------------------------------
+-static struct mutex sem_hpcaccess;	// lock access to HPC
+-static struct semaphore semOperations;	// lock all operations and
++static DEFINE_MUTEX(sem_hpcaccess);	// lock access to HPC
++static DEFINE_MUTEX(operations_mutex);	// lock all operations and
+ 					// access to data structures
+-static struct semaphore sem_exit;	// make sure polling thread goes away
++static DECLARE_COMPLETION(exit_complete); // make sure polling thread goes away
+ static struct task_struct *ibmphp_poll_thread;
+ //----------------------------------------------------------------------------
+ // local function prototypes
+@@ -109,23 +109,6 @@ static int hpc_wait_ctlr_notworking(int, struct controller *, void __iomem *, u8
+ //----------------------------------------------------------------------------
+ 
+ 
+-/*----------------------------------------------------------------------
+-* Name:    ibmphp_hpc_initvars
+-*
+-* Action:  initialize semaphores and variables
+-*---------------------------------------------------------------------*/
+-void __init ibmphp_hpc_initvars(void)
+-{
+-	debug("%s - Entry\n", __func__);
+-
+-	mutex_init(&sem_hpcaccess);
+-	sema_init(&semOperations, 1);
+-	sema_init(&sem_exit, 0);
+-	to_debug = 0;
+-
+-	debug("%s - Exit\n", __func__);
+-}
+-
+ /*----------------------------------------------------------------------
+ * Name:    i2c_ctrl_read
+ *
+@@ -780,7 +763,7 @@ void free_hpc_access(void)
+ *---------------------------------------------------------------------*/
+ void ibmphp_lock_operations(void)
+ {
+-	down(&semOperations);
++	mutex_lock(&operations_mutex);
+ 	to_debug = 1;
+ }
+ 
+@@ -790,7 +773,7 @@ void ibmphp_lock_operations(void)
+ void ibmphp_unlock_operations(void)
+ {
+ 	debug("%s - Entry\n", __func__);
+-	up(&semOperations);
++	mutex_unlock(&operations_mutex);
+ 	to_debug = 0;
+ 	debug("%s - Exit\n", __func__);
+ }
+@@ -816,7 +799,7 @@ static int poll_hpc(void *data)
+ 
+ 	while (!kthread_should_stop()) {
+ 		/* try to get the lock to do some kind of hardware access */
+-		down(&semOperations);
++		mutex_lock(&operations_mutex);
+ 
+ 		switch (poll_state) {
+ 		case POLL_LATCH_REGISTER:
+@@ -871,13 +854,13 @@ static int poll_hpc(void *data)
+ 			break;
+ 		case POLL_SLEEP:
+ 			/* don't sleep with a lock on the hardware */
+-			up(&semOperations);
++			mutex_unlock(&operations_mutex);
+ 			msleep(POLL_INTERVAL_SEC * 1000);
+ 
+ 			if (kthread_should_stop())
+ 				goto out_sleep;
+ 
+-			down(&semOperations);
++			mutex_lock(&operations_mutex);
+ 
+ 			if (poll_count >= POLL_LATCH_CNT) {
+ 				poll_count = 0;
+@@ -887,12 +870,12 @@ static int poll_hpc(void *data)
+ 			break;
+ 		}
+ 		/* give up the hardware semaphore */
+-		up(&semOperations);
++		mutex_unlock(&operations_mutex);
+ 		/* sleep for a short time just for good measure */
+ out_sleep:
+ 		msleep(100);
+ 	}
+-	up(&sem_exit);
++	complete(&exit_complete);
+ 	debug("%s - Exit\n", __func__);
+ 	return 0;
+ }
+@@ -1060,9 +1043,9 @@ void __exit ibmphp_hpc_stop_poll_thread(void)
+ 	debug("after locking operations\n");
+ 
+ 	// wait for poll thread to exit
+-	debug("before sem_exit down\n");
+-	down(&sem_exit);
+-	debug("after sem_exit down\n");
++	debug("before exit_complete down\n");
++	wait_for_completion(&exit_complete);
++	debug("after exit_completion down\n");
+ 
+ 	// cleanup
+ 	debug("before free_hpc_access\n");
+@@ -1070,8 +1053,6 @@ void __exit ibmphp_hpc_stop_poll_thread(void)
+ 	debug("after free_hpc_access\n");
+ 	ibmphp_unlock_operations();
+ 	debug("after unlock operations\n");
+-	up(&sem_exit);
+-	debug("after sem exit up\n");
+ 
+ 	debug("%s - Exit\n", __func__);
+ }
 -- 
-| Michael Nazzareno Trimarchi                     Amarula Solutions BV |
-| COO  -  Founder                                      Cruquiuskade 47 |
-| +31(0)851119172                                 Amsterdam 1018 AM NL |
-|                  [`as] http://www.amarulasolutions.com               |
+2.20.0
+
