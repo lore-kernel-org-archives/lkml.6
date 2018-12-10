@@ -2,150 +2,161 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69111C04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 08:35:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72749C04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 08:39:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2ABB520672
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 08:35:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544430949;
-	bh=+rMzFdcvIBCzMASAbg0FPfMrEfDppcHTezAKXsQFE+4=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=IiYcm+4h2zOrCsj6xoWwkRJg1I6ajEqEHb1Er5ME3Z+8m4tGkmxf/qCoT17+QUrMN
-	 BaEpswNqOwyGpFuVylRVgk0Tk3MudS4b6ryu33TIc33XCQwjAVoBcOVFw1M6Zg8TYh
-	 MdCWbqE0AhMXneyyyB52fqTU8Dw9UUjvXdJcTWpE=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2ABB520672
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 2975B20672
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 08:39:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="Ms1vq/Rn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2975B20672
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726645AbeLJIfr (ORCPT
+        id S1726573AbeLJIj1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 03:35:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59300 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726212AbeLJIfr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 03:35:47 -0500
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8690A20867;
-        Mon, 10 Dec 2018 08:35:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544430945;
-        bh=+rMzFdcvIBCzMASAbg0FPfMrEfDppcHTezAKXsQFE+4=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=cnHPejubSSMmb4Td364KgFZJJ60UCYMKIeb5D1jDHr7mOCwsL0NHO9wjrxJLW8ADE
-         Vg2hntwaf2/7DKyiMmDWOZyh8Y8n2o9dvUd8X4AXT/Z/8WJRaIn4CWYPpOO2EXX8b0
-         CrjLVAQXooSI1XrRqmLBlE1xcjLWhF1AFmXKYcxQ=
-Received: by mail-lj1-f171.google.com with SMTP id v1-v6so8839267ljd.0;
-        Mon, 10 Dec 2018 00:35:45 -0800 (PST)
-X-Gm-Message-State: AA+aEWZhT8jeI2I5J1iB66Ii/xjCJp9D6gifkth5iI8VwGY+laTFnVTn
-        szA4oj8f43JTFQ6lo74as9yGjq6KciOdGk8xnrE=
-X-Google-Smtp-Source: AFSGD/WzMAfjsu15NiZwrRzaAhcgtZsegSzIrhR44iL3LbDqBRqfraTW0NXWhYyrSVW7QTt7k8wp+Drg2ZTf1Wu7iJQ=
-X-Received: by 2002:a2e:85d3:: with SMTP id h19-v6mr6286842ljj.82.1544430943680;
- Mon, 10 Dec 2018 00:35:43 -0800 (PST)
+        Mon, 10 Dec 2018 03:39:27 -0500
+Received: from mail-eopbgr130089.outbound.protection.outlook.com ([40.107.13.89]:2656
+        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726029AbeLJIj0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Dec 2018 03:39:26 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=hsLVtTxUpVSl5rRZKCHlqODROhV+UKxNSwZj+pFn00M=;
+ b=Ms1vq/RnSgC+yk8fqnYjkIPHrFXDigLXLx9yQI7cJvP3jFbklMOKk3MURA3EQvdt4hOgXObbDDNSMqpMB2brRrLnjAd8dEo0T/e2LZSXnrFQ4VcBM7JlK1a9IZoxQvJ/suhQUR1tkyWaLpcBDsCVdYIEPKYqwntvUme9yGy6868=
+Received: from VI1PR04MB5726.eurprd04.prod.outlook.com (20.178.127.24) by
+ VI1PR04MB5824.eurprd04.prod.outlook.com (20.178.204.90) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1404.22; Mon, 10 Dec 2018 08:39:20 +0000
+Received: from VI1PR04MB5726.eurprd04.prod.outlook.com
+ ([fe80::595a:9890:8397:5d51]) by VI1PR04MB5726.eurprd04.prod.outlook.com
+ ([fe80::595a:9890:8397:5d51%4]) with mapi id 15.20.1404.026; Mon, 10 Dec 2018
+ 08:39:20 +0000
+From:   Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>
+To:     Boris Brezillon <boris.brezillon@bootlin.com>
+CC:     Mark Brown <broonie@kernel.org>, Vignesh R <vigneshr@ti.com>,
+        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
+        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "robh@kernel.org" <robh@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
+        "frieder.schrempf@exceet.de" <frieder.schrempf@exceet.de>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v5 0/7] spi: add support for octal mode
+Thread-Topic: [PATCH v5 0/7] spi: add support for octal mode
+Thread-Index: AQHUiuOjeSgB/5zRPUqi536teiWNPKVsvNiAgANQIQCAAA5HAIABBArQgAApmQCAAABNcIAA5e8AgAU4I4CAAEXYAIAAAELw
+Date:   Mon, 10 Dec 2018 08:39:20 +0000
+Message-ID: <VI1PR04MB572609DBC52F7496A656915E99A50@VI1PR04MB5726.eurprd04.prod.outlook.com>
+References: <1543826226-30898-1-git-send-email-yogeshnarayan.gaur@nxp.com>
+        <20181203101937.7b01a0ad@bbrezillon>
+        <214dadd9-859c-ca88-1aff-1c83fcfa3c0b@ti.com>
+        <20181205134618.56223758@bbrezillon>
+        <VI1PR04MB572646B71C6CB7BAAB4A1E1999A90@VI1PR04MB5726.eurprd04.prod.outlook.com>
+        <20181206074554.0ec0aecb@bbrezillon>
+        <VI1PR04MB572620BB57CB01A352904BB999A90@VI1PR04MB5726.eurprd04.prod.outlook.com>
+        <20181206202956.GG3084@sirena.org.uk>
+        <VI1PR04MB572641541BB83E587541BBD099A50@VI1PR04MB5726.eurprd04.prod.outlook.com>
+ <20181210092208.0971c3be@bbrezillon>
+In-Reply-To: <20181210092208.0971c3be@bbrezillon>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=yogeshnarayan.gaur@nxp.com; 
+x-originating-ip: [14.142.187.166]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;VI1PR04MB5824;6:bv0j2lF0ofGLcS8qRy5Fxq1rsshZS4fMA+1CGdh7QNDlgwpho6AzRnUfjOUAh8el3lBUiXKVPMYT2Dn806nsgqWYCunInegrrdrhzfshvFqXfF+p0jmqgtJlhh0jMIm8sn8aHm06suyZfA2KsjJ0R+ARjVoSGQ3NMbcmVN57bwCyf8QSuI9IepzqMQVWHA7O/o8BhvRITy2XY6JGq0NLAKQ/XYAnzQAqULJo0ZoklmpO2nYkMlYeRPkEb+JbJekjrDPjmjCRfzG7qjrboniBbP6c0feGbf1d7A0GZh6qXvDuyWYVy7V4aNGim74hNf0vaRvq/PtLoDmw2l8PrqZMTEldFMeFg7SNQjdZvxQSDgMcJwmgzHFnAg/w0wqX5AlnJYq4maB1lPpCAnJ632g95HnAj0bvdA29UD7J9j2G0VMlNcdyVD46/N+QygOG6XoQcqppll5wD6HtQROtykPe7Q==;5:t3orbg8NxcIVwbbIWopRdeB1NxfNetaDs5OVgkx99I3JGBRPqne52iesqnQnoR9IJL2IQLeGSbMzUhGUsdkzenEEnm1nyfta0JYosZbdf4s4uWoX/IEoGmMKpJ0kdGxqMSlo9tIbIY1aymdWOBKOOSXjlvEExKnFXYRhlmJB2+Q=;7:Jcgupdc/sRyPV5Yx3fajTzYvDOzzSDxrHcY0xyZizXN40A669YLYFvqGhYhDtluNi7PA+XuQKa6Pwvw34C4Og03s2+x7bA6uyzU+dZ1mS1qeGgWYjwDppeHZtej9nlcVR658bHqWA+MkoTpdDKNDjQ==
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 0b2b4df8-ecb2-4057-38bd-08d65e7afaa0
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(7168020)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:VI1PR04MB5824;
+x-ms-traffictypediagnostic: VI1PR04MB5824:
+x-microsoft-antispam-prvs: <VI1PR04MB582417E930EA6C44F1E6DA6599A50@VI1PR04MB5824.eurprd04.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230017)(999002)(6040522)(2401047)(8121501046)(5005006)(3002001)(3231472)(944501520)(52105112)(93006095)(93001095)(10201501046)(6055026)(148016)(149066)(150057)(6041310)(20161123558120)(20161123562045)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:VI1PR04MB5824;BCL:0;PCL:0;RULEID:;SRVR:VI1PR04MB5824;
+x-forefront-prvs: 08828D20BC
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(346002)(396003)(376002)(39860400002)(136003)(13464003)(189003)(199004)(71200400001)(71190400001)(53936002)(99286004)(7416002)(2906002)(6506007)(53546011)(6116002)(6436002)(55236004)(3846002)(97736004)(7696005)(55016002)(14454004)(6306002)(76176011)(9686003)(68736007)(316002)(78486014)(478600001)(86362001)(93886005)(6246003)(39060400002)(54906003)(4326008)(966005)(66066001)(7736002)(33656002)(305945005)(8676002)(81166006)(74316002)(5660300001)(8936002)(81156014)(229853002)(446003)(11346002)(26005)(106356001)(256004)(102836004)(105586002)(486006)(6916009)(476003)(25786009)(186003);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB5824;H:VI1PR04MB5726.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: KUKoNFhLaTovnE+ogNOysOrmvcAiWuTcoov/b+JJuuRC75CCIHngZln6gNukeTf4BA/TNFXV/OCWwQ1mKTheJ4pbTPT/ynXMz7RIvpsCX+UEtIn65rt4qcCQWvA7SFLDs/eogLNWKmNPMvnAz29STGjtepbSlmU1NIX/Mv/DjLt3SVLj7ZfEDyRpSQcotGMsC4DrRoqWYqgth5PWQJaEOqg0/U7kt3eZFM050SlTj4P+Zwx9rvrlYRFRWdzJ+2yPZs/t8pvELGWqzFoXDgHirZbk+miZG0Qw0svdmv+51EFdPgTedCQNlVuz19R1r12i
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-References: <1544185974-5932-1-git-send-email-krzk@kernel.org>
- <1544185974-5932-4-git-send-email-krzk@kernel.org> <8222f85b-4e61-69c4-6d31-ba559de02829@gmail.com>
- <fcb28be6-7d6a-1216-5a22-339f30366fd1@gmail.com>
-In-Reply-To: <fcb28be6-7d6a-1216-5a22-339f30366fd1@gmail.com>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-Date:   Mon, 10 Dec 2018 09:35:32 +0100
-X-Gmail-Original-Message-ID: <CAJKOXPdWkkLhR7YPT1tajVR=8B+5SK+yc6oqqgzgLiYvbLp7+w@mail.gmail.com>
-Message-ID: <CAJKOXPdWkkLhR7YPT1tajVR=8B+5SK+yc6oqqgzgLiYvbLp7+w@mail.gmail.com>
-Subject: Re: [PATCH 4/4] leds: trigger: Add pattern initialization from Device Tree
-To:     jacek.anaszewski@gmail.com
-Cc:     pavel@ucw.cz, robh+dt@kernel.org, mark.rutland@arm.com,
-        baolin.wang@linaro.org, rteysseyre@gmail.com,
-        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0b2b4df8-ecb2-4057-38bd-08d65e7afaa0
+X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Dec 2018 08:39:20.1958
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB5824
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 9 Dec 2018 at 19:55, Jacek Anaszewski
-<jacek.anaszewski@gmail.com> wrote:
->
-> On 12/8/18 7:44 PM, Jacek Anaszewski wrote:
-> > Hi Krzysztof,
-> >
-> > Thank you for the patch set.
-> >
-> > Applied 1/4 and 2/4.
-> >
-> > I'll hold on merging 3/4 until we sort out the issues
-> > I have with this one. Please refer to my comment below.
-> >
-> > On 12/7/18 1:32 PM, Krzysztof Kozlowski wrote:
-> >> Allow initialization of pattern used in pattern trigger from Device Tree
-> >> property.
-> >>
-> >> This is especially useful for embedded systems where the pattern trigger
-> >> would be used to indicate the process of boot status in a nice,
-> >> user-friendly blinking way.  This initialization pattern will be used
-> >> till user-space is brought up and sets its own pattern, indicating the
-> >> boot status is for example finished.
-> >>
-> >> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> >> ---
-> >>   drivers/leds/trigger/ledtrig-pattern.c | 18 ++++++++++++++++++
-> >>   1 file changed, 18 insertions(+)
-> >>
-> >> diff --git a/drivers/leds/trigger/ledtrig-pattern.c
-> >> b/drivers/leds/trigger/ledtrig-pattern.c
-> >> index 1870cf87afe1..96309d3bc43c 100644
-> >> --- a/drivers/leds/trigger/ledtrig-pattern.c
-> >> +++ b/drivers/leds/trigger/ledtrig-pattern.c
-> >> @@ -11,6 +11,7 @@
-> >>   #include <linux/leds.h>
-> >>   #include <linux/module.h>
-> >>   #include <linux/mutex.h>
-> >> +#include <linux/of.h>
-> >>   #include <linux/slab.h>
-> >>   #include <linux/timer.h>
-> >> @@ -331,6 +332,21 @@ static const struct attribute_group
-> >> *pattern_trig_groups[] = {
-> >>       NULL,
-> >>   };
-> >> +static void pattern_init(struct led_classdev *led_cdev)
-> >> +{
-> >> +    struct device_node *np = dev_of_node(led_cdev->dev);
-> >> +    const char *pattern;
-> >> +
-> >> +    if (!np)
-> >> +        return;
-> >> +
-> >> +    if (!of_property_read_string(np, "linux,trigger-pattern",
-> >> &pattern)) {
-> >> +        if (strlen(pattern))
-> >> +            pattern_trig_store_patterns(led_cdev, pattern,
-> >> +                            strlen(pattern), false);
-> >> +    }
-> >> +}
-> >> +
-> >>   static int pattern_trig_activate(struct led_classdev *led_cdev)
-> >>   {
-> >>       struct pattern_trig_data *data;
-> >> @@ -354,6 +370,8 @@ static int pattern_trig_activate(struct
-> >> led_classdev *led_cdev)
-> >>       timer_setup(&data->timer, pattern_trig_timer_function, 0);
-> >>       led_cdev->activated = true;
-> >> +    pattern_init(led_cdev);
->
-> With my recent patches it would suffice to replace above line with:
->
-> if (led_cdev->flags & LED_INIT_DEFAULT_TRIGGER) {
->         pattern_init(led_cdev);
->         led_cdev->flags &= ~LED_INIT_DEFAULT_TRIGGER;
-> }
+Hi Boris,
 
-Right, I see the problem. I'll rebase on top of it.
+Sorry for confusion.
 
-Best regards,
-Krzysztof
+My intention was just to point to the correct patch number only. Earlier yo=
+u have asked Mark to pick the patch [1] but that patch number was not corre=
+ct.
+
+[1] https://lkml.org/lkml/2018/12/5/758
+
+--
+Regards
+Yogesh Gaur
+
+> -----Original Message-----
+> From: Boris Brezillon [mailto:boris.brezillon@bootlin.com]
+> Sent: Monday, December 10, 2018 1:52 PM
+> To: Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>
+> Cc: Mark Brown <broonie@kernel.org>; Vignesh R <vigneshr@ti.com>; linux-
+> mtd@lists.infradead.org; marek.vasut@gmail.com; linux-spi@vger.kernel.org=
+;
+> devicetree@vger.kernel.org; robh@kernel.org; mark.rutland@arm.com;
+> shawnguo@kernel.org; linux-arm-kernel@lists.infradead.org;
+> computersforpeace@gmail.com; frieder.schrempf@exceet.de; linux-
+> kernel@vger.kernel.org
+> Subject: Re: [PATCH v5 0/7] spi: add support for octal mode
+>=20
+> Hi Yogesh,
+>=20
+> On Mon, 10 Dec 2018 04:13:28 +0000
+> Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com> wrote:
+>=20
+> > Hi Mark,
+> >
+> > Patch has been resend [1], this patch is depends on the series of patch=
+[2] and
+> this series has been applied by Boris already.
+>=20
+> You're still not asking the right person. Every patches touching things i=
+n
+> drivers/mtd/ should be taken by me (or another MTD maintainer), and patch=
+es
+> touching things in drivers/spi/ should be taken by Mark. So, the patch yo=
+u're
+> pointing to should be applied by me. Plus, I told you I would apply it af=
+ter 4.21-
+> rc1 because I don't want to deal with the mtd -> spi dependency.
+>=20
+> Please be patient.
+>=20
+> Regards,
+>=20
+> Boris
