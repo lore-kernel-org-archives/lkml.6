@@ -2,232 +2,96 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52768C04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 14:01:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4FFCC04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 14:01:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1896C2086D
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 14:01:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1896C2086D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 5D74220870
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 14:01:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D74220870
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i-love.sakura.ne.jp
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727860AbeLJOBN (ORCPT
+        id S1727878AbeLJOBt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 09:01:13 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:54618 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727612AbeLJOAq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 09:00:46 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D70E1165C;
-        Mon, 10 Dec 2018 06:00:45 -0800 (PST)
-Received: from e110467-lin.cambridge.arm.com (e110467-lin.cambridge.arm.com [10.1.196.75])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 80DD53F575;
-        Mon, 10 Dec 2018 06:00:44 -0800 (PST)
-From:   Robin Murphy <robin.murphy@arm.com>
-To:     hch@lst.de
-Cc:     m.szyprowski@samsung.com, iommu@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, cai@gmx.us, salil.mehta@huawei.com,
-        john.garry@huawei.com
-Subject: [PATCH v3 3/7] dma-debug: Dynamically expand the dma_debug_entry pool
-Date:   Mon, 10 Dec 2018 14:00:29 +0000
-Message-Id: <048517d818d7b9a898e5c9e9ab14bbeed4b34911.1544447601.git.robin.murphy@arm.com>
-X-Mailer: git-send-email 2.19.1.dirty
-In-Reply-To: <cover.1544447601.git.robin.murphy@arm.com>
-References: <cover.1544447601.git.robin.murphy@arm.com>
+        Mon, 10 Dec 2018 09:01:49 -0500
+Received: from www262.sakura.ne.jp ([202.181.97.72]:19838 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727056AbeLJOBs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Dec 2018 09:01:48 -0500
+Received: from fsav105.sakura.ne.jp (fsav105.sakura.ne.jp [27.133.134.232])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id wBAE1kNg089294;
+        Mon, 10 Dec 2018 23:01:46 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav105.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav105.sakura.ne.jp);
+ Mon, 10 Dec 2018 23:01:46 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav105.sakura.ne.jp)
+Received: from [192.168.1.8] (softbank126126163036.bbtec.net [126.126.163.36])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id wBAE1fXx089253
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
+        Mon, 10 Dec 2018 23:01:46 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: [PATCH] printk: Add caller information to printk() output.
+To:     Petr Mladek <pmladek@suse.com>
+Cc:     Dmitry Vyukov <dvyukov@google.com>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        syzkaller <syzkaller@googlegroups.com>
+References: <1543045075-3008-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
+ <20181130154024.ls3mntfdr4zvluub@pathway.suse.cz>
+ <f224bd68-7394-ff70-cad6-d3fbbb3b5f7d@i-love.sakura.ne.jp>
+ <20181203150603.cdqii263e4kmmibo@pathway.suse.cz>
+ <b38c6957-c3c1-54fc-781e-06d7eed6a9b1@i-love.sakura.ne.jp>
+ <20181204152724.ypk44mi4a56nrud4@pathway.suse.cz>
+ <459018db-763b-9520-ead2-2c0d5975fbf3@i-love.sakura.ne.jp>
+ <20181210130930.bas4fozjhe3dc5nu@pathway.suse.cz>
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Message-ID: <c5b5d660-d217-35f0-c4f1-7252367934d1@i-love.sakura.ne.jp>
+Date:   Mon, 10 Dec 2018 23:01:39 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.3
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181210130930.bas4fozjhe3dc5nu@pathway.suse.cz>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Certain drivers such as large multi-queue network adapters can use pools
-of mapped DMA buffers larger than the default dma_debug_entry pool of
-65536 entries, with the result that merely probing such a device can
-cause DMA debug to disable itself during boot unless explicitly given an
-appropriate "dma_debug_entries=..." option.
+On 2018/12/10 22:09, Petr Mladek wrote:
+>> +#ifdef CONFIG_PRINTK_FROM
+>> +#define PREFIX_FROM_MAX		16
+>> +#define PREFIX_MAX		(32 + PREFIX_FROM_MAX)
+>> +#define LOG_LINE_MAX		(1024 - 32)
+> 
+> This looks suspicious. We either need to limit LOG_LINE_MAX
+> by the real PREFIX_MAX (48). Or we must make sure that
+> the code is able to handle an eventual overflow.
 
-Developers trying to debug some other driver on such a system may not be
-immediately aware of this, and at worst it can hide bugs if they fail to
-realise that dma-debug has already disabled itself unexpectedly by the
-time their code of interest gets to run. Even once they do realise, it
-can be a bit of a pain to emprirically determine a suitable number of
-preallocated entries to configure, short of massively over-allocating.
+Reducing LOG_LINE_MAX makes devkmsg_write() to return -EINVAL.
+Is such user visible change acceptable?
 
-There's really no need for such a static limit, though, since we can
-quite easily expand the pool at runtime in those rare cases that the
-preallocated entries are insufficient, which is arguably the least
-surprising and most useful behaviour. To that end, refactor the
-prealloc_memory() logic a little bit to generalise it for runtime
-reallocations as well.
+> BTW: The limit 48 looks right. If I count correctly, the longest
+> prefix might be:
+> 
+>     <2048>[4294967296,xxxxxx][T4294967296]
+> 
+> 38 = 6+19+13
 
-Signed-off-by: Robin Murphy <robin.murphy@arm.com>
----
+Theoretical max (based on variable's bit width) is
+6 + 20 + 13 + 1 (for space) + 1 (for '\0') = 41.
 
-v3: Drop refactoring of dma_debug_resize_entries(), misc. cosmetic tweaks
-
- Documentation/DMA-API.txt | 11 +++---
- kernel/dma/debug.c        | 79 ++++++++++++++++++++-------------------
- 2 files changed, 46 insertions(+), 44 deletions(-)
-
-diff --git a/Documentation/DMA-API.txt b/Documentation/DMA-API.txt
-index 6bdb095393b0..0fcb7561af1e 100644
---- a/Documentation/DMA-API.txt
-+++ b/Documentation/DMA-API.txt
-@@ -717,8 +717,8 @@ dma-api/num_errors		The number in this file shows how many
- dma-api/min_free_entries	This read-only file can be read to get the
- 				minimum number of free dma_debug_entries the
- 				allocator has ever seen. If this value goes
--				down to zero the code will disable itself
--				because it is not longer reliable.
-+				down to zero the code will attempt to increase
-+				nr_total_entries to compensate.
- 
- dma-api/num_free_entries	The current number of free dma_debug_entries
- 				in the allocator.
-@@ -745,10 +745,9 @@ driver filter at boot time. The debug code will only print errors for that
- driver afterwards. This filter can be disabled or changed later using debugfs.
- 
- When the code disables itself at runtime this is most likely because it ran
--out of dma_debug_entries. These entries are preallocated at boot. The number
--of preallocated entries is defined per architecture. If it is too low for you
--boot with 'dma_debug_entries=<your_desired_number>' to overwrite the
--architectural default.
-+out of dma_debug_entries and was unable to allocate more on-demand. 65536
-+entries are preallocated at boot - if this is too low for you boot with
-+'dma_debug_entries=<your_desired_number>' to overwrite the default.
- 
- ::
- 
-diff --git a/kernel/dma/debug.c b/kernel/dma/debug.c
-index 29486eb9d1dc..ef7c90b7a346 100644
---- a/kernel/dma/debug.c
-+++ b/kernel/dma/debug.c
-@@ -47,6 +47,8 @@
- #ifndef PREALLOC_DMA_DEBUG_ENTRIES
- #define PREALLOC_DMA_DEBUG_ENTRIES (1 << 16)
- #endif
-+/* If the pool runs out, add this many new entries at once */
-+#define DMA_DEBUG_DYNAMIC_ENTRIES 256
- 
- enum {
- 	dma_debug_single,
-@@ -646,6 +648,34 @@ static void add_dma_entry(struct dma_debug_entry *entry)
- 	 */
- }
- 
-+static int dma_debug_create_entries(u32 num_entries, gfp_t gfp)
-+{
-+	struct dma_debug_entry *entry, *next_entry;
-+	int i;
-+
-+	for (i = 0; i < num_entries; ++i) {
-+		entry = kzalloc(sizeof(*entry), gfp);
-+		if (!entry)
-+			goto out_err;
-+
-+		list_add_tail(&entry->list, &free_entries);
-+	}
-+
-+	num_free_entries += num_entries;
-+	nr_total_entries += num_entries;
-+
-+	return 0;
-+
-+out_err:
-+
-+	list_for_each_entry_safe(entry, next_entry, &free_entries, list) {
-+		list_del(&entry->list);
-+		kfree(entry);
-+	}
-+
-+	return -ENOMEM;
-+}
-+
- static struct dma_debug_entry *__dma_entry_alloc(void)
- {
- 	struct dma_debug_entry *entry;
-@@ -672,12 +702,14 @@ static struct dma_debug_entry *dma_entry_alloc(void)
- 	unsigned long flags;
- 
- 	spin_lock_irqsave(&free_entries_lock, flags);
--
--	if (list_empty(&free_entries)) {
--		global_disable = true;
--		spin_unlock_irqrestore(&free_entries_lock, flags);
--		pr_err("debugging out of memory - disabling\n");
--		return NULL;
-+	if (num_free_entries == 0) {
-+		if (dma_debug_create_entries(DMA_DEBUG_DYNAMIC_ENTRIES,
-+					     GFP_ATOMIC)) {
-+			global_disable = true;
-+			spin_unlock_irqrestore(&free_entries_lock, flags);
-+			pr_err("debugging out of memory - disabling\n");
-+			return NULL;
-+		}
- 	}
- 
- 	entry = __dma_entry_alloc();
-@@ -764,36 +796,6 @@ int dma_debug_resize_entries(u32 num_entries)
-  *   2. Preallocate a given number of dma_debug_entry structs
-  */
- 
--static int prealloc_memory(u32 num_entries)
--{
--	struct dma_debug_entry *entry, *next_entry;
--	int i;
--
--	for (i = 0; i < num_entries; ++i) {
--		entry = kzalloc(sizeof(*entry), GFP_KERNEL);
--		if (!entry)
--			goto out_err;
--
--		list_add_tail(&entry->list, &free_entries);
--	}
--
--	num_free_entries = num_entries;
--	min_free_entries = num_entries;
--
--	pr_info("preallocated %d debug entries\n", num_entries);
--
--	return 0;
--
--out_err:
--
--	list_for_each_entry_safe(entry, next_entry, &free_entries, list) {
--		list_del(&entry->list);
--		kfree(entry);
--	}
--
--	return -ENOMEM;
--}
--
- static ssize_t filter_read(struct file *file, char __user *user_buf,
- 			   size_t count, loff_t *ppos)
- {
-@@ -1038,14 +1040,15 @@ static int dma_debug_init(void)
- 		return 0;
- 	}
- 
--	if (prealloc_memory(nr_prealloc_entries) != 0) {
-+	if (dma_debug_create_entries(nr_prealloc_entries, GFP_KERNEL) != 0) {
- 		pr_err("debugging out of memory error - disabled\n");
- 		global_disable = true;
- 
- 		return 0;
- 	}
- 
--	nr_total_entries = num_free_entries;
-+	min_free_entries = num_free_entries;
-+	pr_info("preallocated %d debug entries\n", nr_total_entries);
- 
- 	dma_debug_initialized = true;
- 
--- 
-2.19.1.dirty
+We allocate 32 for "<2047>[18446744073.709551] ". Thus,
+I chose 48 for "<2047>[18446744073.709551][T4294967295] ".
 
