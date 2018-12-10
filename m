@@ -7,58 +7,58 @@ X-Spam-Status: No, score=-16.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2DD5C04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 12:51:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6F85C5CFFE
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 12:51:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 89BEB20855
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 12:51:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7A6CA20855
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 12:51:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VEgcxLaX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 89BEB20855
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PdfHiKV/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A6CA20855
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727897AbeLJMvl (ORCPT
+        id S1727912AbeLJMvr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 07:51:41 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:36350 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727792AbeLJMvU (ORCPT
+        Mon, 10 Dec 2018 07:51:47 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:33699 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727698AbeLJMvS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 07:51:20 -0500
-Received: by mail-wr1-f65.google.com with SMTP id u3so10375158wrs.3
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Dec 2018 04:51:19 -0800 (PST)
+        Mon, 10 Dec 2018 07:51:18 -0500
+Received: by mail-wr1-f67.google.com with SMTP id c14so10393540wrr.0
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Dec 2018 04:51:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=pdp/ryV9bt4+HrjeOWrdnZnBI6aj8YPFqzbeaIQ9j68=;
-        b=VEgcxLaXoi0dOKDXk3mvZgG3orCXpa3lyeE6CP4OJMDCNte/zoFeg72gBtyYRUM/+z
-         dkdH0FX3oaVuoZ2TdAnAWlMAq2acZqiJrldMEieGTNK+3b5PjuVvTUt13jkyridlEMir
-         ldYCNgQs6aUD15xGtoBy02lnJF80uPmFB1DrhlhknCsVZxjWvFv1RdkV5JJ5GSpCW5Fm
-         4CiX7I8udlN21IjNRASuq0xeFFDULrKpoEaM9D2i67zp9cQXXr2TQKyBW/cdB/XiSE0/
-         JddgPffO2wfeBRJJGAVFDqBC6nXfN7M9u/3FUN6B+81x1rMeN5f1CRtoSZFGlT6PrwZW
-         bQNw==
+        bh=THrF65uyQ43y9XI4Oao8ZCD7W0hiODFoiBK2GnkK+6k=;
+        b=PdfHiKV/nw+CfvDzzUmvpjA/YhVLjcLEJGbE4xRNKckctV4ggJLQ09SaEpJOCkc/Wd
+         TsbWeQ7VqNxHNADvOwoiDxubfQDEDS0+PHacVgOSQwfEz02dQXLOTxmV5IykKVkn0f9a
+         qcdjj+pRCBHgfvFs4fxlSCiaYPFMMXTkQUdwp3B9666yUCdbDg9xBDMR3zDN5H2HdY1U
+         EAZ/zAia4HQUr1OpEIgycWmDLiok+qqigVLOzimiWXbPovc2JNH66nE7jrGjj0/pP7Xm
+         u31n4umKu6azySOlPyk4zWiDSNjuQbTXYYgyyZeCL1TW0iqGcwgkW/T/pb9E8YfCUAZ2
+         045Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=pdp/ryV9bt4+HrjeOWrdnZnBI6aj8YPFqzbeaIQ9j68=;
-        b=jtl2dpcPRc4E8IDxNkGLI4Xr/cECfvl2D7FoYC/bI49PG0cOxKNH/xpt38l3vPGGSL
-         R0gHbKn6X1MYbdbge0E4O7bRtOwuVOp7prExvQd4u1rB+NznlufUuqzlCQGgqAdb5ePX
-         X1uTr3YLAnAX51tqHmGoJ010/Jmcmf8DRud9xU1bYho9B+qzsObvGtIkA0fWO2fJ/di1
-         4A3iEnYKFTbx6uf8QrdIBSY/0r1HDwX/N/mNjgo4T8WgLh8DYaRYZ7eOw7Ov1B4YglVM
-         GHfJQ2Me9lYqVWIkOdo21Bd2hdN3rZqEgiwvH0NlQ4tOPjMvf9Z0pPiIkkkqyHbok8Fp
-         Rrug==
-X-Gm-Message-State: AA+aEWYaVxtidEaewQ38zqIOJ+NqHmmUwJG4Gm1PiwL81P7/QB6ONSeA
-        d9JQR5dbegpPoksISMoJOY9kng==
-X-Google-Smtp-Source: AFSGD/WkZ2Ib7xqoZNcfNco/+WzWdTWYInohVyU59jy0CeiifxD2IPgCZSpbiMewGDrt/7AYo1yayA==
-X-Received: by 2002:a5d:61c4:: with SMTP id q4mr9258512wrv.308.1544446278383;
-        Mon, 10 Dec 2018 04:51:18 -0800 (PST)
-Received: from andreyknvl0.muc.corp.google.com ([2a00:79e0:15:10:3180:41f8:3010:ff61])
-        by smtp.gmail.com with ESMTPSA id l197sm36893363wma.44.2018.12.10.04.51.17
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        bh=THrF65uyQ43y9XI4Oao8ZCD7W0hiODFoiBK2GnkK+6k=;
+        b=tm2yaq+ojohdtnTrxxisduL22PvtOI0uR4BY1ufTyoSL5O8G7aOzavd3kn9m5lPyz2
+         FrNFY7Bsd5Qau+zjAxAPvMVA+fEUILj3k2z1vP//2VL5Xjx8Aw0SvJ9wIiMtOU8yOnXd
+         F8MGNG4zQwFpjKmSOy/3X+zaibHTxwpfyuhAnlNdq6vYjtCmIYOgq2tTPeIrO4W5LSgV
+         mPIR7uBG9aqo3yibFf/bCHgDX04JnKPaFHdpK1qdWW5c26RVx3CyA5D618pV05lMJ6x/
+         LgVOLDBrO1ko30uVEWuSKbLpKyJ2EzoC/qHIqvc/bKPjgVdZfsqEiLAbBGj1rgyne6xw
+         aCHQ==
+X-Gm-Message-State: AA+aEWbIHrX5ua9KCjIuv8ZIXrYDzNHUcJZ/5R4H8Flg2gzJaHjrDgyn
+        FxjBk75W0g0gCkKD73Wxb/BvrQ==
+X-Google-Smtp-Source: AFSGD/VI/5BMsRXqnw18fB6Gll7b+Eig1k8PMWahNn8bGC0uXwXuMAwRBnIM/ZnTZkzB47NBiSqZdQ==
+X-Received: by 2002:a5d:538a:: with SMTP id d10mr9405307wrv.202.1544446277017;
         Mon, 10 Dec 2018 04:51:17 -0800 (PST)
+Received: from andreyknvl0.muc.corp.google.com ([2a00:79e0:15:10:3180:41f8:3010:ff61])
+        by smtp.gmail.com with ESMTPSA id l197sm36893363wma.44.2018.12.10.04.51.15
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 10 Dec 2018 04:51:16 -0800 (PST)
 From:   Andrey Konovalov <andreyknvl@google.com>
 To:     Catalin Marinas <catalin.marinas@arm.com>,
         Will Deacon <will.deacon@arm.com>,
@@ -84,9 +84,9 @@ Cc:     Dmitry Vyukov <dvyukov@google.com>,
         Chintan Pandya <cpandya@codeaurora.org>,
         Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
         Andrey Konovalov <andreyknvl@google.com>
-Subject: [PATCH v9 6/8] fs, arm64: untag user address in copy_mount_options
-Date:   Mon, 10 Dec 2018 13:51:03 +0100
-Message-Id: <07a4efa5983abec2355b2754812509a73f648332.1544445454.git.andreyknvl@google.com>
+Subject: [PATCH v9 5/8] lib, arm64: untag addrs passed to strncpy_from_user and strnlen_user
+Date:   Mon, 10 Dec 2018 13:51:02 +0100
+Message-Id: <2c573564b456327708d175f3124256bc71081bd8.1544445454.git.andreyknvl@google.com>
 X-Mailer: git-send-email 2.20.0.rc2.403.gdbc3b29805-goog
 In-Reply-To: <cover.1544445454.git.andreyknvl@google.com>
 References: <cover.1544445454.git.andreyknvl@google.com>
@@ -97,32 +97,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In copy_mount_options a user address is being subtracted from TASK_SIZE.
-If the address is lower than TASK_SIZE, the size is calculated to not
-allow the exact_copy_from_user() call to cross TASK_SIZE boundary.
-However if the address is tagged, then the size will be calculated
-incorrectly.
+strncpy_from_user and strnlen_user accept user addresses as arguments, and
+do not go through the same path as copy_from_user and others, so here we
+need to handle the case of tagged user addresses separately.
 
-Untag the address before subtracting.
+Untag user pointers passed to these functions.
 
 Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
 ---
- fs/namespace.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ lib/strncpy_from_user.c | 2 ++
+ lib/strnlen_user.c      | 2 ++
+ 2 files changed, 4 insertions(+)
 
-diff --git a/fs/namespace.c b/fs/namespace.c
-index a7f91265ea67..694dcedb7e7d 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -2686,7 +2686,7 @@ void *copy_mount_options(const void __user * data)
- 	 * the remainder of the page.
- 	 */
- 	/* copy_from_user cannot cross TASK_SIZE ! */
--	size = TASK_SIZE - (unsigned long)data;
-+	size = TASK_SIZE - (unsigned long)untagged_addr(data);
- 	if (size > PAGE_SIZE)
- 		size = PAGE_SIZE;
+diff --git a/lib/strncpy_from_user.c b/lib/strncpy_from_user.c
+index b53e1b5d80f4..97467cd2bc59 100644
+--- a/lib/strncpy_from_user.c
++++ b/lib/strncpy_from_user.c
+@@ -106,6 +106,8 @@ long strncpy_from_user(char *dst, const char __user *src, long count)
+ 	if (unlikely(count <= 0))
+ 		return 0;
  
++	src = untagged_addr(src);
++
+ 	max_addr = user_addr_max();
+ 	src_addr = (unsigned long)src;
+ 	if (likely(src_addr < max_addr)) {
+diff --git a/lib/strnlen_user.c b/lib/strnlen_user.c
+index 60d0bbda8f5e..8b5f56466e00 100644
+--- a/lib/strnlen_user.c
++++ b/lib/strnlen_user.c
+@@ -108,6 +108,8 @@ long strnlen_user(const char __user *str, long count)
+ 	if (unlikely(count <= 0))
+ 		return 0;
+ 
++	str = untagged_addr(str);
++
+ 	max_addr = user_addr_max();
+ 	src_addr = (unsigned long)str;
+ 	if (likely(src_addr < max_addr)) {
 -- 
 2.20.0.rc2.403.gdbc3b29805-goog
 
