@@ -2,99 +2,119 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 797B4C04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 07:47:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44A76C65BAF
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 07:47:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 343BD20855
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 07:47:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544428033;
-	bh=mz00spIBHmLS6UXligirxC7HBp4NwhhqDFw9HuVnzM8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=myznUeBWn6iWJQXB3zZU8An+uus9aLlpkeQyrK9kdBHM1PrcsybV6jK+qgeC1B/C1
-	 wwlglODXNgFTAWo7kgTYNPqeBHTkJNT6IGvnzqH3cYvX9ElXTj7VgCp6RkkRHC4vea
-	 xtJG2U7RibInygbtfXKmaZX2JtG4yAqpvEvrLhzE=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 343BD20855
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 14CAA2081F
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 07:47:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 14CAA2081F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joshtriplett.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726255AbeLJHrM (ORCPT
+        id S1726471AbeLJHrk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 02:47:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33036 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726050AbeLJHrL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 02:47:11 -0500
-Received: from localhost (unknown [77.138.135.184])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6B98F2081F;
-        Mon, 10 Dec 2018 07:47:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544428031;
-        bh=mz00spIBHmLS6UXligirxC7HBp4NwhhqDFw9HuVnzM8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Q21bEvGAUHdCQY3nCUTpHAYWQisaD2Du5oim9uDERwqfF9Qx4ezfM51p2Q5jxWNGo
-         sLknip9U+Ds1nJPlWL2AU6wbFbj1IRh0IPv9S0QaDnL8iL8XWkOYOiCktYraPPHnVC
-         kWZskqCfRLoh+ZaI7+uMquYlF16zjJC8ZL2+bfaY=
-Date:   Mon, 10 Dec 2018 09:47:05 +0200
-From:   Leon Romanovsky <leon@kernel.org>
-To:     YueHaibing <yuehaibing@huawei.com>
-Cc:     dledford@redhat.com, jgg@ziepe.ca, linux-kernel@vger.kernel.org,
-        linux-rdma@vger.kernel.org
-Subject: Re: [PATCH -next] IB/mlx5: remove duplicated include from mlx5_ib.h
-Message-ID: <20181210074705.GD3933@mtr-leonro.mtl.com>
-References: <20181210072759.26128-1-yuehaibing@huawei.com>
+        Mon, 10 Dec 2018 02:47:40 -0500
+Received: from relay8-d.mail.gandi.net ([217.70.183.201]:45791 "EHLO
+        relay8-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726202AbeLJHrj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Dec 2018 02:47:39 -0500
+X-Originating-IP: 50.39.174.102
+Received: from localhost (50-39-174-102.bvtn.or.frontiernet.net [50.39.174.102])
+        (Authenticated sender: josh@joshtriplett.org)
+        by relay8-d.mail.gandi.net (Postfix) with ESMTPSA id 387411BF215;
+        Mon, 10 Dec 2018 07:47:19 +0000 (UTC)
+Date:   Sun, 9 Dec 2018 23:47:17 -0800
+From:   Josh Triplett <josh@joshtriplett.org>
+To:     Pavel Machek <pavel@ucw.cz>
+Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, x86@kernel.org,
+        platform-driver-x86@vger.kernel.org, dave.hansen@intel.com,
+        sean.j.christopherson@intel.com, nhorman@redhat.com,
+        npmccallum@redhat.com, Alexei Starovoitov <ast@kernel.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Borislav Petkov <bp@suse.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@kernel.org>,
+        "open list:INTEL SGX" <intel-sgx-kernel-dev@lists.01.org>,
+        Janakarajan Natarajan <Janakarajan.Natarajan@amd.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        "open list:KERNEL VIRTUAL MACHINE FOR X86 (KVM/x86)" 
+        <kvm@vger.kernel.org>, Len Brown <len.brown@intel.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        "open list:CRYPTO API" <linux-crypto@vger.kernel.org>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:SPARSE CHECKER" <linux-sparse@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Vikas Shivappa <vikas.shivappa@linux.intel.com>
+Subject: Re: [PATCH v11 00/13] Intel SGX1 support
+Message-ID: <20181210074717.GA9880@localhost>
+References: <20180608171216.26521-1-jarkko.sakkinen@linux.intel.com>
+ <20180612105011.GA26931@amd>
+ <20180619145943.GC8034@linux.intel.com>
+ <20180619200414.GA3143@amd>
+ <20180619214833.GA5873@localhost>
+ <20181209200600.GA11608@amd>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="xo44VMWPx7vlQ2+2"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181210072759.26128-1-yuehaibing@huawei.com>
+In-Reply-To: <20181209200600.GA11608@amd>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Sun, Dec 09, 2018 at 09:06:00PM +0100, Pavel Machek wrote:
+...
+> > > > The default permissions for the device are 600.
+> > > 
+> > > Good. This does not belong to non-root.
+> > 
+> > There are entirely legitimate use cases for using this as an
+> > unprivileged user. However, that'll be up to system and distribution
+> > policy, which can evolve over time, and it makes sense for the *initial*
+> > kernel permission to start out root-only and then adjust permissions via
+> > udev.
+> 
+> Agreed.
+> 
+> > Building a software certificate store. Hardening key-agent software like
+> > ssh-agent or gpg-agent. Building a challenge-response authentication
+> > system. Providing more assurance that your server infrastructure is
+> > uncompromised. Offloading computation to a system without having to
+> > fully trust that system.
+> 
+> I think you can do the crypto stuff... as crypto already verifies the
+> results. But I don't think you can do the computation offload.
 
---xo44VMWPx7vlQ2+2
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+You can, as long as you can do attestation.
 
-On Mon, Dec 10, 2018 at 03:27:59PM +0800, YueHaibing wrote:
-> Remove duplicated include.
->
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> ---
->  drivers/infiniband/hw/mlx5/mlx5_ib.h | 1 -
->  1 file changed, 1 deletion(-)
->
+> > As one of many possibilities, imagine a distcc that didn't have to trust
+> > the compile nodes. The compile nodes could fail to return results at
+> > all, but they couldn't alter the results.
+> 
+> distcc on untrusted nodes ... oh yes, that would be great.
+> 
+> Except that you can't do it, right? :-).
+> 
+> First, AFAICT it would be quite hard to get gcc to run under SGX. But
+> maybe you have spare month or three and can do it.
 
-Thanks,
-Acked-by: Leon Romanovsky <leonro@mellanox.com>
-
---xo44VMWPx7vlQ2+2
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBAgAGBQJcDhn5AAoJEORje4g2clin4ecP/25J+S3sNfiveM55tBd5IRvX
-viCV0tOmHz0vdgUAA6oYvJjUxz23ugeM3rUfE9oneUausF4QMjn2OaiJpL1li2rl
-yNgHIHTjCaId2+4Zjo9AQpeJg8iyTLdrKK3bER/1s63gadcWRctRgzImc5caKHbq
-69chEHpV/ke2jTiVi3gwj4/DY2G/YHhuizmgldfioVwHqablwPps0V8qZezat4GP
-acslU0fHHMaYdLAgf3aKMJcn+cgdHoc9jFcYlrax2ejaCpGz1Vjoeqck7jCDoQ1c
-JDMthgcID2i1PEkrLsQLKE9PkwE1q1iP5zIwAkte2mMWF6x18Nec7ZEYoLfZApdG
-FzWBha4JRx7XaRIBPPbwSaCs7ILT/njzGtnkPdbR+LL7WJaIR5uIKq1FakssXW/E
-2tZ1YVphjOGm22CaDG08TggGy8NK4EKvBzabon12/g7+vI2+hzcMA569VfccVrYd
-CsuGr/0ikprgyphGLXIHyaBQxEn/Rz1DuQyEZ9r3Vt77/FKR00ifKGq8pei55XSo
-fW340gb9No8SBefiK0zF7bFif8Aj4dIJsxFiadMMTR2Zmcfir5LO8DBNHBqg4keb
-IWJL4IvUGgqjRL0rsmxF/P5g1Qb/OGb408or3zEFoL2m/LeEoOmmqF7RBDlKczw/
-nJeLY6IRj/xb4FqJmUib
-=So03
------END PGP SIGNATURE-----
-
---xo44VMWPx7vlQ2+2--
+Assuming you don't need to #include files, gcc seems quite simple to run
+in an enclave: data in, computation inside, data out.
