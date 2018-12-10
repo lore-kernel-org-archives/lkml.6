@@ -2,152 +2,139 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B880C04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 17:51:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18C6BC04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 17:51:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D13D20851
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 17:51:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D13D20851
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id D66CB20851
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 17:51:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="YRTMyeTs"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D66CB20851
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728658AbeLJRv2 (ORCPT
+        id S1729044AbeLJRvk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 12:51:28 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:38910 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727567AbeLJRv1 (ORCPT
+        Mon, 10 Dec 2018 12:51:40 -0500
+Received: from mail-yb1-f195.google.com ([209.85.219.195]:36205 "EHLO
+        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727567AbeLJRvk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 12:51:27 -0500
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBAHnYkg008151
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Dec 2018 12:51:26 -0500
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2p9tnyycm9-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Dec 2018 12:51:25 -0500
-Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
-        Mon, 10 Dec 2018 17:51:23 -0000
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 10 Dec 2018 17:51:20 -0000
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBAHpJIV53149934
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 10 Dec 2018 17:51:19 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 43733AE055;
-        Mon, 10 Dec 2018 17:51:19 +0000 (GMT)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 45505AE04D;
-        Mon, 10 Dec 2018 17:51:18 +0000 (GMT)
-Received: from rapoport-lnx (unknown [9.148.204.5])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Mon, 10 Dec 2018 17:51:18 +0000 (GMT)
-Date:   Mon, 10 Dec 2018 19:51:16 +0200
-From:   Mike Rapoport <rppt@linux.ibm.com>
-To:     Peter Xu <peterx@redhat.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        "Kirill A . Shutemov" <kirill@shutemov.name>,
-        Hugh Dickins <hughd@google.com>,
-        Pavel Emelyanov <xemul@virtuozzo.com>,
-        Pravin Shedge <pravin.shedge4linux@gmail.com>,
-        linux-mm@kvack.org
-Subject: Re: [PATCH] userfaultfd: clear flag if remap event not enabled
-References: <20181210065121.14984-1-peterx@redhat.com>
+        Mon, 10 Dec 2018 12:51:40 -0500
+Received: by mail-yb1-f195.google.com with SMTP id 64so2889569ybe.3
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Dec 2018 09:51:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Ujnwl3BsNFQa93BAt9nig1Xuv1MrvR6KHaZTtgjC6ng=;
+        b=YRTMyeTss6kEtS8Cn7N0HWSp33lfIVmAFUB+qqUGUjAwO8qtL1rRsIn+b7vL93fgOv
+         CMcljSPnX8kTdmIWxCXje2D/yWcckRO5vDsitH28q+y3JIdpLuAlPN7zF/XeIVHWuOQN
+         MJ650of5DObqR8TtAC2kJU9YOnolSWbKEdd68=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Ujnwl3BsNFQa93BAt9nig1Xuv1MrvR6KHaZTtgjC6ng=;
+        b=FvvN06UuTzYGNBD5FQ12FN/JJBut8/SFMWlaoKXLDFp2bhdEBpJnmNs1zRkMolREfv
+         zr2KzVk+4+/993RmLF8uiT1kegFmtiykeUmQE/eNfTSKOmYEl5nfla6U9GaGYXSRIL4c
+         BDyDGevG4G/wBKjH0QSKU8dxVx+l/iJ/IS0NBe7jSUTZTjqmVqLjNbnEf2Eun5iFiElN
+         Hbk6VO95/gQZ7lPBLqWECMznpTElZqtUc1nLNDZ6r2wnkuKj32KH6hI/f2F+WRB47/Xi
+         JGaQLQeJMM2q3ZIDCLY8pVnZ5XL3Rdvz/7njHo4hwz0LUz8OlRmnvJn68gTRmSQ5gbVp
+         dA2A==
+X-Gm-Message-State: AA+aEWbxDws7S+BT5SjeRNTxarS3x+89rfnounCCO8zAiDRCQ+oBOeB4
+        91rBJELDVxsEZ61cPaU5njjigYyGbxA=
+X-Google-Smtp-Source: AFSGD/X7hi+HADzpXYq5E3aFjh4FbqQrDCIF/ZyFeTmMJZEpBufIXbxU+fg0dkfRpKN+kGAO3i5YJw==
+X-Received: by 2002:a25:d391:: with SMTP id e139mr7833192ybf.86.1544464298065;
+        Mon, 10 Dec 2018 09:51:38 -0800 (PST)
+Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com. [209.85.219.170])
+        by smtp.gmail.com with ESMTPSA id h145sm3533470ywc.72.2018.12.10.09.51.34
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 10 Dec 2018 09:51:35 -0800 (PST)
+Received: by mail-yb1-f170.google.com with SMTP id f4so5008278ybq.4
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Dec 2018 09:51:34 -0800 (PST)
+X-Received: by 2002:a25:1cc1:: with SMTP id c184-v6mr13103299ybc.421.1544464294266;
+ Mon, 10 Dec 2018 09:51:34 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181210065121.14984-1-peterx@redhat.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-TM-AS-GCONF: 00
-x-cbid: 18121017-0028-0000-0000-0000032897D7
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18121017-0029-0000-0000-000023E4BACD
-Message-Id: <20181210175115.GB6380@rapoport-lnx>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-10_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=892 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1812100160
+References: <20181016223322.16844-1-christian@brauner.io> <20181029145818.4bqmy25itjnqhodg@brauner.io>
+ <CAGXu5jJwSRQ3dOgNW_X0Fk+8gT+ACiBZPJ79g-aCfqiWsm=ewg@mail.gmail.com> <CAPP7u0U72jSkT3km-E2imQdOvk-WRaDCH4t--N07mh8my7PvOQ@mail.gmail.com>
+In-Reply-To: <CAPP7u0U72jSkT3km-E2imQdOvk-WRaDCH4t--N07mh8my7PvOQ@mail.gmail.com>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Mon, 10 Dec 2018 09:51:22 -0800
+X-Gmail-Original-Message-ID: <CAGXu5j+hBRZqqp8JfRxwbPMCFT4YMRdn3djHpb8HyZU2Hh-L=w@mail.gmail.com>
+Message-ID: <CAGXu5j+hBRZqqp8JfRxwbPMCFT4YMRdn3djHpb8HyZU2Hh-L=w@mail.gmail.com>
+Subject: Re: [PATCH v3 0/2] sysctl: handle overflow for file-max
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Christian Brauner <christian.brauner@canonical.com>,
+        Christian Brauner <christian@brauner.io>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        "Luis R. Rodriguez" <mcgrof@kernel.org>,
+        Joe Lawrence <joe.lawrence@redhat.com>,
+        Waiman Long <longman@redhat.com>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Linux API <linux-api@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 10, 2018 at 02:51:21PM +0800, Peter Xu wrote:
-> When the process being tracked do mremap() without
-> UFFD_FEATURE_EVENT_REMAP on the corresponding tracking uffd file
-> handle, we should not generate the remap event, and at the same
-> time we should clear all the uffd flags on the new VMA.  Without
-> this patch, we can still have the VM_UFFD_MISSING|VM_UFFD_WP
-> flags on the new VMA even the fault handling process does not
-> even know the existance of the VMA.
-> 
-> CC: Andrea Arcangeli <aarcange@redhat.com>
-> CC: Andrew Morton <akpm@linux-foundation.org>
-> CC: Mike Rapoport <rppt@linux.vnet.ibm.com>
-> CC: Kirill A. Shutemov <kirill@shutemov.name>
-> CC: Hugh Dickins <hughd@google.com>
-> CC: Pavel Emelyanov <xemul@virtuozzo.com>
-> CC: Pravin Shedge <pravin.shedge4linux@gmail.com>
-> CC: linux-mm@kvack.org
-> CC: linux-kernel@vger.kernel.org
-> Signed-off-by: Peter Xu <peterx@redhat.com>
-> ---
->  fs/userfaultfd.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
-> index cd58939dc977..798ae8a438ff 100644
-> --- a/fs/userfaultfd.c
-> +++ b/fs/userfaultfd.c
-> @@ -740,6 +740,9 @@ void mremap_userfaultfd_prep(struct vm_area_struct *vma,
->  		vm_ctx->ctx = ctx;
->  		userfaultfd_ctx_get(ctx);
->  		WRITE_ONCE(ctx->mmap_changing, true);
-> +	} else if (ctx) {
-> +		vma->vm_userfaultfd_ctx = NULL_VM_UFFD_CTX;
-> +		vma->vm_flags &= ~(VM_UFFD_WP | VM_UFFD_MISSING);
+Hi Andrew,
 
-My preference would be 
+Can you take this patch for -mm?
 
-	if (!ctx)
-		return;
-	
-	if (ctx->features & UFFD_FEATURE_EVENT_REMAP) {
-		...
-	} else {
-		...
-	}
+-Kees
 
-but I don't feel strongly about it.
-
-I'd appreciate a comment in the code and with it 
-
-Acked-by: Mike Rapoport <rppt@linux.ibm.com>
+On Sun, Dec 9, 2018 at 8:41 AM Christian Brauner
+<christian.brauner@canonical.com> wrote:
+>
+> On Mon, Oct 29, 2018 at 10:44 PM Kees Cook <keescook@chromium.org> wrote:
+> >
+> > On Mon, Oct 29, 2018 at 7:58 AM, Christian Brauner <christian@brauner.io> wrote:
+> > > On Wed, Oct 17, 2018 at 12:33:20AM +0200, Christian Brauner wrote:
+> > >> Hey,
+> > >>
+> > >> Here is v3 of this patchset. Changelogs are in the individual commits.
+> > >>
+> > >> Currently, when writing
+> > >>
+> > >> echo 18446744073709551616 > /proc/sys/fs/file-max
+> > >>
+> > >> /proc/sys/fs/file-max will overflow and be set to 0. That quickly
+> > >> crashes the system.
+> > >>
+> > >> The first version of this patch intended to detect the overflow and cap
+> > >> at ULONG_MAX. However, we should not do this and rather return EINVAL on
+> > >> overflow. The reasons are:
+> > >> - this aligns with other sysctl handlers that simply reject overflows
+> > >>   (cf. [1], [2], and a bunch of others)
+> > >> - we already do a partial fail on overflow right now
+> > >>   Namely, when the TMPBUFLEN is exceeded. So we already reject values
+> > >>   such as 184467440737095516160 (21 chars) but accept values such as
+> > >>   18446744073709551616 (20 chars) but both are overflows. So we should
+> > >>   just always reject 64bit overflows and not special-case this based on
+> > >>   the number of chars.
+> > >>
+> > >> (This patchset is in reference to https://lkml.org/lkml/2018/10/11/585.)
+> > >
+> > > Just so that we don't forget, can we make sure that this gets picked
+> > > into linux-next? :)
+> >
+> > I was hoping akpm would take this? Andrew, does the v3 look okay to you?
+>
+> gentle ping again :)
+>
+> Christian
 
 
->  	}
->  }
-> 
-> -- 
-> 2.17.1
-> 
 
 -- 
-Sincerely yours,
-Mike.
-
+Kees Cook
