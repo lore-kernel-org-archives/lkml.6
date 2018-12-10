@@ -2,73 +2,78 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F127AC04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 23:43:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7376C04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 23:43:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B2CB820851
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 23:43:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8429D2084C
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 23:43:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K3UwiBqI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B2CB820851
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OiX74oW3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8429D2084C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730196AbeLJXnK (ORCPT
+        id S1730216AbeLJXnP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 18:43:10 -0500
-Received: from mail-it1-f195.google.com ([209.85.166.195]:34808 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726607AbeLJXnJ (ORCPT
+        Mon, 10 Dec 2018 18:43:15 -0500
+Received: from mail-it1-f194.google.com ([209.85.166.194]:36336 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726607AbeLJXnM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 18:43:09 -0500
-Received: by mail-it1-f195.google.com with SMTP id x124so9304149itd.1;
-        Mon, 10 Dec 2018 15:43:09 -0800 (PST)
+        Mon, 10 Dec 2018 18:43:12 -0500
+Received: by mail-it1-f194.google.com with SMTP id c9so848286itj.1;
+        Mon, 10 Dec 2018 15:43:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=E4yM4WyPy3yPiJETQPYVe1V9tP+X3065yLRYA97Pk1I=;
-        b=K3UwiBqI9+zlDAliqKvgsyxDGa4zDaGPCSSdmVK4nvMmBo1JSxnnAwivvnA8oKsp+Q
-         VsDJnSAh1GmDga4cZOV9o+5eweT56Usyhp+mKtkHl1KtaEaLp8HsgYnwGkYoBQ0hp5Uz
-         EbfyUJO6EyObefFnbUQZEEtkXqcnfCarjLXpJm5RRDZA9ANHRZyEpWmIMedgYrKqy2ic
-         ZWVKZClfni2KtkvC095tc2bvwsU0lvOGUvFK6AhHYEeZ0RZRlb+up55DvpFQpZ4eH9CG
-         tywIXqTA9CvKSurfl7L4HFadaEHj8xwQ5i50msrjPgNaTB2vUNFTEBMZVrbTcO0gaSXr
-         KmOQ==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=YG6k1tVFdVgQPRwNjfcZcQUx8EyghPoLGHnjPOBceD8=;
+        b=OiX74oW3dCrCNV8RR/35ZIStdll4IboNM2bNq75QxKOnK8KQbeeYsZm2klYVKQwt3A
+         Deuwhik/1tQ7wzRtj4FI8eJHaiGvVxoOzKVbhd/lbDN5NoZemmCFNW6SODUe9rPqaUDC
+         zNBs3JvXZf3v0JndEbW8aooWlXJdNhKIGrbr0AWYgBYje7tKjWZBR0RDyGcpgij0WMWi
+         6Fc0xxlbqBCFF8iSkfHURRBOSjaLOtLcBkkj/a9LkSQQwFjPEshh7TxWLRzlRlqJCwUo
+         LJXzGeYzjzh3btuRRDqPWvkB8OaB0H3r88jEc0yEc3IMf4U4lSxFGWE7gRcBySy1YW2V
+         NzRA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=E4yM4WyPy3yPiJETQPYVe1V9tP+X3065yLRYA97Pk1I=;
-        b=tvY1k4zPcTdeDGgmkZdVLujqc8+ZjINmWfbMca7YEL9aL0a5b0YJyMsNPTWc0nW8uF
-         UIh0QK3cit0C6/GW5T30ZYVze0swii5OTrR3tB2v4lHzmMB0LgUs6DCfcsZZLtwEb0Pn
-         k15VT1G+/JS0b3eo364Zeryofk/kkijD1Mg6ZBFjvCvM/BN+U5ytU1tfN+m0jcqE1vzA
-         OuqZVE9DKbdSVL1mi/JCNZGC0hvNEO3li7ryQdZeY0pimR//WATEXVe+FosVepllw1WS
-         h7QeEO9OgCXzcLZRtkJr8M9t3x0ccvdF6vILnlb34eQxHQQO+/fqPJJh8n8p6O3KCHUc
-         dZhQ==
-X-Gm-Message-State: AA+aEWYEuRPcoWYzovVhNiRbiHK5WYrYFyqLvFHQZqx+OrOEvHoEgTzR
-        +EsDhmkAuiJ00B2Uc9cI9DUo4e+Ry2A=
-X-Google-Smtp-Source: AFSGD/XPjee+Yf2HLztlba+PjVCEPwtSDEAF3cQVjballZZP3Qz5ungsj63/OnXeLEUSNG0h6Tq6lg==
-X-Received: by 2002:a05:660c:10:: with SMTP id q16mr355524itj.51.1544485388422;
-        Mon, 10 Dec 2018 15:43:08 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=YG6k1tVFdVgQPRwNjfcZcQUx8EyghPoLGHnjPOBceD8=;
+        b=Ybixgc3pcMfOwCgkDzbfFW2Qb+DnvO6kEMmlCkutOWq48Wtctz4YuFzXQ573quqezV
+         aEQeO1nDpTfTh6XE4FpzqAqFIA6XerkbtrIiyxmqNzW453psGTxjEAo6fvkwg4er73Vo
+         tg/3khGgiaIaw931OP4sXuoUAvocvA+msKoy1SiQzEdRjKnZp3ww0tb1P5zF1SGt6EZJ
+         wG8yabn7+3dXZBwGPoWAtKImASbaXkgNQ4U2SXdcjAFAPvLP+cxxTt5bN252awKZVT/k
+         237tXn+mU3Fl1jqrcj0zX2LESOF1g1l7G2nLBZjgT3ZE2p9RdFwO4m/0Ized8vbFTHLI
+         ycSg==
+X-Gm-Message-State: AA+aEWZBc61Pa1PTvsy+q19feP6yoChm+Q6H7kUH4zlzkm49qo8k8yL1
+        F5UdOozBilrYJIZo8GXgJO+DSQdNo/0=
+X-Google-Smtp-Source: AFSGD/W9/Sv8Ef8RMCtVNWNVjO1n/kiA68mrexiKc97ddJewy3qUSaCezy4G/PftuWaOMf4XHHFtmg==
+X-Received: by 2002:a05:660c:648:: with SMTP id y8mr412244itk.48.1544485389924;
+        Mon, 10 Dec 2018 15:43:09 -0800 (PST)
 Received: from tower.thefacebook.com ([2620:10d:c090:200::4:375a])
-        by smtp.gmail.com with ESMTPSA id e68sm625346ite.7.2018.12.10.15.43.06
+        by smtp.gmail.com with ESMTPSA id e68sm625346ite.7.2018.12.10.15.43.08
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 10 Dec 2018 15:43:07 -0800 (PST)
+        Mon, 10 Dec 2018 15:43:09 -0800 (PST)
 From:   Roman Gushchin <guroan@gmail.com>
 X-Google-Original-From: Roman Gushchin <guro@fb.com>
 To:     netdev@vger.kernel.org
 Cc:     kernel-team@fb.com, linux-kernel@vger.kernel.org,
         Yonghong Song <yhs@fb.com>, Martin Lau <kafai@fb.com>,
-        Roman Gushchin <guro@fb.com>
-Subject: [PATCH v2 bpf-next 0/3] bpffs pretty print for cgroup local storage
-Date:   Mon, 10 Dec 2018 15:42:59 -0800
-Message-Id: <20181210234302.31327-1-guro@fb.com>
+        Roman Gushchin <guro@fb.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>
+Subject: [PATCH v2 bpf-next 1/3] bpf: pass struct btf pointer to the map_check_btf() callback
+Date:   Mon, 10 Dec 2018 15:43:00 -0800
+Message-Id: <20181210234302.31327-2-guro@fb.com>
 X-Mailer: git-send-email 2.19.2
+In-Reply-To: <20181210234302.31327-1-guro@fb.com>
+References: <20181210234302.31327-1-guro@fb.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -76,28 +81,97 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patchset implements bpffs pretty printing for cgroup local storage maps.
+If key_type or value_type are of non-trivial data types
+(e.g. structure or typedef), it's not possible to check them without
+the additional information, which can't be obtained without a pointer
+to the btf structure.
 
-v2->v1:
-  - fixed size checks in cgroup_storage_check_btf(),
-  based on input from Yonghong and Martin
-  - implemented and used btf_type_is_reg_int(), suggested by Martin
+So, let's pass btf pointer to the map_check_btf() callbacks.
 
-Roman Gushchin (3):
-  bpf: pass struct btf pointer to the map_check_btf() callback
-  bpf: add bpffs pretty print for cgroup local storage maps
-  selftests/bpf: add btf annotations for cgroup_local_storage maps
+Signed-off-by: Roman Gushchin <guro@fb.com>
+Cc: Alexei Starovoitov <ast@kernel.org>
+Cc: Daniel Borkmann <daniel@iogearbox.net>
+Acked-by: Martin KaFai Lau <kafai@fb.com>
+---
+ include/linux/bpf.h   | 3 +++
+ kernel/bpf/arraymap.c | 1 +
+ kernel/bpf/lpm_trie.c | 1 +
+ kernel/bpf/syscall.c  | 3 ++-
+ 4 files changed, 7 insertions(+), 1 deletion(-)
 
- include/linux/bpf.h                       |  3 +
- include/linux/btf.h                       |  1 +
- kernel/bpf/arraymap.c                     |  1 +
- kernel/bpf/btf.c                          | 22 ++++++
- kernel/bpf/local_storage.c                | 93 ++++++++++++++++++++++-
- kernel/bpf/lpm_trie.c                     |  1 +
- kernel/bpf/syscall.c                      |  3 +-
- tools/testing/selftests/bpf/netcnt_prog.c |  6 ++
- 8 files changed, 128 insertions(+), 2 deletions(-)
-
+diff --git a/include/linux/bpf.h b/include/linux/bpf.h
+index 0c992b86eb2c..e734f163bd0b 100644
+--- a/include/linux/bpf.h
++++ b/include/linux/bpf.h
+@@ -23,6 +23,7 @@ struct bpf_prog;
+ struct bpf_map;
+ struct sock;
+ struct seq_file;
++struct btf;
+ struct btf_type;
+ 
+ /* map is generic key/value storage optionally accesible by eBPF programs */
+@@ -52,6 +53,7 @@ struct bpf_map_ops {
+ 	void (*map_seq_show_elem)(struct bpf_map *map, void *key,
+ 				  struct seq_file *m);
+ 	int (*map_check_btf)(const struct bpf_map *map,
++			     const struct btf *btf,
+ 			     const struct btf_type *key_type,
+ 			     const struct btf_type *value_type);
+ };
+@@ -126,6 +128,7 @@ static inline bool bpf_map_support_seq_show(const struct bpf_map *map)
+ }
+ 
+ int map_check_no_btf(const struct bpf_map *map,
++		     const struct btf *btf,
+ 		     const struct btf_type *key_type,
+ 		     const struct btf_type *value_type);
+ 
+diff --git a/kernel/bpf/arraymap.c b/kernel/bpf/arraymap.c
+index 24583da9ffd1..25632a75d630 100644
+--- a/kernel/bpf/arraymap.c
++++ b/kernel/bpf/arraymap.c
+@@ -382,6 +382,7 @@ static void percpu_array_map_seq_show_elem(struct bpf_map *map, void *key,
+ }
+ 
+ static int array_map_check_btf(const struct bpf_map *map,
++			       const struct btf *btf,
+ 			       const struct btf_type *key_type,
+ 			       const struct btf_type *value_type)
+ {
+diff --git a/kernel/bpf/lpm_trie.c b/kernel/bpf/lpm_trie.c
+index bfd4882e1106..abf1002080df 100644
+--- a/kernel/bpf/lpm_trie.c
++++ b/kernel/bpf/lpm_trie.c
+@@ -728,6 +728,7 @@ static int trie_get_next_key(struct bpf_map *map, void *_key, void *_next_key)
+ }
+ 
+ static int trie_check_btf(const struct bpf_map *map,
++			  const struct btf *btf,
+ 			  const struct btf_type *key_type,
+ 			  const struct btf_type *value_type)
+ {
+diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
+index a99a23bf5910..4eb7750cb5c0 100644
+--- a/kernel/bpf/syscall.c
++++ b/kernel/bpf/syscall.c
+@@ -456,6 +456,7 @@ static int bpf_obj_name_cpy(char *dst, const char *src)
+ }
+ 
+ int map_check_no_btf(const struct bpf_map *map,
++		     const struct btf *btf,
+ 		     const struct btf_type *key_type,
+ 		     const struct btf_type *value_type)
+ {
+@@ -478,7 +479,7 @@ static int map_check_btf(const struct bpf_map *map, const struct btf *btf,
+ 		return -EINVAL;
+ 
+ 	if (map->ops->map_check_btf)
+-		ret = map->ops->map_check_btf(map, key_type, value_type);
++		ret = map->ops->map_check_btf(map, btf, key_type, value_type);
+ 
+ 	return ret;
+ }
 -- 
 2.19.2
 
