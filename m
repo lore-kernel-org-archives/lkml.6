@@ -2,168 +2,142 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1477C5CFFE
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 11:17:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3340C04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 11:18:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B2D52086D
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 11:17:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B2D52086D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id C33472086D
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 11:18:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C33472086D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727401AbeLJLRy (ORCPT
+        id S1727415AbeLJLS6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 06:17:54 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:51555 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727384AbeLJLRx (ORCPT
+        Mon, 10 Dec 2018 06:18:58 -0500
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:39800 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726706AbeLJLS5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 06:17:53 -0500
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1gWJZL-0004uF-Uc; Mon, 10 Dec 2018 12:17:47 +0100
-Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1gWJZK-0002Nl-B4; Mon, 10 Dec 2018 12:17:46 +0100
-Date:   Mon, 10 Dec 2018 12:17:46 +0100
-From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     =?utf-8?B?Vm9rw6HEjQ==?= Michal <Michal.Vokac@ysoft.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Mon, 10 Dec 2018 06:18:57 -0500
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id wBABIamf104994;
+        Mon, 10 Dec 2018 05:18:36 -0600
+Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wBABIaW7007476
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 10 Dec 2018 05:18:36 -0600
+Received: from DLEE108.ent.ti.com (157.170.170.38) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Mon, 10
+ Dec 2018 05:18:36 -0600
+Received: from dlep33.itg.ti.com (157.170.170.75) by DLEE108.ent.ti.com
+ (157.170.170.38) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Mon, 10 Dec 2018 05:18:36 -0600
+Received: from [172.24.190.89] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id wBABIWup012385;
+        Mon, 10 Dec 2018 05:18:33 -0600
+Subject: Re: [PATCH 3/3] mtd: spi-nor: cadence-quadspi: Add support for Octal
+ SPI controller
+To:     Boris Brezillon <boris.brezillon@bootlin.com>
+CC:     Marek Vasut <marek.vasut@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Lukasz Majewski <l.majewski@majess.pl>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Lothar =?iso-8859-1?Q?Wa=DFmann?= <LW@karo-electronics.de>,
-        Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [RFC PATCH v3 2/2] pwm: imx: Configure output to GPIO in
- disabled state
-Message-ID: <20181210111746.36zyedeaajfcdfeh@pengutronix.de>
-References: <1544103655-104466-1-git-send-email-michal.vokac@ysoft.com>
- <1544103655-104466-3-git-send-email-michal.vokac@ysoft.com>
- <20181206135902.un2nbreqfmi6mpd6@pengutronix.de>
- <01aaa6ff-fb3e-37a7-0e72-099ad013ee2a@ysoft.com>
- <20181206161622.okpfiecfphar77jk@pengutronix.de>
- <8b88d225-efc7-623a-d1a6-8b3cfcfd5e07@ysoft.com>
+        Brian Norris <computersforpeace@gmail.com>,
+        Yogesh Gaur <yogeshnarayan.gaur@nxp.com>,
+        Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
+        <linux-mtd@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20181003165603.2579-1-vigneshr@ti.com>
+ <20181003165603.2579-4-vigneshr@ti.com> <20181210094513.6282d55e@bbrezillon>
+From:   Vignesh R <vigneshr@ti.com>
+Message-ID: <f6c3a649-f580-513d-644d-5010b3b5cf0b@ti.com>
+Date:   Mon, 10 Dec 2018 16:49:29 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <8b88d225-efc7-623a-d1a6-8b3cfcfd5e07@ysoft.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <20181210094513.6282d55e@bbrezillon>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 10, 2018 at 11:15:05AM +0000, Vokáč Michal wrote:
-> On 6.12.2018 17:16, Uwe Kleine-König wrote:
-> > On Thu, Dec 06, 2018 at 03:37:55PM +0000, Vokáč Michal wrote:
-> >> On 6.12.2018 14:59, Uwe Kleine-König wrote:
-> >>> On Thu, Dec 06, 2018 at 01:41:31PM +0000, Vokáč Michal wrote:
-> >>>
-> >>> Can it happen, that pinctrl_pins_pwm is PTR_ERR(-EPROBE_DEFER)?
-> >>
-> >> No. The pinctrl_lookup_state either returns pointer to the pinctrl state
-> >> or ERR_PTR(-ENODEV). But I do not explicitly test the pinctrl_pins_pwm
-> >> for PTR_ERR(-EPROBE_DEFER), or do I?
-> > 
-> > You don't, I just wondered if this could happen and the function should
-> > return -EPROBE_DEFER in this case, too.
+On 10/12/18 2:15 PM, Boris Brezillon wrote:
+> On Wed, 3 Oct 2018 22:26:03 +0530
+> Vignesh R <vigneshr@ti.com> wrote:
 > 
-> OK.
+>> Cadence OSPI controller IP supports Octal IO (x8 IO lines),
+>> It also has an integrated PHY. IP register layout is very
+>> similar to existing QSPI IP except for additional bits to support Octal
+>> and Octal DDR mode. Therefore, extend current driver to support Octal
+>> mode.
+>>
+>> Signed-off-by: Vignesh R <vigneshr@ti.com>
+>> ---
+>>  drivers/mtd/spi-nor/cadence-quadspi.c | 9 +++++++++
+>>  1 file changed, 9 insertions(+)
+>>
+>> diff --git a/drivers/mtd/spi-nor/cadence-quadspi.c b/drivers/mtd/spi-nor/cadence-quadspi.c
+>> index e24db817154e..48b00e75a879 100644
+>> --- a/drivers/mtd/spi-nor/cadence-quadspi.c
+>> +++ b/drivers/mtd/spi-nor/cadence-quadspi.c
+>> @@ -101,6 +101,7 @@ struct cqspi_st {
+>>  #define CQSPI_INST_TYPE_SINGLE			0
+>>  #define CQSPI_INST_TYPE_DUAL			1
+>>  #define CQSPI_INST_TYPE_QUAD			2
+>> +#define CQSPI_INST_TYPE_OCTAL			3
+>>  
+>>  #define CQSPI_DUMMY_CLKS_PER_BYTE		8
+>>  #define CQSPI_DUMMY_BYTES_MAX			4
+>> @@ -898,6 +899,9 @@ static int cqspi_set_protocol(struct spi_nor *nor, const int read)
+>>  		case SNOR_PROTO_1_1_4:
+>>  			f_pdata->data_width = CQSPI_INST_TYPE_QUAD;
+>>  			break;
+>> +		case SNOR_PROTO_1_1_8:
+>> +			f_pdata->data_width = CQSPI_INST_TYPE_OCTAL;
+>> +			break;
+>>  		default:
+>>  			return -EINVAL;
+>>  		}
+>> @@ -1205,6 +1209,7 @@ static int cqspi_setup_flash(struct cqspi_st *cqspi, struct device_node *np)
+>>  			SNOR_HWCAPS_READ_FAST |
+>>  			SNOR_HWCAPS_READ_1_1_2 |
+>>  			SNOR_HWCAPS_READ_1_1_4 |
+>> +			SNOR_HWCAPS_READ_1_1_8 |
 > 
-> >>> Maybe you only want to ignore PTR_ERR(-ENODEV) and for example propagate
-> >>> -EIO? I think you want to put the gpio if the failure is because there
-> >>> is a pinctrl related error.
-> >>
-> >> I think that is what I am doing. In case the GPIO is not ready the probe
-> >> is deferred. In case of any other error with the GPIO or pinctrl failure
-> >> I put the pinctrl. Or maybe I do not really understand what you mean.
-> > 
-> > Yes, you put the pinctrl, but not the GPIO. I.e. you're not undoing
-> > devm_gpiod_get_optional(). Maybe only do this if the pinctrl stuff
-> > succeeded to not touch the GPIO if it won't be used?
-> 
-> OK, I agree it seems better to get the pinctrl first and if it succeeds
-> only then try to get the GPIO. In that case I need to use the non-optional
-> variant of devm_gpio_get(). Note that then I do not really need to put the
-> GPIO in the error path as it means I did not get it.
-> The code would look like:
-> 
-> +static int imx_pwm_init_pinctrl_info(struct imx_chip *imx_chip,
-> +				      struct platform_device *pdev)
-> +{
-> +	imx_chip->pinctrl = devm_pinctrl_get(&pdev->dev);
-> +	if (IS_ERR(imx_chip->pinctrl)) {
-> +		dev_dbg(&pdev->dev, "can not get pinctrl\n");
-> +		return PTR_ERR(imx_chip->pinctrl);
-> +	}
-> +
-> +	imx_chip->pinctrl_pins_pwm = pinctrl_lookup_state(imx_chip->pinctrl,
-> +							  "pwm");
-> +	imx_chip->pinctrl_pins_gpio = pinctrl_lookup_state(imx_chip->pinctrl,
-> +							   "gpio");
-> +
-> +	if (IS_ERR(imx_chip->pinctrl_pins_pwm) ||
-> +	    IS_ERR(imx_chip->pinctrl_pins_gpio)) {
-> +		dev_dbg(&pdev->dev, "pinctrl information incomplete\n");
-> +		goto out;
-> +	}
-> +
-> +	imx_chip->pwm_gpiod = devm_gpiod_get(&pdev->dev, "pwm", GPIOD_IN);
-> +	if (PTR_ERR(imx_chip->pwm_gpiod) == -EPROBE_DEFER) {
-> +		return -EPROBE_DEFER;
-> +	} else if (IS_ERR(imx_chip->pwm_gpiod)) {
-> +		dev_dbg(&pdev->dev, "GPIO information incomplete\n");
-> +		goto out;
-> +	}
-> +
-> +	return 0;
-> +
-> +out:
-> +	devm_pinctrl_put(imx_chip->pinctrl);
-> +	imx_chip->pinctrl = NULL;
-> +
-> +	return 0;
-> +}
+> Is this really supported on qspi versions of this IP? I guess not given
+> the description in the commit message and the name of the new
+> compatible (ospi instead of qspi).
 
-This looks right.
+No, qspi version does not support Octal mode. I guess you are pointing
+out its logically wrong for driver with "*-qspi" compatible to declare
+SNOR_HWCAPS_READ_1_1_8 capability.
+Will update patch to declare SNOR_HWCAPS_READ_1_1_8 based on compatible.
 
-> >>> ISTR that there was a patch that implements get_state for imx. Is there
-> >>> a dependency on that one? Otherwise the state returned by
-> >>> pwm_get_state() might not be what is actually configured.
-> >>
-> >> No, it should be independent. One can go without the other. I tested all
-> >> three combinations (mainline with .get_state, mainline with this series,
-> >> mainline with .get_state AND this series) and got the expected results.
-> >> Without the .get_state() patch the core always returns the default which
-> >> is disabled state so the gpio pinctrl state is selected in probe.
-> > 
-> > Without .get_state it won't be possible to smoothly take over a running
-> > PWM.
 > 
-> But that is exactly how the current pwm-imx code works, right?
-
-But then at least the pwm would run until the first consumer
-reconfigures it.
- 
-Best regards
-Uwe
+>>  			SNOR_HWCAPS_PP,
+>>  	};
+>>  	struct platform_device *pdev = cqspi->pdev;
+>> @@ -1456,6 +1461,10 @@ static const struct of_device_id cqspi_dt_ids[] = {
+>>  		.compatible = "ti,k2g-qspi",
+>>  		.data = (void *)CQSPI_NEEDS_WR_DELAY,
+>>  	},
+>> +	{
+>> +		.compatible = "ti,am654-ospi",
+>> +		.data = (void *)CQSPI_NEEDS_WR_DELAY,
+>> +	},
+>>  	{ /* end of table */ }
+>>  };
+>>  
+> 
 
 -- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Regards
+Vignesh
