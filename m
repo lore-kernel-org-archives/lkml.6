@@ -2,165 +2,115 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0221C6783B
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 16:05:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A919C6783B
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 16:06:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7509220672
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 16:05:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7509220672
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amlogic.com
+	by mail.kernel.org (Postfix) with ESMTP id EE5F22082F
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 16:06:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE5F22082F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=virtuozzo.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728537AbeLJQFT (ORCPT
+        id S1727264AbeLJQGX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 11:05:19 -0500
-Received: from mail-sh2.amlogic.com ([58.32.228.45]:52645 "EHLO
-        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728508AbeLJQFQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 11:05:16 -0500
-Received: from localhost.localdomain (10.18.11.217) by mail-sh2.amlogic.com
- (10.18.11.6) with Microsoft SMTP Server id 15.0.1320.4; Tue, 11 Dec 2018
- 00:05:19 +0800
-From:   Jianxin Pan <jianxin.pan@amlogic.com>
-To:     Jerome Brunet <jbrunet@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>
-CC:     Jianxin Pan <jianxin.pan@amlogic.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Carlo Caione <carlo@caione.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Yixun Lan <yixun.lan@amlogic.com>,
-        Liang Yang <liang.yang@amlogic.com>,
-        Jian Hu <jian.hu@amlogic.com>,
-        Qiufang Dai <qiufang.dai@amlogic.com>,
-        Hanjie Lin <hanjie.lin@amlogic.com>,
-        Victor Wan <victor.wan@amlogic.com>,
-        <linux-clk@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH RESEND v7 4/4] clk: meson: add one based divider support for sclk divider
-Date:   Tue, 11 Dec 2018 00:04:36 +0800
-Message-ID: <1544457877-51301-5-git-send-email-jianxin.pan@amlogic.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1544457877-51301-1-git-send-email-jianxin.pan@amlogic.com>
-References: <1544457877-51301-1-git-send-email-jianxin.pan@amlogic.com>
+        Mon, 10 Dec 2018 11:06:23 -0500
+Received: from relay.sw.ru ([185.231.240.75]:41316 "EHLO relay.sw.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726146AbeLJQGX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Dec 2018 11:06:23 -0500
+Received: from [172.16.25.169] (helo=localhost.localdomain)
+        by relay.sw.ru with esmtp (Exim 4.91)
+        (envelope-from <ktkhai@virtuozzo.com>)
+        id 1gWO4Z-0005ja-Bu; Mon, 10 Dec 2018 19:06:19 +0300
+Subject: [PATCH] ksm: React on changing "sleep_millisecs" parameter faster
+From:   Kirill Tkhai <ktkhai@virtuozzo.com>
+To:     akpm@linux-foundation.org, mhocko@suse.com, ktkhai@virtuozzo.com,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        gorcunov@virtuozzo.com
+Date:   Mon, 10 Dec 2018 19:06:18 +0300
+Message-ID: <154445792450.3178.16241744401215933502.stgit@localhost.localdomain>
+User-Agent: StGit/0.18
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.18.11.217]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When CLK_DIVIDER_ONE_BASED flag is set, the sclk divider will be:
-one based divider (div = val), and zero value gates the clock
+ksm thread unconditionally sleeps in ksm_scan_thread()
+after each iteration:
 
-Signed-off-by: Jianxin Pan <jianxin.pan@amlogic.com>
+	schedule_timeout_interruptible(
+		msecs_to_jiffies(ksm_thread_sleep_millisecs))
+
+The timeout is configured in /sys/kernel/mm/ksm/sleep_millisecs.
+
+In case of user writes a big value by a mistake, and the thread
+enters into schedule_timeout_interruptible(), it's not possible
+to cancel the sleep by writing a new smaler value; the thread
+is just sleeping till timeout expires.
+
+The patch fixes the problem by waking the thread each time
+after the value is updated.
+
+This also may be useful for debug purposes; and also for userspace
+daemons, which change sleep_millisecs value in dependence of
+system load.
+
+Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
 ---
- drivers/clk/meson/clkc-audio.h |  1 +
- drivers/clk/meson/sclk-div.c   | 28 ++++++++++++++++++----------
- 2 files changed, 19 insertions(+), 10 deletions(-)
+ mm/ksm.c |   11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/meson/clkc-audio.h b/drivers/clk/meson/clkc-audio.h
-index 0a7c157..9bd6ced 100644
---- a/drivers/clk/meson/clkc-audio.h
-+++ b/drivers/clk/meson/clkc-audio.h
-@@ -20,6 +20,7 @@ struct meson_sclk_div_data {
- 	struct parm hi;
- 	unsigned int cached_div;
- 	struct clk_duty cached_duty;
-+	u8	flags;
- };
+diff --git a/mm/ksm.c b/mm/ksm.c
+index 723bd32d4dd0..31452122e52b 100644
+--- a/mm/ksm.c
++++ b/mm/ksm.c
+@@ -294,6 +294,7 @@ static int ksm_nr_node_ids = 1;
+ #define KSM_RUN_OFFLINE	4
+ static unsigned long ksm_run = KSM_RUN_STOP;
+ static void wait_while_offlining(void);
++static struct task_struct *ksm_task = NULL;
  
- extern const struct clk_ops meson_clk_triphase_ops;
-diff --git a/drivers/clk/meson/sclk-div.c b/drivers/clk/meson/sclk-div.c
-index bc64019..d98707b 100644
---- a/drivers/clk/meson/sclk-div.c
-+++ b/drivers/clk/meson/sclk-div.c
-@@ -24,22 +24,23 @@
- 	return (struct meson_sclk_div_data *)clk->data;
+ static DECLARE_WAIT_QUEUE_HEAD(ksm_thread_wait);
+ static DEFINE_MUTEX(ksm_thread_mutex);
+@@ -2435,8 +2436,9 @@ static int ksm_scan_thread(void *nothing)
+ 	set_freezable();
+ 	set_user_nice(current, 5);
+ 
++	mutex_lock(&ksm_thread_mutex);
++	ksm_task = current;
+ 	while (!kthread_should_stop()) {
+-		mutex_lock(&ksm_thread_mutex);
+ 		wait_while_offlining();
+ 		if (ksmd_should_run())
+ 			ksm_do_scan(ksm_thread_pages_to_scan);
+@@ -2451,7 +2453,10 @@ static int ksm_scan_thread(void *nothing)
+ 			wait_event_freezable(ksm_thread_wait,
+ 				ksmd_should_run() || kthread_should_stop());
+ 		}
++		mutex_lock(&ksm_thread_mutex);
+ 	}
++	ksm_task = NULL;
++	mutex_unlock(&ksm_thread_mutex);
+ 	return 0;
  }
  
--static int sclk_div_maxval(struct meson_sclk_div_data *sclk)
--{
--	return (1 << sclk->div.width) - 1;
--}
--
- static int sclk_div_maxdiv(struct meson_sclk_div_data *sclk)
- {
--	return sclk_div_maxval(sclk) + 1;
-+	if (sclk->flags & CLK_DIVIDER_ONE_BASED)
-+		return clk_div_mask(sclk->div.width);
-+	else
-+		return clk_div_mask(sclk->div.width) + 1;
+@@ -2864,7 +2869,11 @@ static ssize_t sleep_millisecs_store(struct kobject *kobj,
+ 	if (err || msecs > UINT_MAX)
+ 		return -EINVAL;
+ 
++	mutex_lock(&ksm_thread_mutex);
++	if (ksm_task)
++		wake_up_state(ksm_task, TASK_INTERRUPTIBLE);
+ 	ksm_thread_sleep_millisecs = msecs;
++	mutex_unlock(&ksm_thread_mutex);
+ 
+ 	return count;
  }
- 
- static int sclk_div_getdiv(struct clk_hw *hw, unsigned long rate,
- 			   unsigned long prate, int maxdiv)
- {
- 	int div = DIV_ROUND_CLOSEST_ULL((u64)prate, rate);
-+	struct clk_regmap *clk = to_clk_regmap(hw);
-+	struct meson_sclk_div_data *sclk = meson_sclk_div_data(clk);
-+	int mindiv = (sclk->flags & CLK_DIVIDER_ONE_BASED) ? 1 : 2;
- 
--	return clamp(div, 2, maxdiv);
-+	return clamp(div, mindiv, maxdiv);
- }
- 
- static int sclk_div_bestdiv(struct clk_hw *hw, unsigned long rate,
-@@ -47,7 +48,7 @@ static int sclk_div_bestdiv(struct clk_hw *hw, unsigned long rate,
- 			    struct meson_sclk_div_data *sclk)
- {
- 	struct clk_hw *parent = clk_hw_get_parent(hw);
--	int bestdiv = 0, i;
-+	int bestdiv = 0, i, mindiv;
- 	unsigned long maxdiv, now, parent_now;
- 	unsigned long best = 0, best_parent = 0;
- 
-@@ -64,8 +65,9 @@ static int sclk_div_bestdiv(struct clk_hw *hw, unsigned long rate,
- 	 * unsigned long in rate * i below
- 	 */
- 	maxdiv = min(ULONG_MAX / rate, maxdiv);
-+	mindiv = (sclk->flags & CLK_DIVIDER_ONE_BASED) ? 1 : 2;
- 
--	for (i = 2; i <= maxdiv; i++) {
-+	for (i = mindiv; i <= maxdiv; i++) {
- 		/*
- 		 * It's the most ideal case if the requested rate can be
- 		 * divided from parent clock without needing to change
-@@ -153,10 +155,14 @@ static int sclk_div_get_duty_cycle(struct clk_hw *hw,
- static void sclk_apply_divider(struct clk_regmap *clk,
- 			       struct meson_sclk_div_data *sclk)
- {
-+	unsigned int div;
-+
- 	if (MESON_PARM_APPLICABLE(&sclk->hi))
- 		sclk_apply_ratio(clk, sclk);
- 
--	meson_parm_write(clk->map, &sclk->div, sclk->cached_div - 1);
-+	div = (sclk->flags & CLK_DIVIDER_ONE_BASED) ?
-+		sclk->cached_div : (sclk->cached_div - 1);
-+	meson_parm_write(clk->map, &sclk->div, div);
- }
- 
- static int sclk_div_set_rate(struct clk_hw *hw, unsigned long rate,
-@@ -223,6 +229,8 @@ static void sclk_div_init(struct clk_hw *hw)
- 	/* if the divider is initially disabled, assume max */
- 	if (!val)
- 		sclk->cached_div = sclk_div_maxdiv(sclk);
-+	else if (sclk->flags & CLK_DIVIDER_ONE_BASED)
-+		sclk->cached_div = val;
- 	else
- 		sclk->cached_div = val + 1;
- 
--- 
-1.9.1
 
