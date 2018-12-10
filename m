@@ -7,68 +7,67 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E409C04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 23:52:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94B02C04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 23:55:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 02C8D20851
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 23:52:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 59C1F214C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 23:55:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rsMsMVen"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 02C8D20851
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OmFG3hAv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 59C1F214C4
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729238AbeLJXwL (ORCPT
+        id S1729312AbeLJXzr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 18:52:11 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:33191 "EHLO
+        Mon, 10 Dec 2018 18:55:47 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:43640 "EHLO
         mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726261AbeLJXwL (ORCPT
+        with ESMTP id S1726261AbeLJXzq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 18:52:11 -0500
-Received: by mail-wr1-f67.google.com with SMTP id c14so12312450wrr.0;
-        Mon, 10 Dec 2018 15:52:09 -0800 (PST)
+        Mon, 10 Dec 2018 18:55:46 -0500
+Received: by mail-wr1-f67.google.com with SMTP id r10so12259078wrs.10;
+        Mon, 10 Dec 2018 15:55:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=+msshKRQa9KDUGPA8ZgyKltmv5EfKoaQ+nuFeBBxXDA=;
-        b=rsMsMVenPGicFCKYkJa7/Yxwq2zhAqpfjqWGRgrhwayc31uV9Krap45+zHnlOEg8sc
-         KQDhjKJWYSEQvWF/i1R6FUA09WuN0vuwA8V/XE+sW1frxJ0j9zFiC2Y3GQKUfCULOxPQ
-         FnJ3IYEw8Qq7ucY7DnbpGJEFvChQb0hwi5w0riBPNF9QREDp6Do99JZH/mWXbMpuLHd9
-         nJXUIStBDn2USHHu/5lXAK89louQP5uI8SeIdFVBoMqThCAuJYtyWVbHXFF0Wh5XF9gJ
-         AKQxCUcfyWwMiPsoU5DImhDHaA4+fIYAIAb/484xM8uGDj8trjxT7xFzaGytvHPYQg5C
-         CagA==
+        bh=5DmAZc9VVklV20ByUugu6DlbBYBEoHVB11bBJu+y+Qs=;
+        b=OmFG3hAvYDljxf6J2cRALGY4CIRpgtHBjSmPMP47zl8YX77a5yJ1+kcdjYuCbBYOWf
+         PnHnuhJQZ/kUPN+ncCJ3EAXCjn4VGVf2KtkMzk31Lq4ICGwR7cWnOLHRfKG8lWjgjUDc
+         lhmBlE1hiBVUUCD+J1bJOlywpVycDMIq/JLkyW4ZRo0bAGqE3oDeYWEzQ64iqMYNkr80
+         1+3x+SC9iazh4amrFYThPd8EXEa28aF4Qy4XgZgkqch5Q5ksbZkeemEMfsxJXoVClate
+         z44ROcXpfQVAnaC6cxixCYsxmtSgIo4V3eZAvNKRpgnATOmr1H6a4tIPwP3dpHRr77Xt
+         Ki9g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=+msshKRQa9KDUGPA8ZgyKltmv5EfKoaQ+nuFeBBxXDA=;
-        b=l8cc5hOvQ4tJ5UlKpeCoXkXCrVdhTYnKeh9HiD6dkjIUdwcT6L2403YJoStjOWatKn
-         lUR+FyWrD81Sjl4BEObajG2ENxvMxO6GlRPUMDUslnWUovRisDxpW9muWXYMCr8FtNkV
-         xfkOLTbFeyLZhTjVcNOQf9v3nWl0vRkPYfQx0J1CR4e3c6DMnsXCk0db6NF4HBWjFx0j
-         m36OyhxtVyRkbkKLzH54kNI9Wz9RGeOhK8A2SKqrFATRnpfFNvz0lAYF+xABXQOpXHN+
-         cd5AJkeVbjjhqPtq/fdRSfddnRiNcklobvlizeXBtc5d+irP6uvYEKYekEmoBS3ZA9K4
-         vVIg==
-X-Gm-Message-State: AA+aEWZNhYUZDpK52dOJMNbYhB/p4AXKIZmyX8slBGu8Og0YYYqwk01U
-        Dhke8701SvBZGVN4bkqGsoI=
-X-Google-Smtp-Source: AFSGD/VAV0d2PpjlvvpsPltUc6vrbslwGrvngy7XafxAI+pQmC3FU7z0v1HZUF18y9ZvIVWfLVvyrg==
-X-Received: by 2002:adf:b716:: with SMTP id l22mr12161765wre.186.1544485928370;
-        Mon, 10 Dec 2018 15:52:08 -0800 (PST)
+        bh=5DmAZc9VVklV20ByUugu6DlbBYBEoHVB11bBJu+y+Qs=;
+        b=JcmxBegnmKxKtnTjgzesAsiHu1kL2nfPpz7uVUpGXopwNfANFew8JGvMVLsP53lWbV
+         Rk1OK30xw3zl2+RkhRYX7U2on+tsRhqzFrsjzrh8G8IB8J3FMaT3DD6GcfnoKUBm9eMH
+         ThCWT8hg5O7i+onTk9cxESMpCHtb6ijM9ARITvWouVRgGt9ZVML+pflqk/beG4+kVGur
+         ljJA2iYIOHsY8LF8qDJFqpVgwyqUaniWkb0mxTPT76jMh0ZkGdbDLqjTpxOKkGsMFMUP
+         2BfIkAJqnO0soT/V7Hd/kUVrScXu8Z5M5UME0ZkFyEjJ98BGnM30sjWcZvIAPPwU/kJx
+         cLPg==
+X-Gm-Message-State: AA+aEWZCOWoBv7eaSSqA3m7Q0XPXNlu+Bw4HNnPsh5itll6f4Ek/jbvj
+        OB2WFrq25HIqBPDyY3VEKsA=
+X-Google-Smtp-Source: AFSGD/Vj54GTRLb7t9pa6JpYc9kaID8lMciFqAnrfCFGDwmfCWSdVKfyzTmq0L8npUruJ6kJVGturg==
+X-Received: by 2002:a5d:4303:: with SMTP id h3mr11765575wrq.273.1544486144372;
+        Mon, 10 Dec 2018 15:55:44 -0800 (PST)
 Received: from localhost.localdomain ([2a01:4f8:10b:24a5::2])
-        by smtp.gmail.com with ESMTPSA id c10sm12186461wrw.49.2018.12.10.15.52.07
+        by smtp.gmail.com with ESMTPSA id j33sm25222165wre.91.2018.12.10.15.55.43
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 10 Dec 2018 15:52:07 -0800 (PST)
+        Mon, 10 Dec 2018 15:55:43 -0800 (PST)
 From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     GOTO Masanori <gotom@debian.or.jp>,
-        YOKOTA Hiroshi <yokota@netlab.is.tsukuba.ac.jp>,
+To:     YOKOTA Hiroshi <yokota@netlab.is.tsukuba.ac.jp>,
         "James E.J. Bottomley" <jejb@linux.ibm.com>,
         "Martin K. Petersen" <martin.petersen@oracle.com>
 Cc:     linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
         Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH] scsi: nsp32: Remove unnecessary self assignment in nsp32_set_sync_entry
-Date:   Mon, 10 Dec 2018 16:51:56 -0700
-Message-Id: <20181210235156.6237-1-natechancellor@gmail.com>
+Subject: [PATCH] pcmcia: Remove unnecessary parentheses
+Date:   Mon, 10 Dec 2018 16:55:40 -0700
+Message-Id: <20181210235540.7039-1-natechancellor@gmail.com>
 X-Mailer: git-send-email 2.20.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -79,28 +78,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Clang warns:
 
-drivers/scsi/nsp32.c:2444:14: warning: explicitly assigning value of
-variable of type 'unsigned char' to itself [-Wself-assign]
-        offset      = offset;
-        ~~~~~~      ^
+drivers/scsi/pcmcia/nsp_cs.c:1137:27: warning: equality comparison with
+extraneous parentheses [-Wparentheses-equality]
+                if ((tmpSC->SCp.Message == MSG_COMMAND_COMPLETE)) {
+                     ~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~
+drivers/scsi/pcmcia/nsp_cs.c:1137:27: note: remove extraneous
+parentheses around the comparison to silence this warning
+                if ((tmpSC->SCp.Message == MSG_COMMAND_COMPLETE)) {
+                    ~                   ^                      ~
+drivers/scsi/pcmcia/nsp_cs.c:1137:27: note: use '=' to turn this
+equality comparison into an assignment
+                if ((tmpSC->SCp.Message == MSG_COMMAND_COMPLETE)) {
+                                        ^~
+                                        =
+1 warning generated.
 
 Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
 ---
- drivers/scsi/nsp32.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/scsi/pcmcia/nsp_cs.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/scsi/nsp32.c b/drivers/scsi/nsp32.c
-index 5aac3e801903..7ce6e7acf2f3 100644
---- a/drivers/scsi/nsp32.c
-+++ b/drivers/scsi/nsp32.c
-@@ -2441,7 +2441,6 @@ static void nsp32_set_sync_entry(nsp32_hw_data *data,
+diff --git a/drivers/scsi/pcmcia/nsp_cs.c b/drivers/scsi/pcmcia/nsp_cs.c
+index f3230494a8c9..f28105b144fc 100644
+--- a/drivers/scsi/pcmcia/nsp_cs.c
++++ b/drivers/scsi/pcmcia/nsp_cs.c
+@@ -1134,7 +1134,8 @@ static irqreturn_t nspintr(int irq, void *dev_id)
  
- 	period      = data->synct[entry].period_num;
- 	ackwidth    = data->synct[entry].ackwidth;
--	offset      = offset;
- 	sample_rate = data->synct[entry].sample_rate;
+ 		//*sync_neg       = SYNC_NOT_YET;
  
- 	target->syncreg    = TO_SYNCREG(period, offset);
+-		if ((tmpSC->SCp.Message == MSG_COMMAND_COMPLETE)) {     /* all command complete and return status */
++		/* all command complete and return status */
++		if (tmpSC->SCp.Message == MSG_COMMAND_COMPLETE) {
+ 			tmpSC->result = (DID_OK		             << 16) |
+ 					((tmpSC->SCp.Message & 0xff) <<  8) |
+ 					((tmpSC->SCp.Status  & 0xff) <<  0);
 -- 
 2.20.0
 
