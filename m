@@ -2,193 +2,162 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09607C67838
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 01:18:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E64D5C07E85
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 01:23:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B6AFA2064D
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 01:18:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9522020831
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 01:23:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="JJiydG5l"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B6AFA2064D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (2048-bit key) header.d=lixom-net.20150623.gappssmtp.com header.i=@lixom-net.20150623.gappssmtp.com header.b="M+EvPVql"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9522020831
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lixom.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726406AbeLJBSL (ORCPT
+        id S1726397AbeLJBXz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 20:18:11 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:45328 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726291AbeLJBSL (ORCPT
+        Sun, 9 Dec 2018 20:23:55 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:44269 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726277AbeLJBXz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Dec 2018 20:18:11 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wBA190u8065597;
-        Mon, 10 Dec 2018 01:18:07 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=5Fa5LPxtSCfzdRQpfLnZTIFxQ10Gdf6J2bD4mu4OoqU=;
- b=JJiydG5lxBpoEVsiWDMZHoshavIJRHCQk+3oOyu2Ge6/8+v85QW+uDPGIM0iacBuNm+D
- Uexw9056/Hyy7JguhOSgCBWpwzWv4fGZQdGvQarDsUS/E7YZor2hUFOhwz+NTG8MQ87R
- 0/8IzLUVkeSQoinTH4OJPvcctsR5jKJhogEJyCl4rKuQpzDmgEDghZYp54pEqhfpD0PY
- 7TO2IBQoWfhV7omd+S3Jv9xVcaijNKYKyW9iooo6S2igw8vSlJm2/NfQCudVZ5mBX1MZ
- 1N3TW3wQZUSh4i3V1vXgwNkHhS1p5QFWz9jGVIymhN9QLYjrcWJNA7TXhoGjfpTaVh5q uw== 
-Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
-        by userp2120.oracle.com with ESMTP id 2p86kqk8g3-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 10 Dec 2018 01:18:07 +0000
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id wBA1I6WM009040
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 10 Dec 2018 01:18:06 GMT
-Received: from abhmp0013.oracle.com (abhmp0013.oracle.com [141.146.116.19])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id wBA1I58F022244;
-        Mon, 10 Dec 2018 01:18:05 GMT
-Received: from [10.182.69.118] (/10.182.69.118)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Sun, 09 Dec 2018 17:18:04 -0800
-Subject: Re: [PATCH V11 0/4] blk-mq: refactor code of issue directly
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     ming.lei@redhat.com, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <1544152185-32667-1-git-send-email-jianchao.w.wang@oracle.com>
- <b2bcbb76-af6f-7660-2bc3-9796338cccff@kernel.dk>
- <0adf3419-bcce-93d8-51fb-aee7cbb5ae17@oracle.com>
- <16205e68-aa5e-c59d-364e-4164a0e51dc7@kernel.dk>
- <f052c016-e521-9f12-f4e5-d65f3814643a@kernel.dk>
- <a59a3a1d-94fb-938d-7ddf-969185cd5b48@oracle.com>
- <1e183b77-2c4d-71ff-b019-2b1070d2ed6b@kernel.dk>
- <38eb7c50-dfad-d9cb-f8ab-a8f5250b0ed7@oracle.com>
- <bd99f969-5eed-5365-6aa1-ce9b85dc84d6@kernel.dk>
-From:   "jianchao.wang" <jianchao.w.wang@oracle.com>
-Message-ID: <6432264f-57e9-d405-079e-21c0aa17b08e@oracle.com>
-Date:   Mon, 10 Dec 2018 09:18:54 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Sun, 9 Dec 2018 20:23:55 -0500
+Received: by mail-lj1-f193.google.com with SMTP id k19-v6so8062627lji.11
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Dec 2018 17:23:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lixom-net.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=t/UBLbdynFhlbFxqKQdNUI6XlqKT8uSedEKVSAFRuYw=;
+        b=M+EvPVql2IFAZHpmIgC+srA2Ar4e6TE5urPh8b9VIwzYX+mVUzTT3YKtKA8w/kZmJG
+         NVYEOyEVmubFU63Qk1rwCNbZsKphdG4wc0mPkCcENdKESCAV42jHAsHJ7x9Q5xamvq0K
+         P4ZBN2SpuUmezkfSRdgTVX3Vrh+PeRa0INog80+59/YGLDFSHkqTwkn1IvdCUTh5cmk1
+         SP6J6cnJwhBlSF71TfPtpxC0Q50YKffd7EqaQKXT03XxvxRtO6qYQTUHR6mDqaGg5E3T
+         He8rQ6gttZaKsHBoM4rjnt8zo/7iFN3KaTb74xZUn/EHUI2jgzuJAY4ySwYSu6cFCMeX
+         7xAA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=t/UBLbdynFhlbFxqKQdNUI6XlqKT8uSedEKVSAFRuYw=;
+        b=LYwZmoClVhc6ss68if9gX68UznhOxITaKIex5P2Hqfjf2D4OMYrczhp0IhcKwqXbzq
+         m7Pc3ss6YopTNwi4CgzLcV73w/Rc7sat77mOF5TgXMoQ6I2NFJy8yKiXQXOFQhM1+8wz
+         7VN2lyoEY0XG+oNHxYsGsUtRETdBXpgxP8spfFMq5EOZhBbDCsP0cBZoO4gcXNprbl6/
+         YCJ2jt3/kdGPV9rU6al5sxSd4jAahkW4B5nZTMpcl5g7VH3QryG4SKnIXSVswlqpKiON
+         /T/ecvt84cuzUI46KtNhhIB7qZG3kd3jz97S6ST6iAXHUkrrKUle/pjZFbx29/KRPWP0
+         50Kw==
+X-Gm-Message-State: AA+aEWa4dH4x/R/3hGwRCN3ve5Cma6GmUL1VFkc2ySW0yysE3UwNE47u
+        QWZH41Hr+Vs+FMf8olQy5W6nNf/EFfo=
+X-Google-Smtp-Source: AFSGD/VCUuybhWj6sw1YX0xk0ZBQ6d9BNsTGliJqilFbL47+nBvrcbndU6cGHCIxiaqMw5XTFoePqQ==
+X-Received: by 2002:a2e:2e1a:: with SMTP id u26-v6mr6519576lju.8.1544405032697;
+        Sun, 09 Dec 2018 17:23:52 -0800 (PST)
+Received: from localhost (h85-30-9-151.cust.a3fiber.se. [85.30.9.151])
+        by smtp.gmail.com with ESMTPSA id c88-v6sm1885646ljf.60.2018.12.09.17.23.50
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 09 Dec 2018 17:23:51 -0800 (PST)
+Date:   Sun, 9 Dec 2018 17:23:35 -0800
+From:   Olof Johansson <olof@lixom.net>
+To:     torvalds@linux-foundation.org
+Cc:     olof@lixom.net, arm@kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] ARM: SoC fixes
+Message-ID: <20181210012335.jmxsw4yyj66lrbsp@localhost>
 MIME-Version: 1.0
-In-Reply-To: <bd99f969-5eed-5365-6aa1-ce9b85dc84d6@kernel.dk>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9102 signatures=668679
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1812100009
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Linus,
 
 
-On 12/7/18 11:47 AM, Jens Axboe wrote:
-> On 12/6/18 8:46 PM, jianchao.wang wrote:
->>
->>
->> On 12/7/18 11:42 AM, Jens Axboe wrote:
->>> On 12/6/18 8:41 PM, jianchao.wang wrote:
->>>>
->>>>
->>>> On 12/7/18 11:34 AM, Jens Axboe wrote:
->>>>> On 12/6/18 8:32 PM, Jens Axboe wrote:
->>>>>> On 12/6/18 8:26 PM, jianchao.wang wrote:
->>>>>>>
->>>>>>>
->>>>>>> On 12/7/18 11:16 AM, Jens Axboe wrote:
->>>>>>>> On 12/6/18 8:09 PM, Jianchao Wang wrote:
->>>>>>>>> Hi Jens
->>>>>>>>>
->>>>>>>>> Please consider this patchset for 4.21.
->>>>>>>>>
->>>>>>>>> It refactors the code of issue request directly to unify the interface
->>>>>>>>> and make the code clearer and more readable.
->>>>>>>>>
->>>>>>>>> This patch set is rebased on the recent for-4.21/block and add the 1st
->>>>>>>>> patch which inserts the non-read-write request to hctx dispatch
->>>>>>>>> list to avoid to involve merge and io scheduler when bypass_insert
->>>>>>>>> is true, otherwise, inserting is ignored, BLK_STS_RESOURCE is returned
->>>>>>>>> and the caller will fail forever.
->>>>>>>>>
->>>>>>>>> The 2nd patch refactors the code of issue request directly to unify the
->>>>>>>>> helper interface which could handle all the cases.
->>>>>>>>>
->>>>>>>>> The 3rd patch make blk_mq_sched_insert_requests issue requests directly
->>>>>>>>> with 'bypass' false, then it needn't to handle the non-issued requests
->>>>>>>>> any more.
->>>>>>>>>
->>>>>>>>> The 4th patch replace and kill the blk_mq_request_issue_directly.
->>>>>>>>
->>>>>>>> Sorry to keep iterating on this, but let's default to inserting to
->>>>>>>> the dispatch list if we ever see busy from a direct dispatch. I'm fine
->>>>>>>> with doing that for 4.21, as suggested by Ming, I just didn't want to
->>>>>>>> fiddle with it for 4.20. This will prevent any merging on the request
->>>>>>>> going forward, which I think is a much safer default.
->>>>>>>>
->>>>>>>> You do this already for some cases. Let's do it unconditionally for
->>>>>>>> a request that was ever subjected to ->queue_rq() and we didn't either
->>>>>>>> error or finish after the fact.
->>>>>>>>
->>>>>>> I have done it in this version if I get your point correctly.
->>>>>>> Please refer to the following fragment in the 2nd patch.
->>>>>>>
->>>>>>> +	/*
->>>>>>> +	 * If the request is issued unsuccessfully with
->>>>>>> +	 * BLK_STS_DEV_RESOURCE or BLK_STS_RESOURCE, insert
->>>>>>> +	 * the request to hctx dispatch list due to attached
->>>>>>> +	 * lldd resource.
->>>>>>> +	 */
->>>>>>> +	force = true;
->>>>>>> +	ret = __blk_mq_issue_directly(hctx, rq, cookie, last);
->>>>>>> +out_unlock:
->>>>>>> +	hctx_unlock(hctx, srcu_idx);
->>>>>>> +out:
->>>>>>> +	switch (ret) {
->>>>>>> +	case BLK_STS_OK:
->>>>>>> +		break;
->>>>>>> +	case BLK_STS_DEV_RESOURCE:
->>>>>>> +	case BLK_STS_RESOURCE:
->>>>>>> +		if (force) {
->>>>>>> +			blk_mq_request_bypass_insert(rq, run_queue);
->>>>>>> +			ret = bypass ? BLK_STS_OK : ret;
->>>>>>> +		} else if (!bypass) {
->>>>>>> +			blk_mq_sched_insert_request(rq, false,
->>>>>>> +						    run_queue, false);
->>>>>>> +		}
->>>>>>> +		break;
->>>>>>> +	default:
->>>>>>
->>>>>> You are right, I missed that you set force = true before doing the
->>>>>> issue. So this looks good to me!
->>>>>
->>>>> I applied your series. With this, we should be good to remove the
->>>>> REQ_NOMERGE logic that was added for the corruption case, and the
->>>>> blk_rq_can_direct_dispatch() as well?
->>>>>
->>>>
->>>> Yes, it should be that.
->>>> Every thing rejected by .queue_rq is ended or inserted into hctx dispatch
->>>> list. And also direct-issue path is unified with normal path.
->>>
->>> Why are we doing that return value dance, depending on whether this
->>> is a bypass insert or not? That seems confusing.
->>>
->>
->> For the 'bypass == false' case, it need to know whether the request is issued
->> successfully. This is for the 3rd patch.
->> I used to use the returned cookie to identify the result, but you don't like it.
->> So I have to use this return value.
-> 
-> Makes sense, but could probably do with a comment. I'm going to let the
-> series float for a day or two to ensure others get a chance to review it,
-> then we can move forward.
-> 
+The following changes since commit 2595646791c319cadfdbf271563aac97d0843dc7:
 
-Do I need a respin about the comment ?
+  Linux 4.20-rc5 (2018-12-02 15:07:55 -0800)
 
-Thanks
-Jianchao
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc.git tags/armsoc-fixes
+
+for you to fetch changes up to 0603a9a84679eb12d9dadb97f4e0ba017e684c7b:
+
+  Merge tag 'mvebu-fixes-4.20-1' of git://git.infradead.org/linux-mvebu into fixes (2018-12-09 10:28:02 -0800)
+
+----------------------------------------------------------------
+ARM: SoC fixes
+
+The usual batch; most of them are DT tweaks to fix misdescribed
+hardware. Beyond that:
+
+ - A bugfix for MMP2 CPU detection, it's been there quite a while but
+   makes sense to fix now anyway.
+ - Some power management tweaks;
+   + disabling of CPU idle power state on Marvell Armada 7K/8K (Macchiatobin et al)
+   + Increase of minimum voltage on BananaPi M3
+   + Tweak of power ramp time for DVFS on NXP/Freescale i.MX7SX
+ - A couple of MAINTAINER updates; MMP has a new volunteer to look after
+   it, and Mediatek adds a few keywords, IRC channel and wiki URL.
+
+----------------------------------------------------------------
+Anson Huang (1):
+      ARM: imx: update the cpu power up timing setting on i.mx6sx
+
+Baruch Siach (1):
+      Revert "arm64: dts: marvell: add CPU Idle power state support on Armada 7K/8K"
+
+Corentin Labbe (1):
+      ARM: dts: sun8i: a83t: bananapi-m3: increase vcc-pd voltage to 3.3V
+
+Fabio Estevam (2):
+      ARM: dts: imx7d-pico: Describe the Wifi clock
+      ARM: dts: imx7d-nitrogen7: Fix the description of the Wifi clock
+
+Lubomir Rintel (2):
+      ARM: mmp/mmp2: fix cpu_is_mmp2() on mmp2-dt
+      MAINTAINERS: update entry for MMP platform
+
+Matthias Brugger (1):
+      MAINTAINERS: mediatek: Update SoC entry
+
+Olof Johansson (5):
+      Merge tag 'v4.19-next-fixes' of https://git.kernel.org/.../matthias.bgg/linux into fixes
+      Merge tag 'arm-soc/for-4.20/devicetree-fixes' of https://github.com/Broadcom/stblinux into fixes
+      Merge tag 'imx-fixes-4.20-3' of git://git.kernel.org/.../shawnguo/linux into fixes
+      Merge tag 'sunxi-fixes-for-4.20' of https://git.kernel.org/.../sunxi/linux into fixes
+      Merge tag 'mvebu-fixes-4.20-1' of git://git.infradead.org/linux-mvebu into fixes
+
+Rob Herring (1):
+      ARM: dts: realview: Fix some more duplicate regulator nodes
+
+Ryder Lee (3):
+      arm64: dts: mt7622: fix no more console output on rfb1
+      arm64: dts: mt7622: fix no more console output on BPI-R64 board
+      arm64: dts: mt7622: Drop the general purpose timer node
+
+Stefan Wahren (1):
+      ARM: dts: bcm2837: Fix polarity of wifi reset GPIOs
+
+ CREDITS                                            |  8 +++++++
+ MAINTAINERS                                        | 11 +++++----
+ arch/arm/boot/dts/arm-realview-pb1176.dts          |  4 ++--
+ arch/arm/boot/dts/arm-realview-pb11mp.dts          |  4 ++--
+ arch/arm/boot/dts/bcm2837-rpi-3-b-plus.dts         |  2 +-
+ arch/arm/boot/dts/bcm2837-rpi-3-b.dts              |  2 +-
+ arch/arm/boot/dts/imx7d-nitrogen7.dts              |  9 ++++++--
+ arch/arm/boot/dts/imx7d-pico.dtsi                  | 22 +++++++++++++++++-
+ arch/arm/boot/dts/sun8i-a83t-bananapi-m3.dts       |  4 ++--
+ arch/arm/mach-imx/cpuidle-imx6sx.c                 |  2 +-
+ arch/arm/mach-mmp/cputype.h                        |  6 +++--
+ arch/arm64/boot/dts/marvell/armada-ap806-quad.dtsi |  4 ----
+ arch/arm64/boot/dts/marvell/armada-ap806.dtsi      | 27 ----------------------
+ .../boot/dts/mediatek/mt7622-bananapi-bpi-r64.dts  |  7 +++++-
+ arch/arm64/boot/dts/mediatek/mt7622-rfb1.dts       |  7 +++++-
+ arch/arm64/boot/dts/mediatek/mt7622.dtsi           | 10 --------
+ 16 files changed, 67 insertions(+), 62 deletions(-)
