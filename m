@@ -2,234 +2,430 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10A5EC04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 08:56:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8759C04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 08:56:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC16C2082F
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 08:56:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC16C2082F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 5809E2082F
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 08:56:31 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M2qGNzev"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5809E2082F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726763AbeLJI4T (ORCPT
+        id S1726835AbeLJI4a (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 03:56:19 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:48808 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726531AbeLJI4T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 03:56:19 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4013B1596;
-        Mon, 10 Dec 2018 00:56:18 -0800 (PST)
-Received: from localhost (e113682-lin.copenhagen.arm.com [10.32.144.41])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CCFAE3F575;
-        Mon, 10 Dec 2018 00:56:17 -0800 (PST)
-Date:   Mon, 10 Dec 2018 09:56:16 +0100
-From:   Christoffer Dall <christoffer.dall@arm.com>
-To:     Suzuki K Poulose <suzuki.poulose@arm.com>
-Cc:     Anshuman Khandual <anshuman.khandual@arm.com>,
-        kvmarm@lists.cs.columbia.edu, marc.zyngier@arm.com,
-        will.deacon@arm.com, linux-kernel@vger.kernel.org,
-        punitagrawal@gmail.com, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v9 1/8] KVM: arm/arm64: Share common code in
- user_mem_abort()
-Message-ID: <20181210085616.GB30263@e113682-lin.lund.arm.com>
-References: <20181031175745.18650-1-punit.agrawal@arm.com>
- <20181031175745.18650-2-punit.agrawal@arm.com>
- <ad4b316a-054f-24d9-d32d-8fbe7972b5ad@arm.com>
- <8fd34e5f-7d75-4de2-3fee-d6d70805685c@arm.com>
+        Mon, 10 Dec 2018 03:56:30 -0500
+Received: from mail-it1-f193.google.com ([209.85.166.193]:33610 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726531AbeLJI43 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Dec 2018 03:56:29 -0500
+Received: by mail-it1-f193.google.com with SMTP id m8so7423040itk.0;
+        Mon, 10 Dec 2018 00:56:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=YZIb56R+QEb319IWfbmsRtgryH/Cf7rmiBoO94zw0Rg=;
+        b=M2qGNzevnnAtNrPkzQStTJg1aghA5QapT2X1GI3FKivaJqjDPEoft7ink3ddBMFyWO
+         EbGhGxGKSVih4iYVUVwR/YB8Jnc2XRFyneNtpwE1IH+D104hZsLc3L5YvViQJezr87iA
+         7zgXyq8VAWq5WOgK0d7MfmnoNuMrjYM9BYavlvih0ZODx/Nx/HMQF2J30nO7wbNzXvYC
+         hdgZQGLXS9eDYriXjzTFCJY8qKqDx9ffDEWWTwQrfrR/mb4BVAYxwkoLY0BOL+f9hRFC
+         /dk54DBzPR/7DV5Pegpkrg1FYwoJsxDHqOvuKR6hVJstr1VrVRQEFe1vgA+qItH4c0kj
+         Bjmg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=YZIb56R+QEb319IWfbmsRtgryH/Cf7rmiBoO94zw0Rg=;
+        b=BS5yAuaRcH9OsGi4tzPNRzvC7uYAs/OvAxJR8X087LYIBCXwXJzxWLxXZd4V4tUCah
+         0xyx7vjDMiPbuCCoHgTPagKxyVCYONC1bL7VUrjCLjBgprdzBTftuuKuYahulOQDCgp9
+         /QWzvC8kKqirUGuQMFuK7uTfEF9dK5vzvmElNbUWItcB5n/4aVi5EHN+OaPH1IVGGUzd
+         +HiniF/XPwymKVXdB2CPqbN5o+5Sk5VWqHI1IVqsj/GLSAu4f0E1y0DGQAnQgEmnEJ2F
+         LnfCMsSc1gBset6S7DwGSjZ8XsdSsqnqjdxYlew3WEJJbph7dvuzo0g9nPeaaPvpaYGE
+         3Tmg==
+X-Gm-Message-State: AA+aEWYiYdjIy+ImD2YSBzfUO1QbsCWHOgoVHzJ4TOIuRoJymjASlxkm
+        dmgy+jPHAuDj9IDpFazPnDK2QQ3tSiLi7S351EU=
+X-Google-Smtp-Source: AFSGD/UQB9TByUGNaRYkNYcGpJIrRfq7G+I0GDcj4uef51UlPuF7/1jrzrh54xlBNV6lWyo1NcMPchkNGR5wZXEoZuk=
+X-Received: by 2002:a05:660c:58a:: with SMTP id g10mr9484104itk.167.1544432187069;
+ Mon, 10 Dec 2018 00:56:27 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8fd34e5f-7d75-4de2-3fee-d6d70805685c@arm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+References: <000000000000311344057c4b6cc3@google.com> <CAG_fn=WbOyQ0R35_OhCLjxTTnV7z=u5xnjtm2gXtiSRdHbDz=A@mail.gmail.com>
+ <20181206110634.GA9056@localhost.localdomain>
+In-Reply-To: <20181206110634.GA9056@localhost.localdomain>
+From:   Xin Long <lucien.xin@gmail.com>
+Date:   Mon, 10 Dec 2018 17:56:14 +0900
+Message-ID: <CADvbK_f-F9hp8HwxCp8og8FmEf_4E3=HOr8DPq3sEmRA8wGepg@mail.gmail.com>
+Subject: Re: KMSAN: kernel-infoleak in sctp_getsockopt
+To:     Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
+Cc:     Alexander Potapenko <glider@google.com>,
+        syzbot+ad5d327e6936a2e284be@syzkaller.appspotmail.com,
+        davem <davem@davemloft.net>, LKML <linux-kernel@vger.kernel.org>,
+        linux-sctp@vger.kernel.org, network dev <netdev@vger.kernel.org>,
+        Neil Horman <nhorman@tuxdriver.com>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Vlad Yasevich <vyasevich@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 03, 2018 at 01:37:37PM +0000, Suzuki K Poulose wrote:
-> Hi Anshuman,
-> 
-> On 03/12/2018 12:11, Anshuman Khandual wrote:
+On Thu, Dec 6, 2018 at 8:08 PM Marcelo Ricardo Leitner
+<marcelo.leitner@gmail.com> wrote:
+>
+> On Thu, Dec 06, 2018 at 11:36:08AM +0100, Alexander Potapenko wrote:
+> > On Wed, Dec 5, 2018 at 8:31 PM syzbot
+> > <syzbot+ad5d327e6936a2e284be@syzkaller.appspotmail.com> wrote:
+> > >
+> > > Hello,
+> > >
+> > > syzbot found the following crash on:
+> > >
+> > > HEAD commit:    fffec98ae2a6 net: proper support for CONFIG_GENERIC_C=
+SUM o..
+> > > git tree:       https://github.com/google/kmsan.git/master
+> > > console output: https://syzkaller.appspot.com/x/log.txt?x=3D12e84a474=
+00000
+> > > kernel config:  https://syzkaller.appspot.com/x/.config?x=3D56b48b46d=
+afe4516
+> > > dashboard link: https://syzkaller.appspot.com/bug?extid=3Dad5d327e693=
+6a2e284be
+> > > compiler:       clang version 8.0.0 (trunk 343298)
+> > > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D103cd22=
+5400000
+> > >
+> > > IMPORTANT: if you fix the bug, please add the following tag to the co=
+mmit:
+> > > Reported-by: syzbot+ad5d327e6936a2e284be@syzkaller.appspotmail.com
+> > >
+> > > 8021q: adding VLAN 0 to HW filter on device team0
+> > > 8021q: adding VLAN 0 to HW filter on device team0
+> > > 8021q: adding VLAN 0 to HW filter on device team0
+> > > 8021q: adding VLAN 0 to HW filter on device team0
+> > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > > BUG: KMSAN: kernel-infoleak in _copy_to_user+0x19a/0x230 lib/usercopy=
+.c:33
+> > > CPU: 1 PID: 8164 Comm: syz-executor2 Not tainted 4.20.0-rc3+ #95
+> > > Hardware name: Google Google Compute Engine/Google Compute Engine, BI=
+OS
+> > > Google 01/01/2011
+> > > Call Trace:
+> > >   __dump_stack lib/dump_stack.c:77 [inline]
+> > >   dump_stack+0x32d/0x480 lib/dump_stack.c:113
+> > >   kmsan_report+0x12c/0x290 mm/kmsan/kmsan.c:683
+> > >   kmsan_internal_check_memory+0x32a/0xa50 mm/kmsan/kmsan.c:743
+> > >   kmsan_copy_to_user+0x78/0xd0 mm/kmsan/kmsan_hooks.c:634
+> > >   _copy_to_user+0x19a/0x230 lib/usercopy.c:33
+> > >   copy_to_user include/linux/uaccess.h:183 [inline]
+> > >   sctp_getsockopt_local_addrs net/sctp/socket.c:5998 [inline]
+> > >   sctp_getsockopt+0x15248/0x186f0 net/sctp/socket.c:7477
+> > >   sock_common_getsockopt+0x13f/0x180 net/core/sock.c:2937
+> > >   __sys_getsockopt+0x489/0x550 net/socket.c:1939
+> > >   __do_sys_getsockopt net/socket.c:1950 [inline]
+> > >   __se_sys_getsockopt+0xe1/0x100 net/socket.c:1947
+> > >   __x64_sys_getsockopt+0x62/0x80 net/socket.c:1947
+> > >   do_syscall_64+0xcf/0x110 arch/x86/entry/common.c:291
+> > >   entry_SYSCALL_64_after_hwframe+0x63/0xe7
+> > > RIP: 0033:0x457569
+> > > Code: fd b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 =
+89 f7
+> > > 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f=
+0 ff
+> > > ff 0f 83 cb b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+> > > RSP: 002b:00007f4991886c78 EFLAGS: 00000246 ORIG_RAX: 000000000000003=
+7
+> > > RAX: ffffffffffffffda RBX: 0000000000000005 RCX: 0000000000457569
+> > > RDX: 000000000000006d RSI: 0000000000000084 RDI: 0000000000000003
+> > > RBP: 000000000072bf00 R08: 0000000020000140 R09: 0000000000000000
+> > > R10: 0000000020001100 R11: 0000000000000246 R12: 00007f49918876d4
+> > > R13: 00000000004c7d88 R14: 00000000004ce348 R15: 00000000ffffffff
+> > >
+> > > Uninit was stored to memory at:
+> > >   kmsan_save_stack_with_flags mm/kmsan/kmsan.c:246 [inline]
+> > >   kmsan_save_stack mm/kmsan/kmsan.c:261 [inline]
+> > >   kmsan_internal_chain_origin+0x13d/0x240 mm/kmsan/kmsan.c:469
+> > >   kmsan_memcpy_memmove_metadata+0x1a9/0xf70 mm/kmsan/kmsan.c:344
+> > >   kmsan_memcpy_metadata+0xb/0x10 mm/kmsan/kmsan.c:362
+> > >   __msan_memcpy+0x61/0x70 mm/kmsan/kmsan_instr.c:162
+> > >   sctp_copy_laddrs net/sctp/socket.c:5901 [inline]
+> > >   sctp_getsockopt_local_addrs net/sctp/socket.c:5967 [inline]
+> > >   sctp_getsockopt+0x14f41/0x186f0 net/sctp/socket.c:7477
+> > >   sock_common_getsockopt+0x13f/0x180 net/core/sock.c:2937
+> > >   __sys_getsockopt+0x489/0x550 net/socket.c:1939
+> > >   __do_sys_getsockopt net/socket.c:1950 [inline]
+> > >   __se_sys_getsockopt+0xe1/0x100 net/socket.c:1947
+> > >   __x64_sys_getsockopt+0x62/0x80 net/socket.c:1947
+> > >   do_syscall_64+0xcf/0x110 arch/x86/entry/common.c:291
+> > >   entry_SYSCALL_64_after_hwframe+0x63/0xe7
+> > >
+> > > Uninit was stored to memory at:
+> > >   kmsan_save_stack_with_flags mm/kmsan/kmsan.c:246 [inline]
+> > >   kmsan_save_stack mm/kmsan/kmsan.c:261 [inline]
+> > >   kmsan_internal_chain_origin+0x13d/0x240 mm/kmsan/kmsan.c:469
+> > >   kmsan_memcpy_memmove_metadata+0x1a9/0xf70 mm/kmsan/kmsan.c:344
+> > >   kmsan_memcpy_metadata+0xb/0x10 mm/kmsan/kmsan.c:362
+> > >   __msan_memcpy+0x61/0x70 mm/kmsan/kmsan_instr.c:162
+> > >   sctp_copy_laddrs net/sctp/socket.c:5890 [inline]
+> > >   sctp_getsockopt_local_addrs net/sctp/socket.c:5967 [inline]
+> > >   sctp_getsockopt+0x14de8/0x186f0 net/sctp/socket.c:7477
+> > >   sock_common_getsockopt+0x13f/0x180 net/core/sock.c:2937
+> > >   __sys_getsockopt+0x489/0x550 net/socket.c:1939
+> > >   __do_sys_getsockopt net/socket.c:1950 [inline]
+> > >   __se_sys_getsockopt+0xe1/0x100 net/socket.c:1947
+> > >   __x64_sys_getsockopt+0x62/0x80 net/socket.c:1947
+> > >   do_syscall_64+0xcf/0x110 arch/x86/entry/common.c:291
+> > >   entry_SYSCALL_64_after_hwframe+0x63/0xe7
+> > >
+> > > Uninit was created at:
+> > >   kmsan_save_stack_with_flags mm/kmsan/kmsan.c:246 [inline]
+> > >   kmsan_internal_poison_shadow+0x6d/0x130 mm/kmsan/kmsan.c:170
+> > >   kmsan_kmalloc+0xa1/0x100 mm/kmsan/kmsan_hooks.c:186
+> > >   __kmalloc+0x14c/0x4d0 mm/slub.c:3825
+> > >   kmalloc include/linux/slab.h:551 [inline]
+> > >   sctp_inet6addr_event+0x60e/0xbd0 net/sctp/ipv6.c:100
+> > >   notifier_call_chain kernel/notifier.c:93 [inline]
+> > >   __atomic_notifier_call_chain kernel/notifier.c:183 [inline]
+> > >   atomic_notifier_call_chain+0x13d/0x240 kernel/notifier.c:193
+> > >   inet6addr_notifier_call_chain+0x76/0x90 net/ipv6/addrconf_core.c:10=
+7
+> > >   ipv6_add_addr+0x2597/0x2890 net/ipv6/addrconf.c:1115
+> > >   inet6_addr_add+0xc86/0x1c10 net/ipv6/addrconf.c:2912
+> > >   inet6_rtm_newaddr+0x167e/0x3d20 net/ipv6/addrconf.c:4750
+> > >   rtnetlink_rcv_msg+0x1148/0x1540 net/core/rtnetlink.c:4947
+> > >   netlink_rcv_skb+0x394/0x640 net/netlink/af_netlink.c:2477
+> > >   rtnetlink_rcv+0x50/0x60 net/core/rtnetlink.c:4965
+> > >   netlink_unicast_kernel net/netlink/af_netlink.c:1310 [inline]
+> > >   netlink_unicast+0x1699/0x1740 net/netlink/af_netlink.c:1336
+> > >   netlink_sendmsg+0x13c7/0x1440 net/netlink/af_netlink.c:1917
+> > >   sock_sendmsg_nosec net/socket.c:621 [inline]
+> > >   sock_sendmsg net/socket.c:631 [inline]
+> > >   ___sys_sendmsg+0xe3b/0x1240 net/socket.c:2116
+> > >   __sys_sendmsg net/socket.c:2154 [inline]
+> > >   __do_sys_sendmsg net/socket.c:2163 [inline]
+> > >   __se_sys_sendmsg+0x305/0x460 net/socket.c:2161
+> > >   __x64_sys_sendmsg+0x4a/0x70 net/socket.c:2161
+> > >   do_syscall_64+0xcf/0x110 arch/x86/entry/common.c:291
+> > >   entry_SYSCALL_64_after_hwframe+0x63/0xe7
+> > >
+> > > Bytes 32-35 of 2100 are uninitialized
+> > > Memory access of size 2100 starts at ffff888185d8b000
+> > > Data copied to user address 0000000020001108
+> > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > When a network device goes up and sctp_inetaddr_event() is called, it
+> > allocates a partially initialized struct sctp_sockaddr_entry to hold
+> > the newly created address.
+> > The attached reproducer can be then used to read up to 8 uninit bytes
+> > for each of the local addresses.
+> > I guess the devices aren't created so often that this can pose any
+> > security risk, but we probably still need to allocate this structure
+> > with __GFP_ZERO.
+>
+> Agree. Thanks Alexander.
+> Looks like this is the last/only place left with this issue.
+This field is not really used by sctp, I will just set it to 0.
+
+diff --git a/net/sctp/ipv6.c b/net/sctp/ipv6.c
+index fc6c5e4bffa5..7f0539db5604 100644
+--- a/net/sctp/ipv6.c
++++ b/net/sctp/ipv6.c
+@@ -101,6 +101,7 @@ static int sctp_inet6addr_event(struct
+notifier_block *this, unsigned long ev,
+                if (addr) {
+                        addr->a.v6.sin6_family =3D AF_INET6;
+                        addr->a.v6.sin6_port =3D 0;
++                       addr->a.v6.sin6_flowinfo =3D 0;
+                        addr->a.v6.sin6_addr =3D ifa->addr;
+                        addr->a.v6.sin6_scope_id =3D ifa->idev->dev->ifinde=
+x;
+                        addr->valid =3D 1;
+
+>
+> > >
+> > > ---
+> > > This bug is generated by a bot. It may contain errors.
+> > > See https://goo.gl/tpsmEJ for more information about syzbot.
+> > > syzbot engineers can be reached at syzkaller@googlegroups.com.
+> > >
+> > > syzbot will keep track of this bug report. See:
+> > > https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with
+> > > syzbot.
+> > > syzbot can test patches for this bug, for details see:
+> > > https://goo.gl/tpsmEJ#testing-patches
+> > >
+> > > --
+> > > You received this message because you are subscribed to the Google Gr=
+oups "syzkaller-bugs" group.
+> > > To unsubscribe from this group and stop receiving emails from it, sen=
+d an email to syzkaller-bugs+unsubscribe@googlegroups.com.
+> > > To view this discussion on the web visit https://groups.google.com/d/=
+msgid/syzkaller-bugs/000000000000311344057c4b6cc3%40google.com.
+> > > For more options, visit https://groups.google.com/d/optout.
 > >
 > >
-> >On 10/31/2018 11:27 PM, Punit Agrawal wrote:
-> >>The code for operations such as marking the pfn as dirty, and
-> >>dcache/icache maintenance during stage 2 fault handling is duplicated
-> >>between normal pages and PMD hugepages.
-> >>
-> >>Instead of creating another copy of the operations when we introduce
-> >>PUD hugepages, let's share them across the different pagesizes.
-> >>
-> >>Signed-off-by: Punit Agrawal <punit.agrawal@arm.com>
-> >>Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-> >>Cc: Christoffer Dall <christoffer.dall@arm.com>
-> >>Cc: Marc Zyngier <marc.zyngier@arm.com>
-> >>---
-> >>  virt/kvm/arm/mmu.c | 49 ++++++++++++++++++++++++++++------------------
-> >>  1 file changed, 30 insertions(+), 19 deletions(-)
-> >>
-> >>diff --git a/virt/kvm/arm/mmu.c b/virt/kvm/arm/mmu.c
-> >>index 5eca48bdb1a6..59595207c5e1 100644
-> >>--- a/virt/kvm/arm/mmu.c
-> >>+++ b/virt/kvm/arm/mmu.c
-> >>@@ -1475,7 +1475,7 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
-> >>  			  unsigned long fault_status)
-> >>  {
-> >>  	int ret;
-> >>-	bool write_fault, exec_fault, writable, hugetlb = false, force_pte = false;
-> >>+	bool write_fault, exec_fault, writable, force_pte = false;
-> >>  	unsigned long mmu_seq;
-> >>  	gfn_t gfn = fault_ipa >> PAGE_SHIFT;
-> >>  	struct kvm *kvm = vcpu->kvm;
-> >>@@ -1484,7 +1484,7 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
-> >>  	kvm_pfn_t pfn;
-> >>  	pgprot_t mem_type = PAGE_S2;
-> >>  	bool logging_active = memslot_is_logging(memslot);
-> >>-	unsigned long flags = 0;
-> >>+	unsigned long vma_pagesize, flags = 0;
 > >
-> >A small nit s/vma_pagesize/pagesize. Why call it VMA ? Its implicit.
-> 
-> May be we could call it mapsize. pagesize is confusing.
-> 
-
-I'm ok with mapsize.  I see the vma_pagesize name coming from the fact
-that this is initially set to the return value from vma_kernel_pagesize.
-
-I have not problems with either vma_pagesize or mapsize.
-
+> > --
+> > Alexander Potapenko
+> > Software Engineer
 > >
-> >>  	write_fault = kvm_is_write_fault(vcpu);
-> >>  	exec_fault = kvm_vcpu_trap_is_iabt(vcpu);
-> >>@@ -1504,10 +1504,16 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
-> >>  		return -EFAULT;
-> >>  	}
-> >>-	if (vma_kernel_pagesize(vma) == PMD_SIZE && !logging_active) {
-> >>-		hugetlb = true;
-> >>+	vma_pagesize = vma_kernel_pagesize(vma);
-> >>+	if (vma_pagesize == PMD_SIZE && !logging_active) {
-> >>  		gfn = (fault_ipa & PMD_MASK) >> PAGE_SHIFT;
-> >>  	} else {
-> >>+		/*
-> >>+		 * Fallback to PTE if it's not one of the Stage 2
-> >>+		 * supported hugepage sizes
-> >>+		 */
-> >>+		vma_pagesize = PAGE_SIZE;
+> > Google Germany GmbH
+> > Erika-Mann-Stra=C3=9Fe, 33
+> > 80636 M=C3=BCnchen
 > >
-> >This seems redundant and should be dropped. vma_kernel_pagesize() here either
-> >calls hugetlb_vm_op_pagesize (via hugetlb_vm_ops->pagesize) or simply returns
-> >PAGE_SIZE. The vm_ops path is taken if the QEMU VMA covering any given HVA is
-> >backed either by HugeTLB pages or simply normal pages. vma_pagesize would
-> >either has a value of PMD_SIZE (HugeTLB hstate based) or PAGE_SIZE. Hence if
-> >its not PMD_SIZE it must be PAGE_SIZE which should not be assigned again.
-> 
-> We may want to force using the PTE mappings when logging_active (e.g, migration
-> ?) to prevent keep tracking of huge pages. So the check is still valid.
-> 
-> 
-
-Agreed, and let's not try additionally change the logic and flow with
-this patch.
-
+> > Gesch=C3=A4ftsf=C3=BChrer: Paul Manicle, Halimah DeLaine Prado
+> > Registergericht und -nummer: Hamburg, HRB 86891
+> > Sitz der Gesellschaft: Hamburg
+>
+> > #ifndef DUMP_BUF_H
+> > #define DUMP_BUF_H
 > >
-> >>+
-> >>  		/*
-> >>  		 * Pages belonging to memslots that don't have the same
-> >>  		 * alignment for userspace and IPA cannot be mapped using
-> >>@@ -1573,23 +1579,33 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
-> >>  	if (mmu_notifier_retry(kvm, mmu_seq))
-> >>  		goto out_unlock;
-> >>-	if (!hugetlb && !force_pte)
-> >>-		hugetlb = transparent_hugepage_adjust(&pfn, &fault_ipa);
-> >>+	if (vma_pagesize == PAGE_SIZE && !force_pte) {
-> >>+		/*
-> >>+		 * Only PMD_SIZE transparent hugepages(THP) are
-> >>+		 * currently supported. This code will need to be
-> >>+		 * updated to support other THP sizes.
-> >>+		 */
+> > #ifndef DUMP_MIN_STRLEN
+> > #define DUMP_MIN_STRLEN 1
+> > #endif
 > >
-> >This comment belongs to transparent_hugepage_adjust() but not here.
-> 
-> I think this is relevant here than in thp_adjust, unless we rename
-> the function below to something generic, handle_hugepage_adjust().
-> 
-
-Agreed.
-
-> >>+		if (transparent_hugepage_adjust(&pfn, &fault_ipa))
-> >>+			vma_pagesize = PMD_SIZE;
+> > #ifndef DUMP_PARALLEL
+> > #define DUMP_PARALLEL 0
+> > #endif
 > >
-> >IIUC transparent_hugepage_adjust() is only getting called here. Instead of
-> >returning 'true' when it is able to detect a huge page backing and doing
-> >an adjustment there after, it should rather return THP size (PMD_SIZE) to
-> >accommodate probable multi size THP support in future .
-> 
-> That makes sense.
-> 
-
-That's fine.
-
+> > #ifndef DUMP_PRINT_BUF_ADDR
+> > #define DUMP_PRINT_BUF_ADDR 0
+> > #endif
 > >
-> >>+	}
-> >>+
-> >>+	if (writable)
-> >>+		kvm_set_pfn_dirty(pfn);
-> >>-	if (hugetlb) {
-> >>+	if (fault_status != FSC_PERM)
-> >>+		clean_dcache_guest_page(pfn, vma_pagesize);
-> >>+
-> >>+	if (exec_fault)
-> >>+		invalidate_icache_guest_page(pfn, vma_pagesize);
-> >>+
-> >>+	if (vma_pagesize == PMD_SIZE) {
-> >>  		pmd_t new_pmd = pfn_pmd(pfn, mem_type);
-> >>  		new_pmd = pmd_mkhuge(new_pmd);
-> >>-		if (writable) {
-> >>+		if (writable)
-> >>  			new_pmd = kvm_s2pmd_mkwrite(new_pmd);
-> >>-			kvm_set_pfn_dirty(pfn);
-> >>-		}
-> >>-
-> >>-		if (fault_status != FSC_PERM)
-> >>-			clean_dcache_guest_page(pfn, PMD_SIZE);
-> >>  		if (exec_fault) {
-> >>  			new_pmd = kvm_s2pmd_mkexec(new_pmd);
-> >>-			invalidate_icache_guest_page(pfn, PMD_SIZE);
-> >>  		} else if (fault_status == FSC_PERM) {
-> >>  			/* Preserve execute if XN was already cleared */
-> >>  			if (stage2_is_exec(kvm, fault_ipa))
-> >>@@ -1602,16 +1618,11 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
-> >>  		if (writable) {
-> >>  			new_pte = kvm_s2pte_mkwrite(new_pte);
-> >>-			kvm_set_pfn_dirty(pfn);
-> >>  			mark_page_dirty(kvm, gfn);
-> >>  		}
-> >>-		if (fault_status != FSC_PERM)
-> >>-			clean_dcache_guest_page(pfn, PAGE_SIZE);
-> >>-
-> >>  		if (exec_fault) {
-> >>  			new_pte = kvm_s2pte_mkexec(new_pte);
-> >>-			invalidate_icache_guest_page(pfn, PAGE_SIZE);
-> >>  		} else if (fault_status == FSC_PERM) {
-> >>  			/* Preserve execute if XN was already cleared */
-> >>  			if (stage2_is_exec(kvm, fault_ipa))
-> >>
+> > #ifndef DUMP_PRINT_HEX
+> > #define DUMP_PRINT_HEX 0
+> > #endif
 > >
-> >kvm_set_pfn_dirty, clean_dcache_guest_page, invalidate_icache_guest_page
-> >can all be safely moved before setting the page table entries either as
-> >PMD or PTE.
-> 
-> I think this is what we do currently. So I assume this is fine.
-> 
-Agreed, I don't understand the comment raised by Anshuman here.
-
-
-Thanks,
-
-    Christoffer
+> > #ifndef DUMP_PRINT_STRING
+> > #define DUMP_PRINT_STRING 0
+> > #endif
+> >
+> > #if DUMP_PARALLEL
+> > pthread_mutex_t out_mutex =3D PTHREAD_MUTEX_INITIALIZER;
+> > #endif
+> >
+> > void dump_buf(unsigned char *buf, int len) {
+> >   int i, nz =3D 0;
+> >   for (i =3D 0; i < len; i++) {
+> >     if (buf[i]) {
+> >       nz =3D 1;
+> >       break;
+> >     }
+> >   }
+> >   if (!nz) {
+> >     // The buffer is empty.
+> >     return;
+> >   } else {
+> > #if DUMP_PARALLEL
+> >     pthread_mutex_lock(&out_mutex);
+> > #endif
+> > #if DUMP_PRINT_BUF_ADDR
+> >     fprintf(stderr, "nonempty buffer at %p\n", buf);
+> > #endif
+> > #if DUMP_PRINT_HEX
+> >     for (i=3D0; i < len; i++) {
+> >       if (buf[i]) {
+> >         fprintf(stderr, "buf[%d]: %x (%p)\n", i, buf[i], *(void**)&buf[=
+i]);
+> >       }
+> >     }
+> > #endif // DUMP_PRINT_HEX
+> > #if DUMP_PARALLEL
+> >     pthread_mutex_unlock(&out_mutex);
+> > #endif
+> >   }
+> > #if DUMP_PARALLEL
+> >   pthread_mutex_lock(&out_mutex);
+> > #endif
+> > #if DUMP_PRINT_STRING
+> >   for (i =3D 0; i < len; i++) {
+> >     if (buf[i]) {
+> >       int str_len =3D strlen(&buf[i]);
+> >       // Short string pieces are too boring.
+> >       if (str_len >=3D DUMP_MIN_STRLEN) {
+> >         unsigned char *c;
+> >         for (c =3D &buf[i]; c < &buf[i + str_len]; c++) {
+> >           if ((*c > 127) || ((*c < 32) && (*c !=3D 10) && (*c !=3D 13))=
+)  {
+> >             *c =3D ' ';
+> >             continue;
+> >           }
+> >         }
+> >         // Dump the buffer.
+> >         fprintf(stderr, "%s\n", &buf[i]);
+> >       }
+> >       i +=3D str_len;
+> >     }
+> >   }
+> > #endif // DUMP_PRINT_STRING
+> > #if DUMP_PARALLEL
+> >   pthread_mutex_unlock(&out_mutex);
+> > #endif
+> > }
+> >
+> > #endif
+>
+> > #include <stdio.h>
+> > #include <pthread.h>
+> > #include <sys/types.h>          /* See NOTES */
+> > #include <sys/socket.h>
+> > #include <unistd.h>
+> >
+> > #define DUMP_PARALLEL 1
+> > #define DUMP_PRINT_BUF_ADDR 1
+> > #define DUMP_PRINT_STRING 1
+> > #define DUMP_PRINT_HEX 1
+> > #include "dump_buf.h"
+> >
+> > void *setsockopt_fn(void *arg) {
+> >   int sock =3D (int)arg;
+> >   struct sockaddr addr;
+> >   memset(&addr, 0, sizeof(addr));
+> >   addr.sa_family =3D 2;
+> >   addr.sa_data[2] =3D 0xac;
+> >   addr.sa_data[3] =3D 0x14;
+> >   addr.sa_data[4] =3D 0x14;
+> >   setsockopt(sock, 0x84, 0x6e, &addr, 0x10);
+> > }
+> >
+> > #define BUFLEN (0x2c2)
+> > void *getsockopt_fn(void *arg) {
+> >   int sock =3D (int)arg;
+> >   char buf[BUFLEN];
+> >   memset(buf, 0, BUFLEN);
+> >   int socklen =3D BUFLEN;
+> >   getsockopt(sock, 0x84, /*SCTP_GET_LOCAL_ADDRS*/0x6d, buf, &socklen);
+> >   dump_buf(&(buf[8]), 32);
+> > }
+> >
+> > void do_work(int sock) {
+> >   pthread_t t1, t2;
+> >   for (int i =3D 0; i < 10; i++) {
+> >     pthread_create(&t1, NULL, getsockopt_fn, (void*)sock);
+> >     pthread_create(&t2, NULL, setsockopt_fn, (void*)sock);
+> >     usleep(100);
+> >   }
+> > }
+> >
+> > int main(int argc, char *argv[]) {
+> >   int res;
+> >   int pid =3D fork();
+> >   if (pid =3D=3D 0) {
+> >     int sock =3D socket(0x2, 0x1, 0x84);
+> >     do_work(sock);
+> >   }
+> >   sleep(10);
+> >   return 0;
+> > }
+>
