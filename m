@@ -2,76 +2,463 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9341FC04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 12:28:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E4B6C5CFFE
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 12:30:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4B03320880
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 12:28:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544444915;
-	bh=8tk9pHwzn95AcdTJyc3CiZuqq1yMWGGIW/gk40epphQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=m3qpdPQQbl5usqWpQ60VdHiCu5UMk+/JRytvPl876K4wwlw60GmMAQ8sguC8c+WNN
-	 3NW/Cw38Va4OPa7awL7mn3p32ifKGgPJCeed+yKO5KAHClDJpK6phhuui/YoCJpiGd
-	 K8j4k9apgAxkuxW6/QCDhY/stuUzmb0mVlF8O5wQ=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B03320880
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 409B82086D
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 12:30:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="e98I9XA1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 409B82086D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727639AbeLJM2e (ORCPT
+        id S1727698AbeLJMam (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 07:28:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59236 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726324AbeLJM2e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 07:28:34 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 06F4020870;
-        Mon, 10 Dec 2018 12:28:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544444913;
-        bh=8tk9pHwzn95AcdTJyc3CiZuqq1yMWGGIW/gk40epphQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=d1boYTwU1i/yVZZa8UyAKHfSPn2itCgCExSpsz+3KJ5xxQRAJtL4LY3qKdjMRcA3A
-         Y9IuT2BWnpvZTJ+tMs5fQBEDNI3wpzl6pZBo7wrtBCpB0hqRr6KZdRZLRqOtYvDQGc
-         Vc7AWIIdCwJN58/CUvO6tl5wrDjrXvVUTNqUeXDA=
-Date:   Mon, 10 Dec 2018 13:28:31 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc:     Andreas Noever <andreas.noever@gmail.com>,
-        Michael Jamet <michael.jamet@intel.com>,
-        Yehezkel Bernat <YehezkelShB@gmail.com>,
-        Lukas Wunner <lukas@wunner.de>, linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL] Thunderbolt changes for v4.21
-Message-ID: <20181210122831.GB22995@kroah.com>
-References: <20181210102303.GC2469@lahna.fi.intel.com>
+        Mon, 10 Dec 2018 07:30:42 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:44993 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727668AbeLJMal (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Dec 2018 07:30:41 -0500
+Received: by mail-pf1-f193.google.com with SMTP id u6so5320813pfh.11
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Dec 2018 04:30:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=2mTxvwdPzW/QSR5anmHnH3gdpUyjSH5jfzqhQArPa9M=;
+        b=e98I9XA14w6E3paKGX9oxD3hVw3v1D52wozplVgBaLOYhgvKNyA5AaJh0EqZ6RYgz+
+         O5qwMID6fZV78AfgOrmaxdmWY32VYaPYJe5cA/dBAJB5PkdJLrnXXPiLEyfW/ixHaXOI
+         1GCgyStvD0wj0Hjd7prtCZlg6+xDumSEIpKbQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=2mTxvwdPzW/QSR5anmHnH3gdpUyjSH5jfzqhQArPa9M=;
+        b=b7PSP1Id9lKbXO3Y5YIHjTewiM2QlpldkerG8PLoaWgyo9twe+xMB0P7mTklgkol4F
+         4AZJcayBcu6g8/ifSken1ot18QKzZoV8HutfAP0mb0855GCUgxw/Y1/kInViMoGtLrTb
+         9+0KZEU9iJh0HyKAR6RalIOp3yPUvoizx+8nJ1QVbpVTDiWnpZpLaMHr17Ysj9kBMtWg
+         lec+/XsXW7Na/+UVet3hGl0xJ/WwQkD6WZ6Oz9yOJLDWJXez3gGcnmuDuomBR82uecae
+         0YTui5hr97bvPCUKirhTSyvhDwGOnNySN1e3HQdbrItUq4jAyictEcKtOzN6WgPJ9Z3I
+         3nJA==
+X-Gm-Message-State: AA+aEWYy5syfbnkwFPIwzXA6vsgp7DFUG4YvbLauqT+f2n5Azgw2I3Ps
+        Ix0UHTgM+qPIpybTASFw+VDBIHf6UejFPtXO2KJfMA==
+X-Google-Smtp-Source: AFSGD/UsWTvx6HxX9/l4UJLWCXKd+1eO32IiHQlI/rd3s6NBU5shXZEe+70eSMmFhVwrB7yxes7r1MY0lz8UsTcGe2w=
+X-Received: by 2002:a62:44d8:: with SMTP id m85mr12366360pfi.164.1544445038888;
+ Mon, 10 Dec 2018 04:30:38 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181210102303.GC2469@lahna.fi.intel.com>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+References: <20181210073240.32278-1-weiyi.lu@mediatek.com> <20181210073240.32278-4-weiyi.lu@mediatek.com>
+In-Reply-To: <20181210073240.32278-4-weiyi.lu@mediatek.com>
+From:   Nicolas Boichat <drinkcat@chromium.org>
+Date:   Mon, 10 Dec 2018 20:30:26 +0800
+Message-ID: <CANMq1KA=VBQNuda8RC7Ote1L8gJgPZxsO_dG47RY3sfpAv2SQg@mail.gmail.com>
+Subject: Re: [PATCH v3 02/12] clk: mediatek: add new clkmux register API
+To:     Weiyi Lu <weiyi.lu@mediatek.com>
+Cc:     Matthias Brugger <matthias.bgg@gmail.com>, sboyd@codeaurora.org,
+        Rob Herring <robh@kernel.org>, jamesjj.liao@mediatek.com,
+        Fan Chen <fan.chen@mediatek.com>,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
+        srv_heupstream@mediatek.com, stable@vger.kernel.org,
+        owen.chen@mediatek.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 10, 2018 at 12:23:03PM +0200, Mika Westerberg wrote:
-> Hi Greg,
-> 
-> This includes automatic enabling of IOMMU based DMA protection from
-> possibly malicious devices connected through Thunderbolt ports. In
-> addition we make sure PCIe ATS (Address Translation Service) is not
-> enabled for such devices to prevent them from passing IOMMU protection.
+On Mon, Dec 10, 2018 at 3:33 PM Weiyi Lu <weiyi.lu@mediatek.com> wrote:
+>
+> From: Owen Chen <owen.chen@mediatek.com>
+>
+> On both MT8183 & MT6765, there add "set/clr" register for
+> each clkmux setting, and one update register to trigger value change.
+> It is designed to prevent read-modify-write racing issue.
+> The sw design need to add a new API to handle this hw change with
+> a new mtk_clk_mux/mtk_mux struct in new file "clk-mux.c", "clk-mux.h".
+>
+> Signed-off-by: Owen Chen <owen.chen@mediatek.com>
+> Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
+> ---
+>  drivers/clk/mediatek/Makefile  |   3 +-
+>  drivers/clk/mediatek/clk-mux.c | 229 +++++++++++++++++++++++++++++++++
+>  drivers/clk/mediatek/clk-mux.h | 101 +++++++++++++++
+>  3 files changed, 332 insertions(+), 1 deletion(-)
+>  create mode 100644 drivers/clk/mediatek/clk-mux.c
+>  create mode 100644 drivers/clk/mediatek/clk-mux.h
+>
+> diff --git a/drivers/clk/mediatek/Makefile b/drivers/clk/mediatek/Makefile
+> index 844b55d2770d..00e4d405231e 100644
+> --- a/drivers/clk/mediatek/Makefile
+> +++ b/drivers/clk/mediatek/Makefile
+> @@ -1,5 +1,6 @@
+>  # SPDX-License-Identifier: GPL-2.0
+> -obj-$(CONFIG_COMMON_CLK_MEDIATEK) += clk-mtk.o clk-pll.o clk-gate.o clk-apmixed.o clk-cpumux.o reset.o
+> +obj-$(CONFIG_COMMON_CLK_MEDIATEK) += clk-mtk.o clk-pll.o clk-gate.o clk-apmixed.o clk-cpumux.o reset.o clk-mux.o
+> +
+>  obj-$(CONFIG_COMMON_CLK_MT6797) += clk-mt6797.o
+>  obj-$(CONFIG_COMMON_CLK_MT6797_IMGSYS) += clk-mt6797-img.o
+>  obj-$(CONFIG_COMMON_CLK_MT6797_MMSYS) += clk-mt6797-mm.o
+> diff --git a/drivers/clk/mediatek/clk-mux.c b/drivers/clk/mediatek/clk-mux.c
+> new file mode 100644
+> index 000000000000..efbbb35eb185
+> --- /dev/null
+> +++ b/drivers/clk/mediatek/clk-mux.c
+> @@ -0,0 +1,229 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (c) 2018 MediaTek Inc.
+> + * Author: Owen Chen <owen.chen@mediatek.com>
+> + */
+> +
+> +#include <linux/of.h>
+> +#include <linux/of_address.h>
+> +#include <linux/slab.h>
+> +#include <linux/mfd/syscon.h>
+> +
+> +#include "clk-mtk.h"
+> +#include "clk-mux.h"
+> +
+> +static inline struct mtk_clk_mux *to_mtk_clk_mux(struct clk_hw *hw)
+> +{
+> +       return container_of(hw, struct mtk_clk_mux, hw);
+> +}
+> +
+> +static int mtk_clk_mux_enable(struct clk_hw *hw)
+> +{
+> +       struct mtk_clk_mux *mux = to_mtk_clk_mux(hw);
+> +       u32 mask = BIT(mux->gate_shift);
+> +
+> +       return regmap_update_bits(mux->regmap, mux->mux_ofs, mask, ~mask);
+> +}
+> +
+> +static void mtk_clk_mux_disable(struct clk_hw *hw)
+> +{
+> +       struct mtk_clk_mux *mux = to_mtk_clk_mux(hw);
+> +       u32 mask = BIT(mux->gate_shift);
+> +
+> +       regmap_update_bits(mux->regmap, mux->mux_ofs, mask, mask);
+> +}
+> +
+> +static int mtk_clk_mux_enable_setclr(struct clk_hw *hw)
+> +{
+> +       struct mtk_clk_mux *mux = to_mtk_clk_mux(hw);
+> +
+> +       return regmap_write(mux->regmap, mux->mux_clr_ofs,
+> +                       BIT(mux->gate_shift));
+> +}
+> +
+> +static void mtk_clk_mux_disable_setclr(struct clk_hw *hw)
+> +{
+> +       struct mtk_clk_mux *mux = to_mtk_clk_mux(hw);
+> +
+> +       regmap_write(mux->regmap, mux->mux_set_ofs, BIT(mux->gate_shift));
+> +}
+> +
+> +static int mtk_clk_mux_is_enabled(struct clk_hw *hw)
+> +{
+> +       struct mtk_clk_mux *mux = to_mtk_clk_mux(hw);
+> +       u32 val;
+> +
+> +       regmap_read(mux->regmap, mux->mux_ofs, &val);
+> +
+> +       return (val & BIT(mux->gate_shift)) == 0;
+> +}
+> +
+> +static u8 mtk_clk_mux_get_parent(struct clk_hw *hw)
+> +{
+> +       struct mtk_clk_mux *mux = to_mtk_clk_mux(hw);
+> +       u32 mask = GENMASK(mux->mux_width - 1, 0);
+> +       u32 val;
+> +
+> +       regmap_read(mux->regmap, mux->mux_ofs, &val);
+> +       val = (val >> mux->mux_shift) & mask;
+> +
+> +       return val;
+> +}
+> +
+> +static int mtk_clk_mux_set_parent_lock(struct clk_hw *hw, u8 index)
+> +{
+> +       struct mtk_clk_mux *mux = to_mtk_clk_mux(hw);
+> +       u32 mask = GENMASK(mux->mux_width - 1, 0);
+> +       unsigned long flags;
+> +
+> +       if (mux->lock)
+> +               spin_lock_irqsave(mux->lock, flags);
+> +       else
+> +               __acquire(mux->lock);
+> +
+> +       regmap_update_bits(mux->regmap, mux->mux_ofs, mask,
+> +               index << mux->mux_shift);
+> +
+> +       if (mux->lock)
+> +               spin_unlock_irqrestore(mux->lock, flags);
+> +       else
+> +               __release(mux->lock);
+> +
+> +       return 0;
+> +}
+> +
+> +static int mtk_clk_mux_set_parent_setclr_lock(struct clk_hw *hw, u8 index)
+> +{
+> +       struct mtk_clk_mux *mux = to_mtk_clk_mux(hw);
+> +       u32 mask = GENMASK(mux->mux_width - 1, 0);
+> +       u32 val, orig;
+> +       unsigned long flags;
+> +
+> +       if (mux->lock)
+> +               spin_lock_irqsave(mux->lock, flags);
+> +       else
+> +               __acquire(mux->lock);
+> +
+> +       regmap_read(mux->regmap, mux->mux_ofs, &orig);
+> +       val = (orig & ~(mask << mux->mux_shift)) | (index << mux->mux_shift);
+> +
+> +       if (val != orig) {
+> +               regmap_write(mux->regmap, mux->mux_clr_ofs,
+> +                               mask << mux->mux_shift);
+> +               regmap_write(mux->regmap, mux->mux_set_ofs,
+> +                               index << mux->mux_shift);
+> +
+> +               if (mux->upd_shift >= 0)
+> +                       regmap_write(mux->regmap, mux->upd_ofs,
+> +                                       BIT(mux->upd_shift));
+> +       }
+> +
+> +       if (mux->lock)
+> +               spin_unlock_irqrestore(mux->lock, flags);
+> +       else
+> +               __release(mux->lock);
+> +
+> +       return 0;
+> +}
+> +
+> +const struct clk_ops mtk_mux_ops = {
+> +       .get_parent = mtk_clk_mux_get_parent,
+> +       .set_parent = mtk_clk_mux_set_parent_lock,
+> +};
+> +
+> +const struct clk_ops mtk_mux_clr_set_upd_ops = {
+> +       .get_parent = mtk_clk_mux_get_parent,
+> +       .set_parent = mtk_clk_mux_set_parent_setclr_lock,
+> +};
+> +
+> +const struct clk_ops mtk_mux_gate_ops = {
+> +       .enable = mtk_clk_mux_enable,
+> +       .disable = mtk_clk_mux_disable,
+> +       .is_enabled = mtk_clk_mux_is_enabled,
+> +       .get_parent = mtk_clk_mux_get_parent,
+> +       .set_parent = mtk_clk_mux_set_parent_lock,
+> +};
+> +
+> +const struct clk_ops mtk_mux_gate_clr_set_upd_ops = {
+> +       .enable = mtk_clk_mux_enable_setclr,
+> +       .disable = mtk_clk_mux_disable_setclr,
+> +       .is_enabled = mtk_clk_mux_is_enabled,
+> +       .get_parent = mtk_clk_mux_get_parent,
+> +       .set_parent = mtk_clk_mux_set_parent_setclr_lock,
+> +};
+> +
+> +struct clk *mtk_clk_register_mux(const struct mtk_mux *mux,
+> +                                struct regmap *regmap,
+> +                                spinlock_t *lock)
+> +{
+> +       struct mtk_clk_mux *mtk_mux;
 
-Oh, nice work with the "untrusted" PCI device thing, that's been a long
-time in coming.
+I'd call this variable clk_mux.
 
-Now pulled and pushed out, thanks.
+> +       struct clk_init_data init;
+> +       struct clk *clk;
+> +
+> +       mtk_mux = kzalloc(sizeof(*mtk_mux), GFP_KERNEL);
+> +       if (!mtk_mux)
+> +               return ERR_PTR(-ENOMEM);
+> +
+> +       init.name = mux->name;
+> +       init.flags = mux->flags | CLK_SET_RATE_PARENT;
+> +       init.parent_names = mux->parent_names;
+> +       init.num_parents = mux->num_parents;
+> +       init.ops = mux->ops;
+> +
+> +       mtk_mux->regmap = regmap;
+> +       mtk_mux->name = mux->name;
+> +       mtk_mux->mux_ofs = mux->mux_ofs;
+> +       mtk_mux->mux_set_ofs = mux->set_ofs;
+> +       mtk_mux->mux_clr_ofs = mux->clr_ofs;
+> +       mtk_mux->upd_ofs = mux->upd_ofs;
+> +       mtk_mux->mux_shift = mux->mux_shift;
+> +       mtk_mux->mux_width = mux->mux_width;
+> +       mtk_mux->gate_shift = mux->gate_shift;
+> +       mtk_mux->upd_shift = mux->upd_shift;
 
-greg k-h
+These copies seem a bit wasteful. If the lifetime of the objects are
+the same, can you just keep a pointer to struct mtk_mux in struct
+mtk_clk_mux?
+
+If not, maybe move all the settings to a "params" structure or
+something like that, so we can do a simpler memcpy?
+
+> +
+> +       mtk_mux->lock = lock;
+> +       mtk_mux->hw.init = &init;
+> +
+> +       clk = clk_register(NULL, &mtk_mux->hw);
+> +       if (IS_ERR(clk)) {
+> +               kfree(mtk_mux);
+> +               return clk;
+> +       }
+> +
+> +       return clk;
+> +}
+> +
+> +int mtk_clk_register_muxes(const struct mtk_mux *muxes,
+> +                          int num, struct device_node *node,
+> +                          spinlock_t *lock,
+> +                          struct clk_onecell_data *clk_data)
+> +{
+> +       struct regmap *regmap;
+> +       struct clk *clk;
+> +       int i;
+> +
+> +       regmap = syscon_node_to_regmap(node);
+> +       if (IS_ERR(regmap)) {
+> +               pr_err("Cannot find regmap for %pOF: %ld\n", node,
+> +                      PTR_ERR(regmap));
+> +               return PTR_ERR(regmap);
+> +       }
+> +
+> +       for (i = 0; i < num; i++) {
+> +               const struct mtk_mux *mux = &muxes[i];
+> +
+> +               if (IS_ERR_OR_NULL(clk_data->clks[mux->id])) {
+> +                       clk = mtk_clk_register_mux(mux, regmap, lock);
+> +
+> +                       if (IS_ERR(clk)) {
+> +                               pr_err("Failed to register clk %s: %ld\n",
+> +                                      mux->name, PTR_ERR(clk));
+> +                               continue;
+> +                       }
+> +
+> +                       clk_data->clks[mux->id] = clk;
+> +               }
+> +       }
+> +
+> +       return 0;
+> +}
+> diff --git a/drivers/clk/mediatek/clk-mux.h b/drivers/clk/mediatek/clk-mux.h
+> new file mode 100644
+> index 000000000000..830a6117e670
+> --- /dev/null
+> +++ b/drivers/clk/mediatek/clk-mux.h
+> @@ -0,0 +1,101 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/*
+> + * Copyright (c) 2018 MediaTek Inc.
+> + * Author: Owen Chen <owen.chen@mediatek.com>
+> + */
+> +
+> +#ifndef __DRV_CLK_MTK_MUX_H
+> +#define __DRV_CLK_MTK_MUX_H
+> +
+> +#include <linux/clk-provider.h>
+> +
+> +struct mtk_clk_mux {
+> +       struct clk_hw hw;
+> +       struct regmap *regmap;
+> +
+> +       const char *name;
+> +
+> +       u32 mux_set_ofs;
+> +       u32 mux_clr_ofs;
+> +       u32 mux_ofs;
+> +       u32 upd_ofs;
+> +
+> +       u8 mux_shift;
+> +       u8 mux_width;
+> +       u8 gate_shift;
+> +       s8 upd_shift;
+> +
+> +       spinlock_t *lock;
+> +};
+> +
+> +struct mtk_mux {
+> +       int id;
+> +       const char *name;
+> +       const char * const *parent_names;
+> +       unsigned int flags;
+> +
+> +       u32 mux_ofs;
+> +       u32 set_ofs;
+> +       u32 clr_ofs;
+> +       u32 upd_ofs;
+> +
+> +       u8 mux_shift;
+> +       u8 mux_width;
+> +       u8 gate_shift;
+> +       s8 upd_shift;
+> +
+> +       const struct clk_ops *ops;
+> +
+> +       signed char num_parents;
+> +};
+> +
+> +extern const struct clk_ops mtk_mux_ops;
+> +extern const struct clk_ops mtk_mux_clr_set_upd_ops;
+> +extern const struct clk_ops mtk_mux_gate_ops;
+> +extern const struct clk_ops mtk_mux_gate_clr_set_upd_ops;
+> +
+> +#define GATE_CLR_SET_UPD_FLAGS(_id, _name, _parents, _mux_ofs,         \
+> +                       _mux_set_ofs, _mux_clr_ofs, _shift, _width,     \
+> +                       _gate, _upd_ofs, _upd, _flags, _ops) {          \
+> +               .id = _id,                                              \
+> +               .name = _name,                                          \
+> +               .mux_ofs = _mux_ofs,                                    \
+> +               .set_ofs = _mux_set_ofs,                                \
+> +               .clr_ofs = _mux_clr_ofs,                                \
+> +               .upd_ofs = _upd_ofs,                                    \
+> +               .mux_shift = _shift,                                    \
+> +               .mux_width = _width,                                    \
+> +               .gate_shift = _gate,                                    \
+> +               .upd_shift = _upd,                                      \
+> +               .parent_names = _parents,                               \
+> +               .num_parents = ARRAY_SIZE(_parents),                    \
+> +               .flags = _flags,                                        \
+> +               .ops = &_ops,                                           \
+> +       }
+> +
+> +#define MUX_GATE_CLR_SET_UPD_FLAGS(_id, _name, _parents, _mux_ofs,     \
+> +                       _mux_set_ofs, _mux_clr_ofs, _shift, _width,     \
+> +                       _gate, _upd_ofs, _upd, _flags)                  \
+> +               GATE_CLR_SET_UPD_FLAGS(_id, _name, _parents, _mux_ofs,  \
+> +                       _mux_set_ofs, _mux_clr_ofs, _shift, _width,     \
+> +                       _gate, _upd_ofs, _upd, _flags,                  \
+> +                       mtk_mux_gate_clr_set_upd_ops)
+> +
+> +#define MUX_GATE_CLR_SET_UPD(_id, _name, _parents, _mux_ofs,           \
+> +                       _mux_set_ofs, _mux_clr_ofs, _shift, _width,     \
+> +                       _gate, _upd_ofs, _upd)                          \
+> +               MUX_GATE_CLR_SET_UPD_FLAGS(_id, _name, _parents,        \
+> +                       _mux_ofs, _mux_set_ofs, _mux_clr_ofs, _shift,   \
+> +                       _width, _gate, _upd_ofs, _upd,                  \
+> +                       CLK_SET_RATE_PARENT)
+> +
+> +struct clk *mtk_clk_register_mux(const struct mtk_mux *mux,
+> +                                struct regmap *regmap,
+> +                                spinlock_t *lock);
+> +
+> +int mtk_clk_register_muxes(const struct mtk_mux *muxes,
+> +                          int num, struct device_node *node,
+> +                          spinlock_t *lock,
+> +                          struct clk_onecell_data *clk_data);
+> +
+> +#endif /* __DRV_CLK_MTK_MUX_H */
+> --
+> 2.18.0
+>
