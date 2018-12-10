@@ -2,113 +2,157 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 050D2C04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 22:18:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39A82C04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 22:18:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B059320821
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 22:18:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544480310;
-	bh=3mauFr4t4ujcCEY2Kq5nfGUi7cD3ZKlkfdF3tz4bBRU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=j6hYf3763AisqJ4Qqxvj6omyRpER4m03fYuh+RFXWq0bIQL+zgF0NCQJMamz9lbz4
-	 yymNgsm8T2VXG2j95ep8yOpLX7xMyQmtV/ao0irBysfxKxs5ayFPkRUFkrz/nzXcCe
-	 yLa9ld4vWVbXUjo3Q3kpMMtUXHeT+CiZ/CU7HdsY=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B059320821
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id F0AF120821
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 22:18:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F0AF120821
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728776AbeLJWS3 (ORCPT
+        id S1729034AbeLJWSe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 17:18:29 -0500
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:35717 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726562AbeLJWS3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 17:18:29 -0500
-Received: by mail-oi1-f193.google.com with SMTP id v6so10410822oif.2;
-        Mon, 10 Dec 2018 14:18:28 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ZVmaNxU28RZRbtYzOac5EiHZYnbg7QMeLMNiI/ZFWhU=;
-        b=k7+tcOe7DYcHqCn/X06JISw+AIc12b7LYOt1gtATK2Cr968TXkGhyRC3kuBpNS0GUK
-         cgdPjk3qhdxFI3daWh9L/8s4AAMlmRJgppVeg5Hn9yXyTxn4qF5hXkN2FCoBHiJGvR+Y
-         FHrZO8zdEOPttwnMdaLV7XAQ0+OY7BjBT0ns5mKGVAWBTgBAN2l3SffFnXQyNe10VpyQ
-         ZI60TmqTfJ5YWZqBtPNLx0jDagFVfwlYgqdf/RmUKrUdZ0/DwBJ5MYnGOLK7PX8uepyq
-         x75qLgMSsTpBRhg0YWxJx7nHrxQzmKnL+WIDFE03ZVCaONKAxm68UWYwh/7xT1SDU6MN
-         LLrQ==
-X-Gm-Message-State: AA+aEWYEnP+ISooSpgvc0UGivnNB9N+LH4HYNbRgDMAEYuj7PYpxIsjh
-        U1b+u17y0vNeJS1VKLA1wg==
-X-Google-Smtp-Source: AFSGD/UlgDCJ1x2oIz2waE1mkWw0r1GD/2yoS1FQ2EhKNF3Naxg8stJ+LTjZKvREb+zqWxDIx/Tv7Q==
-X-Received: by 2002:aca:3a55:: with SMTP id h82mr8911536oia.86.1544480307362;
-        Mon, 10 Dec 2018 14:18:27 -0800 (PST)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id r17sm5887977otn.0.2018.12.10.14.18.26
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 10 Dec 2018 14:18:26 -0800 (PST)
-Date:   Mon, 10 Dec 2018 16:18:26 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Abel Vesa <abel.vesa@nxp.com>
-Cc:     Lucas Stach <l.stach@pengutronix.de>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Aisheng Dong <aisheng.dong@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        "patchwork-lst@pengutronix.de" <patchwork-lst@pengutronix.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Abel Vesa <abelvesa@linux.com>, Abel Vesa <abel.vesa@nxp.com>
-Subject: Re: [PATCH v5 2/6] arm64: add basic DTS for i.MX8MQ
-Message-ID: <20181210221826.GA21311@bogus>
-References: <1544365552-30270-1-git-send-email-abel.vesa@nxp.com>
- <1544365552-30270-3-git-send-email-abel.vesa@nxp.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1544365552-30270-3-git-send-email-abel.vesa@nxp.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Mon, 10 Dec 2018 17:18:34 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:47876 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726562AbeLJWSd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Dec 2018 17:18:33 -0500
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 28D5B308212D;
+        Mon, 10 Dec 2018 22:18:32 +0000 (UTC)
+Received: from madcap2.tricolour.ca (ovpn-112-24.phx2.redhat.com [10.3.112.24])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id A0EA660BF1;
+        Mon, 10 Dec 2018 22:18:25 +0000 (UTC)
+From:   Richard Guy Briggs <rgb@redhat.com>
+To:     LKML <linux-kernel@vger.kernel.org>,
+        Linux-Audit Mailing List <linux-audit@redhat.com>
+Cc:     Eric Paris <eparis@redhat.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Steve Grubb <sgrubb@redhat.com>,
+        Paul Moore <paul@paul-moore.com>,
+        Richard Guy Briggs <rgb@redhat.com>
+Subject: [PATCH ghak59 V3 0/4] audit: config_change normalizations and event record gathering
+Date:   Mon, 10 Dec 2018 17:17:47 -0500
+Message-Id: <cover.1544477629.git.rgb@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Mon, 10 Dec 2018 22:18:32 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 9 Dec 2018 14:26:07 +0000, Abel Vesa wrote:
-> From: Lucas Stach <l.stach@pengutronix.de>
-> 
-> This adds the basic DTS for the i.MX8MQ.
-> For now only the following peripherals are supported:
-> - IOMUXC (pin controller)
-> - CCM (clock controller)
-> - GPIO
-> - UART
-> - uSDHC (SD/eMMC controller)
-> - FEC (ethernet controller)
-> - i2c
-> 
-> This is enough to get a very basic board support up and running.
-> 
-> One known limitation is that the driver for the GPC interrupt
-> controller is still missing, rendering the CPU sleep states unusable
-> as there is nothing waking them up anymore.
-> 
-> Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
-> Reviewed-by: Dong Aisheng <Aisheng.dong@nxp.com>
-> ---
->  Documentation/devicetree/bindings/arm/fsl.txt  |   4 +
->  arch/arm64/boot/dts/freescale/imx8mq-pinfunc.h | 623 +++++++++++++++++++++++++
->  arch/arm64/boot/dts/freescale/imx8mq.dtsi      | 392 ++++++++++++++++
->  3 files changed, 1019 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/freescale/imx8mq-pinfunc.h
->  create mode 100644 arch/arm64/boot/dts/freescale/imx8mq.dtsi
-> 
+Make a number of changes to normalize CONFIG_CHANGE records by adding
+missing op= fields, providing more information in existing op fields
+(optional last patch) and connecting all records to existing audit
+events.  The user record needs special-casing since its content isn't
+directly related to the call that logs it.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Since tree purge records are processed after the EOE record is produced,
+the order of operation of the EOE record and the purge will have to be
+reversed so that the purge records can be included in the event.
+
+The last patch is included for completeness understanding it may be more
+information than necessary.
+
+For reference, here are the calling methods and function tree for all
+CONFIG_CHANGE events with fields:
+- audit_log_config_change()
+	- add "op=set" to fields: "[op] <param-name> old auid ses subj res"
+        - AUDIT_SET:AUDIT_STATUS_PID
+        - AUDIT_SET:AUDIT_STATUS_LOST
+        - audit_do_config_change()
+                - AUDIT_SET:AUDIT_STATUS_FAILURE
+                - AUDIT_SET:AUDIT_STATUS_ENABLED
+                - AUDIT_SET:AUDIT_STATUS_RATE_LIMIT
+                - AUDIT_SET:AUDIT_STATUS_BACKLOG_LIMIT
+                - AUDIT_SET:AUDIT_STATUS_BACKLOG_WAIT_TIME
+- audit_log_rule_change()
+	- fields: "auid ses subj op key list res"
+        - AUDIT_ADD_RULE -F dir=...
+        - AUDIT_DEL_RULE -F dir=...
+- audit_log_common_recv_msg()
+	- fields: "pid uid auid ses subj ..."
+        - AUDIT_*USER* events (not CONFIG_CHANGE like all the rest)
+        - AUDIT_LOCKED add "op={add,remove}_rule" to "[op] audit_enabled res"
+        - AUDIT_TRIM "op=trim res"
+        - AUDIT_MAKE_EQUIV: "op=make_equiv old new res"
+        - AUDIT_TTY_SET: "op=tty_set old-enabled new-enabled old-log_passwd new-log_passwd res"
+- audit_mark_log_rule_change()
+	- add ":mark" to op in fields: "uid ses op=autoremove_rule[] path key list res"
+        - audit_autoremove_mark_rule()
+                - audit_mark_handle_event()
+                        - audit_mark_fsnotify_ops.handle_event
+- audit_tree_log_remove_rule() called from kill_rules()
+	- add to op ":tree:%s" to fields: "op=remove_rule[] dir key list res"
+        - from trim_marked()
+                - AUDIT_TRIM: audit_trim_trees() "trim"
+                - audit_add_tree_rule() iterate_mounts err "add"
+                        - audit_add_rule()
+                                - audit_rule_change()
+                                        - AUDIT_ADD_RULE -F dir=...
+                - AUDIT_MAKE_EQUIV: audit_tag_tree() iterate_mounts err "equiv"
+        - from audit_kill_trees()
+                - __audit_free() "free"
+                        - do_exit()
+                        - copy_process() err
+                - __audit_syscall_exit() "exit"
+        - from evict_chunk() "evict"
+                - audit_tree_freeing_mark()
+                        - audit_tree_ops.freeing_mark
+- audit_watch_log_rule_change()
+	add to op ":watch:%s" to fields "auid ses op={updated,remove}_rule[] path key list res"
+        - audit_update_watch() "updated_rules:watch:inval" : "updated_rules:watch:set"
+                - audit_watch_handle_event() FS_CREATE|FS_MOVED_TO, FS_DELETE|FS_MOVED_FROM
+                        - audit_watch_fsnotify_ops.handle_event
+        - audit_remove_parent_watches() "remove_rule:watch:parent"
+                - audit_watch_handle_event() FS_DELETE_SELF|FS_UNMOUNT|FS_MOVE_SELF
+                        - audit_watch_fsnotify_ops.handle_event
+- audit_seccomp_actions_logged()
+	- fields: "op actions old-actions res"
+
+
+See: https://github.com/linux-audit/audit-kernel/issues/50
+See: https://github.com/linux-audit/audit-kernel/issues/59
+
+Sources of AUDIT_CONFIG_CHANGE records and their current and proposed
+fields are listed here
+	https://github.com/linux-audit/audit-kernel/issues/59#issuecomment-445055154
+
+Changelog:
+v3:
+- un-clever %s_rule to not break up op values
+- create audit_log_user_recv_msg() and squash into record connection
+- squash kill_trees context handling with kill-trees before EOE
+- rebase on audit/next (v4.20-rc1) with 2a1fe215e730 ("audit: use current whenever possible")
+- remove parens in extended format
+
+v2:
+- re-order audit_log_exit() and audit_kill_trees()
+- drop EOE reordering patch
+- rebase on 4.18-rc1 (audit/next)
+
+Richard Guy Briggs (4):
+  audit: give a clue what CONFIG_CHANGE op was involved
+  audit: add syscall information to CONFIG_CHANGE records
+  audit: hand taken context to audit_kill_trees for syscall logging
+  audit: extend config_change mark/watch/tree rule changes
+
+ kernel/audit.c          | 33 +++++++++++++++++++++++----------
+ kernel/audit.h          |  4 ++--
+ kernel/audit_fsnotify.c |  4 ++--
+ kernel/audit_tree.c     | 28 +++++++++++++++-------------
+ kernel/audit_watch.c    |  8 +++++---
+ kernel/auditfilter.c    |  2 +-
+ kernel/auditsc.c        | 12 ++++++------
+ 7 files changed, 54 insertions(+), 37 deletions(-)
+
+-- 
+1.8.3.1
+
