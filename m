@@ -2,98 +2,119 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4663BC04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 03:55:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D966C04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 04:00:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 09F932081F
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 03:55:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CA0922081F
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 04:00:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="JDX6hzn6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 09F932081F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Bm1148zc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA0922081F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726413AbeLJDzz (ORCPT
+        id S1726457AbeLJEA4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 22:55:55 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:38765 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726213AbeLJDzz (ORCPT
+        Sun, 9 Dec 2018 23:00:56 -0500
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:34927 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726098AbeLJEA4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Dec 2018 22:55:55 -0500
-Received: by mail-pg1-f194.google.com with SMTP id g189so4330663pgc.5
-        for <linux-kernel@vger.kernel.org>; Sun, 09 Dec 2018 19:55:55 -0800 (PST)
+        Sun, 9 Dec 2018 23:00:56 -0500
+Received: by mail-ed1-f68.google.com with SMTP id x30so8309192edx.2
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Dec 2018 20:00:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=5YURM+DjVIRK1vcQsaiXJgBwbGiap3d/cgnS77iIRYU=;
-        b=JDX6hzn61xQWpkCJQ5I1Z8djBLDduR6YmScea/C5siJK1qP7nRBBG3BogTtvx15uXb
-         nuDOXLzNSUoAbm1dHhuhmd/p2sxBgYQ8qlYNpfa17Fj9x4gOAOnTXmTyxMHxcJ2jjBkq
-         US0Qidygz9+eUSuH6QndRBRku8ywnuMvu6e7oUQOIFzJzKcX1DFB5j/q1TqEM4zRrQR3
-         Y/fqHxUJB8P/jAqrCypnnVk51RMYBs1ZxpzVxfRme2ul7Pn/K6oGvAlx6mjOflx4T35Z
-         Yq7eiLjEqu+htismtgn41pxNqD6z6Ehz7y+UrH+4xj4ZQ/ChS0+gNlDrb0Vp9kfsjxzL
-         Jj6Q==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Tm6Lz0Gq3rNsyHZXFWF3JTzoIllqElfNczDvThKKAtg=;
+        b=Bm1148zcQRQemMCL2MhKQ4rIlq8GE/acWh19T9NgFWt+kBgb2cnM6CCxnNrwiCaPvQ
+         uOaLOYk8K1NNy5gSXRiKm9bRMYzGL76QVkTKFU/qYtnhQeFnF3/XYFPJ3+MtACQL5Cj2
+         dLpj5a2RWq0BO33z93hPl5qJnFuwINXwEbl2SOTb95wgWn5wiIAWEAykPTKcbR8diz2p
+         0QAXkOsXEN0F5OSK4JteZPrz8mfhfCLHcTBuVcIMo8xwH95e2ZmAS7b1r9Pt1z0fw0yM
+         3JKxFOOMqK43MD0JVaQPW47AnjmZx5YRq2AObm4JXmiYxxQvTST/zqv/hlxi0oFn5GPo
+         9Viw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=5YURM+DjVIRK1vcQsaiXJgBwbGiap3d/cgnS77iIRYU=;
-        b=as/pgfx5YGWVJU8GOhoGIRAtOzBEAXWaV1i7L5j6LUSzMzzS2Obo596+zekhCIMkoC
-         TPbtwe7VhYay7q7IdNtGS6qRIFQeo3WO0cbq/ScGp4TdYz9s10wAGabPAVUTkKA5eepQ
-         yRStOMt3jjppuD3UhX92I+Acywgn/bHhPDOOBxvJj6m6B3zUrQRMGM54aOp8AypZqNrr
-         tDCbKMoGNbJkvVKocThJUmVVOf3tsDrHounXxY27jb0V5R0fr6ohcutT1lACLB0GQKGq
-         1qJ0ZJ8Yr9vsKwVD61ZWES8Mdvi7dmlFzMynjvNv5jvhrsz3Z3pflyOYJ+dLQ0f72BTM
-         Xu1g==
-X-Gm-Message-State: AA+aEWblTJEGRc9vYAOXmBWCfQEeo18da10kNrJnO47x3awZB3/+tNWa
-        XT3HnLoIGEbUeiAZeCATCpE7SvvYVrE=
-X-Google-Smtp-Source: AFSGD/WsFSpETGBCggQAvtwTRFR02DDeF9u3/GXMwQbWsTTRiSDt7VyPh4jWAJc5zbDydi9Xn9C4kA==
-X-Received: by 2002:a65:610d:: with SMTP id z13mr9666972pgu.427.1544414154257;
-        Sun, 09 Dec 2018 19:55:54 -0800 (PST)
-Received: from [192.168.1.121] (66.29.188.166.static.utbb.net. [66.29.188.166])
-        by smtp.gmail.com with ESMTPSA id n68sm13837082pfb.62.2018.12.09.19.55.52
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 09 Dec 2018 19:55:53 -0800 (PST)
-Subject: Re: linux-next: manual merge of the device-mapper tree with the block
- tree
-To:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Alasdair G Kergon <agk@redhat.com>,
-        Mike Snitzer <snitzer@redhat.com>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20181210144322.11a94d25@canb.auug.org.au>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <1993882e-8af3-9e64-da82-195d0089d5e3@kernel.dk>
-Date:   Sun, 9 Dec 2018 20:55:51 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Tm6Lz0Gq3rNsyHZXFWF3JTzoIllqElfNczDvThKKAtg=;
+        b=pm6JF2st85WcsdHegaKVS/MMrkTbGhBYV42AMqKaktwb/CBPZN/5YxXKSR34FjV4vz
+         2wXc6CYp3MX138wbvs5qmy7vNbfClA2OdKiIMi5e9nxsyMUHXC2LumDyyy+fRJ83NiI/
+         q/1g7laedBWqiPPozhGXh0IVRR4kmWGIfFgYzlmP9qD9j2ixHDEE0njUL9AifnPJFCXz
+         1VKQwAs3nr7FaSuvzudg7GsKz11PQjeXZ4+ejs13vW35qrJI5S9rakIX7KuQWSSz4eEY
+         asjjuZ88VqABtSmFJlGdXQjKajGf0aFWDp6i28z6pX1eOoxQBrepoaUt2AmuINORgbGK
+         8cuQ==
+X-Gm-Message-State: AA+aEWbJXMznwTc7p/r+Zvl49xWNrfotweHchjPBPAO+CYWXIaGDeWiE
+        HM9LFKDplVSZqtyxDvFc4poecZX8xjIT5M460nuVYOQ=
+X-Google-Smtp-Source: AFSGD/WXPnm1W4X1syFfxmi2K2zI1iDfLRMICDRNFAKD8bK0V7TG5QPApdPIA19VYVoCSbt9WEZ+6+kZRQPoqJo/+1s=
+X-Received: by 2002:aa7:d487:: with SMTP id b7mr9673796edr.256.1544414454227;
+ Sun, 09 Dec 2018 20:00:54 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20181210144322.11a94d25@canb.auug.org.au>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <CAFgQCTsMdQSRFruZRGBuo30TjfiQ=sbrf9kUJAGgwN6uw+LsBw@mail.gmail.com>
+ <CAFgQCTv7ADVW3WvB0tuqpL1U2MFGADA113MUm6ZmVcgvqyBfTA@mail.gmail.com>
+ <20181206121152.GH1286@dhcp22.suse.cz> <CAFgQCTuqn32_pZrLBDNvC_0Aepv2F7KF7rk2nAbxmYF45KfT2w@mail.gmail.com>
+ <20181207075322.GS1286@dhcp22.suse.cz> <CAFgQCTsFBUcOE9UKQ2vz=hg2FWp_QurZMQmJZ2wYLBqXkFHKHQ@mail.gmail.com>
+ <20181207113044.GB1286@dhcp22.suse.cz> <CAFgQCTuf95pJSWDc1BNQ=gN76aJ_dtxMRbAV9a28X6w8vapdMQ@mail.gmail.com>
+ <20181207142240.GC1286@dhcp22.suse.cz> <CAFgQCTuu54oZWKq_ppEvZFb4Mz31gVmsa37gTap+e9KbE=T0aQ@mail.gmail.com>
+ <20181207155627.GG1286@dhcp22.suse.cz>
+In-Reply-To: <20181207155627.GG1286@dhcp22.suse.cz>
+From:   Pingfan Liu <kernelfans@gmail.com>
+Date:   Mon, 10 Dec 2018 12:00:41 +0800
+Message-ID: <CAFgQCTvXDFL73YopcU6iwtQFvxxJno78n=dii9ESskV2PP8+fQ@mail.gmail.com>
+Subject: Re: [PATCH] mm/alloc: fallback to first node if the wanted node offline
+To:     mhocko@kernel.org
+Cc:     Vlastimil Babka <vbabka@suse.cz>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/9/18 8:43 PM, Stephen Rothwell wrote:
-> Hi all,
-> 
-> It appears that there are a series of shared patches between the block
-> and device-mapper trees that are not the same commits.  I assume that the
-> block tree has been rebased, while the device mapper tree that was based
-> (or includes) part of the block tree has not bee rebased (yet).
+On Fri, Dec 7, 2018 at 11:56 PM Michal Hocko <mhocko@kernel.org> wrote:
+>
+> On Fri 07-12-18 22:27:13, Pingfan Liu wrote:
+> [...]
+> > diff --git a/arch/x86/mm/numa.c b/arch/x86/mm/numa.c
+> > index 1308f54..4dc497d 100644
+> > --- a/arch/x86/mm/numa.c
+> > +++ b/arch/x86/mm/numa.c
+> > @@ -754,18 +754,23 @@ void __init init_cpu_to_node(void)
+> >  {
+> >         int cpu;
+> >         u16 *cpu_to_apicid = early_per_cpu_ptr(x86_cpu_to_apicid);
+> > +       int node, nr;
+> >
+> >         BUG_ON(cpu_to_apicid == NULL);
+> > +       nr = cpumask_weight(cpu_possible_mask);
+> > +
+> > +       /* bring up all possible node, since dev->numa_node */
+> > +       //should check acpi works for node possible,
+> > +       for_each_node(node)
+> > +               if (!node_online(node))
+> > +                       init_memory_less_node(node);
+>
+> I suspect there is no change if you replace for_each_node by
+>         for_each_node_mask(nid, node_possible_map)
+>
+> here. If that is the case then we are probably calling
+> free_area_init_node too early. I do not see it yet though.
 
-Yep that's my fault, due to a stupid mistake I had to rebase the
-block tree. Didn't realize that Mike's tree was based on it. Mike,
-would it be a big issue for you to rebase the dm tree?
+Maybe I do not clearly get your meaning, just try to guess. But if you
+worry about node_possible_map, then it is dynamically set by
+alloc_node_data(). The map is changed after the first time to call
+free_area_init_node() for the node with memory.  This logic is the
+same as the current x86 code.
 
--- 
-Jens Axboe
-
+Thanks,
+Pingfan
