@@ -6,53 +6,54 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE993C04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 22:25:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DC4EC5CFFE
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 22:25:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 940CE2084E
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 22:25:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EB4712082F
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 22:25:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544480716;
-	bh=zUzqBMo5HosPJC13PQKICKEd2+pHMWc+ygGlXcmYU/g=;
+	s=default; t=1544480741;
+	bh=aHNL/oIXEK5ny6Y+lYroAXDg7BripBWW9RoNHNUlBFc=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=juCkWKy688J49Tc6Q8bMQSYlI2rHdcfisCY69nqWeLj65BW3FUyM4EIdyTIGsdMlP
-	 A2inzTwuOr4GzMmU0dxgTilNBx8+YNAndfmDEnlJzseljatzOj5veSD9jcixQ2csY6
-	 39kDKY7BxdduK5cA98F0m2FuH28EmnwLZApQT1Ig=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 940CE2084E
+	b=wPlxxJaE5LbqxsK9410JkjPlItyy1/8JDfEE1lG0chWlBmbObRgqTS+n3uVQv7P46
+	 25KfDSjKmTKaF53qeTjlznRmkJ7qxmWGfBS6Xx5xFw1E6axY37R5/y0JcFZLmaRm6p
+	 daU93np7oAIxohKnaYpkRFCZKRAJPwNkTFgQN0LY=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB4712082F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729480AbeLJWZP (ORCPT
+        id S1729591AbeLJWZj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 17:25:15 -0500
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:36929 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726024AbeLJWZP (ORCPT
+        Mon, 10 Dec 2018 17:25:39 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:39592 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729482AbeLJWZj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 17:25:15 -0500
-Received: by mail-oi1-f195.google.com with SMTP id y23so10401652oia.4;
-        Mon, 10 Dec 2018 14:25:14 -0800 (PST)
+        Mon, 10 Dec 2018 17:25:39 -0500
+Received: by mail-ot1-f67.google.com with SMTP id n8so12075647otl.6;
+        Mon, 10 Dec 2018 14:25:38 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=DPnX9FgNasZsQgRsZ+0K4q5mDFGqah2kTqdXu776lCU=;
-        b=ChmyYnmfGoyMWcRF9/VFYjWHkDvlf0LV0sdJvKdZEhjg4lybAxiLc7dNEaDRwoSdt9
-         0CZuaWdeGZ9Q+PZa7DW7A3hgK0DRpa0I47BUNWp/OHEwbUXxTm+kilWB+0QFU/9rdPgk
-         Vo83sG/FpK2qr6/aubfYc5bZJcduBDMRXkSWdevb1TXE0lT47knFycc3sy5m2tzsZwgF
-         JggZQBfOXRZWFBub/q/b7TmYWK7jTR+JerFpg8v2phQmJE/BaLPX24TC1ZO57qqF+2Th
-         Cv3nG5tTM07U/z7sQXsJdRGvwbx1HRnGhNidy0Dhe6R0rrTSH2f/NYMURgm/XkVfNCaz
-         UJlw==
-X-Gm-Message-State: AA+aEWbk4YrhZzMhj3xIGuIcXuSt4C6d6MwWRx6K2Ma4hUi1+ny2Xg1N
-        Kfx3GFHaxzog0asCU4ss8g==
-X-Google-Smtp-Source: AFSGD/V0RicQnLBkvZ9ouH3JjTzPSMQ+izc06d5U503qFczusrs/bjBf5ykmPw41R+0rT0O9iecaew==
-X-Received: by 2002:aca:5508:: with SMTP id j8mr8873898oib.240.1544480714127;
-        Mon, 10 Dec 2018 14:25:14 -0800 (PST)
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=dcrwqDt+BOSt60/oApLq93K6QJ2/knMWlj+10Je9AN4=;
+        b=qnnb/gJVz8m3gucvkM9YUb3hawiG+Ne5RLqaLS512PYTiV2O0nR5nTRk5HT406C6Su
+         kW+bUXp5JyKcJ5B/mnqHGRFvLy9Bpm6GGpl31wTz85hI2lds0Aa1ZD1hCwTB6iYhdouE
+         iBUQoe0YN5Ymq5H8HYwZdFSmTLFGy5cGZdqPCyYJvMtIFd+6VOaHBQ6kgSvz/ZWZYNaC
+         qYcqjY+MYfo/lQQ1ytDLPiL87nyILOm1x4QUXzUYv7/6O+sLUJb68R+rZvcYeabRysE/
+         HWs/XUwmZm8g8onx4RTTXQDn6PUqYgcQCArkuPuxSbs+6eJUaP9R/4yiLmVI8DvaseB/
+         p/Nw==
+X-Gm-Message-State: AA+aEWaF/dTFeGbcbKpFbYsE/QQVVnpGSgRvatvObNtyFOhoUzOoJAr9
+        ykouJ7wNINGUROlf7pesag==
+X-Google-Smtp-Source: AFSGD/VcZW49TwEtJwCT6hRinpqvtsSfSSS5F0fFYxQS6TK9meO9IRpllAEhDVY1nMYaE0+tp46edw==
+X-Received: by 2002:a9d:3db4:: with SMTP id l49mr10369049otc.358.1544480738297;
+        Mon, 10 Dec 2018 14:25:38 -0800 (PST)
 Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id t201sm6357180oie.37.2018.12.10.14.25.13
+        by smtp.gmail.com with ESMTPSA id h24sm8437671otm.72.2018.12.10.14.25.37
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 10 Dec 2018 14:25:13 -0800 (PST)
-Date:   Mon, 10 Dec 2018 16:25:13 -0600
+        Mon, 10 Dec 2018 14:25:37 -0800 (PST)
+Date:   Mon, 10 Dec 2018 16:25:37 -0600
 From:   Rob Herring <robh@kernel.org>
 To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 Cc:     olof@lixom.net, arnd@arndb.de, robh+dt@kernel.org,
@@ -64,28 +65,32 @@ Cc:     olof@lixom.net, arnd@arndb.de, robh+dt@kernel.org,
         linux-serial@vger.kernel.org, amit.kucheria@linaro.org,
         linus.walleij@linaro.org, zhao_steven@263.net,
         Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: Re: [PATCH v4 09/15] dt-bindings: timer: Document RDA8810PL SoC timer
-Message-ID: <20181210222513.GA1326@bogus>
+Subject: Re: [PATCH v4 12/15] dt-bindings: serial: Document RDA Micro UART
+Message-ID: <20181210222537.GA2223@bogus>
 References: <20181210173550.29643-1-manivannan.sadhasivam@linaro.org>
- <20181210173550.29643-10-manivannan.sadhasivam@linaro.org>
+ <20181210173550.29643-13-manivannan.sadhasivam@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20181210173550.29643-10-manivannan.sadhasivam@linaro.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181210173550.29643-13-manivannan.sadhasivam@linaro.org>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 10 Dec 2018 23:05:44 +0530, Manivannan Sadhasivam wrote:
-> Document RDA Micro RDA8810PL SoC timer.
+On Mon, 10 Dec 2018 23:05:47 +0530, Manivannan Sadhasivam wrote:
+> From: Andreas Färber <afaerber@suse.de>
 > 
+> Add an initial binding for the UART in RDA Micro RDA8810PL SoC.
+> 
+> Signed-off-by: Andreas Färber <afaerber@suse.de>
 > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 > ---
->  .../bindings/timer/rda,8810pl-timer.txt       | 20 +++++++++++++++++++
->  1 file changed, 20 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/timer/rda,8810pl-timer.txt
+>  .../bindings/serial/rda,8810pl-uart.txt         | 17 +++++++++++++++++
+>  1 file changed, 17 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/serial/rda,8810pl-uart.txt
 > 
 
 Reviewed-by: Rob Herring <robh@kernel.org>
