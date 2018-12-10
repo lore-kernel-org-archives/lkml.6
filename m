@@ -2,187 +2,100 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25997C04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 13:37:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00EF5C04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 13:40:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E251E21473
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 13:37:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E251E21473
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org
+	by mail.kernel.org (Postfix) with ESMTP id 8F80620855
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 13:40:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544449201;
+	bh=qoxjddS7BhzXuN0dXrsJok5Y0tEf1PtnXxr5pBq1vvE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=EEZrwX/gE9HqGDXNhjTX5CNLri1alyUjYuV0TgQfDVcnx9tqVpYofh6Seg60FQN0O
+	 tmB4c2xdnLYVRmogyL3jNk2+/lvTxZByDMduEeOoyiyohZJrQ4n9XbT0iTc7WHUI6N
+	 AQVP6fgXV1DmMxQ9DG6JRdXl3o/mQqDSEFoIiBD4=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F80620855
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727671AbeLJNhA (ORCPT
+        id S1727694AbeLJNkA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 08:37:00 -0500
-Received: from vmicros1.altlinux.org ([194.107.17.57]:48598 "EHLO
-        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726902AbeLJNhA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 08:37:00 -0500
-Received: from mua.local.altlinux.org (mua.local.altlinux.org [192.168.1.14])
-        by vmicros1.altlinux.org (Postfix) with ESMTP id AABB472CC66;
-        Mon, 10 Dec 2018 16:36:56 +0300 (MSK)
-Received: by mua.local.altlinux.org (Postfix, from userid 508)
-        id D9F1F7CF1FC; Mon, 10 Dec 2018 16:36:55 +0300 (MSK)
-Date:   Mon, 10 Dec 2018 16:36:55 +0300
-From:   "Dmitry V. Levin" <ldv@altlinux.org>
-To:     Oleg Nesterov <oleg@redhat.com>
-Cc:     Michael Ellerman <mpe@ellerman.id.au>,
-        Elvira Khabirova <lineprinter@altlinux.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Breno Leitao <leitao@debian.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Eugene Syromyatnikov <esyr@redhat.com>,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6] powerpc/ptrace: replace ptrace_report_syscall() with
- a tracehook call
-Message-ID: <20181210133655.GH11942@altlinux.org>
-References: <87ftw12nyn.fsf@concordia.ellerman.id.au>
- <20181119210139.GA8360@altlinux.org>
- <87efbe166y.fsf@concordia.ellerman.id.au>
- <20181203031823.GE11573@altlinux.org>
- <20181207011946.GA18558@altlinux.org>
- <87y391k2tq.fsf@concordia.ellerman.id.au>
- <20181207154255.GA28964@altlinux.org>
- <20181207155605.GB28964@altlinux.org>
- <20181207185226.GB31278@altlinux.org>
- <20181210132806.GA4177@redhat.com>
+        Mon, 10 Dec 2018 08:40:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58748 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727374AbeLJNkA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Dec 2018 08:40:00 -0500
+Received: from quaco.ghostprotocols.net (unknown [190.15.121.82])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 134F42084E;
+        Mon, 10 Dec 2018 13:39:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544449199;
+        bh=qoxjddS7BhzXuN0dXrsJok5Y0tEf1PtnXxr5pBq1vvE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=jHWBey+vc+1XfaoO738B6eY3ikSSRbkFCg+zUrXNMXlM7whhgNZ3L+vTcBf0kmLLc
+         TvrdkMHEKwNgUR/QOj1WJGEM8opAmysPp8+odKPb47lo4NYxo+jYD3CHTUFYZwR3Xg
+         j+ALWEIuE8bo4djx7VwTJEr7c3i43oRgFlWN/bWc=
+Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
+        id 02AE54042C; Mon, 10 Dec 2018 10:39:55 -0300 (-03)
+Date:   Mon, 10 Dec 2018 10:39:55 -0300
+From:   Arnaldo Carvalho de Melo <acme@kernel.org>
+To:     Adrian Hunter <adrian.hunter@intel.com>
+Cc:     Jiri Olsa <jolsa@redhat.com>, linux-kernel@vger.kernel.org,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>
+Subject: Re: [PATCH] perf auxtrace: Alter addr_filter__entire_dso() to work
+ if there are no symbols
+Message-ID: <20181210133955.GF32567@kernel.org>
+References: <20181127084634.12469-1-adrian.hunter@intel.com>
+ <20181127124226.GC15747@kernel.org>
+ <67587a92-200c-ac7a-67bd-20df06cdd41b@intel.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="gMR3gsNFwZpnI/Ts"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181210132806.GA4177@redhat.com>
+In-Reply-To: <67587a92-200c-ac7a-67bd-20df06cdd41b@intel.com>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Em Mon, Dec 10, 2018 at 03:17:05PM +0200, Adrian Hunter escreveu:
+> On 27/11/18 2:42 PM, Arnaldo Carvalho de Melo wrote:
+> > Em Tue, Nov 27, 2018 at 10:46:34AM +0200, Adrian Hunter escreveu:
+> >> addr_filter__entire_dso() uses the first and last symbols from a dso,
+> >> and so does not work when there are no symbols.  Alter it to filter the
+> >> whole file instead.
 
---gMR3gsNFwZpnI/Ts
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> > I'm splitting this patch into a first prep one that renames and exports
+> > the static function dso__data_file_size() and a second that does what
+> > this commig log message states.
 
-On Mon, Dec 10, 2018 at 02:28:07PM +0100, Oleg Nesterov wrote:
-> On 12/07, Dmitry V. Levin wrote:
-> >
-> > Please make either v5 or v6 edition of this fix, or any similar fix,
-> > into v4.20.
->=20
-> IIUC, v5 above means
->=20
-> 	[PATCH v5 23/25] powerpc/ptrace: replace ptrace_report_syscall() with a =
-tracehook call
->=20
-> you sent in another series...
+> > The reason is that sometimes we find out that the main part of the patch
+> > is wrong and we then decide to revert the patch, only to realize that
+> > the exported function is by that time already used elsewhere.
+ 
+> Thanks for looking at this, but did it get lost?  I don't see it in your tree.
 
-They just happen to have the same v5 here and there.
-In that series I included the most trivial variant of the change.
+Yeah, my bad, thanks for the reminder, did the split and added to my
+perf/core branch,
 
-> >  long do_syscall_trace_enter(struct pt_regs *regs)
-> >  {
-> > +	struct thread_info *ti;
-> > +	u32 cached_flags;
-> > +
-> >  	user_exit();
-> > =20
-> > -	if (test_thread_flag(TIF_SYSCALL_EMU)) {
-> > -		ptrace_report_syscall(regs);
-> > -		/*
-> > -		 * Returning -1 will skip the syscall execution. We want to
-> > -		 * avoid clobbering any register also, thus, not 'gotoing'
-> > -		 * skip label.
-> > -		 */
-> > -		return -1;
-> > -	}
-> > +	ti =3D current_thread_info();
-> > +	cached_flags =3D READ_ONCE(ti->flags) &
-> > +		       (_TIF_SYSCALL_EMU | _TIF_SYSCALL_TRACE |
-> > +			_TIF_SYSCALL_TRACEPOINT);
-> > =20
-> > -	/*
-> > -	 * The tracer may decide to abort the syscall, if so tracehook
-> > -	 * will return !0. Note that the tracer may also just change
-> > -	 * regs->gpr[0] to an invalid syscall number, that is handled
-> > -	 * below on the exit path.
-> > -	 */
-> > -	if (test_thread_flag(TIF_SYSCALL_TRACE) &&
-> > -	    tracehook_report_syscall_entry(regs))
-> > -		goto skip;
-> > +	if (cached_flags & (_TIF_SYSCALL_EMU | _TIF_SYSCALL_TRACE)) {
-> > +		int rc =3D tracehook_report_syscall_entry(regs);
-> > +
-> > +		if (unlikely(cached_flags & _TIF_SYSCALL_EMU)) {
-> > +			/*
-> > +			 * A nonzero return code from
-> > +			 * tracehook_report_syscall_entry() tells us
-> > +			 * to prevent the syscall execution, but
-> > +			 * we are not going to execute it anyway.
-> > +			 *
-> > +			 * Returning -1 will skip the syscall execution.
-> > +			 * We want to avoid clobbering any register also,
-> > +			 * thus, not 'gotoing' skip label.
-> > +			 */
-> > +			return -1;
-> > +		}
-> > +
-> > +		if (rc) {
-> > +			/*
-> > +			 * The tracer decided to abort the syscall.
-> > +			 * Note that the tracer may also just change
-> > +			 * regs->gpr[0] to an invalid syscall number,
-> > +			 * that is handled below on the exit path.
-> > +			 */
-> > +			goto skip;
-> > +		}
-> > +	}
-> > =20
-> >  	/* Run seccomp after ptrace; allow it to set gpr[3]. */
-> >  	if (do_seccomp(regs))
-> > @@ -3293,7 +3309,7 @@ long do_syscall_trace_enter(struct pt_regs *regs)
-> >  	if (regs->gpr[0] >=3D NR_syscalls)
-> >  		goto skip;
-> > =20
-> > -	if (unlikely(test_thread_flag(TIF_SYSCALL_TRACEPOINT)))
-> > +	if (unlikely(cached_flags & _TIF_SYSCALL_TRACEPOINT))
->=20
-> I will leave this to maintainers, but to me this change looks good and im=
-o it
-> also cleanups the code.
->=20
-> However I am not sure cached_flags should include _TIF_SYSCALL_TRACEPOINT=
-=2E If
-> nothing else, the caller can sleep in ptrace_stop() unpredictably long and
-> TIF_SYSCALL_TRACEPOINT can be set/cleared meanwhile.
+Also I'm adding this:
 
-I agree, we shouldn't cache _TIF_SYSCALL_TRACEPOINT.
+  Cc: Masami Hiramatsu <mhiramat@kernel.org>
+  Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
+  Fixes: 1b36c03e3569 ("perf record: Add support for using symbols in address filters")
 
+So that people that were involved in the patch that introduced this
+feature gets notified of this fix, also for backporters to take notice,
+please try to do this in the future.
 
---=20
-ldv
+Thanks,
 
---gMR3gsNFwZpnI/Ts
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBCAAGBQJcDmv3AAoJEAVFT+BVnCUIlrIQAPHIWnElYZge8NS1F64p0iO0
-lXFKC/o5wdwokgzUtyLf3ngHyBHrjhJr16swFMKVs5PZoXFQtueXLBwJccvJFwbD
-6e2sNrh7g0Mt07dfzEFeKYpYl6z6QLrFUFNDtJXchwnRf8vN6Qt8Eu4H4UDnY5kZ
-ic8KgON/Gg0JJ/b7dLqZZcynmBV6+xhgQSCUh0et4eHeCzW9cKJa5p3N46/QC4Kz
-ybhuVCiAIei8Xiy51v+/nWbPW+asWWJFJY/HQimNVHbPQwnFrfC2jThpUq7Jcs+5
-fkmQtsQHDhvew5+ZL57lt3Xqq+wsbRJWAOIWBVfSj3+iwyJx8LDdtxZr+R0GOF6K
-8aV1APcWpDVdqowvYbfYlqCdNHyRWkYPmedIr/VZAJmperyBeCgXx2Ojqs5Wiz20
-2hcjXExfQ0m4r79k9TZb82rp2Vq9HqgPs+buQA6tEsxh5iHAsPE+5g4qJWSoXoXY
-XkVl+FRNCWSlZCM+hNG17mjR9kf5n3PReFnpEQk+U/2VBo6O2n4j/E/Kfx2ct7T+
-l1jm/EaHocoRy+gx0vaDNM+ozwVibqRu8FiAtpJw2hG4Cw9LKMTBGJtQTOVGDitE
-aE3L1TfAVHwiRBL1gZTqNMOX+V+Lj3sviL2QE1idOtCPqlyAu9fKU3nJXZc7z7Lw
-5Vu3dgy6Nik8QSZRcwR8
-=bgMo
------END PGP SIGNATURE-----
-
---gMR3gsNFwZpnI/Ts--
+- Arnaldo
