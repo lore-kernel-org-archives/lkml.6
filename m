@@ -2,189 +2,147 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 399CEC04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 15:27:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67F24C5CFFE
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 15:29:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB0F72082F
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 15:27:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB0F72082F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 314C320672
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 15:29:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 314C320672
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728050AbeLJP1x (ORCPT
+        id S1728068AbeLJP3G (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 10:27:53 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:33620 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727914AbeLJP1x (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 10:27:53 -0500
-Received: from localhost ([127.0.0.1] helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtp (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1gWNTK-0006I9-Vi; Mon, 10 Dec 2018 16:27:51 +0100
-Message-Id: <20181210152311.986181245@linutronix.de>
-User-Agent: quilt/0.65
-Date:   Mon, 10 Dec 2018 16:23:06 +0100
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     LKML <linux-kernel@vger.kernel.org>
-Cc:     Stefan Liebler <stli@linux.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Darren Hart <dvhart@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>
-Subject: [patch] futex: Cure exit race
+        Mon, 10 Dec 2018 10:29:06 -0500
+Received: from foss.arm.com ([217.140.101.70]:56442 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726607AbeLJP3G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Dec 2018 10:29:06 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A32F91596;
+        Mon, 10 Dec 2018 07:29:05 -0800 (PST)
+Received: from e110467-lin.cambridge.arm.com (e110467-lin.cambridge.arm.com [10.1.196.75])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 28AD93F6A8;
+        Mon, 10 Dec 2018 07:29:04 -0800 (PST)
+From:   Robin Murphy <robin.murphy@arm.com>
+To:     will.deacon@arm.com, catalin.marinas@arm.com
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        jonathan.cameron@huawei.com, cyrilc@xilinx.com,
+        james.morse@arm.com, anshuman.khandual@arm.com
+Subject: [PATCH] arm64: Add memory hotplug support
+Date:   Mon, 10 Dec 2018 15:29:01 +0000
+Message-Id: <0a0c7d3b8fbe1b2b399eeb6889027031335d2af1.1544453739.git.robin.murphy@arm.com>
+X-Mailer: git-send-email 2.19.1.dirty
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Stefan reported, that the glibc tst-robustpi4 test case fails
-occasionally. That case creates the following race between
-sys_exit() and sys_futex(LOCK_PI):
+Wire up the basic support for hot-adding memory. Since memory hotplug
+is fairly tightly coupled to sparsemem, we tweak pfn_valid() to also
+cross-check the presence of a section in the manner of the generic
+implementation, before falling back to memblock to check for no-map
+regions within a present section as before. By having arch_add_memory(()
+create the linear mapping first, this then makes everything work in the
+way that __add_section() expects.
 
- CPU0				CPU1
+We expect hotplug to be ACPI-driven, so the swapper_pg_dir updates
+should be safe from races by virtue of the global device hotplug lock.
 
- sys_exit()			sys_futex()
-  do_exit()			 futex_lock_pi()
-   exit_signals(tsk)		  No waiters:
-    tsk->flags |= PF_EXITING;	  *uaddr == 0x00000PID
-  mm_release(tsk)		  Set waiter bit
-   exit_robust_list(tsk) {	  *uaddr = 0x80000PID;
-      Set owner died		  attach_to_pi_owner() {
-    *uaddr = 0xC0000000;	   tsk = get_task(PID);
-   }				   if (!tsk->flags & PF_EXITING) {
-  ...				     attach();
-  tsk->flags |= PF_EXITPIDONE;	   } else {
-				     if (!(tsk->flags & PF_EXITPIDONE))
-				       return -EAGAIN;
-				     return -ESRCH; <--- FAIL
-				   }
-
-ESRCH is returned all the way to user space, which triggers the glibc test
-case assert. Returning ESRCH unconditionally is wrong here because the user
-space value has been changed by the exiting task to 0xC0000000, i.e. the
-FUTEX_OWNER_DIED bit is set and the futex PID value has been cleared. This
-is a valid state and the kernel has to handle it, i.e. taking the futex.
-
-Cure it by rereading the user space value when PF_EXITING and PF_EXITPIDONE
-is set in the task which owns the futex. If the value has changed, let
-the kernel retry the operation, which includes all regular sanity checks
-and correctly handles the FUTEX_OWNER_DIED case.
-
-If it hasn't changed, then return ESRCH as there is no way to distinguish
-this case from malfunctioning user space. This happens when the exiting
-task did not have a robust list, the robust list was corrupted or the user
-space value in the futex was simply bogus.
-
-Reported-by: Stefan Liebler <stli@linux.ibm.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Darren Hart <dvhart@infradead.org>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: stable@vger.kernel.org
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=200467
+Signed-off-by: Robin Murphy <robin.murphy@arm.com>
 ---
- kernel/futex.c |   57 +++++++++++++++++++++++++++++++++++++++++++++++++++++----
- 1 file changed, 53 insertions(+), 4 deletions(-)
 
---- a/kernel/futex.c
-+++ b/kernel/futex.c
-@@ -1148,11 +1148,60 @@ static int attach_to_pi_state(u32 __user
- 	return ret;
- }
+Looks like I'm not going to have the whole pte_devmap story figured out
+in time to land any ZONE_DEVICE support this cycle, but since this patch
+also stands alone as a complete feature (and has ended up remarkably
+simple and self-contained), I hope we might consider getting it merged
+on its own merit.
+
+Robin.
+
+ arch/arm64/Kconfig   |  3 +++
+ arch/arm64/mm/init.c |  8 ++++++++
+ arch/arm64/mm/mmu.c  | 12 ++++++++++++
+ arch/arm64/mm/numa.c | 10 ++++++++++
+ 4 files changed, 33 insertions(+)
+
+diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+index 6d2b25f51bb3..7b855ae45747 100644
+--- a/arch/arm64/Kconfig
++++ b/arch/arm64/Kconfig
+@@ -261,6 +261,9 @@ config ZONE_DMA32
+ config HAVE_GENERIC_GUP
+ 	def_bool y
  
-+static int handle_exit_race(u32 __user *uaddr, u32 uval, struct task_struct *tsk)
++config ARCH_ENABLE_MEMORY_HOTPLUG
++	def_bool y
++
+ config SMP
+ 	def_bool y
+ 
+diff --git a/arch/arm64/mm/init.c b/arch/arm64/mm/init.c
+index 2983e0fc1786..82e0b08f2e31 100644
+--- a/arch/arm64/mm/init.c
++++ b/arch/arm64/mm/init.c
+@@ -291,6 +291,14 @@ int pfn_valid(unsigned long pfn)
+ 
+ 	if ((addr >> PAGE_SHIFT) != pfn)
+ 		return 0;
++
++#ifdef CONFIG_SPARSEMEM
++	if (pfn_to_section_nr(pfn) >= NR_MEM_SECTIONS)
++		return 0;
++
++	if (!valid_section(__nr_to_section(pfn_to_section_nr(pfn))))
++		return 0;
++#endif
+ 	return memblock_is_map_memory(addr);
+ }
+ EXPORT_SYMBOL(pfn_valid);
+diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
+index e1b2d58a311a..22379a74d289 100644
+--- a/arch/arm64/mm/mmu.c
++++ b/arch/arm64/mm/mmu.c
+@@ -1044,3 +1044,15 @@ int pud_free_pmd_page(pud_t *pudp, unsigned long addr)
+ 	pmd_free(NULL, table);
+ 	return 1;
+ }
++
++#ifdef CONFIG_MEMORY_HOTPLUG
++int arch_add_memory(int nid, u64 start, u64 size, struct vmem_altmap *altmap,
++		    bool want_memblock)
 +{
-+	u32 uval2;
++	__create_pgd_mapping(swapper_pg_dir, start, __phys_to_virt(start),
++			     size, PAGE_KERNEL, pgd_pgtable_alloc, 0);
 +
-+	/*
-+	 * If PF_EXITPIDONE is not yet set try again.
-+	 */
-+	if (!(tsk->flags & PF_EXITPIDONE))
-+		return -EAGAIN;
-+
-+	/*
-+	 * Reread the user space value to handle the following situation:
-+	 *
-+	 * CPU0				CPU1
-+	 *
-+	 * sys_exit()			sys_futex()
-+	 *  do_exit()			 futex_lock_pi()
-+	 *   exit_signals(tsk)		  No waiters:
-+	 *    tsk->flags |= PF_EXITING;	  *uaddr == 0x00000PID
-+	 *  mm_release(tsk)		  Set waiter bit
-+	 *   exit_robust_list(tsk) {	  *uaddr = 0x80000PID;
-+	 *      Set owner died		  attach_to_pi_owner() {
-+	 *    *uaddr = 0xC0000000;	   tsk = get_task(PID);
-+	 *   }				   if (!tsk->flags & PF_EXITING) {
-+	 *  ...				     attach();
-+	 *  tsk->flags |= PF_EXITPIDONE;   } else {
-+	 *				     if (!(tsk->flags & PF_EXITPIDONE))
-+	 *				       return -EAGAIN;
-+	 *				     return -ESRCH; <--- FAIL
-+	 *				   }
-+	 *
-+	 * Returning ESRCH unconditionally is wrong here because the
-+	 * user space value has been changed by the exiting task.
-+	 */
-+	if (get_futex_value_locked(&uval2, uaddr))
-+		return -EFAULT;
-+
-+	/* If the user space value has changed, try again. */
-+	if (uval2 != uval)
-+		return -EAGAIN;
-+
-+	/*
-+	 * The exiting task did not have a robust list, the robust list was
-+	 * corrupted or the user space value in *uaddr is simply bogus.
-+	 * Give up and tell user space.
-+	 */
-+	return -ESRCH;
++	return __add_pages(nid, start >> PAGE_SHIFT, size >> PAGE_SHIFT,
++			   altmap, want_memblock);
 +}
++#endif
+diff --git a/arch/arm64/mm/numa.c b/arch/arm64/mm/numa.c
+index 27a31efd9e8e..ae34e3a1cef1 100644
+--- a/arch/arm64/mm/numa.c
++++ b/arch/arm64/mm/numa.c
+@@ -466,3 +466,13 @@ void __init arm64_numa_init(void)
+ 
+ 	numa_init(dummy_numa_init);
+ }
 +
- /*
-  * Lookup the task for the TID provided from user space and attach to
-  * it after doing proper sanity checks.
-  */
--static int attach_to_pi_owner(u32 uval, union futex_key *key,
-+static int attach_to_pi_owner(u32 __user *uaddr, u32 uval, union futex_key *key,
- 			      struct futex_pi_state **ps)
- {
- 	pid_t pid = uval & FUTEX_TID_MASK;
-@@ -1187,7 +1236,7 @@ static int attach_to_pi_owner(u32 uval,
- 		 * set, we know that the task has finished the
- 		 * cleanup:
- 		 */
--		int ret = (p->flags & PF_EXITPIDONE) ? -ESRCH : -EAGAIN;
-+		int ret = handle_exit_race(uaddr, uval, p);
- 
- 		raw_spin_unlock_irq(&p->pi_lock);
- 		put_task_struct(p);
-@@ -1244,7 +1293,7 @@ static int lookup_pi_state(u32 __user *u
- 	 * We are the first waiter - try to look up the owner based on
- 	 * @uval and attach to it.
- 	 */
--	return attach_to_pi_owner(uval, key, ps);
-+	return attach_to_pi_owner(uaddr, uval, key, ps);
- }
- 
- static int lock_pi_update_atomic(u32 __user *uaddr, u32 uval, u32 newval)
-@@ -1352,7 +1401,7 @@ static int futex_lock_pi_atomic(u32 __us
- 	 * attach to the owner. If that fails, no harm done, we only
- 	 * set the FUTEX_WAITERS bit in the user space variable.
- 	 */
--	return attach_to_pi_owner(uval, key, ps);
-+	return attach_to_pi_owner(uaddr, uval, key, ps);
- }
- 
- /**
-
++/*
++ * We hope that we will be hotplugging memory on nodes we already know about,
++ * such that acpi_get_node() succeeds and we never fall back to this...
++ */
++int memory_add_physaddr_to_nid(u64 addr)
++{
++	pr_warn("Unknown node for memory at 0x%llx, assuming node 0\n", addr);
++	return 0;
++}
+-- 
+2.19.1.dirty
 
