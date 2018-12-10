@@ -2,65 +2,187 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F64CC04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 13:35:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25997C04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 13:37:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EEE9E2084E
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 13:35:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="2+RXh19Q"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EEE9E2084E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lunn.ch
+	by mail.kernel.org (Postfix) with ESMTP id E251E21473
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 13:37:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E251E21473
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727650AbeLJNfK (ORCPT
+        id S1727671AbeLJNhA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 08:35:10 -0500
-Received: from vps0.lunn.ch ([185.16.172.187]:41122 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726902AbeLJNfJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 08:35:09 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch; s=20171124;
-        h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date; bh=80ws1goE5Ryom/NsKdNbe+Q5w0XIAXK3mR7RGe+VUD8=;
-        b=2+RXh19QbACP7Zxs+XjQJJPTAeG+pcFGolqhwUiDCGIENX2BNxe1p+MARMyldN0I6eB25NBqUDro5cYuzTiX0A1hMw95oXwCeVPfWRua9guqxP6NsXK9qVXV3SjkMkyaSp/KNkeJPgtKKSotMdm2BA1RiRBz4YruXuyeacuCzUs=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.84_2)
-        (envelope-from <andrew@lunn.ch>)
-        id 1gWLi8-0001LB-NK; Mon, 10 Dec 2018 14:35:00 +0100
-Date:   Mon, 10 Dec 2018 14:35:00 +0100
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     David Miller <davem@davemloft.net>
-Cc:     hkallweit1@gmail.com, sfr@canb.auug.org.au, netdev@vger.kernel.org,
-        linux-next@vger.kernel.org, linux-kernel@vger.kernel.org,
-        f.fainelli@gmail.com
-Subject: Re: linux-next: Signed-off-by missing for commits in the net-next
- tree
-Message-ID: <20181210133500.GB4660@lunn.ch>
-References: <20181210080045.0e67ad79@canb.auug.org.au>
- <20181209211139.GB21186@lunn.ch>
- <011f5be3-4bc1-2e64-0ddf-b43b8dbc4dcd@gmail.com>
- <20181209.162805.1102172618676272423.davem@davemloft.net>
+        Mon, 10 Dec 2018 08:37:00 -0500
+Received: from vmicros1.altlinux.org ([194.107.17.57]:48598 "EHLO
+        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726902AbeLJNhA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Dec 2018 08:37:00 -0500
+Received: from mua.local.altlinux.org (mua.local.altlinux.org [192.168.1.14])
+        by vmicros1.altlinux.org (Postfix) with ESMTP id AABB472CC66;
+        Mon, 10 Dec 2018 16:36:56 +0300 (MSK)
+Received: by mua.local.altlinux.org (Postfix, from userid 508)
+        id D9F1F7CF1FC; Mon, 10 Dec 2018 16:36:55 +0300 (MSK)
+Date:   Mon, 10 Dec 2018 16:36:55 +0300
+From:   "Dmitry V. Levin" <ldv@altlinux.org>
+To:     Oleg Nesterov <oleg@redhat.com>
+Cc:     Michael Ellerman <mpe@ellerman.id.au>,
+        Elvira Khabirova <lineprinter@altlinux.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Breno Leitao <leitao@debian.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Eugene Syromyatnikov <esyr@redhat.com>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6] powerpc/ptrace: replace ptrace_report_syscall() with
+ a tracehook call
+Message-ID: <20181210133655.GH11942@altlinux.org>
+References: <87ftw12nyn.fsf@concordia.ellerman.id.au>
+ <20181119210139.GA8360@altlinux.org>
+ <87efbe166y.fsf@concordia.ellerman.id.au>
+ <20181203031823.GE11573@altlinux.org>
+ <20181207011946.GA18558@altlinux.org>
+ <87y391k2tq.fsf@concordia.ellerman.id.au>
+ <20181207154255.GA28964@altlinux.org>
+ <20181207155605.GB28964@altlinux.org>
+ <20181207185226.GB31278@altlinux.org>
+ <20181210132806.GA4177@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="gMR3gsNFwZpnI/Ts"
 Content-Disposition: inline
-In-Reply-To: <20181209.162805.1102172618676272423.davem@davemloft.net>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20181210132806.GA4177@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> The problem here is the '--' delimiter, Andrew should have either
-> used nothing or something else.
 
-I picked -- because it was not --- !
+--gMR3gsNFwZpnI/Ts
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Anyway, lesson learned. But i kind of expect it will happen again to
-others, since the "Submitting Patches" documentation just mentions ---
-and does not say that other similar markers may also trigger the magic
-scissors.
+On Mon, Dec 10, 2018 at 02:28:07PM +0100, Oleg Nesterov wrote:
+> On 12/07, Dmitry V. Levin wrote:
+> >
+> > Please make either v5 or v6 edition of this fix, or any similar fix,
+> > into v4.20.
+>=20
+> IIUC, v5 above means
+>=20
+> 	[PATCH v5 23/25] powerpc/ptrace: replace ptrace_report_syscall() with a =
+tracehook call
+>=20
+> you sent in another series...
 
-	Andrew
+They just happen to have the same v5 here and there.
+In that series I included the most trivial variant of the change.
+
+> >  long do_syscall_trace_enter(struct pt_regs *regs)
+> >  {
+> > +	struct thread_info *ti;
+> > +	u32 cached_flags;
+> > +
+> >  	user_exit();
+> > =20
+> > -	if (test_thread_flag(TIF_SYSCALL_EMU)) {
+> > -		ptrace_report_syscall(regs);
+> > -		/*
+> > -		 * Returning -1 will skip the syscall execution. We want to
+> > -		 * avoid clobbering any register also, thus, not 'gotoing'
+> > -		 * skip label.
+> > -		 */
+> > -		return -1;
+> > -	}
+> > +	ti =3D current_thread_info();
+> > +	cached_flags =3D READ_ONCE(ti->flags) &
+> > +		       (_TIF_SYSCALL_EMU | _TIF_SYSCALL_TRACE |
+> > +			_TIF_SYSCALL_TRACEPOINT);
+> > =20
+> > -	/*
+> > -	 * The tracer may decide to abort the syscall, if so tracehook
+> > -	 * will return !0. Note that the tracer may also just change
+> > -	 * regs->gpr[0] to an invalid syscall number, that is handled
+> > -	 * below on the exit path.
+> > -	 */
+> > -	if (test_thread_flag(TIF_SYSCALL_TRACE) &&
+> > -	    tracehook_report_syscall_entry(regs))
+> > -		goto skip;
+> > +	if (cached_flags & (_TIF_SYSCALL_EMU | _TIF_SYSCALL_TRACE)) {
+> > +		int rc =3D tracehook_report_syscall_entry(regs);
+> > +
+> > +		if (unlikely(cached_flags & _TIF_SYSCALL_EMU)) {
+> > +			/*
+> > +			 * A nonzero return code from
+> > +			 * tracehook_report_syscall_entry() tells us
+> > +			 * to prevent the syscall execution, but
+> > +			 * we are not going to execute it anyway.
+> > +			 *
+> > +			 * Returning -1 will skip the syscall execution.
+> > +			 * We want to avoid clobbering any register also,
+> > +			 * thus, not 'gotoing' skip label.
+> > +			 */
+> > +			return -1;
+> > +		}
+> > +
+> > +		if (rc) {
+> > +			/*
+> > +			 * The tracer decided to abort the syscall.
+> > +			 * Note that the tracer may also just change
+> > +			 * regs->gpr[0] to an invalid syscall number,
+> > +			 * that is handled below on the exit path.
+> > +			 */
+> > +			goto skip;
+> > +		}
+> > +	}
+> > =20
+> >  	/* Run seccomp after ptrace; allow it to set gpr[3]. */
+> >  	if (do_seccomp(regs))
+> > @@ -3293,7 +3309,7 @@ long do_syscall_trace_enter(struct pt_regs *regs)
+> >  	if (regs->gpr[0] >=3D NR_syscalls)
+> >  		goto skip;
+> > =20
+> > -	if (unlikely(test_thread_flag(TIF_SYSCALL_TRACEPOINT)))
+> > +	if (unlikely(cached_flags & _TIF_SYSCALL_TRACEPOINT))
+>=20
+> I will leave this to maintainers, but to me this change looks good and im=
+o it
+> also cleanups the code.
+>=20
+> However I am not sure cached_flags should include _TIF_SYSCALL_TRACEPOINT=
+=2E If
+> nothing else, the caller can sleep in ptrace_stop() unpredictably long and
+> TIF_SYSCALL_TRACEPOINT can be set/cleared meanwhile.
+
+I agree, we shouldn't cache _TIF_SYSCALL_TRACEPOINT.
+
+
+--=20
+ldv
+
+--gMR3gsNFwZpnI/Ts
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBCAAGBQJcDmv3AAoJEAVFT+BVnCUIlrIQAPHIWnElYZge8NS1F64p0iO0
+lXFKC/o5wdwokgzUtyLf3ngHyBHrjhJr16swFMKVs5PZoXFQtueXLBwJccvJFwbD
+6e2sNrh7g0Mt07dfzEFeKYpYl6z6QLrFUFNDtJXchwnRf8vN6Qt8Eu4H4UDnY5kZ
+ic8KgON/Gg0JJ/b7dLqZZcynmBV6+xhgQSCUh0et4eHeCzW9cKJa5p3N46/QC4Kz
+ybhuVCiAIei8Xiy51v+/nWbPW+asWWJFJY/HQimNVHbPQwnFrfC2jThpUq7Jcs+5
+fkmQtsQHDhvew5+ZL57lt3Xqq+wsbRJWAOIWBVfSj3+iwyJx8LDdtxZr+R0GOF6K
+8aV1APcWpDVdqowvYbfYlqCdNHyRWkYPmedIr/VZAJmperyBeCgXx2Ojqs5Wiz20
+2hcjXExfQ0m4r79k9TZb82rp2Vq9HqgPs+buQA6tEsxh5iHAsPE+5g4qJWSoXoXY
+XkVl+FRNCWSlZCM+hNG17mjR9kf5n3PReFnpEQk+U/2VBo6O2n4j/E/Kfx2ct7T+
+l1jm/EaHocoRy+gx0vaDNM+ozwVibqRu8FiAtpJw2hG4Cw9LKMTBGJtQTOVGDitE
+aE3L1TfAVHwiRBL1gZTqNMOX+V+Lj3sviL2QE1idOtCPqlyAu9fKU3nJXZc7z7Lw
+5Vu3dgy6Nik8QSZRcwR8
+=bgMo
+-----END PGP SIGNATURE-----
+
+--gMR3gsNFwZpnI/Ts--
