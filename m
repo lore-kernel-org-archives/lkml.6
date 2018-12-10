@@ -2,174 +2,200 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24A68C04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 21:53:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BDE65C04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 21:53:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D68A82146D
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 21:53:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="uBkAv19U"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D68A82146D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	by mail.kernel.org (Postfix) with ESMTP id 8907A2084E
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 21:53:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8907A2084E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729540AbeLJVxX (ORCPT
+        id S1729681AbeLJVx2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 16:53:23 -0500
-Received: from ozlabs.org ([203.11.71.1]:49341 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726392AbeLJVxX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 16:53:23 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 43DGzM3sx6z9s3Z;
-        Tue, 11 Dec 2018 08:53:19 +1100 (AEDT)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1544478799;
-        bh=RFlzYzntr8AAkIOhsxW4s9XG7lAhTInPS5Dghu5tAnU=;
-        h=Date:From:To:Cc:Subject:From;
-        b=uBkAv19UtIOSziMtWhSG62oFcvzo3V/p9HqYxRhJLiR4YI82SX7Ij7AaacFaD4jMV
-         s10bdzdaFFrtrCzHb56T6qZ1vz7UCYlCc3Ipvy5OqXj1qolCvYrNWTtrYEVfwHB1fV
-         RPy6u1Mk0lqzkVHZj9E4lZNl9RQPywDRvnv9uYEfKltffFwWr9cc8gAzpBydiYri5l
-         CA6LBhIx8dd/TVB4Blt1vJhCGllTKRVV0b9Jy+auxVyqp1UEOnVkDMXa+XHXe+rl7v
-         XoTtdvTeMJnd/mkY5jG3DR5/L91ncR+GJKhsm0FJw9F5v1PsljzcP0ZNWchpXYqMAi
-         JMb8lTToVHqWw==
-Date:   Tue, 11 Dec 2018 08:52:57 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Marc Zyngier <marc.zyngier@arm.com>
-Subject: linux-next: manual merge of the arm64 tree with Linus' tree
-Message-ID: <20181211085257.6e689038@canb.auug.org.au>
+        Mon, 10 Dec 2018 16:53:28 -0500
+Received: from mout.kundenserver.de ([212.227.126.187]:46109 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726392AbeLJVx1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Dec 2018 16:53:27 -0500
+Received: from wuerfel.lan ([109.192.41.194]) by mrelayeu.kundenserver.de
+ (mreue012 [212.227.15.129]) with ESMTPA (Nemesis) id
+ 1MkEdF-1hCNxZ236v-00kgK7; Mon, 10 Dec 2018 22:53:20 +0100
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     Andreas Koensgen <ajk@comnets.uni-bremen.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        Paul Mackerras <paulus@samba.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>, Al Viro <viro@zeniv.linux.org.uk>,
+        Colin Ian King <colin.king@canonical.com>,
+        linux-hams@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-ppp@vger.kernel.org
+Subject: [PATCH] hamradio, ppp: change semaphore to completion
+Date:   Mon, 10 Dec 2018 22:52:56 +0100
+Message-Id: <20181210215318.1982562-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.20.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/VrS5QPttYezG16fiWIRB03H"; protocol="application/pgp-signature"
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:d3v9JfKe1nH/BTMqoL4T45oaXvu8btJPVtquML8pEwYf1/kiony
+ 8nd6/qm7IRQE5hmDAslkqZ6G8yP9cTO1Ke3HyBUx7VpYyTWhX8i4UN5zxfyXNWEl0N4Tx+v
+ ZF7DwHdo+5SbNbHsnoOQ/hGTceRZ4hWctODjRQG2arh7IM70idaW+MRR0WgFo7atWBcoDo6
+ 82NSNGsH7Stygrp6O9zDw==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:RNGezJgd3R4=:jYfsVW5pJF6PsTrOpTTQXQ
+ lt/wB6Ob/dbmD5+38YgVhlhLasOehILOIaZLrxLVUlNNkMUZracr1kJUnN3jx1nH69G3U9tnk
+ WRGT152ZkZSxlhoyJ/HiISHlFvi7GaShY2tP141dJ7foKsiv4NsJpoRr2Xg10zBUxUu/+aDss
+ n51SwceQRDLc8ZsIA2av/SeeKaFJLkstz/gJgDhEHaCQipglBOFQKvKCFAQFpTQV9LV2h1QFV
+ aNhjcpXBCBAwF5QqfiNvcu6kDa8N6VkDAjYUsIAJDT9OuYZIfVK8iMWDs1idt4RqgBuEyaT74
+ 3cEnraTtRfZfqNDcYBSvvsvijza/y4YP/KttXd8iALQ17sVO1biG40lMLFdbAZe2et9gONONV
+ qD2kwAQIoCeRQ2vkFkbyEhJHS4PetOnUw8WBbR417mrXUCzwRLm1IZ1TzKpeKA/8ylxLeqeGH
+ timQYN/ml37PWf39d9EL5SvkHcPtsPFny4reaM9SEafBLrqG407fZ2/y3B1aA0V6BCW5IDGYF
+ n0Vtp/e63+WRnH40QDRzdzMBd45Z1GOd08fvBjICPKZtAoZgKYkiAb2AKnS1A1uI/uvSbdAUy
+ 9z9lyN8KgIKeB1YxzGINzAOV9RXM5gv8DBkyBAVi0Jc8efZcPHhRt381oyWWNr9R/4uYEzxBX
+ cMVF9er2a3zCvz44vGIJ3wpXfzdM5miBlVnWWcO6M/w0qmZBxCyOlZb4D5A3Y/RkrB58XK5V6
+ 28YYac4h8dhXpILVMdSabn7PqzRrjIriR2z6zg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/VrS5QPttYezG16fiWIRB03H
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+ppp and hamradio have copies of the same code that uses a semaphore
+in place of a completion for historic reasons. Make it use the
+proper interface instead in all copies.
 
-Hi all,
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/net/hamradio/6pack.c | 10 +++++-----
+ drivers/net/hamradio/mkiss.c |  8 ++++----
+ drivers/net/ppp/ppp_async.c  |  8 ++++----
+ 3 files changed, 13 insertions(+), 13 deletions(-)
 
-Today's linux-next merge of the arm64 tree got conflicts in:
+diff --git a/drivers/net/hamradio/6pack.c b/drivers/net/hamradio/6pack.c
+index 17e6dcd2eb42..28c749980359 100644
+--- a/drivers/net/hamradio/6pack.c
++++ b/drivers/net/hamradio/6pack.c
+@@ -120,7 +120,7 @@ struct sixpack {
+ 	struct timer_list	tx_t;
+ 	struct timer_list	resync_t;
+ 	refcount_t		refcnt;
+-	struct semaphore	dead_sem;
++	struct completion	dead;
+ 	spinlock_t		lock;
+ };
+ 
+@@ -389,7 +389,7 @@ static struct sixpack *sp_get(struct tty_struct *tty)
+ static void sp_put(struct sixpack *sp)
+ {
+ 	if (refcount_dec_and_test(&sp->refcnt))
+-		up(&sp->dead_sem);
++		complete(&sp->dead);
+ }
+ 
+ /*
+@@ -576,7 +576,7 @@ static int sixpack_open(struct tty_struct *tty)
+ 
+ 	spin_lock_init(&sp->lock);
+ 	refcount_set(&sp->refcnt, 1);
+-	sema_init(&sp->dead_sem, 0);
++	init_completion(&sp->dead);
+ 
+ 	/* !!! length of the buffers. MTU is IP MTU, not PACLEN!  */
+ 
+@@ -670,10 +670,10 @@ static void sixpack_close(struct tty_struct *tty)
+ 	 * we have to wait for all existing users to finish.
+ 	 */
+ 	if (!refcount_dec_and_test(&sp->refcnt))
+-		down(&sp->dead_sem);
++		wait_for_completion(&sp->dead);
+ 
+ 	/* We must stop the queue to avoid potentially scribbling
+-	 * on the free buffers. The sp->dead_sem is not sufficient
++	 * on the free buffers. The sp->dead completion is not sufficient
+ 	 * to protect us from sp->xbuff access.
+ 	 */
+ 	netif_stop_queue(sp->dev);
+diff --git a/drivers/net/hamradio/mkiss.c b/drivers/net/hamradio/mkiss.c
+index 802233d41b25..4938cf4c184c 100644
+--- a/drivers/net/hamradio/mkiss.c
++++ b/drivers/net/hamradio/mkiss.c
+@@ -81,7 +81,7 @@ struct mkiss {
+ #define CRC_MODE_SMACK_TEST	4
+ 
+ 	atomic_t		refcnt;
+-	struct semaphore	dead_sem;
++	struct completion	dead;
+ };
+ 
+ /*---------------------------------------------------------------------------*/
+@@ -687,7 +687,7 @@ static struct mkiss *mkiss_get(struct tty_struct *tty)
+ static void mkiss_put(struct mkiss *ax)
+ {
+ 	if (atomic_dec_and_test(&ax->refcnt))
+-		up(&ax->dead_sem);
++		complete(&ax->dead);
+ }
+ 
+ static int crc_force = 0;	/* Can be overridden with insmod */
+@@ -715,7 +715,7 @@ static int mkiss_open(struct tty_struct *tty)
+ 
+ 	spin_lock_init(&ax->buflock);
+ 	atomic_set(&ax->refcnt, 1);
+-	sema_init(&ax->dead_sem, 0);
++	init_completion(&ax->dead);
+ 
+ 	ax->tty = tty;
+ 	tty->disc_data = ax;
+@@ -795,7 +795,7 @@ static void mkiss_close(struct tty_struct *tty)
+ 	 * we have to wait for all existing users to finish.
+ 	 */
+ 	if (!atomic_dec_and_test(&ax->refcnt))
+-		down(&ax->dead_sem);
++		wait_for_completion(&ax->dead);
+ 	/*
+ 	 * Halt the transmit queue so that a new transmit cannot scribble
+ 	 * on our buffers
+diff --git a/drivers/net/ppp/ppp_async.c b/drivers/net/ppp/ppp_async.c
+index bdc4d23627c5..288cf099876b 100644
+--- a/drivers/net/ppp/ppp_async.c
++++ b/drivers/net/ppp/ppp_async.c
+@@ -70,7 +70,7 @@ struct asyncppp {
+ 	struct tasklet_struct tsk;
+ 
+ 	refcount_t	refcnt;
+-	struct semaphore dead_sem;
++	struct completion dead;
+ 	struct ppp_channel chan;	/* interface to generic ppp layer */
+ 	unsigned char	obuf[OBUFSIZE];
+ };
+@@ -148,7 +148,7 @@ static struct asyncppp *ap_get(struct tty_struct *tty)
+ static void ap_put(struct asyncppp *ap)
+ {
+ 	if (refcount_dec_and_test(&ap->refcnt))
+-		up(&ap->dead_sem);
++		complete(&ap->dead);
+ }
+ 
+ /*
+@@ -186,7 +186,7 @@ ppp_asynctty_open(struct tty_struct *tty)
+ 	tasklet_init(&ap->tsk, ppp_async_process, (unsigned long) ap);
+ 
+ 	refcount_set(&ap->refcnt, 1);
+-	sema_init(&ap->dead_sem, 0);
++	init_completion(&ap->dead);
+ 
+ 	ap->chan.private = ap;
+ 	ap->chan.ops = &async_ops;
+@@ -235,7 +235,7 @@ ppp_asynctty_close(struct tty_struct *tty)
+ 	 * by the time it returns.
+ 	 */
+ 	if (!refcount_dec_and_test(&ap->refcnt))
+-		down(&ap->dead_sem);
++		wait_for_completion(&ap->dead);
+ 	tasklet_kill(&ap->tsk);
+ 
+ 	ppp_unregister_channel(&ap->chan);
+-- 
+2.20.0
 
-  Documentation/arm64/silicon-errata.txt
-  arch/arm64/Kconfig
-
-between commit:
-
-  ce8c80c536da ("arm64: Add workaround for Cortex-A76 erratum 1286807")
-
-from Linus' tree and commit:
-
-  a457b0f7f50d ("arm64: Add configuration/documentation for Cortex-A76 erra=
-tum 1165522")
-
-from the arm64 tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc Documentation/arm64/silicon-errata.txt
-index 8f9577621144,04f0bc4690c6..000000000000
---- a/Documentation/arm64/silicon-errata.txt
-+++ b/Documentation/arm64/silicon-errata.txt
-@@@ -57,7 -57,7 +57,8 @@@ stable kernels
-  | ARM            | Cortex-A73      | #858921         | ARM64_ERRATUM_8589=
-21        |
-  | ARM            | Cortex-A55      | #1024718        | ARM64_ERRATUM_1024=
-718       |
-  | ARM            | Cortex-A76      | #1188873        | ARM64_ERRATUM_1188=
-873       |
-+ | ARM            | Cortex-A76      | #1165522        | ARM64_ERRATUM_1165=
-522       |
- +| ARM            | Cortex-A76      | #1286807        | ARM64_ERRATUM_1286=
-807       |
-  | ARM            | MMU-500         | #841119,#826419 | N/A               =
-          |
-  |                |                 |                 |                   =
-          |
-  | Cavium         | ThunderX ITS    | #22375, #24313  | CAVIUM_ERRATUM_223=
-75        |
-diff --cc arch/arm64/Kconfig
-index 0d9a45f948c2,4dbef530cf58..000000000000
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@@ -478,24 -504,18 +485,36 @@@ config ARM64_ERRATUM_118887
- =20
-  	  If unsure, say Y.
- =20
-+ config ARM64_ERRATUM_1165522
-+ 	bool "Cortex-A76: Speculative AT instruction using out-of-context transl=
-ation regime could cause subsequent request to generate an incorrect transl=
-ation"
-+ 	default y
-+ 	help
-+ 	  This option adds work arounds for ARM Cortex-A76 erratum 1165522
-+=20
-+ 	  Affected Cortex-A76 cores (r0p0, r1p0, r2p0) could end-up with
-+ 	  corrupted TLBs by speculating an AT instruction during a guest
-+ 	  context switch.
-+=20
-+ 	  If unsure, say Y.
-+=20
- +config ARM64_ERRATUM_1286807
- +	bool "Cortex-A76: Modification of the translation table for a virtual ad=
-dress might lead to read-after-read ordering violation"
- +	default y
- +	select ARM64_WORKAROUND_REPEAT_TLBI
- +	help
- +	  This option adds workaround for ARM Cortex-A76 erratum 1286807
- +
- +	  On the affected Cortex-A76 cores (r0p0 to r3p0), if a virtual
- +	  address for a cacheable mapping of a location is being
- +	  accessed by a core while another core is remapping the virtual
- +	  address to a new physical page using the recommended
- +	  break-before-make sequence, then under very rare circumstances
- +	  TLBI+DSB completes before a read using the translation being
- +	  invalidated has been observed by other observers. The
- +	  workaround repeats the TLBI+DSB operation.
- +
- +	  If unsure, say Y.
- +
-  config CAVIUM_ERRATUM_22375
-  	bool "Cavium erratum 22375, 24313"
-  	default y
-
---Sig_/VrS5QPttYezG16fiWIRB03H
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwO4DkACgkQAVBC80lX
-0GxUKAgAoEbJ1qc+Ct7woPIsnJYrNJI/SFxoQ79RJQGVPR5yaMOkOl7ng3G8dMY+
-w36bKwtndk+yKWFEt2RaEFTi8k5G5GPBwd5/vSCAHxlmbxcTlLQ0JAb8abhTg4pa
-g2Lo0qeemDTWUkDJc5sMbydZO5Drxy//EBAYu1jmjnj9lgPVrdNBUCz1fnXSd7aW
-yLqSsM6lOvrdy4KMu1kJ3vjYFts6IUrx0xHVaTjXonUXZk79c8Cht6ylzEN1GESx
-OQi96uTnZTKry0nlUEL4Wqtu3QOIeJo1X5VzY2svo6bCbtkIXwVtqhSYQeD+vouD
-QTALj2bhMA7dHLmNLJEUFSNTqsRWGg==
-=/k/H
------END PGP SIGNATURE-----
-
---Sig_/VrS5QPttYezG16fiWIRB03H--
