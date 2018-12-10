@@ -2,60 +2,60 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DC11C04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 17:36:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C64D1C04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 17:37:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D9D2B2082F
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 17:36:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8F74820851
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 17:37:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="BYhxXpgZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D9D2B2082F
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="HnWTjtv6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F74820851
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728338AbeLJRgt (ORCPT
+        id S1728380AbeLJRg6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 12:36:49 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:43638 "EHLO
+        Mon, 10 Dec 2018 12:36:58 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:41034 "EHLO
         mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728307AbeLJRgt (ORCPT
+        with ESMTP id S1728307AbeLJRg5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 12:36:49 -0500
-Received: by mail-pg1-f196.google.com with SMTP id v28so5275525pgk.10
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Dec 2018 09:36:47 -0800 (PST)
+        Mon, 10 Dec 2018 12:36:57 -0500
+Received: by mail-pg1-f196.google.com with SMTP id 70so5278088pgh.8
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Dec 2018 09:36:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=Wp3BZDgoaFaJmF6UrFqd9p3SyvZQREQyZwNsYyp7Sws=;
-        b=BYhxXpgZnvOoilqOg2dayJqLZC1bmtGK3F2m/wNmGOGFtRhrUO1j0+G9GcXeWcGJGw
-         +5tIYrt1xyJk1HXfsyRp7GA5/4DMSuqRQ5GqObVoPgRIzlF1IFKeOFegeGNHzckLkDz4
-         729cKzaTqTJm0iGqUCr/jC90aHtSEx7YnVO8I=
+        bh=jBeXaJXIkgLTVAea7CD+4QY6FweZRNu6qTHTVAB8x/Y=;
+        b=HnWTjtv6Hy7K1s4CYLo0CNcASjpB/ucXs+JDazjHumFysvFqK+VJ8QJWG1urZqaYjt
+         Y0afPttIx8MIBlO/YhK5H0I0R0rKCJkRuKDTyP6KaboVBdzD6WwvGny6ncV5PmcmUjnz
+         wDw+4l/6qUiEcd1nEANt24gSD+Rqcm5Y1pUQk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=Wp3BZDgoaFaJmF6UrFqd9p3SyvZQREQyZwNsYyp7Sws=;
-        b=fibrtdWU5QTpcIQWvmD39rY5YhO6dBD6YIGs3OSGMho4DFYhbyWEOwEws9Dac1yHc8
-         IkcU+A7yO5cgrbv79vVrooLG0iEozXXx0DYHhxUGH/HOc/dSSYNREjasrr1oJMUPxdaY
-         ADTqy/wXVeV0RsFmI7FY1zu2QyEl0mLKJOBSA6pUg+q9IzadpaWsV06luluNVQBCWMAA
-         3DwUp+ChAXU7wvD0rY9Hjn8ds7dRVx/yEMTjJU2JfD5m1G4/GZeJRl7DapKxSKBSShUV
-         JA+9NK28dhuS/L1KVRwfF/DrUXeWdn8AN2CDiEV7JQt28YqhcAOc54VMT1GLnBdbffrk
-         mA5A==
-X-Gm-Message-State: AA+aEWZgNUKutAR9kn+4O//Tn9q8DMDM/y/+90eedrvwXS5Mb+YJ+q1g
-        KX/oPHAi7Eaf9LH+Vo/SGAiU
-X-Google-Smtp-Source: AFSGD/WLNZUAXvqeDAB3wTMU5f8fRrukAKTws78kvI2XuNeBwS3mLMrsixk9GaOGqWsel1TdnhrDDg==
-X-Received: by 2002:a62:ab0d:: with SMTP id p13mr13160505pff.211.1544463407381;
-        Mon, 10 Dec 2018 09:36:47 -0800 (PST)
+        bh=jBeXaJXIkgLTVAea7CD+4QY6FweZRNu6qTHTVAB8x/Y=;
+        b=Z50iePcjw6nfWIioQjWUVZ/1hGCU6/UrU6mFOu8FurFSJPbCHRxgjo00pUS3zWqbdT
+         bU5244UbdIQ0227r87YiWgO3SP8baC+6wAlFoFdr5rfK0Wy8WxoFMFk0wk3pZTKscS0e
+         6ZDNR5p5IDN2bSvqqP3/5tIQDqclIzI3ZjfqrvO8jYrhZ+5LyK9dXS6BNz3OaEToWXTO
+         dvmXHL4CKIOpnuv8P0LJhtk5g2/wAOubmtx1SNmzdGr6OOHoaQz9IKVgK4rbRHR7136G
+         UAjO+9gf7cIdLH5oF4TObXcFK4FyGOFI/URfa+rX8e2jMaT3VrBdumKg78TKCHlqsou+
+         gZCQ==
+X-Gm-Message-State: AA+aEWYWb6FjSUuTUmqEso4fkU23RmieSV72OUpcQlfT4ebRECIEbmIX
+        Iae1S/7ATtWFLTVlkp35oURv
+X-Google-Smtp-Source: AFSGD/VsuZLUgkb5A6az0xNP83jpeir23dDvpTTMoEGwiGnzwSjnc1juBaCDajpNYRCDqe77dbs5Sg==
+X-Received: by 2002:a63:6c48:: with SMTP id h69mr11056458pgc.139.1544463415247;
+        Mon, 10 Dec 2018 09:36:55 -0800 (PST)
 Received: from localhost.localdomain ([2409:4072:91e:2c01:40e1:a028:b090:9e12])
-        by smtp.gmail.com with ESMTPSA id q1sm15998396pfb.96.2018.12.10.09.36.39
+        by smtp.gmail.com with ESMTPSA id q1sm15998396pfb.96.2018.12.10.09.36.47
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 10 Dec 2018 09:36:46 -0800 (PST)
+        Mon, 10 Dec 2018 09:36:54 -0800 (PST)
 From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 To:     olof@lixom.net, arnd@arndb.de, robh+dt@kernel.org,
         tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com,
@@ -67,9 +67,9 @@ Cc:     linux-unisoc@lists.infradead.org, afaerber@suse.de,
         amit.kucheria@linaro.org, linus.walleij@linaro.org,
         zhao_steven@263.net,
         Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH v4 05/15] ARM: dts: Add devicetree for RDA8810PL SoC
-Date:   Mon, 10 Dec 2018 23:05:40 +0530
-Message-Id: <20181210173550.29643-6-manivannan.sadhasivam@linaro.org>
+Subject: [PATCH v4 06/15] ARM: dts: Add devicetree for OrangePi 2G IoT board
+Date:   Mon, 10 Dec 2018 23:05:41 +0530
+Message-Id: <20181210173550.29643-7-manivannan.sadhasivam@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181210173550.29643-1-manivannan.sadhasivam@linaro.org>
 References: <20181210173550.29643-1-manivannan.sadhasivam@linaro.org>
@@ -81,106 +81,84 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add initial device tree for RDA8810PL SoC from RDA Microelectronics.
+Add initial devicetree support for OrangePi 2G IoT board from Xunlong.
 
 Signed-off-by: Andreas Färber <afaerber@suse.de>
 Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 ---
- arch/arm/boot/dts/rda8810pl.dtsi | 86 ++++++++++++++++++++++++++++++++
- 1 file changed, 86 insertions(+)
- create mode 100644 arch/arm/boot/dts/rda8810pl.dtsi
+ arch/arm/boot/dts/Makefile                    |  2 +
+ .../boot/dts/rda8810pl-orangepi-2g-iot.dts    | 50 +++++++++++++++++++
+ 2 files changed, 52 insertions(+)
+ create mode 100644 arch/arm/boot/dts/rda8810pl-orangepi-2g-iot.dts
 
-diff --git a/arch/arm/boot/dts/rda8810pl.dtsi b/arch/arm/boot/dts/rda8810pl.dtsi
+diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+index b0e966d625b9..a0fdad8f10dd 100644
+--- a/arch/arm/boot/dts/Makefile
++++ b/arch/arm/boot/dts/Makefile
+@@ -806,6 +806,8 @@ dtb-$(CONFIG_ARCH_QCOM) += \
+ 	qcom-msm8974-sony-xperia-castor.dtb \
+ 	qcom-msm8974-sony-xperia-honami.dtb \
+ 	qcom-mdm9615-wp8548-mangoh-green.dtb
++dtb-$(CONFIG_ARCH_RDA) += \
++	rda8810pl-orangepi-2g-iot.dtb
+ dtb-$(CONFIG_ARCH_REALVIEW) += \
+ 	arm-realview-pb1176.dtb \
+ 	arm-realview-pb11mp.dtb \
+diff --git a/arch/arm/boot/dts/rda8810pl-orangepi-2g-iot.dts b/arch/arm/boot/dts/rda8810pl-orangepi-2g-iot.dts
 new file mode 100644
-index 000000000000..15547b138977
+index 000000000000..98e34248ae80
 --- /dev/null
-+++ b/arch/arm/boot/dts/rda8810pl.dtsi
-@@ -0,0 +1,86 @@
++++ b/arch/arm/boot/dts/rda8810pl-orangepi-2g-iot.dts
+@@ -0,0 +1,50 @@
 +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
 +/*
-+ * RDA8810PL SoC
-+ *
 + * Copyright (c) 2017 Andreas Färber
 + * Copyright (c) 2018 Manivannan Sadhasivam
 + */
 +
++/dts-v1/;
++
++#include "rda8810pl.dtsi"
++
 +/ {
-+	compatible = "rda,8810pl";
-+	interrupt-parent = <&intc>;
-+	#address-cells = <1>;
-+	#size-cells = <1>;
++	compatible = "xunlong,orangepi-2g-iot", "rda,8810pl";
++	model = "Orange Pi 2G-IoT";
 +
-+	cpus {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		cpu@0 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a5";
-+			reg = <0x0>;
-+		};
++	aliases {
++		serial0 = &uart1;
++		serial1 = &uart2;
++		serial2 = &uart3;
 +	};
 +
-+	sram@100000 {
-+		compatible = "mmio-sram";
-+		reg = <0x100000 0x10000>;
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges;
++	chosen {
++		stdout-path = "serial2:921600n8";
 +	};
 +
-+	apb@20800000 {
-+		compatible = "simple-bus";
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges = <0x0 0x20800000 0x100000>;
-+
-+		intc: interrupt-controller@0 {
-+			compatible = "rda,8810pl-intc";
-+			reg = <0x0 0x1000>;
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+		};
++	memory@80000000 {
++		device_type = "memory";
++		reg = <0x80000000 0x10000000>;
 +	};
 +
-+	apb@20900000 {
-+		compatible = "simple-bus";
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges = <0x0 0x20900000 0x100000>;
++	uart_clk: uart-clk {
++		compatible = "fixed-clock";
++		clock-frequency = <921600>;
++		#clock-cells = <0>;
 +	};
++};
 +
-+	apb@20a00000 {
-+		compatible = "simple-bus";
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges = <0x0 0x20a00000 0x100000>;
++&uart1 {
++	status = "okay";
++	clocks = <&uart_clk>;
++};
 +
-+		uart1: serial@0 {
-+			compatible = "rda,8810pl-uart";
-+			reg = <0x0 0x1000>;
-+			status = "disabled";
-+		};
++&uart2 {
++	status = "okay";
++	clocks = <&uart_clk>;
++};
 +
-+		uart2: serial@10000 {
-+			compatible = "rda,8810pl-uart";
-+			reg = <0x10000 0x1000>;
-+			status = "disabled";
-+		};
-+
-+		uart3: serial@90000 {
-+			compatible = "rda,8810pl-uart";
-+			reg = <0x90000 0x1000>;
-+			status = "disabled";
-+		};
-+	};
-+
-+	l2: cache-controller@21100000 {
-+		compatible = "arm,pl310-cache";
-+		reg = <0x21100000 0x1000>;
-+		cache-unified;
-+		cache-level = <2>;
-+	};
++&uart3 {
++	status = "okay";
++	clocks = <&uart_clk>;
 +};
 -- 
 2.17.1
