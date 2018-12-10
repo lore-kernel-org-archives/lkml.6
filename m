@@ -2,157 +2,133 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.8 required=3.0 tests=DATE_IN_PAST_06_12,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BC56C07E85
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 03:08:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 152DEC04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 03:13:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3DE4F2081F
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 03:08:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3DE4F2081F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id C527E20837
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 03:13:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C527E20837
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726453AbeLJDIO (ORCPT
+        id S1726397AbeLJDNq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 22:08:14 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:16102 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726281AbeLJDIO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Dec 2018 22:08:14 -0500
-Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id D778561D22933;
-        Mon, 10 Dec 2018 11:08:10 +0800 (CST)
-Received: from localhost.localdomain (10.175.34.53) by
- DGGEMS411-HUB.china.huawei.com (10.3.19.211) with Microsoft SMTP Server id
- 14.3.408.0; Mon, 10 Dec 2018 11:08:04 +0800
-From:   Xue Chaojing <xuechaojing@huawei.com>
-To:     <davem@davemloft.net>
-CC:     <linux-kernel@vger.kernel.org>, <xuechaojing@huawei.com>,
-        <netdev@vger.kernel.org>, <wulike1@huawei.com>,
-        <chiqijun@huawei.com>, <fy.wang@huawei.com>, <tony.qu@huawei.com>,
-        <luoshaokai@huawei.com>
-Subject: [PATCH 1/1] net-next/hinic:optmize rx refill buffer mechanism
-Date:   Sun, 9 Dec 2018 19:14:19 +0000
-Message-ID: <20181209191419.16845-1-xuechaojing@huawei.com>
-X-Mailer: git-send-email 2.17.1
+        Sun, 9 Dec 2018 22:13:46 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:43906 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726086AbeLJDNq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Dec 2018 22:13:46 -0500
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 8C8C3307CDDC;
+        Mon, 10 Dec 2018 03:13:45 +0000 (UTC)
+Received: from localhost.localdomain (ovpn-12-66.pek2.redhat.com [10.72.12.66])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 596F160BE5;
+        Mon, 10 Dec 2018 03:13:38 +0000 (UTC)
+Subject: Re: [PATCH 2/2 v2] kdump,vmcoreinfo: Export the value of sme mask to
+ vmcoreinfo
+To:     Dave Young <dyoung@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, kexec@lists.infradead.org,
+        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, x86@kernel.org,
+        akpm@linux-foundation.org, bhe@redhat.com
+References: <20181202030839.29945-1-lijiang@redhat.com>
+ <20181202030839.29945-3-lijiang@redhat.com>
+ <20181205102407.GB6940@dhcp-128-65.nay.redhat.com>
+From:   lijiang <lijiang@redhat.com>
+Message-ID: <685758a5-9d52-9270-e907-b4bda49a0102@redhat.com>
+Date:   Mon, 10 Dec 2018 11:13:35 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.34.53]
-X-CFilter-Loop: Reflected
+In-Reply-To: <20181205102407.GB6940@dhcp-128-65.nay.redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.49]); Mon, 10 Dec 2018 03:13:45 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is no need to schedule a different tasklet for refill,
-This patch remove it.
+在 2018年12月05日 18:24, Dave Young 写道:
+> On 12/02/18 at 11:08am, Lianbo Jiang wrote:
+>> For AMD machine with SME feature, makedumpfile tools need to know
+>> whether the crash kernel was encrypted or not. If SME is enabled
+>> in the first kernel, the crash kernel's page table(pgd/pud/pmd/pte)
+>> contains the memory encryption mask, so need to remove the sme mask
+>> to obtain the true physical address.
+>>
+>> Signed-off-by: Lianbo Jiang <lijiang@redhat.com>
+>> ---
+>>  arch/x86/kernel/machine_kexec_64.c | 14 ++++++++++++++
+>>  1 file changed, 14 insertions(+)
+>>
+>> diff --git a/arch/x86/kernel/machine_kexec_64.c b/arch/x86/kernel/machine_kexec_64.c
+>> index 4c8acdfdc5a7..1860fe24117d 100644
+>> --- a/arch/x86/kernel/machine_kexec_64.c
+>> +++ b/arch/x86/kernel/machine_kexec_64.c
+>> @@ -352,10 +352,24 @@ void machine_kexec(struct kimage *image)
+>>  
+>>  void arch_crash_save_vmcoreinfo(void)
+>>  {
+>> +	u64 sme_mask = sme_me_mask;
+>> +
+>>  	VMCOREINFO_NUMBER(phys_base);
+>>  	VMCOREINFO_SYMBOL(init_top_pgt);
+>>  	vmcoreinfo_append_str("NUMBER(pgtable_l5_enabled)=%d\n",
+>>  			pgtable_l5_enabled());
+>> +	/*
+>> +	 * Currently, the local variable 'sme_mask' stores the value of
+>> +	 * sme_me_mask(bit 47), and also write the value of sme_mask to
+>> +	 * the vmcoreinfo.
+>> +	 * If need, the bit(sme_mask) might be redefined in the future,
+>> +	 * but the 'bit63' will be reserved.
+>> +	 * For example:
+>> +	 * [ misc	   ][ enc bit  ][ other misc SME info       ]
+>> +	 * 0000_0000_0000_0000_1000_0000_0000_0000_0000_0000_..._0000
+>> +	 * 63   59   55   51   47   43   39   35   31   27   ... 3
+>> +	 */
+>> +	VMCOREINFO_NUMBER(sme_mask);
+> 
+> #define VMCOREINFO_NUMBER(name) \
+>         vmcoreinfo_append_str("NUMBER(%s)=%ld\n", #name, (long)name)
+> 
+> VMCOREINFO_NUMBER is defined as above, so it looks questionable to add
+> more users of that for different data types although it may work in real
+> world.
+> 
 
-Suggested-by: Neil Horman <nhorman@redhat.com>
-Signed-off-by: Xue Chaojing <xuechaojing@huawei.com>
----
- drivers/net/ethernet/huawei/hinic/hinic_rx.c | 23 +++++---------------
- drivers/net/ethernet/huawei/hinic/hinic_rx.h |  2 --
- 2 files changed, 5 insertions(+), 20 deletions(-)
+Thank you, Dave.
+For the sme_mask, the bit47 is set '1', and the VMCOREINFO_NUMBER is a signed
+64 bit number(x86_64), it is big enough to the sme_mask.
 
-diff --git a/drivers/net/ethernet/huawei/hinic/hinic_rx.c b/drivers/net/ethernet/huawei/hinic/hinic_rx.c
-index f86f2e693224..0098b206e7e9 100644
---- a/drivers/net/ethernet/huawei/hinic/hinic_rx.c
-+++ b/drivers/net/ethernet/huawei/hinic/hinic_rx.c
-@@ -43,6 +43,7 @@
- #define RX_IRQ_NO_LLI_TIMER             0
- #define RX_IRQ_NO_CREDIT                0
- #define RX_IRQ_NO_RESEND_TIMER          0
-+#define HINIC_RX_BUFFER_WRITE           16
- 
- /**
-  * hinic_rxq_clean_stats - Clean the statistics of specific queue
-@@ -229,7 +230,6 @@ static int rx_alloc_pkts(struct hinic_rxq *rxq)
- 		wmb();  /* write all the wqes before update PI */
- 
- 		hinic_rq_update(rxq->rq, prod_idx);
--		tasklet_schedule(&rxq->rx_task);
- 	}
- 
- 	return i;
-@@ -258,17 +258,6 @@ static void free_all_rx_skbs(struct hinic_rxq *rxq)
- 	}
- }
- 
--/**
-- * rx_alloc_task - tasklet for queue allocation
-- * @data: rx queue
-- **/
--static void rx_alloc_task(unsigned long data)
--{
--	struct hinic_rxq *rxq = (struct hinic_rxq *)data;
--
--	(void)rx_alloc_pkts(rxq);
--}
--
- /**
-  * rx_recv_jumbo_pkt - Rx handler for jumbo pkt
-  * @rxq: rx queue
-@@ -333,6 +322,7 @@ static int rxq_recv(struct hinic_rxq *rxq, int budget)
- 	struct hinic_qp *qp = container_of(rxq->rq, struct hinic_qp, rq);
- 	u64 pkt_len = 0, rx_bytes = 0;
- 	struct hinic_rq_wqe *rq_wqe;
-+	unsigned int free_wqebbs;
- 	int num_wqes, pkts = 0;
- 	struct hinic_sge sge;
- 	struct sk_buff *skb;
-@@ -376,8 +366,9 @@ static int rxq_recv(struct hinic_rxq *rxq, int budget)
- 		rx_bytes += pkt_len;
- 	}
- 
--	if (pkts)
--		tasklet_schedule(&rxq->rx_task); /* rx_alloc_pkts */
-+	free_wqebbs = hinic_get_rq_free_wqebbs(rxq->rq);
-+	if (free_wqebbs > HINIC_RX_BUFFER_WRITE)
-+		rx_alloc_pkts(rxq);
- 
- 	u64_stats_update_begin(&rxq->rxq_stats.syncp);
- 	rxq->rxq_stats.pkts += pkts;
-@@ -494,8 +485,6 @@ int hinic_init_rxq(struct hinic_rxq *rxq, struct hinic_rq *rq,
- 
- 	sprintf(rxq->irq_name, "hinic_rxq%d", qp->q_id);
- 
--	tasklet_init(&rxq->rx_task, rx_alloc_task, (unsigned long)rxq);
--
- 	pkts = rx_alloc_pkts(rxq);
- 	if (!pkts) {
- 		err = -ENOMEM;
-@@ -512,7 +501,6 @@ int hinic_init_rxq(struct hinic_rxq *rxq, struct hinic_rq *rq,
- 
- err_req_rx_irq:
- err_rx_pkts:
--	tasklet_kill(&rxq->rx_task);
- 	free_all_rx_skbs(rxq);
- 	devm_kfree(&netdev->dev, rxq->irq_name);
- 	return err;
-@@ -528,7 +516,6 @@ void hinic_clean_rxq(struct hinic_rxq *rxq)
- 
- 	rx_free_irq(rxq);
- 
--	tasklet_kill(&rxq->rx_task);
- 	free_all_rx_skbs(rxq);
- 	devm_kfree(&netdev->dev, rxq->irq_name);
- }
-diff --git a/drivers/net/ethernet/huawei/hinic/hinic_rx.h b/drivers/net/ethernet/huawei/hinic/hinic_rx.h
-index ab3fabab91b2..f8ed3fa6c8ee 100644
---- a/drivers/net/ethernet/huawei/hinic/hinic_rx.h
-+++ b/drivers/net/ethernet/huawei/hinic/hinic_rx.h
-@@ -42,8 +42,6 @@ struct hinic_rxq {
- 
- 	char                    *irq_name;
- 
--	struct tasklet_struct   rx_task;
--
- 	struct napi_struct      napi;
- };
- 
--- 
-2.17.1
 
+> A new macro like below may be better, may need to choose a better name
+> though:
+> _VMCOREINFO_NUMBER(name, format, type)
+> so you can pass the format specifier and data types explictly
+> 
+
+That should be a good suggestion. But for now, maybe it is not time for improving it.
+Because it is still big enough.
+
+Thanks.
+Lianbo
+
+> 
+>>  
+>>  #ifdef CONFIG_NUMA
+>>  	VMCOREINFO_SYMBOL(node_data);
+>> -- 
+>> 2.17.1
+>>
+> 
+> Thanks
+> Dave
+> 
