@@ -2,96 +2,96 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34CFDC65BB3
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 15:43:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85A90C65BB3
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 15:44:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D88572082F
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 15:43:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544456597;
-	bh=uXCSvXY7wsin5X6pGL2TygTkbK1hSg7gM4eUVxTscF4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=BQlcuciEMOd/udrpwRF7BUSi6sk0EgPiLnN8Rhv4klKSKG/fTGgfUrScOcZAiCCh4
-	 r+iv/499EBlrFiVzDPTjMf3zg16b12Ilxc/idYvUgH4GQ5QAuq8ZFG0uo79yzCD/m3
-	 YZ36kYZo9f9xA5gnNsQbHKR2GAPrPGx0szy/klI0=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D88572082F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 35DB12081F
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 15:44:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fF10LUmO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 35DB12081F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728188AbeLJPnP (ORCPT
+        id S1727313AbeLJPom (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 10:43:15 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:49140 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727313AbeLJPnP (ORCPT
+        Mon, 10 Dec 2018 10:44:42 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:38189 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728103AbeLJPom (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 10:43:15 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=dMhU4WCRINU6YcFxlrsS3bZRSkDxWGVxuO/fYTc2RLY=; b=gUrVrtBT5/oqReENMwjWkTUqz
-        auidvIURQvh9MqGnY6eIbNDA7STIA/gKk1kmEf9DNpDj5yLSJAzObYuwFiyizQtxzN5TP3IQ70aFF
-        9JiKO7Rb9RcXqvLUatLkBV+dYr6t91UX/sHnsViaGm2JcErIy19GqVIqXI13eselywVEg=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1gWNiC-0005CM-9d; Mon, 10 Dec 2018 15:43:12 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id F24C811254C5; Mon, 10 Dec 2018 15:43:11 +0000 (GMT)
-Date:   Mon, 10 Dec 2018 15:43:11 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Douglas Anderson <dianders@chromium.org>
-Cc:     linux-arm-msm@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>,
-        evgreen@chromium.org, Brian Masney <masneyb@onstation.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] regulator: core: Clean enabling always-on regulators +
- their supplies
-Message-ID: <20181210154311.GF6307@sirena.org.uk>
-References: <20181206222318.240401-1-dianders@chromium.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="3yNHWXBV/QO9xKNm"
-Content-Disposition: inline
-In-Reply-To: <20181206222318.240401-1-dianders@chromium.org>
-X-Cookie: Do not cut switchbacks.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Mon, 10 Dec 2018 10:44:42 -0500
+Received: by mail-pl1-f193.google.com with SMTP id e5so5431227plb.5;
+        Mon, 10 Dec 2018 07:44:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=sNObouxbtDAuzbYoJ9Ku1TKX/BO+cq7xwr74jzSdRjI=;
+        b=fF10LUmOgRT+WaKcbYthnRy65MZXg4Uqeu75taS9YlEenNE7dbPs0282ego5eC2/Q/
+         Wh62HghVckKQN2thrAe2G7cvI6jE8eczckKkY3p1VgFkJxtUsYSmFJFT8bHqM3JJ6vJw
+         5QcdKQ7nhu7KIVYMKTajpu9ZHQe+OhuigaflXThc9kzdjtz5H3AAXIGKVqMkoqszDME+
+         RV2yHVhh4rfJMA6u8YtypPWjksjGb+9lw9TUzfByM2hBe2UizvjIkx1idtO1w6xgL+1I
+         vR/7G4N9y2iIkr8n4c3vB4YwudJ6PiTsLSixMBgLEEXQZj19DtkVdTqbzcR8N+kHuNLn
+         p5iw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=sNObouxbtDAuzbYoJ9Ku1TKX/BO+cq7xwr74jzSdRjI=;
+        b=PastYZxF4k09V47tYvRdDEXztx6HEamCfVC5Ed7xG0Ig65fSU4TVe0WEofd7rOOyLk
+         T2md5jATIqvm36QkpVqEP2IEJOSqflJ/ljPKB/ENOthfoeVC8AQ3Pp1gxiqvVQ0tE+E8
+         WGMmnyt5qkgcDMybF36fFqpXSzGedPsLL8sA0IHMcDlHRABaBY2AfqhNzicS4o8Nl6zk
+         HygA7mP4jLHD0uvLMuQtEmNsdrH/BpbxF+79OAvLMaMYOqU761F0NhNtP2pC3N8c70Ag
+         ySh1RoXfddHQgseNOzyIIrTzNYsl3tmBXVNLV/cw/IVBD+pOR7gfbO1L3NZ3A4D5w1g8
+         /5/A==
+X-Gm-Message-State: AA+aEWYmYELl7V1sxrrcDGv7jR9FU4X+Cqq+MTC5Xqk7ypz7Xd9TOLW6
+        FxtkV3Dz1vuPUdH0CjhyXAM=
+X-Google-Smtp-Source: AFSGD/W8U3Zn2FwdBeeejB5/KybQYa+Mp69pG6X4ZIB9wpWGKDETRk5WUuN4oPbqpGpSz3ECk+jViQ==
+X-Received: by 2002:a17:902:7e0d:: with SMTP id b13mr12734968plm.154.1544456681409;
+        Mon, 10 Dec 2018 07:44:41 -0800 (PST)
+Received: from localhost.localdomain ([106.51.67.149])
+        by smtp.googlemail.com with ESMTPSA id f67sm23211227pff.29.2018.12.10.07.44.39
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 10 Dec 2018 07:44:40 -0800 (PST)
+From:   Hardik Singh Rathore <hardiksingh.k@gmail.com>
+To:     dmitry.torokhov@gmail.com
+Cc:     michael.hennerich@analog.com, linux-input@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Hardik Singh Rathore <hardiksingh.k@gmail.com>
+Subject: [PATCH] Input: touchscreen: ad7879: Fix ERROR: foo* bar should be "foo *bar"
+Date:   Mon, 10 Dec 2018 21:14:33 +0530
+Message-Id: <20181210154433.28319-1-hardiksingh.k@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Fix the coding style problem reported by checkpatch.pl.
 
---3yNHWXBV/QO9xKNm
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Signed-off-by: Hardik Singh Rathore <hardiksingh.k@gmail.com>
+---
+ drivers/input/touchscreen/ad7879.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On Thu, Dec 06, 2018 at 02:23:18PM -0800, Douglas Anderson wrote:
-> At the end of regulator_resolve_supply() we have historically turned
-> on our supply in some cases.  This could be for one of two reasons:
+diff --git a/drivers/input/touchscreen/ad7879.c b/drivers/input/touchscreen/ad7879.c
+index 6bad23ee47a1..b68902c17f2e 100644
+--- a/drivers/input/touchscreen/ad7879.c
++++ b/drivers/input/touchscreen/ad7879.c
+@@ -290,7 +290,7 @@ static int ad7879_open(struct input_dev *input)
+ 	return 0;
+ }
+ 
+-static void ad7879_close(struct input_dev* input)
++static void ad7879_close(struct input_dev *input)
+ {
+ 	struct ad7879 *ts = input_get_drvdata(input);
+ 
+-- 
+2.17.1
 
-This doesn't apply against current code, please check and resend.
-
---3yNHWXBV/QO9xKNm
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlwOiY8ACgkQJNaLcl1U
-h9CslAf+PuHrIr1IQ7LNNqfOY9YsDks+jGOc+hjJ2RDJ3iJ3yOf2t8Gz9FjIUgnA
-RAB9UYkB5zaN9BSTZMNbpbZLGbRgmji+Ob4nM5T54pnbBHRwXKpYr4tLDGm3ZyY4
-mB6XW8E5RGFdMscZxrgVW3g594BetQaVKSRVt5y00wJv1kotD9aby4shVrtE0yz9
-Uwne5VGZ8kuNyPXa0rO0DwNUfP/o454H3Gmwf8W4yGaWDKNvXukQGUPjo1d2WlJN
-+pU67M1lA8Box0iHmUyqZYHwkYpF37FteJcjNOircN66X+qLdq0QeyTpjSJZ5Krd
-WMMuHWcTTP0o+IzFgdZlLJgv5BiVnw==
-=X6VO
------END PGP SIGNATURE-----
-
---3yNHWXBV/QO9xKNm--
