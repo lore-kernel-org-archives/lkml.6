@@ -6,134 +6,112 @@ X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D655C04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 10:18:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A580C04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 10:18:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1420120870
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 10:18:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4266620821
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 10:18:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="COe6NzDr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1420120870
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="mNJp2Z7p"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4266620821
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727013AbeLJKSh (ORCPT
+        id S1727038AbeLJKSm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 05:18:37 -0500
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:41551 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726994AbeLJKSh (ORCPT
+        Mon, 10 Dec 2018 05:18:42 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:56618 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726994AbeLJKSj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 05:18:37 -0500
-Received: by mail-ed1-f65.google.com with SMTP id z28so8968525edi.8
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Dec 2018 02:18:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=NAyoTtRLEgV/ZLu0j1afB7pOEypu3oJUgTQbmtuJru0=;
-        b=COe6NzDrrA/t2I/UCH4hq/awqlSSzs/7g0b2lq/KwCoczu9lwnG+T3X9mEJ/7EsRph
-         pRRX2BXh1ocjoY76TBEFQeYiE5HJJRyCKdgEzeJEz0XvUDpeQeqQPKXmbQRn7+2EEKBN
-         9cG8u6IeD+lzVsp3WbZSijWOIt7WDf0Wp/f6A=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=NAyoTtRLEgV/ZLu0j1afB7pOEypu3oJUgTQbmtuJru0=;
-        b=ect3aRn58k36QYAegvPTOgA0YqgA8m2AMJppgmzjIDpQ5sPRn7now5nBUum4qYxHoh
-         f3ehWGVakhnIPlYzawt/h2wx25ChBf3IHHtnBDzomShiL0QuRzOdjghWTjxHYCq2dpyp
-         34/D8pP+rdHHDxNWXDpKDn50Jxox2hgqaWea6MKPYsh9DoR5wnACaeqe4Ky0txYTcvJ/
-         3P+JFK5uSWgWO7OlDVnZWaK76ipHkXOv8Fp8ONT7G/9jrAyK6RZyjV5eQqCwjpWI/+iw
-         NWJOU0AUfZiOO2erNUPBlQwL/cobASZoCh0s/8zmv9Wgx9szcCHbqBKPmmzbpDYaDTnU
-         uJhw==
-X-Gm-Message-State: AA+aEWbkBTkYBWOC34rY2DG/wpQ5R3n51gLiVxcs2JTXXGYDHhvVVer6
-        wRutGZsYu6WIbr+O792O0OWyWg==
-X-Google-Smtp-Source: AFSGD/V9fF2TbVZ1jalCYbRCvHzMPjr9qO6Ad4XOIj4FTsBRF7KGerf/R9vlp1Mygh8H1j8uYe5XUA==
-X-Received: by 2002:a17:906:37da:: with SMTP id o26-v6mr9251480ejc.179.1544437115071;
-        Mon, 10 Dec 2018 02:18:35 -0800 (PST)
-Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
-        by smtp.gmail.com with ESMTPSA id c11-v6sm1726157ejm.67.2018.12.10.02.18.33
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 10 Dec 2018 02:18:34 -0800 (PST)
-Date:   Mon, 10 Dec 2018 11:18:32 +0100
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Daniel Vetter <daniel.vetter@ffwll.ch>,
-        LKML <linux-kernel@vger.kernel.org>,
-        DRI Development <dri-devel@lists.freedesktop.org>,
-        Ramalingam C <ramalingam.c@intel.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Daniel Vetter <daniel.vetter@intel.com>
-Subject: Re: [PATCH] drivers/base: use a worker for sysfs unbind
-Message-ID: <20181210101832.GN21184@phenom.ffwll.local>
-Mail-Followup-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        DRI Development <dri-devel@lists.freedesktop.org>,
-        Ramalingam C <ramalingam.c@intel.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Daniel Vetter <daniel.vetter@intel.com>
-References: <20181210084653.7268-1-daniel.vetter@ffwll.ch>
- <20181210100634.GA8836@kroah.com>
+        Mon, 10 Dec 2018 05:18:39 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=itu9hc9/z9YcrGCrf9vsiWkRxeMGVAIeV48qvUZMUlg=; b=mNJp2Z7pRBP3RW/TTTP3hz6Ga
+        NyHiT+mE4Q9t/sUfSaLIGYt9DTXBqDejpiD1haNGcMsk6z2CZ5UYqPHUnQo0DRlPuBdDG/i9wgqHn
+        x8XqUeOROq+ob3gD0YixmiGEjAnLSteTli+MymAFDq0sYixP9ayNkE97Y86OgZ7nqej1Y0yT0K7jJ
+        Rw699Z24rCYAYWyTSbdih+S2HuqkdSQuJcMBYS+EqDTpcX1WrJpJXSTvmn/Xrkt+eKnpGjEgbky6O
+        OJu4qRg8ubMVNu6yqY8jhqPgvsxX0DxwkTMI8AGQAMLMOg+0U6oZKLTlDjtFnHJNoqGUXFkJE1uaY
+        uVZhWqTcw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gWIdn-0003FW-QR; Mon, 10 Dec 2018 10:18:20 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 292132075A8BB; Mon, 10 Dec 2018 11:18:18 +0100 (CET)
+Date:   Mon, 10 Dec 2018 11:18:18 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Jiri Olsa <jolsa@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Luis Claudio R. Goncalves" <lclaudio@uudg.org>, ldv@altlinux.org,
+        esyr@redhat.com, Frederic Weisbecker <fweisbec@gmail.com>
+Subject: Re: [PATCH 1/8] perf: Allow to block process in syscall tracepoints
+Message-ID: <20181210101818.GJ5289@hirez.programming.kicks-ass.net>
+References: <20181205160509.1168-2-jolsa@kernel.org>
+ <20181206081028.GE4234@hirez.programming.kicks-ass.net>
+ <20181206083400.GA13675@hirez.programming.kicks-ass.net>
+ <20181206131946.2c47f556@vmware.local.home>
+ <20181207085839.GC2237@hirez.programming.kicks-ass.net>
+ <20181207072701.5bc564c7@vmware.local.home>
+ <20181207151105.GB5289@hirez.programming.kicks-ass.net>
+ <20181207151433.20bf0399@vmware.local.home>
+ <20181208104423.GE5289@hirez.programming.kicks-ass.net>
+ <20181208123805.1c158665@vmware.local.home>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181210100634.GA8836@kroah.com>
-X-Operating-System: Linux phenom 4.18.0-2-amd64 
+In-Reply-To: <20181208123805.1c158665@vmware.local.home>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 10, 2018 at 11:06:34AM +0100, Greg Kroah-Hartman wrote:
-> On Mon, Dec 10, 2018 at 09:46:53AM +0100, Daniel Vetter wrote:
-> > Drivers might want to remove some sysfs files, which needs the same
-> > locks and ends up angering lockdep. Relevant snippet of the stack
-> > trace:
+On Sat, Dec 08, 2018 at 12:38:05PM -0500, Steven Rostedt wrote:
+> On Sat, 8 Dec 2018 11:44:23 +0100
+> Peter Zijlstra <peterz@infradead.org> wrote:
+
+> > > Why do we care about lost events? Because strace records *all* events,
+> > > as that's what it does and that's what it always has done. It would be
+> > > a break in functionality (a regression) if it were to start losing
+> > > events. I use strace to see everything that an application is doing.  
 > > 
-> >   kernfs_remove_by_name_ns+0x3b/0x80
-> >   bus_remove_driver+0x92/0xa0
-> >   acpi_video_unregister+0x24/0x40
-> >   i915_driver_unload+0x42/0x130 [i915]
-> >   i915_pci_remove+0x19/0x30 [i915]
-> >   pci_device_remove+0x36/0xb0
-> >   device_release_driver_internal+0x185/0x250
-> >   unbind_store+0xaf/0x180
-> >   kernfs_fop_write+0x104/0x190
-> > 
-> > I've stumbled over this because some new patches by Ram connect the
-> > snd-hda-intel unload (where we do use sysfs unbind) with the locking
-> > chains in the i915 unload code (but without creating a new loop),
-> > which upset our CI. But the bug is already there and can be easily
-> > reproduced by unbind i915 directly.
+> > So make a new tool; break the expectation of all events. See if there's
+> > anybody that really cares.
 > 
-> This is odd, why wouldn't any driver hit this issue?  And why now since
-> you say this is triggerable today?
+> Basically you are saying, break strace and see if anyone notices?
 
-The above backtrace is triggered by unbinding i915 on current upstream
-kernels. Note: Will crash later on rather badly in the
-fbdev/fbcon/vtconsole hell, but that's separate issue (which can be worked
-around by first unbinding fbcon manually through sysfs).
+Nah, give it a new name. Clearly mark this is a new tool.
 
-> I know scsi was doing some strange things like trying to remove the
-> device itself from a sysfs callback on the device, which requires it to
-> just call a different kobject function created just for that type of
-> thing.  Would that also make sense to do here instead of your workqueue?
+> > > When we discussed this at plumbers, Oracle people came to me and said
+> > > how awesome it would be to run strace against their database accesses.
+> > > The problem today is that strace causes such a large overhead that it
+> > > isn't feasible to trace any high speed applications, especially if
+> > > there are time restraints involved.  
+> > 
+> > So have them run that perf thing acme pointed to.
+> > 
+> > So far nobody's made a good argument for why we cannot have LOST events.
+> 
+> If you don't see the use case, I'm not sure anyone can convince you.
+> Again, I like the fact that when I do a strace of an application I know
+> that all system calls that the application I'm tracing is recorded. I
+> don't need to worry about what happened in the "lost events" space.
 
-Note how we blow up on unregistering sw device instances supported by i915
-in entirely different subsystems. I guess most drivers just have sysfs
-files for their own stuff, where this is done as you describe. The problem
-is that there's an awful lot of unrelated stuff hanging off i915.
+You're the one pushing for this crap without _any_ justification. Why
+are you getting upset if I ask for some?
 
-Or maybe acpi_video is busted, and should be using a different function.
-You haven't said which one, and I have no idea which one it is ...
+If people care so much, it shouldn't be hard to write up a coherent
+story on this, so far all I seem to get is: because it's always been
+like that.
 
-And in case the context wasn't clear: This is unbinding the i915 pci
-driver which triggers the above lockdep splat recursion.
-
-Thanks, Daniel
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+Which really isn't much of an argument.
