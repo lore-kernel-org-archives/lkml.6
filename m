@@ -2,108 +2,174 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C11FC07E85
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 00:36:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4E84C65BAF
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 00:36:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DE05B20831
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 00:36:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE05B20831
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=windriver.com
+	by mail.kernel.org (Postfix) with ESMTP id 85D7420831
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 00:36:25 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="qssk8/iG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85D7420831
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726521AbeLJAgU (ORCPT
+        id S1726540AbeLJAgY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 19:36:20 -0500
-Received: from mail5.windriver.com ([192.103.53.11]:53856 "EHLO mail5.wrs.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726291AbeLJAgU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Dec 2018 19:36:20 -0500
-Received: from ALA-HCA.corp.ad.wrs.com (ala-hca.corp.ad.wrs.com [147.11.189.40])
-        by mail5.wrs.com (8.15.2/8.15.2) with ESMTPS id wBA0ZEd6009974
-        (version=TLSv1 cipher=AES128-SHA bits=128 verify=FAIL);
-        Sun, 9 Dec 2018 16:35:30 -0800
-Received: from yow-cube1.wrs.com (128.224.56.98) by ALA-HCA.corp.ad.wrs.com
- (147.11.189.40) with Microsoft SMTP Server id 14.3.408.0; Sun, 9 Dec 2018
- 16:35:03 -0800
-From:   Paul Gortmaker <paul.gortmaker@windriver.com>
-To:     Kishon Vijay Abraham I <kishon@ti.com>
-CC:     <linux-kernel@vger.kernel.org>,
-        Paul Gortmaker <paul.gortmaker@windriver.com>,
-        Andrew Lunn <andrew@lunn.ch>
-Subject: [PATCH 2/3] phy: make phy-mvebu-sata explicitly non-modular
-Date:   Sun, 9 Dec 2018 19:34:49 -0500
-Message-ID: <1544402090-30970-3-git-send-email-paul.gortmaker@windriver.com>
+        Sun, 9 Dec 2018 19:36:24 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:46518 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726292AbeLJAgV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Dec 2018 19:36:21 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wBA0a9sE083239;
+        Mon, 10 Dec 2018 00:36:09 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id; s=corp-2018-07-02;
+ bh=LsoGoMDSrVd81rNdgUZFJRvsyXeVDk6/k7Pg9+hpAMg=;
+ b=qssk8/iGyfRtpOUSuIkFLRQhTLyvf+ZzkhHu9OaEVGADkfaFn19OgLHCiSvJM0AR3yr8
+ 1qKgR/e7P1OzJGIUknjTIqJJ/bi7teKOEhVp+5Q+H+d3u5qpPIbizMDLLX/BVjmXF6Kr
+ kDSbxUgm1+nk2uGDPM56e/QOYBZMWtA1JjzZM7NkDpKpXROdN1dKzCvUJHP9FvZu3yzF
+ 3kNl6qPAPKX12SEIhsy49spPS2jYSkPv/mkFvAVRGzPFqyVOoFHTtywN8MPoiWL49Kyr
+ DGjP5oKY9HsK1HADDUH+G69ovKBs/7DO3gjl6qKc0k8TTGSrV5rsNM2mF1g+8Ui+WkJc DA== 
+Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
+        by userp2130.oracle.com with ESMTP id 2p85ctu8yn-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 10 Dec 2018 00:36:09 +0000
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id wBA0a6sf030490
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 10 Dec 2018 00:36:07 GMT
+Received: from abhmp0015.oracle.com (abhmp0015.oracle.com [141.146.116.21])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id wBA0a4Ct010413;
+        Mon, 10 Dec 2018 00:36:06 GMT
+Received: from linux.cn.oracle.com (/10.182.71.9)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Sun, 09 Dec 2018 16:36:03 -0800
+From:   Dongli Zhang <dongli.zhang@oracle.com>
+To:     iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
+Cc:     konrad.wilk@oracle.com, hch@lst.de, m.szyprowski@samsung.com,
+        robin.murphy@arm.com, joe.jin@oracle.com, dongli.zhang@oracle.com
+Subject: [PATCH v2 1/2] swiotlb: add debugfs to track swiotlb buffer usage
+Date:   Mon, 10 Dec 2018 08:37:57 +0800
+Message-Id: <1544402278-8175-1-git-send-email-dongli.zhang@oracle.com>
 X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1544402090-30970-1-git-send-email-paul.gortmaker@windriver.com>
-References: <1544402090-30970-1-git-send-email-paul.gortmaker@windriver.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9102 signatures=668679
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1812100004
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Kconfig currently controlling compilation of this code is:
+The device driver will not be able to do dma operations once swiotlb buffer
+is full, either because the driver is using so many IO TLB blocks inflight,
+or because there is memory leak issue in device driver. To export the
+swiotlb buffer usage via debugfs would help the user estimate the size of
+swiotlb buffer to pre-allocate or analyze device driver memory leak issue.
 
-drivers/phy/Kconfig:config PHY_MVEBU_SATA
-drivers/phy/Kconfig:    def_bool y
-
-...meaning that it currently is not being built as a module by anyone.
-
-Lets remove the couple of traces of modular infrastructure, so that
-when reading the driver there is no doubt it is builtin-only.
-
-Since module_platform_driver() uses the same init level priority as
-builtin_platform_driver() the init ordering remains unchanged with
-this commit.
-
-Also note that MODULE_DEVICE_TABLE is a no-op for non-modular code.
-
-We also delete the MODULE_LICENSE tag etc. since all that information
-is already contained at the top of the file in the comments.
-
-Cc: Kishon Vijay Abraham I <kishon@ti.com>
-Cc: Andrew Lunn <andrew@lunn.ch>
-Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+Signed-off-by: Dongli Zhang <dongli.zhang@oracle.com>
 ---
- drivers/phy/marvell/phy-mvebu-sata.c | 9 ++-------
- 1 file changed, 2 insertions(+), 7 deletions(-)
+Changed since v1:
+  * init debugfs with late_initcall (suggested by Robin Murphy)
+  * create debugfs entries with debugfs_create_ulong(suggested by Robin Murphy)
 
-diff --git a/drivers/phy/marvell/phy-mvebu-sata.c b/drivers/phy/marvell/phy-mvebu-sata.c
-index 768ce92e81ce..369fece2be7a 100644
---- a/drivers/phy/marvell/phy-mvebu-sata.c
-+++ b/drivers/phy/marvell/phy-mvebu-sata.c
-@@ -10,7 +10,7 @@
+ kernel/dma/swiotlb.c | 50 ++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 50 insertions(+)
+
+diff --git a/kernel/dma/swiotlb.c b/kernel/dma/swiotlb.c
+index 045930e..3979c2c 100644
+--- a/kernel/dma/swiotlb.c
++++ b/kernel/dma/swiotlb.c
+@@ -35,6 +35,9 @@
+ #include <linux/scatterlist.h>
+ #include <linux/mem_encrypt.h>
+ #include <linux/set_memory.h>
++#ifdef CONFIG_DEBUG_FS
++#include <linux/debugfs.h>
++#endif
+ 
+ #include <asm/io.h>
+ #include <asm/dma.h>
+@@ -73,6 +76,13 @@ static phys_addr_t io_tlb_start, io_tlb_end;
   */
+ static unsigned long io_tlb_nslabs;
  
- #include <linux/kernel.h>
--#include <linux/module.h>
-+#include <linux/init.h>
- #include <linux/clk.h>
- #include <linux/phy/phy.h>
- #include <linux/io.h>
-@@ -122,7 +122,6 @@ static const struct of_device_id phy_mvebu_sata_of_match[] = {
- 	{ .compatible = "marvell,mvebu-sata-phy" },
- 	{ },
- };
--MODULE_DEVICE_TABLE(of, phy_mvebu_sata_of_match);
++#ifdef CONFIG_DEBUG_FS
++/*
++ * The number of used IO TLB block
++ */
++static unsigned long io_tlb_used;
++#endif
++
+ /*
+  * This is a free list describing the number of free entries available from
+  * each index
+@@ -528,6 +538,9 @@ phys_addr_t swiotlb_tbl_map_single(struct device *hwdev,
+ 		dev_warn(hwdev, "swiotlb buffer is full (sz: %zd bytes)\n", size);
+ 	return SWIOTLB_MAP_ERROR;
+ found:
++#ifdef CONFIG_DEBUG_FS
++	io_tlb_used += nslots;
++#endif
+ 	spin_unlock_irqrestore(&io_tlb_lock, flags);
  
- static struct platform_driver phy_mvebu_sata_driver = {
- 	.probe	= phy_mvebu_sata_probe,
-@@ -131,8 +130,4 @@ static struct platform_driver phy_mvebu_sata_driver = {
- 		.of_match_table	= phy_mvebu_sata_of_match,
+ 	/*
+@@ -588,6 +601,10 @@ void swiotlb_tbl_unmap_single(struct device *hwdev, phys_addr_t tlb_addr,
+ 		 */
+ 		for (i = index - 1; (OFFSET(i, IO_TLB_SEGSIZE) != IO_TLB_SEGSIZE -1) && io_tlb_list[i]; i--)
+ 			io_tlb_list[i] = ++count;
++
++#ifdef CONFIG_DEBUG_FS
++		io_tlb_used -= nslots;
++#endif
  	}
+ 	spin_unlock_irqrestore(&io_tlb_lock, flags);
+ }
+@@ -883,3 +900,36 @@ const struct dma_map_ops swiotlb_dma_ops = {
+ 	.dma_supported		= dma_direct_supported,
  };
--module_platform_driver(phy_mvebu_sata_driver);
--
--MODULE_AUTHOR("Andrew Lunn <andrew@lunn.ch>");
--MODULE_DESCRIPTION("Marvell MVEBU SATA PHY driver");
--MODULE_LICENSE("GPL v2");
-+builtin_platform_driver(phy_mvebu_sata_driver);
+ EXPORT_SYMBOL(swiotlb_dma_ops);
++
++#ifdef CONFIG_DEBUG_FS
++
++static int __init swiotlb_create_debugfs(void)
++{
++	static struct dentry *d_swiotlb_usage;
++	struct dentry *ent;
++
++	d_swiotlb_usage = debugfs_create_dir("swiotlb", NULL);
++
++	if (!d_swiotlb_usage)
++		return -ENOMEM;
++
++	ent = debugfs_create_ulong("io_tlb_nslabs", 0400,
++				   d_swiotlb_usage, &io_tlb_nslabs);
++	if (!ent)
++		goto fail;
++
++	ent = debugfs_create_ulong("io_tlb_used", 0400,
++				    d_swiotlb_usage, &io_tlb_used);
++	if (!ent)
++		goto fail;
++
++	return 0;
++
++fail:
++	debugfs_remove_recursive(d_swiotlb_usage);
++	return -ENOMEM;
++}
++
++late_initcall(swiotlb_create_debugfs);
++
++#endif
 -- 
 2.7.4
 
