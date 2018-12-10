@@ -2,174 +2,125 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9AF2C5CFFE
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 16:37:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71695C04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 16:37:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA9F6204FD
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 16:37:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544459868;
-	bh=fVcSZ6ZOwhMZIGX4Jnd1IDW35hyJMPANtNi1j+lxsEo=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=yDMXE1DSmsjuzliLoOiqBWqe8kFImi8hLLv8FVbnk2IG7MUct4IgQBAwodCgWdS8M
-	 kES8/BDZK9euChjRScbed9sd3ZKzSc2qE4LaIx2cL3raNvwKcaWBeSEkIsnARMk3n7
-	 8p7pureYIlXoIqtpTwphJqinxI2JaXhxFOcJooEo=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA9F6204FD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 3055C2082F
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 16:37:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="x8GT7vpr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3055C2082F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727228AbeLJQhr (ORCPT
+        id S1727410AbeLJQh5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 11:37:47 -0500
-Received: from mail-yw1-f68.google.com ([209.85.161.68]:41631 "EHLO
-        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726324AbeLJQhr (ORCPT
+        Mon, 10 Dec 2018 11:37:57 -0500
+Received: from conssluserg-05.nifty.com ([210.131.2.90]:50006 "EHLO
+        conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726324AbeLJQh5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 11:37:47 -0500
-Received: by mail-yw1-f68.google.com with SMTP id f65so4188624ywc.8;
-        Mon, 10 Dec 2018 08:37:46 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=2CyfDJy+iTPBEeQ/7W5t1St9jWeDgth6ZsiwwKiH134=;
-        b=pSvi+4hxGeif44cjKokMDKS5OLVgHAJ1p8a6bzvaCOXlwRnA9U3KKpG1mqjJYjWZD3
-         QCrtzPdXfPlq2xGpqxOb13vDaAobVAeS4UMHcCdROgxw9gBU1SVY8A3bGL3HxJSalEOs
-         BRrrm8mjonGLQMX176kOYVffTSwdQoNoxnfUqtWk/htNcXsWBECDkZ7ez7JJE26ksv/k
-         WprmLyuxGpi2dtRD7uMthZgqq7+sNj2k0rz66hd1fY/OEkY+xXKZylqyEdA/xn8C7sIL
-         GNQa3oThssq2uZdIddrVX6pNRhmubwXxgqM1qtPEi4n77gTugwtb32bo95UJ8KixZpbL
-         B9KA==
-X-Gm-Message-State: AA+aEWapoFXkKYN6vpZyMUdZN500zPB1PU5kCKZIBCelx3gZtw4u9Xg1
-        AkdRLNbccaK0TYuHkApdDcI=
-X-Google-Smtp-Source: AFSGD/WrqwHJDgyf5X4ubnSX00izgeQ1DpdQZsbkXhBzzuA7lFHlNCq/aesUV5if7oUw2w9GZ1/xbg==
-X-Received: by 2002:a81:2895:: with SMTP id o143mr13084558ywo.74.1544459866251;
-        Mon, 10 Dec 2018 08:37:46 -0800 (PST)
-Received: from dennisz-mbp.thefacebook.com ([199.201.65.135])
-        by smtp.gmail.com with ESMTPSA id c127sm4373894ywb.67.2018.12.10.08.37.44
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 10 Dec 2018 08:37:45 -0800 (PST)
-From:   Dennis Zhou <dennis@kernel.org>
-To:     Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Josef Bacik <josef@toxicpanda.com>
-Cc:     kernel-team@fb.com, linux-block@vger.kernel.org,
-        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Dennis Zhou <dennis@kernel.org>
-Subject: [PATCH] block: fix iolat timestamp and restore accounting semantics
-Date:   Mon, 10 Dec 2018 11:35:10 -0500
-Message-Id: <20181210163510.58985-1-dennis@kernel.org>
-X-Mailer: git-send-email 2.13.5
+        Mon, 10 Dec 2018 11:37:57 -0500
+Received: from mail-vs1-f53.google.com (mail-vs1-f53.google.com [209.85.217.53]) (authenticated)
+        by conssluserg-05.nifty.com with ESMTP id wBAGbm37029656
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 01:37:49 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-05.nifty.com wBAGbm37029656
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1544459869;
+        bh=/09BAeUYB8iUjP94wpzm0QDj+hLuRBKIsYBzMFRONBc=;
+        h=From:Date:Subject:To:Cc:From;
+        b=x8GT7vprCQ6aqxJCueEBM9nBqPWavWyWqx/0EXHtUDqoJKK5+LH2wUGyBXhZ9qUXW
+         pfF16eQDEIcxHA8jAaflut0c/8XSAanueidA447CXADQOuEnRFW8UY3CK1fqeKSN7Q
+         WpklURGbpHRzZbTYUDfSEgZgfJwrXBM4Xw8GRGulJMWY2ZTRNYecLAvcSouZ+ukyYs
+         9rJ1jfKVyzg95e049bnGsF2IeV89IjoXaBDpjGSVi6682sgiWh0IggpgrJeFe9fd6K
+         7t7IUbNCFN5RP5KXnPq5vdw7TlEXpfXRl8u8wVNb/lNHGwrdlKpLhlMDIU4NQoHeh3
+         dpenl0WB30Zbw==
+X-Nifty-SrcIP: [209.85.217.53]
+Received: by mail-vs1-f53.google.com with SMTP id h18so7027453vsj.4
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Dec 2018 08:37:49 -0800 (PST)
+X-Gm-Message-State: AA+aEWYYjlOwQft4SWks/8BOYDdtyUXNtoIIgGf0sG5BK5+BSuc0GuZh
+        q47cNKnKAxS/XUSUn+guIPYHv91DqszoSxQfEN8=
+X-Google-Smtp-Source: AFSGD/VOkI1lw4lAr9aAns341OI4YLslTbNcqRkXoDUA9tokX2kh15nGkaAJKmBCm61vA8SO0mY+BBcuNyuW8qGZ7MY=
+X-Received: by 2002:a67:5f03:: with SMTP id t3mr5751599vsb.155.1544459867985;
+ Mon, 10 Dec 2018 08:37:47 -0800 (PST)
+MIME-Version: 1.0
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Tue, 11 Dec 2018 01:37:12 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAROrpzx96gT4CnJ8ZkiBa3Yf38_nNqVpMQ7NyH+hK+kOg@mail.gmail.com>
+Message-ID: <CAK7LNAROrpzx96gT4CnJ8ZkiBa3Yf38_nNqVpMQ7NyH+hK+kOg@mail.gmail.com>
+Subject: [GIT PULL RESEND] ARM: dts: uniphier: UniPhier DT updates for v4.21/v5.0
+To:     arm-soc <arm@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        Olof Johansson <olof@lixom.net>
+Cc:     linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The blk-iolatency controller measures the time from rq_qos_throttle() to
-rq_qos_done_bio() and attributes this time to the first bio that needs
-to create the request. This means if a bio is plug-mergeable or
-bio-mergeable, it gets to bypass the blk-iolatency controller.
+Hi Arnd, Olof,
 
-The recent series, to tag all bios w/ blkgs in [1] changed the timing
-incorrectly as well. First, the iolatency controller was tagging bios
-and using that information if it should process it in rq_qos_done_bio().
-However, now that all bios are tagged, this caused the atomic_t for the
-struct rq_wait inflight count to underflow resulting in a stall. Second,
-now the timing was using the duration a bio from generic_make_request()
-rather than the timing mentioned above.
+Please pull UniPhier DT updates for the v4.21/v5.0 MW.
 
-This patch fixes the errors by accounting time separately in a bio
-adding the field bi_start. If this field is set, the bio should be
-processed by blk-iolatency in rq_qos_done_bio().
 
-[1] https://lore.kernel.org/lkml/20181205171039.73066-1-dennis@kernel.org/
+Thanks!
 
-Signed-off-by: Dennis Zhou <dennis@kernel.org>
-Cc: Josef Bacik <josef@toxicpanda.com>
----
- block/blk-iolatency.c     | 17 ++++++-----------
- include/linux/blk_types.h | 12 ++++++++++++
- 2 files changed, 18 insertions(+), 11 deletions(-)
 
-diff --git a/block/blk-iolatency.c b/block/blk-iolatency.c
-index bee092727cad..52d5d7cc387c 100644
---- a/block/blk-iolatency.c
-+++ b/block/blk-iolatency.c
-@@ -463,6 +463,8 @@ static void blkcg_iolatency_throttle(struct rq_qos *rqos, struct bio *bio)
- 	if (!blk_iolatency_enabled(blkiolat))
- 		return;
- 
-+	bio->bi_start = ktime_get_ns();
-+
- 	while (blkg && blkg->parent) {
- 		struct iolatency_grp *iolat = blkg_to_lat(blkg);
- 		if (!iolat) {
-@@ -480,18 +482,12 @@ static void blkcg_iolatency_throttle(struct rq_qos *rqos, struct bio *bio)
- }
- 
- static void iolatency_record_time(struct iolatency_grp *iolat,
--				  struct bio_issue *issue, u64 now,
-+				  struct bio *bio, u64 now,
- 				  bool issue_as_root)
- {
--	u64 start = bio_issue_time(issue);
-+	u64 start = bio->bi_start;
- 	u64 req_time;
- 
--	/*
--	 * Have to do this so we are truncated to the correct time that our
--	 * issue is truncated to.
--	 */
--	now = __bio_issue_time(now);
--
- 	if (now <= start)
- 		return;
- 
-@@ -593,7 +589,7 @@ static void blkcg_iolatency_done_bio(struct rq_qos *rqos, struct bio *bio)
- 	bool enabled = false;
- 
- 	blkg = bio->bi_blkg;
--	if (!blkg)
-+	if (!blkg || !bio->bi_start)
- 		return;
- 
- 	iolat = blkg_to_lat(bio->bi_blkg);
-@@ -612,8 +608,7 @@ static void blkcg_iolatency_done_bio(struct rq_qos *rqos, struct bio *bio)
- 		atomic_dec(&rqw->inflight);
- 		if (!enabled || iolat->min_lat_nsec == 0)
- 			goto next;
--		iolatency_record_time(iolat, &bio->bi_issue, now,
--				      issue_as_root);
-+		iolatency_record_time(iolat, bio, now, issue_as_root);
- 		window_start = atomic64_read(&iolat->window_start);
- 		if (now > window_start &&
- 		    (now - window_start) >= iolat->cur_win_nsec) {
-diff --git a/include/linux/blk_types.h b/include/linux/blk_types.h
-index 46c005d601ac..c2c02ec08d7c 100644
---- a/include/linux/blk_types.h
-+++ b/include/linux/blk_types.h
-@@ -181,6 +181,18 @@ struct bio {
- 	 */
- 	struct blkcg_gq		*bi_blkg;
- 	struct bio_issue	bi_issue;
-+#ifdef CONFIG_BLK_CGROUP_IOLATENCY
-+	/*
-+	 * blk-iolatency measure the time a bio takes between rq_qos_throttle()
-+	 * and rq_qos_done_bio().  It attributes the time to the bio that gets
-+	 * the request allowing any bios that can tag along via plug merging or
-+	 * bio merging to be free (from blk-iolatency's perspective). This is
-+	 * different from the time a bio takes from generic_make_request() to
-+	 * the end of its life.  So, this also serves as a marker for which bios
-+	 * should be processed by blk-iolatency.
-+	 */
-+	u64			bi_start;
-+#endif /* CONFIG_BLK_CGROUP_IOLATENCY */
- #endif
- 	union {
- #if defined(CONFIG_BLK_DEV_INTEGRITY)
+
+
+The following changes since commit 651022382c7f8da46cb4872a545ee1da6d097d2a:
+
+  Linux 4.20-rc1 (2018-11-04 15:37:52 -0800)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/masahiroy/linux-uniphier.git
+tags/uniphier-dt-v4.21
+
+for you to fetch changes up to 5fd98eb7e8ce0f7d7e4f3c138e5b46fc98389804:
+
+  ARM: dts: uniphier: add MIO DMAC nodes (2018-12-11 01:31:17 +0900)
+
+----------------------------------------------------------------
+UniPhier ARM SoC DT updates for v4.21
+
+- Add bindings for all SoCs/boards of UniPhier platform
+
+- Move binding docs to socionext directory
+
+- Add all CPUs in cooling maps
+
+- Add MIO DMAC nodes
+
+----------------------------------------------------------------
+Masahiro Yamada (3):
+      dt-bindings: uniphier: add bindings for UniPhier SoC family
+      dt-bindings: uniphier: move cache-uniphier.txt to vendor directory
+      ARM: dts: uniphier: add MIO DMAC nodes
+
+Viresh Kumar (2):
+      ARM: dts: uniphier: Add all CPUs in cooling maps
+      arm64: dts: uniphier: Add all CPUs in cooling maps
+
+ .../arm/{uniphier => socionext}/cache-uniphier.txt |  0
+ .../devicetree/bindings/arm/socionext/uniphier.txt | 47 ++++++++++++++++++++++
+ MAINTAINERS                                        |  1 +
+ arch/arm/boot/dts/uniphier-ld4.dtsi                | 14 +++++++
+ arch/arm/boot/dts/uniphier-pro4.dtsi               | 16 ++++++++
+ arch/arm/boot/dts/uniphier-pxs2.dtsi               |  6 ++-
+ arch/arm/boot/dts/uniphier-sld8.dtsi               | 14 +++++++
+ arch/arm64/boot/dts/socionext/uniphier-ld20.dtsi   | 11 ++---
+ 8 files changed, 100 insertions(+), 9 deletions(-)
+ rename Documentation/devicetree/bindings/arm/{uniphier =>
+socionext}/cache-uniphier.txt (100%)
+ create mode 100644 Documentation/devicetree/bindings/arm/socionext/uniphier.txt
+
+
 -- 
-2.17.1
-
+Best Regards
+Masahiro Yamada
