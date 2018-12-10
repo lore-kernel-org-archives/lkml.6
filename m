@@ -2,112 +2,119 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 308BAC04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 09:57:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58DE6C04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 09:59:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EA95F2081C
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 09:57:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="N7Av88g1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA95F2081C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id D47C62081C
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 09:59:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D47C62081C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i-love.sakura.ne.jp
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726844AbeLJJ5C (ORCPT
+        id S1726824AbeLJJ7B (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 04:57:02 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:44788 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726146AbeLJJ5C (ORCPT
+        Mon, 10 Dec 2018 04:59:01 -0500
+Received: from www262.sakura.ne.jp ([202.181.97.72]:12481 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726136AbeLJJ7B (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 04:57:02 -0500
-Received: by mail-pl1-f195.google.com with SMTP id k8so4998289pls.11
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Dec 2018 01:57:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=aSomdyy3EaiujdjdjsH4y6F6EHOmtCoGU51caHsh8d4=;
-        b=N7Av88g1UvjcPjim8avN81M3OjXNaLJ0Fm1sxgdz8Eq2ngWZs03oDbbCo5PfdQOuM1
-         N5krfWb0w3XswkGmbz8whbg3mIVJOHP7F5+yrejxk9KbX/zR0+EJdW9Xqt0KFeA0qMoA
-         btF+ZZI3CI0IOr+26iGEKtVLbuR8/JrKqTqGg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=aSomdyy3EaiujdjdjsH4y6F6EHOmtCoGU51caHsh8d4=;
-        b=PsJxzbVfKAoiq1dNJbEdKDERB+sB72gmClMyCe/3ZoefZvn2jBdLUx0kDCW4nJKDMn
-         MHAZJVFOZcteoy0zCqY5Lp0VQSSMPeSY6jYoxmXbXCK1UMGf9a0cPtozHA267yhtz1P2
-         HNAnCfh7ABekXrv58Xy1BmsdYFNGg9ARyPaOLnybTHbPdQy9ZWpRQ/LkYfkn7s9THIWH
-         C9ooXqHZU5YVE3Kd18C/rjkm6CFM1TReGK0SZTaC8Z8QPhytWam/dYaABkJJjY27Mp6y
-         uXIvjXatcWnMolAwtnmOhe/Ki2izomdTa1Pe/HOVrXLmUj8jeijctsh9DBIyqKzakqAU
-         MX3w==
-X-Gm-Message-State: AA+aEWZCkwctnqUatz7VG3iW47A3KeUQxZ1ncZ1pm4XHoGkAS04AqS9U
-        1GJVx85o8OLuM8fC3Q6YVlUR
-X-Google-Smtp-Source: AFSGD/X/T5V1y6iWHcpu64JIzsF7hljVycLkNOjZ1OkL1i4+ZYIL4AzPPYkLsfXETBRrk2ym/Vq8Qg==
-X-Received: by 2002:a17:902:d911:: with SMTP id c17mr7354836plz.151.1544435821756;
-        Mon, 10 Dec 2018 01:57:01 -0800 (PST)
-Received: from Mani-XPS-13-9360 ([2409:4072:91e:2c01:40e1:a028:b090:9e12])
-        by smtp.gmail.com with ESMTPSA id p7sm26710697pfj.72.2018.12.10.01.56.53
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 10 Dec 2018 01:57:01 -0800 (PST)
-Date:   Mon, 10 Dec 2018 15:26:50 +0530
-From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To:     Marc Zyngier <marc.zyngier@arm.com>
-Cc:     olof@lixom.net, arnd@arndb.de, robh+dt@kernel.org,
-        tglx@linutronix.de, jason@lakedaemon.net,
-        daniel.lezcano@linaro.org, gregkh@linuxfoundation.org,
-        jslaby@suse.com, afaerber@suse.de,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-serial@vger.kernel.org,
-        amit.kucheria@linaro.org, linus.walleij@linaro.org,
-        zhao_steven@263.net, overseas.sales@unisoc.com
-Subject: Re: [PATCH v3 08/15] irqchip: Add RDA8810PL interrupt driver
-Message-ID: <20181210095650.GA12397@Mani-XPS-13-9360>
-References: <20181128135106.9255-1-manivannan.sadhasivam@linaro.org>
- <20181128135106.9255-9-manivannan.sadhasivam@linaro.org>
- <9debdd34-0c4a-a0a3-a284-b6372c2f7fd5@arm.com>
+        Mon, 10 Dec 2018 04:59:01 -0500
+Received: from fsav401.sakura.ne.jp (fsav401.sakura.ne.jp [133.242.250.100])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id wBA9wxbp081300;
+        Mon, 10 Dec 2018 18:58:59 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav401.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav401.sakura.ne.jp);
+ Mon, 10 Dec 2018 18:58:59 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav401.sakura.ne.jp)
+Received: from [192.168.1.8] (softbank126126163036.bbtec.net [126.126.163.36])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id wBA9wsOa081148
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
+        Mon, 10 Dec 2018 18:58:58 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: [PATCH] kernel/hung_task.c: force ignore_loglevel before panic
+To:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        "Liu, Chuansheng" <chuansheng.liu@intel.com>
+Cc:     "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "pmladek@suse.com" <pmladek@suse.com>,
+        "sergey.senozhatsky@gmail.com" <sergey.senozhatsky@gmail.com>,
+        "rostedt@goodmis.org" <rostedt@goodmis.org>,
+        "dvyukov@google.com" <dvyukov@google.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <27240C0AC20F114CBF8149A2696CBE4A6015A889@SHSMSX101.ccr.corp.intel.com>
+ <20181210054622.GA6291@jagdpanzerIV>
+ <27240C0AC20F114CBF8149A2696CBE4A6015A8D9@SHSMSX101.ccr.corp.intel.com>
+ <20181210061151.GA28533@jagdpanzerIV>
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Message-ID: <f6e39c8f-2ca2-4a01-cf42-9ed3bc2462a8@i-love.sakura.ne.jp>
+Date:   Mon, 10 Dec 2018 18:58:46 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.3
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <9debdd34-0c4a-a0a3-a284-b6372c2f7fd5@arm.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20181210061151.GA28533@jagdpanzerIV>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Marc,
-
-On Mon, Dec 10, 2018 at 09:39:13AM +0000, Marc Zyngier wrote:
-> On 28/11/2018 13:50, Manivannan Sadhasivam wrote:
-> > Add interrupt driver for RDA Micro RDA8810PL SoC.
-> > 
-> > Signed-off-by: Andreas Färber <afaerber@suse.de>
-> > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+On 2018/12/10 15:11, Sergey Senozhatsky wrote:
+> On (12/10/18 05:58), Liu, Chuansheng wrote:
+>>> On (12/10/18 05:40), Liu, Chuansheng wrote:
+>>>> @@ -130,6 +130,13 @@ static void check_hung_task(struct task_struct *t,
+>>> unsigned long timeout)
+>>>>                         init_utsname()->version);
+>>>>                 pr_err("\"echo 0 > /proc/sys/kernel/hung_task_timeout_secs\""
+>>>>                         " disables this message.\n");
+>>>> +               /* When sysctl_hung_task_panic is set, we have to force
+>>>> +                * ignore_loglevel to get really useful hung task
+>>>> +                * information.
+>>>> +                */
+>>>> +               if (sysctl_hung_task_panic && !ignore_loglevel)
+>>>> +                       ignore_loglevel = true;
+>>>
+>>> 		console_verbose()?
+>>
+>> Thanks Sergey, it is really my need. I will prepare for a new version of patch:)
 > 
-> Reviewed-by: Marc Zyngier <marc.zyngier@arm.com>
-> 
-> Given the dependency on the platform Kconfig entry, how do you want this
-> to be merged?
-> 
+> Let's wait for people to take a look at this patch first.
 
-Hmmm, I think I can just move the platform Kconfig change to SoC changes
-in next revision so that you can apply the driver independently.
+Shouldn't console_verbose() be called like
 
-Regards,
-Mani
+-    if (!sysctl_hung_task_warnings && !sysctl_hung_task_panic)
++    if (sysctl_hung_task_panic)
++        console_verbose();
++    else if (!sysctl_hung_task_warnings)
+         return;
 
-> Thanks,
-> 
-> 	M.
-> -- 
-> Jazz is not dead. It just smells funny...
+or
+
+-    if (!sysctl_hung_task_warnings && !sysctl_hung_task_panic)
+-        return;
++    if (sysctl_hung_task_panic)
++        console_verbose();
+
+or
+
+-    if (!sysctl_hung_task_warnings && !sysctl_hung_task_panic)
+-        return;
++    if (sysctl_hung_task_panic) {
++        console_verbose();
++        hung_task_show_lock = true;
++        hung_task_call_panic = true;
++    }
+(...snipped...)
+-    if (sysctl_hung_task_panic) {
+-        hung_task_show_lock = true;
+-        hung_task_call_panic = true;
+-    }
+
+so that sysctl_hung_task_warnings == 0 && sysctl_hung_task_panic == 1
+will call debug_show_all_locks() and trigger_all_cpu_backtrace() with
+verbose level?
