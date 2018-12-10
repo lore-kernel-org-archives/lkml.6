@@ -2,136 +2,193 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14614C04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 13:22:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44A3CC04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 13:23:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C927E20880
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 13:22:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D2CC520880
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 13:23:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="ihkzGFbd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C927E20880
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="uro4dsrz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D2CC520880
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727356AbeLJNWh (ORCPT
+        id S1727404AbeLJNXE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 08:22:37 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:53095 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727334AbeLJNWf (ORCPT
+        Mon, 10 Dec 2018 08:23:04 -0500
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:50024 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726867AbeLJNXE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 08:22:35 -0500
-Received: by mail-wm1-f67.google.com with SMTP id r11-v6so10855031wmb.2
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Dec 2018 05:22:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=uBjdffJIS6e81RZXl0D/cVk1PRz+k7NxIO5RxlBhn+w=;
-        b=ihkzGFbddzBhg7/l98TR3HElWWrO7AG3D5dq2YA45xQZqkZ8mucv9c45zqYilltaHA
-         qdPCJYzke/x2SyUCfzPW351/KNQ4i853vaPH9lvPQ/pM/ynE6nH8tsi9+KS+mAsEnVmf
-         A0q0qvIzGpxE9KFTIRP/LJ+rnfGrfX/GgnJXulyu5nJ1xBNjewiuErZPMASk0QwUU3pz
-         iCxesQcHicy3VTNhEB9MZHosmhlAb4vz55RyDasb1KF9TC4U6SXp+D7Pn6mP7RqXpXtJ
-         Dsf/vLX2Up+Oby27kPdZLlDWu2SLnWd3XX8lPD/vrAYUKoq5iVbT9nxJJwr7ki+wDR6V
-         0EKw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=uBjdffJIS6e81RZXl0D/cVk1PRz+k7NxIO5RxlBhn+w=;
-        b=bBK/SFg+J7jFAv5qqxYG+oTXXhwUxfiItQLyv4FAzd3fNhKFGv3rNWIS9Y5UCktC6Y
-         vrTirPIv6KDrIOaR5wNrKhpV4UYYR7v0k/FsQVlBGpOYfST9tS5Ns5zIdaFUXuvvWfNy
-         3aKRHlctOJrng1GcALAbN5xHdCxIe4rZXNsnxtO67k+hdHXpVcoTVCiYeIF6TiaEBETC
-         QaSAmuR6O4GqIQGLe+hpAyzsJ4ksj++HV+FDljHXv43MtRe8BBqvWPHHxMZX5ZDsavo3
-         JzLPY3en5RTPcu4FdLG2f9zh2EroyBIYRNsNj3xpBIqdTacKVcMYfE1nGIBdUBEbB5Cu
-         Z1gw==
-X-Gm-Message-State: AA+aEWY4XifMkvg2ygD+IFZbrEQY5JPGsdV9fDVeYWI8OdOrkAuAX7+4
-        R+Saurv/LNo3VMjai6VWvWzq4TXhJC78kYNk
-X-Google-Smtp-Source: AFSGD/VNKgkJdWqMIdXGD3Xop2viNm6jJ/VTo9k/ZE2rcJTd/CFg0jW+zJt4sl4Ns8NHop4RRUZdMQ==
-X-Received: by 2002:a1c:ad43:: with SMTP id w64mr10122640wme.32.1544448152953;
-        Mon, 10 Dec 2018 05:22:32 -0800 (PST)
-Received: from bender.baylibre.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id l3sm11208424wru.36.2018.12.10.05.22.31
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 10 Dec 2018 05:22:31 -0800 (PST)
-From:   Neil Armstrong <narmstrong@baylibre.com>
-To:     khilman@baylibre.com
-Cc:     Christian Hewitt <christianshewitt@gmail.com>,
-        dri-devel@lists.freedesktop.org, linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Neil Armstrong <narmstrong@baylibre.com>
-Subject: [PATCH 2/2] arm64: dts: meson-gxm: Add Mali-T820 node
-Date:   Mon, 10 Dec 2018 14:22:27 +0100
-Message-Id: <20181210132227.29262-3-narmstrong@baylibre.com>
-X-Mailer: git-send-email 2.19.2
-In-Reply-To: <20181210132227.29262-1-narmstrong@baylibre.com>
-References: <20181210132227.29262-1-narmstrong@baylibre.com>
+        Mon, 10 Dec 2018 08:23:04 -0500
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id wBADN1Eg080016;
+        Mon, 10 Dec 2018 07:23:01 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1544448181;
+        bh=WpMjXMYFVh1qiGLvf6EdeivBn7nJVkLUWaq6vk8RTX8=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=uro4dsrzqAbDO+q8KQU6T30bhZkmlrQLTriDnXfyLOxMRE4Bu3LeAdsWDMMXsY/AJ
+         Nc5mmFGCaS5QJTV0/xnYuX1ljv5Oy07Ywe/nckYYoXdilV8y/U91Pp6fIdDWR68UqP
+         7qynCAdE9MjBwUzsp3eMr7YA94X4RSMlEJivwFlo=
+Received: from DLEE102.ent.ti.com (dlee102.ent.ti.com [157.170.170.32])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wBADN1wH026831
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 10 Dec 2018 07:23:01 -0600
+Received: from DLEE107.ent.ti.com (157.170.170.37) by DLEE102.ent.ti.com
+ (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Mon, 10
+ Dec 2018 07:23:00 -0600
+Received: from dlep32.itg.ti.com (157.170.170.100) by DLEE107.ent.ti.com
+ (157.170.170.37) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Mon, 10 Dec 2018 07:23:00 -0600
+Received: from [172.24.190.215] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id wBADMwgW025594;
+        Mon, 10 Dec 2018 07:22:59 -0600
+Subject: Re: [PATCH] mmc: sdhci-omap: Workaround errata regarding SDR104/HS200
+ tuning failures (i929)
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+CC:     Kishon <kishon@ti.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Adrian Hunter <adrian.hunter@intel.com>
+References: <20181129190503.6040-1-faiz_abbas@ti.com>
+ <cb1e8e88-4c9d-741d-79cd-57b03c5e0808@ti.com>
+ <c4704766-7a58-8aa4-6bc0-b9373b15096c@ti.com>
+ <CAPDyKFqMW+tMaVsS_c=kPztZRjX97Nzr2W0egvDkyzkpWckHRA@mail.gmail.com>
+From:   Faiz Abbas <faiz_abbas@ti.com>
+Message-ID: <d1ae4e93-4b17-9574-00b1-bfa268cb7574@ti.com>
+Date:   Mon, 10 Dec 2018 18:55:46 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAPDyKFqMW+tMaVsS_c=kPztZRjX97Nzr2W0egvDkyzkpWckHRA@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Christian Hewitt <christianshewitt@gmail.com>
+Hi Uffe,
 
-The Amlogic Meson GXM SoC embeds an ARM Mali T820 GPU.
+On 05/12/18 7:20 PM, Ulf Hansson wrote:
+> On Fri, 30 Nov 2018 at 06:53, Faiz Abbas <faiz_abbas@ti.com> wrote:
+>>
+>> Hi Kishon,
+>>
+>> On 30/11/18 10:10 AM, Kishon Vijay Abraham I wrote:
+>>> Hi Faiz,
+>>>
+>>> On 30/11/18 12:35 AM, Faiz Abbas wrote:
+>>>> Errata i929 in certain OMAP5/DRA7XX/AM57XX silicon revisions
+>>>> (SPRZ426D - November 2014 - Revised February 2018 [1]) mentions
+>>>> unexpected tuning pattern errors. A small failure band may be present
+>>>> in the tuning range which may be missed by the current algorithm.
+>>>> Furthermore, the failure bands vary with temperature leading to
+>>>> different optimum tuning values for different temperatures.
+>>>>
+>>>> As suggested in the related Application Report (SPRACA9B - October 2017
+>>>> - Revised July 2018 [2]), tuning should be done in two stages.
+>>>> In stage 1, assign the optimum ratio in the maximum pass window for the
+>>>> current temperature. In stage 2, if the chosen value is close to the
+>>>> small failure band, move away from it in the appropriate direction.
+>>>>
+>>>> References:
+>>>> [1] http://www.ti.com/lit/pdf/sprz426
+>>>> [2] http://www.ti.com/lit/pdf/SPRACA9
+>>>>
+>>>> Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
+>>>> ---
+>>>>  drivers/mmc/host/Kconfig      |  2 +
+>>>>  drivers/mmc/host/sdhci-omap.c | 90 ++++++++++++++++++++++++++++++++++-
+>>>>  2 files changed, 91 insertions(+), 1 deletion(-)
+>>>>
+>>>> diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
+>>>> index 1b58739d9744..6d3553f06f27 100644
+>>>> --- a/drivers/mmc/host/Kconfig
+>>>> +++ b/drivers/mmc/host/Kconfig
+>>>> @@ -969,6 +969,8 @@ config MMC_SDHCI_XENON
+>>>>  config MMC_SDHCI_OMAP
+>>>>      tristate "TI SDHCI Controller Support"
+>>>>      depends on MMC_SDHCI_PLTFM && OF
+>>>> +    select THERMAL
+>>>> +    select TI_SOC_THERMAL
+>>>>      help
+>>>>        This selects the Secure Digital Host Controller Interface (SDHCI)
+>>>>        support present in TI's DRA7 SOCs. The controller supports
+>>>> diff --git a/drivers/mmc/host/sdhci-omap.c b/drivers/mmc/host/sdhci-omap.c
+>>>> index b3cb39d0db6f..9ccce7ef3a60 100644
+>>>> --- a/drivers/mmc/host/sdhci-omap.c
+>>>> +++ b/drivers/mmc/host/sdhci-omap.c
+>>>> @@ -27,6 +27,7 @@
+>>>>  #include <linux/regulator/consumer.h>
+>>>>  #include <linux/pinctrl/consumer.h>
+>>>>  #include <linux/sys_soc.h>
+>>>> +#include <linux/thermal.h>
+>>>>
+>>>>  #include "sdhci-pltfm.h"
+>>>>
+>>>> @@ -286,14 +287,18 @@ static int sdhci_omap_execute_tuning(struct mmc_host *mmc, u32 opcode)
+>>>>      struct sdhci_host *host = mmc_priv(mmc);
+>>>>      struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+>>>>      struct sdhci_omap_host *omap_host = sdhci_pltfm_priv(pltfm_host);
+>>>> +    struct thermal_zone_device *thermal_dev;
+>>>>      struct device *dev = omap_host->dev;
+>>>>      struct mmc_ios *ios = &mmc->ios;
+>>>>      u32 start_window = 0, max_window = 0;
+>>>> +    bool single_point_failure = false;
+>>>>      u8 cur_match, prev_match = 0;
+>>>>      u32 length = 0, max_len = 0;
+>>>>      u32 phase_delay = 0;
+>>>> +    int temperature;
+>>>>      int ret = 0;
+>>>>      u32 reg;
+>>>> +    int i;
+>>>>
+>>>>      /* clock tuning is not needed for upto 52MHz */
+>>>>      if (ios->clock <= 52000000)
+>>>> @@ -303,6 +308,16 @@ static int sdhci_omap_execute_tuning(struct mmc_host *mmc, u32 opcode)
+>>>>      if (ios->timing == MMC_TIMING_UHS_SDR50 && !(reg & CAPA2_TSDR50))
+>>>>              return 0;
+>>>>
+>>>> +    thermal_dev = thermal_zone_get_zone_by_name("cpu_thermal");
+>>>> +    if (IS_ERR(thermal_dev)) {
+>>>> +            dev_err(dev, "Unable to get thermal zone for tuning\n");
+>>>> +            return PTR_ERR(thermal_dev);
+>>>> +    }
+>>>
+>>> Can't we get thermal zone once during probe?
+>>>
+>>
+>> Tuning is also (ideally) supposed to happen only once per enumeration.
+>> Also it doesn't make sense to get a thermal zone for lower speed systems
+>> that won't do tuning.
+> 
+> Currently sdhci-omap calls pm_runtime_get_sync() during probe, and
+> then keeps the host device runtime resumed until ->remove() is called
+> on it. I assume you are going to change that, at some point!?
+> 
+> In other words, what will happen to the host device when it becomes
+> runtime suspended? Is re-tuning needed when it gets runtime resumed,
+> which is the case for many other sdhci variants?
 
-This patch adds the node with all the needed properties to power
-on the GPU.
+There are no plans to support runtime_suspend()/resume() any time in the
+near future. If its ok with you, I would like to get this patch in
+without any changes. We can change it in case a need for
+runtime_suspend()/_resume() does arise.
 
-This has been tested with the work-in-progress PanFrost project
-aiming support for ARM Mali Midgard and later GPUs.
+Thanks,
+Faiz
 
-Signed-off-by: Christian Hewitt <christianshewitt@gmail.com>
-Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
----
- arch/arm64/boot/dts/amlogic/meson-gxm.dtsi | 27 ++++++++++++++++++++++
- 1 file changed, 27 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/amlogic/meson-gxm.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxm.dtsi
-index 247888d68a3a..35e59d390903 100644
---- a/arch/arm64/boot/dts/amlogic/meson-gxm.dtsi
-+++ b/arch/arm64/boot/dts/amlogic/meson-gxm.dtsi
-@@ -91,6 +91,33 @@
- 		reset-names = "phy";
- 		status = "okay";
- 	};
-+
-+	mali: gpu@c0000 {
-+		compatible = "amlogic,meson-gxm-mali", "arm,mali-t820";
-+		reg = <0x0 0xc0000 0x0 0x40000>;
-+		interrupt-parent = <&gic>;
-+		interrupts = <GIC_SPI 160 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 161 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 162 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-names = "gpu", "mmu", "job";
-+		clocks = <&clkc CLKID_MALI>;
-+		resets = <&reset RESET_MALI_CAPB3>, <&reset RESET_MALI>;
-+
-+		/*
-+		 * Mali clocking is provided by two identical clock paths
-+		 * MALI_0 and MALI_1 muxed to a single clock by a glitch
-+		 * free mux to safely change frequency while running.
-+		 */
-+		assigned-clocks = <&clkc CLKID_MALI_0_SEL>,
-+				  <&clkc CLKID_MALI_0>,
-+				  <&clkc CLKID_MALI>; /* Glitch free mux */
-+		assigned-clock-parents = <&clkc CLKID_FCLK_DIV3>,
-+					 <0>, /* Do Nothing */
-+					 <&clkc CLKID_MALI_0>;
-+		assigned-clock-rates = <0>, /* Do Nothing */
-+				       <666666666>,
-+				       <0>; /* Do Nothing */
-+	};
- };
- 
- &clkc_AO {
--- 
-2.19.2
+
 
