@@ -2,106 +2,76 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A35C4C04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 12:25:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9341FC04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 12:28:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7FED62086D
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 12:25:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7FED62086D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tuxdriver.com
+	by mail.kernel.org (Postfix) with ESMTP id 4B03320880
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 12:28:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544444915;
+	bh=8tk9pHwzn95AcdTJyc3CiZuqq1yMWGGIW/gk40epphQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=m3qpdPQQbl5usqWpQ60VdHiCu5UMk+/JRytvPl876K4wwlw60GmMAQ8sguC8c+WNN
+	 3NW/Cw38Va4OPa7awL7mn3p32ifKGgPJCeed+yKO5KAHClDJpK6phhuui/YoCJpiGd
+	 K8j4k9apgAxkuxW6/QCDhY/stuUzmb0mVlF8O5wQ=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B03320880
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727246AbeLJMZU (ORCPT
+        id S1727639AbeLJM2e (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 07:25:20 -0500
-Received: from charlotte.tuxdriver.com ([70.61.120.58]:52366 "EHLO
-        smtp.tuxdriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726324AbeLJMZU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 07:25:20 -0500
-Received: from cpe-2606-a000-111b-405a-a193-cb97-58ba-1c15.dyn6.twc.com ([2606:a000:111b:405a:a193:cb97:58ba:1c15] helo=localhost)
-        by smtp.tuxdriver.com with esmtpsa (TLSv1:AES256-SHA:256)
-        (Exim 4.63)
-        (envelope-from <nhorman@tuxdriver.com>)
-        id 1gWKcT-0001Vg-1L; Mon, 10 Dec 2018 07:25:17 -0500
-Date:   Mon, 10 Dec 2018 07:24:36 -0500
-From:   Neil Horman <nhorman@tuxdriver.com>
-To:     Xin Long <lucien.xin@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, network dev <netdev@vger.kernel.org>,
-        linux-sctp@vger.kernel.org, davem@davemloft.net,
-        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
-Subject: Re: [PATCH net] sctp: initialize sin6_flowinfo for ipv6 addrs in
- sctp_inet6addr_event
-Message-ID: <20181210122436.GA4499@hmswarspite.think-freely.org>
-References: <4c3dc15beee77a541042f79f35702574347dffc9.1544436052.git.lucien.xin@gmail.com>
+        Mon, 10 Dec 2018 07:28:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59236 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726324AbeLJM2e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Dec 2018 07:28:34 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 06F4020870;
+        Mon, 10 Dec 2018 12:28:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544444913;
+        bh=8tk9pHwzn95AcdTJyc3CiZuqq1yMWGGIW/gk40epphQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=d1boYTwU1i/yVZZa8UyAKHfSPn2itCgCExSpsz+3KJ5xxQRAJtL4LY3qKdjMRcA3A
+         Y9IuT2BWnpvZTJ+tMs5fQBEDNI3wpzl6pZBo7wrtBCpB0hqRr6KZdRZLRqOtYvDQGc
+         Vc7AWIIdCwJN58/CUvO6tl5wrDjrXvVUTNqUeXDA=
+Date:   Mon, 10 Dec 2018 13:28:31 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc:     Andreas Noever <andreas.noever@gmail.com>,
+        Michael Jamet <michael.jamet@intel.com>,
+        Yehezkel Bernat <YehezkelShB@gmail.com>,
+        Lukas Wunner <lukas@wunner.de>, linux-kernel@vger.kernel.org
+Subject: Re: [GIT PULL] Thunderbolt changes for v4.21
+Message-ID: <20181210122831.GB22995@kroah.com>
+References: <20181210102303.GC2469@lahna.fi.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <4c3dc15beee77a541042f79f35702574347dffc9.1544436052.git.lucien.xin@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181210102303.GC2469@lahna.fi.intel.com>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 10, 2018 at 06:00:52PM +0800, Xin Long wrote:
-> syzbot reported a kernel-infoleak, which is caused by an uninitialized
-> field(sin6_flowinfo) of addr->a.v6 in sctp_inet6addr_event().
-> The call trace is as below:
+On Mon, Dec 10, 2018 at 12:23:03PM +0200, Mika Westerberg wrote:
+> Hi Greg,
 > 
->   BUG: KMSAN: kernel-infoleak in _copy_to_user+0x19a/0x230 lib/usercopy.c:33
->   CPU: 1 PID: 8164 Comm: syz-executor2 Not tainted 4.20.0-rc3+ #95
->   Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
->   Google 01/01/2011
->   Call Trace:
->     __dump_stack lib/dump_stack.c:77 [inline]
->     dump_stack+0x32d/0x480 lib/dump_stack.c:113
->     kmsan_report+0x12c/0x290 mm/kmsan/kmsan.c:683
->     kmsan_internal_check_memory+0x32a/0xa50 mm/kmsan/kmsan.c:743
->     kmsan_copy_to_user+0x78/0xd0 mm/kmsan/kmsan_hooks.c:634
->     _copy_to_user+0x19a/0x230 lib/usercopy.c:33
->     copy_to_user include/linux/uaccess.h:183 [inline]
->     sctp_getsockopt_local_addrs net/sctp/socket.c:5998 [inline]
->     sctp_getsockopt+0x15248/0x186f0 net/sctp/socket.c:7477
->     sock_common_getsockopt+0x13f/0x180 net/core/sock.c:2937
->     __sys_getsockopt+0x489/0x550 net/socket.c:1939
->     __do_sys_getsockopt net/socket.c:1950 [inline]
->     __se_sys_getsockopt+0xe1/0x100 net/socket.c:1947
->     __x64_sys_getsockopt+0x62/0x80 net/socket.c:1947
->     do_syscall_64+0xcf/0x110 arch/x86/entry/common.c:291
->     entry_SYSCALL_64_after_hwframe+0x63/0xe7
-> 
-> sin6_flowinfo is not really used by SCTP, so it will be fixed by simply
-> setting it to 0.
-> 
-> The issue exists since very beginning.
-> Thanks Alexander for the reproducer provided.
-> 
-> Reported-by: syzbot+ad5d327e6936a2e284be@syzkaller.appspotmail.com
-> Signed-off-by: Xin Long <lucien.xin@gmail.com>
-> ---
->  net/sctp/ipv6.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/net/sctp/ipv6.c b/net/sctp/ipv6.c
-> index fc6c5e4..7f0539d 100644
-> --- a/net/sctp/ipv6.c
-> +++ b/net/sctp/ipv6.c
-> @@ -101,6 +101,7 @@ static int sctp_inet6addr_event(struct notifier_block *this, unsigned long ev,
->  		if (addr) {
->  			addr->a.v6.sin6_family = AF_INET6;
->  			addr->a.v6.sin6_port = 0;
-> +			addr->a.v6.sin6_flowinfo = 0;
->  			addr->a.v6.sin6_addr = ifa->addr;
->  			addr->a.v6.sin6_scope_id = ifa->idev->dev->ifindex;
->  			addr->valid = 1;
-> -- 
-> 2.1.0
-> 
-> 
-Acked-by: Neil Horman <nhorman@tuxdriver.com>
+> This includes automatic enabling of IOMMU based DMA protection from
+> possibly malicious devices connected through Thunderbolt ports. In
+> addition we make sure PCIe ATS (Address Translation Service) is not
+> enabled for such devices to prevent them from passing IOMMU protection.
 
+Oh, nice work with the "untrusted" PCI device thing, that's been a long
+time in coming.
+
+Now pulled and pushed out, thanks.
+
+greg k-h
