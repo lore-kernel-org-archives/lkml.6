@@ -2,120 +2,234 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15A14C04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 08:55:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10A5EC04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 08:56:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CD4CF2082F
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 08:55:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Iiyj8+Qn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD4CF2082F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id CC16C2082F
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 08:56:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC16C2082F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726716AbeLJIzl (ORCPT
+        id S1726763AbeLJI4T (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 03:55:41 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:49372 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726572AbeLJIzl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 03:55:41 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=7NJVooFTIsQ1sLkf0iscEhELwDGD/ToFRglzg8miKq0=; b=Iiyj8+QnmYLqIGGVuq//ASid1
-        FgobeVzTq1ckKSaJ7bRoyUhcT3ZNDVmh6qHg5+xRraqRVuMWRX1MPc9bJV5fjtANCXXXudqtnr3wa
-        Stj0H1iaezgqN8EfWOorQt8MZiMOrFmKsDvK6IlMHD+wKHVAvxCpf1gkkTUNibCMqZG2nHZ+WFm3w
-        TwuGhVKRnZrtIborVj7qx5PQP4L+2XXMkrwlZV3+4v7SIAOXKOGrfUK6Q88nMCjIGL2cemBOodsJ0
-        mLVJpOHOR+k9ecv4W5Ao+iPqeqmuJxzPqHbc5jIXxANkztnJqlsDaBqRSvd8/bPYktG9IiAMeLkcr
-        1uZGkqZ3A==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gWHLj-0002MZ-1S; Mon, 10 Dec 2018 08:55:35 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 56C20207261A3; Mon, 10 Dec 2018 09:55:32 +0100 (CET)
-Date:   Mon, 10 Dec 2018 09:55:32 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Nadav Amit <nadav.amit@gmail.com>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Linux-MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andy Lutomirski <luto@kernel.org>
-Subject: Re: Should this_cpu_read() be volatile?
-Message-ID: <20181210085532.GG5289@hirez.programming.kicks-ass.net>
-References: <20181203224920.GQ10377@bombadil.infradead.org>
- <C377D9EF-A0F4-4142-8145-6942DC29A353@gmail.com>
- <EB579DAE-B25F-4869-8529-8586DF4AECFF@gmail.com>
- <20181206102559.GG13538@hirez.programming.kicks-ass.net>
- <55B665E1-3F64-4D87-B779-D1B4AFE719A9@gmail.com>
- <20181207084550.GA2237@hirez.programming.kicks-ass.net>
- <C29C792A-3F47-482D-B0D8-99EABEDF8882@gmail.com>
- <C064896E-268A-4462-8D51-E43C1CF10104@gmail.com>
- <20181208105220.GF5289@hirez.programming.kicks-ass.net>
- <5DE00B41-835C-4E68-B192-2A3C7ACB4392@gmail.com>
+        Mon, 10 Dec 2018 03:56:19 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:48808 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726531AbeLJI4T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Dec 2018 03:56:19 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4013B1596;
+        Mon, 10 Dec 2018 00:56:18 -0800 (PST)
+Received: from localhost (e113682-lin.copenhagen.arm.com [10.32.144.41])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CCFAE3F575;
+        Mon, 10 Dec 2018 00:56:17 -0800 (PST)
+Date:   Mon, 10 Dec 2018 09:56:16 +0100
+From:   Christoffer Dall <christoffer.dall@arm.com>
+To:     Suzuki K Poulose <suzuki.poulose@arm.com>
+Cc:     Anshuman Khandual <anshuman.khandual@arm.com>,
+        kvmarm@lists.cs.columbia.edu, marc.zyngier@arm.com,
+        will.deacon@arm.com, linux-kernel@vger.kernel.org,
+        punitagrawal@gmail.com, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v9 1/8] KVM: arm/arm64: Share common code in
+ user_mem_abort()
+Message-ID: <20181210085616.GB30263@e113682-lin.lund.arm.com>
+References: <20181031175745.18650-1-punit.agrawal@arm.com>
+ <20181031175745.18650-2-punit.agrawal@arm.com>
+ <ad4b316a-054f-24d9-d32d-8fbe7972b5ad@arm.com>
+ <8fd34e5f-7d75-4de2-3fee-d6d70805685c@arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <5DE00B41-835C-4E68-B192-2A3C7ACB4392@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <8fd34e5f-7d75-4de2-3fee-d6d70805685c@arm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Dec 09, 2018 at 04:57:43PM -0800, Nadav Amit wrote:
-> > On Dec 8, 2018, at 2:52 AM, Peter Zijlstra <peterz@infradead.org> wrote:
-
-> > My patch proposed here:
-> > 
-> >  https://marc.info/?l=linux-mm&m=154409548410209
-> > 
-> > would actually fix that one I think, preempt_count() uses
-> > raw_cpu_read_4() which will loose the volatile with that patch.
-
-> I tested the patch you referenced, and it certainly improves the situation
-> for reads, but there are still small and big issues lying around.
-
-I'm sure :-(, this has been 'festering' for a long while it seems. And
-esp. on x86 specific code, where for a long time we all assumed the
-various per-cpu APIs were in fact the same (which turns out to very much
-not be true).
-
-> The biggest one is that (I think) smp_processor_id() should apparently use
-> __this_cpu_read().
-
-Agreed, and note that this will also improve code generation on !x86.
-
-However, I'm not sure the current !debug definition:
-
-#define smp_processor_id() raw_smp_processor_id()
-
-is actually correct. Where raw_smp_processor_id() must be
-this_cpu_read() to avoid CSE, we actually want to allow CSE on
-smp_processor_id() etc..
-
-> There are all kind of other smaller issues, such as set_irq_regs() and
-> get_irq_regs(), which should run with disabled interrupts. They affect the
-> generated code in do_IRQ() and others.
+On Mon, Dec 03, 2018 at 01:37:37PM +0000, Suzuki K Poulose wrote:
+> Hi Anshuman,
 > 
-> But beyond that, there are so many places in the code that use
-> this_cpu_read() while IRQs are guaranteed to be disabled. For example
-> arch/x86/mm/tlb.c is full with this_cpu_read/write() and almost(?) all
-> should be running with interrupts disabled. Having said that, in my build
-> only flush_tlb_func_common() was affected.
+> On 03/12/2018 12:11, Anshuman Khandual wrote:
+> >
+> >
+> >On 10/31/2018 11:27 PM, Punit Agrawal wrote:
+> >>The code for operations such as marking the pfn as dirty, and
+> >>dcache/icache maintenance during stage 2 fault handling is duplicated
+> >>between normal pages and PMD hugepages.
+> >>
+> >>Instead of creating another copy of the operations when we introduce
+> >>PUD hugepages, let's share them across the different pagesizes.
+> >>
+> >>Signed-off-by: Punit Agrawal <punit.agrawal@arm.com>
+> >>Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> >>Cc: Christoffer Dall <christoffer.dall@arm.com>
+> >>Cc: Marc Zyngier <marc.zyngier@arm.com>
+> >>---
+> >>  virt/kvm/arm/mmu.c | 49 ++++++++++++++++++++++++++++------------------
+> >>  1 file changed, 30 insertions(+), 19 deletions(-)
+> >>
+> >>diff --git a/virt/kvm/arm/mmu.c b/virt/kvm/arm/mmu.c
+> >>index 5eca48bdb1a6..59595207c5e1 100644
+> >>--- a/virt/kvm/arm/mmu.c
+> >>+++ b/virt/kvm/arm/mmu.c
+> >>@@ -1475,7 +1475,7 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
+> >>  			  unsigned long fault_status)
+> >>  {
+> >>  	int ret;
+> >>-	bool write_fault, exec_fault, writable, hugetlb = false, force_pte = false;
+> >>+	bool write_fault, exec_fault, writable, force_pte = false;
+> >>  	unsigned long mmu_seq;
+> >>  	gfn_t gfn = fault_ipa >> PAGE_SHIFT;
+> >>  	struct kvm *kvm = vcpu->kvm;
+> >>@@ -1484,7 +1484,7 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
+> >>  	kvm_pfn_t pfn;
+> >>  	pgprot_t mem_type = PAGE_S2;
+> >>  	bool logging_active = memslot_is_logging(memslot);
+> >>-	unsigned long flags = 0;
+> >>+	unsigned long vma_pagesize, flags = 0;
+> >
+> >A small nit s/vma_pagesize/pagesize. Why call it VMA ? Its implicit.
+> 
+> May be we could call it mapsize. pagesize is confusing.
+> 
 
-This all feels like something static analysis could help with; such
-tools would also make sense for !x86 where the difference between the
-various per-cpu accessors is even bigger.
+I'm ok with mapsize.  I see the vma_pagesize name coming from the fact
+that this is initially set to the return value from vma_kernel_pagesize.
 
+I have not problems with either vma_pagesize or mapsize.
+
+> >
+> >>  	write_fault = kvm_is_write_fault(vcpu);
+> >>  	exec_fault = kvm_vcpu_trap_is_iabt(vcpu);
+> >>@@ -1504,10 +1504,16 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
+> >>  		return -EFAULT;
+> >>  	}
+> >>-	if (vma_kernel_pagesize(vma) == PMD_SIZE && !logging_active) {
+> >>-		hugetlb = true;
+> >>+	vma_pagesize = vma_kernel_pagesize(vma);
+> >>+	if (vma_pagesize == PMD_SIZE && !logging_active) {
+> >>  		gfn = (fault_ipa & PMD_MASK) >> PAGE_SHIFT;
+> >>  	} else {
+> >>+		/*
+> >>+		 * Fallback to PTE if it's not one of the Stage 2
+> >>+		 * supported hugepage sizes
+> >>+		 */
+> >>+		vma_pagesize = PAGE_SIZE;
+> >
+> >This seems redundant and should be dropped. vma_kernel_pagesize() here either
+> >calls hugetlb_vm_op_pagesize (via hugetlb_vm_ops->pagesize) or simply returns
+> >PAGE_SIZE. The vm_ops path is taken if the QEMU VMA covering any given HVA is
+> >backed either by HugeTLB pages or simply normal pages. vma_pagesize would
+> >either has a value of PMD_SIZE (HugeTLB hstate based) or PAGE_SIZE. Hence if
+> >its not PMD_SIZE it must be PAGE_SIZE which should not be assigned again.
+> 
+> We may want to force using the PTE mappings when logging_active (e.g, migration
+> ?) to prevent keep tracking of huge pages. So the check is still valid.
+> 
+> 
+
+Agreed, and let's not try additionally change the logic and flow with
+this patch.
+
+> >
+> >>+
+> >>  		/*
+> >>  		 * Pages belonging to memslots that don't have the same
+> >>  		 * alignment for userspace and IPA cannot be mapped using
+> >>@@ -1573,23 +1579,33 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
+> >>  	if (mmu_notifier_retry(kvm, mmu_seq))
+> >>  		goto out_unlock;
+> >>-	if (!hugetlb && !force_pte)
+> >>-		hugetlb = transparent_hugepage_adjust(&pfn, &fault_ipa);
+> >>+	if (vma_pagesize == PAGE_SIZE && !force_pte) {
+> >>+		/*
+> >>+		 * Only PMD_SIZE transparent hugepages(THP) are
+> >>+		 * currently supported. This code will need to be
+> >>+		 * updated to support other THP sizes.
+> >>+		 */
+> >
+> >This comment belongs to transparent_hugepage_adjust() but not here.
+> 
+> I think this is relevant here than in thp_adjust, unless we rename
+> the function below to something generic, handle_hugepage_adjust().
+> 
+
+Agreed.
+
+> >>+		if (transparent_hugepage_adjust(&pfn, &fault_ipa))
+> >>+			vma_pagesize = PMD_SIZE;
+> >
+> >IIUC transparent_hugepage_adjust() is only getting called here. Instead of
+> >returning 'true' when it is able to detect a huge page backing and doing
+> >an adjustment there after, it should rather return THP size (PMD_SIZE) to
+> >accommodate probable multi size THP support in future .
+> 
+> That makes sense.
+> 
+
+That's fine.
+
+> >
+> >>+	}
+> >>+
+> >>+	if (writable)
+> >>+		kvm_set_pfn_dirty(pfn);
+> >>-	if (hugetlb) {
+> >>+	if (fault_status != FSC_PERM)
+> >>+		clean_dcache_guest_page(pfn, vma_pagesize);
+> >>+
+> >>+	if (exec_fault)
+> >>+		invalidate_icache_guest_page(pfn, vma_pagesize);
+> >>+
+> >>+	if (vma_pagesize == PMD_SIZE) {
+> >>  		pmd_t new_pmd = pfn_pmd(pfn, mem_type);
+> >>  		new_pmd = pmd_mkhuge(new_pmd);
+> >>-		if (writable) {
+> >>+		if (writable)
+> >>  			new_pmd = kvm_s2pmd_mkwrite(new_pmd);
+> >>-			kvm_set_pfn_dirty(pfn);
+> >>-		}
+> >>-
+> >>-		if (fault_status != FSC_PERM)
+> >>-			clean_dcache_guest_page(pfn, PMD_SIZE);
+> >>  		if (exec_fault) {
+> >>  			new_pmd = kvm_s2pmd_mkexec(new_pmd);
+> >>-			invalidate_icache_guest_page(pfn, PMD_SIZE);
+> >>  		} else if (fault_status == FSC_PERM) {
+> >>  			/* Preserve execute if XN was already cleared */
+> >>  			if (stage2_is_exec(kvm, fault_ipa))
+> >>@@ -1602,16 +1618,11 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
+> >>  		if (writable) {
+> >>  			new_pte = kvm_s2pte_mkwrite(new_pte);
+> >>-			kvm_set_pfn_dirty(pfn);
+> >>  			mark_page_dirty(kvm, gfn);
+> >>  		}
+> >>-		if (fault_status != FSC_PERM)
+> >>-			clean_dcache_guest_page(pfn, PAGE_SIZE);
+> >>-
+> >>  		if (exec_fault) {
+> >>  			new_pte = kvm_s2pte_mkexec(new_pte);
+> >>-			invalidate_icache_guest_page(pfn, PAGE_SIZE);
+> >>  		} else if (fault_status == FSC_PERM) {
+> >>  			/* Preserve execute if XN was already cleared */
+> >>  			if (stage2_is_exec(kvm, fault_ipa))
+> >>
+> >
+> >kvm_set_pfn_dirty, clean_dcache_guest_page, invalidate_icache_guest_page
+> >can all be safely moved before setting the page table entries either as
+> >PMD or PTE.
+> 
+> I think this is what we do currently. So I assume this is fine.
+> 
+Agreed, I don't understand the comment raised by Anshuman here.
+
+
+Thanks,
+
+    Christoffer
