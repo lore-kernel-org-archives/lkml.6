@@ -2,127 +2,355 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-14.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70798C5CFFE
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 18:05:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F041C5CFFE
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 18:05:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 437782081F
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 18:05:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 437782081F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 30F312064D
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 18:05:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="k4ym61HN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 30F312064D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729108AbeLJSFD (ORCPT
+        id S1729119AbeLJSFK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 13:05:03 -0500
-Received: from lhrrgout.huawei.com ([185.176.76.210]:32807 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726841AbeLJSFC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 13:05:02 -0500
-Received: from LHREML711-CAH.china.huawei.com (unknown [172.18.7.108])
-        by Forcepoint Email with ESMTP id 600C0824594D;
-        Mon, 10 Dec 2018 18:04:58 +0000 (GMT)
-Received: from [10.204.65.144] (10.204.65.144) by smtpsuk.huawei.com
- (10.201.108.34) with Microsoft SMTP Server (TLS) id 14.3.408.0; Mon, 10 Dec
- 2018 18:04:53 +0000
-Subject: Re: [RFC][PATCH 08/12] KEYS: PGP-based public key signature
- verification
-To:     David Howells <dhowells@redhat.com>
-CC:     <dwmw2@infradead.org>, <herbert@gondor.apana.org.au>,
-        <davem@davemloft.net>, <keyrings@vger.kernel.org>,
-        <linux-crypto@vger.kernel.org>, <linux-integrity@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <silviu.vlasceanu@huawei.com>
-References: <e55a9f80-d2ea-f28f-06ab-3d99786096c4@huawei.com>
- <20181112102423.30415-9-roberto.sassu@huawei.com>
- <20181112102423.30415-1-roberto.sassu@huawei.com>
- <19985.1542026635@warthog.procyon.org.uk>
- <17488.1544461088@warthog.procyon.org.uk>
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-Message-ID: <12cec606-c31e-9321-b63f-7122ce068179@huawei.com>
-Date:   Mon, 10 Dec 2018 19:04:53 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Mon, 10 Dec 2018 13:05:10 -0500
+Received: from mail-yw1-f68.google.com ([209.85.161.68]:36331 "EHLO
+        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728918AbeLJSFJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Dec 2018 13:05:09 -0500
+Received: by mail-yw1-f68.google.com with SMTP id y194so4316284ywg.3
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Dec 2018 10:05:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=iDyhZwOx0vltfvp0/a1GQNP1SnHzlm13yyjBXW9GnvY=;
+        b=k4ym61HNnM4USDCCioZ9E67EcjWL6bIbrkrz2/qYw7FGq0KJoLTHKUefhsl54h0H3x
+         edA7Cy38Ek+lENqkNIVo01LsaWPUMzNn2hSCcisc57XTr8op2lCWzLxOccNBtogzErO2
+         +wwyTSl2UL4xl8dxaTHAzGzQboiY2K2jgI/1FRFaPSxgarSXp1SL43RZjCajF0smwnks
+         js/q7xVVvEqbAYUHtnixV6irwizcMFYNRZtWa+BMVk4mrBnNUQkvciDsz8hPJXj38+6n
+         v2IX45v8C16ZBkx8HLjsCvhkHf5dfq1JSxDfieR4qBmgGUEZfZUDXtUF97l9du67APxY
+         dfeQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=iDyhZwOx0vltfvp0/a1GQNP1SnHzlm13yyjBXW9GnvY=;
+        b=LI2nF3UDVlcW7oBdlknT9pfaghL0mD2RjbE9Prg3jpiIno+yPw5CS/VfH9vCPp6sbI
+         G6QsCLT56BsPOSXgK93UqsXuN8vErngBoqMIoF3UbqOXLqSAMFDjuX6o3HqZfbfAzI6+
+         cH7KSmRdF5gm0qlZLvw8iveNAizK0TWTYysO3CT/NO5oABaixXvTvR7nWyWwm9STnR0c
+         ovLx72tZNWGxoZg6iGtt4V5Zg9FlebkdS8Gyq9bX0YzJU3EShF06H2CHfQOKjcSoUBql
+         Ne+FmNx7GjA9mW3X5kk7INw/wEOuvapewrLJ0BFxxFrqyfW9skB9AxGA31NQ/7QBvZjX
+         p/Ew==
+X-Gm-Message-State: AA+aEWaaCpLFCJPzZT8GIvnPzEjwrwnqZ4sD8uaZX6mEGgaly+Stlh3/
+        B8KbvvoHK1wzScPrDqDLjfltKDoCXzWXGAA8bdfFIQ==
+X-Google-Smtp-Source: AFSGD/Ve7ZpKnM1PKA7OqbEel5qdRnm2RGuSu3nFGts/NmXlf8rPgT+84I3YbsHsNvjw09s+MmXiyfflbMUT5rSqE8Q=
+X-Received: by 2002:a81:a395:: with SMTP id a143mr12882283ywh.444.1544465108210;
+ Mon, 10 Dec 2018 10:05:08 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <17488.1544461088@warthog.procyon.org.uk>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.204.65.144]
-X-CFilter-Loop: Reflected
+References: <20181127121849.23975-1-enric.balletbo@collabora.com> <20181127121849.23975-5-enric.balletbo@collabora.com>
+In-Reply-To: <20181127121849.23975-5-enric.balletbo@collabora.com>
+From:   Guenter Roeck <groeck@google.com>
+Date:   Mon, 10 Dec 2018 10:04:57 -0800
+Message-ID: <CABXOdTdTpKFeSCOVDA=_4u0s03sNDP-YfP8+4MfLK9hEKGkF-Q@mail.gmail.com>
+Subject: Re: [PATCH v3 4/8] mfd / platform: cros_ec: move debugfs attributes
+ to its own driver.
+To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Cc:     Lee Jones <lee.jones@linaro.org>,
+        Gwendal Grignou <gwendal@chromium.org>,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Guenter Roeck <groeck@chromium.org>, kernel@collabora.com,
+        Benson Leung <bleung@chromium.org>,
+        Olof Johansson <olof@lixom.net>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/10/2018 5:58 PM, David Howells wrote:
-> Roberto Sassu <roberto.sassu@huawei.com> wrote:
-> 
->>> You need to consider what it is that the patch trying to achieve.
->>
->> I understood that the purpose is to check PGP signatures with built-in
->> keys or keys provided by the user. Since using the session keyring
->> caused the issue I reported, I thought it was ok to use the user
->> keyring.
->>
->> Just a note: the original patches were relying on KEY_FLAG_TRUSTED to
->> determine if a key is trusted; now the trustworthiness depends on the
->> type of keyring passed to pgp_verify_sig(). I removed the additional key
->> search in the user (session) keyring to prevent that signature
->> verification is done with a key provided by the user even when the
->> caller of pgp_verify_sig() expects that a trusted key is used. The
->> search in the session keyring is done if the caller of pgp_verify_sig()
->> sets the keyring pointer to NULL.
-> 
-> Thinking about these patches further, as you point out, the way that trust is
-> computed has changed.  There is no no KEY_FLAG_TRUSTED; rather, a key is
-> assumed to be trusted if it's on a trusted keyring.
-> 
-> *Getting* it onto that trusted keyring is then the trick.  There are two ways:
-> 
->   (1) A key can be loaded from a trusted source during boot (say a compiled in
->       set of keys).
-> 
->   (2) A key can be added to that keyring later, provided that the key is
->       verified by a key already in the ring and the ring hasn't been closed.
-> 
-> What do we need to check PGP signatures?  Blobs or keys as well?
+On Tue, Nov 27, 2018 at 4:19 AM Enric Balletbo i Serra
+<enric.balletbo@collabora.com> wrote:
+>
+> The entire way how cros debugfs attibutes are created is broken.
+> cros_ec_debugfs should be its own driver and its attributes should be
+> associated with a debugfs driver not the mfd driver.
+>
+> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 
-For my use case, verifying blobs (RPM headers or 'Release' for Debian-
-based distributions) would be sufficient. The keys can be added at
-compile time.
+Reviewed-by: Guenter Roeck <groeck@chromium.org>
 
-
-> Why does the user keyring need to be a fallback?  (I know the session keyring
-> used to be a fallback when I first did these, but things have changed since
-> then).
-
-Users can verify signatures with the pgp_test key type (patch 10/12).
-During the first attempt, pgp_test tries to use built-in keys. If
-verification fails, pgp_test tries again with keys in the user keyring.
-But if verification succeeds during the second attempt, the kernel
-prints a warning saying that an untrusted key was used.
-
-
-> Should we have a separate built-in keyring for PGP keys?  Actually, I suspect
-> we should probably mark keys in some way with what they're permitted to be
-> used for.
-
-I kept PGP keys in the main keyring, so that verify_pgp_signature() uses
-the same convention of verify_pkcs7_signature() (keyring == NULL: use
-primary keys, keyring == 1: use secondary keys).
-
-In your patches there was a capability checking mechanism, but it was
-removed with commit db6c43bd2132.
-
-Roberto
-
-
-> David
-> 
-
--- 
-HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
-Managing Director: Bo PENG, Jian LI, Yanli SHI
+> ---
+>
+> Changes in v3: None
+> Changes in v2:
+> - Add a "default MFD_CROS_EC_CHARDEV" in Kconfig for this.
+> - Remove the checks for missing debug_info, are not needed now.
+> - Remove a comment that no longer applies.
+>
+>  drivers/mfd/cros_ec_dev.c                 | 41 +--------------
+>  drivers/platform/chrome/Kconfig           | 11 ++++
+>  drivers/platform/chrome/Makefile          |  4 +-
+>  drivers/platform/chrome/cros_ec_debugfs.c | 62 +++++++++++++++--------
+>  include/linux/mfd/cros_ec.h               |  6 ---
+>  5 files changed, 56 insertions(+), 68 deletions(-)
+>
+> diff --git a/drivers/mfd/cros_ec_dev.c b/drivers/mfd/cros_ec_dev.c
+> index 51325049690c..50ba8e0fb4ec 100644
+> --- a/drivers/mfd/cros_ec_dev.c
+> +++ b/drivers/mfd/cros_ec_dev.c
+> @@ -389,6 +389,7 @@ static const struct mfd_cell cros_usbpd_charger_cells[] = {
+>  };
+>
+>  static const struct mfd_cell cros_ec_platform_cells[] = {
+> +       { .name = "cros-ec-debugfs" },
+>         { .name = "cros-ec-lightbar" },
+>         { .name = "cros-ec-vbc" },
+>  };
+> @@ -483,9 +484,6 @@ static int ec_device_probe(struct platform_device *pdev)
+>                          "failed to add cros-ec platform devices: %d\n",
+>                          retval);
+>
+> -       if (cros_ec_debugfs_init(ec))
+> -               dev_warn(dev, "failed to create debugfs directory\n");
+> -
+>         return 0;
+>
+>  failed:
+> @@ -497,62 +495,25 @@ static int ec_device_remove(struct platform_device *pdev)
+>  {
+>         struct cros_ec_dev *ec = dev_get_drvdata(&pdev->dev);
+>
+> -       cros_ec_debugfs_remove(ec);
+> -
+>         mfd_remove_devices(ec->dev);
+>         cdev_del(&ec->cdev);
+>         device_unregister(&ec->class_dev);
+>         return 0;
+>  }
+>
+> -static void ec_device_shutdown(struct platform_device *pdev)
+> -{
+> -       struct cros_ec_dev *ec = dev_get_drvdata(&pdev->dev);
+> -
+> -       /* Be sure to clear up debugfs delayed works */
+> -       cros_ec_debugfs_remove(ec);
+> -}
+> -
+>  static const struct platform_device_id cros_ec_id[] = {
+>         { DRV_NAME, 0 },
+>         { /* sentinel */ }
+>  };
+>  MODULE_DEVICE_TABLE(platform, cros_ec_id);
+>
+> -static __maybe_unused int ec_device_suspend(struct device *dev)
+> -{
+> -       struct cros_ec_dev *ec = dev_get_drvdata(dev);
+> -
+> -       cros_ec_debugfs_suspend(ec);
+> -
+> -       return 0;
+> -}
+> -
+> -static __maybe_unused int ec_device_resume(struct device *dev)
+> -{
+> -       struct cros_ec_dev *ec = dev_get_drvdata(dev);
+> -
+> -       cros_ec_debugfs_resume(ec);
+> -
+> -       return 0;
+> -}
+> -
+> -static const struct dev_pm_ops cros_ec_dev_pm_ops = {
+> -#ifdef CONFIG_PM_SLEEP
+> -       .suspend = ec_device_suspend,
+> -       .resume = ec_device_resume,
+> -#endif
+> -};
+> -
+>  static struct platform_driver cros_ec_dev_driver = {
+>         .driver = {
+>                 .name = DRV_NAME,
+> -               .pm = &cros_ec_dev_pm_ops,
+>         },
+>         .id_table = cros_ec_id,
+>         .probe = ec_device_probe,
+>         .remove = ec_device_remove,
+> -       .shutdown = ec_device_shutdown,
+>  };
+>
+>  static int __init cros_ec_dev_init(void)
+> diff --git a/drivers/platform/chrome/Kconfig b/drivers/platform/chrome/Kconfig
+> index 29bd9837d520..4e4232b47764 100644
+> --- a/drivers/platform/chrome/Kconfig
+> +++ b/drivers/platform/chrome/Kconfig
+> @@ -131,4 +131,15 @@ config CROS_EC_VBC
+>           To compile this driver as a module, choose M here: the
+>           module will be called cros_ec_vbc.
+>
+> +config CROS_EC_DEBUGFS
+> +       tristate "Export ChromeOS EC internals in DebugFS"
+> +       depends on MFD_CROS_EC_CHARDEV && DEBUG_FS
+> +       default MFD_CROS_EC_CHARDEV
+> +       help
+> +         This option exposes the ChromeOS EC device internals to
+> +         userspace.
+> +
+> +         To compile this driver as a module, choose M here: the
+> +         module will be called cros_ec_debugfs.
+> +
+>  endif # CHROMEOS_PLATFORMS
+> diff --git a/drivers/platform/chrome/Makefile b/drivers/platform/chrome/Makefile
+> index 4081b7179df7..12a5c4d18c17 100644
+> --- a/drivers/platform/chrome/Makefile
+> +++ b/drivers/platform/chrome/Makefile
+> @@ -3,8 +3,7 @@
+>  obj-$(CONFIG_CHROMEOS_LAPTOP)          += chromeos_laptop.o
+>  obj-$(CONFIG_CHROMEOS_PSTORE)          += chromeos_pstore.o
+>  obj-$(CONFIG_CHROMEOS_TBMC)            += chromeos_tbmc.o
+> -cros_ec_ctl-objs                       := cros_ec_sysfs.o \
+> -                                          cros_ec_debugfs.o
+> +cros_ec_ctl-objs                       := cros_ec_sysfs.o
+>  obj-$(CONFIG_CROS_EC_CTL)              += cros_ec_ctl.o
+>  obj-$(CONFIG_CROS_EC_I2C)              += cros_ec_i2c.o
+>  obj-$(CONFIG_CROS_EC_SPI)              += cros_ec_spi.o
+> @@ -15,3 +14,4 @@ obj-$(CONFIG_CROS_EC_PROTO)           += cros_ec_proto.o
+>  obj-$(CONFIG_CROS_KBD_LED_BACKLIGHT)   += cros_kbd_led_backlight.o
+>  obj-$(CONFIG_CROS_EC_LIGHTBAR)         += cros_ec_lightbar.o
+>  obj-$(CONFIG_CROS_EC_VBC)              += cros_ec_vbc.o
+> +obj-$(CONFIG_CROS_EC_DEBUGFS)          += cros_ec_debugfs.o
+> diff --git a/drivers/platform/chrome/cros_ec_debugfs.c b/drivers/platform/chrome/cros_ec_debugfs.c
+> index c62ee8e610a0..6cacac53dfce 100644
+> --- a/drivers/platform/chrome/cros_ec_debugfs.c
+> +++ b/drivers/platform/chrome/cros_ec_debugfs.c
+> @@ -23,12 +23,16 @@
+>  #include <linux/fs.h>
+>  #include <linux/mfd/cros_ec.h>
+>  #include <linux/mfd/cros_ec_commands.h>
+> +#include <linux/module.h>
+>  #include <linux/mutex.h>
+> +#include <linux/platform_device.h>
+>  #include <linux/poll.h>
+>  #include <linux/sched.h>
+>  #include <linux/slab.h>
+>  #include <linux/wait.h>
+>
+> +#define DRV_NAME "cros-ec-debugfs"
+> +
+>  #define LOG_SHIFT              14
+>  #define LOG_SIZE               (1 << LOG_SHIFT)
+>  #define LOG_POLL_SEC           10
+> @@ -423,8 +427,9 @@ static int cros_ec_create_pdinfo(struct cros_ec_debugfs *debug_info)
+>         return 0;
+>  }
+>
+> -int cros_ec_debugfs_init(struct cros_ec_dev *ec)
+> +static int cros_ec_debugfs_probe(struct platform_device *pd)
+>  {
+> +       struct cros_ec_dev *ec = dev_get_drvdata(pd->dev.parent);
+>         struct cros_ec_platform *ec_platform = dev_get_platdata(ec->dev);
+>         const char *name = ec_platform->ec_name;
+>         struct cros_ec_debugfs *debug_info;
+> @@ -453,40 +458,57 @@ int cros_ec_debugfs_init(struct cros_ec_dev *ec)
+>
+>         ec->debug_info = debug_info;
+>
+> +       dev_set_drvdata(&pd->dev, ec);
+> +
+>         return 0;
+>
+>  remove_debugfs:
+>         debugfs_remove_recursive(debug_info->dir);
+>         return ret;
+>  }
+> -EXPORT_SYMBOL(cros_ec_debugfs_init);
+>
+> -void cros_ec_debugfs_remove(struct cros_ec_dev *ec)
+> +static int cros_ec_debugfs_remove(struct platform_device *pd)
+>  {
+> -       if (!ec->debug_info)
+> -               return;
+> +       struct cros_ec_dev *ec = dev_get_drvdata(pd->dev.parent);
+>
+>         debugfs_remove_recursive(ec->debug_info->dir);
+>         cros_ec_cleanup_console_log(ec->debug_info);
+> +
+> +       return 0;
+>  }
+> -EXPORT_SYMBOL(cros_ec_debugfs_remove);
+>
+> -void cros_ec_debugfs_suspend(struct cros_ec_dev *ec)
+> +static int __maybe_unused cros_ec_debugfs_suspend(struct device *dev)
+>  {
+> -       /*
+> -        * cros_ec_debugfs_init() failures are non-fatal; it's also possible
+> -        * that we initted things but decided that console log wasn't supported.
+> -        * We'll use the same set of checks that cros_ec_debugfs_remove() +
+> -        * cros_ec_cleanup_console_log() end up using to handle those cases.
+> -        */
+> -       if (ec->debug_info && ec->debug_info->log_buffer.buf)
+> -               cancel_delayed_work_sync(&ec->debug_info->log_poll_work);
+> +       struct cros_ec_dev *ec = dev_get_drvdata(dev);
+> +
+> +       cancel_delayed_work_sync(&ec->debug_info->log_poll_work);
+> +
+> +       return 0;
+>  }
+> -EXPORT_SYMBOL(cros_ec_debugfs_suspend);
+>
+> -void cros_ec_debugfs_resume(struct cros_ec_dev *ec)
+> +static int __maybe_unused cros_ec_debugfs_resume(struct device *dev)
+>  {
+> -       if (ec->debug_info && ec->debug_info->log_buffer.buf)
+> -               schedule_delayed_work(&ec->debug_info->log_poll_work, 0);
+> +       struct cros_ec_dev *ec = dev_get_drvdata(dev);
+> +
+> +       schedule_delayed_work(&ec->debug_info->log_poll_work, 0);
+> +
+> +       return 0;
+>  }
+> -EXPORT_SYMBOL(cros_ec_debugfs_resume);
+> +
+> +static SIMPLE_DEV_PM_OPS(cros_ec_debugfs_pm_ops,
+> +                        cros_ec_debugfs_suspend, cros_ec_debugfs_resume);
+> +
+> +static struct platform_driver cros_ec_debugfs_driver = {
+> +       .driver = {
+> +               .name = DRV_NAME,
+> +               .pm = &cros_ec_debugfs_pm_ops,
+> +       },
+> +       .probe = cros_ec_debugfs_probe,
+> +       .remove = cros_ec_debugfs_remove,
+> +};
+> +
+> +module_platform_driver(cros_ec_debugfs_driver);
+> +
+> +MODULE_LICENSE("GPL");
+> +MODULE_DESCRIPTION("Debug logs for ChromeOS EC");
+> +MODULE_ALIAS("platform:" DRV_NAME);
+> diff --git a/include/linux/mfd/cros_ec.h b/include/linux/mfd/cros_ec.h
+> index bbbe416fd573..3e4401e2ceea 100644
+> --- a/include/linux/mfd/cros_ec.h
+> +++ b/include/linux/mfd/cros_ec.h
+> @@ -326,10 +326,4 @@ u32 cros_ec_get_host_event(struct cros_ec_device *ec_dev);
+>  /* sysfs stuff */
+>  extern struct attribute_group cros_ec_attr_group;
+>
+> -/* debugfs stuff */
+> -int cros_ec_debugfs_init(struct cros_ec_dev *ec);
+> -void cros_ec_debugfs_remove(struct cros_ec_dev *ec);
+> -void cros_ec_debugfs_suspend(struct cros_ec_dev *ec);
+> -void cros_ec_debugfs_resume(struct cros_ec_dev *ec);
+> -
+>  #endif /* __LINUX_MFD_CROS_EC_H */
+> --
+> 2.19.1
+>
