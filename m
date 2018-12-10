@@ -4,58 +4,58 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3DB6C04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 16:17:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E6D5C5CFFE
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 16:17:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9D20220672
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 16:17:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4023320870
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 16:17:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="kNb5POBI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D20220672
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="c6YjHI+8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4023320870
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728531AbeLJQRv (ORCPT
+        id S1728552AbeLJQRy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 11:17:51 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:36495 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727057AbeLJQRu (ORCPT
+        Mon, 10 Dec 2018 11:17:54 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:53632 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727262AbeLJQRr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 11:17:50 -0500
-Received: by mail-wm1-f65.google.com with SMTP id a18so11945357wmj.1
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Dec 2018 08:17:48 -0800 (PST)
+        Mon, 10 Dec 2018 11:17:47 -0500
+Received: by mail-wm1-f66.google.com with SMTP id y1so11504228wmi.3
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Dec 2018 08:17:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=amarulasolutions.com; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=rlpTqVyJlpHFfIEuYuSfPKgTjg+EAGEL37BZe3O0asI=;
-        b=kNb5POBIBg7XzJkmwn4Gn1mBl5X6SAgU4zKK8zpqOvax0/eJk56DU8LwrbzdpxrQLw
-         lpzC2tFY28hbXcAI/itZQh7tj85b3hCcfDJNwPOrkvbE9Ov5bPqL2uZu7/lJVqWijN9W
-         S1XOoLrcgpdO4jhAQsbhlLoHWPo9rV/4nsGcg=
+        bh=EEGBFedCv0eGIwFBpPqp7aDi2x6OUg3hp3DvnJn01c8=;
+        b=c6YjHI+8zaC8n0EX4g1e8Vzwq0r6HCALxJ7GNsXRoSdq5wGlk8aqV/UMUWWy0ZigNu
+         pJWOQbpwtk91QX+azruY7KvFzZr1EcdNqByLWx+kfBWeKJno2lvvLH6neki4WH2teAfc
+         hw1FzyfEbpO0kXMjwmBiKA7sBioRz5hHYVvn4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=rlpTqVyJlpHFfIEuYuSfPKgTjg+EAGEL37BZe3O0asI=;
-        b=KtDCb84NvkFKYK415LwP8+j1xQQ1aVqTdvsn8DY5x3jPTwRh8oFsZkgJj0WyUyFYh/
-         /lqZkQ4ftKW0Sz+PAR66Mjwc4PU9hPEY03gjrNFzvdXZUiynWgWYI9fBULd3jh3EmRd9
-         SexXaIxBKcumaw4xKY0BJiaibOuxzw89ByeGLcU9mWIlqVj4d/1vS87QPGDs/tYlxsZW
-         6PLSlWXGt9F19Uw+TnQHwNWiNmKf7RzlOgdaM7hOwGCUkk/8IapCkxM6XYK1BswUS3s2
-         RiqS6qSLMIJlluyvu6aXxyGvyOC3BRKD6+cZKLnBAdv9ZoyG7AxZbFpYx2oErwXXm2YS
-         Zb7w==
-X-Gm-Message-State: AA+aEWYtEc5Xqu4KPyMcbBKacYX2TjdMQJRs6gTIsRsE8hUmOdnSSIFy
-        1XRVCJqZhxdvoK29DdkkP8KmLQ==
-X-Google-Smtp-Source: AFSGD/VoTlK9WvKe2US+zX0kbpr0yUt00tI+tJODq6fmyn2DLN+OprVTA8jEQYXnmnycVt8TbQJKiA==
-X-Received: by 2002:a1c:18c:: with SMTP id 134mr10850811wmb.88.1544458667726;
-        Mon, 10 Dec 2018 08:17:47 -0800 (PST)
+        bh=EEGBFedCv0eGIwFBpPqp7aDi2x6OUg3hp3DvnJn01c8=;
+        b=owuapD2Arefgm69AsfRw4uyMk+S5sR0+jImMML6LhRuAGoEGe7CAGqiN4vXtREwpTx
+         jUBZUxd9DPjXv6NvvSMbNVKd1zDWgEDlSv9zU6+54TmevWvQzXxhxZNkZ70oN/8LEHq+
+         lYtEbwBpYzl4hiuZ+siCbPvFP1OmCNVsSKBPSazca/+sahVuBRPsSAAKPinOf2e5I13A
+         uP4n22z4f503qOXzqbwR1rwr0TZRAYrUFFEf1tgpwdB/Qm3aap/PpP79S8l9ckiVIASk
+         Hk1062eQelFaiOdny+sr+brYjvJX5c6DlTKH5s331shcJ1mDgb2691rt7jRyLE0gB+H1
+         TBHw==
+X-Gm-Message-State: AA+aEWZriWOdzzFVwDCzlAF1JH/QAZN5ixp0OMAQNkQ6lHTf9mJ9iP1i
+        9bi1mIGEc1Tvm3rUwmZRtmOUJQ==
+X-Google-Smtp-Source: AFSGD/UpCEzvMXG9xNu95c5VJhwbFLp1a5BdqBxOrmp/Ab/qDMfMcWI2sk3xnLZqpOL57VXj6x8Qyw==
+X-Received: by 2002:a1c:16ce:: with SMTP id 197mr10900332wmw.126.1544458665729;
+        Mon, 10 Dec 2018 08:17:45 -0800 (PST)
 Received: from localhost.localdomain (ip-162-59.sn-213-198.clouditalia.com. [213.198.162.59])
-        by smtp.gmail.com with ESMTPSA id b13sm8397503wrn.28.2018.12.10.08.17.45
+        by smtp.gmail.com with ESMTPSA id b13sm8397503wrn.28.2018.12.10.08.17.44
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 10 Dec 2018 08:17:47 -0800 (PST)
+        Mon, 10 Dec 2018 08:17:45 -0800 (PST)
 From:   Jagan Teki <jagan@amarulasolutions.com>
 To:     Maxime Ripard <maxime.ripard@bootlin.com>,
         Chen-Yu Tsai <wens@csie.org>,
@@ -67,9 +67,9 @@ Cc:     linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
         linux-sunxi <linux-sunxi@googlegroups.com>,
         linux-amarula@amarulasolutions.com,
         Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH v5 02/17] drm/sun4i: sun6i_mipi_dsi: Add has_mod_clk quirk
-Date:   Mon, 10 Dec 2018 21:47:14 +0530
-Message-Id: <20181210161729.29720-3-jagan@amarulasolutions.com>
+Subject: [PATCH v5 01/17] clk: sunxi-ng: Add check for minimal rate to NKM PLLs
+Date:   Mon, 10 Dec 2018 21:47:13 +0530
+Message-Id: <20181210161729.29720-2-jagan@amarulasolutions.com>
 X-Mailer: git-send-email 2.18.0.321.gffc6fa0e3
 In-Reply-To: <20181210161729.29720-1-jagan@amarulasolutions.com>
 References: <20181210161729.29720-1-jagan@amarulasolutions.com>
@@ -80,147 +80,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Mod clock is not mandatory for all Allwinner MIPI DSI
-controllers, it is connected as CLK_DSI_SCLK for A31
-and not available in A64.
+Some NKM PLLs doesn't work well when their output clock rate is set below
+certain rate.
 
-So add has_mod_clk quirk and process the clk accordingly.
+So, add support for minimal rate for relevant PLLs.
 
 Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+Acked-by: Stephen Boyd <sboyd@kernel.org>
 ---
- drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 39 ++++++++++++++++++--------
- drivers/gpu/drm/sun4i/sun6i_mipi_dsi.h |  5 ++++
- 2 files changed, 33 insertions(+), 11 deletions(-)
+ drivers/clk/sunxi-ng/ccu_nkm.c | 5 +++++
+ drivers/clk/sunxi-ng/ccu_nkm.h | 1 +
+ 2 files changed, 6 insertions(+)
 
-diff --git a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-index e3b34a345546..561de393ea23 100644
---- a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-+++ b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-@@ -10,6 +10,7 @@
- #include <linux/component.h>
- #include <linux/crc-ccitt.h>
- #include <linux/of_address.h>
-+#include <linux/of_device.h>
- #include <linux/pm_runtime.h>
- #include <linux/regmap.h>
- #include <linux/reset.h>
-@@ -981,6 +982,8 @@ static int sun6i_dsi_probe(struct platform_device *pdev)
- 	dsi->host.ops = &sun6i_dsi_host_ops;
- 	dsi->host.dev = dev;
+diff --git a/drivers/clk/sunxi-ng/ccu_nkm.c b/drivers/clk/sunxi-ng/ccu_nkm.c
+index 841840e35e61..096ff4f4839a 100644
+--- a/drivers/clk/sunxi-ng/ccu_nkm.c
++++ b/drivers/clk/sunxi-ng/ccu_nkm.c
+@@ -125,6 +125,11 @@ static unsigned long ccu_nkm_round_rate(struct ccu_mux_internal *mux,
+ 	if (nkm->common.features & CCU_FEATURE_FIXED_POSTDIV)
+ 		rate *= nkm->fixed_post_div;
  
-+	dsi->variant = of_device_get_match_data(dev);
++	if (rate < nkm->min_rate) {
++		rate = nkm->min_rate;
++		return rate;
++	}
 +
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	base = devm_ioremap_resource(dev, res);
- 	if (IS_ERR(base)) {
-@@ -1001,17 +1004,20 @@ static int sun6i_dsi_probe(struct platform_device *pdev)
- 		return PTR_ERR(dsi->reset);
- 	}
+ 	ccu_nkm_find_best(*parent_rate, rate, &_nkm);
  
--	dsi->mod_clk = devm_clk_get(dev, "mod");
--	if (IS_ERR(dsi->mod_clk)) {
--		dev_err(dev, "Couldn't get the DSI mod clock\n");
--		return PTR_ERR(dsi->mod_clk);
-+	if (dsi->variant->has_mod_clk) {
-+		dsi->mod_clk = devm_clk_get(dev, "mod");
-+		if (IS_ERR(dsi->mod_clk)) {
-+			dev_err(dev, "Couldn't get the DSI mod clock\n");
-+			return PTR_ERR(dsi->mod_clk);
-+		}
- 	}
+ 	rate = *parent_rate * _nkm.n * _nkm.k / _nkm.m;
+diff --git a/drivers/clk/sunxi-ng/ccu_nkm.h b/drivers/clk/sunxi-ng/ccu_nkm.h
+index cc6efb70a102..ff5bd00f429f 100644
+--- a/drivers/clk/sunxi-ng/ccu_nkm.h
++++ b/drivers/clk/sunxi-ng/ccu_nkm.h
+@@ -35,6 +35,7 @@ struct ccu_nkm {
+ 	struct ccu_mux_internal	mux;
  
- 	/*
- 	 * In order to operate properly, that clock seems to be always
- 	 * set to 297MHz.
- 	 */
--	clk_set_rate_exclusive(dsi->mod_clk, 297000000);
-+	if (dsi->variant->has_mod_clk)
-+		clk_set_rate_exclusive(dsi->mod_clk, 297000000);
+ 	unsigned int		fixed_post_div;
++	unsigned int		min_rate;
  
- 	dphy_node = of_parse_phandle(dev->of_node, "phys", 0);
- 	ret = sun6i_dphy_probe(dsi, dphy_node);
-@@ -1043,7 +1049,8 @@ static int sun6i_dsi_probe(struct platform_device *pdev)
- 	pm_runtime_disable(dev);
- 	sun6i_dphy_remove(dsi);
- err_unprotect_clk:
--	clk_rate_exclusive_put(dsi->mod_clk);
-+	if (dsi->variant->has_mod_clk)
-+		clk_rate_exclusive_put(dsi->mod_clk);
- 	return ret;
- }
- 
-@@ -1056,7 +1063,8 @@ static int sun6i_dsi_remove(struct platform_device *pdev)
- 	mipi_dsi_host_unregister(&dsi->host);
- 	pm_runtime_disable(dev);
- 	sun6i_dphy_remove(dsi);
--	clk_rate_exclusive_put(dsi->mod_clk);
-+	if (dsi->variant->has_mod_clk)
-+		clk_rate_exclusive_put(dsi->mod_clk);
- 
- 	return 0;
- }
-@@ -1066,7 +1074,8 @@ static int __maybe_unused sun6i_dsi_runtime_resume(struct device *dev)
- 	struct sun6i_dsi *dsi = dev_get_drvdata(dev);
- 
- 	reset_control_deassert(dsi->reset);
--	clk_prepare_enable(dsi->mod_clk);
-+	if (dsi->variant->has_mod_clk)
-+		clk_prepare_enable(dsi->mod_clk);
- 
- 	/*
- 	 * Enable the DSI block.
-@@ -1094,7 +1103,8 @@ static int __maybe_unused sun6i_dsi_runtime_suspend(struct device *dev)
- {
- 	struct sun6i_dsi *dsi = dev_get_drvdata(dev);
- 
--	clk_disable_unprepare(dsi->mod_clk);
-+	if (dsi->variant->has_mod_clk)
-+		clk_disable_unprepare(dsi->mod_clk);
- 	reset_control_assert(dsi->reset);
- 
- 	return 0;
-@@ -1106,9 +1116,16 @@ static const struct dev_pm_ops sun6i_dsi_pm_ops = {
- 			   NULL)
+ 	struct ccu_common	common;
  };
- 
-+static const struct sun6i_dsi_variant sun6i_a31_dsi = {
-+	.has_mod_clk = true,
-+};
-+
- static const struct of_device_id sun6i_dsi_of_table[] = {
--	{ .compatible = "allwinner,sun6i-a31-mipi-dsi" },
--	{ }
-+	{
-+		.compatible = "allwinner,sun6i-a31-mipi-dsi",
-+		.data = &sun6i_a31_dsi,
-+	},
-+	{ /* sentinel */ }
- };
- MODULE_DEVICE_TABLE(of, sun6i_dsi_of_table);
- 
-diff --git a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.h b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.h
-index dbbc5b3ecbda..597b62227019 100644
---- a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.h
-+++ b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.h
-@@ -20,6 +20,10 @@ struct sun6i_dphy {
- 	struct reset_control	*reset;
- };
- 
-+struct sun6i_dsi_variant {
-+	bool			has_mod_clk;
-+};
-+
- struct sun6i_dsi {
- 	struct drm_connector	connector;
- 	struct drm_encoder	encoder;
-@@ -35,6 +39,7 @@ struct sun6i_dsi {
- 	struct sun4i_drv	*drv;
- 	struct mipi_dsi_device	*device;
- 	struct drm_panel	*panel;
-+	const struct sun6i_dsi_variant	*variant;
- };
- 
- static inline struct sun6i_dsi *host_to_sun6i_dsi(struct mipi_dsi_host *host)
 -- 
 2.18.0.321.gffc6fa0e3
 
