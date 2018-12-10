@@ -2,139 +2,105 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18C6BC04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 17:51:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91709C04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 17:52:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D66CB20851
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 17:51:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="YRTMyeTs"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D66CB20851
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id 46E212081F
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 17:52:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 46E212081F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729044AbeLJRvk (ORCPT
+        id S1728659AbeLJRwT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 12:51:40 -0500
-Received: from mail-yb1-f195.google.com ([209.85.219.195]:36205 "EHLO
-        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727567AbeLJRvk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 12:51:40 -0500
-Received: by mail-yb1-f195.google.com with SMTP id 64so2889569ybe.3
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Dec 2018 09:51:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Ujnwl3BsNFQa93BAt9nig1Xuv1MrvR6KHaZTtgjC6ng=;
-        b=YRTMyeTss6kEtS8Cn7N0HWSp33lfIVmAFUB+qqUGUjAwO8qtL1rRsIn+b7vL93fgOv
-         CMcljSPnX8kTdmIWxCXje2D/yWcckRO5vDsitH28q+y3JIdpLuAlPN7zF/XeIVHWuOQN
-         MJ650of5DObqR8TtAC2kJU9YOnolSWbKEdd68=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Ujnwl3BsNFQa93BAt9nig1Xuv1MrvR6KHaZTtgjC6ng=;
-        b=FvvN06UuTzYGNBD5FQ12FN/JJBut8/SFMWlaoKXLDFp2bhdEBpJnmNs1zRkMolREfv
-         zr2KzVk+4+/993RmLF8uiT1kegFmtiykeUmQE/eNfTSKOmYEl5nfla6U9GaGYXSRIL4c
-         BDyDGevG4G/wBKjH0QSKU8dxVx+l/iJ/IS0NBe7jSUTZTjqmVqLjNbnEf2Eun5iFiElN
-         Hbk6VO95/gQZ7lPBLqWECMznpTElZqtUc1nLNDZ6r2wnkuKj32KH6hI/f2F+WRB47/Xi
-         JGaQLQeJMM2q3ZIDCLY8pVnZ5XL3Rdvz/7njHo4hwz0LUz8OlRmnvJn68gTRmSQ5gbVp
-         dA2A==
-X-Gm-Message-State: AA+aEWbxDws7S+BT5SjeRNTxarS3x+89rfnounCCO8zAiDRCQ+oBOeB4
-        91rBJELDVxsEZ61cPaU5njjigYyGbxA=
-X-Google-Smtp-Source: AFSGD/X7hi+HADzpXYq5E3aFjh4FbqQrDCIF/ZyFeTmMJZEpBufIXbxU+fg0dkfRpKN+kGAO3i5YJw==
-X-Received: by 2002:a25:d391:: with SMTP id e139mr7833192ybf.86.1544464298065;
-        Mon, 10 Dec 2018 09:51:38 -0800 (PST)
-Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com. [209.85.219.170])
-        by smtp.gmail.com with ESMTPSA id h145sm3533470ywc.72.2018.12.10.09.51.34
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 10 Dec 2018 09:51:35 -0800 (PST)
-Received: by mail-yb1-f170.google.com with SMTP id f4so5008278ybq.4
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Dec 2018 09:51:34 -0800 (PST)
-X-Received: by 2002:a25:1cc1:: with SMTP id c184-v6mr13103299ybc.421.1544464294266;
- Mon, 10 Dec 2018 09:51:34 -0800 (PST)
+        Mon, 10 Dec 2018 12:52:19 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:59914 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727416AbeLJRwS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Dec 2018 12:52:18 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1A39DEBD;
+        Mon, 10 Dec 2018 09:52:18 -0800 (PST)
+Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 07E423F6A8;
+        Mon, 10 Dec 2018 09:52:16 -0800 (PST)
+Date:   Mon, 10 Dec 2018 17:52:11 +0000
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     Ingo Molnar <mingo@kernel.org>
+Cc:     Will Deacon <will.deacon@arm.com>,
+        Anders Roxell <anders.roxell@linaro.org>, peterz@infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] scripts/atomic: change 'fold' to 'grep'
+Message-ID: <20181210175211.hqw4usnzh43a4kab@lakrids.cambridge.arm.com>
+References: <20181204214713.5812-1-anders.roxell@linaro.org>
+ <20181206155244.GA4389@arm.com>
+ <20181206161528.GA118885@gmail.com>
 MIME-Version: 1.0
-References: <20181016223322.16844-1-christian@brauner.io> <20181029145818.4bqmy25itjnqhodg@brauner.io>
- <CAGXu5jJwSRQ3dOgNW_X0Fk+8gT+ACiBZPJ79g-aCfqiWsm=ewg@mail.gmail.com> <CAPP7u0U72jSkT3km-E2imQdOvk-WRaDCH4t--N07mh8my7PvOQ@mail.gmail.com>
-In-Reply-To: <CAPP7u0U72jSkT3km-E2imQdOvk-WRaDCH4t--N07mh8my7PvOQ@mail.gmail.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Mon, 10 Dec 2018 09:51:22 -0800
-X-Gmail-Original-Message-ID: <CAGXu5j+hBRZqqp8JfRxwbPMCFT4YMRdn3djHpb8HyZU2Hh-L=w@mail.gmail.com>
-Message-ID: <CAGXu5j+hBRZqqp8JfRxwbPMCFT4YMRdn3djHpb8HyZU2Hh-L=w@mail.gmail.com>
-Subject: Re: [PATCH v3 0/2] sysctl: handle overflow for file-max
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Christian Brauner <christian.brauner@canonical.com>,
-        Christian Brauner <christian@brauner.io>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        "Luis R. Rodriguez" <mcgrof@kernel.org>,
-        Joe Lawrence <joe.lawrence@redhat.com>,
-        Waiman Long <longman@redhat.com>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Linux API <linux-api@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181206161528.GA118885@gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Andrew,
+Hi Ingo,
 
-Can you take this patch for -mm?
+On Thu, Dec 06, 2018 at 05:15:28PM +0100, Ingo Molnar wrote:
+> 
+> * Will Deacon <will.deacon@arm.com> wrote:
+> 
+> > [+ Ingo and Mark]
+> > 
+> > On Tue, Dec 04, 2018 at 10:47:13PM +0100, Anders Roxell wrote:
+> > > Some distibutions and build systems doesn't include 'fold' from
+> > > coreutils default.
+> > > 
+> > > .../scripts/atomic/atomic-tbl.sh: line 183: fold: command not found
+> > > 
+> > > Rework to use 'grep' instead of 'fold' to use a dependency that is
+> > > already used a lot in the kernel.
+> > > 
+> > > Reported-by: Naresh Kamboju <naresh.kamboju@linaro.org>
+> > > Suggested-by: Will Deacon <will.deacon@arm.com>
+> > > Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+> > > ---
+> > >  scripts/atomic/atomic-tbl.sh | 2 +-
+> > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > > 
+> > > diff --git a/scripts/atomic/atomic-tbl.sh b/scripts/atomic/atomic-tbl.sh
+> > > index 9d6be538a987..81d5c32039dd 100755
+> > > --- a/scripts/atomic/atomic-tbl.sh
+> > > +++ b/scripts/atomic/atomic-tbl.sh
+> > > @@ -180,7 +180,7 @@ gen_proto_variants()
+> > >  #gen_proto(meta, ...)
+> > >  gen_proto() {
+> > >  	local meta="$1"; shift
+> > > -	for m in $(echo "${meta}" | fold -w1); do
+> > > +	for m in $(echo "${meta}" | grep -o .); do
+> > >  		gen_proto_variants "${m}" "$@"
+> > >  	done
+> > 
+> > Acked-by: Will Deacon <will.deacon@arm.com>
+> > 
+> > Ingo -- please can you take this one via -tip?
+> 
+> I'm still waiting for a reply to my previous concerns expressed in:
+> 
+>    Re: [tip:locking/core] locking/atomics: Check generated headers are up-to-date
+>    <20181128083057.GA7879@gmail.com>
+> 
+> Will remove it from linux-next if there's no good resolution for this 
+> cycle.
 
--Kees
+I've just sent a couple of patches for that; please see:
 
-On Sun, Dec 9, 2018 at 8:41 AM Christian Brauner
-<christian.brauner@canonical.com> wrote:
->
-> On Mon, Oct 29, 2018 at 10:44 PM Kees Cook <keescook@chromium.org> wrote:
-> >
-> > On Mon, Oct 29, 2018 at 7:58 AM, Christian Brauner <christian@brauner.io> wrote:
-> > > On Wed, Oct 17, 2018 at 12:33:20AM +0200, Christian Brauner wrote:
-> > >> Hey,
-> > >>
-> > >> Here is v3 of this patchset. Changelogs are in the individual commits.
-> > >>
-> > >> Currently, when writing
-> > >>
-> > >> echo 18446744073709551616 > /proc/sys/fs/file-max
-> > >>
-> > >> /proc/sys/fs/file-max will overflow and be set to 0. That quickly
-> > >> crashes the system.
-> > >>
-> > >> The first version of this patch intended to detect the overflow and cap
-> > >> at ULONG_MAX. However, we should not do this and rather return EINVAL on
-> > >> overflow. The reasons are:
-> > >> - this aligns with other sysctl handlers that simply reject overflows
-> > >>   (cf. [1], [2], and a bunch of others)
-> > >> - we already do a partial fail on overflow right now
-> > >>   Namely, when the TMPBUFLEN is exceeded. So we already reject values
-> > >>   such as 184467440737095516160 (21 chars) but accept values such as
-> > >>   18446744073709551616 (20 chars) but both are overflows. So we should
-> > >>   just always reject 64bit overflows and not special-case this based on
-> > >>   the number of chars.
-> > >>
-> > >> (This patchset is in reference to https://lkml.org/lkml/2018/10/11/585.)
-> > >
-> > > Just so that we don't forget, can we make sure that this gets picked
-> > > into linux-next? :)
-> >
-> > I was hoping akpm would take this? Andrew, does the v3 look okay to you?
->
-> gentle ping again :)
->
-> Christian
+https://lkml.kernel.org/r/20181210175035.45096-1-mark.rutland@arm.com
 
-
-
--- 
-Kees Cook
+Thanks,
+Mark.
