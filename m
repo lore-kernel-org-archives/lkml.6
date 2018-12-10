@@ -2,122 +2,119 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E733C5CFFE
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 17:14:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 236C9C5CFFE
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 17:14:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2DCA220851
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 17:14:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2DCA220851
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xs4all.nl
+	by mail.kernel.org (Postfix) with ESMTP id E84682082F
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 17:14:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E84682082F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728212AbeLJROe (ORCPT
+        id S1728581AbeLJRNo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 12:14:34 -0500
-Received: from lb1-smtp-cloud8.xs4all.net ([194.109.24.21]:53698 "EHLO
-        lb1-smtp-cloud8.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728558AbeLJRNp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 12:13:45 -0500
-Received: from [IPv6:2001:983:e9a7:1:153f:c992:21d9:6742] ([IPv6:2001:983:e9a7:1:153f:c992:21d9:6742])
-        by smtp-cloud8.xs4all.net with ESMTPA
-        id WP7lg6aCVCZKKWP7mgF4Gv; Mon, 10 Dec 2018 18:13:43 +0100
-Subject: Re: [PATCH] media: vimc: add configfs API to configure the topology
-To:     Helen Koike <helen.koike@collabora.com>,
-        linux-media@vger.kernel.org
-Cc:     mchehab@kernel.org, lkcamp@lists.libreplanetbr.org,
-        kernel@collabora.com, linux-kernel@vger.kernel.org
-References: <20181207182200.25283-1-helen.koike@collabora.com>
- <126c3faf-18e0-6fe5-e2f5-8ef0878fb767@xs4all.nl>
- <1cf814ac-60e1-bff7-4e9b-72b2c393d49a@collabora.com>
-From:   Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <159b0f0c-8e75-385d-08de-117d50ab70e3@xs4all.nl>
-Date:   Mon, 10 Dec 2018 18:13:41 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
-MIME-Version: 1.0
-In-Reply-To: <1cf814ac-60e1-bff7-4e9b-72b2c393d49a@collabora.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfKo9lcqtGuOFKiv+NchOElUxtHaDvs2CzEcZlT0ziIMRSjMy47a5WVAxlN2ZLJRFOHCzpz8taHDamKmBRp9xmViw953FfFj9IwdTXtaiZ2RAEsM8OPIw
- SQO0D7Nm9E7Cwd2GIocVNilB3kq5J4QF6AP2FWDVL2JGtmUWd82rdjdpDbq+WBzbNi03fIQQiJ1CQJmE/4hjuUhRHJnmfvsSjTpwYjrgLVmjljEgSRlrcXFq
- xCMqmUHcfcSGNr+JyxtjXK6j318fJ3Rp/i/gwA3yuaVGcFpgh82qgC081YoM6HndcGCCCrkmYiTuG+OiK3RdgtqrVxWR31P9hBKTJ2Nv77HIYKbRZWEILvCX
- roy37HmbOXwduIF7wpcT6stFoYs2sIKwyfCLdy1h/dTGSaC6twLh5ReqymjV/SEWP4qDXG3W5fZUAeT+XM/CCYN1Ijp39vJMNfG6eKJCEiQruetBmRw=
+        Mon, 10 Dec 2018 12:13:44 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:40778 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728404AbeLJRNg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Dec 2018 12:13:36 -0500
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 07C8E13A9D;
+        Mon, 10 Dec 2018 17:13:36 +0000 (UTC)
+Received: from horse.redhat.com (unknown [10.18.25.234])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B5C5F605CB;
+        Mon, 10 Dec 2018 17:13:35 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id B9C1622427A; Mon, 10 Dec 2018 12:13:30 -0500 (EST)
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org
+Cc:     vgoyal@redhat.com, miklos@szeredi.hu, stefanha@redhat.com,
+        dgilbert@redhat.com, sweil@redhat.com, swhiteho@redhat.com
+Subject: [PATCH 46/52] virtio-fs: Retrieve shm capabilities for version table
+Date:   Mon, 10 Dec 2018 12:13:12 -0500
+Message-Id: <20181210171318.16998-47-vgoyal@redhat.com>
+In-Reply-To: <20181210171318.16998-1-vgoyal@redhat.com>
+References: <20181210171318.16998-1-vgoyal@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Mon, 10 Dec 2018 17:13:36 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/10/18 5:14 PM, Helen Koike wrote:
-> Hi Hans,
-> 
-> On 12/10/18 9:31 AM, Hans Verkuil wrote:
->> On 12/7/18 7:22 PM, Helen Koike wrote:
+From: "Dr. David Alan Gilbert" <dgilbert@redhat.com>
 
-<snip>
+Retrieve the capabilities needed to find the journal and version table.
 
-> 
->>
->> The previewer is effectively similar to a debayer block.
-> 
-> You mean the image it outputs?
+Signed-off-by: Dr. David Alan Gilbert <dgilbert@redhat.com>
+---
+ fs/fuse/virtio_fs.c            | 26 ++++++++++++++++++++++++--
+ include/uapi/linux/virtio_fs.h |  2 ++
+ 2 files changed, 26 insertions(+), 2 deletions(-)
 
-Yes. It takes a bayer image and outputs a non-bayer format on the omap3.
+diff --git a/fs/fuse/virtio_fs.c b/fs/fuse/virtio_fs.c
+index c71bc47395b4..c18f406b61cd 100644
+--- a/fs/fuse/virtio_fs.c
++++ b/fs/fuse/virtio_fs.c
+@@ -589,8 +589,11 @@ static int virtio_fs_setup_dax(struct virtio_device *vdev, struct virtio_fs *fs)
+ 	phys_addr_t phys_addr;
+ 	size_t bar_len;
+ 	int ret;
+-	u8 have_cache, cache_bar;
+-	u64 cache_offset, cache_len;
++        u8 have_cache, have_journal, have_vertab;
++        u8 cache_bar, journal_bar, vertab_bar;
++        u64 cache_offset, cache_len;
++        u64 journal_offset, journal_len;
++        u64 vertab_offset, vertab_len;
+ 
+ 	if (!IS_ENABLED(CONFIG_DAX_DRIVER))
+ 		return 0;
+@@ -619,6 +622,25 @@ static int virtio_fs_setup_dax(struct virtio_device *vdev, struct virtio_fs *fs)
+ 				cache_bar, cache_len, cache_offset);
+         }
+ 
++        have_journal = virtio_pci_find_shm_cap(pci_dev,
++                                             VIRTIO_FS_PCI_SHMCAP_ID_JOURNAL,
++                                             &journal_bar, &journal_offset,
++                                             &journal_len);
++        if (have_journal) {
++                dev_notice(&vdev->dev, "Journal bar: %d len: 0x%llx @ 0x%llx\n",
++                           journal_bar, journal_len, journal_offset);
++        }
++
++        have_vertab = virtio_pci_find_shm_cap(pci_dev,
++                                             VIRTIO_FS_PCI_SHMCAP_ID_VERTAB,
++                                             &vertab_bar, &vertab_offset,
++                                             &vertab_len);
++        if (have_vertab) {
++                dev_notice(&vdev->dev, "Version table bar: %d len: 0x%llx @ 0x%llx\n",
++                           vertab_bar, vertab_len, vertab_offset);
++        }
++
++
+ 	/* TODO handle case where device doesn't expose BAR? */
+ 	ret = pci_request_region(pci_dev, cache_bar, "virtio-fs-window");
+ 	if (ret < 0) {
+diff --git a/include/uapi/linux/virtio_fs.h b/include/uapi/linux/virtio_fs.h
+index 65a9d4a0dac0..e70741ab14a8 100644
+--- a/include/uapi/linux/virtio_fs.h
++++ b/include/uapi/linux/virtio_fs.h
+@@ -40,5 +40,7 @@ struct virtio_fs_config {
+ 
+ /* For the id field in virtio_pci_shm_cap */
+ #define VIRTIO_FS_PCI_SHMCAP_ID_CACHE 0
++#define VIRTIO_FS_PCI_SHMCAP_ID_VERTAB 1
++#define VIRTIO_FS_PCI_SHMCAP_ID_JOURNAL 2
+ 
+ #endif /* _UAPI_LINUX_VIRTIO_FS_H */
+-- 
+2.13.6
 
-> 
->>
->> AEWB, AF and histogram are for auto-whitebalance, autofocus and histogram statistics.
->> This isn't supported by vimc, and is a 'nice-to-have' for the future.
-> 
-> Right, I need to check how to include those. I am a bit confused as in
-> the omap3 topology they are seems to be just configuration points (I
-> mean, they are not really part of the image pipeline).
-
-Typically the SoC analyzes the image and produces statistics of various kinds that
-are given to userspace via devices like this. It is used as input to auto-whitebalance,
-auto-focus and auto-gain algorithms running in userspace that feedback the results to
-sensor config changes.
-
-The format is usually very SoC-specific.
-
-> 
-> I was reading this
-> https://linuxtv.org/downloads/v4l-dvb-apis-new/v4l-drivers/omap3isp.html?highlight=histogram#statistic-blocks-ioctls
-> It says:
-> "The statistics are dequeueable by the user from the statistics subdev
-> nodes using private IOCTLs"
-> 
-> I suppose we should emulate those private IOCTLs in vimc? If you could
-> provide me some pointers in where I can find docs on these private
-> IOCTLs it would be great.
-
-No, just ignore these statistics devices for now. And if we make them, we
-can design a vimc-specific format.
-
-> 
->>
->> The main missing bits in vimc are a CSI block and a splitter block. It should be simple
->> to add the CSI block since it really doesn't do anything in an emulated environment.
-> 
-> CSI would be just a dummy entity with one sink pad and one source pad right?
-
-Right.
-
-> 
->>
->> A splitter might be more complicated, I'm not sure.
-> 
-> splitter shouldn't that complicated in the current state of vimc, but
-> when we start optimizing the pipeline then it is going to be more
-> complicated.
-
-Right.
-
-Regards,
-
-	Hans
