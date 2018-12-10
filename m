@@ -2,59 +2,60 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C73C3C5CFFE
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 10:23:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EDD37C5CFFE
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 10:23:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C28420870
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 10:23:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B21DC2082F
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 10:23:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Jcx86OD2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C28420870
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZbBb58wW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B21DC2082F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727144AbeLJKXR (ORCPT
+        id S1727179AbeLJKXW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 05:23:17 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:35668 "EHLO
+        Mon, 10 Dec 2018 05:23:22 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:35669 "EHLO
         mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727112AbeLJKXQ (ORCPT
+        with ESMTP id S1727145AbeLJKXS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 05:23:16 -0500
-Received: by mail-wr1-f67.google.com with SMTP id 96so9877425wrb.2
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Dec 2018 02:23:15 -0800 (PST)
+        Mon, 10 Dec 2018 05:23:18 -0500
+Received: by mail-wr1-f67.google.com with SMTP id 96so9877505wrb.2
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Dec 2018 02:23:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=E55urFktBVJM2wfmpqkyl6MfKSKGPuDf2s6mSVnoNUc=;
-        b=Jcx86OD2ELVvtx/VPQ232dBAHgalgu4FyjPIoPyXLfXMTFyQB1S38RmLrFaEA2NRK3
-         mdq8eTu4hFOzn9eIpVqCx6s0F4fvTl35sjRjR/YAf0Bti7TXv9i6u44DX+2eHgzpt/B3
-         uLR7HlBDxaHR+eEJB7SxjyRzcxDi3ZihWET78=
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=XZ8fgTNKEzlulFo0jglvRy93ay062mbv4LQ6PKEe/gQ=;
+        b=ZbBb58wWhDv0MvwPZN9fA1XNugmo28nJATFNZ3SQPrwq7s88m8LANQ3JEoSlOuOpyw
+         X3FR9ehnuEsgiJVknsxMyzK4p60EKVzrlbh+tXYTlGEqDKkvWs4eSih+mr8E2Jv+emdk
+         dAUg2vdmhMtyEX2jigxj5+o8sYttCsDJOau7k=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=E55urFktBVJM2wfmpqkyl6MfKSKGPuDf2s6mSVnoNUc=;
-        b=hOUkNtFPj+C1LbnWNKrU6OQVCBUXER0dcBaf4MMDL6M/Dlrr835LBLT4/jPko6RIFI
-         LrBOadck9S4zB0C9tx7+SU6A+i4DzgVOzLnDdGcX1NU/FT9sA83qAcnh6l/3EhW9zBrH
-         kKjWhC+1hKyIW+w6wElbRIB00CQi8wP6/eAufBAjJbV/C4DeP1AGtxhpPOhFWyni8vKA
-         SUG+ByuU+UtZfeNfcD7S9hJTbibDXLpqzUosAjzH1vFnYww7ZxX4WHOoyZ1Vz1fUhhns
-         L3xnU63CVj1/K5iUc3QpQW91yFYbIb93jcvitOpIlHGEvJZxCvsuyUxrpHyWCEAhClKb
-         KbgA==
-X-Gm-Message-State: AA+aEWYV8RmEq3RMQIcmb7vTctWruFk2ngtznATcvhq0H+vLhfKnFDYp
-        uJN/f4eVSfhXTaa84vvcFh2TaA==
-X-Google-Smtp-Source: AFSGD/VgKl63jhsjccIH3wISI9ia/Uw8UGwflFh9LXYiI1UehAA4WUM/cK18dQCZOqT42lK8SB8dgw==
-X-Received: by 2002:a5d:410e:: with SMTP id l14mr9247898wrp.61.1544437394612;
-        Mon, 10 Dec 2018 02:23:14 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=XZ8fgTNKEzlulFo0jglvRy93ay062mbv4LQ6PKEe/gQ=;
+        b=prr04SGRw7KlyDuQ5uFhqbhOYXEauvAiBB7ixr/ayYY4mN/NlvOR7SaOflE4qbx/Cy
+         Z6IkGE7vEZfX5xiBYdb/869c/62Kgg2vBGC5FeortU4i3U2iYygWr7/usVJHMju9UIYj
+         4Bs9eHHCmcjlj9zdeuYaT8JqX3ImKdMVjRdE4WRjOm9lS3aQapABmVUfx4ecehaOe3zL
+         9/JMe9LDopYf85Wx8KJ4eX2ptC7N/wQPMdBxmGFvRy5NkRGrEoiJnj/F1Dk23jJ9nYO5
+         Fr1WQOxawpejdGbKNfri398XAj5pNafhnMBFMDYfHOhhHBIliHAv+T8vuCTP/5F1oLMO
+         jfjg==
+X-Gm-Message-State: AA+aEWZokPGvP4SbnSotVDDMl/TAiyLanVyGSrwJo3v4HptqaOgbawD0
+        NJC8EoV+kIN0m7IAFACxeiMbhA==
+X-Google-Smtp-Source: AFSGD/WUV60mKobL5BLE2bRhvSje/Gp7j0dRjZwA2MwbNnR/qvcGjJ5yuFEboaP5naRxrXnIVtm6sw==
+X-Received: by 2002:adf:ef50:: with SMTP id c16mr9299102wrp.198.1544437396064;
+        Mon, 10 Dec 2018 02:23:16 -0800 (PST)
 Received: from srini-hackbox.lan (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
-        by smtp.gmail.com with ESMTPSA id r64sm12266664wmg.5.2018.12.10.02.23.13
+        by smtp.gmail.com with ESMTPSA id r64sm12266664wmg.5.2018.12.10.02.23.14
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 10 Dec 2018 02:23:14 -0800 (PST)
+        Mon, 10 Dec 2018 02:23:15 -0800 (PST)
 From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 To:     marc.zyngier@arm.com
 Cc:     sudeep.holla@arm.com, tglx@linutronix.de, jason@lakedaemon.net,
@@ -64,10 +65,12 @@ Cc:     sudeep.holla@arm.com, tglx@linutronix.de, jason@lakedaemon.net,
         ctatlor97@gmail.com, vkoul@kernel.org, robh+dt@kernel.org,
         devicetree@vger.kernel.org,
         Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH v4 0/4] irqchip/gic-v3: Add support to DT based quirk for msm8996
-Date:   Mon, 10 Dec 2018 10:23:05 +0000
-Message-Id: <20181210102309.8207-1-srinivas.kandagatla@linaro.org>
+Subject: [PATCH v4 1/4] dt-bindings/gic-v3: Add msm8996 compatible string
+Date:   Mon, 10 Dec 2018 10:23:06 +0000
+Message-Id: <20181210102309.8207-2-srinivas.kandagatla@linaro.org>
 X-Mailer: git-send-email 2.19.2
+In-Reply-To: <20181210102309.8207-1-srinivas.kandagatla@linaro.org>
+References: <20181210102309.8207-1-srinivas.kandagatla@linaro.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -80,38 +83,32 @@ There are many devices out there with this restriction in place
 and there has been no update to this firmware since last few years,
 making those devices totally unusable for upstream development.
 
-My previous attempts to add quirk based on IIDR register value seems to be
-flawed by the fact that the value conflicted with other SoCs.
-Last Suggestion by Marc Z using compatible seems to be the only way to apply
-quirks required for msm8996 based SoCs.
-
-Here is the patchset which add new compatible for msm8996 gicv3 and add
-support gic_enable_of_quirks() followed by the actual quirk required for msm8996.
+IIDR register value conflicts with other SoCs, using compatible seems
+to be the only way to apply quirks required for msm8996 based SoCs.
 
 Without this quirk many qcom SoCs (atleast 3 that I know) are
 unable to boot mainline.
 
-Changes since v3:
-- removed __maybe unused annotation
-- moved enabling quirks to gic_of_init() as suggested by Marc
-- fixed quick comment as suggest by Marc
+Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+---
+ .../devicetree/bindings/interrupt-controller/arm,gic-v3.txt   | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Thanks,
-Srini
-
-Srinivas Kandagatla (4):
-  dt-bindings/gic-v3: Add msm8996 compatible string
-  irqchip/gic: common: add support to device tree based quirks
-  irqchip: gic-v3: Add quirk for msm8996 secured registers
-  arm64: dts: add msm8996 compatible to gicv3
-
- .../interrupt-controller/arm,gic-v3.txt       |  4 ++-
- arch/arm64/boot/dts/qcom/msm8996.dtsi         |  2 +-
- drivers/irqchip/irq-gic-common.c              | 12 +++++++++
- drivers/irqchip/irq-gic-common.h              |  3 +++
- drivers/irqchip/irq-gic-v3.c                  | 25 +++++++++++++++++++
- 5 files changed, 44 insertions(+), 2 deletions(-)
-
+diff --git a/Documentation/devicetree/bindings/interrupt-controller/arm,gic-v3.txt b/Documentation/devicetree/bindings/interrupt-controller/arm,gic-v3.txt
+index 3ea78c4ef887..b83bb8249074 100644
+--- a/Documentation/devicetree/bindings/interrupt-controller/arm,gic-v3.txt
++++ b/Documentation/devicetree/bindings/interrupt-controller/arm,gic-v3.txt
+@@ -7,7 +7,9 @@ Interrupts (LPI).
+ 
+ Main node required properties:
+ 
+-- compatible : should at least contain  "arm,gic-v3".
++- compatible : should at least contain  "arm,gic-v3" or either
++		"qcom,msm8996-gic-v3", "arm,gic-v3" for msm8996 SoCs
++		to address SoC specific bugs/quirks
+ - interrupt-controller : Identifies the node as an interrupt controller
+ - #interrupt-cells : Specifies the number of cells needed to encode an
+   interrupt source. Must be a single cell with a value of at least 3.
 -- 
 2.19.2
 
