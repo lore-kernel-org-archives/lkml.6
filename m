@@ -2,130 +2,56 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B75DC04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 22:08:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B8DFC04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 22:09:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DEDC120821
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 22:08:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DEDC120821
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ens-lyon.org
+	by mail.kernel.org (Postfix) with ESMTP id 1794F20821
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 22:09:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1794F20821
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=atomide.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729439AbeLJWIy (ORCPT
+        id S1729681AbeLJWJa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 17:08:54 -0500
-Received: from hera.aquilenet.fr ([185.233.100.1]:33942 "EHLO
-        hera.aquilenet.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728786AbeLJWIy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 17:08:54 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by hera.aquilenet.fr (Postfix) with ESMTP id DB5E42D7E;
-        Mon, 10 Dec 2018 23:08:52 +0100 (CET)
-X-Virus-Scanned: Debian amavisd-new at aquilenet.fr
-Received: from hera.aquilenet.fr ([127.0.0.1])
-        by localhost (hera.aquilenet.fr [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id gSunzxIAEstH; Mon, 10 Dec 2018 23:08:52 +0100 (CET)
-Received: from function.home (unknown [IPv6:2a01:cb19:181:c200:9eb6:d0ff:fe88:c3c7])
-        by hera.aquilenet.fr (Postfix) with ESMTPSA id 346AF2D7D;
-        Mon, 10 Dec 2018 23:08:52 +0100 (CET)
-Received: from samy by function.home with local (Exim 4.91)
-        (envelope-from <samuel.thibault@ens-lyon.org>)
-        id 1gWTjO-0004w5-W9; Mon, 10 Dec 2018 23:08:51 +0100
-Date:   Mon, 10 Dec 2018 23:08:50 +0100
-From:   Samuel Thibault <samuel.thibault@ens-lyon.org>
+        Mon, 10 Dec 2018 17:09:30 -0500
+Received: from muru.com ([72.249.23.125]:57146 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729387AbeLJWJa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Dec 2018 17:09:30 -0500
+Received: from atomide.com (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTPS id BA5D180F0;
+        Mon, 10 Dec 2018 22:09:32 +0000 (UTC)
+Date:   Mon, 10 Dec 2018 14:09:26 -0800
+From:   Tony Lindgren <tony@atomide.com>
 To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     William Hubbs <w.d.hubbs@gmail.com>,
-        Chris Brannon <chris@the-brannons.com>,
-        Kirk Reiser <kirk@reisers.ca>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        speakup@linux-speakup.org, devel@driverdev.osuosl.org,
+Cc:     arm@kernel.org, Kevin Hilman <khilman@kernel.org>,
+        Dave Gerlach <d-gerlach@ti.com>, Keerthy <j-keerthy@ti.com>,
+        Tero Kristo <t-kristo@ti.com>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] staging: speakup: change semaphore to completion
-Message-ID: <20181210220850.wq7rbcc77v2ckw3f@function>
-Mail-Followup-To: Samuel Thibault <samuel.thibault@ens-lyon.org>,
-        Arnd Bergmann <arnd@arndb.de>, William Hubbs <w.d.hubbs@gmail.com>,
-        Chris Brannon <chris@the-brannons.com>,
-        Kirk Reiser <kirk@reisers.ca>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        speakup@linux-speakup.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org
-References: <20181210214225.1497552-1-arnd@arndb.de>
+Subject: Re: [PATCH 1/4] ARM: omap2: avoid section mismatch warning
+Message-ID: <20181210220926.GF6707@atomide.com>
+References: <20181210215856.2238253-1-arnd@arndb.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181210214225.1497552-1-arnd@arndb.de>
-Organization: I am not organized
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20181210215856.2238253-1-arnd@arndb.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Arnd Bergmann, le lun. 10 déc. 2018 22:41:50 +0100, a ecrit:
-> In this driver, both function the same way, but we want to eventually
-> kill off semaphores, so a completion is the better choice here.
-> 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+* Arnd Bergmann <arnd@arndb.de> [181210 21:59]:
+> WARNING: vmlinux.o(.text+0x27530): Section mismatch in reference from the function am43xx_suspend_init() to the function .init.text:am43xx_map_scu()
+> The function am43xx_suspend_init() references
+> the function __init am43xx_map_scu().
+> This is often because am43xx_suspend_init lacks a __init
+> annotation or the annotation of am43xx_map_scu is wrong.
 
-Reviewed-by: Samuel Thibault <samuel.thibault@ens-lyon.org>
-
-> ---
->  drivers/staging/speakup/spk_ttyio.c | 9 +++++----
->  1 file changed, 5 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/staging/speakup/spk_ttyio.c b/drivers/staging/speakup/spk_ttyio.c
-> index 979e3ae249c1..c92bbd05516e 100644
-> --- a/drivers/staging/speakup/spk_ttyio.c
-> +++ b/drivers/staging/speakup/spk_ttyio.c
-> @@ -10,7 +10,7 @@
->  
->  struct spk_ldisc_data {
->  	char buf;
-> -	struct semaphore sem;
-> +	struct completion completion;
->  	bool buf_free;
->  };
->  
-> @@ -55,7 +55,7 @@ static int spk_ttyio_ldisc_open(struct tty_struct *tty)
->  	if (!ldisc_data)
->  		return -ENOMEM;
->  
-> -	sema_init(&ldisc_data->sem, 0);
-> +	init_completion(&ldisc_data->completion);
->  	ldisc_data->buf_free = true;
->  	speakup_tty->disc_data = ldisc_data;
->  
-> @@ -95,7 +95,7 @@ static int spk_ttyio_receive_buf2(struct tty_struct *tty,
->  
->  	ldisc_data->buf = cp[0];
->  	ldisc_data->buf_free = false;
-> -	up(&ldisc_data->sem);
-> +	complete(&ldisc_data->completion);
->  
->  	return 1;
->  }
-> @@ -286,7 +286,8 @@ static unsigned char ttyio_in(int timeout)
->  	struct spk_ldisc_data *ldisc_data = speakup_tty->disc_data;
->  	char rv;
->  
-> -	if (down_timeout(&ldisc_data->sem, usecs_to_jiffies(timeout)) == -ETIME) {
-> +	if (wait_for_completion_timeout(&ldisc_data->completion,
-> +					usecs_to_jiffies(timeout)) == 0) {
->  		if (timeout)
->  			pr_warn("spk_ttyio: timeout (%d)  while waiting for input\n",
->  				timeout);
-> -- 
-> 2.20.0
-> 
-
--- 
-Samuel
-Progress (n.): The process through which the Internet has evolved from
-smart people in front of dumb terminals to dumb people in front of smart
-terminals.
+Acked-by: Tony Lindgren <tony@atomide.com>
