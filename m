@@ -2,380 +2,124 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9671DC04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 16:10:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8253C04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 16:12:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4682F2082F
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 16:10:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6C4A820672
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 16:12:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="gNCtlabm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4682F2082F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="fWWhmI5z"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C4A820672
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727462AbeLJQKw (ORCPT
+        id S1728316AbeLJQMg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 11:10:52 -0500
-Received: from mail-io1-f65.google.com ([209.85.166.65]:40624 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727304AbeLJQKv (ORCPT
+        Mon, 10 Dec 2018 11:12:36 -0500
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:34340 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726946AbeLJQMf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 11:10:51 -0500
-Received: by mail-io1-f65.google.com with SMTP id n9so9149908ioh.7
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Dec 2018 08:10:49 -0800 (PST)
+        Mon, 10 Dec 2018 11:12:35 -0500
+Received: by mail-oi1-f193.google.com with SMTP id h25so9427515oig.1
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Dec 2018 08:12:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=yPVDp9Oewc1/reIdoTFty2Lv1QZJp/zPgRZg2C+IW7g=;
-        b=gNCtlabm09vtegjAc7EdoLSy07COef+VSfhrdTt0G/j+On8OGbvo/f2wuyIJq4aLk3
-         5+syKB+Ncwb08gdfheGxB5k/Tud6tjjlsnmuqHd3A5AYy1KOdKnHpZYsIAVZJ54oEGkU
-         KCMlzBybt2VLrWcPtIA7OWYG0QbSGEfp7GB24=
+        bh=jXBaR7F0Nj4Mp5RDUQk/IIzpiBgmuHu9tmtX2N1eI2k=;
+        b=fWWhmI5zL+VePlrxW5AO9FYuBP6pf8MpwnXS5DeLtwlBGpVBUpIGQMCir+xQjC0/Jx
+         hHzzemhAxtDRbMl0o42A4k8QWUjqKnrLk8XodvtP+CEGsCyiIHB1w3lCuor6V+Bj5RY9
+         yAk1Dj/i9FYwPpOatKkwv3ATRF7ggyePPJwF1/hOEx3REgcOq/vo9OCLd9k4CFgMaapH
+         kPGJ292TJhhqy82zTOn1qthzKTDSClWmHR0/zEI+XhkftdM29nfCeLI7C0yis5bxTj/Q
+         LuReNIOAjlLXYUW/M/UNEpNmBidoBzu+2kI1ZU3RA/hMwrj2v5wSYUGJx7NFTTLBbWT6
+         0+AQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=yPVDp9Oewc1/reIdoTFty2Lv1QZJp/zPgRZg2C+IW7g=;
-        b=RgQ1dA3yHtyDW1kcSLj9laCGAF6Kx9N5Ybytgr+YswXOfUpI+DZ55uJ6UWOYu5kzSs
-         Z+OuZ6Jm0KduCo3GWbo1U28ir8O/k5VYz2n/pjNd47sS1SF9S2VSExaJ/NX2wcQlTQv6
-         j/oO3tDU68gD/C9doBI4qGpFJXhS6nPz0/5XmvF62Rm0z+m31FmklthZkQ3U4V3fm0qy
-         +MC9vXsnZEDNXKZAtm7H+WfTfZJtF4U71dGhaztfEqQsi7OktXPT/YKNzb627XkYNsHF
-         L6Mu8DCoh77nIxZI0EEb5pafB7CHbehOkHN9zfy630pXXapHTuoqXRQeEjVAV78tyXTv
-         lkRg==
-X-Gm-Message-State: AA+aEWZkPdG22EcLKWC47b3PkMgqOuM86mqOT1P9BUKpuZf/HKtP0myl
-        uK9/467fnijq4vM6OlvGo7PR7d3x0NZWpjEEM00NJ2YNgKB8UQ==
-X-Google-Smtp-Source: AFSGD/U3dDNtp0qUxtpWt7XE0ZdYUjc2sIOd9BlpfVvJD/Dn1qENoSi/YyH6F5q7ctkmkuvXQotayZmf3+wZwYxW3jo=
-X-Received: by 2002:a6b:c8c9:: with SMTP id y192mr9624896iof.183.1544458249006;
- Mon, 10 Dec 2018 08:10:49 -0800 (PST)
+        bh=jXBaR7F0Nj4Mp5RDUQk/IIzpiBgmuHu9tmtX2N1eI2k=;
+        b=YwUqP0EOffguBzGnielkZF8dHq+RvQKsDVVYqMEkIhH+9Fv9jU2MGa8flYae37q5l1
+         mBnrVQap5o7MpKJMUB7Q25SnXTahbiOnQTVv/SJ96uUh0JV2eyip8XphDmSh7qSCoQTj
+         hFRlb999Njf2/6MiVPzp1s/dyj6KiBHXURp0D9NdeSnb/OebrFWz4XozZy1eS/AdPKXd
+         /9Vh50tKFr8zlNWiUEnM4dAdxje1wy5u2VF3TGuPpHJJ+NepqtYS7tXDZDT7PCi1rGTC
+         6jXafK9CvFMprjEGysepunvLN4UcM8rHlAy8Zpga+T0O3oPVa4iMG4gI9gpYeJvD1sc2
+         f2yw==
+X-Gm-Message-State: AA+aEWbZ+4pz8O7ggvK64PAmOVAoU1NGpXKTQcCvgiLQmhazMO+GI8qL
+        fXyrFx9ahbdHI+DUdwJX4uwObshGWIkIfXhXnL8RnQ==
+X-Google-Smtp-Source: AFSGD/VON5942vDhGGY/j3EcECAiTIJSkJ1/hPZ4NVXihAeVPk0azSLNHh4Uicsjvd5Uf6JFvzB5Se9Ac+4fGCNoliw=
+X-Received: by 2002:aca:b804:: with SMTP id i4mr7472637oif.280.1544458354575;
+ Mon, 10 Dec 2018 08:12:34 -0800 (PST)
 MIME-Version: 1.0
-References: <1544131696-2888-1-git-send-email-steven.sistare@oracle.com>
-In-Reply-To: <1544131696-2888-1-git-send-email-steven.sistare@oracle.com>
-From:   Vincent Guittot <vincent.guittot@linaro.org>
-Date:   Mon, 10 Dec 2018 17:10:37 +0100
-Message-ID: <CAKfTPtBuAsbF2r8wSigM=ckpKCqj0hcHbi+y3ZAaC7dqYcFY2g@mail.gmail.com>
-Subject: Re: [PATCH v4 00/10] steal tasks to improve CPU utilization
-To:     steven.sistare@oracle.com
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        subhra.mazumdar@oracle.com, Dhaval Giani <dhaval.giani@oracle.com>,
-        daniel.m.jordan@oracle.com, pavel.tatashin@microsoft.com,
-        Matt Fleming <matt@codeblueprint.co.uk>,
-        Mike Galbraith <umgwanakikbuti@gmail.com>,
-        Rik van Riel <riel@redhat.com>, Josef Bacik <jbacik@fb.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Quentin Perret <quentin.perret@arm.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
+References: <20181114224921.12123-2-keith.busch@intel.com> <20181114224921.12123-4-keith.busch@intel.com>
+ <20181115125909.000067aa@huawei.com>
+In-Reply-To: <20181115125909.000067aa@huawei.com>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Mon, 10 Dec 2018 08:12:23 -0800
+Message-ID: <CAPcyv4jtf8guXutLKnHt9UbyS0-sEZ5pVJfse49xe3gCCkW8dQ@mail.gmail.com>
+Subject: Re: [PATCH 3/7] doc/vm: New documentation for memory performance
+To:     jonathan.cameron@huawei.com
+Cc:     Keith Busch <keith.busch@intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ACPI <linux-acpi@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Steven,
+On Thu, Nov 15, 2018 at 4:59 AM Jonathan Cameron
+<jonathan.cameron@huawei.com> wrote:
+>
+> On Wed, 14 Nov 2018 15:49:16 -0700
+> Keith Busch <keith.busch@intel.com> wrote:
+[..]
+> > +The kernel does not provide performance attributes for non-local memory
+> > +initiators. The performance characteristics the kernel provides for
+> > +the local initiators are exported are as follows::
+> > +
+> > +     # tree /sys/devices/system/node/nodeY/initiator_access
+> > +     /sys/devices/system/node/nodeY/initiator_access
+> > +     |-- read_bandwidth
+> > +     |-- read_latency
+> > +     |-- write_bandwidth
+> > +     `-- write_latency
+> > +
+> > +The bandwidth attributes are provided in MiB/second.
+> > +
+> > +The latency attributes are provided in nanoseconds.
+> > +
+> > +See also: https://www.uefi.org/sites/default/files/resources/ACPI_6_2.pdf
+>
+> My worry here is we are explicitly making an interface that is only ever
+> providing "local" node information, where local node is not the best
+> defined thing in the world for complex topologies.
+>
+> I have no problem with that making a sensible starting point for providing
+> information userspace knows what to do with, just with an interface that
+> in of itself doesn't make that clear.
+>
+> Perhaps something as simple as
+> /sys/devices/system/nodeY/local_initiatorX
+> /sys/devices/system/nodeX/local_targetY
+>
+> That leaves us the option of coming along later and having a full listing
+> when a userspace requirement has become clear.  Another option would
+> be an exhaustive list of all initiator / memory pairs that exist, with
+> an additional sysfs file giving a list of those that are nearest
+> to avoid every userspace program having to do the search.
 
-On Thu, 6 Dec 2018 at 22:38, Steve Sistare <steven.sistare@oracle.com> wrote:
->
-> When a CPU has no more CFS tasks to run, and idle_balance() fails to
-> find a task, then attempt to steal a task from an overloaded CPU in the
-> same LLC. Maintain and use a bitmap of overloaded CPUs to efficiently
-> identify candidates.  To minimize search time, steal the first migratable
-> task that is found when the bitmap is traversed.  For fairness, search
-> for migratable tasks on an overloaded CPU in order of next to run.
->
-> This simple stealing yields a higher CPU utilization than idle_balance()
-> alone, because the search is cheap, so it may be called every time the CPU
-> is about to go idle.  idle_balance() does more work because it searches
-> widely for the busiest queue, so to limit its CPU consumption, it declines
-> to search if the system is too busy.  Simple stealing does not offload the
-> globally busiest queue, but it is much better than running nothing at all.
->
-> The bitmap of overloaded CPUs is a new type of sparse bitmap, designed to
-> reduce cache contention vs the usual bitmap when many threads concurrently
-> set, clear, and visit elements.
->
-> Patch 1 defines the sparsemask type and its operations.
->
-> Patches 2, 3, and 4 implement the bitmap of overloaded CPUs.
->
-> Patches 5 and 6 refactor existing code for a cleaner merge of later
->   patches.
->
-> Patches 7 and 8 implement task stealing using the overloaded CPUs bitmap.
->
-> Patch 9 disables stealing on systems with more than 2 NUMA nodes for the
-> time being because of performance regressions that are not due to stealing
-> per-se.  See the patch description for details.
->
-> Patch 10 adds schedstats for comparing the new behavior to the old, and
->   provided as a convenience for developers only, not for integration.
->
-> The patch series is based on kernel 4.20.0-rc1.  It compiles, boots, and
-> runs with/without each of CONFIG_SCHED_SMT, CONFIG_SMP, CONFIG_SCHED_DEBUG,
-> and CONFIG_PREEMPT.  It runs without error with CONFIG_DEBUG_PREEMPT +
-> CONFIG_SLUB_DEBUG + CONFIG_DEBUG_PAGEALLOC + CONFIG_DEBUG_MUTEXES +
-> CONFIG_DEBUG_SPINLOCK + CONFIG_DEBUG_ATOMIC_SLEEP.  CPU hot plug and CPU
-> bandwidth control were tested.
->
-> Stealing improves utilization with only a modest CPU overhead in scheduler
-> code.  In the following experiment, hackbench is run with varying numbers
-> of groups (40 tasks per group), and the delta in /proc/schedstat is shown
-> for each run, averaged per CPU, augmented with these non-standard stats:
->
->   %find - percent of time spent in old and new functions that search for
->     idle CPUs and tasks to steal and set the overloaded CPUs bitmap.
->
->   steal - number of times a task is stolen from another CPU.
->
-> X6-2: 1 socket * 10 cores * 2 hyperthreads = 20 CPUs
-> Intel(R) Xeon(R) CPU E5-2630 v4 @ 2.20GHz
-> hackbench <grps> process 100000
-> sched_wakeup_granularity_ns=15000000
->
->   baseline
->   grps  time  %busy  slice   sched   idle     wake %find  steal
->   1    8.084  75.02   0.10  105476  46291    59183  0.31      0
->   2   13.892  85.33   0.10  190225  70958   119264  0.45      0
->   3   19.668  89.04   0.10  263896  87047   176850  0.49      0
->   4   25.279  91.28   0.10  322171  94691   227474  0.51      0
->   8   47.832  94.86   0.09  630636 144141   486322  0.56      0
->
->   new
->   grps  time  %busy  slice   sched   idle     wake %find  steal  %speedup
->   1    5.938  96.80   0.24   31255   7190    24061  0.63   7433  36.1
->   2   11.491  99.23   0.16   74097   4578    69512  0.84  19463  20.9
->   3   16.987  99.66   0.15  115824   1985   113826  0.77  24707  15.8
->   4   22.504  99.80   0.14  167188   2385   164786  0.75  29353  12.3
->   8   44.441  99.86   0.11  389153   1616   387401  0.67  38190   7.6
->
-> Elapsed time improves by 8 to 36%, and CPU busy utilization is up
-> by 5 to 22% hitting 99% for 2 or more groups (80 or more tasks).
-> The cost is at most 0.4% more find time.
-
-I have run some hackbench tests on my hikey arm64 octo cores with your
-patchset. My original intent was to send a tested-by but I have some
-performances regressions.
-This hikey is the smp one and not the asymetric hikey960 that Valentin
-used for his tests
-The sched domain topology is
-domain-0: span=0-3 level=MC  and domain-0: span=4-7 level=MC
-domain-1: span=0-7 level=DIE
-
-I have run 12 times hackbench -g $j -P -l 2000 with j equals to 1 2 3 4 8
-
-grps  time
-1      1.396
-2      2.699
-3      3.617
-4      4.498
-8      7.721
-
-Then after disabling STEAL in sched_feature with echo NO_STEAL >
-/sys/kernel/debug/sched_features , the results become:
-grps  time
-1      1.217
-2      1.973
-3      2.855
-4      3.932
-8      7.674
-
-I haven't looked in details about some possible reasons of such
-difference yet and haven't collected the stats that you added with
-patch 10.
-Have you got a script to collect and post process them ?
-
-Regards,
-Vincent
-
->
-> Additional performance results follow.  A negative "speedup" is a
-> regression.  Note: for all hackbench runs, sched_wakeup_granularity_ns
-> is set to 15 msec.  Otherwise, preemptions increase at higher loads and
-> distort the comparison between baseline and new.
->
-> ------------------ 1 Socket Results ------------------
->
-> X6-2: 1 socket * 10 cores * 2 hyperthreads = 20 CPUs
-> Intel(R) Xeon(R) CPU E5-2630 v4 @ 2.20GHz
-> Average of 10 runs of: hackbench <groups> process 100000
->
->             --- base --    --- new ---
->   groups    time %stdev    time %stdev  %speedup
->        1   8.008    0.1   5.905    0.2      35.6
->        2  13.814    0.2  11.438    0.1      20.7
->        3  19.488    0.2  16.919    0.1      15.1
->        4  25.059    0.1  22.409    0.1      11.8
->        8  47.478    0.1  44.221    0.1       7.3
->
-> X6-2: 1 socket * 22 cores * 2 hyperthreads = 44 CPUs
-> Intel(R) Xeon(R) CPU E5-2699 v4 @ 2.20GHz
-> Average of 10 runs of: hackbench <groups> process 100000
->
->             --- base --    --- new ---
->   groups    time %stdev    time %stdev  %speedup
->        1   4.586    0.8   4.596    0.6      -0.3
->        2   7.693    0.2   5.775    1.3      33.2
->        3  10.442    0.3   8.288    0.3      25.9
->        4  13.087    0.2  11.057    0.1      18.3
->        8  24.145    0.2  22.076    0.3       9.3
->       16  43.779    0.1  41.741    0.2       4.8
->
-> KVM 4-cpu
-> Intel(R) Xeon(R) CPU E5-2699 v3 @ 2.30GHz
-> tbench, average of 11 runs.
->
->   clients    %speedup
->         1        16.2
->         2        11.7
->         4         9.9
->         8        12.8
->        16        13.7
->
-> KVM 2-cpu
-> Intel(R) Xeon(R) CPU E5-2699 v3 @ 2.30GHz
->
->   Benchmark                     %speedup
->   specjbb2015_critical_jops          5.7
->   mysql_sysb1.0.14_mutex_2          40.6
->   mysql_sysb1.0.14_oltp_2            3.9
->
-> ------------------ 2 Socket Results ------------------
->
-> X6-2: 2 sockets * 10 cores * 2 hyperthreads = 40 CPUs
-> Intel(R) Xeon(R) CPU E5-2630 v4 @ 2.20GHz
-> Average of 10 runs of: hackbench <groups> process 100000
->
->             --- base --    --- new ---
->   groups    time %stdev    time %stdev  %speedup
->        1   7.945    0.2   7.219    8.7      10.0
->        2   8.444    0.4   6.689    1.5      26.2
->        3  12.100    1.1   9.962    2.0      21.4
->        4  15.001    0.4  13.109    1.1      14.4
->        8  27.960    0.2  26.127    0.3       7.0
->
-> X6-2: 2 sockets * 22 cores * 2 hyperthreads = 88 CPUs
-> Intel(R) Xeon(R) CPU E5-2699 v4 @ 2.20GHz
-> Average of 10 runs of: hackbench <groups> process 100000
->
->             --- base --    --- new ---
->   groups    time %stdev    time %stdev  %speedup
->        1   5.826    5.4   5.840    5.0      -0.3
->        2   5.041    5.3   6.171   23.4     -18.4
->        3   6.839    2.1   6.324    3.8       8.1
->        4   8.177    0.6   7.318    3.6      11.7
->        8  14.429    0.7  13.966    1.3       3.3
->       16  26.401    0.3  25.149    1.5       4.9
->
->
-> X6-2: 2 sockets * 22 cores * 2 hyperthreads = 88 CPUs
-> Intel(R) Xeon(R) CPU E5-2699 v4 @ 2.20GHz
-> Oracle database OLTP, logging disabled, NVRAM storage
->
->   Customers   Users   %speedup
->     1200000      40       -1.2
->     2400000      80        2.7
->     3600000     120        8.9
->     4800000     160        4.4
->     6000000     200        3.0
->
-> X6-2: 2 sockets * 14 cores * 2 hyperthreads = 56 CPUs
-> Intel(R) Xeon(R) CPU E5-2690 v4 @ 2.60GHz
-> Results from the Oracle "Performance PIT".
->
->   Benchmark                                           %speedup
->
->   mysql_sysb1.0.14_fileio_56_rndrd                        19.6
->   mysql_sysb1.0.14_fileio_56_seqrd                        12.1
->   mysql_sysb1.0.14_fileio_56_rndwr                         0.4
->   mysql_sysb1.0.14_fileio_56_seqrewr                      -0.3
->
->   pgsql_sysb1.0.14_fileio_56_rndrd                        19.5
->   pgsql_sysb1.0.14_fileio_56_seqrd                         8.6
->   pgsql_sysb1.0.14_fileio_56_rndwr                         1.0
->   pgsql_sysb1.0.14_fileio_56_seqrewr                       0.5
->
->   opatch_time_ASM_12.2.0.1.0_HP2M                          7.5
->   select-1_users-warm_asmm_ASM_12.2.0.1.0_HP2M             5.1
->   select-1_users_asmm_ASM_12.2.0.1.0_HP2M                  4.4
->   swingbenchv3_asmm_soebench_ASM_12.2.0.1.0_HP2M           5.8
->
->   lm3_memlat_L2                                            4.8
->   lm3_memlat_L1                                            0.0
->
->   ub_gcc_56CPUs-56copies_Pipe-based_Context_Switching     60.1
->   ub_gcc_56CPUs-56copies_Shell_Scripts_1_concurrent        5.2
->   ub_gcc_56CPUs-56copies_Shell_Scripts_8_concurrent       -3.0
->   ub_gcc_56CPUs-56copies_File_Copy_1024_bufsize_2000_maxblocks 2.4
->
-> X5-2: 2 sockets * 18 cores * 2 hyperthreads = 72 CPUs
-> Intel(R) Xeon(R) CPU E5-2699 v3 @ 2.30GHz
->
->   NAS_OMP
->   bench class   ncpu    %improved(Mops)
->   dc    B       72      1.3
->   is    C       72      0.9
->   is    D       72      0.7
->
->   sysbench mysql, average of 24 runs
->           --- base ---     --- new ---
->   nthr   events  %stdev   events  %stdev %speedup
->      1    331.0    0.25    331.0    0.24     -0.1
->      2    661.3    0.22    661.8    0.22      0.0
->      4   1297.0    0.88   1300.5    0.82      0.2
->      8   2420.8    0.04   2420.5    0.04     -0.1
->     16   4826.3    0.07   4825.4    0.05     -0.1
->     32   8815.3    0.27   8830.2    0.18      0.1
->     64  12823.0    0.24  12823.6    0.26      0.0
->
-> --------------------------------------------------------------
->
-> Changes from v1 to v2:
->   - Remove stray find_time hunk from patch 5
->   - Fix "warning: label out defined but not used" for !CONFIG_SCHED_SMT
->   - Set SCHED_STEAL_NODE_LIMIT_DEFAULT to 2
->   - Steal iff avg_idle exceeds the cost of stealing
->
-> Changes from v2 to v3:
->   - Update series for kernel 4.20.  Context changes only.
->
-> Changes from v3 to v4:
->   - Avoid 64-bit division on 32-bit processors in compute_skid()
->   - Replace IF_SMP with inline functions to set idle_stamp
->   - Push ZALLOC_MASK body into calling function
->   - Set rq->cfs_overload_cpus in update_top_cache_domain instead of
->     cpu_attach_domain
->   - Rewrite sparsemask iterator for complete inlining
->   - Cull and clean up sparsemask functions and moved all into
->     sched/sparsemask.h
->
-> Steve Sistare (10):
->   sched: Provide sparsemask, a reduced contention bitmap
->   sched/topology: Provide hooks to allocate data shared per LLC
->   sched/topology: Provide cfs_overload_cpus bitmap
->   sched/fair: Dynamically update cfs_overload_cpus
->   sched/fair: Hoist idle_stamp up from idle_balance
->   sched/fair: Generalize the detach_task interface
->   sched/fair: Provide can_migrate_task_llc
->   sched/fair: Steal work from an overloaded CPU when CPU goes idle
->   sched/fair: disable stealing if too many NUMA nodes
->   sched/fair: Provide idle search schedstats
->
->  include/linux/sched/topology.h |   1 +
->  kernel/sched/core.c            |  31 +++-
->  kernel/sched/fair.c            | 354 +++++++++++++++++++++++++++++++++++++----
->  kernel/sched/features.h        |   6 +
->  kernel/sched/sched.h           |  13 +-
->  kernel/sched/sparsemask.h      | 210 ++++++++++++++++++++++++
->  kernel/sched/stats.c           |  11 +-
->  kernel/sched/stats.h           |  13 ++
->  kernel/sched/topology.c        | 121 +++++++++++++-
->  9 files changed, 726 insertions(+), 34 deletions(-)
->  create mode 100644 kernel/sched/sparsemask.h
->
-> --
-> 1.8.3.1
->
+I worry that "local" is an HMAT specific concept when all it is in
+actuality is a place for platform firmware to list the "best" or
+"primary" access initiators. How about "initiator_classX" with some
+documentation that the 0th class captures this primary initiator set.
+That leaves the interface a straightforward way to add more classes in
+the future, but with no strict association to the class number.
