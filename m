@@ -7,61 +7,65 @@ X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIMWL_WL_MED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14529C5CFFE
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 20:00:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21705C04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 20:00:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B35922082F
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 20:00:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BC7E320821
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 20:00:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="ol1GCFJd";
-	dkim=pass (1024-bit key) header.d=fb.onmicrosoft.com header.i=@fb.onmicrosoft.com header.b="ayUEim2Q"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B35922082F
+	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="M4Zgc2tj";
+	dkim=pass (1024-bit key) header.d=fb.onmicrosoft.com header.i=@fb.onmicrosoft.com header.b="ePewa7Us"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC7E320821
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=fb.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729654AbeLJUAJ (ORCPT
+        id S1729666AbeLJUAN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 15:00:09 -0500
-Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:52584 "EHLO
-        mx0b-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727596AbeLJUAG (ORCPT
+        Mon, 10 Dec 2018 15:00:13 -0500
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:54888 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727434AbeLJUAJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 15:00:06 -0500
-Received: from pps.filterd (m0109332.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id wBAJxNeE031979;
-        Mon, 10 Dec 2018 11:59:55 -0800
+        Mon, 10 Dec 2018 15:00:09 -0500
+Received: from pps.filterd (m0109334.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id wBAJvlNd010188;
+        Mon, 10 Dec 2018 11:59:58 -0800
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
  : date : message-id : references : in-reply-to : content-type : content-id
  : content-transfer-encoding : mime-version; s=facebook;
- bh=laFvmhLu1XU8kPONGuHW6OuXsXiuED390f4AeWqxBZk=;
- b=ol1GCFJdaiKBzOum6uUK0LeRZgRVYxl1SXg1zT/HwKpFwXXk4Q8PtlNa3EFGJz2LxzUr
- Cz0vXR8iQyUm1Tjg/3G/XG4PUJPNC0WeQm4gaolz/p/wPP9TM1QOgTErTGdX3fnvLuVa
- P4QHkgShPj7VpXbquT4UVULmF1BQtBURygc= 
-Received: from mail.thefacebook.com ([199.201.64.23])
-        by mx0a-00082601.pphosted.com with ESMTP id 2p9wvx872q-13
+ bh=jucX9AZEzQUtdSJRRHLi5CMYefs+aWYDzBST1YLppiU=;
+ b=M4Zgc2tjjHC1qpmJLziWBnNnLRjY7c8ASzPwYL+ekx0J1+5fVGnSHkE2hKWFGnmM0881
+ MOgGME2TBcb483y/r6iUMcdifSD5Cy8Sni8lwpeW5iFmmq/2Rn0L5AjMzfkh3q1QRPxV
+ sqqfkvrgHVTkFmAl9G+7hdYVz0UYVntkWF4= 
+Received: from maileast.thefacebook.com ([199.201.65.23])
+        by mx0a-00082601.pphosted.com with ESMTP id 2p9wgwrbcy-2
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Mon, 10 Dec 2018 11:59:54 -0800
-Received: from prn-hub03.TheFacebook.com (2620:10d:c081:35::127) by
- prn-hub06.TheFacebook.com (2620:10d:c081:35::130) with Microsoft SMTP Server
+        Mon, 10 Dec 2018 11:59:58 -0800
+Received: from frc-mbx04.TheFacebook.com (2620:10d:c0a1:f82::28) by
+ frc-hub06.TheFacebook.com (2620:10d:c021:18::176) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.1.1531.3; Mon, 10 Dec 2018 11:59:40 -0800
-Received: from NAM05-CO1-obe.outbound.protection.outlook.com (192.168.54.28)
- by o365-in.thefacebook.com (192.168.16.27) with Microsoft SMTP Server
+ 15.1.1531.3; Mon, 10 Dec 2018 11:58:41 -0800
+Received: from frc-hub02.TheFacebook.com (2620:10d:c021:18::172) by
+ frc-mbx04.TheFacebook.com (2620:10d:c0a1:f82::28) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.1.1531.3; Mon, 10 Dec 2018 11:58:40 -0800
+Received: from NAM02-BL2-obe.outbound.protection.outlook.com (192.168.183.28)
+ by o365-in.thefacebook.com (192.168.177.72) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.1.1531.3
- via Frontend Transport; Mon, 10 Dec 2018 11:59:40 -0800
+ via Frontend Transport; Mon, 10 Dec 2018 11:58:40 -0800
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
  s=selector1-fb-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=laFvmhLu1XU8kPONGuHW6OuXsXiuED390f4AeWqxBZk=;
- b=ayUEim2QD55MsqNCDdgKMWlNtOh8/rnRdKOmeneEC0X6JnrTHzIBCcLZRLr3nvf2qWYgvje6E0v6eUAdUVR7s754T0GCui17Tr94DymQS967YKZsf/ZAq7jANhmYRKlCyj9/D6jhOIzuFxF/zS3xGx+k5cGm7LTpSoDZwosVdF4=
+ bh=jucX9AZEzQUtdSJRRHLi5CMYefs+aWYDzBST1YLppiU=;
+ b=ePewa7UsmnlvVXTIEMQVrc5cEHBovZqo+yzlmU1sHFV9kK59xts/RbJVWgIEH9IVyeBvE7O1jdDY0NoarvczDAyn7SXL1cZSzl0u8f6XfHW6wjL8SHVgt8RvuDKJmzPvFdiWbOlvjVWFEUI0H9emuCkTxLK3yGGrz1AATl7oZk0=
 Received: from MWHPR15MB1134.namprd15.prod.outlook.com (10.175.2.12) by
- MWHPR15MB1118.namprd15.prod.outlook.com (10.175.2.8) with Microsoft SMTP
+ MWHPR15MB1166.namprd15.prod.outlook.com (10.175.2.20) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1404.19; Mon, 10 Dec 2018 19:59:38 +0000
+ 15.20.1404.17; Mon, 10 Dec 2018 19:58:38 +0000
 Received: from MWHPR15MB1134.namprd15.prod.outlook.com
  ([fe80::911d:ed1a:7e45:6434]) by MWHPR15MB1134.namprd15.prod.outlook.com
  ([fe80::911d:ed1a:7e45:6434%4]) with mapi id 15.20.1404.026; Mon, 10 Dec 2018
- 19:59:38 +0000
+ 19:58:38 +0000
 From:   Dave Watson <davejwatson@fb.com>
 To:     Herbert Xu <herbert@gondor.apana.org.au>,
         Junaid Shahid <junaids@google.com>,
@@ -71,11 +75,11 @@ CC:     Doron Roberts-Kedes <doronrk@fb.com>,
         Sabrina Dubroca <sd@queasysnail.net>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         Stephan Mueller <smueller@chronox.de>
-Subject: [PATCH 11/12] x86/crypto: aesni: Introduce partial block macro
-Thread-Topic: [PATCH 11/12] x86/crypto: aesni: Introduce partial block macro
-Thread-Index: AQHUkMLhsUg1ZlT5qEOkVFI0jgUkaQ==
-Date:   Mon, 10 Dec 2018 19:59:38 +0000
-Message-ID: <67137103e3a6b4ac0f20fe94eef0575536b11af8.1544471415.git.davejwatson@fb.com>
+Subject: [PATCH 07/12] x86/crypto: aesni: Merge avx precompute functions
+Thread-Topic: [PATCH 07/12] x86/crypto: aesni: Merge avx precompute functions
+Thread-Index: AQHUkMK+eVEZ+uWr2ESLeqxqAeCPPA==
+Date:   Mon, 10 Dec 2018 19:58:38 +0000
+Message-ID: <f2b870d980ed5c7fdabd1c4746ab94a145fa9807.1544471415.git.davejwatson@fb.com>
 References: <cover.1544471415.git.davejwatson@fb.com>
 In-Reply-To: <cover.1544471415.git.davejwatson@fb.com>
 Accept-Language: en-US
@@ -83,36 +87,36 @@ Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
 user-agent: NeoMutt/20180716
-x-clientproxiedby: MWHPR0201CA0066.namprd02.prod.outlook.com
- (2603:10b6:301:73::43) To MWHPR15MB1134.namprd15.prod.outlook.com
+x-clientproxiedby: MWHPR17CA0094.namprd17.prod.outlook.com
+ (2603:10b6:300:c2::32) To MWHPR15MB1134.namprd15.prod.outlook.com
  (2603:10b6:320:22::12)
 x-ms-exchange-messagesentrepresentingtype: 1
 x-originating-ip: [2620:10d:c090:180::1:2261]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;MWHPR15MB1118;20:H2M5j3tIDwGbeK8hg533xU2Wg0q3GhivKMDIndYDOFfIgBA7zI9jG12+d8Qls34c6yi+cubBZl/dBXt3te9YZTX84nZCHB4pM2obbSOPopUdXUHzulDVoFg/EygOVsWDgs2Vx34wA0kkYQouYC3/hgBm5RExafl++etcGk/0Za0=
-x-ms-office365-filtering-correlation-id: 5d46d37e-d2d1-4607-d2cd-08d65eda03d2
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:MWHPR15MB1118;
-x-ms-traffictypediagnostic: MWHPR15MB1118:
-x-microsoft-antispam-prvs: <MWHPR15MB111801531BB5066BBA7700E3DDA50@MWHPR15MB1118.namprd15.prod.outlook.com>
+x-microsoft-exchange-diagnostics: 1;MWHPR15MB1166;20:7Xb+3kghEtyqaK6WHDizMw0O59eTUyS6QCch9dbQmRB/IpryPPKtQAWlV+h2eUFmdgu5mjFf5UZEztKD8S4b6uvyRurSvYYzRQpgbv+REVoKvDdmDutgBMiCC1zuZTAJxvYnHZq4kAcB9KMH9iXaAuXdhV1kMYytrvv+OMUqo9c=
+x-ms-office365-filtering-correlation-id: 4e628f27-2c86-47d3-a561-08d65ed9e059
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:MWHPR15MB1166;
+x-ms-traffictypediagnostic: MWHPR15MB1166:
+x-microsoft-antispam-prvs: <MWHPR15MB11666C8C19A509251DF28619DDA50@MWHPR15MB1166.namprd15.prod.outlook.com>
 x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230017)(999002)(11241501185)(6040522)(2401047)(8121501046)(5005006)(3231472)(944501520)(52105112)(3002001)(93006095)(93001095)(10201501046)(148016)(149066)(150057)(6041310)(20161123560045)(20161123558120)(20161123562045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:MWHPR15MB1118;BCL:0;PCL:0;RULEID:;SRVR:MWHPR15MB1118;
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230017)(999002)(11241501185)(6040522)(2401047)(5005006)(8121501046)(3231472)(944501520)(52105112)(3002001)(93006095)(93001095)(10201501046)(148016)(149066)(150057)(6041310)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123558120)(20161123560045)(201708071742011)(7699051)(76991095);SRVR:MWHPR15MB1166;BCL:0;PCL:0;RULEID:;SRVR:MWHPR15MB1166;
 x-forefront-prvs: 08828D20BC
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(366004)(396003)(376002)(39860400002)(136003)(189003)(199004)(102836004)(5660300001)(305945005)(36756003)(106356001)(99286004)(316002)(7736002)(4326008)(81156014)(54906003)(68736007)(76176011)(53936002)(2906002)(14454004)(58126008)(478600001)(6506007)(386003)(52116002)(186003)(8936002)(110136005)(118296001)(6116002)(2616005)(97736004)(476003)(11346002)(256004)(6436002)(2501003)(25786009)(6512007)(81166006)(8676002)(86362001)(486006)(46003)(14444005)(446003)(105586002)(6486002)(71200400001)(71190400001);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR15MB1118;H:MWHPR15MB1134.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(136003)(39860400002)(346002)(366004)(376002)(396003)(199004)(189003)(7736002)(256004)(8936002)(14444005)(486006)(386003)(76176011)(316002)(54906003)(58126008)(110136005)(99286004)(4326008)(2616005)(446003)(11346002)(52116002)(102836004)(305945005)(6506007)(46003)(476003)(186003)(5660300001)(36756003)(71190400001)(71200400001)(106356001)(105586002)(97736004)(118296001)(2501003)(53936002)(8676002)(68736007)(81166006)(81156014)(478600001)(14454004)(2906002)(25786009)(86362001)(6486002)(6512007)(6116002)(6436002);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR15MB1166;H:MWHPR15MB1134.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 received-spf: None (protection.outlook.com: fb.com does not designate
  permitted sender hosts)
-x-microsoft-antispam-message-info: 3WJ21OzUudcd6S/51caXAWI+kT081P6JqEpvUGxbQk/GVLhwKzCB18z+26rGnZdt9I9NGtpf0UHA3v/EGgJVUXLNyUrfO1zrwsXLIuaCW40GJGspPllv6wfgjoL42qRTopLehaarP9GG5GIAV7g/45YxEWkZ+p9sUKcS1h5x7P8T2b5qrkXUPUKJphwMN3c8bk5aDeDB83bzOT0HWGkMP02KENX7FR+D8RgKmNgR5V57d6j16t7hbBqq3bEOw3fRQ4XBR2LT68ESvJ7z79MSk1rjaM+fM1M1TiMdujoqELOE8NFD1o/PkcU3ztacIhiy
+x-microsoft-antispam-message-info: X+44EaN/3ZKLfyUFxOhjF6xA8PCwvIbU9aO3/yV0YlcAiY1p9CJ4dPrV4WVfZeLQE8e9cAYE5ie/cGYXmlK21I23tlBSe8pxdD7fV8LbgCiLIHr4WnPEehaupgnhgkHLlGkDFr7Tl3PK73ZJ3rZe3qwGtQPE+XXkb2KlZDaavtJJ2HtYDFxAhROH+vLlRzZp1bP6V6P7Umz9BIL4PsLC4VC4ODbSX8oQITyxRh7FReCBW1FEMDuL5i9mqr+sQ8rhUqasmO7DJdZwZAZoik3mh1MEOxBshxaZeJy+ewKbBcSzpP5Ff1eQ2Z/jatoi/m77
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="us-ascii"
-Content-ID: <AE772F2144BDCA44A208FC5231E0D859@namprd15.prod.outlook.com>
+Content-ID: <D6B142CDB14D114E973E598D4DA0A361@namprd15.prod.outlook.com>
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5d46d37e-d2d1-4607-d2cd-08d65eda03d2
-X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Dec 2018 19:59:38.4437
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4e628f27-2c86-47d3-a561-08d65ed9e059
+X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Dec 2018 19:58:38.7762
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR15MB1118
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR15MB1166
 X-OriginatorOrg: fb.com
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-10_07:,,
  signatures=0
@@ -123,216 +127,131 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Before this diff, multiple calls to GCM_ENC_DEC will
-succeed, but only if all calls are a multiple of 16 bytes.
-
-Handle partial blocks at the start of GCM_ENC_DEC, and update
-aadhash as appropriate.
-
-The data offset %r11 is also updated after the partial block.
+The precompute functions differ only by the sub-macros
+they call, merge them to a single macro.   Later diffs
+add more code to fill in the gcm_context_data structure,
+this allows changes in a single place.
 
 Signed-off-by: Dave Watson <davejwatson@fb.com>
 ---
- arch/x86/crypto/aesni-intel_avx-x86_64.S | 156 ++++++++++++++++++++++-
- 1 file changed, 150 insertions(+), 6 deletions(-)
+ arch/x86/crypto/aesni-intel_avx-x86_64.S | 76 +++++++++---------------
+ 1 file changed, 27 insertions(+), 49 deletions(-)
 
 diff --git a/arch/x86/crypto/aesni-intel_avx-x86_64.S b/arch/x86/crypto/aes=
 ni-intel_avx-x86_64.S
-index ff00ad19064d..af45fc57db90 100644
+index 305abece93ad..e347ba61db65 100644
 --- a/arch/x86/crypto/aesni-intel_avx-x86_64.S
 +++ b/arch/x86/crypto/aesni-intel_avx-x86_64.S
-@@ -301,6 +301,12 @@ VARIABLE_OFFSET =3D 16*8
-         vmovdqu  HashKey(arg2), %xmm13      # xmm13 =3D HashKey
-         add arg5, InLen(arg2)
-=20
-+        # initialize the data pointer offset as zero
-+        xor     %r11d, %r11d
-+
-+        PARTIAL_BLOCK \GHASH_MUL, arg3, arg4, arg5, %r11, %xmm8, \ENC_DEC
-+        sub %r11, arg5
-+
-         mov     arg5, %r13                  # save the number of bytes of =
-plaintext/ciphertext
-         and     $-16, %r13                  # r13 =3D r13 - (r13 mod 16)
-=20
-@@ -737,6 +743,150 @@ _read_next_byte_lt8_\@:
- _done_read_partial_block_\@:
+@@ -661,6 +661,31 @@ _get_AAD_done\@:
+         vmovdqu \T7, AadHash(arg2)
  .endm
 =20
-+# PARTIAL_BLOCK: Handles encryption/decryption and the tag partial blocks
-+# between update calls.
-+# Requires the input data be at least 1 byte long due to READ_PARTIAL_BLOC=
-K
-+# Outputs encrypted bytes, and updates hash and partial info in gcm_data_c=
-ontext
-+# Clobbers rax, r10, r12, r13, xmm0-6, xmm9-13
-+.macro PARTIAL_BLOCK GHASH_MUL CYPH_PLAIN_OUT PLAIN_CYPH_IN PLAIN_CYPH_LEN=
- DATA_OFFSET \
-+        AAD_HASH ENC_DEC
-+        mov 	PBlockLen(arg2), %r13
-+        cmp	$0, %r13
-+        je	_partial_block_done_\@	# Leave Macro if no partial blocks
-+        # Read in input data without over reading
-+        cmp	$16, \PLAIN_CYPH_LEN
-+        jl	_fewer_than_16_bytes_\@
-+        vmovdqu	(\PLAIN_CYPH_IN), %xmm1	# If more than 16 bytes, just fill=
- xmm
-+        jmp	_data_read_\@
++.macro INIT GHASH_MUL PRECOMPUTE
++        vmovdqu  (arg3), %xmm6              # xmm6 =3D HashKey
 +
-+_fewer_than_16_bytes_\@:
-+        lea	(\PLAIN_CYPH_IN, \DATA_OFFSET, 1), %r10
-+        mov	\PLAIN_CYPH_LEN, %r12
-+        READ_PARTIAL_BLOCK %r10 %r12 %xmm1
++        vpshufb  SHUF_MASK(%rip), %xmm6, %xmm6
++        ###############  PRECOMPUTATION of HashKey<<1 mod poly from the Ha=
+shKey
++        vmovdqa  %xmm6, %xmm2
++        vpsllq   $1, %xmm6, %xmm6
++        vpsrlq   $63, %xmm2, %xmm2
++        vmovdqa  %xmm2, %xmm1
++        vpslldq  $8, %xmm2, %xmm2
++        vpsrldq  $8, %xmm1, %xmm1
++        vpor     %xmm2, %xmm6, %xmm6
++        #reduction
++        vpshufd  $0b00100100, %xmm1, %xmm2
++        vpcmpeqd TWOONE(%rip), %xmm2, %xmm2
++        vpand    POLY(%rip), %xmm2, %xmm2
++        vpxor    %xmm2, %xmm6, %xmm6        # xmm6 holds the HashKey<<1 mo=
+d poly
++        ##################################################################=
+#####
++        vmovdqu  %xmm6, HashKey(arg2)       # store HashKey<<1 mod poly
 +
-+        mov PBlockLen(arg2), %r13
++        CALC_AAD_HASH \GHASH_MUL, arg5, arg6, %xmm2, %xmm6, %xmm3, %xmm4, =
+%xmm5, %xmm7, %xmm1, %xmm0
 +
-+_data_read_\@:				# Finished reading in data
-+
-+        vmovdqu	PBlockEncKey(arg2), %xmm9
-+        vmovdqu	HashKey(arg2), %xmm13
-+
-+        lea	SHIFT_MASK(%rip), %r12
-+
-+        # adjust the shuffle mask pointer to be able to shift r13 bytes
-+        # r16-r13 is the number of bytes in plaintext mod 16)
-+        add	%r13, %r12
-+        vmovdqu	(%r12), %xmm2		# get the appropriate shuffle mask
-+        vpshufb %xmm2, %xmm9, %xmm9		# shift right r13 bytes
-+
-+.if  \ENC_DEC =3D=3D  DEC
-+        vmovdqa	%xmm1, %xmm3
-+        pxor	%xmm1, %xmm9		# Cyphertext XOR E(K, Yn)
-+
-+        mov	\PLAIN_CYPH_LEN, %r10
-+        add	%r13, %r10
-+        # Set r10 to be the amount of data left in CYPH_PLAIN_IN after fil=
-ling
-+        sub	$16, %r10
-+        # Determine if if partial block is not being filled and
-+        # shift mask accordingly
-+        jge	_no_extra_mask_1_\@
-+        sub	%r10, %r12
-+_no_extra_mask_1_\@:
-+
-+        vmovdqu	ALL_F-SHIFT_MASK(%r12), %xmm1
-+        # get the appropriate mask to mask out bottom r13 bytes of xmm9
-+        vpand	%xmm1, %xmm9, %xmm9		# mask out bottom r13 bytes of xmm9
-+
-+        vpand	%xmm1, %xmm3, %xmm3
-+        vmovdqa	SHUF_MASK(%rip), %xmm10
-+        vpshufb	%xmm10, %xmm3, %xmm3
-+        vpshufb	%xmm2, %xmm3, %xmm3
-+        vpxor	%xmm3, \AAD_HASH, \AAD_HASH
-+
-+        cmp	$0, %r10
-+        jl	_partial_incomplete_1_\@
-+
-+        # GHASH computation for the last <16 Byte block
-+        \GHASH_MUL \AAD_HASH, %xmm13, %xmm0, %xmm10, %xmm11, %xmm5, %xmm6
-+        xor	%eax,%eax
-+
-+        mov	%rax, PBlockLen(arg2)
-+        jmp	_dec_done_\@
-+_partial_incomplete_1_\@:
-+        add	\PLAIN_CYPH_LEN, PBlockLen(arg2)
-+_dec_done_\@:
-+        vmovdqu	\AAD_HASH, AadHash(arg2)
-+.else
-+        vpxor	%xmm1, %xmm9, %xmm9			# Plaintext XOR E(K, Yn)
-+
-+        mov	\PLAIN_CYPH_LEN, %r10
-+        add	%r13, %r10
-+        # Set r10 to be the amount of data left in CYPH_PLAIN_IN after fil=
-ling
-+        sub	$16, %r10
-+        # Determine if if partial block is not being filled and
-+        # shift mask accordingly
-+        jge	_no_extra_mask_2_\@
-+        sub	%r10, %r12
-+_no_extra_mask_2_\@:
-+
-+        vmovdqu	ALL_F-SHIFT_MASK(%r12), %xmm1
-+        # get the appropriate mask to mask out bottom r13 bytes of xmm9
-+        vpand	%xmm1, %xmm9, %xmm9
-+
-+        vmovdqa	SHUF_MASK(%rip), %xmm1
-+        vpshufb %xmm1, %xmm9, %xmm9
-+        vpshufb %xmm2, %xmm9, %xmm9
-+        vpxor	%xmm9, \AAD_HASH, \AAD_HASH
-+
-+        cmp	$0, %r10
-+        jl	_partial_incomplete_2_\@
-+
-+        # GHASH computation for the last <16 Byte block
-+        \GHASH_MUL \AAD_HASH, %xmm13, %xmm0, %xmm10, %xmm11, %xmm5, %xmm6
-+        xor	%eax,%eax
-+
-+        mov	%rax, PBlockLen(arg2)
-+        jmp	_encode_done_\@
-+_partial_incomplete_2_\@:
-+        add	\PLAIN_CYPH_LEN, PBlockLen(arg2)
-+_encode_done_\@:
-+        vmovdqu	\AAD_HASH, AadHash(arg2)
-+
-+        vmovdqa	SHUF_MASK(%rip), %xmm10
-+        # shuffle xmm9 back to output as ciphertext
-+        vpshufb	%xmm10, %xmm9, %xmm9
-+        vpshufb	%xmm2, %xmm9, %xmm9
-+.endif
-+        # output encrypted Bytes
-+        cmp	$0, %r10
-+        jl	_partial_fill_\@
-+        mov	%r13, %r12
-+        mov	$16, %r13
-+        # Set r13 to be the number of bytes to write out
-+        sub	%r12, %r13
-+        jmp	_count_set_\@
-+_partial_fill_\@:
-+        mov	\PLAIN_CYPH_LEN, %r13
-+_count_set_\@:
-+        vmovdqa	%xmm9, %xmm0
-+        vmovq	%xmm0, %rax
-+        cmp	$8, %r13
-+        jle	_less_than_8_bytes_left_\@
-+
-+        mov	%rax, (\CYPH_PLAIN_OUT, \DATA_OFFSET, 1)
-+        add	$8, \DATA_OFFSET
-+        psrldq	$8, %xmm0
-+        vmovq	%xmm0, %rax
-+        sub	$8, %r13
-+_less_than_8_bytes_left_\@:
-+        movb	%al, (\CYPH_PLAIN_OUT, \DATA_OFFSET, 1)
-+        add	$1, \DATA_OFFSET
-+        shr	$8, %rax
-+        sub	$1, %r13
-+        jne	_less_than_8_bytes_left_\@
-+_partial_block_done_\@:
-+.endm # PARTIAL_BLOCK
++        \PRECOMPUTE  %xmm6, %xmm0, %xmm1, %xmm2, %xmm3, %xmm4, %xmm5
++.endm
 +
  #ifdef CONFIG_AS_AVX
  ##########################################################################=
 #####
  # GHASH_MUL MACRO to implement: Data*HashKey mod (128,127,126,121,0)
-@@ -856,9 +1006,6 @@ _done_read_partial_block_\@:
- 	setreg
-         vmovdqu AadHash(arg2), reg_i
-=20
--	# initialize the data pointer offset as zero
--	xor     %r11d, %r11d
+@@ -1558,31 +1583,7 @@ _initial_blocks_done\@:
+ #############################################################
+ ENTRY(aesni_gcm_precomp_avx_gen2)
+         FUNC_SAVE
 -
- 	# start AES for num_initial_blocks blocks
- 	vmovdqu CurCount(arg2), \CTR
-=20
-@@ -1798,9 +1945,6 @@ ENDPROC(aesni_gcm_dec_avx_gen2)
- 	setreg
- 	vmovdqu AadHash(arg2), reg_i
-=20
--	# initialize the data pointer offset as zero
--	xor     %r11d, %r11d
+-        vmovdqu  (arg3), %xmm6              # xmm6 =3D HashKey
 -
- 	# start AES for num_initial_blocks blocks
- 	vmovdqu CurCount(arg2), \CTR
-=20
+-        vpshufb  SHUF_MASK(%rip), %xmm6, %xmm6
+-        ###############  PRECOMPUTATION of HashKey<<1 mod poly from the Ha=
+shKey
+-        vmovdqa  %xmm6, %xmm2
+-        vpsllq   $1, %xmm6, %xmm6
+-        vpsrlq   $63, %xmm2, %xmm2
+-        vmovdqa  %xmm2, %xmm1
+-        vpslldq  $8, %xmm2, %xmm2
+-        vpsrldq  $8, %xmm1, %xmm1
+-        vpor     %xmm2, %xmm6, %xmm6
+-        #reduction
+-        vpshufd  $0b00100100, %xmm1, %xmm2
+-        vpcmpeqd TWOONE(%rip), %xmm2, %xmm2
+-        vpand    POLY(%rip), %xmm2, %xmm2
+-        vpxor    %xmm2, %xmm6, %xmm6        # xmm6 holds the HashKey<<1 mo=
+d poly
+-        ##################################################################=
+#####
+-        vmovdqu  %xmm6, HashKey(arg2)       # store HashKey<<1 mod poly
+-
+-
+-        CALC_AAD_HASH GHASH_MUL_AVX, arg5, arg6, %xmm2, %xmm6, %xmm3, %xmm=
+4, %xmm5, %xmm7, %xmm1, %xmm0
+-
+-        PRECOMPUTE_AVX  %xmm6, %xmm0, %xmm1, %xmm2, %xmm3, %xmm4, %xmm5
+-
++        INIT GHASH_MUL_AVX, PRECOMPUTE_AVX
+         FUNC_RESTORE
+         ret
+ ENDPROC(aesni_gcm_precomp_avx_gen2)
+@@ -2547,30 +2548,7 @@ _initial_blocks_done\@:
+ #############################################################
+ ENTRY(aesni_gcm_precomp_avx_gen4)
+         FUNC_SAVE
+-
+-        vmovdqu  (arg3), %xmm6                # xmm6 =3D HashKey
+-
+-        vpshufb  SHUF_MASK(%rip), %xmm6, %xmm6
+-        ###############  PRECOMPUTATION of HashKey<<1 mod poly from the Ha=
+shKey
+-        vmovdqa  %xmm6, %xmm2
+-        vpsllq   $1, %xmm6, %xmm6
+-        vpsrlq   $63, %xmm2, %xmm2
+-        vmovdqa  %xmm2, %xmm1
+-        vpslldq  $8, %xmm2, %xmm2
+-        vpsrldq  $8, %xmm1, %xmm1
+-        vpor     %xmm2, %xmm6, %xmm6
+-        #reduction
+-        vpshufd  $0b00100100, %xmm1, %xmm2
+-        vpcmpeqd TWOONE(%rip), %xmm2, %xmm2
+-        vpand    POLY(%rip), %xmm2, %xmm2
+-        vpxor    %xmm2, %xmm6, %xmm6          # xmm6 holds the HashKey<<1 =
+mod poly
+-        ##################################################################=
+#####
+-        vmovdqu  %xmm6, HashKey(arg2)         # store HashKey<<1 mod poly
+-
+-        CALC_AAD_HASH GHASH_MUL_AVX2, arg5, arg6, %xmm2, %xmm6, %xmm3, %xm=
+m4, %xmm5, %xmm7, %xmm1, %xmm0
+-
+-        PRECOMPUTE_AVX2  %xmm6, %xmm0, %xmm1, %xmm2, %xmm3, %xmm4, %xmm5
+-
++        INIT GHASH_MUL_AVX2, PRECOMPUTE_AVX2
+         FUNC_RESTORE
+         ret
+ ENDPROC(aesni_gcm_precomp_avx_gen4)
 --=20
 2.17.1
 
