@@ -6,100 +6,101 @@ X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB611C5CFFE
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 21:00:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9481CC04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 21:01:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B5BCF2082F
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 21:00:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B5BCF2082F
+	by mail.kernel.org (Postfix) with ESMTP id 5A98A2082F
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 21:01:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A98A2082F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729887AbeLJVAB (ORCPT
+        id S1729896AbeLJVBC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 16:00:01 -0500
-Received: from mout.kundenserver.de ([212.227.126.135]:50355 "EHLO
+        Mon, 10 Dec 2018 16:01:02 -0500
+Received: from mout.kundenserver.de ([217.72.192.73]:34119 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727538AbeLJVAA (ORCPT
+        with ESMTP id S1727143AbeLJVBB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 16:00:00 -0500
+        Mon, 10 Dec 2018 16:01:01 -0500
 Received: from wuerfel.lan ([109.192.41.194]) by mrelayeu.kundenserver.de
- (mreue012 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1MnWx3-1hDX7B0wuj-00jatI; Mon, 10 Dec 2018 21:59:56 +0100
+ (mreue108 [212.227.15.145]) with ESMTPA (Nemesis) id
+ 1MYvPq-1h1Cuy3AYa-00UuJb; Mon, 10 Dec 2018 22:00:36 +0100
 From:   Arnd Bergmann <arnd@arndb.de>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>, Stephen Boyd <swboyd@chromium.org>,
-        Timur Tabi <timur@codeaurora.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>,
-        Evan Green <evgreen@chromium.org>,
-        linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] pinctrl: msm: mark PM functions as __maybe_unused
-Date:   Mon, 10 Dec 2018 21:59:45 +0100
-Message-Id: <20181210205955.3254660-1-arnd@arndb.de>
+To:     Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] ARM: shmobile: fix build regressions
+Date:   Mon, 10 Dec 2018 22:00:23 +0100
+Message-Id: <20181210210033.3276054-1-arnd@arndb.de>
 X-Mailer: git-send-email 2.20.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:xGnY+Tz4mS0nI0F6dcf1GCsrhPj67IExbLpe9y/GFJxfpEnAMqx
- 76oAA7L0SxJS7k2Zz/MfCziSdX/jtTn/ieutpTt++oMmsmhhiOKaBC/fBjJBbqiGaukXXLG
- g5lyeLZg/jVWWrIFgwgWA5gD6k9GEyMpxHT18l6ltpSsfDkJUY3MEQyZ9fdr3b/AuS1KFoP
- kctMdQ9DnZBC2au/bDdfg==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:hn4ltawq2Mc=:cVi0eOPx6XbQ5n0O33f9rI
- t28ZbvMJco+LyPJi0Xih9J7+PTQPafUcpEOVQzOL5D2xDQJq6Id/ev1UWzwUdvCDF9ZOMjR64
- TGjr5uV9/UGAYyK39BX5GVEQFtJoAWTGX1CCbN6OLr2N/UbUjKRhVhrlCNav3G2x5b2XF9jwp
- 1zgJJiJT0YpwwgnA5Xi4qwhmIJyKOfkupm5WtaVEk2DUJC2c9SL2DotddohMq6wKi2zPC8ja5
- EJJZRr/n987qa7lCl0U4f12qJ/sODMwUV0bNXbERellyyPlyYNAdsLha6YAFdmOihwIn8iXmB
- LtTQWpon6FoZPQzIh5KrY4H7lHdCQNCrpgczPr09kplZyuizpwTGbGPKaqpthVSpDI/+Nw0c9
- J109Wk/+1y6HV6ZWcgf5S0NnUsTZjOUXnuQVxIQyOU4NDnBxjlSqDSr0PWo1vGr/L36hpwyRO
- 9JVsHp3Iq8Llsqk0C/PcrD0azTXxFcSTAwH6MdNlpyAl5hVku7gxIndl3GUsOB2rnsxV442Pq
- quMnuugzKDfWQ/4vSqwennyPLR26q1uU8wCOdaw/9LGXkuinPSqVUgcV4uk1Mkm0gami0cZvq
- VcCn+yRFRpPrn1Bot0GNxClc8o/bnbE4fFmmOuFy1NN4cKnL9AM8NYG/b8qDrUG0zS6jPzRNf
- dLvaZhrqdxiSvNJN7XDx00vG0JUSeEPzEWjuOwM6epmexmfB9IiDitnWqsFLsDeF/To6BXuob
- J1ID8lFS8uITRUgm4IWU12IpknFW1g5aSZbQFg==
+X-Provags-ID: V03:K1:dP0m1Lr68VWEmnpEQiiX5DpZfPi93rokPZF52SeRdzwu1eqQg7x
+ L8O9gjgnmZCQA+FTohNwwJOwKPFaQr+IycHRx/0TdrNaTlLqqgXonSbgDl4LPTVg5cE+O8R
+ y6TcLDpN8Eq8JZkvsiG6waajSVuJ3SgHXUhQFZZgoYN11ddoyP5FAlXD1LG61xyk64qKcva
+ ebNcV7rOISwhtyEAQsvSQ==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:5ZBJWCYxsR4=:MglSuOS2QNtml4UUKFdfxG
+ bIiduu1CDJ7c3KbOlQN9DZLMNCviekExhTKIyrvFSR1HpsyL4x2c9Ka5NwABkUuvdi+EgAOj6
+ YV2JlV/74pa/uoYlkSQHYAIUKA9zv0wvcnu5BXrkph0KZWRmpKtmzYT5VIfUuYsaP21nhfCvl
+ fxZCYq0XVjhJbIsw9ZUIvo10e0KQ41cX2SbjTgRi5GMnjD/cQJSW2mYQLi1QEjkT+Oevmc0Vd
+ kb4WXdMvvaBx1E5EU1T1fV8fS7jqv3NoJjvll6ZB42kci9+397T8VFGwms8wix92iL3MC8Ujy
+ 0oZ4vlOHIgQp+ddH8OeMYnLFM4GTSkSVJ03TXBvPi0R3wr7MhWCGD//qfaZUys8SDCMu5eZew
+ NPzg2ha8Tt9BQ6U4vsnmgAA/DMWDZHGTHVC4qemrWjELnKMt4k60//Nz/nwyb8BI7RgY9UaLf
+ E4qtN0/skzHsTbpc4VdLnjJbVZV5/eNHxyk6ejtXHsYnhMNxT22GNy1agMcYbtoxOCx9FfJPX
+ A953s784n9YI08x4u/7pWjogYZHJXyOmaPp5NcITzZhT24fFGMkqY2OgddP7R5gyuMQ8gBIdx
+ PqtBf8EYDr+n3CinUQdJMFo8NOaWjfF97CwfzwX6I642bHwqhhc2IIAv9pnZIs3YYSsYTIkIe
+ ZYdgtACMEK5HtMvG+ovAfvtwxkmpwyMp04IKQrJPR3KAANd1B4N0Hu8YgFFcPpaI8iIIB9hFw
+ LoYeg4b5m4yZGRrXOfRqSpqdnykt5ToPHjtOfg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Without CONFIG_PM_SLEEP, we get annoyting warnings about unused functions:
+A number of Kconfig options have become available now to random ARM
+platforms outside of ARCH_MULTIPLATFORM, which now causes Kconfig
+warnings, and other build errors when those select options that
+lack additonal dependencies, e.g.:
 
-drivers/pinctrl/qcom/pinctrl-msm.c:1082:12: error: 'msm_pinctrl_resume' defined but not used [-Werror=unused-function]
- static int msm_pinctrl_resume(struct device *dev)
-            ^~~~~~~~~~~~~~~~~~
-drivers/pinctrl/qcom/pinctrl-msm.c:1075:12: error: 'msm_pinctrl_suspend' defined but not used [-Werror=unused-function]
- static int msm_pinctrl_suspend(struct device *dev)
+WARNING: unmet direct dependencies detected for HAVE_ARM_ARCH_TIMER
+  Depends on [n]: CPU_V7 [=n]
+  Selected by [y]:
+  - ARCH_RCAR_GEN2 [=y] && SOC_RENESAS [=y]
+  - ARCH_R8A73A4 [=y] && SOC_RENESAS [=y] && ARM [=y]
 
-Mark them as __maybe_unused to shut up the warning and silently drop
-the functions without having to add ugly #ifdefs.
+WARNING: unmet direct dependencies detected for SYS_SUPPORTS_EM_STI
+  Depends on [n]: GENERIC_CLOCKEVENTS [=n]
+  Selected by [y]:
+  - ARCH_EMEV2 [=y] && SOC_RENESAS [=y] && ARM [=y]
 
-Fixes: 977d057ad346 ("pinctrl: msm: Add sleep pinctrl state transitions")
+Put the old dependency on ARCH_RENESAS back for the moment to restore
+the previous behavior.
+
+Fixes: 062887bf5ef7 ("ARM: shmobile: Move SoC Kconfig symbols to drivers/soc/renesas/")
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- drivers/pinctrl/qcom/pinctrl-msm.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/soc/renesas/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinctrl-msm.c
-index 87cbebe217fd..ee8119879c4c 100644
---- a/drivers/pinctrl/qcom/pinctrl-msm.c
-+++ b/drivers/pinctrl/qcom/pinctrl-msm.c
-@@ -1072,14 +1072,14 @@ static void msm_pinctrl_setup_pm_reset(struct msm_pinctrl *pctrl)
- 		}
- }
+diff --git a/drivers/soc/renesas/Kconfig b/drivers/soc/renesas/Kconfig
+index 4d8012e1205c..68bfca6f20dd 100644
+--- a/drivers/soc/renesas/Kconfig
++++ b/drivers/soc/renesas/Kconfig
+@@ -44,7 +44,7 @@ config ARCH_RZN1
+ 	bool
+ 	select ARM_AMBA
  
--static int msm_pinctrl_suspend(struct device *dev)
-+static __maybe_unused int msm_pinctrl_suspend(struct device *dev)
- {
- 	struct msm_pinctrl *pctrl = dev_get_drvdata(dev);
+-if ARM
++if ARM && ARCH_RENESAS
  
- 	return pinctrl_force_sleep(pctrl->pctrl);
- }
- 
--static int msm_pinctrl_resume(struct device *dev)
-+static __maybe_unused int msm_pinctrl_resume(struct device *dev)
- {
- 	struct msm_pinctrl *pctrl = dev_get_drvdata(dev);
+ #comment "Renesas ARM SoCs System Type"
  
 -- 
 2.20.0
