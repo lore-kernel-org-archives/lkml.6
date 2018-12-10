@@ -2,174 +2,115 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09CE9C04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 15:10:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1F29C04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 15:13:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C10B820672
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 15:10:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AB0A920672
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 15:13:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="WGuJNcjp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C10B820672
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EMFSZuAM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB0A920672
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728010AbeLJPKq (ORCPT
+        id S1727782AbeLJPNA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 10:10:46 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:37814 "EHLO
+        Mon, 10 Dec 2018 10:13:00 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:46565 "EHLO
         mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727974AbeLJPKo (ORCPT
+        with ESMTP id S1727121AbeLJPNA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 10:10:44 -0500
-Received: by mail-wr1-f65.google.com with SMTP id j10so10845974wru.4
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Dec 2018 07:10:42 -0800 (PST)
+        Mon, 10 Dec 2018 10:13:00 -0500
+Received: by mail-wr1-f65.google.com with SMTP id l9so10805388wrt.13
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Dec 2018 07:12:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=wb/fLbhHyqXf8iwaRFvhIRMTSVTgEgTB9jz/yncINeA=;
-        b=WGuJNcjpjAZsu/Z8PLX2a4eWisWNnxBiVrBtZHwfn4ctfRDUHzNR9Jr050oA6UUPfy
-         fyzFNRM4ga7BE+XcVr18nwpPu3Yg6XpLKOYI/tfPmUq3fTPbF6axOkx/EcXw7ERELLSB
-         A/tIr++cN0HBF1PPmHWq1jaxXrCrYxbeCNFzvABLt4bj1olAs/0Vt/44gYT5ewHLkdKc
-         g6CwOPyiVwevRDeDQ0BaWlHzjHMF8r5RoW+94TqbS3d3k3tj44slzw0ne25MD+a8ceGJ
-         MA1jwIgZPQb629qgw2yWnDM9B6+R4dfxwvjYqG2hr5SHWULu8WG+3JotJ6HlgaZ+UPAX
-         FVMg==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=SZzKSrhqccWQdpOVW17AHjuTu939cT/b5KlSYsuXu2Q=;
+        b=EMFSZuAMaNTdvPGKAYAdCKY/LLtFhVvK1dci3wuXGuPw9GuBqo16T1bf08VeXnqyb7
+         8TJ3oFhGeV1ZlAq57SMVjTV9kqhb7EI2/8WWontfXOxjpbIGdTBpPV/f2Qs7pI9use9N
+         qP1WK6mv55FKrQp3sSYgzqCkjoNtL6Jf6AU2aTRxT9v2AWtHODxGHM8UmjMHbPeEbHmE
+         MRuP3eJ+Kap6CZlZwWw32TX8BmwKBiGpXq7/QeljIO5L032XCj2i2lJ7IUE9sKraoqMg
+         bHyfTZC/OXh2k3U905zd5Z0jSQu3tEyZGlYTOp/1naOnt7t7v5rN69R+O7YdjZ+qOtr2
+         zXhg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=wb/fLbhHyqXf8iwaRFvhIRMTSVTgEgTB9jz/yncINeA=;
-        b=kOtRs1i5m2cb6gOC+J1zUrQKAwwwo97JuTmN9KmEvJYm3NvLqQKlIbr6J7Bm0HRmzf
-         dnMJq9UhFLpSRLNTjmoa7HCEgqFaqgH05LjjRLTlbOBfmdpPuCVJ3UlQmnf/WC2SXuI3
-         J5m81U5FJvOvflseQfzI4BRyl8HWlTVY/nRm5YqVPdpvy6ZuPLvZ9fGX5Pif0Kx3SR0g
-         4G5E9i/FLc2pDJFkXApOyUK6xTt0agzB3bsvuOqoeWYpI1y/jHo81p9bf9REUM4COrTI
-         vebeSKOKLFDQghaNtHVt+w0UDeOAujqqu7QgJ6SVUsOQNoNiU5vQ1cmhg+Wfq3sW74u0
-         AjVQ==
-X-Gm-Message-State: AA+aEWYYECjgfurvQnEIf/feGi4vBxhdA4EvsYEVBMnvRPJVHUxbkU2s
-        geLtcyDVbX7Q2EI47F+bBfaQYw==
-X-Google-Smtp-Source: AFSGD/W5lpqD3IMO4FMqBHb+4urq3H8Ok5z+qwN1XUkH+2micJX2B5ypnhWrYxHQgmkYFQ6kLnhgpw==
-X-Received: by 2002:a5d:6988:: with SMTP id g8mr9738365wru.33.1544454641938;
-        Mon, 10 Dec 2018 07:10:41 -0800 (PST)
-Received: from debian-brgl.home ([2a01:cb1d:af:5b00:6d6c:8493:1ab5:dad7])
-        by smtp.gmail.com with ESMTPSA id y8sm11755720wmg.13.2018.12.10.07.10.40
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 10 Dec 2018 07:10:41 -0800 (PST)
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-To:     Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH 2/2] regulator: provide regulator_set_voltage_sel_regmap_step() helper
-Date:   Mon, 10 Dec 2018 16:10:24 +0100
-Message-Id: <20181210151024.3906-3-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181210151024.3906-1-brgl@bgdev.pl>
-References: <20181210151024.3906-1-brgl@bgdev.pl>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=SZzKSrhqccWQdpOVW17AHjuTu939cT/b5KlSYsuXu2Q=;
+        b=CiCRUsqMl9bDm8uBGQJji7arHuax2aPxwLvQBNo1fyQ6ydG/WzUHdDeTBq1dQLFxSE
+         E6wCIi/8h1yflmdc9smzr81xvUOWefFj1Xtt3iuPvY2i12ACCcQ1ZxH9b6X+i7/fZI73
+         +wGiI86e/LV5uwxnQ+tkd2myHt8QDbSE+IuJnlWe5xkwl1Fv6r1Tjaz9SDQzFkcViOP/
+         aIbLFbJNAK1/86hgNJ5gC05aMmMA2q8iQx0rFvmn0ye9FzXwhmXkkzj5igFjo1YIgmbo
+         ySiucmf8jJ0UFbqjh6g+ji3WlwX6IKvOhByC1sUQoRL51IU4KmSm3b7OW+cg2aK0rTD6
+         ZFTQ==
+X-Gm-Message-State: AA+aEWYHBNgv5GqvQP/3aVQVujiEgCEZOB37PjcW+a6LvtLKAJdTQPuY
+        3ZKvHzcrU98r9kqfBuWCPQ==
+X-Google-Smtp-Source: AFSGD/Wq585wafpkfGUpsgCJxMlaGmEvc6SjI/7Cq/jXJEiRIwD9EgncDyUW6CbCZj3luyFgJokZ9A==
+X-Received: by 2002:a05:6000:8a:: with SMTP id m10mr9808615wrx.79.1544454778463;
+        Mon, 10 Dec 2018 07:12:58 -0800 (PST)
+Received: from localhost (host34-126-dynamic.27-79-r.retail.telecomitalia.it. [79.27.126.34])
+        by smtp.gmail.com with ESMTPSA id 129sm12168951wmd.18.2018.12.10.07.12.57
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 10 Dec 2018 07:12:57 -0800 (PST)
+Date:   Mon, 10 Dec 2018 16:12:57 +0100
+From:   Andrea Righi <righi.andrea@gmail.com>
+To:     Masami Hiramatsu <mhiramat@kernel.org>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>,
+        Stefano Stabellini <sstabellini@kernel.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] kprobes/x86/xen: blacklist non-attachable xen interrupt
+ functions
+Message-ID: <20181210151256.GA1977@Dell>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Blacklist symbols in Xen probe-prohibited areas, so that user can see
+these prohibited symbols in debugfs.
 
-On some devices we need to manually ramp the regulators to desired
-voltage one step at a time. This patch adds a helper routine for
-regmap users that checks if the regulator is enabled and, if so,
-iterates over all selectors between the current one and the one
-representing the targeted voltage setting.
+See also: a50480cb6d61.
 
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Signed-off-by: Andrea Righi <righi.andrea@gmail.com>
 ---
- drivers/regulator/helpers.c      | 48 ++++++++++++++++++++++++++++++++
- include/linux/regulator/driver.h |  2 ++
- 2 files changed, 50 insertions(+)
+ arch/x86/xen/xen-asm_64.S | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/regulator/helpers.c b/drivers/regulator/helpers.c
-index 5686a1335bd3..6eb0e147bbc9 100644
---- a/drivers/regulator/helpers.c
-+++ b/drivers/regulator/helpers.c
-@@ -19,6 +19,8 @@
- #include <linux/regulator/driver.h>
- #include <linux/module.h>
+diff --git a/arch/x86/xen/xen-asm_64.S b/arch/x86/xen/xen-asm_64.S
+index bb1c2da0381d..1e9ef0ba30a5 100644
+--- a/arch/x86/xen/xen-asm_64.S
++++ b/arch/x86/xen/xen-asm_64.S
+@@ -12,6 +12,7 @@
+ #include <asm/segment.h>
+ #include <asm/asm-offsets.h>
+ #include <asm/thread_info.h>
++#include <asm/asm.h>
  
-+#include "internal.h"
-+
- /**
-  * regulator_is_enabled_regmap - standard is_enabled() for regmap users
-  *
-@@ -279,6 +281,52 @@ int regulator_set_voltage_sel_regmap(struct regulator_dev *rdev, unsigned sel)
- }
- EXPORT_SYMBOL_GPL(regulator_set_voltage_sel_regmap);
+ #include <xen/interface/xen.h>
  
-+/**
-+ * regulator_set_voltage_sel_regmap_step - stepping set_voltage_sel for regmap
-+ *                                         users
-+ *
-+ * @rdev: regulator to operate on
-+ * @sel: Selector to set
-+ *
-+ * Regulators that use regmap for their register I/O but want to ramp up/down
-+ * to the selected voltage one step at a time can use this routine as their
-+ * set_voltage_sel operation.
-+ */
-+int regulator_set_voltage_sel_regmap_step(struct regulator_dev *rdev,
-+					  unsigned int sel)
-+{
-+	int ret, curr, diff, i, end;
-+	bool asc;
-+
-+	/*
-+	 * If the regulator is disabled, we can program the desired
-+	 * voltage right away.
-+	 */
-+	if (!_regulator_is_enabled(rdev))
-+		return regulator_set_voltage_sel_regmap(rdev, sel);
-+
-+	curr = regulator_get_voltage_sel_regmap(rdev);
-+	if (curr < 0)
-+		return curr;
-+
-+	diff = curr - sel;
-+	if (diff == 0)
-+		return 0; /* Already there. */
-+
-+	asc = diff > 0 ? false : true;
-+	end = asc ? sel + 1 : sel - 1;
-+	asc ? curr++ : curr--;
-+
-+	for (i = curr; i != end; asc ? i++ : i--) {
-+		ret = regulator_set_voltage_sel_regmap(rdev, i);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(regulator_set_voltage_sel_regmap_step);
-+
- /**
-  * regulator_map_voltage_iterate - map_voltage() based on list_voltage()
-  *
-diff --git a/include/linux/regulator/driver.h b/include/linux/regulator/driver.h
-index a9c030192147..eedd8b495900 100644
---- a/include/linux/regulator/driver.h
-+++ b/include/linux/regulator/driver.h
-@@ -530,6 +530,8 @@ int regulator_set_voltage_sel_pickable_regmap(struct regulator_dev *rdev,
- 						unsigned int sel);
- int regulator_get_voltage_sel_regmap(struct regulator_dev *rdev);
- int regulator_set_voltage_sel_regmap(struct regulator_dev *rdev, unsigned sel);
-+int regulator_set_voltage_sel_regmap_step(struct regulator_dev *rdev,
-+					  unsigned int sel);
- int regulator_is_enabled_regmap(struct regulator_dev *rdev);
- int regulator_enable_regmap(struct regulator_dev *rdev);
- int regulator_disable_regmap(struct regulator_dev *rdev);
+@@ -24,6 +25,7 @@ ENTRY(xen_\name)
+ 	pop %r11
+ 	jmp  \name
+ END(xen_\name)
++_ASM_NOKPROBE(xen_\name)
+ .endm
+ 
+ xen_pv_trap divide_error
 -- 
-2.19.1
+2.17.1
 
