@@ -3,110 +3,113 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B34DAC5CFFE
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 20:30:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 643DDC04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 20:31:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7ADC62084C
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 20:30:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7ADC62084C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org
+	by mail.kernel.org (Postfix) with ESMTP id 2DA7C20672
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 20:31:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2DA7C20672
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729468AbeLJUao (ORCPT
+        id S1728949AbeLJUb5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 15:30:44 -0500
-Received: from vmicros1.altlinux.org ([194.107.17.57]:36234 "EHLO
-        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728182AbeLJUaj (ORCPT
+        Mon, 10 Dec 2018 15:31:57 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:36182 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727494AbeLJUb5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 15:30:39 -0500
-Received: from mua.local.altlinux.org (mua.local.altlinux.org [192.168.1.14])
-        by vmicros1.altlinux.org (Postfix) with ESMTP id 43DBF72CC66;
-        Mon, 10 Dec 2018 23:30:36 +0300 (MSK)
-Received: by mua.local.altlinux.org (Postfix, from userid 508)
-        id 342C37CF426; Mon, 10 Dec 2018 23:30:36 +0300 (MSK)
-Date:   Mon, 10 Dec 2018 23:30:36 +0300
-From:   "Dmitry V. Levin" <ldv@altlinux.org>
-To:     Max Filippov <jcmvbkbc@gmail.com>
-Cc:     Oleg Nesterov <oleg@redhat.com>,
-        Andrew Lutomirski <luto@kernel.org>,
-        Elvira Khabirova <lineprinter@altlinux.org>,
-        Eugene Syromyatnikov <esyr@redhat.com>,
-        Chris Zankel <chris@zankel.net>,
-        Paul Moore <paul@paul-moore.com>,
-        Eric Paris <eparis@redhat.com>, linux-xtensa@linux-xtensa.org,
-        linux-audit@redhat.com, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v5 19/25] xtensa: define syscall_get_* functions
-Message-ID: <20181210203036.GA18150@altlinux.org>
-References: <20181210042352.GA6092@altlinux.org>
- <20181210043041.GS6131@altlinux.org>
- <CAMo8Bf+s6xObgYoOOR0NTQZR-ReBbXmNv_5Jf=jX7J+bnDsTYQ@mail.gmail.com>
- <20181210125315.GB11942@altlinux.org>
- <CAMo8BfLbk8wfUNVZ_Qa9XVTtg4f5k5Wj6LFauroheheoTCJPxw@mail.gmail.com>
- <20181210202402.GA18101@altlinux.org>
+        Mon, 10 Dec 2018 15:31:57 -0500
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBAKScpR138822
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Dec 2018 15:31:56 -0500
+Received: from e31.co.us.ibm.com (e31.co.us.ibm.com [32.97.110.149])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2p9v1t16da-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Dec 2018 15:31:55 -0500
+Received: from localhost
+        by e31.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <bauerman@linux.ibm.com>;
+        Mon, 10 Dec 2018 20:31:54 -0000
+Received: from b03cxnp08027.gho.boulder.ibm.com (9.17.130.19)
+        by e31.co.us.ibm.com (192.168.1.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 10 Dec 2018 20:31:51 -0000
+Received: from b03ledav004.gho.boulder.ibm.com (b03ledav004.gho.boulder.ibm.com [9.17.130.235])
+        by b03cxnp08027.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBAKVoUP30081044
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 10 Dec 2018 20:31:50 GMT
+Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 88BEF7805E;
+        Mon, 10 Dec 2018 20:31:50 +0000 (GMT)
+Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 0C2007805F;
+        Mon, 10 Dec 2018 20:31:47 +0000 (GMT)
+Received: from morokweng.localdomain (unknown [9.85.129.222])
+        by b03ledav004.gho.boulder.ibm.com (Postfix) with ESMTPS;
+        Mon, 10 Dec 2018 20:31:47 +0000 (GMT)
+References: <1544095908-2414-1-git-send-email-ego@linux.vnet.ibm.com> <87a7li5zv2.fsf@morokweng.localdomain> <20181207104311.GA11431@in.ibm.com> <20181207120346.GB11431@in.ibm.com> <87va443fm3.fsf@morokweng.localdomain> <06dfb955-6af9-ae23-3919-9bee447cfcdc@linux.vnet.ibm.com>
+User-agent: mu4e 1.0; emacs 26.1
+From:   Thiago Jung Bauermann <bauerman@linux.ibm.com>
+To:     Michael Bringmann <mwb@linux.vnet.ibm.com>
+Cc:     ego@linux.vnet.ibm.com, Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Tyrel Datwyler <tyreld@linux.vnet.ibm.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Vaidyanathan Srinivasan <svaidy@linux.vnet.ibm.com>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] pseries/hotplug: Add more delay in pseries_cpu_die while waiting for rtas-stop
+In-reply-to: <06dfb955-6af9-ae23-3919-9bee447cfcdc@linux.vnet.ibm.com>
+Date:   Mon, 10 Dec 2018 18:31:43 -0200
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="vtzGhvizbBRQ85DL"
-Content-Disposition: inline
-In-Reply-To: <20181210202402.GA18101@altlinux.org>
+Content-Type: text/plain
+X-TM-AS-GCONF: 00
+x-cbid: 18121020-8235-0000-0000-00000E369D28
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010209; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000270; SDB=6.01129878; UDB=6.00587072; IPR=6.00910011;
+ MB=3.00024645; MTD=3.00000008; XFM=3.00000015; UTC=2018-12-10 20:31:53
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18121020-8236-0000-0000-000043A83019
+Message-Id: <87a7ld3yz4.fsf@morokweng.localdomain>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-10_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=722 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1812100183
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---vtzGhvizbBRQ85DL
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hello Michael,
 
-On Mon, Dec 10, 2018 at 11:24:02PM +0300, Dmitry V. Levin wrote:
-> On Mon, Dec 10, 2018 at 12:14:37PM -0800, Max Filippov wrote:
-> > On Mon, Dec 10, 2018 at 4:53 AM Dmitry V. Levin <ldv@altlinux.org> wrot=
-e:
-> > > On Sun, Dec 09, 2018 at 09:02:50PM -0800, Max Filippov wrote:
-> > > > How should we synchronize our changes?
-> > >
-> > > No problem, I can revert to the previous edition of this patch
-> > > that just adds syscall_get_arch.
-> > > Alternatively, you can just take that couple of patches (v5 18/25
-> > > and v2 15/15) into your tree.
-> >=20
-> > Sure I can do the second. Will it work for v2 16/15 that changes
-> > syscall_get_arch adding an argument to it?
->=20
-> No, I'm afraid it won't work for v2 16/15 (aka v5 22/25), which means
-> I'd have to keep them in the series.
+Michael Bringmann <mwb@linux.vnet.ibm.com> writes:
 
-You can surely take them into your tree, but I'll have to keep them
-in the series because of that change of syscall_get_arch signature.
-Sorry for confusion.
+> I have asked Scott Mayes to take a look at one of these crashes from
+> the phyp side.  I will let you know if he finds anything notable.
 
+Thanks! It might make sense to test whether booting with
+cede_offline=off makes the bug go away.
 
---=20
-ldv
+One suspicion I have is regarding the code handling CPU_STATE_INACTIVE.
+From what I understand, it is a powerpc-specific CPU state and from the
+perspective of the generic CPU hotplug state machine, inactive CPUs are
+already fully offline. Which means that the locking performed by the
+generic code state machine doesn't apply to transitioning CPUs from
+INACTIVE to OFFLINE state. Perhaps the bug is that there is more than
+one CPU making that transition at the same time? That would cause two
+CPUs to call RTAS stop-self.
 
---vtzGhvizbBRQ85DL
-Content-Type: application/pgp-signature; name="signature.asc"
+I haven't checked whether this is really possible or not, though. It's
+just a conjecture.
 
------BEGIN PGP SIGNATURE-----
+--
+Thiago Jung Bauermann
+IBM Linux Technology Center
 
-iQIcBAEBCAAGBQJcDszrAAoJEAVFT+BVnCUIPHsP/jmCV9w7FP7HaFO8ewlxKsCl
-890myt44lNJeQQi4B5OY/Jo2YReg/+mQGtbZCIY/asQDgp0+Ae/mGij9vml59L/w
-kfIZ77bAb+RrcV5hsDmmdIBUJy4cN7+ltGrWpcsasR1NjeLKg6QQpB3cpBUGtaFl
-DukIjdjITh/8ysESS04sx/fW8SxwodWnkJSDYsfHyZzxNFDTs7ABEa/bGxtEIRy4
-4j2eXn3GktezHx8GJms3P3shcaXGUqPCfEmR4+lsV1sAJSitLVH7QCPxjryLwDcr
-o9kUrckcJ+ONbl22LZrhIAgiKvWNOR9lMFL3JgmzPsLT1sfi6LdxXtifgXlNTwnt
-vw9uB4SXxCSSVhiRdX1ON3mM3/NjZ9/Ira3J4VFSiUvPhLwFpboEq4T7DVsIVKNb
-8FYDnb7wMa0gw0W8S6B1jUmklMGjSnTcS1ovSHO0VINbWLHIQ4H5zjOtQd9v3D+W
-SB6bA5Xb06/ReXINUDvE7Y9gXJ7bCuTXIdKi4Y61Gjtine+j9ZOQA9+hzYFcP8sV
-q/8qzPUjNZTdcyuLmRKpzNjtnX24a0HfQ7X2NjvnJQ7lbboRwazmN2FC3Sxixcfi
-r/fT9kkEO8Zf3uucw0GNfPhhMzD9Y1cij9KEwM6EMMWl2sbBMiIvM8T5H8s7GQaD
-3cFRHHz+VOPFrbkshZDp
-=8KiF
------END PGP SIGNATURE-----
-
---vtzGhvizbBRQ85DL--
