@@ -2,179 +2,136 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12391C04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 07:59:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9492FC04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 08:04:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CE4E520855
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 07:59:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE4E520855
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
+	by mail.kernel.org (Postfix) with ESMTP id 5983A20672
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 08:04:42 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="udYO8WKM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5983A20672
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726589AbeLJH72 (ORCPT
+        id S1726562AbeLJIEl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 02:59:28 -0500
-Received: from pegase1.c-s.fr ([93.17.236.30]:21195 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726029AbeLJH72 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 02:59:28 -0500
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 43CwTB1GGBz9v9f1;
-        Mon, 10 Dec 2018 08:59:26 +0100 (CET)
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id kELf0GNDycG0; Mon, 10 Dec 2018 08:59:26 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 43CwTB0SYDz9v9f0;
-        Mon, 10 Dec 2018 08:59:26 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 79F068B79D;
-        Mon, 10 Dec 2018 08:59:26 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id JTu96yTxi_35; Mon, 10 Dec 2018 08:59:26 +0100 (CET)
-Received: from po14163vm.idsi0.si.c-s.fr (po15451.idsi0.si.c-s.fr [172.25.231.2])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 53A128B74C;
-        Mon, 10 Dec 2018 08:59:26 +0100 (CET)
-Received: by po14163vm.idsi0.si.c-s.fr (Postfix, from userid 0)
-        id 3C55E716A8; Mon, 10 Dec 2018 07:59:26 +0000 (UTC)
-Message-Id: <9f3535374a79469b7d6918500f5550709db8b493.1544428579.git.christophe.leroy@c-s.fr>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH v2] powerpc: implement CONFIG_DEBUG_VIRTUAL
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date:   Mon, 10 Dec 2018 07:59:26 +0000 (UTC)
+        Mon, 10 Dec 2018 03:04:41 -0500
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:44804 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726029AbeLJIEl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Dec 2018 03:04:41 -0500
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id wBA843Ii061422;
+        Mon, 10 Dec 2018 02:04:03 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1544429043;
+        bh=YUaTvCEoGoQ9M/VI0rsqshq+eCmW3OAv+7vup59ErDI=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=udYO8WKM5MDXlSNpxfdpt6V1JIXBVzy54EBqiVDP0g6IdSeLIAH0vB4YLi6k7WW5H
+         EoYHqBpu2ZGHl8FUnaQ7mRs9GvA6VJZsePLVVKD6L3Ko/FZVBdWBCX5ogKExB/5LMt
+         LlN6WavWzN9BVFC/gRIwlIipo2HqR0CHhGUeIZ0k=
+Received: from DFLE102.ent.ti.com (dfle102.ent.ti.com [10.64.6.23])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wBA843d9045242
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 10 Dec 2018 02:04:03 -0600
+Received: from DFLE102.ent.ti.com (10.64.6.23) by DFLE102.ent.ti.com
+ (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Mon, 10
+ Dec 2018 02:04:02 -0600
+Received: from dflp32.itg.ti.com (10.64.6.15) by DFLE102.ent.ti.com
+ (10.64.6.23) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Mon, 10 Dec 2018 02:04:02 -0600
+Received: from [172.24.190.172] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id wBA83u76031129;
+        Mon, 10 Dec 2018 02:03:59 -0600
+Subject: Re: [PATCH 2/2] arm64: dts: ti: k3-am654-base-board: Add MMC/SD
+ support
+To:     Nishanth Menon <nm@ti.com>, Faiz Abbas <faiz_abbas@ti.com>
+CC:     <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <mark.rutland@arm.com>,
+        <robh+dt@kernel.org>, <t-kristo@ti.com>, <kishon@ti.com>,
+        <ulf.hansson@linaro.org>, <adrian.hunter@intel.com>,
+        <michal.simek@xilinx.com>, Tony Lindgren <tony@atomide.com>,
+        Arnd Bergmann <arnd@arndb.de>
+References: <20181207084233.13700-1-faiz_abbas@ti.com>
+ <20181207084233.13700-3-faiz_abbas@ti.com>
+ <20181208155427.jmidz4vsw4k4qj36@akan>
+From:   Sekhar Nori <nsekhar@ti.com>
+Message-ID: <c1dd9783-84dc-9dad-ea94-9a14a4ad814d@ti.com>
+Date:   Mon, 10 Dec 2018 13:33:56 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+MIME-Version: 1.0
+In-Reply-To: <20181208155427.jmidz4vsw4k4qj36@akan>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch implements CONFIG_DEBUG_VIRTUAL to warn about
-incorrect use of virt_to_phys() and page_to_phys()
+On 08/12/18 9:24 PM, Nishanth Menon wrote:
+> On 14:12-20181207, Faiz Abbas wrote:
+> 
+>> +
+>> +&sdhci0 {
+>> +	status = "okay";
+>> +	pinctrl-names = "default";
+>> +	pinctrl-0 = <&main_mmc0_pins_default>;
+>> +	bus-width = <8>;
+>> +	non-removable;
+>> +	ti,driver-strength-ohm = <50>;
+> 
+> ^^
+> 
+>> +};
+>> +
+>> +&sdhci1 {
+>> +	status = "okay";
+>> +	pinctrl-names = "default";
+>> +	pinctrl-0 = <&main_mmc1_pins_default>;
+>> +	ti,driver-strength-ohm = <50>;
+> 
+> NAK.
+> 
+> $ git checkout next-20181207
+> $ git grep ti,driver-strength-ohm Documentation
+> $
+> 
+> Nada.. And.. I think "new phy binding" probably introduces this.
+> [1] https://patchwork.kernel.org/project/linux-mmc/list/?series=53185
+> 
+> If your patches are'nt really ready, please send them as RFC, I am not
+> really in a mood to track the status of every single driver subsystem.
+> 
+> If your binding is not in linux next at the baremin, as far as I am
+> concerned, this is not ready, and should be RFC.
 
-It also warns about DMA on stack when CONFIG_HAVE_ARCH_VMAP_STACK is
-selected. It will help locate them before activating CONFIG_VMAP_STACK
+No, RFC does not say "do not merge" or "this has dependencies". RFC is
+used to invite a stronger review when introducing a new concept. Its
+fair game to apply patches marked RFC if maintainer is okay with the
+content.
 
-Below is the result of test_debug_virtual:
+Dependencies are either noted in cover-letter or below the patch
+tear-line. With what you are asking, looks like patches need to be
+resubmitted once dependencies are cleared, even if there is no change in
+the content itself. This will be additional work.
 
-[    1.438746] WARNING: CPU: 0 PID: 1 at ./arch/powerpc/include/asm/io.h:808 test_debug_virtual_init+0x3c/0xd4
-[    1.448156] CPU: 0 PID: 1 Comm: swapper Not tainted 4.20.0-rc5-00560-g6bfb52e23a00-dirty #532
-[    1.457259] NIP:  c066c550 LR: c0650ccc CTR: c066c514
-[    1.462257] REGS: c900bdb0 TRAP: 0700   Not tainted  (4.20.0-rc5-00560-g6bfb52e23a00-dirty)
-[    1.471184] MSR:  00029032 <EE,ME,IR,DR,RI>  CR: 48000422  XER: 20000000
-[    1.477811]
-[    1.477811] GPR00: c0650ccc c900be60 c60d0000 00000000 006000c0 c9000000 00009032 c7fa0020
-[    1.477811] GPR08: 00002400 00000001 09000000 00000000 c07b5d04 00000000 c00037d8 00000000
-[    1.477811] GPR16: 00000000 00000000 00000000 00000000 c0760000 c0740000 00000092 c0685bb0
-[    1.477811] GPR24: c065042c c068a734 c0685b8c 00000006 00000000 c0760000 c075c3c0 ffffffff
-[    1.512711] NIP [c066c550] test_debug_virtual_init+0x3c/0xd4
-[    1.518315] LR [c0650ccc] do_one_initcall+0x8c/0x1cc
-[    1.523163] Call Trace:
-[    1.525595] [c900be60] [c0567340] 0xc0567340 (unreliable)
-[    1.530954] [c900be90] [c0650ccc] do_one_initcall+0x8c/0x1cc
-[    1.536551] [c900bef0] [c0651000] kernel_init_freeable+0x1f4/0x2cc
-[    1.542658] [c900bf30] [c00037ec] kernel_init+0x14/0x110
-[    1.547913] [c900bf40] [c000e1d0] ret_from_kernel_thread+0x14/0x1c
-[    1.553971] Instruction dump:
-[    1.556909] 3ca50100 bfa10024 54a5000e 3fa0c076 7c0802a6 3d454000 813dc204 554893be
-[    1.564566] 7d294010 7d294910 90010034 39290001 <0f090000> 7c3e0b78 955e0008 3fe0c062
-[    1.572425] ---[ end trace 6f6984225b280ad6 ]---
-[    1.577467] PA: 0x09000000 for VA: 0xc9000000
-[    1.581799] PA: 0x061e8f50 for VA: 0xc61e8f50
+That said, if it makes life convenient for you, you can impose such a
+rule for patches you need to handle. But I think it will take some
+getting used for developers who send patches to you as I don't think
+this is a norm elsewhere.
 
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
----
- v2: Using asm/pgtable.h to avoid build failure on ppc64e.
-     Added a verification that the object is not in stack to catch problems before activing VMAP_STACK.
+Adding Tony and Arnd as well, in case I have missed some recently
+accepted convention.
 
- arch/powerpc/Kconfig          |  1 +
- arch/powerpc/include/asm/io.h | 19 ++++++++++++++++++-
- arch/powerpc/mm/pgtable_32.c  |  2 +-
- 3 files changed, 20 insertions(+), 2 deletions(-)
-
-diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
-index e312e92e3381..94b46624068d 100644
---- a/arch/powerpc/Kconfig
-+++ b/arch/powerpc/Kconfig
-@@ -128,6 +128,7 @@ config PPC
- 	#
- 	# Please keep this list sorted alphabetically.
- 	#
-+	select ARCH_HAS_DEBUG_VIRTUAL
- 	select ARCH_HAS_DEVMEM_IS_ALLOWED
- 	select ARCH_HAS_DMA_SET_COHERENT_MASK
- 	select ARCH_HAS_ELF_RANDOMIZE
-diff --git a/arch/powerpc/include/asm/io.h b/arch/powerpc/include/asm/io.h
-index e746becd9d6f..51e96a4413d2 100644
---- a/arch/powerpc/include/asm/io.h
-+++ b/arch/powerpc/include/asm/io.h
-@@ -29,12 +29,14 @@ extern struct pci_dev *isa_bridge_pcidev;
- 
- #include <linux/device.h>
- #include <linux/compiler.h>
-+#include <linux/sched/task_stack.h>
- #include <asm/page.h>
- #include <asm/byteorder.h>
- #include <asm/synch.h>
- #include <asm/delay.h>
- #include <asm/mmu.h>
- #include <asm/ppc_asm.h>
-+#include <asm/pgtable.h>
- 
- #ifdef CONFIG_PPC64
- #include <asm/paca.h>
-@@ -804,6 +806,11 @@ extern void __iounmap_at(void *ea, unsigned long size);
-  */
- static inline unsigned long virt_to_phys(volatile void * address)
- {
-+	if (IS_ENABLED(CONFIG_DEBUG_VIRTUAL) &&
-+	    !WARN_ON(IS_ENABLED(CONFIG_HAVE_ARCH_VMAP_STACK) && current->pid &&
-+		     object_is_on_stack((const void*)address)))
-+			WARN_ON(!virt_addr_valid(address));
-+
- 	return __pa((unsigned long)address);
- }
- 
-@@ -827,7 +834,17 @@ static inline void * phys_to_virt(unsigned long address)
- /*
-  * Change "struct page" to physical address.
-  */
--#define page_to_phys(page)	((phys_addr_t)page_to_pfn(page) << PAGE_SHIFT)
-+static inline phys_addr_t page_to_phys(struct page *page)
-+{
-+	unsigned long pfn = page_to_pfn(page);
-+
-+	if (IS_ENABLED(CONFIG_DEBUG_VIRTUAL) &&
-+	    !WARN_ON(IS_ENABLED(CONFIG_HAVE_ARCH_VMAP_STACK) && current->pid &&
-+		     object_is_on_stack(__va(PFN_PHYS(pfn)))))
-+		WARN_ON(!pfn_valid(pfn));
-+
-+	return PFN_PHYS(pfn);
-+}
- 
- /*
-  * 32 bits still uses virt_to_bus() for it's implementation of DMA
-diff --git a/arch/powerpc/mm/pgtable_32.c b/arch/powerpc/mm/pgtable_32.c
-index 4fc77a99c9bf..68d204a45cd0 100644
---- a/arch/powerpc/mm/pgtable_32.c
-+++ b/arch/powerpc/mm/pgtable_32.c
-@@ -143,7 +143,7 @@ __ioremap_caller(phys_addr_t addr, unsigned long size, pgprot_t prot, void *call
- 	 * Don't allow anybody to remap normal RAM that we're using.
- 	 * mem_init() sets high_memory so only do the check after that.
- 	 */
--	if (slab_is_available() && (p < virt_to_phys(high_memory)) &&
-+	if (slab_is_available() && virt_addr_valid(p) &&
- 	    page_is_ram(__phys_to_pfn(p))) {
- 		printk("__ioremap(): phys addr 0x%llx is RAM lr %ps\n",
- 		       (unsigned long long)p, __builtin_return_address(0));
--- 
-2.13.3
-
+Thanks,
+Sekhar
