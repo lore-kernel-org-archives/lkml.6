@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8CBEC65BAF
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 02:02:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51486C65BAF
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 02:02:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A01192064D
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 02:02:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A01192064D
+	by mail.kernel.org (Postfix) with ESMTP id 0CAEA20855
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 02:02:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0CAEA20855
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726415AbeLJCCm (ORCPT
+        id S1726441AbeLJCCp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 21:02:42 -0500
+        Sun, 9 Dec 2018 21:02:45 -0500
 Received: from mga06.intel.com ([134.134.136.31]:8030 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726300AbeLJCCl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Dec 2018 21:02:41 -0500
+        id S1726300AbeLJCCn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Dec 2018 21:02:43 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Dec 2018 18:02:40 -0800
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Dec 2018 18:02:43 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,336,1539673200"; 
-   d="scan'208";a="300767129"
+   d="scan'208";a="300767141"
 Received: from allen-box.sh.intel.com ([10.239.161.122])
-  by fmsmga006.fm.intel.com with ESMTP; 09 Dec 2018 18:02:37 -0800
+  by fmsmga006.fm.intel.com with ESMTP; 09 Dec 2018 18:02:40 -0800
 From:   Lu Baolu <baolu.lu@linux.intel.com>
 To:     Joerg Roedel <joro@8bytes.org>,
         David Woodhouse <dwmw2@infradead.org>
@@ -41,31 +41,44 @@ Cc:     ashok.raj@intel.com, sanjay.k.kumar@intel.com,
         iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
         Lu Baolu <baolu.lu@linux.intel.com>,
         Jacob Pan <jacob.jun.pan@linux.intel.com>
-Subject: [PATCH v6 01/12] iommu/vt-d: Enumerate the scalable mode capability
-Date:   Mon, 10 Dec 2018 09:58:55 +0800
-Message-Id: <20181210015906.27929-2-baolu.lu@linux.intel.com>
+Subject: [PATCH v6 02/12] iommu/vt-d: Manage scalalble mode PASID tables
+Date:   Mon, 10 Dec 2018 09:58:56 +0800
+Message-Id: <20181210015906.27929-3-baolu.lu@linux.intel.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181210015906.27929-1-baolu.lu@linux.intel.com>
 References: <20181210015906.27929-1-baolu.lu@linux.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Intel vt-d spec rev3.0 introduces a new translation
-mode called scalable mode, which enables PASID-granular
-translations for first level, second level, nested and
-pass-through modes. At the same time, the previous
-Extended Context (ECS) mode is deprecated (no production
-ever implements ECS).
+In scalable mode, pasid structure is a two level table with
+a pasid directory table and a pasid table. Any pasid entry
+can be identified by a pasid value in below way.
 
-This patch adds enumeration for Scalable Mode and removes
-the deprecated ECS enumeration. It provides a boot time
-option to disable scalable mode even hardware claims to
-support it.
+   1
+   9                       6 5      0
+    .-----------------------.-------.
+    |              PASID    |       |
+    '-----------------------'-------'    .-------------.
+             |                    |      |             |
+             |                    |      |             |
+             |                    |      |             |
+             |     .-----------.  |      .-------------.
+             |     |           |  |----->| PASID Entry |
+             |     |           |  |      '-------------'
+             |     |           |  |Plus  |             |
+             |     .-----------.  |      |             |
+             |---->| DIR Entry |-------->|             |
+             |     '-----------'         '-------------'
+.---------.  |Plus |           |
+| Context |  |     |           |
+|  Entry  |------->|           |
+'---------'        '-----------'
+
+This changes the pasid table APIs to support scalable mode
+PASID directory and PASID table. It also adds a helper to
+get the PASID table entry according to the pasid value.
 
 Cc: Ashok Raj <ashok.raj@intel.com>
 Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>
@@ -74,206 +87,282 @@ Signed-off-by: Sanjay Kumar <sanjay.k.kumar@intel.com>
 Signed-off-by: Liu Yi L <yi.l.liu@intel.com>
 Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
 Reviewed-by: Ashok Raj <ashok.raj@intel.com>
-Reviewed-by: Kevin Tian <kevin.tian@intel.com>
 ---
- .../admin-guide/kernel-parameters.txt         | 12 ++--
- drivers/iommu/intel-iommu.c                   | 64 +++++--------------
- include/linux/intel-iommu.h                   |  1 +
- 3 files changed, 24 insertions(+), 53 deletions(-)
+ drivers/iommu/intel-iommu.c | 23 ++++++----
+ drivers/iommu/intel-pasid.c | 87 ++++++++++++++++++++++++++++++-------
+ drivers/iommu/intel-pasid.h | 12 ++++-
+ drivers/iommu/intel-svm.c   |  6 +--
+ 4 files changed, 97 insertions(+), 31 deletions(-)
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index aefd358a5ca3..70384d8682ea 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -1683,12 +1683,12 @@
- 			By default, super page will be supported if Intel IOMMU
- 			has the capability. With this option, super page will
- 			not be supported.
--		ecs_off [Default Off]
--			By default, extended context tables will be supported if
--			the hardware advertises that it has support both for the
--			extended tables themselves, and also PASID support. With
--			this option set, extended tables will not be used even
--			on hardware which claims to support them.
-+		sm_off [Default Off]
-+			By default, scalable mode will be supported if the
-+			hardware advertises that it has support for the scalable
-+			mode translation. With this option set, scalable mode
-+			will not be used even on hardware which claims to support
-+			it.
- 		tboot_noforce [Default Off]
- 			Do not force the Intel IOMMU enabled under tboot.
- 			By default, tboot will force Intel IOMMU on, which
 diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
-index f3afab82f3ee..c0ffde6cb21a 100644
+index c0ffde6cb21a..73d7c15bf737 100644
 --- a/drivers/iommu/intel-iommu.c
 +++ b/drivers/iommu/intel-iommu.c
-@@ -405,38 +405,16 @@ static int dmar_map_gfx = 1;
- static int dmar_forcedac;
- static int intel_iommu_strict;
- static int intel_iommu_superpage = 1;
--static int intel_iommu_ecs = 1;
--static int intel_iommu_pasid28;
-+static int intel_iommu_sm = 1;
- static int iommu_identity_mapping;
+@@ -425,21 +425,24 @@ static LIST_HEAD(device_domain_list);
  
- #define IDENTMAP_ALL		1
- #define IDENTMAP_GFX		2
- #define IDENTMAP_AZALIA		4
- 
--/* Broadwell and Skylake have broken ECS support — normal so-called "second
-- * level" translation of DMA requests-without-PASID doesn't actually happen
-- * unless you also set the NESTE bit in an extended context-entry. Which of
-- * course means that SVM doesn't work because it's trying to do nested
-- * translation of the physical addresses it finds in the process page tables,
-- * through the IOVA->phys mapping found in the "second level" page tables.
-- *
-- * The VT-d specification was retroactively changed to change the definition
-- * of the capability bits and pretend that Broadwell/Skylake never happened...
-- * but unfortunately the wrong bit was changed. It's ECS which is broken, but
-- * for some reason it was the PASID capability bit which was redefined (from
-- * bit 28 on BDW/SKL to bit 40 in future).
-- *
-- * So our test for ECS needs to eschew those implementations which set the old
-- * PASID capabiity bit 28, since those are the ones on which ECS is broken.
-- * Unless we are working around the 'pasid28' limitations, that is, by putting
-- * the device into passthrough mode for normal DMA and thus masking the bug.
-- */
--#define ecs_enabled(iommu) (intel_iommu_ecs && ecap_ecs(iommu->ecap) && \
--			    (intel_iommu_pasid28 || !ecap_broken_pasid(iommu->ecap)))
--/* PASID support is thus enabled if ECS is enabled and *either* of the old
-- * or new capability bits are set. */
--#define pasid_enabled(iommu) (ecs_enabled(iommu) &&			\
--			      (ecap_pasid(iommu->ecap) || ecap_broken_pasid(iommu->ecap)))
-+#define sm_supported(iommu)	(intel_iommu_sm && ecap_smts((iommu)->ecap))
-+#define pasid_supported(iommu)	(sm_supported(iommu) &&			\
-+				 ecap_pasid((iommu)->ecap))
- 
- int intel_iommu_gfx_mapped;
- EXPORT_SYMBOL_GPL(intel_iommu_gfx_mapped);
-@@ -516,15 +494,9 @@ static int __init intel_iommu_setup(char *str)
- 		} else if (!strncmp(str, "sp_off", 6)) {
- 			pr_info("Disable supported super page\n");
- 			intel_iommu_superpage = 0;
--		} else if (!strncmp(str, "ecs_off", 7)) {
--			printk(KERN_INFO
--				"Intel-IOMMU: disable extended context table support\n");
--			intel_iommu_ecs = 0;
--		} else if (!strncmp(str, "pasid28", 7)) {
--			printk(KERN_INFO
--				"Intel-IOMMU: enable pre-production PASID support\n");
--			intel_iommu_pasid28 = 1;
--			iommu_identity_mapping |= IDENTMAP_GFX;
-+		} else if (!strncmp(str, "sm_off", 6)) {
-+			pr_info("Intel-IOMMU: disable scalable mode support\n");
-+			intel_iommu_sm = 0;
- 		} else if (!strncmp(str, "tboot_noforce", 13)) {
- 			printk(KERN_INFO
- 				"Intel-IOMMU: not forcing on after tboot. This could expose security risk for tboot\n");
-@@ -771,7 +743,7 @@ struct context_entry *iommu_context_addr(struct intel_iommu *iommu, u8 bus,
- 	u64 *entry;
- 
- 	entry = &root->lo;
--	if (ecs_enabled(iommu)) {
-+	if (sm_supported(iommu)) {
- 		if (devfn >= 0x80) {
- 			devfn -= 0x80;
- 			entry = &root->hi;
-@@ -913,7 +885,7 @@ static void free_context_table(struct intel_iommu *iommu)
- 		if (context)
- 			free_pgtable_page(context);
- 
--		if (!ecs_enabled(iommu))
-+		if (!sm_supported(iommu))
- 			continue;
- 
- 		context = iommu_context_addr(iommu, i, 0x80, 0);
-@@ -1265,8 +1237,6 @@ static void iommu_set_root_entry(struct intel_iommu *iommu)
- 	unsigned long flag;
- 
- 	addr = virt_to_phys(iommu->root_entry);
--	if (ecs_enabled(iommu))
--		addr |= DMA_RTADDR_RTT;
- 
- 	raw_spin_lock_irqsave(&iommu->register_lock, flag);
- 	dmar_writeq(iommu->reg + DMAR_RTADDR_REG, addr);
-@@ -1755,7 +1725,7 @@ static void free_dmar_iommu(struct intel_iommu *iommu)
- 	free_context_table(iommu);
- 
- #ifdef CONFIG_INTEL_IOMMU_SVM
--	if (pasid_enabled(iommu)) {
-+	if (pasid_supported(iommu)) {
- 		if (ecap_prs(iommu->ecap))
- 			intel_svm_finish_prq(iommu);
- 		intel_svm_exit(iommu);
-@@ -2464,8 +2434,8 @@ static struct dmar_domain *dmar_insert_one_dev_info(struct intel_iommu *iommu,
- 		    dmar_find_matched_atsr_unit(pdev))
- 			info->ats_supported = 1;
- 
--		if (ecs_enabled(iommu)) {
--			if (pasid_enabled(iommu)) {
-+		if (sm_supported(iommu)) {
-+			if (pasid_supported(iommu)) {
- 				int features = pci_pasid_features(pdev);
- 				if (features >= 0)
- 					info->pasid_supported = features | 1;
-@@ -3277,7 +3247,7 @@ static int __init init_dmars(void)
- 		 * We need to ensure the system pasid table is no bigger
- 		 * than the smallest supported.
- 		 */
--		if (pasid_enabled(iommu)) {
-+		if (pasid_supported(iommu)) {
- 			u32 temp = 2 << ecap_pss(iommu->ecap);
- 
- 			intel_pasid_max_id = min_t(u32, temp,
-@@ -3338,7 +3308,7 @@ static int __init init_dmars(void)
- 		if (!ecap_pass_through(iommu->ecap))
- 			hw_pass_through = 0;
- #ifdef CONFIG_INTEL_IOMMU_SVM
--		if (pasid_enabled(iommu))
-+		if (pasid_supported(iommu))
- 			intel_svm_init(iommu);
- #endif
- 	}
-@@ -3442,7 +3412,7 @@ static int __init init_dmars(void)
- 		iommu_flush_write_buffer(iommu);
- 
- #ifdef CONFIG_INTEL_IOMMU_SVM
--		if (pasid_enabled(iommu) && ecap_prs(iommu->ecap)) {
-+		if (pasid_supported(iommu) && ecap_prs(iommu->ecap)) {
- 			ret = intel_svm_enable_prq(iommu);
- 			if (ret)
- 				goto free_iommu;
-@@ -4331,7 +4301,7 @@ static int intel_iommu_add(struct dmar_drhd_unit *dmaru)
- 		goto out;
- 
- #ifdef CONFIG_INTEL_IOMMU_SVM
--	if (pasid_enabled(iommu))
-+	if (pasid_supported(iommu))
- 		intel_svm_init(iommu);
- #endif
- 
-@@ -4348,7 +4318,7 @@ static int intel_iommu_add(struct dmar_drhd_unit *dmaru)
- 	iommu_flush_write_buffer(iommu);
- 
- #ifdef CONFIG_INTEL_IOMMU_SVM
--	if (pasid_enabled(iommu) && ecap_prs(iommu->ecap)) {
-+	if (pasid_supported(iommu) && ecap_prs(iommu->ecap)) {
- 		ret = intel_svm_enable_prq(iommu);
- 		if (ret)
- 			goto disable_iommu;
-diff --git a/include/linux/intel-iommu.h b/include/linux/intel-iommu.h
-index a58bc05d6798..8c9b6063d275 100644
---- a/include/linux/intel-iommu.h
-+++ b/include/linux/intel-iommu.h
-@@ -177,6 +177,7 @@
-  * Extended Capability Register
+ /*
+  * Iterate over elements in device_domain_list and call the specified
+- * callback @fn against each element. This helper should only be used
+- * in the context where the device_domain_lock has already been holden.
++ * callback @fn against each element.
   */
+ int for_each_device_domain(int (*fn)(struct device_domain_info *info,
+ 				     void *data), void *data)
+ {
+ 	int ret = 0;
++	unsigned long flags;
+ 	struct device_domain_info *info;
  
-+#define ecap_smts(e)		(((e) >> 43) & 0x1)
- #define ecap_dit(e)		((e >> 41) & 0x1)
- #define ecap_pasid(e)		((e >> 40) & 0x1)
- #define ecap_pss(e)		((e >> 35) & 0x1f)
+-	assert_spin_locked(&device_domain_lock);
++	spin_lock_irqsave(&device_domain_lock, flags);
+ 	list_for_each_entry(info, &device_domain_list, global) {
+ 		ret = fn(info, data);
+-		if (ret)
++		if (ret) {
++			spin_unlock_irqrestore(&device_domain_lock, flags);
+ 			return ret;
++		}
+ 	}
++	spin_unlock_irqrestore(&device_domain_lock, flags);
+ 
+ 	return 0;
+ }
+@@ -2481,16 +2484,18 @@ static struct dmar_domain *dmar_insert_one_dev_info(struct intel_iommu *iommu,
+ 	list_add(&info->global, &device_domain_list);
+ 	if (dev)
+ 		dev->archdata.iommu = info;
++	spin_unlock_irqrestore(&device_domain_lock, flags);
+ 
+-	if (dev && dev_is_pci(dev) && info->pasid_supported) {
++	/* PASID table is mandatory for a PCI device in scalable mode. */
++	if (dev && dev_is_pci(dev) && sm_supported(iommu)) {
+ 		ret = intel_pasid_alloc_table(dev);
+ 		if (ret) {
+-			pr_warn("No pasid table for %s, pasid disabled\n",
+-				dev_name(dev));
+-			info->pasid_supported = 0;
++			pr_err("PASID table allocation for %s failed\n",
++			       dev_name(dev));
++			dmar_remove_one_dev_info(domain, dev);
++			return NULL;
+ 		}
+ 	}
+-	spin_unlock_irqrestore(&device_domain_lock, flags);
+ 
+ 	if (dev && domain_context_mapping(domain, dev)) {
+ 		pr_err("Domain context map for %s failed\n", dev_name(dev));
+diff --git a/drivers/iommu/intel-pasid.c b/drivers/iommu/intel-pasid.c
+index fe95c9bd4d33..fd3ccc0753b0 100644
+--- a/drivers/iommu/intel-pasid.c
++++ b/drivers/iommu/intel-pasid.c
+@@ -123,12 +123,13 @@ int intel_pasid_alloc_table(struct device *dev)
+ 	struct pasid_table *pasid_table;
+ 	struct pasid_table_opaque data;
+ 	struct page *pages;
+-	size_t size, count;
++	int max_pasid = 0;
+ 	int ret, order;
++	int size;
+ 
++	might_sleep();
+ 	info = dev->archdata.iommu;
+-	if (WARN_ON(!info || !dev_is_pci(dev) ||
+-		    !info->pasid_supported || info->pasid_table))
++	if (WARN_ON(!info || !dev_is_pci(dev) || info->pasid_table))
+ 		return -EINVAL;
+ 
+ 	/* DMA alias device already has a pasid table, use it: */
+@@ -138,23 +139,25 @@ int intel_pasid_alloc_table(struct device *dev)
+ 	if (ret)
+ 		goto attach_out;
+ 
+-	pasid_table = kzalloc(sizeof(*pasid_table), GFP_ATOMIC);
++	pasid_table = kzalloc(sizeof(*pasid_table), GFP_KERNEL);
+ 	if (!pasid_table)
+ 		return -ENOMEM;
+ 	INIT_LIST_HEAD(&pasid_table->dev);
+ 
+-	size = sizeof(struct pasid_entry);
+-	count = min_t(int, pci_max_pasids(to_pci_dev(dev)), intel_pasid_max_id);
+-	order = get_order(size * count);
++	if (info->pasid_supported)
++		max_pasid = min_t(int, pci_max_pasids(to_pci_dev(dev)),
++				  intel_pasid_max_id);
++
++	size = max_pasid >> (PASID_PDE_SHIFT - 3);
++	order = size ? get_order(size) : 0;
+ 	pages = alloc_pages_node(info->iommu->node,
+-				 GFP_ATOMIC | __GFP_ZERO,
+-				 order);
++				 GFP_KERNEL | __GFP_ZERO, order);
+ 	if (!pages)
+ 		return -ENOMEM;
+ 
+ 	pasid_table->table = page_address(pages);
+ 	pasid_table->order = order;
+-	pasid_table->max_pasid = count;
++	pasid_table->max_pasid = 1 << (order + PAGE_SHIFT + 3);
+ 
+ attach_out:
+ 	device_attach_pasid_table(info, pasid_table);
+@@ -162,14 +165,33 @@ int intel_pasid_alloc_table(struct device *dev)
+ 	return 0;
+ }
+ 
++/* Get PRESENT bit of a PASID directory entry. */
++static inline bool
++pasid_pde_is_present(struct pasid_dir_entry *pde)
++{
++	return READ_ONCE(pde->val) & PASID_PTE_PRESENT;
++}
++
++/* Get PASID table from a PASID directory entry. */
++static inline struct pasid_entry *
++get_pasid_table_from_pde(struct pasid_dir_entry *pde)
++{
++	if (!pasid_pde_is_present(pde))
++		return NULL;
++
++	return phys_to_virt(READ_ONCE(pde->val) & PDE_PFN_MASK);
++}
++
+ void intel_pasid_free_table(struct device *dev)
+ {
+ 	struct device_domain_info *info;
+ 	struct pasid_table *pasid_table;
++	struct pasid_dir_entry *dir;
++	struct pasid_entry *table;
++	int i, max_pde;
+ 
+ 	info = dev->archdata.iommu;
+-	if (!info || !dev_is_pci(dev) ||
+-	    !info->pasid_supported || !info->pasid_table)
++	if (!info || !dev_is_pci(dev) || !info->pasid_table)
+ 		return;
+ 
+ 	pasid_table = info->pasid_table;
+@@ -178,6 +200,14 @@ void intel_pasid_free_table(struct device *dev)
+ 	if (!list_empty(&pasid_table->dev))
+ 		return;
+ 
++	/* Free scalable mode PASID directory tables: */
++	dir = pasid_table->table;
++	max_pde = pasid_table->max_pasid >> PASID_PDE_SHIFT;
++	for (i = 0; i < max_pde; i++) {
++		table = get_pasid_table_from_pde(&dir[i]);
++		free_pgtable_page(table);
++	}
++
+ 	free_pages((unsigned long)pasid_table->table, pasid_table->order);
+ 	kfree(pasid_table);
+ }
+@@ -206,17 +236,37 @@ int intel_pasid_get_dev_max_id(struct device *dev)
+ 
+ struct pasid_entry *intel_pasid_get_entry(struct device *dev, int pasid)
+ {
++	struct device_domain_info *info;
+ 	struct pasid_table *pasid_table;
++	struct pasid_dir_entry *dir;
+ 	struct pasid_entry *entries;
++	int dir_index, index;
+ 
+ 	pasid_table = intel_pasid_get_table(dev);
+ 	if (WARN_ON(!pasid_table || pasid < 0 ||
+ 		    pasid >= intel_pasid_get_dev_max_id(dev)))
+ 		return NULL;
+ 
+-	entries = pasid_table->table;
++	dir = pasid_table->table;
++	info = dev->archdata.iommu;
++	dir_index = pasid >> PASID_PDE_SHIFT;
++	index = pasid & PASID_PTE_MASK;
++
++	spin_lock(&pasid_lock);
++	entries = get_pasid_table_from_pde(&dir[dir_index]);
++	if (!entries) {
++		entries = alloc_pgtable_page(info->iommu->node);
++		if (!entries) {
++			spin_unlock(&pasid_lock);
++			return NULL;
++		}
++
++		WRITE_ONCE(dir[dir_index].val,
++			   (u64)virt_to_phys(entries) | PASID_PTE_PRESENT);
++	}
++	spin_unlock(&pasid_lock);
+ 
+-	return &entries[pasid];
++	return &entries[index];
+ }
+ 
+ /*
+@@ -224,7 +274,14 @@ struct pasid_entry *intel_pasid_get_entry(struct device *dev, int pasid)
+  */
+ static inline void pasid_clear_entry(struct pasid_entry *pe)
+ {
+-	WRITE_ONCE(pe->val, 0);
++	WRITE_ONCE(pe->val[0], 0);
++	WRITE_ONCE(pe->val[1], 0);
++	WRITE_ONCE(pe->val[2], 0);
++	WRITE_ONCE(pe->val[3], 0);
++	WRITE_ONCE(pe->val[4], 0);
++	WRITE_ONCE(pe->val[5], 0);
++	WRITE_ONCE(pe->val[6], 0);
++	WRITE_ONCE(pe->val[7], 0);
+ }
+ 
+ void intel_pasid_clear_entry(struct device *dev, int pasid)
+diff --git a/drivers/iommu/intel-pasid.h b/drivers/iommu/intel-pasid.h
+index 1fb5e12b029a..12f480c2bb8b 100644
+--- a/drivers/iommu/intel-pasid.h
++++ b/drivers/iommu/intel-pasid.h
+@@ -11,12 +11,20 @@
+ #define __INTEL_PASID_H
+ 
+ #define PASID_MIN			0x1
+-#define PASID_MAX			0x20000
++#define PASID_MAX			0x100000
++#define PASID_PTE_MASK			0x3F
++#define PASID_PTE_PRESENT		1
++#define PDE_PFN_MASK			PAGE_MASK
++#define PASID_PDE_SHIFT			6
+ 
+-struct pasid_entry {
++struct pasid_dir_entry {
+ 	u64 val;
+ };
+ 
++struct pasid_entry {
++	u64 val[8];
++};
++
+ /* The representative of a PASID table */
+ struct pasid_table {
+ 	void			*table;		/* pasid table pointer */
+diff --git a/drivers/iommu/intel-svm.c b/drivers/iommu/intel-svm.c
+index 887150907526..9014b07ab975 100644
+--- a/drivers/iommu/intel-svm.c
++++ b/drivers/iommu/intel-svm.c
+@@ -65,8 +65,6 @@ int intel_svm_init(struct intel_iommu *iommu)
+ 
+ 	order = get_order(sizeof(struct pasid_entry) * iommu->pasid_max);
+ 	if (ecap_dis(iommu->ecap)) {
+-		/* Just making it explicit... */
+-		BUILD_BUG_ON(sizeof(struct pasid_entry) != sizeof(struct pasid_state_entry));
+ 		pages = alloc_pages(GFP_KERNEL | __GFP_ZERO, order);
+ 		if (pages)
+ 			iommu->pasid_state_table = page_address(pages);
+@@ -405,9 +403,7 @@ int intel_svm_bind_mm(struct device *dev, int *pasid, int flags, struct svm_dev_
+ 			pasid_entry_val |= PASID_ENTRY_FLPM_5LP;
+ 
+ 		entry = intel_pasid_get_entry(dev, svm->pasid);
+-		entry->val = pasid_entry_val;
+-
+-		wmb();
++		WRITE_ONCE(entry->val[0], pasid_entry_val);
+ 
+ 		/*
+ 		 * Flush PASID cache when a PASID table entry becomes
 -- 
 2.17.1
 
