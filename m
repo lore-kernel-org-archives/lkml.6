@@ -2,400 +2,261 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FC8BC5CFFE
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 22:26:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94227C04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 22:26:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CFA452082F
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 22:26:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RqMq6LjL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CFA452082F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 50FB42082F
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 22:26:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 50FB42082F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729741AbeLJW0J (ORCPT
+        id S1729777AbeLJW0o (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 17:26:09 -0500
-Received: from mail-yb1-f196.google.com ([209.85.219.196]:35048 "EHLO
-        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729482AbeLJW0J (ORCPT
+        Mon, 10 Dec 2018 17:26:44 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:55130 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728887AbeLJW0n (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 17:26:09 -0500
-Received: by mail-yb1-f196.google.com with SMTP id z2-v6so5913468ybj.2
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Dec 2018 14:26:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=yFva+Y6/iD1Eu3V8Pr9w3tezg+fIdRQ9gKBjZMGDDXA=;
-        b=RqMq6LjLGNKmYZqU5ao+roWSlllPRfjSZc9yAuOwWeBHdGI1L6KOISL1qEHAK1ufLc
-         LKFlYev9nj4g4NZ5CIo1aNMov+Q1702AgbsjmeBGmEwc0R9Imi2DhMCeQurPSCuzoXQt
-         M33gECJs3WDTTBD6lcNvI0i6+6f2ut0uDSuUENR8nAJhaUhlKAE8JqnJrzWdN7u5Ak7o
-         nQoD14LcNV5b5OIRwPMlKm10PRBv5QBnEsAEdCfgKhk+X7RsuIa3SYEezVWefHjF38Fg
-         7DIv2ah8ccG2dSFvTnaVtA8atjIOnRZLvnzz7upjJIm4f3DhOmNRiGoYUpW5ayAB4bPn
-         wgAw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=yFva+Y6/iD1Eu3V8Pr9w3tezg+fIdRQ9gKBjZMGDDXA=;
-        b=ihu5RnkbaIAQ0v8/VOmJ92i2Krq2C2JgbERw0RxMFmGDQoqUw40I3ixCki5tpxjbTU
-         ZN8n4m7Bm/jVCKFr8KiqB64s/wiwp3PO0c0iQrZCP3fhvu0q56k+luUCXTxNkMqSzeLa
-         ZORZHYmxOudLwcL9kcRx0TpXcTQt+hVcRT4uDvytxpSwruKqg3CBTsEV/WMZi3+0FGuA
-         f7uYcVn4udQ4aGVSLYRGukyZJlytRKeR+LbDoBVvgI7WDWPsnq0MLj5ANa/DhxOyUoo/
-         4ndo9OfMXoLIyjiBU+xCVIFlF75m3ZW00nQeS+gDG4karD+bpQl8cNnftDE5rKpUUec8
-         XZAg==
-X-Gm-Message-State: AA+aEWaJMTQUtFxx0hhlzau/rz6qLCGkafTV2Bzx8h5ptF2Z8+eQwfIU
-        OKmwKMRth7ZScKKBGsXE5Jp6qVY2MY5i0eHykcbiyQ==
-X-Google-Smtp-Source: AFSGD/VvmHADx5LgxsP1yn2yeUIFtxrEuxRJLe2ORX6UYO7RW0NOHs9cwrxEMEGws6uHzOw6YhoWoHu2Ilkbv2DMIow=
-X-Received: by 2002:a25:9c09:: with SMTP id c9mr13899668ybo.247.1544480767457;
- Mon, 10 Dec 2018 14:26:07 -0800 (PST)
-MIME-Version: 1.0
-References: <20181127121849.23975-1-enric.balletbo@collabora.com>
- <20181127121849.23975-6-enric.balletbo@collabora.com> <CABXOdTfxHU0ad9F0ieCLbMpxVDgdiANmu3ai35WFWUj85gvbWA@mail.gmail.com>
- <87b2e544-756d-87bb-7102-267d9babc636@collabora.com> <CABXOdTcb+D7_o0CLvuMwu1jmpVeWBS-D6Kk8R4ry_Ti5KZdycQ@mail.gmail.com>
- <CAFqH_51gYwAaw_e+ggh4+M2HU7_A73cYTAUuMnvn6Ab7K35H3g@mail.gmail.com>
- <CABXOdTcpiVRxxr1D-vnubk-ALNrvoU0oVM7Cyr58soz_DOZPhQ@mail.gmail.com> <CAFqH_53EAKt+XDqToue_UJv_nSfk=i8pTZuKN5UAyrx2M_nVUA@mail.gmail.com>
-In-Reply-To: <CAFqH_53EAKt+XDqToue_UJv_nSfk=i8pTZuKN5UAyrx2M_nVUA@mail.gmail.com>
-From:   Guenter Roeck <groeck@google.com>
-Date:   Mon, 10 Dec 2018 14:25:56 -0800
-Message-ID: <CABXOdTdMx_cm6G=Pp_uRVYwU31uKQjn40iHgPk3JDy3AvY_g0w@mail.gmail.com>
-Subject: Re: [PATCH v3 5/8] mfd / platform: cros_ec: move device sysfs
- attributes to its own driver.
-To:     Enric Balletbo Serra <eballetbo@gmail.com>
-Cc:     Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Gwendal Grignou <gwendal@chromium.org>,
-        Nicolas Boichat <drinkcat@chromium.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Guenter Roeck <groeck@chromium.org>, kernel@collabora.com,
-        Benson Leung <bleung@chromium.org>,
-        Olof Johansson <olof@lixom.net>
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 10 Dec 2018 17:26:43 -0500
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBAMNk7V022586
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Dec 2018 17:26:42 -0500
+Received: from e36.co.us.ibm.com (e36.co.us.ibm.com [32.97.110.154])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2p9ypn2yf2-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Dec 2018 17:26:42 -0500
+Received: from localhost
+        by e36.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <eajames@linux.ibm.com>;
+        Mon, 10 Dec 2018 22:26:41 -0000
+Received: from b03cxnp08027.gho.boulder.ibm.com (9.17.130.19)
+        by e36.co.us.ibm.com (192.168.1.136) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 10 Dec 2018 22:26:36 -0000
+Received: from b03ledav003.gho.boulder.ibm.com (b03ledav003.gho.boulder.ibm.com [9.17.130.234])
+        by b03cxnp08027.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBAMQZKl28311634
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 10 Dec 2018 22:26:35 GMT
+Received: from b03ledav003.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id BDCB06A04F;
+        Mon, 10 Dec 2018 22:26:35 +0000 (GMT)
+Received: from b03ledav003.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 6A5586A054;
+        Mon, 10 Dec 2018 22:26:34 +0000 (GMT)
+Received: from oc6728276242.ibm.com (unknown [9.85.155.148])
+        by b03ledav003.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Mon, 10 Dec 2018 22:26:34 +0000 (GMT)
+From:   Eddie James <eajames@linux.ibm.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     mark.rutland@arm.com, devicetree@vger.kernel.org,
+        linux-aspeed@lists.ozlabs.org, robh+dt@kernel.org,
+        mchehab@kernel.org, linux-media@vger.kernel.org,
+        hverkuil@xs4all.nl, Eddie James <eajames@linux.vnet.ibm.com>
+Subject: [PATCH v7 0/2] media: platform: Add Aspeed Video Engine driver
+Date:   Mon, 10 Dec 2018 16:26:29 -0600
+X-Mailer: git-send-email 1.8.3.1
+X-TM-AS-GCONF: 00
+x-cbid: 18121022-0020-0000-0000-00000E97C30C
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010210; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000270; SDB=6.01129916; UDB=6.00587095; IPR=6.00910050;
+ MB=3.00024647; MTD=3.00000008; XFM=3.00000015; UTC=2018-12-10 22:26:39
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18121022-0021-0000-0000-000064019EBD
+Message-Id: <1544480791-92746-1-git-send-email-eajames@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-10_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1812100200
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 10, 2018 at 2:11 PM Enric Balletbo Serra
-<eballetbo@gmail.com> wrote:
->
-> Missatge de Guenter Roeck <groeck@google.com> del dia dl., 10 de des.
-> 2018 a les 22:50:
-> >
-> > On Mon, Dec 10, 2018 at 1:27 PM Enric Balletbo Serra
-> > <eballetbo@gmail.com> wrote:
-> > >
-> > > Missatge de Guenter Roeck <groeck@google.com> del dia dl., 10 de des.
-> > > 2018 a les 19:34:
-> > > >
-> > > > On Mon, Dec 10, 2018 at 10:22 AM Enric Balletbo i Serra
-> > > > <enric.balletbo@collabora.com> wrote:
-> > > > >
-> > > > > Hi Guenter,
-> > > > >
-> > > > > On 10/12/18 19:13, Guenter Roeck wrote:
-> > > > > > On Tue, Nov 27, 2018 at 4:19 AM Enric Balletbo i Serra
-> > > > > > <enric.balletbo@collabora.com> wrote:
-> > > > > >>
-> > > > > >> The entire way how cros debugfs attibutes are created is broken.
-> > > > > >> cros_ec_sysfs should be its own driver and its attributes should be
-> > > > > >> associated with the sysfs driver not the mfd driver.
-> > > > > >>
-> > > > > >> The patch also adds the sysfs documentation.
-> > > > > >>
-> > > > > >> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-> > > > > >> ---
-> > > > > >>
-> > > > > >> Changes in v3:
-> > > > > >> - Do not print ec_platform name as is with dev_err is enough.
-> > > > > >>
-> > > > > >> Changes in v2:
-> > > > > >> - Create the attributes directly instead of use the attach/detach callbacks.
-> > > > > >>
-> > > > > >>  .../ABI/testing/sysfs-class-chromeos          | 32 +++++++++++++++++
-> > > > > >>  drivers/mfd/Kconfig                           |  1 -
-> > > > > >>  drivers/mfd/cros_ec_dev.c                     |  7 +---
-> > > > > >>  drivers/platform/chrome/Kconfig               | 14 ++++++--
-> > > > > >>  drivers/platform/chrome/Makefile              |  3 +-
-> > > > > >>  drivers/platform/chrome/cros_ec_sysfs.c       | 36 ++++++++++++++++++-
-> > > > > >>  include/linux/mfd/cros_ec.h                   |  3 --
-> > > > > >>  7 files changed, 80 insertions(+), 16 deletions(-)
-> > > > > >>  create mode 100644 Documentation/ABI/testing/sysfs-class-chromeos
-> > > > > >>
-> > > > > >> diff --git a/Documentation/ABI/testing/sysfs-class-chromeos b/Documentation/ABI/testing/sysfs-class-chromeos
-> > > > > >> new file mode 100644
-> > > > > >> index 000000000000..a5399c4ca82d
-> > > > > >> --- /dev/null
-> > > > > >> +++ b/Documentation/ABI/testing/sysfs-class-chromeos
-> > > > > >> @@ -0,0 +1,32 @@
-> > > > > >> +What:          /sys/class/chromeos/<cros-ec>/flashinfo
-> > > > > >
-> > > > > > Why "<cros-ec>" and not "cros_ec" ?
-> > > > > >
-> > > > >
-> > > > > Maybe will be more clear if I use <cros-ec-name>?
-> > > > >
-> > > > > Actually <cros-ec-name> can be cros_ec or cros_pd. I put between <> to indicate
-> > > > > that is not the literal name.
-> > > > >
-> > > > Should that be mentioned somewhere ? Readers of this document won't
-> > > > know what it stands for.
-> > > >
-> > >
-> > > I assumed that <something> is the standard de facto, although I don't
-> > > see that documented anywhere. If you do a grep it is extensively used.
-> > > I.e:
-> > >
-> > > stable/sysfs-class-infiniband:199:What:
-> > > /sys/class/infiniband/<device-name>/ports/<port-num>/hw_counters/lifespan
-> > > testing/sysfs-class-power:3:What:
-> > > /sys/class/power_supply/<supply_name>/manufacturer
-> > > ... and many others
-> > >
-> > That makes sense if the name is determined by the driver, and there
-> > are many drivers and no fixed name(s). Here we have exactly two
-> > possible names.
-> >
->
-> Although are not upstream yet, there aren't more possible names? If I
-> remember correctly there is also cros_fp (for a fingerprint) and
-> cros_tp (for a touchpad)? I am not sure which devices use those.
->
-Good point.
+From: Eddie James <eajames@linux.vnet.ibm.com>
 
-> > > Maybe add a new entry at the beginning?
-> > >
-> > > What:          /sys/class/chromeos/<cros-ec-name>
-> > > ...
-> > > Description:
-> > >               The cros-ec device name, i.e. cros_ec or cros_pd.
-> > >
-> > How about {cros_ec,cros_pd} instead of <cros-ec> ?
-> > I see that used a few times where the names are well defined.
-> >
->
-> Sounds good to me if the list is fixed, if needs to increase I don't
-> think it will be really friendly. Or we can do this way and change if
-> the list grows.
->
-Also good point. Ok, let's just use <cros-ec-name> (or maybe
-<ec-device-name> ?).
+The Video Engine (VE) embedded in the Aspeed AST2400 and AST2500 SOCs
+can capture and compress video data from digital or analog sources. With
+the Aspeed chip acting as a service processor, the Video Engine can
+capture the host processor graphics output.
 
-Thanks,
-Guenter
+This series adds a V4L2 driver for the VE, providing the usual V4L2 streaming
+interface by way of videobuf2. Each frame, the driver triggers the hardware to
+capture the host graphics output and compress it to JPEG format.
 
-> Cheers,
->  Enric
->
-> > Thanks,
-> > Guenter
-> >
-> > > > Thanks,
-> > > > Guenter
-> > > >
-> > > > > >> +Date:          August 2015
-> > > > > >> +KernelVersion: 4.2
-> > > > > >> +Description:
-> > > > > >> +               Show the EC flash information.
-> > > > > >> +
-> > > > > >> +What:          /sys/class/chromeos/<cros-ec>/kb_wake_angle
-> > > > > >> +Date:          March 2018
-> > > > > >> +KernelVersion: 4.17
-> > > > > >> +Description:
-> > > > > >> +               Control the keyboard wake lid angle. Values are between
-> > > > > >> +               0 and 360. This file will also show the keyboard wake lid
-> > > > > >> +               angle by querying the hardware.
-> > > > > >> +
-> > > > > >> +What:          /sys/class/chromeos/<cros-ec>/reboot
-> > > > > >> +Date:          August 2015
-> > > > > >> +KernelVersion: 4.2
-> > > > > >> +Description:
-> > > > > >> +               Tell the EC to reboot in various ways. Options are:
-> > > > > >> +               "cancel": Cancel a pending reboot.
-> > > > > >> +               "ro": Jump to RO without rebooting.
-> > > > > >> +               "rw": Jump to RW without rebooting.
-> > > > > >> +               "cold": Cold reboot.
-> > > > > >> +               "disable-jump": Disable jump until next reboot.
-> > > > > >> +               "hibernate": Hibernate the EC.
-> > > > > >> +               "at-shutdown": Reboot after an AP shutdown.
-> > > > > >> +
-> > > > > >> +What:          /sys/class/chromeos/<cros-ec>/version
-> > > > > >> +Date:          August 2015
-> > > > > >> +KernelVersion: 4.2
-> > > > > >> +Description:
-> > > > > >> +               Show the information about the EC software and hardware.
-> > > > > >> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
-> > > > > >> index 8c5dfdce4326..089ffb408918 100644
-> > > > > >> --- a/drivers/mfd/Kconfig
-> > > > > >> +++ b/drivers/mfd/Kconfig
-> > > > > >> @@ -214,7 +214,6 @@ config MFD_CROS_EC
-> > > > > >>  config MFD_CROS_EC_CHARDEV
-> > > > > >>          tristate "Chrome OS Embedded Controller userspace device interface"
-> > > > > >>          depends on MFD_CROS_EC
-> > > > > >> -        select CROS_EC_CTL
-> > > > > >>          ---help---
-> > > > > >>            This driver adds support to talk with the ChromeOS EC from userspace.
-> > > > > >>
-> > > > > >> diff --git a/drivers/mfd/cros_ec_dev.c b/drivers/mfd/cros_ec_dev.c
-> > > > > >> index 50ba8e0fb4ec..d9b16ce79319 100644
-> > > > > >> --- a/drivers/mfd/cros_ec_dev.c
-> > > > > >> +++ b/drivers/mfd/cros_ec_dev.c
-> > > > > >> @@ -34,15 +34,9 @@
-> > > > > >>  #define CROS_MAX_DEV 128
-> > > > > >>  static int ec_major;
-> > > > > >>
-> > > > > >> -static const struct attribute_group *cros_ec_groups[] = {
-> > > > > >> -       &cros_ec_attr_group,
-> > > > > >> -       NULL,
-> > > > > >> -};
-> > > > > >> -
-> > > > > >>  static struct class cros_class = {
-> > > > > >>         .owner          = THIS_MODULE,
-> > > > > >>         .name           = "chromeos",
-> > > > > >> -       .dev_groups     = cros_ec_groups,
-> > > > > >>  };
-> > > > > >>
-> > > > > >>  /* Basic communication */
-> > > > > >> @@ -391,6 +385,7 @@ static const struct mfd_cell cros_usbpd_charger_cells[] = {
-> > > > > >>  static const struct mfd_cell cros_ec_platform_cells[] = {
-> > > > > >>         { .name = "cros-ec-debugfs" },
-> > > > > >>         { .name = "cros-ec-lightbar" },
-> > > > > >> +       { .name = "cros-ec-sysfs" },
-> > > > > >>         { .name = "cros-ec-vbc" },
-> > > > > >>  };
-> > > > > >>
-> > > > > >> diff --git a/drivers/platform/chrome/Kconfig b/drivers/platform/chrome/Kconfig
-> > > > > >> index 4e4232b47764..b709cc5173a2 100644
-> > > > > >> --- a/drivers/platform/chrome/Kconfig
-> > > > > >> +++ b/drivers/platform/chrome/Kconfig
-> > > > > >> @@ -49,9 +49,6 @@ config CHROMEOS_TBMC
-> > > > > >>           To compile this driver as a module, choose M here: the
-> > > > > >>           module will be called chromeos_tbmc.
-> > > > > >>
-> > > > > >> -config CROS_EC_CTL
-> > > > > >> -        tristate
-> > > > > >> -
-> > > > > >>  config CROS_EC_I2C
-> > > > > >>         tristate "ChromeOS Embedded Controller (I2C)"
-> > > > > >>         depends on MFD_CROS_EC && I2C
-> > > > > >> @@ -142,4 +139,15 @@ config CROS_EC_DEBUGFS
-> > > > > >>           To compile this driver as a module, choose M here: the
-> > > > > >>           module will be called cros_ec_debugfs.
-> > > > > >>
-> > > > > >> +config CROS_EC_SYSFS
-> > > > > >> +       tristate "ChromeOS EC control and information through sysfs"
-> > > > > >> +       depends on MFD_CROS_EC_CHARDEV && SYSFS
-> > > > > >> +       default y
-> > > > > >
-> > > > > > In practice this is limited to MFD_CROS_EC_CHARDEV, meaning it will be
-> > > > > > set to m if MFD_CROS_EC_CHARDEV=m.
-> > > > > > Not sure what is better here, but for consistency I would prefer
-> > > > > > "default MFD_CROS_EC_CHARDEV" (or default y
-> > > > > > in the entire series).
-> > > > > >
-> > > > >
-> > > > > Right, makes sense that if the MFD_CROS_EC_CHARDEV is selected set also those by
-> > > > > default. Will prepare a new version with that small change.
-> > > > >
-> > > > > >> +       help
-> > > > > >> +         This option exposes some sysfs attributes to control and get
-> > > > > >> +         information from ChromeOS EC.
-> > > > > >> +
-> > > > > >> +         To compile this driver as a module, choose M here: the
-> > > > > >> +         module will be called cros_ec_sysfs.
-> > > > > >> +
-> > > > > >>  endif # CHROMEOS_PLATFORMS
-> > > > > >> diff --git a/drivers/platform/chrome/Makefile b/drivers/platform/chrome/Makefile
-> > > > > >> index 12a5c4d18c17..fdbee501931b 100644
-> > > > > >> --- a/drivers/platform/chrome/Makefile
-> > > > > >> +++ b/drivers/platform/chrome/Makefile
-> > > > > >> @@ -3,8 +3,6 @@
-> > > > > >>  obj-$(CONFIG_CHROMEOS_LAPTOP)          += chromeos_laptop.o
-> > > > > >>  obj-$(CONFIG_CHROMEOS_PSTORE)          += chromeos_pstore.o
-> > > > > >>  obj-$(CONFIG_CHROMEOS_TBMC)            += chromeos_tbmc.o
-> > > > > >> -cros_ec_ctl-objs                       := cros_ec_sysfs.o
-> > > > > >> -obj-$(CONFIG_CROS_EC_CTL)              += cros_ec_ctl.o
-> > > > > >>  obj-$(CONFIG_CROS_EC_I2C)              += cros_ec_i2c.o
-> > > > > >>  obj-$(CONFIG_CROS_EC_SPI)              += cros_ec_spi.o
-> > > > > >>  cros_ec_lpcs-objs                      := cros_ec_lpc.o cros_ec_lpc_reg.o
-> > > > > >> @@ -15,3 +13,4 @@ obj-$(CONFIG_CROS_KBD_LED_BACKLIGHT)  += cros_kbd_led_backlight.o
-> > > > > >>  obj-$(CONFIG_CROS_EC_LIGHTBAR)         += cros_ec_lightbar.o
-> > > > > >>  obj-$(CONFIG_CROS_EC_VBC)              += cros_ec_vbc.o
-> > > > > >>  obj-$(CONFIG_CROS_EC_DEBUGFS)          += cros_ec_debugfs.o
-> > > > > >> +obj-$(CONFIG_CROS_EC_SYSFS)            += cros_ec_sysfs.o
-> > > > > >> diff --git a/drivers/platform/chrome/cros_ec_sysfs.c b/drivers/platform/chrome/cros_ec_sysfs.c
-> > > > > >> index f34a50121064..0ff5aa30c070 100644
-> > > > > >> --- a/drivers/platform/chrome/cros_ec_sysfs.c
-> > > > > >> +++ b/drivers/platform/chrome/cros_ec_sysfs.c
-> > > > > >> @@ -34,6 +34,8 @@
-> > > > > >>  #include <linux/types.h>
-> > > > > >>  #include <linux/uaccess.h>
-> > > > > >>
-> > > > > >> +#define DRV_NAME "cros-ec-sysfs"
-> > > > > >> +
-> > > > > >>  /* Accessor functions */
-> > > > > >>
-> > > > > >>  static ssize_t reboot_show(struct device *dev,
-> > > > > >> @@ -353,7 +355,39 @@ struct attribute_group cros_ec_attr_group = {
-> > > > > >>         .attrs = __ec_attrs,
-> > > > > >>         .is_visible = cros_ec_ctrl_visible,
-> > > > > >>  };
-> > > > > >> -EXPORT_SYMBOL(cros_ec_attr_group);
-> > > > > >> +
-> > > > > >> +static int cros_ec_sysfs_probe(struct platform_device *pd)
-> > > > > >> +{
-> > > > > >> +       struct cros_ec_dev *ec_dev = dev_get_drvdata(pd->dev.parent);
-> > > > > >> +       struct device *dev = &pd->dev;
-> > > > > >> +       int ret;
-> > > > > >> +
-> > > > > >> +       ret = sysfs_create_group(&ec_dev->class_dev.kobj, &cros_ec_attr_group);
-> > > > > >> +       if (ret < 0)
-> > > > > >> +               dev_err(dev, "failed to create attributes. err=%d\n", ret);
-> > > > > >> +
-> > > > > >> +       return ret;
-> > > > > >> +}
-> > > > > >> +
-> > > > > >> +static int cros_ec_sysfs_remove(struct platform_device *pd)
-> > > > > >> +{
-> > > > > >> +       struct cros_ec_dev *ec_dev = dev_get_drvdata(pd->dev.parent);
-> > > > > >> +
-> > > > > >> +       sysfs_remove_group(&ec_dev->class_dev.kobj, &cros_ec_attr_group);
-> > > > > >> +
-> > > > > >> +       return 0;
-> > > > > >> +}
-> > > > > >> +
-> > > > > >> +static struct platform_driver cros_ec_sysfs_driver = {
-> > > > > >> +       .driver = {
-> > > > > >> +               .name = DRV_NAME,
-> > > > > >> +       },
-> > > > > >> +       .probe = cros_ec_sysfs_probe,
-> > > > > >> +       .remove = cros_ec_sysfs_remove,
-> > > > > >> +};
-> > > > > >> +
-> > > > > >> +module_platform_driver(cros_ec_sysfs_driver);
-> > > > > >>
-> > > > > >>  MODULE_LICENSE("GPL");
-> > > > > >>  MODULE_DESCRIPTION("ChromeOS EC control driver");
-> > > > > >> +MODULE_ALIAS("platform:" DRV_NAME);
-> > > > > >> diff --git a/include/linux/mfd/cros_ec.h b/include/linux/mfd/cros_ec.h
-> > > > > >> index 3e4401e2ceea..f718ad9c2132 100644
-> > > > > >> --- a/include/linux/mfd/cros_ec.h
-> > > > > >> +++ b/include/linux/mfd/cros_ec.h
-> > > > > >> @@ -323,7 +323,4 @@ int cros_ec_get_next_event(struct cros_ec_device *ec_dev, bool *wake_event);
-> > > > > >>   */
-> > > > > >>  u32 cros_ec_get_host_event(struct cros_ec_device *ec_dev);
-> > > > > >>
-> > > > > >> -/* sysfs stuff */
-> > > > > >> -extern struct attribute_group cros_ec_attr_group;
-> > > > > >> -
-> > > > > >>  #endif /* __LINUX_MFD_CROS_EC_H */
-> > > > > >> --
-> > > > > >> 2.19.1
-> > > > > >>
-> > > > > >
+v4l2-compliance SHA: d039b47a108596ca004b11e52989054882d45888, 32 bits
+
+Compliance test for device /dev/video0:
+
+Driver Info:
+	Driver name      : aspeed-video
+	Card type        : Aspeed Video Engine
+	Bus info         : platform:aspeed-video
+	Driver version   : 4.19.6
+	Capabilities     : 0x85200001
+		Video Capture
+		Read/Write
+		Streaming
+		Extended Pix Format
+		Device Capabilities
+	Device Caps      : 0x05200001
+		Video Capture
+		Read/Write
+		Streaming
+		Extended Pix Format
+
+Required ioctls:
+	test VIDIOC_QUERYCAP: OK
+
+Allow for multiple opens:
+	test second /dev/video0 open: OK
+	test VIDIOC_QUERYCAP: OK
+	test VIDIOC_G/S_PRIORITY: OK
+	test for unlimited opens: OK
+
+Debug ioctls:
+	test VIDIOC_DBG_G/S_REGISTER: OK (Not Supported)
+	test VIDIOC_LOG_STATUS: OK (Not Supported)
+
+Input ioctls:
+	test VIDIOC_G/S_TUNER/ENUM_FREQ_BANDS: OK (Not Supported)
+	test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+	test VIDIOC_S_HW_FREQ_SEEK: OK (Not Supported)
+	test VIDIOC_ENUMAUDIO: OK (Not Supported)
+	test VIDIOC_G/S/ENUMINPUT: OK
+	test VIDIOC_G/S_AUDIO: OK (Not Supported)
+	Inputs: 1 Audio Inputs: 0 Tuners: 0
+
+Output ioctls:
+	test VIDIOC_G/S_MODULATOR: OK (Not Supported)
+	test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+	test VIDIOC_ENUMAUDOUT: OK (Not Supported)
+	test VIDIOC_G/S/ENUMOUTPUT: OK (Not Supported)
+	test VIDIOC_G/S_AUDOUT: OK (Not Supported)
+	Outputs: 0 Audio Outputs: 0 Modulators: 0
+
+Input/Output configuration ioctls:
+	test VIDIOC_ENUM/G/S/QUERY_STD: OK (Not Supported)
+	test VIDIOC_ENUM/G/S/QUERY_DV_TIMINGS: OK
+	test VIDIOC_DV_TIMINGS_CAP: OK
+	test VIDIOC_G/S_EDID: OK (Not Supported)
+
+Control ioctls (Input 0):
+	test VIDIOC_QUERY_EXT_CTRL/QUERYMENU: OK
+	test VIDIOC_QUERYCTRL: OK
+	test VIDIOC_G/S_CTRL: OK
+	test VIDIOC_G/S/TRY_EXT_CTRLS: OK
+		warn: v4l2-test-controls.cpp(853): V4L2_CID_DV_RX_POWER_PRESENT not found for input 0
+	test VIDIOC_(UN)SUBSCRIBE_EVENT/DQEVENT: OK
+	test VIDIOC_G/S_JPEGCOMP: OK (Not Supported)
+	Standard Controls: 3 Private Controls: 0
+
+Format ioctls (Input 0):
+	test VIDIOC_ENUM_FMT/FRAMESIZES/FRAMEINTERVALS: OK
+	test VIDIOC_G/S_PARM: OK
+	test VIDIOC_G_FBUF: OK (Not Supported)
+	test VIDIOC_G_FMT: OK
+	test VIDIOC_TRY_FMT: OK
+	test VIDIOC_S_FMT: OK
+	test VIDIOC_G_SLICED_VBI_CAP: OK (Not Supported)
+	test Cropping: OK (Not Supported)
+	test Composing: OK (Not Supported)
+	test Scaling: OK (Not Supported)
+
+Codec ioctls (Input 0):
+	test VIDIOC_(TRY_)ENCODER_CMD: OK (Not Supported)
+	test VIDIOC_G_ENC_INDEX: OK (Not Supported)
+	test VIDIOC_(TRY_)DECODER_CMD: OK (Not Supported)
+
+Buffer ioctls (Input 0):
+	test VIDIOC_REQBUFS/CREATE_BUFS/QUERYBUF: OK
+	test VIDIOC_EXPBUF: OK
+	test Requests: OK (Not Supported)
+
+Test input 0:
+
+Streaming ioctls:
+	test read/write: OK
+	test blocking wait: OK
+	test MMAP: OK                                     
+	test USERPTR: OK (Not Supported)
+	test DMABUF: Cannot test, specify --expbuf-device
+
+Total: 48, Succeeded: 48, Failed: 0, Warnings: 1
+
+I'm unable to run linux-next or the media tree as our system doesn't boot
+without quite a few patches that aren't yet upstreamed, so I can't grab the
+fix for that warning Hans mentioned.
+
+Changes since v6:
+ - Refactor open/start process such that the file handle can be opened without
+   a video signal present
+ - Added standards and capabilities
+ - Removed used of VB2_BUF_FLAG_LAST
+ - Added a few comments
+ - Removed a couple of functions that were only used once
+ - Removed client counter
+
+Changes since v5:
+ - Rework resolution change and v4l2 timings functions again with active and
+   detected timings.
+ - Renamed a few things.
+ - Fixed polarities in the timings.
+
+Changes since v4:
+ - Set real min and max resolution in enum_dv_timings
+ - Add check for vb2_is_busy before settings the timings
+ - Set max frame rate to the actual max rather than max + 1
+ - Correct the input status to 0.
+ - Rework resolution change to only set the relevant h/w regs during startup or
+   when set_timings is called.
+
+Changes since v3:
+ - Switch update reg function to use u32 clear rather than unsigned long mask
+ - Add timing information from host VGA signal
+ - Fix binding documentation mispelling
+ - Fix upper case hex values
+ - Add wait_prepare and wait_finish
+ - Set buffer state to queued (rather than error) if streaming fails to start
+ - Switch engine busy print statement to error
+ - Removed a couple unecessary type assignments in v4l2 ioctls
+ - Added query_dv_timings, fixed get_dv_timings
+ - Corrected source change event to fire if and only if size actually changes
+ - Locked open and release
+
+Changes since v2:
+ - Switch to streaming interface. This involved a lot of changes.
+ - Rework memory allocation due to using videobuf2 buffers, but also only
+   allocate the necessary size of source buffer rather than the max size
+
+Changes since v1:
+ - Removed le32_to_cpu calls for JPEG header data
+ - Reworked v4l2 ioctls to be compliant.
+ - Added JPEG controls
+ - Updated devicetree docs according to Rob's suggestions.
+ - Added myself to MAINTAINERS
+
+Eddie James (2):
+  dt-bindings: media: Add Aspeed Video Engine binding documentation
+  media: platform: Add Aspeed Video Engine driver
+
+ .../devicetree/bindings/media/aspeed-video.txt     |   26 +
+ MAINTAINERS                                        |    8 +
+ drivers/media/platform/Kconfig                     |    9 +
+ drivers/media/platform/Makefile                    |    1 +
+ drivers/media/platform/aspeed-video.c              | 1717 ++++++++++++++++++++
+ 5 files changed, 1761 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/media/aspeed-video.txt
+ create mode 100644 drivers/media/platform/aspeed-video.c
+
+-- 
+1.8.3.1
+
