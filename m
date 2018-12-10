@@ -2,142 +2,90 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2AA1C67839
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 22:24:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE993C04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 22:25:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 813E720880
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 22:24:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 940CE2084E
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 22:25:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544480696;
-	bh=8GzBDr3IF05sb1PvOTqA+jHGxjPF7TVcwt9aEuUlBwQ=;
+	s=default; t=1544480716;
+	bh=zUzqBMo5HosPJC13PQKICKEd2+pHMWc+ygGlXcmYU/g=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=mQa5ycBjioET8WAu7w27JSTm1X/NxpHnlZFwnGqG60M1qMuh0fZMANC7q7Jtar6ti
-	 iMOL+FlTpueL12ODtuHp0AO54B/oFLO77xqFAg8fU120XTmn6EEG53v8Ho5hFAmOyz
-	 B1SEr1DU08s9EdrvFpF6A7mYcC94RdSO5OUUcDU8=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 813E720880
+	b=juCkWKy688J49Tc6Q8bMQSYlI2rHdcfisCY69nqWeLj65BW3FUyM4EIdyTIGsdMlP
+	 A2inzTwuOr4GzMmU0dxgTilNBx8+YNAndfmDEnlJzseljatzOj5veSD9jcixQ2csY6
+	 39kDKY7BxdduK5cA98F0m2FuH28EmnwLZApQT1Ig=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 940CE2084E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729435AbeLJWYz (ORCPT
+        id S1729480AbeLJWZP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 17:24:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52714 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726024AbeLJWYz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 17:24:55 -0500
-Received: from localhost (unknown [69.71.4.100])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CA46F2082F;
-        Mon, 10 Dec 2018 22:24:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544480694;
-        bh=8GzBDr3IF05sb1PvOTqA+jHGxjPF7TVcwt9aEuUlBwQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=p/xZ21JMR9j4tF0BjajlBcch/e7wrIEV1MJ82mLUSo3FgL/hY54+NV8P6smqjCt2w
-         m/df6HtJyUuuiMXy5oR+9GQarUEl+Ys/3hH6fSelszpZ6Byi+03M+C4ojiyNpOKZtI
-         yEf4Rgz0mMLoefLdLcPRRCRcpVQlJdHiAPJdiONY=
-Date:   Mon, 10 Dec 2018 16:24:52 -0600
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     "Grumbach, Emmanuel" <emmanuel.grumbach@intel.com>
-Cc:     "bjorn@helgaas.com" <bjorn@helgaas.com>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "Mertarg10@gmail.com" <Mertarg10@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: Fwd: [Bug 201647] New: Intel Wireless card 3165 does not get
- detected but bluetooth works
-Message-ID: <20181210222452.GC85090@google.com>
-References: <bug-201647-193951@https.bugzilla.kernel.org/>
- <CABhMZUXc4FS-f52ZDsErEhbkm_jjEz+kn75YO5Tuvp42Qm+1xw@mail.gmail.com>
- <20181128211959.GB178809@google.com>
- <0BA3FCBA62E2DC44AF3030971E174FB3013373E4A3@HASMSX112.ger.corp.intel.com>
+        Mon, 10 Dec 2018 17:25:15 -0500
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:36929 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726024AbeLJWZP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Dec 2018 17:25:15 -0500
+Received: by mail-oi1-f195.google.com with SMTP id y23so10401652oia.4;
+        Mon, 10 Dec 2018 14:25:14 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=DPnX9FgNasZsQgRsZ+0K4q5mDFGqah2kTqdXu776lCU=;
+        b=ChmyYnmfGoyMWcRF9/VFYjWHkDvlf0LV0sdJvKdZEhjg4lybAxiLc7dNEaDRwoSdt9
+         0CZuaWdeGZ9Q+PZa7DW7A3hgK0DRpa0I47BUNWp/OHEwbUXxTm+kilWB+0QFU/9rdPgk
+         Vo83sG/FpK2qr6/aubfYc5bZJcduBDMRXkSWdevb1TXE0lT47knFycc3sy5m2tzsZwgF
+         JggZQBfOXRZWFBub/q/b7TmYWK7jTR+JerFpg8v2phQmJE/BaLPX24TC1ZO57qqF+2Th
+         Cv3nG5tTM07U/z7sQXsJdRGvwbx1HRnGhNidy0Dhe6R0rrTSH2f/NYMURgm/XkVfNCaz
+         UJlw==
+X-Gm-Message-State: AA+aEWbk4YrhZzMhj3xIGuIcXuSt4C6d6MwWRx6K2Ma4hUi1+ny2Xg1N
+        Kfx3GFHaxzog0asCU4ss8g==
+X-Google-Smtp-Source: AFSGD/V0RicQnLBkvZ9ouH3JjTzPSMQ+izc06d5U503qFczusrs/bjBf5ykmPw41R+0rT0O9iecaew==
+X-Received: by 2002:aca:5508:: with SMTP id j8mr8873898oib.240.1544480714127;
+        Mon, 10 Dec 2018 14:25:14 -0800 (PST)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id t201sm6357180oie.37.2018.12.10.14.25.13
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 10 Dec 2018 14:25:13 -0800 (PST)
+Date:   Mon, 10 Dec 2018 16:25:13 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc:     olof@lixom.net, arnd@arndb.de, robh+dt@kernel.org,
+        tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com,
+        daniel.lezcano@linaro.org, gregkh@linuxfoundation.org,
+        jslaby@suse.com, linux-unisoc@lists.infradead.org,
+        afaerber@suse.de, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-serial@vger.kernel.org, amit.kucheria@linaro.org,
+        linus.walleij@linaro.org, zhao_steven@263.net,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: Re: [PATCH v4 09/15] dt-bindings: timer: Document RDA8810PL SoC timer
+Message-ID: <20181210222513.GA1326@bogus>
+References: <20181210173550.29643-1-manivannan.sadhasivam@linaro.org>
+ <20181210173550.29643-10-manivannan.sadhasivam@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <0BA3FCBA62E2DC44AF3030971E174FB3013373E4A3@HASMSX112.ger.corp.intel.com>
+In-Reply-To: <20181210173550.29643-10-manivannan.sadhasivam@linaro.org>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Dec 02, 2018 at 06:57:35AM +0000, Grumbach, Emmanuel wrote:
-> > On Fri, Nov 09, 2018 at 03:43:06PM -0600, Bjorn Helgaas wrote:
-> > > ---------- Forwarded message ---------
-> > > From: <bugzilla-daemon@bugzilla.kernel.org>
-> > > Date: Fri, Nov 9, 2018 at 4:10 AM
-> > > Subject: [Bug 201647] New: Intel Wireless card 3165 does not get
-> > > detected but bluetooth works
-> > >
-> > > https://bugzilla.kernel.org/show_bug.cgi?id=201647
-> > >
-> > >             Bug ID: 201647
-> > >            Summary: Intel Wireless card 3165 does not get detected but
-> > >                     bluetooth works
-> > >            Product: Drivers
-> > >            Version: 2.5
-> > >     Kernel Version: 4.19.1
-> > >           Hardware: Intel
-> > >                 OS: Linux
-> > >               Tree: Mainline
-> > >             Status: NEW
-> > >           Severity: high
-> > >           Priority: P1
-> > >          Component: PCI
-> > >           Assignee: drivers_pci@kernel-bugs.osdl.org
-> > >           Reporter: Mertarg10@gmail.com
-> > >         Regression: No
-> > >
-> > > This bug affects most of the devices with a Celeron N4000 and an Intel
-> > > wifi 3165 Ac adapter.
-> > >
-> > > When using Linux wifi is not working however, Bluetooth is working
-> > > fine.  Also, Bluetooth part of this chip is connected via btusb and
-> > > the wifi part of this chip is connected via PCIe.
-> > 
-> > Can you attach a screenshot of the Windows 10 device manager info for the
-> > wifi adapter to the bugzilla?  If you can get a raw hex dump of its config
-> > space, that would be awesome.
-> > 
-> > Also attach a copy of your kernel .config file (typically in /boot/).
-> > 
-> > My only guess is that maybe the system keeps wifi completely powered
-> > down and uses hotplug to add it when needed.  [1] mentions wifi being on
-> > pcibus 1 under Windows.  Your lspci does show bridge 00:13.0 leading to bus
-> > 01, but Linux doesn't find any devices on bus 01.
-> > 
-> > Hotplug could be done via either acpiphp (ACPI mediated hotplug) or pciehp
-> > (native PCIe hotplug).  Your dmesg shows you do have acpiphp.
-> > 
-> > I can't tell about pciehp (your .config will show that), but I think pciehp will
-> > only claim bridges where SltCap contains HotPlug+, and yours shows HotPlug-
-> > , so I don't think pciehp will do anything on your system.
-> > 
-> > Even if the system does use hotplug, I don't know what mechanism the OS
-> > would use to wake up the device, since we don't know it even exists.  I guess
-> > there could be some magic switch accessible via USB.
-> > But if that were the case, I'm sure Emmanuel would know about it.
+On Mon, 10 Dec 2018 23:05:44 +0530, Manivannan Sadhasivam wrote:
+> Document RDA Micro RDA8810PL SoC timer.
 > 
-> Hm... Don't be so sure... :)
-> I don't think we have anything as fancy as this.
-> I guess you can try to dig into the BIOS settings?
-> I have heard of such a switch that would make the device disappear.
+> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> ---
+>  .../bindings/timer/rda,8810pl-timer.txt       | 20 +++++++++++++++++++
+>  1 file changed, 20 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/timer/rda,8810pl-timer.txt
+> 
 
-It's worth looking, but I don't understand how a BIOS switch would
-solve this problem.  I assume that with the same BIOS settings,
-Windows works and Linux fails.
-
-Maybe there would be a clue in an acpidump from affected machines,
-e.g., maybe we'd see some kind of ACPI hotplug notification.  That
-seems like a long shot because we do have acpiphp in the kernel, and
-it *should* be handling such notifications, but it could always be
-broken.
-
-The Windows device manager info (requested above) would be
-interesting.
-
-Bjorn
+Reviewed-by: Rob Herring <robh@kernel.org>
