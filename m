@@ -2,136 +2,107 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47E5FC04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 23:23:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64B27C67839
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 23:24:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 08B4620821
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 23:23:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 08B4620821
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
+	by mail.kernel.org (Postfix) with ESMTP id 284272081F
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 23:24:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544484242;
+	bh=ZozId5HCoQoq5U+gUViN80Pw1ZwtYFvrhrw2WrvdfaM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=h2TBZ9TdmoIkfrLEETCapC9CWA/ZjSzGgc2dl9mgr/q+6jHvUiPHNTDfCtFy3lK7Y
+	 Pt0GVevnAgu11B3hwWYQKFh89OkSZM4TKhuiy5wgMP/UVz+zaB2vsppfxIwmu2o3sw
+	 iNe88v200EUk6GFu3gayiKxSiJQVssbWTnMvNrJs=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 284272081F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730130AbeLJXXW (ORCPT
+        id S1729453AbeLJXYB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 18:23:22 -0500
-Received: from smtprelay0189.hostedemail.com ([216.40.44.189]:44429 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728921AbeLJXXW (ORCPT
+        Mon, 10 Dec 2018 18:24:01 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:34657 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726693AbeLJXYA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 18:23:22 -0500
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay06.hostedemail.com (Postfix) with ESMTP id D0E51187A6301;
-        Mon, 10 Dec 2018 23:23:20 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: order75_1d113e709753b
-X-Filterd-Recvd-Size: 3518
-Received: from XPS-9350.home (unknown [47.151.153.53])
-        (Authenticated sender: joe@perches.com)
-        by omf03.hostedemail.com (Postfix) with ESMTPA;
-        Mon, 10 Dec 2018 23:23:19 +0000 (UTC)
-Message-ID: <128afaebcd8fdb52bd90dcc9a09ee2d23d306a5a.camel@perches.com>
-Subject: Re: [PATCH] net: fix braces and comments codestyle
-From:   Joe Perches <joe@perches.com>
-To:     Darya Litvintseva <litv.daria@gmail.com>
-Cc:     alex.mikhalevich@gmail.com,
-        "David S. Miller" <davem@davemloft.net>,
-        Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Mon, 10 Dec 2018 15:23:18 -0800
-In-Reply-To: <20181210231140.5280-1-litv.daria@gmail.com>
-References: <20181210231140.5280-1-litv.daria@gmail.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.30.1-1build1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Mon, 10 Dec 2018 18:24:00 -0500
+Received: by mail-ot1-f66.google.com with SMTP id t5so12260778otk.1;
+        Mon, 10 Dec 2018 15:24:00 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=5wytH2VjJePyFuGqDWTvW58pYv89UnREaFtUGmC4XGg=;
+        b=CKfrj9ZmajgMxyLFzgbAjEHT6tMSHZauq32mPjS6LfAZTKQzSraBW2B4KbSVOuQqta
+         Z2XQ3wpVN9oX3y0rEk9yO64PRAtcHEO/NANtFyx+nArT0quAQqyJ5Vd6sr73a3+PU33q
+         UUXDR0NgoD3anZ2QA0h6pXPdNOITLM7q2vRYFLivsxnYQiH4ULaw7cYyIatIPZ0hsL3q
+         F1jfxhebhigR0PgrkS8K6EWHInOCYGPpgaD0UTpXNspoK7xH/A0BBwwfyY69fWKd2fIS
+         eSNCoxu6e6POhVzP16lN47UA2rhHu8vNFLWWsZGbFYWG6mCCgf+fS2Ea9TWwpikwUqkv
+         1Plg==
+X-Gm-Message-State: AA+aEWYyQL4BuXMNKTCipW8ZwHDiTLS9ae3blYj27be6GrJkNN7pPjL8
+        Q+U1pH1s+VfkVBm8ro13Bq3rFCM=
+X-Google-Smtp-Source: AFSGD/V00sFr12ezBvBjnGbdLppZ911bLGSzmvoKfNDAKax44LzxW3N4TYwgTW5OtelDhIrTQkJJ0Q==
+X-Received: by 2002:a9d:23e5:: with SMTP id t92mr10219988otb.159.1544484239802;
+        Mon, 10 Dec 2018 15:23:59 -0800 (PST)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id b18sm5725850otl.33.2018.12.10.15.23.59
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 10 Dec 2018 15:23:59 -0800 (PST)
+Date:   Mon, 10 Dec 2018 17:23:58 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Anson Huang <anson.huang@nxp.com>
+Cc:     "jic23@kernel.org" <jic23@kernel.org>,
+        "knaack.h@gmx.de" <knaack.h@gmx.de>,
+        "lars@metafoo.de" <lars@metafoo.de>,
+        "pmeerw@pmeerw.net" <pmeerw@pmeerw.net>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>
+Subject: Re: [PATCH V3 1/2] dt-bindings: iio: light: isl29018: update power
+ supply name
+Message-ID: <20181210232358.GA11621@bogus>
+References: <1544425521-775-1-git-send-email-Anson.Huang@nxp.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1544425521-775-1-git-send-email-Anson.Huang@nxp.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-12-11 at 02:11 +0300, Darya Litvintseva wrote:
-> Signed-off-by: Darya Litvintseva <litv.daria@gmail.com>
-
-Hello.
-
-Most maintainers want some patch description
-and not a blank commit message.
-
-Whitespace only changes are sometimes not taken.
-
-First kernel patches are best done in drivers/staging.
-
-And some additional comments below...
-
-cheers, Joe
-
-> diff --git a/net/ethernet/eth.c b/net/ethernet/eth.c
-[]
-> @@ -90,9 +90,7 @@ int eth_header(struct sk_buff *skb, struct net_device *dev,
->  	else
->  		eth->h_proto = htons(len);
+On Mon, Dec 10, 2018 at 07:11:19AM +0000, Anson Huang wrote:
+> According to datasheet, the isl29018 has "vddd/vdda" power
+> supply, and isl29023/isl29035 ONLY has "vdd" power supply,
+> update the power supply name with "vdd" and "vdda" according
+> to datasheet to cover all devices and avoid confusion.
+> 
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+> ---
+>  Documentation/devicetree/bindings/iio/light/isl29018.txt | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/iio/light/isl29018.txt b/Documentation/devicetree/bindings/iio/light/isl29018.txt
+> index b9bbde3..36f737d 100644
+> --- a/Documentation/devicetree/bindings/iio/light/isl29018.txt
+> +++ b/Documentation/devicetree/bindings/iio/light/isl29018.txt
+> @@ -15,7 +15,9 @@ Optional properties:
+>    Refer to interrupt-controller/interrupts.txt for generic interrupt client
+>    node bindings.
 >  
-> -	/*
-> -	 *      Set the source hardware address.
-> -	 */
-> +	/* Set the source hardware address.*/
+> -  - vcc-supply: phandle to the regulator that provides power to the sensor.
+> +  - vdd-supply: phandle to the regulator that provides vdd power to the sensor.
+> +
+> +  - vdda-supply: phandle to the regulator that provides vdda power to the sensor.
 
-Most single line comments use a space before the */
+Is this in use? You can't just change things if it is.
 
-> @@ -170,13 +166,11 @@ __be16 eth_type_trans(struct sk_buff *skb, struct net_device *dev)
->  			skb->pkt_type = PACKET_BROADCAST;
->  		else
->  			skb->pkt_type = PACKET_MULTICAST;
-> -	}
-> -	else if (unlikely(!ether_addr_equal_64bits(eth->h_dest,
-> +	} else if (unlikely(!ether_addr_equal_64bits(eth->h_dest,
->  						   dev->dev_addr)))
-
-please realign multiline statements to the open parenthesis
-
-> @@ -187,8 +181,7 @@ __be16 eth_type_trans(struct sk_buff *skb, struct net_device *dev)
->  	if (likely(eth_proto_is_802_3(eth->h_proto)))
->  		return eth->h_proto;
->  
-> -	/*
-> -	 *      This is a magic hack to spot IPX packets. Older Novell breaks
-> +	/*      This is a magic hack to spot IPX packets. Older Novell breaks
->  	 *      the protocol design and runs IPX over 802.3 without an 802.2 LLC
->  	 *      layer. We look for FFFF which isn't a used 802.2 SSAP/DSAP. This
->  	 *      won't work for fault tolerant netware but does for the rest.
-
-Given the ipx protocol removal, perhaps this block
-should be revisited.
-
-commit e02554e9a4338c58e75fdfb0ef908a5adc86cba5
-Author: Stephen Hemminger <stephen@networkplumber.org>
-Date:   Tue Nov 14 08:37:14 2017 -0800
-
-    ipx: move Novell IPX protocol support into staging
-
-commit 7a2e838d28cff6718a0bdf66164465402f8e40ed
-Author: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Date:   Fri Jun 1 20:39:54 2018 +0200
-
-    staging: ipx: delete it from the tree
-    
-    The ipx code moved into the staging tree back in November 2017 and no
-    one has complained or even noticed it was gone.  Because of that, let's
-    just delete it.
-
-> @@ -197,8 +190,7 @@ __be16 eth_type_trans(struct sk_buff *skb, struct net_device *dev)
->  	if (sap && *sap == 0xFFFF)
->  		return htons(ETH_P_802_3);
->  
-> -	/*
-> -	 *      Real 802.2 LLC
-> +	/* Real 802.2 LLC
->  	 */
-
-better to move the closing */ up as a single line comment
-
-
+Rob
