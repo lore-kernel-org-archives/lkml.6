@@ -3,42 +3,43 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 303B7C04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 04:30:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2955CC67839
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 04:30:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F2D6E2081C
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 04:30:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F2D6E2081C
+	by mail.kernel.org (Postfix) with ESMTP id ECD422082F
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 04:30:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ECD422082F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726699AbeLJEaY (ORCPT
+        id S1726712AbeLJEaa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Dec 2018 23:30:24 -0500
-Received: from vmicros1.altlinux.org ([194.107.17.57]:39460 "EHLO
+        Sun, 9 Dec 2018 23:30:30 -0500
+Received: from vmicros1.altlinux.org ([194.107.17.57]:39562 "EHLO
         vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726428AbeLJEaX (ORCPT
+        with ESMTP id S1726422AbeLJEa2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Dec 2018 23:30:23 -0500
+        Sun, 9 Dec 2018 23:30:28 -0500
 Received: from mua.local.altlinux.org (mua.local.altlinux.org [192.168.1.14])
-        by vmicros1.altlinux.org (Postfix) with ESMTP id 370F772CC66;
-        Mon, 10 Dec 2018 07:30:21 +0300 (MSK)
+        by vmicros1.altlinux.org (Postfix) with ESMTP id CE86672CC66;
+        Mon, 10 Dec 2018 07:30:26 +0300 (MSK)
 Received: by mua.local.altlinux.org (Postfix, from userid 508)
-        id 2C60B7CEFE9; Mon, 10 Dec 2018 07:30:21 +0300 (MSK)
-Date:   Mon, 10 Dec 2018 07:30:21 +0300
+        id C314C7CEFE9; Mon, 10 Dec 2018 07:30:26 +0300 (MSK)
+Date:   Mon, 10 Dec 2018 07:30:26 +0300
 From:   "Dmitry V. Levin" <ldv@altlinux.org>
-To:     Helge Deller <deller@gmx.de>,
-        "James E.J. Bottomley" <jejb@parisc-linux.org>,
+To:     Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
         Oleg Nesterov <oleg@redhat.com>,
         Andy Lutomirski <luto@kernel.org>
 Cc:     Elvira Khabirova <lineprinter@altlinux.org>,
         Eugene Syromyatnikov <esyr@redhat.com>,
-        linux-parisc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v5 15/25] parisc: define syscall_get_error()
-Message-ID: <20181210043020.GO6131@altlinux.org>
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v5 16/25] powerpc: define syscall_get_error()
+Message-ID: <20181210043026.GP6131@altlinux.org>
 References: <20181210042352.GA6092@altlinux.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -48,41 +49,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-syscall_get_error() is required to be implemented on all
-architectures in addition to already implemented syscall_get_nr(),
+syscall_get_error() is required to be implemented on this
+architecture in addition to already implemented syscall_get_nr(),
 syscall_get_arguments(), syscall_get_return_value(), and
 syscall_get_arch() functions in order to extend the generic
 ptrace API with PTRACE_GET_SYSCALL_INFO request.
 
-Cc: Helge Deller <deller@gmx.de>
-Cc: James E.J. Bottomley <jejb@parisc-linux.org>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: Paul Mackerras <paulus@samba.org>
 Cc: Oleg Nesterov <oleg@redhat.com>
 Cc: Andy Lutomirski <luto@kernel.org>
 Cc: Elvira Khabirova <lineprinter@altlinux.org>
 Cc: Eugene Syromyatnikov <esyr@redhat.com>
-Cc: linux-parisc@vger.kernel.org
+Cc: linuxppc-dev@lists.ozlabs.org
 Signed-off-by: Dmitry V. Levin <ldv@altlinux.org>
 ---
- arch/parisc/include/asm/syscall.h | 7 +++++++
- 1 file changed, 7 insertions(+)
 
-diff --git a/arch/parisc/include/asm/syscall.h b/arch/parisc/include/asm/syscall.h
-index 8bff1a58c97f..477511ff7546 100644
---- a/arch/parisc/include/asm/syscall.h
-+++ b/arch/parisc/include/asm/syscall.h
-@@ -43,6 +43,13 @@ static inline void syscall_get_arguments(struct task_struct *tsk,
- 	}
+Notes:
+    This change has been tested with
+    tools/testing/selftests/ptrace/get_syscall_info.c and strace,
+    so it's correct from PTRACE_GET_SYSCALL_INFO point of view.
+    
+    This cast doubts on commit v4.3-rc1~86^2~81 that changed
+    syscall_set_return_value() in a way that doesn't quite match
+    syscall_get_error(), but syscall_set_return_value() is out
+    of scope of this series, so I just air my concerns.
+
+ arch/powerpc/include/asm/syscall.h | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/arch/powerpc/include/asm/syscall.h b/arch/powerpc/include/asm/syscall.h
+index ab9f3f0a8637..1d03e753391d 100644
+--- a/arch/powerpc/include/asm/syscall.h
++++ b/arch/powerpc/include/asm/syscall.h
+@@ -39,6 +39,16 @@ static inline void syscall_rollback(struct task_struct *task,
+ 	regs->gpr[3] = regs->orig_gpr3;
  }
  
 +static inline long syscall_get_error(struct task_struct *task,
 +				     struct pt_regs *regs)
 +{
-+	unsigned long error = regs->gr[28];
-+	return IS_ERR_VALUE(error) ? error : 0;
++	/*
++	 * If the system call failed,
++	 * regs->gpr[3] contains a positive ERRORCODE.
++	 */
++	return (regs->ccr & 0x10000000UL) ? -regs->gpr[3] : 0;
 +}
 +
  static inline long syscall_get_return_value(struct task_struct *task,
- 						struct pt_regs *regs)
+ 					    struct pt_regs *regs)
  {
 -- 
 ldv
