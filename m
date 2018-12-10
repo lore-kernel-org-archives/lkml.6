@@ -2,163 +2,126 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDEE8C04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 16:43:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 450EEC04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 16:46:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9690B2064D
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 16:43:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9690B2064D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 07FB52064D
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 16:46:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 07FB52064D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=ucloud.cn
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727473AbeLJQn2 (ORCPT
+        id S1727414AbeLJQqX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 11:43:28 -0500
-Received: from mga09.intel.com ([134.134.136.24]:62126 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726699AbeLJQn1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 11:43:27 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Dec 2018 08:43:27 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,339,1539673200"; 
-   d="scan'208";a="300941656"
-Received: from nm-b85m-d3h.iind.intel.com (HELO intel.com) ([10.223.163.12])
-  by fmsmga006.fm.intel.com with ESMTP; 10 Dec 2018 08:43:21 -0800
-Date:   Mon, 10 Dec 2018 22:08:43 +0530
-From:   Naveen M <naveen.m@intel.com>
-To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Cc:     Zhuohao Lee <zhuohao@chromium.org>, alsa-devel@alsa-project.org,
-        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
-        Jie Yang <yang.jie@linux.intel.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, Vinod Koul <vkoul@kernel.org>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Max Chang <changmax@chromium.org>,
-        Oder Chiou <oder_chiou@realtek.com>,
-        linux-kernel@vger.kernel.org, yong.zhi@intel.com
-Subject: Re: [alsa-devel] [PATCH v1] ASoC: Intel: kbl_da7219_max98927: fix
- the audio jack button remapping
-Message-ID: <20181210163837.GA11058@intel.com>
-References: <20181207090552.105205-1-zhuohao@chromium.org>
- <90b46425-5dbd-2ba7-d57d-270d0ab68632@linux.intel.com>
- <CABD5ybm1E4=XQRt0zhviLzgXvUmo+C06AHr4wnXHF2QYbF=d8Q@mail.gmail.com>
- <c11cb754-b01f-3e53-f07f-7fd186b45bdf@linux.intel.com>
+        Mon, 10 Dec 2018 11:46:23 -0500
+Received: from m97188.mail.qiye.163.com ([220.181.97.188]:38331 "EHLO
+        m97188.mail.qiye.163.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726664AbeLJQqW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Dec 2018 11:46:22 -0500
+X-Greylist: delayed 521 seconds by postgrey-1.27 at vger.kernel.org; Mon, 10 Dec 2018 11:46:20 EST
+Received: from localhost (unknown [114.241.220.134])
+        by m97188.mail.qiye.163.com (Hmail) with ESMTPA id 6BF619628EA;
+        Tue, 11 Dec 2018 00:37:31 +0800 (CST)
+From:   WANG Chao <chao.wang@ucloud.cn>
+To:     linux-kernel@vger.kernel.org
+Cc:     stable@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
+        Zhenzhong Duan <zhenzhong.duan@oracle.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Borislav Petkov <bp@suse.de>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        srinivas.eeda@oracle.com
+Subject: [PATCH] treewide: replace RETPOLINE with CONFIG_RETPOLINE
+Date:   Tue, 11 Dec 2018 00:37:25 +0800
+Message-Id: <20181210163725.95977-1-chao.wang@ucloud.cn>
+X-Mailer: git-send-email 2.19.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <c11cb754-b01f-3e53-f07f-7fd186b45bdf@linux.intel.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+X-HM-Spam-Status: e1ktWUFJV1koWUFJQjdXWQgYFAkeWUFLVUtXWQkOFx4IWUFZMjUtOjcyP0
+        FLVUtZBg++
+X-HM-Sender-Digest: e1kSHx4VD1lBWUc6MFE6HRw*IjkBNE8sLVE9FCNOC0wwCS9VSlVKTk9P
+        T05CQ05ITUtJVTMWGhIXVRgTGhRVDBoVHDsOGBcUDh9VGBVFWVdZDB4ZWUEdGhcIHldZCAFZQUhC
+        Tk83V1kSC1lBWUpKT1VJT0pVSUlLVUpIT1kG
+X-HM-Tid: 0a6798fb16c120bckuqy6bf619628ea
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 10, 2018 at 08:41:23AM -0600, Pierre-Louis Bossart wrote:
-> 
-> On 12/9/18 10:29 PM, Zhuohao Lee wrote:
-> > Thanks Pierre-Louis.
-> > I saw a patch https://patchwork.kernel.org/patch/10493135/ which changed
-> > the KEY_MEDIA to KEY_PLAYPAUSE, will you merge that patch?
-> > Combined with this patch, the key remapping should be consistent.
-> 
-> I don't have merge superpowers here, and I don't want to submit something I
-> cannot test.
-> 
-> I was only flagging that the behavior is not aligned across patches, and
-> some of these patches were never merged (some since April). Yong Zhi and
-> Naveen M, can you help resubmit a patchset that aligns the handling of
-> buttons for DA7219-based devices?
-> 
-> Thanks!
-> 
-> 
-Sure Pierre, we will soon post the change for all DA7219 based boards.
-Thanks
-> > 
-> > I'll submit a patch to remove the Change-Id.
-> > 
-> > On Sat, Dec 8, 2018 at 1:57 AM Pierre-Louis Bossart
-> > <pierre-louis.bossart@linux.intel.com
-> > <mailto:pierre-louis.bossart@linux.intel.com>> wrote:
-> > 
-> > 
-> >     On 12/7/18 3:05 AM, Zhuohao Lee wrote:
-> >     >  From the da7219 spec, the button A, B, C and D are remapped to
-> >     > 0, 1, 2 and 3 respectively where button A is KEY_PLAYPAUSE,
-> >     > B is KEY_VOLUMEUP, C is KEY_VOLUMEDOWN and D is KEY_VOICECOMMAND
-> > 
-> >     Ok, but could fix all da7219-based machine drivers then, the mappings
-> >     are completely inconsistent:
-> > 
-> >     kbl_da7219_max98357a.c:    snd_jack_set_key(jack->jack,
-> >     SND_JACK_BTN_0,
-> >     KEY_MEDIA);
-> >     kbl_da7219_max98357a.c:    snd_jack_set_key(jack->jack,
-> >     SND_JACK_BTN_1,
-> >     KEY_VOLUMEUP);
-> >     kbl_da7219_max98357a.c:    snd_jack_set_key(jack->jack,
-> >     SND_JACK_BTN_2,
-> >     KEY_VOLUMEDOWN);
-> >     kbl_da7219_max98357a.c:    snd_jack_set_key(jack->jack,
-> >     SND_JACK_BTN_3,
-> >     KEY_VOICECOMMAND);
-> >     kbl_da7219_max98927.c:    snd_jack_set_key(jack->jack,
-> >     SND_JACK_BTN_0,
-> >     KEY_PLAYPAUSE);
-> >     kbl_da7219_max98927.c:    snd_jack_set_key(jack->jack,
-> >     SND_JACK_BTN_1,
-> >     KEY_VOICECOMMAND);
-> >     kbl_da7219_max98927.c:    snd_jack_set_key(jack->jack,
-> >     SND_JACK_BTN_2,
-> >     KEY_VOLUMEUP);
-> >     kbl_da7219_max98927.c:    snd_jack_set_key(jack->jack,
-> >     SND_JACK_BTN_3,
-> >     KEY_VOLUMEDOWN);
-> > 
-> >     Thanks!
-> > 
-> >     >
-> >     > Change-Id: I67f929f226883bd289cb7beb0a7b23f40e7121e2
-> >     You want to remove those Change-Ids for upstream.
-> >     > Signed-off-by: Zhuohao Lee <zhuohao@chromium.org
-> >     <mailto:zhuohao@chromium.org>>
-> >     > Signed-off-by: Max Chang  <changmax@chromium.org
-> >     <mailto:changmax@chromium.org>>
-> >     > ---
-> >     >   sound/soc/intel/boards/kbl_da7219_max98927.c | 6 +++---
-> >     >   1 file changed, 3 insertions(+), 3 deletions(-)
-> >     >
-> >     > diff --git a/sound/soc/intel/boards/kbl_da7219_max98927.c
-> >     b/sound/soc/intel/boards/kbl_da7219_max98927.c
-> >     > index 3fa1c3ca6d37..d3531f0eb357 100644
-> >     > --- a/sound/soc/intel/boards/kbl_da7219_max98927.c
-> >     > +++ b/sound/soc/intel/boards/kbl_da7219_max98927.c
-> >     > @@ -262,9 +262,9 @@ static int kabylake_da7219_codec_init(struct
-> >     snd_soc_pcm_runtime *rtd)
-> >     >
-> >     >       jack = &ctx->kabylake_headset;
-> >     >       snd_jack_set_key(jack->jack, SND_JACK_BTN_0, KEY_PLAYPAUSE);
-> >     > -     snd_jack_set_key(jack->jack, SND_JACK_BTN_1,
-> >     KEY_VOICECOMMAND);
-> >     > -     snd_jack_set_key(jack->jack, SND_JACK_BTN_2, KEY_VOLUMEUP);
-> >     > -     snd_jack_set_key(jack->jack, SND_JACK_BTN_3, KEY_VOLUMEDOWN);
-> >     > +     snd_jack_set_key(jack->jack, SND_JACK_BTN_1, KEY_VOLUMEUP);
-> >     > +     snd_jack_set_key(jack->jack, SND_JACK_BTN_2, KEY_VOLUMEDOWN);
-> >     > +     snd_jack_set_key(jack->jack, SND_JACK_BTN_3,
-> >     KEY_VOICECOMMAND);
-> >     >
-> >     >       da7219_aad_jack_det(component, &ctx->kabylake_headset);
-> >     >
-> > 
+Since commit 4cd24de3a098 ("x86/retpoline: Make CONFIG_RETPOLINE depend
+on compiler support"), RETPOLINE has been replaced by CONFIG_RETPOLINE.
 
+Fixes: 4cd24de3a098 ("x86/retpoline: Make CONFIG_RETPOLINE depend on compiler support")
+Signed-off-by: WANG Chao <chao.wang@ucloud.cn>
+---
+ arch/x86/kernel/cpu/bugs.c   | 2 +-
+ include/linux/compiler-gcc.h | 2 +-
+ include/linux/module.h       | 2 +-
+ scripts/mod/modpost.c        | 2 +-
+ 4 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
+index 500278f5308e..e8abe3f6c10e 100644
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -213,7 +213,7 @@ static enum spectre_v2_mitigation spectre_v2_enabled __ro_after_init =
+ static enum spectre_v2_user_mitigation spectre_v2_user __ro_after_init =
+ 	SPECTRE_V2_USER_NONE;
+ 
+-#ifdef RETPOLINE
++#ifdef CONFIG_RETPOLINE
+ static bool spectre_v2_bad_module;
+ 
+ bool retpoline_module_ok(bool has_retpoline)
+diff --git a/include/linux/compiler-gcc.h b/include/linux/compiler-gcc.h
+index 2010493e1040..977ddf2774f9 100644
+--- a/include/linux/compiler-gcc.h
++++ b/include/linux/compiler-gcc.h
+@@ -68,7 +68,7 @@
+  */
+ #define uninitialized_var(x) x = x
+ 
+-#ifdef RETPOLINE
++#ifdef CONFIG_RETPOLINE
+ #define __noretpoline __attribute__((__indirect_branch__("keep")))
+ #endif
+ 
+diff --git a/include/linux/module.h b/include/linux/module.h
+index fce6b4335e36..0c575f51fe57 100644
+--- a/include/linux/module.h
++++ b/include/linux/module.h
+@@ -817,7 +817,7 @@ static inline void module_bug_finalize(const Elf_Ehdr *hdr,
+ static inline void module_bug_cleanup(struct module *mod) {}
+ #endif	/* CONFIG_GENERIC_BUG */
+ 
+-#ifdef RETPOLINE
++#ifdef CONFIG_RETPOLINE
+ extern bool retpoline_module_ok(bool has_retpoline);
+ #else
+ static inline bool retpoline_module_ok(bool has_retpoline)
+diff --git a/scripts/mod/modpost.c b/scripts/mod/modpost.c
+index 0d998c54564d..5a5b3780456f 100644
+--- a/scripts/mod/modpost.c
++++ b/scripts/mod/modpost.c
+@@ -2157,7 +2157,7 @@ static void add_intree_flag(struct buffer *b, int is_intree)
+ /* Cannot check for assembler */
+ static void add_retpoline(struct buffer *b)
+ {
+-	buf_printf(b, "\n#ifdef RETPOLINE\n");
++	buf_printf(b, "\n#ifdef CONFIG_RETPOLINE\n");
+ 	buf_printf(b, "MODULE_INFO(retpoline, \"Y\");\n");
+ 	buf_printf(b, "#endif\n");
+ }
 -- 
+2.19.2
+
