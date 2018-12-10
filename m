@@ -2,124 +2,143 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT,
+	WEIRD_PORT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B445C04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 16:25:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E7ECC04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 16:26:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C2BB72082F
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 16:25:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 443BC20821
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 16:26:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="I5WTLZKB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C2BB72082F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O2z/ioMj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 443BC20821
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727746AbeLJQZk (ORCPT
+        id S1727797AbeLJQ01 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 11:25:40 -0500
-Received: from conssluserg-04.nifty.com ([210.131.2.83]:28733 "EHLO
-        conssluserg-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726392AbeLJQZj (ORCPT
+        Mon, 10 Dec 2018 11:26:27 -0500
+Received: from mail-ed1-f50.google.com ([209.85.208.50]:40363 "EHLO
+        mail-ed1-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726392AbeLJQ00 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 11:25:39 -0500
-Received: from mail-vs1-f42.google.com (mail-vs1-f42.google.com [209.85.217.42]) (authenticated)
-        by conssluserg-04.nifty.com with ESMTP id wBAGPBUR004551
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 01:25:12 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-04.nifty.com wBAGPBUR004551
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1544459112;
-        bh=HTpUEVT8Rl5xqjHZP4AHzyHMs5MebJM2JoSaIhZfpvg=;
-        h=From:Date:Subject:To:Cc:From;
-        b=I5WTLZKB8KXgzoBySx/G1k2Qf5Z3WX/Ob2mN4DAHayXRA5Dr1CTkWT0+F4X3eLmTN
-         ZywfpGn0wyKrSDSVYPqVbve1X5rQnvq+CS3JSkwxfpt4+WnEtsBC7TiLYtI5bnCpEn
-         bNeIbobpHIxVjgQGVkBxOMoQoCl4WGDiUzXfac/NmpSOnO+vVhPjUsC9LwdbYLOu2m
-         CZ5uWe9N+sCyNLGM5Ytp/h8ZDZRDbYOhtihTsYWPFWnLOHhnw9o0mNoRUcLRIXnVwv
-         8TaHMhufgB0Z+GcLupUxadZdS8WkjGtZOZY8wPYum9irBbT46Wmqvj5p+Dhx3ximNO
-         hS9aUb6vnHAtw==
-X-Nifty-SrcIP: [209.85.217.42]
-Received: by mail-vs1-f42.google.com with SMTP id n10so6978207vso.13
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Dec 2018 08:25:12 -0800 (PST)
-X-Gm-Message-State: AA+aEWZyyb8xjL4pzpnu2ITk7R2v32UW4F8bhdrfiMuUk7QwawcENBH1
-        DgiFNIHaO7ijrX2eycUpHLkGiKz7z5vYTrHgHI8=
-X-Google-Smtp-Source: AFSGD/UwkiRC58xItJ3x5SKHjGQjPTJ0Cxn6hXYZj8vly0q/lIwRoKuIElm8+OeEGFRNZM68NYmRXvTX+MYwvx7sGjA=
-X-Received: by 2002:a67:f1d6:: with SMTP id v22mr5509561vsm.181.1544459110820;
- Mon, 10 Dec 2018 08:25:10 -0800 (PST)
+        Mon, 10 Dec 2018 11:26:26 -0500
+Received: by mail-ed1-f50.google.com with SMTP id d3so9989807edx.7
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Dec 2018 08:26:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=XkH8Kd1l2T3aFDNb+AhDS8ZZP1BskzEXBckN1Nq2HH4=;
+        b=O2z/ioMjMpm4qLBWvYOS2OJ9O9RRIn4LV84Z9zRV3TCmBOwaQQhbzypHAycAM2TSAb
+         geju5JLBQSd5r9BKnCbMmjRumubqMpPB1gUEob53Feh4lfbW8pWNRhcs2X195PQ4rV5b
+         NaS59y0pfecGzeFu5VolQD3drA9+FLcV8wZHYXOCU3C6s4vkNlytl1Ztx/I/uQqwYIqm
+         QkPNfBDAQFnK3C3BIg8cA0N7Nuj2N+cu9/O4U2re1Zn2tTn0CTvVa2JIwvPjldSj2Svp
+         PZKaldkBqLjzXcFVxJ0l4lwNAMf3E6yMeS3JoFgYKcR4NaPOCH6EQQtonDYQm5C4aCCs
+         5YSQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=XkH8Kd1l2T3aFDNb+AhDS8ZZP1BskzEXBckN1Nq2HH4=;
+        b=VsvFmovZEsHI/qZlOfg4kzCsxigNcwMZbzJisCs8DGU6CoaELYcRcFGeUSZl7MFehI
+         hR2S0wqaRbu1Ii0bmJC3fN4W/GsujGpC/qnmxMIZ+39lHLG3Z5VuOuOExqXAuJQVyLVp
+         AXV5JYyOPIeW76/5QdlViFSH5BVob9XdFL+XYteIml11lm5oMj5eKW/BEIacEX6who55
+         vIrWDfi1sGWTU105cI8vFq2JPqBytRbmrU7qpBiX4S9XJKcMhetbKGtvkI+WQXXfq2Ck
+         CCAY0KWygcmsIE9XEKBjEX1yoC//eiZ38omuIm/X7f2ZXt1UCue0IJFbfDWxHWN7FQfO
+         Jymw==
+X-Gm-Message-State: AA+aEWYcpIp4HKxoyVmW44a7VOqx2aaYh/mHAWrUFxCCTkLMkoYSuqem
+        dT1zo1568OuFoplKnrsK5wg=
+X-Google-Smtp-Source: AFSGD/VKpjguEShOxQa6FnoVVRjNAoP3zYOYzm8PUKARjZyYhqLWtY0bRByiw1GnZ1Hx49utp8mG3w==
+X-Received: by 2002:a17:906:2f88:: with SMTP id w8-v6mr10089603eji.114.1544459184485;
+        Mon, 10 Dec 2018 08:26:24 -0800 (PST)
+Received: from localhost (pD9E51040.dip0.t-ipconnect.de. [217.229.16.64])
+        by smtp.gmail.com with ESMTPSA id b11-v6sm1868049eje.38.2018.12.10.08.26.23
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 10 Dec 2018 08:26:23 -0800 (PST)
+Date:   Mon, 10 Dec 2018 17:26:22 +0100
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Guillaume Tucker <guillaume.tucker@collabora.com>,
+        Lyude Paul <lyude@redhat.com>, Ben Skeggs <bskeggs@redhat.com>,
+        nouveau@lists.freedesktop.org, David Airlie <airlied@linux.ie>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        kernel@collabora.com, Karol Herbst <kherbst@redhat.com>,
+        Kevin Hilman <khilman@baylibre.com>
+Subject: Re: next/master boot bisection: Oops in nouveau driver on jetson-tk1
+Message-ID: <20181210162622.GB4789@ulmo>
+References: <89fa50d0-945f-d1ed-ae55-ee947187f209@collabora.com>
+ <95255117123da3702da585491d2fdd74890937c0.camel@redhat.com>
+ <16ca4f0f-6800-7204-6fc2-286caa7b850a@collabora.com>
+ <20181210142559.GB6307@sirena.org.uk>
 MIME-Version: 1.0
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Tue, 11 Dec 2018 01:24:34 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAToKE7dv8UHOhQhJN+6Q6qVs=noQvLedGCEQszSgmVvXg@mail.gmail.com>
-Message-ID: <CAK7LNAToKE7dv8UHOhQhJN+6Q6qVs=noQvLedGCEQszSgmVvXg@mail.gmail.com>
-Subject: [GIT PULL] ARM: dts: uniphier: UniPhier DT updates for v4.21/v5.0
-To:     arm-soc <arm@kernel.org>, Olof Johansson <olof@lixom.net>,
-        Arnd Bergmann <arnd@arndb.de>
-Cc:     linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="nVMJ2NtxeReIH9PS"
+Content-Disposition: inline
+In-Reply-To: <20181210142559.GB6307@sirena.org.uk>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Arnd, Olof,
 
-Please pull UniPhier DT updates for the v4.21/v5.0 MW.
+--nVMJ2NtxeReIH9PS
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+On Mon, Dec 10, 2018 at 02:25:59PM +0000, Mark Brown wrote:
+> On Mon, Dec 10, 2018 at 10:00:08AM +0000, Guillaume Tucker wrote:
+> > On 08/12/2018 00:08, Lyude Paul wrote:
+> > > uhhhhhhhhhhhhh
+> > > didn't we fix this weeks ago? with "drm/nouveau: tegra: Call
+> > > nouveau_drm_device_init()"
+> >=20
+> > Yes here's the fix from Thierry:
+> >=20
+> >   https://patchwork.freedesktop.org/patch/263587/
+> >=20
+> >=20
+> > and I can confirm that it does fix the Oops when applied on top
+> > of next-20181206 (what I used for the bisection last week):
+> >=20
+> >   http://lava.baylibre.com:10080/scheduler/job/71109
+> >=20
+> >=20
+> > However the fix doesn't appear to have been applied in any
+> > upstream tree yet.
+>=20
+> This has been broken for a considerable time now with no response from
+> Ben - is there some other path we can use to get the fix merged?
 
-Thanks!
+I suppose we could go directly via Dave. But Ben's usually pretty
+responsive, so he probably just missed it. Let me ping him on IRC, maybe
+that'll get his attention.
 
+Thierry
 
+--nVMJ2NtxeReIH9PS
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
 
-The following changes since commit 651022382c7f8da46cb4872a545ee1da6d097d2a:
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlwOk64ACgkQ3SOs138+
+s6F6XQ/9ES0hTsz4LycsQufs+tw97MIYsZy4gUvyiX5rhUXz6/9wI5JVsEz+GV8z
+Xd8Jn7FgbLh6lP1QW9+19mfUaLJfdRz/u2OmOUI+iQrPtpDIuLEiI5dHrUnYlVwr
+88MvV265t9Wua8zD2NndZbwAU20iYBGTsaSUnqmw+vmvxP6z+Yr3ULoNqET3OFV+
+1M+Lu6I+4ZCSvv14pjACQYzX4h5puXHk8Y1B8/3if4PFgA6ZQ5aILk4HFw232OLz
+wQyDZEhfsRz0gb1kkBZuBq/UfTHGjSJ589L9RjNTy/yOmrFfTTb5o/KlzlvmK1Yz
+nOFgkpNF2xLpniULwO3dWeI2GMjRidgGWAKqaxWpgXtDpE6hwFnKU8FEFgzOw9sc
+kecoaAt8dOgrYnCC99hAM9qRcvwgXutN4gSVmDaLfJvecRbCk80tlJ42q5ujEMvE
+CwBm7l7nuYPp0Yql/0A56YoYUIftVJtPr/cthtFZMA879tSzppwpxngaCu5k04uh
+3yQulluwPJAkhgnljzAWa9+krla7Mfekr2Jy7O1OBVKbNpUVWfsXqPlfL4hky9b5
+21REm8d8itrxAhZUzb979DicV1b8cx6gJodDfc+IHq8l8Pohi0RJZmfn5OnDY/cp
+4LjjuH4nlSP1FDsGKomypqGAgoBeLQioyIrP0cCWprJFaJHHM6I=
+=P7H+
+-----END PGP SIGNATURE-----
 
-  Linux 4.20-rc1 (2018-11-04 15:37:52 -0800)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/masahiroy/linux-uniphier.git
-tags/uniphier-dt-v4.21
-
-for you to fetch changes up to f911160a215c2ee63633d058d673881986568fb1:
-
-  ARM: dts: uniphier: add MIO DMAC nodes (2018-12-11 00:58:54 +0900)
-
-----------------------------------------------------------------
-UniPhier ARM SoC DT updates for v4.21
-
-- Add bindings for all SoCs/boards of UniPhier platform
-
-- Move binding docs to the socionext directory
-
-- Add all CPUs in cooling maps
-
-- Add MIO DMAC nodes
-
-----------------------------------------------------------------
-Masahiro Yamada (3):
-      dt-bindings: uniphier: add bindings for UniPhier SoC family
-      dt-bindings: uniphier: move cache-uniphier.txt to vendor directory
-      ARM: dts: uniphier: add MIO DMAC nodes
-
-Viresh Kumar (1):
-      ARM: dts: uniphier: Add all CPUs in cooling maps
-
- .../arm/{uniphier => socionext}/cache-uniphier.txt |  0
- .../devicetree/bindings/arm/socionext/uniphier.txt | 47 ++++++++++++++++++++++
- MAINTAINERS                                        |  1 +
- arch/arm/boot/dts/uniphier-ld4.dtsi                | 14 +++++++
- arch/arm/boot/dts/uniphier-pro4.dtsi               | 16 ++++++++
- arch/arm/boot/dts/uniphier-pxs2.dtsi               |  6 ++-
- arch/arm/boot/dts/uniphier-sld8.dtsi               | 14 +++++++
- 7 files changed, 96 insertions(+), 2 deletions(-)
- rename Documentation/devicetree/bindings/arm/{uniphier =>
-socionext}/cache-uniphier.txt (100%)
- create mode 100644 Documentation/devicetree/bindings/arm/socionext/uniphier.txt
-
-
-
--- 
-Best Regards
-Masahiro Yamada
+--nVMJ2NtxeReIH9PS--
