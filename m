@@ -6,105 +6,102 @@ X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ABCB7C04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 17:14:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DD93C5CFFE
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 17:14:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D4A820851
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 17:14:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D4A820851
+	by mail.kernel.org (Postfix) with ESMTP id 0CAE72082F
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 17:14:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0CAE72082F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728741AbeLJROJ (ORCPT
+        id S1728613AbeLJRNq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 12:14:09 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:39829 "EHLO mx1.redhat.com"
+        Mon, 10 Dec 2018 12:13:46 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:45090 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728655AbeLJRNv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 12:13:51 -0500
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        id S1728370AbeLJRNf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Dec 2018 12:13:35 -0500
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 004D8307D96B;
-        Mon, 10 Dec 2018 17:13:51 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 8A72B2D7F9;
+        Mon, 10 Dec 2018 17:13:34 +0000 (UTC)
 Received: from horse.redhat.com (unknown [10.18.25.234])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 02E2C18501;
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 57995600D7;
         Mon, 10 Dec 2018 17:13:34 +0000 (UTC)
 Received: by horse.redhat.com (Postfix, from userid 10451)
-        id 658F4224263; Mon, 10 Dec 2018 12:13:30 -0500 (EST)
+        id 48A2F223C1D; Mon, 10 Dec 2018 12:13:30 -0500 (EST)
 From:   Vivek Goyal <vgoyal@redhat.com>
 To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         kvm@vger.kernel.org
 Cc:     vgoyal@redhat.com, miklos@szeredi.hu, stefanha@redhat.com,
         dgilbert@redhat.com, sweil@redhat.com, swhiteho@redhat.com
-Subject: [PATCH 24/52] fuse: Introduce setupmapping/removemapping commands
-Date:   Mon, 10 Dec 2018 12:12:50 -0500
-Message-Id: <20181210171318.16998-25-vgoyal@redhat.com>
+Subject: [PATCH 17/52] virtio-fs: Retrieve shm capabilities for cache
+Date:   Mon, 10 Dec 2018 12:12:43 -0500
+Message-Id: <20181210171318.16998-18-vgoyal@redhat.com>
 In-Reply-To: <20181210171318.16998-1-vgoyal@redhat.com>
 References: <20181210171318.16998-1-vgoyal@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.48]); Mon, 10 Dec 2018 17:13:51 +0000 (UTC)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Mon, 10 Dec 2018 17:13:34 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Introduce two new fuse commands to setup/remove memory mappings.
+Retrieve the capabilities needed to find the cache.
 
-Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
+Signed-off-by: Dr. David Alan Gilbert <dgilbert@redhat.com>
 ---
- include/uapi/linux/fuse.h | 33 +++++++++++++++++++++++++++++++++
- 1 file changed, 33 insertions(+)
+ fs/fuse/virtio_fs.c            | 15 +++++++++++++++
+ include/uapi/linux/virtio_fs.h |  3 +++
+ 2 files changed, 18 insertions(+)
 
-diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
-index b4967d48bfda..867fdafc4a5e 100644
---- a/include/uapi/linux/fuse.h
-+++ b/include/uapi/linux/fuse.h
-@@ -394,6 +394,8 @@ enum fuse_opcode {
- 	FUSE_RENAME2		= 45,
- 	FUSE_LSEEK		= 46,
- 	FUSE_COPY_FILE_RANGE	= 47,
-+	FUSE_SETUPMAPPING       = 48,
-+	FUSE_REMOVEMAPPING      = 49,
+diff --git a/fs/fuse/virtio_fs.c b/fs/fuse/virtio_fs.c
+index cd916943205e..60d496c16841 100644
+--- a/fs/fuse/virtio_fs.c
++++ b/fs/fuse/virtio_fs.c
+@@ -520,6 +520,8 @@ static int virtio_fs_setup_dax(struct virtio_device *vdev, struct virtio_fs *fs)
+ 	phys_addr_t phys_addr;
+ 	size_t len;
+ 	int ret;
++	u8 have_cache, cache_bar;
++	u64 cache_offset, cache_len;
  
- 	/* CUSE specific operations */
- 	CUSE_INIT		= 4096,
-@@ -817,4 +819,35 @@ struct fuse_copy_file_range_in {
- 	uint64_t	flags;
- };
+ 	if (!IS_ENABLED(CONFIG_DAX_DRIVER))
+ 		return 0;
+@@ -535,6 +537,19 @@ static int virtio_fs_setup_dax(struct virtio_device *vdev, struct virtio_fs *fs)
+ 	if (ret < 0)
+ 		return ret;
  
-+#define FUSE_SETUPMAPPING_ENTRIES 8
-+#define FUSE_SETUPMAPPING_FLAG_WRITE (1ull << 0)
-+struct fuse_setupmapping_in {
-+	/* An already open handle */
-+	uint64_t	fh;
-+	/* Offset into the file to start the mapping */
-+	uint64_t	foffset;
-+	/* Length of mapping required */
-+	uint64_t	len;
-+	/* Flags, FUSE_SETUPMAPPING_FLAG_* */
-+	uint64_t	flags;
-+	/* Offset in Memory Window */
-+	uint64_t	moffset;
-+};
++	have_cache = virtio_pci_find_shm_cap(pci_dev,
++			VIRTIO_FS_PCI_SHMCAP_ID_CACHE, &cache_bar,
++			&cache_offset, &cache_len);
 +
-+struct fuse_setupmapping_out {
-+	/* Offsets into the cache of mappings */
-+	uint64_t	coffset[FUSE_SETUPMAPPING_ENTRIES];
-+        /* Lengths of each mapping */
-+        uint64_t	len[FUSE_SETUPMAPPING_ENTRIES];
-+};
++	if (!have_cache) {
++		dev_err(&vdev->dev, "%s: No cache capability\n",
++			__func__);
++		return -ENXIO;
++	} else {
++		dev_notice(&vdev->dev, "Cache bar: %d len: 0x%llx @ 0x%llx\n",
++				cache_bar, cache_len, cache_offset);
++        }
 +
-+struct fuse_removemapping_in {
-+        /* An already open handle */
-+        uint64_t	fh;
-+	/* Offset into the dax window start the unmapping */
-+	uint64_t        moffset;
-+        /* Length of mapping required */
-+        uint64_t	len;
-+};
+ 	/* TODO handle case where device doesn't expose BAR? */
+ 	ret = pci_request_region(pci_dev, VIRTIO_FS_WINDOW_BAR,
+ 				 "virtio-fs-window");
+diff --git a/include/uapi/linux/virtio_fs.h b/include/uapi/linux/virtio_fs.h
+index 48f3590dcfbe..65a9d4a0dac0 100644
+--- a/include/uapi/linux/virtio_fs.h
++++ b/include/uapi/linux/virtio_fs.h
+@@ -38,4 +38,7 @@ struct virtio_fs_config {
+ 	__u32 num_queues;
+ } __attribute__((packed));
+ 
++/* For the id field in virtio_pci_shm_cap */
++#define VIRTIO_FS_PCI_SHMCAP_ID_CACHE 0
 +
- #endif /* _LINUX_FUSE_H */
+ #endif /* _UAPI_LINUX_VIRTIO_FS_H */
 -- 
 2.13.6
 
