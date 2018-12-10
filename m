@@ -2,150 +2,103 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-2.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14393C04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 13:47:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A562C04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 13:50:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CE0192084E
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 13:47:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="QxTiqO/+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE0192084E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id D45662086D
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 13:50:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D45662086D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727473AbeLJNrt (ORCPT
+        id S1727396AbeLJNuW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 08:47:49 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:44270 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727033AbeLJNrt (ORCPT
+        Mon, 10 Dec 2018 08:50:22 -0500
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:33712 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726902AbeLJNuV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 08:47:49 -0500
-Received: by mail-pl1-f195.google.com with SMTP id k8so5272056pls.11
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Dec 2018 05:47:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=SCSftQKSNYCntANDuG/87Ss7joH+raVpHDPuPUwvWDE=;
-        b=QxTiqO/+xqjwTAXygQ0QOqo9QAVSFevY+MXO/9zs/bowfpXHL30oIGU1XFC/OvPxKt
-         FAD7HZlpKPEQpd40xs7M2dwrJsWMdvM4H11CRJgggzMV+eq2OAtijRoBc2GTrM3zl+NO
-         IkVvcEWKarRe1e+4GBu60WIN5b850PPD0X6ZU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=SCSftQKSNYCntANDuG/87Ss7joH+raVpHDPuPUwvWDE=;
-        b=R4fE5FvyGaUc5/m83Coptv4iUsYlxmFD2LCfWP2MGKuT0IF3FIiJCICGHeeQNS5UPq
-         dBgoc8rI4IfD733qUrCzU83MVaENIPyCl3gb2ft130SS1YVd9ueVcGvQFeQu2HEN3Gl3
-         Edt/C60EAKAlrk7Pwf+aSyDjd5ldzOfXJcwppwRYlPbrzIm/GOqLNvYK1/UQmf9iZzW2
-         jIBjjlFPwstyOf6d9YOGTBFdWaCu0yGGO9nE4Bc1EhHjJwXw1l9stlDtCB/KQF3b28lH
-         /56l8yS8nF4tBafE3nNEWOyq7k8jhdpFL2laDfsPz6g+b3TJr7+1VfB+oPAImeQOlSLv
-         GRZQ==
-X-Gm-Message-State: AA+aEWZmFy3TewqMsRLUa0yVRyrn1YGjjQlBMphG2mMJ+Hzgta3U4i/7
-        7CTvLYF+lKd6eBMVaOAuQY5/
-X-Google-Smtp-Source: AFSGD/XI2quJT25IFou0wOBSlY7EkX8aJvejCDX6Mzi3k8wNaoKX+bP4FUU5Zo6f9FRUHiOz4YCZbQ==
-X-Received: by 2002:a17:902:a9c4:: with SMTP id b4mr12206622plr.298.1544449668478;
-        Mon, 10 Dec 2018 05:47:48 -0800 (PST)
-Received: from Mani-XPS-13-9360 ([2409:4072:91e:2c01:40e1:a028:b090:9e12])
-        by smtp.gmail.com with ESMTPSA id r4sm19503821pgn.54.2018.12.10.05.47.41
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 10 Dec 2018 05:47:47 -0800 (PST)
-Date:   Mon, 10 Dec 2018 19:17:38 +0530
-From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To:     Parthiban Nallathambi <pn@denx.de>
-Cc:     afaerber@suse.de, robh+dt@kernel.org, mark.rutland@arm.com,
-        wsa@the-dreams.de, linux-arm-kernel@lists.infradead.org,
-        linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux@cubietech.com,
-        thomas.liau@actions-semi.com
-Subject: Re: [PATCH v2 3/4] arm64: dts: actions: s700: Add I2C controller
- nodes
-Message-ID: <20181210134738.GB25368@Mani-XPS-13-9360>
-References: <20181126185821.2480449-1-pn@denx.de>
- <20181126185821.2480449-4-pn@denx.de>
+        Mon, 10 Dec 2018 08:50:21 -0500
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id wBADnwOx014245;
+        Mon, 10 Dec 2018 07:49:58 -0600
+Received: from DLEE113.ent.ti.com (dlee113.ent.ti.com [157.170.170.24])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wBADnw5S074360
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 10 Dec 2018 07:49:58 -0600
+Received: from DLEE102.ent.ti.com (157.170.170.32) by DLEE113.ent.ti.com
+ (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Mon, 10
+ Dec 2018 07:49:58 -0600
+Received: from dflp32.itg.ti.com (10.64.6.15) by DLEE102.ent.ti.com
+ (157.170.170.32) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Mon, 10 Dec 2018 07:49:58 -0600
+Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id wBADnwdo024647;
+        Mon, 10 Dec 2018 07:49:58 -0600
+Date:   Mon, 10 Dec 2018 07:49:38 -0600
+From:   Nishanth Menon <nm@ti.com>
+To:     Sekhar Nori <nsekhar@ti.com>
+CC:     Faiz Abbas <faiz_abbas@ti.com>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <mark.rutland@arm.com>,
+        <robh+dt@kernel.org>, <t-kristo@ti.com>, <kishon@ti.com>,
+        <ulf.hansson@linaro.org>, <adrian.hunter@intel.com>,
+        <michal.simek@xilinx.com>, Tony Lindgren <tony@atomide.com>,
+        Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH 2/2] arm64: dts: ti: k3-am654-base-board: Add MMC/SD
+ support
+Message-ID: <20181210134938.hh4543yig6fngyrj@kahuna>
+References: <20181207084233.13700-1-faiz_abbas@ti.com>
+ <20181207084233.13700-3-faiz_abbas@ti.com>
+ <20181208155427.jmidz4vsw4k4qj36@akan>
+ <c1dd9783-84dc-9dad-ea94-9a14a4ad814d@ti.com>
+ <20181210120647.i3ply3p7umvedb3u@akan>
+ <66f9d53b-abec-0a28-8eae-ecb99b075db4@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20181126185821.2480449-4-pn@denx.de>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <66f9d53b-abec-0a28-8eae-ecb99b075db4@ti.com>
+User-Agent: NeoMutt/20171215
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 26, 2018 at 07:58:20PM +0100, Parthiban Nallathambi wrote:
-> Add I2C controller nodes for Actions Semiconductor S700 SoC.
+On 18:10-20181210, Sekhar Nori wrote:
 > 
-> Signed-off-by: Parthiban Nallathambi <pn@denx.de>
-
-Ideally, dts patches should come before driver.
-
-Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-
-Cheers,
-Mani
-
-> ---
->  arch/arm64/boot/dts/actions/s700.dtsi | 40 +++++++++++++++++++++++++++
->  1 file changed, 40 insertions(+)
+> I think you can rely on the author to tell you when something is
+> actually ready to be merged (and you can tell him/her to remind you).
 > 
-> diff --git a/arch/arm64/boot/dts/actions/s700.dtsi b/arch/arm64/boot/dts/actions/s700.dtsi
-> index 192c7b39c8c1..35fddba2af1c 100644
-> --- a/arch/arm64/boot/dts/actions/s700.dtsi
-> +++ b/arch/arm64/boot/dts/actions/s700.dtsi
-> @@ -174,6 +174,46 @@
->  			#clock-cells = <1>;
->  		};
->  
-> +		i2c0: i2c@e0170000 {
-> +			compatible = "actions,s700-i2c";
-> +			reg = <0 0xe0170000 0 0x1000>;
-> +			clocks = <&cmu CLK_I2C0>;
-> +			interrupts = <GIC_SPI 25 IRQ_TYPE_LEVEL_HIGH>;
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +			status = "disabled";
-> +		};
-> +
-> +		i2c1: i2c@e0174000 {
-> +			compatible = "actions,s700-i2c";
-> +			reg = <0 0xe0174000 0 0x1000>;
-> +			clocks = <&cmu CLK_I2C1>;
-> +			interrupts = <GIC_SPI 26 IRQ_TYPE_LEVEL_HIGH>;
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +			status = "disabled";
-> +		};
-> +
-> +		i2c2: i2c@e0178000 {
-> +			compatible = "actions,s700-i2c";
-> +			reg = <0 0xe0178000 0 0x1000>;
-> +			clocks = <&cmu CLK_I2C2>;
-> +			interrupts = <GIC_SPI 27 IRQ_TYPE_LEVEL_HIGH>;
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +			status = "disabled";
-> +		};
-> +
-> +		i2c3: i2c@e017c000 {
-> +			compatible = "actions,s700-i2c";
-> +			reg = <0 0xe017c000 0 0x1000>;
-> +			clocks = <&cmu CLK_I2C3>;
-> +			interrupts = <GIC_SPI 28 IRQ_TYPE_LEVEL_HIGH>;
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +			status = "disabled";
-> +		};
-> +
->  		sps: power-controller@e01b0100 {
->  			compatible = "actions,s700-sps";
->  			reg = <0x0 0xe01b0100 0x0 0x100>;
-> -- 
-> 2.17.2
-> 
+> For the review itself, doing it by having a look at the dependencies
+> mentioned in the cover letter (like available for this series) should be
+> good enough (I feel).
+
+Dependencies can be for multiple things.. anyways, Sigh..
+
+> I am not sure if there is a need to post an "RFC version", and then
+> follow it up with an actual "PATCH version" once dependencies are
+> cleared though.
+Heads up for the maintainers will be useful. For example:
+
+Will be good to state in cover-letter instead of just stating
+https://patchwork.kernel.org/cover/10717641/
+
+State:
+
+Bindings are in discussion[2], will confirm if approved and will
+check if rebase is necessary.
+
+This will indicate to the maintainer that patches are preliminary and
+subject to change depending on bindings discussion and developer has
+taken ownership of maintaining patch sanity.
+
+-- 
+Regards,
+Nishanth Menon
