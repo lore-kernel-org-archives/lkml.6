@@ -2,148 +2,97 @@ Return-Path: <SRS0=GJN7=OT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FROM_LOCAL_NOVOWEL,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 157FDC04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 05:03:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08CABC65BAF
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 05:10:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C6BFA20821
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 05:03:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C25C72082F
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Dec 2018 05:10:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LvAbAhOV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C6BFA20821
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="nqo7U4BL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C25C72082F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726481AbeLJFDD (ORCPT
+        id S1726451AbeLJFKn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 00:03:03 -0500
-Received: from mail-yw1-f68.google.com ([209.85.161.68]:34292 "EHLO
-        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726303AbeLJFDD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 00:03:03 -0500
-Received: by mail-yw1-f68.google.com with SMTP id g75so3471761ywb.1
-        for <linux-kernel@vger.kernel.org>; Sun, 09 Dec 2018 21:03:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=gokXEaayarhxMI6caXM2jwP/JGu2CK/TKpDjM3H/tco=;
-        b=LvAbAhOV8bCeoBpUUXP2l+i9cpKf1QSjoxoK3HIz6KAqGW1ybLTd74gICJLXFM+RTY
-         QpDpHhe0A+n6nWoKKITa16a52L0/KDMxqWQ6VIigIXLwNYc0SsCTquFq22HKTQ1whoyF
-         Itr+7BZxj3Ap9BRkfCsJJYaiDcMs9e5u4dTITn2En+mh/YSLLQuoYevtGtNiYKyvKFBk
-         VbBwSRSppu1wdOvl8u5CcFxJpoc5hOwHgqGSKmGhseqZ4oF2fcyFl7d/OWOfVjEBEnRi
-         PbdxeQ09WJ4OWe0y9faBkaw2fma/e2qAe40zJNRrI5RZFW64jn5fQZ3uDlBG7YWZ61Z/
-         /8MA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=gokXEaayarhxMI6caXM2jwP/JGu2CK/TKpDjM3H/tco=;
-        b=bD2AEKp+QsRuBwxSLJHodhaJ8PWxyGFl610K2C0/Uh6pB+Ad4k57A9QvMruYPmG+ev
-         ehbvsZikUp+4l64tfwK9PfujDBoT8jAFZKaipaTzXTYhrr6sgiIyUsoP/SoVIbnUawGI
-         KxEROBUvLxdPZcXJmdBAtZWI87wefYc8G3TK1KkKRGrKZowEV8AgAItP89+tGCZ4nsTO
-         QnXvNPn7rvQV8l+mVZEIkxF9ik0N6gMPnDI/VLESIaXGo3Q7dGe/xny9iU/6augGF0XO
-         aCUJhnugLY1Sunn8r+f/ZgQ+dQfzxIhd0IliMHBRmxFgTH18/0MIcpW7RO6ZuF9bEs/Z
-         a36A==
-X-Gm-Message-State: AA+aEWY/D9DJwFltbj25oUMU889gT9zofIdahFafoV+8pNHcoTDHYXF8
-        xbJ2G6hX2mrxTdGoXqUyJQZODavn7fp1l7YDtDY=
-X-Google-Smtp-Source: AFSGD/Xstu+AHR7yrBBa552/via6F2gqjfhzHne5087UJllhERAI1ph4XorVNnl8EKAYoPjcV5JRTcOo4lxcCy8o+hw=
-X-Received: by 2002:a81:3217:: with SMTP id y23mr10894223ywy.275.1544418182075;
- Sun, 09 Dec 2018 21:03:02 -0800 (PST)
+        Mon, 10 Dec 2018 00:10:43 -0500
+Received: from ozlabs.org ([203.11.71.1]:58517 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726224AbeLJFKn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Dec 2018 00:10:43 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 43CrkR66CDz9s4s;
+        Mon, 10 Dec 2018 16:10:39 +1100 (AEDT)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1544418639;
+        bh=18SuysdI/VG9hgaz0jFWjbGEFa6xPHuRSpwhmXNldDY=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=nqo7U4BLNYd4KeG3ta/ORa0SBnmT81WUrL+RKzSMCYizpy/5VC0Xtb24FVXPDgPu2
+         1d2/oB4kQUJqtL9jF9+gh8GkTwsSFvCH3ShLj7n69sX8P/J4F4aqi55UHF7Uj2nK17
+         6S6IRn5oYQGMbWHYcZsofl2Ycbo812lUTnOtTJDhB3TVKNcq4fxsjvsKrH7y9WI8Ht
+         LSWrYgWn2OvJZv03jGNikh0SjmpTe52I4TqPZ9VPifQLidmTMRZMcBBOiRY5F/WvWS
+         iS9juISqacuT6VnaZgIxBG3Uo0lFIHTqDUWhlKrPfTAxx+TcPFDvMpCJIudPeO7iKX
+         c4ZVEs//M+v0Q==
+Date:   Mon, 10 Dec 2018 16:10:39 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Paulo Flabiano Smorigo <pfsmorigo@gmail.com>
+Subject: Re: linux-next: manual merge of the rcu tree with the crypto tree
+Message-ID: <20181210161039.655e399f@canb.auug.org.au>
+In-Reply-To: <20181210154744.3b35b1c7@canb.auug.org.au>
+References: <20181210154744.3b35b1c7@canb.auug.org.au>
 MIME-Version: 1.0
-References: <20181210042352.GA6092@altlinux.org> <20181210043041.GS6131@altlinux.org>
-In-Reply-To: <20181210043041.GS6131@altlinux.org>
-From:   Max Filippov <jcmvbkbc@gmail.com>
-Date:   Sun, 9 Dec 2018 21:02:50 -0800
-Message-ID: <CAMo8Bf+s6xObgYoOOR0NTQZR-ReBbXmNv_5Jf=jX7J+bnDsTYQ@mail.gmail.com>
-Subject: Re: [PATCH v5 19/25] xtensa: define syscall_get_* functions
-To:     ldv@altlinux.org
-Cc:     oleg@redhat.com, Andrew Lutomirski <luto@kernel.org>,
-        lineprinter@altlinux.org, esyr@redhat.com,
-        Chris Zankel <chris@zankel.net>,
-        Paul Moore <paul@paul-moore.com>, eparis@redhat.com,
-        linux-xtensa@linux-xtensa.org, linux-audit@redhat.com,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/nfiuJUWvVjLqp4leHGpU983"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+--Sig_/nfiuJUWvVjLqp4leHGpU983
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, Dec 9, 2018 at 8:30 PM Dmitry V. Levin <ldv@altlinux.org> wrote:
-> syscall_get_* functions are required to be implemented on all
-> architectures in order to extend the generic ptrace API with
-> PTRACE_GET_SYSCALL_INFO request.
+Hi all,
+
+On Mon, 10 Dec 2018 15:47:44 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
 >
-> This adds all 5 syscall_get_* functions on xtensa as documented
-> in asm-generic/syscall.h: syscall_get_nr, syscall_get_arguments,
-> syscall_get_error, syscall_get_return_value, and syscall_get_arch.
+> I fixed it up (I used the crypto tree version of the changes) and can
 
-I have this set of functions plus syscall_set_arguments implemented
-for syscall tracing here:
-  https://github.com/jcmvbkbc/linux-xtensa/commit/0023f56298cc92ce47e61b1b5dd1038f7be4f826
+This turned out to be the correct thing to do since my email to Paulo
+Flabiano Smorigo <pfsmorigo@linux.vnet.ibm.com> (when forwarded to <pfsmori=
+go@linux.ibm.com>) bounced.   ;-)
+=20
 
-How should we synchronize our changes?
+--=20
+Cheers,
+Stephen Rothwell
 
-> diff --git a/arch/xtensa/include/asm/syscall.h b/arch/xtensa/include/asm/syscall.h
-> index 3673ff1f1bc5..d529c855a144 100644
-> --- a/arch/xtensa/include/asm/syscall.h
-> +++ b/arch/xtensa/include/asm/syscall.h
+--Sig_/nfiuJUWvVjLqp4leHGpU983
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-[...]
+-----BEGIN PGP SIGNATURE-----
 
-> +static inline void
-> +syscall_get_arguments(struct task_struct *task, struct pt_regs *regs,
-> +                     unsigned int i, unsigned int n, unsigned long *args)
-> +{
-> +       switch (i) {
-> +       case 0:
-> +               if (!n--)
-> +                       break;
-> +               *args++ = regs->areg[6];
-> +               /* fall through */
-> +       case 1:
-> +               if (!n--)
-> +                       break;
-> +               *args++ = regs->areg[3];
-> +               /* fall through */
-> +       case 2:
-> +               if (!n--)
-> +                       break;
-> +               *args++ = regs->areg[4];
-> +               /* fall through */
-> +       case 3:
-> +               if (!n--)
-> +                       break;
-> +               *args++ = regs->areg[5];
-> +               /* fall through */
-> +       case 4:
-> +               if (!n--)
-> +                       break;
-> +               *args++ = regs->areg[8];
-> +               /* fall through */
-> +       case 5:
-> +               if (!n--)
-> +                       break;
-> +               *args++ = regs->areg[9];
-> +               /* fall through */
-> +       case 6:
-> +               if (!n--)
-> +                       break;
-> +               /* fall through */
-> +       default:
-> +               BUG();
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwN9U8ACgkQAVBC80lX
+0Gz6/gf8Dv8XLbp9lbdRTdqoMllJOziRClhlOW2tR+A51YCMeoE/wVbxdmEBqodL
+yC7HMp2ukKQDDmhBWeLy9ns/laGmp87CpzBOpYSsN9aMExe20Atw8tNZv7u1hW80
+gpvBfwjn2BO0ZbTFJCzYCkSa//KOB/wvdTgBy7U1vgEo5ftLe9Kr/QMZL+Pv3xJN
+q2Rzl5Nt0d5nyrjk1OXkv16fRK3ityl72oPQM492+otiLH0XvIM8hIoayzPX3vj6
+U5/E/DcnRd4W5sNSg5MyKoetWji3sYQFBtEYvEUzZ0IJGYTzUsVUy5uk19GowX+G
+zt6K73lyBjb/fdI0K5cyxp8cMoEXnQ==
+=Jm3/
+-----END PGP SIGNATURE-----
 
-A WARN should be enough.
-
--- 
-Thanks.
--- Max
+--Sig_/nfiuJUWvVjLqp4leHGpU983--
