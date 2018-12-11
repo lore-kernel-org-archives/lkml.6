@@ -2,103 +2,101 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0990C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 00:05:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB303C67839
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 00:06:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5D1E12081F
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 00:05:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m2mmxOr3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D1E12081F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 741492081F
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 00:06:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 741492081F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ah.jp.nec.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728444AbeLKAF4 (ORCPT
+        id S1728665AbeLKAGN convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 19:05:56 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:44905 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727225AbeLKAFz (ORCPT
+        Mon, 10 Dec 2018 19:06:13 -0500
+Received: from tyo162.gate.nec.co.jp ([114.179.232.162]:59229 "EHLO
+        tyo162.gate.nec.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727225AbeLKAGM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 19:05:55 -0500
-Received: by mail-wr1-f66.google.com with SMTP id z5so12255195wrt.11;
-        Mon, 10 Dec 2018 16:05:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=04AGU6znUsheVb7NBNNw+8OY8y+ws90vlv4simqd50o=;
-        b=m2mmxOr373f1C3JLr7q4q/fWwHU+3PrIpCii8+ul6q73be1LgrnunI9JY6VrlIxSdg
-         e4iCIURwRVlRCpMBhVuosvO2GED6AKLyjNYvLV3+o7vvXRM1fNdwheYJNy5rn3H0lUsB
-         R/FAL06JpzX/Ze8LQaIgjBwxf2Kv62tB3+2B1fuqXThBYwJkbasK8hy1C8oJxRQ6EtCO
-         noCFPZKzVNbnMg1iz2kD0fR40JSDIbGGyLLy/vf3d/olO9BSUNh1rgibeKrCTwPuZpDq
-         iXg55aBwwMHXuf2p8AbGWCfclp6rVzaZGlsxuZtVv8LCvkdXYSSgtAhMHainaFm5R6Fw
-         wpmQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=04AGU6znUsheVb7NBNNw+8OY8y+ws90vlv4simqd50o=;
-        b=Aog0FmEW07r37N26RHWg8od/KGRbZqKuMHQBZ0ERqa2wDYifmjSm9b43gNBDdAdt1p
-         4sdA1Gv2nKMBVz7ncLkOc+dZC5UUMJy0H4sfkGRMSjMsRauIVeUJa5mGzdkqeGQ64o7m
-         Bfkf/GyzCvGLk7/wfadSp3AbsO6bt7512lTDjMzhLN2WV7YeqeRphjlVfd1iADVazh2K
-         Xk0GtZc9FAT7dd9F4V7pdRRixGaxXr0k2nWwzfHFK1pIUtxiQ6xdEFlEFz7smYaMDhCr
-         y94BcRoqIpQQ8AnM9WVAC35qjxQkJPLrybJF9bhisIufwdnrMI3bK/5txgkjZB6B31uG
-         I12w==
-X-Gm-Message-State: AA+aEWZD0evIfYyBe63VIHwkXXo6Xc3R7mRcmGLWV/56pb0jMEP4fKvZ
-        4xHpKfpwltmM2PJ7hpEfbOwxW66++cQRsw==
-X-Google-Smtp-Source: AFSGD/UlEqaqBcYEAQ8Nz24y+qVzbYcrgFeMHSnD72a1pyIsdEhZCUlUB0d9GCYvvQzR0ypkQyV2kw==
-X-Received: by 2002:adf:f350:: with SMTP id e16mr10978800wrp.125.1544486753443;
-        Mon, 10 Dec 2018 16:05:53 -0800 (PST)
-Received: from localhost.localdomain ([2a01:4f8:10b:24a5::2])
-        by smtp.gmail.com with ESMTPSA id h16sm36448599wrb.62.2018.12.10.16.05.52
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 10 Dec 2018 16:05:52 -0800 (PST)
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Joel Stanley <joel@jms.id.au>, Andrew Jeffery <andrew@aj.id.au>,
-        linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH] pinctrl: aspeed: Wrap -Woverride-init with cc-option
-Date:   Mon, 10 Dec 2018 17:05:06 -0700
-Message-Id: <20181211000506.7559-1-natechancellor@gmail.com>
-X-Mailer: git-send-email 2.20.0
+        Mon, 10 Dec 2018 19:06:12 -0500
+Received: from mailgate01.nec.co.jp ([114.179.233.122])
+        by tyo162.gate.nec.co.jp (8.15.1/8.15.1) with ESMTPS id wBB02c1M027846
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Tue, 11 Dec 2018 09:02:38 +0900
+Received: from mailsv01.nec.co.jp (mailgate-v.nec.co.jp [10.204.236.94])
+        by mailgate01.nec.co.jp (8.15.1/8.15.1) with ESMTP id wBB02cti013400;
+        Tue, 11 Dec 2018 09:02:38 +0900
+Received: from mail01b.kamome.nec.co.jp (mail01b.kamome.nec.co.jp [10.25.43.2])
+        by mailsv01.nec.co.jp (8.15.1/8.15.1) with ESMTP id wBB01p4H002374;
+        Tue, 11 Dec 2018 09:02:38 +0900
+Received: from bpxc99gp.gisp.nec.co.jp ([10.38.151.150] [10.38.151.150]) by mail03.kamome.nec.co.jp with ESMTP id BT-MMP-513664; Tue, 11 Dec 2018 09:00:51 +0900
+Received: from BPXM23GP.gisp.nec.co.jp ([10.38.151.215]) by
+ BPXC22GP.gisp.nec.co.jp ([10.38.151.150]) with mapi id 14.03.0319.002; Tue,
+ 11 Dec 2018 09:00:50 +0900
+From:   Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+To:     Anthony Yznaga <anthony.yznaga@oracle.com>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "chansen3@cisco.com" <chansen3@cisco.com>,
+        "vbabka@suse.cz" <vbabka@suse.cz>,
+        "willy@infradead.org" <willy@infradead.org>,
+        "rientjes@google.com" <rientjes@google.com>
+Subject: Re: [PATCH] tools/vm/page-types.c: fix "kpagecount returned fewer
+ pages than expected" failures
+Thread-Topic: [PATCH] tools/vm/page-types.c: fix "kpagecount returned fewer
+ pages than expected" failures
+Thread-Index: AQHUjB+8Q0loeO8VgkakJeKYQ9HUO6V4GgaA
+Date:   Tue, 11 Dec 2018 00:00:49 +0000
+Message-ID: <20181211000049.GA19806@hori1.linux.bs1.fc.nec.co.jp>
+References: <1543962269-26116-1-git-send-email-anthony.yznaga@oracle.com>
+In-Reply-To: <1543962269-26116-1-git-send-email-anthony.yznaga@oracle.com>
+Accept-Language: en-US, ja-JP
+Content-Language: ja-JP
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.51.8.80]
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-ID: <E8B28FAEE810064EA748D114065562DB@gisp.nec.co.jp>
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-TM-AS-MML: disable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Clang does not support this option:
+On Tue, Dec 04, 2018 at 02:24:29PM -0800, Anthony Yznaga wrote:
+> Because kpagecount_read() fakes success if map counts are not being
+> collected, clamp the page count passed to it by walk_pfn() to the pages
+> value returned by the preceding call to kpageflags_read().
+> 
+> Fixes: 7f1d23e60718 ("tools/vm/page-types.c: include shared map counts")
+> Signed-off-by: Anthony Yznaga <anthony.yznaga@oracle.com>
 
-warning: unknown warning option '-Woverride-init'; did you mean
-'-Woverride-module'? [-Wunknown-warning-option]
-1 warning generated.
+Reviewed-by: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
 
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
----
- drivers/pinctrl/aspeed/Makefile | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/pinctrl/aspeed/Makefile b/drivers/pinctrl/aspeed/Makefile
-index 191ed0fc1804..790b406aae19 100644
---- a/drivers/pinctrl/aspeed/Makefile
-+++ b/drivers/pinctrl/aspeed/Makefile
-@@ -1,6 +1,6 @@
- # Aspeed pinctrl support
- 
--ccflags-y += -Woverride-init
-+ccflags-y += $(call cc-option,-Woverride-init)
- obj-$(CONFIG_PINCTRL_ASPEED)	+= pinctrl-aspeed.o
- obj-$(CONFIG_PINCTRL_ASPEED_G4)	+= pinctrl-aspeed-g4.o
- obj-$(CONFIG_PINCTRL_ASPEED_G5)	+= pinctrl-aspeed-g5.o
--- 
-2.20.0
-
+> ---
+>  tools/vm/page-types.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/tools/vm/page-types.c b/tools/vm/page-types.c
+> index 37908a83ddc2..1ff3a6c0367b 100644
+> --- a/tools/vm/page-types.c
+> +++ b/tools/vm/page-types.c
+> @@ -701,7 +701,7 @@ static void walk_pfn(unsigned long voffset,
+>  		if (kpagecgroup_read(cgi, index, pages) != pages)
+>  			fatal("kpagecgroup returned fewer pages than expected");
+>  
+> -		if (kpagecount_read(cnt, index, batch) != pages)
+> +		if (kpagecount_read(cnt, index, pages) != pages)
+>  			fatal("kpagecount returned fewer pages than expected");
+>  
+>  		for (i = 0; i < pages; i++)
+> -- 
+> 1.8.3.1
+> 
+> 
