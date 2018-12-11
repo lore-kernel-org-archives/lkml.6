@@ -2,289 +2,91 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3A7BC6783B
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 20:24:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BDA40C6783C
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 20:24:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AAE7120880
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 20:24:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544559852;
-	bh=SY2KYGdGvdvuURM1J0TPPmpSyNPT7lOcr6Gtum/Z3gI=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=CbiD8GFyJCxckmagccEf7q8I71jDAa6fLiqZi4diejMbv9rwt9r5MmcYmsXPpypVD
-	 nrLyp5/shzjIrPEis+M0iG52PrQLE7PajmRtGilJWgMCj6/upk2FsgeVMCTcxgANHN
-	 mTIgOZaDXGgHnRuKKh7v6qBiPTy6h+XF+mN5TyfU=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AAE7120880
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 2540B20851
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 20:24:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="U/XiwwdM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2540B20851
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726311AbeLKUYL (ORCPT
+        id S1726339AbeLKUYM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 11 Dec 2018 15:24:12 -0500
+Received: from ozlabs.org ([203.11.71.1]:39137 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726134AbeLKUYL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 11 Dec 2018 15:24:11 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:40860 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726125AbeLKUYL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 15:24:11 -0500
-Received: by mail-ot1-f68.google.com with SMTP id s5so15355975oth.7;
-        Tue, 11 Dec 2018 12:24:09 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=qDEl5D7sjNExZPgDsPayoPbNtf9cuUrPusIJ99/11Fs=;
-        b=c3B8PGuoySVK17q/Diy2PY48uuONz9w0zsnteY4jNr+pUJXoAsKI/qak2+5Kc3i064
-         bDKa6Nu8M0TdnazThR3bIifWE6i8Zn3fiP3r89zV+VmkY/twwqkCLrdrY/v1VxfZ4CKc
-         aM3nsa+tiXjbVGZydiZZoLJ7sPbJjYiGVASLNGE11eRXCleEInhr0rg5ez3ud4Ez2+3E
-         ItnSPTIpanYSNBeuONNFHf1xGdXteNNlP+17RykxWPGfvpGDGGnggumVCsKTJ+E2YM9b
-         EZBM+hBnIkT00MYwVBcIEXhNqpCLiqJ5Su//ctI8ou9BttML62GZC0kQ29/RlJZSY26w
-         V1UA==
-X-Gm-Message-State: AA+aEWaNAusr2wnPg7fKC9Vm1MKHd4cjK1AVFhPP9I5dw8LrNLYbOc9m
-        7IY3MU3P3DIPTw6GXX+G362di7s=
-X-Google-Smtp-Source: AFSGD/Ub2SvNQ//jyxN7kG/dzI9pQIkB5mZMsjKnHNEQKUsianwAcKxOxEAWYW850wtYb3gHq/udiA==
-X-Received: by 2002:a05:6830:d:: with SMTP id c13mr13187750otp.82.1544559848822;
-        Tue, 11 Dec 2018 12:24:08 -0800 (PST)
-Received: from xps15.herring.priv (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.googlemail.com with ESMTPSA id z9sm7327127oiz.21.2018.12.11.12.24.07
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 11 Dec 2018 12:24:08 -0800 (PST)
-From:   Rob Herring <robh@kernel.org>
-To:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     Sean Hudson <darknighte@darknighte.com>,
-        Frank Rowand <frowand.list@gmail.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linuxppc-dev@lists.ozlabs.org, Grant Likely <grant.likely@arm.com>,
-        Kumar Gala <kumar.gala@linaro.org>, arm@kernel.org,
-        Jonathan Corbet <corbet@lwn.net>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        linux-doc@vger.kernel.org, linux-kbuild@vger.kernel.org
-Subject: [PATCH v4] kbuild: Add support for DT binding schema checks
-Date:   Tue, 11 Dec 2018 14:24:06 -0600
-Message-Id: <20181211202406.27721-1-robh@kernel.org>
-X-Mailer: git-send-email 2.19.1
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 43Dry133Cvz9s1c;
+        Wed, 12 Dec 2018 07:24:09 +1100 (AEDT)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1544559849;
+        bh=MTvTMn3D+494wQJ7djJinH9eaAXyR64uR0mMHLhSMCc=;
+        h=Date:From:To:Cc:Subject:From;
+        b=U/XiwwdMPIKdDBi+Tpdlbp6x1HaveVApu3tBr1n88Yi7UT26E2E8LhV4XvVi1/ySe
+         a0vhQvAM2LG7F37NQlx5zoIrvKiMUSefqnzeC+iWrAkJItkGO9amj4U+TSd16F2wUs
+         +7RBAjJJT2/TCw0C9J7bOL2+N8DNubiD7N+XMsJeKk4Vm7SH15pVJIaW+59oU+w2IN
+         1TLs5LtXf8+Dgcu6oTOLrBCQ8HE/YzYRkMnAqnxrXsCP+xJnWmo+QDUA8fvfg8zrOy
+         +XFnKudtYE/2neRY3bM84TScOCX63y05CiVGXzivqfZ1Jc8nvwwMaGhUJg4oZqMm8u
+         qOI/EAZUjxBrg==
+Date:   Wed, 12 Dec 2018 07:24:02 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Steven Whitehouse <swhiteho@redhat.com>,
+        Bob Peterson <rpeterso@redhat.com>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andreas Gruenbacher <agruenba@redhat.com>
+Subject: linux-next: Signed-off-by missing for commit in the gfs2 tree
+Message-ID: <20181212072402.7b967df7@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/M8NGu9AN0qZCubDrYoPDlQ_"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This adds the build infrastructure for checking DT binding schema
-documents and validating dts files using the binding schema.
+--Sig_/M8NGu9AN0qZCubDrYoPDlQ_
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Check DT binding schema documents:
-make dt_binding_check
+Hi all,
 
-Build dts files and check using DT binding schema:
-make dtbs_check
+Commit
 
-Optionally, DT_SCHEMA_FILES can be passed in with a schema file(s) to
-use for validation. This makes it easier to find and fix errors
-generated by a specific schema.
+  ec702fa79702 ("gfs2: Dump nrpages for inodes and their glocks")
 
-Currently, the validation targets are separate from a normal build to
-avoid a hard dependency on the external DT schema project and because
-there are lots of warnings generated.
+is missing a Signed-off-by from its committer.
 
-Cc: Jonathan Corbet <corbet@lwn.net>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Michal Marek <michal.lkml@markovi.net>
-Cc: linux-doc@vger.kernel.org
-Cc: devicetree@vger.kernel.org
-Cc: linux-kbuild@vger.kernel.org
-Signed-off-by: Rob Herring <robh@kernel.org>
----
-v4:
-- Rework libyaml check and error message with Masahiro's version
-- Simplify build rules and dependencies
+--=20
+Cheers,
+Stephen Rothwell
 
+--Sig_/M8NGu9AN0qZCubDrYoPDlQ_
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
- .gitignore                                   |  1 +
- Documentation/Makefile                       |  2 +-
- Documentation/devicetree/bindings/.gitignore |  2 ++
- Documentation/devicetree/bindings/Makefile   | 27 ++++++++++++++++++++
- Makefile                                     | 13 +++++++---
- scripts/Makefile.lib                         | 24 +++++++++++++++--
- scripts/dtc/Makefile                         |  4 +++
- 7 files changed, 67 insertions(+), 6 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/.gitignore
- create mode 100644 Documentation/devicetree/bindings/Makefile
+-----BEGIN PGP SIGNATURE-----
 
-diff --git a/.gitignore b/.gitignore
-index 97ba6b79834c..a20ac26aa2f5 100644
---- a/.gitignore
-+++ b/.gitignore
-@@ -15,6 +15,7 @@
- *.bin
- *.bz2
- *.c.[012]*.*
-+*.dt.yaml
- *.dtb
- *.dtb.S
- *.dwo
-diff --git a/Documentation/Makefile b/Documentation/Makefile
-index 2ca77ad0f238..9786957c6a35 100644
---- a/Documentation/Makefile
-+++ b/Documentation/Makefile
-@@ -2,7 +2,7 @@
- # Makefile for Sphinx documentation
- #
- 
--subdir-y :=
-+subdir-y := devicetree/bindings/
- 
- # You can set these variables from the command line.
- SPHINXBUILD   = sphinx-build
-diff --git a/Documentation/devicetree/bindings/.gitignore b/Documentation/devicetree/bindings/.gitignore
-new file mode 100644
-index 000000000000..ef82fcfcccab
---- /dev/null
-+++ b/Documentation/devicetree/bindings/.gitignore
-@@ -0,0 +1,2 @@
-+*.example.dts
-+processed-schema.yaml
-diff --git a/Documentation/devicetree/bindings/Makefile b/Documentation/devicetree/bindings/Makefile
-new file mode 100644
-index 000000000000..6e5cef0ed6fb
---- /dev/null
-+++ b/Documentation/devicetree/bindings/Makefile
-@@ -0,0 +1,27 @@
-+# SPDX-License-Identifier: GPL-2.0
-+DT_DOC_CHECKER ?= dt-doc-validate
-+DT_EXTRACT_EX ?= dt-extract-example
-+DT_MK_SCHEMA ?= dt-mk-schema
-+DT_MK_SCHEMA_FLAGS := $(if $(DT_SCHEMA_FILES), -u)
-+
-+quiet_cmd_chk_binding = CHKDT   $(patsubst $(srctree)/%,%,$<)
-+      cmd_chk_binding = $(DT_DOC_CHECKER) $< ; \
-+                        $(DT_EXTRACT_EX) $< > $@
-+
-+$(obj)/%.example.dts: $(src)/%.yaml FORCE
-+	$(call if_changed,chk_binding)
-+
-+DT_TMP_SCHEMA := processed-schema.yaml
-+extra-y += $(DT_TMP_SCHEMA)
-+
-+quiet_cmd_mk_schema = SCHEMA  $@
-+      cmd_mk_schema = $(DT_MK_SCHEMA) $(DT_MK_SCHEMA_FLAGS) -o $@ $(filter-out FORCE, $^)
-+
-+DT_DOCS = $(shell cd $(srctree)/$(src) && find * -name '*.yaml')
-+DT_SCHEMA_FILES ?= $(addprefix $(src)/,$(DT_DOCS))
-+
-+extra-y += $(patsubst $(src)/%.yaml,%.example.dts, $(DT_SCHEMA_FILES))
-+extra-y += $(patsubst $(src)/%.yaml,%.example.dtb, $(DT_SCHEMA_FILES))
-+
-+$(obj)/$(DT_TMP_SCHEMA): $(DT_SCHEMA_FILES) FORCE
-+	$(call if_changed,mk_schema)
-diff --git a/Makefile b/Makefile
-index 2f36db897895..a3e2db2a3119 100644
---- a/Makefile
-+++ b/Makefile
-@@ -1232,10 +1232,13 @@ ifneq ($(dtstree),)
- %.dtb: prepare3 scripts_dtc
- 	$(Q)$(MAKE) $(build)=$(dtstree) $(dtstree)/$@
- 
--PHONY += dtbs dtbs_install
--dtbs: prepare3 scripts_dtc
-+PHONY += dtbs dtbs_install dt_binding_check
-+dtbs dtbs_check: prepare3 scripts_dtc
- 	$(Q)$(MAKE) $(build)=$(dtstree)
- 
-+dtbs_check: export CHECK_DTBS=1
-+dtbs_check: dt_binding_check
-+
- dtbs_install:
- 	$(Q)$(MAKE) $(dtbinst)=$(dtstree)
- 
-@@ -1249,6 +1252,9 @@ PHONY += scripts_dtc
- scripts_dtc: scripts_basic
- 	$(Q)$(MAKE) $(build)=scripts/dtc
- 
-+dt_binding_check: scripts_dtc
-+	$(Q)$(MAKE) $(build)=Documentation/devicetree/bindings
-+
- # ---------------------------------------------------------------------------
- # Modules
- 
-@@ -1611,7 +1617,8 @@ clean: $(clean-dirs)
- 	$(call cmd,rmfiles)
- 	@find $(if $(KBUILD_EXTMOD), $(KBUILD_EXTMOD), .) $(RCS_FIND_IGNORE) \
- 		\( -name '*.[aios]' -o -name '*.ko' -o -name '.*.cmd' \
--		-o -name '*.ko.*' -o -name '*.dtb' -o -name '*.dtb.S' \
-+		-o -name '*.ko.*' \
-+		-o -name '*.dtb' -o -name '*.dtb.S' -o -name '*.dt.yaml' \
- 		-o -name '*.dwo' -o -name '*.lst' \
- 		-o -name '*.su'  \
- 		-o -name '.*.d' -o -name '.*.tmp' -o -name '*.mod.c' \
-diff --git a/scripts/Makefile.lib b/scripts/Makefile.lib
-index 8fe4468f9bda..723b33c942df 100644
---- a/scripts/Makefile.lib
-+++ b/scripts/Makefile.lib
-@@ -61,6 +61,11 @@ real-obj-m := $(foreach m, $(obj-m), $(if $(strip $($(m:.o=-objs)) $($(m:.o=-y))
- extra-y				+= $(dtb-y)
- extra-$(CONFIG_OF_ALL_DTBS)	+= $(dtb-)
- 
-+ifneq ($(CHECK_DTBS),)
-+extra-y += $(patsubst %.dtb,%.dt.yaml, $(dtb-y))
-+extra-$(CONFIG_OF_ALL_DTBS) += $(patsubst %.dtb,%.dt.yaml, $(dtb-))
-+endif
-+
- # Add subdir path
- 
- extra-y		:= $(addprefix $(obj)/,$(extra-y))
-@@ -284,13 +289,28 @@ $(obj)/%.dtb.S: $(obj)/%.dtb FORCE
- quiet_cmd_dtc = DTC     $@
- cmd_dtc = mkdir -p $(dir ${dtc-tmp}) ; \
- 	$(HOSTCC) -E $(dtc_cpp_flags) -x assembler-with-cpp -o $(dtc-tmp) $< ; \
--	$(DTC) -O dtb -o $@ -b 0 \
-+	$(DTC) -O $(2) -o $@ -b 0 \
- 		$(addprefix -i,$(dir $<) $(DTC_INCLUDE)) $(DTC_FLAGS) \
- 		-d $(depfile).dtc.tmp $(dtc-tmp) ; \
- 	cat $(depfile).pre.tmp $(depfile).dtc.tmp > $(depfile)
- 
- $(obj)/%.dtb: $(src)/%.dts $(DTC) FORCE
--	$(call if_changed_dep,dtc)
-+	$(call if_changed_dep,dtc,dtb)
-+
-+DT_CHECKER ?= dt-validate
-+DT_BINDING_DIR := Documentation/devicetree/bindings
-+DT_TMP_SCHEMA := $(objtree)/$(DT_BINDING_DIR)/processed-schema.yaml
-+
-+quiet_cmd_dtb_check =	CHECK   $@
-+      cmd_dtb_check =	$(DT_CHECKER) -p $(DT_TMP_SCHEMA) $@ ;
-+
-+define rule_dtc_dt_yaml
-+	$(call cmd_and_fixdep,dtc,yaml)		\
-+	$(call echo-cmd,dtb_check) $(cmd_dtb_check)
-+endef
-+
-+$(obj)/%.dt.yaml: $(src)/%.dts $(DTC) $(DT_TMP_SCHEMA) FORCE
-+	$(call if_changed_rule,dtc_dt_yaml)
- 
- dtc-tmp = $(subst $(comma),_,$(dot-target).dts.tmp)
- 
-diff --git a/scripts/dtc/Makefile b/scripts/dtc/Makefile
-index 056d5da6c477..5f227d8d39d8 100644
---- a/scripts/dtc/Makefile
-+++ b/scripts/dtc/Makefile
-@@ -12,6 +12,10 @@ dtc-objs	+= dtc-lexer.lex.o dtc-parser.tab.o
- HOST_EXTRACFLAGS := -I$(src)/libfdt
- 
- ifeq ($(wildcard /usr/include/yaml.h),)
-+ifneq ($(CHECK_DTBS),)
-+$(error dtc needs libyaml for DT schema validation support. \
-+	Install the necessary libyaml development package.)
-+endif
- HOST_EXTRACFLAGS += -DNO_YAML
- else
- dtc-objs	+= yamltree.o
--- 
-2.19.1
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwQHOIACgkQAVBC80lX
+0GzsUwf+IlfRH/ejw9dftfobCVrGG1j/dX7txmrfqzRyuW1IkVAMeK5msA6V1Jcw
+3KZZmxYnbx506muCfbNzM1z5xzwophX7sR2qaAImDSakZlmIXKVmuAIKYlmojXzs
+Ws8loSGiSxP832sTKft8RFRMIx0Tv+4WyEUdHIInZZBi4Ei2xuWIDp4NKRzTXJJ1
+7NAdERa2TvMMzHtosyKdbdk63YBN79ZCjgCL7GFeVDy8aW2o6YEbxkXoUw6JrQsY
+o8IsTFtk7Y2CGg4u8vafYzvXfY+s8Qf65b5rDPGSilFHL+1FYQa/gbZeoOgPUJus
+LpwXTuaU9o12MNv1wIHKDwJuL3K1Rg==
+=0PFl
+-----END PGP SIGNATURE-----
 
+--Sig_/M8NGu9AN0qZCubDrYoPDlQ_--
