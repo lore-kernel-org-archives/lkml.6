@@ -3,117 +3,113 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4CD2C67839
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 23:29:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C63D1C67839
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 23:33:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 735E820672
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 23:29:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 735E820672
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 964BC20879
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 23:33:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 964BC20879
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=libc.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726235AbeLKX3x (ORCPT
+        id S1726234AbeLKXd2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 18:29:53 -0500
-Received: from mga02.intel.com ([134.134.136.20]:34190 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726183AbeLKX3w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 18:29:52 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Dec 2018 15:29:51 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,343,1539673200"; 
-   d="scan'208";a="125057550"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.154])
-  by fmsmga002.fm.intel.com with ESMTP; 11 Dec 2018 15:29:51 -0800
-Date:   Tue, 11 Dec 2018 15:29:51 -0800
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     Josh Triplett <josh@joshtriplett.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        X86 ML <x86@kernel.org>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
+        Tue, 11 Dec 2018 18:33:28 -0500
+Received: from 216-12-86-13.cv.mvl.ntelos.net ([216.12.86.13]:58748 "EHLO
+        brightrain.aerifal.cx" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726158AbeLKXd2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 18:33:28 -0500
+Received: from dalias by brightrain.aerifal.cx with local (Exim 3.15 #2)
+        id 1gWrWe-0007p9-00; Tue, 11 Dec 2018 23:33:16 +0000
+Date:   Tue, 11 Dec 2018 18:33:16 -0500
+From:   Rich Felker <dalias@libc.org>
+To:     Thorsten Glaser <tg@mirbsd.de>
+Cc:     John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+        Andy Lutomirski <luto@kernel.org>, X86 ML <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
         "H. Peter Anvin" <hpa@zytor.com>,
-        LKML <linux-kernel@vger.kernel.org>, linux-sgx@vger.kernel.org,
-        Haitao Huang <haitao.huang@linux.intel.com>,
-        Jethro Beekman <jethro@fortanix.com>,
-        "Dr. Greg Wettstein" <greg@enjellic.com>
-Subject: Re: [RFC PATCH v3 0/4] x86: Add exception fixup for SGX ENCLU
-Message-ID: <20181211232951.GK14731@linux.intel.com>
-References: <20181210232141.5425-1-sean.j.christopherson@intel.com>
- <20181210232449.GA11843@localhost>
- <EEE078E7-7F37-4F74-8874-46E16C1E0A77@amacapital.net>
- <20181211165253.GB14731@linux.intel.com>
- <CALCETrXOXh8Gb_d7NYLakx4w+JVEe79t11wFPLpy+5MEq9kq=A@mail.gmail.com>
- <20181211222312.GI14731@linux.intel.com>
- <CALCETrW5Z_4+Yo+D1KgahHHqGdb+tgyWMRvB8eozbW82jZqK3w@mail.gmail.com>
+        Peter Zijlstra <peterz@infradead.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Florian Weimer <fweimer@redhat.com>,
+        Mike Frysinger <vapier@gentoo.org>,
+        "H. J. Lu" <hjl.tools@gmail.com>, x32@buildd.debian.org,
+        Arnd Bergmann <arnd@arndb.de>,
+        Will Deacon <will.deacon@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: Can we drop upstream Linux x32 support?
+Message-ID: <20181211233316.GN23599@brightrain.aerifal.cx>
+References: <CALCETrXoRAibsbWa9nfbDrt0iEuebMnCMhSFg-d9W-J2g8mDjw@mail.gmail.com>
+ <70bb54b2-8ed3-b5ee-c02d-6ef66c4f27eb@physik.fu-berlin.de>
+ <Pine.BSM.4.64L.1812112155170.21176@herc.mirbsd.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CALCETrW5Z_4+Yo+D1KgahHHqGdb+tgyWMRvB8eozbW82jZqK3w@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <Pine.BSM.4.64L.1812112155170.21176@herc.mirbsd.org>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 11, 2018 at 03:10:52PM -0800, Andy Lutomirski wrote:
-> On Tue, Dec 11, 2018 at 2:23 PM Sean Christopherson
-> <sean.j.christopherson@intel.com> wrote:
-> >
-> > On Tue, Dec 11, 2018 at 09:58:19AM -0800, Andy Lutomirski wrote:
-> > > > On Dec 11, 2018, at 8:52 AM, Sean Christopherson <sean.j.christopherson@intel.com> wrote:
-> > > >
-> > > >> On Tue, Dec 11, 2018 at 07:41:27AM -0800, Andy Lutomirski wrote:
-> > > >>
-> > > >>
-> > > >>>> On Dec 10, 2018, at 3:24 PM, Josh Triplett <josh@joshtriplett.org> wrote:
-> > > >>>>
-> > > >>>> On Mon, Dec 10, 2018 at 03:21:37PM -0800, Sean Christopherson wrote:
-> > > >>>> At that point I realized it's a hell of a lot easier to simply provide
-> > > >>>> an IOCTL via /dev/sgx that allows userspace to register a per-process
-> > > >>>> ENCLU exception handler.  At a high level, the basic idea is the same
-> > > >>>> as the vDSO approach: provide a hardcoded fixup handler for ENCLU and
-> > > >>>> attempt to fixup select unhandled exceptions that occurred in user code.
-> > > >>>
-> > > >>> So, on the one hand, this is *absolutely* much cleaner than the VDSO
-> > > >>> approach. On the other hand, this is global process state and has some
-> > > >>> of the same problems as a signal handler as a result.
-> > > >>
-> > > >> I liked the old version better for this reason
-> > > >
-> > > > This isn't fundamentally different than forcing all EENTER calls through
-> > > > the vDSO, which is also per-process.  Technically this is more flexible
-> > > > in that regard since userspace gets to choose where their one ENCLU gets
-> > > > to reside.  Userspace can have per-enclave entry flows so long as the
-> > > > actual ENLU[EENTER] is common, same as vDSO.
-> > >
-> > > Right. The problem is that user libraries have a remarkably hard time
-> > > agreeing on where their one copy of anything lives.
-> >
-> > Are you concerned about userspace shooting themselves in the foot, e.g.
-> > unknowingly overwriting their handler?  Requiring unregister->register
-> > to change the handler would mitigate that issue for the most part.  Or
-> > we could even say it's a write-once property.
-> >
-> > That obviously doesn't solve the issue of a userspace application
-> > deliberately using two different libraries to run enclaves in a single
-> > process, but I have a hard time envisioning a scenario where someone
-> > would want to use two different *SGX* libraries in a single process.
-> > Don't most of the signal issue arise due to loading multiple libraries
-> > that provide *different* services needing to handle signals?
+On Tue, Dec 11, 2018 at 09:59:48PM +0000, Thorsten Glaser wrote:
+> John Paul Adrian Glaubitz dixit:
 > 
-> I can easily imagine two SGX libraries that know nothing about each
-> other running in the same process.  One or both could be PKCS#11
-> modules, for example.
+> >I can't say anything about the syscall interface. However, what I do know
+> >is that the weird combination of a 32-bit userland with a 64-bit kernel
+> >interface is sometimes causing issues. For example, application code usually
+> 
+> Yes, but more and more ${foo}64ilp32 architectures are popping up.
+> 
+> >Additionally, x32 support in many applications is either rudimentary
+> 
+> If a signal is sent that this kind of architectures will stay, some
+> people might be convinced to fix that.
+> 
+> >It's also that the performance benefits of x32 are often eaten up by
+> >the fact that none of the scripted languages that I know of provide
+> 
+> Non-JITted languages like yours truly’s shell do benefit from it,
+> though. (mksh works just fine on LP64 but its internal structures
+> pack massively better on ILP32, for example.)
 
-Argh, wasn't thinking about loading other libraries that would also be
-using SGX.
+gcc also benefits massively, up to 2x or more performance improvement
+from ILP32, just because you can double your -jN to make. The "or
+more" comes from cache utilization also improving. Actually I often
+use i486 gcc even on 64-bit systems for this reason, and have observed
+this order of improvement despite the lack of registers and worse call
+ABI. Presumably x32 would be better, but I've avoided it because of
+how buggy it's been in the past.
+
+> >If x32 is eventually to be removed, we should also take care of removing
+> >x32 support from userland code. From the top of my head, this would at least
+> 
+> I don’t think so. The patches also contain
+> – stuff to support 64-bit time_t on 32-bit architectures, e.g:
+> - bugfixes like printf("%lld", (long long)timet_value) instead
+>   of assuming time_t fits into a long (also important for other
+>   operating systems…)
+> - generally switching from generic types like long to specific
+>   types like size_t, ptrdiff_t, etc.
+> - there was one more but after having written two eMails I forgot it
+> - oh and, of course, they lay the base for e.g. amd64ilp32 support
+
+I would not classify any of that as part of "removing x32 support",
+but rather as "reintroducing broken assumptions". I think "removing
+x32 support" was intended to mean places where there's
+explicitly-x32-specific code or tooling, like asm functions/fragments
+in libc, x32 versions of the dispatch asm in mesa, x32 code
+generation, etc. Obviously (at least I hope it's obvious) nonportable
+assumptions should not be reintroduced regardless of whether x32 is
+dropped.
+
+FWIW x32 is nice as a test case for catching such nonportable
+assumptions and getting them fixed.
+
+Rich
