@@ -2,98 +2,83 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88260C5CFFE
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 19:49:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53469C5CFFE
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 19:57:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5907F20851
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 19:49:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5907F20851
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=the-dreams.de
+	by mail.kernel.org (Postfix) with ESMTP id 0DD3D20870
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 19:57:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XNozX/1Q"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0DD3D20870
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726301AbeLKTto (ORCPT
+        id S1726227AbeLKT5S (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 14:49:44 -0500
-Received: from sauhun.de ([88.99.104.3]:45240 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726158AbeLKTtn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 14:49:43 -0500
-Received: from localhost (p54B334A7.dip0.t-ipconnect.de [84.179.52.167])
-        by pokefinder.org (Postfix) with ESMTPSA id 6E3444C0E8F;
-        Tue, 11 Dec 2018 20:49:41 +0100 (CET)
-Date:   Tue, 11 Dec 2018 20:49:40 +0100
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Peter Rosin <peda@axentia.se>,
-        linux-i2c <linux-i2c@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH] dt-bindings: i2c: use correct vendor prefix for atmel's
- at24 EEPROMs
-Message-ID: <20181211194940.u6ru27qfvrxc3xey@ninjato>
-References: <20181206094550.18082-1-brgl@bgdev.pl>
- <20181206104421.a6njveg72dcguckp@katana>
- <CAMRc=MfRBgF9CSzGb=VMUGiCsFc1B_y=d5yMgPJ3xc0GyytATA@mail.gmail.com>
+        Tue, 11 Dec 2018 14:57:18 -0500
+Received: from mail-pg1-f171.google.com ([209.85.215.171]:33243 "EHLO
+        mail-pg1-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726125AbeLKT5S (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 14:57:18 -0500
+Received: by mail-pg1-f171.google.com with SMTP id z11so7143117pgu.0
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 11:57:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=ZP4GBqDZAb8jD/jVzZynJIv2l8hEYXUTyekAG8xbeO8=;
+        b=XNozX/1QnENvqC7dHqKkpUQEunuHtpp6snA1ppqKTc/AlSHZuDQnQNInXR6dUqgW/+
+         t2FeijAHTFdSVvla1CTue07Ub6DQoNf6/fF7sQplQrpD9cBSqRBNqB081c0NnaEWu/sn
+         dpcWoS5wYYni1Ht44ounNjT1ZCLiYUbI32yYt1DkL2Rq/gWHa8p08JJ6GMGewXD2evEw
+         Zi1SZX3CwTkNI6UssjHWmjCz6/+upIUvq8dWZDgtyuyTPgWQbmFsczw5V7NnXtUkV4HM
+         Ln3JEhcqEOoVCVk2/rUeyBN9jGpEQfBVStT1+5d2/OloWK6IBYhtputoeMH81KZVMnel
+         zVog==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mime-version:content-disposition:user-agent;
+        bh=ZP4GBqDZAb8jD/jVzZynJIv2l8hEYXUTyekAG8xbeO8=;
+        b=ovhEDsR1xjLPBI+ImskAlMGtDleLk4+MBwiKQxSZ6eKp+WPuxuHx3AzbrH1S2JQb1o
+         p009iq6e6vmh9ztQNd9nxGmzJEs6NL2kUmXZWWeQtRjSkaMq/x1P6Al4OAVJVo/+bKl2
+         XXykgukXu49eZ4zBsYw6jHSzXKVD/ixF1wbUFzub6uS/DXvfUtJ0CHvOQtUZu1H4uRnD
+         szUaIsO8/PQgkBD6Ul8Rfhg/+9aoYT/t5MSi1z4LAkke2UGtXScx4D8glLYAor1nowt9
+         ZhkE5mXK3P2zoac9I46aic6vZHhPwUjfwQ+0hgkXAVMcnTxSp6S7LCG3xautdFNiFtTL
+         VIYw==
+X-Gm-Message-State: AA+aEWZ/sopDIxmb9xdchr6uUf9OQkZX7+p2EzlJRCmpr/kDnVw+wo9K
+        dMusAn1tReog/v2glYCYAKA=
+X-Google-Smtp-Source: AFSGD/UYDm+3WioEMPtu++a/66+qsfyH6Iw12etQpiuggvq7OtzUBF/ld5PdpwXujUdgkmwxXIis1Q==
+X-Received: by 2002:a62:b511:: with SMTP id y17mr17738048pfe.199.1544558236840;
+        Tue, 11 Dec 2018 11:57:16 -0800 (PST)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id q199sm25479082pfc.97.2018.12.11.11.57.15
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 11 Dec 2018 11:57:16 -0800 (PST)
+Date:   Tue, 11 Dec 2018 11:57:15 -0800
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Guo Ren <guoren@kernel.org>
+Cc:     linux-kernel@vger.kernel.org
+Subject: working toolchain for c-sky
+Message-ID: <20181211195715.GA32516@roeck-us.net>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="hp3uq3uf7plgsilw"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAMRc=MfRBgF9CSzGb=VMUGiCsFc1B_y=d5yMgPJ3xc0GyytATA@mail.gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi,
 
---hp3uq3uf7plgsilw
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+can someone point me to a working c-sky toolchain ?
 
-On Fri, Dec 07, 2018 at 02:18:15PM +0100, Bartosz Golaszewski wrote:
-> czw., 6 gru 2018 o 11:44 Wolfram Sang <wsa@the-dreams.de> napisa=C5=82(a):
-> >
-> > On Thu, Dec 06, 2018 at 10:45:50AM +0100, Bartosz Golaszewski wrote:
-> > > This is a follow-up to Thierry's patch which missed a few occurences.
-> > >
-> > > Cc: Thierry Reding <thierry.reding@gmail.com>
-> > > Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
-> >
-> > Since I dropped Thierry's original patch, I wonder if it is okay with
-> > you to simply squash these hunks into it?
-> >
->=20
-> Yes, feel free to squash those two with my Signed-off-by tag.
+I tried several from https://github.com/c-sky/tools/, but they all fail
+to build csky:defconfig with various error messages.
 
-Done now, thanks!
-
-
---hp3uq3uf7plgsilw
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlwQFNQACgkQFA3kzBSg
-KbaKUxAApaFbz8HNFCpbawjy/bW1uuTvKOdoPdLY9+KiygbTLqqVAfaKxscKpmA+
-IpKiVyT1UpYFarePvzZ37z5m3+r3Qk72Sy04bK/eJk2dMZ8PYFEaQrCYlTDBOxEu
-Qu3YedaF95i9V1nCZ5JUOOopH03zPYSlSjQRUZfZpBjY9CnYRyV9BVlKmzw8hXH+
-ztOu7omw2EQVB7Xu6qPyX5HL6Yy6qK8SwFbZJca6oezlVnphUoy9kYSSMSSTSLAZ
-yEHzP2oDFQIyKSWy+crCg0kVYm+vjxkCxGtvhuGwCSfMHHuU8X/BWpZx5ObqIe9F
-bMCDmZO4FAq/FRQGGRFN0J/N49d1vklFzy0azGD4o5yTlWDCdJ5kE1y3xHhcn7M3
-7EZIiozo2MBFBqg+ifPlepEysE7WYvw/6KNJCSoeeBs2jILElFbyZbNKqmRb5US/
-x6nU1ZG+BExn+5yGKEiCss5h+0UyDHjYZt4lC3pazhOFsvRP7VgMNYy9/z9+Ui8s
-KhB+fmnRHqKptnQe85SThlD38Ghw5BB5c4sr2rW8yZQO7m5rnGUcRyBxinLziwu/
-DM8gDaR/FzqrMkzZ+BkUjEoymdf3tgAZKdmzAJ+jWxdEhFaJc4sF+wH50K8hUSKx
-o1LK+nmb63WVCygOog9alOpY5b7Sns9Pf/tja5Y5a31PCkmK/oA=
-=Y9uK
------END PGP SIGNATURE-----
-
---hp3uq3uf7plgsilw--
+Thanks,
+Guenter
