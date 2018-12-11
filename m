@@ -2,146 +2,136 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 350C7C07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 10:23:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A32D9C07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 10:26:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E0C8C20811
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 10:23:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5BBDF20811
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 10:26:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="QLu6cfG+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E0C8C20811
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="TZzewEeG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5BBDF20811
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726375AbeLKKXQ (ORCPT
+        id S1726358AbeLKK0m (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 05:23:16 -0500
-Received: from mail-vs1-f68.google.com ([209.85.217.68]:42286 "EHLO
-        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726176AbeLKKXQ (ORCPT
+        Tue, 11 Dec 2018 05:26:42 -0500
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:37654 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726134AbeLKK0m (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 05:23:16 -0500
-Received: by mail-vs1-f68.google.com with SMTP id b74so8538916vsd.9
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 02:23:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=HrYR4fvb9Zuy/diATyTIFQ/WDg9meXa7ljUFngMKNH4=;
-        b=QLu6cfG+l0xhTSx07Yw7onreDDPEHoM0DY+Kv3ds4j3wOG5w3luAXYsFzprHbv+EMp
-         jOEI/Of+uImSuYxqhZYVf65q6DOTRHw08apR4C6RcpLEXpUdmuVSOL35o6KKAn9zL4wR
-         L1ny9rQ6hPoilkos2HVpR+Zf1LJPyoulT2ppI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=HrYR4fvb9Zuy/diATyTIFQ/WDg9meXa7ljUFngMKNH4=;
-        b=cH0BN8ZeMq249JjHdjmkIVvXX0seYIA+wMNFefYhg5A+kMc72zF/bSoPKFq5j4pLvp
-         yo7/ws/etRNw+YmQH9geQ+US5SPCoxNTd8AzF2yipat0w6d2c/nkziWpSCebbOEjFrLF
-         J+HFVj1KBiD8jAvdiUqnWmUQWPJKQwXq4oSoOkOw4vCLBCOsgvTvh9FHgzdCKXBG/SbR
-         fnsNN0wCpZhjWUL7f1sYO/RUoOhYytwGHTrVgqJu8IQR20fwEuwhO84p/QERt3pbdyZn
-         xp6uoMBsbLmlKXu2ZYf7KbwdoAtslBAvAaEfWt2NfFu2xlMKfT8QFJNHUNI/FhUTNVoV
-         Irhg==
-X-Gm-Message-State: AA+aEWZDUMNibuIcT0vtjS3j8Z0gcbbCo3w0R5AqFlNOoelDsprLEvTJ
-        v7/L+PbCAsgFR6LuV0lpCyvv76w3bavTn1ABRNazog==
-X-Google-Smtp-Source: AFSGD/W4LYTzHEL6L7GCwBSBEUmecRY1goOwITKMIl0f1JKhq7k/T9G0uVoC6StbC4Qsjia2nKvD0cKv6VRqDW0Ua/8=
-X-Received: by 2002:a67:b245:: with SMTP id s5mr7066706vsh.200.1544523795071;
- Tue, 11 Dec 2018 02:23:15 -0800 (PST)
+        Tue, 11 Dec 2018 05:26:42 -0500
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id wBBAQWbg056290;
+        Tue, 11 Dec 2018 04:26:32 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1544523992;
+        bh=L5gU2CnGhylx1EcelkJad5vEp7e18dyf5E3gjQ9DWA4=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=TZzewEeG39gwSaFJxc0SLgjjlzl60CHOl+WlZc2Qa9Dn+n4a6pPXkuPK1WQ8Unb5t
+         flaNYkxpbDpBc3RhNYouKJ7FaGV3TDI2fxCrQXBsHZOj1VJlxNhu9nfuCik+9P2PJL
+         EGxAd1CYWajia5OOnm0M321yY4gfRdSLcr1pseyQ=
+Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wBBAQWjS011081
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 11 Dec 2018 04:26:32 -0600
+Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Tue, 11
+ Dec 2018 04:26:32 -0600
+Received: from dflp33.itg.ti.com (10.64.6.16) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Tue, 11 Dec 2018 04:26:31 -0600
+Received: from [172.24.190.233] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id wBBAQRgY015978;
+        Tue, 11 Dec 2018 04:26:28 -0600
+Subject: Re: [PATCH v7 0/5] arm64: dts: qcom: sdm845: Add UFS DT nodes
+To:     Evan Green <evgreen@chromium.org>,
+        Andy Gross <andy.gross@linaro.org>
+CC:     Douglas Anderson <dianders@chromium.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        <devicetree@vger.kernel.org>, Rob Herring <robh@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, Can Guo <cang@codeaurora.org>,
+        <linux-kernel@vger.kernel.org>,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Manu Gautam <mgautam@codeaurora.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        David Brown <david.brown@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        <linux-soc@vger.kernel.org>
+References: <20181210192826.241350-1-evgreen@chromium.org>
+From:   Kishon Vijay Abraham I <kishon@ti.com>
+Message-ID: <1d00081d-7ef5-20fb-b04b-3b51ca9cd6da@ti.com>
+Date:   Tue, 11 Dec 2018 15:56:16 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-References: <20181211094938.25086-1-rnayak@codeaurora.org> <20181211094938.25086-11-rnayak@codeaurora.org>
-In-Reply-To: <20181211094938.25086-11-rnayak@codeaurora.org>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Tue, 11 Dec 2018 11:22:39 +0100
-Message-ID: <CAPDyKFof-rkzmzibWOrAhDFysU=y+C8Bp0cK=_iht4=vmv-0vw@mail.gmail.com>
-Subject: Re: [PATCH v6 10/10] soc: qcom: rpmhpd: Mark mx as a parent for cx
-To:     Rajendra Nayak <rnayak@codeaurora.org>
-Cc:     Andy Gross <andy.gross@linaro.org>, Rob Herring <robh@kernel.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        David Collins <collinsd@codeaurora.org>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        DTML <devicetree@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20181210192826.241350-1-evgreen@chromium.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 11 Dec 2018 at 10:50, Rajendra Nayak <rnayak@codeaurora.org> wrote:
->
-> Specify the active + sleep and active-only MX power domains as
-> the parents of the corresponding CX power domains. This will ensure that
-> performance state requests on CX automatically generate equivalent requests
-> on MX power domains.
->
-> This is used to enforce a requirement that exists for various
-> hardware blocks on SDM845 that MX performance state >= CX performance
-> state for a given operating frequency.
 
-I assume that also means the MX power domain must not be power off as
-long as the CX power domain is powered on?
 
-Just to make sure there are no conflicting hierarchical constraints
-between idle management and performance state management!?
+On 11/12/18 12:58 AM, Evan Green wrote:
+> Update the device tree bindings for the QMP PHY to properly
+> specify the registers for dual-lane PHYs. Update the driver to use
+> those new registers. Add the DT nodes for UFS on SDM845 and MTP.
+> Finally, fix up the USB3 PHY on SDM845, which also has a dual-lane phy
+> 
+> This series is now based on phy/next, and given that the changes stack,
+> I guess that means Kishon will take the whole thing?
 
-Kind regards
-Uffe
+No. I'll take only the phy changes. The dts changes can probably be taken by
+Andy during the early 4.21 -rc cycle.
 
->
-> Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
-> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-> ---
-> This patch is dependent on the series from
-> Viresh [1] which adds support to propogate performance states across the
-> power domain hierarchy which is still being reviewed.
->
-> [1] https://lkml.org/lkml/2018/11/26/333
->
->  drivers/soc/qcom/rpmhpd.c | 11 +++++++++++
->  1 file changed, 11 insertions(+)
->
-> diff --git a/drivers/soc/qcom/rpmhpd.c b/drivers/soc/qcom/rpmhpd.c
-> index 1ce86f0cc9fa..af7b07d49e4f 100644
-> --- a/drivers/soc/qcom/rpmhpd.c
-> +++ b/drivers/soc/qcom/rpmhpd.c
-> @@ -102,12 +102,14 @@ static struct rpmhpd sdm845_cx_ao;
->  static struct rpmhpd sdm845_cx = {
->         .pd = { .name = "cx", },
->         .peer = &sdm845_cx_ao,
-> +       .parent = &sdm845_mx.pd,
->         .res_name = "cx.lvl",
->  };
->
->  static struct rpmhpd sdm845_cx_ao = {
->         .pd = { .name = "cx_ao", },
->         .peer = &sdm845_cx,
-> +       .parent = &sdm845_mx_ao.pd,
->         .res_name = "cx.lvl",
->  };
->
-> @@ -389,6 +391,15 @@ static int rpmhpd_probe(struct platform_device *pdev)
->                 data->domains[i] = &rpmhpds[i]->pd;
->         }
->
-> +       /* Add subdomains */
-> +       for (i = 0; i < num_pds; i++) {
-> +               if (!rpmhpds[i])
-> +                       continue;
-> +               if (rpmhpds[i]->parent)
-> +                       pm_genpd_add_subdomain(rpmhpds[i]->parent,
-> +                                              &rpmhpds[i]->pd);
-> +       }
-> +
->         return of_genpd_add_provider_onecell(pdev->dev.of_node, data);
->  }
->
-> --
-> QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-> of Code Aurora Forum, hosted by The Linux Foundation
->
+Thanks
+Kishon
+> 
+> Changes in v7:
+>  - Rebased on top of phy/next
+> 
+> Changes in v6:
+> - Removed resets and reset-names (Bjorn)
+> - Renamed nodes (Bjorn)
+> - Fix renamed nodes in MTP (Bjorn)
+> 
+> Changes in v5:
+> - Fix incorrect register value in example, copied from real life!
+> 
+> Changes in v4:
+> - Remove "status" from DT binding example (Rob)
+> 
+> Changes in v3:
+>  - Removed erroneous fixup for USB UniPro PHY, which is not dual lane (Doug)
+> 
+> Changes in v2:
+> - Added dt bindings change, corresponding driver fixup, and USB PHY fixup
+> - Renamed ufsphy to phy (Vivek)
+> - Removed #clock-cells (Vivek)
+> 
+> Can Guo (1):
+>   arm64: dts: qcom: sdm845: Add UFS nodes for sdm845-mtp
+> 
+> Evan Green (4):
+>   dt-bindings: phy-qcom-qmp: Fix register underspecification
+>   phy: qcom-qmp: Utilize fully-specified DT registers
+>   arm64: dts: qcom: sdm845: add UFS controller
+>   arm64: dts: qcom: sdm845: Add USB PHY lane two
+> 
+>  .../devicetree/bindings/phy/qcom-qmp-phy.txt  | 69 +++++++++++++++++--
+>  arch/arm64/boot/dts/qcom/sdm845-mtp.dts       | 14 ++++
+>  arch/arm64/boot/dts/qcom/sdm845.dtsi          | 68 +++++++++++++++++-
+>  drivers/phy/qualcomm/phy-qcom-qmp.c           | 51 ++++++++++----
+>  4 files changed, 181 insertions(+), 21 deletions(-)
+> 
