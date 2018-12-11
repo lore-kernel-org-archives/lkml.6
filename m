@@ -2,147 +2,121 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2735CC07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:00:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D2CBC5CFFE
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:00:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DF0CD2086D
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:00:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544544003;
-	bh=3Z0DO6kWqrWlEhMdNbbaK7Jvsbp9eqZMqcbj5GhHxPk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=VIeSfQ2BrOOWczth3lkBZxZRulCw9GbSXTeXQD+m/5AFIZoSNaJyScjvm1E2JuxqW
-	 AXo9Q8A36aBri48onidewtI/0rVLEkuC4VNTDWCphUKX2B13J43czKyRpH3EIyx4C0
-	 j90DSNsq6NbO1Ne/vGeKZEJtT74bSd5+JUL40SuY=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF0CD2086D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 6C37D20855
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:00:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C37D20855
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730849AbeLKQAB (ORCPT
+        id S1727490AbeLKP77 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 11:00:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48116 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730381AbeLKP6g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:58:36 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C320E20855;
-        Tue, 11 Dec 2018 15:58:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544543915;
-        bh=3Z0DO6kWqrWlEhMdNbbaK7Jvsbp9eqZMqcbj5GhHxPk=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LtgDA+mFP/KcxOT8Lj9bq0Te1A950XtRYfL8JimmCLZGVCSIB1kPh0ib/2h3ykxbl
-         HwaIBqbCnwui7nUmnywE0sOGzfG+0uaW8VAw79l7AUE399iA7od3HOOJtcoD0MuRg8
-         IiBEV+uN2EMgDB6CqsYbX1lmlbFp3gv6dmmo9/2U=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Halil Pasic <pasic@linux.ibm.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        Cornelia Huck <cohuck@redhat.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>
-Subject: [PATCH 4.19 078/118] virtio/s390: fix race in ccw_io_helper()
-Date:   Tue, 11 Dec 2018 16:41:37 +0100
-Message-Id: <20181211151647.412003042@linuxfoundation.org>
-X-Mailer: git-send-email 2.20.0
-In-Reply-To: <20181211151644.216668863@linuxfoundation.org>
-References: <20181211151644.216668863@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-X-Patchwork-Hint: ignore
+        Tue, 11 Dec 2018 10:59:59 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:51058 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726762AbeLKP75 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 10:59:57 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 759BE1596;
+        Tue, 11 Dec 2018 07:59:56 -0800 (PST)
+Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 438C33F575;
+        Tue, 11 Dec 2018 07:59:56 -0800 (PST)
+Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
+        id 4F95A1AE0CFD; Tue, 11 Dec 2018 16:00:19 +0000 (GMT)
+Date:   Tue, 11 Dec 2018 16:00:19 +0000
+From:   Will Deacon <will.deacon@arm.com>
+To:     Andrey Konovalov <andreyknvl@google.com>, akpm@linux-foundation.org
+Cc:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Alexander Potapenko <glider@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Christoph Lameter <cl@linux.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Dave Martin <dave.martin@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Paul Lawrence <paullawrence@google.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        kasan-dev <kasan-dev@googlegroups.com>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-sparse@vger.kernel.org,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Kostya Serebryany <kcc@google.com>,
+        Evgenii Stepanov <eugenis@google.com>,
+        Lee Smith <Lee.Smith@arm.com>,
+        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
+        Jacob Bramley <Jacob.Bramley@arm.com>,
+        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
+        Jann Horn <jannh@google.com>,
+        Mark Brand <markbrand@google.com>,
+        Chintan Pandya <cpandya@codeaurora.org>,
+        Vishwath Mohan <vishwath@google.com>
+Subject: Re: [PATCH v13 00/25] kasan: add software tag-based mode for arm64
+Message-ID: <20181211160018.GA12597@edgewater-inn.cambridge.arm.com>
+References: <cover.1544099024.git.andreyknvl@google.com>
+ <20181211151829.GB11718@edgewater-inn.cambridge.arm.com>
+ <CAAeHK+xxNsOfaUZhcErc+fjEEv0YZ-dbQ0fTXzQUO4dZbM-GgA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAAeHK+xxNsOfaUZhcErc+fjEEv0YZ-dbQ0fTXzQUO4dZbM-GgA@mail.gmail.com>
+User-Agent: Mutt/1.11.1+30 (d10eec459b35) ()
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.19-stable review patch.  If anyone has any objections, please let me know.
+[moving akpm to To:]
 
-------------------
+On Tue, Dec 11, 2018 at 04:57:27PM +0100, Andrey Konovalov wrote:
+> On Tue, Dec 11, 2018 at 4:18 PM Will Deacon <will.deacon@arm.com> wrote:
+> > On Thu, Dec 06, 2018 at 01:24:18PM +0100, Andrey Konovalov wrote:
+> > > This patchset adds a new software tag-based mode to KASAN [1].
+> > > (Initially this mode was called KHWASAN, but it got renamed,
+> > >  see the naming rationale at the end of this section).
+> > >
+> > > The plan is to implement HWASan [2] for the kernel with the incentive,
+> > > that it's going to have comparable to KASAN performance, but in the same
+> > > time consume much less memory, trading that off for somewhat imprecise
+> > > bug detection and being supported only for arm64.
+> >
+> > For the arm64 parts:
+> >
+> > Acked-by: Will Deacon <will.deacon@arm.com>
+> >
+> > I assume that you plan to replace the current patches in -mm with this
+> > series?
+> >
+> > Cheers,
+> >
+> > Will
+> 
+> Hi Will,
+> 
+> Yes, that was the intention of sending v13. Should have I sent a
+> separate patch with v12->v13 fixes instead? I don't know what's the
+> usual way to make changes to the patchset once it's in the mm tree.
 
-From: Halil Pasic <pasic@linux.ibm.com>
+No, I was just checking that the intention was for akpm to pick this up in
+preference to the old stuff! That works for me, and the minor conflict with
+arm64 in next was already resolved by Stephen.
 
-commit 78b1a52e05c9db11d293342e8d6d8a230a04b4e7 upstream.
-
-While ccw_io_helper() seems like intended to be exclusive in a sense that
-it is supposed to facilitate I/O for at most one thread at any given
-time, there is actually nothing ensuring that threads won't pile up at
-vcdev->wait_q. If they do, all threads get woken up and see the status
-that belongs to some other request than their own. This can lead to bugs.
-For an example see:
-https://bugs.launchpad.net/ubuntu/+source/linux/+bug/1788432
-
-This race normally does not cause any problems. The operations provided
-by struct virtio_config_ops are usually invoked in a well defined
-sequence, normally don't fail, and are normally used quite infrequent
-too.
-
-Yet, if some of the these operations are directly triggered via sysfs
-attributes, like in the case described by the referenced bug, userspace
-is given an opportunity to force races by increasing the frequency of the
-given operations.
-
-Let us fix the problem by ensuring, that for each device, we finish
-processing the previous request before starting with a new one.
-
-Signed-off-by: Halil Pasic <pasic@linux.ibm.com>
-Reported-by: Colin Ian King <colin.king@canonical.com>
-Cc: stable@vger.kernel.org
-Message-Id: <20180925121309.58524-3-pasic@linux.ibm.com>
-Signed-off-by: Cornelia Huck <cohuck@redhat.com>
-Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- drivers/s390/virtio/virtio_ccw.c |    7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
-
---- a/drivers/s390/virtio/virtio_ccw.c
-+++ b/drivers/s390/virtio/virtio_ccw.c
-@@ -56,6 +56,7 @@ struct virtio_ccw_device {
- 	unsigned int revision; /* Transport revision */
- 	wait_queue_head_t wait_q;
- 	spinlock_t lock;
-+	struct mutex io_lock; /* Serializes I/O requests */
- 	struct list_head virtqueues;
- 	unsigned long indicators;
- 	unsigned long indicators2;
-@@ -296,6 +297,7 @@ static int ccw_io_helper(struct virtio_c
- 	unsigned long flags;
- 	int flag = intparm & VIRTIO_CCW_INTPARM_MASK;
- 
-+	mutex_lock(&vcdev->io_lock);
- 	do {
- 		spin_lock_irqsave(get_ccwdev_lock(vcdev->cdev), flags);
- 		ret = ccw_device_start(vcdev->cdev, ccw, intparm, 0, 0);
-@@ -308,7 +310,9 @@ static int ccw_io_helper(struct virtio_c
- 		cpu_relax();
- 	} while (ret == -EBUSY);
- 	wait_event(vcdev->wait_q, doing_io(vcdev, flag) == 0);
--	return ret ? ret : vcdev->err;
-+	ret = ret ? ret : vcdev->err;
-+	mutex_unlock(&vcdev->io_lock);
-+	return ret;
- }
- 
- static void virtio_ccw_drop_indicator(struct virtio_ccw_device *vcdev,
-@@ -1253,6 +1257,7 @@ static int virtio_ccw_online(struct ccw_
- 	init_waitqueue_head(&vcdev->wait_q);
- 	INIT_LIST_HEAD(&vcdev->virtqueues);
- 	spin_lock_init(&vcdev->lock);
-+	mutex_init(&vcdev->io_lock);
- 
- 	spin_lock_irqsave(get_ccwdev_lock(cdev), flags);
- 	dev_set_drvdata(&cdev->dev, vcdev);
-
-
+Will
