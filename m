@@ -2,121 +2,112 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3B87C07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 14:09:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FDEBC07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 14:15:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B23672084C
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 14:09:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B23672084C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id 1071320849
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 14:15:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1071320849
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=virtuozzo.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726839AbeLKOJc (ORCPT
+        id S1726631AbeLKOPG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 09:09:32 -0500
-Received: from mx2.suse.de ([195.135.220.15]:41640 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726444AbeLKOJb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 09:09:31 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 2D834B036;
-        Tue, 11 Dec 2018 14:09:28 +0000 (UTC)
-Date:   Tue, 11 Dec 2018 15:09:26 +0100
-From:   Petr Mladek <pmladek@suse.com>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Brendan Higgins <brendanhiggins@google.com>,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        Eryu Guan <guaneryu@gmail.com>,
-        Eric Sandeen <sandeen@sandeen.net>, jeffm@suse.com,
-        Sasha Levin <Alexander.Levin@microsoft.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Kees Cook <keescook@google.com>, shuah@kernel.org,
-        Joel Stanley <joel@jms.id.au>, mpe@ellerman.id.au,
-        joe@perches.com, brakmo@fb.com, rostedt@goodmis.org,
-        Tim.Bird@sony.com, khilman@baylibre.com,
-        Julia Lawall <julia.lawall@lip6.fr>,
-        linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        jdike@addtoit.com, richard@nod.at, linux-um@lists.infradead.org,
-        Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel@lists.freedesktop.org, Rob Herring <robh@kernel.org>,
-        dan.j.williams@intel.com, linux-nvdimm@lists.01.org,
-        Frank Rowand <frowand.list@gmail.com>,
-        Knut Omang <knut.omang@oracle.com>,
-        Felix Guo <felixguoxiuping@gmail.com>,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [RFC v3 11/19] kunit: add Python libraries for handing KUnit
- config and kernel
-Message-ID: <20181211140926.7wzd5jh6klcfsfgz@pathway.suse.cz>
-References: <20181128193636.254378-1-brendanhiggins@google.com>
- <20181128193636.254378-12-brendanhiggins@google.com>
- <841cf4ae-501b-05ae-5863-a51010709b67@ideasonboard.com>
- <CAFd5g47x-UNja72k-CWPmWz9+LTn8pF8Wj5Poq+2FJ93E=vymA@mail.gmail.com>
- <20181204204701.GT28501@garbanzo.do-not-panic.com>
- <f8722f4a-44c8-24c2-c433-5178f9f40b82@ideasonboard.com>
- <20181206153718.GD24603@bombadil.infradead.org>
+        Tue, 11 Dec 2018 09:15:06 -0500
+Received: from relay.sw.ru ([185.231.240.75]:56516 "EHLO relay.sw.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726444AbeLKOPG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 09:15:06 -0500
+Received: from [172.16.25.169]
+        by relay.sw.ru with esmtp (Exim 4.91)
+        (envelope-from <ktkhai@virtuozzo.com>)
+        id 1gWioP-0000o2-9r; Tue, 11 Dec 2018 17:15:01 +0300
+Subject: Re: [PATCH v2] ksm: React on changing "sleep_millisecs" parameter
+ faster
+To:     Cyrill Gorcunov <gorcunov@gmail.com>
+Cc:     akpm@linux-foundation.org, mhocko@suse.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, gorcunov@virtuozzo.com
+References: <20181211100346.GE2342@uranus.lan>
+ <154452399396.4921.3418365102240528000.stgit@localhost.localdomain>
+ <20181211111300.GF2342@uranus.lan>
+ <26fb047f-9164-96ae-a6cd-7a7efa41d43b@virtuozzo.com>
+ <20181211123455.GI2342@uranus.lan>
+From:   Kirill Tkhai <ktkhai@virtuozzo.com>
+Message-ID: <2dd9cc7b-9384-df11-bb5a-3aed45cc914b@virtuozzo.com>
+Date:   Tue, 11 Dec 2018 17:15:00 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181206153718.GD24603@bombadil.infradead.org>
-User-Agent: NeoMutt/20170421 (1.8.2)
+In-Reply-To: <20181211123455.GI2342@uranus.lan>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 2018-12-06 07:37:18, Matthew Wilcox wrote:
-> On Thu, Dec 06, 2018 at 12:32:47PM +0000, Kieran Bingham wrote:
-> > On 04/12/2018 20:47, Luis Chamberlain wrote:
-> > > On Mon, Dec 03, 2018 at 03:48:15PM -0800, Brendan Higgins wrote:
-> > >> On Thu, Nov 29, 2018 at 5:54 AM Kieran Bingham
-> > >> <kieran.bingham@ideasonboard.com> wrote:
-> > > Developers working upstream do modify their kernels a lot, so we'd have
-> > > to update such libraries quite a bit, but I think that's fine too. The
-> > > *real* value I think from the above suggestion would be enterprise /
-> > > mobile distros or stable kernel maintainers which have a static kernel
-> > > they need to support for a relatively *long time*, consider a 10 year
-> > > time frame. Running unit tests without qemu with uml and libraries for
-> > > respective kernels seems real worthy.
-> > 
-> > I think any such library might be something generated by the kernel
-> > build system, so if someone makes substantial changes to a core
-> > component provided by the library - it can be up to them to build a
-> > corresponding userspace library as well.
-> > 
-> > My main initial idea for a libumlinux is to provide infrastructure such
-> > as our linked-lists and other kernel formatting so that we can take
-> > kernel code directly to userspace for test and debug (assuming that
-> > there are no hardware dependencies or things that we can't mock out)
+On 11.12.2018 15:34, Cyrill Gorcunov wrote:
+> On Tue, Dec 11, 2018 at 03:22:42PM +0300, Kirill Tkhai wrote:
+>> On 11.12.2018 14:13, Cyrill Gorcunov wrote:
+>>> On Tue, Dec 11, 2018 at 01:26:59PM +0300, Kirill Tkhai wrote:
+>>>> ksm thread unconditionally sleeps in ksm_scan_thread()
+>>>> after each iteration:
+>>>>
+>>>> 	schedule_timeout_interruptible(
+>>>> 		msecs_to_jiffies(ksm_thread_sleep_millisecs))
+>>>>
+>>>> The timeout is configured in /sys/kernel/mm/ksm/sleep_millisecs.
+>>>>
+>>>> In case of user writes a big value by a mistake, and the thread
+>>>> enters into schedule_timeout_interruptible(), it's not possible
+>>>> to cancel the sleep by writing a new smaler value; the thread
+>>>> is just sleeping till timeout expires.
+>>>>
+>>>> The patch fixes the problem by waking the thread each time
+>>>> after the value is updated.
+>>>>
+>>>> This also may be useful for debug purposes; and also for userspace
+>>>> daemons, which change sleep_millisecs value in dependence of
+>>>> system load.
+>>>>
+>>>> Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
+>>>>
+>>>> v2: Use wait_event_interruptible_timeout() instead of unconditional
+>>>>     schedule_timeout().
+>>> ...
+>>>> @@ -2844,7 +2849,10 @@ static ssize_t sleep_millisecs_store(struct kobject *kobj,
+>>>>  	if (err || msecs > UINT_MAX)
+>>>>  		return -EINVAL;
+>>>>  
+>>>> +	mutex_lock(&ksm_thread_mutex);
+>>>>  	ksm_thread_sleep_millisecs = msecs;
+>>>> +	mutex_unlock(&ksm_thread_mutex);
+>>>> +	wake_up_interruptible(&ksm_iter_wait);
+>>>
+>>> Btw, just thought -- if we start using this mutex here don't we
+>>> open a window for force attack on the thread self execution,
+>>> iow if there gonna be a million of writers do we have a guarantee
+>>> thread ksm_scan_thread will grab the mutex earlier than writers
+>>> (or somewhere inbetween)?
+>>
+>> This file is permitted for global root only. I don't think there is
+>> a problem.
+>>
+>> If someone wants to make ksm helpless, a person may just write a big
+>> "sleep_millisecs" value. KSM thread won't be executed almost all the time
+>> in this case.
 > 
-> We have liburcu already, which is good.  The main sticking points are:
+> True. Still I think if we can leave without taking a lock it a rule of thumb.
+> Something like
 > 
->  - printk has started adding a lot of %pX enhancements which printf
->    obviously doesn't know about.
+> 	if (msecs != ksm_thread_sleep_millisecs)
+> 		wake_up_interruptable(&ksm_iter_wait);
+> 
+> Thoughts?
 
-I wonder how big problem it is and if it is worth using another
-approach.
-
-An alternative would be to replace them with helper functions
-the would produce the same string. The meaning would be easier
-to understand. But concatenating with the surrounding text
-would be less elegant. People might start using pr_cont()
-that is problematic (mixed lines).
-
-Also the %pX formats are mostly used to print context of some
-structures. Even the helper functions would need some maintenance
-to keep them compatible.
-
-BTW: The printk() feature has been introduced 10 years ago by
-the commit 4d8a743cdd2690c0bc8 ("vsprintf: add infrastructure
-support for extended '%p' specifiers").
-
-Best Regards,
-Petr
+Ok, good idea.
