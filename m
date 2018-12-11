@@ -2,112 +2,106 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EBCDC04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 00:10:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AC0FC5CFFE
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 00:10:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 033482081F
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 00:10:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 35C0F2081F
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 00:10:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="SMwiI9t1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 033482081F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="jItdHyf3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 35C0F2081F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728697AbeLKAKo (ORCPT
+        id S1728833AbeLKAKy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 19:10:44 -0500
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:38672 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726720AbeLKAKo (ORCPT
+        Mon, 10 Dec 2018 19:10:54 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:36909 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728286AbeLKAKx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 19:10:44 -0500
-Received: by mail-oi1-f194.google.com with SMTP id a77so10583255oii.5
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Dec 2018 16:10:43 -0800 (PST)
+        Mon, 10 Dec 2018 19:10:53 -0500
+Received: by mail-pl1-f193.google.com with SMTP id b5so6028453plr.4
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Dec 2018 16:10:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
-        bh=yi1VF96O/q8BCikgm25lag/fmoX6JrFGqfib6kD7cMo=;
-        b=SMwiI9t1szhtExZ4zKZzTD2Xqq8bjMi8Ht4SZDzQC8L17IrgIDSRQWAZn4Maf+5D3e
-         AmS8nDPTGpBoEyA5uyzbGgQGarVOGRzxMAi8nJKO56Yno1mx6JHll3xtNDZ8NDMz+gZe
-         8A5lZ9WXfvbykOp2DCHCEseD2lKFgw7FLXEIekcSXqEgmMTpWgstajDqicyhpdL3/lBr
-         MofVO/cz1rbKVoIjkftwOfM5ptIW17YX+IbPKJxmfYUTNjOuUV5yyF1UC88sWzdHYIlC
-         REuV+/iI75QL0Ml08Nk+TFtIstSE9tGdrP3D2BYzbadhzxSi2yzivL3oDXb73pwDbJ9R
-         oEpw==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=y3IP5Wrkr5uqRldbZYCDS+iJsMw6QUbs7xMpAd5rkjo=;
+        b=jItdHyf3Cds/vgg5jMN273VcDz8jg8oKdMmwfQhNu0yBQXhq476wZa0pTEztf+laV8
+         mXPSUgAZnxZQs65qGzj969lZeoTvLevsYVBHkyEA7a2VvBFKjSI4fBHGrrfiry1I6cHT
+         YXklKaGN3Q90N/x0gOJ3oicTvkBW2jOxadr3g=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to;
-        bh=yi1VF96O/q8BCikgm25lag/fmoX6JrFGqfib6kD7cMo=;
-        b=b2/9mN9sV/WU5dkL1SMI8ik4xWZG1K/MIPJeGmksfgJ9+51H0irhCVfsnn6ttm6eC3
-         Mjk//Ae34nlXB51SB9I7g+5ZUCXyTQtBJPwR8Qu4sh63BhXCCPDkimZoXBsvp7ah+R//
-         XkWMbfrpsNChO1yKOpxIIGMqZrUPkWzQEyqmM7XubOOQ4oqT5X1ASsruS2z5rsSjJl1o
-         +k9ajXYVs4l7Vsrrj0l933VQnWaTOp8snSoGSlJQ4XGMC4pzhqHZK2tm2ACVA99TLHsq
-         8MqN//V3NQvuea+b48bzlEGB2hGrIPBMmUkwHqkBHa7B/E6jdauyPyR8q4l0tOJMgKE4
-         UbGA==
-X-Gm-Message-State: AA+aEWa8yWeUeQ0yBodCqf9ou3mO3rT1GbbywDQTlcg7JW6RG7DOyLfD
-        nd1xbw0dxy2qgUufHqxZktH2gNbu+Ob93vSoYh/ImA==
-X-Google-Smtp-Source: AFSGD/U9fkviS0WqQTaJiACbHQOcSpOVSimdAl9DgNHDHCZZGzBjUp0IDAt7q/57xoa3TB10jaUStuEpZC81NX7byWc=
-X-Received: by 2002:aca:d905:: with SMTP id q5mr119976oig.0.1544487043418;
- Mon, 10 Dec 2018 16:10:43 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=y3IP5Wrkr5uqRldbZYCDS+iJsMw6QUbs7xMpAd5rkjo=;
+        b=R6uAtICBh8lS7Jgfiiu0Hx7iXkAr2b+M54zc36v6sItFvGnsF2TRP9Lbde7mKlupH3
+         bzKiTa1p6VLt4tsxCuOa55/oAkgEpiZ4niysut8Qn2HTpkykDlRIYd44nF4AeMt2RqZr
+         xWPgkK2xEEvBVuYZE73wnnRCwyWzTkJcwz6Cdg2GK6VN5HICtsI85oxUNtnPipUZzimb
+         6RH8f/X2hChBzedoHq4x6QtaGiQM95eVMKBW4Eov5T+yBpKMeY0b9MKo/HOoO+VOqsGe
+         5VvETdsnHTF8lmik2bUto/h5UDlwc+MBElSoFQ+2JU+zPIaByXMAPQKBvxW1G5WNfcsy
+         UbLQ==
+X-Gm-Message-State: AA+aEWYzRjDqTmM1oj2qBFvHaSmQ4GX+AvTlH2OPmAvpoBXa1BFWDRZ7
+        VvuejrPJTVNhOsM8/btynjL22g==
+X-Google-Smtp-Source: AFSGD/UxK+OQQqiw8kHWc5YnBZk/xEYEVPdzRkGz2Co+SUxT7xn1LGmBgxUp9ODDMyq1TRfBJ1hO/A==
+X-Received: by 2002:a17:902:8ec9:: with SMTP id x9mr14167015plo.27.1544487053009;
+        Mon, 10 Dec 2018 16:10:53 -0800 (PST)
+Received: from tuxbook-pro (pat_11.qualcomm.com. [192.35.156.11])
+        by smtp.gmail.com with ESMTPSA id q187sm20123301pfq.128.2018.12.10.16.10.51
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 10 Dec 2018 16:10:52 -0800 (PST)
+Date:   Mon, 10 Dec 2018 16:10:50 -0800
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc:     Mark Rutland <mark.rutland@arm.com>, robh+dt@kernel.org,
+        gregkh@linuxfoundation.org, arnd@arndb.de,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, bkumar@qti.qualcomm.com,
+        thierry.escande@linaro.org
+Subject: Re: [PATCH v2 1/6] misc: dt-bindings: Add Qualcomm Fastrpc bindings
+Message-ID: <20181211001050.GA1578@tuxbook-pro>
+References: <20181207163513.16412-1-srinivas.kandagatla@linaro.org>
+ <20181207163513.16412-2-srinivas.kandagatla@linaro.org>
+ <20181207182327.64mtkfx6v4wlwccz@lakrids.cambridge.arm.com>
+ <afdeecc4-4ee9-e933-9917-9930ece85b00@linaro.org>
 MIME-Version: 1.0
-References: <46441800c43f029757c70d8386e3112701081503.1534160958.git.yi.z.zhang@linux.intel.com>
- <1534787638.13739.52.camel@intel.com> <89e7bd54-4afa-614d-ec54-49af7928d6c7@intel.com>
- <20180821161657.GA22028@tiger-server>
-In-Reply-To: <20180821161657.GA22028@tiger-server>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Mon, 10 Dec 2018 16:10:31 -0800
-Message-ID: <CAPcyv4gZ8WBhUZkoUd1m6bCrtKW0EmfWfCtpGULvjfM=yJ9_sg@mail.gmail.com>
-Subject: Re: [PATCH V2 1/1] device-dax: check for vma range while dax_mmap.
-To:     Dave Jiang <dave.jiang@intel.com>,
-        Vishal L Verma <vishal.l.verma@intel.com>,
-        "Zhang, Yu C" <yu.c.zhang@intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>, zwisler@kernel.org,
-        Jan Kara <jack@suse.cz>, "Zhang, Yi Z" <yi.z.zhang@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <afdeecc4-4ee9-e933-9917-9930ece85b00@linaro.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 21, 2018 at 12:38 AM Yi Zhang <yi.z.zhang@linux.intel.com> wrote:
->
-> On 2018-08-20 at 12:50:31 -0700, Dave Jiang wrote:
-> >
-> >
-> > On 08/20/2018 10:53 AM, Verma, Vishal L wrote:
-> > >
-> > > On Mon, 2018-08-13 at 20:02 +0800, Zhang Yi wrote:
-> > >> This patch prevents a user mapping an illegal vma range that is larger
-> > >> than a dax device physical resource.
-> > >>
-> > >> When qemu maps the dax device for virtual nvdimm's backend device, the
-> > >> v-nvdimm label area is defined at the end of mapped range. By using an
-> > >> illegal size that exceeds the range of the device dax, it will trigger a
-> > >> fault with qemu.
-> > >>
-> > >> Signed-off-by: Zhang Yi <yi.z.zhang@linux.intel.com>
-> > >> ---
-> > >>  drivers/dax/device.c | 29 +++++++++++++++++++++++++++++
-> > >>  1 file changed, 29 insertions(+)
-> > >>
-> > >
-> > > Looks good to me:
-> > > Reviewed-by: Vishal Verma <vishal.l.verma@intel.com>
-> >
-> > Applied.
-> Thanks Dava and Vishal's kindly review. Thank you.
+On Mon 10 Dec 03:17 PST 2018, Srinivas Kandagatla wrote:
+> On 07/12/18 18:23, Mark Rutland wrote:
+> > On Fri, Dec 07, 2018 at 04:35:08PM +0000, Srinivas Kandagatla wrote:
+> > > diff --git a/Documentation/devicetree/bindings/misc/qcom,fastrpc.txt b/Documentation/devicetree/bindings/misc/qcom,fastrpc.txt
+[..]
+> > > +- reg
+> > > +	Usage: required
+> > > +	Value type: <u32>
+> > > +	Definition: DSP Processor ID.
+> > > +	Possible values are :
+> > > +			0 - ADSP
+> > > +			1 - MDSP
+> > > +			2 - SDSP
+> > > +			3 - CDSP
+> > 
+> > Why is this in a reg?
+> 
+> This is to identify which type of dsp(Audio/Modem/Sensor/Compute) it is,
+> This information is used to create device nodes for user-space access.
+> 
 
-So, it turns out this patch did not get merged for 4.20. I fumbled it
-when returning from vacation. However, I'm not sure it is needed. As
-long as attempts to access the out-of-range capacity results in SIGBUS
-then the implementation is correct. This is similar to the case where
-a file is truncated after the vma is established. That size is
-validated at fault time.
+But it does not represent FastRPC's address on the rpmsg bus. How about
+replacing it with a "label" (or "qcom,domain" perhaps?) of type string?
 
-Could you be clearer about why this is a problem? The fault sounds
-like the correct result.
+Regards,
+Bjorn
