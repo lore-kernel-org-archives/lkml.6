@@ -2,110 +2,123 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67A8FC07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 07:28:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C9D2C5CFFE
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 07:29:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2999720811
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 07:28:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=telus.net header.i=@telus.net header.b="5F/9RpJo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2999720811
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=telus.net
+	by mail.kernel.org (Postfix) with ESMTP id D0FD120849
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 07:29:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D0FD120849
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726176AbeLKH2Q (ORCPT
+        id S1726179AbeLKH3z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 02:28:16 -0500
-Received: from cmta17.telus.net ([209.171.16.90]:36660 "EHLO cmta17.telus.net"
+        Tue, 11 Dec 2018 02:29:55 -0500
+Received: from pegase1.c-s.fr ([93.17.236.30]:8899 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726094AbeLKH2Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 02:28:16 -0500
-Received: from dougxps ([173.180.45.4])
-        by cmsmtp with SMTP
-        id WcSfgdL0SP96wWcSggwQ7d; Tue, 11 Dec 2018 00:28:14 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=telus.net; s=neo;
-        t=1544513294; bh=CVpunYFypL/dXiyjG9R9gzj4K4lgYzkFiiwy2UAzYyE=;
-        h=From:To:Cc:References:In-Reply-To:Subject:Date;
-        b=5F/9RpJoXyVUdxml5XvA/fodUx92Tj9HZsTBRZjw0yhiTeV+/4hcfyxHnhJn3WWm5
-         T2f+q856LoEekCxVvJ5raAnZ8LFrcWBVgXlJdc/jg6yP0UeayLLEqIrI/TMoX2Hkhf
-         I5MG6lOJO04EmlFG88zxDZYw6WC/uJ7GT1VLCD2FSOj56Y/vLesKhXOVTzOgfVF9bt
-         pL1bvs+o4b0cCipEM/qaMEmkSEDAdx7CXF9WJIaQ+nBccmX2d1+gGy3tKzmx5fwOBm
-         NWqnItXKTqR4EOpErlugmgKgBLjwa0fRxBBCiSIkiUX0bO6NvMIOpJ82Zwn6IWAK8y
-         gtJ/VqCUIUJZQ==
-X-Authority-Analysis: v=2.3 cv=G5vN7Os5 c=1 sm=1 tr=0
- a=zJWegnE7BH9C0Gl4FFgQyA==:117 a=zJWegnE7BH9C0Gl4FFgQyA==:17
- a=Pyq9K9CWowscuQLKlpiwfMBGOR0=:19 a=kj9zAlcOel0A:10 a=JfrnYn6hAAAA:8
- a=j_xubRRabc_gLPjOC1IA:9 a=CjuIK1q_8ugA:10 a=1CNFftbPRP8L7MoqJWF3:22
-From:   "Doug Smythies" <dsmythies@telus.net>
-To:     "'Peter Zijlstra'" <peterz@infradead.org>,
-        "'Rafael J. Wysocki'" <rafael@kernel.org>
-Cc:     "'Rafael J. Wysocki'" <rjw@rjwysocki.net>,
-        "'Linux PM'" <linux-pm@vger.kernel.org>,
-        "'Linux Kernel Mailing List'" <linux-kernel@vger.kernel.org>,
-        "'open list:DOCUMENTATION'" <linux-doc@vger.kernel.org>,
-        "'Daniel Lezcano'" <daniel.lezcano@linaro.org>,
-        "'Giovanni Gherdovich'" <ggherdovich@suse.cz>,
-        "'Lorenzo Pieralisi'" <lorenzo.pieralisi@arm.com>,
-        "Doug Smythies" <dsmythies@telus.net>
-References: <3514439.dzOWKx1Cjx@aspire.rjw.lan> <20181210122104.GL5289@hirez.programming.kicks-ass.net> <CAJZ5v0j-a6cHayRtcsUPbUTBT0iBSUvmcUy6pfSSvUVcTMBxbw@mail.gmail.com> WUOsgxly2wifMWUOxgv0We
-In-Reply-To: WUOsgxly2wifMWUOxgv0We
-Subject: RE: [PATCH v2] cpuidle: Add 'above' and 'below' idle state metrics
-Date:   Mon, 10 Dec 2018 23:28:07 -0800
-Message-ID: <003401d49123$13627710$3a276530$@net>
-MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Office Outlook 12.0
-Thread-Index: AdSQ2u+9QZn0bxubQISdP83AHOeGqAARHUkw
-Content-Language: en-ca
-X-CMAE-Envelope: MS4wfC33gNEF43A6YSw0pX/n+IeerjIUSXbDcDusVBnW+qrmWiQiKxZtEuoW9qt38DIJZpL6Fe7dfay05A3bOPn6rB+wua9/yslg8OuvigUbli+qBWf0DZyt
- l6UjzQjYaBxSPRaTRERa6Y7Dn4z11vb3P9zxb4GtTvDt/hEozTnWT19YgJ9lfrOecP7UfcYPHjFePlrHDq95gE4icUv9hEHv1e4BQXWiaKF+g5qGhy0Gyw/B
- DidzH4wMfzWOkIclJg+F/UVRDHK1LMXmC0Ifq07u64Wtipwz8545+jXLO2zzGbeGbj5vQqI4e5PdcXnAxIq4GVUN6WWmfnWllZdQjkgLomAlgpC1+QxOHy7X
- HlxVxPMXoYh3D0lHyPSsfMnv356Ltz47Y+ALgW5jGwaM7PYjvEK/Prs1Blghp4dGNx78dQwKNPmPS0G+miKvIeJY6INWByVJfpjCstvpXnU35s72g3Z0ima4
- HKVlPJOAEefnUdVV
+        id S1726036AbeLKH3z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 02:29:55 -0500
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 43DWmc634rz9tygZ;
+        Tue, 11 Dec 2018 08:29:52 +0100 (CET)
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id E_AjTmBt6E_G; Tue, 11 Dec 2018 08:29:52 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 43DWmc5F8Nz9tygX;
+        Tue, 11 Dec 2018 08:29:52 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 689638B7D5;
+        Tue, 11 Dec 2018 08:29:53 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id JiF5Pz7EEWUO; Tue, 11 Dec 2018 08:29:53 +0100 (CET)
+Received: from PO15451.localdomain (unknown [192.168.232.3])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 18B1D8B775;
+        Tue, 11 Dec 2018 08:29:50 +0100 (CET)
+Received: by localhost.localdomain (Postfix, from userid 0)
+        id 4E0B0716F4; Tue, 11 Dec 2018 07:29:40 +0000 (UTC)
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [PATCH] crypto: talitos - fix ablkcipher for CONFIG_VMAP_STACK
+To:     Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc:     linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org
+Message-Id: <20181211072940.4E0B0716F4@localhost.localdomain>
+Date:   Tue, 11 Dec 2018 07:29:40 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018.12.10 02:52 Peter Zijlstra wrote:
->On Mon, Dec 10, 2018 at 10:36:40PM +0100, Rafael J. Wysocki wrote:
->> On Mon, Dec 10, 2018 at 1:21 PM Peter Zijlstra <peterz@infradead.org> wrote:
+[    2.364486] WARNING: CPU: 0 PID: 60 at ./arch/powerpc/include/asm/io.h:837 dma_nommu_map_page+0x44/0xd4
+[    2.373579] CPU: 0 PID: 60 Comm: cryptomgr_test Tainted: G        W         4.20.0-rc5-00560-g6bfb52e23a00-dirty #531
+[    2.384740] NIP:  c000c540 LR: c000c584 CTR: 00000000
+[    2.389743] REGS: c95abab0 TRAP: 0700   Tainted: G        W          (4.20.0-rc5-00560-g6bfb52e23a00-dirty)
+[    2.400042] MSR:  00029032 <EE,ME,IR,DR,RI>  CR: 24042204  XER: 00000000
+[    2.406669]
+[    2.406669] GPR00: c02f2244 c95abb60 c6262990 c95abd80 0000256a 00000001 00000001 00000001
+[    2.406669] GPR08: 00000000 00002000 00000010 00000010 24042202 00000000 00000100 c95abd88
+[    2.406669] GPR16: 00000000 c05569d4 00000001 00000010 c95abc88 c0615664 00000004 00000000
+[    2.406669] GPR24: 00000010 c95abc88 c95abc88 00000000 c61ae210 c7ff6d40 c61ae210 00003d68
+[    2.441559] NIP [c000c540] dma_nommu_map_page+0x44/0xd4
+[    2.446720] LR [c000c584] dma_nommu_map_page+0x88/0xd4
+[    2.451762] Call Trace:
+[    2.454195] [c95abb60] [82000808] 0x82000808 (unreliable)
+[    2.459572] [c95abb80] [c02f2244] talitos_edesc_alloc+0xbc/0x3c8
+[    2.465493] [c95abbb0] [c02f2600] ablkcipher_edesc_alloc+0x4c/0x5c
+[    2.471606] [c95abbd0] [c02f4ed0] ablkcipher_encrypt+0x20/0x64
+[    2.477389] [c95abbe0] [c02023b0] __test_skcipher+0x4bc/0xa08
+[    2.483049] [c95abe00] [c0204b60] test_skcipher+0x2c/0xcc
+[    2.488385] [c95abe20] [c0204c48] alg_test_skcipher+0x48/0xbc
+[    2.494064] [c95abe40] [c0205cec] alg_test+0x164/0x2e8
+[    2.499142] [c95abf00] [c0200dec] cryptomgr_test+0x48/0x50
+[    2.504558] [c95abf10] [c0039ff4] kthread+0xe4/0x110
+[    2.509471] [c95abf40] [c000e1d0] ret_from_kernel_thread+0x14/0x1c
+[    2.515532] Instruction dump:
+[    2.518468] 7c7e1b78 7c9d2378 7cbf2b78 41820054 3d20c076 8089c200 3d20c076 7c84e850
+[    2.526127] 8129c204 7c842e70 7f844840 419c0008 <0fe00000> 2f9e0000 54847022 7c84fa14
+[    2.533960] ---[ end trace bf78d94af73fe3b8 ]---
+[    2.539123] talitos ff020000.crypto: master data transfer error
+[    2.544775] talitos ff020000.crypto: TEA error: ISR 0x20000000_00000040
+[    2.551625] alg: skcipher: encryption failed on test 1 for ecb-aes-talitos: ret=22
 
->>> Would not a tracepoint be better?; then there is no overhead in the
->>> normal case where nobody gives a crap about these here numbers.
->> 
->> There is an existing tracepoint that in principle could be used to
->> produce this information, but it is such a major PITA in practice that
->> nobody does that.  Guess why. :-)
->
-> Sounds like you need to ship a convenient script or something :-)
+IV cannot be on stack when CONFIG_VMAP_STACK is selected because the stack
+cannot be DMA mapped anymore.
 
-For the histogram plots of idle durations that I sometimes provide, trace
-is used. It is more work to do it the trace way. Very often, when the rate
-of idle state entries/ exits is high, turning on trace influences the system
-under test significantly. Also, even if I allocate the majority of my memory
-to the trace buffer (i.e. 15 of my 16 gigabytes), I can only acquire a few 
-minutes of trace data before filling the buffer.
+This patch copies the IV from areq->info to the context ctx->iv.
 
-Some of my tests run for hours, and these new counters provide a way to acquire
-potentially useful (I don't have enough experience with them yet to know how useful)
-information, while having no influence on the system under test because
-I only take samples once per minute, or sometimes 4 times per minute.
+Fixes: 4de9d0b547b9 ("crypto: talitos - Add ablkcipher algorithms")
+Cc: stable@vger.kernel.org
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+---
+ drivers/crypto/talitos.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
->> Also, the "usage" and "time" counters are there in sysfs, so why not these two?
-
-I agree, how are these two counters any different?
-
-In about a week or so, I'll have some test data comparing 4.20-rc5 with teov6
-teov7 along with the idle data (graphs) that I usually provide and also these
-new counters.
-
-... Doug
-
+diff --git a/drivers/crypto/talitos.c b/drivers/crypto/talitos.c
+index 6988012deca4..385ec970b639 100644
+--- a/drivers/crypto/talitos.c
++++ b/drivers/crypto/talitos.c
+@@ -1668,8 +1668,11 @@ static struct talitos_edesc *ablkcipher_edesc_alloc(struct ablkcipher_request *
+ 	struct talitos_ctx *ctx = crypto_ablkcipher_ctx(cipher);
+ 	unsigned int ivsize = crypto_ablkcipher_ivsize(cipher);
+ 
++	if (ivsize)
++		memcpy(ctx->iv, areq->info, ivsize);
++
+ 	return talitos_edesc_alloc(ctx->dev, areq->src, areq->dst,
+-				   areq->info, 0, areq->nbytes, 0, ivsize, 0,
++				   ctx->iv, 0, areq->nbytes, 0, ivsize, 0,
+ 				   areq->base.flags, encrypt);
+ }
+ 
+-- 
+2.13.3
 
