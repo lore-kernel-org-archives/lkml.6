@@ -2,110 +2,150 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AF63C07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:41:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CCE1DC07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:42:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CDA952082F
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:41:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="YnrB4isO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CDA952082F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
+	by mail.kernel.org (Postfix) with ESMTP id 91C9D20855
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:42:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544542950;
+	bh=L5F6tSQ6qDPunY/pcqoyPD0FZJPtkQcHtDgvjeHg2WA=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=DqNbHecKGOawkHoK9Tnduok8IW+NW3Q99jTk9wZdEXFy+qsoieX2rI8JVOKv/F6dN
+	 /ZC+3wKGycchX3DoIRLLCDXq0kbhm3JlZXQLW7ciYWu3tkM5cnn+8CrwL7mDiWNqbR
+	 zt5wf9VA8W2Wz6KkpLYlefHAwUzdyDvjiAK3yZT0=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 91C9D20855
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727237AbeLKPla (ORCPT
+        id S1727251AbeLKPm3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 10:41:30 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:36319 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726499AbeLKPla (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:41:30 -0500
-Received: by mail-pl1-f193.google.com with SMTP id g9so7098364plo.3
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 07:41:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=U9cQk/oU0NjVhkyahB/PaBaJmR2qTHCOw8kIX+qQC5E=;
-        b=YnrB4isOJtN8m49WvsMv2NrOcPDBReeYRpwMX6Ehl/jYSnmjN85hZx2wuJ6lCX4Cc6
-         9yVM4JUDc33P7JKuqL7gYJJvV1q4ypasrT20LTaLtIciY0JNi24UgDciyALWpRm1deeO
-         x8GClN+J7yp2kLToiS6CV0aEywGNRGycQse6V9QtuCBSLI9lEDpo78GQFe8QbZABKZsx
-         yM8TPp+JVuV9Pe4hJj3f0HyZTZ/KvvS/58aKLrPvuBa8KlEjrOd6S3WWi5/nHp+hyebT
-         F5V1r+kKx3CZoF9nehRae2vA9TJenUYf9xG6AUTNWy7gW3u2//g6xUwoVIWZ7JGizP5t
-         y6vA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=U9cQk/oU0NjVhkyahB/PaBaJmR2qTHCOw8kIX+qQC5E=;
-        b=CO85Iw8VpRj9BmQeVjHQ6bIGuH7cePEVm8M71/BRux6cRw7G2R6Y+n7HHtN3yhEP5N
-         Kb63sEjD2FhyUJjC2nnv5kTB6Vxip3EHYXFDitz7CkVvlSFoKPaX7+8PwxX/9Obt7icJ
-         XMxcwqBQ8qQSSvFtvKd8ZQEK1ti7JLAMM+EQ49pxYen1tc0o9PozJ2D3zQ/zlhlCe6c2
-         Fu4/NG+8ENJSAeOCwhT5pIUSOQGwZSXhUt3bsqGnQYr5qi2F4sHQDID972fCzpqebcYS
-         hIqrBjf9JDUXW4jk8sTOVrudmvvEODE5zv8LKcdXtD+4BBAgTZxfIh2sMzMWclpw2I//
-         dKaA==
-X-Gm-Message-State: AA+aEWaS6WpO7sXSsAzsU/ArFWxUiQRqqg1aQxEJP7pRl1Mjqcck5U8f
-        4Le6OOLUOE3m0RIu4G/ISHh3Lg==
-X-Google-Smtp-Source: AFSGD/Xi541w4Hn554IEJwsktZN9ZwZtLf0bcDlXADk7q3LdvPIkEXQ7/I6YcRLltqlivEKuHJwA8w==
-X-Received: by 2002:a17:902:4a0c:: with SMTP id w12mr16679813pld.8.1544542889578;
-        Tue, 11 Dec 2018 07:41:29 -0800 (PST)
-Received: from ?IPv6:2601:646:c200:7429:cc12:b7da:e644:c670? ([2601:646:c200:7429:cc12:b7da:e644:c670])
-        by smtp.gmail.com with ESMTPSA id u8sm20350831pfl.16.2018.12.11.07.41.28
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 11 Dec 2018 07:41:28 -0800 (PST)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (1.0)
-Subject: Re: [RFC PATCH v3 0/4] x86: Add exception fixup for SGX ENCLU
-From:   Andy Lutomirski <luto@amacapital.net>
-X-Mailer: iPhone Mail (16B92)
-In-Reply-To: <20181210232449.GA11843@localhost>
-Date:   Tue, 11 Dec 2018 07:41:27 -0800
-Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
-        linux-sgx@vger.kernel.org,
-        Haitao Huang <haitao.huang@linux.intel.com>,
-        Jethro Beekman <jethro@fortanix.com>,
-        "Dr . Greg Wettstein" <greg@enjellic.com>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <EEE078E7-7F37-4F74-8874-46E16C1E0A77@amacapital.net>
-References: <20181210232141.5425-1-sean.j.christopherson@intel.com> <20181210232449.GA11843@localhost>
-To:     Josh Triplett <josh@joshtriplett.org>
+        Tue, 11 Dec 2018 10:42:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58834 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727157AbeLKPm3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 10:42:29 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D530020672;
+        Tue, 11 Dec 2018 15:42:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544542948;
+        bh=L5F6tSQ6qDPunY/pcqoyPD0FZJPtkQcHtDgvjeHg2WA=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=UrpAVkuyI/Kouoxkzd8iOShlpQ+j0uEpHTiuKhZnmtRSAJOvhryJStswGWdP5cv72
+         lWQsk7npgO/pPiGVxDf9vZM+/6bFtwt5y5a4SyvfLj+AIGPjaApWTwA5vAFUqgxFCA
+         5GVhIQWI4SlnrRCm7T/nF+4AgzWYNmIbDQRkpnr4=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 3.18 01/54] Revert "wlcore: Add missing PM call for wlcore_cmd_wait_for_event_or_timeout()"
+Date:   Tue, 11 Dec 2018 16:40:49 +0100
+Message-Id: <20181211151546.074391484@linuxfoundation.org>
+X-Mailer: git-send-email 2.20.0
+In-Reply-To: <20181211151546.010073210@linuxfoundation.org>
+References: <20181211151546.010073210@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+3.18-stable review patch.  If anyone has any objections, please let me know.
+
+------------------
+
+This reverts commit cbc56a12da05d5333a9020c4d7854ad7d0b5a31d which was
+upstream commit 4ec7cece87b3ed21ffcd407c62fb2f151a366bc1.
+
+>From Dietmar May's report on the stable mailing list
+(https://www.spinics.net/lists/stable/msg272201.html):
+
+> I've run into some problems which appear due to (a) recent patch(es) on
+> the wlcore wifi driver.
+>
+> 4.4.160 - commit 3fdd34643ffc378b5924941fad40352c04610294
+> 4.9.131 - commit afeeecc764436f31d4447575bb9007732333818c
+>
+> Earlier versions (4.9.130 and 4.4.159 - tested back to 4.4.49) do not
+> exhibit this problem. It is still present in 4.9.141.
+>
+> master as of 4.20.0-rc4 does not exhibit this problem.
+>
+> Basically, during client association when in AP mode (running hostapd),
+> handshake may or may not complete following a noticeable delay. If
+> successful, then the driver fails consistently in warn_slowpath_null
+> during disassociation. If unsuccessful, the wifi client attempts multiple
+> times, sometimes failing repeatedly. I've had clients unable to connect
+> for 3-5 minutes during testing, with the syslog filled with dozens of
+> backtraces. syslog details are below.
+>
+> I'm working on an embedded device with a TI 3352 ARM processor and a
+> murata wl1271 module in sdio mode. We're running a fully patched ubuntu
+> 18.04 ARM build, with a kernel built from kernel.org's stable/linux repo <https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/commit/?h=linux-4.9.y&id=afeeecc764436f31d4447575bb9007732333818c>.
+> Relevant parts of the kernel config are included below.
+>
+> The commit message states:
+>
+> > /I've only seen this few times with the runtime PM patches enabled so
+> > this one is probably not needed before that. This seems to work
+> > currently based on the current PM implementation timer. Let's apply
+> > this separately though in case others are hitting this issue./
+> We're not doing anything explicit with power management. The device is an
+> IoT edge gateway with battery backup, normally running on wall power. The
+> battery is currently used solely to shut down the system cleanly to avoid
+> filesystem corruption.
+>
+> The device tree is configured to keep power in suspend; but the device
+> should never suspend, so in our case, there is no need to call
+> wl1271_ps_elp_wakeup() or wl1271_ps_elp_sleep(), as occurs in the patch.
+
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ drivers/net/wireless/ti/wlcore/cmd.c |    6 ------
+ 1 file changed, 6 deletions(-)
+
+--- a/drivers/net/wireless/ti/wlcore/cmd.c
++++ b/drivers/net/wireless/ti/wlcore/cmd.c
+@@ -35,7 +35,6 @@
+ #include "wl12xx_80211.h"
+ #include "cmd.h"
+ #include "event.h"
+-#include "ps.h"
+ #include "tx.h"
+ #include "hw_ops.h"
+ 
+@@ -188,10 +187,6 @@ int wlcore_cmd_wait_for_event_or_timeout
+ 
+ 	timeout_time = jiffies + msecs_to_jiffies(WL1271_EVENT_TIMEOUT);
+ 
+-	ret = wl1271_ps_elp_wakeup(wl);
+-	if (ret < 0)
+-		return ret;
+-
+ 	do {
+ 		if (time_after(jiffies, timeout_time)) {
+ 			wl1271_debug(DEBUG_CMD, "timeout waiting for event %d",
+@@ -223,7 +218,6 @@ int wlcore_cmd_wait_for_event_or_timeout
+ 	} while (!event);
+ 
+ out:
+-	wl1271_ps_elp_sleep(wl);
+ 	kfree(events_vector);
+ 	return ret;
+ }
 
 
-> On Dec 10, 2018, at 3:24 PM, Josh Triplett <josh@joshtriplett.org> wrote:
->=20
->> On Mon, Dec 10, 2018 at 03:21:37PM -0800, Sean Christopherson wrote:
->> At that point I realized it's a hell of a lot easier to simply provide
->> an IOCTL via /dev/sgx that allows userspace to register a per-process
->> ENCLU exception handler.  At a high level, the basic idea is the same
->> as the vDSO approach: provide a hardcoded fixup handler for ENCLU and
->> attempt to fixup select unhandled exceptions that occurred in user code.
->=20
-> So, on the one hand, this is *absolutely* much cleaner than the VDSO
-> approach. On the other hand, this is global process state and has some
-> of the same problems as a signal handler as a result.
-
-I liked the old version better for this reason and for another reason: while=
- this new one looks very very simple, it still has the hidden complexity tha=
-t the magic values written to registers in the event of an exception are ver=
-y much Linux specific.
-
-OTOH, the old approach clobbered more regs than needed, but that=E2=80=99s a=
- easy fix.=
