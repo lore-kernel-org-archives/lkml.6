@@ -2,48 +2,88 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2E37C07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 13:43:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85A7EC07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 13:43:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 84A922054F
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 13:43:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 84A922054F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+	by mail.kernel.org (Postfix) with ESMTP id 557E82054F
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 13:43:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 557E82054F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=8bytes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726533AbeLKNng (ORCPT
+        id S1726580AbeLKNnt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 08:43:36 -0500
-Received: from verein.lst.de ([213.95.11.211]:55423 "EHLO newverein.lst.de"
+        Tue, 11 Dec 2018 08:43:49 -0500
+Received: from 8bytes.org ([81.169.241.247]:53202 "EHLO theia.8bytes.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726286AbeLKNng (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 08:43:36 -0500
-Received: by newverein.lst.de (Postfix, from userid 2407)
-        id 275AC68DD2; Tue, 11 Dec 2018 14:43:35 +0100 (CET)
-Date:   Tue, 11 Dec 2018 14:43:35 +0100
-From:   Christoph Hellwig <hch@lst.de>
-To:     Robin Murphy <robin.murphy@arm.com>
-Cc:     hch@lst.de, m.szyprowski@samsung.com,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        cai@gmx.us, salil.mehta@huawei.com, john.garry@huawei.com,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org
-Subject: Re: [PATCH v3 0/7] dma-debug cleanup and dynamic allocation
-Message-ID: <20181211134335.GA20781@lst.de>
-References: <cover.1544447601.git.robin.murphy@arm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1544447601.git.robin.murphy@arm.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+        id S1726135AbeLKNns (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 08:43:48 -0500
+Received: by theia.8bytes.org (Postfix, from userid 1000)
+        id 9D00E284; Tue, 11 Dec 2018 14:43:46 +0100 (CET)
+From:   Joerg Roedel <joro@8bytes.org>
+To:     iommu@lists.linux-foundation.org
+Cc:     Russell Currey <ruscur@russell.cc>,
+        Sam Bobroff <sbobroff@linux.ibm.com>, oohall@gmail.com,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Hanjun Guo <hanjun.guo@linaro.org>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Vinod Koul <vkoul@kernel.org>, Joerg Roedel <joro@8bytes.org>,
+        jroedel@suse.de, Mathias Nyman <mathias.nyman@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
+        dmaengine@vger.kernel.org, linux-usb@vger.kernel.org
+Subject: [PATCH 0/6 v2] Introduce device_iommu_mapped() function
+Date:   Tue, 11 Dec 2018 14:43:37 +0100
+Message-Id: <20181211134343.10664-1-joro@8bytes.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thanks, applied to dma-mapping for-next.
+Hi,
+
+here is the second version of this patch-set. It replaces
+the various (dev->iommu_group) checks with a function call
+which better expresses their intend.
+
+Changes to the first version are the added patch for
+rcar-dmac, a driver I missed before. I also added all
+Acked-By's I received on the first version.
+
+Please review and provide Acks, if there are no objections.
+I have some iommu patches that depend on these, so I'd like
+to carry this patch-set in the IOMMU tree.
+
+Regards,
+
+	Joerg
+
+Joerg Roedel (6):
+  driver core: Introduce device_iommu_mapped() function
+  iommu/of: Use device_iommu_mapped()
+  ACPI/IORT: Use device_iommu_mapped()
+  powerpc/iommu: Use device_iommu_mapped()
+  xhci: Use device_iommu_mapped()
+  dmaengine: sh: rcar-dmac: Use device_iommu_mapped()
+
+ arch/powerpc/kernel/eeh.c   |  2 +-
+ arch/powerpc/kernel/iommu.c |  6 +++---
+ drivers/acpi/arm64/iort.c   |  2 +-
+ drivers/dma/sh/rcar-dmac.c  |  2 +-
+ drivers/iommu/of_iommu.c    |  2 +-
+ drivers/usb/host/xhci.c     |  2 +-
+ include/linux/device.h      | 10 ++++++++++
+ 7 files changed, 18 insertions(+), 8 deletions(-)
+
+-- 
+2.17.1
+
