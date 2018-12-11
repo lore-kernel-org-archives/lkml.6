@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2CB1C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 01:06:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0889AC04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 01:06:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A43EC2084E
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 01:06:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A43EC2084E
+	by mail.kernel.org (Postfix) with ESMTP id BE1F62084E
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 01:06:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE1F62084E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729816AbeLKBGU (ORCPT
+        id S1729863AbeLKBGc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 20:06:20 -0500
+        Mon, 10 Dec 2018 20:06:32 -0500
 Received: from mga02.intel.com ([134.134.136.20]:24704 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729605AbeLKBFz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 20:05:55 -0500
+        id S1729546AbeLKBFw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Dec 2018 20:05:52 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Dec 2018 17:05:54 -0800
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Dec 2018 17:05:52 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,340,1539673200"; 
-   d="scan'208";a="117705216"
+   d="scan'208";a="117705208"
 Received: from unknown (HELO localhost.lm.intel.com) ([10.232.112.69])
-  by orsmga001.jf.intel.com with ESMTP; 10 Dec 2018 17:05:53 -0800
+  by orsmga001.jf.intel.com with ESMTP; 10 Dec 2018 17:05:51 -0800
 From:   Keith Busch <keith.busch@intel.com>
 To:     linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
         linux-mm@kvack.org
@@ -39,9 +39,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Dave Hansen <dave.hansen@intel.com>,
         Dan Williams <dan.j.williams@intel.com>,
         Keith Busch <keith.busch@intel.com>
-Subject: [PATCHv2 11/12] acpi/hmat: Register memory side cache attributes
-Date:   Mon, 10 Dec 2018 18:03:09 -0700
-Message-Id: <20181211010310.8551-12-keith.busch@intel.com>
+Subject: [PATCHv2 09/12] node: Add memory caching attributes
+Date:   Mon, 10 Dec 2018 18:03:07 -0700
+Message-Id: <20181211010310.8551-10-keith.busch@intel.com>
 X-Mailer: git-send-email 2.13.6
 In-Reply-To: <20181211010310.8551-1-keith.busch@intel.com>
 References: <20181211010310.8551-1-keith.busch@intel.com>
@@ -50,63 +50,244 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Register memory side cache attributes with the memory's node if HMAT
-provides the side cache information table.
+System memory may have side caches to help improve access speed. While
+the system provided cache is transparent to the software accessing
+these memory ranges, applications can optimize their own access based
+on cache attributes.
+
+Provide a new API for the kernel to register these memory side caches
+under the memory node that provides it.
+
+The kernel's sysfs representation is modeled from the cpu cacheinfo
+attributes, as seen from /sys/devices/system/cpu/cpuX/side_cache/.
+Unlike CPU cacheinfo, though, the node cache level is reported from
+the view of the memory.  A higher number is nearer to the CPU, while
+lower levels are closer to the backing memory. Also unlike CPU cache,
+it is assumed the system will handle flushing any dirty cached memory to
+the last level the memory on a power failure if the range is persistent
+memory.
+
+The attributes we export are the cache size, the line size, associativity,
+and write back policy.
 
 Signed-off-by: Keith Busch <keith.busch@intel.com>
 ---
- drivers/acpi/hmat.c | 32 ++++++++++++++++++++++++++++++++
- 1 file changed, 32 insertions(+)
+ drivers/base/node.c  | 140 +++++++++++++++++++++++++++++++++++++++++++++++++++
+ include/linux/node.h |  23 +++++++++
+ 2 files changed, 163 insertions(+)
 
-diff --git a/drivers/acpi/hmat.c b/drivers/acpi/hmat.c
-index 40bc83f4b593..48d53ceb4778 100644
---- a/drivers/acpi/hmat.c
-+++ b/drivers/acpi/hmat.c
-@@ -206,6 +206,7 @@ static __init int hmat_parse_cache(union acpi_subtable_headers *header,
- 				   const unsigned long end)
- {
- 	struct acpi_hmat_cache *cache = (void *)header;
-+	struct node_cache_attrs cache_attrs;
- 	u32 attrs;
+diff --git a/drivers/base/node.c b/drivers/base/node.c
+index 768612c06c56..54184424ca7f 100644
+--- a/drivers/base/node.c
++++ b/drivers/base/node.c
+@@ -17,6 +17,7 @@
+ #include <linux/nodemask.h>
+ #include <linux/cpu.h>
+ #include <linux/device.h>
++#include <linux/pm_runtime.h>
+ #include <linux/swap.h>
+ #include <linux/slab.h>
  
- 	if (cache->header.length < sizeof(*cache)) {
-@@ -219,6 +220,37 @@ static __init int hmat_parse_cache(union acpi_subtable_headers *header,
- 		cache->memory_PD, cache->cache_size, attrs,
- 		cache->number_of_SMBIOShandles);
- 
-+	cache_attrs.size = cache->cache_size;
-+	cache_attrs.level = (attrs & ACPI_HMAT_CACHE_LEVEL) >> 4;
-+	cache_attrs.line_size = (attrs & ACPI_HMAT_CACHE_LINE_SIZE) >> 16;
-+
-+	switch ((attrs & ACPI_HMAT_CACHE_ASSOCIATIVITY) >> 8) {
-+	case ACPI_HMAT_CA_DIRECT_MAPPED:
-+		cache_attrs.associativity = NODE_CACHE_DIRECT_MAP;
-+		break;
-+	case ACPI_HMAT_CA_COMPLEX_CACHE_INDEXING:
-+		cache_attrs.associativity = NODE_CACHE_INDEXED;
-+		break;
-+	case ACPI_HMAT_CA_NONE:
-+	default:
-+		cache_attrs.associativity = NODE_CACHE_OTHER;
-+		break;
-+	}
-+
-+	switch ((attrs & ACPI_HMAT_WRITE_POLICY) >> 12) {
-+	case ACPI_HMAT_CP_WB:
-+		cache_attrs.write_policy = NODE_CACHE_WRITE_BACK;
-+		break;
-+	case ACPI_HMAT_CP_WT:
-+		cache_attrs.write_policy = NODE_CACHE_WRITE_THROUGH;
-+		break;
-+	case ACPI_HMAT_CP_NONE:
-+	default:
-+		cache_attrs.write_policy = NODE_CACHE_WRITE_OTHER;
-+		break;
-+	}
-+
-+	node_add_cache(pxm_to_node(cache->memory_PD), &cache_attrs);
- 	return 0;
+@@ -141,6 +142,143 @@ void node_set_perf_attrs(unsigned int nid, struct node_hmem_attrs *hmem_attrs)
+ 		pr_info("failed to add performance attribute group to node %d\n",
+ 			nid);
  }
++
++struct node_cache_info {
++	struct device dev;
++	struct list_head node;
++	struct node_cache_attrs cache_attrs;
++};
++#define to_cache_info(device) container_of(device, struct node_cache_info, dev)
++
++#define CACHE_ATTR(name, fmt) 							\
++static ssize_t name##_show(struct device *dev,					\
++			   struct device_attribute *attr,			\
++			   char *buf)						\
++{										\
++	return sprintf(buf, fmt "\n", to_cache_info(dev)->cache_attrs.name);	\
++}										\
++DEVICE_ATTR_RO(name);
++
++CACHE_ATTR(size, "%lld")
++CACHE_ATTR(level, "%d")
++CACHE_ATTR(line_size, "%d")
++CACHE_ATTR(associativity, "%d")
++CACHE_ATTR(write_policy, "%d")
++
++static struct attribute *cache_attrs[] = {
++	&dev_attr_level.attr,
++	&dev_attr_associativity.attr,
++	&dev_attr_size.attr,
++	&dev_attr_line_size.attr,
++	&dev_attr_write_policy.attr,
++	NULL,
++};
++
++const struct attribute_group node_cache_attrs_group = {
++	.attrs = cache_attrs,
++};
++
++const struct attribute_group *node_cache_attrs_groups[] = {
++	&node_cache_attrs_group,
++	NULL,
++};
++
++static void node_release(struct device *dev)
++{
++	kfree(dev);
++}
++
++static void node_cache_release(struct device *dev)
++{
++	struct node_cache_info *info = to_cache_info(dev);
++	kfree(info);
++}
++
++static void node_init_cache_dev(struct node *node)
++{
++	struct device *dev;
++
++	dev = kzalloc(sizeof(*dev), GFP_KERNEL);
++	if (!dev)
++		return;
++
++	dev->parent = &node->dev;
++	dev->release = node_release;
++	dev_set_name(dev, "side_cache");
++
++	if (device_register(dev)) {
++		kfree(dev);
++		return;
++	}
++	pm_runtime_no_callbacks(dev);
++	node->cache_dev = dev;
++}
++
++void node_add_cache(unsigned int nid, struct node_cache_attrs *cache_attrs)
++{
++	struct node_cache_info *info;
++	struct device *dev;
++	struct node *node;
++
++	if (!node_online(nid) || !node_devices[nid])
++		return;
++
++	node = node_devices[nid];
++	list_for_each_entry(info, &node->cache_attrs, node) {
++		if (info->cache_attrs.level == cache_attrs->level) {
++			dev_warn(&node->dev,
++				"attempt to add duplicate cache level:%d\n",
++				cache_attrs->level);
++			return;
++		}
++	}
++
++	if (!node->cache_dev)
++		node_init_cache_dev(node);
++	if (!node->cache_dev)
++		return;
++
++	info = kzalloc(sizeof(*info), GFP_KERNEL);
++	if (!info)
++		return;
++
++	dev = &info->dev;
++	dev->parent = node->cache_dev;
++	dev->release = node_cache_release;
++	dev->groups = node_cache_attrs_groups;
++	dev_set_name(dev, "index%d", cache_attrs->level);
++	info->cache_attrs = *cache_attrs;
++	if (device_register(dev)) {
++		dev_warn(&node->dev, "failed to add cache level:%d\n",
++			 cache_attrs->level);
++		kfree(info);
++		return;
++	}
++	pm_runtime_no_callbacks(dev);
++	list_add_tail(&info->node, &node->cache_attrs);
++}
++
++static void node_remove_caches(struct node *node)
++{
++	struct node_cache_info *info, *next;
++
++	if (!node->cache_dev)
++		return;
++
++	list_for_each_entry_safe(info, next, &node->cache_attrs, node) {
++		list_del(&info->node);
++		device_unregister(&info->dev);
++	}
++	device_unregister(node->cache_dev);
++}
++
++static void node_init_caches(unsigned int nid)
++{
++	INIT_LIST_HEAD(&node_devices[nid]->cache_attrs);
++}
++#else
++static void node_init_caches(unsigned int nid) { }
++static void node_remove_caches(struct node *node) { }
+ #endif
+ 
+ #define K(x) ((x) << (PAGE_SHIFT - 10))
+@@ -389,6 +527,7 @@ static void node_device_release(struct device *dev)
+ 	 */
+ 	flush_work(&node->node_work);
+ #endif
++	node_remove_caches(node);
+ 	kfree(node);
+ }
+ 
+@@ -711,6 +850,7 @@ int __register_one_node(int nid)
+ 
+ 	/* initialize work queue for memory hot plug */
+ 	init_node_hugetlb_work(nid);
++	node_init_caches(nid);
+ 
+ 	return error;
+ }
+diff --git a/include/linux/node.h b/include/linux/node.h
+index 71abaf0d4f4b..897e04e99e80 100644
+--- a/include/linux/node.h
++++ b/include/linux/node.h
+@@ -36,6 +36,27 @@ struct node_hmem_attrs {
+ 	unsigned int write_latency;
+ };
+ void node_set_perf_attrs(unsigned int nid, struct node_hmem_attrs *hmem_attrs);
++
++enum cache_associativity {
++	NODE_CACHE_DIRECT_MAP,
++	NODE_CACHE_INDEXED,
++	NODE_CACHE_OTHER,
++};
++
++enum cache_write_policy {
++	NODE_CACHE_WRITE_BACK,
++	NODE_CACHE_WRITE_THROUGH,
++	NODE_CACHE_WRITE_OTHER,
++};
++
++struct node_cache_attrs {
++	enum cache_associativity associativity;
++	enum cache_write_policy write_policy;
++	u64 size;
++	u16 line_size;
++	u8  level;
++};
++void node_add_cache(unsigned int nid, struct node_cache_attrs *cache_attrs);
+ #endif
+ 
+ struct node {
+@@ -48,6 +69,8 @@ struct node {
+ #endif
+ #ifdef CONFIG_HMEM_REPORTING
+ 	struct node_hmem_attrs hmem_attrs;
++	struct list_head cache_attrs;
++	struct device *cache_dev;
+ #endif
+ };
  
 -- 
 2.14.4
