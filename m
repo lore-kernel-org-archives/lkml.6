@@ -2,148 +2,152 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FC00C07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 09:40:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A0C5C5CFFE
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 09:40:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3D75C2084A
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 09:40:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D75C2084A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	by mail.kernel.org (Postfix) with ESMTP id E33C320811
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 09:40:30 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Nbp6ECBb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E33C320811
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726239AbeLKJkB (ORCPT
+        id S1726240AbeLKJk3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 04:40:01 -0500
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:52614 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726132AbeLKJkA (ORCPT
+        Tue, 11 Dec 2018 04:40:29 -0500
+Received: from mail-ua1-f68.google.com ([209.85.222.68]:34090 "EHLO
+        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726085AbeLKJk3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 04:40:00 -0500
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id wBB9dqJ1085157;
-        Tue, 11 Dec 2018 03:39:52 -0600
-Received: from DLEE104.ent.ti.com (dlee104.ent.ti.com [157.170.170.34])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wBB9dqEu079262
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 11 Dec 2018 03:39:52 -0600
-Received: from DLEE108.ent.ti.com (157.170.170.38) by DLEE104.ent.ti.com
- (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Tue, 11
- Dec 2018 03:39:51 -0600
-Received: from dlep33.itg.ti.com (157.170.170.75) by DLEE108.ent.ti.com
- (157.170.170.38) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Tue, 11 Dec 2018 03:39:52 -0600
-Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id wBB9dmPO012459;
-        Tue, 11 Dec 2018 03:39:49 -0600
-Subject: Re: [PATCH v1 2/2] usb:cdns3 Add Cadence USB3 DRD Driver
-To:     Pawel Laszczak <pawell@cadence.com>, <devicetree@vger.kernel.org>
-References: <1544445555-17325-1-git-send-email-pawell@cadence.com>
- <1544445555-17325-3-git-send-email-pawell@cadence.com>
-CC:     <gregkh@linuxfoundation.org>, <linux-usb@vger.kernel.org>,
-        <balbi@kernel.org>, <linux-kernel@vger.kernel.org>,
-        <adouglas@cadence.com>, <jbergsagel@ti.com>, <nsekhar@ti.com>,
-        <nm@ti.com>, <sureshp@cadence.com>, <peter.chen@nxp.com>,
-        <pjez@cadence.com>, <kurahul@cadence.com>
-From:   Roger Quadros <rogerq@ti.com>
-Message-ID: <5C0F85E4.10609@ti.com>
-Date:   Tue, 11 Dec 2018 11:39:48 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
- Thunderbird/38.6.0
+        Tue, 11 Dec 2018 04:40:29 -0500
+Received: by mail-ua1-f68.google.com with SMTP id z23so4908891uam.1
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 01:40:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=1FHA0e+1mmwBBktuWFq/vqc7REX2BVGHa6vEukq0Mm0=;
+        b=Nbp6ECBbHJjSUni3+s7O+qCzgemHhGXKaBZMsWxkSY33nh2/O9Kn+ouEgaJ38rs/KF
+         QF1lqRDQcHiWA4HmekOxBLqeLuYq1+ns/PA9nubs2NhzLveCr3OdZkxMMAdf7WrItx1f
+         QN2YVg2MXa95TroEKgXbpARjM+7yLcTcsSTho=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=1FHA0e+1mmwBBktuWFq/vqc7REX2BVGHa6vEukq0Mm0=;
+        b=WZQZU9NWzM2ysTNeTTZn94TuYB3nhkvLYVu0yiIziOTHqPiLXN20KRDinbpk7/vLz6
+         cg2vmblODst7zj4Zmu8JvJ+LZ47oof3i1xncg9qp55DubZE/c5VSmlXxc816PTEbAjHZ
+         XKOU67dXK2TjuMkmEhAFyCNftzYzna4rMua850N6vGAsXR3texvfwtYZroBtamZFN0oV
+         avltjvuaDPJFWXX9pjwInMBVDC1xwdQo9hpl1WL/mkCZM/hDlemBoSa2Y2IxSNzIADww
+         TtKLcPyivr0AX3MWvNe6O6VPGn3vDOACnIsJzzwg9N2FVWbb3Vfrz4GAa+JfUyfB0F88
+         1IRQ==
+X-Gm-Message-State: AA+aEWaQc0doXP088/pgZXGslzNbOrbncHO0sraOdH0r8sIpCgevWA66
+        it8upqRAPZbU2Y9+Kg7slPW4LMgrS9hxnlChCw7SuA==
+X-Google-Smtp-Source: AFSGD/XlndIoalqz9cWTgpiYhwZIKNjzTXwpn2Nmt73mZbxEoNTD6IDz+rQwapcFXenHykeWlqrREUkDuOCsyuguwU4=
+X-Received: by 2002:ab0:3484:: with SMTP id c4mr6990361uar.39.1544521227500;
+ Tue, 11 Dec 2018 01:40:27 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <1544445555-17325-3-git-send-email-pawell@cadence.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <20181210215856.2238253-1-arnd@arndb.de> <20181210215856.2238253-4-arnd@arndb.de>
+In-Reply-To: <20181210215856.2238253-4-arnd@arndb.de>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Tue, 11 Dec 2018 10:39:51 +0100
+Message-ID: <CAPDyKFogJv0OeaqdXBUyVAtmFqNTxDOJU_EMgMO7tFYdoQMY4A@mail.gmail.com>
+Subject: Re: [PATCH 4/4] ARM: pxa: avoid section mismatch warning
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     arm@kernel.org, Daniel Mack <daniel@zonque.org>,
+        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        grinberg@compulab.co.il, miquel.raynal@bootlin.com,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Pawel,
+On Mon, 10 Dec 2018 at 23:00, Arnd Bergmann <arnd@arndb.de> wrote:
+>
+> WARNING: vmlinux.o(.text+0x19f90): Section mismatch in reference from the function littleton_init_lcd() to the function .init.text:pxa_set_fb_info()
+> The function littleton_init_lcd() references
+> the function __init pxa_set_fb_info().
+> This is often because littleton_init_lcd lacks a __init
+> annotation or the annotation of pxa_set_fb_info is wrong.
+>
+> WARNING: vmlinux.o(.text+0xf824): Section mismatch in reference from the function zeus_register_ohci() to the function .init.text:pxa_set_ohci_info()
+> The function zeus_register_ohci() references
+> the function __init pxa_set_ohci_info().
+> This is often because zeus_register_ohci lacks a __init
+> annotation or the annotation of pxa_set_ohci_info is wrong.
+>
+> WARNING: vmlinux.o(.text+0xf95c): Section mismatch in reference from the function cm_x300_init_u2d() to the function .init.text:pxa3xx_set_u2d_info()
+> The function cm_x300_init_u2d() references
+> the function __init pxa3xx_set_u2d_info().
+> This is often because cm_x300_init_u2d lacks a __init
+> annotation or the annotation of pxa3xx_set_u2d_info is wrong.
+>
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-On 10/12/18 14:39, Pawel Laszczak wrote:
-> This patch introduce new Cadence USBSS DRD driver
-> to linux kernel.
-> 
-> The Cadence USBSS DRD Driver is a highly
-> configurable IP Core which can be
-> instantiated as Dual-Role Device (DRD),
-> Peripheral Only and Host Only (XHCI)
-> configurations.
-> 
-> The current driver has been validated with
-> FPGA burned. We have support for PCIe
-> bus, which is used on FPGA prototyping.
-> 
-> The host side of USBSS-DRD controller is compliance
-> with XHCI specification, so it works with
-> standard XHCI linux driver.
-> 
-> Signed-off-by: Pawel Laszczak <pawell@cadence.com>
+I have queued a bunch of pxa changes via my mmc tree for gpio
+descriptor conversions, by Linus Walleij.
+
+Are those causing this problem? Should I queue this one via mmc tree as well?
+
+Kind regards
+Uffe
+
 > ---
->  drivers/usb/Kconfig                |    2 +
->  drivers/usb/Makefile               |    2 +
->  drivers/usb/cdns3/Kconfig          |   44 +
->  drivers/usb/cdns3/Makefile         |   16 +
->  drivers/usb/cdns3/cdns3-pci-wrap.c |  157 +++
->  drivers/usb/cdns3/core.c           |  451 +++++++
->  drivers/usb/cdns3/core.h           |  108 ++
->  drivers/usb/cdns3/debug.h          |  346 ++++++
->  drivers/usb/cdns3/debugfs.c        |  168 +++
->  drivers/usb/cdns3/drd.c            |  315 +++++
->  drivers/usb/cdns3/drd.h            |  129 ++
->  drivers/usb/cdns3/ep0.c            |  864 +++++++++++++
->  drivers/usb/cdns3/gadget-export.h  |   28 +
->  drivers/usb/cdns3/gadget.c         | 1802 ++++++++++++++++++++++++++++
->  drivers/usb/cdns3/gadget.h         | 1177 ++++++++++++++++++
->  drivers/usb/cdns3/host-export.h    |   28 +
->  drivers/usb/cdns3/host.c           |   74 ++
->  drivers/usb/cdns3/trace.c          |   11 +
->  drivers/usb/cdns3/trace.h          |  343 ++++++
-
-You went to the other extreme of combining everything (host/gadget/drd) together
-which again makes this very hard to review.
-
-I think what Felipe meant was to only combine the gadget driver code into one patch.
-
-The series could be split into 6 patches like so.
--dt binding
--pci glue
--core driver
--host driver
--gadget driver
--drd driver
-
->  19 files changed, 6065 insertions(+)
->  create mode 100644 drivers/usb/cdns3/Kconfig
->  create mode 100644 drivers/usb/cdns3/Makefile
->  create mode 100644 drivers/usb/cdns3/cdns3-pci-wrap.c
->  create mode 100644 drivers/usb/cdns3/core.c
->  create mode 100644 drivers/usb/cdns3/core.h
->  create mode 100644 drivers/usb/cdns3/debug.h
->  create mode 100644 drivers/usb/cdns3/debugfs.c
->  create mode 100644 drivers/usb/cdns3/drd.c
->  create mode 100644 drivers/usb/cdns3/drd.h
->  create mode 100644 drivers/usb/cdns3/ep0.c
->  create mode 100644 drivers/usb/cdns3/gadget-export.h
->  create mode 100644 drivers/usb/cdns3/gadget.c
->  create mode 100644 drivers/usb/cdns3/gadget.h
->  create mode 100644 drivers/usb/cdns3/host-export.h
->  create mode 100644 drivers/usb/cdns3/host.c
->  create mode 100644 drivers/usb/cdns3/trace.c
->  create mode 100644 drivers/usb/cdns3/trace.h
-> 
-<snip>
-
-cheers,
--roger
-
--- 
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+>  arch/arm/mach-pxa/cm-x300.c   | 2 +-
+>  arch/arm/mach-pxa/littleton.c | 2 +-
+>  arch/arm/mach-pxa/zeus.c      | 2 +-
+>  3 files changed, 3 insertions(+), 3 deletions(-)
+>
+> diff --git a/arch/arm/mach-pxa/cm-x300.c b/arch/arm/mach-pxa/cm-x300.c
+> index 109fab292f94..b76b566280fa 100644
+> --- a/arch/arm/mach-pxa/cm-x300.c
+> +++ b/arch/arm/mach-pxa/cm-x300.c
+> @@ -564,7 +564,7 @@ static struct pxa3xx_u2d_platform_data cm_x300_u2d_platform_data = {
+>         .exit           = cm_x300_u2d_exit,
+>  };
+>
+> -static void cm_x300_init_u2d(void)
+> +static void __init cm_x300_init_u2d(void)
+>  {
+>         pxa3xx_set_u2d_info(&cm_x300_u2d_platform_data);
+>  }
+> diff --git a/arch/arm/mach-pxa/littleton.c b/arch/arm/mach-pxa/littleton.c
+> index 8e0b60a33026..39db4898dc4a 100644
+> --- a/arch/arm/mach-pxa/littleton.c
+> +++ b/arch/arm/mach-pxa/littleton.c
+> @@ -182,7 +182,7 @@ static struct pxafb_mach_info littleton_lcd_info = {
+>         .lcd_conn               = LCD_COLOR_TFT_16BPP,
+>  };
+>
+> -static void littleton_init_lcd(void)
+> +static void __init littleton_init_lcd(void)
+>  {
+>         pxa_set_fb_info(NULL, &littleton_lcd_info);
+>  }
+> diff --git a/arch/arm/mach-pxa/zeus.c b/arch/arm/mach-pxa/zeus.c
+> index 897ef59fbe0c..c411f79d4cb5 100644
+> --- a/arch/arm/mach-pxa/zeus.c
+> +++ b/arch/arm/mach-pxa/zeus.c
+> @@ -576,7 +576,7 @@ static struct pxaohci_platform_data zeus_ohci_platform_data = {
+>         .flags          = ENABLE_PORT_ALL | POWER_SENSE_LOW,
+>  };
+>
+> -static void zeus_register_ohci(void)
+> +static void __init zeus_register_ohci(void)
+>  {
+>         /* Port 2 is shared between host and client interface. */
+>         UP2OCR = UP2OCR_HXOE | UP2OCR_HXS | UP2OCR_DMPDE | UP2OCR_DPPDE;
+> --
+> 2.20.0
+>
