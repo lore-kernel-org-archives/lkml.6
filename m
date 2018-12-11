@@ -2,101 +2,106 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 617E4C07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 09:36:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E91DC07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 09:37:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1029220811
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 09:36:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D728620849
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 09:37:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Oui2p1UQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1029220811
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ETMPSNBl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D728620849
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726211AbeLKJgj (ORCPT
+        id S1726231AbeLKJhP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 04:36:39 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:46950 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726085AbeLKJgj (ORCPT
+        Tue, 11 Dec 2018 04:37:15 -0500
+Received: from mail-ua1-f51.google.com ([209.85.222.51]:42394 "EHLO
+        mail-ua1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726104AbeLKJhP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 04:36:39 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wBB9YDNT155691;
-        Tue, 11 Dec 2018 09:36:07 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=oFgLjnybA59cO3bfRRcMLyFW8K3ZDze3zGo3aUVlfIY=;
- b=Oui2p1UQWXSX/F34DNyS4mh4FWVeqFXvZd6S0G528/GMxHsiN3jq6pe0SmPzXTGO4a2g
- DTk4pU0qXsE/BOuulDNUlUiIxvpBCUGl+X/wcTqs1FDQfOnAalDRK/4Lg9PKVmVwC2JA
- crjKwZ7fQu57LMZZKQkgAjrq6RCmuCiuvR+PXaf6LqZp0nxeYoFSF15ZaiiBYNfeFaGP
- WpTQP/Vt4VjvW444r3BqytccxfPca0jEew1xJzdsXpSCz11NfnUl5ukG6oRnqJtorTBf
- mAESttXezKiMHE5HkoUsMQGDIw37SCp13eeS/nLhllmdAyDH6caEeY0taPZMzb+moyoq og== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by userp2120.oracle.com with ESMTP id 2p86kqtnes-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 11 Dec 2018 09:36:07 +0000
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wBB9a2BC030882
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 11 Dec 2018 09:36:02 GMT
-Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id wBB9a0Ho032320;
-        Tue, 11 Dec 2018 09:36:00 GMT
-Received: from kadam (/10.175.35.120)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 11 Dec 2018 01:35:59 -0800
-Date:   Tue, 11 Dec 2018 12:35:48 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Shreeya Patel <shreeya.patel23498@gmail.com>
-Cc:     lars@metafoo.de, Michael.Hennerich@analog.com, jic23@kernel.org,
-        knaack.h@gmx.de, pmeerw@pmeerw.net, gregkh@linuxfoundation.org,
-        linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/3] Staging: iio: adt7316: Move interrupt related code
-Message-ID: <20181211093548.GA3116@kadam>
-References: <20181208151638.8759-1-shreeya.patel23498@gmail.com>
- <20181208151638.8759-3-shreeya.patel23498@gmail.com>
+        Tue, 11 Dec 2018 04:37:15 -0500
+Received: by mail-ua1-f51.google.com with SMTP id d21so4890086uap.9
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 01:37:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=bfu37XvicU8GOJunSNdquvYomfpuT3hN3SAggWjLB98=;
+        b=ETMPSNBlvml7wFYO6tgjpExr0YIg9GL5/413ehIRg5zTej2kkpqA1na2u0J/dUQe7Y
+         59tT99eFM7+fkYqlCA4iESfs4p+QpkfFZ8Cvkwgt/oZmR70uOEeKDK4wPar7L7IzmY4V
+         asl7P05TB7XkwrbkNjVt+qGlO64b4M+ul90VC5iSZe+kG+GmHGLy/FdGCxTCB7GWhX7a
+         yEnAZqM3S0OpSDXLflcsSQdkyjDiUayZnwJjiqiacqknrN3DOCMEplmCQ+F+M4QL8w07
+         w+RGWCskK9DKp/aVZwUnFQpvjtY/xrJbBwLyN7I8tDsxraq1l8BDNc8DblSeeNW/89it
+         fIoQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=bfu37XvicU8GOJunSNdquvYomfpuT3hN3SAggWjLB98=;
+        b=FpcIXz/Lpet7t4g1ZHi3AJL7cbAWz2VAD0JrsqxSCmTCacQnStb7eYtO0el0zQs80h
+         tRmm6cqnkpPWGjUR/LFORDwRXKhhIkFRANuyGBMivhRFfy6lnU5CibEn9Q74iratAIiM
+         70C3jWyOo114ChUFzWiCIKhiPPUH4C3tvefSkFBoT71ZyN4fhTene0U+VWA/IgFo8XPl
+         Ky8Ll+RBS7j26uSss+zotcFaYPkyWIRkRU0i1hFr4AOyLMXAW53nPIZ1YDDFAdW216Fc
+         kDJWS9eATLXl3Hyu+ioDoJmPnXKgsCarkd6fQLucOasCb3/v5y9Sf2HdPk82tfc0UMdQ
+         oJCA==
+X-Gm-Message-State: AA+aEWYKj4FnirYxa2CYa8lQSw0YqRj9ALA1h+KfqqtZEEMB5FLSwr+u
+        aNNEPduQ5OXiG7Y3MD5seu2+H+MOBWH2R/UhTbURVJtO0g==
+X-Google-Smtp-Source: AFSGD/VOHTabmVzki91hN+mm4gt6FH3uwSmE7/GjmS6dV5WAmjUrJUUNsjfRY4y5axGxKy5sDZQmhU0zoHBqROplhDc=
+X-Received: by 2002:ab0:14f2:: with SMTP id f47mr6817465uae.27.1544521033581;
+ Tue, 11 Dec 2018 01:37:13 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181208151638.8759-3-shreeya.patel23498@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9103 signatures=668679
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=828
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1812110091
+References: <CALjTZvZzHSZ=s0W0Pd-MVd7OA0hYxu0LzsZ+GxYybXKoUQQR6Q@mail.gmail.com>
+ <20181130103222.GA23393@lst.de> <CALjTZvZsk0qA+Yxu7S+8pfa5y6rpihnThrHiAKkZMWsdyC-tVg@mail.gmail.com>
+ <42b1408cafe77ebac1b1ad909db237fe34e4d177.camel@kernel.crashing.org>
+ <20181208171746.GB15228@lst.de> <CALjTZvb4+Ox5Jdm-xwQuxMDz_ub=mHAgPLA4NgrVNZTmUZwhnQ@mail.gmail.com>
+ <20181210193317.GA31514@lst.de> <8a2e104a6c5b745adca8e7f3310af564f3b8a75d.camel@kernel.crashing.org>
+In-Reply-To: <8a2e104a6c5b745adca8e7f3310af564f3b8a75d.camel@kernel.crashing.org>
+From:   Rui Salvaterra <rsalvaterra@gmail.com>
+Date:   Tue, 11 Dec 2018 09:37:02 +0000
+Message-ID: <CALjTZvZ1Ud4P_XqB23Yq=815VyF=UbbT8YCFjTaPN=5tORWrtQ@mail.gmail.com>
+Subject: Re: use generic DMA mapping code in powerpc V4
+To:     benh@kernel.crashing.org
+Cc:     hch@lst.de, linux-mm@kvack.org, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Dec 08, 2018 at 08:46:37PM +0530, Shreeya Patel wrote:
-> -	return irq_type;
-> +	ret = devm_request_threaded_irq(&indio_dev->dev, chip->bus.irq,
-> +					NULL, adt7316_event_handler,
-> +					irq_type | IRQF_ONESHOT,
-> +					indio_dev->name, indio_dev);
-> +	if (ret)
-> +		return ret;
-> +
-> +	if (irq_type & IRQF_TRIGGER_HIGH)
-> +		chip->config1 |= ADT7316_INT_POLARITY;
-> +
-> +	return ret;
+On Mon, 10 Dec 2018 at 20:49, Benjamin Herrenschmidt
+<benh@kernel.crashing.org> wrote:
+>
 
-return 0; here.
+[snip]
 
->  }
->  
->  /*
+>
+> AGP is a gigantic nightmare :-) It's not just cache coherency issues
+> (some implementations are coherent, some aren't, Apple's is ... weird).
+>
+> Apple has all sort of bugs, and Darwin source code only sheds light on
+> some of them. Some implementation can only read, not write I think, for
+> example. There are issues with transfers crossing some boundaries I
+> beleive, but it's all unclear.
+>
+> Apple makes this work with a combination of hacks in the AGP "driver"
+> and the closed source GPU driver, which we don't see.
+>
+> I have given up trying to make that stuff work reliably a decade ago :)
+>
+> Cheers,
+> Ben.
 
-regards,
-dan carpenter
+That's what I was afraid of=E2=80=A6 what a mess. At least now I have a
+definitive answer from one of the original authors of the code, thanks
+a lot, Ben. :)
+I have an unresearched belief that AGP support was hacked in the Mac
+series as an afterthought (weren't they supposed to be PCI/PCI-X
+only?), and your explanation surely seems to corroborate. :/
