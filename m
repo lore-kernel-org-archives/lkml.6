@@ -4,52 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC16FC07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:47:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89F4EC5CFFE
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:47:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B1102133F
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:47:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 458A12133F
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:47:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544543263;
-	bh=d4AmW7KN32kR5u2SlypY2SHLYWR5bzyMXGJsAOEsvtc=;
+	s=default; t=1544543271;
+	bh=wCZKrx4H0QRBi2A+ox/vSfx+q10GvK0cBg14mkYv/yQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=vOwRJxp6jJ2yj6y1s7uEgXD5mQSyaRC97cB9sSnd64MnR/RNjHTpMvsAYY5rFPQ68
-	 bPjA+2++0LSKxGrLnjFoqK2DlcQjmn3Edf+SGB7TvxANDfBufEU6rfTzOje2U9bj7i
-	 ESvIWrcxpzwMEA8IwIqUIW1Qd+I7lRt8xXWMlCKE=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B1102133F
+	b=tdyVgf1IzWxpLu0fRMRvykuuEo6/UMK8FnNVTMJjoqB74EYZy4T2iBhmiRcrYbauU
+	 QL1WXYmw0Xtemfc92DhGoeI8IaVg7m/sMOtRP3tESivVcJzbPRF0+Ace1yaSOiBBuG
+	 Pde7unl5rXW2YMlEl3bfbO9XiA8Gn6TzgQ3QO8wI=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 458A12133F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728631AbeLKPrm (ORCPT
+        id S1728663AbeLKPrt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 10:47:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36140 "EHLO mail.kernel.org"
+        Tue, 11 Dec 2018 10:47:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36204 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728603AbeLKPrj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:47:39 -0500
+        id S1728152AbeLKPrp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 10:47:45 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9B52E20989;
-        Tue, 11 Dec 2018 15:47:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A5F322145D;
+        Tue, 11 Dec 2018 15:47:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544543259;
-        bh=d4AmW7KN32kR5u2SlypY2SHLYWR5bzyMXGJsAOEsvtc=;
+        s=default; t=1544543264;
+        bh=wCZKrx4H0QRBi2A+ox/vSfx+q10GvK0cBg14mkYv/yQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hfbGPhwJohAtg1pqLWFAJJTwqTjt058Y2LQzy1P3HNwEgIBHNcx1M83vnFVG3Oknx
-         XgJ5k56iuKUraVhNGo0HVtMy4l8rshSO5lAvZREbAHl4SBUh9See4emo05xzsUl/EM
-         rZSkpIVJTg3lr+no6lUyW9eAkrlOGP8KQc2JZPT0=
+        b=YpUZlKo5/OhUJclfdaL0z0Mcgc5EMC2FlWlX6GSGSeqKRkKNu/Cv87OuCn9jgbSl4
+         LViyxD/hKx/84UvXQrLbdJskEzsiIEFdi17sddwilzgB2SEqAMEb/cW7zlEFi2tZ7s
+         X0CCZx5SfeYBSl7P3+6yGOVejOjuc0bJqdzDCE2c=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hui Peng <benquike@gmail.com>,
-        Mathias Payer <mathias.payer@nebelwelt.net>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.4 73/91] ALSA: usb-audio: Fix UAF decrement if card has no live interfaces in card.c
-Date:   Tue, 11 Dec 2018 16:41:32 +0100
-Message-Id: <20181211151612.376935704@linuxfoundation.org>
+        stable@vger.kernel.org, Wonmin Jung <wonmin.jung@lge.com>,
+        Chanho Min <chanho.min@lge.com>, Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.4 75/91] ALSA: pcm: Fix starvation on down_write_nonblock()
+Date:   Tue, 11 Dec 2018 16:41:34 +0100
+Message-Id: <20181211151612.555362106@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181211151606.026852373@linuxfoundation.org>
 References: <20181211151606.026852373@linuxfoundation.org>
@@ -68,49 +68,91 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Hui Peng <benquike@gmail.com>
+From: Chanho Min <chanho.min@lge.com>
 
-commit 5f8cf712582617d523120df67d392059eaf2fc4b upstream.
+commit b888a5f713e4d17faaaff24316585a4eb07f35b7 upstream.
 
-If a USB sound card reports 0 interfaces, an error condition is triggered
-and the function usb_audio_probe errors out. In the error path, there was a
-use-after-free vulnerability where the memory object of the card was first
-freed, followed by a decrement of the number of active chips. Moving the
-decrement above the atomic_dec fixes the UAF.
+Commit 67ec1072b053 ("ALSA: pcm: Fix rwsem deadlock for non-atomic PCM
+stream") fixes deadlock for non-atomic PCM stream. But, This patch
+causes antother stuck.
+If writer is RT thread and reader is a normal thread, the reader
+thread will be difficult to get scheduled. It may not give chance to
+release readlocks and writer gets stuck for a long time if they are
+pinned to single cpu.
 
-[ The original problem was introduced in 3.1 kernel, while it was
-  developed in a different form.  The Fixes tag below indicates the
-  original commit but it doesn't mean that the patch is applicable
-  cleanly. -- tiwai ]
+The deadlock described in the previous commit is because the linux
+rwsem queues like a FIFO. So, we might need non-FIFO writelock, not
+non-block one.
 
-Fixes: 362e4e49abe5 ("ALSA: usb-audio - clear chip->probing on error exit")
-Reported-by: Hui Peng <benquike@gmail.com>
-Reported-by: Mathias Payer <mathias.payer@nebelwelt.net>
-Signed-off-by: Hui Peng <benquike@gmail.com>
-Signed-off-by: Mathias Payer <mathias.payer@nebelwelt.net>
+My suggestion is that the writer gives reader a chance to be scheduled
+by using the minimum msleep() instaed of spinning without blocking by
+writer. Also, The *_nonblock may be changed to *_nonfifo appropriately
+to this concept.
+In terms of performance, when trylock is failed, this minimum periodic
+msleep will have the same performance as the tick-based
+schedule()/wake_up_q().
+
+[ Although this has a fairly high performance penalty, the relevant
+  code path became already rare due to the previous commit ("ALSA:
+  pcm: Call snd_pcm_unlink() conditionally at closing").  That is, now
+  this unconditional msleep appears only when using linked streams,
+  and this must be a rare case.  So we accept this as a quick
+  workaround until finding a more suitable one -- tiwai ]
+
+Fixes: 67ec1072b053 ("ALSA: pcm: Fix rwsem deadlock for non-atomic PCM stream")
+Suggested-by: Wonmin Jung <wonmin.jung@lge.com>
+Signed-off-by: Chanho Min <chanho.min@lge.com>
 Cc: <stable@vger.kernel.org>
 Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/usb/card.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ sound/core/pcm_native.c |   11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
---- a/sound/usb/card.c
-+++ b/sound/usb/card.c
-@@ -589,9 +589,12 @@ static int usb_audio_probe(struct usb_in
+--- a/sound/core/pcm_native.c
++++ b/sound/core/pcm_native.c
+@@ -35,6 +35,7 @@
+ #include <sound/timer.h>
+ #include <sound/minors.h>
+ #include <linux/uio.h>
++#include <linux/delay.h>
  
-  __error:
- 	if (chip) {
-+		/* chip->active is inside the chip->card object,
-+		 * decrement before memory is possibly returned.
-+		 */
-+		atomic_dec(&chip->active);
- 		if (!chip->num_interfaces)
- 			snd_card_free(chip->card);
--		atomic_dec(&chip->active);
+ /*
+  *  Compatibility
+@@ -78,12 +79,12 @@ static DECLARE_RWSEM(snd_pcm_link_rwsem)
+  * and this may lead to a deadlock when the code path takes read sem
+  * twice (e.g. one in snd_pcm_action_nonatomic() and another in
+  * snd_pcm_stream_lock()).  As a (suboptimal) workaround, let writer to
+- * spin until it gets the lock.
++ * sleep until all the readers are completed without blocking by writer.
+  */
+-static inline void down_write_nonblock(struct rw_semaphore *lock)
++static inline void down_write_nonfifo(struct rw_semaphore *lock)
+ {
+ 	while (!down_write_trylock(lock))
+-		cond_resched();
++		msleep(1);
+ }
+ 
+ /**
+@@ -1825,7 +1826,7 @@ static int snd_pcm_link(struct snd_pcm_s
+ 		res = -ENOMEM;
+ 		goto _nolock;
  	}
- 	mutex_unlock(&register_mutex);
- 	return err;
+-	down_write_nonblock(&snd_pcm_link_rwsem);
++	down_write_nonfifo(&snd_pcm_link_rwsem);
+ 	write_lock_irq(&snd_pcm_link_rwlock);
+ 	if (substream->runtime->status->state == SNDRV_PCM_STATE_OPEN ||
+ 	    substream->runtime->status->state != substream1->runtime->status->state ||
+@@ -1872,7 +1873,7 @@ static int snd_pcm_unlink(struct snd_pcm
+ 	struct snd_pcm_substream *s;
+ 	int res = 0;
+ 
+-	down_write_nonblock(&snd_pcm_link_rwsem);
++	down_write_nonfifo(&snd_pcm_link_rwsem);
+ 	write_lock_irq(&snd_pcm_link_rwlock);
+ 	if (!snd_pcm_stream_linked(substream)) {
+ 		res = -EALREADY;
 
 
