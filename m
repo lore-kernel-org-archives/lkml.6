@@ -2,110 +2,448 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5333FC67839
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 12:48:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2817AC07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 12:50:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 18ED52084A
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 12:48:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C1FCF20811
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 12:50:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="EHkXMpXc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 18ED52084A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	dkim=pass (1024-bit key) header.d=virtuozzo.com header.i=@virtuozzo.com header.b="Yubzlu8I"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C1FCF20811
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=virtuozzo.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726454AbeLKMsB (ORCPT
+        id S1726450AbeLKMuV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 07:48:01 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:51339 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726299AbeLKMsA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 07:48:00 -0500
-Received: by mail-wm1-f68.google.com with SMTP id s14so2094299wmh.1
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 04:47:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=e6+XGQxF1M0YbsuzVX9nWRsvC5OlvjeQt28ui753cWI=;
-        b=EHkXMpXckqku1EiWXfzvqfyINTdg8l2dBTCB4cvD9cmQ9jf/w8DzMVWluXzDk8SLMg
-         WuPaqMSQA/Up9WZT01efQZKbKtWW7mY08nSGQKkJCHJUu7upE664KBV9f5WGs1SATT6z
-         8nf6JrTGJGxwbCOmRnWkGd8U0brA4cm4AbU9av6TZPb+mYxUVGZXjYLVNSrsCD4VfUkS
-         SUdrOrXf9gwFqgl7VAEJw2af8/bzkd+iRHNEd5sLb2OJFQ2Slkg0gOe+Udny7fY+CARk
-         pZlyMOVjuiMQ4I80Ll/k4kDM0h/hZsJlg1CXeavbYFuQAsZR/CZJqDxKkcMNytvseXNl
-         HHiQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=e6+XGQxF1M0YbsuzVX9nWRsvC5OlvjeQt28ui753cWI=;
-        b=GyM5xzNmDsaH4m9qnJH1xdqQTj2l50gh/iLRB2Z4QkZwHdqLewJyqkyRo3DHG1w9Sr
-         Yla8ha5ce5ltYqrTCXo8KUOUxD1AXg59w4/IMW/sZKzCuBMvW+Pd9iHFK/GFu+VPROW+
-         ptOOcZNwTdqxMQgz5jNRKAzWord6kZUZgGvESwfUkTLcb3w6dic+yPV3BlYg+BxRAQyY
-         6cBw/LB/ShQyNO/dvMX6o9QrrKej/sthtvmC8Mdwb+NUEOP9jvn41zOI8ooUKGwowo0b
-         D/WdmPhHwAO1MrtihubHlirBkj799izST+UTPW/qRy1oj/GPruTv3Aarpi++2hlh6T/8
-         yV0A==
-X-Gm-Message-State: AA+aEWbB66HZBk7rxT3l1O9kH6tPTYfAPrZax7nJNz4d0GApnIyOa0Fx
-        oOjia6GerJlqmN30KDowTyFYrw==
-X-Google-Smtp-Source: AFSGD/UECDTCl14T9opPngcd3qbUVg+oqqoZ03PmcnI8tsJQfxwtQr3ghdLjY7+QdXIsGDV6zFAf4w==
-X-Received: by 2002:a1c:18c:: with SMTP id 134mr2108554wmb.88.1544532478851;
-        Tue, 11 Dec 2018 04:47:58 -0800 (PST)
-Received: from boomer.local ([2a01:e34:eeb6:4690:106b:bae3:31ed:7561])
-        by smtp.googlemail.com with ESMTPSA id w18sm10620406wru.54.2018.12.11.04.47.57
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 11 Dec 2018 04:47:58 -0800 (PST)
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Neil Armstrong <narmstrong@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Carlo Caione <carlo@caione.org>
-Cc:     Jerome Brunet <jbrunet@baylibre.com>, linux-clk@vger.kernel.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: [PATCH] clk: meson: axg-audio: fix input clock name
-Date:   Tue, 11 Dec 2018 13:47:51 +0100
-Message-Id: <20181211124751.30108-1-jbrunet@baylibre.com>
-X-Mailer: git-send-email 2.19.2
+        Tue, 11 Dec 2018 07:50:21 -0500
+Received: from mail-bgr052101130104.outbound.protection.outlook.com ([52.101.130.104]:16199
+        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726190AbeLKMuV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 07:50:21 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=virtuozzo.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=yQtWqA/+zsX5HW0NdM7hFWUgkLCV+FF7bYCBj0A/n+g=;
+ b=Yubzlu8InQMTsIZMayqGjcHwPR+ywvtpbqB6IeYEklAcCvIrn64Z8oUMmH2IX4IDpiLlfCrjCj7fnbxO0PEM8QwKU1bSDfP8mxReBnQAcKJZq00kiyVteyfAvbRVuIDEyOprb4AsD3MnMN1Vx70ruXazk8TxG/SC+bH/5q+0VO8=
+Received: from DB8PR08MB4092.eurprd08.prod.outlook.com (20.179.10.210) by
+ DB8PR08MB4124.eurprd08.prod.outlook.com (20.179.11.74) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1425.18; Tue, 11 Dec 2018 12:50:01 +0000
+Received: from DB8PR08MB4092.eurprd08.prod.outlook.com
+ ([fe80::d41:d012:1944:5810]) by DB8PR08MB4092.eurprd08.prod.outlook.com
+ ([fe80::d41:d012:1944:5810%6]) with mapi id 15.20.1404.026; Tue, 11 Dec 2018
+ 12:50:01 +0000
+From:   Roman Kagan <rkagan@virtuozzo.com>
+To:     Vitaly Kuznetsov <vkuznets@redhat.com>
+CC:     "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        =?iso-8859-2?Q?Radim_Kr=E8m=E1=F8?= <rkrcmar@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
+        Eduardo Habkost <ehabkost@redhat.com>
+Subject: Re: [PATCH v2 4/7] x86/kvm/hyper-v: Introduce
+ KVM_GET_SUPPORTED_HV_CPUID
+Thread-Topic: [PATCH v2 4/7] x86/kvm/hyper-v: Introduce
+ KVM_GET_SUPPORTED_HV_CPUID
+Thread-Index: AQHUkKznsqV3L84bk0eamd/uIlqfEKV5frCA
+Date:   Tue, 11 Dec 2018 12:50:01 +0000
+Message-ID: <20181211124956.GA2378@rkaganb.sw.ru>
+References: <20181210172159.410-1-vkuznets@redhat.com>
+ <20181210172159.410-5-vkuznets@redhat.com>
+In-Reply-To: <20181210172159.410-5-vkuznets@redhat.com>
+Accept-Language: en-US, ru-RU
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Mutt/1.10.1 (2018-07-13)
+mail-followup-to: =?iso-8859-2?Q?Roman_Kagan_<rkagan@virtuozzo.com>,=09Vitaly_Kuznetsov_<vk?=
+ =?iso-8859-2?Q?uznets@redhat.com>,_kvm@vger.kernel.org,=09Paolo_Bonzini_<?=
+ =?iso-8859-2?Q?pbonzini@redhat.com>,=09Radim_Kr=E8m=E1=F8_<rkrcmar@redhat?=
+ =?iso-8859-2?Q?.com>,=09linux-kernel@vger.kernel.org,=09"K._Y._Srinivasan?=
+ =?iso-8859-2?Q?"_<kys@microsoft.com>,=09Haiyang_Zhang_<haiyangz@microsoft?=
+ =?iso-8859-2?Q?.com>,=09Stephen_Hemminger_<sthemmin@microsoft.com>,_x86@k?=
+ =?iso-8859-2?Q?ernel.org,=09"Michael_Kelley_(EOSG)"_<Michael.H.Kelley@mic?=
+ =?iso-8859-2?Q?rosoft.com>,=09Eduardo_Habkost_<ehabkost@redhat.com>?=
+x-originating-ip: [185.231.240.5]
+x-clientproxiedby: HE1PR05CA0188.eurprd05.prod.outlook.com
+ (2603:10a6:3:f9::12) To DB8PR08MB4092.eurprd08.prod.outlook.com
+ (2603:10a6:10:ab::18)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=rkagan@virtuozzo.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;DB8PR08MB4124;7:Vy+i9YfUmFVP2hHrZLX9VYEKMxaE8zZEOBcWhY2m4DRXvQdCK1jPKCet0FBWa2blRnhdkWYEqiOBKNhQhY2r0WOlAuMJqWd0lVb2NOBdlV+TMMiO7mkPJ9J9METikqB4fGK0RFIHGEqREJ7EAKOytQ==;20:t8Gt83G4iXGR2/+YkU4bUpHnMC0xaUVsZpyM2WmDjDnF1weohdLK1psySV/3PeUZotAcm+3ve9vi3/ww4FJwddWSwF3fpgn1cmHewvpqoxisMc+rjQPcPovMkUx7HddjK9M7K4snttcTOYCnq1c8OXBGAgQjK9XQ/SYbNqtkPBs=
+x-ms-office365-filtering-correlation-id: aa6ee229-74b7-41e7-863a-08d65f6729f1
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:DB8PR08MB4124;
+x-ms-traffictypediagnostic: DB8PR08MB4124:|DB8PR08MB4124:
+x-microsoft-antispam-prvs: <DB8PR08MB41241A17CCA150AAB03BDED5C9A60@DB8PR08MB4124.eurprd08.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(3230017)(999002)(6040522)(2401047)(5005006)(8121501046)(3002001)(10201501046)(3231472)(944501520)(52105112)(93006095)(93001095)(148016)(149066)(150057)(6041310)(20161123564045)(20161123562045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(201708071742011)(7699051)(76991095);SRVR:DB8PR08MB4124;BCL:0;PCL:0;RULEID:;SRVR:DB8PR08MB4124;
+x-forefront-prvs: 08831F51DC
+x-forefront-antispam-report: SFV:SPM;SFS:(10019020)(979002)(39850400004)(136003)(346002)(376002)(396003)(366004)(199004)(189003)(54094003)(256004)(14444005)(6916009)(6486002)(86362001)(14454004)(575784001)(9686003)(6512007)(66066001)(33896004)(97736004)(99286004)(6436002)(316002)(58126008)(54906003)(71200400001)(71190400001)(4744004)(229853002)(486006)(478600001)(8936002)(81166006)(81156014)(8676002)(446003)(102836004)(36756003)(11346002)(186003)(6246003)(2906002)(106356001)(33656002)(26005)(476003)(25786009)(7416002)(53936002)(6506007)(6116002)(5660300001)(105586002)(1076002)(3846002)(386003)(68736007)(4326008)(7736002)(76176011)(305945005)(52116002)(30126002)(18370500001)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1501;SCL:5;SRVR:DB8PR08MB4124;H:DB8PR08MB4092.eurprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: virtuozzo.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: NTdb9RjCYf/Hw+/bL1NAwIopRbFZt9hSvJyhsou9LWYVhRbXA6/Ids19LeqVfsXGO23LS/MS/oj1+ukheohR0HtDadafVq8vaDXR1DX8ElN/HV7fbUQ1312yYaptmHOuFOV0GE9NVNBz31wxdXPXBm2rtbsOoLWCwYXybuDKe8LplVpXHo679T7rfIkF0enJgOo0NKWEy2TuzDEY9ChroftVSHeQKIZ2pRs9pbjMiGWrcnoaWrHMWBI1pSIlblF5EPQrLGJeI75+yf3uJ5N05QuDgRKbqIZrm4MXpaF8nbmQ6T1+ktPUHyioPJCMCF7md7eJjOlxoNUSmlRtMa2NBN4dLXoBWdy6qInyBuzHT+kDAY31l8//26NtpACJ0y1+IMbPcEGDvHC6KLZ9nXXsAO21a6DN7rnpvqVAY++GgCrkKHRNOy8yyfRNOcED24IOXArSSy6l/pD90e89xKZ1H3HuBulbEjH8EktDLYKL4Pe2KzV2eQ7mrDlLVDodwzZm
+spamdiagnosticoutput: 1:22
+Content-Type: text/plain; charset="iso-8859-2"
+Content-ID: <D7822E6C43F3EB4F9E6B3C5E0EA2C111@eurprd08.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: virtuozzo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: aa6ee229-74b7-41e7-863a-08d65f6729f1
+X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Dec 2018 12:50:01.3881
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 0bc7f26d-0264-416e-a6fc-8352af79c58f
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB8PR08MB4124
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The name of input clock is not aligned with the rest of the tree
-Because of this, the audio peripheral clocks are orphaned.
+On Mon, Dec 10, 2018 at 06:21:56PM +0100, Vitaly Kuznetsov wrote:
+> With every new Hyper-V Enlightenment we implement we're forced to add a
+> KVM_CAP_HYPERV_* capability. While this approach works it is fairly
+> inconvenient: the majority of the enlightenments we do have corresponding
+> CPUID feature bit(s) and userspace has to know this anyways to be able to
+> expose the feature to the guest.
+>=20
+> Add KVM_GET_SUPPORTED_HV_CPUID ioctl (backed by KVM_CAP_HYPERV_CPUID, "on=
+e
+> cap to rule them all!") returning all Hyper-V CPUID feature leaves.
+>=20
+> Using the existing KVM_GET_SUPPORTED_CPUID doesn't seem to be possible:
+> Hyper-V CPUID feature leaves intersect with KVM's (e.g. 0x40000000,
+> 0x40000001) and we would probably confuse userspace in case we decide to
+> return these twice.
+>=20
+> KVM_CAP_HYPERV_CPUID's number is interim: we're intended to drop
+> KVM_CAP_HYPERV_STIMER_DIRECT and use its number instead.
+>=20
+> Suggested-by: Paolo Bonzini <pbonzini@redhat.com>
+> Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+> ---
+> Changes since v1:
+> - Document KVM_GET_SUPPORTED_HV_CPUID and KVM_CAP_HYPERV_CPUID.
+> - Fix error handling in kvm_vcpu_ioctl_get_hv_cpuid()
+> ---
+>  Documentation/virtual/kvm/api.txt |  57 ++++++++++++++
+>  arch/x86/kvm/hyperv.c             | 121 ++++++++++++++++++++++++++++++
+>  arch/x86/kvm/hyperv.h             |   2 +
+>  arch/x86/kvm/x86.c                |  20 +++++
+>  include/uapi/linux/kvm.h          |   4 +
+>  5 files changed, 204 insertions(+)
+>=20
+> diff --git a/Documentation/virtual/kvm/api.txt b/Documentation/virtual/kv=
+m/api.txt
+> index cd209f7730af..5b72de0af24d 100644
+> --- a/Documentation/virtual/kvm/api.txt
+> +++ b/Documentation/virtual/kvm/api.txt
+> @@ -3753,6 +3753,63 @@ Coalesced pio is based on coalesced mmio. There is=
+ little difference
+>  between coalesced mmio and pio except that coalesced pio records accesse=
+s
+>  to I/O ports.
+> =20
+> +4.117 KVM_GET_SUPPORTED_HV_CPUID
+> +
+> +Capability: KVM_CAP_HYPERV_CPUID
+> +Architectures: x86
+> +Type: vcpu ioctl
+> +Parameters: struct kvm_cpuid2 (in/out)
+> +Returns: 0 on success, -1 on error
+> +
+> +struct kvm_cpuid2 {
+> +	__u32 nent;
+> +	__u32 padding;
+> +	struct kvm_cpuid_entry2 entries[0];
+> +};
+> +
+> +struct kvm_cpuid_entry2 {
+> +	__u32 function;
+> +	__u32 index;
+> +	__u32 flags;
+> +	__u32 eax;
+> +	__u32 ebx;
+> +	__u32 ecx;
+> +	__u32 edx;
+> +	__u32 padding[3];
+> +};
+> +
+> +This ioctl returns x86 cpuid features leaves related to Hyper-V emulatio=
+n in
+> +KVM.  Userspace can use the information returned by this ioctl to constr=
+uct
+> +cpuid information presented to guests consuming Hyper-V enlightenments (=
+e.g.
+> +Windows or Hyper-V guests).
+> +
+> +CPUID feature leaves returned by this ioctl are defined by Hyper-V Top L=
+evel
+> +Functional Specification (TLFS). These leaves can't be obtained with
+> +KVM_GET_SUPPORTED_CPUID ioctl because some of them intersect with KVM fe=
+ature
+> +leaves (0x40000000, 0x40000001).
+> +
+> +Currently, the following list of CPUID leaves are returned:
+> + HYPERV_CPUID_VENDOR_AND_MAX_FUNCTIONS
+> + HYPERV_CPUID_INTERFACE
+> + HYPERV_CPUID_VERSION
+> + HYPERV_CPUID_FEATURES
+> + HYPERV_CPUID_ENLIGHTMENT_INFO
+> + HYPERV_CPUID_IMPLEMENT_LIMITS
+> + HYPERV_CPUID_NESTED_FEATURES
+> +
+> +HYPERV_CPUID_NESTED_FEATURES leaf is only exposed when Enlightened VMCS =
+was
+> +enabled on the corresponding vCPU (KVM_CAP_HYPERV_ENLIGHTENED_VMCS).
 
-Fixes: 1222ab89328f ("clk: meson: axg-audio: use the clk input helper function")
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
- Neil,
+IOW the output of ioctl(KVM_GET_SUPPORTED_HV_CPUID) depends on
+whether ioctl(KVM_ENABLE_CAP, KVM_CAP_HYPERV_ENLIGHTENED_VMCS) has
+already been called on that vcpu?  I wonder if this fits the intended
+usage?
 
- Feel free to squash this with commit 1222ab89328f if you prefer
+Roman.
 
- Cheers
- Jerome
-
- drivers/clk/meson/axg-audio.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/clk/meson/axg-audio.c b/drivers/clk/meson/axg-audio.c
-index 72b717e61a68..8ac3a2295473 100644
---- a/drivers/clk/meson/axg-audio.c
-+++ b/drivers/clk/meson/axg-audio.c
-@@ -752,7 +752,7 @@ static int axg_audio_clkc_probe(struct platform_device *pdev)
- 	}
- 
- 	/* Register the peripheral input clock */
--	hw = meson_clk_hw_register_input(dev, "pclk", "audio_pclk", 0);
-+	hw = meson_clk_hw_register_input(dev, "pclk", "axg_audio_pclk", 0);
- 	if (IS_ERR(hw))
- 		return PTR_ERR(hw);
- 
--- 
-2.19.2
-
+> +
+> +Userspace invokes KVM_GET_SUPPORTED_CPUID by passing a kvm_cpuid2 struct=
+ure
+> +with the 'nent' field indicating the number of entries in the variable-s=
+ize
+> +array 'entries'.  If the number of entries is too low to describe all Hy=
+per-V
+> +feature leaves, an error (E2BIG) is returned. If the number is more or e=
+qual
+> +to the number of Hyper-V feature leaves, the 'nent' field is adjusted to=
+ the
+> +number of valid entries in the 'entries' array, which is then filled.
+> +
+> +'index' and 'flags' fields in 'struct kvm_cpuid_entry2' are currently re=
+served,
+> +userspace should not expect to get any particular value there.
+> +
+>  5. The kvm_run structure
+>  ------------------------
+> =20
+> diff --git a/arch/x86/kvm/hyperv.c b/arch/x86/kvm/hyperv.c
+> index cecf907e4c49..04c3cdf3389e 100644
+> --- a/arch/x86/kvm/hyperv.c
+> +++ b/arch/x86/kvm/hyperv.c
+> @@ -1804,3 +1804,124 @@ int kvm_vm_ioctl_hv_eventfd(struct kvm *kvm, stru=
+ct kvm_hyperv_eventfd *args)
+>  		return kvm_hv_eventfd_deassign(kvm, args->conn_id);
+>  	return kvm_hv_eventfd_assign(kvm, args->conn_id, args->fd);
+>  }
+> +
+> +int kvm_vcpu_ioctl_get_hv_cpuid(struct kvm_vcpu *vcpu, struct kvm_cpuid2=
+ *cpuid,
+> +				struct kvm_cpuid_entry2 __user *entries)
+> +{
+> +	uint16_t evmcs_ver =3D kvm_x86_ops->nested_get_evmcs_version(vcpu);
+> +	struct kvm_cpuid_entry2 cpuid_entries[] =3D {
+> +		{ .function =3D HYPERV_CPUID_VENDOR_AND_MAX_FUNCTIONS },
+> +		{ .function =3D HYPERV_CPUID_INTERFACE },
+> +		{ .function =3D HYPERV_CPUID_VERSION },
+> +		{ .function =3D HYPERV_CPUID_FEATURES },
+> +		{ .function =3D HYPERV_CPUID_ENLIGHTMENT_INFO },
+> +		{ .function =3D HYPERV_CPUID_IMPLEMENT_LIMITS },
+> +		{ .function =3D HYPERV_CPUID_NESTED_FEATURES },
+> +	};
+> +	int i, nent =3D ARRAY_SIZE(cpuid_entries);
+> +
+> +	/* Skip NESTED_FEATURES if eVMCS is not supported */
+> +	if (!evmcs_ver)
+> +		--nent;
+> +
+> +	if (cpuid->nent < nent)
+> +		return -E2BIG;
+> +
+> +	if (cpuid->nent > nent)
+> +		cpuid->nent =3D nent;
+> +
+> +	for (i =3D 0; i < nent; i++) {
+> +		struct kvm_cpuid_entry2 *ent =3D &cpuid_entries[i];
+> +		u32 signature[3];
+> +
+> +		switch (ent->function) {
+> +		case HYPERV_CPUID_VENDOR_AND_MAX_FUNCTIONS:
+> +			memcpy(signature, "Linux KVM Hv", 12);
+> +
+> +			ent->eax =3D HYPERV_CPUID_NESTED_FEATURES;
+> +			ent->ebx =3D signature[0];
+> +			ent->ecx =3D signature[1];
+> +			ent->edx =3D signature[2];
+> +			break;
+> +
+> +		case HYPERV_CPUID_INTERFACE:
+> +			memcpy(signature, "Hv#1\0\0\0\0\0\0\0\0", 12);
+> +			ent->eax =3D signature[0];
+> +			break;
+> +
+> +		case HYPERV_CPUID_VERSION:
+> +			/*
+> +			 * We implement some Hyper-V 2016 functions so let's use
+> +			 * this version.
+> +			 */
+> +			ent->eax =3D 0x00003839;
+> +			ent->ebx =3D 0x000A0000;
+> +			break;
+> +
+> +		case HYPERV_CPUID_FEATURES:
+> +			ent->eax |=3D HV_X64_MSR_VP_RUNTIME_AVAILABLE;
+> +			ent->eax |=3D HV_MSR_TIME_REF_COUNT_AVAILABLE;
+> +			ent->eax |=3D HV_X64_MSR_SYNIC_AVAILABLE;
+> +			ent->eax |=3D HV_MSR_SYNTIMER_AVAILABLE;
+> +			ent->eax |=3D HV_X64_MSR_APIC_ACCESS_AVAILABLE;
+> +			ent->eax |=3D HV_X64_MSR_HYPERCALL_AVAILABLE;
+> +			ent->eax |=3D HV_X64_MSR_VP_INDEX_AVAILABLE;
+> +			ent->eax |=3D HV_X64_MSR_RESET_AVAILABLE;
+> +			ent->eax |=3D HV_MSR_REFERENCE_TSC_AVAILABLE;
+> +			ent->eax |=3D HV_X64_MSR_GUEST_IDLE_AVAILABLE;
+> +			ent->eax |=3D HV_X64_ACCESS_FREQUENCY_MSRS;
+> +			ent->eax |=3D HV_X64_ACCESS_REENLIGHTENMENT;
+> +
+> +			ent->ebx |=3D HV_X64_POST_MESSAGES;
+> +			ent->ebx |=3D HV_X64_SIGNAL_EVENTS;
+> +
+> +			ent->edx |=3D HV_FEATURE_FREQUENCY_MSRS_AVAILABLE;
+> +			ent->edx |=3D HV_FEATURE_GUEST_CRASH_MSR_AVAILABLE;
+> +			ent->edx |=3D HV_STIMER_DIRECT_MODE_AVAILABLE;
+> +
+> +			break;
+> +
+> +		case HYPERV_CPUID_ENLIGHTMENT_INFO:
+> +			ent->eax |=3D HV_X64_REMOTE_TLB_FLUSH_RECOMMENDED;
+> +			ent->eax |=3D HV_X64_APIC_ACCESS_RECOMMENDED;
+> +			ent->eax |=3D HV_X64_SYSTEM_RESET_RECOMMENDED;
+> +			ent->eax |=3D HV_X64_RELAXED_TIMING_RECOMMENDED;
+> +			ent->eax |=3D HV_X64_CLUSTER_IPI_RECOMMENDED;
+> +			ent->eax |=3D HV_X64_EX_PROCESSOR_MASKS_RECOMMENDED;
+> +			ent->eax |=3D HV_X64_ENLIGHTENED_VMCS_RECOMMENDED;
+> +
+> +			/*
+> +			 * Default number of spinlock retry attempts, matches
+> +			 * HyperV 2016.
+> +			 */
+> +			ent->ebx =3D 0x00000FFF;
+> +
+> +			break;
+> +
+> +		case HYPERV_CPUID_IMPLEMENT_LIMITS:
+> +			/* Maximum number of virtual processors */
+> +			ent->eax =3D KVM_MAX_VCPUS;
+> +			/*
+> +			 * Maximum number of logical processors, matches
+> +			 * HyperV 2016.
+> +			 */
+> +			ent->ebx =3D 64;
+> +
+> +			break;
+> +
+> +		case HYPERV_CPUID_NESTED_FEATURES:
+> +			ent->eax =3D evmcs_ver;
+> +
+> +			break;
+> +
+> +		default:
+> +			break;
+> +		}
+> +	}
+> +
+> +	if (copy_to_user(entries, cpuid_entries,
+> +			 nent * sizeof(struct kvm_cpuid_entry2)))
+> +		return -EFAULT;
+> +
+> +	return 0;
+> +}
+> diff --git a/arch/x86/kvm/hyperv.h b/arch/x86/kvm/hyperv.h
+> index 0e66c12ed2c3..25428f5966e6 100644
+> --- a/arch/x86/kvm/hyperv.h
+> +++ b/arch/x86/kvm/hyperv.h
+> @@ -95,5 +95,7 @@ void kvm_hv_setup_tsc_page(struct kvm *kvm,
+>  void kvm_hv_init_vm(struct kvm *kvm);
+>  void kvm_hv_destroy_vm(struct kvm *kvm);
+>  int kvm_vm_ioctl_hv_eventfd(struct kvm *kvm, struct kvm_hyperv_eventfd *=
+args);
+> +int kvm_vcpu_ioctl_get_hv_cpuid(struct kvm_vcpu *vcpu, struct kvm_cpuid2=
+ *cpuid,
+> +				struct kvm_cpuid_entry2 __user *entries);
+> =20
+>  #endif
+> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> index b21b5ceb8d26..142776435166 100644
+> --- a/arch/x86/kvm/x86.c
+> +++ b/arch/x86/kvm/x86.c
+> @@ -2998,6 +2998,7 @@ int kvm_vm_ioctl_check_extension(struct kvm *kvm, l=
+ong ext)
+>  	case KVM_CAP_HYPERV_SEND_IPI:
+>  	case KVM_CAP_HYPERV_ENLIGHTENED_VMCS:
+>  	case KVM_CAP_HYPERV_STIMER_DIRECT:
+> +	case KVM_CAP_HYPERV_CPUID:
+>  	case KVM_CAP_PCI_SEGMENT:
+>  	case KVM_CAP_DEBUGREGS:
+>  	case KVM_CAP_X86_ROBUST_SINGLESTEP:
+> @@ -4191,6 +4192,25 @@ long kvm_arch_vcpu_ioctl(struct file *filp,
+>  		r =3D kvm_x86_ops->set_nested_state(vcpu, user_kvm_nested_state, &kvm_=
+state);
+>  		break;
+>  	}
+> +	case KVM_GET_SUPPORTED_HV_CPUID: {
+> +		struct kvm_cpuid2 __user *cpuid_arg =3D argp;
+> +		struct kvm_cpuid2 cpuid;
+> +
+> +		r =3D -EFAULT;
+> +		if (copy_from_user(&cpuid, cpuid_arg, sizeof(cpuid)))
+> +			goto out;
+> +
+> +		r =3D kvm_vcpu_ioctl_get_hv_cpuid(vcpu, &cpuid,
+> +						cpuid_arg->entries);
+> +		if (r)
+> +			goto out;
+> +
+> +		r =3D -EFAULT;
+> +		if (copy_to_user(cpuid_arg, &cpuid, sizeof(cpuid)))
+> +			goto out;
+> +		r =3D 0;
+> +		break;
+> +	}
+>  	default:
+>  		r =3D -EINVAL;
+>  	}
+> diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
+> index b8da14cee8e5..9d0038eae002 100644
+> --- a/include/uapi/linux/kvm.h
+> +++ b/include/uapi/linux/kvm.h
+> @@ -976,6 +976,7 @@ struct kvm_ppc_resize_hpt {
+>  #define KVM_CAP_EXCEPTION_PAYLOAD 164
+>  #define KVM_CAP_ARM_VM_IPA_SIZE 165
+>  #define KVM_CAP_HYPERV_STIMER_DIRECT 166
+> +#define KVM_CAP_HYPERV_CPUID 167
+> =20
+>  #ifdef KVM_CAP_IRQ_ROUTING
+> =20
+> @@ -1422,6 +1423,9 @@ struct kvm_enc_region {
+>  #define KVM_GET_NESTED_STATE         _IOWR(KVMIO, 0xbe, struct kvm_neste=
+d_state)
+>  #define KVM_SET_NESTED_STATE         _IOW(KVMIO,  0xbf, struct kvm_neste=
+d_state)
+> =20
+> +/* Available with KVM_CAP_HYPERV_CPUID */
+> +#define KVM_GET_SUPPORTED_HV_CPUID _IOWR(KVMIO, 0xc0, struct kvm_cpuid2)
+> +
+>  /* Secure Encrypted Virtualization command */
+>  enum sev_cmd_id {
+>  	/* Guest initialization commands */
+> --=20
+> 2.19.2
+>=20
