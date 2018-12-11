@@ -2,135 +2,118 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98879C07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 13:22:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CBEBC07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 13:24:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5CA6C2082F
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 13:22:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E30D92082F
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 13:24:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="V/sZTabY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5CA6C2082F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=alien8.de
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iacFUCcM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E30D92082F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726418AbeLKNWj (ORCPT
+        id S1726448AbeLKNYP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 08:22:39 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:44480 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726135AbeLKNWi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 08:22:38 -0500
-Received: from zn.tnic (p200300EC2BCD2B00BD72DD1FE93D9839.dip0.t-ipconnect.de [IPv6:2003:ec:2bcd:2b00:bd72:dd1f:e93d:9839])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 29F451EC0BAA;
-        Tue, 11 Dec 2018 14:22:37 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1544534557;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=Ct4IPzTQP8nDSad1R3f+AYWTXQVO0j/2wKlVRxqaHgU=;
-        b=V/sZTabYPqaViJ/3I/ESZ4sR0yA85PM3YUqioxIT3x2pEyfje/TWisOiHJ78MomM6OOLfz
-        0cbQoLotIzxpEvMAR/JOeAMGReVObRpuV7hPhqy8YkSxdsDyTPn0ZUrz5RhpWtHyVaPtTm
-        9qt7ARKuioG5+1kXN46snvUPB6s73Sw=
-Date:   Tue, 11 Dec 2018 14:22:34 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Maran Wilson <maran.wilson@oracle.com>
-Cc:     x86@kernel.org, linux-kernel@vger.kernel.org,
-        xen-devel@lists.xenproject.org, kvm@vger.kernel.org,
-        pbonzini@redhat.com, jgross@suse.com, tglx@linutronix.de,
-        mingo@redhat.com, hpa@zytor.com, boris.ostrovsky@oracle.com,
-        jpoimboe@redhat.com, kirill.shutemov@linux.intel.com, bp@suse.de,
-        thomas.lendacky@amd.com, luto@kernel.org,
-        dave.hansen@linux.intel.com, roger.pau@citrix.com,
-        rkrcmar@redhat.com, rdunlap@infradead.org
-Subject: Re: [PATCH v9 1/7] xen/pvh: Split CONFIG_XEN_PVH into CONFIG_PVH and
- CONFIG_XEN_PVH
-Message-ID: <20181211132234.GE27375@zn.tnic>
-References: <1544468734-32763-1-git-send-email-maran.wilson@oracle.com>
- <1544468848-496-1-git-send-email-maran.wilson@oracle.com>
+        Tue, 11 Dec 2018 08:24:15 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:38040 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726170AbeLKNYP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 08:24:15 -0500
+Received: by mail-lj1-f193.google.com with SMTP id c19-v6so12944687lja.5;
+        Tue, 11 Dec 2018 05:24:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=Lu3D8Kt3wCaVZ6PwrC0Lj6Q5yOWn+ze8vYjEU/P/bec=;
+        b=iacFUCcMlaW/sb/uhWG4Q+9hdF87CbytUNOzJRn0FbJMF5q9Rl3HiBygdD4g2ZtusQ
+         aT3dAOfMNWie/87W5eDU36vJ+5YYb51OKqG1B68dT/BJcnU4HZEhxhBhBGprgtrN0Juq
+         5xqYu4gh/Bmpzm3OTgNhPvcAYo9Ti75uCeyHPE6p8+dQbUQtXwowlGrfjASzfZpVdB3U
+         twMIryuWdpulK5En09MUzvt10R3KyIVpqd/1fMMIut/Bib4LXP2N25hfVJj143nxsOAo
+         gOtf1JMQ7B82XEzc8a/kePr79ub/uirYEb8hd54pW316rdvDqR0Sg8KAsTaFXLz4jkKu
+         QQfw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Lu3D8Kt3wCaVZ6PwrC0Lj6Q5yOWn+ze8vYjEU/P/bec=;
+        b=gsw4kfh/LmGARb705uNTImp+K10s8LJdpH613jHqHrDwdsh8UTqcu1CNNcOBYamxwa
+         wkvYw2S8wFjykvsXXU1/9Rxc4TM4BsdYv2Fv6JQW0pStTXb7rtW0WGOCHquDJN8u3x6z
+         8/8tWL+swN0MyM/qfrDO7UwUGkP+98zWVu+HKTZWtQyk4sI48lSRxKVEPloLKrpeq6cx
+         2vyRR49BeLRr9LdSNCav8PF8G7f2OzXqr1JKUUOrUEaJ/ak1TbjsIj8kxuQR1iyX6poe
+         7dZBXqwkGcE98DyFtU7pJhhMysx6qFkTQuSKVgxXG6sPb0iC1Gs7+YWgCiewnl+sZczi
+         6rBw==
+X-Gm-Message-State: AA+aEWYqEkfofNvp4HztXX8o8d2oCxE7zXcOQfhWvsIPn1dyZXK72ift
+        D/gSyyR8jK39zWZaDcsF8afysU+p
+X-Google-Smtp-Source: AFSGD/WeL4I5xLRCJvuIOvm7W5OLbIlzCW88D+Ng0JNT1xIkks5b5PQ9T/HFhiqxX+fDOBCZ5JI6LQ==
+X-Received: by 2002:a2e:9256:: with SMTP id v22-v6mr10881284ljg.178.1544534651676;
+        Tue, 11 Dec 2018 05:24:11 -0800 (PST)
+Received: from [192.168.2.145] ([94.29.36.169])
+        by smtp.googlemail.com with ESMTPSA id o5-v6sm2685410ljh.75.2018.12.11.05.24.09
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 11 Dec 2018 05:24:10 -0800 (PST)
+Subject: Re: [PATCH v6 00/21] IOMMU: Tegra GART driver clean up and
+ optimization
+To:     Joerg Roedel <joro@8bytes.org>,
+        Thierry Reding <thierry.reding@gmail.com>
+Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        iommu@lists.linux-foundation.org, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20181209202950.31486-1-digetx@gmail.com>
+ <20181211095317.tv43aaefnsezmic7@8bytes.org>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <0eb25577-cd64-11d5-1de6-8efa129b3b7b@gmail.com>
+Date:   Tue, 11 Dec 2018 16:22:31 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
+In-Reply-To: <20181211095317.tv43aaefnsezmic7@8bytes.org>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <1544468848-496-1-git-send-email-maran.wilson@oracle.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 10, 2018 at 11:07:28AM -0800, Maran Wilson wrote:
-> In order to pave the way for hypervisors other than Xen to use the PVH
-> entry point for VMs, we need to factor the PVH entry code into Xen specific
-> and hypervisor agnostic components. The first step in doing that, is to
-> create a new config option for PVH entry that can be enabled
-> independently from CONFIG_XEN.
+On 11.12.2018 12:53, Joerg Roedel wrote:
+> On Sun, Dec 09, 2018 at 11:29:29PM +0300, Dmitry Osipenko wrote:
+>> Dmitry Osipenko (21):
+>>   iommu/tegra: gart: Remove pr_fmt and clean up includes
+>>   iommu/tegra: gart: Clean up driver probe errors handling
+>>   iommu/tegra: gart: Ignore devices without IOMMU phandle in DT
+>>   iommu: Introduce iotlb_sync_map callback
+>>   iommu/tegra: gart: Optimize mapping / unmapping performance
+>>   dt-bindings: memory: tegra: Squash tegra20-gart into tegra20-mc
+>>   ARM: dts: tegra20: Update Memory Controller node to the new binding
+>>   memory: tegra: Don't invoke Tegra30+ specific memory timing setup on
+>>     Tegra20
+>>   memory: tegra: Adapt to Tegra20 device-tree binding changes
+>>   memory: tegra: Read client ID on GART page fault
+>>   memory: tegra: Use of_device_get_match_data()
+>>   memory: tegra: Use relaxed versions of readl/writel
+>>   iommu/tegra: gart: Integrate with Memory Controller driver
+>>   iommu/tegra: gart: Fix spinlock recursion
+>>   iommu/tegra: gart: Fix NULL pointer dereference
+>>   iommu/tegra: gart: Allow only one active domain at a time
+>>   iommu/tegra: gart: Don't use managed resources
+>>   iommu/tegra: gart: Prepend error/debug messages with "gart:"
+>>   iommu/tegra: gart: Don't detach devices from inactive domains
+>>   iommu/tegra: gart: Simplify clients-tracking code
+>>   iommu/tegra: gart: Perform code refactoring
 > 
-> Signed-off-by: Maran Wilson <maran.wilson@oracle.com>
-> Reviewed-by: Juergen Gross <jgross@suse.com>
-> ---
->  arch/x86/Kconfig          | 6 ++++++
->  arch/x86/kernel/head_64.S | 2 +-
->  arch/x86/xen/Kconfig      | 3 ++-
->  3 files changed, 9 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-> index 8689e794a43c..c2a22a74abee 100644
-> --- a/arch/x86/Kconfig
-> +++ b/arch/x86/Kconfig
-> @@ -796,6 +796,12 @@ config KVM_GUEST
->  	  underlying device model, the host provides the guest with
->  	  timing infrastructure such as time of day, and system time
->  
-> +config PVH
-> +	bool "Support for running PVH guests"
-> +	---help---
-> +	  This option enables the PVH entry point for guest virtual machines
-> +	  as specified in the x86/HVM direct boot ABI.
-> +
->  config KVM_DEBUG_FS
->  	bool "Enable debug information for KVM Guests in debugfs"
->  	depends on KVM_GUEST && DEBUG_FS
-> diff --git a/arch/x86/kernel/head_64.S b/arch/x86/kernel/head_64.S
-> index 747c758f67b7..d1dbe8e4eb82 100644
-> --- a/arch/x86/kernel/head_64.S
-> +++ b/arch/x86/kernel/head_64.S
-> @@ -386,7 +386,7 @@ NEXT_PAGE(early_dynamic_pgts)
->  
->  	.data
->  
-> -#if defined(CONFIG_XEN_PV) || defined(CONFIG_XEN_PVH)
-> +#if defined(CONFIG_XEN_PV) || defined(CONFIG_PVH)
->  NEXT_PGD_PAGE(init_top_pgt)
->  	.quad   level3_ident_pgt - __START_KERNEL_map + _KERNPG_TABLE_NOENC
->  	.org    init_top_pgt + L4_PAGE_OFFSET*8, 0
-> diff --git a/arch/x86/xen/Kconfig b/arch/x86/xen/Kconfig
-> index 1ef391aa184d..e07abefd3d26 100644
-> --- a/arch/x86/xen/Kconfig
-> +++ b/arch/x86/xen/Kconfig
-> @@ -74,6 +74,7 @@ config XEN_DEBUG_FS
->  	  Enabling this option may incur a significant performance overhead.
->  
->  config XEN_PVH
-> -	bool "Support for running as a PVH guest"
-> +	bool "Support for running as a Xen PVH guest"
->  	depends on XEN && XEN_PVHVM && ACPI
-> +	select PVH
->  	def_bool n
-> -- 
+> This is making progress, but some parts have no Ack or Review yet, I'll
+> wait for Thierry before applying these patches into the iommu tree.
 
-LGTM:
+Okay, waiting.. zZZ :) Pretty much all of the patches are actually reviewed, those that are missing review/ack tags just have changes that were requested in a review comments to the previous version of the series. I hope it won't take much time to finalize the review of the patches.
 
-Acked-by: Borislav Petkov <bp@suse.de>
-
--- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+Thierry, could you please acknowledge that you'll come back to these patches? More than two months passed since the last time you were replying regarding this series.
