@@ -7,51 +7,49 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94CD2C5CFFE
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:12:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C59C0C07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:12:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5BB8220879
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:12:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8ACA520879
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:12:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544544757;
-	bh=z7SpT0XaW0lbW36U2YxGrpcnnLvbmYxPKwxqzKGVdZs=;
+	s=default; t=1544544774;
+	bh=MzOpA+GqLe/yhoIycbPjUXtE3sBG5Y7ThFfBKkGbrKA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=BYowuvpKzHwlhhqu5UAJi9nVcpQjPOzxPcL9+RwmDpP5XirmYt25ATkX1G6sorCg8
-	 wqFG8fyasJreJLUP9BkdUKDGA5pg7WXRFWE7k/3bv8xLj0X326kFljdYgBuPTs+edN
-	 oz0BzgMBzHWb7SK5CrJz0yFrSxdRCpxJbd0Oop8A=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5BB8220879
+	b=Y2r9Ya48Ju8TFKweK3VXtdk1v409ScHwO7rysEU2B7AjPtUY2HCbkqRmpS+ynAy38
+	 BIgmqLk2oM/JV8Ctsdr590AlDDTLbvu2MCI8xtEzVW8F0Vg11VJ3kGjcUCivDjiGgS
+	 lscC1Y8ZOIVYMKBtWRuV4j6kvjkw4+QsCB3JvlyI=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8ACA520879
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729276AbeLKPu3 (ORCPT
+        id S1729749AbeLKQMw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 10:50:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38994 "EHLO mail.kernel.org"
+        Tue, 11 Dec 2018 11:12:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38846 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729245AbeLKPuU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:50:20 -0500
+        id S1728710AbeLKPuM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 10:50:12 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6463B20870;
-        Tue, 11 Dec 2018 15:50:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7D9972084E;
+        Tue, 11 Dec 2018 15:50:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544543419;
-        bh=z7SpT0XaW0lbW36U2YxGrpcnnLvbmYxPKwxqzKGVdZs=;
+        s=default; t=1544543412;
+        bh=MzOpA+GqLe/yhoIycbPjUXtE3sBG5Y7ThFfBKkGbrKA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mrtEBu8nZ37e8gvgYiqqexULk0imYqtukjYOX7gTER+dD2LB4mlSwJ9LSFBlp+j2U
-         V1PLDzA+YWn3Jc1dHKCGFO+S+7p4h9t3d7PgeEJZk708/WPpcWTCTXR+ycWMAEdvOw
-         1I6AYT30FigENHi5Y+9AS+Ykii1OOCS09aDpHcJU=
+        b=zJ5bxyQ1NHig82Isb/qae2qMlAxsrfvMwFzBArKAbQFMLd5pDrkkJdawI0/4l4JF6
+         VS/c4PciRaD7DvaETIvlnv89yxOidZBAo/NapJ3gup9Prb2Lu9bF26fSXJS5lGojqD
+         FZaK3m5oNZHI7hSF8v+IR7YemI8/H8juLGbCGqu0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Rob Herring <robh@kernel.org>, Jiri Slaby <jslaby@suse.com>,
-        Chanho Park <parkch98@gmail.com>
-Subject: [PATCH 4.9 43/51] tty: do not set TTY_IO_ERROR flag if console port
-Date:   Tue, 11 Dec 2018 16:41:51 +0100
-Message-Id: <20181211151617.552046525@linuxfoundation.org>
+        stable@vger.kernel.org, Young Xiao <YangX92@hotmail.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>
+Subject: [PATCH 4.9 41/51] staging: rtl8712: Fix possible buffer overrun
+Date:   Tue, 11 Dec 2018 16:41:49 +0100
+Message-Id: <20181211151617.382563819@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181211151612.328911565@linuxfoundation.org>
 References: <20181211151612.328911565@linuxfoundation.org>
@@ -70,55 +68,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Chanho Park <parkch98@gmail.com>
+From: Young Xiao <YangX92@hotmail.com>
 
-commit 2a48602615e0a2f563549c7d5c8d507f904cf96e upstream.
+commit 300cd664865bed5d50ae0a42fb4e3a6f415e8a10 upstream.
 
-Since Commit 761ed4a94582 ('tty: serial_core: convert uart_close to use
-tty_port_close') and Commit 4dda864d7307 ('tty: serial_core: Fix serial
-console crash on port shutdown), a serial port which is used as
-console can be stuck when logging out if there is a remained process.
-After logged out, agetty will try to grab the serial port but it will
-be failed because the previous process did not release the port
-correctly. To fix this, TTY_IO_ERROR bit should not be enabled of
-tty_port_close if the port is console port.
+In commit 8b7a13c3f404 ("staging: r8712u: Fix possible buffer
+overrun") we fix a potential off by one by making the limit smaller.
+The better fix is to make the buffer larger.  This makes it match up
+with the similar code in other drivers.
 
-Reproduce step:
-- Run background processes from serial console
-$ while true; do sleep 10; done &
-
-- Log out
-$ logout
--> Stuck
-
-- Read journal log by journalctl | tail
-Jan 28 16:07:01 ubuntu systemd[1]: Stopped Serial Getty on ttyAMA0.
-Jan 28 16:07:01 ubuntu systemd[1]: Started Serial Getty on ttyAMA0.
-Jan 28 16:07:02 ubuntu agetty[1643]: /dev/ttyAMA0: not a tty
-
-Fixes: 761ed4a94582 ("tty: serial_core: convert uart_close to use tty_port_close")
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Rob Herring <robh@kernel.org>
-Cc: Jiri Slaby <jslaby@suse.com>
-Signed-off-by: Chanho Park <parkch98@gmail.com>
+Fixes: 8b7a13c3f404 ("staging: r8712u: Fix possible buffer overrun")
+Signed-off-by: Young Xiao <YangX92@hotmail.com>
 Cc: stable <stable@vger.kernel.org>
+Reviewed-by: Dan Carpenter <dan.carpenter@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/tty/tty_port.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/staging/rtl8712/mlme_linux.c   |    2 +-
+ drivers/staging/rtl8712/rtl871x_mlme.c |    2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/tty/tty_port.c
-+++ b/drivers/tty/tty_port.c
-@@ -531,7 +531,8 @@ void tty_port_close(struct tty_port *por
- 	if (tty_port_close_start(port, tty, filp) == 0)
- 		return;
- 	tty_port_shutdown(port, tty);
--	set_bit(TTY_IO_ERROR, &tty->flags);
-+	if (!port->console)
-+		set_bit(TTY_IO_ERROR, &tty->flags);
- 	tty_port_close_end(port, tty);
- 	tty_port_tty_set(port, NULL);
- }
+--- a/drivers/staging/rtl8712/mlme_linux.c
++++ b/drivers/staging/rtl8712/mlme_linux.c
+@@ -158,7 +158,7 @@ void r8712_report_sec_ie(struct _adapter
+ 		p = buff;
+ 		p += sprintf(p, "ASSOCINFO(ReqIEs=");
+ 		len = sec_ie[1] + 2;
+-		len =  (len < IW_CUSTOM_MAX) ? len : IW_CUSTOM_MAX - 1;
++		len =  (len < IW_CUSTOM_MAX) ? len : IW_CUSTOM_MAX;
+ 		for (i = 0; i < len; i++)
+ 			p += sprintf(p, "%02x", sec_ie[i]);
+ 		p += sprintf(p, ")");
+--- a/drivers/staging/rtl8712/rtl871x_mlme.c
++++ b/drivers/staging/rtl8712/rtl871x_mlme.c
+@@ -1365,7 +1365,7 @@ sint r8712_restruct_sec_ie(struct _adapt
+ 		     u8 *out_ie, uint in_len)
+ {
+ 	u8 authmode = 0, match;
+-	u8 sec_ie[255], uncst_oui[4], bkup_ie[255];
++	u8 sec_ie[IW_CUSTOM_MAX], uncst_oui[4], bkup_ie[255];
+ 	u8 wpa_oui[4] = {0x0, 0x50, 0xf2, 0x01};
+ 	uint ielength, cnt, remove_cnt;
+ 	int iEntry;
 
 
