@@ -2,162 +2,109 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C9FDC5CFFE
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 14:41:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA991C07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 14:41:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ED73F2054F
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 14:41:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED73F2054F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id AC6F420849
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 14:41:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC6F420849
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726674AbeLKOlE (ORCPT
+        id S1726714AbeLKOlr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 09:41:04 -0500
-Received: from foss.arm.com ([217.140.101.70]:48672 "EHLO foss.arm.com"
+        Tue, 11 Dec 2018 09:41:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49184 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726231AbeLKOlE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 09:41:04 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A9B9A1596;
-        Tue, 11 Dec 2018 06:41:03 -0800 (PST)
-Received: from e107981-ln.cambridge.arm.com (e107981-ln.cambridge.arm.com [10.1.197.40])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0B6563F575;
-        Tue, 11 Dec 2018 06:41:01 -0800 (PST)
-Date:   Tue, 11 Dec 2018 14:40:59 +0000
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     "Z.q. Hou" <zhiqiang.hou@nxp.com>
-Cc:     "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "bhelgaas@google.com" <bhelgaas@google.com>,
-        "jingoohan1@gmail.com" <jingoohan1@gmail.com>,
-        "gustavo.pimentel@synopsys.com" <gustavo.pimentel@synopsys.com>,
-        Roy Zang <roy.zang@nxp.com>, Mingkai Hu <mingkai.hu@nxp.com>,
-        "M.h. Lian" <minghuan.lian@nxp.com>
-Subject: Re: [PATCHv2 2/4] PCI: dwc: fix 4GiB outbound window size truncated
- to zero issue
-Message-ID: <20181211144059.GB526@e107981-ln.cambridge.arm.com>
-References: <20181107100854.28389-1-Zhiqiang.Hou@nxp.com>
- <20181107100854.28389-3-Zhiqiang.Hou@nxp.com>
- <20181205160153.GA18567@e107981-ln.cambridge.arm.com>
- <AM6PR04MB57813C419469B58F3C7DC37C84A90@AM6PR04MB5781.eurprd04.prod.outlook.com>
+        id S1726231AbeLKOlq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 09:41:46 -0500
+Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D4FCA2054F;
+        Tue, 11 Dec 2018 14:41:42 +0000 (UTC)
+Date:   Tue, 11 Dec 2018 09:41:40 -0500
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Petr Mladek <pmladek@suse.com>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Brendan Higgins <brendanhiggins@google.com>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        Eryu Guan <guaneryu@gmail.com>,
+        Eric Sandeen <sandeen@sandeen.net>, jeffm@suse.com,
+        Sasha Levin <Alexander.Levin@microsoft.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Kees Cook <keescook@google.com>, shuah@kernel.org,
+        Joel Stanley <joel@jms.id.au>, mpe@ellerman.id.au,
+        joe@perches.com, brakmo@fb.com, Tim.Bird@sony.com,
+        khilman@baylibre.com, Julia Lawall <julia.lawall@lip6.fr>,
+        linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        jdike@addtoit.com, richard@nod.at, linux-um@lists.infradead.org,
+        Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel@lists.freedesktop.org, Rob Herring <robh@kernel.org>,
+        dan.j.williams@intel.com, linux-nvdimm@lists.01.org,
+        Frank Rowand <frowand.list@gmail.com>,
+        Knut Omang <knut.omang@oracle.com>,
+        Felix Guo <felixguoxiuping@gmail.com>,
+        linux-fsdevel@vger.kernel.org,
+        Linux Trace Devel <linux-trace-devel@vger.kernel.org>
+Subject: Re: [RFC v3 11/19] kunit: add Python libraries for handing KUnit
+ config and kernel
+Message-ID: <20181211094140.2a928fe7@gandalf.local.home>
+In-Reply-To: <20181211140926.7wzd5jh6klcfsfgz@pathway.suse.cz>
+References: <20181128193636.254378-1-brendanhiggins@google.com>
+        <20181128193636.254378-12-brendanhiggins@google.com>
+        <841cf4ae-501b-05ae-5863-a51010709b67@ideasonboard.com>
+        <CAFd5g47x-UNja72k-CWPmWz9+LTn8pF8Wj5Poq+2FJ93E=vymA@mail.gmail.com>
+        <20181204204701.GT28501@garbanzo.do-not-panic.com>
+        <f8722f4a-44c8-24c2-c433-5178f9f40b82@ideasonboard.com>
+        <20181206153718.GD24603@bombadil.infradead.org>
+        <20181211140926.7wzd5jh6klcfsfgz@pathway.suse.cz>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <AM6PR04MB57813C419469B58F3C7DC37C84A90@AM6PR04MB5781.eurprd04.prod.outlook.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 06, 2018 at 01:25:17AM +0000, Z.q. Hou wrote:
-> Hi Lorenzo,
-> 
-> Thanks a lot for your comments!
-> 
-> > -----Original Message-----
-> > From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-> > Sent: 2018??12??6?? 0:02
-> > To: Z.q. Hou <zhiqiang.hou@nxp.com>
-> > Cc: linux-pci@vger.kernel.org; linux-kernel@vger.kernel.org;
-> > bhelgaas@google.com; jingoohan1@gmail.com;
-> > gustavo.pimentel@synopsys.com; Roy Zang <roy.zang@nxp.com>; Mingkai Hu
-> > <mingkai.hu@nxp.com>; M.h. Lian <minghuan.lian@nxp.com>
-> > Subject: Re: [PATCHv2 2/4] PCI: dwc: fix 4GiB outbound window size
-> > truncated to zero issue
-> > 
-> > On Wed, Nov 07, 2018 at 10:09:10AM +0000, Z.q. Hou wrote:
-> > > From: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
-> > >
-> > > The current type of mem_size is 'u32', so when resource_size() return
-> > > 4G it will be truncated to zero. This patch fix it by changing its
-> > > type to 'u64'.
-> > >
-> > > Signed-off-by: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
-> > > Acked-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-> > > ---
-> > > V2:
-> > >  - Reworded the subject.
-> > >
-> > >  drivers/pci/controller/dwc/pcie-designware.c | 4 ++--
-> > > drivers/pci/controller/dwc/pcie-designware.h | 4 ++--
-> > >  2 files changed, 4 insertions(+), 4 deletions(-)
-> > 
-> > I would like to add a Fixes: tag.
-> > 
-> > is
-> > 
-> > edd45e396829 ("PCI: dwc: designware: Move _unroll configurations to a
-> > separate function")
-> > 
-> > the commit you are fixing ?
-> 
-> Yes, will add the Fixes, and I think it fixes the original patch: 340cba6092c2 ("pci: Add PCIe driver for Samsung Exynos").
+On Tue, 11 Dec 2018 15:09:26 +0100
+Petr Mladek <pmladek@suse.com> wrote:
 
-I will add it myself.
-
-Thanks,
-Lorenzo
-
-> > Thanks,
-> > Lorenzo
+> > We have liburcu already, which is good.  The main sticking points are:
 > > 
-> > > diff --git a/drivers/pci/controller/dwc/pcie-designware.c
-> > > b/drivers/pci/controller/dwc/pcie-designware.c
-> > > index 2153956a0b20..7ac5989c23ef 100644
-> > > --- a/drivers/pci/controller/dwc/pcie-designware.c
-> > > +++ b/drivers/pci/controller/dwc/pcie-designware.c
-> > > @@ -106,7 +106,7 @@ static void dw_pcie_writel_ob_unroll(struct
-> > > dw_pcie *pci, u32 index, u32 reg,
-> > >
-> > >  static void dw_pcie_prog_outbound_atu_unroll(struct dw_pcie *pci, int
-> > index,
-> > >  					     int type, u64 cpu_addr,
-> > > -					     u64 pci_addr, u32 size)
-> > > +					     u64 pci_addr, u64 size)
-> > >  {
-> > >  	u32 retries, val;
-> > >
-> > > @@ -141,7 +141,7 @@ static void
-> > > dw_pcie_prog_outbound_atu_unroll(struct dw_pcie *pci, int index,  }
-> > >
-> > >  void dw_pcie_prog_outbound_atu(struct dw_pcie *pci, int index, int type,
-> > > -			       u64 cpu_addr, u64 pci_addr, u32 size)
-> > > +			       u64 cpu_addr, u64 pci_addr, u64 size)
-> > >  {
-> > >  	u32 retries, val;
-> > >
-> > > diff --git a/drivers/pci/controller/dwc/pcie-designware.h
-> > > b/drivers/pci/controller/dwc/pcie-designware.h
-> > > index 9f1a5e399b70..a438c3879aa9 100644
-> > > --- a/drivers/pci/controller/dwc/pcie-designware.h
-> > > +++ b/drivers/pci/controller/dwc/pcie-designware.h
-> > > @@ -153,7 +153,7 @@ struct pcie_port {
-> > >  	u32			io_size;
-> > >  	u64			mem_base;
-> > >  	phys_addr_t		mem_bus_addr;
-> > > -	u32			mem_size;
-> > > +	u64			mem_size;
-> > >  	struct resource		*cfg;
-> > >  	struct resource		*io;
-> > >  	struct resource		*mem;
-> > > @@ -238,7 +238,7 @@ int dw_pcie_link_up(struct dw_pcie *pci);  int
-> > > dw_pcie_wait_for_link(struct dw_pcie *pci);  void
-> > > dw_pcie_prog_outbound_atu(struct dw_pcie *pci, int index,
-> > >  			       int type, u64 cpu_addr, u64 pci_addr,
-> > > -			       u32 size);
-> > > +			       u64 size);
-> > >  int dw_pcie_prog_inbound_atu(struct dw_pcie *pci, int index, int bar,
-> > >  			     u64 cpu_addr, enum dw_pcie_as_type as_type);  void
-> > > dw_pcie_disable_atu(struct dw_pcie *pci, int index,
-> > > --
-> > > 2.17.1
-> > >
+> >  - printk has started adding a lot of %pX enhancements which printf
+> >    obviously doesn't know about.  
 > 
-> Thanks,
-> Zhiqiang
+> I wonder how big problem it is and if it is worth using another
+> approach.
+
+No, please do not change the %pX approach.
+
+> 
+> An alternative would be to replace them with helper functions
+> the would produce the same string. The meaning would be easier
+> to understand. But concatenating with the surrounding text
+> would be less elegant. People might start using pr_cont()
+> that is problematic (mixed lines).
+> 
+> Also the %pX formats are mostly used to print context of some
+> structures. Even the helper functions would need some maintenance
+> to keep them compatible.
+> 
+> BTW: The printk() feature has been introduced 10 years ago by
+> the commit 4d8a743cdd2690c0bc8 ("vsprintf: add infrastructure
+> support for extended '%p' specifiers").
+
+trace-cmd and perf know about most of the %pX data and how to read it.
+Perhaps we can extend the libtraceevent library to export a generic way
+to read data from printk() output for other tools to use.
+
+-- Steve
