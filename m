@@ -7,43 +7,43 @@ X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98B7FC5CFFE
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 00:02:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 627F9C5CFFE
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 00:02:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 519BF214F0
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 00:02:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 29225214F0
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 00:02:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544486521;
-	bh=YwpG66b1PbbNfHWKoWOhJAYkAamckUuMJ0ABZ58yDWU=;
+	s=default; t=1544486525;
+	bh=HzWfxiGJX5Xsuy9W7GKgHAh/SHNyllXvhXrssvb8uWk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
 	 References:List-ID:From;
-	b=n045zxSG1F37bCA+x2lQ3XImS8fIlvH8Mx3RihJs5MtueII4gIRt+zVmQsQQZkjH2
-	 BkFkUeMUDZnn0/XRHI1ZUtmRCk8ZBC2HXUQvBsqHluZMpkHprpg1En7BSHYzLJx/p9
-	 5E6EFipBlHAJiCejrtk0SQQbN8y2pyLsAwiGzaUI=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 519BF214F0
+	b=HH786w3zjpQy9FjjmFAJ1KzCmbWLCjFwrU0285XXFAo6KJTOtUiZE2/T5gM2XgsgW
+	 OR6acTnxwz8GqxPhHy+pNFwLKroy+Tu2O5s/eMfQRgGWwnJ49Ct/ybZwOJbL145KOC
+	 LzLYo0UQdzfH4wLsIdoQZwRBe6MEfOYQBnYFyme8=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 29225214F0
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730332AbeLKACA (ORCPT
+        id S1730348AbeLKACD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 19:02:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41058 "EHLO mail.kernel.org"
+        Mon, 10 Dec 2018 19:02:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41126 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730286AbeLKAB6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 19:01:58 -0500
+        id S1730320AbeLKACA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Dec 2018 19:02:00 -0500
 Received: from localhost.localdomain (c-98-220-238-81.hsd1.il.comcast.net [98.220.238.81])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A6A49214E0;
-        Tue, 11 Dec 2018 00:01:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3B32B214ED;
+        Tue, 11 Dec 2018 00:01:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544486517;
-        bh=YwpG66b1PbbNfHWKoWOhJAYkAamckUuMJ0ABZ58yDWU=;
+        s=default; t=1544486519;
+        bh=HzWfxiGJX5Xsuy9W7GKgHAh/SHNyllXvhXrssvb8uWk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
          References:From;
-        b=hQjbwxIpsvEDI5E1rv0mUcfbnBPPNFz02b0OiCzRDdgl8hOsA3XEVwyH2hGBfsOmZ
-         /yrycu6NaTho4sNCGbodwGxVdVn1pFhCgxMh9S3gHIbZldov3QlNMECXAe1iniCyRe
-         BRma5scHgu9gHlIrS2TcJ1TCVdMNnGzAu29cGwMs=
+        b=WlxEM3M7Kvgj1pHwO82BNKAP5O0ZFQ/xr5LV6Xv95yHt3HYjlljF+ECnn+KOEHxtl
+         ZUtkM2SA8j7cJ957KRktXW7Ju+DgIvxjIuVsV5eIYwSmokdtuJPbkWwEWLvdke4TCD
+         uyUVWrX3J9lhQX6cxAQISFzl1zuSUqZg1L5VoSl4=
 From:   Tom Zanussi <zanussi@kernel.org>
 To:     rostedt@goodmis.org
 Cc:     tglx@linutronix.de, mhiramat@kernel.org, namhyung@kernel.org,
@@ -51,9 +51,9 @@ Cc:     tglx@linutronix.de, mhiramat@kernel.org, namhyung@kernel.org,
         joel@joelfernandes.org, mathieu.desnoyers@efficios.com,
         julia@ni.com, linux-kernel@vger.kernel.org,
         linux-rt-users@vger.kernel.org
-Subject: [PATCH v8 08/22] tracing: Add hist trigger snapshot() action Documentation
-Date:   Mon, 10 Dec 2018 18:01:22 -0600
-Message-Id: <ac8b6f273e238da332ae470e20035bae74306c24.1544483273.git.tom.zanussi@linux.intel.com>
+Subject: [PATCH v8 09/22] tracing: Add hist trigger snapshot() action test case
+Date:   Mon, 10 Dec 2018 18:01:23 -0600
+Message-Id: <08e018fd4f7346435c36435d155f1aa8f9e7346d.1544483273.git.tom.zanussi@linux.intel.com>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <cover.1544483272.git.tom.zanussi@linux.intel.com>
 References: <cover.1544483272.git.tom.zanussi@linux.intel.com>
@@ -66,141 +66,64 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Tom Zanussi <tom.zanussi@linux.intel.com>
 
-Add Documentation for the hist:handlerXXX($var).snapshot() action.
+Add a test case verifying the basic functionality of the
+hist:snapshot() action.
 
 Signed-off-by: Tom Zanussi <tom.zanussi@linux.intel.com>
 ---
- Documentation/trace/histogram.rst | 110 ++++++++++++++++++++++++++++++++++++++
- 1 file changed, 110 insertions(+)
+ .../inter-event/trigger-snapshot-action-hist.tc    | 43 ++++++++++++++++++++++
+ 1 file changed, 43 insertions(+)
+ create mode 100644 tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-snapshot-action-hist.tc
 
-diff --git a/Documentation/trace/histogram.rst b/Documentation/trace/histogram.rst
-index 63e522107e59..353317bc3825 100644
---- a/Documentation/trace/histogram.rst
-+++ b/Documentation/trace/histogram.rst
-@@ -1874,6 +1874,7 @@ The available actions are:
- 
-   - <synthetic_event_name>(param list)         - generate synthetic event
-   - save(field,...)                            - save current event fields
-+  - snapshot()                                 - snapshot the trace buffer
- 
- The following commonly-used handler.action pairs are available:
- 
-@@ -2030,6 +2031,115 @@ The following commonly-used handler.action pairs are available:
-             Entries: 2
-             Dropped: 0
- 
-+  - onmax(var).snapshot()
+diff --git a/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-snapshot-action-hist.tc b/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-snapshot-action-hist.tc
+new file mode 100644
+index 000000000000..18fff69fc433
+--- /dev/null
++++ b/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-snapshot-action-hist.tc
+@@ -0,0 +1,43 @@
++#!/bin/sh
++# SPDX-License-Identifier: GPL-2.0
++# description: event trigger - test inter-event histogram trigger snapshot action
 +
-+    The 'onmax(var).snapshot()' hist trigger action is invoked
-+    whenever the value of 'var' associated with a histogram entry
-+    exceeds the current maximum contained in that variable.
++fail() { #msg
++    echo $1
++    exit_fail
++}
 +
-+    The end result is that a global snapshot of the trace buffer will
-+    be saved in the tracing/snapshot file if 'var' exceeds the current
-+    maximum for any hist trigger entry.
++if [ ! -f set_event ]; then
++    echo "event tracing is not supported"
++    exit_unsupported
++fi
 +
-+    Note that in this case the maximum is a global maximum for the
-+    current trace instance, which is the maximum across all buckets of
-+    the histogram.  The key of the specific trace event that caused
-+    the global maximum and the global maximum itself are displayed,
-+    along with a message stating that a snapshot has been taken and
-+    where to find it.  The user can use the key information displayed
-+    to locate the corresponding bucket in the histogram for even more
-+    detail.
++if [ ! -f snapshot ]; then
++    echo "snapshot is not supported"
++    exit_unsupported
++fi
 +
-+    As an example the below defines a couple of hist triggers, one for
-+    sched_waking and another for sched_switch, keyed on pid.  Whenever
-+    a sched_waking event occurs, the timestamp is saved in the entry
-+    corresponding to the current pid, and when the scheduler switches
-+    back to that pid, the timestamp difference is calculated.  If the
-+    resulting latency, stored in wakeup_lat, exceeds the current
-+    maximum latency, a snapshot is taken.  As part of the setup, all
-+    the scheduler events are also enabled, which are the events that
-+    will show up in the snapshot when it is taken at some point:
++grep -q "onchange(var)" README || exit_unsupported # version issue
 +
-+    # echo 1 > /sys/kernel/debug/tracing/events/sched/enable
++grep -q "snapshot()" README || exit_unsupported # version issue
 +
-+    # echo 'hist:keys=pid:ts0=common_timestamp.usecs \
-+            if comm=="cyclictest"' >> \
-+            /sys/kernel/debug/tracing/events/sched/sched_waking/trigger
++echo "Test snapshot action"
 +
-+    # echo 'hist:keys=next_pid:wakeup_lat=common_timestamp.usecs-$ts0: \
-+            onmax($wakeup_lat).save(next_prio,next_comm,prev_pid,prev_prio, \
-+	    prev_comm):onmax($wakeup_lat).snapshot() \
-+	    if next_comm=="cyclictest"' >> \
-+	    /sys/kernel/debug/tracing/events/sched/sched_switch/trigger
++echo 1 > /sys/kernel/debug/tracing/events/sched/enable
 +
-+    When the histogram is displayed, for each bucket the max value
-+    and the saved values corresponding to the max are displayed
-+    following the rest of the fields.
++echo 'hist:keys=comm:newprio=prio:onchange($newprio).save(comm,prio):onchange($newprio).snapshot() if comm=="ping"' >> /sys/kernel/debug/tracing/events/sched/sched_waking/trigger
 +
-+    If a snaphot was taken, there is also a message indicating that,
-+    along with the value and event that triggered the global maximum:
++ping $LOCALHOST -c 3
++nice -n 1 ping $LOCALHOST -c 3
 +
-+    # cat /sys/kernel/debug/tracing/events/sched/sched_switch/hist
-+      { next_pid:       2101 } hitcount:        200
-+	max:         52  next_prio:        120  next_comm: cyclictest \
-+        prev_pid:          0  prev_prio:        120  prev_comm: swapper/6
++echo 0 > tracing_on
 +
-+      { next_pid:       2103 } hitcount:       1326
-+	max:        572  next_prio:         19  next_comm: cyclictest \
-+        prev_pid:          0  prev_prio:        120  prev_comm: swapper/1
++if ! grep -q "changed:" events/sched/sched_waking/hist; then
++    fail "Failed to create onchange action inter-event histogram"
++fi
 +
-+      { next_pid:       2102 } hitcount:       1982 \
-+	max:         74  next_prio:         19  next_comm: cyclictest \
-+        prev_pid:          0  prev_prio:        120  prev_comm: swapper/5
++if ! grep -q "comm=ping" snapshot; then
++    fail "Failed to create snapshot action inter-event histogram"
++fi
 +
-+    Snapshot taken (see tracing/snapshot).  Details:
-+	triggering value { onmax($wakeup_lat) }:        572	\
-+	triggered by event with key: { next_pid:       2103 }
-+
-+    Totals:
-+        Hits: 3508
-+        Entries: 3
-+        Dropped: 0
-+
-+    In the above case, the event that triggered the global maximum has
-+    the key with next_pid == 2103.  If you look at the bucket that has
-+    2103 as the key, you'll find the additional values save()'d along
-+    with the local maximum for that bucket, which should be the same
-+    as the global maximum (since that was the same value that
-+    triggered the global snapshot).
-+
-+    And finally, looking at the snapshot data should show at or near
-+    the end the event that triggered the snapshot (in this case you
-+    can verify the timestamps between the sched_waking and
-+    sched_switch events, which should match the time displayed in the
-+    global maximum):
-+
-+    # cat /sys/kernel/debug/tracing/snapshot
-+
-+     <...>-2103  [005] d..3   309.873125: sched_switch: prev_comm=cyclictest prev_pid=2103 prev_prio=19 prev_state=D ==> next_comm=swapper/5 next_pid=0 next_prio=120
-+     <idle>-0     [005] d.h3   309.873611: sched_waking: comm=cyclictest pid=2102 prio=19 target_cpu=005
-+     <idle>-0     [005] dNh4   309.873613: sched_wakeup: comm=cyclictest pid=2102 prio=19 target_cpu=005
-+     <idle>-0     [005] d..3   309.873616: sched_switch: prev_comm=swapper/5 prev_pid=0 prev_prio=120 prev_state=S ==> next_comm=cyclictest next_pid=2102 next_prio=19
-+     <...>-2102  [005] d..3   309.873625: sched_switch: prev_comm=cyclictest prev_pid=2102 prev_prio=19 prev_state=D ==> next_comm=swapper/5 next_pid=0 next_prio=120
-+     <idle>-0     [005] d.h3   309.874624: sched_waking: comm=cyclictest pid=2102 prio=19 target_cpu=005
-+     <idle>-0     [005] dNh4   309.874626: sched_wakeup: comm=cyclictest pid=2102 prio=19 target_cpu=005
-+     <idle>-0     [005] dNh3   309.874628: sched_waking: comm=cyclictest pid=2103 prio=19 target_cpu=005
-+     <idle>-0     [005] dNh4   309.874630: sched_wakeup: comm=cyclictest pid=2103 prio=19 target_cpu=005
-+     <idle>-0     [005] d..3   309.874633: sched_switch: prev_comm=swapper/5 prev_pid=0 prev_prio=120 prev_state=S ==> next_comm=cyclictest next_pid=2102 next_prio=19
-+     <idle>-0     [004] d.h3   309.874757: sched_waking: comm=gnome-terminal- pid=1699 prio=120 target_cpu=004
-+     <idle>-0     [004] dNh4   309.874762: sched_wakeup: comm=gnome-terminal- pid=1699 prio=120 target_cpu=004
-+     <idle>-0     [004] d..3   309.874766: sched_switch: prev_comm=swapper/4 prev_pid=0 prev_prio=120 prev_state=S ==> next_comm=gnome-terminal- next_pid=1699 next_prio=120
-+ gnome-terminal--1699  [004] d.h2   309.874941: sched_stat_runtime: comm=gnome-terminal- pid=1699 runtime=180706 [ns] vruntime=1126870572 [ns]
-+     <idle>-0     [003] d.s4   309.874956: sched_waking: comm=rcu_sched pid=9 prio=120 target_cpu=007
-+     <idle>-0     [003] d.s5   309.874960: sched_wake_idle_without_ipi: cpu=7
-+     <idle>-0     [003] d.s5   309.874961: sched_wakeup: comm=rcu_sched pid=9 prio=120 target_cpu=007
-+     <idle>-0     [007] d..3   309.874963: sched_switch: prev_comm=swapper/7 prev_pid=0 prev_prio=120 prev_state=S ==> next_comm=rcu_sched next_pid=9 next_prio=120
-+  rcu_sched-9     [007] d..3   309.874973: sched_stat_runtime: comm=rcu_sched pid=9 runtime=13646 [ns] vruntime=22531430286 [ns]
-+  rcu_sched-9     [007] d..3   309.874978: sched_switch: prev_comm=rcu_sched prev_pid=9 prev_prio=120 prev_state=R+ ==> next_comm=swapper/7 next_pid=0 next_prio=120
-+      <...>-2102  [005] d..4   309.874994: sched_migrate_task: comm=cyclictest pid=2103 prio=19 orig_cpu=5 dest_cpu=1
-+      <...>-2102  [005] d..4   309.875185: sched_wake_idle_without_ipi: cpu=1
-+     <idle>-0     [001] d..3   309.875200: sched_switch: prev_comm=swapper/1 prev_pid=0 prev_prio=120 prev_state=S ==> next_comm=cyclictest next_pid=2103 next_prio=19
-+
- 3. User space creating a trigger
- --------------------------------
- 
++exit 0
 -- 
 2.14.1
 
