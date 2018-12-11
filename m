@@ -2,146 +2,71 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_SBL,URIBL_SBL_A
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC9ADC67839
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 18:48:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 783F5C67839
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 18:49:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A115720811
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 18:48:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A115720811
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 4AEC920811
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 18:49:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4AEC920811
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=namei.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726717AbeLKSsy (ORCPT
+        id S1726744AbeLKSta (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 13:48:54 -0500
-Received: from foss.arm.com ([217.140.101.70]:55362 "EHLO foss.arm.com"
+        Tue, 11 Dec 2018 13:49:30 -0500
+Received: from namei.org ([65.99.196.166]:59004 "EHLO namei.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726241AbeLKSsy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 13:48:54 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D75CFEBD;
-        Tue, 11 Dec 2018 10:48:53 -0800 (PST)
-Received: from e110467-lin.cambridge.arm.com (e110467-lin.cambridge.arm.com [10.1.196.75])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 381563F6A8;
-        Tue, 11 Dec 2018 10:48:52 -0800 (PST)
-From:   Robin Murphy <robin.murphy@arm.com>
-To:     will.deacon@arm.com, catalin.marinas@arm.com
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        jonathan.cameron@huawei.com, cyrilc@xilinx.com,
-        james.morse@arm.com, anshuman.khandual@arm.com, linux-mm@kvack.org
-Subject: [PATCH v2] arm64: Add memory hotplug support
-Date:   Tue, 11 Dec 2018 18:48:48 +0000
-Message-Id: <331db1485b4c8c3466217e16a1e1f05618e9bae8.1544553902.git.robin.murphy@arm.com>
-X-Mailer: git-send-email 2.19.1.dirty
+        id S1726241AbeLKSt3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 13:49:29 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by namei.org (8.14.4/8.14.4) with ESMTP id wBBIn05S012701;
+        Tue, 11 Dec 2018 18:49:00 GMT
+Date:   Wed, 12 Dec 2018 05:49:00 +1100 (AEDT)
+From:   James Morris <jmorris@namei.org>
+To:     Nayna Jain <nayna@linux.ibm.com>
+cc:     linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-efi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, zohar@linux.ibm.com,
+        dhowells@redhat.com, jforbes@redhat.com,
+        seth.forshee@canonical.com, kexec@lists.infradead.org,
+        keyrings@vger.kernel.org, vgoyal@redhat.com, ebiederm@xmission.com,
+        mpe@ellerman.id.au, Josh Boyer <jwboyer@fedoraproject.org>
+Subject: Re: [PATCH v2 6/7] efi: Allow the "db" UEFI variable to be
+ suppressed
+In-Reply-To: <20181208202705.18673-7-nayna@linux.ibm.com>
+Message-ID: <alpine.LRH.2.21.1812120548480.11653@namei.org>
+References: <20181208202705.18673-1-nayna@linux.ibm.com> <20181208202705.18673-7-nayna@linux.ibm.com>
+User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Wire up the basic support for hot-adding memory. Since memory hotplug
-is fairly tightly coupled to sparsemem, we tweak pfn_valid() to also
-cross-check the presence of a section in the manner of the generic
-implementation, before falling back to memblock to check for no-map
-regions within a present section as before. By having arch_add_memory(()
-create the linear mapping first, this then makes everything work in the
-way that __add_section() expects.
+On Sun, 9 Dec 2018, Nayna Jain wrote:
 
-We expect hotplug to be ACPI-driven, so the swapper_pg_dir updates
-should be safe from races by virtue of the global device hotplug lock.
+> From: Josh Boyer <jwboyer@fedoraproject.org>
+> 
+> If a user tells shim to not use the certs/hashes in the UEFI db variable
+> for verification purposes, shim will set a UEFI variable called
+> MokIgnoreDB. Have the uefi import code look for this and ignore the db
+> variable if it is found.
+> 
+> Signed-off-by: Josh Boyer <jwboyer@fedoraproject.org>
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> Acked-by: Nayna Jain <nayna@linux.ibm.com>
+> Acked-by: Serge Hallyn <serge@hallyn.com>
 
-Signed-off-by: Robin Murphy <robin.murphy@arm.com>
----
 
-v2: Handle page-mappings-only cases appropriately
+Reviewed-by: James Morris <james.morris@microsoft.com>
 
- arch/arm64/Kconfig   |  3 +++
- arch/arm64/mm/init.c |  8 ++++++++
- arch/arm64/mm/mmu.c  | 17 +++++++++++++++++
- arch/arm64/mm/numa.c | 10 ++++++++++
- 4 files changed, 38 insertions(+)
 
-diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index 4dbef530cf58..be423fda5cec 100644
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@ -261,6 +261,9 @@ config ZONE_DMA32
- config HAVE_GENERIC_GUP
- 	def_bool y
- 
-+config ARCH_ENABLE_MEMORY_HOTPLUG
-+	def_bool y
-+
- config SMP
- 	def_bool y
- 
-diff --git a/arch/arm64/mm/init.c b/arch/arm64/mm/init.c
-index 6cde00554e9b..4bfe0fc9edac 100644
---- a/arch/arm64/mm/init.c
-+++ b/arch/arm64/mm/init.c
-@@ -291,6 +291,14 @@ int pfn_valid(unsigned long pfn)
- 
- 	if ((addr >> PAGE_SHIFT) != pfn)
- 		return 0;
-+
-+#ifdef CONFIG_SPARSEMEM
-+	if (pfn_to_section_nr(pfn) >= NR_MEM_SECTIONS)
-+		return 0;
-+
-+	if (!valid_section(__nr_to_section(pfn_to_section_nr(pfn))))
-+		return 0;
-+#endif
- 	return memblock_is_map_memory(addr);
- }
- EXPORT_SYMBOL(pfn_valid);
-diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
-index 674c409a8ce4..da513a1facf4 100644
---- a/arch/arm64/mm/mmu.c
-+++ b/arch/arm64/mm/mmu.c
-@@ -1046,3 +1046,20 @@ int pud_free_pmd_page(pud_t *pudp, unsigned long addr)
- 	pmd_free(NULL, table);
- 	return 1;
- }
-+
-+#ifdef CONFIG_MEMORY_HOTPLUG
-+int arch_add_memory(int nid, u64 start, u64 size, struct vmem_altmap *altmap,
-+		    bool want_memblock)
-+{
-+	int flags = 0;
-+
-+	if (rodata_full || debug_pagealloc_enabled())
-+		flags = NO_BLOCK_MAPPINGS | NO_CONT_MAPPINGS;
-+
-+	__create_pgd_mapping(swapper_pg_dir, start, __phys_to_virt(start),
-+			     size, PAGE_KERNEL, pgd_pgtable_alloc, flags);
-+
-+	return __add_pages(nid, start >> PAGE_SHIFT, size >> PAGE_SHIFT,
-+			   altmap, want_memblock);
-+}
-+#endif
-diff --git a/arch/arm64/mm/numa.c b/arch/arm64/mm/numa.c
-index 27a31efd9e8e..ae34e3a1cef1 100644
---- a/arch/arm64/mm/numa.c
-+++ b/arch/arm64/mm/numa.c
-@@ -466,3 +466,13 @@ void __init arm64_numa_init(void)
- 
- 	numa_init(dummy_numa_init);
- }
-+
-+/*
-+ * We hope that we will be hotplugging memory on nodes we already know about,
-+ * such that acpi_get_node() succeeds and we never fall back to this...
-+ */
-+int memory_add_physaddr_to_nid(u64 addr)
-+{
-+	pr_warn("Unknown node for memory at 0x%llx, assuming node 0\n", addr);
-+	return 0;
-+}
 -- 
-2.19.1.dirty
+James Morris
+<jmorris@namei.org>
 
