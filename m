@@ -2,101 +2,181 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08EA0C5CFFE
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 01:40:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AAA6C67839
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 01:41:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C2D8F20672
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 01:40:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CA0BE20672
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 01:41:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Ap6+XNMg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C2D8F20672
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="03E470CH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA0BE20672
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729158AbeLKBk4 (ORCPT
+        id S1729182AbeLKBld (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 20:40:56 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:45194 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729125AbeLKBkz (ORCPT
+        Mon, 10 Dec 2018 20:41:33 -0500
+Received: from aserp2130.oracle.com ([141.146.126.79]:54348 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728586AbeLKBld (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 20:40:55 -0500
-Received: by mail-lj1-f196.google.com with SMTP id s5-v6so11424916ljd.12
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Dec 2018 17:40:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=108tEwMnsOyR1Qg6kCaAed0YVY4gMbMYx9nYF5g2vss=;
-        b=Ap6+XNMgpe9K7kzWrVKQMc0yB3Q4W9dUSZ3coH4Ckfl8WWkr1bLJuVMdsPuYq4qHFD
-         tPr95BAMliFIJ3SMEzffmc2NOWkkCkkb8Wl/sEtEPYHqiWZ9o+GatitFv766i3wVgN9y
-         7foCjkMH5YtYG4l20OArWoXFyy1kRIXMonJ74=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=108tEwMnsOyR1Qg6kCaAed0YVY4gMbMYx9nYF5g2vss=;
-        b=RHBjIjrC1lnUCpzbqZB+1/f9Sb+ExZIvKS+I6rN/nxI3ETVNpsz+X5P9FKmtKkGh11
-         nBLgbQt07KS8AHeqyT1GGqt5KuqImEYvu2vL2kk1Az6iT2Lbm/S5SCTHoKZIedP0zGuT
-         cWV31GN0RQg3a9vTbwqiRImodx5hktN4xnmTY8gZ2zRqZc0UfbukHUDMoARROyoB6KEa
-         2i3KVPndZ5dFm8BRqL8IP/Pr7YiZyMdlu0gVdWeDeFwKFkIeNCPrBpYI3Ydk3d/njRrA
-         rb3cC3r19l/QTbw8tqSTqLinvHfG8R/BHMWuGRO2y1VT78kHybrjgx15vWmEVouCc95a
-         uEzg==
-X-Gm-Message-State: AA+aEWaBzRU30w1LNXbObWEVwdgDh8i0ObQcD3wI2MPdrvhaR3oD3z97
-        6A36Ixd7yzA9JTiJSzU/QJGgY8UtCt8=
-X-Google-Smtp-Source: AFSGD/XsDfUG4Vyh75/lakvvrlEd8HCuQbemHxftXzvIvTXtsYhdIh1/tF1OOSiBXfg2M9Yt+kSLvw==
-X-Received: by 2002:a2e:9059:: with SMTP id n25-v6mr8547087ljg.155.1544492452727;
-        Mon, 10 Dec 2018 17:40:52 -0800 (PST)
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com. [209.85.167.49])
-        by smtp.gmail.com with ESMTPSA id d10sm2395222lfa.71.2018.12.10.17.40.50
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 10 Dec 2018 17:40:51 -0800 (PST)
-Received: by mail-lf1-f49.google.com with SMTP id c16so9500952lfj.8
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Dec 2018 17:40:50 -0800 (PST)
-X-Received: by 2002:a19:982:: with SMTP id 124mr7866096lfj.138.1544492449862;
- Mon, 10 Dec 2018 17:40:49 -0800 (PST)
+        Mon, 10 Dec 2018 20:41:33 -0500
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wBB1YPt2010319;
+        Tue, 11 Dec 2018 01:41:28 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=+BqcrYpxy5FhbcXFuoeBDdEk/8cWqUDOO4+BAyActtY=;
+ b=03E470CHJ6TnfEhVEOx9se16Vc3fTDz9HchegaM/Vx3xAirRQ1qLybBY9UGetW5/Or10
+ wOC5SXc2Z2SjT48qKlHt9pv9eUaRUbY5usSKyLj7jC6plBb0de7rvJDuqwB1+GqVI1vQ
+ ZmvEwV4PLnOcHf6cz7Ao3R2lCae7zS9VhimErgnhUkcP0hktRjBVPyH8/sxaxFqqCT/X
+ vTYWJjqmEwo9kqnFv/C1MGAOecU5VOEhNMc6GsAsvf3UxW6PKFjqexvJcMOVQY2TqatK
+ nkEqmOTY1Z2YF1vJlBOfny793OYEA9q4Oi8yjYth7ClLKQ6InblxS5NE5sJW/EHK/qNx Nw== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by aserp2130.oracle.com with ESMTP id 2p83fe1d56-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 11 Dec 2018 01:41:28 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id wBB1fQC1026840
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 11 Dec 2018 01:41:27 GMT
+Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wBB1fQQX000878;
+        Tue, 11 Dec 2018 01:41:26 GMT
+Received: from [10.182.69.118] (/10.182.69.118)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 10 Dec 2018 17:41:26 -0800
+Subject: Re: [PATCH V13 0/3] blk-mq: refactor code of issue directly
+To:     axboe@kernel.dk
+Cc:     ming.lei@redhat.com, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <1544410892-2905-1-git-send-email-jianchao.w.wang@oracle.com>
+From:   "jianchao.wang" <jianchao.w.wang@oracle.com>
+Message-ID: <e0048af3-6ba5-f397-9837-41fede63ce07@oracle.com>
+Date:   Tue, 11 Dec 2018 09:42:17 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-References: <CALCETrXoRAibsbWa9nfbDrt0iEuebMnCMhSFg-d9W-J2g8mDjw@mail.gmail.com>
-In-Reply-To: <CALCETrXoRAibsbWa9nfbDrt0iEuebMnCMhSFg-d9W-J2g8mDjw@mail.gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Mon, 10 Dec 2018 17:40:33 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wi_Kp=3XmGDdzmadzFSPFvuL+aAJ6ZPAR=o4z=KwYT2vw@mail.gmail.com>
-Message-ID: <CAHk-=wi_Kp=3XmGDdzmadzFSPFvuL+aAJ6ZPAR=o4z=KwYT2vw@mail.gmail.com>
-Subject: Re: Can we drop upstream Linux x32 support?
-To:     Andrew Lutomirski <luto@kernel.org>
-Cc:     "the arch/x86 maintainers" <x86@kernel.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        linux-api@vger.kernel.org, Peter Anvin <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>, bp@alien8.de,
-        fweimer@redhat.com, vapier@gentoo.org, hjl.tools@gmail.com,
-        dalias@libc.org, x32@buildd.debian.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Will Deacon <will.deacon@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1544410892-2905-1-git-send-email-jianchao.w.wang@oracle.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9103 signatures=668679
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1812110014
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 10, 2018 at 5:23 PM Andy Lutomirski <luto@kernel.org> wrote:
->
-> I'm seriously considering sending a patch to remove x32 support from
-> upstream Linux.  Here are some problems with it:
+Ping ?
 
-I talked to Arnd (I think - we were talking about all the crazy ABI's,
-but maybe it was with somebody else) about exactly this in Edinburgh.
+Thanks
+Jianchao
 
-Apparently the main real use case is for extreme benchmarking. It's
-the only use-case where the complexity of maintaining a whole
-development environment and distro is worth it, it seems. Apparently a
-number of Spec submissions have been done with the x32 model.
-
-I'm not opposed to trying to sunset the support, but let's see who complains..
-
-              Linus
+On 12/10/18 11:01 AM, Jianchao Wang wrote:
+> Hi Jens
+> 
+> Please consider this patchset for 4.21.
+> 
+> It refactors the code of issue request directly to unify the interface
+> and make the code clearer and more readable.
+> 
+> The 1st patch refactors the code of issue request directly to unify the
+> helper interface which could handle all the cases.
+> 
+> The 2nd patch make blk_mq_sched_insert_requests issue requests directly
+> with 'bypass' false, then it needn't to handle the non-issued requests
+> any more.
+> 
+> The 3rd patch replace and kill the blk_mq_request_issue_directly.
+> 
+> V13:
+>  - remove the unused tag 'out' (1/3)
+> 
+> V12:
+>  - remove the original 1st patch/
+>  - rebase other 3 patches on newest for-4.21/block
+>  - add some comment
+> 
+> V11:
+>  - insert request to dispatch list when .queue_rq return
+>    BLK_STS_RESOURCE/BLK_STS_DEV_RESOURCE. (2/4)
+>  - stop to attempt direct-issue and insert the reset when meet
+>    non-ok case (3/4).
+> 
+> V10:
+>  - address Jen's comment.
+>  - let blk_mq_try_issue_directly return actual result for case
+>    'bypass == false'. (2/4)
+>  - use return value of blk_mq_try_issue_directly to identify
+>    whether the request is direct-issued successfully. (3/4)
+> 
+> V9:
+>  - rebase on recent for-4.21/block
+>  - add 1st patch
+> 
+> V8:
+>  - drop the original 2nd patch which try to insert requests into hctx->dispatch
+>    if quiesced or stopped.
+>  - remove two wrong 'unlikely'
+> 
+> V7:
+>  - drop the original 3rd patch which try to ensure hctx to be ran on
+>    its mapped cpu in issueing directly path.
+> 
+> V6:
+>  - drop original 1st patch to address Jen's comment
+>  - discard the enum mq_issue_decision and blk_mq_make_decision and use
+>    BLK_STS_* return values directly to address Jen's comment. (1/5)
+>  - add 'unlikely' in blk_mq_try_issue_directly (1/5)
+>  - refactor the 2nd and 3rd patch based on the new 1st patch.
+>  - reserve the unused_cookie in 4th and 5th patch
+> 
+> V5:
+>  - rebase against Jens' for-4.21/block branch
+>  - adjust the order of patch04 and patch05
+>  - add patch06 to replace and kill the one line blk_mq_request_bypass_insert
+>  - comment changes
+> 
+> V4:
+>  - split the original patch 1 into two patches, 1st and 2nd patch currently
+>  - rename the mq_decision to mq_issue_decision
+>  - comment changes
+> 
+> V3:
+>  - Correct the code about the case bypass_insert is true and io scheduler
+>    attached. The request still need to be issued in case above. (1/4)
+>  - Refactor the code to make code clearer. blk_mq_make_request is introduced
+>    to decide insert, end or just return based on the return value of .queue_rq
+>    and bypass_insert (1/4) 
+>  - Add the 2nd patch. It introduce a new decision result which indicates to
+>    insert request with blk_mq_request_bypass_insert.
+>  - Modify the code to adapt the new patch 1.
+> 
+> V2:
+>  - Add 1st and 2nd patch to refactor the code.
+> 
+> 
+> Jianchao Wang (3)
+> blk-mq: refactor the code of issue request directly
+> blk-mq: issue directly with bypass 'false' in
+> blk-mq: replace and kill blk_mq_request_issue_directly
+> 
+> block/blk-core.c     |   4 +-
+> block/blk-mq-sched.c |   8 ++--
+> block/blk-mq.c       | 123 +++++++++++++++++++++++++--------------------------
+> block/blk-mq.h       |   6 ++-
+> 4 files changed, 70 insertions(+), 71 deletions(-)
+> 
+> Thanks
+> Jianchao
+> 
+> 
