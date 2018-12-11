@@ -2,143 +2,226 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F505C07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 14:37:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66FB4C07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 14:39:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 532A62054F
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 14:37:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544539034;
-	bh=TotJtOPiOQiIU/x9E2IVMm3S8TyoOxNZOvPMLam/Aok=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=PDbj4lGRTK4OPPc4ZVT2G0GHw/fL+i2nRFOo8swg4xoutn/tMMuPS3AWmQtAqlnts
-	 olRve9r0FSjy57o8pme2irqGzSnSMOTK9yMaeklX4ljrl6iwfjs372GP498rpyfaad
-	 h2UGCjNnFvtD70isReucD+NdI/e255VESHopjrT0=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 532A62054F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 160BA2054F
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 14:39:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="CpMJl7pq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 160BA2054F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726714AbeLKOhN (ORCPT
+        id S1726584AbeLKOjZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 09:37:13 -0500
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:42760 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726335AbeLKOgw (ORCPT
+        Tue, 11 Dec 2018 09:39:25 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:55842 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726398AbeLKOjZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 09:36:52 -0500
-Received: by mail-ed1-f66.google.com with SMTP id j6so12678087edp.9;
-        Tue, 11 Dec 2018 06:36:50 -0800 (PST)
+        Tue, 11 Dec 2018 09:39:25 -0500
+Received: by mail-wm1-f68.google.com with SMTP id y139so2441551wmc.5
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 06:39:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :user-agent:mime-version:content-transfer-encoding;
+        bh=QD3eJs/RaEFfBBcOak7at7J5XZS3rHC6GMqA/4qo2JE=;
+        b=CpMJl7pqUmM5M5gdmlDWsZSyzrLV2h5NybK4gJFeQxAT/PnGYf4x9sTQFM+cwMrM/L
+         mJLvm32K99KXFv7zwWiHuAAJWi0ARa04mVliBSaV5zTJ/85tSF4HBuUhydsFwIwgq1PC
+         fRtCSYx7/tJ6gBoND4XqVgXgBhAZhUQ7hdrMdypuUdc501Kc9HUrVNf4kT0WxS0ftCUP
+         tMZJ8tlldoRp9cSYW2OLMYHTOSU1b0Nj71AqOLDVaH1thu4Gb9+ZInppJ+UaQLKPZAGo
+         vUJnqJiKXbinCjaE/dDiEKMv7m3I6q0Fx9NLocKlShqnJueoQQvg5K74LT/RqF34xQhh
+         FkMg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=SxgSQ41vevm4qZepZDpPxwHugsA+vDQMi7Sz6pwcLHk=;
-        b=oZBH4MzVdGwc6sXGnp9QWJFzScpu2o8BhpGtM2MpO8TDHArX9bOhN/uLDVgsnt01sp
-         y7/nY7YK/KaL+3eseCYcDikUeo5cGc65CIE5bX47bP5GudhwKUBemLXbl3+7xowSTzbO
-         EU7tK6vhqCfIHxSW22V1dCVTMCcHbJKSRs5vjc7o6h2MdEykGEAN0k8Sn22/XJuVkAwb
-         n4aFtWkTeYpYbvWTySbhs/Bpm6VVGHssuZtQEIDpK3Pne6ZKqU1wx30kmj4pmGWF9zYI
-         kPjYy1tfG7AXF2Cjk6FYICzRIV4NpFBVSS9PSs7w3eTkpGPPtQeqSLJwviXHzinlAxCA
-         Pj+w==
-X-Gm-Message-State: AA+aEWab62hJ8AYdVfr8lK4vl9em9hHxtGhyVEiRwa3unhd48vY5phXa
-        hLLpjy29j2p+y1OE/c7S1Dc=
-X-Google-Smtp-Source: AFSGD/UXuasc79hjCYZNspt5DG9q6e3pITQ4jJGUN6Ma0PV9YCqzlzLjEoj1c/VpHKI6ndPYtPTHqA==
-X-Received: by 2002:a17:906:5c9:: with SMTP id t9-v6mr12876002ejt.111.1544539010079;
-        Tue, 11 Dec 2018 06:36:50 -0800 (PST)
-Received: from tiehlicka.suse.cz (prg-ext-pat.suse.com. [213.151.95.130])
-        by smtp.gmail.com with ESMTPSA id z40sm4017084edz.86.2018.12.11.06.36.49
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 11 Dec 2018 06:36:49 -0800 (PST)
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     linux-api@vger.kernel.org, <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        David Rientjes <rientjes@google.com>, Jan Kara <jack@suse.cz>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Vlastimil Babka <vbabka@suse.cz>
-Subject: [PATCH 1/3] mm, proc: be more verbose about unstable VMA flags in /proc/<pid>/smaps
-Date:   Tue, 11 Dec 2018 15:36:39 +0100
-Message-Id: <20181211143641.3503-2-mhocko@kernel.org>
-X-Mailer: git-send-email 2.19.2
-In-Reply-To: <20181211143641.3503-1-mhocko@kernel.org>
-References: <20181211143641.3503-1-mhocko@kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:user-agent:mime-version:content-transfer-encoding;
+        bh=QD3eJs/RaEFfBBcOak7at7J5XZS3rHC6GMqA/4qo2JE=;
+        b=rNFJH51fdNWbaN7eLDy8xdCGknqxBS/uA7U0+WKIBp3TsDYIZv/+GRbi6Dl5ctedVO
+         VFSV0hrFr8BLsNF0u8ym9CN8rkMAeuPzkGpWAdyct7/eGRd8NsEIaNrwnHuO1kSsg28a
+         VfG6QFvrCl4GlZrpfVLJNH4AdSFdfmEdpVR7VC8h6O4G7HneZyWI/5AlOdh61V3DQKkB
+         vuWuSjyzgxgYGiTQNtexbaTNSPpoE4PzCyqlo4iu1XVDOF7e7osxddWstv7mu6e9r7XZ
+         r9YZh/1Yl+H2HCEuBXET0IEXGQqygbcBfQJX6yjEa5NPq1LLUMwdnF1Gdc1La1FEiyq/
+         crFg==
+X-Gm-Message-State: AA+aEWZtSjDFeQaRIunHu6vv5k0gpDBgHhk3Hc54MQv21UAS1d4X/e8f
+        BfynQTw/fdAEp8Jp5Fb2x4V4kw==
+X-Google-Smtp-Source: AFSGD/W39xHPT4eyXXzepuA82xS6hyVMU31nUqHw4EPBUjPMfFO3ijoACBQhkihSZjwMJsdrM/NNpA==
+X-Received: by 2002:a1c:aad2:: with SMTP id t201mr2482648wme.148.1544539162989;
+        Tue, 11 Dec 2018 06:39:22 -0800 (PST)
+Received: from boomer.baylibre.com ([2a01:e34:eeb6:4690:106b:bae3:31ed:7561])
+        by smtp.gmail.com with ESMTPSA id v1sm19160147wrw.90.2018.12.11.06.39.20
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 11 Dec 2018 06:39:22 -0800 (PST)
+Message-ID: <48899a9beb0c32103ae7edea14cec890779d498e.camel@baylibre.com>
+Subject: Re: [PATCH v5 1/2] dt-bindings: clk: meson-g12a: Add G12A EE Clock
+ Bindings
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Jian Hu <jian.hu@amlogic.com>,
+        Neil Armstrong <narmstrong@baylibre.com>
+Cc:     Kevin Hilman <khilman@baylibre.com>,
+        Carlo Caione <carlo@caione.org>, Rob Herring <robh@kernel.org>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Yixun Lan <yixun.lan@amlogic.com>,
+        Qiufang Dai <qiufang.dai@amlogic.com>,
+        Jianxin Pan <jianxin.pan@amlogic.com>,
+        linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Date:   Tue, 11 Dec 2018 15:39:19 +0100
+In-Reply-To: <1543498917-98605-2-git-send-email-jian.hu@amlogic.com>
+References: <1543498917-98605-1-git-send-email-jian.hu@amlogic.com>
+         <1543498917-98605-2-git-send-email-jian.hu@amlogic.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.2 (3.30.2-2.fc29) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michal Hocko <mhocko@suse.com>
+On Thu, 2018-11-29 at 21:41 +0800, Jian Hu wrote:
+> Add new clock controller compatible and dt-bingdings headers
+> for the Everything-Else domain of the g12a SoC
+> 
+> Signed-off-by: Jian Hu <jian.hu@amlogic.com>
+> ---
+>  .../bindings/clock/amlogic,gxbb-clkc.txt           |  1 +
+>  include/dt-bindings/clock/g12a-clkc.h              | 93
+> ++++++++++++++++++++++
+>  2 files changed, 94 insertions(+)
+>  create mode 100644 include/dt-bindings/clock/g12a-clkc.h
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt
+> b/Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt
+> index e950599..0833006 100644
+> --- a/Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt
+> +++ b/Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt
+> @@ -9,6 +9,7 @@ Required Properties:
+>  		"amlogic,gxbb-clkc" for GXBB SoC,
+>  		"amlogic,gxl-clkc" for GXL and GXM SoC,
+>  		"amlogic,axg-clkc" for AXG SoC.
+> +		"amlogic,g12a-clkc" for G12A SoC.
 
-Even though vma flags exported via /proc/<pid>/smaps are explicitly
-documented to be not guaranteed for future compatibility the warning
-doesn't go far enough because it doesn't mention semantic changes to
-those flags. And they are important as well because these flags are
-a deep implementation internal to the MM code and the semantic might
-change at any time.
 
-Let's consider two recent examples:
-http://lkml.kernel.org/r/20181002100531.GC4135@quack2.suse.cz
-: commit e1fb4a086495 "dax: remove VM_MIXEDMAP for fsdax and device dax" has
-: removed VM_MIXEDMAP flag from DAX VMAs. Now our testing shows that in the
-: mean time certain customer of ours started poking into /proc/<pid>/smaps
-: and looks at VMA flags there and if VM_MIXEDMAP is missing among the VMA
-: flags, the application just fails to start complaining that DAX support is
-: missing in the kernel.
+Binding description is not aligned with what the driver does.
+If you are going take clock input from DT, it needs to be documented.
 
-http://lkml.kernel.org/r/alpine.DEB.2.21.1809241054050.224429@chino.kir.corp.google.com
-: Commit 1860033237d4 ("mm: make PR_SET_THP_DISABLE immediately active")
-: introduced a regression in that userspace cannot always determine the set
-: of vmas where thp is ineligible.
-: Userspace relies on the "nh" flag being emitted as part of /proc/pid/smaps
-: to determine if a vma is eligible to be backed by hugepages.
-: Previous to this commit, prctl(PR_SET_THP_DISABLE, 1) would cause thp to
-: be disabled and emit "nh" as a flag for the corresponding vmas as part of
-: /proc/pid/smaps.  After the commit, thp is disabled by means of an mm
-: flag and "nh" is not emitted.
-: This causes smaps parsing libraries to assume a vma is eligible for thp
-: and ends up puzzling the user on why its memory is not backed by thp.
+In the meantime this has been done [0] for you but you'll have to rebase.
 
-In both cases userspace was relying on a semantic of a specific VMA
-flag. The primary reason why that happened is a lack of a proper
-internface. While this has been worked on and it will be fixed properly,
-it seems that our wording could see some refinement and be more vocal
-about semantic aspect of these flags as well.
+[0]: 20181203171640.12110-3-jbrunet@baylibre.com
 
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: David Rientjes <rientjes@google.com>
-Acked-by: Jan Kara <jack@suse.cz>
-Acked-by: Dan Williams <dan.j.williams@intel.com>
-Acked-by: David Rientjes <rientjes@google.com>
-Acked-by: Mike Rapoport <rppt@linux.ibm.com>
-Acked-by: Vlastimil Babka <vbabka@suse.cz>
-Signed-off-by: Michal Hocko <mhocko@suse.com>
----
- Documentation/filesystems/proc.txt | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+>  
+>  - #clock-cells: should be 1.
+>  
+> diff --git a/include/dt-bindings/clock/g12a-clkc.h b/include/dt-
+> bindings/clock/g12a-clkc.h
+> new file mode 100644
+> index 0000000..b55e6e1
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/g12a-clkc.h
+> @@ -0,0 +1,93 @@
+> +/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
+> +/*
+> + * Meson-G12A clock tree IDs
+> + *
+> + * Copyright (c) 2018 Amlogic, Inc. All rights reserved.
+> + */
+> +
+> +#ifndef __G12A_CLKC_H
+> +#define __G12A_CLKC_H
+> +
+> +#define CLKID_SYS_PLL				0
+> +#define CLKID_FIXED_PLL				1
+> +#define CLKID_FCLK_DIV2				2
+> +#define CLKID_FCLK_DIV3				3
+> +#define CLKID_FCLK_DIV4				4
+> +#define CLKID_FCLK_DIV5				5
+> +#define CLKID_FCLK_DIV7				6
+> +#define CLKID_GP0_PLL				7
+> +#define CLKID_CLK81				10
+> +#define CLKID_MPLL0				11
+> +#define CLKID_MPLL1				12
+> +#define CLKID_MPLL2				13
+> +#define CLKID_MPLL3				14
+> +#define CLKID_DDR				15
+> +#define CLKID_DOS				16
+> +#define CLKID_AUDIO_LOCKER			17
+> +#define CLKID_MIPI_DSI_HOST			18
+> +#define CLKID_ETH_PHY				19
+> +#define CLKID_ISA				20
+> +#define CLKID_PL301				21
+> +#define CLKID_PERIPHS				22
+> +#define CLKID_SPICC0				23
+> +#define CLKID_I2C				24
+> +#define CLKID_SANA				25
+> +#define CLKID_SD				26
+> +#define CLKID_RNG0				27
+> +#define CLKID_UART0				28
+> +#define CLKID_SPICC1				29
+> +#define CLKID_HIU_IFACE				30
+> +#define CLKID_MIPI_DSI_PHY			31
+> +#define CLKID_ASSIST_MISC			32
+> +#define CLKID_SD_EMMC_A				33
+> +#define CLKID_SD_EMMC_B				34
+> +#define CLKID_SD_EMMC_C				35
+> +#define CLKID_AUDIO_CODEC			36
+> +#define CLKID_AUDIO				37
+> +#define CLKID_ETH				38
+> +#define CLKID_DEMUX				39
+> +#define CLKID_AUDIO_IFIFO			40
+> +#define CLKID_ADC				41
+> +#define CLKID_UART1				42
+> +#define CLKID_G2D				43
+> +#define CLKID_RESET				44
+> +#define CLKID_PCIE_COMB				45
+> +#define CLKID_PARSER				46
+> +#define CLKID_USB				47
+> +#define CLKID_PCIE_PHY				48
+> +#define CLKID_AHB_ARB0				49
+> +#define CLKID_AHB_DATA_BUS			50
+> +#define CLKID_AHB_CTRL_BUS			51
+> +#define CLKID_HTX_HDCP22			52
+> +#define CLKID_HTX_PCLK				53
+> +#define CLKID_BT656				54
+> +#define CLKID_USB1_DDR_BRIDGE			55
+> +#define CLKID_MMC_PCLK				56
+> +#define CLKID_UART2				57
+> +#define CLKID_VPU_INTR				58
+> +#define CLKID_GIC				59
+> +#define CLKID_SD_EMMC_B_CLK0			60
+> +#define CLKID_SD_EMMC_C_CLK0			61
+> +#define CLKID_HIFI_PLL				71
+> +#define CLKID_VCLK2_VENCI0			77
+> +#define CLKID_VCLK2_VENCI1			78
+> +#define CLKID_VCLK2_VENCP0			79
+> +#define CLKID_VCLK2_VENCP1			80
+> +#define CLKID_VCLK2_VENCT0			81
+> +#define CLKID_VCLK2_VENCT1			82
+> +#define CLKID_VCLK2_OTHER			83
+> +#define CLKID_VCLK2_ENCI			84
+> +#define CLKID_VCLK2_ENCP			85
+> +#define CLKID_DAC_CLK				86
+> +#define CLKID_AOCLK				87
+> +#define CLKID_IEC958				88
+> +#define CLKID_ENC480P				89
+> +#define CLKID_RNG1				90
+> +#define CLKID_VCLK2_ENCT			91
+> +#define CLKID_VCLK2_ENCL			92
+> +#define CLKID_VCLK2_VENCLMMC			93
+> +#define CLKID_VCLK2_VENCL			94
+> +#define CLKID_VCLK2_OTHER1			95
+> +#define CLKID_FCLK_DIV2P5			96
+> +
+> +#endif /* __G12A_CLKC_H */
 
-diff --git a/Documentation/filesystems/proc.txt b/Documentation/filesystems/proc.txt
-index 12a5e6e693b6..2a4e63f5122c 100644
---- a/Documentation/filesystems/proc.txt
-+++ b/Documentation/filesystems/proc.txt
-@@ -496,7 +496,9 @@ flags associated with the particular virtual memory area in two letter encoded
- 
- Note that there is no guarantee that every flag and associated mnemonic will
- be present in all further kernel releases. Things get changed, the flags may
--be vanished or the reverse -- new added.
-+be vanished or the reverse -- new added. Interpretation of their meaning
-+might change in future as well. So each consumer of these flags has to
-+follow each specific kernel version for the exact semantic.
- 
- This file is only present if the CONFIG_MMU kernel configuration option is
- enabled.
--- 
-2.19.2
 
