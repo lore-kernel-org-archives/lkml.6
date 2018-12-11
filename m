@@ -2,338 +2,405 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15CB6C07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 14:05:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 481C8C5CFFE
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 14:06:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF9F42081B
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 14:05:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF9F42081B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id 010E82081B
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 14:06:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 010E82081B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fi.rohmeurope.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726705AbeLKOFh convert rfc822-to-8bit (ORCPT
+        id S1726777AbeLKOGH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 09:05:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57018 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726454AbeLKOFh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 09:05:37 -0500
-Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 032732081B;
-        Tue, 11 Dec 2018 14:05:34 +0000 (UTC)
-Date:   Tue, 11 Dec 2018 09:05:32 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     kernel test robot <rong.a.chen@intel.com>
-Cc:     Masami Hiramatsu <mhiramat@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>, lkp@01.org
-Subject: Re: [LKP] [function_graph] 8114865ff8:  netperf.Throughput_tps
- -1.1% regression
-Message-ID: <20181211090532.56284ee4@gandalf.local.home>
-In-Reply-To: <20181211091631.GQ23332@shao2-debian>
-References: <20181211091631.GQ23332@shao2-debian>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Tue, 11 Dec 2018 09:06:07 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:47071 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726454AbeLKOGH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 09:06:07 -0500
+Received: by mail-lj1-f196.google.com with SMTP id v15-v6so13019730ljh.13;
+        Tue, 11 Dec 2018 06:06:05 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=IB4yxfsjwzI74jbIIzVBNFow2r9PN3pYY1Qjb3RH2Wc=;
+        b=KtaRC/emXgerk5ldnQq+En8yh2J0Phnw1REZDT4SnlWc5NumfAViBh2K/dUjW5Edek
+         xA5ijRV49qnetxJX9HCOgKcVRljlJJ5S4QWMVyEvZKf8XVQXpGW30o6cCTGhys03d9rK
+         P4e+88qkrqew3uWl2PBGvXp9s2tmViVZX2mUgeuVFs6eCX9zPrg4H/Jc/958DIEbSKko
+         z9TCQNZuFkb7LyIBMvOYOMzdB1jMXKSsHreIse038uAw9U4hCRGUsfLCchcBIvmZIfGW
+         ItGxf+ZPst9PUSv42jxcuSzrBxZ8/UPc4rJPLUKMCp/QpCuA4deNhCm1+cjO/sUb8xHw
+         YlCw==
+X-Gm-Message-State: AA+aEWbUOPx2tL4CI5uVFpld99Xz7Nf2c1Nizq8Qft3K4t4R8608lIOA
+        vu1cNqXHXdBzHbBukei/x4c=
+X-Google-Smtp-Source: AFSGD/W/c0SRWd2jO67pfyAAWKhM1h9YmfBNnGG0vXXl6h9oRR7LSfHU0KbYoTp/+io54AAi3LNJ5g==
+X-Received: by 2002:a2e:6594:: with SMTP id e20-v6mr10720433ljf.123.1544537164255;
+        Tue, 11 Dec 2018 06:06:04 -0800 (PST)
+Received: from localhost.localdomain ([213.255.186.46])
+        by smtp.gmail.com with ESMTPSA id x21sm2654611lfe.6.2018.12.11.06.06.02
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 11 Dec 2018 06:06:03 -0800 (PST)
+Date:   Tue, 11 Dec 2018 16:05:55 +0200
+From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To:     matti.vaittinen@fi.rohmeurope.com, mazziesaccount@gmail.com
+Cc:     broonie@kernel.org, gregkh@linuxfoundation.org, rafael@kernel.org,
+        linus.walleij@linaro.org, linux-kernel@vger.kernel.org,
+        linux-gpio@vger.kernel.org, heikki.haikola@fi.rohmeurope.com,
+        mikko.mutanen@fi.rohmeurope.com, vladimir_zapolskiy@mentor.com
+Subject: [RFC PATCH v2] regmap: regmap-irq/gpio-max77620: add level-irq
+ support
+Message-ID: <20181211140555.GA5872@localhost.localdomain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 11 Dec 2018 17:16:31 +0800
-kernel test robot <rong.a.chen@intel.com> wrote:
+Add level active IRQ support to regmap-irq irqchip. Change breaks
+existing regmap-irq type setting. Convert the existing drivers which
+use regmap-irq with trigger type setting (gpio-max77620) to work
+with this new approach. So we do not magically support level-active
+IRQs on gpio-max77620 - but add support to the regmap-irq for chips
+which support them =)
 
-> Greeting,
-> 
-> FYI, we noticed a -1.1% regression of netperf.Throughput_tps due to commit:
-> 
-> 
-> commit: 8114865ff82e200b383e46821c25cb0625b842b5 ("function_graph: Create function_graph_enter() to consolidate architecture code")
-> https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git master
+We do not support distinguishing situation where HW supports rising
+and falling edge detection but not both. Separating this would require
+inventing yet another flags for IRQ types. We use the existing
+functionality which does logical OR for riding and falling edge values
+if both edges are requested to be detected. This may not work on all
+HWs.
 
-This must be a false positive, as the commit in question simply adds a
-function that nothing calls.
+Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+---
+One specific question hit me while doing this. Why does the regmap-irq
+core do default trigger type configuration? I did leave this in the
+patch - but to me it is strange. For me it would be unexpected that the
+HW default trigger level is changed by common code. I would understand
+if change was done by some board specific code, or code specific to a
+chip - but 'core' doing this seems wrong to me. Should it be removed?
 
--- Steve
+And I still don't have max77620 so I have only done _wery_ limited
+testing. I would _really_ appreciate if someone had time to review this
+thoroughly - and even happier if someone had possibility to try this out
+with the max77620.
 
-> 
-> in testcase: netperf
-> on test machine: 8 threads Intel(R) Core(TM) i7-4770 CPU @ 3.40GHz with 8G memory
-> with following parameters:
-> 
-> 	ip: ipv4
-> 	runtime: 300s
-> 	nr_threads: 200%
-> 	cluster: cs-localhost
-> 	test: TCP_CRR
-> 	ucode: 0x25
-> 	cpufreq_governor: performance
-> 
-> test-description: Netperf is a benchmark that can be use to measure various aspect of networking performance.
-> test-url: http://www.netperf.org/netperf/
-> 
-> 
-> 
-> Details are as below:
-> -------------------------------------------------------------------------------------------------->  
-> 
-> 
-> To reproduce:
-> 
->         git clone https://github.com/intel/lkp-tests.git
->         cd lkp-tests
->         bin/lkp install job.yaml  # job file is attached in this email
->         bin/lkp run     job.yaml
-> 
-> =========================================================================================
-> cluster/compiler/cpufreq_governor/ip/kconfig/nr_threads/rootfs/runtime/tbox_group/test/testcase/ucode:
->   cs-localhost/gcc-7/performance/ipv4/x86_64-rhel-7.2/200%/debian-x86_64-2018-04-03.cgz/300s/lkp-hsw-d01/TCP_CRR/netperf/0x25
-> 
-> commit: 
->   v4.20-rc3
->   8114865ff8 ("function_graph: Create function_graph_enter() to consolidate architecture code")
-> 
->        v4.20-rc3 8114865ff82e200b383e46821c 
-> ---------------- -------------------------- 
->        fail:runs  %reproduction    fail:runs
->            |             |             |    
->           2:5          -40%            :4     dmesg.WARNING:at#for_ip_swapgs_restore_regs_and_return_to_usermode/0x
->           2:5          -40%            :4     dmesg.WARNING:stack_recursion
->            :5           20%           1:4     kmsg.drm:drm_atomic_helper_wait_for_dependencies[drm_kms_helper]]*ERROR*[CONNECTOR:#:VGA-#]flip_done_timed_out
->            :5           20%           1:4     kmsg.drm:drm_atomic_helper_wait_for_dependencies[drm_kms_helper]]*ERROR*[CRTC:#:pipe_A]flip_done_timed_out
->            :5           20%           1:4     kmsg.drm:drm_atomic_helper_wait_for_dependencies[drm_kms_helper]]*ERROR*[PLANE:#:primary_A]flip_done_timed_out
->            :5           20%           1:4     kmsg.drm:drm_atomic_helper_wait_for_flip_done[drm_kms_helper]]*ERROR*[CRTC:#:pipe_A]flip_done_timed_out
->           1:5          -10%           1:4     perf-profile.calltrace.cycles-pp.dequeue_entity.dequeue_task_fair.__sched_text_start.schedule.schedule_timeout
->          26:5          -93%          21:4     perf-profile.children.cycles-pp.schedule_timeout
->           0:5           -1%           0:4     perf-profile.self.cycles-pp.schedule_timeout
->          %stddev     %change         %stddev
->              \          |                \  
->     131277            -1.1%     129833        netperf.Throughput_total_tps
->       8204            -1.1%       8114        netperf.Throughput_tps
->     104.96            -1.6%     103.25        netperf.time.user_time
->   39321448            -1.1%   38880992        netperf.time.voluntary_context_switches
->   39383220            -1.1%   38949992        netperf.workload
->     327.02          -100.0%       0.00        uptime.boot
->     179.66 ±  8%    -100.0%       0.00        uptime.idle
->       4174 ± 10%     +12.4%       4692 ± 12%  slabinfo.anon_vma.active_objs
->       4174 ± 10%     +12.4%       4692 ± 12%  slabinfo.anon_vma.num_objs
->      39.00          +229.5%     128.50 ± 27%  slabinfo.buffer_head.active_objs
->      39.00          +229.5%     128.50 ± 27%  slabinfo.buffer_head.num_objs
->       0.43 ±  9%     -19.6%       0.34 ± 13%  sched_debug.cfs_rq:/.nr_running.stddev
->      12140 ±114%    +330.4%      52248 ± 73%  sched_debug.cpu.avg_idle.min
->       0.88 ±  8%     +24.1%       1.09 ±  4%  sched_debug.cpu.clock.stddev
->       0.88 ±  8%     +24.1%       1.09 ±  4%  sched_debug.cpu.clock_task.stddev
->     163.75 ±  2%      +6.7%     174.67 ±  4%  sched_debug.cpu.cpu_load[0].avg
->     238.17 ±  3%     +24.7%     296.96 ± 17%  sched_debug.cpu.cpu_load[0].max
->     215.03 ±  2%     +16.7%     251.04 ±  8%  sched_debug.cpu.cpu_load[1].max
->      20.65 ± 12%     +19.2%      24.61 ±  7%  sched_debug.cpu.cpu_load[2].stddev
->      62804            +2.0%      64053        proc-vmstat.nr_active_anon
->       1.00        +10950.0%     110.50 ± 73%  proc-vmstat.nr_active_file
->      61258            +2.0%      62489        proc-vmstat.nr_anon_pages
->      23.00          +303.3%      92.75 ± 38%  proc-vmstat.nr_inactive_file
->       3854            +8.2%       4170        proc-vmstat.nr_kernel_stack
->       9474            +2.0%       9666        proc-vmstat.nr_slab_reclaimable
->       8753            +2.7%       8988        proc-vmstat.nr_slab_unreclaimable
->      62807            +2.0%      64055        proc-vmstat.nr_zone_active_anon
->       1.00        +10950.0%     110.50 ± 73%  proc-vmstat.nr_zone_active_file
->      23.00          +303.3%      92.75 ± 38%  proc-vmstat.nr_zone_inactive_file
->     461366            +4.9%     483771 ±  2%  proc-vmstat.numa_hit
->     461366            +4.9%     483771 ±  2%  proc-vmstat.numa_local
->  8.459e+11            -1.3%  8.347e+11        perf-stat.branch-instructions
->   81655384            -1.1%   80758043        perf-stat.context-switches
->       2.04            +1.3%       2.07        perf-stat.cpi
->      56426 ±  3%      -8.7%      51533 ±  5%  perf-stat.cpu-migrations
->       0.10 ±  2%      +0.0        0.10 ±  3%  perf-stat.dTLB-store-miss-rate%
->  8.433e+11            -1.1%  8.337e+11        perf-stat.dTLB-stores
->      75.15            +1.9       77.05        perf-stat.iTLB-load-miss-rate%
->  8.967e+08           -10.2%  8.056e+08        perf-stat.iTLB-loads
->  4.324e+12            -1.3%  4.267e+12        perf-stat.instructions
->       0.49            -1.2%       0.48        perf-stat.ipc
->     390422            +0.8%     393664        perf-stat.minor-faults
->   17227761 ±  3%     +15.0%   19812916 ±  2%  perf-stat.node-stores
->     390422            +0.8%     393654        perf-stat.page-faults
->       1.74 ± 15%      -0.3        1.43 ±  2%  perf-profile.calltrace.cycles-pp.security_sock_rcv_skb.sk_filter_trim_cap.tcp_filter.tcp_v4_rcv.ip_local_deliver_finish
->       1.53 ±  6%      -0.2        1.35 ±  2%  perf-profile.calltrace.cycles-pp.selinux_socket_sock_rcv_skb.security_sock_rcv_skb.sk_filter_trim_cap.tcp_filter.tcp_v4_rcv
->       1.06 ±  3%      -0.1        0.99 ±  2%  perf-profile.calltrace.cycles-pp.tcp_send_fin.tcp_close.inet_release.__sock_release.sock_close
->       2.24            +0.1        2.30        perf-profile.calltrace.cycles-pp.tcp_rcv_established.tcp_v4_do_rcv.__release_sock.release_sock.tcp_sendmsg
->       0.88 ±  2%      +0.1        0.95 ±  5%  perf-profile.calltrace.cycles-pp.__ip_queue_xmit.__tcp_transmit_skb.tcp_fin.tcp_data_queue.tcp_rcv_state_process
->       1.08 ±  2%      +0.1        1.17 ±  4%  perf-profile.calltrace.cycles-pp.__tcp_transmit_skb.tcp_fin.tcp_data_queue.tcp_rcv_state_process.tcp_v4_do_rcv
->       2.54            +0.1        2.65        perf-profile.calltrace.cycles-pp.__release_sock.release_sock.tcp_sendmsg.sock_sendmsg.__sys_sendto
->       2.68 ±  2%      +0.1        2.80        perf-profile.calltrace.cycles-pp.release_sock.tcp_sendmsg.sock_sendmsg.__sys_sendto.__x64_sys_sendto
->       3.03 ±  2%      +0.1        3.16        perf-profile.calltrace.cycles-pp.tcp_fin.tcp_data_queue.tcp_rcv_state_process.tcp_v4_do_rcv.tcp_v4_rcv
->       0.71 ±  7%      +0.1        0.84 ± 14%  perf-profile.calltrace.cycles-pp.ip_output.tcp_v4_send_synack.tcp_conn_request.tcp_rcv_state_process.tcp_v4_do_rcv
->       3.19 ±  2%      +0.2        3.36        perf-profile.calltrace.cycles-pp.tcp_data_queue.tcp_rcv_state_process.tcp_v4_do_rcv.tcp_v4_rcv.ip_local_deliver_finish
->       0.33 ± 82%      +0.3        0.63 ± 13%  perf-profile.calltrace.cycles-pp.ret_from_fork
->       0.33 ± 82%      +0.3        0.63 ± 13%  perf-profile.calltrace.cycles-pp.kthread.ret_from_fork
->      12.33            +0.4       12.77 ±  2%  perf-profile.calltrace.cycles-pp.tcp_v4_connect.__inet_stream_connect.inet_stream_connect.__sys_connect.__x64_sys_connect
->      30.28            +0.5       30.73        perf-profile.calltrace.cycles-pp.ip_local_deliver.ip_rcv.__netif_receive_skb_one_core.process_backlog.net_rx_action
->       7.34 ±  2%      +0.5        7.79 ±  2%  perf-profile.calltrace.cycles-pp.ip_output.__ip_queue_xmit.__tcp_transmit_skb.tcp_connect.tcp_v4_connect
->      32.67            +0.5       33.13        perf-profile.calltrace.cycles-pp.__netif_receive_skb_one_core.process_backlog.net_rx_action.__softirqentry_text_start.do_softirq_own_stack
->       7.21 ±  2%      +0.5        7.69 ±  3%  perf-profile.calltrace.cycles-pp.ip_finish_output2.ip_output.__ip_queue_xmit.__tcp_transmit_skb.tcp_connect
->       8.80 ±  2%      +0.5        9.28        perf-profile.calltrace.cycles-pp.tcp_rcv_state_process.tcp_v4_do_rcv.tcp_v4_rcv.ip_local_deliver_finish.ip_local_deliver
->      10.34            +0.5       10.88 ±  3%  perf-profile.calltrace.cycles-pp.tcp_connect.tcp_v4_connect.__inet_stream_connect.inet_stream_connect.__sys_connect
->      34.75            +0.5       35.30        perf-profile.calltrace.cycles-pp.__softirqentry_text_start.do_softirq_own_stack.do_softirq.__local_bh_enable_ip.ip_finish_output2
->      34.88            +0.6       35.43        perf-profile.calltrace.cycles-pp.do_softirq_own_stack.do_softirq.__local_bh_enable_ip.ip_finish_output2.ip_output
->      16.15            +0.6       16.70 ±  2%  perf-profile.calltrace.cycles-pp.tcp_v4_do_rcv.tcp_v4_rcv.ip_local_deliver_finish.ip_local_deliver.ip_rcv
->       8.86 ±  2%      +0.6        9.44 ±  2%  perf-profile.calltrace.cycles-pp.__tcp_transmit_skb.tcp_connect.tcp_v4_connect.__inet_stream_connect.inet_stream_connect
->      35.25            +0.6       35.84        perf-profile.calltrace.cycles-pp.do_softirq.__local_bh_enable_ip.ip_finish_output2.ip_output.__ip_queue_xmit
->      34.18            +0.6       34.78        perf-profile.calltrace.cycles-pp.net_rx_action.__softirqentry_text_start.do_softirq_own_stack.do_softirq.__local_bh_enable_ip
->       8.31 ±  2%      +0.6        8.92 ±  2%  perf-profile.calltrace.cycles-pp.__ip_queue_xmit.__tcp_transmit_skb.tcp_connect.tcp_v4_connect.__inet_stream_connect
->      35.35            +0.7       36.01        perf-profile.calltrace.cycles-pp.__local_bh_enable_ip.ip_finish_output2.ip_output.__ip_queue_xmit.__tcp_transmit_skb
->       2.33 ±  5%      -0.2        2.10        perf-profile.children.cycles-pp.security_sock_rcv_skb
->       2.21 ±  5%      -0.2        1.99        perf-profile.children.cycles-pp.selinux_socket_sock_rcv_skb
->       2.51 ±  5%      -0.2        2.30        perf-profile.children.cycles-pp.sk_filter_trim_cap
->       1.59 ±  6%      -0.2        1.42        perf-profile.children.cycles-pp.selinux_sock_rcv_skb_compat
->       1.91 ±  6%      -0.2        1.75        perf-profile.children.cycles-pp._raw_spin_lock
->       1.49 ±  4%      -0.1        1.36 ±  2%  perf-profile.children.cycles-pp.__kfree_skb
->       0.61 ±  9%      -0.1        0.50 ±  9%  perf-profile.children.cycles-pp.sock_def_wakeup
->       0.97 ±  3%      -0.1        0.88 ±  6%  perf-profile.children.cycles-pp.avc_has_perm
->       0.56 ±  6%      -0.1        0.47 ±  4%  perf-profile.children.cycles-pp.__x64_sys_close
->       0.37 ± 10%      -0.1        0.29 ± 12%  perf-profile.children.cycles-pp._copy_from_iter_full
->       0.62 ±  3%      -0.1        0.54 ±  3%  perf-profile.children.cycles-pp.__fget_light
->       0.26 ± 13%      -0.1        0.19 ±  9%  perf-profile.children.cycles-pp.security_file_alloc
->       0.42 ±  2%      -0.1        0.35 ± 13%  perf-profile.children.cycles-pp.copy_user_generic_unrolled
->       0.23 ± 11%      -0.1        0.16 ±  9%  perf-profile.children.cycles-pp.selinux_file_alloc_security
->       1.06 ±  3%      -0.1        1.00 ±  2%  perf-profile.children.cycles-pp.tcp_send_fin
->       0.11 ± 18%      -0.1        0.05 ± 58%  perf-profile.children.cycles-pp.sel_netnode_find
->       0.13 ± 16%      -0.1        0.07 ±  6%  perf-profile.children.cycles-pp.sel_netnode_sid
->       0.39 ±  6%      -0.1        0.34 ±  4%  perf-profile.children.cycles-pp.skb_release_data
->       0.34 ± 10%      -0.1        0.29 ± 11%  perf-profile.children.cycles-pp.filp_close
->       0.20 ±  5%      -0.0        0.15 ± 12%  perf-profile.children.cycles-pp.tcp_update_skb_after_send
->       0.36 ±  7%      -0.0        0.32 ±  5%  perf-profile.children.cycles-pp.__update_load_avg_se
->       0.12 ± 14%      -0.0        0.09 ± 16%  perf-profile.children.cycles-pp.__tcp_ack_snd_check
->       0.15 ± 14%      -0.0        0.11 ±  9%  perf-profile.children.cycles-pp.init_timer_key
->       0.15 ±  4%      -0.0        0.12 ± 10%  perf-profile.children.cycles-pp.remove_wait_queue
->       0.08 ± 17%      -0.0        0.06        perf-profile.children.cycles-pp.ip_build_and_send_pkt
->       0.15 ±  6%      +0.0        0.17 ±  3%  perf-profile.children.cycles-pp.__usecs_to_jiffies
->       0.04 ± 51%      +0.0        0.07 ±  6%  perf-profile.children.cycles-pp.find_exception
->       0.09 ± 11%      +0.0        0.11 ± 17%  perf-profile.children.cycles-pp.tcp_newly_delivered
->       0.09 ± 15%      +0.0        0.11 ±  7%  perf-profile.children.cycles-pp.xfrm_lookup_with_ifid
->       0.12 ± 15%      +0.0        0.15 ± 11%  perf-profile.children.cycles-pp.get_nohz_timer_target
->       0.17 ± 11%      +0.0        0.20 ± 11%  perf-profile.children.cycles-pp.tcp_md5_do_lookup
->       0.02 ±123%      +0.0        0.06 ± 16%  perf-profile.children.cycles-pp.security_sk_classify_flow
->       0.08 ± 21%      +0.0        0.11 ±  4%  perf-profile.children.cycles-pp._raw_spin_trylock
->       0.04 ± 83%      +0.0        0.08 ± 14%  perf-profile.children.cycles-pp.activate_task
->       0.05 ± 54%      +0.0        0.09 ± 24%  perf-profile.children.cycles-pp.tcp_urg
->       0.19 ±  8%      +0.0        0.23 ±  8%  perf-profile.children.cycles-pp.tcp_rearm_rto
->       0.01 ±200%      +0.0        0.06 ±  9%  perf-profile.children.cycles-pp.skb_free_head
->       0.10 ±  9%      +0.0        0.15 ±  8%  perf-profile.children.cycles-pp.xfrm_lookup_route
->       0.39 ±  5%      +0.1        0.44 ±  8%  perf-profile.children.cycles-pp.ip_rcv_core
->       0.14 ± 19%      +0.1        0.19 ± 22%  perf-profile.children.cycles-pp.__inet_lookup_listener
->       0.01 ±200%      +0.1        0.06 ± 20%  perf-profile.children.cycles-pp.blkcg_maybe_throttle_current
->       0.00            +0.1        0.05 ±  8%  perf-profile.children.cycles-pp.ip_mc_drop_socket
->       0.58 ±  4%      +0.1        0.64 ±  3%  perf-profile.children.cycles-pp.sk_prot_alloc
->       0.60 ±  4%      +0.1        0.66 ±  4%  perf-profile.children.cycles-pp.__might_sleep
->       0.15 ± 25%      +0.1        0.21 ± 20%  perf-profile.children.cycles-pp.eth_type_trans
->       1.13 ±  2%      +0.1        1.21 ±  2%  perf-profile.children.cycles-pp.inet_csk_destroy_sock
->       0.78 ±  2%      +0.1        0.87 ±  8%  perf-profile.children.cycles-pp.tcp_mstamp_refresh
->       0.52 ±  8%      +0.1        0.63 ± 13%  perf-profile.children.cycles-pp.kthread
->       0.52 ±  8%      +0.1        0.64 ± 13%  perf-profile.children.cycles-pp.ret_from_fork
->       0.56 ± 11%      +0.1        0.68 ±  6%  perf-profile.children.cycles-pp.ip_finish_output
->       3.44            +0.1        3.57        perf-profile.children.cycles-pp.tcp_fin
->       4.81            +0.1        4.95        perf-profile.children.cycles-pp.tcp_data_queue
->      12.35            +0.4       12.78 ±  2%  perf-profile.children.cycles-pp.tcp_v4_connect
->      32.75            +0.5       33.20        perf-profile.children.cycles-pp.__netif_receive_skb_one_core
->      10.35            +0.5       10.89 ±  3%  perf-profile.children.cycles-pp.tcp_connect
->      34.90            +0.6       35.45        perf-profile.children.cycles-pp.do_softirq_own_stack
->      34.29            +0.6       34.86        perf-profile.children.cycles-pp.net_rx_action
->      45.59            +0.6       46.19        perf-profile.children.cycles-pp.__tcp_transmit_skb
->      35.37            +0.6       35.99        perf-profile.children.cycles-pp.__softirqentry_text_start
->      42.97            +0.7       43.69        perf-profile.children.cycles-pp.__ip_queue_xmit
->      35.89            +0.7       36.62        perf-profile.children.cycles-pp.__local_bh_enable_ip
->      41.33            +0.8       42.10        perf-profile.children.cycles-pp.ip_output
->      39.17            +0.8       39.94        perf-profile.children.cycles-pp.ip_finish_output2
->       0.88 ±  4%      -0.1        0.74 ±  3%  perf-profile.self.cycles-pp.tcp_write_xmit
->       0.61 ±  2%      -0.1        0.54 ±  3%  perf-profile.self.cycles-pp.__fget_light
->       0.23 ±  5%      -0.1        0.15 ± 18%  perf-profile.self.cycles-pp.tcp_v4_connect
->       0.93 ±  3%      -0.1        0.86 ±  6%  perf-profile.self.cycles-pp.avc_has_perm
->       0.41 ±  2%      -0.1        0.34 ± 12%  perf-profile.self.cycles-pp.copy_user_generic_unrolled
->       0.11 ± 18%      -0.1        0.05 ± 58%  perf-profile.self.cycles-pp.sel_netnode_find
->       0.39 ±  8%      -0.1        0.32 ±  6%  perf-profile.self.cycles-pp.selinux_ip_postroute
->       0.11 ± 24%      -0.1        0.05 ± 58%  perf-profile.self.cycles-pp.security_d_instantiate
->       0.16 ±  7%      -0.1        0.11 ± 13%  perf-profile.self.cycles-pp.tcp_send_fin
->       0.35 ±  6%      -0.1        0.30 ±  6%  perf-profile.self.cycles-pp.__update_load_avg_se
->       0.10 ± 15%      -0.0        0.06 ± 58%  perf-profile.self.cycles-pp.__x64_sys_close
->       0.07 ± 16%      -0.0        0.03 ±100%  perf-profile.self.cycles-pp.inet_release
->       0.35 ±  7%      -0.0        0.31 ±  2%  perf-profile.self.cycles-pp.tcp_parse_options
->       0.09 ± 15%      -0.0        0.05 ± 58%  perf-profile.self.cycles-pp.__sys_socket
->       0.13 ±  8%      -0.0        0.10 ± 17%  perf-profile.self.cycles-pp.sk_stream_alloc_skb
->       0.12 ± 13%      -0.0        0.08 ± 19%  perf-profile.self.cycles-pp.__tcp_ack_snd_check
->       0.14 ± 12%      -0.0        0.10 ± 12%  perf-profile.self.cycles-pp.skb_release_all
->       0.16 ± 10%      -0.0        0.13 ±  3%  perf-profile.self.cycles-pp.__inet_bind
->       0.18 ±  8%      -0.0        0.15 ±  5%  perf-profile.self.cycles-pp.sk_clone_lock
->       0.16 ±  5%      -0.0        0.14 ± 11%  perf-profile.self.cycles-pp.__wake_up_common
->       0.09 ±  8%      +0.0        0.11 ± 11%  perf-profile.self.cycles-pp.ip_local_out
->       0.08 ± 12%      +0.0        0.11 ±  9%  perf-profile.self.cycles-pp.xfrm_lookup_with_ifid
->       0.11 ±  8%      +0.0        0.14 ±  8%  perf-profile.self.cycles-pp.__usecs_to_jiffies
->       0.16 ± 10%      +0.0        0.19 ±  4%  perf-profile.self.cycles-pp.tcp_rearm_rto
->       0.07 ±  6%      +0.0        0.11 ± 14%  perf-profile.self.cycles-pp.__dentry_kill
->       0.24 ±  7%      +0.0        0.28 ±  6%  perf-profile.self.cycles-pp.tcp_ack_update_rtt
->       0.08 ± 12%      +0.0        0.11 ± 15%  perf-profile.self.cycles-pp.tcp_newly_delivered
->       0.14 ± 16%      +0.0        0.17 ± 13%  perf-profile.self.cycles-pp.skb_push
->       0.06 ± 54%      +0.0        0.10 ± 11%  perf-profile.self.cycles-pp._raw_spin_unlock_bh
->       0.08 ± 11%      +0.0        0.12 ± 17%  perf-profile.self.cycles-pp.tcp_init_transfer
->       0.07 ± 23%      +0.0        0.11 ±  4%  perf-profile.self.cycles-pp._raw_spin_trylock
->       0.14 ± 13%      +0.0        0.18 ±  9%  perf-profile.self.cycles-pp.account_entity_dequeue
->       0.01 ±200%      +0.0        0.06 ±  9%  perf-profile.self.cycles-pp.skb_free_head
->       0.38 ±  5%      +0.1        0.43 ±  7%  perf-profile.self.cycles-pp.ip_rcv_core
->       0.06 ± 12%      +0.1        0.11 ± 25%  perf-profile.self.cycles-pp.tcp_filter
->       0.14 ± 19%      +0.1        0.19 ± 22%  perf-profile.self.cycles-pp.__inet_lookup_listener
->       0.00            +0.1        0.05 ±  8%  perf-profile.self.cycles-pp.ip_mc_drop_socket
->       0.10 ± 26%      +0.1        0.15 ± 11%  perf-profile.self.cycles-pp.tcp_make_synack
->       0.03 ± 82%      +0.1        0.09 ± 24%  perf-profile.self.cycles-pp.tcp_urg
->       0.51 ±  6%      +0.1        0.57 ±  3%  perf-profile.self.cycles-pp.__might_sleep
->       0.14 ± 28%      +0.1        0.21 ± 20%  perf-profile.self.cycles-pp.eth_type_trans
->       0.54 ±  5%      +0.1        0.61 ±  4%  perf-profile.self.cycles-pp.__kmalloc_node_track_caller
->       0.44 ±  5%      +0.1        0.51 ±  4%  perf-profile.self.cycles-pp.enqueue_to_backlog
->       0.45 ± 10%      +0.1        0.53        perf-profile.self.cycles-pp.net_rx_action
->       0.28 ±  8%      +0.1        0.36 ±  6%  perf-profile.self.cycles-pp.ip_local_deliver_finish
->       0.70 ±  7%      +0.1        0.79 ±  6%  perf-profile.self.cycles-pp.__dev_queue_xmit
->       0.52 ±  4%      +0.1        0.64 ±  9%  perf-profile.self.cycles-pp.mod_timer
->       1.54 ±  3%      +0.1        1.67 ±  3%  perf-profile.self.cycles-pp.__tcp_transmit_skb
->       0.28 ±  5%      +0.1        0.41 ±  8%  perf-profile.self.cycles-pp.ip_finish_output
->       0.68 ±  5%      +0.1        0.83 ±  4%  perf-profile.self.cycles-pp.__local_bh_enable_ip
->       0.22 ± 10%      +0.3        0.49 ±  3%  perf-profile.self.cycles-pp.dev_hard_start_xmit
-> 
-> 
->                                                                                 
->                         netperf.time.voluntary_context_switches                 
->                                                                                 
->     4e+07 O-+O-O--O--O-O----O--O------------O--O--O-O--O--O-O--O-O--O-------+   
->           |                         O     O                                 |   
->   3.5e+07 +-+                                                               |   
->     3e+07 +-+                                                               |   
->           |                                                                 |   
->   2.5e+07 +-+                                                               |   
->           |                                                                 |   
->     2e+07 +-+                                                               |   
->           |                                                                 |   
->   1.5e+07 +-+                                                               |   
->     1e+07 +-+                                                               |   
->           |                                                                 |   
->     5e+06 +-+                                                               |   
->           |                                                                 |   
->         0 +-+-------------O-------O----O------------------------------------+   
->                                                                                 
->                                                                                 
-> [*] bisect-good sample
-> [O] bisect-bad  sample
-> 
-> 
-> 
-> Disclaimer:
-> Results have been estimated based on internal Intel analysis and are provided
-> for informational purposes only. Any difference in system hardware or software
-> design or configuration may affect actual performance.
-> 
-> 
-> Thanks,
-> Rong Chen
+ drivers/base/regmap/regmap-irq.c | 61 +++++++++++++++----------
+ drivers/gpio/gpio-max77620.c     | 96 ++++++++++++++++++++++++++--------------
+ include/linux/regmap.h           | 29 ++++++++----
+ 3 files changed, 122 insertions(+), 64 deletions(-)
 
+diff --git a/drivers/base/regmap/regmap-irq.c b/drivers/base/regmap/regmap-irq.c
+index 429ca8ed7e51..eacbb807d1c6 100644
+--- a/drivers/base/regmap/regmap-irq.c
++++ b/drivers/base/regmap/regmap-irq.c
+@@ -162,12 +162,8 @@ static void regmap_irq_sync_unlock(struct irq_data *data)
+ 			continue;
+ 		reg = d->chip->type_base +
+ 			(i * map->reg_stride * d->type_reg_stride);
+-		if (d->chip->type_invert)
+-			ret = regmap_irq_update_bits(d, reg,
+-				d->type_buf_def[i], ~d->type_buf[i]);
+-		else
+-			ret = regmap_irq_update_bits(d, reg,
+-				d->type_buf_def[i], d->type_buf[i]);
++		ret = regmap_irq_update_bits(d, reg, d->type_buf_def[i],
++					     d->type_buf[i]);
+ 		if (ret != 0)
+ 			dev_err(d->map->dev, "Failed to sync type in %x\n",
+ 				reg);
+@@ -212,27 +208,42 @@ static int regmap_irq_set_type(struct irq_data *data, unsigned int type)
+ 	struct regmap_irq_chip_data *d = irq_data_get_irq_chip_data(data);
+ 	struct regmap *map = d->map;
+ 	const struct regmap_irq *irq_data = irq_to_regmap_irq(d, data->hwirq);
+-	int reg = irq_data->type_reg_offset / map->reg_stride;
++	int reg;
++	const struct regmap_irq_type *t = &irq_data->type;
+ 
+-	if (!(irq_data->type_rising_mask | irq_data->type_falling_mask))
+-		return 0;
++	if ((t->types_supported & type) != type)
++		return -ENOTSUPP;
++
++	reg = t->type_reg_offset / map->reg_stride;
+ 
+-	d->type_buf[reg] &= ~(irq_data->type_falling_mask |
+-					irq_data->type_rising_mask);
++	if (t->type_reg_mask)
++		d->type_buf[reg] &= ~t->type_reg_mask;
++	else
++		d->type_buf[reg] &= ~(t->type_falling_val |
++				      t->type_rising_val |
++				      t->type_level_low_val |
++				      t->type_level_high_val);
+ 	switch (type) {
+ 	case IRQ_TYPE_EDGE_FALLING:
+-		d->type_buf[reg] |= irq_data->type_falling_mask;
++		d->type_buf[reg] |= t->type_falling_val;
+ 		break;
+ 
+ 	case IRQ_TYPE_EDGE_RISING:
+-		d->type_buf[reg] |= irq_data->type_rising_mask;
++		d->type_buf[reg] |= t->type_rising_val;
+ 		break;
+ 
+ 	case IRQ_TYPE_EDGE_BOTH:
+-		d->type_buf[reg] |= (irq_data->type_falling_mask |
+-					irq_data->type_rising_mask);
++		d->type_buf[reg] |= (t->type_falling_val |
++					t->type_rising_val);
++		break;
++
++	case IRQ_TYPE_LEVEL_HIGH:
++		d->type_buf[reg] |= t->type_level_high_val;
+ 		break;
+ 
++	case IRQ_TYPE_LEVEL_LOW:
++		d->type_buf[reg] |= t->type_level_low_val;
++		break;
+ 	default:
+ 		return -EINVAL;
+ 	}
+@@ -602,9 +613,15 @@ int regmap_add_irq_chip(struct regmap *map, int irq, int irq_flags,
+ 
+ 	if (chip->num_type_reg) {
+ 		for (i = 0; i < chip->num_irqs; i++) {
+-			reg = chip->irqs[i].type_reg_offset / map->reg_stride;
+-			d->type_buf_def[reg] |= chip->irqs[i].type_rising_mask |
+-					chip->irqs[i].type_falling_mask;
++			const struct regmap_irq_type *type;
++
++			type = &chip->irqs[i].type;
++			if (!type->types_supported)
++				continue;
++			reg = type->type_reg_offset / map->reg_stride;
++			/* Why we do this ? */
++			d->type_buf_def[reg] |= type->type_rising_val |
++					type->type_falling_val;
+ 		}
+ 		for (i = 0; i < chip->num_type_reg; ++i) {
+ 			if (!d->type_buf_def[i])
+@@ -612,12 +629,8 @@ int regmap_add_irq_chip(struct regmap *map, int irq, int irq_flags,
+ 
+ 			reg = chip->type_base +
+ 				(i * map->reg_stride * d->type_reg_stride);
+-			if (chip->type_invert)
+-				ret = regmap_irq_update_bits(d, reg,
+-					d->type_buf_def[i], 0xFF);
+-			else
+-				ret = regmap_irq_update_bits(d, reg,
+-					d->type_buf_def[i], 0x0);
++			ret = regmap_irq_update_bits(d, reg, d->type_buf_def[i],
++						     0x0);
+ 			if (ret != 0) {
+ 				dev_err(map->dev,
+ 					"Failed to set type in 0x%x: %x\n",
+diff --git a/drivers/gpio/gpio-max77620.c b/drivers/gpio/gpio-max77620.c
+index 538bce4b5b42..65fa3a198ebd 100644
+--- a/drivers/gpio/gpio-max77620.c
++++ b/drivers/gpio/gpio-max77620.c
+@@ -25,60 +25,92 @@ struct max77620_gpio {
+ 
+ static const struct regmap_irq max77620_gpio_irqs[] = {
+ 	[0] = {
+-		.mask = MAX77620_IRQ_LVL2_GPIO_EDGE0,
+-		.type_rising_mask = MAX77620_CNFG_GPIO_INT_RISING,
+-		.type_falling_mask = MAX77620_CNFG_GPIO_INT_FALLING,
+ 		.reg_offset = 0,
+-		.type_reg_offset = 0,
++		.mask = MAX77620_IRQ_LVL2_GPIO_EDGE0,
++		.type = {
++			.type_rising_val = MAX77620_CNFG_GPIO_INT_RISING,
++			.type_falling_val = MAX77620_CNFG_GPIO_INT_FALLING,
++			.type_reg_mask = MAX77620_CNFG_GPIO_INT_MASK,
++			.type_reg_offset = 0,
++			.types_supported = IRQ_TYPE_EDGE_BOTH,
++		},
+ 	},
+ 	[1] = {
+-		.mask = MAX77620_IRQ_LVL2_GPIO_EDGE1,
+-		.type_rising_mask = MAX77620_CNFG_GPIO_INT_RISING,
+-		.type_falling_mask = MAX77620_CNFG_GPIO_INT_FALLING,
+ 		.reg_offset = 0,
+-		.type_reg_offset = 1,
++		.mask = MAX77620_IRQ_LVL2_GPIO_EDGE1,
++		.type = {
++			.type_rising_val = MAX77620_CNFG_GPIO_INT_RISING,
++			.type_falling_val = MAX77620_CNFG_GPIO_INT_FALLING,
++			.type_reg_mask = MAX77620_CNFG_GPIO_INT_MASK,
++			.type_reg_offset = 1,
++			.types_supported = IRQ_TYPE_EDGE_BOTH,
++		},
+ 	},
+ 	[2] = {
+-		.mask = MAX77620_IRQ_LVL2_GPIO_EDGE2,
+-		.type_rising_mask = MAX77620_CNFG_GPIO_INT_RISING,
+-		.type_falling_mask = MAX77620_CNFG_GPIO_INT_FALLING,
+ 		.reg_offset = 0,
+-		.type_reg_offset = 2,
++		.mask = MAX77620_IRQ_LVL2_GPIO_EDGE2,
++		.type = {
++			.type_rising_val = MAX77620_CNFG_GPIO_INT_RISING,
++			.type_falling_val = MAX77620_CNFG_GPIO_INT_FALLING,
++			.type_reg_mask = MAX77620_CNFG_GPIO_INT_MASK,
++			.type_reg_offset = 2,
++			.types_supported = IRQ_TYPE_EDGE_BOTH,
++		},
+ 	},
+ 	[3] = {
+-		.mask = MAX77620_IRQ_LVL2_GPIO_EDGE3,
+-		.type_rising_mask = MAX77620_CNFG_GPIO_INT_RISING,
+-		.type_falling_mask = MAX77620_CNFG_GPIO_INT_FALLING,
+ 		.reg_offset = 0,
+-		.type_reg_offset = 3,
++		.mask = MAX77620_IRQ_LVL2_GPIO_EDGE3,
++		.type = {
++			.type_rising_val = MAX77620_CNFG_GPIO_INT_RISING,
++			.type_falling_val = MAX77620_CNFG_GPIO_INT_FALLING,
++			.type_reg_mask = MAX77620_CNFG_GPIO_INT_MASK,
++			.type_reg_offset = 3,
++			.types_supported = IRQ_TYPE_EDGE_BOTH,
++		},
+ 	},
+ 	[4] = {
+-		.mask = MAX77620_IRQ_LVL2_GPIO_EDGE4,
+-		.type_rising_mask = MAX77620_CNFG_GPIO_INT_RISING,
+-		.type_falling_mask = MAX77620_CNFG_GPIO_INT_FALLING,
+ 		.reg_offset = 0,
+-		.type_reg_offset = 4,
++		.mask = MAX77620_IRQ_LVL2_GPIO_EDGE4,
++		.type = {
++			.type_rising_val = MAX77620_CNFG_GPIO_INT_RISING,
++			.type_falling_val = MAX77620_CNFG_GPIO_INT_FALLING,
++			.type_reg_mask = MAX77620_CNFG_GPIO_INT_MASK,
++			.type_reg_offset = 4,
++			.types_supported = IRQ_TYPE_EDGE_BOTH,
++		},
+ 	},
+ 	[5] = {
+-		.mask = MAX77620_IRQ_LVL2_GPIO_EDGE5,
+-		.type_rising_mask = MAX77620_CNFG_GPIO_INT_RISING,
+-		.type_falling_mask = MAX77620_CNFG_GPIO_INT_FALLING,
+ 		.reg_offset = 0,
+-		.type_reg_offset = 5,
++		.mask = MAX77620_IRQ_LVL2_GPIO_EDGE5,
++		.type = {
++			.type_rising_val = MAX77620_CNFG_GPIO_INT_RISING,
++			.type_falling_val = MAX77620_CNFG_GPIO_INT_FALLING,
++			.type_reg_mask = MAX77620_CNFG_GPIO_INT_MASK,
++			.type_reg_offset = 5,
++			.types_supported = IRQ_TYPE_EDGE_BOTH,
++		},
+ 	},
+ 	[6] = {
+-		.mask = MAX77620_IRQ_LVL2_GPIO_EDGE6,
+-		.type_rising_mask = MAX77620_CNFG_GPIO_INT_RISING,
+-		.type_falling_mask = MAX77620_CNFG_GPIO_INT_FALLING,
+ 		.reg_offset = 0,
+-		.type_reg_offset = 6,
++		.mask = MAX77620_IRQ_LVL2_GPIO_EDGE6,
++		.type = {
++			.type_rising_val = MAX77620_CNFG_GPIO_INT_RISING,
++			.type_falling_val = MAX77620_CNFG_GPIO_INT_FALLING,
++			.type_reg_mask = MAX77620_CNFG_GPIO_INT_MASK,
++			.type_reg_offset = 6,
++			.types_supported = IRQ_TYPE_EDGE_BOTH,
++		},
+ 	},
+ 	[7] = {
+-		.mask = MAX77620_IRQ_LVL2_GPIO_EDGE7,
+-		.type_rising_mask = MAX77620_CNFG_GPIO_INT_RISING,
+-		.type_falling_mask = MAX77620_CNFG_GPIO_INT_FALLING,
+ 		.reg_offset = 0,
+-		.type_reg_offset = 7,
++		.mask = MAX77620_IRQ_LVL2_GPIO_EDGE7,
++		.type = {
++			.type_rising_val = MAX77620_CNFG_GPIO_INT_RISING,
++			.type_falling_val = MAX77620_CNFG_GPIO_INT_FALLING,
++			.type_reg_mask = MAX77620_CNFG_GPIO_INT_MASK,
++			.type_reg_offset = 7,
++			.types_supported = IRQ_TYPE_EDGE_BOTH,
++		},
+ 	},
+ };
+ 
+diff --git a/include/linux/regmap.h b/include/linux/regmap.h
+index a367d59c301d..6ade3ed822a2 100644
+--- a/include/linux/regmap.h
++++ b/include/linux/regmap.h
+@@ -1089,22 +1089,37 @@ int regmap_fields_read(struct regmap_field *field, unsigned int id,
+ int regmap_fields_update_bits_base(struct regmap_field *field,  unsigned int id,
+ 				   unsigned int mask, unsigned int val,
+ 				   bool *change, bool async, bool force);
++/**
++ * struct regmap_irq_type - IRQ type definitions.
++ *
++ * @type_reg_offset: Offset register for the irq type setting.
++ * @type_rising_val: Register value to configure RISING type irq.
++ * @type_falling_val: Register value to configure FALLING type irq.
++ * @type_level_low_val: Register value to configure LEVEL_LOW type irq.
++ * @type_level_high_val: Register value to configure LEVEL_HIGH type irq.
++ * @types_supported: logical OR of IRQ_TYPE_* flags indicating supported types.
++ */
++struct regmap_irq_type {
++	unsigned int type_reg_offset;
++	unsigned int type_reg_mask;
++	unsigned int type_rising_val;
++	unsigned int type_falling_val;
++	unsigned int type_level_low_val;
++	unsigned int type_level_high_val;
++	unsigned int types_supported;
++};
+ 
+ /**
+  * struct regmap_irq - Description of an IRQ for the generic regmap irq_chip.
+  *
+  * @reg_offset: Offset of the status/mask register within the bank
+  * @mask:       Mask used to flag/control the register.
+- * @type_reg_offset: Offset register for the irq type setting.
+- * @type_rising_mask: Mask bit to configure RISING type irq.
+- * @type_falling_mask: Mask bit to configure FALLING type irq.
++ * @type:	IRQ trigger type setting details if supported.
+  */
+ struct regmap_irq {
+ 	unsigned int reg_offset;
+ 	unsigned int mask;
+-	unsigned int type_reg_offset;
+-	unsigned int type_rising_mask;
+-	unsigned int type_falling_mask;
++	struct regmap_irq_type type;
+ };
+ 
+ #define REGMAP_IRQ_REG(_irq, _off, _mask)		\
+@@ -1130,7 +1145,6 @@ struct regmap_irq {
+  * @use_ack:     Use @ack register even if it is zero.
+  * @ack_invert:  Inverted ack register: cleared bits for ack.
+  * @wake_invert: Inverted wake register: cleared bits are wake enabled.
+- * @type_invert: Invert the type flags.
+  * @runtime_pm:  Hold a runtime PM lock on the device when accessing it.
+  *
+  * @num_regs:    Number of registers in each control bank.
+@@ -1168,7 +1182,6 @@ struct regmap_irq_chip {
+ 	bool ack_invert:1;
+ 	bool wake_invert:1;
+ 	bool runtime_pm:1;
+-	bool type_invert:1;
+ 
+ 	int num_regs;
+ 
+-- 
+2.14.3
+
+
+-- 
+Matti Vaittinen
+ROHM Semiconductors
+
+~~~ "I don't think so," said Rene Descartes.  Just then, he vanished ~~~
