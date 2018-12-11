@@ -5,68 +5,67 @@ X-Spam-Level:
 X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
 	DKIM_INVALID,DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98459C5CFFE
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 11:55:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41C22C5CFFE
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 11:55:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5DFF420849
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 11:55:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 05E4F20849
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 11:55:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XSNLipqv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5DFF420849
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AQ+sooAP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 05E4F20849
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726430AbeLKLzk (ORCPT
+        id S1726461AbeLKLzr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 06:55:40 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:39106 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726130AbeLKLzj (ORCPT
+        Tue, 11 Dec 2018 06:55:47 -0500
+Received: from mail-pg1-f177.google.com ([209.85.215.177]:35818 "EHLO
+        mail-pg1-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726130AbeLKLzr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 06:55:39 -0500
-Received: by mail-pf1-f194.google.com with SMTP id c72so7022469pfc.6;
-        Tue, 11 Dec 2018 03:55:39 -0800 (PST)
+        Tue, 11 Dec 2018 06:55:47 -0500
+Received: by mail-pg1-f177.google.com with SMTP id s198so6544589pgs.2;
+        Tue, 11 Dec 2018 03:55:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=Z8fi+4hZoWoOB0xXjU5wSf479DpIZ2+IWk4s+qeP434=;
-        b=XSNLipqvcnMbY0Jt0NojebOIxcVtc2V8Yc13+IqzPjFNnNTwsmgstBtnqchoK5f49e
-         /w+yZNCf95Eg6VaVw/X/XbR03o2N1XfBu+Zuj18qoLtTAP4knfyZtlgwsx0GaN8g1oe+
-         EU399lY0ipep0/zS2BmBQ0S6mSQYDrefBmQns9CKiORkQ0TGRmvRuPnX9Uvs/wlQ+hn8
-         gugVKcTCxMjG6MzUY2glkXu06mc+QPBUpswhIri/W1qzjEMPBV9s91kkmrojmKNayb0L
-         pjPmsDqgoGIVkfXreOfGaOZ64RRrK657Hh29uHByV5Sjsw0tTlP5fApy3SIHTuwzEsdI
-         +Nbg==
+        bh=SlJCnY5DeXCwcqWwl1Fo1heqQs1jJancafkPG5apsCE=;
+        b=AQ+sooAPKlIg/i0xOI3aQWJtXEtgnx7Hej+YK9TzuqWNLt1wrRaJHUVcotomRSVwZD
+         uD7cYqI3olvoeqaJVMfN+xRXUqcJ2iVbsNS3hsuyhGaeOTyP5d3AYjHNJiPP9GLLJVDp
+         /q0Op02cM/3uIXeBJoVoRWokMqr/wE7R0XUiX2qqSihrCDM/SiJaUdPY4c3WR80JBFU6
+         aceip08xGfrGQBvh8nMGZCVmCWAeGfZQkqyULLjfw5p9U3PShgapski60Pbdhn8gk27X
+         IsMw92sWb8yMtCFe+xbB9ZW3zP19QjVyEuq+J6JKA7Zomvg3BdDONuK5P3+44ESjmMsy
+         fXlA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=Z8fi+4hZoWoOB0xXjU5wSf479DpIZ2+IWk4s+qeP434=;
-        b=le15a4v8W/LJgtLbdBmI3AHG4arYROYmXw8tk/yj8NAzZrZdSS49HVpswPqYMGyioM
-         yi0ZLSZ15iKbvIXyJ6/gI6wBTKxtL1XgYzVHdeedZyAGJyVb8Fwlsf6wbEbRRz9SMRQD
-         HEzsvdMZuA/C8Dx7LzJTsnGirCQ0l2cftSz91wUcehPnrGJoDHyJXUx1avAwS5GU5lVQ
-         IEFRoRoZphEVDeLhZmdmt7e1KxT9QK/xonY3NVe/exr9IM5ghvv1QCnN45+axuFlAXws
-         cgdRfchUc9rc2BskLXPTobzJO0odW8UuJx3/6DWbaczaNbCY594cFfJ9DIcv8jzCTtUj
-         G1FA==
-X-Gm-Message-State: AA+aEWabRD7YbIuHWrdSPe9+l5BKE4qvolNkdQPLg6LC6pa1SzI4Izcu
-        oHSuf5pGV6++w97RdWf/FBbFPx6m
-X-Google-Smtp-Source: AFSGD/U1VhThH/XT2E40lJEaSj0angzvYtlqLJhCAy59sfb+zSPiz0oMyoulANFYRlFsuW2KTezLpA==
-X-Received: by 2002:a65:6447:: with SMTP id s7mr14212956pgv.226.1544529338951;
-        Tue, 11 Dec 2018 03:55:38 -0800 (PST)
+        bh=SlJCnY5DeXCwcqWwl1Fo1heqQs1jJancafkPG5apsCE=;
+        b=Jflow7dY5VJlr7zx92PhY0Z0DZKk/mteem09yaj6IZb1n5JS/dg8fz8OBAf2/Td9UU
+         AB7+KIbbEePxUwrrNP2XG4r5CiPfEp7p6FfMi6JECp/nTkgobksc1L+T3XGOKUhoIhAg
+         lm6720ndyydoht29RQBOThRAJ5NB8RY0VPztjWakZEcwEGKBjZsw2iBAvLC89wyM8+lQ
+         ARx6GuIWqh3cvvfOsuAq7myi6gm3LMg5D//tOTKH4jU54bS2kDt505PNNBdWdzpxz+U/
+         uOyH0LygdQXABvNCY8WbjgO7T7gZD4QwcyUCwav+HGj1XrUMUQAzua6pAh0G5W4sJzOI
+         FnLQ==
+X-Gm-Message-State: AA+aEWbpD79/WAtbiD9ZffGtWpq9fG2EbSc9syTXCnTGc37r61qxqdWG
+        VvwLelpQr+qGpx46Fsz4gbE=
+X-Google-Smtp-Source: AFSGD/XX1VPlPbjKbTpa9TlMWBd9A8cM6IBuNZUH4ikPgXaTklxN7C+AQB/sxPNA0xj9Pt+FDJsO/A==
+X-Received: by 2002:a63:2784:: with SMTP id n126mr14653571pgn.48.1544529346345;
+        Tue, 11 Dec 2018 03:55:46 -0800 (PST)
 Received: from localhost (219x123x27x194.ap219.ftth.ucom.ne.jp. [219.123.27.194])
-        by smtp.gmail.com with ESMTPSA id r12sm15395880pgv.83.2018.12.11.03.55.37
+        by smtp.gmail.com with ESMTPSA id 85sm20227525pfw.17.2018.12.11.03.55.45
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 11 Dec 2018 03:55:38 -0800 (PST)
+        Tue, 11 Dec 2018 03:55:45 -0800 (PST)
 From:   Alice Ferrazzi <alice.ferrazzi@gmail.com>
 Cc:     ast@kernel.org, daniel@iogearbox.net, shuah@kernel.org,
         netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
         Alice Ferrazzi <alice.ferrazzi@gmail.com>
-Subject: [PATCH 2/7] selftest/bpf: optimize import
-Date:   Tue, 11 Dec 2018 20:56:02 +0900
-Message-Id: <20181211115607.13774-3-alice.ferrazzi@gmail.com>
+Subject: [PATCH 3/7] selftest/bpf: PEP 8: multiple statements on one line (colon)
+Date:   Tue, 11 Dec 2018 20:56:03 +0900
+Message-Id: <20181211115607.13774-4-alice.ferrazzi@gmail.com>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181211115607.13774-1-alice.ferrazzi@gmail.com>
 References: <20181211115607.13774-1-alice.ferrazzi@gmail.com>
@@ -78,51 +77,86 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix PEP8 warnings
+Reformat the file for fixing PEP 8 style
 
 Signed-off-by: Alice Ferrazzi <alice.ferrazzi@gmail.com>
 ---
- tools/testing/selftests/bpf/tcp_client.py | 7 +++----
- tools/testing/selftests/bpf/tcp_server.py | 7 ++++---
- 2 files changed, 7 insertions(+), 7 deletions(-)
+ tools/testing/selftests/bpf/tcp_client.py | 13 +++++++++----
+ tools/testing/selftests/bpf/tcp_server.py | 16 +++++++++++-----
+ 2 files changed, 20 insertions(+), 9 deletions(-)
 
 diff --git a/tools/testing/selftests/bpf/tcp_client.py b/tools/testing/selftests/bpf/tcp_client.py
-index c3c44633c801..ad3de27cd605 100755
+index ad3de27cd605..31f022bf06fa 100755
 --- a/tools/testing/selftests/bpf/tcp_client.py
 +++ b/tools/testing/selftests/bpf/tcp_client.py
-@@ -3,10 +3,9 @@
- # SPDX-License-Identifier: GPL-2.0
- #
- 
--import sys, os, os.path, getopt
--import socket, time
--import subprocess
--import select
-+import socket
-+import sys
-+
- 
- def read(sock, n):
+@@ -11,17 +11,22 @@ def read(sock, n):
      buf = b''
+     while len(buf) < n:
+         rem = n - len(buf)
+-        try: s = sock.recv(rem)
+-        except (socket.error) as e: return b''
++        try:
++            s = sock.recv(rem)
++        except (socket.error) as e:
++            return b''
+         buf += s
+     return buf
+ 
++
+ def send(sock, s):
+     total = len(s)
+     count = 0
+     while count < total:
+-        try: n = sock.send(s)
+-        except (socket.error) as e: n = 0
++        try:
++            n = sock.send(s)
++        except (socket.error) as e:
++            n = 0
+         if n == 0:
+             return count
+         count += n
 diff --git a/tools/testing/selftests/bpf/tcp_server.py b/tools/testing/selftests/bpf/tcp_server.py
-index 183d07509a0a..f7491517cc49 100755
+index f7491517cc49..af79210249af 100755
 --- a/tools/testing/selftests/bpf/tcp_server.py
 +++ b/tools/testing/selftests/bpf/tcp_server.py
-@@ -3,10 +3,11 @@
- # SPDX-License-Identifier: GPL-2.0
- #
- 
--import sys, os, os.path, getopt
--import socket, time
--import subprocess
-+import socket
-+import os.path
- import select
-+import sys
-+
- 
- def read(sock, n):
+@@ -13,17 +13,22 @@ def read(sock, n):
      buf = b''
+     while len(buf) < n:
+         rem = n - len(buf)
+-        try: s = sock.recv(rem)
+-        except (socket.error) as e: return b''
++        try:
++            s = sock.recv(rem)
++        except (socket.error) as e:
++            return b''
+         buf += s
+     return buf
+ 
++
+ def send(sock, s):
+     total = len(s)
+     count = 0
+     while count < total:
+-        try: n = sock.send(s)
+-        except (socket.error) as e: n = 0
++        try:
++            n = sock.send(s)
++        except (socket.error) as e:
++            n = 0
+         if n == 0:
+             return count
+         count += n
+@@ -42,7 +47,8 @@ HostName = socket.gethostname()
+ serverSocket = socket.socket(socket.AF_INET6, socket.SOCK_STREAM)
+ host = socket.gethostname()
+ 
+-try: serverSocket.bind((host, 0))
++try:
++    serverSocket.bind((host, 0))
+ except socket.error as msg:
+     print('bind fails: ' + str(msg))
+ 
 -- 
 2.19.2
 
