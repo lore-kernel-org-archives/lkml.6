@@ -7,39 +7,39 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA2C9C6783B
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 22:23:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20283C67839
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 22:23:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF9C12084C
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 22:23:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DA6CE2084C
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 22:23:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="WZ2lcHep"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF9C12084C
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="H4kconNm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA6CE2084C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=alien8.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726375AbeLKWXg (ORCPT
+        id S1726359AbeLKWXf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 17:23:36 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:46246 "EHLO mail.skyhub.de"
+        Tue, 11 Dec 2018 17:23:35 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:46202 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726343AbeLKWXd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 17:23:33 -0500
+        id S1726202AbeLKWXb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 17:23:31 -0500
 Received: from zn.tnic (p200300EC2BCD2B0010F6E1EC68D6BA6C.dip0.t-ipconnect.de [IPv6:2003:ec:2bcd:2b00:10f6:e1ec:68d6:ba6c])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 08EF21EC0C0D;
-        Tue, 11 Dec 2018 23:23:32 +0100 (CET)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 45AFD1EC0BFC;
+        Tue, 11 Dec 2018 23:23:30 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1544567012;
+        t=1544567010;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=/mxEqfgkMMmGXETHhDRIDKT6kwIaVl8L4VY0yY4ghDM=;
-        b=WZ2lcHepbhGEWdyW2m8JHf+gJ/R2h2YWHEgignzPNJWqchJs88iNwZC95VLdDJGYyiQqUn
-        WSz40pUZhBDT4e82mt+fnaMW2DmpQW2SJzAU2OCFL6VlYb9ilQBCvQCUTfq7lul22F92ZB
-        WYE4HquQFffpzUdHx4UbT5GyxlbLu+M=
+        bh=PbCAF2XcCAjQWK1b11rF+GVjG1oyepoSMGI1yKiTULM=;
+        b=H4kconNmMwqaWh5v6kq1qFO5UhvBZX0Pr+YzCwF6Q8jNd7YO0iJWPLCfmC9GeH3SWf+yWS
+        7OWmUG8rc5zQwFGROIttfH5lMxkDP4mgbGONDFYApSTS7RXZ0B992hdKOZD3BGfiP6Q8oc
+        f+NNkdYG+nEfVMALV81mZS8tBwBw8oU=
 From:   Borislav Petkov <bp@alien8.de>
 To:     LKML <linux-kernel@vger.kernel.org>
 Cc:     X86 ML <x86@kernel.org>, Andy Lutomirski <luto@amacapital.net>,
@@ -47,9 +47,9 @@ Cc:     X86 ML <x86@kernel.org>, Andy Lutomirski <luto@amacapital.net>,
         Josh Poimboeuf <jpoimboe@redhat.com>,
         Peter Zijlstra <peterz@infradead.org>,
         Tom Lendacky <thomas.lendacky@amd.com>
-Subject: [RFC PATCH 3/4] x86/alternatives: Add an ALTERNATIVE_3() macro
-Date:   Tue, 11 Dec 2018 23:23:25 +0100
-Message-Id: <20181211222326.14581-4-bp@alien8.de>
+Subject: [RFC PATCH 1/4] x86/alternatives: Add macro comments
+Date:   Tue, 11 Dec 2018 23:23:23 +0100
+Message-Id: <20181211222326.14581-2-bp@alien8.de>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181211222326.14581-1-bp@alien8.de>
 References: <20181211222326.14581-1-bp@alien8.de>
@@ -62,56 +62,83 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Borislav Petkov <bp@suse.de>
 
-Similar to ALTERNATIVE_2(), ALTERNATIVE_3() selects between 3 possible
-variants. Will be used for adding RDTSCP to the rdtsc_ordered()
-alternatives.
+... so that when one stares at the .s output, one can find her way
+around the resulting asm magic.
+
+For example, ALTERNATIVE looks like this now:
+
+          # ALT: oldnstr
+  661:
+          ...
+  662:
+          # ALT: padding
+  .skip ...
+  663:
+  .pushsection .altinstructions,"a"
+
+  ...
+
+  .popsection
+  .pushsection .altinstr_replacement, "ax"
+          # ALT: replacement 1
+  6641:
+  	...
+  6651:
+          .popsection
+
+Merge __OLDINSTR() into OLDINSTR(), while at it.
+
+No functional changes.
 
 Signed-off-by: Borislav Petkov <bp@suse.de>
 ---
- arch/x86/include/asm/alternative.h | 23 +++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
+ arch/x86/include/asm/alternative.h | 16 +++++++++-------
+ 1 file changed, 9 insertions(+), 7 deletions(-)
 
 diff --git a/arch/x86/include/asm/alternative.h b/arch/x86/include/asm/alternative.h
-index 8d38b296a18a..f24d111f366b 100644
+index d7faa16622d8..8d38b296a18a 100644
 --- a/arch/x86/include/asm/alternative.h
 +++ b/arch/x86/include/asm/alternative.h
-@@ -115,6 +115,16 @@ static inline int alternatives_text_reserved(void *start, void *end)
- 		"(" alt_max_short(alt_rlen(num1), alt_rlen(num2)) " - (" alt_slen ")), 0x90\n"	\
+@@ -87,13 +87,12 @@ static inline int alternatives_text_reserved(void *start, void *end)
+ #define alt_total_slen		alt_end_marker"b-661b"
+ #define alt_rlen(num)		e_replacement(num)"f-"b_replacement(num)"f"
+ 
+-#define __OLDINSTR(oldinstr, num)					\
++#define OLDINSTR(oldinstr, num)						\
++	"# ALT: oldnstr\n"						\
+ 	"661:\n\t" oldinstr "\n662:\n"					\
++	"# ALT: padding\n"						\
+ 	".skip -(((" alt_rlen(num) ")-(" alt_slen ")) > 0) * "		\
+-		"((" alt_rlen(num) ")-(" alt_slen ")),0x90\n"
+-
+-#define OLDINSTR(oldinstr, num)						\
+-	__OLDINSTR(oldinstr, num)					\
++		"((" alt_rlen(num) ")-(" alt_slen ")),0x90\n"		\
  	alt_end_marker ":\n"
  
-+#define OLDINSTR_3(oldinsn, n1, n2, n3)								\
-+	"# ALT: oldinstr3\n"									\
-+	"661:\n\t" oldinsn "\n662:\n"								\
-+	"# ALT: padding3\n"									\
-+	".skip -((" alt_max_short(alt_max_short(alt_rlen(n1), alt_rlen(n2)), alt_rlen(n3))	\
-+		" - (" alt_slen ")) > 0) * "							\
-+		"(" alt_max_short(alt_max_short(alt_rlen(n1), alt_rlen(n2)), alt_rlen(n3))	\
-+		" - (" alt_slen ")), 0x90\n"							\
-+	alt_end_marker ":\n"
-+
- #define ALTINSTR_ENTRY(feature, num)					      \
- 	" .long 661b - .\n"				/* label           */ \
- 	" .long " b_replacement(num)"f - .\n"		/* new instruction */ \
-@@ -148,6 +158,19 @@ static inline int alternatives_text_reserved(void *start, void *end)
- 	ALTINSTR_REPLACEMENT(newinstr2, feature2, 2)			\
- 	".popsection\n"
- 
-+#define ALTERNATIVE_3(oldinsn, newinsn1, feat1, newinsn2, feat2, newinsn3, feat3) \
-+	OLDINSTR_3(oldinsn, 1, 2, 3)						\
-+	".pushsection .altinstructions,\"a\"\n"					\
-+	ALTINSTR_ENTRY(feat1, 1)						\
-+	ALTINSTR_ENTRY(feat2, 2)						\
-+	ALTINSTR_ENTRY(feat3, 3)						\
-+	".popsection\n"								\
-+	".pushsection .altinstr_replacement, \"ax\"\n"				\
-+	ALTINSTR_REPLACEMENT(newinsn1, feat1, 1)				\
-+	ALTINSTR_REPLACEMENT(newinsn2, feat2, 2)				\
-+	ALTINSTR_REPLACEMENT(newinsn3, feat3, 3)				\
-+	".popsection\n"
-+
  /*
-  * Alternative instructions for different CPU types or capabilities.
-  *
+@@ -109,7 +108,9 @@ static inline int alternatives_text_reserved(void *start, void *end)
+  * additionally longer than the first replacement alternative.
+  */
+ #define OLDINSTR_2(oldinstr, num1, num2) \
++	"# ALT: oldinstr2\n"									\
+ 	"661:\n\t" oldinstr "\n662:\n"								\
++	"# ALT: padding2\n"									\
+ 	".skip -((" alt_max_short(alt_rlen(num1), alt_rlen(num2)) " - (" alt_slen ")) > 0) * "	\
+ 		"(" alt_max_short(alt_rlen(num1), alt_rlen(num2)) " - (" alt_slen ")), 0x90\n"	\
+ 	alt_end_marker ":\n"
+@@ -122,8 +123,9 @@ static inline int alternatives_text_reserved(void *start, void *end)
+ 	" .byte " alt_rlen(num) "\n"			/* replacement len */ \
+ 	" .byte " alt_pad_len "\n"			/* pad len */
+ 
+-#define ALTINSTR_REPLACEMENT(newinstr, feature, num)	/* replacement */     \
+-	b_replacement(num)":\n\t" newinstr "\n" e_replacement(num) ":\n\t"
++#define ALTINSTR_REPLACEMENT(newinstr, feature, num)	/* replacement */	\
++	"# ALT: replacement " #num "\n"						\
++	b_replacement(num)":\n\t" newinstr "\n" e_replacement(num) ":\n"
+ 
+ /* alternative assembly primitive: */
+ #define ALTERNATIVE(oldinstr, newinstr, feature)			\
 -- 
 2.19.1
 
