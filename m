@@ -7,48 +7,49 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE345C07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:53:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B856CC07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:53:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A0D8620855
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:53:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7DBFA2146E
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:53:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544543585;
-	bh=1R0kPdxQ+hHjkduxaehpqdU/cbaHqwiuEfqk5QpAe+o=;
+	s=default; t=1544543589;
+	bh=nPDkvFeHadqKWlENC3uRBaM5qpoCU7IdF1QE1W8JkN0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=WKS/dVryPE5Xp5zc7LHozdAUDnCa+kGX4CEZRs26LowzhJXFIPeUCE3FllvFdJL4C
-	 p9wFf2WSN2XBGEitmcyR0eQawgie/rhPnZ1Vst1oBUpDIH8qI5q2ovqtu3DgDMXu6k
-	 TdITuZGCTW4SAunMj0jOntU08mqNqPIJ5db1U4IU=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A0D8620855
+	b=BNPeHrDTX3tHgLGlB557h4CIhm8J5k7YdRj4d4gr11ingA2B3Xwe9USnG88oABcmB
+	 jDUogy7vRXDWl9ulh1tk1k9brqWgvvB7TRnx+pBcCQwHcS+W/bnQPs3opd14miIOUe
+	 tgXBizjzSOq09dY8CnBm1nlUCrBM8jycT0L1l/rM=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7DBFA2146E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729849AbeLKPxE (ORCPT
+        id S1729861AbeLKPxI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 10:53:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41658 "EHLO mail.kernel.org"
+        Tue, 11 Dec 2018 10:53:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41750 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729335AbeLKPw7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:52:59 -0500
+        id S1729846AbeLKPxE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 10:53:04 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0B51F20855;
-        Tue, 11 Dec 2018 15:52:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2FD272146E;
+        Tue, 11 Dec 2018 15:53:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544543578;
-        bh=1R0kPdxQ+hHjkduxaehpqdU/cbaHqwiuEfqk5QpAe+o=;
+        s=default; t=1544543583;
+        bh=nPDkvFeHadqKWlENC3uRBaM5qpoCU7IdF1QE1W8JkN0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RtMAMuVEeYPhipkSCskFX4cK9CFad0ji5Yne2wqtNe/w6uNnEmx3OHp6mR/cjMGjZ
-         sYXCuaNjRPLfnmwND1GbMNKYxkT24xQ2fhASiFcoG9EGGcko2XAwAIFtckwZ0eeBhZ
-         iWoLI/JxEFc1LHmMfSrMBjN3buRHKAjS4gonqW6A=
+        b=FNSvRUuXN4EcDFCHf84u1AHZdcximrXeWICH6/G8w6T7d9yBhnZOWnE3UD1tEOnIm
+         uak+YOJ0gz+tYTGVIWYn/rmZsyQ4+HMIMCa0gE/++U5jAkJgQrnOttG+1SVDtVUeC5
+         YoikfD9s0QyFzjl8paS3ynuwpNfNpt9LA68ll3Cw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org
-Subject: [PATCH 4.14 52/67] staging: atomisp: remove "fun" strncpy warning
-Date:   Tue, 11 Dec 2018 16:41:52 +0100
-Message-Id: <20181211151633.021294573@linuxfoundation.org>
+        stable@vger.kernel.org, Young Xiao <YangX92@hotmail.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>
+Subject: [PATCH 4.14 54/67] staging: rtl8712: Fix possible buffer overrun
+Date:   Tue, 11 Dec 2018 16:41:54 +0100
+Message-Id: <20181211151633.113301658@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181211151630.378216233@linuxfoundation.org>
 References: <20181211151630.378216233@linuxfoundation.org>
@@ -67,39 +68,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+From: Young Xiao <YangX92@hotmail.com>
 
-[for older kernels only, atomisp has been removed from upstream]
+commit 300cd664865bed5d50ae0a42fb4e3a6f415e8a10 upstream.
 
-gcc-8 rightfully warns that this instance of strncpy is just copying
-from the source, to the same source, for a few bytes.  Meaning this call
-does nothing.  As the author of the code obviously meant it to do
-something, but this code must be working properly, just replace the call
-to the kernel internal strscpy() which gcc doesn't know about, so the
-warning goes away.
+In commit 8b7a13c3f404 ("staging: r8712u: Fix possible buffer
+overrun") we fix a potential off by one by making the limit smaller.
+The better fix is to make the buffer larger.  This makes it match up
+with the similar code in other drivers.
 
-As this driver was deleted from newer kernel versions, none of this
-really matters but now at least we do not have to worry about a build
-warning in the stable trees.
-
+Fixes: 8b7a13c3f404 ("staging: r8712u: Fix possible buffer overrun")
+Signed-off-by: Young Xiao <YangX92@hotmail.com>
+Cc: stable <stable@vger.kernel.org>
+Reviewed-by: Dan Carpenter <dan.carpenter@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/staging/media/atomisp/pci/atomisp2/css2400/runtime/debug/src/ia_css_debug.c |    4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/staging/rtl8712/mlme_linux.c   |    2 +-
+ drivers/staging/rtl8712/rtl871x_mlme.c |    2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/staging/media/atomisp/pci/atomisp2/css2400/runtime/debug/src/ia_css_debug.c
-+++ b/drivers/staging/media/atomisp/pci/atomisp2/css2400/runtime/debug/src/ia_css_debug.c
-@@ -2860,9 +2860,7 @@ ia_css_debug_pipe_graph_dump_stage(
- 			if (l <= ENABLE_LINE_MAX_LENGTH) {
- 				/* It fits on one line, copy string and init */
- 				/* other helper strings with empty string */
--				strcpy_s(enable_info,
--					sizeof(enable_info),
--					ei);
-+				strscpy(enable_info, ei, sizeof(enable_info));
- 			} else {
- 				/* Too big for one line, find last comma */
- 				p = ENABLE_LINE_MAX_LENGTH;
+--- a/drivers/staging/rtl8712/mlme_linux.c
++++ b/drivers/staging/rtl8712/mlme_linux.c
+@@ -158,7 +158,7 @@ void r8712_report_sec_ie(struct _adapter
+ 		p = buff;
+ 		p += sprintf(p, "ASSOCINFO(ReqIEs=");
+ 		len = sec_ie[1] + 2;
+-		len =  (len < IW_CUSTOM_MAX) ? len : IW_CUSTOM_MAX - 1;
++		len =  (len < IW_CUSTOM_MAX) ? len : IW_CUSTOM_MAX;
+ 		for (i = 0; i < len; i++)
+ 			p += sprintf(p, "%02x", sec_ie[i]);
+ 		p += sprintf(p, ")");
+--- a/drivers/staging/rtl8712/rtl871x_mlme.c
++++ b/drivers/staging/rtl8712/rtl871x_mlme.c
+@@ -1361,7 +1361,7 @@ sint r8712_restruct_sec_ie(struct _adapt
+ 		     u8 *out_ie, uint in_len)
+ {
+ 	u8 authmode = 0, match;
+-	u8 sec_ie[255], uncst_oui[4], bkup_ie[255];
++	u8 sec_ie[IW_CUSTOM_MAX], uncst_oui[4], bkup_ie[255];
+ 	u8 wpa_oui[4] = {0x0, 0x50, 0xf2, 0x01};
+ 	uint ielength, cnt, remove_cnt;
+ 	int iEntry;
 
 
