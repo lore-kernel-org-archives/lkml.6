@@ -7,49 +7,49 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ACC6EC07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:48:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FFFCC5CFFE
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:48:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6BDDA20989
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:48:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D24DD2146E
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:48:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544543327;
-	bh=bAtf3FYlTZ0VXqMRW8K/SZSe7x8H6S7nnxbDkCAN8Ks=;
+	s=default; t=1544543331;
+	bh=I56TJmKCf9pokNmWAK6G8URE7cBHXgRUy+OCcuREvLk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ATyWPZdIVJ18oAWfi2QnEnsmY3Lz8/kIAWFeEzTSCO38TqPV9sVY6EL4bOhdo28SK
-	 qT9LEubdjp1g2P/QMR9vRWhf5FzWHuCilw8zAKMdSSl6eyMnvVQ34wBqbtEIhAmVZ7
-	 tY4CI5oZ4O7fERN5a6mDN4EtHsCqFZ9yOhRTx5L4=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6BDDA20989
+	b=BZPIbwzU3LcoAf0t5HD1AQxKlYnIFN9U69bfEvJgHBSxrdZ7bG8H+3DoQ/Yc2pdLO
+	 HnPpZzVkN3er2E6YhJM7bv5x6gA1n5qZ17W4a35Ako69bP7lpUseobcnioggTJzIfc
+	 W7/tFmCAF2Pl6o3yOrIDQoFX1Y19JaQvZnPZC4lo=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D24DD2146E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728878AbeLKPsq (ORCPT
+        id S1728893AbeLKPsu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 10:48:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37034 "EHLO mail.kernel.org"
+        Tue, 11 Dec 2018 10:48:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37102 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728864AbeLKPsm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:48:42 -0500
+        id S1728864AbeLKPsr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 10:48:47 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 10EC820870;
-        Tue, 11 Dec 2018 15:48:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1E9CA20870;
+        Tue, 11 Dec 2018 15:48:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544543321;
-        bh=bAtf3FYlTZ0VXqMRW8K/SZSe7x8H6S7nnxbDkCAN8Ks=;
+        s=default; t=1544543326;
+        bh=I56TJmKCf9pokNmWAK6G8URE7cBHXgRUy+OCcuREvLk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Sb051zEoh2zT6GrONsXrC6STWuqyRnrMIpz+ADhcDX1+vct8mGh/Ilx3015OEoRHd
-         94Ar+XVF0BhWECieY1jE/gQ5DmIKaV4wOh9ix1zRHBW/yU41eSJkO02S2IvU7E6/P+
-         nn2B1Muh6EeLt6Mc3c7H2FcNz1LBorajjs4e2XkA=
+        b=tqih7l913ytniwgUsCIocv+GZO7y13lCnHXNSPdqgrW04Wrp1c5laRVQIypKGCg8r
+         18SuWxA3taMsjka5DRMeOF/kWQq+c8lyzRS7xFc3OEtcKapIFq4CheYMd6FMJ5XC2S
+         N1l8RYmQJzrtpVgRrIsAvB7xfqUI6BmT4nA9wzCU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Felix Fietkau <nbd@nbd.name>,
-        Johannes Berg <johannes.berg@intel.com>
-Subject: [PATCH 4.4 90/91] mac80211: fix reordering of buffered broadcast packets
-Date:   Tue, 11 Dec 2018 16:41:49 +0100
-Message-Id: <20181211151614.302020771@linuxfoundation.org>
+        stable@vger.kernel.org, Macpaul Lin <macpaul@gmail.com>,
+        Daniel Thompson <daniel.thompson@linaro.org>
+Subject: [PATCH 4.4 86/91] kgdboc: fix KASAN global-out-of-bounds bug in param_set_kgdboc_var()
+Date:   Tue, 11 Dec 2018 16:41:45 +0100
+Message-Id: <20181211151613.844598759@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181211151606.026852373@linuxfoundation.org>
 References: <20181211151606.026852373@linuxfoundation.org>
@@ -68,38 +68,82 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Felix Fietkau <nbd@nbd.name>
+From: Macpaul Lin <macpaul@gmail.com>
 
-commit 9ec1190d065998650fd9260dea8cf3e1f56c0e8c upstream.
+commit dada6a43b0402eba438a17ac86fdc64ac56a4607 upstream.
 
-If the buffered broadcast queue contains packets, letting new packets bypass
-that queue can lead to heavy reordering, since the driver is probably throttling
-transmission of buffered multicast packets after beacons.
+This patch is trying to fix KE issue due to
+"BUG: KASAN: global-out-of-bounds in param_set_kgdboc_var+0x194/0x198"
+reported by Syzkaller scan."
 
-Keep buffering packets until the buffer has been cleared (and no client
-is in powersave mode).
+[26364:syz-executor0][name:report8t]BUG: KASAN: global-out-of-bounds in param_set_kgdboc_var+0x194/0x198
+[26364:syz-executor0][name:report&]Read of size 1 at addr ffffff900e44f95f by task syz-executor0/26364
+[26364:syz-executor0][name:report&]
+[26364:syz-executor0]CPU: 7 PID: 26364 Comm: syz-executor0 Tainted: G W 0
+[26364:syz-executor0]Call trace:
+[26364:syz-executor0][<ffffff9008095cf8>] dump_bacIctrace+Ox0/0x470
+[26364:syz-executor0][<ffffff9008096de0>] show_stack+0x20/0x30
+[26364:syz-executor0][<ffffff90089cc9c8>] dump_stack+Oxd8/0x128
+[26364:syz-executor0][<ffffff90084edb38>] print_address_description +0x80/0x4a8
+[26364:syz-executor0][<ffffff90084ee270>] kasan_report+Ox178/0x390
+[26364:syz-executor0][<ffffff90084ee4a0>] _asan_report_loadi_noabort+Ox18/0x20
+[26364:syz-executor0][<ffffff9008b092ac>] param_set_kgdboc_var+Ox194/0x198
+[26364:syz-executor0][<ffffff900813af64>] param_attr_store+Ox14c/0x270
+[26364:syz-executor0][<ffffff90081394c8>] module_attr_store+0x60/0x90
+[26364:syz-executor0][<ffffff90086690c0>] sysfs_kl_write+Ox100/0x158
+[26364:syz-executor0][<ffffff9008666d84>] kernfs_fop_write+0x27c/0x3a8
+[26364:syz-executor0][<ffffff9008508264>] do_loop_readv_writev+0x114/0x1b0
+[26364:syz-executor0][<ffffff9008509ac8>] do_readv_writev+0x4f8/0x5e0
+[26364:syz-executor0][<ffffff9008509ce4>] vfs_writev+0x7c/Oxb8
+[26364:syz-executor0][<ffffff900850ba64>] SyS_writev+Oxcc/0x208
+[26364:syz-executor0][<ffffff90080883f0>] elO_svc_naked +0x24/0x28
+[26364:syz-executor0][name:report&]
+[26364:syz-executor0][name:report&]The buggy address belongs to the variable:
+[26364:syz-executor0][name:report&] kgdb_tty_line+Ox3f/0x40
+[26364:syz-executor0][name:report&]
+[26364:syz-executor0][name:report&]Memory state around the buggy address:
+[26364:syz-executor0] ffffff900e44f800: 00 00 00 00 00 04 fa fa fa fa fa fa 00 fa fa fa
+[26364:syz-executor0] ffffff900e44f880: fa fa fa fa 00 fa fa fa fa fa fa fa 00 fa fa fa
+[26364:syz-executor0]> ffffff900e44f900: fa fa fa fa 04 fa fa fa fa fa fa fa 00 00 00 00
+[26364:syz-executor0][name:report&]                                       ^
+[26364:syz-executor0] ffffff900e44f980: 00 fa fa fa fa fa fa fa 04 fa fa fa fa fa fa fa
+[26364:syz-executor0] ffffff900e44fa00: 04 fa fa fa fa fa fa fa 00 fa fa fa fa fa fa fa
+[26364:syz-executor0][name:report&]
+[26364:syz-executor0][name:panic&]Disabling lock debugging due to kernel taint
+[26364:syz-executor0]------------[cut here]------------
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Felix Fietkau <nbd@nbd.name>
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+After checking the source code, we've found there might be an out-of-bounds
+access to "config[len - 1]" array when the variable "len" is zero.
+
+Signed-off-by: Macpaul Lin <macpaul@gmail.com>
+Acked-by: Daniel Thompson <daniel.thompson@linaro.org>
+Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/mac80211/tx.c |    4 ++--
+ drivers/tty/serial/kgdboc.c |    4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/net/mac80211/tx.c
-+++ b/net/mac80211/tx.c
-@@ -431,8 +431,8 @@ ieee80211_tx_h_multicast_ps_buf(struct i
- 	if (ieee80211_hw_check(&tx->local->hw, QUEUE_CONTROL))
- 		info->hw_queue = tx->sdata->vif.cab_queue;
+--- a/drivers/tty/serial/kgdboc.c
++++ b/drivers/tty/serial/kgdboc.c
+@@ -232,7 +232,7 @@ static void kgdboc_put_char(u8 chr)
  
--	/* no stations in PS mode */
--	if (!atomic_read(&ps->num_sta_ps))
-+	/* no stations in PS mode and no buffered packets */
-+	if (!atomic_read(&ps->num_sta_ps) && skb_queue_empty(&ps->bc_buf))
- 		return TX_CONTINUE;
+ static int param_set_kgdboc_var(const char *kmessage, struct kernel_param *kp)
+ {
+-	int len = strlen(kmessage);
++	size_t len = strlen(kmessage);
  
- 	info->flags |= IEEE80211_TX_CTL_SEND_AFTER_DTIM;
+ 	if (len >= MAX_CONFIG_LEN) {
+ 		printk(KERN_ERR "kgdboc: config string too long\n");
+@@ -254,7 +254,7 @@ static int param_set_kgdboc_var(const ch
+ 
+ 	strcpy(config, kmessage);
+ 	/* Chop out \n char as a result of echo */
+-	if (config[len - 1] == '\n')
++	if (len && config[len - 1] == '\n')
+ 		config[len - 1] = '\0';
+ 
+ 	if (configured == 1)
 
 
