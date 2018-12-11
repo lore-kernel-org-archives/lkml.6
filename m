@@ -7,48 +7,51 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D471C07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:11:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51A86C07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:11:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BD63E2084E
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:11:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 18ADA20879
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:11:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544544692;
-	bh=XZSRl9nwoq/vPrry8mSkDvKCNcD4Pofocct5cWqbMqg=;
+	s=default; t=1544544702;
+	bh=3IkYE6LfZWz6wvQ3rXWzjd/qBnaVR4BOS2hB0iCQlSo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=HLIRXsefM46mfJGKwSC9mBD6tI74QPD+vR8kj4alKl+6i8dMrjpZvGXtA8UYlUdg5
-	 6hpACgNHQaw6MLBc4AvY7/zX8Q3HZYuIY902e4TJI/5zNXlSXlzE2JBKseHcbKB5SZ
-	 f8zRmAUaHoTfbz+luoyFDXsnko6bwKcw4mbngACw=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD63E2084E
+	b=RprdaqdgZrxqYnaHacyMuom3OZO5kZjBKkYdE19nlwk+sKVrvLLoIIhR5fiJN10JG
+	 65TC4+jViOTpSgIHTnyQXm1NYisl7hobrhbVnI8AcVdDtI5mevahHrySmSMIOLWJbG
+	 +6ktRNp/UNqDChmViY3KHmvKdXAqTjTBkhMX2ozI=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 18ADA20879
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730357AbeLKQLb (ORCPT
+        id S1729344AbeLKPun (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 11:11:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39442 "EHLO mail.kernel.org"
+        Tue, 11 Dec 2018 10:50:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39258 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728052AbeLKPut (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:50:49 -0500
+        id S1729295AbeLKPuj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 10:50:39 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4A28C2084E;
-        Tue, 11 Dec 2018 15:50:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DA8CE2084E;
+        Tue, 11 Dec 2018 15:50:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544543448;
-        bh=XZSRl9nwoq/vPrry8mSkDvKCNcD4Pofocct5cWqbMqg=;
+        s=default; t=1544543438;
+        bh=3IkYE6LfZWz6wvQ3rXWzjd/qBnaVR4BOS2hB0iCQlSo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=x1KfxACeNO+MePNkwmA9A08xTShvZWR8nqOyNPAYjSYiiHSx2hsIhH96uwTQ19T0H
-         ZDH7AYQ0Wr5l1hZl5eJr51bG4/sXVOvQ30ia0SL7Zd3A+VAkAHpjvZ9eEgwH/xArIB
-         A6n+sam8CKd8i34rQfnEibjyNEb7om2G4S7pahRs=
+        b=JQmefxCc40W2uEHNsjdT0xLwWUk7TE2LtAFTT1GcHU20DQrKb9cVX8AA5xk/ZmMMo
+         wiFpZco88DJ4V+yyA4aQZB1X0MmYwDnO6+3sqwNohXfQUNeJQhEnN67Ua0Wrhy5n4w
+         VK3Ug+v+/sO8XGoIbUkeBdF8TjRZWJwopXQfssU0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.9 28/51] ALSA: pcm: Fix interval evaluation with openmin/max
-Date:   Tue, 11 Dec 2018 16:41:36 +0100
-Message-Id: <20181211151616.449169318@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Matthias Kaehlcke <mka@chromium.org>
+Subject: [PATCH 4.9 50/51] kbuild: fix linker feature test macros when cross compiling with Clang
+Date:   Tue, 11 Dec 2018 16:41:58 +0100
+Message-Id: <20181211151618.539797359@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181211151612.328911565@linuxfoundation.org>
 References: <20181211151612.328911565@linuxfoundation.org>
@@ -67,40 +70,70 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Nick Desaulniers <ndesaulniers@google.com>
 
-commit 5363857b916c1f48027e9b96ee8be8376bf20811 upstream.
+(commit 86a9df597cdd564d2d29c65897bcad42519e3678 upstream)
 
-As addressed in alsa-lib (commit b420056604f0), we need to fix the
-case where the evaluation of PCM interval "(x x+1]" leading to
--EINVAL.  After applying rules, such an interval may be translated as
-"(x x+1)".
+I was not seeing my linker flags getting added when using ld-option when
+cross compiling with Clang. Upon investigation, this seems to be due to
+a difference in how GCC vs Clang handle cross compilation.
 
-Fixes: ff2d6acdf6f1 ("ALSA: pcm: Fix snd_interval_refine first/last with open min/max")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+GCC is configured at build time to support one backend, that is implicit
+when compiling.  Clang is explicit via the use of `-target <triple>` and
+ships with all supported backends by default.
+
+GNU Make feature test macros that compile then link will always fail
+when cross compiling with Clang unless Clang's triple is passed along to
+the compiler. For example:
+
+$ clang -x c /dev/null -c -o temp.o
+$ aarch64-linux-android/bin/ld -E temp.o
+aarch64-linux-android/bin/ld:
+unknown architecture of input file `temp.o' is incompatible with
+aarch64 output
+aarch64-linux-android/bin/ld:
+warning: cannot find entry symbol _start; defaulting to
+0000000000400078
+$ echo $?
+1
+
+$ clang -target aarch64-linux-android- -x c /dev/null -c -o temp.o
+$ aarch64-linux-android/bin/ld -E temp.o
+aarch64-linux-android/bin/ld:
+warning: cannot find entry symbol _start; defaulting to 00000000004002e4
+$ echo $?
+0
+
+This causes conditional checks that invoke $(CC) without the target
+triple, then $(LD) on the result, to always fail.
+
+Suggested-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
+Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+[ND: readjusted for context]
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- include/sound/pcm_params.h |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ scripts/Kbuild.include |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
---- a/include/sound/pcm_params.h
-+++ b/include/sound/pcm_params.h
-@@ -247,11 +247,13 @@ static inline int snd_interval_empty(con
- static inline int snd_interval_single(const struct snd_interval *i)
- {
- 	return (i->min == i->max || 
--		(i->min + 1 == i->max && i->openmax));
-+		(i->min + 1 == i->max && (i->openmin || i->openmax)));
- }
+--- a/scripts/Kbuild.include
++++ b/scripts/Kbuild.include
+@@ -162,12 +162,13 @@ cc-ifversion = $(shell [ $(cc-version) $
+ # cc-ldoption
+ # Usage: ldflags += $(call cc-ldoption, -Wl$(comma)--hash-style=both)
+ cc-ldoption = $(call try-run,\
+-	$(CC) $(1) -nostdlib -x c /dev/null -o "$$TMP",$(1),$(2))
++	$(CC) $(1) $(KBUILD_CPPFLAGS) $(CC_OPTION_CFLAGS) -nostdlib -x c /dev/null -o "$$TMP",$(1),$(2))
  
- static inline int snd_interval_value(const struct snd_interval *i)
- {
-+	if (i->openmin && !i->openmax)
-+		return i->max;
- 	return i->min;
- }
+ # ld-option
+ # Usage: LDFLAGS += $(call ld-option, -X)
+ ld-option = $(call try-run,\
+-	$(CC) -x c /dev/null -c -o "$$TMPO" ; $(LD) $(1) "$$TMPO" -o "$$TMP",$(1),$(2))
++	$(CC) $(KBUILD_CPPFLAGS) $(CC_OPTION_CFLAGS) -x c /dev/null -c -o "$$TMPO"; \
++	$(LD) $(LDFLAGS) $(1) "$$TMPO" -o "$$TMP",$(1),$(2))
  
+ # ar-option
+ # Usage: KBUILD_ARFLAGS := $(call ar-option,D)
 
 
