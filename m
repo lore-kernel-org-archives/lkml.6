@@ -7,49 +7,50 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9AE5C5CFFE
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:57:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFB61C07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:57:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B07D3205C9
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:57:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 73791205C9
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:57:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544543869;
-	bh=c4r4IHHy+FIjhY+4OSOtUtFf3fTrxqw8UF3KG/lzvco=;
+	s=default; t=1544543872;
+	bh=AFy2SJ9PDkhJynCc4bZ8GT/S8IcadC4JbDgUHd7/UeA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=BWOOsbWNvc8P2ky+eA+gu5SokaV4pMW0w5UsbW51HN/4q+orI9O0s2k5NTRPwYaZ2
-	 NViDJC00sjPcCVbiw0ALRGTMDdxKoMji9Y1dzX/rxj90f0AzTzXIWoUMw9jboLFcPd
-	 tK0AFISnK0tyQkZ7PHiNBgvW5CWYYAh2wgBjbek4=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B07D3205C9
+	b=oiWDZGfMMnI6Mr6g702ZJ+DeZ3F+hxkhra/WhdnSzUy3fLHsrVRgkrvxQEey/8xnz
+	 OxrPxls3nNB/K5vPpKqZ20YI9ZYQ1M+Ng0jRTuFZ6V9ITLveWTfWq5IDQJSWKJvCpm
+	 0ECN0ttYF7JtPByNuJNo6V4hOGZIxJuA3NHMHqRI=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 73791205C9
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730897AbeLKP5s (ORCPT
+        id S1730908AbeLKP5v (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 10:57:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46870 "EHLO mail.kernel.org"
+        Tue, 11 Dec 2018 10:57:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46822 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729928AbeLKP5q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:57:46 -0500
+        id S1730884AbeLKP5o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 10:57:44 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B0A6121104;
-        Tue, 11 Dec 2018 15:57:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3D56F2146D;
+        Tue, 11 Dec 2018 15:57:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544543866;
-        bh=c4r4IHHy+FIjhY+4OSOtUtFf3fTrxqw8UF3KG/lzvco=;
+        s=default; t=1544543863;
+        bh=AFy2SJ9PDkhJynCc4bZ8GT/S8IcadC4JbDgUHd7/UeA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BlNtzIGinu2nDfJyKSYylZfDW5xvdqhuEpPCctUhjIa7Dhe0pu4UoTJ11qVmds63Y
-         k3cboM3mMUAuczbhjzW9lJbHk0xW3twFv14AcZYnjKnQVzyssLX2fjW1oU9L/ybJfs
-         SdabRn1l+rKGV0aK97jjFpNKPNhWd7sTNAbBDstI=
+        b=rI9wGKn8AAflW6XsF1quy1AWvqvsIQEKrcmK6/t96bd30ouHaufomvE+tHi7kvSrn
+         aRzpMB6jITov8iodPxTpvdVf5GKf6QTr5zIkRaQXjrZe+hba7nGwnfd1w1i4cqbSlh
+         r60Pw7Ehe5V5yMhTVLhty8kuXeJfKlr9SOoWxBCk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Young Xiao <YangX92@hotmail.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>
-Subject: [PATCH 4.19 094/118] staging: rtl8712: Fix possible buffer overrun
-Date:   Tue, 11 Dec 2018 16:41:53 +0100
-Message-Id: <20181211151648.066806655@linuxfoundation.org>
+        stable@vger.kernel.org, Paulo Alcantara <palcantara@suse.com>,
+        Aurelien Aptel <aaptel@suse.com>,
+        Steve French <stfrench@microsoft.com>
+Subject: [PATCH 4.19 093/118] cifs: Fix separator when building path from dentry
+Date:   Tue, 11 Dec 2018 16:41:52 +0100
+Message-Id: <20181211151648.026520102@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181211151644.216668863@linuxfoundation.org>
 References: <20181211151644.216668863@linuxfoundation.org>
@@ -68,47 +69,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Young Xiao <YangX92@hotmail.com>
+From: Paulo Alcantara <palcantara@suse.com>
 
-commit 300cd664865bed5d50ae0a42fb4e3a6f415e8a10 upstream.
+commit c988de29ca161823db6a7125e803d597ef75b49c upstream.
 
-In commit 8b7a13c3f404 ("staging: r8712u: Fix possible buffer
-overrun") we fix a potential off by one by making the limit smaller.
-The better fix is to make the buffer larger.  This makes it match up
-with the similar code in other drivers.
+Make sure to use the CIFS_DIR_SEP(cifs_sb) as path separator for
+prefixpath too. Fixes a bug with smb1 UNIX extensions.
 
-Fixes: 8b7a13c3f404 ("staging: r8712u: Fix possible buffer overrun")
-Signed-off-by: Young Xiao <YangX92@hotmail.com>
-Cc: stable <stable@vger.kernel.org>
-Reviewed-by: Dan Carpenter <dan.carpenter@oracle.com>
+Fixes: a6b5058fafdf ("fs/cifs: make share unaccessible at root level mountable")
+Signed-off-by: Paulo Alcantara <palcantara@suse.com>
+Reviewed-by: Aurelien Aptel <aaptel@suse.com>
+Signed-off-by: Steve French <stfrench@microsoft.com>
+CC: Stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/staging/rtl8712/mlme_linux.c   |    2 +-
- drivers/staging/rtl8712/rtl871x_mlme.c |    2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ fs/cifs/dir.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/staging/rtl8712/mlme_linux.c
-+++ b/drivers/staging/rtl8712/mlme_linux.c
-@@ -158,7 +158,7 @@ void r8712_report_sec_ie(struct _adapter
- 		p = buff;
- 		p += sprintf(p, "ASSOCINFO(ReqIEs=");
- 		len = sec_ie[1] + 2;
--		len =  (len < IW_CUSTOM_MAX) ? len : IW_CUSTOM_MAX - 1;
-+		len =  (len < IW_CUSTOM_MAX) ? len : IW_CUSTOM_MAX;
- 		for (i = 0; i < len; i++)
- 			p += sprintf(p, "%02x", sec_ie[i]);
- 		p += sprintf(p, ")");
---- a/drivers/staging/rtl8712/rtl871x_mlme.c
-+++ b/drivers/staging/rtl8712/rtl871x_mlme.c
-@@ -1358,7 +1358,7 @@ sint r8712_restruct_sec_ie(struct _adapt
- 		     u8 *out_ie, uint in_len)
- {
- 	u8 authmode = 0, match;
--	u8 sec_ie[255], uncst_oui[4], bkup_ie[255];
-+	u8 sec_ie[IW_CUSTOM_MAX], uncst_oui[4], bkup_ie[255];
- 	u8 wpa_oui[4] = {0x0, 0x50, 0xf2, 0x01};
- 	uint ielength, cnt, remove_cnt;
- 	int iEntry;
+--- a/fs/cifs/dir.c
++++ b/fs/cifs/dir.c
+@@ -174,7 +174,7 @@ cifs_bp_rename_retry:
+ 
+ 		cifs_dbg(FYI, "using cifs_sb prepath <%s>\n", cifs_sb->prepath);
+ 		memcpy(full_path+dfsplen+1, cifs_sb->prepath, pplen-1);
+-		full_path[dfsplen] = '\\';
++		full_path[dfsplen] = dirsep;
+ 		for (i = 0; i < pplen-1; i++)
+ 			if (full_path[dfsplen+1+i] == '/')
+ 				full_path[dfsplen+1+i] = CIFS_DIR_SEP(cifs_sb);
 
 
