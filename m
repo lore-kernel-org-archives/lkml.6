@@ -2,194 +2,108 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0694C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 00:47:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BEB40C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 00:51:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E22A2084E
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 00:47:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UPROrBR8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E22A2084E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 7B36220672
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 00:51:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544489495;
+	bh=0m1KS5Vc74LuPMPLBCXplzZJKpShr9X6akkQOv6gBOI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=PFTbObfLbaw9qFYY355SyMyqRR+F0FcRCuSaOJbdJURobsm17iWcWM6DymeI2JfXn
+	 uXOq+buzOYxxJ71xdxEG5qlihrHuhWdTJi0rH1rBvZshM+ihu4DmxCTMLbaS79Ex0r
+	 9DcVJhmRPP1vNpJbD67w4Ht39DQwJakwMc4QCBxk=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B36220672
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728642AbeLKAre (ORCPT
+        id S1729080AbeLKAvd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 19:47:34 -0500
-Received: from mail-it1-f195.google.com ([209.85.166.195]:40918 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727448AbeLKAre (ORCPT
+        Mon, 10 Dec 2018 19:51:33 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:37822 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728640AbeLKAvd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 19:47:34 -0500
-Received: by mail-it1-f195.google.com with SMTP id h193so993043ita.5;
-        Mon, 10 Dec 2018 16:47:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=y1WkjeKSWAmq+SQweWcOAebDmIrh3t1RL48KkpeOplg=;
-        b=UPROrBR8X7+rroJMYBD+opm7LDjHA+X7mebKAR8qn7i1lCTFTcQ3mZ5AZRxipUGJMr
-         qnlGYLFLdu3608Y1wXzLeQep2qF52UJnCS9LNbvrIfwzMhxDjB/4COYe+Mu2mniT+/s7
-         Qi54kyydaiFEh/whntc3GwNJ8F9B1vaXi58tmL+2VpPT3gVkcbNDBpbAgkO3liyItWjm
-         xqzjhT/AZvPNVM35ykh2k++emeK9nSuiNyZ2qQbIEOvSZs5qSWaoiNZkpOSOwnZHFwM9
-         8c88k+mnMv5BlrTfMzAg+920KSOcTOVOhxWVoAEiqT8Wq5oOSxV/qBbD2gJ1AAgXbhRN
-         ruSQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=y1WkjeKSWAmq+SQweWcOAebDmIrh3t1RL48KkpeOplg=;
-        b=myxu3/7/rQAM3OSzKshWuA6PYsSBgr8SdvKNQcf7kS8xwVVneiAUKRirFXE4naGnxK
-         D4/bbA4KVZWh7zDMItuYRY86PzBV1SA5inyT/LSMFG0TXc4IPk9r2rq5mOknk6sA0byY
-         QksnbmjlzgtSqq7G5EABKtum4/sozWQtXRBPcV5C8kY+RQZOHdeMnJDSmoJyJD+XZZaa
-         OK//GuXgLfDZmQy1V1DWeeuczyMa3Nb60B9SmqxtxU9DBV7s8MPkgeUIQPnwl6YyZbUy
-         jIr4XW+TnwENAyIkUYBuh5bgTm4QIxcvSXxveM+ByG6+i5iAiIKlr5i/ZRws4m3YDI45
-         dEgQ==
-X-Gm-Message-State: AA+aEWYaPrwgo0tUv4v1jzujuD0BFga3as7bdaG70byY9xoIE9VUR+1s
-        iYpxOB5Bx/r8IWenWtlxuteSQAev0FWPVWgga3kVZg==
-X-Google-Smtp-Source: AFSGD/XI3obp8N8HZQU6PBz7cfe7MLy02ukRV4d9FdKFRc+D2mysKRxiPxHgrDjxS8AiLEhoBAz5NjUUh1HgquDwJmk=
-X-Received: by 2002:a24:5314:: with SMTP id n20mr525019itb.132.1544489253065;
- Mon, 10 Dec 2018 16:47:33 -0800 (PST)
+        Mon, 10 Dec 2018 19:51:33 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=jXA6Zpt3aXkThVJSMkEjs9vuz651TTO0wfKb99D1NPA=; b=UJ4Q/2QEyPW5x2iH6Nf2zVqAW
+        oGryjCFVeMzB6TsR/8mYAUeaZn8vkTyhEBc9dupd1ER4cX6iEDvh/FpUZYX25mUmi1kqx0n3Dru7m
+        ZajTm/9JlHBloyUWnipqkqkMZe4mLcf4GRSGb8oYxxhqZWG/SjC4Wp+zmgOoLr7FvGBbQ=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1gWWGm-0000Fb-Nn; Tue, 11 Dec 2018 00:51:28 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id 3A26D11254C7; Tue, 11 Dec 2018 00:51:28 +0000 (GMT)
+Date:   Tue, 11 Dec 2018 00:51:28 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Guillaume Tucker <guillaume.tucker@collabora.com>,
+        Lyude Paul <lyude@redhat.com>, Ben Skeggs <bskeggs@redhat.com>,
+        nouveau@lists.freedesktop.org, David Airlie <airlied@linux.ie>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        kernel@collabora.com, Karol Herbst <kherbst@redhat.com>,
+        Kevin Hilman <khilman@baylibre.com>
+Subject: Re: next/master boot bisection: Oops in nouveau driver on jetson-tk1
+Message-ID: <20181211005128.GA3004@sirena.org.uk>
+References: <89fa50d0-945f-d1ed-ae55-ee947187f209@collabora.com>
+ <95255117123da3702da585491d2fdd74890937c0.camel@redhat.com>
+ <16ca4f0f-6800-7204-6fc2-286caa7b850a@collabora.com>
+ <20181210142559.GB6307@sirena.org.uk>
+ <20181210162622.GB4789@ulmo>
 MIME-Version: 1.0
-References: <20181210205620.3041207-1-arnd@arndb.de>
-In-Reply-To: <20181210205620.3041207-1-arnd@arndb.de>
-From:   Rob Clark <robdclark@gmail.com>
-Date:   Mon, 10 Dec 2018 19:47:19 -0500
-Message-ID: <CAF6AEGtg51tCu31C91e95c3j59VvjSscK2Fg-Bm7ZNsz6GbJqg@mail.gmail.com>
-Subject: Re: [PATCH] drm/msm: fix arm64 build error
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     David Airlie <airlied@linux.ie>, Jonathan <jonathan@marek.ca>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        freedreno <freedreno@lists.freedesktop.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="Qxx1br4bt0+wmkIi"
+Content-Disposition: inline
+In-Reply-To: <20181210162622.GB4789@ulmo>
+X-Cookie: Now I am depressed ...
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 10, 2018 at 3:56 PM Arnd Bergmann <arnd@arndb.de> wrote:
->
-> The new a200 GPU MMU support fails to build on arm64 because
-> of a conflicting macro name:
->
-> drivers/gpu/drm/msm/msm_gpummu.c:17: error: "VA_START" redefined [-Werror]
->  #define VA_START SZ_16M
->
-> In file included from arch/arm64/include/asm/pgtable-hwdef.h:19,
->                  from arch/arm64/include/asm/processor.h:48,
->                  from include/linux/mutex.h:19,
->                  from include/linux/notifier.h:14,
->                  from include/linux/clk.h:17,
->                  from drivers/gpu/drm/msm/msm_drv.h:23,
->                  from drivers/gpu/drm/msm/msm_gpummu.c:4:
-> arch/arm64/include/asm/memory.h:51: note: this is the location of the previous definition
->  #define VA_START  (UL(0xffffffffffffffff) - \
->
-> Rename this and the related macros with a GPU_ prefix.
->
-> Fixes: 1c0088f255ae ("drm/msm: implement a2xx mmu")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-fyi I've updated this patch in msm-next/linux-next with a fixup from
-Jonathan which prefixes these with GPUMMU_*
+--Qxx1br4bt0+wmkIi
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-not entirely sure why I didn't hit this build error locally, but
-thanks to you and kbuild-robot for noticing so we could fix
+On Mon, Dec 10, 2018 at 05:26:22PM +0100, Thierry Reding wrote:
+> On Mon, Dec 10, 2018 at 02:25:59PM +0000, Mark Brown wrote:
 
-BR,
--R
+> > This has been broken for a considerable time now with no response from
+> > Ben - is there some other path we can use to get the fix merged?
 
+> I suppose we could go directly via Dave. But Ben's usually pretty
+> responsive, so he probably just missed it. Let me ping him on IRC, maybe
+> that'll get his attention.
 
-> ---
->  drivers/gpu/drm/msm/msm_gpummu.c | 24 ++++++++++++------------
->  1 file changed, 12 insertions(+), 12 deletions(-)
->
-> diff --git a/drivers/gpu/drm/msm/msm_gpummu.c b/drivers/gpu/drm/msm/msm_gpummu.c
-> index f1dc2b7e5fd3..2a7ddd449d3d 100644
-> --- a/drivers/gpu/drm/msm/msm_gpummu.c
-> +++ b/drivers/gpu/drm/msm/msm_gpummu.c
-> @@ -14,10 +14,10 @@ struct msm_gpummu {
->  };
->  #define to_msm_gpummu(x) container_of(x, struct msm_gpummu, base)
->
-> -#define VA_START SZ_16M
-> -#define VA_RANGE (0xfff * SZ_64K)
-> -#define MMU_PAGE_SIZE SZ_4K
-> -#define TABLE_SIZE (sizeof(uint32_t) * VA_RANGE / MMU_PAGE_SIZE)
-> +#define GPU_VA_START SZ_16M
-> +#define GPU_VA_RANGE (0xfff * SZ_64K)
-> +#define GPU_MMU_PAGE_SIZE SZ_4K
-> +#define GPU_TABLE_SIZE (sizeof(uint32_t) * GPU_VA_RANGE / GPU_MMU_PAGE_SIZE)
->
->  static int msm_gpummu_attach(struct msm_mmu *mmu, const char * const *names,
->                 int cnt)
-> @@ -34,7 +34,7 @@ static int msm_gpummu_map(struct msm_mmu *mmu, uint64_t iova,
->                 struct sg_table *sgt, unsigned len, int prot)
->  {
->         struct msm_gpummu *gpummu = to_msm_gpummu(mmu);
-> -       unsigned idx = (iova - VA_START) / MMU_PAGE_SIZE;
-> +       unsigned idx = (iova - GPU_VA_START) / GPU_MMU_PAGE_SIZE;
->         struct scatterlist *sg;
->         unsigned prot_bits = 0;
->         unsigned i, j;
-> @@ -46,9 +46,9 @@ static int msm_gpummu_map(struct msm_mmu *mmu, uint64_t iova,
->
->         for_each_sg(sgt->sgl, sg, sgt->nents, i) {
->                 dma_addr_t addr = sg->dma_address;
-> -               for (j = 0; j < sg->length / MMU_PAGE_SIZE; j++, idx++) {
-> +               for (j = 0; j < sg->length / GPU_MMU_PAGE_SIZE; j++, idx++) {
->                         gpummu->table[idx] = addr | prot_bits;
-> -                       addr += MMU_PAGE_SIZE;
-> +                       addr += GPU_MMU_PAGE_SIZE;
->                 }
->         }
->
-> @@ -62,10 +62,10 @@ static int msm_gpummu_map(struct msm_mmu *mmu, uint64_t iova,
->  static int msm_gpummu_unmap(struct msm_mmu *mmu, uint64_t iova, unsigned len)
->  {
->         struct msm_gpummu *gpummu = to_msm_gpummu(mmu);
-> -       unsigned idx = (iova - VA_START) / MMU_PAGE_SIZE;
-> +       unsigned idx = (iova - GPU_VA_START) / GPU_MMU_PAGE_SIZE;
->         unsigned i;
->
-> -       for (i = 0; i < len / MMU_PAGE_SIZE; i++, idx++)
-> +       for (i = 0; i < len / GPU_MMU_PAGE_SIZE; i++, idx++)
->                  gpummu->table[idx] = 0;
->
->         gpu_write(gpummu->gpu, REG_A2XX_MH_MMU_INVALIDATE,
-> @@ -78,7 +78,7 @@ static void msm_gpummu_destroy(struct msm_mmu *mmu)
->  {
->         struct msm_gpummu *gpummu = to_msm_gpummu(mmu);
->
-> -       dma_free_attrs(mmu->dev, TABLE_SIZE, gpummu->table, gpummu->pt_base,
-> +       dma_free_attrs(mmu->dev, GPU_TABLE_SIZE, gpummu->table, gpummu->pt_base,
->                 DMA_ATTR_FORCE_CONTIGUOUS);
->
->         kfree(gpummu);
-> @@ -100,7 +100,7 @@ struct msm_mmu *msm_gpummu_new(struct device *dev, struct msm_gpu *gpu)
->         if (!gpummu)
->                 return ERR_PTR(-ENOMEM);
->
-> -       gpummu->table = dma_alloc_attrs(dev, TABLE_SIZE + 32, &gpummu->pt_base,
-> +       gpummu->table = dma_alloc_attrs(dev, GPU_TABLE_SIZE + 32, &gpummu->pt_base,
->                 GFP_KERNEL | __GFP_ZERO, DMA_ATTR_FORCE_CONTIGUOUS);
->         if (!gpummu->table) {
->                 kfree(gpummu);
-> @@ -119,5 +119,5 @@ void msm_gpummu_params(struct msm_mmu *mmu, dma_addr_t *pt_base,
->         dma_addr_t base = to_msm_gpummu(mmu)->pt_base;
->
->         *pt_base = base;
-> -       *tran_error = base + TABLE_SIZE; /* 32-byte aligned */
-> +       *tran_error = base + GPU_TABLE_SIZE; /* 32-byte aligned */
->  }
-> --
-> 2.20.0
->
+This is at least the third go at reporting this as a boot failure IIRC
+so these clearly aren't doing the trick :/ .  Perhaps a resend as well?
+
+--Qxx1br4bt0+wmkIi
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlwPCg0ACgkQJNaLcl1U
+h9COzggAg0zNEhWVa+Iz0oQAKqj0KyMUg0Vf2WMO1tGdUfeMcT5QCmhGqrlN6nEh
+NUKJT6A3b3uVnh9HzSrBjzfXM9wfS8DSdMYGoXzN5cQVnlN3u0Awe4mwlAjR4r0W
+aEPrMlJS3iIZ74uGMKrB+LzmKF1h79fu5ssL0Bdvh3lvYm5asUA6I1zpy3GX4K04
+LaupBTL92aPrV/Nxhu52li1N0sEWszq0Rkm6vlbHbUu5pSLuPrjSck1nn87H4K/g
+aNyMm8GV9PMhij+OoAFti1Gr7MhLG/hxlkpXxw4iHtOwd8jmVsTRc/NzNiEAxj9+
+x3Vhm9WafzqtTDnxv3/scLHx3iHmgw==
+=/7qx
+-----END PGP SIGNATURE-----
+
+--Qxx1br4bt0+wmkIi--
