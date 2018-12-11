@@ -2,57 +2,53 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B83CC5CFFE
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:01:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DF71C07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:01:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C16F9205C9
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:01:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DC4F32084E
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:01:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544544088;
-	bh=cKlsRjBtTO0tdrvWu8as5ASsT5xD2cy5isI8ooG6Tak=;
+	s=default; t=1544544104;
+	bh=y/HJGTuixO+JIzNrrdOCh4Lq1h509JXMCqZlZ6bV12Q=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Iht7RHKdwUpixbuaIrjPR+0+Wk26MaXHxmpWcMD17AXXMmylHB8hFDSKAmvulQiTH
-	 h+efaPnLPAIHbI+COmcwHqEJl3rX4pB4cCoxsJ2nyHV7QDp4XlD0sN1k/Ln6APFMY/
-	 +ro8QoW9SrR+o3Cy/qMX7QaK6fEMJ3MxlOCv3XAU=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C16F9205C9
+	b=0PESHR22yZM8xsNZidwFSKfDOXlA2BNNwhxx/fzApIbbUNPTCpaPwoCV54kvSHA6K
+	 DFTISLh0r61A9VJ7RSUtHSk5KfGxDjg58sAAwvfz5O7MmyI1dPIMNRaO+RE0NjWKOa
+	 9lOVpjALnS77eLESEYp4MSiESua1xsuVciVpsVDk=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC4F32084E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730855AbeLKP5j (ORCPT
+        id S1730989AbeLKQBm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 10:57:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46644 "EHLO mail.kernel.org"
+        Tue, 11 Dec 2018 11:01:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46332 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730816AbeLKP5g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:57:36 -0500
+        id S1730787AbeLKP5U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 10:57:20 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 97DE420855;
-        Tue, 11 Dec 2018 15:57:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2071B2086D;
+        Tue, 11 Dec 2018 15:57:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544543856;
-        bh=cKlsRjBtTO0tdrvWu8as5ASsT5xD2cy5isI8ooG6Tak=;
+        s=default; t=1544543839;
+        bh=y/HJGTuixO+JIzNrrdOCh4Lq1h509JXMCqZlZ6bV12Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=n7kLosV8Uo5C/8Uiyl1lIg8/J3E+7xNw5SDlsR8RHGiWGzL596ekDB0AHZvtEgLUb
-         2IERCrQMF+3EWs4aaIbU9f1qbMGRQ6Nvp0vFejHL03lktgT9KD7P+MnWx0Z+PjKpOu
-         aRexDmCM2/ncTAt6w6aVRS40zK74hFqzFG78TSpQ=
+        b=lnz4IA49AtrqWDkPea7MrL8S8lh1sfEq+NPhRnAe0lqxb+8jgqhHlrR1SI9dcZYoG
+         kaYtoez4EUQOU/reJRof0i5LlfWSEMeuJu9NaIrOyguasuyLiibohPBlzjs62/ljMY
+         Tq3eUtCk5ZjqapWEXQAd68WHGU8QC8G0m9u0s+no=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 091/118] arm64: dts: rockchip: remove vdd_log from rock960 to fix a stability issues
-Date:   Tue, 11 Dec 2018 16:41:50 +0100
-Message-Id: <20181211151647.941975738@linuxfoundation.org>
+        stable@vger.kernel.org, Lucas Stach <l.stach@pengutronix.de>,
+        Robin Gong <yibin.gong@nxp.com>, Vinod Koul <vkoul@kernel.org>
+Subject: [PATCH 4.19 085/118] dmaengine: imx-sdma: implement channel termination via worker
+Date:   Tue, 11 Dec 2018 16:41:44 +0100
+Message-Id: <20181211151647.700970690@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181211151644.216668863@linuxfoundation.org>
 References: <20181211151644.216668863@linuxfoundation.org>
@@ -71,66 +67,142 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 13682e524167cbd7e2a26c5e91bec765f0f96273 ]
+From: Lucas Stach <l.stach@pengutronix.de>
 
-When the performance governor is set as default, the rock960 hangs
-around one minute after booting, whatever the activity is (idle, key
-pressed, loaded, ...).
+commit b8603d2a5795c42f78998e70dc792336e0dc20c9 upstream.
 
-Based on the commit log found at https://patchwork.kernel.org/patch/10092377/
+The dmaengine documentation states that device_terminate_all may be
+asynchronous and need not wait for the active transfers to stop.
 
-"vdd_log has no consumer and therefore will not be set to a specific
-voltage. Still the PWM output pin gets configured and thence the vdd_log
-output voltage will changed from it's default. Depending on the idle
-state of the PWM this will slightly over or undervoltage the logic supply
-of the RK3399 and cause instability with GbE (undervoltage) and PCIe
-(overvoltage). Since the default value set by a voltage divider is the
-correct supply voltage and we don't need to change it during runtime we
-remove the rail from the devicetree completely so the PWM pin will not
-be configured."
+This allows us to move most of the functionality currently implemented
+in the sdma channel termination function to run in a worker, outside
+of any atomic context. Moving this out of atomic context has two
+benefits: we can now sleep while waiting for the channel to terminate,
+instead of busy waiting and the freeing of the dma descriptors happens
+with IRQs enabled, getting rid of a warning in the dma mapping code.
 
-After removing the vdd-log from the rock960's specific DT, the board
-does no longer hang and shows a stable behavior.
+As the termination is now async, we need to implement the
+device_synchronize dma engine function which simply waits for the
+worker to finish its execution.
 
-Apply the same change for the rock960 by removing the vdd-log from the
-DT.
+Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
+Signed-off-by: Robin Gong <yibin.gong@nxp.com>
+Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Vinod Koul <vkoul@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Fixes: 874846f1fccd ("arm64: dts: rockchip: add 96boards RK3399 Ficus board")
-Cc: stable@vger.kernel.org
-Tested-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-[sl: adjust filename for 4.19]
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm64/boot/dts/rockchip/rk3399-ficus.dts | 12 ------------
- 1 file changed, 12 deletions(-)
+ drivers/dma/imx-sdma.c |   51 ++++++++++++++++++++++++++++++++++++-------------
+ 1 file changed, 38 insertions(+), 13 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3399-ficus.dts b/arch/arm64/boot/dts/rockchip/rk3399-ficus.dts
-index 8978d924eb83..85cf0b6bdda9 100644
---- a/arch/arm64/boot/dts/rockchip/rk3399-ficus.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3399-ficus.dts
-@@ -75,18 +75,6 @@
- 		regulator-always-on;
- 		vin-supply = <&vcc_sys>;
- 	};
--
--	vdd_log: vdd-log {
--		compatible = "pwm-regulator";
--		pwms = <&pwm2 0 25000 0>;
--		regulator-name = "vdd_log";
--		regulator-min-microvolt = <800000>;
--		regulator-max-microvolt = <1400000>;
--		regulator-always-on;
--		regulator-boot-on;
--		vin-supply = <&vcc_sys>;
--	};
--
+--- a/drivers/dma/imx-sdma.c
++++ b/drivers/dma/imx-sdma.c
+@@ -32,6 +32,7 @@
+ #include <linux/of_address.h>
+ #include <linux/of_device.h>
+ #include <linux/of_dma.h>
++#include <linux/workqueue.h>
+ 
+ #include <asm/irq.h>
+ #include <linux/platform_data/dma-imx-sdma.h>
+@@ -375,6 +376,7 @@ struct sdma_channel {
+ 	u32				shp_addr, per_addr;
+ 	enum dma_status			status;
+ 	struct imx_dma_data		data;
++	struct work_struct		terminate_worker;
  };
  
- &cpu_l0 {
--- 
-2.19.1
-
+ #define IMX_DMA_SG_LOOP		BIT(0)
+@@ -1025,31 +1027,49 @@ static int sdma_disable_channel(struct d
+ 
+ 	return 0;
+ }
+-
+-static int sdma_disable_channel_with_delay(struct dma_chan *chan)
++static void sdma_channel_terminate_work(struct work_struct *work)
+ {
+-	struct sdma_channel *sdmac = to_sdma_chan(chan);
++	struct sdma_channel *sdmac = container_of(work, struct sdma_channel,
++						  terminate_worker);
+ 	unsigned long flags;
+ 	LIST_HEAD(head);
+ 
+-	sdma_disable_channel(chan);
+-	spin_lock_irqsave(&sdmac->vc.lock, flags);
+-	vchan_get_all_descriptors(&sdmac->vc, &head);
+-	sdmac->desc = NULL;
+-	spin_unlock_irqrestore(&sdmac->vc.lock, flags);
+-	vchan_dma_desc_free_list(&sdmac->vc, &head);
+-
+ 	/*
+ 	 * According to NXP R&D team a delay of one BD SDMA cost time
+ 	 * (maximum is 1ms) should be added after disable of the channel
+ 	 * bit, to ensure SDMA core has really been stopped after SDMA
+ 	 * clients call .device_terminate_all.
+ 	 */
+-	mdelay(1);
++	usleep_range(1000, 2000);
++
++	spin_lock_irqsave(&sdmac->vc.lock, flags);
++	vchan_get_all_descriptors(&sdmac->vc, &head);
++	sdmac->desc = NULL;
++	spin_unlock_irqrestore(&sdmac->vc.lock, flags);
++	vchan_dma_desc_free_list(&sdmac->vc, &head);
++}
++
++static int sdma_disable_channel_async(struct dma_chan *chan)
++{
++	struct sdma_channel *sdmac = to_sdma_chan(chan);
++
++	sdma_disable_channel(chan);
++
++	if (sdmac->desc)
++		schedule_work(&sdmac->terminate_worker);
+ 
+ 	return 0;
+ }
+ 
++static void sdma_channel_synchronize(struct dma_chan *chan)
++{
++	struct sdma_channel *sdmac = to_sdma_chan(chan);
++
++	vchan_synchronize(&sdmac->vc);
++
++	flush_work(&sdmac->terminate_worker);
++}
++
+ static void sdma_set_watermarklevel_for_p2p(struct sdma_channel *sdmac)
+ {
+ 	struct sdma_engine *sdma = sdmac->sdma;
+@@ -1287,7 +1307,9 @@ static void sdma_free_chan_resources(str
+ 	struct sdma_channel *sdmac = to_sdma_chan(chan);
+ 	struct sdma_engine *sdma = sdmac->sdma;
+ 
+-	sdma_disable_channel_with_delay(chan);
++	sdma_disable_channel_async(chan);
++
++	sdma_channel_synchronize(chan);
+ 
+ 	if (sdmac->event_id0)
+ 		sdma_event_disable(sdmac, sdmac->event_id0);
+@@ -1993,6 +2015,8 @@ static int sdma_probe(struct platform_de
+ 
+ 		sdmac->channel = i;
+ 		sdmac->vc.desc_free = sdma_desc_free;
++		INIT_WORK(&sdmac->terminate_worker,
++				sdma_channel_terminate_work);
+ 		/*
+ 		 * Add the channel to the DMAC list. Do not add channel 0 though
+ 		 * because we need it internally in the SDMA driver. This also means
+@@ -2044,7 +2068,8 @@ static int sdma_probe(struct platform_de
+ 	sdma->dma_device.device_prep_slave_sg = sdma_prep_slave_sg;
+ 	sdma->dma_device.device_prep_dma_cyclic = sdma_prep_dma_cyclic;
+ 	sdma->dma_device.device_config = sdma_config;
+-	sdma->dma_device.device_terminate_all = sdma_disable_channel_with_delay;
++	sdma->dma_device.device_terminate_all = sdma_disable_channel_async;
++	sdma->dma_device.device_synchronize = sdma_channel_synchronize;
+ 	sdma->dma_device.src_addr_widths = SDMA_DMA_BUSWIDTHS;
+ 	sdma->dma_device.dst_addr_widths = SDMA_DMA_BUSWIDTHS;
+ 	sdma->dma_device.directions = SDMA_DMA_DIRECTIONS;
 
 
