@@ -2,170 +2,162 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8681EC5CFFE
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:04:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E904C5CFFE
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:04:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 48C8E20855
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:04:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="OPczIJ4F"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 48C8E20855
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	by mail.kernel.org (Postfix) with ESMTP id 410C42084E
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:04:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544544256;
+	bh=Bqd/zrS66idBOf27U6A8+crzIKaHlozfV/n6S/uUBxg=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=Gli4fYADX6OPIN1HKcoux3ufiuiDN5ORYmQ9nUKHKSPPCSMVXiTyjZVtOOjF9nLbI
+	 MHRWZdDLlahBT/YTkndslFJ3zbD0oGzTIrYlcedljdUEb7Gbv6fjAP8PJTdaejX38z
+	 i5vzki5YlSCtuab3xR+hkhCZSzkIFo/9DVUv6VpQ=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 410C42084E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731209AbeLKQEE (ORCPT
+        id S1731215AbeLKQEO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 11:04:04 -0500
-Received: from conssluserg-02.nifty.com ([210.131.2.81]:26017 "EHLO
-        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730552AbeLKQED (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 11:04:03 -0500
-Received: from mail-ua1-f47.google.com (mail-ua1-f47.google.com [209.85.222.47]) (authenticated)
-        by conssluserg-02.nifty.com with ESMTP id wBBG3Zxa004409;
-        Wed, 12 Dec 2018 01:03:35 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com wBBG3Zxa004409
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1544544216;
-        bh=yybUklpXv+i3ZvDZN0IW/BOVhtWK4rILiidGaAjhMpM=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=OPczIJ4FOYy580LZ7DS/3nKvrqqoOMHIZIKWccecRRjdvtFhKfsasloqP+Dao9mEm
-         yzIvnhZYIU23eLSWDkv5eknjQSTX81s+9ltfglUEI9fvClHdaKOOIV0hO2IbCPtae5
-         cU9qNLWUULDw8JVFXwonarCPtCbPoaKBO6MB1qZxmij13lnLAV6E9ZPLkrDQlccFhG
-         Nvs9c5jSADVSTLnT7pFwfBpGaFqq76gCdwKJ5HV/jPocJnHYkPkZ8QYjqAq0l478+r
-         Q0qx8ITQFTQfN63dUPdk+p7cMblUVHzDlDv83AUwvUQbE3b0yFbwuVZGN8cnpvfj0R
-         IO0sQl7AJbqKg==
-X-Nifty-SrcIP: [209.85.222.47]
-Received: by mail-ua1-f47.google.com with SMTP id k10so5303937ual.6;
-        Tue, 11 Dec 2018 08:03:35 -0800 (PST)
-X-Gm-Message-State: AA+aEWazi+9hQx0qqBC1uJwACTeKIT5TYSo8sjvQYGax6aOZnekq9qRz
-        vD5vJz5j0CRuen2MuTOS0eVOHb/uA3qo8E87qsg=
-X-Google-Smtp-Source: AFSGD/XZc79/L4SuKcG1VJ0VKvjIawgbFQtNLlqIpxPcLm8VGbMkBdVTmt2/WSQVL+Vpd0inHxvZI+sz8UNKgKFxppM=
-X-Received: by 2002:ab0:849:: with SMTP id b9mr3720525uaf.93.1544544214488;
- Tue, 11 Dec 2018 08:03:34 -0800 (PST)
+        Tue, 11 Dec 2018 11:04:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45040 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728890AbeLKP4O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 10:56:14 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id EA44B205C9;
+        Tue, 11 Dec 2018 15:56:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544543773;
+        bh=Bqd/zrS66idBOf27U6A8+crzIKaHlozfV/n6S/uUBxg=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=XFaeRVpPLo0xzznLmYl6VGbdnF5BrdazlgOH1eGo0879cxreXoqbYo/hQdcbKYmsy
+         mFzZtqj5bt5IDAgeJSvt0WJwodhlepKr785NtpiviGDzqCEDVICYdadbkIk4JeEYvp
+         p8dC1iUUmfN2LlqUIQVtUl4Sl+OlA3R3GE7uCp/4=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Hui Peng <benquike@gmail.com>,
+        Mathias Payer <mathias.payer@nebelwelt.net>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        stable <stable@kernel.org>
+Subject: [PATCH 4.19 058/118] USB: check usb_get_extra_descriptor for proper size
+Date:   Tue, 11 Dec 2018 16:41:17 +0100
+Message-Id: <20181211151646.584503979@linuxfoundation.org>
+X-Mailer: git-send-email 2.20.0
+In-Reply-To: <20181211151644.216668863@linuxfoundation.org>
+References: <20181211151644.216668863@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
-References: <20181210203225.11179-1-robh@kernel.org> <CAK7LNAThtAOy4PQiYZ2X0oWrHdcLi7on8ctSXJ=bfT0HNh7NFQ@mail.gmail.com>
- <CAL_JsqL7n2sjLbJVieVDQ4YtKMi2COCaijO9ZNu7ggzmXXxLEg@mail.gmail.com>
-In-Reply-To: <CAL_JsqL7n2sjLbJVieVDQ4YtKMi2COCaijO9ZNu7ggzmXXxLEg@mail.gmail.com>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Wed, 12 Dec 2018 01:02:58 +0900
-X-Gmail-Original-Message-ID: <CAK7LNARkr-g9ae+74QE6GMuxLM0JPgEqYOkwb0njXcb9-=nBdQ@mail.gmail.com>
-Message-ID: <CAK7LNARkr-g9ae+74QE6GMuxLM0JPgEqYOkwb0njXcb9-=nBdQ@mail.gmail.com>
-Subject: Re: [PATCH v3] kbuild: Add support for DT binding schema checks
-To:     Rob Herring <robh@kernel.org>
-Cc:     DTML <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        darknighte@darknighte.com, Frank Rowand <frowand.list@gmail.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        grant.likely@arm.com, Kumar Gala <kumar.gala@linaro.org>,
-        arm-soc <arm@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 12, 2018 at 12:13 AM Rob Herring <robh@kernel.org> wrote:
+4.19-stable review patch.  If anyone has any objections, please let me know.
 
->
-> > > +$(obj)/%.example.dts: $(src)/%.yaml FORCE
-> > > +       $(call if_changed,chk_binding)
-> > > +
-> > > +DT_TMP_SCHEMA := .schema.yaml.tmp
-> >
-> >
-> > BTW, why does this file start with a period?
-> > What is the meaning of '.tmp' extension?
->
-> Nothing really. Just named it something so it gets cleaned and ignored by git.
+------------------
+
+From: Mathias Payer <mathias.payer@nebelwelt.net>
+
+commit 704620afc70cf47abb9d6a1a57f3825d2bca49cf upstream.
+
+When reading an extra descriptor, we need to properly check the minimum
+and maximum size allowed, to prevent from invalid data being sent by a
+device.
+
+Reported-by: Hui Peng <benquike@gmail.com>
+Reported-by: Mathias Payer <mathias.payer@nebelwelt.net>
+Co-developed-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Hui Peng <benquike@gmail.com>
+Signed-off-by: Mathias Payer <mathias.payer@nebelwelt.net>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: stable <stable@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+---
+ drivers/usb/core/hub.c    |    2 +-
+ drivers/usb/core/usb.c    |    6 +++---
+ drivers/usb/host/hwa-hc.c |    2 +-
+ include/linux/usb.h       |    4 ++--
+ 4 files changed, 7 insertions(+), 7 deletions(-)
+
+--- a/drivers/usb/core/hub.c
++++ b/drivers/usb/core/hub.c
+@@ -2250,7 +2250,7 @@ static int usb_enumerate_device_otg(stru
+ 		/* descriptor may appear anywhere in config */
+ 		err = __usb_get_extra_descriptor(udev->rawdescriptors[0],
+ 				le16_to_cpu(udev->config[0].desc.wTotalLength),
+-				USB_DT_OTG, (void **) &desc);
++				USB_DT_OTG, (void **) &desc, sizeof(*desc));
+ 		if (err || !(desc->bmAttributes & USB_OTG_HNP))
+ 			return 0;
+ 
+--- a/drivers/usb/core/usb.c
++++ b/drivers/usb/core/usb.c
+@@ -832,14 +832,14 @@ EXPORT_SYMBOL_GPL(usb_get_current_frame_
+  */
+ 
+ int __usb_get_extra_descriptor(char *buffer, unsigned size,
+-			       unsigned char type, void **ptr)
++			       unsigned char type, void **ptr, size_t minsize)
+ {
+ 	struct usb_descriptor_header *header;
+ 
+ 	while (size >= sizeof(struct usb_descriptor_header)) {
+ 		header = (struct usb_descriptor_header *)buffer;
+ 
+-		if (header->bLength < 2) {
++		if (header->bLength < 2 || header->bLength > size) {
+ 			printk(KERN_ERR
+ 				"%s: bogus descriptor, type %d length %d\n",
+ 				usbcore_name,
+@@ -848,7 +848,7 @@ int __usb_get_extra_descriptor(char *buf
+ 			return -1;
+ 		}
+ 
+-		if (header->bDescriptorType == type) {
++		if (header->bDescriptorType == type && header->bLength >= minsize) {
+ 			*ptr = header;
+ 			return 0;
+ 		}
+--- a/drivers/usb/host/hwa-hc.c
++++ b/drivers/usb/host/hwa-hc.c
+@@ -640,7 +640,7 @@ static int hwahc_security_create(struct
+ 	top = itr + itr_size;
+ 	result = __usb_get_extra_descriptor(usb_dev->rawdescriptors[index],
+ 			le16_to_cpu(usb_dev->actconfig->desc.wTotalLength),
+-			USB_DT_SECURITY, (void **) &secd);
++			USB_DT_SECURITY, (void **) &secd, sizeof(*secd));
+ 	if (result == -1) {
+ 		dev_warn(dev, "BUG? WUSB host has no security descriptors\n");
+ 		return 0;
+--- a/include/linux/usb.h
++++ b/include/linux/usb.h
+@@ -407,11 +407,11 @@ struct usb_host_bos {
+ };
+ 
+ int __usb_get_extra_descriptor(char *buffer, unsigned size,
+-	unsigned char type, void **ptr);
++	unsigned char type, void **ptr, size_t min);
+ #define usb_get_extra_descriptor(ifpoint, type, ptr) \
+ 				__usb_get_extra_descriptor((ifpoint)->extra, \
+ 				(ifpoint)->extralen, \
+-				type, (void **)ptr)
++				type, (void **)ptr, sizeof(**(ptr)))
+ 
+ /* ----------------------------------------------------------------------- */
+ 
 
 
-It is cleaned whatever file name you use.
-
-
-See scripts/Makefile.clean
-
-__clean-files   := $(extra-y) $(extra-m) $(extra-)       \
-                   $(always) $(targets) $(clean-files)   \
-                   $(hostprogs-y) $(hostprogs-m) $(hostprogs-) \
-                   $(hostlibs-y) $(hostlibs-m) $(hostlibs-) \
-                   $(hostcxxlibs-y) $(hostcxxlibs-m)
-
-
-$(extra-y) is cleaned.
-
-
-
-You are adding *.example.dts to .gitignore
-
-Why not "schema.yaml" ?
-
-
-
-
-> > > +extra-y += $(DT_TMP_SCHEMA)
-> > > +
-> > > +quiet_cmd_mk_schema = SCHEMA  $@
-> > > +      cmd_mk_schema = mkdir -p $(obj); \
-> > > +                      rm -f $@; \
-> > > +                      $(DT_MK_SCHEMA) $(DT_MK_SCHEMA_FLAGS) -o $@ $(filter-out FORCE, $^)
-> >
-> >
-> > "mkdir -p $(obj)" is redundant.
-> >
-> >
-> > Why is 'rm -f $@' necessary ?
-> > Can't dt-mk-schema overwrite the output file?
->
-> It is for error case when the output file is not generated. I can
-> handle this within dt-mk-schema instead.
-> > > +DT_DOCS = $(shell cd $(srctree)/$(src) && find * -name '*.yaml')
-> > > +DT_SCHEMA_FILES ?= $(addprefix $(src)/,$(DT_DOCS))
-> > > +
-> > > +extra-y += $(patsubst $(src)/%.yaml,%.example.dts, $(DT_SCHEMA_FILES))
-> > > +extra-y += $(patsubst $(src)/%.yaml,%.example.dtb, $(DT_SCHEMA_FILES))
-> >
-> >
-> >
-> > I assume you intentionally did not do like this:
-> >
-> > extra-y += $(patsubst %.yaml,%.example.dtb, $(DT_DOCS))
-> >
-> > From the commit description, DT_SCHEMA_FILES might be overridden by a user.
-> > So, I think this is OK.
-> >
-> >
-> >
-> >
-> > > +$(obj)/$(DT_TMP_SCHEMA): | $(addprefix $(obj)/,$(patsubst $(src)/%.yaml,%.example.dtb, $(DT_SCHEMA_FILES)))
-> >
-> > I do not understand this line.
-> > Why is it necessary?
-> >
-> > *.example.dtb files are generated anyway
-> > since they are listed in extra-y.
->
-> It is enforcing the ordering. Without it, the binding checks and
-> building .schema.yaml.tmp happen in parallel because both only have
-> the source files as dependencies. The '|' keeps the dependencies out
-> of the dependency list($^).
-
-
-What kind problem would you see if
-the binding checks and building .schema.yaml.tmp
-happen in parallel?
-
-
-
--- 
-Best Regards
-Masahiro Yamada
