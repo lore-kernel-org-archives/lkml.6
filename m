@@ -6,49 +6,49 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D53B3C07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:24:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87D0DC5CFFE
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:24:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 96BEC20870
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:24:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4B62D2084E
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:24:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544545456;
-	bh=s8RZ+tBxpqEJoDpXJ3685k50fBfjDhFaEVSFFBvMKp0=;
+	s=default; t=1544545466;
+	bh=8DfYzkFUREWSWmB+LVJtf2vMQzZpCR4OCH71SI2dcTI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=nBB0QZ4jMUIb61ONU2wqTmFw8R/YGVQmWOZPAJ+Z8swZ7vwx6J0emSkQlZWixXu50
-	 he/S/D5YMwiRrIQEgKya5vjyeFbZ11nD+SBeDBpOQvzDqdAYR/CSr/TuJkl63HSBRw
-	 eRBTOP6IXRxMfkoDNKebwdtUSE5qPGqermZ6tZnM=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 96BEC20870
+	b=lyiSqI9EEtlpk9a70U59U1SAG+IRH7b25b9uwlOFYqgj1ufN3qQ/qY+hHjr0ux4fN
+	 +cdv0rZM6eiAEdmNB5dxQZ1LYuv5x22pOVabkJDKttGBNuzVKqSh9de31bUEaELGPy
+	 6qsKjrhK+86DX1ueg+2gur76Rc4YM4ATSwIcsq54=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B62D2084E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727370AbeLKPmz (ORCPT
+        id S1727421AbeLKQYY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 10:42:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59280 "EHLO mail.kernel.org"
+        Tue, 11 Dec 2018 11:24:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59176 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727354AbeLKPmw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:42:52 -0500
+        id S1727332AbeLKPmq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 10:42:46 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1826E20855;
-        Tue, 11 Dec 2018 15:42:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C2EB420879;
+        Tue, 11 Dec 2018 15:42:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544542971;
-        bh=s8RZ+tBxpqEJoDpXJ3685k50fBfjDhFaEVSFFBvMKp0=;
+        s=default; t=1544542966;
+        bh=8DfYzkFUREWSWmB+LVJtf2vMQzZpCR4OCH71SI2dcTI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=au6YKcRE2yv5wBRaH+bi7pThupd1u+KYKm0LWif/ht7qMysbMxlXn+lYc4Ji0RAPa
-         159GALkxUXSbavz66Tay/4IVHkQm88OahyZxuFFLejNoGbzOokofhEGu6R0xwEjaAn
-         QZfuf9RxdH9+EeMejL5ZuLo74+AVndWQRCaTMS8k=
+        b=TJ1mMQRlddZ2MZxq2WCu+77mJsUjVf0kMYIQLUUtNwpxbT0kVhsRGR94AxN9mlMRF
+         6mfbVUDmbeq+erstE/3R8gWI6mi3tDq4D5/tWRGaY3YOTQi5Ytk5F74uT0nyCMHkyq
+         ZUppImFXiq52VFM5v2ObFex7JEnGbNguj14roMkE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sultan Alsawaf <sultanxda@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 3.18 18/54] ip_tunnel: Fix name string concatenate in __ip_tunnel_create()
-Date:   Tue, 11 Dec 2018 16:41:06 +0100
-Message-Id: <20181211151547.004615385@linuxfoundation.org>
+        stable@vger.kernel.org, Pan Bian <bianpan2016@163.com>,
+        Jan Kara <jack@suse.cz>
+Subject: [PATCH 3.18 08/54] ext2: fix potential use after free
+Date:   Tue, 11 Dec 2018 16:40:56 +0100
+Message-Id: <20181211151546.448597786@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181211151546.010073210@linuxfoundation.org>
 References: <20181211151546.010073210@linuxfoundation.org>
@@ -67,36 +67,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sultan Alsawaf <sultanxda@gmail.com>
+From: Pan Bian <bianpan2016@163.com>
 
-commit 000ade8016400d93b4d7c89970d96b8c14773d45 upstream.
+commit ecebf55d27a11538ea84aee0be643dd953f830d5 upstream.
 
-By passing a limit of 2 bytes to strncat, strncat is limited to writing
-fewer bytes than what it's supposed to append to the name here.
+The function ext2_xattr_set calls brelse(bh) to drop the reference count
+of bh. After that, bh may be freed. However, following brelse(bh),
+it reads bh->b_data via macro HDR(bh). This may result in a
+use-after-free bug. This patch moves brelse(bh) after reading field.
 
-Since the bounds are checked on the line above this, just remove the string
-bounds checks entirely since they're unneeded.
-
-Signed-off-by: Sultan Alsawaf <sultanxda@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+CC: stable@vger.kernel.org
+Signed-off-by: Pan Bian <bianpan2016@163.com>
+Signed-off-by: Jan Kara <jack@suse.cz>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/ipv4/ip_tunnel.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/ext2/xattr.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/ipv4/ip_tunnel.c
-+++ b/net/ipv4/ip_tunnel.c
-@@ -310,8 +310,8 @@ static struct net_device *__ip_tunnel_cr
- 	} else {
- 		if (strlen(ops->kind) > (IFNAMSIZ - 3))
- 			goto failed;
--		strlcpy(name, ops->kind, IFNAMSIZ);
--		strncat(name, "%d", 2);
-+		strcpy(name, ops->kind);
-+		strcat(name, "%d");
+--- a/fs/ext2/xattr.c
++++ b/fs/ext2/xattr.c
+@@ -606,9 +606,9 @@ skip_replace:
  	}
  
- 	ASSERT_RTNL();
+ cleanup:
+-	brelse(bh);
+ 	if (!(bh && header == HDR(bh)))
+ 		kfree(header);
++	brelse(bh);
+ 	up_write(&EXT2_I(inode)->xattr_sem);
+ 
+ 	return error;
 
 
