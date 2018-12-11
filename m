@@ -6,27 +6,27 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC227C07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 07:44:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 230ECC07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 07:44:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7B2042082F
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 07:44:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B2042082F
+	by mail.kernel.org (Postfix) with ESMTP id E23A12082F
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 07:44:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E23A12082F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726211AbeLKHoa (ORCPT
+        id S1726239AbeLKHok (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 02:44:30 -0500
-Received: from mx2.suse.de ([195.135.220.15]:51452 "EHLO mx1.suse.de"
+        Tue, 11 Dec 2018 02:44:40 -0500
+Received: from mx2.suse.de ([195.135.220.15]:51486 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726036AbeLKHo3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 02:44:29 -0500
+        id S1726036AbeLKHok (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 02:44:40 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id D5495AEF2;
-        Tue, 11 Dec 2018 07:44:27 +0000 (UTC)
-Subject: Re: [PATCH 1/2] scsi: aacraid: change wait_sem to a completion
+        by mx1.suse.de (Postfix) with ESMTP id 9EA0AAEF2;
+        Tue, 11 Dec 2018 07:44:37 +0000 (UTC)
+Subject: Re: [PATCH 2/2] scsi: aacraid: change event_wait to a completion
 To:     Arnd Bergmann <arnd@arndb.de>,
         Adaptec OEM Raid Solutions <aacraid@microsemi.com>,
         "James E.J. Bottomley" <jejb@linux.ibm.com>,
@@ -37,6 +37,7 @@ Cc:     Raghava Aditya Renukunta <RaghavaAditya.Renukunta@microsemi.com>,
         Dan Carpenter <dan.carpenter@oracle.com>,
         linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
 References: <20181210213301.1065510-1-arnd@arndb.de>
+ <20181210213301.1065510-2-arnd@arndb.de>
 From:   Johannes Thumshirn <jthumshirn@suse.de>
 Openpgp: preference=signencrypt
 Autocrypt: addr=jthumshirn@suse.de; prefer-encrypt=mutual; keydata=
@@ -94,12 +95,12 @@ Autocrypt: addr=jthumshirn@suse.de; prefer-encrypt=mutual; keydata=
  l2t2TyTuHm7wVUY2J3gJYgG723/PUGW4LaoqNrYQUr/rqo6NXw6c+EglRpm1BdpkwPwAng63
  W5VOQMdnozD2RsDM5GfA4aEFi5m00tE+8XPICCtkduyWw+Z+zIqYk2v+zraPLs9Gs0X2C7X0
  yvqY9voUoJjG6skkOToGZbqtMX9K4GOv9JAxVs075QRXL3brHtHONDt6udYobzz+
-Message-ID: <a282ab7f-7f10-a0b2-9153-9db797bd019d@suse.de>
-Date:   Tue, 11 Dec 2018 08:44:27 +0100
+Message-ID: <d881c7e1-311a-e236-2bfa-cb4b8547f368@suse.de>
+Date:   Tue, 11 Dec 2018 08:44:37 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <20181210213301.1065510-1-arnd@arndb.de>
+In-Reply-To: <20181210213301.1065510-2-arnd@arndb.de>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
