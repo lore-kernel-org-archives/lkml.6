@@ -2,174 +2,138 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=unavailable
+X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC449C5CFFE
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 10:16:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7699C5CFFE
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 10:16:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D46620849
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 10:16:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7638E2081B
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 10:16:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="BOtUU/Hr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D46620849
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Xm4XlMnx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7638E2081B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726438AbeLKKQd (ORCPT
+        id S1726451AbeLKKQk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 05:16:33 -0500
-Received: from mail-it1-f195.google.com ([209.85.166.195]:36252 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726154AbeLKKQd (ORCPT
+        Tue, 11 Dec 2018 05:16:40 -0500
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:60774 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726241AbeLKKQj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 05:16:33 -0500
-Received: by mail-it1-f195.google.com with SMTP id c9so2893159itj.1
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 02:16:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=iQQbudlyyqw9QYq7OpcsZgG7rfcHPWsyg5HZGpcEpbs=;
-        b=BOtUU/Hr/acuLDPKBCKOLuS6NcmQjAuorPMHXadIlCWy43QnoB8zK30s54Pc/552O7
-         0N/W7Fy+0eXh0VZgSEfSm6RU9sviBltEIg9fp64/q0EqEzQpexFj46BQDBAj5opkSoxw
-         52xCxxVZpO3HW8s0PQm8/6vdriKo/JGLN9M+ljd2/XrrQy+AkGFoTApXZt3PnzMjRb5+
-         jVlTGXedbK5B1VhdsHRqcTsRYtQqGXCbdDcGY21FK+5/d8qadUUG8Pb8LcPOdfOhAFae
-         4RLmfMZyfkqyZ2DxxV68LsRIPuapyCaWKEZcH51Eu1rNjVE9vVV435Wu7kA12rDXBLVG
-         0+NQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=iQQbudlyyqw9QYq7OpcsZgG7rfcHPWsyg5HZGpcEpbs=;
-        b=cqZNAVBDQGKqE/W/4bh0gCtXN8DeX7BoAPZI7urvbGWnRdg3ssmpSFXsFC55Mhg4us
-         FXEjCxM+suncnnijpwCPjiLI2Y/7rTPw3e+88alckoj/v9Brc136B/8reg+zpu3Vukn+
-         AVCPLdqikUi7jq1678s/nsxaNlmNtCrR0sVa/8rc9CRiZV1kK/YVrzc0ZbAzb1EAUDD4
-         GrdObXgBz2oNHiRRzVUDx1SdRYXufCVmN4JVAzWZ52nKqxhgRq1keHWvJ3QqTKur7Djn
-         YRdfGxxxV0oklg8XkaWT9pZax6/WB+xYfMIgalOGD+nwR4vsj2j56T6yXzBhvzEd7hqO
-         xoVw==
-X-Gm-Message-State: AA+aEWY6tnZ/KGM1QpZR1ABvt/UH6ey9Z5ao67eEMa/FairB30M/SApR
-        daiZAAdb1UF7nPF2VyV7lPJ7rqz4b6t874mJ2/AX1Q==
-X-Google-Smtp-Source: AFSGD/VwoKxxhm3cSAV/rJ0M/u6rPFpBKmU+VaoppwUI7SQk1Ilb8+DUU9YoGLgkxRtzxMLmT9UUczlOhgZkDNodR90=
-X-Received: by 2002:a05:660c:f94:: with SMTP id x20mr1464115itl.144.1544523391894;
- Tue, 11 Dec 2018 02:16:31 -0800 (PST)
+        Tue, 11 Dec 2018 05:16:39 -0500
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id wBBAGV4W118852;
+        Tue, 11 Dec 2018 04:16:31 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1544523391;
+        bh=4rJ+R33zdAmLPoMVK8NpEm2EDT88UCXqTknwMpLUE0M=;
+        h=Subject:To:References:CC:From:Date:In-Reply-To;
+        b=Xm4XlMnxa8GadPLBIDDBXMHuq7l+OixF2K1hoWfWNCr0Gw2BrYUZtj4l2JS/VS2XV
+         f0kpPV8M7zH7cRAFiZouLtN6epQzQSHSzQ6fRwmSNFZyrvf/UWNO8Wo/xpWlg5GeD3
+         dcZGZuyBy1XJ1uXnM2OhAaC4/NztTj9siC6/ph6M=
+Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wBBAGVwD083589
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 11 Dec 2018 04:16:31 -0600
+Received: from DFLE101.ent.ti.com (10.64.6.22) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Tue, 11
+ Dec 2018 04:16:31 -0600
+Received: from dlep33.itg.ti.com (157.170.170.75) by DFLE101.ent.ti.com
+ (10.64.6.22) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Tue, 11 Dec 2018 04:16:31 -0600
+Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id wBBAGRRv022842;
+        Tue, 11 Dec 2018 04:16:28 -0600
+Subject: Re: [PATCH v1 1/2] dt-bindings: add binding for USBSS-DRD controller.
+To:     Pawel Laszczak <pawell@cadence.com>, <devicetree@vger.kernel.org>
+References: <1544445555-17325-1-git-send-email-pawell@cadence.com>
+ <1544445555-17325-2-git-send-email-pawell@cadence.com>
+CC:     <gregkh@linuxfoundation.org>, <linux-usb@vger.kernel.org>,
+        <balbi@kernel.org>, <linux-kernel@vger.kernel.org>,
+        <adouglas@cadence.com>, <jbergsagel@ti.com>, <nsekhar@ti.com>,
+        <nm@ti.com>, <sureshp@cadence.com>, <peter.chen@nxp.com>,
+        <pjez@cadence.com>, <kurahul@cadence.com>
+From:   Roger Quadros <rogerq@ti.com>
+Message-ID: <5C0F8E7B.3030601@ti.com>
+Date:   Tue, 11 Dec 2018 12:16:27 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
+ Thunderbird/38.6.0
 MIME-Version: 1.0
-References: <bug-201949-27@https.bugzilla.kernel.org/> <20181210154550.03bf3fe93944a7c786ba924d@linux-foundation.org>
-In-Reply-To: <20181210154550.03bf3fe93944a7c786ba924d@linux-foundation.org>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Tue, 11 Dec 2018 11:16:20 +0100
-Message-ID: <CACT4Y+a_J1sjL352sY=+6paZDg2-4V9UPa8t3XBNeZfYw_ZHWA@mail.gmail.com>
-Subject: Re: [Bug 201949] New: KASAN: use-after-free Read in __handle_mm_fault
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>
-Cc:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Alexander Potapenko <glider@google.com>,
-        bugzilla-daemon@bugzilla.kernel.org,
-        kasan-dev <kasan-dev@googlegroups.com>, jaguo2014@outlook.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1544445555-17325-2-git-send-email-pawell@cadence.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 11, 2018 at 12:45 AM Andrew Morton
-<akpm@linux-foundation.org> wrote:
->
-> (switched to email.  Please respond via emailed reply-to-all, not via the
-> bugzilla web interface).
+Pawel,
 
-Looking at the reproducer this looks like a bug in sg ioctl.
-+block/scsi_ioctl.c maintainers
+On 10/12/18 14:39, Pawel Laszczak wrote:
+> This patch aim at documenting USB related dt-bindings for the
+> Cadence USBSS-DRD controller.
+> 
+> Signed-off-by: Pawel Laszczak <pawell@cadence.com>
+> ---
+>  .../devicetree/bindings/usb/cdns3-usb.txt     | 31 +++++++++++++++++++
+>  1 file changed, 31 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/usb/cdns3-usb.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/usb/cdns3-usb.txt b/Documentation/devicetree/bindings/usb/cdns3-usb.txt
+> new file mode 100644
+> index 000000000000..ae4a255f0b10
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/usb/cdns3-usb.txt
+> @@ -0,0 +1,31 @@
+> +Binding for the Cadence USBSS-DRD controller
+> +
+> +Required properties:
+> +  - reg: Physical base address and size of the controller's register areas.
+> +	 Controller has 3 different regions:
+> +	 region 1 - HOST registers area
+> +	 region 2 - DEVICE registers area
+> +	 region 3 - OTG/DRD registers area
+> +  - compatible: Should contain: "cdns,usb3"
+> +  - interrupts: Interrupt specifier. Refer to interrupt bindings.
+> +		Driver supports only single interrupt line.
+> +                This single interrupt is shared between Device,
+> +		host and OTG/DRD part of driver.
+> +
+> +Optional propertiesi:
 
-> On Mon, 10 Dec 2018 10:56:31 +0000 bugzilla-daemon@bugzilla.kernel.org wrote:
->
-> > https://bugzilla.kernel.org/show_bug.cgi?id=201949
-> >
-> >             Bug ID: 201949
-> >            Summary: KASAN: use-after-free Read in __handle_mm_fault
-> >            Product: Memory Management
-> >            Version: 2.5
-> >     Kernel Version: 4.19-rc2,4.20-rc5,4.20-rc6
-> >           Hardware: All
-> >                 OS: Linux
-> >               Tree: Mainline
-> >             Status: NEW
-> >           Severity: normal
-> >           Priority: P1
-> >          Component: Other
-> >           Assignee: akpm@linux-foundation.org
-> >           Reporter: jaguo2014@outlook.com
-> >         Regression: No
-> >
-> > Created attachment 279915
-> >   --> https://bugzilla.kernel.org/attachment.cgi?id=279915&action=edit
-> > poc.c
-> >
-> > Syzkaller hit 'KASAN: use-after-free Read in __handle_mm_fault' bug.
-> >
-> > ==================================================================
-> > BUG: KASAN: use-after-free in handle_pte_fault mm/memory.c:3744 [inline]
-> > BUG: KASAN: use-after-free in __handle_mm_fault+0x1b5d/0x1d20 mm/memory.c:3889
-> > Read of size 8 at addr ffff888000048008 by task syz-executor666/2067
-> >
-> > CPU: 0 PID: 2067 Comm: syz-executor666 Not tainted 4.20.0-rc5+ #1
-> > Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 0.5.1 01/01/2011
-> > Call Trace:
-> >  __dump_stack lib/dump_stack.c:77 [inline]
-> >  dump_stack+0x75/0xae lib/dump_stack.c:113
-> >  print_address_description+0x65/0x270 mm/kasan/report.c:256
-> >  kasan_report_error mm/kasan/report.c:354 [inline]
-> >  kasan_report+0x25b/0x380 mm/kasan/report.c:412
-> >  handle_pte_fault mm/memory.c:3744 [inline]
-> >  __handle_mm_fault+0x1b5d/0x1d20 mm/memory.c:3889
-> >  handle_mm_fault+0xfc/0x350 mm/memory.c:3926
-> >  do_user_addr_fault arch/x86/mm/fault.c:1423 [inline]
-> >  __do_page_fault+0x4f4/0xaa0 arch/x86/mm/fault.c:1489
-> >  async_page_fault+0x1e/0x30 arch/x86/entry/entry_64.S:1142
-> > RIP: 0033:0x4014fd
-> > Code: Bad RIP value.
-> > RSP: 002b:00007ffdaac075f0 EFLAGS: 00010246
-> > RAX: 0000000000000000 RBX: 00007ffdaac07790 RCX: 00007f6df4bee2f0
-> > RDX: 0000000000000001 RSI: 00007f6df4bea270 RDI: 00007f6df4e08ae0
-> > RBP: 0000000000000000 R08: 00007f6df4e08800 R09: 00007f6df4bea270
-> > R10: 00007f6df4e08800 R11: 0000000000000202 R12: 0000000000000000
-> > R13: 00007ffdaac07920 R14: 0000000000000000 R15: 0000000000000000
-> >
-> > The buggy address belongs to the page:
-> > page:ffffea0000001200 count:0 mapcount:0 mapping:0000000000000000 index:0x0
-> > flags: 0x0()
-> > raw: 0000000000000000 ffffea0000001208 ffffea0000001208 0000000000000000
-> > raw: 0000000000000000 0000000000000000 00000000ffffffff 0000000000000000
-> > page dumped because: kasan: bad access detected
-> >
-> > Memory state around the buggy address:
-> >  ffff888000047f00: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-> >  ffff888000047f80: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-> > >ffff888000048000: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-> >                       ^
-> >  ffff888000048080: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-> >  ffff888000048100: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-> > ==================================================================
-> >
-> >
-> > Syzkaller reproducer:
-> > # {Threaded:false Collide:false Repeat:true RepeatTimes:0 Procs:8 Sandbox:
-> > Fault:false FaultCall:-1 FaultNth:0 EnableTun:false UseTmpDir:true
-> > EnableCgroups:false EnableNetdev:false ResetNet:false HandleSegv:true
-> > Repro:false Trace:false}
-> > r0 = syz_open_dev$sg(&(0x7f0000000180)='/dev/sg#\x00', 0x0, 0x0)
-> > ioctl$SCSI_IOCTL_SEND_COMMAND(r0, 0x1, &(0x7f0000000080)={0x1, 0x0, 0x8, "ae"})
-> >
-> > --
-> > You are receiving this mail because:
-> > You are the assignee for the bug.
->
-> --
-> You received this message because you are subscribed to the Google Groups "kasan-dev" group.
-> To unsubscribe from this group and stop receiving emails from it, send an email to kasan-dev+unsubscribe@googlegroups.com.
-> To post to this group, send email to kasan-dev@googlegroups.com.
-> To view this discussion on the web visit https://groups.google.com/d/msgid/kasan-dev/20181210154550.03bf3fe93944a7c786ba924d%40linux-foundation.org.
-> For more options, visit https://groups.google.com/d/optout.
+s/propertiesi/properties
+
+> + - maximum-speed : valid arguments are "super-speed", "high-speed" and
+> +                   "full-speed"; refer to usb/generic.txt
+> + - dr_mode: Should be one of "host", "peripheral" or "otg".
+> + - phys: reference to the USB PHY
+> + - phy-names: name of the USB PHY, should be "cdns3,usbphy"
+> +
+> +
+> +Example:
+> +	usb@f3000000 {
+> +		compatible = "cdns,usb3";
+> +		interrupts = <USB_IRQ  7 IRQ_TYPE_LEVEL_HIGH>;
+> +		reg = <0xf3000000 0x10000	//memory area for HOST registers
+> +			0xf3010000 0x10000	//memory area for DEVICE registers
+> +			0xf3020000 0x10000>;	//memory area for OTG/DRD registers
+
+Use "/* <comment> */" instead.
+
+> +	};
+> +
+> 
+
+cheers,
+-roger
+-- 
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
