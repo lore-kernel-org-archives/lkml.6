@@ -2,198 +2,140 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF3DFC07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:43:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F967C67839
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:44:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 861892086D
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:43:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 861892086D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 559C82086D
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:44:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OcNWtioe"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 559C82086D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727958AbeLKQnt (ORCPT
+        id S1727995AbeLKQoX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 11:43:49 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:58712 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727914AbeLKQnr (ORCPT
+        Tue, 11 Dec 2018 11:44:23 -0500
+Received: from mail-it1-f193.google.com ([209.85.166.193]:38765 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727400AbeLKQoX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 11:43:47 -0500
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBBGchU0119506
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 11:43:45 -0500
-Received: from e36.co.us.ibm.com (e36.co.us.ibm.com [32.97.110.154])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2pagk81e86-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 11:43:44 -0500
-Received: from localhost
-        by e36.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <mwb@linux.vnet.ibm.com>;
-        Tue, 11 Dec 2018 16:43:43 -0000
-Received: from b03cxnp08026.gho.boulder.ibm.com (9.17.130.18)
-        by e36.co.us.ibm.com (192.168.1.136) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 11 Dec 2018 16:43:39 -0000
-Received: from b03ledav001.gho.boulder.ibm.com (b03ledav001.gho.boulder.ibm.com [9.17.130.232])
-        by b03cxnp08026.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBBGhc0o25362584
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 11 Dec 2018 16:43:38 GMT
-Received: from b03ledav001.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D5CBF6E050;
-        Tue, 11 Dec 2018 16:43:38 +0000 (GMT)
-Received: from b03ledav001.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3C0E26E04E;
-        Tue, 11 Dec 2018 16:43:38 +0000 (GMT)
-Received: from oc5000245537.ibm.com (unknown [9.53.179.223])
-        by b03ledav001.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Tue, 11 Dec 2018 16:43:38 +0000 (GMT)
-Subject: Re: [PATCH v03] powerpc/mobility: Fix node detach/rename problem
-To:     Michael Ellerman <mpe@ellerman.id.au>,
-        linuxppc-dev@lists.ozlabs.org
-Cc:     devicetree@vger.kernel.org,
-        Thomas Falcon <tlfalcon@linux.vnet.ibm.com>,
-        linux-kernel@vger.kernel.org, robh+dt@kernel.org,
-        Juliet Kim <minkim@us.ibm.com>,
-        Tyrel Datwyler <tyreld@linux.vnet.ibm.com>,
-        frowand.list@gmail.com
-References: <a2d46622-a957-dffe-04d1-8087bbf0f8b5@linux.vnet.ibm.com>
- <871s6oxkdf.fsf@concordia.ellerman.id.au>
-From:   Michael Bringmann <mwb@linux.vnet.ibm.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=mwb@linux.vnet.ibm.com; prefer-encrypt=mutual; keydata=
- xsBNBFcY7GcBCADzw3en+yzo9ASFGCfldVkIg95SAMPK0myXp2XJYET3zT45uBsX/uj9/2nA
- lBmXXeOSXnPfJ9V3vtiwcfATnWIsVt3tL6n1kqikzH9nXNxZT7MU/7gqzWZngMAWh/GJ9qyg
- DTOZdjsvdUNUWxtiLvBo7y+reA4HjlQhwhYxxvCpXBeRoF0qDWfQ8DkneemqINzDZPwSQ7zY
- t4F5iyN1I9GC5RNK8Y6jiKmm6bDkrrbtXPOtzXKs0J0FqWEIab/u3BDrRP3STDVPdXqViHua
- AjEzthQbGZm0VCxI4a7XjMi99g614/qDcXZCs00GLZ/VYIE8hB9C5Q+l66S60PLjRrxnABEB
- AAHNLU1pY2hhZWwgVy4gQnJpbmdtYW5uIDxtd2JAbGludXgudm5ldC5pYm0uY29tPsLAeAQT
- AQIAIgUCVxjsZwIbAwYLCQgHAwIGFQgCCQoLBBYCAwECHgECF4AACgkQSEdag3dpuTI0NAf8
- CKYTDKQLgOSjVrU2L5rM4lXaJRmQV6oidD3vIhKSnWRvPq9C29ifRG6ri20prTHAlc0vycgm
- 41HHg0y2vsGgNXGTWC2ObemoZBI7mySXe/7Tq5mD/semGzOp0YWZ7teqrkiSR8Bw0p+LdE7K
- QmT7tpjjvuhrtQ3RRojUYcuy1nWUsc4D+2cxsnZslsx84FUKxPbLagDgZmgBhUw/sUi40s6S
- AkdViVCVS0WANddLIpG0cfdsV0kCae/XdjK3mRK6drFKv1z+QFjvOhc8QIkkxFD0da9w3tJj
- oqnqHFV5gLcHO6/wizPx/NV90y6RngeBORkQiRFWxTXS4Oj9GVI/Us7ATQRXGOxnAQgAmJ5Y
- ikTWrMWPfiveUacETyEhWVl7u8UhZcx3yy2te8O0ay7t9fYcZgIEfQPPVVus89acIXlG3wYL
- DDPvb21OprLxi+ZJ2a0S5we+LcSWN1jByxJlbWBq+/LcMtGAOhNLpysY1gD0Y4UW/eKS+TFZ
- 562qKC3k1dBvnV9JXCgeS1taYFxRdVAn+2DwK3nuyG/DDq/XgJ5BtmyC3MMx8CiW3POj+O+l
- 6SedIeAfZlZ7/xhijx82g93h07VavUQRwMZgZFsqmuxBxVGiav2HB+dNvs3PFB087Pvc9OHe
- qhajPWOP/gNLMmvBvknn1NToM9a8/E8rzcIZXoYs4RggRRYh6wARAQABwsBfBBgBAgAJBQJX
- GOxnAhsMAAoJEEhHWoN3abky+RUH/jE08/r5QzaNKYeVhu0uVbgXu5fsxqr2cAxhf+KuwT3T
- efhEP2alarxzUZdEh4MsG6c+X2NYLbD3cryiXxVx/7kSAJEFQJfA5P06g8NLR25Qpq9BLsN7
- ++dxQ+CLKzSEb1X24hYAJZpOhS8ev3ii+M/XIo+olDBKuTaTgB6elrg3CaxUsVgLBJ+jbRkW
- yQe2S5f/Ja1ThDpSSLLWLiLK/z7+gaqwhnwjQ8Z8Y9D2itJQcj4itHilwImsqwLG7SxzC0NX
- IQ5KaAFYdRcOgwR8VhhkOIVd70ObSZU+E4pTET1WDz4o65xZ89yfose1No0+r5ht/xWOOrh8
- 53/hcWvxHVs=
-Organization: IBM Linux Technology Center
-Date:   Tue, 11 Dec 2018 10:43:37 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 11 Dec 2018 11:44:23 -0500
+Received: by mail-it1-f193.google.com with SMTP id h65so4867916ith.3;
+        Tue, 11 Dec 2018 08:44:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=DwyPkcVNlLZnkFsH0IBvFgeaelucitRwz/cnxhMyq00=;
+        b=OcNWtioevuvc/8nzGgqOOYaIHMqoBT6YJ2NyNbql7RMuuxhL4oV92ktm8oRmQnUeIG
+         wu+lLgmvB9xMGXFdQsHo8M2mx3yzMuu2aqVH3iec43sjq6rrdbM2cEGBu5pw3bfMPnXE
+         m3gXAzkzLSipA7Njzg8vduGttGwauGeMi3MGnkoFa0iBjSoQWuJ4lfDEshT+KDbTBz20
+         uswk+V0hIyoh40gz15/V25colYk6DlMJ5dVylZU5NRN3fhBYBhESBBcaylxHsR6U83qp
+         TIHpswi79HBhZWqQX3MD8RU2zYCizeJYDdZ6ynCTDzUqZnQ+ggrITAvsleIPYG2nEg23
+         PiuQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=DwyPkcVNlLZnkFsH0IBvFgeaelucitRwz/cnxhMyq00=;
+        b=qFzEIfVpQ38Z9fV0yhdph44OB8WMsETkP2UQWHrbzDLKw3h6yKjUqLSVS7HXilMdMk
+         GHzWO7fQoRh5wuRXSVfmBwvxG90NPw1ymPHSeBAm050JEV1Hi4wMcu6x09/yz8ba+HaR
+         yhSHqnmXZ5O4OISvejrFnvTnm8ITeyMeRx5tMhA5iJH9HFVAwXtH76WeTMvQlRe+bh7v
+         Z8fWf8m3VirSexNHM5PJ0I8jCOp6BcJUwkQ+fGrEfxViyYgjjXiiRFDi0D6jSmJiB4lZ
+         r5iEQgpp78dAsd2xeSi0n0jHGSn8H4Vs891xnMGRh/AVzrl8tGD32g7GaP2idoMWRRq7
+         KfSA==
+X-Gm-Message-State: AA+aEWZHH1CVTMeLsDJ3bdsXbSyxs37M7UvcpZrLBEThJDQPoCjkh3Ks
+        /PP9RgyacGheyWJzuSzRQjlt7tKCLGEmxufqnXY=
+X-Google-Smtp-Source: AFSGD/X4y0pidDxX9ZH+JY5Xsua9IQ/rzkuT99x+4G01MX0m+PX+crm4EEO57sDth6obt0Ty02P5KX6ZJWvl5R5g/Bg=
+X-Received: by 2002:a24:a701:: with SMTP id a1mr2731659itf.7.1544546661714;
+ Tue, 11 Dec 2018 08:44:21 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <871s6oxkdf.fsf@concordia.ellerman.id.au>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18121116-0020-0000-0000-00000E982F67
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010213; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000270; SDB=6.01130282; UDB=6.00587314; IPR=6.00910415;
- MB=3.00024655; MTD=3.00000008; XFM=3.00000015; UTC=2018-12-11 16:43:41
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18121116-0021-0000-0000-00006403D158
-Message-Id: <6026321f-5818-26ff-f21f-375fa2dca51d@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-11_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1812110150
+References: <20181210210310.12677-1-wsa+renesas@sang-engineering.com> <20181210210310.12677-5-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20181210210310.12677-5-wsa+renesas@sang-engineering.com>
+From:   Kamal Dasu <kdasu.kdev@gmail.com>
+Date:   Tue, 11 Dec 2018 11:44:01 -0500
+Message-ID: <CAC=U0a2cvdhAdBPyowR3i=wpnONDHjBWMZ56D_pJYfhYL=DTbg@mail.gmail.com>
+Subject: Re: [RFC/RFT 04/10] i2c: brcmstb: use core helper to mark adapter suspended
+To:     wsa+renesas@sang-engineering.com
+Cc:     linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        hdegoede@redhat.com, linux-pm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Brian Norris <computersforpeace@gmail.com>,
+        Gregory Fong <gregory.0xf0@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        bcm-kernel-feedback-list@broadcom.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---- Snip ---
+On Mon, Dec 10, 2018 at 4:03 PM Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+>
+> Rejecting transfers should be handled by the core.
+>
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
->>
->> The mobility.c code continues on during the second migration, accepts
->> the definitions of the new nodes from the PHYP and ends up renaming
->> the new properties e.g.
->>
->> [ 4565.827296] Duplicate name in base, renamed to "ibm,platform-facilities#1"
->>
->> There is no check like 'of_node_check_flag(np, OF_DETACHED)' within
->> of_find_node_by_phandle to skip nodes that are detached, but still
->> present due to caching or use count considerations.  Also, note that
->> of_find_node_by_phandle also uses a 'phandle_cache' which does not
->> appear to be updated when of_detach_node() is invoked.
-> 
-> This seems like the real bug. Since the phandle cache was added we can
-> now find detached nodes when we shouldn't be able to.
-> 
-> Does the patch below work?
-> 
-> cheers
-> 
-> diff --git a/drivers/of/base.c b/drivers/of/base.c
-> index 09692c9b32a7..d8e4534c0686 100644
-> --- a/drivers/of/base.c
-> +++ b/drivers/of/base.c
-> @@ -1190,6 +1190,10 @@ struct device_node *of_find_node_by_phandle(phandle handle)
->  		if (phandle_cache[masked_handle] &&
->  		    handle == phandle_cache[masked_handle]->phandle)
->  			np = phandle_cache[masked_handle];
-> +
-> +		/* If we find a detached node, remove it */
-> +		if (of_node_check_flag(np, OF_DETACHED))
-> +			np = phandle_cache[masked_handle] = NULL;
->  	}
-> 
->  	if (!np) {
-> 
-> 
+Reviewed-by: Kamal Dasu <kdasu.kdev@gmail.com>
 
-I think this would be a bit better for cases where masked values overlap:
-
-diff --git a/drivers/of/base.c b/drivers/of/base.c
-index 09692c9..ec79129 100644
---- a/drivers/of/base.c
-+++ b/drivers/of/base.c
-@@ -1188,8 +1188,13 @@ struct device_node *of_find_node_by_phandle(phandle handle)
- 
- 	if (phandle_cache) {
- 		if (phandle_cache[masked_handle] &&
--		    handle == phandle_cache[masked_handle]->phandle)
--			np = phandle_cache[masked_handle];
-+		    handle == phandle_cache[masked_handle]->phandle) {
-+				np = phandle_cache[masked_handle];
-+
-+			/* If we find a detached node, remove it */
-+			if (of_node_check_flag(np, OF_DETACHED))
-+				np = phandle_cache[masked_handle] = NULL;
-+		}
- 	}
- 
- 	if (!np) {
-
-
-Will try it out.  Wouldn't it be better to do this when the node is detached
-in drivers/of/dynamic.c:__of_detach_node()?
-
-Thanks.
-Michael
-
--- 
-Michael W. Bringmann
-Linux Technology Center
-IBM Corporation
-Tie-Line  363-5196
-External: (512) 286-5196
-Cell:       (512) 466-0650
-mwb@linux.vnet.ibm.com
-
+> ---
+>  drivers/i2c/busses/i2c-brcmstb.c | 13 ++-----------
+>  1 file changed, 2 insertions(+), 11 deletions(-)
+>
+> diff --git a/drivers/i2c/busses/i2c-brcmstb.c b/drivers/i2c/busses/i2c-brcmstb.c
+> index 826d32049996..05c822e5a3f6 100644
+> --- a/drivers/i2c/busses/i2c-brcmstb.c
+> +++ b/drivers/i2c/busses/i2c-brcmstb.c
+> @@ -170,7 +170,6 @@ struct brcmstb_i2c_dev {
+>         struct bsc_regs *bsc_regmap;
+>         struct i2c_adapter adapter;
+>         struct completion done;
+> -       bool is_suspended;
+>         u32 clk_freq_hz;
+>         int data_regsz;
+>  };
+> @@ -467,9 +466,6 @@ static int brcmstb_i2c_xfer(struct i2c_adapter *adapter,
+>         int xfersz = brcmstb_i2c_get_xfersz(dev);
+>         u32 cond, cond_per_msg;
+>
+> -       if (dev->is_suspended)
+> -               return -EBUSY;
+> -
+>         /* Loop through all messages */
+>         for (i = 0; i < num; i++) {
+>                 pmsg = &msgs[i];
+> @@ -689,10 +685,7 @@ static int brcmstb_i2c_suspend(struct device *dev)
+>  {
+>         struct brcmstb_i2c_dev *i2c_dev = dev_get_drvdata(dev);
+>
+> -       i2c_lock_bus(&i2c_dev->adapter, I2C_LOCK_ROOT_ADAPTER);
+> -       i2c_dev->is_suspended = true;
+> -       i2c_unlock_bus(&i2c_dev->adapter, I2C_LOCK_ROOT_ADAPTER);
+> -
+> +       i2c_mark_adapter_suspended(&i2c_dev->adapter, true);
+>         return 0;
+>  }
+>
+> @@ -700,10 +693,8 @@ static int brcmstb_i2c_resume(struct device *dev)
+>  {
+>         struct brcmstb_i2c_dev *i2c_dev = dev_get_drvdata(dev);
+>
+> -       i2c_lock_bus(&i2c_dev->adapter, I2C_LOCK_ROOT_ADAPTER);
+>         brcmstb_i2c_set_bsc_reg_defaults(i2c_dev);
+> -       i2c_dev->is_suspended = false;
+> -       i2c_unlock_bus(&i2c_dev->adapter, I2C_LOCK_ROOT_ADAPTER);
+> +       i2c_mark_adapter_suspended(&i2c_dev->adapter, false);
+>
+>         return 0;
+>  }
+> --
+> 2.11.0
+>
