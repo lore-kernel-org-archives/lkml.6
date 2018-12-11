@@ -2,97 +2,162 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.7 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43E87C07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:16:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02F7BC07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:16:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B3FD2084E
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:16:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Ta67NsVV";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ogKCq+TS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B3FD2084E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id BA7752084E
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:16:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544545014;
+	bh=0oI8jiRAo1J3dHZT2oWFU/RLwIMb7eNd2Wd2DPLW1JI=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=JQV07BBrV/FnBBW8z+xL1ucGkxZwl1JaxINpmaPmR6Oy0gxH6Bj/Ev5qGW2qXknN7
+	 xP1bsd5hfYzdCz9bBWHyc1O9F7KFbuUqbQKvBnQA6xE+j+5PyQvt/z5OG4MfY2gUBk
+	 txlS3XukPfZo3jM63SDZ14isY5LfVH+wgy1XT3Og=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA7752084E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728641AbeLKPrp (ORCPT
+        id S1728617AbeLKPrk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 10:47:45 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:49822 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728601AbeLKPrj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:47:39 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id CB89460CEC; Tue, 11 Dec 2018 15:47:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1544543258;
-        bh=EvezvSovCiG+rZTuzeY5DBw+q8iht9hDkIOc58MiDAA=;
-        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-        b=Ta67NsVVeuMUWyAkBgBSrOrjQyYbO9k8t+kGRLKcW70usvF1wCdTj4/g0LtPEqR/w
-         1iug6gbnCmD73UPxYWe5v7JTTu/LhsdRluRBjv7Iwe14DqgnnyjM+ToRoHjrDf5prM
-         2f0uAgrY7nut0+DeEC6OEjz4GAooxd+K8WZfmcsU=
-Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        Tue, 11 Dec 2018 10:47:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36080 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727969AbeLKPrh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 10:47:37 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: kvalo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id DE2C160C5F;
-        Tue, 11 Dec 2018 15:47:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        by mail.kernel.org (Postfix) with ESMTPSA id 0623C20989;
+        Tue, 11 Dec 2018 15:47:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1544543256;
-        bh=EvezvSovCiG+rZTuzeY5DBw+q8iht9hDkIOc58MiDAA=;
-        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-        b=ogKCq+TS0VuxcBBubFEu7v6WcJV5pbi/kc0xQLWl53oqmJSCLAyRecneIXe3GRva7
-         CMG3Z+1+8WHWQUiEJLu7qNW8bbhiElhpAtij3NpapO/DqEVmyI7dhrIIJocM1PyK4x
-         R8TsOkN3QQb+BUTB+7Ru3GciyqIjkjFE71zt58U4=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org DE2C160C5F
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-From:   Kalle Valo <kvalo@codeaurora.org>
-To:     Frank Lee <tiny.windzz@gmail.com>
-Cc:     merez@codeaurora.org, davem@davemloft.net,
-        linux-wireless@vger.kernel.org, wil6210@qti.qualcomm.com,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] wireless/wil6210: convert to DEFINE_SHOW_ATTRIBUTE
-References: <20181203132557.12269-1-tiny.windzz@gmail.com>
-        <874lbug2fr.fsf@codeaurora.org>
-        <CAEExFWtc2vRm7k2YpoNae+tOtnusSbVnapU-Wmo7kR-WfY+dzQ@mail.gmail.com>
-        <CAEExFWtqn=-0bq6u_YWhn2YtwVL-eoEEUFkXSU-G5wc4UE=MXg@mail.gmail.com>
-Date:   Tue, 11 Dec 2018 17:47:32 +0200
-In-Reply-To: <CAEExFWtqn=-0bq6u_YWhn2YtwVL-eoEEUFkXSU-G5wc4UE=MXg@mail.gmail.com>
-        (Frank Lee's message of "Tue, 11 Dec 2018 23:28:13 +0800")
-Message-ID: <87ftv412wb.fsf@kamboji.qca.qualcomm.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
+        bh=0oI8jiRAo1J3dHZT2oWFU/RLwIMb7eNd2Wd2DPLW1JI=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=K0N2bu+nZ05wCQVTod1lUF/ro9cpKcAbeAmQQgzkwNZ3PMVxZnqS0CTeH7bZXk7TU
+         9mHp8vPr6vGvdk9oGyIFLFPDq91tDabpAudzw7QRmwUu+C5Khd8LgIt5DZF9Y4nxwp
+         lCNevyP4PrVlCIJbrOILTrpEEPA8ysb3scJgTU2g=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Hui Peng <benquike@gmail.com>,
+        Mathias Payer <mathias.payer@nebelwelt.net>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        stable <stable@kernel.org>
+Subject: [PATCH 4.4 72/91] USB: check usb_get_extra_descriptor for proper size
+Date:   Tue, 11 Dec 2018 16:41:31 +0100
+Message-Id: <20181211151612.247415249@linuxfoundation.org>
+X-Mailer: git-send-email 2.20.0
+In-Reply-To: <20181211151606.026852373@linuxfoundation.org>
+References: <20181211151606.026852373@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Frank Lee <tiny.windzz@gmail.com> writes:
+4.4-stable review patch.  If anyone has any objections, please let me know.
 
-> On Mon, Dec 3, 2018 at 9:36 PM Frank Lee <tiny.windzz@gmail.com> wrote:
->>
->> On Mon, Dec 3, 2018 at 9:33 PM Kalle Valo <kvalo@codeaurora.org> wrote:
->> >
->> > Yangtao Li <tiny.windzz@gmail.com> writes:
->> >
->> > > Use DEFINE_SHOW_ATTRIBUTE macro to simplify the code.
->> > >
->> > > Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
->> >
->> > The prefix for the title should be just "wil6210:", I can fix that.
-> Hi Kalle:
-> Why I can't find it in ath.git?
+------------------
 
-Because I haven't reviewed and applied it yet. BTW, you can reduce email
-by checking the status from patchwork yourself:
+From: Mathias Payer <mathias.payer@nebelwelt.net>
 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches#checking_state_of_patches_from_patchwork
+commit 704620afc70cf47abb9d6a1a57f3825d2bca49cf upstream.
 
--- 
-Kalle Valo
+When reading an extra descriptor, we need to properly check the minimum
+and maximum size allowed, to prevent from invalid data being sent by a
+device.
+
+Reported-by: Hui Peng <benquike@gmail.com>
+Reported-by: Mathias Payer <mathias.payer@nebelwelt.net>
+Co-developed-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Hui Peng <benquike@gmail.com>
+Signed-off-by: Mathias Payer <mathias.payer@nebelwelt.net>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: stable <stable@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+---
+ drivers/usb/core/hub.c    |    2 +-
+ drivers/usb/core/usb.c    |    6 +++---
+ drivers/usb/host/hwa-hc.c |    2 +-
+ include/linux/usb.h       |    4 ++--
+ 4 files changed, 7 insertions(+), 7 deletions(-)
+
+--- a/drivers/usb/core/hub.c
++++ b/drivers/usb/core/hub.c
+@@ -2211,7 +2211,7 @@ static int usb_enumerate_device_otg(stru
+ 		/* descriptor may appear anywhere in config */
+ 		err = __usb_get_extra_descriptor(udev->rawdescriptors[0],
+ 				le16_to_cpu(udev->config[0].desc.wTotalLength),
+-				USB_DT_OTG, (void **) &desc);
++				USB_DT_OTG, (void **) &desc, sizeof(*desc));
+ 		if (err || !(desc->bmAttributes & USB_OTG_HNP))
+ 			return 0;
+ 
+--- a/drivers/usb/core/usb.c
++++ b/drivers/usb/core/usb.c
+@@ -678,14 +678,14 @@ EXPORT_SYMBOL_GPL(usb_get_current_frame_
+  */
+ 
+ int __usb_get_extra_descriptor(char *buffer, unsigned size,
+-			       unsigned char type, void **ptr)
++			       unsigned char type, void **ptr, size_t minsize)
+ {
+ 	struct usb_descriptor_header *header;
+ 
+ 	while (size >= sizeof(struct usb_descriptor_header)) {
+ 		header = (struct usb_descriptor_header *)buffer;
+ 
+-		if (header->bLength < 2) {
++		if (header->bLength < 2 || header->bLength > size) {
+ 			printk(KERN_ERR
+ 				"%s: bogus descriptor, type %d length %d\n",
+ 				usbcore_name,
+@@ -694,7 +694,7 @@ int __usb_get_extra_descriptor(char *buf
+ 			return -1;
+ 		}
+ 
+-		if (header->bDescriptorType == type) {
++		if (header->bDescriptorType == type && header->bLength >= minsize) {
+ 			*ptr = header;
+ 			return 0;
+ 		}
+--- a/drivers/usb/host/hwa-hc.c
++++ b/drivers/usb/host/hwa-hc.c
+@@ -654,7 +654,7 @@ static int hwahc_security_create(struct
+ 	top = itr + itr_size;
+ 	result = __usb_get_extra_descriptor(usb_dev->rawdescriptors[index],
+ 			le16_to_cpu(usb_dev->actconfig->desc.wTotalLength),
+-			USB_DT_SECURITY, (void **) &secd);
++			USB_DT_SECURITY, (void **) &secd, sizeof(*secd));
+ 	if (result == -1) {
+ 		dev_warn(dev, "BUG? WUSB host has no security descriptors\n");
+ 		return 0;
+--- a/include/linux/usb.h
++++ b/include/linux/usb.h
+@@ -334,11 +334,11 @@ struct usb_host_bos {
+ };
+ 
+ int __usb_get_extra_descriptor(char *buffer, unsigned size,
+-	unsigned char type, void **ptr);
++	unsigned char type, void **ptr, size_t min);
+ #define usb_get_extra_descriptor(ifpoint, type, ptr) \
+ 				__usb_get_extra_descriptor((ifpoint)->extra, \
+ 				(ifpoint)->extralen, \
+-				type, (void **)ptr)
++				type, (void **)ptr, sizeof(**(ptr)))
+ 
+ /* ----------------------------------------------------------------------- */
+ 
+
+
