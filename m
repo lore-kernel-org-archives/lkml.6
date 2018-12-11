@@ -4,53 +4,55 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 729EDC5CFFE
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:09:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D40D7C07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:09:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 384EB2084E
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:09:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 93E6720880
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:09:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544544552;
-	bh=mhhdFNjuTv/BRZF9uxuHvkCIN+jepENBT5kNJzhKPgY=;
+	s=default; t=1544544555;
+	bh=uQsCC59JKgkf4GEpfsYbOLXlPETtP4iiaUKEievQhPU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=DeKzkEiJZi1KB50XXGGSdQ4yzED4OMdTV/GO2B9eMoMC9C1wIG4vVAb7gbQb1EHNe
-	 857oUArdmjmBGh5sFZmPp7W9ORHayG3st0yzWRfu9jXThvigccTi9PTRXuDHZKL616
-	 AeVReU9e+6uHa29LeV4ZyU4V/gChc1f+kDhcpsbo=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 384EB2084E
+	b=b3BJv33I23kra2CSPKF1OlPy36UNOYnwy1lPJ/T9YHfNG7aR+km7jTZ/LTbpPEM0T
+	 NIROL23aP/RqDO36YncOFL0+uAgokRlIDSmesu3LG7SixDiKuLcrdt4hvbDaeXV2pG
+	 5wJ5oYjCPZl4aKr+7YKENvCCVsoDFR/+ia+awDew=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 93E6720880
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729757AbeLKPwh (ORCPT
+        id S1729743AbeLKPwf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 10:52:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41182 "EHLO mail.kernel.org"
+        Tue, 11 Dec 2018 10:52:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41224 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729725AbeLKPw3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:52:29 -0500
+        id S1729271AbeLKPwc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 10:52:32 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BF48F2146D;
-        Tue, 11 Dec 2018 15:52:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 940D820855;
+        Tue, 11 Dec 2018 15:52:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544543549;
-        bh=mhhdFNjuTv/BRZF9uxuHvkCIN+jepENBT5kNJzhKPgY=;
+        s=default; t=1544543552;
+        bh=uQsCC59JKgkf4GEpfsYbOLXlPETtP4iiaUKEievQhPU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UkwbhhfmWzkx4z/6eBxGRQ44kbagubj0ALtVZDJCHA+Io3Tdok6L8ewmSJrv+9B5u
-         6fZyUGEGVlD1SPkeswpT1zLPzWK8UhXPkFXC7r2pYxr3WMrztkIw0rD48cG6+POnkD
-         ctILB7qow/t8c+BRQjl8No0BOxeg9gNGIrWlD0gQ=
+        b=IfQp33GW7p97anqMVmrnnoeguyPUm/adaaClG45wTLE1lwhGg6wKsobC+MCtNOcSi
+         J2eLdrrmPvkoApaBtEH7TDf4tUESxgV2p3Vv8SdKKCF+piBUIhgJ+148qoRfCqfkUh
+         bxPMZssAiHsn9fT50jjuGhongAoZ4yHIkXL9EU1A=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Benson Leung <bleung@chromium.org>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        stable@vger.kernel.org,
+        =?UTF-8?q?Linus=20L=C3=BCssing?= <linus.luessing@c0d3.blue>,
+        Sven Eckelmann <sven@narfation.org>,
+        Simon Wunderlich <sw@simonwunderlich.de>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 07/67] HID: input: Ignore battery reported by Symbol DS4308
-Date:   Tue, 11 Dec 2018 16:41:07 +0100
-Message-Id: <20181211151630.742833973@linuxfoundation.org>
+Subject: [PATCH 4.14 08/67] batman-adv: Use explicit tvlv padding for ELP packets
+Date:   Tue, 11 Dec 2018 16:41:08 +0100
+Message-Id: <20181211151630.794271195@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181211151630.378216233@linuxfoundation.org>
 References: <20181211151630.378216233@linuxfoundation.org>
@@ -69,54 +71,59 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 0fd791841a6d67af1155a9c3de54dea51220721e ]
+[ Upstream commit f4156f9656feac21f4de712fac94fae964c5d402 ]
 
-The Motorola/Zebra Symbol DS4308-HD is a handheld USB barcode scanner
-which does not have a battery, but reports one anyway that always has
-capacity 2.
+The announcement messages of batman-adv COMPAT_VERSION 15 have the
+possibility to announce additional information via a dynamic TVLV part.
+This part is optional for the ELP packets and currently not parsed by the
+Linux implementation. Still out-of-tree versions are using it to transport
+things like neighbor hashes to optimize the rebroadcast behavior.
 
-Let's apply the IGNORE quirk to prevent it from being treated like a
-power supply so that userspaces don't get confused that this
-accessory is almost out of power and warn the user that they need to charge
-their wired barcode scanner.
+Since the ELP broadcast packets are smaller than the minimal ethernet
+packet, it often has to be padded. This is often done (as specified in
+RFC894) with octets of zero and thus work perfectly fine with the TVLV
+part (making it a zero length and thus empty). But not all ethernet
+compatible hardware seems to follow this advice. To avoid ambiguous
+situations when parsing the TVLV header, just force the 4 bytes (TVLV
+length + padding) after the required ELP header to zero.
 
-Reported here: https://bugs.chromium.org/p/chromium/issues/detail?id=804720
-
-Signed-off-by: Benson Leung <bleung@chromium.org>
-Reviewed-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Fixes: d6f94d91f766 ("batman-adv: ELP - adding basic infrastructure")
+Reported-by: Linus Lüssing <linus.luessing@c0d3.blue>
+Signed-off-by: Sven Eckelmann <sven@narfation.org>
+Signed-off-by: Simon Wunderlich <sw@simonwunderlich.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/hid/hid-ids.h   | 1 +
- drivers/hid/hid-input.c | 3 +++
- 2 files changed, 4 insertions(+)
+ net/batman-adv/bat_v_elp.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/hid/hid-ids.h b/drivers/hid/hid-ids.h
-index 3fc8c0d67592..87904d2adadb 100644
---- a/drivers/hid/hid-ids.h
-+++ b/drivers/hid/hid-ids.h
-@@ -1001,6 +1001,7 @@
- #define USB_VENDOR_ID_SYMBOL		0x05e0
- #define USB_DEVICE_ID_SYMBOL_SCANNER_1	0x0800
- #define USB_DEVICE_ID_SYMBOL_SCANNER_2	0x1300
-+#define USB_DEVICE_ID_SYMBOL_SCANNER_3	0x1200
+diff --git a/net/batman-adv/bat_v_elp.c b/net/batman-adv/bat_v_elp.c
+index e92dfedccc16..fbc132f4670e 100644
+--- a/net/batman-adv/bat_v_elp.c
++++ b/net/batman-adv/bat_v_elp.c
+@@ -338,19 +338,21 @@ out:
+  */
+ int batadv_v_elp_iface_enable(struct batadv_hard_iface *hard_iface)
+ {
++	static const size_t tvlv_padding = sizeof(__be32);
+ 	struct batadv_elp_packet *elp_packet;
+ 	unsigned char *elp_buff;
+ 	u32 random_seqno;
+ 	size_t size;
+ 	int res = -ENOMEM;
  
- #define USB_VENDOR_ID_SYNAPTICS		0x06cb
- #define USB_DEVICE_ID_SYNAPTICS_TP	0x0001
-diff --git a/drivers/hid/hid-input.c b/drivers/hid/hid-input.c
-index bb984cc9753b..d146a9b545ee 100644
---- a/drivers/hid/hid-input.c
-+++ b/drivers/hid/hid-input.c
-@@ -325,6 +325,9 @@ static const struct hid_device_id hid_battery_quirks[] = {
- 	{ HID_BLUETOOTH_DEVICE(USB_VENDOR_ID_ELECOM,
- 		USB_DEVICE_ID_ELECOM_BM084),
- 	  HID_BATTERY_QUIRK_IGNORE },
-+	{ HID_USB_DEVICE(USB_VENDOR_ID_SYMBOL,
-+		USB_DEVICE_ID_SYMBOL_SCANNER_3),
-+	  HID_BATTERY_QUIRK_IGNORE },
- 	{}
- };
+-	size = ETH_HLEN + NET_IP_ALIGN + BATADV_ELP_HLEN;
++	size = ETH_HLEN + NET_IP_ALIGN + BATADV_ELP_HLEN + tvlv_padding;
+ 	hard_iface->bat_v.elp_skb = dev_alloc_skb(size);
+ 	if (!hard_iface->bat_v.elp_skb)
+ 		goto out;
  
+ 	skb_reserve(hard_iface->bat_v.elp_skb, ETH_HLEN + NET_IP_ALIGN);
+-	elp_buff = skb_put_zero(hard_iface->bat_v.elp_skb, BATADV_ELP_HLEN);
++	elp_buff = skb_put_zero(hard_iface->bat_v.elp_skb,
++				BATADV_ELP_HLEN + tvlv_padding);
+ 	elp_packet = (struct batadv_elp_packet *)elp_buff;
+ 
+ 	elp_packet->packet_type = BATADV_ELP;
 -- 
 2.19.1
 
