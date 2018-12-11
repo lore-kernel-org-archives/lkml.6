@@ -2,112 +2,78 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E096AC5CFFE
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 09:52:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86984C07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 09:53:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AC0772082F
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 09:52:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC0772082F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 4B5DE2082F
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 09:53:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B5DE2082F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=8bytes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726377AbeLKJwf (ORCPT
+        id S1726308AbeLKJxU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 04:52:35 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:50962 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726117AbeLKJwf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 04:52:35 -0500
-Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id B80C3EFB55449;
-        Tue, 11 Dec 2018 17:52:31 +0800 (CST)
-Received: from localhost (10.177.31.96) by DGGEMS408-HUB.china.huawei.com
- (10.3.19.208) with Microsoft SMTP Server id 14.3.408.0; Tue, 11 Dec 2018
- 17:52:25 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <bp@alien8.de>, <mchehab@kernel.org>
-CC:     <linux-kernel@vger.kernel.org>, <linux-edac@vger.kernel.org>,
-        YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next] i5000_edac: remove set but not used variables 'maxdimmperch, maxch, channel_count'
-Date:   Tue, 11 Dec 2018 17:52:07 +0800
-Message-ID: <20181211095207.25936-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
+        Tue, 11 Dec 2018 04:53:20 -0500
+Received: from 8bytes.org ([81.169.241.247]:53056 "EHLO theia.8bytes.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726114AbeLKJxU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 04:53:20 -0500
+Received: by theia.8bytes.org (Postfix, from userid 1000)
+        id 8DB833AF; Tue, 11 Dec 2018 10:53:18 +0100 (CET)
+Date:   Tue, 11 Dec 2018 10:53:17 +0100
+From:   Joerg Roedel <joro@8bytes.org>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        iommu@lists.linux-foundation.org, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 00/21] IOMMU: Tegra GART driver clean up and
+ optimization
+Message-ID: <20181211095317.tv43aaefnsezmic7@8bytes.org>
+References: <20181209202950.31486-1-digetx@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.177.31.96]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181209202950.31486-1-digetx@gmail.com>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+On Sun, Dec 09, 2018 at 11:29:29PM +0300, Dmitry Osipenko wrote:
+> Dmitry Osipenko (21):
+>   iommu/tegra: gart: Remove pr_fmt and clean up includes
+>   iommu/tegra: gart: Clean up driver probe errors handling
+>   iommu/tegra: gart: Ignore devices without IOMMU phandle in DT
+>   iommu: Introduce iotlb_sync_map callback
+>   iommu/tegra: gart: Optimize mapping / unmapping performance
+>   dt-bindings: memory: tegra: Squash tegra20-gart into tegra20-mc
+>   ARM: dts: tegra20: Update Memory Controller node to the new binding
+>   memory: tegra: Don't invoke Tegra30+ specific memory timing setup on
+>     Tegra20
+>   memory: tegra: Adapt to Tegra20 device-tree binding changes
+>   memory: tegra: Read client ID on GART page fault
+>   memory: tegra: Use of_device_get_match_data()
+>   memory: tegra: Use relaxed versions of readl/writel
+>   iommu/tegra: gart: Integrate with Memory Controller driver
+>   iommu/tegra: gart: Fix spinlock recursion
+>   iommu/tegra: gart: Fix NULL pointer dereference
+>   iommu/tegra: gart: Allow only one active domain at a time
+>   iommu/tegra: gart: Don't use managed resources
+>   iommu/tegra: gart: Prepend error/debug messages with "gart:"
+>   iommu/tegra: gart: Don't detach devices from inactive domains
+>   iommu/tegra: gart: Simplify clients-tracking code
+>   iommu/tegra: gart: Perform code refactoring
 
-drivers/edac/i5000_edac.c: In function 'i5000_get_mc_regs':
-drivers/edac/i5000_edac.c:1138:6: warning:
- variable 'maxdimmperch' set but not used [-Wunused-but-set-variable]
+This is making progress, but some parts have no Ack or Review yet, I'll
+wait for Thierry before applying these patches into the iommu tree.
 
-drivers/edac/i5000_edac.c:1137:6: warning:
- variable 'maxch' set but not used [-Wunused-but-set-variable]
+Regards,
 
-drivers/edac/i5000_edac.c: In function 'i5000_init_csrows':
-drivers/edac/i5000_edac.c:1256:13: warning:
- variable 'channel_count' set but not used [-Wunused-but-set-variable]
-
-It never used since introduction in
-commit eb60705ac5a9 ("drivers/edac: new intel 5000 MC driver")
-
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/edac/i5000_edac.c | 9 +--------
- 1 file changed, 1 insertion(+), 8 deletions(-)
-
-diff --git a/drivers/edac/i5000_edac.c b/drivers/edac/i5000_edac.c
-index 98bef13..078a735 100644
---- a/drivers/edac/i5000_edac.c
-+++ b/drivers/edac/i5000_edac.c
-@@ -1134,8 +1134,6 @@ static void i5000_get_mc_regs(struct mem_ctl_info *mci)
- 	u32 actual_tolm;
- 	u16 limit;
- 	int slot_row;
--	int maxch;
--	int maxdimmperch;
- 	int way0, way1;
- 
- 	pvt = mci->pvt_info;
-@@ -1145,9 +1143,6 @@ static void i5000_get_mc_regs(struct mem_ctl_info *mci)
- 	pci_read_config_dword(pvt->system_address, AMBASE + sizeof(u32),
- 			&pvt->u.ambase_top);
- 
--	maxdimmperch = pvt->maxdimmperch;
--	maxch = pvt->maxch;
--
- 	edac_dbg(2, "AMBASE= 0x%lx  MAXCH= %d  MAX-DIMM-Per-CH= %d\n",
- 		 (long unsigned int)pvt->ambase, pvt->maxch, pvt->maxdimmperch);
- 
-@@ -1253,7 +1248,7 @@ static int i5000_init_csrows(struct mem_ctl_info *mci)
- {
- 	struct i5000_pvt *pvt;
- 	struct dimm_info *dimm;
--	int empty, channel_count;
-+	int empty;
- 	int max_csrows;
- 	int mtr;
- 	int csrow_megs;
-@@ -1261,8 +1256,6 @@ static int i5000_init_csrows(struct mem_ctl_info *mci)
- 	int slot;
- 
- 	pvt = mci->pvt_info;
--
--	channel_count = pvt->maxch;
- 	max_csrows = pvt->maxdimmperch * 2;
- 
- 	empty = 1;		/* Assume NO memory */
--- 
-2.7.4
-
-
+	Joerg
