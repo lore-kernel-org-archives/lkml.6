@@ -2,110 +2,141 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DF30C6783B
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 22:50:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4ABCBC6783B
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 22:50:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E4CFF20672
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 22:50:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0099820849
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 22:50:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=neverware.com header.i=@neverware.com header.b="OUSbKthQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E4CFF20672
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=neverware.com
+	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="Ul4Cs0yB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0099820849
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726295AbeLKWuG (ORCPT
+        id S1726314AbeLKWua (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 17:50:06 -0500
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:41016 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726201AbeLKWuG (ORCPT
+        Tue, 11 Dec 2018 17:50:30 -0500
+Received: from mail-ot1-f45.google.com ([209.85.210.45]:34096 "EHLO
+        mail-ot1-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726202AbeLKWua (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 17:50:06 -0500
-Received: by mail-qt1-f195.google.com with SMTP id d18so18423513qto.8
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 14:50:05 -0800 (PST)
+        Tue, 11 Dec 2018 17:50:30 -0500
+Received: by mail-ot1-f45.google.com with SMTP id t5so15820674otk.1
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 14:50:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=neverware.com; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=kCcVZCFcQP8h5Lw4sHSIAZ/fdHniF/n0Tl4rMUpKOyI=;
-        b=OUSbKthQXOwHxc9obTikSr1JR8ZBaQCtvqq63IqwQtowjmI+xsV11H4tlhJGdV2HDa
-         2GvvifhkHG/jZVtHWlFMvlBKOopJNkwWA0C9DnAKaOv8m2XAd6bT96GgzcSd+Mm/eTVr
-         hlUzTxzrlrFahMzyGM6YtADiU/A+MbUfler4A=
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=SyTStl/gv6OZlnF/T4Jla+zEiy1qVtn8wNdP2wBRhC0=;
+        b=Ul4Cs0yBH9puEHDVWDPnJ5NFZo7HNYXkVgvzOTGGteanMoYuOILETh8HG8X/YG6mt7
+         0DnWYDwGNCj6SnUZ6V8CY3VyW+2LczlfI/jpFc8vMWJVLiCnbbG7xGS4WE6rD3kBXJgl
+         jGZVnu50F1uIHAoZMR9pdu0EM0oRbhIptv3goUSa2AmAzT/p30IRRo0BtNqQffayHM3T
+         YVc3QcGKLcSDYW8HJi9wfPghv71fMOHXMmKaoMo1IUCdOIHc84f6I5jmtDW0KZKk5vvj
+         pr/gz7i0vL7W5VO/PGKB0x9Ln69QnAQxbNbEA7RuaSI5K7TqxP1+hMnvfCb5stkbAmq8
+         FGMQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=kCcVZCFcQP8h5Lw4sHSIAZ/fdHniF/n0Tl4rMUpKOyI=;
-        b=nwC9Q1WDPuqsrvvuX66XODVGHbzUKzaRtCeZLBJl1oD8AUqImPzwNEqGs7GisQc+UF
-         hKPba2BiZIrdp/8zaL7GP/Jhz6vETfiAQLESP6bqiMZ5feF3fC/+oeW0YlpW+jNOClqH
-         wvGs+Y/ZkbYI7Gp7vaOchZPvChoRojohsYjXrsIQ/WFx1smneZECAKye+F11tulzd1hp
-         iqnwu69jmei1Zv73TkuoYXNb8ekNwbMy99apFdliskhqYn49wCEtoTA+TIYrBWrnlYjN
-         f5woT1WiyYvER8VlXJlxrO+l5jAdkPaf+7cbX2nKxKKCuau/FZRn71yw7U2LLK2dVRiC
-         dkZg==
-X-Gm-Message-State: AA+aEWaGrIRMPPJscbuztW4ewyVslFgjm3il990K1iUE694zMJ5IoqOt
-        mR/TqCYMdROvXKByuOLo07UtAQ==
-X-Google-Smtp-Source: AFSGD/US2/4fR9ywxbuY3t+ofblPwZQ+fI9AsffBLwvwE1//mCl/eFjn8vf48TWFvdv0x1VYLuMkSg==
-X-Received: by 2002:aed:23c5:: with SMTP id k5mr18090212qtc.39.1544568604861;
-        Tue, 11 Dec 2018 14:50:04 -0800 (PST)
-Received: from Puget-178128.seaworld.local (rrcs-208-105-51-90.nyc.biz.rr.com. [208.105.51.90])
-        by smtp.googlemail.com with ESMTPSA id z23sm14509860qkg.50.2018.12.11.14.50.04
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 11 Dec 2018 14:50:04 -0800 (PST)
-From:   Girija Kumar Kasinadhuni <gkumar@neverware.com>
-To:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        Kailang Yang <kailang@realtek.com>,
-        Hui Wang <hui.wang@canonical.com>, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org
-Cc:     Girija Kumar Kasinadhuni <gkumar@neverware.com>
-Subject: [PATCH] ALSA: hda/realtek - Add quirks for Dell Optiplex 5060, 7060 for audio out while using headphones
-Date:   Tue, 11 Dec 2018 17:49:36 -0500
-Message-Id: <20181211224937.28889-1-gkumar@neverware.com>
-X-Mailer: git-send-email 2.17.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=SyTStl/gv6OZlnF/T4Jla+zEiy1qVtn8wNdP2wBRhC0=;
+        b=pUv4bMms/BQEF1Jrw0cVBhEYNn2+pXKaqyMte91D/KFEpO55B2+67DYStz8Z+ele6U
+         h5U2phMMccixlpKQyqOdpgxhAjoxQEJFEWUJgMNJpqU/pJNQ2BrhOExxvQGpxFl1CBwP
+         EFTLoZGUaWgnPUicQjvd/IVxBSE0xu2PI4NgiVWD+ZHzwZ2ZetYXhq9bT+POZufJtVgD
+         tF+qBch2o77II9kDlekWMJzbEujuJlBZ2QLtPS3SnOOW9NBWzlVY/I3gLTJOFnGLZWJT
+         Cnq3JtTx/qUbK3OjNaFC88F3rK/KAxCNw2IWDpv1cwOpi2OHzAa8OSDWn48lFLoPYzpq
+         LGJw==
+X-Gm-Message-State: AA+aEWZB1O90yvP4Hdpmk8T7cAMNCS62r+yRuzPumPpQlYvUADIoMm6O
+        1ROy0Zf4PmFNPyhs2cGxHIaj80f6koG5XewNtKp+hw==
+X-Google-Smtp-Source: AFSGD/XY/KwYl+6nLUAETVS3kFoVpXnTa6e5bm5PQOSDawNLRay38O+sBRmXbB4YQIsTsyPWEcDs9BEjlPbNhAQD7fI=
+X-Received: by 2002:a9d:6ac2:: with SMTP id m2mr12207666otq.353.1544568629316;
+ Tue, 11 Dec 2018 14:50:29 -0800 (PST)
+MIME-Version: 1.0
+References: <20181211010310.8551-1-keith.busch@intel.com> <20181211010310.8551-3-keith.busch@intel.com>
+ <CAPcyv4gEpxigPqc0PgDE0YCL3Ot+wPfvChAZqUTtdYR2WDxaJg@mail.gmail.com>
+ <20181211165518.GB8101@localhost.localdomain> <CAPcyv4id0mgjdBPPw8Y26rodOEQ=EHfaTrgasU5g4X7u=dS2xw@mail.gmail.com>
+ <20181211204451.GD8101@localhost.localdomain>
+In-Reply-To: <20181211204451.GD8101@localhost.localdomain>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Tue, 11 Dec 2018 14:50:17 -0800
+Message-ID: <CAPcyv4hmCJLg6mT=Fc1gwz7E7D5Nm5fO0erqqF0yUb=HbvGf6g@mail.gmail.com>
+Subject: Re: [PATCHv2 02/12] acpi/hmat: Parse and report heterogeneous memory
+To:     Keith Busch <keith.busch@intel.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ACPI <linux-acpi@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There are two audio ports on these machines - headset and mic.
-There' s no sound when hp is inserted into the headset port,
-though the hp is detected. Without pulseaudio, this issue is
-seen on both the Optiplex machines. The issue goes away with the
-"options snd-hda-intel model=dell-headset-dock" quirk in the
-/etc/modprobe.d/alsa-base.conf or /etc/modprobe.d/alsa.conf
-Getting this fix into the kernel instead of fixing in an
-application layer above, or in a .conf file. This is also helpful
-for audio clients using the ALSA api like cras from ChromiumOS.
+On Tue, Dec 11, 2018 at 12:47 PM Keith Busch <keith.busch@intel.com> wrote:
+>
+> On Tue, Dec 11, 2018 at 12:29:45PM -0800, Dan Williams wrote:
+> > On Tue, Dec 11, 2018 at 8:58 AM Keith Busch <keith.busch@intel.com> wrote:
+> > > +static int __init
+> > > +acpi_parse_cache(union acpi_subtable_headers *header, const unsigned long end)
+> > > +{
+> > > +       struct acpi_hmat_cache *cache = (void *)header;
+> > > +       u32 attrs;
+> > > +
+> > > +       attrs = cache->cache_attributes;
+> > > +       if (((attrs & ACPI_HMAT_CACHE_ASSOCIATIVITY) >> 8) ==
+> > > +                                               ACPI_HMAT_CA_DIRECT_MAPPED)
+> > > +               set_bit(cache->memory_PD, node_side_cached);
+> >
+> > I'm not sure I see a use case for 'node_side_cached'. Instead I need
+> > to know if a cache intercepts a "System RAM" resource, because a cache
+> > in front of a reserved address range would not be impacted by page
+> > allocator randomization. Or, are you saying have memblock generically
+> > describes this capability and move the responsibility of acting on
+> > that data to a higher level?
+>
+> The "node_side_cached" array isn't intended to be used directly. It's
+> just holding the PXM's that HMAT says have a side cache so we know which
+> PXM's have that attribute before parsing SRAT's memory affinity.
+>
+> The intention was that this is just another attribute of a memory range
+> similiar to hotpluggable. Whoever needs to use it may query it from
+> the memblock, if that makes sense.
+>
+> > The other detail to consider is the cache ratio size, but that would
+> > be a follow on feature. The use case is to automatically determine the
+> > ratio to pass to numa_emulation:
+> >
+> >     cc9aec03e58f x86/numa_emulation: Introduce uniform split capability
+>
+> Will look into that.
+>
+> > > diff --git a/include/linux/memblock.h b/include/linux/memblock.h
+> > > index aee299a6aa76..a24c918a4496 100644
+> > > --- a/include/linux/memblock.h
+> > > +++ b/include/linux/memblock.h
+> > > @@ -44,6 +44,7 @@ enum memblock_flags {
+> > >         MEMBLOCK_HOTPLUG        = 0x1,  /* hotpluggable region */
+> > >         MEMBLOCK_MIRROR         = 0x2,  /* mirrored region */
+> > >         MEMBLOCK_NOMAP          = 0x4,  /* don't add to kernel direct mapping */
+> > > +       MEMBLOCK_SIDECACHED     = 0x8,  /* System side caches memory access */
+> >
+> > I'm concerned that we may be stretching memblock past its intended use
+> > case especially for just this randomization case. For example, I think
+> > memblock_find_in_range() gets confused in the presence of
+> > MEMBLOCK_SIDECACHED memblocks.
+>
+> Ok, I see. Is there a better structure or interface that you may recommend
+> for your use case to identify which memory ranges contain this attribute?
 
-Signed-off-by: Girija Kumar Kasinadhuni <gkumar@neverware.com>
----
-alsa-info:
-
- Optiplex 5060 -
- - without fix:	http://www.alsa-project.org/db/?f=2cf3c4354e82bde4aa480612a914535982fa3f91
- - with fix: http://www.alsa-project.org/db/?f=7a928960400ec828b82632411284ad8a63727b92
- Optiplex 7060
- - without fix: http://www.alsa-project.org/db/?f=69fa554faa712e7cad1f188be4a5192353d64f2c
- - with fix: http://www.alsa-project.org/db/?f=80ce1fb178b377b27b0795ac1c55e8cbee1b5b96
-
- sound/pci/hda/patch_realtek.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/sound/pci/hda/patch_realtek.c b/sound/pci/hda/patch_realtek.c
-index 8d75597028ee..581f6a288abf 100644
---- a/sound/pci/hda/patch_realtek.c
-+++ b/sound/pci/hda/patch_realtek.c
-@@ -6444,6 +6444,8 @@ static const struct snd_pci_quirk alc269_fixup_tbl[] = {
- 	SND_PCI_QUIRK(0x1028, 0x064b, "Dell", ALC293_FIXUP_DELL1_MIC_NO_PRESENCE),
- 	SND_PCI_QUIRK(0x1028, 0x0665, "Dell XPS 13", ALC288_FIXUP_DELL_XPS_13),
- 	SND_PCI_QUIRK(0x1028, 0x0669, "Dell Optiplex 9020m", ALC255_FIXUP_DELL1_MIC_NO_PRESENCE),
-+	SND_PCI_QUIRK(0x1028, 0x085b, "Dell Optiplex 5060", ALC269_FIXUP_DELL2_MIC_NO_PRESENCE),
-+	SND_PCI_QUIRK(0x1028, 0x085a, "Dell Optiplex 7060", ALC269_FIXUP_DELL2_MIC_NO_PRESENCE),
- 	SND_PCI_QUIRK(0x1028, 0x069a, "Dell Vostro 5480", ALC290_FIXUP_SUBWOOFER_HSJACK),
- 	SND_PCI_QUIRK(0x1028, 0x06c7, "Dell", ALC255_FIXUP_DELL1_MIC_NO_PRESENCE),
- 	SND_PCI_QUIRK(0x1028, 0x06d9, "Dell", ALC293_FIXUP_DELL1_MIC_NO_PRESENCE),
--- 
-2.17.1
-
+Well, no I don't think there is one. We just need to either audit
+existing memblock users to make sure they are prepared for this new
+type, or move the cache information somewhere else. I'd be inclined to
+just move it to new fields, or a sub-struct in struct memblock_region.
+Then we can put the cache set-way info and near memory size
+information in there as well. Likely need a new
+CONFIG_HAVE_MEMBLOCK_CACHE_INFO gated by the presence of HMAT support.
