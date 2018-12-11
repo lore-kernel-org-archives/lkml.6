@@ -2,110 +2,147 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7E69C67839
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 19:13:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49E03C5CFFE
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 19:17:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AE4EF20879
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 19:13:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE4EF20879
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=the-dreams.de
+	by mail.kernel.org (Postfix) with ESMTP id BE65120880
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 19:17:02 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=lightnvm-io.20150623.gappssmtp.com header.i=@lightnvm-io.20150623.gappssmtp.com header.b="GVMdYczn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE65120880
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lightnvm.io
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727087AbeLKTNh (ORCPT
+        id S1726742AbeLKTRB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 14:13:37 -0500
-Received: from sauhun.de ([88.99.104.3]:44834 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726398AbeLKTNg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 14:13:36 -0500
-Received: from localhost (p54B334A7.dip0.t-ipconnect.de [84.179.52.167])
-        by pokefinder.org (Postfix) with ESMTPSA id EFC324C0E8F;
-        Tue, 11 Dec 2018 20:13:32 +0100 (CET)
-Date:   Tue, 11 Dec 2018 20:13:16 +0100
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        linux-pwm@vger.kernel.org, linux-iio@vger.kernel.org,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        linux-i2c@vger.kernel.org, groeck@chromium.org,
-        kernel@collabora.com, linux-rtc@vger.kernel.org,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Benson Leung <bleung@chromium.org>,
-        Sebastian Reichel <sre@kernel.org>,
-        linux-input@vger.kernel.org,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        devicetree@vger.kernel.org,
-        Thierry Reding <thierry.reding@gmail.com>,
-        linux-pm@vger.kernel.org, MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "David S. Miller" <davem@davemloft.net>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH v2] MAINTAINERS: add maintainers for ChromeOS EC
- sub-drivers
-Message-ID: <20181211191316.asshpucnnhkd43mc@ninjato>
-References: <20181211190953.13626-1-enric.balletbo@collabora.com>
+        Tue, 11 Dec 2018 14:17:01 -0500
+Received: from mail-lj1-f169.google.com ([209.85.208.169]:41584 "EHLO
+        mail-lj1-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726365AbeLKTRB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 14:17:01 -0500
+Received: by mail-lj1-f169.google.com with SMTP id k15-v6so14030579ljc.8
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 11:16:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lightnvm-io.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=O7fFUM/mepqe/i69Sla4D4jNze3fp3adihc9Ic58eOA=;
+        b=GVMdYcznBYlKwHrs356gHcEOIfsmsx5lPAhb8TO1oLbB61FlvuWNkBJbDYyStRXq/3
+         bYFDpK19xBxdgpdiA/AeJbwuRYewaAqp3bn2rVf5vxehF5pwMGuBQaHXUTpPU5CfGlju
+         CD2y74vRSpwqJDIi6CTobxG3klItOP9Cq1qSFkhWF5BvdB98avUkADApQW+6Nk276DJ9
+         Ow4SIBV1+3rVfYNxqsj+YpByNnlqokCsALKWzPvagoOjnArxYc2g8kTXZ/SKo6+mKsKl
+         WG9wdogzou19092v2aCfgkZCQ0EkQBHtfvi6RgFcL+qaer7BOiA8kXIYguMO6au+ujd0
+         772Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=O7fFUM/mepqe/i69Sla4D4jNze3fp3adihc9Ic58eOA=;
+        b=b2zH4OHx/gO0XA+/8kZmT96MO1Y4QlF4my5aZ6lbzoHZ6tvqSPLHxkNtHV314ldULw
+         GdFpvdgzBuGFRD8Y5YdE6We5HkcmWZnaQFgH0RKZRiY6npa9l+c6ZPzm6Ixn9pPB7iRj
+         PmekhcHIDP8v7fgbn6JYzGaWIa2uCKhfzJylCjQhV4vmD9CVaFoCYmxd6ziiTQ24yGVq
+         NmOFlLSI2ezw16y7trKLQL5/qphn8uTiEasQU0Sg6oXyIhp+1YEnSo2f3fRTfKp58Kjh
+         dSEs6NnBrXF8WVJ3NMefzMcC/0PRK+ZLHtqvu5ZYVwSkVxbKqD9Johvydd6eTHVrEr7t
+         r1FA==
+X-Gm-Message-State: AA+aEWZrC7F0x6BqhhfQ/c0xZ7JfstnpMluH0ue3/wTrYwXU5rC0YVkb
+        bNgToMKrPvVai5r5LYo2D6P//A==
+X-Google-Smtp-Source: AFSGD/UOcBuxUW1xRyZpOcd3ar6Jna83QvZZGqIYibKxiqnOLfLeHH6dWeAnDSDA4UHzaSlpFD3aJw==
+X-Received: by 2002:a2e:9783:: with SMTP id y3-v6mr10423226lji.167.1544555819041;
+        Tue, 11 Dec 2018 11:16:59 -0800 (PST)
+Received: from skyninja.webspeed.dk (95-166-82-66-cable.dk.customer.tdc.net. [95.166.82.66])
+        by smtp.gmail.com with ESMTPSA id v64sm2764583lfa.48.2018.12.11.11.16.58
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 11 Dec 2018 11:16:58 -0800 (PST)
+From:   =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
+To:     axboe@fb.com
+Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
+Subject: [GIT PULL 00/21] lightnvm updates for 4.21
+Date:   Tue, 11 Dec 2018 20:16:06 +0100
+Message-Id: <20181211191627.15542-1-mb@lightnvm.io>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="rlh4qplpe7ewwylv"
-Content-Disposition: inline
-In-Reply-To: <20181211190953.13626-1-enric.balletbo@collabora.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Jens,
 
---rlh4qplpe7ewwylv
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Would you please pick up the following patches for 4.21?
 
-On Tue, Dec 11, 2018 at 08:09:52PM +0100, Enric Balletbo i Serra wrote:
-> There are multiple ChromeOS EC sub-drivers spread in different
-> subsystems, as all of them are related to the Chrome stuff add
-> Benson and myself as a maintainers for all these sub-drivers.
->=20
-> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Changelog:
 
-Great, thanks!
+ - Igor added packed metadata to pblk. Now drives without metadata
+   per LBA can be used as well.
+ - Fix from Geert on uninitialized value on chunk metadata reads.
+ - Fixes from Hans and Javier to pblk recovery and write path.
+ - Fix from Hua Su to fix a race condition in the pblk recovery code.
+ - Scan optimization added to pblk recovery from Zhoujie.
+ - Small geometry cleanup from me.
 
-Acked-by: Wolfram Sang <wsa@the-dreams.de>
+Thank you,
+Matias
 
+Geert Uytterhoeven (1):
+  lightnvm: Fix uninitialized return value in nvm_get_chunk_meta()
 
---rlh4qplpe7ewwylv
-Content-Type: application/pgp-signature; name="signature.asc"
+Hans Holmberg (8):
+  lightnvm: pblk: fix chunk close trace event check
+  lightnvm: pblk: fix resubmission of overwritten write err lbas
+  lightnvm: pblk: account for write error sectors in emeta
+  lightnvm: pblk: stop writes gracefully when running out of lines
+  lightnvm: pblk: set conservative threshold for user writes
+  lightnvm: pblk: remove unused macro
+  lightnvm: pblk: fix pblk_lines_init error handling path
+  lightnvm: pblk: remove dead code in pblk_recov_l2p
 
------BEGIN PGP SIGNATURE-----
+Hua Su (2):
+  lightnvm: pblk: fix spelling in comment
+  lightnvm: pblk: add lock protection to list operations
 
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlwQDEgACgkQFA3kzBSg
-Kbbujw//Rmg6CpKq42FYw7tg/uyJ56KZ1p403nkc1fz9EFCBV3sN2AoGGKBPp23Q
-dXwKE41n7jE8IJLMTBC5AcNWZ2YeZL53V38cnaQEn4wiKxuh8H5V51QyBlhAwa9B
-/C4Ch3fwmEpI1gkIm11EaV/1jpSeTVPZh86bVlk2iC1gwChpIai2eU5kqu4jl0oo
-sNeU3eBS6zYvP9Af7FIstAWSfiXX23dAdI9rYq3flE/UdjGYuJnN8/HrrRyvhXWt
-Hv+LYeY3MATPs7nBbu6z6ujqc+RGu8Jku+SAzK9fHk9mWn1RB6y5nI07flEuHs2U
-Hzhqa5ohTZpdb0Jda0hhBW8+IEo9WYPTAWf8ATFx7KlCt4Xdbk05kb6l8javuwS1
-+k5vAiIglMgJqEnFcnW0uUqukcmvJrtF9bKet5LvTN0mIAjP6/FGmAU78tJuT1bd
-CwBcV+HmUjry9XIE/jQC0aAgse5/2x4uY5MN6veISFPBj06AMvb9sIk0zK7d+P/g
-KV6dJbxYhkNBXYYunx80ThNT6WPSxsL0+xNJutwmPefpoD5+T+N6G8O66kC6qCrF
-aulUu2E2He4Ed7D55XUMBibD4ykKyI7L43b1aZbQi8iXf+T7rW3Hwcd7709pLGB/
-l4ekPPCzAHZjf9lbbcyX7ltwHuJ/fTjHESO2DTPDRUdZT/Jy6cQ=
-=A/iL
------END PGP SIGNATURE-----
+Igor Konopko (6):
+  lightnvm: pblk: move lba list to partial read context
+  lightnvm: pblk: add helpers for OOB metadata
+  lightnvm: dynamic DMA pool entry size
+  lightnvm: disable interleaved metadata
+  lightnvm: pblk: support packed metadata
+  lightnvm: pblk: do not overwrite ppa list with meta list
 
---rlh4qplpe7ewwylv--
+Javier González (2):
+  lightnvm: pblk: add comments wrt locking in recovery path
+  lightnvm: pblk: avoid ref warning on cache creation
+
+Matias Bjørling (1):
+  lightnvm: simplify geometry enumeration
+
+Zhoujie Wu (1):
+  lightnvm: pblk: ignore the smeta oob area scan
+
+ drivers/lightnvm/core.c          |  23 ++++---
+ drivers/lightnvm/pblk-core.c     |  77 ++++++++++++++++++-----
+ drivers/lightnvm/pblk-init.c     | 103 ++++++++++++++++++++++++-------
+ drivers/lightnvm/pblk-map.c      |  63 ++++++++++++-------
+ drivers/lightnvm/pblk-rb.c       |   5 +-
+ drivers/lightnvm/pblk-read.c     |  66 +++++++++++---------
+ drivers/lightnvm/pblk-recovery.c |  46 +++++++++-----
+ drivers/lightnvm/pblk-rl.c       |   5 +-
+ drivers/lightnvm/pblk-sysfs.c    |   7 +++
+ drivers/lightnvm/pblk-write.c    |  64 +++++++++++++------
+ drivers/lightnvm/pblk.h          |  43 +++++++++++--
+ drivers/nvme/host/core.c         |  18 +++---
+ drivers/nvme/host/lightnvm.c     |  27 ++++----
+ drivers/nvme/host/nvme.h         |   2 -
+ include/linux/lightnvm.h         |   3 +-
+ 15 files changed, 383 insertions(+), 169 deletions(-)
+
+-- 
+2.17.1
+
