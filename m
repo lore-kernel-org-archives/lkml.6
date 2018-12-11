@@ -7,50 +7,52 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5B31C5CFFE
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:45:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77CD3C5CFFE
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:45:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C28820989
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:45:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3D635208E7
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:45:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544543155;
-	bh=dynoOLV5l/NVd1fEKjEBJiE8eo9+DrtNxWiKtSbQsAo=;
+	s=default; t=1544543158;
+	bh=/uO9LvegOskOtYpNYJAyqXYSD9VwhWhBLsjwCBTgZJU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=iFCBrAjZsAEjx0ShaHgoCza9I7ATOr2JM21batB3sAkSFgBRJRhAs1ujy0kKSB5n4
-	 oW0g1QyjYLHWCuPYpssjeFblbya110bUujeGqoPMPfkcJNq8bhdLCP+CDswG4HeSXl
-	 NRvltBEQ7GV8yFxZY7IbJZO1hiyAr1IelP72CTYg=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C28820989
+	b=H/i9BVigz5Pkn0SMRnL/ngVsQ7P2ERwHDwUUMraybUL6rgL+4t0rS+iW6DBBIUVfJ
+	 4Yq3ijoSoEA/CrWQdZLnyiOJ4UrOlryULrOuICUpJJ/b+/rLC7KDVdbNfrRtxbvyWK
+	 +F/Qylgl9WO7OfuMAwqYgr5CX02SMZU4fV1s7WZQ=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D635208E7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728221AbeLKPpx (ORCPT
+        id S1727626AbeLKPp5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 10:45:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34230 "EHLO mail.kernel.org"
+        Tue, 11 Dec 2018 10:45:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34252 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728199AbeLKPpv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:45:51 -0500
+        id S1728199AbeLKPpy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 10:45:54 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 82CA220870;
-        Tue, 11 Dec 2018 15:45:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 051252087F;
+        Tue, 11 Dec 2018 15:45:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544543151;
-        bh=dynoOLV5l/NVd1fEKjEBJiE8eo9+DrtNxWiKtSbQsAo=;
+        s=default; t=1544543153;
+        bh=/uO9LvegOskOtYpNYJAyqXYSD9VwhWhBLsjwCBTgZJU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ic8lCY+iDFkWEkyCWfwCOTjmWJdmJrdOjxC9pCk/i/7IvVYx/lqsiXcR86ZLS/BB6
-         3/h1e6QLsIdwaPLphnH51CEx5FJDOTtYbveP4+ZIAM1iwVxnp5nCYLkliX7oQMQWaG
-         FkODyZ793zkGae5BNoxy5GKi99B+2EvyWNpo0VQ4=
+        b=EHki8lFyWAIZBOm/+GEz6hrdVDZl92xrtwsv+PAuJZEKlkIkoOsdmnRkP2BI8LLJ0
+         JXMWzVr2tgjYzA19jTL30/F855pTpd2k6rMuR2C57xOJfK68R6hc+WQciAvHS4Mrhp
+         sepPvLEQ7HUoD4h8dF1c45erxxUpQ/ldnLAE8q8c=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Jason Gunthorpe <jgg@mellanox.com>
-Subject: [PATCH 4.4 32/91] iser: set sector for ambiguous mr status errors
-Date:   Tue, 11 Dec 2018 16:40:51 +0100
-Message-Id: <20181211151608.395828609@linuxfoundation.org>
+        stable@vger.kernel.org, Mario Forner <m.forner@be4energy.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Richard Genoud <richard.genoud@gmail.com>,
+        Vinod Koul <vkoul@kernel.org>
+Subject: [PATCH 4.4 15/91] dmaengine: at_hdmac: fix memory leak in at_dma_xlate()
+Date:   Tue, 11 Dec 2018 16:40:34 +0100
+Message-Id: <20181211151607.136130436@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181211151606.026852373@linuxfoundation.org>
 References: <20181211151606.026852373@linuxfoundation.org>
@@ -69,45 +71,57 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sagi Grimberg <sagi@grimberg.me>
+From: Richard Genoud <richard.genoud@gmail.com>
 
-commit 24c3456c8d5ee6fc1933ca40f7b4406130682668 upstream.
+commit 98f5f932254b88ce828bc8e4d1642d14e5854caa upstream.
 
-If for some reason we failed to query the mr status, we need to make sure
-to provide sufficient information for an ambiguous error (guard error on
-sector 0).
+The leak was found when opening/closing a serial port a great number of
+time, increasing kmalloc-32 in slabinfo.
 
-Fixes: 0a7a08ad6f5f ("IB/iser: Implement check_protection")
-Cc: <stable@vger.kernel.org>
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Sagi Grimberg <sagi@grimberg.me>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Each time the port was opened, dma_request_slave_channel() was called.
+Then, in at_dma_xlate(), atslave was allocated with devm_kzalloc() and
+never freed. (Well, it was free at module unload, but that's not what we
+want).
+So, here, kzalloc is more suited for the job since it has to be freed in
+atc_free_chan_resources().
+
+Cc: stable@vger.kernel.org
+Fixes: bbe89c8e3d59 ("at_hdmac: move to generic DMA binding")
+Reported-by: Mario Forner <m.forner@be4energy.com>
+Suggested-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Acked-by: Ludovic Desroches <ludovic.desroches@microchip.com>
+Signed-off-by: Richard Genoud <richard.genoud@gmail.com>
+Signed-off-by: Vinod Koul <vkoul@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/infiniband/ulp/iser/iser_verbs.c |    7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ drivers/dma/at_hdmac.c |    8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
---- a/drivers/infiniband/ulp/iser/iser_verbs.c
-+++ b/drivers/infiniband/ulp/iser/iser_verbs.c
-@@ -1289,7 +1289,9 @@ u8 iser_check_task_pi_status(struct iscs
- 					 IB_MR_CHECK_SIG_STATUS, &mr_status);
- 		if (ret) {
- 			pr_err("ib_check_mr_status failed, ret %d\n", ret);
--			goto err;
-+			/* Not a lot we can do, return ambiguous guard error */
-+			*sector = 0;
-+			return 0x1;
- 		}
+--- a/drivers/dma/at_hdmac.c
++++ b/drivers/dma/at_hdmac.c
+@@ -1781,6 +1781,12 @@ static void atc_free_chan_resources(stru
+ 	atchan->descs_allocated = 0;
+ 	atchan->status = 0;
  
- 		if (mr_status.fail_status & IB_MR_CHECK_SIG_STATUS) {
-@@ -1317,7 +1319,4 @@ u8 iser_check_task_pi_status(struct iscs
- 	}
- 
- 	return 0;
--err:
--	/* Not alot we can do here, return ambiguous guard error */
--	return 0x1;
++	/*
++	 * Free atslave allocated in at_dma_xlate()
++	 */
++	kfree(chan->private);
++	chan->private = NULL;
++
+ 	dev_vdbg(chan2dev(chan), "free_chan_resources: done\n");
  }
+ 
+@@ -1815,7 +1821,7 @@ static struct dma_chan *at_dma_xlate(str
+ 	dma_cap_zero(mask);
+ 	dma_cap_set(DMA_SLAVE, mask);
+ 
+-	atslave = devm_kzalloc(&dmac_pdev->dev, sizeof(*atslave), GFP_KERNEL);
++	atslave = kzalloc(sizeof(*atslave), GFP_KERNEL);
+ 	if (!atslave)
+ 		return NULL;
+ 
 
 
