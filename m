@@ -7,48 +7,48 @@ X-Spam-Status: No, score=-11.9 required=3.0
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7290AC07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:37:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4107EC07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:38:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2FBFE20672
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:37:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2FBFE20672
+	by mail.kernel.org (Postfix) with ESMTP id F10E220672
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:38:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F10E220672
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727183AbeLKPhm (ORCPT
+        id S1727188AbeLKPiU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 10:37:42 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:46635 "EHLO
+        Tue, 11 Dec 2018 10:38:20 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:40611 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726448AbeLKPhm (ORCPT
+        with ESMTP id S1726670AbeLKPiU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:37:42 -0500
+        Tue, 11 Dec 2018 10:38:20 -0500
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wBBFbFsG4043231
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wBBFbora4043282
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Tue, 11 Dec 2018 07:37:15 -0800
+        Tue, 11 Dec 2018 07:37:50 -0800
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wBBFbFSN4043228;
-        Tue, 11 Dec 2018 07:37:15 -0800
-Date:   Tue, 11 Dec 2018 07:37:15 -0800
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wBBFbotd4043279;
+        Tue, 11 Dec 2018 07:37:50 -0800
+Date:   Tue, 11 Dec 2018 07:37:50 -0800
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Quentin Perret <tipbot@zytor.com>
-Message-ID: <tip-630246a06ae2a7a12d1fce85f1e5681032982791@git.kernel.org>
-Cc:     torvalds@linux-foundation.org, peterz@infradead.org,
-        tglx@linutronix.de, mingo@kernel.org, linux-kernel@vger.kernel.org,
-        hpa@zytor.com, quentin.perret@arm.com, valentin.schneider@arm.com,
-        efault@gmx.de
-Reply-To: efault@gmx.de, valentin.schneider@arm.com,
-          quentin.perret@arm.com, hpa@zytor.com,
-          linux-kernel@vger.kernel.org, mingo@kernel.org,
-          tglx@linutronix.de, peterz@infradead.org,
-          torvalds@linux-foundation.org
-In-Reply-To: <20181203095628.11858-12-quentin.perret@arm.com>
-References: <20181203095628.11858-12-quentin.perret@arm.com>
+From:   tip-bot for Morten Rasmussen <tipbot@zytor.com>
+Message-ID: <tip-2802bf3cd936fe2c8033a696d375a4d9d3974de4@git.kernel.org>
+Cc:     hpa@zytor.com, tglx@linutronix.de, peterz@infradead.org,
+        efault@gmx.de, torvalds@linux-foundation.org,
+        morten.rasmussen@arm.com, linux-kernel@vger.kernel.org,
+        quentin.perret@arm.com, mingo@kernel.org
+Reply-To: hpa@zytor.com, tglx@linutronix.de, peterz@infradead.org,
+          efault@gmx.de, torvalds@linux-foundation.org,
+          morten.rasmussen@arm.com, mingo@kernel.org,
+          quentin.perret@arm.com, linux-kernel@vger.kernel.org
+In-Reply-To: <20181203095628.11858-13-quentin.perret@arm.com>
+References: <20181203095628.11858-13-quentin.perret@arm.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:sched/core] sched/fair: Clean-up update_sg_lb_stats parameters
-Git-Commit-ID: 630246a06ae2a7a12d1fce85f1e5681032982791
+Subject: [tip:sched/core] sched/fair: Add over-utilization/tipping point
+ indicator
+Git-Commit-ID: 2802bf3cd936fe2c8033a696d375a4d9d3974de4
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -62,31 +62,74 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  630246a06ae2a7a12d1fce85f1e5681032982791
-Gitweb:     https://git.kernel.org/tip/630246a06ae2a7a12d1fce85f1e5681032982791
-Author:     Quentin Perret <quentin.perret@arm.com>
-AuthorDate: Mon, 3 Dec 2018 09:56:24 +0000
+Commit-ID:  2802bf3cd936fe2c8033a696d375a4d9d3974de4
+Gitweb:     https://git.kernel.org/tip/2802bf3cd936fe2c8033a696d375a4d9d3974de4
+Author:     Morten Rasmussen <morten.rasmussen@arm.com>
+AuthorDate: Mon, 3 Dec 2018 09:56:25 +0000
 Committer:  Ingo Molnar <mingo@kernel.org>
 CommitDate: Tue, 11 Dec 2018 15:17:01 +0100
 
-sched/fair: Clean-up update_sg_lb_stats parameters
+sched/fair: Add over-utilization/tipping point indicator
 
-In preparation for the introduction of a new root domain flag which can
-be set during load balance (the 'overutilized' flag), clean-up the set
-of parameters passed to update_sg_lb_stats(). More specifically, the
-'local_group' and 'local_idx' parameters can be removed since they can
-easily be reconstructed from within the function.
+Energy-aware scheduling is only meant to be active while the system is
+_not_ over-utilized. That is, there are spare cycles available to shift
+tasks around based on their actual utilization to get a more
+energy-efficient task distribution without depriving any tasks. When
+above the tipping point task placement is done the traditional way based
+on load_avg, spreading the tasks across as many cpus as possible based
+on priority scaled load to preserve smp_nice. Below the tipping point we
+want to use util_avg instead. We need to define a criteria for when we
+make the switch.
 
-While at it, transform the 'overload' parameter into a flag stored in
-the 'sg_status' parameter hence facilitating the definition of new flags
-when needed.
+The util_avg for each cpu converges towards 100% regardless of how many
+additional tasks we may put on it. If we define over-utilized as:
 
-Suggested-by: Peter Zijlstra <peterz@infradead.org>
-Suggested-by: Valentin Schneider <valentin.schneider@arm.com>
+sum_{cpus}(rq.cfs.avg.util_avg) + margin > sum_{cpus}(rq.capacity)
+
+some individual cpus may be over-utilized running multiple tasks even
+when the above condition is false. That should be okay as long as we try
+to spread the tasks out to avoid per-cpu over-utilization as much as
+possible and if all tasks have the _same_ priority. If the latter isn't
+true, we have to consider priority to preserve smp_nice.
+
+For example, we could have n_cpus nice=-10 util_avg=55% tasks and
+n_cpus/2 nice=0 util_avg=60% tasks. Balancing based on util_avg we are
+likely to end up with nice=-10 tasks sharing cpus and nice=0 tasks
+getting their own as we 1.5*n_cpus tasks in total and 55%+55% is less
+over-utilized than 55%+60% for those cpus that have to be shared. The
+system utilization is only 85% of the system capacity, but we are
+breaking smp_nice.
+
+To be sure not to break smp_nice, we have defined over-utilization
+conservatively as when any cpu in the system is fully utilized at its
+highest frequency instead:
+
+cpu_rq(any).cfs.avg.util_avg + margin > cpu_rq(any).capacity
+
+IOW, as soon as one cpu is (nearly) 100% utilized, we switch to load_avg
+to factor in priority to preserve smp_nice.
+
+With this definition, we can skip periodic load-balance as no cpu has an
+always-running task when the system is not over-utilized. All tasks will
+be periodic and we can balance them at wake-up. This conservative
+condition does however mean that some scenarios that could benefit from
+energy-aware decisions even if one cpu is fully utilized would not get
+those benefits.
+
+For systems where some cpus might have reduced capacity on some cpus
+(RT-pressure and/or big.LITTLE), we want periodic load-balance checks as
+soon a just a single cpu is fully utilized as it might one of those with
+reduced capacity and in that case we want to migrate it.
+
+[ peterz: Added a comment explaining why new tasks are not accounted during
+          overutilization detection. ]
+
+Signed-off-by: Morten Rasmussen <morten.rasmussen@arm.com>
 Signed-off-by: Quentin Perret <quentin.perret@arm.com>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Mike Galbraith <efault@gmx.de>
+Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: adharmap@codeaurora.org
 Cc: chris.redpath@arm.com
@@ -97,7 +140,6 @@ Cc: gregkh@linuxfoundation.org
 Cc: javi.merino@kernel.org
 Cc: joel@joelfernandes.org
 Cc: juri.lelli@redhat.com
-Cc: morten.rasmussen@arm.com
 Cc: patrick.bellasi@arm.com
 Cc: pkondeti@codeaurora.org
 Cc: rjw@rjwysocki.net
@@ -106,110 +148,142 @@ Cc: smuckle@google.com
 Cc: srinivas.pandruvada@linux.intel.com
 Cc: thara.gopinath@linaro.org
 Cc: tkjos@google.com
+Cc: valentin.schneider@arm.com
 Cc: vincent.guittot@linaro.org
 Cc: viresh.kumar@linaro.org
-Link: https://lkml.kernel.org/r/20181203095628.11858-12-quentin.perret@arm.com
+Link: https://lkml.kernel.org/r/20181203095628.11858-13-quentin.perret@arm.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- kernel/sched/fair.c  | 27 +++++++++++----------------
- kernel/sched/sched.h |  3 +++
- 2 files changed, 14 insertions(+), 16 deletions(-)
+ kernel/sched/fair.c  | 59 ++++++++++++++++++++++++++++++++++++++++++++++++++--
+ kernel/sched/sched.h |  4 ++++
+ 2 files changed, 61 insertions(+), 2 deletions(-)
 
 diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index a31a6d325901..e04f29098ec7 100644
+index e04f29098ec7..767e7675774b 100644
 --- a/kernel/sched/fair.c
 +++ b/kernel/sched/fair.c
-@@ -7905,16 +7905,16 @@ static bool update_nohz_stats(struct rq *rq, bool force)
-  * update_sg_lb_stats - Update sched_group's statistics for load balancing.
-  * @env: The load balancing environment.
-  * @group: sched_group whose statistics are to be updated.
-- * @load_idx: Load index of sched_domain of this_cpu for load calc.
-- * @local_group: Does group contain this_cpu.
-  * @sgs: variable to hold the statistics for this group.
-- * @overload: Indicate pullable load (e.g. >1 runnable task).
-+ * @sg_status: Holds flag indicating the status of the sched_group
-  */
- static inline void update_sg_lb_stats(struct lb_env *env,
--			struct sched_group *group, int load_idx,
--			int local_group, struct sg_lb_stats *sgs,
--			bool *overload)
-+				      struct sched_group *group,
-+				      struct sg_lb_stats *sgs,
-+				      int *sg_status)
- {
-+	int local_group = cpumask_test_cpu(env->dst_cpu, sched_group_span(group));
-+	int load_idx = get_sd_load_idx(env->sd, env->idle);
- 	unsigned long load;
- 	int i, nr_running;
- 
-@@ -7938,7 +7938,7 @@ static inline void update_sg_lb_stats(struct lb_env *env,
- 
- 		nr_running = rq->nr_running;
- 		if (nr_running > 1)
--			*overload = true;
-+			*sg_status |= SG_OVERLOAD;
- 
- #ifdef CONFIG_NUMA_BALANCING
- 		sgs->nr_numa_running += rq->nr_numa_running;
-@@ -7954,7 +7954,7 @@ static inline void update_sg_lb_stats(struct lb_env *env,
- 		if (env->sd->flags & SD_ASYM_CPUCAPACITY &&
- 		    sgs->group_misfit_task_load < rq->misfit_task_load) {
- 			sgs->group_misfit_task_load = rq->misfit_task_load;
--			*overload = 1;
-+			*sg_status |= SG_OVERLOAD;
- 		}
- 	}
- 
-@@ -8099,17 +8099,14 @@ static inline void update_sd_lb_stats(struct lb_env *env, struct sd_lb_stats *sd
- 	struct sched_group *sg = env->sd->groups;
- 	struct sg_lb_stats *local = &sds->local_stat;
- 	struct sg_lb_stats tmp_sgs;
--	int load_idx;
--	bool overload = false;
- 	bool prefer_sibling = child && child->flags & SD_PREFER_SIBLING;
-+	int sg_status = 0;
- 
- #ifdef CONFIG_NO_HZ_COMMON
- 	if (env->idle == CPU_NEWLY_IDLE && READ_ONCE(nohz.has_blocked))
- 		env->flags |= LBF_NOHZ_STATS;
+@@ -5082,6 +5082,24 @@ static inline void hrtick_update(struct rq *rq)
+ }
  #endif
  
--	load_idx = get_sd_load_idx(env->sd, env->idle);
--
- 	do {
- 		struct sg_lb_stats *sgs = &tmp_sgs;
- 		int local_group;
-@@ -8124,8 +8121,7 @@ static inline void update_sd_lb_stats(struct lb_env *env, struct sd_lb_stats *sd
- 				update_group_capacity(env->sd, env->dst_cpu);
- 		}
++#ifdef CONFIG_SMP
++static inline unsigned long cpu_util(int cpu);
++static unsigned long capacity_of(int cpu);
++
++static inline bool cpu_overutilized(int cpu)
++{
++	return (capacity_of(cpu) * 1024) < (cpu_util(cpu) * capacity_margin);
++}
++
++static inline void update_overutilized_status(struct rq *rq)
++{
++	if (!READ_ONCE(rq->rd->overutilized) && cpu_overutilized(rq->cpu))
++		WRITE_ONCE(rq->rd->overutilized, SG_OVERUTILIZED);
++}
++#else
++static inline void update_overutilized_status(struct rq *rq) { }
++#endif
++
+ /*
+  * The enqueue_task method is called before nr_running is
+  * increased. Here we update the fair scheduling stats and
+@@ -5139,8 +5157,26 @@ enqueue_task_fair(struct rq *rq, struct task_struct *p, int flags)
+ 		update_cfs_group(se);
+ 	}
  
--		update_sg_lb_stats(env, sg, load_idx, local_group, sgs,
--						&overload);
-+		update_sg_lb_stats(env, sg, sgs, &sg_status);
+-	if (!se)
++	if (!se) {
+ 		add_nr_running(rq, 1);
++		/*
++		 * Since new tasks are assigned an initial util_avg equal to
++		 * half of the spare capacity of their CPU, tiny tasks have the
++		 * ability to cross the overutilized threshold, which will
++		 * result in the load balancer ruining all the task placement
++		 * done by EAS. As a way to mitigate that effect, do not account
++		 * for the first enqueue operation of new tasks during the
++		 * overutilized flag detection.
++		 *
++		 * A better way of solving this problem would be to wait for
++		 * the PELT signals of tasks to converge before taking them
++		 * into account, but that is not straightforward to implement,
++		 * and the following generally works well enough in practice.
++		 */
++		if (flags & ENQUEUE_WAKEUP)
++			update_overutilized_status(rq);
++
++	}
  
- 		if (local_group)
- 			goto next_group;
-@@ -8175,8 +8171,7 @@ next_group:
+ 	hrtick_update(rq);
+ }
+@@ -7940,6 +7976,9 @@ static inline void update_sg_lb_stats(struct lb_env *env,
+ 		if (nr_running > 1)
+ 			*sg_status |= SG_OVERLOAD;
+ 
++		if (cpu_overutilized(i))
++			*sg_status |= SG_OVERUTILIZED;
++
+ #ifdef CONFIG_NUMA_BALANCING
+ 		sgs->nr_numa_running += rq->nr_numa_running;
+ 		sgs->nr_preferred_running += rq->nr_preferred_running;
+@@ -8170,8 +8209,15 @@ next_group:
+ 		env->fbq_type = fbq_classify_group(&sds->busiest_stat);
  
  	if (!env->sd->parent) {
++		struct root_domain *rd = env->dst_rq->rd;
++
  		/* update overload indicator if we are at root domain */
--		if (READ_ONCE(env->dst_rq->rd->overload) != overload)
--			WRITE_ONCE(env->dst_rq->rd->overload, overload);
-+		WRITE_ONCE(env->dst_rq->rd->overload, sg_status & SG_OVERLOAD);
+-		WRITE_ONCE(env->dst_rq->rd->overload, sg_status & SG_OVERLOAD);
++		WRITE_ONCE(rd->overload, sg_status & SG_OVERLOAD);
++
++		/* Update over-utilization (tipping point, U >= 0) indicator */
++		WRITE_ONCE(rd->overutilized, sg_status & SG_OVERUTILIZED);
++	} else if (sg_status & SG_OVERUTILIZED) {
++		WRITE_ONCE(env->dst_rq->rd->overutilized, SG_OVERUTILIZED);
  	}
  }
  
+@@ -8398,6 +8444,14 @@ static struct sched_group *find_busiest_group(struct lb_env *env)
+ 	 * this level.
+ 	 */
+ 	update_sd_lb_stats(env, &sds);
++
++	if (static_branch_unlikely(&sched_energy_present)) {
++		struct root_domain *rd = env->dst_rq->rd;
++
++		if (rcu_dereference(rd->pd) && !READ_ONCE(rd->overutilized))
++			goto out_balanced;
++	}
++
+ 	local = &sds.local_stat;
+ 	busiest = &sds.busiest_stat;
+ 
+@@ -9798,6 +9852,7 @@ static void task_tick_fair(struct rq *rq, struct task_struct *curr, int queued)
+ 		task_tick_numa(rq, curr);
+ 
+ 	update_misfit_status(curr, rq);
++	update_overutilized_status(task_rq(curr));
+ }
+ 
+ /*
 diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index 2b3cf356e958..d4d984846924 100644
+index d4d984846924..0ba08924e017 100644
 --- a/kernel/sched/sched.h
 +++ b/kernel/sched/sched.h
-@@ -716,6 +716,9 @@ struct perf_domain {
- 	struct rcu_head rcu;
- };
+@@ -718,6 +718,7 @@ struct perf_domain {
  
-+/* Scheduling group status flags */
-+#define SG_OVERLOAD		0x1 /* More than one runnable task on a CPU. */
-+
+ /* Scheduling group status flags */
+ #define SG_OVERLOAD		0x1 /* More than one runnable task on a CPU. */
++#define SG_OVERUTILIZED		0x2 /* One or more CPUs are over-utilized. */
+ 
  /*
   * We add the notion of a root-domain which will be used to define per-domain
-  * variables. Each exclusive cpuset essentially defines an island domain by
+@@ -741,6 +742,9 @@ struct root_domain {
+ 	 */
+ 	int			overload;
+ 
++	/* Indicate one or more cpus over-utilized (tipping point) */
++	int			overutilized;
++
+ 	/*
+ 	 * The bit corresponding to a CPU gets set here if such CPU has more
+ 	 * than one runnable -deadline task (as it is below for RT tasks).
