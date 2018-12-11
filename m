@@ -2,117 +2,118 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.9 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D526C5CFFE
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 19:08:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BE5CC5CFFE
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 19:10:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E5D1C20879
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 19:08:44 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dVqW6xN1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5D1C20879
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id F294420870
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 19:10:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F294420870
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726806AbeLKTIn (ORCPT
+        id S1726883AbeLKTKH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 14:08:43 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:33028 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726464AbeLKTIn (ORCPT
+        Tue, 11 Dec 2018 14:10:07 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:49118 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726329AbeLKTKG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 14:08:43 -0500
-Received: by mail-pg1-f193.google.com with SMTP id z11so7081704pgu.0
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 11:08:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=tOxMLNfKKQUiexQUX+5DNnxMLV+BE56lTOqnKa+Ttp0=;
-        b=dVqW6xN1aQbjKGlg9cCxXBPhxR5rvh0zKsrAAIBSenrupr+CaGDam/KZqz157iSKx9
-         +KuLHorDgraNxkyzbBDxPZ92ZljdIrYXg3fZ5FI4z1DMdu+DLrqx6uuVkJxL8xQocTkz
-         qgASi0P6ZsUrn0kfXNCnMKdgjIZSZqsD/c63w4g7BSDzBzuHou9wkpUgVwt5u82fmcE6
-         wpubodookszY4xMVATXizBTVaBCepWYOJbFMqbEbTQhWU6EHT5/6+l+57VxDZFVdXYC8
-         F5d1ZM9+g2+nz6c86uuNC7gMdQpoJpYpA7nlgpv50WH9G3Ge5eUIuqnGIgiTleI/aPDk
-         tmsA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=tOxMLNfKKQUiexQUX+5DNnxMLV+BE56lTOqnKa+Ttp0=;
-        b=W/PDYOhay7E500ti+s9sonHp7X5BnrosRLaG8O+Iso8IPIHl551oRq9OxtZhzLq8xj
-         FEkdZiQnx9a3Re/RrXwVZM67nn2WqmMw8xYgv20E5Pe5CC0K/4Rd1HRVJ6B3DI90emuF
-         l+Gmrw9pOaXkhwM3uoy1XT4VQDIoIVOou8NCXp00H4gxumsN9ki+h6uYMDYrtNnCQ880
-         205HPRK0uVRqu785kNH0iexdo04oHpdB5wqah3oh5wbRpPqoTPo+bFst2R19tyLcuhce
-         oENMWfOnSI4L6sqnPIoNsnSzyuxWw6WBauBiQxeYrK9imwXyh7d8WmQBXxXTl1QWlZKT
-         h6mg==
-X-Gm-Message-State: AA+aEWaQgfGok4WfN6S1ZyPm+8F0VCyTpm+UzFauJo+0bUh1JPZdVBYz
-        AAqQ4dn8OVv4o4tLKQDYzemiGlwTw0VbaPxRHSjfMA==
-X-Google-Smtp-Source: AFSGD/WduYtQ0e7PffzJ7BztqChWGeFNlRprWmcU2wpjmtlwlblDehQjCHdb4mZCvabv40cmJvHAPCzoXjRIi3yqhHI=
-X-Received: by 2002:a63:bf0b:: with SMTP id v11mr16016455pgf.302.1544555322149;
- Tue, 11 Dec 2018 11:08:42 -0800 (PST)
+        Tue, 11 Dec 2018 14:10:06 -0500
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: eballetbo)
+        with ESMTPSA id 1DB64260976
+From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Alessandro Zummo <a.zummo@towertech.it>, linux-pwm@vger.kernel.org,
+        linux-iio@vger.kernel.org,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        linux-i2c@vger.kernel.org, groeck@chromium.org,
+        kernel@collabora.com, linux-rtc@vger.kernel.org,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Benson Leung <bleung@chromium.org>,
+        Sebastian Reichel <sre@kernel.org>,
+        linux-input@vger.kernel.org,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        devicetree@vger.kernel.org,
+        Thierry Reding <thierry.reding@gmail.com>,
+        linux-pm@vger.kernel.org, MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: [PATCH v2] MAINTAINERS: add maintainers for ChromeOS EC sub-drivers
+Date:   Tue, 11 Dec 2018 20:09:52 +0100
+Message-Id: <20181211190953.13626-1-enric.balletbo@collabora.com>
+X-Mailer: git-send-email 2.19.2
 MIME-Version: 1.0
-References: <20181206191231.192355-1-ndesaulniers@google.com>
- <tip-f4313ba52f9caccfda6a55f991c84aba6726b88f@git.kernel.org>
- <CAKwvOdmBNvpjiYDdP88c9TZHzqbf-GTcQqPdft+LgJXC+W26Dw@mail.gmail.com>
- <5480353.C3TqP6Wb6x@blindfold> <20181211174658.GN27375@zn.tnic>
- <CAKwvOdnkqbxTYudCWH+Q_nuGbpKp8w3_3zHpxe29nirKKPrpsQ@mail.gmail.com> <20181211180547.GG25994@zn.tnic>
-In-Reply-To: <20181211180547.GG25994@zn.tnic>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Tue, 11 Dec 2018 11:08:30 -0800
-Message-ID: <CAKwvOd=OY-qWqxK9gcacKChAEAPqFWyyBbgsQK6-h0zTYTcOgg@mail.gmail.com>
-Subject: Re: [tip:x86/build] x86/um/vdso: Drop implicit common-page-size
- linker flag
-To:     bp@suse.de, richard@nod.at
-Cc:     bp@alien8.de, Masahiro Yamada <yamada.masahiro@socionext.com>,
-        mingo@redhat.com, LKML <linux-kernel@vger.kernel.org>,
-        x86@kernel.org, hpa@zytor.com, jdike@addtoit.com,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        linux-tip-commits@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 11, 2018 at 10:06 AM Borislav Petkov <bp@suse.de> wrote:
->
-> On Tue, Dec 11, 2018 at 09:53:49AM -0800, Nick Desaulniers wrote:
-> > Indeed it was.  I'm forced to use Gmail's clients for this work
-> > account and all that implies (no plain text responses when mobile).
->
-> Can't you access it over imap?
+There are multiple ChromeOS EC sub-drivers spread in different
+subsystems, as all of them are related to the Chrome stuff add
+Benson and myself as a maintainers for all these sub-drivers.
 
-Personal gmail account, yes. Corporate gmail, no, IIUC.  There was a
-pretty big internal thread where all of our kernel contributors got
-cut off one day and were scrambling to figure out how to send/review
-patches as their workflows were interrupted.  Something is still not
-configured right when I send patches (maintainers have merged patches
-with my email address but no name, I assume from working with mbox
-files).
+Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+---
 
-We have some internal tool that's smtp based but does the two factor
-authentication.
+Changes in v2:
+- Fix typo in Benson email address.
 
->
-> > Maybe I can file a bug about this internally...
->
-> FWIW, people have looked for ways to report such issues in the past...
->
-> But in this particular case, DKIM is pretty good spam protection
-> mechanism so enabling it is a good idea.
+ MAINTAINERS | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
-Internal Gmail developers were able to help me verify that SPF was
-setup correctly, but indeed there's no DKIM.  This article has more
-info: https://support.google.com/mail/answer/81126?hl=en.  Richard, I
-don't know if that's a lot of work on your end, but other folks using
-gmail might have the same issue repeatedly with receiving emails from
-your domain otherwise.
-
+diff --git a/MAINTAINERS b/MAINTAINERS
+index a24129b0b043..bbe7180e2851 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -3625,6 +3625,30 @@ S:	Maintained
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/bleung/chrome-platform.git
+ F:	drivers/platform/chrome/
+ 
++CHROMEOS EC SUBDRIVERS
++M:	Benson Leung <bleung@chromium.org>
++M:	Enric Balletbo i Serra <enric.balletbo@collabora.com>
++S:	Maintained
++F:	Documentation/devicetree/bindings/extcon/extcon-usbc-cros-ec.txt
++F:	Documentation/devicetree/bindings/input/cros-ec-keyb.txt
++F:	Documentation/devicetree/bindings/pwm/google,cros-ec-pwm.txt
++F:	Documentation/devicetree/bindings/i2c/i2c-cros-ec-tunnel.txt
++F:	Documentation/devicetree/bindings/mfd/cros-ec.txt
++F:	Documentation/ABI/testing/sysfs-bus-iio-cros-ec
++F:	drivers/extcon/extcon-usbc-cros-ec.c
++F:	drivers/i2c/busses/i2c-cros-ec-tunnel.c
++F:	drivers/iio/accel/cros_ec*
++F:	drivers/iio/common/cros_ec_sensors/
++F:	drivers/iio/light/cros_ec*
++F:	drivers/iio/pressure/cros_ec*
++F:	drivers/input/keyboard/cros_ec*
++F:	drivers/mfd/cros_ec*
++F:	drivers/power/supply/cros_usbpd-charger.c
++F:	drivers/pwm/pwm-cros-ec.c
++F:	drivers/rtc/rtc-cros-ec.c
++F:	include/linux/iio/common/cros_ec_sensors_core.h
++F:	include/linux/mfd/cros_ec*
++
+ CIRRUS LOGIC AUDIO CODEC DRIVERS
+ M:	Brian Austin <brian.austin@cirrus.com>
+ M:	Paul Handrigan <Paul.Handrigan@cirrus.com>
 -- 
-Thanks,
-~Nick Desaulniers
+2.19.2
+
