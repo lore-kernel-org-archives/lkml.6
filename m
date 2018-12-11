@@ -2,118 +2,104 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77BE5C67839
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 20:33:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D645C67839
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 20:36:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F12420851
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 20:33:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernelci-org.20150623.gappssmtp.com header.i=@kernelci-org.20150623.gappssmtp.com header.b="y/BpQFqA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F12420851
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernelci.org
+	by mail.kernel.org (Postfix) with ESMTP id 0FDF62084C
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 20:36:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0FDF62084C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=the-dreams.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726285AbeLKUdF (ORCPT
+        id S1726340AbeLKUg4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 15:33:05 -0500
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:36102 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726136AbeLKUdF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 15:33:05 -0500
-Received: by mail-ed1-f68.google.com with SMTP id f23so13691229edb.3
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 12:33:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
-        h=message-id:date:mime-version:content-transfer-encoding:in-reply-to
-         :references:subject:to:from:cc;
-        bh=x7X5VX0/enjjRolAMPSTcXLa+sacGx9rCmX/XfkBe3o=;
-        b=y/BpQFqAoRcCeygrSHKLQLPLJIKeMnjPhS84jZINujpUnC6M3SEsbVELje8Q5c1SPP
-         bGsnwGfR/u+ihw3YVIDTZnLTivw4UmMc4r/gBtmZhIihMgolgCJYuuzsjx/ll/Jlzo7Z
-         kmqjP2RuQGbhWf8yweqII+ffZf1ZEF2dH5EWtoTopE2kF/Pi7DveF/6scby31XCoB3cM
-         dnkIPf+JcjVPqYhrUsiRSt/kc0ifY/d6Yf1/7+JZ+Ly8OtulMlUS8J/M9nX5sTWZTkAd
-         Fdy34luK3inFbso5u/z8dQxocrvW4EavxHtnKFQaMl0VKZF3RdMM/CHigqEOTht60d7D
-         Hf2A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:date:mime-version
-         :content-transfer-encoding:in-reply-to:references:subject:to:from:cc;
-        bh=x7X5VX0/enjjRolAMPSTcXLa+sacGx9rCmX/XfkBe3o=;
-        b=MAxhN5D4QpbyvMe3JlzbSkLzaVXgdOk1cqh2ZtNebL5oORCaCdelHlhUJsC2s5P0j4
-         bSgagrow7/yWulJIS1jsfKl/CfURh+kymCuPbkKWOfeFgo2Wue8eQntPqUUkVsPW9eyn
-         AD4RQmK4OsENV9JENBkjdco8BOn575GWCM58A8hxi67jgEbcjD9BArv1sNrkJwJP9Idj
-         wATikfRRIAAwlZ+S1imG/ZVnCs5Ld5+bouK5wNyrI+dIigsebeblVJk4HBzznrpKxkEs
-         taG7eCcUB12cdwjHd2jaRLGIh3xxdAqY1QhLCYFlCGDCY9/Rn0WlL8BWnSAWhEYM2sWr
-         J/LQ==
-X-Gm-Message-State: AA+aEWa9l3Gj6LeQOEBjiTdQZhuCEjFVGlJp0gutD6HZXJO6Bs2NvmQ3
-        EP9zvl1+MNuPJNC1dklj6FwOJA==
-X-Google-Smtp-Source: AFSGD/VfyMreqRQcQL+tyHQWhXPCseSA9b7mQ+vBB+ZxQTqM5TpRPC6EloUBr9AIfA8ag4dK2v0Hzw==
-X-Received: by 2002:a50:f4c3:: with SMTP id v3mr16217735edm.196.1544560383213;
-        Tue, 11 Dec 2018 12:33:03 -0800 (PST)
-Received: from [148.251.42.114] ([2a01:4f8:201:9271::2])
-        by smtp.gmail.com with ESMTPSA id c38sm4276408edb.15.2018.12.11.12.33.02
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 11 Dec 2018 12:33:02 -0800 (PST)
-Message-ID: <5c101efe.1c69fb81.84622.8ff6@mx.google.com>
-Date:   Tue, 11 Dec 2018 12:33:02 -0800 (PST)
-Content-Type: text/plain; charset="utf-8"
+        Tue, 11 Dec 2018 15:36:56 -0500
+Received: from sauhun.de ([88.99.104.3]:45624 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726134AbeLKUgz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 15:36:55 -0500
+Received: from localhost (p54B334A7.dip0.t-ipconnect.de [84.179.52.167])
+        by pokefinder.org (Postfix) with ESMTPSA id ACF164C0E90;
+        Tue, 11 Dec 2018 21:36:53 +0100 (CET)
+Date:   Tue, 11 Dec 2018 21:36:53 +0100
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Jian Hu <jian.hu@amlogic.com>
+Cc:     Jerome Brunet <jbrunet@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Carlo Caione <carlo@caione.org>, Rob Herring <robh@kernel.org>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Jianxin Pan <jianxin.pan@amlogic.com>,
+        Hanjie Lin <hanjie.lin@amlogic.com>,
+        linux-amlogic@lists.infradead.org, linux-i2c@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH 0/2] i2c: meson: add support for Meson G12A SoC i2c
+ controller
+Message-ID: <20181211203652.rogajl4ajwu7cs6f@ninjato>
+References: <1543489197-183181-1-git-send-email-jian.hu@amlogic.com>
+ <8a6a204b28523e5a181f9e85dda18fade76a26a3.camel@baylibre.com>
+ <b2bceaf4-92ce-92a4-c382-713d29ae3b70@amlogic.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Report-Type: boot
-X-Kernelci-Tree: stable-rc
-X-Kernelci-Branch: linux-4.9.y
-X-Kernelci-Kernel: v4.9.144-52-g8705173bd0fe
-In-Reply-To: <20181211151612.328911565@linuxfoundation.org>
-References: <20181211151612.328911565@linuxfoundation.org>
-Subject: Re: [PATCH 4.9 00/51] 4.9.145-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-From:   "kernelci.org bot" <bot@kernelci.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="r6j4ocolv5vcwqhy"
+Content-Disposition: inline
+In-Reply-To: <b2bceaf4-92ce-92a4-c382-713d29ae3b70@amlogic.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-stable-rc/linux-4.9.y boot: 102 boots: 0 failed, 95 passed with 6 offline, =
-1 untried/unknown (v4.9.144-52-g8705173bd0fe)
 
-Full Boot Summary: https://kernelci.org/boot/all/job/stable-rc/branch/linux=
--4.9.y/kernel/v4.9.144-52-g8705173bd0fe/
-Full Build Summary: https://kernelci.org/build/stable-rc/branch/linux-4.9.y=
-/kernel/v4.9.144-52-g8705173bd0fe/
+--r6j4ocolv5vcwqhy
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Tree: stable-rc
-Branch: linux-4.9.y
-Git Describe: v4.9.144-52-g8705173bd0fe
-Git Commit: 8705173bd0fed9cbde3a23f8b1680e9f997d7019
-Git URL: http://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git
-Tested: 49 unique boards, 21 SoC families, 13 builds out of 193
 
-Offline Platforms:
+> I am okay if it is reasonable below in file
+> arch/arm64/boot/dts/amlogic/meson-g12a.dtsi. I2c controller node just uses
+> axg's compatible.
+>=20
+> 			i2c0: i2c@1f000 {
+> 				compatible =3D "amlogic,meson-axg-i2c";
 
-arm:
+Actually, you should have
 
-    mvebu_v7_defconfig:
-        armada-xp-openblocks-ax3-4: 1 offline lab
+	compatible =3D "amlogic,meson-g12a-i2c", "amlogic,meson-axg-i2c";
 
-    multi_v7_defconfig:
-        armada-xp-openblocks-ax3-4: 1 offline lab
-        stih410-b2120: 1 offline lab
-        tegra30-beaver: 1 offline lab
-        zynq-zc702: 1 offline lab
+in the DT to have support for future SoC specific additions. And then,
+patch 1 is needed.
 
-    tegra_defconfig:
-        tegra30-beaver: 1 offline lab
+Or do you handle this differently? I'd think this is DT standard.
 
----
-For more info write to <info@kernelci.org>
+
+--r6j4ocolv5vcwqhy
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlwQH+QACgkQFA3kzBSg
+KbYghA//e+Y8jxdhjD74FHRwHJedpaaTeb8kDXLWeywBEDsZikyyg521dDLFYodO
+1fm88aVcj21Of70l3aXd5XlRUndSa701Rm/JStWJR6xgHY1wmU0MiuUAINO3XvbE
+90yyjh5gVOonytSaEM1at5rvgsuMknBPDWigRNEbPfQkXckMYyh+Ini2nAvKs5ZB
+GZUNMt1JZcKRdd599coNfhuKPQAxp+SmikdPBJ+H9RSm58IyU8iitPw9AR6JesMM
+7ihWoNOC5REbI8CzCKlYTFM0J8ppRnpJfzAkDKDl18V147TAmXVBQ+hPSDKfTxYH
+VbtZQ9AUPUawMWhTVmt7ZsZuZPmOoPjccsLo+nWqz/db/JDyhyMzjY/46AWl37U2
+b6H55meUJyPVf/AKDY67ey/DpjA00C6URXkOLCelW0vV4qy71hzYgMXGGJ3yWdwi
+4NmJtPpqax3st/K2/mwDQc4humJ+4FeLw9OREsLhdOw++3fRkYr8ZrysJDmNH7yS
+h5cgVTGqE0rtCt9sct8Om88gut//78pusStosThw+nwHbTOL5gsK405OrSQFoe2N
+nitfLq2ISw/njOwajTWSgdUcWa9kkwmTk/UixXjBe8r5VEiv32qmt/Q/K8vmyDES
+O9MOHcWu3slySjEBzXQs519PblIQJCYgUdHVaXwuIStWkHpkO1k=
+=Uiz1
+-----END PGP SIGNATURE-----
+
+--r6j4ocolv5vcwqhy--
