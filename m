@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2055C6783C
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 23:34:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E667C6783B
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 23:34:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6386F20672
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 23:34:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 44CF820672
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 23:34:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="Dv+dFjMV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6386F20672
+	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="S+Jgqj4n"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 44CF820672
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=fb.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726273AbeLKXeB (ORCPT
+        id S1726315AbeLKXeF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 18:34:01 -0500
-Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:39718 "EHLO
+        Tue, 11 Dec 2018 18:34:05 -0500
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:39716 "EHLO
         mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726245AbeLKXeA (ORCPT
+        by vger.kernel.org with ESMTP id S1726242AbeLKXeA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 11 Dec 2018 18:34:00 -0500
 Received: from pps.filterd (m0044012.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id wBBNUoGD019430
+        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id wBBNUbdl019400
         for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 15:33:59 -0800
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
  : date : message-id : in-reply-to : references : mime-version :
- content-type; s=facebook; bh=OVcPqt+jofOMEwhLLb2qDLGHFJwx2qu8RQXb9Iw0xaY=;
- b=Dv+dFjMV+6gNVaq89IpxUOV2J4/K7P/aADRx6sQddc+N4b/fmaVqeYGj7xYAY2wbpCpJ
- GcNP22/dFQrp57KCjBXIMGCLPqNZ2vF05RDKuaXZSPP1lSr1zBXM6OFea37TCDTF+AHb
- DcgZQUccmG63Gn0wlkc1z+YxZ3XHiMXzB6I= 
-Received: from mail.thefacebook.com ([199.201.64.23])
-        by mx0a-00082601.pphosted.com with ESMTP id 2pap88g4t8-7
+ content-type; s=facebook; bh=W5TnqGV1oW5NSg15CZ102nlUrwSCoS25PAbvynjX5C0=;
+ b=S+Jgqj4nKF34/f8HZv1G/dxcP/pQskB1gtCWSGGDBTrRQKlqyD2+AdCPJBk/jC0CMQuC
+ aJzdosLe54+lHKBvg1eDD76Wq8SHeQyRuUbKZ2YMYAXf6sTz5m5vOnjV0Xjm1nws06gR
+ M1WgXZjk56FEBmgEWgRFbVtdB8EysVSjmIA= 
+Received: from maileast.thefacebook.com ([199.201.65.23])
+        by mx0a-00082601.pphosted.com with ESMTP id 2pap88g4t5-5
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT)
         for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 15:33:59 -0800
-Received: from mx-out.facebook.com (2620:10d:c081:10::13) by
- mail.thefacebook.com (2620:10d:c081:35::128) with Microsoft SMTP Server
+Received: from mx-out.facebook.com (2620:10d:c0a1:3::13) by
+ mail.thefacebook.com (2620:10d:c021:18::174) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA) id 15.1.1531.3;
  Tue, 11 Dec 2018 15:33:57 -0800
 Received: by devbig006.ftw2.facebook.com (Postfix, from userid 4523)
-        id A181762E1B75; Tue, 11 Dec 2018 15:33:55 -0800 (PST)
+        id D812A62E1B75; Tue, 11 Dec 2018 15:33:55 -0800 (PST)
 Smtp-Origin-Hostprefix: devbig
 From:   Song Liu <songliubraving@fb.com>
 Smtp-Origin-Hostname: devbig006.ftw2.facebook.com
@@ -53,9 +53,9 @@ CC:     Song Liu <songliubraving@fb.com>, <ast@kernel.org>,
         <daniel@iogearbox.net>, <kernel-team@fb.com>,
         <peterz@infradead.org>, <acme@kernel.org>
 Smtp-Origin-Cluster: ftw2c04
-Subject: [PATCH v3 perf, bpf-next 3/4] perf util: handle PERF_RECORD_BPF_EVENT
-Date:   Tue, 11 Dec 2018 15:33:49 -0800
-Message-ID: <20181211233351.4036381-4-songliubraving@fb.com>
+Subject: [PATCH v3 perf, bpf-next 4/4] perf tools: synthesize bpf event for loaded BPF programs
+Date:   Tue, 11 Dec 2018 15:33:50 -0800
+Message-ID: <20181211233351.4036381-5-songliubraving@fb.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181211233351.4036381-1-songliubraving@fb.com>
 References: <20181211233351.4036381-1-songliubraving@fb.com>
@@ -71,369 +71,258 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch handles PERF_RECORD_BPF_EVENT in perf record/report.
-Specifically, map and symbol are created for PERF_BPF_EVENT_PROG_LOAD,
-and removed for PERF_BPF_EVENT_PROG_UNLOAD.
-
-This patch also set perf_event_attr.bpf_event properly. The flag is
-ON by default.
+This patch synthesize PERF_RECORD_BPF_EVENT for BPF programs loaded before
+perf-record. This is achieved by gathering information about all BPF
+programs via sys_bpf.
 
 Signed-off-by: Song Liu <songliubraving@fb.com>
 ---
- tools/perf/util/Build       |  2 ++
- tools/perf/util/bpf-event.c | 66 +++++++++++++++++++++++++++++++++++++
- tools/perf/util/bpf-event.h | 11 +++++++
- tools/perf/util/event.c     | 23 +++++++++++++
- tools/perf/util/event.h     | 26 +++++++++++++++
- tools/perf/util/evsel.c     |  9 +++++
- tools/perf/util/evsel.h     |  1 +
- tools/perf/util/machine.c   |  3 ++
- tools/perf/util/session.c   |  4 +++
- tools/perf/util/tool.h      |  4 ++-
- 10 files changed, 148 insertions(+), 1 deletion(-)
- create mode 100644 tools/perf/util/bpf-event.c
- create mode 100644 tools/perf/util/bpf-event.h
+ tools/perf/builtin-record.c |   6 ++
+ tools/perf/util/bpf-event.c | 185 ++++++++++++++++++++++++++++++++++++
+ tools/perf/util/bpf-event.h |   4 +
+ 3 files changed, 195 insertions(+)
 
-diff --git a/tools/perf/util/Build b/tools/perf/util/Build
-index b7bf201fe8a8..99455f30c264 100644
---- a/tools/perf/util/Build
-+++ b/tools/perf/util/Build
-@@ -151,6 +151,8 @@ endif
+diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
+index 488779bc4c8d..81928952d13b 100644
+--- a/tools/perf/builtin-record.c
++++ b/tools/perf/builtin-record.c
+@@ -41,6 +41,7 @@
+ #include "util/perf-hooks.h"
+ #include "util/time-utils.h"
+ #include "util/units.h"
++#include "util/bpf-event.h"
+ #include "asm/bug.h"
  
- libperf-y += perf-hooks.o
+ #include <errno.h>
+@@ -855,6 +856,11 @@ static int record__synthesize(struct record *rec, bool tail)
+ 		return err;
+ 	}
  
-+libperf-$(CONFIG_LIBBPF) += bpf-event.o
++	err = perf_event__synthesize_bpf_events(tool, process_synthesized_event,
++						machine);
++	if (err < 0)
++		pr_warning("Couldn't synthesize bpf events.\n");
 +
- libperf-$(CONFIG_CXX) += c++/
- 
- CFLAGS_config.o   += -DETC_PERFCONFIG="BUILD_STR($(ETC_PERFCONFIG_SQ))"
+ 	err = __machine__synthesize_threads(machine, tool, &opts->target, rec->evlist->threads,
+ 					    process_synthesized_event, opts->sample_address,
+ 					    opts->proc_map_timeout, 1);
 diff --git a/tools/perf/util/bpf-event.c b/tools/perf/util/bpf-event.c
-new file mode 100644
-index 000000000000..2b0a45d8f1d7
---- /dev/null
+index 2b0a45d8f1d7..ae1b89c5b73d 100644
+--- a/tools/perf/util/bpf-event.c
 +++ b/tools/perf/util/bpf-event.c
-@@ -0,0 +1,66 @@
-+// SPDX-License-Identifier: GPL-2.0
-+#include <errno.h>
-+#include <bpf/bpf.h>
-+#include "bpf-event.h"
-+#include "debug.h"
-+#include "symbol.h"
+@@ -1,10 +1,24 @@
+ // SPDX-License-Identifier: GPL-2.0
+ #include <errno.h>
+ #include <bpf/bpf.h>
++#include <bpf/btf.h>
++#include <linux/btf.h>
+ #include "bpf-event.h"
+ #include "debug.h"
+ #include "symbol.h"
+ 
++#define ptr_to_u64(ptr)    ((__u64)(unsigned long)(ptr))
 +
-+static int machine__process_bpf_prog_load(
-+	struct machine *machine,
-+	union perf_event *event,
-+	struct perf_sample *sample __maybe_unused)
++static int snprintf_hex(char *buf, size_t size, unsigned char *data, size_t len)
 +{
-+	struct symbol *sym;
-+	struct map *map;
++	int ret = 0;
++	size_t i;
 +
-+	map = map_groups__find(&machine->kmaps, event->bpf_event.addr);
-+	if (!map) {
-+		map = dso__new_map("bpf_prog");
-+		if (!map)
-+			return -ENOMEM;
-+
-+		map->start = event->bpf_event.addr;
-+		map->pgoff = map->start;
-+		map->end = map->start + event->bpf_event.len;
-+		map_groups__insert(&machine->kmaps, map);
-+	}
-+
-+	sym = symbol__new(event->bpf_event.addr, event->bpf_event.len,
-+			  0, 0, event->bpf_event.name);
-+	if (!sym)
-+		return -ENOMEM;
-+	dso__insert_symbol(map->dso, sym);
-+	return 0;
++	for (i = 0; i < len; i++)
++		ret += snprintf(buf + ret, size - ret, "%02x", data[i]);
++	return ret;
 +}
 +
-+static int machine__process_bpf_prog_unload(
-+	struct machine *machine,
-+	union perf_event *event,
-+	struct perf_sample *sample __maybe_unused)
+ static int machine__process_bpf_prog_load(
+ 	struct machine *machine,
+ 	union perf_event *event,
+@@ -64,3 +78,174 @@ int machine__process_bpf_event(struct machine *machine __maybe_unused,
+ 	}
+ 	return 0;
+ }
++
++/*
++ * Synthesize bpf_event for one bpf program. One bpf_event is generated for
++ * each sub program.
++ */
++static int perf_event__synthesize_one_bpf_prog(struct perf_tool *tool,
++					       perf_event__handler_t process,
++					       struct machine *machine,
++					       int fd,
++					       union perf_event *event)
 +{
-+	struct map *map;
++	struct bpf_event *bpf_event = &event->bpf_event;
++	u32 sub_prog_cnt, i, func_info_rec_size;
++	u8 (*prog_tags)[BPF_TAG_SIZE] = NULL;
++	struct bpf_prog_info info = {};
++	u32 info_len = sizeof(info);
++	void *func_infos = NULL;
++	u64 *prog_addrs = NULL;
++	struct btf *btf = NULL;
++	u32 *prog_lens = NULL;
++	bool has_btf = false;
++	int err = 0;
 +
-+	map = map_groups__find(&machine->kmaps, event->bpf_event.addr);
-+	if (map)
-+		map_groups__remove(&machine->kmaps, map);
++	/* Call bpf_obj_get_info_by_fd() to get sizes of arrays */
++	err = bpf_obj_get_info_by_fd(fd, &info, &info_len);
 +
-+	return 0;
++	if (err || info_len < 192 /* need field prog_tags */)
++		return -1;
++
++	/* number of ksyms, func_lengths, and tags should match */
++	sub_prog_cnt = info.nr_jited_ksyms;
++	if (sub_prog_cnt != info.nr_prog_tags ||
++	    sub_prog_cnt != info.nr_jited_func_lens)
++		return -1;
++
++	/* check BTF func info support */
++	if (info.btf_id && info.nr_func_info && info.func_info_rec_size) {
++		/* btf func info number should be same as sub_prog_cnt */
++		if (sub_prog_cnt != info.nr_func_info)
++			return -1;
++		if (btf__get_from_id(info.btf_id, &btf))
++			return -1;
++		func_info_rec_size = info.func_info_rec_size;
++		func_infos = malloc(sub_prog_cnt * func_info_rec_size);
++		if (!func_infos)
++			return -1;
++		has_btf = true;
++	}
++
++	/*
++	 * We need address, length, and tag for each sub program.
++	 * Allocate memory and call bpf_obj_get_info_by_fd() again
++	 */
++	prog_addrs = (u64 *)malloc(sizeof(u64) * sub_prog_cnt);
++	prog_lens = (u32 *)malloc(sizeof(u64) * sub_prog_cnt);
++	prog_tags = malloc(sizeof(u8) * BPF_TAG_SIZE * sub_prog_cnt);
++
++	err = !prog_addrs || !prog_lens || !prog_tags;
++	if (err)
++		goto out;
++
++	memset(&info, 0, sizeof(info));
++	info.nr_jited_ksyms = sub_prog_cnt;
++	info.nr_jited_func_lens = sub_prog_cnt;
++	info.nr_prog_tags = sub_prog_cnt;
++	info.jited_ksyms = ptr_to_u64(prog_addrs);
++	info.jited_func_lens = ptr_to_u64(prog_lens);
++	info.prog_tags = ptr_to_u64(prog_tags);
++	info_len = sizeof(info);
++	if (has_btf) {
++		info.nr_func_info = sub_prog_cnt;
++		info.func_info_rec_size = func_info_rec_size;
++		info.func_info = ptr_to_u64(func_infos);
++	}
++
++	err = bpf_obj_get_info_by_fd(fd, &info, &info_len);
++	if (err)
++		goto out;
++
++	/* Synthesize bpf_events */
++	for (i = 0; i < sub_prog_cnt; i++) {
++		const struct bpf_func_info *finfo;
++		const char *short_name = NULL;
++		const struct btf_type *t;
++		int name_len;
++
++		bpf_event->header.type = PERF_RECORD_BPF_EVENT;
++		bpf_event->header.misc = 0;
++		bpf_event->header.size = sizeof(struct bpf_event);
++		bpf_event->type = PERF_BPF_EVENT_PROG_LOAD;
++		bpf_event->flags = 0;
++		bpf_event->id = info.id;
++		bpf_event->sub_id = i;
++		bpf_event->addr = prog_addrs[i];
++		bpf_event->len = prog_lens[i];
++		memcpy(bpf_event->tag, prog_tags[i], BPF_TAG_SIZE);
++
++		name_len = snprintf(bpf_event->name, KSYM_NAME_LEN,
++				    "bpf_prog_");
++		name_len += snprintf_hex(bpf_event->name + name_len,
++					 KSYM_NAME_LEN - name_len,
++					 bpf_event->tag, BPF_TAG_SIZE);
++		if (has_btf) {
++			finfo = func_infos + i * info.func_info_rec_size;
++			t = btf__type_by_id(btf, finfo->type_id);
++			short_name = btf__name_by_offset(btf, t->name_off);
++		} else if (i == 0 && sub_prog_cnt == 1) {
++			/* no subprog */
++			if (info.name[0])
++				short_name = info.name;
++		} else
++			short_name = "F";
++		if (short_name)
++			name_len += snprintf(bpf_event->name + name_len,
++					     KSYM_NAME_LEN - name_len,
++					     "_%s", short_name);
++
++		bpf_event->header.size += PERF_ALIGN(name_len + 1, sizeof(u64));
++		err = perf_tool__process_synth_event(tool, event,
++						     machine, process);
++	}
++
++out:
++	free(prog_tags);
++	free(prog_lens);
++	free(prog_addrs);
++	free(func_infos);
++	free(btf);
++	return err ? -1 : 0;
 +}
 +
-+int machine__process_bpf_event(struct machine *machine __maybe_unused,
-+			       union perf_event *event,
-+			       struct perf_sample *sample)
++int perf_event__synthesize_bpf_events(struct perf_tool *tool,
++				      perf_event__handler_t process,
++				      struct machine *machine)
 +{
-+	if (dump_trace)
-+		perf_event__fprintf_bpf_event(event, stdout);
++	union perf_event *event;
++	__u32 id = 0;
++	int err;
++	int fd;
 +
-+	switch (event->bpf_event.type) {
-+	case PERF_BPF_EVENT_PROG_LOAD:
-+		return machine__process_bpf_prog_load(machine, event, sample);
-+	case PERF_BPF_EVENT_PROG_UNLOAD:
-+		return machine__process_bpf_prog_unload(machine, event, sample);
-+	default:
-+		break;
++	event = malloc(sizeof(event->bpf_event) + KSYM_NAME_LEN);
++	if (!event)
++		return -1;
++	while (true) {
++		err = bpf_prog_get_next_id(id, &id);
++		if (err) {
++			if (errno == ENOENT) {
++				err = 0;
++				break;
++			}
++			pr_err("can't get next program: %s%s",
++			       strerror(errno),
++			       errno == EINVAL ? " -- kernel too old?" : "");
++			err = -1;
++			break;
++		}
++		fd = bpf_prog_get_fd_by_id(id);
++		if (fd < 0) {
++			pr_debug("Failed to get fd for prog_id %u\n", id);
++			continue;
++		}
++
++		err = perf_event__synthesize_one_bpf_prog(
++			tool, process, machine, fd, event);
++		close(fd);
++		if (err)
++			break;
 +	}
-+	return 0;
++	free(event);
++	return err;
 +}
 diff --git a/tools/perf/util/bpf-event.h b/tools/perf/util/bpf-event.h
-new file mode 100644
-index 000000000000..d5ca355dd298
---- /dev/null
+index d5ca355dd298..be6372a44aba 100644
+--- a/tools/perf/util/bpf-event.h
 +++ b/tools/perf/util/bpf-event.h
-@@ -0,0 +1,11 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef __PERF_BPF_EVENT_H
-+#define __PERF_BPF_EVENT_H
+@@ -8,4 +8,8 @@ int machine__process_bpf_event(struct machine *machine,
+ 			       union perf_event *event,
+ 			       struct perf_sample *sample);
+ 
++int perf_event__synthesize_bpf_events(struct perf_tool *tool,
++				      perf_event__handler_t process,
++				      struct machine *machine);
 +
-+#include "machine.h"
-+
-+int machine__process_bpf_event(struct machine *machine,
-+			       union perf_event *event,
-+			       struct perf_sample *sample);
-+
-+#endif
-diff --git a/tools/perf/util/event.c b/tools/perf/util/event.c
-index e9c108a6b1c3..de8bfbfa6860 100644
---- a/tools/perf/util/event.c
-+++ b/tools/perf/util/event.c
-@@ -24,6 +24,8 @@
- #include "symbol/kallsyms.h"
- #include "asm/bug.h"
- #include "stat.h"
-+#include "session.h"
-+#include "bpf-event.h"
- 
- static const char *perf_event__names[] = {
- 	[0]					= "TOTAL",
-@@ -43,6 +45,7 @@ static const char *perf_event__names[] = {
- 	[PERF_RECORD_SWITCH]			= "SWITCH",
- 	[PERF_RECORD_SWITCH_CPU_WIDE]		= "SWITCH_CPU_WIDE",
- 	[PERF_RECORD_NAMESPACES]		= "NAMESPACES",
-+	[PERF_RECORD_BPF_EVENT]			= "BPF_EVENT",
- 	[PERF_RECORD_HEADER_ATTR]		= "ATTR",
- 	[PERF_RECORD_HEADER_EVENT_TYPE]		= "EVENT_TYPE",
- 	[PERF_RECORD_HEADER_TRACING_DATA]	= "TRACING_DATA",
-@@ -1335,6 +1338,14 @@ int perf_event__process_switch(struct perf_tool *tool __maybe_unused,
- 	return machine__process_switch_event(machine, event);
- }
- 
-+int perf_event__process_bpf_event(struct perf_tool *tool __maybe_unused,
-+				  union perf_event *event,
-+				  struct perf_sample *sample __maybe_unused,
-+				  struct machine *machine)
-+{
-+	return machine__process_bpf_event(machine, event, sample);
-+}
-+
- size_t perf_event__fprintf_mmap(union perf_event *event, FILE *fp)
- {
- 	return fprintf(fp, " %d/%d: [%#" PRIx64 "(%#" PRIx64 ") @ %#" PRIx64 "]: %c %s\n",
-@@ -1467,6 +1478,15 @@ static size_t perf_event__fprintf_lost(union perf_event *event, FILE *fp)
- 	return fprintf(fp, " lost %" PRIu64 "\n", event->lost.lost);
- }
- 
-+size_t perf_event__fprintf_bpf_event(union perf_event *event, FILE *fp)
-+{
-+	return fprintf(fp, " bpf event with type %u, flags %u, id %u sub_id %u addr %lx len %lu name %s\n",
-+		       event->bpf_event.type, event->bpf_event.flags,
-+		       event->bpf_event.id, event->bpf_event.sub_id,
-+		       event->bpf_event.addr, event->bpf_event.len,
-+		       event->bpf_event.name);
-+}
-+
- size_t perf_event__fprintf(union perf_event *event, FILE *fp)
- {
- 	size_t ret = fprintf(fp, "PERF_RECORD_%s",
-@@ -1502,6 +1522,9 @@ size_t perf_event__fprintf(union perf_event *event, FILE *fp)
- 	case PERF_RECORD_LOST:
- 		ret += perf_event__fprintf_lost(event, fp);
- 		break;
-+	case PERF_RECORD_BPF_EVENT:
-+		ret += perf_event__fprintf_bpf_event(event, fp);
-+		break;
- 	default:
- 		ret += fprintf(fp, "\n");
- 	}
-diff --git a/tools/perf/util/event.h b/tools/perf/util/event.h
-index bfa60bcafbde..cea19b1b128a 100644
---- a/tools/perf/util/event.h
-+++ b/tools/perf/util/event.h
-@@ -5,6 +5,7 @@
- #include <limits.h>
- #include <stdio.h>
- #include <linux/kernel.h>
-+#include <linux/bpf.h>
- 
- #include "../perf.h"
- #include "build-id.h"
-@@ -84,6 +85,25 @@ struct throttle_event {
- 	u64 stream_id;
- };
- 
-+#ifndef KSYM_NAME_LEN
-+#define KSYM_NAME_LEN 256
-+#endif
-+
-+/* Record different types of bpf events, see enum perf_bpf_event_type */
-+struct bpf_event {
-+	struct perf_event_header header;
-+	u32 type;
-+	u32 flags;
-+	u32 id;
-+	u32 sub_id;
-+
-+	/* for bpf_prog types */
-+	u8 tag[BPF_TAG_SIZE];  // prog tag
-+	u64 addr;
-+	u64 len;
-+	char name[KSYM_NAME_LEN];
-+};
-+
- #define PERF_SAMPLE_MASK				\
- 	(PERF_SAMPLE_IP | PERF_SAMPLE_TID |		\
- 	 PERF_SAMPLE_TIME | PERF_SAMPLE_ADDR |		\
-@@ -651,6 +671,7 @@ union perf_event {
- 	struct stat_round_event		stat_round;
- 	struct time_conv_event		time_conv;
- 	struct feature_event		feat;
-+	struct bpf_event		bpf_event;
- };
- 
- void perf_event__print_totals(void);
-@@ -750,6 +771,10 @@ int perf_event__process_exit(struct perf_tool *tool,
- 			     union perf_event *event,
- 			     struct perf_sample *sample,
- 			     struct machine *machine);
-+int perf_event__process_bpf_event(struct perf_tool *tool,
-+				  union perf_event *event,
-+				  struct perf_sample *sample,
-+				  struct machine *machine);
- int perf_tool__process_synth_event(struct perf_tool *tool,
- 				   union perf_event *event,
- 				   struct machine *machine,
-@@ -814,6 +839,7 @@ size_t perf_event__fprintf_switch(union perf_event *event, FILE *fp);
- size_t perf_event__fprintf_thread_map(union perf_event *event, FILE *fp);
- size_t perf_event__fprintf_cpu_map(union perf_event *event, FILE *fp);
- size_t perf_event__fprintf_namespaces(union perf_event *event, FILE *fp);
-+size_t perf_event__fprintf_bpf_event(union perf_event *event, FILE *fp);
- size_t perf_event__fprintf(union perf_event *event, FILE *fp);
- 
- int kallsyms__get_function_start(const char *kallsyms_filename,
-diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
-index dbc0466db368..6e13e28c0bf0 100644
---- a/tools/perf/util/evsel.c
-+++ b/tools/perf/util/evsel.c
-@@ -1035,6 +1035,7 @@ void perf_evsel__config(struct perf_evsel *evsel, struct record_opts *opts,
- 	attr->mmap  = track;
- 	attr->mmap2 = track && !perf_missing_features.mmap2;
- 	attr->comm  = track;
-+	attr->bpf_event = track && !perf_missing_features.bpf_event;
- 
- 	if (opts->record_namespaces)
- 		attr->namespaces  = track;
-@@ -1652,6 +1653,7 @@ int perf_event_attr__fprintf(FILE *fp, struct perf_event_attr *attr,
- 	PRINT_ATTRf(context_switch, p_unsigned);
- 	PRINT_ATTRf(write_backward, p_unsigned);
- 	PRINT_ATTRf(namespaces, p_unsigned);
-+	PRINT_ATTRf(bpf_event, p_unsigned);
- 
- 	PRINT_ATTRn("{ wakeup_events, wakeup_watermark }", wakeup_events, p_unsigned);
- 	PRINT_ATTRf(bp_type, p_unsigned);
-@@ -1811,6 +1813,8 @@ int perf_evsel__open(struct perf_evsel *evsel, struct cpu_map *cpus,
- 				     PERF_SAMPLE_BRANCH_NO_CYCLES);
- 	if (perf_missing_features.group_read && evsel->attr.inherit)
- 		evsel->attr.read_format &= ~(PERF_FORMAT_GROUP|PERF_FORMAT_ID);
-+	if (perf_missing_features.bpf_event)
-+		evsel->attr.bpf_event = 0;
- retry_sample_id:
- 	if (perf_missing_features.sample_id_all)
- 		evsel->attr.sample_id_all = 0;
-@@ -1955,6 +1959,11 @@ int perf_evsel__open(struct perf_evsel *evsel, struct cpu_map *cpus,
- 		perf_missing_features.exclude_guest = true;
- 		pr_debug2("switching off exclude_guest, exclude_host\n");
- 		goto fallback_missing_features;
-+	} else if (!perf_missing_features.bpf_event &&
-+		   evsel->attr.bpf_event) {
-+		perf_missing_features.bpf_event = true;
-+		pr_debug2("switching off bpf_event\n");
-+		goto fallback_missing_features;
- 	} else if (!perf_missing_features.sample_id_all) {
- 		perf_missing_features.sample_id_all = true;
- 		pr_debug2("switching off sample_id_all\n");
-diff --git a/tools/perf/util/evsel.h b/tools/perf/util/evsel.h
-index 3147ca76c6fc..ee7e7cc23c6c 100644
---- a/tools/perf/util/evsel.h
-+++ b/tools/perf/util/evsel.h
-@@ -168,6 +168,7 @@ struct perf_missing_features {
- 	bool lbr_flags;
- 	bool write_backward;
- 	bool group_read;
-+	bool bpf_event;
- };
- 
- extern struct perf_missing_features perf_missing_features;
-diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
-index 8f36ce813bc5..29c18989ba4f 100644
---- a/tools/perf/util/machine.c
-+++ b/tools/perf/util/machine.c
-@@ -21,6 +21,7 @@
- #include "unwind.h"
- #include "linux/hash.h"
- #include "asm/bug.h"
-+#include "bpf-event.h"
- 
- #include "sane_ctype.h"
- #include <symbol/kallsyms.h>
-@@ -1812,6 +1813,8 @@ int machine__process_event(struct machine *machine, union perf_event *event,
- 	case PERF_RECORD_SWITCH:
- 	case PERF_RECORD_SWITCH_CPU_WIDE:
- 		ret = machine__process_switch_event(machine, event); break;
-+	case PERF_RECORD_BPF_EVENT:
-+		ret = machine__process_bpf_event(machine, event, sample); break;
- 	default:
- 		ret = -1;
- 		break;
-diff --git a/tools/perf/util/session.c b/tools/perf/util/session.c
-index 7d2c8ce6cfad..dffe5120d2d3 100644
---- a/tools/perf/util/session.c
-+++ b/tools/perf/util/session.c
-@@ -371,6 +371,8 @@ void perf_tool__fill_defaults(struct perf_tool *tool)
- 		tool->itrace_start = perf_event__process_itrace_start;
- 	if (tool->context_switch == NULL)
- 		tool->context_switch = perf_event__process_switch;
-+	if (tool->bpf_event == NULL)
-+		tool->bpf_event = perf_event__process_bpf_event;
- 	if (tool->read == NULL)
- 		tool->read = process_event_sample_stub;
- 	if (tool->throttle == NULL)
-@@ -1300,6 +1302,8 @@ static int machines__deliver_event(struct machines *machines,
- 	case PERF_RECORD_SWITCH:
- 	case PERF_RECORD_SWITCH_CPU_WIDE:
- 		return tool->context_switch(tool, event, sample, machine);
-+	case PERF_RECORD_BPF_EVENT:
-+		return tool->bpf_event(tool, event, sample, machine);
- 	default:
- 		++evlist->stats.nr_unknown_events;
- 		return -1;
-diff --git a/tools/perf/util/tool.h b/tools/perf/util/tool.h
-index 56e4ca54020a..69ae898ca024 100644
---- a/tools/perf/util/tool.h
-+++ b/tools/perf/util/tool.h
-@@ -53,7 +53,9 @@ struct perf_tool {
- 			itrace_start,
- 			context_switch,
- 			throttle,
--			unthrottle;
-+			unthrottle,
-+			bpf_event;
-+
- 	event_attr_op	attr;
- 	event_attr_op	event_update;
- 	event_op2	tracing_data;
+ #endif
 -- 
 2.17.1
 
