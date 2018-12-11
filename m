@@ -2,283 +2,157 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF784C67839
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 22:04:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC3E9C6783B
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 22:06:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9191020672
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 22:04:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9191020672
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 9FFF32084E
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 22:06:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544566001;
+	bh=7Ey62Xetjv+JnZeFKsau/gmBEKiq4GTGBYt5e/XLn20=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=ZXQoUxBCfo1P5BN/8ufln50Mi90uqOCO2etw87JzFgiDXP6YMF7i61odJl79kw/Ji
+	 tSsm8I51FoRymh6fjDuvBwd2nI+UEZXf2QS5Eu2EO3XDXyrg4K/k/UpK5OuZGPG3+1
+	 mtcqcAbJIPJwlosIGouj6DBi7IlcJ6y4UFX91wKk=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9FFF32084E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726318AbeLKWEO (ORCPT
+        id S1726240AbeLKWGk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 17:04:14 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:46798 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726146AbeLKWEN (ORCPT
+        Tue, 11 Dec 2018 17:06:40 -0500
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:36156 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726146AbeLKWGk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 17:04:13 -0500
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBBM3sSB136939
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 17:04:12 -0500
-Received: from e33.co.us.ibm.com (e33.co.us.ibm.com [32.97.110.151])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2pamu1j9dk-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 17:04:12 -0500
-Received: from localhost
-        by e33.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <mwb@linux.vnet.ibm.com>;
-        Tue, 11 Dec 2018 22:04:11 -0000
-Received: from b03cxnp08026.gho.boulder.ibm.com (9.17.130.18)
-        by e33.co.us.ibm.com (192.168.1.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 11 Dec 2018 22:04:08 -0000
-Received: from b03ledav006.gho.boulder.ibm.com (b03ledav006.gho.boulder.ibm.com [9.17.130.237])
-        by b03cxnp08026.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBBM452222347966
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 11 Dec 2018 22:04:05 GMT
-Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id CAC33C6057;
-        Tue, 11 Dec 2018 22:04:05 +0000 (GMT)
-Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A5412C6055;
-        Tue, 11 Dec 2018 22:04:05 +0000 (GMT)
-Received: from powerkvm6.aus.stglabs.ibm.com (unknown [9.40.192.78])
-        by b03ledav006.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Tue, 11 Dec 2018 22:04:05 +0000 (GMT)
-Received: from powerkvm6.aus.stglabs.ibm.com (localhost [IPv6:::1])
-        by powerkvm6.aus.stglabs.ibm.com (Postfix) with ESMTP id 5E737489EFAB;
-        Tue, 11 Dec 2018 16:04:05 -0600 (CST)
-Subject: [RFC 3/3] powerpc/numa: Apply mapping between HW and kernel cpus
-From:   Michael Bringmann <mwb@linux.vnet.ibm.com>
-To:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org
-Cc:     Michael Ellerman <mpe@ellerman.id.au>,
-        Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
-        Vaidyanathan Srinivasan <svaidyan@in.ibm.com>,
-        Juliet Kim <minkim@us.ibm.com>,
-        Tyrel Datwyler <tyreld@linux.vnet.ibm.com>,
-        Thomas Falcon <tlfalcon@linux.vnet.ibm.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Rob Herring <robh@kernel.org>,
-        Guenter Roeck <linux@roeck-us.net>, mwb@linux.vnet.ibm.com,
-        tlfalcon@linux.vnet.ibm.com, tyreld@linux.vnet.ibm.com,
-        minkim@us.ibm.com
-Date:   Tue, 11 Dec 2018 16:04:05 -0600
-In-Reply-To: <20181211220321.87502.72082.stgit@powerkvm6.aus.stglabs.ibm.com>
-References: <20181211220321.87502.72082.stgit@powerkvm6.aus.stglabs.ibm.com>
-User-Agent: StGit/0.18-105-g416a-dirty
+        Tue, 11 Dec 2018 17:06:40 -0500
+Received: by mail-oi1-f194.google.com with SMTP id x23so13376045oix.3;
+        Tue, 11 Dec 2018 14:06:39 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=zxCHXJVn4g17vaDC2XUQXh0RHGbwgRdcqSlW3XixLQQ=;
+        b=cuP9UHmVjCkKI+0pse+O3wHpATrQ1c+m6WpWM1FtfJ/0Yv1tdwF0BBeaNJcyHfItRM
+         HXFya2TD0poRlNWgMSTHCTf3+7dUwXydhDyOk7jr3TfxyW8XGGa9odq2sv+yrrSA+9L9
+         fPhZBNgiOKYK+2ADIE28qm1AqIwNZmZXnFJH2EHnfTSiYPC9ZmHaqhCrlMNUuIFafshJ
+         jFt9QGf7X5+eGyZ4vNhKjbjUGHoxO6xCr158lfEbVqLvdRKSRcbJuvaCPnELSozbz6mb
+         p9w172xe9vW+kxItcr3L2p/3i6eC7dGO9NU2kxa2kfEJqUL+f1Xk4XSF2KPWVrk8zQNl
+         1WRA==
+X-Gm-Message-State: AA+aEWaKzn2rhIM3+4F0O5kHKGMy9SY9lZIAYM2dAHFj9JU92dN9EfxQ
+        LhfS4e7BN5awGWj9jmgO9A==
+X-Google-Smtp-Source: AFSGD/U+e0//ayUG57ZOL0ioXZAFq5e19gceavoIYy4lsGUmGULjH0x5bbWsbX+1A9/Xk1W7UA4K/w==
+X-Received: by 2002:aca:3345:: with SMTP id z66mr1230589oiz.91.1544565998924;
+        Tue, 11 Dec 2018 14:06:38 -0800 (PST)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id q128sm7247905oia.4.2018.12.11.14.06.37
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 11 Dec 2018 14:06:38 -0800 (PST)
+Date:   Tue, 11 Dec 2018 16:06:37 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Roger Quadros <rogerq@ti.com>
+Cc:     ohad@wizery.com, bjorn.andersson@linaro.org, tony@atomide.com,
+        bcousson@baylibre.com, ssantosh@kernel.org, s-anna@ti.com,
+        nsekhar@ti.com, t-kristo@ti.com, nsaulnier@ti.com, jreeder@ti.com,
+        m-karicheri2@ti.com, woods.technical@gmail.com,
+        linux-omap@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH 12/16] dt-bindings: remoteproc: ti-pruss: Document
+ application node bindings
+Message-ID: <20181211220637.GA32460@bogus>
+References: <1543218769-5507-1-git-send-email-rogerq@ti.com>
+ <1543218769-5507-13-git-send-email-rogerq@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18121122-0036-0000-0000-00000A691622
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010214; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000270; SDB=6.01130389; UDB=6.00587377; IPR=6.00910522;
- MB=3.00024658; MTD=3.00000008; XFM=3.00000015; UTC=2018-12-11 22:04:10
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18121122-0037-0000-0000-000049F0F898
-Message-Id: <20181211220400.87502.94057.stgit@powerkvm6.aus.stglabs.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-11_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1812110194
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1543218769-5507-13-git-send-email-rogerq@ti.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Apply new interface to map external powerpc cpus across multiple
-nodes to a range of kernel cpu values.  Mapping is intended to
-prevent confusion within the kernel about the cpu+node mapping, and
-the changes in configuration that may happen due to powerpc LPAR
-migration or other associativity changes during the lifetime of a
-system.  These interfaces exchange the thread_index provided by the
-'ibm,ppc-interrupt-server#s' properties, for an internal index to
-be used by kernel scheduling interfaces.
+On Mon, Nov 26, 2018 at 09:52:45AM +0200, Roger Quadros wrote:
+> From: Tero Kristo <t-kristo@ti.com>
+> 
+> Add documentation for the Texas Instruments PRU application nodes.
+> These are used to configure specific user applications for PRU instances.
+> 
+> Signed-off-by: Tero Kristo <t-kristo@ti.com>
+> [s-anna@ti.com: some binding updates]
+> Signed-off-by: Suman Anna <s-anna@ti.com>
+> Signed-off-by: Roger Quadros <rogerq@ti.com>
+> ---
+>  .../devicetree/bindings/soc/ti/ti,pruss.txt        | 43 ++++++++++++++++++++++
+>  1 file changed, 43 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/soc/ti/ti,pruss.txt b/Documentation/devicetree/bindings/soc/ti/ti,pruss.txt
+> index 3e5f32f..94c91ee 100644
+> --- a/Documentation/devicetree/bindings/soc/ti/ti,pruss.txt
+> +++ b/Documentation/devicetree/bindings/soc/ti/ti,pruss.txt
+> @@ -210,6 +210,38 @@ used in TI Davinci SoCs. Please refer to the corresponding binding document,
+>  Documentation/devicetree/bindings/net/davinci-mdio.txt for details.
+>  
+>  
+> +Application/User Nodes
+> +=======================
+> +A PRU application/user node typically uses one or more PRU device nodes to
+> +implement a PRU application/functionality. Each application/client node would
+> +need a reference to at least a PRU node, and optionally pass some configuration
+> +parameters.
+> +
+> +Required Properties:
+> +--------------------
+> +- prus                 : phandles to the PRU nodes used
+> +
+> +Optional Properties:
+> +--------------------
+> +- firmware-name        : firmwares for the PRU cores, the default firmware
+> +                         for the core from the PRU node will be used if not
+> +                         provided. The firmware names should correspond to
+> +                         the PRU cores listed in the 'prus' property
+> +- ti,pruss-gp-mux-sel  : array of values for the GP_MUX_SEL under PRUSS_GPCFG
+> +                         register for a PRU. This selects the internal muxing
+> +                         scheme for the PRU instance. If not provided, the
+> +                         default out-of-reset value (0) for the PRU core is
+> +                         used. Values should correspond to the PRU cores listed
+> +                         in the 'prus' property
+> +- ti,pru-interrupt-map : PRU interrupt mappings, containing an array of entries
+> +                         with each entry consisting of 4 cell-values. First one
+> +                         is an index towards the "prus" property to identify the
+> +                         PRU core for the interrupt map, second is the PRU
+> +                         System Event id, third is the PRU interrupt channel id
+> +                         and fourth is the PRU host interrupt id. If provided,
+> +                         this map will supercede any other configuration
+> +                         provided through firmware
 
-Signed-off-by: Michael Bringmann <mwb@linux.vnet.ibm.com>
----
- arch/powerpc/mm/numa.c                       |   45 +++++++++++++++++---------
- arch/powerpc/platforms/pseries/hotplug-cpu.c |   15 +++++++--
- 2 files changed, 41 insertions(+), 19 deletions(-)
+Can't you use 'interrupt-map' or use more cells for the PRU intc cells. 
+Or use interrupts-extended if you need more than 1 parent.
 
-diff --git a/arch/powerpc/mm/numa.c b/arch/powerpc/mm/numa.c
-index 7d6bba264..59d7cd9 100644
---- a/arch/powerpc/mm/numa.c
-+++ b/arch/powerpc/mm/numa.c
-@@ -1063,7 +1063,8 @@ u64 memory_hotplug_max(void)
- 
- struct topology_update_data {
- 	struct topology_update_data *next;
--	unsigned int cpu;
-+	unsigned int old_cpu;
-+	unsigned int new_cpu;
- 	int old_nid;
- 	int new_nid;
- };
-@@ -1253,13 +1254,13 @@ static int update_cpu_topology(void *data)
- 
- 	for (update = data; update; update = update->next) {
- 		int new_nid = update->new_nid;
--		if (cpu != update->cpu)
-+		if (cpu != update->new_cpu)
- 			continue;
- 
--		unmap_cpu_from_node(cpu);
--		map_cpu_to_node(cpu, new_nid);
--		set_cpu_numa_node(cpu, new_nid);
--		set_cpu_numa_mem(cpu, local_memory_node(new_nid));
-+		unmap_cpu_from_node(update->old_cpu);
-+		map_cpu_to_node(update->new_cpu, new_nid);
-+		set_cpu_numa_node(update->new_cpu, new_nid);
-+		set_cpu_numa_mem(update->new_cpu, local_memory_node(new_nid));
- 		vdso_getcpu_init();
- 	}
- 
-@@ -1283,7 +1284,7 @@ static int update_lookup_table(void *data)
- 		int nid, base, j;
- 
- 		nid = update->new_nid;
--		base = cpu_first_thread_sibling(update->cpu);
-+		base = cpu_first_thread_sibling(update->new_cpu);
- 
- 		for (j = 0; j < threads_per_core; j++) {
- 			update_numa_cpu_lookup_table(base + j, nid);
-@@ -1305,7 +1306,7 @@ int numa_update_cpu_topology(bool cpus_locked)
- 	struct topology_update_data *updates, *ud;
- 	cpumask_t updated_cpus;
- 	struct device *dev;
--	int weight, new_nid, i = 0;
-+	int weight, new_nid, i = 0, ii;
- 
- 	if (!prrn_enabled && !vphn_enabled && topology_inited)
- 		return 0;
-@@ -1349,12 +1350,16 @@ int numa_update_cpu_topology(bool cpus_locked)
- 			continue;
- 		}
- 
-+		ii = 0;
- 		for_each_cpu(sibling, cpu_sibling_mask(cpu)) {
- 			ud = &updates[i++];
- 			ud->next = &updates[i];
--			ud->cpu = sibling;
- 			ud->new_nid = new_nid;
- 			ud->old_nid = numa_cpu_lookup_table[sibling];
-+			ud->old_cpu = sibling;
-+			ud->new_cpu = cpuremap_map_cpu(
-+					get_hard_smp_processor_id(sibling),
-+					ii++, new_nid);
- 			cpumask_set_cpu(sibling, &updated_cpus);
- 		}
- 		cpu = cpu_last_thread_sibling(cpu);
-@@ -1370,9 +1375,10 @@ int numa_update_cpu_topology(bool cpus_locked)
- 	pr_debug("Topology update for the following CPUs:\n");
- 	if (cpumask_weight(&updated_cpus)) {
- 		for (ud = &updates[0]; ud; ud = ud->next) {
--			pr_debug("cpu %d moving from node %d "
--					  "to %d\n", ud->cpu,
--					  ud->old_nid, ud->new_nid);
-+			pr_debug("cpu %d, node %d moving to"
-+				 " cpu %d, node %d\n",
-+				 ud->old_cpu, ud->old_nid,
-+				 ud->new_cpu, ud->new_nid);
- 		}
- 	}
- 
-@@ -1409,13 +1415,20 @@ int numa_update_cpu_topology(bool cpus_locked)
- 			     cpumask_of(raw_smp_processor_id()));
- 
- 	for (ud = &updates[0]; ud; ud = ud->next) {
--		unregister_cpu_under_node(ud->cpu, ud->old_nid);
--		register_cpu_under_node(ud->cpu, ud->new_nid);
-+		unregister_cpu_under_node(ud->old_cpu, ud->old_nid);
-+		register_cpu_under_node(ud->new_cpu, ud->new_nid);
- 
--		dev = get_cpu_device(ud->cpu);
-+		dev = get_cpu_device(ud->old_cpu);
- 		if (dev)
- 			kobject_uevent(&dev->kobj, KOBJ_CHANGE);
--		cpumask_clear_cpu(ud->cpu, &cpu_associativity_changes_mask);
-+		cpumask_clear_cpu(ud->old_cpu, &cpu_associativity_changes_mask);
-+		if (ud->old_cpu != ud->new_cpu) {
-+			dev = get_cpu_device(ud->new_cpu);
-+			if (dev)
-+				kobject_uevent(&dev->kobj, KOBJ_CHANGE);
-+			cpumask_clear_cpu(ud->new_cpu,
-+				&cpu_associativity_changes_mask);
-+		}
- 		changed = 1;
- 	}
- 
-diff --git a/arch/powerpc/platforms/pseries/hotplug-cpu.c b/arch/powerpc/platforms/pseries/hotplug-cpu.c
-index 620cb57..3a11a31 100644
---- a/arch/powerpc/platforms/pseries/hotplug-cpu.c
-+++ b/arch/powerpc/platforms/pseries/hotplug-cpu.c
-@@ -259,8 +259,13 @@ static int pseries_add_processor(struct device_node *np)
- 	zalloc_cpumask_var(&tmp, GFP_KERNEL);
- 
- 	nthreads = len / sizeof(u32);
--	for (i = 0; i < nthreads; i++)
--		cpumask_set_cpu(i, tmp);
-+	for (i = 0; i < nthreads; i++) {
-+		int thread_index = be32_to_cpu(intserv[i]);
-+		int nid = find_and_online_cpu_nid(thread_index, false);
-+		int cpu = cpuremap_map_cpu(thread_index, i, nid);
-+		cpumask_set_cpu(cpu, tmp);
-+		cpuremap_reserve_cpu(cpu);
-+	}
- 
- 	cpu_maps_update_begin();
- 
-@@ -333,6 +338,7 @@ static void pseries_remove_processor(struct device_node *np)
- 			set_cpu_present(cpu, false);
- 			set_hard_smp_processor_id(cpu, -1);
- 			update_numa_cpu_lookup_table(cpu, -1);
-+			cpuremap_release_cpu(cpu);
- 			break;
- 		}
- 		if (cpu >= nr_cpu_ids)
-@@ -346,7 +352,7 @@ static int dlpar_online_cpu(struct device_node *dn)
- {
- 	int rc = 0;
- 	unsigned int cpu;
--	int len, nthreads, i;
-+	int len, nthreads, i, nid;
- 	const __be32 *intserv;
- 	u32 thread;
- 
-@@ -367,9 +373,11 @@ static int dlpar_online_cpu(struct device_node *dn)
- 			cpu_maps_update_done();
- 			timed_topology_update(1);
- 			find_and_online_cpu_nid(cpu, true);
-+			cpuremap_map_cpu(thread, i, nid);
- 			rc = device_online(get_cpu_device(cpu));
- 			if (rc)
- 				goto out;
-+			cpuremap_reserve_cpu(cpu);
- 			cpu_maps_update_begin();
- 
- 			break;
-@@ -541,6 +549,7 @@ static int dlpar_offline_cpu(struct device_node *dn)
- 				rc = device_offline(get_cpu_device(cpu));
- 				if (rc)
- 					goto out;
-+				cpuremap_release_cpu(cpu);
- 				cpu_maps_update_begin();
- 				break;
- 
-
+> +
+>  Example:
+>  ========
+>  1.	/* AM33xx PRU-ICSS */
+> @@ -397,3 +429,14 @@ Example:
+>  			...
+>  		};
+>  	};
+> +
+> +3:	/* PRU application node example */
+> +	app_node: app_node {
+> +		prus = <&pru1_0>, <&pru1_1>;
+> +		firmware-name = "pruss-app-fw", "pruss-app-fw-2";
+> +		ti,pruss-gp-mux-sel = <2>, <1>;
+> +		/* setup interrupts for prus:
+> +		   prus[0] => pru1_0: ev=16, chnl=2, host-irq=7,
+> +		   prus[1] => pru1_1: ev=19, chnl=1, host-irq=3 */
+> +		ti,pru-interrupt-map = <0 16 2 7 >, <1 19 1 3>;
+> +	}
+> -- 
+> Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+> Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+> 
