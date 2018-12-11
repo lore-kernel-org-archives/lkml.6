@@ -7,55 +7,54 @@ X-Spam-Status: No, score=-12.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C821C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 01:16:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82A8AC5CFFE
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 01:16:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 14A3520851
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 01:16:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 49FC42084E
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 01:16:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544490983;
-	bh=85YMVMhYaOTXlaE/Dxwmmj7lAoowDYKdQM60LQZU8TY=;
+	s=default; t=1544490987;
+	bh=3W3TEujnWa/M/Bjv3mkRq3wMwKieHPFsgX+AmrSFNT0=;
 	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
-	b=V8/Jo73aemSV6SUyPGlqbIrW3ijn68W7BbN8Un4lXS/turLEvsklpKvCVeWV7JSN0
-	 6Q/64AK39KTlaDoycHQHs5MtLuDrZ7ULo6WOyjRsqLRK7LFJhSLfhCQzm5ROvm0IOW
-	 5mighvco24J2YuQXrdcmJXcXJpsghL2zytIEa4+Y=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 14A3520851
+	b=TbjzeuslBSYOqH7s1yNflTbVvx/SKOb2BG3xu18lh19rBObrERXkbEyeTAGlwBaxT
+	 7An9+nb7ZQIVQz9pfpQLzWhRuy3lachT7FTs0j9c0/wvN2rYKncxKzcFeP8mI+g3UJ
+	 6Jv0GD2y3bLk/kJw3+SxH7mGwDlONZhu/jCY2LNc=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 49FC42084E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728563AbeLKBQW (ORCPT
+        id S1728673AbeLKBQ0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 20:16:22 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:51192 "EHLO
+        Mon, 10 Dec 2018 20:16:26 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:51360 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728375AbeLKBQR (ORCPT
+        with ESMTP id S1728524AbeLKBQV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 20:16:17 -0500
+        Mon, 10 Dec 2018 20:16:21 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=HLeYB78qRjRKsb2QgM8O5Wa4o/mUpnsvaU1+CL8uJNc=; b=Yb2nBpENF2vD
-        ZYGfO7YrA2Up9jQH2S+RLOixsTEPS1HTZSKZtYxBBpKPrjSaCJfc87eG2Sae1pT3Hy0lgD4WGwhHy
-        btGUY5nPeLVT50NvjY1vMwaQrWokNjFkHpfZS1+U1ncN8cmsIuZOye+su9v55qmmveL4BAiSbEeJ0
-        PtN6o=;
+        List-Archive; bh=OtrfZZPHQwSha0M255kJbIjHeaiRCq48TdXKdjrTw3c=; b=KTXe9V1ROMCv
+        uNO0UU/4fnMoTADeB9niaUmHxf9nx1Wfn1cnQP2hljwfl4TwMu0WO5vWd++LXpFZCMFhfa5ARQqP4
+        ZfcCb+PmosMA/qIyzbRDDD59uzmkMkjUdbCdksw5beroIAZ5p7qM6nbBhAQBC3BgPj57XNH0DfeUq
+        tBRdU=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1gWWej-0000M1-De; Tue, 11 Dec 2018 01:16:13 +0000
+        id 1gWWep-0000MT-SD; Tue, 11 Dec 2018 01:16:19 +0000
 Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 1D9F411254C7; Tue, 11 Dec 2018 01:16:13 +0000 (GMT)
+        id 8DD8211254C7; Tue, 11 Dec 2018 01:16:19 +0000 (GMT)
 From:   Mark Brown <broonie@kernel.org>
 To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Applied "regulator: max77686: Let core handle GPIO descriptor" to the regulator tree
+Cc:     Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Applied "regulator: lm363x: Let core handle GPIO descriptor" to the regulator tree
 In-Reply-To: 
 X-Patchwork-Hint: ignore
-Message-Id: <20181211011613.1D9F411254C7@debutante.sirena.org.uk>
-Date:   Tue, 11 Dec 2018 01:16:13 +0000 (GMT)
+Message-Id: <20181211011619.8DD8211254C7@debutante.sirena.org.uk>
+Date:   Tue, 11 Dec 2018 01:16:19 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -63,7 +62,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   regulator: max77686: Let core handle GPIO descriptor
+   regulator: lm363x: Let core handle GPIO descriptor
 
 has been applied to the regulator tree at
 
@@ -88,68 +87,54 @@ to this mail.
 Thanks,
 Mark
 
-From d03c63dbcaa1ee570d0435a7f79c7083ffb59245 Mon Sep 17 00:00:00 2001
+From e8a33aa0e3bc22134bf2bf3ca6339d6a1b7ffe16 Mon Sep 17 00:00:00 2001
 From: Linus Walleij <linus.walleij@linaro.org>
-Date: Thu, 6 Dec 2018 13:43:43 +0100
-Subject: [PATCH] regulator: max77686: Let core handle GPIO descriptor
+Date: Thu, 6 Dec 2018 13:43:39 +0100
+Subject: [PATCH] regulator: lm363x: Let core handle GPIO descriptor
 
-Use the gpiod_get_from_of_node() rather than the devm_*
-version so that the regulator core can handle the lifecycle
-of these descriptors.
+Use the gpiod_get() rather than the devm_* version so that the
+regulator core can handle the lifecycle of these descriptors.
 
-Fix up the errorpath so that we free this descriptor if
-an error occurs in the callback. Rely on the regulator
-core to deal with it after this point: a previous patch
-fixed up the regulator core to properly dispose any
-GPIO descriptors once you call regulator_register().
-
-Fixes: 96392c3d8ca4 ("regulator: max77686: Pass descriptor instead of GPIO number")
+Fixes: b2d751b7f69b ("regulator: lm363x: Pass descriptor instead of GPIO number")
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Reviewed-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
 Reviewed-by: Charles Keepax <ckeepax@opensource.cirrus.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/regulator/max77686-regulator.c | 14 +++++++++-----
- 1 file changed, 9 insertions(+), 5 deletions(-)
+ drivers/regulator/lm363x-regulator.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/regulator/max77686-regulator.c b/drivers/regulator/max77686-regulator.c
-index f5cee1775905..8020eb57374a 100644
---- a/drivers/regulator/max77686-regulator.c
-+++ b/drivers/regulator/max77686-regulator.c
-@@ -250,13 +250,13 @@ static int max77686_of_parse_cb(struct device_node *np,
- 		struct regulator_config *config)
- {
- 	struct max77686_data *max77686 = config->driver_data;
-+	int ret;
- 
- 	switch (desc->id) {
- 	case MAX77686_BUCK8:
- 	case MAX77686_BUCK9:
- 	case MAX77686_LDO20 ... MAX77686_LDO22:
--		config->ena_gpiod = devm_gpiod_get_from_of_node(max77686->dev,
--				np,
-+		config->ena_gpiod = gpiod_get_from_of_node(np,
- 				"maxim,ena",
- 				0,
- 				GPIOD_OUT_HIGH | GPIOD_FLAGS_BIT_NONEXCLUSIVE,
-@@ -271,9 +271,13 @@ static int max77686_of_parse_cb(struct device_node *np,
- 	if (config->ena_gpiod) {
- 		set_bit(desc->id, max77686->gpio_enabled);
- 
--		return regmap_update_bits(config->regmap, desc->enable_reg,
--					  desc->enable_mask,
--					  MAX77686_GPIO_CONTROL);
-+		ret = regmap_update_bits(config->regmap, desc->enable_reg,
-+					 desc->enable_mask,
-+					 MAX77686_GPIO_CONTROL);
-+		if (ret) {
-+			gpiod_put(config->ena_gpiod);
-+			config->ena_gpiod = NULL;
-+		}
- 	}
- 
- 	return 0;
+diff --git a/drivers/regulator/lm363x-regulator.c b/drivers/regulator/lm363x-regulator.c
+index bbedb08d257b..8c0e8419c43f 100644
+--- a/drivers/regulator/lm363x-regulator.c
++++ b/drivers/regulator/lm363x-regulator.c
+@@ -224,13 +224,15 @@ static struct gpio_desc *lm363x_regulator_of_get_enable_gpio(struct device *dev,
+ 	/*
+ 	 * Check LCM_EN1/2_GPIO is configured.
+ 	 * Those pins are used for enabling VPOS/VNEG LDOs.
++	 * Do not use devm* here: the regulator core takes over the
++	 * lifecycle management of the GPIO descriptor.
+ 	 */
+ 	switch (id) {
+ 	case LM3632_LDO_POS:
+-		return devm_gpiod_get_index_optional(dev, "enable", 0,
++		return gpiod_get_index_optional(dev, "enable", 0,
+ 				GPIOD_OUT_LOW | GPIOD_FLAGS_BIT_NONEXCLUSIVE);
+ 	case LM3632_LDO_NEG:
+-		return devm_gpiod_get_index_optional(dev, "enable", 1,
++		return gpiod_get_index_optional(dev, "enable", 1,
+ 				GPIOD_OUT_LOW | GPIOD_FLAGS_BIT_NONEXCLUSIVE);
+ 	default:
+ 		return NULL;
+@@ -263,6 +265,8 @@ static int lm363x_regulator_probe(struct platform_device *pdev)
+ 					 LM3632_EXT_EN_MASK,
+ 					 LM3632_EXT_EN_MASK);
+ 		if (ret) {
++			if (gpiod)
++				gpiod_put(gpiod);
+ 			dev_err(dev, "External pin err: %d\n", ret);
+ 			return ret;
+ 		}
 -- 
 2.19.0.rc2
 
