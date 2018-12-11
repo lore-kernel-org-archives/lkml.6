@@ -2,155 +2,299 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B059FC5CFFE
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:18:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42AE7C67839
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:19:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7800A2084E
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:18:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544541528;
-	bh=zk88PNm93vOrQRJuhmKV7k46NfJeGzn5XGA9gnCTq4w=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=xz+hOTswCECNWmv24crw2MF+o4TngjUvYrI0c6j3Q0K1AiRI+EIfmOxZX13vPbhZA
-	 eogNT6wxa0YXush37dVEKfcEj8VDZsH2ZGW7kOWWNSAAZ5UpjsRlXoiR1KJpZqJ5Uy
-	 7WI0bZoJ2U637rtk6/t25I0YxXSSpPf9hNmhDfd4=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7800A2084E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 000BC2084E
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:19:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 000BC2084E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726907AbeLKPSr (ORCPT
+        id S1726784AbeLKPTQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 10:18:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42772 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726366AbeLKPSr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:18:47 -0500
-Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E395520851;
-        Tue, 11 Dec 2018 15:18:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544541526;
-        bh=zk88PNm93vOrQRJuhmKV7k46NfJeGzn5XGA9gnCTq4w=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=f35GcSP7stgx6SclvEjSCP7hqZtcJ42c6FDpL0JQynd4kPGOhKeXAnGpDxd0pNxyH
-         DMfBk0oqt1/akgssgYSTdol3q+7kCsqCu7qxMhqoucV2wbdN/ZE06oR6E7PdITOo/k
-         K+NuppVrDlB4egh8qo6IQS+eHx7heP/mG7iZ+kFQ=
-Received: by mail-qk1-f173.google.com with SMTP id y16so8777279qki.7;
-        Tue, 11 Dec 2018 07:18:45 -0800 (PST)
-X-Gm-Message-State: AA+aEWZc8fz3w7miI2oT4thGCsAcnI/5jipzOKLpmlUXAPZipc6a6m1U
-        dJ2B57EkqPNzrIts1DVnU/yDXmJcSlpKH/Y36g==
-X-Google-Smtp-Source: AFSGD/WI5yD91yt9GqhL/iY1sQifQIMa4uTENA3yixv9s43AO6E7k4c6tCBxQPLbW02djjfpX1UAq7QNSXWnqNSDOa8=
-X-Received: by 2002:a37:7682:: with SMTP id r124mr15036944qkc.79.1544541525112;
- Tue, 11 Dec 2018 07:18:45 -0800 (PST)
-MIME-Version: 1.0
-References: <1544425521-775-1-git-send-email-Anson.Huang@nxp.com>
- <20181210232358.GA11621@bogus> <DB3PR0402MB3916E1651ABC07F6F788B265F5A60@DB3PR0402MB3916.eurprd04.prod.outlook.com>
-In-Reply-To: <DB3PR0402MB3916E1651ABC07F6F788B265F5A60@DB3PR0402MB3916.eurprd04.prod.outlook.com>
-From:   Rob Herring <robh@kernel.org>
-Date:   Tue, 11 Dec 2018 09:18:33 -0600
-X-Gmail-Original-Message-ID: <CAL_Jsq+sP_fsQaoT6FpZNRxjhPAhCcE8e-0xffUUxShcC2LuHw@mail.gmail.com>
-Message-ID: <CAL_Jsq+sP_fsQaoT6FpZNRxjhPAhCcE8e-0xffUUxShcC2LuHw@mail.gmail.com>
-Subject: Re: [PATCH V3 1/2] dt-bindings: iio: light: isl29018: update power
- supply name
-To:     Anson Huang <anson.huang@nxp.com>
-Cc:     Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald <pmeerw@pmeerw.net>,
-        Mark Rutland <mark.rutland@arm.com>, linux-iio@vger.kernel.org,
-        devicetree@vger.kernel.org,
+        Tue, 11 Dec 2018 10:19:16 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:49726 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726401AbeLKPTQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 10:19:16 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AE88B1596;
+        Tue, 11 Dec 2018 07:19:15 -0800 (PST)
+Received: from red-moon (red-moon.cambridge.arm.com [10.1.197.39])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E19C33F575;
+        Tue, 11 Dec 2018 07:19:13 -0800 (PST)
+Date:   Tue, 11 Dec 2018 15:19:53 +0000
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     "Z.q. Hou" <zhiqiang.hou@nxp.com>, gustavo.pimentel@synopsys.com
+Cc:     "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        NXP Linux Team <linux-imx@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        "bhelgaas@google.com" <bhelgaas@google.com>,
+        "jingoohan1@gmail.com" <jingoohan1@gmail.com>,
+        Roy Zang <roy.zang@nxp.com>, Mingkai Hu <mingkai.hu@nxp.com>,
+        "M.h. Lian" <minghuan.lian@nxp.com>
+Subject: Re: [PATCHv2 4/4] PCI: dwc: add prefetchable memory range support
+Message-ID: <20181211151953.GA1964@red-moon>
+References: <20181107100854.28389-1-Zhiqiang.Hou@nxp.com>
+ <20181107100854.28389-5-Zhiqiang.Hou@nxp.com>
+ <20181128175943.GA25307@e107981-ln.cambridge.arm.com>
+ <AM6PR04MB57811186BB76B02BCF12FB5384A60@AM6PR04MB5781.eurprd04.prod.outlook.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <AM6PR04MB57811186BB76B02BCF12FB5384A60@AM6PR04MB5781.eurprd04.prod.outlook.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 10, 2018 at 7:40 PM Anson Huang <anson.huang@nxp.com> wrote:
->
-> Hi, Rob
->
-> Best Regards!
-> Anson Huang
->
-> > -----Original Message-----
-> > From: Rob Herring [mailto:robh@kernel.org]
-> > Sent: 2018=E5=B9=B412=E6=9C=8811=E6=97=A5 7:24
-> > To: Anson Huang <anson.huang@nxp.com>
-> > Cc: jic23@kernel.org; knaack.h@gmx.de; lars@metafoo.de;
-> > pmeerw@pmeerw.net; mark.rutland@arm.com; linux-iio@vger.kernel.org;
-> > devicetree@vger.kernel.org; linux-kernel@vger.kernel.org; dl-linux-imx
-> > <linux-imx@nxp.com>
-> > Subject: Re: [PATCH V3 1/2] dt-bindings: iio: light: isl29018: update p=
-ower
-> > supply name
-> >
-> > On Mon, Dec 10, 2018 at 07:11:19AM +0000, Anson Huang wrote:
-> > > According to datasheet, the isl29018 has "vddd/vdda" power supply, an=
-d
-> > > isl29023/isl29035 ONLY has "vdd" power supply, update the power suppl=
-y
-> > > name with "vdd" and "vdda" according to datasheet to cover all device=
-s
-> > > and avoid confusion.
-> > >
-> > > Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-> > > ---
-> > >  Documentation/devicetree/bindings/iio/light/isl29018.txt | 4 +++-
-> > >  1 file changed, 3 insertions(+), 1 deletion(-)
-> > >
-> > > diff --git a/Documentation/devicetree/bindings/iio/light/isl29018.txt
-> > > b/Documentation/devicetree/bindings/iio/light/isl29018.txt
-> > > index b9bbde3..36f737d 100644
-> > > --- a/Documentation/devicetree/bindings/iio/light/isl29018.txt
-> > > +++ b/Documentation/devicetree/bindings/iio/light/isl29018.txt
-> > > @@ -15,7 +15,9 @@ Optional properties:
-> > >    Refer to interrupt-controller/interrupts.txt for generic interrupt=
- client
-> > >    node bindings.
-> > >
-> > > -  - vcc-supply: phandle to the regulator that provides power to the =
-sensor.
-> > > +  - vdd-supply: phandle to the regulator that provides vdd power to =
-the
-> > sensor.
+On Tue, Dec 11, 2018 at 10:21:08AM +0000, Z.q. Hou wrote:
+
+[...]
+
+> > > +	 */
+> > > +	if (pci->num_viewport < 2) {
+> > > +		ret = of_property_read_u32(np, "num-viewport",
+> > > +					   &pci->num_viewport);
+> > > +		if (ret || pci->num_viewport < 2)
+> > > +			pci->num_viewport = 2;
+> > > +	}
 > > > +
-> > > +  - vdda-supply: phandle to the regulator that provides vdda power t=
-o the
-> > sensor.
-> >
-> > Is this in use? You can't just change things if it is.
->
-> I did NOT see any "vcc" in folder drivers/iio/light/, so I think it is NO=
-T used at all,
-> so I take this chance to update it according to datasheet. Thanks.
+> > > +	/*
+> > > +	 * if there are only 2 viewports, assign the last viewport for
+> > > +	 * both CFG and IO window, otherwise assign the last 2 viewport
+> > 
+> > Gah. Can anyone explain to me how this driver works if only two
+> > viewports are available ? What happens if an IO access happens at
+> > the same time of a config access (that fiddles with the outbound
+> > memory windows) ?
 
-arch/arm/boot/dts/exynos5420-peach-pit.dts-629- light-sensor@44 {
-arch/arm/boot/dts/exynos5420-peach-pit.dts:630:         compatible =3D
-"isil,isl29018";
-arch/arm/boot/dts/exynos5420-peach-pit.dts-631-         reg =3D <0x44>;
-arch/arm/boot/dts/exynos5420-peach-pit.dts-632-         vcc-supply =3D
-<&tps65090_fet5>;
-arch/arm/boot/dts/exynos5420-peach-pit.dts-633- };
+Guys, this is utterly broken. If the IP does not have enough address
+decoders it is better not to support IO at all rather implementing
+it with this broken code that can fail anytime.
 
-arch/arm/boot/dts/exynos5800-peach-pi.dts-629-  light-sensor@44 {
-arch/arm/boot/dts/exynos5800-peach-pi.dts:630:          compatible =3D
-"isil,isl29018";
-arch/arm/boot/dts/exynos5800-peach-pi.dts-631-          reg =3D <0x44>;
-arch/arm/boot/dts/exynos5800-peach-pi.dts-632-          vcc-supply =3D
-<&tps65090_fet5>;
-arch/arm/boot/dts/exynos5800-peach-pi.dts-633-  };
+This ought to be fixed and it is not a problem with this patch it
+is a *bug* in the mainline kernel.
 
-The rest of the dts files using this don't have a supply it seems. So
-you need permission from the Exynos folks if you want to just drop
-this. And also update their dts files.
+Lorenzo
 
-Rob
+> You are right it has potential IO transaction drop issue, but DWC PCIe databook does give a default value 2 of viewport number.
+> 
+>  
+> > > +	 * for CFG and IO window specific. And the rest viewports are
+> > > +	 * assigned to MEM windows.
+> > > +	 */
+> > > +	if (pci->num_viewport == 2) {
+> > > +		pp->cfg_idx = pp->io_idx = PCIE_ATU_REGION_INDEX1;
+> > > +		pp->mem_wins = 1;
+> > > +	} else {
+> > > +		pp->cfg_idx = pci->num_viewport - 1;
+> > > +		pp->io_idx = pci->num_viewport - 2;
+> > > +		pp->mem_wins = pci->num_viewport - 2;
+> > > +	}
+> > > +
+> > > +	dev_dbg(dev, "CFG win id: %d, I/O win id: %d, Total MEM win: %d\n",
+> > > +		pp->cfg_idx, pp->io_idx, pp->mem_wins);
+> > > +
+> > >  	bridge = pci_alloc_host_bridge(0);
+> > >  	if (!bridge)
+> > >  		return -ENOMEM;
+> > > @@ -377,10 +406,20 @@ int dw_pcie_host_init(struct pcie_port *pp)
+> > >  			}
+> > >  			break;
+> > >  		case IORESOURCE_MEM:
+> > > -			pp->mem = win->res;
+> > > -			pp->mem->name = "MEM";
+> > > -			pp->mem_size = resource_size(pp->mem);
+> > > -			pp->mem_bus_addr = pp->mem->start - win->offset;
+> > > +			if (win->res->flags & IORESOURCE_PREFETCH) {
+> > > +				pp->mem_perf = win->res;
+> > > +				pp->mem_perf->name = "MEM perf";
+> > 
+> > Nit: Why "perf" and not "pref" ?
+> > 
+> > It is confusing but that's the least of this patch problems.
+> 
+> My bad, it is typo, will fix in next version.
+> 
+> > 
+> > > +				pp->mem_perf_size = resource_size(pp->mem_perf);
+> > > +				pp->mem_perf_bus_addr = pp->mem_perf->start -
+> > > +							win->offset;
+> > > +				pp->mem_perf_base = pp->mem_perf->start;
+> > > +			} else {
+> > > +				pp->mem = win->res;
+> > > +				pp->mem->name = "MEM";
+> > > +				pp->mem_size = resource_size(pp->mem);
+> > > +				pp->mem_bus_addr = pp->mem->start - win->offset;
+> > > +				pp->mem_base = pp->mem->start;
+> > > +			}
+> > >  			break;
+> > >  		case 0:
+> > >  			pp->cfg = win->res;
+> > > @@ -406,8 +445,6 @@ int dw_pcie_host_init(struct pcie_port *pp)
+> > >  		}
+> > >  	}
+> > >
+> > > -	pp->mem_base = pp->mem->start;
+> > > -
+> > >  	if (!pp->va_cfg0_base) {
+> > >  		pp->va_cfg0_base = devm_pci_remap_cfgspace(dev,
+> > >  					pp->cfg0_base, pp->cfg0_size);
+> > > @@ -534,12 +571,12 @@ static int dw_pcie_rd_other_conf(struct
+> > pcie_port *pp, struct pci_bus *bus,
+> > >  		va_cfg_base = pp->va_cfg1_base;
+> > >  	}
+> > >
+> > > -	dw_pcie_prog_outbound_atu(pci, PCIE_ATU_REGION_INDEX1,
+> > > +	dw_pcie_prog_outbound_atu(pci, pp->cfg_idx,
+> > >  				  type, cpu_addr,
+> > >  				  busdev, cfg_size);
+> > >  	ret = dw_pcie_read(va_cfg_base + where, size, val);
+> > > -	if (pci->num_viewport <= 2)
+> > > -		dw_pcie_prog_outbound_atu(pci, PCIE_ATU_REGION_INDEX1,
+> > > +	if (pp->cfg_idx == pp->io_idx)
+> > > +		dw_pcie_prog_outbound_atu(pci, pp->io_idx,
+> > >  					  PCIE_ATU_TYPE_IO, pp->io_base,
+> > >  					  pp->io_bus_addr, pp->io_size);
+> > 
+> > See above, even though this is not related to this patch.
+> 
+> I think it is more reasonable to check if the CFG and IO shared viewport than the viewport number.
+> 
+> > 
+> > >
+> > > @@ -573,12 +610,12 @@ static int dw_pcie_wr_other_conf(struct
+> > pcie_port *pp, struct pci_bus *bus,
+> > >  		va_cfg_base = pp->va_cfg1_base;
+> > >  	}
+> > >
+> > > -	dw_pcie_prog_outbound_atu(pci, PCIE_ATU_REGION_INDEX1,
+> > > +	dw_pcie_prog_outbound_atu(pci, pp->cfg_idx,
+> > >  				  type, cpu_addr,
+> > >  				  busdev, cfg_size);
+> > >  	ret = dw_pcie_write(va_cfg_base + where, size, val);
+> > > -	if (pci->num_viewport <= 2)
+> > > -		dw_pcie_prog_outbound_atu(pci, PCIE_ATU_REGION_INDEX1,
+> > > +	if (pp->cfg_idx == pp->io_idx)
+> > > +		dw_pcie_prog_outbound_atu(pci, pp->io_idx,
+> > >  					  PCIE_ATU_TYPE_IO, pp->io_base,
+> > >  					  pp->io_bus_addr, pp->io_size);
+> > >
+> > > @@ -652,6 +689,9 @@ static u8 dw_pcie_iatu_unroll_enabled(struct
+> > > dw_pcie *pci)  void dw_pcie_setup_rc(struct pcie_port *pp)  {
+> > >  	u32 val, ctrl, num_ctrls;
+> > > +	u64 remain_size, base, win_size;
+> > > +	phys_addr_t bus_addr;
+> > > +	int i;
+> > >  	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
+> > >
+> > >  	dw_pcie_setup(pci);
+> > > @@ -700,13 +740,42 @@ void dw_pcie_setup_rc(struct pcie_port *pp)
+> > >  		dev_dbg(pci->dev, "iATU unroll: %s\n",
+> > >  			pci->iatu_unroll_enabled ? "enabled" : "disabled");
+> > >
+> > > -		dw_pcie_prog_outbound_atu(pci, PCIE_ATU_REGION_INDEX0,
+> > > -					  PCIE_ATU_TYPE_MEM, pp->mem_base,
+> > > -					  pp->mem_bus_addr, pp->mem_size);
+> > > -		if (pci->num_viewport > 2)
+> > > -			dw_pcie_prog_outbound_atu(pci, PCIE_ATU_REGION_INDEX2,
+> > > -						  PCIE_ATU_TYPE_IO, pp->io_base,
+> > > -						  pp->io_bus_addr, pp->io_size);
+> > > +		/*
+> > > +		 * The maximum region size is 4 GB, and a region
+> > > +		 * must not cross a 4 GB boundary.
+> > > +		 */
+> > > +		win_size = SZ_4G - (pp->mem_base & (SZ_4G - 1));
+> > > +		win_size = min(win_size, pp->mem_size);
+> > > +		dw_pcie_prog_outbound_atu(pci, 0, PCIE_ATU_TYPE_MEM,
+> > > +					  pp->mem_base, pp->mem_bus_addr,
+> > > +					  win_size);
+> > > +		dev_dbg(pci->dev,
+> > > +			"iATU: non-pref MEM: win = %d: base = %llx, bus_addr = %pa,
+> > size = %llx\n",
+> > > +			0, pp->mem_base, &pp->mem_bus_addr, win_size);
+> > > +
+> > > +		/* Prefetchable range can be 64bit space */
+> > > +		remain_size = pp->mem_perf_size;
+> > 
+> > unallocated/free_size ?
+> 
+> Sorry, I don't understand your question.
+> 
+> > 
+> > > +		base = pp->mem_perf_base;
+> > > +		bus_addr = pp->mem_perf_bus_addr;
+> > > +		for (i = 1; remain_size > 0 && i < pp->mem_wins; i++) {
+> > > +			win_size = SZ_4G - (base & (SZ_4G - 1));
+> > > +			win_size = min(win_size, remain_size);
+> > > +			dw_pcie_prog_outbound_atu(pci, i, PCIE_ATU_TYPE_MEM,
+> > > +						  base, bus_addr, win_size);
+> > > +			dev_dbg(pci->dev, "iATU: pref MEM: win = %d: base = %llx,
+> > bus_addr = %pa, size = %llx\n",
+> > > +				i, base, &bus_addr, win_size);
+> > > +
+> > > +			base += win_size;
+> > > +			bus_addr += win_size;
+> > > +			remain_size -= win_size;
+> > > +		}
+> > > +
+> > > +		if (remain_size > 0)
+> > > +			dev_info(pci->dev, "iATU: MEM window isn't enough\n");
+> > > +
+> > > +		dw_pcie_prog_outbound_atu(pci, pp->io_idx, PCIE_ATU_TYPE_IO,
+> > > +					  pp->io_base, pp->io_bus_addr,
+> > > +					  pp->io_size);
+> > >  	}
+> > >
+> > >  	dw_pcie_wr_own_conf(pp, PCI_BASE_ADDRESS_0, 4, 0); diff --git
+> > > a/drivers/pci/controller/dwc/pcie-designware.h
+> > > b/drivers/pci/controller/dwc/pcie-designware.h
+> > > index a438c3879aa9..0197f67f82b7 100644
+> > > --- a/drivers/pci/controller/dwc/pcie-designware.h
+> > > +++ b/drivers/pci/controller/dwc/pcie-designware.h
+> > > @@ -148,15 +148,22 @@ struct pcie_port {
+> > >  	u64			cfg1_base;
+> > >  	void __iomem		*va_cfg1_base;
+> > >  	u32			cfg1_size;
+> > > +	u32			cfg_idx;
+> > >  	resource_size_t		io_base;
+> > >  	phys_addr_t		io_bus_addr;
+> > >  	u32			io_size;
+> > > +	u32			io_idx;
+> > >  	u64			mem_base;
+> > >  	phys_addr_t		mem_bus_addr;
+> > >  	u64			mem_size;
+> > > +	u64			mem_perf_base;
+> > 
+> > This is a phys_addr_t
+> > 
+> > > +	phys_addr_t		mem_perf_bus_addr;
+> > 
+> > pci_bus_addr_t ?
+> 
+> Will fix in next version.
+> 
+> > 
+> > Lorenzo
+> > 
+> > > +	u64			mem_perf_size;
+> > > +	u32			mem_wins;
+> > >  	struct resource		*cfg;
+> > >  	struct resource		*io;
+> > >  	struct resource		*mem;
+> > > +	struct resource		*mem_perf;
+> > >  	struct resource		*busn;
+> > >  	int			irq;
+> > >  	const struct dw_pcie_host_ops *ops;
+> > > --
+> > > 2.17.1
+> > >
+> 
+> Thanks,
+> Zhiqiang
