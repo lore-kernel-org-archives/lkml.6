@@ -2,55 +2,58 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B7A5C5CFFE
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:18:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 962D6C07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:18:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D5ED92087F
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:18:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5D82020851
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:18:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544545090;
-	bh=WFbAZIUI89qcPu0Zlr7P20702y2IjPBcpDItp89/+IQ=;
+	s=default; t=1544545096;
+	bh=nXIb51wCD0PLvnkwLgQjjxK/EeCGuYyikHc2EmuWBmE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=OekjZoXJWKYwIPf5k2ZF4jyn6LUZrUGUFfUt8zfubdkleAvbMKa4/WRkoBzGcoLKN
-	 S+RHwAUGeDe7/yuWuzeW/LGgraSMkBNl0Sp3Qcy18sUuMidc5k3m7IE6tIJYqkgad+
-	 lPdHQXT5WZbVLdSoYMQnhSH3ljpGUOUKzxeTrBrA=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5ED92087F
+	b=h/RspMmPpuCFqZiAZkzYG2dJtcwl+tloAZFFRQmSHnBdqg//GO3bqYlHUK8Hghc8X
+	 gNcVUu1OnSk9Jxr2uCi+t800TvUW1A0qfiXXt+04+q91DIU4VNDs+lZscGbfHvQ3+A
+	 6a50IdS2kOEvXHWKs6m/y882RQaj6hnLUxZ5wKdk=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D82020851
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728396AbeLKPqp (ORCPT
+        id S1728894AbeLKQSP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 10:46:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35102 "EHLO mail.kernel.org"
+        Tue, 11 Dec 2018 11:18:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35066 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728364AbeLKPqm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:46:42 -0500
+        id S1728371AbeLKPqj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 10:46:39 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 563D02087F;
-        Tue, 11 Dec 2018 15:46:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AF53320870;
+        Tue, 11 Dec 2018 15:46:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544543201;
-        bh=WFbAZIUI89qcPu0Zlr7P20702y2IjPBcpDItp89/+IQ=;
+        s=default; t=1544543199;
+        bh=nXIb51wCD0PLvnkwLgQjjxK/EeCGuYyikHc2EmuWBmE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TgJYLURZ0JoWZtsVuvPwWQYtyiHUrcV1uj66PP52+UNAI525BhTEuezLWU4p1EZvk
-         pPRui5LJYMBccWzdR7afqqLatrtkHCtrDS0cRrH/NR6E4Wre2jhPX4t95YIhqG5A2j
-         QiyGWDeA3x8bPyvpBFwpXBI2e861lim2b4OdWCzQ=
+        b=cRoQvwQLXaOsMIAJEhjBSaRuBLMxwRQMZnAgJvg9PlryhIFq/F9N2/4/Todg3H8vF
+         kxZ6xYw3KmAMvQU9zMiCyWOKHMcCOiS5Qiyc+7nYpPqhf9SqCISMu8vJ09LMEAern7
+         cI1iB367L8qad1HkCoDxTKRAtGrF4AZc42JzoOrI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        Alan Stern <stern@rowland.harvard.edu>
-Subject: [PATCH 4.4 18/91] USB: usb-storage: Add new IDs to ums-realtek
-Date:   Tue, 11 Dec 2018 16:40:37 +0100
-Message-Id: <20181211151607.341974796@linuxfoundation.org>
+        stable@vger.kernel.org, Omar Sandoval <osandov@fb.com>,
+        Liu Bo <bo.liu@linux.alibaba.com>,
+        Nikolay Borisov <nborisov@suse.com>,
+        Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.4 17/91] btrfs: release metadata before running delayed refs
+Date:   Tue, 11 Dec 2018 16:40:36 +0100
+Message-Id: <20181211151607.261293742@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181211151606.026852373@linuxfoundation.org>
 References: <20181211151606.026852373@linuxfoundation.org>
@@ -69,40 +72,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Kai-Heng Feng <kai.heng.feng@canonical.com>
+We want to release the unused reservation we have since it refills the
+delayed refs reserve, which will make everything go smoother when
+running the delayed refs if we're short on our reservation.
 
-commit a84a1bcc992f0545a51d2e120b8ca2ef20e2ea97 upstream.
-
-There are two new Realtek card readers require ums-realtek to work
-correctly.
-
-Add the new IDs to support them.
-
-Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
-Acked-by: Alan Stern <stern@rowland.harvard.edu>
-Cc: stable <stable@vger.kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+CC: stable@vger.kernel.org # 4.4+
+Reviewed-by: Omar Sandoval <osandov@fb.com>
+Reviewed-by: Liu Bo <bo.liu@linux.alibaba.com>
+Reviewed-by: Nikolay Borisov <nborisov@suse.com>
+Signed-off-by: Josef Bacik <josef@toxicpanda.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/storage/unusual_realtek.h |   10 ++++++++++
- 1 file changed, 10 insertions(+)
+ fs/btrfs/transaction.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/drivers/usb/storage/unusual_realtek.h
-+++ b/drivers/usb/storage/unusual_realtek.h
-@@ -38,4 +38,14 @@ UNUSUAL_DEV(0x0bda, 0x0159, 0x0000, 0x99
- 		"USB Card Reader",
- 		USB_SC_DEVICE, USB_PR_DEVICE, init_realtek_cr, 0),
+diff --git a/fs/btrfs/transaction.c b/fs/btrfs/transaction.c
+index be8eae80ff65..098016338f98 100644
+--- a/fs/btrfs/transaction.c
++++ b/fs/btrfs/transaction.c
+@@ -1821,6 +1821,9 @@ int btrfs_commit_transaction(struct btrfs_trans_handle *trans,
+ 		return ret;
+ 	}
  
-+UNUSUAL_DEV(0x0bda, 0x0177, 0x0000, 0x9999,
-+		"Realtek",
-+		"USB Card Reader",
-+		USB_SC_DEVICE, USB_PR_DEVICE, init_realtek_cr, 0),
++	btrfs_trans_release_metadata(trans, root);
++	trans->block_rsv = NULL;
 +
-+UNUSUAL_DEV(0x0bda, 0x0184, 0x0000, 0x9999,
-+		"Realtek",
-+		"USB Card Reader",
-+		USB_SC_DEVICE, USB_PR_DEVICE, init_realtek_cr, 0),
-+
- #endif  /* defined(CONFIG_USB_STORAGE_REALTEK) || ... */
+ 	/* make a pass through all the delayed refs we have so far
+ 	 * any runnings procs may add more while we are here
+ 	 */
+@@ -1830,9 +1833,6 @@ int btrfs_commit_transaction(struct btrfs_trans_handle *trans,
+ 		return ret;
+ 	}
+ 
+-	btrfs_trans_release_metadata(trans, root);
+-	trans->block_rsv = NULL;
+-
+ 	cur_trans = trans->transaction;
+ 
+ 	/*
+-- 
+2.17.1
+
 
 
