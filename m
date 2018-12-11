@@ -2,135 +2,101 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6191C07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 18:05:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4608C5CFFE
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 18:05:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AC27D2087F
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 18:05:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="igLkuJ/o"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC27D2087F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+	by mail.kernel.org (Postfix) with ESMTP id 78E5520879
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 18:05:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 78E5520879
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727030AbeLKSFQ (ORCPT
+        id S1727064AbeLKSF1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 13:05:16 -0500
-Received: from mail-it1-f181.google.com ([209.85.166.181]:36269 "EHLO
-        mail-it1-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726676AbeLKSFQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 13:05:16 -0500
-Received: by mail-it1-f181.google.com with SMTP id c9so5363597itj.1
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 10:05:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=pyKR+gozXkLNrKKhrpt5D+hcCDuAYM42zKYof/e8FeM=;
-        b=igLkuJ/oJsiSD/VhCTm0XFqq0GyhfC2k3d3pbadPl6TV2mciaJdFoC2rrXSi53hjYo
-         2CWclP/gtjSoP24fcOjo656QkNbkUYupEJXho7WCucSNpAPzlSDs1YKL6I8XiWUVV/gA
-         td/SFCV+XIw6soiX5ffj8wzOFGYuWhhcEAluObv2CfoWNNfqUfnyMjQqp6b4iwb68nhG
-         1Pq2lUhtJTuvdDPTSCMbdX2k/v+5MbO/6bayx/IP7+J/CwdYyLyNVrqxyZwCJog8bnhy
-         JleTX0ypLBKafhmb3iKXc2BwpKVRiqluh8H8GEqpgzQm0AYgC61/29HT+JCBusuZX0JE
-         Hsqg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=pyKR+gozXkLNrKKhrpt5D+hcCDuAYM42zKYof/e8FeM=;
-        b=XSyHfR5P3EaoTH+7axHylfTg9/Ct8hpruP1/UVcdC+RR3864+703fiNYUbln1FlvtU
-         DUFAhaIZhQ9vuD2S23SMFV/ynZCvFC0ih5xayxJ5S2CIOMTia9GO31AG2Fn3l87C4z6d
-         PRLCWR7MyYqBgbUM9MohiG2CPCH53Th95MRRQeE2dRDlwOnDZRlJUTTJGBvw7canSmGV
-         NVdb2ov/8EXcQ5AJ0aEcUr9KMJKIpxE6jZWqZ4/pJYGgtwYW7GDaz86vT7gUpk8fqYmM
-         5WgL72g2ycqWCoOiTlD5oX1NRCidOeogOpOInZ1GyRCkzXk0fib/rZkpFcQGaPdhze7M
-         6aaQ==
-X-Gm-Message-State: AA+aEWaEsR0QgTPDUiWgILkoIUIHvykKJsfrAr60UT28d3LVFJe5BdV3
-        MsRdqpr3eg3n2LJZdgWyob+0Ow==
-X-Google-Smtp-Source: AFSGD/X24hP539+78tJNiKlrl2RrjV4lT17kI9mrdDVuoQ0qRserfBVgOBzLMCCe/niaTjdC5dSIZg==
-X-Received: by 2002:a24:5a8f:: with SMTP id v137mr3040345ita.65.1544551514803;
-        Tue, 11 Dec 2018 10:05:14 -0800 (PST)
-Received: from [192.168.1.56] ([216.160.245.98])
-        by smtp.gmail.com with ESMTPSA id 79sm1620832itx.11.2018.12.11.10.05.13
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 11 Dec 2018 10:05:13 -0800 (PST)
-Subject: Re: [PATCH] aio: Convert ioctx_table to XArray
-To:     Jeff Moyer <jmoyer@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Benjamin LaHaise <bcrl@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Kees Cook <keescook@chromium.org>,
-        linux-fsdevel@vger.kernel.org, linux-aio@kvack.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        kent.overstreet@gmail.com
-References: <20181128183531.5139-1-willy@infradead.org>
- <x49va46e1p0.fsf@segfault.boston.devel.redhat.com>
- <x49pnuee1gm.fsf@segfault.boston.devel.redhat.com>
- <x49mupcm11r.fsf@segfault.boston.devel.redhat.com>
- <20181211175156.GF6830@bombadil.infradead.org>
- <x495zw0lz68.fsf@segfault.boston.devel.redhat.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <0f77a532-0d88-78bc-b9cc-06bb203a0405@kernel.dk>
-Date:   Tue, 11 Dec 2018 11:05:12 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Tue, 11 Dec 2018 13:05:27 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:60552 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726676AbeLKSF0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 13:05:26 -0500
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 6D6663082204;
+        Tue, 11 Dec 2018 18:05:26 +0000 (UTC)
+Received: from treble (ovpn-122-18.rdu2.redhat.com [10.10.122.18])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 645785DAA0;
+        Tue, 11 Dec 2018 18:05:23 +0000 (UTC)
+Date:   Tue, 11 Dec 2018 12:05:21 -0600
+From:   Josh Poimboeuf <jpoimboe@redhat.com>
+To:     Edward Cree <ecree@solarflare.com>
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
+        Paolo Abeni <pabeni@redhat.com>, Nadav Amit <namit@vmware.com>
+Subject: Re: [PATCH v2 0/4] Static calls
+Message-ID: <20181211180521.ljdvnnztjnvoijge@treble>
+References: <cover.1543200841.git.jpoimboe@redhat.com>
+ <0e96ac37-d5c5-86b6-833c-0de01ba18f0d@solarflare.com>
 MIME-Version: 1.0
-In-Reply-To: <x495zw0lz68.fsf@segfault.boston.devel.redhat.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+In-Reply-To: <0e96ac37-d5c5-86b6-833c-0de01ba18f0d@solarflare.com>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Tue, 11 Dec 2018 18:05:26 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/11/18 11:02 AM, Jeff Moyer wrote:
-> Matthew Wilcox <willy@infradead.org> writes:
-> 
->> On Tue, Dec 11, 2018 at 12:21:52PM -0500, Jeff Moyer wrote:
->>> I'm going to submit this version formally.  If you're interested in
->>> converting the ioctx_table to xarray, you can do that separately from a
->>> security fix.  I would include a performance analysis with that patch,
->>> though.  The idea of using a radix tree for the ioctx table was
->>> discarded due to performance reasons--see commit db446a08c23d5 ("aio:
->>> convert the ioctx list to table lookup v3").  I suspect using the xarray
->>> will perform similarly.
->>
->> There's a big difference between Octavian's patch and mine.  That patch
->> indexed into the radix tree by 'ctx_id' directly, which was pretty
->> much guaranteed to exhibit some close-to-worst-case behaviour from the
->> radix tree due to IDs being sparsely assigned.  My patch uses the ring
->> ID which _we_ assigned, and so is nicely behaved, being usually a very
->> small integer.
-> 
-> OK, good to know.  I obviously didn't look too closely at the two.
-> 
->> What performance analysis would you find compelling?  Octavian's original
->> fio script:
->>
->>> rw=randrw; size=256k ;directory=/mnt/fio; ioengine=libaio; iodepth=1
->>> blocksize=1024; numjobs=512; thread; loops=100
->>>
->>> on an EXT2 filesystem mounted on top of a ramdisk
->>
->> or something else?
-> 
-> I think the most common use case is a small number of ioctx-s, so I'd
-> like to see that use case not regress (that should be easy, right?).
-> Kent, what were the tests you were using when doing this work?  Jens,
-> since you're doing performance work in this area now, are there any
-> particular test cases you care about?
+On Fri, Dec 07, 2018 at 04:06:32PM +0000, Edward Cree wrote:
+> Sorry if this has been pointed out before (it's a very long thread), but
+>  in the out-of-line implementation, it appears that static_call_update()
+>  never alters key->func.  Am I right in thinking that this should be
+>  fixed by adding 'WRITE_ONCE(key->func, func);' just after the call to
+>  arch_static_call_transform() on line 159 of include/linux/static_call.h?
 
-I can give it a spin, ioctx lookup is in the fast path, and for "classic"
-aio we do it twice for each IO...
+Yes, you're right about both bugs in the out-of-line case: key->func
+needs to be written, and __static_call_update() needs to be called by
+static_call_update.  I was so focused on getting the inline case working
+that I overlooked those.
+
+> Some background (why does key->func matter for the
+>  CONFIG_HAVE_STATIC_CALL_OUTLINE case?): I am experimenting with
+>  combining these static calls with the 'indirect call wrappers' notion
+>  that Paolo Abeni has been working on [1], using runtime instrumentation
+>  to determine a list of potential callees.  (This allows us to cope with
+>  cases where the callees are in modules, or where different workloads may
+>  use different sets of callees for a given call site, neither of which is
+>  handled by Paolo's approach).
+> The core of my design looks something like:
+> 
+> static int dynamic_call_xyz(int (*func)(some_args), some_args)
+> {
+> 	if (func == dynamic_call_xyz_1.func)
+> 		return static_call(dynamic_call_xyz_1, some_args);
+> 	if (func == dynamic_call_xyz_2.func)
+> 		return static_call(dynamic_call_xyz_2, some_args);
+> 	return (*func)(some_args);
+> }
+> 
+> albeit with a bunch of extra (and currently rather ugly) stuff to collect
+>  the statistics needed to decide what to put in the static call keys, and
+>  mechanisms (RCU in my current case) to ensure that the static call isn't
+>  changed between checking its .func and actually calling it.
+> 
+> -Ed
+> 
+> PS: not on list, please keep me in CC.
+> 
+> [1] https://lwn.net/Articles/773985/
+
+Thanks, this sounds very interesting.  Adding Nadav to CC, as he has
+been looking at a different approach to solving the same problem:
+
+  https://lkml.kernel.org/r/20181018005420.82993-1-namit@vmware.com
 
 -- 
-Jens Axboe
-
+Josh
