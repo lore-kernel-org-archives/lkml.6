@@ -2,100 +2,173 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49CF8C07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 14:16:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFB3EC5CFFE
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 14:16:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D74120849
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 14:16:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544537769;
-	bh=63Jpb+FCl42cdiA8bmbAmfKW9W8CJNmW8I58R7aZWr0=;
-	h=From:Date:Subject:To:List-ID:From;
-	b=2AELvFlLWEdkkX5g+KANPwfuki5paAOhsA8dayHL2OEz80skldBlMLeFk1YoNqmcl
-	 S1kmLFEsIZidCXOzc5Q4+4fLIUy00gq9gj9uld0VNkMm3f1KRGNwUC91JipgMMe6EP
-	 VrOqxCy8wA+kC2H21T0KKJXFXEf+yH1azrxRV46Y=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D74120849
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 8DD422084E
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 14:16:30 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=dell.com header.i=@dell.com header.b="Nn/amUGF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8DD422084E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=dell.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726788AbeLKOQH (ORCPT
+        id S1726806AbeLKOQ3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 09:16:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37910 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726554AbeLKOQH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 09:16:07 -0500
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9774320851;
-        Tue, 11 Dec 2018 14:16:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544537766;
-        bh=63Jpb+FCl42cdiA8bmbAmfKW9W8CJNmW8I58R7aZWr0=;
-        h=From:Date:Subject:To:From;
-        b=iZAJEKTTqg73XFCFVfAvRYMGPfbvNTldkwLcYUdUPfFRtHiaQaPySEiZs3dFH6nR8
-         0KHDzj6OCaEeQOW3qpyf2Ial4rkst1x8lkpMsGiSD3U12wq8GAP/KGOLoFzZkQZoJg
-         9qrN3Sl+FJNhfhP5LXBZHnrbt+rCxF05I+1Hz4XU=
-Received: by mail-lj1-f170.google.com with SMTP id x85-v6so13120822ljb.2;
-        Tue, 11 Dec 2018 06:16:06 -0800 (PST)
-X-Gm-Message-State: AA+aEWaOdXpqSPGnvZzQn4DomeWyU04MndwwnmRjSzoPbwT5xe8qyhoT
-        gLytUuADdiY+sV5DBKNDFBB8pKTXxt31xKB5vQw=
-X-Google-Smtp-Source: AFSGD/Wic1p8neykUE5eohK1jq+IzM8SuNX/0Veqev4wtSbWMXCHbC79B7Fa9g3Qr+9amTRKeM9vmpAM4ISfKTjr2CU=
-X-Received: by 2002:a2e:9cd2:: with SMTP id g18-v6mr10897043ljj.161.1544537764710;
- Tue, 11 Dec 2018 06:16:04 -0800 (PST)
-MIME-Version: 1.0
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-Date:   Tue, 11 Dec 2018 15:15:53 +0100
-X-Gmail-Original-Message-ID: <CAJKOXPdNS+Qs6t1GwrgYhWT5EbtORJwYMzSrDPf8oAxv7ndNBg@mail.gmail.com>
-Message-ID: <CAJKOXPdNS+Qs6t1GwrgYhWT5EbtORJwYMzSrDPf8oAxv7ndNBg@mail.gmail.com>
-Subject: [BUG BISECT next] Files cannot be opened after "fsverity: Move verity
- status check to fsverity_file_open"
-To:     Chandan Rajendra <chandan@linux.vnet.ibm.com>,
-        "Theodore Ts'o" <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>,
-        Eric Biggers <ebiggers@kernel.org>, linux-ext4@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-fscrypt@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 11 Dec 2018 09:16:29 -0500
+Received: from esa7.dell-outbound.iphmx.com ([68.232.153.96]:5755 "EHLO
+        esa7.dell-outbound.iphmx.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726448AbeLKOQ3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 09:16:29 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=dell.com; i=@dell.com; q=dns/txt; s=smtpout;
+  t=1544537778; x=1576073778;
+  h=from:to:cc:subject:date:message-id;
+  bh=5a8oGUomlONxYXp5vnFXmGGsI+vXGPfLoQ0LOLOMbWc=;
+  b=Nn/amUGFIZVw3WK201ep3/aNSelZCkg4VCRSrkJbB2IkDj/PdaJz9vpp
+   smhZ2JvV0iyWq/Cx9+q0eEJVZQ6A8mzIPvpn6DhqFWXIRSz/WLiRxwo8n
+   Qj5xAY0jMlWn+LkS7U1SiQss919Ce29fSgLkDJ6xO/OrjvGb8aJ2qfFJi
+   k=;
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2GFAQBUxQ9chyWd50NlHQEBBQEHBQG?=
+ =?us-ascii?q?BZYNsJ4xzizGDCZhRCwEBhGyCbyI4EgEDAQECAQECAQECEAEBAQoLCQgpL4I?=
+ =?us-ascii?q?2JAGCZRYVUikmbxMign+CApkYPQKBEIlYAQEBgWoziiuHfIQ/gVc/gRGCXQe?=
+ =?us-ascii?q?Bb4kbAok7hwGQPwcCgiIEjysCFpE/AZkMAgQCBAUCFIFdgXhwgzyCJwwCCY4?=
+ =?us-ascii?q?8IQExi2gBAQ?=
+X-IPAS-Result: =?us-ascii?q?A2GFAQBUxQ9chyWd50NlHQEBBQEHBQGBZYNsJ4xzizGDC?=
+ =?us-ascii?q?ZhRCwEBhGyCbyI4EgEDAQECAQECAQECEAEBAQoLCQgpL4I2JAGCZRYVUikmb?=
+ =?us-ascii?q?xMign+CApkYPQKBEIlYAQEBgWoziiuHfIQ/gVc/gRGCXQeBb4kbAok7hwGQP?=
+ =?us-ascii?q?wcCgiIEjysCFpE/AZkMAgQCBAUCFIFdgXhwgzyCJwwCCY48IQExi2gBAQ?=
+Received: from mx0b-00154901.pphosted.com ([67.231.157.37])
+  by esa7.dell-outbound.iphmx.com with ESMTP/TLS/AES256-SHA256; 11 Dec 2018 08:16:17 -0600
+Received: from pps.filterd (m0089483.ppops.net [127.0.0.1])
+        by mx0b-00154901.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id wBBED4Vu056376;
+        Tue, 11 Dec 2018 09:16:27 -0500
+Received: from esa2.dell-outbound2.iphmx.com (esa2.dell-outbound2.iphmx.com [68.232.153.202])
+        by mx0b-00154901.pphosted.com with ESMTP id 2pab5q173m-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 11 Dec 2018 09:16:27 -0500
+Received: from ausxipps310.us.dell.com ([143.166.148.211])
+  by esa2.dell-outbound2.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA256; 11 Dec 2018 20:16:10 +0600
+X-LoopCount0: from 10.173.37.27
+X-IronPort-AV: E=Sophos;i="5.56,342,1539666000"; 
+   d="scan'208";a="293934597"
+From:   Mario Limonciello <mario.limonciello@dell.com>
+To:     David Miller <davem@davemloft.net>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Netdev <netdev@vger.kernel.org>,
+        Linux USB <linux-usb@vger.kernel.org>,
+        anthony.wong@canonical.com,
+        Mario Limonciello <mario.limonciello@dell.com>
+Subject: [PATCH] r8152: Add support for MAC address pass through on RTL8153-BND
+Date:   Tue, 11 Dec 2018 08:16:14 -0600
+Message-Id: <1544537774-4370-1-git-send-email-mario.limonciello@dell.com>
+X-Mailer: git-send-email 2.7.4
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-11_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1812110129
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+All previous docks and dongles that have supported this feature use
+the RTL8153-AD chip.
 
-Bisect from today's next pointed me to:
-commit 4de97efb578a094e8fbf279522d41eb9ece1e3e0
-Author: Chandan Rajendra <chandan@linux.vnet.ibm.com>
-Date:   Sat Dec 8 12:21:43 2018 +0530
-    fsverity: Move verity status check to fsverity_file_open
+RTL8153-BND is a new chip that will be used in upcoming Dell type-C docks.
+It should be added to the whitelist of devices to activate MAC address
+pass through.
 
-as a reason of "Operation not supported" when reading any file from
-mounted ext4fs (from SD card). Rootfs from nfsroot works but reading
-from /home with ext4fs fails.
+Per confirming with Realtek all devices containing RTL8153-BND should
+activate MAC pass through and there won't use pass through bit on efuse
+like in RTL8153-AD.
 
-Mounts:
-192.168.1.10:/srv/nfs/odroidhc1 on / type nfs4
-(rw,relatime,vers=4.0,rsize=131072,wsize=131072,namlen=255,hard,proto=tcp,timeo=600,retrans=2,sec=sys,clientaddr=192.168.1.12,local_lock=none,addr=192.168.1.10)
-/dev/mmcblk0p2 on /home type ext4 (rw,relatime)
+Signed-off-by: Mario Limonciello <mario.limonciello@dell.com>
+---
+ drivers/net/usb/r8152.c | 33 ++++++++++++++++++++++-----------
+ 1 file changed, 22 insertions(+), 11 deletions(-)
 
-Configuration:
-1. Arch ARM Linux
-2. exynos_defconfig
-  - All my Odroid boards (ARMv7, Exynos)
-    Systemd: v239, v238
-3. All boards boot from TFTP with NFS root (NFSv4)
-No specific errors in boot log:
-https://krzk.eu/#/builders/21/builds/1034/steps/12/logs/serial0
+diff --git a/drivers/net/usb/r8152.c b/drivers/net/usb/r8152.c
+index f1b5201..60dd1ec 100644
+--- a/drivers/net/usb/r8152.c
++++ b/drivers/net/usb/r8152.c
+@@ -129,6 +129,7 @@
+ #define USB_UPS_CTRL		0xd800
+ #define USB_POWER_CUT		0xd80a
+ #define USB_MISC_0		0xd81a
++#define USB_MISC_1		0xd81f
+ #define USB_AFE_CTRL2		0xd824
+ #define USB_UPS_CFG		0xd842
+ #define USB_UPS_FLAGS		0xd848
+@@ -555,6 +556,7 @@ enum spd_duplex {
+ 
+ /* MAC PASSTHRU */
+ #define AD_MASK			0xfee0
++#define BND_MASK		0x0004
+ #define EFUSE			0xcfdb
+ #define PASS_THRU_MASK		0x1
+ 
+@@ -1150,7 +1152,7 @@ static int rtl8152_set_mac_address(struct net_device *netdev, void *p)
+ 	return ret;
+ }
+ 
+-/* Devices containing RTL8153-AD can support a persistent
++/* Devices containing proper chips can support a persistent
+  * host system provided MAC address.
+  * Examples of this are Dell TB15 and Dell WD15 docks
+  */
+@@ -1165,13 +1167,23 @@ static int vendor_mac_passthru_addr_read(struct r8152 *tp, struct sockaddr *sa)
+ 
+ 	/* test for -AD variant of RTL8153 */
+ 	ocp_data = ocp_read_word(tp, MCU_TYPE_USB, USB_MISC_0);
+-	if ((ocp_data & AD_MASK) != 0x1000)
+-		return -ENODEV;
+-
+-	/* test for MAC address pass-through bit */
+-	ocp_data = ocp_read_byte(tp, MCU_TYPE_USB, EFUSE);
+-	if ((ocp_data & PASS_THRU_MASK) != 1)
+-		return -ENODEV;
++	if ((ocp_data & AD_MASK) == 0x1000) {
++		/* test for MAC address pass-through bit */
++		ocp_data = ocp_read_byte(tp, MCU_TYPE_USB, EFUSE);
++		if ((ocp_data & PASS_THRU_MASK) != 1) {
++			netif_dbg(tp, probe, tp->netdev,
++				  "No efuse for RTL8153-AD MAC pass through\n");
++			return -ENODEV;
++		}
++	} else {
++		/* test for RTL8153-BND */
++		ocp_data = ocp_read_byte(tp, MCU_TYPE_USB, USB_MISC_1);
++		if ((ocp_data & BND_MASK) == 0) {
++			netif_dbg(tp, probe, tp->netdev,
++				  "Invalid variant for MAC pass through\n");
++			return -ENODEV;
++		}
++	}
+ 
+ 	/* returns _AUXMAC_#AABBCCDDEEFF# */
+ 	status = acpi_evaluate_object(NULL, "\\_SB.AMAC", NULL, &buffer);
+@@ -1217,9 +1229,8 @@ static int set_ethernet_addr(struct r8152 *tp)
+ 	if (tp->version == RTL_VER_01) {
+ 		ret = pla_ocp_read(tp, PLA_IDR, 8, sa.sa_data);
+ 	} else {
+-		/* if this is not an RTL8153-AD, no eFuse mac pass thru set,
+-		 * or system doesn't provide valid _SB.AMAC this will be
+-		 * be expected to non-zero
++		/* if device doesn't support MAC pass through this will
++		 * be expected to be non-zero
+ 		 */
+ 		ret = vendor_mac_passthru_addr_read(tp, &sa);
+ 		if (ret < 0)
+-- 
+2.7.4
 
-Let me know if you need any more data.
-
-Best regards,
-Krzysztof
