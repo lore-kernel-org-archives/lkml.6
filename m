@@ -7,52 +7,50 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E463DC07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:55:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44591C5CFFE
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:55:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AB69F21473
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:55:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0A2672146D
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:55:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544543720;
-	bh=u3WFsnraUR9VEeX0fBpumqKAew6RugJ5l6ZY9D5OkG0=;
+	s=default; t=1544543723;
+	bh=EoooJqLEvVA2F92WAGrJgkjEBYAc5IpaBnmo5+LIE5A=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Y5bCFoIy0nLFof6682QEP3ghvFSTIZPd9JFRSNKhN6IQ5KzY2QMJrpwC6iiDY2yu9
-	 6GD6yDlrTWM2PevkhnP9xWyMiLIjzF4eb7xJ5AyLWH+0UnZMjVnXn+wjhC4UQuiEOt
-	 84jaUEd6KKMX1DCz9gG22/3Oqv5Cveh2VTRviNTI=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB69F21473
+	b=hl1Jd58P4BrVeONbrYP5K24KQG462Lni5S6k5/NKUQOhAkuwaBlxSyOmWeQ5c2ssa
+	 CoGz9jNnP30SQ21+yxfMfhRPEBsAAnaRqBOb+XY7qr0ydZeUQtrIoaPFbiQsSravKx
+	 A8OvKFNZm6yDLtKZzExnZlY9WYMexIqcuiNsNrfI=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A2672146D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730375AbeLKPzT (ORCPT
+        id S1729925AbeLKPzW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 10:55:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42910 "EHLO mail.kernel.org"
+        Tue, 11 Dec 2018 10:55:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43870 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730161AbeLKPyR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:54:17 -0500
+        id S1730357AbeLKPzO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 10:55:14 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 058E120855;
-        Tue, 11 Dec 2018 15:54:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C2E4D2146D;
+        Tue, 11 Dec 2018 15:55:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544543657;
-        bh=u3WFsnraUR9VEeX0fBpumqKAew6RugJ5l6ZY9D5OkG0=;
+        s=default; t=1544543714;
+        bh=EoooJqLEvVA2F92WAGrJgkjEBYAc5IpaBnmo5+LIE5A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=V/E+YRA+9GDLl4AyxsAvvNG82wLUxW4sVwImyK5vvi2U4tc1qRW0nCUhz85tVrWUI
-         0alO4q/KTlaq1vDeiepHbjAHUUUvC15wKFRxu4CNw7DIE8IUNd7Yz/7//gdFFohbK/
-         FdDBBx1iYPBIgymTIAMkeXfq6Hc/PRINCvPhfUXE=
+        b=mjgiUj5IVHBO3BFM26dgtgnNCENTTFVaFWPirz2v28OhES/7byQhln6Cq1BbspQ5/
+         ymgcMAgerwl7vP3bxY3V1bx6E+4GQM+7djL43jxxiFADZdQtzYMwzvjFCWKHCuD8BP
+         wTJFY56q2cmoc22hH4ffkHLtEio8enqZ3gX4bddQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?Linus=20L=C3=BCssing?= <linus.luessing@c0d3.blue>,
-        Sven Eckelmann <sven@narfation.org>,
-        Simon Wunderlich <sw@simonwunderlich.de>,
+        stable@vger.kernel.org, Bartosz Golaszewski <brgl@bgdev.pl>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 014/118] batman-adv: Use explicit tvlv padding for ELP packets
-Date:   Tue, 11 Dec 2018 16:40:33 +0100
-Message-Id: <20181211151644.806200956@linuxfoundation.org>
+Subject: [PATCH 4.19 034/118] gpio: mockup: fix indicated direction
+Date:   Tue, 11 Dec 2018 16:40:53 +0100
+Message-Id: <20181211151645.614766892@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181211151644.216668863@linuxfoundation.org>
 References: <20181211151644.216668863@linuxfoundation.org>
@@ -71,59 +69,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit f4156f9656feac21f4de712fac94fae964c5d402 ]
+[ Upstream commit bff466bac59994cfcceabe4d0be5fdc1c20cd5b8 ]
 
-The announcement messages of batman-adv COMPAT_VERSION 15 have the
-possibility to announce additional information via a dynamic TVLV part.
-This part is optional for the ELP packets and currently not parsed by the
-Linux implementation. Still out-of-tree versions are using it to transport
-things like neighbor hashes to optimize the rebroadcast behavior.
+Commit 3edfb7bd76bd ("gpiolib: Show correct direction from the
+beginning") fixed an existing issue but broke libgpiod tests by
+changing the default direction of dummy lines to output.
 
-Since the ELP broadcast packets are smaller than the minimal ethernet
-packet, it often has to be padded. This is often done (as specified in
-RFC894) with octets of zero and thus work perfectly fine with the TVLV
-part (making it a zero length and thus empty). But not all ethernet
-compatible hardware seems to follow this advice. To avoid ambiguous
-situations when parsing the TVLV header, just force the 4 bytes (TVLV
-length + padding) after the required ELP header to zero.
+We don't break user-space so make gpio-mockup behave as before.
 
-Fixes: d6f94d91f766 ("batman-adv: ELP - adding basic infrastructure")
-Reported-by: Linus Lüssing <linus.luessing@c0d3.blue>
-Signed-off-by: Sven Eckelmann <sven@narfation.org>
-Signed-off-by: Simon Wunderlich <sw@simonwunderlich.de>
+Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/batman-adv/bat_v_elp.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/gpio/gpio-mockup.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/net/batman-adv/bat_v_elp.c b/net/batman-adv/bat_v_elp.c
-index 9f481cfdf77d..e8090f099eb8 100644
---- a/net/batman-adv/bat_v_elp.c
-+++ b/net/batman-adv/bat_v_elp.c
-@@ -352,19 +352,21 @@ out:
-  */
- int batadv_v_elp_iface_enable(struct batadv_hard_iface *hard_iface)
+diff --git a/drivers/gpio/gpio-mockup.c b/drivers/gpio/gpio-mockup.c
+index d66b7a768ecd..945bd13e5e79 100644
+--- a/drivers/gpio/gpio-mockup.c
++++ b/drivers/gpio/gpio-mockup.c
+@@ -32,8 +32,8 @@
+ #define gpio_mockup_err(...)	pr_err(GPIO_MOCKUP_NAME ": " __VA_ARGS__)
+ 
+ enum {
+-	GPIO_MOCKUP_DIR_OUT = 0,
+-	GPIO_MOCKUP_DIR_IN = 1,
++	GPIO_MOCKUP_DIR_IN = 0,
++	GPIO_MOCKUP_DIR_OUT = 1,
+ };
+ 
+ /*
+@@ -135,7 +135,7 @@ static int gpio_mockup_get_direction(struct gpio_chip *gc, unsigned int offset)
  {
-+	static const size_t tvlv_padding = sizeof(__be32);
- 	struct batadv_elp_packet *elp_packet;
- 	unsigned char *elp_buff;
- 	u32 random_seqno;
- 	size_t size;
- 	int res = -ENOMEM;
+ 	struct gpio_mockup_chip *chip = gpiochip_get_data(gc);
  
--	size = ETH_HLEN + NET_IP_ALIGN + BATADV_ELP_HLEN;
-+	size = ETH_HLEN + NET_IP_ALIGN + BATADV_ELP_HLEN + tvlv_padding;
- 	hard_iface->bat_v.elp_skb = dev_alloc_skb(size);
- 	if (!hard_iface->bat_v.elp_skb)
- 		goto out;
+-	return chip->lines[offset].dir;
++	return !chip->lines[offset].dir;
+ }
  
- 	skb_reserve(hard_iface->bat_v.elp_skb, ETH_HLEN + NET_IP_ALIGN);
--	elp_buff = skb_put_zero(hard_iface->bat_v.elp_skb, BATADV_ELP_HLEN);
-+	elp_buff = skb_put_zero(hard_iface->bat_v.elp_skb,
-+				BATADV_ELP_HLEN + tvlv_padding);
- 	elp_packet = (struct batadv_elp_packet *)elp_buff;
- 
- 	elp_packet->packet_type = BATADV_ELP;
+ static int gpio_mockup_to_irq(struct gpio_chip *gc, unsigned int offset)
 -- 
 2.19.1
 
