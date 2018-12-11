@@ -2,126 +2,94 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96964C07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 12:29:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D32DC07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 12:31:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A7972081B
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 12:29:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544531397;
-	bh=RBNTldWktr52Y6MxAAfN+HXAfEJpD4kjE75GrOVAGok=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=JOz9YQ68pkbCae9t0UUY1qah16eR0DZh6By+jY6HuW2v+8vnFM/OnVrdSci53yTCJ
-	 BSALfMV73zNkfUmCMDS2MiVXvPs0P0NM9mykonVW37NWC9KOaC2oybjAmh+dQ/6Bp3
-	 4bk8QzlDlAvpqGMeqH3phubwSbJuBa9xsV4/IAqk=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A7972081B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 47A4C2081B
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 12:31:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 47A4C2081B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726435AbeLKM34 (ORCPT
+        id S1726371AbeLKMbC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 07:29:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45122 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726230AbeLKM3z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 07:29:55 -0500
-Received: from quaco.ghostprotocols.net (unknown [190.15.121.82])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B25D42081B;
-        Tue, 11 Dec 2018 12:29:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544531394;
-        bh=RBNTldWktr52Y6MxAAfN+HXAfEJpD4kjE75GrOVAGok=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ENaMKYoQyK0hRQsjc6LCUEOtjvAmrCTVjJa09tXaZk0tdfSw6/93ssqquABb6aofr
-         6FXEC5Cqe3Y5Km/uUocXkrr2t8b1c4TVbbYypfw4/5nXeIneTHfeUPSS48a0b3w36C
-         /G1+hdt74RDWVydKKoJkykSh1fN7cnubxfLPBjfo=
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id 7D5834042C; Tue, 11 Dec 2018 09:29:52 -0300 (-03)
-Date:   Tue, 11 Dec 2018 09:29:52 -0300
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Linux Trace Devel <linux-trace-devel@vger.kernel.org>,
-        Jiri Olsa <jolsa@redhat.com>, Ingo Molnar <mingo@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>
-Subject: Re: [PATCH] tools/lib/traceevent: Fix processing of dereferenced
- args in bprintk events
-Message-ID: <20181211122952.GC14480@kernel.org>
-References: <20181210134522.3f71e2ca@gandalf.local.home>
- <20181210184807.GA26445@kernel.org>
- <20181210162621.2050475a@gandalf.local.home>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181210162621.2050475a@gandalf.local.home>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Tue, 11 Dec 2018 07:31:02 -0500
+Received: from mx2.suse.de ([195.135.220.15]:53254 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726135AbeLKMbB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 07:31:01 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 2875CAE3C;
+        Tue, 11 Dec 2018 12:31:00 +0000 (UTC)
+Message-ID: <64c0fef108dc3bdb137c84714644d770f2008ac5.camel@suse.de>
+Subject: Re: [PATCH] staging: vchiq: rework remove_event handling
+From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+To:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Arnd Bergmann <arnd@arndb.de>
+Cc:     devel@driverdev.osuosl.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Tara Null <tn@fastmail.net>, linux-kernel@vger.kernel.org,
+        linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org
+Date:   Tue, 11 Dec 2018 13:30:55 +0100
+In-Reply-To: <20181211100728.GC3116@kadam>
+References: <20181210211231.4084251-1-arnd@arndb.de>
+         <20181211100728.GC3116@kadam>
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-6Xl5zNzwmyTPg82Yk6D2"
+User-Agent: Evolution 3.30.2 
+Mime-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Mon, Dec 10, 2018 at 04:26:21PM -0500, Steven Rostedt escreveu:
-> On Mon, 10 Dec 2018 15:48:07 -0300
-> Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
-> 
-> > Em Mon, Dec 10, 2018 at 01:45:22PM -0500, Steven Rostedt escreveu:
-> > > From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
-> > > 
-> > > In the case that a bprintk event has a dereferenced pointer that is stored
-> > > as a string, and there's more values to process (more args), the arg was not
-> > > updated to point to the next arg after processing the dereferenced pointer,
-> > > and it screwed up what was to be displayed.  
-> > 
-> > Thanks, applied.
-> >  
-> > > Cc: stable@vger.kernel.org
-> > > Fixes: 7db96bb49629 ("tools lib traceevent: Handle new pointer processing of bprint strings")  
-> 
-> Arnaldo,
-> 
-> It seems that I cut and pasted the sha1 of the "fixes" part wrong. Can
-> you add a "3". That is, the above should have been: 37db96bb49629
 
-Done, git rebase -i + reword -> push -f'ed :-)
+--=-6Xl5zNzwmyTPg82Yk6D2
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-https://git.kernel.org/acme/c/1e862fa6b4e9
+On Tue, 2018-12-11 at 13:07 +0300, Dan Carpenter wrote:
+> On Mon, Dec 10, 2018 at 10:11:58PM +0100, Arnd Bergmann wrote:
+> > Note that I'm changing it back to 'killable' after the previous
+> > patch
+> > changed 'killable' to 'interruptible', apparently based on a
+> > misunderstanding
+> > of the subtle down_interruptible() macro override in
+> > vchiq_killable.h.
+>=20
+> Oh wow...  The non standard down_interruptible() macro is ugly.
+>=20
 
-- Arnaldo
- 
-> Thanks,
-> 
-> -- Steve
-> 
-> > 
-> > > Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-> > > ---
-> > >  tools/lib/traceevent/event-parse.c | 1 +
-> > >  1 file changed, 1 insertion(+)
-> > > 
-> > > diff --git a/tools/lib/traceevent/event-parse.c b/tools/lib/traceevent/event-parse.c
-> > > index 3692f29fee46..70144b98141c 100644
-> > > --- a/tools/lib/traceevent/event-parse.c
-> > > +++ b/tools/lib/traceevent/event-parse.c
-> > > @@ -4970,6 +4970,7 @@ static void pretty_print(struct trace_seq *s, void *data, int size, struct tep_e
-> > >  
-> > >  				if (arg->type == TEP_PRINT_BSTRING) {
-> > >  					trace_seq_puts(s, arg->string.string);
-> > > +					arg = arg->next;
-> > >  					break;
-> > >  				}
-> > >  
-> > > -- 
-> > > 2.19.1  
-> > 
+Same reaction here, *_*. I wasn't even aware of it.
 
--- 
+Arnd, as long as it you're not doing it already. I'll prepare some
+extra fixes for the rest of completions and get rid of that file
+altogether.
 
-- Arnaldo
+Regards,
+Nicolas
+
+--=-6Xl5zNzwmyTPg82Yk6D2
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEErOkkGDHCg2EbPcGjlfZmHno8x/4FAlwPrf8ACgkQlfZmHno8
+x/70jggAmDlmYkQniQi3bwL3vGHNBDfc5O2Q4qXDuDXUF+Hiaaq2Qdft0V0T7YTE
+1/Ex5iP+rk+Rqc3/1XObOtmdwwrrZZ7IWn4VjsLd06f8f/EyWBxghwA4edgrmW18
++AB/ZGnfd7qdAnty+OzTACEN1IZQSRN3vkwGt99uAgH+AtERPKiQbM67Ma6tiH+i
+HOuWG+Ge6lDMeE9lSC5yK9sLHAzZu0rRpDddWYpJMmscmG9AOIKFcJsz6ifbt6cM
+6GUaJMX33QlI/yZk2pXcFBKqk8IrsLgwmGkVRSaJvC7WNBKFXv8944G70q/1kxfD
+6Ls4YS+R9QE99KJqjSdXSHJETV72kw==
+=oAA/
+-----END PGP SIGNATURE-----
+
+--=-6Xl5zNzwmyTPg82Yk6D2--
+
