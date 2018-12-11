@@ -4,51 +4,54 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6317FC07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:00:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29BE8C5CFFE
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:00:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 26E6020672
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:00:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E4F7A205C9
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:00:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544544040;
-	bh=ufXmbXQFReG4SVo9pv+qVihlTvYvdxYF71vXa3zcTvU=;
+	s=default; t=1544544053;
+	bh=G5XxjqRYjlgJItjFkK6C+IMaj0YQL8bHLhUNpZkW6EQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=BCmT17/jvCRf8KRXEB2x0M9JVS4uUuFEJXPUMT0go8+/TLUO3pY+vQkNGnhm0N0FK
-	 DkkZTdBidleQBY/wvYR56OTXaCN7ljmii2y+g6uq3Is891rACFLd5c+eb6SiRAmwKS
-	 QmeBMRifowXMy6/eJcl+H97N3Db4zgSqkRpuiT1s=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 26E6020672
+	b=s6iVqpcJicH6cUrt2puZgQJ28DVZuDZktHGA7jes6WofhEOtlEnSS7mBoriPsqWbS
+	 GOgkDRIVQSeqKFO0EIBXOO3ghbcODSHGN+6fVBUT+/u+6wa+Q3J9CUbkf+WdralurX
+	 l2OdbAVcTnwRCWPIbdPBuKQ7bZvA4eTnjfsNsWXY=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E4F7A205C9
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730780AbeLKQAj (ORCPT
+        id S1730909AbeLKQAv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 11:00:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47352 "EHLO mail.kernel.org"
+        Tue, 11 Dec 2018 11:00:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47110 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730967AbeLKP6K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:58:10 -0500
+        id S1730232AbeLKP57 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 10:57:59 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 347272145D;
-        Tue, 11 Dec 2018 15:58:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BCE8A205C9;
+        Tue, 11 Dec 2018 15:57:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544543889;
-        bh=ufXmbXQFReG4SVo9pv+qVihlTvYvdxYF71vXa3zcTvU=;
+        s=default; t=1544543879;
+        bh=G5XxjqRYjlgJItjFkK6C+IMaj0YQL8bHLhUNpZkW6EQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HWpQB4O2FzoaNJmwQbI/v2r0P4OpqK8lnoi1btRCOTGJGemoV2tqynmmTNfvnkMwd
-         nG/ZTZO4xt/2afK2eYfkTi6WElyiiuGf0hjDNrDGIOcQpb8PEx4+DlzkGgyLF+bol1
-         l0+XYpWtT46YEjwC8rX3QmhEyjEoZJINDVPAhDfU=
+        b=dQle9haOoBApUtjyeiAECeZLCDKpXaLIPHa0MTnD2NdBqu5qM/xIH1/wJHhUc5zo2
+         AvJ6iF0QJIFjcgUt+4DqiOfzgSJI81leGL7ETWtY+7S9N3r72MjucroevvZieIGEff
+         qozHB6PuTBMnO/eEUW007nM2zKaenamE5Me+TXH0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Frank Scheiner <frank.scheiner@web.de>,
-        Helge Deller <deller@gmx.de>
-Subject: [PATCH 4.19 076/118] parisc: Enable -ffunction-sections for modules on 32-bit kernel
-Date:   Tue, 11 Dec 2018 16:41:35 +0100
-Message-Id: <20181211151647.324119111@linuxfoundation.org>
+        stable@vger.kernel.org, Robert Foss <robert.foss@collabora.com>,
+        Chris Wilson <chris@chris-wilson.co.uk>,
+        Rob Clark <robdclark@gmail.com>,
+        Sean Paul <seanpaul@chromium.org>
+Subject: [PATCH 4.19 099/118] drm/msm: Move fence put to where failure occurs
+Date:   Tue, 11 Dec 2018 16:41:58 +0100
+Message-Id: <20181211151648.269110604@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181211151644.216668863@linuxfoundation.org>
 References: <20181211151644.216668863@linuxfoundation.org>
@@ -67,60 +70,71 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Helge Deller <deller@gmx.de>
+From: Robert Foss <robert.foss@collabora.com>
 
-commit 1e8249b8a4e960018e4baca6b523b8a4500af600 upstream.
+commit 2189463dba3eac10d7264a40ede12fc1a3c06fb1 upstream.
 
-Frank Schreiner reported, that since kernel 4.18 he faces sysfs-warnings
-when loading modules on a 32-bit kernel. Here is one such example:
+If dma_fence_wait fails to wait for a supplied in-fence in
+msm_ioctl_gem_submit, make sure we release that in-fence.
 
- sysfs: cannot create duplicate filename '/module/nfs/sections/.text'
- CPU: 0 PID: 98 Comm: modprobe Not tainted 4.18.0-2-parisc #1 Debian 4.18.10-2
- Backtrace:
-  [<1017ce2c>] show_stack+0x3c/0x50
-  [<107a7210>] dump_stack+0x28/0x38
-  [<103f900c>] sysfs_warn_dup+0x88/0xac
-  [<103f8b1c>] sysfs_add_file_mode_ns+0x164/0x1d0
-  [<103f9e70>] internal_create_group+0x11c/0x304
-  [<103fa0a0>] sysfs_create_group+0x48/0x60
-  [<1022abe8>] load_module.constprop.35+0x1f9c/0x23b8
-  [<1022b278>] sys_finit_module+0xd0/0x11c
-  [<101831dc>] syscall_exit+0x0/0x14
+Also remove this dma_fence_put() from the 'out' label.
 
-This warning gets triggered by the fact, that due to commit 24b6c22504a2
-("parisc: Build kernel without -ffunction-sections") we now get multiple .text
-sections in the kernel modules for which sysfs_create_group() can't create
-multiple virtual files.
-
-This patch works around the problem by re-enabling the -ffunction-sections
-compiler option for modules, while keeping it disabled for the non-module
-kernel code.
-
-Reported-by: Frank Scheiner <frank.scheiner@web.de>
-Fixes: 24b6c22504a2 ("parisc: Build kernel without -ffunction-sections")
-Cc: <stable@vger.kernel.org> # v4.18+
-Signed-off-by: Helge Deller <deller@gmx.de>
+Signed-off-by: Robert Foss <robert.foss@collabora.com>
+Reviewed-by: Chris Wilson <chris@chris-wilson.co.uk>
+Cc: stable@vger.kernel.org
+Signed-off-by: Rob Clark <robdclark@gmail.com>
+Signed-off-by: Sean Paul <seanpaul@chromium.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/parisc/Makefile |    7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/gpu/drm/msm/msm_gem_submit.c |   15 ++++++++-------
+ 1 file changed, 8 insertions(+), 7 deletions(-)
 
---- a/arch/parisc/Makefile
-+++ b/arch/parisc/Makefile
-@@ -71,6 +71,13 @@ ifdef CONFIG_MLONGCALLS
- KBUILD_CFLAGS_KERNEL += -mlong-calls
- endif
+--- a/drivers/gpu/drm/msm/msm_gem_submit.c
++++ b/drivers/gpu/drm/msm/msm_gem_submit.c
+@@ -410,7 +410,6 @@ int msm_ioctl_gem_submit(struct drm_devi
+ 	struct msm_file_private *ctx = file->driver_priv;
+ 	struct msm_gem_submit *submit;
+ 	struct msm_gpu *gpu = priv->gpu;
+-	struct dma_fence *in_fence = NULL;
+ 	struct sync_file *sync_file = NULL;
+ 	struct msm_gpu_submitqueue *queue;
+ 	struct msm_ringbuffer *ring;
+@@ -443,6 +442,8 @@ int msm_ioctl_gem_submit(struct drm_devi
+ 	ring = gpu->rb[queue->prio];
  
-+# Without this, "ld -r" results in .text sections that are too big (> 0x40000)
-+# for branches to reach stubs. And multiple .text sections trigger a warning
-+# when creating the sysfs module information section.
-+ifndef CONFIG_64BIT
-+KBUILD_CFLAGS_MODULE += -ffunction-sections
-+endif
+ 	if (args->flags & MSM_SUBMIT_FENCE_FD_IN) {
++		struct dma_fence *in_fence;
 +
- # select which processor to optimise for
- cflags-$(CONFIG_PA7000)		+= -march=1.1 -mschedule=7100
- cflags-$(CONFIG_PA7200)		+= -march=1.1 -mschedule=7200
+ 		in_fence = sync_file_get_fence(args->fence_fd);
+ 
+ 		if (!in_fence)
+@@ -452,11 +453,13 @@ int msm_ioctl_gem_submit(struct drm_devi
+ 		 * Wait if the fence is from a foreign context, or if the fence
+ 		 * array contains any fence from a foreign context.
+ 		 */
+-		if (!dma_fence_match_context(in_fence, ring->fctx->context)) {
++		ret = 0;
++		if (!dma_fence_match_context(in_fence, ring->fctx->context))
+ 			ret = dma_fence_wait(in_fence, true);
+-			if (ret)
+-				return ret;
+-		}
++
++		dma_fence_put(in_fence);
++		if (ret)
++			return ret;
+ 	}
+ 
+ 	ret = mutex_lock_interruptible(&dev->struct_mutex);
+@@ -582,8 +585,6 @@ int msm_ioctl_gem_submit(struct drm_devi
+ 	}
+ 
+ out:
+-	if (in_fence)
+-		dma_fence_put(in_fence);
+ 	submit_cleanup(submit);
+ 	if (ret)
+ 		msm_gem_submit_free(submit);
 
 
