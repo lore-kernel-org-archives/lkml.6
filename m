@@ -7,49 +7,51 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 126A5C07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:53:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6769BC5CFFE
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:53:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CD6D82146E
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:53:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2E3892146D
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:53:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544543627;
-	bh=eMg5wGQWftbv9dATqS9dqodGCQ6lql0URAanJ4LTMhM=;
+	s=default; t=1544543635;
+	bh=hYVFHLj7QxO49MOhGwiRsD5BTfppMnnrALpDJLY3ue4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=NTbH24fFUiKuB2LIt4NsUqjR3Zs4dxczvt/gMTXDDKIA/er13sc7y56NJmz/G+URO
-	 CtE0ILUxerrK+6o3VkNQ4fTY9QPwM1uI8nxBIL5RFd3P8y6PMBB2i4nFaxcJWt8ez3
-	 9fZQJmFjDbHuUjDT2knmbaf24lWlajDcDhmkx6FQ=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD6D82146E
+	b=g2dI7ioRtbka9LIFOn02jcHUtUv/LpPYmpN/aaVjwtiuncQHqYx4cSstj+6XDlO+2
+	 XAlZ3nsvn1zZpPbyeNP+5WaBCOik/a7zmm943YfNLhRHGOcyATD3ZBKCqJ0ZDYHy3q
+	 q4Z50SYhO3PfbyPwZBHsOsH8GKYM1wwaZidcIP4w=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E3892146D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730004AbeLKPxp (ORCPT
+        id S1730028AbeLKPxy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 10:53:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42378 "EHLO mail.kernel.org"
+        Tue, 11 Dec 2018 10:53:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42492 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729984AbeLKPxl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:53:41 -0500
+        id S1730012AbeLKPxt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 10:53:49 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2919120855;
-        Tue, 11 Dec 2018 15:53:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E728B2146F;
+        Tue, 11 Dec 2018 15:53:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544543620;
-        bh=eMg5wGQWftbv9dATqS9dqodGCQ6lql0URAanJ4LTMhM=;
+        s=default; t=1544543628;
+        bh=hYVFHLj7QxO49MOhGwiRsD5BTfppMnnrALpDJLY3ue4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sXMwvzLnQQcNbmVAE/vQ+rBa8Yh0wN0aBiQgsy4UzEazCr1ZhzhyjqhAffe4iQcCH
-         9PPdokgFcoqvccL8cvUIfg0Qt+bkCwFMAg84TaW4e3PZW/SUpX4QT09vG4TrEWqIql
-         qe1fys5B19k0miZRs40N66xx9yFhqBiiC9FDYbOY=
+        b=wUuTSveY+3y7dZDTcZfbIFRQgSxkJO4alo2xXWF0Bk3vJkToIpU0O7X0G3eDkCRtK
+         3gr3eRr5vc8nNejWFwRdxmMJN4lVkm+oIqSsI/3mu+B6AuRzkKoV0Da5pXsxlY4E+Z
+         A3Rs+7qqZCwedyWS1iArCM0FC4gWn4I2sLw2VSjw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Felix Fietkau <nbd@nbd.name>,
-        Johannes Berg <johannes.berg@intel.com>
-Subject: [PATCH 4.14 66/67] mac80211: fix reordering of buffered broadcast packets
-Date:   Tue, 11 Dec 2018 16:42:06 +0100
-Message-Id: <20181211151634.204050948@linuxfoundation.org>
+        stable@vger.kernel.org, Halil Pasic <pasic@linux.ibm.com>,
+        Colin Ian King <colin.king@canonical.com>,
+        Cornelia Huck <cohuck@redhat.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>
+Subject: [PATCH 4.14 41/67] virtio/s390: fix race in ccw_io_helper()
+Date:   Tue, 11 Dec 2018 16:41:41 +0100
+Message-Id: <20181211151632.469737628@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181211151630.378216233@linuxfoundation.org>
 References: <20181211151630.378216233@linuxfoundation.org>
@@ -68,38 +70,79 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Felix Fietkau <nbd@nbd.name>
+From: Halil Pasic <pasic@linux.ibm.com>
 
-commit 9ec1190d065998650fd9260dea8cf3e1f56c0e8c upstream.
+commit 78b1a52e05c9db11d293342e8d6d8a230a04b4e7 upstream.
 
-If the buffered broadcast queue contains packets, letting new packets bypass
-that queue can lead to heavy reordering, since the driver is probably throttling
-transmission of buffered multicast packets after beacons.
+While ccw_io_helper() seems like intended to be exclusive in a sense that
+it is supposed to facilitate I/O for at most one thread at any given
+time, there is actually nothing ensuring that threads won't pile up at
+vcdev->wait_q. If they do, all threads get woken up and see the status
+that belongs to some other request than their own. This can lead to bugs.
+For an example see:
+https://bugs.launchpad.net/ubuntu/+source/linux/+bug/1788432
 
-Keep buffering packets until the buffer has been cleared (and no client
-is in powersave mode).
+This race normally does not cause any problems. The operations provided
+by struct virtio_config_ops are usually invoked in a well defined
+sequence, normally don't fail, and are normally used quite infrequent
+too.
 
+Yet, if some of the these operations are directly triggered via sysfs
+attributes, like in the case described by the referenced bug, userspace
+is given an opportunity to force races by increasing the frequency of the
+given operations.
+
+Let us fix the problem by ensuring, that for each device, we finish
+processing the previous request before starting with a new one.
+
+Signed-off-by: Halil Pasic <pasic@linux.ibm.com>
+Reported-by: Colin Ian King <colin.king@canonical.com>
 Cc: stable@vger.kernel.org
-Signed-off-by: Felix Fietkau <nbd@nbd.name>
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Message-Id: <20180925121309.58524-3-pasic@linux.ibm.com>
+Signed-off-by: Cornelia Huck <cohuck@redhat.com>
+Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/mac80211/tx.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/s390/virtio/virtio_ccw.c |    7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
---- a/net/mac80211/tx.c
-+++ b/net/mac80211/tx.c
-@@ -435,8 +435,8 @@ ieee80211_tx_h_multicast_ps_buf(struct i
- 	if (ieee80211_hw_check(&tx->local->hw, QUEUE_CONTROL))
- 		info->hw_queue = tx->sdata->vif.cab_queue;
+--- a/drivers/s390/virtio/virtio_ccw.c
++++ b/drivers/s390/virtio/virtio_ccw.c
+@@ -59,6 +59,7 @@ struct virtio_ccw_device {
+ 	unsigned int revision; /* Transport revision */
+ 	wait_queue_head_t wait_q;
+ 	spinlock_t lock;
++	struct mutex io_lock; /* Serializes I/O requests */
+ 	struct list_head virtqueues;
+ 	unsigned long indicators;
+ 	unsigned long indicators2;
+@@ -299,6 +300,7 @@ static int ccw_io_helper(struct virtio_c
+ 	unsigned long flags;
+ 	int flag = intparm & VIRTIO_CCW_INTPARM_MASK;
  
--	/* no stations in PS mode */
--	if (!atomic_read(&ps->num_sta_ps))
-+	/* no stations in PS mode and no buffered packets */
-+	if (!atomic_read(&ps->num_sta_ps) && skb_queue_empty(&ps->bc_buf))
- 		return TX_CONTINUE;
++	mutex_lock(&vcdev->io_lock);
+ 	do {
+ 		spin_lock_irqsave(get_ccwdev_lock(vcdev->cdev), flags);
+ 		ret = ccw_device_start(vcdev->cdev, ccw, intparm, 0, 0);
+@@ -311,7 +313,9 @@ static int ccw_io_helper(struct virtio_c
+ 		cpu_relax();
+ 	} while (ret == -EBUSY);
+ 	wait_event(vcdev->wait_q, doing_io(vcdev, flag) == 0);
+-	return ret ? ret : vcdev->err;
++	ret = ret ? ret : vcdev->err;
++	mutex_unlock(&vcdev->io_lock);
++	return ret;
+ }
  
- 	info->flags |= IEEE80211_TX_CTL_SEND_AFTER_DTIM;
+ static void virtio_ccw_drop_indicator(struct virtio_ccw_device *vcdev,
+@@ -1256,6 +1260,7 @@ static int virtio_ccw_online(struct ccw_
+ 	init_waitqueue_head(&vcdev->wait_q);
+ 	INIT_LIST_HEAD(&vcdev->virtqueues);
+ 	spin_lock_init(&vcdev->lock);
++	mutex_init(&vcdev->io_lock);
+ 
+ 	spin_lock_irqsave(get_ccwdev_lock(cdev), flags);
+ 	dev_set_drvdata(&cdev->dev, vcdev);
 
 
