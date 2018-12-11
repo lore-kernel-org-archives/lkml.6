@@ -4,52 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28A5EC07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:46:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB812C5CFFE
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:46:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E244620989
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:46:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 70FA4208E7
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:46:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544543202;
-	bh=dK6Cqx5cboeqyjb115aseFceGhOm4vpdG2ggZW6fmgU=;
+	s=default; t=1544543208;
+	bh=sTDuWLqivzHWc/O38KsJsQbah9+HL0degfX04Ou6enQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Q8v9gbm7tS313tWcofJ+zSLlrZupfX6mLBd3puhuV3nAG/mRJCXHYRhRpKz5xxRNr
-	 1tua9L74GJbPs9EXBelyPUIkD9kHqXYRTyc7tkdxStME3Jxfyh16e/m6kJm/4Uf1x6
-	 /OifSW9xsSCRIYMmtYDfv80EA48AHBys0V3URXUA=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E244620989
+	b=eNGOMv5SaGX39oSIqLSF+OEhQvrbZCW7m1h13kSDzrCyAKkkBAgdQ+Q9v8MDpnG0P
+	 36dnJUAvC3AUKK536kg5+nr30UYIivrUqWUEqOBVJsbH6MMGGVDIlII+ZNSernQ4IH
+	 zTYd/EGr97/JHBSD0M1bLXZRenS613OaxITzV854=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 70FA4208E7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728381AbeLKPqk (ORCPT
+        id S1728406AbeLKPqq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 10:46:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35014 "EHLO mail.kernel.org"
+        Tue, 11 Dec 2018 10:46:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35146 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728364AbeLKPqh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:46:37 -0500
+        id S1728390AbeLKPqo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 10:46:44 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 18AA020870;
-        Tue, 11 Dec 2018 15:46:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D61142087F;
+        Tue, 11 Dec 2018 15:46:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544543196;
-        bh=dK6Cqx5cboeqyjb115aseFceGhOm4vpdG2ggZW6fmgU=;
+        s=default; t=1544543204;
+        bh=sTDuWLqivzHWc/O38KsJsQbah9+HL0degfX04Ou6enQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=P5OkBJfJA0k9nK2xbOz0t4uOtTiwZG0B1FDcgw3QBB13U9n1NM/S1BiQt20LZwglE
-         q0TdODhd8yoip3RUkxVvyfVvzE3Ko1BALE515f8y+pfpOwXNKE4+J1pEsTFxXQkJiG
-         t3qqIZKbU12p/F1S54ImtBQ681GzYFd8x9OmQ+gI=
+        b=BB8Sv+wWs29btaHH1X+iTwFt3uqtTVVIdOgJsYPPv/V8uk4vZxXR/O1omAvRIBRDu
+         PgLleIigxYXAGr1hfYzah7mBdeRDDN5S9RtcnLIP3Kp44KzVGoMFK0oGLffyLKr4pB
+         ZAZku/HFyW3RimfYjNzkXaLXQPuXnFZmCrgkpzdo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Noah Westervelt <nwestervelt@outlook.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: [PATCH 4.4 48/91] Input: elan_i2c - add ACPI ID for Lenovo IdeaPad 330-15ARR
-Date:   Tue, 11 Dec 2018 16:41:07 +0100
-Message-Id: <20181211151609.869818814@linuxfoundation.org>
+        stable@vger.kernel.org,
+        =?UTF-8?q?Michael=20Niew=C3=B6hner?= <linux@mniewoehner.de>
+Subject: [PATCH 4.4 19/91] usb: core: quirks: add RESET_RESUME quirk for Cherry G230 Stream series
+Date:   Tue, 11 Dec 2018 16:40:38 +0100
+Message-Id: <20181211151607.396138304@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181211151606.026852373@linuxfoundation.org>
 References: <20181211151606.026852373@linuxfoundation.org>
@@ -68,31 +67,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Noah Westervelt <nwestervelt@outlook.com>
+From: Michael Niewöhner <linux@mniewoehner.de>
 
-commit ad33429cd02565c28404bb16ae7a4c2bdfda6626 upstream.
+commit effd14f66cc1ef6701a19c5a56e39c35f4d395a5 upstream.
 
-Add ELAN061E to the ACPI table to support Elan touchpad found in Lenovo
-IdeaPad 330-15ARR.
+Cherry G230 Stream 2.0 (G85-231) and 3.0 (G85-232) need this quirk to
+function correctly. This fixes a but where double pressing numlock locks
+up the device completely with need to replug the keyboard.
 
-Signed-off-by: Noah Westervelt <nwestervelt@outlook.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Signed-off-by: Michael Niewöhner <linux@mniewoehner.de>
+Tested-by: Michael Niewöhner <linux@mniewoehner.de>
+Cc: stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/input/mouse/elan_i2c_core.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/usb/core/quirks.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/input/mouse/elan_i2c_core.c
-+++ b/drivers/input/mouse/elan_i2c_core.c
-@@ -1253,6 +1253,7 @@ static const struct acpi_device_id elan_
- 	{ "ELAN0618", 0 },
- 	{ "ELAN061C", 0 },
- 	{ "ELAN061D", 0 },
-+	{ "ELAN061E", 0 },
- 	{ "ELAN0620", 0 },
- 	{ "ELAN0622", 0 },
- 	{ "ELAN1000", 0 },
+--- a/drivers/usb/core/quirks.c
++++ b/drivers/usb/core/quirks.c
+@@ -64,6 +64,9 @@ static const struct usb_device_id usb_qu
+ 	/* Microsoft LifeCam-VX700 v2.0 */
+ 	{ USB_DEVICE(0x045e, 0x0770), .driver_info = USB_QUIRK_RESET_RESUME },
+ 
++	/* Cherry Stream G230 2.0 (G85-231) and 3.0 (G85-232) */
++	{ USB_DEVICE(0x046a, 0x0023), .driver_info = USB_QUIRK_RESET_RESUME },
++
+ 	/* Logitech HD Pro Webcams C920, C920-C, C925e and C930e */
+ 	{ USB_DEVICE(0x046d, 0x082d), .driver_info = USB_QUIRK_DELAY_INIT },
+ 	{ USB_DEVICE(0x046d, 0x0841), .driver_info = USB_QUIRK_DELAY_INIT },
 
 
