@@ -2,169 +2,96 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5B23C07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 14:28:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25040C07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 14:29:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 686012081B
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 14:28:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=xenosoft.de header.i=@xenosoft.de header.b="D12PfApp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 686012081B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xenosoft.de
+	by mail.kernel.org (Postfix) with ESMTP id DF2162082F
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 14:29:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544538563;
+	bh=ktqVvGBZiKeRkHXf8gaVlAJEysO7FRLivHJkl40VbKY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=fQ4/aIO7Y0FQ14aQmYrRAWy9RS5eluDWR1mqxf1bpxEq0KdgkX60BXLTjHBP7WKsR
+	 JhUx6JKE/FSLM0+lCBcQ9jUvgSCqIbTc1qrjivLC0dYpRQ6xZK4D/44b4Cp5A+IPlq
+	 s8UTYOFpRzIPIzaeVzAYG5hdV9WyQcIGwKzRZjhs=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF2162082F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726507AbeLKO2x (ORCPT
+        id S1726568AbeLKO3V (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 09:28:53 -0500
-Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.52]:18036 "EHLO
-        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726231AbeLKO2w (ORCPT
+        Tue, 11 Dec 2018 09:29:21 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:54942 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726350AbeLKO3V (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 09:28:52 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1544538529;
-        s=strato-dkim-0002; d=xenosoft.de;
-        h=In-Reply-To:Date:Message-ID:References:Cc:To:From:Subject:
-        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=rItOzgUuqEpwZEzn16FSVomGzsINWRwfpv8bF8hO+zA=;
-        b=D12PfAppCNqp2K01IpEhrVaNJzTivFvXg97T+qWp1q4eXPoGbzhCDCsRckvhT0fQUm
-        5Go5gmI4Z+Ehln6nYjSzGUzf214Jbx1D7Ls6dC27pNPpPv/bRYBQJYCzzLcKpbwuemEk
-        yom2VIh/MR8i/p8d6rgD/Z+gZ2/g+ZGBp5NyV5XPeT4xVY6LKq8W9tO8dJ0Ky9D10TMn
-        ulGg6x6SLqVgvUy6E4ArKhsZCjI8WHV+Q1N1JvH59UCPo8C9KrHzfj4WT2HtGvwe4er3
-        1FolFDKq5WjwV427wGhq2Jpt6DsfNJJETOjhB+Cre1VHgcAS+xJWmmLTUaMCdAsFpMgD
-        +NyQ==
-X-RZG-AUTH: ":L2QefEenb+UdBJSdRCXu93KJ1bmSGnhMdmOod1DhGM4l4Hio94KKxRySfLxnHfJ+Dkjp5G5MdirQj0WG7CkMh8jk++v0p07AockVEYHf+vz0MA=="
-X-RZG-CLASS-ID: mo00
-Received: from [IPv6:2a02:8109:a400:162c:39b6:b99f:5436:fbce]
-        by smtp.strato.de (RZmta 44.7 AUTH)
-        with ESMTPSA id j074b8uBBESl2bZ
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
-        (Client did not present a certificate);
-        Tue, 11 Dec 2018 15:28:47 +0100 (CET)
-Subject: Re: use generic DMA mapping code in powerpc V4
-From:   Christian Zigotzky <chzigotzky@xenosoft.de>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     linux-arch@vger.kernel.org,
-        Darren Stevens <darren@stevens-zone.net>,
-        linux-kernel@vger.kernel.org, Julian Margetson <runaway@candw.ms>,
-        linux-mm@kvack.org, iommu@lists.linux-foundation.org,
-        Paul Mackerras <paulus@samba.org>,
-        Olof Johansson <olof@lixom.net>, linuxppc-dev@lists.ozlabs.org
-References: <20181129170351.GC27951@lst.de>
- <d0e04a85-f17d-414e-6fea-971414417430@xenosoft.de>
- <20181130105346.GB26765@lst.de>
- <8694431d-c669-b7b9-99fa-e99db5d45a7d@xenosoft.de>
- <20181130131056.GA5211@lst.de>
- <25999587-2d91-a63c-ed38-c3fb0075d9f1@xenosoft.de>
- <c5202d29-863d-1377-0e2d-762203b317e2@xenosoft.de>
- <58c61afb-290f-6196-c72c-ac7b61b84718@xenosoft.de>
- <20181204142426.GA2743@lst.de>
- <ef56d279-f75d-008e-71ba-7068c1b37c48@xenosoft.de>
- <20181205140550.GA27549@lst.de>
- <1948cf84-49ab-543c-472c-d18e27751903@xenosoft.de>
- <5a2ea855-b4b0-e48a-5c3e-c859a8451ca2@xenosoft.de>
- <7B6DDB28-8BF6-4589-84ED-F1D4D13BFED6@xenosoft.de>
- <8a2c4581-0c85-8065-f37e-984755eb31ab@xenosoft.de>
- <424bb228-c9e5-6593-1ab7-5950d9b2bd4e@xenosoft.de>
- <c86d76b4-b199-557e-bc64-4235729c1e72@xenosoft.de>
- <1ecb7692-f3fb-a246-91f9-2db1b9496305@xenosoft.de>
- <6c997c03-e072-97a9-8ae0-38a4363df919@xenosoft.de>
-Message-ID: <4cfb3f26-74e1-db01-b014-759f188bb5a6@xenosoft.de>
-Date:   Tue, 11 Dec 2018 15:28:47 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.3
+        Tue, 11 Dec 2018 09:29:21 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=ktqVvGBZiKeRkHXf8gaVlAJEysO7FRLivHJkl40VbKY=; b=MtpncsoWXF4YOdBdTJmbEB5vl
+        IsTy1qi+dgzwpjR4Z+T2lU/coLJeOmQ3gn5ZVbL8gPNnKyAolZ4wDEW71cZR428/vAXntd2fPVa1j
+        3NRYLz0+Qx42euM+g8Z7WQtBjVu8Esy2QwEFOrcv3tPfEcorI6g7INQKkY3by6mj3vrBw=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1gWj2F-00017R-Ed; Tue, 11 Dec 2018 14:29:19 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id 27077112540E; Tue, 11 Dec 2018 14:29:19 +0000 (GMT)
+Date:   Tue, 11 Dec 2018 14:29:19 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Clark Wang <xiaoning.wang@nxp.com>
+Cc:     "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] spi: lpspi: Improve the stability of lpspi data
+ transmission
+Message-ID: <20181211142919.GI6686@sirena.org.uk>
+References: <20181204062122.28745-1-xiaoning.wang@nxp.com>
 MIME-Version: 1.0
-In-Reply-To: <6c997c03-e072-97a9-8ae0-38a4363df919@xenosoft.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: de-DE
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="3U8TY7m7wOx7RL1F"
+Content-Disposition: inline
+In-Reply-To: <20181204062122.28745-1-xiaoning.wang@nxp.com>
+X-Cookie: Immanuel doesn't pun, he Kant.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Next step: 977706f9755d2d697aa6f45b4f9f0e07516efeda (powerpc/dma: remove 
-dma_nommu_mmap_coherent)
 
-Result: The P5020 board boots and the PASEMI onboard ethernet works.
+--3U8TY7m7wOx7RL1F
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
--- Christian
+On Tue, Dec 04, 2018 at 06:22:15AM +0000, Clark Wang wrote:
+> Use SR_TDF to judge if need to send data, and SR_FCF is to judge if
+> transmission end and to replace the waiting after transmission end.
+> This waiting has no actual meaning, for module will set the FCF
+> flag at the real end.
 
+This doesn't apply against current code, please check and resend.
 
-On 10 December 2018 at 4:54PM, Christian Zigotzky wrote:
-> Next step: 64ecd2c160bbef31465c4d34efc0f076a2aad4df (powerpc/dma: use 
-> phys_to_dma instead of get_dma_offset)
->
-> The P5020 board boots and the PASEMI onboard ethernet works.
->
-> -- Christian
->
->
-> On 09 December 2018 at 7:26PM, Christian Zigotzky wrote:
->> Next step: c1bfcad4b0cf38ce5b00f7ad880d3a13484c123a (dma-mapping, 
->> powerpc: simplify the arch dma_set_mask override)
->>
->> Result: No problems with the PASEMI onboard ethernet and with booting 
->> the X5000 (P5020 board).
->>
->> -- Christian
->>
->>
->> On 09 December 2018 at 3:20PM, Christian Zigotzky wrote:
->>> Next step: 602307b034734ce77a05da4b99333a2eaf6b6482 
->>> (powerpc/fsl_pci: simplify fsl_pci_dma_set_mask)
->>>
->>> git checkout 602307b034734ce77a05da4b99333a2eaf6b6482
->>>
->>> The PASEMI onboard ethernet works and the X5000 boots.
->>>
->>> -- Christian
->>>
->>>
->>> On 08 December 2018 at 2:47PM, Christian Zigotzky wrote:
->>>> Next step: e15cd8173ef85e9cc3e2a9c7cc2982f5c1355615 (powerpc/dma: 
->>>> fix an off-by-one in dma_capable)
->>>>
->>>> git checkout e15cd8173ef85e9cc3e2a9c7cc2982f5c1355615
->>>>
->>>> The PASEMI onboard ethernet also works with this commit and the 
->>>> X5000 boots without any problems.
->>>>
->>>> -- Christian
->>>>
->>>>
->>>> On 08 December 2018 at 11:29AM, Christian Zigotzky wrote:
->>>>> Next step: 7ebc44c535f6bd726d553756d38b137acc718443 (powerpc/dma: 
->>>>> remove max_direct_dma_addr)
->>>>>
->>>>> git checkout 7ebc44c535f6bd726d553756d38b137acc718443
->>>>>
->>>>> OK, the PASEMI onboard ethernet works and the P5020 board boots.
->>>>>
->>>>> -- Christian
->>>>>
->>>>>
->>>>> On 07 December 2018 at 7:33PM, Christian Zigotzky wrote:
->>>>>> Next step: 13c1fdec5682b6e13257277fa16aa31f342d167d (powerpc/dma: 
->>>>>> move pci_dma_dev_setup_swiotlb to fsl_pci.c)
->>>>>>
->>>>>> git checkout 13c1fdec5682b6e13257277fa16aa31f342d167d
->>>>>>
->>>>>> Result: The PASEMI onboard ethernet works and the P5020 board boots.
->>>>>>
->>>>>> — Christian
->>>>>
->>>>>
->>>>>
->>>>
->>>>
->>>
->>>
->>
->>
->
->
+--3U8TY7m7wOx7RL1F
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlwPyb4ACgkQJNaLcl1U
+h9CHXAf9FzW3QYoHquCa9xNOaHc8+L8/4d8c8CsaMHI/hjWw2TNzTKR15YFgmJZf
+68l/M19BJNklr7pLcp+Vp0C39N5GM8FXxZXrOJqRQ7c8Vxp5tBajb4oxNaoag9xc
+Gc7nq55WTK4zyp3A2d4K7aATEuo4eEYCaZGKbIFgowKstKYAJ6JMGFWrUTi7DoPx
+KN+odSPJxxRB0HqLmNYRLsPB5S07e4cI7cVd8Kr79YvIbwJgMsmqFEzSpY40x1//
++la+hkQ09O39H0MCZkBnt17T1PWJLwj/vozapy6ElTnoVEMs+0aLMpt5zwtY21O2
+2ZtYP2FphHoJT1vnvKkz7IEBKkojag==
+=iClv
+-----END PGP SIGNATURE-----
+
+--3U8TY7m7wOx7RL1F--
