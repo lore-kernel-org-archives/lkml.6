@@ -4,53 +4,56 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1E2FC07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:17:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66099C07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:17:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B526720851
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:17:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 20A5A20851
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:17:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544545045;
-	bh=RWtfUAkUTRnWDiF0gi0MfuJHadAjjlYFtP8A7nb2Qho=;
+	s=default; t=1544545058;
+	bh=O2ExPM73cQ3Bf0jfrv4NyCd3NvVMApox6/sdFZAVqXw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=CaSCZmJfj+ZXUJivbz+MgtvKlyAQIakgZJcGsAKsGcmBnymYLUq7kZ9kqGoAOesXe
-	 pMj+d06XqhloCT0QVEA+ntZyHZC50UJxdF94kXlkVLPqMTyguLJetYXOIoTPf3IpYV
-	 hXBXiTERlqy1Ss7/y0h1ggBPCt7vl8+81IBGJ8nk=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B526720851
+	b=UKqpddUp5yBbWIl34Y8rHCFOSayJ3R3zSjCQLEYFSracd0MCxxi5pdYVDGIaIRTrz
+	 ole8R0fquOOn5kjnaMTQdH9j8vJcfSytigA9FKiF0Vrt1nLEOTEorZVyhlkoU3FymC
+	 Jiu01f9kkay9J40AyV9Jg/1Vpdev1k+3SCoBlPM4=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20A5A20851
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728968AbeLKQRY (ORCPT
+        id S1728465AbeLKPrG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 11:17:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35724 "EHLO mail.kernel.org"
+        Tue, 11 Dec 2018 10:47:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35382 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728506AbeLKPrP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:47:15 -0500
+        id S1727048AbeLKPrA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 10:47:00 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E5025208E7;
-        Tue, 11 Dec 2018 15:47:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1D1F22086D;
+        Tue, 11 Dec 2018 15:46:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544543235;
-        bh=RWtfUAkUTRnWDiF0gi0MfuJHadAjjlYFtP8A7nb2Qho=;
+        s=default; t=1544543219;
+        bh=O2ExPM73cQ3Bf0jfrv4NyCd3NvVMApox6/sdFZAVqXw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OsDpLOJU5jAUwBzDhOZjG0xVEm6x5u2DKJf+1asZZ9ENOz2GHaZ8tPHvf4m4ILaPC
-         sfR3ftaJyyw6alWRRpTaeCs2GmV3OMKY6GDhQJUAYn/IS9kauHHA8i094wXZANxNTt
-         y7zBySBUDN+0peIWM7jYEyPSHn03HltxjnaloBE0=
+        b=TGWMOB/+ZryBt5qAarmfe/uAyAZ+dBur10d23HFwPgki7wYN182bu2dwr1/+ADbJP
+         P5JtCUzflimosKwP38s6lGCHHbgVPvpXHYaSmDCLGQid3rNU0xLuwA/5tVGob2RSBp
+         F4ymlWPXzfwfzojPpkk25auxG48o/OT2ukzrYYXE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tariq Toukan <tariqt@mellanox.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Marc Kleine-Budde <mkl@pengutronix.de>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 65/91] net/mlx4_core: Fix uninitialized variable compilation warning
-Date:   Tue, 11 Dec 2018 16:41:24 +0100
-Message-Id: <20181211151611.462739330@linuxfoundation.org>
+Subject: [PATCH 4.4 59/91] can: rcar_can: Fix erroneous registration
+Date:   Tue, 11 Dec 2018 16:41:18 +0100
+Message-Id: <20181211151610.845687444@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181211151606.026852373@linuxfoundation.org>
 References: <20181211151606.026852373@linuxfoundation.org>
@@ -69,31 +72,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 3ea7e7ea53c9f6ee41cb69a29c375fe9dd9a56a7 ]
+[ Upstream commit 68c8d209cd4337da4fa04c672f0b62bb735969bc ]
 
-Initialize the uid variable to zero to avoid the compilation warning.
+Assigning 2 to "renesas,can-clock-select" tricks the driver into
+registering the CAN interface, even though we don't want that.
+This patch improves one of the checks to prevent that from happening.
 
-Fixes: 7a89399ffad7 ("net/mlx4: Add mlx4_bitmap zone allocator")
-Signed-off-by: Tariq Toukan <tariqt@mellanox.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 862e2b6af9413b43 ("can: rcar_can: support all input clocks")
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Chris Paterson <Chris.Paterson2@renesas.com>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/mellanox/mlx4/alloc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/can/rcar_can.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/mellanox/mlx4/alloc.c b/drivers/net/ethernet/mellanox/mlx4/alloc.c
-index 0c51c69f802f..a4912b11e54f 100644
---- a/drivers/net/ethernet/mellanox/mlx4/alloc.c
-+++ b/drivers/net/ethernet/mellanox/mlx4/alloc.c
-@@ -339,7 +339,7 @@ void mlx4_zone_allocator_destroy(struct mlx4_zone_allocator *zone_alloc)
- static u32 __mlx4_alloc_from_zone(struct mlx4_zone_entry *zone, int count,
- 				  int align, u32 skip_mask, u32 *puid)
- {
--	u32 uid;
-+	u32 uid = 0;
- 	u32 res;
- 	struct mlx4_zone_allocator *zone_alloc = zone->allocator;
- 	struct mlx4_zone_entry *curr_node;
+diff --git a/drivers/net/can/rcar_can.c b/drivers/net/can/rcar_can.c
+index bc46be39549d..9d93492ddfcc 100644
+--- a/drivers/net/can/rcar_can.c
++++ b/drivers/net/can/rcar_can.c
+@@ -24,6 +24,9 @@
+ 
+ #define RCAR_CAN_DRV_NAME	"rcar_can"
+ 
++#define RCAR_SUPPORTED_CLOCKS	(BIT(CLKR_CLKP1) | BIT(CLKR_CLKP2) | \
++				 BIT(CLKR_CLKEXT))
++
+ /* Mailbox configuration:
+  * mailbox 60 - 63 - Rx FIFO mailboxes
+  * mailbox 56 - 59 - Tx FIFO mailboxes
+@@ -789,7 +792,7 @@ static int rcar_can_probe(struct platform_device *pdev)
+ 		goto fail_clk;
+ 	}
+ 
+-	if (clock_select >= ARRAY_SIZE(clock_names)) {
++	if (!(BIT(clock_select) & RCAR_SUPPORTED_CLOCKS)) {
+ 		err = -EINVAL;
+ 		dev_err(&pdev->dev, "invalid CAN clock selected\n");
+ 		goto fail_clk;
 -- 
 2.19.1
 
