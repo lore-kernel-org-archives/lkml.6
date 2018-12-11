@@ -2,46 +2,66 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D272C67839
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 18:53:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57DEBC5CFFE
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 18:53:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5597020870
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 18:53:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1FF0820880
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 18:53:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Bt1Ufs1r"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5597020870
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="wXdc2B4E"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1FF0820880
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726852AbeLKSxP (ORCPT
+        id S1726881AbeLKSxk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 13:53:15 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:38588 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726313AbeLKSxN (ORCPT
+        Tue, 11 Dec 2018 13:53:40 -0500
+Received: from mail-it1-f195.google.com ([209.85.166.195]:35344 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726418AbeLKSxj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 13:53:13 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=nw6gn98kOeoOvbqz55rm/FYxZbQcsNmtwlPp0QYTMl8=; b=Bt1Ufs1rGUuKuPX9FPPhRGAjk
-        ATyCVLwMga5rmHuaH3ToIWqHw2EpfccHAi6YE1i6GKsGHi67nP1i7Z6xc5C7Jrow1gJc6lJz7AmnG
-        +b3OFSsw6pqOGo80O+pa0NAlfn60UDsLHzkUatuNRh/Aggv7S5uSTzQUEk+Ya5ia2B/I1H0iH6C2Y
-        LaQWwDgUdK1ToURhs21I8ahduzDwZlirQzJ69JCkrfeuJrtrfNhPgZtTjzENsDMiTU6a4YREvijcl
-        gygc4YnAN6s1/BfdP2KcED2q2EeLelAoxqzdYvQg5gcx5mwnHZtkMg7Zp7hx2oyT/x58NU2u3Lw/t
-        NjNJOUZhg==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gWn9b-0000ti-MW; Tue, 11 Dec 2018 18:53:11 +0000
-Date:   Tue, 11 Dec 2018 10:53:11 -0800
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Jens Axboe <axboe@kernel.dk>
+        Tue, 11 Dec 2018 13:53:39 -0500
+Received: by mail-it1-f195.google.com with SMTP id p197so5641278itp.0
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 10:53:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:from:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=wbPAhLt2fDGBmcnE7/YRRo4I9EDR2wBe8YvC0vOSPac=;
+        b=wXdc2B4EpN9c+0UAujOUgdRVT6IL8a3fB7/orBqfpIeHVIsPWAANq3hfIA3PBBihqa
+         IDh4JyweU1u5ykci1qILXbIOErELix9YNECiL2Aaak5ILCzj79YODWJkd0rUdUIwF+v6
+         NmR+EkoNwRijYrvNl4HY7oNFfnRupd/UdYpFZneKz5J+1jShTfE7oxxm2Ogh4CCCB3CB
+         WqQY1R846PwtpMZpwlgYD+gKYY0mHqNeRqP5hT1ES8E3v8PbCN781purOWHLxMWv6wb5
+         D8Db+X01ylXAe2J/MhLoqMH1wTRqu9ceMrOPyhxhPqqTHja1ZPN24wb0xb8QJe4PbT+s
+         GbgA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=wbPAhLt2fDGBmcnE7/YRRo4I9EDR2wBe8YvC0vOSPac=;
+        b=GxyaTg6zX8x9/W2hK3t3iIpJHK4K0hSMUHZ9K5jWvybmvZJBJlo/Y8Gnk/hKzMAmHo
+         Je9ct9T8XBNkQiwBb70K2u3uNedC1RYg35mHpShMoU/0PLCseAd5yrUGTsoZ/Ttq3Qv4
+         9qqwZ8SURuwHpo3qa/6h62eOstVy52dCknA4qAUt9vpKaqC/USbEXtMKx/Y6/dJpQkDL
+         hQ9baqgaYEo7cHr0kVlWzOSXluaJWpTiaWjY9t9PxKG0TiaUBjdiNJC5mxlje5K8xdxs
+         TxrG9OTTWMeVD2kaqt94UQmzk7seOpPrwl7GYwubtIZPMJXVpsaCTA27ipTK0zKVcB2l
+         aYmQ==
+X-Gm-Message-State: AA+aEWZhSWICnNcMQWHEQ4RN2/b3lF9yNLrGcMOj9ITQW7HNhGHlohD+
+        u3wiAVsUFuQlRVpsd9FAJ9wXdg==
+X-Google-Smtp-Source: AFSGD/UsU7wH4CShHVRMe8pyIJKZoQE36gZzDDaJ7rja7D/LXN2PEiy+clzFzX1yQCBlLWs0k8Btyg==
+X-Received: by 2002:a24:94f:: with SMTP id 76mr3419055itm.169.1544554418807;
+        Tue, 11 Dec 2018 10:53:38 -0800 (PST)
+Received: from [192.168.1.56] ([216.160.245.98])
+        by smtp.gmail.com with ESMTPSA id t194sm9183769iof.3.2018.12.11.10.53.37
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 11 Dec 2018 10:53:37 -0800 (PST)
+Subject: Re: [PATCH] aio: Convert ioctx_table to XArray
+From:   Jens Axboe <axboe@kernel.dk>
+To:     Matthew Wilcox <willy@infradead.org>
 Cc:     Al Viro <viro@zeniv.linux.org.uk>,
         Benjamin LaHaise <bcrl@kvack.org>,
         Andrew Morton <akpm@linux-foundation.org>,
@@ -50,30 +70,54 @@ Cc:     Al Viro <viro@zeniv.linux.org.uk>,
         linux-mm <linux-mm@kvack.org>,
         linux-kernel <linux-kernel@vger.kernel.org>,
         Dan Carpenter <dan.carpenter@oracle.com>
-Subject: Re: [PATCH] aio: Convert ioctx_table to XArray
-Message-ID: <20181211185311.GJ6830@bombadil.infradead.org>
 References: <20181128183531.5139-1-willy@infradead.org>
  <09e3d156-66fc-ca17-efac-63f080a27a1d@kernel.dk>
  <20181211184553.GH6830@bombadil.infradead.org>
  <75267003-9407-101f-33ee-685e345a2c8a@kernel.dk>
+Message-ID: <e4822d16-efec-46f1-8f4c-ed68b8e5f27f@kernel.dk>
+Date:   Tue, 11 Dec 2018 11:53:36 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 In-Reply-To: <75267003-9407-101f-33ee-685e345a2c8a@kernel.dk>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 11, 2018 at 11:46:53AM -0700, Jens Axboe wrote:
+On 12/11/18 11:46 AM, Jens Axboe wrote:
 > On 12/11/18 11:45 AM, Matthew Wilcox wrote:
-> > I think we need the rcu read lock here to prevent ctx from being freed
-> > under us by free_ioctx().
+>> On Tue, Dec 11, 2018 at 11:41:55AM -0700, Jens Axboe wrote:
+>>> On Wed, Nov 28, 2018 at 11:35 AM Matthew Wilcox <willy@infradead.org> wrote:
+>>>>
+>>>>         rcu_read_lock();
+>>>> -       table = rcu_dereference(mm->ioctx_table);
+>>>> -
+>>>> -       if (!table || id >= table->nr)
+>>>> -               goto out;
+>>>> -
+>>>> -       ctx = rcu_dereference(table->table[id]);
+>>>> +       ctx = xa_load(&mm->ioctx, id);
+>>>>         if (ctx && ctx->user_id == ctx_id) {
+>>>>                 if (percpu_ref_tryget_live(&ctx->users))
+>>>>                         ret = ctx;
+>>>>         }
+>>>
+>>> Question on this part - do we need that RCU read lock around this now? I
+>>> don't think we do.
+>>
+>> I think we need the rcu read lock here to prevent ctx from being freed
+>> under us by free_ioctx().
 > 
 > Then that begs the question, how about __xa_load() that is already called
 > under RCU read lock?
 
-I've been considering adding it to the API, yes.  I was under the
-impression that nested rcu_read_lock() calls were not expensive, even
-with CONFIG_PREEMPT.
+Something like this, mem remap has an existing user that can use this
+too already.
+
+-- 
+Jens Axboe
+
