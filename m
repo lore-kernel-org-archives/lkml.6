@@ -2,106 +2,131 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AC0FC5CFFE
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 00:10:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29219C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 00:11:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 35C0F2081F
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 00:10:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D81F82084E
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 00:11:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="jItdHyf3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 35C0F2081F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="Z1gjnjbn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D81F82084E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=wdc.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728833AbeLKAKy (ORCPT
+        id S1728901AbeLKALX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 19:10:54 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:36909 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728286AbeLKAKx (ORCPT
+        Mon, 10 Dec 2018 19:11:23 -0500
+Received: from esa6.hgst.iphmx.com ([216.71.154.45]:18111 "EHLO
+        esa6.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727419AbeLKALX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 19:10:53 -0500
-Received: by mail-pl1-f193.google.com with SMTP id b5so6028453plr.4
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Dec 2018 16:10:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=y3IP5Wrkr5uqRldbZYCDS+iJsMw6QUbs7xMpAd5rkjo=;
-        b=jItdHyf3Cds/vgg5jMN273VcDz8jg8oKdMmwfQhNu0yBQXhq476wZa0pTEztf+laV8
-         mXPSUgAZnxZQs65qGzj969lZeoTvLevsYVBHkyEA7a2VvBFKjSI4fBHGrrfiry1I6cHT
-         YXklKaGN3Q90N/x0gOJ3oicTvkBW2jOxadr3g=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=y3IP5Wrkr5uqRldbZYCDS+iJsMw6QUbs7xMpAd5rkjo=;
-        b=R6uAtICBh8lS7Jgfiiu0Hx7iXkAr2b+M54zc36v6sItFvGnsF2TRP9Lbde7mKlupH3
-         bzKiTa1p6VLt4tsxCuOa55/oAkgEpiZ4niysut8Qn2HTpkykDlRIYd44nF4AeMt2RqZr
-         xWPgkK2xEEvBVuYZE73wnnRCwyWzTkJcwz6Cdg2GK6VN5HICtsI85oxUNtnPipUZzimb
-         6RH8f/X2hChBzedoHq4x6QtaGiQM95eVMKBW4Eov5T+yBpKMeY0b9MKo/HOoO+VOqsGe
-         5VvETdsnHTF8lmik2bUto/h5UDlwc+MBElSoFQ+2JU+zPIaByXMAPQKBvxW1G5WNfcsy
-         UbLQ==
-X-Gm-Message-State: AA+aEWYzRjDqTmM1oj2qBFvHaSmQ4GX+AvTlH2OPmAvpoBXa1BFWDRZ7
-        VvuejrPJTVNhOsM8/btynjL22g==
-X-Google-Smtp-Source: AFSGD/UxK+OQQqiw8kHWc5YnBZk/xEYEVPdzRkGz2Co+SUxT7xn1LGmBgxUp9ODDMyq1TRfBJ1hO/A==
-X-Received: by 2002:a17:902:8ec9:: with SMTP id x9mr14167015plo.27.1544487053009;
-        Mon, 10 Dec 2018 16:10:53 -0800 (PST)
-Received: from tuxbook-pro (pat_11.qualcomm.com. [192.35.156.11])
-        by smtp.gmail.com with ESMTPSA id q187sm20123301pfq.128.2018.12.10.16.10.51
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 10 Dec 2018 16:10:52 -0800 (PST)
-Date:   Mon, 10 Dec 2018 16:10:50 -0800
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc:     Mark Rutland <mark.rutland@arm.com>, robh+dt@kernel.org,
-        gregkh@linuxfoundation.org, arnd@arndb.de,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, bkumar@qti.qualcomm.com,
-        thierry.escande@linaro.org
-Subject: Re: [PATCH v2 1/6] misc: dt-bindings: Add Qualcomm Fastrpc bindings
-Message-ID: <20181211001050.GA1578@tuxbook-pro>
-References: <20181207163513.16412-1-srinivas.kandagatla@linaro.org>
- <20181207163513.16412-2-srinivas.kandagatla@linaro.org>
- <20181207182327.64mtkfx6v4wlwccz@lakrids.cambridge.arm.com>
- <afdeecc4-4ee9-e933-9917-9930ece85b00@linaro.org>
+        Mon, 10 Dec 2018 19:11:23 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1544487083; x=1576023083;
+  h=subject:to:cc:references:from:message-id:date:
+   mime-version:in-reply-to:content-transfer-encoding;
+  bh=yOAXje27PgeYE34HSOVYaOHf47IeAXxcPCAr+k9KhTU=;
+  b=Z1gjnjbnwz9rq9JqAHiz1qNWFTG4cjHelkLqI48WTocanaytVm3pXhRx
+   dxuDQSdXlY+DtsGXKaTBw6LriwnsCeL0TlMrHMIAp6R8TC0ojfLclOph4
+   LRrpX5Yf0AtAp/8AV3sZ69It6ojEOy//k0drZNSbZF8CimudHM96CHVLI
+   oWi1v13EpHkiwZ9UaLmgnS1JyTBtG6PEruViLBmm6Yk//yQdTUbyuBFp1
+   Vz4QyGSAbUOk9xFxx/JzjhkCOCnhO+TWIKQicvpzkuJ/eIfVrg+yHowwW
+   J84IEEkGGtxMSu5vLOaRaIp6erNgyLM4dXDiSNHOUwliDFGXSZoU/qxSU
+   Q==;
+X-IronPort-AV: E=Sophos;i="5.56,340,1539619200"; 
+   d="scan'208";a="98025677"
+Received: from uls-op-cesaip01.wdc.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
+  by ob1.hgst.iphmx.com with ESMTP; 11 Dec 2018 08:11:23 +0800
+Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
+  by uls-op-cesaep01.wdc.com with ESMTP; 10 Dec 2018 15:53:08 -0800
+Received: from colley-l-lt.ad.shared (HELO [10.86.57.118]) ([10.86.57.118])
+  by uls-op-cesaip01.wdc.com with ESMTP; 10 Dec 2018 16:11:21 -0800
+Subject: Re: [RFT PATCH v1 0/4] Unify CPU topology across ARM64 & RISC-V
+To:     Morten Rasmussen <morten.rasmussen@arm.com>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Anup Patel <anup@brainfault.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Dmitriy Cherkasov <dmitriy@oss-tech.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Jeremy Linton <jeremy.linton@arm.com>,
+        Juri Lelli <juri.lelli@arm.com>,
+        "moderated list:ARM64 PORT (AARCH64 ARCHITECTURE)" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Will Deacon <will.deacon@arm.com>
+References: <1543534100-3654-1-git-send-email-atish.patra@wdc.com>
+ <20181207134509.GA5913@e105550-lin.cambridge.arm.com>
+From:   Atish Patra <atish.patra@wdc.com>
+Message-ID: <dffd0d6e-bebe-ae31-548b-1778d08a3285@wdc.com>
+Date:   Mon, 10 Dec 2018 16:11:21 -0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:60.0)
+ Gecko/20100101 Thunderbird/60.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <afdeecc4-4ee9-e933-9917-9930ece85b00@linaro.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181207134509.GA5913@e105550-lin.cambridge.arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 10 Dec 03:17 PST 2018, Srinivas Kandagatla wrote:
-> On 07/12/18 18:23, Mark Rutland wrote:
-> > On Fri, Dec 07, 2018 at 04:35:08PM +0000, Srinivas Kandagatla wrote:
-> > > diff --git a/Documentation/devicetree/bindings/misc/qcom,fastrpc.txt b/Documentation/devicetree/bindings/misc/qcom,fastrpc.txt
-[..]
-> > > +- reg
-> > > +	Usage: required
-> > > +	Value type: <u32>
-> > > +	Definition: DSP Processor ID.
-> > > +	Possible values are :
-> > > +			0 - ADSP
-> > > +			1 - MDSP
-> > > +			2 - SDSP
-> > > +			3 - CDSP
-> > 
-> > Why is this in a reg?
+On 12/7/18 5:45 AM, Morten Rasmussen wrote:
+> Hi,
 > 
-> This is to identify which type of dsp(Audio/Modem/Sensor/Compute) it is,
-> This information is used to create device nodes for user-space access.
+> On Thu, Nov 29, 2018 at 03:28:16PM -0800, Atish Patra wrote:
+>> The cpu-map DT entry in ARM64 can describe the CPU topology in
+>> much better way compared to other existing approaches. RISC-V can
+>> easily adopt this binding to represent it's own CPU topology.
+>> Thus, both cpu-map DT binding and topology parsing code can be
+>> moved to a common location so that RISC-V or any other
+>> architecture can leverage that.
+>>
+>> The relevant discussion regarding unifying cpu topology can be
+>> found in [1].
+>>
+>> arch_topology seems to be a perfect place to move the common
+>> code. I have not introduced any functional changes in the moved
+>> code. The only downside in this approach is that the capacity
+>> code will be executed for RISC-V as well. But, it will exit
+>> immediately after not able to find the appropriate DT node. If
+>> the overhead is considered too much, we can always compile out
+>> capacity related functions under a different config for the
+>> architectures that do not support them.
+>>
+>> The patches have been tested for RISC-V and compile tested for
+>> ARM64 & x86.
 > 
+> The cpu-map bindings are used for arch/arm too, and so is
+> arch_topology.c. In fact, it was introduced to allow code-sharing
+> between arm and arm64. Applying patch three breaks arm.
+> 
+> Moving the DT parsing to arch_topology.c we have to unify all three
+> architectures. Be aware that arm and arm64 have some differences in how
+> they detect cpu capacities. I think we might have to look at the split
+> of code between arch/* and arch_topology.c again :-/
+> 
+> Morten
+> 
+Thank you for bringing this up. I will send a new version and make sure 
+that it works on arm32 as well.
 
-But it does not represent FastRPC's address on the rpmsg bus. How about
-replacing it with a "label" (or "qcom,domain" perhaps?) of type string?
 
 Regards,
-Bjorn
+Atish
