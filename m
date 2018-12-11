@@ -2,183 +2,483 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44D9CC67839
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 22:11:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83412C6783B
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 22:12:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 06A3620851
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 22:11:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 06A3620851
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 394782084E
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 22:12:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 394782084E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726303AbeLKWLg (ORCPT
+        id S1726315AbeLKWM3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 17:11:36 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:40482 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726146AbeLKWLg (ORCPT
+        Tue, 11 Dec 2018 17:12:29 -0500
+Received: from mail-vs1-f68.google.com ([209.85.217.68]:39180 "EHLO
+        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726209AbeLKWM3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 17:11:36 -0500
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBBM9J9V003379
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 17:11:34 -0500
-Received: from e17.ny.us.ibm.com (e17.ny.us.ibm.com [129.33.205.207])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2pansj820r-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 17:11:34 -0500
-Received: from localhost
-        by e17.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <mwb@linux.vnet.ibm.com>;
-        Tue, 11 Dec 2018 22:11:33 -0000
-Received: from b01cxnp22035.gho.pok.ibm.com (9.57.198.25)
-        by e17.ny.us.ibm.com (146.89.104.204) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 11 Dec 2018 22:11:30 -0000
-Received: from b01ledav004.gho.pok.ibm.com (b01ledav004.gho.pok.ibm.com [9.57.199.109])
-        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBBMBT8420512828
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 11 Dec 2018 22:11:29 GMT
-Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8A3DE112066;
-        Tue, 11 Dec 2018 22:11:29 +0000 (GMT)
-Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E4D7B112065;
-        Tue, 11 Dec 2018 22:11:28 +0000 (GMT)
-Received: from oc5000245537.ibm.com (unknown [9.53.179.223])
-        by b01ledav004.gho.pok.ibm.com (Postfix) with ESMTP;
-        Tue, 11 Dec 2018 22:11:28 +0000 (GMT)
-Subject: Re: [PATCH] pseries/hotplug: Add more delay in pseries_cpu_die while
- waiting for rtas-stop
-To:     Thiago Jung Bauermann <bauerman@linux.ibm.com>
-Cc:     ego@linux.vnet.ibm.com, linux-kernel@vger.kernel.org,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Tyrel Datwyler <tyreld@linux.vnet.ibm.com>,
-        linuxppc-dev@lists.ozlabs.org
-References: <1544095908-2414-1-git-send-email-ego@linux.vnet.ibm.com>
- <87a7li5zv2.fsf@morokweng.localdomain> <20181207104311.GA11431@in.ibm.com>
- <20181207120346.GB11431@in.ibm.com> <87va443fm3.fsf@morokweng.localdomain>
- <06dfb955-6af9-ae23-3919-9bee447cfcdc@linux.vnet.ibm.com>
- <87a7ld3yz4.fsf@morokweng.localdomain>
-From:   Michael Bringmann <mwb@linux.vnet.ibm.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=mwb@linux.vnet.ibm.com; prefer-encrypt=mutual; keydata=
- xsBNBFcY7GcBCADzw3en+yzo9ASFGCfldVkIg95SAMPK0myXp2XJYET3zT45uBsX/uj9/2nA
- lBmXXeOSXnPfJ9V3vtiwcfATnWIsVt3tL6n1kqikzH9nXNxZT7MU/7gqzWZngMAWh/GJ9qyg
- DTOZdjsvdUNUWxtiLvBo7y+reA4HjlQhwhYxxvCpXBeRoF0qDWfQ8DkneemqINzDZPwSQ7zY
- t4F5iyN1I9GC5RNK8Y6jiKmm6bDkrrbtXPOtzXKs0J0FqWEIab/u3BDrRP3STDVPdXqViHua
- AjEzthQbGZm0VCxI4a7XjMi99g614/qDcXZCs00GLZ/VYIE8hB9C5Q+l66S60PLjRrxnABEB
- AAHNLU1pY2hhZWwgVy4gQnJpbmdtYW5uIDxtd2JAbGludXgudm5ldC5pYm0uY29tPsLAeAQT
- AQIAIgUCVxjsZwIbAwYLCQgHAwIGFQgCCQoLBBYCAwECHgECF4AACgkQSEdag3dpuTI0NAf8
- CKYTDKQLgOSjVrU2L5rM4lXaJRmQV6oidD3vIhKSnWRvPq9C29ifRG6ri20prTHAlc0vycgm
- 41HHg0y2vsGgNXGTWC2ObemoZBI7mySXe/7Tq5mD/semGzOp0YWZ7teqrkiSR8Bw0p+LdE7K
- QmT7tpjjvuhrtQ3RRojUYcuy1nWUsc4D+2cxsnZslsx84FUKxPbLagDgZmgBhUw/sUi40s6S
- AkdViVCVS0WANddLIpG0cfdsV0kCae/XdjK3mRK6drFKv1z+QFjvOhc8QIkkxFD0da9w3tJj
- oqnqHFV5gLcHO6/wizPx/NV90y6RngeBORkQiRFWxTXS4Oj9GVI/Us7ATQRXGOxnAQgAmJ5Y
- ikTWrMWPfiveUacETyEhWVl7u8UhZcx3yy2te8O0ay7t9fYcZgIEfQPPVVus89acIXlG3wYL
- DDPvb21OprLxi+ZJ2a0S5we+LcSWN1jByxJlbWBq+/LcMtGAOhNLpysY1gD0Y4UW/eKS+TFZ
- 562qKC3k1dBvnV9JXCgeS1taYFxRdVAn+2DwK3nuyG/DDq/XgJ5BtmyC3MMx8CiW3POj+O+l
- 6SedIeAfZlZ7/xhijx82g93h07VavUQRwMZgZFsqmuxBxVGiav2HB+dNvs3PFB087Pvc9OHe
- qhajPWOP/gNLMmvBvknn1NToM9a8/E8rzcIZXoYs4RggRRYh6wARAQABwsBfBBgBAgAJBQJX
- GOxnAhsMAAoJEEhHWoN3abky+RUH/jE08/r5QzaNKYeVhu0uVbgXu5fsxqr2cAxhf+KuwT3T
- efhEP2alarxzUZdEh4MsG6c+X2NYLbD3cryiXxVx/7kSAJEFQJfA5P06g8NLR25Qpq9BLsN7
- ++dxQ+CLKzSEb1X24hYAJZpOhS8ev3ii+M/XIo+olDBKuTaTgB6elrg3CaxUsVgLBJ+jbRkW
- yQe2S5f/Ja1ThDpSSLLWLiLK/z7+gaqwhnwjQ8Z8Y9D2itJQcj4itHilwImsqwLG7SxzC0NX
- IQ5KaAFYdRcOgwR8VhhkOIVd70ObSZU+E4pTET1WDz4o65xZ89yfose1No0+r5ht/xWOOrh8
- 53/hcWvxHVs=
-Organization: IBM Linux Technology Center
-Date:   Tue, 11 Dec 2018 16:11:28 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 11 Dec 2018 17:12:29 -0500
+Received: by mail-vs1-f68.google.com with SMTP id h78so9865795vsi.6
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 14:12:26 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=dkU478LWAaLb4Ol4y/qFYD9IutDoc4youfnCAz0Ojrc=;
+        b=CvcEh0XbCTHOpU58mz+19bt+gXGKNxsWYZtgCr8/PJzfVKFiex/b3UcS0eZ3v8wmIT
+         CfH1VYTHgX8CQgq/5LiMM44Ci+KvjX/UWysYXeYgXoVEIneNkBBULFzptkhv93l2sOgz
+         wMflx/3ghg4TYjwdOXKtcmGBa2GEMfN0BGh6x7JeQoxs/qkQanzgefrqbwoxiJioDCCD
+         PNEx1eFH2KxFU8cn4kTsMoCV1urTXOqmMw2UxFoTVY36UYENH+Ij6DRC35aQ4ZffSRru
+         F3T7kj9t2OlQrxT1jixZ85O7NXcoe8NUSIJQgpE59BSpaoMIfUCvaFIg/2gYuab/krgd
+         XKwQ==
+X-Gm-Message-State: AA+aEWazX4zyWeH9jFbAIlt057imtcb/MU/Kzy1UcoqhvxDCkToGjSuX
+        HiowseI4kQVXX2NXu5XIZsE/WIeKMck20t6p77o=
+X-Google-Smtp-Source: AFSGD/XZeW9F9Xu9b+XF5eOcE33dhaPOkREdEJ/3G26Rgx7BKlD/i6NkskEbvNIq7ILHWFzqBiOzyeiwBccZIw4VruI=
+X-Received: by 2002:a67:f43:: with SMTP id 64mr8212855vsp.166.1544566346158;
+ Tue, 11 Dec 2018 14:12:26 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <87a7ld3yz4.fsf@morokweng.localdomain>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18121122-0040-0000-0000-000004A115AD
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010214; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000270; SDB=6.01130391; UDB=6.00577119; IPR=6.00910525;
- MB=3.00024658; MTD=3.00000008; XFM=3.00000015; UTC=2018-12-11 22:11:32
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18121122-0041-0000-0000-000008AA3604
-Message-Id: <f93ec711-a7c6-e754-2002-2dad2a893005@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-11_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1812110195
+References: <20181211212428.28327-1-linus.walleij@linaro.org> <20181211212428.28327-3-linus.walleij@linaro.org>
+In-Reply-To: <20181211212428.28327-3-linus.walleij@linaro.org>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Tue, 11 Dec 2018 23:12:13 +0100
+Message-ID: <CAMuHMdWSTXsW8u9vwd8+G5Dy8fFNNiagHzWs4xyWO5TL9Y5Qxw@mail.gmail.com>
+Subject: Re: [PATCH 2/5 v8] regulator: fixed/gpio: Pull inversion/OD into gpiolib
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        ckeepax@opensource.cirrus.com,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Alexander Shiyan <shc_work@mail.ru>,
+        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        Aaro Koskinen <aaro.koskinen@iki.fi>,
+        ext Tony Lindgren <tony@atomide.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
+        Philipp Zabel <philipp.zabel@gmail.com>, petr.cvek@tul.cz,
+        lost.distance@yahoo.com, Daniel Mack <zonque@gmail.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Russell King <rmk+kernel@armlinux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Note from Scott Mayes on latest crash:
+CC Jacopo, who has an Ecovec24
 
-Michael,
-
-Since the partition crashed, I was able to get the last .2 seconds worth of RTAS call trace leading up to the crash.
-
-Best I could tell from that bit of trace was that the removal of a processor involved the following steps:
--- Call to stop-self for a given thread
--- Repeated calls to query-cpu-stopped-state (which eventually indicated the thread was stopped)
--- Call to get-sensor-state for the thread to check its entity-state (9003) sensor which returned 'dr-entity-present'
--- Call to set-indicator to set the isolation-state (9001) indicator to ISOLATE state
--- Call to set-indicator to set the allocation-state (9003) indicator to UNUSABLE state
-
-I noticed one example of thread x28 getting through all of these steps just fine, but for thread x20, although the
-query-cpu-stopped state returned 0 status (STOPPED), a subsequent call to set-indicator to ISOLATE
-failed.  This failure was near the end of the trace, but was not the very last RTAS call made in the trace.
-The set-indicator failure reported to Linux was a -9001 (Valid outstanding translation) which was mapped
-from a 0x502 (Invalid thread state) return code from PHYP's H_SET_DR_STATE h-call.
-
-On 12/10/2018 02:31 PM, Thiago Jung Bauermann wrote:
-> 
-> Hello Michael,
-> 
-> Michael Bringmann <mwb@linux.vnet.ibm.com> writes:
-> 
->> I have asked Scott Mayes to take a look at one of these crashes from
->> the phyp side.  I will let you know if he finds anything notable.
-> 
-> Thanks! It might make sense to test whether booting with
-> cede_offline=off makes the bug go away.
-
-Scott is looking at the system.  I will try once he is finished.
-
-> 
-> One suspicion I have is regarding the code handling CPU_STATE_INACTIVE.
->>From what I understand, it is a powerpc-specific CPU state and from the
-> perspective of the generic CPU hotplug state machine, inactive CPUs are
-> already fully offline. Which means that the locking performed by the
-> generic code state machine doesn't apply to transitioning CPUs from
-> INACTIVE to OFFLINE state. Perhaps the bug is that there is more than
-> one CPU making that transition at the same time? That would cause two
-> CPUs to call RTAS stop-self.
-> 
-> I haven't checked whether this is really possible or not, though. It's
-> just a conjecture.
-
-Michael
-
-> 
+On Tue, Dec 11, 2018 at 10:26 PM Linus Walleij <linus.walleij@linaro.org> wrote:
+> This pushes the handling of inversion semantics and open drain
+> settings to the GPIO descriptor and gpiolib. All affected board
+> files are also augmented.
+>
+> This is especially nice since we don't have to have any
+> confusing flags passed around to the left and right littering
+> the fixed and GPIO regulator drivers and the regulator core.
+> It is all just very straight-forward: the core asks the GPIO
+> line to be asserted or deasserted and gpiolib deals with the
+> rest depending on how the platform is configured: if the line
+> is active low, it deals with that, if the line is open drain,
+> it deals with that too.
+>
+> Cc: Alexander Shiyan <shc_work@mail.ru> # i.MX boards user
+> Cc: Haojian Zhuang <haojian.zhuang@gmail.com> # MMP2 maintainer
+> Cc: Aaro Koskinen <aaro.koskinen@iki.fi> # OMAP1 maintainer
+> Cc: Tony Lindgren <tony@atomide.com> # OMAP1,2,3 maintainer
+> Cc: Mike Rapoport <rppt@linux.vnet.ibm.com> # EM-X270 maintainer
+> Cc: Robert Jarzmik <robert.jarzmik@free.fr> # EZX maintainer
+> Cc: Philipp Zabel <philipp.zabel@gmail.com> # Magician maintainer
+> Cc: Petr Cvek <petr.cvek@tul.cz> # Magician
+> Cc: Robert Jarzmik <robert.jarzmik@free.fr> # PXA
+> Cc: Paul Parsons <lost.distance@yahoo.com> # hx4700
+> Cc: Daniel Mack <zonque@gmail.com> # Raumfeld maintainer
+> Cc: Marc Zyngier <marc.zyngier@arm.com> # Zeus maintainer
+> Cc: Geert Uytterhoeven <geert+renesas@glider.be> # SuperH pinctrl/GPIO maintainer
+> Cc: Russell King <rmk+kernel@armlinux.org.uk> # SA1100
+> Tested-by: Janusz Krzysztofik <jmkrzyszt@gmail.com> #OMAP1 Amstrad Delta
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
+> ChangeLog v7->v8:
+> - Collected Janusz Tested-by tag for OMAP1.
+> - Rebase on core fixes.
+> ChangeLog v6->v7:
+> - Fix a missed .enable_high on OMAP1.
+> ChangeLog v4->v6:
+> - Split out parts relation to GPIO regulator descriptor conversion
+>   to the right patch.
+> - Renumber to fit the rest of the series.
+> - Daniel Mack says he will probably delete the Raumfeld board file
+>   and replace it with a device tree, I suggest we just deal with that
+>   conflict upstream.
+> ChangeLog v3->v4:
+> - Rebase on fixed regulator changes.
+> ChangeLog v2->v3:
+> - Resending.
+> ChangeLog v1->v2:
+> - Rebase the patch series
+> - Cover the new user added in sa1100
+> ---
+>  arch/arm/mach-imx/mach-mx21ads.c              |  1 -
+>  arch/arm/mach-imx/mach-mx27ads.c              |  2 +-
+>  arch/arm/mach-mmp/brownstone.c                |  1 -
+>  arch/arm/mach-omap1/board-ams-delta.c         |  2 --
+>  arch/arm/mach-omap2/pdata-quirks.c            |  1 -
+>  arch/arm/mach-pxa/em-x270.c                   |  1 -
+>  arch/arm/mach-pxa/ezx.c                       |  3 +-
+>  arch/arm/mach-pxa/raumfeld.c                  |  1 -
+>  arch/arm/mach-pxa/zeus.c                      |  3 +-
+>  arch/arm/mach-sa1100/assabet.c                |  1 -
+>  arch/sh/boards/mach-ecovec24/setup.c          |  2 --
+>  .../intel-mid/device_libs/platform_bcm43xx.c  |  1 -
+>  drivers/regulator/core.c                      |  8 ++---
+>  drivers/regulator/da9055-regulator.c          |  1 -
+>  drivers/regulator/fixed.c                     | 35 +++++--------------
+>  include/linux/regulator/fixed.h               | 10 ------
+>  include/linux/regulator/gpio-regulator.h      |  6 ----
+>  17 files changed, 13 insertions(+), 66 deletions(-)
+>
+> diff --git a/arch/arm/mach-imx/mach-mx21ads.c b/arch/arm/mach-imx/mach-mx21ads.c
+> index 2e1e540f2e5a..d278fb672d40 100644
+> --- a/arch/arm/mach-imx/mach-mx21ads.c
+> +++ b/arch/arm/mach-imx/mach-mx21ads.c
+> @@ -205,7 +205,6 @@ static struct regulator_init_data mx21ads_lcd_regulator_init_data = {
+>  static struct fixed_voltage_config mx21ads_lcd_regulator_pdata = {
+>         .supply_name    = "LCD",
+>         .microvolts     = 3300000,
+> -       .enable_high    = 1,
+>         .init_data      = &mx21ads_lcd_regulator_init_data,
+>  };
+>
+> diff --git a/arch/arm/mach-imx/mach-mx27ads.c b/arch/arm/mach-imx/mach-mx27ads.c
+> index f5e04047ed13..6dd7f57c332f 100644
+> --- a/arch/arm/mach-imx/mach-mx27ads.c
+> +++ b/arch/arm/mach-imx/mach-mx27ads.c
+> @@ -237,7 +237,7 @@ static struct fixed_voltage_config mx27ads_lcd_regulator_pdata = {
+>  static struct gpiod_lookup_table mx27ads_lcd_regulator_gpiod_table = {
+>         .dev_id = "reg-fixed-voltage.0", /* Let's hope ID 0 is what we get */
+>         .table = {
+> -               GPIO_LOOKUP("LCD", 0, NULL, GPIO_ACTIVE_HIGH),
+> +               GPIO_LOOKUP("LCD", 0, NULL, GPIO_ACTIVE_LOW),
+>                 { },
+>         },
+>  };
+> diff --git a/arch/arm/mach-mmp/brownstone.c b/arch/arm/mach-mmp/brownstone.c
+> index a04e249c654b..d2560fb1e835 100644
+> --- a/arch/arm/mach-mmp/brownstone.c
+> +++ b/arch/arm/mach-mmp/brownstone.c
+> @@ -149,7 +149,6 @@ static struct regulator_init_data brownstone_v_5vp_data = {
+>  static struct fixed_voltage_config brownstone_v_5vp = {
+>         .supply_name            = "v_5vp",
+>         .microvolts             = 5000000,
+> -       .enable_high            = 1,
+>         .enabled_at_boot        = 1,
+>         .init_data              = &brownstone_v_5vp_data,
+>  };
+> diff --git a/arch/arm/mach-omap1/board-ams-delta.c b/arch/arm/mach-omap1/board-ams-delta.c
+> index 3d191fd52910..26e9b5969b0a 100644
+> --- a/arch/arm/mach-omap1/board-ams-delta.c
+> +++ b/arch/arm/mach-omap1/board-ams-delta.c
+> @@ -268,7 +268,6 @@ static struct fixed_voltage_config modem_nreset_config = {
+>         .supply_name            = "modem_nreset",
+>         .microvolts             = 3300000,
+>         .startup_delay          = 25000,
+> -       .enable_high            = 1,
+>         .enabled_at_boot        = 1,
+>         .init_data              = &modem_nreset_data,
+>  };
+> @@ -529,7 +528,6 @@ static struct regulator_init_data keybrd_pwr_initdata = {
+>  static struct fixed_voltage_config keybrd_pwr_config = {
+>         .supply_name            = "keybrd_pwr",
+>         .microvolts             = 5000000,
+> -       .enable_high            = 1,
+>         .init_data              = &keybrd_pwr_initdata,
+>  };
+>
+> diff --git a/arch/arm/mach-omap2/pdata-quirks.c b/arch/arm/mach-omap2/pdata-quirks.c
+> index 9fec5f84bf77..69a9182a9aff 100644
+> --- a/arch/arm/mach-omap2/pdata-quirks.c
+> +++ b/arch/arm/mach-omap2/pdata-quirks.c
+> @@ -330,7 +330,6 @@ static struct fixed_voltage_config pandora_vwlan = {
+>         .supply_name            = "vwlan",
+>         .microvolts             = 1800000, /* 1.8V */
+>         .startup_delay          = 50000, /* 50ms */
+> -       .enable_high            = 1,
+>         .init_data              = &pandora_vmmc3,
+>  };
+>
+> diff --git a/arch/arm/mach-pxa/em-x270.c b/arch/arm/mach-pxa/em-x270.c
+> index 67e37df637f5..97f428e3b77a 100644
+> --- a/arch/arm/mach-pxa/em-x270.c
+> +++ b/arch/arm/mach-pxa/em-x270.c
+> @@ -984,7 +984,6 @@ static struct fixed_voltage_config camera_dummy_config = {
+>         .supply_name            = "camera_vdd",
+>         .input_supply           = "vcc cam",
+>         .microvolts             = 2800000,
+> -       .enable_high            = 0,
+>         .init_data              = &camera_dummy_initdata,
+>  };
+>
+> diff --git a/arch/arm/mach-pxa/ezx.c b/arch/arm/mach-pxa/ezx.c
+> index 565965e9acc7..5e110e70ce5a 100644
+> --- a/arch/arm/mach-pxa/ezx.c
+> +++ b/arch/arm/mach-pxa/ezx.c
+> @@ -714,7 +714,6 @@ static struct regulator_init_data camera_regulator_initdata = {
+>  static struct fixed_voltage_config camera_regulator_config = {
+>         .supply_name            = "camera_vdd",
+>         .microvolts             = 2800000,
+> -       .enable_high            = 0,
+>         .init_data              = &camera_regulator_initdata,
+>  };
+>
+> @@ -730,7 +729,7 @@ static struct gpiod_lookup_table camera_supply_gpiod_table = {
+>         .dev_id = "reg-fixed-voltage.1",
+>         .table = {
+>                 GPIO_LOOKUP("gpio-pxa", GPIO50_nCAM_EN,
+> -                           NULL, GPIO_ACTIVE_HIGH),
+> +                           NULL, GPIO_ACTIVE_LOW),
+>                 { },
+>         },
+>  };
+> diff --git a/arch/arm/mach-pxa/raumfeld.c b/arch/arm/mach-pxa/raumfeld.c
+> index bd3c23ad6ce6..cffa182167a9 100644
+> --- a/arch/arm/mach-pxa/raumfeld.c
+> +++ b/arch/arm/mach-pxa/raumfeld.c
+> @@ -886,7 +886,6 @@ static struct regulator_init_data audio_va_initdata = {
+>  static struct fixed_voltage_config audio_va_config = {
+>         .supply_name            = "audio_va",
+>         .microvolts             = 5000000,
+> -       .enable_high            = 1,
+>         .enabled_at_boot        = 0,
+>         .init_data              = &audio_va_initdata,
+>  };
+> diff --git a/arch/arm/mach-pxa/zeus.c b/arch/arm/mach-pxa/zeus.c
+> index d53ea12fc766..9b8c2cf23111 100644
+> --- a/arch/arm/mach-pxa/zeus.c
+> +++ b/arch/arm/mach-pxa/zeus.c
+> @@ -426,7 +426,7 @@ static struct gpiod_lookup_table can_regulator_gpiod_table = {
+>         .dev_id = "reg-fixed-voltage.0",
+>         .table = {
+>                 GPIO_LOOKUP("gpio-pxa", ZEUS_CAN_SHDN_GPIO,
+> -                           NULL, GPIO_ACTIVE_HIGH),
+> +                           NULL, GPIO_ACTIVE_LOW),
+>                 { },
+>         },
+>  };
+> @@ -547,7 +547,6 @@ static struct regulator_init_data zeus_ohci_regulator_data = {
+>  static struct fixed_voltage_config zeus_ohci_regulator_config = {
+>         .supply_name            = "vbus2",
+>         .microvolts             = 5000000, /* 5.0V */
+> -       .enable_high            = 1,
+>         .startup_delay          = 0,
+>         .init_data              = &zeus_ohci_regulator_data,
+>  };
+> diff --git a/arch/arm/mach-sa1100/assabet.c b/arch/arm/mach-sa1100/assabet.c
+> index 3e8c0948abcc..3723d70af471 100644
+> --- a/arch/arm/mach-sa1100/assabet.c
+> +++ b/arch/arm/mach-sa1100/assabet.c
+> @@ -468,7 +468,6 @@ static struct regulator_consumer_supply assabet_cf_vcc_consumers[] = {
+>  static struct fixed_voltage_config assabet_cf_vcc_pdata __initdata = {
+>         .supply_name = "cf-power",
+>         .microvolts = 3300000,
+> -       .enable_high = 1,
+>  };
+>
+>  static struct gpiod_lookup_table assabet_cf_vcc_gpio_table = {
+> diff --git a/arch/sh/boards/mach-ecovec24/setup.c b/arch/sh/boards/mach-ecovec24/setup.c
+> index 06a894526a0b..ffddec161292 100644
+> --- a/arch/sh/boards/mach-ecovec24/setup.c
+> +++ b/arch/sh/boards/mach-ecovec24/setup.c
+> @@ -633,7 +633,6 @@ static struct regulator_init_data cn12_power_init_data = {
+>  static struct fixed_voltage_config cn12_power_info = {
+>         .supply_name = "CN12 SD/MMC Vdd",
+>         .microvolts = 3300000,
+> -       .enable_high = 1,
+>         .init_data = &cn12_power_init_data,
+>  };
+>
+> @@ -674,7 +673,6 @@ static struct regulator_init_data sdhi0_power_init_data = {
+>  static struct fixed_voltage_config sdhi0_power_info = {
+>         .supply_name = "CN11 SD/MMC Vdd",
+>         .microvolts = 3300000,
+> -       .enable_high = 1,
+>         .init_data = &sdhi0_power_init_data,
+>  };
+>
+> diff --git a/arch/x86/platform/intel-mid/device_libs/platform_bcm43xx.c b/arch/x86/platform/intel-mid/device_libs/platform_bcm43xx.c
+> index dbfc5cf2aa93..e3b57c346f3b 100644
+> --- a/arch/x86/platform/intel-mid/device_libs/platform_bcm43xx.c
+> +++ b/arch/x86/platform/intel-mid/device_libs/platform_bcm43xx.c
+> @@ -44,7 +44,6 @@ static struct fixed_voltage_config bcm43xx_vmmc = {
+>          */
+>         .microvolts             = 2000000,              /* 1.8V */
+>         .startup_delay          = 250 * 1000,           /* 250ms */
+> -       .enable_high            = 1,                    /* active high */
+>         .enabled_at_boot        = 0,                    /* disabled at boot */
+>         .init_data              = &bcm43xx_vmmc_data,
+>  };
+> diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
+> index 79cb090ff22f..8f3aa151bb72 100644
+> --- a/drivers/regulator/core.c
+> +++ b/drivers/regulator/core.c
+> @@ -82,7 +82,6 @@ struct regulator_enable_gpio {
+>         struct gpio_desc *gpiod;
+>         u32 enable_count;       /* a number of enabled shared GPIO */
+>         u32 request_count;      /* a number of requested shared GPIO */
+> -       unsigned int ena_gpio_invert:1;
+>  };
+>
+>  /*
+> @@ -2253,7 +2252,6 @@ static int regulator_ena_gpio_request(struct regulator_dev *rdev,
+>         }
+>
+>         pin->gpiod = gpiod;
+> -       pin->ena_gpio_invert = config->ena_gpio_invert;
+>         list_add(&pin->list, &regulator_ena_gpio_list);
+>
+>  update_ena_gpio_to_rdev:
+> @@ -2304,8 +2302,7 @@ static int regulator_ena_gpio_ctrl(struct regulator_dev *rdev, bool enable)
+>         if (enable) {
+>                 /* Enable GPIO at initial use */
+>                 if (pin->enable_count == 0)
+> -                       gpiod_set_value_cansleep(pin->gpiod,
+> -                                                !pin->ena_gpio_invert);
+> +                       gpiod_set_value_cansleep(pin->gpiod, 1);
+>
+>                 pin->enable_count++;
+>         } else {
+> @@ -2316,8 +2313,7 @@ static int regulator_ena_gpio_ctrl(struct regulator_dev *rdev, bool enable)
+>
+>                 /* Disable GPIO if not used */
+>                 if (pin->enable_count <= 1) {
+> -                       gpiod_set_value_cansleep(pin->gpiod,
+> -                                                pin->ena_gpio_invert);
+> +                       gpiod_set_value_cansleep(pin->gpiod, 0);
+>                         pin->enable_count = 0;
+>                 }
+>         }
+> diff --git a/drivers/regulator/da9055-regulator.c b/drivers/regulator/da9055-regulator.c
+> index 588c3d2445cf..417cafe2aba0 100644
+> --- a/drivers/regulator/da9055-regulator.c
+> +++ b/drivers/regulator/da9055-regulator.c
+> @@ -457,7 +457,6 @@ static int da9055_gpio_init(struct da9055_regulator *regulator,
+>                 int gpio_mux = pdata->gpio_ren[id];
+>
+>                 config->ena_gpiod = pdata->ena_gpiods[id];
+> -               config->ena_gpio_invert = 1;
+>
+>                 /*
+>                  * GPI pin is muxed with regulator to control the
+> diff --git a/drivers/regulator/fixed.c b/drivers/regulator/fixed.c
+> index 9abdb9130766..b5afc9db2c61 100644
+> --- a/drivers/regulator/fixed.c
+> +++ b/drivers/regulator/fixed.c
+> @@ -79,15 +79,6 @@ of_get_fixed_voltage_config(struct device *dev,
+>
+>         of_property_read_u32(np, "startup-delay-us", &config->startup_delay);
+>
+> -       /*
+> -        * FIXME: we pulled active low/high and open drain handling into
+> -        * gpiolib so it will be handled there. Delete this in the second
+> -        * step when we also remove the custom inversion handling for all
+> -        * legacy boardfiles.
+> -        */
+> -       config->enable_high = 1;
+> -       config->gpio_is_open_drain = 0;
+> -
+>         if (of_find_property(np, "vin-supply", NULL))
+>                 config->input_supply = "vin";
+>
+> @@ -151,24 +142,14 @@ static int reg_fixed_voltage_probe(struct platform_device *pdev)
+>
+>         drvdata->desc.fixed_uV = config->microvolts;
+>
+> -       cfg.ena_gpio_invert = !config->enable_high;
+> -       if (config->enabled_at_boot) {
+> -               if (config->enable_high)
+> -                       gflags = GPIOD_OUT_HIGH;
+> -               else
+> -                       gflags = GPIOD_OUT_LOW;
+> -       } else {
+> -               if (config->enable_high)
+> -                       gflags = GPIOD_OUT_LOW;
+> -               else
+> -                       gflags = GPIOD_OUT_HIGH;
+> -       }
+> -       if (config->gpio_is_open_drain) {
+> -               if (gflags == GPIOD_OUT_HIGH)
+> -                       gflags = GPIOD_OUT_HIGH_OPEN_DRAIN;
+> -               else
+> -                       gflags = GPIOD_OUT_LOW_OPEN_DRAIN;
+> -       }
+> +       /*
+> +        * The signal will be inverted by the GPIO core if flagged so in the
+> +        * decriptor.
+> +        */
+> +       if (config->enabled_at_boot)
+> +               gflags = GPIOD_OUT_HIGH;
+> +       else
+> +               gflags = GPIOD_OUT_LOW;
+>
+>         /*
+>          * Some fixed regulators share the enable line between two
+> diff --git a/include/linux/regulator/fixed.h b/include/linux/regulator/fixed.h
+> index 1a4340ed8e2b..f10140da7145 100644
+> --- a/include/linux/regulator/fixed.h
+> +++ b/include/linux/regulator/fixed.h
+> @@ -25,14 +25,6 @@ struct regulator_init_data;
+>   * @input_supply:      Name of the input regulator supply
+>   * @microvolts:                Output voltage of regulator
+>   * @startup_delay:     Start-up time in microseconds
+> - * @gpio_is_open_drain: Gpio pin is open drain or normal type.
+> - *                     If it is open drain type then HIGH will be set
+> - *                     through PULL-UP with setting gpio as input
+> - *                     and low will be set as gpio-output with driven
+> - *                     to low. For non-open-drain case, the gpio will
+> - *                     will be in output and drive to low/high accordingly.
+> - * @enable_high:       Polarity of enable GPIO
+> - *                     1 = Active high, 0 = Active low
+>   * @enabled_at_boot:   Whether regulator has been enabled at
+>   *                     boot or not. 1 = Yes, 0 = No
+>   *                     This is used to keep the regulator at
+> @@ -48,8 +40,6 @@ struct fixed_voltage_config {
+>         const char *input_supply;
+>         int microvolts;
+>         unsigned startup_delay;
+> -       unsigned gpio_is_open_drain:1;
+> -       unsigned enable_high:1;
+>         unsigned enabled_at_boot:1;
+>         struct regulator_init_data *init_data;
+>  };
+> diff --git a/include/linux/regulator/gpio-regulator.h b/include/linux/regulator/gpio-regulator.h
+> index 49c407afb944..11cd6375215d 100644
+> --- a/include/linux/regulator/gpio-regulator.h
+> +++ b/include/linux/regulator/gpio-regulator.h
+> @@ -46,10 +46,6 @@ struct gpio_regulator_state {
+>  /**
+>   * struct gpio_regulator_config - config structure
+>   * @supply_name:       Name of the regulator supply
+> - * @enable_gpio:       GPIO to use for enable control
+> - *                     set to -EINVAL if not used
+> - * @enable_high:       Polarity of enable GPIO
+> - *                     1 = Active high, 0 = Active low
+>   * @enabled_at_boot:   Whether regulator has been enabled at
+>   *                     boot or not. 1 = Yes, 0 = No
+>   *                     This is used to keep the regulator at
+> @@ -71,8 +67,6 @@ struct gpio_regulator_state {
+>  struct gpio_regulator_config {
+>         const char *supply_name;
+>
+> -       int enable_gpio;
+> -       unsigned enable_high:1;
+>         unsigned enabled_at_boot:1;
+>         unsigned startup_delay;
+>
 > --
-> Thiago Jung Bauermann
-> IBM Linux Technology Center
-> 
-> 
-
--- 
-Michael W. Bringmann
-Linux Technology Center
-IBM Corporation
-Tie-Line  363-5196
-External: (512) 286-5196
-Cell:       (512) 466-0650
-mwb@linux.vnet.ibm.com
-
+> 2.19.2
