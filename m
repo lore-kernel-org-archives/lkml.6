@@ -2,93 +2,103 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EDF9C5CFFE
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 14:22:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5215AC07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 14:26:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5EABA2081B
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 14:22:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5EABA2081B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ACULAB.COM
+	by mail.kernel.org (Postfix) with ESMTP id 109542081B
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 14:26:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544538376;
+	bh=x9iNxP9PHIsohyecxutJaQhQR1ITKvuAOB9FJbZLmFw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=iYZ4VgnMQaZI1tJBlZGQSH2x9ucQvgwXqLqwnXnUuoXDHtyP+1gDb+0VDKRgmw11w
+	 boDWkfhNptyHmT07VjtpTVNddssheL4jsNd7KjZFH2d/PJ6lGHrkF+FRSrv3CFpbT0
+	 o0vzU2t4vmvbDFX+nOZDUWstUfMvwO/o7uoQ3tFI=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 109542081B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726852AbeLKOWH (ORCPT
+        id S1726796AbeLKO0O (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 09:22:07 -0500
-Received: from eu-smtp-delivery-151.mimecast.com ([146.101.78.151]:51044 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726636AbeLKOWG (ORCPT
+        Tue, 11 Dec 2018 09:26:14 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:49722 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726625AbeLKO0O (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 09:22:06 -0500
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- uk-mta-165-J199icJ0OSK9VPyrkpoVZQ-1; Tue, 11 Dec 2018 14:22:02 +0000
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Tue, 11 Dec 2018 14:22:12 +0000
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Tue, 11 Dec 2018 14:22:12 +0000
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Alan Douglas' <adouglas@cadence.com>,
-        Wen Yang <wen.yang99@zte.com.cn>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>
-CC:     "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "zhong.weidong@zte.com.cn" <zhong.weidong@zte.com.cn>,
-        Bob Copeland <me@bobcopeland.com>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        Niklas Cassel <niklas.cassel@axis.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Cyrille Pitchen <cyrille.pitchen@free-electrons.com>
-Subject: RE: [PATCH] PCI: endpoint: functions: Use kmemdup instead of
- duplicating its function
-Thread-Topic: [PATCH] PCI: endpoint: functions: Use kmemdup instead of
- duplicating its function
-Thread-Index: AQHUjU2PiCR+5hvyDU6PPfEeCbv436Vxm41wgAgDT3A=
-Date:   Tue, 11 Dec 2018 14:22:12 +0000
-Message-ID: <a682d5066a964efc9e280e27231213b6@AcuMS.aculab.com>
-References: <20181206102105.53098-1-wen.yang99@zte.com.cn>
- <MWHPR07MB350216ECF82E2730CF87A7D2D8A90@MWHPR07MB3502.namprd07.prod.outlook.com>
-In-Reply-To: <MWHPR07MB350216ECF82E2730CF87A7D2D8A90@MWHPR07MB3502.namprd07.prod.outlook.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        Tue, 11 Dec 2018 09:26:14 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=WwVSuC6/bdgUqMBah0m0VUcguMtcEeZiuMn/J+br+UA=; b=aglXg4vUsXoFX4uFbcLDNrxQU
+        28aTN22tqLr5I6XkqtZu3e0H9FLXCtdn1lC/KX9E92T3bapvov9srLsNjv0jXXBwSc66Ip8EYWh06
+        x6O6wxu8Bafgm1Oxa6VlE/6iQspxDLCIfi3HUQgA6V+2P5c2TLhuX5NX0lshO1MZv66cA=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1gWizE-000174-3e; Tue, 11 Dec 2018 14:26:12 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id 9E8F6112540E; Tue, 11 Dec 2018 14:26:11 +0000 (GMT)
+Date:   Tue, 11 Dec 2018 14:26:11 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Clark Wang <xiaoning.wang@nxp.com>
+Cc:     "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] spi: lpspi: Add cs-gpio support
+Message-ID: <20181211142611.GF6686@sirena.org.uk>
+References: <20181204062313.28942-1-xiaoning.wang@nxp.com>
 MIME-Version: 1.0
-X-MC-Unique: J199icJ0OSK9VPyrkpoVZQ-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="rWhLK7VZz0iBluhq"
+Content-Disposition: inline
+In-Reply-To: <20181204062313.28942-1-xiaoning.wang@nxp.com>
+X-Cookie: Immanuel doesn't pun, he Kant.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-RnJvbTogQWxhbiBEb3VnbGFzDQo+IFNlbnQ6IDA2IERlY2VtYmVyIDIwMTggMTI6MDENCj4gSGks
-DQo+IA0KPiBPbiAwNiBEZWNlbWJlciAyMDE4IDEwOjIxLCBXZW4gWWFuZyB3cm90ZToNCj4gPiBr
-bWVtZHVwIGhhcyBpbXBsZW1lbnRlZCB0aGUgZnVuY3Rpb24gdGhhdCBrbWFsbG9jKCkgKyBtZW1j
-cHkoKS4NCj4gPiBXZSBwcmVmZXIgdG8ga21lbWR1cCByYXRoZXIgdGhhbiBjb2RlIG9wZW5lZCBp
-bXBsZW1lbnRhdGlvbi4NCi4uLg0KPiA+IGRpZmYgLS1naXQgYS9kcml2ZXJzL3BjaS9lbmRwb2lu
-dC9mdW5jdGlvbnMvcGNpLWVwZi10ZXN0LmMgYi9kcml2ZXJzL3BjaS9lbmRwb2ludC9mdW5jdGlv
-bnMvcGNpLWVwZi0NCj4gdGVzdC5jDQo+ID4gaW5kZXggM2U4NmZhM2M3ZGEzLi42ZTQyZGFhMmE2
-NTEgMTAwNjQ0DQo+ID4gLS0tIGEvZHJpdmVycy9wY2kvZW5kcG9pbnQvZnVuY3Rpb25zL3BjaS1l
-cGYtdGVzdC5jDQo+ID4gKysrIGIvZHJpdmVycy9wY2kvZW5kcG9pbnQvZnVuY3Rpb25zL3BjaS1l
-cGYtdGVzdC5jDQo+ID4gQEAgLTE2OSwxNCArMTY5LDEyIEBAIHN0YXRpYyBpbnQgcGNpX2VwZl90
-ZXN0X3JlYWQoc3RydWN0IHBjaV9lcGZfdGVzdCAqZXBmX3Rlc3QpDQo+ID4gIAkJZ290byBlcnJf
-YWRkcjsNCj4gPiAgCX0NCj4gPg0KPiA+IC0JYnVmID0ga3phbGxvYyhyZWctPnNpemUsIEdGUF9L
-RVJORUwpOw0KPiA+ICsJYnVmID0ga3phbGxvYyhzcmNfYWRkciwgcmVnLT5zaXplLCBHRlBfS0VS
-TkVMKTsNCj4gTG9va3MgbGlrZSBhIHR5cG8gLSBrbWVtZHVwIGluc3RlYWQgb2Yga3phbGxvYz8N
-Cg0KV2hpY2ggaXMgd2h5IG1ha2luZyBidXR0ZXIgKGNodXJuaW5nKSBsaWtlIHRoaXMgaXMgbW9z
-dGx5IHBvaW50bGVzcy4NCkl0IGlzIHZlcnkgZWFzeSB0byBtYWtlIHNpbGx5IG1pc3Rha2VzLg0K
-DQoJRGF2aWQNCg0KLQ0KUmVnaXN0ZXJlZCBBZGRyZXNzIExha2VzaWRlLCBCcmFtbGV5IFJvYWQs
-IE1vdW50IEZhcm0sIE1pbHRvbiBLZXluZXMsIE1LMSAxUFQsIFVLDQpSZWdpc3RyYXRpb24gTm86
-IDEzOTczODYgKFdhbGVzKQ0K
 
+--rWhLK7VZz0iBluhq
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Tue, Dec 04, 2018 at 06:24:59AM +0000, Clark Wang wrote:
+
+> Add cs-gpio feature for LPSPI. Use fsl_lpspi_prepare_message() and
+> fsl_lpspi_unprepare_message() to enable and control cs line.
+> These two functions will be only called at the beginning and the ending
+> of a message transfer.
+
+> Still support using the mode without cs-gpio. It depends on if attribute
+> cs-gpio has been configured in dts file.
+
+Why is this not using the core support for GPIO chip selects?  Note that
+you can't just implement chip select in the prepare and unprepare,
+drivers can toggle chip select within a message so the code should be
+looking at the individual transfers to see if cs_change is set and
+acting accordingly.
+
+--rWhLK7VZz0iBluhq
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlwPyQIACgkQJNaLcl1U
+h9B2swf/VYU6sQbbpmrPoL0HsQRH99qUTf1tXQ6eoxj1gQV3T8Cir05pDhfjwOMX
+uzNvGECzeszzYfcKi/fvlJIbpIjHqFwE//pZHcvFaFROM2ir/VacYzz5V/+LCU2E
+CvU8rcxkNFsxPetafRX5c3O3kc6zixC7sfndIF/jzvtdUCjp+JWS18kA3RBif81Y
+5IZ5Q75SFckDPN+yHx2lx0Unf5PckD6fEygU8kYc+CgTHGj+C2wwkRVUbiTt0MTS
+lK30/mQ2u+i21wS1i1TKVLsCjJZDqF7nHKSCnYw5PEG16Z7tKOPSWVIuN9402rX4
+6AT+9x3/YQVyfchjU8s9yMUkRMXoFQ==
+=B20T
+-----END PGP SIGNATURE-----
+
+--rWhLK7VZz0iBluhq--
