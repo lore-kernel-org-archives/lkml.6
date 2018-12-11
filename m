@@ -2,55 +2,53 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EBADC07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:13:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C33E4C5CFFE
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:13:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 45A762084E
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:13:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 84D802084E
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:13:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544544827;
-	bh=8I7w2kTLF749tsFFtF2BFpPcyyvfsAEtDyn/5IMl3sM=;
+	s=default; t=1544544833;
+	bh=vfqo1mjiDcFmsOktgxpOcIX42ItJEtVoty1a3dFFIJw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=tFA/5kp2LsHOoCcHHF17sd0Gi+w3foc8DUohvJ89fPy+GCuIX01vSeaZ4B75N/0TX
-	 gJ2fWh7IEp5oVoUG3r6ff/iRinnKzKbGhjB7zyzaCrV0q2roHhNgRKFLRsDP90BGFP
-	 AgQNlSvKg54zyiQWloTiCtRZyEys/ObKuRD/CS1U=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 45A762084E
+	b=1KVcFYNM0ma4KQQqwJkzxlqGBkUK35Z7hSzUqp+fS5s27b98823AnpxWlq47KuVSQ
+	 KsxjSXxLIU/gSAbZ8FKub6P9nfL+4CwI7ETGPBKWf/HImaJkdBaM+AizpvjDjO4+Dt
+	 xlfyhWlyajUOjGFMZ74VaduTs5kyZBClgtAxw33g=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 84D802084E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729557AbeLKQNq (ORCPT
+        id S1729063AbeLKPta (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 11:13:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37972 "EHLO mail.kernel.org"
+        Tue, 11 Dec 2018 10:49:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37814 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729081AbeLKPtg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:49:36 -0500
+        id S1729010AbeLKPtZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 10:49:25 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0741F20989;
-        Tue, 11 Dec 2018 15:49:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 76F12208E7;
+        Tue, 11 Dec 2018 15:49:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544543375;
-        bh=8I7w2kTLF749tsFFtF2BFpPcyyvfsAEtDyn/5IMl3sM=;
+        s=default; t=1544543364;
+        bh=vfqo1mjiDcFmsOktgxpOcIX42ItJEtVoty1a3dFFIJw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NgcefV1VWNk86ql9rYjRBWE9MdF8dgO4BnTaBRia0IHkhpoKYmbhGx+nH2A3Jxjff
-         24rCK99HY0EWhlHlrp+gycvkdq6CZqSQ/ulfAVPBHIdVRavbiYxO1s3WU+fMowt9vG
-         EgMHUQB7fZMAYft+PSC9mVe0rAxrnUR3IFMAo9UI=
+        b=fdhXpvJMgK7V4DcYupqGoFhq6xsPfh+CgNCKivOVFBLgFmbJsTg1uJK7GToTSiCD3
+         xcTc9FdddYVU14X8f8UWb9nZJ3GV5t9jKpmASCNXxwMItLY8luswIH11RssF9v/n+e
+         s+auOvVFjGwaIK5q5O1smbmzyIjEFhGo1yFv/3yQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Benson Leung <bleung@chromium.org>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 06/51] HID: input: Ignore battery reported by Symbol DS4308
-Date:   Tue, 11 Dec 2018 16:41:14 +0100
-Message-Id: <20181211151613.131632173@linuxfoundation.org>
+        stable@vger.kernel.org, Alexander Theissen <alex.theissen@me.com>
+Subject: [PATCH 4.9 22/51] usb: appledisplay: Add 27" Apple Cinema Display
+Date:   Tue, 11 Dec 2018 16:41:30 +0100
+Message-Id: <20181211151615.053117632@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181211151612.328911565@linuxfoundation.org>
 References: <20181211151612.328911565@linuxfoundation.org>
@@ -69,56 +67,29 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 0fd791841a6d67af1155a9c3de54dea51220721e ]
+From: Alexander Theissen <alex.theissen@me.com>
 
-The Motorola/Zebra Symbol DS4308-HD is a handheld USB barcode scanner
-which does not have a battery, but reports one anyway that always has
-capacity 2.
+commit d7859905301880ad3e16272399d26900af3ac496 upstream.
 
-Let's apply the IGNORE quirk to prevent it from being treated like a
-power supply so that userspaces don't get confused that this
-accessory is almost out of power and warn the user that they need to charge
-their wired barcode scanner.
+Add another Apple Cinema Display to the list of supported displays.
 
-Reported here: https://bugs.chromium.org/p/chromium/issues/detail?id=804720
+Signed-off-by: Alexander Theissen <alex.theissen@me.com>
+Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Signed-off-by: Benson Leung <bleung@chromium.org>
-Reviewed-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/hid/hid-ids.h   | 1 +
- drivers/hid/hid-input.c | 3 +++
- 2 files changed, 4 insertions(+)
+ drivers/usb/misc/appledisplay.c |    1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/hid/hid-ids.h b/drivers/hid/hid-ids.h
-index 8913f357e78f..6f4c84d824e6 100644
---- a/drivers/hid/hid-ids.h
-+++ b/drivers/hid/hid-ids.h
-@@ -965,6 +965,7 @@
- #define USB_VENDOR_ID_SYMBOL		0x05e0
- #define USB_DEVICE_ID_SYMBOL_SCANNER_1	0x0800
- #define USB_DEVICE_ID_SYMBOL_SCANNER_2	0x1300
-+#define USB_DEVICE_ID_SYMBOL_SCANNER_3	0x1200
+--- a/drivers/usb/misc/appledisplay.c
++++ b/drivers/usb/misc/appledisplay.c
+@@ -64,6 +64,7 @@ static const struct usb_device_id appled
+ 	{ APPLEDISPLAY_DEVICE(0x921c) },
+ 	{ APPLEDISPLAY_DEVICE(0x921d) },
+ 	{ APPLEDISPLAY_DEVICE(0x9222) },
++	{ APPLEDISPLAY_DEVICE(0x9226) },
+ 	{ APPLEDISPLAY_DEVICE(0x9236) },
  
- #define USB_VENDOR_ID_SYNAPTICS		0x06cb
- #define USB_DEVICE_ID_SYNAPTICS_TP	0x0001
-diff --git a/drivers/hid/hid-input.c b/drivers/hid/hid-input.c
-index 5ff6dd8147b6..fc7ada26457e 100644
---- a/drivers/hid/hid-input.c
-+++ b/drivers/hid/hid-input.c
-@@ -324,6 +324,9 @@ static const struct hid_device_id hid_battery_quirks[] = {
- 	{ HID_BLUETOOTH_DEVICE(USB_VENDOR_ID_ELECOM,
- 		USB_DEVICE_ID_ELECOM_BM084),
- 	  HID_BATTERY_QUIRK_IGNORE },
-+	{ HID_USB_DEVICE(USB_VENDOR_ID_SYMBOL,
-+		USB_DEVICE_ID_SYMBOL_SCANNER_3),
-+	  HID_BATTERY_QUIRK_IGNORE },
- 	{}
- };
- 
--- 
-2.19.1
-
+ 	/* Terminating entry */
 
 
