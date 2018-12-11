@@ -7,52 +7,54 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8943FC07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:59:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1969EC5CFFE
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:59:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 53478205C9
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:59:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C86FD20855
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:59:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544543988;
-	bh=m+ulCkNmKM407BMsqM2mIyiq8hRNKYsFDUcZVTBrGZ4=;
+	s=default; t=1544543991;
+	bh=eo7v4Pzn8rLp8zNnvypSMEHm6w74bLzHYv4iW6w4g8s=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ITDYpR9eZT0jxzcpuOE5P4d+1JFW2Q/LThGB0wzHSe2h3CSSB2oz4w4kPGnaLZCnW
-	 Ep2Q1yxeYy5vp1ge8guV0s6pXUC/hi86/RIIJf/WGq/k1ZaT2F02W2KbXsJba0PSGR
-	 lD9+oEHEBn17GWNUORpnq1yid5eEZvEx85ybN2oE=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 53478205C9
+	b=U9bd9SPLsocl0cG4PpYmFkcMv9jeHggG1DZ46X7PhSbIWuoFz93K33qqUkrj1I56W
+	 ig4EJgkhk5/Sc5qnI/ZuoZ8JyrCZHgJhKSDpgWk3OI34EAa8yFVzOf8d3nQGxSwbQN
+	 xFx61562H/rcd2/TBIxEQf9KftATr4vhXOAsIX24=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C86FD20855
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731065AbeLKP6o (ORCPT
+        id S1731054AbeLKP6m (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 10:58:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48214 "EHLO mail.kernel.org"
+        Tue, 11 Dec 2018 10:58:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48162 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731048AbeLKP6l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:58:41 -0500
+        id S1731040AbeLKP6i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 10:58:38 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D9A09205C9;
-        Tue, 11 Dec 2018 15:58:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4E0C3208E7;
+        Tue, 11 Dec 2018 15:58:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544543920;
-        bh=m+ulCkNmKM407BMsqM2mIyiq8hRNKYsFDUcZVTBrGZ4=;
+        s=default; t=1544543917;
+        bh=eo7v4Pzn8rLp8zNnvypSMEHm6w74bLzHYv4iW6w4g8s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SmJqkKv/C8RQZNPiMhWA978LDImUVkZg7yr1bvqrlhQpYAhjTmTfPBuPUSK+QzMt2
-         l6yR39BobD8yDgmhXf7AlEZTqXvRqgHVqgHhEjmU8ssVgjTJ8NvTOprtKRqgr1f0fb
-         kVEIHYJW1DwYCdutZoQ+RLyKkVJQntB5juRy3h4k=
+        b=G6ZsgS1SGqSIBFvblwW0WitR6g14tQIQ0OdvboLbokr5ubvjTAmhqkyPF9EFTupBy
+         jEg0Tjfkf0bay/Cpt5BnITsFZNZE6+lk6dcUoFo3qgMKY/wQDnCQBrdYJyyQmHZpSx
+         xKzD+xx8WbkAOYA4CHXmY3Xp904s4l8QpW9CbfSY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        James Morse <james.morse@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>
-Subject: [PATCH 4.19 080/118] arm64: hibernate: Avoid sending cross-calling with interrupts disabled
-Date:   Tue, 11 Dec 2018 16:41:39 +0100
-Message-Id: <20181211151647.498633571@linuxfoundation.org>
+        syzbot+e3e074963495f92a89ed@syzkaller.appspotmail.com,
+        syzbot+d5a0a170c5069658b141@syzkaller.appspotmail.com,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        syzbot+bd391451452fb0b93039@syzkaller.appspotmail.com
+Subject: [PATCH 4.19 079/118] vhost/vsock: fix use-after-free in network stack callers
+Date:   Tue, 11 Dec 2018 16:41:38 +0100
+Message-Id: <20181211151647.450861711@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181211151644.216668863@linuxfoundation.org>
 References: <20181211151644.216668863@linuxfoundation.org>
@@ -71,55 +73,193 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Will Deacon <will.deacon@arm.com>
+From: Stefan Hajnoczi <stefanha@redhat.com>
 
-commit b4aecf78083d8c6424657c1746c7c3de6e61669f upstream.
+commit 834e772c8db0c6a275d75315d90aba4ebbb1e249 upstream.
 
-Since commit 3b8c9f1cdfc50 ("arm64: IPI each CPU after invalidating the
-I-cache for kernel mappings"), a call to flush_icache_range() will use
-an IPI to cross-call other online CPUs so that any stale instructions
-are flushed from their pipelines. This triggers a WARN during the
-hibernation resume path, where flush_icache_range() is called with
-interrupts disabled and is therefore prone to deadlock:
+If the network stack calls .send_pkt()/.cancel_pkt() during .release(),
+a struct vhost_vsock use-after-free is possible.  This occurs because
+.release() does not wait for other CPUs to stop using struct
+vhost_vsock.
 
-  | Disabling non-boot CPUs ...
-  | CPU1: shutdown
-  | psci: CPU1 killed.
-  | CPU2: shutdown
-  | psci: CPU2 killed.
-  | CPU3: shutdown
-  | psci: CPU3 killed.
-  | WARNING: CPU: 0 PID: 1 at ../kernel/smp.c:416 smp_call_function_many+0xd4/0x350
-  | Modules linked in:
-  | CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.20.0-rc4 #1
+Switch to an RCU-enabled hashtable (indexed by guest CID) so that
+.release() can wait for other CPUs by calling synchronize_rcu().  This
+also eliminates vhost_vsock_lock acquisition in the data path so it
+could have a positive effect on performance.
 
-Since all secondary CPUs have been taken offline prior to invalidating
-the I-cache, there's actually no need for an IPI and we can simply call
-__flush_icache_range() instead.
+This is CVE-2018-14625 "kernel: use-after-free Read in vhost_transport_send_pkt".
 
-Cc: <stable@vger.kernel.org>
-Fixes: 3b8c9f1cdfc50 ("arm64: IPI each CPU after invalidating the I-cache for kernel mappings")
-Reported-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-Tested-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-Tested-by: James Morse <james.morse@arm.com>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
+Cc: stable@vger.kernel.org
+Reported-and-tested-by: syzbot+bd391451452fb0b93039@syzkaller.appspotmail.com
+Reported-by: syzbot+e3e074963495f92a89ed@syzkaller.appspotmail.com
+Reported-by: syzbot+d5a0a170c5069658b141@syzkaller.appspotmail.com
+Signed-off-by: Stefan Hajnoczi <stefanha@redhat.com>
+Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+Acked-by: Jason Wang <jasowang@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm64/kernel/hibernate.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/vhost/vsock.c |   57 ++++++++++++++++++++++++++++----------------------
+ 1 file changed, 33 insertions(+), 24 deletions(-)
 
---- a/arch/arm64/kernel/hibernate.c
-+++ b/arch/arm64/kernel/hibernate.c
-@@ -214,7 +214,7 @@ static int create_safe_exec_page(void *s
+--- a/drivers/vhost/vsock.c
++++ b/drivers/vhost/vsock.c
+@@ -15,6 +15,7 @@
+ #include <net/sock.h>
+ #include <linux/virtio_vsock.h>
+ #include <linux/vhost.h>
++#include <linux/hashtable.h>
+ 
+ #include <net/af_vsock.h>
+ #include "vhost.h"
+@@ -27,14 +28,14 @@ enum {
+ 
+ /* Used to track all the vhost_vsock instances on the system. */
+ static DEFINE_SPINLOCK(vhost_vsock_lock);
+-static LIST_HEAD(vhost_vsock_list);
++static DEFINE_READ_MOSTLY_HASHTABLE(vhost_vsock_hash, 8);
+ 
+ struct vhost_vsock {
+ 	struct vhost_dev dev;
+ 	struct vhost_virtqueue vqs[2];
+ 
+-	/* Link to global vhost_vsock_list, protected by vhost_vsock_lock */
+-	struct list_head list;
++	/* Link to global vhost_vsock_hash, writes use vhost_vsock_lock */
++	struct hlist_node hash;
+ 
+ 	struct vhost_work send_pkt_work;
+ 	spinlock_t send_pkt_list_lock;
+@@ -50,11 +51,14 @@ static u32 vhost_transport_get_local_cid
+ 	return VHOST_VSOCK_DEFAULT_HOST_CID;
+ }
+ 
+-static struct vhost_vsock *__vhost_vsock_get(u32 guest_cid)
++/* Callers that dereference the return value must hold vhost_vsock_lock or the
++ * RCU read lock.
++ */
++static struct vhost_vsock *vhost_vsock_get(u32 guest_cid)
+ {
+ 	struct vhost_vsock *vsock;
+ 
+-	list_for_each_entry(vsock, &vhost_vsock_list, list) {
++	hash_for_each_possible_rcu(vhost_vsock_hash, vsock, hash, guest_cid) {
+ 		u32 other_cid = vsock->guest_cid;
+ 
+ 		/* Skip instances that have no CID yet */
+@@ -69,17 +73,6 @@ static struct vhost_vsock *__vhost_vsock
+ 	return NULL;
+ }
+ 
+-static struct vhost_vsock *vhost_vsock_get(u32 guest_cid)
+-{
+-	struct vhost_vsock *vsock;
+-
+-	spin_lock_bh(&vhost_vsock_lock);
+-	vsock = __vhost_vsock_get(guest_cid);
+-	spin_unlock_bh(&vhost_vsock_lock);
+-
+-	return vsock;
+-}
+-
+ static void
+ vhost_transport_do_send_pkt(struct vhost_vsock *vsock,
+ 			    struct vhost_virtqueue *vq)
+@@ -210,9 +203,12 @@ vhost_transport_send_pkt(struct virtio_v
+ 	struct vhost_vsock *vsock;
+ 	int len = pkt->len;
+ 
++	rcu_read_lock();
++
+ 	/* Find the vhost_vsock according to guest context id  */
+ 	vsock = vhost_vsock_get(le64_to_cpu(pkt->hdr.dst_cid));
+ 	if (!vsock) {
++		rcu_read_unlock();
+ 		virtio_transport_free_pkt(pkt);
+ 		return -ENODEV;
+ 	}
+@@ -225,6 +221,8 @@ vhost_transport_send_pkt(struct virtio_v
+ 	spin_unlock_bh(&vsock->send_pkt_list_lock);
+ 
+ 	vhost_work_queue(&vsock->dev, &vsock->send_pkt_work);
++
++	rcu_read_unlock();
+ 	return len;
+ }
+ 
+@@ -234,12 +232,15 @@ vhost_transport_cancel_pkt(struct vsock_
+ 	struct vhost_vsock *vsock;
+ 	struct virtio_vsock_pkt *pkt, *n;
+ 	int cnt = 0;
++	int ret = -ENODEV;
+ 	LIST_HEAD(freeme);
+ 
++	rcu_read_lock();
++
+ 	/* Find the vhost_vsock according to guest context id  */
+ 	vsock = vhost_vsock_get(vsk->remote_addr.svm_cid);
+ 	if (!vsock)
+-		return -ENODEV;
++		goto out;
+ 
+ 	spin_lock_bh(&vsock->send_pkt_list_lock);
+ 	list_for_each_entry_safe(pkt, n, &vsock->send_pkt_list, list) {
+@@ -265,7 +266,10 @@ vhost_transport_cancel_pkt(struct vsock_
+ 			vhost_poll_queue(&tx_vq->poll);
  	}
  
- 	memcpy((void *)dst, src_start, length);
--	flush_icache_range(dst, dst + length);
-+	__flush_icache_range(dst, dst + length);
+-	return 0;
++	ret = 0;
++out:
++	rcu_read_unlock();
++	return ret;
+ }
  
- 	pgdp = pgd_offset_raw(allocator(mask), dst_addr);
- 	if (pgd_none(READ_ONCE(*pgdp))) {
+ static struct virtio_vsock_pkt *
+@@ -533,10 +537,6 @@ static int vhost_vsock_dev_open(struct i
+ 	spin_lock_init(&vsock->send_pkt_list_lock);
+ 	INIT_LIST_HEAD(&vsock->send_pkt_list);
+ 	vhost_work_init(&vsock->send_pkt_work, vhost_transport_send_pkt_work);
+-
+-	spin_lock_bh(&vhost_vsock_lock);
+-	list_add_tail(&vsock->list, &vhost_vsock_list);
+-	spin_unlock_bh(&vhost_vsock_lock);
+ 	return 0;
+ 
+ out:
+@@ -577,9 +577,13 @@ static int vhost_vsock_dev_release(struc
+ 	struct vhost_vsock *vsock = file->private_data;
+ 
+ 	spin_lock_bh(&vhost_vsock_lock);
+-	list_del(&vsock->list);
++	if (vsock->guest_cid)
++		hash_del_rcu(&vsock->hash);
+ 	spin_unlock_bh(&vhost_vsock_lock);
+ 
++	/* Wait for other CPUs to finish using vsock */
++	synchronize_rcu();
++
+ 	/* Iterating over all connections for all CIDs to find orphans is
+ 	 * inefficient.  Room for improvement here. */
+ 	vsock_for_each_connected_socket(vhost_vsock_reset_orphans);
+@@ -620,12 +624,17 @@ static int vhost_vsock_set_cid(struct vh
+ 
+ 	/* Refuse if CID is already in use */
+ 	spin_lock_bh(&vhost_vsock_lock);
+-	other = __vhost_vsock_get(guest_cid);
++	other = vhost_vsock_get(guest_cid);
+ 	if (other && other != vsock) {
+ 		spin_unlock_bh(&vhost_vsock_lock);
+ 		return -EADDRINUSE;
+ 	}
++
++	if (vsock->guest_cid)
++		hash_del_rcu(&vsock->hash);
++
+ 	vsock->guest_cid = guest_cid;
++	hash_add_rcu(vhost_vsock_hash, &vsock->hash, guest_cid);
+ 	spin_unlock_bh(&vhost_vsock_lock);
+ 
+ 	return 0;
 
 
