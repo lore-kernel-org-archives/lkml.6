@@ -2,129 +2,127 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97E34C67839
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 22:09:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA7F1C6783B
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 22:11:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 511722084E
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 22:09:44 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="lYedVqQZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 511722084E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=googlemail.com
+	by mail.kernel.org (Postfix) with ESMTP id 6CE9A2084E
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 22:11:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544566290;
+	bh=fbY5cy91EnG1bmyjTBblCjvp0IKwuuin+q2Xmjlhlbg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=KoLaK323pgUdiyrqBC40k9QVTNw+j/OemKqxNXYqFsk7i740o9Hl/kJQAxaG+PLcr
+	 PtGS4Tvj06AYydIiS49Td7fhYl/9jdtG23sAPHN0ilSV727vXWjtT8hHyJ/lQuZ5aw
+	 OeimD+kROTpcoVztHH+gvEXVDuwC4JUC6oRJ2RlA=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6CE9A2084E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726276AbeLKWJn (ORCPT
+        id S1726248AbeLKWL3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 17:09:43 -0500
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:35831 "EHLO
+        Tue, 11 Dec 2018 17:11:29 -0500
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:43698 "EHLO
         mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726146AbeLKWJn (ORCPT
+        with ESMTP id S1726146AbeLKWL3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 17:09:43 -0500
-Received: by mail-oi1-f196.google.com with SMTP id v6so13402078oif.2;
-        Tue, 11 Dec 2018 14:09:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=eI5IGdZLbihoM1JpOCBJmDZFFsM5cSSnLSPPgCxAhxk=;
-        b=lYedVqQZ3hqB7908uJavjK0ActWFskQNhfRu/+U8sFPEicionz+F4zXfkoBWB7MTMv
-         nrpTV249UI8OByccj+DNfZJ5xnMuEXGYE4F36ZwtOALheYYEtd8ornGZyAwNvsXKw6nB
-         OI0ufxjbfmFQ2JDHaFLSAK/hmv7+senKJrKhyeNvWpWXDUKkiGwVzJTxaRz3wdVjD4hp
-         NmDDJmKtN2Azl/2TUzYP8vVcdYr2sm4kq5PLlO/n+p+KBi5IIn4sybbYSwuDiUNimUMq
-         4W1erBZT5etP3t4ANa42ek3Q6kczPK65Xkl1UxFHoN7f7V6QWiugpOfFGoudCfCkNS82
-         WdOA==
+        Tue, 11 Dec 2018 17:11:29 -0500
+Received: by mail-oi1-f196.google.com with SMTP id u18so13370972oie.10;
+        Tue, 11 Dec 2018 14:11:28 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=eI5IGdZLbihoM1JpOCBJmDZFFsM5cSSnLSPPgCxAhxk=;
-        b=ARmmPSxRvxzBkL/vy5QPvXquF95UAMRz1ODsTgY3JWZODXHNzdMMJ+dgzCoB71A2FE
-         ifHzwD68xP754z0Ifunq//bkQ4wZ8HS9M+r+65ZV0/hep07eqZ5k82z7o6clwSsf/6WS
-         gzgWRsvcbouDP/06DKjtmKSkUU9M7YO5+ZWQi1eELiM0tvOXS+AHbROal9u8uRS4mfgW
-         pPUS78CUFqTjlMcqiNLiFVJ+nGwsvP+EBLf6pH8uoNbUwj4Ga75qkOkXgvUbV2tqKKoW
-         kVGxccUi9Fek0EYQ4/5jftq6M5ecNGwInwzS0A68g3Z+smQRpX0zEba4/8P4LYBAvoLr
-         CL9w==
-X-Gm-Message-State: AA+aEWYng5QBPLasXs+SrLw6pe3NuJNEHrc0XHUixDkXHkpRsBeTIXp7
-        gasa7Svc4U1DCBe4ZntX6GEwMdbYElxt6pLskMo=
-X-Google-Smtp-Source: AFSGD/Wd/Z4vd02AtSBwuc1xmWjmPFLv8kqXsfTFz7+LnpbfgEAjbmcFHJYvFjMlfJ1RZphs6yginarIxzFkIPWxYhY=
-X-Received: by 2002:aca:4ace:: with SMTP id x197mr2461612oia.129.1544566181810;
- Tue, 11 Dec 2018 14:09:41 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=UwTLHImGnhHPqQHRWYwLA7kWhbAY2YbRVPBJsH9MFtU=;
+        b=OmYCZrqbogl/Okhpc3Fc1YgnM0rrrsbezNgrLimNXqs7KrpfdnPNtOz9eUOrnn4VDz
+         CYKXrOTlm+z7nWDisABRs0i6hRYGp932cgr4IUqbn8CxWmIPYZjneGYurhT42Oj51DP4
+         75l6Q3W0n6UDB2n1f0KW8yDP0PhbawFZmfUpqATkAE7rXnZ208aKvbBjg/MgQt5qr7wn
+         9aKC7M46x3EVwt7E9sJfzYDVzp1Om6jB7w3uCUnBuVo07/2rJBRtEkyeA1wy30Bo2f9E
+         qXjg2ZPeGnpa+jAx+alvE2Fn2iMHTQhDjUnxWD+EJ88D11I7LPYCfiCNinJJ9GPKMS4Z
+         H0pA==
+X-Gm-Message-State: AA+aEWaLNWGbdaG5a3MODOze5g1pVqxWhzATKmpvNFbBjLfshtXUSQls
+        wGAtJy7W2X6HfUuCHwhzcA==
+X-Google-Smtp-Source: AFSGD/UVExkZpPnBEaIgAWnBNp941HLGB5GRhCYdoLZJYVZP1bICVPTeiyJbfIqZVL09xz0VbZYgYg==
+X-Received: by 2002:aca:3209:: with SMTP id y9mr2199847oiy.198.1544566287736;
+        Tue, 11 Dec 2018 14:11:27 -0800 (PST)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id d3sm7369982otb.79.2018.12.11.14.11.26
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 11 Dec 2018 14:11:26 -0800 (PST)
+Date:   Tue, 11 Dec 2018 16:11:26 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Icenowy Zheng <icenowy@aosc.io>
+Cc:     Jernej Skrabec <jernej.skrabec@siol.net>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        David Airlie <airlied@linux.ie>,
+        Mark Rutland <mark.rutland@arm.com>,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH 2/2] dt-bindings: gpu: add Allwinner H6 Mali Midgard
+ binding
+Message-ID: <20181211221126.GA12250@bogus>
+References: <20181127074249.15204-1-icenowy@aosc.io>
+ <20181127074249.15204-2-icenowy@aosc.io>
 MIME-Version: 1.0
-References: <20181208165025.27689-1-martin.blumenstingl@googlemail.com> <ba3e4fef-7a18-8c7d-e0ea-05c541b29913@baylibre.com>
-In-Reply-To: <ba3e4fef-7a18-8c7d-e0ea-05c541b29913@baylibre.com>
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date:   Tue, 11 Dec 2018 23:09:30 +0100
-Message-ID: <CAFBinCBYBAqtKp_edgs6b44MpOhc-iN_FwR425bkU4xirGQKvA@mail.gmail.com>
-Subject: Re: [PATCH v2 0/3] ARM: dts: meson: add the APB/APB2 busses
-To:     Neil Armstrong <narmstrong@baylibre.com>
-Cc:     linux-amlogic@lists.infradead.org, khilman@baylibre.com,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181127074249.15204-2-icenowy@aosc.io>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Neil,
+On Tue, Nov 27, 2018 at 03:42:49PM +0800, Icenowy Zheng wrote:
+> Allwinner H6 SoC uses a Mali T720 GPU, which is one of the GPUs in the
+> Midgard GPU product line.
+> 
+> Add binding for the H6 Mali Midgard GPU.
+> 
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+> ---
+>  .../devicetree/bindings/gpu/arm,mali-midgard.txt    | 13 +++++++++++++
+>  1 file changed, 13 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/gpu/arm,mali-midgard.txt b/Documentation/devicetree/bindings/gpu/arm,mali-midgard.txt
+> index 02f870cd60e6..c897dd7be48f 100644
+> --- a/Documentation/devicetree/bindings/gpu/arm,mali-midgard.txt
+> +++ b/Documentation/devicetree/bindings/gpu/arm,mali-midgard.txt
+> @@ -18,6 +18,7 @@ Required properties:
+>      + "amlogic,meson-gxm-mali"
+>      + "rockchip,rk3288-mali"
+>      + "rockchip,rk3399-mali"
+> +    + "allwinner,sun50i-h6-mali"
+>  
+>  - reg : Physical base address of the device and length of the register area.
+>  
+> @@ -44,6 +45,18 @@ Optional properties:
+>    for details.
+>  
+>  
+> +Vendor-specific bindings
+> +------------------------
+> +
+> +The Mali GPU is integrated very differently from one SoC to
+> +another. In order to accomodate those differences, you have the option
 
-On Tue, Dec 11, 2018 at 10:16 AM Neil Armstrong <narmstrong@baylibre.com> wrote:
->
-> On 08/12/2018 17:50, Martin Blumenstingl wrote:
-> > This adds the APB bus on Meson8 and Meson8b as well as the APB2 bus on
-> > Meson6. This is preparation work for adding the Mali GPU which is
-> > located on theses busses.
-> >
-> > Meson6 seems to have it's APB at 0xc8000000 instead of 0xd0000000. The
-> > region at 0xd0000000 is called APB2 or A9_APB and it has a different
-> > size (256k) compared to Meson8 and Meson8b (2M).
-> >
-> > Addresses and sizes are taken from the Amlogic 3.10 kernel sources:
-> > - Meson6: [0]
-> > - Meson8: [1]
-> > - Meson8b: [2]
-> >
-> >
-> > Changes since v1 at [3]:
-> > - re-send the patches but this time don't include the old patches
-> >   which still had a typo in the patch description (ABP vs APB)
-> >
-> >
-> > [0] https://github.com/endlessm/linux-meson/blob/cd4096c3ff4eb5b8a8a5581bb46508601c5470dc/arch/arm/mach-meson6/include/mach/io.h#L61
-> > [1] https://github.com/endlessm/linux-meson/blob/cd4096c3ff4eb5b8a8a5581bb46508601c5470dc/arch/arm/mach-meson8/include/mach/io.h#L53
-> > [2] https://github.com/endlessm/linux-meson/blob/cd4096c3ff4eb5b8a8a5581bb46508601c5470dc/arch/arm/mach-meson8b/include/mach/io.h#L53
-> > [3] http://lists.infradead.org/pipermail/linux-amlogic/2018-December/009424.html
-> >
-> >
-> > Martin Blumenstingl (3):
-> >   ARM: dts: meson6: add the APB2 bus
-> >   ARM: dts: meson8: add the APB bus
-> >   ARM: dts: meson8b: add the APB bus
-> >
-> >  arch/arm/boot/dts/meson6.dtsi  | 8 ++++++++
-> >  arch/arm/boot/dts/meson8.dtsi  | 8 ++++++++
-> >  arch/arm/boot/dts/meson8b.dtsi | 8 ++++++++
-> >  3 files changed, 24 insertions(+)
-> >
->
-> Reviewed-by: Neil Armstrong <narmstrong@baylibre.com>
-thank you for taking the time to review this!
+WARNING: 'accomodate' may be misspelled - perhaps 'accommodate'?                                                      
+#50: FILE: Documentation/devicetree/bindings/gpu/arm,mali-midgard.txt:52:                                             
 
-> But frankly I'll squash the meson8/meson8b patches with the mali node patches !
-I didn't do this because I realized that there are different busses
-between Meson6 and Meson8/Meson8b. so I wanted to have a commit
-message which describes this.
-if you prefer I can still squash the Meson8 and Meson8b patches into
-their corresponding GPU .dts patch but I would like to keep the Meson6
-patch (as I'm not planning to add the Mali GPU until someone can
-actually test it on that SoC)
-
-
-Regards
-Martin
+> +to specify one more vendor-specific compatible, among:
+> +
+> +  - allwinner,sun50i-h6-mali
+> +    Required properties:
+> +      * resets: phandle to the reset line for the GPU
+> +
+> +
+>  Example for a Mali-T760:
+>  
+>  gpu@ffa30000 {
+> -- 
+> 2.18.1
+> 
