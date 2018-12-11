@@ -2,79 +2,209 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3784C07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 11:13:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 672F8C07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 11:18:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A4A8220849
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 11:13:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544526802;
-	bh=CKjsjZUyOJXW33h2HbkaXJ2rcsiboFHzVLHGKme2a9Y=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=kqt37mP97FuNmU7JTNIBMGtNlmMTZvP8r6YsESXYRtUXjVbWyTx28XAt8aTJBPL3j
-	 2cl21hsSfZysDJqSQdeEiuZ0vjj7RhaWqmBiCE2R/By0jsLENHbj7RoaVuLmCqrwVN
-	 ia+7TO/hrqa6c3f5WcLBlfyBaMPT4IC68VpRMeeA=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A4A8220849
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 2E87D20849
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 11:18:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E87D20849
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726365AbeLKLNV (ORCPT
+        id S1726281AbeLKLSP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 06:13:21 -0500
-Received: from mx2.suse.de ([195.135.220.15]:40036 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726125AbeLKLNV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 06:13:21 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 40FDFABC1;
-        Tue, 11 Dec 2018 11:13:19 +0000 (UTC)
-Date:   Tue, 11 Dec 2018 12:13:18 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Ingo Molnar <mingo@kernel.org>, linux-mm@kvack.org, bp@suse.de,
-        pasha.tatashin@soleen.com, linux-kernel@vger.kernel.org,
-        dave.hansen@intel.com, torvalds@linux-foundation.org,
-        hpa@zytor.com, jkosina@suse.cz, ak@linux.intel.com,
-        linux-tip-commits@vger.kernel.org
-Subject: Re: [tip:x86/pti] x86/speculation/l1tf: Drop the swap storage limit
- restriction when l1tf=off
-Message-ID: <20181211111318.GH1286@dhcp22.suse.cz>
-References: <20181113184910.26697-1-mhocko@kernel.org>
- <tip-f4abaa98c4575cc06ea5e1a593e3bc2c8de8ef48@git.kernel.org>
- <20181211090056.GA30493@gmail.com>
- <alpine.DEB.2.21.1812111147300.8611@nanos.tec.linutronix.de>
+        Tue, 11 Dec 2018 06:18:15 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:46954 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726170AbeLKLSP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 06:18:15 -0500
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: eballetbo)
+        with ESMTPSA id 02A52263BCE
+Subject: Re: [PATCH v3 7/8] platform/chrome: cros_ec_lightbar: instantiate
+ only if the EC has a lightbar.
+To:     Guenter Roeck <groeck@google.com>
+Cc:     Lee Jones <lee.jones@linaro.org>,
+        Gwendal Grignou <gwendal@chromium.org>,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Guenter Roeck <groeck@chromium.org>, kernel@collabora.com,
+        Benson Leung <bleung@chromium.org>,
+        Olof Johansson <olof@lixom.net>
+References: <20181127121849.23975-1-enric.balletbo@collabora.com>
+ <20181127121849.23975-8-enric.balletbo@collabora.com>
+ <CABXOdTfagM6sRWYMNs3cEwtjvOe8LVvmZ6=0LfBueT7JJzw-MQ@mail.gmail.com>
+From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Message-ID: <be4b375e-32dd-4b62-f04b-e66c2f6092db@collabora.com>
+Date:   Tue, 11 Dec 2018 12:18:10 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1812111147300.8611@nanos.tec.linutronix.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CABXOdTfagM6sRWYMNs3cEwtjvOe8LVvmZ6=0LfBueT7JJzw-MQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 11-12-18 11:47:52, Thomas Gleixner wrote:
-> On Tue, 11 Dec 2018, Ingo Molnar wrote:
-> > >    off		Disables hypervisor mitigations and doesn't emit any
-> > >  		warnings.
-> > > +		It also drops the swap size and available RAM limit restrictions
-> > > +                on both hypervisor and bare metal.
-> > > +
-> > 
-> > Note tha there's also some whitespace damage here: all other similar 
-> > lines in this RST file start with two tabs, this one starts with 8 
-> > spaces.
+
+
+On 10/12/18 19:20, Guenter Roeck wrote:
+> On Tue, Nov 27, 2018 at 4:19 AM Enric Balletbo i Serra
+> <enric.balletbo@collabora.com> wrote:
+>>
+>> Due to the way attribute groups visibility work, the function
+>> cros_ec_lightbar_attrs_are_visible is called multiple times, once per
+>> attribute, and each of these calls makes an EC transaction. For what is
+>> worth the EC log reports multiple errors on boot when the lightbar is
+>> not available. Instead, check if the EC has a lightbar in the probe
+>> function and only instantiate the device.
+>>
+>> Ideally we should have instantiate the driver only if the
+>> EC_FEATURE_LIGHTBAR is defined, but that's not possible because that flag
+>> is not in the very first Pixel Chromebook (Link), only on Samus. So, the
+>> driver is instantiated by his parent always.
+>>
+>> This patch changes a bit the actual behaviour. Before the patch if an EC
+>> doesn't have a lightbar an empty lightbar folder is created in
+>> /sys/class/chromeos/<ec device>, after the patch the empty folder is not
+>> created, so, the folder is only created if the lightbar exists.
+>>
+>> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 > 
-> Fixed...
+> Nitpicks, otherwise
+> 
+> Reviewed-by: Guenter Roeck <groeck@chromium.org>
+> 
+>> ---
+>>
+>> Changes in v3: None
+>> Changes in v2:
+>> - Removed ec_with_lightbar variable.
+>>
+>>  drivers/platform/chrome/cros_ec_lightbar.c | 37 ++++++++--------------
+>>  1 file changed, 13 insertions(+), 24 deletions(-)
+>>
+>> diff --git a/drivers/platform/chrome/cros_ec_lightbar.c b/drivers/platform/chrome/cros_ec_lightbar.c
+>> index 80eed6317570..6f6a4cbfc3fc 100644
+>> --- a/drivers/platform/chrome/cros_ec_lightbar.c
+>> +++ b/drivers/platform/chrome/cros_ec_lightbar.c
+>> @@ -43,7 +43,6 @@ static unsigned long lb_interval_jiffies = 50 * HZ / 1000;
+>>   * If this is true, we won't do anything during suspend/resume.
+>>   */
+>>  static bool userspace_control;
+>> -static struct cros_ec_dev *ec_with_lightbar;
+>>
+>>  static ssize_t interval_msec_show(struct device *dev,
+>>                                   struct device_attribute *attr, char *buf)
+>> @@ -381,9 +380,6 @@ static int lb_manual_suspend_ctrl(struct cros_ec_dev *ec, uint8_t enable)
+>>         struct cros_ec_command *msg;
+>>         int ret;
+>>
+>> -       if (ec != ec_with_lightbar)
+>> -               return 0;
+>> -
+>>         msg = alloc_lightbar_cmd_msg(ec);
+>>         if (!msg)
+>>                 return -ENOMEM;
+>> @@ -567,37 +563,26 @@ static struct attribute *__lb_cmds_attrs[] = {
+>>         NULL,
+>>  };
+>>
+>> -static bool ec_has_lightbar(struct cros_ec_dev *ec)
+>> +static bool cros_ec_has_lightbar(struct cros_ec_dev *ec_dev)
+>>  {
+>> -       return !!get_lightbar_version(ec, NULL, NULL);
+>> -}
+>> -
+>> -static umode_t cros_ec_lightbar_attrs_are_visible(struct kobject *kobj,
+>> -                                                 struct attribute *a, int n)
+>> -{
+>> -       struct device *dev = container_of(kobj, struct device, kobj);
+>> -       struct cros_ec_dev *ec = to_cros_ec_dev(dev);
+>> -       struct platform_device *pdev = to_platform_device(ec->dev);
+>> +       struct platform_device *pdev = to_platform_device(ec_dev->dev);
+>>         struct cros_ec_platform *pdata = pdev->dev.platform_data;
+>>         int is_cros_ec;
+>>
+>>         is_cros_ec = strcmp(pdata->ec_name, CROS_EC_DEV_NAME);
+>>
+>>         if (is_cros_ec != 0)
+>> -               return 0;
+>> +               return false;
+>>
+> FWIW, is_cros_ec is really unnecessary here, though I guess that might
+> be a different patch.
+> 
+>> -       /* Only instantiate this stuff if the EC has a lightbar */
+>> -       if (ec_has_lightbar(ec)) {
+>> -               ec_with_lightbar = ec;
+>> -               return a->mode;
+>> -       }
+>> -       return 0;
+>> +       if (!!get_lightbar_version(ec_dev, NULL, NULL))
+>> +               return true;
+>> +
+>> +       return false;
+> 
+> Why not just the following ?
+>             return !!get_lightbar_version(ec_dev, NULL, NULL);
+> or even
+>             return !strcmp(pdata->ec_name, CROS_EC_DEV_NAME) &&
+>                       !!get_lightbar_version(ec_dev, NULL, NULL);
+> 
 
-Thanks Thomas! I haven't noticed a different whitespaces and relied on
-whatever vim decided to do.
+Ack, I think that we can get rid of the cros_ec_has_lightbar function then. I'll
+do in next version.
 
--- 
-Michal Hocko
-SUSE Labs
+Thanks,
+ Enric
+
+>>  }
+>>
+>>  struct attribute_group cros_ec_lightbar_attr_group = {
+>>         .name = "lightbar",
+>>         .attrs = __lb_cmds_attrs,
+>> -       .is_visible = cros_ec_lightbar_attrs_are_visible,
+>>  };
+>>
+>>  static int cros_ec_lightbar_probe(struct platform_device *pd)
+>> @@ -606,6 +591,10 @@ static int cros_ec_lightbar_probe(struct platform_device *pd)
+>>         struct device *dev = &pd->dev;
+>>         int ret;
+>>
+>> +       /* Only instantiate this stuff if the EC has a lightbar */
+>> +       if (!cros_ec_has_lightbar(ec_dev))
+>> +               return -ENODEV;
+>> +
+>>         /* Take control of the lightbar from the EC. */
+>>         lb_manual_suspend_ctrl(ec_dev, 1);
+>>
+>> @@ -635,7 +624,7 @@ static int __maybe_unused cros_ec_lightbar_resume(struct device *dev)
+>>  {
+>>         struct cros_ec_dev *ec_dev = dev_get_drvdata(dev);
+>>
+>> -       if (userspace_control || ec_dev != ec_with_lightbar)
+>> +       if (userspace_control)
+>>                 return 0;
+>>
+>>         return lb_send_empty_cmd(ec_dev, LIGHTBAR_CMD_RESUME);
+>> @@ -645,7 +634,7 @@ static int __maybe_unused cros_ec_lightbar_suspend(struct device *dev)
+>>  {
+>>         struct cros_ec_dev *ec_dev = dev_get_drvdata(dev);
+>>
+>> -       if (userspace_control || ec_dev != ec_with_lightbar)
+>> +       if (userspace_control)
+>>                 return 0;
+>>
+>>         return lb_send_empty_cmd(ec_dev, LIGHTBAR_CMD_SUSPEND);
+>> --
+>> 2.19.1
+>>
