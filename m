@@ -2,161 +2,186 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BDAADC6783B
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 22:46:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92735C67839
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 22:46:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B94C20672
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 22:46:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5BC6A20672
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 22:46:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="mOksNH0G"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B94C20672
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amd.com
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="DwEGluDT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5BC6A20672
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726776AbeLKWqX (ORCPT
+        id S1726514AbeLKWnr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 17:46:23 -0500
-Received: from mail-eopbgr720046.outbound.protection.outlook.com ([40.107.72.46]:34114
-        "EHLO NAM05-CO1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726361AbeLKWqU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 17:46:20 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=CumKVzNJIVp3sFfpHVZSP953H8JPy5OIFTFWZUlbY1I=;
- b=mOksNH0GcPfrwUSuGS1cRHzhiu5aTCrHN3rn0HYgBoXKCAbQ96Hf7woL66qRrQE0v3vNuB/TgyddZ9J3frUPDrBPNhQZRwEAqM5DY6TbJAm4xHCiVCzAddFEfWIboiraypI8j5EYT3UcRljY1f/aLCpL10xdjsiNvocH9mPq1eI=
-Received: from SN1PR12MB0175.namprd12.prod.outlook.com (10.162.3.15) by
- SN1PR12MB2445.namprd12.prod.outlook.com (52.132.195.148) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1425.19; Tue, 11 Dec 2018 22:46:17 +0000
-Received: from SN1PR12MB0175.namprd12.prod.outlook.com
- ([fe80::bc0e:7f7f:ee65:e2d5]) by SN1PR12MB0175.namprd12.prod.outlook.com
- ([fe80::bc0e:7f7f:ee65:e2d5%6]) with mapi id 15.20.1425.016; Tue, 11 Dec 2018
- 22:46:17 +0000
-From:   "Lendacky, Thomas" <Thomas.Lendacky@amd.com>
-To:     "x86@kernel.org" <x86@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     Andrea Arcangeli <aarcange@redhat.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Jiri Kosina <jkosina@suse.cz>, Ingo Molnar <mingo@redhat.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        David Woodhouse <dwmw@amazon.co.uk>
-Subject: [PATCH v2] x86/speculation: Add support for STIBP always-on preferred
- mode
-Thread-Topic: [PATCH v2] x86/speculation: Add support for STIBP always-on
- preferred mode
-Thread-Index: AQHUkaNTNctPywnCTEqVxIZjhKo+lQ==
-Date:   Tue, 11 Dec 2018 22:46:16 +0000
-Message-ID: <20181211224615.5373.65736.stgit@tlendack-t1.amdoffice.net>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: SN4PR0201CA0055.namprd02.prod.outlook.com
- (2603:10b6:803:20::17) To SN1PR12MB0175.namprd12.prod.outlook.com
- (2a01:111:e400:5143::15)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Thomas.Lendacky@amd.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [165.204.77.1]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;SN1PR12MB2445;20:S22ogREjwXjOPovUb0cPYNPuwA6l941tV0wCSNvroG2O8uS/2ZovdyzqM+gLUMMHLPp7vw9c/SR9N4uMNc7nTRsP1Iui4fV8pT/laHJCAaNVv+jsRCcrOG86ogIehedWmOozAZGdkhkGfFCLGBZVNuOQmPZ3NRY3DSmK+ofvsnlaLh8W+DEQx6zh7b3a3X5VOHmqo49RcTJaoqcmCoc7u3hSMwGYsJiRDKJhIJORlrwbP2DA7kdM607/xILc25mo
-x-ms-office365-filtering-correlation-id: 8d7c8a71-e271-4fb0-5693-08d65fba75db
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:SN1PR12MB2445;
-x-ms-traffictypediagnostic: SN1PR12MB2445:
-x-microsoft-antispam-prvs: <SN1PR12MB24458608CC65212FE2D118CEECA60@SN1PR12MB2445.namprd12.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(823302103)(3002001)(10201501046)(3231455)(999002)(944501520)(52105112)(93006095)(93001095)(6055026)(148016)(149066)(150057)(6041310)(20161123562045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123560045)(201708071742011)(7699051)(76991095);SRVR:SN1PR12MB2445;BCL:0;PCL:0;RULEID:;SRVR:SN1PR12MB2445;
-x-forefront-prvs: 08831F51DC
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(346002)(136003)(39860400002)(396003)(366004)(199004)(189003)(81156014)(71200400001)(316002)(8676002)(8936002)(81166006)(54906003)(71190400001)(476003)(6506007)(478600001)(7416002)(486006)(110136005)(99286004)(4326008)(386003)(52116002)(68736007)(2906002)(97746001)(33896004)(256004)(14444005)(7736002)(86362001)(97736004)(102836004)(186003)(26005)(6486002)(5660300001)(9686003)(1076002)(6512007)(305945005)(14454004)(66066001)(6436002)(3846002)(103116003)(53936002)(2501003)(6116002)(72206003)(106356001)(25786009)(105586002);DIR:OUT;SFP:1101;SCL:1;SRVR:SN1PR12MB2445;H:SN1PR12MB0175.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: amd.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: +hGrp9Jb3zc4KrFzqNJ12Cwd1M7x2ewpkBVp+BwPL3AYChXSpYweP3TMsKXf3ku2F4pi1UuCYsdHba+qF6jasUK3neOICqeU019qJCouFW0fXWG7z6NQmRIrKGFB3Of9uGOLBbx/jUNAZ+1G3eICbGe/P5dQVkCRqzh01LonDJCLdqfIKAfmRmZkXNtO94U6x0JMTv/qJbWbYuA0tH0JTzAhiyEVBApCl5Nxg/NuzP7A9FfUoADdYAkZ/wSlYyIhUj1pUyMG2epuV4zNLlUWIJXNJp75vNTITzrf1GuslsILE+IGxCo3zJxB7Z2dW7Fu
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <0A76A1C96716C144A7102BD39F6F412A@namprd12.prod.outlook.com>
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8d7c8a71-e271-4fb0-5693-08d65fba75db
-X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Dec 2018 22:46:16.8340
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN1PR12MB2445
+        Tue, 11 Dec 2018 17:43:47 -0500
+Received: from sonic316-27.consmr.mail.ne1.yahoo.com ([66.163.187.153]:44056
+        "EHLO sonic316-27.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726430AbeLKWnm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 17:43:42 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1544568220; bh=a++z2bUg74Xtmo8a+aMA0NUOSVK7svmlbVVJIsC9OCg=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject; b=DwEGluDT77Omo+R6s/jjW4wD/FSRBNAWD9giQ4ZkVsURZdaqjOQYWwex/oxohw61ZnVd67m8/qTQHz5QdwLVdVUiy8UeaaOJyd1xQ69Tga9gCxF2cypWwFeUrHAnaFTXS4/IJfvxAcBUkoRqApaP4exSS0bPt9Lp2qYnFmj+XByPR1YVbOV9WnvabvMK2uepdK3lAF/17wDwYbu/HwC26SCiMBcwDWDpJsj556P5JvwI/sX2xHvOu+le3eelw6lrEoAZWw7DOt7mcZjQf9fR5JrV7VCsfyL5Wk4LMbB3w6Jbm6CgnhlLqNa8oaI3YOSMFA00oaF1wii7LPYF7CrFBQ==
+X-YMail-OSG: .cfjY9QVM1kdj7XDqF8gYjCvTdRL_BB4SG3ip0BrPkZDlwL3F3dwvGoMySs8_0c
+ fNNG7VkW_DIMO6_xmaNkOwwDJsDgXgiL5IIxH5WUd9SRGaXBTwEtG2W7yEWZcvbr7dkAV_WFQ1jH
+ m7VhR.htBkM8eoBHGOi8nrRt1hJvztqEnRTmlfrv0avr_zgSddf0_yKiIFhPyTcnSnEcGdF3b2BC
+ Ojwo_X4Q45Pl5IjIqtAYYXttiI52ad.GIDAiRuQT2VlZLkYKNcKfYPGP1w3sdbpBODx2S0lkTbTa
+ NqjiEe_wsaEfVQYIcDEGJ5WxisYsO_O5D90vXFZBWspAGsSSYaxdluBX20pG1cDPIMHxQvQipd6C
+ TQ.T_bp5NldHqgCWOe2su29fbe2SVWUqOBFOqcbAIlCkl2JrNqSzBsVj2oi5MdVnLQbTMSiIrqsg
+ jWjPDHRmPEEJHlDZjxXYcxv3dcNv4oV4jKMkTY5JRUvRaQeM6Ldw2Nd7r7CTi4BVSqc8efsbA24.
+ qpheWWbDiimM7pXtMUhaUleHfSdYDwp99dyczi6ZllYOqkyVfqKStP6F8oyLPgdGF.pua5dEmG2r
+ IU71rpRNeWpJ00WZvutsJ85b5roq8nYjSbYjxcI0eLgs2zx487_148VP4NQ9wkRJ56r158WfnQ31
+ i4axlw8ehykQKh3kz4Uc8rkjJXX0l1.jk.vzr95NUyqFGAkFUgFcmOretXdvF8UXzWuDDu_7IKqP
+ 6Cz3JzJ2k_jHGI.brIG5ti4WG5iVGzn.2WXfTAA67gwlOFx7XS0ucE_McWedllAIMvP953LHUdB3
+ baRnwVShF0HlyvibazAUFWTBsGjgyhD5h4vAsmX7leyklWLBgaV8U__rtIRbtFb7se7sKStCF73g
+ OugWk7FLQjKKmBHL9EMWD8GI.8lj8gtJbzJQUtXqRLFYr5jh55jOkJQIISOyi4Y9Xyg8vNO8NAhg
+ nh6TR7chlpvPmluaMgFnXsGx5XnPDuMUJHpHU3ezMKawUVBpI5_L3MCaw3XRfgI87FtC_3Ubpcjn
+ MzJC4j4BvGTqKqJ5nfI4RHuypBMxeK6VfJy9Gv46BmFycBtOnZkJ.tTI4nV8CMOxZ9u7xjNxnkMf
+ J7lDduow9n4ahlyktamvrEKilpLCMFd2rf1LQpynRBUU-
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic316.consmr.mail.ne1.yahoo.com with HTTP; Tue, 11 Dec 2018 22:43:40 +0000
+Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO localhost.localdomain) ([67.169.65.224])
+          by smtp408.mail.ne1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID d92a2db682ecd2e464273bda9352fd0e;
+          Tue, 11 Dec 2018 22:43:35 +0000 (UTC)
+From:   Casey Schaufler <casey@schaufler-ca.com>
+To:     jmorris@namei.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, selinux@vger.kernel.org
+Cc:     john.johansen@canonical.com, keescook@chromium.org,
+        penguin-kernel@i-love.sakura.ne.jp, paul@paul-moore.com,
+        linux-fsdevel@vger.kernel.org, sds@tycho.nsa.gov,
+        adobriyan@gmail.com, mic@digikod.net, s.mesoraca16@gmail.com,
+        casey@schaufler-ca.com
+Subject: [PATCH v5 11/38] LSM: Separate idea of "major" LSM from "exclusive" LSM
+Date:   Tue, 11 Dec 2018 14:42:47 -0800
+Message-Id: <20181211224314.22412-12-casey@schaufler-ca.com>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20181211224314.22412-1-casey@schaufler-ca.com>
+References: <20181211224314.22412-1-casey@schaufler-ca.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-RGlmZmVyZW50IEFNRCBwcm9jZXNzb3JzIG1heSBoYXZlIGRpZmZlcmVudCBpbXBsZW1lbnRhdGlv
-bnMgb2YgU1RJQlAuDQpXaGVuIFNUSUJQIGlzIGNvbmRpdGlvbmFsbHkgZW5hYmxlZCwgc29tZSBp
-bXBsZW1lbnRhdGlvbnMgd291bGQgYmVuZWZpdA0KZnJvbSBoYXZpbmcgU1RJQlAgYWx3YXlzIG9u
-IGluc3RlYWQgb2YgdG9nZ2xpbmcgdGhlIFNUSUJQIGJpdCB0aHJvdWdoIE1TUg0Kd3JpdGVzLiBU
-aGlzIHByZWZlcmVuY2UgaXMgYWR2ZXJ0aXNlZCB0aHJvdWdoIGEgQ1BVSUQgZmVhdHVyZSBiaXQu
-DQoNCldoZW4gY29uZGl0aW9uYWwgU1RJQlAgc3VwcG9ydCBpcyByZXF1ZXN0ZWQgYXQgYm9vdCBh
-bmQgdGhlIENQVSBhZHZlcnRpc2VzDQpTVElCUCBhbHdheXMtb24gbW9kZSBhcyBwcmVmZXJyZWQs
-IHN3aXRjaCB0byBTVElCUCAib24iIHN1cHBvcnQuIFByaW50IGENCm1lc3NhZ2UgdG8gbGV0IHRo
-ZSB1c2VyIGtub3cgdGhpcyBvY2N1cnJlZC4gQWxzbywgcHJvdmlkZSBhIGJvb2xlYW4gdGhhdA0K
-YmUgdXNlZCBpbiBzdGlicF9zdGF0ZSgpIHRvIHJldHVybiBhIG1lc3NhZ2UgdGFpbG9yZWQgdG8g
-dGhlIGFsd2F5cy1vbg0Kc3VwcG9ydC4NCg0KU2lnbmVkLW9mZi1ieTogVG9tIExlbmRhY2t5IDx0
-aG9tYXMubGVuZGFja3lAYW1kLmNvbT4NCi0tLQ0KDQpUaGlzIHBhdGNoIGlzIGFnYWluc3QgdGhl
-IHg4Ni9wdGkgYnJhbmNoIG9mIHRoZSB0aXAgdHJlZToNCiAgZ2l0Oi8vZ2l0Lmtlcm5lbC5vcmcv
-cHViL3NjbS9saW51eC9rZXJuZWwvZ2l0L3RpcC90aXAuZ2l0IHg4Ni9wdGkNCg0KQ2hhbmdlcyBm
-cm9tIHYxOg0KLSBSZW1vdmVkIGV4cGxpY2l0IFNQRUNUUkVfVjJfVVNFUl9TVFJJQ1RfUFJFRkVS
-UkVEIG1vZGUNCi0gQWRkZWQgYSBtZXNzYWdlIHdoZW4gc3dpdGNoaW5nIHRvIGFsd2F5cy1vbiBt
-b2RlDQotIFNldCBhbmQgdXNlZCBhIHN0YXRpYyBib29sZWFuIGZvciB0aGUgc3RyaW5nIGluIHN0
-aWJwX3N0YXRlKCkNCg0KIGFyY2gveDg2L2luY2x1ZGUvYXNtL2NwdWZlYXR1cmVzLmggfCAgICAx
-ICsNCiBhcmNoL3g4Ni9rZXJuZWwvY3B1L2J1Z3MuYyAgICAgICAgIHwgICAxNyArKysrKysrKysr
-KysrKysrLQ0KIDIgZmlsZXMgY2hhbmdlZCwgMTcgaW5zZXJ0aW9ucygrKSwgMSBkZWxldGlvbigt
-KQ0KDQpkaWZmIC0tZ2l0IGEvYXJjaC94ODYvaW5jbHVkZS9hc20vY3B1ZmVhdHVyZXMuaCBiL2Fy
-Y2gveDg2L2luY2x1ZGUvYXNtL2NwdWZlYXR1cmVzLmgNCmluZGV4IDI4YzRhNTAuLmRmOGU5NGUy
-IDEwMDY0NA0KLS0tIGEvYXJjaC94ODYvaW5jbHVkZS9hc20vY3B1ZmVhdHVyZXMuaA0KKysrIGIv
-YXJjaC94ODYvaW5jbHVkZS9hc20vY3B1ZmVhdHVyZXMuaA0KQEAgLTI4NCw2ICsyODQsNyBAQA0K
-ICNkZWZpbmUgWDg2X0ZFQVRVUkVfQU1EX0lCUEIJCSgxMyozMisxMikgLyogIiIgSW5kaXJlY3Qg
-QnJhbmNoIFByZWRpY3Rpb24gQmFycmllciAqLw0KICNkZWZpbmUgWDg2X0ZFQVRVUkVfQU1EX0lC
-UlMJCSgxMyozMisxNCkgLyogIiIgSW5kaXJlY3QgQnJhbmNoIFJlc3RyaWN0ZWQgU3BlY3VsYXRp
-b24gKi8NCiAjZGVmaW5lIFg4Nl9GRUFUVVJFX0FNRF9TVElCUAkJKDEzKjMyKzE1KSAvKiAiIiBT
-aW5nbGUgVGhyZWFkIEluZGlyZWN0IEJyYW5jaCBQcmVkaWN0b3JzICovDQorI2RlZmluZSBYODZf
-RkVBVFVSRV9BTURfU1RJQlBfQUxXQVlTX09OCSgxMyozMisxNykgLyogIiIgU2luZ2xlIFRocmVh
-ZCBJbmRpcmVjdCBCcmFuY2ggUHJlZGljdG9ycyBhbHdheXMtb24gcHJlZmVycmVkICovDQogI2Rl
-ZmluZSBYODZfRkVBVFVSRV9BTURfU1NCRAkJKDEzKjMyKzI0KSAvKiAiIiBTcGVjdWxhdGl2ZSBT
-dG9yZSBCeXBhc3MgRGlzYWJsZSAqLw0KICNkZWZpbmUgWDg2X0ZFQVRVUkVfVklSVF9TU0JECQko
-MTMqMzIrMjUpIC8qIFZpcnR1YWxpemVkIFNwZWN1bGF0aXZlIFN0b3JlIEJ5cGFzcyBEaXNhYmxl
-ICovDQogI2RlZmluZSBYODZfRkVBVFVSRV9BTURfU1NCX05PCQkoMTMqMzIrMjYpIC8qICIiIFNw
-ZWN1bGF0aXZlIFN0b3JlIEJ5cGFzcyBpcyBmaXhlZCBpbiBoYXJkd2FyZS4gKi8NCmRpZmYgLS1n
-aXQgYS9hcmNoL3g4Ni9rZXJuZWwvY3B1L2J1Z3MuYyBiL2FyY2gveDg2L2tlcm5lbC9jcHUvYnVn
-cy5jDQppbmRleCA1ODY4OWFjLi5kYjE1NmUxIDEwMDY0NA0KLS0tIGEvYXJjaC94ODYva2VybmVs
-L2NwdS9idWdzLmMNCisrKyBiL2FyY2gveDg2L2tlcm5lbC9jcHUvYnVncy5jDQpAQCAtNjEsNiAr
-NjEsOCBAQA0KIC8qIENvbnRyb2wgdW5jb25kaXRpb25hbCBJQlBCIGluIHN3aXRjaF9tbSgpICov
-DQogREVGSU5FX1NUQVRJQ19LRVlfRkFMU0Uoc3dpdGNoX21tX2Fsd2F5c19pYnBiKTsNCiANCitz
-dGF0aWMgYm9vbCBzdGlicF9hbHdheXNfb247DQorDQogdm9pZCBfX2luaXQgY2hlY2tfYnVncyh2
-b2lkKQ0KIHsNCiAJaWRlbnRpZnlfYm9vdF9jcHUoKTsNCkBAIC0zNTUsNiArMzU3LDE4IEBAIHN0
-YXRpYyB2b2lkIF9faW5pdCBzcGVjX3YyX3VzZXJfcHJpbnRfY29uZChjb25zdCBjaGFyICpyZWFz
-b24sIGJvb2wgc2VjdXJlKQ0KIAkJYnJlYWs7DQogCX0NCiANCisJLyoNCisJICogQXQgdGhpcyBw
-b2ludCwgYW4gU1RJQlAgbW9kZSBvdGhlciB0aGFuICJvZmYiIGhhcyBiZWVuIHNldC4NCisJICog
-SWYgU1RJQlAgc3VwcG9ydCBpcyBub3QgYmVpbmcgZm9yY2VkLCBjaGVjayBpZiBTVElCUCBhbHdh
-eXMtb24NCisJICogaXMgcHJlZmVycmVkLg0KKwkgKi8NCisJaWYgKG1vZGUgIT0gU1BFQ1RSRV9W
-Ml9VU0VSX1NUUklDVCAmJg0KKwkgICAgYm9vdF9jcHVfaGFzKFg4Nl9GRUFUVVJFX0FNRF9TVElC
-UF9BTFdBWVNfT04pKSB7DQorCQlzdGlicF9hbHdheXNfb24gPSB0cnVlOw0KKwkJbW9kZSA9IFNQ
-RUNUUkVfVjJfVVNFUl9TVFJJQ1Q7DQorCQlwcl9pbmZvKCJtaXRpZ2F0aW9uOiBTVElCUCBhbHdh
-eXMtb24gaXMgcHJlZmVycmVkXG4iKTsNCisJfQ0KKw0KIAkvKiBJbml0aWFsaXplIEluZGlyZWN0
-IEJyYW5jaCBQcmVkaWN0aW9uIEJhcnJpZXIgKi8NCiAJaWYgKGJvb3RfY3B1X2hhcyhYODZfRkVB
-VFVSRV9JQlBCKSkgew0KIAkJc2V0dXBfZm9yY2VfY3B1X2NhcChYODZfRkVBVFVSRV9VU0VfSUJQ
-Qik7DQpAQCAtMTA4OCw3ICsxMTAyLDggQEAgc3RhdGljIGNoYXIgKnN0aWJwX3N0YXRlKHZvaWQp
-DQogCWNhc2UgU1BFQ1RSRV9WMl9VU0VSX05PTkU6DQogCQlyZXR1cm4gIiwgU1RJQlA6IGRpc2Fi
-bGVkIjsNCiAJY2FzZSBTUEVDVFJFX1YyX1VTRVJfU1RSSUNUOg0KLQkJcmV0dXJuICIsIFNUSUJQ
-OiBmb3JjZWQiOw0KKwkJcmV0dXJuIHN0aWJwX2Fsd2F5c19vbiA/ICIsIFNUSUJQOiBhbHdheXMt
-b24iDQorCQkJCSAgICAgICA6ICIsIFNUSUJQOiBmb3JjZWQiOw0KIAljYXNlIFNQRUNUUkVfVjJf
-VVNFUl9QUkNUTDoNCiAJY2FzZSBTUEVDVFJFX1YyX1VTRVJfU0VDQ09NUDoNCiAJCWlmIChzdGF0
-aWNfa2V5X2VuYWJsZWQoJnN3aXRjaF90b19jb25kX3N0aWJwKSkNCg0K
+From: Kees Cook <keescook@chromium.org>
+
+In order to both support old "security=" Legacy Major LSM selection, and
+handling real exclusivity, this creates LSM_FLAG_EXCLUSIVE and updates
+the selection logic to handle them.
+
+Signed-off-by: Kees Cook <keescook@chromium.org>
+Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
+---
+ include/linux/lsm_hooks.h  |  1 +
+ security/apparmor/lsm.c    |  2 +-
+ security/security.c        | 12 ++++++++++++
+ security/selinux/hooks.c   |  2 +-
+ security/smack/smack_lsm.c |  2 +-
+ security/tomoyo/tomoyo.c   |  2 +-
+ 6 files changed, 17 insertions(+), 4 deletions(-)
+
+diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+index 272791fdd26e..7d04a0c32011 100644
+--- a/include/linux/lsm_hooks.h
++++ b/include/linux/lsm_hooks.h
+@@ -2040,6 +2040,7 @@ extern void security_add_hooks(struct security_hook_list *hooks, int count,
+ 				char *lsm);
+ 
+ #define LSM_FLAG_LEGACY_MAJOR	BIT(0)
++#define LSM_FLAG_EXCLUSIVE	BIT(1)
+ 
+ struct lsm_info {
+ 	const char *name;	/* Required. */
+diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
+index d840c1ef3e4d..37dafab649b1 100644
+--- a/security/apparmor/lsm.c
++++ b/security/apparmor/lsm.c
+@@ -1722,7 +1722,7 @@ static int __init apparmor_init(void)
+ 
+ DEFINE_LSM(apparmor) = {
+ 	.name = "apparmor",
+-	.flags = LSM_FLAG_LEGACY_MAJOR,
++	.flags = LSM_FLAG_LEGACY_MAJOR | LSM_FLAG_EXCLUSIVE,
+ 	.enabled = &apparmor_enabled,
+ 	.init = apparmor_init,
+ };
+diff --git a/security/security.c b/security/security.c
+index a7889885585e..0009ef6c83fa 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -49,6 +49,7 @@ static __initconst const char * const builtin_lsm_order = CONFIG_LSM;
+ 
+ /* Ordered list of LSMs to initialize. */
+ static __initdata struct lsm_info **ordered_lsms;
++static __initdata struct lsm_info *exclusive;
+ 
+ static __initdata bool debug;
+ #define init_debug(...)						\
+@@ -129,6 +130,12 @@ static bool __init lsm_allowed(struct lsm_info *lsm)
+ 	if (!is_enabled(lsm))
+ 		return false;
+ 
++	/* Not allowed if another exclusive LSM already initialized. */
++	if ((lsm->flags & LSM_FLAG_EXCLUSIVE) && exclusive) {
++		init_debug("exclusive disabled: %s\n", lsm->name);
++		return false;
++	}
++
+ 	return true;
+ }
+ 
+@@ -144,6 +151,11 @@ static void __init maybe_initialize_lsm(struct lsm_info *lsm)
+ 	if (enabled) {
+ 		int ret;
+ 
++		if ((lsm->flags & LSM_FLAG_EXCLUSIVE) && !exclusive) {
++			exclusive = lsm;
++			init_debug("exclusive chosen: %s\n", lsm->name);
++		}
++
+ 		init_debug("initializing %s\n", lsm->name);
+ 		ret = lsm->init();
+ 		WARN(ret, "%s failed to initialize: %d\n", lsm->name, ret);
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index b81239a09dbb..3687599d9d16 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -7199,7 +7199,7 @@ void selinux_complete_init(void)
+    all processes and objects when they are created. */
+ DEFINE_LSM(selinux) = {
+ 	.name = "selinux",
+-	.flags = LSM_FLAG_LEGACY_MAJOR,
++	.flags = LSM_FLAG_LEGACY_MAJOR | LSM_FLAG_EXCLUSIVE,
+ 	.enabled = &selinux_enabled,
+ 	.init = selinux_init,
+ };
+diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+index 56a114c1d750..849426ac6a6c 100644
+--- a/security/smack/smack_lsm.c
++++ b/security/smack/smack_lsm.c
+@@ -4888,6 +4888,6 @@ static __init int smack_init(void)
+  */
+ DEFINE_LSM(smack) = {
+ 	.name = "smack",
+-	.flags = LSM_FLAG_LEGACY_MAJOR,
++	.flags = LSM_FLAG_LEGACY_MAJOR | LSM_FLAG_EXCLUSIVE,
+ 	.init = smack_init,
+ };
+diff --git a/security/tomoyo/tomoyo.c b/security/tomoyo/tomoyo.c
+index a46f6bc1e97c..daff7d7897ad 100644
+--- a/security/tomoyo/tomoyo.c
++++ b/security/tomoyo/tomoyo.c
+@@ -550,6 +550,6 @@ static int __init tomoyo_init(void)
+ 
+ DEFINE_LSM(tomoyo) = {
+ 	.name = "tomoyo",
+-	.flags = LSM_FLAG_LEGACY_MAJOR,
++	.flags = LSM_FLAG_LEGACY_MAJOR | LSM_FLAG_EXCLUSIVE,
+ 	.init = tomoyo_init,
+ };
+-- 
+2.14.5
+
