@@ -6,51 +6,49 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CEE01C5CFFE
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:53:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30FDFC07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:53:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 94C7B20855
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:53:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E73172146D
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:53:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544543609;
-	bh=DmP3cRKWQKG54BAanPuXh1HWk5cuA2PGcTWgDcurLkk=;
+	s=default; t=1544543613;
+	bh=8ZVk39zR6CnThZhzBQRTlVHLqfWoYgzzT8KcmAaY2tg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Ge+aqmBLRYHnHD8dyfbg9jrj5rvr3+ktSwQv/S0N61LMz9rVXfMzEnVMqXef4NOoc
-	 F+cewOCWIjRu1mG0E11RgOpZUWElmPSeeTmso9ijxXYXCVqyosWQbKgb+1epMUWWYz
-	 L/aKmVvZ1rZx/UbbCC0TcWitBmp1Ta/rV8QAKRyg=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 94C7B20855
+	b=sRUpKirIo24N/pMgo0ZULQtDX6AhbfKCXdudR70y0RfkKMcgLEPwog7DyriMoD+Zo
+	 f0SZAYCZo1ulQQLnC9I/qkkbmHoA9svVnGzq/Z1X4g2aH1P2LqvMriylxegm8gvccp
+	 ZiTo/SWgL/c4yo5ZJ6VlA7V2OiznmE8gnmIpzGuQ=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E73172146D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729948AbeLKPx2 (ORCPT
+        id S1729957AbeLKPxb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 10:53:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42060 "EHLO mail.kernel.org"
+        Tue, 11 Dec 2018 10:53:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42116 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729927AbeLKPxW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:53:22 -0500
+        id S1729911AbeLKPxZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 10:53:25 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9DB2620855;
-        Tue, 11 Dec 2018 15:53:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4EB4D2146E;
+        Tue, 11 Dec 2018 15:53:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544543602;
-        bh=DmP3cRKWQKG54BAanPuXh1HWk5cuA2PGcTWgDcurLkk=;
+        s=default; t=1544543604;
+        bh=8ZVk39zR6CnThZhzBQRTlVHLqfWoYgzzT8KcmAaY2tg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=v3r9aWOoe1UaSXyyftOnAEc38KGEnU83v3svki1iYQciGQmvH02aWS+o22hmaIPja
-         HTS75OVE7d/OUciUX/hUiIFFyp2xm3dwIn/wyB3AA2dXw128wbpjP6nPa4ISSLpIfG
-         Ves2BiD59ouUROwj4+nQT3AY6Z6bqt8PoDhujvOQ=
+        b=ta7PTy72u18SNKnhnNtq2JNKPsk6gH5s5IzN70AebEjI/KgJYDMjYCFLrrDTzXs/H
+         QiWRMt3l9T887voDSubDmDnmy49AQ4IAxCP/tdo5YujGdh6soXVpr4QTjsuasRhyZA
+         0Zp+TigcKpSu9Pok4y/qCuppOeOZ0vkB2ua95+wo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Rob Herring <robh@kernel.org>, Jiri Slaby <jslaby@suse.com>,
-        Chanho Park <parkch98@gmail.com>
-Subject: [PATCH 4.14 60/67] tty: do not set TTY_IO_ERROR flag if console port
-Date:   Tue, 11 Dec 2018 16:42:00 +0100
-Message-Id: <20181211151633.408720788@linuxfoundation.org>
+        stable@vger.kernel.org, Macpaul Lin <macpaul@gmail.com>,
+        Daniel Thompson <daniel.thompson@linaro.org>
+Subject: [PATCH 4.14 61/67] kgdboc: fix KASAN global-out-of-bounds bug in param_set_kgdboc_var()
+Date:   Tue, 11 Dec 2018 16:42:01 +0100
+Message-Id: <20181211151633.514591974@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181211151630.378216233@linuxfoundation.org>
 References: <20181211151630.378216233@linuxfoundation.org>
@@ -69,55 +67,82 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Chanho Park <parkch98@gmail.com>
+From: Macpaul Lin <macpaul@gmail.com>
 
-commit 2a48602615e0a2f563549c7d5c8d507f904cf96e upstream.
+commit dada6a43b0402eba438a17ac86fdc64ac56a4607 upstream.
 
-Since Commit 761ed4a94582 ('tty: serial_core: convert uart_close to use
-tty_port_close') and Commit 4dda864d7307 ('tty: serial_core: Fix serial
-console crash on port shutdown), a serial port which is used as
-console can be stuck when logging out if there is a remained process.
-After logged out, agetty will try to grab the serial port but it will
-be failed because the previous process did not release the port
-correctly. To fix this, TTY_IO_ERROR bit should not be enabled of
-tty_port_close if the port is console port.
+This patch is trying to fix KE issue due to
+"BUG: KASAN: global-out-of-bounds in param_set_kgdboc_var+0x194/0x198"
+reported by Syzkaller scan."
 
-Reproduce step:
-- Run background processes from serial console
-$ while true; do sleep 10; done &
+[26364:syz-executor0][name:report8t]BUG: KASAN: global-out-of-bounds in param_set_kgdboc_var+0x194/0x198
+[26364:syz-executor0][name:report&]Read of size 1 at addr ffffff900e44f95f by task syz-executor0/26364
+[26364:syz-executor0][name:report&]
+[26364:syz-executor0]CPU: 7 PID: 26364 Comm: syz-executor0 Tainted: G W 0
+[26364:syz-executor0]Call trace:
+[26364:syz-executor0][<ffffff9008095cf8>] dump_bacIctrace+Ox0/0x470
+[26364:syz-executor0][<ffffff9008096de0>] show_stack+0x20/0x30
+[26364:syz-executor0][<ffffff90089cc9c8>] dump_stack+Oxd8/0x128
+[26364:syz-executor0][<ffffff90084edb38>] print_address_description +0x80/0x4a8
+[26364:syz-executor0][<ffffff90084ee270>] kasan_report+Ox178/0x390
+[26364:syz-executor0][<ffffff90084ee4a0>] _asan_report_loadi_noabort+Ox18/0x20
+[26364:syz-executor0][<ffffff9008b092ac>] param_set_kgdboc_var+Ox194/0x198
+[26364:syz-executor0][<ffffff900813af64>] param_attr_store+Ox14c/0x270
+[26364:syz-executor0][<ffffff90081394c8>] module_attr_store+0x60/0x90
+[26364:syz-executor0][<ffffff90086690c0>] sysfs_kl_write+Ox100/0x158
+[26364:syz-executor0][<ffffff9008666d84>] kernfs_fop_write+0x27c/0x3a8
+[26364:syz-executor0][<ffffff9008508264>] do_loop_readv_writev+0x114/0x1b0
+[26364:syz-executor0][<ffffff9008509ac8>] do_readv_writev+0x4f8/0x5e0
+[26364:syz-executor0][<ffffff9008509ce4>] vfs_writev+0x7c/Oxb8
+[26364:syz-executor0][<ffffff900850ba64>] SyS_writev+Oxcc/0x208
+[26364:syz-executor0][<ffffff90080883f0>] elO_svc_naked +0x24/0x28
+[26364:syz-executor0][name:report&]
+[26364:syz-executor0][name:report&]The buggy address belongs to the variable:
+[26364:syz-executor0][name:report&] kgdb_tty_line+Ox3f/0x40
+[26364:syz-executor0][name:report&]
+[26364:syz-executor0][name:report&]Memory state around the buggy address:
+[26364:syz-executor0] ffffff900e44f800: 00 00 00 00 00 04 fa fa fa fa fa fa 00 fa fa fa
+[26364:syz-executor0] ffffff900e44f880: fa fa fa fa 00 fa fa fa fa fa fa fa 00 fa fa fa
+[26364:syz-executor0]> ffffff900e44f900: fa fa fa fa 04 fa fa fa fa fa fa fa 00 00 00 00
+[26364:syz-executor0][name:report&]                                       ^
+[26364:syz-executor0] ffffff900e44f980: 00 fa fa fa fa fa fa fa 04 fa fa fa fa fa fa fa
+[26364:syz-executor0] ffffff900e44fa00: 04 fa fa fa fa fa fa fa 00 fa fa fa fa fa fa fa
+[26364:syz-executor0][name:report&]
+[26364:syz-executor0][name:panic&]Disabling lock debugging due to kernel taint
+[26364:syz-executor0]------------[cut here]------------
 
-- Log out
-$ logout
--> Stuck
+After checking the source code, we've found there might be an out-of-bounds
+access to "config[len - 1]" array when the variable "len" is zero.
 
-- Read journal log by journalctl | tail
-Jan 28 16:07:01 ubuntu systemd[1]: Stopped Serial Getty on ttyAMA0.
-Jan 28 16:07:01 ubuntu systemd[1]: Started Serial Getty on ttyAMA0.
-Jan 28 16:07:02 ubuntu agetty[1643]: /dev/ttyAMA0: not a tty
-
-Fixes: 761ed4a94582 ("tty: serial_core: convert uart_close to use tty_port_close")
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Rob Herring <robh@kernel.org>
-Cc: Jiri Slaby <jslaby@suse.com>
-Signed-off-by: Chanho Park <parkch98@gmail.com>
+Signed-off-by: Macpaul Lin <macpaul@gmail.com>
+Acked-by: Daniel Thompson <daniel.thompson@linaro.org>
 Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/tty/tty_port.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/tty/serial/kgdboc.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/tty/tty_port.c
-+++ b/drivers/tty/tty_port.c
-@@ -639,7 +639,8 @@ void tty_port_close(struct tty_port *por
- 	if (tty_port_close_start(port, tty, filp) == 0)
- 		return;
- 	tty_port_shutdown(port, tty);
--	set_bit(TTY_IO_ERROR, &tty->flags);
-+	if (!port->console)
-+		set_bit(TTY_IO_ERROR, &tty->flags);
- 	tty_port_close_end(port, tty);
- 	tty_port_tty_set(port, NULL);
- }
+--- a/drivers/tty/serial/kgdboc.c
++++ b/drivers/tty/serial/kgdboc.c
+@@ -232,7 +232,7 @@ static void kgdboc_put_char(u8 chr)
+ 
+ static int param_set_kgdboc_var(const char *kmessage, struct kernel_param *kp)
+ {
+-	int len = strlen(kmessage);
++	size_t len = strlen(kmessage);
+ 
+ 	if (len >= MAX_CONFIG_LEN) {
+ 		printk(KERN_ERR "kgdboc: config string too long\n");
+@@ -254,7 +254,7 @@ static int param_set_kgdboc_var(const ch
+ 
+ 	strcpy(config, kmessage);
+ 	/* Chop out \n char as a result of echo */
+-	if (config[len - 1] == '\n')
++	if (len && config[len - 1] == '\n')
+ 		config[len - 1] = '\0';
+ 
+ 	if (configured == 1)
 
 
