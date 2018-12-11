@@ -2,124 +2,117 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76345C07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:29:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7DE3C07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:29:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2FB6D2081B
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:29:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6B8442081B
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:29:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microchiptechnology.onmicrosoft.com header.i=@microchiptechnology.onmicrosoft.com header.b="Tb1Lbzy/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2FB6D2081B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="nlcyGlKR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B8442081B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sifive.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727364AbeLKQ3p (ORCPT
+        id S1727546AbeLKQ34 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 11:29:45 -0500
-Received: from esa3.microchip.iphmx.com ([68.232.153.233]:34684 "EHLO
-        esa3.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726628AbeLKQ3o (ORCPT
+        Tue, 11 Dec 2018 11:29:56 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:43081 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726628AbeLKQ3z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 11:29:44 -0500
-X-IronPort-AV: E=Sophos;i="5.56,342,1539673200"; 
-   d="scan'208";a="24241512"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 11 Dec 2018 09:29:43 -0700
-Received: from NAM03-BY2-obe.outbound.protection.outlook.com (10.10.215.89) by
- email.microchip.com (10.10.76.38) with Microsoft SMTP Server (TLS) id
- 14.3.352.0; Tue, 11 Dec 2018 09:29:42 -0700
+        Tue, 11 Dec 2018 11:29:55 -0500
+Received: by mail-pf1-f195.google.com with SMTP id w73so7355083pfk.10
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 08:29:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=microchiptechnology.onmicrosoft.com;
- s=selector1-microchiptechnology-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=2OvGcfVQAPw38OfXECuiYdeqXNNyE+6zk9RNn7c8BFc=;
- b=Tb1Lbzy/10fR6blEuYTGg0hlLsxAYsmrwgCNbYx7672uUyMpm+QsVZ4CqZo7JY+KNZtcUjW9J1KZ4VHmmMr2cdKf/jyyqrciIZXAXkG54YtCQ4azXPLqJW5XFHA1seUjmEnfIfvb6fSnZ0t4X6OK3LPmfnOySI333Rybl9w7Mas=
-Received: from BYAPR11MB3447.namprd11.prod.outlook.com (20.177.186.216) by
- BYAPR11MB3078.namprd11.prod.outlook.com (20.177.226.159) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1404.19; Tue, 11 Dec 2018 16:29:41 +0000
-Received: from BYAPR11MB3447.namprd11.prod.outlook.com
- ([fe80::e0e3:4983:d46d:994f]) by BYAPR11MB3447.namprd11.prod.outlook.com
- ([fe80::e0e3:4983:d46d:994f%3]) with mapi id 15.20.1404.026; Tue, 11 Dec 2018
- 16:29:41 +0000
-From:   <Dave.Carroll@microchip.com>
-To:     <arnd@arndb.de>, <aacraid@microsemi.com>, <jejb@linux.ibm.com>,
-        <martin.petersen@oracle.com>
-CC:     <RaghavaAditya.Renukunta@microsemi.com>,
-        <prasad.munirathnam@microsemi.com>, <david.carroll@microsemi.com>,
-        <dan.carpenter@oracle.com>, <jthumshirn@suse.de>,
-        <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH 2/2] scsi: aacraid: change event_wait to a completion
-Thread-Topic: [PATCH 2/2] scsi: aacraid: change event_wait to a completion
-Thread-Index: AQHUkNAPeQWPKH7BNEGPmaEtBR/DuaV5u42Q
-Date:   Tue, 11 Dec 2018 16:29:41 +0000
-Message-ID: <BYAPR11MB3447E4D0D93323738690993088A60@BYAPR11MB3447.namprd11.prod.outlook.com>
-References: <20181210213301.1065510-1-arnd@arndb.de>
- <20181210213301.1065510-2-arnd@arndb.de>
-In-Reply-To: <20181210213301.1065510-2-arnd@arndb.de>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Dave.Carroll@microchip.com; 
-x-originating-ip: [204.94.163.30]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BYAPR11MB3078;6:RoRO5PPg3J1a43ATsuzWy2rOL65nRXaQGXmTTjbCSF5zDVwt2+tzrPdttGkFO+doWupIetdHhf2Ecz4BHgrauDfkFeAC38kEGnpJh1LxwK0aHdI1tQQXPkfrxS0D2ryNF1eyxacJr7xQtI3bl50vVZZSKwwctCztXE3Oa0P+fC3adlixAMBFQ1SBlSRSlF2n85VrFUMnPpU4liQxQ6XAfV263pQ1nOsxs9/rg9zdgLybJcPT8qGrfxEZQqOfvlNYUnVpsUrcq9PDt9NxMw+BZJNX4pScSsl9Grq740Gb6WR+nUYEt5o6sOyLZK5GI6ZvCZprLC2D04QdZ8tg/onkwPEroKHPgTIqE1tR8SxorcWiK5IjLSaYWR9VkJmVY35f+RvySQdUxCgEXo0v62nTHlBa8Bg4noqITWvyJYLuKrg1zT6ylDiEYjyyP+14OGtdmQDza5xUk71UGa1BN+KVdg==;5:z08a8VgsUE7/5KRMFmIQWyOjnYGMa0hc3YjvuyfjSBcAFMeEFYhQwmoTeIhPFuLyDq+THbK4PbQAQ2Wu2DPzltBS2bLuCBry6HpTch4ZkSP5Xgdoiibva0ZyD1vZazcYiRSwFGPxvGb2NL2Z2em3HaLf0HrqzGci9q7HtHEfWW0=;7:J4btlsvCnlFu83fUgvCFurSmh33pXfiU/Hw7Br//z70QS3cZdzgNsLaDQT+A47E6WKkDw4IJXUkM1jZ7DHQI+nsDLEqPRKD4uhb1g7hC3vCT4M3HIqO5r3eWcbkrK8vhmp/1xT8LeFuoZlGQb3jV9Q==
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 7f54ab5f-cc08-4598-4637-08d65f85da51
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:BYAPR11MB3078;
-x-ms-traffictypediagnostic: BYAPR11MB3078:
-x-microsoft-antispam-prvs: <BYAPR11MB3078CAC84332ADBE5DD6DF8A88A60@BYAPR11MB3078.namprd11.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(3230017)(999002)(6040522)(2401047)(5005006)(8121501046)(3231472)(944501520)(52105112)(3002001)(10201501046)(93006095)(93001095)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123558120)(20161123564045)(20161123562045)(201708071742011)(7699051)(76991095);SRVR:BYAPR11MB3078;BCL:0;PCL:0;RULEID:;SRVR:BYAPR11MB3078;
-x-forefront-prvs: 08831F51DC
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(346002)(396003)(39860400002)(136003)(366004)(13464003)(199004)(189003)(99286004)(7696005)(76176011)(11346002)(74316002)(446003)(9686003)(305945005)(71200400001)(71190400001)(6436002)(2906002)(55016002)(33656002)(6246003)(53936002)(81156014)(8936002)(8676002)(81166006)(97736004)(3846002)(86362001)(6116002)(7736002)(5660300001)(316002)(66066001)(229853002)(110136005)(256004)(4326008)(68736007)(54906003)(106356001)(26005)(53546011)(25786009)(102836004)(478600001)(486006)(14454004)(186003)(7416002)(72206003)(6506007)(476003)(105586002);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR11MB3078;H:BYAPR11MB3447.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: microchip.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: /eYNYtutWTSJJkYeSJ1LUULsvhEv1yMEjAFmHcLxgbX5L2t0b8W8c/Jn4zJsEJGJDzbEozaH6amRJpOBYblmfNesSonF4w/vx3dUcQyCYhn5GceSNTNNm5lXBzepKiBrqQOD1l5arSdRdlCSN/nsioMBtgswgnidEpeT88MoIFfGKcWaPS88ebbfS32sTNn8PDVazFSu3w40TDKQnSa+YtfeE6qLSnmj1+TGFKHiQqvxAwQyBuK4Ja3H3ee9cqbAhIa60iCGy9kQuxErZMtJup4ad8l569QcU3OvGsmXT1P7TrWjobYrgDMzPYa1XOtD
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7f54ab5f-cc08-4598-4637-08d65f85da51
-X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Dec 2018 16:29:41.5833
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR11MB3078
-X-OriginatorOrg: microchip.com
+        d=sifive.com; s=google;
+        h=date:subject:in-reply-to:cc:from:to:message-id;
+        bh=gzbxHecU86LFLkoFtvtJbFFqdwZzwuGxgACWUAu+Sow=;
+        b=nlcyGlKRTqTbq8+IqXBHRqittXZfjRRwenzH80RsKpkqfJtTJNrQgXGnnLbcZUMhYr
+         wvTmkOaaCn434bSQn7aCr/wxuJHQKqxuIbeWcUIJDYE57yOeW1/AB3NLcFPtzL1kP4Ml
+         YPY0npu+udLAC11iErcC+8C7cCojqyC8fEA0bJB9HSrpyIbO4IGRXiDPeGmI7T7B3pTc
+         fV7/bES0gkdi+IYjwD3lfkFnUhYNhJk0SSd1IRGUH8vXf8KQX5HtgHjCFkNWVWzqcX6/
+         A6roqauT34wp6klDiUXjgRIlt6o+5UCDN++fDfLvXtXxh+nIPu8/8+BUrwW2tUWxvuMo
+         i/zw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:subject:in-reply-to:cc:from:to:message-id;
+        bh=gzbxHecU86LFLkoFtvtJbFFqdwZzwuGxgACWUAu+Sow=;
+        b=sOKQ+Jd1zKH26uWAc0jmbIQ22TgIjdDfYY6nnY4jeYySvNZoyZm42owEVJH8JUqCOC
+         ErUEAERn8ssXQOjhQZknDO+7M/5RWNFZX0NHtqtqxrxaYyyVXzxNF+c1cfPyqwOaXtxT
+         pqXjSeZYf/NTNoiECXUiVb76qs6c2kmbuRUy4VwOo/acgeijk0ZOI6WKS3L/PgXiC3bV
+         iK2x/VK8xpWJMrH3HEeQD53J4rWD0qeL7H+1ln2jhOh+aJY1UGWl6pUXHtKWP/re+en5
+         +BDme03P0NPgcCHibL46lRdPHFcsL8/5rNTk+kb//3dlsc6MaQt4zc5cwJbDevCAvU4L
+         F8WA==
+X-Gm-Message-State: AA+aEWa+QAOdOs+vAPGrqGqZdlNpOnQcAv1b+WtH7T5vmKN5aUPptAKI
+        SDYLec6F0skOo7UK2npmLyUFmw==
+X-Google-Smtp-Source: AFSGD/X4jMEyWNxSR2E0mKM7M07cpiLlL+IqKW6i6KevEKdtwNAhn/64cIvGL8dbmcdvJMK78BwZcg==
+X-Received: by 2002:a63:4745:: with SMTP id w5mr15452249pgk.377.1544545794727;
+        Tue, 11 Dec 2018 08:29:54 -0800 (PST)
+Received: from localhost ([12.206.222.5])
+        by smtp.gmail.com with ESMTPSA id c13sm20690787pfo.121.2018.12.11.08.29.53
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 11 Dec 2018 08:29:53 -0800 (PST)
+Date:   Tue, 11 Dec 2018 08:29:53 -0800 (PST)
+X-Google-Original-Date: Tue, 11 Dec 2018 08:22:07 PST (-0800)
+Subject:     Re: [PATCH 2/3] kbuild: generate asm-generic wrappers if mandatory headers are missing
+In-Reply-To: <CAK7LNAS7hh4f8mYoZc7RUWStnchhftUN0nU5MJ_trjyNJx50Lw@mail.gmail.com>
+CC:     Christoph Hellwig <hch@infradead.org>,
+        linux-kbuild@vger.kernel.org, sam@ravnborg.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        corbet@lwn.net, michal.lkml@markovi.net
+From:   Palmer Dabbelt <palmer@sifive.com>
+To:     yamada.masahiro@socionext.com
+Message-ID: <mhng-f63eb098-71bf-411a-9583-388234647f1e@palmer-si-x1c4>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, 11 Dec 2018 04:59:26 PST (-0800), yamada.masahiro@socionext.com wrote:
+> Hi Christoph,
+>
+>
+> On Fri, Dec 7, 2018 at 12:04 AM Christoph Hellwig <hch@infradead.org> wrote:
+>>
+>> On Wed, Dec 05, 2018 at 08:28:05PM +0900, Masahiro Yamada wrote:
+>> > Some time ago, Sam pointed out a certain degree of overwrap between
+>> > generic-y and mandatory-y. (https://lkml.org/lkml/2017/7/10/121)
+>> >
+>> > I a bit tweaked the meaning of mandatory-y; now it defines the minimum
+>> > set of ASM headers that all architectures must have.
+>> >
+>> > If arch does not have specific implementation of a mandatory header,
+>> > Kbuild will let it fallback to the asm-generic one by automatically
+>> > generating a wrapper. This will allow to drop lots of redundant
+>> > generic-y defines.
+>> >
+>> > Previously, "mandatory" was used in the context of UAPI, but I guess
+>> > this can be extended to kernel space ASM headers.
+>>
+>> How useful is it to keep the generic-y behavior around at all vs making
+>> everything useful mandatory?
+>
+>
+> What I can tell is not all architectures
+> support kvm_para.h, ucontext.h
+>
+> I guess they will stay as arch-specific generic-y,
+> but I am not an expert in this area.
+>
+>
+> kvm_para.h is missing csky, nds32, riscv.
 
+It looks like RISC-V missed it and everyone else copied us.  I don't see any 
+reason why the generic version wouldn't work on RISC-V, as it just has failures 
+for all the calls.
 
-> -----Original Message-----
-> From: linux-scsi-owner@vger.kernel.org [mailto:linux-scsi-
-> owner@vger.kernel.org] On Behalf Of Arnd Bergmann
-> Sent: Monday, December 10, 2018 1:33 PM
-> To: Adaptec OEM Raid Solutions <aacraid@microsemi.com>; James E.J.
-> Bottomley <jejb@linux.ibm.com>; Martin K. Petersen
-> <martin.petersen@oracle.com>
-> Cc: Arnd Bergmann <arnd@arndb.de>; Raghava Aditya Renukunta
-> <RaghavaAditya.Renukunta@microsemi.com>; Prasad B Munirathnam
-> <prasad.munirathnam@microsemi.com>; Dave Carroll
-> <david.carroll@microsemi.com>; Dan Carpenter
-> <dan.carpenter@oracle.com>; Johannes Thumshirn <jthumshirn@suse.de>;
-> linux-scsi@vger.kernel.org; linux-kernel@vger.kernel.org
-> Subject: [PATCH 2/2] scsi: aacraid: change event_wait to a completion
->=20
-> The event_wait semaphore has completion semantics, so we can change it
-> over to the completion interface for clarity without changing the behavio=
-r.
->=20
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
-Reviewed-by: Dave Carroll <david.carroll@microsemi.com>
+> ucontext.h is missing in alpha, arm, m68k, parisc, sparc, xtensa
+>
+>
+>
+> bpf_perf_event.h could be promoted to mandatory-y ?
+> All architectures have it.
