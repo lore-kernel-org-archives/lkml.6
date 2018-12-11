@@ -2,89 +2,103 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C8EDC07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:20:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4335BC07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:20:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 33D1320672
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:20:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 33D1320672
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=keithp.com
+	by mail.kernel.org (Postfix) with ESMTP id 0928C20672
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:20:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544545247;
+	bh=6ZEGsGHmQHWwFmlwqUXyXQUsdRjEa/r6IFAoxC5OK1k=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=FK9KMuIV2TEfGx9VLR7o/OdymFIYFlHunH1sER8iYIuHhwXSZk5GdE98amNUnyj9S
+	 TlppydZHPLCcEnZ1Y4LvBA6MzGpOyEed+PmnhiAvTpKMlWqAvKlvsIJr6FmiEi0Rt2
+	 2i2m9hm/xWw9UTNx4T3j72V2nIO6NOmnPGvhtwkU=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0928C20672
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728374AbeLKQUj (ORCPT
+        id S1727929AbeLKPos (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 11:20:39 -0500
-Received: from home.keithp.com ([63.227.221.253]:38558 "EHLO elaine.keithp.com"
+        Tue, 11 Dec 2018 10:44:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33130 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727529AbeLKQUi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 11:20:38 -0500
-X-Greylist: delayed 351 seconds by postgrey-1.27 at vger.kernel.org; Tue, 11 Dec 2018 11:20:38 EST
-Received: from localhost (localhost [127.0.0.1])
-        by elaine.keithp.com (Postfix) with ESMTP id 205B63F25909;
-        Tue, 11 Dec 2018 08:14:47 -0800 (PST)
-X-Virus-Scanned: Debian amavisd-new at keithp.com
-Received: from elaine.keithp.com ([127.0.0.1])
-        by localhost (elaine.keithp.com [127.0.0.1]) (amavisd-new, port 10024)
-        with LMTP id ChaN0_6y6AGW; Tue, 11 Dec 2018 08:14:46 -0800 (PST)
-Received: from keithp.com (koto.keithp.com [10.0.0.2])
-        by elaine.keithp.com (Postfix) with ESMTPSA id B4E6F3F25908;
-        Tue, 11 Dec 2018 08:14:46 -0800 (PST)
-Received: by keithp.com (Postfix, from userid 1000)
-        id 9EF7F1582116; Tue, 11 Dec 2018 08:14:46 -0800 (PST)
-From:   "Keith Packard" <keithp@keithp.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
+        id S1727422AbeLKPop (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 10:44:45 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 736A920870;
+        Tue, 11 Dec 2018 15:44:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544543085;
+        bh=6ZEGsGHmQHWwFmlwqUXyXQUsdRjEa/r6IFAoxC5OK1k=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=1Iu8Z4tlZriAPgF+Q4mg3vPJMBoT3HfogR0PEIGfy6QLjHyO3mhibe/BlUrjKlpaF
+         xhhExHWcdt4secQWQjEfKFM94NxdY2W1imYqvC21AOKL/jN1HPcHhk2d7c3vFWDIvF
+         PT2lrr4qC117zbppBd+rBI9s2iPvYx0x7OJtuUvU=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dave Airlie <airlied@redhat.com>,
-        Daniel Vetter <daniel.vetter@intel.com>
-Subject: Re: [PATCH 4.19 098/118] drm/lease: Send a distinct uevent
-In-Reply-To: <20181211151648.232890582@linuxfoundation.org>
-References: <20181211151644.216668863@linuxfoundation.org> <20181211151648.232890582@linuxfoundation.org>
-Date:   Tue, 11 Dec 2018 08:14:46 -0800
-Message-ID: <87a7lcm45l.fsf@keithp.com>
+        stable@vger.kernel.org, Felix Fietkau <nbd@nbd.name>,
+        Johannes Berg <johannes.berg@intel.com>
+Subject: [PATCH 3.18 54/54] mac80211: fix reordering of buffered broadcast packets
+Date:   Tue, 11 Dec 2018 16:41:42 +0100
+Message-Id: <20181211151549.086991878@linuxfoundation.org>
+X-Mailer: git-send-email 2.20.0
+In-Reply-To: <20181211151546.010073210@linuxfoundation.org>
+References: <20181211151546.010073210@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha256; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+3.18-stable review patch.  If anyone has any objections, please let me know.
 
-Greg Kroah-Hartman <gregkh@linuxfoundation.org> writes:
+------------------
 
-> 4.19-stable review patch.  If anyone has any objections, please let me
-> know.
+From: Felix Fietkau <nbd@nbd.name>
 
-Acked-by: Keith Packard <keithp@keithp.com>
+commit 9ec1190d065998650fd9260dea8cf3e1f56c0e8c upstream.
 
-=2D-=20
-=2Dkeith
+If the buffered broadcast queue contains packets, letting new packets bypass
+that queue can lead to heavy reordering, since the driver is probably throttling
+transmission of buffered multicast packets after beacons.
 
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
+Keep buffering packets until the buffer has been cleared (and no client
+is in powersave mode).
 
------BEGIN PGP SIGNATURE-----
+Cc: stable@vger.kernel.org
+Signed-off-by: Felix Fietkau <nbd@nbd.name>
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-iQIzBAEBCAAdFiEEw4O3eCVWE9/bQJ2R2yIaaQAAABEFAlwP4nYACgkQ2yIaaQAA
-ABFb2BAAqXXcRD4tALJug3f/mHBuwyICTMR8YRidWHqI6h2aXCFGLtFnAaMR1NmM
-z1QvN83a6CT7PkKFcLCBxqWdS103sUISTNpuYTVsTUSHBLbU8+2xKESZ28o6ZIm2
-+DSOVA7VDBuQ9uGpf6Z5xHH44YtfGocsnStGvgFBVFXw4w5l7JmJlqS7gSDUclBI
-v8N6e9+pMLF7re0Mi6xnDq/8ASweGJXMmzUThOBKxRbQ2WLUZPyqdGkaIKFg8EZl
-6rqEJOeVUUNLEvNaZX3CariVZ12/ysy3ld1Ul/t+0sjbnPxiORijNwH4uZL9yUiC
-CChCGsFSdDU7bWU8tzBT4Q4owbN1Dm3BkIu2bOqPc0u/rk5R3d41Jq76WxsoHjWZ
-uH65Dlbum7w/Zan7uhYmLdH79z1pwP4xe/kJPeAjJgq2hT+SaRjXMW2z2L96kEdO
-ODYG/q7Wu5va86kFVjUbUH/F1i2I32C7yY5B6X88QF8PR8drf2/LJLtAA48HXEWx
-vbJ8OK7jqWy7qd21WUDWTlv9APxpHW+TG3wwx9X6fjxrKktEoT2srfDh2iY+cmXC
-fW0ILSZdHxaEMMh/rmzoyGDwK+z6JjJrxUDzeKmxkXsA3BD5GZHm7Mah1jNH4r8q
-8tCYmj2FdL+ADirlwJ+4Sh46nHYFZhllGSY4bHjXPf0GG2tw8O0=
-=LICm
------END PGP SIGNATURE-----
---=-=-=--
+---
+ net/mac80211/tx.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+--- a/net/mac80211/tx.c
++++ b/net/mac80211/tx.c
+@@ -419,8 +419,8 @@ ieee80211_tx_h_multicast_ps_buf(struct i
+ 	if (tx->local->hw.flags & IEEE80211_HW_QUEUE_CONTROL)
+ 		info->hw_queue = tx->sdata->vif.cab_queue;
+ 
+-	/* no stations in PS mode */
+-	if (!atomic_read(&ps->num_sta_ps))
++	/* no stations in PS mode and no buffered packets */
++	if (!atomic_read(&ps->num_sta_ps) && skb_queue_empty(&ps->bc_buf))
+ 		return TX_CONTINUE;
+ 
+ 	info->flags |= IEEE80211_TX_CTL_SEND_AFTER_DTIM;
+
+
