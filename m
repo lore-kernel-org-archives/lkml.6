@@ -7,61 +7,64 @@ X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A639EC5CFFE
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 14:37:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F505C07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 14:37:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6BA9C2054F
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 14:37:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 532A62054F
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 14:37:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544539026;
-	bh=A9tI16gImqVtUqmild2k3OknX4Gzc1otd8HuiaCL7wI=;
+	s=default; t=1544539034;
+	bh=TotJtOPiOQiIU/x9E2IVMm3S8TyoOxNZOvPMLam/Aok=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=kkbnbtd8Z/jMD6IzqaTgVYWQ2ZJpt92EraELqSXTzPUbmM/aGBctA2o9+a/48TUkq
-	 jiXTpFFAizNwOU6OnhA7FUcPivvtvQKgWD9rKdXApY2vOUyvBU4rTaJYWQBRSsK4Mu
-	 Hwa6PDQn85da9ACfhxg0qBnXoum47W5XxO3RP6iw=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6BA9C2054F
+	b=PDbj4lGRTK4OPPc4ZVT2G0GHw/fL+i2nRFOo8swg4xoutn/tMMuPS3AWmQtAqlnts
+	 olRve9r0FSjy57o8pme2irqGzSnSMOTK9yMaeklX4ljrl6iwfjs372GP498rpyfaad
+	 h2UGCjNnFvtD70isReucD+NdI/e255VESHopjrT0=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 532A62054F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726678AbeLKOhA (ORCPT
+        id S1726714AbeLKOhN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 09:37:00 -0500
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:39715 "EHLO
+        Tue, 11 Dec 2018 09:37:13 -0500
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:42760 "EHLO
         mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726231AbeLKOgy (ORCPT
+        with ESMTP id S1726335AbeLKOgw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 09:36:54 -0500
-Received: by mail-ed1-f66.google.com with SMTP id b14so12695023edt.6;
-        Tue, 11 Dec 2018 06:36:53 -0800 (PST)
+        Tue, 11 Dec 2018 09:36:52 -0500
+Received: by mail-ed1-f66.google.com with SMTP id j6so12678087edp.9;
+        Tue, 11 Dec 2018 06:36:50 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=AyqbHZLKGmThJTrdoLh3HA5rnpO95hPXZGeWvc40dsA=;
-        b=nfRgz4MIK+UUd6Hb6/raw0KlGLFdOXu4JHN9SUYcGP8lsZsHPKuYoq8tdXPRoSa9kD
-         3HnOML9joMQG7tn2UQ7R7+C87tdFpUC9ehp5RJoQ/ogiYnku6fwxXUN5P/JG7hGLyDpe
-         hK7XRmhkGeNzoVqjubzDMy+BasNMsjHxkuWKkzdpI7cuolmHMvY5yksFQtWNEt8cLM6G
-         HlDNdt+up/nRUnRjNKe7ObMAd/+VVka8PsdGLoTR/IDVw4JugyYmSgKbs2U99twNEOZX
-         bV99P6N5RdC47NPfadZbmlSSunM8uoNZlejMvn4KwCwHkfYAhlEoFWWtDksI1BY6dINr
-         Uuaw==
-X-Gm-Message-State: AA+aEWYJZnPzueVzpp0Wequpo88e+rOwoMp0+85Xp04HEqqyrXp7cVRi
-        u2yojkX/ytCWuHh578K49d8=
-X-Google-Smtp-Source: AFSGD/X7KLzdI7d7PZLo/hrL6aPDD+b2i67B2umVhARl/QOcSpLVm+N2KaswALPenC4TARVGpLhuOQ==
-X-Received: by 2002:a50:a086:: with SMTP id 6mr15066935edo.88.1544539012411;
-        Tue, 11 Dec 2018 06:36:52 -0800 (PST)
+        bh=SxgSQ41vevm4qZepZDpPxwHugsA+vDQMi7Sz6pwcLHk=;
+        b=oZBH4MzVdGwc6sXGnp9QWJFzScpu2o8BhpGtM2MpO8TDHArX9bOhN/uLDVgsnt01sp
+         y7/nY7YK/KaL+3eseCYcDikUeo5cGc65CIE5bX47bP5GudhwKUBemLXbl3+7xowSTzbO
+         EU7tK6vhqCfIHxSW22V1dCVTMCcHbJKSRs5vjc7o6h2MdEykGEAN0k8Sn22/XJuVkAwb
+         n4aFtWkTeYpYbvWTySbhs/Bpm6VVGHssuZtQEIDpK3Pne6ZKqU1wx30kmj4pmGWF9zYI
+         kPjYy1tfG7AXF2Cjk6FYICzRIV4NpFBVSS9PSs7w3eTkpGPPtQeqSLJwviXHzinlAxCA
+         Pj+w==
+X-Gm-Message-State: AA+aEWab62hJ8AYdVfr8lK4vl9em9hHxtGhyVEiRwa3unhd48vY5phXa
+        hLLpjy29j2p+y1OE/c7S1Dc=
+X-Google-Smtp-Source: AFSGD/UXuasc79hjCYZNspt5DG9q6e3pITQ4jJGUN6Ma0PV9YCqzlzLjEoj1c/VpHKI6ndPYtPTHqA==
+X-Received: by 2002:a17:906:5c9:: with SMTP id t9-v6mr12876002ejt.111.1544539010079;
+        Tue, 11 Dec 2018 06:36:50 -0800 (PST)
 Received: from tiehlicka.suse.cz (prg-ext-pat.suse.com. [213.151.95.130])
-        by smtp.gmail.com with ESMTPSA id z40sm4017084edz.86.2018.12.11.06.36.51
+        by smtp.gmail.com with ESMTPSA id z40sm4017084edz.86.2018.12.11.06.36.49
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 11 Dec 2018 06:36:51 -0800 (PST)
+        Tue, 11 Dec 2018 06:36:49 -0800 (PST)
 From:   Michal Hocko <mhocko@kernel.org>
 To:     Andrew Morton <akpm@linux-foundation.org>
 Cc:     linux-api@vger.kernel.org, <linux-mm@kvack.org>,
         LKML <linux-kernel@vger.kernel.org>,
         Michal Hocko <mhocko@suse.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        David Rientjes <rientjes@google.com>, Jan Kara <jack@suse.cz>,
+        Mike Rapoport <rppt@linux.ibm.com>,
         Vlastimil Babka <vbabka@suse.cz>
-Subject: [PATCH 3/3] mm, proc: report PR_SET_THP_DISABLE in proc
-Date:   Tue, 11 Dec 2018 15:36:41 +0100
-Message-Id: <20181211143641.3503-4-mhocko@kernel.org>
+Subject: [PATCH 1/3] mm, proc: be more verbose about unstable VMA flags in /proc/<pid>/smaps
+Date:   Tue, 11 Dec 2018 15:36:39 +0100
+Message-Id: <20181211143641.3503-2-mhocko@kernel.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181211143641.3503-1-mhocko@kernel.org>
 References: <20181211143641.3503-1-mhocko@kernel.org>
@@ -74,83 +77,68 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Michal Hocko <mhocko@suse.com>
 
-David Rientjes has reported that 1860033237d4 ("mm: make
-PR_SET_THP_DISABLE immediately active") has changed the way how
-we report THPable VMAs to the userspace. Their monitoring tool is
-triggering false alarms on PR_SET_THP_DISABLE tasks because it considers
-an insufficient THP usage as a memory fragmentation resp. memory
-pressure issue.
+Even though vma flags exported via /proc/<pid>/smaps are explicitly
+documented to be not guaranteed for future compatibility the warning
+doesn't go far enough because it doesn't mention semantic changes to
+those flags. And they are important as well because these flags are
+a deep implementation internal to the MM code and the semantic might
+change at any time.
 
-Before the said commit each newly created VMA inherited VM_NOHUGEPAGE
-flag and that got exposed to the userspace via /proc/<pid>/smaps file.
-This implementation had its downsides as explained in the commit message
-but it is true that the userspace doesn't have any means to query for
-the process wide THP enabled/disabled status.
+Let's consider two recent examples:
+http://lkml.kernel.org/r/20181002100531.GC4135@quack2.suse.cz
+: commit e1fb4a086495 "dax: remove VM_MIXEDMAP for fsdax and device dax" has
+: removed VM_MIXEDMAP flag from DAX VMAs. Now our testing shows that in the
+: mean time certain customer of ours started poking into /proc/<pid>/smaps
+: and looks at VMA flags there and if VM_MIXEDMAP is missing among the VMA
+: flags, the application just fails to start complaining that DAX support is
+: missing in the kernel.
 
-PR_SET_THP_DISABLE is a process wide flag so it makes a lot of sense
-to export in the process wide context rather than per-vma. Introduce
-a new field to /proc/<pid>/status which export this status.  If
-PR_SET_THP_DISABLE is used then it reports false same as when the THP is
-not compiled in. It doesn't consider the global THP status because we
-already export that information via sysfs
+http://lkml.kernel.org/r/alpine.DEB.2.21.1809241054050.224429@chino.kir.corp.google.com
+: Commit 1860033237d4 ("mm: make PR_SET_THP_DISABLE immediately active")
+: introduced a regression in that userspace cannot always determine the set
+: of vmas where thp is ineligible.
+: Userspace relies on the "nh" flag being emitted as part of /proc/pid/smaps
+: to determine if a vma is eligible to be backed by hugepages.
+: Previous to this commit, prctl(PR_SET_THP_DISABLE, 1) would cause thp to
+: be disabled and emit "nh" as a flag for the corresponding vmas as part of
+: /proc/pid/smaps.  After the commit, thp is disabled by means of an mm
+: flag and "nh" is not emitted.
+: This causes smaps parsing libraries to assume a vma is eligible for thp
+: and ends up puzzling the user on why its memory is not backed by thp.
 
-Fixes: 1860033237d4 ("mm: make PR_SET_THP_DISABLE immediately active")
+In both cases userspace was relying on a semantic of a specific VMA
+flag. The primary reason why that happened is a lack of a proper
+internface. While this has been worked on and it will be fixed properly,
+it seems that our wording could see some refinement and be more vocal
+about semantic aspect of these flags as well.
+
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: David Rientjes <rientjes@google.com>
+Acked-by: Jan Kara <jack@suse.cz>
+Acked-by: Dan Williams <dan.j.williams@intel.com>
+Acked-by: David Rientjes <rientjes@google.com>
+Acked-by: Mike Rapoport <rppt@linux.ibm.com>
 Acked-by: Vlastimil Babka <vbabka@suse.cz>
 Signed-off-by: Michal Hocko <mhocko@suse.com>
 ---
- Documentation/filesystems/proc.txt |  3 +++
- fs/proc/array.c                    | 10 ++++++++++
- 2 files changed, 13 insertions(+)
+ Documentation/filesystems/proc.txt | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
 diff --git a/Documentation/filesystems/proc.txt b/Documentation/filesystems/proc.txt
-index cd465304bec4..b24fd9bccc99 100644
+index 12a5e6e693b6..2a4e63f5122c 100644
 --- a/Documentation/filesystems/proc.txt
 +++ b/Documentation/filesystems/proc.txt
-@@ -182,6 +182,7 @@ For example, to get the status information of a process, all you have to do is
-   VmSwap:        0 kB
-   HugetlbPages:          0 kB
-   CoreDumping:    0
-+  THP_enabled:	  1
-   Threads:        1
-   SigQ:   0/28578
-   SigPnd: 0000000000000000
-@@ -256,6 +257,8 @@ Table 1-2: Contents of the status files (as of 4.8)
-  HugetlbPages                size of hugetlb memory portions
-  CoreDumping                 process's memory is currently being dumped
-                              (killing the process may lead to a corrupted core)
-+ THP_enabled		     process is allowed to use THP (returns 0 when
-+			     PR_SET_THP_DISABLE is set on the process
-  Threads                     number of threads
-  SigQ                        number of signals queued/max. number for queue
-  SigPnd                      bitmap of pending signals for the thread
-diff --git a/fs/proc/array.c b/fs/proc/array.c
-index 0ceb3b6b37e7..9d428d5a0ac8 100644
---- a/fs/proc/array.c
-+++ b/fs/proc/array.c
-@@ -392,6 +392,15 @@ static inline void task_core_dumping(struct seq_file *m, struct mm_struct *mm)
- 	seq_putc(m, '\n');
- }
+@@ -496,7 +496,9 @@ flags associated with the particular virtual memory area in two letter encoded
  
-+static inline void task_thp_status(struct seq_file *m, struct mm_struct *mm)
-+{
-+	bool thp_enabled = IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE);
-+
-+	if (thp_enabled)
-+		thp_enabled = !test_bit(MMF_DISABLE_THP, &mm->flags);
-+	seq_printf(m, "THP_enabled:\t%d\n", thp_enabled);
-+}
-+
- int proc_pid_status(struct seq_file *m, struct pid_namespace *ns,
- 			struct pid *pid, struct task_struct *task)
- {
-@@ -406,6 +415,7 @@ int proc_pid_status(struct seq_file *m, struct pid_namespace *ns,
- 	if (mm) {
- 		task_mem(m, mm);
- 		task_core_dumping(m, mm);
-+		task_thp_status(m, mm);
- 		mmput(mm);
- 	}
- 	task_sig(m, task);
+ Note that there is no guarantee that every flag and associated mnemonic will
+ be present in all further kernel releases. Things get changed, the flags may
+-be vanished or the reverse -- new added.
++be vanished or the reverse -- new added. Interpretation of their meaning
++might change in future as well. So each consumer of these flags has to
++follow each specific kernel version for the exact semantic.
+ 
+ This file is only present if the CONFIG_MMU kernel configuration option is
+ enabled.
 -- 
 2.19.2
 
