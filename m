@@ -2,111 +2,140 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8563BC07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 10:39:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B296C07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 10:40:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 48B162082F
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 10:39:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 48B162082F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 684362082F
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 10:40:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 684362082F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726444AbeLKKjc (ORCPT
+        id S1726446AbeLKKkc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 05:39:32 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:44032 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726114AbeLKKjb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 05:39:31 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0EE3D1596;
-        Tue, 11 Dec 2018 02:39:31 -0800 (PST)
-Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id D2B983F6A8;
-        Tue, 11 Dec 2018 02:39:30 -0800 (PST)
-Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
-        id CBCDB1AE0B6A; Tue, 11 Dec 2018 10:39:53 +0000 (GMT)
-Date:   Tue, 11 Dec 2018 10:39:53 +0000
-From:   Will Deacon <will.deacon@arm.com>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        Steve Capper <steve.capper@arm.com>
-Subject: Re: linux-next: manual merge of the akpm-current tree with the arm64
- tree
-Message-ID: <20181211103953.GC12006@edgewater-inn.cambridge.arm.com>
-References: <20181211171102.14c0be9f@canb.auug.org.au>
- <20181211171230.7847fd48@canb.auug.org.au>
+        Tue, 11 Dec 2018 05:40:32 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:47592 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726114AbeLKKkb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 05:40:31 -0500
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 0FC2D3082E52;
+        Tue, 11 Dec 2018 10:40:31 +0000 (UTC)
+Received: from oldenburg2.str.redhat.com (ovpn-116-82.ams2.redhat.com [10.36.116.82])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id CF0005D964;
+        Tue, 11 Dec 2018 10:40:24 +0000 (UTC)
+From:   Florian Weimer <fweimer@redhat.com>
+To:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc:     Carlos O'Donell <carlos@redhat.com>,
+        Joseph Myers <joseph@codesourcery.com>,
+        Szabolcs Nagy <szabolcs.nagy@arm.com>,
+        libc-alpha@sourceware.org, Thomas Gleixner <tglx@linutronix.de>,
+        Ben Maurer <bmaurer@fb.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
+        Rich Felker <dalias@libc.org>, linux-kernel@vger.kernel.org,
+        linux-api@vger.kernel.org
+Subject: Re: [RFC PATCH glibc 1/4] glibc: Perform rseq(2) registration at nptl init and thread creation (v4)
+References: <20181204192141.4684-1-mathieu.desnoyers@efficios.com>
+Date:   Tue, 11 Dec 2018 11:40:22 +0100
+Message-ID: <87h8fkz6qx.fsf@oldenburg2.str.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181211171230.7847fd48@canb.auug.org.au>
-User-Agent: Mutt/1.11.1+30 (d10eec459b35) ()
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Tue, 11 Dec 2018 10:40:31 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 11, 2018 at 05:12:30PM +1100, Stephen Rothwell wrote:
-> On Tue, 11 Dec 2018 17:11:02 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> >
-> > Today's linux-next merge of the akpm-current tree got a conflict in:
-> > 
-> >   arch/arm64/mm/proc.S
-> > 
-> > between commits:
-> > 
-> >   67e7fdfcc682 ("arm64: mm: introduce 52-bit userspace support")
-> >   68d23da4373a ("rm64: Kconfig: Re-jig CONFIG options for 52-bit VA")
-> > 
-> > from the arm64 tree and commit:
-> > 
-> >   089dc516f651 ("kasan, arm64: enable top byte ignore for the kernel")
-> > 
-> > from the akpm-current tree.
-> > 
-> > I fixed it up (see below) and can carry the fix as necessary. This
-> > is now fixed as far as linux-next is concerned, but any non trivial
-> > conflicts should be mentioned to your upstream maintainer when your tree
-> > is submitted for merging.  You may also want to consider cooperating
-> > with the maintainer of the conflicting tree to minimise any particularly
-> > complex conflicts.
-> > 
-> > -- 
-> > Cheers,
-> > Stephen Rothwell
-> > 
-> > diff --cc arch/arm64/mm/proc.S
-> > index e05b3ce1db6b,d861f208eeb1..73886a5f1f30
-> > --- a/arch/arm64/mm/proc.S
-> > +++ b/arch/arm64/mm/proc.S
-> > @@@ -449,16 -451,8 +455,16 @@@ ENTRY(__cpu_setup
-> >   	 */
-> >   	ldr	x10, =TCR_TxSZ(VA_BITS) | TCR_CACHE_FLAGS | TCR_SMP_FLAGS | \
-> >   			TCR_TG_FLAGS | TCR_KASLR_FLAGS | TCR_ASID16 | \
-> > - 			TCR_TBI0 | TCR_A1
-> > + 			TCR_TBI0 | TCR_A1 | TCR_KASAN_FLAGS
-> >  -	tcr_set_idmap_t0sz	x10, x9
-> >  +
-> >  +#ifdef CONFIG_ARM64_USER_VA_BITS_52
-> >  +	ldr_l		x9, vabits_user
-> >  +	sub		x9, xzr, x9
-> >  +	add		x9, x9, #64
-> >  +#else
-> >  +	ldr_l		x9, idmap_t0sz
-> >  +#endif
-> >  +	tcr_set_t0sz	x10, x9
-> >   
-> >   	/*
-> >   	 * Set the IPS bits in TCR_EL1.
+* Mathieu Desnoyers:
 
-This looks good to me. Thanks, Stephen.
+> I want to keep the __rseq_refcount symbol so out-of-libc users can
+> register rseq if they are linked against a pre-2.29 libc.
 
-Will
+Sorry, I was confused.
+
+> diff --git a/csu/Makefile b/csu/Makefile
+> index 88fc77662e..81d471587f 100644
+> --- a/csu/Makefile
+> +++ b/csu/Makefile
+> @@ -28,7 +28,7 @@ include ../Makeconfig
+>  
+>  routines = init-first libc-start $(libc-init) sysdep version check_fds \
+>  	   libc-tls elf-init dso_handle
+> -aux	 = errno
+> +aux	 = errno rseq
+>  elide-routines.os = libc-tls
+>  static-only-routines = elf-init
+>  csu-dummies = $(filter-out $(start-installed-name),crt1.o Mcrt1.o)
+
+Do we plan to add Hurd support for this?
+
+> diff --git a/sysdeps/unix/sysv/linux/rseq-internal.h b/sysdeps/unix/sysv/linux/rseq-internal.h
+> new file mode 100644
+> index 0000000000..2367926def
+> --- /dev/null
+> +++ b/sysdeps/unix/sysv/linux/rseq-internal.h
+
+> +#define RSEQ_SIG 0x53053053
+
+What's this?  This needs a comment.
+
+> +extern __thread volatile struct rseq __rseq_abi
+> +__attribute__ ((tls_model ("initial-exec")));
+> +
+> +extern __thread volatile uint32_t __rseq_refcount
+> +__attribute__ ((tls_model ("initial-exec")));
+
+The volatile qualifier needs justification in a comment.  (Usually,
+volatile is wrong. and it is difficult to get rid of it.)
+
+We need to document these public symbols somewhere.  There should be an
+installed header file.
+
+> diff --git a/nptl/Versions b/nptl/Versions
+> index e7f691da7a..f7890f73fc 100644
+> --- a/nptl/Versions
+> +++ b/nptl/Versions
+> @@ -277,6 +277,10 @@ libpthread {
+>      cnd_timedwait; cnd_wait; tss_create; tss_delete; tss_get; tss_set;
+>    }
+>  
+> +  GLIBC_2.29 {
+> +    __rseq_refcount;
+> +  }
+
+Why put this into libpthread, and __rseq_abi into libc?
+
+What, exactly, is the benefit of having __rseq_refcount defined by
+glibc?  Have you actually got this working?  If an rseq library is
+linked against glibc 2.29, it will reference the GLIBC_2.29 symbol
+version, so it cannot be loaded by older glibcs.  In this case,
+__rseq_refcount is not needed.
+
+If you build against pre-2.29, then the __rseq_refcount symbol will be
+unversioned.  But then you don't need it glibc, either.
+
+So it seems to me that the addition to glibc is useless in both
+scenarios.  Am I missing something?
+
+By the way, you could avoid the need for unregistration if you allocated
+the rseq areas persistently, index by TID.  They are quite small, so
+with the typical PID range, maybe the wasted memory due to changing TIDs
+would be acceptable?
+
+I guess things would be so much easier if the kernel simply provided a
+means to obtain the address of a previously registered rseq area.
+
+Thanks,
+Florian
