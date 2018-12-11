@@ -2,144 +2,108 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE8DFC07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 10:55:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E1FFC07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 10:55:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A412D2081B
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 10:55:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 200832084C
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 10:55:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OYFcyYbu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A412D2081B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="abhuCIta"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 200832084C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726676AbeLKKzc (ORCPT
+        id S1726692AbeLKKzu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 05:55:32 -0500
-Received: from mail-io1-f67.google.com ([209.85.166.67]:35624 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726527AbeLKKzb (ORCPT
+        Tue, 11 Dec 2018 05:55:50 -0500
+Received: from mail-io1-f66.google.com ([209.85.166.66]:36927 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726527AbeLKKzu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 05:55:31 -0500
-Received: by mail-io1-f67.google.com with SMTP id i1so9423572ioo.2
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 02:55:30 -0800 (PST)
+        Tue, 11 Dec 2018 05:55:50 -0500
+Received: by mail-io1-f66.google.com with SMTP id f14so11442791iol.4
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 02:55:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=+oce3y3MlGvg/ig4q///rHNhAA6VEygCtwfBqOJrH80=;
-        b=OYFcyYbujpbmJLMoorf8g2CGc3dRHhpaC4oHn7aX8C+pilj0+BUmD1PuOBBAcJutRU
-         NlZxIVAjYLgNAGCZ28aD4VsUXDxT5NB0OzAMZY1RJUoKXWN4LTwUojH2yeqSpysB5iNL
-         A42x7SB9zOM5MurTZecCvWFWksN43Ae6DSRD8cPq7p9XyoDRBiU0YKrpB9ETgqXOKVeQ
-         cbOuhpyilH0yoa/VjlOgZvQPlJRuTlM4QoPtcCz1ksDdON6xeeGsa3f6SKzw/tarO6XZ
-         0Ng9h66+0z54ZXXZQLT5o6Lc2ak7m45gnjsY8igPlrcjS8c8vqVruog4uC+JbP7eaGYH
-         JmPQ==
+         :cc:content-transfer-encoding;
+        bh=eZMBhKDg4pKiTmlT/8UOyZXJmoDT5fBnrkWFkFHiKAk=;
+        b=abhuCItaTd/Oq31WI0QDJh92mo71L7Ha/pz+oZUfl4myy8nCeSJwmiQaK0b2vRQm3Q
+         QUUKPAgmFsS9hTHG4kIaPYmcjkVojcZ3G3VxxxgZFkd4jPkZ4SDoVjMu2eNuk2BKuT2h
+         AaBi3+4MK0ObPBqWeYNxyUcY2niNWS7LKzx/yZucaZfMa8lJs1PAjF2crPTKxDjENNUz
+         kvNfueHVmjVE88lp/SCvsS1JqEYAD/b8crMmD0/JZgAs/gVL0rdl4cF6f1fiAvXKgy34
+         1H4j7V34Y5p5VP+gzZdP/Y4V6C6GLYMpM9xKd2tc9E5L7YggCbzr3uL+ULVFxDD8RVxB
+         6KBQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=+oce3y3MlGvg/ig4q///rHNhAA6VEygCtwfBqOJrH80=;
-        b=XoVYbSgc7x1pSMrHS1ttQMHgEbAcYFk62zh97cPdFmsOfxJaicHBuGEP0e14B3qW6M
-         Cdpe9JQ1P8hgC6VTcnilcz9WN0vf10+wTNJXepiYQSFz5hrqr+mxSohRHdjHXth+hnBK
-         iUaB+5WkNHN1T93OlCMhMl6sccJaOCEkM7+Wgc9C+MsyKYXthAyfmsk6w5C4LQxaVeYE
-         xWiyDFVUglvUlf78s/VkiR5HXROL/Gm0sNuJ35aRnCcRwXOjkXaMF0b/RHb40rBd0RFk
-         2BYvBP9hK77A9PscbFCH29nL4zwbCaiS8mzxA73AGFSZLwDZdYNenjOBRKbRzYSL/nIv
-         iB/Q==
-X-Gm-Message-State: AA+aEWZPiE1WuN+NoDUmODUTsXhgYVlMdA9ysLfsElXF/nxSPoR3rv9d
-        m/Kge0guuV3+dfvyzH85qMQlltOrBLyH2oonmw31bg==
-X-Google-Smtp-Source: AFSGD/VJFiK20b68epGrMvagn+leJifm3tacp6heSJXRe88DiHfYg/Uaou99w5gEQcF4RvuRM5U0d3jn75ernwtRDCU=
-X-Received: by 2002:a5d:8491:: with SMTP id t17mr12603247iom.11.1544525729885;
- Tue, 11 Dec 2018 02:55:29 -0800 (PST)
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=eZMBhKDg4pKiTmlT/8UOyZXJmoDT5fBnrkWFkFHiKAk=;
+        b=JA0vovwZ8zAigo42cXPtS+aFcl6NtaSY0M5Lwknl6QK7KLEKpC38hq/JEPOOsTSlIj
+         bftvACvuNTtT2yBv/aSE9OW+3dAT1MAfNK0+I9JwDgk+3/BTqgE3ZLXTX75Q8z5klkjH
+         GWj55k/+q1THmlklnYK9/72S1rcEFsehlFTZWPsZ9m+sSpoujR8aBcvMUblZ+6WTOBgS
+         3B8Aq6yDlUpT8k7knXFt0zs3SQ2Auw5HQvat1wW9LEtgO5MT2cx6a3Xvaf240GoXwLSQ
+         ohZG/TyxdrG+6e6ZgRIkPmDB2WtGvZuqRm/pmnvQbOZ6e/nPyvcu6K3wBY1RhbZMDF32
+         Wenw==
+X-Gm-Message-State: AA+aEWYPOtiem8lbXVjakZXBrLFFKBLgojNJtKjoaJu7idLNE835nMLM
+        wg8YIlqBhO9MCFOT//6gt7Ox0/AWcmUxxlOYcR/XyQ==
+X-Google-Smtp-Source: AFSGD/WeRAkhHyqQJqzUTVcpiBu+fol201V/MqWUw0nynDrk/KqJVFk0v4ML4KgETpxfpXQOCENSi4GYaKxU2MYgFUw=
+X-Received: by 2002:a5e:aa06:: with SMTP id s6mr12239041ioe.187.1544525749521;
+ Tue, 11 Dec 2018 02:55:49 -0800 (PST)
 MIME-Version: 1.0
-References: <20181211103733.22284-1-anders.roxell@linaro.org>
-In-Reply-To: <20181211103733.22284-1-anders.roxell@linaro.org>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Tue, 11 Dec 2018 11:55:18 +0100
-Message-ID: <CACT4Y+Yz36BDR6WJ0WrPLHd+Z2WpJFhqm=Hv8_VoC7CJ8GEh=Q@mail.gmail.com>
-Subject: Re: [PATCH] kasan: mark kasan_check_(read|write) as 'notrace'
-To:     anders.roxell@linaro.org
-Cc:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        kasan-dev <kasan-dev@googlegroups.com>,
-        Linux-MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>
+References: <20181210151024.3906-1-brgl@bgdev.pl> <20181210151024.3906-3-brgl@bgdev.pl>
+ <20181210154125.GE6307@sirena.org.uk>
+In-Reply-To: <20181210154125.GE6307@sirena.org.uk>
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Tue, 11 Dec 2018 11:55:37 +0100
+Message-ID: <CAMRc=MfC-E9DpMhDSXSQ-o5xG1ONccbT35=0rHsZy6oLt9j8cA@mail.gmail.com>
+Subject: Re: [PATCH 2/2] regulator: provide regulator_set_voltage_sel_regmap_step()
+ helper
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Liam Girdwood <lgirdwood@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 11, 2018 at 11:37 AM Anders Roxell <anders.roxell@linaro.org> wrote:
+pon., 10 gru 2018 o 16:41 Mark Brown <broonie@kernel.org> napisa=C5=82(a):
 >
-> When option CONFIG_KASAN is enabled toghether with ftrace, function
-> ftrace_graph_caller() gets in to a recursion, via functions
-> kasan_check_read() and kasan_check_write().
+> On Mon, Dec 10, 2018 at 04:10:24PM +0100, Bartosz Golaszewski wrote:
 >
->  Breakpoint 2, ftrace_graph_caller () at ../arch/arm64/kernel/entry-ftrace.S:179
->  179             mcount_get_pc             x0    //     function's pc
->  (gdb) bt
->  #0  ftrace_graph_caller () at ../arch/arm64/kernel/entry-ftrace.S:179
->  #1  0xffffff90101406c8 in ftrace_caller () at ../arch/arm64/kernel/entry-ftrace.S:151
->  #2  0xffffff90106fd084 in kasan_check_write (p=0xffffffc06c170878, size=4) at ../mm/kasan/common.c:105
->  #3  0xffffff90104a2464 in atomic_add_return (v=<optimized out>, i=<optimized out>) at ./include/generated/atomic-instrumented.h:71
->  #4  atomic_inc_return (v=<optimized out>) at ./include/generated/atomic-fallback.h:284
->  #5  trace_graph_entry (trace=0xffffffc03f5ff380) at ../kernel/trace/trace_functions_graph.c:441
->  #6  0xffffff9010481774 in trace_graph_entry_watchdog (trace=<optimized out>) at ../kernel/trace/trace_selftest.c:741
->  #7  0xffffff90104a185c in function_graph_enter (ret=<optimized out>, func=<optimized out>, frame_pointer=18446743799894897728, retp=<optimized out>) at ../kernel/trace/trace_functions_graph.c:196
->  #8  0xffffff9010140628 in prepare_ftrace_return (self_addr=18446743592948977792, parent=0xffffffc03f5ff418, frame_pointer=18446743799894897728) at ../arch/arm64/kernel/ftrace.c:231
->  #9  0xffffff90101406f4 in ftrace_graph_caller () at ../arch/arm64/kernel/entry-ftrace.S:182
->  Backtrace stopped: previous frame identical to this frame (corrupt stack?)
->  (gdb)
+> > On some devices we need to manually ramp the regulators to desired
+> > voltage one step at a time. This patch adds a helper routine for
+> > regmap users that checks if the regulator is enabled and, if so,
 >
-> Rework so that kasan_check_read() and kasan_check_write() is marked with
-> 'notrace'.
+> My first question would be why do this at the regmap helper level, why
+> not do this at the core level by stepping through selectors?  I'd also
+> expect to be programming the step size here, while some regulators
+> aren't able to regulate well over larger step changes I'd expect that
+> they wouldn't need to step through every single possible voltage value,
+> that's potentially extremely slow.
 >
-> Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
-> ---
->  mm/kasan/common.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/mm/kasan/common.c b/mm/kasan/common.c
-> index 03d5d1374ca7..71507d15712b 100644
-> --- a/mm/kasan/common.c
-> +++ b/mm/kasan/common.c
-> @@ -95,13 +95,13 @@ void kasan_disable_current(void)
->         current->kasan_depth--;
->  }
->
-> -void kasan_check_read(const volatile void *p, unsigned int size)
-> +void notrace kasan_check_read(const volatile void *p, unsigned int size)
->  {
->         check_memory_region((unsigned long)p, size, false, _RET_IP_);
->  }
->  EXPORT_SYMBOL(kasan_check_read);
->
-> -void kasan_check_write(const volatile void *p, unsigned int size)
-> +void notrace kasan_check_write(const volatile void *p, unsigned int size)
->  {
->         check_memory_region((unsigned long)p, size, true, _RET_IP_);
->  }
 
-Hi Anders,
+This sounds like a good improvement to the core regulator code indeed.
+I'll give it a try but I'm not sure I'll have something before the
+next merge window, so for now I'll put this logic into my driver that
+I'd like to get merged for 4.22 and we can factor it out later on once
+we agree on the right approach.
 
-Thanks for fixing this!
+> > +     asc =3D diff > 0 ? false : true;
+> > +     end =3D asc ? sel + 1 : sel - 1;
+> > +     asc ? curr++ : curr--;
+>
+> Please just write normal conditional statements so the code is more
+> readable and hence maintainable.
 
-I wonder if there is some compiler/make flag to turn this off for the
-whole file?
+Sure.
 
-We turn as much instrumentation as possible already for this file in Makefile:
-
-KASAN_SANITIZE := n
-UBSAN_SANITIZE_kasan.o := n
-KCOV_INSTRUMENT := n
-CFLAGS_REMOVE_kasan.o = -pg
-CFLAGS_kasan.o := $(call cc-option, -fno-conserve-stack -fno-stack-protector)
-
-These functions call check_memory_region, which is presumably inlined.
-But if it's not inlined later in some configuration, or we just
-shuffle code a bit, we can get the same problem again.
+Thanks,
+Bartosz
