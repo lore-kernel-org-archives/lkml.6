@@ -2,340 +2,307 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4415FC07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 06:42:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B69EEC07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 06:45:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD0DF20672
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 06:42:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SlS6e9tD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD0DF20672
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 5BF5120672
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 06:45:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5BF5120672
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727034AbeLKGmk (ORCPT
+        id S1726200AbeLKGpP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 01:42:40 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:42028 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725923AbeLKGmk (ORCPT
+        Tue, 11 Dec 2018 01:45:15 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:38808 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726032AbeLKGpO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 01:42:40 -0500
-Received: by mail-wr1-f67.google.com with SMTP id q18so12823181wrx.9;
-        Mon, 10 Dec 2018 22:42:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=KXmtxN7ePXcIMgJ+dYxNG4yOdWzQoUxvuy6ni7g+6uU=;
-        b=SlS6e9tD5Qd3yzli5y9gY1NB3cek8arQ3IAvjSLrWaGOvrULz9wVLM6b55gyJqyDgO
-         YYYWjwJcgI71HBlA7HXYYWQRUwUpfHra+vNhaFjm6RU9moCFeCozIb12jkjByxaAkET5
-         8SL6iRlEw3ibm7xA5F+hYIU9sIBebpcvnT8wsUKpVqIh/+KHNzyCSqODVOTa2HQWRK/x
-         COIdf5wkz8Bcc5Q9hacaC59ugto7vtNxiCb6GNJSP3RmJ/rJgVlvEwAUBg5DmfzPJY3b
-         PtlaEVBehxzY156Ud4tYl+mzqdVep7c6P3oPTcUxB6zabj9ZuhOnSIlGcgKXn2aODZ+G
-         tCqQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=KXmtxN7ePXcIMgJ+dYxNG4yOdWzQoUxvuy6ni7g+6uU=;
-        b=kKwihR9x9zm2TU9f94Zvnf/kYgOthAUx0+WHylW8i6GPfRaU981wtqFU+NR1isj8pn
-         0qVraRFcGwPUIELcfBYzxfLDQOctkAH3lD8PDe3O1/uo65IeldR9WDoZkNRovKWD/tQx
-         H/OgzvRNdPSb2xwlS0unSaSvY8CUJd79O96fbPAnzLXhSza4WHMqEbrZQFXR0HaD/8dk
-         ZE/TZtZml+Bz7CrKcz/v3WfNWtMmFi7O2LrxV8v1ML2PWeIKVI24kHeYJG/e0jPBLDuV
-         TFsSXLK5CLm7KB+3fHiTetIF7p2OnBDn8T6qMHgPUP14MPm5aloqX1SqkGEGOlPG8yKW
-         8fyA==
-X-Gm-Message-State: AA+aEWZyA7frELEE6vg/qdhIqw2N8qNUwI1/hDk6xUGF1+FjlFYzu/GK
-        0YEkHKzNtLomNPFDOxkVf1l8kusWHq71XlBajXQ=
-X-Google-Smtp-Source: AFSGD/WxgQULKArE5Wc55H2XDjRiuGZbEJN+WjT7ZRGi+lbVpIu6l6HjsxHEMXBhuhsedPsuC+mHvvEVMg3yAM3ymbM=
-X-Received: by 2002:adf:e08c:: with SMTP id c12mr11536584wri.199.1544510557499;
- Mon, 10 Dec 2018 22:42:37 -0800 (PST)
+        Tue, 11 Dec 2018 01:45:14 -0500
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBB6ha7C179310
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 01:45:12 -0500
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2pa75sa95j-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 01:45:12 -0500
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
+        Tue, 11 Dec 2018 06:45:10 -0000
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 11 Dec 2018 06:45:06 -0000
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBB6j5Mu37421264
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 11 Dec 2018 06:45:05 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 7E76AA4051;
+        Tue, 11 Dec 2018 06:45:05 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D036BA4053;
+        Tue, 11 Dec 2018 06:45:04 +0000 (GMT)
+Received: from rapoport-lnx (unknown [9.148.8.213])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Tue, 11 Dec 2018 06:45:04 +0000 (GMT)
+Date:   Tue, 11 Dec 2018 08:45:03 +0200
+From:   Mike Rapoport <rppt@linux.ibm.com>
+To:     Keith Busch <keith.busch@intel.com>
+Cc:     linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
+        linux-mm@kvack.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rafael Wysocki <rafael@kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Dan Williams <dan.j.williams@intel.com>
+Subject: Re: [PATCHv2 12/12] doc/mm: New documentation for memory performance
+References: <20181211010310.8551-1-keith.busch@intel.com>
+ <20181211010310.8551-13-keith.busch@intel.com>
 MIME-Version: 1.0
-References: <8736rldyzm.fsf@oldenburg.str.redhat.com> <1543444466.5493.220.camel@redhat.com>
- <87y39c2dsg.fsf@oldenburg.str.redhat.com> <1689938209.14804.1543502662882.JavaMail.zimbra@efficios.com>
- <20181129150433.GH4170@linux.ibm.com> <CAHD6eXcvx1bskbp-X+vuMYoMQiCLOt0PiCZ5FT1yFsda9Ud-yA@mail.gmail.com>
- <20181206215405.GL4170@linux.ibm.com>
-In-Reply-To: <20181206215405.GL4170@linux.ibm.com>
-From:   David Goldblatt <davidtgoldblatt@gmail.com>
-Date:   Mon, 10 Dec 2018 22:42:25 -0800
-Message-ID: <CAHD6eXeoAXBhGJpx6wY6g9UV4G+zmqTbjbUHnqXnVh2xiNLvug@mail.gmail.com>
-Subject: Re: [PATCH] Linux: Implement membarrier function
-To:     Paul McKenney <paulmck@linux.ibm.com>
-Cc:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Florian Weimer <fweimer@redhat.com>, triegel@redhat.com,
-        libc-alpha@sourceware.org, stern@rowland.harvard.edu,
-        andrea.parri@amarulasolutions.com,
-        Will Deacon <will.deacon@arm.com>, peterz@infradead.org,
-        boqun.feng@gmail.com, npiggin@gmail.com, dhowells@redhat.com,
-        j.alglave@ucl.ac.uk, luc.maranget@inria.fr, akiyks@gmail.com,
-        dlustig@nvidia.com, linux-arch@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181211010310.8551-13-keith.busch@intel.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-TM-AS-GCONF: 00
+x-cbid: 18121106-0008-0000-0000-0000029FA4AA
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18121106-0009-0000-0000-0000220A1BB5
+Message-Id: <20181211064502.GB3302@rapoport-lnx>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-11_02:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1812110064
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Paul, thank you for thinking about all this.
+Hi Keith,
 
-I think the modelling you suggest captures most of the algorithms I
-would want to write. I think it's slightly too weak, though, to
-implement the model suggested in P1202R0[1], which permits the SC
-outcome to be recovered in C-Goldblat-memb-2[2] by inserting a second
-smp_memb() after the first, which is a rather nice property (and I
-believe is supported by the underlying implementation options). I
-afraid though that I'm not familiar enough with the Linux herd
-definitions to suggest a tweak (or know how easy a tweak might be).
+Thanks for the docs! :)
+Some nits below...
 
-- David
-
-[1] Which I think may be strengthened a little bit more even in R1.
-[2] As a nit, my name has two "t"'s in it, although I'd throw into the
-ring "memb-pairwise", "memb-nontransitive", and "memb-sequenced" if
-these get non-placeholder names.
-
-On Thu, Dec 6, 2018 at 1:54 PM Paul E. McKenney <paulmck@linux.ibm.com> wrote:
->
-> Hello, David,
->
-> I took a crack at extending LKMM to accommodate what I think would
-> support what you have in your paper.  Please see the very end of this
-> email for a patch against the "dev" branch of my -rcu tree.
->
-> This gives the expected result for the following three litmus tests,
-> but is probably deficient or otherwise misguided in other ways.  I have
-> added the LKMM maintainers on CC for their amusement.  ;-)
->
-> Thoughts?
->
->                                                 Thanx, Paul
->
-> ------------------------------------------------------------------------
->
-> C C-Goldblat-memb-1
-> {
-> }
->
-> P0(int *x0, int *x1)
-> {
->         WRITE_ONCE(*x0, 1);
->         r1 = READ_ONCE(*x1);
-> }
->
->
-> P1(int *x0, int *x1)
-> {
->         WRITE_ONCE(*x1, 1);
->         smp_memb();
->         r2 = READ_ONCE(*x0);
-> }
->
-> exists (0:r1=0 /\ 1:r2=0)
->
-> ------------------------------------------------------------------------
->
-> C C-Goldblat-memb-2
-> {
-> }
->
-> P0(int *x0, int *x1)
-> {
->         WRITE_ONCE(*x0, 1);
->         r1 = READ_ONCE(*x1);
-> }
->
->
-> P1(int *x1, int *x2)
-> {
->         WRITE_ONCE(*x1, 1);
->         smp_memb();
->         r1 = READ_ONCE(*x2);
-> }
->
-> P2(int *x2, int *x0)
-> {
->         WRITE_ONCE(*x2, 1);
->         r1 = READ_ONCE(*x0);
-> }
->
-> exists (0:r1=0 /\ 1:r1=0 /\ 2:r1=0)
->
-> ------------------------------------------------------------------------
->
-> C C-Goldblat-memb-3
-> {
-> }
->
-> P0(int *x0, int *x1)
-> {
->         WRITE_ONCE(*x0, 1);
->         r1 = READ_ONCE(*x1);
-> }
->
->
-> P1(int *x1, int *x2)
-> {
->         WRITE_ONCE(*x1, 1);
->         smp_memb();
->         r1 = READ_ONCE(*x2);
-> }
->
-> P2(int *x2, int *x3)
-> {
->         WRITE_ONCE(*x2, 1);
->         r1 = READ_ONCE(*x3);
-> }
->
-> P3(int *x3, int *x0)
-> {
->         WRITE_ONCE(*x3, 1);
->         smp_memb();
->         r1 = READ_ONCE(*x0);
-> }
->
-> exists (0:r1=0 /\ 1:r1=0 /\ 2:r1=0 /\ 3:r1=0)
->
-> ------------------------------------------------------------------------
->
-> On Thu, Nov 29, 2018 at 11:02:17AM -0800, David Goldblatt wrote:
-> > One note with the suggested patch is that
-> > `atomic_thread_fence(memory_order_acq_rel)` should probably be
-> > `atomic_thread_fence (memory_order_seq_cst)` (otherwise the call would
-> > be a no-op on, say, x86, which it very much isn't).
-> >
-> > The non-transitivity thing makes the resulting description arguably
-> > incorrect, but this is informal enough that it might not be a big deal
-> > to add something after "For these threads, the membarrier function
-> > call turns an existing compiler barrier (see above) executed by these
-> > threads into full memory barriers" that clarifies it. E.g. you could
-> > make it into "turns an existing compiler barrier [...] into full
-> > memory barriers, with respect to the calling thread".
-> >
-> > Since this is targeting the description of the OS call (and doesn't
-> > have to concern itself with also being implementable by other
-> > asymmetric techniques or degrading to architectural barriers), I think
-> > that the description in "approach 2" in P1202 would also make sense
-> > for a formal description of the syscall. (Of course, without the
-> > kernel itself committing to a rigorous semantics, anything specified
-> > on top of it will be on slightly shaky ground).
-> >
-> > - David
-> >
-> > On Thu, Nov 29, 2018 at 7:04 AM Paul E. McKenney <paulmck@linux.ibm.com> wrote:
-> > >
-> > > On Thu, Nov 29, 2018 at 09:44:22AM -0500, Mathieu Desnoyers wrote:
-> > > > ----- On Nov 29, 2018, at 8:50 AM, Florian Weimer fweimer@redhat.com wrote:
-> > > >
-> > > > > * Torvald Riegel:
-> > > > >
-> > > > >> On Wed, 2018-11-28 at 16:05 +0100, Florian Weimer wrote:
-> > > > >>> This is essentially a repost of last year's patch, rebased to the glibc
-> > > > >>> 2.29 symbol version and reflecting the introduction of
-> > > > >>> MEMBARRIER_CMD_GLOBAL.
-> > > > >>>
-> > > > >>> I'm not including any changes to manual/ here because the set of
-> > > > >>> supported operations is evolving rapidly, we could not get consensus for
-> > > > >>> the language I proposed the last time, and I do not want to contribute
-> > > > >>> to the manual for the time being.
-> > > > >>
-> > > > >> Fair enough.  Nonetheless, can you summarize how far you're along with
-> > > > >> properly defining the semantics (eg, based on the C/C++ memory model)?
-> > > > >
-> > > > > I wrote down what you could, but no one liked it.
-> > > > >
-> > > > > <https://sourceware.org/ml/libc-alpha/2017-12/msg00796.html>
-> > > > >
-> > > > > I expect that a formalization would interact in non-trivial ways with
-> > > > > any potential formalization of usable relaxed memory order semantics,
-> > > > > and I'm not sure if anyone knows how to do the latter today.
-> > > >
-> > > > Adding Paul E. McKenney in CC.
-> > >
-> > > There is some prototype C++ memory model wording from David Goldblatt (CCed)
-> > > here (search for "Standarese"):
-> > >
-> > > http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/p1202r0.pdf
-> > >
-> > > David's key insight is that (in Linuxese) light fences cannot pair with
-> > > each other.
->
-> ------------------------------------------------------------------------
->
-> commit 17e3b6b60e57d1cb791f68a1a6a36e942cb2baad
-> Author: Paul E. McKenney <paulmck@linux.ibm.com>
-> Date:   Thu Dec 6 13:40:40 2018 -0800
->
->     EXP tools/memory-model: Add semantics for sys_membarrier()
->
->     This prototype commit extends LKMM to accommodate sys_membarrier(),
->     which is a asymmetric barrier with a limited ability to insert full
->     ordering into tasks that provide only compiler ordering.  This commit
->     currently uses the "po" relation for this purpose, but something more
->     sophisticated will be required when plain accesses are added, which
->     the compiler can reorder.
->
->     For more detail, please see David Goldblatt's C++ working paper:
->     http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/p1202r0.pdf
->
->     Signed-off-by: Paul E. McKenney <paulmck@linux.ibm.com>
->
-> diff --git a/tools/memory-model/linux-kernel.bell b/tools/memory-model/linux-kernel.bell
-> index 9c42cd9ddcb4..4ef41453f569 100644
-> --- a/tools/memory-model/linux-kernel.bell
-> +++ b/tools/memory-model/linux-kernel.bell
-> @@ -24,6 +24,7 @@ instructions RMW[{'once,'acquire,'release}]
->  enum Barriers = 'wmb (*smp_wmb*) ||
->                 'rmb (*smp_rmb*) ||
->                 'mb (*smp_mb*) ||
-> +               'memb (*sys_membarrier*) ||
->                 'rcu-lock (*rcu_read_lock*)  ||
->                 'rcu-unlock (*rcu_read_unlock*) ||
->                 'sync-rcu (*synchronize_rcu*) ||
-> diff --git a/tools/memory-model/linux-kernel.cat b/tools/memory-model/linux-kernel.cat
-> index 8dcb37835b61..837c3ee20bea 100644
-> --- a/tools/memory-model/linux-kernel.cat
-> +++ b/tools/memory-model/linux-kernel.cat
-> @@ -33,9 +33,10 @@ let mb = ([M] ; fencerel(Mb) ; [M]) |
->         ([M] ; po? ; [LKW] ; fencerel(After-spinlock) ; [M]) |
->         ([M] ; po ; [UL] ; (co | po) ; [LKW] ;
->                 fencerel(After-unlock-lock) ; [M])
-> +let memb = [M] ; fencerel(Memb) ; [M]
->  let gp = po ; [Sync-rcu | Sync-srcu] ; po?
->
-> -let strong-fence = mb | gp
-> +let strong-fence = mb | gp | memb
->
->  (* Release Acquire *)
->  let acq-po = [Acquire] ; po ; [M]
-> @@ -86,6 +87,13 @@ acyclic hb as happens-before
->  let pb = prop ; strong-fence ; hb*
->  acyclic pb as propagation
->
-> +(********************)
-> +(* sys_membarrier() *)
-> +(********************)
+On Mon, Dec 10, 2018 at 06:03:10PM -0700, Keith Busch wrote:
+> Platforms may provide system memory where some physical address ranges
+> perform differently than others, or is side cached by the system.
+> 
+> Add documentation describing a high level overview of such systems and the
+> performance and caching attributes the kernel provides for applications
+> wishing to query this information.
+> 
+> Signed-off-by: Keith Busch <keith.busch@intel.com>
+> ---
+>  Documentation/admin-guide/mm/numaperf.rst | 171 ++++++++++++++++++++++++++++++
+>  1 file changed, 171 insertions(+)
+>  create mode 100644 Documentation/admin-guide/mm/numaperf.rst
+> 
+> diff --git a/Documentation/admin-guide/mm/numaperf.rst b/Documentation/admin-guide/mm/numaperf.rst
+> new file mode 100644
+> index 000000000000..846b3f991e7f
+> --- /dev/null
+> +++ b/Documentation/admin-guide/mm/numaperf.rst
+> @@ -0,0 +1,171 @@
+> +.. _numaperf:
 > +
-> +let memb-step = ( prop ; po ; prop )? ; memb
-> +acyclic memb-step as memb-before
+> +=============
+> +NUMA Locality
+> +=============
 > +
->  (*******)
->  (* RCU *)
->  (*******)
-> diff --git a/tools/memory-model/linux-kernel.def b/tools/memory-model/linux-kernel.def
-> index 1d6a120cde14..9ff0691c5f2c 100644
-> --- a/tools/memory-model/linux-kernel.def
-> +++ b/tools/memory-model/linux-kernel.def
-> @@ -17,6 +17,7 @@ rcu_dereference(X) __load{once}(X)
->  smp_store_mb(X,V) { __store{once}(X,V); __fence{mb}; }
->
->  // Fences
-> +smp_memb() { __fence{memb}; }
->  smp_mb() { __fence{mb}; }
->  smp_rmb() { __fence{rmb}; }
->  smp_wmb() { __fence{wmb}; }
->
+> +Some platforms may have multiple types of memory attached to a single
+> +CPU. These disparate memory ranges share some characteristics, such as
+> +CPU cache coherence, but may have different performance. For example,
+> +different media types and buses affect bandwidth and latency.
+> +
+> +A system supporting such heterogeneous memory by grouping each memory
+
+Maybe "A system supports ..."?
+
+> +type under different "nodes" based on similar CPU locality and performance
+> +characteristics.  Some memory may share the same node as a CPU, and others
+> +are provided as memory only nodes. While memory only nodes do not provide
+> +CPUs, they may still be directly accessible, or local, to one or more
+> +compute nodes. The following diagram shows one such example of two compute
+> +noes with local memory and a memory only node for each of compute node:
+
+                                                ^ attached to each ?
+> +
+> + +------------------+     +------------------+
+> + | Compute Node 0   +-----+ Compute Node 1   |
+> + | Local Node0 Mem  |     | Local Node1 Mem  |
+> + +--------+---------+     +--------+---------+
+> +          |                        |
+> + +--------+---------+     +--------+---------+
+> + | Slower Node2 Mem |     | Slower Node3 Mem |
+> + +------------------+     +--------+---------+
+> +
+> +A "memory initiator" is a node containing one or more devices such as
+> +CPUs or separate memory I/O devices that can initiate memory requests. A
+> +"memory target" is a node containing one or more accessible physical
+> +address ranges from one or more memory initiators.
+
+Maybe "... one or more address ranges accessible from one or more memory
+initiators"
+
+> +
+> +When multiple memory initiators exist, they may not all have the same
+> +performance when accessing a given memory target. The highest performing
+> +initiator to a given target is considered to be one of that target's
+> +local initiators. Any given target may have one or more local initiators,
+> +and any given initiator may have multiple local memory targets.
+> +
+> +To aid applications matching memory targets with their initiators,
+> +the kernel provide symlinks to each other like the following example::
+
+            ^ provides
+> +
+> +	# ls -l /sys/devices/system/node/nodeX/local_target*
+> +	/sys/devices/system/node/nodeX/local_targetY -> ../nodeY
+> +
+> +	# ls -l /sys/devices/system/node/nodeY/local_initiator*
+> +	/sys/devices/system/node/nodeY/local_initiatorX -> ../nodeX
+> +
+> +The linked nodes will also have their node number set in the local_mem
+> +and local_cpu node list and maps.
+> +
+> +An example showing how this may be used to run a particular task on CPUs
+> +and memory that are both local to a particular PCI device can be done
+> +using existing 'numactl' as follows::
+> +
+> +  # NODE=$(cat /sys/devices/pci:0000:00/.../numa_node)
+> +  # numactl --membind=$(cat /sys/devices/node/node${NODE}/local_mem_nodelist) \
+> +      --cpunodebind=$(cat /sys/devices/node/node${NODE}/local_cpu_nodelist) \
+> +      -- <some-program-to-execute>
+> +
+> +================
+> +NUMA Performance
+> +================
+> +
+> +Applications may wish to consider which node they want their memory to
+> +be allocated from based on the node's performance characteristics. If the
+> +system provides these attributes, the kernel exports them under the node
+> +sysfs hierarchy by appending the local_initiator_access directory under
+> +the memory node as follows::
+> +
+> +	/sys/devices/system/node/nodeY/local_initiator_access/
+> +
+> +The kernel does not provide performance attributes for non-local memory
+> +initiators. These attributes apply only to the memory initiator nodes that
+> +have a local_initiatorX link, or are set in the local_cpu_nodelist. A
+> +memory initiator node is considered local to itself if it also is
+> +a memory target and will be set it its node list and map, but won't
+> +contain a symlink to itself.
+> +
+> +The performance characteristics the kernel provides for the local initiators
+> +are exported are as follows::
+> +
+> +	# tree /sys/devices/system/node/nodeY/local_initiator_access
+> +	/sys/devices/system/node/nodeY/local_initiator_access
+> +	|-- read_bandwidth
+> +	|-- read_latency
+> +	|-- write_bandwidth
+> +	`-- write_latency
+> +
+> +The bandwidth attributes are provided in MiB/second.
+> +
+> +The latency attributes are provided in nanoseconds.
+> +
+> +==========
+> +NUMA Cache
+> +==========
+> +
+> +System memory may be constructed in a hierarchy of elements with various
+> +performance characteristics in order to provide large address space
+> +of slower performing memory side-cached by a smaller higher performing
+> +memory. The system physical addresses that initiators are aware of is
+> +provided by the last memory level in the hierarchy, while the system uses
+> +higher performing memory to transparently cache access to progressively
+> +slower levels.
+> +
+> +The term "far memory" is used to denote the last level memory in the
+> +hierarchy. Each increasing cache level provides higher performing
+> +initiator access, and the term "near memory" represents the fastest
+> +cache provided by the system.
+> +
+> +This numbering is different than CPU caches where the cache level (ex:
+> +L1, L2, L3) uses a CPU centric view with each increased level is lower
+> +performing. In contrast, the memory cache level is centric to the last
+> +level memory, so the higher numbered cache level denotes memory nearer
+> +to the CPU, and further from far memory.
+> +
+> +The memory side caches are not directly addressable by software. When
+> +software accesses a system address, the system will return it from the
+
+                                                      ^ satisfy the request
+
+> +near memory cache if it is present. If it is not present, the system
+> +accesses the next level of memory until there is either a hit in that
+> +cache level, or it reaches far memory.
+> +
+> +An application does not need to know about caching attributes in order
+> +to use the system, software may optionally query the memory cache
+> +attributes in order to maximize the performance out of such a setup.
+> +If the system provides a way for the kernel to discover this information,
+> +for example with ACPI HMAT (Heterogeneous Memory Attribute Table),
+> +the kernel will append these attributes to the NUMA node memory target.
+> +
+> +When the kernel first registers a memory cache with a node, the kernel
+> +will create the following directory::
+> +
+> +	/sys/devices/system/node/nodeX/side_cache/
+> +
+> +If that directory is not present, the system either does not not provide
+> +a memory side cache, or that information is not accessible to the kernel.
+> +
+> +The attributes for each level of cache is provided under its cache
+> +level index::
+> +
+> +	/sys/devices/system/node/nodeX/side_cache/indexA/
+> +	/sys/devices/system/node/nodeX/side_cache/indexB/
+> +	/sys/devices/system/node/nodeX/side_cache/indexC/
+> +
+> +Each cache level's directory provides its attributes. For example,
+> +the following is a single cache level and the attributes available for
+> +software to query::
+> +
+> +	# tree sys/devices/system/node/node0/side_cache/
+> +	/sys/devices/system/node/node0/side_cache/
+> +	|-- index1
+> +	|   |-- associativity
+> +	|   |-- level
+> +	|   |-- line_size
+> +	|   |-- size
+> +	|   `-- write_policy
+> +
+> +The "associativity" will be 0 if it is a direct-mapped cache, and non-zero
+> +for any other indexed based, multi-way associativity.
+> +
+> +The "level" is the distance from the far memory, and matches the number
+> +appended to its "index" directory.
+> +
+> +The "line_size" is the number of bytes accessed on a cache miss.
+> +
+> +The "size" is the number of bytes provided by this cache level.
+> +
+> +The "write_policy" will be 0 for write-back, and non-zero for
+> +write-through caching.
+> +
+> +See also: https://www.uefi.org/sites/default/files/resources/ACPI_6_2.pdf
+
+I'd suggest to reference relevant sections rather than entire 1K pages doc ;-)
+
+> -- 
+> 2.14.4
+> 
+
+-- 
+Sincerely yours,
+Mike.
+
