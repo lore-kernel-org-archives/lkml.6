@@ -7,43 +7,43 @@ X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C91CC5CFFE
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 00:02:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD015C5CFFE
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 00:02:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 40D4F214DB
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 00:02:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7293D214D9
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 00:02:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544486550;
-	bh=IQ6bSWYRRQlQ73hVfmiM3U1fjHX0gmcQcIh90+Hb530=;
+	s=default; t=1544486553;
+	bh=jPPqHKTkWMm6kPJrQ9UQRYW/ovQTEgMMb0xPZqp1sBo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
 	 References:List-ID:From;
-	b=A0OjqbUaYKTDVN7eLVHkt1/RDpZ1UBrUoQNBSuDt77QO4vilV1NWfBNM5wQpovrB3
-	 Ti8Fp3YB68SviNU5xQTi67rndLHB/77qn6rmDtyW7uBqz+H8tEI1B1zf+aoYgwzat2
-	 b3YOzdPSVkeuXyNPd1b5Lw3xlF84rAaw1dF4s5YE=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 40D4F214DB
+	b=EK/gz9rLCyFieQ1oaTXB9XDL4IO1ilWaQ3WeL0/4f18pLbIUo+bFCmkmZmFKShXLa
+	 Gf8mDz3dHFt638VNNObUeMd+PiQM76ygTO1jbfvSc5pXxt9/jX8pY/J2Pv5mszw+7T
+	 5ThrcJ3GYY2YxdBMtme2voM8lZIpCboAVREAS1Xo=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7293D214D9
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730451AbeLKAC2 (ORCPT
+        id S1730441AbeLKAC0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 19:02:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41710 "EHLO mail.kernel.org"
+        Mon, 10 Dec 2018 19:02:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41642 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730416AbeLKACV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 19:02:21 -0500
+        id S1730394AbeLKACR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Dec 2018 19:02:17 -0500
 Received: from localhost.localdomain (c-98-220-238-81.hsd1.il.comcast.net [98.220.238.81])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BE575214DE;
-        Tue, 11 Dec 2018 00:02:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 121EA214DB;
+        Tue, 11 Dec 2018 00:02:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544486540;
-        bh=IQ6bSWYRRQlQ73hVfmiM3U1fjHX0gmcQcIh90+Hb530=;
+        s=default; t=1544486536;
+        bh=jPPqHKTkWMm6kPJrQ9UQRYW/ovQTEgMMb0xPZqp1sBo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
          References:From;
-        b=D1g1KrYq6ZO3AEhaWBqxLLo3fhOqBcjJQZPdIa7DddDXZsfVNMyK3htRP/lcUs5jY
-         ulyFqMfdznXz1NRasm9uIuvHNeTUUrlyP9jjMm81DfYQcCSuablvRkdc985iXiVAd6
-         xn3uPO762RI+gPPNJF7uSre1sy/D1xBH+ytTdnLk=
+        b=SPu8kj17Vl+VHtr1sRhQqyOfa+80kATeT30I/cYkZcugHjgoxShFrU+o5fejh9XUu
+         IDAHsUCCqdyZ+b6YYUueRF4bYe/E3MSzz2xL26UOKycg3Mw0gvONiYsP9fFhsbKmGw
+         1XQD4zd1Q5s6SFaQovCTWLF5WeRbp2dqISrB34oM=
 From:   Tom Zanussi <zanussi@kernel.org>
 To:     rostedt@goodmis.org
 Cc:     tglx@linutronix.de, mhiramat@kernel.org, namhyung@kernel.org,
@@ -51,9 +51,9 @@ Cc:     tglx@linutronix.de, mhiramat@kernel.org, namhyung@kernel.org,
         joel@joelfernandes.org, mathieu.desnoyers@efficios.com,
         julia@ni.com, linux-kernel@vger.kernel.org,
         linux-rt-users@vger.kernel.org
-Subject: [PATCH v8 22/22] tracing: Add hist trigger comments for variable-related fields
-Date:   Mon, 10 Dec 2018 18:01:36 -0600
-Message-Id: <095c3bd35a755500fcb3eb1a26d0c3240bb4e688.1544483273.git.tom.zanussi@linux.intel.com>
+Subject: [PATCH v8 20/22] tracing: Use hist trigger's var_ref array to destroy var_refs
+Date:   Mon, 10 Dec 2018 18:01:34 -0600
+Message-Id: <4d6103ab7b4fdef81a82e2977b4005a26212a726.1544483273.git.tom.zanussi@linux.intel.com>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <cover.1544483272.git.tom.zanussi@linux.intel.com>
 References: <cover.1544483272.git.tom.zanussi@linux.intel.com>
@@ -66,80 +66,71 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Tom Zanussi <tom.zanussi@linux.intel.com>
 
-Add a few comments to help clarify how variable and variable reference
-fields are used in the code.
+Since every var ref for a trigger has an entry in the var_ref[] array,
+use that to destroy the var_refs, instead of piecemeal via the field
+expressions.
+
+This allows us to avoid having to keep and treat differently separate
+lists for the action-related references, which future patches will
+remove.
 
 Signed-off-by: Tom Zanussi <tom.zanussi@linux.intel.com>
 ---
- kernel/trace/trace_events_hist.c | 36 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 36 insertions(+)
+ kernel/trace/trace_events_hist.c | 24 +++++++++++++++++++-----
+ 1 file changed, 19 insertions(+), 5 deletions(-)
 
 diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
-index 81e998bb601e..de5748ff8775 100644
+index d07bb2d75e18..da4800c3f745 100644
 --- a/kernel/trace/trace_events_hist.c
 +++ b/kernel/trace/trace_events_hist.c
-@@ -40,6 +40,16 @@ enum field_op_id {
- 	FIELD_OP_UNARY_MINUS,
- };
+@@ -2312,6 +2312,15 @@ static int contains_operator(char *str)
+ 	return field_op;
+ }
  
-+/*
-+ * A hist_var (histogram variable) contains variable information for
-+ * hist_fields having the HIST_FIELD_FL_VAR or HIST_FIELD_FL_VAR_REF
-+ * flag set.  A hist_var has a variable name e.g. ts0, and is
-+ * associated with a given histogram trigger, as specified by
-+ * hist_data.  The hist_var idx is the unique index assigned to the
-+ * variable by the hist trigger's tracing_map.  The idx is what is
-+ * used to set a variable's value and, by a variable reference, to
-+ * retrieve it.
-+ */
- struct hist_var {
- 	char				*name;
- 	struct hist_trigger_data	*hist_data;
-@@ -56,11 +66,29 @@ struct hist_field {
- 	const char			*type;
- 	struct hist_field		*operands[HIST_FIELD_OPERANDS_MAX];
- 	struct hist_trigger_data	*hist_data;
++static void __destroy_hist_field(struct hist_field *hist_field)
++{
++	kfree(hist_field->var.name);
++	kfree(hist_field->name);
++	kfree(hist_field->type);
 +
-+	/*
-+	 * Variable fields contain variable-specific info in var.
-+	 */
- 	struct hist_var			var;
- 	enum field_op_id		operator;
- 	char				*system;
- 	char				*event_name;
++	kfree(hist_field);
++}
 +
-+	/*
-+	 * The name field is used for EXPR and VAR_REF fields.  VAR
-+	 * fields contain the variable name in var.name.
-+	 */
- 	char				*name;
-+
-+	/*
-+	 * When a histogram trigger is hit, if it has any references
-+	 * to variables, the values of those variables are collected
-+	 * into a var_ref_vals array by resolve_var_refs().  The
-+	 * current value of each variable is read from the tracing_map
-+	 * using the hist field's hist_var.idx and entered into the
-+	 * var_ref_idx entry i.e. var_ref_vals[var_ref_idx].
-+	 */
- 	unsigned int			var_ref_idx;
- 	bool                            read_once;
- };
-@@ -389,6 +417,14 @@ struct action_data {
- 	unsigned int		n_params;
- 	char			*params[SYNTH_FIELDS_MAX];
+ static void destroy_hist_field(struct hist_field *hist_field,
+ 			       unsigned int level)
+ {
+@@ -2323,14 +2332,13 @@ static void destroy_hist_field(struct hist_field *hist_field,
+ 	if (!hist_field)
+ 		return;
  
-+	/*
-+	 * When a histogram trigger is hit, the values of any
-+	 * references to variables, including variables being passed
-+	 * as parameters to synthetic events, are collected into a
-+	 * var_ref_vals array.  This var_ref_idx is the index of the
-+	 * first param in the array to be passed to the synthetic
-+	 * event invocation.
-+	 */
- 	unsigned int		var_ref_idx;
- 	struct synth_event	*synth_event;
- 	bool			use_trace_keyword;
++	if (hist_field->flags & HIST_FIELD_FL_VAR_REF)
++		return; /* var refs will be destroyed separately */
++
+ 	for (i = 0; i < HIST_FIELD_OPERANDS_MAX; i++)
+ 		destroy_hist_field(hist_field->operands[i], level + 1);
+ 
+-	kfree(hist_field->var.name);
+-	kfree(hist_field->name);
+-	kfree(hist_field->type);
+-
+-	kfree(hist_field);
++	__destroy_hist_field(hist_field);
+ }
+ 
+ static struct hist_field *create_hist_field(struct hist_trigger_data *hist_data,
+@@ -2457,6 +2465,12 @@ static void destroy_hist_fields(struct hist_trigger_data *hist_data)
+ 			hist_data->fields[i] = NULL;
+ 		}
+ 	}
++
++	for (i = 0; i < hist_data->n_var_refs; i++) {
++		WARN_ON(!(hist_data->var_refs[i]->flags & HIST_FIELD_FL_VAR_REF));
++		__destroy_hist_field(hist_data->var_refs[i]);
++		hist_data->var_refs[i] = NULL;
++	}
+ }
+ 
+ static int init_var_ref(struct hist_field *ref_field,
 -- 
 2.14.1
 
