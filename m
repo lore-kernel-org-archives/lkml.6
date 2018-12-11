@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-11.9 required=3.0
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 050CBC67839
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:31:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F664C07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:32:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA3BF20672
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:31:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA3BF20672
+	by mail.kernel.org (Postfix) with ESMTP id 115DF20672
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:32:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 115DF20672
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727093AbeLKPbs (ORCPT
+        id S1727099AbeLKPcW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 10:31:48 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:55185 "EHLO
+        Tue, 11 Dec 2018 10:32:22 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:43235 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726417AbeLKPbs (ORCPT
+        with ESMTP id S1726417AbeLKPcW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:31:48 -0500
+        Tue, 11 Dec 2018 10:32:22 -0500
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wBBFVO7h4042009
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wBBFW00k4042056
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Tue, 11 Dec 2018 07:31:24 -0800
+        Tue, 11 Dec 2018 07:32:00 -0800
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wBBFVOwi4042005;
-        Tue, 11 Dec 2018 07:31:24 -0800
-Date:   Tue, 11 Dec 2018 07:31:24 -0800
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wBBFVxvh4042053;
+        Tue, 11 Dec 2018 07:31:59 -0800
+Date:   Tue, 11 Dec 2018 07:31:59 -0800
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Vincent Guittot <tipbot@zytor.com>
-Message-ID: <tip-765d0af19f5f388a34bf4533378f8398b72ded46@git.kernel.org>
-Cc:     tglx@linutronix.de, mingo@kernel.org, vincent.guittot@linaro.org,
-        linux-kernel@vger.kernel.org, peterz@infradead.org,
-        torvalds@linux-foundation.org, hpa@zytor.com, efault@gmx.de
-Reply-To: mingo@kernel.org, tglx@linutronix.de, vincent.guittot@linaro.org,
-          hpa@zytor.com, efault@gmx.de, torvalds@linux-foundation.org,
-          peterz@infradead.org, linux-kernel@vger.kernel.org
-In-Reply-To: <1535548752-4434-4-git-send-email-vincent.guittot@linaro.org>
-References: <1535548752-4434-4-git-send-email-vincent.guittot@linaro.org>
+From:   tip-bot for Yangtao Li <tipbot@zytor.com>
+Message-ID: <tip-9ebc6053814d37b9de8cc291fba28f30a729c929@git.kernel.org>
+Cc:     torvalds@linux-foundation.org, hpa@zytor.com, peterz@infradead.org,
+        efault@gmx.de, linux-kernel@vger.kernel.org, mingo@kernel.org,
+        tiny.windzz@gmail.com, tglx@linutronix.de
+Reply-To: tglx@linutronix.de, tiny.windzz@gmail.com, efault@gmx.de,
+          peterz@infradead.org, linux-kernel@vger.kernel.org,
+          mingo@kernel.org, torvalds@linux-foundation.org, hpa@zytor.com
+In-Reply-To: <20181103172602.1917-1-tiny.windzz@gmail.com>
+References: <20181103172602.1917-1-tiny.windzz@gmail.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:sched/core] sched/topology: Remove the ::smt_gain field from
- 'struct sched_domain'
-Git-Commit-ID: 765d0af19f5f388a34bf4533378f8398b72ded46
+Subject: [tip:sched/core] sched/core: Remove unnecessary unlikely() in
+ push_*_task()
+Git-Commit-ID: 9ebc6053814d37b9de8cc291fba28f30a729c929
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -60,92 +60,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  765d0af19f5f388a34bf4533378f8398b72ded46
-Gitweb:     https://git.kernel.org/tip/765d0af19f5f388a34bf4533378f8398b72ded46
-Author:     Vincent Guittot <vincent.guittot@linaro.org>
-AuthorDate: Wed, 29 Aug 2018 15:19:11 +0200
+Commit-ID:  9ebc6053814d37b9de8cc291fba28f30a729c929
+Gitweb:     https://git.kernel.org/tip/9ebc6053814d37b9de8cc291fba28f30a729c929
+Author:     Yangtao Li <tiny.windzz@gmail.com>
+AuthorDate: Sat, 3 Nov 2018 13:26:02 -0400
 Committer:  Ingo Molnar <mingo@kernel.org>
 CommitDate: Tue, 11 Dec 2018 15:16:57 +0100
 
-sched/topology: Remove the ::smt_gain field from 'struct sched_domain'
+sched/core: Remove unnecessary unlikely() in push_*_task()
 
-::smt_gain is used to compute the capacity of CPUs of a SMT core with the
-constraint 1 < ::smt_gain < 2 in order to be able to compute number of CPUs
-per core. The field has_free_capacity of struct numa_stat, which was the
-last user of this computation of number of CPUs per core, has been removed
-by:
+WARN_ON() already contains an unlikely(), so it's not necessary to
+use WARN_ON(1).
 
-  2d4056fafa19 ("sched/numa: Remove numa_has_capacity()")
-
-We can now remove this constraint on core capacity and use the defautl value
-SCHED_CAPACITY_SCALE for SMT CPUs. With this remove, SCHED_CAPACITY_SCALE
-becomes the maximum compute capacity of CPUs on every systems. This should
-help to simplify some code and remove fields like rd->max_cpu_capacity
-
-Furthermore, arch_scale_cpu_capacity() is used with a NULL sd in several other
-places in the code when it wants the capacity of a CPUs to scale
-some metrics like in pelt, deadline or schedutil. In case on SMT, the value
-returned is not the capacity of SMT CPUs but default SCHED_CAPACITY_SCALE.
-
-So remove it.
-
-Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
+Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Mike Galbraith <efault@gmx.de>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/1535548752-4434-4-git-send-email-vincent.guittot@linaro.org
+Link: http://lkml.kernel.org/r/20181103172602.1917-1-tiny.windzz@gmail.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- include/linux/sched/topology.h | 1 -
- kernel/sched/sched.h           | 3 ---
- kernel/sched/topology.c        | 2 --
- 3 files changed, 6 deletions(-)
+ kernel/sched/deadline.c | 4 +---
+ kernel/sched/rt.c       | 4 +---
+ 2 files changed, 2 insertions(+), 6 deletions(-)
 
-diff --git a/include/linux/sched/topology.h b/include/linux/sched/topology.h
-index 6b9976180c1e..7fa0bc17cd8c 100644
---- a/include/linux/sched/topology.h
-+++ b/include/linux/sched/topology.h
-@@ -89,7 +89,6 @@ struct sched_domain {
- 	unsigned int newidle_idx;
- 	unsigned int wake_idx;
- 	unsigned int forkexec_idx;
--	unsigned int smt_gain;
+diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
+index b32bc1f7cd14..fb8b7b5d745d 100644
+--- a/kernel/sched/deadline.c
++++ b/kernel/sched/deadline.c
+@@ -2042,10 +2042,8 @@ static int push_dl_task(struct rq *rq)
+ 		return 0;
  
- 	int nohz_idle;			/* NOHZ IDLE status */
- 	int flags;			/* See SD_* */
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index 9bde60a11805..ceb896404869 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -1864,9 +1864,6 @@ unsigned long arch_scale_freq_capacity(int cpu)
- static __always_inline
- unsigned long arch_scale_cpu_capacity(struct sched_domain *sd, int cpu)
- {
--	if (sd && (sd->flags & SD_SHARE_CPUCAPACITY) && (sd->span_weight > 1))
--		return sd->smt_gain / sd->span_weight;
--
- 	return SCHED_CAPACITY_SCALE;
- }
- #endif
-diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
-index 8d7f15ba5916..7364e0b427b7 100644
---- a/kernel/sched/topology.c
-+++ b/kernel/sched/topology.c
-@@ -1133,7 +1133,6 @@ sd_init(struct sched_domain_topology_level *tl,
+ retry:
+-	if (unlikely(next_task == rq->curr)) {
+-		WARN_ON(1);
++	if (WARN_ON(next_task == rq->curr))
+ 		return 0;
+-	}
  
- 		.last_balance		= jiffies,
- 		.balance_interval	= sd_weight,
--		.smt_gain		= 0,
- 		.max_newidle_lb_cost	= 0,
- 		.next_decay_max_lb_cost	= jiffies,
- 		.child			= child,
-@@ -1164,7 +1163,6 @@ sd_init(struct sched_domain_topology_level *tl,
+ 	/*
+ 	 * If next_task preempts rq->curr, and rq->curr
+diff --git a/kernel/sched/rt.c b/kernel/sched/rt.c
+index 9aa3287ce301..e4f398ad9e73 100644
+--- a/kernel/sched/rt.c
++++ b/kernel/sched/rt.c
+@@ -1813,10 +1813,8 @@ static int push_rt_task(struct rq *rq)
+ 		return 0;
  
- 	if (sd->flags & SD_SHARE_CPUCAPACITY) {
- 		sd->imbalance_pct = 110;
--		sd->smt_gain = 1178; /* ~15% */
+ retry:
+-	if (unlikely(next_task == rq->curr)) {
+-		WARN_ON(1);
++	if (WARN_ON(next_task == rq->curr))
+ 		return 0;
+-	}
  
- 	} else if (sd->flags & SD_SHARE_PKG_RESOURCES) {
- 		sd->imbalance_pct = 117;
+ 	/*
+ 	 * It's possible that the next_task slipped in of
