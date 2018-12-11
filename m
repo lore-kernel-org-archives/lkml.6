@@ -6,256 +6,120 @@ X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A67DFC07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 10:26:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B2DCC5CFFE
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 10:27:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6CDA420811
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 10:26:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6CDA420811
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i-love.sakura.ne.jp
+	by mail.kernel.org (Postfix) with ESMTP id 4778220849
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 10:27:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4778220849
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=virtuozzo.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726434AbeLKK0w (ORCPT
+        id S1726471AbeLKK1E (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 05:26:52 -0500
-Received: from www262.sakura.ne.jp ([202.181.97.72]:24243 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726134AbeLKK0v (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 05:26:51 -0500
-Received: from fsav403.sakura.ne.jp (fsav403.sakura.ne.jp [133.242.250.102])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id wBBAQnm7069524;
-        Tue, 11 Dec 2018 19:26:49 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav403.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav403.sakura.ne.jp);
- Tue, 11 Dec 2018 19:26:49 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav403.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank126126163036.bbtec.net [126.126.163.36])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id wBBAQnkU069519
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
-        Tue, 11 Dec 2018 19:26:49 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: [PATCH] printk: Add caller information to printk() output.
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-To:     Petr Mladek <pmladek@suse.com>
-Cc:     Dmitry Vyukov <dvyukov@google.com>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        syzkaller <syzkaller@googlegroups.com>
-References: <1543045075-3008-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
- <20181130154024.ls3mntfdr4zvluub@pathway.suse.cz>
- <f224bd68-7394-ff70-cad6-d3fbbb3b5f7d@i-love.sakura.ne.jp>
- <20181203150603.cdqii263e4kmmibo@pathway.suse.cz>
- <b38c6957-c3c1-54fc-781e-06d7eed6a9b1@i-love.sakura.ne.jp>
- <20181204152724.ypk44mi4a56nrud4@pathway.suse.cz>
- <459018db-763b-9520-ead2-2c0d5975fbf3@i-love.sakura.ne.jp>
- <20181210130930.bas4fozjhe3dc5nu@pathway.suse.cz>
- <c5b5d660-d217-35f0-c4f1-7252367934d1@i-love.sakura.ne.jp>
-Message-ID: <e3f69846-ef08-c8f5-368f-4dada13c9970@i-love.sakura.ne.jp>
-Date:   Tue, 11 Dec 2018 19:26:48 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.3
+        Tue, 11 Dec 2018 05:27:04 -0500
+Received: from relay.sw.ru ([185.231.240.75]:48000 "EHLO relay.sw.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726439AbeLKK1D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 05:27:03 -0500
+Received: from [172.16.25.169] (helo=localhost.localdomain)
+        by relay.sw.ru with esmtp (Exim 4.91)
+        (envelope-from <ktkhai@virtuozzo.com>)
+        id 1gWfFk-0007pJ-8p; Tue, 11 Dec 2018 13:27:00 +0300
+Subject: [PATCH v2] ksm: React on changing "sleep_millisecs" parameter faster
+From:   Kirill Tkhai <ktkhai@virtuozzo.com>
+To:     akpm@linux-foundation.org, mhocko@suse.com, ktkhai@virtuozzo.com,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        gorcunov@virtuozzo.com
+Date:   Tue, 11 Dec 2018 13:26:59 +0300
+Message-ID: <154452399396.4921.3418365102240528000.stgit@localhost.localdomain>
+In-Reply-To: <20181211100346.GE2342@uranus.lan>
+References: <20181211100346.GE2342@uranus.lan>
+User-Agent: StGit/0.18
 MIME-Version: 1.0
-In-Reply-To: <c5b5d660-d217-35f0-c4f1-7252367934d1@i-love.sakura.ne.jp>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From bdb80508390694456f3f864f9651d047ded109bf Mon Sep 17 00:00:00 2001
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Date: Tue, 11 Dec 2018 19:23:30 +0900
-Subject: [PATCH v4] printk: Add caller information to printk() output.
+ksm thread unconditionally sleeps in ksm_scan_thread()
+after each iteration:
 
-Sometimes we want to print a series of printk() messages to consoles
-without being disturbed by concurrent printk() from interrupts and/or
-other threads. But we can't enforce printk() callers to use their local
-buffers because we need to ask them to make too much changes. Also, even
-buffering up to one line inside printk() might cause failing to emit
-an important clue under critical situation.
+	schedule_timeout_interruptible(
+		msecs_to_jiffies(ksm_thread_sleep_millisecs))
 
-Therefore, instead of trying to help buffering, let's try to help
-reconstructing messages by saving caller information as of calling
-log_store() and adding it as "[T$thread_id]" or "[C$processor_id]"
-upon printing to consoles.
+The timeout is configured in /sys/kernel/mm/ksm/sleep_millisecs.
 
-Some examples for console output:
+In case of user writes a big value by a mistake, and the thread
+enters into schedule_timeout_interruptible(), it's not possible
+to cancel the sleep by writing a new smaler value; the thread
+is just sleeping till timeout expires.
 
-  [    1.222773][    T1] x86: Booting SMP configuration:
-  [    2.779635][    T1] pci 0000:00:01.0: PCI bridge to [bus 01]
-  [    5.069193][  T268] Fusion MPT base driver 3.04.20
-  [    9.316504][    C2] random: fast init done
-  [   13.413336][ T3355] Initialized host personality
+The patch fixes the problem by waking the thread each time
+after the value is updated.
 
-Some examples for /dev/kmsg output:
+This also may be useful for debug purposes; and also for userspace
+daemons, which change sleep_millisecs value in dependence of
+system load.
 
-  6,496,1222773,-,from=T1;x86: Booting SMP configuration:
-  6,968,2779635,-,from=T1;pci 0000:00:01.0: PCI bridge to [bus 01]
-   SUBSYSTEM=pci
-   DEVICE=+pci:0000:00:01.0
-  6,1353,5069193,-,from=T268;Fusion MPT base driver 3.04.20
-  5,1526,9316504,-,from=C2;random: fast init done
-  6,1575,13413336,-,from=T3355;Initialized host personality
+Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
 
-Note that this patch changes max length of messages which can be printed
-by printk() or written to /dev/kmsg interface from 992 bytes to 976 bytes,
-based on an assumption that userspace won't try to write messages hitting
-that border line to /dev/kmsg interface.
-
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+v2: Use wait_event_interruptible_timeout() instead of unconditional
+    schedule_timeout().
 ---
- kernel/printk/printk.c | 50 ++++++++++++++++++++++++++++++++++++++++++++++----
- lib/Kconfig.debug      | 17 +++++++++++++++++
- 2 files changed, 63 insertions(+), 4 deletions(-)
+ mm/ksm.c |   12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
 
-diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
-index 1306fe0..84e5425 100644
---- a/kernel/printk/printk.c
-+++ b/kernel/printk/printk.c
-@@ -356,6 +356,9 @@ struct printk_log {
- 	u8 facility;		/* syslog facility */
- 	u8 flags:5;		/* internal record flags */
- 	u8 level:3;		/* syslog level */
-+#ifdef CONFIG_PRINTK_FROM
-+	u32 from_id;            /* thread id or processor id */
-+#endif
- }
- #ifdef CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS
- __packed __aligned(4)
-@@ -422,7 +425,11 @@ __packed __aligned(4)
- static u64 clear_seq;
- static u32 clear_idx;
+diff --git a/mm/ksm.c b/mm/ksm.c
+index daa14db01e4d..b8e0b8413d51 100644
+--- a/mm/ksm.c
++++ b/mm/ksm.c
+@@ -296,6 +296,7 @@ static unsigned long ksm_run = KSM_RUN_STOP;
+ static void wait_while_offlining(void);
  
-+#ifdef CONFIG_PRINTK_FROM
-+#define PREFIX_MAX		48
-+#else
- #define PREFIX_MAX		32
-+#endif
- #define LOG_LINE_MAX		(1024 - PREFIX_MAX)
+ static DECLARE_WAIT_QUEUE_HEAD(ksm_thread_wait);
++static DECLARE_WAIT_QUEUE_HEAD(ksm_iter_wait);
+ static DEFINE_MUTEX(ksm_thread_mutex);
+ static DEFINE_SPINLOCK(ksm_mmlist_lock);
  
- #define LOG_LEVEL(v)		((v) & 0x07)
-@@ -625,6 +632,12 @@ static int log_store(int facility, int level,
- 		msg->ts_nsec = ts_nsec;
- 	else
- 		msg->ts_nsec = local_clock();
-+#ifdef CONFIG_PRINTK_FROM
-+	if (in_task())
-+		msg->from_id = task_pid_nr(current);
-+	else
-+		msg->from_id = 0x80000000 + raw_smp_processor_id();
-+#endif
- 	memset(log_dict(msg) + dict_len, 0, pad_len);
- 	msg->len = size;
+@@ -2412,6 +2413,8 @@ static int ksmd_should_run(void)
  
-@@ -688,12 +701,21 @@ static ssize_t msg_print_ext_header(char *buf, size_t size,
- 				    struct printk_log *msg, u64 seq)
+ static int ksm_scan_thread(void *nothing)
  {
- 	u64 ts_usec = msg->ts_nsec;
-+	char from[18];
-+#ifdef CONFIG_PRINTK_FROM
-+	u32 id = msg->from_id;
++	unsigned int sleep_ms;
 +
-+	snprintf(from, sizeof(from), ",from=%c%u",
-+		 id & 0x80000000 ? 'C' : 'T', id & ~0x80000000);
-+#else
-+	from[0] = '\0';
-+#endif
+ 	set_freezable();
+ 	set_user_nice(current, 5);
  
- 	do_div(ts_usec, 1000);
+@@ -2420,13 +2423,15 @@ static int ksm_scan_thread(void *nothing)
+ 		wait_while_offlining();
+ 		if (ksmd_should_run())
+ 			ksm_do_scan(ksm_thread_pages_to_scan);
++		sleep_ms = ksm_thread_sleep_millisecs;
+ 		mutex_unlock(&ksm_thread_mutex);
  
--	return scnprintf(buf, size, "%u,%llu,%llu,%c;",
--		       (msg->facility << 3) | msg->level, seq, ts_usec,
--		       msg->flags & LOG_CONT ? 'c' : '-');
-+	return scnprintf(buf, size, "%u,%llu,%llu,%c%s;",
-+			 (msg->facility << 3) | msg->level, seq, ts_usec,
-+			 msg->flags & LOG_CONT ? 'c' : '-', from);
+ 		try_to_freeze();
+ 
+ 		if (ksmd_should_run()) {
+-			schedule_timeout_interruptible(
+-				msecs_to_jiffies(ksm_thread_sleep_millisecs));
++			wait_event_interruptible_timeout(ksm_iter_wait,
++					sleep_ms != ksm_thread_sleep_millisecs,
++					msecs_to_jiffies(sleep_ms));
+ 		} else {
+ 			wait_event_freezable(ksm_thread_wait,
+ 				ksmd_should_run() || kthread_should_stop());
+@@ -2844,7 +2849,10 @@ static ssize_t sleep_millisecs_store(struct kobject *kobj,
+ 	if (err || msecs > UINT_MAX)
+ 		return -EINVAL;
+ 
++	mutex_lock(&ksm_thread_mutex);
+ 	ksm_thread_sleep_millisecs = msecs;
++	mutex_unlock(&ksm_thread_mutex);
++	wake_up_interruptible(&ksm_iter_wait);
+ 
+ 	return count;
  }
- 
- static ssize_t msg_print_ext_body(char *buf, size_t size,
-@@ -1038,6 +1060,9 @@ void log_buf_vmcoreinfo_setup(void)
- 	VMCOREINFO_OFFSET(printk_log, len);
- 	VMCOREINFO_OFFSET(printk_log, text_len);
- 	VMCOREINFO_OFFSET(printk_log, dict_len);
-+#ifdef CONFIG_PRINTK_FROM
-+	VMCOREINFO_OFFSET(printk_log, from_id);
-+#endif
- }
- #endif
- 
-@@ -1236,10 +1261,21 @@ static size_t print_time(u64 ts, char *buf)
- {
- 	unsigned long rem_nsec = do_div(ts, 1000000000);
- 
--	return sprintf(buf, "[%5lu.%06lu] ",
-+	return sprintf(buf, "[%5lu.%06lu]",
- 		       (unsigned long)ts, rem_nsec / 1000);
- }
- 
-+#ifdef CONFIG_PRINTK_FROM
-+static size_t print_from(u32 id, char *buf)
-+{
-+	char from[12];
-+
-+	snprintf(from, sizeof(from), "%c%u",
-+		 id & 0x80000000 ? 'C' : 'T', id & ~0x80000000);
-+	return sprintf(buf, "[%6s]", from);
-+}
-+#endif
-+
- static size_t print_prefix(const struct printk_log *msg, bool syslog,
- 			   bool time, char *buf)
- {
-@@ -1249,6 +1285,12 @@ static size_t print_prefix(const struct printk_log *msg, bool syslog,
- 		len = print_syslog((msg->facility << 3) | msg->level, buf);
- 	if (time)
- 		len += print_time(msg->ts_nsec, buf + len);
-+#ifdef CONFIG_PRINTK_FROM
-+	len += print_from(msg->from_id, buf + len);
-+#endif
-+	if (IS_ENABLED(CONFIG_PRINTK_FROM) || time)
-+		buf[len++] = ' ';
-+	buf[len] = '\0'; /* For safety in case of accessed as a string. */
- 	return len;
- }
- 
-diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-index d312188..e626bd7 100644
---- a/lib/Kconfig.debug
-+++ b/lib/Kconfig.debug
-@@ -17,6 +17,23 @@ config PRINTK_TIME
- 	  The behavior is also controlled by the kernel command line
- 	  parameter printk.time=1. See Documentation/admin-guide/kernel-parameters.rst
- 
-+config PRINTK_FROM
-+	bool "Show caller information on printks"
-+	depends on PRINTK
-+	help
-+	  Selecting this option causes "thread id" (if in task context) or
-+	  "processor id" (if not in task context) of the printk() messages
-+	  to be added.
-+
-+	  This option is intended for environments where multiple threads
-+	  concurrently call printk() for many times, for it is difficult to
-+	  interpret without knowing where these lines (or sometimes individual
-+	  line which was divided into multiple lines due to race) came from.
-+
-+	  Since toggling after boot makes the code racy, currently there is
-+	  no option to enable/disable at the kernel command line parameter or
-+	  sysfs interface.
-+
- config CONSOLE_LOGLEVEL_DEFAULT
- 	int "Default console loglevel (1-15)"
- 	range 1 15
--- 
-1.8.3.1
-
 
