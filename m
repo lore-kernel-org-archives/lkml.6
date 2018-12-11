@@ -7,51 +7,50 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DA32C07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:54:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AEC5AC07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:54:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2D0C02146E
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:54:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 75AFF2146E
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:54:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544543653;
-	bh=abefNrNhV/hdAdhZ0mPDAGoo5xCDc87Iv9S3hLLr5Uc=;
+	s=default; t=1544543661;
+	bh=krmnVy+6opTSsB873KZOiHu9N4rmMBDdaBpg2/JToXY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=UmjrlhqJTJXlQGy4lWKxqajrGmmoBCFWPY+VFllfnps558VzSME8vihtbx05KktAC
-	 iDB7Le1JPUe6+/bUDmN8PuQZjgCtaJEAR+X4NtNzromc/Ii74CrC+ReyDmtgpFRHRq
-	 3MI4hy9a0uoFY4EkHqgteicPPk91k1lJq50FdIeY=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D0C02146E
+	b=yR8OMWkwpW4EF/ikfdK2h2LobCDqPxgiN4QEjyeNBwcXAuq+YAaHBFqZ9YyTaA2Z8
+	 ykDWMsYOlR2tB3fJUJoB/kPjnuk+8d/db9IZGlerNHN4aJ0p8BjfB6GtKASU6RkjLL
+	 M9ODm/ZOR8QJ8AoSX8moCxsoQaXzEVjB+hDEA0iw=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75AFF2146E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729439AbeLKPyL (ORCPT
+        id S1730189AbeLKPyU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 10:54:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42756 "EHLO mail.kernel.org"
+        Tue, 11 Dec 2018 10:54:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42884 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729644AbeLKPyH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:54:07 -0500
+        id S1729442AbeLKPyP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 10:54:15 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6D0FB2087F;
-        Tue, 11 Dec 2018 15:54:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4805C20855;
+        Tue, 11 Dec 2018 15:54:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544543646;
-        bh=abefNrNhV/hdAdhZ0mPDAGoo5xCDc87Iv9S3hLLr5Uc=;
+        s=default; t=1544543654;
+        bh=krmnVy+6opTSsB873KZOiHu9N4rmMBDdaBpg2/JToXY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=m55nfLh7PuUBnKFocVkTbNx6C5zzXpQFXOvlF89NqA9k1mKyOvOXTKM2m4dLG2Vkb
-         qEnC71fHZJMpZPqxH3Ua/HVMOayhTzWhHvkOEPLtuCFGu/UV1Pjfke+RJY/9v9BWBD
-         2PijSKskufbyat5Vpr9vB7p80ZfIDLgo4FsXZSKE=
+        b=DfTht0JLLq748MpEgdv0QCWjityrqf88ow6N5T+w3jeqe+dilQsZqguurL9I62MNN
+         Z/fvdVj2OWkXGojG6FoFy9SpqjPWsUnhf29SaJ9FzQ3evLUBE2sBPRjk80Jz+lSwdP
+         Ku4xsMNAxDJJmUsprc5AeNerRdmvv+sVWwwXq7fo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>,
-        Martin Elshuber <martin.elshuber@theobroma-systems.com>,
-        Marc Kleine-Budde <mkl@pengutronix.de>,
+        stable@vger.kernel.org, Benson Leung <bleung@chromium.org>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 010/118] can: ucan: remove set but not used variable udev
-Date:   Tue, 11 Dec 2018 16:40:29 +0100
-Message-Id: <20181211151644.642333539@linuxfoundation.org>
+Subject: [PATCH 4.19 013/118] HID: input: Ignore battery reported by Symbol DS4308
+Date:   Tue, 11 Dec 2018 16:40:32 +0100
+Message-Id: <20181211151644.768341756@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181211151644.216668863@linuxfoundation.org>
 References: <20181211151644.216668863@linuxfoundation.org>
@@ -70,39 +69,54 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 207681fc5f3d5d398f106d1ae0080fc2373f707a ]
+[ Upstream commit 0fd791841a6d67af1155a9c3de54dea51220721e ]
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+The Motorola/Zebra Symbol DS4308-HD is a handheld USB barcode scanner
+which does not have a battery, but reports one anyway that always has
+capacity 2.
 
-drivers/net/can/usb/ucan.c: In function 'ucan_disconnect':
-drivers/net/can/usb/ucan.c:1578:21: warning:
- variable 'udev' set but not used [-Wunused-but-set-variable]
-  struct usb_device *udev;
+Let's apply the IGNORE quirk to prevent it from being treated like a
+power supply so that userspaces don't get confused that this
+accessory is almost out of power and warn the user that they need to charge
+their wired barcode scanner.
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-Reviewed-by: Martin Elshuber <martin.elshuber@theobroma-systems.com>
-Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
+Reported here: https://bugs.chromium.org/p/chromium/issues/detail?id=804720
+
+Signed-off-by: Benson Leung <bleung@chromium.org>
+Reviewed-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/can/usb/ucan.c | 3 ---
- 1 file changed, 3 deletions(-)
+ drivers/hid/hid-ids.h   | 1 +
+ drivers/hid/hid-input.c | 3 +++
+ 2 files changed, 4 insertions(+)
 
-diff --git a/drivers/net/can/usb/ucan.c b/drivers/net/can/usb/ucan.c
-index 0678a38b1af4..c9fd83e8d947 100644
---- a/drivers/net/can/usb/ucan.c
-+++ b/drivers/net/can/usb/ucan.c
-@@ -1575,11 +1575,8 @@ err_firmware_needs_update:
- /* disconnect the device */
- static void ucan_disconnect(struct usb_interface *intf)
- {
--	struct usb_device *udev;
- 	struct ucan_priv *up = usb_get_intfdata(intf);
+diff --git a/drivers/hid/hid-ids.h b/drivers/hid/hid-ids.h
+index 501c05cbec7e..a2d25055cd7f 100644
+--- a/drivers/hid/hid-ids.h
++++ b/drivers/hid/hid-ids.h
+@@ -1038,6 +1038,7 @@
+ #define USB_VENDOR_ID_SYMBOL		0x05e0
+ #define USB_DEVICE_ID_SYMBOL_SCANNER_1	0x0800
+ #define USB_DEVICE_ID_SYMBOL_SCANNER_2	0x1300
++#define USB_DEVICE_ID_SYMBOL_SCANNER_3	0x1200
  
--	udev = interface_to_usbdev(intf);
--
- 	usb_set_intfdata(intf, NULL);
+ #define USB_VENDOR_ID_SYNAPTICS		0x06cb
+ #define USB_DEVICE_ID_SYNAPTICS_TP	0x0001
+diff --git a/drivers/hid/hid-input.c b/drivers/hid/hid-input.c
+index a481eaf39e88..a3916e58dbf5 100644
+--- a/drivers/hid/hid-input.c
++++ b/drivers/hid/hid-input.c
+@@ -325,6 +325,9 @@ static const struct hid_device_id hid_battery_quirks[] = {
+ 	{ HID_BLUETOOTH_DEVICE(USB_VENDOR_ID_ELECOM,
+ 		USB_DEVICE_ID_ELECOM_BM084),
+ 	  HID_BATTERY_QUIRK_IGNORE },
++	{ HID_USB_DEVICE(USB_VENDOR_ID_SYMBOL,
++		USB_DEVICE_ID_SYMBOL_SCANNER_3),
++	  HID_BATTERY_QUIRK_IGNORE },
+ 	{}
+ };
  
- 	if (up) {
 -- 
 2.19.1
 
