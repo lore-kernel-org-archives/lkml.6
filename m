@@ -7,50 +7,49 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B64DC5CFFE
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:59:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7B22C5CFFE
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:59:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 14C7220855
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:59:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 69FE720855
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:59:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544543951;
-	bh=AY4xZHC5dhkWBgK+VCzRFjrJaePPW6CAmDlVRLDIHOI=;
+	s=default; t=1544543953;
+	bh=W0ihdPsMQJky1R+o4iPgHKclaxeC2oiVJc644vZ2CIA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=FdprK969CNAlJ07D9fmoSNMJEnq8jjUnYR0hhIiSm9Iula/j807e/OXDtRop16Pep
-	 IOGYRBVFKUY+B/klv5y8jaiPElr2jg+AaVOVhvWL8VzTScVz8F0I9sL199MYVi5m5A
-	 y8EmSg+5+TOVZm7AKXbPX+PJUT9YdlOotOHRyPKc=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 14C7220855
+	b=A3KBaSkZyK7B/gdOvCjobfuWZRdOIe09p9Qmb0cY5n8egaf/p0cFchQRNkQp/G+eF
+	 wYz/QGdqJizQ9emIR7O9OF/ci3Nbgj2zF7djxfktZ91bGj47kwGCBAKKdW71xiF+qP
+	 nzoHIuAMl2PftvAaSHJZuNymC4kIttOjjoBOP26o=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 69FE720855
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731157AbeLKP7K (ORCPT
+        id S1731168AbeLKP7M (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 10:59:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48718 "EHLO mail.kernel.org"
+        Tue, 11 Dec 2018 10:59:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48768 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730736AbeLKP7G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:59:06 -0500
+        id S1731150AbeLKP7J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 10:59:09 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 914D520855;
-        Tue, 11 Dec 2018 15:59:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 141DA2086D;
+        Tue, 11 Dec 2018 15:59:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544543946;
-        bh=AY4xZHC5dhkWBgK+VCzRFjrJaePPW6CAmDlVRLDIHOI=;
+        s=default; t=1544543948;
+        bh=W0ihdPsMQJky1R+o4iPgHKclaxeC2oiVJc644vZ2CIA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nKP+ZcBZBNEnRGWoJ5cpIE6c4pQlkrYP6nUPr2Ngp9Tfn0R/d8NErd9IwD3YX1qS0
-         s3NRp/KrPwugQ+PN8TGnMbdWVzz6RXAWjb+rCt/zHGTVXbwusbzU1NqEx9DEdHOYLt
-         9LovkfdwugV6r/tcehoZR9w1Jyk9XIJP7YRHNiKg=
+        b=K8BCzA5t5tUx81VQJsj68oAn+6kxl5yXoDuwO9vymaurs8C5u0T5VC7bGTG/xtsAn
+         0R9//kMXbdd4jg13GnkG/ILF0SMVPEX+zCvrCNO2UnQjgSJHRYeK/oIQrd+qsxoG63
+         CxujKGkJOm7OO0aAAu0uLvPWKbL/65QHwiPh+wsc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?Nic=20Soud=C3=A9e?= <nsoudee@gmail.com>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Subject: [PATCH 4.19 118/118] HID: quirks: fix RetroUSB.com devices
-Date:   Tue, 11 Dec 2018 16:42:17 +0100
-Message-Id: <20181211151649.019105782@linuxfoundation.org>
+        stable@vger.kernel.org, Jouni Malinen <jouni@codeaurora.org>,
+        Johannes Berg <johannes.berg@intel.com>
+Subject: [PATCH 4.19 111/118] cfg80211: Fix busy loop regression in ieee80211_ie_split_ric()
+Date:   Tue, 11 Dec 2018 16:42:10 +0100
+Message-Id: <20181211151648.745981808@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181211151644.216668863@linuxfoundation.org>
 References: <20181211151644.216668863@linuxfoundation.org>
@@ -69,60 +68,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Nic Soudée <nsoudee@gmail.com>
+From: Jouni Malinen <jouni@codeaurora.org>
 
-commit 868613f1c0ccf7b832f38b48b18cca31cdeb3d26 upstream.
+commit 312ca38ddda64bac6513ec68e0ac3789b4eb44dc upstream.
 
-SNES RetroPort and RetroPad register only 4 gamepad buttons
-when they should register all 8 buttons. This is described here:
+This function was modified to support the information element extension
+case (WLAN_EID_EXTENSION) in a manner that would result in an infinite
+loop when going through set of IEs that include WLAN_EID_RIC_DATA and
+contain an IE that is in the after_ric array. The only place where this
+can currently happen is in mac80211 ieee80211_send_assoc() where
+ieee80211_ie_split_ric() is called with after_ric[].
 
-https://ask.fedoraproject.org/en/question/128102
+This can be triggered by valid data from user space nl80211
+association/connect request (i.e., requiring GENL_UNS_ADMIN_PERM). The
+only known application having an option to include WLAN_EID_RIC_DATA in
+these requests is wpa_supplicant and it had a bug that prevented this
+specific contents from being used (and because of that, not triggering
+this kernel bug in an automated test case ap_ft_ric) and now that this
+bug is fixed, it has a workaround to avoid this kernel issue.
+WLAN_EID_RIC_DATA is currently used only for testing purposes, so this
+does not cause significant harm for production use cases.
 
-This is happening because of:
-
-Commit 190d7f02ce8e ("HID: input: do not increment usages when
-    duplicate is found")
-
-Here, I add the quirk HID_QUIRK_INCREMENT_USAGE_ON_DUPLICATE
-(created for backward compatibility with the change in 190d7f02ce8e)
-for the two products.
-
-Tested with both RetroPort and RetroPad.
-
-Cc: stable@vger.kernel.org  # v4.18+
-
-Signed-off-by: Nic Soudée <nsoudee@gmail.com>
-Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Fixes: 2512b1b18d07 ("mac80211: extend ieee80211_ie_split to support EXTENSION")
+Cc: stable@vger.kernel.org
+Signed-off-by: Jouni Malinen <jouni@codeaurora.org>
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/hid/hid-ids.h    |    4 ++++
- drivers/hid/hid-quirks.c |    2 ++
- 2 files changed, 6 insertions(+)
+ net/wireless/util.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/hid/hid-ids.h
-+++ b/drivers/hid/hid-ids.h
-@@ -934,6 +934,10 @@
- #define USB_VENDOR_ID_REALTEK		0x0bda
- #define USB_DEVICE_ID_REALTEK_READER	0x0152
- 
-+#define USB_VENDOR_ID_RETROUSB		0xf000
-+#define USB_DEVICE_ID_RETROUSB_SNES_RETROPAD	0x0003
-+#define USB_DEVICE_ID_RETROUSB_SNES_RETROPORT	0x00f1
-+
- #define USB_VENDOR_ID_ROCCAT		0x1e7d
- #define USB_DEVICE_ID_ROCCAT_ARVO	0x30d4
- #define USB_DEVICE_ID_ROCCAT_ISKU	0x319c
---- a/drivers/hid/hid-quirks.c
-+++ b/drivers/hid/hid-quirks.c
-@@ -136,6 +136,8 @@ static const struct hid_device_id hid_qu
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_QUANTA, USB_DEVICE_ID_QUANTA_OPTICAL_TOUCH_3003), HID_QUIRK_NOGET },
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_QUANTA, USB_DEVICE_ID_QUANTA_OPTICAL_TOUCH_3008), HID_QUIRK_NOGET },
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_REALTEK, USB_DEVICE_ID_REALTEK_READER), HID_QUIRK_NO_INIT_REPORTS },
-+	{ HID_USB_DEVICE(USB_VENDOR_ID_RETROUSB, USB_DEVICE_ID_RETROUSB_SNES_RETROPAD), HID_QUIRK_INCREMENT_USAGE_ON_DUPLICATE },
-+	{ HID_USB_DEVICE(USB_VENDOR_ID_RETROUSB, USB_DEVICE_ID_RETROUSB_SNES_RETROPORT), HID_QUIRK_INCREMENT_USAGE_ON_DUPLICATE },
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_SAITEK, USB_DEVICE_ID_SAITEK_RUMBLEPAD), HID_QUIRK_BADPAD },
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_SEMICO, USB_DEVICE_ID_SEMICO_USB_KEYKOARD2), HID_QUIRK_NO_INIT_REPORTS },
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_SEMICO, USB_DEVICE_ID_SEMICO_USB_KEYKOARD), HID_QUIRK_NO_INIT_REPORTS },
+--- a/net/wireless/util.c
++++ b/net/wireless/util.c
+@@ -1418,6 +1418,8 @@ size_t ieee80211_ie_split_ric(const u8 *
+ 							  ies[pos + ext],
+ 							  ext == 2))
+ 					pos = skip_ie(ies, ielen, pos);
++				else
++					break;
+ 			}
+ 		} else {
+ 			pos = skip_ie(ies, ielen, pos);
 
 
