@@ -2,296 +2,130 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D432C5CFFE
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 10:04:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0089AC07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 10:05:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D293E20849
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 10:04:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B86202081B
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 10:05:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Kv1BYEFD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D293E20849
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZStDF5Ib"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B86202081B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726308AbeLKKEY (ORCPT
+        id S1726232AbeLKKFz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 05:04:24 -0500
-Received: from mail-it1-f194.google.com ([209.85.166.194]:38949 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726179AbeLKKEV (ORCPT
+        Tue, 11 Dec 2018 05:05:55 -0500
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:38621 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726104AbeLKKFy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 05:04:21 -0500
-Received: by mail-it1-f194.google.com with SMTP id a6so2812038itl.4
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 02:04:19 -0800 (PST)
+        Tue, 11 Dec 2018 05:05:54 -0500
+Received: by mail-ed1-f66.google.com with SMTP id h50so12018142ede.5;
+        Tue, 11 Dec 2018 02:05:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=E3Vgc0pVoE6d69ZxfgqpOLXo9MalH7+rLpDbCJ8v/sE=;
-        b=Kv1BYEFD0YGnjDyLhERx3VZ0yuSfv2uQ3fpYKobM40tV4IBqjvmnCgtqQVgilYmqus
-         Q3qo2QwRXXIaYGn4Jtpz5CxC8EhWLKACrP3gft88Sgd8RENi2EglIUF5DWsZajPqz/qm
-         ekJ76LACCdOw3mu9/xFGpHz7iupGYFyoCbnWxFF5qiiJHkqF8ZS8Up0kIeRJJA1l0H1b
-         caP71hyHAS2WIjdGvXute0uHtALR1vG/jDmGbw/6ux+Mx0cXGMvQYF/fcHf7HvlMgyEI
-         bfO4gVjghE/DMHdrcpVc5wI6bRWn7+clLSClaxN9R+bCk/xZ6dEyl/BvHYbIiKqdo+TT
-         HlMA==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=JhVzsSVTu5/1KUGpEPQdBbgEcXVIhDUjHvu9SEMn77c=;
+        b=ZStDF5IbrSXTiKnvC/gCzwThTDxP+1rDl1LafpVD4vYinS8N8QPf7V7o/AjzB+nCk6
+         xhu31RY87ywjBROzqt2K1PYvsQLGiIIehqtZ+eGvOvzbP/TUTdTG2hJORednkEXHtz92
+         bP/d3ZXWpNso/9/BxHqZB2N25WDP4NpmnzLxlo3NH5aSv00vJEq2q0q0h3PM0vM6zPWI
+         xwhToeR0hVOBhl1SYWtPCHM4kcHfYEnqrlvuQvUjnEXG7m2+vGmot+PU2RoO7YT9ZZF7
+         6SwhmuRLVsSOjMgyIKjnD7dHeqD8SK5VZjXv/xwNnNouvfQKF1wBU97Yrk8xiRxfsfhG
+         ZyUg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=E3Vgc0pVoE6d69ZxfgqpOLXo9MalH7+rLpDbCJ8v/sE=;
-        b=DsIFy1I4/eKoSUdsUbfTnY7QV4+zVzpILJ4IkaWlY6QVG23d/BclEgRD1cdLB6JB3s
-         zlJKGPJvI6sSZtRtk3qx7qx2sMOIogqge1tlLRGr3Dx7TVcseLWGIz0pTKEcnoBuPJ4d
-         tHmOAxSO1M59rIIplRYyuq+rgqOyEzcYvW8+9T1Wv5WngRD5CmUmKhPZZHtMhrY1Hz3/
-         I40ZerBUC1G+bF8eLMl3q0RwO05wMvGQ7ZNbWEv/D4goECnDPGH7jFJ8ejl08ZQAt2r0
-         WZp3FDBsq253AeIGj56wBxMNgg20dEPzeYDG9wasCjDZ0cYx+gXxMVVzFNhcYgC+Pgk8
-         pQ2g==
-X-Gm-Message-State: AA+aEWbZ+FMhuQFx4cWCKJqmscJZPea3y2iGPwd4d3EbNcbrp5ye5DSF
-        JhRvGwxO9/vQp83XUpt364KEb2+SM7u9cPN8TElUnw==
-X-Google-Smtp-Source: AFSGD/XHPtIfckhlDa8byGnDquHgYo3bcqgmHOJzIfRIjdFIz7UGJUB+sxR9dMt57jAXytVMq40pD1ECvKpkYck/HTs=
-X-Received: by 2002:a05:660c:f94:: with SMTP id x20mr1441230itl.144.1544522658793;
- Tue, 11 Dec 2018 02:04:18 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=JhVzsSVTu5/1KUGpEPQdBbgEcXVIhDUjHvu9SEMn77c=;
+        b=aW4c02FGkHekvK9cC9avt8nbtPz0l3U+5nxvrzO8X5KYU4isqmyT+OWpD1RUdJCFN/
+         L5PSfGWpjJH1dIW//RidVf8O0cXMiBvgTXBJ0chTbgI0HX4qjxex1FoKeq7TC8qdQx2j
+         5FFtaPcrhgAGQwYqVMsq335AMzqL9BVX1GcUqzZEsob9jNQ65i0vhR7p+wJZyGFHIvdE
+         I+Dns72QU80VhNq2Sv83MfzQdmZ0D5bCxADrwXq5VIezFdiYD0USuotBGAskSbA9AaRZ
+         s5ffDCQNjDr8u1d90REufLpumTvoLJH6xpbXuqwasyhCIvDvIj16WsgCHIdW7P76Y9tH
+         PGuw==
+X-Gm-Message-State: AA+aEWY/+Rz4EyVyFAVHPgiHx/JlEhDXD4G1kMClOixgHw9ba1ws/Xeh
+        rKcD74NiEe3SQOsR+GBgWGU=
+X-Google-Smtp-Source: AFSGD/UrU59mZ+AB8vW2kGD8PNyuP2hxTMUm/wz/8hLglX058cs0HwP0nM8E+1Y9Xk07683OFKwjPA==
+X-Received: by 2002:a17:906:55d2:: with SMTP id z18-v6mr1606668ejp.163.1544522752693;
+        Tue, 11 Dec 2018 02:05:52 -0800 (PST)
+Received: from localhost (pD9E51040.dip0.t-ipconnect.de. [217.229.16.64])
+        by smtp.gmail.com with ESMTPSA id by5-v6sm2163120ejb.7.2018.12.11.02.05.51
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 11 Dec 2018 02:05:51 -0800 (PST)
+Date:   Tue, 11 Dec 2018 11:05:50 +0100
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     arm@kernel.org, Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/4] ARM: tegra: avoid section mismatch warning
+Message-ID: <20181211100550.GD14426@ulmo>
+References: <20181210215856.2238253-1-arnd@arndb.de>
+ <20181210215856.2238253-2-arnd@arndb.de>
 MIME-Version: 1.0
-References: <000000000000eb3fa9057cbc2f06@google.com>
-In-Reply-To: <000000000000eb3fa9057cbc2f06@google.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Tue, 11 Dec 2018 11:04:07 +0100
-Message-ID: <CACT4Y+ZeHK1OowCr=C5kS6CZDd=gC0xdvoeLmQehYsef=iueag@mail.gmail.com>
-Subject: Re: INFO: task hung in ctrl_getfamily
-To:     syzbot+36edb5cac286af8e3385@syzkaller.appspotmail.com,
-        Jon Maloy <jon.maloy@ericsson.com>,
-        Ying Xue <ying.xue@windriver.com>,
-        tipc-discussion@lists.sourceforge.net
-Cc:     Andrei Vagin <avagin@virtuozzo.com>,
-        David Miller <davem@davemloft.net>,
-        Kees Cook <keescook@chromium.org>,
-        Kirill Tkhai <ktkhai@virtuozzo.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        netdev <netdev@vger.kernel.org>,
-        Nicolas Dichtel <nicolas.dichtel@6wind.com>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="8w3uRX/HFJGApMzv"
+Content-Disposition: inline
+In-Reply-To: <20181210215856.2238253-2-arnd@arndb.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 11, 2018 at 11:03 AM syzbot
-<syzbot+36edb5cac286af8e3385@syzkaller.appspotmail.com> wrote:
->
-> Hello,
->
-> syzbot found the following crash on:
->
-> HEAD commit:    40e020c129cf Linux 4.20-rc6
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=146ff5a3400000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=c8970c89a0efbb23
-> dashboard link: https://syzkaller.appspot.com/bug?extid=36edb5cac286af8e3385
-> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14f04d6d400000
->
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+36edb5cac286af8e3385@syzkaller.appspotmail.com
 
-This looks like TIPC bug, + TIPC maintainers.
+--8w3uRX/HFJGApMzv
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> IPv6: ADDRCONF(NETDEV_UP): veth0: link is not ready
-> IPv6: ADDRCONF(NETDEV_UP): veth1: link is not ready
-> IPv6: ADDRCONF(NETDEV_CHANGE): veth1: link becomes ready
-> IPv6: ADDRCONF(NETDEV_CHANGE): veth0: link becomes ready
-> 8021q: adding VLAN 0 to HW filter on device team0
-> INFO: task syz-executor0:6314 blocked for more than 140 seconds.
->        Not tainted 4.20.0-rc6+ #370
-> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-> syz-executor0   D21448  6314   6054 0x00000004
-> Call Trace:
->   context_switch kernel/sched/core.c:2831 [inline]
->   __schedule+0x8cf/0x21d0 kernel/sched/core.c:3472
->   schedule+0xfe/0x460 kernel/sched/core.c:3516
->   schedule_preempt_disabled+0x13/0x20 kernel/sched/core.c:3574
->   __mutex_lock_common kernel/locking/mutex.c:1002 [inline]
->   __mutex_lock+0xaff/0x16f0 kernel/locking/mutex.c:1072
->   mutex_lock_nested+0x16/0x20 kernel/locking/mutex.c:1087
->   genl_lock net/netlink/genetlink.c:33 [inline]
->   ctrl_getfamily+0x313/0x420 net/netlink/genetlink.c:873
->   genl_family_rcv_msg+0x8a7/0x11a0 net/netlink/genetlink.c:601
->   genl_rcv_msg+0xc6/0x168 net/netlink/genetlink.c:626
->   netlink_rcv_skb+0x172/0x440 net/netlink/af_netlink.c:2477
->   genl_rcv+0x28/0x40 net/netlink/genetlink.c:637
->   netlink_unicast_kernel net/netlink/af_netlink.c:1310 [inline]
->   netlink_unicast+0x5a5/0x760 net/netlink/af_netlink.c:1336
->   netlink_sendmsg+0xa18/0xfc0 net/netlink/af_netlink.c:1917
->   sock_sendmsg_nosec net/socket.c:621 [inline]
->   sock_sendmsg+0xd5/0x120 net/socket.c:631
->   ___sys_sendmsg+0x7fd/0x930 net/socket.c:2116
->   __sys_sendmsg+0x11d/0x280 net/socket.c:2154
->   __do_sys_sendmsg net/socket.c:2163 [inline]
->   __se_sys_sendmsg net/socket.c:2161 [inline]
->   __x64_sys_sendmsg+0x78/0xb0 net/socket.c:2161
->   do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
->   entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> RIP: 0033:0x411231
-> Code: 01 4c 89 54 24 28 e9 6f fa ff ff 49 8b 7c 24 70 8b 35 43 c4 24 00 ff
-> 15 ed 83 24 00 85 c0 0f 85 b3 fe ff ff 49 8b 7c 24 70 be <20> 13 41 00 ff
-> 15 dd 83 24 00 85 c0 0f 85 9b fe ff ff 49 8b 7c 24
-> RSP: 002b:00007fc4f0d7f9c0 EFLAGS: 00000293 ORIG_RAX: 000000000000002e
-> RAX: ffffffffffffffda RBX: 0000000000000001 RCX: 0000000000411231
-> RDX: 0000000000000000 RSI: 00007fc4f0d7fa00 RDI: 0000000000000006
-> RBP: 0000000000000006 R08: 00007fc4f0d7f9d0 R09: 000000000072bf00
-> R10: 0000000000000005 R11: 0000000000000293 R12: 00007fc4f0d7fa40
-> R13: 00000000004cc470 R14: 00000000004d9950 R15: 00000000ffffffff
->
-> Showing all locks held in the system:
-> 1 lock held by khungtaskd/1019:
->   #0: 0000000018acca81 (rcu_read_lock){....}, at:
-> debug_show_all_locks+0xd0/0x424 kernel/locking/lockdep.c:4379
-> 1 lock held by rsyslogd/5919:
->   #0: 00000000a301519f (&f->f_pos_lock){+.+.}, at: __fdget_pos+0x1bb/0x200
-> fs/file.c:766
-> 2 locks held by getty/6010:
->   #0: 000000008d1ae09f (&tty->ldisc_sem){++++}, at:
-> ldsem_down_read+0x32/0x40 drivers/tty/tty_ldsem.c:353
->   #1: 000000001356f661 (&ldata->atomic_read_lock){+.+.}, at:
-> n_tty_read+0x335/0x1e80 drivers/tty/n_tty.c:2154
-> 2 locks held by getty/6011:
->   #0: 00000000c1ee7f5a (&tty->ldisc_sem){++++}, at:
-> ldsem_down_read+0x32/0x40 drivers/tty/tty_ldsem.c:353
->   #1: 0000000053bcc6b4 (&ldata->atomic_read_lock){+.+.}, at:
-> n_tty_read+0x335/0x1e80 drivers/tty/n_tty.c:2154
-> 2 locks held by getty/6012:
->   #0: 000000003937906c (&tty->ldisc_sem){++++}, at:
-> ldsem_down_read+0x32/0x40 drivers/tty/tty_ldsem.c:353
->   #1: 000000005503206b (&ldata->atomic_read_lock){+.+.}, at:
-> n_tty_read+0x335/0x1e80 drivers/tty/n_tty.c:2154
-> 2 locks held by getty/6013:
->   #0: 00000000e7a22898 (&tty->ldisc_sem){++++}, at:
-> ldsem_down_read+0x32/0x40 drivers/tty/tty_ldsem.c:353
->   #1: 00000000a0e9cef1 (&ldata->atomic_read_lock){+.+.}, at:
-> n_tty_read+0x335/0x1e80 drivers/tty/n_tty.c:2154
-> 2 locks held by getty/6014:
->   #0: 000000002666d591 (&tty->ldisc_sem){++++}, at:
-> ldsem_down_read+0x32/0x40 drivers/tty/tty_ldsem.c:353
->   #1: 00000000a02c8c57 (&ldata->atomic_read_lock){+.+.}, at:
-> n_tty_read+0x335/0x1e80 drivers/tty/n_tty.c:2154
-> 2 locks held by getty/6015:
->   #0: 00000000bc3e2096 (&tty->ldisc_sem){++++}, at:
-> ldsem_down_read+0x32/0x40 drivers/tty/tty_ldsem.c:353
->   #1: 00000000c9a713a6 (&ldata->atomic_read_lock){+.+.}, at:
-> n_tty_read+0x335/0x1e80 drivers/tty/n_tty.c:2154
-> 2 locks held by getty/6016:
->   #0: 00000000076cf5e3 (&tty->ldisc_sem){++++}, at:
-> ldsem_down_read+0x32/0x40 drivers/tty/tty_ldsem.c:353
->   #1: 00000000dd03af83 (&ldata->atomic_read_lock){+.+.}, at:
-> n_tty_read+0x335/0x1e80 drivers/tty/n_tty.c:2154
-> 2 locks held by syz-executor0/6314:
->   #0: 00000000cf395c86 (cb_lock){++++}, at: ctrl_getfamily+0x305/0x420
-> net/netlink/genetlink.c:872
->   #1: 000000004b0549ce (genl_mutex){+.+.}, at: genl_lock
-> net/netlink/genetlink.c:33 [inline]
->   #1: 000000004b0549ce (genl_mutex){+.+.}, at: ctrl_getfamily+0x313/0x420
-> net/netlink/genetlink.c:873
-> 3 locks held by syz-executor0/6317:
->
-> =============================================
->
-> NMI backtrace for cpu 0
-> CPU: 0 PID: 1019 Comm: khungtaskd Not tainted 4.20.0-rc6+ #370
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> Google 01/01/2011
-> Call Trace:
->   __dump_stack lib/dump_stack.c:77 [inline]
->   dump_stack+0x244/0x39d lib/dump_stack.c:113
->   nmi_cpu_backtrace.cold.2+0x5c/0xa1 lib/nmi_backtrace.c:101
->   nmi_trigger_cpumask_backtrace+0x1e8/0x22a lib/nmi_backtrace.c:62
->   arch_trigger_cpumask_backtrace+0x14/0x20 arch/x86/kernel/apic/hw_nmi.c:38
->   trigger_all_cpu_backtrace include/linux/nmi.h:146 [inline]
->   check_hung_uninterruptible_tasks kernel/hung_task.c:205 [inline]
->   watchdog+0xb51/0x1060 kernel/hung_task.c:289
->   kthread+0x35a/0x440 kernel/kthread.c:246
->   ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:352
-> Sending NMI from CPU 0 to CPUs 1:
-> INFO: NMI handler (nmi_cpu_backtrace_handler) took too long to run: 1.855
-> msecs
-> NMI backtrace for cpu 1
-> CPU: 1 PID: 6317 Comm: syz-executor0 Not tainted 4.20.0-rc6+ #370
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> Google 01/01/2011
-> RIP: 0010:rcu_dynticks_curr_cpu_in_eqs+0x4e/0x170 kernel/rcu/tree.c:289
-> Code: 48 c1 eb 03 48 83 ec 68 48 c7 45 80 b3 8a b5 41 4a 8d 04 33 48 c7 45
-> 88 80 96 11 89 48 c7 45 90 90 6a 6a 81 c7 00 f1 f1 f1 f1 <c7> 40 04 04 f2
-> f2 f2 65 48 8b 04 25 28 00 00 00 48 89 45 d8 31 c0
-> RSP: 0018:ffff8881bab0e810 EFLAGS: 00000282
-> RAX: ffffed1037561d03 RBX: 1ffff11037561d03 RCX: ffffffff87a2367c
-> RDX: 0000000000000000 RSI: ffffffff87a2368a RDI: ffff8881bb77a8fc
-> RBP: ffff8881bab0e898 R08: ffff8881bb77a080 R09: ffffed103b5e5b5f
-> R10: ffffed103b5e5b5f R11: ffff8881daf2dafb R12: 000000000002da40
-> R13: ffff8881bab0e878 R14: dffffc0000000000 R15: ffff8881b6cc9b80
-> FS:  00007fc4f0d5f700(0000) GS:ffff8881daf00000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: ffffffffff600400 CR3: 00000001b318c000 CR4: 00000000001406e0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
->   rcu_is_watching+0x10/0x30 kernel/rcu/tree.c:906
->   rcu_read_lock_held+0x87/0xc0 kernel/rcu/update.c:277
->   __rhashtable_lookup include/linux/rhashtable.h:478 [inline]
->   rhashtable_lookup include/linux/rhashtable.h:516 [inline]
->   rhashtable_lookup_fast include/linux/rhashtable.h:542 [inline]
->   tipc_sk_lookup+0xa4f/0xff0 net/tipc/socket.c:2746
->   tipc_nl_publ_dump+0x22d/0xf93 net/tipc/socket.c:3550
->   __tipc_nl_compat_dumpit.isra.11+0x25d/0xb60 net/tipc/netlink_compat.c:196
->   tipc_nl_compat_publ_dump net/tipc/netlink_compat.c:925 [inline]
->   tipc_nl_compat_sk_dump+0x88e/0xc50 net/tipc/netlink_compat.c:973
->   __tipc_nl_compat_dumpit.isra.11+0x389/0xb60 net/tipc/netlink_compat.c:205
->   tipc_nl_compat_dumpit+0x1f4/0x440 net/tipc/netlink_compat.c:270
->   tipc_nl_compat_handle net/tipc/netlink_compat.c:1147 [inline]
->   tipc_nl_compat_recv+0x12b3/0x19a0 net/tipc/netlink_compat.c:1210
->   genl_family_rcv_msg+0x8a7/0x11a0 net/netlink/genetlink.c:601
->   genl_rcv_msg+0xc6/0x168 net/netlink/genetlink.c:626
->   netlink_rcv_skb+0x172/0x440 net/netlink/af_netlink.c:2477
->   genl_rcv+0x28/0x40 net/netlink/genetlink.c:637
->   netlink_unicast_kernel net/netlink/af_netlink.c:1310 [inline]
->   netlink_unicast+0x5a5/0x760 net/netlink/af_netlink.c:1336
->   netlink_sendmsg+0xa18/0xfc0 net/netlink/af_netlink.c:1917
->   sock_sendmsg_nosec net/socket.c:621 [inline]
->   sock_sendmsg+0xd5/0x120 net/socket.c:631
->   ___sys_sendmsg+0x7fd/0x930 net/socket.c:2116
->   __sys_sendmsg+0x11d/0x280 net/socket.c:2154
->   __do_sys_sendmsg net/socket.c:2163 [inline]
->   __se_sys_sendmsg net/socket.c:2161 [inline]
->   __x64_sys_sendmsg+0x78/0xb0 net/socket.c:2161
->   do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
->   entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> RIP: 0033:0x457659
-> Code: fd b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7
-> 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff
-> ff 0f 83 cb b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-> RSP: 002b:00007fc4f0d5ec78 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-> RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000457659
-> RDX: 0000000000000000 RSI: 0000000020000180 RDI: 0000000000000005
-> RBP: 000000000072bfa0 R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000246 R12: 00007fc4f0d5f6d4
-> R13: 00000000004c4171 R14: 00000000004d7058 R15: 00000000ffffffff
->
->
+On Mon, Dec 10, 2018 at 10:58:37PM +0100, Arnd Bergmann wrote:
+> WARNING: vmlinux.o(.text+0x39ecc): Section mismatch in reference from the=
+ function tegra114_gic_cpu_pm_registration() to the (unknown reference) .in=
+it.rodata:(unknown)
+> The function tegra114_gic_cpu_pm_registration() references
+> the (unknown reference) __initconst (unknown).
+> This is often because tegra114_gic_cpu_pm_registration lacks a __initconst
+> annotation or the annotation of (unknown) is wrong.
+>=20
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 > ---
-> This bug is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
->
-> syzbot will keep track of this bug report. See:
-> https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with
-> syzbot.
-> syzbot can test patches for this bug, for details see:
-> https://goo.gl/tpsmEJ#testing-patches
->
-> --
-> You received this message because you are subscribed to the Google Groups "syzkaller-bugs" group.
-> To unsubscribe from this group and stop receiving emails from it, send an email to syzkaller-bugs+unsubscribe@googlegroups.com.
-> To view this discussion on the web visit https://groups.google.com/d/msgid/syzkaller-bugs/000000000000eb3fa9057cbc2f06%40google.com.
-> For more options, visit https://groups.google.com/d/optout.
+>  arch/arm/mach-tegra/irq.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+
+I'm not seeing these. Do I need to enable any special options to trigger
+these? Or are these just so new that I haven't run into them yet?
+
+In either case, I see that this is called by tegra_init_irq() and that
+does have an __init annotation, so this looks good to me:
+
+Acked-by: Thierry Reding <treding@nvidia.com>
+
+--8w3uRX/HFJGApMzv
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlwPi/4ACgkQ3SOs138+
+s6FLVQ/+NM4HKqTPuyuEUc0S1R5ieZZ6+FH1S1uUzhJVbjr3yp6GsVL8fkXR6dMv
+4A0o92B1GuH8D/JKFi+Wy5U1JIRBokNkg+o2B358cTOHUUhKc4OQ2Q7/3gyNXJX6
+0xCI6IBrG7nrsYrgGYuyl4/h0kuyffG2Ot0bxIBxkrfx/YHebKRUKebL6ociI7Q6
+ZPYYhmbs7GM1XENuOSRhLvyfADDDHeYmevM3oOPaBHcaYZ5AxrkUlcQ4mhAdL7yh
+k+TxI575WuGxSzs4lgRCA9qAjsKjR+BoLeaYA9b1PEW9PNxgoLq6w1EdK+p62ay+
+EncuT4kzZmsa5BlY9ADbEIDel6t7PKF+dFljssnmutrB7V1WVav2mjXvbeBIRcl5
+t0y7OJtG2+BMCMANxDvIvNZ2mNwI0awHGIzf9j9Dk8M6WsdLXB1og/i9VOFjL6fW
+mRoJQRCw15a6xdxwAlOVBN81/+aocrNmF2c1u5kDcSgsjQqhMbGFR2Kq6ZBDQVeF
+604EDZyQ/KX7+cn3RnojlCzTPo/ahhrb5kGO0ypJPEXoV8MuuUSXULAFblHmHF5S
+Klrv3iPlnxB1xfZ1UubentR8gqZZeArXPJAdYPLZ2V4VA9U/2k6xAM6Mob+Y+dbK
+1S7UktZGm9/20Yfq14rZ+DpNoPpjmg/Q/Kkd1VFCrKp5lMospsw=
+=QpbD
+-----END PGP SIGNATURE-----
+
+--8w3uRX/HFJGApMzv--
