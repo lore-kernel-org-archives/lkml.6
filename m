@@ -2,141 +2,180 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D450BC07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 12:35:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F7A9C07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 12:36:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 98ED220849
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 12:35:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lPOpWLnc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98ED220849
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id F213E2082F
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 12:36:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F213E2082F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726424AbeLKMe7 (ORCPT
+        id S1726398AbeLKMgY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 07:34:59 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:35625 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726114AbeLKMe7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 07:34:59 -0500
-Received: by mail-lj1-f193.google.com with SMTP id x85-v6so12826845ljb.2
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 04:34:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=JLP/jVOfJWUzYaxcfAAo52I1nAx/30ZeEC3HeKJcBWo=;
-        b=lPOpWLncAx00ZEf+nhM+8TfNwnijNp4B7BFNNz17wmKCwi/ljB52y87GVhe1TlPqf8
-         PBnZ5HVEjr26cf8vwVawe/mobfYJRMHm3SDFCbTgqOGlYrGTB/dSmbtBGapgt1NfjVIb
-         G0F8fWxbVuvrea1rlZ1Zg0hDI4wyiLjyf5pGaVHf0s8GHS0DIs1YmB7Ni7x0YJqyLThB
-         6K6QBUgtur3T3R8Bkt50JG/HZKRyzdDA0UC9mKdqb1qyd/gsqJB8kp7t7wzAg8SYL4MB
-         shzw4RQWWn9B/ahkQiHVOJClja1lL/PgnfwCFZl3QXDnOYRa1NVH0SOLsAvaP23xBgOD
-         o93g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=JLP/jVOfJWUzYaxcfAAo52I1nAx/30ZeEC3HeKJcBWo=;
-        b=I7ifu1LpRa6IJcD0OmN0+6RhBikyURr30RsHxRHX1lQ91RZjsFwu/YkBHcxxb2o3QE
-         Fixu+a6GZrLC80ympaGxOPlz7DmwQK15b9WX8nkxDWpSbMGCqZWt0oCIiigYgY5SefHN
-         I1YH2OdxYErB7XOj6jlxUEq2f+WIPSwVbnzwlaIEKc679aUMEM312XL41Fi0WYUzo/w7
-         oF+soFBivFLmBvImrgTjTqH2F8SJNJf76dW8JKVtd/x4jO4OWTRsBJxUBeLIrGPiK4za
-         0wmHAT6TdaXALLgjMsIo3+SfWPLNjPxXebUAdQcHZtVqc60pGixryhATZYXtrZns+BBj
-         FuGQ==
-X-Gm-Message-State: AA+aEWZhOd41n7u+hERYdhw3siHHjkwzR+Pu1ba7tVaa8Z8vv5sn29ZU
-        omYStAjKI5OUZjIfJl6enMw=
-X-Google-Smtp-Source: AFSGD/W8X+ywgvsaSdUwX+RZZ9zKd3dcg4KbVsE83COvgpK1ZCDwNB5HVeaaVjypGjfW5H3rKi8bhg==
-X-Received: by 2002:a2e:5703:: with SMTP id l3-v6mr10563222ljb.106.1544531697010;
-        Tue, 11 Dec 2018 04:34:57 -0800 (PST)
-Received: from uranus.localdomain ([5.18.102.224])
-        by smtp.gmail.com with ESMTPSA id l21-v6sm2635813lji.6.2018.12.11.04.34.56
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 11 Dec 2018 04:34:56 -0800 (PST)
-Received: by uranus.localdomain (Postfix, from userid 1000)
-        id CDCC8460AA3; Tue, 11 Dec 2018 15:34:55 +0300 (MSK)
-Date:   Tue, 11 Dec 2018 15:34:55 +0300
-From:   Cyrill Gorcunov <gorcunov@gmail.com>
-To:     Kirill Tkhai <ktkhai@virtuozzo.com>
-Cc:     akpm@linux-foundation.org, mhocko@suse.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, gorcunov@virtuozzo.com
-Subject: Re: [PATCH v2] ksm: React on changing "sleep_millisecs" parameter
- faster
-Message-ID: <20181211123455.GI2342@uranus.lan>
-References: <20181211100346.GE2342@uranus.lan>
- <154452399396.4921.3418365102240528000.stgit@localhost.localdomain>
- <20181211111300.GF2342@uranus.lan>
- <26fb047f-9164-96ae-a6cd-7a7efa41d43b@virtuozzo.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <26fb047f-9164-96ae-a6cd-7a7efa41d43b@virtuozzo.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Tue, 11 Dec 2018 07:36:24 -0500
+Received: from mx2.suse.de ([195.135.220.15]:54154 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726241AbeLKMgX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 07:36:23 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id E8DD0ACDE;
+        Tue, 11 Dec 2018 12:36:20 +0000 (UTC)
+Message-ID: <c0348f29fc1bcc73b3f67b740cd3c5c6ad34d07b.camel@suse.de>
+Subject: Re: [PATCH] staging: vchiq: rework remove_event handling
+From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+To:     Arnd Bergmann <arnd@arndb.de>, Eric Anholt <eric@anholt.net>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Tara Null <tn@fastmail.net>, linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org
+Date:   Tue, 11 Dec 2018 13:36:19 +0100
+In-Reply-To: <20181210211231.4084251-1-arnd@arndb.de>
+References: <20181210211231.4084251-1-arnd@arndb.de>
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-iz9Vcq7U4bBc0EImhqak"
+User-Agent: Evolution 3.30.2 
+Mime-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 11, 2018 at 03:22:42PM +0300, Kirill Tkhai wrote:
-> On 11.12.2018 14:13, Cyrill Gorcunov wrote:
-> > On Tue, Dec 11, 2018 at 01:26:59PM +0300, Kirill Tkhai wrote:
-> >> ksm thread unconditionally sleeps in ksm_scan_thread()
-> >> after each iteration:
-> >>
-> >> 	schedule_timeout_interruptible(
-> >> 		msecs_to_jiffies(ksm_thread_sleep_millisecs))
-> >>
-> >> The timeout is configured in /sys/kernel/mm/ksm/sleep_millisecs.
-> >>
-> >> In case of user writes a big value by a mistake, and the thread
-> >> enters into schedule_timeout_interruptible(), it's not possible
-> >> to cancel the sleep by writing a new smaler value; the thread
-> >> is just sleeping till timeout expires.
-> >>
-> >> The patch fixes the problem by waking the thread each time
-> >> after the value is updated.
-> >>
-> >> This also may be useful for debug purposes; and also for userspace
-> >> daemons, which change sleep_millisecs value in dependence of
-> >> system load.
-> >>
-> >> Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
-> >>
-> >> v2: Use wait_event_interruptible_timeout() instead of unconditional
-> >>     schedule_timeout().
-> > ...
-> >> @@ -2844,7 +2849,10 @@ static ssize_t sleep_millisecs_store(struct kobject *kobj,
-> >>  	if (err || msecs > UINT_MAX)
-> >>  		return -EINVAL;
-> >>  
-> >> +	mutex_lock(&ksm_thread_mutex);
-> >>  	ksm_thread_sleep_millisecs = msecs;
-> >> +	mutex_unlock(&ksm_thread_mutex);
-> >> +	wake_up_interruptible(&ksm_iter_wait);
-> > 
-> > Btw, just thought -- if we start using this mutex here don't we
-> > open a window for force attack on the thread self execution,
-> > iow if there gonna be a million of writers do we have a guarantee
-> > thread ksm_scan_thread will grab the mutex earlier than writers
-> > (or somewhere inbetween)?
-> 
-> This file is permitted for global root only. I don't think there is
-> a problem.
-> 
-> If someone wants to make ksm helpless, a person may just write a big
-> "sleep_millisecs" value. KSM thread won't be executed almost all the time
-> in this case.
 
-True. Still I think if we can leave without taking a lock it a rule of thumb.
-Something like
+--=-iz9Vcq7U4bBc0EImhqak
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-	if (msecs != ksm_thread_sleep_millisecs)
-		wake_up_interruptable(&ksm_iter_wait);
+Hi Arnd, thanks for the patch!
 
-Thoughts?
+On Mon, 2018-12-10 at 22:11 +0100, Arnd Bergmann wrote:
+> I had started the removal of semaphores in this driver without
+> knowing
+> that Nicolas Saenz Julienne also worked on this. In case of the
+> "remote
+> event" infrastructure, my solution seemed significantly better, so
+> I'm
+> proposing this as a change on top.
+>=20
+> The problem with using either semaphores or completions here is that
+> it's an overly complex way of waking up a thread, and it looks like
+> the
+> 'count' of the semaphore can easily get out of sync, even though I
+> found
+> it hard to come up with a specific example.
+>=20
+> Changing it to a 'wait_queue_head_t' instead of a completion
+> simplifies
+> this by letting us wait directly on the 'event->fired' variable that
+> is
+> set by the videocore.
+>=20
+> Another simplification is passing the wait queue directly into the
+> helper
+> functions instead of going through the fragile logic of recording the
+> offset inside of a structure as part of a shared memory variable.
+> This
+> also avoids one uncached memory read and should be faster.
+>=20
+> Note that I'm changing it back to 'killable' after the previous patch
+> changed 'killable' to 'interruptible', apparently based on a
+> misunderstanding
+> of the subtle down_interruptible() macro override in
+> vchiq_killable.h.
+>=20
+> Fixes: f27e47bc6b8b ("staging: vchiq: use completions instead of
+> semaphores")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  .../interface/vchiq_arm/vchiq_core.c          | 63 +++++++--------
+> ----
+>  .../interface/vchiq_arm/vchiq_core.h          | 12 ++--
+>  2 files changed, 30 insertions(+), 45 deletions(-)
+>=20
+> diff --git
+> a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
+> b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
+> index 482b5daf6c0c..eda3004a0c6a 100644
+> --- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
+> +++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
+> @@ -417,26 +417,23 @@ vchiq_set_conn_state(VCHIQ_STATE_T *state,
+> VCHIQ_CONNSTATE_T newstate)
+>  }
+> =20
+>  static inline void
+> -remote_event_create(REMOTE_EVENT_T *event)
+> +remote_event_create(wait_queue_head_t *wq, REMOTE_EVENT_T *event)
+>  {
+>  	event->armed =3D 0;
+>  	/* Don't clear the 'fired' flag because it may already have
+> been set
+>  	** by the other side. */
+> +	init_waitqueue_head(wq);
+>  }
+> =20
+>  static inline int
+> -remote_event_wait(VCHIQ_STATE_T *state, REMOTE_EVENT_T *event)
+> +remote_event_wait(wait_queue_head_t *wq, REMOTE_EVENT_T *event)
+>  {
+>  	if (!event->fired) {
+>  		event->armed =3D 1;
+>  		dsb(sy);
+> -		if (!event->fired) {
+> -			if (wait_for_completion_interruptible(
+> -					(struct completion *)
+> -					((char *)state + event-
+> >event))) {
+> -				event->armed =3D 0;
+> -				return 0;
+> -			}
+> +		if (wait_event_killable(*wq, event->fired)) {
+> +			event->armed =3D 0;
+> +			return 0;
+>  		}
+>  		event->armed =3D 0;
+>  		wmb();
+> @@ -447,26 +444,26 @@ remote_event_wait(VCHIQ_STATE_T *state,
+> REMOTE_EVENT_T *event)
+>  }
+> =20
+>  static inline void
+> -remote_event_signal_local(VCHIQ_STATE_T *state, REMOTE_EVENT_T
+> *event)
+> +remote_event_signal_local(wait_queue_head_t *wq, REMOTE_EVENT_T
+> *event)
+>  {
+>  	event->armed =3D 0;
+> -	complete((struct completion *)((char *)state + event->event));
+> +	wake_up_all(wq);
+
+Shouldn't this just be "wake_up(wq)"?=20
+
+Regards,
+Nicolas
+
+
+--=-iz9Vcq7U4bBc0EImhqak
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEErOkkGDHCg2EbPcGjlfZmHno8x/4FAlwPr0MACgkQlfZmHno8
+x/5oGwgAgaXU/Me8ZmcYNWBmoAq7sMybiCrgz8vqDxU0LnX5mFXJ2VuuzPcxTTR9
+7gaT+/ekslPnGGyzUy//WZXqYjQv3cI9uiaAt85rTU/Jqv1cbsGBY9ayjMJVEYId
+ZNOpU4oXwQezFsy8Sx5BAeyrzthyLkMPKVwd9bTbqok6KjI/iVURJwHnXeXCm4Dl
+CHhOciwWiJOvnbsAyJlgGqL/W2K0aSG9dDiZx+xypKy/z0xA7FpidLnETqPKZMTV
+YLuiKL44bUmra6iSJd91PqCXLKUBsSeDwLDo9pONjvZ/fKvizIAG33yrYshRRv+3
+ja6Fh6TAPvOsFii9eD50Y+8jkUkU1g==
+=UpGO
+-----END PGP SIGNATURE-----
+
+--=-iz9Vcq7U4bBc0EImhqak--
+
