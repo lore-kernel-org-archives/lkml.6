@@ -7,50 +7,48 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF149C5CFFE
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:46:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48DEDC5CFFE
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:46:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B8272087F
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:46:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0DD222087F
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:46:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544543171;
-	bh=h2ntuOz7hLAOg4vAnpOmOozN0SBudiB50YXtJOKNrOk=;
+	s=default; t=1544543176;
+	bh=Sb2LZhea8SCJikvrUTUObU7rv/95/9mz2XLpBNxe47U=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=twCjwi9Yo3MrbeHCLu7cktxKjwVaLKDLWbl/aX258MiGMUCyS1s1ygCxDrKWSros2
-	 CTXJ2ZClz0AeubJo7Vzw2j5R5+bj9Uznc3MKwuQDkQe5U6PMfQx4i23LLwna7s+Als
-	 3QD5XM6fe8uNEXeUzV4MClNZOtnRhRwYieBNl/BE=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B8272087F
+	b=SCIgI4pmmf8bPY9fYLMWXBaj63lfxOAQaUYzO3BlzxEjCMcKwguPEmfro1Dn+gnzR
+	 zWrkZzh9uAdS0zi6I7Zk6rzYymERPBKA6/EAVol1HQkgXuTlZpol51PsVTC7tGVJ0s
+	 zTTEV4TiZeQD3zGTwkSMb4T6Fq61ynDB0zN26AJ4=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0DD222087F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728285AbeLKPqK (ORCPT
+        id S1728301AbeLKPqO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 10:46:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34536 "EHLO mail.kernel.org"
+        Tue, 11 Dec 2018 10:46:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34588 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728267AbeLKPqH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:46:07 -0500
+        id S1728278AbeLKPqJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 10:46:09 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A32CB20870;
-        Tue, 11 Dec 2018 15:46:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2F62A2087F;
+        Tue, 11 Dec 2018 15:46:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544543166;
-        bh=h2ntuOz7hLAOg4vAnpOmOozN0SBudiB50YXtJOKNrOk=;
+        s=default; t=1544543168;
+        bh=Sb2LZhea8SCJikvrUTUObU7rv/95/9mz2XLpBNxe47U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uqjfoFnXm9n0qu2v3zhDdIWhaLrPQavPDl/uuM2iOfX1KEAXGrEtpESTF9r+iQYaq
-         OTTuV6Zm9Z9Jwt13TdZAXBWoU2XHFARH2y8XNq+FGDEfLPeBI8qPOri5bf434MNKOa
-         tnUwjcYpR1+4uTlLay/DQD3FuVGCj0vrU8++k1gQ=
+        b=zAChU/mp2QPhwj0JKpD/Sngl3TSbdiTELR+MYeWgS4hFq98xNZizj6+9m1IAswWd3
+         sokHeWMZCxp9SRcFboUVd+7THBl5oKFIdYX9EOVtTMRUTMxBOQTXHRHAC4PcfvVNf4
+         Tpm/uE0X1ptMs/yuVf8CsH1bY/FGs0tELifjtTrU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Martin Wilck <mwilck@suse.com>,
-        Bart Van Assche <bart.vanassche@wdc.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.4 37/91] scsi: scsi_devinfo: cleanly zero-pad devinfo strings
-Date:   Tue, 11 Dec 2018 16:40:56 +0100
-Message-Id: <20181211151608.862217772@linuxfoundation.org>
+        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.4 38/91] ALSA: trident: Suppress gcc string warning
+Date:   Tue, 11 Dec 2018 16:40:57 +0100
+Message-Id: <20181211151608.968759154@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181211151606.026852373@linuxfoundation.org>
 References: <20181211151606.026852373@linuxfoundation.org>
@@ -69,64 +67,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Martin Wilck <mwilck@suse.com>
+From: Takashi Iwai <tiwai@suse.de>
 
-commit 81df022b688d43d2a3667518b2f755d384397910 upstream.
+commit d6b340d7cb33c816ef4abe8143764ec5ab14a5cc upstream.
 
-Cleanly fill memory for "vendor" and "model" with 0-bytes for the
-"compatible" case rather than adding only a single 0 byte.  This
-simplifies the devinfo code a a bit, and avoids mistakes in other places
-of the code (not in current upstream, but we had one such mistake in the
-SUSE kernel).
+The meddlesome gcc warns about the possible shortname string in
+trident driver code:
+  sound/pci/trident/trident.c: In function ‘snd_trident_probe’:
+  sound/pci/trident/trident.c:126:2: warning: ‘strcat’ accessing 17 or more bytes at offsets 36 and 20 may overlap 1 byte at offset 36 [-Wrestrict]
+  strcat(card->shortname, card->driver);
 
-[mkp: applied by hand and added braces]
+It happens since gcc calculates the possible string size from
+card->driver, but this can't be true since we did set the string just
+before that, and they are much shorter.
 
-Signed-off-by: Martin Wilck <mwilck@suse.com>
-Reviewed-by: Bart Van Assche <bart.vanassche@wdc.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+For shutting it up, use the exactly same string set to card->driver
+for strcat() to card->shortname, too.
+
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/scsi/scsi_devinfo.c |   22 +++++++---------------
- 1 file changed, 7 insertions(+), 15 deletions(-)
+ sound/pci/trident/trident.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/scsi/scsi_devinfo.c
-+++ b/drivers/scsi/scsi_devinfo.c
-@@ -33,7 +33,6 @@ struct scsi_dev_info_list_table {
- };
- 
- 
--static const char spaces[] = "                "; /* 16 of them */
- static unsigned scsi_default_dev_flags;
- static LIST_HEAD(scsi_dev_info_list);
- static char scsi_dev_flags[256];
-@@ -291,20 +290,13 @@ static void scsi_strcpy_devinfo(char *na
- 	size_t from_length;
- 
- 	from_length = strlen(from);
--	strncpy(to, from, min(to_length, from_length));
--	if (from_length < to_length) {
--		if (compatible) {
--			/*
--			 * NUL terminate the string if it is short.
--			 */
--			to[from_length] = '\0';
--		} else {
--			/* 
--			 * space pad the string if it is short. 
--			 */
--			strncpy(&to[from_length], spaces,
--				to_length - from_length);
--		}
-+	/* this zero-pads the destination */
-+	strncpy(to, from, to_length);
-+	if (from_length < to_length && !compatible) {
-+		/*
-+		 * space pad the string if it is short.
-+		 */
-+		memset(&to[from_length], ' ', to_length - from_length);
+--- a/sound/pci/trident/trident.c
++++ b/sound/pci/trident/trident.c
+@@ -123,7 +123,7 @@ static int snd_trident_probe(struct pci_
+ 	} else {
+ 		strcpy(card->shortname, "Trident ");
  	}
- 	if (from_length > to_length)
- 		 printk(KERN_WARNING "%s: %s string '%s' is too long\n",
+-	strcat(card->shortname, card->driver);
++	strcat(card->shortname, str);
+ 	sprintf(card->longname, "%s PCI Audio at 0x%lx, irq %d",
+ 		card->shortname, trident->port, trident->irq);
+ 
 
 
