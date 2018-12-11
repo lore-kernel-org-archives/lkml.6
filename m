@@ -2,93 +2,141 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86D38C5CFFE
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 13:51:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9ADECC07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 13:53:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 42CE92082F
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 13:51:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544536285;
-	bh=gRzf6z/MKDvgtnWkAZXJlfic2APrhs8q9Aso7EbUsxo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=q3Ymbwhzoh/c/hx+x13GnfdHRagDbJA/Qr/F+bIHrfVAZyeNtucMa8/GI2xqr6PRP
-	 0V+c6u+7LZJS5rcZfSrfMuwm2/p8CPlxo1/H02z0HNxcSWRbwtnl8kIpUpDIm9fglB
-	 oQSfUWiATdf1mkF1eUCPufr4EXnnNfCTLfd6vl+s=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 42CE92082F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 6800F2082F
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 13:53:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6800F2082F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726621AbeLKNvY (ORCPT
+        id S1726636AbeLKNx1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 08:51:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45352 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726135AbeLKNvX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 08:51:23 -0500
-Received: from localhost (173-25-171-118.client.mchsi.com [173.25.171.118])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 947C42082F;
-        Tue, 11 Dec 2018 13:51:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544536282;
-        bh=gRzf6z/MKDvgtnWkAZXJlfic2APrhs8q9Aso7EbUsxo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=e7GBUfnr+efAKmVLq5gc/PkXkIhSA+S9fHYHn4wpvr75KyFcw3adV7njHSltYBWrM
-         KLJiUWSJdCrejIZh2mNsdpLsBP8zLh6QvSicz1G9+end1tvT/QCsDA3Ne64b/3uwiI
-         hdFn44tWuCuhM53qZ4H1kMi6pB7BrBpebkkEAcSM=
-Date:   Tue, 11 Dec 2018 07:51:21 -0600
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     "Grumbach, Emmanuel" <emmanuel.grumbach@intel.com>
-Cc:     "bjorn@helgaas.com" <bjorn@helgaas.com>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "Mertarg10@gmail.com" <Mertarg10@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: Fwd: [Bug 201647] New: Intel Wireless card 3165 does not get
- detected but bluetooth works
-Message-ID: <20181211135121.GB99796@google.com>
-References: <bug-201647-193951@https.bugzilla.kernel.org/>
- <CABhMZUXc4FS-f52ZDsErEhbkm_jjEz+kn75YO5Tuvp42Qm+1xw@mail.gmail.com>
- <20181128211959.GB178809@google.com>
- <0BA3FCBA62E2DC44AF3030971E174FB3013373E4A3@HASMSX112.ger.corp.intel.com>
- <20181210222452.GC85090@google.com>
- <0BA3FCBA62E2DC44AF3030971E174FB30133754C00@HASMSX112.ger.corp.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0BA3FCBA62E2DC44AF3030971E174FB30133754C00@HASMSX112.ger.corp.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Tue, 11 Dec 2018 08:53:27 -0500
+Received: from smtp.nue.novell.com ([195.135.221.5]:58188 "EHLO
+        smtp.nue.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726286AbeLKNx0 (ORCPT
+        <rfc822;groupwise-linux-kernel@vger.kernel.org:0:0>);
+        Tue, 11 Dec 2018 08:53:26 -0500
+Received: from emea4-mta.ukb.novell.com ([10.120.13.87])
+        by smtp.nue.novell.com with ESMTP (TLS encrypted); Tue, 11 Dec 2018 14:53:24 +0100
+Received: from d104.suse.de (nwb-a10-snat.microfocus.com [10.120.13.202])
+        by emea4-mta.ukb.novell.com with ESMTP (NOT encrypted); Tue, 11 Dec 2018 13:53:20 +0000
+From:   Oscar Salvador <osalvador@suse.de>
+To:     akpm@linux-foundation.org
+Cc:     mhocko@suse.com, david@redhat.com, pasha.tatashin@soleen.com,
+        dan.j.williams@gmail.com, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, Oscar Salvador <osalvador@suse.de>
+Subject: [PATCH v2] mm, memory_hotplug: Don't bail out in do_migrate_range prematurely
+Date:   Tue, 11 Dec 2018 14:53:12 +0100
+Message-Id: <20181211135312.27034-1-osalvador@suse.de>
+X-Mailer: git-send-email 2.13.7
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 11, 2018 at 06:35:20AM +0000, Grumbach, Emmanuel wrote:
-> > > > > https://bugzilla.kernel.org/show_bug.cgi?id=201647
+v1 -> v2:
+        - Keep branch to decrease refcount and print out
+          the failed pfn/page
+        - Modified changelog per Michal's feedback
+        - move put_page() out of the if/else branch
 
-> > The Windows device manager info (requested above) would be interesting.
+---
+From f81da873be9a5b7845249d1e62a423f054c487d5 Mon Sep 17 00:00:00 2001
+From: Oscar Salvador <osalvador@suse.com>
+Date: Tue, 11 Dec 2018 11:45:19 +0100
+Subject: [PATCH] mm, memory_hotplug: Don't bail out in do_migrate_range
+ prematurely
 
-I *thought* I had requested it, but I can't find that.  Mert, thanks
-for the screenshot you attached.  Would you mind also capturing the
-other tabs from device manager?  I'm really looking for a hex dump of
-the config space, which should be at least 256 bytes.  I *think*
-that's available somewhere in device manager.  If not, AIDA64
-(https://www.aida64.com/downloads) should be able to get it.
+do_migrate_ranges() takes a memory range and tries to isolate the
+pages to put them into a list.
+This list will be later on used in migrate_pages() to know
+the pages we need to migrate.
 
-> FWIW: I saw another problem like this with a 9650 device.
+Currently, if we fail to isolate a single page, we put all already
+isolated pages back to their LRU and we bail out from the function.
+This is quite suboptimal, as this will force us to start over again
+because scan_movable_pages will give us the same range.
+If there is no chance that we can isolate that page, we will loop here
+forever.
 
-Do you have a pointer to any info about this 9650 issue?  Maybe that
-would have a clue.
+Issue debugged in [1] has proved that.
+During the debugging of that issue, it was noticed that if
+do_migrate_ranges() fails to isolate a single page, we will
+just discard the work we have done so far and bail out, which means
+that scan_movable_pages() will find again the same set of pages.
 
-> PS: PCI folks don't use bugzilla's anymore? It's all over the mailing list?
+Instead, we can just skip the error, keep isolating as much pages
+as possible and then proceed with the call to migrate_pages().
 
-Personally, I use bugzilla as a convenient place to archive artifacts
-like logs, screenshots, etc.  But it doesn't seem as convenient for
-conversations as the mailing list, and it doesn't have the visibility
-that the list does.
+This will allow us to do as much work as possible at once.
 
-Bjorn
+[1] https://lkml.org/lkml/2018/12/6/324
+
+Signed-off-by: Oscar Salvador <osalvador@suse.de>
+---
+ mm/memory_hotplug.c | 18 ++----------------
+ 1 file changed, 2 insertions(+), 16 deletions(-)
+
+diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
+index 86ab673fc4e3..68e740b1768e 100644
+--- a/mm/memory_hotplug.c
++++ b/mm/memory_hotplug.c
+@@ -1339,7 +1339,6 @@ do_migrate_range(unsigned long start_pfn, unsigned long end_pfn)
+ 	unsigned long pfn;
+ 	struct page *page;
+ 	int move_pages = NR_OFFLINE_AT_ONCE_PAGES;
+-	int not_managed = 0;
+ 	int ret = 0;
+ 	LIST_HEAD(source);
+ 
+@@ -1388,7 +1387,6 @@ do_migrate_range(unsigned long start_pfn, unsigned long end_pfn)
+ 		else
+ 			ret = isolate_movable_page(page, ISOLATE_UNEVICTABLE);
+ 		if (!ret) { /* Success */
+-			put_page(page);
+ 			list_add_tail(&page->lru, &source);
+ 			move_pages--;
+ 			if (!__PageMovable(page))
+@@ -1398,22 +1396,10 @@ do_migrate_range(unsigned long start_pfn, unsigned long end_pfn)
+ 		} else {
+ 			pr_warn("failed to isolate pfn %lx\n", pfn);
+ 			dump_page(page, "isolation failed");
+-			put_page(page);
+-			/* Because we don't have big zone->lock. we should
+-			   check this again here. */
+-			if (page_count(page)) {
+-				not_managed++;
+-				ret = -EBUSY;
+-				break;
+-			}
+ 		}
++		put_page(page);
+ 	}
+ 	if (!list_empty(&source)) {
+-		if (not_managed) {
+-			putback_movable_pages(&source);
+-			goto out;
+-		}
+-
+ 		/* Allocate a new page from the nearest neighbor node */
+ 		ret = migrate_pages(&source, new_node_page, NULL, 0,
+ 					MIGRATE_SYNC, MR_MEMORY_HOTPLUG);
+@@ -1426,7 +1412,7 @@ do_migrate_range(unsigned long start_pfn, unsigned long end_pfn)
+ 			putback_movable_pages(&source);
+ 		}
+ 	}
+-out:
++
+ 	return ret;
+ }
+ 
+-- 
+2.13.7
+
