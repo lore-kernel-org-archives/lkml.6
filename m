@@ -2,175 +2,181 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3DF1C6783B
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 22:40:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E17DC6783B
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 22:41:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 72E0F20851
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 22:40:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 72E0F20851
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
+	by mail.kernel.org (Postfix) with ESMTP id 0119C20672
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 22:41:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0119C20672
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726254AbeLKWk5 (ORCPT
+        id S1726270AbeLKWlT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 17:40:57 -0500
-Received: from pegase1.c-s.fr ([93.17.236.30]:19354 "EHLO pegase1.c-s.fr"
+        Tue, 11 Dec 2018 17:41:19 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:35192 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726234AbeLKWkz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 17:40:55 -0500
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 43Dvzn5rc0z9v0sm;
-        Tue, 11 Dec 2018 23:40:53 +0100 (CET)
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id DRsE75rC7Ea9; Tue, 11 Dec 2018 23:40:53 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 43Dvzn4xyYz9v0sl;
-        Tue, 11 Dec 2018 23:40:53 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id ECE8D8B818;
-        Tue, 11 Dec 2018 23:40:53 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id VMz-VvTwKv-a; Tue, 11 Dec 2018 23:40:53 +0100 (CET)
-Received: from PO15451.localdomain (unknown [192.168.4.90])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id A21A98B812;
-        Tue, 11 Dec 2018 23:40:53 +0100 (CET)
-Received: by localhost.localdomain (Postfix, from userid 0)
-        id 3E3CB71707; Tue, 11 Dec 2018 22:40:53 +0000 (UTC)
-Message-Id: <a42260e77d609a10667872c2e7bf14ceabcce050.1544562518.git.christophe.leroy@c-s.fr>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH v3] powerpc: implement CONFIG_DEBUG_VIRTUAL
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date:   Tue, 11 Dec 2018 22:40:53 +0000 (UTC)
+        id S1726225AbeLKWlT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 17:41:19 -0500
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id A6EFA307DAA4;
+        Tue, 11 Dec 2018 22:41:18 +0000 (UTC)
+Received: from madcap2.tricolour.ca (ovpn-112-24.phx2.redhat.com [10.3.112.24])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 4CBA15D736;
+        Tue, 11 Dec 2018 22:41:10 +0000 (UTC)
+Date:   Tue, 11 Dec 2018 17:41:07 -0500
+From:   Richard Guy Briggs <rgb@redhat.com>
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     linux-kernel@vger.kernel.org, linux-audit@redhat.com,
+        Eric Paris <eparis@redhat.com>, viro@zeniv.linux.org.uk,
+        sgrubb@redhat.com
+Subject: Re: [PATCH ghak59 V3 0/4] audit: config_change normalizations and
+ event record gathering
+Message-ID: <20181211224107.vdeksnc5bd5bb7mb@madcap2.tricolour.ca>
+References: <cover.1544477629.git.rgb@redhat.com>
+ <CAHC9VhRqMt2k+pL7YF0MaZQfXZzttyHAXBJhHH56Mvswii4EKg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHC9VhRqMt2k+pL7YF0MaZQfXZzttyHAXBJhHH56Mvswii4EKg@mail.gmail.com>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Tue, 11 Dec 2018 22:41:18 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch implements CONFIG_DEBUG_VIRTUAL to warn about
-incorrect use of virt_to_phys() and page_to_phys()
+On 2018-12-11 17:31, Paul Moore wrote:
+> On Mon, Dec 10, 2018 at 5:18 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+> > Make a number of changes to normalize CONFIG_CHANGE records by adding
+> > missing op= fields, providing more information in existing op fields
+> > (optional last patch) and connecting all records to existing audit
+> > events.  The user record needs special-casing since its content isn't
+> > directly related to the call that logs it.
+> >
+> > Since tree purge records are processed after the EOE record is produced,
+> > the order of operation of the EOE record and the purge will have to be
+> > reversed so that the purge records can be included in the event.
+> >
+> > The last patch is included for completeness understanding it may be more
+> > information than necessary.
+> >
+> > For reference, here are the calling methods and function tree for all
+> > CONFIG_CHANGE events with fields:
+> > - audit_log_config_change()
+> >         - add "op=set" to fields: "[op] <param-name> old auid ses subj res"
+> >         - AUDIT_SET:AUDIT_STATUS_PID
+> >         - AUDIT_SET:AUDIT_STATUS_LOST
+> >         - audit_do_config_change()
+> >                 - AUDIT_SET:AUDIT_STATUS_FAILURE
+> >                 - AUDIT_SET:AUDIT_STATUS_ENABLED
+> >                 - AUDIT_SET:AUDIT_STATUS_RATE_LIMIT
+> >                 - AUDIT_SET:AUDIT_STATUS_BACKLOG_LIMIT
+> >                 - AUDIT_SET:AUDIT_STATUS_BACKLOG_WAIT_TIME
+> > - audit_log_rule_change()
+> >         - fields: "auid ses subj op key list res"
+> >         - AUDIT_ADD_RULE -F dir=...
+> >         - AUDIT_DEL_RULE -F dir=...
+> > - audit_log_common_recv_msg()
+> >         - fields: "pid uid auid ses subj ..."
+> >         - AUDIT_*USER* events (not CONFIG_CHANGE like all the rest)
+> >         - AUDIT_LOCKED add "op={add,remove}_rule" to "[op] audit_enabled res"
+> >         - AUDIT_TRIM "op=trim res"
+> >         - AUDIT_MAKE_EQUIV: "op=make_equiv old new res"
+> >         - AUDIT_TTY_SET: "op=tty_set old-enabled new-enabled old-log_passwd new-log_passwd res"
+> > - audit_mark_log_rule_change()
+> >         - add ":mark" to op in fields: "uid ses op=autoremove_rule[] path key list res"
+> >         - audit_autoremove_mark_rule()
+> >                 - audit_mark_handle_event()
+> >                         - audit_mark_fsnotify_ops.handle_event
+> > - audit_tree_log_remove_rule() called from kill_rules()
+> >         - add to op ":tree:%s" to fields: "op=remove_rule[] dir key list res"
+> >         - from trim_marked()
+> >                 - AUDIT_TRIM: audit_trim_trees() "trim"
+> >                 - audit_add_tree_rule() iterate_mounts err "add"
+> >                         - audit_add_rule()
+> >                                 - audit_rule_change()
+> >                                         - AUDIT_ADD_RULE -F dir=...
+> >                 - AUDIT_MAKE_EQUIV: audit_tag_tree() iterate_mounts err "equiv"
+> >         - from audit_kill_trees()
+> >                 - __audit_free() "free"
+> >                         - do_exit()
+> >                         - copy_process() err
+> >                 - __audit_syscall_exit() "exit"
+> >         - from evict_chunk() "evict"
+> >                 - audit_tree_freeing_mark()
+> >                         - audit_tree_ops.freeing_mark
+> > - audit_watch_log_rule_change()
+> >         add to op ":watch:%s" to fields "auid ses op={updated,remove}_rule[] path key list res"
+> >         - audit_update_watch() "updated_rules:watch:inval" : "updated_rules:watch:set"
+> >                 - audit_watch_handle_event() FS_CREATE|FS_MOVED_TO, FS_DELETE|FS_MOVED_FROM
+> >                         - audit_watch_fsnotify_ops.handle_event
+> >         - audit_remove_parent_watches() "remove_rule:watch:parent"
+> >                 - audit_watch_handle_event() FS_DELETE_SELF|FS_UNMOUNT|FS_MOVE_SELF
+> >                         - audit_watch_fsnotify_ops.handle_event
+> > - audit_seccomp_actions_logged()
+> >         - fields: "op actions old-actions res"
+> >
+> >
+> > See: https://github.com/linux-audit/audit-kernel/issues/50
+> > See: https://github.com/linux-audit/audit-kernel/issues/59
+> >
+> > Sources of AUDIT_CONFIG_CHANGE records and their current and proposed
+> > fields are listed here
+> >         https://github.com/linux-audit/audit-kernel/issues/59#issuecomment-445055154
+> >
+> > Changelog:
+> > v3:
+> > - un-clever %s_rule to not break up op values
+> > - create audit_log_user_recv_msg() and squash into record connection
+> > - squash kill_trees context handling with kill-trees before EOE
+> > - rebase on audit/next (v4.20-rc1) with 2a1fe215e730 ("audit: use current whenever possible")
+> > - remove parens in extended format
+> >
+> > v2:
+> > - re-order audit_log_exit() and audit_kill_trees()
+> > - drop EOE reordering patch
+> > - rebase on 4.18-rc1 (audit/next)
+> >
+> > Richard Guy Briggs (4):
+> >   audit: give a clue what CONFIG_CHANGE op was involved
+> >   audit: add syscall information to CONFIG_CHANGE records
+> >   audit: hand taken context to audit_kill_trees for syscall logging
+> >   audit: extend config_change mark/watch/tree rule changes
+> >
+> >  kernel/audit.c          | 33 +++++++++++++++++++++++----------
+> >  kernel/audit.h          |  4 ++--
+> >  kernel/audit_fsnotify.c |  4 ++--
+> >  kernel/audit_tree.c     | 28 +++++++++++++++-------------
+> >  kernel/audit_watch.c    |  8 +++++---
+> >  kernel/auditfilter.c    |  2 +-
+> >  kernel/auditsc.c        | 12 ++++++------
+> >  7 files changed, 54 insertions(+), 37 deletions(-)
+> 
+> In order to make sure expectations are set appropriately, as we are at
+> -rc6 right now this is not something that would go into audit/next now
+> (assuming everything looks okay on review), it would go into
+> audit/next *after* the upcoming merge window.
 
-Below is the result of test_debug_virtual:
+I agree it is a bit late for this.  I wasn't expecting it to go in this
+one.  I'm filling the queue since I'm blocked on other review for
+ghak81(5.5wks), ghak90(5.5wks), ghak100(3.5wks).  ghak90 missed another
+merge window.
 
-[    1.438746] WARNING: CPU: 0 PID: 1 at ./arch/powerpc/include/asm/io.h:808 test_debug_virtual_init+0x3c/0xd4
-[    1.448156] CPU: 0 PID: 1 Comm: swapper Not tainted 4.20.0-rc5-00560-g6bfb52e23a00-dirty #532
-[    1.457259] NIP:  c066c550 LR: c0650ccc CTR: c066c514
-[    1.462257] REGS: c900bdb0 TRAP: 0700   Not tainted  (4.20.0-rc5-00560-g6bfb52e23a00-dirty)
-[    1.471184] MSR:  00029032 <EE,ME,IR,DR,RI>  CR: 48000422  XER: 20000000
-[    1.477811]
-[    1.477811] GPR00: c0650ccc c900be60 c60d0000 00000000 006000c0 c9000000 00009032 c7fa0020
-[    1.477811] GPR08: 00002400 00000001 09000000 00000000 c07b5d04 00000000 c00037d8 00000000
-[    1.477811] GPR16: 00000000 00000000 00000000 00000000 c0760000 c0740000 00000092 c0685bb0
-[    1.477811] GPR24: c065042c c068a734 c0685b8c 00000006 00000000 c0760000 c075c3c0 ffffffff
-[    1.512711] NIP [c066c550] test_debug_virtual_init+0x3c/0xd4
-[    1.518315] LR [c0650ccc] do_one_initcall+0x8c/0x1cc
-[    1.523163] Call Trace:
-[    1.525595] [c900be60] [c0567340] 0xc0567340 (unreliable)
-[    1.530954] [c900be90] [c0650ccc] do_one_initcall+0x8c/0x1cc
-[    1.536551] [c900bef0] [c0651000] kernel_init_freeable+0x1f4/0x2cc
-[    1.542658] [c900bf30] [c00037ec] kernel_init+0x14/0x110
-[    1.547913] [c900bf40] [c000e1d0] ret_from_kernel_thread+0x14/0x1c
-[    1.553971] Instruction dump:
-[    1.556909] 3ca50100 bfa10024 54a5000e 3fa0c076 7c0802a6 3d454000 813dc204 554893be
-[    1.564566] 7d294010 7d294910 90010034 39290001 <0f090000> 7c3e0b78 955e0008 3fe0c062
-[    1.572425] ---[ end trace 6f6984225b280ad6 ]---
-[    1.577467] PA: 0x09000000 for VA: 0xc9000000
-[    1.581799] PA: 0x061e8f50 for VA: 0xc61e8f50
+> paul moore
 
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
----
- v3: Added missing linux/mm.h
-     I realised that a driver may use DMA on stack after checking with virt_addr_valid(), so the new
-     verification might induce false positives. I remove it for now, will add it again later in a more
-     controled way.
+- RGB
 
- v2: Using asm/pgtable.h to avoid build failure on ppc64e.
-     Added a verification that the object is not in stack to catch problems before activing VMAP_STACK.
-
- arch/powerpc/Kconfig          |  1 +
- arch/powerpc/include/asm/io.h | 13 ++++++++++++-
- arch/powerpc/mm/pgtable_32.c  |  2 +-
- 3 files changed, 14 insertions(+), 2 deletions(-)
-
-diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
-index e312e92e3381..94b46624068d 100644
---- a/arch/powerpc/Kconfig
-+++ b/arch/powerpc/Kconfig
-@@ -128,6 +128,7 @@ config PPC
- 	#
- 	# Please keep this list sorted alphabetically.
- 	#
-+	select ARCH_HAS_DEBUG_VIRTUAL
- 	select ARCH_HAS_DEVMEM_IS_ALLOWED
- 	select ARCH_HAS_DMA_SET_COHERENT_MASK
- 	select ARCH_HAS_ELF_RANDOMIZE
-diff --git a/arch/powerpc/include/asm/io.h b/arch/powerpc/include/asm/io.h
-index e746becd9d6f..7f19fbd3ba55 100644
---- a/arch/powerpc/include/asm/io.h
-+++ b/arch/powerpc/include/asm/io.h
-@@ -29,12 +29,14 @@ extern struct pci_dev *isa_bridge_pcidev;
- 
- #include <linux/device.h>
- #include <linux/compiler.h>
-+#include <linux/mm.h>
- #include <asm/page.h>
- #include <asm/byteorder.h>
- #include <asm/synch.h>
- #include <asm/delay.h>
- #include <asm/mmu.h>
- #include <asm/ppc_asm.h>
-+#include <asm/pgtable.h>
- 
- #ifdef CONFIG_PPC64
- #include <asm/paca.h>
-@@ -804,6 +806,8 @@ extern void __iounmap_at(void *ea, unsigned long size);
-  */
- static inline unsigned long virt_to_phys(volatile void * address)
- {
-+	WARN_ON(IS_ENABLED(CONFIG_DEBUG_VIRTUAL) && !virt_addr_valid(address));
-+
- 	return __pa((unsigned long)address);
- }
- 
-@@ -827,7 +831,14 @@ static inline void * phys_to_virt(unsigned long address)
- /*
-  * Change "struct page" to physical address.
-  */
--#define page_to_phys(page)	((phys_addr_t)page_to_pfn(page) << PAGE_SHIFT)
-+static inline phys_addr_t page_to_phys(struct page *page)
-+{
-+	unsigned long pfn = page_to_pfn(page);
-+
-+	WARN_ON(IS_ENABLED(CONFIG_DEBUG_VIRTUAL) && !pfn_valid(pfn));
-+
-+	return PFN_PHYS(pfn);
-+}
- 
- /*
-  * 32 bits still uses virt_to_bus() for it's implementation of DMA
-diff --git a/arch/powerpc/mm/pgtable_32.c b/arch/powerpc/mm/pgtable_32.c
-index 4fc77a99c9bf..68d204a45cd0 100644
---- a/arch/powerpc/mm/pgtable_32.c
-+++ b/arch/powerpc/mm/pgtable_32.c
-@@ -143,7 +143,7 @@ __ioremap_caller(phys_addr_t addr, unsigned long size, pgprot_t prot, void *call
- 	 * Don't allow anybody to remap normal RAM that we're using.
- 	 * mem_init() sets high_memory so only do the check after that.
- 	 */
--	if (slab_is_available() && (p < virt_to_phys(high_memory)) &&
-+	if (slab_is_available() && virt_addr_valid(p) &&
- 	    page_is_ram(__phys_to_pfn(p))) {
- 		printk("__ioremap(): phys addr 0x%llx is RAM lr %ps\n",
- 		       (unsigned long long)p, __builtin_return_address(0));
--- 
-2.13.3
-
+--
+Richard Guy Briggs <rgb@redhat.com>
+Sr. S/W Engineer, Kernel Security, Base Operating Systems
+Remote, Ottawa, Red Hat Canada
+IRC: rgb, SunRaycer
+Voice: +1.647.777.2635, Internal: (81) 32635
