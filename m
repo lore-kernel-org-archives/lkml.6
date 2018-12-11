@@ -2,159 +2,176 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.9 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72315C07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 10:33:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5144C07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 10:34:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 358FB20849
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 10:33:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="EVv5tis9";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="RD2tAHCC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 358FB20849
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 790962084A
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 10:34:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 790962084A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726313AbeLKKdf (ORCPT
+        id S1726305AbeLKKeM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 05:33:35 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:43372 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726125AbeLKKde (ORCPT
+        Tue, 11 Dec 2018 05:34:12 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:42867 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726117AbeLKKeL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 05:33:34 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 39E91607DC; Tue, 11 Dec 2018 10:33:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1544524413;
-        bh=04bfWuXk5IS22g19OE3O1vkoh9oZ723zXgQ0eCo4LRo=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=EVv5tis9EJzasACSyrCWVC6Zm59PTiDcZAKwu2MoyO1qmS9r8XjGTNPecmvgBlfxi
-         zS4TScxYK7x9U9zqhiHslhiNwGuTZbmzB5GgW3HRdTNUwT7Y9MMFLl0D6fXc0Ldttr
-         4PzIWytYqqyHMETYgrTlBqYxYQkDUUQMrdOPHJ5k=
-Received: from [10.79.128.19] (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: rnayak@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id C5B40601A1;
-        Tue, 11 Dec 2018 10:33:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1544524408;
-        bh=04bfWuXk5IS22g19OE3O1vkoh9oZ723zXgQ0eCo4LRo=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=RD2tAHCCDdgMfo2HhxMFSnPq59F8KYZUnrkRP7w0m6uhiqWhU7TCMBpJnE+HAJGJv
-         ihw4pP8KY37awwT250TSIRtSkmi+P75cYJvJbCDhtlbQUPwkcBKhFX4TXglGCAFMs4
-         93+yuUlOuZ+oUaaGV8jDNPDcxWchJb83tvpepDZ8=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C5B40601A1
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rnayak@codeaurora.org
-Subject: Re: [PATCH v6 10/10] soc: qcom: rpmhpd: Mark mx as a parent for cx
-To:     Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     Andy Gross <andy.gross@linaro.org>, Rob Herring <robh@kernel.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        David Collins <collinsd@codeaurora.org>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        DTML <devicetree@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20181211094938.25086-1-rnayak@codeaurora.org>
- <20181211094938.25086-11-rnayak@codeaurora.org>
- <CAPDyKFof-rkzmzibWOrAhDFysU=y+C8Bp0cK=_iht4=vmv-0vw@mail.gmail.com>
-From:   Rajendra Nayak <rnayak@codeaurora.org>
-Message-ID: <00d91f90-ccf1-3486-0d42-0c4105058e61@codeaurora.org>
-Date:   Tue, 11 Dec 2018 16:03:23 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.3
+        Tue, 11 Dec 2018 05:34:11 -0500
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wBBAXsME3948513
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Tue, 11 Dec 2018 02:33:54 -0800
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wBBAXrwm3948510;
+        Tue, 11 Dec 2018 02:33:53 -0800
+Date:   Tue, 11 Dec 2018 02:33:53 -0800
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   "tip-bot for Kirill A. Shutemov" <tipbot@zytor.com>
+Message-ID: <tip-16877a5570e0c5f4270d5b17f9bab427bcae9514@git.kernel.org>
+Cc:     mingo@kernel.org, tglx@linutronix.de, hpa@zytor.com,
+        kirill.shutemov@linux.intel.com, linux-kernel@vger.kernel.org,
+        jgross@suse.com, hans.van.kranenburg@mendix.com
+Reply-To: mingo@kernel.org, tglx@linutronix.de, hpa@zytor.com,
+          kirill.shutemov@linux.intel.com, linux-kernel@vger.kernel.org,
+          jgross@suse.com, hans.van.kranenburg@mendix.com
+In-Reply-To: <20181130202328.65359-2-kirill.shutemov@linux.intel.com>
+References: <20181130202328.65359-2-kirill.shutemov@linux.intel.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/urgent] x86/mm: Fix guard hole handling
+Git-Commit-ID: 16877a5570e0c5f4270d5b17f9bab427bcae9514
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-In-Reply-To: <CAPDyKFof-rkzmzibWOrAhDFysU=y+C8Bp0cK=_iht4=vmv-0vw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Commit-ID:  16877a5570e0c5f4270d5b17f9bab427bcae9514
+Gitweb:     https://git.kernel.org/tip/16877a5570e0c5f4270d5b17f9bab427bcae9514
+Author:     Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+AuthorDate: Fri, 30 Nov 2018 23:23:27 +0300
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Tue, 11 Dec 2018 11:19:24 +0100
 
+x86/mm: Fix guard hole handling
 
-On 12/11/2018 3:52 PM, Ulf Hansson wrote:
-> On Tue, 11 Dec 2018 at 10:50, Rajendra Nayak <rnayak@codeaurora.org> wrote:
->>
->> Specify the active + sleep and active-only MX power domains as
->> the parents of the corresponding CX power domains. This will ensure that
->> performance state requests on CX automatically generate equivalent requests
->> on MX power domains.
->>
->> This is used to enforce a requirement that exists for various
->> hardware blocks on SDM845 that MX performance state >= CX performance
->> state for a given operating frequency.
-> 
-> I assume that also means the MX power domain must not be power off as
-> long as the CX power domain is powered on?
+There is a guard hole at the beginning of the kernel address space, also
+used by hypervisors. It occupies 16 PGD entries.
 
-So with rpmh, there's really no separate on/off control, we just put
-it in the lowest perf state at off.
+This reserved range is not defined explicitely, it is calculated relative
+to other entities: direct mapping and user space ranges.
 
-> 
-> Just to make sure there are no conflicting hierarchical constraints
-> between idle management and performance state management!?
-> 
-> Kind regards
-> Uffe
-> 
->>
->> Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
->> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
->> ---
->> This patch is dependent on the series from
->> Viresh [1] which adds support to propogate performance states across the
->> power domain hierarchy which is still being reviewed.
->>
->> [1] https://lkml.org/lkml/2018/11/26/333
->>
->>   drivers/soc/qcom/rpmhpd.c | 11 +++++++++++
->>   1 file changed, 11 insertions(+)
->>
->> diff --git a/drivers/soc/qcom/rpmhpd.c b/drivers/soc/qcom/rpmhpd.c
->> index 1ce86f0cc9fa..af7b07d49e4f 100644
->> --- a/drivers/soc/qcom/rpmhpd.c
->> +++ b/drivers/soc/qcom/rpmhpd.c
->> @@ -102,12 +102,14 @@ static struct rpmhpd sdm845_cx_ao;
->>   static struct rpmhpd sdm845_cx = {
->>          .pd = { .name = "cx", },
->>          .peer = &sdm845_cx_ao,
->> +       .parent = &sdm845_mx.pd,
->>          .res_name = "cx.lvl",
->>   };
->>
->>   static struct rpmhpd sdm845_cx_ao = {
->>          .pd = { .name = "cx_ao", },
->>          .peer = &sdm845_cx,
->> +       .parent = &sdm845_mx_ao.pd,
->>          .res_name = "cx.lvl",
->>   };
->>
->> @@ -389,6 +391,15 @@ static int rpmhpd_probe(struct platform_device *pdev)
->>                  data->domains[i] = &rpmhpds[i]->pd;
->>          }
->>
->> +       /* Add subdomains */
->> +       for (i = 0; i < num_pds; i++) {
->> +               if (!rpmhpds[i])
->> +                       continue;
->> +               if (rpmhpds[i]->parent)
->> +                       pm_genpd_add_subdomain(rpmhpds[i]->parent,
->> +                                              &rpmhpds[i]->pd);
->> +       }
->> +
->>          return of_genpd_add_provider_onecell(pdev->dev.of_node, data);
->>   }
->>
->> --
->> QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
->> of Code Aurora Forum, hosted by The Linux Foundation
->>
+The calculation got broken by recent changes of the kernel memory layout:
+LDT remap range is now mapped before direct mapping and makes the
+calculation invalid.
+
+The breakage leads to crash on Xen dom0 boot[1].
+
+Define the reserved range explicitely. It's part of kernel ABI (hypervisors
+expect it to be stable) and must not depend on changes in the rest of
+kernel memory layout.
+
+[1] https://lists.xenproject.org/archives/html/xen-devel/2018-11/msg03313.html
+
+Fixes: d52888aa2753 ("x86/mm: Move LDT remap out of KASLR region on 5-level paging")
+Reported-by: Hans van Kranenburg <hans.van.kranenburg@mendix.com>
+Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Tested-by: Hans van Kranenburg <hans.van.kranenburg@mendix.com>
+Reviewed-by: Juergen Gross <jgross@suse.com>
+Cc: bp@alien8.de
+Cc: hpa@zytor.com
+Cc: dave.hansen@linux.intel.com
+Cc: luto@kernel.org
+Cc: peterz@infradead.org
+Cc: boris.ostrovsky@oracle.com
+Cc: bhe@redhat.com
+Cc: linux-mm@kvack.org
+Cc: xen-devel@lists.xenproject.org
+Link: https://lkml.kernel.org/r/20181130202328.65359-2-kirill.shutemov@linux.intel.com
+
+---
+ arch/x86/include/asm/pgtable_64_types.h |  5 +++++
+ arch/x86/mm/dump_pagetables.c           |  8 ++++----
+ arch/x86/xen/mmu_pv.c                   | 11 ++++++-----
+ 3 files changed, 15 insertions(+), 9 deletions(-)
+
+diff --git a/arch/x86/include/asm/pgtable_64_types.h b/arch/x86/include/asm/pgtable_64_types.h
+index 84bd9bdc1987..88bca456da99 100644
+--- a/arch/x86/include/asm/pgtable_64_types.h
++++ b/arch/x86/include/asm/pgtable_64_types.h
+@@ -111,6 +111,11 @@ extern unsigned int ptrs_per_p4d;
+  */
+ #define MAXMEM			(1UL << MAX_PHYSMEM_BITS)
+ 
++#define GUARD_HOLE_PGD_ENTRY	-256UL
++#define GUARD_HOLE_SIZE		(16UL << PGDIR_SHIFT)
++#define GUARD_HOLE_BASE_ADDR	(GUARD_HOLE_PGD_ENTRY << PGDIR_SHIFT)
++#define GUARD_HOLE_END_ADDR	(GUARD_HOLE_BASE_ADDR + GUARD_HOLE_SIZE)
++
+ #define LDT_PGD_ENTRY		-240UL
+ #define LDT_BASE_ADDR		(LDT_PGD_ENTRY << PGDIR_SHIFT)
+ #define LDT_END_ADDR		(LDT_BASE_ADDR + PGDIR_SIZE)
+diff --git a/arch/x86/mm/dump_pagetables.c b/arch/x86/mm/dump_pagetables.c
+index fc37bbd23eb8..dad153e5a427 100644
+--- a/arch/x86/mm/dump_pagetables.c
++++ b/arch/x86/mm/dump_pagetables.c
+@@ -512,11 +512,11 @@ static inline bool is_hypervisor_range(int idx)
+ {
+ #ifdef CONFIG_X86_64
+ 	/*
+-	 * ffff800000000000 - ffff87ffffffffff is reserved for
+-	 * the hypervisor.
++	 * A hole in the beginning of kernel address space reserved
++	 * for a hypervisor.
+ 	 */
+-	return	(idx >= pgd_index(__PAGE_OFFSET) - 16) &&
+-		(idx <  pgd_index(__PAGE_OFFSET));
++	return	(idx >= pgd_index(GUARD_HOLE_BASE_ADDR)) &&
++		(idx <  pgd_index(GUARD_HOLE_END_ADDR));
+ #else
+ 	return false;
+ #endif
+diff --git a/arch/x86/xen/mmu_pv.c b/arch/x86/xen/mmu_pv.c
+index a5d7ed125337..0f4fe206dcc2 100644
+--- a/arch/x86/xen/mmu_pv.c
++++ b/arch/x86/xen/mmu_pv.c
+@@ -648,19 +648,20 @@ static int __xen_pgd_walk(struct mm_struct *mm, pgd_t *pgd,
+ 			  unsigned long limit)
+ {
+ 	int i, nr, flush = 0;
+-	unsigned hole_low, hole_high;
++	unsigned hole_low = 0, hole_high = 0;
+ 
+ 	/* The limit is the last byte to be touched */
+ 	limit--;
+ 	BUG_ON(limit >= FIXADDR_TOP);
+ 
++#ifdef CONFIG_X86_64
+ 	/*
+ 	 * 64-bit has a great big hole in the middle of the address
+-	 * space, which contains the Xen mappings.  On 32-bit these
+-	 * will end up making a zero-sized hole and so is a no-op.
++	 * space, which contains the Xen mappings.
+ 	 */
+-	hole_low = pgd_index(USER_LIMIT);
+-	hole_high = pgd_index(PAGE_OFFSET);
++	hole_low = pgd_index(GUARD_HOLE_BASE_ADDR);
++	hole_high = pgd_index(GUARD_HOLE_END_ADDR);
++#endif
+ 
+ 	nr = pgd_index(limit) + 1;
+ 	for (i = 0; i < nr; i++) {
