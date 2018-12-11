@@ -2,151 +2,104 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.9 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4386C5CFFE
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:28:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EA3EC07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:29:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 79CE020849
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:28:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aqkFX09o"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 79CE020849
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 2F4E220849
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:29:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F4E220849
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726989AbeLKP2s (ORCPT
+        id S1727002AbeLKP3E (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 10:28:48 -0500
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:37555 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726417AbeLKP2r (ORCPT
+        Tue, 11 Dec 2018 10:29:04 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:40699 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726618AbeLKP3E (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:28:47 -0500
-Received: by mail-ed1-f66.google.com with SMTP id h15so12868376edb.4;
-        Tue, 11 Dec 2018 07:28:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=7awNY4ymdO+RNLil9JDwL8hY7iyonw/4hjSQTrtkG0Y=;
-        b=aqkFX09os53Wz8YPHEdNH1j5+XhWVQIwp4/1t7QqAnq09NQZ5e/Ky2kExZjNmuh902
-         e34RcDqx9Bcd7WGqugCvaM19UgoHlvAJedvAcVHCklkbsS9E+sUh3dq/AaOeV/G7d4VJ
-         NMMjLK4OB/FNgxLrxjz+gG1+6HQZH6YEkdoSOBQTYiLHbHcbQNJNAIikT8/hkI7TKUlo
-         zmjpB1hxadWqk9OSQcbe50BYSJyS0J3m6h2ktvi6uQnTu5UpfYTd4ql3CyieH/c1fYtq
-         4XdF4z3ZgPhQICWWhjDZd8OeRpD2npwa749bXI3aGBLAfC76dkIpAVbMI+JWgXRJ/Wk+
-         cXuw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=7awNY4ymdO+RNLil9JDwL8hY7iyonw/4hjSQTrtkG0Y=;
-        b=Xk9QWV1FFW32z7tVgwsc4CjsPjWjXhWQftRIaUVVkJwMPvVJ6OC86j+PPtLAhNdK4E
-         GIpVefACx4Mk0Pq+75bETqOxTHYpXdi9d7liXIhy/9LMUoCwFDsSBwANXRBfI7+xogY5
-         sHo292LQdxlaFUjooNsqVh/PM8fpQRlQzd5xrFaDZqc216fIXlDj1YR/qXVwjv37hdnz
-         VmUj0Gtl83gYtF9IxtHUweCIKpyuIo7Agu59MH/x3bt8+tDwv9aTTS6HApn6OSIHROJ6
-         ou7sco6MS9fnG8BPONeTvhFTpTtsKAXnJrcnZUm5JeoA9PonCFkTn2s3Xx3Tjsa7vaO0
-         j/QA==
-X-Gm-Message-State: AA+aEWbezLHbyVJ2baTdosf4spsAe/ZgXH/vTofYXXXrP3w4n2lt5JZK
-        tx3KN+h/H6m2QTPNJ9yrG08=
-X-Google-Smtp-Source: AFSGD/UlCY20XFFFIWP/ONk+SiZ5SXRAj4sT17yb2VOnwB4TwhH8KbE0Q44Yz3HZvzUVGYBLANHO/w==
-X-Received: by 2002:a50:a6cf:: with SMTP id f15mr15192704edc.97.1544542124463;
-        Tue, 11 Dec 2018 07:28:44 -0800 (PST)
-Received: from ltop.local ([2a02:a03f:40bc:4d00:450b:7efe:59a0:ccfd])
-        by smtp.gmail.com with ESMTPSA id t11sm3981662eds.34.2018.12.11.07.28.42
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 11 Dec 2018 07:28:43 -0800 (PST)
-Date:   Tue, 11 Dec 2018 16:28:41 +0100
-From:   Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
-To:     Andrey Konovalov <andreyknvl@google.com>
-Cc:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Alexander Potapenko <glider@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Christoph Lameter <cl@linux.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Dave Martin <dave.martin@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Paul Lawrence <paullawrence@google.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        kasan-dev@googlegroups.com, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-sparse@vger.kernel.org, linux-mm@kvack.org,
-        linux-kbuild@vger.kernel.org, Kostya Serebryany <kcc@google.com>,
-        Evgeniy Stepanov <eugenis@google.com>,
-        Lee Smith <Lee.Smith@arm.com>,
-        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
-        Jacob Bramley <Jacob.Bramley@arm.com>,
-        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
-        Jann Horn <jannh@google.com>,
-        Mark Brand <markbrand@google.com>,
-        Chintan Pandya <cpandya@codeaurora.org>,
-        Vishwath Mohan <vishwath@google.com>
-Subject: Re: [PATCH v13 05/25] kasan: add CONFIG_KASAN_GENERIC and
- CONFIG_KASAN_SW_TAGS
-Message-ID: <20181211152840.ezjujzpyz5z6fd2d@ltop.local>
-References: <cover.1544099024.git.andreyknvl@google.com>
- <b2550106eb8a68b10fefbabce820910b115aa853.1544099024.git.andreyknvl@google.com>
+        Tue, 11 Dec 2018 10:29:04 -0500
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wBBFSTOK4041379
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Tue, 11 Dec 2018 07:28:29 -0800
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wBBFSSaL4041376;
+        Tue, 11 Dec 2018 07:28:28 -0800
+Date:   Tue, 11 Dec 2018 07:28:28 -0800
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Bart Van Assche <tipbot@zytor.com>
+Message-ID: <tip-a66b6922dc6a5ece60ea9326153da3b062977a4d@git.kernel.org>
+Cc:     longman@redhat.com, bvanassche@acm.org,
+        torvalds@linux-foundation.org, hpa@zytor.com, mingo@kernel.org,
+        johannes@sipsolutions.net, linux-kernel@vger.kernel.org,
+        tglx@linutronix.de, sasha.levin@oracle.com, peterz@infradead.org
+Reply-To: sasha.levin@oracle.com, peterz@infradead.org,
+          linux-kernel@vger.kernel.org, tglx@linutronix.de,
+          mingo@kernel.org, johannes@sipsolutions.net, longman@redhat.com,
+          bvanassche@acm.org, torvalds@linux-foundation.org, hpa@zytor.com
+In-Reply-To: <20181207011148.251812-12-bvanassche@acm.org>
+References: <20181207011148.251812-12-bvanassche@acm.org>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:locking/core] locking/lockdep: Remove a superfluous
+ INIT_LIST_HEAD() statement
+Git-Commit-ID: a66b6922dc6a5ece60ea9326153da3b062977a4d
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <b2550106eb8a68b10fefbabce820910b115aa853.1544099024.git.andreyknvl@google.com>
-User-Agent: NeoMutt/20180622
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 06, 2018 at 01:24:23PM +0100, Andrey Konovalov wrote:
-> diff --git a/include/linux/compiler-clang.h b/include/linux/compiler-clang.h
-> index 3e7dafb3ea80..39f668d5066b 100644
-> --- a/include/linux/compiler-clang.h
-> +++ b/include/linux/compiler-clang.h
-> @@ -16,9 +16,13 @@
->  /* all clang versions usable with the kernel support KASAN ABI version 5 */
->  #define KASAN_ABI_VERSION 5
->  
-> +#if __has_feature(address_sanitizer) || __has_feature(hwaddress_sanitizer)
->  /* emulate gcc's __SANITIZE_ADDRESS__ flag */
-> -#if __has_feature(address_sanitizer)
->  #define __SANITIZE_ADDRESS__
-> +#define __no_sanitize_address \
-> +		__attribute__((no_sanitize("address", "hwaddress")))
-> +#else
-> +#define __no_sanitize_address
->  #endif
->  
->  /*
-> diff --git a/include/linux/compiler-gcc.h b/include/linux/compiler-gcc.h
-> index 2010493e1040..5776da43da97 100644
-> --- a/include/linux/compiler-gcc.h
-> +++ b/include/linux/compiler-gcc.h
-> @@ -143,6 +143,12 @@
->  #define KASAN_ABI_VERSION 3
->  #endif
->  
-> +#if __has_attribute(__no_sanitize_address__)
-> +#define __no_sanitize_address __attribute__((no_sanitize_address))
-> +#else
-> +#define __no_sanitize_address
-> +#endif
+Commit-ID:  a66b6922dc6a5ece60ea9326153da3b062977a4d
+Gitweb:     https://git.kernel.org/tip/a66b6922dc6a5ece60ea9326153da3b062977a4d
+Author:     Bart Van Assche <bvanassche@acm.org>
+AuthorDate: Thu, 6 Dec 2018 17:11:35 -0800
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Tue, 11 Dec 2018 14:54:54 +0100
 
-Not really important but it's the name with leading and trailing
-underscores that is tested with __has_attribute() but then it's
-the naked 'no_sanitize_address' that is used in the attribute.
+locking/lockdep: Remove a superfluous INIT_LIST_HEAD() statement
 
--- Luc
+Initializing a list entry just before it is passed to list_add_tail_rcu()
+is not necessary because list_add_tail_rcu() overwrites the next and prev
+pointers anyway. Hence remove the INIT_LIST_HEAD() statement.
+
+Signed-off-by: Bart Van Assche <bvanassche@acm.org>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Johannes Berg <johannes@sipsolutions.net>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Sasha Levin <sasha.levin@oracle.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Waiman Long <longman@redhat.com>
+Cc: johannes.berg@intel.com
+Cc: tj@kernel.org
+Link: https://lkml.kernel.org/r/20181207011148.251812-12-bvanassche@acm.org
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ kernel/locking/lockdep.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
+index 81388d028ac7..346b5a1fd062 100644
+--- a/kernel/locking/lockdep.c
++++ b/kernel/locking/lockdep.c
+@@ -792,7 +792,6 @@ register_lock_class(struct lockdep_map *lock, unsigned int subclass, int force)
+ 	class->key = key;
+ 	class->name = lock->name;
+ 	class->subclass = subclass;
+-	INIT_LIST_HEAD(&class->lock_entry);
+ 	INIT_LIST_HEAD(&class->locks_before);
+ 	INIT_LIST_HEAD(&class->locks_after);
+ 	class->name_version = count_matching_names(class);
