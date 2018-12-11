@@ -2,119 +2,76 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BD43C07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 13:47:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11E87C07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 13:48:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 101982054F
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 13:47:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="hIZN705s"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 101982054F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	by mail.kernel.org (Postfix) with ESMTP id D1A6B2054F
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 13:48:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D1A6B2054F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726726AbeLKNrp (ORCPT
+        id S1726613AbeLKNsj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 08:47:45 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:50916 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726654AbeLKNr3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 08:47:29 -0500
-Received: by mail-wm1-f68.google.com with SMTP id n190so2295830wmd.0
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 05:47:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=B3o+VZnttimFeCQxAmu6M7QAtRnX+/U1ANv52odWswA=;
-        b=hIZN705sTu6SeovdrawG+uO2CDCw3EuO1L03Klmq2GoxpJQfM4oJn34c8B29KlQ5QG
-         huHHfThXHfd7/6Y94lqdkh0uRw8qgXM0USVCsaTMCJM9fIhfuIQAhBzZhdl9HWVOd7Mk
-         ItcTLIbs/1j/jKlLkhh+dHi21SK7eEDPta1W0Uj8UYimWGh45Alk0J/Wkj8zRGSI2/9z
-         X+h6kEzcHrdE5sZV/SXRJi9EluclWv7d+skTHxkxX5pwhc1HphKskDT0EJwuwh3xa0gY
-         4Gxkz6G6mT6SAzfM2EaQQk+3T8TMbAicDQ6R/mK7K8FBIwPIwD3WiHGusxuIf0eP4NUr
-         TvJg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=B3o+VZnttimFeCQxAmu6M7QAtRnX+/U1ANv52odWswA=;
-        b=BcMrWbA0Uqqh7cp7T6u3Wyng+Sdoju8z3WduwAGQGIZYZFF96NoLTllSpgHC677nDy
-         VKDR/uLK7Q+l9gRUdFcJvfF3WQeYWFx+byDRh2/hu8y1YiXzLxhlEwfzF3m4bfFSxuKk
-         4cry/g5BtEuh8paDo3f6ahD3NOPTBrBIuxfobsXfKWb+Xh1qWtQBSprvVxTAromgbTun
-         Ni7BxqJyPSiuVUBCZXO8wXmAElkCjjTIuLoWivrMSBOKAUBpLzwfuK10Rov0BF77vlxe
-         7S7cY71OrwVMX2BDumofWmW/h1dfv5kn3fo+KAncYrEgLlMyZaMFmr7uMpu0CKRg1Wsj
-         toZg==
-X-Gm-Message-State: AA+aEWZydjrFWW+g8a7IYeZrpsGxtk4GTdVNouR6WgOGLyvSerGeuKPP
-        c+m+1V+T6tKYlo+a5QwgC2BsTQ==
-X-Google-Smtp-Source: AFSGD/W/NyrKCjhdHe0M1cLXzGs7Aqq7gjSm1xXM86n0BpaeIZt7fGhsC9ipLmaH45yiFviLykspZw==
-X-Received: by 2002:a1c:c70f:: with SMTP id x15mr2362816wmf.130.1544536047118;
-        Tue, 11 Dec 2018 05:47:27 -0800 (PST)
-Received: from boomer.local ([2a01:e34:eeb6:4690:106b:bae3:31ed:7561])
-        by smtp.googlemail.com with ESMTPSA id 126sm113768wmd.1.2018.12.11.05.47.25
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 11 Dec 2018 05:47:26 -0800 (PST)
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Mark Brown <broonie@kernel.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Carlo Caione <carlo@caione.org>
-Cc:     Jerome Brunet <jbrunet@baylibre.com>, alsa-devel@alsa-project.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-amlogic@lists.infradead.org
-Subject: [PATCH 2/4] ASoC: meson: add axg spdif input DT binding documentation
-Date:   Tue, 11 Dec 2018 14:47:11 +0100
-Message-Id: <20181211134713.4908-3-jbrunet@baylibre.com>
-X-Mailer: git-send-email 2.19.2
-In-Reply-To: <20181211134713.4908-1-jbrunet@baylibre.com>
-References: <20181211134713.4908-1-jbrunet@baylibre.com>
+        Tue, 11 Dec 2018 08:48:39 -0500
+Received: from foss.arm.com ([217.140.101.70]:47592 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726530AbeLKNsj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 08:48:39 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3C3FA1596;
+        Tue, 11 Dec 2018 05:48:35 -0800 (PST)
+Received: from queper01-lin (queper01-lin.cambridge.arm.com [10.1.195.48])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B4FAF3F59C;
+        Tue, 11 Dec 2018 05:48:33 -0800 (PST)
+Date:   Tue, 11 Dec 2018 13:48:32 +0000
+From:   Quentin Perret <quentin.perret@arm.com>
+To:     Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-pm@vger.kernel.org,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Rafael Wysocki <rjw@rjwysocki.net>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] OPP: Fix missing debugfs supply directory for OPPs
+Message-ID: <20181211134829.nct4uqvofn332yxp@queper01-lin>
+References: <90e3577b5feb42bac1269e16bb3d2bdd8f6df40f.1544527580.git.viresh.kumar@linaro.org>
+ <46f48aca2e5aef3f430e95d1a5fb68227ec8ec85.1544527580.git.viresh.kumar@linaro.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <46f48aca2e5aef3f430e95d1a5fb68227ec8ec85.1544527580.git.viresh.kumar@linaro.org>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the DT binding documentation for axg's SPDIF input.
+On Tuesday 11 Dec 2018 at 16:56:29 (+0530), Viresh Kumar wrote:
+> There is one case where we may end up with no "supply" directory for the
+> OPPs in debugfs. That happens when the OPP core isn't managing the
+> regulators for the device and the device's OPP do have microvolt
+> property. It happens because the opp_table->regulator_count remains set
+> to 0 and the debugfs routines don't add any supply directory in such a
+> case.
+> 
+> This commit fixes that by setting opp_table->regulator_count to 1 in
+> that particular case. But to make everything work nicely and not break
+> other parts of the core, regulator_count is defined as "int" now instead
+> of "unsigned int" and it can have different special values now. It is
+> set to -1 initially to mark it "uninitialized" and later only we set it
+> to 0 or positive values after checking how many supplies are there.
+> 
+> This also helps in finding the bugs where only few of the OPPs have the
+> "opp-microvolt" property set and not all.
 
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
- .../bindings/sound/amlogic,axg-spdifin.txt    | 22 +++++++++++++++++++
- 1 file changed, 22 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/sound/amlogic,axg-spdifin.txt
+Tested on Juno r0 and Hikey960 successfully. The 'supply' directory is
+now correctly exposed.
 
-diff --git a/Documentation/devicetree/bindings/sound/amlogic,axg-spdifin.txt b/Documentation/devicetree/bindings/sound/amlogic,axg-spdifin.txt
-new file mode 100644
-index 000000000000..2e6cb7d9b202
---- /dev/null
-+++ b/Documentation/devicetree/bindings/sound/amlogic,axg-spdifin.txt
-@@ -0,0 +1,22 @@
-+* Amlogic Audio SPDIF Input
-+
-+Required properties:
-+- compatible: 'amlogic,axg-spdifin'
-+- interrupts: interrupt specifier for the spdif input.
-+- clocks: list of clock phandle, one for each entry clock-names.
-+- clock-names: should contain the following:
-+  * "pclk" : peripheral clock.
-+  * "refclk" : spdif input reference clock
-+- #sound-dai-cells: must be 0.
-+
-+Example on the A113 SoC:
-+
-+spdifin: audio-controller@400 {
-+	compatible = "amlogic,axg-spdifin";
-+	reg = <0x0 0x400 0x0 0x30>;
-+	#sound-dai-cells = <0>;
-+	interrupts = <GIC_SPI 87 IRQ_TYPE_EDGE_RISING>;
-+	clocks = <&clkc_audio AUD_CLKID_SPDIFIN>,
-+		 <&clkc_audio AUD_CLKID_SPDIFIN_CLK>;
-+	clock-names = "pclk", "refclk";
-+};
--- 
-2.19.2
+Feel free to add Tested-by: Quentin Perret <quentin.perret@arm.com>
 
+Thanks,
+Quentin
