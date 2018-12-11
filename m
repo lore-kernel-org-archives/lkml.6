@@ -2,461 +2,95 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FAKE_REPLY_C,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E63D6C67839
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 23:34:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F83DC67839
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 23:37:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 98C4220672
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 23:34:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 55A302084E
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 23:37:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="LnLLy9Fh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98C4220672
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=fb.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KRL751pS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 55A302084E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726352AbeLKXeT (ORCPT
+        id S1726246AbeLKXh6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 18:34:19 -0500
-Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:59954 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726239AbeLKXeA (ORCPT
+        Tue, 11 Dec 2018 18:37:58 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:46084 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726158AbeLKXh6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 18:34:00 -0500
-Received: from pps.filterd (m0109333.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id wBBNUcM1006378
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 15:33:58 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-type; s=facebook; bh=1kMZ/twJOV81NBNMlQmH8EQw5dFkY+UAFoM6xUlS5qg=;
- b=LnLLy9FhLYY+s26xiEz/oOUUf9H621rU3alVXd3Th/JmLm56X/WWOmPixquGJtCKtRov
- lHHh+EJ1WYYUukSYhEH5jso3EHIBl4Fm01fmdyzUTcj3hZUCs3APinJBO033gIB4F3U3
- 2WhUBeThjI4vOQ8GkYO9VNBBqnSw0YZ2RzA= 
-Received: from maileast.thefacebook.com ([199.201.65.23])
-        by mx0a-00082601.pphosted.com with ESMTP id 2pamex8h6d-2
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 15:33:58 -0800
-Received: from mx-out.facebook.com (2620:10d:c0a1:3::13) by
- mail.thefacebook.com (2620:10d:c021:18::173) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA) id 15.1.1531.3;
- Tue, 11 Dec 2018 15:33:56 -0800
-Received: by devbig006.ftw2.facebook.com (Postfix, from userid 4523)
-        id 3221D62E1045; Tue, 11 Dec 2018 15:33:55 -0800 (PST)
-Smtp-Origin-Hostprefix: devbig
-From:   Song Liu <songliubraving@fb.com>
-Smtp-Origin-Hostname: devbig006.ftw2.facebook.com
-To:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>
-CC:     Song Liu <songliubraving@fb.com>, <ast@kernel.org>,
-        <daniel@iogearbox.net>, <kernel-team@fb.com>,
-        <peterz@infradead.org>, <acme@kernel.org>
-Smtp-Origin-Cluster: ftw2c04
-Subject: [PATCH v3 perf, bpf-next 1/4] perf, bpf: Introduce PERF_RECORD_BPF_EVENT
-Date:   Tue, 11 Dec 2018 15:33:47 -0800
-Message-ID: <20181211233351.4036381-2-songliubraving@fb.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181211233351.4036381-1-songliubraving@fb.com>
-References: <20181211233351.4036381-1-songliubraving@fb.com>
-X-FB-Internal: Safe
+        Tue, 11 Dec 2018 18:37:58 -0500
+Received: by mail-wr1-f68.google.com with SMTP id l9so15798519wrt.13
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 15:37:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=M+ZESdkC1LCs3NwWzelStNPrJ9VByThnOLUyRcLrGwo=;
+        b=KRL751pSO9vI0naXAWLg16Vpb+UYRBUwgzGXdusWxlw7DB4gT7/41fJea6y+kV9a7S
+         320YoouaoZmUXknQfGBF0BUGnornb/pd8ZqAwOj96jBgaT4lnYy+DR07hjZ8YZmlg0Uy
+         SMUpyk38CHhAg7w4pTs7Zjbluj56NCH6d5ZmEbyX18HjnZf7Q100Z1OWSA0um815jEex
+         ccBBp6Fw+BvfF0HKizFywp6ZEdHZvsOxK2nxbPTbCG00c30uAOwXWXYTm4acWka4xHk4
+         DR4x3Y9NgcTWlnj0to38/26EXWoElqQkAg0TfxtyGYJVrnAnzRy6ONrnl4uF5b+NnHwV
+         n1vQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=M+ZESdkC1LCs3NwWzelStNPrJ9VByThnOLUyRcLrGwo=;
+        b=cA/TKDx+lVXAy+ViBsUfigc6zLFt7q2FK/h1gebAPgJzeyu0TCWdj+EAXBeFz9nxPe
+         QIO/bkxvefYTjd6xwYHbE6c6QtmtJlJR+AMVRSSuExuKd4H98By1k+1hzoRFFN/g+Aor
+         1jrPt0DZwee2KwpXdhGyarQIO4PzrJHHzhJjf6Hqre/X17AJ71N/9HcFE/htCQcYUfd8
+         /al8MJjARTv4hx0Afb4uS+/QmFVEO7deyuD/ZGhWtWpRwBjOJ6z69vWUbeqWww4cJ+BW
+         xLJM0IqvhPOQHxJaCTt4KdM1Vh/e+InZjRiJGcuKSc9+/I+g02o/89CpArKgBSm4RolK
+         ElCw==
+X-Gm-Message-State: AA+aEWZ0x8VGWAI6G2yLiQcVrQIAet/9khuus6vEVepJAqntb9tBr7Kg
+        25SL3equtR8Y7RiGEbdGWQ==
+X-Google-Smtp-Source: AFSGD/XQjHwISgvlQ+jM42C4tbqDu+tDRZc+vqSJAl6FEbmFiMPJlHLTzAL2rcDk3Lvmj9ZkHgirrA==
+X-Received: by 2002:a05:6000:120a:: with SMTP id e10mr15378411wrx.85.1544571476424;
+        Tue, 11 Dec 2018 15:37:56 -0800 (PST)
+Received: from avx2 (nat-minsk-pool-46-53-201-92.telecom.by. [46.53.201.92])
+        by smtp.gmail.com with ESMTPSA id l197sm2923080wma.44.2018.12.11.15.37.55
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 11 Dec 2018 15:37:55 -0800 (PST)
+Date:   Wed, 12 Dec 2018 02:37:53 +0300
+From:   Alexey Dobriyan <adobriyan@gmail.com>
+To:     luto@kernel.org
+Cc:     linux-kernel@vger.kernel.org, tglx@linutronix.de, bp@suse.de,
+        thomas.lendacky@amd.com, hpa@zytor.com, john.stultz@linaro.org,
+        x86@kernel.org
+Subject: Re: [RFC PATCH 4/4] x86/TSC: Use RDTSCP
+Message-ID: <20181211233753.GA26593@avx2>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-11_08:,,
- signatures=0
-X-Proofpoint-Spam-Reason: safe
-X-FB-Internal: Safe
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For better performance analysis of BPF programs, this patch introduces
-PERF_RECORD_BPF_EVENT, a new perf_event_type that exposes BPF program
-load/unload information to user space.
+> And I had a bit of a WTF moment, as in "WTF does
+> RDTSC have to do with a speculation protection barrier".
+> Does it actually make sense?
 
-Each BPF program may contain up to BPF_MAX_SUBPROGS (256) sub programs.
-The following example shows kernel symbols for a BPF program with 7
-sub programs:
+It doesn't. There was too much s/lfence/barrier_nospec/ apparently.
 
-    ffffffffa0257cf9 t bpf_prog_b07ccb89267cf242_F
-    ffffffffa02592e1 t bpf_prog_2dcecc18072623fc_F
-    ffffffffa025b0e9 t bpf_prog_bb7a405ebaec5d5c_F
-    ffffffffa025dd2c t bpf_prog_a7540d4a39ec1fc7_F
-    ffffffffa025fcca t bpf_prog_05762d4ade0e3737_F
-    ffffffffa026108f t bpf_prog_db4bd11e35df90d4_F
-    ffffffffa0263f00 t bpf_prog_89d64e4abf0f0126_F
-    ffffffffa0257cf9 t bpf_prog_ae31629322c4b018__dummy_tracepoi
+> +	asm volatile(ALTERNATIVE_3("rdtsc",
+> +				   "mfence; rdtsc", X86_FEATURE_MFENCE_RDTSC,
+> +				   "lfence; rdtsc", X86_FEATURE_LFENCE_RDTSC,
+> +				   "rdtscp", X86_FEATURE_RDTSCP)
+> +			: EAX_EDX_RET(val, low, high)
+> +			/* RDTSCP clobbers ECX with MSR_TSC_AUX. */
+> +			:: "ecx");
 
-Note that these sub programs are not allocated in contiguous memory
-ranges. Instead, each of them occupies separate page(s). The starting
-address of these sub programs are randomized within the page(s) for
-security reasons.
+I have a question: does alternatives ordering matter? CPU can have
+both features.
 
-The following data structure is used for PERF_RECORD_BPF_EVENT. It is
-generated for each _sub program_:
-
-        /*
-         * Record different types of bpf events:
-         *  enum perf_bpf_event_type {
-         *     PERF_BPF_EVENT_UNKNOWN           = 0,
-         *     PERF_BPF_EVENT_PROG_LOAD         = 1,
-         *     PERF_BPF_EVENT_PROG_UNLOAD       = 2,
-         *  };
-         *
-         * struct {
-         *      struct perf_event_header header;
-         *      u32                             type;
-         *      u32                             flags;
-         *      u32                             id; // prog_id or other id
-         *      u32                             sub_id; // subprog id
-         *
-         *      // for bpf_prog types, bpf prog or subprog
-         *      u8                              tag[BPF_TAG_SIZE];
-         *      u64                             addr;
-         *      u64                             len;
-         *      char                            name[];
-         *      struct sample_id                sample_id;
-         * };
-         */
-
-This data is designed for different use cases:
-
-  1. For simple perf profiling, addr, len, and name[] works similar to
-     PERF_RECORD_MMAP. These raw records are stored in perf.data file.
-  2. For perf annotation and other cases that needs more details of the
-     BPF program, id and sub_id are used to extract detailed information
-     of the prog through sys_bpf(BPF_OBJ_GET_INFO_BY_FD). User space
-     tools are responsible to save the detailed information properly, as
-     these information will not be available after the bpf program is
-     unloaded.
-
-This follows the existing perf model of keeping the ordered records
-with enough information for profiling while keeping keys for reliably
-finding extra, more voluminous information for further analysis, like
-raw jitted binaries augmented with line numbers that can be used for
-disassembly, annotation, etc
-
-Currently, PERF_RECORD_BPF_EVENT only support two events:
-PERF_BPF_EVENT_PROG_LOAD and PERF_BPF_EVENT_PROG_UNLOAD. But it can be
-easily extended to support more events.
-
-Signed-off-by: Song Liu <songliubraving@fb.com>
-Reviewed-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- include/linux/filter.h          |   7 ++
- include/linux/perf_event.h      |  10 +++
- include/uapi/linux/perf_event.h |  35 ++++++++-
- kernel/bpf/core.c               |   2 +-
- kernel/bpf/syscall.c            |   3 +
- kernel/events/core.c            | 123 +++++++++++++++++++++++++++++++-
- 6 files changed, 177 insertions(+), 3 deletions(-)
-
-diff --git a/include/linux/filter.h b/include/linux/filter.h
-index 537e9e7c6e6f..45d23560f90b 100644
---- a/include/linux/filter.h
-+++ b/include/linux/filter.h
-@@ -955,6 +955,7 @@ bpf_address_lookup(unsigned long addr, unsigned long *size,
- 
- void bpf_prog_kallsyms_add(struct bpf_prog *fp);
- void bpf_prog_kallsyms_del(struct bpf_prog *fp);
-+void bpf_get_prog_name(const struct bpf_prog *prog, char *sym);
- 
- #else /* CONFIG_BPF_JIT */
- 
-@@ -1010,6 +1011,12 @@ static inline void bpf_prog_kallsyms_add(struct bpf_prog *fp)
- static inline void bpf_prog_kallsyms_del(struct bpf_prog *fp)
- {
- }
-+
-+static inline void bpf_get_prog_name(const struct bpf_prog *prog, char *sym)
-+{
-+	sym[0] = '\0';
-+}
-+
- #endif /* CONFIG_BPF_JIT */
- 
- void bpf_prog_kallsyms_del_subprogs(struct bpf_prog *fp);
-diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
-index 53c500f0ca79..02217bab64d0 100644
---- a/include/linux/perf_event.h
-+++ b/include/linux/perf_event.h
-@@ -1113,6 +1113,12 @@ static inline void perf_event_task_sched_out(struct task_struct *prev,
- }
- 
- extern void perf_event_mmap(struct vm_area_struct *vma);
-+
-+#ifdef CONFIG_BPF_SYSCALL
-+extern void perf_event_bpf_event_prog(enum perf_bpf_event_type type,
-+				      struct bpf_prog *prog);
-+#endif
-+
- extern struct perf_guest_info_callbacks *perf_guest_cbs;
- extern int perf_register_guest_info_callbacks(struct perf_guest_info_callbacks *callbacks);
- extern int perf_unregister_guest_info_callbacks(struct perf_guest_info_callbacks *callbacks);
-@@ -1333,6 +1339,10 @@ static inline int perf_unregister_guest_info_callbacks
- (struct perf_guest_info_callbacks *callbacks)				{ return 0; }
- 
- static inline void perf_event_mmap(struct vm_area_struct *vma)		{ }
-+#ifdef CONFIG_BPF_SYSCALL
-+static inline void perf_event_bpf_event_prog(enum perf_bpf_event_type type,
-+					     struct bpf_prog *prog)	{ }
-+#endif
- static inline void perf_event_exec(void)				{ }
- static inline void perf_event_comm(struct task_struct *tsk, bool exec)	{ }
- static inline void perf_event_namespaces(struct task_struct *tsk)	{ }
-diff --git a/include/uapi/linux/perf_event.h b/include/uapi/linux/perf_event.h
-index 9de8780ac8d9..0ae3dae55fa8 100644
---- a/include/uapi/linux/perf_event.h
-+++ b/include/uapi/linux/perf_event.h
-@@ -372,7 +372,8 @@ struct perf_event_attr {
- 				context_switch :  1, /* context switch data */
- 				write_backward :  1, /* Write ring buffer from end to beginning */
- 				namespaces     :  1, /* include namespaces data */
--				__reserved_1   : 35;
-+				bpf_event      :  1, /* include bpf events */
-+				__reserved_1   : 34;
- 
- 	union {
- 		__u32		wakeup_events;	  /* wakeup every n events */
-@@ -965,9 +966,41 @@ enum perf_event_type {
- 	 */
- 	PERF_RECORD_NAMESPACES			= 16,
- 
-+	/*
-+	 * Record different types of bpf events:
-+	 *  enum perf_bpf_event_type {
-+	 *     PERF_BPF_EVENT_UNKNOWN		= 0,
-+	 *     PERF_BPF_EVENT_PROG_LOAD		= 1,
-+	 *     PERF_BPF_EVENT_PROG_UNLOAD	= 2,
-+	 *  };
-+	 *
-+	 * struct {
-+	 *	struct perf_event_header header;
-+	 *	u32				type;
-+	 *	u32				flags;
-+	 *	u32				id; // prog_id or other id
-+	 *	u32				sub_id; // subprog id
-+	 *
-+	 *	// for bpf_prog types, bpf prog or subprog
-+	 *	u8				tag[BPF_TAG_SIZE];
-+	 *	u64				addr;
-+	 *	u64				len;
-+	 *	char				name[];
-+	 *	struct sample_id		sample_id;
-+	 * };
-+	 */
-+	PERF_RECORD_BPF_EVENT			= 17,
-+
- 	PERF_RECORD_MAX,			/* non-ABI */
- };
- 
-+enum perf_bpf_event_type {
-+	PERF_BPF_EVENT_UNKNOWN		= 0,
-+	PERF_BPF_EVENT_PROG_LOAD	= 1,
-+	PERF_BPF_EVENT_PROG_UNLOAD	= 2,
-+	PERF_BPF_EVENT_MAX,		/* non-ABI */
-+};
-+
- #define PERF_MAX_STACK_DEPTH		127
- #define PERF_MAX_CONTEXTS_PER_STACK	  8
- 
-diff --git a/kernel/bpf/core.c b/kernel/bpf/core.c
-index 5cdd8da0e7f2..2a8364294f11 100644
---- a/kernel/bpf/core.c
-+++ b/kernel/bpf/core.c
-@@ -496,7 +496,7 @@ bpf_get_prog_addr_region(const struct bpf_prog *prog,
- 	*symbol_end   = addr + hdr->pages * PAGE_SIZE;
- }
- 
--static void bpf_get_prog_name(const struct bpf_prog *prog, char *sym)
-+void bpf_get_prog_name(const struct bpf_prog *prog, char *sym)
- {
- 	const char *end = sym + KSYM_NAME_LEN;
- 	const struct btf_type *type;
-diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
-index 496c2f695f2d..a97a3698b7a4 100644
---- a/kernel/bpf/syscall.c
-+++ b/kernel/bpf/syscall.c
-@@ -1210,6 +1210,8 @@ static void __bpf_prog_put_rcu(struct rcu_head *rcu)
- static void __bpf_prog_put(struct bpf_prog *prog, bool do_idr_lock)
- {
- 	if (atomic_dec_and_test(&prog->aux->refcnt)) {
-+		perf_event_bpf_event_prog(PERF_BPF_EVENT_PROG_UNLOAD, prog);
-+
- 		/* bpf_prog_free_id() must be called first */
- 		bpf_prog_free_id(prog, do_idr_lock);
- 		bpf_prog_kallsyms_del_all(prog);
-@@ -1558,6 +1560,7 @@ static int bpf_prog_load(union bpf_attr *attr, union bpf_attr __user *uattr)
- 	}
- 
- 	bpf_prog_kallsyms_add(prog);
-+	perf_event_bpf_event_prog(PERF_BPF_EVENT_PROG_LOAD, prog);
- 	return err;
- 
- free_used_maps:
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index 84530ab358c3..4b2d1a58d3fe 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -385,6 +385,7 @@ static atomic_t nr_namespaces_events __read_mostly;
- static atomic_t nr_task_events __read_mostly;
- static atomic_t nr_freq_events __read_mostly;
- static atomic_t nr_switch_events __read_mostly;
-+static atomic_t nr_bpf_events __read_mostly;
- 
- static LIST_HEAD(pmus);
- static DEFINE_MUTEX(pmus_lock);
-@@ -4235,7 +4236,7 @@ static bool is_sb_event(struct perf_event *event)
- 
- 	if (attr->mmap || attr->mmap_data || attr->mmap2 ||
- 	    attr->comm || attr->comm_exec ||
--	    attr->task ||
-+	    attr->task || attr->bpf_event ||
- 	    attr->context_switch)
- 		return true;
- 	return false;
-@@ -4305,6 +4306,8 @@ static void unaccount_event(struct perf_event *event)
- 		dec = true;
- 	if (has_branch_stack(event))
- 		dec = true;
-+	if (event->attr.bpf_event)
-+		atomic_dec(&nr_bpf_events);
- 
- 	if (dec) {
- 		if (!atomic_add_unless(&perf_sched_count, -1, 1))
-@@ -7650,6 +7653,122 @@ static void perf_log_throttle(struct perf_event *event, int enable)
- 	perf_output_end(&handle);
- }
- 
-+/*
-+ * bpf load/unload tracking
-+ */
-+
-+struct perf_bpf_event {
-+	struct bpf_prog *prog;
-+
-+	struct {
-+		struct perf_event_header        header;
-+		u32 type;
-+		u32 flags;
-+		u32 id;
-+		u32 sub_id;
-+		u8 tag[BPF_TAG_SIZE];
-+		u64 addr;
-+		u64 len;
-+	} event_id;
-+};
-+
-+static int perf_event_bpf_match(struct perf_event *event)
-+{
-+	return event->attr.bpf_event;
-+}
-+
-+static void perf_event_bpf_output(struct perf_event *event,
-+				   void *data)
-+{
-+	struct perf_bpf_event *bpf_event = data;
-+	struct perf_output_handle handle;
-+	struct perf_sample_data sample;
-+	char name[KSYM_NAME_LEN];
-+	int name_len;
-+	int ret;
-+
-+	if (!perf_event_bpf_match(event))
-+		return;
-+
-+	/* get prog name and round up to 64 bit aligned */
-+	bpf_get_prog_name(bpf_event->prog, name);
-+	name_len = strlen(name) + 1;
-+	while (!IS_ALIGNED(name_len, sizeof(u64)))
-+		name[name_len++] = '\0';
-+	bpf_event->event_id.header.size += name_len;
-+
-+	perf_event_header__init_id(&bpf_event->event_id.header, &sample, event);
-+	ret = perf_output_begin(&handle, event,
-+				bpf_event->event_id.header.size);
-+	if (ret)
-+		return;
-+
-+	perf_output_put(&handle, bpf_event->event_id);
-+
-+	__output_copy(&handle, name, name_len);
-+
-+	perf_event__output_id_sample(event, &handle, &sample);
-+
-+	perf_output_end(&handle);
-+}
-+
-+static void perf_event_bpf(struct perf_bpf_event *bpf_event)
-+{
-+	perf_iterate_sb(perf_event_bpf_output,
-+		       bpf_event,
-+		       NULL);
-+}
-+
-+static void perf_event_bpf_event_subprog(
-+	enum perf_bpf_event_type type,
-+	struct bpf_prog *prog, u32 id, u32 sub_id)
-+{
-+	struct perf_bpf_event bpf_event = (struct perf_bpf_event){
-+		.prog = prog,
-+		.event_id = {
-+			.header = {
-+				.type = PERF_RECORD_BPF_EVENT,
-+				.size = sizeof(bpf_event.event_id),
-+			},
-+			.type = type,
-+			/* .flags = 0 */
-+			.id = id,
-+			.sub_id = sub_id,
-+			.addr = (u64)(unsigned long)prog->bpf_func,
-+			.len = prog->jited_len,
-+		},
-+	};
-+
-+	memcpy(bpf_event.event_id.tag, prog->tag, BPF_TAG_SIZE);
-+	perf_event_bpf(&bpf_event);
-+}
-+
-+/*
-+ * This is call per bpf_prog. In case of multiple sub programs,
-+ * this function calls perf_event_bpf_event_subprog() multiple times
-+ */
-+void perf_event_bpf_event_prog(enum perf_bpf_event_type type,
-+			       struct bpf_prog *prog)
-+{
-+	if (!atomic_read(&nr_bpf_events))
-+		return;
-+
-+	if (type != PERF_BPF_EVENT_PROG_LOAD &&
-+	    type != PERF_BPF_EVENT_PROG_UNLOAD)
-+		return;
-+
-+	if (prog->aux->func_cnt == 0) {
-+		perf_event_bpf_event_subprog(type, prog,
-+					     prog->aux->id, 0);
-+	} else {
-+		int i;
-+
-+		for (i = 0; i < prog->aux->func_cnt; i++)
-+			perf_event_bpf_event_subprog(type, prog->aux->func[i],
-+						     prog->aux->id, i);
-+	}
-+}
-+
- void perf_event_itrace_started(struct perf_event *event)
- {
- 	event->attach_state |= PERF_ATTACH_ITRACE;
-@@ -9900,6 +10019,8 @@ static void account_event(struct perf_event *event)
- 		inc = true;
- 	if (is_cgroup_event(event))
- 		inc = true;
-+	if (event->attr.bpf_event)
-+		atomic_inc(&nr_bpf_events);
- 
- 	if (inc) {
- 		/*
--- 
-2.17.1
-
+And other code in this file uses "c" for clobber.
