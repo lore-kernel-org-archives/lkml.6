@@ -7,49 +7,51 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1B7CC5CFFE
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:42:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8E81C07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:43:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 792C320880
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:42:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8026020880
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:43:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544542977;
-	bh=cZ2P5ReJFiqngoEhU4a2wjefi8jA0ALBkKWLxtToRpo=;
+	s=default; t=1544542982;
+	bh=O87nsCcczkI2S6DN+/JTxkGykucMFuCsAFTW4ku0DA0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=QZQKWN/BmB2kScim6R9Oex25BTAxfzRq7kZp+7ry4BpYlB7jFg7NMbocdSYNgjfP0
-	 92nTWQ9MM6UZIbxWGzO+qL4VCenp8Jm0h00G04eSCLXraLXHcEC/P7+uAlWecshL7A
-	 Td/T4VJEnPHwZ7Wuw1fb59FH8k26P5cfkQTvYRf0=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 792C320880
+	b=UQdJZ8oRPF1LibtWzUljNdIxGhZABmxwQa20XIPtDjxf6u5ZSKtbBf5NwRofZDItf
+	 ft4O3uUAFEGCegSj1iDtI2kkK0FLJ5OmgQMO1vAkxJzy0dN9SfVMRmpfGxiDDp35j5
+	 8sycLH7xRYkjfuX/uNEbeWHnItVdN4awZ9jU/6OM=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8026020880
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727384AbeLKPm4 (ORCPT
+        id S1727401AbeLKPnB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 10:42:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59334 "EHLO mail.kernel.org"
+        Tue, 11 Dec 2018 10:43:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59356 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727341AbeLKPmy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:42:54 -0500
+        id S1727341AbeLKPm6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 10:42:58 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A00E920880;
-        Tue, 11 Dec 2018 15:42:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 50ADC20855;
+        Tue, 11 Dec 2018 15:42:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544542974;
-        bh=cZ2P5ReJFiqngoEhU4a2wjefi8jA0ALBkKWLxtToRpo=;
+        s=default; t=1544542976;
+        bh=O87nsCcczkI2S6DN+/JTxkGykucMFuCsAFTW4ku0DA0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wJl54abNOmUaWcTRL+DqejURRVIRXsdugsZvA8iRgdFMzNc2k2wJsTy3rZ9I6jOuw
-         3BDT0zOJ/b4XWd0kaafcGd0e1O4zRGX892JhKPAEUcahqxoyPELXjGGbf0z/EtZKcC
-         m2qBeAF7vwyNdHjmEKzySghsui3irmokoz9JQe2M=
+        b=eDqFdEq/Uak82Kf0cQRkBVtZdVDKl3zPjBJfCrF1PX1dV9iRpLfZu68kBtHcoOBiR
+         tXS+KhkbwMi7/7xDNDwtspKhCBi+J4B4IdNbAduClWUdQ9lksLCBcp4Lg/kVbII7pZ
+         XMLPQPLVnSVotZEchbESVJ5Rec+913/+i3ccmHNo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>
-Subject: [PATCH 3.18 19/54] drm: gma500: fix logic error
-Date:   Tue, 11 Dec 2018 16:41:07 +0100
-Message-Id: <20181211151547.051788639@linuxfoundation.org>
+        Johannes Thumshirn <jthumshirn@suse.de>,
+        Sudarsana Kalluru <Sudarsana.Kalluru@cavium.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH 3.18 20/54] scsi: bfa: convert to strlcpy/strlcat
+Date:   Tue, 11 Dec 2018 16:41:08 +0100
+Message-Id: <20181211151547.118428980@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181211151546.010073210@linuxfoundation.org>
 References: <20181211151546.010073210@linuxfoundation.org>
@@ -70,37 +72,448 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Arnd Bergmann <arnd@arndb.de>
 
-commit 67a3b63a54cbe18944191f43d644686731cf30c7 upstream.
+commit 8c5a50e8e7ad812a62f7ccf28d9a5e74fddf3000 upstream.
 
-gcc-8 points out a condition that almost certainly doesn't
-do what the author had in mind:
+The bfa driver has a number of real issues with string termination
+that gcc-8 now points out:
 
-drivers/gpu/drm/gma500/mdfld_intel_display.c: In function 'mdfldWaitForPipeEnable':
-drivers/gpu/drm/gma500/mdfld_intel_display.c:102:37: error: bitwise comparison always evaluates to false [-Werror=tautological-compare]
+drivers/scsi/bfa/bfad_bsg.c: In function 'bfad_iocmd_port_get_attr':
+drivers/scsi/bfa/bfad_bsg.c:320:9: error: argument to 'sizeof' in 'strncpy' call is the same expression as the source; did you mean to use the size of the destination? [-Werror=sizeof-pointer-memaccess]
+drivers/scsi/bfa/bfa_fcs.c: In function 'bfa_fcs_fabric_psymb_init':
+drivers/scsi/bfa/bfa_fcs.c:775:9: error: argument to 'sizeof' in 'strncat' call is the same expression as the source; did you mean to use the size of the destination? [-Werror=sizeof-pointer-memaccess]
+drivers/scsi/bfa/bfa_fcs.c:781:9: error: argument to 'sizeof' in 'strncat' call is the same expression as the source; did you mean to use the size of the destination? [-Werror=sizeof-pointer-memaccess]
+drivers/scsi/bfa/bfa_fcs.c:788:9: error: argument to 'sizeof' in 'strncat' call is the same expression as the source; did you mean to use the size of the destination? [-Werror=sizeof-pointer-memaccess]
+drivers/scsi/bfa/bfa_fcs.c:801:10: error: argument to 'sizeof' in 'strncat' call is the same expression as the source; did you mean to use the size of the destination? [-Werror=sizeof-pointer-memaccess]
+drivers/scsi/bfa/bfa_fcs.c:808:10: error: argument to 'sizeof' in 'strncat' call is the same expression as the source; did you mean to use the size of the destination? [-Werror=sizeof-pointer-memaccess]
+drivers/scsi/bfa/bfa_fcs.c: In function 'bfa_fcs_fabric_nsymb_init':
+drivers/scsi/bfa/bfa_fcs.c:837:10: error: argument to 'sizeof' in 'strncat' call is the same expression as the source; did you mean to use the size of the destination? [-Werror=sizeof-pointer-memaccess]
+drivers/scsi/bfa/bfa_fcs.c:844:10: error: argument to 'sizeof' in 'strncat' call is the same expression as the source; did you mean to use the size of the destination? [-Werror=sizeof-pointer-memaccess]
+drivers/scsi/bfa/bfa_fcs.c:852:10: error: argument to 'sizeof' in 'strncat' call is the same expression as the source; did you mean to use the size of the destination? [-Werror=sizeof-pointer-memaccess]
+drivers/scsi/bfa/bfa_fcs.c: In function 'bfa_fcs_fabric_psymb_init':
+drivers/scsi/bfa/bfa_fcs.c:778:2: error: 'strncat' output may be truncated copying 10 bytes from a string of length 63 [-Werror=stringop-truncation]
+drivers/scsi/bfa/bfa_fcs.c:784:2: error: 'strncat' output may be truncated copying 30 bytes from a string of length 63 [-Werror=stringop-truncation]
+drivers/scsi/bfa/bfa_fcs.c:803:3: error: 'strncat' output may be truncated copying 44 bytes from a string of length 63 [-Werror=stringop-truncation]
+drivers/scsi/bfa/bfa_fcs.c:811:3: error: 'strncat' output may be truncated copying 16 bytes from a string of length 63 [-Werror=stringop-truncation]
+drivers/scsi/bfa/bfa_fcs.c: In function 'bfa_fcs_fabric_nsymb_init':
+drivers/scsi/bfa/bfa_fcs.c:840:2: error: 'strncat' output may be truncated copying 10 bytes from a string of length 63 [-Werror=stringop-truncation]
+drivers/scsi/bfa/bfa_fcs.c:847:2: error: 'strncat' output may be truncated copying 30 bytes from a string of length 63 [-Werror=stringop-truncation]
+drivers/scsi/bfa/bfa_fcs_lport.c: In function 'bfa_fcs_fdmi_get_hbaattr':
+drivers/scsi/bfa/bfa_fcs_lport.c:2657:10: error: argument to 'sizeof' in 'strncat' call is the same expression as the source; did you mean to use the size of the destination? [-Werror=sizeof-pointer-memaccess]
+drivers/scsi/bfa/bfa_fcs_lport.c:2659:11: error: argument to 'sizeof' in 'strncat' call is the same expression as the source; did you mean to use the size of the destination? [-Werror=sizeof-pointer-memaccess]
+drivers/scsi/bfa/bfa_fcs_lport.c: In function 'bfa_fcs_lport_ms_gmal_response':
+drivers/scsi/bfa/bfa_fcs_lport.c:3232:5: error: 'strncpy' output may be truncated copying 16 bytes from a string of length 247 [-Werror=stringop-truncation]
+drivers/scsi/bfa/bfa_fcs_lport.c: In function 'bfa_fcs_lport_ns_send_rspn_id':
+drivers/scsi/bfa/bfa_fcs_lport.c:4670:3: error: 'strncpy' output truncated before terminating nul copying as many bytes from a string as its length [-Werror=stringop-truncation]
+drivers/scsi/bfa/bfa_fcs_lport.c:4682:3: error: 'strncat' output truncated before terminating nul copying as many bytes from a string as its length [-Werror=stringop-truncation]
+drivers/scsi/bfa/bfa_fcs_lport.c: In function 'bfa_fcs_lport_ns_util_send_rspn_id':
+drivers/scsi/bfa/bfa_fcs_lport.c:5206:3: error: 'strncpy' output truncated before terminating nul copying as many bytes from a string as its length [-Werror=stringop-truncation]
+drivers/scsi/bfa/bfa_fcs_lport.c:5215:3: error: 'strncat' output truncated before terminating nul copying as many bytes from a string as its length [-Werror=stringop-truncation]
+drivers/scsi/bfa/bfa_fcs_lport.c: In function 'bfa_fcs_fdmi_get_portattr':
+drivers/scsi/bfa/bfa_fcs_lport.c:2751:2: error: 'strncpy' specified bound 128 equals destination size [-Werror=stringop-truncation]
+drivers/scsi/bfa/bfa_fcbuild.c: In function 'fc_rspnid_build':
+drivers/scsi/bfa/bfa_fcbuild.c:1254:2: error: 'strncpy' output truncated before terminating nul copying as many bytes from a string as its length [-Werror=stringop-truncation]
+drivers/scsi/bfa/bfa_fcbuild.c:1253:25: note: length computed here
+drivers/scsi/bfa/bfa_fcbuild.c: In function 'fc_rsnn_nn_build':
+drivers/scsi/bfa/bfa_fcbuild.c:1275:2: error: 'strncpy' output truncated before terminating nul copying as many bytes from a string as its length [-Werror=stringop-truncation]
 
-This changes it to a simple bit mask operation to check
-whether the bit is set.
+In most cases, this can be addressed by correctly calling strlcpy and
+strlcat instead of strncpy/strncat, with the size of the destination
+buffer as the last argument.
 
-Fixes: 026abc333205 ("gma500: initial medfield merge")
+For consistency, I'm changing the other callers of strncpy() in this
+driver the same way.
+
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-Link: https://patchwork.freedesktop.org/patch/msgid/20170905074741.435324-1-arnd@arndb.de
+Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
+Acked-by: Sudarsana Kalluru <Sudarsana.Kalluru@cavium.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/gma500/mdfld_intel_display.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/scsi/bfa/bfa_fcbuild.c   |    8 ++--
+ drivers/scsi/bfa/bfa_fcs.c       |   78 +++++++++++++++++++--------------------
+ drivers/scsi/bfa/bfa_fcs_lport.c |   62 ++++++++++++-------------------
+ drivers/scsi/bfa/bfa_ioc.c       |    2 -
+ drivers/scsi/bfa/bfa_svc.c       |    4 +-
+ drivers/scsi/bfa/bfad.c          |   20 +++++-----
+ drivers/scsi/bfa/bfad_attr.c     |    2 -
+ drivers/scsi/bfa/bfad_bsg.c      |    6 +--
+ 8 files changed, 84 insertions(+), 98 deletions(-)
 
---- a/drivers/gpu/drm/gma500/mdfld_intel_display.c
-+++ b/drivers/gpu/drm/gma500/mdfld_intel_display.c
-@@ -99,7 +99,7 @@ void mdfldWaitForPipeEnable(struct drm_d
- 	/* Wait for for the pipe enable to take effect. */
- 	for (count = 0; count < COUNT_MAX; count++) {
- 		temp = REG_READ(map->conf);
--		if ((temp & PIPEACONF_PIPE_STATE) == 1)
-+		if (temp & PIPEACONF_PIPE_STATE)
- 			break;
- 	}
+--- a/drivers/scsi/bfa/bfa_fcbuild.c
++++ b/drivers/scsi/bfa/bfa_fcbuild.c
+@@ -1249,8 +1249,8 @@ fc_rspnid_build(struct fchs_s *fchs, voi
+ 	memset(rspnid, 0, sizeof(struct fcgs_rspnid_req_s));
+ 
+ 	rspnid->dap = s_id;
+-	rspnid->spn_len = (u8) strlen((char *)name);
+-	strncpy((char *)rspnid->spn, (char *)name, rspnid->spn_len);
++	strlcpy(rspnid->spn, name, sizeof(rspnid->spn));
++	rspnid->spn_len = (u8) strlen(rspnid->spn);
+ 
+ 	return sizeof(struct fcgs_rspnid_req_s) + sizeof(struct ct_hdr_s);
  }
+@@ -1270,8 +1270,8 @@ fc_rsnn_nn_build(struct fchs_s *fchs, vo
+ 	memset(rsnn_nn, 0, sizeof(struct fcgs_rsnn_nn_req_s));
+ 
+ 	rsnn_nn->node_name = node_name;
+-	rsnn_nn->snn_len = (u8) strlen((char *)name);
+-	strncpy((char *)rsnn_nn->snn, (char *)name, rsnn_nn->snn_len);
++	strlcpy(rsnn_nn->snn, name, sizeof(rsnn_nn->snn));
++	rsnn_nn->snn_len = (u8) strlen(rsnn_nn->snn);
+ 
+ 	return sizeof(struct fcgs_rsnn_nn_req_s) + sizeof(struct ct_hdr_s);
+ }
+--- a/drivers/scsi/bfa/bfa_fcs.c
++++ b/drivers/scsi/bfa/bfa_fcs.c
+@@ -831,23 +831,23 @@ bfa_fcs_fabric_psymb_init(struct bfa_fcs
+ 	bfa_ioc_get_adapter_model(&fabric->fcs->bfa->ioc, model);
+ 
+ 	/* Model name/number */
+-	strncpy((char *)&port_cfg->sym_name, model,
+-		BFA_FCS_PORT_SYMBNAME_MODEL_SZ);
+-	strncat((char *)&port_cfg->sym_name, BFA_FCS_PORT_SYMBNAME_SEPARATOR,
+-		sizeof(BFA_FCS_PORT_SYMBNAME_SEPARATOR));
++	strlcpy(port_cfg->sym_name.symname, model,
++		BFA_SYMNAME_MAXLEN);
++	strlcat(port_cfg->sym_name.symname, BFA_FCS_PORT_SYMBNAME_SEPARATOR,
++		BFA_SYMNAME_MAXLEN);
+ 
+ 	/* Driver Version */
+-	strncat((char *)&port_cfg->sym_name, (char *)driver_info->version,
+-		BFA_FCS_PORT_SYMBNAME_VERSION_SZ);
+-	strncat((char *)&port_cfg->sym_name, BFA_FCS_PORT_SYMBNAME_SEPARATOR,
+-		sizeof(BFA_FCS_PORT_SYMBNAME_SEPARATOR));
++	strlcat(port_cfg->sym_name.symname, driver_info->version,
++		BFA_SYMNAME_MAXLEN);
++	strlcat(port_cfg->sym_name.symname, BFA_FCS_PORT_SYMBNAME_SEPARATOR,
++		BFA_SYMNAME_MAXLEN);
+ 
+ 	/* Host machine name */
+-	strncat((char *)&port_cfg->sym_name,
+-		(char *)driver_info->host_machine_name,
+-		BFA_FCS_PORT_SYMBNAME_MACHINENAME_SZ);
+-	strncat((char *)&port_cfg->sym_name, BFA_FCS_PORT_SYMBNAME_SEPARATOR,
+-		sizeof(BFA_FCS_PORT_SYMBNAME_SEPARATOR));
++	strlcat(port_cfg->sym_name.symname,
++		driver_info->host_machine_name,
++		BFA_SYMNAME_MAXLEN);
++	strlcat(port_cfg->sym_name.symname, BFA_FCS_PORT_SYMBNAME_SEPARATOR,
++		BFA_SYMNAME_MAXLEN);
+ 
+ 	/*
+ 	 * Host OS Info :
+@@ -855,24 +855,24 @@ bfa_fcs_fabric_psymb_init(struct bfa_fcs
+ 	 * OS name string and instead copy the entire OS info string (64 bytes).
+ 	 */
+ 	if (driver_info->host_os_patch[0] == '\0') {
+-		strncat((char *)&port_cfg->sym_name,
+-			(char *)driver_info->host_os_name,
+-			BFA_FCS_OS_STR_LEN);
+-		strncat((char *)&port_cfg->sym_name,
++		strlcat(port_cfg->sym_name.symname,
++			driver_info->host_os_name,
++			BFA_SYMNAME_MAXLEN);
++		strlcat(port_cfg->sym_name.symname,
+ 			BFA_FCS_PORT_SYMBNAME_SEPARATOR,
+-			sizeof(BFA_FCS_PORT_SYMBNAME_SEPARATOR));
++			BFA_SYMNAME_MAXLEN);
+ 	} else {
+-		strncat((char *)&port_cfg->sym_name,
+-			(char *)driver_info->host_os_name,
+-			BFA_FCS_PORT_SYMBNAME_OSINFO_SZ);
+-		strncat((char *)&port_cfg->sym_name,
++		strlcat(port_cfg->sym_name.symname,
++			driver_info->host_os_name,
++			BFA_SYMNAME_MAXLEN);
++		strlcat(port_cfg->sym_name.symname,
+ 			BFA_FCS_PORT_SYMBNAME_SEPARATOR,
+-			sizeof(BFA_FCS_PORT_SYMBNAME_SEPARATOR));
++			BFA_SYMNAME_MAXLEN);
+ 
+ 		/* Append host OS Patch Info */
+-		strncat((char *)&port_cfg->sym_name,
+-			(char *)driver_info->host_os_patch,
+-			BFA_FCS_PORT_SYMBNAME_OSPATCH_SZ);
++		strlcat(port_cfg->sym_name.symname,
++			driver_info->host_os_patch,
++			BFA_SYMNAME_MAXLEN);
+ 	}
+ 
+ 	/* null terminate */
+@@ -892,26 +892,26 @@ bfa_fcs_fabric_nsymb_init(struct bfa_fcs
+ 	bfa_ioc_get_adapter_model(&fabric->fcs->bfa->ioc, model);
+ 
+ 	/* Model name/number */
+-	strncpy((char *)&port_cfg->node_sym_name, model,
+-		BFA_FCS_PORT_SYMBNAME_MODEL_SZ);
+-	strncat((char *)&port_cfg->node_sym_name,
++	strlcpy(port_cfg->node_sym_name.symname, model,
++		BFA_SYMNAME_MAXLEN);
++	strlcat(port_cfg->node_sym_name.symname,
+ 			BFA_FCS_PORT_SYMBNAME_SEPARATOR,
+-			sizeof(BFA_FCS_PORT_SYMBNAME_SEPARATOR));
++			BFA_SYMNAME_MAXLEN);
+ 
+ 	/* Driver Version */
+-	strncat((char *)&port_cfg->node_sym_name, (char *)driver_info->version,
+-		BFA_FCS_PORT_SYMBNAME_VERSION_SZ);
+-	strncat((char *)&port_cfg->node_sym_name,
++	strlcat(port_cfg->node_sym_name.symname, (char *)driver_info->version,
++		BFA_SYMNAME_MAXLEN);
++	strlcat(port_cfg->node_sym_name.symname,
+ 			BFA_FCS_PORT_SYMBNAME_SEPARATOR,
+-			sizeof(BFA_FCS_PORT_SYMBNAME_SEPARATOR));
++			BFA_SYMNAME_MAXLEN);
+ 
+ 	/* Host machine name */
+-	strncat((char *)&port_cfg->node_sym_name,
+-		(char *)driver_info->host_machine_name,
+-		BFA_FCS_PORT_SYMBNAME_MACHINENAME_SZ);
+-	strncat((char *)&port_cfg->node_sym_name,
++	strlcat(port_cfg->node_sym_name.symname,
++		driver_info->host_machine_name,
++		BFA_SYMNAME_MAXLEN);
++	strlcat(port_cfg->node_sym_name.symname,
+ 			BFA_FCS_PORT_SYMBNAME_SEPARATOR,
+-			sizeof(BFA_FCS_PORT_SYMBNAME_SEPARATOR));
++			BFA_SYMNAME_MAXLEN);
+ 
+ 	/* null terminate */
+ 	port_cfg->node_sym_name.symname[BFA_SYMNAME_MAXLEN - 1] = 0;
+--- a/drivers/scsi/bfa/bfa_fcs_lport.c
++++ b/drivers/scsi/bfa/bfa_fcs_lport.c
+@@ -2630,10 +2630,10 @@ bfa_fcs_fdmi_get_hbaattr(struct bfa_fcs_
+ 	bfa_ioc_get_adapter_fw_ver(&port->fcs->bfa->ioc,
+ 					hba_attr->fw_version);
+ 
+-	strncpy(hba_attr->driver_version, (char *)driver_info->version,
++	strlcpy(hba_attr->driver_version, (char *)driver_info->version,
+ 		sizeof(hba_attr->driver_version));
+ 
+-	strncpy(hba_attr->os_name, driver_info->host_os_name,
++	strlcpy(hba_attr->os_name, driver_info->host_os_name,
+ 		sizeof(hba_attr->os_name));
+ 
+ 	/*
+@@ -2641,23 +2641,23 @@ bfa_fcs_fdmi_get_hbaattr(struct bfa_fcs_
+ 	 * to the os name along with a separator
+ 	 */
+ 	if (driver_info->host_os_patch[0] != '\0') {
+-		strncat(hba_attr->os_name, BFA_FCS_PORT_SYMBNAME_SEPARATOR,
+-			sizeof(BFA_FCS_PORT_SYMBNAME_SEPARATOR));
+-		strncat(hba_attr->os_name, driver_info->host_os_patch,
+-				sizeof(driver_info->host_os_patch));
++		strlcat(hba_attr->os_name, BFA_FCS_PORT_SYMBNAME_SEPARATOR,
++			sizeof(hba_attr->os_name));
++		strlcat(hba_attr->os_name, driver_info->host_os_patch,
++				sizeof(hba_attr->os_name));
+ 	}
+ 
+ 	/* Retrieve the max frame size from the port attr */
+ 	bfa_fcs_fdmi_get_portattr(fdmi, &fcs_port_attr);
+ 	hba_attr->max_ct_pyld = fcs_port_attr.max_frm_size;
+ 
+-	strncpy(hba_attr->node_sym_name.symname,
++	strlcpy(hba_attr->node_sym_name.symname,
+ 		port->port_cfg.node_sym_name.symname, BFA_SYMNAME_MAXLEN);
+ 	strcpy(hba_attr->vendor_info, "BROCADE");
+ 	hba_attr->num_ports =
+ 		cpu_to_be32(bfa_ioc_get_nports(&port->fcs->bfa->ioc));
+ 	hba_attr->fabric_name = port->fabric->lps->pr_nwwn;
+-	strncpy(hba_attr->bios_ver, hba_attr->option_rom_ver, BFA_VERSION_LEN);
++	strlcpy(hba_attr->bios_ver, hba_attr->option_rom_ver, BFA_VERSION_LEN);
+ 
+ }
+ 
+@@ -2724,20 +2724,20 @@ bfa_fcs_fdmi_get_portattr(struct bfa_fcs
+ 	/*
+ 	 * OS device Name
+ 	 */
+-	strncpy(port_attr->os_device_name, (char *)driver_info->os_device_name,
++	strlcpy(port_attr->os_device_name, driver_info->os_device_name,
+ 		sizeof(port_attr->os_device_name));
+ 
+ 	/*
+ 	 * Host name
+ 	 */
+-	strncpy(port_attr->host_name, (char *)driver_info->host_machine_name,
++	strlcpy(port_attr->host_name, driver_info->host_machine_name,
+ 		sizeof(port_attr->host_name));
+ 
+ 	port_attr->node_name = bfa_fcs_lport_get_nwwn(port);
+ 	port_attr->port_name = bfa_fcs_lport_get_pwwn(port);
+ 
+-	strncpy(port_attr->port_sym_name.symname,
+-		(char *)&bfa_fcs_lport_get_psym_name(port), BFA_SYMNAME_MAXLEN);
++	strlcpy(port_attr->port_sym_name.symname,
++		bfa_fcs_lport_get_psym_name(port).symname, BFA_SYMNAME_MAXLEN);
+ 	bfa_fcs_lport_get_attr(port, &lport_attr);
+ 	port_attr->port_type = cpu_to_be32(lport_attr.port_type);
+ 	port_attr->scos = pport_attr.cos_supported;
+@@ -3217,7 +3217,7 @@ bfa_fcs_lport_ms_gmal_response(void *fcs
+ 					rsp_str[gmal_entry->len-1] = 0;
+ 
+ 				/* copy IP Address to fabric */
+-				strncpy(bfa_fcs_lport_get_fabric_ipaddr(port),
++				strlcpy(bfa_fcs_lport_get_fabric_ipaddr(port),
+ 					gmal_entry->ip_addr,
+ 					BFA_FCS_FABRIC_IPADDR_SZ);
+ 				break;
+@@ -4655,21 +4655,13 @@ bfa_fcs_lport_ns_send_rspn_id(void *ns_c
+ 		 * to that of the base port.
+ 		 */
+ 
+-		strncpy((char *)psymbl,
+-			(char *) &
+-			(bfa_fcs_lport_get_psym_name
++		strlcpy(symbl,
++			(char *)&(bfa_fcs_lport_get_psym_name
+ 			 (bfa_fcs_get_base_port(port->fcs))),
+-			strlen((char *) &
+-			       bfa_fcs_lport_get_psym_name(bfa_fcs_get_base_port
+-							  (port->fcs))));
+-
+-		/* Ensure we have a null terminating string. */
+-		((char *)psymbl)[strlen((char *) &
+-			bfa_fcs_lport_get_psym_name(bfa_fcs_get_base_port
+-						(port->fcs)))] = 0;
+-		strncat((char *)psymbl,
+-			(char *) &(bfa_fcs_lport_get_psym_name(port)),
+-		strlen((char *) &bfa_fcs_lport_get_psym_name(port)));
++			sizeof(symbl));
++
++		strlcat(symbl, (char *)&(bfa_fcs_lport_get_psym_name(port)),
++			sizeof(symbl));
+ 	} else {
+ 		psymbl = (u8 *) &(bfa_fcs_lport_get_psym_name(port));
+ 	}
+@@ -5161,7 +5153,6 @@ bfa_fcs_lport_ns_util_send_rspn_id(void
+ 	struct fchs_s fchs;
+ 	struct bfa_fcxp_s *fcxp;
+ 	u8 symbl[256];
+-	u8 *psymbl = &symbl[0];
+ 	int len;
+ 
+ 	/* Avoid sending RSPN in the following states. */
+@@ -5191,22 +5182,17 @@ bfa_fcs_lport_ns_util_send_rspn_id(void
+ 		 * For Vports, we append the vport's port symbolic name
+ 		 * to that of the base port.
+ 		 */
+-		strncpy((char *)psymbl, (char *)&(bfa_fcs_lport_get_psym_name
++		strlcpy(symbl, (char *)&(bfa_fcs_lport_get_psym_name
+ 			(bfa_fcs_get_base_port(port->fcs))),
+-			strlen((char *)&bfa_fcs_lport_get_psym_name(
+-			bfa_fcs_get_base_port(port->fcs))));
+-
+-		/* Ensure we have a null terminating string. */
+-		((char *)psymbl)[strlen((char *)&bfa_fcs_lport_get_psym_name(
+-		 bfa_fcs_get_base_port(port->fcs)))] = 0;
++			sizeof(symbl));
+ 
+-		strncat((char *)psymbl,
++		strlcat(symbl,
+ 			(char *)&(bfa_fcs_lport_get_psym_name(port)),
+-			strlen((char *)&bfa_fcs_lport_get_psym_name(port)));
++			sizeof(symbl));
+ 	}
+ 
+ 	len = fc_rspnid_build(&fchs, bfa_fcxp_get_reqbuf(fcxp),
+-			      bfa_fcs_lport_get_fcid(port), 0, psymbl);
++			      bfa_fcs_lport_get_fcid(port), 0, symbl);
+ 
+ 	bfa_fcxp_send(fcxp, NULL, port->fabric->vf_id, port->lp_tag, BFA_FALSE,
+ 		      FC_CLASS_3, len, &fchs, NULL, NULL, FC_MAX_PDUSZ, 0);
+--- a/drivers/scsi/bfa/bfa_ioc.c
++++ b/drivers/scsi/bfa/bfa_ioc.c
+@@ -2802,7 +2802,7 @@ void
+ bfa_ioc_get_adapter_manufacturer(struct bfa_ioc_s *ioc, char *manufacturer)
+ {
+ 	memset((void *)manufacturer, 0, BFA_ADAPTER_MFG_NAME_LEN);
+-	memcpy(manufacturer, BFA_MFG_NAME, BFA_ADAPTER_MFG_NAME_LEN);
++	strlcpy(manufacturer, BFA_MFG_NAME, BFA_ADAPTER_MFG_NAME_LEN);
+ }
+ 
+ void
+--- a/drivers/scsi/bfa/bfa_svc.c
++++ b/drivers/scsi/bfa/bfa_svc.c
+@@ -365,8 +365,8 @@ bfa_plog_str(struct bfa_plog_s *plog, en
+ 		lp.eid = event;
+ 		lp.log_type = BFA_PL_LOG_TYPE_STRING;
+ 		lp.misc = misc;
+-		strncpy(lp.log_entry.string_log, log_str,
+-			BFA_PL_STRING_LOG_SZ - 1);
++		strlcpy(lp.log_entry.string_log, log_str,
++			BFA_PL_STRING_LOG_SZ);
+ 		lp.log_entry.string_log[BFA_PL_STRING_LOG_SZ - 1] = '\0';
+ 		bfa_plog_add(plog, &lp);
+ 	}
+--- a/drivers/scsi/bfa/bfad.c
++++ b/drivers/scsi/bfa/bfad.c
+@@ -987,20 +987,20 @@ bfad_start_ops(struct bfad_s *bfad) {
+ 
+ 	/* Fill the driver_info info to fcs*/
+ 	memset(&driver_info, 0, sizeof(driver_info));
+-	strncpy(driver_info.version, BFAD_DRIVER_VERSION,
+-		sizeof(driver_info.version) - 1);
++	strlcpy(driver_info.version, BFAD_DRIVER_VERSION,
++		sizeof(driver_info.version));
+ 	if (host_name)
+-		strncpy(driver_info.host_machine_name, host_name,
+-			sizeof(driver_info.host_machine_name) - 1);
++		strlcpy(driver_info.host_machine_name, host_name,
++			sizeof(driver_info.host_machine_name));
+ 	if (os_name)
+-		strncpy(driver_info.host_os_name, os_name,
+-			sizeof(driver_info.host_os_name) - 1);
++		strlcpy(driver_info.host_os_name, os_name,
++			sizeof(driver_info.host_os_name));
+ 	if (os_patch)
+-		strncpy(driver_info.host_os_patch, os_patch,
+-			sizeof(driver_info.host_os_patch) - 1);
++		strlcpy(driver_info.host_os_patch, os_patch,
++			sizeof(driver_info.host_os_patch));
+ 
+-	strncpy(driver_info.os_device_name, bfad->pci_name,
+-		sizeof(driver_info.os_device_name) - 1);
++	strlcpy(driver_info.os_device_name, bfad->pci_name,
++		sizeof(driver_info.os_device_name));
+ 
+ 	/* FCS driver info init */
+ 	spin_lock_irqsave(&bfad->bfad_lock, flags);
+--- a/drivers/scsi/bfa/bfad_attr.c
++++ b/drivers/scsi/bfa/bfad_attr.c
+@@ -842,7 +842,7 @@ bfad_im_symbolic_name_show(struct device
+ 	char symname[BFA_SYMNAME_MAXLEN];
+ 
+ 	bfa_fcs_lport_get_attr(&bfad->bfa_fcs.fabric.bport, &port_attr);
+-	strncpy(symname, port_attr.port_cfg.sym_name.symname,
++	strlcpy(symname, port_attr.port_cfg.sym_name.symname,
+ 			BFA_SYMNAME_MAXLEN);
+ 	return snprintf(buf, PAGE_SIZE, "%s\n", symname);
+ }
+--- a/drivers/scsi/bfa/bfad_bsg.c
++++ b/drivers/scsi/bfa/bfad_bsg.c
+@@ -126,7 +126,7 @@ bfad_iocmd_ioc_get_attr(struct bfad_s *b
+ 
+ 	/* fill in driver attr info */
+ 	strcpy(iocmd->ioc_attr.driver_attr.driver, BFAD_DRIVER_NAME);
+-	strncpy(iocmd->ioc_attr.driver_attr.driver_ver,
++	strlcpy(iocmd->ioc_attr.driver_attr.driver_ver,
+ 		BFAD_DRIVER_VERSION, BFA_VERSION_LEN);
+ 	strcpy(iocmd->ioc_attr.driver_attr.fw_ver,
+ 		iocmd->ioc_attr.adapter_attr.fw_ver);
+@@ -314,9 +314,9 @@ bfad_iocmd_port_get_attr(struct bfad_s *
+ 	iocmd->attr.port_type = port_attr.port_type;
+ 	iocmd->attr.loopback = port_attr.loopback;
+ 	iocmd->attr.authfail = port_attr.authfail;
+-	strncpy(iocmd->attr.port_symname.symname,
++	strlcpy(iocmd->attr.port_symname.symname,
+ 		port_attr.port_cfg.sym_name.symname,
+-		sizeof(port_attr.port_cfg.sym_name.symname));
++		sizeof(iocmd->attr.port_symname.symname));
+ 
+ 	iocmd->status = BFA_STATUS_OK;
+ 	return 0;
 
 
