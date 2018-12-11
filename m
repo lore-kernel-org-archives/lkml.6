@@ -2,90 +2,126 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84C71C07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 05:18:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7770EC07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 05:24:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EC12A20672
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 05:18:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC12A20672
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gondor.apana.org.au
+	by mail.kernel.org (Postfix) with ESMTP id B477920811
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 05:24:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="aP+PP6Ej"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B477920811
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=russell.cc
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728995AbeLKFSI (ORCPT
+        id S1728994AbeLKFYV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 00:18:08 -0500
-Received: from orcrist.hmeau.com ([104.223.48.154]:43262 "EHLO
-        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725993AbeLKFSH (ORCPT
+        Tue, 11 Dec 2018 00:24:21 -0500
+Received: from out1-smtp.messagingengine.com ([66.111.4.25]:60577 "EHLO
+        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727991AbeLKFYV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 00:18:07 -0500
-Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
-        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
-        id 1gWaQi-0004PB-IA; Tue, 11 Dec 2018 13:18:00 +0800
-Received: from herbert by gondobar with local (Exim 4.89)
-        (envelope-from <herbert@gondor.apana.org.au>)
-        id 1gWaQd-0002U4-9j; Tue, 11 Dec 2018 13:17:55 +0800
-Date:   Tue, 11 Dec 2018 13:17:55 +0800
-From:   Herbert Xu <herbert@gondor.apana.org.au>
-To:     NeilBrown <neilb@suse.com>
-Cc:     Thomas Graf <tgraf@suug.ch>, Tom Herbert <tom@quantonium.net>,
-        David Miller <davem@davemloft.net>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next] rhashtable: further improve stability of
- rhashtable_walk
-Message-ID: <20181211051755.modgomqzszkbiihe@gondor.apana.org.au>
-References: <153086101070.2825.6850140624411927465.stgit@noble>
- <153086109256.2825.15329014177598382684.stgit@noble>
- <87zhtkeimx.fsf@notabene.neil.brown.name>
- <20181207053943.7zacyn5uvqkfnfoi@gondor.apana.org.au>
- <87k1kico1o.fsf@notabene.neil.brown.name>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87k1kico1o.fsf@notabene.neil.brown.name>
-User-Agent: NeoMutt/20170113 (1.7.2)
+        Tue, 11 Dec 2018 00:24:21 -0500
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
+        by mailout.nyi.internal (Postfix) with ESMTP id 9260C21AFB;
+        Tue, 11 Dec 2018 00:24:19 -0500 (EST)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute6.internal (MEProxy); Tue, 11 Dec 2018 00:24:19 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:content-type
+        :date:from:in-reply-to:message-id:mime-version:references
+        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm1; bh=pMxm48d9UHOSlbEZYv6rkEmhC3bI8rIFomvnflUbk
+        l4=; b=aP+PP6EjbmmeRsntvCr4m0DaMmsrtX39zSUPFEYkQOFJMkx4jlZhpuluy
+        RCeXPNE7Kl8ldG+uLXBFGJAUga9dYMh8owI+3+MY6+B9cWhGNCLfL3d6TSw/Gih4
+        o34I8XwZn00w2c570fjn0kh2qE9g1ZNFUgE7TpXxu27NGz6zHSO1SPCuTRXIsmyc
+        u67fTYYFII/mAu5TUSt7EQiM0M4nZnYMO9ZItaQln6yXiTEQliFPbtNurH8w8I2z
+        2aZv0B86mQqSxl8cJVDukwuGr8nd1TwiVl1OtWXYptnDd6ibTI+HnMrWRkCPX885
+        N5EFsCn/wPT01G4+ADEPtWsw6WZSQ==
+X-ME-Sender: <xms:AkoPXA4F4FZiiJhe-uoi_1NY5m1DYR3gmVx10-jf0YoGVMFy7XDFIQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedtkedrudegiedgkeefucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfquhhtnecuuegrihhlohhuthemucef
+    tddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenfghrlhcuvffnffculdeftd
+    dmnecujfgurhepkffuhffvffgjfhgtfggggfesthejredttderjeenucfhrhhomheptfhu
+    shhsvghllhcuvehurhhrvgihuceorhhushgtuhhrsehruhhsshgvlhhlrdgttgeqnecukf
+    hppeduvddvrdelledrkedvrddutdenucfrrghrrghmpehmrghilhhfrhhomheprhhushgt
+    uhhrsehruhhsshgvlhhlrdgttgenucevlhhushhtvghrufhiiigvpedt
+X-ME-Proxy: <xmx:AkoPXJZ3Mv8z812JtnvmQeWn5HXoFmy-V1iCFE-u4BN4iC9h8i3NwQ>
+    <xmx:AkoPXA1l12Mx2W95ZuXxnVkP72MHAzUcjtPEIznohOLLYPTEQbCwlw>
+    <xmx:AkoPXMqwgj7HRx9UDyQYgVthHE_WOYDZE7aaVWcv37dmfYcK9YzhNQ>
+    <xmx:AkoPXPOofqbL7kbUOUdxqbBSFAbRKR7-HopiOwU17XjmNPDAiiCiQw>
+    <xmx:AkoPXFp6Yp1ZJCLZ3Ne2uT_jDJmXxCuIKgl72INGWDvta298m6xptQ>
+    <xmx:A0oPXLuF1ZHQk87iRwqWSFnWhSro6hkdKfWohWbZxzlbumj25IQeVA>
+Received: from crackle.ozlabs.ibm.com (unknown [122.99.82.10])
+        by mail.messagingengine.com (Postfix) with ESMTPA id A017EE450E;
+        Tue, 11 Dec 2018 00:24:15 -0500 (EST)
+Message-ID: <a6dbd5284d8700d591614481fda242a25ca5a3b5.camel@russell.cc>
+Subject: Re: [RFC PATCH v2 11/11] powerpc/book3s32: Implement Kernel
+ Userspace Access Protection
+From:   Russell Currey <ruscur@russell.cc>
+To:     Christophe Leroy <christophe.leroy@c-s.fr>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Date:   Tue, 11 Dec 2018 16:25:07 +1100
+In-Reply-To: <98e37def51328f58d8c2ceb60edd4b3da7b6f2ef.1543356926.git.christophe.leroy@c-s.fr>
+References: <76d777b36e54e7b8d4c196405decc712fc5eaf45.1543356926.git.christophe.leroy@c-s.fr>
+         <98e37def51328f58d8c2ceb60edd4b3da7b6f2ef.1543356926.git.christophe.leroy@c-s.fr>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Neil:
-
-On Mon, Dec 10, 2018 at 09:50:43AM +1100, NeilBrown wrote:
->  I think it was agreed that I would not pursue features that were only
->  of use to out-of-tree code, but I don't think that applies here.  This
->  is not a feature, this is a quality-of-implementation improvement.
->  There are users in the kernel today which use
->    rhashtable_walk_stop()/rhashtable_walk_start()
->  to drop out of RCU protection for periods during the walk.
->  Any such user might miss seeing an object that has been in the table
->  for a while - sure that is less than optimal, and should be fixed if
->  the cost is small.
+On Wed, 2018-11-28 at 09:27 +0000, Christophe Leroy wrote:
+> This patch implements Kernel Userspace Access Protection for
+> book3s/32.
 > 
->  There are currently no rhlist users which use stop/start to drop out
->  of RCU, so there is no clear value in fixing that case, or cost in not
->  fixing it.
+> Due to limitations of the processor page protection capabilities,
+> the protection is only against writing. read protection cannot be
+> achieved using page protection.
+> 
+> In order to provide the protection, Ku and Ks keys are modified in
+> Userspace Segment registers, and different PP bits are used to:
+> 
+> PP01 provides RW for Key 0 and RO for Key 1
+> PP10 provides RW for all
+> PP11 provides RO for all
+> 
+> Today PP10 is used for RW pages and PP11 for RO pages. This patch
+> modifies page protection to PP01 for RW pages.
+> 
+> Then segment registers are set to Ku 0 and Ks 1. When kernel needs
+> to write to RW pages, the associated segment register is changed to
+> Ks 0 in order to allow write access to the kernel.
+> 
+> In order to avoid having the read all segment registers when
+> locking/unlocking the access, some data is kept in the thread_struct
+> and saved on stack on exceptions. The field identifies both the
+> first unlocked segment and the first segment following the last
+> unlocked one. When no segment is unlocked, it contains value 0.
+> 
+> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
 
-I think the complexities of this patch outweighs any benefit.
+Hey Christophe, I tried to test this and got a machine check after the
+kernel starts init.
 
-Walking an rhashtable is inherently unreliable, due to rehashing.
-If you need an 100% reliable walking mechanism, then add your own
-linked list alongside the hash table like xfrm does.
+Vector: 700 (Program Check) at [ef0b5e70]
+    pc: 00000ca4
+    lr: b7e1a030
+    sp: ef0b5f30
+   msr: 81002
+  current = 0xef0b8000
+    pid   = 1, comm = init
 
-Having said that, if the current code is missing items that existed
-prior to the start of the walk (in the absence of a rehash) then
-that would be a bug that we should fix.  Anything else like
-duplicates just needs to be accepted by the caller.
+Testing with mac99 model in qemu.
 
-So please explain how can an object be missed then we can work on
-fixing that and that only.
+- Russell
 
-Thanks,
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
