@@ -2,110 +2,127 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30A12C07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 17:18:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B814AC5CFFE
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 17:18:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F222020870
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 17:18:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F222020870
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 7EA9D20879
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 17:18:33 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=lca.pw header.i=@lca.pw header.b="svMzx1Nh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7EA9D20879
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lca.pw
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727159AbeLKRS0 (ORCPT
+        id S1727194AbeLKRSc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 12:18:26 -0500
-Received: from mga04.intel.com ([192.55.52.120]:5060 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726884AbeLKRS0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 12:18:26 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Dec 2018 09:18:25 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,343,1539673200"; 
-   d="scan'208";a="117920761"
-Received: from ray.jf.intel.com (HELO [10.7.201.17]) ([10.7.201.17])
-  by orsmga001.jf.intel.com with ESMTP; 11 Dec 2018 09:18:25 -0800
-Subject: Re: [PATCH v4 1/2] x86/fpu: track AVX-512 usage of tasks
-To:     Aubrey Li <aubrey.li@intel.com>, tglx@linutronix.de,
-        mingo@redhat.com, peterz@infradead.org, hpa@zytor.com
-Cc:     ak@linux.intel.com, tim.c.chen@linux.intel.com,
-        arjan@linux.intel.com, linux-kernel@vger.kernel.org,
-        Aubrey Li <aubrey.li@linux.intel.com>
-References: <20181211002448.3520-1-aubrey.li@intel.com>
-From:   Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <df1a1b5b-3e8b-5d96-12df-25be30c391af@intel.com>
-Date:   Tue, 11 Dec 2018 09:18:25 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <20181211002448.3520-1-aubrey.li@intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        Tue, 11 Dec 2018 12:18:32 -0500
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:44158 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726776AbeLKRSb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 12:18:31 -0500
+Received: by mail-qt1-f196.google.com with SMTP id n32so17233669qte.11
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 09:18:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lca.pw; s=google;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=h0hsgksLXZZZ+Za4ufYtYeUu6sbcdg1JL7mSLK44kUY=;
+        b=svMzx1NhUA9/VSxg+zlHTLuVM1Ssqd+JJ3soT1feYkYRvsGy51GQxFr+fTh2/vEanU
+         Vh3X3biNlEDE0T3+3TqTxCgKWoA3IBZaeQKhaH7Y4MRY/dYP95rmNdkMlF6s9VZvL2Up
+         i05Lg8dUO8w4zpxnyWrMDxNbQxQs8WV6Mw6r+CojIOzDnUeMhFgYDGmRX+iqCYmtkHEj
+         v0cMyZnE6QlWqtyOkrzmHFvdtkfi1qvAgUmuU2uk4wiy8r1+TMG3iZQEJRZZ5oyRVK5n
+         TSA9+yGqA0UP3yA786ErRqWFNIBnhwPp+C9sSL8YxAvulCbOfLRUX9Tx9pppJ72twWzP
+         Mh7w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=h0hsgksLXZZZ+Za4ufYtYeUu6sbcdg1JL7mSLK44kUY=;
+        b=r265q33Lj3Lq2X3NtsCWPDkcHs5prWbNABuCHsRTRRYOJ3zIFqJJG38L4crKXrIwh3
+         LdLKfXtFcHyAUZqHN03EQumS4DDNK6IL7IklpFrBII+wQuEBwxr7CLLt2DyMRS2+eIcg
+         heu1FphQu488ic+d8RClBgVJuf8njVplpUzmRgOeMkzI2CFxKhpeWKGkc6FsfGoLUDLu
+         eOZx/voG5nnVPR2AeGSQNE4Ghw3NtnupwxGVYHBCORRT44AqkjGcjEoLRnaehCWoxAob
+         0bN8xdtvsNV4zteVINFLQ6y7n0sPjtWEjqQpeWtiSsbZ4ev42Wh91oZXYf6BXUOpNLRl
+         MVcA==
+X-Gm-Message-State: AA+aEWZfEgYcF7SnyVfKvysGW7107mM2GZJy8g5VFJkGCZlT7/raqo4R
+        vcJaB0jeve7ftaKXX3KnzjbLXA==
+X-Google-Smtp-Source: AFSGD/VjSceHo1CAZ9W5GfynGWR67gmlWIo3i6anGONMRu4EZeLaCyiYEothGKkUaRykwx+4aL7APw==
+X-Received: by 2002:ac8:16d8:: with SMTP id y24mr17243898qtk.253.1544548709912;
+        Tue, 11 Dec 2018 09:18:29 -0800 (PST)
+Received: from dhcp-41-57.bos.redhat.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
+        by smtp.gmail.com with ESMTPSA id e89sm8298135qtb.78.2018.12.11.09.18.28
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 11 Dec 2018 09:18:29 -0800 (PST)
+Message-ID: <1544548707.18411.3.camel@lca.pw>
+Subject: Re: [PATCH] arm64: increase stack size for KASAN_EXTRA
+From:   Qian Cai <cai@lca.pw>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Alexander Potapenko <glider@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        kasan-dev <kasan-dev@googlegroups.com>,
+        Linux-MM <linux-mm@kvack.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Date:   Tue, 11 Dec 2018 12:18:27 -0500
+In-Reply-To: <CAK8P3a20kRDrkS1YFLp6cYeKcUoC9s+O_tnYNbKEMWGukia1Tg@mail.gmail.com>
+References: <721E7B42-2D55-4866-9C1A-3E8D64F33F9C@gmx.us>
+         <20181207223449.38808-1-cai@lca.pw>
+         <CAK8P3a20kRDrkS1YFLp6cYeKcUoC9s+O_tnYNbKEMWGukia1Tg@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6 (3.22.6-10.el7) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/10/18 4:24 PM, Aubrey Li wrote:
-> The tracking turns on the usage flag at the next context switch of
-> the task, but requires 3 consecutive context switches with no usage
-> to clear it. This decay is required because well-written AVX-512
-> applications are expected to clear this state when not actively using
-> AVX-512 registers.
+On Tue, 2018-12-11 at 13:42 +0100, Arnd Bergmann wrote:
+> On Fri, Dec 7, 2018 at 11:35 PM Qian Cai <cai@lca.pw> wrote:
+> > 
+> > If the kernel is configured with KASAN_EXTRA, the stack size is
+> > increasted significantly due to enable this option will set
+> > -fstack-reuse to "none" in GCC [1]. As the results, it could trigger
+> > stack overrun quite often with 32k stack size compiled using GCC 8. For
+> > example, this reproducer
+> > 
+> > size
+> > 7536 shrink_inactive_list
+> > 7440 shrink_page_list
+> > 6560 fscache_stats_show
+> > 3920 jbd2_journal_commit_transaction
+> > 3216 try_to_unmap_one
+> > 3072 migrate_page_move_mapping
+> > 3584 migrate_misplaced_transhuge_page
+> > 3920 ip_vs_lblcr_schedule
+> > 4304 lpfc_nvme_info_show
+> > 3888 lpfc_debugfs_nvmestat_data.constprop
+> > 
+> > There are other 49 functions are over 2k in size while compiling kernel
+> > with "-Wframe-larger-than=" on this machine. Hence, it is too much work
+> > to change Makefiles for each object to compile without
+> > -fsanitize-address-use-after-scope individually.
+> > 
+> > [1] https://gcc.gnu.org/bugzilla/show_bug.cgi?id=81715#c23
+> 
+> Could you clarify: are the numbers you see with or without the bugfix
+> from that bugzilla?
+> 
 
-One concern about this:  Given a HZ=1000 system, this means that the
-flag needs to get scanned every ~3ms.  That's a pretty good amount of
-scanning on a system with hundreds or thousands of tasks running around.
+The numbers were from GCC8 which does NOT contain this patch [1].
 
-How many tasks does this scale to until you're eating up an entire CPU
-or two just scanning /proc?
+GCC9 is awesome which reduced the numbers in half even for KASAN_EXTRA. Only
+thing is that GCC9 has not been officially released yet, so it is a bit
+inconvenient for users need to compile the compiler by themselves first.
+
+I am fine either way to drop this patch or keep it until GCC9 is GA.
+
+[1] https://gcc.gnu.org/bugzilla/show_bug.cgi?id=81715#c35
