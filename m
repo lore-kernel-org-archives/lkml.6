@@ -2,83 +2,111 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53469C5CFFE
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 19:57:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49008C6783B
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 20:00:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0DD3D20870
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 19:57:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E64AB2087F
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 20:00:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XNozX/1Q"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0DD3D20870
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="HKFYjLF9";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="SBW9IRok"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E64AB2087F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726227AbeLKT5S (ORCPT
+        id S1726240AbeLKUAT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 14:57:18 -0500
-Received: from mail-pg1-f171.google.com ([209.85.215.171]:33243 "EHLO
-        mail-pg1-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726125AbeLKT5S (ORCPT
+        Tue, 11 Dec 2018 15:00:19 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:60016 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726125AbeLKUAS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 14:57:18 -0500
-Received: by mail-pg1-f171.google.com with SMTP id z11so7143117pgu.0
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 11:57:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=ZP4GBqDZAb8jD/jVzZynJIv2l8hEYXUTyekAG8xbeO8=;
-        b=XNozX/1QnENvqC7dHqKkpUQEunuHtpp6snA1ppqKTc/AlSHZuDQnQNInXR6dUqgW/+
-         t2FeijAHTFdSVvla1CTue07Ub6DQoNf6/fF7sQplQrpD9cBSqRBNqB081c0NnaEWu/sn
-         dpcWoS5wYYni1Ht44ounNjT1ZCLiYUbI32yYt1DkL2Rq/gWHa8p08JJ6GMGewXD2evEw
-         Zi1SZX3CwTkNI6UssjHWmjCz6/+upIUvq8dWZDgtyuyTPgWQbmFsczw5V7NnXtUkV4HM
-         Ln3JEhcqEOoVCVk2/rUeyBN9jGpEQfBVStT1+5d2/OloWK6IBYhtputoeMH81KZVMnel
-         zVog==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mime-version:content-disposition:user-agent;
-        bh=ZP4GBqDZAb8jD/jVzZynJIv2l8hEYXUTyekAG8xbeO8=;
-        b=ovhEDsR1xjLPBI+ImskAlMGtDleLk4+MBwiKQxSZ6eKp+WPuxuHx3AzbrH1S2JQb1o
-         p009iq6e6vmh9ztQNd9nxGmzJEs6NL2kUmXZWWeQtRjSkaMq/x1P6Al4OAVJVo/+bKl2
-         XXykgukXu49eZ4zBsYw6jHSzXKVD/ixF1wbUFzub6uS/DXvfUtJ0CHvOQtUZu1H4uRnD
-         szUaIsO8/PQgkBD6Ul8Rfhg/+9aoYT/t5MSi1z4LAkke2UGtXScx4D8glLYAor1nowt9
-         ZhkE5mXK3P2zoac9I46aic6vZHhPwUjfwQ+0hgkXAVMcnTxSp6S7LCG3xautdFNiFtTL
-         VIYw==
-X-Gm-Message-State: AA+aEWZ/sopDIxmb9xdchr6uUf9OQkZX7+p2EzlJRCmpr/kDnVw+wo9K
-        dMusAn1tReog/v2glYCYAKA=
-X-Google-Smtp-Source: AFSGD/UYDm+3WioEMPtu++a/66+qsfyH6Iw12etQpiuggvq7OtzUBF/ld5PdpwXujUdgkmwxXIis1Q==
-X-Received: by 2002:a62:b511:: with SMTP id y17mr17738048pfe.199.1544558236840;
-        Tue, 11 Dec 2018 11:57:16 -0800 (PST)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id q199sm25479082pfc.97.2018.12.11.11.57.15
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 11 Dec 2018 11:57:16 -0800 (PST)
-Date:   Tue, 11 Dec 2018 11:57:15 -0800
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Guo Ren <guoren@kernel.org>
-Cc:     linux-kernel@vger.kernel.org
-Subject: working toolchain for c-sky
-Message-ID: <20181211195715.GA32516@roeck-us.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        Tue, 11 Dec 2018 15:00:18 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 1D77E60227; Tue, 11 Dec 2018 20:00:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1544558418;
+        bh=b1cCFHkNyzpXw51nJO7Dp9Y78GDfx9moKasqPuTPQ+U=;
+        h=From:To:Cc:Subject:Date:From;
+        b=HKFYjLF9OAfBPZd5OcP9fdpWqwareXKQqVsO7Gwy68joF1rAsgoTtnds/SAzB62tN
+         Yjcbh6XBOeswhEtarsxwnccJP9tLwBpIyfxp3Oh9baHmCi810rsfpWEHOuOlQWWAav
+         U7JZdR/wn+18JfU0Qzx7m2W45kgU0BB40ZzCZS1E=
+Received: from jhugo-perf-lnx.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: jhugo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id B9CAD60132;
+        Tue, 11 Dec 2018 20:00:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1544558417;
+        bh=b1cCFHkNyzpXw51nJO7Dp9Y78GDfx9moKasqPuTPQ+U=;
+        h=From:To:Cc:Subject:Date:From;
+        b=SBW9IRokC5U79mzo9yMnS6P/r1rIL6Dxf3pHiHCrVjPvBVDDHmKqfquNago4E2OG0
+         yNIuhCsX3XzmN+fdLMKpfngwdKm2LMwOlwzzuMJLEleMTgGyE+uofA00kzhkhBhekt
+         /hVtO9Eniau9s3nf3tsjW1R3KkCevsMr6fbpNOXI=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B9CAD60132
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jhugo@codeaurora.org
+From:   Jeffrey Hugo <jhugo@codeaurora.org>
+To:     sboyd@kernel.org, andy.gross@linaro.org, david.brown@linaro.org,
+        mturquette@baylibre.com
+Cc:     bjorn.andersson@linaro.org, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jeffrey Hugo <jhugo@codeaurora.org>
+Subject: [PATCH] clk: qcom: Add missing msm8998 resets
+Date:   Tue, 11 Dec 2018 13:00:04 -0700
+Message-Id: <1544558404-1705-1-git-send-email-jhugo@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+commit c0cb7c7e7164 ("clk: qcom: Enumerate remaining msm8998 resets")
+missed two USB2 resets.  Add them.
 
-can someone point me to a working c-sky toolchain ?
+Fixes: c0cb7c7e7164 ("clk: qcom: Enumerate remaining msm8998 resets")
+Signed-off-by: Jeffrey Hugo <jhugo@codeaurora.org>
+---
 
-I tried several from https://github.com/c-sky/tools/, but they all fail
-to build csky:defconfig with various error messages.
+Sorry, noticed this when working on USB.  I double checked the documentation
+again, and I'm reasonably sure I got them all now.
 
-Thanks,
-Guenter
+ drivers/clk/qcom/gcc-msm8998.c               | 2 ++
+ include/dt-bindings/clock/qcom,gcc-msm8998.h | 2 ++
+ 2 files changed, 4 insertions(+)
+
+diff --git a/drivers/clk/qcom/gcc-msm8998.c b/drivers/clk/qcom/gcc-msm8998.c
+index 5f989ee..f3c2ab4 100644
+--- a/drivers/clk/qcom/gcc-msm8998.c
++++ b/drivers/clk/qcom/gcc-msm8998.c
+@@ -2827,6 +2827,8 @@ enum {
+ 	[GCC_MMSS_BCR] = { 0xb000 },
+ 	[GCC_QDSS_BCR] = { 0xc000 },
+ 	[GCC_WCSS_BCR] = { 0x11000 },
++	[GCC_QUSB2PHY_PRIM_BCR] = { 0x12000 },
++	[GCC_QUSB2PHY_SEC_BCR] = { 0x12004 },
+ 	[GCC_BLSP1_BCR] = { 0x17000 },
+ 	[GCC_BLSP1_UART1_BCR] = { 0x1a000 },
+ 	[GCC_BLSP1_UART2_BCR] = { 0x1c000 },
+diff --git a/include/dt-bindings/clock/qcom,gcc-msm8998.h b/include/dt-bindings/clock/qcom,gcc-msm8998.h
+index 958fe83..ba84bba 100644
+--- a/include/dt-bindings/clock/qcom,gcc-msm8998.h
++++ b/include/dt-bindings/clock/qcom,gcc-msm8998.h
+@@ -296,5 +296,7 @@
+ #define GCC_GLM_BCR						103
+ #define GCC_SKL_BCR						104
+ #define GCC_MSMPU_BCR						105
++#define GCC_QUSB2PHY_PRIM_BCR					106
++#define GCC_QUSB2PHY_SEC_BCR					107
+ 
+ #endif
+-- 
+Qualcomm Datacenter Technologies as an affiliate of Qualcomm Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the
+Code Aurora Forum, a Linux Foundation Collaborative Project.
+
