@@ -7,51 +7,50 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8DE6C07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:51:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04E39C07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:51:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A0D2F2084E
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:51:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C17472145D
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:51:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544543490;
-	bh=GN7W4OAIQJImCtpARNKgATw13qsK4UxyBhweSNCwPTw=;
+	s=default; t=1544543493;
+	bh=v4X99B3eeBD+FIbBR9EWkBg7XYuW93298tNi0+0ih0E=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Ov+opE4jlZco8wSRefSY02Us+zZWfcfwGHT8nmESjqciQGjXg9GAa9e5NdVNBTC3n
-	 vtGBiJ4gZLoroZrPRfNpBiwgf6wZOfBYBZ8/DHNm4VcpyKWCGPyW7vkybeKMv+HOx1
-	 ng0A+pxG+ott4grWJYGv4ucfEVAF3PksYvtmJVHc=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A0D2F2084E
+	b=d3L1+1XU83Wtn4j3atlHIuymxoydaupKtjeflBs8VsyeeixJfZR2e73C/xbBFeG3o
+	 ASAOZZ5AHcjfi7zF7JdDlEPvfr45+DTMi6WrZMAKnPeYs08C3H8tEWdpEYDP1qf33y
+	 Pz8acZ33lEC6heN4BExWN172L7kjkMgLTxdK5Lq0=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C17472145D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729507AbeLKPv3 (ORCPT
+        id S1728872AbeLKPvc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 10:51:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40070 "EHLO mail.kernel.org"
+        Tue, 11 Dec 2018 10:51:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40130 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728270AbeLKPv0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:51:26 -0500
+        id S1729502AbeLKPv3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 10:51:29 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 618C62084E;
-        Tue, 11 Dec 2018 15:51:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 36E5820855;
+        Tue, 11 Dec 2018 15:51:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544543485;
-        bh=GN7W4OAIQJImCtpARNKgATw13qsK4UxyBhweSNCwPTw=;
+        s=default; t=1544543488;
+        bh=v4X99B3eeBD+FIbBR9EWkBg7XYuW93298tNi0+0ih0E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cSvULXdyeh6vwV5/BvDEnfPehGh/zwpPihoyeEGoS1SCtNLCyOIUO7btOiOD4mHbS
-         y9dYD0BtHNGKsOlG3UDlJLr+sN9kHLDm1RKh1EYnz1VMQlij5/m68zlgLkYNqSF9zt
-         +DM6Wmyq/kCK/l5GKlnBOiR92E321N1gkNWI1+Do=
+        b=qFPD0FTY2dyfxbBWoXOq/HQkwszVst6x4hl6Wv6MurncXeoTbxc4cJn7zK+ch37Fg
+         fuqTR5drRnx6lB/2ohjOyh4xChvPEO7rnvG0fFFvvpz8z2o0O77LQmrRL2kOqyzUFP
+         rC8TqpeGMM4/dd9RLy8Xawuf5WI24JDoeJwVLt9o=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Aya Levin <ayal@mellanox.com>,
-        Tariq Toukan <tariqt@mellanox.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Bartosz Golaszewski <brgl@bgdev.pl>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 17/67] net/mlx4: Fix UBSAN warning of signed integer overflow
-Date:   Tue, 11 Dec 2018 16:41:17 +0100
-Message-Id: <20181211151631.258636206@linuxfoundation.org>
+Subject: [PATCH 4.14 18/67] gpio: mockup: fix indicated direction
+Date:   Tue, 11 Dec 2018 16:41:18 +0100
+Message-Id: <20181211151631.307878553@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181211151630.378216233@linuxfoundation.org>
 References: <20181211151630.378216233@linuxfoundation.org>
@@ -70,43 +69,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit a463146e67c848cbab5ce706d6528281b7cded08 ]
+[ Upstream commit bff466bac59994cfcceabe4d0be5fdc1c20cd5b8 ]
 
-UBSAN: Undefined behavior in
-drivers/net/ethernet/mellanox/mlx4/resource_tracker.c:626:29
-signed integer overflow: 1802201963 + 1802201963 cannot be represented
-in type 'int'
+Commit 3edfb7bd76bd ("gpiolib: Show correct direction from the
+beginning") fixed an existing issue but broke libgpiod tests by
+changing the default direction of dummy lines to output.
 
-The union of res_reserved and res_port_rsvd[MLX4_MAX_PORTS] monitors
-granting of reserved resources. The grant operation is calculated and
-protected, thus both members of the union cannot be negative.  Changed
-type of res_reserved and of res_port_rsvd[MLX4_MAX_PORTS] from signed
-int to unsigned int, allowing large value.
+We don't break user-space so make gpio-mockup behave as before.
 
-Fixes: 5a0d0a6161ae ("mlx4: Structures and init/teardown for VF resource quotas")
-Signed-off-by: Aya Levin <ayal@mellanox.com>
-Signed-off-by: Tariq Toukan <tariqt@mellanox.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/mellanox/mlx4/mlx4.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/gpio/gpio-mockup.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/ethernet/mellanox/mlx4/mlx4.h b/drivers/net/ethernet/mellanox/mlx4/mlx4.h
-index c68da1986e51..aaeb446bba62 100644
---- a/drivers/net/ethernet/mellanox/mlx4/mlx4.h
-+++ b/drivers/net/ethernet/mellanox/mlx4/mlx4.h
-@@ -541,8 +541,8 @@ struct slave_list {
- struct resource_allocator {
- 	spinlock_t alloc_lock; /* protect quotas */
- 	union {
--		int res_reserved;
--		int res_port_rsvd[MLX4_MAX_PORTS];
-+		unsigned int res_reserved;
-+		unsigned int res_port_rsvd[MLX4_MAX_PORTS];
- 	};
- 	union {
- 		int res_free;
+diff --git a/drivers/gpio/gpio-mockup.c b/drivers/gpio/gpio-mockup.c
+index 9532d86a82f7..d99c8d8da9a0 100644
+--- a/drivers/gpio/gpio-mockup.c
++++ b/drivers/gpio/gpio-mockup.c
+@@ -35,8 +35,8 @@
+ #define GPIO_MOCKUP_MAX_RANGES	(GPIO_MOCKUP_MAX_GC * 2)
+ 
+ enum {
+-	GPIO_MOCKUP_DIR_OUT = 0,
+-	GPIO_MOCKUP_DIR_IN = 1,
++	GPIO_MOCKUP_DIR_IN = 0,
++	GPIO_MOCKUP_DIR_OUT = 1,
+ };
+ 
+ /*
+@@ -112,7 +112,7 @@ static int gpio_mockup_get_direction(struct gpio_chip *gc, unsigned int offset)
+ {
+ 	struct gpio_mockup_chip *chip = gpiochip_get_data(gc);
+ 
+-	return chip->lines[offset].dir;
++	return !chip->lines[offset].dir;
+ }
+ 
+ static int gpio_mockup_name_lines(struct device *dev,
 -- 
 2.19.1
 
