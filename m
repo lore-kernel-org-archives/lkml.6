@@ -2,288 +2,176 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.9 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4107EC07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:38:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06277C5CFFE
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:38:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F10E220672
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:38:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F10E220672
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id 782702082F
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:38:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 782702082F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727188AbeLKPiU (ORCPT
+        id S1727199AbeLKPig (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 10:38:20 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:40611 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726670AbeLKPiU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:38:20 -0500
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wBBFbora4043282
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Tue, 11 Dec 2018 07:37:50 -0800
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wBBFbotd4043279;
-        Tue, 11 Dec 2018 07:37:50 -0800
-Date:   Tue, 11 Dec 2018 07:37:50 -0800
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Morten Rasmussen <tipbot@zytor.com>
-Message-ID: <tip-2802bf3cd936fe2c8033a696d375a4d9d3974de4@git.kernel.org>
-Cc:     hpa@zytor.com, tglx@linutronix.de, peterz@infradead.org,
-        efault@gmx.de, torvalds@linux-foundation.org,
-        morten.rasmussen@arm.com, linux-kernel@vger.kernel.org,
-        quentin.perret@arm.com, mingo@kernel.org
-Reply-To: hpa@zytor.com, tglx@linutronix.de, peterz@infradead.org,
-          efault@gmx.de, torvalds@linux-foundation.org,
-          morten.rasmussen@arm.com, mingo@kernel.org,
-          quentin.perret@arm.com, linux-kernel@vger.kernel.org
-In-Reply-To: <20181203095628.11858-13-quentin.perret@arm.com>
-References: <20181203095628.11858-13-quentin.perret@arm.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:sched/core] sched/fair: Add over-utilization/tipping point
- indicator
-Git-Commit-ID: 2802bf3cd936fe2c8033a696d375a4d9d3974de4
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Tue, 11 Dec 2018 10:38:36 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:15674 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726452AbeLKPif (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 10:38:35 -0500
+Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 25BC1E73FA4;
+        Tue, 11 Dec 2018 23:38:27 +0800 (CST)
+Received: from localhost (10.202.226.46) by DGGEMS404-HUB.china.huawei.com
+ (10.3.19.204) with Microsoft SMTP Server id 14.3.408.0; Tue, 11 Dec 2018
+ 23:38:27 +0800
+Date:   Tue, 11 Dec 2018 15:38:17 +0000
+From:   Jonathan Cameron <jonathan.cameron@huawei.com>
+To:     Robin Murphy <robin.murphy@arm.com>
+CC:     <will.deacon@arm.com>, <catalin.marinas@arm.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <cyrilc@xilinx.com>,
+        <james.morse@arm.com>, <anshuman.khandual@arm.com>
+Subject: Re: [PATCH] arm64: Add memory hotplug support
+Message-ID: <20181211153817.0000580d@huawei.com>
+In-Reply-To: <0a0c7d3b8fbe1b2b399eeb6889027031335d2af1.1544453739.git.robin.murphy@arm.com>
+References: <0a0c7d3b8fbe1b2b399eeb6889027031335d2af1.1544453739.git.robin.murphy@arm.com>
+Organization: Huawei
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; i686-w64-mingw32)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.202.226.46]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  2802bf3cd936fe2c8033a696d375a4d9d3974de4
-Gitweb:     https://git.kernel.org/tip/2802bf3cd936fe2c8033a696d375a4d9d3974de4
-Author:     Morten Rasmussen <morten.rasmussen@arm.com>
-AuthorDate: Mon, 3 Dec 2018 09:56:25 +0000
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Tue, 11 Dec 2018 15:17:01 +0100
+On Mon, 10 Dec 2018 15:29:01 +0000
+Robin Murphy <robin.murphy@arm.com> wrote:
 
-sched/fair: Add over-utilization/tipping point indicator
+> Wire up the basic support for hot-adding memory. Since memory hotplug
+> is fairly tightly coupled to sparsemem, we tweak pfn_valid() to also
+> cross-check the presence of a section in the manner of the generic
+> implementation, before falling back to memblock to check for no-map
+> regions within a present section as before. By having arch_add_memory(()
+> create the linear mapping first, this then makes everything work in the
+> way that __add_section() expects.
+> 
+> We expect hotplug to be ACPI-driven, so the swapper_pg_dir updates
+> should be safe from races by virtue of the global device hotplug lock.
+> 
+> Signed-off-by: Robin Murphy <robin.murphy@arm.com>
 
-Energy-aware scheduling is only meant to be active while the system is
-_not_ over-utilized. That is, there are spare cycles available to shift
-tasks around based on their actual utilization to get a more
-energy-efficient task distribution without depriving any tasks. When
-above the tipping point task placement is done the traditional way based
-on load_avg, spreading the tasks across as many cpus as possible based
-on priority scaled load to preserve smp_nice. Below the tipping point we
-want to use util_avg instead. We need to define a criteria for when we
-make the switch.
+This did come out even shorter than I expected and the "work around" for
+the pfn_valid issue is neat and tidy.
 
-The util_avg for each cpu converges towards 100% regardless of how many
-additional tasks we may put on it. If we define over-utilized as:
+I've done some really quick checks bolting this in place of the old
+hotplug code  we were abusing with our NUMA handling (which is ripped out
+of the x86 code).  Seems to work well though I wouldn't describe these as
+proper testing as it was just a few cycles. It's somewhat of a pain to test
+until you add remove as have to keep rebooting :)
 
-sum_{cpus}(rq.cfs.avg.util_avg) + margin > sum_{cpus}(rq.capacity)
+The one case I have left that I'll try and run tomorrow is the one where
+we probe memory on a NUMA node that is empty at boot.
+There used to be a nasty work around needed for that path.  The core code
+has changed a fair bit since then so may be fine now. I'd just
+like to sanity check it. So for today I'll go with a resounding
+'seems good'.
 
-some individual cpus may be over-utilized running multiple tasks even
-when the above condition is false. That should be okay as long as we try
-to spread the tasks out to avoid per-cpu over-utilization as much as
-possible and if all tasks have the _same_ priority. If the latter isn't
-true, we have to consider priority to preserve smp_nice.
+Thanks.
 
-For example, we could have n_cpus nice=-10 util_avg=55% tasks and
-n_cpus/2 nice=0 util_avg=60% tasks. Balancing based on util_avg we are
-likely to end up with nice=-10 tasks sharing cpus and nice=0 tasks
-getting their own as we 1.5*n_cpus tasks in total and 55%+55% is less
-over-utilized than 55%+60% for those cpus that have to be shared. The
-system utilization is only 85% of the system capacity, but we are
-breaking smp_nice.
+Jonathan
+> ---
+> 
+> Looks like I'm not going to have the whole pte_devmap story figured out
+> in time to land any ZONE_DEVICE support this cycle, but since this patch
+> also stands alone as a complete feature (and has ended up remarkably
+> simple and self-contained), I hope we might consider getting it merged
+> on its own merit.
+> 
+> Robin.
+> 
+>  arch/arm64/Kconfig   |  3 +++
+>  arch/arm64/mm/init.c |  8 ++++++++
+>  arch/arm64/mm/mmu.c  | 12 ++++++++++++
+>  arch/arm64/mm/numa.c | 10 ++++++++++
+>  4 files changed, 33 insertions(+)
+> 
+> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+> index 6d2b25f51bb3..7b855ae45747 100644
+> --- a/arch/arm64/Kconfig
+> +++ b/arch/arm64/Kconfig
+> @@ -261,6 +261,9 @@ config ZONE_DMA32
+>  config HAVE_GENERIC_GUP
+>  	def_bool y
+>  
+> +config ARCH_ENABLE_MEMORY_HOTPLUG
+> +	def_bool y
+> +
+>  config SMP
+>  	def_bool y
+>  
+> diff --git a/arch/arm64/mm/init.c b/arch/arm64/mm/init.c
+> index 2983e0fc1786..82e0b08f2e31 100644
+> --- a/arch/arm64/mm/init.c
+> +++ b/arch/arm64/mm/init.c
+> @@ -291,6 +291,14 @@ int pfn_valid(unsigned long pfn)
+>  
+>  	if ((addr >> PAGE_SHIFT) != pfn)
+>  		return 0;
+> +
+> +#ifdef CONFIG_SPARSEMEM
+> +	if (pfn_to_section_nr(pfn) >= NR_MEM_SECTIONS)
+> +		return 0;
+> +
+> +	if (!valid_section(__nr_to_section(pfn_to_section_nr(pfn))))
+> +		return 0;
+> +#endif
+>  	return memblock_is_map_memory(addr);
+>  }
+>  EXPORT_SYMBOL(pfn_valid);
+> diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
+> index e1b2d58a311a..22379a74d289 100644
+> --- a/arch/arm64/mm/mmu.c
+> +++ b/arch/arm64/mm/mmu.c
+> @@ -1044,3 +1044,15 @@ int pud_free_pmd_page(pud_t *pudp, unsigned long addr)
+>  	pmd_free(NULL, table);
+>  	return 1;
+>  }
+> +
+> +#ifdef CONFIG_MEMORY_HOTPLUG
+> +int arch_add_memory(int nid, u64 start, u64 size, struct vmem_altmap *altmap,
+> +		    bool want_memblock)
+> +{
+> +	__create_pgd_mapping(swapper_pg_dir, start, __phys_to_virt(start),
+> +			     size, PAGE_KERNEL, pgd_pgtable_alloc, 0);
+> +
+> +	return __add_pages(nid, start >> PAGE_SHIFT, size >> PAGE_SHIFT,
+> +			   altmap, want_memblock);
+> +}
+> +#endif
+> diff --git a/arch/arm64/mm/numa.c b/arch/arm64/mm/numa.c
+> index 27a31efd9e8e..ae34e3a1cef1 100644
+> --- a/arch/arm64/mm/numa.c
+> +++ b/arch/arm64/mm/numa.c
+> @@ -466,3 +466,13 @@ void __init arm64_numa_init(void)
+>  
+>  	numa_init(dummy_numa_init);
+>  }
+> +
+> +/*
+> + * We hope that we will be hotplugging memory on nodes we already know about,
+> + * such that acpi_get_node() succeeds and we never fall back to this...
+> + */
+> +int memory_add_physaddr_to_nid(u64 addr)
+> +{
+> +	pr_warn("Unknown node for memory at 0x%llx, assuming node 0\n", addr);
+> +	return 0;
+> +}
 
-To be sure not to break smp_nice, we have defined over-utilization
-conservatively as when any cpu in the system is fully utilized at its
-highest frequency instead:
 
-cpu_rq(any).cfs.avg.util_avg + margin > cpu_rq(any).capacity
-
-IOW, as soon as one cpu is (nearly) 100% utilized, we switch to load_avg
-to factor in priority to preserve smp_nice.
-
-With this definition, we can skip periodic load-balance as no cpu has an
-always-running task when the system is not over-utilized. All tasks will
-be periodic and we can balance them at wake-up. This conservative
-condition does however mean that some scenarios that could benefit from
-energy-aware decisions even if one cpu is fully utilized would not get
-those benefits.
-
-For systems where some cpus might have reduced capacity on some cpus
-(RT-pressure and/or big.LITTLE), we want periodic load-balance checks as
-soon a just a single cpu is fully utilized as it might one of those with
-reduced capacity and in that case we want to migrate it.
-
-[ peterz: Added a comment explaining why new tasks are not accounted during
-          overutilization detection. ]
-
-Signed-off-by: Morten Rasmussen <morten.rasmussen@arm.com>
-Signed-off-by: Quentin Perret <quentin.perret@arm.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Mike Galbraith <efault@gmx.de>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: adharmap@codeaurora.org
-Cc: chris.redpath@arm.com
-Cc: currojerez@riseup.net
-Cc: dietmar.eggemann@arm.com
-Cc: edubezval@gmail.com
-Cc: gregkh@linuxfoundation.org
-Cc: javi.merino@kernel.org
-Cc: joel@joelfernandes.org
-Cc: juri.lelli@redhat.com
-Cc: patrick.bellasi@arm.com
-Cc: pkondeti@codeaurora.org
-Cc: rjw@rjwysocki.net
-Cc: skannan@codeaurora.org
-Cc: smuckle@google.com
-Cc: srinivas.pandruvada@linux.intel.com
-Cc: thara.gopinath@linaro.org
-Cc: tkjos@google.com
-Cc: valentin.schneider@arm.com
-Cc: vincent.guittot@linaro.org
-Cc: viresh.kumar@linaro.org
-Link: https://lkml.kernel.org/r/20181203095628.11858-13-quentin.perret@arm.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- kernel/sched/fair.c  | 59 ++++++++++++++++++++++++++++++++++++++++++++++++++--
- kernel/sched/sched.h |  4 ++++
- 2 files changed, 61 insertions(+), 2 deletions(-)
-
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index e04f29098ec7..767e7675774b 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -5082,6 +5082,24 @@ static inline void hrtick_update(struct rq *rq)
- }
- #endif
- 
-+#ifdef CONFIG_SMP
-+static inline unsigned long cpu_util(int cpu);
-+static unsigned long capacity_of(int cpu);
-+
-+static inline bool cpu_overutilized(int cpu)
-+{
-+	return (capacity_of(cpu) * 1024) < (cpu_util(cpu) * capacity_margin);
-+}
-+
-+static inline void update_overutilized_status(struct rq *rq)
-+{
-+	if (!READ_ONCE(rq->rd->overutilized) && cpu_overutilized(rq->cpu))
-+		WRITE_ONCE(rq->rd->overutilized, SG_OVERUTILIZED);
-+}
-+#else
-+static inline void update_overutilized_status(struct rq *rq) { }
-+#endif
-+
- /*
-  * The enqueue_task method is called before nr_running is
-  * increased. Here we update the fair scheduling stats and
-@@ -5139,8 +5157,26 @@ enqueue_task_fair(struct rq *rq, struct task_struct *p, int flags)
- 		update_cfs_group(se);
- 	}
- 
--	if (!se)
-+	if (!se) {
- 		add_nr_running(rq, 1);
-+		/*
-+		 * Since new tasks are assigned an initial util_avg equal to
-+		 * half of the spare capacity of their CPU, tiny tasks have the
-+		 * ability to cross the overutilized threshold, which will
-+		 * result in the load balancer ruining all the task placement
-+		 * done by EAS. As a way to mitigate that effect, do not account
-+		 * for the first enqueue operation of new tasks during the
-+		 * overutilized flag detection.
-+		 *
-+		 * A better way of solving this problem would be to wait for
-+		 * the PELT signals of tasks to converge before taking them
-+		 * into account, but that is not straightforward to implement,
-+		 * and the following generally works well enough in practice.
-+		 */
-+		if (flags & ENQUEUE_WAKEUP)
-+			update_overutilized_status(rq);
-+
-+	}
- 
- 	hrtick_update(rq);
- }
-@@ -7940,6 +7976,9 @@ static inline void update_sg_lb_stats(struct lb_env *env,
- 		if (nr_running > 1)
- 			*sg_status |= SG_OVERLOAD;
- 
-+		if (cpu_overutilized(i))
-+			*sg_status |= SG_OVERUTILIZED;
-+
- #ifdef CONFIG_NUMA_BALANCING
- 		sgs->nr_numa_running += rq->nr_numa_running;
- 		sgs->nr_preferred_running += rq->nr_preferred_running;
-@@ -8170,8 +8209,15 @@ next_group:
- 		env->fbq_type = fbq_classify_group(&sds->busiest_stat);
- 
- 	if (!env->sd->parent) {
-+		struct root_domain *rd = env->dst_rq->rd;
-+
- 		/* update overload indicator if we are at root domain */
--		WRITE_ONCE(env->dst_rq->rd->overload, sg_status & SG_OVERLOAD);
-+		WRITE_ONCE(rd->overload, sg_status & SG_OVERLOAD);
-+
-+		/* Update over-utilization (tipping point, U >= 0) indicator */
-+		WRITE_ONCE(rd->overutilized, sg_status & SG_OVERUTILIZED);
-+	} else if (sg_status & SG_OVERUTILIZED) {
-+		WRITE_ONCE(env->dst_rq->rd->overutilized, SG_OVERUTILIZED);
- 	}
- }
- 
-@@ -8398,6 +8444,14 @@ static struct sched_group *find_busiest_group(struct lb_env *env)
- 	 * this level.
- 	 */
- 	update_sd_lb_stats(env, &sds);
-+
-+	if (static_branch_unlikely(&sched_energy_present)) {
-+		struct root_domain *rd = env->dst_rq->rd;
-+
-+		if (rcu_dereference(rd->pd) && !READ_ONCE(rd->overutilized))
-+			goto out_balanced;
-+	}
-+
- 	local = &sds.local_stat;
- 	busiest = &sds.busiest_stat;
- 
-@@ -9798,6 +9852,7 @@ static void task_tick_fair(struct rq *rq, struct task_struct *curr, int queued)
- 		task_tick_numa(rq, curr);
- 
- 	update_misfit_status(curr, rq);
-+	update_overutilized_status(task_rq(curr));
- }
- 
- /*
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index d4d984846924..0ba08924e017 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -718,6 +718,7 @@ struct perf_domain {
- 
- /* Scheduling group status flags */
- #define SG_OVERLOAD		0x1 /* More than one runnable task on a CPU. */
-+#define SG_OVERUTILIZED		0x2 /* One or more CPUs are over-utilized. */
- 
- /*
-  * We add the notion of a root-domain which will be used to define per-domain
-@@ -741,6 +742,9 @@ struct root_domain {
- 	 */
- 	int			overload;
- 
-+	/* Indicate one or more cpus over-utilized (tipping point) */
-+	int			overutilized;
-+
- 	/*
- 	 * The bit corresponding to a CPU gets set here if such CPU has more
- 	 * than one runnable -deadline task (as it is below for RT tasks).
