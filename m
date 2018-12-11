@@ -2,133 +2,101 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4BE6C07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:22:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C191C07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:22:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7828320870
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:22:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="hyGRahYJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7828320870
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
+	by mail.kernel.org (Postfix) with ESMTP id 3D0122084E
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:22:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544545351;
+	bh=20fiXFHFqyO1gVSezecTyWr+KICkhc05e9KE8ov5ybg=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=wSKLPJdE3G4frEh5wHRVacdEKvY6EJtXNafAZnrMGGmUCmNR8/8iK3G/HBsG6WrU6
+	 QTWvMO/vl3y7pweKIWlc3N/sucWUfPYLdZs7ilpYyNSeReWBEs3w5M/Vj7J8zJg5aS
+	 X5UqKwGn/t3KmtwO2CpWNHdKinGmFySKcAeu1s8w=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D0122084E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728273AbeLKQWR (ORCPT
+        id S1727728AbeLKPoH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 11:22:17 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:55964 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727752AbeLKPoN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:44:13 -0500
-Received: by mail-wm1-f66.google.com with SMTP id y139so2675553wmc.5
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 07:44:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=s3D2raQMukEX70jUMwg9ACQ2h5hM2z+quJDGcBrzJ8g=;
-        b=hyGRahYJJLKok3h32nnGoLViknE8anNZs9YI5GT56/Vt48MNn/PkLM3UqJviVTWPzP
-         L1LRXA6bhbyJZdFIYy7ab0Ej1zIEUvJ+Segh1H795+ZTdRNkq4cfyGGg5SueUzC+XdS8
-         v8SCR5m2Dx0phrgNyZjEzaYiIZGBOCXBV76HE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=s3D2raQMukEX70jUMwg9ACQ2h5hM2z+quJDGcBrzJ8g=;
-        b=QjYucgrpU4B2/FlKDuCc7ZEpIWSFhfd/I/ENUb0XnvehaE1kVmFNtKUZqFKKzrSJMN
-         kzW21piU0yKUF9fEU+QYeu3voCONNDJYomFKHw5vvT/JPXkZ7KxRDBGWxchDS+O8dMNU
-         fBoOo7rvx3r6ZnhZdNii24OdGWkijlWlTvYD0D84mFpnjSvG5kv7Dop/mQF9du0L/rHc
-         McVJ2ZLVpDmM+Q2kQm2AAULn4T16Z3ynqUyWdV9rvOxiWYaKSIDlooSZeB+VXFdkBfJJ
-         rXa+rP/EypJJeW34SSRukfmeImg8F33lNZznbdR29UmGp6pYrkUNmf22bXceMStC7CRg
-         YgOw==
-X-Gm-Message-State: AA+aEWZ6lTaUQwojnt4lAg4+YIoYMI8/N3oP4BbQmefj0WrOb/pX1/xG
-        Ve4q+0LlFnEvMaHx3tRwHweMbw==
-X-Google-Smtp-Source: AFSGD/WjWACLP9wS5srXpaS0qZ/2WaeabJ20I8a+HCcLVOObRojo82UC5NcbU1uNKYglWfecRtH3PQ==
-X-Received: by 2002:a1c:da92:: with SMTP id r140mr2920707wmg.136.1544543051990;
-        Tue, 11 Dec 2018 07:44:11 -0800 (PST)
-Received: from localhost.localdomain (ip-160-131.sn-213-198.clouditalia.com. [213.198.160.131])
-        by smtp.gmail.com with ESMTPSA id t70sm396499wmd.36.2018.12.11.07.44.10
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 11 Dec 2018 07:44:11 -0800 (PST)
-From:   Jagan Teki <jagan@amarulasolutions.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        David Airlie <airlied@linux.ie>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc:     linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        devicetree@vger.kernel.org, linux-amarula@amarulasolutions.com,
-        linux-sunxi <linux-sunxi@googlegroups.com>,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH v5 1/2] dt-bindings: panel: Add Sitronix ST7701 panel documentation
-Date:   Tue, 11 Dec 2018 21:13:57 +0530
-Message-Id: <20181211154358.25293-1-jagan@amarulasolutions.com>
-X-Mailer: git-send-email 2.18.0.321.gffc6fa0e3
+        Tue, 11 Dec 2018 10:44:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60638 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727271AbeLKPoE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 10:44:04 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0A3562087F;
+        Tue, 11 Dec 2018 15:44:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544543043;
+        bh=20fiXFHFqyO1gVSezecTyWr+KICkhc05e9KE8ov5ybg=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=2Hp0W3WTmqMOdl170Q9uGPGGpfFkUGbTa/5iLMQsA46KDxbIuKTh2xA+01pk9Ko5a
+         dwEU9jpT7U8KzSarzGBAD/ZYTN/cUj9nPRY3cfGF6KmqSKaJ37HrMGEvuP1UUUxnU1
+         7OVTHHADaFkgeBfexnMfxSZ6IEtsi9lWSCpxsLNs=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 3.18 44/54] ALSA: hda: Add support for AMD Stoney Ridge
+Date:   Tue, 11 Dec 2018 16:41:32 +0100
+Message-Id: <20181211151548.534541861@linuxfoundation.org>
+X-Mailer: git-send-email 2.20.0
+In-Reply-To: <20181211151546.010073210@linuxfoundation.org>
+References: <20181211151546.010073210@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Techstar TS8550B MIPI DSI panel is 480x854, 2-lane MIPI DSI LCD panel
-with inbuilt ST7701 chip.
+3.18-stable review patch.  If anyone has any objections, please let me know.
 
-The default regulator names in ST7701 chip is renamed in Techstar TS8550B
-so, add specific binding names for them.
+------------------
 
-Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+From: Kai-Heng Feng <kai.heng.feng@canonical.com>
+
+commit 3deef52ce10514ccdebba8e8ab85f9cebd0eb3f7 upstream.
+
+It's similar to other AMD audio devices, it also supports D3, which can
+save some power drain.
+
+Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
-Changes for v5:
-- found the chip from vendor, so added new chip binding
-- here is v4: https://patchwork.kernel.org/patch/10680333/
+ sound/pci/hda/hda_intel.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
- .../display/panel/sitronix,st7701.txt         | 30 +++++++++++++++++++
- 1 file changed, 30 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/display/panel/sitronix,st7701.txt
+--- a/sound/pci/hda/hda_intel.c
++++ b/sound/pci/hda/hda_intel.c
+@@ -2092,6 +2092,10 @@ static const struct pci_device_id azx_id
+ 	/* AMD Hudson */
+ 	{ PCI_DEVICE(0x1022, 0x780d),
+ 	  .driver_data = AZX_DRIVER_GENERIC | AZX_DCAPS_PRESET_ATI_SB },
++	/* AMD Stoney */
++	{ PCI_DEVICE(0x1022, 0x157a),
++	  .driver_data = AZX_DRIVER_GENERIC | AZX_DCAPS_PRESET_ATI_SB |
++			 AZX_DCAPS_PM_RUNTIME },
+ 	/* AMD Raven */
+ 	{ PCI_DEVICE(0x1022, 0x15e3),
+ 	  .driver_data = AZX_DRIVER_GENERIC | AZX_DCAPS_PRESET_ATI_SB |
 
-diff --git a/Documentation/devicetree/bindings/display/panel/sitronix,st7701.txt b/Documentation/devicetree/bindings/display/panel/sitronix,st7701.txt
-new file mode 100644
-index 000000000000..ccd17597f1f6
---- /dev/null
-+++ b/Documentation/devicetree/bindings/display/panel/sitronix,st7701.txt
-@@ -0,0 +1,30 @@
-+Sitronix ST7701 based LCD panels
-+
-+ST7701 designed for small and medium sizes of TFT LCD display, is
-+capable of supporting up to 480RGBX864 in resolution. It provides
-+several system interfaces like MIPI/RGB/SPI.
-+
-+Techstar TS8550B is 480x854, 2-lane MIPI DSI LCD panel which has
-+inbuilt ST7701 chip.
-+
-+Required properties:
-+- compatible: must be "sitronix,st7701" and one of
-+  * "techstar,ts8550b"
-+- reset-gpios: a GPIO phandle for the reset pin
-+
-+Required properties for techstar,ts8550b:
-+- reg: DSI virtual channel used by that screen
-+- VCC-supply: analog regulator for MIPI circuit
-+- IOVCC-supply: I/O system regulator
-+
-+Optional properties:
-+- backlight: phandle for the backlight control.
-+
-+panel@0 {
-+	compatible = "techstar,ts8550b", "sitronix,st7701";
-+	reg = <0>;
-+	VCC-supply = <&reg_dldo2>;
-+	IOVCC-supply = <&reg_dldo2>;
-+	reset-gpios = <&pio 3 24 GPIO_ACTIVE_HIGH>; /* LCD-RST: PD24 */
-+	backlight = <&backlight>;
-+};
--- 
-2.18.0.321.gffc6fa0e3
 
