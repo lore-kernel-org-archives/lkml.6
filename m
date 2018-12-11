@@ -7,49 +7,49 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0DD6C07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:50:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E62A7C5CFFE
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:50:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7778620879
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:50:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A01CD20880
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:50:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544543448;
-	bh=f5oZ3+Ohnt/+RmmNUoYhzsZErfIEdgv9iZEgugQn034=;
+	s=default; t=1544543452;
+	bh=zOOW3XkwnfgRFhCCWN6c+SPDl/m1IkW/OogYTGzHraE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=sNIday1Q6Pvq7Sa34Zu7Q+N49Nv90Uqa3CMJNtFa7H8k4IqguQFOG8ekD9/6TFE1w
-	 A0dFakpPB9fm3HcSR03vdRPlUCVRM1N8s/pzWu5RMovTaLLghnzhfIGvCjqjRjPXRI
-	 nuxDVzcz7okCMaLAwFcfPbOZRFiAC7ga77L9zgHk=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7778620879
+	b=Fk3F5BmjJR2MMwdx6nL6SxeVSe3GPB0pkeRZIaJ5r4Ss84msJ0quQq3+G+oigR3/B
+	 oVahUSiaqD/IcSd1F3geFZjIn0tkKCUetYqQsMq/aDGL/xo3zaTN/3E4phLyHU9V+x
+	 MIc82a7UJ8BNfdwOSAdmp3AN5bF//ElaaF/anifI=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A01CD20880
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729369AbeLKPur (ORCPT
+        id S1729377AbeLKPuv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 10:50:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39346 "EHLO mail.kernel.org"
+        Tue, 11 Dec 2018 10:50:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39396 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729349AbeLKPuo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:50:44 -0500
+        id S1729366AbeLKPuq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 10:50:46 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F31E22084E;
-        Tue, 11 Dec 2018 15:50:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AEB5B2145D;
+        Tue, 11 Dec 2018 15:50:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544543443;
-        bh=f5oZ3+Ohnt/+RmmNUoYhzsZErfIEdgv9iZEgugQn034=;
+        s=default; t=1544543446;
+        bh=zOOW3XkwnfgRFhCCWN6c+SPDl/m1IkW/OogYTGzHraE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0wds1hgVBbouqvvvI49RS2/80pZ1RAKs+eFqtPCyNcFtioPt2bdxwe051RLiOGbLu
-         07Pk+MnUztg/FL8iBETFeIhxoqpQVjcxDpu226cgeNbBKoRfCEg8+XNtQjPIMa8Ugu
-         6myT+4Nh1nk+DfqWefZUGvv1d/KIkzJZ+yT7xZ14=
+        b=1QiZBJqOalC8n3nr6daXH22ffgE/ZgNsTXkOOUtExOtvUHkLKvGMBbYpR8qNp7lA9
+         aObuq7mIu71t7iCGZoi8rwnJ4XZLRAICLPTixWq1Hr2mpaXexhV9HU03ZOf05EdmMv
+         /zaY4To1mc46eScsEJOGuj6owh8/966NIlSTfZJE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wonmin Jung <wonmin.jung@lge.com>,
-        Chanho Min <chanho.min@lge.com>, Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.9 26/51] ALSA: pcm: Fix starvation on down_write_nonblock()
-Date:   Tue, 11 Dec 2018 16:41:34 +0100
-Message-Id: <20181211151616.165759966@linuxfoundation.org>
+        stable@vger.kernel.org, Chanho Min <chanho.min@lge.com>,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.9 27/51] ALSA: pcm: Call snd_pcm_unlink() conditionally at closing
+Date:   Tue, 11 Dec 2018 16:41:35 +0100
+Message-Id: <20181211151616.296412553@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181211151612.328911565@linuxfoundation.org>
 References: <20181211151612.328911565@linuxfoundation.org>
@@ -68,91 +68,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Chanho Min <chanho.min@lge.com>
+From: Takashi Iwai <tiwai@suse.de>
 
-commit b888a5f713e4d17faaaff24316585a4eb07f35b7 upstream.
+commit b51abed8355e5556886623b2772fa6b7598d2282 upstream.
 
-Commit 67ec1072b053 ("ALSA: pcm: Fix rwsem deadlock for non-atomic PCM
-stream") fixes deadlock for non-atomic PCM stream. But, This patch
-causes antother stuck.
-If writer is RT thread and reader is a normal thread, the reader
-thread will be difficult to get scheduled. It may not give chance to
-release readlocks and writer gets stuck for a long time if they are
-pinned to single cpu.
+Currently the PCM core calls snd_pcm_unlink() always unconditionally
+at closing a stream.  However, since snd_pcm_unlink() invokes the
+global rwsem down, the lock can be easily contended.  More badly, when
+a thread runs in a high priority RT-FIFO, it may stall at spinning.
 
-The deadlock described in the previous commit is because the linux
-rwsem queues like a FIFO. So, we might need non-FIFO writelock, not
-non-block one.
+Basically the call of snd_pcm_unlink() is required only for the linked
+streams that are already rare occasion.  For normal use cases, this
+code path is fairly superfluous.
 
-My suggestion is that the writer gives reader a chance to be scheduled
-by using the minimum msleep() instaed of spinning without blocking by
-writer. Also, The *_nonblock may be changed to *_nonfifo appropriately
-to this concept.
-In terms of performance, when trylock is failed, this minimum periodic
-msleep will have the same performance as the tick-based
-schedule()/wake_up_q().
+As an optimization (and also as a workaround for the RT problem
+above in normal situations without linked streams), this patch adds a
+check before calling snd_pcm_unlink() and calls it only when needed.
 
-[ Although this has a fairly high performance penalty, the relevant
-  code path became already rare due to the previous commit ("ALSA:
-  pcm: Call snd_pcm_unlink() conditionally at closing").  That is, now
-  this unconditional msleep appears only when using linked streams,
-  and this must be a rare case.  So we accept this as a quick
-  workaround until finding a more suitable one -- tiwai ]
-
-Fixes: 67ec1072b053 ("ALSA: pcm: Fix rwsem deadlock for non-atomic PCM stream")
-Suggested-by: Wonmin Jung <wonmin.jung@lge.com>
-Signed-off-by: Chanho Min <chanho.min@lge.com>
+Reported-by: Chanho Min <chanho.min@lge.com>
 Cc: <stable@vger.kernel.org>
 Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/core/pcm_native.c |   11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+ sound/core/pcm_native.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
 --- a/sound/core/pcm_native.c
 +++ b/sound/core/pcm_native.c
-@@ -35,6 +35,7 @@
- #include <sound/timer.h>
- #include <sound/minors.h>
- #include <linux/uio.h>
-+#include <linux/delay.h>
+@@ -2225,7 +2225,8 @@ int snd_pcm_hw_constraints_complete(stru
  
- /*
-  *  Compatibility
-@@ -78,12 +79,12 @@ static DECLARE_RWSEM(snd_pcm_link_rwsem)
-  * and this may lead to a deadlock when the code path takes read sem
-  * twice (e.g. one in snd_pcm_action_nonatomic() and another in
-  * snd_pcm_stream_lock()).  As a (suboptimal) workaround, let writer to
-- * spin until it gets the lock.
-+ * sleep until all the readers are completed without blocking by writer.
-  */
--static inline void down_write_nonblock(struct rw_semaphore *lock)
-+static inline void down_write_nonfifo(struct rw_semaphore *lock)
+ static void pcm_release_private(struct snd_pcm_substream *substream)
  {
- 	while (!down_write_trylock(lock))
--		cond_resched();
-+		msleep(1);
+-	snd_pcm_unlink(substream);
++	if (snd_pcm_stream_linked(substream))
++		snd_pcm_unlink(substream);
  }
  
- /**
-@@ -1825,7 +1826,7 @@ static int snd_pcm_link(struct snd_pcm_s
- 		res = -ENOMEM;
- 		goto _nolock;
- 	}
--	down_write_nonblock(&snd_pcm_link_rwsem);
-+	down_write_nonfifo(&snd_pcm_link_rwsem);
- 	write_lock_irq(&snd_pcm_link_rwlock);
- 	if (substream->runtime->status->state == SNDRV_PCM_STATE_OPEN ||
- 	    substream->runtime->status->state != substream1->runtime->status->state ||
-@@ -1872,7 +1873,7 @@ static int snd_pcm_unlink(struct snd_pcm
- 	struct snd_pcm_substream *s;
- 	int res = 0;
- 
--	down_write_nonblock(&snd_pcm_link_rwsem);
-+	down_write_nonfifo(&snd_pcm_link_rwsem);
- 	write_lock_irq(&snd_pcm_link_rwlock);
- 	if (!snd_pcm_stream_linked(substream)) {
- 		res = -EALREADY;
+ void snd_pcm_release_substream(struct snd_pcm_substream *substream)
 
 
