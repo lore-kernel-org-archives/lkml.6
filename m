@@ -7,51 +7,51 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CB45C07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:53:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE128C07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:53:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BD1AF20855
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:53:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5F42F2146E
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:53:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544543598;
-	bh=KoktMSn2MPJxFf09iWL9M2HN3eKJuVo6QyNCmhwziNQ=;
+	s=default; t=1544543602;
+	bh=exS4iVnafaeI9QA46q2R0jMfgG4OsN6lSduq+5AoD3s=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=XQOiW2jUIJ1LU9wE8DxbfJRyJef9NFizaPQKdW0tzO1OHC7bUYy5fqesnDdv2Tr6E
-	 HZ+QOucXTXPcoMXpPHWChaGCnZ4KnZ71M9MvEsw5Q2fuaNLKewPCLsNqUYM1430IBl
-	 1B5v09jBVbP4LCvb4MDWtGnpAkfaZrwOgR9754Cw=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD1AF20855
+	b=B3QPR5qY3rBYNXIwIXU4yfJbrtJO1rCEtILvXO9cJG+6erQdRU4t96Om8E4A+a2dF
+	 5a86USIBIWatjTcsMyrhoPxCawrYhlkasMONLdVLdS1DPStMjfMIQP+Aq1+zhAk2yr
+	 pHeqfLK7Usr4njYws+yhIle1uSFsIXHIUnlolWTE=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F42F2146E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729910AbeLKPxR (ORCPT
+        id S1729922AbeLKPxV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 10:53:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41928 "EHLO mail.kernel.org"
+        Tue, 11 Dec 2018 10:53:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41990 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729894AbeLKPxP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:53:15 -0500
+        id S1729904AbeLKPxS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 10:53:18 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B61D820855;
-        Tue, 11 Dec 2018 15:53:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 54D532146D;
+        Tue, 11 Dec 2018 15:53:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544543594;
-        bh=KoktMSn2MPJxFf09iWL9M2HN3eKJuVo6QyNCmhwziNQ=;
+        s=default; t=1544543596;
+        bh=exS4iVnafaeI9QA46q2R0jMfgG4OsN6lSduq+5AoD3s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oLEZaKe/axUBjzK7M9dQlGRmjl68YdI+Qxc+Ldp6wgbT6J7OXfmeniKQ0Q6vAi+VJ
-         ey/Ytts4qHiNM90+2GajYDDDbeFHEUZBbqYNMYQbgk/ZHrxgxGcW0mI/MRIzUr+nvA
-         n1ptJZgPs5U2cmzk5KbfbV1E66gQg5LD+F72yASY=
+        b=bKvXj2IAl55oMAu29+MeztGumATLpoxwU5ajpFLOythZbomvgOm4DJRrVOTOZpMpb
+         pWCbbbowgCuD3zzpcmXkVHLnc8xrNB0ednsiOFej/jf73Hpy7F/6cIKt8QWN6cs8W3
+         VLkiSaSElnUFKAQXMyuMllf6mQ69oRhnC3YQ2wKE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        Junwei Zhang <Jerry.Zhang@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>
-Subject: [PATCH 4.14 57/67] drm/amdgpu/gmc8: update MC firmware for polaris
-Date:   Tue, 11 Dec 2018 16:41:57 +0100
-Message-Id: <20181211151633.266259722@linuxfoundation.org>
+        stable@vger.kernel.org, Stephen Hemminger <sthemmin@microsoft.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Dexuan Cui <decui@microsoft.com>
+Subject: [PATCH 4.14 58/67] Drivers: hv: vmbus: Offload the handling of channels to two workqueues
+Date:   Tue, 11 Dec 2018 16:41:58 +0100
+Message-Id: <20181211151633.318780100@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181211151630.378216233@linuxfoundation.org>
 References: <20181211151630.378216233@linuxfoundation.org>
@@ -70,77 +70,383 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alex Deucher <alexander.deucher@amd.com>
+From: Dexuan Cui <decui@microsoft.com>
 
-commit a81a7c9c9ea3042ab02d66ac35def74abf091c15 upstream.
+commit 37c2578c0c40e286bc0d30bdc05290b2058cf66e upstream.
 
-Some variants require different MC firmware images.
+vmbus_process_offer() mustn't call channel->sc_creation_callback()
+directly for sub-channels, because sc_creation_callback() ->
+vmbus_open() may never get the host's response to the
+OPEN_CHANNEL message (the host may rescind a channel at any time,
+e.g. in the case of hot removing a NIC), and vmbus_onoffer_rescind()
+may not wake up the vmbus_open() as it's blocked due to a non-zero
+vmbus_connection.offer_in_progress, and finally we have a deadlock.
 
-Acked-by: Christian König <christian.koenig@amd.com>
-Reviewed-by: Junwei Zhang <Jerry.Zhang@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+The above is also true for primary channels, if the related device
+drivers use sync probing mode by default.
+
+And, usually the handling of primary channels and sub-channels can
+depend on each other, so we should offload them to different
+workqueues to avoid possible deadlock, e.g. in sync-probing mode,
+NIC1's netvsc_subchan_work() can race with NIC2's netvsc_probe() ->
+rtnl_lock(), and causes deadlock: the former gets the rtnl_lock
+and waits for all the sub-channels to appear, but the latter
+can't get the rtnl_lock and this blocks the handling of sub-channels.
+
+The patch can fix the multiple-NIC deadlock described above for
+v3.x kernels (e.g. RHEL 7.x) which don't support async-probing
+of devices, and v4.4, v4.9, v4.14 and v4.18 which support async-probing
+but don't enable async-probing for Hyper-V drivers (yet).
+
+The patch can also fix the hang issue in sub-channel's handling described
+above for all versions of kernels, including v4.19 and v4.20-rc4.
+
+So actually the patch should be applied to all the existing kernels,
+not only the kernels that have 8195b1396ec8.
+
+Fixes: 8195b1396ec8 ("hv_netvsc: fix deadlock on hotplug")
 Cc: stable@vger.kernel.org
+Cc: Stephen Hemminger <sthemmin@microsoft.com>
+Cc: K. Y. Srinivasan <kys@microsoft.com>
+Cc: Haiyang Zhang <haiyangz@microsoft.com>
+Signed-off-by: Dexuan Cui <decui@microsoft.com>
+Signed-off-by: K. Y. Srinivasan <kys@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/amd/amdgpu/gmc_v8_0.c |   29 ++++++++++++++++++++++++-----
- 1 file changed, 24 insertions(+), 5 deletions(-)
+ drivers/hv/channel_mgmt.c |  185 +++++++++++++++++++++++++++++++---------------
+ drivers/hv/connection.c   |   24 +++++
+ drivers/hv/hyperv_vmbus.h |    7 +
+ include/linux/hyperv.h    |    7 +
+ 4 files changed, 160 insertions(+), 63 deletions(-)
 
---- a/drivers/gpu/drm/amd/amdgpu/gmc_v8_0.c
-+++ b/drivers/gpu/drm/amd/amdgpu/gmc_v8_0.c
-@@ -52,6 +52,8 @@ MODULE_FIRMWARE("amdgpu/tonga_mc.bin");
- MODULE_FIRMWARE("amdgpu/polaris11_mc.bin");
- MODULE_FIRMWARE("amdgpu/polaris10_mc.bin");
- MODULE_FIRMWARE("amdgpu/polaris12_mc.bin");
-+MODULE_FIRMWARE("amdgpu/polaris11_k_mc.bin");
-+MODULE_FIRMWARE("amdgpu/polaris10_k_mc.bin");
- MODULE_FIRMWARE("amdgpu/polaris12_k_mc.bin");
+--- a/drivers/hv/channel_mgmt.c
++++ b/drivers/hv/channel_mgmt.c
+@@ -444,61 +444,16 @@ void vmbus_free_channels(void)
+ 	}
+ }
  
- static const u32 golden_settings_tonga_a11[] =
-@@ -220,22 +222,39 @@ static int gmc_v8_0_init_microcode(struc
- 		chip_name = "tonga";
- 		break;
- 	case CHIP_POLARIS11:
--		chip_name = "polaris11";
-+		if (((adev->pdev->device == 0x67ef) &&
-+		     ((adev->pdev->revision == 0xe0) ||
-+		      (adev->pdev->revision == 0xe5))) ||
-+		    ((adev->pdev->device == 0x67ff) &&
-+		     ((adev->pdev->revision == 0xcf) ||
-+		      (adev->pdev->revision == 0xef) ||
-+		      (adev->pdev->revision == 0xff))))
-+			chip_name = "polaris11_k";
-+		else if ((adev->pdev->device == 0x67ef) &&
-+			 (adev->pdev->revision == 0xe2))
-+			chip_name = "polaris11_k";
-+		else
-+			chip_name = "polaris11";
- 		break;
- 	case CHIP_POLARIS10:
--		chip_name = "polaris10";
-+		if ((adev->pdev->device == 0x67df) &&
-+		    ((adev->pdev->revision == 0xe1) ||
-+		     (adev->pdev->revision == 0xf7)))
-+			chip_name = "polaris10_k";
-+		else
-+			chip_name = "polaris10";
- 		break;
- 	case CHIP_POLARIS12:
--		chip_name = "polaris12";
- 		if (((adev->pdev->device == 0x6987) &&
- 		     ((adev->pdev->revision == 0xc0) ||
- 		      (adev->pdev->revision == 0xc3))) ||
- 		    ((adev->pdev->device == 0x6981) &&
- 		     ((adev->pdev->revision == 0x00) ||
- 		      (adev->pdev->revision == 0x01) ||
--		      (adev->pdev->revision == 0x10)))) {
-+		      (adev->pdev->revision == 0x10))))
- 			chip_name = "polaris12_k";
+-/*
+- * vmbus_process_offer - Process the offer by creating a channel/device
+- * associated with this offer
+- */
+-static void vmbus_process_offer(struct vmbus_channel *newchannel)
++/* Note: the function can run concurrently for primary/sub channels. */
++static void vmbus_add_channel_work(struct work_struct *work)
+ {
+-	struct vmbus_channel *channel;
+-	bool fnew = true;
++	struct vmbus_channel *newchannel =
++		container_of(work, struct vmbus_channel, add_channel_work);
++	struct vmbus_channel *primary_channel = newchannel->primary_channel;
+ 	unsigned long flags;
+ 	u16 dev_type;
+ 	int ret;
+ 
+-	/* Make sure this is a new offer */
+-	mutex_lock(&vmbus_connection.channel_mutex);
+-
+-	/*
+-	 * Now that we have acquired the channel_mutex,
+-	 * we can release the potentially racing rescind thread.
+-	 */
+-	atomic_dec(&vmbus_connection.offer_in_progress);
+-
+-	list_for_each_entry(channel, &vmbus_connection.chn_list, listentry) {
+-		if (!uuid_le_cmp(channel->offermsg.offer.if_type,
+-			newchannel->offermsg.offer.if_type) &&
+-			!uuid_le_cmp(channel->offermsg.offer.if_instance,
+-				newchannel->offermsg.offer.if_instance)) {
+-			fnew = false;
+-			break;
 -		}
-+		else
-+			chip_name = "polaris12";
- 		break;
- 	case CHIP_FIJI:
- 	case CHIP_CARRIZO:
+-	}
+-
+-	if (fnew)
+-		list_add_tail(&newchannel->listentry,
+-			      &vmbus_connection.chn_list);
+-
+-	mutex_unlock(&vmbus_connection.channel_mutex);
+-
+-	if (!fnew) {
+-		/*
+-		 * Check to see if this is a sub-channel.
+-		 */
+-		if (newchannel->offermsg.offer.sub_channel_index != 0) {
+-			/*
+-			 * Process the sub-channel.
+-			 */
+-			newchannel->primary_channel = channel;
+-			spin_lock_irqsave(&channel->lock, flags);
+-			list_add_tail(&newchannel->sc_list, &channel->sc_list);
+-			channel->num_sc++;
+-			spin_unlock_irqrestore(&channel->lock, flags);
+-		} else {
+-			goto err_free_chan;
+-		}
+-	}
+-
+ 	dev_type = hv_get_dev_type(newchannel);
+ 
+ 	init_vp_index(newchannel, dev_type);
+@@ -516,21 +471,22 @@ static void vmbus_process_offer(struct v
+ 	/*
+ 	 * This state is used to indicate a successful open
+ 	 * so that when we do close the channel normally, we
+-	 * can cleanup properly
++	 * can cleanup properly.
+ 	 */
+ 	newchannel->state = CHANNEL_OPEN_STATE;
+ 
+-	if (!fnew) {
+-		if (channel->sc_creation_callback != NULL)
+-			channel->sc_creation_callback(newchannel);
++	if (primary_channel != NULL) {
++		/* newchannel is a sub-channel. */
++
++		if (primary_channel->sc_creation_callback != NULL)
++			primary_channel->sc_creation_callback(newchannel);
++
+ 		newchannel->probe_done = true;
+ 		return;
+ 	}
+ 
+ 	/*
+-	 * Start the process of binding this offer to the driver
+-	 * We need to set the DeviceObject field before calling
+-	 * vmbus_child_dev_add()
++	 * Start the process of binding the primary channel to the driver
+ 	 */
+ 	newchannel->device_obj = vmbus_device_create(
+ 		&newchannel->offermsg.offer.if_type,
+@@ -559,13 +515,28 @@ static void vmbus_process_offer(struct v
+ 
+ err_deq_chan:
+ 	mutex_lock(&vmbus_connection.channel_mutex);
+-	list_del(&newchannel->listentry);
++
++	/*
++	 * We need to set the flag, otherwise
++	 * vmbus_onoffer_rescind() can be blocked.
++	 */
++	newchannel->probe_done = true;
++
++	if (primary_channel == NULL) {
++		list_del(&newchannel->listentry);
++	} else {
++		spin_lock_irqsave(&primary_channel->lock, flags);
++		list_del(&newchannel->sc_list);
++		spin_unlock_irqrestore(&primary_channel->lock, flags);
++	}
++
+ 	mutex_unlock(&vmbus_connection.channel_mutex);
+ 
+ 	if (newchannel->target_cpu != get_cpu()) {
+ 		put_cpu();
+ 		smp_call_function_single(newchannel->target_cpu,
+-					 percpu_channel_deq, newchannel, true);
++					 percpu_channel_deq,
++					 newchannel, true);
+ 	} else {
+ 		percpu_channel_deq(newchannel);
+ 		put_cpu();
+@@ -573,14 +544,104 @@ err_deq_chan:
+ 
+ 	vmbus_release_relid(newchannel->offermsg.child_relid);
+ 
+-err_free_chan:
+ 	free_channel(newchannel);
+ }
+ 
+ /*
++ * vmbus_process_offer - Process the offer by creating a channel/device
++ * associated with this offer
++ */
++static void vmbus_process_offer(struct vmbus_channel *newchannel)
++{
++	struct vmbus_channel *channel;
++	struct workqueue_struct *wq;
++	unsigned long flags;
++	bool fnew = true;
++
++	mutex_lock(&vmbus_connection.channel_mutex);
++
++	/*
++	 * Now that we have acquired the channel_mutex,
++	 * we can release the potentially racing rescind thread.
++	 */
++	atomic_dec(&vmbus_connection.offer_in_progress);
++
++	list_for_each_entry(channel, &vmbus_connection.chn_list, listentry) {
++		if (!uuid_le_cmp(channel->offermsg.offer.if_type,
++				 newchannel->offermsg.offer.if_type) &&
++		    !uuid_le_cmp(channel->offermsg.offer.if_instance,
++				 newchannel->offermsg.offer.if_instance)) {
++			fnew = false;
++			break;
++		}
++	}
++
++	if (fnew)
++		list_add_tail(&newchannel->listentry,
++			      &vmbus_connection.chn_list);
++	else {
++		/*
++		 * Check to see if this is a valid sub-channel.
++		 */
++		if (newchannel->offermsg.offer.sub_channel_index == 0) {
++			mutex_unlock(&vmbus_connection.channel_mutex);
++			/*
++			 * Don't call free_channel(), because newchannel->kobj
++			 * is not initialized yet.
++			 */
++			kfree(newchannel);
++			WARN_ON_ONCE(1);
++			return;
++		}
++		/*
++		 * Process the sub-channel.
++		 */
++		newchannel->primary_channel = channel;
++		spin_lock_irqsave(&channel->lock, flags);
++		list_add_tail(&newchannel->sc_list, &channel->sc_list);
++		spin_unlock_irqrestore(&channel->lock, flags);
++	}
++
++	mutex_unlock(&vmbus_connection.channel_mutex);
++
++	/*
++	 * vmbus_process_offer() mustn't call channel->sc_creation_callback()
++	 * directly for sub-channels, because sc_creation_callback() ->
++	 * vmbus_open() may never get the host's response to the
++	 * OPEN_CHANNEL message (the host may rescind a channel at any time,
++	 * e.g. in the case of hot removing a NIC), and vmbus_onoffer_rescind()
++	 * may not wake up the vmbus_open() as it's blocked due to a non-zero
++	 * vmbus_connection.offer_in_progress, and finally we have a deadlock.
++	 *
++	 * The above is also true for primary channels, if the related device
++	 * drivers use sync probing mode by default.
++	 *
++	 * And, usually the handling of primary channels and sub-channels can
++	 * depend on each other, so we should offload them to different
++	 * workqueues to avoid possible deadlock, e.g. in sync-probing mode,
++	 * NIC1's netvsc_subchan_work() can race with NIC2's netvsc_probe() ->
++	 * rtnl_lock(), and causes deadlock: the former gets the rtnl_lock
++	 * and waits for all the sub-channels to appear, but the latter
++	 * can't get the rtnl_lock and this blocks the handling of
++	 * sub-channels.
++	 */
++	INIT_WORK(&newchannel->add_channel_work, vmbus_add_channel_work);
++	wq = fnew ? vmbus_connection.handle_primary_chan_wq :
++		    vmbus_connection.handle_sub_chan_wq;
++	queue_work(wq, &newchannel->add_channel_work);
++}
++
++/*
+  * We use this state to statically distribute the channel interrupt load.
+  */
+ static int next_numa_node_id;
++/*
++ * init_vp_index() accesses global variables like next_numa_node_id, and
++ * it can run concurrently for primary channels and sub-channels: see
++ * vmbus_process_offer(), so we need the lock to protect the global
++ * variables.
++ */
++static DEFINE_SPINLOCK(bind_channel_to_cpu_lock);
+ 
+ /*
+  * Starting with Win8, we can statically distribute the incoming
+@@ -618,6 +679,8 @@ static void init_vp_index(struct vmbus_c
+ 		return;
+ 	}
+ 
++	spin_lock(&bind_channel_to_cpu_lock);
++
+ 	/*
+ 	 * Based on the channel affinity policy, we will assign the NUMA
+ 	 * nodes.
+@@ -700,6 +763,8 @@ static void init_vp_index(struct vmbus_c
+ 	channel->target_cpu = cur_cpu;
+ 	channel->target_vp = hv_cpu_number_to_vp_number(cur_cpu);
+ 
++	spin_unlock(&bind_channel_to_cpu_lock);
++
+ 	free_cpumask_var(available_mask);
+ }
+ 
+--- a/drivers/hv/connection.c
++++ b/drivers/hv/connection.c
+@@ -161,6 +161,20 @@ int vmbus_connect(void)
+ 		goto cleanup;
+ 	}
+ 
++	vmbus_connection.handle_primary_chan_wq =
++		create_workqueue("hv_pri_chan");
++	if (!vmbus_connection.handle_primary_chan_wq) {
++		ret = -ENOMEM;
++		goto cleanup;
++	}
++
++	vmbus_connection.handle_sub_chan_wq =
++		create_workqueue("hv_sub_chan");
++	if (!vmbus_connection.handle_sub_chan_wq) {
++		ret = -ENOMEM;
++		goto cleanup;
++	}
++
+ 	INIT_LIST_HEAD(&vmbus_connection.chn_msg_list);
+ 	spin_lock_init(&vmbus_connection.channelmsg_lock);
+ 
+@@ -251,10 +265,14 @@ void vmbus_disconnect(void)
+ 	 */
+ 	vmbus_initiate_unload(false);
+ 
+-	if (vmbus_connection.work_queue) {
+-		drain_workqueue(vmbus_connection.work_queue);
++	if (vmbus_connection.handle_sub_chan_wq)
++		destroy_workqueue(vmbus_connection.handle_sub_chan_wq);
++
++	if (vmbus_connection.handle_primary_chan_wq)
++		destroy_workqueue(vmbus_connection.handle_primary_chan_wq);
++
++	if (vmbus_connection.work_queue)
+ 		destroy_workqueue(vmbus_connection.work_queue);
+-	}
+ 
+ 	if (vmbus_connection.int_page) {
+ 		free_pages((unsigned long)vmbus_connection.int_page, 0);
+--- a/drivers/hv/hyperv_vmbus.h
++++ b/drivers/hv/hyperv_vmbus.h
+@@ -327,7 +327,14 @@ struct vmbus_connection {
+ 	struct list_head chn_list;
+ 	struct mutex channel_mutex;
+ 
++	/*
++	 * An offer message is handled first on the work_queue, and then
++	 * is further handled on handle_primary_chan_wq or
++	 * handle_sub_chan_wq.
++	 */
+ 	struct workqueue_struct *work_queue;
++	struct workqueue_struct *handle_primary_chan_wq;
++	struct workqueue_struct *handle_sub_chan_wq;
+ };
+ 
+ 
+--- a/include/linux/hyperv.h
++++ b/include/linux/hyperv.h
+@@ -869,6 +869,13 @@ struct vmbus_channel {
+ 
+ 	bool probe_done;
+ 
++	/*
++	 * We must offload the handling of the primary/sub channels
++	 * from the single-threaded vmbus_connection.work_queue to
++	 * two different workqueue, otherwise we can block
++	 * vmbus_connection.work_queue and hang: see vmbus_process_offer().
++	 */
++	struct work_struct add_channel_work;
+ };
+ 
+ static inline bool is_hvsock_channel(const struct vmbus_channel *c)
 
 
