@@ -6,50 +6,50 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64799C07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:56:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A95CCC07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:56:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 283412086D
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:56:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6FA472146D
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:56:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544543803;
-	bh=RZ9P5POzx5DGYu3wMbLziF2mvY7dvwTrEm0txs2k3z0=;
+	s=default; t=1544543807;
+	bh=1ezgbpvDp0Y3Q5wxdmn9izxo5eovV1ekO5x03euF2uM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=BzfWhD16bZ2GFLamwAFDt87aI1+WSdRAe+ITWOsnf7/DtqahgAq1KlXI3HAuCTkhI
-	 h6SJIb4Tod6jcnrAGIZMjZPuDNW/GSZ6vFJCkRZKCe6OLEXM0z+oOtMp+0guIyvYMn
-	 F19cNL+HFIY7h43zWloSrc09z0Z7Qs2jdNbt14HA=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 283412086D
+	b=yF5HLd4AZZf8G1J8MMhF4difXSEc/FGFUwYdcj0xOPma0Dndy8xVPh1Mu++hMo3hX
+	 /aplAVfEsp+oOci81IN7iSBEYEj7C1YITo+v1NHFVXkFATzy5nzbdlPK/X0fO7CJ7/
+	 tH7471I5qCNvHVf87M0i+//oA+PChyC87m4RylOI=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6FA472146D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730633AbeLKP4l (ORCPT
+        id S1730658AbeLKP4q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 10:56:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45426 "EHLO mail.kernel.org"
+        Tue, 11 Dec 2018 10:56:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45534 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730620AbeLKP4j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:56:39 -0500
+        id S1730639AbeLKP4o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 10:56:44 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 337112146D;
-        Tue, 11 Dec 2018 15:56:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 637972146D;
+        Tue, 11 Dec 2018 15:56:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544543798;
-        bh=RZ9P5POzx5DGYu3wMbLziF2mvY7dvwTrEm0txs2k3z0=;
+        s=default; t=1544543803;
+        bh=1ezgbpvDp0Y3Q5wxdmn9izxo5eovV1ekO5x03euF2uM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=elkZJAsItVw2ZzWZZ85o/8HzWEDQe1+50UzwIf3zQrlSoZ/VVhjFkYU7SRxtvP34y
-         wk3mVWEt4PV7pD+/tNDOvzZYqrSV38FMYOIWxI9JxuAdbYm/A3lRHyD/sY6KvIkicn
-         UgxJ7HNR3wQfl6k8OwYj5+o84VCMuo7MRn9jqPhs=
+        b=Bw2+FJcc1KrPgGuk9vaqwgyS1LaO+i0hJj6dlDepkREvGOoS7qxEPLv1iedSvzusC
+         P+5p9nJ8E6KiXJGm+FxniC542Bz5nfFCj2Fx6HslxFRn/JwXqEoMAMbk0uccUUFP4f
+         myOXKnZVb7+pBU2zlruY64ovPCG3d5CpKKCIABxM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Jian-Hong Pan <jian-hong@endlessm.com>,
         Daniel Drake <drake@endlessm.com>,
         Chris Chiu <chiu@endlessm.com>, Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.19 067/118] ALSA: hda/realtek: ALC286 mic and headset-mode fixups for Acer Aspire U27-880
-Date:   Tue, 11 Dec 2018 16:41:26 +0100
-Message-Id: <20181211151646.941553439@linuxfoundation.org>
+Subject: [PATCH 4.19 069/118] ALSA: hda/realtek: Fix mic issue on Acer AIO Veriton Z4660G
+Date:   Tue, 11 Dec 2018 16:41:28 +0100
+Message-Id: <20181211151647.027673727@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181211151644.216668863@linuxfoundation.org>
 References: <20181211151644.216668863@linuxfoundation.org>
@@ -70,14 +70,12 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Chris Chiu <chiu@endlessm.com>
 
-commit 33aaebd48ae2d2c78fef5063a0381e17db19b060 upstream.
+commit 9f8aefed9623a91dec54eab8908f3810b7f8d73a upstream.
 
-Acer Aspire U27-880(AIO) with ALC286 codec can not detect headset mic
-and internal mic not working either. It needs the similar quirk like
-Sony laptops to fix headphone jack sensing and enables use of the
-internal microphone.
-
-Unfortunately jack sensing for the headset mic is still not working.
+Acer AIO Veriton Z4660G with ALC286 codec has issue with the input
+from external microphones connecting via 'Front Mic' jack. The fixup
+ALC286_FIXUP_ACER_AIO_MIC_NO_PRESENCE enables the jack sensing of
+the headset and fix the audio input issue of external microphone.
 
 Signed-off-by: Jian-Hong Pan <jian-hong@endlessm.com>
 Signed-off-by: Daniel Drake <drake@endlessm.com>
@@ -87,45 +85,18 @@ Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/pci/hda/patch_realtek.c |   14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ sound/pci/hda/patch_realtek.c |    1 +
+ 1 file changed, 1 insertion(+)
 
 --- a/sound/pci/hda/patch_realtek.c
 +++ b/sound/pci/hda/patch_realtek.c
-@@ -5519,6 +5519,7 @@ enum {
- 	ALC221_FIXUP_HP_HEADSET_MIC,
- 	ALC285_FIXUP_LENOVO_HEADPHONE_NOISE,
- 	ALC295_FIXUP_HP_AUTO_MUTE,
-+	ALC286_FIXUP_ACER_AIO_MIC_NO_PRESENCE,
- };
- 
- static const struct hda_fixup alc269_fixups[] = {
-@@ -6396,6 +6397,15 @@ static const struct hda_fixup alc269_fix
- 		.type = HDA_FIXUP_FUNC,
- 		.v.func = alc_fixup_auto_mute_via_amp,
- 	},
-+	[ALC286_FIXUP_ACER_AIO_MIC_NO_PRESENCE] = {
-+		.type = HDA_FIXUP_PINS,
-+		.v.pins = (const struct hda_pintbl[]) {
-+			{ 0x18, 0x01a1913c }, /* use as headset mic, without its own jack detect */
-+			{ }
-+		},
-+		.chained = true,
-+		.chain_id = ALC269_FIXUP_HEADSET_MIC
-+	},
- };
- 
- static const struct snd_pci_quirk alc269_fixup_tbl[] = {
-@@ -7074,6 +7084,10 @@ static const struct snd_hda_pin_quirk al
- 		{0x14, 0x90170110},
- 		{0x19, 0x04a11040},
- 		{0x21, 0x04211020}),
-+	SND_HDA_PIN_QUIRK(0x10ec0286, 0x1025, "Acer", ALC286_FIXUP_ACER_AIO_MIC_NO_PRESENCE,
-+		{0x12, 0x90a60130},
-+		{0x17, 0x90170110},
-+		{0x21, 0x02211020}),
- 	SND_HDA_PIN_QUIRK(0x10ec0288, 0x1028, "Dell", ALC288_FIXUP_DELL1_MIC_NO_PRESENCE,
- 		{0x12, 0x90a60120},
- 		{0x14, 0x90170110},
+@@ -6422,6 +6422,7 @@ static const struct snd_pci_quirk alc269
+ 	SND_PCI_QUIRK(0x1025, 0x079b, "Acer Aspire V5-573G", ALC282_FIXUP_ASPIRE_V5_PINS),
+ 	SND_PCI_QUIRK(0x1025, 0x102b, "Acer Aspire C24-860", ALC286_FIXUP_ACER_AIO_MIC_NO_PRESENCE),
+ 	SND_PCI_QUIRK(0x1025, 0x106d, "Acer Cloudbook 14", ALC283_FIXUP_CHROME_BOOK),
++	SND_PCI_QUIRK(0x1025, 0x1291, "Acer Veriton Z4660G", ALC286_FIXUP_ACER_AIO_MIC_NO_PRESENCE),
+ 	SND_PCI_QUIRK(0x1028, 0x0470, "Dell M101z", ALC269_FIXUP_DELL_M101Z),
+ 	SND_PCI_QUIRK(0x1028, 0x054b, "Dell XPS one 2710", ALC275_FIXUP_DELL_XPS),
+ 	SND_PCI_QUIRK(0x1028, 0x05bd, "Dell Latitude E6440", ALC292_FIXUP_DELL_E7X),
 
 
