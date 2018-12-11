@@ -2,109 +2,185 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5725EC07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 03:59:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EBCFC07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 04:04:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 16F8320811
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 03:59:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 16F8320811
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
+	by mail.kernel.org (Postfix) with ESMTP id 5412320811
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 04:04:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5412320811
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730096AbeLKD7m (ORCPT
+        id S1730114AbeLKEEK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 22:59:42 -0500
-Received: from mx2.suse.de ([195.135.220.15]:58592 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727721AbeLKD7m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 22:59:42 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 1AE02AD8F;
-        Tue, 11 Dec 2018 03:59:39 +0000 (UTC)
-Subject: Re: [PATCH] Add linux-unisoc mailing list to Spreadtrum SoC support
-To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc:     orsonzhai@gmail.com, baolin.wang@linaro.org, zhang.lyra@gmail.com,
-        linux-unisoc@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        orson.zhai@unisoc.com, geng.ren@unisoc.com
-References: <20181211035725.5084-1-manivannan.sadhasivam@linaro.org>
-From:   =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
-Openpgp: preference=signencrypt
-Autocrypt: addr=afaerber@suse.de; prefer-encrypt=mutual; keydata=
- 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
-Organization: SUSE Linux GmbH
-Message-ID: <48534f01-b0db-ec09-cbc5-8d589804eb98@suse.de>
-Date:   Tue, 11 Dec 2018 04:59:37 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Mon, 10 Dec 2018 23:04:10 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:47236 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727721AbeLKEEJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Dec 2018 23:04:09 -0500
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 5F2BC369A0;
+        Tue, 11 Dec 2018 04:04:09 +0000 (UTC)
+Received: from redhat.com (ovpn-120-187.rdu2.redhat.com [10.10.120.187])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 85BF660BF1;
+        Tue, 11 Dec 2018 04:04:08 +0000 (UTC)
+Date:   Mon, 10 Dec 2018 23:04:08 -0500
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     Jason Wang <jasowang@redhat.com>
+Cc:     kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Tonghao Zhang <xiangxia.m.yue@gmail.com>
+Subject: Re: [PATCH net 2/4] vhost_net: rework on the lock ordering for busy
+ polling
+Message-ID: <20181210230106-mutt-send-email-mst@kernel.org>
+References: <20181210094454.21144-1-jasowang@redhat.com>
+ <20181210094454.21144-3-jasowang@redhat.com>
+ <20181210203119-mutt-send-email-mst@kernel.org>
+ <f2a98f3a-a5c5-b762-8ec3-119a7708795d@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <20181211035725.5084-1-manivannan.sadhasivam@linaro.org>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <f2a98f3a-a5c5-b762-8ec3-119a7708795d@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Tue, 11 Dec 2018 04:04:09 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am 11.12.18 um 04:57 schrieb Manivannan Sadhasivam:
-> Since Spreadtrum is now merged into Unisoc Communications, let's use the
-> newly created linux-unisoc mailing list for all discussions around the
-> Spreadtrum SoCs.
+On Tue, Dec 11, 2018 at 11:06:43AM +0800, Jason Wang wrote:
 > 
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> On 2018/12/11 上午9:34, Michael S. Tsirkin wrote:
+> > On Mon, Dec 10, 2018 at 05:44:52PM +0800, Jason Wang wrote:
+> > > When we try to do rx busy polling in tx path in commit 441abde4cd84
+> > > ("net: vhost: add rx busy polling in tx path"), we lock rx vq mutex
+> > > after tx vq mutex is held. This may lead deadlock so we try to lock vq
+> > > one by one in commit 78139c94dc8c ("net: vhost: lock the vqs one by
+> > > one"). With this commit, we avoid the deadlock with the assumption
+> > > that handle_rx() and handle_tx() run in a same process. But this
+> > > commit remove the protection for IOTLB updating which requires the
+> > > mutex of each vq to be held.
+> > > 
+> > > To solve this issue, the first step is to have a exact same lock
+> > > ordering for vhost_net. This is done through:
+> > > 
+> > > - For handle_rx(), if busy polling is enabled, lock tx vq immediately.
+> > > - For handle_tx(), always lock rx vq before tx vq, and unlock it if
+> > >    busy polling is not enabled.
+> > > - Remove the tricky locking codes in busy polling.
+> > > 
+> > > With this, we can have a exact same lock ordering for vhost_net, this
+> > > allows us to safely revert commit 78139c94dc8c ("net: vhost: lock the
+> > > vqs one by one") in next patch.
+> > > 
+> > > The patch will add two more atomic operations on the tx path during
+> > > each round of handle_tx(). 1 byte TCP_RR does not notice such
+> > > overhead.
+> > > 
+> > > Fixes: commit 78139c94dc8c ("net: vhost: lock the vqs one by one")
+> > > Cc: Tonghao Zhang<xiangxia.m.yue@gmail.com>
+> > > Signed-off-by: Jason Wang<jasowang@redhat.com>
+> > > ---
+> > >   drivers/vhost/net.c | 18 +++++++++++++++---
+> > >   1 file changed, 15 insertions(+), 3 deletions(-)
+> > > 
+> > > diff --git a/drivers/vhost/net.c b/drivers/vhost/net.c
+> > > index ab11b2bee273..5f272ab4d5b4 100644
+> > > --- a/drivers/vhost/net.c
+> > > +++ b/drivers/vhost/net.c
+> > > @@ -513,7 +513,6 @@ static void vhost_net_busy_poll(struct vhost_net *net,
+> > >   	struct socket *sock;
+> > >   	struct vhost_virtqueue *vq = poll_rx ? tvq : rvq;
+> > > -	mutex_lock_nested(&vq->mutex, poll_rx ? VHOST_NET_VQ_TX: VHOST_NET_VQ_RX);
+> > >   	vhost_disable_notify(&net->dev, vq);
+> > >   	sock = rvq->private_data;
+> > > @@ -543,8 +542,6 @@ static void vhost_net_busy_poll(struct vhost_net *net,
+> > >   		vhost_net_busy_poll_try_queue(net, vq);
+> > >   	else if (!poll_rx) /* On tx here, sock has no rx data. */
+> > >   		vhost_enable_notify(&net->dev, rvq);
+> > > -
+> > > -	mutex_unlock(&vq->mutex);
+> > >   }
+> > >   static int vhost_net_tx_get_vq_desc(struct vhost_net *net,
+> > > @@ -913,10 +910,16 @@ static void handle_tx_zerocopy(struct vhost_net *net, struct socket *sock)
+> > >   static void handle_tx(struct vhost_net *net)
+> > >   {
+> > >   	struct vhost_net_virtqueue *nvq = &net->vqs[VHOST_NET_VQ_TX];
+> > > +	struct vhost_net_virtqueue *nvq_rx = &net->vqs[VHOST_NET_VQ_RX];
+> > >   	struct vhost_virtqueue *vq = &nvq->vq;
+> > > +	struct vhost_virtqueue *vq_rx = &nvq_rx->vq;
+> > >   	struct socket *sock;
+> > > +	mutex_lock_nested(&vq_rx->mutex, VHOST_NET_VQ_RX);
+> > >   	mutex_lock_nested(&vq->mutex, VHOST_NET_VQ_TX);
+> > > +	if (!vq->busyloop_timeout)
+> > > +		mutex_unlock(&vq_rx->mutex);
+> > > +
+> > >   	sock = vq->private_data;
+> > >   	if (!sock)
+> > >   		goto out;
+> > > @@ -933,6 +936,8 @@ static void handle_tx(struct vhost_net *net)
+> > >   		handle_tx_copy(net, sock);
+> > >   out:
+> > > +	if (vq->busyloop_timeout)
+> > > +		mutex_unlock(&vq_rx->mutex);
+> > >   	mutex_unlock(&vq->mutex);
+> > >   }
+> > So rx mutex taken on tx path now.  And tx mutex is on rc path ...  This
+> > is just messed up. Why can't tx polling drop rx lock before
+> > getting the tx lock and vice versa?
+> 
+> 
+> Because we want to poll both tx and rx virtqueue at the same time
+> (vhost_net_busy_poll()).
+> 
+>     while (vhost_can_busy_poll(endtime)) {
+>         if (vhost_has_work(&net->dev)) {
+>             *busyloop_intr = true;
+>             break;
+>         }
+> 
+>         if ((sock_has_rx_data(sock) &&
+>              !vhost_vq_avail_empty(&net->dev, rvq)) ||
+>             !vhost_vq_avail_empty(&net->dev, tvq))
+>             break;
+> 
+>         cpu_relax();
+> 
+>     }
+> 
+> 
+> And we disable kicks and notification for better performance.
 
-Reviewed-by: Andreas Färber <afaerber@suse.de>
+Right but it's all slow path - it happens when queue is
+otherwise empty. So this is what I am saying: let's drop the locks
+we hold around this.
 
-Thanks,
-Andreas
+
+> 
+> > 
+> > Or if we really wanted to force everything to be locked at
+> > all times, let's just use a single mutex.
+> > 
+> > 
+> > 
+> 
+> We could, but it might requires more changes which could be done for -next I
+> believe.
+> 
+> 
+> Thanks
+
+I'd rather we kept the fine grained locking. E.g. people are
+looking at splitting the tx and rx threads. But if not possible
+let's fix it cleanly with a coarse-grained one. A mess here will
+just create more trouble later.
 
 -- 
-SUSE Linux GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
-GF: Felix Imendörffer, Jane Smithard, Graham Norton
-HRB 21284 (AG Nürnberg)
+MST
