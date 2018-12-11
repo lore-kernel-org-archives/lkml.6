@@ -7,50 +7,52 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CEBC9C07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:57:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA396C07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:57:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 959CF2086D
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:57:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AE15020855
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:57:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544543850;
-	bh=mfmXeQ9V203s1wYaBVecf59+FMX6X5+BWLxGjccwS0c=;
+	s=default; t=1544543853;
+	bh=sIiJv8f773/KtXrqifesFxWZo52tXbRoN97aCtG6sSE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Skhjuj9pKX3PU+WW9Llz4szgMLpSfe/hRPecfSYvyDL0uaKVydzu5PoEibWGhuLcG
-	 IRMTIXjKRvnHXwP4HoRu25Qlv7Q8S6PjsyrhF/YJcDx3TfBpfra/Mlejy0Zd6HslYM
-	 TVgCFqjX5S/lsdJQyfQ2z1DNaVRbMwsvTpousJOM=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 959CF2086D
+	b=ECXsBsBiLRtxff5JI07/QYkArT8hwCtCu7PqcwsK7KMHaHppY/IRnCtwGk7ZzVQK6
+	 F7jcAmfHuEBQCOLuxMUu/aTmmg8ZUW4c1NEzEjrLZKGjuVQWVryNKsIR3SBfc0/DLL
+	 RLGe3OeFbJXq0tj0IrnyVDUeBRYInRIeuZ6q5hXI=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE15020855
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727416AbeLKP53 (ORCPT
+        id S1730829AbeLKP5c (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 10:57:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46446 "EHLO mail.kernel.org"
+        Tue, 11 Dec 2018 10:57:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46502 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730804AbeLKP50 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:57:26 -0500
+        id S1730810AbeLKP53 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 10:57:29 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 99554205C9;
-        Tue, 11 Dec 2018 15:57:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id ED93F205C9;
+        Tue, 11 Dec 2018 15:57:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544543845;
-        bh=mfmXeQ9V203s1wYaBVecf59+FMX6X5+BWLxGjccwS0c=;
+        s=default; t=1544543848;
+        bh=sIiJv8f773/KtXrqifesFxWZo52tXbRoN97aCtG6sSE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rggSmMzCSwdAOjWfTIWBzsZUzMyafAdw+KcjGlVLC+eogEo3Eczb38LhYhMkDbgEi
-         hbEnFnoKsfEuOK/0zNXL1xv7MWNDwLNe3N80pmYg4M6nfD/SVrzyeDuBz6/F72gRJo
-         iSy8hX7FxTYHCqRqfTMtWcab6hRkrbmitmPBLD9E=
+        b=SEhe3wU8iInNL318AzntcJFKEbqNdk1G7zXDQ8WNaRWB42adUM6kMPsJe/XKLIPfj
+         JVZMnCMlPBIWBZByIi6i6MHbluITyHrJ7PFL2XKSfTQKWW7LXjGKlAFtnYPHqq5tw6
+         xAND1mbYXoo4qZVC8lGbm4D2GUFAdIRSI8YeQoOA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Bin Liu <b-liu@ti.com>,
-        Peter Ujfalusi <peter.ujfalusi@ti.com>,
-        Vinod Koul <vkoul@kernel.org>
-Subject: [PATCH 4.19 087/118] dmaengine: cppi41: delete channel from pending list when stop channel
-Date:   Tue, 11 Dec 2018 16:41:46 +0100
-Message-Id: <20181211151647.780446772@linuxfoundation.org>
+        stable@vger.kernel.org, William Cohen <wcohen@redhat.com>,
+        Laura Abbott <labbott@redhat.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Russell King <rmk+kernel@armlinux.org.uk>
+Subject: [PATCH 4.19 088/118] ARM: 8806/1: kprobes: Fix false positive with FORTIFY_SOURCE
+Date:   Tue, 11 Dec 2018 16:41:47 +0100
+Message-Id: <20181211151647.822266181@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181211151644.216668863@linuxfoundation.org>
 References: <20181211151644.216668863@linuxfoundation.org>
@@ -69,62 +71,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Bin Liu <b-liu@ti.com>
+From: Kees Cook <keescook@chromium.org>
 
-commit 59861547ec9a9736e7882f6fb0c096a720ff811a upstream.
+commit e46daee53bb50bde38805f1823a182979724c229 upstream.
 
-The driver defines three states for a cppi channel.
-- idle: .chan_busy == 0 && not in .pending list
-- pending: .chan_busy == 0 && in .pending list
-- busy: .chan_busy == 1 && not in .pending list
+The arm compiler internally interprets an inline assembly label
+as an unsigned long value, not a pointer. As a result, under
+CONFIG_FORTIFY_SOURCE, the address of a label has a size of 4 bytes,
+which was tripping the runtime checks. Instead, we can just cast the label
+(as done with the size calculations earlier).
 
-There are cases in which the cppi channel could be in the pending state
-when cppi41_dma_issue_pending() is called after cppi41_runtime_suspend()
-is called.
+Bugzilla: https://bugzilla.redhat.com/show_bug.cgi?id=1639397
 
-cppi41_stop_chan() has a bug for these cases to set channels to idle state.
-It only checks the .chan_busy flag, but not the .pending list, then later
-when cppi41_runtime_resume() is called the channels in .pending list will
-be transitioned to busy state.
-
-Removing channels from the .pending list solves the problem.
-
-Fixes: 975faaeb9985 ("dma: cppi41: start tear down only if channel is busy")
-Cc: stable@vger.kernel.org # v3.15+
-Signed-off-by: Bin Liu <b-liu@ti.com>
-Reviewed-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
+Reported-by: William Cohen <wcohen@redhat.com>
+Fixes: 6974f0c4555e ("include/linux/string.h: add the option of fortified string.h functions")
+Cc: stable@vger.kernel.org
+Acked-by: Laura Abbott <labbott@redhat.com>
+Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
+Tested-by: William Cohen <wcohen@redhat.com>
+Signed-off-by: Kees Cook <keescook@chromium.org>
+Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/dma/ti/cppi41.c |   16 +++++++++++++++-
- 1 file changed, 15 insertions(+), 1 deletion(-)
+ arch/arm/probes/kprobes/opt-arm.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/dma/ti/cppi41.c
-+++ b/drivers/dma/ti/cppi41.c
-@@ -723,8 +723,22 @@ static int cppi41_stop_chan(struct dma_c
+--- a/arch/arm/probes/kprobes/opt-arm.c
++++ b/arch/arm/probes/kprobes/opt-arm.c
+@@ -247,7 +247,7 @@ int arch_prepare_optimized_kprobe(struct
+ 	}
  
- 	desc_phys = lower_32_bits(c->desc_phys);
- 	desc_num = (desc_phys - cdd->descs_phys) / sizeof(struct cppi41_desc);
--	if (!cdd->chan_busy[desc_num])
-+	if (!cdd->chan_busy[desc_num]) {
-+		struct cppi41_channel *cc, *_ct;
-+
-+		/*
-+		 * channels might still be in the pendling list if
-+		 * cppi41_dma_issue_pending() is called after
-+		 * cppi41_runtime_suspend() is called
-+		 */
-+		list_for_each_entry_safe(cc, _ct, &cdd->pending, node) {
-+			if (cc != c)
-+				continue;
-+			list_del(&cc->node);
-+			break;
-+		}
- 		return 0;
-+	}
+ 	/* Copy arch-dep-instance from template. */
+-	memcpy(code, &optprobe_template_entry,
++	memcpy(code, (unsigned char *)optprobe_template_entry,
+ 			TMPL_END_IDX * sizeof(kprobe_opcode_t));
  
- 	ret = cppi41_tear_down_chan(c);
- 	if (ret)
+ 	/* Adjust buffer according to instruction. */
 
 
