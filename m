@@ -2,74 +2,93 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C608BC5CFFE
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 13:49:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86D38C5CFFE
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 13:51:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 94AB92081B
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 13:49:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 94AB92081B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id 42CE92082F
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 13:51:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544536285;
+	bh=gRzf6z/MKDvgtnWkAZXJlfic2APrhs8q9Aso7EbUsxo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=q3Ymbwhzoh/c/hx+x13GnfdHRagDbJA/Qr/F+bIHrfVAZyeNtucMa8/GI2xqr6PRP
+	 0V+c6u+7LZJS5rcZfSrfMuwm2/p8CPlxo1/H02z0HNxcSWRbwtnl8kIpUpDIm9fglB
+	 oQSfUWiATdf1mkF1eUCPufr4EXnnNfCTLfd6vl+s=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 42CE92082F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726701AbeLKNtz (ORCPT
+        id S1726621AbeLKNvY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 08:49:55 -0500
-Received: from smtp.nue.novell.com ([195.135.221.5]:54621 "EHLO
-        smtp.nue.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726135AbeLKNtz (ORCPT
-        <rfc822;groupwise-linux-kernel@vger.kernel.org:0:0>);
-        Tue, 11 Dec 2018 08:49:55 -0500
-Received: from emea4-mta.ukb.novell.com ([10.120.13.87])
-        by smtp.nue.novell.com with ESMTP (TLS encrypted); Tue, 11 Dec 2018 14:49:52 +0100
-Received: from [192.168.1.132] (nwb-a10-snat.microfocus.com [10.120.13.202])
-        by emea4-mta.ukb.novell.com with ESMTP (TLS encrypted); Tue, 11 Dec 2018 13:49:29 +0000
-Message-ID: <1544536167.5269.7.camel@suse.com>
-Subject: Re: [PATCH] Revert "firmware: dmi_scan: Use lowercase letters for
- UUID"
-From:   Jean Delvare <jdelvare@suse.com>
-To:     Peter Korsgaard <peter@korsgaard.com>
-Cc:     linux-kernel@vger.kernel.org
-Date:   Tue, 11 Dec 2018 14:49:27 +0100
-In-Reply-To: <87efaotgi1.fsf@dell.be.48ers.dk>
-References: <20181205211351.5309-1-peter@korsgaard.com>
-         <1544086444.5492.1.camel@suse.com> <87a7ljyppx.fsf@dell.be.48ers.dk>
-         <1544092087.5492.3.camel@suse.com> <878t1264lf.fsf@dell.be.48ers.dk>
-         <87efaotgi1.fsf@dell.be.48ers.dk>
-Organization: Suse Linux
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Tue, 11 Dec 2018 08:51:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45352 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726135AbeLKNvX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 08:51:23 -0500
+Received: from localhost (173-25-171-118.client.mchsi.com [173.25.171.118])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 947C42082F;
+        Tue, 11 Dec 2018 13:51:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544536282;
+        bh=gRzf6z/MKDvgtnWkAZXJlfic2APrhs8q9Aso7EbUsxo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=e7GBUfnr+efAKmVLq5gc/PkXkIhSA+S9fHYHn4wpvr75KyFcw3adV7njHSltYBWrM
+         KLJiUWSJdCrejIZh2mNsdpLsBP8zLh6QvSicz1G9+end1tvT/QCsDA3Ne64b/3uwiI
+         hdFn44tWuCuhM53qZ4H1kMi6pB7BrBpebkkEAcSM=
+Date:   Tue, 11 Dec 2018 07:51:21 -0600
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     "Grumbach, Emmanuel" <emmanuel.grumbach@intel.com>
+Cc:     "bjorn@helgaas.com" <bjorn@helgaas.com>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "Mertarg10@gmail.com" <Mertarg10@gmail.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: Fwd: [Bug 201647] New: Intel Wireless card 3165 does not get
+ detected but bluetooth works
+Message-ID: <20181211135121.GB99796@google.com>
+References: <bug-201647-193951@https.bugzilla.kernel.org/>
+ <CABhMZUXc4FS-f52ZDsErEhbkm_jjEz+kn75YO5Tuvp42Qm+1xw@mail.gmail.com>
+ <20181128211959.GB178809@google.com>
+ <0BA3FCBA62E2DC44AF3030971E174FB3013373E4A3@HASMSX112.ger.corp.intel.com>
+ <20181210222452.GC85090@google.com>
+ <0BA3FCBA62E2DC44AF3030971E174FB30133754C00@HASMSX112.ger.corp.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0BA3FCBA62E2DC44AF3030971E174FB30133754C00@HASMSX112.ger.corp.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-12-11 at 13:06 +0100, Peter Korsgaard wrote:
-> > > > > > "Peter" == Peter Korsgaard <peter@korsgaard.com> writes:
-> 
-> Hi Jean,
-> 
->  >> Look, you can imagine that I was perfectly aware of what I was doing
->  >> when I made that change, and that I pondered the decision carefully at
->  >> that time. And my decision was that the change should be made. As far
->  >> as I'm concerned, this ship has sailed already, sorry.
-> 
->  > Sorry, what is the perceived risk of reverting this change? Just the
->  > minor inconsistency between the dmidecode and sysfs output? As stated
->  > above, the RFC requires conforming parsers to handle upper case as well.
-> 
-> I would appreciate if you could explain what risk you see from reverting
-> this change?
+On Tue, Dec 11, 2018 at 06:35:20AM +0000, Grumbach, Emmanuel wrote:
+> > > > > https://bugzilla.kernel.org/show_bug.cgi?id=201647
 
-The exact same risk that you are complaining about, for a different
-pair of kernel versions. You cannot at the same time argue that the
-change should not have been done back then, and ask for same change to
-be done again now.
+> > The Windows device manager info (requested above) would be interesting.
 
--- 
-Jean Delvare
-SUSE L3 Support
+I *thought* I had requested it, but I can't find that.  Mert, thanks
+for the screenshot you attached.  Would you mind also capturing the
+other tabs from device manager?  I'm really looking for a hex dump of
+the config space, which should be at least 256 bytes.  I *think*
+that's available somewhere in device manager.  If not, AIDA64
+(https://www.aida64.com/downloads) should be able to get it.
+
+> FWIW: I saw another problem like this with a 9650 device.
+
+Do you have a pointer to any info about this 9650 issue?  Maybe that
+would have a clue.
+
+> PS: PCI folks don't use bugzilla's anymore? It's all over the mailing list?
+
+Personally, I use bugzilla as a convenient place to archive artifacts
+like logs, screenshots, etc.  But it doesn't seem as convenient for
+conversations as the mailing list, and it doesn't have the visibility
+that the list does.
+
+Bjorn
