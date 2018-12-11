@@ -2,127 +2,132 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B814AC5CFFE
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 17:18:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62A86C07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 17:19:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7EA9D20879
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 17:18:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lca.pw header.i=@lca.pw header.b="svMzx1Nh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7EA9D20879
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lca.pw
+	by mail.kernel.org (Postfix) with ESMTP id 30A752086D
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 17:19:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 30A752086D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727194AbeLKRSc (ORCPT
+        id S1727214AbeLKRTN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 12:18:32 -0500
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:44158 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726776AbeLKRSb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 12:18:31 -0500
-Received: by mail-qt1-f196.google.com with SMTP id n32so17233669qte.11
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 09:18:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=h0hsgksLXZZZ+Za4ufYtYeUu6sbcdg1JL7mSLK44kUY=;
-        b=svMzx1NhUA9/VSxg+zlHTLuVM1Ssqd+JJ3soT1feYkYRvsGy51GQxFr+fTh2/vEanU
-         Vh3X3biNlEDE0T3+3TqTxCgKWoA3IBZaeQKhaH7Y4MRY/dYP95rmNdkMlF6s9VZvL2Up
-         i05Lg8dUO8w4zpxnyWrMDxNbQxQs8WV6Mw6r+CojIOzDnUeMhFgYDGmRX+iqCYmtkHEj
-         v0cMyZnE6QlWqtyOkrzmHFvdtkfi1qvAgUmuU2uk4wiy8r1+TMG3iZQEJRZZ5oyRVK5n
-         TSA9+yGqA0UP3yA786ErRqWFNIBnhwPp+C9sSL8YxAvulCbOfLRUX9Tx9pppJ72twWzP
-         Mh7w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=h0hsgksLXZZZ+Za4ufYtYeUu6sbcdg1JL7mSLK44kUY=;
-        b=r265q33Lj3Lq2X3NtsCWPDkcHs5prWbNABuCHsRTRRYOJ3zIFqJJG38L4crKXrIwh3
-         LdLKfXtFcHyAUZqHN03EQumS4DDNK6IL7IklpFrBII+wQuEBwxr7CLLt2DyMRS2+eIcg
-         heu1FphQu488ic+d8RClBgVJuf8njVplpUzmRgOeMkzI2CFxKhpeWKGkc6FsfGoLUDLu
-         eOZx/voG5nnVPR2AeGSQNE4Ghw3NtnupwxGVYHBCORRT44AqkjGcjEoLRnaehCWoxAob
-         0bN8xdtvsNV4zteVINFLQ6y7n0sPjtWEjqQpeWtiSsbZ4ev42Wh91oZXYf6BXUOpNLRl
-         MVcA==
-X-Gm-Message-State: AA+aEWZfEgYcF7SnyVfKvysGW7107mM2GZJy8g5VFJkGCZlT7/raqo4R
-        vcJaB0jeve7ftaKXX3KnzjbLXA==
-X-Google-Smtp-Source: AFSGD/VjSceHo1CAZ9W5GfynGWR67gmlWIo3i6anGONMRu4EZeLaCyiYEothGKkUaRykwx+4aL7APw==
-X-Received: by 2002:ac8:16d8:: with SMTP id y24mr17243898qtk.253.1544548709912;
-        Tue, 11 Dec 2018 09:18:29 -0800 (PST)
-Received: from dhcp-41-57.bos.redhat.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
-        by smtp.gmail.com with ESMTPSA id e89sm8298135qtb.78.2018.12.11.09.18.28
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 11 Dec 2018 09:18:29 -0800 (PST)
-Message-ID: <1544548707.18411.3.camel@lca.pw>
-Subject: Re: [PATCH] arm64: increase stack size for KASAN_EXTRA
-From:   Qian Cai <cai@lca.pw>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Alexander Potapenko <glider@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        kasan-dev <kasan-dev@googlegroups.com>,
-        Linux-MM <linux-mm@kvack.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Date:   Tue, 11 Dec 2018 12:18:27 -0500
-In-Reply-To: <CAK8P3a20kRDrkS1YFLp6cYeKcUoC9s+O_tnYNbKEMWGukia1Tg@mail.gmail.com>
-References: <721E7B42-2D55-4866-9C1A-3E8D64F33F9C@gmx.us>
-         <20181207223449.38808-1-cai@lca.pw>
-         <CAK8P3a20kRDrkS1YFLp6cYeKcUoC9s+O_tnYNbKEMWGukia1Tg@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6 (3.22.6-10.el7) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Tue, 11 Dec 2018 12:19:13 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:46550 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726878AbeLKRTN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 12:19:13 -0500
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 4D880307EA99;
+        Tue, 11 Dec 2018 17:19:12 +0000 (UTC)
+Received: from treble (ovpn-122-18.rdu2.redhat.com [10.10.122.18])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 2049B600CC;
+        Tue, 11 Dec 2018 17:19:10 +0000 (UTC)
+Date:   Tue, 11 Dec 2018 11:19:04 -0600
+From:   Josh Poimboeuf <jpoimboe@redhat.com>
+To:     David Laight <David.Laight@ACULAB.COM>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Lutomirski <luto@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "mhiramat@kernel.org" <mhiramat@kernel.org>,
+        "jbaron@akamai.com" <jbaron@akamai.com>,
+        Jiri Kosina <jkosina@suse.cz>, "bp@alien8.de" <bp@alien8.de>,
+        "julia@ni.com" <julia@ni.com>, "jeyu@kernel.org" <jeyu@kernel.org>,
+        Peter Anvin <hpa@zytor.com>
+Subject: Re: [PATCH v2 4/4] x86/static_call: Add inline static call
+ implementation for x86-64
+Message-ID: <20181211171904.urcsux6ttp2yfunm@treble>
+References: <20181129125857.75c55b96@gandalf.local.home>
+ <CAHk-=wigLUgxDM6Dq2aS7efduffratP976Ggmpv4Ev4EOrJxyA@mail.gmail.com>
+ <20181129134725.6d86ade6@gandalf.local.home>
+ <CAHk-=wgbnQs4fpuHqT1jLkDnKcvTGS5EN8m=qy7oUE5n_fhOig@mail.gmail.com>
+ <CAHk-=wjN=sow0F-UtA6DtHHT_CNUV7wYVe3cQ4E8GPp4LN32+Q@mail.gmail.com>
+ <CALCETrVzFk2Yv8q54Xh6qOb45AKKrQhD5OkAuTsw9HaR3Wvy4Q@mail.gmail.com>
+ <20181129202452.56f4j2wdct6qbaqo@treble>
+ <CAHk-=wiO87jDPP8FZ7EfwfbFNQRdr64Pa+g33do7tKiTFYz8BA@mail.gmail.com>
+ <20181130162713.uoeyfau66buntyse@treble>
+ <9fe3867d8f06424681ec2e75d8c6a7dd@AcuMS.aculab.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <9fe3867d8f06424681ec2e75d8c6a7dd@AcuMS.aculab.com>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Tue, 11 Dec 2018 17:19:12 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-12-11 at 13:42 +0100, Arnd Bergmann wrote:
-> On Fri, Dec 7, 2018 at 11:35 PM Qian Cai <cai@lca.pw> wrote:
+On Tue, Dec 11, 2018 at 09:41:37AM +0000, David Laight wrote:
+> From: Josh Poimboeuf
+> > Sent: 30 November 2018 16:27
 > > 
-> > If the kernel is configured with KASAN_EXTRA, the stack size is
-> > increasted significantly due to enable this option will set
-> > -fstack-reuse to "none" in GCC [1]. As the results, it could trigger
-> > stack overrun quite often with 32k stack size compiled using GCC 8. For
-> > example, this reproducer
+> > On Thu, Nov 29, 2018 at 03:04:20PM -0800, Linus Torvalds wrote:
+> > > On Thu, Nov 29, 2018 at 12:25 PM Josh Poimboeuf <jpoimboe@redhat.com> wrote:
+> ...
+> > > > Maybe that would be ok.  If my math is right, we would use the
+> > > > out-of-line version almost 5% of the time due to cache misalignment of
+> > > > the address.
+> > >
+> > > Note that I don't think cache-line alignment is necessarily sufficient.
+> > >
+> > > The I$ fetch from the cacheline can happen in smaller chunks, because
+> > > the bus between the I$ and the instruction decode isn't a full
+> > > cacheline (well, it is _now_ in modern big cores, but it hasn't always
+> > > been).
+> > >
+> > > So even if the cacheline is updated atomically, I could imagine seeing
+> > > a partial fetch from the I$ (old values) and then a second partial
+> > > fetch (new values).
+> > >
+> > > It would be interesting to know what the exact fetch rules are.
 > > 
-> > size
-> > 7536 shrink_inactive_list
-> > 7440 shrink_page_list
-> > 6560 fscache_stats_show
-> > 3920 jbd2_journal_commit_transaction
-> > 3216 try_to_unmap_one
-> > 3072 migrate_page_move_mapping
-> > 3584 migrate_misplaced_transhuge_page
-> > 3920 ip_vs_lblcr_schedule
-> > 4304 lpfc_nvme_info_show
-> > 3888 lpfc_debugfs_nvmestat_data.constprop
+> > I've been doing  some cross-modifying code experiments on Nehalem, with
+> > one CPU writing call destinations while the other CPUs are executing
+> > them.  Reliably, one of the readers goes off into the weeds within a few
+> > seconds.
 > > 
-> > There are other 49 functions are over 2k in size while compiling kernel
-> > with "-Wframe-larger-than=" on this machine. Hence, it is too much work
-> > to change Makefiles for each object to compile without
-> > -fsanitize-address-use-after-scope individually.
+> > The writing was done with just text_poke(), no #BP.
 > > 
-> > [1] https://gcc.gnu.org/bugzilla/show_bug.cgi?id=81715#c23
+> > I wasn't able to figure out the pattern in the addresses of the
+> > corrupted call sites.  It wasn't cache line.
+> > 
+> > That was on Nehalem.  Skylake didn't crash at all.
 > 
-> Could you clarify: are the numbers you see with or without the bugfix
-> from that bugzilla?
+> Interesting thought?
 > 
+> If it is possible to add a prefix that can be overwritten by an int3
+> is it also possible to add something that the assembler will use
+> to align the instruction so that a write to the 4 byte offset
+> will be atomic?
+> 
+> I'd guess that avoiding 8 byte granularity would be sufficient.
+> So you'd need a 1, 2 or 3 byte nop depending on the actual
+> alignment - although a 3 byte one would always do.
 
-The numbers were from GCC8 which does NOT contain this patch [1].
+The problem is that the call is done in C code, and we don't have a
+feasible way to use inline asm to call functions with more than five
+arguments.
 
-GCC9 is awesome which reduced the numbers in half even for KASAN_EXTRA. Only
-thing is that GCC9 has not been officially released yet, so it is a bit
-inconvenient for users need to compile the compiler by themselves first.
+BTW, my original experiments (mentioned above) were a bit... flawed.  I
+used text_poke(), which does memcpy(), which writes one byte at a time.
+No wonder it wasn't atomic.
 
-I am fine either way to drop this patch or keep it until GCC9 is GA.
+I'll need to do some more experiments.
 
-[1] https://gcc.gnu.org/bugzilla/show_bug.cgi?id=81715#c35
+-- 
+Josh
