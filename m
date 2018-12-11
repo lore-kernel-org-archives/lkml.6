@@ -6,25 +6,25 @@ X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D172C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 02:06:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52B27C5CFFE
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 02:06:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6CA1520672
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 02:06:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6CA1520672
+	by mail.kernel.org (Postfix) with ESMTP id 21E9320672
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 02:06:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 21E9320672
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=atomide.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729454AbeLKCGQ (ORCPT
+        id S1729429AbeLKCGP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 21:06:16 -0500
-Received: from muru.com ([72.249.23.125]:57244 "EHLO muru.com"
+        Mon, 10 Dec 2018 21:06:15 -0500
+Received: from muru.com ([72.249.23.125]:57258 "EHLO muru.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727485AbeLKCGM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 21:06:12 -0500
+        id S1729389AbeLKCGN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Dec 2018 21:06:13 -0500
 Received: from hillo.muru.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTP id B9EE78132;
-        Tue, 11 Dec 2018 02:06:14 +0000 (UTC)
+        by muru.com (Postfix) with ESMTP id 48DB68138;
+        Tue, 11 Dec 2018 02:06:16 +0000 (UTC)
 From:   Tony Lindgren <tony@atomide.com>
 To:     Mark Brown <broonie@kernel.org>
 Cc:     Liam Girdwood <lgirdwood@gmail.com>,
@@ -32,9 +32,9 @@ Cc:     Liam Girdwood <lgirdwood@gmail.com>,
         Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
         linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
         Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Subject: [PATCH 1/2] ASoC: simple-card-utils: revert port changes to follow graph binding
-Date:   Mon, 10 Dec 2018 18:05:56 -0800
-Message-Id: <20181211020557.61783-2-tony@atomide.com>
+Subject: [PATCH 2/2] ASoC: audio-graph-card: Fix parsing of multiple endpoints
+Date:   Mon, 10 Dec 2018 18:05:57 -0800
+Message-Id: <20181211020557.61783-3-tony@atomide.com>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181211020557.61783-1-tony@atomide.com>
 References: <20181211020557.61783-1-tony@atomide.com>
@@ -45,61 +45,103 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit b6f3fc005a2c ("ASoC: simple-card-utils: fixup
-asoc_simple_card_get_dai_id() counting") changed endpoint parsing for
-asoc_simple_card_get_dai_id(), but it seems the old code is correct.
+We currently use only the first endpoint even if multiple endpoints
+are configured for a port.
 
-This code should follow the generic binding documentation for
-Documentation/devicetree/bindings/graph.txt that allows multiple
-endpoints for each port.
+We should follow what's specified in the device graph binding
+document Documentation/devicetree/bindings/graph.txt in paragraph
+"Organisation of ports and endpoints":
+
+"If a single port is connected to more than one remote device, an
+ 'endpoint' child node must be provided for each link."
+
+This is the case for example for I2S where multiple devices can be
+connected to a single I2S port sharing it using TDM (Time-Division
+Multiplexing).
+
+To fix this, we need to iterate over each endpoint for a port.
+
+Note that the dts "dais" property should still contain a single
+property for each port, and not for each endpoint.
 
 Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Signed-off-by: Tony Lindgren <tony@atomide.com>
 ---
- sound/soc/generic/simple-card-utils.c | 22 +++++++++++++++++++---
- 1 file changed, 19 insertions(+), 3 deletions(-)
+ sound/soc/generic/audio-graph-card.c | 41 ++++++++++++++++++++++++----
+ 1 file changed, 36 insertions(+), 5 deletions(-)
 
-diff --git a/sound/soc/generic/simple-card-utils.c b/sound/soc/generic/simple-card-utils.c
---- a/sound/soc/generic/simple-card-utils.c
-+++ b/sound/soc/generic/simple-card-utils.c
-@@ -269,19 +269,35 @@ EXPORT_SYMBOL_GPL(asoc_simple_card_parse_dai);
- 
- static int asoc_simple_card_get_dai_id(struct device_node *ep)
- {
--	struct of_endpoint info;
-+	struct device_node *node;
-+	struct device_node *endpoint;
-+	int i, id;
- 	int ret;
- 
- 	ret = snd_soc_get_dai_id(ep);
- 	if (ret != -ENOTSUPP)
- 		return ret;
- 
-+	node = of_graph_get_port_parent(ep);
-+
- 	/*
- 	 * Non HDMI sound case, counting port/endpoint on its DT
- 	 * is enough. Let's count it.
- 	 */
--	of_graph_parse_endpoint(ep, &info);
--	return info.port;
-+	i = 0;
-+	id = -1;
-+	for_each_endpoint_of_node(node, endpoint) {
-+		if (endpoint == ep)
-+			id = i;
-+		i++;
-+	}
-+
-+	of_node_put(node);
-+
-+	if (id < 0)
-+		return -ENODEV;
-+
-+	return id;
+diff --git a/sound/soc/generic/audio-graph-card.c b/sound/soc/generic/audio-graph-card.c
+--- a/sound/soc/generic/audio-graph-card.c
++++ b/sound/soc/generic/audio-graph-card.c
+@@ -156,17 +156,17 @@ static int asoc_graph_card_dai_init(struct snd_soc_pcm_runtime *rtd)
+ 	return 0;
  }
  
- int asoc_simple_card_parse_graph_dai(struct device_node *ep,
+-static int asoc_graph_card_dai_link_of(struct device_node *cpu_port,
++static int asoc_graph_card_ep_of(struct device_node *cpu_port,
++					struct device_node *cpu_ep,
+ 					struct graph_card_data *priv,
+ 					int *dai_idx, int link_idx)
+ {
+ 	struct device *dev = graph_priv_to_dev(priv);
+ 	struct snd_soc_dai_link *dai_link = graph_priv_to_link(priv, link_idx);
+ 	struct graph_dai_props *dai_props = graph_priv_to_props(priv, link_idx);
++	struct device_node *codec_ep = of_graph_get_remote_endpoint(cpu_ep);
+ 	struct asoc_simple_dai *cpu_dai;
+ 	struct asoc_simple_dai *codec_dai;
+-	struct device_node *cpu_ep    = of_get_next_child(cpu_port, NULL);
+-	struct device_node *codec_ep = of_graph_get_remote_endpoint(cpu_ep);
+ 	int ret;
+ 
+ 	cpu_dai			=
+@@ -230,6 +230,31 @@ static int asoc_graph_card_dai_link_of(struct device_node *cpu_port,
+ 	return ret;
+ }
+ 
++static int asoc_graph_card_dai_link_of(struct device_node *cpu_port,
++					struct graph_card_data *priv,
++					int *dai_idx, int link_idx)
++{
++	struct device *dev = graph_priv_to_dev(priv);
++	struct device_node *ep = NULL;
++	int num_ep, ep_idx, ret;
++
++	num_ep = of_get_child_count(cpu_port);
++	if (!num_ep) {
++		dev_err(dev, "no cpu endpoints found for %pOf\n", cpu_port);
++		return -ENODEV;
++	}
++
++	for (ep_idx = 0; ep_idx < num_ep; ep_idx++) {
++		ep = of_get_next_child(cpu_port, ep);
++		ret = asoc_graph_card_ep_of(cpu_port, ep, priv,
++					    dai_idx, link_idx + ep_idx);
++		if (ret)
++			return ret;
++	}
++
++	return ret;
++}
++
+ static int asoc_graph_card_parse_of(struct graph_card_data *priv)
+ {
+ 	struct of_phandle_iterator it;
+@@ -272,8 +297,14 @@ static int asoc_graph_get_dais_count(struct device *dev)
+ 	int count = 0;
+ 	int rc;
+ 
+-	of_for_each_phandle(&it, rc, node, "dais", NULL, 0)
+-		count++;
++	of_for_each_phandle(&it, rc, node, "dais", NULL, 0) {
++		int ep_count = of_get_child_count(it.node);
++
++		if (ep_count)
++			count += ep_count;
++		else
++			count++;
++	}
+ 
+ 	return count;
+ }
 -- 
 2.19.2
