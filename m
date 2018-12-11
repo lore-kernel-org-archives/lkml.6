@@ -2,183 +2,147 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E377C5CFFE
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:23:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45D60C07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:23:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D32B220870
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:23:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D32B220870
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org
+	by mail.kernel.org (Postfix) with ESMTP id 0A8B52084E
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:23:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544545410;
+	bh=lHxqwt+J4nPPFMZkFlTOQ/RMcQVAvd7l7e4FkIkqS7o=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=Vf0p5q7O4VlU7IVQ8qoA+p+7i6Xkf1a+iXQZ4zOZ+CWmqAFXpD6P+ngg6e+CU/LAS
+	 OsMBElijDTdm9foTup86B5vaMYTj36vzpWspudmhaYWdPB7zpHXErQ6RGbMbd/EHwV
+	 cRJdzcxIXAiwqNB30v9wmizjnk7KJ4rKxUbDtFgs=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A8B52084E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728484AbeLKQXM (ORCPT
+        id S1727536AbeLKPn3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 11:23:12 -0500
-Received: from vmicros1.altlinux.org ([194.107.17.57]:48318 "EHLO
-        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727686AbeLKQXJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 11:23:09 -0500
-Received: from mua.local.altlinux.org (mua.local.altlinux.org [192.168.1.14])
-        by vmicros1.altlinux.org (Postfix) with ESMTP id 94A9872CC6C;
-        Tue, 11 Dec 2018 19:23:05 +0300 (MSK)
-Received: by mua.local.altlinux.org (Postfix, from userid 508)
-        id 7C9EB7CFA6D; Tue, 11 Dec 2018 19:23:05 +0300 (MSK)
-Date:   Tue, 11 Dec 2018 19:23:05 +0300
-From:   "Dmitry V. Levin" <ldv@altlinux.org>
-To:     Oleg Nesterov <oleg@redhat.com>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Elvira Khabirova <lineprinter@altlinux.org>,
-        Eugene Syromyatnikov <esyr@redhat.com>,
-        Kees Cook <keescook@chromium.org>,
-        Jann Horn <jannh@google.com>, linux-api@vger.kernel.org,
-        strace-devel@lists.strace.io, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 24/25] ptrace: add PTRACE_GET_SYSCALL_INFO request
-Message-ID: <20181211162305.GA480@altlinux.org>
-References: <20181210042352.GA6092@altlinux.org>
- <20181210043126.GX6131@altlinux.org>
- <20181210141107.GB4177@redhat.com>
- <20181210162131.GG14149@altlinux.org>
- <20181211152953.GA8504@redhat.com>
+        Tue, 11 Dec 2018 10:43:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59928 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727489AbeLKPn0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 10:43:26 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0B78920855;
+        Tue, 11 Dec 2018 15:43:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544543005;
+        bh=lHxqwt+J4nPPFMZkFlTOQ/RMcQVAvd7l7e4FkIkqS7o=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=EJ6jtAMvXeGfzC/pQgewGVD7DAvw2hJdEOF10Lg48hLsMjIZyomrq0pqpOrCkzWck
+         Te/HWK7OjswkzU3GllQ8hwtTRkQz/3B1ynV50lJUvbsPSdKW4MT6WoeqCVR0pkrc6x
+         Qq6+01bVg28Nu1vWJrGfmPYi2VCzOCpeoMm41Hnk=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>,
+        Laura Abbott <labbott@redhat.com>
+Subject: [PATCH 3.18 30/54] kgdboc: Fix warning with module build
+Date:   Tue, 11 Dec 2018 16:41:18 +0100
+Message-Id: <20181211151547.817465116@linuxfoundation.org>
+X-Mailer: git-send-email 2.20.0
+In-Reply-To: <20181211151546.010073210@linuxfoundation.org>
+References: <20181211151546.010073210@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="a8Wt8u1KmwUX3Y2C"
-Content-Disposition: inline
-In-Reply-To: <20181211152953.GA8504@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+3.18-stable review patch.  If anyone has any objections, please let me know.
 
---a8Wt8u1KmwUX3Y2C
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+------------------
 
-On Tue, Dec 11, 2018 at 04:29:54PM +0100, Oleg Nesterov wrote:
-> On 12/10, Dmitry V. Levin wrote:
-> > On Mon, Dec 10, 2018 at 03:11:07PM +0100, Oleg Nesterov wrote:
-> > > On 12/10, Dmitry V. Levin wrote:
-> > > >
-> > > > +struct ptrace_syscall_info {
-> > > > +	__u8 op;	/* PTRACE_SYSCALL_INFO_* */
-> > > > +	__u8 __pad0[3];
-> > > > +	__u32 arch;
-> > > > +	__u64 instruction_pointer;
-> > > > +	__u64 stack_pointer;
-> > > > +	__u64 frame_pointer;
-> > > > +	union {
-> > > > +		struct {
-> > > > +			__u64 nr;
-> > > > +			__u64 args[6];
-> > > > +		} entry;
-> > > > +		struct {
-> > > > +			__s64 rval;
-> > > > +			__u8 is_error;
-> > > > +			__u8 __pad1[7];
-> > > > +		} exit;
-> > > > +		struct {
-> > > > +			__u64 nr;
-> > > > +			__u64 args[6];
-> > > > +			__u32 ret_data;
-> > > > +			__u8 __pad2[4];
-> > > > +		} seccomp;
-> > > > +	};
-> > > > +};
-> > >
-> > > Could you explain why ptrace_syscall_info needs __pad{0,1,2} ? I simp=
-ly can't
-> > > understand why...
-> >
-> > I suppose the idea behind the use of these pads was to make the structu=
-re
-> > arch-independent.
->=20
-> Still can't understand... are you saying that without (say) __pad2[4]
-> sizeof(ptrace_syscall_info) or offsetofend(ptrace_syscall_info, seccomp)
-> will depend on arch? Or what? I am just curious.
+From: Laura Abbott <labbott@redhat.com>
 
-Yes, without padding these sizes will depend on architecture:
+commit 1cd25cbb2fedbc777f3a8c3cb1ba69b645aeaa64 upstream.
 
-$ cat t.c
-#include <linux/types.h>
-int main() {
-	struct s {
-		__u64 nr;
-		__u64 args[6];
-		__u32 ret_data;
-	};
-	return sizeof(struct s);
-}
+After 2dd453168643 ("kgdboc: Fix restrict error"), kgdboc_option_setup is
+now only used when built in, resulting in a warning when compiled as a
+module:
 
-$ gcc -m64 -Wall -O2 t.c && ./a.out; echo $?
-64
-$ gcc -m32 -Wall -O2 t.c && ./a.out; echo $?
-60
+drivers/tty/serial/kgdboc.c:134:12: warning: 'kgdboc_option_setup' defined but not used [-Wunused-function]
+ static int kgdboc_option_setup(char *opt)
+            ^~~~~~~~~~~~~~~~~~~
 
-This happens because __u64 has 32-bit alignment on some 32-bit
-architectures like x86.
+Move the function under the appropriate ifdef for builtin only.
 
-There is also m68k where __u32 has 16-bit alignment.
+Fixes: 2dd453168643 ("kgdboc: Fix restrict error")
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Signed-off-by: Laura Abbott <labbott@redhat.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-> > I don't think we really need to keep it exactly the same on all
-> > architectures - the only practical requirement is to avoid any compat
-> > issues, but I don't mind keeping the structure arch-independent.
->=20
-> OK, but may be you can add a short comment to explain these pads.
+---
+ drivers/tty/serial/kgdboc.c |   37 +++++++++++++++++++------------------
+ 1 file changed, 19 insertions(+), 18 deletions(-)
 
-Alternatively, we could use __attribute__((aligned(N))), e.g.
-
-struct ptrace_syscall_info {
-	__u8 op;	/* PTRACE_SYSCALL_INFO_* */
-	__u32 arch __attribute__((aligned(4)));
-	__u64 instruction_pointer;
-	__u64 stack_pointer;
-	union {
-		struct {
-			__u64 nr __attribute__((aligned(8)));
-			__u64 args[6];
-		} entry;
-		struct {
-			__s64 rval __attribute__((aligned(8)));
-			__u8 is_error;
-		} exit;
-		struct {
-			__u64 nr __attribute__((aligned(8)));
-			__u64 args[6];
-			__u32 ret_data;
-		} seccomp;
-	};
-};
-
-Do you prefer __attribute__((aligned(N))) to padding?
+--- a/drivers/tty/serial/kgdboc.c
++++ b/drivers/tty/serial/kgdboc.c
+@@ -131,24 +131,6 @@ static void kgdboc_unregister_kbd(void)
+ #define kgdboc_restore_input()
+ #endif /* ! CONFIG_KDB_KEYBOARD */
+ 
+-static int kgdboc_option_setup(char *opt)
+-{
+-	if (!opt) {
+-		pr_err("kgdboc: config string not provided\n");
+-		return -EINVAL;
+-	}
+-
+-	if (strlen(opt) >= MAX_CONFIG_LEN) {
+-		printk(KERN_ERR "kgdboc: config string too long\n");
+-		return -ENOSPC;
+-	}
+-	strcpy(config, opt);
+-
+-	return 0;
+-}
+-
+-__setup("kgdboc=", kgdboc_option_setup);
+-
+ static void cleanup_kgdboc(void)
+ {
+ 	if (kgdb_unregister_nmi_console())
+@@ -316,6 +298,25 @@ static struct kgdb_io kgdboc_io_ops = {
+ };
+ 
+ #ifdef CONFIG_KGDB_SERIAL_CONSOLE
++static int kgdboc_option_setup(char *opt)
++{
++	if (!opt) {
++		pr_err("config string not provided\n");
++		return -EINVAL;
++	}
++
++	if (strlen(opt) >= MAX_CONFIG_LEN) {
++		pr_err("config string too long\n");
++		return -ENOSPC;
++	}
++	strcpy(config, opt);
++
++	return 0;
++}
++
++__setup("kgdboc=", kgdboc_option_setup);
++
++
+ /* This is only available if kgdboc is a built in for early debugging */
+ static int __init kgdboc_early_init(char *opt)
+ {
 
 
---=20
-ldv
-
---a8Wt8u1KmwUX3Y2C
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBCAAGBQJcD+RpAAoJEAVFT+BVnCUIcBAQAIk2DIaVO8win99bfrthySyg
-4qzAMo2GFFPBGMrOaj8q+9FcfOS+atOy6twMOyuBahMHzUZ4FCfBWfMwmKKlmqlN
-fRaj8nnwyISEhR8pcV2qRgqrdYw+kB//81GoY9OALju+H6jP+xuJ58aV+O1D1aiM
-PiuwWBvScc6fgAo/fRac9UKMwDMfxfdw0CJ99VmnJz3AhbKp2e19Vo1nzw6Jqp41
-Tx11Tvd97+qIT9E2NdRH+7kt8APthvZW0lo+8fqnGxJu49ulS2oRh8Vk5K6ZjXKe
-x9sRyfWz1rMSyS4P/KaDE8cX4wk4c6n158EeYK8al/McUeIz9hATmdGjOv8vsQFJ
-OniRAY3sTYnMX63pY7sIENM+1uILbBZQbyXsHm6haB6Cpog8wZjiTfL0GuvfNY3u
-eo5xHeAxMEVOQegHDOY7Q2WdrsdY2TzjM3FWzDm4ZTRr7MW16eQZXtHKryIe4pTC
-rfxwfvgtbVDtkfk9mpjnL/7+P6ATGzecSAlzT10zyinTnnX0qElau7k+RHCUTczZ
-wztUiTvLzPbMaDVf23anqO5YYt5OBEPOAn3e0xX2h85QpFC2nEaUIWEK9hHDgwKB
-mhz6ga7Iup10vckeP/b/qau4tWYMwMGCUqVobFSa+bcmIl6U3293uHHEpcZsKCzZ
-LVQwqcKiPj4ANJ4TkiMj
-=H7Ic
------END PGP SIGNATURE-----
-
---a8Wt8u1KmwUX3Y2C--
