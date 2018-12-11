@@ -2,53 +2,55 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF842C07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:43:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 408ACC5CFFE
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:44:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9986D20870
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:43:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 057B620855
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:44:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544543039;
-	bh=OIZaAMpI6/FOYm/IDIfp7TNnKrLY+BHhod+379IK3qw=;
+	s=default; t=1544543042;
+	bh=EQhQ/jz9GSiri87p6mOhVl8XyyJr/v8PTvooQVHCRyQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=q3SW46gIiT+otgep1m1BzqTXX0+iIywGaEAfU9qW1XJIyiT1Esc8Hs0Y89NYWT/BY
-	 wz2CUQVRf0xTKmhaNqRm0vmUTiqvAbIuXX+YlB7nDsmwm5R4g1r4NZqPXHGiRZTstN
-	 /v86T7iqnzRCSI1W0wV2EvUei9rBVn2QV6AEL2SU=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9986D20870
+	b=rqB84I4jfGLLlL5TOfEu+U/BN3tMrtMC9IKKgAJvDE/zx9I63i8bBxRCA4qSPe+Ht
+	 EHI/lL4UPMchCFgDMU7E2PGEqc+b5ErK3Pd5zC18g0hreTl3K3uVyQEGV+R4PpJ5qc
+	 HI7UCngGVqo7J8MGiwVJqQiW1I59uvaUFM+fOsHs=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 057B620855
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727684AbeLKPn6 (ORCPT
+        id S1727700AbeLKPoA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 10:43:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60512 "EHLO mail.kernel.org"
+        Tue, 11 Dec 2018 10:44:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60458 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727647AbeLKPn4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:43:56 -0500
+        id S1727659AbeLKPnx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 10:43:53 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 42CE02087F;
-        Tue, 11 Dec 2018 15:43:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AA8A520672;
+        Tue, 11 Dec 2018 15:43:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544543035;
-        bh=OIZaAMpI6/FOYm/IDIfp7TNnKrLY+BHhod+379IK3qw=;
+        s=default; t=1544543033;
+        bh=EQhQ/jz9GSiri87p6mOhVl8XyyJr/v8PTvooQVHCRyQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=o69DpDTyRIodZHNircO1ABvSAwwpJOB8iCsAMz+AoFnAXAI70Tx+mE1P360rVpaKV
-         wbskyLFhWDBaLmonaDZ1W3Xjcl2RJYjCVtuUbFkqCzPGLJc+5mrSouQ8oc6BiJSg4f
-         47zzpljbLK58jWdaMeRahrzm9vDMB58A+U2rddyw=
+        b=CuP5PurrpA2NBed5Zp6kmh/PtKZuTHjRJH1/UlxlBV31ox7dzL9UGBTChXODGd7o9
+         668VwvWcF3PcO+K0JxD9pZAteAqn6I55ox/jVWcwY1F3vuBoRUGyArirvp5CC/prY8
+         aIpgx6nHqgfsTgts64NHDhmv6KvWemTqyPa+Cbaw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Harry Pan <harry.pan@intel.com>
-Subject: [PATCH 3.18 41/54] usb: quirk: add no-LPM quirk on SanDisk Ultra Flair device
-Date:   Tue, 11 Dec 2018 16:41:29 +0100
-Message-Id: <20181211151548.385413245@linuxfoundation.org>
+        stable@vger.kernel.org, Anton Blanchard <anton@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 3.18 40/54] powerpc/vdso64: Use double word compare on pointers
+Date:   Tue, 11 Dec 2018 16:41:28 +0100
+Message-Id: <20181211151548.329260078@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181211151546.010073210@linuxfoundation.org>
 References: <20181211151546.010073210@linuxfoundation.org>
@@ -67,66 +69,70 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Harry Pan <harry.pan@intel.com>
+[ Upstream commit 5045ea37377ce8cca6890d32b127ad6770e6dce5 ]
 
-commit 2f2dde6ba89b1ef1fe23c1138131b315d9aa4019 upstream.
+__kernel_get_syscall_map() and __kernel_clock_getres() use cmpli to
+check if the passed in pointer is non zero. cmpli maps to a 32 bit
+compare on binutils, so we ignore the top 32 bits.
 
-Some lower volume SanDisk Ultra Flair in 16GB, which the VID:PID is
-in 0781:5591, will aggressively request LPM of U1/U2 during runtime,
-when using this thumb drive as the OS installation key we found the
-device will generate failure during U1 exit path making it dropped
-from the USB bus, this causes a corrupted installation in system at
-the end.
+A simple test case can be created by passing in a bogus pointer with
+the bottom 32 bits clear. Using a clk_id that is handled by the VDSO,
+then one that is handled by the kernel shows the problem:
 
-i.e.,
-[  166.918296] hub 2-0:1.0: state 7 ports 7 chg 0000 evt 0004
-[  166.918327] usb usb2-port2: link state change
-[  166.918337] usb usb2-port2: do warm reset
-[  166.970039] usb usb2-port2: not warm reset yet, waiting 50ms
-[  167.022040] usb usb2-port2: not warm reset yet, waiting 200ms
-[  167.276043] usb usb2-port2: status 02c0, change 0041, 5.0 Gb/s
-[  167.276050] usb 2-2: USB disconnect, device number 2
-[  167.276058] usb 2-2: unregistering device
-[  167.276060] usb 2-2: unregistering interface 2-2:1.0
-[  167.276170] xhci_hcd 0000:00:15.0: shutdown urb ffffa3c7cc695cc0 ep1in-bulk
-[  167.284055] sd 0:0:0:0: [sda] tag#0 FAILED Result: hostbyte=DID_NO_CONNECT driverbyte=DRIVER_OK
-[  167.284064] sd 0:0:0:0: [sda] tag#0 CDB: Read(10) 28 00 00 33 04 90 00 01 00 00
-...
+  printf("%d\n", clock_getres(CLOCK_REALTIME, (void *)0x100000000));
+  printf("%d\n", clock_getres(CLOCK_BOOTTIME, (void *)0x100000000));
 
-Analyzed the USB trace in the link layer we realized it is because
-of the 6-ms timer of tRecoveryConfigurationTimeout which documented
-on the USB 3.2 Revision 1.0, the section 7.5.10.4.2 of "Exit from
-Recovery.Configuration"; device initiates U1 exit -> Recovery.Active
--> Recovery.Configuration, then the host timer timeout makes the link
-transits to eSS.Inactive -> Rx.Detect follows by a Warm Reset.
+And we get:
 
-Interestingly, the other higher volume of SanDisk Ultra Flair sharing
-the same VID:PID, such as 64GB, would not request LPM during runtime,
-it sticks at U0 always, thus disabling LPM does not affect those thumb
-drives at all.
+  0
+  -1
 
-The same odd occures in SanDisk Ultra Fit 16GB, VID:PID in 0781:5583.
+The bigger issue is if we pass a valid pointer with the bottom 32 bits
+clear, in this case we will return success but won't write any data
+to the pointer.
 
-Signed-off-by: Harry Pan <harry.pan@intel.com>
-Cc: stable <stable@vger.kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+I stumbled across this issue because the LLVM integrated assembler
+doesn't accept cmpli with 3 arguments. Fix this by converting them to
+cmpldi.
 
+Fixes: a7f290dad32e ("[PATCH] powerpc: Merge vdso's and add vdso support to 32 bits kernel")
+Cc: stable@vger.kernel.org # v2.6.15+
+Signed-off-by: Anton Blanchard <anton@samba.org>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/core/quirks.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ arch/powerpc/kernel/vdso64/datapage.S     | 2 +-
+ arch/powerpc/kernel/vdso64/gettimeofday.S | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/usb/core/quirks.c
-+++ b/drivers/usb/core/quirks.c
-@@ -177,6 +177,10 @@ static const struct usb_device_id usb_qu
- 	/* Midiman M-Audio Keystation 88es */
- 	{ USB_DEVICE(0x0763, 0x0192), .driver_info = USB_QUIRK_RESET_RESUME },
+diff --git a/arch/powerpc/kernel/vdso64/datapage.S b/arch/powerpc/kernel/vdso64/datapage.S
+index 79796de11737..3263ee23170d 100644
+--- a/arch/powerpc/kernel/vdso64/datapage.S
++++ b/arch/powerpc/kernel/vdso64/datapage.S
+@@ -57,7 +57,7 @@ V_FUNCTION_BEGIN(__kernel_get_syscall_map)
+ 	bl	V_LOCAL_FUNC(__get_datapage)
+ 	mtlr	r12
+ 	addi	r3,r3,CFG_SYSCALL_MAP64
+-	cmpli	cr0,r4,0
++	cmpldi	cr0,r4,0
+ 	crclr	cr0*4+so
+ 	beqlr
+ 	li	r0,__NR_syscalls
+diff --git a/arch/powerpc/kernel/vdso64/gettimeofday.S b/arch/powerpc/kernel/vdso64/gettimeofday.S
+index a76b4af37ef2..382021324883 100644
+--- a/arch/powerpc/kernel/vdso64/gettimeofday.S
++++ b/arch/powerpc/kernel/vdso64/gettimeofday.S
+@@ -145,7 +145,7 @@ V_FUNCTION_BEGIN(__kernel_clock_getres)
+ 	bne	cr0,99f
  
-+	/* SanDisk Ultra Fit and Ultra Flair */
-+	{ USB_DEVICE(0x0781, 0x5583), .driver_info = USB_QUIRK_NO_LPM },
-+	{ USB_DEVICE(0x0781, 0x5591), .driver_info = USB_QUIRK_NO_LPM },
-+
- 	/* M-Systems Flash Disk Pioneers */
- 	{ USB_DEVICE(0x08ec, 0x1000), .driver_info = USB_QUIRK_RESET_RESUME },
- 
+ 	li	r3,0
+-	cmpli	cr0,r4,0
++	cmpldi	cr0,r4,0
+ 	crclr	cr0*4+so
+ 	beqlr
+ 	lis	r5,CLOCK_REALTIME_RES@h
+-- 
+2.19.1
+
 
 
