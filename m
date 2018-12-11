@@ -7,51 +7,50 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16C0BC07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:47:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1D88C07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:47:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CE41D2145D
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:47:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 87F4B2145D
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:47:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544543240;
-	bh=udgaIKOM/ryxsNJgBuFb7iU//y+YUB/CkfPswMUNaY8=;
+	s=default; t=1544543243;
+	bh=b3IJ2tsW9GZUjR3Ytw5uWzAXwafwri7aHr+XI/S0QiY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ARsFUAoLzmKR2XDvi22Mk6yAS+Tq1/91YZliNQASmoBy46uPrkVpzbZwyAYbwC3aR
-	 311QUTxzLaL0SG5VSiWtBnbWV/qmjpsFRC4lGuMZ46xrNTt6eE1oMNe+N7QIc/2/o6
-	 3mykDRFVlGWcJp9iDNUquxKWSL5rPByz3ybgUhH0=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE41D2145D
+	b=SpOSXuSob9COMRTQxcYFDvet4TldeoC5eBLpR0VDpu/Y+ROICYTyhMCNUJ+Cuobwk
+	 9vFTddNaOoeWtOvhpZX/N/cWTsMAUbjRshf7DJmL3JDMqZmu2b/IKpbQmGevbxmRt+
+	 SNsgKqi8wYJOe3vuV3qqDFba0fASoyiTEq6EIyoY=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 87F4B2145D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728521AbeLKPrT (ORCPT
+        id S1728049AbeLKPrW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 10:47:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35776 "EHLO mail.kernel.org"
+        Tue, 11 Dec 2018 10:47:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35830 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727835AbeLKPrS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:47:18 -0500
+        id S1727835AbeLKPrV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 10:47:21 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7CE682146D;
-        Tue, 11 Dec 2018 15:47:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 37D8620989;
+        Tue, 11 Dec 2018 15:47:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544543238;
-        bh=udgaIKOM/ryxsNJgBuFb7iU//y+YUB/CkfPswMUNaY8=;
+        s=default; t=1544543240;
+        bh=b3IJ2tsW9GZUjR3Ytw5uWzAXwafwri7aHr+XI/S0QiY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rQepz3oGPuHSgq10dGEwuXaeOJnIZVU+LKashn2BnPTk4WCljnQiSsJeATr5O4/CL
-         Z6JTe6XcRCnIOnqnPUuLRI3di11Oeg2YW1VoGMnL2AHpGnVDwwadVVV53E560lJpqH
-         XUNOgjyQXglWGcLfIA+MVmyD3Eo+ACAa/gcr8+Y8=
+        b=etRGr1aqPDpa+HqRBUQM0DBMu2lkwJ5AvN4bt7tY1TX4eOZNBkOcxV1hdhL/tjp/G
+         J+uhMSgaiOrPNk/eAlMqLWO0DNThflRrUDw0CmK+5Nst5fpvi6cSBBWWF3cOVxw4eX
+         YGor4MDQvPEE+/Elswjo0gw6qtdHN00kVAOstCxk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Aya Levin <ayal@mellanox.com>,
-        Tariq Toukan <tariqt@mellanox.com>,
+        stable@vger.kernel.org, Vincent Chen <vincentc@andestech.com>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 66/91] net/mlx4: Fix UBSAN warning of signed integer overflow
-Date:   Tue, 11 Dec 2018 16:41:25 +0100
-Message-Id: <20181211151611.631008994@linuxfoundation.org>
+Subject: [PATCH 4.4 67/91] net: faraday: ftmac100: remove netif_running(netdev) check before disabling interrupts
+Date:   Tue, 11 Dec 2018 16:41:26 +0100
+Message-Id: <20181211151611.736569261@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181211151606.026852373@linuxfoundation.org>
 References: <20181211151606.026852373@linuxfoundation.org>
@@ -70,43 +69,52 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit a463146e67c848cbab5ce706d6528281b7cded08 ]
+[ Upstream commit 426a593e641ebf0d9288f0a2fcab644a86820220 ]
 
-UBSAN: Undefined behavior in
-drivers/net/ethernet/mellanox/mlx4/resource_tracker.c:626:29
-signed integer overflow: 1802201963 + 1802201963 cannot be represented
-in type 'int'
+In the original ftmac100_interrupt(), the interrupts are only disabled when
+the condition "netif_running(netdev)" is true. However, this condition
+causes kerenl hang in the following case. When the user requests to
+disable the network device, kernel will clear the bit __LINK_STATE_START
+from the dev->state and then call the driver's ndo_stop function. Network
+device interrupts are not blocked during this process. If an interrupt
+occurs between clearing __LINK_STATE_START and stopping network device,
+kernel cannot disable the interrupts due to the condition
+"netif_running(netdev)" in the ISR. Hence, kernel will hang due to the
+continuous interruption of the network device.
 
-The union of res_reserved and res_port_rsvd[MLX4_MAX_PORTS] monitors
-granting of reserved resources. The grant operation is calculated and
-protected, thus both members of the union cannot be negative.  Changed
-type of res_reserved and of res_port_rsvd[MLX4_MAX_PORTS] from signed
-int to unsigned int, allowing large value.
+In order to solve the above problem, the interrupts of the network device
+should always be disabled in the ISR without being restricted by the
+condition "netif_running(netdev)".
 
-Fixes: 5a0d0a6161ae ("mlx4: Structures and init/teardown for VF resource quotas")
-Signed-off-by: Aya Levin <ayal@mellanox.com>
-Signed-off-by: Tariq Toukan <tariqt@mellanox.com>
+[V2]
+Remove unnecessary curly braces.
+
+Signed-off-by: Vincent Chen <vincentc@andestech.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/mellanox/mlx4/mlx4.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/faraday/ftmac100.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/net/ethernet/mellanox/mlx4/mlx4.h b/drivers/net/ethernet/mellanox/mlx4/mlx4.h
-index f5fdbd53d052..db40387ffaf6 100644
---- a/drivers/net/ethernet/mellanox/mlx4/mlx4.h
-+++ b/drivers/net/ethernet/mellanox/mlx4/mlx4.h
-@@ -537,8 +537,8 @@ struct slave_list {
- struct resource_allocator {
- 	spinlock_t alloc_lock; /* protect quotas */
- 	union {
--		int res_reserved;
--		int res_port_rsvd[MLX4_MAX_PORTS];
-+		unsigned int res_reserved;
-+		unsigned int res_port_rsvd[MLX4_MAX_PORTS];
- 	};
- 	union {
- 		int res_free;
+diff --git a/drivers/net/ethernet/faraday/ftmac100.c b/drivers/net/ethernet/faraday/ftmac100.c
+index dce5f7b7f772..05e1f923f49e 100644
+--- a/drivers/net/ethernet/faraday/ftmac100.c
++++ b/drivers/net/ethernet/faraday/ftmac100.c
+@@ -865,11 +865,10 @@ static irqreturn_t ftmac100_interrupt(int irq, void *dev_id)
+ 	struct net_device *netdev = dev_id;
+ 	struct ftmac100 *priv = netdev_priv(netdev);
+ 
+-	if (likely(netif_running(netdev))) {
+-		/* Disable interrupts for polling */
+-		ftmac100_disable_all_int(priv);
++	/* Disable interrupts for polling */
++	ftmac100_disable_all_int(priv);
++	if (likely(netif_running(netdev)))
+ 		napi_schedule(&priv->napi);
+-	}
+ 
+ 	return IRQ_HANDLED;
+ }
 -- 
 2.19.1
 
