@@ -2,131 +2,104 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-2.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29219C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 00:11:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D727C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 00:12:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D81F82084E
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 00:11:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="Z1gjnjbn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D81F82084E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=wdc.com
+	by mail.kernel.org (Postfix) with ESMTP id DA40C2084E
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 00:12:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA40C2084E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728901AbeLKALX (ORCPT
+        id S1729080AbeLKAMB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 19:11:23 -0500
-Received: from esa6.hgst.iphmx.com ([216.71.154.45]:18111 "EHLO
-        esa6.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727419AbeLKALX (ORCPT
+        Mon, 10 Dec 2018 19:12:01 -0500
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:52363 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728624AbeLKAMB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 19:11:23 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1544487083; x=1576023083;
-  h=subject:to:cc:references:from:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=yOAXje27PgeYE34HSOVYaOHf47IeAXxcPCAr+k9KhTU=;
-  b=Z1gjnjbnwz9rq9JqAHiz1qNWFTG4cjHelkLqI48WTocanaytVm3pXhRx
-   dxuDQSdXlY+DtsGXKaTBw6LriwnsCeL0TlMrHMIAp6R8TC0ojfLclOph4
-   LRrpX5Yf0AtAp/8AV3sZ69It6ojEOy//k0drZNSbZF8CimudHM96CHVLI
-   oWi1v13EpHkiwZ9UaLmgnS1JyTBtG6PEruViLBmm6Yk//yQdTUbyuBFp1
-   Vz4QyGSAbUOk9xFxx/JzjhkCOCnhO+TWIKQicvpzkuJ/eIfVrg+yHowwW
-   J84IEEkGGtxMSu5vLOaRaIp6erNgyLM4dXDiSNHOUwliDFGXSZoU/qxSU
-   Q==;
-X-IronPort-AV: E=Sophos;i="5.56,340,1539619200"; 
-   d="scan'208";a="98025677"
-Received: from uls-op-cesaip01.wdc.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 11 Dec 2018 08:11:23 +0800
-Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
-  by uls-op-cesaep01.wdc.com with ESMTP; 10 Dec 2018 15:53:08 -0800
-Received: from colley-l-lt.ad.shared (HELO [10.86.57.118]) ([10.86.57.118])
-  by uls-op-cesaip01.wdc.com with ESMTP; 10 Dec 2018 16:11:21 -0800
-Subject: Re: [RFT PATCH v1 0/4] Unify CPU topology across ARM64 & RISC-V
-To:     Morten Rasmussen <morten.rasmussen@arm.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Anup Patel <anup@brainfault.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Dmitriy Cherkasov <dmitriy@oss-tech.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Jeremy Linton <jeremy.linton@arm.com>,
-        Juri Lelli <juri.lelli@arm.com>,
-        "moderated list:ARM64 PORT (AARCH64 ARCHITECTURE)" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Will Deacon <will.deacon@arm.com>
-References: <1543534100-3654-1-git-send-email-atish.patra@wdc.com>
- <20181207134509.GA5913@e105550-lin.cambridge.arm.com>
-From:   Atish Patra <atish.patra@wdc.com>
-Message-ID: <dffd0d6e-bebe-ae31-548b-1778d08a3285@wdc.com>
-Date:   Mon, 10 Dec 2018 16:11:21 -0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:60.0)
- Gecko/20100101 Thunderbird/60.3.0
+        Mon, 10 Dec 2018 19:12:01 -0500
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id 2C54380704; Tue, 11 Dec 2018 01:11:55 +0100 (CET)
+Date:   Tue, 11 Dec 2018 01:11:58 +0100
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Andrey Melnikov <temnota.am@gmail.com>
+Cc:     jrf@mailbox.org, Theodore Ts'o <tytso@mit.edu>,
+        linux-kernel@vger.kernel.org, linux-ext4@vger.kernel.org
+Subject: Re: ext4 file system corruption with v4.19.3 / v4.19.4
+Message-ID: <20181211001158.GA20388@amd>
+References: <065643a0-f9aa-a361-715a-03ca978d9228@roeck-us.net>
+ <20181128041555.GE31885@thunk.org>
+ <en52df-5dh.ln1@banana.localnet>
+ <2547416.7Vy7A2kRpU@siriux>
+ <CA+PODjo-da79FKQCmpcH9Z9CBq35HbWu2m+nB3si7WgD9w-kGA@mail.gmail.com>
+ <cbdb2e6b-31a2-1e19-f51f-067dcbdcf183@mailbox.org>
+ <CA+PODjpLRuc1u4SNSRqfWtx+Z+C8NGi6fs7yFuyKK0DwHggEdg@mail.gmail.com>
+ <de67b507-ca54-e827-867e-76d57e531cb9@mailbox.org>
+ <CA+PODjrT=pXg-jbhk=q=M6j6-v0x+c05s4Lmi3+MLm0P4iirqg@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20181207134509.GA5913@e105550-lin.cambridge.arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="LQksG6bCIzRHxTLp"
+Content-Disposition: inline
+In-Reply-To: <CA+PODjrT=pXg-jbhk=q=M6j6-v0x+c05s4Lmi3+MLm0P4iirqg@mail.gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/7/18 5:45 AM, Morten Rasmussen wrote:
-> Hi,
-> 
-> On Thu, Nov 29, 2018 at 03:28:16PM -0800, Atish Patra wrote:
->> The cpu-map DT entry in ARM64 can describe the CPU topology in
->> much better way compared to other existing approaches. RISC-V can
->> easily adopt this binding to represent it's own CPU topology.
->> Thus, both cpu-map DT binding and topology parsing code can be
->> moved to a common location so that RISC-V or any other
->> architecture can leverage that.
->>
->> The relevant discussion regarding unifying cpu topology can be
->> found in [1].
->>
->> arch_topology seems to be a perfect place to move the common
->> code. I have not introduced any functional changes in the moved
->> code. The only downside in this approach is that the capacity
->> code will be executed for RISC-V as well. But, it will exit
->> immediately after not able to find the appropriate DT node. If
->> the overhead is considered too much, we can always compile out
->> capacity related functions under a different config for the
->> architectures that do not support them.
->>
->> The patches have been tested for RISC-V and compile tested for
->> ARM64 & x86.
-> 
-> The cpu-map bindings are used for arch/arm too, and so is
-> arch_topology.c. In fact, it was introduced to allow code-sharing
-> between arm and arm64. Applying patch three breaks arm.
-> 
-> Moving the DT parsing to arch_topology.c we have to unify all three
-> architectures. Be aware that arm and arm64 have some differences in how
-> they detect cpu capacities. I think we might have to look at the split
-> of code between arch/* and arch_topology.c again :-/
-> 
-> Morten
-> 
-Thank you for bringing this up. I will send a new version and make sure 
-that it works on arm32 as well.
 
+--LQksG6bCIzRHxTLp
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Regards,
-Atish
+Hi!
+
+> > >> OK, - and now we are looking forward to *your* ideas how to solve th=
+is.
+> > >
+> > > After four days playing games around git bisect - real winner is
+> > > debian gcc-8.2.0-9. Upgrade it to 8.2.0-10 or use 7.3.0-30 version for
+> > > same kernel + config - does not exhibit ext4 corruption.
+> > >
+> > > I think I hit this https://gcc.gnu.org/bugzilla/show_bug.cgi?id=3D878=
+59
+> > > with 8.2.0-9 version.
+> > >
+> > Good that it works for you. But others used gcc 5.4.0 or 6.3.0 and were
+> > hit anyway: https://bugzilla.kernel.org/show_bug.cgi?id=3D201685#c165
+>=20
+> Depends on workload pattern. 4.19.5 built with 8.2.0-10 and 7.3.0-30 -
+> crashed after 4 hours of usage (previous build crash in 5 min).
+> So my assumption about broken gcc is wrong.
+
+Would it be possible to try vanilla 4.19? (Not stable?)
+
+I test vanilla and -next kernels every week or two, and did not have
+ext4 problems recently. I guess many kernel developers test mainline
+but not stable...
+
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--LQksG6bCIzRHxTLp
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlwPAM4ACgkQMOfwapXb+vLyyQCglNr9W0Yjj+gLo6r9M2hiqmgZ
+nuUAoLpVLCRMF5SHvowKQwp8rB12CY4A
+=9lSA
+-----END PGP SIGNATURE-----
+
+--LQksG6bCIzRHxTLp--
