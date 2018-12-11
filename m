@@ -2,257 +2,313 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5A6AC67839
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 22:24:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E493DC6783B
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 22:24:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 523282084C
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 22:24:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Dep8vHSB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 523282084C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id A334B2084C
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 22:24:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A334B2084C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726408AbeLKWYg (ORCPT
+        id S1726327AbeLKWYx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 17:24:36 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:40210 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726183AbeLKWYf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 17:24:35 -0500
-Received: by mail-wr1-f66.google.com with SMTP id p4so15720895wrt.7
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 14:24:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=TlOjKgflAYFBQU1xBX/OZlZVA67mEmvOWdcDiZG2Ghs=;
-        b=Dep8vHSBLiYpMwt95zVUqRfz+EpH9OYJ04R6VEOUZ2vKo7dXp/rbWt56tgYAW/45yb
-         AZv3NOZRKBWtvmr15sbtsI7zHIYszr3GUzwVJrVJtE8H87Qwng9ytAwtmqvjQv4LH+81
-         8tJwKppMp2UOYWdZj9zUf1h67J8K4a5v92Wcx1QBYPQHG+mObdqCfV1YM5a4STE4rU0Z
-         jMPMvclCxiDfzrhkxv33k9mP9v9YOtbbepiVzN/m75ZJTr5+C1cXgfilKVrQO/ls6S2O
-         Gf+HIuxTFQ8VVaOMclW2Ci48y7PMV2rYWVxwOjmNwi94UWW4PAV/wyPCHD/SCnpIEqmh
-         DyAw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=TlOjKgflAYFBQU1xBX/OZlZVA67mEmvOWdcDiZG2Ghs=;
-        b=lPahEd7pLWY1fo2NB3ivV5yDDlwM7uB6GXPxtunQufWB43RcQ4q2iItYVFXQQo5XGc
-         TTxz2zK4+JzHuSSULxjrJ1hJ5E/n3xlF/dU9eMhQM3d7tfnJhC7EOSfWwaBJRP2Nhgkt
-         ffd+6jnh31pTlhBcXjRfaNsCW5VUDSYiOHrZ3N+uTk33eHLfUSrblL4IPHJYKZ9yi+G1
-         5DQshp6kImXwzqCRe5jM2x/Z6vEln0UpdRH0Vj3k0Pfugo6z4JqExv42C8uHWFvhIA7T
-         hXdB2PCU3y7Jw2Ixp2kjYJN+bibzXnfWkLslGPsbhxv4OASktSj7LflxS0aEH29Byghy
-         4h6A==
-X-Gm-Message-State: AA+aEWZHlNhBFikXZIwOhG/W5l1aiwrZOFWjWf+Kat4AXomuyLdU86Yv
-        /yfgNyTFxibghcexRRZo2o0=
-X-Google-Smtp-Source: AFSGD/XjysSErcO0nZ/3ps4CRju2MOPI23ZxBm71yZsHfX/WPthqr6QAbaQNvQcAq+XDbF06e8++Ow==
-X-Received: by 2002:a5d:46c2:: with SMTP id g2mr15765289wrs.49.1544567073069;
-        Tue, 11 Dec 2018 14:24:33 -0800 (PST)
-Received: from flashbox ([2a01:4f8:10b:24a5::2])
-        by smtp.gmail.com with ESMTPSA id o82sm1460250wmo.29.2018.12.11.14.24.32
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 11 Dec 2018 14:24:32 -0800 (PST)
-Date:   Tue, 11 Dec 2018 15:24:30 -0700
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Nick Desaulniers <ndesaulniers@google.com>
-Cc:     Harry Wentland <harry.wentland@amd.com>, sunpeng.li@amd.com,
-        alexander.deucher@amd.com, christian.koenig@amd.com,
-        David1.Zhou@amd.com, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] drm/amd/display: Pass app_tf by value rather than by
- reference
-Message-ID: <20181211222430.GA17468@flashbox>
-References: <20181210234201.4850-1-natechancellor@gmail.com>
- <CAKwvOdkOwdrsOAADGp9To2F5o2AAW7123yADFzYLMawwsinmug@mail.gmail.com>
- <20181211214240.GA31705@flashbox>
- <CAKwvOdn4467193YUMCboj+Z62m0+pVMAbjAc4avCsSsng7hpPg@mail.gmail.com>
+        Tue, 11 Dec 2018 17:24:53 -0500
+Received: from mail.hallyn.com ([178.63.66.53]:59758 "EHLO mail.hallyn.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726183AbeLKWYx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 17:24:53 -0500
+Received: by mail.hallyn.com (Postfix, from userid 1001)
+        id 390DFC32; Tue, 11 Dec 2018 16:24:49 -0600 (CST)
+Date:   Tue, 11 Dec 2018 16:24:49 -0600
+From:   "Serge E. Hallyn" <serge@hallyn.com>
+To:     Tycho Andersen <tycho@tycho.ws>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Oleg Nesterov <oleg@redhat.com>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Christian Brauner <christian@brauner.io>,
+        Tyler Hicks <tyhicks@canonical.com>,
+        Akihiro Suda <suda.akihiro@lab.ntt.co.jp>,
+        Aleksa Sarai <asarai@suse.de>, Jann Horn <jannh@google.com>,
+        linux-kernel@vger.kernel.org,
+        containers@lists.linux-foundation.org, linux-api@vger.kernel.org
+Subject: Re: [PATCH v10 4/4] samples: add an example of seccomp user trap
+Message-ID: <20181211222449.GA937@mail.hallyn.com>
+References: <20181209182414.30862-1-tycho@tycho.ws>
+ <20181209182414.30862-5-tycho@tycho.ws>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAKwvOdn4467193YUMCboj+Z62m0+pVMAbjAc4avCsSsng7hpPg@mail.gmail.com>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+In-Reply-To: <20181209182414.30862-5-tycho@tycho.ws>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 11, 2018 at 02:07:31PM -0800, Nick Desaulniers wrote:
-> On Tue, Dec 11, 2018 at 1:42 PM Nathan Chancellor
-> <natechancellor@gmail.com> wrote:
-> >
-> > On Tue, Dec 11, 2018 at 01:25:00PM -0800, Nick Desaulniers wrote:
-> > > On Mon, Dec 10, 2018 at 3:42 PM Nathan Chancellor
-> > > <natechancellor@gmail.com> wrote:
-> > > >
-> > > > Clang warns when an expression that equals zero is used as a null
-> > > > pointer constant (in lieu of NULL):
-> > > >
-> > > > drivers/gpu/drm/amd/amdgpu/../display/amdgpu_dm/amdgpu_dm.c:4435:3:
-> > > > warning: expression which evaluates to zero treated as a null pointer
-> > > > constant of type 'const enum color_transfer_func *'
-> > > > [-Wnon-literal-null-conversion]
-> > > >                 TRANSFER_FUNC_UNKNOWN,
-> > > >                 ^~~~~~~~~~~~~~~~~~~~~
-> > > > 1 warning generated.
-> > > >
-> > > > This warning is caused by commit bb47de736661 ("drm/amdgpu: Set FreeSync
-> > > > state using drm VRR properties") and it could be solved by using NULL
-> > > > instead of TRANSFER_FUNC_UNKNOWN or casting TRANSFER_FUNC_UNKNOWN as a
-> > > > pointer. However, after looking into it, there doesn't appear to be a
-> > > > good reason to pass app_tf by reference as it is never mutated along the
-> > > > way. This is the only code path in which app_tf is used:
-> > > >
-> > > > mod_freesync_build_vrr_infopacket ->
-> > > >     build_vrr_infopacket_v2 ->
-> > > >         build_vrr_infopacket_fs2_data
-> > > >
-> > > > Neither mod_freesync_build_vrr_infopacket or build_vrr_infopacket_v2
-> > > > modify app_tf's value and build_vrr_infopacket_fs2_data expects just
-> > > > the value so we can avoid dereferencing anything by just passing in
-> > > > app_tf's value to mod_freesync_build_vrr_infopacket and
-> > > > build_vrr_infopacket_v2.
-> > > >
-> > > > There is no functional change because build_vrr_infopacket_fs2_data
-> > > > doesn't do anything if TRANSFER_FUNC_UNKNOWN is passed to it, the same
-> > > > as not calling build_vrr_infopacket_fs2_data at all like before this
-> > > > change when NULL was used for app_tf.
-> > >
-> > > Nathan,
-> > > Thanks for sending this patch.  I was hoping to provide review sooner,
-> > > but have been quite busy lately.
-> > >
-> >
-> > Late review is better than no review, I appeciate you taking the time to
-> > do this!
-> >
-> > > Yeah, especially for LP64 targets, the pointer to enum is larger than
-> > > just the enum, and if it's not being updated ("in/out paramter")
-> > > there's no need to pass by pointer.
-> > >
-> >
-> > Thanks for confirming!
-> >
-> > > >
-> > > > Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-> > > > ---
-> > > >  drivers/gpu/drm/amd/display/modules/freesync/freesync.c | 7 +++----
-> > > >  drivers/gpu/drm/amd/display/modules/inc/mod_freesync.h  | 2 +-
-> > > >  2 files changed, 4 insertions(+), 5 deletions(-)
-> > > >
-> > > > diff --git a/drivers/gpu/drm/amd/display/modules/freesync/freesync.c b/drivers/gpu/drm/amd/display/modules/freesync/freesync.c
-> > > > index 620a171620ee..520665a9d81a 100644
-> > > > --- a/drivers/gpu/drm/amd/display/modules/freesync/freesync.c
-> > > > +++ b/drivers/gpu/drm/amd/display/modules/freesync/freesync.c
-> > > > @@ -656,7 +656,7 @@ static void build_vrr_infopacket_v1(enum signal_type signal,
-> > > >
-> > > >  static void build_vrr_infopacket_v2(enum signal_type signal,
-> > > >                 const struct mod_vrr_params *vrr,
-> > > > -               const enum color_transfer_func *app_tf,
-> > > > +               enum color_transfer_func app_tf,
-> > > >                 struct dc_info_packet *infopacket)
-> > > >  {
-> > > >         unsigned int payload_size = 0;
-> > > > @@ -664,8 +664,7 @@ static void build_vrr_infopacket_v2(enum signal_type signal,
-> > > >         build_vrr_infopacket_header_v2(signal, infopacket, &payload_size);
-> > > >         build_vrr_infopacket_data(vrr, infopacket);
-> > > >
-> > > > -       if (app_tf != NULL)
-> > > > -               build_vrr_infopacket_fs2_data(*app_tf, infopacket);
-> > > > +       build_vrr_infopacket_fs2_data(app_tf, infopacket);
-> > > >
-> > > >         build_vrr_infopacket_checksum(&payload_size, infopacket);
-> > > >
-> > > > @@ -676,7 +675,7 @@ void mod_freesync_build_vrr_infopacket(struct mod_freesync *mod_freesync,
-> > > >                 const struct dc_stream_state *stream,
-> > > >                 const struct mod_vrr_params *vrr,
-> > > >                 enum vrr_packet_type packet_type,
-> > > > -               const enum color_transfer_func *app_tf,
-> > > > +               enum color_transfer_func app_tf,
-> > > >                 struct dc_info_packet *infopacket)
-> > > >  {
-> > > >         /* SPD info packet for FreeSync */
-> > > > diff --git a/drivers/gpu/drm/amd/display/modules/inc/mod_freesync.h b/drivers/gpu/drm/amd/display/modules/inc/mod_freesync.h
-> > > > index 949a8b62aa98..063af6258fd9 100644
-> > > > --- a/drivers/gpu/drm/amd/display/modules/inc/mod_freesync.h
-> > > > +++ b/drivers/gpu/drm/amd/display/modules/inc/mod_freesync.h
-> > > > @@ -145,7 +145,7 @@ void mod_freesync_build_vrr_infopacket(struct mod_freesync *mod_freesync,
-> > > >                 const struct dc_stream_state *stream,
-> > > >                 const struct mod_vrr_params *vrr,
-> > > >                 enum vrr_packet_type packet_type,
-> > > > -               const enum color_transfer_func *app_tf,
-> > > > +               enum color_transfer_func app_tf,
-> > >
-> > > Don't you need to update the callsite of `mod_freesync_build_vrr_infopacket` in
-> > >
-> > > drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c#4949:
-> > >
-> > > -                                           NULL,
-> > > +                                          transfer_func_unknown,
-> > >
-> >
-> > That change in commit bb47de736661 ("drm/amdgpu: Set FreeSync state
-> > using drm VRR properties") in -next is what prompted this patch (the
-> > warning in the commit message is not present in mainline):
+On Sun, Dec 09, 2018 at 11:24:14AM -0700, Tycho Andersen wrote:
+> The idea here is just to give a demonstration of how one could safely use
+> the SECCOMP_RET_USER_NOTIF feature to do mount policies. This particular
+> policy is (as noted in the comment) not very interesting, but it serves to
+> illustrate how one might apply a policy dodging the various TOCTOU issues.
 > 
-> Ah! Sorry, I was looking at mainline.  I should have noticed
-> bb47de736661 wasn't there.
+> Signed-off-by: Tycho Andersen <tycho@tycho.ws>
+> CC: Kees Cook <keescook@chromium.org>
+> CC: Andy Lutomirski <luto@amacapital.net>
+> CC: Oleg Nesterov <oleg@redhat.com>
+> CC: Eric W. Biederman <ebiederm@xmission.com>
+> CC: "Serge E. Hallyn" <serge@hallyn.com>
+> CC: Christian Brauner <christian@brauner.io>
+> CC: Tyler Hicks <tyhicks@canonical.com>
+> CC: Akihiro Suda <suda.akihiro@lab.ntt.co.jp>
+> ---
+> v5: new in v5
+> v7: updates for v7 API changes
+> v8: * add some more comments about what's happening in main() (Kees)
+>     * move from ptrace API to SECCOMP_FILTER_FLAG_NEW_LISTENER
+> v9: * s/mknod/mount in error message
+>     * switch to the SECCOMP_GET_NOTIF_SIZES API
+>     * add a note about getting ENOENT from SECCOMP_IOCTL_NOTIF_SEND
+> ---
+>  samples/seccomp/.gitignore  |   1 +
+>  samples/seccomp/Makefile    |   7 +-
+>  samples/seccomp/user-trap.c | 375 ++++++++++++++++++++++++++++++++++++
+>  3 files changed, 382 insertions(+), 1 deletion(-)
 > 
-> Shouldn't that change fail to compile, as transfer_func_unknown is an
-> `enum color_transfer_func` value, but
-> mod_freesync_build_vrr_infopacket takes a *pointer* to an `enum
-> color_transfer_func` value?
-> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/drivers/gpu/drm/amd/display/modules/freesync/freesync.c#n675
-> 
+> diff --git a/samples/seccomp/.gitignore b/samples/seccomp/.gitignore
+> index 78fb78184291..d1e2e817d556 100644
+> --- a/samples/seccomp/.gitignore
+> +++ b/samples/seccomp/.gitignore
+> @@ -1,3 +1,4 @@
+>  bpf-direct
+>  bpf-fancy
+>  dropper
+> +user-trap
+> diff --git a/samples/seccomp/Makefile b/samples/seccomp/Makefile
+> index cf34ff6b4065..4920903c8009 100644
+> --- a/samples/seccomp/Makefile
+> +++ b/samples/seccomp/Makefile
+> @@ -1,6 +1,6 @@
+>  # SPDX-License-Identifier: GPL-2.0
+>  ifndef CROSS_COMPILE
+> -hostprogs-$(CONFIG_SAMPLE_SECCOMP) := bpf-fancy dropper bpf-direct
+> +hostprogs-$(CONFIG_SAMPLE_SECCOMP) := bpf-fancy dropper bpf-direct user-trap
+>  
+>  HOSTCFLAGS_bpf-fancy.o += -I$(objtree)/usr/include
+>  HOSTCFLAGS_bpf-fancy.o += -idirafter $(objtree)/include
+> @@ -16,6 +16,10 @@ HOSTCFLAGS_bpf-direct.o += -I$(objtree)/usr/include
+>  HOSTCFLAGS_bpf-direct.o += -idirafter $(objtree)/include
+>  bpf-direct-objs := bpf-direct.o
+>  
+> +HOSTCFLAGS_user-trap.o += -I$(objtree)/usr/include
+> +HOSTCFLAGS_user-trap.o += -idirafter $(objtree)/include
+> +user-trap-objs := user-trap.o
+> +
+>  # Try to match the kernel target.
+>  ifndef CONFIG_64BIT
+>  
+> @@ -33,6 +37,7 @@ HOSTCFLAGS_bpf-fancy.o += $(MFLAG)
+>  HOSTLDLIBS_bpf-direct += $(MFLAG)
+>  HOSTLDLIBS_bpf-fancy += $(MFLAG)
+>  HOSTLDLIBS_dropper += $(MFLAG)
+> +HOSTLDLIBS_user-trap += $(MFLAG)
+>  endif
+>  always := $(hostprogs-m)
+>  endif
+> diff --git a/samples/seccomp/user-trap.c b/samples/seccomp/user-trap.c
+> new file mode 100644
+> index 000000000000..61267cb59c8e
+> --- /dev/null
+> +++ b/samples/seccomp/user-trap.c
+> @@ -0,0 +1,375 @@
+> +#include <signal.h>
+> +#include <stdio.h>
+> +#include <stdlib.h>
+> +#include <unistd.h>
+> +#include <errno.h>
+> +#include <fcntl.h>
+> +#include <string.h>
+> +#include <stddef.h>
+> +#include <sys/sysmacros.h>
+> +#include <sys/types.h>
+> +#include <sys/wait.h>
+> +#include <sys/socket.h>
+> +#include <sys/stat.h>
+> +#include <sys/mman.h>
+> +#include <sys/syscall.h>
+> +#include <sys/user.h>
+> +#include <sys/ioctl.h>
+> +#include <sys/ptrace.h>
+> +#include <sys/mount.h>
+> +#include <linux/limits.h>
+> +#include <linux/filter.h>
+> +#include <linux/seccomp.h>
+> +
+> +#define ARRAY_SIZE(x) (sizeof(x) / sizeof(*(x)))
+> +
+> +static int seccomp(unsigned int op, unsigned int flags, void *args)
+> +{
+> +	errno = 0;
+> +	return syscall(__NR_seccomp, op, flags, args);
+> +}
+> +
+> +static int send_fd(int sock, int fd)
+> +{
+> +	struct msghdr msg = {};
+> +	struct cmsghdr *cmsg;
+> +	char buf[CMSG_SPACE(sizeof(int))] = {0}, c = 'c';
+> +	struct iovec io = {
+> +		.iov_base = &c,
+> +		.iov_len = 1,
+> +	};
+> +
+> +	msg.msg_iov = &io;
+> +	msg.msg_iovlen = 1;
+> +	msg.msg_control = buf;
+> +	msg.msg_controllen = sizeof(buf);
+> +	cmsg = CMSG_FIRSTHDR(&msg);
+> +	cmsg->cmsg_level = SOL_SOCKET;
+> +	cmsg->cmsg_type = SCM_RIGHTS;
+> +	cmsg->cmsg_len = CMSG_LEN(sizeof(int));
+> +	*((int *)CMSG_DATA(cmsg)) = fd;
+> +	msg.msg_controllen = cmsg->cmsg_len;
+> +
+> +	if (sendmsg(sock, &msg, 0) < 0) {
+> +		perror("sendmsg");
+> +		return -1;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int recv_fd(int sock)
+> +{
+> +	struct msghdr msg = {};
+> +	struct cmsghdr *cmsg;
+> +	char buf[CMSG_SPACE(sizeof(int))] = {0}, c = 'c';
+> +	struct iovec io = {
+> +		.iov_base = &c,
+> +		.iov_len = 1,
+> +	};
+> +
+> +	msg.msg_iov = &io;
+> +	msg.msg_iovlen = 1;
+> +	msg.msg_control = buf;
+> +	msg.msg_controllen = sizeof(buf);
+> +
+> +	if (recvmsg(sock, &msg, 0) < 0) {
+> +		perror("recvmsg");
+> +		return -1;
+> +	}
+> +
+> +	cmsg = CMSG_FIRSTHDR(&msg);
+> +
+> +	return *((int *)CMSG_DATA(cmsg));
+> +}
+> +
+> +static int user_trap_syscall(int nr, unsigned int flags)
+> +{
+> +	struct sock_filter filter[] = {
+> +		BPF_STMT(BPF_LD+BPF_W+BPF_ABS,
+> +			offsetof(struct seccomp_data, nr)),
+> +		BPF_JUMP(BPF_JMP+BPF_JEQ+BPF_K, nr, 0, 1),
+> +		BPF_STMT(BPF_RET+BPF_K, SECCOMP_RET_USER_NOTIF),
+> +		BPF_STMT(BPF_RET+BPF_K, SECCOMP_RET_ALLOW),
+> +	};
+> +
+> +	struct sock_fprog prog = {
+> +		.len = (unsigned short)ARRAY_SIZE(filter),
+> +		.filter = filter,
+> +	};
+> +
+> +	return seccomp(SECCOMP_SET_MODE_FILTER, flags, &prog);
+> +}
+> +
+> +static int handle_req(struct seccomp_notif *req,
+> +		      struct seccomp_notif_resp *resp, int listener)
+> +{
+> +	char path[PATH_MAX], source[PATH_MAX], target[PATH_MAX];
+> +	int ret = -1, mem;
+> +
+> +	resp->id = req->id;
+> +	resp->error = -EPERM;
+> +	resp->val = 0;
+> +
+> +	if (req->data.nr != __NR_mount) {
+> +		fprintf(stderr, "huh? trapped something besides mount? %d\n", req->data.nr);
+> +		return -1;
+> +	}
+> +
+> +	/* Only allow bind mounts. */
+> +	if (!(req->data.args[3] & MS_BIND))
+> +		return 0;
+> +
+> +	/*
+> +	 * Ok, let's read the task's memory to see where they wanted their
+> +	 * mount to go.
+> +	 */
+> +	snprintf(path, sizeof(path), "/proc/%d/mem", req->pid);
+> +	mem = open(path, O_RDONLY);
+> +	if (mem < 0) {
+> +		perror("open mem");
+> +		return -1;
+> +	}
+> +
+> +	/*
+> +	 * Now we avoid a TOCTOU: we referred to a pid by its pid, but since
+> +	 * the pid that made the syscall may have died, we need to confirm that
+> +	 * the pid is still valid after we open its /proc/pid/mem file. We can
+> +	 * ask the listener fd this as follows.
+> +	 *
+> +	 * Note that this check should occur *after* any task-specific
+> +	 * resources are opened, to make sure that the task has not died and
+> +	 * we're not wrongly reading someone else's state in order to make
+> +	 * decisions.
+> +	 */
+> +	if (ioctl(listener, SECCOMP_IOCTL_NOTIF_ID_VALID, &req->id) < 0) {
+> +		fprintf(stderr, "task died before we could map its memory\n");
+> +		goto out;
+> +	}
+> +
+> +	/*
+> +	 * Phew, we've got the right /proc/pid/mem. Now we can read it. Note
+> +	 * that to avoid another TOCTOU, we should read all of the pointer args
+> +	 * before we decide to allow the syscall.
+> +	 */
+> +	if (lseek(mem, req->data.args[0], SEEK_SET) < 0) {
+> +		perror("seek");
+> +		goto out;
+> +	}
+> +
+> +	ret = read(mem, source, sizeof(source));
+> +	if (ret < 0) {
+> +		perror("read");
+> +		goto out;
+> +	}
+> +
+> +	if (lseek(mem, req->data.args[1], SEEK_SET) < 0) {
+> +		perror("seek");
+> +		goto out;
+> +	}
+> +
+> +	ret = read(mem, target, sizeof(target));
+> +	if (ret < 0) {
+> +		perror("read");
+> +		goto out;
+> +	}
+> +
+> +	/*
+> +	 * Our policy is to only allow bind mounts inside /tmp. This isn't very
+> +	 * interesting, because we could do unprivlieged bind mounts with user
+> +	 * namespaces already, but you get the idea.
+> +	 */
+> +	if (!strncmp(source, "/tmp", 4) && !strncmp(target, "/tmp", 4)) {
 
-Unfortunately, no. GCC does not warn like Clang does when an expression
-that equals zero is passed to a function requiring a pointer (it just
-silently treats it as NULL, whereas Clang audibly complains).
-
-They both do when the expression is something other than zero.
-
-https://godbolt.org/z/goo91G
-
-Nathan
-
-> >
-> >         mod_freesync_build_vrr_infopacket(
-> >                 dm->freesync_module,
-> >                 new_stream,
-> >                 &vrr,
-> >                 packet_type_vrr,
-> >                 transfer_func_unknown,
-> >                 &vrr_infopacket);
-> >
-> > > Maybe at that point the `if (app_tf != NULL)` could be replaced with
-> > > `if (app_tf != transfer_func_unknown)` hoisted from
-> > > `build_vrr_infopacket_fs2_data`? (There's only one caller of
-> > > `build_vrr_infopacket_fs2_data` today, maybe fine to leave the
-> > > unconditional call and check).
-> > >
-> >
-> > Hmmm that's not unreasonable I suppose. I guess it depends on if
-> > build_vrr_infopacket_fs2_data could ever be called from outside of
-> > build_vrr_infopacket_v2; if it can, it makes sense to leave the
-> > conditional check for 'app_tf != transfer_func_unknown' in
-> > build_vrr_infopacket_fs2_data and leaving the unconditional call
-> > to it in build_vrr_infopacket_v2 (since app_tf is no longer a pointer,
-> > no need to check against NULL).
-> >
-> > I'm happy to do a v2 if the maintainers feel strongly about it, thank
-> > you for bringing that up.
-> 
-> Don't worry about it, I think it's fine.
-> Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
-> 
-> -- 
-> Thanks,
-> ~Nick Desaulniers
+Of course the host could have a /tmproot or somesuch, so you might want to
+check the first 5 characters :)
