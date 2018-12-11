@@ -2,114 +2,100 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6AA0C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 01:23:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3258AC04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 01:25:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 943F92081F
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 01:23:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E007820855
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 01:25:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544491434;
-	bh=h+XzGKcY765gMTqyVPOnShXTl/WRhYXmIfcJYSI4BjU=;
-	h=From:Date:Subject:To:List-ID:From;
-	b=C3z47jwvWFrMRLFvk5Aj3phpM0F/VO26xcIIMTfCm8O7UxQaeo8BkfPAGQ6WwjRFI
-	 HhoZmF15qasgzeaRRCLz6I4hYQrm8PGY7mpy7W7PJktzykMha71MWihNG92WnN0xRR
-	 kW8DR3ZX7dbHWgxDz9QljHF0w5gDGKplTEMw/W7I=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 943F92081F
+	s=default; t=1544491534;
+	bh=pJIVFydXReMtbU0T7fKO5kqX4ncJ+Iq/R4Q2AgQm62A=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=u/JrSlxfAL31xPG/g2qXZovLEffoeRu3gVshMPdPNT4eTlk3lxAwV+HgMvbgt/d79
+	 Uq4yL+aZ1BHEG1NYyWJ8r5fT3P4G1vUF9ThqeQY5M7bzC1cZXYvStEu3fqPT7Ln2DT
+	 YSETvGeHhNJ+pVYJAZ2zf/u4z9Wk60KDrOn/LaMA=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E007820855
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728586AbeLKBXx (ORCPT
+        id S1728363AbeLKBZc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 20:23:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51676 "EHLO mail.kernel.org"
+        Mon, 10 Dec 2018 20:25:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52532 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727276AbeLKBXx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 20:23:53 -0500
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1727276AbeLKBZc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Dec 2018 20:25:32 -0500
+Received: from localhost (c-71-202-137-17.hsd1.ca.comcast.net [71.202.137.17])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DE0A32146D
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 01:23:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6F74E2081F;
+        Tue, 11 Dec 2018 01:25:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544491432;
-        bh=h+XzGKcY765gMTqyVPOnShXTl/WRhYXmIfcJYSI4BjU=;
-        h=From:Date:Subject:To:From;
-        b=NCa31ih7NNj13BLUs+ykXpoVLKUyxkOcLI3q/2DBznfKYRWVNFn71BFveT//6X+r7
-         VYp9x+uRt7iX+kJx4WQl6fsr56FihLU+/B9KdZef6EN/OlUktk/sqLnQ3Be1SeJXj6
-         gwLKL2RzgDPXzSJFFEEUwKpFFWW+bcBsJNjMaVuI=
-Received: by mail-wm1-f46.google.com with SMTP id q26so495228wmf.5
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Dec 2018 17:23:51 -0800 (PST)
-X-Gm-Message-State: AA+aEWb7p69oWGGxRDMRonC528PQkbzRPs2DwRpF2pMS5xk9mWEg08qh
-        m6muUxo0pqWcwfCMgdLT7BT8ciJiaPUvg5+eerL7Rw==
-X-Google-Smtp-Source: AFSGD/UzrLGq4rHShWyLlrcUB90AgZlJAieEILp7phscfMKb8KA0KcHH2yrKMljYQUJD1W2EU5IoN3gjqXbx0yLH298=
-X-Received: by 2002:a7b:ce17:: with SMTP id m23mr537345wmc.74.1544491430259;
- Mon, 10 Dec 2018 17:23:50 -0800 (PST)
-MIME-Version: 1.0
+        s=default; t=1544491531;
+        bh=pJIVFydXReMtbU0T7fKO5kqX4ncJ+Iq/R4Q2AgQm62A=;
+        h=From:To:Cc:Subject:Date:From;
+        b=SSPj/YOQXAAA/w/JSMJDPm60ByRIGpiiSY4pkMFuMAG8RxJ29LGjRL09yN18VbwW6
+         Bmd6isq7p4fC0vrvhGVYfwrBkBMr74I2qgVaW1Fglboth4ufBnnk8C79rh9ZNKViSJ
+         9E2Ebn4+cXXt3BU/KO+FVKNwPqtzGhonNzPYUNAA=
 From:   Andy Lutomirski <luto@kernel.org>
-Date:   Mon, 10 Dec 2018 17:23:39 -0800
-X-Gmail-Original-Message-ID: <CALCETrXoRAibsbWa9nfbDrt0iEuebMnCMhSFg-d9W-J2g8mDjw@mail.gmail.com>
-Message-ID: <CALCETrXoRAibsbWa9nfbDrt0iEuebMnCMhSFg-d9W-J2g8mDjw@mail.gmail.com>
-Subject: Can we drop upstream Linux x32 support?
-To:     X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
+To:     x86@kernel.org
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Eric Biederman <ebiederm@xmission.com>,
         Peter Zijlstra <peterz@infradead.org>,
         Borislav Petkov <bp@alien8.de>,
-        Florian Weimer <fweimer@redhat.com>,
-        Mike Frysinger <vapier@gentoo.org>,
-        "H. J. Lu" <hjl.tools@gmail.com>, Rich Felker <dalias@libc.org>,
-        x32@buildd.debian.org, Arnd Bergmann <arnd@arndb.de>,
-        Will Deacon <will.deacon@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
+        Andy Lutomirski <luto@kernel.org>
+Subject: [PATCH] x86/syscalls: Use the compat versions of rt_sigsuspend() and rt_sigprocmask()
+Date:   Mon, 10 Dec 2018 17:25:29 -0800
+Message-Id: <5debcb065386c1762566d9429d7576b9f91f5eaf.1544491480.git.luto@kernel.org>
+X-Mailer: git-send-email 2.17.2
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi all-
+I'm working on some code that detects at build time if there's a
+COMPAT_SYSCALL_DEFINE() that is not referenced in the x86 syscall
+tables.  It catches three offenders: rt_sigsuspend(),
+rt_sigprocmask(), and sendfile64().
 
-I'm seriously considering sending a patch to remove x32 support from
-upstream Linux.  Here are some problems with it:
+For rt_sigsuspend() and rt_sigprocmask(), the only potential
+difference between the native and compat versions is that the compat
+version converts the sigset_t, but, on little endian architectures,
+the conversion is a no-op.  This is why they both currently work on
+x86.
 
-1. It's not entirely clear that it has users.  As far as I know, it's
-supported on Gentoo and Debian, and the Debian popcon graph for x32
-has been falling off dramatically.  I don't think that any enterprise
-distro has ever supported x32.
+To make the code more consistent, and to make my upcoming patches
+work, this patch rewires x86 to use the compat vesions.
 
-2. The way that system calls work is very strange.  Most syscalls on
-x32 enter through their *native* (i.e. not COMPAT_SYSCALL_DEFINE)
-entry point, and this is intentional.  For example, adjtimex() uses
-the native entry, not the compat entry, because x32's struct timex
-matches the x86_64 layout.  But a handful of syscalls have separate
-entry points -- these are the syscalls starting at 512.  These enter
-through the COMPAT_SYSCALL_DEFINE entry points.
+sendfile64() is more complicated, and I'll address it separately.
 
-The x32 syscalls that are *not* in the 512 range violate all semblance
-of kernel syscall convention.  In the syscall handlers,
-in_compat_syscall() returns true, but the COMPAT_SYSCALL_DEFINE entry
-is not invoked.   This is nutty and risks breaking things when people
-refactor their syscall implementations.  And no one tests these
-things.  Similarly, if someone calls any of the syscalls below 512 but
-sets bit 31 in RAX, then the native entry will be called with
-in_compat_set().
+Signed-off-by: Andy Lutomirski <luto@kernel.org>
+---
+ arch/x86/entry/syscalls/syscall_32.tbl | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Conversely, if you call a syscall in the 512 range with bit 31
-*clear*, then the compat entry is set with in_compat_syscall()
-*clear*.  This is also nutty.
+diff --git a/arch/x86/entry/syscalls/syscall_32.tbl b/arch/x86/entry/syscalls/syscall_32.tbl
+index 3cf7b533b3d1..8f6b771606e6 100644
+--- a/arch/x86/entry/syscalls/syscall_32.tbl
++++ b/arch/x86/entry/syscalls/syscall_32.tbl
+@@ -186,11 +186,11 @@
+ 172	i386	prctl			sys_prctl			__ia32_sys_prctl
+ 173	i386	rt_sigreturn		sys_rt_sigreturn		sys32_rt_sigreturn
+ 174	i386	rt_sigaction		sys_rt_sigaction		__ia32_compat_sys_rt_sigaction
+-175	i386	rt_sigprocmask		sys_rt_sigprocmask		__ia32_sys_rt_sigprocmask
++175	i386	rt_sigprocmask		sys_rt_sigprocmask		__ia32_compat_sys_rt_sigprocmask
+ 176	i386	rt_sigpending		sys_rt_sigpending		__ia32_compat_sys_rt_sigpending
+ 177	i386	rt_sigtimedwait		sys_rt_sigtimedwait		__ia32_compat_sys_rt_sigtimedwait
+ 178	i386	rt_sigqueueinfo		sys_rt_sigqueueinfo		__ia32_compat_sys_rt_sigqueueinfo
+-179	i386	rt_sigsuspend		sys_rt_sigsuspend		__ia32_sys_rt_sigsuspend
++179	i386	rt_sigsuspend		sys_rt_sigsuspend		__ia32_compat_sys_rt_sigsuspend
+ 180	i386	pread64			sys_pread64			__ia32_compat_sys_x86_pread
+ 181	i386	pwrite64		sys_pwrite64			__ia32_compat_sys_x86_pwrite
+ 182	i386	chown			sys_chown16			__ia32_sys_chown16
+-- 
+2.17.2
 
-Finally, the kernel has a weird distinction between CONFIG_X86_X32_ABI
-and and CONFIG_X86_X32, which I suspect results in incorrect builds if
-the host doesn't have an x32 toolchain installed.
-
-I propose that we make CONFIG_X86_X32 depend on BROKEN for a release
-or two and then remove all the code if no one complains.  If anyone
-wants to re-add it, IMO they're welcome to do so, but they need to do
-it in a way that is maintainable.
-
---Andy
