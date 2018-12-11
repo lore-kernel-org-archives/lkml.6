@@ -2,97 +2,87 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E113C07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 12:42:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BDB7C07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 12:46:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E0562084A
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 12:42:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E0562084A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id 4F7922084A
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 12:46:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F7922084A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726506AbeLKMmm (ORCPT
+        id S1726417AbeLKMqw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 07:42:42 -0500
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:45666 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726114AbeLKMmm (ORCPT
+        Tue, 11 Dec 2018 07:46:52 -0500
+Received: from lithops.sigma-star.at ([195.201.40.130]:48878 "EHLO
+        lithops.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726299AbeLKMqw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 07:42:42 -0500
-Received: by mail-qk1-f196.google.com with SMTP id y78so8442633qka.12
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 04:42:41 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=gD8f9A+yOrKSkam/K81qSn+sZ/zk2aeP124oDPQh7j8=;
-        b=f+tEblF8n7ijq+Wjf++xHtwZkoaM93VLcaBHLMqd9Wm/BJdmPmOEx/oocjEtzN59Si
-         1vIrjJWmRrskbDU3JYLpgJ6hazlxZuPXrqIVSenvySJTjl0FWiMN8yhU9FEn8/6aRKfT
-         c2TmU/oL+6F8LwU6vGiQuJ/tfPZpWCYFGTGeRoP4O8sKornxfM5uTkelCTYS9li/3T+A
-         GJXgZtHknMJEpM0MZ6dRdafJe5WD1fqbHSvzpQt5szkwBYL+KMGYmtlAJZ8ee/b/W8LY
-         r8qJ6Na0qFobYhVajP4s+5wP2uvddm/LnnMRtprgT5kck8qdY8IDnAkLt1O6TtyaS/ga
-         a/8g==
-X-Gm-Message-State: AA+aEWbyOWnVrYlBt8ZsmsXIURuFvCMjb4sz/LdJrJNCU54u0T8reoWf
-        dx5l2UempX1r+niBo+4NAhIXnuv7g2Ci7LtG9wY=
-X-Google-Smtp-Source: AFSGD/Vd1BIXINShufesnfmxbgu3Uq+GOP9+W8KyfUFd1gvLvE01bT4ekpquPDaZ24IdORmlr0adyRros9sOjzDWghA=
-X-Received: by 2002:a37:324a:: with SMTP id y71mr14519413qky.291.1544532161273;
- Tue, 11 Dec 2018 04:42:41 -0800 (PST)
+        Tue, 11 Dec 2018 07:46:52 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by lithops.sigma-star.at (Postfix) with ESMTP id 0F812608A38A;
+        Tue, 11 Dec 2018 13:46:50 +0100 (CET)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id q0tmx8Q_ommH; Tue, 11 Dec 2018 13:46:49 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+        by lithops.sigma-star.at (Postfix) with ESMTP id B4DD2608A38C;
+        Tue, 11 Dec 2018 13:46:49 +0100 (CET)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id Cu7OYQQD2KB9; Tue, 11 Dec 2018 13:46:49 +0100 (CET)
+Received: from blindfold.localnet (unknown [82.150.214.1])
+        by lithops.sigma-star.at (Postfix) with ESMTPSA id 35987608A38A;
+        Tue, 11 Dec 2018 13:46:49 +0100 (CET)
+From:   Richard Weinberger <richard@nod.at>
+To:     ndesaulniers@google.com
+Cc:     jdike@addtoit.com, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-um@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] x86/um/vdso: Drop implicit common-page-size linker flag
+Date:   Tue, 11 Dec 2018 13:46:48 +0100
+Message-ID: <1633144.08IGjMOzBB@blindfold>
+In-Reply-To: <20181210222718.19926-1-ndesaulniers@google.com>
+References: <20181210222718.19926-1-ndesaulniers@google.com>
 MIME-Version: 1.0
-References: <721E7B42-2D55-4866-9C1A-3E8D64F33F9C@gmx.us> <20181207223449.38808-1-cai@lca.pw>
-In-Reply-To: <20181207223449.38808-1-cai@lca.pw>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Tue, 11 Dec 2018 13:42:24 +0100
-Message-ID: <CAK8P3a20kRDrkS1YFLp6cYeKcUoC9s+O_tnYNbKEMWGukia1Tg@mail.gmail.com>
-Subject: Re: [PATCH] arm64: increase stack size for KASAN_EXTRA
-To:     cai@lca.pw
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Alexander Potapenko <glider@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        kasan-dev <kasan-dev@googlegroups.com>,
-        Linux-MM <linux-mm@kvack.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 7, 2018 at 11:35 PM Qian Cai <cai@lca.pw> wrote:
->
-> If the kernel is configured with KASAN_EXTRA, the stack size is
-> increasted significantly due to enable this option will set
-> -fstack-reuse to "none" in GCC [1]. As the results, it could trigger
-> stack overrun quite often with 32k stack size compiled using GCC 8. For
-> example, this reproducer
+Am Montag, 10. Dezember 2018, 23:27:16 CET schrieb ndesaulniers@google.com:
+> GNU linker's -z common-page-size's default value is based on the target
+> architecture. arch/x86/entry/vdso/Makefile sets it to the architecture
+> default, which is implicit and redundant. Drop it.
+> 
+> Link: https://lkml.kernel.org/r/20181206191231.192355-1-ndesaulniers@google.com
+> Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
+> ---
+>  arch/x86/um/vdso/Makefile | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/x86/um/vdso/Makefile b/arch/x86/um/vdso/Makefile
+> index 822ccdba93ad..bf94060fc06f 100644
+> --- a/arch/x86/um/vdso/Makefile
+> +++ b/arch/x86/um/vdso/Makefile
+> @@ -26,7 +26,7 @@ targets += vdso.so vdso.so.dbg vdso.lds $(vobjs-y)
+>  CPPFLAGS_vdso.lds += -P -C
+>  
+>  VDSO_LDFLAGS_vdso.lds = -m64 -Wl,-soname=linux-vdso.so.1 \
+> -       -Wl,-z,max-page-size=4096 -Wl,-z,common-page-size=4096
+> +       -Wl,-z,max-page-size=4096
 
->
-> size
-> 7536 shrink_inactive_list
-> 7440 shrink_page_list
-> 6560 fscache_stats_show
-> 3920 jbd2_journal_commit_transaction
-> 3216 try_to_unmap_one
-> 3072 migrate_page_move_mapping
-> 3584 migrate_misplaced_transhuge_page
-> 3920 ip_vs_lblcr_schedule
-> 4304 lpfc_nvme_info_show
-> 3888 lpfc_debugfs_nvmestat_data.constprop
->
-> There are other 49 functions are over 2k in size while compiling kernel
-> with "-Wframe-larger-than=" on this machine. Hence, it is too much work
-> to change Makefiles for each object to compile without
-> -fsanitize-address-use-after-scope individually.
->
-> [1] https://gcc.gnu.org/bugzilla/show_bug.cgi?id=81715#c23
+Acked-by: Richard Weinberger <richard@nod.at>
 
-Could you clarify: are the numbers you see with or without the bugfix
-from that bugzilla?
+Thanks,
+//richard
 
-       Arnd
+
