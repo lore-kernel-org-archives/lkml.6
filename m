@@ -7,64 +7,66 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD930C5CFFE
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 18:55:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6A38C67839
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 18:55:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D0CE2084E
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 18:55:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A87492084E
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 18:55:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=desy.de header.i=@desy.de header.b="us5/Skef"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D0CE2084E
+	dkim=pass (1024-bit key) header.d=desy.de header.i=@desy.de header.b="XqtsjXtY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A87492084E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=desy.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726825AbeLKSzi (ORCPT
+        id S1726928AbeLKSzl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 13:55:38 -0500
-Received: from smtp-o-1.desy.de ([131.169.56.154]:44017 "EHLO smtp-o-1.desy.de"
+        Tue, 11 Dec 2018 13:55:41 -0500
+Received: from smtp-o-3.desy.de ([131.169.56.156]:34340 "EHLO smtp-o-3.desy.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726350AbeLKSzi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 13:55:38 -0500
-X-Greylist: delayed 419 seconds by postgrey-1.27 at vger.kernel.org; Tue, 11 Dec 2018 13:55:35 EST
-Received: from smtp-buf-1.desy.de (smtp-buf-1.desy.de [131.169.56.164])
-        by smtp-o-1.desy.de (DESY-O-1) with ESMTP id C78E32809D9
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 19:48:34 +0100 (CET)
-DKIM-Filter: OpenDKIM Filter v2.11.0 smtp-o-1.desy.de C78E32809D9
+        id S1726508AbeLKSzj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 13:55:39 -0500
+Received: from smtp-buf-3.desy.de (smtp-buf-3.desy.de [IPv6:2001:638:700:1038::1:a6])
+        by smtp-o-3.desy.de (DESY-O-3) with ESMTP id CE9F528079B
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 19:49:32 +0100 (CET)
+DKIM-Filter: OpenDKIM Filter v2.11.0 smtp-o-3.desy.de CE9F528079B
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=desy.de; s=default;
-        t=1544554114; bh=yX2LlJBHMvi6oXwSBlMv6uM7Aw6CiSKmHOt3efypaCA=;
+        t=1544554172; bh=1YI1zqDrdppyHlD+9bp2tWVhFNMUgkfPdQqVg5E4xSg=;
         h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-        b=us5/SkefiBWemUP8Nk9efm1+i55qnDvwLqhE9/L1FUcT0Xvp9zlbnv6DL6hFfnszf
-         LMcC9Fp+8YhkFH0r0krIXVRV4grWp9ptkdCniIF9tyFaecISLwl4//yTtjokwhF9JH
-         NO7Bl4qGmZ/0NjV/wdQfC3YBdd4p3ldTyowTMTKY=
-Received: from smtp-m-1.desy.de (smtp-m-1.desy.de [IPv6:2001:638:700:1038::1:81])
-        by smtp-buf-1.desy.de (Postfix) with ESMTP id BA480120856;
-        Tue, 11 Dec 2018 19:48:34 +0100 (CET)
+        b=XqtsjXtY3Dtccjz767py/BF7FcVQv+cUmGuRzFD9JJ81lZEWKOVDQTXf3UDAH6gcU
+         TUubxP08P+S+WAesxicv0CWftCWqlWe5haj1w2xo2g9If7I6arKydlJtzX5wBl5W/S
+         4vVsUt1rDFEDTav4j3E/MiV7NKbeD0ryCRs+1Of4=
+Received: from smtp-m-3.desy.de (smtp-m-3.desy.de [131.169.56.131])
+        by smtp-buf-3.desy.de (Postfix) with ESMTP id C6B91A0040;
+        Tue, 11 Dec 2018 19:49:32 +0100 (CET)
 X-Virus-Scanned: amavisd-new at desy.de
 Received: from z-mbx-2.desy.de (z-mbx-2.desy.de [131.169.55.140])
-        by smtp-intra-1.desy.de (DESY-INTRA-1) with ESMTP id 837213E901;
-        Tue, 11 Dec 2018 19:48:34 +0100 (MET)
-Date:   Tue, 11 Dec 2018 19:48:34 +0100 (CET)
+        by smtp-intra-3.desy.de (DESY-INTRA-3) with ESMTP id 135E11029;
+        Tue, 11 Dec 2018 19:49:28 +0100 (MET)
+Date:   Tue, 11 Dec 2018 19:49:27 +0100 (CET)
 From:   "Mkrtchyan, Tigran" <tigran.mkrtchyan@desy.de>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, stable <stable@vger.kernel.org>,
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        stable <stable@vger.kernel.org>,
         Rick Macklem <rmacklem@uoguelph.ca>,
         Trond Myklebust <trond.myklebust@hammerspace.com>,
         Sasha Levin <sashal@kernel.org>
-Message-ID: <915991654.5303561.1544554114494.JavaMail.zimbra@desy.de>
-In-Reply-To: <20181211151631.719148510@linuxfoundation.org>
-References: <20181211151630.378216233@linuxfoundation.org> <20181211151631.719148510@linuxfoundation.org>
-Subject: Re: [PATCH 4.14 26/67] flexfiles: use per-mirror specified stateid
- for IO
+Message-ID: <922713302.5303567.1544554167994.JavaMail.zimbra@desy.de>
+In-Reply-To: <20181211151646.307760274@linuxfoundation.org>
+References: <20181211151644.216668863@linuxfoundation.org> <20181211151646.307760274@linuxfoundation.org>
+Subject: Re: [PATCH 4.19 051/118] flexfiles: use per-mirror specified
+ stateid for IO
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 X-Mailer: Zimbra 8.8.10_GA_3713 (ZimbraWebClient - FF63 (Linux)/8.8.10_GA_3041)
 Thread-Topic: flexfiles: use per-mirror specified stateid for IO
-Thread-Index: vMQzWgOUiVe9PimcauPEYD64kmgRvg==
+Thread-Index: jj2s2lLwB2tLSTK0CnId6RIeRK/bmg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+
+
 
 Hi Greg,
 
@@ -73,16 +75,17 @@ with 320f35b7bf8cccf1997ca3126843535e1b95e9c4
 
 Tigran.
 
+
 ----- Original Message -----
 > From: "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
-> To: linux-kernel@vger.kernel.org
+> To: "linux-kernel" <linux-kernel@vger.kernel.org>
 > Cc: "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>, "stable" <stable@vger.kernel.org>, "Tigran Mkrtchyan"
 > <tigran.mkrtchyan@desy.de>, "Rick Macklem" <rmacklem@uoguelph.ca>, "Trond Myklebust" <trond.myklebust@hammerspace.com>,
 > "Sasha Levin" <sashal@kernel.org>
-> Sent: Tuesday, December 11, 2018 4:41:26 PM
-> Subject: [PATCH 4.14 26/67] flexfiles: use per-mirror specified stateid for IO
+> Sent: Tuesday, December 11, 2018 4:41:10 PM
+> Subject: [PATCH 4.19 051/118] flexfiles: use per-mirror specified stateid for IO
 
-> 4.14-stable review patch.  If anyone has any objections, please let me know.
+> 4.19-stable review patch.  If anyone has any objections, please let me know.
 > 
 > ------------------
 > 
@@ -111,10 +114,10 @@ Tigran.
 > 
 > diff --git a/fs/nfs/flexfilelayout/flexfilelayout.c
 > b/fs/nfs/flexfilelayout/flexfilelayout.c
-> index b0fa83a60754..13612a848378 100644
+> index cae43333ef16..86ac2c5b93fe 100644
 > --- a/fs/nfs/flexfilelayout/flexfilelayout.c
 > +++ b/fs/nfs/flexfilelayout/flexfilelayout.c
-> @@ -1365,12 +1365,7 @@ static void ff_layout_read_prepare_v4(struct rpc_task
+> @@ -1361,12 +1361,7 @@ static void ff_layout_read_prepare_v4(struct rpc_task
 > *task, void *data)
 > 				task))
 > 		return;
@@ -129,7 +132,7 @@ Tigran.
 > }
 > 
 > static void ff_layout_read_call_done(struct rpc_task *task, void *data)
-> @@ -1539,12 +1534,7 @@ static void ff_layout_write_prepare_v4(struct rpc_task
+> @@ -1542,12 +1537,7 @@ static void ff_layout_write_prepare_v4(struct rpc_task
 > *task, void *data)
 > 				task))
 > 		return;
@@ -144,7 +147,7 @@ Tigran.
 > }
 > 
 > static void ff_layout_write_call_done(struct rpc_task *task, void *data)
-> @@ -1734,6 +1724,10 @@ ff_layout_read_pagelist(struct nfs_pgio_header *hdr)
+> @@ -1742,6 +1732,10 @@ ff_layout_read_pagelist(struct nfs_pgio_header *hdr)
 > 	fh = nfs4_ff_layout_select_ds_fh(lseg, idx);
 > 	if (fh)
 > 		hdr->args.fh = fh;
@@ -155,7 +158,7 @@ Tigran.
 > 	/*
 > 	 * Note that if we ever decide to split across DSes,
 > 	 * then we may need to handle dense-like offsets.
-> @@ -1796,6 +1790,9 @@ ff_layout_write_pagelist(struct nfs_pgio_header *hdr, int
+> @@ -1804,6 +1798,9 @@ ff_layout_write_pagelist(struct nfs_pgio_header *hdr, int
 > sync)
 > 	if (fh)
 > 		hdr->args.fh = fh;
@@ -168,10 +171,10 @@ Tigran.
 > 	 * then we may need to handle dense-like offsets.
 > diff --git a/fs/nfs/flexfilelayout/flexfilelayout.h
 > b/fs/nfs/flexfilelayout/flexfilelayout.h
-> index 679cb087ef3f..d6515f1584f3 100644
+> index 411798346e48..de50a342d5a5 100644
 > --- a/fs/nfs/flexfilelayout/flexfilelayout.h
 > +++ b/fs/nfs/flexfilelayout/flexfilelayout.h
-> @@ -214,6 +214,10 @@ unsigned int ff_layout_fetch_ds_ioerr(struct
+> @@ -215,6 +215,10 @@ unsigned int ff_layout_fetch_ds_ioerr(struct
 > pnfs_layout_hdr *lo,
 > 		unsigned int maxnum);
 > struct nfs_fh *
@@ -185,10 +188,10 @@ Tigran.
 > nfs4_ff_layout_prepare_ds(struct pnfs_layout_segment *lseg, u32 ds_idx,
 > diff --git a/fs/nfs/flexfilelayout/flexfilelayoutdev.c
 > b/fs/nfs/flexfilelayout/flexfilelayoutdev.c
-> index d62279d3fc5d..9f69e83810ca 100644
+> index 59aa04976331..a8df2f496898 100644
 > --- a/fs/nfs/flexfilelayout/flexfilelayoutdev.c
 > +++ b/fs/nfs/flexfilelayout/flexfilelayoutdev.c
-> @@ -369,6 +369,25 @@ out:
+> @@ -370,6 +370,25 @@ out:
 > 	return fh;
 > }
 > 
