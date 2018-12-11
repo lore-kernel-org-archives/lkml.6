@@ -2,240 +2,100 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C81BC07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 05:35:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 378DFC07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 05:38:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 121332054F
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 05:35:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 121332054F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=atomide.com
+	by mail.kernel.org (Postfix) with ESMTP id EB94A2081B
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 05:37:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB94A2081B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729268AbeLKFfm (ORCPT
+        id S1729303AbeLKFh7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 00:35:42 -0500
-Received: from muru.com ([72.249.23.125]:57288 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727849AbeLKFfl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 00:35:41 -0500
-Received: from atomide.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTPS id EDF6B80F0;
-        Tue, 11 Dec 2018 05:35:42 +0000 (UTC)
-Date:   Mon, 10 Dec 2018 21:35:36 -0800
-From:   Tony Lindgren <tony@atomide.com>
-To:     Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc:     Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
-        Sebastian Reichel <sre@kernel.org>,
-        Jarkko Nikula <jarkko.nikula@bitmer.com>,
-        Peter Ujfalusi <peter.ujfalusi@ti.com>
-Subject: Re: [PATCH 0/2] Graph fixes for using multiple endpoints per port
-Message-ID: <20181211053536.GJ6707@atomide.com>
-References: <20181211020557.61783-1-tony@atomide.com>
- <8736r4bvf3.wl-kuninori.morimoto.gx@renesas.com>
- <20181211045220.GI6707@atomide.com>
- <871s6obqkb.wl-kuninori.morimoto.gx@renesas.com>
+        Tue, 11 Dec 2018 00:37:59 -0500
+Received: from mailgw01.mediatek.com ([210.61.82.183]:49795 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727849AbeLKFh6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 00:37:58 -0500
+X-UUID: c5bf67ea02a5448b899a485b0565e5ab-20181211
+X-UUID: c5bf67ea02a5448b899a485b0565e5ab-20181211
+Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw01.mediatek.com
+        (envelope-from <long.cheng@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 1755209803; Tue, 11 Dec 2018 13:37:52 +0800
+Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
+ mtkmbs01n2.mediatek.inc (172.21.101.79) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Tue, 11 Dec 2018 13:37:49 +0800
+Received: from localhost.localdomain (10.17.3.153) by MTKCAS06.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Tue, 11 Dec 2018 13:37:48 +0800
+From:   Long Cheng <long.cheng@mediatek.com>
+To:     Vinod Koul <vkoul@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ryder Lee <ryder.lee@mediatek.com>
+CC:     Matthias Brugger <matthias.bgg@gmail.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        Sean Wang <sean.wang@mediatek.com>,
+        Sean Wang <sean.wang@kernel.org>, <dmaengine@vger.kernel.org>,
+        <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-serial@vger.kernel.org>,
+        <srv_heupstream@mediatek.com>,
+        Yingjoe Chen <yingjoe.chen@mediatek.com>,
+        YT Shen <yt.shen@mediatek.com>,
+        Long Cheng <long.cheng@mediatek.com>
+Subject: [PATCH v5 0/2] add uart DMA function 
+Date:   Tue, 11 Dec 2018 13:37:23 +0800
+Message-ID: <1544506645-27979-1-git-send-email-long.cheng@mediatek.com>
+X-Mailer: git-send-email 1.7.9.5
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <871s6obqkb.wl-kuninori.morimoto.gx@renesas.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-TM-SNTS-SMTP: F1B53AF904294C972B7BDD82D3FD6BBF1AD3A14DB688C1A509C0C6F61A16E2972000:8
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Kuninori Morimoto <kuninori.morimoto.gx@renesas.com> [181211 05:16]:
-> 
-> Hi Tony
-> 
-> > > This looks a little bit strange for me.
-> > > Can you show me your DT for it ?
-> > 
-> > Sure, adding also Sebastian to Cc. Here's what I currently have for droid 4
-> > dts with two codecs on I2S. Please just ignore the GNSS parts there..
-> > 
-> > The TDM configuration is all done in the cpcap_audio_codec via set_tdm_slot().
-> > The modem voice call codec is a serdev driver :) I'll need some more time to
-> > be able to post patches but it's basically working for voice calls.
-> 
-> Hmm... it seems strange...
-> I guess you are using "ti,omap4-mcbsp" driver (= linux/sound/soc/omap/omap-mcbsp.c)
-> Is this correct ?
+In Mediatek SOCs, the uart can support DMA function.
+Base on DMA engine formwork, we add the DMA code to support uart. And put the code under drivers/dma.
 
-Yes.
+This series contains document bindings, Kconfig to control the function enable or not,
+device tree including interrupt and dma device node, the code of UART DM
 
-> If so, your driver is registering component as
-> 
-> 	ret = devm_snd_soc_register_component(&pdev->dev,
-> 					      &omap_mcbsp_component,
-> 					      &omap_mcbsp_dai, 1);
-> 
-> Your driver has only 1 DAI.
+Changes compared to v4:
+-modify Kconfig depends on.
+Changes compared to v3:
+-fix CONFIG_PM, will cause build fail
+Changes compared to v2:
+-remove unimportant parameters
+-instead of cookie, use APIs of virtual channel.
+-use of_dma_xlate_by_chan_id.
+Changes compared to v1:
+-mian revised file, 8250_mtk_dma.c
+--parameters renamed for standard
+--remove atomic operation
 
-Yes I have a patch for omap-mcbsp.c too :)
+Long Cheng (2):
+  dmaengine: 8250_mtk_dma: add Mediatek uart DMA support
+  arm: dts: mt2712: add uart APDMA to device tree
 
-> >  	mcbsp3_port: port {
-> > -		cpu_dai3: endpoint {
-> > +		cpu_dai3: endpoint@0 {
-> >  			dai-format = "dsp_a";
-> >  			frame-master = <&cpcap_audio_codec1>;
-> >  			bitclock-master = <&cpcap_audio_codec1>;
-> >  			remote-endpoint = <&cpcap_audio_codec1>;
-> >  		};
-> > +		cpu_dai_mdm: endpoint@1 {
-> > +			dai-format = "dsp_a";
-> > +			frame-master = <&cpcap_audio_codec1>;
-> > +			bitclock-master = <&cpcap_audio_codec1>;
-> > +			remote-endpoint = <&mot_mdm6600_audio_codec0>;
-> > +		};
-> 
-> And here, you have 1 port, 2 endpoint.
-> Then, asoc_simple_card_get_dai_id() should return 1.
-> 
-> And, your [2/2] patch,
-> I guess you are misunderstanding about "port" vs "endpoint",
-> or omap-mcbsp driver side need to update ?
+ arch/arm64/boot/dts/mediatek/mt2712e.dtsi |   50 ++
+ drivers/dma/mediatek/8250_mtk_dma.c       |  830 +++++++++++++++++++++++++++++
+ drivers/dma/mediatek/Kconfig              |   11 +
+ drivers/dma/mediatek/Makefile             |    1 +
+ 4 files changed, 892 insertions(+)
+ create mode 100644 drivers/dma/mediatek/8250_mtk_dma.c
 
-Yes omap-mcbsp driver needs to be updated for multiple endpoints.
+-- 
+1.7.9.5
 
-Adding Jarkko and Peter also to Cc, below is the WIP patch that I'm
-currently using for omap-mcbsp to add more DAIs.
-
-So far nothing else to do in the omap-mcbsp as it's the cpcap hardware
-that configures the TDM timeslots. And I'm currently assuming the
-first instance is the master, I guess that should be parsed from the
-the frame-master dts property instead.
-
-Regards,
-
-Tony
-
-8< ----------------------
-diff --git a/sound/soc/omap/omap-mcbsp-priv.h b/sound/soc/omap/omap-mcbsp-priv.h
---- a/sound/soc/omap/omap-mcbsp-priv.h
-+++ b/sound/soc/omap/omap-mcbsp-priv.h
-@@ -262,6 +262,8 @@ struct omap_mcbsp {
- 	struct omap_mcbsp_platform_data *pdata;
- 	struct omap_mcbsp_st_data *st_data;
- 	struct omap_mcbsp_reg_cfg cfg_regs;
-+	struct snd_soc_dai_driver *dais;
-+	int dai_count;
- 	struct snd_dmaengine_dai_dma_data dma_data[2];
- 	unsigned int dma_req[2];
- 	int dma_op_mode;
-diff --git a/sound/soc/omap/omap-mcbsp.c b/sound/soc/omap/omap-mcbsp.c
---- a/sound/soc/omap/omap-mcbsp.c
-+++ b/sound/soc/omap/omap-mcbsp.c
-@@ -28,6 +28,7 @@
- #include <linux/pm_runtime.h>
- #include <linux/of.h>
- #include <linux/of_device.h>
-+#include <linux/of_graph.h>
- #include <sound/core.h>
- #include <sound/pcm.h>
- #include <sound/pcm_params.h>
-@@ -1318,23 +1319,53 @@ static int omap_mcbsp_remove(struct snd_soc_dai *dai)
- 	return 0;
- }
- 
--static struct snd_soc_dai_driver omap_mcbsp_dai = {
--	.probe = omap_mcbsp_probe,
--	.remove = omap_mcbsp_remove,
--	.playback = {
--		.channels_min = 1,
--		.channels_max = 16,
--		.rates = OMAP_MCBSP_RATES,
--		.formats = SNDRV_PCM_FMTBIT_S16_LE | SNDRV_PCM_FMTBIT_S32_LE,
--	},
--	.capture = {
--		.channels_min = 1,
--		.channels_max = 16,
--		.rates = OMAP_MCBSP_RATES,
--		.formats = SNDRV_PCM_FMTBIT_S16_LE | SNDRV_PCM_FMTBIT_S32_LE,
--	},
--	.ops = &mcbsp_dai_ops,
--};
-+static int omap_mcbsp_init_dais(struct omap_mcbsp *mcbsp)
-+{
-+	struct device_node *np = mcbsp->dev->of_node;
-+	int i;
-+
-+	if (np)
-+		mcbsp->dai_count = of_graph_get_endpoint_count(np);
-+
-+	if (!mcbsp->dai_count)
-+		mcbsp->dai_count = 1;
-+
-+	mcbsp->dais = devm_kcalloc(mcbsp->dev, mcbsp->dai_count,
-+				   sizeof(*mcbsp->dais), GFP_KERNEL);
-+	if (!mcbsp->dais)
-+		return -ENOMEM;
-+
-+	for (i = 0; i < mcbsp->dai_count; i++) {
-+		struct snd_soc_dai_driver *dai = &mcbsp->dais[i];
-+
-+		dai->name = devm_kasprintf(mcbsp->dev, GFP_KERNEL, "%s-dai%i",
-+					   dev_name(mcbsp->dev), i);
-+
-+		if (i == 0) {
-+			dai->probe = omap_mcbsp_probe;
-+			dai->remove = omap_mcbsp_remove;
-+			dai->ops = &mcbsp_dai_ops;
-+		}
-+		dai->playback.channels_min = 1;
-+		dai->playback.channels_max = 16;
-+		dai->playback.rates = OMAP_MCBSP_RATES;
-+		if (mcbsp->pdata->reg_size == 2)
-+			dai->playback.formats = SNDRV_PCM_FMTBIT_S16_LE;
-+		else
-+			dai->playback.formats = SNDRV_PCM_FMTBIT_S16_LE |
-+						SNDRV_PCM_FMTBIT_S32_LE;
-+		dai->capture.channels_min = 1;
-+		dai->capture.channels_max = 16;
-+		dai->capture.rates = OMAP_MCBSP_RATES;
-+		if (mcbsp->pdata->reg_size == 2)
-+			dai->capture.formats = SNDRV_PCM_FMTBIT_S16_LE;
-+		else
-+			dai->capture.formats = SNDRV_PCM_FMTBIT_S16_LE |
-+					       SNDRV_PCM_FMTBIT_S32_LE;
-+	}
-+
-+	return 0;
-+}
- 
- static const struct snd_soc_component_driver omap_mcbsp_component = {
- 	.name		= "omap-mcbsp",
-@@ -1423,18 +1454,17 @@ static int asoc_mcbsp_probe(struct platform_device *pdev)
- 	mcbsp->dev = &pdev->dev;
- 	platform_set_drvdata(pdev, mcbsp);
- 
--	ret = omap_mcbsp_init(pdev);
-+	ret = omap_mcbsp_init_dais(mcbsp);
- 	if (ret)
- 		return ret;
- 
--	if (mcbsp->pdata->reg_size == 2) {
--		omap_mcbsp_dai.playback.formats = SNDRV_PCM_FMTBIT_S16_LE;
--		omap_mcbsp_dai.capture.formats = SNDRV_PCM_FMTBIT_S16_LE;
--	}
-+	ret = omap_mcbsp_init(pdev);
-+	if (ret)
-+		return ret;
- 
- 	ret = devm_snd_soc_register_component(&pdev->dev,
- 					      &omap_mcbsp_component,
--					      &omap_mcbsp_dai, 1);
-+					      mcbsp->dais, mcbsp->dai_count);
- 	if (ret)
- 		return ret;
- 
