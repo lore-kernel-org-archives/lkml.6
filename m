@@ -2,164 +2,104 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17AABC6783B
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 21:58:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70A6CC6783B
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 21:59:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CFF962084C
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 21:58:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 32A802084C
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 21:59:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QPzK0G4l"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CFF962084C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=lca.pw header.i=@lca.pw header.b="eU1xFEzZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 32A802084C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lca.pw
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726262AbeLKV6d (ORCPT
+        id S1726271AbeLKV7g (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 16:58:33 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:34527 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726146AbeLKV6d (ORCPT
+        Tue, 11 Dec 2018 16:59:36 -0500
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:42926 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726146AbeLKV7f (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 16:58:33 -0500
-Received: by mail-pg1-f194.google.com with SMTP id 17so7284032pgg.1;
-        Tue, 11 Dec 2018 13:58:32 -0800 (PST)
+        Tue, 11 Dec 2018 16:59:35 -0500
+Received: by mail-qt1-f193.google.com with SMTP id d19so18289406qtq.9
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 13:59:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=JsizWuxivQwCor4f18/Dzhh5JdhzgqGGUKMUTx0zDIw=;
-        b=QPzK0G4lussss1f7j7yBd9IhovSVNXeu0kE4XXlrurIaPgODoNRJL0gSQcMGhBAFNP
-         F5t/m1p5iTbAw/yBCPBW+sWXa4HDdFvOlsQQfuco46k2qXqfhs/GD95qtf63DBZCL926
-         Od7/TdeDefD93TXph91VrWxyO6TSU/sUR+RYIJcGtfjzef3gbyQGHZgtGmOeezOVn/Bg
-         iuuTBedPBY8XmqXZXFHNSBCGMsA5x4uUsdOn4vMgLe/ERqRtch8m4zesnYfCPwc8oMxd
-         nf+HA2RJ32rra6On9T4uIrQkPmgGw8lPuccrvbgW7cMq5ByD02ukwAaqlEYWqEdf8vbq
-         KeQQ==
+        d=lca.pw; s=google;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=GRkTp6DzEHsoz7ooKDEy7qLkmsIpSQz4SxdvDjr70wY=;
+        b=eU1xFEzZtzX80lJ+0uys80CmdKIio8IE4GxubE/pvY5DNyf3P6YwccasJu3ziBiYUA
+         azwqT6FMzbZLZgFBRZUYgE53BhDqzUcnv6d9rPVI1MLRCT4GkIZp83bNa3SqT+AwdooZ
+         nZNsbpejttbnwB67r1WVI/iGMBrbbamvlvStajISMWBdHmU0aDy1fpGVQIKbmief56mr
+         viRJAzLeYz/UUYcL8111JzHn5iz0MvEFcL6YBwfNaCCs4ux46F7tdUrD6TocafyrnDRy
+         bryKEdsrW5IdT+RRx5HexTSchEZUHwgOUdpjOXT18Qfk2QSyHqwSl5Gzizu2Qn/rddFG
+         aZUg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=JsizWuxivQwCor4f18/Dzhh5JdhzgqGGUKMUTx0zDIw=;
-        b=GUY0465A7Jx1xvvmkTjdWOi5kAeCntyX6IWco0fL6HtLewJ2U1H/uR0X6oK6a+YVeF
-         N8MME/R8OrNh2eg8Bu/C+B3tiB/0rlljoSU6LAqaAHjqBSFwcjc2D1NjpcOotgl8WHNs
-         2oKxSEiSyL/XADuOyocamptdhASWzLmSScfkuLQVrKNWN3loBcpSHZ7gaH3m2Nf+O68F
-         lFtrmEiA1wJLW1LCFvF/Gjo2rXUGYM0lYkxMM61X6l4Up2N2zyoWbNk/sKV0pr/9QO3W
-         rSzCvwM+YwdX432zeytbL1l8yrKY3sAqLYXYFs/qvVBZqKfITWvK37iSshZODgmNv2NZ
-         xihg==
-X-Gm-Message-State: AA+aEWZ5Nh1+hXcYBTG+PeHKa+wQfc6QXtUyIgyYJ32mNTjgeEaBEfaw
-        I3xVuyTD45v4+UPGU4F7Uw2uvdUB
-X-Google-Smtp-Source: AFSGD/W8slIh3kRiCmY5kFUb06t+EqglhUuAg+6xZizNyfzgi4MABJZZr81vZQRohLFaacKwGZYvPw==
-X-Received: by 2002:aa7:8354:: with SMTP id z20mr17642302pfm.81.1544565512259;
-        Tue, 11 Dec 2018 13:58:32 -0800 (PST)
-Received: from [192.168.1.70] (c-24-6-192-50.hsd1.ca.comcast.net. [24.6.192.50])
-        by smtp.gmail.com with ESMTPSA id r83sm26342337pfc.115.2018.12.11.13.58.31
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=GRkTp6DzEHsoz7ooKDEy7qLkmsIpSQz4SxdvDjr70wY=;
+        b=oxkdRnSxm3tz/dUM6pFU97Grt2pODzEZQxfwWZ//QJQpOdYZ+qaQeP24Ly5e72qpit
+         MTiEOUbHwAwejvTYR4SV77xljNVIFbtWKTCkgAA72ZrfbygB4MWShTFGzoqQGiq5p4hn
+         mQJ7g8nqDoDfLmZXxN6thiD58++rBJZjkd0C91MPIn9xQ87KjS9LAsNsXSQ67Cf47is5
+         v9Sd7dOrtdu/Ye3oAha8x9t56KdiMQqZkg2qK0Y4ytFfpQOdzwWpGfq5nyJRCShkpy91
+         oJ8hzqVxEnG8cxj2Kysqo8of1gEuyOoBkIL0dl7teAc9TCpwAQubUN0N5xsMX51wfTE4
+         L1OQ==
+X-Gm-Message-State: AA+aEWbljQvt3din0xjC9igLzM6oauhlkwMD9xAeFsZ7sbV/lKtuUyy5
+        br/BjpRMImiecRrFxTQ6J3oTqw==
+X-Google-Smtp-Source: AFSGD/XkzT4kSJ496Phc9I32fOTTuvXY84tCZK273W9ldQiiG7v2N3f9B/NCcbu+YkAw+GcZJzNuuQ==
+X-Received: by 2002:ac8:366a:: with SMTP id n39mr17335844qtb.133.1544565574384;
+        Tue, 11 Dec 2018 13:59:34 -0800 (PST)
+Received: from dhcp-41-57.bos.redhat.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
+        by smtp.gmail.com with ESMTPSA id 126sm7759426qkj.70.2018.12.11.13.59.33
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 11 Dec 2018 13:58:31 -0800 (PST)
-Subject: Re: [PATCH] of: add dtc annotations functionality to dtx_diff
-From:   Frank Rowand <frowand.list@gmail.com>
-To:     Rob Herring <robh+dt@kernel.org>
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Julia Lawall <julia.lawall@lip6.fr>
-References: <1543233669-8696-1-git-send-email-frowand.list@gmail.com>
-Message-ID: <deded1fc-1e3c-01b3-1325-51b1636b0b63@gmail.com>
-Date:   Tue, 11 Dec 2018 13:58:30 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <1543233669-8696-1-git-send-email-frowand.list@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+        Tue, 11 Dec 2018 13:59:34 -0800 (PST)
+Message-ID: <1544565572.18411.7.camel@lca.pw>
+Subject: Re: [PATCH] arm64: increase stack size for KASAN_EXTRA
+From:   Qian Cai <cai@lca.pw>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Alexander Potapenko <glider@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        kasan-dev <kasan-dev@googlegroups.com>,
+        Linux-MM <linux-mm@kvack.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Date:   Tue, 11 Dec 2018 16:59:32 -0500
+In-Reply-To: <CAK8P3a0DiaeHtUKhWGniXQfrx3DOk9goSXp_d2-dcMunY8jRyg@mail.gmail.com>
+References: <721E7B42-2D55-4866-9C1A-3E8D64F33F9C@gmx.us>
+         <20181207223449.38808-1-cai@lca.pw>
+         <CAK8P3a20kRDrkS1YFLp6cYeKcUoC9s+O_tnYNbKEMWGukia1Tg@mail.gmail.com>
+         <1544548707.18411.3.camel@lca.pw>
+         <CAK8P3a3ghizoj5xwkQayuwu2Z1HppSqHLwHGPp97dUG4upv+LA@mail.gmail.com>
+         <1544565158.18411.5.camel@lca.pw>
+         <CAK8P3a0DiaeHtUKhWGniXQfrx3DOk9goSXp_d2-dcMunY8jRyg@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6 (3.22.6-10.el7) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rob,
-
-
-On 11/26/18 4:01 AM, frowand.list@gmail.com wrote:
-> From: Frank Rowand <frank.rowand@sony.com>
+On Tue, 2018-12-11 at 22:56 +0100, Arnd Bergmann wrote:
+> On Tue, Dec 11, 2018 at 10:52 PM Qian Cai <cai@lca.pw> wrote:
+> > On Tue, 2018-12-11 at 22:43 +0100, Arnd Bergmann wrote:
+> > > On Tue, Dec 11, 2018 at 6:18 PM Qian Cai <cai@lca.pw> wrote:
+> > I am not too keen to do the version-check considering some LTS versions
+> > could
+> > just back-port those patches and the render the version-check incorrectly.
 > 
-> Add -T and --annotations command line arguments to dtx_diff.  These
-> arguments will be passed through to dtc.  dtc will then add source
-> location annotations to its output.
-> 
-> Signed-off-by: Frank Rowand <frank.rowand@sony.com>
-> ---
-> 
-> This feature depends upon commit 5667e7ef9a9a ("annotations: add the
-> annotation functionality") in the dtc git repository.  To use the
-
-Ping. Your subsequent patch on 11/30, "[PATCH 1/3] scripts/dtc:
-Update to upstream version v1.4.7-57-gf267e674d145" adds the required
-commit.
-
--Frank
-
-
-> new flags before the new version of dtc is imported to the linux
-> kernel, download the dtc repository, compile dtc with the make command,
-> then add the path of the dtc repository to the shell PATH variable.> 
->  scripts/dtc/dtx_diff | 13 ++++++++++++-
->  1 file changed, 12 insertions(+), 1 deletion(-)
-> 
-> diff --git a/scripts/dtc/dtx_diff b/scripts/dtc/dtx_diff
-> index 8c4fbad2055e..0d8572008729 100755
-> --- a/scripts/dtc/dtx_diff
-> +++ b/scripts/dtc/dtx_diff
-> @@ -21,6 +21,7 @@ Usage:
->          diff DTx_1 and DTx_2
->  
->  
-> +      --annotate    synonym for -T
->         -f           print full dts in diff (--unified=99999)
->         -h           synonym for --help
->         -help        synonym for --help
-> @@ -28,6 +29,7 @@ Usage:
->         -s SRCTREE   linux kernel source tree is at path SRCTREE
->                          (default is current directory)
->         -S           linux kernel source tree is at root of current git repo
-> +       -T           Annotate output .dts with input source file and line (-T -T for more details)
->         -u           unsorted, do not sort DTx
->  
->  
-> @@ -174,6 +176,7 @@ compile_to_dts() {
->  
->  # -----  start of script
->  
-> +annotate=""
->  cmd_diff=0
->  diff_flags="-u"
->  dtx_file_1=""
-> @@ -208,6 +211,14 @@ while [ $# -gt 0 ] ; do
->  		shift
->  		;;
->  
-> +	-T | --annotate )
-> +		if [ "${annotate}"  = "" ] ; then
-> +			annotate="-T"
-> +		elif [ "${annotate}"  = "-T" ] ; then
-> +			annotate="-T -T"
-> +		fi
-> +		shift
-> +		;;
->  	-u )
->  		dtc_sort=""
->  		shift
-> @@ -327,7 +338,7 @@ cpp_flags="\
->  DTC="\
->  	${DTC}                                     \
->  	-i ${srctree}/scripts/dtc/include-prefixes \
-> -	-O dts -qq -f ${dtc_sort} -o -"
-> +	-O dts -qq -f ${dtc_sort} ${annotate} -o -"
->  
->  
->  # -----  do the diff or decompile
+> I'm not following what the problem is. Do you mean distro versions gcc
+> with the compiler bugfix, or LTS kernel versions?
 > 
 
+I mean distro versions of GCC where the version is still 8 but keep back-porting 
+tons of patches.
