@@ -2,205 +2,99 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B95FC07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:57:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9053DC07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:58:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 16CCC20851
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:57:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 16CCC20851
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 53FE120851
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:58:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544547518;
+	bh=bYxvgYOBSwOSe0ZpRtqNnNn2RseC00i5nN637rwutQY=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=O1VDY030CmKWD6uB3ebP5i74kB+J445N4p1gHViWvEsKf0ptBRaYM20SV4pB3iJ6V
+	 gcKyA3i5XHj3RUVcPfKwQhlaDbypZ8Fj1jccAbxpF8/LC1LBnuMevxnz6kvtjfmIjg
+	 GFBTSpb2FaqV1Ng9oQmdZ3L2izuoJ1NMvtaHUvnY=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 53FE120851
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727129AbeLKQ5u (ORCPT
+        id S1727215AbeLKQ6g (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 11:57:50 -0500
-Received: from mga18.intel.com ([134.134.136.126]:59892 "EHLO mga18.intel.com"
+        Tue, 11 Dec 2018 11:58:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47810 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726739AbeLKQ5u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 11:57:50 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Dec 2018 08:57:49 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,342,1539673200"; 
-   d="scan'208";a="117476644"
-Received: from unknown (HELO localhost.localdomain) ([10.232.112.69])
-  by orsmga002.jf.intel.com with ESMTP; 11 Dec 2018 08:57:48 -0800
-Date:   Tue, 11 Dec 2018 09:55:18 -0700
-From:   Keith Busch <keith.busch@intel.com>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux ACPI <linux-acpi@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        "Hansen, Dave" <dave.hansen@intel.com>
-Subject: Re: [PATCHv2 02/12] acpi/hmat: Parse and report heterogeneous memory
-Message-ID: <20181211165518.GB8101@localhost.localdomain>
-References: <20181211010310.8551-1-keith.busch@intel.com>
- <20181211010310.8551-3-keith.busch@intel.com>
- <CAPcyv4gEpxigPqc0PgDE0YCL3Ot+wPfvChAZqUTtdYR2WDxaJg@mail.gmail.com>
+        id S1726739AbeLKQ6g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 11:58:36 -0500
+Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3D4B020851;
+        Tue, 11 Dec 2018 16:58:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544547515;
+        bh=bYxvgYOBSwOSe0ZpRtqNnNn2RseC00i5nN637rwutQY=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=JfrBeh+j8eEAPLvVSW6yJvUWkli7phF3BEr0DDuwm7XUfMOGS5Lu6RIlNlZX5TvSX
+         DdwkQjBcHBhzlNgH3HGqq4NyzW5hl96S+gbrnknyEDnXAnE4Rz6ZXj3eR0qQPoTECu
+         TGQOGn3vqfYSQ6PsYW25w2ptPxKIFisHxbNW59YQ=
+Received: by mail-qk1-f178.google.com with SMTP id q70so9001317qkh.6;
+        Tue, 11 Dec 2018 08:58:35 -0800 (PST)
+X-Gm-Message-State: AA+aEWbZkICpmYP0o6IasulujqgugJh6rQhXrUUhYN6pytT/hUZEqJtV
+        F+LaL8P4j8Ihlg6mQOLRkrT8GClPL5s/O6mHIg==
+X-Google-Smtp-Source: AFSGD/V00bXWrg6CnLbWbb/ZNNU5UHouIAhgsI7YN0OZlNBnDMm8QwuZyoYDHvTrKHHE0ibF207knHklPq6ThEoGD4c=
+X-Received: by 2002:ae9:ef14:: with SMTP id d20mr15556224qkg.147.1544547514495;
+ Tue, 11 Dec 2018 08:58:34 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAPcyv4gEpxigPqc0PgDE0YCL3Ot+wPfvChAZqUTtdYR2WDxaJg@mail.gmail.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+References: <20181210132227.29262-1-narmstrong@baylibre.com> <20181210132227.29262-2-narmstrong@baylibre.com>
+In-Reply-To: <20181210132227.29262-2-narmstrong@baylibre.com>
+From:   Rob Herring <robh@kernel.org>
+Date:   Tue, 11 Dec 2018 10:58:23 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqK9nDaOOe3yjHAdaH92ds=_cudbq-wQee+YBPaCHEE-HQ@mail.gmail.com>
+Message-ID: <CAL_JsqK9nDaOOe3yjHAdaH92ds=_cudbq-wQee+YBPaCHEE-HQ@mail.gmail.com>
+Subject: Re: [PATCH 1/2] dt-bindings: gpu: mali-midgard: Add resets property
+To:     Neil Armstrong <narmstrong@baylibre.com>
+Cc:     devicetree@vger.kernel.org, Kevin Hilman <khilman@baylibre.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        linux-amlogic@lists.infradead.org,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 10, 2018 at 10:03:40PM -0800, Dan Williams wrote:
-> I have a use case to detect the presence of a memory-side-cache early
-> at init time [1]. To me this means that hmat_init() needs to happen as
-> a part of acpi_numa_init(). Subsequently I think that also means that
-> the sysfs portion needs to be broken out to its own init path that can
-> probably run at module_init() priority.
-> 
-> Perhaps we should split this patch set into two? The table parsing
-> with an in-kernel user is a bit easier to reason about and can go in
-> first. Towards that end can I steal / refllow patches 1 & 2 into the
-> memory randomization series? Other ideas how to handle this?
-> 
-> [1]: https://lkml.org/lkml/2018/10/12/309
+On Mon, Dec 10, 2018 at 7:22 AM Neil Armstrong <narmstrong@baylibre.com> wrote:
+>
+> The Amlogic ARM Mali Midgard requires reset controls to power on and
+> software reset the GPU, adds these as optional in the bindings.
+>
+> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+> ---
+>  Documentation/devicetree/bindings/gpu/arm,mali-midgard.txt | 2 ++
+>  1 file changed, 2 insertions(+)
+>
+> diff --git a/Documentation/devicetree/bindings/gpu/arm,mali-midgard.txt b/Documentation/devicetree/bindings/gpu/arm,mali-midgard.txt
+> index 18a2cde2e5f3..24d83ec952f1 100644
+> --- a/Documentation/devicetree/bindings/gpu/arm,mali-midgard.txt
+> +++ b/Documentation/devicetree/bindings/gpu/arm,mali-midgard.txt
+> @@ -37,6 +37,8 @@ Optional properties:
+>  - operating-points-v2 : Refer to Documentation/devicetree/bindings/opp/opp.txt
+>    for details.
+>
+> +- resets : Phandle to the reset controls for the Mali Midgard device.
 
-To that end, will something like the following work for you? This just
-needs to happen after patch 1.
+How many? Sounds like 1, but the dts has 2. There's also a similar
+patch for Allwinner[1]. I don't want to see a different number of
+resets and different names for each vendor. So first figure out how
+many resets the IP block has. You'll have to find someone with access
+to the TRM.
 
----
-diff --git a/drivers/acpi/numa.c b/drivers/acpi/numa.c
-index f5e09c39ff22..03ef3c8ba4ea 100644
---- a/drivers/acpi/numa.c
-+++ b/drivers/acpi/numa.c
-@@ -40,6 +40,8 @@ static int pxm_to_node_map[MAX_PXM_DOMAINS]
- static int node_to_pxm_map[MAX_NUMNODES]
- 			= { [0 ... MAX_NUMNODES - 1] = PXM_INVAL };
- 
-+static unsigned long node_side_cached[BITS_TO_LONGS(MAX_PXM_DOMAINS)];
-+
- unsigned char acpi_srat_revision __initdata;
- int acpi_numa __initdata;
- 
-@@ -262,6 +264,7 @@ acpi_numa_memory_affinity_init(struct acpi_srat_mem_affinity *ma)
- 	u64 start, end;
- 	u32 hotpluggable;
- 	int node, pxm;
-+	bool side_cached;
- 
- 	if (srat_disabled())
- 		goto out_err;
-@@ -308,6 +311,11 @@ acpi_numa_memory_affinity_init(struct acpi_srat_mem_affinity *ma)
- 		pr_warn("SRAT: Failed to mark hotplug range [mem %#010Lx-%#010Lx] in memblock\n",
- 			(unsigned long long)start, (unsigned long long)end - 1);
- 
-+	side_cached = test_bit(pxm, node_side_cached);
-+	if (side_cached && memblock_mark_sidecached(start, ma->length))
-+		pr_warn("SRAT: Failed to mark side cached range [mem %#010Lx-%#010Lx] in memblock\n",
-+			(unsigned long long)start, (unsigned long long)end - 1);
-+
- 	max_possible_pfn = max(max_possible_pfn, PFN_UP(end - 1));
- 
- 	return 0;
-@@ -411,6 +419,19 @@ acpi_parse_memory_affinity(union acpi_subtable_headers * header,
- 	return 0;
- }
- 
-+static int __init
-+acpi_parse_cache(union acpi_subtable_headers *header, const unsigned long end)
-+{
-+	struct acpi_hmat_cache *cache = (void *)header;
-+	u32 attrs;
-+
-+	attrs = cache->cache_attributes;
-+	if (((attrs & ACPI_HMAT_CACHE_ASSOCIATIVITY) >> 8) ==
-+						ACPI_HMAT_CA_DIRECT_MAPPED)
-+		set_bit(cache->memory_PD, node_side_cached);
-+	return 0;
-+}
-+
- static int __init acpi_parse_srat(struct acpi_table_header *table)
- {
- 	struct acpi_table_srat *srat = (struct acpi_table_srat *)table;
-@@ -422,6 +443,11 @@ static int __init acpi_parse_srat(struct acpi_table_header *table)
- 	return 0;
- }
- 
-+static __init int acpi_parse_hmat(struct acpi_table_header *table)
-+{
-+	return 0;
-+}
-+
- static int __init
- acpi_table_parse_srat(enum acpi_srat_type id,
- 		      acpi_tbl_entry_handler handler, unsigned int max_entries)
-@@ -460,6 +486,16 @@ int __init acpi_numa_init(void)
- 					sizeof(struct acpi_table_srat),
- 					srat_proc, ARRAY_SIZE(srat_proc), 0);
- 
-+		if (!acpi_table_parse(ACPI_SIG_HMAT, acpi_parse_hmat)) {
-+			struct acpi_subtable_proc hmat_proc;
-+
-+			memset(&hmat_proc, 0, sizeof(hmat_proc));
-+			hmat_proc.handler = acpi_parse_cache;
-+			hmat_proc.id = ACPI_HMAT_TYPE_CACHE;
-+			acpi_table_parse_entries_array(ACPI_SIG_HMAT,
-+						sizeof(struct acpi_table_hmat),
-+						&hmat_proc, 1, 0);
-+		}
- 		cnt = acpi_table_parse_srat(ACPI_SRAT_TYPE_MEMORY_AFFINITY,
- 					    acpi_parse_memory_affinity, 0);
- 	}
-diff --git a/include/linux/memblock.h b/include/linux/memblock.h
-index aee299a6aa76..a24c918a4496 100644
---- a/include/linux/memblock.h
-+++ b/include/linux/memblock.h
-@@ -44,6 +44,7 @@ enum memblock_flags {
- 	MEMBLOCK_HOTPLUG	= 0x1,	/* hotpluggable region */
- 	MEMBLOCK_MIRROR		= 0x2,	/* mirrored region */
- 	MEMBLOCK_NOMAP		= 0x4,	/* don't add to kernel direct mapping */
-+	MEMBLOCK_SIDECACHED	= 0x8,  /* System side caches memory access */
- };
- 
- /**
-@@ -130,6 +131,7 @@ int memblock_clear_hotplug(phys_addr_t base, phys_addr_t size);
- int memblock_mark_mirror(phys_addr_t base, phys_addr_t size);
- int memblock_mark_nomap(phys_addr_t base, phys_addr_t size);
- int memblock_clear_nomap(phys_addr_t base, phys_addr_t size);
-+int memblock_mark_sidecached(phys_addr_t base, phys_addr_t size);
- enum memblock_flags choose_memblock_flags(void);
- 
- unsigned long memblock_free_all(void);
-@@ -227,6 +229,11 @@ static inline bool memblock_is_nomap(struct memblock_region *m)
- 	return m->flags & MEMBLOCK_NOMAP;
- }
- 
-+static inline bool memblock_is_sidecached(struct memblock_region *m)
-+{
-+	return m->flags & MEMBLOCK_SIDECACHED;
-+}
-+
- #ifdef CONFIG_HAVE_MEMBLOCK_NODE_MAP
- int memblock_search_pfn_nid(unsigned long pfn, unsigned long *start_pfn,
- 			    unsigned long  *end_pfn);
-diff --git a/mm/memblock.c b/mm/memblock.c
-index 9a2d5ae81ae1..827b709afdcd 100644
---- a/mm/memblock.c
-+++ b/mm/memblock.c
-@@ -865,6 +865,11 @@ int __init_memblock memblock_mark_hotplug(phys_addr_t base, phys_addr_t size)
- 	return memblock_setclr_flag(base, size, 1, MEMBLOCK_HOTPLUG);
- }
- 
-+int __init_memblock memblock_mark_sidecached(phys_addr_t base, phys_addr_t size)
-+{
-+	return memblock_setclr_flag(base, size, 1, MEMBLOCK_SIDECACHED);
-+}
-+
- /**
-  * memblock_clear_hotplug - Clear flag MEMBLOCK_HOTPLUG for a specified region.
-  * @base: the base phys addr of the region
---
+Rob
+
+[1] https://patchwork.ozlabs.org/patch/1003654/
