@@ -7,51 +7,51 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 399F9C07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:54:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BF6EC07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:54:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E976421473
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:54:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D5CE920855
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:54:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544543676;
-	bh=xvsOO61ap6SzOLctsGys64oeS8ftftizybgDtDB7MKM=;
+	s=default; t=1544543680;
+	bh=cUuPPYPy2K6QBZr5pyg54aD0xwbXKhmFpY3WWYhaZB4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=fa5X17Ii8Z7vmP31+bYCGsoTpnhvQdB/WyHV5qeTocaPnUbYnYcsmwZ9jO19xrevX
-	 3XDO4XRrXjrtZZQS0OKQdYFKWdxNQ9oJ/Ydbv+b8O5ju546te6ab3VmGOtRM0e6rhQ
-	 5qrL4scGpcC+yDB4LZUcCCsBlpR5g9+3eXDZG2jk=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E976421473
+	b=Dx8isAvo4dNyrhz1iZUJkJgchn47E46n+qPZCKAwwMmz0rn3Q6xeGDfEzkZ6JOPUG
+	 mS5eU+0qKZusiP8YGLur8n6UdC+hHA1xQMf/4KSQMVz25eeexjzUW3aTZClBu6c77N
+	 K7FfPQyPj0bleyBO+1HaeB+DqYR5jtRHvZmG931Q=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5CE920855
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730173AbeLKPye (ORCPT
+        id S1730213AbeLKPyi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 10:54:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43130 "EHLO mail.kernel.org"
+        Tue, 11 Dec 2018 10:54:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43176 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729196AbeLKPyb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:54:31 -0500
+        id S1730145AbeLKPye (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 10:54:34 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 12BAB20855;
-        Tue, 11 Dec 2018 15:54:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B86032146D;
+        Tue, 11 Dec 2018 15:54:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544543670;
-        bh=xvsOO61ap6SzOLctsGys64oeS8ftftizybgDtDB7MKM=;
+        s=default; t=1544543673;
+        bh=cUuPPYPy2K6QBZr5pyg54aD0xwbXKhmFpY3WWYhaZB4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=K7RTiEktC9P88LiQzQO8xs80XYoz2AKBsebV4e/wVblXkl0JSTcxFiycaNxN+rN+U
-         WP8Y5hMgP7GQQWcZ2fQc5ARdjp6AGEmU4SSxuJrxgvwfkoU6pgbN1dK74MJf2amWKU
-         NcAuW8RbIzRWj5ctSSRex4tvv77Ej1aOppK7oAg0=
+        b=VqWKGYlrCLNNbepnf2CaMDwzXXLu0lxUc9XN61pGDSo+XDfI9YRhEcD+PqnZhkwyO
+         20k4AHS2rXsj+SdcIme3owbXOCEZ+eiNaXRGNplbh8lH/763D25Ela4eCwIidTX3rR
+         VBlKnRrWTsz19hyU+hYdsEjNJVrjwisiaYui37AY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Denis Bolotin <denis.bolotin@cavium.com>,
-        Michal Kalderon <michal.kalderon@cavium.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Hans Verkuil <hans.verkuil@cisco.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 019/118] qed: Fix overriding offload_tc by protocols without APP TLV
-Date:   Tue, 11 Dec 2018 16:40:38 +0100
-Message-Id: <20181211151645.006745041@linuxfoundation.org>
+Subject: [PATCH 4.19 002/118] media: cec: check for non-OK/NACK conditions while claiming a LA
+Date:   Tue, 11 Dec 2018 16:40:21 +0100
+Message-Id: <20181211151644.313948188@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181211151644.216668863@linuxfoundation.org>
 References: <20181211151644.216668863@linuxfoundation.org>
@@ -70,80 +70,93 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit e90202ed1cf9672c48a363c84a929932ebfe6fc0 ]
+[ Upstream commit 55623b4169056d7bb493d1c6f715991f8db67302 ]
 
-The TC received from APP TLV is stored in offload_tc, and should not be
-set by protocols which did not receive an APP TLV. Fixed the condition
-when overriding the offload_tc.
+During the configuration phase of a CEC adapter it is trying to claim a
+free logical address by polling.
 
-Signed-off-by: Denis Bolotin <denis.bolotin@cavium.com>
-Signed-off-by: Michal Kalderon <michal.kalderon@cavium.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+However, the code doesn't check if there were errors other than OK or NACK,
+those are just treated as if the poll was NACKed.
+
+Instead check for such errors and retry the poll. And if the problem persists
+then don't claim this LA since there is something weird going on.
+
+Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
+Signed-off-by: Hans Verkuil <hverkuil@xs4all.nl>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/qlogic/qed/qed_dcbx.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+ drivers/media/cec/cec-adap.c | 47 ++++++++++++++++++++++++++++--------
+ 1 file changed, 37 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/net/ethernet/qlogic/qed/qed_dcbx.c b/drivers/net/ethernet/qlogic/qed/qed_dcbx.c
-index f5459de6d60a..5900a506bf8d 100644
---- a/drivers/net/ethernet/qlogic/qed/qed_dcbx.c
-+++ b/drivers/net/ethernet/qlogic/qed/qed_dcbx.c
-@@ -191,7 +191,7 @@ qed_dcbx_dp_protocol(struct qed_hwfn *p_hwfn, struct qed_dcbx_results *p_data)
- static void
- qed_dcbx_set_params(struct qed_dcbx_results *p_data,
- 		    struct qed_hwfn *p_hwfn, struct qed_ptt *p_ptt,
--		    bool enable, u8 prio, u8 tc,
-+		    bool app_tlv, bool enable, u8 prio, u8 tc,
- 		    enum dcbx_protocol_type type,
- 		    enum qed_pci_personality personality)
+diff --git a/drivers/media/cec/cec-adap.c b/drivers/media/cec/cec-adap.c
+index dd8bad74a1f0..a537e518384b 100644
+--- a/drivers/media/cec/cec-adap.c
++++ b/drivers/media/cec/cec-adap.c
+@@ -1167,6 +1167,8 @@ static int cec_config_log_addr(struct cec_adapter *adap,
  {
-@@ -210,7 +210,7 @@ qed_dcbx_set_params(struct qed_dcbx_results *p_data,
- 		p_data->arr[type].dont_add_vlan0 = true;
+ 	struct cec_log_addrs *las = &adap->log_addrs;
+ 	struct cec_msg msg = { };
++	const unsigned int max_retries = 2;
++	unsigned int i;
+ 	int err;
  
- 	/* QM reconf data */
--	if (p_hwfn->hw_info.personality == personality)
-+	if (app_tlv && p_hwfn->hw_info.personality == personality)
- 		qed_hw_info_set_offload_tc(&p_hwfn->hw_info, tc);
+ 	if (cec_has_log_addr(adap, log_addr))
+@@ -1175,19 +1177,44 @@ static int cec_config_log_addr(struct cec_adapter *adap,
+ 	/* Send poll message */
+ 	msg.len = 1;
+ 	msg.msg[0] = (log_addr << 4) | log_addr;
+-	err = cec_transmit_msg_fh(adap, &msg, NULL, true);
  
- 	/* Configure dcbx vlan priority in doorbell block for roce EDPM */
-@@ -225,7 +225,7 @@ qed_dcbx_set_params(struct qed_dcbx_results *p_data,
- static void
- qed_dcbx_update_app_info(struct qed_dcbx_results *p_data,
- 			 struct qed_hwfn *p_hwfn, struct qed_ptt *p_ptt,
--			 bool enable, u8 prio, u8 tc,
-+			 bool app_tlv, bool enable, u8 prio, u8 tc,
- 			 enum dcbx_protocol_type type)
- {
- 	enum qed_pci_personality personality;
-@@ -240,7 +240,7 @@ qed_dcbx_update_app_info(struct qed_dcbx_results *p_data,
+-	/*
+-	 * While trying to poll the physical address was reset
+-	 * and the adapter was unconfigured, so bail out.
+-	 */
+-	if (!adap->is_configuring)
+-		return -EINTR;
++	for (i = 0; i < max_retries; i++) {
++		err = cec_transmit_msg_fh(adap, &msg, NULL, true);
  
- 		personality = qed_dcbx_app_update[i].personality;
+-	if (err)
+-		return err;
++		/*
++		 * While trying to poll the physical address was reset
++		 * and the adapter was unconfigured, so bail out.
++		 */
++		if (!adap->is_configuring)
++			return -EINTR;
++
++		if (err)
++			return err;
  
--		qed_dcbx_set_params(p_data, p_hwfn, p_ptt, enable,
-+		qed_dcbx_set_params(p_data, p_hwfn, p_ptt, app_tlv, enable,
- 				    prio, tc, type, personality);
- 	}
- }
-@@ -318,8 +318,8 @@ qed_dcbx_process_tlv(struct qed_hwfn *p_hwfn, struct qed_ptt *p_ptt,
- 				enable = true;
- 			}
+-	if (msg.tx_status & CEC_TX_STATUS_OK)
++		/*
++		 * The message was aborted due to a disconnect or
++		 * unconfigure, just bail out.
++		 */
++		if (msg.tx_status & CEC_TX_STATUS_ABORTED)
++			return -EINTR;
++		if (msg.tx_status & CEC_TX_STATUS_OK)
++			return 0;
++		if (msg.tx_status & CEC_TX_STATUS_NACK)
++			break;
++		/*
++		 * Retry up to max_retries times if the message was neither
++		 * OKed or NACKed. This can happen due to e.g. a Lost
++		 * Arbitration condition.
++		 */
++	}
++
++	/*
++	 * If we are unable to get an OK or a NACK after max_retries attempts
++	 * (and note that each attempt already consists of four polls), then
++	 * then we assume that something is really weird and that it is not a
++	 * good idea to try and claim this logical address.
++	 */
++	if (i == max_retries)
+ 		return 0;
  
--			qed_dcbx_update_app_info(p_data, p_hwfn, p_ptt, enable,
--						 priority, tc, type);
-+			qed_dcbx_update_app_info(p_data, p_hwfn, p_ptt, true,
-+						 enable, priority, tc, type);
- 		}
- 	}
- 
-@@ -340,7 +340,7 @@ qed_dcbx_process_tlv(struct qed_hwfn *p_hwfn, struct qed_ptt *p_ptt,
- 			continue;
- 
- 		enable = (type == DCBX_PROTOCOL_ETH) ? false : !!dcbx_version;
--		qed_dcbx_update_app_info(p_data, p_hwfn, p_ptt, enable,
-+		qed_dcbx_update_app_info(p_data, p_hwfn, p_ptt, false, enable,
- 					 priority, tc, type);
- 	}
- 
+ 	/*
 -- 
 2.19.1
 
