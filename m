@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-11.9 required=3.0
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F664C07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:32:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A78CC07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:33:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 115DF20672
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:32:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 115DF20672
+	by mail.kernel.org (Postfix) with ESMTP id 2D2D120672
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:33:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D2D120672
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727099AbeLKPcW (ORCPT
+        id S1727083AbeLKPdB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 10:32:22 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:43235 "EHLO
+        Tue, 11 Dec 2018 10:33:01 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:37125 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726417AbeLKPcW (ORCPT
+        with ESMTP id S1726628AbeLKPdA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:32:22 -0500
+        Tue, 11 Dec 2018 10:33:00 -0500
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wBBFW00k4042056
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wBBFWXMf4042107
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Tue, 11 Dec 2018 07:32:00 -0800
+        Tue, 11 Dec 2018 07:32:33 -0800
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wBBFVxvh4042053;
-        Tue, 11 Dec 2018 07:31:59 -0800
-Date:   Tue, 11 Dec 2018 07:31:59 -0800
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wBBFWXPB4042104;
+        Tue, 11 Dec 2018 07:32:33 -0800
+Date:   Tue, 11 Dec 2018 07:32:33 -0800
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Yangtao Li <tipbot@zytor.com>
-Message-ID: <tip-9ebc6053814d37b9de8cc291fba28f30a729c929@git.kernel.org>
-Cc:     torvalds@linux-foundation.org, hpa@zytor.com, peterz@infradead.org,
-        efault@gmx.de, linux-kernel@vger.kernel.org, mingo@kernel.org,
-        tiny.windzz@gmail.com, tglx@linutronix.de
-Reply-To: tglx@linutronix.de, tiny.windzz@gmail.com, efault@gmx.de,
-          peterz@infradead.org, linux-kernel@vger.kernel.org,
-          mingo@kernel.org, torvalds@linux-foundation.org, hpa@zytor.com
-In-Reply-To: <20181103172602.1917-1-tiny.windzz@gmail.com>
-References: <20181103172602.1917-1-tiny.windzz@gmail.com>
+From:   tip-bot for Quentin Perret <tipbot@zytor.com>
+Message-ID: <tip-5bd0988be12733a42a1a3d50e3e2ddfd79e57518@git.kernel.org>
+Cc:     quentin.perret@arm.com, tglx@linutronix.de, peterz@infradead.org,
+        linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        efault@gmx.de, hpa@zytor.com, mingo@kernel.org
+Reply-To: mingo@kernel.org, efault@gmx.de, hpa@zytor.com,
+          torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
+          peterz@infradead.org, tglx@linutronix.de, quentin.perret@arm.com
+In-Reply-To: <20181203095628.11858-2-quentin.perret@arm.com>
+References: <20181203095628.11858-2-quentin.perret@arm.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:sched/core] sched/core: Remove unnecessary unlikely() in
- push_*_task()
-Git-Commit-ID: 9ebc6053814d37b9de8cc291fba28f30a729c929
+Subject: [tip:sched/core] sched/topology: Relocate arch_scale_cpu_capacity()
+ to the internal header
+Git-Commit-ID: 5bd0988be12733a42a1a3d50e3e2ddfd79e57518
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -60,60 +60,116 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  9ebc6053814d37b9de8cc291fba28f30a729c929
-Gitweb:     https://git.kernel.org/tip/9ebc6053814d37b9de8cc291fba28f30a729c929
-Author:     Yangtao Li <tiny.windzz@gmail.com>
-AuthorDate: Sat, 3 Nov 2018 13:26:02 -0400
+Commit-ID:  5bd0988be12733a42a1a3d50e3e2ddfd79e57518
+Gitweb:     https://git.kernel.org/tip/5bd0988be12733a42a1a3d50e3e2ddfd79e57518
+Author:     Quentin Perret <quentin.perret@arm.com>
+AuthorDate: Mon, 3 Dec 2018 09:56:14 +0000
 Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Tue, 11 Dec 2018 15:16:57 +0100
+CommitDate: Tue, 11 Dec 2018 15:16:58 +0100
 
-sched/core: Remove unnecessary unlikely() in push_*_task()
+sched/topology: Relocate arch_scale_cpu_capacity() to the internal header
 
-WARN_ON() already contains an unlikely(), so it's not necessary to
-use WARN_ON(1).
+By default, arch_scale_cpu_capacity() is only visible from within the
+kernel/sched folder. Relocate it to include/linux/sched/topology.h to
+make it visible to other clients needing to know about the capacity of
+CPUs, such as the Energy Model framework.
 
-Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+This also shrinks the <linux/sched/topology.h> public header.
+
+Signed-off-by: Quentin Perret <quentin.perret@arm.com>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Mike Galbraith <efault@gmx.de>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/20181103172602.1917-1-tiny.windzz@gmail.com
+Cc: adharmap@codeaurora.org
+Cc: chris.redpath@arm.com
+Cc: currojerez@riseup.net
+Cc: dietmar.eggemann@arm.com
+Cc: edubezval@gmail.com
+Cc: gregkh@linuxfoundation.org
+Cc: javi.merino@kernel.org
+Cc: joel@joelfernandes.org
+Cc: juri.lelli@redhat.com
+Cc: morten.rasmussen@arm.com
+Cc: patrick.bellasi@arm.com
+Cc: pkondeti@codeaurora.org
+Cc: rjw@rjwysocki.net
+Cc: skannan@codeaurora.org
+Cc: smuckle@google.com
+Cc: srinivas.pandruvada@linux.intel.com
+Cc: thara.gopinath@linaro.org
+Cc: tkjos@google.com
+Cc: valentin.schneider@arm.com
+Cc: vincent.guittot@linaro.org
+Cc: viresh.kumar@linaro.org
+Link: https://lkml.kernel.org/r/20181203095628.11858-2-quentin.perret@arm.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- kernel/sched/deadline.c | 4 +---
- kernel/sched/rt.c       | 4 +---
- 2 files changed, 2 insertions(+), 6 deletions(-)
+ include/linux/sched/topology.h | 16 ++++++++++++++++
+ kernel/sched/sched.h           | 18 ------------------
+ 2 files changed, 16 insertions(+), 18 deletions(-)
 
-diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
-index b32bc1f7cd14..fb8b7b5d745d 100644
---- a/kernel/sched/deadline.c
-+++ b/kernel/sched/deadline.c
-@@ -2042,10 +2042,8 @@ static int push_dl_task(struct rq *rq)
- 		return 0;
+diff --git a/include/linux/sched/topology.h b/include/linux/sched/topology.h
+index 7fa0bc17cd8c..c31d3a47a47c 100644
+--- a/include/linux/sched/topology.h
++++ b/include/linux/sched/topology.h
+@@ -201,6 +201,14 @@ extern void set_sched_topology(struct sched_domain_topology_level *tl);
+ # define SD_INIT_NAME(type)
+ #endif
  
- retry:
--	if (unlikely(next_task == rq->curr)) {
--		WARN_ON(1);
-+	if (WARN_ON(next_task == rq->curr))
- 		return 0;
--	}
++#ifndef arch_scale_cpu_capacity
++static __always_inline
++unsigned long arch_scale_cpu_capacity(struct sched_domain *sd, int cpu)
++{
++	return SCHED_CAPACITY_SCALE;
++}
++#endif
++
+ #else /* CONFIG_SMP */
  
- 	/*
- 	 * If next_task preempts rq->curr, and rq->curr
-diff --git a/kernel/sched/rt.c b/kernel/sched/rt.c
-index 9aa3287ce301..e4f398ad9e73 100644
---- a/kernel/sched/rt.c
-+++ b/kernel/sched/rt.c
-@@ -1813,10 +1813,8 @@ static int push_rt_task(struct rq *rq)
- 		return 0;
+ struct sched_domain_attr;
+@@ -216,6 +224,14 @@ static inline bool cpus_share_cache(int this_cpu, int that_cpu)
+ 	return true;
+ }
  
- retry:
--	if (unlikely(next_task == rq->curr)) {
--		WARN_ON(1);
-+	if (WARN_ON(next_task == rq->curr))
- 		return 0;
--	}
++#ifndef arch_scale_cpu_capacity
++static __always_inline
++unsigned long arch_scale_cpu_capacity(void __always_unused *sd, int cpu)
++{
++	return SCHED_CAPACITY_SCALE;
++}
++#endif
++
+ #endif	/* !CONFIG_SMP */
  
- 	/*
- 	 * It's possible that the next_task slipped in of
+ static inline int task_node(const struct task_struct *p)
+diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+index ceb896404869..66067152a831 100644
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -1859,24 +1859,6 @@ unsigned long arch_scale_freq_capacity(int cpu)
+ }
+ #endif
+ 
+-#ifdef CONFIG_SMP
+-#ifndef arch_scale_cpu_capacity
+-static __always_inline
+-unsigned long arch_scale_cpu_capacity(struct sched_domain *sd, int cpu)
+-{
+-	return SCHED_CAPACITY_SCALE;
+-}
+-#endif
+-#else
+-#ifndef arch_scale_cpu_capacity
+-static __always_inline
+-unsigned long arch_scale_cpu_capacity(void __always_unused *sd, int cpu)
+-{
+-	return SCHED_CAPACITY_SCALE;
+-}
+-#endif
+-#endif
+-
+ #ifdef CONFIG_SMP
+ #ifdef CONFIG_PREEMPT
+ 
