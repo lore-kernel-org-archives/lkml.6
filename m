@@ -2,70 +2,90 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54A2BC5CFFE
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 11:28:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D65AC07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 11:32:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 219F62082F
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 11:28:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 219F62082F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 133602082F
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 11:32:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 133602082F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726498AbeLKL2Q (ORCPT
+        id S1726412AbeLKLch (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 06:28:16 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:15673 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726190AbeLKL2Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 06:28:16 -0500
-Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id EA1AD384715A5;
-        Tue, 11 Dec 2018 19:28:12 +0800 (CST)
-Received: from [10.151.23.176] (10.151.23.176) by smtp.huawei.com
- (10.3.19.209) with Microsoft SMTP Server (TLS) id 14.3.408.0; Tue, 11 Dec
- 2018 19:28:07 +0800
-Subject: Re: [PATCH 3/5] drivers: staging: erofs: Fix spelling issue
-To:     Aaron Strahlberger <aaron.strahlberger@posteo.de>
-CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Chao Yu <yuchao0@huawei.com>, <linux-erofs@lists.ozlabs.org>,
-        <devel@driverdev.osuosl.org>, <linux-kernel@vger.kernel.org>,
-        <linux-kernel@i4.cs.fau.de>,
-        Julius Wiedmann <julius.wiedmann@fau.de>,
-        Dominik Huber <domi250@gmx.de>
-References: <0ed9f3e7-9081-4a8a-06b0-e5ad14e2c872@huawei.com>
- <20181211105443.21826-1-aaron.strahlberger@posteo.de>
- <20181211105443.21826-4-aaron.strahlberger@posteo.de>
-From:   Gao Xiang <gaoxiang25@huawei.com>
-Message-ID: <b9f1bc3b-6bdc-0c6c-e3b5-edbf53d82a2d@huawei.com>
-Date:   Tue, 11 Dec 2018 19:27:51 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
+        Tue, 11 Dec 2018 06:32:37 -0500
+Received: from foss.arm.com ([217.140.101.70]:44936 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726154AbeLKLcg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 06:32:36 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3D90CEBD;
+        Tue, 11 Dec 2018 03:32:36 -0800 (PST)
+Received: from arrakis.emea.arm.com (arrakis.cambridge.arm.com [10.1.196.113])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8F4753F6A8;
+        Tue, 11 Dec 2018 03:32:33 -0800 (PST)
+Date:   Tue, 11 Dec 2018 11:32:31 +0000
+From:   Catalin Marinas <catalin.marinas@arm.com>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Andy Lutomirski <luto@kernel.org>, "H.J. Lu" <hjl.tools@gmail.com>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Florian Weimer <fweimer@redhat.com>, vapier@gentoo.org,
+        Rich Felker <dalias@libc.org>, x32@buildd.debian.org,
+        Will Deacon <will.deacon@arm.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: Can we drop upstream Linux x32 support?
+Message-ID: <20181211113230.GB35824@arrakis.emea.arm.com>
+References: <CALCETrXoRAibsbWa9nfbDrt0iEuebMnCMhSFg-d9W-J2g8mDjw@mail.gmail.com>
+ <CAMe9rOp0m5sn59AsD2F2i2Ad2tb7ufPU1mMg-vUOfh+TnGMeaw@mail.gmail.com>
+ <CALCETrU5xw61=me1YcTO3VPzjNEZahMPpi-20-oiSGs+CHcj4g@mail.gmail.com>
+ <CAK8P3a0adxnXr9JLfpR5MBeEJXSCK2Rt4w7NFLUUwO6s6LBVPQ@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20181211105443.21826-4-aaron.strahlberger@posteo.de>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.151.23.176]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAK8P3a0adxnXr9JLfpR5MBeEJXSCK2Rt4w7NFLUUwO6s6LBVPQ@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-On 2018/12/11 18:54, Aaron Strahlberger wrote:
-> Changed "stoped" to "stopped".
+On Tue, Dec 11, 2018 at 10:02:45AM +0100, Arnd Bergmann wrote:
+> On Tue, Dec 11, 2018 at 6:35 AM Andy Lutomirski <luto@kernel.org> wrote:
+> > I tried to understand what's going on.  As far as I can tell, most of
+> > the magic is the fact that __kernel_long_t and __kernel_ulong_t are
+> > 64-bit as seen by x32 user code.  This means that a decent number of
+> > uapi structures are the same on x32 and x86_64.  Syscalls that only
+> > use structures like this should route to the x86_64 entry points.  But
+> > the implementation is still highly dubious -- in_compat_syscall() will
+> > be *true* in such system calls,
 > 
-> Signed-off-by: Aaron Strahlberger <aaron.strahlberger@posteo.de>
-> Signed-off-by: Julius Wiedmann <julius.wiedmann@fau.de>
-> Signed-off-by: Dominik Huber <domi250@gmx.de>
+> I think the fundamental issue was that the intention had always been
+> to use only the 64-bit entry points for system calls, but the most
+> complex one we have -- ioctl() -- has to use the compat entry point
+> because device drivers define their own data structures using 'long'
+> and pointer members and they need translation, as well as
+> matching in_compat_syscall() checks. This in turn breaks down
+> again whenever a driver defines an ioctl command that takes
+> a __kernel_long_t or a derived type like timespec as its argument.
 
-A typo fix... I'm not a native English speaker, help me if it has more typo errors...
+With arm64 ILP32 we tried to avoid the ioctl() problem by having
+__kernel_long_t 32-bit, IOW mimicking the arm32 ABI (compat). The
+biggest pain point is signals where the state is completely different
+from arm32 (more, wider registers) and can't be dealt with by the compat
+layer.
 
-Reviewed-by: Gao Xiang <gaoxiang25@huawei.com>
+Fortunately, we haven't merge it yet as we have the same dilemma about
+real users and who's going to regularly test the ABI in the long run. In
+the meantime, watching this thread with interest ;).
 
-Thanks,
-Gao Xiang
+-- 
+Catalin
