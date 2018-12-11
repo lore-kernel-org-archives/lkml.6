@@ -2,202 +2,110 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6F66C67839
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 19:13:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7E69C67839
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 19:13:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6E60E20879
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 19:13:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="QcLrEw1Z"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E60E20879
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amd.com
+	by mail.kernel.org (Postfix) with ESMTP id AE4EF20879
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 19:13:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE4EF20879
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=the-dreams.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727072AbeLKTM7 (ORCPT
+        id S1727087AbeLKTNh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 14:12:59 -0500
-Received: from mail-eopbgr770082.outbound.protection.outlook.com ([40.107.77.82]:40488
-        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726350AbeLKTM6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 14:12:58 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=h3o2V1zwTtjggr1snHfzXO7Hq0lCjmNgAhqsAw12l1g=;
- b=QcLrEw1ZH3vXRjIKdwWgJpAFLA78sDCtK36wSmEFiZk3I2CuNqRGAds2cLzUyNKWSWeYHF9WfcCKPVdM6AdAdkMzV+Ww/uo+AN2Zp4jzEZvKrE4LwcYGx2xttgx+dOcaX4dlTZuJUUc530ENZBe8DxEKCnxuJTktqdVTiljzdY4=
-Received: from SN1PR12MB0175.namprd12.prod.outlook.com (10.162.3.15) by
- SN1PR12MB2493.namprd12.prod.outlook.com (52.132.196.148) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1404.17; Tue, 11 Dec 2018 19:10:02 +0000
-Received: from SN1PR12MB0175.namprd12.prod.outlook.com
- ([fe80::bc0e:7f7f:ee65:e2d5]) by SN1PR12MB0175.namprd12.prod.outlook.com
- ([fe80::bc0e:7f7f:ee65:e2d5%6]) with mapi id 15.20.1425.016; Tue, 11 Dec 2018
- 19:10:02 +0000
-From:   "Lendacky, Thomas" <Thomas.Lendacky@amd.com>
-To:     "x86@kernel.org" <x86@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     Andrea Arcangeli <aarcange@redhat.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Jiri Kosina <jkosina@suse.cz>, Ingo Molnar <mingo@redhat.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        David Woodhouse <dwmw@amazon.co.uk>
-Subject: [PATCH] x86/speculation: Add support for STIBP always-on preferred
- mode
-Thread-Topic: [PATCH] x86/speculation: Add support for STIBP always-on
- preferred mode
-Thread-Index: AQHUkYUdUUqHSw55jUaGOaWlduXUMQ==
-Date:   Tue, 11 Dec 2018 19:10:01 +0000
-Message-ID: <20181211190959.28321.56433.stgit@tlendack-t1.amdoffice.net>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: SN6PR02CA0013.namprd02.prod.outlook.com
- (2603:10b6:805:a2::26) To SN1PR12MB0175.namprd12.prod.outlook.com
- (2a01:111:e400:5143::15)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Thomas.Lendacky@amd.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [165.204.77.1]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;SN1PR12MB2493;20:OGAanKPlLihGETJL+W4IUSWrcc+xzq6v9RBFxod/0Hkf8OLb2VEMYBekMm5LrJK6h/kzlpJxW9OZvs/WVrCO9+oSy2v7R0hqkhO+RQsH+3mFrnigEsBy4RyrP1rEqT8Kf0JxFkEw5Mog8XXPBF2PveNGU6YZXrR8aBefKulYwHAzWuDkZQFltnbh3m9mILT3B6LYusv5D+jMQi5jnAvzPo9CrpR+zZuXAcDaC8MmsMutZE+6SssedaicUCieHRCR
-x-ms-office365-filtering-correlation-id: aca678f5-fc46-400d-993b-08d65f9c4026
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:SN1PR12MB2493;
-x-ms-traffictypediagnostic: SN1PR12MB2493:
-x-microsoft-antispam-prvs: <SN1PR12MB2493E6F509BF990FAAC403C6ECA60@SN1PR12MB2493.namprd12.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(823302103)(10201501046)(3231455)(999002)(944501520)(52105112)(93006095)(93001095)(3002001)(6055026)(148016)(149066)(150057)(6041310)(20161123560045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123564045)(201708071742011)(7699051)(76991095);SRVR:SN1PR12MB2493;BCL:0;PCL:0;RULEID:;SRVR:SN1PR12MB2493;
-x-forefront-prvs: 08831F51DC
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(979002)(39860400002)(376002)(136003)(366004)(346002)(396003)(199004)(189003)(14444005)(33896004)(6512007)(25786009)(81166006)(9686003)(1076002)(6436002)(2501003)(486006)(6116002)(97736004)(86362001)(103116003)(256004)(3846002)(8676002)(72206003)(97746001)(6486002)(71190400001)(71200400001)(105586002)(476003)(66066001)(316002)(4326008)(7736002)(99286004)(7416002)(305945005)(106356001)(5660300001)(52116002)(6506007)(386003)(186003)(8936002)(81156014)(68736007)(478600001)(14454004)(26005)(102836004)(53936002)(54906003)(110136005)(2906002)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1101;SCL:1;SRVR:SN1PR12MB2493;H:SN1PR12MB0175.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: amd.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: W97CHR8hnHNKp8+WbVEzY5xHa7/M3OkGfE/uwB/d2CBC7IwzcyubZMluUECgd+F+/aWVWw2Cy4Qtmy73UXDoGMryjiX3JJaa4mUXPhqK+ywb51zR2eSrpsORCfyAeWcRlKCz4tT951ZqFLhbC+OziYibQ0RAFwcN5PbfusDHSzjhAYtjvkqkBH13iJQQVUhhWLVUtCug6WvqJZfEa0fC7dODOmCqfsXpBiasYWgt7e9xJA9D6tNe2CanMKYA7T2VA0xhttsahCCTu6VnU+s3tPAami0lIZXqIMe3tjp+URT7wYk0czxi4l1s8spe2rlF
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <76C469B3873ADF4FAD156D62411141AC@namprd12.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        Tue, 11 Dec 2018 14:13:37 -0500
+Received: from sauhun.de ([88.99.104.3]:44834 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726398AbeLKTNg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 14:13:36 -0500
+Received: from localhost (p54B334A7.dip0.t-ipconnect.de [84.179.52.167])
+        by pokefinder.org (Postfix) with ESMTPSA id EFC324C0E8F;
+        Tue, 11 Dec 2018 20:13:32 +0100 (CET)
+Date:   Tue, 11 Dec 2018 20:13:16 +0100
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        linux-pwm@vger.kernel.org, linux-iio@vger.kernel.org,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        linux-i2c@vger.kernel.org, groeck@chromium.org,
+        kernel@collabora.com, linux-rtc@vger.kernel.org,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Benson Leung <bleung@chromium.org>,
+        Sebastian Reichel <sre@kernel.org>,
+        linux-input@vger.kernel.org,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        devicetree@vger.kernel.org,
+        Thierry Reding <thierry.reding@gmail.com>,
+        linux-pm@vger.kernel.org, MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH v2] MAINTAINERS: add maintainers for ChromeOS EC
+ sub-drivers
+Message-ID: <20181211191316.asshpucnnhkd43mc@ninjato>
+References: <20181211190953.13626-1-enric.balletbo@collabora.com>
 MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: aca678f5-fc46-400d-993b-08d65f9c4026
-X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Dec 2018 19:10:01.8794
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN1PR12MB2493
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="rlh4qplpe7ewwylv"
+Content-Disposition: inline
+In-Reply-To: <20181211190953.13626-1-enric.balletbo@collabora.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-RGlmZmVyZW50IEFNRCBwcm9jZXNzb3JzIG1heSBoYXZlIGRpZmZlcmVudCBpbXBsZW1lbnRhdGlv
-bnMgb2YgU1RJQlAuDQpXaGVuIFNUSUJQIGlzIGNvbmRpdGlvbmFsbHkgZW5hYmxlZCwgc29tZSBp
-bXBsZW1lbnRhdGlvbnMgd291bGQgYmVuZWZpdA0KZnJvbSBoYXZpbmcgU1RJQlAgYWx3YXlzIG9u
-IGluc3RlYWQgb2YgdG9nZ2xpbmcgdGhlIFNUSUJQIGJpdCB0aHJvdWdoIE1TUg0Kd3JpdGVzLiBU
-aGlzIHByZWZlcmVuY2UgaXMgYWR2ZXJ0aXNlZCB0aHJvdWdoIGEgQ1BVSUQgZmVhdHVyZSBiaXQu
-DQoNCldoZW4gY29uZGl0aW9uYWwgU1RJQlAgc3VwcG9ydCBpcyByZXF1ZXN0ZWQgYXQgYm9vdCBh
-bmQgdGhlIENQVSBhZHZlcnRpc2VzDQpTVElCUCBhbHdheXMtb24gbW9kZSBhcyBwcmVmZXJyZWQs
-IHN3aXRjaCB0byBTVElCUCAib24iIHN1cHBvcnQuIFRvIHNob3cNCnRoYXQgdGhpcyB0cmFuc2l0
-aW9uIGhhcyBvY2N1cnJlZCwgY3JlYXRlIGEgbmV3IHNwZWN0cmVfdjJfdXNlcl9taXRpZ2F0aW9u
-DQp2YWx1ZSBhbmQgYSBuZXcgc3BlY3RyZV92Ml91c2VyX3N0cmluZ3MgbWVzc2FnZS4gVGhlIG5l
-dyBtaXRpZ2F0aW9uIHZhbHVlDQppcyB1c2VkIGluIHNwZWN0cmVfdjJfdXNlcl9zZWxlY3RfbWl0
-aWdhdGlvbigpIHRvIHByaW50IHRoZSBuZXcgbWl0aWdhdGlvbg0KbWVzc2FnZSBhcyB3ZWxsIGFz
-IHRvIHJldHVybiBhIG5ldyBzdHJpbmcgZnJvbSBzdGlicF9zdGF0ZSgpLg0KDQpTaWduZWQtb2Zm
-LWJ5OiBUb20gTGVuZGFja3kgPHRob21hcy5sZW5kYWNreUBhbWQuY29tPg0KLS0tDQoNClRoaXMg
-cGF0Y2ggaXMgYWdhaW5zdCB0aGUgeDg2L3B0aSBicmFuY2ggb2YgdGhlIHRpcCB0cmVlOg0KICBn
-aXQ6Ly9naXQua2VybmVsLm9yZy9wdWIvc2NtL2xpbnV4L2tlcm5lbC9naXQvdGlwL3RpcC5naXQg
-eDg2L3B0aQ0KDQogYXJjaC94ODYvaW5jbHVkZS9hc20vY3B1ZmVhdHVyZXMuaCAgIHwgICAgMSAr
-DQogYXJjaC94ODYvaW5jbHVkZS9hc20vbm9zcGVjLWJyYW5jaC5oIHwgICAgMSArDQogYXJjaC94
-ODYva2VybmVsL2NwdS9idWdzLmMgICAgICAgICAgIHwgICAyOCArKysrKysrKysrKysrKysrKysr
-KysrLS0tLS0tDQogMyBmaWxlcyBjaGFuZ2VkLCAyNCBpbnNlcnRpb25zKCspLCA2IGRlbGV0aW9u
-cygtKQ0KDQpkaWZmIC0tZ2l0IGEvYXJjaC94ODYvaW5jbHVkZS9hc20vY3B1ZmVhdHVyZXMuaCBi
-L2FyY2gveDg2L2luY2x1ZGUvYXNtL2NwdWZlYXR1cmVzLmgNCmluZGV4IDI4YzRhNTAuLmRmOGU5
-NGUyIDEwMDY0NA0KLS0tIGEvYXJjaC94ODYvaW5jbHVkZS9hc20vY3B1ZmVhdHVyZXMuaA0KKysr
-IGIvYXJjaC94ODYvaW5jbHVkZS9hc20vY3B1ZmVhdHVyZXMuaA0KQEAgLTI4NCw2ICsyODQsNyBA
-QA0KICNkZWZpbmUgWDg2X0ZFQVRVUkVfQU1EX0lCUEIJCSgxMyozMisxMikgLyogIiIgSW5kaXJl
-Y3QgQnJhbmNoIFByZWRpY3Rpb24gQmFycmllciAqLw0KICNkZWZpbmUgWDg2X0ZFQVRVUkVfQU1E
-X0lCUlMJCSgxMyozMisxNCkgLyogIiIgSW5kaXJlY3QgQnJhbmNoIFJlc3RyaWN0ZWQgU3BlY3Vs
-YXRpb24gKi8NCiAjZGVmaW5lIFg4Nl9GRUFUVVJFX0FNRF9TVElCUAkJKDEzKjMyKzE1KSAvKiAi
-IiBTaW5nbGUgVGhyZWFkIEluZGlyZWN0IEJyYW5jaCBQcmVkaWN0b3JzICovDQorI2RlZmluZSBY
-ODZfRkVBVFVSRV9BTURfU1RJQlBfQUxXQVlTX09OCSgxMyozMisxNykgLyogIiIgU2luZ2xlIFRo
-cmVhZCBJbmRpcmVjdCBCcmFuY2ggUHJlZGljdG9ycyBhbHdheXMtb24gcHJlZmVycmVkICovDQog
-I2RlZmluZSBYODZfRkVBVFVSRV9BTURfU1NCRAkJKDEzKjMyKzI0KSAvKiAiIiBTcGVjdWxhdGl2
-ZSBTdG9yZSBCeXBhc3MgRGlzYWJsZSAqLw0KICNkZWZpbmUgWDg2X0ZFQVRVUkVfVklSVF9TU0JE
-CQkoMTMqMzIrMjUpIC8qIFZpcnR1YWxpemVkIFNwZWN1bGF0aXZlIFN0b3JlIEJ5cGFzcyBEaXNh
-YmxlICovDQogI2RlZmluZSBYODZfRkVBVFVSRV9BTURfU1NCX05PCQkoMTMqMzIrMjYpIC8qICIi
-IFNwZWN1bGF0aXZlIFN0b3JlIEJ5cGFzcyBpcyBmaXhlZCBpbiBoYXJkd2FyZS4gKi8NCmRpZmYg
-LS1naXQgYS9hcmNoL3g4Ni9pbmNsdWRlL2FzbS9ub3NwZWMtYnJhbmNoLmggYi9hcmNoL3g4Ni9p
-bmNsdWRlL2FzbS9ub3NwZWMtYnJhbmNoLmgNCmluZGV4IDAzMmI2MDAuLmRhZDEyYjcgMTAwNjQ0
-DQotLS0gYS9hcmNoL3g4Ni9pbmNsdWRlL2FzbS9ub3NwZWMtYnJhbmNoLmgNCisrKyBiL2FyY2gv
-eDg2L2luY2x1ZGUvYXNtL25vc3BlYy1icmFuY2guaA0KQEAgLTIzMiw2ICsyMzIsNyBAQCBlbnVt
-IHNwZWN0cmVfdjJfbWl0aWdhdGlvbiB7DQogZW51bSBzcGVjdHJlX3YyX3VzZXJfbWl0aWdhdGlv
-biB7DQogCVNQRUNUUkVfVjJfVVNFUl9OT05FLA0KIAlTUEVDVFJFX1YyX1VTRVJfU1RSSUNULA0K
-KwlTUEVDVFJFX1YyX1VTRVJfU1RSSUNUX1BSRUZFUlJFRCwNCiAJU1BFQ1RSRV9WMl9VU0VSX1BS
-Q1RMLA0KIAlTUEVDVFJFX1YyX1VTRVJfU0VDQ09NUCwNCiB9Ow0KZGlmZiAtLWdpdCBhL2FyY2gv
-eDg2L2tlcm5lbC9jcHUvYnVncy5jIGIvYXJjaC94ODYva2VybmVsL2NwdS9idWdzLmMNCmluZGV4
-IDU4Njg5YWMuLmU1M2NlZmEgMTAwNjQ0DQotLS0gYS9hcmNoL3g4Ni9rZXJuZWwvY3B1L2J1Z3Mu
-Yw0KKysrIGIvYXJjaC94ODYva2VybmVsL2NwdS9idWdzLmMNCkBAIC0yNjIsMTAgKzI2MiwxMSBA
-QCBlbnVtIHNwZWN0cmVfdjJfdXNlcl9jbWQgew0KIH07DQogDQogc3RhdGljIGNvbnN0IGNoYXIg
-KiBjb25zdCBzcGVjdHJlX3YyX3VzZXJfc3RyaW5nc1tdID0gew0KLQlbU1BFQ1RSRV9WMl9VU0VS
-X05PTkVdCQk9ICJVc2VyIHNwYWNlOiBWdWxuZXJhYmxlIiwNCi0JW1NQRUNUUkVfVjJfVVNFUl9T
-VFJJQ1RdCT0gIlVzZXIgc3BhY2U6IE1pdGlnYXRpb246IFNUSUJQIHByb3RlY3Rpb24iLA0KLQlb
-U1BFQ1RSRV9WMl9VU0VSX1BSQ1RMXQkJPSAiVXNlciBzcGFjZTogTWl0aWdhdGlvbjogU1RJQlAg
-dmlhIHByY3RsIiwNCi0JW1NQRUNUUkVfVjJfVVNFUl9TRUNDT01QXQk9ICJVc2VyIHNwYWNlOiBN
-aXRpZ2F0aW9uOiBTVElCUCB2aWEgc2VjY29tcCBhbmQgcHJjdGwiLA0KKwlbU1BFQ1RSRV9WMl9V
-U0VSX05PTkVdCQkJPSAiVXNlciBzcGFjZTogVnVsbmVyYWJsZSIsDQorCVtTUEVDVFJFX1YyX1VT
-RVJfU1RSSUNUXQkJPSAiVXNlciBzcGFjZTogTWl0aWdhdGlvbjogU1RJQlAgcHJvdGVjdGlvbiIs
-DQorCVtTUEVDVFJFX1YyX1VTRVJfU1RSSUNUX1BSRUZFUlJFRF0JPSAiVXNlciBzcGFjZTogTWl0
-aWdhdGlvbjogU1RJQlAgYWx3YXlzLW9uIHByZWZlcnJlZCBwcm90ZWN0aW9uIiwNCisJW1NQRUNU
-UkVfVjJfVVNFUl9QUkNUTF0JCQk9ICJVc2VyIHNwYWNlOiBNaXRpZ2F0aW9uOiBTVElCUCB2aWEg
-cHJjdGwiLA0KKwlbU1BFQ1RSRV9WMl9VU0VSX1NFQ0NPTVBdCQk9ICJVc2VyIHNwYWNlOiBNaXRp
-Z2F0aW9uOiBTVElCUCB2aWEgc2VjY29tcCBhbmQgcHJjdGwiLA0KIH07DQogDQogc3RhdGljIGNv
-bnN0IHN0cnVjdCB7DQpAQCAtMzU1LDYgKzM1NiwxNSBAQCBzdGF0aWMgdm9pZCBfX2luaXQgc3Bl
-Y192Ml91c2VyX3ByaW50X2NvbmQoY29uc3QgY2hhciAqcmVhc29uLCBib29sIHNlY3VyZSkNCiAJ
-CWJyZWFrOw0KIAl9DQogDQorCS8qDQorCSAqIEF0IHRoaXMgcG9pbnQsIGFuIFNUSUJQIG1vZGUg
-b3RoZXIgdGhhbiAib2ZmIiBoYXMgYmVlbiBzZXQuDQorCSAqIElmIFNUSUJQIHN1cHBvcnQgaXMg
-bm90IGJlaW5nIGZvcmNlZCwgY2hlY2sgaWYgU1RJQlAgYWx3YXlzLW9uDQorCSAqIGlzIHByZWZl
-cnJlZC4NCisJICovDQorCWlmIChtb2RlICE9IFNQRUNUUkVfVjJfVVNFUl9TVFJJQ1QgJiYNCisJ
-ICAgIGJvb3RfY3B1X2hhcyhYODZfRkVBVFVSRV9BTURfU1RJQlBfQUxXQVlTX09OKSkNCisJCW1v
-ZGUgPSBTUEVDVFJFX1YyX1VTRVJfU1RSSUNUX1BSRUZFUlJFRDsNCisNCiAJLyogSW5pdGlhbGl6
-ZSBJbmRpcmVjdCBCcmFuY2ggUHJlZGljdGlvbiBCYXJyaWVyICovDQogCWlmIChib290X2NwdV9o
-YXMoWDg2X0ZFQVRVUkVfSUJQQikpIHsNCiAJCXNldHVwX2ZvcmNlX2NwdV9jYXAoWDg2X0ZFQVRV
-UkVfVVNFX0lCUEIpOw0KQEAgLTYxMCw2ICs2MjAsNyBAQCB2b2lkIGFyY2hfc210X3VwZGF0ZSh2
-b2lkKQ0KIAljYXNlIFNQRUNUUkVfVjJfVVNFUl9OT05FOg0KIAkJYnJlYWs7DQogCWNhc2UgU1BF
-Q1RSRV9WMl9VU0VSX1NUUklDVDoNCisJY2FzZSBTUEVDVFJFX1YyX1VTRVJfU1RSSUNUX1BSRUZF
-UlJFRDoNCiAJCXVwZGF0ZV9zdGlicF9zdHJpY3QoKTsNCiAJCWJyZWFrOw0KIAljYXNlIFNQRUNU
-UkVfVjJfVVNFUl9QUkNUTDoNCkBAIC04MTIsNyArODIzLDggQEAgc3RhdGljIGludCBpYl9wcmN0
-bF9zZXQoc3RydWN0IHRhc2tfc3RydWN0ICp0YXNrLCB1bnNpZ25lZCBsb25nIGN0cmwpDQogCQkg
-KiBJbmRpcmVjdCBicmFuY2ggc3BlY3VsYXRpb24gaXMgYWx3YXlzIGRpc2FibGVkIGluIHN0cmlj
-dA0KIAkJICogbW9kZS4NCiAJCSAqLw0KLQkJaWYgKHNwZWN0cmVfdjJfdXNlciA9PSBTUEVDVFJF
-X1YyX1VTRVJfU1RSSUNUKQ0KKwkJaWYgKHNwZWN0cmVfdjJfdXNlciA9PSBTUEVDVFJFX1YyX1VT
-RVJfU1RSSUNUIHx8DQorCQkgICAgc3BlY3RyZV92Ml91c2VyID09IFNQRUNUUkVfVjJfVVNFUl9T
-VFJJQ1RfUFJFRkVSUkVEKQ0KIAkJCXJldHVybiAtRVBFUk07DQogCQl0YXNrX2NsZWFyX3NwZWNf
-aWJfZGlzYWJsZSh0YXNrKTsNCiAJCXRhc2tfdXBkYXRlX3NwZWNfdGlmKHRhc2spOw0KQEAgLTgy
-NSw3ICs4MzcsOCBAQCBzdGF0aWMgaW50IGliX3ByY3RsX3NldChzdHJ1Y3QgdGFza19zdHJ1Y3Qg
-KnRhc2ssIHVuc2lnbmVkIGxvbmcgY3RybCkNCiAJCSAqLw0KIAkJaWYgKHNwZWN0cmVfdjJfdXNl
-ciA9PSBTUEVDVFJFX1YyX1VTRVJfTk9ORSkNCiAJCQlyZXR1cm4gLUVQRVJNOw0KLQkJaWYgKHNw
-ZWN0cmVfdjJfdXNlciA9PSBTUEVDVFJFX1YyX1VTRVJfU1RSSUNUKQ0KKwkJaWYgKHNwZWN0cmVf
-djJfdXNlciA9PSBTUEVDVFJFX1YyX1VTRVJfU1RSSUNUIHx8DQorCQkgICAgc3BlY3RyZV92Ml91
-c2VyID09IFNQRUNUUkVfVjJfVVNFUl9TVFJJQ1RfUFJFRkVSUkVEKQ0KIAkJCXJldHVybiAwOw0K
-IAkJdGFza19zZXRfc3BlY19pYl9kaXNhYmxlKHRhc2spOw0KIAkJaWYgKGN0cmwgPT0gUFJfU1BF
-Q19GT1JDRV9ESVNBQkxFKQ0KQEAgLTg5Niw2ICs5MDksNyBAQCBzdGF0aWMgaW50IGliX3ByY3Rs
-X2dldChzdHJ1Y3QgdGFza19zdHJ1Y3QgKnRhc2spDQogCQkJcmV0dXJuIFBSX1NQRUNfUFJDVEwg
-fCBQUl9TUEVDX0RJU0FCTEU7DQogCQlyZXR1cm4gUFJfU1BFQ19QUkNUTCB8IFBSX1NQRUNfRU5B
-QkxFOw0KIAljYXNlIFNQRUNUUkVfVjJfVVNFUl9TVFJJQ1Q6DQorCWNhc2UgU1BFQ1RSRV9WMl9V
-U0VSX1NUUklDVF9QUkVGRVJSRUQ6DQogCQlyZXR1cm4gUFJfU1BFQ19ESVNBQkxFOw0KIAlkZWZh
-dWx0Og0KIAkJcmV0dXJuIFBSX1NQRUNfTk9UX0FGRkVDVEVEOw0KQEAgLTEwODksNiArMTEwMyw4
-IEBAIHN0YXRpYyBjaGFyICpzdGlicF9zdGF0ZSh2b2lkKQ0KIAkJcmV0dXJuICIsIFNUSUJQOiBk
-aXNhYmxlZCI7DQogCWNhc2UgU1BFQ1RSRV9WMl9VU0VSX1NUUklDVDoNCiAJCXJldHVybiAiLCBT
-VElCUDogZm9yY2VkIjsNCisJY2FzZSBTUEVDVFJFX1YyX1VTRVJfU1RSSUNUX1BSRUZFUlJFRDoN
-CisJCXJldHVybiAiLCBTVElCUDogYWx3YXlzLW9uIHByZWZlcnJlZCI7DQogCWNhc2UgU1BFQ1RS
-RV9WMl9VU0VSX1BSQ1RMOg0KIAljYXNlIFNQRUNUUkVfVjJfVVNFUl9TRUNDT01QOg0KIAkJaWYg
-KHN0YXRpY19rZXlfZW5hYmxlZCgmc3dpdGNoX3RvX2NvbmRfc3RpYnApKQ0KDQo=
+
+--rlh4qplpe7ewwylv
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Tue, Dec 11, 2018 at 08:09:52PM +0100, Enric Balletbo i Serra wrote:
+> There are multiple ChromeOS EC sub-drivers spread in different
+> subsystems, as all of them are related to the Chrome stuff add
+> Benson and myself as a maintainers for all these sub-drivers.
+>=20
+> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+
+Great, thanks!
+
+Acked-by: Wolfram Sang <wsa@the-dreams.de>
+
+
+--rlh4qplpe7ewwylv
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlwQDEgACgkQFA3kzBSg
+Kbbujw//Rmg6CpKq42FYw7tg/uyJ56KZ1p403nkc1fz9EFCBV3sN2AoGGKBPp23Q
+dXwKE41n7jE8IJLMTBC5AcNWZ2YeZL53V38cnaQEn4wiKxuh8H5V51QyBlhAwa9B
+/C4Ch3fwmEpI1gkIm11EaV/1jpSeTVPZh86bVlk2iC1gwChpIai2eU5kqu4jl0oo
+sNeU3eBS6zYvP9Af7FIstAWSfiXX23dAdI9rYq3flE/UdjGYuJnN8/HrrRyvhXWt
+Hv+LYeY3MATPs7nBbu6z6ujqc+RGu8Jku+SAzK9fHk9mWn1RB6y5nI07flEuHs2U
+Hzhqa5ohTZpdb0Jda0hhBW8+IEo9WYPTAWf8ATFx7KlCt4Xdbk05kb6l8javuwS1
++k5vAiIglMgJqEnFcnW0uUqukcmvJrtF9bKet5LvTN0mIAjP6/FGmAU78tJuT1bd
+CwBcV+HmUjry9XIE/jQC0aAgse5/2x4uY5MN6veISFPBj06AMvb9sIk0zK7d+P/g
+KV6dJbxYhkNBXYYunx80ThNT6WPSxsL0+xNJutwmPefpoD5+T+N6G8O66kC6qCrF
+aulUu2E2He4Ed7D55XUMBibD4ykKyI7L43b1aZbQi8iXf+T7rW3Hwcd7709pLGB/
+l4ekPPCzAHZjf9lbbcyX7ltwHuJ/fTjHESO2DTPDRUdZT/Jy6cQ=
+=A/iL
+-----END PGP SIGNATURE-----
+
+--rlh4qplpe7ewwylv--
