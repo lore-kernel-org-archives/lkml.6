@@ -7,51 +7,50 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 969B1C07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:16:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63F7FC07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:16:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5DAE42084E
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:16:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 27E742084E
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:16:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544544984;
-	bh=5HoslKBEjUJ/U6RkRMx3XHFgLItsRqP1dmDa8c9C0F0=;
+	s=default; t=1544544988;
+	bh=7Ggeck8wQb4CpeQ/vdbJmdjcECKkUglFwyrQBscj4zg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=rHd0V2uyo2jU0BmhpPyCrb7lusasSCJsUbynoI7Nr1cYNGrcHfApvwvFx3VMzgkAw
-	 riqgGyjMzBh7G5G0bm6v7H0XpQANlDqa1dr/V76yfYb1+v/m7d9f0xh7gcKhb1GXRa
-	 X2ADmoCr2PqWpPArJkC5DX1HKvnwOQ8NH74SaKLs=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5DAE42084E
+	b=LToRGqw9AdWbvnTgDHNa5+McB/pWioeYkDV5S4JKoSsPdrSrxjj/ie/mP9OFS/yCX
+	 prWxykd8l+QfFPMmEu4vEsCLbXPzi8qrh7SB6v8RO83RZNxjcTw1gz9RS3jnpYjl8o
+	 LcD0C+YYsfyQ4wN/ZIf8VzxFCXHPL5Ar6XxdxlqE=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 27E742084E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728717AbeLKPsE (ORCPT
+        id S1728702AbeLKPsC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 10:48:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36338 "EHLO mail.kernel.org"
+        Tue, 11 Dec 2018 10:48:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36316 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728667AbeLKPr6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:47:58 -0500
+        id S1728684AbeLKPrz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 10:47:55 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DEB7620989;
-        Tue, 11 Dec 2018 15:47:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4178420989;
+        Tue, 11 Dec 2018 15:47:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544543277;
-        bh=5HoslKBEjUJ/U6RkRMx3XHFgLItsRqP1dmDa8c9C0F0=;
+        s=default; t=1544543274;
+        bh=7Ggeck8wQb4CpeQ/vdbJmdjcECKkUglFwyrQBscj4zg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0aWqghIMtYJC6Hp3CCd8dX+2WxKfHAXB6CoTixbx2fvDBNS+vM3ysFZ2999A122l0
-         ID5Tya2/L8FhTOv2UV9gU7USn3UplIVDQv6HvC41wqO2aGsakVpo1C8UGX2YKjtej0
-         TFSJYvmEbGhyGT9Kpp/iim+/Fqziyj4dzenGR0Eo=
+        b=1QHEFcbJWzM4uNY93lrkkryAP631ps41UfetNyS9c65j+Y/pibEgH+GsSspihR8kr
+         Be66BTRD7ieAdOW6EQatesU2XKzzuW7RvJpQRK+h2+s7UwksvR4LuIUE5XFuV8zLuk
+         621n99n1wC40GAIawzNGyC4gVUx57Z13w3bjRCIk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Halil Pasic <pasic@linux.ibm.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        Cornelia Huck <cohuck@redhat.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>
-Subject: [PATCH 4.4 79/91] virtio/s390: fix race in ccw_io_helper()
-Date:   Tue, 11 Dec 2018 16:41:38 +0100
-Message-Id: <20181211151613.033769641@linuxfoundation.org>
+        stable@vger.kernel.org, Kevin Hilman <khilman@baylibre.com>,
+        Alexey Brodkin <abrodkin@synopsys.com>,
+        Vineet Gupta <vgupta@synopsys.com>
+Subject: [PATCH 4.4 52/91] ARC: change defconfig defaults to ARCv2
+Date:   Tue, 11 Dec 2018 16:41:11 +0100
+Message-Id: <20181211151610.187087935@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181211151606.026852373@linuxfoundation.org>
 References: <20181211151606.026852373@linuxfoundation.org>
@@ -70,79 +69,98 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Halil Pasic <pasic@linux.ibm.com>
+From: Kevin Hilman <khilman@baylibre.com>
 
-commit 78b1a52e05c9db11d293342e8d6d8a230a04b4e7 upstream.
+commit b7cc40c32a8bfa6f2581a71747f6a7d491fe43ba upstream.
 
-While ccw_io_helper() seems like intended to be exclusive in a sense that
-it is supposed to facilitate I/O for at most one thread at any given
-time, there is actually nothing ensuring that threads won't pile up at
-vcdev->wait_q. If they do, all threads get woken up and see the status
-that belongs to some other request than their own. This can lead to bugs.
-For an example see:
-https://bugs.launchpad.net/ubuntu/+source/linux/+bug/1788432
+Change the default defconfig (used with 'make defconfig') to the ARCv2
+nsim_hs_defconfig, and also switch the default Kconfig ISA selection to
+ARCv2.
 
-This race normally does not cause any problems. The operations provided
-by struct virtio_config_ops are usually invoked in a well defined
-sequence, normally don't fail, and are normally used quite infrequent
-too.
+This allows several default defconfigs (e.g. make defconfig, make
+allnoconfig, make tinyconfig) to all work with ARCv2 by default.
 
-Yet, if some of the these operations are directly triggered via sysfs
-attributes, like in the case described by the referenced bug, userspace
-is given an opportunity to force races by increasing the frequency of the
-given operations.
+Note since we change default architecture from ARCompact to ARCv2
+it's required to explicitly mention architecture type in ARCompact
+defconfigs otherwise ARCv2 will be implied and binaries will be
+generated for ARCv2.
 
-Let us fix the problem by ensuring, that for each device, we finish
-processing the previous request before starting with a new one.
-
-Signed-off-by: Halil Pasic <pasic@linux.ibm.com>
-Reported-by: Colin Ian King <colin.king@canonical.com>
-Cc: stable@vger.kernel.org
-Message-Id: <20180925121309.58524-3-pasic@linux.ibm.com>
-Signed-off-by: Cornelia Huck <cohuck@redhat.com>
-Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+Cc: <stable@vger.kernel.org> # 4.4.x
+Signed-off-by: Kevin Hilman <khilman@baylibre.com>
+Signed-off-by: Alexey Brodkin <abrodkin@synopsys.com>
+Signed-off-by: Vineet Gupta <vgupta@synopsys.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/s390/virtio/virtio_ccw.c |    7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ arch/arc/Kconfig                    |    2 +-
+ arch/arc/Makefile                   |    2 +-
+ arch/arc/configs/axs101_defconfig   |    1 +
+ arch/arc/configs/nsim_700_defconfig |    1 +
+ arch/arc/configs/nsimosci_defconfig |    1 +
+ arch/arc/configs/tb10x_defconfig    |    1 +
+ 6 files changed, 6 insertions(+), 2 deletions(-)
 
---- a/drivers/s390/virtio/virtio_ccw.c
-+++ b/drivers/s390/virtio/virtio_ccw.c
-@@ -59,6 +59,7 @@ struct virtio_ccw_device {
- 	unsigned int revision; /* Transport revision */
- 	wait_queue_head_t wait_q;
- 	spinlock_t lock;
-+	struct mutex io_lock; /* Serializes I/O requests */
- 	struct list_head virtqueues;
- 	unsigned long indicators;
- 	unsigned long indicators2;
-@@ -307,6 +308,7 @@ static int ccw_io_helper(struct virtio_c
- 	unsigned long flags;
- 	int flag = intparm & VIRTIO_CCW_INTPARM_MASK;
+--- a/arch/arc/Kconfig
++++ b/arch/arc/Kconfig
+@@ -96,7 +96,7 @@ endmenu
  
-+	mutex_lock(&vcdev->io_lock);
- 	do {
- 		spin_lock_irqsave(get_ccwdev_lock(vcdev->cdev), flags);
- 		ret = ccw_device_start(vcdev->cdev, ccw, intparm, 0, 0);
-@@ -319,7 +321,9 @@ static int ccw_io_helper(struct virtio_c
- 		cpu_relax();
- 	} while (ret == -EBUSY);
- 	wait_event(vcdev->wait_q, doing_io(vcdev, flag) == 0);
--	return ret ? ret : vcdev->err;
-+	ret = ret ? ret : vcdev->err;
-+	mutex_unlock(&vcdev->io_lock);
-+	return ret;
- }
+ choice
+ 	prompt "ARC Instruction Set"
+-	default ISA_ARCOMPACT
++	default ISA_ARCV2
  
- static void virtio_ccw_drop_indicator(struct virtio_ccw_device *vcdev,
-@@ -1236,6 +1240,7 @@ static int virtio_ccw_online(struct ccw_
- 	init_waitqueue_head(&vcdev->wait_q);
- 	INIT_LIST_HEAD(&vcdev->virtqueues);
- 	spin_lock_init(&vcdev->lock);
-+	mutex_init(&vcdev->io_lock);
+ config ISA_ARCOMPACT
+ 	bool "ARCompact ISA"
+--- a/arch/arc/Makefile
++++ b/arch/arc/Makefile
+@@ -12,7 +12,7 @@ ifeq ($(CROSS_COMPILE),)
+ CROSS_COMPILE := arc-linux-
+ endif
  
- 	spin_lock_irqsave(get_ccwdev_lock(cdev), flags);
- 	dev_set_drvdata(&cdev->dev, vcdev);
+-KBUILD_DEFCONFIG := nsim_700_defconfig
++KBUILD_DEFCONFIG := nsim_hs_defconfig
+ 
+ cflags-y	+= -fno-common -pipe -fno-builtin -mmedium-calls -D__linux__
+ cflags-$(CONFIG_ISA_ARCOMPACT)	+= -mA7
+--- a/arch/arc/configs/axs101_defconfig
++++ b/arch/arc/configs/axs101_defconfig
+@@ -17,6 +17,7 @@ CONFIG_PERF_EVENTS=y
+ # CONFIG_VM_EVENT_COUNTERS is not set
+ # CONFIG_SLUB_DEBUG is not set
+ # CONFIG_COMPAT_BRK is not set
++CONFIG_ISA_ARCOMPACT=y
+ CONFIG_MODULES=y
+ CONFIG_PARTITION_ADVANCED=y
+ CONFIG_ARC_PLAT_AXS10X=y
+--- a/arch/arc/configs/nsim_700_defconfig
++++ b/arch/arc/configs/nsim_700_defconfig
+@@ -16,6 +16,7 @@ CONFIG_KALLSYMS_ALL=y
+ CONFIG_EMBEDDED=y
+ # CONFIG_SLUB_DEBUG is not set
+ # CONFIG_COMPAT_BRK is not set
++CONFIG_ISA_ARCOMPACT=y
+ CONFIG_KPROBES=y
+ CONFIG_MODULES=y
+ # CONFIG_LBDAF is not set
+--- a/arch/arc/configs/nsimosci_defconfig
++++ b/arch/arc/configs/nsimosci_defconfig
+@@ -17,6 +17,7 @@ CONFIG_KALLSYMS_ALL=y
+ CONFIG_EMBEDDED=y
+ # CONFIG_SLUB_DEBUG is not set
+ # CONFIG_COMPAT_BRK is not set
++CONFIG_ISA_ARCOMPACT=y
+ CONFIG_KPROBES=y
+ CONFIG_MODULES=y
+ # CONFIG_LBDAF is not set
+--- a/arch/arc/configs/tb10x_defconfig
++++ b/arch/arc/configs/tb10x_defconfig
+@@ -19,6 +19,7 @@ CONFIG_KALLSYMS_ALL=y
+ # CONFIG_AIO is not set
+ CONFIG_EMBEDDED=y
+ # CONFIG_COMPAT_BRK is not set
++CONFIG_ISA_ARCOMPACT=y
+ CONFIG_SLAB=y
+ CONFIG_MODULES=y
+ CONFIG_MODULE_FORCE_LOAD=y
 
 
