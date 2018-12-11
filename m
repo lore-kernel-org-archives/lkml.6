@@ -2,167 +2,301 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-11.9 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26A06C07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 13:29:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A110DC07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 13:31:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D95612082F
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 13:29:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D95612082F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+	by mail.kernel.org (Postfix) with ESMTP id 3B1712082F
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 13:31:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B1712082F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726543AbeLKN3E (ORCPT
+        id S1726444AbeLKNbH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 08:29:04 -0500
-Received: from ozlabs.org ([203.11.71.1]:53317 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726350AbeLKN3E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 08:29:04 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 43Dgl11Ljlz9s4s;
-        Wed, 12 Dec 2018 00:29:01 +1100 (AEDT)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-From:   Michael Ellerman <mpe@ellerman.id.au>
-To:     Michael Bringmann <mwb@linux.vnet.ibm.com>,
-        linuxppc-dev@lists.ozlabs.org
-Cc:     Michael Bringmann <mwb@linux.vnet.ibm.com>,
-        Tyrel Datwyler <tyreld@linux.vnet.ibm.com>,
-        Thomas Falcon <tlfalcon@linux.vnet.ibm.com>,
-        Juliet Kim <minkim@us.ibm.com>, robh+dt@kernel.org,
-        frowand.list@gmail.com, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v03] powerpc/mobility: Fix node detach/rename problem
-In-Reply-To: <a2d46622-a957-dffe-04d1-8087bbf0f8b5@linux.vnet.ibm.com>
-References: <a2d46622-a957-dffe-04d1-8087bbf0f8b5@linux.vnet.ibm.com>
-Date:   Wed, 12 Dec 2018 00:29:00 +1100
-Message-ID: <871s6oxkdf.fsf@concordia.ellerman.id.au>
+        Tue, 11 Dec 2018 08:31:07 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:57129 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726231AbeLKNbG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 08:31:06 -0500
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wBBDUsuD4004708
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Tue, 11 Dec 2018 05:30:54 -0800
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wBBDUrxt4004705;
+        Tue, 11 Dec 2018 05:30:53 -0800
+Date:   Tue, 11 Dec 2018 05:30:53 -0800
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Borislav Petkov <tipbot@zytor.com>
+Message-ID: <tip-21afaf181362b4aeb5be72705d2914673b336149@git.kernel.org>
+Cc:     hpa@zytor.com, bp@suse.de, tony.luck@intel.com,
+        linux-kernel@vger.kernel.org, mingo@kernel.org, tglx@linutronix.de
+Reply-To: linux-kernel@vger.kernel.org, tglx@linutronix.de,
+          mingo@kernel.org, hpa@zytor.com, bp@suse.de, tony.luck@intel.com
+In-Reply-To: <20181205141323.14995-1-bp@alien8.de>
+References: <20181205141323.14995-1-bp@alien8.de>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:ras/core] x86/mce: Streamline MCE subsystem's naming
+Git-Commit-ID: 21afaf181362b4aeb5be72705d2914673b336149
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Michael,
+Commit-ID:  21afaf181362b4aeb5be72705d2914673b336149
+Gitweb:     https://git.kernel.org/tip/21afaf181362b4aeb5be72705d2914673b336149
+Author:     Borislav Petkov <bp@suse.de>
+AuthorDate: Sun, 18 Nov 2018 15:15:05 +0100
+Committer:  Borislav Petkov <bp@suse.de>
+CommitDate: Wed, 5 Dec 2018 18:00:29 +0100
 
-Please Cc the device tree folks on device tree patches, and also the
-original author of the patch that added the code you're modifying.
+x86/mce: Streamline MCE subsystem's naming
 
-So I've added:
-  robh+dt@kernel.org
-  frowand.list@gmail.com
-  devicetree@vger.kernel.org
-  linux-kernel@vger.kernel.org
+Rename the containing folder to "mce" which is the most widespread name.
+Drop the "mce[-_]" filename prefix of some compilation units (while
+others don't have it).
 
-Michael Bringmann <mwb@linux.vnet.ibm.com> writes:
-> The PPC mobility code receives RTAS requests to delete nodes with
-> platform-/hardware-specific attributes when restarting the kernel
-> after a migration.  My example is for migration between a P8 Alpine
-> and a P8 Brazos.   Nodes to be deleted include 'ibm,random-v1',
-> 'ibm,platform-facilities', 'ibm,sym-encryption-v1', and,
-> 'ibm,compression-v1'.
->
-> The mobility.c code calls 'of_detach_node' for the nodes and their
-> children.  This makes calls to detach the properties and to remove
-> the associated sysfs/kernfs files.
->
-> Then new copies of the same nodes are next provided by the PHYP,
-> local copies are built, and a pointer to the 'struct device_node'
-> is passed to of_attach_node.  Before the call to of_attach_node,
-> the phandle is initialized to 0 when the data structure is alloced.
-> During the call to of_attach_node, it calls __of_attach_node which
-> pulls the actual name and phandle from just created sub-properties
-> named something like 'name' and 'ibm,phandle'.
->
-> This is all fine for the first migration.  The problem occurs with
-> the second and subsequent migrations when the PHYP on the new system
-> wants to replace the same set of nodes again, referenced with the
-> same names and phandle values.
->
-> On the second and subsequent migrations, the PHYP tells the system
-> to again delete the nodes 'ibm,platform-facilities', 'ibm,random-v1',
-> 'ibm,compression-v1', 'ibm,sym-encryption-v1'.  It specifies these
-> nodes by its known set of phandle values -- the same handles used
-> by the PHYP on the source system are known on the target system.
-> The mobility.c code calls of_find_node_by_phandle() with these values
-> and ends up locating the first instance of each node that was added
-> during the original boot, instead of the second instance of each node
-> created after the first migration.  The detach during the second
-> migration fails with errors like,
->
-> [ 4565.030704] WARNING: CPU: 3 PID: 4787 at drivers/of/dynamic.c:252 __of_detach_node+0x8/0xa0
-> [ 4565.030708] Modules linked in: nfsv3 nfs_acl nfs tcp_diag udp_diag inet_diag unix_diag af_packet_diag netlink_diag lockd grace fscache sunrpc xts vmx_crypto sg pseries_rng binfmt_misc ip_tables xfs libcrc32c sd_mod ibmveth ibmvscsi scsi_transport_srp dm_mirror dm_region_hash dm_log dm_mod
-> [ 4565.030733] CPU: 3 PID: 4787 Comm: drmgr Tainted: G        W         4.18.0-rc1-wi107836-v05-120+ #201
-> [ 4565.030737] NIP:  c0000000007c1ea8 LR: c0000000007c1fb4 CTR: 0000000000655170
-> [ 4565.030741] REGS: c0000003f302b690 TRAP: 0700   Tainted: G        W          (4.18.0-rc1-wi107836-v05-120+)
-> [ 4565.030745] MSR:  800000010282b033 <SF,VEC,VSX,EE,FP,ME,IR,DR,RI,LE,TM[E]>  CR: 22288822  XER: 0000000a
-> [ 4565.030757] CFAR: c0000000007c1fb0 IRQMASK: 1
-> [ 4565.030757] GPR00: c0000000007c1fa4 c0000003f302b910 c00000000114bf00 c0000003ffff8e68
-> [ 4565.030757] GPR04: 0000000000000001 ffffffffffffffff 800000c008e0b4b8 ffffffffffffffff
-> [ 4565.030757] GPR08: 0000000000000000 0000000000000001 0000000080000003 0000000000002843
-> [ 4565.030757] GPR12: 0000000000008800 c00000001ec9ae00 0000000040000000 0000000000000000
-> [ 4565.030757] GPR16: 0000000000000000 0000000000000008 0000000000000000 00000000f6ffffff
-> [ 4565.030757] GPR20: 0000000000000007 0000000000000000 c0000003e9f1f034 0000000000000001
-> [ 4565.030757] GPR24: 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-> [ 4565.030757] GPR28: c000000001549d28 c000000001134828 c0000003ffff8e68 c0000003f302b930
-> [ 4565.030804] NIP [c0000000007c1ea8] __of_detach_node+0x8/0xa0
-> [ 4565.030808] LR [c0000000007c1fb4] of_detach_node+0x74/0xd0
-> [ 4565.030811] Call Trace:
-> [ 4565.030815] [c0000003f302b910] [c0000000007c1fa4] of_detach_node+0x64/0xd0 (unreliable)
-> [ 4565.030821] [c0000003f302b980] [c0000000000c33c4] dlpar_detach_node+0xb4/0x150
-> [ 4565.030826] [c0000003f302ba10] [c0000000000c3ffc] delete_dt_node+0x3c/0x80
-> [ 4565.030831] [c0000003f302ba40] [c0000000000c4380] pseries_devicetree_update+0x150/0x4f0
-> [ 4565.030836] [c0000003f302bb70] [c0000000000c479c] post_mobility_fixup+0x7c/0xf0
-> [ 4565.030841] [c0000003f302bbe0] [c0000000000c4908] migration_store+0xf8/0x130
-> [ 4565.030847] [c0000003f302bc70] [c000000000998160] kobj_attr_store+0x30/0x60
-> [ 4565.030852] [c0000003f302bc90] [c000000000412f14] sysfs_kf_write+0x64/0xa0
-> [ 4565.030857] [c0000003f302bcb0] [c000000000411cac] kernfs_fop_write+0x16c/0x240
-> [ 4565.030862] [c0000003f302bd00] [c000000000355f20] __vfs_write+0x40/0x220
-> [ 4565.030867] [c0000003f302bd90] [c000000000356358] vfs_write+0xc8/0x240
-> [ 4565.030872] [c0000003f302bde0] [c0000000003566cc] ksys_write+0x5c/0x100
-> [ 4565.030880] [c0000003f302be30] [c00000000000b288] system_call+0x5c/0x70
-> [ 4565.030884] Instruction dump:
-> [ 4565.030887] 38210070 38600000 e8010010 eb61ffd8 eb81ffe0 eba1ffe8 ebc1fff0 ebe1fff8
-> [ 4565.030895] 7c0803a6 4e800020 e9230098 7929f7e2 <0b090000> 2f890000 4cde0020 e9030040
-> [ 4565.030903] ---[ end trace 5bd54cb1df9d2976 ]---
->
-> The mobility.c code continues on during the second migration, accepts
-> the definitions of the new nodes from the PHYP and ends up renaming
-> the new properties e.g.
->
-> [ 4565.827296] Duplicate name in base, renamed to "ibm,platform-facilities#1"
->
-> There is no check like 'of_node_check_flag(np, OF_DETACHED)' within
-> of_find_node_by_phandle to skip nodes that are detached, but still
-> present due to caching or use count considerations.  Also, note that
-> of_find_node_by_phandle also uses a 'phandle_cache' which does not
-> appear to be updated when of_detach_node() is invoked.
+This unifies the file naming in the MCE subsystem:
 
-This seems like the real bug. Since the phandle cache was added we can
-now find detached nodes when we shouldn't be able to.
+mce/
+|-- amd.c
+|-- apei.c
+|-- core.c
+|-- dev-mcelog.c
+|-- genpool.c
+|-- inject.c
+|-- intel.c
+|-- internal.h
+|-- Makefile
+|-- p5.c
+|-- severity.c
+|-- therm_throt.c
+|-- threshold.c
+`-- winchip.c
 
-Does the patch below work?
+No functional changes.
 
-cheers
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Reviewed-by: Ingo Molnar <mingo@kernel.org>
+Acked-by: Tony Luck <tony.luck@intel.com>
+Link: https://lkml.kernel.org/r/20181205141323.14995-1-bp@alien8.de
+---
+ arch/x86/kernel/cpu/Makefile                                  |  2 +-
+ arch/x86/kernel/cpu/{mcheck => mce}/Makefile                  | 10 +++++-----
+ arch/x86/kernel/cpu/{mcheck/mce_amd.c => mce/amd.c}           |  2 +-
+ arch/x86/kernel/cpu/{mcheck/mce-apei.c => mce/apei.c}         |  2 +-
+ arch/x86/kernel/cpu/{mcheck/mce.c => mce/core.c}              |  2 +-
+ arch/x86/kernel/cpu/{mcheck => mce}/dev-mcelog.c              |  2 +-
+ arch/x86/kernel/cpu/{mcheck/mce-genpool.c => mce/genpool.c}   |  2 +-
+ arch/x86/kernel/cpu/{mcheck/mce-inject.c => mce/inject.c}     |  2 +-
+ arch/x86/kernel/cpu/{mcheck/mce_intel.c => mce/intel.c}       |  2 +-
+ arch/x86/kernel/cpu/{mcheck/mce-internal.h => mce/internal.h} |  0
+ arch/x86/kernel/cpu/{mcheck => mce}/p5.c                      |  0
+ arch/x86/kernel/cpu/{mcheck/mce-severity.c => mce/severity.c} |  2 +-
+ arch/x86/kernel/cpu/{mcheck => mce}/therm_throt.c             |  0
+ arch/x86/kernel/cpu/{mcheck => mce}/threshold.c               |  0
+ arch/x86/kernel/cpu/{mcheck => mce}/winchip.c                 |  0
+ 15 files changed, 14 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/of/base.c b/drivers/of/base.c
-index 09692c9b32a7..d8e4534c0686 100644
---- a/drivers/of/base.c
-+++ b/drivers/of/base.c
-@@ -1190,6 +1190,10 @@ struct device_node *of_find_node_by_phandle(phandle handle)
- 		if (phandle_cache[masked_handle] &&
- 		    handle == phandle_cache[masked_handle]->phandle)
- 			np = phandle_cache[masked_handle];
-+
-+		/* If we find a detached node, remove it */
-+		if (of_node_check_flag(np, OF_DETACHED))
-+			np = phandle_cache[masked_handle] = NULL;
- 	}
+diff --git a/arch/x86/kernel/cpu/Makefile b/arch/x86/kernel/cpu/Makefile
+index 1f5d2291c31e..43afe707c6fb 100644
+--- a/arch/x86/kernel/cpu/Makefile
++++ b/arch/x86/kernel/cpu/Makefile
+@@ -40,7 +40,7 @@ obj-$(CONFIG_INTEL_RDT)	+= intel_rdt.o intel_rdt_rdtgroup.o intel_rdt_monitor.o
+ obj-$(CONFIG_INTEL_RDT)	+= intel_rdt_ctrlmondata.o intel_rdt_pseudo_lock.o
+ CFLAGS_intel_rdt_pseudo_lock.o = -I$(src)
  
- 	if (!np) {
+-obj-$(CONFIG_X86_MCE)			+= mcheck/
++obj-$(CONFIG_X86_MCE)			+= mce/
+ obj-$(CONFIG_MTRR)			+= mtrr/
+ obj-$(CONFIG_MICROCODE)			+= microcode/
+ 
+diff --git a/arch/x86/kernel/cpu/mcheck/Makefile b/arch/x86/kernel/cpu/mce/Makefile
+similarity index 52%
+rename from arch/x86/kernel/cpu/mcheck/Makefile
+rename to arch/x86/kernel/cpu/mce/Makefile
+index bcc7c54c7041..765759765ab7 100644
+--- a/arch/x86/kernel/cpu/mcheck/Makefile
++++ b/arch/x86/kernel/cpu/mce/Makefile
+@@ -1,14 +1,14 @@
+ # SPDX-License-Identifier: GPL-2.0
+-obj-y				=  mce.o mce-severity.o mce-genpool.o
++obj-y				=  core.o severity.o genpool.o
+ 
+ obj-$(CONFIG_X86_ANCIENT_MCE)	+= winchip.o p5.o
+-obj-$(CONFIG_X86_MCE_INTEL)	+= mce_intel.o
+-obj-$(CONFIG_X86_MCE_AMD)	+= mce_amd.o
++obj-$(CONFIG_X86_MCE_INTEL)	+= intel.o
++obj-$(CONFIG_X86_MCE_AMD)	+= amd.o
+ obj-$(CONFIG_X86_MCE_THRESHOLD) += threshold.o
+-obj-$(CONFIG_X86_MCE_INJECT)	+= mce-inject.o
++obj-$(CONFIG_X86_MCE_INJECT)	+= inject.o
+ 
+ obj-$(CONFIG_X86_THERMAL_VECTOR) += therm_throt.o
+ 
+-obj-$(CONFIG_ACPI_APEI)		+= mce-apei.o
++obj-$(CONFIG_ACPI_APEI)		+= apei.o
+ 
+ obj-$(CONFIG_X86_MCELOG_LEGACY)	+= dev-mcelog.o
+diff --git a/arch/x86/kernel/cpu/mcheck/mce_amd.c b/arch/x86/kernel/cpu/mce/amd.c
+similarity index 99%
+rename from arch/x86/kernel/cpu/mcheck/mce_amd.c
+rename to arch/x86/kernel/cpu/mce/amd.c
+index e12454e21b8a..4a2fb59a372e 100644
+--- a/arch/x86/kernel/cpu/mcheck/mce_amd.c
++++ b/arch/x86/kernel/cpu/mce/amd.c
+@@ -28,7 +28,7 @@
+ #include <asm/msr.h>
+ #include <asm/trace/irq_vectors.h>
+ 
+-#include "mce-internal.h"
++#include "internal.h"
+ 
+ #define NR_BLOCKS         5
+ #define THRESHOLD_MAX     0xFFF
+diff --git a/arch/x86/kernel/cpu/mcheck/mce-apei.c b/arch/x86/kernel/cpu/mce/apei.c
+similarity index 99%
+rename from arch/x86/kernel/cpu/mcheck/mce-apei.c
+rename to arch/x86/kernel/cpu/mce/apei.c
+index 2eee85379689..1d9b3ce662a0 100644
+--- a/arch/x86/kernel/cpu/mcheck/mce-apei.c
++++ b/arch/x86/kernel/cpu/mce/apei.c
+@@ -36,7 +36,7 @@
+ #include <acpi/ghes.h>
+ #include <asm/mce.h>
+ 
+-#include "mce-internal.h"
++#include "internal.h"
+ 
+ void apei_mce_report_mem_error(int severity, struct cper_sec_mem_err *mem_err)
+ {
+diff --git a/arch/x86/kernel/cpu/mcheck/mce.c b/arch/x86/kernel/cpu/mce/core.c
+similarity index 99%
+rename from arch/x86/kernel/cpu/mcheck/mce.c
+rename to arch/x86/kernel/cpu/mce/core.c
+index 36d2696c9563..b0ae12cf7827 100644
+--- a/arch/x86/kernel/cpu/mcheck/mce.c
++++ b/arch/x86/kernel/cpu/mce/core.c
+@@ -52,7 +52,7 @@
+ #include <asm/msr.h>
+ #include <asm/reboot.h>
+ 
+-#include "mce-internal.h"
++#include "internal.h"
+ 
+ static DEFINE_MUTEX(mce_log_mutex);
+ 
+diff --git a/arch/x86/kernel/cpu/mcheck/dev-mcelog.c b/arch/x86/kernel/cpu/mce/dev-mcelog.c
+similarity index 99%
+rename from arch/x86/kernel/cpu/mcheck/dev-mcelog.c
+rename to arch/x86/kernel/cpu/mce/dev-mcelog.c
+index 27f394ac983f..41d9169d27fa 100644
+--- a/arch/x86/kernel/cpu/mcheck/dev-mcelog.c
++++ b/arch/x86/kernel/cpu/mce/dev-mcelog.c
+@@ -15,7 +15,7 @@
+ #include <linux/kmod.h>
+ #include <linux/poll.h>
+ 
+-#include "mce-internal.h"
++#include "internal.h"
+ 
+ static BLOCKING_NOTIFIER_HEAD(mce_injector_chain);
+ 
+diff --git a/arch/x86/kernel/cpu/mcheck/mce-genpool.c b/arch/x86/kernel/cpu/mce/genpool.c
+similarity index 99%
+rename from arch/x86/kernel/cpu/mcheck/mce-genpool.c
+rename to arch/x86/kernel/cpu/mce/genpool.c
+index 217cd4449bc9..3395549c51d3 100644
+--- a/arch/x86/kernel/cpu/mcheck/mce-genpool.c
++++ b/arch/x86/kernel/cpu/mce/genpool.c
+@@ -10,7 +10,7 @@
+ #include <linux/mm.h>
+ #include <linux/genalloc.h>
+ #include <linux/llist.h>
+-#include "mce-internal.h"
++#include "internal.h"
+ 
+ /*
+  * printk() is not safe in MCE context. This is a lock-less memory allocator
+diff --git a/arch/x86/kernel/cpu/mcheck/mce-inject.c b/arch/x86/kernel/cpu/mce/inject.c
+similarity index 99%
+rename from arch/x86/kernel/cpu/mcheck/mce-inject.c
+rename to arch/x86/kernel/cpu/mce/inject.c
+index 1fc424c40a31..8492ef7d9015 100644
+--- a/arch/x86/kernel/cpu/mcheck/mce-inject.c
++++ b/arch/x86/kernel/cpu/mce/inject.c
+@@ -38,7 +38,7 @@
+ #include <asm/nmi.h>
+ #include <asm/smp.h>
+ 
+-#include "mce-internal.h"
++#include "internal.h"
+ 
+ /*
+  * Collect all the MCi_XXX settings
+diff --git a/arch/x86/kernel/cpu/mcheck/mce_intel.c b/arch/x86/kernel/cpu/mce/intel.c
+similarity index 99%
+rename from arch/x86/kernel/cpu/mcheck/mce_intel.c
+rename to arch/x86/kernel/cpu/mce/intel.c
+index d05be307d081..e43eb6732630 100644
+--- a/arch/x86/kernel/cpu/mcheck/mce_intel.c
++++ b/arch/x86/kernel/cpu/mce/intel.c
+@@ -18,7 +18,7 @@
+ #include <asm/msr.h>
+ #include <asm/mce.h>
+ 
+-#include "mce-internal.h"
++#include "internal.h"
+ 
+ /*
+  * Support for Intel Correct Machine Check Interrupts. This allows
+diff --git a/arch/x86/kernel/cpu/mcheck/mce-internal.h b/arch/x86/kernel/cpu/mce/internal.h
+similarity index 100%
+rename from arch/x86/kernel/cpu/mcheck/mce-internal.h
+rename to arch/x86/kernel/cpu/mce/internal.h
+diff --git a/arch/x86/kernel/cpu/mcheck/p5.c b/arch/x86/kernel/cpu/mce/p5.c
+similarity index 100%
+rename from arch/x86/kernel/cpu/mcheck/p5.c
+rename to arch/x86/kernel/cpu/mce/p5.c
+diff --git a/arch/x86/kernel/cpu/mcheck/mce-severity.c b/arch/x86/kernel/cpu/mce/severity.c
+similarity index 99%
+rename from arch/x86/kernel/cpu/mcheck/mce-severity.c
+rename to arch/x86/kernel/cpu/mce/severity.c
+index 44396d521987..dc3e26e905a3 100644
+--- a/arch/x86/kernel/cpu/mcheck/mce-severity.c
++++ b/arch/x86/kernel/cpu/mce/severity.c
+@@ -16,7 +16,7 @@
+ #include <asm/mce.h>
+ #include <linux/uaccess.h>
+ 
+-#include "mce-internal.h"
++#include "internal.h"
+ 
+ /*
+  * Grade an mce by severity. In general the most severe ones are processed
+diff --git a/arch/x86/kernel/cpu/mcheck/therm_throt.c b/arch/x86/kernel/cpu/mce/therm_throt.c
+similarity index 100%
+rename from arch/x86/kernel/cpu/mcheck/therm_throt.c
+rename to arch/x86/kernel/cpu/mce/therm_throt.c
+diff --git a/arch/x86/kernel/cpu/mcheck/threshold.c b/arch/x86/kernel/cpu/mce/threshold.c
+similarity index 100%
+rename from arch/x86/kernel/cpu/mcheck/threshold.c
+rename to arch/x86/kernel/cpu/mce/threshold.c
+diff --git a/arch/x86/kernel/cpu/mcheck/winchip.c b/arch/x86/kernel/cpu/mce/winchip.c
+similarity index 100%
+rename from arch/x86/kernel/cpu/mcheck/winchip.c
+rename to arch/x86/kernel/cpu/mce/winchip.c
