@@ -2,119 +2,100 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0334C5CFFE
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 14:15:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49CF8C07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 14:16:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A45252084C
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 14:15:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0D74120849
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 14:16:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544537718;
-	bh=btIkuGMu4oq9KJJipDS2QkItUsZfELjYDWkIDx0tXj4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=x/5zTfH2PYdXBjJTfDwVax+ChlG7qTql+H6FKQP51Qcn1LcPW8RpB/vtt4ad6zK3t
-	 iRYS6FwUBFHNf1AEER0MX9m8uoMrjIVlB8oen4Xun5Tmy2YUtaKSTkjvbSDnDORDhb
-	 EgB+GDIdn8Uipcw/Mm/yPJh+OGhH8QOPAQlbjPHg=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A45252084C
+	s=default; t=1544537769;
+	bh=63Jpb+FCl42cdiA8bmbAmfKW9W8CJNmW8I58R7aZWr0=;
+	h=From:Date:Subject:To:List-ID:From;
+	b=2AELvFlLWEdkkX5g+KANPwfuki5paAOhsA8dayHL2OEz80skldBlMLeFk1YoNqmcl
+	 S1kmLFEsIZidCXOzc5Q4+4fLIUy00gq9gj9uld0VNkMm3f1KRGNwUC91JipgMMe6EP
+	 VrOqxCy8wA+kC2H21T0KKJXFXEf+yH1azrxRV46Y=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D74120849
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726726AbeLKOPR (ORCPT
+        id S1726788AbeLKOQH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 09:15:17 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:43626 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726448AbeLKOPQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 09:15:16 -0500
-Received: by mail-wr1-f68.google.com with SMTP id r10so14234148wrs.10;
-        Tue, 11 Dec 2018 06:15:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=pMf99pyABdRzoJiS5lDTMS1O9Zl2Bxv/+qfzWDHb74s=;
-        b=cK2v5ShG2PBWF/v2C9yFy/eWxoJ5j630rJGHlWBE/PM/aI68V8kjCHT/9sTmCx2t1A
-         5f7+bypd6Ebni8p25o8pAdhjFMbj2e8tDMvnymImzmJ23k/8+5U7CHbXSf2ouDvpEO7F
-         HjUYvfSeaGxxqaw+Io5/PZXASGkC/LrAhdimT7bmJ+8YBM8EaAuHV9Av2BA0QKfmcQaK
-         DL8az8CGeNaRJTN/Kgs1rv/dzaGboPUVFGKAvTZbfd3o8pWMDc8tO6PmHuwC66iblU9V
-         NdXkGP/DAKDyoBOFRiIsOlRuEuHT28+b4FqqwoO2hQq4MB0hq+GEoTIpFvxCV5J2SOvw
-         kEHQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=pMf99pyABdRzoJiS5lDTMS1O9Zl2Bxv/+qfzWDHb74s=;
-        b=l7SUhDTvnD0j0yQAublj2M2hdnN0O/3RC0BzJugjEh2MTuMmHmPtQvcY6Yn7M3zMSP
-         zlXLFSf7ctSCzxG+WlbTsICXl94eiU0oZ0rtFwwm0GnxV8wsMOjxTAqzi7wmmcE64NAK
-         PuZ2eD0utSklUCakF5xZhBjoUTWI4CxK9bid9MfWpPcBH7Ya7/iGD7J9KocAkpVD2d89
-         lJ4JwZlljvBqyns8WKh7y7RFpST3NvS411r2F4NAiR6iCKnNPm8ciO1WyZWN7GVHdIsP
-         svcdAiDQ2qgFGv1/RXV5A72CpqapyMWiAw2EelTVO5Qjed/2I0m2HTOSNBhMLZQYLhJT
-         N9dA==
-X-Gm-Message-State: AA+aEWbAzn6lIZzRSlfjIh498VdHX0QukHGU0ufJz2d3PJYS1nODZySc
-        gHqalphL3Q4v0vtJgekwG09XXlbh
-X-Google-Smtp-Source: AFSGD/WNnmNyTU2if/F1U14ChQFu6YLUfhMgWGH35q0gJe1urT4GlN4ZYiipVGD2sIVtRWbeH9y0CA==
-X-Received: by 2002:a5d:6549:: with SMTP id z9mr12973387wrv.116.1544537714051;
-        Tue, 11 Dec 2018 06:15:14 -0800 (PST)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id 133sm168385wme.9.2018.12.11.06.15.11
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 11 Dec 2018 06:15:12 -0800 (PST)
-Date:   Tue, 11 Dec 2018 15:15:09 +0100
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Quentin Perret <quentin.perret@arm.com>
-Cc:     peterz@infradead.org, rjw@rjwysocki.net,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        gregkh@linuxfoundation.org, mingo@redhat.com,
-        dietmar.eggemann@arm.com, morten.rasmussen@arm.com,
-        chris.redpath@arm.com, patrick.bellasi@arm.com,
-        valentin.schneider@arm.com, vincent.guittot@linaro.org,
-        thara.gopinath@linaro.org, viresh.kumar@linaro.org,
-        tkjos@google.com, joel@joelfernandes.org, smuckle@google.com,
-        adharmap@codeaurora.org, skannan@codeaurora.org,
-        pkondeti@codeaurora.org, juri.lelli@redhat.com,
-        edubezval@gmail.com, srinivas.pandruvada@linux.intel.com,
-        currojerez@riseup.net, javi.merino@kernel.org,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>
-Subject: Re: [PATCH v10 10/15] sched: Introduce a sysctl for Energy Aware
- Scheduling
-Message-ID: <20181211141509.GA32005@gmail.com>
-References: <20181203095628.11858-1-quentin.perret@arm.com>
- <20181203095628.11858-11-quentin.perret@arm.com>
+        Tue, 11 Dec 2018 09:16:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37910 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726554AbeLKOQH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 09:16:07 -0500
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9774320851;
+        Tue, 11 Dec 2018 14:16:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544537766;
+        bh=63Jpb+FCl42cdiA8bmbAmfKW9W8CJNmW8I58R7aZWr0=;
+        h=From:Date:Subject:To:From;
+        b=iZAJEKTTqg73XFCFVfAvRYMGPfbvNTldkwLcYUdUPfFRtHiaQaPySEiZs3dFH6nR8
+         0KHDzj6OCaEeQOW3qpyf2Ial4rkst1x8lkpMsGiSD3U12wq8GAP/KGOLoFzZkQZoJg
+         9qrN3Sl+FJNhfhP5LXBZHnrbt+rCxF05I+1Hz4XU=
+Received: by mail-lj1-f170.google.com with SMTP id x85-v6so13120822ljb.2;
+        Tue, 11 Dec 2018 06:16:06 -0800 (PST)
+X-Gm-Message-State: AA+aEWaOdXpqSPGnvZzQn4DomeWyU04MndwwnmRjSzoPbwT5xe8qyhoT
+        gLytUuADdiY+sV5DBKNDFBB8pKTXxt31xKB5vQw=
+X-Google-Smtp-Source: AFSGD/Wic1p8neykUE5eohK1jq+IzM8SuNX/0Veqev4wtSbWMXCHbC79B7Fa9g3Qr+9amTRKeM9vmpAM4ISfKTjr2CU=
+X-Received: by 2002:a2e:9cd2:: with SMTP id g18-v6mr10897043ljj.161.1544537764710;
+ Tue, 11 Dec 2018 06:16:04 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181203095628.11858-11-quentin.perret@arm.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+Date:   Tue, 11 Dec 2018 15:15:53 +0100
+X-Gmail-Original-Message-ID: <CAJKOXPdNS+Qs6t1GwrgYhWT5EbtORJwYMzSrDPf8oAxv7ndNBg@mail.gmail.com>
+Message-ID: <CAJKOXPdNS+Qs6t1GwrgYhWT5EbtORJwYMzSrDPf8oAxv7ndNBg@mail.gmail.com>
+Subject: [BUG BISECT next] Files cannot be opened after "fsverity: Move verity
+ status check to fsverity_file_open"
+To:     Chandan Rajendra <chandan@linux.vnet.ibm.com>,
+        "Theodore Ts'o" <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>,
+        Eric Biggers <ebiggers@kernel.org>, linux-ext4@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-fscrypt@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi,
 
-* Quentin Perret <quentin.perret@arm.com> wrote:
+Bisect from today's next pointed me to:
+commit 4de97efb578a094e8fbf279522d41eb9ece1e3e0
+Author: Chandan Rajendra <chandan@linux.vnet.ibm.com>
+Date:   Sat Dec 8 12:21:43 2018 +0530
+    fsverity: Move verity status check to fsverity_file_open
 
-> In its current state, Energy Aware Scheduling (EAS) starts automatically
-> on asymmetric platforms having an Energy Model (EM). However, there are
-> users who want to have an EM (for thermal management for example), but
-> don't want EAS with it.
+as a reason of "Operation not supported" when reading any file from
+mounted ext4fs (from SD card). Rootfs from nfsroot works but reading
+from /home with ext4fs fails.
 
-Well, then introduce a new Kconfig variant for EAS, if it's super 
-important to allow this to be disabled.
+Mounts:
+192.168.1.10:/srv/nfs/odroidhc1 on / type nfs4
+(rw,relatime,vers=4.0,rsize=131072,wsize=131072,namlen=255,hard,proto=tcp,timeo=600,retrans=2,sec=sys,clientaddr=192.168.1.12,local_lock=none,addr=192.168.1.10)
+/dev/mmcblk0p2 on /home type ext4 (rw,relatime)
 
-Why do we want to disable it - is it not reliable in some circumstances?
+Configuration:
+1. Arch ARM Linux
+2. exynos_defconfig
+  - All my Odroid boards (ARMv7, Exynos)
+    Systemd: v239, v238
+3. All boards boot from TFTP with NFS root (NFSv4)
+No specific errors in boot log:
+https://krzk.eu/#/builders/21/builds/1034/steps/12/logs/serial0
 
-> In order to let users disable EAS explicitly, introduce a new sysctl
-> called 'sched_energy_aware'. It is enabled by default so that EAS can
-> start automatically on platforms where it makes sense. Flipping it to 0
-> rebuilds the scheduling domains and disables EAS.
+Let me know if you need any more data.
 
-Yeah, making this a sysctl ABI is asking for trouble - this really should 
-be a Kconfig or debug space knob, at most.
-
-Thanks,
-
-	Ingo
+Best regards,
+Krzysztof
