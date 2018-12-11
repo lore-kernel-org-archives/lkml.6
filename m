@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC298C6783B
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 22:46:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3C11C67839
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 22:46:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C7E620672
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 22:46:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 844B820672
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 22:46:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="Hj9Fgv2B"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C7E620672
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="UeX3hPoK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 844B820672
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726731AbeLKWqM (ORCPT
+        id S1726740AbeLKWqU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 17:46:12 -0500
-Received: from sonic308-17.consmr.mail.ne1.yahoo.com ([66.163.187.40]:39516
+        Tue, 11 Dec 2018 17:46:20 -0500
+Received: from sonic308-17.consmr.mail.ne1.yahoo.com ([66.163.187.40]:46339
         "EHLO sonic308-17.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726554AbeLKWnx (ORCPT
+        by vger.kernel.org with ESMTP id S1726557AbeLKWnw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 17:43:53 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1544568231; bh=PBT9NIfIFWqve0jgHQc8SqCsASaMC4tLfOD1iemFqzE=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject; b=Hj9Fgv2BK6BOQPCOoYDUfB4tmj4W3L1lGRX2NAf3zA+i9kBjgae4aj/2Otb9Qf3apKW5DFVkTKN33MLZ2aryahfpxNqvnCIXvA9nyCtgKSZHSxp1RoL57mw8LIwh2N6Ib/rU3o77jOl5XwaJ9duGn4GV4SPn3DUxJEYvFRxzvg6GFlMbAwMmow/7ABhxK9aTmsjkQpmat/PdzkOD3y6uLkEV3cjjz8QIUkHkxjQaKlLLGck12rhmzy/te3wk/nWUcsE2OnYOWdFLsNWiQt3WM6Hz5rtPqUsBdPQS0jFZU5yB6Jzu9kvaqKFJbmhkEqJAo6oweb0EkxES/f9pqyezPg==
-X-YMail-OSG: GFYM0dwVM1nBF2LyWlPECLqKVLs3YI.0Lzskt_B4WcwqBqe9vBHbj39Xk1QbLfz
- zfFvlFUqn9Gd6WxUFRK6HFqRlvfzeQ34PDrwmV1w3GCxoZtgI.69B3XQnvbfJm3JeJDQVjuLryEC
- 3HCTDrh0k1DrSJJ5jLybZ6gAB29h3.RZMcoUaZAZMZ6Mw_ze2inBXO4t8IvlznjgDm0xYGKIXVQL
- lRDnfIJA1A12FaF_w7jR8LK4UD8OD6uK09ilcV69ZH5XvZO3dZD.F6uVd0GDd6irOTkm28L0sJ1t
- YMRRf920119Z.Ini79ozHD6xMDKJTcbEa0qpEYwYDvH337kInUI2uvvjBbTriIn0CVVSds5foWms
- S4yiMn1WzJwck_5UZTOCqTZndCsFpqaPuluA1eEmrECZFE66Ga5T3ucCvDSlMd.F7zP3ShHH7Xxc
- _906RlgeVwVgo1Tp9JUwA9CClRURKvbIuLEH.TecgzyK28XDt.4UDnllGnd.ZeZsPc80S56j5SXM
- GCXIJb2UZqMRyxhoLrAnTOTo8eLJ7FgW79dMk9C4YH.KVaqNVHJ.1mZp7S7BkmKC17nYYyGvPREI
- RdES3V2ORakg5qDWS3ZPmeLgn5zMKR5YylRDMfUgAP6YjCJuvFJRNpsvsjH1mDSoB64NrG_NRl5o
- o.iAzbOOjPJMOXO5r.78VCMqJS2ushazcnGUQ1TJ8RBgD8w9YDlrVAp8VMcu4ZbDn_ABceslahYB
- LYvK8m5XHDYMaPiWA_uFLD.iPFpOeTGbugBECFIf0LZZy0qJTqzS1HulYXDX7012903mDOlbrdVb
- dihLjMaoXMUVCJuwHvhMSkqvay6l.xhRWn7OxXoVHjrg_IeEWR_ZcY_WbhgcfocS3xq0N2m2SHw8
- 2O22kQ.mtz0IPQS5QdZVZHXazI30PGxCWFE49qP9uCfd6Xwk.UtiITMahfkk83mkEZqTq88TcZbJ
- Pcc.qELOp2gYXtVzr0.7OAKEWRNmKlsXk3rFueXLpP1_djUKw._4F.qtjLwj3EHTbezFBLAfsHD7
- Pz.4NjX6py23Jvs69hGHEjPlB0votRo1pHN7Hu5vwhWQyOpH155Y4DKlcRF4gsqgpACEifAkXHio
- 80hWLnqYcoMemFIbqHybd1cgho9qrBfvSBrN9kg--
+        Tue, 11 Dec 2018 17:43:52 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1544568231; bh=yzS41n1rCVRHChOBSSjNfES4FV7tKjQHrZu9+D9erQU=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject; b=UeX3hPoKqVD/YNQuBS8PHgMl5zaQDEJqy0q6m5QWgDOzRZDBd7QiX3mjvVy/7wR+uZh3ngZ7yU2BXXl7bxSZh2gJq+r8VHApWZWlw5bRpmhDY76LuSAMEd5xx+hZimH+GZ+KspZp2YrBoimByLaIqi59nQi3zflWM6P71D8nofPsPduxuxYa+DW3v0GVa8EIejjaDz8FM+TpGLufaO4lUkEapkZFkunujjYa0TyCEbcJbDwizEaXwPsBij8y87ZkeSxVwxGHTPbDP7EAueGQLLmGOfD2UDosFCkhIXXowZGXqaB1cgT2GYLdmYxtLx7TuFg8bJn/wlQHPZz5vVP6Rw==
+X-YMail-OSG: R.R8J4wVM1kHGFDRAkC59YJWoZP3nfRZMilZ24D_9Gqo94RD1cb7jqe2n.NPlLP
+ _gg4RQaA6XXE0lKnoFjxHqRFapXHT1gVWCM7Ombddy9dOBkXnXUZfUuAPOyiWIXYbZvPRNRdBgqP
+ WFo_cuZ9TPwY.AjLUsP8z4.xFIc12BOg.OYFRsyQ2aovskvQULOFzOT1xushjxuK1KuSCoS0McNN
+ 58PnS2HhyuOw4SociF9MXeiJzQ3l6wQHJGU4pAZM4Lb9cGtTDQJuG5f.EjvQ.wKAdl27iGxwxD09
+ aBY0a3bXY1AjQHdPaVFweQpGCnpkj1to9EkvQg6KHcaiFMskGgKYCcxenUyGbui_6pP0cuwI366c
+ cdJyK4Mx2rkVMZ_QoI215IgADJkgtWvHBwA0pJEdy7ONfuBozmyIgP1E6xjuEc0CCTXuFYE0LNJs
+ uBeeKlGUpI45sIO.ChNpGkdTF517KdrcTtrr6a4JAlCJdJrE8KFgG22NFSITvan4F2UjIe3iP.J9
+ HQP1kD2RfpqlnAzpCyGbAq978AGDmQm2.4JlflPHeXptPmr1d9_8v80Sl8.iM3ogriUsuIB3r44Z
+ Km7uSKVPa7IW6juQ4Da.ZHmb_VN3umpurSP6A7dbDxi7ZQWDYtdxGLcRJHNQbq.TxUh40HsujnNf
+ Wa5mb1yBCVQxLL6i6Kd.hdntbE1JNL30FyNDPL23esBKV6cl6wzupgEm48mR8q79mt.K8OqJ94ni
+ BRsRsnQUQ0BmlXPIQHM8p_DdW01IUAB79BAov5STMR62ujI_e7X_hkfq.iW0vQkG8fCm0FWT3o3n
+ SnAN5iOkYctkVqd2.l1AWoCPU.4SEJ.wCpSEoPwkfBMKHuCBucO.XQHFKhKXCN_ptgfjB5ITG_f1
+ dVqQUzHSI8deCACV0WZnalq6R92LreJxMhlomAmEPgumdTNzKKbTggD3xa1KaknMFcJvamCX4ADp
+ KT32j48jOs2UDOetdUF78wbWrPbiN.R8Kn5lry5hAAqrbOlXBE.UQ0_suEbuDBARl9jqksHGn2oJ
+ rpl278XV3Y1oq6SXfMeZKw4BaKDrfeT_8CbnIiyt6e8OAAC5nnoHzuKdfblN6bLFmerWUfH_Bi4X
+ lnxRbe2vLWQiCbQXmDy9XaKtWFdcLX6.pM1nrAg--
 Received: from sonic.gate.mail.ne1.yahoo.com by sonic308.consmr.mail.ne1.yahoo.com with HTTP; Tue, 11 Dec 2018 22:43:51 +0000
 Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO localhost.localdomain) ([67.169.65.224])
           by smtp415.mail.ne1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 8f4847c15ff2a33ea2e557120f9f24e5;
-          Tue, 11 Dec 2018 22:43:46 +0000 (UTC)
+          Tue, 11 Dec 2018 22:43:50 +0000 (UTC)
 From:   Casey Schaufler <casey@schaufler-ca.com>
 To:     jmorris@namei.org, linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org, selinux@vger.kernel.org
@@ -55,9 +55,9 @@ Cc:     john.johansen@canonical.com, keescook@chromium.org,
         linux-fsdevel@vger.kernel.org, sds@tycho.nsa.gov,
         adobriyan@gmail.com, mic@digikod.net, s.mesoraca16@gmail.com,
         casey@schaufler-ca.com
-Subject: [PATCH v5 20/38] procfs: add smack subdir to attrs
-Date:   Tue, 11 Dec 2018 14:42:56 -0800
-Message-Id: <20181211224314.22412-21-casey@schaufler-ca.com>
+Subject: [PATCH v5 23/38] SELinux: Remove cred security blob poisoning
+Date:   Tue, 11 Dec 2018 14:42:59 -0800
+Message-Id: <20181211224314.22412-24-casey@schaufler-ca.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20181211224314.22412-1-casey@schaufler-ca.com>
 References: <20181211224314.22412-1-casey@schaufler-ca.com>
@@ -66,258 +66,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Back in 2007 I made what turned out to be a rather serious
-mistake in the implementation of the Smack security module.
-The SELinux module used an interface in /proc to manipulate
-the security context on processes. Rather than use a similar
-interface, I used the same interface. The AppArmor team did
-likewise. Now /proc/.../attr/current will tell you the
-security "context" of the process, but it will be different
-depending on the security module you're using.
-
-This patch provides a subdirectory in /proc/.../attr for
-Smack. Smack user space can use the "current" file in
-this subdirectory and never have to worry about getting
-SELinux attributes by mistake. Programs that use the
-old interface will continue to work (or fail, as the case
-may be) as before.
-
-The proposed S.A.R.A security module is dependent on
-the mechanism to create its own attr subdirectory.
-
-The original implementation is by Kees Cook.
+The SELinux specific credential poisioning only makes sense
+if SELinux is managing the credentials. As the intent of this
+patch set is to move the blob management out of the modules
+and into the infrastructure, the SELinux specific code has
+to go. The poisioning could be introduced into the infrastructure
+at some later date.
 
 Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
 Reviewed-by: Kees Cook <keescook@chromium.org>
 Signed-off-by: Kees Cook <keescook@chromium.org>
 ---
- Documentation/admin-guide/LSM/index.rst | 13 +++++--
- fs/proc/base.c                          | 64 ++++++++++++++++++++++++++++-----
- fs/proc/internal.h                      |  1 +
- include/linux/security.h                | 15 +++++---
- security/security.c                     | 24 ++++++++++---
- 5 files changed, 96 insertions(+), 21 deletions(-)
+ kernel/cred.c            | 13 -------------
+ security/selinux/hooks.c |  6 ------
+ 2 files changed, 19 deletions(-)
 
-diff --git a/Documentation/admin-guide/LSM/index.rst b/Documentation/admin-guide/LSM/index.rst
-index c980dfe9abf1..9842e21afd4a 100644
---- a/Documentation/admin-guide/LSM/index.rst
-+++ b/Documentation/admin-guide/LSM/index.rst
-@@ -17,9 +17,8 @@ MAC extensions, other extensions can be built using the LSM to provide
- specific changes to system operation when these tweaks are not available
- in the core functionality of Linux itself.
- 
--Without a specific LSM built into the kernel, the default LSM will be the
--Linux capabilities system. Most LSMs choose to extend the capabilities
--system, building their checks on top of the defined capability hooks.
-+The Linux capabilities modules will always be included. This may be
-+followed by any number of "minor" modules and at most one "major" module.
- For more details on capabilities, see ``capabilities(7)`` in the Linux
- man-pages project.
- 
-@@ -30,6 +29,14 @@ order in which checks are made. The capability module will always
- be first, followed by any "minor" modules (e.g. Yama) and then
- the one "major" module (e.g. SELinux) if there is one configured.
- 
-+Process attributes associated with "major" security modules should
-+be accessed and maintained using the special files in ``/proc/.../attr``.
-+A security module may maintain a module specific subdirectory there,
-+named after the module. ``/proc/.../attr/smack`` is provided by the Smack
-+security module and contains all its special files. The files directly
-+in ``/proc/.../attr`` remain as legacy interfaces for modules that provide
-+subdirectories.
-+
- .. toctree::
-    :maxdepth: 1
- 
-diff --git a/fs/proc/base.c b/fs/proc/base.c
-index ce3465479447..e133de4897df 100644
---- a/fs/proc/base.c
-+++ b/fs/proc/base.c
-@@ -140,9 +140,13 @@ struct pid_entry {
- #define REG(NAME, MODE, fops)				\
- 	NOD(NAME, (S_IFREG|(MODE)), NULL, &fops, {})
- #define ONE(NAME, MODE, show)				\
--	NOD(NAME, (S_IFREG|(MODE)), 			\
-+	NOD(NAME, (S_IFREG|(MODE)),			\
- 		NULL, &proc_single_file_operations,	\
- 		{ .proc_show = show } )
-+#define ATTR(LSM, NAME, MODE)				\
-+	NOD(NAME, (S_IFREG|(MODE)),			\
-+		NULL, &proc_pid_attr_operations,	\
-+		{ .lsm = LSM })
- 
- /*
-  * Count the number of hardlinks for the pid_entry table, excluding the .
-@@ -2517,7 +2521,7 @@ static ssize_t proc_pid_attr_read(struct file * file, char __user * buf,
- 	if (!task)
- 		return -ESRCH;
- 
--	length = security_getprocattr(task,
-+	length = security_getprocattr(task, PROC_I(inode)->op.lsm,
- 				      (char*)file->f_path.dentry->d_name.name,
- 				      &p);
- 	put_task_struct(task);
-@@ -2566,7 +2570,9 @@ static ssize_t proc_pid_attr_write(struct file * file, const char __user * buf,
- 	if (rv < 0)
- 		goto out_free;
- 
--	rv = security_setprocattr(file->f_path.dentry->d_name.name, page, count);
-+	rv = security_setprocattr(PROC_I(inode)->op.lsm,
-+				  file->f_path.dentry->d_name.name, page,
-+				  count);
- 	mutex_unlock(&current->signal->cred_guard_mutex);
- out_free:
- 	kfree(page);
-@@ -2580,13 +2586,53 @@ static const struct file_operations proc_pid_attr_operations = {
- 	.llseek		= generic_file_llseek,
- };
- 
-+#define LSM_DIR_OPS(LSM) \
-+static int proc_##LSM##_attr_dir_iterate(struct file *filp, \
-+			     struct dir_context *ctx) \
-+{ \
-+	return proc_pident_readdir(filp, ctx, \
-+				   LSM##_attr_dir_stuff, \
-+				   ARRAY_SIZE(LSM##_attr_dir_stuff)); \
-+} \
-+\
-+static const struct file_operations proc_##LSM##_attr_dir_ops = { \
-+	.read		= generic_read_dir, \
-+	.iterate	= proc_##LSM##_attr_dir_iterate, \
-+	.llseek		= default_llseek, \
-+}; \
-+\
-+static struct dentry *proc_##LSM##_attr_dir_lookup(struct inode *dir, \
-+				struct dentry *dentry, unsigned int flags) \
-+{ \
-+	return proc_pident_lookup(dir, dentry, \
-+				  LSM##_attr_dir_stuff, \
-+				  ARRAY_SIZE(LSM##_attr_dir_stuff)); \
-+} \
-+\
-+static const struct inode_operations proc_##LSM##_attr_dir_inode_ops = { \
-+	.lookup		= proc_##LSM##_attr_dir_lookup, \
-+	.getattr	= pid_getattr, \
-+	.setattr	= proc_setattr, \
-+}
-+
-+#ifdef CONFIG_SECURITY_SMACK
-+static const struct pid_entry smack_attr_dir_stuff[] = {
-+	ATTR("smack", "current",	0666),
-+};
-+LSM_DIR_OPS(smack);
-+#endif
-+
- static const struct pid_entry attr_dir_stuff[] = {
--	REG("current",    S_IRUGO|S_IWUGO, proc_pid_attr_operations),
--	REG("prev",       S_IRUGO,	   proc_pid_attr_operations),
--	REG("exec",       S_IRUGO|S_IWUGO, proc_pid_attr_operations),
--	REG("fscreate",   S_IRUGO|S_IWUGO, proc_pid_attr_operations),
--	REG("keycreate",  S_IRUGO|S_IWUGO, proc_pid_attr_operations),
--	REG("sockcreate", S_IRUGO|S_IWUGO, proc_pid_attr_operations),
-+	ATTR(NULL, "current",		0666),
-+	ATTR(NULL, "prev",		0444),
-+	ATTR(NULL, "exec",		0666),
-+	ATTR(NULL, "fscreate",		0666),
-+	ATTR(NULL, "keycreate",		0666),
-+	ATTR(NULL, "sockcreate",	0666),
-+#ifdef CONFIG_SECURITY_SMACK
-+	DIR("smack",			0555,
-+	    proc_smack_attr_dir_inode_ops, proc_smack_attr_dir_ops),
-+#endif
- };
- 
- static int proc_attr_dir_readdir(struct file *file, struct dir_context *ctx)
-diff --git a/fs/proc/internal.h b/fs/proc/internal.h
-index 5185d7f6a51e..d4f9989063d0 100644
---- a/fs/proc/internal.h
-+++ b/fs/proc/internal.h
-@@ -81,6 +81,7 @@ union proc_op {
- 	int (*proc_show)(struct seq_file *m,
- 		struct pid_namespace *ns, struct pid *pid,
- 		struct task_struct *task);
-+	const char *lsm;
- };
- 
- struct proc_inode {
-diff --git a/include/linux/security.h b/include/linux/security.h
-index d170a5b031f3..35691877c3e1 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -390,8 +390,10 @@ int security_sem_semctl(struct kern_ipc_perm *sma, int cmd);
- int security_sem_semop(struct kern_ipc_perm *sma, struct sembuf *sops,
- 			unsigned nsops, int alter);
- void security_d_instantiate(struct dentry *dentry, struct inode *inode);
--int security_getprocattr(struct task_struct *p, char *name, char **value);
--int security_setprocattr(const char *name, void *value, size_t size);
-+int security_getprocattr(struct task_struct *p, const char *lsm, char *name,
-+			 char **value);
-+int security_setprocattr(const char *lsm, const char *name, void *value,
-+			 size_t size);
- int security_netlink_send(struct sock *sk, struct sk_buff *skb);
- int security_ismaclabel(const char *name);
- int security_secid_to_secctx(u32 secid, char **secdata, u32 *seclen);
-@@ -1139,15 +1141,18 @@ static inline int security_sem_semop(struct kern_ipc_perm *sma,
- 	return 0;
- }
- 
--static inline void security_d_instantiate(struct dentry *dentry, struct inode *inode)
-+static inline void security_d_instantiate(struct dentry *dentry,
-+					  struct inode *inode)
- { }
- 
--static inline int security_getprocattr(struct task_struct *p, char *name, char **value)
-+static inline int security_getprocattr(struct task_struct *p, const char *lsm,
-+				       char *name, char **value)
+diff --git a/kernel/cred.c b/kernel/cred.c
+index ecf03657e71c..fa2061ee4955 100644
+--- a/kernel/cred.c
++++ b/kernel/cred.c
+@@ -704,19 +704,6 @@ bool creds_are_invalid(const struct cred *cred)
  {
- 	return -EINVAL;
+ 	if (cred->magic != CRED_MAGIC)
+ 		return true;
+-#ifdef CONFIG_SECURITY_SELINUX
+-	/*
+-	 * cred->security == NULL if security_cred_alloc_blank() or
+-	 * security_prepare_creds() returned an error.
+-	 */
+-	if (selinux_is_enabled() && cred->security) {
+-		if ((unsigned long) cred->security < PAGE_SIZE)
+-			return true;
+-		if ((*(u32 *)cred->security & 0xffffff00) ==
+-		    (POISON_FREE << 24 | POISON_FREE << 16 | POISON_FREE << 8))
+-			return true;
+-	}
+-#endif
+ 	return false;
  }
- 
--static inline int security_setprocattr(char *name, void *value, size_t size)
-+static inline int security_setprocattr(const char *lsm, char *name,
-+				       void *value, size_t size)
+ EXPORT_SYMBOL(creds_are_invalid);
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index 24b6b459fa2a..41b230d459a6 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -3922,12 +3922,6 @@ static void selinux_cred_free(struct cred *cred)
  {
- 	return -EINVAL;
- }
-diff --git a/security/security.c b/security/security.c
-index eab64bdc60fb..81ff6a71e78e 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -1472,14 +1472,30 @@ void security_d_instantiate(struct dentry *dentry, struct inode *inode)
- }
- EXPORT_SYMBOL(security_d_instantiate);
+ 	struct task_security_struct *tsec = selinux_cred(cred);
  
--int security_getprocattr(struct task_struct *p, char *name, char **value)
-+int security_getprocattr(struct task_struct *p, const char *lsm, char *name,
-+				char **value)
- {
--	return call_int_hook(getprocattr, -EINVAL, p, name, value);
-+	struct security_hook_list *hp;
-+
-+	hlist_for_each_entry(hp, &security_hook_heads.getprocattr, list) {
-+		if (lsm != NULL && strcmp(lsm, hp->lsm))
-+			continue;
-+		return hp->hook.getprocattr(p, name, value);
-+	}
-+	return -EINVAL;
+-	/*
+-	 * cred->security == NULL if security_cred_alloc_blank() or
+-	 * security_prepare_creds() returned an error.
+-	 */
+-	BUG_ON(cred->security && (unsigned long) cred->security < PAGE_SIZE);
+-	cred->security = (void *) 0x7UL;
+ 	kfree(tsec);
  }
  
--int security_setprocattr(const char *name, void *value, size_t size)
-+int security_setprocattr(const char *lsm, const char *name, void *value,
-+			 size_t size)
- {
--	return call_int_hook(setprocattr, -EINVAL, name, value, size);
-+	struct security_hook_list *hp;
-+
-+	hlist_for_each_entry(hp, &security_hook_heads.setprocattr, list) {
-+		if (lsm != NULL && strcmp(lsm, hp->lsm))
-+			continue;
-+		return hp->hook.setprocattr(name, value, size);
-+	}
-+	return -EINVAL;
- }
- 
- int security_netlink_send(struct sock *sk, struct sk_buff *skb)
 -- 
 2.14.5
 
