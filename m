@@ -6,123 +6,171 @@ X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E07BC67839
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 22:40:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3DF1C6783B
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 22:40:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C9CB020880
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 22:40:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C9CB020880
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 72E0F20851
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 22:40:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 72E0F20851
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726233AbeLKWkw (ORCPT
+        id S1726254AbeLKWk5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 17:40:52 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:44286 "EHLO mx1.redhat.com"
+        Tue, 11 Dec 2018 17:40:57 -0500
+Received: from pegase1.c-s.fr ([93.17.236.30]:19354 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726158AbeLKWkw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 17:40:52 -0500
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id BD6545F;
-        Tue, 11 Dec 2018 22:40:51 +0000 (UTC)
-Received: from ovpn-120-31.rdu2.redhat.com (ovpn-120-31.rdu2.redhat.com [10.10.120.31])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id F0D15600C9;
-        Tue, 11 Dec 2018 22:40:33 +0000 (UTC)
-Message-ID: <32ecedb571206e462f2bc683219b8b8c349a1702.camel@redhat.com>
-Subject: Re: [PATCH v5 04/25] c6x: define syscall_get_arch()
-From:   Mark Salter <msalter@redhat.com>
-To:     "Dmitry V. Levin" <ldv@altlinux.org>,
-        Aurelien Jacquiot <jacquiot.aurelien@gmail.com>,
-        Paul Moore <paul@paul-moore.com>,
-        Eric Paris <eparis@redhat.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Andy Lutomirski <luto@kernel.org>
-Cc:     Elvira Khabirova <lineprinter@altlinux.org>,
-        Eugene Syromyatnikov <esyr@redhat.com>,
-        linux-c6x-dev@linux-c6x.org, linux-audit@redhat.com,
-        linux-kernel@vger.kernel.org
-Date:   Tue, 11 Dec 2018 17:40:33 -0500
-In-Reply-To: <20181210042912.GD6131@altlinux.org>
-References: <20181210042352.GA6092@altlinux.org>
-         <20181210042912.GD6131@altlinux.org>
-Organization: Red Hat, Inc
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.2 (3.30.2-2.fc29) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Tue, 11 Dec 2018 22:40:51 +0000 (UTC)
+        id S1726234AbeLKWkz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 17:40:55 -0500
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 43Dvzn5rc0z9v0sm;
+        Tue, 11 Dec 2018 23:40:53 +0100 (CET)
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id DRsE75rC7Ea9; Tue, 11 Dec 2018 23:40:53 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 43Dvzn4xyYz9v0sl;
+        Tue, 11 Dec 2018 23:40:53 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id ECE8D8B818;
+        Tue, 11 Dec 2018 23:40:53 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id VMz-VvTwKv-a; Tue, 11 Dec 2018 23:40:53 +0100 (CET)
+Received: from PO15451.localdomain (unknown [192.168.4.90])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id A21A98B812;
+        Tue, 11 Dec 2018 23:40:53 +0100 (CET)
+Received: by localhost.localdomain (Postfix, from userid 0)
+        id 3E3CB71707; Tue, 11 Dec 2018 22:40:53 +0000 (UTC)
+Message-Id: <a42260e77d609a10667872c2e7bf14ceabcce050.1544562518.git.christophe.leroy@c-s.fr>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [PATCH v3] powerpc: implement CONFIG_DEBUG_VIRTUAL
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Date:   Tue, 11 Dec 2018 22:40:53 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2018-12-10 at 07:29 +0300, Dmitry V. Levin wrote:
-> syscall_get_arch() is required to be implemented on all architectures
-> in addition to already implemented syscall_get_nr(),
-> syscall_get_arguments(), syscall_get_error(), and
-> syscall_get_return_value() functions in order to extend the generic
-> ptrace API with PTRACE_GET_SYSCALL_INFO request.
-> 
-> Cc: Mark Salter <msalter@redhat.com>
-> Cc: Aurelien Jacquiot <jacquiot.aurelien@gmail.com>
-> Cc: Paul Moore <paul@paul-moore.com>
-> Cc: Eric Paris <eparis@redhat.com>
-> Cc: Oleg Nesterov <oleg@redhat.com>
-> Cc: Andy Lutomirski <luto@kernel.org>
-> Cc: Elvira Khabirova <lineprinter@altlinux.org>
-> Cc: Eugene Syromyatnikov <esyr@redhat.com>
-> Cc: linux-c6x-dev@linux-c6x.org
-> Cc: linux-audit@redhat.com
-> Signed-off-by: Dmitry V. Levin <ldv@altlinux.org>
-> ---
-> 
-> Notes:
->     v5: added Cc
-> 
->  arch/c6x/include/asm/syscall.h | 7 +++++++
->  include/uapi/linux/audit.h     | 2 ++
->  2 files changed, 9 insertions(+)
-> 
-> diff --git a/arch/c6x/include/asm/syscall.h b/arch/c6x/include/asm/syscall.h
-> index ae2be315ee9c..39dbd1ef994c 100644
-> --- a/arch/c6x/include/asm/syscall.h
-> +++ b/arch/c6x/include/asm/syscall.h
-> @@ -11,6 +11,7 @@
->  #ifndef __ASM_C6X_SYSCALL_H
->  #define __ASM_C6X_SYSCALL_H
->  
-> +#include <uapi/linux/audit.h>
->  #include <linux/err.h>
->  #include <linux/sched.h>
->  
-> @@ -120,4 +121,10 @@ static inline void syscall_set_arguments(struct task_struct *task,
->  	}
->  }
->  
-> +static inline int syscall_get_arch(void)
-> +{
-> +	return IS_ENABLED(CONFIG_CPU_BIG_ENDIAN)
-> +		? AUDIT_ARCH_C6XBE : AUDIT_ARCH_C6X;
-> +}
-> +
->  #endif /* __ASM_C6X_SYSCALLS_H */
-> diff --git a/include/uapi/linux/audit.h b/include/uapi/linux/audit.h
-> index bedf3bf54c3a..72aeea0a740d 100644
-> --- a/include/uapi/linux/audit.h
-> +++ b/include/uapi/linux/audit.h
-> @@ -381,6 +381,8 @@ enum {
->  #define AUDIT_ARCH_ARCV2BE	(EM_ARCV2)
->  #define AUDIT_ARCH_ARM		(EM_ARM|__AUDIT_ARCH_LE)
->  #define AUDIT_ARCH_ARMEB	(EM_ARM)
-> +#define AUDIT_ARCH_C6X		(EM_TI_C6000|__AUDIT_ARCH_LE)
-> +#define AUDIT_ARCH_C6XBE	(EM_TI_C6000)
->  #define AUDIT_ARCH_CRIS		(EM_CRIS|__AUDIT_ARCH_LE)
->  #define AUDIT_ARCH_FRV		(EM_FRV)
->  #define AUDIT_ARCH_I386		(EM_386|__AUDIT_ARCH_LE)
+This patch implements CONFIG_DEBUG_VIRTUAL to warn about
+incorrect use of virt_to_phys() and page_to_phys()
 
-Acked-by: Mark Salter <msalter@redhat.com>
+Below is the result of test_debug_virtual:
 
+[    1.438746] WARNING: CPU: 0 PID: 1 at ./arch/powerpc/include/asm/io.h:808 test_debug_virtual_init+0x3c/0xd4
+[    1.448156] CPU: 0 PID: 1 Comm: swapper Not tainted 4.20.0-rc5-00560-g6bfb52e23a00-dirty #532
+[    1.457259] NIP:  c066c550 LR: c0650ccc CTR: c066c514
+[    1.462257] REGS: c900bdb0 TRAP: 0700   Not tainted  (4.20.0-rc5-00560-g6bfb52e23a00-dirty)
+[    1.471184] MSR:  00029032 <EE,ME,IR,DR,RI>  CR: 48000422  XER: 20000000
+[    1.477811]
+[    1.477811] GPR00: c0650ccc c900be60 c60d0000 00000000 006000c0 c9000000 00009032 c7fa0020
+[    1.477811] GPR08: 00002400 00000001 09000000 00000000 c07b5d04 00000000 c00037d8 00000000
+[    1.477811] GPR16: 00000000 00000000 00000000 00000000 c0760000 c0740000 00000092 c0685bb0
+[    1.477811] GPR24: c065042c c068a734 c0685b8c 00000006 00000000 c0760000 c075c3c0 ffffffff
+[    1.512711] NIP [c066c550] test_debug_virtual_init+0x3c/0xd4
+[    1.518315] LR [c0650ccc] do_one_initcall+0x8c/0x1cc
+[    1.523163] Call Trace:
+[    1.525595] [c900be60] [c0567340] 0xc0567340 (unreliable)
+[    1.530954] [c900be90] [c0650ccc] do_one_initcall+0x8c/0x1cc
+[    1.536551] [c900bef0] [c0651000] kernel_init_freeable+0x1f4/0x2cc
+[    1.542658] [c900bf30] [c00037ec] kernel_init+0x14/0x110
+[    1.547913] [c900bf40] [c000e1d0] ret_from_kernel_thread+0x14/0x1c
+[    1.553971] Instruction dump:
+[    1.556909] 3ca50100 bfa10024 54a5000e 3fa0c076 7c0802a6 3d454000 813dc204 554893be
+[    1.564566] 7d294010 7d294910 90010034 39290001 <0f090000> 7c3e0b78 955e0008 3fe0c062
+[    1.572425] ---[ end trace 6f6984225b280ad6 ]---
+[    1.577467] PA: 0x09000000 for VA: 0xc9000000
+[    1.581799] PA: 0x061e8f50 for VA: 0xc61e8f50
+
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+---
+ v3: Added missing linux/mm.h
+     I realised that a driver may use DMA on stack after checking with virt_addr_valid(), so the new
+     verification might induce false positives. I remove it for now, will add it again later in a more
+     controled way.
+
+ v2: Using asm/pgtable.h to avoid build failure on ppc64e.
+     Added a verification that the object is not in stack to catch problems before activing VMAP_STACK.
+
+ arch/powerpc/Kconfig          |  1 +
+ arch/powerpc/include/asm/io.h | 13 ++++++++++++-
+ arch/powerpc/mm/pgtable_32.c  |  2 +-
+ 3 files changed, 14 insertions(+), 2 deletions(-)
+
+diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
+index e312e92e3381..94b46624068d 100644
+--- a/arch/powerpc/Kconfig
++++ b/arch/powerpc/Kconfig
+@@ -128,6 +128,7 @@ config PPC
+ 	#
+ 	# Please keep this list sorted alphabetically.
+ 	#
++	select ARCH_HAS_DEBUG_VIRTUAL
+ 	select ARCH_HAS_DEVMEM_IS_ALLOWED
+ 	select ARCH_HAS_DMA_SET_COHERENT_MASK
+ 	select ARCH_HAS_ELF_RANDOMIZE
+diff --git a/arch/powerpc/include/asm/io.h b/arch/powerpc/include/asm/io.h
+index e746becd9d6f..7f19fbd3ba55 100644
+--- a/arch/powerpc/include/asm/io.h
++++ b/arch/powerpc/include/asm/io.h
+@@ -29,12 +29,14 @@ extern struct pci_dev *isa_bridge_pcidev;
+ 
+ #include <linux/device.h>
+ #include <linux/compiler.h>
++#include <linux/mm.h>
+ #include <asm/page.h>
+ #include <asm/byteorder.h>
+ #include <asm/synch.h>
+ #include <asm/delay.h>
+ #include <asm/mmu.h>
+ #include <asm/ppc_asm.h>
++#include <asm/pgtable.h>
+ 
+ #ifdef CONFIG_PPC64
+ #include <asm/paca.h>
+@@ -804,6 +806,8 @@ extern void __iounmap_at(void *ea, unsigned long size);
+  */
+ static inline unsigned long virt_to_phys(volatile void * address)
+ {
++	WARN_ON(IS_ENABLED(CONFIG_DEBUG_VIRTUAL) && !virt_addr_valid(address));
++
+ 	return __pa((unsigned long)address);
+ }
+ 
+@@ -827,7 +831,14 @@ static inline void * phys_to_virt(unsigned long address)
+ /*
+  * Change "struct page" to physical address.
+  */
+-#define page_to_phys(page)	((phys_addr_t)page_to_pfn(page) << PAGE_SHIFT)
++static inline phys_addr_t page_to_phys(struct page *page)
++{
++	unsigned long pfn = page_to_pfn(page);
++
++	WARN_ON(IS_ENABLED(CONFIG_DEBUG_VIRTUAL) && !pfn_valid(pfn));
++
++	return PFN_PHYS(pfn);
++}
+ 
+ /*
+  * 32 bits still uses virt_to_bus() for it's implementation of DMA
+diff --git a/arch/powerpc/mm/pgtable_32.c b/arch/powerpc/mm/pgtable_32.c
+index 4fc77a99c9bf..68d204a45cd0 100644
+--- a/arch/powerpc/mm/pgtable_32.c
++++ b/arch/powerpc/mm/pgtable_32.c
+@@ -143,7 +143,7 @@ __ioremap_caller(phys_addr_t addr, unsigned long size, pgprot_t prot, void *call
+ 	 * Don't allow anybody to remap normal RAM that we're using.
+ 	 * mem_init() sets high_memory so only do the check after that.
+ 	 */
+-	if (slab_is_available() && (p < virt_to_phys(high_memory)) &&
++	if (slab_is_available() && virt_addr_valid(p) &&
+ 	    page_is_ram(__phys_to_pfn(p))) {
+ 		printk("__ioremap(): phys addr 0x%llx is RAM lr %ps\n",
+ 		       (unsigned long long)p, __builtin_return_address(0));
+-- 
+2.13.3
 
