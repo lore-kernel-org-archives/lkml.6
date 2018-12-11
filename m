@@ -2,57 +2,54 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3E67C07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:48:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27EF6C5CFFE
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:48:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B083C2145D
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:48:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E207920989
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:48:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544543311;
-	bh=nib+OCMqLU9Y9ubf/P5H4YHB2/SUHWvOqNy4nEN5AbE=;
+	s=default; t=1544543318;
+	bh=DbTkrtTbs6ekCfL3duw1qqiA7tvUY8sL2yn3PS3vnFI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=i6WLZ5OyNVWVB1svZ0AVpjBlpIomC0wcVo9UWY8qO2iKg+KMEGhH2TnTJ+ILXFVpm
-	 BwCEz2cxSHeLEWW7OXXoCCZIxM0pt/7M1yda73LmP/GpcULOzJuMoVa5Kmp7+otVwV
-	 r8/01IyJgIeLK6xau46HTqV15/MqiPRFTp2PXtwY=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B083C2145D
+	b=Auw4TlwMDSnsuk7CFG4qEuaK7mcpzRjlOdrEMT078vJNUoLNZN/55rf4oU8LOKt66
+	 dBlJcxWmA6IOg4FN2TasgHKr/jQkguLLADpGEVbV54UZ+OUOkfMYhJl2lrEO3UAUl7
+	 zoPOd52hZpjA1XMOJwKIZ3+KREGY11BdZcoGtxSQ=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E207920989
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728820AbeLKPsa (ORCPT
+        id S1728843AbeLKPsh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 10:48:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36824 "EHLO mail.kernel.org"
+        Tue, 11 Dec 2018 10:48:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36944 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728034AbeLKPs0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:48:26 -0500
+        id S1728823AbeLKPse (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 10:48:34 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B4BE020989;
-        Tue, 11 Dec 2018 15:48:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7CDF220870;
+        Tue, 11 Dec 2018 15:48:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544543306;
-        bh=nib+OCMqLU9Y9ubf/P5H4YHB2/SUHWvOqNy4nEN5AbE=;
+        s=default; t=1544543314;
+        bh=DbTkrtTbs6ekCfL3duw1qqiA7tvUY8sL2yn3PS3vnFI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=yutq/nN3SX5awXkr2sK5mQVdAb8lT31Da03zJb1z9CN72Mu+fsFyPP5zMsviYd1U0
-         2MDxqjivXahLKfZC4Mzam/etvZhey0xn+/3uV9L2ZYPHONy8sZ+E68dgVZHuptMcwS
-         eRTWYfQU//hpKLDdehmVqbagcXM28Jm1aoxwcDQc=
+        b=VpTCW6mKch55ZkvmhGbn+y1DTqRajoHM0zb1hQp1qW3bhI7hR+QSz7G5CMPeD5nRO
+         8QvyWidE8mcQbML6xuZAuOVC7OoDDWk5pXTZPAknY5px4L3ivKw03PcXYfPx1AiOap
+         O3GlB6I9NuhQqKzkqA+apTWgxi+5VkPDbibvAK7s=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ashok Raj <ashok.raj@intel.com>,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>,
-        Sohil Mehta <sohil.mehta@intel.com>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        Joerg Roedel <jroedel@suse.de>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 57/91] iommu/vt-d: Fix NULL pointer dereference in prq_event_thread()
-Date:   Tue, 11 Dec 2018 16:41:16 +0100
-Message-Id: <20181211151610.702484733@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Vasyl Vavrychuk <vasyl.vavrychuk@globallogic.com>,
+        Johannes Berg <johannes.berg@intel.com>
+Subject: [PATCH 4.4 87/91] mac80211_hwsim: Timer should be initialized before device registered
+Date:   Tue, 11 Dec 2018 16:41:46 +0100
+Message-Id: <20181211151613.958492049@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181211151606.026852373@linuxfoundation.org>
 References: <20181211151606.026852373@linuxfoundation.org>
@@ -71,38 +68,54 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 19ed3e2dd8549c1a34914e8dad01b64e7837645a ]
+From: Vasyl Vavrychuk <vasyl.vavrychuk@globallogic.com>
 
-When handling page request without pasid event, go to "no_pasid"
-branch instead of "bad_req". Otherwise, a NULL pointer deference
-will happen there.
+commit a1881c9b8a1edef0a5ae1d5c1b61406fe3402114 upstream.
 
-Cc: Ashok Raj <ashok.raj@intel.com>
-Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>
-Cc: Sohil Mehta <sohil.mehta@intel.com>
-Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
-Fixes: a222a7f0bb6c9 'iommu/vt-d: Implement page request handling'
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Otherwise if network manager starts configuring Wi-Fi interface
+immidiatelly after getting notification of its creation, we will get
+NULL pointer dereference:
+
+  BUG: unable to handle kernel NULL pointer dereference at           (null)
+  IP: [<ffffffff95ae94c8>] hrtimer_active+0x28/0x50
+  ...
+  Call Trace:
+   [<ffffffff95ae9997>] ? hrtimer_try_to_cancel+0x27/0x110
+   [<ffffffff95ae9a95>] ? hrtimer_cancel+0x15/0x20
+   [<ffffffffc0803bf0>] ? mac80211_hwsim_config+0x140/0x1c0 [mac80211_hwsim]
+
+Cc: stable@vger.kernel.org
+Signed-off-by: Vasyl Vavrychuk <vasyl.vavrychuk@globallogic.com>
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/iommu/intel-svm.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/wireless/mac80211_hwsim.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/iommu/intel-svm.c b/drivers/iommu/intel-svm.c
-index 10068a481e22..cbde03e509c1 100644
---- a/drivers/iommu/intel-svm.c
-+++ b/drivers/iommu/intel-svm.c
-@@ -558,7 +558,7 @@ static irqreturn_t prq_event_thread(int irq, void *d)
- 			pr_err("%s: Page request without PASID: %08llx %08llx\n",
- 			       iommu->name, ((unsigned long long *)req)[0],
- 			       ((unsigned long long *)req)[1]);
--			goto bad_req;
-+			goto no_pasid;
- 		}
+--- a/drivers/net/wireless/mac80211_hwsim.c
++++ b/drivers/net/wireless/mac80211_hwsim.c
+@@ -2515,6 +2515,10 @@ static int mac80211_hwsim_new_radio(stru
+ 	if (param->no_vif)
+ 		ieee80211_hw_set(hw, NO_AUTO_VIF);
  
- 		if (!svm || svm->pasid != req->pasid) {
--- 
-2.19.1
-
++	tasklet_hrtimer_init(&data->beacon_timer,
++			     mac80211_hwsim_beacon,
++			     CLOCK_MONOTONIC, HRTIMER_MODE_ABS);
++
+ 	err = ieee80211_register_hw(hw);
+ 	if (err < 0) {
+ 		printk(KERN_DEBUG "mac80211_hwsim: ieee80211_register_hw failed (%d)\n",
+@@ -2539,10 +2543,6 @@ static int mac80211_hwsim_new_radio(stru
+ 				    data->debugfs,
+ 				    data, &hwsim_simulate_radar);
+ 
+-	tasklet_hrtimer_init(&data->beacon_timer,
+-			     mac80211_hwsim_beacon,
+-			     CLOCK_MONOTONIC, HRTIMER_MODE_ABS);
+-
+ 	spin_lock_bh(&hwsim_radio_lock);
+ 	list_add_tail(&data->list, &hwsim_radios);
+ 	spin_unlock_bh(&hwsim_radio_lock);
 
 
