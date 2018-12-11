@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 102FEC04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 01:06:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2C09C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 01:06:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C7D862084E
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 01:06:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C7D862084E
+	by mail.kernel.org (Postfix) with ESMTP id 855C92084E
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 01:06:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 855C92084E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729555AbeLKBFw (ORCPT
+        id S1729913AbeLKBGo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 20:05:52 -0500
+        Mon, 10 Dec 2018 20:06:44 -0500
 Received: from mga02.intel.com ([134.134.136.20]:24625 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729289AbeLKBFv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 20:05:51 -0500
+        id S1729427AbeLKBFr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Dec 2018 20:05:47 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Dec 2018 17:05:49 -0800
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Dec 2018 17:05:46 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,340,1539673200"; 
-   d="scan'208";a="117705189"
+   d="scan'208";a="117705176"
 Received: from unknown (HELO localhost.lm.intel.com) ([10.232.112.69])
-  by orsmga001.jf.intel.com with ESMTP; 10 Dec 2018 17:05:48 -0800
+  by orsmga001.jf.intel.com with ESMTP; 10 Dec 2018 17:05:45 -0800
 From:   Keith Busch <keith.busch@intel.com>
 To:     linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
         linux-mm@kvack.org
@@ -39,9 +39,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Dave Hansen <dave.hansen@intel.com>,
         Dan Williams <dan.j.williams@intel.com>,
         Keith Busch <keith.busch@intel.com>
-Subject: [PATCHv2 06/12] node: Add heterogenous memory performance
-Date:   Mon, 10 Dec 2018 18:03:04 -0700
-Message-Id: <20181211010310.8551-7-keith.busch@intel.com>
+Subject: [PATCHv2 03/12] node: Link memory nodes to their compute nodes
+Date:   Mon, 10 Dec 2018 18:03:01 -0700
+Message-Id: <20181211010310.8551-4-keith.busch@intel.com>
 X-Mailer: git-send-email 2.13.6
 In-Reply-To: <20181211010310.8551-1-keith.busch@intel.com>
 References: <20181211010310.8551-1-keith.busch@intel.com>
@@ -50,172 +50,203 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Heterogeneous memory systems provide memory nodes with different latency
-and bandwidth performance attributes. Create an interface for the kernel
-to register the attributes for the primary memory initiators under the
-memory node. If the system provides this information, applications can
-then query the node attributes when deciding which node to request memory.
+Memory-only nodes will often have affinity to a compute node that can
+initiate memory access. Platforms may have various ways to express that
+locality. The nodes that initiate memory requests closest to a memory
+target node may be considered to have 'primary' access.
 
-The following example shows the new sysfs hierarchy for a node exporting
-performance attributes:
+In preparation for these systems, provide a way for the kernel to link the
+target memory node to its primary initiator compute nodes with symlinks
+to each other. Also add memory target and initiator node masks showing
+the same relationship.
 
-  # tree /sys/devices/system/node/nodeY/primary_initiator_access
-  /sys/devices/system/node/nodeY/primary_initiator_access
-  |-- read_bandwidth
-  |-- read_latency
-  |-- write_bandwidth
-  `-- write_latency
+The following example show the node's new sysfs hierarchy setup for
+memory node 'Y' with primary access to commpute node 'X':
 
-The bandwidth is exported as MB/s and latency is reported in nanoseconds.
-Memory accesses from an initiator node that is not one of the memory's
-primary compute nodes may encounter a performance penalty that does not
-match the performance reported for primary memory initiators.
+  # ls -l /sys/devices/system/node/nodeX/primary_target*
+  /sys/devices/system/node/nodeX/primary_targetY -> ../nodeY
+
+  # ls -l /sys/devices/system/node/nodeY/primary_initiator*
+  /sys/devices/system/node/nodeY/primary_initiatorX -> ../nodeX
+
+A single initiator may have primary access to multiple memory targets, and
+the targets may also have primary access from multiple memory initiators.
+
+The following demonstrates how this may look for a theoretical system
+with 8 memory nodes and 2 compute nodes.
+
+  # cat /sys/devices/system/node/node0/primary_mem_nodelist
+  0,2,4,6
+
+  # cat /sys/devices/system/node/node1/primary_mem_nodelist
+  1,3,5,7
+
+And then going the other way to identify the cpu lists of a node's
+primary targets:
+
+  # cat /sys/devices/system/node/node0/primary_target*/primary_cpu_nodelist | tr "\n" ","
+  0,0,0,0
+
+  # cat /sys/devices/system/node/node1/primary_target*/primary_cpu_nodelist
+  1,1,1,1
 
 As an example of what you may be able to do with this, let's say we have
 a PCIe storage device, /dev/nvme0n1, attached to a particular node, and
-we want to run IO to it using the fastest memory with primary access
-from the same node as that PCIe device. The following shell script is
-such an example to achieve that goal:
+we want to run IO to it using only CPUs and Memory that share primary
+access. The following shell script is such an example to achieve
+that goal:
 
   #!/bin/bash
   DEV_NODE=/sys/devices/system/node/node$(cat /sys/block/nvme0n1/device/device/numa_node)
-  BEST_WRITE_BW=0
-  BEST_MEM_NODE=0
-  for i in $(ls -d ${DEV_NODE}/primary_target*); do
-    tmp=$(cat ${i}/primary_initiator_access/write_bandwidth);
-    if ((${tmp} > ${BEST_WRITE_BW})); then
-      BEST_WRITE_BW=${tmp}
-      BEST_MEM_NODE=$(echo ${i} | sed s/^.*primary_target//g)
-    fi
-  done
-
-  numactl --membind=${BEST_MEM_NODE} \
-    --cpunodebind=$(cat ${DEV_NODE}/primary_cpu_nodelist) \
-    -- fio --filename=/dev/nvme0n1 --bs=4k --name=access-test
+  numactl --membind=$(cat ${DEV_NODE}/primary_mem_nodelist) \
+            --cpunodebind=$(cat ${DEV_NODE}/primary_cpu_nodelist) \
+            -- fio --filename=/dev/nvme0n1 --bs=4k --name=access-test
 
 Signed-off-by: Keith Busch <keith.busch@intel.com>
 ---
- drivers/base/Kconfig |  8 ++++++++
- drivers/base/node.c  | 44 ++++++++++++++++++++++++++++++++++++++++++++
- include/linux/node.h | 22 ++++++++++++++++++++++
- 3 files changed, 74 insertions(+)
+ drivers/base/node.c  | 85 ++++++++++++++++++++++++++++++++++++++++++++++++++++
+ include/linux/node.h |  4 +++
+ 2 files changed, 89 insertions(+)
 
-diff --git a/drivers/base/Kconfig b/drivers/base/Kconfig
-index 3e63a900b330..6014980238e8 100644
---- a/drivers/base/Kconfig
-+++ b/drivers/base/Kconfig
-@@ -149,6 +149,14 @@ config DEBUG_TEST_DRIVER_REMOVE
- 	  unusable. You should say N here unless you are explicitly looking to
- 	  test this functionality.
- 
-+config HMEM_REPORTING
-+	bool
-+	default y
-+	depends on NUMA
-+	help
-+	  Enable reporting for heterogenous memory access attributes under
-+	  their non-uniform memory nodes.
-+
- source "drivers/base/test/Kconfig"
- 
- config SYS_HYPERVISOR
 diff --git a/drivers/base/node.c b/drivers/base/node.c
-index 50412ce3fd7d..768612c06c56 100644
+index 86d6cd92ce3d..50412ce3fd7d 100644
 --- a/drivers/base/node.c
 +++ b/drivers/base/node.c
-@@ -99,6 +99,50 @@ static DEVICE_ATTR_RO(primary_cpu_nodelist);
+@@ -56,6 +56,46 @@ static inline ssize_t node_read_cpulist(struct device *dev,
+ 	return node_read_cpumap(dev, true, buf);
+ }
+ 
++static ssize_t node_read_nodemap(nodemask_t *mask, bool list, char *buf)
++{
++	return list ? scnprintf(buf, PAGE_SIZE - 1, "%*pbl\n",
++				nodemask_pr_args(mask)) :
++		      scnprintf(buf, PAGE_SIZE - 1, "%*pb\n",
++				nodemask_pr_args(mask));
++}
++
++static ssize_t primary_mem_nodelist_show(struct device *dev,
++				struct device_attribute *attr, char *buf)
++{
++	struct node *n = to_node(dev);
++	return node_read_nodemap(&n->primary_mem_nodes, true, buf);
++}
++
++static ssize_t primary_mem_nodemask_show(struct device *dev,
++				struct device_attribute *attr, char *buf)
++{
++	struct node *n = to_node(dev);
++	return node_read_nodemap(&n->primary_mem_nodes, false, buf);
++}
++
++static ssize_t primary_cpu_nodelist_show(struct device *dev,
++				struct device_attribute *attr, char *buf)
++{
++	struct node *n = to_node(dev);
++	return node_read_nodemap(&n->primary_cpu_nodes, true, buf);
++}
++
++static ssize_t primary_cpu_nodemask_show(struct device *dev,
++				struct device_attribute *attr, char *buf)
++{
++	struct node *n = to_node(dev);
++	return node_read_nodemap(&n->primary_cpu_nodes, false, buf);
++}
++
++static DEVICE_ATTR_RO(primary_mem_nodelist);
++static DEVICE_ATTR_RO(primary_mem_nodemask);
++static DEVICE_ATTR_RO(primary_cpu_nodemask);
++static DEVICE_ATTR_RO(primary_cpu_nodelist);
  static DEVICE_ATTR(cpumap,  S_IRUGO, node_read_cpumask, NULL);
  static DEVICE_ATTR(cpulist, S_IRUGO, node_read_cpulist, NULL);
  
-+#ifdef CONFIG_HMEM_REPORTING
-+const struct attribute_group node_access_attrs_group;
-+
-+#define ACCESS_ATTR(name) 						\
-+static ssize_t name##_show(struct device *dev,				\
-+			   struct device_attribute *attr,		\
-+			   char *buf)					\
-+{									\
-+	return sprintf(buf, "%d\n", to_node(dev)->hmem_attrs.name);	\
-+}									\
-+static DEVICE_ATTR_RO(name);
-+
-+ACCESS_ATTR(read_bandwidth)
-+ACCESS_ATTR(read_latency)
-+ACCESS_ATTR(write_bandwidth)
-+ACCESS_ATTR(write_latency)
-+
-+static struct attribute *access_attrs[] = {
-+	&dev_attr_read_bandwidth.attr,
-+	&dev_attr_read_latency.attr,
-+	&dev_attr_write_bandwidth.attr,
-+	&dev_attr_write_latency.attr,
-+	NULL,
-+};
-+
-+const struct attribute_group node_access_attrs_group = {
-+	.name		= "primary_initiator_access",
-+	.attrs		= access_attrs,
-+};
-+
-+void node_set_perf_attrs(unsigned int nid, struct node_hmem_attrs *hmem_attrs)
+@@ -240,6 +280,10 @@ static struct attribute *node_dev_attrs[] = {
+ 	&dev_attr_numastat.attr,
+ 	&dev_attr_distance.attr,
+ 	&dev_attr_vmstat.attr,
++	&dev_attr_primary_mem_nodelist.attr,
++	&dev_attr_primary_mem_nodemask.attr,
++	&dev_attr_primary_cpu_nodemask.attr,
++	&dev_attr_primary_cpu_nodelist.attr,
+ 	NULL
+ };
+ ATTRIBUTE_GROUPS(node_dev);
+@@ -372,6 +416,42 @@ int register_cpu_under_node(unsigned int cpu, unsigned int nid)
+ 				 kobject_name(&node_devices[nid]->dev.kobj));
+ }
+ 
++int register_memory_node_under_compute_node(unsigned int m, unsigned int p)
 +{
-+	struct node *node;
++	struct node *init, *targ;
++	char initiator[28]; /* "primary_initiator4294967295\0" */
++	char target[25]; /* "primary_target4294967295\0" */
++	int ret;
 +
-+	if (WARN_ON_ONCE(!node_online(nid)))
-+		return;
-+	node = node_devices[nid];
-+	node->hmem_attrs = *hmem_attrs;
-+	if (sysfs_create_group(&node->dev.kobj, &node_access_attrs_group))
-+		pr_info("failed to add performance attribute group to node %d\n",
-+			nid);
++	if (!node_online(p) || !node_online(m))
++		return -ENODEV;
++	if (m == p)
++		return 0;
++
++	snprintf(initiator, sizeof(initiator), "primary_initiator%d", p);
++	snprintf(target, sizeof(target), "primary_target%d", m);
++
++	init = node_devices[p];
++	targ = node_devices[m];
++
++	ret = sysfs_create_link(&init->dev.kobj, &targ->dev.kobj, target);
++	if (ret)
++		return ret;
++
++	ret = sysfs_create_link(&targ->dev.kobj, &init->dev.kobj, initiator);
++	if (ret)
++		goto err;
++
++	node_set(m, init->primary_mem_nodes);
++	node_set(p, targ->primary_cpu_nodes);
++
++	return 0;
++ err:
++	sysfs_remove_link(&node_devices[p]->dev.kobj,
++			  kobject_name(&node_devices[m]->dev.kobj));
++	return ret;
 +}
-+#endif
 +
- #define K(x) ((x) << (PAGE_SHIFT - 10))
- static ssize_t node_read_meminfo(struct device *dev,
- 			struct device_attribute *attr, char *buf)
+ int unregister_cpu_under_node(unsigned int cpu, unsigned int nid)
+ {
+ 	struct device *obj;
+@@ -580,6 +660,11 @@ int __register_one_node(int nid)
+ 			register_cpu_under_node(cpu, nid);
+ 	}
+ 
++	if (node_state(nid, N_MEMORY))
++		node_set(nid, node_devices[nid]->primary_mem_nodes);
++	if (node_state(nid, N_CPU))
++		node_set(nid, node_devices[nid]->primary_cpu_nodes);
++
+ 	/* initialize work queue for memory hot plug */
+ 	init_node_hugetlb_work(nid);
+ 
 diff --git a/include/linux/node.h b/include/linux/node.h
-index 3d06de045cbf..71abaf0d4f4b 100644
+index 257bb3d6d014..3d06de045cbf 100644
 --- a/include/linux/node.h
 +++ b/include/linux/node.h
-@@ -17,8 +17,27 @@
+@@ -21,6 +21,8 @@
  
- #include <linux/device.h>
- #include <linux/cpumask.h>
-+#include <linux/list.h>
- #include <linux/workqueue.h>
- 
-+#ifdef CONFIG_HMEM_REPORTING
-+/**
-+ * struct node_hmem_attrs - heterogeneous memory performance attributes
-+ *
-+ * read_bandwidth:	Read bandwidth in MB/s
-+ * write_bandwidth:	Write bandwidth in MB/s
-+ * read_latency:	Read latency in nanoseconds
-+ * write_latency:	Write latency in nanoseconds
-+ */
-+struct node_hmem_attrs {
-+	unsigned int read_bandwidth;
-+	unsigned int write_bandwidth;
-+	unsigned int read_latency;
-+	unsigned int write_latency;
-+};
-+void node_set_perf_attrs(unsigned int nid, struct node_hmem_attrs *hmem_attrs);
-+#endif
-+
  struct node {
  	struct device	dev;
- 	nodemask_t	primary_mem_nodes;
-@@ -27,6 +46,9 @@ struct node {
++	nodemask_t	primary_mem_nodes;
++	nodemask_t	primary_cpu_nodes;
+ 
  #if defined(CONFIG_MEMORY_HOTPLUG_SPARSE) && defined(CONFIG_HUGETLBFS)
  	struct work_struct	node_work;
- #endif
-+#ifdef CONFIG_HMEM_REPORTING
-+	struct node_hmem_attrs hmem_attrs;
-+#endif
- };
+@@ -75,6 +77,8 @@ extern int register_mem_sect_under_node(struct memory_block *mem_blk,
+ extern int unregister_mem_sect_under_nodes(struct memory_block *mem_blk,
+ 					   unsigned long phys_index);
  
- struct memory_block;
++extern int register_memory_node_under_compute_node(unsigned int m, unsigned int p);
++
+ #ifdef CONFIG_HUGETLBFS
+ extern void register_hugetlbfs_with_node(node_registration_func_t doregister,
+ 					 node_registration_func_t unregister);
 -- 
 2.14.4
 
