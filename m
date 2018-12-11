@@ -2,147 +2,88 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E011AC07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 14:59:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3569CC67839
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:01:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 99BAC2082F
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 14:59:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="u5kN6xfN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 99BAC2082F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cogentembedded.com
+	by mail.kernel.org (Postfix) with ESMTP id 03B532082F
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:01:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 03B532082F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726621AbeLKO7i (ORCPT
+        id S1726508AbeLKPBx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 09:59:38 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:33594 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726417AbeLKO7h (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 09:59:37 -0500
-Received: by mail-lj1-f193.google.com with SMTP id v1-v6so13268983ljd.0
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 06:59:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:organization:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=1AO66jJhSY8/evsRYM/xVdgBN8qsSLYY7v4QBGE5+8g=;
-        b=u5kN6xfNUnAQzEN+auFhyI+Ou8JVB32aqhDqm1+HsMhKPYrTcfGlZceEboL07m4K88
-         ZiyzoJJAFK+LhoLf09KOOmxQQypTPk0R+mIAK/sYse0yQj9nmKdGo9Ty6tN9MQHWUwPq
-         SbRleckMwpRpOo1v9RpFqZKMzcegGcTErfZNS/wgxG+C46Esf+k/sYUy6UZcR5XGPX/R
-         q+2fDtHutFSnrPrFDpHyI0t/q3ze1e5CtZmgrdqvlWhApAWVFlMydtYv55fj97Ooi3dw
-         MOimZqd8Qw9FL2uGYSUGKVnasodIacw1fELeQCuTl7+9G9cGMIyYsdinU//cju2U5C2E
-         WYIw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=1AO66jJhSY8/evsRYM/xVdgBN8qsSLYY7v4QBGE5+8g=;
-        b=KSEglMIoAMGoO02gShJKpFPFJhaXCNXXYqGx8P6nQR/G5q74oYzrGft6SjobjH9arr
-         cF8suvX2uC8f+wFstgg32uJy9vnJwly1IJB9kwCZREeZ0L0g1Rt9mIx9wCk/aK/qWpTV
-         XUSmluNkmuZBn5HauKi75aibBRJDYLB7YjAtOhDrpda5EzOKJgR5MCXUNCBpAPImpabD
-         gAq+nm/IS3EWFP4eMKLqrEaB6+U303Q2246ihPWhu0JMfEJWScFfXLl7dCKzUma4t5+2
-         OSL8bmFaScQc9rcdWDFJmLma3SE3WS2X+ehK4QMZ1waC4h92gcxfZxm3sW6Q+K23Va7F
-         fpGA==
-X-Gm-Message-State: AA+aEWa0RGlQ/NCCFApnwGbFuE0e697cBcSVUhaxWUBwTpEmjYpo9MKF
-        WtWvLo/nYVLqfUSkQOnXtFIhTw==
-X-Google-Smtp-Source: AFSGD/UI+rLcfmf6OGZrrojkBk6+1ILjSOSu90d1AcmWKfI5ceStjck2rYQCyxC+NdUcaniyd4CUkA==
-X-Received: by 2002:a2e:a289:: with SMTP id k9-v6mr9897024lja.24.1544540375561;
-        Tue, 11 Dec 2018 06:59:35 -0800 (PST)
-Received: from wasted.cogentembedded.com ([31.173.85.248])
-        by smtp.gmail.com with ESMTPSA id b25sm2628573lfa.96.2018.12.11.06.59.33
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 11 Dec 2018 06:59:34 -0800 (PST)
-Subject: Re: [PATCH 1/6] driver core: Introduce device_iommu_mapped() function
-To:     Joerg Roedel <joro@8bytes.org>, iommu@lists.linux-foundation.org
-Cc:     Russell Currey <ruscur@russell.cc>,
-        Sam Bobroff <sbobroff@linux.ibm.com>, oohall@gmail.com,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Hanjun Guo <hanjun.guo@linaro.org>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Vinod Koul <vkoul@kernel.org>, jroedel@suse.de,
-        Mathias Nyman <mathias.nyman@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
-        dmaengine@vger.kernel.org, linux-usb@vger.kernel.org
-References: <20181211134343.10664-1-joro@8bytes.org>
- <20181211134343.10664-2-joro@8bytes.org>
-From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Organization: Cogent Embedded
-Message-ID: <b1344a34-cd5f-f080-fddf-c1548f85af6a@cogentembedded.com>
-Date:   Tue, 11 Dec 2018 17:59:33 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        Tue, 11 Dec 2018 10:01:53 -0500
+Received: from mga06.intel.com ([134.134.136.31]:52613 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726212AbeLKPBx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 10:01:53 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Dec 2018 07:01:52 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,342,1539673200"; 
+   d="scan'208";a="100651266"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.154])
+  by orsmga008.jf.intel.com with ESMTP; 11 Dec 2018 07:01:52 -0800
+Date:   Tue, 11 Dec 2018 07:01:52 -0800
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     "Dr. Greg" <greg@enjellic.com>
+Cc:     Josh Triplett <josh@joshtriplett.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
+        linux-sgx@vger.kernel.org, Andy Lutomirski <luto@amacapital.net>,
+        Haitao Huang <haitao.huang@linux.intel.com>,
+        Jethro Beekman <jethro@fortanix.com>
+Subject: Re: [RFC PATCH v3 0/4] x86: Add exception fixup for SGX ENCLU
+Message-ID: <20181211150152.GA14731@linux.intel.com>
+References: <20181210232141.5425-1-sean.j.christopherson@intel.com>
+ <20181210232449.GA11843@localhost>
+ <20181211145339.GA7528@wind.enjellic.com>
 MIME-Version: 1.0
-In-Reply-To: <20181211134343.10664-2-joro@8bytes.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181211145339.GA7528@wind.enjellic.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello!
-
-On 12/11/2018 04:43 PM, Joerg Roedel wrote:
-
-> From: Joerg Roedel <jroedel@suse.de>
+On Tue, Dec 11, 2018 at 08:53:39AM -0600, Dr. Greg wrote:
+> On Mon, Dec 10, 2018 at 03:24:50PM -0800, Josh Triplett wrote:
 > 
-> Some places in the kernel check the iommu_group pointer in
-> 'struct device' in order to find ot whether a device is
-> mapped by an IOMMU.
+> Good morning to everyone, I hope the week is progressing well.
 > 
-> This is not good way to make this check, as the pointer will
-> be moved to 'struct dev_iommu_data'. This way to make the
-> check is also not very readable.
+> > On Mon, Dec 10, 2018 at 03:21:37PM -0800, Sean Christopherson wrote:
+> > > At that point I realized it's a hell of a lot easier to simply provide
+> > > an IOCTL via /dev/sgx that allows userspace to register a per-process
+> > > ENCLU exception handler.  At a high level, the basic idea is the same
+> > > as the vDSO approach: provide a hardcoded fixup handler for ENCLU and
+> > > attempt to fixup select unhandled exceptions that occurred in user code.
 > 
-> Introduce an explicit function to perform this check.
+> > So, on the one hand, this is *absolutely* much cleaner than the VDSO
+> > approach. On the other hand, this is global process state and has
+> > some of the same problems as a signal handler as a result.
 > 
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Acked-by: Robin Murphy <robin.murphy@arm.com>
-> Signed-off-by: Joerg Roedel <jroedel@suse.de>
-> ---
->  include/linux/device.h | 10 ++++++++++
->  1 file changed, 10 insertions(+)
+> Sean's architecture is very simple and straight forward and thus has a
+> lot going for it.
 > 
-> diff --git a/include/linux/device.h b/include/linux/device.h
-> index 1b25c7a43f4c..6cb4640b6160 100644
-> --- a/include/linux/device.h
-> +++ b/include/linux/device.h
-> @@ -1058,6 +1058,16 @@ static inline struct device *kobj_to_dev(struct kobject *kobj)
->  	return container_of(kobj, struct device, kobj);
->  }
->  
-> +/**
-> + * device_iommu_mapped - Returns true when the device DMA is translated
-> + *			 by an IOMMU
-> + * @dev: Device to perform the check on
-> + */
-> +static inline bool device_iommu_mapped(struct device *dev)
-> +{
-> +	return (dev->iommu_group != NULL);
+> As Sean's approach indicates, by linking the exception handler to
+> current->mm, SGX is very much a per memory map concept.  The issue is
+> that there can be multiple enclaves loaded and excecuting in a
+> processes memory map, the problem is, execution and thus exception
+> handling, is very much at the per thread level.
 
-   You know that parens are unnecessary here, right? :-)
-
-> +}
-> +
->  /* Get the wakeup routines, which depend on struct device */
->  #include <linux/pm_wakeup.h>
->  
-
-MBR, Sergei
-
+Right, but is there a need to have a per-thread code page?  The handler
+isn't per-process any more than the AEP is per-process.
