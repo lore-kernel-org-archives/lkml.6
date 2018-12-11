@@ -7,43 +7,43 @@ X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D5EBC04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 00:02:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 995EDC5CFFE
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 00:02:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0132C214D9
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 00:02:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5F431214DB
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 00:02:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544486542;
-	bh=wNXpEvHfF8L0Pgc8OIMtZCLN2O99PXMpLp2xLuYBUGw=;
+	s=default; t=1544486545;
+	bh=BVRV8Sk3npvAJkum1VQb0/QzGzMsLY38YHioXENz44s=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
 	 References:List-ID:From;
-	b=yaouru9tpy7FDZNTHsBg37zQhCdDxjwx+eKXylbyoqt/Ca5BVCdNp9JxaEkY69E/1
-	 2Bo0d4NkeV5FyeTYeIwbdbFHY5UEhi8nSCyA6EhlzpAnq8ZhTLyIIceAwo3/Km4TCt
-	 v9AAxyMnlfbQaKN6cucC8U7uvOoMXe2pvtGktjrU=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0132C214D9
+	b=rOSupKUKduXCi4IISUqKIGhhgaPLp/+CrmkPcpL7hNJjfwV19Qus/ARKb8tqFW3p7
+	 1Fykav5XYdTuHrZrxamSuSjzHWuifRTpfZdLtsG8I5lbW7isx8oP/Sv5UiH7/2VHW+
+	 hFZRxvUZud3D7aCOYxRFxmZT7vaUAr2AReFJ7le8=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F431214DB
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730415AbeLKACU (ORCPT
+        id S1730429AbeLKACY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 19:02:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41404 "EHLO mail.kernel.org"
+        Mon, 10 Dec 2018 19:02:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41556 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730371AbeLKACJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 19:02:09 -0500
+        id S1730384AbeLKACO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Dec 2018 19:02:14 -0500
 Received: from localhost.localdomain (c-98-220-238-81.hsd1.il.comcast.net [98.220.238.81])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EB798214E0;
-        Tue, 11 Dec 2018 00:02:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CD4EC214D9;
+        Tue, 11 Dec 2018 00:02:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544486528;
-        bh=wNXpEvHfF8L0Pgc8OIMtZCLN2O99PXMpLp2xLuYBUGw=;
+        s=default; t=1544486533;
+        bh=BVRV8Sk3npvAJkum1VQb0/QzGzMsLY38YHioXENz44s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
          References:From;
-        b=Djmk1tjCLlg5KYrmKdgaQ5YT3TXv9ygfUi8N+oB+cdb+cWhgpu9n1aiaqNe0VQFgj
-         iUJ77Np7BmYUEMkAlcPIffvtik66ROvy5TsEjeGnfdcFZhwfZa4Ppbve4a7Ik8yAr/
-         OOzTlWYBTxGfe9SwQXVMiB8TDSK+qBCRLw+RYwAs=
+        b=DpF8BcwIBXoRY5Y1bWNw/xIxUYKqwkNSuvu5HneQTMn1Sr6b5h3dil6d9skuzz+bj
+         FPt0wNnlSMAFaDIfKT/pOg0vceJQ0CecE+/pGjH6YY+U+aQ86jkQVA/N/41tiY+luC
+         6ddUsJoagNqQvlYY741AJ4YUtCWbcEx3w9SS/kwQ=
 From:   Tom Zanussi <zanussi@kernel.org>
 To:     rostedt@goodmis.org
 Cc:     tglx@linutronix.de, mhiramat@kernel.org, namhyung@kernel.org,
@@ -51,9 +51,9 @@ Cc:     tglx@linutronix.de, mhiramat@kernel.org, namhyung@kernel.org,
         joel@joelfernandes.org, mathieu.desnoyers@efficios.com,
         julia@ni.com, linux-kernel@vger.kernel.org,
         linux-rt-users@vger.kernel.org
-Subject: [PATCH v8 15/22] tracing: Add hist trigger action 'expected fail' test case
-Date:   Mon, 10 Dec 2018 18:01:29 -0600
-Message-Id: <08399819a5aae7b50b79c9e81c580e0b961d73ea.1544483273.git.tom.zanussi@linux.intel.com>
+Subject: [PATCH v8 18/22] tracing: Use var_refs[] for hist trigger reference checking
+Date:   Mon, 10 Dec 2018 18:01:32 -0600
+Message-Id: <fe1901c79da40f54471e37d4c1ca9b61eea8dc89.1544483273.git.tom.zanussi@linux.intel.com>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <cover.1544483272.git.tom.zanussi@linux.intel.com>
 References: <cover.1544483272.git.tom.zanussi@linux.intel.com>
@@ -66,51 +66,95 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Tom Zanussi <tom.zanussi@linux.intel.com>
 
-Add a test case verifying that basic action combinations fail as
-expected.
+Since all the variable reference hist_fields are collected into
+hist_data->var_refs[] array, there's no need to go through all the
+fields looking for them, or in separate arrays like synth_var_refs[],
+which will be going away soon anyway.
+
+This also allows us to get rid of some unnecessary code and functions
+currently used for the same purpose.
 
 Signed-off-by: Tom Zanussi <tom.zanussi@linux.intel.com>
 ---
- .../inter-event/trigger-action-hist-xfail.tc       | 30 ++++++++++++++++++++++
- 1 file changed, 30 insertions(+)
- create mode 100644 tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-action-hist-xfail.tc
+ kernel/trace/trace_events_hist.c | 57 +++++-----------------------------------
+ 1 file changed, 7 insertions(+), 50 deletions(-)
 
-diff --git a/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-action-hist-xfail.tc b/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-action-hist-xfail.tc
-new file mode 100644
-index 000000000000..1221240f8cf6
---- /dev/null
-+++ b/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-action-hist-xfail.tc
-@@ -0,0 +1,30 @@
-+#!/bin/sh
-+# SPDX-License-Identifier: GPL-2.0
-+# description: event trigger - test inter-event histogram trigger expected fail actions
-+
-+fail() { #msg
-+    echo $1
-+    exit_fail
-+}
-+
-+if [ ! -f set_event ]; then
-+    echo "event tracing is not supported"
-+    exit_unsupported
-+fi
-+
-+if [ ! -f snapshot ]; then
-+    echo "snapshot is not supported"
-+    exit_unsupported
-+fi
-+
-+grep -q "snapshot()" README || exit_unsupported # version issue
-+
-+echo "Test expected snapshot action failure"
-+
-+echo 'hist:keys=comm:onmatch(sched.sched_wakeup).snapshot()' >> /sys/kernel/debug/tracing/events/sched/sched_waking/trigger && exit_fail
-+
-+echo "Test expected save action failure"
-+
-+echo 'hist:keys=comm:onmatch(sched.sched_wakeup).save(comm,prio)' >> /sys/kernel/debug/tracing/events/sched/sched_waking/trigger && exit_fail
-+
-+exit_xfail
+diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
+index 130ac2cf6893..268f56bc12de 100644
+--- a/kernel/trace/trace_events_hist.c
++++ b/kernel/trace/trace_events_hist.c
+@@ -1423,45 +1423,11 @@ check_field_for_var_ref(struct hist_field *hist_field,
+ {
+ 	struct hist_field *found = NULL;
+ 
+-	if (hist_field && hist_field->flags & HIST_FIELD_FL_VAR_REF) {
+-		if (hist_field->var.idx == var_idx &&
+-		    hist_field->var.hist_data == var_data) {
+-			found = hist_field;
+-		}
+-	}
+-
+-	return found;
+-}
+-
+-static struct hist_field *
+-check_field_for_var_refs(struct hist_trigger_data *hist_data,
+-			 struct hist_field *hist_field,
+-			 struct hist_trigger_data *var_data,
+-			 unsigned int var_idx,
+-			 unsigned int level)
+-{
+-	struct hist_field *found = NULL;
+-	unsigned int i;
+-
+-	if (level > 3)
+-		return found;
+-
+-	if (!hist_field)
+-		return found;
++	WARN_ON(!(hist_field && hist_field->flags & HIST_FIELD_FL_VAR_REF));
+ 
+-	found = check_field_for_var_ref(hist_field, var_data, var_idx);
+-	if (found)
+-		return found;
+-
+-	for (i = 0; i < HIST_FIELD_OPERANDS_MAX; i++) {
+-		struct hist_field *operand;
+-
+-		operand = hist_field->operands[i];
+-		found = check_field_for_var_refs(hist_data, operand, var_data,
+-						 var_idx, level + 1);
+-		if (found)
+-			return found;
+-	}
++	if (hist_field && hist_field->var.idx == var_idx &&
++	    hist_field->var.hist_data == var_data)
++		found = hist_field;
+ 
+ 	return found;
+ }
+@@ -1473,18 +1439,9 @@ static struct hist_field *find_var_ref(struct hist_trigger_data *hist_data,
+ 	struct hist_field *hist_field, *found = NULL;
+ 	unsigned int i;
+ 
+-	for_each_hist_field(i, hist_data) {
+-		hist_field = hist_data->fields[i];
+-		found = check_field_for_var_refs(hist_data, hist_field,
+-						 var_data, var_idx, 0);
+-		if (found)
+-			return found;
+-	}
+-
+-	for (i = 0; i < hist_data->n_synth_var_refs; i++) {
+-		hist_field = hist_data->synth_var_refs[i];
+-		found = check_field_for_var_refs(hist_data, hist_field,
+-						 var_data, var_idx, 0);
++	for (i = 0; i < hist_data->n_var_refs; i++) {
++		hist_field = hist_data->var_refs[i];
++		found = check_field_for_var_ref(hist_field, var_data, var_idx);
+ 		if (found)
+ 			return found;
+ 	}
 -- 
 2.14.1
 
