@@ -6,114 +6,127 @@ X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9738C07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 11:06:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58EE5C07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 11:06:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4E75320811
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 11:06:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E75320811
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 2A35F20811
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 11:06:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A35F20811
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726254AbeLKLGh (ORCPT
+        id S1726312AbeLKLG5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 06:06:37 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:59543 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726117AbeLKLGg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 06:06:36 -0500
-Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 283B2F890CEF1;
-        Tue, 11 Dec 2018 19:06:33 +0800 (CST)
-Received: from [10.151.23.176] (10.151.23.176) by smtp.huawei.com
- (10.3.19.207) with Microsoft SMTP Server (TLS) id 14.3.408.0; Tue, 11 Dec
- 2018 19:06:26 +0800
-Subject: Re: [PATCH 4/5] drivers: staging: erofs: Fix parentheses error in
- macro
-To:     Aaron Strahlberger <aaron.strahlberger@posteo.de>
-CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Chao Yu <yuchao0@huawei.com>, <linux-erofs@lists.ozlabs.org>,
-        <devel@driverdev.osuosl.org>, <linux-kernel@vger.kernel.org>,
-        <linux-kernel@i4.cs.fau.de>,
-        Julius Wiedmann <julius.wiedmann@fau.de>,
-        Dominik Huber <domi250@gmx.de>
-References: <0ed9f3e7-9081-4a8a-06b0-e5ad14e2c872@huawei.com>
- <20181211105443.21826-1-aaron.strahlberger@posteo.de>
- <20181211105443.21826-5-aaron.strahlberger@posteo.de>
-From:   Gao Xiang <gaoxiang25@huawei.com>
-Message-ID: <dc56553c-a5ea-5265-5820-4bb481b0b948@huawei.com>
-Date:   Tue, 11 Dec 2018 19:06:11 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
+        Tue, 11 Dec 2018 06:06:57 -0500
+Received: from ozlabs.org ([203.11.71.1]:57223 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726117AbeLKLG5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 06:06:57 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 43Dcb21q6Qz9s3Z;
+        Tue, 11 Dec 2018 22:06:53 +1100 (AEDT)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     Andrew Murray <andrew.murray@arm.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Will Deacon <will.deacon@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>, x86@kernel.org,
+        linux-alpha@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Joerg Roedel <joro@8bytes.org>,
+        "paulus\@samba.org" <paulus@samba.org>
+Subject: Re: [PATCH 10/10] perf/doc: update design.txt for exclude_{host|guest} flags
+In-Reply-To: <20181120133202.GH35798@e119886-lin.cambridge.arm.com>
+References: <1542363853-13849-1-git-send-email-andrew.murray@arm.com> <1542363853-13849-11-git-send-email-andrew.murray@arm.com> <87pnv00yuf.fsf@concordia.ellerman.id.au> <20181120133202.GH35798@e119886-lin.cambridge.arm.com>
+Date:   Tue, 11 Dec 2018 22:06:53 +1100
+Message-ID: <87bm5sxqya.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-In-Reply-To: <20181211105443.21826-5-aaron.strahlberger@posteo.de>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.151.23.176]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Aaron,
+[ Reviving old thread. ]
 
-On 2018/12/11 18:54, Aaron Strahlberger wrote:
-> Fix of ERROR: Macros with complex values should be enclosed in parentheses
-> from checkpatch.pl
-> 
-> Signed-off-by: Aaron Strahlberger <aaron.strahlberger@posteo.de>
-> Signed-off-by: Julius Wiedmann <julius.wiedmann@fau.de>
-> Signed-off-by: Dominik Huber <domi250@gmx.de>
-> ---
->  drivers/staging/erofs/erofs_fs.h | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/staging/erofs/erofs_fs.h b/drivers/staging/erofs/erofs_fs.h
-> index d4bffa2852b3..892c913960c3 100644
-> --- a/drivers/staging/erofs/erofs_fs.h
-> +++ b/drivers/staging/erofs/erofs_fs.h
-> @@ -38,9 +38,9 @@ struct erofs_super_block {
->  /* 80 */__u8 reserved2[48];     /* 128 bytes */
->  } __packed;
->  
-> -#define __EROFS_BIT(_prefix, _cur, _pre)	enum {	\
-> +#define __EROFS_BIT(_prefix, _cur, _pre)	(enum { \
->  	_prefix ## _cur ## _BIT = _prefix ## _pre ## _BIT + \
-> -		_prefix ## _pre ## _BITS }
-> +	_prefix ## _pre ## _BITS })
+Andrew Murray <andrew.murray@arm.com> writes:
+> On Tue, Nov 20, 2018 at 10:31:36PM +1100, Michael Ellerman wrote:
+>> Andrew Murray <andrew.murray@arm.com> writes:
+>> 
+>> > Update design.txt to reflect the presence of the exclude_host
+>> > and exclude_guest perf flags.
+>> >
+>> > Signed-off-by: Andrew Murray <andrew.murray@arm.com>
+>> > ---
+>> >  tools/perf/design.txt | 4 ++++
+>> >  1 file changed, 4 insertions(+)
+>> >
+>> > diff --git a/tools/perf/design.txt b/tools/perf/design.txt
+>> > index a28dca2..7de7d83 100644
+>> > --- a/tools/perf/design.txt
+>> > +++ b/tools/perf/design.txt
+>> > @@ -222,6 +222,10 @@ The 'exclude_user', 'exclude_kernel' and 'exclude_hv' bits provide a
+>> >  way to request that counting of events be restricted to times when the
+>> >  CPU is in user, kernel and/or hypervisor mode.
+>> >  
+>> > +Furthermore the 'exclude_host' and 'exclude_guest' bits provide a way
+>> > +to request counting of events restricted to guest and host contexts when
+>> > +using virtualisation.
+>> 
+>> How does exclude_host differ from exclude_hv ?
+>
+> I believe exclude_host / exclude_guest are intented to distinguish
+> between host and guest in the hosted hypervisor context (KVM).
 
-It seems not the valid C, here is the compiler error:
+OK yeah, from the perf-list man page:
 
-...
+           u - user-space counting
+           k - kernel counting
+           h - hypervisor counting
+           I - non idle counting
+           G - guest counting (in KVM guests)
+           H - host counting (not in KVM guests)
 
-In file included from drivers/staging/erofs/internal.h:25:0,
-                 from drivers/staging/erofs/xattr.h:16,
-                 from drivers/staging/erofs/xattr.c:14:
-drivers/staging/erofs/erofs_fs.h:41:43: error: expected identifier or ‘(’ before ‘enum’
- #define __EROFS_BIT(_prefix, _cur, _pre) (enum { \
-                                           ^
-drivers/staging/erofs/erofs_fs.h:65:1: note: in expansion of macro ‘__EROFS_BIT’
- __EROFS_BIT(EROFS_I_, DATA_MAPPING, VERSION);
- ^~~~~~~~~~~
-make[3]: *** [scripts/Makefile.build:292: drivers/staging/erofs/xattr.o] Error 1
+> Whereas exclude_hv allows to distinguish between guest and
+> hypervisor in the bare-metal type hypervisors.
 
-...
+Except that's exactly not how we use them on powerpc :)
 
+We use exclude_hv to exclude "the hypervisor", regardless of whether
+it's KVM or PowerVM (which is a bare-metal hypervisor).
 
-the __EROFS_BIT marco is used to define yyy_BIT according to xxx_BIT + xxx_BITS for cascade, eg.
+We don't use exclude_host / exclude_guest at all, which I guess is a
+bug, except I didn't know they existed until this thread.
 
-__EROFS_BIT(EROFS_I_, DATA_MAPPING, VERSION);
-it will defines EROFS_I_DATA_MAPPING_BIT = EROFS_I_VERSION_BIT + EROFS_I_VERSION_BITS;
+eg, in a KVM guest:
 
-__EROFS_BIT(EROFS_I_, FEATURE2, DATA_MAPPING);
-it will defines EROFS_I_FEATURE2_BIT = EROFS_I_DATA_MAPPING_BIT + EROFS_I_DATA_MAPPING_BITS;
+  $ perf record -e cycles:G /bin/bash -c "for i in {0..100000}; do :;done"
+  $ perf report -D | grep -Fc "dso: [hypervisor]"
+  16
 
 
-Thanks,
-Gao Xiang
+> In the case of arm64 - if VHE extensions are present then the host
+> kernel will run at a higher privilege to the guest kernel, in which
+> case there is no distinction between hypervisor and host so we ignore
+> exclude_hv. But where VHE extensions are not present then the host
+> kernel runs at the same privilege level as the guest and we use a
+> higher privilege level to switch between them - in this case we can
+> use exclude_hv to discount that hypervisor role of switching between
+> guests.
 
->  
->  /*
->   * erofs inode data mapping:
-> 
+I couldn't find any arm64 perf code using exclude_host/guest at all?
+
+And I don't see any x86 code using exclude_hv.
+
+But maybe that's OK, I just worry this is confusing for users.
+
+cheers
