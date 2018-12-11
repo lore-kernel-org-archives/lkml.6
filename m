@@ -7,50 +7,49 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A77C9C5CFFE
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:11:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2521C07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:12:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6DFBD20879
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:11:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 693C62084E
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:12:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544544711;
-	bh=bSJcPJE7Hr2YTMZpNd44wO2/sEDF8WKHa23u/I4goPY=;
+	s=default; t=1544544730;
+	bh=naJzLeaxRcuWcy00uK0YGaIj3VHX01fOpPgWiHYYqb8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Fcf8n55AzQF9PR9Rf1vrlLUdFDWQbpPUK+EM4+6YrTodKkXhpVXJrVv0VNHJy6AlD
-	 H0POO5DZXF/C9FlLrlAoCWFeYBVtOY1FiKYWLFQ0VksEtSGrfVl8n6ohFEriKMFDf0
-	 r+v3nPArohOaMZLYKDDlFbnczkW2LQCB7KIAZK0E=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6DFBD20879
+	b=J0Tyk4OZSS/XJ+K5q9IoU9TccosfpnSsne7unD9AWV4hSeKGR4Lh8fF0ZNKEhdYKi
+	 TSE7ttNbbNiNlKcsTKlFFy+RfYPSqtAEr30JebauLFe5ptKx5JcSUwyRdcO0AxKMUP
+	 usyLQPLSDIpbZHPXrMLCaV4guWemIJOrIhigvZaU=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 693C62084E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729764AbeLKQLu (ORCPT
+        id S1729305AbeLKPuf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 11:11:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39236 "EHLO mail.kernel.org"
+        Tue, 11 Dec 2018 10:50:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39136 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729311AbeLKPug (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:50:36 -0500
+        id S1729272AbeLKPu2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 10:50:28 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 54FD52084E;
-        Tue, 11 Dec 2018 15:50:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 601D720870;
+        Tue, 11 Dec 2018 15:50:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544543435;
-        bh=bSJcPJE7Hr2YTMZpNd44wO2/sEDF8WKHa23u/I4goPY=;
+        s=default; t=1544543427;
+        bh=naJzLeaxRcuWcy00uK0YGaIj3VHX01fOpPgWiHYYqb8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PPNt6XyJnngD85sFpZsYRzuSnsBhlsZ6wojqjp1HoAkIM4NSony8biU1GflyYbTi6
-         QD6GDYFVV7MF5gBy08EfL7aWMgycSgGTNg1c0wy6CJQnwXki95267MJmmO8UHwd8Nr
-         BSGo8oC1wfhOP1uEJE6ffojwj86n7s/Xf0RWWebc=
+        b=qGb+B9xhzQH6zmIHDcp4VylFPLonrgLugL+P642ItFF6DmkG4hblz+LT8vXMVDYZq
+         zQypUYdhjQdm4ycvl8lINV0iqketZBlo3o0yI8Gfga4czFEsUINlcdEJoQb32FdRdI
+         FuQIRD9IFh89pgMq6iTRmg7KO2+/3sCP+zqi2ARk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
+        stable@vger.kernel.org, Ben Greear <greearb@candelatech.com>,
         Johannes Berg <johannes.berg@intel.com>
-Subject: [PATCH 4.9 49/51] mac80211: ignore NullFunc frames in the duplicate detection
-Date:   Tue, 11 Dec 2018 16:41:57 +0100
-Message-Id: <20181211151618.447983362@linuxfoundation.org>
+Subject: [PATCH 4.9 46/51] mac80211: Clear beacon_int in ieee80211_do_stop
+Date:   Tue, 11 Dec 2018 16:41:54 +0100
+Message-Id: <20181211151618.069233518@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181211151612.328911565@linuxfoundation.org>
 References: <20181211151612.328911565@linuxfoundation.org>
@@ -69,44 +68,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
+From: Ben Greear <greearb@candelatech.com>
 
-commit 990d71846a0b7281bd933c34d734e6afc7408e7e upstream.
+commit 5c21e8100dfd57c806e833ae905e26efbb87840f upstream.
 
-NullFunc packets should never be duplicate just like
-QoS-NullFunc packets.
+This fixes stale beacon-int values that would keep a netdev
+from going up.
 
-We saw a client that enters / exits power save with
-NullFunc frames (and not with QoS-NullFunc) despite the
-fact that the association supports HT.
-This specific client also re-uses a non-zero sequence number
-for different NullFunc frames.
-At some point, the client had to send a retransmission of
-the NullFunc frame and we dropped it, leading to a
-misalignment in the power save state.
-Fix this by never consider a NullFunc frame as duplicate,
-just like we do for QoS NullFunc frames.
+To reproduce:
 
-This fixes https://bugzilla.kernel.org/show_bug.cgi?id=201449
+Create two VAP on one radio.
+vap1 has beacon-int 100, start it.
+vap2 has beacon-int 240, start it (and it will fail
+  because beacon-int mismatch).
+reconfigure vap2 to have beacon-int 100 and start it.
+  It will fail because the stale beacon-int 240 will be used
+  in the ifup path and hostapd never gets a chance to set the
+  new beacon interval.
 
-CC: <stable@vger.kernel.org>
-Signed-off-by: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Ben Greear <greearb@candelatech.com>
 Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/mac80211/rx.c |    1 +
- 1 file changed, 1 insertion(+)
+ net/mac80211/iface.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/net/mac80211/rx.c
-+++ b/net/mac80211/rx.c
-@@ -1230,6 +1230,7 @@ ieee80211_rx_h_check_dup(struct ieee8021
- 		return RX_CONTINUE;
+--- a/net/mac80211/iface.c
++++ b/net/mac80211/iface.c
+@@ -1025,6 +1025,8 @@ static void ieee80211_do_stop(struct iee
+ 	if (local->open_count == 0)
+ 		ieee80211_clear_tx_pending(local);
  
- 	if (ieee80211_is_ctl(hdr->frame_control) ||
-+	    ieee80211_is_nullfunc(hdr->frame_control) ||
- 	    ieee80211_is_qos_nullfunc(hdr->frame_control) ||
- 	    is_multicast_ether_addr(hdr->addr1))
- 		return RX_CONTINUE;
++	sdata->vif.bss_conf.beacon_int = 0;
++
+ 	/*
+ 	 * If the interface goes down while suspended, presumably because
+ 	 * the device was unplugged and that happens before our resume,
 
 
