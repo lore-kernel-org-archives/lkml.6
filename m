@@ -2,180 +2,232 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C71CC07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:14:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B1EFC07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:14:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 43E002084E
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:14:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544544881;
-	bh=Q/B1S5sulD15eSwXBg3Lm6RoyAYxMqZf0tQK5AEJIo8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=PcswSY3AdWXlRTrS1Kn4CAgxcxO0bR9Z42D3OSU7ryqYZ/5b/i9Oc7iMxVdB7LcDE
-	 TSSz71aAbub/d1GY0FTAcRMLN/ilIdo5/wLfAErHvWAXr9CZ63HZFpdYU7HiepLkMQ
-	 I2eH6PK0XdhVzPGDYrQPgWYSaH47Hm7tooOWmQko=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 43E002084E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id BA5122084E
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:14:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="OYMQghQS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA5122084E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=alien8.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728950AbeLKPtE (ORCPT
+        id S1730574AbeLKQOt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 10:49:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37380 "EHLO mail.kernel.org"
+        Tue, 11 Dec 2018 11:14:49 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:43824 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728933AbeLKPtD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:49:03 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        id S1728331AbeLKQOr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 11:14:47 -0500
+Received: from zn.tnic (p200300EC2BCD2B00C8FE208D32917CBC.dip0.t-ipconnect.de [IPv6:2003:ec:2bcd:2b00:c8fe:208d:3291:7cbc])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8961B20870;
-        Tue, 11 Dec 2018 15:49:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544543342;
-        bh=Q/B1S5sulD15eSwXBg3Lm6RoyAYxMqZf0tQK5AEJIo8=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NeOtHmMirXwWuGlYQOEIp7vMONpI+InnXk08/xEi8v85nTuBYdRXnmpxxpbb0lScf
-         eNtZSRVpRM+TR1gZuXQNQE28EGFB7+H8PEZjwEI9ej2bTLuCOwIDg8nKdwar0yEMjJ
-         YPcS8K+jLzwWZ/VV+ktfZ477hHCf0tUgvi1Psm5U=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Olof Johansson <olof@lixom.net>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 14/51] mtd: rawnand: qcom: Namespace prefix some commands
-Date:   Tue, 11 Dec 2018 16:41:22 +0100
-Message-Id: <20181211151614.075095303@linuxfoundation.org>
-X-Mailer: git-send-email 2.20.0
-In-Reply-To: <20181211151612.328911565@linuxfoundation.org>
-References: <20181211151612.328911565@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-X-Patchwork-Hint: ignore
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 532181EC0432;
+        Tue, 11 Dec 2018 17:14:45 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1544544885;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=8FGm4F7qRiT6N3V0J+DkcpOEUULHH1H2BGEdrFrXZGM=;
+        b=OYMQghQS51gbClhqCVjEflz5KAtr/CL2i5Lpc0QUkEvGweZhlAP2eI4IalnZC3gkN3wT4/
+        pLa6gEAVXvB1dupxLlRNdLLDPryjRHZ+KCcc8USkn2fwqpPz3dqz0MoGS3530L7gjJJ2wr
+        UTyRp+zb3zZZBOD9zk3v/VU3e+rNKtA=
+Date:   Tue, 11 Dec 2018 17:14:40 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Daniel =?utf-8?B?UC4gQmVycmFuZ8Op?= <berrange@redhat.com>,
+        Eduardo Habkost <ehabkost@redhat.com>
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        =?utf-8?B?SsO2cmcgUsO2ZGVs?= <joro@8bytes.org>,
+        Andre Przywara <andre.przywara@arm.com>,
+        kvm ML <kvm@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Eric Blake <eblake@redhat.com>, qemu-devel@nongnu.org
+Subject: [PATCH] target-i386: Reenable RDTSCP support on Opteron_G[345] CPU
+ models
+Message-ID: <20181211161440.GG27375@zn.tnic>
+References: <20181210181328.GA762@zn.tnic>
+ <20181210183730.GJ4669@habkost.net>
+ <20181210184153.GB5482@zn.tnic>
+ <20181210190600.GK4669@habkost.net>
+ <20181210194258.GD5482@zn.tnic>
+ <20181210200843.GN4669@habkost.net>
+ <20181211103839.GC921@redhat.com>
+ <20181211115546.GQ4669@habkost.net>
+ <e4d9a943-2de2-34a7-3f52-ee3d64ea889a@redhat.com>
+ <20181211153017.GN921@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181211153017.GN921@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.9-stable review patch.  If anyone has any objections, please let me know.
++ qemu-devel.
 
-------------------
+On Tue, Dec 11, 2018 at 03:30:17PM +0000, Daniel P. Berrangé wrote:
+> Great, then, this is a non-issue - we just need to mention that fact
+> in the commit that sets the min version for the kernel
 
-[ Upstream commit 33bf5519ae5dd356b182a94e3622f42860274a38 ]
+Ok, here's a first draft ontop of Eduardo's machine-next branch from
+http://github.com/ehabkost/qemu
 
-PAGE_READ is used by RISC-V arch code included through mm headers,
-and it makes sense to bring in a prefix on these in the driver.
+Also, thanks for the help Eduardo! :-)
 
-drivers/mtd/nand/raw/qcom_nandc.c:153: warning: "PAGE_READ" redefined
- #define PAGE_READ   0x2
-In file included from include/linux/memremap.h:7,
-                 from include/linux/mm.h:27,
-                 from include/linux/scatterlist.h:8,
-                 from include/linux/dma-mapping.h:11,
-                 from drivers/mtd/nand/raw/qcom_nandc.c:17:
-arch/riscv/include/asm/pgtable.h:48: note: this is the location of the previous definition
-
-Caught by riscv allmodconfig.
-
-Signed-off-by: Olof Johansson <olof@lixom.net>
-Reviewed-by: Miquel Raynal <miquel.raynal@bootlin.com>
-Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/mtd/nand/qcom_nandc.c | 32 ++++++++++++++++----------------
- 1 file changed, 16 insertions(+), 16 deletions(-)
+From: Borislav Petkov <bp@suse.de>
+Date: Tue, 11 Dec 2018 17:01:00 +0100
 
-diff --git a/drivers/mtd/nand/qcom_nandc.c b/drivers/mtd/nand/qcom_nandc.c
-index dc4943134649..9f6c9a34b9eb 100644
---- a/drivers/mtd/nand/qcom_nandc.c
-+++ b/drivers/mtd/nand/qcom_nandc.c
-@@ -142,15 +142,15 @@
- #define	NAND_VERSION_MINOR_SHIFT	16
+The missing functionality was added ~3 years ago with the Linux commit
+
+  46896c73c1a4 ("KVM: svm: add support for RDTSCP")
+
+so reenable RDTSCP support on those CPU models.
+
+Opteron_G2 - being family 15, model 6, doesn't have RDTSCP support
+(the real hardware doesn't have it. K8 got RDTSCP support with the NPT
+models, i.e., models >= 0x40).
+
+Document the host's minimum required kernel version, while at it.
+
+Signed-off-by: Borislav Petkov <bp@suse.de>
+---
+ include/hw/i386/pc.h | 17 +++++++++++++----
+ qemu-doc.texi        | 13 +++++++++++++
+ target/i386/cpu.c    | 11 ++++-------
+ 3 files changed, 30 insertions(+), 11 deletions(-)
+
+diff --git a/include/hw/i386/pc.h b/include/hw/i386/pc.h
+index 9d29c4b1df2a..ebc28e816b04 100644
+--- a/include/hw/i386/pc.h
++++ b/include/hw/i386/pc.h
+@@ -296,6 +296,19 @@ bool e820_get_entry(int, uint32_t, uint64_t *, uint64_t *);
  
- /* NAND OP_CMDs */
--#define	PAGE_READ			0x2
--#define	PAGE_READ_WITH_ECC		0x3
--#define	PAGE_READ_WITH_ECC_SPARE	0x4
--#define	PROGRAM_PAGE			0x6
--#define	PAGE_PROGRAM_WITH_ECC		0x7
--#define	PROGRAM_PAGE_SPARE		0x9
--#define	BLOCK_ERASE			0xa
--#define	FETCH_ID			0xb
--#define	RESET_DEVICE			0xd
-+#define	OP_PAGE_READ			0x2
-+#define	OP_PAGE_READ_WITH_ECC		0x3
-+#define	OP_PAGE_READ_WITH_ECC_SPARE	0x4
-+#define	OP_PROGRAM_PAGE			0x6
-+#define	OP_PAGE_PROGRAM_WITH_ECC	0x7
-+#define	OP_PROGRAM_PAGE_SPARE		0x9
-+#define	OP_BLOCK_ERASE			0xa
-+#define	OP_FETCH_ID			0xb
-+#define	OP_RESET_DEVICE			0xd
+ #define PC_COMPAT_3_1 \
+     HW_COMPAT_3_1 \
++    {\
++        .driver   = "Opteron_G3" "-" TYPE_X86_CPU,\
++        .property = "rdtscp",\
++        .value    = "off",\
++    },{\
++        .driver   = "Opteron_G4" "-" TYPE_X86_CPU,\
++        .property = "rdtscp",\
++        .value    = "off",\
++    },{\
++        .driver   = "Opteron_G5" "-" TYPE_X86_CPU,\
++        .property = "rdtscp",\
++        .value    = "off",\
++    },
  
- /* Default Value for NAND_DEV_CMD_VLD */
- #define NAND_DEV_CMD_VLD_VAL		(READ_START_VLD | WRITE_START_VLD | \
-@@ -425,11 +425,11 @@ static void update_rw_regs(struct qcom_nand_host *host, int num_cw, bool read)
+ #define PC_COMPAT_3_0 \
+     HW_COMPAT_3_0 \
+@@ -527,10 +540,6 @@ bool e820_get_entry(int, uint32_t, uint64_t *, uint64_t *);
+         .driver   = "qemu32" "-" TYPE_X86_CPU,\
+         .property = "popcnt",\
+         .value    = "on",\
+-    },{\
+-        .driver   = "Opteron_G2" "-" TYPE_X86_CPU,\
+-        .property = "rdtscp",\
+-        .value    = "on",\
+     },{\
+         .driver   = "Opteron_G3" "-" TYPE_X86_CPU,\
+         .property = "rdtscp",\
+diff --git a/qemu-doc.texi b/qemu-doc.texi
+index f7ad1dfe4b69..16b955cbf985 100644
+--- a/qemu-doc.texi
++++ b/qemu-doc.texi
+@@ -37,6 +37,7 @@
+ * QEMU System emulator for non PC targets::
+ * QEMU Guest Agent::
+ * QEMU User space emulator::
++* System requirements::
+ * Implementation notes::
+ * Deprecated features::
+ * Supported build platforms::
+@@ -2813,6 +2814,18 @@ Act as if the host page size was 'pagesize' bytes
+ Run the emulation in single step mode.
+ @end table
  
- 	if (read) {
- 		if (host->use_ecc)
--			cmd = PAGE_READ_WITH_ECC | PAGE_ACC | LAST_PAGE;
-+			cmd = OP_PAGE_READ_WITH_ECC | PAGE_ACC | LAST_PAGE;
- 		else
--			cmd = PAGE_READ | PAGE_ACC | LAST_PAGE;
-+			cmd = OP_PAGE_READ | PAGE_ACC | LAST_PAGE;
- 	} else {
--			cmd = PROGRAM_PAGE | PAGE_ACC | LAST_PAGE;
-+		cmd = OP_PROGRAM_PAGE | PAGE_ACC | LAST_PAGE;
- 	}
++@node System requirements
++@chapter System requirements
++
++@section KVM kernel module
++
++On x86_64 hosts, the default set of CPU features enabled by the KVM accelerator
++require the host to be running Linux v4.5 or newer.
++
++The OpteronG[345] CPU models require KVM support for RDTSCP, which was
++added with Linux 4.5 which is supported by the major distros. And even
++if RHEL7 has kernel 3.10, KVM there has the required functionality there
++to make it close to a 4.5 or newer kernel.
  
- 	if (host->use_ecc) {
-@@ -662,7 +662,7 @@ static int nandc_param(struct qcom_nand_host *host)
- 	 * in use. we configure the controller to perform a raw read of 512
- 	 * bytes to read onfi params
- 	 */
--	nandc_set_reg(nandc, NAND_FLASH_CMD, PAGE_READ | PAGE_ACC | LAST_PAGE);
-+	nandc_set_reg(nandc, NAND_FLASH_CMD, OP_PAGE_READ | PAGE_ACC | LAST_PAGE);
- 	nandc_set_reg(nandc, NAND_ADDR0, 0);
- 	nandc_set_reg(nandc, NAND_ADDR1, 0);
- 	nandc_set_reg(nandc, NAND_DEV0_CFG0, 0 << CW_PER_PAGE
-@@ -715,7 +715,7 @@ static int erase_block(struct qcom_nand_host *host, int page_addr)
- 	struct qcom_nand_controller *nandc = get_qcom_nand_controller(chip);
+ @include qemu-tech.texi
  
- 	nandc_set_reg(nandc, NAND_FLASH_CMD,
--		      BLOCK_ERASE | PAGE_ACC | LAST_PAGE);
-+		      OP_BLOCK_ERASE | PAGE_ACC | LAST_PAGE);
- 	nandc_set_reg(nandc, NAND_ADDR0, page_addr);
- 	nandc_set_reg(nandc, NAND_ADDR1, 0);
- 	nandc_set_reg(nandc, NAND_DEV0_CFG0,
-@@ -746,7 +746,7 @@ static int read_id(struct qcom_nand_host *host, int column)
- 	if (column == -1)
- 		return 0;
- 
--	nandc_set_reg(nandc, NAND_FLASH_CMD, FETCH_ID);
-+	nandc_set_reg(nandc, NAND_FLASH_CMD, OP_FETCH_ID);
- 	nandc_set_reg(nandc, NAND_ADDR0, column);
- 	nandc_set_reg(nandc, NAND_ADDR1, 0);
- 	nandc_set_reg(nandc, NAND_FLASH_CHIP_SELECT, DM_EN);
-@@ -766,7 +766,7 @@ static int reset(struct qcom_nand_host *host)
- 	struct nand_chip *chip = &host->chip;
- 	struct qcom_nand_controller *nandc = get_qcom_nand_controller(chip);
- 
--	nandc_set_reg(nandc, NAND_FLASH_CMD, RESET_DEVICE);
-+	nandc_set_reg(nandc, NAND_FLASH_CMD, OP_RESET_DEVICE);
- 	nandc_set_reg(nandc, NAND_EXEC_CMD, 1);
- 
- 	write_reg_dma(nandc, NAND_FLASH_CMD, 1);
+diff --git a/target/i386/cpu.c b/target/i386/cpu.c
+index f81d35e1f914..a7def11b27cd 100644
+--- a/target/i386/cpu.c
++++ b/target/i386/cpu.c
+@@ -2706,7 +2706,6 @@ static X86CPUDefinition builtin_x86_defs[] = {
+             CPUID_DE | CPUID_FP87,
+         .features[FEAT_1_ECX] =
+             CPUID_EXT_CX16 | CPUID_EXT_SSE3,
+-        /* Missing: CPUID_EXT2_RDTSCP */
+         .features[FEAT_8000_0001_EDX] =
+             CPUID_EXT2_LM | CPUID_EXT2_NX | CPUID_EXT2_SYSCALL,
+         .features[FEAT_8000_0001_ECX] =
+@@ -2730,9 +2729,9 @@ static X86CPUDefinition builtin_x86_defs[] = {
+         .features[FEAT_1_ECX] =
+             CPUID_EXT_POPCNT | CPUID_EXT_CX16 | CPUID_EXT_MONITOR |
+             CPUID_EXT_SSE3,
+-        /* Missing: CPUID_EXT2_RDTSCP */
+         .features[FEAT_8000_0001_EDX] =
+-            CPUID_EXT2_LM | CPUID_EXT2_NX | CPUID_EXT2_SYSCALL,
++            CPUID_EXT2_LM | CPUID_EXT2_NX | CPUID_EXT2_SYSCALL |
++            CPUID_EXT2_RDTSCP,
+         .features[FEAT_8000_0001_ECX] =
+             CPUID_EXT3_MISALIGNSSE | CPUID_EXT3_SSE4A |
+             CPUID_EXT3_ABM | CPUID_EXT3_SVM | CPUID_EXT3_LAHF_LM,
+@@ -2757,10 +2756,9 @@ static X86CPUDefinition builtin_x86_defs[] = {
+             CPUID_EXT_POPCNT | CPUID_EXT_SSE42 | CPUID_EXT_SSE41 |
+             CPUID_EXT_CX16 | CPUID_EXT_SSSE3 | CPUID_EXT_PCLMULQDQ |
+             CPUID_EXT_SSE3,
+-        /* Missing: CPUID_EXT2_RDTSCP */
+         .features[FEAT_8000_0001_EDX] =
+             CPUID_EXT2_LM | CPUID_EXT2_PDPE1GB | CPUID_EXT2_NX |
+-            CPUID_EXT2_SYSCALL,
++            CPUID_EXT2_SYSCALL | CPUID_EXT2_RDTSCP,
+         .features[FEAT_8000_0001_ECX] =
+             CPUID_EXT3_FMA4 | CPUID_EXT3_XOP |
+             CPUID_EXT3_3DNOWPREFETCH | CPUID_EXT3_MISALIGNSSE |
+@@ -2788,10 +2786,9 @@ static X86CPUDefinition builtin_x86_defs[] = {
+             CPUID_EXT_AES | CPUID_EXT_POPCNT | CPUID_EXT_SSE42 |
+             CPUID_EXT_SSE41 | CPUID_EXT_CX16 | CPUID_EXT_FMA |
+             CPUID_EXT_SSSE3 | CPUID_EXT_PCLMULQDQ | CPUID_EXT_SSE3,
+-        /* Missing: CPUID_EXT2_RDTSCP */
+         .features[FEAT_8000_0001_EDX] =
+             CPUID_EXT2_LM | CPUID_EXT2_PDPE1GB | CPUID_EXT2_NX |
+-            CPUID_EXT2_SYSCALL,
++            CPUID_EXT2_SYSCALL | CPUID_EXT2_RDTSCP,
+         .features[FEAT_8000_0001_ECX] =
+             CPUID_EXT3_TBM | CPUID_EXT3_FMA4 | CPUID_EXT3_XOP |
+             CPUID_EXT3_3DNOWPREFETCH | CPUID_EXT3_MISALIGNSSE |
 -- 
 2.19.1
 
+-- 
+Regards/Gruss,
+    Boris.
 
-
+Good mailing practices for 400: avoid top-posting and trim the reply.
