@@ -2,449 +2,139 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE8BEC07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 12:31:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77C28C07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 12:32:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8869F20849
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 12:31:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8869F20849
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 2A1772084A
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 12:32:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=microchiptechnology.onmicrosoft.com header.i=@microchiptechnology.onmicrosoft.com header.b="qoEqno7p"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A1772084A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726411AbeLKMb6 (ORCPT
+        id S1726432AbeLKMcp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 07:31:58 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:55268 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726114AbeLKMb5 (ORCPT
+        Tue, 11 Dec 2018 07:32:45 -0500
+Received: from esa3.microchip.iphmx.com ([68.232.153.233]:50937 "EHLO
+        esa3.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726114AbeLKMcp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 07:31:57 -0500
-Received: by mail-wm1-f66.google.com with SMTP id a62so2026625wmh.4
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 04:31:55 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=V8JgRKBv3feQhW/yWFzfp76o+gDk0wIw3rRajjK3/s4=;
-        b=qcByI2sXkOsM9s3BU+7i+Sm5aWjqRMMxIHvDMFM9ROcvnggy04QXHQzvJL9RLF4uqx
-         bAKSIQFsDbtAdOzjbij/FOTKeHuFEVo19gzaPuZuB7mWD76smbFg0t+yKQNXx1QN5lXl
-         2twzgSd5fghHyzZF/x70SACbKqAqC56ZDzcRUL0v2gBBBnfV1TlO3DvfwID6kES5TRy6
-         y2y387tZE2MJKm/Zd1wFtRw32BlCz2Y6cyP3A8kXvvBII2iCAGS7vpkDe54ffIvQE+y5
-         iy3c/kwPPT3ouEuegCeqXnb7FhUlEg16BGZo+YSDne1fBYeYY68OToS3i/vJPpIz4dj9
-         lodw==
-X-Gm-Message-State: AA+aEWbL81lN9JwOB4qE2Fn7GrNaBGA8onBtj9micqujY4gXJYak019I
-        x4Rdr7rPki6Rl5BGiSLEmSj39g==
-X-Google-Smtp-Source: AFSGD/XXElTClyYQ5Qr2gz835nrH0tlNZMEPblP0od4If4iwPGB8a1E2YmERiUwEw20bod9R3Ivi4w==
-X-Received: by 2002:a1c:4c0c:: with SMTP id z12mr2007819wmf.17.1544531514271;
-        Tue, 11 Dec 2018 04:31:54 -0800 (PST)
-Received: from shalem.localdomain (546A5441.cm-12-3b.dynamic.ziggo.nl. [84.106.84.65])
-        by smtp.gmail.com with ESMTPSA id e19sm28458072wrc.25.2018.12.11.04.31.52
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 11 Dec 2018 04:31:53 -0800 (PST)
-Subject: Re: [PATCH 1/3] staging: rtl8723bs: change semaphores to completions
-To:     Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Bastien Nocera <hadess@hadess.net>,
-        Larry Finger <Larry.Finger@lwfinger.net>,
-        linux-kernel@vger.kernel.org, devel@driverdev.osuosl.org
-References: <20181210214032.1441224-1-arnd@arndb.de>
-From:   Hans de Goede <hdegoede@redhat.com>
-Message-ID: <ec878b0a-9974-91f8-06e3-b6ce9da05834@redhat.com>
-Date:   Tue, 11 Dec 2018 13:31:52 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
-MIME-Version: 1.0
-In-Reply-To: <20181210214032.1441224-1-arnd@arndb.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
+        Tue, 11 Dec 2018 07:32:45 -0500
+X-IronPort-AV: E=Sophos;i="5.56,342,1539673200"; 
+   d="scan'208";a="24232166"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa3.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 11 Dec 2018 05:32:44 -0700
+Received: from NAM04-BN3-obe.outbound.protection.outlook.com (10.10.215.89) by
+ email.microchip.com (10.10.76.107) with Microsoft SMTP Server (TLS) id
+ 14.3.352.0; Tue, 11 Dec 2018 05:32:44 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=microchiptechnology.onmicrosoft.com;
+ s=selector1-microchiptechnology-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=iBCzqyuLKy6zjnGaXCt2XCD/j7AEagAQhXorNxnF+l8=;
+ b=qoEqno7pREOQXDf57IdoFLHhj3YHWkUgDOjNl7CvdOgitOilWawkA1Ma0I67vPsTJiIt4VRu6h53KJbLvV/Fu+aFYDvfzWVyTJ3ATyp8XHxAnJVQHhA3ov6Kn2A72pPZww2wSaYiDwlZS+hdxOjqk+my2xEYQpljvWWe7h7gM6k=
+Received: from BN6PR11MB1842.namprd11.prod.outlook.com (10.175.99.146) by
+ BN6PR11MB1970.namprd11.prod.outlook.com (10.175.100.147) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1404.22; Tue, 11 Dec 2018 12:32:41 +0000
+Received: from BN6PR11MB1842.namprd11.prod.outlook.com
+ ([fe80::d88c:1d67:5fb0:12ae]) by BN6PR11MB1842.namprd11.prod.outlook.com
+ ([fe80::d88c:1d67:5fb0:12ae%2]) with mapi id 15.20.1404.026; Tue, 11 Dec 2018
+ 12:32:41 +0000
+From:   <Tudor.Ambarus@microchip.com>
+To:     <alexandre.belloni@bootlin.com>
+CC:     <Nicolas.Ferre@microchip.com>, <Ludovic.Desroches@microchip.com>,
+        <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+        <Cyrille.Pitchen@microchip.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <boris.brezillon@bootlin.com>, <linux-mtd@lists.infradead.org>,
+        <broonie@kernel.org>, <linux-spi@vger.kernel.org>
+Subject: Re: [PATCH] ARM: dts: at91: sama5d2 Xplained: add QSPI0 + SPI NOR
+ memory nodes
+Thread-Topic: [PATCH] ARM: dts: at91: sama5d2 Xplained: add QSPI0 + SPI NOR
+ memory nodes
+Thread-Index: AQHUkKvzXXGQaMBmgEiVjL0m4mUE46V4f0+AgAD6hoA=
+Date:   Tue, 11 Dec 2018 12:32:40 +0000
+Message-ID: <22730de3-55f0-df21-312a-560a02f02dc7@microchip.com>
+References: <20181210171511.21002-1-tudor.ambarus@microchip.com>
+ <20181210213553.GK8952@piout.net>
+In-Reply-To: <20181210213553.GK8952@piout.net>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: VI1PR08CA0099.eurprd08.prod.outlook.com
+ (2603:10a6:800:d3::25) To BN6PR11MB1842.namprd11.prod.outlook.com
+ (2603:10b6:404:103::18)
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [86.120.240.19]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BN6PR11MB1970;6:2s+iQ3KBRgTi2QnSueCY5xDmGFI8mSm7tQLq0QY4gwMSAgYMp9DOZptJrGPZXRRY0XnB+KSHdqaOKRXA9CcFFTe+f60UoGw5XPyQFGbA1757/Jk7bH4SCSIHmfAeHZHKBWGkt/xFReQOvH8wsrLvq8phj62cjic9qWuHRMl32jx9oE9yZsKKdkOsD1Mr+5NDAkS/i/cTarEkUMEegJkbvJSEZUzXp1EkO72qO3wstix36gC7BARwzSiCI8dEmR7RmoM4DnEjCz/QwQDxwnFPb39riVbyHmb4ml6Vyu2Fu1UZHw9tQW9+k80XT1FcZc7IzCgufV6CfAErLW2LXseTImD6XKSW2rNP8/gUENW01NBj2q6NfxTjz02PHERZ3aULlPSvlA698ex9MX7eWoxceq+3bRAn5JJpR9bXpFfQmzrtfhzUECW7QSzx5PqVci33lZeeZYABkqWde2+XDqlznQ==;5:vv48AWDGtEVt1ZedShQajiZpPRsmcFSMOGqYpo0sxIGSCDW84rcFhrh6jtBHePWfsGAMRvTPYUk2ZL0BfO3t7rs+/obEHWgCqpY1SuUwGFVcPzqZ8WMAtJjYVrawWs1oBuEtMdMipHuv6sKRx4KyzZmetB2dl/wgQ08/LVxU4BI=;7:rmKxgbWMyniBFBkTQIX8lvD5bndYL+gnIqCMmZ8FvsQJ9VEUkNkiU9MepnHznOeGrFuFQOVioMMIm56O9T2sSzwb8yJQzamXDQz+3SGDmgimG1EtK8OrzIYDKtRKAP545o+TrOSVrXcqMkqrECKYSA==
+x-ms-office365-filtering-correlation-id: deb2d04d-ae0a-424a-3706-08d65f64bdce
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:BN6PR11MB1970;
+x-ms-traffictypediagnostic: BN6PR11MB1970:
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Tudor.Ambarus@microchip.com; 
+x-microsoft-antispam-prvs: <BN6PR11MB1970ADB4E694A05071DDEB43F0A60@BN6PR11MB1970.namprd11.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(3230017)(999002)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231472)(944501520)(52105112)(10201501046)(3002001)(148016)(149066)(150057)(6041310)(20161123560045)(20161123558120)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(201708071742011)(7699051)(76991095);SRVR:BN6PR11MB1970;BCL:0;PCL:0;RULEID:;SRVR:BN6PR11MB1970;
+x-forefront-prvs: 08831F51DC
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(346002)(376002)(136003)(366004)(39860400002)(199004)(189003)(31686004)(229853002)(106356001)(7416002)(386003)(6506007)(71190400001)(72206003)(71200400001)(99286004)(68736007)(3846002)(8936002)(6116002)(6246003)(446003)(52116002)(97736004)(6486002)(25786009)(11346002)(6916009)(478600001)(2616005)(186003)(53546011)(6436002)(256004)(14444005)(102836004)(486006)(476003)(76176011)(217873002)(86362001)(5660300001)(26005)(66066001)(81156014)(36756003)(8676002)(6512007)(2906002)(54906003)(81166006)(14454004)(7736002)(4326008)(305945005)(105586002)(53936002)(316002)(31696002);DIR:OUT;SFP:1101;SCL:1;SRVR:BN6PR11MB1970;H:BN6PR11MB1842.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: microchip.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: leNb24rlb82FmNPlgFEALcCPYaId0V+J8Pj/pSEq4GSivEKUt7dmxZH+Ok1NAwtrL6Ymt8sa8pfnzXFilF7HrKm17Ea/DhIKYZTIoq7cVy4yT9DuHGl+ZvvPdJuePC6SeDYqjB10+lKJe2zLbNCtdkHzIXIXzUpEbMrbhJg3QPIPQPJ/I/UfOKhSOxENAkUXv+9rTRNW3LRz4dYeNlimNIE7tWBgYJ252ZSxiP3gto0x8JABNO/1tUqBDMiRfnvt9nn27VfG21qU+Z6e03+xkQ6X6J6kW2FpkVduQ/Da3QHPls1eho37gbVXrZe1egG/
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <FDD38498AEBB3547A3FAB81144C33D0F@namprd11.prod.outlook.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-MS-Exchange-CrossTenant-Network-Message-Id: deb2d04d-ae0a-424a-3706-08d65f64bdce
+X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Dec 2018 12:32:40.7972
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR11MB1970
+X-OriginatorOrg: microchip.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Arnd,
-
-Thank you for the patches.
-
-On 10-12-18 22:40, Arnd Bergmann wrote:
-> This driver uses many semaphores, most of them are equivalent to
-> completions. The other copies of this driver got moved over to
-> completions a while ago, so do the same here.
-> 
-> In this usage scenario, the two are equivalent, so the behavior
-> should not change.
-> 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-
-The entire series looks good to me and I've also given it
-a quick test run on a tablet with a rtl8723bs wifi chip:
-
-Reviewed-by: Hans de Goede <hdegoede@redhat.com>
-
-Regards,
-
-Hans
-
-
-
-
-> ---
->   drivers/staging/rtl8723bs/core/rtw_cmd.c      | 20 ++++++++---------
->   drivers/staging/rtl8723bs/core/rtw_mlme.c     |  2 --
->   drivers/staging/rtl8723bs/core/rtw_pwrctrl.c  |  4 ++--
->   drivers/staging/rtl8723bs/core/rtw_xmit.c     |  8 +++----
->   .../staging/rtl8723bs/hal/rtl8723b_hal_init.c |  4 ++--
->   .../staging/rtl8723bs/hal/rtl8723bs_xmit.c    | 22 ++++++++-----------
->   drivers/staging/rtl8723bs/hal/sdio_ops.c      |  2 +-
->   drivers/staging/rtl8723bs/include/rtw_cmd.h   |  7 +++---
->   drivers/staging/rtl8723bs/include/rtw_xmit.h  |  9 ++++----
->   drivers/staging/rtl8723bs/os_dep/os_intfs.c   |  6 ++---
->   drivers/staging/rtl8723bs/os_dep/xmit_linux.c |  2 +-
->   11 files changed, 39 insertions(+), 47 deletions(-)
-> 
-> diff --git a/drivers/staging/rtl8723bs/core/rtw_cmd.c b/drivers/staging/rtl8723bs/core/rtw_cmd.c
-> index 830be63391b7..3d206c33eafa 100644
-> --- a/drivers/staging/rtl8723bs/core/rtw_cmd.c
-> +++ b/drivers/staging/rtl8723bs/core/rtw_cmd.c
-> @@ -166,10 +166,8 @@ sint	_rtw_init_cmd_priv(struct	cmd_priv *pcmdpriv)
->   {
->   	sint res = _SUCCESS;
->   
-> -	sema_init(&(pcmdpriv->cmd_queue_sema), 0);
-> -	/* sema_init(&(pcmdpriv->cmd_done_sema), 0); */
-> -	sema_init(&(pcmdpriv->terminate_cmdthread_sema), 0);
-> -
-> +	init_completion(&pcmdpriv->cmd_queue_comp);
-> +	init_completion(&pcmdpriv->terminate_cmdthread_comp);
->   
->   	_rtw_init_queue(&(pcmdpriv->cmd_queue));
->   
-> @@ -369,7 +367,7 @@ u32 rtw_enqueue_cmd(struct cmd_priv *pcmdpriv, struct cmd_obj *cmd_obj)
->   	res = _rtw_enqueue_cmd(&pcmdpriv->cmd_queue, cmd_obj);
->   
->   	if (res == _SUCCESS)
-> -		up(&pcmdpriv->cmd_queue_sema);
-> +		complete(&pcmdpriv->cmd_queue_comp);
->   
->   exit:
->   	return res;
-> @@ -410,8 +408,8 @@ void rtw_stop_cmd_thread(struct adapter *adapter)
->   		atomic_read(&(adapter->cmdpriv.cmdthd_running)) == true &&
->   		adapter->cmdpriv.stop_req == 0) {
->   		adapter->cmdpriv.stop_req = 1;
-> -		up(&adapter->cmdpriv.cmd_queue_sema);
-> -		down(&adapter->cmdpriv.terminate_cmdthread_sema);
-> +		complete(&adapter->cmdpriv.cmd_queue_comp);
-> +		wait_for_completion(&adapter->cmdpriv.terminate_cmdthread_comp);
->   	}
->   }
->   
-> @@ -435,13 +433,13 @@ int rtw_cmd_thread(void *context)
->   
->   	pcmdpriv->stop_req = 0;
->   	atomic_set(&(pcmdpriv->cmdthd_running), true);
-> -	up(&pcmdpriv->terminate_cmdthread_sema);
-> +	complete(&pcmdpriv->terminate_cmdthread_comp);
->   
->   	RT_TRACE(_module_rtl871x_cmd_c_, _drv_info_, ("start r871x rtw_cmd_thread !!!!\n"));
->   
->   	while (1) {
-> -		if (down_interruptible(&pcmdpriv->cmd_queue_sema)) {
-> -			DBG_871X_LEVEL(_drv_always_, FUNC_ADPT_FMT" down_interruptible(&pcmdpriv->cmd_queue_sema) return != 0, break\n", FUNC_ADPT_ARG(padapter));
-> +		if (wait_for_completion_interruptible(&pcmdpriv->cmd_queue_comp)) {
-> +			DBG_871X_LEVEL(_drv_always_, FUNC_ADPT_FMT" wait_for_completion_interruptible(&pcmdpriv->cmd_queue_comp) return != 0, break\n", FUNC_ADPT_ARG(padapter));
->   			break;
->   		}
->   
-> @@ -581,7 +579,7 @@ int rtw_cmd_thread(void *context)
->   		rtw_free_cmd_obj(pcmd);
->   	} while (1);
->   
-> -	up(&pcmdpriv->terminate_cmdthread_sema);
-> +	complete(&pcmdpriv->terminate_cmdthread_comp);
->   	atomic_set(&(pcmdpriv->cmdthd_running), false);
->   
->   	thread_exit();
-> diff --git a/drivers/staging/rtl8723bs/core/rtw_mlme.c b/drivers/staging/rtl8723bs/core/rtw_mlme.c
-> index 4c5d5cf9dfe0..81505f3bce8b 100644
-> --- a/drivers/staging/rtl8723bs/core/rtw_mlme.c
-> +++ b/drivers/staging/rtl8723bs/core/rtw_mlme.c
-> @@ -2373,8 +2373,6 @@ sint rtw_set_key(struct adapter *adapter, struct security_priv *psecuritypriv, s
->   
->   		INIT_LIST_HEAD(&pcmd->list);
->   
-> -		/* sema_init(&(pcmd->cmd_sem), 0); */
-> -
->   		res = rtw_enqueue_cmd(pcmdpriv, pcmd);
->   	} else{
->   		setkey_hdl(adapter, (u8 *)psetkeyparm);
-> diff --git a/drivers/staging/rtl8723bs/core/rtw_pwrctrl.c b/drivers/staging/rtl8723bs/core/rtw_pwrctrl.c
-> index 59a667753266..a0d8fbeecf9b 100644
-> --- a/drivers/staging/rtl8723bs/core/rtw_pwrctrl.c
-> +++ b/drivers/staging/rtl8723bs/core/rtw_pwrctrl.c
-> @@ -745,10 +745,10 @@ void cpwm_int_hdl(
->   
->   	if (pwrpriv->cpwm >= PS_STATE_S2) {
->   		if (pwrpriv->alives & CMD_ALIVE)
-> -			up(&padapter->cmdpriv.cmd_queue_sema);
-> +			complete(&padapter->cmdpriv.cmd_queue_comp);
->   
->   		if (pwrpriv->alives & XMIT_ALIVE)
-> -			up(&padapter->xmitpriv.xmit_sema);
-> +			complete(&padapter->xmitpriv.xmit_comp);
->   	}
->   
->   	up(&pwrpriv->lock);
-> diff --git a/drivers/staging/rtl8723bs/core/rtw_xmit.c b/drivers/staging/rtl8723bs/core/rtw_xmit.c
-> index 729fd37f440b..fdfa4b3c4c10 100644
-> --- a/drivers/staging/rtl8723bs/core/rtw_xmit.c
-> +++ b/drivers/staging/rtl8723bs/core/rtw_xmit.c
-> @@ -45,8 +45,8 @@ s32 _rtw_init_xmit_priv(struct xmit_priv *pxmitpriv, struct adapter *padapter)
->   
->   	spin_lock_init(&pxmitpriv->lock);
->   	spin_lock_init(&pxmitpriv->lock_sctx);
-> -	sema_init(&pxmitpriv->xmit_sema, 0);
-> -	sema_init(&pxmitpriv->terminate_xmitthread_sema, 0);
-> +	init_completion(&pxmitpriv->xmit_comp);
-> +	init_completion(&pxmitpriv->terminate_xmitthread_comp);
->   
->   	/*
->   	Please insert all the queue initializaiton using _rtw_init_queue below
-> @@ -2879,7 +2879,7 @@ void enqueue_pending_xmitbuf(
->   	list_add_tail(&pxmitbuf->list, get_list_head(pqueue));
->   	spin_unlock_bh(&pqueue->lock);
->   
-> -	up(&(pri_adapter->xmitpriv.xmit_sema));
-> +	complete(&(pri_adapter->xmitpriv.xmit_comp));
->   }
->   
->   void enqueue_pending_xmitbuf_to_head(
-> @@ -2998,7 +2998,7 @@ int rtw_xmit_thread(void *context)
->   		flush_signals_thread();
->   	} while (_SUCCESS == err);
->   
-> -	up(&padapter->xmitpriv.terminate_xmitthread_sema);
-> +	complete(&padapter->xmitpriv.terminate_xmitthread_comp);
->   
->   	thread_exit();
->   }
-> diff --git a/drivers/staging/rtl8723bs/hal/rtl8723b_hal_init.c b/drivers/staging/rtl8723bs/hal/rtl8723b_hal_init.c
-> index c7e55618b9a8..85fd12cca4ae 100644
-> --- a/drivers/staging/rtl8723bs/hal/rtl8723b_hal_init.c
-> +++ b/drivers/staging/rtl8723bs/hal/rtl8723b_hal_init.c
-> @@ -4502,8 +4502,8 @@ void rtl8723b_stop_thread(struct adapter *padapter)
->   
->   	/*  stop xmit_buf_thread */
->   	if (xmitpriv->SdioXmitThread) {
-> -		up(&xmitpriv->SdioXmitSema);
-> -		down(&xmitpriv->SdioXmitTerminateSema);
-> +		complete(&xmitpriv->SdioXmitStart);
-> +		wait_for_completion(&xmitpriv->SdioXmitTerminate);
->   		xmitpriv->SdioXmitThread = NULL;
->   	}
->   #endif
-> diff --git a/drivers/staging/rtl8723bs/hal/rtl8723bs_xmit.c b/drivers/staging/rtl8723bs/hal/rtl8723bs_xmit.c
-> index 10b3f9733bad..69c4db5b5b0c 100644
-> --- a/drivers/staging/rtl8723bs/hal/rtl8723bs_xmit.c
-> +++ b/drivers/staging/rtl8723bs/hal/rtl8723bs_xmit.c
-> @@ -148,7 +148,7 @@ s32 rtl8723bs_xmit_buf_handler(struct adapter *padapter)
->   
->   	pxmitpriv = &padapter->xmitpriv;
->   
-> -	if (down_interruptible(&pxmitpriv->xmit_sema)) {
-> +	if (wait_for_completion_interruptible(&pxmitpriv->xmit_comp)) {
->   		DBG_871X_LEVEL(_drv_emerg_, "%s: down SdioXmitBufSema fail!\n", __func__);
->   		return _FAIL;
->   	}
-> @@ -312,7 +312,7 @@ static s32 xmit_xmitframes(struct adapter *padapter, struct xmit_priv *pxmitpriv
->   						DBG_871X_LEVEL(_drv_err_, "%s: xmit_buf is not enough!\n", __func__);
->   #endif
->   						err = -2;
-> -						up(&(pxmitpriv->xmit_sema));
-> +						complete(&(pxmitpriv->xmit_comp));
->   						break;
->   					}
->   					k = 0;
-> @@ -420,8 +420,8 @@ static s32 rtl8723bs_xmit_handler(struct adapter *padapter)
->   
->   	pxmitpriv = &padapter->xmitpriv;
->   
-> -	if (down_interruptible(&pxmitpriv->SdioXmitSema)) {
-> -		DBG_871X_LEVEL(_drv_emerg_, "%s: down sema fail!\n", __func__);
-> +	if (wait_for_completion_interruptible(&pxmitpriv->SdioXmitStart)) {
-> +		DBG_871X_LEVEL(_drv_emerg_, "%s: SdioXmitStart fail!\n", __func__);
->   		return _FAIL;
->   	}
->   
-> @@ -490,10 +490,6 @@ int rtl8723bs_xmit_thread(void *context)
->   
->   	DBG_871X("start "FUNC_ADPT_FMT"\n", FUNC_ADPT_ARG(padapter));
->   
-> -	/*  For now, no one would down sema to check thread is running, */
-> -	/*  so mark this temporary, Lucas@20130820 */
-> -/* 	up(&pxmitpriv->SdioXmitTerminateSema); */
-> -
->   	do {
->   		ret = rtl8723bs_xmit_handler(padapter);
->   		if (signal_pending(current)) {
-> @@ -501,7 +497,7 @@ int rtl8723bs_xmit_thread(void *context)
->   		}
->   	} while (_SUCCESS == ret);
->   
-> -	up(&pxmitpriv->SdioXmitTerminateSema);
-> +	complete(&pxmitpriv->SdioXmitTerminate);
->   
->   	RT_TRACE(_module_hal_xmit_c_, _drv_notice_, ("-%s\n", __func__));
->   
-> @@ -590,7 +586,7 @@ s32 rtl8723bs_hal_xmit(
->   		return true;
->   	}
->   
-> -	up(&pxmitpriv->SdioXmitSema);
-> +	complete(&pxmitpriv->SdioXmitStart);
->   
->   	return false;
->   }
-> @@ -611,7 +607,7 @@ s32	rtl8723bs_hal_xmitframe_enqueue(
->   #ifdef CONFIG_SDIO_TX_TASKLET
->   		tasklet_hi_schedule(&pxmitpriv->xmit_tasklet);
->   #else
-> -		up(&pxmitpriv->SdioXmitSema);
-> +		complete(&pxmitpriv->SdioXmitStart);
->   #endif
->   	}
->   
-> @@ -634,8 +630,8 @@ s32 rtl8723bs_init_xmit_priv(struct adapter *padapter)
->   	phal = GET_HAL_DATA(padapter);
->   
->   	spin_lock_init(&phal->SdioTxFIFOFreePageLock);
-> -	sema_init(&xmitpriv->SdioXmitSema, 0);
-> -	sema_init(&xmitpriv->SdioXmitTerminateSema, 0);
-> +	init_completion(&xmitpriv->SdioXmitStart);
-> +	init_completion(&xmitpriv->SdioXmitTerminate);
->   
->   	return _SUCCESS;
->   }
-> diff --git a/drivers/staging/rtl8723bs/hal/sdio_ops.c b/drivers/staging/rtl8723bs/hal/sdio_ops.c
-> index d6b93e1f78d8..3fee34484577 100644
-> --- a/drivers/staging/rtl8723bs/hal/sdio_ops.c
-> +++ b/drivers/staging/rtl8723bs/hal/sdio_ops.c
-> @@ -1023,7 +1023,7 @@ void sd_int_dpc(struct adapter *adapter)
->   		u8 freepage[4];
->   
->   		_sdio_local_read(adapter, SDIO_REG_FREE_TXPG, 4, freepage);
-> -		up(&(adapter->xmitpriv.xmit_sema));
-> +		complete(&(adapter->xmitpriv.xmit_comp));
->   	}
->   
->   	if (hal->sdio_hisr & SDIO_HISR_CPWM1) {
-> diff --git a/drivers/staging/rtl8723bs/include/rtw_cmd.h b/drivers/staging/rtl8723bs/include/rtw_cmd.h
-> index 7dc5bf050839..299b55538788 100644
-> --- a/drivers/staging/rtl8723bs/include/rtw_cmd.h
-> +++ b/drivers/staging/rtl8723bs/include/rtw_cmd.h
-> @@ -7,6 +7,7 @@
->   #ifndef __RTW_CMD_H_
->   #define __RTW_CMD_H_
->   
-> +#include <linux/completion.h>
->   
->   #define C2H_MEM_SZ (16*1024)
->   
-> @@ -27,7 +28,6 @@
->   		u8 *rsp;
->   		u32 rspsz;
->   		struct submit_ctx *sctx;
-> -		/* _sema		cmd_sem; */
->   		struct list_head	list;
->   	};
->   
-> @@ -38,9 +38,8 @@
->   	};
->   
->   	struct cmd_priv {
-> -		_sema	cmd_queue_sema;
-> -		/* _sema	cmd_done_sema; */
-> -		_sema	terminate_cmdthread_sema;
-> +		struct completion cmd_queue_comp;
-> +		struct completion terminate_cmdthread_comp;
->   		struct __queue	cmd_queue;
->   		u8 cmd_seq;
->   		u8 *cmd_buf;	/* shall be non-paged, and 4 bytes aligned */
-> diff --git a/drivers/staging/rtl8723bs/include/rtw_xmit.h b/drivers/staging/rtl8723bs/include/rtw_xmit.h
-> index a75b668d09a6..1b38b9182b31 100644
-> --- a/drivers/staging/rtl8723bs/include/rtw_xmit.h
-> +++ b/drivers/staging/rtl8723bs/include/rtw_xmit.h
-> @@ -7,6 +7,7 @@
->   #ifndef _RTW_XMIT_H_
->   #define _RTW_XMIT_H_
->   
-> +#include <linux/completion.h>
->   
->   #define MAX_XMITBUF_SZ	(20480)	/*  20k */
->   
-> @@ -364,8 +365,8 @@ struct	xmit_priv {
->   
->   	_lock	lock;
->   
-> -	_sema	xmit_sema;
-> -	_sema	terminate_xmitthread_sema;
-> +	struct completion xmit_comp;
-> +	struct completion terminate_xmitthread_comp;
->   
->   	/* struct __queue	blk_strms[MAX_NUMBLKS]; */
->   	struct __queue	be_pending;
-> @@ -419,8 +420,8 @@ struct	xmit_priv {
->   	struct tasklet_struct xmit_tasklet;
->   #else
->   	void *SdioXmitThread;
-> -	_sema		SdioXmitSema;
-> -	_sema		SdioXmitTerminateSema;
-> +	struct completion SdioXmitStart;
-> +	struct completion SdioXmitTerminate;
->   #endif /* CONFIG_SDIO_TX_TASKLET */
->   
->   	struct __queue free_xmitbuf_queue;
-> diff --git a/drivers/staging/rtl8723bs/os_dep/os_intfs.c b/drivers/staging/rtl8723bs/os_dep/os_intfs.c
-> index 181642358e3f..143e3f9b31aa 100644
-> --- a/drivers/staging/rtl8723bs/os_dep/os_intfs.c
-> +++ b/drivers/staging/rtl8723bs/os_dep/os_intfs.c
-> @@ -585,7 +585,7 @@ u32 rtw_start_drv_threads(struct adapter *padapter)
->   	if (IS_ERR(padapter->cmdThread))
->   		_status = _FAIL;
->   	else
-> -		down(&padapter->cmdpriv.terminate_cmdthread_sema); /* wait for cmd_thread to run */
-> +		wait_for_completion(&padapter->cmdpriv.terminate_cmdthread_comp); /* wait for cmd_thread to run */
->   
->   	rtw_hal_start_thread(padapter);
->   	return _status;
-> @@ -598,8 +598,8 @@ void rtw_stop_drv_threads (struct adapter *padapter)
->   	rtw_stop_cmd_thread(padapter);
->   
->   	/*  Below is to termindate tx_thread... */
-> -	up(&padapter->xmitpriv.xmit_sema);
-> -	down(&padapter->xmitpriv.terminate_xmitthread_sema);
-> +	complete(&padapter->xmitpriv.xmit_comp);
-> +	wait_for_completion(&padapter->xmitpriv.terminate_xmitthread_comp);
->   	RT_TRACE(_module_os_intfs_c_, _drv_info_, ("\n drv_halt: rtw_xmit_thread can be terminated !\n"));
->   
->   	rtw_hal_stop_thread(padapter);
-> diff --git a/drivers/staging/rtl8723bs/os_dep/xmit_linux.c b/drivers/staging/rtl8723bs/os_dep/xmit_linux.c
-> index 2cf903c66854..4e4e565d991c 100644
-> --- a/drivers/staging/rtl8723bs/os_dep/xmit_linux.c
-> +++ b/drivers/staging/rtl8723bs/os_dep/xmit_linux.c
-> @@ -101,7 +101,7 @@ void rtw_os_xmit_schedule(struct adapter *padapter)
->   		return;
->   
->   	if (!list_empty(&padapter->xmitpriv.pending_xmitbuf_queue.queue))
-> -		up(&pri_adapter->xmitpriv.xmit_sema);
-> +		complete(&pri_adapter->xmitpriv.xmit_comp);
->   }
->   
->   static void rtw_check_xmit_resource(struct adapter *padapter, _pkt *pkt)
-> 
+SGksIEFsZXhhbmRyZSwNCg0KT24gMTIvMTAvMjAxOCAxMTozNSBQTSwgQWxleGFuZHJlIEJlbGxv
+bmkgd3JvdGU6DQo+IEhpLA0KPiANCj4gT24gMTAvMTIvMjAxOCAxNzoxNToyOSswMDAwLCBUdWRv
+ci5BbWJhcnVzQG1pY3JvY2hpcC5jb20gd3JvdGU6DQo+PiBGcm9tOiBDeXJpbGxlIFBpdGNoZW4g
+PGN5cmlsbGUucGl0Y2hlbkBtaWNyb2NoaXAuY29tPg0KPj4NCj4+IFRoaXMgcGF0Y2ggY29uZmln
+dXJlcyB0aGUgUVNQSTAgY29udHJvbGxlciBwaW4gbXV4aW5nIGFuZCBkZWNsYXJlcw0KPj4gYSBq
+ZWRlYyxzcGktbm9yIG1lbW9yeS4NCj4+DQo+PiBzYW1hNWQyIFhwbGFpbmVkIFJldkIgYW5kIFJl
+dkMgdXNlIHRoZSBNYWNyb25peCBNWDI1TDI1NjczRyBmbGFzaA0KPj4gbWVtb3J5IHdoaWNoIGFk
+dmVydGlzZXMgYSBtYXhpbXVtIGZyZXF1ZW5jeSBvZiA4ME1IeiBmb3IgUXVhZCBJTw0KPj4gRmFz
+dCBSZWFkLiBTZXQgdGhlIHNwaS1tYXgtZnJlcXVlbmN5IHRvIDgwTUh6IGtub3dpbmcgdGhhdCBh
+Y3R1YWxseQ0KPj4gdGhlIFFTUEkgZHJ2ZXIgd2lsbCBzZXQgdGhlIFNQSSBidXMgY2xvY2sgdG8g
+MTY2TUh6IC8gMyA9IDU1LjNNSHouDQo+Pg0KPj4gU2lnbmVkLW9mZi1ieTogQ3lyaWxsZSBQaXRj
+aGVuIDxjeXJpbGxlLnBpdGNoZW5AbWljcm9jaGlwLmNvbT4NCj4+IFt0dWRvci5hbWJhcnVzQG1p
+Y3JvY2hpcC5jb206DQo+PiAtIGRyb3AgcGFydGl0aW9ucywNCj4+IC0gYWRkIHNwaS1yeC90eC1i
+dXMtd2lkdGgNCj4+IC0gY2hhbmdlIHNwaS1tYXgtZnJlcXVlbmN5IHRvIG1hdGNoIHRoZSA4ME1I
+eiBsaW1pdCBhZHZlcnRpc2VkIGJ5DQo+PiAgIE1YMjVMMjU2NzNHIGZvciBRdWFkIElPIEZhc3Qg
+UmVhZCwNCj4+IC0gcmV3b3JkIGNvbW1pdCBtZXNzYWdlIGFuZCBzdWJqZWN0Ll0NCj4+IFNpZ25l
+ZC1vZmYtYnk6IFR1ZG9yIEFtYmFydXMgPHR1ZG9yLmFtYmFydXNAbWljcm9jaGlwLmNvbT4NCj4+
+IC0tLQ0KPj4gIGFyY2gvYXJtL2Jvb3QvZHRzL2F0OTEtc2FtYTVkMl94cGxhaW5lZC5kdHMgfCAz
+MSArKysrKysrKysrKysrKysrKysrKysrKysrKysrKw0KPj4gIDEgZmlsZSBjaGFuZ2VkLCAzMSBp
+bnNlcnRpb25zKCspDQo+Pg0KPj4gZGlmZiAtLWdpdCBhL2FyY2gvYXJtL2Jvb3QvZHRzL2F0OTEt
+c2FtYTVkMl94cGxhaW5lZC5kdHMgYi9hcmNoL2FybS9ib290L2R0cy9hdDkxLXNhbWE1ZDJfeHBs
+YWluZWQuZHRzDQo+PiBpbmRleCA1MThlMmIwOTVjY2YuLjE3MWJjODJjZmJiZiAxMDA2NDQNCj4+
+IC0tLSBhL2FyY2gvYXJtL2Jvb3QvZHRzL2F0OTEtc2FtYTVkMl94cGxhaW5lZC5kdHMNCj4+ICsr
+KyBiL2FyY2gvYXJtL2Jvb3QvZHRzL2F0OTEtc2FtYTVkMl94cGxhaW5lZC5kdHMNCj4+IEBAIC0x
+MDgsNiArMTA4LDIxIEBADQo+PiAgCQl9Ow0KPj4gIA0KPj4gIAkJYXBiIHsNCj4+ICsJCQlxc3Bp
+MDogc3BpQGYwMDIwMDAwIHsNCj4+ICsJCQkJcGluY3RybC1uYW1lcyA9ICJkZWZhdWx0IjsNCj4+
+ICsJCQkJcGluY3RybC0wID0gPCZwaW5jdHJsX3FzcGkwX2RlZmF1bHQ+Ow0KPj4gKwkJCQkvKiBz
+dGF0dXMgPSAib2theSI7ICovIC8qIGNvbmZsaWN0IHdpdGggc2RtbWMxICovDQo+IA0KPiBJc24n
+dCB0aGF0IGNvbmZsaWN0aW5nIHRoZW4gYmVjYXVzZSBJIHRoaW5rIHRoZSBkZWZhdWx0IGlzIG9r
+YXkuDQpxc3BpMCBpcyBkaXNhYmxlZCBpbiBzYW1hNWQyLmR0c2kuDQoNClRoYW5rcywNCnRhDQo=
