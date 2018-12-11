@@ -3,40 +3,40 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1C55C5CFFE
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 17:14:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1D01C5CFFE
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 17:14:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 79D602081B
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 17:14:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 79D602081B
+	by mail.kernel.org (Postfix) with ESMTP id 884FB2081B
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 17:14:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 884FB2081B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726998AbeLKROg (ORCPT
+        id S1727026AbeLKROl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 12:14:36 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:47022 "EHLO huawei.com"
+        Tue, 11 Dec 2018 12:14:41 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:47023 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726639AbeLKROc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 12:14:32 -0500
+        id S1726784AbeLKROf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 12:14:35 -0500
 Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id F0AC4EC6C1950;
-        Wed, 12 Dec 2018 01:14:20 +0800 (CST)
+        by Forcepoint Email with ESMTP id 0A16FFBDEDF64;
+        Wed, 12 Dec 2018 01:14:21 +0800 (CST)
 Received: from S00293818-DELL1.china.huawei.com (10.202.226.54) by
  DGGEMS403-HUB.china.huawei.com (10.3.19.203) with Microsoft SMTP Server id
- 14.3.408.0; Wed, 12 Dec 2018 01:14:12 +0800
+ 14.3.408.0; Wed, 12 Dec 2018 01:14:14 +0800
 From:   Salil Mehta <salil.mehta@huawei.com>
 To:     <davem@davemloft.net>
 CC:     <salil.mehta@huawei.com>, <yisen.zhuang@huawei.com>,
         <lipeng321@huawei.com>, <mehta.salil@opnsrc.net>,
         <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linuxarm@huawei.com>, liuzhongzhu <liuzhongzhu@huawei.com>
-Subject: [PATCH net-next 5/6] net: hns3: Add "queue map" information query function
-Date:   Tue, 11 Dec 2018 17:13:29 +0000
-Message-ID: <20181211171330.20592-6-salil.mehta@huawei.com>
+Subject: [PATCH net-next 6/6] net: hns3: Add "tm map" status information query function
+Date:   Tue, 11 Dec 2018 17:13:30 +0000
+Message-ID: <20181211171330.20592-7-salil.mehta@huawei.com>
 X-Mailer: git-send-email 2.8.3
 In-Reply-To: <20181211171330.20592-1-salil.mehta@huawei.com>
 References: <20181211171330.20592-1-salil.mehta@huawei.com>
@@ -51,232 +51,167 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: liuzhongzhu <liuzhongzhu@huawei.com>
 
-This patch prints queue map information.
+This patch prints dcb register status  information by module.
 
 debugfs command:
-echo dump queue map > cmd
-
-Sample Command:
-root@(none)# echo queue map > cmd
- local queue id | global queue id | vector id
-          0              32             769
-          1              33             770
-          2              34             771
-          3              35             772
-          4              36             773
-          5              37             774
-          6              38             775
-          7              39             776
-          8              40             777
-          9              41             778
-         10              42             779
-         11              43             780
-         12              44             781
-         13              45             782
-         14              46             783
-         15              47             784
+root@(none)# echo dump tm map 100 > cmd
+queue_id | qset_id | pri_id | tc_id
+0100     | 0065    | 08     | 00
 root@(none)#
 
 Signed-off-by: liuzhongzhu <liuzhongzhu@huawei.com>
 Signed-off-by: Salil Mehta <salil.mehta@huawei.com>
 ---
- drivers/net/ethernet/hisilicon/hns3/hclge_mbx.h    |  1 +
- drivers/net/ethernet/hisilicon/hns3/hnae3.h        |  1 +
- drivers/net/ethernet/hisilicon/hns3/hns3_debugfs.c | 33 ++++++++++++++++++++++
- .../ethernet/hisilicon/hns3/hns3pf/hclge_main.c    |  4 +--
- .../ethernet/hisilicon/hns3/hns3pf/hclge_main.h    |  1 +
- .../net/ethernet/hisilicon/hns3/hns3pf/hclge_mbx.c | 20 +++++++++++++
- .../ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c  | 18 ++++++++++++
- 7 files changed, 76 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/hisilicon/hns3/hns3_debugfs.c |  1 +
+ .../net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h |  1 +
+ .../ethernet/hisilicon/hns3/hns3pf/hclge_debugfs.c | 84 ++++++++++++++++++++++
+ .../net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.h  |  7 ++
+ 4 files changed, 93 insertions(+)
 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hclge_mbx.h b/drivers/net/ethernet/hisilicon/hns3/hclge_mbx.h
-index 4d9cf39..691d121 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hclge_mbx.h
-+++ b/drivers/net/ethernet/hisilicon/hns3/hclge_mbx.h
-@@ -39,6 +39,7 @@ enum HCLGE_MBX_OPCODE {
- 	HCLGE_MBX_KEEP_ALIVE,		/* (VF -> PF) send keep alive cmd */
- 	HCLGE_MBX_SET_ALIVE,		/* (VF -> PF) set alive state */
- 	HCLGE_MBX_SET_MTU,		/* (VF -> PF) set mtu */
-+	HCLGE_MBX_GET_QID_IN_PF,	/* (VF -> PF) get queue id in pf */
- };
- 
- /* below are per-VF mac-vlan subcodes */
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hnae3.h b/drivers/net/ethernet/hisilicon/hns3/hnae3.h
-index 294e725..845d43d 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hnae3.h
-+++ b/drivers/net/ethernet/hisilicon/hns3/hnae3.h
-@@ -460,6 +460,7 @@ struct hnae3_ae_ops {
- 	bool (*ae_dev_resetting)(struct hnae3_handle *handle);
- 	unsigned long (*ae_dev_reset_cnt)(struct hnae3_handle *handle);
- 	int (*set_gro_en)(struct hnae3_handle *handle, int enable);
-+	u16 (*get_global_queue_id)(struct hnae3_handle *handle, u16 queue_id);
- };
- 
- struct hnae3_dcb_ops {
 diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_debugfs.c b/drivers/net/ethernet/hisilicon/hns3/hns3_debugfs.c
-index be11e3d..fe5ec68 100644
+index fe5ec68..0872ca5 100644
 --- a/drivers/net/ethernet/hisilicon/hns3/hns3_debugfs.c
 +++ b/drivers/net/ethernet/hisilicon/hns3/hns3_debugfs.c
-@@ -125,6 +125,36 @@ static int hns3_dbg_queue_info(struct hnae3_handle *h, char *cmd_buf)
- 	return 0;
- }
- 
-+static int hns3_dbg_queue_map(struct hnae3_handle *h)
-+{
-+	struct hns3_nic_priv *priv = h->priv;
-+	struct hns3_nic_ring_data *ring_data;
-+	int i;
-+
-+	if (!h->ae_algo->ops->get_global_queue_id)
-+		return -EOPNOTSUPP;
-+
-+	dev_info(&h->pdev->dev, "map info for queue id and vector id\n");
-+	dev_info(&h->pdev->dev,
-+		 "local queue id | global queue id | vector id\n");
-+	for (i = 0; i < h->kinfo.num_tqps; i++) {
-+		u16 global_qid;
-+
-+		global_qid = h->ae_algo->ops->get_global_queue_id(h, i);
-+		ring_data = &priv->ring_data[i];
-+		if (!ring_data || !ring_data->ring ||
-+		    !ring_data->ring->tqp_vector)
-+			continue;
-+
-+		dev_info(&h->pdev->dev,
-+			 "      %4d            %4d            %4d\n",
-+			 i, global_qid,
-+			 ring_data->ring->tqp_vector->vector_irq);
-+	}
-+
-+	return 0;
-+}
-+
- static int hns3_dbg_bd_info(struct hnae3_handle *h, char *cmd_buf)
- {
- 	struct hns3_nic_priv *priv = h->priv;
-@@ -207,6 +237,7 @@ static void hns3_dbg_help(struct hnae3_handle *h)
- 
- 	dev_info(&h->pdev->dev, "available commands\n");
- 	dev_info(&h->pdev->dev, "queue info [number]\n");
-+	dev_info(&h->pdev->dev, "queue map\n");
+@@ -241,6 +241,7 @@ static void hns3_dbg_help(struct hnae3_handle *h)
  	dev_info(&h->pdev->dev, "bd info [q_num] <bd index>\n");
  	dev_info(&h->pdev->dev, "dump fd tcam\n");
  	dev_info(&h->pdev->dev, "dump tc\n");
-@@ -303,6 +334,8 @@ static ssize_t hns3_dbg_cmd_write(struct file *filp, const char __user *buffer,
- 		hns3_dbg_help(handle);
- 	else if (strncmp(cmd_buf, "queue info", 10) == 0)
- 		ret = hns3_dbg_queue_info(handle, cmd_buf);
-+	else if (strncmp(cmd_buf, "queue map", 9) == 0)
-+		ret = hns3_dbg_queue_map(handle);
- 	else if (strncmp(cmd_buf, "bd info", 7) == 0)
- 		ret = hns3_dbg_bd_info(handle, cmd_buf);
- 	else if (handle->ae_algo->ops->dbg_run_cmd)
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-index 2238020..3fe08cf 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-@@ -6602,8 +6602,7 @@ static int hclge_get_reset_status(struct hclge_dev *hdev, u16 queue_id)
- 	return hnae3_get_bit(req->ready_to_reset, HCLGE_TQP_RESET_B);
++	dev_info(&h->pdev->dev, "dump tm map [q_num]\n");
+ 	dev_info(&h->pdev->dev, "dump tm\n");
+ 	dev_info(&h->pdev->dev, "dump qos pause cfg\n");
+ 	dev_info(&h->pdev->dev, "dump qos pri map\n");
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h
+index dc8b7c2..71c1678 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h
+@@ -165,6 +165,7 @@ enum hclge_opcode_type {
+ 	HCLGE_OPC_CFG_TX_QUEUE		= 0x0B01,
+ 	HCLGE_OPC_QUERY_TX_POINTER	= 0x0B02,
+ 	HCLGE_OPC_QUERY_TX_STATUS	= 0x0B03,
++	HCLGE_OPC_TQP_TX_QUEUE_TC	= 0x0B04,
+ 	HCLGE_OPC_CFG_RX_QUEUE		= 0x0B11,
+ 	HCLGE_OPC_QUERY_RX_POINTER	= 0x0B12,
+ 	HCLGE_OPC_QUERY_RX_STATUS	= 0x0B13,
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_debugfs.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_debugfs.c
+index d1d693b..dda5f00 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_debugfs.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_debugfs.c
+@@ -537,6 +537,88 @@ static void hclge_dbg_dump_tm(struct hclge_dev *hdev)
+ 		cmd, ret);
  }
  
--static u16 hclge_covert_handle_qid_global(struct hnae3_handle *handle,
--					  u16 queue_id)
-+u16 hclge_covert_handle_qid_global(struct hnae3_handle *handle, u16 queue_id)
- {
- 	struct hnae3_queue *queue;
- 	struct hclge_tqp *tqp;
-@@ -7975,6 +7974,7 @@ static const struct hnae3_ae_ops hclge_ops = {
- 	.ae_dev_resetting = hclge_ae_dev_resetting,
- 	.ae_dev_reset_cnt = hclge_ae_dev_reset_cnt,
- 	.set_gro_en = hclge_gro_en,
-+	.get_global_queue_id = hclge_covert_handle_qid_global,
- };
- 
- static struct hnae3_ae_algo ae_algo = {
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h
-index 106fce1..9571e22 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h
-@@ -874,4 +874,5 @@ int hclge_vport_start(struct hclge_vport *vport);
- void hclge_vport_stop(struct hclge_vport *vport);
- int hclge_set_vport_mtu(struct hclge_vport *vport, int new_mtu);
- int hclge_dbg_run_cmd(struct hnae3_handle *handle, char *cmd_buf);
-+u16 hclge_covert_handle_qid_global(struct hnae3_handle *handle, u16 queue_id);
- #endif
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_mbx.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_mbx.c
-index e16a730..a1de451 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_mbx.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_mbx.c
-@@ -413,6 +413,19 @@ static int hclge_set_vf_mtu(struct hclge_vport *vport,
- 	return hclge_gen_resp_to_vf(vport, mbx_req, ret, NULL, 0);
- }
- 
-+static int hclge_get_queue_id_in_pf(struct hclge_vport *vport,
-+				    struct hclge_mbx_vf_to_pf_cmd *mbx_req)
++static void hclge_dbg_dump_tm_map(struct hclge_dev *hdev, char *cmd_buf)
 +{
-+	u16 queue_id, qid_in_pf;
-+	u8 resp_data[2];
++	struct hclge_bp_to_qs_map_cmd *bp_to_qs_map_cmd;
++	struct hclge_nq_to_qs_link_cmd *nq_to_qs_map;
++	struct hclge_qs_to_pri_link_cmd *map;
++	struct hclge_tqp_tx_queue_tc_cmd *tc;
++	enum hclge_opcode_type cmd;
++	struct hclge_desc desc;
++	int queue_id, group_id;
++	u32 qset_maping[32];
++	int tc_id, qset_id;
++	int pri_id, ret;
++	u32 i;
 +
-+	memcpy(&queue_id, &mbx_req->msg[2], sizeof(queue_id));
-+	qid_in_pf = hclge_covert_handle_qid_global(&vport->nic, queue_id);
-+	memcpy(resp_data, &qid_in_pf, sizeof(qid_in_pf));
++	ret = kstrtouint(&cmd_buf[12], 10, &queue_id);
++	queue_id = (ret != 0) ? 0 : queue_id;
 +
-+	return hclge_gen_resp_to_vf(vport, mbx_req, 0, resp_data, 2);
++	cmd = HCLGE_OPC_TM_NQ_TO_QS_LINK;
++	nq_to_qs_map = (struct hclge_nq_to_qs_link_cmd *)desc.data;
++	hclge_cmd_setup_basic_desc(&desc, cmd, true);
++	nq_to_qs_map->nq_id = cpu_to_le16(queue_id);
++	ret = hclge_cmd_send(&hdev->hw, &desc, 1);
++	if (ret)
++		goto err_tm_map_cmd_send;
++	qset_id = nq_to_qs_map->qset_id & 0x3FF;
++
++	cmd = HCLGE_OPC_TM_QS_TO_PRI_LINK;
++	map = (struct hclge_qs_to_pri_link_cmd *)desc.data;
++	hclge_cmd_setup_basic_desc(&desc, cmd, true);
++	map->qs_id = cpu_to_le16(qset_id);
++	ret = hclge_cmd_send(&hdev->hw, &desc, 1);
++	if (ret)
++		goto err_tm_map_cmd_send;
++	pri_id = map->priority;
++
++	cmd = HCLGE_OPC_TQP_TX_QUEUE_TC;
++	tc = (struct hclge_tqp_tx_queue_tc_cmd *)desc.data;
++	hclge_cmd_setup_basic_desc(&desc, cmd, true);
++	tc->queue_id = cpu_to_le16(queue_id);
++	ret = hclge_cmd_send(&hdev->hw, &desc, 1);
++	if (ret)
++		goto err_tm_map_cmd_send;
++	tc_id = tc->tc_id & 0x7;
++
++	dev_info(&hdev->pdev->dev, "queue_id | qset_id | pri_id | tc_id\n");
++	dev_info(&hdev->pdev->dev, "%04d     | %04d    | %02d     | %02d\n",
++		 queue_id, qset_id, pri_id, tc_id);
++
++	cmd = HCLGE_OPC_TM_BP_TO_QSET_MAPPING;
++	bp_to_qs_map_cmd = (struct hclge_bp_to_qs_map_cmd *)desc.data;
++	for (group_id = 0; group_id < 32; group_id++) {
++		hclge_cmd_setup_basic_desc(&desc, cmd, true);
++		bp_to_qs_map_cmd->tc_id = tc_id;
++		bp_to_qs_map_cmd->qs_group_id = group_id;
++		ret = hclge_cmd_send(&hdev->hw, &desc, 1);
++		if (ret)
++			goto err_tm_map_cmd_send;
++
++		qset_maping[group_id] = bp_to_qs_map_cmd->qs_bit_map;
++	}
++
++	dev_info(&hdev->pdev->dev, "index | tm bp qset maping:\n");
++
++	i = 0;
++	for (group_id = 0; group_id < 4; group_id++) {
++		dev_info(&hdev->pdev->dev,
++			 "%04d  | %08x:%08x:%08x:%08x:%08x:%08x:%08x:%08x\n",
++			 group_id * 256, qset_maping[(u32)(i + 7)],
++			 qset_maping[(u32)(i + 6)], qset_maping[(u32)(i + 5)],
++			 qset_maping[(u32)(i + 4)], qset_maping[(u32)(i + 3)],
++			 qset_maping[(u32)(i + 2)], qset_maping[(u32)(i + 1)],
++			 qset_maping[i]);
++		i += 8;
++	}
++
++	return;
++
++err_tm_map_cmd_send:
++	dev_err(&hdev->pdev->dev, "dump tqp map fail(0x%x), status is %d\n",
++		cmd, ret);
 +}
 +
- static bool hclge_cmd_crq_empty(struct hclge_hw *hw)
+ static void hclge_dbg_dump_qos_pause_cfg(struct hclge_dev *hdev)
  {
- 	u32 tail = hclge_read_dev(hw, HCLGE_NIC_CRQ_TAIL_REG);
-@@ -533,6 +546,13 @@ void hclge_mbx_handler(struct hclge_dev *hdev)
- 				dev_err(&hdev->pdev->dev,
- 					"VF fail(%d) to set mtu\n", ret);
- 			break;
-+		case HCLGE_MBX_GET_QID_IN_PF:
-+			ret = hclge_get_queue_id_in_pf(vport, req);
-+			if (ret)
-+				dev_err(&hdev->pdev->dev,
-+					"PF failed(%d) to get qid for VF\n",
-+					ret);
-+			break;
- 		default:
- 			dev_err(&hdev->pdev->dev,
- 				"un-supported mailbox message, code = %d\n",
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
-index 417e078..75327dc 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
-@@ -256,6 +256,23 @@ static int hclgevf_get_queue_info(struct hclgevf_dev *hdev)
- 	return 0;
- }
- 
-+static u16 hclgevf_get_qid_global(struct hnae3_handle *handle, u16 queue_id)
-+{
-+	struct hclgevf_dev *hdev = hclgevf_ae_get_hdev(handle);
-+	u8 msg_data[2], resp_data[2];
-+	u16 qid_in_pf = 0;
-+	int ret;
-+
-+	memcpy(&msg_data[0], &queue_id, sizeof(queue_id));
-+
-+	ret = hclgevf_send_mbx_msg(hdev, HCLGE_MBX_GET_QID_IN_PF, 0, msg_data,
-+				   2, true, resp_data, 2);
-+	if (!ret)
-+		qid_in_pf = *(u16 *)resp_data;
-+
-+	return qid_in_pf;
-+}
-+
- static int hclgevf_alloc_tqps(struct hclgevf_dev *hdev)
- {
- 	struct hclgevf_tqp *tqp;
-@@ -2642,6 +2659,7 @@ static const struct hnae3_ae_ops hclgevf_ops = {
- 	.ae_dev_reset_cnt = hclgevf_ae_dev_reset_cnt,
- 	.set_gro_en = hclgevf_gro_en,
- 	.set_mtu = hclgevf_set_mtu,
-+	.get_global_queue_id = hclgevf_get_qid_global,
+ 	struct hclge_cfg_pause_param_cmd *pause_param;
+@@ -828,6 +910,8 @@ int hclge_dbg_run_cmd(struct hnae3_handle *handle, char *cmd_buf)
+ 		hclge_dbg_fd_tcam(hdev);
+ 	} else if (strncmp(cmd_buf, "dump tc", 7) == 0) {
+ 		hclge_dbg_dump_tc(hdev);
++	} else if (strncmp(cmd_buf, "dump tm map", 11) == 0) {
++		hclge_dbg_dump_tm_map(hdev, cmd_buf);
+ 	} else if (strncmp(cmd_buf, "dump tm", 7) == 0) {
+ 		hclge_dbg_dump_tm(hdev);
+ 	} else if (strncmp(cmd_buf, "dump qos pause cfg", 18) == 0) {
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.h b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.h
+index 9c6192c..b6496a4 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.h
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.h
+@@ -40,6 +40,13 @@ struct hclge_nq_to_qs_link_cmd {
+ 	__le16 qset_id;
  };
  
- static struct hnae3_ae_algo ae_algovf = {
++struct hclge_tqp_tx_queue_tc_cmd {
++	__le16 queue_id;
++	__le16 rsvd;
++	u8 tc_id;
++	u8 rev[3];
++};
++
+ struct hclge_pg_weight_cmd {
+ 	u8 pg_id;
+ 	u8 dwrr;
 -- 
 2.7.4
 
