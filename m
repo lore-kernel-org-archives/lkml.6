@@ -2,181 +2,111 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E17DC6783B
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 22:41:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9453FC6783B
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 22:42:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0119C20672
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 22:41:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0119C20672
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 583A620672
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 22:42:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544568168;
+	bh=W6RSb1WGGAa/lFOMjAsKChAv1Ly0uGWRltzbgtWIrXA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=TP1LpNWSoNyuKu/Nsu2ouf+HNaqThmRlK2Po/HG/hJXcEzK84dLjNk054Bgga/FQU
+	 aBzVfE4vFMgGoxa3ZEGNYMFk95hvdkwo8x/eyJQfoxrBQtXXG1yNzAJF4x8xharDZj
+	 n9moKO2gVtlcXgXFUiCcXMjjjBln+rPgl2svkqJw=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 583A620672
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726270AbeLKWlT (ORCPT
+        id S1726272AbeLKWmr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 17:41:19 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:35192 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726225AbeLKWlT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 17:41:19 -0500
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id A6EFA307DAA4;
-        Tue, 11 Dec 2018 22:41:18 +0000 (UTC)
-Received: from madcap2.tricolour.ca (ovpn-112-24.phx2.redhat.com [10.3.112.24])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 4CBA15D736;
-        Tue, 11 Dec 2018 22:41:10 +0000 (UTC)
-Date:   Tue, 11 Dec 2018 17:41:07 -0500
-From:   Richard Guy Briggs <rgb@redhat.com>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     linux-kernel@vger.kernel.org, linux-audit@redhat.com,
-        Eric Paris <eparis@redhat.com>, viro@zeniv.linux.org.uk,
-        sgrubb@redhat.com
-Subject: Re: [PATCH ghak59 V3 0/4] audit: config_change normalizations and
- event record gathering
-Message-ID: <20181211224107.vdeksnc5bd5bb7mb@madcap2.tricolour.ca>
-References: <cover.1544477629.git.rgb@redhat.com>
- <CAHC9VhRqMt2k+pL7YF0MaZQfXZzttyHAXBJhHH56Mvswii4EKg@mail.gmail.com>
+        Tue, 11 Dec 2018 17:42:47 -0500
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:45465 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726201AbeLKWmo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 17:42:44 -0500
+Received: by mail-ot1-f65.google.com with SMTP id 32so15719837ota.12;
+        Tue, 11 Dec 2018 14:42:43 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=7Bt+DwbFZ+TeQMvGL0PtpTseNkOQeR/h9ziJF2avlrQ=;
+        b=Iq3hUl7D0GJpHLcbIdGHPKq7lFoxX5jksJirQX6JwZGXtRsHQA+kgJkPEr28LBS9L0
+         HmRRja2vH27R+ORx4g53eumZ0i/7au7PuUbwJ0ZbUMm38M1aJGCREny57Sc6/c2k27bj
+         9dMk3BpGtiCb9kwsBI4RPNkOAnGI4GcwqE3HxLUjLrQlSVCy/Te/WKycBOMcBU8bBJv9
+         5Kj/V/nexHzP8S0nmzEs03hwsSQAkitx6HMKX3XhzVRuAH4Kv0K1L9XFTSUZZ/NSZlrf
+         RibSiOM4RCYhQfd//sliDxfkAZU0GxhwU3EqHPf1u2ml1d8RO9PSpa6VCQVsvciAakRI
+         kGJQ==
+X-Gm-Message-State: AA+aEWZjUjFfbOfBkd2TbgljYhX+UipwlupsBntjUNhnK06Qx9hi8Ypq
+        7gWrUWATufLgVscRqqamHQ==
+X-Google-Smtp-Source: AFSGD/WZ2a+JaQ2eO8BVMKHFG6CiZRmNJl3GIq3eZGZtOhCOffHixkpyfkVz8y7BHR906k+RLe9JFA==
+X-Received: by 2002:a9d:69d7:: with SMTP id v23mr13224444oto.96.1544568163338;
+        Tue, 11 Dec 2018 14:42:43 -0800 (PST)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id g4sm8332135otp.53.2018.12.11.14.42.42
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 11 Dec 2018 14:42:42 -0800 (PST)
+Date:   Tue, 11 Dec 2018 16:42:42 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     "David R. Piegdon" <lkml@p23q.org>
+Cc:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Chunfeng Yun <chunfeng.yun@mediatek.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Johan Hovold <johan@kernel.org>, Kay Sievers <kay@vrfy.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Mathias Nyman <mathias.nyman@linux.intel.com>,
+        Roger Quadros <rogerq@ti.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-usb@vger.kernel.org, systemd-devel@lists.freedesktop.org
+Subject: Re: [RFC PATCH 0/2] USB: DTS: allow suggesting busnumber for
+ platform USB bus via DTS alias
+Message-ID: <20181211224242.GA21950@bogus>
+References: <20181127165705.GA13460@lagavulin.indurad.x>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHC9VhRqMt2k+pL7YF0MaZQfXZzttyHAXBJhHH56Mvswii4EKg@mail.gmail.com>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Tue, 11 Dec 2018 22:41:18 +0000 (UTC)
+In-Reply-To: <20181127165705.GA13460@lagavulin.indurad.x>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-12-11 17:31, Paul Moore wrote:
-> On Mon, Dec 10, 2018 at 5:18 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> > Make a number of changes to normalize CONFIG_CHANGE records by adding
-> > missing op= fields, providing more information in existing op fields
-> > (optional last patch) and connecting all records to existing audit
-> > events.  The user record needs special-casing since its content isn't
-> > directly related to the call that logs it.
-> >
-> > Since tree purge records are processed after the EOE record is produced,
-> > the order of operation of the EOE record and the purge will have to be
-> > reversed so that the purge records can be included in the event.
-> >
-> > The last patch is included for completeness understanding it may be more
-> > information than necessary.
-> >
-> > For reference, here are the calling methods and function tree for all
-> > CONFIG_CHANGE events with fields:
-> > - audit_log_config_change()
-> >         - add "op=set" to fields: "[op] <param-name> old auid ses subj res"
-> >         - AUDIT_SET:AUDIT_STATUS_PID
-> >         - AUDIT_SET:AUDIT_STATUS_LOST
-> >         - audit_do_config_change()
-> >                 - AUDIT_SET:AUDIT_STATUS_FAILURE
-> >                 - AUDIT_SET:AUDIT_STATUS_ENABLED
-> >                 - AUDIT_SET:AUDIT_STATUS_RATE_LIMIT
-> >                 - AUDIT_SET:AUDIT_STATUS_BACKLOG_LIMIT
-> >                 - AUDIT_SET:AUDIT_STATUS_BACKLOG_WAIT_TIME
-> > - audit_log_rule_change()
-> >         - fields: "auid ses subj op key list res"
-> >         - AUDIT_ADD_RULE -F dir=...
-> >         - AUDIT_DEL_RULE -F dir=...
-> > - audit_log_common_recv_msg()
-> >         - fields: "pid uid auid ses subj ..."
-> >         - AUDIT_*USER* events (not CONFIG_CHANGE like all the rest)
-> >         - AUDIT_LOCKED add "op={add,remove}_rule" to "[op] audit_enabled res"
-> >         - AUDIT_TRIM "op=trim res"
-> >         - AUDIT_MAKE_EQUIV: "op=make_equiv old new res"
-> >         - AUDIT_TTY_SET: "op=tty_set old-enabled new-enabled old-log_passwd new-log_passwd res"
-> > - audit_mark_log_rule_change()
-> >         - add ":mark" to op in fields: "uid ses op=autoremove_rule[] path key list res"
-> >         - audit_autoremove_mark_rule()
-> >                 - audit_mark_handle_event()
-> >                         - audit_mark_fsnotify_ops.handle_event
-> > - audit_tree_log_remove_rule() called from kill_rules()
-> >         - add to op ":tree:%s" to fields: "op=remove_rule[] dir key list res"
-> >         - from trim_marked()
-> >                 - AUDIT_TRIM: audit_trim_trees() "trim"
-> >                 - audit_add_tree_rule() iterate_mounts err "add"
-> >                         - audit_add_rule()
-> >                                 - audit_rule_change()
-> >                                         - AUDIT_ADD_RULE -F dir=...
-> >                 - AUDIT_MAKE_EQUIV: audit_tag_tree() iterate_mounts err "equiv"
-> >         - from audit_kill_trees()
-> >                 - __audit_free() "free"
-> >                         - do_exit()
-> >                         - copy_process() err
-> >                 - __audit_syscall_exit() "exit"
-> >         - from evict_chunk() "evict"
-> >                 - audit_tree_freeing_mark()
-> >                         - audit_tree_ops.freeing_mark
-> > - audit_watch_log_rule_change()
-> >         add to op ":watch:%s" to fields "auid ses op={updated,remove}_rule[] path key list res"
-> >         - audit_update_watch() "updated_rules:watch:inval" : "updated_rules:watch:set"
-> >                 - audit_watch_handle_event() FS_CREATE|FS_MOVED_TO, FS_DELETE|FS_MOVED_FROM
-> >                         - audit_watch_fsnotify_ops.handle_event
-> >         - audit_remove_parent_watches() "remove_rule:watch:parent"
-> >                 - audit_watch_handle_event() FS_DELETE_SELF|FS_UNMOUNT|FS_MOVE_SELF
-> >                         - audit_watch_fsnotify_ops.handle_event
-> > - audit_seccomp_actions_logged()
-> >         - fields: "op actions old-actions res"
-> >
-> >
-> > See: https://github.com/linux-audit/audit-kernel/issues/50
-> > See: https://github.com/linux-audit/audit-kernel/issues/59
-> >
-> > Sources of AUDIT_CONFIG_CHANGE records and their current and proposed
-> > fields are listed here
-> >         https://github.com/linux-audit/audit-kernel/issues/59#issuecomment-445055154
-> >
-> > Changelog:
-> > v3:
-> > - un-clever %s_rule to not break up op values
-> > - create audit_log_user_recv_msg() and squash into record connection
-> > - squash kill_trees context handling with kill-trees before EOE
-> > - rebase on audit/next (v4.20-rc1) with 2a1fe215e730 ("audit: use current whenever possible")
-> > - remove parens in extended format
-> >
-> > v2:
-> > - re-order audit_log_exit() and audit_kill_trees()
-> > - drop EOE reordering patch
-> > - rebase on 4.18-rc1 (audit/next)
-> >
-> > Richard Guy Briggs (4):
-> >   audit: give a clue what CONFIG_CHANGE op was involved
-> >   audit: add syscall information to CONFIG_CHANGE records
-> >   audit: hand taken context to audit_kill_trees for syscall logging
-> >   audit: extend config_change mark/watch/tree rule changes
-> >
-> >  kernel/audit.c          | 33 +++++++++++++++++++++++----------
-> >  kernel/audit.h          |  4 ++--
-> >  kernel/audit_fsnotify.c |  4 ++--
-> >  kernel/audit_tree.c     | 28 +++++++++++++++-------------
-> >  kernel/audit_watch.c    |  8 +++++---
-> >  kernel/auditfilter.c    |  2 +-
-> >  kernel/auditsc.c        | 12 ++++++------
-> >  7 files changed, 54 insertions(+), 37 deletions(-)
+On Tue, Nov 27, 2018 at 04:57:05PM +0000, David R. Piegdon wrote:
+> Hi,
 > 
-> In order to make sure expectations are set appropriately, as we are at
-> -rc6 right now this is not something that would go into audit/next now
-> (assuming everything looks okay on review), it would go into
-> audit/next *after* the upcoming merge window.
+> on our embedded systems we rely on systemd's persistent netdev names.
+> Those currently do not work for USB netdevs that are connected to a
+> platform USB bus.
+> 
+> In https://github.com/systemd/systemd/pull/7273 a systemd patch was
+> suggested that would allow exactly this, but it was (rightfully) said
+> that numbering of theses busses is not guaranteed. Internally we used
+> the patch for a while now, but exactly that has happened with one of our
+> platforms across different kernel revisions.
+> 
+> The following kernel patches allow suggesting a USB busnumber for each
+> USB platform bus via a DTS alias, as can be done similarly for many
+> other devices.
+> In combination with above systemd patch, these changes allow use of
+> persistent netdev names also on platform USB busses.
 
-I agree it is a bit late for this.  I wasn't expecting it to go in this
-one.  I'm filling the queue since I'm blocked on other review for
-ghak81(5.5wks), ghak90(5.5wks), ghak100(3.5wks).  ghak90 missed another
-merge window.
+I don't think this is doing what was suggested in the link above. Though 
+I'm not familiar with what ACPI provides. Userspace would still be 
+relying on the Linux enumeration numbering. How would userspace tell if 
+that numbering is persistent or not other than looking at the DT itself 
+(which isn't a good solution either)?
 
-> paul moore
+I don't understand though why userspace needs anything more that the mac 
+address of a net device to provide a persistent name.
 
-- RGB
-
---
-Richard Guy Briggs <rgb@redhat.com>
-Sr. S/W Engineer, Kernel Security, Base Operating Systems
-Remote, Ottawa, Red Hat Canada
-IRC: rgb, SunRaycer
-Voice: +1.647.777.2635, Internal: (81) 32635
+Rob
