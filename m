@@ -7,49 +7,50 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 704B6C07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:59:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 939C1C07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:59:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 37D7A205C9
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:59:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4779C205C9
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:59:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544543969;
-	bh=IS/kF7hY9pHqT51+4aL3u3Vr7Y1qvb4C2iWsq5reQ4s=;
+	s=default; t=1544543983;
+	bh=7s6hxthP7WGKiavRqiXXz25e7t/Ms2UGm5H4V/xJbyE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=CSQ1D68kkum3Ol/EbH+6umbhXdAZJHSOUqD6OCQObD+uxNnBkoOJK7UKgyQ2m/KUx
-	 7rtWWUOTV5I6eM5WhC+S689YPagCZu1VWjmYuLgDnGrNoMURM8/veA0cfMT+hn8yPX
-	 rUzw4CZD3BmBm5BK9p1UOTTSBWhzUPGaj98zCVc8=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37D7A205C9
+	b=ozbFLHHX+XWSTNw0/SUvxC2ruK/LYp3nS6uWiyAoQBNIWY1uK9on9sexNA6hitW90
+	 5HnFeHYHHIcAAKWLnk+0yihfbs1HwXAWBv4zhemkRjyRxl/5s6AdaIDBPOlGR5wg7K
+	 pDu3Xn67yTNh6jE0CfUhbY4+D/8cwMpmQouR+Gww=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4779C205C9
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730796AbeLKP72 (ORCPT
+        id S1731171AbeLKP7m (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 10:59:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48564 "EHLO mail.kernel.org"
+        Tue, 11 Dec 2018 10:59:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48336 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731119AbeLKP66 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:58:58 -0500
+        id S1730134AbeLKP6s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 10:58:48 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BABFE208E7;
-        Tue, 11 Dec 2018 15:58:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A98BD20855;
+        Tue, 11 Dec 2018 15:58:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544543938;
-        bh=IS/kF7hY9pHqT51+4aL3u3Vr7Y1qvb4C2iWsq5reQ4s=;
+        s=default; t=1544543928;
+        bh=7s6hxthP7WGKiavRqiXXz25e7t/Ms2UGm5H4V/xJbyE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HNPXcE7aLgxlvR8/uemdnE3sMHY1mrBvuUSQR08EDgFQLXonlMYsNbNA6aHZDlIs+
-         /gfSeXJ5eUKWJVlgktv4JBbxQQ72+GdHpX8R09hWVxd1V/J2ArvKEWRKUaFQOOtK9j
-         VT5H8CflVAj2Ey34DNkzWqSrfP8cQ12z4nuzTKKA=
+        b=qgpUVRl7Lz8K4qJGz93jNSGp5Sz2RrnENrek8fdjXnhn+MFjvUJmZc+QliKBNG4km
+         tXgi+6DPA5xy2la/YMcdkmAapWtwQfysOIgdc3ZtLtSj1ZveGNcLSL3kYoknhGy8Md
+         XzIJCQodr9Vt/vFXvz/a48oV4wPqgQGEpBMn/bzM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Felix Fietkau <nbd@nbd.name>,
-        Johannes Berg <johannes.berg@intel.com>
-Subject: [PATCH 4.19 115/118] mac80211: ignore tx status for PS stations in ieee80211_tx_status_ext
-Date:   Tue, 11 Dec 2018 16:42:14 +0100
-Message-Id: <20181211151648.902892295@linuxfoundation.org>
+        stable@vger.kernel.org, Stakanov Schufter <stakanov@eclipso.eu>,
+        Takashi Iwai <tiwai@suse.de>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Subject: [PATCH 4.19 073/118] media: dvb-pll: fix tuner frequency ranges
+Date:   Tue, 11 Dec 2018 16:41:32 +0100
+Message-Id: <20181211151647.200163003@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181211151644.216668863@linuxfoundation.org>
 References: <20181211151644.216668863@linuxfoundation.org>
@@ -68,35 +69,302 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Felix Fietkau <nbd@nbd.name>
+From: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 
-commit a317e65face482371de30246b6494feb093ff7f9 upstream.
+commit 3d8e450f517cdb33da77827ec75929354753e9c0 upstream.
 
-Make it behave like regular ieee80211_tx_status calls, except for the lack of
-filtered frame processing.
-This fixes spurious low-ack triggered disconnections with powersave clients
-connected to an AP.
+Tuners should report frequencies in Hz. That works fine on most
+drivers, but, in the case of dvb-pll, some settings are for
+satellite tuners, while others are for terrestrial/cable ones.
 
-Fixes: f027c2aca0cf4 ("mac80211: add ieee80211_tx_status_noskb")
-Cc: stable@vger.kernel.org
-Signed-off-by: Felix Fietkau <nbd@nbd.name>
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+The code was trying to solve it at probing time, but that doesn't
+work, as, when _attach is called, the delivery system may be wrong.
+
+Fix it by ensuring that all frequencies are in Hz at the per-tuner
+max/min values.
+
+While here, add a debug message, as this would help to debug any
+issues there.
+
+It partially fixes the following bug:
+  https://bugzilla.opensuse.org/show_bug.cgi?id=1116374
+
+Fixes: a3f90c75b833 ("media: dvb: convert tuner_info frequencies to Hz")
+Reported-by: Stakanov Schufter <stakanov@eclipso.eu>
+Reported-by: Takashi Iwai <tiwai@suse.de>
+Cc: stable@vger.kernel.org # For 4.19
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/mac80211/status.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/media/dvb-frontends/dvb-pll.c |  103 +++++++++++++++-------------------
+ 1 file changed, 48 insertions(+), 55 deletions(-)
 
---- a/net/mac80211/status.c
-+++ b/net/mac80211/status.c
-@@ -964,6 +964,8 @@ void ieee80211_tx_status_ext(struct ieee
- 			/* Track when last TDLS packet was ACKed */
- 			if (test_sta_flag(sta, WLAN_STA_TDLS_PEER_AUTH))
- 				sta->status_stats.last_tdls_pkt_time = jiffies;
-+		} else if (test_sta_flag(sta, WLAN_STA_PS_STA)) {
-+			return;
- 		} else {
- 			ieee80211_lost_packet(sta, info);
- 		}
+--- a/drivers/media/dvb-frontends/dvb-pll.c
++++ b/drivers/media/dvb-frontends/dvb-pll.c
+@@ -80,8 +80,8 @@ struct dvb_pll_desc {
+ 
+ static const struct dvb_pll_desc dvb_pll_thomson_dtt7579 = {
+ 	.name  = "Thomson dtt7579",
+-	.min   = 177000000,
+-	.max   = 858000000,
++	.min   = 177 * MHz,
++	.max   = 858 * MHz,
+ 	.iffreq= 36166667,
+ 	.sleepdata = (u8[]){ 2, 0xb4, 0x03 },
+ 	.count = 4,
+@@ -102,8 +102,8 @@ static void thomson_dtt759x_bw(struct dv
+ 
+ static const struct dvb_pll_desc dvb_pll_thomson_dtt759x = {
+ 	.name  = "Thomson dtt759x",
+-	.min   = 177000000,
+-	.max   = 896000000,
++	.min   = 177 * MHz,
++	.max   = 896 * MHz,
+ 	.set   = thomson_dtt759x_bw,
+ 	.iffreq= 36166667,
+ 	.sleepdata = (u8[]){ 2, 0x84, 0x03 },
+@@ -126,8 +126,8 @@ static void thomson_dtt7520x_bw(struct d
+ 
+ static const struct dvb_pll_desc dvb_pll_thomson_dtt7520x = {
+ 	.name  = "Thomson dtt7520x",
+-	.min   = 185000000,
+-	.max   = 900000000,
++	.min   = 185 * MHz,
++	.max   = 900 * MHz,
+ 	.set   = thomson_dtt7520x_bw,
+ 	.iffreq = 36166667,
+ 	.count = 7,
+@@ -144,8 +144,8 @@ static const struct dvb_pll_desc dvb_pll
+ 
+ static const struct dvb_pll_desc dvb_pll_lg_z201 = {
+ 	.name  = "LG z201",
+-	.min   = 174000000,
+-	.max   = 862000000,
++	.min   = 174 * MHz,
++	.max   = 862 * MHz,
+ 	.iffreq= 36166667,
+ 	.sleepdata = (u8[]){ 2, 0xbc, 0x03 },
+ 	.count = 5,
+@@ -160,8 +160,8 @@ static const struct dvb_pll_desc dvb_pll
+ 
+ static const struct dvb_pll_desc dvb_pll_unknown_1 = {
+ 	.name  = "unknown 1", /* used by dntv live dvb-t */
+-	.min   = 174000000,
+-	.max   = 862000000,
++	.min   = 174 * MHz,
++	.max   = 862 * MHz,
+ 	.iffreq= 36166667,
+ 	.count = 9,
+ 	.entries = {
+@@ -182,8 +182,8 @@ static const struct dvb_pll_desc dvb_pll
+  */
+ static const struct dvb_pll_desc dvb_pll_tua6010xs = {
+ 	.name  = "Infineon TUA6010XS",
+-	.min   =  44250000,
+-	.max   = 858000000,
++	.min   = 44250 * kHz,
++	.max   = 858 * MHz,
+ 	.iffreq= 36125000,
+ 	.count = 3,
+ 	.entries = {
+@@ -196,8 +196,8 @@ static const struct dvb_pll_desc dvb_pll
+ /* Panasonic env57h1xd5 (some Philips PLL ?) */
+ static const struct dvb_pll_desc dvb_pll_env57h1xd5 = {
+ 	.name  = "Panasonic ENV57H1XD5",
+-	.min   =  44250000,
+-	.max   = 858000000,
++	.min   = 44250 * kHz,
++	.max   = 858 * MHz,
+ 	.iffreq= 36125000,
+ 	.count = 4,
+ 	.entries = {
+@@ -220,8 +220,8 @@ static void tda665x_bw(struct dvb_fronte
+ 
+ static const struct dvb_pll_desc dvb_pll_tda665x = {
+ 	.name  = "Philips TDA6650/TDA6651",
+-	.min   =  44250000,
+-	.max   = 858000000,
++	.min   = 44250 * kHz,
++	.max   = 858 * MHz,
+ 	.set   = tda665x_bw,
+ 	.iffreq= 36166667,
+ 	.initdata = (u8[]){ 4, 0x0b, 0xf5, 0x85, 0xab },
+@@ -254,8 +254,8 @@ static void tua6034_bw(struct dvb_fronte
+ 
+ static const struct dvb_pll_desc dvb_pll_tua6034 = {
+ 	.name  = "Infineon TUA6034",
+-	.min   =  44250000,
+-	.max   = 858000000,
++	.min   = 44250 * kHz,
++	.max   = 858 * MHz,
+ 	.iffreq= 36166667,
+ 	.count = 3,
+ 	.set   = tua6034_bw,
+@@ -278,8 +278,8 @@ static void tded4_bw(struct dvb_frontend
+ 
+ static const struct dvb_pll_desc dvb_pll_tded4 = {
+ 	.name = "ALPS TDED4",
+-	.min = 47000000,
+-	.max = 863000000,
++	.min =  47 * MHz,
++	.max = 863 * MHz,
+ 	.iffreq= 36166667,
+ 	.set   = tded4_bw,
+ 	.count = 4,
+@@ -296,8 +296,8 @@ static const struct dvb_pll_desc dvb_pll
+  */
+ static const struct dvb_pll_desc dvb_pll_tdhu2 = {
+ 	.name = "ALPS TDHU2",
+-	.min = 54000000,
+-	.max = 864000000,
++	.min =  54 * MHz,
++	.max = 864 * MHz,
+ 	.iffreq= 44000000,
+ 	.count = 4,
+ 	.entries = {
+@@ -313,8 +313,8 @@ static const struct dvb_pll_desc dvb_pll
+  */
+ static const struct dvb_pll_desc dvb_pll_samsung_tbmv = {
+ 	.name = "Samsung TBMV30111IN / TBMV30712IN1",
+-	.min = 54000000,
+-	.max = 860000000,
++	.min =  54 * MHz,
++	.max = 860 * MHz,
+ 	.iffreq= 44000000,
+ 	.count = 6,
+ 	.entries = {
+@@ -332,8 +332,8 @@ static const struct dvb_pll_desc dvb_pll
+  */
+ static const struct dvb_pll_desc dvb_pll_philips_sd1878_tda8261 = {
+ 	.name  = "Philips SD1878",
+-	.min   =  950000,
+-	.max   = 2150000,
++	.min   =  950 * MHz,
++	.max   = 2150 * MHz,
+ 	.iffreq= 249, /* zero-IF, offset 249 is to round up */
+ 	.count = 4,
+ 	.entries = {
+@@ -398,8 +398,8 @@ static void opera1_bw(struct dvb_fronten
+ 
+ static const struct dvb_pll_desc dvb_pll_opera1 = {
+ 	.name  = "Opera Tuner",
+-	.min   =  900000,
+-	.max   = 2250000,
++	.min   =  900 * MHz,
++	.max   = 2250 * MHz,
+ 	.initdata = (u8[]){ 4, 0x08, 0xe5, 0xe1, 0x00 },
+ 	.initdata2 = (u8[]){ 4, 0x08, 0xe5, 0xe5, 0x00 },
+ 	.iffreq= 0,
+@@ -445,8 +445,8 @@ static void samsung_dtos403ih102a_set(st
+ /* unknown pll used in Samsung DTOS403IH102A DVB-C tuner */
+ static const struct dvb_pll_desc dvb_pll_samsung_dtos403ih102a = {
+ 	.name   = "Samsung DTOS403IH102A",
+-	.min    =  44250000,
+-	.max    = 858000000,
++	.min    = 44250 * kHz,
++	.max    = 858 * MHz,
+ 	.iffreq =  36125000,
+ 	.count  = 8,
+ 	.set    = samsung_dtos403ih102a_set,
+@@ -465,8 +465,8 @@ static const struct dvb_pll_desc dvb_pll
+ /* Samsung TDTC9251DH0 DVB-T NIM, as used on AirStar 2 */
+ static const struct dvb_pll_desc dvb_pll_samsung_tdtc9251dh0 = {
+ 	.name	= "Samsung TDTC9251DH0",
+-	.min	=  48000000,
+-	.max	= 863000000,
++	.min	=  48 * MHz,
++	.max	= 863 * MHz,
+ 	.iffreq	=  36166667,
+ 	.count	= 3,
+ 	.entries = {
+@@ -479,8 +479,8 @@ static const struct dvb_pll_desc dvb_pll
+ /* Samsung TBDU18132 DVB-S NIM with TSA5059 PLL, used in SkyStar2 DVB-S 2.3 */
+ static const struct dvb_pll_desc dvb_pll_samsung_tbdu18132 = {
+ 	.name = "Samsung TBDU18132",
+-	.min	=  950000,
+-	.max	= 2150000, /* guesses */
++	.min	=  950 * MHz,
++	.max	= 2150 * MHz, /* guesses */
+ 	.iffreq = 0,
+ 	.count = 2,
+ 	.entries = {
+@@ -500,8 +500,8 @@ static const struct dvb_pll_desc dvb_pll
+ /* Samsung TBMU24112 DVB-S NIM with SL1935 zero-IF tuner */
+ static const struct dvb_pll_desc dvb_pll_samsung_tbmu24112 = {
+ 	.name = "Samsung TBMU24112",
+-	.min	=  950000,
+-	.max	= 2150000, /* guesses */
++	.min	=  950 * MHz,
++	.max	= 2150 * MHz, /* guesses */
+ 	.iffreq = 0,
+ 	.count = 2,
+ 	.entries = {
+@@ -521,8 +521,8 @@ static const struct dvb_pll_desc dvb_pll
+  * 822 - 862   1  *  0   0   1   0   0   0   0x88 */
+ static const struct dvb_pll_desc dvb_pll_alps_tdee4 = {
+ 	.name = "ALPS TDEE4",
+-	.min	=  47000000,
+-	.max	= 862000000,
++	.min	=  47 * MHz,
++	.max	= 862 * MHz,
+ 	.iffreq	=  36125000,
+ 	.count = 4,
+ 	.entries = {
+@@ -537,8 +537,8 @@ static const struct dvb_pll_desc dvb_pll
+ /* CP cur. 50uA, AGC takeover: 103dBuV, PORT3 on */
+ static const struct dvb_pll_desc dvb_pll_tua6034_friio = {
+ 	.name   = "Infineon TUA6034 ISDB-T (Friio)",
+-	.min    =  90000000,
+-	.max    = 770000000,
++	.min    =  90 * MHz,
++	.max    = 770 * MHz,
+ 	.iffreq =  57000000,
+ 	.initdata = (u8[]){ 4, 0x9a, 0x50, 0xb2, 0x08 },
+ 	.sleepdata = (u8[]){ 4, 0x9a, 0x70, 0xb3, 0x0b },
+@@ -553,8 +553,8 @@ static const struct dvb_pll_desc dvb_pll
+ /* Philips TDA6651 ISDB-T, used in Earthsoft PT1 */
+ static const struct dvb_pll_desc dvb_pll_tda665x_earth_pt1 = {
+ 	.name   = "Philips TDA6651 ISDB-T (EarthSoft PT1)",
+-	.min    =  90000000,
+-	.max    = 770000000,
++	.min    =  90 * MHz,
++	.max    = 770 * MHz,
+ 	.iffreq =  57000000,
+ 	.initdata = (u8[]){ 5, 0x0e, 0x7f, 0xc1, 0x80, 0x80 },
+ 	.count = 10,
+@@ -799,7 +799,6 @@ struct dvb_frontend *dvb_pll_attach(stru
+ 	struct dvb_pll_priv *priv = NULL;
+ 	int ret;
+ 	const struct dvb_pll_desc *desc;
+-	struct dtv_frontend_properties *c = &fe->dtv_property_cache;
+ 
+ 	b1 = kmalloc(1, GFP_KERNEL);
+ 	if (!b1)
+@@ -845,18 +844,12 @@ struct dvb_frontend *dvb_pll_attach(stru
+ 
+ 	strncpy(fe->ops.tuner_ops.info.name, desc->name,
+ 		sizeof(fe->ops.tuner_ops.info.name));
+-	switch (c->delivery_system) {
+-	case SYS_DVBS:
+-	case SYS_DVBS2:
+-	case SYS_TURBO:
+-	case SYS_ISDBS:
+-		fe->ops.tuner_ops.info.frequency_min_hz = desc->min * kHz;
+-		fe->ops.tuner_ops.info.frequency_max_hz = desc->max * kHz;
+-		break;
+-	default:
+-		fe->ops.tuner_ops.info.frequency_min_hz = desc->min;
+-		fe->ops.tuner_ops.info.frequency_max_hz = desc->max;
+-	}
++
++	fe->ops.tuner_ops.info.frequency_min_hz = desc->min;
++	fe->ops.tuner_ops.info.frequency_max_hz = desc->max;
++
++	dprintk("%s tuner, frequency range: %u...%u\n",
++		desc->name, desc->min, desc->max);
+ 
+ 	if (!desc->initdata)
+ 		fe->ops.tuner_ops.init = NULL;
 
 
