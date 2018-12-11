@@ -7,50 +7,50 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE6B9C07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:13:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 670FFC5CFFE
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:13:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C8082084E
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:13:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2C5332084E
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:13:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544544799;
-	bh=gdYCI4xs1aYeKaV5MNDfGiAciPXZeNxZ/GdiO00UOxU=;
+	s=default; t=1544544803;
+	bh=ta7dECxVDOGHNlWNkEVXWZqtnvoOwP0Fy4qLg6ZkNBw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=KHsXLtgZaoFwdYc5LziuSZeagoDhGWvVF2NRSSaDAaBawgJv2VMxvHq8BcHJTFKqa
-	 izWfVu/VPMGxrUuFG8/AfkB3+CP1uI/fYW+/z5oJCDZxLJthTml6BZW3oeWe5TC3lO
-	 80kz9q2YPJ3ANUS6kkbzk92gwVK6XqkP13saC+qE=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C8082084E
+	b=K0ZUtvVXf9DebHjAQOAGXLV47sEwJ5u2qNRKE5B3KhZuldy0CDns4T8M/g9+kxUjx
+	 hLn8+5Ncuy4dIAcUnrt1P2JECNgEtDjEuD8NeJnScWFx4sQ4/UYAew4dbd25bWWWzh
+	 YrIM7USaRpXiXav9nFZlTE4foXRMXYO7GFUVTkDg=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C5332084E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729155AbeLKPtz (ORCPT
+        id S1729142AbeLKPty (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 10:49:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38188 "EHLO mail.kernel.org"
+        Tue, 11 Dec 2018 10:49:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38234 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729124AbeLKPtt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:49:49 -0500
+        id S1728227AbeLKPtv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 10:49:51 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D2FB42146D;
-        Tue, 11 Dec 2018 15:49:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 687692146D;
+        Tue, 11 Dec 2018 15:49:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544543388;
-        bh=gdYCI4xs1aYeKaV5MNDfGiAciPXZeNxZ/GdiO00UOxU=;
+        s=default; t=1544543390;
+        bh=ta7dECxVDOGHNlWNkEVXWZqtnvoOwP0Fy4qLg6ZkNBw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tYIo9ekdu0emc3dZUMtvfkBBhIL77gwYqW6SiEaKWezB+3VlI8yTQ+Twxev4UTLz9
-         B7uEDue6jas6NFuC9/JTp0LgAoyZfWr7lC3yGmdgK47IO8LoaPXdw5UlQNeWIdSZvn
-         Z/k4kYz3NyHp6BfLR8HRaXkXxkyCHbKvL6QtjhtY=
+        b=sdhnzx/FLjTc4EgVhRBhTMXUq9uiT3izKJcIiBu7LqwqOKF9qQsbRNqDnIVrzjFfJ
+         O3LvdE+fjWbVB71xrSr40dk10zG+zklEGpcpPPszqufDrH1jQfQNLcSYYIK3J/KwhX
+         4+miuoQ7mHupF7l31i+GWmRmEZ96yxQsOxhzw4T4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hui Peng <benquike@gmail.com>,
-        Mathias Payer <mathias.payer@nebelwelt.net>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.9 24/51] ALSA: usb-audio: Fix UAF decrement if card has no live interfaces in card.c
-Date:   Tue, 11 Dec 2018 16:41:32 +0100
-Message-Id: <20181211151615.456699292@linuxfoundation.org>
+        stable@vger.kernel.org, Bin Liu <b-liu@ti.com>,
+        Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        Vinod Koul <vkoul@kernel.org>
+Subject: [PATCH 4.9 33/51] dmaengine: cppi41: delete channel from pending list when stop channel
+Date:   Tue, 11 Dec 2018 16:41:41 +0100
+Message-Id: <20181211151616.833435888@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181211151612.328911565@linuxfoundation.org>
 References: <20181211151612.328911565@linuxfoundation.org>
@@ -69,49 +69,62 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Hui Peng <benquike@gmail.com>
+From: Bin Liu <b-liu@ti.com>
 
-commit 5f8cf712582617d523120df67d392059eaf2fc4b upstream.
+commit 59861547ec9a9736e7882f6fb0c096a720ff811a upstream.
 
-If a USB sound card reports 0 interfaces, an error condition is triggered
-and the function usb_audio_probe errors out. In the error path, there was a
-use-after-free vulnerability where the memory object of the card was first
-freed, followed by a decrement of the number of active chips. Moving the
-decrement above the atomic_dec fixes the UAF.
+The driver defines three states for a cppi channel.
+- idle: .chan_busy == 0 && not in .pending list
+- pending: .chan_busy == 0 && in .pending list
+- busy: .chan_busy == 1 && not in .pending list
 
-[ The original problem was introduced in 3.1 kernel, while it was
-  developed in a different form.  The Fixes tag below indicates the
-  original commit but it doesn't mean that the patch is applicable
-  cleanly. -- tiwai ]
+There are cases in which the cppi channel could be in the pending state
+when cppi41_dma_issue_pending() is called after cppi41_runtime_suspend()
+is called.
 
-Fixes: 362e4e49abe5 ("ALSA: usb-audio - clear chip->probing on error exit")
-Reported-by: Hui Peng <benquike@gmail.com>
-Reported-by: Mathias Payer <mathias.payer@nebelwelt.net>
-Signed-off-by: Hui Peng <benquike@gmail.com>
-Signed-off-by: Mathias Payer <mathias.payer@nebelwelt.net>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+cppi41_stop_chan() has a bug for these cases to set channels to idle state.
+It only checks the .chan_busy flag, but not the .pending list, then later
+when cppi41_runtime_resume() is called the channels in .pending list will
+be transitioned to busy state.
+
+Removing channels from the .pending list solves the problem.
+
+Fixes: 975faaeb9985 ("dma: cppi41: start tear down only if channel is busy")
+Cc: stable@vger.kernel.org # v3.15+
+Signed-off-by: Bin Liu <b-liu@ti.com>
+Reviewed-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+Signed-off-by: Vinod Koul <vkoul@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/usb/card.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/dma/cppi41.c |   16 +++++++++++++++-
+ 1 file changed, 15 insertions(+), 1 deletion(-)
 
---- a/sound/usb/card.c
-+++ b/sound/usb/card.c
-@@ -644,9 +644,12 @@ static int usb_audio_probe(struct usb_in
+--- a/drivers/dma/cppi41.c
++++ b/drivers/dma/cppi41.c
+@@ -717,8 +717,22 @@ static int cppi41_stop_chan(struct dma_c
  
-  __error:
- 	if (chip) {
-+		/* chip->active is inside the chip->card object,
-+		 * decrement before memory is possibly returned.
+ 	desc_phys = lower_32_bits(c->desc_phys);
+ 	desc_num = (desc_phys - cdd->descs_phys) / sizeof(struct cppi41_desc);
+-	if (!cdd->chan_busy[desc_num])
++	if (!cdd->chan_busy[desc_num]) {
++		struct cppi41_channel *cc, *_ct;
++
++		/*
++		 * channels might still be in the pendling list if
++		 * cppi41_dma_issue_pending() is called after
++		 * cppi41_runtime_suspend() is called
 +		 */
-+		atomic_dec(&chip->active);
- 		if (!chip->num_interfaces)
- 			snd_card_free(chip->card);
--		atomic_dec(&chip->active);
- 	}
- 	mutex_unlock(&register_mutex);
- 	return err;
++		list_for_each_entry_safe(cc, _ct, &cdd->pending, node) {
++			if (cc != c)
++				continue;
++			list_del(&cc->node);
++			break;
++		}
+ 		return 0;
++	}
+ 
+ 	ret = cppi41_tear_down_chan(c);
+ 	if (ret)
 
 
