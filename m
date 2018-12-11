@@ -2,172 +2,100 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67A11C6783B
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 22:15:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0594FC67839
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 22:15:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 29BC52084E
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 22:15:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 29BC52084E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
+	by mail.kernel.org (Postfix) with ESMTP id BE5C62084E
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 22:15:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE5C62084E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mirbsd.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726604AbeLKWPm (ORCPT
+        id S1726612AbeLKWPx convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 17:15:42 -0500
-Received: from pegase1.c-s.fr ([93.17.236.30]:51476 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726581AbeLKWPi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 17:15:38 -0500
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 43DvQc2388z9v0sP;
-        Tue, 11 Dec 2018 23:15:36 +0100 (CET)
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id i4ZDwfpi6__X; Tue, 11 Dec 2018 23:15:36 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 43DvQc1MzNz9v0sN;
-        Tue, 11 Dec 2018 23:15:36 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 67CBF8B818;
-        Tue, 11 Dec 2018 23:15:36 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id E5ORCR9wb88g; Tue, 11 Dec 2018 23:15:36 +0100 (CET)
-Received: from localhost.localdomain (unknown [192.168.4.90])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id E65B08B812;
-        Tue, 11 Dec 2018 23:15:35 +0100 (CET)
-Subject: Re: [RFC PATCH v2 11/11] powerpc/book3s32: Implement Kernel Userspace
- Access Protection
-To:     Russell Currey <ruscur@russell.cc>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-References: <76d777b36e54e7b8d4c196405decc712fc5eaf45.1543356926.git.christophe.leroy@c-s.fr>
- <98e37def51328f58d8c2ceb60edd4b3da7b6f2ef.1543356926.git.christophe.leroy@c-s.fr>
- <a6dbd5284d8700d591614481fda242a25ca5a3b5.camel@russell.cc>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Message-ID: <fa21d262-1d44-6303-94a5-37fe2f060132@c-s.fr>
-Date:   Tue, 11 Dec 2018 20:46:24 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Tue, 11 Dec 2018 17:15:53 -0500
+Received: from static-87-79-237-121.netcologne.de ([87.79.237.121]:45957 "EHLO
+        herc.mirbsd.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726252AbeLKWOL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 17:14:11 -0500
+X-Greylist: delayed 627 seconds by postgrey-1.27 at vger.kernel.org; Tue, 11 Dec 2018 17:14:06 EST
+Received: from herc.mirbsd.org (tg@herc.mirbsd.org [192.168.0.82])
+        by herc.mirbsd.org (8.14.9/8.14.5) with ESMTP id wBBLxm1T009080
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+        Tue, 11 Dec 2018 22:00:06 GMT
+Date:   Tue, 11 Dec 2018 21:59:48 +0000 (UTC)
+From:   Thorsten Glaser <tg@mirbsd.de>
+X-X-Sender: tg@herc.mirbsd.org
+To:     John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+cc:     Andy Lutomirski <luto@kernel.org>, X86 ML <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Florian Weimer <fweimer@redhat.com>,
+        Mike Frysinger <vapier@gentoo.org>,
+        "H. J. Lu" <hjl.tools@gmail.com>, Rich Felker <dalias@libc.org>,
+        x32@buildd.debian.org, Arnd Bergmann <arnd@arndb.de>,
+        Will Deacon <will.deacon@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: Can we drop upstream Linux x32 support?
+In-Reply-To: <70bb54b2-8ed3-b5ee-c02d-6ef66c4f27eb@physik.fu-berlin.de>
+Message-ID: <Pine.BSM.4.64L.1812112155170.21176@herc.mirbsd.org>
+References: <CALCETrXoRAibsbWa9nfbDrt0iEuebMnCMhSFg-d9W-J2g8mDjw@mail.gmail.com>
+ <70bb54b2-8ed3-b5ee-c02d-6ef66c4f27eb@physik.fu-berlin.de>
+Content-Language: de-DE-1901, en-GB
+X-Message-Flag: Your mailer is broken. Get an update at http://www.washington.edu/pine/getpine/pcpine.html for free.
 MIME-Version: 1.0
-In-Reply-To: <a6dbd5284d8700d591614481fda242a25ca5a3b5.camel@russell.cc>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: TEXT/PLAIN; charset=utf-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+John Paul Adrian Glaubitz dixit:
 
+>I can't say anything about the syscall interface. However, what I do know
+>is that the weird combination of a 32-bit userland with a 64-bit kernel
+>interface is sometimes causing issues. For example, application code usually
 
-On 12/11/2018 05:25 AM, Russell Currey wrote:
-> On Wed, 2018-11-28 at 09:27 +0000, Christophe Leroy wrote:
->> This patch implements Kernel Userspace Access Protection for
->> book3s/32.
->>
->> Due to limitations of the processor page protection capabilities,
->> the protection is only against writing. read protection cannot be
->> achieved using page protection.
->>
->> In order to provide the protection, Ku and Ks keys are modified in
->> Userspace Segment registers, and different PP bits are used to:
->>
->> PP01 provides RW for Key 0 and RO for Key 1
->> PP10 provides RW for all
->> PP11 provides RO for all
->>
->> Today PP10 is used for RW pages and PP11 for RO pages. This patch
->> modifies page protection to PP01 for RW pages.
->>
->> Then segment registers are set to Ku 0 and Ks 1. When kernel needs
->> to write to RW pages, the associated segment register is changed to
->> Ks 0 in order to allow write access to the kernel.
->>
->> In order to avoid having the read all segment registers when
->> locking/unlocking the access, some data is kept in the thread_struct
->> and saved on stack on exceptions. The field identifies both the
->> first unlocked segment and the first segment following the last
->> unlocked one. When no segment is unlocked, it contains value 0.
->>
->> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
-> 
-> Hey Christophe, I tried to test this and got a machine check after the
-> kernel starts init.
+Yes, but more and more ${foo}64ilp32 architectures are popping up.
 
-A program check you mean ?
+>Additionally, x32 support in many applications is either rudimentary
 
-> 
-> Vector: 700 (Program Check) at [ef0b5e70]
->      pc: 00000ca4
->      lr: b7e1a030
->      sp: ef0b5f30
->     msr: 81002
->    current = 0xef0b8000
->      pid   = 1, comm = init
-> 
-> Testing with mac99 model in qemu.
+If a signal is sent that this kind of architectures will stay, some
+people might be convinced to fix that.
 
-That's pretty surprising. At 0xca4 there is nothing particular for me. 
-This is a handler for system call. Do you have the same ?
-How can this trigger a program check ? According to the MSR, the check 
-is due to an illegal instruction (bit 12). An we are with MMU off.
+>It's also that the performance benefits of x32 are often eaten up by
+>the fact that none of the scripted languages that I know of provide
 
-c0000c00 <SystemCall>:
-c0000c00:       7d 50 43 a6     mtsprg  0,r10
-c0000c04:       7d 71 43 a6     mtsprg  1,r11
-c0000c08:       7d 40 00 26     mfcr    r10
-c0000c0c:       7d 7b 02 a6     mfsrr1  r11
-c0000c10:       71 6b 40 00     andi.   r11,r11,16384
-c0000c14:       3d 61 40 00     addis   r11,r1,16384
-c0000c18:       41 82 00 14     beq     c0000c2c <SystemCall+0x2c>
-c0000c1c:       7d 73 42 a6     mfsprg  r11,3
-c0000c20:       81 6b fb d8     lwz     r11,-1064(r11)
-c0000c24:       39 6b 20 00     addi    r11,r11,8192
-c0000c28:       3d 6b 40 00     addis   r11,r11,16384
-c0000c2c:       39 6b ff 40     addi    r11,r11,-192
-c0000c30:       91 4b 00 a8     stw     r10,168(r11)
-c0000c34:       91 8b 00 40     stw     r12,64(r11)
-c0000c38:       91 2b 00 34     stw     r9,52(r11)
-c0000c3c:       7d 50 42 a6     mfsprg  r10,0
-c0000c40:       91 4b 00 38     stw     r10,56(r11)
-c0000c44:       7d 91 42 a6     mfsprg  r12,1
-c0000c48:       91 8b 00 3c     stw     r12,60(r11)
-c0000c4c:       7d 48 02 a6     mflr    r10
-c0000c50:       91 4b 00 a0     stw     r10,160(r11)
-c0000c54:       7d 9a 02 a6     mfsrr0  r12
-c0000c58:       7d 3b 02 a6     mfsrr1  r9
-c0000c5c:       90 2b 00 14     stw     r1,20(r11)
-c0000c60:       90 2b 00 00     stw     r1,0(r11)
-c0000c64:       3c 2b c0 00     addis   r1,r11,-16384
-c0000c68:       39 40 10 02     li      r10,4098
-c0000c6c:       7d 40 01 24     mtmsr   r10
-c0000c70:       90 0b 00 10     stw     r0,16(r11)
-c0000c74:       3d 40 72 65     lis     r10,29285
-c0000c78:       39 4a 67 73     addi    r10,r10,26483
-c0000c7c:       91 4b 00 08     stw     r10,8(r11)
-c0000c80:       90 6b 00 1c     stw     r3,28(r11)
-c0000c84:       90 8b 00 20     stw     r4,32(r11)
-c0000c88:       90 ab 00 24     stw     r5,36(r11)
-c0000c8c:       90 cb 00 28     stw     r6,40(r11)
-c0000c90:       90 eb 00 2c     stw     r7,44(r11)
-c0000c94:       91 0b 00 30     stw     r8,48(r11)
-c0000c98:       39 40 0c 01     li      r10,3073
-c0000c9c:       91 4b 00 b0     stw     r10,176(r11)
-c0000ca0:       39 40 10 32     li      r10,4146
-c0000ca4:       51 2a 04 20     rlwimi  r10,r9,0,16,16
-c0000ca8:       48 01 13 5d     bl      c0012004 <transfer_to_handler>
+Non-JITted languages like yours truly’s shell do benefit from it,
+though. (mksh works just fine on LP64 but its internal structures
+pack massively better on ILP32, for example.)
 
-Christophe
+>If x32 is eventually to be removed, we should also take care of removing
+>x32 support from userland code. From the top of my head, this would at least
 
-> 
-> - Russell
-> 
+I don’t think so. The patches also contain
+– stuff to support 64-bit time_t on 32-bit architectures, e.g:
+- bugfixes like printf("%lld", (long long)timet_value) instead
+  of assuming time_t fits into a long (also important for other
+  operating systems…)
+- generally switching from generic types like long to specific
+  types like size_t, ptrdiff_t, etc.
+- there was one more but after having written two eMails I forgot it
+- oh and, of course, they lay the base for e.g. amd64ilp32 support
+
+bye,
+//mirabilos
+-- 
+FWIW, I'm quite impressed with mksh interactively. I thought it was much
+*much* more bare bones. But it turns out it beats the living hell out of
+ksh93 in that respect. I'd even consider it for my daily use if I hadn't
+wasted half my life on my zsh setup. :-) -- Frank Terbeck in #!/bin/mksh
