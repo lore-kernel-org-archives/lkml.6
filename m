@@ -2,138 +2,254 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EF67C07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 12:11:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7331CC07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 12:11:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0C12D20811
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 12:11:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="sHuOXMkI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C12D20811
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	by mail.kernel.org (Postfix) with ESMTP id 3613020811
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 12:11:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3613020811
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726357AbeLKMLR (ORCPT
+        id S1726412AbeLKMLo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 07:11:17 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:45094 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726251AbeLKMLQ (ORCPT
+        Tue, 11 Dec 2018 07:11:44 -0500
+Received: from mailgw02.mediatek.com ([1.203.163.81]:7038 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726251AbeLKMLo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 07:11:16 -0500
-Received: by mail-wr1-f66.google.com with SMTP id b14so13813694wru.12
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 04:11:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id;
-        bh=aMzDWZ5d4DsmLZNz4JpMbix0QWStbli61BCRMNkvIn8=;
-        b=sHuOXMkIijV+0GoFjy5UiUhcyBUNL0DPDkE10nnUjD4g1hnSC1HVVUlSXnce04RaBJ
-         uGIluta8QRMR4AI7AzHi06fRAWzwznKc5ynojJ8NQ+bE62cfUySIidBMzGbngY5WgNmR
-         3tDlONSQaH1sp6opyfoAZvXiOvGiHH6efUP4JhHnxdEZKcnW8ZWrwavivRzRSKbBlxKw
-         e1FDUZ77SKOR1tCFxfewVQSCgtDwhgtXc0O2I1doUZYxM6gdea/zEnaKccwNY97OQUo+
-         VueGYPZB2tQDCVxEL03YRJPPWD7LtxUoDOmh0J1juCXZ+iRr8GCBxm+s+eAa1yHXtuLn
-         3Krw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=aMzDWZ5d4DsmLZNz4JpMbix0QWStbli61BCRMNkvIn8=;
-        b=qSdYeMfWr+Y4aiZHeH8euHfFBnddvwezNdhl2lKXvNEbIRZ3ou0QeYcgmZCplT9IDI
-         srDdceJRrn+p5zkxEYPMpREy5LzVYjfzOtOuzvsNTpiepBPSoLrYaZeSvwxwip09KZJV
-         QfRo/w6OHu8srKZqWKcptjOGeZaQWYMxqIev8UK8raLULr6zN8PRnznwMlnARs6MZ7v4
-         Y7PJ+IK6Y5i04jkhKwrf7pOzkknAglWfcpsWjuC/6fKquL/jyznBX+Wr2WnghaeJe/ix
-         JSlJ3d4Cc3PcjDlrIJCYEhfUasAEgNOiyhsrLXR8E5jVlEglh1YAgWKYv8mo+2bWc0ZK
-         Zj9A==
-X-Gm-Message-State: AA+aEWbpmTnvuJvpKLXC2VM7SjXjZeHYMPCh5hJuassZDk86EbYfPYUo
-        sr8gAFTfdpjJwfWwNbiPj6U2Eg==
-X-Google-Smtp-Source: AFSGD/UbKywRizAEeEdkNhUkyhmMvOvNduFHnwgON+ZPGJGhZvILWUTmi64Y7sLghhD9YzgXo+7WCQ==
-X-Received: by 2002:a05:6000:8a:: with SMTP id m10mr12734890wrx.79.1544530274710;
-        Tue, 11 Dec 2018 04:11:14 -0800 (PST)
-Received: from localhost.localdomain ([51.15.160.169])
-        by smtp.googlemail.com with ESMTPSA id p14sm9999629wrt.37.2018.12.11.04.11.13
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 11 Dec 2018 04:11:14 -0800 (PST)
-From:   Corentin Labbe <clabbe@baylibre.com>
-To:     davem@davemloft.net
-Cc:     linux-kernel@vger.kernel.org, sparclinux@vger.kernel.org,
-        Corentin Labbe <clabbe@baylibre.com>
-Subject: [PATCH] sparc: Set "ARCH: sunxx" information on the same line
-Date:   Tue, 11 Dec 2018 12:11:09 +0000
-Message-Id: <1544530269-15008-1-git-send-email-clabbe@baylibre.com>
-X-Mailer: git-send-email 2.7.4
+        Tue, 11 Dec 2018 07:11:44 -0500
+X-UUID: 0a659e8873b746a8a8d39f704cef2cb3-20181211
+X-UUID: 0a659e8873b746a8a8d39f704cef2cb3-20181211
+Received: from mtkcas35.mediatek.inc [(172.27.4.250)] by mailgw02.mediatek.com
+        (envelope-from <jjian.zhou@mediatek.com>)
+        (mailgw01.mediatek.com ESMTP with TLS)
+        with ESMTP id 418914162; Tue, 11 Dec 2018 20:11:35 +0800
+Received: from MTKCAS32.mediatek.inc (172.27.4.184) by MTKMBS31DR.mediatek.inc
+ (172.27.6.102) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 11 Dec
+ 2018 20:11:34 +0800
+Received: from [10.17.3.153] (10.17.3.153) by MTKCAS32.mediatek.inc
+ (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Tue, 11 Dec 2018 20:11:33 +0800
+Message-ID: <1544530293.29734.30.camel@mhfsdcap03>
+Subject: Re: [PATCH v3] mmc: mediatek: Add MMC_CAP_SDIO_IRQ support
+From:   Jjian Zhou <jjian.zhou@mediatek.com>
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+CC:     Matthias Brugger <matthias.bgg@gmail.com>,
+        Chaotian Jing =?UTF-8?Q?=28=E4=BA=95=E6=9C=9D=E5=A4=A9=29?= 
+        <Chaotian.Jing@mediatek.com>,
+        Ryder Lee =?UTF-8?Q?=28=E6=9D=8E=E5=BA=9A=E8=AB=BA=29?= 
+        <Ryder.Lee@mediatek.com>, Sean Wang <sean.wang@mediatek.com>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "linux-mediatek@lists.infradead.org" 
+        <linux-mediatek@lists.infradead.org>,
+        srv_heupstream <srv_heupstream@mediatek.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Yong Mao =?UTF-8?Q?=28=E6=AF=9B=E5=8B=87=29?= 
+        <yong.mao@mediatek.com>
+Date:   Tue, 11 Dec 2018 20:11:33 +0800
+In-Reply-To: <CAPDyKFq2xH2m4JTbOwbh38mqjbwLRNewuYEVyOKCsBAPrUm9Dg@mail.gmail.com>
+References: <1544442233-20303-1-git-send-email-jjian.zhou@mediatek.com>
+         <CAPDyKFq2xH2m4JTbOwbh38mqjbwLRNewuYEVyOKCsBAPrUm9Dg@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
+Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-While checking boot log from SPARC qemu, I saw that the "ARCH: sunxx"
-information was split on two different line.
-This patchs merge both line together.
-In the meantime, thoses information need to be printed via pr_info
-since printk print them by default via the warning loglevel.
+On Tue, 2018-12-11 at 17:29 +0800, Ulf Hansson wrote:
+> On Mon, 10 Dec 2018 at 12:44, Jjian Zhou <jjian.zhou@mediatek.com> wrote:
+> >
+> > From: jjian zhou <jjian.zhou@mediatek.com>
+> >
+> > This patch enables support SDIO IRQs. It enables
+> > MMC_CAP_SDIO_IRQ & MMC_CAP2_SDIO_IRQ_NOTHREAD
+> > and implement the ->ack_sdio_irq callback.
+> >
+> > Signed-off-by: Jjian Zhou <jjian.zhou@mediatek.com>
+> > Signed-off-by: Chaotian Jing <chaotian.jing@mediatek.com>
+> > Signed-off-by: Yong Mao <yong.mao@mediatek.com>
+> > ---
+> >  drivers/mmc/host/mtk-sd.c | 49 ++++++++++++++++++++++++++++++++++++++++++++---
+> >  1 file changed, 46 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/drivers/mmc/host/mtk-sd.c b/drivers/mmc/host/mtk-sd.c
+> > index 6334cc7..40a1848 100644
+> > --- a/drivers/mmc/host/mtk-sd.c
+> > +++ b/drivers/mmc/host/mtk-sd.c
+> > @@ -1114,6 +1114,7 @@ static void msdc_start_command(struct msdc_host *host,
+> >                 struct mmc_request *mrq, struct mmc_command *cmd)
+> >  {
+> >         u32 rawcmd;
+> > +       unsigned long flags;
+> >
+> >         WARN_ON(host->cmd);
+> >         host->cmd = cmd;
+> > @@ -1131,7 +1132,10 @@ static void msdc_start_command(struct msdc_host *host,
+> >         cmd->error = 0;
+> >         rawcmd = msdc_cmd_prepare_raw_cmd(host, mrq, cmd);
+> >
+> > +       spin_lock_irqsave(&host->lock, flags);
+> >         sdr_set_bits(host->base + MSDC_INTEN, cmd_ints_mask);
+> > +       spin_unlock_irqrestore(&host->lock, flags);
+> > +
+> 
+> The above looks like a reasonable change, however does it really
+> belong in $subject patch. If so, can you explain why?
+> 
+> Maybe you should move this into a standalone separate patch?
+> 
 
-Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
----
- arch/sparc/kernel/setup_32.c | 13 ++++++-------
- arch/sparc/kernel/setup_64.c |  4 ++--
- 2 files changed, 8 insertions(+), 9 deletions(-)
+Thanks for your suggestion.
 
-diff --git a/arch/sparc/kernel/setup_32.c b/arch/sparc/kernel/setup_32.c
-index 7df3d704284c..afe1592a6d08 100644
---- a/arch/sparc/kernel/setup_32.c
-+++ b/arch/sparc/kernel/setup_32.c
-@@ -311,25 +311,24 @@ void __init setup_arch(char **cmdline_p)
- 
- 	register_console(&prom_early_console);
- 
--	printk("ARCH: ");
- 	switch(sparc_cpu_model) {
- 	case sun4m:
--		printk("SUN4M\n");
-+		pr_info("ARCH: SUN4M\n");
- 		break;
- 	case sun4d:
--		printk("SUN4D\n");
-+		pr_info("ARCH: SUN4D\n");
- 		break;
- 	case sun4e:
--		printk("SUN4E\n");
-+		pr_info("ARCH: SUN4E\n");
- 		break;
- 	case sun4u:
--		printk("SUN4U\n");
-+		pr_info("ARCH: SUN4U\n");
- 		break;
- 	case sparc_leon:
--		printk("LEON\n");
-+		pr_info("ARCH: LEON\n");
- 		break;
- 	default:
--		printk("UNKNOWN!\n");
-+		pr_info("ARCH: UNKNOWN!\n");
- 		break;
- 	}
- 
-diff --git a/arch/sparc/kernel/setup_64.c b/arch/sparc/kernel/setup_64.c
-index 014390950333..51c4d12c0853 100644
---- a/arch/sparc/kernel/setup_64.c
-+++ b/arch/sparc/kernel/setup_64.c
-@@ -643,9 +643,9 @@ void __init setup_arch(char **cmdline_p)
- 		register_console(&prom_early_console);
- 
- 	if (tlb_type == hypervisor)
--		printk("ARCH: SUN4V\n");
-+		pr_info("ARCH: SUN4V\n");
- 	else
--		printk("ARCH: SUN4U\n");
-+		pr_info("ARCH: SUN4U\n");
- 
- #ifdef CONFIG_DUMMY_CONSOLE
- 	conswitchp = &dummy_con;
--- 
-2.19.2
+The modification of MSDC_INTEN is non-atomic operation. If it enanbles
+MMC_CAP_SDIO_IRQ, there is a race condition of access MSDC_INTEN in irq
+and thread context. So need make modification of MSDC_INTEN by atomic.
+
+> >         writel(cmd->arg, host->base + SDC_ARG);
+> >         writel(rawcmd, host->base + SDC_CMD);
+> >  }
+> > @@ -1351,6 +1355,27 @@ static void msdc_request_timeout(struct work_struct *work)
+> >         }
+> >  }
+> >
+> > +static void msdc_enable_sdio_irq(struct mmc_host *mmc, int enb)
+> > +{
+> > +       unsigned long flags;
+> > +       struct msdc_host *host = mmc_priv(mmc);
+> > +
+> > +       if (enb)
+> > +               pm_runtime_get_sync(host->dev);
+> 
+> I would convert to pm_runtime_get_noresume() as the host is already
+> been runtime resumed by the mmc core.
+
+will do it in next version.
+
+> > +
+> > +       spin_lock_irqsave(&host->lock, flags);
+> > +       if (enb)
+> > +               sdr_set_bits(host->base + MSDC_INTEN, MSDC_INTEN_SDIOIRQ);
+> > +       else
+> > +               sdr_clr_bits(host->base + MSDC_INTEN, MSDC_INTEN_SDIOIRQ);
+> > +       spin_unlock_irqrestore(&host->lock, flags);
+> 
+> You should move the code above into a separate function. Along the lines of:
+> 
+> static void __msdc_enable_sdio_irq(struct mmc_host *mmc, int enb)
+> 
+> You need this, because you will otherwise mess up the runtime PM usage
+> count when acking the SDIO irq. More comments about that below.
+
+will do it in next version.
+
+> > +
+> > +       if (!enb) {
+> > +               pm_runtime_mark_lastwill do it in next version._busy(host->dev);
+> > +               pm_runtime_put_autosuspend(host->dev);
+> 
+> Convert to pm_runtime_put_noidle(), as the above is already managed by
+> the mmc core.
+> 
+
+will do it in next version.
+
+> > +       }
+> > +}
+> > +
+> >  static irqreturn_t msdc_irq(int irq, void *dev_id)
+> >  {
+> >         struct msdc_host *host = (struct msdc_host *) dev_id;
+> > @@ -1373,7 +1398,12 @@ static irqreturn_t msdc_irq(int irq, void *dev_id)
+> >                 data = host->data;
+> >                 spin_unlock_irqrestore(&host->lock, flags);
+> >
+> > -               if (!(events & event_mask))
+> > +               if ((events & event_mask) & MSDC_INT_SDIOIRQ) {
+> > +                       msdc_enable_sdio_irq(host->mmc, 0);
+> 
+> To not mess up the runtime PM reference count and to avoid invoking
+> runtime PM callbacks from atomic context, I suggest you call
+> __msdc_enable_sdio_irq(host->mmc, 0) (new proposed function according
+> to earlier comment).
+
+will do it in next version.
+
+> 
+> > +                       sdio_signal_irq(host->mmc);
+> > +               }
+> > +
+> > +               if (!(events & (event_mask & ~MSDC_INT_SDIOIRQ)))
+> >                         break;
+> >
+> >                 if (!mrq) {
+> > @@ -1493,8 +1523,11 @@ static void msdc_init_hw(struct msdc_host *host)
+> >          */
+> >         sdr_set_bits(host->base + SDC_CFG, SDC_CFG_SDIO);
+> >
+> > -       /* disable detect SDIO device interrupt function */
+> > -       sdr_clr_bits(host->base + SDC_CFG, SDC_CFG_SDIOIDE);
+> > +       /* Config SDIO device detect interrupt function */
+> > +       if (host->mmc->caps & MMC_CAP_SDIO_IRQ)
+> > +               sdr_set_bits(host->base + SDC_CFG, SDC_CFG_SDIOIDE);
+> > +       else
+> > +               sdr_clr_bits(host->base + SDC_CFG, SDC_CFG_SDIOIDE);
+> >
+> >         /* Configure to default data timeout */
+> >         sdr_set_field(host->base + SDC_CFG, SDC_CFG_DTOC, 3);
+> > @@ -2013,6 +2046,11 @@ static void msdc_hw_reset(struct mmc_host *mmc)
+> >         sdr_clr_bits(host->base + EMMC_IOCON, 1);
+> >  }
+> >
+> > +static void msdc_ack_sdio_irq(struct mmc_host *mmc)
+> > +{
+> > +       msdc_enable_sdio_irq(mmc, 1);
+> 
+> To not mess up the runtime PM reference count, I suggest you call
+> __msdc_enable_sdio_irq(host->mmc, 1) (new proposed function according
+> to earlier comment).
+> 
+
+will do it in next version.
+
+> > +}
+> > +
+> >  static const struct mmc_host_ops mt_msdc_ops = {
+> >         .post_req = msdc_post_req,
+> >         .pre_req = msdc_pre_req,
+> > @@ -2020,6 +2058,8 @@ static void msdc_hw_reset(struct mmc_host *mmc)
+> >         .set_ios = msdc_ops_set_ios,
+> >         .get_ro = mmc_gpio_get_ro,
+> >         .get_cd = mmc_gpio_get_cd,
+> > +       .enable_sdio_irq = msdc_enable_sdio_irq,
+> > +       .ack_sdio_irq = msdc_ack_sdio_irq,
+> >         .start_signal_voltage_switch = msdc_ops_switch_volt,
+> >         .card_busy = msdc_card_busy,
+> >         .execute_tuning = msdc_execute_tuning,
+> > @@ -2147,6 +2187,9 @@ static int msdc_drv_probe(struct platform_device *pdev)
+> >         else
+> >                 mmc->f_min = DIV_ROUND_UP(host->src_clk_freq, 4 * 4095);
+> >
+> > +       if (mmc->caps & MMC_CAP_SDIO_IRQ)
+> > +               mmc->caps2 |= MMC_CAP2_SDIO_IRQ_NOTHREAD;
+> > +
+> >         mmc->caps |= MMC_CAP_ERASE | MMC_CAP_CMD23;
+> >         /* MMC core transfer sizes tunable parameters */
+> >         mmc->max_segs = MAX_BD_NUM;
+> > --
+> > 1.9.1
+> >
+> 
+> Kind regards
+> Uffe
+
 
