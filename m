@@ -2,172 +2,143 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.9 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=FROM_EXCESS_BASE64,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4A9FC5CFFE
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 10:38:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F43EC07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 10:38:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 85DEE2082F
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 10:38:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85DEE2082F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id 6978E20849
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 10:38:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6978E20849
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726419AbeLKKiJ (ORCPT
+        id S1726434AbeLKKis (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 05:38:09 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:49727 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726114AbeLKKiJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 05:38:09 -0500
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wBBAasVE3949364
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Tue, 11 Dec 2018 02:36:54 -0800
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wBBAasWA3949361;
-        Tue, 11 Dec 2018 02:36:54 -0800
-Date:   Tue, 11 Dec 2018 02:36:54 -0800
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Michal Hocko <tipbot@zytor.com>
-Message-ID: <tip-d7409e79dbec2d2834fb6ccca53664197ab65505@git.kernel.org>
-Cc:     jkosina@suse.cz, tglx@linutronix.de, torvalds@linux-foundation.org,
-        linux-kernel@vger.kernel.org, pasha.tatashin@soleen.com,
-        dave.hansen@intel.com, hpa@zytor.com, ak@linux.intel.com,
-        mhocko@suse.com, linux-mm@kvack.org, bp@suse.de, mingo@kernel.org
-Reply-To: tglx@linutronix.de, jkosina@suse.cz,
-          torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
-          pasha.tatashin@soleen.com, dave.hansen@intel.com,
-          ak@linux.intel.com, hpa@zytor.com, bp@suse.de, mingo@kernel.org,
-          mhocko@suse.com, linux-mm@kvack.org
-In-Reply-To: <20181113184910.26697-1-mhocko@kernel.org>
-References: <20181113184910.26697-1-mhocko@kernel.org>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/pti] x86/speculation/l1tf: Drop the swap storage limit
- restriction when l1tf=off
-Git-Commit-ID: d7409e79dbec2d2834fb6ccca53664197ab65505
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Tue, 11 Dec 2018 05:38:48 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:52806 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726114AbeLKKir (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 05:38:47 -0500
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 6C25F30B933E;
+        Tue, 11 Dec 2018 10:38:47 +0000 (UTC)
+Received: from redhat.com (ovpn-112-59.ams2.redhat.com [10.36.112.59])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 49294600D6;
+        Tue, 11 Dec 2018 10:38:42 +0000 (UTC)
+Date:   Tue, 11 Dec 2018 10:38:39 +0000
+From:   Daniel =?utf-8?B?UC4gQmVycmFuZ8Op?= <berrange@redhat.com>
+To:     Eduardo Habkost <ehabkost@redhat.com>
+Cc:     Borislav Petkov <bp@alien8.de>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        =?utf-8?B?SsO2cmcgUsO2ZGVs?= <joro@8bytes.org>,
+        Andre Przywara <andre.przywara@arm.com>,
+        kvm ML <kvm@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Eric Blake <eblake@redhat.com>
+Subject: Re: kvm: RDTSCP on AMD
+Message-ID: <20181211103839.GC921@redhat.com>
+Reply-To: Daniel =?utf-8?B?UC4gQmVycmFuZ8Op?= <berrange@redhat.com>
+References: <20181210181328.GA762@zn.tnic>
+ <20181210183730.GJ4669@habkost.net>
+ <20181210184153.GB5482@zn.tnic>
+ <20181210190600.GK4669@habkost.net>
+ <20181210194258.GD5482@zn.tnic>
+ <20181210200843.GN4669@habkost.net>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
+In-Reply-To: <20181210200843.GN4669@habkost.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.49]); Tue, 11 Dec 2018 10:38:47 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  d7409e79dbec2d2834fb6ccca53664197ab65505
-Gitweb:     https://git.kernel.org/tip/d7409e79dbec2d2834fb6ccca53664197ab65505
-Author:     Michal Hocko <mhocko@suse.com>
-AuthorDate: Tue, 13 Nov 2018 19:49:10 +0100
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Tue, 11 Dec 2018 11:13:32 +0100
+On Mon, Dec 10, 2018 at 06:08:43PM -0200, Eduardo Habkost wrote:
+> On Mon, Dec 10, 2018 at 08:42:58PM +0100, Borislav Petkov wrote:
+> > On Mon, Dec 10, 2018 at 05:06:00PM -0200, Eduardo Habkost wrote:
+> > > I mean documenting it.  We already have code that will print
+> > > warnings if a feature isn't available.
+> > > 
+> > > See my previous attempt to document the minimum kernel version
+> > > at <https://www.mail-archive.com/qemu-devel@nongnu.org/msg486559.html>.
+> > 
+> > Something like this?
+> > 
+> > I still have no clue how to add RDTSCP on pc-*-4.0 and newer.
+> 
+> qemu.git master have no PC_COMPAT_3_1 and pc-*-4.0 machine-types
+> yet.  I've sent another reply with additional pointers.
+> 
+> > 
+> > Thx.
+> > 
+> > ---
+> > diff --git a/qemu-doc.texi b/qemu-doc.texi
+> > index f7ad1dfe4b69..913b2ef68d54 100644
+> > --- a/qemu-doc.texi
+> > +++ b/qemu-doc.texi
+> > @@ -37,6 +37,7 @@
+> >  * QEMU System emulator for non PC targets::
+> >  * QEMU Guest Agent::
+> >  * QEMU User space emulator::
+> > +* System requirements::
+> >  * Implementation notes::
+> >  * Deprecated features::
+> >  * Supported build platforms::
+> > @@ -2813,6 +2814,13 @@ Act as if the host page size was 'pagesize' bytes
+> >  Run the emulation in single step mode.
+> >  @end table
+> >  
+> > +@node System requirements
+> > +@chapter System requirements
+> > +
+> > +@section KVM kernel module
+> > +
+> > +On x86_64 hosts, the default set of CPU features enabled by the KVM accelerator
+> > +require the host to be running Linux v4.5 or newer.
+> >  
+> 
+> Sounds good, but it would be nice to document what exactly makes
+> Linux 4.5+ necessary.  e.g.:
+> 
+> | On x86_64 hosts, it is recommended to run Linux 4.5 or newer on
+> | the host when using the KVM accelerator.
+> | 
+> | The Opteron_G2, OpteronG3, Opteron_G4, and Opteron_G5 CPU
+> | models require KVM support for RDTSCP, which was added on
+> | Linux 4.5.
+> 
+> I'm CCing some people who may help review English grammar and
+> style.
 
-x86/speculation/l1tf: Drop the swap storage limit restriction when l1tf=off
+Note that QEMU has a declared supported platform list which is used to
+set the minimum software versions required.
 
-Swap storage is restricted to max_swapfile_size (~16TB on x86_64) whenever
-the system is deemed affected by L1TF vulnerability. Even though the limit
-is quite high for most deployments it seems to be too restrictive for
-deployments which are willing to live with the mitigation disabled.
+   https://qemu.weilnetz.de/doc/qemu-doc.html#Linux-OS
 
-We have a customer to deploy 8x 6,4TB PCIe/NVMe SSD swap devices which is
-clearly out of the limit.
+Based on that policy, the Linux distros we aim to support have the
+following kernel versions:
 
-Drop the swap restriction when l1tf=off is specified. It also doesn't make
-much sense to warn about too much memory for the l1tf mitigation when it is
-forcefully disabled by the administrator.
+  - Debian Jessie: 4.5
+  - Debian Stretch: 4.5
+  - RHEL-7: 3.10
+  - Ubuntu LTS (Xenial): 4.5
+  - OpenSUSE Leap 15: 4.12.14
 
-[ tglx: Folded the documentation delta change ]
+So we can't require Linux 4.5 as a minimum version at this time.
 
-Fixes: 377eeaa8e11f ("x86/speculation/l1tf: Limit swap file size to MAX_PA/2")
-Signed-off-by: Michal Hocko <mhocko@suse.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Pavel Tatashin <pasha.tatashin@soleen.com>
-Reviewed-by: Andi Kleen <ak@linux.intel.com>
-Acked-by: Jiri Kosina <jkosina@suse.cz>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Borislav Petkov <bp@suse.de>
-Cc: <linux-mm@kvack.org>
-Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/20181113184910.26697-1-mhocko@kernel.org
----
- Documentation/admin-guide/kernel-parameters.txt | 3 +++
- Documentation/admin-guide/l1tf.rst              | 6 +++++-
- arch/x86/kernel/cpu/bugs.c                      | 3 ++-
- arch/x86/mm/init.c                              | 2 +-
- 4 files changed, 11 insertions(+), 3 deletions(-)
-
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 05a252e5178d..835e422572eb 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -2095,6 +2095,9 @@
- 			off
- 				Disables hypervisor mitigations and doesn't
- 				emit any warnings.
-+				It also drops the swap size and available
-+				RAM limit restriction on both hypervisor and
-+				bare metal.
- 
- 			Default is 'flush'.
- 
-diff --git a/Documentation/admin-guide/l1tf.rst b/Documentation/admin-guide/l1tf.rst
-index b85dd80510b0..2e65e6cb033e 100644
---- a/Documentation/admin-guide/l1tf.rst
-+++ b/Documentation/admin-guide/l1tf.rst
-@@ -405,6 +405,9 @@ time with the option "l1tf=". The valid arguments for this option are:
- 
-   off		Disables hypervisor mitigations and doesn't emit any
- 		warnings.
-+		It also drops the swap size and available RAM limit restrictions
-+                on both hypervisor and bare metal.
-+
-   ============  =============================================================
- 
- The default is 'flush'. For details about L1D flushing see :ref:`l1d_flush`.
-@@ -576,7 +579,8 @@ Default mitigations
-   The kernel default mitigations for vulnerable processors are:
- 
-   - PTE inversion to protect against malicious user space. This is done
--    unconditionally and cannot be controlled.
-+    unconditionally and cannot be controlled. The swap storage is limited
-+    to ~16TB.
- 
-   - L1D conditional flushing on VMENTER when EPT is enabled for
-     a guest.
-diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
-index a68b32cb845a..58689ac64440 100644
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -1002,7 +1002,8 @@ static void __init l1tf_select_mitigation(void)
- #endif
- 
- 	half_pa = (u64)l1tf_pfn_limit() << PAGE_SHIFT;
--	if (e820__mapped_any(half_pa, ULLONG_MAX - half_pa, E820_TYPE_RAM)) {
-+	if (l1tf_mitigation != L1TF_MITIGATION_OFF &&
-+			e820__mapped_any(half_pa, ULLONG_MAX - half_pa, E820_TYPE_RAM)) {
- 		pr_warn("System has more than MAX_PA/2 memory. L1TF mitigation not effective.\n");
- 		pr_info("You may make it effective by booting the kernel with mem=%llu parameter.\n",
- 				half_pa);
-diff --git a/arch/x86/mm/init.c b/arch/x86/mm/init.c
-index ef99f3892e1f..427a955a2cf2 100644
---- a/arch/x86/mm/init.c
-+++ b/arch/x86/mm/init.c
-@@ -931,7 +931,7 @@ unsigned long max_swapfile_size(void)
- 
- 	pages = generic_max_swapfile_size();
- 
--	if (boot_cpu_has_bug(X86_BUG_L1TF)) {
-+	if (boot_cpu_has_bug(X86_BUG_L1TF) && l1tf_mitigation != L1TF_MITIGATION_OFF) {
- 		/* Limit the swap file size to MAX_PA/2 for L1TF workaround */
- 		unsigned long long l1tf_limit = l1tf_pfn_limit();
- 		/*
+Regards,
+Daniel
+-- 
+|: https://berrange.com      -o-    https://www.flickr.com/photos/dberrange :|
+|: https://libvirt.org         -o-            https://fstop138.berrange.com :|
+|: https://entangle-photo.org    -o-    https://www.instagram.com/dberrange :|
