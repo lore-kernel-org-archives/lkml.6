@@ -2,123 +2,151 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5D03C67839
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 06:17:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C97BAC07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 06:18:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7B1C020849
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 06:17:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="u55Is/qA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B1C020849
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 816F12084C
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 06:18:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 816F12084C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fromorbit.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728836AbeLKGRK (ORCPT
+        id S1729323AbeLKGSz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 01:17:10 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:46884 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727352AbeLKGRJ (ORCPT
+        Tue, 11 Dec 2018 01:18:55 -0500
+Received: from ipmail06.adl2.internode.on.net ([150.101.137.129]:17939 "EHLO
+        ipmail06.adl2.internode.on.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726607AbeLKGSy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 01:17:09 -0500
-Received: by mail-pl1-f194.google.com with SMTP id t13so6423609ply.13;
-        Mon, 10 Dec 2018 22:17:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=TlYVShGWQfqCikX7zIfo6dSj8lcXrBBDWQwIm/PzWAQ=;
-        b=u55Is/qA0pSseLvGvzYgxvg44ykhaYLA1P4+SfTntUm/1jRq5p7qJiQ82p0EdWsWni
-         cdvBxrnGCavkp5pqneI/M2ZusPoIRlDM5rLfqYNyRTCAXLOadKxh/huIBzcXV+RJRkqu
-         WaRrwWxdL53tDisAlhgvyZC3eJvj4tR1M0xxQaJAlJ8N0mxjKisR6jiVAkywiRAAAXyh
-         x63D8vDM1Ydvsgb86/tzzVtyLBnFYitf18eB7h2HHynwSTbA/65xpbvo0IyF1fQ63nv8
-         dpMDV3QxZTn0idAZcy07VA0/DG2cTvC3ZrQpNIGSavewgqms8TirjIKom8g+K/0xwIZs
-         p/rA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=TlYVShGWQfqCikX7zIfo6dSj8lcXrBBDWQwIm/PzWAQ=;
-        b=m/f2KiVNnDXd3jv0IZRlpdIuWYqChCpuImIXmRHyqmt3+yru9W4IJOzncGVFTlTYI8
-         xC9hi5x5R6T4eNSlJyCF9Wh9TQ48Fi3J1VS7MfnpQEU586kicsPjFFcwbdqF8RA4W9Q1
-         os6cJtcoPWX4MNVOPPcXBkn2XfmFBklBmkN55s7NOSGel8IjzDvBoROxuJHX4JPnHERt
-         GW4v0JnMC6i9dYxtMvLUX3uqDFgfp+LLDezjXuNYE4IDoxtX6iOhKBSiBVWMnxI+yY3L
-         8yDlVLi6pCHw1XFs2Vxvq/5Oe3tywst+0bKoVCmob/yHKwz89xTh+W6g0UFqAkq+rtbZ
-         xtwQ==
-X-Gm-Message-State: AA+aEWYLuLVIzzBwKxQ9UsZJxKMmlA3heL0bq5nnU6XcpShk11zChhEm
-        ZCdjZxp2V2DkjvkDxdiTfMI=
-X-Google-Smtp-Source: AFSGD/WtGwEGzXbzvfgEkVr2zxQ5RWgAx4+tVSYC1KALczRjt5jgzWAy5EcN525T7eCRDfgAiwvC+w==
-X-Received: by 2002:a17:902:722:: with SMTP id 31mr14992831pli.271.1544509029167;
-        Mon, 10 Dec 2018 22:17:09 -0800 (PST)
-Received: from localhost.localdomain (27-52-137-213.adsl.fetnet.net. [27.52.137.213])
-        by smtp.gmail.com with ESMTPSA id e16sm16246045pfn.46.2018.12.10.22.17.07
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 10 Dec 2018 22:17:08 -0800 (PST)
-From:   medadyoung@gmail.com
-To:     jbacik@fb.com, axboe@kernel.dk
-Cc:     linux-block@vger.kernel.org, nbd@other.debian.org,
-        linux-kernel@vger.kernel.org, openbmc@lists.ozlabs.org,
-        Medad <medadyoung@gmail.com>
-Subject: [PATCH] nbd:clear NBD_BOUND flag when NBD connection is closed
-Date:   Tue, 11 Dec 2018 14:17:03 +0800
-Message-Id: <1544509023-18923-1-git-send-email-medadyoung@gmail.com>
-X-Mailer: git-send-email 2.7.4
+        Tue, 11 Dec 2018 01:18:54 -0500
+Received: from ppp121-44-12-151.lns20.syd4.internode.on.net (HELO dastard) ([121.44.12.151])
+  by ipmail06.adl2.internode.on.net with ESMTP; 11 Dec 2018 16:48:50 +1030
+Received: from dave by dastard with local (Exim 4.80)
+        (envelope-from <david@fromorbit.com>)
+        id 1gWbNX-0006gw-Ql; Tue, 11 Dec 2018 17:18:47 +1100
+Date:   Tue, 11 Dec 2018 17:18:47 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        John Hubbard <john.hubbard@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux MM <linux-mm@kvack.org>, Jan Kara <jack@suse.cz>,
+        tom@talpey.com, Al Viro <viro@zeniv.linux.org.uk>, benve@cisco.com,
+        Christopher Lameter <cl@linux.com>,
+        "Dalessandro, Dennis" <dennis.dalessandro@intel.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Michal Hocko <mhocko@kernel.org>,
+        Mike Marciniszyn <mike.marciniszyn@intel.com>,
+        rcampbell@nvidia.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH 1/2] mm: introduce put_user_page*(), placeholder versions
+Message-ID: <20181211061847.GG2398@dastard>
+References: <20181205011519.GV10377@bombadil.infradead.org>
+ <20181205014441.GA3045@redhat.com>
+ <59ca5c4b-fd5b-1fc6-f891-c7986d91908e@nvidia.com>
+ <7b4733be-13d3-c790-ff1b-ac51b505e9a6@nvidia.com>
+ <20181207191620.GD3293@redhat.com>
+ <3c4d46c0-aced-f96f-1bf3-725d02f11b60@nvidia.com>
+ <CAPcyv4hwtMA+4qc6500ucn5vf6fRrNdfyMHru_Jhzx86=1Wwww@mail.gmail.com>
+ <20181208163353.GA2952@redhat.com>
+ <20181208164825.GA26154@infradead.org>
+ <CAPcyv4hP1XrheKTrapANmrg10xz6dpG7cj=qEG8La9L34bCKDQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAPcyv4hP1XrheKTrapANmrg10xz6dpG7cj=qEG8La9L34bCKDQ@mail.gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Medad <medadyoung@gmail.com>
+On Sat, Dec 08, 2018 at 10:09:26AM -0800, Dan Williams wrote:
+> On Sat, Dec 8, 2018 at 8:48 AM Christoph Hellwig <hch@infradead.org> wrote:
+> >
+> > On Sat, Dec 08, 2018 at 11:33:53AM -0500, Jerome Glisse wrote:
+> > > Patchset to use HMM inside nouveau have already been posted, some
+> > > of the bits have already made upstream and more are line up for
+> > > next merge window.
+> >
+> > Even with that it is a relative fringe feature compared to making
+> > something like get_user_pages() that is literally used every to actually
+> > work properly.
+> >
+> > So I think we need to kick out HMM here and just find another place for
+> > it to store data.
+> >
+> > And just to make clear that I'm not picking just on this - the same is
+> > true to a just a little smaller extent for the pgmap..
+> 
+> Fair enough, I cringed as I took a full pointer for that use case, I'm
+> happy to look at ways of consolidating or dropping that usage.
+> 
+> Another fix that may put pressure 'struct page' is resolving the
+> untenable situation of dax being incompatible with reflink, i.e.
+> reflink currently requires page-cache pages. Dave has talked about
+> silently establishing page-cache entries when a dax-page is cow'd for
+> reflink,
 
-    If we do NOT clear NBD_BOUND flag when NBD connection is closed,
-    then the original NBD device could not be used again.
+I think you've got it the wrong way around there :)
 
-Signed-off-by: Medad <medadyoung@gmail.com>
----
- drivers/block/nbd.c | 11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
+Think of a set of files with the following physical block mappings:
 
-diff --git a/drivers/block/nbd.c b/drivers/block/nbd.c
-index 64278f4..5c88490 100644
---- a/drivers/block/nbd.c
-+++ b/drivers/block/nbd.c
-@@ -277,10 +277,14 @@ static void sock_shutdown(struct nbd_device *nbd)
- 	struct nbd_config *config = nbd->config;
- 	int i;
- 
--	if (config->num_connections == 0)
-+	if (config->num_connections == 0) {
-+		clear_bit(NBD_BOUND, &config->runtime_flags);
- 		return;
--	if (test_and_set_bit(NBD_DISCONNECTED, &config->runtime_flags))
-+	}
-+	if (test_and_set_bit(NBD_DISCONNECTED, &config->runtime_flags)) {
-+		clear_bit(NBD_BOUND, &config->runtime_flags);
- 		return;
-+	}
- 
- 	for (i = 0; i < config->num_connections; i++) {
- 		struct nbd_sock *nsock = config->socks[i];
-@@ -944,7 +948,7 @@ static int nbd_reconnect_socket(struct nbd_device *nbd, unsigned long arg)
- 		sockfd_put(old);
- 
- 		clear_bit(NBD_DISCONNECTED, &config->runtime_flags);
--
-+		clear_bit(NBD_BOUND, &config->runtime_flags);
- 		/* We take the tx_mutex in an error path in the recv_work, so we
- 		 * need to queue_work outside of the tx_mutex.
- 		 */
-@@ -1020,6 +1024,7 @@ static int nbd_disconnect(struct nbd_device *nbd)
- 	dev_info(disk_to_dev(nbd->disk), "NBD_DISCONNECT\n");
- 	set_bit(NBD_DISCONNECT_REQUESTED, &config->runtime_flags);
- 	send_disconnects(nbd);
-+	clear_bit(NBD_BOUND, &config->runtime_flags);
- 	return 0;
- }
- 
+index		0  1  2  3  4  5
+inode W		A  B  C  D  E  F
+inode X		B  C  D  E  F  A
+inode Y		C  D  E  F  A  B
+inode Z		D  E  F  A  B  C
+
+Basically, each block has 4 references (one from each file), and
+each reference to a block is from a diffent file offset. Now, with
+DAX, each inode wants to put the same struct page into their own
+address space mapping tree but have different page indexes.
+
+i.e. for block A, inode W wants page->index = 0, X wants 5, Y wants
+4 and Z wants 3.
+
+This is not possible with a single struct page and where the
+problem with DAX, struct pages and physically shared data lies.
+
+This is where the page cache is currently required - each mapping
+gets it's own copy of the shared block in volatile RAM, but when
+sharing is broken (by COW) we can toss the volatile copy and go back
+to using DAX for the newly allocated, single owner {block, struct
+page} tuple that replaces the shared page.
+
+> but I wonder if we could go the other way and introduce the
+> mechanism of a page belonging to multiple mappings simultaneously and
+> managed by the filesystem.
+
+That's pretty much what I suggested at LSFMM. We do lookups for
+shared extent mappings through the filesystem buffer cache (which is
+indexed by physical location) and hold the primary struct page in
+the filesystem buffer cache. We then hand out dynamically allocated
+struct pages back to the caller that point to the same physical page
+and place them in each inode's address space. When a write fault
+occurs, we allocate a new block, grab the physical struct page, copy
+the data across, and release the dynamically allocated read-only
+struct page and reference to the primary struct page held in the
+filesytem buffer cache.
+
+It's essentially the same model "cached page per inode address
+space" as using volatile RAM copies via the page cache, except
+the struct pages point back to the same physical location rather
+than having their own temporary, volatile copy of the data.
+
+Cheers,
+
+Dave.
 -- 
-2.7.4
-
+Dave Chinner
+david@fromorbit.com
