@@ -4,51 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB812C5CFFE
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:46:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF6EBC5CFFE
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:46:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 70FA4208E7
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:46:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 878AF208E7
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:46:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544543208;
-	bh=sTDuWLqivzHWc/O38KsJsQbah9+HL0degfX04Ou6enQ=;
+	s=default; t=1544543211;
+	bh=LtE0N+9Br/zOevKM8nOtBH6a6VW+TdTNwi4bYBW/TAQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=eNGOMv5SaGX39oSIqLSF+OEhQvrbZCW7m1h13kSDzrCyAKkkBAgdQ+Q9v8MDpnG0P
-	 36dnJUAvC3AUKK536kg5+nr30UYIivrUqWUEqOBVJsbH6MMGGVDIlII+ZNSernQ4IH
-	 zTYd/EGr97/JHBSD0M1bLXZRenS613OaxITzV854=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 70FA4208E7
+	b=LJicbz9p+YctmYC3wtbODnxYo3EsxEk8r8CCwmV2XCixChmzIE0Bw1/LVTr42p4Tt
+	 T2Pqve7iEJ93IZ1Ld+xfWYgtbzqJFvJK9Ki9Wzkxj9F1jz9t7zoOtLP1Xzz8wRB+pu
+	 nzINontx5JNIKw+oy/2cG6ZhaaEKRYkpkbO1WTck=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 878AF208E7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728406AbeLKPqq (ORCPT
+        id S1728421AbeLKPqu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 10:46:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35146 "EHLO mail.kernel.org"
+        Tue, 11 Dec 2018 10:46:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35166 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728390AbeLKPqo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:46:44 -0500
+        id S1727912AbeLKPqr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 10:46:47 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D61142087F;
-        Tue, 11 Dec 2018 15:46:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5597A2087F;
+        Tue, 11 Dec 2018 15:46:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544543204;
-        bh=sTDuWLqivzHWc/O38KsJsQbah9+HL0degfX04Ou6enQ=;
+        s=default; t=1544543206;
+        bh=LtE0N+9Br/zOevKM8nOtBH6a6VW+TdTNwi4bYBW/TAQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BB8Sv+wWs29btaHH1X+iTwFt3uqtTVVIdOgJsYPPv/V8uk4vZxXR/O1omAvRIBRDu
-         PgLleIigxYXAGr1hfYzah7mBdeRDDN5S9RtcnLIP3Kp44KzVGoMFK0oGLffyLKr4pB
-         ZAZku/HFyW3RimfYjNzkXaLXQPuXnFZmCrgkpzdo=
+        b=Ra7FLk4FjO0O1r4P8I8m/mbffwEqNZWrqyZeXNQxIgHH2Sd1O4ZI7RHxBMpqE7h4R
+         kOxMlITJwSVc13gzPWhpOpQMPiMNMpQV+WWoh4btRLfw+iS2cdReI8OPHhr0CNQsEz
+         RyqK1cOtstYsaCsMprEPSwg/m2LUKJQ8GXYCSo+c=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?Michael=20Niew=C3=B6hner?= <linux@mniewoehner.de>
-Subject: [PATCH 4.4 19/91] usb: core: quirks: add RESET_RESUME quirk for Cherry G230 Stream series
-Date:   Tue, 11 Dec 2018 16:40:38 +0100
-Message-Id: <20181211151607.396138304@linuxfoundation.org>
+        stable@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH 4.4 20/91] misc: mic/scif: fix copy-paste error in scif_create_remote_lookup
+Date:   Tue, 11 Dec 2018 16:40:39 +0100
+Message-Id: <20181211151607.457147313@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181211151606.026852373@linuxfoundation.org>
 References: <20181211151606.026852373@linuxfoundation.org>
@@ -67,34 +67,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Michael Niewöhner <linux@mniewoehner.de>
+From: YueHaibing <yuehaibing@huawei.com>
 
-commit effd14f66cc1ef6701a19c5a56e39c35f4d395a5 upstream.
+commit 6484a677294aa5d08c0210f2f387ebb9be646115 upstream.
 
-Cherry G230 Stream 2.0 (G85-231) and 3.0 (G85-232) need this quirk to
-function correctly. This fixes a but where double pressing numlock locks
-up the device completely with need to replug the keyboard.
+gcc '-Wunused-but-set-variable' warning:
 
-Signed-off-by: Michael Niewöhner <linux@mniewoehner.de>
-Tested-by: Michael Niewöhner <linux@mniewoehner.de>
+drivers/misc/mic/scif/scif_rma.c: In function 'scif_create_remote_lookup':
+drivers/misc/mic/scif/scif_rma.c:373:25: warning:
+ variable 'vmalloc_num_pages' set but not used [-Wunused-but-set-variable]
+
+'vmalloc_num_pages' should be used to determine if the address is
+within the vmalloc range.
+
+Fixes: ba612aa8b487 ("misc: mic: SCIF memory registration and unregistration")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 Cc: stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/core/quirks.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/misc/mic/scif/scif_rma.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/usb/core/quirks.c
-+++ b/drivers/usb/core/quirks.c
-@@ -64,6 +64,9 @@ static const struct usb_device_id usb_qu
- 	/* Microsoft LifeCam-VX700 v2.0 */
- 	{ USB_DEVICE(0x045e, 0x0770), .driver_info = USB_QUIRK_RESET_RESUME },
- 
-+	/* Cherry Stream G230 2.0 (G85-231) and 3.0 (G85-232) */
-+	{ USB_DEVICE(0x046a, 0x0023), .driver_info = USB_QUIRK_RESET_RESUME },
-+
- 	/* Logitech HD Pro Webcams C920, C920-C, C925e and C930e */
- 	{ USB_DEVICE(0x046d, 0x082d), .driver_info = USB_QUIRK_DELAY_INIT },
- 	{ USB_DEVICE(0x046d, 0x0841), .driver_info = USB_QUIRK_DELAY_INIT },
+--- a/drivers/misc/mic/scif/scif_rma.c
++++ b/drivers/misc/mic/scif/scif_rma.c
+@@ -414,7 +414,7 @@ static int scif_create_remote_lookup(str
+ 		if (err)
+ 			goto error_window;
+ 		err = scif_map_page(&window->num_pages_lookup.lookup[j],
+-				    vmalloc_dma_phys ?
++				    vmalloc_num_pages ?
+ 				    vmalloc_to_page(&window->num_pages[i]) :
+ 				    virt_to_page(&window->num_pages[i]),
+ 				    remote_dev);
 
 
