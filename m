@@ -2,145 +2,122 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.9 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D045BC5CFFE
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:29:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95DC5C07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:29:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 969B920851
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:29:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544542160;
-	bh=AtUMkIE4IETPqnqTkclVVj9L1zrkVt/67Wobo+vfbpI=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=1Q38f2YANY6MdMJO79ivrtizBYcQuwNGVolwt4TCi0Of8iWDBB4hpQ3GC1KBMPLkv
-	 9ymv1QWoCgyVBTOcUw50cqRQ7Vqio2DWM7FpkwrFEzIIKi89scn0xEVA8s2mEqEVfe
-	 AxdOXjG8+UKgzQhxzZ7Oup1kx2msBJL3ML3zhUWY=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 969B920851
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 5D0C720855
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:29:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D0C720855
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727032AbeLKP3T (ORCPT
+        id S1727038AbeLKP3l (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 10:29:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49094 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726417AbeLKP3R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:29:17 -0500
-Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C5FCF20851;
-        Tue, 11 Dec 2018 15:29:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544542156;
-        bh=AtUMkIE4IETPqnqTkclVVj9L1zrkVt/67Wobo+vfbpI=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=pSVKxJBnhAtz00o6VydTK1HsfKZWVQikgIQsiLBcHvJYGiawM4KRjEE3mY+NMr4a6
-         xTRHE8yI1k9OhaAZrKGe0yFYxZHtS8YZtESUNBHM8DEWql0cNKLCUr9j0S+jMguyiQ
-         Yb24JDs/qy8UFDkDMlEvcoWrHxd8drqSpvwYjY/I=
-Received: by mail-qt1-f171.google.com with SMTP id l11so16839308qtp.0;
-        Tue, 11 Dec 2018 07:29:16 -0800 (PST)
-X-Gm-Message-State: AA+aEWagc/zIC066uFTyrec5NTQqMeXQrwOrCa1cKlIkYPjEARN52C6c
-        hA/vJ8urFBAZHdmQBH6N0AG/GG7BncBPeGTxQA==
-X-Google-Smtp-Source: AFSGD/W695+WXDLPdc/Ze0rKDuXT2mtilmiQXtDf3pKUYVT4cvm2rm2dz31Xzw006eQv8VJdiVbpf9eiq0kfDnklu4g=
-X-Received: by 2002:ac8:2d2b:: with SMTP id n40mr15802303qta.38.1544542156001;
- Tue, 11 Dec 2018 07:29:16 -0800 (PST)
+        Tue, 11 Dec 2018 10:29:41 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:54901 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726417AbeLKP3k (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 10:29:40 -0500
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wBBFT5YT4041482
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Tue, 11 Dec 2018 07:29:05 -0800
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wBBFT4Iw4041476;
+        Tue, 11 Dec 2018 07:29:04 -0800
+Date:   Tue, 11 Dec 2018 07:29:04 -0800
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Bart Van Assche <tipbot@zytor.com>
+Message-ID: <tip-786fa29e9cb6810e21ab0d9c41a81d81d54d1d1b@git.kernel.org>
+Cc:     tglx@linutronix.de, torvalds@linux-foundation.org,
+        linux-kernel@vger.kernel.org, longman@redhat.com,
+        johannes@sipsolutions.net, mingo@kernel.org, bvanassche@acm.org,
+        hpa@zytor.com, peterz@infradead.org, sasha.levin@oracle.com
+Reply-To: mingo@kernel.org, johannes@sipsolutions.net, longman@redhat.com,
+          sasha.levin@oracle.com, hpa@zytor.com, peterz@infradead.org,
+          bvanassche@acm.org, tglx@linutronix.de,
+          linux-kernel@vger.kernel.org, torvalds@linux-foundation.org
+In-Reply-To: <20181207011148.251812-13-bvanassche@acm.org>
+References: <20181207011148.251812-13-bvanassche@acm.org>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:locking/core] locking/lockdep: Make concurrent
+ lockdep_reset_lock() calls safe
+Git-Commit-ID: 786fa29e9cb6810e21ab0d9c41a81d81d54d1d1b
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-References: <20181122094602.5156-1-tom@aussec.com> <20181122094602.5156-2-tom@aussec.com>
- <20181122094602.5156-3-tom@aussec.com> <20181122094602.5156-4-tom@aussec.com>
- <CAL_JsqJ6fM3+pcC3b-eXEex=j_ft6Z=vukhLK9wULfWJqOTN-A@mail.gmail.com>
- <20181127150629.10795h1esqtc53ut@aussec.com> <CAL_JsqJmuDbPgc3WYRU8y3hbDL5A4_Luj0FfAiSvJ2+J-TM9_g@mail.gmail.com>
- <20181211131716.931947v9gya4ajos@www.aussec.com>
-In-Reply-To: <20181211131716.931947v9gya4ajos@www.aussec.com>
-From:   Rob Herring <robh@kernel.org>
-Date:   Tue, 11 Dec 2018 09:29:04 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqK877WtcFDEVc-fqRu0nSJwpgGBNjuxH0yiN7uy1BBRbw@mail.gmail.com>
-Message-ID: <CAL_JsqK877WtcFDEVc-fqRu0nSJwpgGBNjuxH0yiN7uy1BBRbw@mail.gmail.com>
-Subject: Re: [PATCH v9 3/4] dt-bindings: pps: pps-gpio PPS ECHO implementation
-To:     Tom Burkart <tom@aussec.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        devicetree@vger.kernel.org, lukas@fridolin.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 10, 2018 at 8:17 PM tom burkart <tom@aussec.com> wrote:
->
-> Quoting Rob Herring <robh@kernel.org>:
->
-> > On Mon, Nov 26, 2018 at 10:06 PM tom burkart <tom@aussec.com> wrote:
-> >>
-> >> Quoting Rob Herring <robh@kernel.org>:
-> >>
-> >> > On Thu, Nov 22, 2018 at 3:49 AM Tom Burkart <tom@aussec.com> wrote:
-> >> >>
-> >> >> This patch implements the device tree changes required for the pps
-> >> >> echo functionality for pps-gpio, that sysfs claims is available
-> >> >> already.
-> >> >>
-> >> >> This patch was originally written by Lukas Senger as part of a masters
-> >> >> thesis project and modified for inclusion into the linux kernel by Tom
-> >> >> Burkart.
-> >> >>
-> >> >> Signed-off-by: Lukas Senger <lukas@fridolin.com>
-> >> >> Signed-off-by: Tom Burkart <tom@aussec.com>
-> >> >> ---
-> >> >>  Documentation/devicetree/bindings/pps/pps-gpio.txt | 9 +++++++++
-> >> >>  1 file changed, 9 insertions(+)
-> >> >>
-> >> >> diff --git a/Documentation/devicetree/bindings/pps/pps-gpio.txt
-> >> >> b/Documentation/devicetree/bindings/pps/pps-gpio.txt
-> >> >> index 1155d49c2699..e09f6f2405c5 100644
-> >> >> --- a/Documentation/devicetree/bindings/pps/pps-gpio.txt
-> >> >> +++ b/Documentation/devicetree/bindings/pps/pps-gpio.txt
-> >> >> @@ -7,10 +7,15 @@ Required properties:
-> >> >>  - compatible: should be "pps-gpio"
-> >> >>  - gpios: one PPS GPIO in the format described by ../gpio/gpio.txt
-> >> >>
-> >> >> +Additional required properties for the PPS ECHO functionality:
-> >> >> +- echo-gpios: one PPS ECHO GPIO in the format described by
-> >> ../gpio/gpio.txt
-> >> >> +- echo-active-ms: duration in ms of the active portion of the echo pulse
-> >> >> +
-> >> >>  Optional properties:
-> >> >>  - assert-falling-edge: when present, assert is indicated by a
-> >> falling edge
-> >> >>                         (instead of by a rising edge)
-> >> >>  - capture-clear: when present, also capture the PPS clear event
-> >> >> +- invert-pps-echo: when present, invert the PPS ECHO pulse
-> >> >
-> >> > Why do you need this? Can't you just make the echo gpio GPIO_ACTIVE_LOW?
-> >> >
-> >> > BTW, using the flag probably should have been done for
-> >> > 'assert-falling-edge' as well.
-> >>
-> >> The hardware I use expects a positive-going echo pulse, however, it
-> >> was really easy to give users the option to have it inverted in case
-> >> they use different hardware that expects a negative-going edge.
-> >
-> > It will be even easier to implement if you use GPIO_ACTIVE_LOW or
-> > GPIO_ACTIVE_HIGH as appropriate. If the flag is set appropriately,
-> > then gpiod_set_value(gpio, 1) asserts the pulse and
-> > gpiod_set_value(gpio, 0) deasserts it no matter which way the h/w is
-> > wired. You can then get rid of invert_pps_echo in the driver.
->
-> Hi Rob,
-> I have looked at the appropriate changes to my code to implement the
-> above.  However, there is no GPIO_ACTIVE_* as part of the gpiod_flags
-> enum (include/linux/gpio/consumer.h).
->
-> What am I missing?
+Commit-ID:  786fa29e9cb6810e21ab0d9c41a81d81d54d1d1b
+Gitweb:     https://git.kernel.org/tip/786fa29e9cb6810e21ab0d9c41a81d81d54d1d1b
+Author:     Bart Van Assche <bvanassche@acm.org>
+AuthorDate: Thu, 6 Dec 2018 17:11:36 -0800
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Tue, 11 Dec 2018 14:54:55 +0100
 
-You don't need to know in the driver. You set the gpio state to 1 for
-active, 0 for inactive and that does the right thing based on the flag
-in the DT. IOW, if the DT defines the GPIO as active low, then setting
-the gpio state to 1 will result in the GPIO being 0V. It's a bit
-annoying and confusing at first until you realize the driver can just
-handle either polarity transparently.
+locking/lockdep: Make concurrent lockdep_reset_lock() calls safe
 
-Rob
+Since zap_class() removes items from the all_lock_classes list and the
+classhash_table, protect all zap_class() calls against concurrent
+data structure modifications with the graph lock.
+
+Signed-off-by: Bart Van Assche <bvanassche@acm.org>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Johannes Berg <johannes@sipsolutions.net>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Sasha Levin <sasha.levin@oracle.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Waiman Long <longman@redhat.com>
+Cc: johannes.berg@intel.com
+Cc: tj@kernel.org
+Link: https://lkml.kernel.org/r/20181207011148.251812-13-bvanassche@acm.org
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ kernel/locking/lockdep.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
+index 346b5a1fd062..737d2dd3ea56 100644
+--- a/kernel/locking/lockdep.c
++++ b/kernel/locking/lockdep.c
+@@ -4122,6 +4122,9 @@ void lockdep_reset(void)
+ 	raw_local_irq_restore(flags);
+ }
+ 
++/*
++ * Remove all references to a lock class. The caller must hold the graph lock.
++ */
+ static void zap_class(struct lock_class *class)
+ {
+ 	int i;
+@@ -4229,6 +4232,7 @@ void lockdep_reset_lock(struct lockdep_map *lock)
+ 	int j, locked;
+ 
+ 	raw_local_irq_save(flags);
++	locked = graph_lock();
+ 
+ 	/*
+ 	 * Remove all classes this lock might have:
+@@ -4245,7 +4249,6 @@ void lockdep_reset_lock(struct lockdep_map *lock)
+ 	 * Debug check: in the end all mapped classes should
+ 	 * be gone.
+ 	 */
+-	locked = graph_lock();
+ 	if (unlikely(lock_class_cache_is_registered(lock))) {
+ 		if (debug_locks_off_graph_unlock()) {
+ 			/*
