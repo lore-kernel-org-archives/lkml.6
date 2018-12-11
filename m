@@ -7,51 +7,51 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2C22C5CFFE
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:46:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60D94C07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:46:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 885E52087F
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:46:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 26C2E20870
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:46:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544543186;
-	bh=jM1ZnS6O/x00Y+CTfJujThYY02CVMuhWjH+s5A3xR/A=;
+	s=default; t=1544543190;
+	bh=4CSWEAdwlDSXtIyWdtY+XhwrZcKqNlBD4l8pUUH/0s0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ZNhPVm/akqkzqrGxgjhagxpx4djzMbmeGQGjmGCja7UMJ6RReOiVYx8GdIPtqSIxQ
-	 VMspIqgJlaHFfHWSHelf9o6jZ9Qv9bk8woDBugnDEjLWlEVFoY8+3xBV2R6hL1i16W
-	 //2dj9LD+s88shTA08IG5MgD9Qf1AbYyHksqWooE=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 885E52087F
+	b=Edj4BZbXKjgqi23oNhVR9Fg140fkxVBEiKUGMiphNl6rH4qMR2vML1fwCVksU6s/P
+	 CDVKNezXPeAK42ZgxwPvuYEHIt/hW6bHSZZF903gbgPbUAClYMOX1/XN8rginxgYkT
+	 jZJ3wrVStoSCBqbveoZQ1mfwXsbOO4Nybl+V9sWM=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 26C2E20870
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728337AbeLKPqZ (ORCPT
+        id S1728346AbeLKPq2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 10:46:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34758 "EHLO mail.kernel.org"
+        Tue, 11 Dec 2018 10:46:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34844 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728295AbeLKPqV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:46:21 -0500
+        id S1727567AbeLKPq0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 10:46:26 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A631C20870;
-        Tue, 11 Dec 2018 15:46:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C5B32208E7;
+        Tue, 11 Dec 2018 15:46:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544543181;
-        bh=jM1ZnS6O/x00Y+CTfJujThYY02CVMuhWjH+s5A3xR/A=;
+        s=default; t=1544543186;
+        bh=4CSWEAdwlDSXtIyWdtY+XhwrZcKqNlBD4l8pUUH/0s0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dtpakc/jpGRgBjURp89z2XVamY98DB/oWFhRdm1BLsvWRet1T+DQ7obn/ct0tKfkZ
-         l3KfqL2nad+PO0ofLOwsUMHQX71RbGCLyKqe5HNz28kVFn2M0tLPJrZcKMksTYozSe
-         +ZENHZfiZRHJHnSQYbcK1TWXjv50ryCo0U1ORXYw=
+        b=WvNhYkX80jfYP90HYDN/IZ5MFftY43le0+grB/efZ46qYiW4RddmVisH2DMIE5mlF
+         ue5i/9AcGQlNjDaGMhbHsmu2pbZjqxjujDlStsSjyC2lVxxZiF5Kj40dISh2kdp3WG
+         7s2cpot4D1YVl8SBLRXHL1IY2csVldLaic6MqWe0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        Richard Genoud <richard.genoud@gmail.com>,
-        Vinod Koul <vkoul@kernel.org>
-Subject: [PATCH 4.4 16/91] dmaengine: at_hdmac: fix module unloading
-Date:   Tue, 11 Dec 2018 16:40:35 +0100
-Message-Id: <20181211151607.203912382@linuxfoundation.org>
+        Wei Yongjun <yongjun_wei@trendmicro.com.cn>,
+        Jacek Anaszewski <j.anaszewski@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH 4.4 44/91] leds: leds-gpio: Fix return value check in create_gpio_led()
+Date:   Tue, 11 Dec 2018 16:41:03 +0100
+Message-Id: <20181211151609.585460748@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181211151606.026852373@linuxfoundation.org>
 References: <20181211151606.026852373@linuxfoundation.org>
@@ -70,37 +70,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Richard Genoud <richard.genoud@gmail.com>
+From: Wei Yongjun <yongjun_wei@trendmicro.com.cn>
 
-commit 77e75fda94d2ebb86aa9d35fb1860f6395bf95de upstream.
+commit 2d88a331e48095cf60ad9bdf3177bd401bf99727 upstream.
 
-of_dma_controller_free() was not called on module onloading.
-This lead to a soft lockup:
-watchdog: BUG: soft lockup - CPU#0 stuck for 23s!
-Modules linked in: at_hdmac [last unloaded: at_hdmac]
-when of_dma_request_slave_channel() tried to call ofdma->of_dma_xlate().
+In case of error, the function gpio_to_desc() returns NULL
+pointer not ERR_PTR(). The IS_ERR() test in the return value
+check should be replaced with NULL test.
 
-Cc: stable@vger.kernel.org
-Fixes: bbe89c8e3d59 ("at_hdmac: move to generic DMA binding")
-Acked-by: Ludovic Desroches <ludovic.desroches@microchip.com>
-Signed-off-by: Richard Genoud <richard.genoud@gmail.com>
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
+Signed-off-by: Wei Yongjun <yongjun_wei@trendmicro.com.cn>
+Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/dma/at_hdmac.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/leds/leds-gpio.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/dma/at_hdmac.c
-+++ b/drivers/dma/at_hdmac.c
-@@ -2152,6 +2152,8 @@ static int at_dma_remove(struct platform
- 	struct resource		*io;
+--- a/drivers/leds/leds-gpio.c
++++ b/drivers/leds/leds-gpio.c
+@@ -118,8 +118,8 @@ static int create_gpio_led(const struct
+ 			return ret;
  
- 	at_dma_off(atdma);
-+	if (pdev->dev.of_node)
-+		of_dma_controller_free(pdev->dev.of_node);
- 	dma_async_device_unregister(&atdma->dma_common);
+ 		led_dat->gpiod = gpio_to_desc(template->gpio);
+-		if (IS_ERR(led_dat->gpiod))
+-			return PTR_ERR(led_dat->gpiod);
++		if (!led_dat->gpiod)
++			return -EINVAL;
+ 	}
  
- 	dma_pool_destroy(atdma->memset_pool);
+ 	led_dat->cdev.name = template->name;
 
 
