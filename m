@@ -2,150 +2,126 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1717CC6783B
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 23:23:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06E73C6783B
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 23:26:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB03E20851
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 23:23:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544570580;
-	bh=eDAlSULV94RqEAFfgBQaVPmif4qoH/rkERvgXe2t4m8=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=oObEVLcOXwSWqBRfBAj0cOFvTIse81PaU6dKvCM5Qr7s3yM8b3m/62LhqZz0pZUUl
-	 jmpVGSJOGUX97x4oCEjVxlANPXJx/qk8CEU/uH8xKjccjuGuOR41zo52hLVt8vJZcR
-	 kovzH592O6SBtWuh9Fus19SvYIlS9ybgQ0hTEdFI=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB03E20851
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 98D6D20672
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 23:26:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="01WSNWk8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98D6D20672
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726237AbeLKXW7 (ORCPT
+        id S1726255AbeLKX04 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 18:22:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57010 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726183AbeLKXW7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 18:22:59 -0500
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EAF0421473
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 23:22:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544570578;
-        bh=eDAlSULV94RqEAFfgBQaVPmif4qoH/rkERvgXe2t4m8=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=SfbVneZd5Nun9ZpBsZuZsK3Gzjj5SMOJIhXDKSsFYkBqILA/XlmBOHokZuxov6/JG
-         IYwqKXSZ7tVkwirR/fHw4Z91EgLfj4ov1FnH+8Ti6VCpYOLJSRTlxeUjl+Q1lIII/X
-         icetzV4dxgcJLnYVQ5DuaxvaZM4IJzl5V828N2xA=
-Received: by mail-wm1-f50.google.com with SMTP id a18so4059770wmj.1
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 15:22:57 -0800 (PST)
-X-Gm-Message-State: AA+aEWYhf0LiVgNsAN+VFXYyPtm9VPg3fr8u/G8nX7so/9LbNYGJ9Gq/
-        VwyXaqJrmd9BqbcmjJ1r+jeE94Pd0MuEkOJqPTiUXQ==
-X-Google-Smtp-Source: AFSGD/U5+YW3RxB0S4/HWjS9g983JWM2WGsSKFJsaZrfGKE6thbAXVoXRjzmvel9+qBe+FTg/oWqPUYYOWynOD4AQac=
-X-Received: by 2002:a1c:864f:: with SMTP id i76mr4032598wmd.83.1544570576367;
- Tue, 11 Dec 2018 15:22:56 -0800 (PST)
+        Tue, 11 Dec 2018 18:26:56 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:42856 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726218AbeLKX04 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 18:26:56 -0500
+Received: by mail-lf1-f68.google.com with SMTP id l10so12096667lfh.9
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 15:26:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=vzICyHmd0JEn5UWsVCk7go+fTmvEQXBnI3wfUaeZzo0=;
+        b=01WSNWk8LJUMV7S71iFqrRfVJtWrveC8bt6ldAQ/nnO3M9iuzrFYXGTQ2mDpis9d1X
+         2pQ+lJNra+KD5jgurk0n8IVjxxX6pBl/SNZinhYRjZL5swpmb0XlCeDo75+7451n86JB
+         3y65h2W5Kp1Ctax6gnidPUfQCsUxD9zlLzoVH1i+kCLj2tdKVlbmJ0G4O1KTAfiPHDF+
+         cVeVag/awxcFwyeSvrNVYjDlkyXtKJZ52fuyY7DHw4eNAdSGSaQU5iT0ib1tsYohIOVo
+         ml6BBmeGp3OCBEMsUNoxlILLEGj5NbR664nRL1sPACm/NXR08spLPaPhyI6/jHDs7H24
+         IlwQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=vzICyHmd0JEn5UWsVCk7go+fTmvEQXBnI3wfUaeZzo0=;
+        b=RpR2Hv9V87d+d9pKo1P5g+CK2Hwmhk8ZOsxG2qG5xMnnu/m27IcIJwcossuzv7xwTR
+         h22D6rxXI0X4o13zOrzQqTA2hRmCXPblwMjG+IcCvqUjyvHrAPW/uonI25vL9lSdLaRk
+         gI6oEbT6jZmrGsetQwR+p8OMRf8T/qdJrHHGyb8AZGcpWjWmKicitNuiNKpgoUc620dL
+         r+i9obCBvyH7TIc+h+kSNaAMZjcANlPKO0ir47MqHQXZ53jO+IGvmk4RCgHhBoPlxV9d
+         XVm6frGwY4a9FmUgt3EK660ubsyJBz/O3iVlgJb5jgqhNjQtxjJsOKHsUdTY3m823Zh0
+         W7aQ==
+X-Gm-Message-State: AA+aEWa+Sm084Vel04298OX1Oe7NAhL5KLkbFBcqTB/A9aJoVba6BRF4
+        BYyae6IqEdpDU1+cBaZCSUjuA9FEA8Vu1diucIoc
+X-Google-Smtp-Source: AFSGD/VFrrs1mZDaWPFiePS1U6TxyutSdhbdsYIqi2zRu0pgPGRaQUbaF/wfO/tc35sQTOtXVKgsRxbT8g0UgQZOG5g=
+X-Received: by 2002:a19:e601:: with SMTP id d1mr10839000lfh.71.1544570813365;
+ Tue, 11 Dec 2018 15:26:53 -0800 (PST)
 MIME-Version: 1.0
-References: <CALCETrXoRAibsbWa9nfbDrt0iEuebMnCMhSFg-d9W-J2g8mDjw@mail.gmail.com>
- <CAHk-=wi_Kp=3XmGDdzmadzFSPFvuL+aAJ6ZPAR=o4z=KwYT2vw@mail.gmail.com> <Pine.BSM.4.64L.1812112150480.21176@herc.mirbsd.org>
-In-Reply-To: <Pine.BSM.4.64L.1812112150480.21176@herc.mirbsd.org>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Tue, 11 Dec 2018 15:22:43 -0800
-X-Gmail-Original-Message-ID: <CALCETrWgpAX7FV23zHmid83SsgnwFMKD4a_-xSEgB6v0kJR5sA@mail.gmail.com>
-Message-ID: <CALCETrWgpAX7FV23zHmid83SsgnwFMKD4a_-xSEgB6v0kJR5sA@mail.gmail.com>
-Subject: Re: Can we drop upstream Linux x32 support?
-To:     tg@mirbsd.de
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Lutomirski <luto@kernel.org>, X86 ML <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Florian Weimer <fweimer@redhat.com>,
-        Mike Frysinger <vapier@gentoo.org>,
-        "H. J. Lu" <hjl.tools@gmail.com>, Rich Felker <dalias@libc.org>,
-        x32@buildd.debian.org, Arnd Bergmann <arnd@arndb.de>,
-        Will Deacon <will.deacon@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>
+References: <cover.1544477629.git.rgb@redhat.com> <CAHC9VhRqMt2k+pL7YF0MaZQfXZzttyHAXBJhHH56Mvswii4EKg@mail.gmail.com>
+ <20181211224107.vdeksnc5bd5bb7mb@madcap2.tricolour.ca>
+In-Reply-To: <20181211224107.vdeksnc5bd5bb7mb@madcap2.tricolour.ca>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Tue, 11 Dec 2018 18:26:42 -0500
+Message-ID: <CAHC9VhSkKqdm=q5r4Y0-kEg2j84-AG5omo6frfORXVcJ_orUaw@mail.gmail.com>
+Subject: Re: [PATCH ghak59 V3 0/4] audit: config_change normalizations and
+ event record gathering
+To:     rgb@redhat.com
+Cc:     linux-kernel@vger.kernel.org, linux-audit@redhat.com,
+        Eric Paris <eparis@redhat.com>, viro@zeniv.linux.org.uk,
+        sgrubb@redhat.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 11, 2018 at 2:14 PM Thorsten Glaser <tg@mirbsd.de> wrote:
+On Tue, Dec 11, 2018 at 5:41 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+> On 2018-12-11 17:31, Paul Moore wrote:
+> > On Mon, Dec 10, 2018 at 5:18 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+
+...
+
+> > > Richard Guy Briggs (4):
+> > >   audit: give a clue what CONFIG_CHANGE op was involved
+> > >   audit: add syscall information to CONFIG_CHANGE records
+> > >   audit: hand taken context to audit_kill_trees for syscall logging
+> > >   audit: extend config_change mark/watch/tree rule changes
+> > >
+> > >  kernel/audit.c          | 33 +++++++++++++++++++++++----------
+> > >  kernel/audit.h          |  4 ++--
+> > >  kernel/audit_fsnotify.c |  4 ++--
+> > >  kernel/audit_tree.c     | 28 +++++++++++++++-------------
+> > >  kernel/audit_watch.c    |  8 +++++---
+> > >  kernel/auditfilter.c    |  2 +-
+> > >  kernel/auditsc.c        | 12 ++++++------
+> > >  7 files changed, 54 insertions(+), 37 deletions(-)
+> >
+> > In order to make sure expectations are set appropriately, as we are at
+> > -rc6 right now this is not something that would go into audit/next now
+> > (assuming everything looks okay on review), it would go into
+> > audit/next *after* the upcoming merge window.
 >
-> Note: please keep me in Cc because I am not subscribed.
->
-> Linus Torvalds dixit:
->
-> >I'm not opposed to trying to sunset the support, but let's see who compl=
-ains..
->
-> I will hereby complain.
->
-> I=E2=80=99m using Debian/x32 on my main desktop at work, and do
-> occasionally help out with porting issues. It=E2=80=99s a good
-> way to make more out of 64-bit machines without going
-> all 64 bit; it=E2=80=99s also helped me find bugs in software.
-> It=E2=80=99s a nice architectural idea, and a way forward for
-> things that are constricted to 32 bits while opening
-> up stuff like 64-bit time_t without taking up half the
-> available CPU registers (while more than doubling the
-> number of the available CPU registers, too).
+> I agree it is a bit late for this.  I wasn't expecting it to go in this
+> one.  I'm filling the queue since I'm blocked on other review for
+> ghak81(5.5wks), ghak90(5.5wks), ghak100(3.5wks).  ghak90 missed another
+> merge window.
 
-Thanks for responding!
+As discussed previously, GHAK81
+(https://github.com/linux-audit/audit-kernel/issues/81) is something
+that I consider part of the audit container ID work (GHAK90).  I
+believe it's time to stop treating it as a separate issue.
 
-I suppose the question is: are you enough of a user to justify the
-continued maintenance effort.
+The audit container ID work, GHAK90
+(https://github.com/linux-audit/audit-kernel/issues/90), is where all
+the dragon's lie.  That one takes a good deal of time to review, and
+quite frankly I'm really the only one who seems to be looking at it
+anymore, so it takes a bit longer.
 
->
-> I was also considering investing a nontrivial amount of
-> work into porting klibc to x32, since hpa does not wish
-> to do it himself. Thankfully I have only done a bit yet.
->
-> Furthermore, x32 was the first of the many *64ilp32
-> architectures; I know I=E2=80=99ve seen amd64ilp32 and at least
-> one other I don=E2=80=99t recall. It will have prototyped many
-> of the problems users of these will run in, and I=E2=80=99d prefer
-> to keep it (completely selfish because I don=E2=80=99t wish to
-> have to crossgrade a whole system yet again).
+Beside the fact that GHAK100
+(https://github.com/linux-audit/audit-kernel/issues/100) was marked as
+a RFC, I've been waiting to hear back from the VFS folks if they are
+comfortable with it.  Miklos Szeredi in particular had some concerns
+and it isn't clear to me from that thread that his concerns have been
+resolved.
 
-it kind of seems like arm64's lesson is "don't do it like x32".
-
-There's some effort going on right now to make it possible to add
-syscalls without having to muck with every single architecture.  I
-don't really want x32 to derail that effort.  I suppose we could say
-that x32 stays but that it simply gets no new syscalls, but that seems
-a bit lame.  Unfortunately, on x86, x32 really is a third ABI that is
-not compatible in a structure-memory-layout sense with the other two.
-What happens if someone adds a struct like:
-
-struct nasty_on_x32 {
-  __kernel_long_t a;
-  void * __user b;
-};
-
-On x86_64, that's two 8-byte fields.  On x86_32, it's two four-byte
-fields.  On x32, it's an 8-byte field and a 4-byte field.  Now what?
-
-I'm sure we could have some magic gcc plugin or other nifty tool that gives=
- us:
-
-copy_from_user(struct struct_name, kernel_ptr, user_ptr);
-
-where it automatically generates code for all possible ABIs to copy
-over the struct and dispatches dynamically based on the current
-syscall ABI, but I have trouble imagining anyone volunteering to
-actually do this work.  Instead we get ad hoc fixes for each syscall,
-along the lines of preadv64v2(), which get done when somebody notices
-a problem.
-
-Linus, any advice here?
-
---Andy
+-- 
+paul moore
+www.paul-moore.com
