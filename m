@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.9 required=3.0
 	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05A94C5CFFE
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 19:34:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 020F2C5CFFE
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 19:34:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C113220870
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 19:34:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C113220870
+	by mail.kernel.org (Postfix) with ESMTP id C91EF20870
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 19:34:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C91EF20870
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=public-files.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727062AbeLKTeW (ORCPT
+        id S1726965AbeLKTeS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 14:34:22 -0500
-Received: from mout.gmx.net ([212.227.15.19]:38069 "EHLO mout.gmx.net"
+        Tue, 11 Dec 2018 14:34:18 -0500
+Received: from mout.gmx.net ([212.227.15.18]:60513 "EHLO mout.gmx.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726864AbeLKTeQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726858AbeLKTeQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 11 Dec 2018 14:34:16 -0500
 Received: from localhost.localdomain ([91.14.83.44]) by mail.gmx.com (mrgmx002
- [212.227.17.190]) with ESMTPSA (Nemesis) id 0MWBpJ-1gvMxT2drN-00XLBD; Tue, 11
- Dec 2018 20:33:34 +0100
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 0M54fe-1hNFmP0NIc-00zIHc; Tue, 11
+ Dec 2018 20:33:39 +0100
 From:   Frank Wunderlich <frank-w@public-files.de>
 To:     Andrew Lunn <andrew@lunn.ch>,
         Vivien Didelot <vivien.didelot@savoirfairelinux.com>,
@@ -36,109 +36,76 @@ To:     Andrew Lunn <andrew@lunn.ch>,
         linux-arm-kernel@lists.infradead.org,
         linux-mediatek@lists.infradead.org
 Cc:     Frank Wunderlich <frank-w@public-files.de>
-Subject: [PATCH 2/7] [DSA] add helper functions
-Date:   Tue, 11 Dec 2018 20:33:09 +0100
-Message-Id: <20181211193314.10695-2-frank-w@public-files.de>
+Subject: [PATCH 6/7] [DSA] tell GDMA when we are turning on the special tag
+Date:   Tue, 11 Dec 2018 20:33:13 +0100
+Message-Id: <20181211193314.10695-6-frank-w@public-files.de>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181211193314.10695-1-frank-w@public-files.de>
 References: <20181211193314.10695-1-frank-w@public-files.de>
-X-Provags-ID: V03:K1:Q/my6UytJVxyZLtJc7lh5FOPR8E+ADY9dIGQJ6QokjLi/F4DiGf
- 6YXNBT8dwo2tASrHjKJ0CTlhZxNHf+mRzlED69h8/IjldXLg78KujPVtRfkiIgE5cPO2YnY
- M6iUHKu8Vw4yPN3RNfZg3QUEn3L7HvZSS/wJnhnux4ROIWF/tE93C1preTXR+vfs2fuCxyK
- JvGS2b9zyKQ6jwBcPl34A==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:9uJAsunHCT8=:JA4PNchNUuqM1nHmmGKkYd
- 249Xh7Yb4Baaa1PyJHKwYAy6o7Vwk2Nzlj1nE85GZ0+5zFA1IY9MJ0e1TvuD/P8y3FBuvK6ub
- 2I1SbUwl+eWg8EJCDrB0zDWFBFhcvvuLstzhy7+OcMGjGqw/N/gVJLrEPyN/12aBgR3EZ1Suj
- gcL+oQNlhinrJ0Tr1qVMsiy6C1ekkxu4ZLGhLxf905WJUk8ALRYeUBRg0WP1H/vwK3TIcgl2N
- 94EiQFKPcngLLx6aFtiNj6zgMxVxr9+35qf2RpxKzzRTDywQlS4P1SuzEo0+VlU79zjy8Wc1Q
- SKJ2z4ooPLloS0iXhjuIIa4Ri4iYfb3GgnLTRaO11L4xUGZ2nPKBGFPXHRzYNM7ZQb486xWoA
- LdHJB2yzjIFiej9Dmzvb7VUoFEwVrRwinFPYsTJ1ZMQZiKsIHnIAvJXWVxjnyoylmZcwBJ8O4
- L3cMouXLQX93IugSNjiedMlQAiaYTVm19KVvcfRz9QCwMelH7Sou7EGpWaJLUxIggPoYd9HyM
- +S0O19S16cQ7mgm426BXfg3/saSFIa2tEUMqWJMqpN8D0d37OZHNhupUY3yTvxeyvnVwMMLgi
- nwFVt6OyVFQVJETweKv0u1z6RW4mojl3BiJycgLKHL2yKLH966jtA9Q2ZK9K0gjXvWZosXiHA
- 3g7rBFqlTcESfsizXECHAd10bnvzGqbRQstPvD5yvy97upni144f5IsHRRU4ufQQjDEygbw3X
- ImSNWoxRK7RiEyBPbMsAmfcfFq7zw7GTAwP0vONwVd1W4wXjja80MGw5sJuzOvy6MvUuFAMmJ
- hY8TcAd6plUZWmQSduaFKqaWrmXo10xX4TWL4F37pTrkBUFyyklJ1uPuGEiYz8Y5mP2qQ4F1y
- wgTZYTied0AufIIdtTGqtZIQ6juAACNJtvI08fzkaOsZ6C/IIM+9a3YCg/7vg5
+X-Provags-ID: V03:K1:uFgKQXFf5ffjFoYiHtcDtZDgE2oDlHS562h3FDJ6QC9XXwBnE5y
+ CONdUO19qPjv3zRQmvcGXVS4tLjnPeRJozuJIcvahp7pGrsM5uKsFgEQ4MN0gWFeVMBw9Gx
+ +B8CcF6tBpPNoof+Uq92L/FGvYka5vZkxE7/vtEW/DfB7+lxsQyPUCmTk+/L/6kxVpMovZs
+ B1zP3X69gkvpbYuWNhnLw==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:xO9EQCi536I=:b+bOI7S7AJJsRlQortI3Sq
+ i3+ejQQd/dbczxZJbXf0gavnEkFxzLfhTU6IHCKfLC21vUP3qaqNfh/AfsT3MjPoWfzu3q08+
+ 8ly4JxvNvC6s+4VhsX185bxDZcRG5CiaDoK193i6L5wMvAoJtHiEyynwKcohsLsyVQIqli/6b
+ GeYb+h0nXf6DneF3vg76rFL+RdTBqAYsjvl5L9L1RIgFzdKKgMPRuPnAYEDPzMOY5BQKa+T3Z
+ fyYG2vXwr92E6pKzCn4s5Bknugrbdx4cAA4NGgxKDCWD6H/MZzJcxJUnv5KdZ2a47vkGvbcRw
+ fMlyFYzampC8n2OgBD8aGoEF9mQqz6lyhLQ4S+bGUMqrFGtAqB+sHBwN9c6Sepwgmg5Ikigre
+ 8FfR6vDOtv47SeP0MRI0ikMrPOrwiXRxb01LP29ZR4cI5j3l3EXDk6d8xz3X2BjcObqdF+Lmv
+ gqrPEXl/euUHKzRCtbPoldTvg1sCZO4zfmszDW+oMCGQdomxPfc+SuQb1dQmHAIzC+Fbr6oLi
+ 7wQOhSkXBmPucuWuBnR3xTwUGnwF46/Vqqdk0nPeYE7YPyM6IWXVBsjCRLYdi3F/gUmI+bimt
+ UmGKv+PsRRadlM1sO9myKVmUBqZa00fn28ejntrT4GXe6J3fQDZJPbbFhVO7AqgJdh/7vA8Ef
+ BCfvzFc0JW9QoGFkMscmYzhbjx6C6blefrhkWAs0d4ciO6gl/SLlqQMYS2KWddD/2zpG4qlrn
+ JfnuAuGSFG/QW3P6jz1F9G+RSPOcmvOQ0G5WrfyB9xr+boHBzVqWZN1hAjhsUdo0jixJqigCW
+ w8nWL6CTh4Kal4+vTX4ojDozl5WDtejsCgblaZzWkHBGv2hra+95Wf6lBQw6GOOGciWfGv85v
+ U1JVf8V4RIc0+n9nGv0t8ikqKEh0pOAnZd+ND5Md0FsEDw+lMMkW5YnKB7IZAx
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 based on
-https://github.com/openwrt/openwrt/blob/master/target/linux/mediatek/patches-4.14/0033-dsa-multi-cpu.patch
+https://github.com/openwrt/openwrt/blob/master/target/linux/mediatek/patches-4.14/0044-net-next-dsa-mediatek-tell-GDMA-when-we-are-turning-.patch
 
 Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
 ---
- include/net/dsa.h | 18 ++++++++++++++++++
- net/dsa/dsa2.c    | 18 ++++++++++++++++++
- 2 files changed, 36 insertions(+)
+ drivers/net/dsa/mt7530.c | 6 ++++++
+ drivers/net/dsa/mt7530.h | 4 ++++
+ 2 files changed, 10 insertions(+)
 
-diff --git a/include/net/dsa.h b/include/net/dsa.h
-index 3efa81e08993..612942ac56de 100644
---- a/include/net/dsa.h
-+++ b/include/net/dsa.h
-@@ -319,6 +319,12 @@ static inline unsigned int dsa_towards_port(struct dsa_switch *ds, int device,
- 		return ds->rtable[device];
- }
+diff --git a/drivers/net/dsa/mt7530.c b/drivers/net/dsa/mt7530.c
+index 441320d4d779..83669f53cb36 100644
+--- a/drivers/net/dsa/mt7530.c
++++ b/drivers/net/dsa/mt7530.c
+@@ -681,6 +681,12 @@ mt7530_cpu_port_enable(struct mt7530_priv *priv,
+ 	mt7530_write(priv, MT7530_PVC_P(port),
+ 		     PORT_SPEC_TAG);
  
-+
-+static inline bool dsa_is_upstream_port(struct dsa_switch *ds, int p)
-+{
-+	return dsa_is_cpu_port(ds, p) || dsa_is_dsa_port(ds, p);
-+}
-+
- /* Return the local port used to reach the dedicated CPU port */
- static inline unsigned int dsa_upstream_port(struct dsa_switch *ds, int port)
- {
-@@ -331,6 +337,18 @@ static inline unsigned int dsa_upstream_port(struct dsa_switch *ds, int port)
- 	return dsa_towards_port(ds, cpu_dp->ds->index, cpu_dp->index);
- }
- 
-+static inline u8 dsa_port_upstream_port(struct dsa_switch *ds, int port)
-+{
-+	/*
-+	 * If this port has a specific upstream cpu port, use it,
-+	 * otherwise use the switch default.
++	/* Enable Mediatek header mode on the GMAC that the cpu port
++	 * connects to
 +	 */
-+	if (ds->ports[port].upstream)
-+		return ds->ports[port].upstream;
-+	else
-+		return dsa_upstream_port(ds, port);
-+}
++	regmap_write_bits(priv->ethernet, MTK_GDMA_FWD_CFG(port),
++			  GDMA_SPEC_TAG, GDMA_SPEC_TAG);
 +
- typedef int dsa_fdb_dump_cb_t(const unsigned char *addr, u16 vid,
- 			      bool is_static, void *data);
- struct dsa_switch_ops {
-diff --git a/net/dsa/dsa2.c b/net/dsa/dsa2.c
-index a1917025e155..77420675e9ed 100644
---- a/net/dsa/dsa2.c
-+++ b/net/dsa/dsa2.c
-@@ -255,6 +255,24 @@ static void dsa_tree_teardown_default_cpu(struct dsa_switch_tree *dst)
- 	dst->cpu_dp = NULL;
- }
+ 	/* Setup the MAC by default for the cpu port */
+ 	mt7530_write(priv, MT7530_PMCR_P(port), PMCR_CPUP_LINK);
  
-+static int dsa_user_parse(struct dsa_port *port, u32 index,
-+			  struct dsa_switch *ds)
-+{
-+	struct device_node *cpu_port;
-+	const unsigned int *cpu_port_reg;
-+	int cpu_port_index;
+diff --git a/drivers/net/dsa/mt7530.h b/drivers/net/dsa/mt7530.h
+index d9b407a22a58..310f2536175b 100644
+--- a/drivers/net/dsa/mt7530.h
++++ b/drivers/net/dsa/mt7530.h
+@@ -23,6 +23,10 @@
+ 
+ #define TRGMII_BASE(x)			(0x10000 + (x))
+ 
++/* Registers for GDMA configuration access */
++#define MTK_GDMA_FWD_CFG(x)		(0x500 + (x * 0x1000))
++#define GDMA_SPEC_TAG			BIT(24)
 +
-+	cpu_port = of_parse_phandle(port->dn, "cpu", 0);
-+	if (cpu_port) {
-+		cpu_port_reg = of_get_property(cpu_port, "reg", NULL);
-+		if (!cpu_port_reg)
-+			return -EINVAL;
-+		cpu_port_index = be32_to_cpup(cpu_port_reg);
-+		ds->ports[index].upstream = cpu_port_index;
-+	}
-+	return 0;
-+}
-+
- static int dsa_port_setup(struct dsa_port *dp)
- {
- 	struct dsa_switch *ds = dp->ds;
+ /* Registers to ethsys access */
+ #define ETHSYS_CLKCFG0			0x2c
+ #define  ETHSYS_TRGMII_CLK_SEL362_5	BIT(11)
 -- 
 2.17.1
 
