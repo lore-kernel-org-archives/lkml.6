@@ -2,130 +2,95 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80A66C07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 14:29:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF192C5CFFE
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 14:30:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 475442081B
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 14:29:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Hpp5jXGo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 475442081B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 6C1F12084E
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 14:30:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544538609;
+	bh=HS57lYH7JptwNtPF4OwkNLWuULlu/aMyD06HHgWcovw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=fhRvsRrOAhPOnvzcpPZSgdLMIWI2JAH3611sShm0VjPRPeLRF1IfKKdAqQy8mtVX/
+	 h9UqjNQbNecI5Qdx+Kd5+44Q0eRBsLYWkMmVbQpZE2mwJMsV4CQXzUouB4TYspRoNS
+	 sSvGYHsBGWl6m/RaALnFGuNrjKVD9Elm9ZxrvXi0=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C1F12084E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726585AbeLKO3s (ORCPT
+        id S1726617AbeLKOaH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 09:29:48 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:54958 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726231AbeLKO3r (ORCPT
+        Tue, 11 Dec 2018 09:30:07 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:56264 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726176AbeLKOaH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 09:29:47 -0500
+        Tue, 11 Dec 2018 09:30:07 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
         List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=3lZ6iH/hfEnxvUJ99+5wMLUzxVp8nF2STyXFCHfIi18=; b=Hpp5jXGoZjC/IW8pQWwu/VHWG
-        UbwpCH15sJU2/c5U7wNsvPRkZuWf5l8Ug0mbl0XwdmgeJZv99uDJr32/mCzYCX3mN24K8YYBHzz4m
-        tp8nHvElVsOEJ5Otc2tIIPGqaH9A32/LmL5d7/i9zwPVVaBuHftW6aVMiQyn5dp8F3jAg/isa3AR2
-        t344JJI5ilFNoqAizZMp5DfsjKcPpxdV/ZP5uOSuO1JrBPgwXD8aHM5Ezs2Th3MXjDrJRrlUeL2c+
-        +TszgFeyUg04HBTmQUUP+6WB0CueTOkdhj2yo/sQ/8bGojwHdxoC1G0COIt3fdcdeOuP3aKT+FeED
-        /1PnKcGww==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gWj2h-0004fr-9q; Tue, 11 Dec 2018 14:29:47 +0000
-Date:   Tue, 11 Dec 2018 06:29:47 -0800
-From:   Matthew Wilcox <willy@infradead.org>
-To:     kernel test robot <rong.a.chen@intel.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>, lkp@01.org
-Subject: Re: [LKP] [xarray] 4e99d4e957: BUG:soft_lockup-CPU##stuck_for#s
-Message-ID: <20181211142947.GC6830@bombadil.infradead.org>
-References: <20181211095441.GR23332@shao2-debian>
+         bh=HS57lYH7JptwNtPF4OwkNLWuULlu/aMyD06HHgWcovw=; b=w48UEWvgc7kusQWgLC2b2hIv5
+        I5lzC9n1432G9a9wS9Ic44FDCTpMPqv58Iw8owGTtE+WXszDi7TosAQO2nge5QPZEweJ1fjR6/8mj
+        gjgsle7DlJ5oezFhuKQyVpG3dA2hX4H5sq7ewswdKfUw7w7qgm7hDyYOR2dVboafjtey8=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1gWj30-00017W-6N; Tue, 11 Dec 2018 14:30:06 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id CE83E112540E; Tue, 11 Dec 2018 14:30:05 +0000 (GMT)
+Date:   Tue, 11 Dec 2018 14:30:05 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Clark Wang <xiaoning.wang@nxp.com>
+Cc:     "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] spi: lpspi: Fix CLK pin becomes low before one transfer
+Message-ID: <20181211143005.GJ6686@sirena.org.uk>
+References: <20181204062224.28844-1-xiaoning.wang@nxp.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="yr/DzoowOgTDcSCF"
 Content-Disposition: inline
-In-Reply-To: <20181211095441.GR23332@shao2-debian>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20181204062224.28844-1-xiaoning.wang@nxp.com>
+X-Cookie: Immanuel doesn't pun, he Kant.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 11, 2018 at 05:54:41PM +0800, kernel test robot wrote:
-> # To reproduce,
-> # 1) save job-script and this script (both are attached in 0day report email)
-> # 2) run this script with your compiled kernel and optional env $INSTALL_MOD_PATH
-> 
-> kernel=$1
-> 
-> initrds=(
-> 	/osimage/yocto/yocto-tiny-i386-2016-04-22.cgz
-> 	/lkp/lkp/lkp-i386.cgz
-> 	/osimage/deps/debian-x86_64-2016-08-31.cgz/run-ipconfig.i386_2016-09-03.cgz
-> )
-> 
-> HTTP_PREFIX=https://download.01.org/0day-ci/lkp-qemu
-> wget --timestamping "${initrds[@]/#/$HTTP_PREFIX}"
-> 
-> {
-> 	cat "${initrds[@]//*\//}"
-> 	[[ $INSTALL_MOD_PATH ]] && (
-> 		cd "$INSTALL_MOD_PATH"
-> 
-> 
-> To reproduce:
-> 
->         git clone https://github.com/intel/lkp-tests.git
->         cd lkp-tests
->         bin/lkp qemu -k <bzImage> job-script # job-script is attached in this email
 
-When I do this, the only output I get is:
+--yr/DzoowOgTDcSCF
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-make: Entering directory '/home/willy/kernel/lkp-tests/bin/event'
-gcc    -c -o wakeup.o wakeup.c
-gcc  -static -o wakeup wakeup.o
-rm -f wakeup.o
-strip wakeup
-make: Leaving directory '/home/willy/kernel/lkp-tests/bin/event'
+On Tue, Dec 04, 2018 at 06:23:19AM +0000, Clark Wang wrote:
+> Remove Reset operation in fsl_lpspi_config(). This RST may cause both CLK
+> and CS pins go from high to low level under cs-gpio mode.
+> Add fsl_lpspi_reset() function after one message transfer to clear all
+> flags in use.
 
-Running under sh -x, I get as far as:
+This doesn't apply against current code, please check and resend.
 
-+ exec /home/willy/kernel/lkp-tests/lkp-exec/qemu -k ../idrext/.build-yocto/arch/x86/boot/bzImage job-script
+--yr/DzoowOgTDcSCF
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Editing that script to set -x, I get to:
+-----BEGIN PGP SIGNATURE-----
 
-+ /home/willy/kernel/lkp-tests/sbin/pack -f -a x86_64 lkp-src
-make: Entering directory '/home/willy/kernel/lkp-tests/bin/event'
-gcc    -c -o wakeup.o wakeup.c
-gcc  -static -o wakeup wakeup.o
-rm -f wakeup.o
-strip wakeup
-make: Leaving directory '/home/willy/kernel/lkp-tests/bin/event'
-+ exit
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlwPye0ACgkQJNaLcl1U
+h9BAygf/dnLhg3GtANkZTYpKtHYETF7XJSIoWNyd9k0A9sJ5RoRZsze7LKQwR7rz
+D6PtMkNEv5HJDLOYZLz19V1TuTSwRHAKJ3w4Lz+Yb6vl9guscyXTncXcv3steZX5
+nSZQgWl2aBGKynQy5/lv7uOlLr6hcCZFkZq0sD183oPGCw7HPqMokISo+FQPndUh
+ZKNVqpcEF5YZJJE0YPbrGp0rHqW4AaLdYDuOrM6zgwqmdu0G1eZkNNww9ulI0g1N
+mzB+tUd8Oup0u/LfyYQcfNpcfgaf2h5m2+rL5snG8CVSF0gHFPQHyojfev4QGfZS
+ppfXA3gov1qTmMysUM25YMpq52mRIA==
+=pMcg
+-----END PGP SIGNATURE-----
 
-which would seem to indicate your 'pack' command failed with a non-zero
-exit code?  Adding set -x to _that_ script gives me:
-
-+ find . -type d -exec chmod g+rwx '{}' ';'
-+ chmod -R g+rw etc lib root usr
-+ '[' -d /osimage/addon-x86_64 ']'
-+ gzip -n -9 /home/willy/.lkp/cache/lkp-x86_64.cpio
-+ mv -f /home/willy/.lkp/cache/lkp-x86_64.cpio.gz /home/willy/.lkp/cache/lkp-x86_64.cgz
-+ [[ -n '' ]]
-+ [[ -n '' ]]
-+ exit
-
-I'm using your top-of-tree lkp-tests, commit
-e28c726dfe85e3e595ba4776a4eb92f2559d3ac0
-
-By the way, I took this kernel config and ran it under one of your other
-test cases (the one which runs Trinity) and didn't see a boot problem,
-so either it's something specific to this setup, or the problem got
-fixed between this commit and current top-of-tree.
+--yr/DzoowOgTDcSCF--
