@@ -2,56 +2,54 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-11.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60D94C07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:46:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94232C5CFFE
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:46:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 26C2E20870
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:46:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 561BE20870
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:46:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544543190;
-	bh=4CSWEAdwlDSXtIyWdtY+XhwrZcKqNlBD4l8pUUH/0s0=;
+	s=default; t=1544543194;
+	bh=02Hx4+PpyZUPSvWpvJM0FiJWhul8ESrvUoJLK+mBoT8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Edj4BZbXKjgqi23oNhVR9Fg140fkxVBEiKUGMiphNl6rH4qMR2vML1fwCVksU6s/P
-	 CDVKNezXPeAK42ZgxwPvuYEHIt/hW6bHSZZF903gbgPbUAClYMOX1/XN8rginxgYkT
-	 jZJ3wrVStoSCBqbveoZQ1mfwXsbOO4Nybl+V9sWM=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 26C2E20870
+	b=Gl1K/KDotAdJQuhkGdgU/ENJTrI10r58tDrAHS0UJSdsnPLE2Zx4EjDOqw4ZAbAYv
+	 H/poimdRguw0M2C334Fav9S0WPRjyk3gfVL9192zqZpSdmV2oUzEh0SEnWhgx/1e1J
+	 MM3jTQs9TIaPgKZOaSv73sr4Gm6IKxxpFgTxuKIg=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 561BE20870
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728346AbeLKPq2 (ORCPT
+        id S1728357AbeLKPqd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 10:46:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34844 "EHLO mail.kernel.org"
+        Tue, 11 Dec 2018 10:46:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34900 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727567AbeLKPq0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:46:26 -0500
+        id S1727567AbeLKPq3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 10:46:29 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C5B32208E7;
-        Tue, 11 Dec 2018 15:46:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6782B20989;
+        Tue, 11 Dec 2018 15:46:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544543186;
-        bh=4CSWEAdwlDSXtIyWdtY+XhwrZcKqNlBD4l8pUUH/0s0=;
+        s=default; t=1544543188;
+        bh=02Hx4+PpyZUPSvWpvJM0FiJWhul8ESrvUoJLK+mBoT8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WvNhYkX80jfYP90HYDN/IZ5MFftY43le0+grB/efZ46qYiW4RddmVisH2DMIE5mlF
-         ue5i/9AcGQlNjDaGMhbHsmu2pbZjqxjujDlStsSjyC2lVxxZiF5Kj40dISh2kdp3WG
-         7s2cpot4D1YVl8SBLRXHL1IY2csVldLaic6MqWe0=
+        b=VqcAKLVB87/pJCN4LiOZtT8O9C2j/qQi8YQrTgExiMjF7I0/olQy2Dg+4HcP4rovr
+         IH+wt4YwKjjPM4PfQeRDXt4pQut6NAITq71Bq4+634ouz34nm7qwZ1f+2fvbOlSoSI
+         TRPfguN3C431Wi2A/vvl7Ty8GKRxuSlG2xSU/Yhg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Wei Yongjun <yongjun_wei@trendmicro.com.cn>,
-        Jacek Anaszewski <j.anaszewski@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH 4.4 44/91] leds: leds-gpio: Fix return value check in create_gpio_led()
-Date:   Tue, 11 Dec 2018 16:41:03 +0100
-Message-Id: <20181211151609.585460748@linuxfoundation.org>
+        stable@vger.kernel.org, Cameron Gutman <aicommander@gmail.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: [PATCH 4.4 45/91] Input: xpad - quirk all PDP Xbox One gamepads
+Date:   Tue, 11 Dec 2018 16:41:04 +0100
+Message-Id: <20181211151609.671686237@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181211151606.026852373@linuxfoundation.org>
 References: <20181211151606.026852373@linuxfoundation.org>
@@ -70,35 +68,70 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Wei Yongjun <yongjun_wei@trendmicro.com.cn>
+From: Cameron Gutman <aicommander@gmail.com>
 
-commit 2d88a331e48095cf60ad9bdf3177bd401bf99727 upstream.
+commit a6754fae1e66e9a40fed406290d7ca3f2b4d227c upstream.
 
-In case of error, the function gpio_to_desc() returns NULL
-pointer not ERR_PTR(). The IS_ERR() test in the return value
-check should be replaced with NULL test.
+Since we continue to find tons of new variants [0,1,2,3,4,5,6] that
+need the PDP quirk, let's just quirk all devices from PDP.
 
-Signed-off-by: Wei Yongjun <yongjun_wei@trendmicro.com.cn>
-Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+[0]: https://github.com/paroj/xpad/pull/104
+[1]: https://github.com/paroj/xpad/pull/105
+[2]: https://github.com/paroj/xpad/pull/108
+[3]: https://github.com/paroj/xpad/pull/109
+[4]: https://github.com/paroj/xpad/pull/112
+[5]: https://github.com/paroj/xpad/pull/115
+[6]: https://github.com/paroj/xpad/pull/116
+
+Fixes: e5c9c6a885fa ("Input: xpad - add support for PDP Xbox One controllers")
+Cc: stable@vger.kernel.org
+Signed-off-by: Cameron Gutman <aicommander@gmail.com>
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/leds/leds-gpio.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/input/joystick/xpad.c |   16 ++++++----------
+ 1 file changed, 6 insertions(+), 10 deletions(-)
 
---- a/drivers/leds/leds-gpio.c
-+++ b/drivers/leds/leds-gpio.c
-@@ -118,8 +118,8 @@ static int create_gpio_led(const struct
- 			return ret;
+--- a/drivers/input/joystick/xpad.c
++++ b/drivers/input/joystick/xpad.c
+@@ -483,18 +483,18 @@ static const u8 xboxone_hori_init[] = {
+ };
  
- 		led_dat->gpiod = gpio_to_desc(template->gpio);
--		if (IS_ERR(led_dat->gpiod))
--			return PTR_ERR(led_dat->gpiod);
-+		if (!led_dat->gpiod)
-+			return -EINVAL;
- 	}
+ /*
+- * This packet is required for some of the PDP pads to start
++ * This packet is required for most (all?) of the PDP pads to start
+  * sending input reports. These pads include: (0x0e6f:0x02ab),
+- * (0x0e6f:0x02a4).
++ * (0x0e6f:0x02a4), (0x0e6f:0x02a6).
+  */
+ static const u8 xboxone_pdp_init1[] = {
+ 	0x0a, 0x20, 0x00, 0x03, 0x00, 0x01, 0x14
+ };
  
- 	led_dat->cdev.name = template->name;
+ /*
+- * This packet is required for some of the PDP pads to start
++ * This packet is required for most (all?) of the PDP pads to start
+  * sending input reports. These pads include: (0x0e6f:0x02ab),
+- * (0x0e6f:0x02a4).
++ * (0x0e6f:0x02a4), (0x0e6f:0x02a6).
+  */
+ static const u8 xboxone_pdp_init2[] = {
+ 	0x06, 0x20, 0x00, 0x02, 0x01, 0x00
+@@ -530,12 +530,8 @@ static const struct xboxone_init_packet
+ 	XBOXONE_INIT_PKT(0x0e6f, 0x0165, xboxone_hori_init),
+ 	XBOXONE_INIT_PKT(0x0f0d, 0x0067, xboxone_hori_init),
+ 	XBOXONE_INIT_PKT(0x0000, 0x0000, xboxone_fw2015_init),
+-	XBOXONE_INIT_PKT(0x0e6f, 0x02ab, xboxone_pdp_init1),
+-	XBOXONE_INIT_PKT(0x0e6f, 0x02ab, xboxone_pdp_init2),
+-	XBOXONE_INIT_PKT(0x0e6f, 0x02a4, xboxone_pdp_init1),
+-	XBOXONE_INIT_PKT(0x0e6f, 0x02a4, xboxone_pdp_init2),
+-	XBOXONE_INIT_PKT(0x0e6f, 0x02a6, xboxone_pdp_init1),
+-	XBOXONE_INIT_PKT(0x0e6f, 0x02a6, xboxone_pdp_init2),
++	XBOXONE_INIT_PKT(0x0e6f, 0x0000, xboxone_pdp_init1),
++	XBOXONE_INIT_PKT(0x0e6f, 0x0000, xboxone_pdp_init2),
+ 	XBOXONE_INIT_PKT(0x24c6, 0x541a, xboxone_rumblebegin_init),
+ 	XBOXONE_INIT_PKT(0x24c6, 0x542a, xboxone_rumblebegin_init),
+ 	XBOXONE_INIT_PKT(0x24c6, 0x543a, xboxone_rumblebegin_init),
 
 
