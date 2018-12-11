@@ -7,47 +7,48 @@ X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C9C3C07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 11:01:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E60A8C07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 11:01:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 100F82082F
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 11:01:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ADE662081B
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 11:01:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="p3CC9cwI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 100F82082F
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="X2MiZ7U/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ADE662081B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726728AbeLKLBt (ORCPT
+        id S1726769AbeLKLBy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 06:01:49 -0500
-Received: from conuserg-11.nifty.com ([210.131.2.78]:36709 "EHLO
+        Tue, 11 Dec 2018 06:01:54 -0500
+Received: from conuserg-11.nifty.com ([210.131.2.78]:37031 "EHLO
         conuserg-11.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726601AbeLKLBo (ORCPT
+        with ESMTP id S1726738AbeLKLBw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 06:01:44 -0500
+        Tue, 11 Dec 2018 06:01:52 -0500
 Received: from pug.e01.socionext.com (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
-        by conuserg-11.nifty.com with ESMTP id wBBB1C5d017210;
-        Tue, 11 Dec 2018 20:01:14 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-11.nifty.com wBBB1C5d017210
+        by conuserg-11.nifty.com with ESMTP id wBBB1C5v017210;
+        Tue, 11 Dec 2018 20:01:26 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-11.nifty.com wBBB1C5v017210
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1544526074;
-        bh=zSehz5sKi9aix5amSrmINjlwYVsoU6nXsGRPKh0lMLo=;
+        s=dec2015msa; t=1544526087;
+        bh=E5748NZyl+90o6KcOmeB0jqh57but7eKhlAPYZZaCdo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=p3CC9cwIqHRRCTrxDoVz7UVsAF5ni8sCGpeXSVsCaMb7fKKF/yga3871nqKxDOa4/
-         qToXkmvKntTs26LhMaSi46tBN+hOyqUF6UlJktpYkMGKqDdF/i3QhmdqQWUiMPiqui
-         1JBbB3XZ0OdXz7rARLFINBWFg0GriUxnI/49UUIdJp+xSFkp5w7WZV7B9cf8W3Gw8u
-         9m8m2ITJU3tmioLGXFjLYIQw2xDkIlu46VC6VnYJQG7LGOTZL4yeggPJkHhL0j+ica
-         ZPMlN1DrpsE4lN04bQRI0n5Vv7sge295ax+unKo1EIH+UJttHubRmN/Z3KwP3QkPm/
-         AZP3gWXx+Nv/w==
+        b=X2MiZ7U/GH8sihqbUev6Ry1nqri4gmPO9sE5AOQgLqDdeH52B+VWCBKHQJadeE41P
+         HsessXnJS06PRG+NX24cUvKR2k86w1yNrn2BIDwlLreE8mQoOT++c2L8FMQVfJHK6t
+         IoHkPkJqsdVHRhKnEYN8q77pQ9SXZuVuK/fbPVEyVdje0sjFstfwsnIWby3yJWF+yG
+         aCRmc3IJUVPq7Fu10CDx+d8cLxxB7+yvQPQqKJQ+vzYoyFO1X2YcdcU4SYh6EL+Czp
+         JsMmxjL4vNT0+y3bd3Z3CQvcuE9jJ5LfPFKJAe6LPj9312CQ/wNc49BlxTnpW3FjPn
+         1PGFDu1yapPrw==
 X-Nifty-SrcIP: [153.142.97.92]
 From:   Masahiro Yamada <yamada.masahiro@socionext.com>
 To:     linux-kbuild@vger.kernel.org
 Cc:     Ulf Magnusson <ulfalizer@gmail.com>, linux-kernel@vger.kernel.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: [PATCH 02/27] kconfig: fix memory leak when EOF is encountered in quotation
-Date:   Tue, 11 Dec 2018 20:00:45 +0900
-Message-Id: <1544526070-16690-3-git-send-email-yamada.masahiro@socionext.com>
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Simek <monstr@monstr.eu>
+Subject: [PATCH 20/27] microblaze: surround string default in Kconfig with double quotes
+Date:   Tue, 11 Dec 2018 20:01:03 +0900
+Message-Id: <1544526070-16690-21-git-send-email-yamada.masahiro@socionext.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1544526070-16690-1-git-send-email-yamada.masahiro@socionext.com>
 References: <1544526070-16690-1-git-send-email-yamada.masahiro@socionext.com>
@@ -56,63 +57,30 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-An unterminated string literal followed by new line is passed to the
-parser (with "multi-line strings not supported" warning shown), then
-handled properly there.
-
-On the other hand, an unterminated string literal at end of file is
-never passed to the parser, then results in memory leak.
-
-[Test Code]
-
-  ----------(Kconfig begin)----------
-  source "Kconfig.inc"
-
-  config A
-          bool "a"
-  -----------(Kconfig end)-----------
-
-  --------(Kconfig.inc begin)--------
-  config B
-          bool "b\No new line at end of file
-  ---------(Kconfig.inc end)---------
-
-[Summary from Valgrind]
-
-  Before the fix:
-
-    LEAK SUMMARY:
-       definitely lost: 16 bytes in 1 blocks
-       ...
-
-  After the fix:
-
-    LEAK SUMMARY:
-       definitely lost: 0 bytes in 0 blocks
-       ...
-
-Eliminate the memory leak path by handling this case. Of course, such
-a Kconfig file is wrong already, so I will add an error message later.
+I guess this is a constant value instead of a symbol.
 
 Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 ---
 
- scripts/kconfig/zconf.l | 2 ++
- 1 file changed, 2 insertions(+)
+I will apply this to my Kbuild tree
+because it is necessary for Kconfig clean-ups.
 
-diff --git a/scripts/kconfig/zconf.l b/scripts/kconfig/zconf.l
-index eeac64c..c2f577d 100644
---- a/scripts/kconfig/zconf.l
-+++ b/scripts/kconfig/zconf.l
-@@ -221,6 +221,8 @@ n	[A-Za-z0-9_-]
- 	}
- 	<<EOF>>	{
- 		BEGIN(INITIAL);
-+		yylval.string = text;
-+		return T_WORD_QUOTE;
- 	}
- }
+
+ arch/microblaze/Kconfig.platform | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/microblaze/Kconfig.platform b/arch/microblaze/Kconfig.platform
+index f7f1739..7361974 100644
+--- a/arch/microblaze/Kconfig.platform
++++ b/arch/microblaze/Kconfig.platform
+@@ -65,6 +65,6 @@ config XILINX_MICROBLAZE0_USE_FPU
  
+ config XILINX_MICROBLAZE0_HW_VER
+ 	string "Core version number"
+-	default 7.10.d
++	default "7.10.d"
+ 
+ endmenu
 -- 
 2.7.4
 
