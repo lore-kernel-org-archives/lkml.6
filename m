@@ -2,54 +2,54 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94232C5CFFE
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:46:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EAA31C5CFFE
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:46:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 561BE20870
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:46:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B1ACA2087F
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:46:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544543194;
-	bh=02Hx4+PpyZUPSvWpvJM0FiJWhul8ESrvUoJLK+mBoT8=;
+	s=default; t=1544543198;
+	bh=1GRBb6TU2Me5zjt598cY/S3W588XXOSPJhgR5L/Ezb0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Gl1K/KDotAdJQuhkGdgU/ENJTrI10r58tDrAHS0UJSdsnPLE2Zx4EjDOqw4ZAbAYv
-	 H/poimdRguw0M2C334Fav9S0WPRjyk3gfVL9192zqZpSdmV2oUzEh0SEnWhgx/1e1J
-	 MM3jTQs9TIaPgKZOaSv73sr4Gm6IKxxpFgTxuKIg=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 561BE20870
+	b=wntqySnehTY+zKnTpan7v0rFXWnJ8YbWjqTukpiBIN73qkQ0UweyqWyKzdlSqwUwX
+	 u3if3wSMqh1v+TTAXy1LAPHIN+lgPIzZVVT/dQHV1BPZaLjvYp7+TM5R2Dn5XZrKvr
+	 9b7hoxqC/YpOrZUsNdwGExpDFKKat+XT5dm4KedQ=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1ACA2087F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728357AbeLKPqd (ORCPT
+        id S1728369AbeLKPqh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 10:46:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34900 "EHLO mail.kernel.org"
+        Tue, 11 Dec 2018 10:46:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34968 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727567AbeLKPq3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:46:29 -0500
+        id S1727377AbeLKPqe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 10:46:34 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6782B20989;
-        Tue, 11 Dec 2018 15:46:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 997422087F;
+        Tue, 11 Dec 2018 15:46:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544543188;
-        bh=02Hx4+PpyZUPSvWpvJM0FiJWhul8ESrvUoJLK+mBoT8=;
+        s=default; t=1544543194;
+        bh=1GRBb6TU2Me5zjt598cY/S3W588XXOSPJhgR5L/Ezb0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VqcAKLVB87/pJCN4LiOZtT8O9C2j/qQi8YQrTgExiMjF7I0/olQy2Dg+4HcP4rovr
-         IH+wt4YwKjjPM4PfQeRDXt4pQut6NAITq71Bq4+634ouz34nm7qwZ1f+2fvbOlSoSI
-         TRPfguN3C431Wi2A/vvl7Ty8GKRxuSlG2xSU/Yhg=
+        b=g2yHTiV83gtC3R2/iz9P83wqyzC7lQ/Pn5KcgIvxNMefk8F9OppkuiLM4pPGzNK8W
+         k9z0/2z6htxIrAl9EeDGNwVwu4BXqtsQLh+12Z0Hv6aMdx89rNKxxbmwkCz8DMHqoT
+         hWfRyKNY9CCWSIex8K/pJsH8lhsycjicnfL2GJzM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Cameron Gutman <aicommander@gmail.com>,
+        stable@vger.kernel.org, Patrick Gaskin <patrick@pgaskin.net>,
         Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: [PATCH 4.4 45/91] Input: xpad - quirk all PDP Xbox One gamepads
-Date:   Tue, 11 Dec 2018 16:41:04 +0100
-Message-Id: <20181211151609.671686237@linuxfoundation.org>
+Subject: [PATCH 4.4 47/91] Input: elan_i2c - add ELAN0620 to the ACPI table
+Date:   Tue, 11 Dec 2018 16:41:06 +0100
+Message-Id: <20181211151609.811096651@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181211151606.026852373@linuxfoundation.org>
 References: <20181211151606.026852373@linuxfoundation.org>
@@ -68,70 +68,31 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Cameron Gutman <aicommander@gmail.com>
+From: Patrick Gaskin <patrick@pgaskin.net>
 
-commit a6754fae1e66e9a40fed406290d7ca3f2b4d227c upstream.
+commit 3ed64da3b790be7c63601e8ca6341b7dff74a660 upstream.
 
-Since we continue to find tons of new variants [0,1,2,3,4,5,6] that
-need the PDP quirk, let's just quirk all devices from PDP.
+Add ELAN0620 to the ACPI table to support the elan touchpad in
+the Lenovo IdeaPad 130-15IKB.
 
-[0]: https://github.com/paroj/xpad/pull/104
-[1]: https://github.com/paroj/xpad/pull/105
-[2]: https://github.com/paroj/xpad/pull/108
-[3]: https://github.com/paroj/xpad/pull/109
-[4]: https://github.com/paroj/xpad/pull/112
-[5]: https://github.com/paroj/xpad/pull/115
-[6]: https://github.com/paroj/xpad/pull/116
-
-Fixes: e5c9c6a885fa ("Input: xpad - add support for PDP Xbox One controllers")
+Signed-off-by: Patrick Gaskin <patrick@pgaskin.net>
 Cc: stable@vger.kernel.org
-Signed-off-by: Cameron Gutman <aicommander@gmail.com>
 Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/input/joystick/xpad.c |   16 ++++++----------
- 1 file changed, 6 insertions(+), 10 deletions(-)
+ drivers/input/mouse/elan_i2c_core.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/input/joystick/xpad.c
-+++ b/drivers/input/joystick/xpad.c
-@@ -483,18 +483,18 @@ static const u8 xboxone_hori_init[] = {
- };
- 
- /*
-- * This packet is required for some of the PDP pads to start
-+ * This packet is required for most (all?) of the PDP pads to start
-  * sending input reports. These pads include: (0x0e6f:0x02ab),
-- * (0x0e6f:0x02a4).
-+ * (0x0e6f:0x02a4), (0x0e6f:0x02a6).
-  */
- static const u8 xboxone_pdp_init1[] = {
- 	0x0a, 0x20, 0x00, 0x03, 0x00, 0x01, 0x14
- };
- 
- /*
-- * This packet is required for some of the PDP pads to start
-+ * This packet is required for most (all?) of the PDP pads to start
-  * sending input reports. These pads include: (0x0e6f:0x02ab),
-- * (0x0e6f:0x02a4).
-+ * (0x0e6f:0x02a4), (0x0e6f:0x02a6).
-  */
- static const u8 xboxone_pdp_init2[] = {
- 	0x06, 0x20, 0x00, 0x02, 0x01, 0x00
-@@ -530,12 +530,8 @@ static const struct xboxone_init_packet
- 	XBOXONE_INIT_PKT(0x0e6f, 0x0165, xboxone_hori_init),
- 	XBOXONE_INIT_PKT(0x0f0d, 0x0067, xboxone_hori_init),
- 	XBOXONE_INIT_PKT(0x0000, 0x0000, xboxone_fw2015_init),
--	XBOXONE_INIT_PKT(0x0e6f, 0x02ab, xboxone_pdp_init1),
--	XBOXONE_INIT_PKT(0x0e6f, 0x02ab, xboxone_pdp_init2),
--	XBOXONE_INIT_PKT(0x0e6f, 0x02a4, xboxone_pdp_init1),
--	XBOXONE_INIT_PKT(0x0e6f, 0x02a4, xboxone_pdp_init2),
--	XBOXONE_INIT_PKT(0x0e6f, 0x02a6, xboxone_pdp_init1),
--	XBOXONE_INIT_PKT(0x0e6f, 0x02a6, xboxone_pdp_init2),
-+	XBOXONE_INIT_PKT(0x0e6f, 0x0000, xboxone_pdp_init1),
-+	XBOXONE_INIT_PKT(0x0e6f, 0x0000, xboxone_pdp_init2),
- 	XBOXONE_INIT_PKT(0x24c6, 0x541a, xboxone_rumblebegin_init),
- 	XBOXONE_INIT_PKT(0x24c6, 0x542a, xboxone_rumblebegin_init),
- 	XBOXONE_INIT_PKT(0x24c6, 0x543a, xboxone_rumblebegin_init),
+--- a/drivers/input/mouse/elan_i2c_core.c
++++ b/drivers/input/mouse/elan_i2c_core.c
+@@ -1253,6 +1253,7 @@ static const struct acpi_device_id elan_
+ 	{ "ELAN0618", 0 },
+ 	{ "ELAN061C", 0 },
+ 	{ "ELAN061D", 0 },
++	{ "ELAN0620", 0 },
+ 	{ "ELAN0622", 0 },
+ 	{ "ELAN1000", 0 },
+ 	{ }
 
 
