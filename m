@@ -2,154 +2,281 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B2E3C07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 05:27:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B2C5C07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 05:29:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E776F2081B
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 05:27:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="TYbpcWio"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E776F2081B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
+	by mail.kernel.org (Postfix) with ESMTP id DF1BD20811
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 05:29:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF1BD20811
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729031AbeLKF12 (ORCPT
+        id S1729123AbeLKF3Y convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 00:27:28 -0500
-Received: from mailout1.samsung.com ([203.254.224.24]:52056 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727845AbeLKF12 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 00:27:28 -0500
-Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
-        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20181211052726epoutp0128d5e814fa3abec7aa293218b940ffff~vMBDTSdm52800128001epoutp01Q;
-        Tue, 11 Dec 2018 05:27:26 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20181211052726epoutp0128d5e814fa3abec7aa293218b940ffff~vMBDTSdm52800128001epoutp01Q
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1544506046;
-        bh=aSeLG28trxAIAr/Q4sYLG+x+WN+oHYCl2qBfx6Nz2E0=;
-        h=Date:From:To:Cc:Subject:References:From;
-        b=TYbpcWiothmHuaztBqzhD/s3G6l1j39ZjwsU9sl0mWkF/cS92b1dma97Pn1dwOZL6
-         yb7kfdeZKWoZbOwq6VyPcHuO9iIOcZEtvIGUsvgT3sxW08Z9iy1xdDLKkWJ5z7IMUy
-         xwB5rZAQyO+cQP4ARKtFShxFg6RiuHv5eFxKQoEY=
-Received: from epsmges2p2.samsung.com (unknown [182.195.40.156]) by
-        epcas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20181211052722epcas1p18e6f7d7d5a924b0dadda24ee581d882a~vMA-y3TJO2589325893epcas1p1c;
-        Tue, 11 Dec 2018 05:27:22 +0000 (GMT)
-Received: from epcas2p3.samsung.com ( [182.195.41.55]) by
-        epsmges2p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        4B.EE.04060.ABA4F0C5; Tue, 11 Dec 2018 14:27:22 +0900 (KST)
-Received: from epsmgms2p2new.samsung.com (unknown [182.195.42.143]) by
-        epcas2p1.samsung.com (KnoxPortal) with ESMTP id
-        20181211052721epcas2p1f5a54f0b24fa8f654b379be8a43db644~vMA-c_15B2092520925epcas2p1C;
-        Tue, 11 Dec 2018 05:27:21 +0000 (GMT)
-X-AuditID: b6c32a46-b45ff70000000fdc-f9-5c0f4aba6a8f
-Received: from epmmp1.local.host ( [203.254.227.16]) by
-        epsmgms2p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        05.35.03627.9BA4F0C5; Tue, 11 Dec 2018 14:27:21 +0900 (KST)
-Received: from [10.113.63.77] by mmp1.samsung.com (Oracle Communications
-        Messaging Server 7.0.5.31.0 64bit (built May  5 2014)) with ESMTPA id
-        <0PJK004RE4HLB020@mmp1.samsung.com>; Tue, 11 Dec 2018 14:27:21 +0900 (KST)
-Message-id: <5C0F4AB9.2090304@samsung.com>
-Date:   Tue, 11 Dec 2018 14:27:21 +0900
-From:   Chanwoo Choi <cw00.choi@samsung.com>
-Organization: Samsung Electronics
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101
-        Thunderbird/31.6.0
-MIME-version: 1.0
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Chanwoo Choi (chanwoo@kernel.org)" <chanwoo@kernel.org>,
-        =?UTF-8?B?Iuy1nOywrOyasCAoc2Ftc3VuZy5jb20pIg==?= 
-        <cw00.choi@samsung.com>,
-        =?UTF-8?B?7ZWo66qF7KO8?= <myungjoo.ham@samsung.com>
-Subject: [GIT PULL] extcon next for v4.21
-Content-type: text/plain; charset="utf-8"
-Content-transfer-encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrLKsWRmVeSWpSXmKPExsWy7bCmue4uL/4Ygx8XOSwm3rjCYnH9y3NW
-        i+bF69ksLu+aw2Zxu3EFmwOrx6ZVnWwe++euYffo27KK0ePzJrkAlqhsm4zUxJTUIoXUvOT8
-        lMy8dFsl7+B453hTMwNDXUNLC3MlhbzE3FRbJRefAF23zBygvUoKZYk5pUChgMTiYiV9O5ui
-        /NKSVIWM/OISW6XUgpScAssCveLE3OLSvHS95PxcK0MDAyNToMKE7Iw/ax8wFnTzVnTcX8HW
-        wPiaq4uRk0NCwERi8e0Wpi5GLg4hgR2MEl0fn7JCON8ZJTbtnsYCUzXh612oqt2MEgfndbBD
-        OHcZJb7tfskKUsUroCVxcO9LRhCbRUBV4sHslWA2G1B8/4sbbCA2v4CixNUfj8HiogIREjvn
-        f2OH6BWU+DH5Htg2EQENiZdHb7GALGAWaGCSmPTzMFiDsICmxM61P8GWMQPZL75MYoGw5SU2
-        r3nLDHHqAjaJKR/dIWwXiUVLPzBB2MISr45vYYewpSWerdrICLJAQqCdUeLLi2ZWCGcCo8SH
-        U5uhOowlni3sYoLYwCfRcfgvUDcHUJxXoqNNCKLEQ+LF9x6wg4QEYiWeXb3NPoFRZhaSh2Yh
-        uXUWklsXMDKvYhRLLSjOTU8tNiowQo60TYzgpKXltoNxyTmfQ4wCHIxKPLwVbXwxQqyJZcWV
-        uYcYJTiYlUR4ddN4Y4R4UxIrq1KL8uOLSnNSiw8xmgIDfyKzlGhyPjCh5pXEG5oaGRsbW5ia
-        WxobWCqJ8z6UnhstJJCeWJKanZpakFoE08fEwSnVwBhecmTvwQPHJt7JT45Rk9P/aWFlpWO1
-        SebG4xqd1/cEGxUqFT+ncolt09qmsDct8evHa4J2t+xfLJzdXuEb0cy1UG7D46tLLT74Or/P
-        CV6zeNMc88ZlN2+1eRbced6WOHPu0jyxfdNyn2UkvVt3703fB+VLGqeygm9d+ioid/lf4XZ+
-        T6/ZodVKLMUZiYZazEXFiQDtWe2dcAMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrOLMWRmVeSWpSXmKPExsVy+t9jAd2dXvwxBl+bTCwm3rjCYnH9y3NW
-        i+bF69ksLu+aw2Zxu3EFmwOrx6ZVnWwe++euYffo27KK0ePzJrkAligum5TUnMyy1CJ9uwSu
-        jD9rHzAWdPNWdNxfwdbA+Jqri5GTQ0LARGLC17tMXYxcHEICOxkl1p+6xgrh3GeUODLhAgtI
-        Fa+AlsTBvS8ZQWwWAVWJB7NXgtlsQPH9L26wgdj8AooSV388BopzcIgKREh0n6iEaBWU+DH5
-        HtgYEQENiZdHb7GAzGcWaGCS6Gn9zwSSEBbQlNi59icrSC+zgLrElCm5IGFmAXmJzWveMk9g
-        5JuFZNQshKpZSKoWMDKvYpRMLSjOTc8tNiowykst1ytOzC0uzUvXS87P3cQIDM5th7X6dzA+
-        XhJ/iFGAg1GJh7eijS9GiDWxrLgy9xCjBAezkgivbhpvjBBvSmJlVWpRfnxRaU5q8SFGaQ4W
-        JXFe/vxjkUIC6YklqdmpqQWpRTBZJg5OqQbGlQ9n3jj5L3RB5+H42y+X5sj5GR/q7rStqU/d
-        W/W6altSRfSJ45xqNi9K72+wWhL2ds3X6GbbOr+Ve3w2M7y1DTjbtqgr3ynob+493Y9fDhy/
-        Kaj63ZdTxEzh8Pdp6VeMT9sv3jM9Or5BeFvHjLl+fMXBDl+u5ckV9szKs7fSmG7cb9Zkef2l
-        EktxRqKhFnNRcSIAminq1EoCAAA=
-X-CMS-MailID: 20181211052721epcas2p1f5a54f0b24fa8f654b379be8a43db644
-X-Msg-Generator: CA
-CMS-TYPE: 102P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20181211052721epcas2p1f5a54f0b24fa8f654b379be8a43db644
-References: <CGME20181211052721epcas2p1f5a54f0b24fa8f654b379be8a43db644@epcas2p1.samsung.com>
+        Tue, 11 Dec 2018 00:29:24 -0500
+Received: from mga11.intel.com ([192.55.52.93]:37572 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728756AbeLKF3Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 00:29:24 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Dec 2018 21:29:23 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,341,1539673200"; 
+   d="scan'208";a="302777673"
+Received: from fmsmsx108.amr.corp.intel.com ([10.18.124.206])
+  by fmsmga005.fm.intel.com with ESMTP; 10 Dec 2018 21:29:22 -0800
+Received: from fmsmsx113.amr.corp.intel.com (10.18.116.7) by
+ FMSMSX108.amr.corp.intel.com (10.18.124.206) with Microsoft SMTP Server (TLS)
+ id 14.3.408.0; Mon, 10 Dec 2018 21:29:22 -0800
+Received: from shsmsx152.ccr.corp.intel.com (10.239.6.52) by
+ FMSMSX113.amr.corp.intel.com (10.18.116.7) with Microsoft SMTP Server (TLS)
+ id 14.3.408.0; Mon, 10 Dec 2018 21:29:22 -0800
+Received: from shsmsx104.ccr.corp.intel.com ([169.254.5.203]) by
+ SHSMSX152.ccr.corp.intel.com ([169.254.6.222]) with mapi id 14.03.0415.000;
+ Tue, 11 Dec 2018 13:29:20 +0800
+From:   "He, Bo" <bo.he@intel.com>
+To:     "paulmck@linux.ibm.com" <paulmck@linux.ibm.com>
+CC:     Steven Rostedt <rostedt@goodmis.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "josh@joshtriplett.org" <josh@joshtriplett.org>,
+        "mathieu.desnoyers@efficios.com" <mathieu.desnoyers@efficios.com>,
+        "jiangshanlai@gmail.com" <jiangshanlai@gmail.com>,
+        "Zhang, Jun" <jun.zhang@intel.com>,
+        "Xiao, Jin" <jin.xiao@intel.com>,
+        "Zhang, Yanmin" <yanmin.zhang@intel.com>,
+        "Bai, Jie A" <jie.a.bai@intel.com>
+Subject: RE: rcu_preempt caused oom
+Thread-Topic: rcu_preempt caused oom
+Thread-Index: AdSHvQIr70OYynHSTxKgLAvVXX+0Zv//yKOAgAAWeAD//li4UIADPhuAgAAJSYD//3lRYIAAoJ4A//tcRfABJU8zAP/+T9Nw//xa4AD/91m7QP/uoBSA/9vB3nD/t3F+AP9tcGAw/tr6woD9snCZgPtjpC6Q9sakFQDtjQLogNsZc+ew
+Date:   Tue, 11 Dec 2018 05:29:20 +0000
+Message-ID: <CD6925E8781EFD4D8E11882D20FC406D52A18B0C@SHSMSX104.ccr.corp.intel.com>
+References: <20181204194936.GD4170@linux.ibm.com>
+ <CD6925E8781EFD4D8E11882D20FC406D52A16605@SHSMSX104.ccr.corp.intel.com>
+ <20181205174435.GU4170@linux.ibm.com>
+ <CD6925E8781EFD4D8E11882D20FC406D52A16C46@SHSMSX104.ccr.corp.intel.com>
+ <20181206173808.GI4170@linux.ibm.com>
+ <CD6925E8781EFD4D8E11882D20FC406D52A180C5@SHSMSX104.ccr.corp.intel.com>
+ <20181207141131.GP4170@linux.ibm.com> <20181209195601.GA7854@linux.ibm.com>
+ <CD6925E8781EFD4D8E11882D20FC406D52A186D0@SHSMSX104.ccr.corp.intel.com>
+ <20181211003838.GD4170@linux.ibm.com> <20181211044631.GA19942@linux.ibm.com>
+In-Reply-To: <20181211044631.GA19942@linux.ibm.com>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ctpclassification: CTP_NT
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiZjY5Y2UyOTQtYzA2Yy00N2Q0LWJjOTAtYzQ0NDliZTZkN2RkIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoicGE0dGdhZzIxS3JmWCtcL1l3enRcL0FkWFVvMzh5MVVVcUxUOFpQMEJ6RXJOangweml3UHRnelwvbmFpZkNobXFIeSJ9
+dlp-product: dlpe-windows
+dlp-version: 11.0.400.15
+dlp-reaction: no-action
+x-originating-ip: [10.239.127.40]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dear Greg,
+sure, we will update the new patch to run the test.
 
-This is extcon-next pull request for v4.21. I add detailed description of
-this pull request on below. Please pull extcon with following updates.
+-----Original Message-----
+From: Paul E. McKenney <paulmck@linux.ibm.com> 
+Sent: Tuesday, December 11, 2018 12:47 PM
+To: He, Bo <bo.he@intel.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>; linux-kernel@vger.kernel.org; josh@joshtriplett.org; mathieu.desnoyers@efficios.com; jiangshanlai@gmail.com; Zhang, Jun <jun.zhang@intel.com>; Xiao, Jin <jin.xiao@intel.com>; Zhang, Yanmin <yanmin.zhang@intel.com>; Bai, Jie A <jie.a.bai@intel.com>
+Subject: Re: rcu_preempt caused oom
 
-Best Regards,
-Chanwoo Choi
+On Mon, Dec 10, 2018 at 04:38:38PM -0800, Paul E. McKenney wrote:
+> On Mon, Dec 10, 2018 at 06:56:18AM +0000, He, Bo wrote:
+> > Hi, 
+> >    We have start the test with the CONFIG_PROVE_RCU=y, and also add one 2s to detect the preempt rcu hang, hope we can get more useful logs tomorrow.
+> >    I also enclosed the config and the debug patches for you review.
+> 
+> I instead suggest the (lightly tested) debug patch shown below, which 
+> tracks wakeups of RCU's grace-period kthreads and dumps them out if a 
+> given requested grace period fails to start.  Again, it is necessary 
+> to build with CONFIG_PROVE_RCU=y, that is, with CONFIG_PROVE_LOCKING=y.
 
+Right.  This time without commenting out the wakeup as a test of the diagnostic.  :-/
 
-The following changes since commit 651022382c7f8da46cb4872a545ee1da6d097d2a:
+Please use the patch below instead of the one that I sent in my previous email.
 
-  Linux 4.20-rc1 (2018-11-04 15:37:52 -0800)
+							Thanx, Paul
 
-are available in the git repository at:
+------------------------------------------------------------------------
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/chanwoo/extcon.git tags/extcon-next-for-4.21
+commit adfc7dff659495a3433d5084256be59eee0ac6df
+Author: Paul E. McKenney <paulmck@linux.ibm.com>
+Date:   Mon Dec 10 16:33:59 2018 -0800
 
-for you to fetch changes up to a2dc50914744eea9f83a70a5db0486be625e5dc0:
+    rcu: Improve diagnostics for failed RCU grace-period start
+    
+    Backported from v4.21/v5.0
+    
+    If a grace period fails to start (for example, because you commented
+    out the last two lines of rcu_accelerate_cbs_unlocked()), rcu_core()
+    will invoke rcu_check_gp_start_stall(), which will notice and complain.
+    However, this complaint is lacking crucial debugging information such
+    as when the last wakeup executed and what the value of ->gp_seq was at
+    that time.  This commit therefore removes the current pr_alert() from
+    rcu_check_gp_start_stall(), instead invoking show_rcu_gp_kthreads(),
+    which has been updated to print the needed information, which is collected
+    by rcu_gp_kthread_wake().
+    
+    Signed-off-by: Paul E. McKenney <paulmck@linux.ibm.com>
 
-  extcon: max8997: Fix lack of path setting in USB device mode (2018-11-14 09:06:32 +0900)
-
-----------------------------------------------------------------
-Update extcon for 4.21
-
-Detailed description for this pull request:
-1. Fix minor issue of Maxim MUIC (Micro USB IC) device driver
-- Avoid forcing UART path on probe for extcon-max77843/77693/14577/8997.c
-- Set USB path in USB device mode for extcon-max8997.c
-
-----------------------------------------------------------------
-Marek Szyprowski (5):
-      extcon: max77843: Avoid forcing UART path on drive probe
-      extcon: max77693: Avoid forcing UART path on drive probe
-      extcon: max14577: Avoid forcing UART path on drive probe
-      extcon: max8997: Avoid forcing UART path on drive probe
-      extcon: max8997: Fix lack of path setting in USB device mode
-
- drivers/extcon/extcon-max14577.c | 15 +++++++++++++--
- drivers/extcon/extcon-max77693.c | 16 ++++++++++++++--
- drivers/extcon/extcon-max77843.c | 18 +++++++++++++++---
- drivers/extcon/extcon-max8997.c  | 25 +++++++++++++++++--------
- 4 files changed, 59 insertions(+), 15 deletions(-)
-
+diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c index 0b760c1369f7..4bcd8753e293 100644
+--- a/kernel/rcu/tree.c
++++ b/kernel/rcu/tree.c
+@@ -626,25 +626,57 @@ void rcu_sched_force_quiescent_state(void)
+ }
+ EXPORT_SYMBOL_GPL(rcu_sched_force_quiescent_state);
+ 
++/*
++ * Convert a ->gp_state value to a character string.
++ */
++static const char *gp_state_getname(short gs) {
++	if (gs < 0 || gs >= ARRAY_SIZE(gp_state_names))
++		return "???";
++	return gp_state_names[gs];
++}
++
++/*
++ * Return the root node of the specified rcu_state structure.
++ */
++static struct rcu_node *rcu_get_root(struct rcu_state *rsp) {
++	return &rsp->node[0];
++}
++
+ /*
+  * Show the state of the grace-period kthreads.
+  */
+ void show_rcu_gp_kthreads(void)
+ {
+ 	int cpu;
++	unsigned long j;
++	unsigned long ja;
++	unsigned long jr;
++	unsigned long jw;
+ 	struct rcu_data *rdp;
+ 	struct rcu_node *rnp;
+ 	struct rcu_state *rsp;
+ 
++	j = jiffies;
+ 	for_each_rcu_flavor(rsp) {
+-		pr_info("%s: wait state: %d ->state: %#lx\n",
+-			rsp->name, rsp->gp_state, rsp->gp_kthread->state);
++		ja = j - READ_ONCE(rsp->gp_activity);
++		jr = j - READ_ONCE(rsp->gp_req_activity);
++		jw = j - READ_ONCE(rsp->gp_wake_time);
++		pr_info("%s: wait state: %s(%d) ->state: %#lx delta ->gp_activity %lu ->gp_req_activity %lu ->gp_wake_time %lu ->gp_wake_seq %ld ->gp_seq %ld ->gp_seq_needed %ld ->gp_flags %#x\n",
++			rsp->name, gp_state_getname(rsp->gp_state),
++			rsp->gp_state,
++			rsp->gp_kthread ? rsp->gp_kthread->state : 0x1ffffL,
++			ja, jr, jw, (long)READ_ONCE(rsp->gp_wake_seq),
++			(long)READ_ONCE(rsp->gp_seq),
++			(long)READ_ONCE(rcu_get_root(rsp)->gp_seq_needed),
++			READ_ONCE(rsp->gp_flags));
+ 		rcu_for_each_node_breadth_first(rsp, rnp) {
+ 			if (ULONG_CMP_GE(rsp->gp_seq, rnp->gp_seq_needed))
+ 				continue;
+-			pr_info("\trcu_node %d:%d ->gp_seq %lu ->gp_seq_needed %lu\n",
+-				rnp->grplo, rnp->grphi, rnp->gp_seq,
+-				rnp->gp_seq_needed);
++			pr_info("\trcu_node %d:%d ->gp_seq %ld ->gp_seq_needed %ld\n",
++				rnp->grplo, rnp->grphi, (long)rnp->gp_seq,
++				(long)rnp->gp_seq_needed);
+ 			if (!rcu_is_leaf_node(rnp))
+ 				continue;
+ 			for_each_leaf_node_possible_cpu(rnp, cpu) { @@ -653,8 +685,8 @@ void show_rcu_gp_kthreads(void)
+ 				    ULONG_CMP_GE(rsp->gp_seq,
+ 						 rdp->gp_seq_needed))
+ 					continue;
+-				pr_info("\tcpu %d ->gp_seq_needed %lu\n",
+-					cpu, rdp->gp_seq_needed);
++				pr_info("\tcpu %d ->gp_seq_needed %ld\n",
++					cpu, (long)rdp->gp_seq_needed);
+ 			}
+ 		}
+ 		/* sched_show_task(rsp->gp_kthread); */ @@ -690,14 +722,6 @@ void rcutorture_get_gp_data(enum rcutorture_type test_type, int *flags,  }  EXPORT_SYMBOL_GPL(rcutorture_get_gp_data);
+ 
+-/*
+- * Return the root node of the specified rcu_state structure.
+- */
+-static struct rcu_node *rcu_get_root(struct rcu_state *rsp) -{
+-	return &rsp->node[0];
+-}
+-
+ /*
+  * Enter an RCU extended quiescent state, which can be either the
+  * idle loop or adaptive-tickless usermode execution.
+@@ -1285,16 +1309,6 @@ static void record_gp_stall_check_time(struct rcu_state *rsp)
+ 	rsp->n_force_qs_gpstart = READ_ONCE(rsp->n_force_qs);  }
+ 
+-/*
+- * Convert a ->gp_state value to a character string.
+- */
+-static const char *gp_state_getname(short gs) -{
+-	if (gs < 0 || gs >= ARRAY_SIZE(gp_state_names))
+-		return "???";
+-	return gp_state_names[gs];
+-}
+-
+ /*
+  * Complain about starvation of grace-period kthread.
+  */
+@@ -1693,7 +1707,8 @@ static bool rcu_future_gp_cleanup(struct rcu_state *rsp, struct rcu_node *rnp)
+  * Don't do a self-awaken, and don't bother awakening when there is
+  * nothing for the grace-period kthread to do (as in several CPUs
+  * raced to awaken, and we lost), and finally don't try to awaken
+- * a kthread that has not yet been created.
++ * a kthread that has not yet been created.  If all those checks are
++ * passed, track some debug information and awaken.
+  */
+ static void rcu_gp_kthread_wake(struct rcu_state *rsp)  { @@ -1701,6 +1716,8 @@ static void rcu_gp_kthread_wake(struct rcu_state *rsp)
+ 	    !READ_ONCE(rsp->gp_flags) ||
+ 	    !rsp->gp_kthread)
+ 		return;
++	WRITE_ONCE(rsp->gp_wake_time, jiffies);
++	WRITE_ONCE(rsp->gp_wake_seq, READ_ONCE(rsp->gp_seq));
+ 	swake_up_one(&rsp->gp_wq);
+ }
+ 
+@@ -2802,16 +2819,11 @@ rcu_check_gp_start_stall(struct rcu_state *rsp, struct rcu_node *rnp,
+ 		raw_spin_unlock_irqrestore_rcu_node(rnp, flags);
+ 		return;
+ 	}
+-	pr_alert("%s: g%ld->%ld gar:%lu ga:%lu f%#x gs:%d %s->state:%#lx\n",
+-		 __func__, (long)READ_ONCE(rsp->gp_seq),
+-		 (long)READ_ONCE(rnp_root->gp_seq_needed),
+-		 j - rsp->gp_req_activity, j - rsp->gp_activity,
+-		 rsp->gp_flags, rsp->gp_state, rsp->name,
+-		 rsp->gp_kthread ? rsp->gp_kthread->state : 0x1ffffL);
+ 	WARN_ON(1);
+ 	if (rnp_root != rnp)
+ 		raw_spin_unlock_rcu_node(rnp_root);
+ 	raw_spin_unlock_irqrestore_rcu_node(rnp, flags);
++	show_rcu_gp_kthreads();
+ }
+ 
+ /*
+diff --git a/kernel/rcu/tree.h b/kernel/rcu/tree.h index 4e74df768c57..0e051d9b5f1a 100644
+--- a/kernel/rcu/tree.h
++++ b/kernel/rcu/tree.h
+@@ -327,6 +327,8 @@ struct rcu_state {
+ 	struct swait_queue_head gp_wq;		/* Where GP task waits. */
+ 	short gp_flags;				/* Commands for GP task. */
+ 	short gp_state;				/* GP kthread sleep state. */
++	unsigned long gp_wake_time;		/* Last GP kthread wake. */
++	unsigned long gp_wake_seq;		/* ->gp_seq at ^^^. */
+ 
+ 	/* End of fields guarded by root rcu_node's lock. */
+ 
 
