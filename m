@@ -6,48 +6,51 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E838CC07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:53:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CEE01C5CFFE
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:53:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD82F2146D
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:53:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 94C7B20855
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:53:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544543605;
-	bh=LACqVpRQYi1mc1MW8Vj5cSqGRvH9SythMRp4ct5e2Lo=;
+	s=default; t=1544543609;
+	bh=DmP3cRKWQKG54BAanPuXh1HWk5cuA2PGcTWgDcurLkk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=2jJtvvog+Zy8iRskE4VI7Fm78tx0rNkqA0SdMlqnK1qUP9Ec40Bmwc2PCcfZrInbf
-	 0qBNP3u8X1SZcIXZoRvYpuknBkNhQ860MkvI2sdHlcmJpbZhJx1cmDhZfUPqydodOA
-	 KGS4hna1fYIkPyHEhVoQSdX5FU1sD8BTCNP35r5E=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD82F2146D
+	b=Ge+aqmBLRYHnHD8dyfbg9jrj5rvr3+ktSwQv/S0N61LMz9rVXfMzEnVMqXef4NOoc
+	 F+cewOCWIjRu1mG0E11RgOpZUWElmPSeeTmso9ijxXYXCVqyosWQbKgb+1epMUWWYz
+	 L/aKmVvZ1rZx/UbbCC0TcWitBmp1Ta/rV8QAKRyg=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 94C7B20855
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729932AbeLKPxY (ORCPT
+        id S1729948AbeLKPx2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 10:53:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42034 "EHLO mail.kernel.org"
+        Tue, 11 Dec 2018 10:53:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42060 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729911AbeLKPxU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:53:20 -0500
+        id S1729927AbeLKPxW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 10:53:22 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2030B2147D;
-        Tue, 11 Dec 2018 15:53:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9DB2620855;
+        Tue, 11 Dec 2018 15:53:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544543599;
-        bh=LACqVpRQYi1mc1MW8Vj5cSqGRvH9SythMRp4ct5e2Lo=;
+        s=default; t=1544543602;
+        bh=DmP3cRKWQKG54BAanPuXh1HWk5cuA2PGcTWgDcurLkk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xqR4+ve24jMbKCqWEHgnSBkXEu+W3yYGR8GGT+JDrEWy/otTkQiUzTw1gE7fqxGAT
-         WHP+TBx725bKCsPRTnXA20gCjOaCg3B6vflMmDo4xCQ+VPsjmGdO6uziEg4cJC87KB
-         ewxC4xhsyKCFJYQW7hUnx4YoGhBWRuL5pupvWcBE=
+        b=v3r9aWOoe1UaSXyyftOnAEc38KGEnU83v3svki1iYQciGQmvH02aWS+o22hmaIPja
+         HTS75OVE7d/OUciUX/hUiIFFyp2xm3dwIn/wyB3AA2dXw128wbpjP6nPa4ISSLpIfG
+         Ves2BiD59ouUROwj4+nQT3AY6Z6bqt8PoDhujvOQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Peter Shih <pihsun@chromium.org>
-Subject: [PATCH 4.14 59/67] tty: serial: 8250_mtk: always resume the device in probe.
-Date:   Tue, 11 Dec 2018 16:41:59 +0100
-Message-Id: <20181211151633.368504075@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Rob Herring <robh@kernel.org>, Jiri Slaby <jslaby@suse.com>,
+        Chanho Park <parkch98@gmail.com>
+Subject: [PATCH 4.14 60/67] tty: do not set TTY_IO_ERROR flag if console port
+Date:   Tue, 11 Dec 2018 16:42:00 +0100
+Message-Id: <20181211151633.408720788@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181211151630.378216233@linuxfoundation.org>
 References: <20181211151630.378216233@linuxfoundation.org>
@@ -66,69 +69,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Peter Shih <pihsun@chromium.org>
+From: Chanho Park <parkch98@gmail.com>
 
-commit 100bc3e2bebf95506da57cbdf5f26b25f6da4c81 upstream.
+commit 2a48602615e0a2f563549c7d5c8d507f904cf96e upstream.
 
-serial8250_register_8250_port calls uart_config_port, which calls
-config_port on the port before it tries to power on the port. So we need
-the port to be on before calling serial8250_register_8250_port. Change
-the code to always do a runtime resume in probe before registering port,
-and always do a runtime suspend in remove.
+Since Commit 761ed4a94582 ('tty: serial_core: convert uart_close to use
+tty_port_close') and Commit 4dda864d7307 ('tty: serial_core: Fix serial
+console crash on port shutdown), a serial port which is used as
+console can be stuck when logging out if there is a remained process.
+After logged out, agetty will try to grab the serial port but it will
+be failed because the previous process did not release the port
+correctly. To fix this, TTY_IO_ERROR bit should not be enabled of
+tty_port_close if the port is console port.
 
-This basically reverts the change in commit 68e5fc4a255a ("tty: serial:
-8250_mtk: use pm_runtime callbacks for enabling"), but still use
-pm_runtime callbacks.
+Reproduce step:
+- Run background processes from serial console
+$ while true; do sleep 10; done &
 
-Fixes: 68e5fc4a255a ("tty: serial: 8250_mtk: use pm_runtime callbacks for enabling")
-Signed-off-by: Peter Shih <pihsun@chromium.org>
+- Log out
+$ logout
+-> Stuck
+
+- Read journal log by journalctl | tail
+Jan 28 16:07:01 ubuntu systemd[1]: Stopped Serial Getty on ttyAMA0.
+Jan 28 16:07:01 ubuntu systemd[1]: Started Serial Getty on ttyAMA0.
+Jan 28 16:07:02 ubuntu agetty[1643]: /dev/ttyAMA0: not a tty
+
+Fixes: 761ed4a94582 ("tty: serial_core: convert uart_close to use tty_port_close")
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Rob Herring <robh@kernel.org>
+Cc: Jiri Slaby <jslaby@suse.com>
+Signed-off-by: Chanho Park <parkch98@gmail.com>
 Cc: stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/tty/serial/8250/8250_mtk.c |   16 +++++++---------
- 1 file changed, 7 insertions(+), 9 deletions(-)
+ drivers/tty/tty_port.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/tty/serial/8250/8250_mtk.c
-+++ b/drivers/tty/serial/8250/8250_mtk.c
-@@ -222,17 +222,17 @@ static int mtk8250_probe(struct platform
- 
- 	platform_set_drvdata(pdev, data);
- 
--	pm_runtime_enable(&pdev->dev);
--	if (!pm_runtime_enabled(&pdev->dev)) {
--		err = mtk8250_runtime_resume(&pdev->dev);
--		if (err)
--			return err;
--	}
-+	err = mtk8250_runtime_resume(&pdev->dev);
-+	if (err)
-+		return err;
- 
- 	data->line = serial8250_register_8250_port(&uart);
- 	if (data->line < 0)
- 		return data->line;
- 
-+	pm_runtime_set_active(&pdev->dev);
-+	pm_runtime_enable(&pdev->dev);
-+
- 	return 0;
+--- a/drivers/tty/tty_port.c
++++ b/drivers/tty/tty_port.c
+@@ -639,7 +639,8 @@ void tty_port_close(struct tty_port *por
+ 	if (tty_port_close_start(port, tty, filp) == 0)
+ 		return;
+ 	tty_port_shutdown(port, tty);
+-	set_bit(TTY_IO_ERROR, &tty->flags);
++	if (!port->console)
++		set_bit(TTY_IO_ERROR, &tty->flags);
+ 	tty_port_close_end(port, tty);
+ 	tty_port_tty_set(port, NULL);
  }
- 
-@@ -243,13 +243,11 @@ static int mtk8250_remove(struct platfor
- 	pm_runtime_get_sync(&pdev->dev);
- 
- 	serial8250_unregister_port(data->line);
-+	mtk8250_runtime_suspend(&pdev->dev);
- 
- 	pm_runtime_disable(&pdev->dev);
- 	pm_runtime_put_noidle(&pdev->dev);
- 
--	if (!pm_runtime_status_suspended(&pdev->dev))
--		mtk8250_runtime_suspend(&pdev->dev);
--
- 	return 0;
- }
- 
 
 
