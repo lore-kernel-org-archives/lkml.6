@@ -2,57 +2,53 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5886BC07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:49:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C74C7C07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:49:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1FCC72133F
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:49:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8DA102133F
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:49:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544543363;
-	bh=+MN5MAMwSsv7bXvk7A8NjXvMtALwdgGc6u7V17QHQ/E=;
+	s=default; t=1544543367;
+	bh=EU7yXh5N+sPpgIWSLhJZxc1gz64mOAhmvWCoPOiKyg0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=FeZSBEuOzsgDZYHBX4utIVi8PbC/WYLIHjzMZRKtJ8Jur4Z6rwfngDUGC9x4ZPAuN
-	 cjax3DhfDKvqGttOUDSn2CwPQMyte0XknSzR9VkZFyl5jygF0c2Rq4GFT+oMAtJYcV
-	 PWnSKZOHQKy0KaFT9yu5umT4jt5NDFNV0eA5+fwU=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1FCC72133F
+	b=AIkhcLhqEGBJ3/AGGjQX73XBMuM9RpuvtzvjMI0cczivfCZRuBRMVvotlcAQJv+Me
+	 /h8rYEZNqtLvXemwzAQ48eDANJ9q+6gmTKt1pQLugOoM3/gAkvIFN/YwtEASXLG+Fn
+	 g6ePSbbLLql4xChv5KEDoRuDITb7Z10dnKvs/z08=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8DA102133F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728998AbeLKPtW (ORCPT
+        id S1729033AbeLKPt0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 10:49:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37682 "EHLO mail.kernel.org"
+        Tue, 11 Dec 2018 10:49:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37770 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729033AbeLKPtS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:49:18 -0500
+        id S1727441AbeLKPtX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 10:49:23 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B67BB208E7;
-        Tue, 11 Dec 2018 15:49:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EB6D0208E7;
+        Tue, 11 Dec 2018 15:49:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544543357;
-        bh=+MN5MAMwSsv7bXvk7A8NjXvMtALwdgGc6u7V17QHQ/E=;
+        s=default; t=1544543362;
+        bh=EU7yXh5N+sPpgIWSLhJZxc1gz64mOAhmvWCoPOiKyg0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Vid3kHyELOLJmrJ/rByAi9mRomvJxFaJRbRAu4LR0VAfZwJKHhusenQs7+QO1gY5v
-         nwQ8e5M2LS24Ur7ejwTz9itCzvL3aL1xNmhwgpkIbCJEdr3HxPbwE5edSdFE1W2oo6
-         DKNKTJWR1rCecSdaSVBBg/ZxCOo5q5Dpm4pZp9nc=
+        b=DznsC0UoPhU+mG22p+RqRejI7YBInDiicEnSoRF74fJF86RJ504kccD8bJNxI/a1Y
+         UmcZtG8EgBPLLw7+7b2w1ep5bRjtOP8kfiaaTx89r53vFMDntCdALRFPw1vRB8p5Y6
+         ykiTZ5u8koFafMjPu5Cu10i8rjZXuC8sJuh1dlJs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ashok Raj <ashok.raj@intel.com>,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>,
-        Sohil Mehta <sohil.mehta@intel.com>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        Joerg Roedel <jroedel@suse.de>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 02/51] iommu/vt-d: Fix NULL pointer dereference in prq_event_thread()
-Date:   Tue, 11 Dec 2018 16:41:10 +0100
-Message-Id: <20181211151612.561273075@linuxfoundation.org>
+        stable@vger.kernel.org, Harry Pan <harry.pan@intel.com>
+Subject: [PATCH 4.9 21/51] usb: quirk: add no-LPM quirk on SanDisk Ultra Flair device
+Date:   Tue, 11 Dec 2018 16:41:29 +0100
+Message-Id: <20181211151614.851858168@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181211151612.328911565@linuxfoundation.org>
 References: <20181211151612.328911565@linuxfoundation.org>
@@ -71,38 +67,66 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 19ed3e2dd8549c1a34914e8dad01b64e7837645a ]
+From: Harry Pan <harry.pan@intel.com>
 
-When handling page request without pasid event, go to "no_pasid"
-branch instead of "bad_req". Otherwise, a NULL pointer deference
-will happen there.
+commit 2f2dde6ba89b1ef1fe23c1138131b315d9aa4019 upstream.
 
-Cc: Ashok Raj <ashok.raj@intel.com>
-Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>
-Cc: Sohil Mehta <sohil.mehta@intel.com>
-Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
-Fixes: a222a7f0bb6c9 'iommu/vt-d: Implement page request handling'
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Some lower volume SanDisk Ultra Flair in 16GB, which the VID:PID is
+in 0781:5591, will aggressively request LPM of U1/U2 during runtime,
+when using this thumb drive as the OS installation key we found the
+device will generate failure during U1 exit path making it dropped
+from the USB bus, this causes a corrupted installation in system at
+the end.
+
+i.e.,
+[  166.918296] hub 2-0:1.0: state 7 ports 7 chg 0000 evt 0004
+[  166.918327] usb usb2-port2: link state change
+[  166.918337] usb usb2-port2: do warm reset
+[  166.970039] usb usb2-port2: not warm reset yet, waiting 50ms
+[  167.022040] usb usb2-port2: not warm reset yet, waiting 200ms
+[  167.276043] usb usb2-port2: status 02c0, change 0041, 5.0 Gb/s
+[  167.276050] usb 2-2: USB disconnect, device number 2
+[  167.276058] usb 2-2: unregistering device
+[  167.276060] usb 2-2: unregistering interface 2-2:1.0
+[  167.276170] xhci_hcd 0000:00:15.0: shutdown urb ffffa3c7cc695cc0 ep1in-bulk
+[  167.284055] sd 0:0:0:0: [sda] tag#0 FAILED Result: hostbyte=DID_NO_CONNECT driverbyte=DRIVER_OK
+[  167.284064] sd 0:0:0:0: [sda] tag#0 CDB: Read(10) 28 00 00 33 04 90 00 01 00 00
+...
+
+Analyzed the USB trace in the link layer we realized it is because
+of the 6-ms timer of tRecoveryConfigurationTimeout which documented
+on the USB 3.2 Revision 1.0, the section 7.5.10.4.2 of "Exit from
+Recovery.Configuration"; device initiates U1 exit -> Recovery.Active
+-> Recovery.Configuration, then the host timer timeout makes the link
+transits to eSS.Inactive -> Rx.Detect follows by a Warm Reset.
+
+Interestingly, the other higher volume of SanDisk Ultra Flair sharing
+the same VID:PID, such as 64GB, would not request LPM during runtime,
+it sticks at U0 always, thus disabling LPM does not affect those thumb
+drives at all.
+
+The same odd occures in SanDisk Ultra Fit 16GB, VID:PID in 0781:5583.
+
+Signed-off-by: Harry Pan <harry.pan@intel.com>
+Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/iommu/intel-svm.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/usb/core/quirks.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/iommu/intel-svm.c b/drivers/iommu/intel-svm.c
-index f846f0140a9d..7dc2f8d415b6 100644
---- a/drivers/iommu/intel-svm.c
-+++ b/drivers/iommu/intel-svm.c
-@@ -558,7 +558,7 @@ static irqreturn_t prq_event_thread(int irq, void *d)
- 			pr_err("%s: Page request without PASID: %08llx %08llx\n",
- 			       iommu->name, ((unsigned long long *)req)[0],
- 			       ((unsigned long long *)req)[1]);
--			goto bad_req;
-+			goto no_pasid;
- 		}
+--- a/drivers/usb/core/quirks.c
++++ b/drivers/usb/core/quirks.c
+@@ -188,6 +188,10 @@ static const struct usb_device_id usb_qu
+ 	/* Midiman M-Audio Keystation 88es */
+ 	{ USB_DEVICE(0x0763, 0x0192), .driver_info = USB_QUIRK_RESET_RESUME },
  
- 		if (!svm || svm->pasid != req->pasid) {
--- 
-2.19.1
-
++	/* SanDisk Ultra Fit and Ultra Flair */
++	{ USB_DEVICE(0x0781, 0x5583), .driver_info = USB_QUIRK_NO_LPM },
++	{ USB_DEVICE(0x0781, 0x5591), .driver_info = USB_QUIRK_NO_LPM },
++
+ 	/* M-Systems Flash Disk Pioneers */
+ 	{ USB_DEVICE(0x08ec, 0x1000), .driver_info = USB_QUIRK_RESET_RESUME },
+ 
 
 
