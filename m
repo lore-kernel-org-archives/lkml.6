@@ -7,50 +7,60 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0C34C07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:48:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ACEABC07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:48:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 687B22145D
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:48:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 726D62145D
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:48:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544543301;
-	bh=s+leIqEWRmPpaUafOGtZSiYnqS66qD8NMa/nAeSwmbs=;
+	s=default; t=1544543306;
+	bh=+MHfQRR70XAfTjncgdsYePr26YS5fI7Fxzo56QxNWIc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=h0R9AgGnY6qVCxLPPlwG5GsagmMCRulyUhFAF/z0HM2KPbH1PIXi+2wUbElEbjGpH
-	 GTmp1f4RUjIcTCnCTYJPviR2PoTgxJMR2Rpdly8JzVrJChJwTyNswVWYioi/meeFRg
-	 DjMQkQdsG1ArO6V07bUTMH98lHXIjvR6s3J0lO60=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 687B22145D
+	b=1vMJaYet8iFgGav2jgmZsi62SjDOVMXK4hE01eiyVGIVwmFToKLzpHNB0SnfC2Z2I
+	 OUS01X7kSWVxh9Zgt1CKIoo3BNrhsW9sHGgUHthMKQyPfZwz6aErYAq/z5fVAoCqyL
+	 geJHZH9xLWcY8HGKOesHqAwoDs7ZOSIZdLdV4npE=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 726D62145D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728783AbeLKPsU (ORCPT
+        id S1728796AbeLKPsZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 10:48:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36620 "EHLO mail.kernel.org"
+        Tue, 11 Dec 2018 10:48:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36708 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728276AbeLKPsQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:48:16 -0500
+        id S1727983AbeLKPsW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 10:48:22 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 71E7520870;
-        Tue, 11 Dec 2018 15:48:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8CEF520989;
+        Tue, 11 Dec 2018 15:48:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544543295;
-        bh=s+leIqEWRmPpaUafOGtZSiYnqS66qD8NMa/nAeSwmbs=;
+        s=default; t=1544543301;
+        bh=+MHfQRR70XAfTjncgdsYePr26YS5fI7Fxzo56QxNWIc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KpZC9DbSqBgz79Q3NHoRQjEcUvo7Qg1S2XvRPNsRAH/0fPlalEYA13DSQn1fX+27f
-         iZRZ2YHNd5eAJeVA1jrfvUZNLv/8sQjKMgvHv6HVriPrDwOLyx/ORJwE34tav65y4C
-         JUteGxCwGYJ6QDuSYSqr7RrwBQLz6C1Mc6efSpYU=
+        b=Ptogyc4FnAjLgn1NK1DhnXr+xAmq0H5qqBvxXfWnpy7Ce5rX3TPXq9V+mI3C/9nsf
+         1vBmsVC1SrZc2Y7v3ARb+22RCVWwTAY784SE2uvkUJSF+NSWXUhoGOmRrigZrz1GL0
+         dwFrl8Z0K2C/1hWE1HP9R7YqTDsnkLLt2yKAyFDU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alexey Brodkin <abrodkin@synopsys.com>,
-        Cupertino Miranda <cmiranda@synopsys.com>,
-        Vineet Gupta <vgupta@synopsys.com>
-Subject: [PATCH 4.4 53/91] arc: [devboards] Add support of NFSv3 ACL
-Date:   Tue, 11 Dec 2018 16:41:12 +0100
-Message-Id: <20181211151610.321985421@linuxfoundation.org>
+        stable@vger.kernel.org, Simon Guo <wei.guo.simon@gmail.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Alexey Klimov <klimov.linux@gmail.com>,
+        Eric B Munson <emunson@akamai.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Michal Hocko <mhocko@suse.com>, Shuah Khan <shuah@kernel.org>,
+        Thierry Reding <treding@nvidia.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        David Rientjes <rientjes@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Rafael David Tinoco <rafael.tinoco@linaro.org>
+Subject: [PATCH 4.4 55/91] mm: mlock: avoid increase mm->locked_vm on mlock() when already mlock2(,MLOCK_ONFAULT)
+Date:   Tue, 11 Dec 2018 16:41:14 +0100
+Message-Id: <20181211151610.493454417@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181211151606.026852373@linuxfoundation.org>
 References: <20181211151606.026852373@linuxfoundation.org>
@@ -69,111 +79,69 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alexey Brodkin <abrodkin@synopsys.com>
+From: Simon Guo <wei.guo.simon@gmail.com>
 
-commit 6b04114f6fae5e84d33404c2970b1949c032546e upstream.
+commit b155b4fde5bdde9fed439cd1f5ea07173df2ed31 upstream.
 
-By default NFSv3 doesn't support ACL (Access Control Lists)
-which might be quite convenient to have so that
-mounted NFS behaves exactly as any other local file-system.
+When one vma was with flag VM_LOCKED|VM_LOCKONFAULT (by invoking
+mlock2(,MLOCK_ONFAULT)), it can again be populated with mlock() with
+VM_LOCKED flag only.
 
-In particular missing support of ACL makes umask useless.
-This among other thigs fixes Glibc's "nptl/tst-umask1".
+There is a hole in mlock_fixup() which increase mm->locked_vm twice even
+the two operations are on the same vma and both with VM_LOCKED flags.
 
-Signed-off-by: Alexey Brodkin <abrodkin@synopsys.com>
-Cc: Cupertino Miranda <cmiranda@synopsys.com>
-Cc: stable@vger.kernel.org	#4.14+
-Signed-off-by: Vineet Gupta <vgupta@synopsys.com>
+The issue can be reproduced by following code:
+
+  mlock2(p, 1024 * 64, MLOCK_ONFAULT); //VM_LOCKED|VM_LOCKONFAULT
+  mlock(p, 1024 * 64);  //VM_LOCKED
+
+Then check the increase VmLck field in /proc/pid/status(to 128k).
+
+When vma is set with different vm_flags, and the new vm_flags is with
+VM_LOCKED, it is not necessarily be a "new locked" vma.  This patch
+corrects this bug by prevent mm->locked_vm from increment when old
+vm_flags is already VM_LOCKED.
+
+Link: http://lkml.kernel.org/r/1472554781-9835-3-git-send-email-wei.guo.simon@gmail.com
+Signed-off-by: Simon Guo <wei.guo.simon@gmail.com>
+Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Cc: Alexey Klimov <klimov.linux@gmail.com>
+Cc: Eric B Munson <emunson@akamai.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Mel Gorman <mgorman@techsingularity.net>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: Shuah Khan <shuah@kernel.org>
+Cc: Simon Guo <wei.guo.simon@gmail.com>
+Cc: Thierry Reding <treding@nvidia.com>
+Cc: Vlastimil Babka <vbabka@suse.cz>
+Cc: David Rientjes <rientjes@google.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Rafael David Tinoco <rafael.tinoco@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arc/configs/axs101_defconfig          |    1 +
- arch/arc/configs/axs103_defconfig          |    1 +
- arch/arc/configs/axs103_smp_defconfig      |    1 +
- arch/arc/configs/nsimosci_defconfig        |    1 +
- arch/arc/configs/nsimosci_hs_defconfig     |    1 +
- arch/arc/configs/nsimosci_hs_smp_defconfig |    1 +
- arch/arc/configs/vdk_hs38_defconfig        |    1 +
- arch/arc/configs/vdk_hs38_smp_defconfig    |    1 +
- 8 files changed, 8 insertions(+)
+ mm/mlock.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/arch/arc/configs/axs101_defconfig
-+++ b/arch/arc/configs/axs101_defconfig
-@@ -98,6 +98,7 @@ CONFIG_NTFS_FS=y
- CONFIG_TMPFS=y
- CONFIG_JFFS2_FS=y
- CONFIG_NFS_FS=y
-+CONFIG_NFS_V3_ACL=y
- CONFIG_NLS_CODEPAGE_437=y
- CONFIG_NLS_ISO8859_1=y
- # CONFIG_ENABLE_WARN_DEPRECATED is not set
---- a/arch/arc/configs/axs103_defconfig
-+++ b/arch/arc/configs/axs103_defconfig
-@@ -103,6 +103,7 @@ CONFIG_NTFS_FS=y
- CONFIG_TMPFS=y
- CONFIG_JFFS2_FS=y
- CONFIG_NFS_FS=y
-+CONFIG_NFS_V3_ACL=y
- CONFIG_NLS_CODEPAGE_437=y
- CONFIG_NLS_ISO8859_1=y
- # CONFIG_ENABLE_WARN_DEPRECATED is not set
---- a/arch/arc/configs/axs103_smp_defconfig
-+++ b/arch/arc/configs/axs103_smp_defconfig
-@@ -104,6 +104,7 @@ CONFIG_NTFS_FS=y
- CONFIG_TMPFS=y
- CONFIG_JFFS2_FS=y
- CONFIG_NFS_FS=y
-+CONFIG_NFS_V3_ACL=y
- CONFIG_NLS_CODEPAGE_437=y
- CONFIG_NLS_ISO8859_1=y
- # CONFIG_ENABLE_WARN_DEPRECATED is not set
---- a/arch/arc/configs/nsimosci_defconfig
-+++ b/arch/arc/configs/nsimosci_defconfig
-@@ -70,5 +70,6 @@ CONFIG_EXT2_FS_XATTR=y
- CONFIG_TMPFS=y
- # CONFIG_MISC_FILESYSTEMS is not set
- CONFIG_NFS_FS=y
-+CONFIG_NFS_V3_ACL=y
- # CONFIG_ENABLE_WARN_DEPRECATED is not set
- # CONFIG_ENABLE_MUST_CHECK is not set
---- a/arch/arc/configs/nsimosci_hs_defconfig
-+++ b/arch/arc/configs/nsimosci_hs_defconfig
-@@ -69,5 +69,6 @@ CONFIG_EXT2_FS_XATTR=y
- CONFIG_TMPFS=y
- # CONFIG_MISC_FILESYSTEMS is not set
- CONFIG_NFS_FS=y
-+CONFIG_NFS_V3_ACL=y
- # CONFIG_ENABLE_WARN_DEPRECATED is not set
- # CONFIG_ENABLE_MUST_CHECK is not set
---- a/arch/arc/configs/nsimosci_hs_smp_defconfig
-+++ b/arch/arc/configs/nsimosci_hs_smp_defconfig
-@@ -88,6 +88,7 @@ CONFIG_EXT2_FS_XATTR=y
- CONFIG_TMPFS=y
- # CONFIG_MISC_FILESYSTEMS is not set
- CONFIG_NFS_FS=y
-+CONFIG_NFS_V3_ACL=y
- # CONFIG_ENABLE_WARN_DEPRECATED is not set
- # CONFIG_ENABLE_MUST_CHECK is not set
- CONFIG_FTRACE=y
---- a/arch/arc/configs/vdk_hs38_defconfig
-+++ b/arch/arc/configs/vdk_hs38_defconfig
-@@ -89,6 +89,7 @@ CONFIG_NTFS_FS=y
- CONFIG_TMPFS=y
- CONFIG_JFFS2_FS=y
- CONFIG_NFS_FS=y
-+CONFIG_NFS_V3_ACL=y
- CONFIG_NLS_CODEPAGE_437=y
- CONFIG_NLS_ISO8859_1=y
- # CONFIG_ENABLE_WARN_DEPRECATED is not set
---- a/arch/arc/configs/vdk_hs38_smp_defconfig
-+++ b/arch/arc/configs/vdk_hs38_smp_defconfig
-@@ -91,6 +91,7 @@ CONFIG_NTFS_FS=y
- CONFIG_TMPFS=y
- CONFIG_JFFS2_FS=y
- CONFIG_NFS_FS=y
-+CONFIG_NFS_V3_ACL=y
- CONFIG_NLS_CODEPAGE_437=y
- CONFIG_NLS_ISO8859_1=y
- # CONFIG_ENABLE_WARN_DEPRECATED is not set
+--- a/mm/mlock.c
++++ b/mm/mlock.c
+@@ -504,6 +504,7 @@ static int mlock_fixup(struct vm_area_st
+ 	int nr_pages;
+ 	int ret = 0;
+ 	int lock = !!(newflags & VM_LOCKED);
++	vm_flags_t old_flags = vma->vm_flags;
+ 
+ 	if (newflags == vma->vm_flags || (vma->vm_flags & VM_SPECIAL) ||
+ 	    is_vm_hugetlb_page(vma) || vma == get_gate_vma(current->mm))
+@@ -538,6 +539,8 @@ success:
+ 	nr_pages = (end - start) >> PAGE_SHIFT;
+ 	if (!lock)
+ 		nr_pages = -nr_pages;
++	else if (old_flags & VM_LOCKED)
++		nr_pages = 0;
+ 	mm->locked_vm += nr_pages;
+ 
+ 	/*
 
 
