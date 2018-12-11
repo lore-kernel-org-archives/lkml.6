@@ -2,127 +2,137 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.9 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B394C6783B
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 21:12:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B4BBC67839
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 21:13:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 182C520851
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 21:12:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TvvrhnAU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 182C520851
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 4AD2020851
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 21:13:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4AD2020851
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726258AbeLKVM5 (ORCPT
+        id S1726312AbeLKVNX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 16:12:57 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:42787 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726134AbeLKVM4 (ORCPT
+        Tue, 11 Dec 2018 16:13:23 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:54491 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726134AbeLKVNW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 16:12:56 -0500
-Received: by mail-pl1-f195.google.com with SMTP id y1so7494530plp.9
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 13:12:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=lPrFjhTsNHUUayrOVZ+SpfzOV4fwLjJ9piWRaxrSzko=;
-        b=TvvrhnAUzDAlfjotKGhxfewuauVpZld1xXZ05uqRFJ+QMOGmLdUv6WeF2zyAq5AaPL
-         ZNlsc+HPoOOGAbghz93ggz7EoS9WntxLPXsUw1t/Les2dYBlfXaqoVBmzeDtQKfdeXC2
-         aEvdpjExbiN1zlAreBZBoDImLY4awKlNw9ZZ6zwvQQSRST0kAYw6bcBxDN2Or/mvFZYF
-         be4MIULUFl8LeZ35OL7aOHTsZPOgmOMhGdTUT2/skioMBhOQNmhFylxWz4aPJ8XkKzBi
-         6l5Z7k3RYLR/echceWFpDe45ygsiiJ2t2r3x5Tqi1Fhgk6UhiJIJVj0H8B5cU2Ys2P49
-         B/Qw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=lPrFjhTsNHUUayrOVZ+SpfzOV4fwLjJ9piWRaxrSzko=;
-        b=KVqVXH5TsFvvGOFGWhz9UXqgYDyyUTfWm7AV1yKv4iMXXbAdsLeoPmCXbdMjWSgcbz
-         V6GjWtPtF0DWwstHpT8V73zRC9UlhU+NICsr9r8+uR+udtDR7o0Gb14F9/ueKINXmaVm
-         Cd8Gt3GqddbnE179Wh7SVW5R8hotU9q1j8iQkWGHWmZySvAMPiaTyzoYvbKbZtqf9uHm
-         qeYrKmk8NajTJfCaPoPTluyvZLkycSZtcTCksUdd7oyZkKqfGIA4b1iqYcMXT9YaLL8y
-         ePnQtCclyO6IMqUbu8eZjy6euMO0jGkAnpXEE98FPikB2akNMrKduU/pOAiTTDv7+0bO
-         utHg==
-X-Gm-Message-State: AA+aEWYXE4dvODoY89VnSzGGuRkmCTwjajegwJOLzPAJ2Bv7+M4DGu3N
-        Kwl9WGScR5E/3EaokxIWU5PcnQ==
-X-Google-Smtp-Source: AFSGD/UJ9uaV7drFVRG56eHW2DQeRtWMmnnJ7r2kyQs6EpbfVs8o/kj92RICmAwWp7FvAr/DlwC7jg==
-X-Received: by 2002:a17:902:8f97:: with SMTP id z23mr17748953plo.283.1544562775705;
-        Tue, 11 Dec 2018 13:12:55 -0800 (PST)
-Received: from [2620:15c:17:3:3a5:23a7:5e32:4598] ([2620:15c:17:3:3a5:23a7:5e32:4598])
-        by smtp.gmail.com with ESMTPSA id e86sm23104576pfb.6.2018.12.11.13.12.54
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 11 Dec 2018 13:12:54 -0800 (PST)
-Date:   Tue, 11 Dec 2018 13:12:54 -0800 (PST)
-From:   David Rientjes <rientjes@google.com>
-X-X-Sender: rientjes@chino.kir.corp.google.com
-To:     Jerome Glisse <jglisse@redhat.com>
-cc:     Arnd Bergmann <arnd@arndb.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Michal Hocko <mhocko@suse.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mm/mmu_notifier: fix mmu_notifier_range_init warning
-In-Reply-To: <20181211201909.GA6478@redhat.com>
-Message-ID: <alpine.DEB.2.21.1812111310320.87855@chino.kir.corp.google.com>
-References: <20181211200526.3868586-1-arnd@arndb.de> <20181211201909.GA6478@redhat.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Tue, 11 Dec 2018 16:13:22 -0500
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wBBLD7Df4154210
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Tue, 11 Dec 2018 13:13:07 -0800
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wBBLD5Qh4154207;
+        Tue, 11 Dec 2018 13:13:05 -0800
+Date:   Tue, 11 Dec 2018 13:13:05 -0800
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Reinette Chatre <tipbot@zytor.com>
+Message-ID: <tip-80b71c340f17705ec145911b9a193ea781811b16@git.kernel.org>
+Cc:     mingo@kernel.org, tglx@linutronix.de, linux-kernel@vger.kernel.org,
+        reinette.chatre@intel.com, fenghua.yu@intel.com, mingo@redhat.com,
+        hpa@zytor.com, bp@suse.de, tony.luck@intel.com,
+        stable@vger.kernel.org, x86@kernel.org
+Reply-To: bp@suse.de, tony.luck@intel.com, stable@vger.kernel.org,
+          x86@kernel.org, mingo@kernel.org, tglx@linutronix.de,
+          linux-kernel@vger.kernel.org, reinette.chatre@intel.com,
+          fenghua.yu@intel.com, mingo@redhat.com, hpa@zytor.com
+In-Reply-To: <b7b17432a80f95a1fa21a1698ba643014f58ad31.1544476425.git.reinette.chatre@intel.com>
+References: <b7b17432a80f95a1fa21a1698ba643014f58ad31.1544476425.git.reinette.chatre@intel.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/urgent] x86/intel_rdt: Ensure a CPU remains online for the
+ region's pseudo-locking sequence
+Git-Commit-ID: 80b71c340f17705ec145911b9a193ea781811b16
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 11 Dec 2018, Jerome Glisse wrote:
+Commit-ID:  80b71c340f17705ec145911b9a193ea781811b16
+Gitweb:     https://git.kernel.org/tip/80b71c340f17705ec145911b9a193ea781811b16
+Author:     Reinette Chatre <reinette.chatre@intel.com>
+AuthorDate: Mon, 10 Dec 2018 13:21:54 -0800
+Committer:  Borislav Petkov <bp@suse.de>
+CommitDate: Tue, 11 Dec 2018 21:59:01 +0100
 
-> On Tue, Dec 11, 2018 at 09:04:43PM +0100, Arnd Bergmann wrote:
-> > The macro version of mmu_notifier_range_init() for CONFIG_MMU_NOTIFIER=n
-> > does not evaluate all its arguments, leading to a warning in one case:
-> > 
-> > mm/migrate.c: In function 'migrate_vma_pages':
-> > mm/migrate.c:2711:20: error: unused variable 'mm' [-Werror=unused-variable]
-> >   struct mm_struct *mm = vma->vm_mm;
-> > 
-> > Pass down the 'mm' as into the inline function as well so gcc can
-> > see why the variable exists.
-> > 
-> > Fixes: 137d92bd73b1 ("mm/mmu_notifier: use structure for invalidate_range_start/end calls v2")
-> 
-> What about changing migrate.c (i actualy tried to do that everywhere in
-> the patchset but i missed that spot) So we avoid one useless variable on
-> such configuration:
-> 
-> diff --git a/mm/migrate.c b/mm/migrate.c
-> index f02bb4b22c1a..883fce631f47 100644
-> --- a/mm/migrate.c
-> +++ b/mm/migrate.c
-> @@ -2701,7 +2701,6 @@ static void migrate_vma_pages(struct migrate_vma *migrate)
->  	const unsigned long npages = migrate->npages;
->  	const unsigned long start = migrate->start;
->  	struct vm_area_struct *vma = migrate->vma;
-> -	struct mm_struct *mm = vma->vm_mm;
->  	struct mmu_notifier_range range;
->  	unsigned long addr, i;
->  	bool notified = false;
-> @@ -2724,8 +2723,8 @@ static void migrate_vma_pages(struct migrate_vma *migrate)
->  			if (!notified) {
->  				notified = true;
->  
-> -				mmu_notifier_range_init(&range, mm, addr,
-> -							migrate->end,
-> +				mmu_notifier_range_init(&range, vma->vm_mm,
-> +							addr, migrate->end,
->  							MMU_NOTIFY_CLEAR);
->  				mmu_notifier_invalidate_range_start(&range);
->  			}
+x86/intel_rdt: Ensure a CPU remains online for the region's pseudo-locking sequence
 
-Wouldn't it be better to just declare mmu_notifier_range_init() as a 
-static inline function rather than a #define to avoid this warning?
+The user triggers the creation of a pseudo-locked region when writing
+the requested schemata to the schemata resctrl file. The pseudo-locking
+of a region is required to be done on a CPU that is associated with the
+cache on which the pseudo-locked region will reside. In order to run the
+locking code on a specific CPU, the needed CPU has to be selected and
+ensured to remain online during the entire locking sequence.
+
+At this time, the cpu_hotplug_lock is not taken during the pseudo-lock
+region creation and it is thus possible for a CPU to be selected to run
+the pseudo-locking code and then that CPU to go offline before the
+thread is able to run on it.
+
+Fix this by ensuring that the cpu_hotplug_lock is taken while the CPU on
+which code has to run needs to be controlled. Since the cpu_hotplug_lock
+is always taken before rdtgroup_mutex the lock order is maintained.
+
+Fixes: e0bdfe8e36f3 ("x86/intel_rdt: Support creation/removal of pseudo-locked region")
+Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Fenghua Yu <fenghua.yu@intel.com>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Tony Luck <tony.luck@intel.com>
+Cc: gavin.hindman@intel.com
+Cc: jithu.joseph@intel.com
+Cc: stable <stable@vger.kernel.org>
+Cc: x86-ml <x86@kernel.org>
+Link: https://lkml.kernel.org/r/b7b17432a80f95a1fa21a1698ba643014f58ad31.1544476425.git.reinette.chatre@intel.com
+---
+ arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c b/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c
+index 27937458c231..efa4a519f5e5 100644
+--- a/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c
++++ b/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c
+@@ -23,6 +23,7 @@
+ 
+ #define pr_fmt(fmt)	KBUILD_MODNAME ": " fmt
+ 
++#include <linux/cpu.h>
+ #include <linux/kernfs.h>
+ #include <linux/seq_file.h>
+ #include <linux/slab.h>
+@@ -310,9 +311,11 @@ ssize_t rdtgroup_schemata_write(struct kernfs_open_file *of,
+ 		return -EINVAL;
+ 	buf[nbytes - 1] = '\0';
+ 
++	cpus_read_lock();
+ 	rdtgrp = rdtgroup_kn_lock_live(of->kn);
+ 	if (!rdtgrp) {
+ 		rdtgroup_kn_unlock(of->kn);
++		cpus_read_unlock();
+ 		return -ENOENT;
+ 	}
+ 	rdt_last_cmd_clear();
+@@ -367,6 +370,7 @@ ssize_t rdtgroup_schemata_write(struct kernfs_open_file *of,
+ 
+ out:
+ 	rdtgroup_kn_unlock(of->kn);
++	cpus_read_unlock();
+ 	return ret ?: nbytes;
+ }
+ 
