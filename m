@@ -2,56 +2,59 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13BCBC6783B
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 22:15:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47549C67839
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 22:15:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C251F2084E
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 22:15:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E9F812084E
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 22:15:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=mailprotect.be header.i=@mailprotect.be header.b="kBvshdmS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C251F2084E
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=mailprotect.be header.i=@mailprotect.be header.b="bXT21lM5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E9F812084E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=acm.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726381AbeLKWOO (ORCPT
+        id S1726520AbeLKWPE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 17:14:14 -0500
-Received: from com-out001.mailprotect.be ([83.217.72.83]:58737 "EHLO
-        com-out001.mailprotect.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726308AbeLKWOL (ORCPT
+        Tue, 11 Dec 2018 17:15:04 -0500
+Received: from out002.mailprotect.be ([83.217.72.86]:49743 "EHLO
+        out002.mailprotect.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726367AbeLKWOO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 17:14:11 -0500
+        Tue, 11 Dec 2018 17:14:14 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=mailprotect.be; s=mail; h=Content-Transfer-Encoding:MIME-Version:Message-Id
-        :Date:Subject:Cc:To:From:reply-to:sender:bcc:in-reply-to:references:
-        content-type; bh=lPIVnauzj81YfwkDDegoiE1uVpqRqpbOmNEvzTUtOr0=; b=kBvshdmSs+fT
-        TD1jo2LCNaTq08v8PCoMLxCkhweFvIqHnYf9eBvEvqkQHNNhTpyTpzIZlxO2WXA4jM3rrEZymrbhk
-        7VSLsAEScw6O54VkQ3AhdB2+k/fjqj02aEmiMTZrqc0uUVAKCzPp9WJEpmfA5sVHz4suYnHMvZ7mh
-        J8n1fUvAausmcKp05paU/qXgjVTHIiNp+tNqajKHXm2PMUiUeAk/wM+wXorRvnOg1KYBWXrL/Nu9y
-        t/TvGb9PV5nUM446NjGmmjA3OyETAuLvPhWsMLHozQSiP0+NHFKkTlJPLQ6d2C8uxXNWxoKxnrHup
-        xjXNz1xsEy8JeWIiEdYBcw==;
+        d=mailprotect.be; s=mail; h=Content-Transfer-Encoding:MIME-Version:References
+        :In-Reply-To:Message-Id:Date:Subject:Cc:To:From:reply-to:sender:bcc:
+        content-type; bh=NDg9GsD4dE0YSw8uB0CGBAuB0OXS9veGMSY6pJK76wI=; b=bXT21lM5KyyS
+        I7sXlBB4D2FFXPoVqyS4/PcfJScgVT52l91LeeR/htzdV/Gfn8DEGE5nzUOrH7Kf2PPDp65w37q7O
+        /iyUQkog/7DZVWNvPsyVA/PGaGJT7mITDhfz6OGi4Mte1Cew7ZoAkKFTXfCM7MzyU+IHCb96iPjUx
+        vkVjZ9EtopTZxngJotWZtL5ZS9bYWXIOxvPcLw+jhAaYYpOJ61GDv4UMtrUay8tIOEqSuUybOx7IC
+        Ud6EhjtrP1srUIptes/cpshTQIuBdxbTLaBYFY2Mbzoh7raSM2mjgUtnmv17PnAt3bHsgrNnLDG/z
+        BXjCnAOWgEzk6+B8IxpL3A==;
 Received: from smtp-auth.mailprotect.be ([178.208.39.155])
-        by com-mpt-out001.mailprotect.be with esmtp (Exim 4.89)
+        by com-mpt-out002.mailprotect.be with esmtp (Exim 4.89)
         (envelope-from <bvanassche@acm.org>)
-        id 1gWqHo-0005Lw-PR; Tue, 11 Dec 2018 23:13:53 +0100
+        id 1gWqHy-0006rV-Ed; Tue, 11 Dec 2018 23:14:02 +0100
 Received: from desktop-bart.svl.corp.google.com (unknown [104.133.8.89])
         (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by smtp-auth.mailprotect.be (Postfix) with ESMTPSA id 83D5DC0718;
-        Tue, 11 Dec 2018 23:13:34 +0100 (CET)
+        by smtp-auth.mailprotect.be (Postfix) with ESMTPSA id A5F5EC0718;
+        Tue, 11 Dec 2018 23:14:00 +0100 (CET)
 From:   Bart Van Assche <bvanassche@acm.org>
 To:     peterz@infradead.org
 Cc:     mingo@redhat.com, tj@kernel.org, longman@redhat.com,
         johannes.berg@intel.com, linux-kernel@vger.kernel.org,
-        Bart Van Assche <bvanassche@acm.org>
-Subject: [PATCH v4 00/15] locking/lockdep: Add support for dynamic keys
-Date:   Tue, 11 Dec 2018 14:13:06 -0800
-Message-Id: <20181211221321.196536-1-bvanassche@acm.org>
+        Bart Van Assche <bvanassche@acm.org>,
+        Johannes Berg <johannes@sipsolutions.net>
+Subject: [PATCH v4 13/15] locking/lockdep: Add support for dynamic keys
+Date:   Tue, 11 Dec 2018 14:13:19 -0800
+Message-Id: <20181211221321.196536-14-bvanassche@acm.org>
 X-Mailer: git-send-email 2.20.0.rc2.403.gdbc3b29805-goog
+In-Reply-To: <20181211221321.196536-1-bvanassche@acm.org>
+References: <20181211221321.196536-1-bvanassche@acm.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Originating-IP: 178.208.39.155
@@ -59,112 +62,257 @@ X-SpamExperts-Domain: mailprotect.be
 X-SpamExperts-Username: 178.208.39.128/27
 Authentication-Results: mailprotect.be; auth=pass smtp.auth=178.208.39.128/27@mailprotect.be
 X-SpamExperts-Outgoing-Class: ham
-X-SpamExperts-Outgoing-Evidence: Combined (0.08)
+X-SpamExperts-Outgoing-Evidence: SB/global_tokens (0.0064518440543)
 X-Recommended-Action: accept
-X-Filter-ID: EX5BVjFpneJeBchSMxfU5qG7cpVmpnDvIHp2+sbGUo1602E9L7XzfQH6nu9C/Fh9KJzpNe6xgvOx
+X-Filter-ID: EX5BVjFpneJeBchSMxfU5jElL0qh/9r4FWmIGsV+M0J602E9L7XzfQH6nu9C/Fh9KJzpNe6xgvOx
  q3u0UDjvO1tLifGj39bI0bcPyaJsYTb/+zriNZuqQk0xRpGwjn+MTR8dtByWYYhgj25jR+mEA3YO
  AtfhCcV13BpIh8lqRXSSiFVwqwU9VgKUrYQ0lqWyFDaym8oavoPYsm7m1mVEGf0/5ST3nkt5XYDK
- YAuRpmF7E2F3eqKXiTd2ECUghryWsXVhPBs4K8hVtp6La00Uv8ZB14E0iQtvqvjtp9rD8If9bcHJ
- zTYM7Gz36QU/LMAv0C6YQxDn16lwRqui2ilsPyTg127TqHZDxA/kZB41Rh8wUGmdr3B4qT9RiswA
- A6TjCkmYneWmOLktMt7B24Jcus2wWVbjHO/cpJpsYlvFhM+N0nsLdCG7LGfReC1C1uWeBldNoc4/
- ugpbufbubK+x4pGqVAT1vWFeEhEnVslbRXVRh+7MnWbw7fXOUdDwPDg2bN87qJveuvI4FkaTzox5
- 7en0TkQuIdVjxFJSAPHvCxKJKuWBdR7YVGu3dD+xoi67r0TCUZsaG+mLAH7VoDC8TGpF0nrTJnXQ
- ungkKNbjrbxYFX5W98JZfM4UDzp+I2t3/FxvddG4mRHKJlnoc+LvLMw4Oh2LkwsmIC+tUiJAU2Hq
- vcLZCDNz7FE5l8aegTfrXgepXw2uOkh8BWaRmYTapEnuVpgRu+5Csn5Mqn0EOmQ4zJ5Xvbj1fZ7U
- ZAcZAKRxxrMZUT78gpA1Zyw3QtodznRSNA+VaZsOBFopY/kW1qm1docXitEPM13yBfBB3B5fzBq4
- o6xB5AMMdSDguIlqHHJIe5U4rz33MPOIlGKEX4NMFgsxYIHCku08yYLbMWIz8Sz3rXkToGgoPkqM
- hPcHscFEFmAKKS84AwX/iljz3fd1vw8CKdLIQ0mXmruaJQIi+FOxgkVvyyGR6ssTaccR4EbSKT4v
- l+2c5ndA22w8Q+OWgwomWRcGIJOYPo3qjuJ89r6TOdr62U9MDkWGkPl9AMOpyKA69LF1Ge2GaGfx
- mfos7YTXbqll+CkEp8Abhi88xg9tdbvxd+VhQOn2K5bYwN40eTXlWiUAYdLmsJdAoPJvtp9WlTt+
- Kq0eQx3E5oYrsjSrzniyQYOvVIVbP1OsRtMGMevVVKNikwLQ0fq/FOtFj5jedxzVymPEjnK9ocrD
- Qs1Q7QbJ8LleNweIjcZcgw==
+ YAuRpmF7E2F3eqKXiTd2ECUghryWXlqwG31yUGf3t09vBVYS71V1Pk0aHudBU1wyWVTA5OYS1waI
+ XXCBiQFDV0yen8nGcSeERs4TOTnIH1kc1IWc5eLazqbUYkjl7F1LyK0RORrZFrlHzfI3TKR6+KP6
+ 1O90SNgvEAWLFiDAlQR6Wu0I/iWDegq4fQ11AxLVlrI7DVH6GzPz+r852EXXeYX4ImMyzDg6HYuT
+ CyYgL61SIkBTYXPEvhymCNb22qmKERGbL1SqvGGff0htQqhQf0/aDrhpLM4xnCPpmyyS7jgD9Nen
+ VVoB/PLX+rmdznc91veCJAwpCI+5VHpzDqRcT2+GtIE8SRAgmLDKAcp9i+Q+BEiSUj07SNjVkl0P
+ Pj+OUYZX3/3Z86X+I1ED1LLv7p/g4HOOdbYb9IXfYGRpVS/0hA4Mwp9kB6JZdl+SJy+nWImyKEy/
+ zJE11ZjKQFiKV8EwnkodMjMm/D2rEPnNAuCCnt9B91Ax/uigYcgpQGDKFCrOdd8gr/U0flMcy2Vi
+ /IcBgY4aVBKUAPQbBk8nfWT8Lcjyyn9ZSA9YgSwQmLSJwsFnO3lUxpF8dVvwCXY/4mE1q/c/E53d
+ gi3vLmcjfrrMypRHnyTGvDCJaPC8dHPvu1kGoGYWiC59k0WHCnjOrK6bv6flX1KrFIDnIhhlHDLh
+ vRwgYpikjrjEsQHYqzPksYepQjQSeP/rn+UB/EmrduGPxHj/dKsQ+WcgzL7pTOYRE2yEvlBrMyfp
+ YuyanAZpMXssfrVwLrD8rqLg0SqQCDr4y/2aLbffSfO93ZWvA5iNcw0tbqhwpsJ54eJylMfm2XVQ
+ efDYhBKQrXFod+WvUUP1Uys1EcG7yIy1/E3Wa9/NTnLEueuO5TcDeKjrEmYPn2IVWRtfdRHps2br
+ TOkutpvyrdmtvbYO9ASW9x0dzW2b+IEXgSV5FVT0nNNOs1IDBtijAxf8XG910biZEcomWehz4u8s
+ zDg6HYuTCyYgL61SIkBTYSiCBqrB4vMmHpjmx6wTDBzk2EPy497nssgnoMkIb3rMdj8luXC7km26
+ QtXP9s02LA==
 X-Report-Abuse-To: spam@com-mpt-mgt001.mailprotect.be
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Peter and Ingo,
+A shortcoming of the current lockdep implementation is that it requires
+lock keys to be allocated statically. That forces certain lock objects
+to share lock keys. Since lock dependency analysis groups lock objects
+per key sharing lock keys can cause false positive lockdep reports.
+Make it possible to avoid such false positive reports by allowing lock
+keys to be allocated dynamically. Require that dynamically allocated
+lock keys are registered before use by calling lockdep_register_key().
+Complain about attempts to register the same lock key pointer twice
+without calling lockdep_unregister_key() between successive
+registration calls.
 
-A known shortcoming of the current lockdep implementation is that it requires
-lock keys to be allocated statically. This forces certain unrelated
-synchronization objects to share keys and this key sharing can cause false
-positive deadlock reports. This patch series adds support for dynamic keys in
-the lockdep code and eliminates a class of false positive reports from the
-workqueue implementation.
+The purpose of the new lock_keys_hash[] data structure that keeps
+track of all dynamic keys is twofold:
+- Verify whether the lockdep_register_key() and lockdep_unregister_key()
+  functions are used correctly.
+- Avoid that lockdep_init_map() complains when encountering a dynamically
+  allocated key.
 
-The changes compared to v3 are:
-- Rework the code that frees objects that are no longer used such that it
-  is now guaranteed that a grace period elapses between last use and freeing.
-- The lockdep self tests pass again.
-- Avoid that the patch that removes all matching lock order entries can
-  cause list corruption. Note: the change in this patch to realize that
-  is removed again by a later patch. In other words, this change is only
-  necessary to make the series bisectable.
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Waiman Long <longman@redhat.com>
+Cc: Johannes Berg <johannes@sipsolutions.net>
+Signed-off-by: Bart Van Assche <bvanassche@acm.org>
+---
+ include/linux/lockdep.h  |  13 +++--
+ kernel/locking/lockdep.c | 114 ++++++++++++++++++++++++++++++++++++---
+ 2 files changed, 116 insertions(+), 11 deletions(-)
 
-The changes compared to v2 are:
-- Made sure that all schedule_free_zapped_classes() calls are protected
-  with the graph lock.
-- When removing a lock class, only recalculate lock chains that have been
-  modified.
-- Combine a list_del() and list_add_tail() call into a list_move_tail()
-  call in register_lock_class().
-- Use an RCU read lock instead of the graph lock inside is_dynamic_key().
-
-The changes compared to v1 are:
-- Addressed Peter's review comments: remove the list_head that I had added
-  to struct lock_list again, replaced all_list_entries and free_list_entries
-  by two bitmaps, use call_rcu() to free lockdep objects, add a BUILD_BUG_ON()
-  that compares the size of struct lock_class_key and raw_spin_lock_t.
-- Addressed the "unknown symbol" errors reported by the build bot by adding a
-  few #ifdef / #endif directives. Addressed the 32-bit warnings by using %d
-  instead of %ld for array indices and by casting the array indices to
-  unsigned int.
-- Removed several WARN_ON_ONCE(!class->hash_entry.pprev) statements since
-  these duplicate the code in check_data_structures().
-- Left out the patch that causes lockdep to complain if no name has been
-  assigned to a lock object. That patch namely causes the build bot to
-  complain about certain lock objects but I have not yet had the time to
-  figure out the identity of these lock objects.
-  
-Bart.
-
-Bart Van Assche (15):
-  locking/lockdep: Fix required memory size reported if
-    CONFIG_PROVE_LOCKING=n
-  locking/lockdep: Make zap_class() remove all matching lock order
-    entries
-  locking/lockdep: Reorder struct lock_class members
-  locking/lockdep: Initialize the locks_before and locks_after lists
-    earlier
-  locking/lockdep: Split lockdep_free_key_range() and
-    lockdep_reset_lock()
-  locking/lockdep: Make it easy to detect whether or not inside a
-    selftest
-  locking/lockdep: Free lock classes that are no longer in use
-  locking/lockdep: Reuse list entries that are no longer in use
-  locking/lockdep: Introduce lockdep_next_lockchain() and
-    lock_chain_count()
-  locking/lockdep: Reuse lock chains that have been freed
-  locking/lockdep: Check data structure consistency
-  locking/lockdep: Verify whether lock objects are small enough to be
-    used as class keys
-  locking/lockdep: Add support for dynamic keys
-  kernel/workqueue: Use dynamic lockdep keys for workqueues
-  lockdep tests: Test dynamic key registration
-
- include/linux/lockdep.h                       |  38 +-
- include/linux/workqueue.h                     |  28 +-
- kernel/locking/lockdep.c                      | 884 ++++++++++++++++--
- kernel/locking/lockdep_internals.h            |   3 +-
- kernel/locking/lockdep_proc.c                 |  12 +-
- kernel/workqueue.c                            |  60 +-
- lib/locking-selftest.c                        |   2 +
- tools/lib/lockdep/include/liblockdep/common.h |   2 +
- tools/lib/lockdep/include/liblockdep/mutex.h  |  11 +-
- tools/lib/lockdep/tests/ABBA.c                |   9 +
- 10 files changed, 893 insertions(+), 156 deletions(-)
-
+diff --git a/include/linux/lockdep.h b/include/linux/lockdep.h
+index 0ddf754ef9c1..2f3835ba35b4 100644
+--- a/include/linux/lockdep.h
++++ b/include/linux/lockdep.h
+@@ -46,15 +46,19 @@ extern int lock_stat;
+ #define NR_LOCKDEP_CACHING_CLASSES	2
+ 
+ /*
+- * Lock-classes are keyed via unique addresses, by embedding the
+- * lockclass-key into the kernel (or module) .data section. (For
+- * static locks we use the lock address itself as the key.)
++ * A lockdep key is associated with each lock object. For static locks we use
++ * the lock address itself as the key. Dynamically allocated lock objects can
++ * have a statically or dynamically allocated key. Dynamically allocated lock
++ * keys must be registered before being used and must be unregistered before
++ * the key memory is freed.
+  */
+ struct lockdep_subclass_key {
+ 	char __one_byte;
+ } __attribute__ ((__packed__));
+ 
++/* hash_entry is used to keep track of dynamically allocated keys. */
+ struct lock_class_key {
++	struct hlist_node		hash_entry;
+ 	struct lockdep_subclass_key	subkeys[MAX_LOCKDEP_SUBCLASSES];
+ };
+ 
+@@ -272,6 +276,9 @@ extern asmlinkage void lockdep_sys_exit(void);
+ extern void lockdep_off(void);
+ extern void lockdep_on(void);
+ 
++extern void lockdep_register_key(struct lock_class_key *key);
++extern void lockdep_unregister_key(struct lock_class_key *key);
++
+ /*
+  * These methods are used by specific locking variants (spinlocks,
+  * rwlocks, mutexes and rwsems) to pass init/acquire/release events
+diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
+index 2685b2265f6e..fb96cfc5cd61 100644
+--- a/kernel/locking/lockdep.c
++++ b/kernel/locking/lockdep.c
+@@ -143,6 +143,9 @@ static DECLARE_BITMAP(list_entries_in_use, MAX_LOCKDEP_ENTRIES);
+  * nr_lock_classes is the number of elements of lock_classes[] that is
+  * in use.
+  */
++#define KEYHASH_BITS		(MAX_LOCKDEP_KEYS_BITS - 1)
++#define KEYHASH_SIZE		(1UL << KEYHASH_BITS)
++static struct hlist_head lock_keys_hash[KEYHASH_SIZE];
+ unsigned long nr_lock_classes;
+ #ifndef CONFIG_DEBUG_LOCKDEP
+ static
+@@ -621,7 +624,7 @@ static int very_verbose(struct lock_class *class)
+  * Is this the address of a static object:
+  */
+ #ifdef __KERNEL__
+-static int static_obj(void *obj)
++static int static_obj(const void *obj)
+ {
+ 	unsigned long start = (unsigned long) &_stext,
+ 		      end   = (unsigned long) &_end,
+@@ -975,6 +978,65 @@ static void init_data_structures_once(void)
+ 	}
+ }
+ 
++static inline struct hlist_head *keyhashentry(const struct lock_class_key *key)
++{
++	unsigned long hash = hash_long((uintptr_t)key, KEYHASH_BITS);
++
++	return lock_keys_hash + hash;
++}
++
++/*
++ * Register a dynamically allocated key.
++ */
++void lockdep_register_key(struct lock_class_key *key)
++{
++	struct hlist_head *hash_head;
++	struct lock_class_key *k;
++	unsigned long flags;
++
++	if (WARN_ON_ONCE(static_obj(key)))
++		return;
++	hash_head = keyhashentry(key);
++
++	raw_local_irq_save(flags);
++	if (!graph_lock())
++		goto restore_irqs;
++	hlist_for_each_entry_rcu(k, hash_head, hash_entry) {
++		if (WARN_ON_ONCE(k == key))
++			goto out_unlock;
++	}
++	hlist_add_head_rcu(&key->hash_entry, hash_head);
++out_unlock:
++	graph_unlock();
++restore_irqs:
++	raw_local_irq_restore(flags);
++}
++EXPORT_SYMBOL_GPL(lockdep_register_key);
++
++/* Check whether a key has been registered as a dynamic key. */
++static bool is_dynamic_key(const struct lock_class_key *key)
++{
++	struct hlist_head *hash_head;
++	struct lock_class_key *k;
++	bool found = false;
++
++	if (WARN_ON_ONCE(static_obj(key)))
++		return false;
++
++	hash_head = keyhashentry(key);
++
++	rcu_read_lock();
++	hlist_for_each_entry_rcu(k, hash_head, hash_entry) {
++		if (k == key) {
++			found = true;
++			break;
++		}
++	}
++	rcu_read_unlock();
++
++	return found;
++}
++
+ /*
+  * Register a lock's class in the hash-table, if the class is not present
+  * yet. Otherwise we look it up. We cache the result in the lock object
+@@ -996,7 +1058,7 @@ register_lock_class(struct lockdep_map *lock, unsigned int subclass, int force)
+ 	if (!lock->key) {
+ 		if (!assign_lock_key(lock))
+ 			return NULL;
+-	} else if (!static_obj(lock->key)) {
++	} else if (!static_obj(lock->key) && !is_dynamic_key(lock->key)) {
+ 		return NULL;
+ 	}
+ 
+@@ -3410,13 +3472,13 @@ void lockdep_init_map(struct lockdep_map *lock, const char *name,
+ 	if (DEBUG_LOCKS_WARN_ON(!key))
+ 		return;
+ 	/*
+-	 * Sanity check, the lock-class key must be persistent:
++	 * Sanity check, the lock-class key must either have been allocated
++	 * statically or must have been registered as a dynamic key.
+ 	 */
+-	if (!static_obj(key)) {
+-		printk("BUG: key %px not in .data!\n", key);
+-		/*
+-		 * What it says above ^^^^^, I suggest you read it.
+-		 */
++	if (!static_obj(key) && !is_dynamic_key(key)) {
++		if (debug_locks)
++			printk(KERN_ERR "BUG: key %px has not been registered!\n",
++			       key);
+ 		DEBUG_LOCKS_WARN_ON(1);
+ 		return;
+ 	}
+@@ -4855,6 +4917,42 @@ void lockdep_reset_lock(struct lockdep_map *lock)
+ 		lockdep_reset_lock_reg(lock);
+ }
+ 
++/*
++ * Unregister a dynamically allocated key. Must not be called from interrupt
++ * context. The caller must ensure that freeing @key only happens after an RCU
++ * grace period.
++ */
++void lockdep_unregister_key(struct lock_class_key *key)
++{
++	struct hlist_head *hash_head = keyhashentry(key);
++	struct lock_class_key *k;
++	struct pending_free *pf;
++	unsigned long flags;
++	bool found = false;
++
++	might_sleep();
++
++	if (WARN_ON_ONCE(static_obj(key)))
++		return;
++
++	pf = get_pending_free_lock(&flags);
++	if (WARN_ON_ONCE(!pf))
++		return;
++	hlist_for_each_entry_rcu(k, hash_head, hash_entry) {
++		if (k == key) {
++			hlist_del_rcu(&k->hash_entry);
++			found = true;
++			break;
++		}
++	}
++	WARN_ON_ONCE(!found);
++	__lockdep_free_key_range(pf, key, 1);
++	schedule_free_zapped_classes(pf);
++	graph_unlock();
++	raw_local_irq_restore(flags);
++}
++EXPORT_SYMBOL_GPL(lockdep_unregister_key);
++
+ void __init lockdep_init(void)
+ {
+ 	printk("Lock dependency validator: Copyright (c) 2006 Red Hat, Inc., Ingo Molnar\n");
 -- 
 2.20.0.rc2.403.gdbc3b29805-goog
 
