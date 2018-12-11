@@ -2,55 +2,60 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC2FBC07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 12:14:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 118A3C07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 12:15:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3323120811
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 12:14:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CC41A20811
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 12:15:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544530459;
-	bh=gK2AzgYpqK3zcvA/bnshyuoPJeSxGwCBj82/yP1gGW4=;
+	s=default; t=1544530549;
+	bh=roZCx4HTVA3IisYCmPheiblNUEmrdwsjZvdv5ElZxXc=;
 	h=From:To:Cc:Subject:In-Reply-To:References:Date:List-ID:From;
-	b=ouJ/gsgBoKsPIWqrF43g68z5TfKu8U1CUCz5HgxQnydeDadKmfkmVXcya8a8oasvK
-	 rBmBMwKAY9/7i1oGdHDXg8ES1gwhdZGSudbNPl+shb2MLBUjMTurrp8+m5L53rtLu4
-	 f0IKgDyl1HGewnxdoQlIxOLrj7K4bsBsU48T13Ts=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3323120811
+	b=U+MLUkjGwXZVekxJ/ys//x66sy1Q9LZCnYsmN61EqIkYmYgBfCdFWogya8DaFMbYv
+	 UyCbvp5bL0vqLIXP1wVzzvcVcaeKPlub3gkOaWL6T0CA2+UKAz+elnTeNcGIt76XOF
+	 UIhwxKV31AfUiXfwUKAbICtex5PXPv6S7kbbdD68=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC41A20811
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726311AbeLKMOR (ORCPT
+        id S1726349AbeLKMPs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 07:14:17 -0500
-Received: from mga12.intel.com ([192.55.52.136]:36956 "EHLO mga12.intel.com"
+        Tue, 11 Dec 2018 07:15:48 -0500
+Received: from mga04.intel.com ([192.55.52.120]:32945 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726135AbeLKMOQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 07:14:16 -0500
+        id S1726135AbeLKMPs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 07:15:48 -0500
 X-Amp-Result: UNKNOWN
 X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Dec 2018 04:14:12 -0800
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Dec 2018 04:15:47 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,342,1539673200"; 
-   d="asc'?scan'208";a="117844849"
+   d="asc'?scan'208";a="109461474"
 Received: from pipin.fi.intel.com (HELO localhost) ([10.237.72.175])
-  by orsmga001.jf.intel.com with ESMTP; 11 Dec 2018 04:14:08 -0800
+  by orsmga003.jf.intel.com with ESMTP; 11 Dec 2018 04:15:43 -0800
 From:   Felipe Balbi <balbi@kernel.org>
-To:     Pawel Laszczak <pawell@cadence.com>, devicetree@vger.kernel.org
-Cc:     gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
-        rogerq@ti.com, linux-kernel@vger.kernel.org, adouglas@cadence.com,
-        jbergsagel@ti.com, nsekhar@ti.com, nm@ti.com, sureshp@cadence.com,
-        peter.chen@nxp.com, pjez@cadence.com, kurahul@cadence.com,
-        Pawel Laszczak <pawell@cadence.com>
-Subject: Re: [PATCH v1 2/2] usb:cdns3 Add Cadence USB3 DRD Driver
-In-Reply-To: <1544445555-17325-3-git-send-email-pawell@cadence.com>
-References: <1544445555-17325-1-git-send-email-pawell@cadence.com> <1544445555-17325-3-git-send-email-pawell@cadence.com>
-Date:   Tue, 11 Dec 2018 14:14:04 +0200
-Message-ID: <87h8fkmfar.fsf@linux.intel.com>
+To:     Pawel Laszczak <pawell@cadence.com>, Roger Quadros <rogerq@ti.com>,
+        "devicetree\@vger.kernel.org" <devicetree@vger.kernel.org>
+Cc:     "gregkh\@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "linux-usb\@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Alan Douglas <adouglas@cadence.com>,
+        "jbergsagel\@ti.com" <jbergsagel@ti.com>,
+        "nsekhar\@ti.com" <nsekhar@ti.com>, "nm\@ti.com" <nm@ti.com>,
+        Suresh Punnoose <sureshp@cadence.com>,
+        "peter.chen\@nxp.com" <peter.chen@nxp.com>,
+        Pawel Jez <pjez@cadence.com>, Rahul Kumar <kurahul@cadence.com>
+Subject: RE: [PATCH v1 2/2] usb:cdns3 Add Cadence USB3 DRD Driver
+In-Reply-To: <BYAPR07MB47095A5EEBC106EE7CD0E078DDA60@BYAPR07MB4709.namprd07.prod.outlook.com>
+References: <1544445555-17325-1-git-send-email-pawell@cadence.com> <1544445555-17325-3-git-send-email-pawell@cadence.com> <5C0F85E4.10609@ti.com> <BYAPR07MB47095A5EEBC106EE7CD0E078DDA60@BYAPR07MB4709.namprd07.prod.outlook.com>
+Date:   Tue, 11 Dec 2018 14:15:39 +0200
+Message-ID: <87d0q8mf84.fsf@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; boundary="=-=-=";
         micalg=pgp-sha256; protocol="application/pgp-signature"
@@ -67,665 +72,31 @@ Content-Transfer-Encoding: quoted-printable
 Hi,
 
 Pawel Laszczak <pawell@cadence.com> writes:
-> +static int cdns3_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev =3D &pdev->dev;
-> +	struct resource	*res;
-> +	struct cdns3 *cdns;
-> +	void __iomem *regs;
-> +	int ret;
-> +
-> +	cdns =3D devm_kzalloc(dev, sizeof(*cdns), GFP_KERNEL);
-> +	if (!cdns)
-> +		return -ENOMEM;
-> +
-> +	cdns->dev =3D dev;
-> +
-> +	platform_set_drvdata(pdev, cdns);
-> +
-> +	res =3D platform_get_resource(pdev, IORESOURCE_IRQ, 0);
-> +	if (!res) {
-> +		dev_err(dev, "missing IRQ\n");
-> +		return -ENODEV;
-> +	}
-> +	cdns->irq =3D res->start;
-> +
-> +	cdns->xhci_res[0] =3D *res;
-> +
-> +	/*
-> +	 * Request memory region
-> +	 * region-0: xHCI
-> +	 * region-1: Peripheral
-> +	 * region-2: OTG registers
-> +	 */
-> +	res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> +	cdns->xhci_res[1] =3D *res;
-> +
-> +	res =3D platform_get_resource(pdev, IORESOURCE_MEM, 1);
-> +	regs =3D devm_ioremap_resource(dev, res);
-> +	if (IS_ERR(regs))
-> +		return PTR_ERR(regs);
-> +	cdns->dev_regs	=3D regs;
-> +
-> +	res =3D platform_get_resource(pdev, IORESOURCE_MEM, 2);
-> +	regs =3D devm_ioremap_resource(dev, res);
-> +	if (IS_ERR(regs))
-> +		return PTR_ERR(regs);
-> +	cdns->otg_regs =3D regs;
-> +
-> +	mutex_init(&cdns->mutex);
-> +
-> +	cdns->phy =3D devm_phy_get(dev, "cdns3,usbphy");
-> +	if (IS_ERR(cdns->phy)) {
-> +		ret =3D PTR_ERR(cdns->phy);
-> +		if (ret =3D=3D -ENOSYS || ret =3D=3D -ENODEV) {
+>>I think what Felipe meant was to only combine the gadget driver code into=
+ one patch.
+>>
+>>The series could be split into 6 patches like so.
+>>-dt binding
+>>-pci glue
+>>-core driver
+>>-host driver
+>>-gadget driver
+>>-drd driver
+>
+> Felipe wrote:
+> "=20
+> Frankly, I don't understand why this is a series. It's a single driver
+> and splitting it into a series just makes it more difficult to review,
+> actually.
+>
+> Sure, a single patch will be large, but there's no way to have a
+> functional driver until all patches are applied, anyway.
+> "
+>
+> Felipe should I split this driver as suggested by Roger ?.=20
+> Now it's very big patch but it's still a single driver.
 
-Are you sure you can get ENOSYS here? Have you checked output of
-checkpatch --strict?
-
-=2D:852: WARNING: ENOSYS means 'invalid syscall nr' and nothing else
-
-> +#ifdef CONFIG_PM_SLEEP
-> +static int cdns3_suspend(struct device *dev)
-> +{
-> +	/* TODO: Implements this function. */
-> +	return 0;
-> +}
-> +
-> +static int cdns3_resume(struct device *dev)
-> +{
-> +	/* TODO: Implements this function. */
-> +	return 0;
-> +}
-> +#endif /* CONFIG_PM_SLEEP */
-> +static int cdns3_runtime_suspend(struct device *dev)
-> +{	/* TODO: Implements this function. */
-> +	return 0;
-> +}
-> +
-> +static int cdns3_runtime_resume(struct device *dev)
-> +{
-> +	/* TODO: Implements this function. */
-> +	return 0;
-> +}
-> +#endif /* CONFIG_PM */
-
-please no TODO stubs. Just get rid of your dev_pm_ops if you don't
-implement them. Come up with a later patch adding a proper
-implementation for PM.
-
-> +static int __init cdns3_driver_platform_register(void)
-> +{
-> +	return platform_driver_register(&cdns3_driver);
-> +}
-> +module_init(cdns3_driver_platform_register);
-> +
-> +static void __exit cdns3_driver_platform_unregister(void)
-> +{
-> +	platform_driver_unregister(&cdns3_driver);
-> +}
-> +module_exit(cdns3_driver_platform_unregister);
-
-module_platform_driver()
-
-> diff --git a/drivers/usb/cdns3/debug.h b/drivers/usb/cdns3/debug.h
-> new file mode 100644
-> index 000000000000..afb81d224718
-> --- /dev/null
-> +++ b/drivers/usb/cdns3/debug.h
-> @@ -0,0 +1,346 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +/*
-> + * Cadence USBSS DRD Driver.
-> + * Debug header file.
-> + *
-> + * Copyright (C) 2018 Cadence.
-> + *
-> + * Author: Pawel Laszczak <pawell@cadence.com>
-> + */
-> +#ifndef __LINUX_CDNS3_DEBUG
-> +#define __LINUX_CDNS3_DEBUG
-> +#include "gadget.h"
-> +
-> +static inline void cdns3_decode_get_status(u8 bRequestType, u16 wIndex,
-> +					   u16 wLength, char *str)
-> +{
-> +	switch (bRequestType & USB_RECIP_MASK) {
-> +	case USB_RECIP_INTERFACE:
-> +		sprintf(str, "Get Interface Status Intf =3D %d, L: =3D %d",
-> +			wIndex, wLength);
-> +		break;
-> +	case USB_RECIP_ENDPOINT:
-> +		sprintf(str, "Get Endpoint Status ep%d%s",
-> +			wIndex & ~USB_DIR_IN,
-> +			wIndex & USB_DIR_IN ? "in" : "out");
-> +		break;
-> +	}
-> +}
-> +
-> +static inline const char *cdns3_decode_device_feature(u16 wValue)
-> +{
-> +	switch (wValue) {
-> +	case USB_DEVICE_SELF_POWERED:
-> +		return "Self Powered";
-> +	case USB_DEVICE_REMOTE_WAKEUP:
-> +		return "Remote Wakeup";
-> +	case USB_DEVICE_TEST_MODE:
-> +		return "Test Mode";
-> +	case USB_DEVICE_U1_ENABLE:
-> +		return "U1 Enable";
-> +	case USB_DEVICE_U2_ENABLE:
-> +		return "U2 Enable";
-> +	case USB_DEVICE_LTM_ENABLE:
-> +		return "LTM Enable";
-> +	default:
-> +		return "UNKNOWN";
-> +	}
-> +}
-> +
-> +static inline const char *cdns3_decode_test_mode(u16 wIndex)
-> +{
-> +	switch (wIndex) {
-> +	case TEST_J:
-> +		return ": TEST_J";
-> +	case TEST_K:
-> +		return ": TEST_K";
-> +	case TEST_SE0_NAK:
-> +		return ": TEST_SE0_NAK";
-> +	case TEST_PACKET:
-> +		return ": TEST_PACKET";
-> +	case TEST_FORCE_EN:
-> +		return ": TEST_FORCE_EN";
-> +	default:
-> +		return ": UNKNOWN";
-> +	}
-> +}
-> +
-> +static inline void cdns3_decode_set_clear_feature(u8 bRequestType, u8 bR=
-equest,
-> +						  u16 wValue, u16 wIndex,
-> +						  char *str)
-> +{
-> +	switch (bRequestType & USB_RECIP_MASK) {
-> +	case USB_RECIP_DEVICE:
-> +		sprintf(str, "%s Device Feature(%s%s)",
-> +			bRequest =3D=3D USB_REQ_CLEAR_FEATURE ? "Clear" : "Set",
-> +			cdns3_decode_device_feature(wValue),
-> +			wValue =3D=3D USB_DEVICE_TEST_MODE ?
-> +			cdns3_decode_test_mode(wIndex) : "");
-> +		break;
-> +	case USB_RECIP_INTERFACE:
-> +		sprintf(str, "%s Interface Feature(%s)",
-> +			bRequest =3D=3D USB_REQ_CLEAR_FEATURE ? "Clear" : "Set",
-> +			wIndex =3D=3D USB_INTRF_FUNC_SUSPEND ?
-> +			"Function Suspend" : "UNKNOWN");
-> +		break;
-> +	case USB_RECIP_ENDPOINT:
-> +		sprintf(str, "%s Endpoint Feature(%s ep%d%s)",
-> +			bRequest =3D=3D USB_REQ_CLEAR_FEATURE ? "Clear" : "Set",
-> +			    wIndex =3D=3D USB_ENDPOINT_HALT ? "Halt" : "UNKNOWN",
-> +			wIndex & ~USB_DIR_IN,
-> +			wIndex & USB_DIR_IN ? "in" : "out");
-> +		break;
-> +	}
-> +}
-> +
-> +static inline const char *cdns3_decode_descriptor(u16 wValue)
-> +{
-> +	switch (wValue >> 8) {
-> +	case USB_DT_DEVICE:
-> +		return "Device";
-> +	case USB_DT_CONFIG:
-> +		return "Configuration";
-> +	case USB_DT_STRING:
-> +		return "String";
-> +	case USB_DT_INTERFACE:
-> +		return "Interface";
-> +	case USB_DT_ENDPOINT:
-> +		return "Endpoint";
-> +	case USB_DT_DEVICE_QUALIFIER:
-> +		return "Device Qualifier";
-> +	case USB_DT_OTHER_SPEED_CONFIG:
-> +		return "Other Speed Config";
-> +	case USB_DT_INTERFACE_POWER:
-> +		return "Interface Power";
-> +	case USB_DT_OTG:
-> +		return "OTG";
-> +	case USB_DT_DEBUG:
-> +		return "Debug";
-> +	case USB_DT_INTERFACE_ASSOCIATION:
-> +		return "Interface Association";
-> +	case USB_DT_BOS:
-> +		return "BOS";
-> +	case USB_DT_DEVICE_CAPABILITY:
-> +		return "Device Capability";
-> +	case USB_DT_SS_ENDPOINT_COMP:
-> +		return "SS Endpoint Companion";
-> +	case USB_DT_SSP_ISOC_ENDPOINT_COMP:
-> +		return "SSP Isochronous Endpoint Companion";
-> +	default:
-> +		return "UNKNOWN";
-> +	}
-> +}
-> +
-> +/**
-> + * cdns3_decode_ctrl - returns a string represetion of ctrl request
-> + */
-> +static inline const char *cdns3_decode_ctrl(char *str, u8 bRequestType,
-> +					    u8 bRequest, u16 wValue,
-> +					    u16 wIndex, u16 wLength)
-> +{
-> +	switch (bRequest) {
-> +	case USB_REQ_GET_STATUS:
-> +		cdns3_decode_get_status(bRequestType, wIndex,
-> +					wLength, str);
-> +		break;
-> +	case USB_REQ_CLEAR_FEATURE:
-> +	case USB_REQ_SET_FEATURE:
-> +		cdns3_decode_set_clear_feature(bRequestType, bRequest,
-> +					       wValue, wIndex, str);
-> +		break;
-> +	case USB_REQ_SET_ADDRESS:
-> +		sprintf(str, "Set Address Addr: %02x", wValue);
-> +		break;
-> +	case USB_REQ_GET_DESCRIPTOR:
-> +		sprintf(str, "GET %s Descriptor I: %d, L: %d",
-> +			cdns3_decode_descriptor(wValue),
-> +			wValue & 0xff, wLength);
-> +		break;
-> +	case USB_REQ_SET_DESCRIPTOR:
-> +		sprintf(str, "SET %s Descriptor I: %d, L: %d",
-> +			cdns3_decode_descriptor(wValue),
-> +			wValue & 0xff, wLength);
-> +		break;
-> +	case USB_REQ_GET_CONFIGURATION:
-> +		sprintf(str, "Get Configuration L: %d", wLength);
-> +		break;
-> +	case USB_REQ_SET_CONFIGURATION:
-> +		sprintf(str, "Set Configuration Config: %d ", wValue);
-> +		break;
-> +	case USB_REQ_GET_INTERFACE:
-> +		sprintf(str, "Get Interface Intf: %d, L: %d", wIndex, wLength);
-> +		break;
-> +	case USB_REQ_SET_INTERFACE:
-> +		sprintf(str, "Set Interface Intf: %d, Alt: %d", wIndex, wValue);
-> +		break;
-> +	case USB_REQ_SYNCH_FRAME:
-> +		sprintf(str, "Synch Frame Ep: %d, L: %d", wIndex, wLength);
-> +		break;
-> +	case USB_REQ_SET_SEL:
-> +		sprintf(str, "Set SEL L: %d", wLength);
-> +		break;
-> +	case USB_REQ_SET_ISOCH_DELAY:
-> +		sprintf(str, "Set Isochronous Delay Delay: %d ns", wValue);
-> +		break;
-> +	default:
-> +		sprintf(str,
-> +			"SETUP BRT: %02x BR: %02x V: %04x I: %04x L: %04x\n",
-> +			bRequestType, bRequest,
-> +			wValue, wIndex, wLength);
-> +	}
-> +
-> +	return str;
-> +}
-
-All of these are a flat out copy of dwc3's implementation. It's much,
-much better to turn dwc3's implementation into a generic, reusable
-library function then spinning your own as a duplicated effort.
-
-> diff --git a/drivers/usb/cdns3/ep0.c b/drivers/usb/cdns3/ep0.c
-> new file mode 100644
-> index 000000000000..1ef0e9f73e3e
-> --- /dev/null
-> +++ b/drivers/usb/cdns3/ep0.c
-> @@ -0,0 +1,864 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Cadence USBSS DRD Driver - gadget side.
-> + *
-> + * Copyright (C) 2018 Cadence Design Systems.
-> + * Copyright (C) 2017-2018 NXP
-> + *
-> + * Authors: Pawel Jez <pjez@cadence.com>,
-> + *          Pawel Laszczak <pawell@cadence.com>
-> + *	    Peter Chen <peter.chen@nxp.com>
-> + */
-> +
-> +#include <linux/usb/composite.h>
-> +
-> +#include "gadget.h"
-> +#include "trace.h"
-> +
-> +static struct usb_endpoint_descriptor cdns3_gadget_ep0_desc =3D {
-> +	.bLength =3D USB_DT_ENDPOINT_SIZE,
-> +	.bDescriptorType =3D USB_DT_ENDPOINT,
-> +	.bmAttributes =3D	USB_ENDPOINT_XFER_CONTROL,
-> +};
-> +
-> +/**
-> + * cdns3_ep0_run_transfer - Do transfer on default endpoint hardware
-> + * @priv_dev: extended gadget object
-> + * @dma_addr: physical address where data is/will be stored
-> + * @length: data length
-> + * @erdy: set it to 1 when ERDY packet should be sent -
-> + *        exit from flow control state
-> + */
-> +static void cdns3_ep0_run_transfer(struct cdns3_device *priv_dev,
-> +				   dma_addr_t dma_addr,
-> +				   unsigned int length, int erdy)
-> +{
-> +	struct cdns3_usb_regs __iomem *regs =3D priv_dev->regs;
-> +	struct cdns3_endpoint *priv_ep =3D ep_to_cdns3_ep(priv_dev->gadget.ep0);
-> +
-> +	priv_dev->ep0_trb->buffer =3D TRB_BUFFER(dma_addr);
-> +	priv_dev->ep0_trb->length =3D TRB_LEN(length);
-> +	priv_dev->ep0_trb->control =3D TRB_CYCLE | TRB_IOC | TRB_TYPE(TRB_NORMA=
-L);
-> +
-> +	trace_cdns3_prepare_trb(priv_ep, priv_dev->ep0_trb);
-> +
-> +	cdns3_select_ep(priv_dev, priv_dev->ep0_data_dir);
-> +
-> +	writel(EP_STS_TRBERR, &regs->ep_sts);
-> +	writel(EP_TRADDR_TRADDR(priv_dev->ep0_trb_dma), &regs->ep_traddr);
-> +	trace_cdns3_doorbell_ep0(priv_dev->ep0_data_dir ? "ep0in" : "ep0out");
-> +
-> +	/* TRB should be prepared before starting transfer */
-> +	writel(EP_CMD_DRDY, &regs->ep_cmd);
-> +
-> +	if (erdy)
-> +		writel(EP_CMD_ERDY, &priv_dev->regs->ep_cmd);
-> +}
-> +
-> +/**
-> + * cdns3_ep0_delegate_req - Returns status of handling setup packet
-> + * Setup is handled by gadget driver
-> + * @priv_dev: extended gadget object
-> + * @ctrl_req: pointer to received setup packet
-> + *
-> + * Returns zero on success or negative value on failure
-> + */
-> +static int cdns3_ep0_delegate_req(struct cdns3_device *priv_dev,
-> +				  struct usb_ctrlrequest *ctrl_req)
-> +{
-> +	int ret;
-> +
-> +	spin_unlock(&priv_dev->lock);
-> +	priv_dev->setup_pending =3D 1;
-> +	ret =3D priv_dev->gadget_driver->setup(&priv_dev->gadget, ctrl_req);
-> +	priv_dev->setup_pending =3D 0;
-> +	spin_lock(&priv_dev->lock);
-> +	return ret;
-> +}
-> +
-> +static void cdns3_prepare_setup_packet(struct cdns3_device *priv_dev)
-> +{
-> +	priv_dev->ep0_data_dir =3D 0;
-> +	cdns3_ep0_run_transfer(priv_dev, priv_dev->setup_dma,
-> +			       sizeof(struct usb_ctrlrequest), 0);
-> +}
-> +
-> +/**
-> + * cdns3_req_ep0_set_configuration - Handling of SET_CONFIG standard USB=
- request
-> + * @priv_dev: extended gadget object
-> + * @ctrl_req: pointer to received setup packet
-> + *
-> + * Returns 0 if success, USB_GADGET_DELAYED_STATUS on deferred status st=
-age,
-> + * error code on error
-> + */
-> +static int cdns3_req_ep0_set_configuration(struct cdns3_device *priv_dev,
-> +					   struct usb_ctrlrequest *ctrl_req)
-> +{
-> +	enum usb_device_state device_state =3D priv_dev->gadget.state;
-> +	struct cdns3_endpoint *priv_ep;
-> +	u32 config =3D le16_to_cpu(ctrl_req->wValue);
-> +	int result =3D 0;
-> +	int i;
-> +
-> +	switch (device_state) {
-> +	case USB_STATE_ADDRESS:
-> +		/* Configure non-control EPs */
-> +		for (i =3D 0; i < CDNS3_ENDPOINTS_MAX_COUNT; i++) {
-> +			priv_ep =3D priv_dev->eps[i];
-> +			if (!priv_ep)
-> +				continue;
-> +
-> +			if (priv_ep->flags & EP_CLAIMED)
-> +				cdns3_ep_config(priv_ep);
-> +		}
-> +
-> +		result =3D cdns3_ep0_delegate_req(priv_dev, ctrl_req);
-> +
-> +		if (result)
-> +			return result;
-> +
-> +		if (config) {
-> +			cdns3_set_hw_configuration(priv_dev);
-> +		} else {
-> +			cdns3_gadget_unconfig(priv_dev);
-> +			usb_gadget_set_state(&priv_dev->gadget,
-> +					     USB_STATE_ADDRESS);
-
-this is wrong. If address is zero, state should be default, not
-addressed. Addressed would be used on the other branch here, when you
-have a non-zero address
-
-> +		}
-> +		break;
-> +	case USB_STATE_CONFIGURED:
-
-where do you set this state?
-
-> +static int cdns3_ep0_feature_handle_device(struct cdns3_device *priv_dev,
-> +					   struct usb_ctrlrequest *ctrl,
-> +					   int set)
-> +{
-> +	enum usb_device_state state;
-> +	enum usb_device_speed speed;
-> +	int ret =3D 0;
-> +	u32 wValue;
-> +	u32 wIndex;
-> +	u16 tmode;
-> +
-> +	wValue =3D le16_to_cpu(ctrl->wValue);
-> +	wIndex =3D le16_to_cpu(ctrl->wIndex);
-> +	state =3D priv_dev->gadget.state;
-> +	speed =3D priv_dev->gadget.speed;
-> +
-> +	switch (ctrl->wValue) {
-> +	case USB_DEVICE_REMOTE_WAKEUP:
-> +		priv_dev->wake_up_flag =3D !!set;
-> +		break;
-> +	case USB_DEVICE_U1_ENABLE:
-> +		if (state !=3D USB_STATE_CONFIGURED || speed !=3D USB_SPEED_SUPER)
-> +			return -EINVAL;
-> +
-> +		priv_dev->u1_allowed =3D !!set;
-> +		break;
-> +	case USB_DEVICE_U2_ENABLE:
-> +		if (state !=3D USB_STATE_CONFIGURED || speed !=3D USB_SPEED_SUPER)
-> +			return -EINVAL;
-> +
-> +		priv_dev->u2_allowed =3D !!set;
-> +		break;
-> +	case USB_DEVICE_LTM_ENABLE:
-> +		ret =3D -EINVAL;
-> +		break;
-> +	case USB_DEVICE_TEST_MODE:
-> +		if (state !=3D USB_STATE_CONFIGURED || speed > USB_SPEED_HIGH)
-> +			return -EINVAL;
-> +
-> +		tmode =3D le16_to_cpu(ctrl->wIndex);
-> +
-> +		if (!set || (tmode & 0xff) !=3D 0)
-> +			return -EINVAL;
-> +
-> +		switch (tmode >> 8) {
-> +		case TEST_J:
-> +		case TEST_K:
-> +		case TEST_SE0_NAK:
-> +		case TEST_PACKET:
-> +			cdns3_set_register_bit(&priv_dev->regs->usb_cmd,
-> +					       USB_CMD_STMODE |
-> +					       USB_STS_TMODE_SEL(tmode - 1));
-
-I'm 90% sure this won't work. There's a reason why we only enter the
-requested test mode from status stage. How have you tested this?
-
-> diff --git a/drivers/usb/cdns3/gadget.c b/drivers/usb/cdns3/gadget.c
-> new file mode 100644
-> index 000000000000..a021eaf07aee
-> --- /dev/null
-> +++ b/drivers/usb/cdns3/gadget.c
-
-<snip>
-
-> +struct usb_request *cdns3_next_request(struct list_head *list)
-> +{
-> +	if (list_empty(list))
-> +		return NULL;
-> +	return list_first_entry(list, struct usb_request, list);
-
-list_first_entry_or_null()
-
-> +void cdns3_gadget_unconfig(struct cdns3_device *priv_dev)
-> +{
-> +	/* RESET CONFIGURATION */
-> +	writel(USB_CONF_CFGRST, &priv_dev->regs->usb_conf);
-> +
-> +	cdns3_allow_enable_l1(priv_dev, 0);
-> +	priv_dev->hw_configured_flag =3D 0;
-> +	priv_dev->onchip_mem_allocated_size =3D 0;
-
-clear all test modes? Reset ep0 max_packet_size to 512?
-
-> +static irqreturn_t cdns3_device_irq_handler(int irq, void *data)
-> +{
-> +	struct cdns3_device *priv_dev;
-> +	struct cdns3 *cdns =3D data;
-> +	irqreturn_t ret =3D IRQ_NONE;
-> +	unsigned long flags;
-> +	u32 reg;
-> +
-> +	priv_dev =3D cdns->gadget_dev;
-> +	spin_lock_irqsave(&priv_dev->lock, flags);
-
-you're already running in hardirq context. Why do you need this lock at
-all? I would be better to use the hardirq handler to mask your
-interrupts, so they don't fire again, then used the top-half (softirq)
-handler to actually handle the interrupts.
-
-> +	/* check USB device interrupt */
-> +	reg =3D readl(&priv_dev->regs->usb_ists);
-> +	writel(reg, &priv_dev->regs->usb_ists);
-> +
-> +	if (reg) {
-> +		dev_dbg(priv_dev->dev, "IRQ: usb_ists: %08X\n", reg);
-
-I strongly advise against using dev_dbg() for debugging. Even more so
-inside your IRQ handler.
-
-> +		cdns3_check_usb_interrupt_proceed(priv_dev, reg);
-> +		ret =3D IRQ_HANDLED;
-> +	}
-> +
-> +	/* check endpoint interrupt */
-> +	reg =3D readl(&priv_dev->regs->ep_ists);
-> +
-> +	/* handle default endpoint OUT */
-> +	if (reg & EP_ISTS_EP_OUT0) {
-> +		cdns3_check_ep0_interrupt_proceed(priv_dev, USB_DIR_OUT);
-> +		ret =3D IRQ_HANDLED;
-> +	}
-> +
-> +	/* handle default endpoint IN */
-> +	if (reg & EP_ISTS_EP_IN0) {
-> +		cdns3_check_ep0_interrupt_proceed(priv_dev, USB_DIR_IN);
-> +		ret =3D IRQ_HANDLED;
-> +	}
-> +
-> +	/* check if interrupt from non default endpoint, if no exit */
-> +	reg &=3D ~(EP_ISTS_EP_OUT0 | EP_ISTS_EP_IN0);
-> +	if (!reg)
-> +		goto irqend;
-> +
-> +	do {
-> +		unsigned int bit_pos =3D ffs(reg);
-> +		u32 bit_mask =3D 1 << (bit_pos - 1);
-> +		int index;
-> +
-> +		index =3D cdns3_ep_reg_pos_to_index(bit_pos);
-> +		cdns3_check_ep_interrupt_proceed(priv_dev->eps[index]);
-> +		reg &=3D ~bit_mask;
-> +		ret =3D IRQ_HANDLED;
-> +	} while (reg);
-
-use for_each_set_bit() here.
-
-> +void cdns3_ep_config(struct cdns3_endpoint *priv_ep)
-> +{
-> +	bool is_iso_ep =3D (priv_ep->type =3D=3D USB_ENDPOINT_XFER_ISOC);
-> +	struct cdns3_device *priv_dev =3D priv_ep->cdns3_dev;
-> +	u32 bEndpointAddress =3D priv_ep->num | priv_ep->dir;
-> +	u32 interrupt_mask =3D EP_STS_EN_TRBERREN;
-> +	u32 max_packet_size =3D 0;
-> +	u32 ep_cfg =3D 0;
-> +	int ret;
-> +
-> +	if (!priv_ep->dir)
-> +		interrupt_mask |=3D EP_STS_EN_DESCMISEN;
-> +
-> +	if (priv_ep->type =3D=3D USB_ENDPOINT_XFER_INT) {
-
-you can turn tis into a switch statement. It'll look nicer
-
-> +		ep_cfg =3D EP_CFG_EPTYPE(USB_ENDPOINT_XFER_INT);
-> +	} else if (priv_ep->type =3D=3D USB_ENDPOINT_XFER_BULK) {
-> +		ep_cfg =3D EP_CFG_EPTYPE(USB_ENDPOINT_XFER_BULK);
-> +	} else {
-> +		ep_cfg =3D EP_CFG_EPTYPE(USB_ENDPOINT_XFER_ISOC);
-> +		interrupt_mask =3D 0xFFFFFFFF;
-> +	}
-> +
-> +	switch (priv_dev->gadget.speed) {
-> +	case USB_SPEED_FULL:
-> +		max_packet_size =3D is_iso_ep ? 1023 : 64;
-> +		break;
-> +	case USB_SPEED_HIGH:
-> +		max_packet_size =3D is_iso_ep ? 1024 : 512;
-> +		break;
-> +	case USB_SPEED_SUPER:
-> +		max_packet_size =3D 1024;
-> +		break;
-> +	default:
-> +		/* all other speed are not supported */
-> +		return;
-> +	}
-> +
-> +	ret =3D cdns3_ep_onchip_buffer_reserve(priv_dev, CDNS3_EP_BUF_SIZE);
-> +	if (ret) {
-> +		dev_err(priv_dev->dev, "onchip mem is full, ep is invalid\n");
-> +		return;
-> +	}
-> +
-> +	ep_cfg |=3D EP_CFG_MAXPKTSIZE(max_packet_size) |
-> +		  EP_CFG_BUFFERING(CDNS3_EP_BUF_SIZE - 1) |
-> +		  EP_CFG_MAXBURST(priv_ep->endpoint.maxburst);
-> +
-> +	cdns3_select_ep(priv_dev, bEndpointAddress);
-> +
-> +	writel(ep_cfg, &priv_dev->regs->ep_cfg);
-> +	writel(interrupt_mask, &priv_dev->regs->ep_sts_en);
-> +
-> +	dev_dbg(priv_dev->dev, "Configure %s: with val %08x\n",
-> +		priv_ep->name, ep_cfg);
-> +
-> +	/* enable interrupt for selected endpoint */
-> +	cdns3_set_register_bit(&priv_dev->regs->ep_ien,
-> +			       cdns3_ep_addr_to_bit_pos(bEndpointAddress));
-> +}
+don't bother. It's far easier to review as it is.
 
 =2D-=20
 balbi
@@ -735,18 +106,18 @@ Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAEBCAAdFiEElLzh7wn96CXwjh2IzL64meEamQYFAlwPqgwACgkQzL64meEa
-mQauLQ/+OSVX4rrN+PWm0vc2XDCEpbkmJ2wy7rDD8PbDBPQWYYjRoW0wNPl8DKTQ
-lTxsUYPyPQ/OtxJWqQ9a/d6DDDCTx1i3NJb6zYvxYc4Ihf45yRdIabnkTtEJzTWW
-Lt7DO0WKPi+kKWS3UupZ9IGKLVHFFMSnjIolCdXpc1fARdFhlvR0VmTK2A/kc61k
-/IT0txaa7wDOiSevDPKenbgDIQ7an8oQwqD6Ll997ZJTj3CjRWh11a3OPQgLm4XY
-ftwlYVhAm3rznNIHTJqmV+jW9YJMw+0EQWuCpqVLBEtcflm8ZHsi5AY1/bYXVGIh
-zvExG7mS03TIY2x0kmLCuT/nKADEtqB3Jwaq2Pc8a3ncdK0su5PEJ8GDDa36owdz
-DHHHMvMJMr7fxMe1mNUb1glcScWgG4YWVgC6udv2ZbbCAh+LG7F2yWVyUeUeHR3C
-p09aVHVnGgBL+1E+FvxrOUo8l46C45JT73Yv78resl6yZoT7Vav+xbNOxbPLLVUi
-EYHB8zTzj1G3zYGe15lOiRkSshq6v8kyKDfmetVSFSNb/57U1umhVyW9WE1IaQEI
-RWg/E7X2ahaCIxPdaRVuyEQ5SEi3U0yv10dVadxT4w3gV3LwAkquQGhqi8w3A8wT
-fzL54aBC6kZppf08TXQgcNnJS8kYPbf4HKu1QL3Tabkpon4iK34=
-=F3Gz
+iQIzBAEBCAAdFiEElLzh7wn96CXwjh2IzL64meEamQYFAlwPqmsACgkQzL64meEa
+mQZPmQ//esDJQg93nkGwEMz/n7dBD/KM+sQAtvq4SeIeOwgcS0YyLYWFtu+lHxMJ
+S3+6BIkWVQksJ/38yscj6pohIjNLENdHDYKgqQDWf5bPJdLKXim4BJQ66I5b36VW
+C8RdDf55uzOgNVs4+3cwpVUoUTXRwmAdl/Hl3lj2VEYDnyYEl+r8LwHRue0D9JeK
+CrIlseRcHISvFEMjAN/0llqCBzDc4gvWU2nu+xiSfe2quPDzOP4ew0mdNr3diAo/
+QvkIAIDsCumQ7QumURLHhgPq4+BG5wdnYXGDlHyMx5UiiQgRXWjyZoc9ifJqA2mJ
+dgn+w7ZRNru1T108kC24zCIuoEvMb7pO9rEK2BclhGBMDreleEdOVnfFNoSno/Av
+5ehkQJpeSlGMguskkZ2jFZMCRL9Io813yqq/rV872xoyHVqSIIRWCJCAVa010oRm
+o52j+V5ezs9DyKnHMJJFVAHRF6BbWP7LQEgMVP24q0CQ+4+KySpAMtD0/iruSOCO
+W5GS6fwrRyfXIi9ex4AQS7Eb5bJs1GMVSiGkMP+8xTJnzWW+rcj03xmU8y8kHbGq
+lLxeR+3982xdCibam/7OVQEU6OFybxGByQzhsYSjgSZwo2BUD9P03zJcDkcF1bc4
+e9uCfDmZqHS17h2yPuFMOEM8WaQLE5ueSY16PwDzUfB5WjJg8B8=
+=HuLJ
 -----END PGP SIGNATURE-----
 --=-=-=--
