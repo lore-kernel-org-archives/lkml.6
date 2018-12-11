@@ -7,50 +7,49 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66E5AC07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:55:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADE95C07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:55:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C8D82146D
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:55:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6B96120855
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:55:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544543710;
-	bh=kp7gvNII2eUH9lCwfttzFyvrd8fySR04POMjTp430qY=;
+	s=default; t=1544543715;
+	bh=+FBuBNZhT3ekO46mJmhapbKOxfwo8X1sUzInW+al/5g=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=pxP2dbMtrZm1CkHQSxb8ENxjYcY/966jlo6AyUDohmZiLPvaBXImxTjd+qUpf72za
-	 RwPuVo547hCgZ/JgcWfy6wOuLlagXsVxpHp94HVBcO60j9d8H5VVgTWEvlE64zO2lM
-	 cCrJL40oEX0q4CE/MlnK31K6EZpFT7wQr19YAqDE=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C8D82146D
+	b=AMyCRkU0nVzqtS6N+dbbN7Kdp6vk/NuZhAUkRmF0oUVXr+D/TBEgVv+wR7EfyqaW3
+	 w701eSAdrtWY7r9V+oSfzppw+tDhuuMc7n7POvqk3Ze1KBQmaF9WBPet1PaN0n4hRe
+	 1NGiRKWe8Asq+CmqfKB1fMHz/rN5RICuJqyh+0Z8=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B96120855
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730336AbeLKPzI (ORCPT
+        id S1730102AbeLKPyP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 10:55:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43694 "EHLO mail.kernel.org"
+        Tue, 11 Dec 2018 10:54:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42838 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730323AbeLKPzE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:55:04 -0500
+        id S1729404AbeLKPyM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 10:54:12 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8EB7420855;
-        Tue, 11 Dec 2018 15:55:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BF1B320855;
+        Tue, 11 Dec 2018 15:54:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544543704;
-        bh=kp7gvNII2eUH9lCwfttzFyvrd8fySR04POMjTp430qY=;
+        s=default; t=1544543652;
+        bh=+FBuBNZhT3ekO46mJmhapbKOxfwo8X1sUzInW+al/5g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MQoZKfdT1NebrkjcFzEYqsJyOa+NX4kMOgmG3XVMgMUhsjiN1Wc6YFc1JzEQeh9bl
-         GgUJjVXbEb+TiIJHH9X/F63gcF2EneLBW2deLaqnes0/VS0J0/w8+nzhumFRacM/Zu
-         znNDBfH2QDmboLvpOLg00zDrUdZdIf1xqvpcgoFI=
+        b=FjC4CdzHT3gBMjp71TAlfdI+kLpvAERejxLt9BvWx9JuogJs926GknvXKykF7cJMZ
+         lIYRKElWBlX63KmlipVAv2HQFumRPEVJGkjmnvQ0M8icKTkywxUbeRixiKVeuX50sZ
+         tn4vh53W14eBYQWOm5293Bajodtl+OYxiwnhgPMk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tariq Toukan <tariqt@mellanox.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 030/118] net/mlx4_core: Fix uninitialized variable compilation warning
-Date:   Tue, 11 Dec 2018 16:40:49 +0100
-Message-Id: <20181211151645.459755811@linuxfoundation.org>
+Subject: [PATCH 4.19 012/118] test_firmware: fix error return getting clobbered
+Date:   Tue, 11 Dec 2018 16:40:31 +0100
+Message-Id: <20181211151644.726352191@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181211151644.216668863@linuxfoundation.org>
 References: <20181211151644.216668863@linuxfoundation.org>
@@ -69,31 +68,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 3ea7e7ea53c9f6ee41cb69a29c375fe9dd9a56a7 ]
+[ Upstream commit 8bb0a88600f0267cfcc245d34f8c4abe8c282713 ]
 
-Initialize the uid variable to zero to avoid the compilation warning.
+In the case where eq->fw->size > PAGE_SIZE the error return rc
+is being set to EINVAL however this is being overwritten to
+rc = req->fw->size because the error exit path via label 'out' is
+not being taken.  Fix this by adding the jump to the error exit
+path 'out'.
 
-Fixes: 7a89399ffad7 ("net/mlx4: Add mlx4_bitmap zone allocator")
-Signed-off-by: Tariq Toukan <tariqt@mellanox.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Detected by CoverityScan, CID#1453465 ("Unused value")
+
+Fixes: c92316bf8e94 ("test_firmware: add batched firmware tests")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/mellanox/mlx4/alloc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ lib/test_firmware.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/net/ethernet/mellanox/mlx4/alloc.c b/drivers/net/ethernet/mellanox/mlx4/alloc.c
-index 4bdf25059542..21788d4f9881 100644
---- a/drivers/net/ethernet/mellanox/mlx4/alloc.c
-+++ b/drivers/net/ethernet/mellanox/mlx4/alloc.c
-@@ -337,7 +337,7 @@ void mlx4_zone_allocator_destroy(struct mlx4_zone_allocator *zone_alloc)
- static u32 __mlx4_alloc_from_zone(struct mlx4_zone_entry *zone, int count,
- 				  int align, u32 skip_mask, u32 *puid)
- {
--	u32 uid;
-+	u32 uid = 0;
- 	u32 res;
- 	struct mlx4_zone_allocator *zone_alloc = zone->allocator;
- 	struct mlx4_zone_entry *curr_node;
+diff --git a/lib/test_firmware.c b/lib/test_firmware.c
+index b984806d7d7b..7cab9a9869ac 100644
+--- a/lib/test_firmware.c
++++ b/lib/test_firmware.c
+@@ -837,6 +837,7 @@ static ssize_t read_firmware_show(struct device *dev,
+ 	if (req->fw->size > PAGE_SIZE) {
+ 		pr_err("Testing interface must use PAGE_SIZE firmware for now\n");
+ 		rc = -EINVAL;
++		goto out;
+ 	}
+ 	memcpy(buf, req->fw->data, req->fw->size);
+ 
 -- 
 2.19.1
 
