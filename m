@@ -2,138 +2,337 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2292FC6783B
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 22:45:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E450C67839
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 22:45:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CFCEC20672
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 22:45:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2BE8420672
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 22:45:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="26IFtrgM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CFCEC20672
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amd.com
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="DvBHUxdl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2BE8420672
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726851AbeLKWpw (ORCPT
+        id S1726867AbeLKWp6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 17:45:52 -0500
-Received: from mail-eopbgr740043.outbound.protection.outlook.com ([40.107.74.43]:23040
-        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726232AbeLKWpt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 17:45:49 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=O5m2hSVSQnR3VJggy2lHJCJw48zUFXNBLAPU7R2Y1ZU=;
- b=26IFtrgMkQgzvEe5S1RfxPRIgbK17Wevj2hdoz3q1gVdUD6zxbGi1Ik886nRoqXQPMXu2I1ZzfQ3/3UH5XP+qrxMrj5YpEu1CEg8sU8sAc+R8pn/1GRxeJyY+XXF7mUKwW+wr7Sf3T8XVGRc0S744HHzLrjH/ob48tEW1oSpvVg=
-Received: from SN1PR12MB0175.namprd12.prod.outlook.com (10.162.3.15) by
- SN1PR12MB2446.namprd12.prod.outlook.com (52.132.195.149) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1404.22; Tue, 11 Dec 2018 22:45:41 +0000
-Received: from SN1PR12MB0175.namprd12.prod.outlook.com
- ([fe80::bc0e:7f7f:ee65:e2d5]) by SN1PR12MB0175.namprd12.prod.outlook.com
- ([fe80::bc0e:7f7f:ee65:e2d5%6]) with mapi id 15.20.1425.016; Tue, 11 Dec 2018
- 22:45:41 +0000
-From:   "Lendacky, Thomas" <Thomas.Lendacky@amd.com>
-To:     Borislav Petkov <bp@alien8.de>
-CC:     "x86@kernel.org" <x86@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Jiri Kosina <jkosina@suse.cz>, Ingo Molnar <mingo@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        David Woodhouse <dwmw@amazon.co.uk>
-Subject: Re: [PATCH] x86/speculation: Add support for STIBP always-on
- preferred mode
-Thread-Topic: [PATCH] x86/speculation: Add support for STIBP always-on
- preferred mode
-Thread-Index: AQHUkYUdUUqHSw55jUaGOaWlduXUMaV5hSQAgACGSgD//6uNgIAAZh+AgAAGVYA=
-Date:   Tue, 11 Dec 2018 22:45:41 +0000
-Message-ID: <eebb189a-1e39-92a3-d2be-7ee67ac1845c@amd.com>
-References: <20181211190959.28321.56433.stgit@tlendack-t1.amdoffice.net>
- <3308b5d2-0c59-fa33-472b-f56633d39575@amd.com>
- <20181211211944.GT27375@zn.tnic>
- <d054e17f-87e4-a8cc-425c-f56b9c6d4588@amd.com>
- <20181211222259.GU27375@zn.tnic>
-In-Reply-To: <20181211222259.GU27375@zn.tnic>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: SN6PR0102CA0034.prod.exchangelabs.com (2603:10b6:805:1::47)
- To SN1PR12MB0175.namprd12.prod.outlook.com (2a01:111:e400:5143::15)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Thomas.Lendacky@amd.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [165.204.77.1]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;SN1PR12MB2446;20:+LyQeyWJiL8WuF6cLmE4ZjpJMhOktdeAykecaUZh7+n3k6B5JfPhN3+kdy3sH+3uIa885LElOOcNuOgcTvNF3sPEkjQsL+ThhfhajW6jnqmsK11bqVQHGPzTT/3ffHhmDfhtbidbuhcfYtCL1CNLHNQ6M0rft9udQI8F1BKQ3STiycaz80aqkhF9+/ysh3Rzga7hVvgsaykIOtCCVEesHAk8siJNdB8ntYqXzSDaMm9Q6lwpXfYRjk6T2/G2pusi
-x-ms-office365-filtering-correlation-id: 37dbd8e1-962d-4f8c-9481-08d65fba6097
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:SN1PR12MB2446;
-x-ms-traffictypediagnostic: SN1PR12MB2446:
-x-microsoft-antispam-prvs: <SN1PR12MB24463B312381F15042F29D8CECA60@SN1PR12MB2446.namprd12.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(93006095)(93001095)(3231455)(999002)(944501520)(52105112)(10201501046)(6055026)(148016)(149066)(150057)(6041310)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123560045)(20161123562045)(201708071742011)(7699051)(76991095);SRVR:SN1PR12MB2446;BCL:0;PCL:0;RULEID:;SRVR:SN1PR12MB2446;
-x-forefront-prvs: 08831F51DC
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(346002)(136003)(39860400002)(366004)(396003)(199004)(189003)(11346002)(31696002)(6246003)(26005)(102836004)(2616005)(186003)(446003)(476003)(6506007)(93886005)(76176011)(14444005)(52116002)(86362001)(97736004)(71200400001)(36756003)(8676002)(66066001)(4326008)(486006)(256004)(105586002)(81166006)(8936002)(386003)(53546011)(71190400001)(81156014)(6512007)(14454004)(53936002)(6916009)(5660300001)(25786009)(72206003)(3846002)(54906003)(6116002)(316002)(2906002)(6436002)(7736002)(106356001)(305945005)(6486002)(68736007)(31686004)(99286004)(7416002)(478600001)(229853002);DIR:OUT;SFP:1101;SCL:1;SRVR:SN1PR12MB2446;H:SN1PR12MB0175.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: amd.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: SmH9oJynMWGlKdZMM84luf6T5RODXyoG84cCgNBFqewzIDbTbwLGcl6yrk9sr80foZxxudQ65IeUWgv0hEH2KOJv9FDvmDZVsx8U3Lasau+xzjPXsxJRAevXUgEgeKlpNk0n/Eoy4hOZXZ1jkSibIH02vmIH6mrj/0qzHzUsFVb7MPJ9XX2eH2bnGldLzIr/aTbPiXuGVGuZV+zmV+5pOP5B3OHtf1qrLsuIaK72aZt56BMaIHPEeppWmSXekDF/kRXUfMOHevfnY0tjbDANusLq6rY00FA02bnqBfrTeviShFcVFYjW/X1lBH4LFlDT
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <DE462B900960D04983703124FCB49B9F@namprd12.prod.outlook.com>
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 37dbd8e1-962d-4f8c-9481-08d65fba6097
-X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Dec 2018 22:45:41.2709
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN1PR12MB2446
+        Tue, 11 Dec 2018 17:45:58 -0500
+Received: from sonic303-49.consmr.mail.ne1.yahoo.com ([66.163.188.175]:36868
+        "EHLO sonic303-49.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726850AbeLKWpv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 17:45:51 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1544568350; bh=2uARvLb1q2zznR0LcReH3B1TK7Gvxnoz0sP/IEti4Co=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject; b=DvBHUxdliBud1jxIa/Gau/OMOqwgpw8V9+egdLDdkDMUV97rcp35JNaZHVatjYnc8iB/JTfKykxT5Xgygn+y0I4kr/zoy2lGo9C/oSyDTgX8iUMZKOvd2wElLJyrzqoKd5CcxlBFkXzRGJEDqwFo8MsoQMohxkGptVf++GZK9TJWmquVUconYg8CXLlBz/d+hxcK+HsPhAxfVH+Vnj8JFA9ceg1/c2BgnkGhVAe/xORZO+MKVCYsZfOVKgwHNUxDygIwspLMZn69Hg8/6b0K3zOgdLzVAm8x8elVY871p6sT9ULy1nbYcu5N4PY6+kNWM01vy0qowswQrQ3firtQGQ==
+X-YMail-OSG: 1nLngaAVM1lv9XJh24xR8UVSp9RDXBFEO7WpWmTEEDFytfok7lqUCRnIBG6kYUI
+ QhvHTqPqoJQ--
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic303.consmr.mail.ne1.yahoo.com with HTTP; Tue, 11 Dec 2018 22:45:50 +0000
+Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO localhost.localdomain) ([67.169.65.224])
+          by smtp415.mail.ne1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 8f4847c15ff2a33ea2e557120f9f24e5;
+          Tue, 11 Dec 2018 22:43:48 +0000 (UTC)
+From:   Casey Schaufler <casey@schaufler-ca.com>
+To:     jmorris@namei.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, selinux@vger.kernel.org
+Cc:     john.johansen@canonical.com, keescook@chromium.org,
+        penguin-kernel@i-love.sakura.ne.jp, paul@paul-moore.com,
+        linux-fsdevel@vger.kernel.org, sds@tycho.nsa.gov,
+        adobriyan@gmail.com, mic@digikod.net, s.mesoraca16@gmail.com,
+        casey@schaufler-ca.com
+Subject: [PATCH v5 22/38] SELinux: Abstract use of cred security blob
+Date:   Tue, 11 Dec 2018 14:42:58 -0800
+Message-Id: <20181211224314.22412-23-casey@schaufler-ca.com>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20181211224314.22412-1-casey@schaufler-ca.com>
+References: <20181211224314.22412-1-casey@schaufler-ca.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gMTIvMTEvMjAxOCAwNDoyMiBQTSwgQm9yaXNsYXYgUGV0a292IHdyb3RlOg0KPiBPbiBUdWUs
-IERlYyAxMSwgMjAxOCBhdCAxMDoxNzozMFBNICswMDAwLCBMZW5kYWNreSwgVGhvbWFzIHdyb3Rl
-Og0KPj4gSWYgdXNpbmcganVzdCBTUEVDVFJFX1YyX1VTRVJfU1RSSUNUIHRoZW4gdGhlIGNvZGUg
-aW4gc3RpYnBfc3RhdGUoKSB3b3VsZA0KPj4gaGF2ZSB0byBiZSBhYmxlIGRpZmZlcmVudGlhdGUg
-YmV0d2VlbiB0aGUgY2FzZSB3aGVyZSB0aGUgbW9kZSB3YXMgc3dpdGNoZWQNCj4+IGJlY2F1c2Ug
-b2YgWDg2X0ZFQVRVUkVfQU1EX1NUSUJQX0FMV0FZU19PTiB2cyBhIGtlcm5lbCBjb21tYW5kIGxp
-bmUgd2l0aA0KPj4gInNwZWN0cmVfdjJfdXNlcj1vbiIuIEkgY291bGQgYWx3YXlzIHNldCBhbmQg
-dXNlIGEgc3RhdGljIHZhcmlhYmxlIGluIHRoZQ0KPj4gZmlsZSBqdXN0IGZvciB0aGUgc3RpYnBf
-c3RhdGUoKSBjYXNlLg0KPiANCj4gRG9lcyBpdCBtYXR0ZXIgb24gWDg2X0ZFQVRVUkVfQU1EX1NU
-SUJQX0FMV0FZU19PTiBDUFVzPw0KPiANCj4gSSBtZWFuLCB3ZSB3YW50IFNUSUJQIHRvIGJlIGFs
-d2F5cyBvbiB0aGVyZSBzbyB5b3UgY2FuIGRvOg0KPiANCj4gZGlmZiAtLWdpdCBhL2FyY2gveDg2
-L2tlcm5lbC9jcHUvYnVncy5jIGIvYXJjaC94ODYva2VybmVsL2NwdS9idWdzLmMNCj4gaW5kZXgg
-MjVlOTE0Zjc3YmI4Li5kMTQ4NjBkMWNmOWMgMTAwNjQ0DQo+IC0tLSBhL2FyY2gveDg2L2tlcm5l
-bC9jcHUvYnVncy5jDQo+ICsrKyBiL2FyY2gveDg2L2tlcm5lbC9jcHUvYnVncy5jDQo+IEBAIC0x
-MDg5LDcgKzEwODksMTAgQEAgc3RhdGljIGNoYXIgKnN0aWJwX3N0YXRlKHZvaWQpDQo+ICAJY2Fz
-ZSBTUEVDVFJFX1YyX1VTRVJfTk9ORToNCj4gIAkJcmV0dXJuICIsIFNUSUJQOiBkaXNhYmxlZCI7
-DQo+ICAJY2FzZSBTUEVDVFJFX1YyX1VTRVJfU1RSSUNUOg0KPiAtCQlyZXR1cm4gIiwgU1RJQlA6
-IGZvcmNlZCI7DQo+ICsJCWlmIChib290X2NwdV9oYXMoWDg2X0ZFQVRVUkVfQU1EX1NUSUJQX0FM
-V0FZU19PTikpDQo+ICsJCQlyZXR1cm4gIiwgU1RJQlA6IGFsd2F5cyBvbiI7DQo+ICsJCWVsc2UN
-Cj4gKwkJCXJldHVybiAiLCBTVElCUDogZm9yY2VkIjsNCj4gIAljYXNlIFNQRUNUUkVfVjJfVVNF
-Ul9QUkNUTDoNCj4gIAljYXNlIFNQRUNUUkVfVjJfVVNFUl9TRUNDT01QOg0KPiAgCQlpZiAoc3Rh
-dGljX2tleV9lbmFibGVkKCZzd2l0Y2hfdG9fY29uZF9zdGlicCkpDQo+IA0KPiBzbyBpZiB1c2Vy
-IGhhcyBib290ZWQgd2l0aCBzcGVjdHJlX3YyX3VzZXI9b24sIHdlIHNheSwgIm9oIHdlbGwsIGl0
-IGlzIGFsd2F5cw0KPiBlbmFibGVkIGFueXdheSIuLi4gb3I/DQoNCkknbSBvayB3aXRoIHRoYXQu
-IEhhdmluZyBzYWlkIHRoYXQsIHdlIGNhbiBwcm9iYWJseSBqdXN0IGxlYXZlIGl0IGFzIGlzDQph
-bmQgcmV0dXJuICJmb3JjZWQiIGV2ZW4gZm9yIHRoZSBBTFdBWVNfT04gY2FzZSwgdGhlbi4NCg0K
-QnV0IGlmIHdlIHdhbnQgdG8gZGlmZmVyZW50aWF0ZSwgdGhvdWdoLCBhIHNpbXBsZSBzdGF0aWMg
-Ym9vbCB0aGF0IGlzIHNldA0Kd2hlbiB0aGUgbW9kZSBpcyBzd2l0Y2hlZCB3b3JrcyBqdXN0IGFz
-IHdlbGwuDQoNCj4gDQo+PiBJJ2xsIGdpdmUgaXQgYSBiaXQgb2YgdGltZSBhbmQgc2VlIGlmIHRo
-ZXJlJ3MgYW55IG90aGVyIGRpc2N1c3Npb24gYW5kDQo+PiByZS1zdWJtaXQgd2l0aG91dCB0aGUg
-bmV3IFNQRUNUUkVfVjJfVVNFUl9TVFJJQ1RfUFJFRkVSUkVEIHZhbHVlLg0KPiANCj4gU3VyZS4N
-Cg0KRWgsIEknbGwganVzdCBzdWJtaXQgdjIgd2l0aCB0aGUgY2hhbmdlcyBub3cgYW5kIHdlIGNh
-biBkZWNpZGUgYmV0d2VlbiB0aGUNCmFib3ZlIG9yIHRoZSBib29sLg0KDQpUaGFua3MsDQpUb20N
-Cg0KPiANCg==
+Don't use the cred->security pointer directly.
+Provide a helper function that provides the security blob pointer.
+
+Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+Reviewed-by: Kees Cook <keescook@chromium.org>
+[kees: adjusted for ordered init series]
+Signed-off-by: Kees Cook <keescook@chromium.org>
+---
+ security/selinux/hooks.c          | 54 +++++++++++++++++++--------------------
+ security/selinux/include/objsec.h |  5 ++++
+ security/selinux/xfrm.c           |  4 +--
+ 3 files changed, 34 insertions(+), 29 deletions(-)
+
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index edd5b8dd3e56..24b6b459fa2a 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -225,7 +225,7 @@ static inline u32 cred_sid(const struct cred *cred)
+ {
+ 	const struct task_security_struct *tsec;
+ 
+-	tsec = cred->security;
++	tsec = selinux_cred(cred);
+ 	return tsec->sid;
+ }
+ 
+@@ -461,7 +461,7 @@ static int may_context_mount_sb_relabel(u32 sid,
+ 			struct superblock_security_struct *sbsec,
+ 			const struct cred *cred)
+ {
+-	const struct task_security_struct *tsec = cred->security;
++	const struct task_security_struct *tsec = selinux_cred(cred);
+ 	int rc;
+ 
+ 	rc = avc_has_perm(&selinux_state,
+@@ -480,7 +480,7 @@ static int may_context_mount_inode_relabel(u32 sid,
+ 			struct superblock_security_struct *sbsec,
+ 			const struct cred *cred)
+ {
+-	const struct task_security_struct *tsec = cred->security;
++	const struct task_security_struct *tsec = selinux_cred(cred);
+ 	int rc;
+ 	rc = avc_has_perm(&selinux_state,
+ 			  tsec->sid, sbsec->sid, SECCLASS_FILESYSTEM,
+@@ -1951,7 +1951,7 @@ static int may_create(struct inode *dir,
+ 		      struct dentry *dentry,
+ 		      u16 tclass)
+ {
+-	const struct task_security_struct *tsec = current_security();
++	const struct task_security_struct *tsec = selinux_cred(current_cred());
+ 	struct inode_security_struct *dsec;
+ 	struct superblock_security_struct *sbsec;
+ 	u32 sid, newsid;
+@@ -1973,7 +1973,7 @@ static int may_create(struct inode *dir,
+ 	if (rc)
+ 		return rc;
+ 
+-	rc = selinux_determine_inode_label(current_security(), dir,
++	rc = selinux_determine_inode_label(selinux_cred(current_cred()), dir,
+ 					   &dentry->d_name, tclass, &newsid);
+ 	if (rc)
+ 		return rc;
+@@ -2480,8 +2480,8 @@ static int selinux_bprm_set_creds(struct linux_binprm *bprm)
+ 	if (bprm->called_set_creds)
+ 		return 0;
+ 
+-	old_tsec = current_security();
+-	new_tsec = bprm->cred->security;
++	old_tsec = selinux_cred(current_cred());
++	new_tsec = selinux_cred(bprm->cred);
+ 	isec = inode_security(inode);
+ 
+ 	/* Default to the current task SID. */
+@@ -2645,7 +2645,7 @@ static void selinux_bprm_committing_creds(struct linux_binprm *bprm)
+ 	struct rlimit *rlim, *initrlim;
+ 	int rc, i;
+ 
+-	new_tsec = bprm->cred->security;
++	new_tsec = selinux_cred(bprm->cred);
+ 	if (new_tsec->sid == new_tsec->osid)
+ 		return;
+ 
+@@ -2688,7 +2688,7 @@ static void selinux_bprm_committing_creds(struct linux_binprm *bprm)
+  */
+ static void selinux_bprm_committed_creds(struct linux_binprm *bprm)
+ {
+-	const struct task_security_struct *tsec = current_security();
++	const struct task_security_struct *tsec = selinux_cred(current_cred());
+ 	struct itimerval itimer;
+ 	u32 osid, sid;
+ 	int rc, i;
+@@ -2991,7 +2991,7 @@ static int selinux_dentry_init_security(struct dentry *dentry, int mode,
+ 	u32 newsid;
+ 	int rc;
+ 
+-	rc = selinux_determine_inode_label(current_security(),
++	rc = selinux_determine_inode_label(selinux_cred(current_cred()),
+ 					   d_inode(dentry->d_parent), name,
+ 					   inode_mode_to_security_class(mode),
+ 					   &newsid);
+@@ -3011,14 +3011,14 @@ static int selinux_dentry_create_files_as(struct dentry *dentry, int mode,
+ 	int rc;
+ 	struct task_security_struct *tsec;
+ 
+-	rc = selinux_determine_inode_label(old->security,
++	rc = selinux_determine_inode_label(selinux_cred(old),
+ 					   d_inode(dentry->d_parent), name,
+ 					   inode_mode_to_security_class(mode),
+ 					   &newsid);
+ 	if (rc)
+ 		return rc;
+ 
+-	tsec = new->security;
++	tsec = selinux_cred(new);
+ 	tsec->create_sid = newsid;
+ 	return 0;
+ }
+@@ -3028,7 +3028,7 @@ static int selinux_inode_init_security(struct inode *inode, struct inode *dir,
+ 				       const char **name,
+ 				       void **value, size_t *len)
+ {
+-	const struct task_security_struct *tsec = current_security();
++	const struct task_security_struct *tsec = selinux_cred(current_cred());
+ 	struct superblock_security_struct *sbsec;
+ 	u32 newsid, clen;
+ 	int rc;
+@@ -3038,7 +3038,7 @@ static int selinux_inode_init_security(struct inode *inode, struct inode *dir,
+ 
+ 	newsid = tsec->create_sid;
+ 
+-	rc = selinux_determine_inode_label(current_security(),
++	rc = selinux_determine_inode_label(selinux_cred(current_cred()),
+ 		dir, qstr,
+ 		inode_mode_to_security_class(inode->i_mode),
+ 		&newsid);
+@@ -3500,7 +3500,7 @@ static int selinux_inode_copy_up(struct dentry *src, struct cred **new)
+ 			return -ENOMEM;
+ 	}
+ 
+-	tsec = new_creds->security;
++	tsec = selinux_cred(new_creds);
+ 	/* Get label from overlay inode and set it in create_sid */
+ 	selinux_inode_getsecid(d_inode(src), &sid);
+ 	tsec->create_sid = sid;
+@@ -3920,7 +3920,7 @@ static int selinux_cred_alloc_blank(struct cred *cred, gfp_t gfp)
+  */
+ static void selinux_cred_free(struct cred *cred)
+ {
+-	struct task_security_struct *tsec = cred->security;
++	struct task_security_struct *tsec = selinux_cred(cred);
+ 
+ 	/*
+ 	 * cred->security == NULL if security_cred_alloc_blank() or
+@@ -3940,7 +3940,7 @@ static int selinux_cred_prepare(struct cred *new, const struct cred *old,
+ 	const struct task_security_struct *old_tsec;
+ 	struct task_security_struct *tsec;
+ 
+-	old_tsec = old->security;
++	old_tsec = selinux_cred(old);
+ 
+ 	tsec = kmemdup(old_tsec, sizeof(struct task_security_struct), gfp);
+ 	if (!tsec)
+@@ -3955,8 +3955,8 @@ static int selinux_cred_prepare(struct cred *new, const struct cred *old,
+  */
+ static void selinux_cred_transfer(struct cred *new, const struct cred *old)
+ {
+-	const struct task_security_struct *old_tsec = old->security;
+-	struct task_security_struct *tsec = new->security;
++	const struct task_security_struct *old_tsec = selinux_cred(old);
++	struct task_security_struct *tsec = selinux_cred(new);
+ 
+ 	*tsec = *old_tsec;
+ }
+@@ -3972,7 +3972,7 @@ static void selinux_cred_getsecid(const struct cred *c, u32 *secid)
+  */
+ static int selinux_kernel_act_as(struct cred *new, u32 secid)
+ {
+-	struct task_security_struct *tsec = new->security;
++	struct task_security_struct *tsec = selinux_cred(new);
+ 	u32 sid = current_sid();
+ 	int ret;
+ 
+@@ -3997,7 +3997,7 @@ static int selinux_kernel_act_as(struct cred *new, u32 secid)
+ static int selinux_kernel_create_files_as(struct cred *new, struct inode *inode)
+ {
+ 	struct inode_security_struct *isec = inode_security(inode);
+-	struct task_security_struct *tsec = new->security;
++	struct task_security_struct *tsec = selinux_cred(new);
+ 	u32 sid = current_sid();
+ 	int ret;
+ 
+@@ -4546,7 +4546,7 @@ static int sock_has_perm(struct sock *sk, u32 perms)
+ static int selinux_socket_create(int family, int type,
+ 				 int protocol, int kern)
+ {
+-	const struct task_security_struct *tsec = current_security();
++	const struct task_security_struct *tsec = selinux_cred(current_cred());
+ 	u32 newsid;
+ 	u16 secclass;
+ 	int rc;
+@@ -4566,7 +4566,7 @@ static int selinux_socket_create(int family, int type,
+ static int selinux_socket_post_create(struct socket *sock, int family,
+ 				      int type, int protocol, int kern)
+ {
+-	const struct task_security_struct *tsec = current_security();
++	const struct task_security_struct *tsec = selinux_cred(current_cred());
+ 	struct inode_security_struct *isec = inode_security_novalidate(SOCK_INODE(sock));
+ 	struct sk_security_struct *sksec;
+ 	u16 sclass = socket_type_to_security_class(family, type, protocol);
+@@ -5444,7 +5444,7 @@ static int selinux_secmark_relabel_packet(u32 sid)
+ 	const struct task_security_struct *__tsec;
+ 	u32 tsid;
+ 
+-	__tsec = current_security();
++	__tsec = selinux_cred(current_cred());
+ 	tsid = __tsec->sid;
+ 
+ 	return avc_has_perm(&selinux_state,
+@@ -6381,7 +6381,7 @@ static int selinux_getprocattr(struct task_struct *p,
+ 	unsigned len;
+ 
+ 	rcu_read_lock();
+-	__tsec = __task_cred(p)->security;
++	__tsec = selinux_cred(__task_cred(p));
+ 
+ 	if (current != p) {
+ 		error = avc_has_perm(&selinux_state,
+@@ -6504,7 +6504,7 @@ static int selinux_setprocattr(const char *name, void *value, size_t size)
+ 	   operation.  See selinux_bprm_set_creds for the execve
+ 	   checks and may_create for the file creation checks. The
+ 	   operation will then fail if the context is not permitted. */
+-	tsec = new->security;
++	tsec = selinux_cred(new);
+ 	if (!strcmp(name, "exec")) {
+ 		tsec->exec_sid = sid;
+ 	} else if (!strcmp(name, "fscreate")) {
+@@ -6633,7 +6633,7 @@ static int selinux_key_alloc(struct key *k, const struct cred *cred,
+ 	if (!ksec)
+ 		return -ENOMEM;
+ 
+-	tsec = cred->security;
++	tsec = selinux_cred(cred);
+ 	if (tsec->keycreate_sid)
+ 		ksec->sid = tsec->keycreate_sid;
+ 	else
+diff --git a/security/selinux/include/objsec.h b/security/selinux/include/objsec.h
+index cc5e26b0161b..734b6833bdff 100644
+--- a/security/selinux/include/objsec.h
++++ b/security/selinux/include/objsec.h
+@@ -158,4 +158,9 @@ struct bpf_security_struct {
+ 	u32 sid;  /*SID of bpf obj creater*/
+ };
+ 
++static inline struct task_security_struct *selinux_cred(const struct cred *cred)
++{
++	return cred->security;
++}
++
+ #endif /* _SELINUX_OBJSEC_H_ */
+diff --git a/security/selinux/xfrm.c b/security/selinux/xfrm.c
+index 91dc3783ed94..8ffe7e1053c4 100644
+--- a/security/selinux/xfrm.c
++++ b/security/selinux/xfrm.c
+@@ -79,7 +79,7 @@ static int selinux_xfrm_alloc_user(struct xfrm_sec_ctx **ctxp,
+ 				   gfp_t gfp)
+ {
+ 	int rc;
+-	const struct task_security_struct *tsec = current_security();
++	const struct task_security_struct *tsec = selinux_cred(current_cred());
+ 	struct xfrm_sec_ctx *ctx = NULL;
+ 	u32 str_len;
+ 
+@@ -138,7 +138,7 @@ static void selinux_xfrm_free(struct xfrm_sec_ctx *ctx)
+  */
+ static int selinux_xfrm_delete(struct xfrm_sec_ctx *ctx)
+ {
+-	const struct task_security_struct *tsec = current_security();
++	const struct task_security_struct *tsec = selinux_cred(current_cred());
+ 
+ 	if (!ctx)
+ 		return 0;
+-- 
+2.14.5
+
