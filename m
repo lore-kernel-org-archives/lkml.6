@@ -2,111 +2,183 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94486C07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 09:43:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73795C5CFFE
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 09:43:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B3A22084A
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 09:43:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544521386;
-	bh=aIcEkkhNlcKbrQBNe9VU1OQXv8faUp2xmhrX9FJeFRo=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=Zh+3O3afXD+Nvfp63Zuy8mAQUL8UIUCZEuuXh0+NVK4831Wqx6qDUao2HsJh++elL
-	 dJRlyvUJaSsyXiHf60bB/W/pXyITUZSegg3c3vXcKXBQtoLOqvppJkio2nGY6bvRxB
-	 NK8jv+GXz+9bAgYvUQOMqOxlLGexTm2vLWDCyDmo=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B3A22084A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 332192084C
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 09:43:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="PKT2Tzdi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 332192084C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726232AbeLKJnF (ORCPT
+        id S1726249AbeLKJnO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 04:43:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43852 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726114AbeLKJnE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 04:43:04 -0500
-Received: from devnote (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A6BDB20811;
-        Tue, 11 Dec 2018 09:43:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544521384;
-        bh=aIcEkkhNlcKbrQBNe9VU1OQXv8faUp2xmhrX9FJeFRo=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=ywJOsOjROIeudqZs4fB1TMHFPBUkPFSC26CrYrUgLO6LGZ0lT9h3ZFOynvRc9kSHT
-         Z2CLFbymuRh+MbG+ej/DTQlt796CrmuL+AQNdSvemNUq7Xn+PmvQrzWtr1aUfiW+1y
-         rxrlNd5t++ehpKYW5SHKW8nBwK9v+zB/9FCfNfg8=
-Date:   Tue, 11 Dec 2018 18:43:00 +0900
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Andrea Righi <righi.andrea@gmail.com>
-Cc:     Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] kprobes/x86/xen: blacklist non-attachable xen interrupt
- functions
-Message-Id: <20181211184300.810577f6087339bb0781068c@kernel.org>
-In-Reply-To: <20181210151256.GA1977@Dell>
-References: <20181210151256.GA1977@Dell>
-X-Mailer: Sylpheed 3.5.0 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Tue, 11 Dec 2018 04:43:14 -0500
+Received: from mail-ua1-f68.google.com ([209.85.222.68]:36883 "EHLO
+        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726209AbeLKJnN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 04:43:13 -0500
+Received: by mail-ua1-f68.google.com with SMTP id u19so4899943uae.4
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 01:43:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=qiCVCqL8DPBEqqUZ9Lkm11QkiqOa+zItnYetZ5jc2W4=;
+        b=PKT2Tzdi+fV9EVYj6CKY2Cr5xBcsIDOxBV+AGZS7uXXQjH7fzOY9HCOX8AvFVH6A4U
+         jt8YA3KPthxCPzuab73HPP54OyR5L7bBQlpAD+CrQbRmFionC9TJt+RgubFP+23weoZJ
+         3fbfSobZXGULbOJjULjvM9u0aSu6+JPxo+XEs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=qiCVCqL8DPBEqqUZ9Lkm11QkiqOa+zItnYetZ5jc2W4=;
+        b=Xuu+hsKGxo01L5EigXlQE0BItob0RT629nB0pVmd5O7kASDLilQ2xtxphtG1fVFQJS
+         xpQyv/OnwB/HaPm8aQrwP8ku6tE3Uq32aUnVO/fGZXvWo0k64Gw1m5QQu+xaHw0CqOUg
+         enEXvrePOtSnQFH8ge96rtAmv8CQytUbBHrQE1AxqXrkciVQnfiavmiL8qIRZPpp8VBK
+         Rpkgua4oU9kgJyRFOxwSPd95Wtc+IUhh4fTncss19jSGEpbQpDYZwcguWmx6ZX/Yg/gS
+         qOsOpmUfq3CzqRmJyMwUQ5wi7mPXOAsHJxGfxn/ouP2wxhfU+b49qCNOtCLXJ5wYV9EA
+         vJNg==
+X-Gm-Message-State: AA+aEWbUEO2oGH6iFrmh+rRtHS+5foV9Sp/q6Lo+kp0Yim+iqbTQw65h
+        DRc/UXMT+kuKeEIVNjak1CiwhAfoEG4cQra7dgqXnw==
+X-Google-Smtp-Source: AFSGD/VGXOGhRU+5j41SWhMn/JGDx25SC/LQU9uF8R3wQtVvb2xPc1rTO8zBx+jYhJwht90zrDsmaHjc4MhvvQPkVx8=
+X-Received: by 2002:ab0:3484:: with SMTP id c4mr6993247uar.39.1544521391423;
+ Tue, 11 Dec 2018 01:43:11 -0800 (PST)
+MIME-Version: 1.0
+References: <20181205195050.4759-5-robh@kernel.org>
+In-Reply-To: <20181205195050.4759-5-robh@kernel.org>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Tue, 11 Dec 2018 10:42:35 +0100
+Message-ID: <CAPDyKFq2x=BKVc36xqyjjjh5xMZa_Ws=-wv9bwadiNkBEgmsdA@mail.gmail.com>
+Subject: Re: [PATCH] clk: Use of_node_name_eq for node name comparisons
+To:     Rob Herring <robh@kernel.org>
+Cc:     DTML <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Tero Kristo <t-kristo@ti.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-omap <linux-omap@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 10 Dec 2018 16:12:57 +0100
-Andrea Righi <righi.andrea@gmail.com> wrote:
+On Wed, 5 Dec 2018 at 20:50, Rob Herring <robh@kernel.org> wrote:
+>
+> Convert string compares of DT node names to use of_node_name_eq helper
+> instead. This removes direct access to the node name pointer.
+>
+> For instances using of_node_cmp, this has the side effect of now using
+> case sensitive comparisons. This should not matter for any FDT based
+> system which all of these are.
+>
+> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Stephen Boyd <sboyd@kernel.org>
+> Cc: Tero Kristo <t-kristo@ti.com>
+> Cc: Ulf Hansson <ulf.hansson@linaro.org>
+> Cc: linux-renesas-soc@vger.kernel.org
+> Cc: linux-clk@vger.kernel.org
+> Cc: linux-omap@vger.kernel.org
+> Cc: linux-arm-kernel@lists.infradead.org
+> Signed-off-by: Rob Herring <robh@kernel.org>
 
-> Blacklist symbols in Xen probe-prohibited areas, so that user can see
-> these prohibited symbols in debugfs.
-> 
-> See also: a50480cb6d61.
+For the ux500 part:
 
-Looks good to me, thanks!
+Acked-by: Ulf Hansson <ulf.hansson@linaro.org>
 
-Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
+Kind regards
+Uffe
 
-> 
-> Signed-off-by: Andrea Righi <righi.andrea@gmail.com>
 > ---
->  arch/x86/xen/xen-asm_64.S | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/arch/x86/xen/xen-asm_64.S b/arch/x86/xen/xen-asm_64.S
-> index bb1c2da0381d..1e9ef0ba30a5 100644
-> --- a/arch/x86/xen/xen-asm_64.S
-> +++ b/arch/x86/xen/xen-asm_64.S
-> @@ -12,6 +12,7 @@
->  #include <asm/segment.h>
->  #include <asm/asm-offsets.h>
->  #include <asm/thread_info.h>
-> +#include <asm/asm.h>
->  
->  #include <xen/interface/xen.h>
->  
-> @@ -24,6 +25,7 @@ ENTRY(xen_\name)
->  	pop %r11
->  	jmp  \name
->  END(xen_\name)
-> +_ASM_NOKPROBE(xen_\name)
->  .endm
->  
->  xen_pv_trap divide_error
-> -- 
-> 2.17.1
-> 
-
-
--- 
-Masami Hiramatsu <mhiramat@kernel.org>
+>  drivers/clk/renesas/clk-mstp.c   |  2 +-
+>  drivers/clk/ti/clkctrl.c         |  2 +-
+>  drivers/clk/ti/dpll.c            |  2 +-
+>  drivers/clk/ux500/u8500_of_clk.c | 10 +++++-----
+>  4 files changed, 8 insertions(+), 8 deletions(-)
+>
+> diff --git a/drivers/clk/renesas/clk-mstp.c b/drivers/clk/renesas/clk-mstp.c
+> index 1c1768c2cc82..765175d1148a 100644
+> --- a/drivers/clk/renesas/clk-mstp.c
+> +++ b/drivers/clk/renesas/clk-mstp.c
+> @@ -280,7 +280,7 @@ int cpg_mstp_attach_dev(struct generic_pm_domain *unused, struct device *dev)
+>                         goto found;
+>
+>                 /* BSC on r8a73a4/sh73a0 uses zb_clk instead of an mstp clock */
+> -               if (!strcmp(clkspec.np->name, "zb_clk"))
+> +               if (of_node_name_eq(clkspec.np, "zb_clk"))
+>                         goto found;
+>
+>                 of_node_put(clkspec.np);
+> diff --git a/drivers/clk/ti/clkctrl.c b/drivers/clk/ti/clkctrl.c
+> index 469f560ae1cf..40630eb950fc 100644
+> --- a/drivers/clk/ti/clkctrl.c
+> +++ b/drivers/clk/ti/clkctrl.c
+> @@ -448,7 +448,7 @@ static void __init _ti_omap4_clkctrl_setup(struct device_node *node)
+>         char *c;
+>
+>         if (!(ti_clk_get_features()->flags & TI_CLK_CLKCTRL_COMPAT) &&
+> -           !strcmp(node->name, "clk"))
+> +           of_node_name_eq(node, "clk"))
+>                 ti_clk_features.flags |= TI_CLK_CLKCTRL_COMPAT;
+>
+>         addrp = of_get_address(node, 0, NULL, NULL);
+> diff --git a/drivers/clk/ti/dpll.c b/drivers/clk/ti/dpll.c
+> index 92e28af7afba..6c3329bc116f 100644
+> --- a/drivers/clk/ti/dpll.c
+> +++ b/drivers/clk/ti/dpll.c
+> @@ -410,7 +410,7 @@ static void __init of_ti_omap3_dpll_setup(struct device_node *node)
+>
+>         if ((of_machine_is_compatible("ti,omap3630") ||
+>              of_machine_is_compatible("ti,omap36xx")) &&
+> -           !strcmp(node->name, "dpll5_ck"))
+> +            of_node_name_eq(node, "dpll5_ck"))
+>                 of_ti_dpll_setup(node, &omap3_dpll5_ck_ops, &dd);
+>         else
+>                 of_ti_dpll_setup(node, &omap3_dpll_ck_ops, &dd);
+> diff --git a/drivers/clk/ux500/u8500_of_clk.c b/drivers/clk/ux500/u8500_of_clk.c
+> index d5888591e1a9..18a3c4522831 100644
+> --- a/drivers/clk/ux500/u8500_of_clk.c
+> +++ b/drivers/clk/ux500/u8500_of_clk.c
+> @@ -545,21 +545,21 @@ static void u8500_clk_init(struct device_node *np)
+>         for_each_child_of_node(np, child) {
+>                 static struct clk_onecell_data clk_data;
+>
+> -               if (!of_node_cmp(child->name, "prcmu-clock")) {
+> +               if (of_node_name_eq(child, "prcmu-clock")) {
+>                         clk_data.clks = prcmu_clk;
+>                         clk_data.clk_num = ARRAY_SIZE(prcmu_clk);
+>                         of_clk_add_provider(child, of_clk_src_onecell_get, &clk_data);
+>                 }
+> -               if (!of_node_cmp(child->name, "prcc-periph-clock"))
+> +               if (of_node_name_eq(child, "prcc-periph-clock"))
+>                         of_clk_add_provider(child, ux500_twocell_get, prcc_pclk);
+>
+> -               if (!of_node_cmp(child->name, "prcc-kernel-clock"))
+> +               if (of_node_name_eq(child, "prcc-kernel-clock"))
+>                         of_clk_add_provider(child, ux500_twocell_get, prcc_kclk);
+>
+> -               if (!of_node_cmp(child->name, "rtc32k-clock"))
+> +               if (of_node_name_eq(child, "rtc32k-clock"))
+>                         of_clk_add_provider(child, of_clk_src_simple_get, rtc_clk);
+>
+> -               if (!of_node_cmp(child->name, "smp-twd-clock"))
+> +               if (of_node_name_eq(child, "smp-twd-clock"))
+>                         of_clk_add_provider(child, of_clk_src_simple_get, twd_clk);
+>         }
+>  }
+> --
+> 2.19.1
+>
