@@ -2,82 +2,111 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31A7CC5CFFE
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 08:27:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD15AC07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 08:32:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AFB292082F
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 08:27:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AFB292082F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=datenfreihafen.org
+	by mail.kernel.org (Postfix) with ESMTP id 88C672082F
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 08:32:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 88C672082F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726231AbeLKI1I (ORCPT
+        id S1726157AbeLKIcd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 03:27:08 -0500
-Received: from proxima.lasnet.de ([78.47.171.185]:55531 "EHLO
-        proxima.lasnet.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726135AbeLKI1G (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 03:27:06 -0500
-Received: from localhost.localdomain (unknown [88.128.80.186])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: stefan@datenfreihafen.org)
-        by proxima.lasnet.de (Postfix) with ESMTPSA id CFBA4C8C29;
-        Tue, 11 Dec 2018 09:27:00 +0100 (CET)
-Subject: Re: [PATCH net-next] ieee802154: ca8210: fix possible u8 overflow in
- ca8210_rx_done
-To:     David Miller <davem@davemloft.net>, yuehaibing@huawei.com
-Cc:     h.morris@cascoda.com, alex.aring@gmail.com,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        linux-wpan@vger.kernel.org
-References: <20181211031339.21048-1-yuehaibing@huawei.com>
- <20181210.220107.751606140724107779.davem@davemloft.net>
-From:   Stefan Schmidt <stefan@datenfreihafen.org>
-Message-ID: <87dbac94-8b2e-8cef-5166-8c130529ceb9@datenfreihafen.org>
-Date:   Tue, 11 Dec 2018 09:26:37 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Tue, 11 Dec 2018 03:32:33 -0500
+Received: from mx2.suse.de ([195.135.220.15]:57860 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726072AbeLKIcc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 03:32:32 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 1929CAF09;
+        Tue, 11 Dec 2018 08:32:31 +0000 (UTC)
+Date:   Tue, 11 Dec 2018 09:32:30 +0100
+From:   Petr Mladek <pmladek@suse.com>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Steven Rostedt <rostedt@goodmis.org>,
+        Feng Tang <feng.tang@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@suse.de>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Sasha Levin <sashal@kernel.org>, stable@kernel.org
+Subject: Re: [PATCH v4] panic: Avoid the extra noise dmesg
+Message-ID: <20181211083230.x6s44wsgfgijl4ws@pathway.suse.cz>
+References: <1544176279-77828-1-git-send-email-feng.tang@intel.com>
+ <20181210131729.04b8e0d3@gandalf.local.home>
+ <CAGXu5jJrC5J7YNJ24JNNkNTRr7qRfQa+x+dePC0OOrpcEJFwaA@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20181210.220107.751606140724107779.davem@davemloft.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAGXu5jJrC5J7YNJ24JNNkNTRr7qRfQa+x+dePC0OOrpcEJFwaA@mail.gmail.com>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Dave.
-
-On 11.12.18 07:01, David Miller wrote:
-> From: YueHaibing <yuehaibing@huawei.com>
-> Date: Tue, 11 Dec 2018 11:13:39 +0800
+On Mon 2018-12-10 10:49:22, Kees Cook wrote:
+> On Mon, Dec 10, 2018 at 10:17 AM Steven Rostedt <rostedt@goodmis.org> wrote:
+> >
+> > On Fri,  7 Dec 2018 17:51:19 +0800
+> > Feng Tang <feng.tang@intel.com> wrote:
+> >
+> > > When kernel panic happens, it will first print the panic call stack,
+> > > then the ending msg like:
+> > >
+> > > [   35.743249] ---[ end Kernel panic - not syncing: Fatal exception
+> > > [   35.749975] ------------[ cut here ]------------
+> > >
+> > > The above message are very useful for debugging.
+> > >
+> > > But if system is configured to not reboot on panic, say the "panic_timeout"
+> > > parameter equals 0, it will likely print out many noisy message like
+> > > WARN() call stack for each and every CPU except the panic one, messages
+> > > like below:
+> >
+> >
+> > > Keeping the interrupt disabled will avoid the noisy message.
+> > >
+> > > When code runs to this point, it means user has chosed to not reboot, or
+> > > do any special handling by using the panic notifier method, the only reason
+> > > to enable the interrupt may be sysrq migic key and panic_blink function
+> > > (though may not work even with irq enabled).
+> > >
+> > > So make the irq disabled by default and add a cmdline parameter
+> > > "panic_keep_irq_on" to turn it on when needed.
+> > >
+> > > Signed-off-by: Feng Tang <feng.tang@intel.com>
+> > >
+> >
+> > Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 > 
->> gcc warning this:
->>
->> drivers/net/ieee802154/ca8210.c:730:10: warning:
->>  comparison is always false due to limited range of data type [-Wtype-limits]
->>
->> 'len' is u8 type, we get it from buf[1] adding 2, which can overflow.
->> This patch change the type of 'len' to unsigned int to avoid this,also fix
->> the gcc warning.
->>
->> Fixes: ded845a781a5 ("ieee802154: Add CA8210 IEEE 802.15.4 device driver")
->> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> 
-> WPAN maintainers, I am assuming that as maintainers you will be
-> picking this up and sending it to me.
+> I'm fine with the new boot param, but I think we need to leave it how
+> it was by default: systems that want to see the blinking aren't going
+> to have a screen to read about what boot param they need to add.
+> Currently, we'll blink and spew extra warnings. With this patch we'll
+> not blink and not spew: a headless machine will have no indication
+> that a panic happened.
 
-That's correct. On driver patches I always wait 2 days or so to give the
-driver maintainer a chance to reply before I go ahead and apply it.
+Just to be sure, in case, you did not follow the other long
+discussion.
 
-I will take this one directly now and do some smoke testing. It will
-come together with another fix as pull request to you.
+I had an alternative approach to switch printk() into nop at
+this panic() stage. It can be restored when sysrq is triggered.
+This approach allows to keep blinking and sysrq working. People
+debugging the blinking would need to block this change but it
+should be rare.
 
-regards
-Stefan Schmidt
+I do not resist on my solution. It looks a bit hacky. But it
+is simple and rather straightforward.
+
+Best Regards,
+Petr
