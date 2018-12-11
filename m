@@ -7,50 +7,50 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66505C5CFFE
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:10:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1D07C07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:10:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2DF6F20879
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:10:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 647F92084E
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:10:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544544601;
-	bh=Hpi+1G706tZwAfcLl1/SbIuwSBtuTaDuVix7wAkSqes=;
+	s=default; t=1544544621;
+	bh=zqOJas7jHRxwYXchULGyKyNBFANO7yb7p+39ZCoQNjc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=HWd3OAaJgotcYahs6TFWvx6wOF9xNpqKLexWr9PiTqUM3cDKWWi+puoWDmKMvff0i
-	 LTvSkc6Syq52KupcaoBPYQk6vhc3DQYy+K+5XeWJcvoNy/fre1XxfRmF3hBn2duAcI
-	 sMknnhmwO2h12ohO9dVnZb9x1tOWTcSSGdBTeQVo=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2DF6F20879
+	b=cPXooPcZlD5ol1yQbHtzthMxqPaJBaRxDSBFWVOnz4mqVXPFnQtP6r2plHITHqPSB
+	 b6hE5rNkBPEY0Gfh0MZu/t8gDc/OUUib2YB+Bj9cAtmr9ucrKCupbTQI6OgX32wGVa
+	 yTNhGazR1Ns8ty7MW5OJ41RR7RX5iUfSA8kczGPs=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 647F92084E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730177AbeLKQJ7 (ORCPT
+        id S1729540AbeLKPvj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 11:09:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40606 "EHLO mail.kernel.org"
+        Tue, 11 Dec 2018 10:51:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40292 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729616AbeLKPvz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:51:55 -0500
+        id S1728728AbeLKPvh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 10:51:37 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 90C6F20855;
-        Tue, 11 Dec 2018 15:51:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 13DD72084E;
+        Tue, 11 Dec 2018 15:51:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544543515;
-        bh=Hpi+1G706tZwAfcLl1/SbIuwSBtuTaDuVix7wAkSqes=;
+        s=default; t=1544543496;
+        bh=zqOJas7jHRxwYXchULGyKyNBFANO7yb7p+39ZCoQNjc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=icibyUYCticwB7TAfJm/gd0FZEnk5+1Rv2uxiOqwG7Fgp17iO2HLnu/htttSZGcL2
-         Inr7MSNpX2MXQ652X0woUMQc3BVNy0dS4YHlADX8fcdiqXTOVRRS1fLJxkUMHPx7KX
-         vxD5/trUP11trsi54AMQj/T78YeijcHRUbFwwCHY=
+        b=ZuNs+FA9xJDmzFqSLpL9Cm0MP1i37L2gMZJl1wAnI/Ymgy18LxUFIOzeQYPiymJ1V
+         bz0ogXzB38nkL4W0Et3vJWoA6U2P2qDDo9saW+xPmx4IraUWPWN7fgs+tk0XPmeMxi
+         z4eXkOps9nChl+JcXIjECAHaRWLQpTfVqSsZUf6A=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thomas Falcon <tlfalcon@linux.ibm.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 27/67] ibmvnic: Fix RX queue buffer cleanup
-Date:   Tue, 11 Dec 2018 16:41:27 +0100
-Message-Id: <20181211151631.764550368@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        Jiri Kosina <jkosina@suse.cz>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 20/67] HID: multitouch: Add pointstick support for Cirque Touchpad
+Date:   Tue, 11 Dec 2018 16:41:20 +0100
+Message-Id: <20181211151631.406052183@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181211151630.378216233@linuxfoundation.org>
 References: <20181211151630.378216233@linuxfoundation.org>
@@ -69,33 +69,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit b7cdec3d699db2e5985ad39de0f25d3b6111928e ]
+[ Upstream commit 12d43aacf9a74d0eb66fd0ea54ebeb79ca28940f ]
 
-The wrong index is used when cleaning up RX buffer objects during release
-of RX queues. Update to use the correct index counter.
+Cirque Touchpad/Pointstick combo is similar to Alps devices, it requires
+MT_CLS_WIN_8_DUAL to expose its pointstick as a mouse.
 
-Signed-off-by: Thomas Falcon <tlfalcon@linux.ibm.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+Signed-off-by: Jiri Kosina <jkosina@suse.cz>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/ibm/ibmvnic.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/hid/hid-ids.h        | 3 +++
+ drivers/hid/hid-multitouch.c | 6 ++++++
+ 2 files changed, 9 insertions(+)
 
-diff --git a/drivers/net/ethernet/ibm/ibmvnic.c b/drivers/net/ethernet/ibm/ibmvnic.c
-index 5c7134ccc1fd..14c53ed5cca6 100644
---- a/drivers/net/ethernet/ibm/ibmvnic.c
-+++ b/drivers/net/ethernet/ibm/ibmvnic.c
-@@ -457,8 +457,8 @@ static void release_rx_pools(struct ibmvnic_adapter *adapter)
+diff --git a/drivers/hid/hid-ids.h b/drivers/hid/hid-ids.h
+index 87904d2adadb..fcc688df694c 100644
+--- a/drivers/hid/hid-ids.h
++++ b/drivers/hid/hid-ids.h
+@@ -266,6 +266,9 @@
  
- 		for (j = 0; j < rx_pool->size; j++) {
- 			if (rx_pool->rx_buff[j].skb) {
--				dev_kfree_skb_any(rx_pool->rx_buff[i].skb);
--				rx_pool->rx_buff[i].skb = NULL;
-+				dev_kfree_skb_any(rx_pool->rx_buff[j].skb);
-+				rx_pool->rx_buff[j].skb = NULL;
- 			}
- 		}
+ #define USB_VENDOR_ID_CIDC		0x1677
  
++#define I2C_VENDOR_ID_CIRQUE		0x0488
++#define I2C_PRODUCT_ID_CIRQUE_121F	0x121F
++
+ #define USB_VENDOR_ID_CJTOUCH		0x24b8
+ #define USB_DEVICE_ID_CJTOUCH_MULTI_TOUCH_0020	0x0020
+ #define USB_DEVICE_ID_CJTOUCH_MULTI_TOUCH_0040	0x0040
+diff --git a/drivers/hid/hid-multitouch.c b/drivers/hid/hid-multitouch.c
+index c3b9bd5dba75..07d92d4a9f7c 100644
+--- a/drivers/hid/hid-multitouch.c
++++ b/drivers/hid/hid-multitouch.c
+@@ -1474,6 +1474,12 @@ static const struct hid_device_id mt_devices[] = {
+ 		MT_USB_DEVICE(USB_VENDOR_ID_CHUNGHWAT,
+ 			USB_DEVICE_ID_CHUNGHWAT_MULTITOUCH) },
+ 
++	/* Cirque devices */
++	{ .driver_data = MT_CLS_WIN_8_DUAL,
++		HID_DEVICE(BUS_I2C, HID_GROUP_MULTITOUCH_WIN_8,
++			I2C_VENDOR_ID_CIRQUE,
++			I2C_PRODUCT_ID_CIRQUE_121F) },
++
+ 	/* CJTouch panels */
+ 	{ .driver_data = MT_CLS_NSMU,
+ 		MT_USB_DEVICE(USB_VENDOR_ID_CJTOUCH,
 -- 
 2.19.1
 
