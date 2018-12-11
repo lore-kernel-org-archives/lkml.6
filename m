@@ -4,51 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-11.9 required=3.0
 	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2516C07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:31:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 050CBC67839
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:31:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9EE2720672
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:31:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9EE2720672
+	by mail.kernel.org (Postfix) with ESMTP id BA3BF20672
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:31:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA3BF20672
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727090AbeLKPbL (ORCPT
+        id S1727093AbeLKPbs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 10:31:11 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:38103 "EHLO
+        Tue, 11 Dec 2018 10:31:48 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:55185 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726417AbeLKPbL (ORCPT
+        with ESMTP id S1726417AbeLKPbs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:31:11 -0500
+        Tue, 11 Dec 2018 10:31:48 -0500
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wBBFUovx4041951
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wBBFVO7h4042009
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Tue, 11 Dec 2018 07:30:50 -0800
+        Tue, 11 Dec 2018 07:31:24 -0800
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wBBFUnYX4041948;
-        Tue, 11 Dec 2018 07:30:49 -0800
-Date:   Tue, 11 Dec 2018 07:30:49 -0800
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wBBFVOwi4042005;
+        Tue, 11 Dec 2018 07:31:24 -0800
+Date:   Tue, 11 Dec 2018 07:31:24 -0800
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Mukesh Ojha <tipbot@zytor.com>
-Message-ID: <tip-43b9e4febc66b98d83cc1560196d56ac7fef3c32@git.kernel.org>
-Cc:     mojha@codeaurora.org, jolsa@redhat.com,
-        torvalds@linux-foundation.org, acme@kernel.org, hpa@zytor.com,
-        namhyung@kernel.org, tglx@linutronix.de, mingo@kernel.org,
-        linux-kernel@vger.kernel.org, peterz@infradead.org
-Reply-To: hpa@zytor.com, mingo@kernel.org, tglx@linutronix.de,
-          namhyung@kernel.org, mojha@codeaurora.org, acme@kernel.org,
-          torvalds@linux-foundation.org, jolsa@redhat.com,
-          linux-kernel@vger.kernel.org, peterz@infradead.org
-In-Reply-To: <1543310012-7967-1-git-send-email-mojha@codeaurora.org>
-References: <1543310012-7967-1-git-send-email-mojha@codeaurora.org>
+From:   tip-bot for Vincent Guittot <tipbot@zytor.com>
+Message-ID: <tip-765d0af19f5f388a34bf4533378f8398b72ded46@git.kernel.org>
+Cc:     tglx@linutronix.de, mingo@kernel.org, vincent.guittot@linaro.org,
+        linux-kernel@vger.kernel.org, peterz@infradead.org,
+        torvalds@linux-foundation.org, hpa@zytor.com, efault@gmx.de
+Reply-To: mingo@kernel.org, tglx@linutronix.de, vincent.guittot@linaro.org,
+          hpa@zytor.com, efault@gmx.de, torvalds@linux-foundation.org,
+          peterz@infradead.org, linux-kernel@vger.kernel.org
+In-Reply-To: <1535548752-4434-4-git-send-email-vincent.guittot@linaro.org>
+References: <1535548752-4434-4-git-send-email-vincent.guittot@linaro.org>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf/core: Declare the __percpu attribute on
- non-deref types
-Git-Commit-ID: 43b9e4febc66b98d83cc1560196d56ac7fef3c32
+Subject: [tip:sched/core] sched/topology: Remove the ::smt_gain field from
+ 'struct sched_domain'
+Git-Commit-ID: 765d0af19f5f388a34bf4533378f8398b72ded46
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -62,58 +60,92 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  43b9e4febc66b98d83cc1560196d56ac7fef3c32
-Gitweb:     https://git.kernel.org/tip/43b9e4febc66b98d83cc1560196d56ac7fef3c32
-Author:     Mukesh Ojha <mojha@codeaurora.org>
-AuthorDate: Tue, 27 Nov 2018 14:43:32 +0530
+Commit-ID:  765d0af19f5f388a34bf4533378f8398b72ded46
+Gitweb:     https://git.kernel.org/tip/765d0af19f5f388a34bf4533378f8398b72ded46
+Author:     Vincent Guittot <vincent.guittot@linaro.org>
+AuthorDate: Wed, 29 Aug 2018 15:19:11 +0200
 Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Tue, 11 Dec 2018 15:01:48 +0100
+CommitDate: Tue, 11 Dec 2018 15:16:57 +0100
 
-perf/core: Declare the __percpu attribute on non-deref types
+sched/topology: Remove the ::smt_gain field from 'struct sched_domain'
 
-Sparse reports the current declaration of two perf percpu variables
-with this warning:
+::smt_gain is used to compute the capacity of CPUs of a SMT core with the
+constraint 1 < ::smt_gain < 2 in order to be able to compute number of CPUs
+per core. The field has_free_capacity of struct numa_stat, which was the
+last user of this computation of number of CPUs per core, has been removed
+by:
 
-  warning: incorrect type in initializer (different address spaces)
-         expected void const [noderef] <asn:3>*__vpp_verify
-         got struct perf_cpu_context *<noident>
+  2d4056fafa19 ("sched/numa: Remove numa_has_capacity()")
 
-While it's normally perfectly fine to place GCC attributes anywhere
-in the definition, this particular attribute is for a checking
-compiler's such as Sparse's benefit, which doesn't want __percpu
-on pointers.
+We can now remove this constraint on core capacity and use the defautl value
+SCHED_CAPACITY_SCALE for SMT CPUs. With this remove, SCHED_CAPACITY_SCALE
+becomes the maximum compute capacity of CPUs on every systems. This should
+help to simplify some code and remove fields like rd->max_cpu_capacity
 
-So reorder the attribute to come after the structure type, not after
-the pointer type.
+Furthermore, arch_scale_cpu_capacity() is used with a NULL sd in several other
+places in the code when it wants the capacity of a CPUs to scale
+some metrics like in pelt, deadline or schedutil. In case on SMT, the value
+returned is not the capacity of SMT CPUs but default SCHED_CAPACITY_SCALE.
 
-[ mingo: Rewrote the changelog. ]
+So remove it.
 
-Signed-off-by: Mukesh Ojha <mojha@codeaurora.org>
+Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Jiri Olsa <jolsa@redhat.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Mike Galbraith <efault@gmx.de>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lkml.kernel.org/r/1543310012-7967-1-git-send-email-mojha@codeaurora.org
+Link: http://lkml.kernel.org/r/1535548752-4434-4-git-send-email-vincent.guittot@linaro.org
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- include/linux/perf_event.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ include/linux/sched/topology.h | 1 -
+ kernel/sched/sched.h           | 3 ---
+ kernel/sched/topology.c        | 2 --
+ 3 files changed, 6 deletions(-)
 
-diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
-index 53c500f0ca79..1d5c551a5add 100644
---- a/include/linux/perf_event.h
-+++ b/include/linux/perf_event.h
-@@ -262,8 +262,8 @@ struct pmu {
- 	 */
- 	int				capabilities;
+diff --git a/include/linux/sched/topology.h b/include/linux/sched/topology.h
+index 6b9976180c1e..7fa0bc17cd8c 100644
+--- a/include/linux/sched/topology.h
++++ b/include/linux/sched/topology.h
+@@ -89,7 +89,6 @@ struct sched_domain {
+ 	unsigned int newidle_idx;
+ 	unsigned int wake_idx;
+ 	unsigned int forkexec_idx;
+-	unsigned int smt_gain;
  
--	int * __percpu			pmu_disable_count;
--	struct perf_cpu_context * __percpu pmu_cpu_context;
-+	int __percpu			*pmu_disable_count;
-+	struct perf_cpu_context __percpu *pmu_cpu_context;
- 	atomic_t			exclusive_cnt; /* < 0: cpu; > 0: tsk */
- 	int				task_ctx_nr;
- 	int				hrtimer_interval_ms;
+ 	int nohz_idle;			/* NOHZ IDLE status */
+ 	int flags;			/* See SD_* */
+diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+index 9bde60a11805..ceb896404869 100644
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -1864,9 +1864,6 @@ unsigned long arch_scale_freq_capacity(int cpu)
+ static __always_inline
+ unsigned long arch_scale_cpu_capacity(struct sched_domain *sd, int cpu)
+ {
+-	if (sd && (sd->flags & SD_SHARE_CPUCAPACITY) && (sd->span_weight > 1))
+-		return sd->smt_gain / sd->span_weight;
+-
+ 	return SCHED_CAPACITY_SCALE;
+ }
+ #endif
+diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
+index 8d7f15ba5916..7364e0b427b7 100644
+--- a/kernel/sched/topology.c
++++ b/kernel/sched/topology.c
+@@ -1133,7 +1133,6 @@ sd_init(struct sched_domain_topology_level *tl,
+ 
+ 		.last_balance		= jiffies,
+ 		.balance_interval	= sd_weight,
+-		.smt_gain		= 0,
+ 		.max_newidle_lb_cost	= 0,
+ 		.next_decay_max_lb_cost	= jiffies,
+ 		.child			= child,
+@@ -1164,7 +1163,6 @@ sd_init(struct sched_domain_topology_level *tl,
+ 
+ 	if (sd->flags & SD_SHARE_CPUCAPACITY) {
+ 		sd->imbalance_pct = 110;
+-		sd->smt_gain = 1178; /* ~15% */
+ 
+ 	} else if (sd->flags & SD_SHARE_PKG_RESOURCES) {
+ 		sd->imbalance_pct = 117;
