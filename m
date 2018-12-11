@@ -4,54 +4,54 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6F3CC5CFFE
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:54:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27991C07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:54:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AB86F20855
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:54:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DAE652146D
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:54:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544543687;
-	bh=qDnigAgDMFr5WxE+/KClV0wx2N02yCnw+M2Pnf+hZU8=;
+	s=default; t=1544543691;
+	bh=QrwVrGQDkNr+crhmsDzrRflRFByCb3XiIV1IZ/Yy7bg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=mABYlogiYBeYlYggLuO4Vj2/z2ZEwKy90idUymPFnV9OXYeyv4cUcAiP3hVzGVNMJ
-	 AljEb0pM2GIZuKTqFl3f82HeqpV5jLA4dJJK8kDQHGvFl9FSpd+BqrdIYEPfo9dyfd
-	 U1vF23ltH2dhDODagQwSZftS8D70aam7OEUHdB/M=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB86F20855
+	b=kJ3f4bDuy+K90hmcanXi+z3BMMET2dTR5VvtvApnDJZnX1YyoytkreGIJTP9veJYd
+	 bSBlFa8y5ofmHXlYy4a6gXn0yMagXH7tYzoKx682VpeHPaAHXDpD90hHBsC22Z4YhN
+	 3ycEUC8Mp4WwwnvmjvabfJ+s2s62JKesd+R7UWcw=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DAE652146D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730250AbeLKPyq (ORCPT
+        id S1730263AbeLKPyt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 10:54:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43366 "EHLO mail.kernel.org"
+        Tue, 11 Dec 2018 10:54:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43388 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729515AbeLKPyo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:54:44 -0500
+        id S1730243AbeLKPyq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 10:54:46 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 359C42146E;
-        Tue, 11 Dec 2018 15:54:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AC5442146E;
+        Tue, 11 Dec 2018 15:54:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544543683;
-        bh=qDnigAgDMFr5WxE+/KClV0wx2N02yCnw+M2Pnf+hZU8=;
+        s=default; t=1544543686;
+        bh=QrwVrGQDkNr+crhmsDzrRflRFByCb3XiIV1IZ/Yy7bg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=m4n0+/MuUenII/09cV89AWNlWFd0BTbyfnUonBjrxhNKVPRWYnCxEvlt++kUhHBBB
-         zQBZWuL+ffT0Anuz2qMOyh8XpjjDBqspbut9fp1w5IOZB02JVljLp4fjMpWHCJPW2R
-         2MKcTJTko9XwReZ7Yx/nyKbh7aRTvUJwmX02bKFU=
+        b=yuUmxgVnoliwqpOJ4Iq5DJ6bUs6+Maf4X0aXVoxeEoV/4lyQnowN8ezYQ04yXUDcZ
+         fW7A9aqMCKWg0FlWXS4KGuvVUrIAU+uPm7eNBA91hjFvhL+mDt52n/ZE3V7M/gFtDE
+         xFOmhfYid3bvOmqZHNyaq+PJUOu6d0w4/itgGRCE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Shen Jing <jingx.shen@intel.com>,
-        Saranya Gopal <saranya.gopal@intel.com>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>,
+        stable@vger.kernel.org, Sebastian Ott <sebott@linux.ibm.com>,
+        Ursula Braun <ubraun@linux.ibm.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 023/118] Revert "usb: gadget: ffs: Fix BUG when userland exits with submitted AIO transfers"
-Date:   Tue, 11 Dec 2018 16:40:42 +0100
-Message-Id: <20181211151645.177392726@linuxfoundation.org>
+Subject: [PATCH 4.19 024/118] s390/ism: clear dmbe_mask bit before SMC IRQ handling
+Date:   Tue, 11 Dec 2018 16:40:43 +0100
+Message-Id: <20181211151645.219854857@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181211151644.216668863@linuxfoundation.org>
 References: <20181211151644.216668863@linuxfoundation.org>
@@ -70,90 +70,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit a9c859033f6ec772f8e3228c343bb1321584ae0e ]
+[ Upstream commit 007b656851ed7f94ba0fa358ac3e5d7705da6846 ]
 
-This reverts commit b4194da3f9087dd38d91b40f9bec42d59ce589a8
-since it causes list corruption followed by kernel panic:
+SMC-D stress workload showed connection stalls. Since the firmware
+decides to skip raising an interrupt if the SBA DMBE mask bit is
+still set, this SBA DMBE mask bit should be cleared before the
+IRQ handling in the SMC code runs. Otherwise there are small windows
+possible with missing interrupts for incoming data.
+SMC-D currently does not care about the old value of the SBA DMBE
+mask.
 
-Workqueue: adb ffs_aio_cancel_worker
-RIP: 0010:__list_add_valid+0x4d/0x70
-Call Trace:
-insert_work+0x47/0xb0
-__queue_work+0xf6/0x400
-queue_work_on+0x65/0x70
-dwc3_gadget_giveback+0x44/0x50 [dwc3]
-dwc3_gadget_ep_dequeue+0x83/0x2d0 [dwc3]
-? finish_wait+0x80/0x80
-usb_ep_dequeue+0x1e/0x90
-process_one_work+0x18c/0x3b0
-worker_thread+0x3c/0x390
-? process_one_work+0x3b0/0x3b0
-kthread+0x11e/0x140
-? kthread_create_worker_on_cpu+0x70/0x70
-ret_from_fork+0x3a/0x50
-
-This issue is seen with warm reboot stability testing.
-
-Signed-off-by: Shen Jing <jingx.shen@intel.com>
-Signed-off-by: Saranya Gopal <saranya.gopal@intel.com>
-Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+Acked-by: Sebastian Ott <sebott@linux.ibm.com>
+Signed-off-by: Ursula Braun <ubraun@linux.ibm.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/gadget/function/f_fs.c | 26 ++++++++------------------
- 1 file changed, 8 insertions(+), 18 deletions(-)
+ drivers/s390/net/ism_drv.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/usb/gadget/function/f_fs.c b/drivers/usb/gadget/function/f_fs.c
-index 3ada83d81bda..31e8bf3578c8 100644
---- a/drivers/usb/gadget/function/f_fs.c
-+++ b/drivers/usb/gadget/function/f_fs.c
-@@ -215,7 +215,6 @@ struct ffs_io_data {
+diff --git a/drivers/s390/net/ism_drv.c b/drivers/s390/net/ism_drv.c
+index c0631895154e..8684bcec8ff4 100644
+--- a/drivers/s390/net/ism_drv.c
++++ b/drivers/s390/net/ism_drv.c
+@@ -415,9 +415,9 @@ static irqreturn_t ism_handle_irq(int irq, void *data)
+ 			break;
  
- 	struct mm_struct *mm;
- 	struct work_struct work;
--	struct work_struct cancellation_work;
+ 		clear_bit_inv(bit, bv);
++		ism->sba->dmbe_mask[bit + ISM_DMB_BIT_OFFSET] = 0;
+ 		barrier();
+ 		smcd_handle_irq(ism->smcd, bit + ISM_DMB_BIT_OFFSET);
+-		ism->sba->dmbe_mask[bit + ISM_DMB_BIT_OFFSET] = 0;
+ 	}
  
- 	struct usb_ep *ep;
- 	struct usb_request *req;
-@@ -1073,31 +1072,22 @@ ffs_epfile_open(struct inode *inode, struct file *file)
- 	return 0;
- }
- 
--static void ffs_aio_cancel_worker(struct work_struct *work)
--{
--	struct ffs_io_data *io_data = container_of(work, struct ffs_io_data,
--						   cancellation_work);
--
--	ENTER();
--
--	usb_ep_dequeue(io_data->ep, io_data->req);
--}
--
- static int ffs_aio_cancel(struct kiocb *kiocb)
- {
- 	struct ffs_io_data *io_data = kiocb->private;
--	struct ffs_data *ffs = io_data->ffs;
-+	struct ffs_epfile *epfile = kiocb->ki_filp->private_data;
- 	int value;
- 
- 	ENTER();
- 
--	if (likely(io_data && io_data->ep && io_data->req)) {
--		INIT_WORK(&io_data->cancellation_work, ffs_aio_cancel_worker);
--		queue_work(ffs->io_completion_wq, &io_data->cancellation_work);
--		value = -EINPROGRESS;
--	} else {
-+	spin_lock_irq(&epfile->ffs->eps_lock);
-+
-+	if (likely(io_data && io_data->ep && io_data->req))
-+		value = usb_ep_dequeue(io_data->ep, io_data->req);
-+	else
- 		value = -EINVAL;
--	}
-+
-+	spin_unlock_irq(&epfile->ffs->eps_lock);
- 
- 	return value;
- }
+ 	if (ism->sba->e) {
 -- 
 2.19.1
 
