@@ -2,101 +2,97 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.7 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D03CC07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:16:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43E87C07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:16:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BF4C22084E
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:16:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544545003;
-	bh=qoWOv9u/0EBNJLgDuR9Sw6tatcpwtJ/edl7TInkeCWA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=CZxOrOek6B6qYJ6z9EOfZMIdvUUFwmMc7J/LarGPh+DP1ZZBwsoARQfoXFPS4iOh0
-	 CAP93WIZP7BGep9C2X1mfBD2CNcXbWCiFhkbL1RsOkeCUQFJNAJgQ9FubGu/J9uiYM
-	 Pp1KPDo+9byIPxV2NybcRplUOxFRYyrT9S5S9y/w=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF4C22084E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 0B3FD2084E
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:16:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Ta67NsVV";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ogKCq+TS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B3FD2084E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728654AbeLKPrq (ORCPT
+        id S1728641AbeLKPrp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 10:47:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36162 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728627AbeLKPrm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:47:42 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Tue, 11 Dec 2018 10:47:45 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:49822 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728601AbeLKPrj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 10:47:39 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id CB89460CEC; Tue, 11 Dec 2018 15:47:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1544543258;
+        bh=EvezvSovCiG+rZTuzeY5DBw+q8iht9hDkIOc58MiDAA=;
+        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+        b=Ta67NsVVeuMUWyAkBgBSrOrjQyYbO9k8t+kGRLKcW70usvF1wCdTj4/g0LtPEqR/w
+         1iug6gbnCmD73UPxYWe5v7JTTu/LhsdRluRBjv7Iwe14DqgnnyjM+ToRoHjrDf5prM
+         2f0uAgrY7nut0+DeEC6OEjz4GAooxd+K8WZfmcsU=
+Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 304EA20989;
-        Tue, 11 Dec 2018 15:47:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544543261;
-        bh=qoWOv9u/0EBNJLgDuR9Sw6tatcpwtJ/edl7TInkeCWA=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bM3rxYDUIv4nb8H03rDGpYmleiu6+jHh+FvjVwx/05gJype097ydiq05D5DcicOIg
-         7yJuIP8XqAQECYVXrDa4sZjj+aWM79Ut8oMjyxPH3aKhbxDbOZ5BIBBriFI0AQ7w4c
-         0vJCaDGw9TTWkE6OyshhwKV6/LZCVQLtqpBtO1no=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.4 74/91] ALSA: hda: Add support for AMD Stoney Ridge
-Date:   Tue, 11 Dec 2018 16:41:33 +0100
-Message-Id: <20181211151612.452925185@linuxfoundation.org>
-X-Mailer: git-send-email 2.20.0
-In-Reply-To: <20181211151606.026852373@linuxfoundation.org>
-References: <20181211151606.026852373@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-X-Patchwork-Hint: ignore
+        (Authenticated sender: kvalo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id DE2C160C5F;
+        Tue, 11 Dec 2018 15:47:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1544543256;
+        bh=EvezvSovCiG+rZTuzeY5DBw+q8iht9hDkIOc58MiDAA=;
+        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+        b=ogKCq+TS0VuxcBBubFEu7v6WcJV5pbi/kc0xQLWl53oqmJSCLAyRecneIXe3GRva7
+         CMG3Z+1+8WHWQUiEJLu7qNW8bbhiElhpAtij3NpapO/DqEVmyI7dhrIIJocM1PyK4x
+         R8TsOkN3QQb+BUTB+7Ru3GciyqIjkjFE71zt58U4=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org DE2C160C5F
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+From:   Kalle Valo <kvalo@codeaurora.org>
+To:     Frank Lee <tiny.windzz@gmail.com>
+Cc:     merez@codeaurora.org, davem@davemloft.net,
+        linux-wireless@vger.kernel.org, wil6210@qti.qualcomm.com,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] wireless/wil6210: convert to DEFINE_SHOW_ATTRIBUTE
+References: <20181203132557.12269-1-tiny.windzz@gmail.com>
+        <874lbug2fr.fsf@codeaurora.org>
+        <CAEExFWtc2vRm7k2YpoNae+tOtnusSbVnapU-Wmo7kR-WfY+dzQ@mail.gmail.com>
+        <CAEExFWtqn=-0bq6u_YWhn2YtwVL-eoEEUFkXSU-G5wc4UE=MXg@mail.gmail.com>
+Date:   Tue, 11 Dec 2018 17:47:32 +0200
+In-Reply-To: <CAEExFWtqn=-0bq6u_YWhn2YtwVL-eoEEUFkXSU-G5wc4UE=MXg@mail.gmail.com>
+        (Frank Lee's message of "Tue, 11 Dec 2018 23:28:13 +0800")
+Message-ID: <87ftv412wb.fsf@kamboji.qca.qualcomm.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.4-stable review patch.  If anyone has any objections, please let me know.
+Frank Lee <tiny.windzz@gmail.com> writes:
 
-------------------
+> On Mon, Dec 3, 2018 at 9:36 PM Frank Lee <tiny.windzz@gmail.com> wrote:
+>>
+>> On Mon, Dec 3, 2018 at 9:33 PM Kalle Valo <kvalo@codeaurora.org> wrote:
+>> >
+>> > Yangtao Li <tiny.windzz@gmail.com> writes:
+>> >
+>> > > Use DEFINE_SHOW_ATTRIBUTE macro to simplify the code.
+>> > >
+>> > > Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+>> >
+>> > The prefix for the title should be just "wil6210:", I can fix that.
+> Hi Kalle:
+> Why I can't find it in ath.git?
 
-From: Kai-Heng Feng <kai.heng.feng@canonical.com>
+Because I haven't reviewed and applied it yet. BTW, you can reduce email
+by checking the status from patchwork yourself:
 
-commit 3deef52ce10514ccdebba8e8ab85f9cebd0eb3f7 upstream.
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches#checking_state_of_patches_from_patchwork
 
-It's similar to other AMD audio devices, it also supports D3, which can
-save some power drain.
-
-Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- sound/pci/hda/hda_intel.c |    4 ++++
- 1 file changed, 4 insertions(+)
-
---- a/sound/pci/hda/hda_intel.c
-+++ b/sound/pci/hda/hda_intel.c
-@@ -2363,6 +2363,10 @@ static const struct pci_device_id azx_id
- 	/* AMD Hudson */
- 	{ PCI_DEVICE(0x1022, 0x780d),
- 	  .driver_data = AZX_DRIVER_GENERIC | AZX_DCAPS_PRESET_ATI_SB },
-+	/* AMD Stoney */
-+	{ PCI_DEVICE(0x1022, 0x157a),
-+	  .driver_data = AZX_DRIVER_GENERIC | AZX_DCAPS_PRESET_ATI_SB |
-+			 AZX_DCAPS_PM_RUNTIME },
- 	/* AMD Raven */
- 	{ PCI_DEVICE(0x1022, 0x15e3),
- 	  .driver_data = AZX_DRIVER_GENERIC | AZX_DCAPS_PRESET_ATI_SB |
-
-
+-- 
+Kalle Valo
