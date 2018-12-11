@@ -2,101 +2,128 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D608FC5CFFE
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:54:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A900C07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:57:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9A7E12086D
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:54:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544547283;
-	bh=1ywB8z3U2NPnha7Yi+fI2RReg0XIqXApRroyT5ZHqqc=;
-	h=Subject:To:Cc:References:From:Date:In-Reply-To:List-ID:From;
-	b=zT5GuC2BSxbQCqRY1PW4C9BngFHACqYbqhaTmEqysPWi36jXdpqoINBhi5u3oOzCC
-	 +rENJWmkJTMMSjVoRSPExApvgskqSVZiDhodgNF+4Z2ApL0FwDUpcOXJm+shbQAj0X
-	 QrSxu1R0xjnB+hb48xNm4wdOysiZ8uAUcVh/2100=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A7E12086D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 46C652086D
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:57:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 46C652086D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728122AbeLKQym (ORCPT
+        id S1728150AbeLKQ5Q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 11:54:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45612 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726808AbeLKQym (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 11:54:42 -0500
-Received: from [10.80.45.159] (unknown [71.69.156.42])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9E7E320851;
-        Tue, 11 Dec 2018 16:54:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544547281;
-        bh=1ywB8z3U2NPnha7Yi+fI2RReg0XIqXApRroyT5ZHqqc=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=mHB4+qf4TVEKi4Hi+zYZIMm5ZUY+ez1vmIxiOrqiopaCdkiUdVxb+eOta0Qg+RvPB
-         74TK6mp98gcUEKz0tU66EipLcVd0dorDpekj5FXjb7JEGzp4QZgBbLiNt1x7+Licu9
-         ts6inJKo6lVViof24J7DgrlAUStrHsDT7d4R6KBY=
-Subject: Re: [PATCH v2 1/3] ACPI: Allow PCI to be disabled for reboot
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20181208214644.5374-1-okaya@kernel.org>
- <CAJZ5v0jV+UZ7A46Kiyv6JysoFJ=_ts7O_p3z9F1Uze3OwZdh_Q@mail.gmail.com>
-From:   Sinan Kaya <okaya@kernel.org>
-Message-ID: <4aa65942-bf97-c957-7f77-38bfdf7d1d3a@kernel.org>
-Date:   Tue, 11 Dec 2018 11:54:39 -0500
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.3
-MIME-Version: 1.0
-In-Reply-To: <CAJZ5v0jV+UZ7A46Kiyv6JysoFJ=_ts7O_p3z9F1Uze3OwZdh_Q@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Tue, 11 Dec 2018 11:57:16 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:37324 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726808AbeLKQ5O (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 11:57:14 -0500
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBBGsUkS045485
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 11:57:12 -0500
+Received: from e36.co.us.ibm.com (e36.co.us.ibm.com [32.97.110.154])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2pag3hupre-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 11:57:11 -0500
+Received: from localhost
+        by e36.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <eajames@linux.ibm.com>;
+        Tue, 11 Dec 2018 16:57:09 -0000
+Received: from b03cxnp07029.gho.boulder.ibm.com (9.17.130.16)
+        by e36.co.us.ibm.com (192.168.1.136) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 11 Dec 2018 16:57:07 -0000
+Received: from b03ledav004.gho.boulder.ibm.com (b03ledav004.gho.boulder.ibm.com [9.17.130.235])
+        by b03cxnp07029.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBBGv6QI23265514
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 11 Dec 2018 16:57:06 GMT
+Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 4709778060;
+        Tue, 11 Dec 2018 16:57:06 +0000 (GMT)
+Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 91D027805E;
+        Tue, 11 Dec 2018 16:57:05 +0000 (GMT)
+Received: from talon7.ibm.com (unknown [9.41.179.222])
+        by b03ledav004.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Tue, 11 Dec 2018 16:57:05 +0000 (GMT)
+From:   Eddie James <eajames@linux.ibm.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     mark.rutland@arm.com, devicetree@vger.kernel.org,
+        linux-aspeed@lists.ozlabs.org, hverkuil@xs4all.nl,
+        robh+dt@kernel.org, mchehab@kernel.org,
+        linux-media@vger.kernel.org, Eddie James <eajames@linux.ibm.com>
+Subject: [PATCH v8 1/2] dt-bindings: media: Add Aspeed Video Engine binding documentation
+Date:   Tue, 11 Dec 2018 10:57:00 -0600
+X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <1544547421-25724-1-git-send-email-eajames@linux.ibm.com>
+References: <1544547421-25724-1-git-send-email-eajames@linux.ibm.com>
+X-TM-AS-GCONF: 00
+x-cbid: 18121116-0020-0000-0000-00000E9830D8
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010213; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000270; SDB=6.01130286; UDB=6.00587317; IPR=6.00910419;
+ MB=3.00024655; MTD=3.00000008; XFM=3.00000015; UTC=2018-12-11 16:57:09
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18121116-0021-0000-0000-00006403D804
+Message-Id: <1544547421-25724-2-git-send-email-eajames@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-11_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1812110152
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/11/2018 5:12 AM, Rafael J. Wysocki wrote:
-> On Sat, Dec 8, 2018 at 10:47 PM Sinan Kaya <okaya@kernel.org> wrote:
->>
->> Make PCI reboot conditional on PCI support being present on the kernel
->> configuration.
->>
->> Signed-off-by: Sinan Kaya <okaya@kernel.org>
-> 
-> Same comment as for patch [2/3]: make the subject say clearly that
-> this is about CONFIG_PCI.
+Document the bindings.
 
-Sure
+Signed-off-by: Eddie James <eajames@linux.ibm.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+---
+ .../devicetree/bindings/media/aspeed-video.txt     | 26 ++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/media/aspeed-video.txt
 
->>          case ACPI_ADR_SPACE_PCI_CONFIG:
->> +       {
->> +#ifdef CONFIG_PCI
->> +               unsigned int devfn;
->> +               struct pci_bus *bus0;
->> +
->>                  /* The reset register can only live on bus 0. */
->>                  bus0 = pci_find_bus(0, 0);
->>                  if (!bus0)
->> @@ -45,7 +48,10 @@ void acpi_reboot(void)
->>                  pci_bus_write_config_byte(bus0, devfn,
->>                                  (rr->address & 0xffff), reset_value);
->>                  break;
->> -
->> +#else
->> +               return;
-> 
-> Why not "break"?
-> 
+diff --git a/Documentation/devicetree/bindings/media/aspeed-video.txt b/Documentation/devicetree/bindings/media/aspeed-video.txt
+new file mode 100644
+index 0000000..78b464a
+--- /dev/null
++++ b/Documentation/devicetree/bindings/media/aspeed-video.txt
+@@ -0,0 +1,26 @@
++* Device tree bindings for Aspeed Video Engine
++
++The Video Engine (VE) embedded in the Aspeed AST2400 and AST2500 SOCs can
++capture and compress video data from digital or analog sources.
++
++Required properties:
++ - compatible:		"aspeed,ast2400-video-engine" or
++			"aspeed,ast2500-video-engine"
++ - reg:			contains the offset and length of the VE memory region
++ - clocks:		clock specifiers for the syscon clocks associated with
++			the VE (ordering must match the clock-names property)
++ - clock-names:		"vclk" and "eclk"
++ - resets:		reset specifier for the syscon reset associated with
++			the VE
++ - interrupts:		the interrupt associated with the VE on this platform
++
++Example:
++
++video-engine@1e700000 {
++    compatible = "aspeed,ast2500-video-engine";
++    reg = <0x1e700000 0x20000>;
++    clocks = <&syscon ASPEED_CLK_GATE_VCLK>, <&syscon ASPEED_CLK_GATE_ECLK>;
++    clock-names = "vclk", "eclk";
++    resets = <&syscon ASPEED_RESET_VIDEO>;
++    interrupts = <7>;
++};
+-- 
+1.8.3.1
 
-I struggled between break and return. Existing code seems to return on failure
-when bus0 is NULL. I assumed it would be more logical to return as someone could
-put some code after here that assumes everything is in order.
