@@ -2,163 +2,195 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-11.9 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE93CC5CFFE
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:35:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11F90C07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:36:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 94ED02082F
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:35:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="bta/SaWy";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="gRTW5zh2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 94ED02082F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id CB5C720672
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:36:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB5C720672
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727156AbeLKPf1 (ORCPT
+        id S1727164AbeLKPf7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 10:35:27 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:39106 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726499AbeLKPfZ (ORCPT
+        Tue, 11 Dec 2018 10:35:59 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:45807 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726499AbeLKPf6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:35:25 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 0511F60C64; Tue, 11 Dec 2018 15:35:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1544542524;
-        bh=UTejcDY/XE3AHidaahIJmn23UpUx87hv2SPQ3EFob4c=;
-        h=From:To:Cc:Subject:Date:From;
-        b=bta/SaWyoo+Kn/0HX2gfB1BH6IeyOMaqdM/Q8R1mUgdFaiSUtQjRYdggcazhgszjI
-         RP3LWU+0ArVQrT5dWIhK4pJjxWOnWEZvGDKCQWkEv71jZVpyM6CPHOo69lChPtqqei
-         kIMGdoOpWf69ya9jH67zjK4EoYVLG1TzaPjxtV1I=
-Received: from bgodavar-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: bgodavar@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id D570C60B19;
-        Tue, 11 Dec 2018 15:35:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1544542507;
-        bh=UTejcDY/XE3AHidaahIJmn23UpUx87hv2SPQ3EFob4c=;
-        h=From:To:Cc:Subject:Date:From;
-        b=gRTW5zh29QVQDnP182zT+0MoAldt7GIsuGkEQsB854qV5CMcWYoOKFF5pDnqnNvgq
-         A4fFThDQwbMzHe/fPVrTfYL28hX4hans8Jsrh7SWn4MA33MB+4YnNHa4+cME2bmzBV
-         uLYZlFGo+iKF3Mk04QfkZpv7TmgIlL3eV39+ueQ0=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D570C60B19
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=bgodavar@codeaurora.org
-From:   Balakrishna Godavarthi <bgodavar@codeaurora.org>
-To:     marcel@holtmann.org, johan.hedberg@gmail.com
-Cc:     mka@chromium.org, linux-kernel@vger.kernel.org,
-        linux-bluetooth@vger.kernel.org, hemantg@codeaurora.org,
-        linux-arm-msm@vger.kernel.org,
-        Balakrishna Godavarthi <bgodavar@codeaurora.org>
-Subject: [RESEND v2] Bluetooth: hci_qca: Add helper to set device address
-Date:   Tue, 11 Dec 2018 21:04:50 +0530
-Message-Id: <20181211153450.9764-1-bgodavar@codeaurora.org>
-X-Mailer: git-send-email 2.19.1
+        Tue, 11 Dec 2018 10:35:58 -0500
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wBBFZWPt4042916
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Tue, 11 Dec 2018 07:35:32 -0800
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wBBFZV7K4042913;
+        Tue, 11 Dec 2018 07:35:31 -0800
+Date:   Tue, 11 Dec 2018 07:35:31 -0800
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Quentin Perret <tipbot@zytor.com>
+Message-ID: <tip-b68a4c0dba3b1e1dda1ede49f3c2fc72d3b54567@git.kernel.org>
+Cc:     mingo@kernel.org, peterz@infradead.org, tglx@linutronix.de,
+        linux-kernel@vger.kernel.org, efault@gmx.de,
+        torvalds@linux-foundation.org, quentin.perret@arm.com,
+        hpa@zytor.com
+Reply-To: torvalds@linux-foundation.org, hpa@zytor.com,
+          quentin.perret@arm.com, efault@gmx.de,
+          linux-kernel@vger.kernel.org, peterz@infradead.org,
+          tglx@linutronix.de, mingo@kernel.org
+In-Reply-To: <20181203095628.11858-8-quentin.perret@arm.com>
+References: <20181203095628.11858-8-quentin.perret@arm.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:sched/core] sched/topology: Disable EAS on inappropriate
+ platforms
+Git-Commit-ID: b68a4c0dba3b1e1dda1ede49f3c2fc72d3b54567
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch add qca_set_bdaddr() to set the device
-address for latest Qualcomm Bluetooth chipset wcn3990 and above.
+Commit-ID:  b68a4c0dba3b1e1dda1ede49f3c2fc72d3b54567
+Gitweb:     https://git.kernel.org/tip/b68a4c0dba3b1e1dda1ede49f3c2fc72d3b54567
+Author:     Quentin Perret <quentin.perret@arm.com>
+AuthorDate: Mon, 3 Dec 2018 09:56:20 +0000
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Tue, 11 Dec 2018 15:17:00 +0100
 
-Signed-off-by: Balakrishna Godavarthi <bgodavar@codeaurora.org>
-Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
-Tested-by: Matthias Kaehlcke <mka@chromium.org>
+sched/topology: Disable EAS on inappropriate platforms
+
+Energy Aware Scheduling (EAS) in its current form is most relevant on
+platforms with asymmetric CPU topologies (e.g. Arm big.LITTLE) since
+this is where there is a lot of potential for saving energy through
+scheduling. This is particularly true since the Energy Model only
+includes the active power costs of CPUs, hence not providing enough data
+to compare packing-vs-spreading strategies.
+
+As such, disable EAS on root domains where the SD_ASYM_CPUCAPACITY flag
+is not set. While at it, disable EAS on systems where the complexity of
+the Energy Model is too high since that could lead to unacceptable
+scheduling overhead.
+
+All in all, EAS can be used on a root domain if and only if:
+  1. an Energy Model is available;
+  2. the root domain has an asymmetric CPU capacity topology;
+  3. the complexity of the root domain's EM is low enough to keep
+     scheduling overheads low.
+
+Signed-off-by: Quentin Perret <quentin.perret@arm.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Mike Galbraith <efault@gmx.de>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: adharmap@codeaurora.org
+Cc: chris.redpath@arm.com
+Cc: currojerez@riseup.net
+Cc: dietmar.eggemann@arm.com
+Cc: edubezval@gmail.com
+Cc: gregkh@linuxfoundation.org
+Cc: javi.merino@kernel.org
+Cc: joel@joelfernandes.org
+Cc: juri.lelli@redhat.com
+Cc: morten.rasmussen@arm.com
+Cc: patrick.bellasi@arm.com
+Cc: pkondeti@codeaurora.org
+Cc: rjw@rjwysocki.net
+Cc: skannan@codeaurora.org
+Cc: smuckle@google.com
+Cc: srinivas.pandruvada@linux.intel.com
+Cc: thara.gopinath@linaro.org
+Cc: tkjos@google.com
+Cc: valentin.schneider@arm.com
+Cc: vincent.guittot@linaro.org
+Cc: viresh.kumar@linaro.org
+Link: https://lkml.kernel.org/r/20181203095628.11858-8-quentin.perret@arm.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- drivers/bluetooth/btqca.c   | 19 +++++++++++++++++++
- drivers/bluetooth/btqca.h   |  8 +++++++-
- drivers/bluetooth/hci_qca.c |  5 ++++-
- 3 files changed, 30 insertions(+), 2 deletions(-)
+ kernel/sched/topology.c | 49 ++++++++++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 48 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/bluetooth/btqca.c b/drivers/bluetooth/btqca.c
-index ec9e03a6b778..612268574fc7 100644
---- a/drivers/bluetooth/btqca.c
-+++ b/drivers/bluetooth/btqca.c
-@@ -391,6 +391,25 @@ int qca_uart_setup(struct hci_dev *hdev, uint8_t baudrate,
+diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
+index 137ccfed9a43..6ddb804b2dec 100644
+--- a/kernel/sched/topology.c
++++ b/kernel/sched/topology.c
+@@ -270,12 +270,45 @@ static void destroy_perf_domain_rcu(struct rcu_head *rp)
+ 	free_pd(pd);
  }
- EXPORT_SYMBOL_GPL(qca_uart_setup);
  
-+int qca_set_bdaddr(struct hci_dev *hdev, const bdaddr_t *bdaddr)
-+{
-+	struct sk_buff *skb;
-+	int err;
++/*
++ * EAS can be used on a root domain if it meets all the following conditions:
++ *    1. an Energy Model (EM) is available;
++ *    2. the SD_ASYM_CPUCAPACITY flag is set in the sched_domain hierarchy.
++ *    3. the EM complexity is low enough to keep scheduling overheads low;
++ *
++ * The complexity of the Energy Model is defined as:
++ *
++ *              C = nr_pd * (nr_cpus + nr_cs)
++ *
++ * with parameters defined as:
++ *  - nr_pd:    the number of performance domains
++ *  - nr_cpus:  the number of CPUs
++ *  - nr_cs:    the sum of the number of capacity states of all performance
++ *              domains (for example, on a system with 2 performance domains,
++ *              with 10 capacity states each, nr_cs = 2 * 10 = 20).
++ *
++ * It is generally not a good idea to use such a model in the wake-up path on
++ * very complex platforms because of the associated scheduling overheads. The
++ * arbitrary constraint below prevents that. It makes EAS usable up to 16 CPUs
++ * with per-CPU DVFS and less than 8 capacity states each, for example.
++ */
++#define EM_MAX_COMPLEXITY 2048
 +
-+	skb = __hci_cmd_sync_ev(hdev, EDL_WRITE_BD_ADDR_OPCODE, 6, bdaddr,
-+				HCI_EV_VENDOR, HCI_INIT_TIMEOUT);
-+	if (IS_ERR(skb)) {
-+		err = PTR_ERR(skb);
-+		bt_dev_err(hdev, "QCA Change address cmd failed (%d)", err);
-+		return err;
+ static void build_perf_domains(const struct cpumask *cpu_map)
+ {
++	int i, nr_pd = 0, nr_cs = 0, nr_cpus = cpumask_weight(cpu_map);
+ 	struct perf_domain *pd = NULL, *tmp;
+ 	int cpu = cpumask_first(cpu_map);
+ 	struct root_domain *rd = cpu_rq(cpu)->rd;
+-	int i;
++
++	/* EAS is enabled for asymmetric CPU capacity topologies. */
++	if (!per_cpu(sd_asym_cpucapacity, cpu)) {
++		if (sched_debug()) {
++			pr_info("rd %*pbl: CPUs do not have asymmetric capacities\n",
++					cpumask_pr_args(cpu_map));
++		}
++		goto free;
++	}
+ 
+ 	for_each_cpu(i, cpu_map) {
+ 		/* Skip already covered CPUs. */
+@@ -288,6 +321,20 @@ static void build_perf_domains(const struct cpumask *cpu_map)
+ 			goto free;
+ 		tmp->next = pd;
+ 		pd = tmp;
++
++		/*
++		 * Count performance domains and capacity states for the
++		 * complexity check.
++		 */
++		nr_pd++;
++		nr_cs += em_pd_nr_cap_states(pd->em_pd);
 +	}
 +
-+	kfree_skb(skb);
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(qca_set_bdaddr);
-+
- MODULE_AUTHOR("Ben Young Tae Kim <ytkim@qca.qualcomm.com>");
- MODULE_DESCRIPTION("Bluetooth support for Qualcomm Atheros family ver " VERSION);
- MODULE_VERSION(VERSION);
-diff --git a/drivers/bluetooth/btqca.h b/drivers/bluetooth/btqca.h
-index 0c01f375fe83..c72c56ea7480 100644
---- a/drivers/bluetooth/btqca.h
-+++ b/drivers/bluetooth/btqca.h
-@@ -20,6 +20,7 @@
- 
- #define EDL_PATCH_CMD_OPCODE		(0xFC00)
- #define EDL_NVM_ACCESS_OPCODE		(0xFC0B)
-+#define EDL_WRITE_BD_ADDR_OPCODE	(0xFC14)
- #define EDL_PATCH_CMD_LEN		(1)
- #define EDL_PATCH_VER_REQ_CMD		(0x19)
- #define EDL_PATCH_TLV_REQ_CMD		(0x1E)
-@@ -140,7 +141,7 @@ int qca_set_bdaddr_rome(struct hci_dev *hdev, const bdaddr_t *bdaddr);
- int qca_uart_setup(struct hci_dev *hdev, uint8_t baudrate,
- 		   enum qca_btsoc_type soc_type, u32 soc_ver);
- int qca_read_soc_version(struct hci_dev *hdev, u32 *soc_version);
--
-+int qca_set_bdaddr(struct hci_dev *hdev, const bdaddr_t *bdaddr);
- #else
- 
- static inline int qca_set_bdaddr_rome(struct hci_dev *hdev, const bdaddr_t *bdaddr)
-@@ -159,4 +160,9 @@ static inline int qca_read_soc_version(struct hci_dev *hdev, u32 *soc_version)
- 	return -EOPNOTSUPP;
- }
- 
-+static inline int qca_set_bdaddr(struct hci_dev *hdev, const bdaddr_t *bdaddr)
-+{
-+	return -EOPNOTSUPP;
-+}
-+
- #endif
-diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
-index f036c8f98ea3..53ac5ade532b 100644
---- a/drivers/bluetooth/hci_qca.c
-+++ b/drivers/bluetooth/hci_qca.c
-@@ -1241,7 +1241,10 @@ static int qca_setup(struct hci_uart *hu)
++	/* Bail out if the Energy Model complexity is too high. */
++	if (nr_pd * (nr_cs + nr_cpus) > EM_MAX_COMPLEXITY) {
++		WARN(1, "rd %*pbl: Failed to start EAS, EM complexity is too high\n",
++						cpumask_pr_args(cpu_map));
++		goto free;
  	}
  
- 	/* Setup bdaddr */
--	hu->hdev->set_bdaddr = qca_set_bdaddr_rome;
-+	if (qcadev->btsoc_type == QCA_WCN3990)
-+		hu->hdev->set_bdaddr = qca_set_bdaddr;
-+	else
-+		hu->hdev->set_bdaddr = qca_set_bdaddr_rome;
- 
- 	return ret;
- }
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
-
+ 	perf_domain_debug(cpu_map, pd);
