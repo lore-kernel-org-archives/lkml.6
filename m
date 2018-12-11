@@ -2,220 +2,399 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18D98C67839
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 04:29:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B38B8C07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 04:39:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D3BBC2081B
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 04:29:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E052D20811
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 04:39:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="eeduuePn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D3BBC2081B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="Y0HKxL3A"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E052D20811
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730162AbeLKE3n (ORCPT
+        id S1730175AbeLKEjN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 23:29:43 -0500
-Received: from mail-eopbgr20054.outbound.protection.outlook.com ([40.107.2.54]:21280
-        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728263AbeLKE3m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 23:29:42 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=L/ynTsNgbrPLEPmes7TNEqTAOdfk/nHnBqImnUqjvdc=;
- b=eeduuePn1/CyKanFRAyIsxIk+2J2C07WIzmoKxeC/6ejisets3uP1fDMvNAGFTa6/yg4fKapzFygKMamawdIVUhSUSRJ0dH0eKqsUVGsJysyeXhXCE5ucPm+ViFyRzk3C1n2B0cDhcHc3ZFnEJieHvVzSnRymZK4cktiZHFT7Qc=
-Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com (52.134.72.18) by
- DB3PR0402MB3756.eurprd04.prod.outlook.com (52.134.73.29) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1404.17; Tue, 11 Dec 2018 04:29:29 +0000
-Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com
- ([fe80::adf8:f49d:deb4:58fd]) by DB3PR0402MB3916.eurprd04.prod.outlook.com
- ([fe80::adf8:f49d:deb4:58fd%3]) with mapi id 15.20.1404.026; Tue, 11 Dec 2018
- 04:29:29 +0000
-From:   Anson Huang <anson.huang@nxp.com>
-To:     Phil Reid <preid@electromag.com.au>,
-        "jic23@kernel.org" <jic23@kernel.org>,
-        "knaack.h@gmx.de" <knaack.h@gmx.de>,
-        "lars@metafoo.de" <lars@metafoo.de>,
-        "pmeerw@pmeerw.net" <pmeerw@pmeerw.net>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "festevam@gmail.com" <festevam@gmail.com>
-CC:     dl-linux-imx <linux-imx@nxp.com>
-Subject: RE: [PATCH V4 2/2] iio: light: isl29018: add optional vdd/vdda
- regulator operation support
-Thread-Topic: [PATCH V4 2/2] iio: light: isl29018: add optional vdd/vdda
- regulator operation support
-Thread-Index: AQHUkQD7YnUpJgt5iEONteRFHRrUpKV441EAgAAB1+CAAAO7gIAACLqg
-Date:   Tue, 11 Dec 2018 04:29:29 +0000
-Message-ID: <DB3PR0402MB3916588612090716E066D2ABF5A60@DB3PR0402MB3916.eurprd04.prod.outlook.com>
-References: <1544498291-2716-1-git-send-email-Anson.Huang@nxp.com>
- <1544498291-2716-2-git-send-email-Anson.Huang@nxp.com>
- <d07b5970-5825-2ea6-9e27-538386927923@electromag.com.au>
- <DB3PR0402MB39161ED492C863BB48D48E2FF5A60@DB3PR0402MB3916.eurprd04.prod.outlook.com>
- <0b08c0d1-afe2-5ade-9333-2eb7d57d4db6@electromag.com.au>
-In-Reply-To: <0b08c0d1-afe2-5ade-9333-2eb7d57d4db6@electromag.com.au>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=anson.huang@nxp.com; 
-x-originating-ip: [119.31.174.66]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DB3PR0402MB3756;6:u0V+1ye9g2dkosuN1NFLpbUbGPZ2ZXOwS7PAgUXH40QjKXWY/jo65chXGIcD/YVHm3y+AD7MPej0P22GES2OM+uBcXhcVm2zh/DlQ9L7y8WZOybpaf3IDEQWIsqAKj8kMnKVHAmAG3232U8luJkltzcn096UHhEgLqUSTrocb9E9B91LoG8w8F2/MQ0xgrAFC9o/aBLv5ceDi7Ubb3OIwP+aDFC2aXgwEXIDdGnJ2RULAim0lpBKPlrcC1N5FhO+o6+Syo/RGgVC56pYWn7hEuXvWFReftrtRmVFuCA2MoDBYS0oBsHaalpaWm4z8Q8plCq1qwt5MCV4HuA/WaF6vXWTWmXSB0gcOxvRoieqg5W5asmPzx6nOIJGdWhZK9bNzCEu/HTv20rSFzzsGEpWs2Pi1nwMKN+2wMJG/OqM5TFp/zA9KAAeb30Xso02q6qulHFAXtiqXC1/xVz8YCp1HQ==;5:PGpbXnQHdvyb1zTgYFc5t6Zd8koekw8Mh/3Z5AXBtZyZZS6BBNNk5vj7zpawjGxdXwqmI+AEt2HlpdH4U8+CBIrQBJEhPSVqoWYFndQuMxVniW7dDbGngvpDD1kpptbw4fbITtWKLOuSP2KXm6ur+F0TF+4ycgyjs5ryk7B03Z0=;7:JuDw1rv1O3ATmU0JvknGvnPU5pSoedYBbyAor+W8WR3j8df7ZOm0DKjlb94LKK1NRHaFDzHO59IzZqjboDqktPA8vEAla767uyW0gb5l5T6EAk3InjbcNthYM5+ebUg+8QK0bNp7ej3id2RWxSwalg==
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: af2c02d4-ee34-4ed6-458b-08d65f213e0d
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:DB3PR0402MB3756;
-x-ms-traffictypediagnostic: DB3PR0402MB3756:
-x-microsoft-antispam-prvs: <DB3PR0402MB3756A6FCA87B0005EDFA41CFF5A60@DB3PR0402MB3756.eurprd04.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230017)(999002)(6040522)(2401047)(8121501046)(5005006)(10201501046)(3231472)(944501520)(52105112)(93006095)(93001095)(3002001)(6055026)(148016)(149066)(150057)(6041310)(20161123562045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123564045)(201708071742011)(7699051)(76991095);SRVR:DB3PR0402MB3756;BCL:0;PCL:0;RULEID:;SRVR:DB3PR0402MB3756;
-x-forefront-prvs: 08831F51DC
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(376002)(346002)(366004)(39860400002)(136003)(199004)(189003)(13464003)(54534003)(106356001)(6246003)(93886005)(4326008)(105586002)(2501003)(44832011)(5660300001)(81156014)(53936002)(8936002)(8676002)(2201001)(55016002)(81166006)(86362001)(9686003)(68736007)(6436002)(97736004)(7696005)(3846002)(446003)(99286004)(11346002)(71200400001)(76176011)(476003)(26005)(71190400001)(102836004)(6116002)(186003)(110136005)(316002)(486006)(229853002)(2906002)(39060400002)(14454004)(25786009)(74316002)(7736002)(305945005)(478600001)(7416002)(256004)(66066001)(14444005)(6506007)(33656002)(53546011)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:DB3PR0402MB3756;H:DB3PR0402MB3916.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: tMG4MGGDwqEa9tcONPKtblgQPJPESqWUvLk9DMuz2bTybsgvBWeb4Oth2XLuAhy9Et6RtTIx8UHTlDIT+25AJYBk/+VI8kDXNgCqOip5pG5eK4c4fnXWD2+8sTIrOc5ou67FVBKZDMtbw6LKFf8ndD1dgTckAmuDNtFofIp5EqOnY4pgrz61n6waYRta1u9lMmPu2TSwuSmKMBAuBsbfk3pLKQ86nCWun+DnDKDSkPSAMsDcuUg2OYIbhwG5DviWSq1s6E+z94slRyF0Wxu7lKVngRgIXhqrn5sifjI63ZGF3ZcxrRy/2plUxh60c6sH
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Mon, 10 Dec 2018 23:39:13 -0500
+Received: from conssluserg-06.nifty.com ([210.131.2.91]:49357 "EHLO
+        conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729060AbeLKEjN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Dec 2018 23:39:13 -0500
+Received: from mail-vs1-f49.google.com (mail-vs1-f49.google.com [209.85.217.49]) (authenticated)
+        by conssluserg-06.nifty.com with ESMTP id wBB4d3a0009060;
+        Tue, 11 Dec 2018 13:39:04 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-06.nifty.com wBB4d3a0009060
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1544503144;
+        bh=Oood8TAfVHUh/TERJE8Q4Ksf5SJWTHtrCaWvyC4Mju8=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=Y0HKxL3AnARq5Mj2gyJpZZ6sQrKP6ZAgmjNbwPLaIMEF4bKHgWUDPnt3ulxxZoVSe
+         mSlb+/iQNf8A4HAq1EXJd5yHuOEnsGZ8KJRahw2uAOL3kgPgUx72wOz5QLWh/NUuFv
+         0p0oPMI61kAE7TMOrsPAY0CPK1vTOyRrItjb8oBZLAskzLfA3nx0Q5mpvmu6HE9ZiD
+         ofQk0LWIDm3m1qJ95/yb8pspspuJinJcJD5pDvVcWBzqYTOh6+F/BsKe1sZ6g5YC2c
+         9t9Ukq5KAehLglzo5H6z7FyIrXTIKWAgPgla781nOgPBGWGCHskM93Zfqro0Rma1r4
+         MTz1oT9FiF/0A==
+X-Nifty-SrcIP: [209.85.217.49]
+Received: by mail-vs1-f49.google.com with SMTP id y27so8124952vsi.1;
+        Mon, 10 Dec 2018 20:39:04 -0800 (PST)
+X-Gm-Message-State: AA+aEWaetB/GT608mt8WhZEBOTMHc7rsSWPAqnnmjA4OXVdhdx3ZjZmd
+        dHVpeGb+DBHtXrFbKzBAjfI63w6AItehEpZ+rNc=
+X-Google-Smtp-Source: AFSGD/WSCxoASVkdjL9j1CKQvTKRwFY3nYisnYvF2RHWQfsjn1uHbVVxpY3tjniQHMF/s702uLv6NKca+Msq9AIZWt4=
+X-Received: by 2002:a67:a858:: with SMTP id r85mr6427130vse.215.1544503142862;
+ Mon, 10 Dec 2018 20:39:02 -0800 (PST)
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: af2c02d4-ee34-4ed6-458b-08d65f213e0d
-X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Dec 2018 04:29:29.8440
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB3PR0402MB3756
+References: <20181210203225.11179-1-robh@kernel.org>
+In-Reply-To: <20181210203225.11179-1-robh@kernel.org>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Tue, 11 Dec 2018 13:38:26 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAThtAOy4PQiYZ2X0oWrHdcLi7on8ctSXJ=bfT0HNh7NFQ@mail.gmail.com>
+Message-ID: <CAK7LNAThtAOy4PQiYZ2X0oWrHdcLi7on8ctSXJ=bfT0HNh7NFQ@mail.gmail.com>
+Subject: Re: [PATCH v3] kbuild: Add support for DT binding schema checks
+To:     Rob Herring <robh@kernel.org>
+Cc:     DTML <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        darknighte@darknighte.com, Frank Rowand <frowand.list@gmail.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        grant.likely@arm.com, Kumar Gala <kumar.gala@linaro.org>,
+        arm-soc <arm@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGksIFBoaWwNCg0KQmVzdCBSZWdhcmRzIQ0KQW5zb24gSHVhbmcNCg0KPiAtLS0tLU9yaWdpbmFs
-IE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBQaGlsIFJlaWQgW21haWx0bzpwcmVpZEBlbGVjdHJvbWFn
-LmNvbS5hdV0NCj4gU2VudDogMjAxOOW5tDEy5pyIMTHml6UgMTE6NTYNCj4gVG86IEFuc29uIEh1
-YW5nIDxhbnNvbi5odWFuZ0BueHAuY29tPjsgamljMjNAa2VybmVsLm9yZzsNCj4ga25hYWNrLmhA
-Z214LmRlOyBsYXJzQG1ldGFmb28uZGU7IHBtZWVyd0BwbWVlcncubmV0Ow0KPiByb2JoK2R0QGtl
-cm5lbC5vcmc7IG1hcmsucnV0bGFuZEBhcm0uY29tOyBsaW51eC1paW9Admdlci5rZXJuZWwub3Jn
-Ow0KPiBkZXZpY2V0cmVlQHZnZXIua2VybmVsLm9yZzsgbGludXgta2VybmVsQHZnZXIua2VybmVs
-Lm9yZzsNCj4gZmVzdGV2YW1AZ21haWwuY29tDQo+IENjOiBkbC1saW51eC1pbXggPGxpbnV4LWlt
-eEBueHAuY29tPg0KPiBTdWJqZWN0OiBSZTogW1BBVENIIFY0IDIvMl0gaWlvOiBsaWdodDogaXNs
-MjkwMTg6IGFkZCBvcHRpb25hbCB2ZGQvdmRkYQ0KPiByZWd1bGF0b3Igb3BlcmF0aW9uIHN1cHBv
-cnQNCj4gDQo+IEcnZGF5IEFuc29uLA0KPiANCj4gSnVzdCBwdWxsZWQgdXAgdGhlIGRhdGFzaGVl
-dCBmb3IgdGhpcyBjaGlwLg0KPiANCj4gVGhlIGFic29sdXRlIG1heCBmb3IgVmRkYSBpcyBzcGVj
-ZWQgYXMgVmRkZCArLy0wLjUgV2l0aCBhIG5vdGUgdGhhdCBWZGRhDQo+IHNob3VsZCBiZSBleHRl
-cm5hbGx5IHNob3J0ZWQgdG8gVmRkZC4NCg0KVGhlIGRhdGEgc2hlZXQgc2F5cyB2ZGRhIHNob3Vs
-ZCBiZSBjb25uZWN0ZWQgdG8gdmRkIGV4dGVybmFsbHksIHRoZW4gSSB0aGluayB3ZSBzaG91bGQg
-anVzdA0KdXNlIG9uZSByZWd1bGF0b3IgdmRkLCB0aGVuIGl0IHdpbGwgYmUgbXVjaCBlYXNpZXIg
-Zm9yIHRoZSBkcml2ZXIsIHdoYXQgZG8geW91IHRoaW5rPw0KDQpBbnNvbi4NCg0KPiANCj4gDQo+
-IE9uIDExLzEyLzIwMTggMTE6NDMgYW0sIEFuc29uIEh1YW5nIHdyb3RlOg0KPiA+IEhpLCBQaGls
-DQo+ID4NCj4gPiBCZXN0IFJlZ2FyZHMhDQo+ID4gQW5zb24gSHVhbmcNCj4gPg0KPiA+PiAtLS0t
-LU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiA+PiBGcm9tOiBQaGlsIFJlaWQgW21haWx0bzpwcmVp
-ZEBlbGVjdHJvbWFnLmNvbS5hdV0NCj4gPj4gU2VudDogMjAxOOW5tDEy5pyIMTHml6UgMTE6MzYN
-Cj4gPj4gVG86IEFuc29uIEh1YW5nIDxhbnNvbi5odWFuZ0BueHAuY29tPjsgamljMjNAa2VybmVs
-Lm9yZzsNCj4gPj4ga25hYWNrLmhAZ214LmRlOyBsYXJzQG1ldGFmb28uZGU7IHBtZWVyd0BwbWVl
-cncubmV0Ow0KPiA+PiByb2JoK2R0QGtlcm5lbC5vcmc7IG1hcmsucnV0bGFuZEBhcm0uY29tOyBs
-aW51eC1paW9Admdlci5rZXJuZWwub3JnOw0KPiA+PiBkZXZpY2V0cmVlQHZnZXIua2VybmVsLm9y
-ZzsgbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZzsNCj4gPj4gZmVzdGV2YW1AZ21haWwuY29t
-DQo+ID4+IENjOiBkbC1saW51eC1pbXggPGxpbnV4LWlteEBueHAuY29tPg0KPiA+PiBTdWJqZWN0
-OiBSZTogW1BBVENIIFY0IDIvMl0gaWlvOiBsaWdodDogaXNsMjkwMTg6IGFkZCBvcHRpb25hbA0K
-PiA+PiB2ZGQvdmRkYSByZWd1bGF0b3Igb3BlcmF0aW9uIHN1cHBvcnQNCj4gPj4NCj4gPj4gT24g
-MTEvMTIvMjAxOCAxMToyNCBhbSwgQW5zb24gSHVhbmcgd3JvdGU6DQo+ID4+PiBUaGUgbGlnaHQg
-c2Vuc29yJ3MgcG93ZXIgc3VwcGx5IGNvdWxkIGJlIGNvbnRyb2xsZWQgYnkgcmVndWxhdG9yIG9u
-DQo+ID4+PiBzb21lIHBsYXRmb3Jtcywgc3VjaCBhcyBpLk1YNlEtU0FCUkVTRCBib2FyZCwgdGhl
-IGxpZ2h0IHNlbnNvcg0KPiA+Pj4gaXNsMjkwMjMncyBwb3dlciBzdXBwbHkgaXMgY29udHJvbGxl
-ZCBieSBhIEdQSU8gZml4ZWQgcmVndWxhdG9yLA0KPiA+Pj4gbmVlZCB0byBtYWtlIHN1cmUgdGhl
-IHJlZ3VsYXRvciBpcyBlbmFibGVkIGJlZm9yZSBhbnkgb3BlcmF0aW9uIG9mDQo+ID4+PiBzZW5z
-b3IsIHRoaXMgcGF0Y2ggYWRkcyBvcHRpb25hbCB2ZGQvdmRkYSByZWd1bGF0b3Igb3BlcmF0aW9u
-IHN1cHBvcnQuDQo+ID4+Pg0KPiA+Pj4gU2lnbmVkLW9mZi1ieTogQW5zb24gSHVhbmcgPEFuc29u
-Lkh1YW5nQG54cC5jb20+DQo+ID4+PiAtLS0NCj4gPj4+IENoYW5nZUxvZyBzaW5jZSBWMzoNCj4g
-Pj4+IAktIGltcHJvdmUgdGhlIGVycm9yIGhhbmRsaW5nIG9mIGRldm1fcmVndWxhdG9yX2dldF9v
-cHRpb25hbDsNCj4gPj4+IAktIG1ha2Ugc3VyZSByZWd1bGF0b3JzIGFyZSBkaXNhYmxlZCBpbiBl
-cnJvciBwYXRoLg0KPiA+Pj4gLS0tDQo+ID4+PiAgICBkcml2ZXJzL2lpby9saWdodC9pc2wyOTAx
-OC5jIHwgODMNCj4gPj4gKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysr
-LS0NCj4gPj4+ICAgIDEgZmlsZSBjaGFuZ2VkLCA4MCBpbnNlcnRpb25zKCspLCAzIGRlbGV0aW9u
-cygtKQ0KPiA+Pj4NCj4gPj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2lpby9saWdodC9pc2wyOTAx
-OC5jDQo+ID4+PiBiL2RyaXZlcnMvaWlvL2xpZ2h0L2lzbDI5MDE4LmMgaW5kZXggYjQ1NDAwZi4u
-YTIxNjUyYiAxMDA2NDQNCj4gPj4+IC0tLSBhL2RyaXZlcnMvaWlvL2xpZ2h0L2lzbDI5MDE4LmMN
-Cj4gPj4+ICsrKyBiL2RyaXZlcnMvaWlvL2xpZ2h0L2lzbDI5MDE4LmMNCj4gPj4+IEBAIC0yMyw2
-ICsyMyw3IEBADQo+ID4+PiAgICAjaW5jbHVkZSA8bGludXgvbXV0ZXguaD4NCj4gPj4+ICAgICNp
-bmNsdWRlIDxsaW51eC9kZWxheS5oPg0KPiA+Pj4gICAgI2luY2x1ZGUgPGxpbnV4L3JlZ21hcC5o
-Pg0KPiA+Pj4gKyNpbmNsdWRlIDxsaW51eC9yZWd1bGF0b3IvY29uc3VtZXIuaD4NCj4gPj4+ICAg
-ICNpbmNsdWRlIDxsaW51eC9zbGFiLmg+DQo+ID4+PiAgICAjaW5jbHVkZSA8bGludXgvaWlvL2lp
-by5oPg0KPiA+Pj4gICAgI2luY2x1ZGUgPGxpbnV4L2lpby9zeXNmcy5oPg0KPiA+Pj4gQEAgLTk1
-LDYgKzk2LDggQEAgc3RydWN0IGlzbDI5MDE4X2NoaXAgew0KPiA+Pj4gICAgCXN0cnVjdCBpc2wy
-OTAxOF9zY2FsZQlzY2FsZTsNCj4gPj4+ICAgIAlpbnQJCQlwcm94X3NjaGVtZTsNCj4gPj4+ICAg
-IAlib29sCQkJc3VzcGVuZGVkOw0KPiA+Pj4gKwlzdHJ1Y3QgcmVndWxhdG9yCSp2ZGRfcmVnOw0K
-PiA+Pj4gKwlzdHJ1Y3QgcmVndWxhdG9yCSp2ZGRhX3JlZzsNCj4gPj4+ICAgIH07DQo+ID4+Pg0K
-PiA+Pj4gICAgc3RhdGljIGludCBpc2wyOTAxOF9zZXRfaW50ZWdyYXRpb25fdGltZShzdHJ1Y3Qg
-aXNsMjkwMThfY2hpcA0KPiA+Pj4gKmNoaXAsIEBAIC03MzUsNiArNzM4LDM0IEBAIHN0YXRpYyBp
-bnQgaXNsMjkwMThfcHJvYmUoc3RydWN0DQo+ID4+PiBpMmNfY2xpZW50ICpjbGllbnQsDQo+ID4+
-Pg0KPiA+Pj4gICAgCW11dGV4X2luaXQoJmNoaXAtPmxvY2spOw0KPiA+Pj4NCj4gPj4+ICsJY2hp
-cC0+dmRkX3JlZyA9IGRldm1fcmVndWxhdG9yX2dldF9vcHRpb25hbCgmY2xpZW50LT5kZXYsICJ2
-ZGQiKTsNCj4gPj4+ICsJaWYgKCFJU19FUlIoY2hpcC0+dmRkX3JlZykpIHsNCj4gPj4+ICsJCWVy
-ciA9IHJlZ3VsYXRvcl9lbmFibGUoY2hpcC0+dmRkX3JlZyk7DQo+ID4+PiArCQlpZiAoZXJyKSB7
-DQo+ID4+PiArCQkJZGV2X2VycigmY2xpZW50LT5kZXYsICJmYWlsZWQgdG8gZW5hYmxlIFZERCBy
-ZWd1bGF0b3JcbiIpOw0KPiA+Pj4gKwkJCXJldHVybiBlcnI7DQo+ID4+PiArCQl9DQo+ID4+PiAr
-CX0gZWxzZSB7DQo+ID4+PiArCQllcnIgPSBQVFJfRVJSKGNoaXAtPnZkZF9yZWcpOw0KPiA+Pj4g
-KwkJaWYgKGVyciAhPSAtRU5PREVWKQ0KPiA+Pj4gKwkJCXJldHVybiBlcnI7DQo+ID4+PiArCX0N
-Cj4gPj4+ICsNCj4gPj4+ICsJY2hpcC0+dmRkYV9yZWcgPSBkZXZtX3JlZ3VsYXRvcl9nZXRfb3B0
-aW9uYWwoJmNsaWVudC0+ZGV2LA0KPiAidmRkYSIpOw0KPiA+Pj4gKwlpZiAoIUlTX0VSUihjaGlw
-LT52ZGRhX3JlZykpIHsNCj4gPj4+ICsJCWVyciA9IHJlZ3VsYXRvcl9lbmFibGUoY2hpcC0+dmRk
-YV9yZWcpOw0KPiA+Pj4gKwkJaWYgKGVycikgew0KPiA+Pj4gKwkJCWRldl9lcnIoJmNsaWVudC0+
-ZGV2LCAiZmFpbGVkIHRvIGVuYWJsZSBWRERBDQo+IHJlZ3VsYXRvclxuIik7DQo+ID4+PiArCQkJ
-aWYgKCFJU19FUlIoY2hpcC0+dmRkX3JlZykpDQo+ID4+PiArCQkJCXJlZ3VsYXRvcl9kaXNhYmxl
-KGNoaXAtPnZkZF9yZWcpOw0KPiA+Pj4gKwkJCXJldHVybiBlcnI7DQo+IE5vdCBzdXJlIGFib3V0
-IHRoaXMgY2FzZSBhdCB0aGUgY2FsbCB0byBlbmFibGUgZmFpbGVkIHNvIEkgdGhpbmsgeW91IG9u
-bHkgd2FudA0KPiB0aGUgZmlyc3Qgb25lIHRvIGJlIGRpc2FibGVkLg0KPiBZb3UgY291bGQgYWRk
-IGFub3RoZXIgZ290byBzdGF0ZW1lbnQgdGhvdSwgc2VlIGJlbG93Lg0KPiANCj4gDQo+ID4+PiAr
-CQl9DQo+ID4+PiArCX0gZWxzZSB7DQo+ID4+PiArCQllcnIgPSBQVFJfRVJSKGNoaXAtPnZkZGFf
-cmVnKTsNCj4gPj4+ICsJCWlmIChlcnIgIT0gLUVOT0RFVikNCj4gPj4+ICsJCQlyZXR1cm4gZXJy
-Ow0KPiA+PiBtYXliZSBnb3RvIGRpc2FibGVfcmVndWxhdG9yczsgdG8gZGlzYWJsZSB2ZGQuDQo+
-ID4NCj4gPiBBZ3JlZSwgSSB3aWxsIHVzZSAiIGdvdG8gZGlzYWJsZV9yZWd1bGF0b3JzOyIgaW4g
-Ym90aCBoZXJlIGFuZCB1cHBlciByZWd1bGF0b3INCj4gZW5hYmxlIGZhaWwgY2FzZS4NCj4gPiBQ
-bGVhc2UgaGVscCByZXZpZXcgVjUsIHRoYW5rcy4NCj4gDQo+IEhlcmUgaXRzIHNhZmUgdG8gY2Fs
-bCBib3RoIGFzIHZkZGFfcmVnIHdpbGwgYmUgYW4gZXJyb3IgcHRyLg0KPiANCj4gPg0KPiA+IEFu
-c29uDQo+ID4NCj4gPj4NCj4gPj4+ICsJfQ0KPiA+Pj4gKw0KPiA+Pj4gICAgCWNoaXAtPnR5cGUg
-PSBkZXZfaWQ7DQo+ID4+PiAgICAJY2hpcC0+Y2FsaWJzY2FsZSA9IDE7DQo+ID4+PiAgICAJY2hp
-cC0+dWNhbGlic2NhbGUgPSAwOw0KPiA+Pj4gQEAgLTc0NywxMiArNzc4LDEyIEBAIHN0YXRpYyBp
-bnQgaXNsMjkwMThfcHJvYmUoc3RydWN0IGkyY19jbGllbnQNCj4gKmNsaWVudCwNCj4gPj4+ICAg
-IAlpZiAoSVNfRVJSKGNoaXAtPnJlZ21hcCkpIHsNCj4gPj4+ICAgIAkJZXJyID0gUFRSX0VSUihj
-aGlwLT5yZWdtYXApOw0KPiA+Pj4gICAgCQlkZXZfZXJyKCZjbGllbnQtPmRldiwgInJlZ21hcCBp
-bml0aWFsaXphdGlvbiBmYWlsczogJWRcbiIsIGVycik7DQo+ID4+PiAtCQlyZXR1cm4gZXJyOw0K
-PiA+Pj4gKwkJZ290byBkaXNhYmxlX3JlZ3VsYXRvcnM7DQo+ID4+PiAgICAJfQ0KPiA+Pj4NCj4g
-Pj4+ICAgIAllcnIgPSBpc2wyOTAxOF9jaGlwX2luaXQoY2hpcCk7DQo+ID4+PiAgICAJaWYgKGVy
-cikNCj4gPj4+IC0JCXJldHVybiBlcnI7DQo+ID4+PiArCQlnb3RvIGRpc2FibGVfcmVndWxhdG9y
-czsNCj4gPj4+DQo+ID4+PiAgICAJaW5kaW9fZGV2LT5pbmZvID0gaXNsMjkwMThfY2hpcF9pbmZv
-X3RibFtkZXZfaWRdLmluZGlvX2luZm87DQo+ID4+PiAgICAJaW5kaW9fZGV2LT5jaGFubmVscyA9
-IGlzbDI5MDE4X2NoaXBfaW5mb190YmxbZGV2X2lkXS5jaGFubmVsczsNCj4gPj4+IEBAIC03NjEs
-MTMgKzc5MiwyNCBAQCBzdGF0aWMgaW50IGlzbDI5MDE4X3Byb2JlKHN0cnVjdCBpMmNfY2xpZW50
-DQo+ICpjbGllbnQsDQo+ID4+PiAgICAJaW5kaW9fZGV2LT5kZXYucGFyZW50ID0gJmNsaWVudC0+
-ZGV2Ow0KPiA+Pj4gICAgCWluZGlvX2Rldi0+bW9kZXMgPSBJTkRJT19ESVJFQ1RfTU9ERTsNCj4g
-Pj4+DQo+ID4+PiAtCXJldHVybiBkZXZtX2lpb19kZXZpY2VfcmVnaXN0ZXIoJmNsaWVudC0+ZGV2
-LCBpbmRpb19kZXYpOw0KPiA+Pj4gKwllcnIgPSBkZXZtX2lpb19kZXZpY2VfcmVnaXN0ZXIoJmNs
-aWVudC0+ZGV2LCBpbmRpb19kZXYpOw0KPiA+Pj4gKwlpZiAoIWVycikNCj4gPj4+ICsJCXJldHVy
-biAwOw0KPiA+Pj4gKw0KPiA+Pj4gK2Rpc2FibGVfcmVndWxhdG9yczoNCj4gPj4+ICsJaWYgKCFJ
-U19FUlIoY2hpcC0+dmRkX3JlZykpDQo+ID4+PiArCQlyZWd1bGF0b3JfZGlzYWJsZShjaGlwLT52
-ZGRfcmVnKTsNCj4gPj4+ICsJaWYgKCFJU19FUlIoY2hpcC0+dmRkYV9yZWcpKQ0KPiA+Pj4gKwkJ
-cmVndWxhdG9yX2Rpc2FibGUoY2hpcC0+dmRkYV9yZWcpOw0KPiA+Pj4gKw0KPiBlZzogZXh0cmEg
-bGFiZWwgaGVyZS4NCj4gT3JkZXIgaXMgY2hhbmdlZCB0aG91LCB3aGljaCBtYXkgYmUgYSBwcm9i
-bGVtLg0KPiBJdCdzIGluIHRoZSByZXZlcnNlIG9yZGVyIHRvIHRoZSBlbmFibGUsIHdoaWNoIGlz
-IHVzdWFsbHkgd2hhdCB5b3Ugd2FudCBidXQgdGhlDQo+IGRhdGFzaGVldCBjb25jZXJucyBhYm92
-ZSBtYXkgYmUgYW4gaXNzdWUuDQo+IA0KPiANCj4gZGlzYWJsZV9yZWd1bGF0b3JzOg0KPiAJaWYg
-KCFJU19FUlIoY2hpcC0+dmRkYV9yZWcpKQ0KPiAJCXJlZ3VsYXRvcl9kaXNhYmxlKGNoaXAtPnZk
-ZGFfcmVnKTsNCj4gZGlzYWJsZV9yZWd1bGF0b3JfdmRkOg0KPiAJaWYgKCFJU19FUlIoY2hpcC0+
-dmRkX3JlZykpDQo+IAkJcmVndWxhdG9yX2Rpc2FibGUoY2hpcC0+dmRkX3JlZyk7DQo+IA0KPiA+
-Pj4gKwlyZXR1cm4gZXJyOw0KPiA+Pj4gICAgfQ0KPiA+Pj4NCj4gPj4gW3NuaXBdDQo+ID4+DQo+
-IA0KPiANCj4gDQo+IC0tDQo+IFJlZ2FyZHMNCj4gUGhpbA0K
+Hi Rob,
+
+On Tue, Dec 11, 2018 at 5:50 AM Rob Herring <robh@kernel.org> wrote:
+>
+> This adds the build infrastructure for checking DT binding schema
+> documents and validating dts files using the binding schema.
+>
+> Check DT binding schema documents:
+> make dt_binding_check
+>
+> Build dts files and check using DT binding schema:
+> make dtbs_check
+>
+> Optionally, DT_SCHEMA_FILES can passed in with a schema file(s) to use
+
+
+Perhaps, "can be passed" ?
+
+
+
+> for validation. This makes it easier to find and fix errors generated by
+> a specific schema.
+>
+> Currently, the validation targets are separate from a normal build to
+> avoid a hard dependency on the external DT schema project and because
+> there are lots of warnings generated.
+>
+> Cc: Jonathan Corbet <corbet@lwn.net>
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
+> Cc: Michal Marek <michal.lkml@markovi.net>
+> Cc: linux-doc@vger.kernel.org
+> Cc: devicetree@vger.kernel.org
+> Cc: linux-kbuild@vger.kernel.org
+> Signed-off-by: Rob Herring <robh@kernel.org>
+> ---
+> v3:
+> - Fix error causing only 1st schema file to get used.
+> - Add a more useful error message when dtc is missing YAML support
+> telling the user they need to install libyaml devel package.
+>
+>
+>  .gitignore                                   |  1 +
+>  Documentation/Makefile                       |  2 +-
+>  Documentation/devicetree/bindings/.gitignore |  1 +
+>  Documentation/devicetree/bindings/Makefile   | 33 +++++++++++++++++
+>  Makefile                                     | 11 ++++--
+>  scripts/Makefile.lib                         | 37 ++++++++++++++++++--
+>  6 files changed, 80 insertions(+), 5 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/.gitignore
+>  create mode 100644 Documentation/devicetree/bindings/Makefile
+>
+> diff --git a/.gitignore b/.gitignore
+> index 97ba6b79834c..a20ac26aa2f5 100644
+> --- a/.gitignore
+> +++ b/.gitignore
+> @@ -15,6 +15,7 @@
+>  *.bin
+>  *.bz2
+>  *.c.[012]*.*
+> +*.dt.yaml
+>  *.dtb
+>  *.dtb.S
+>  *.dwo
+> diff --git a/Documentation/Makefile b/Documentation/Makefile
+> index 2ca77ad0f238..9786957c6a35 100644
+> --- a/Documentation/Makefile
+> +++ b/Documentation/Makefile
+> @@ -2,7 +2,7 @@
+>  # Makefile for Sphinx documentation
+>  #
+>
+> -subdir-y :=
+> +subdir-y := devicetree/bindings/
+>
+>  # You can set these variables from the command line.
+>  SPHINXBUILD   = sphinx-build
+> diff --git a/Documentation/devicetree/bindings/.gitignore b/Documentation/devicetree/bindings/.gitignore
+> new file mode 100644
+> index 000000000000..d9194c02dd08
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/.gitignore
+> @@ -0,0 +1 @@
+> +*.example.dts
+> diff --git a/Documentation/devicetree/bindings/Makefile b/Documentation/devicetree/bindings/Makefile
+> new file mode 100644
+> index 000000000000..43f8657ab070
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/Makefile
+> @@ -0,0 +1,33 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +DT_DOC_CHECKER ?= dt-doc-validate
+> +DT_EXTRACT_EX ?= dt-extract-example
+> +DT_MK_SCHEMA ?= dt-mk-schema
+> +DT_MK_SCHEMA_FLAGS := $(if $(DT_SCHEMA_FILES), -u)
+> +
+> +quiet_cmd_chk_binding = CHKDT   $<
+
+
+In convention, the short log displays the target name
+instead of the prerequisite.
+
+If O=foo/bar is given, $< shows the full path,
+then log will look like follows:
+
+
+  CHKDT   /home/masahiro/ref/linux-devicetree/Documentation/devicetree/bindings/arm/calxeda.yaml
+  DTC     Documentation/devicetree/bindings/arm/calxeda.example.dtb
+  CHKDT   /home/masahiro/ref/linux-devicetree/Documentation/devicetree/bindings/arm/qcom.yaml
+  DTC     Documentation/devicetree/bindings/arm/qcom.example.dtb
+  CHKDT   /home/masahiro/ref/linux-devicetree/Documentation/devicetree/bindings/arm/xilinx.yaml
+  DTC     Documentation/devicetree/bindings/arm/xilinx.example.dtb
+  CHKDT   /home/masahiro/ref/linux-devicetree/Documentation/devicetree/bindings/arm/ti/nspire.yaml
+  DTC     Documentation/devicetree/bindings/arm/ti/nspire.example.dtb
+  CHKDT   /home/masahiro/ref/linux-devicetree/Documentation/devicetree/bindings/arm/ti/ti,davinci.yaml
+  DTC     Documentation/devicetree/bindings/arm/ti/ti,davinci.example.dtb
+  CHKDT   /home/masahiro/ref/linux-devicetree/Documentation/devicetree/bindings/arm/altera.yaml
+
+You might think it is ugly.
+
+
+
+
+> +      cmd_chk_binding = (set -e; \
+> +                         $(DT_DOC_CHECKER) $< ; \
+> +                         mkdir -p $(dir $@) ; \
+> +                         $(DT_EXTRACT_EX) $< > $@ )
+
+
+- 'set -e' is redundant because if_changed already has it.
+
+- 'mkdir mkdir -p $(dir $@)' is also redundant because
+   scripts/Makefile.build automatically creates it.
+
+-  You do not need to execute this in a sub-shell
+
+
+
+You can simplify like this:
+
+       cmd_chk_binding = $(DT_DOC_CHECKER) $< ; \
+                         $(DT_EXTRACT_EX) $< > $@
+
+
+
+> +$(obj)/%.example.dts: $(src)/%.yaml FORCE
+> +       $(call if_changed,chk_binding)
+> +
+> +DT_TMP_SCHEMA := .schema.yaml.tmp
+
+
+BTW, why does this file start with a period?
+What is the meaning of '.tmp' extension?
+
+
+
+> +extra-y += $(DT_TMP_SCHEMA)
+> +
+> +quiet_cmd_mk_schema = SCHEMA  $@
+> +      cmd_mk_schema = mkdir -p $(obj); \
+> +                      rm -f $@; \
+> +                      $(DT_MK_SCHEMA) $(DT_MK_SCHEMA_FLAGS) -o $@ $(filter-out FORCE, $^)
+
+
+"mkdir -p $(obj)" is redundant.
+
+
+Why is 'rm -f $@' necessary ?
+Can't dt-mk-schema overwrite the output file?
+
+
+
+
+> +DT_DOCS = $(shell cd $(srctree)/$(src) && find * -name '*.yaml')
+> +DT_SCHEMA_FILES ?= $(addprefix $(src)/,$(DT_DOCS))
+> +
+> +extra-y += $(patsubst $(src)/%.yaml,%.example.dts, $(DT_SCHEMA_FILES))
+> +extra-y += $(patsubst $(src)/%.yaml,%.example.dtb, $(DT_SCHEMA_FILES))
+
+
+
+I assume you intentionally did not do like this:
+
+extra-y += $(patsubst %.yaml,%.example.dtb, $(DT_DOCS))
+
+From the commit description, DT_SCHEMA_FILES might be overridden by a user.
+So, I think this is OK.
+
+
+
+
+> +$(obj)/$(DT_TMP_SCHEMA): | $(addprefix $(obj)/,$(patsubst $(src)/%.yaml,%.example.dtb, $(DT_SCHEMA_FILES)))
+
+I do not understand this line.
+Why is it necessary?
+
+*.example.dtb files are generated anyway
+since they are listed in extra-y.
+
+
+
+
+> +$(obj)/$(DT_TMP_SCHEMA): $(addprefix $(srctree)/, $(DT_SCHEMA_FILES)) FORCE
+> +       $(call if_changed,mk_schema)
+
+
+You do not need to prefix $(srctree)/ because Kbuild uses VPATH.
+
+
+$(obj)/$(DT_TMP_SCHEMA): $(DT_SCHEMA_FILES) FORCE
+       $(call if_changed,mk_schema)
+
+
+is fine.
+
+
+
+
+
+
+
+> +cmd_dtc_yaml_chk = \
+> +       if ! echo "/dts-v1/; /{};" | $(DTC) -I dts -O yaml > /dev/null ; then \
+> +               echo "*"; \
+> +               echo "* dtc needs libyaml for DT schema validation support."; \
+> +               echo "* Install the necessary libyaml development package from your distro."; \
+> +               echo "*"; \
+> +               false; \
+> +       fi; \
+> +       touch $@
+> +
+> +$(objtree)/scripts/dtc/.dtc-yaml-chk.tmp: $(DTC) FORCE
+> +       $(call if_changed,dtc_yaml_chk)
+
+
+Hmm, this is kind of ugly.
+
+I'd rather check this in scripts/dtc/Makefile
+
+
+
+How about something like below?
+
+
+
+diff --git a/Makefile b/Makefile
+index ff59adf..a3e2db2 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1233,11 +1233,11 @@ ifneq ($(dtstree),)
+        $(Q)$(MAKE) $(build)=$(dtstree) $(dtstree)/$@
+
+ PHONY += dtbs dtbs_install dt_binding_check
+-dtbs: prepare3 scripts_dtc
++dtbs dtbs_check: prepare3 scripts_dtc
+        $(Q)$(MAKE) $(build)=$(dtstree)
+
+-dtbs_check: prepare3 dt_binding_check
+-       $(Q)$(MAKE) $(build)=$(dtstree) CHECK_DTBS=1
++dtbs_check: export CHECK_DTBS=1
++dtbs_check: dt_binding_check
+
+ dtbs_install:
+        $(Q)$(MAKE) $(dtbinst)=$(dtstree)
+diff --git a/scripts/Makefile.lib b/scripts/Makefile.lib
+index 8a7d622..5017175 100644
+--- a/scripts/Makefile.lib
++++ b/scripts/Makefile.lib
+@@ -309,20 +309,7 @@ define rule_dtc_dt_yaml
+        $(call echo-cmd,dtb_check) $(cmd_dtb_check)
+ endef
+
+-cmd_dtc_yaml_chk = \
+-       if ! echo "/dts-v1/; /{};" | $(DTC) -I dts -O yaml > /dev/null ; then \
+-               echo "*"; \
+-               echo "* dtc needs libyaml for DT schema validation support."; \
+-               echo "* Install the necessary libyaml development
+package from your distro."; \
+-               echo "*"; \
+-               false; \
+-       fi; \
+-       touch $@
+-
+-$(objtree)/scripts/dtc/.dtc-yaml-chk.tmp: $(DTC) FORCE
+-       $(call if_changed,dtc_yaml_chk)
+-
+-$(obj)/%.dt.yaml: $(src)/%.dts $(DTC) $(DT_TMP_SCHEMA) FORCE |
+$(objtree)/scripts/dtc/.dtc-yaml-chk.tmp
++$(obj)/%.dt.yaml: $(src)/%.dts $(DTC) $(DT_TMP_SCHEMA) FORCE
+        $(call if_changed_rule,dtc_dt_yaml)
+
+ dtc-tmp = $(subst $(comma),_,$(dot-target).dts.tmp)
+diff --git a/scripts/dtc/Makefile b/scripts/dtc/Makefile
+index 056d5da..3e497f1 100644
+--- a/scripts/dtc/Makefile
++++ b/scripts/dtc/Makefile
+@@ -12,6 +12,10 @@ dtc-objs     += dtc-lexer.lex.o dtc-parser.tab.o
+ HOST_EXTRACFLAGS := -I$(src)/libfdt
+
+ ifeq ($(wildcard /usr/include/yaml.h),)
++ifeq ($(CHECK_DTBS),1)
++$(error dtc needs libyaml for DT schema validation support. \
++        Install the necessary libyaml development package.)
++endif
+ HOST_EXTRACFLAGS += -DNO_YAML
+ else
+ dtc-objs       += yamltree.o
+
+
+
+
+
+One drawback of this approach is,
+this is not checked if you are using out-of-tree DTC.
+Probably, Rob is the only person that overrides DTC.
+
+
+
+
+
+
+
+-- 
+Best Regards
+Masahiro Yamada
