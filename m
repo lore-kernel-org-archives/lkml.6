@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9457FC67839
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 19:27:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D30FC5CFFE
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 19:27:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 62BEE20851
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 19:27:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 62BEE20851
+	by mail.kernel.org (Postfix) with ESMTP id 5E6FE20811
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 19:27:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E6FE20811
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726766AbeLKT05 (ORCPT
+        id S1726904AbeLKT1I (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 11 Dec 2018 14:27:08 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:55992 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726655AbeLKT05 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 11 Dec 2018 14:26:57 -0500
-Received: from foss.arm.com ([217.140.101.70]:55984 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726633AbeLKT0z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 14:26:55 -0500
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 85758165C;
-        Tue, 11 Dec 2018 11:26:55 -0800 (PST)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AF5141684;
+        Tue, 11 Dec 2018 11:26:56 -0800 (PST)
 Received: from e103592.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 760563F6A8;
-        Tue, 11 Dec 2018 11:26:54 -0800 (PST)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id C2E833F6A8;
+        Tue, 11 Dec 2018 11:26:55 -0800 (PST)
 From:   Dave Martin <Dave.Martin@arm.com>
 To:     linux-arm-kernel@lists.infradead.org
 Cc:     linux-kernel@vger.kernel.org, Will Deacon <will.deacon@arm.com>,
         Alan Hayward <alan.hayward@arm.com>,
         Szabolcs Nagy <szabolcs.nagy@arm.com>
-Subject: [PATCH 2/3] arm64/sve: ptrace: Fix SVE_PT_REGS_OFFSET definition
-Date:   Tue, 11 Dec 2018 19:26:46 +0000
-Message-Id: <1544556407-19897-3-git-send-email-Dave.Martin@arm.com>
+Subject: [PATCH 3/3] arm64/sve: Disentangle <uapi/asm/ptrace.h> from <uapi/asm/sigcontext.h>
+Date:   Tue, 11 Dec 2018 19:26:47 +0000
+Message-Id: <1544556407-19897-4-git-send-email-Dave.Martin@arm.com>
 X-Mailer: git-send-email 2.1.4
 In-Reply-To: <1544556407-19897-1-git-send-email-Dave.Martin@arm.com>
 References: <1544556407-19897-1-git-send-email-Dave.Martin@arm.com>
@@ -44,38 +44,283 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SVE_PT_REGS_OFFSET is supposed to indicate the offset for skipping
-over the ptrace NT_ARM_SVE header (struct user_sve_header) to the
-start of the SVE register data proper.
+Currently, <uapi/asm/sigcontext.h> provides common definitions for
+describing SVE context structures that are also used by the ptrace
+definitions in <uapi/asm/ptrace.h>.
 
-However, currently SVE_PT_REGS_OFFSET is defined in terms of struct
-sve_context, which is wrong: that structure describes the SVE
-header in the signal frame, not in the ptrace regset.
+For this reason, a #include of <asm/sigcontext.h> was added in
+ptrace.h, but it this turns out that this can interact badly with
+userspace code that tries to include ptrace.h on top of the libc
+headers (which may provide their own shadow definitions for
+sigcontext.h).
 
-This patch fixes the definition to use the ptrace header structure
-struct user_sve_header instead.
+To make the headers easier for userspace to consume, this patch
+bounces the common definitions into an __SVE_* namespace and moves
+them to a backend header <uapi/asm/sve_context.h> that can be
+included by the other headers as appropriate.  This should allow
+ptrace.h to be used alongside libc's sigcontext.h (if any) without
+ill effects.
 
-By good fortune, the to structures are the same size anyway, so
-there is no functional or ABI change.
+This should make the situation unambiguous: <asm/sigcontext.h> is
+the header to include for the sigframe-specific definitions, while
+<asm/ptrace.h> is the header to include for ptrace-specific
+definitions.
+
+To avoid conflicting with existing usage, <asm/sigcontext.h>
+remains the canonical way to get the common definitions for
+SVE_VQ_MIN, sve_vq_from_vl() etc., both in userspace and in the
+kernel: relying on these being defined as a side effect of
+including just <asm/ptrace.h> was never intended to be safe.
 
 Signed-off-by: Dave Martin <Dave.Martin@arm.com>
 ---
- arch/arm64/include/uapi/asm/ptrace.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm64/include/uapi/asm/ptrace.h      | 39 ++++++++++-----------
+ arch/arm64/include/uapi/asm/sigcontext.h  | 56 +++++++++++++++----------------
+ arch/arm64/include/uapi/asm/sve_context.h | 50 +++++++++++++++++++++++++++
+ 3 files changed, 96 insertions(+), 49 deletions(-)
+ create mode 100644 arch/arm64/include/uapi/asm/sve_context.h
 
 diff --git a/arch/arm64/include/uapi/asm/ptrace.h b/arch/arm64/include/uapi/asm/ptrace.h
-index a36227f..65ef8b0 100644
+index 65ef8b0..cff79c5 100644
 --- a/arch/arm64/include/uapi/asm/ptrace.h
 +++ b/arch/arm64/include/uapi/asm/ptrace.h
-@@ -131,7 +131,7 @@ struct user_sve_header {
+@@ -23,7 +23,7 @@
+ #include <linux/types.h>
  
- /* Offset from the start of struct user_sve_header to the register data */
- #define SVE_PT_REGS_OFFSET					\
--	((sizeof(struct sve_context) + (SVE_VQ_BYTES - 1))	\
-+	((sizeof(struct user_sve_header) + (SVE_VQ_BYTES - 1))	\
- 		/ SVE_VQ_BYTES * SVE_VQ_BYTES)
+ #include <asm/hwcap.h>
+-#include <asm/sigcontext.h>
++#include <asm/sve_context.h>
+ 
  
  /*
+@@ -130,9 +130,9 @@ struct user_sve_header {
+  */
+ 
+ /* Offset from the start of struct user_sve_header to the register data */
+-#define SVE_PT_REGS_OFFSET					\
+-	((sizeof(struct user_sve_header) + (SVE_VQ_BYTES - 1))	\
+-		/ SVE_VQ_BYTES * SVE_VQ_BYTES)
++#define SVE_PT_REGS_OFFSET						\
++	((sizeof(struct user_sve_header) + (__SVE_VQ_BYTES - 1))	\
++		/ __SVE_VQ_BYTES * __SVE_VQ_BYTES)
+ 
+ /*
+  * The register data content and layout depends on the value of the
+@@ -178,39 +178,36 @@ struct user_sve_header {
+  * Additional data might be appended in the future.
+  */
+ 
+-#define SVE_PT_SVE_ZREG_SIZE(vq)	SVE_SIG_ZREG_SIZE(vq)
+-#define SVE_PT_SVE_PREG_SIZE(vq)	SVE_SIG_PREG_SIZE(vq)
+-#define SVE_PT_SVE_FFR_SIZE(vq)		SVE_SIG_FFR_SIZE(vq)
++#define SVE_PT_SVE_ZREG_SIZE(vq)	__SVE_ZREG_SIZE(vq)
++#define SVE_PT_SVE_PREG_SIZE(vq)	__SVE_PREG_SIZE(vq)
++#define SVE_PT_SVE_FFR_SIZE(vq)		__SVE_FFR_SIZE(vq)
+ #define SVE_PT_SVE_FPSR_SIZE		sizeof(__u32)
+ #define SVE_PT_SVE_FPCR_SIZE		sizeof(__u32)
+ 
+-#define __SVE_SIG_TO_PT(offset) \
+-	((offset) - SVE_SIG_REGS_OFFSET + SVE_PT_REGS_OFFSET)
+-
+ #define SVE_PT_SVE_OFFSET		SVE_PT_REGS_OFFSET
+ 
+ #define SVE_PT_SVE_ZREGS_OFFSET \
+-	__SVE_SIG_TO_PT(SVE_SIG_ZREGS_OFFSET)
++	(SVE_PT_REGS_OFFSET + __SVE_ZREGS_OFFSET)
+ #define SVE_PT_SVE_ZREG_OFFSET(vq, n) \
+-	__SVE_SIG_TO_PT(SVE_SIG_ZREG_OFFSET(vq, n))
++	(SVE_PT_REGS_OFFSET + __SVE_ZREG_OFFSET(vq, n))
+ #define SVE_PT_SVE_ZREGS_SIZE(vq) \
+-	(SVE_PT_SVE_ZREG_OFFSET(vq, SVE_NUM_ZREGS) - SVE_PT_SVE_ZREGS_OFFSET)
++	(SVE_PT_SVE_ZREG_OFFSET(vq, __SVE_NUM_ZREGS) - SVE_PT_SVE_ZREGS_OFFSET)
+ 
+ #define SVE_PT_SVE_PREGS_OFFSET(vq) \
+-	__SVE_SIG_TO_PT(SVE_SIG_PREGS_OFFSET(vq))
++	(SVE_PT_REGS_OFFSET + __SVE_PREGS_OFFSET(vq))
+ #define SVE_PT_SVE_PREG_OFFSET(vq, n) \
+-	__SVE_SIG_TO_PT(SVE_SIG_PREG_OFFSET(vq, n))
++	(SVE_PT_REGS_OFFSET + __SVE_PREG_OFFSET(vq, n))
+ #define SVE_PT_SVE_PREGS_SIZE(vq) \
+-	(SVE_PT_SVE_PREG_OFFSET(vq, SVE_NUM_PREGS) - \
++	(SVE_PT_SVE_PREG_OFFSET(vq, __SVE_NUM_PREGS) - \
+ 		SVE_PT_SVE_PREGS_OFFSET(vq))
+ 
+ #define SVE_PT_SVE_FFR_OFFSET(vq) \
+-	__SVE_SIG_TO_PT(SVE_SIG_FFR_OFFSET(vq))
++	(SVE_PT_REGS_OFFSET + __SVE_FFR_OFFSET(vq))
+ 
+ #define SVE_PT_SVE_FPSR_OFFSET(vq)				\
+ 	((SVE_PT_SVE_FFR_OFFSET(vq) + SVE_PT_SVE_FFR_SIZE(vq) +	\
+-			(SVE_VQ_BYTES - 1))			\
+-		/ SVE_VQ_BYTES * SVE_VQ_BYTES)
++			(__SVE_VQ_BYTES - 1))			\
++		/ __SVE_VQ_BYTES * __SVE_VQ_BYTES)
+ #define SVE_PT_SVE_FPCR_OFFSET(vq) \
+ 	(SVE_PT_SVE_FPSR_OFFSET(vq) + SVE_PT_SVE_FPSR_SIZE)
+ 
+@@ -221,8 +218,8 @@ struct user_sve_header {
+ 
+ #define SVE_PT_SVE_SIZE(vq, flags)					\
+ 	((SVE_PT_SVE_FPCR_OFFSET(vq) + SVE_PT_SVE_FPCR_SIZE		\
+-			- SVE_PT_SVE_OFFSET + (SVE_VQ_BYTES - 1))	\
+-		/ SVE_VQ_BYTES * SVE_VQ_BYTES)
++			- SVE_PT_SVE_OFFSET + (__SVE_VQ_BYTES - 1))	\
++		/ __SVE_VQ_BYTES * __SVE_VQ_BYTES)
+ 
+ #define SVE_PT_SIZE(vq, flags)						\
+ 	 (((flags) & SVE_PT_REGS_MASK) == SVE_PT_REGS_SVE ?		\
+diff --git a/arch/arm64/include/uapi/asm/sigcontext.h b/arch/arm64/include/uapi/asm/sigcontext.h
+index dca8f8b..5f3c0ce 100644
+--- a/arch/arm64/include/uapi/asm/sigcontext.h
++++ b/arch/arm64/include/uapi/asm/sigcontext.h
+@@ -130,6 +130,8 @@ struct sve_context {
+ 
+ #endif /* !__ASSEMBLY__ */
+ 
++#include <asm/sve_context.h>
++
+ /*
+  * The SVE architecture leaves space for future expansion of the
+  * vector length beyond its initial architectural limit of 2048 bits
+@@ -138,21 +140,20 @@ struct sve_context {
+  * See linux/Documentation/arm64/sve.txt for a description of the VL/VQ
+  * terminology.
+  */
+-#define SVE_VQ_BYTES		16	/* number of bytes per quadword */
++#define SVE_VQ_BYTES		__SVE_VQ_BYTES	/* bytes per quadword */
+ 
+-#define SVE_VQ_MIN		1
+-#define SVE_VQ_MAX		512
++#define SVE_VQ_MIN		__SVE_VQ_MIN
++#define SVE_VQ_MAX		__SVE_VQ_MAX
+ 
+-#define SVE_VL_MIN		(SVE_VQ_MIN * SVE_VQ_BYTES)
+-#define SVE_VL_MAX		(SVE_VQ_MAX * SVE_VQ_BYTES)
++#define SVE_VL_MIN		__SVE_VL_MIN
++#define SVE_VL_MAX		__SVE_VL_MAX
+ 
+-#define SVE_NUM_ZREGS		32
+-#define SVE_NUM_PREGS		16
++#define SVE_NUM_ZREGS		__SVE_NUM_ZREGS
++#define SVE_NUM_PREGS		__SVE_NUM_PREGS
+ 
+-#define sve_vl_valid(vl) \
+-	((vl) % SVE_VQ_BYTES == 0 && (vl) >= SVE_VL_MIN && (vl) <= SVE_VL_MAX)
+-#define sve_vq_from_vl(vl)	((vl) / SVE_VQ_BYTES)
+-#define sve_vl_from_vq(vq)	((vq) * SVE_VQ_BYTES)
++#define sve_vl_valid(vl)	__sve_vl_valid(vl)
++#define sve_vq_from_vl(vl)	__sve_vq_from_vl(vl)
++#define sve_vl_from_vq(vq)	__sve_vl_from_vq(vq)
+ 
+ /*
+  * If the SVE registers are currently live for the thread at signal delivery,
+@@ -205,34 +206,33 @@ struct sve_context {
+  * Additional data might be appended in the future.
+  */
+ 
+-#define SVE_SIG_ZREG_SIZE(vq)	((__u32)(vq) * SVE_VQ_BYTES)
+-#define SVE_SIG_PREG_SIZE(vq)	((__u32)(vq) * (SVE_VQ_BYTES / 8))
+-#define SVE_SIG_FFR_SIZE(vq)	SVE_SIG_PREG_SIZE(vq)
++#define SVE_SIG_ZREG_SIZE(vq)	__SVE_ZREG_SIZE(vq)
++#define SVE_SIG_PREG_SIZE(vq)	__SVE_PREG_SIZE(vq)
++#define SVE_SIG_FFR_SIZE(vq)	__SVE_FFR_SIZE(vq)
+ 
+ #define SVE_SIG_REGS_OFFSET					\
+-	((sizeof(struct sve_context) + (SVE_VQ_BYTES - 1))	\
+-		/ SVE_VQ_BYTES * SVE_VQ_BYTES)
++	((sizeof(struct sve_context) + (__SVE_VQ_BYTES - 1))	\
++		/ __SVE_VQ_BYTES * __SVE_VQ_BYTES)
+ 
+-#define SVE_SIG_ZREGS_OFFSET	SVE_SIG_REGS_OFFSET
++#define SVE_SIG_ZREGS_OFFSET \
++		(SVE_SIG_REGS_OFFSET + __SVE_ZREGS_OFFSET)
+ #define SVE_SIG_ZREG_OFFSET(vq, n) \
+-	(SVE_SIG_ZREGS_OFFSET + SVE_SIG_ZREG_SIZE(vq) * (n))
+-#define SVE_SIG_ZREGS_SIZE(vq) \
+-	(SVE_SIG_ZREG_OFFSET(vq, SVE_NUM_ZREGS) - SVE_SIG_ZREGS_OFFSET)
++		(SVE_SIG_REGS_OFFSET + __SVE_ZREG_OFFSET(vq, n))
++#define SVE_SIG_ZREGS_SIZE(vq) __SVE_ZREGS_SIZE(vq)
+ 
+ #define SVE_SIG_PREGS_OFFSET(vq) \
+-	(SVE_SIG_ZREGS_OFFSET + SVE_SIG_ZREGS_SIZE(vq))
++		(SVE_SIG_REGS_OFFSET + __SVE_PREGS_OFFSET(vq))
+ #define SVE_SIG_PREG_OFFSET(vq, n) \
+-	(SVE_SIG_PREGS_OFFSET(vq) + SVE_SIG_PREG_SIZE(vq) * (n))
+-#define SVE_SIG_PREGS_SIZE(vq) \
+-	(SVE_SIG_PREG_OFFSET(vq, SVE_NUM_PREGS) - SVE_SIG_PREGS_OFFSET(vq))
++		(SVE_SIG_REGS_OFFSET + __SVE_PREG_OFFSET(vq, n))
++#define SVE_SIG_PREGS_SIZE(vq) __SVE_PREGS_SIZE(vq)
+ 
+ #define SVE_SIG_FFR_OFFSET(vq) \
+-	(SVE_SIG_PREGS_OFFSET(vq) + SVE_SIG_PREGS_SIZE(vq))
++		(SVE_SIG_REGS_OFFSET + __SVE_FFR_OFFSET(vq))
+ 
+ #define SVE_SIG_REGS_SIZE(vq) \
+-	(SVE_SIG_FFR_OFFSET(vq) + SVE_SIG_FFR_SIZE(vq) - SVE_SIG_REGS_OFFSET)
+-
+-#define SVE_SIG_CONTEXT_SIZE(vq) (SVE_SIG_REGS_OFFSET + SVE_SIG_REGS_SIZE(vq))
++		(__SVE_FFR_OFFSET(vq) + __SVE_FFR_SIZE(vq))
+ 
++#define SVE_SIG_CONTEXT_SIZE(vq) \
++		(SVE_SIG_REGS_OFFSET + SVE_SIG_REGS_SIZE(vq))
+ 
+ #endif /* _UAPI__ASM_SIGCONTEXT_H */
+diff --git a/arch/arm64/include/uapi/asm/sve_context.h b/arch/arm64/include/uapi/asm/sve_context.h
+new file mode 100644
+index 0000000..140f14c
+--- /dev/null
++++ b/arch/arm64/include/uapi/asm/sve_context.h
+@@ -0,0 +1,50 @@
++/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
++/* Copyright (C) 2017-2018 ARM Limited */
++
++#if !defined(_UAPI__ASM_PTRACE_H) && !defined(_UAPI__ASM_SIGCONTEXT_H)
++#error "Do not include this header or use its definitions directly."
++#endif
++
++#ifndef _UAPI__ASM_SVE_CONTEXT_H
++#define _UAPI__ASM_SVE_CONTEXT_H
++
++#define __SVE_VQ_BYTES		16	/* number of bytes per quadword */
++
++#define __SVE_VQ_MIN		1
++#define __SVE_VQ_MAX		512
++
++#define __SVE_VL_MIN		(__SVE_VQ_MIN * __SVE_VQ_BYTES)
++#define __SVE_VL_MAX		(__SVE_VQ_MAX * __SVE_VQ_BYTES)
++
++#define __SVE_NUM_ZREGS		32
++#define __SVE_NUM_PREGS		16
++
++#define __sve_vl_valid(vl)			\
++	((vl) % __SVE_VQ_BYTES == 0 &&		\
++	 (vl) >= __SVE_VL_MIN &&		\
++	 (vl) <= __SVE_VL_MAX)
++
++#define __sve_vq_from_vl(vl)	((vl) / __SVE_VQ_BYTES)
++#define __sve_vl_from_vq(vq)	((vq) * __SVE_VQ_BYTES)
++
++#define __SVE_ZREG_SIZE(vq)	((__u32)(vq) * __SVE_VQ_BYTES)
++#define __SVE_PREG_SIZE(vq)	((__u32)(vq) * (__SVE_VQ_BYTES / 8))
++#define __SVE_FFR_SIZE(vq)	__SVE_PREG_SIZE(vq)
++
++#define __SVE_ZREGS_OFFSET	0
++#define __SVE_ZREG_OFFSET(vq, n) \
++	(__SVE_ZREGS_OFFSET + __SVE_ZREG_SIZE(vq) * (n))
++#define __SVE_ZREGS_SIZE(vq) \
++	(__SVE_ZREG_OFFSET(vq, __SVE_NUM_ZREGS) - __SVE_ZREGS_OFFSET)
++
++#define __SVE_PREGS_OFFSET(vq) \
++	(__SVE_ZREGS_OFFSET + __SVE_ZREGS_SIZE(vq))
++#define __SVE_PREG_OFFSET(vq, n) \
++	(__SVE_PREGS_OFFSET(vq) + __SVE_PREG_SIZE(vq) * (n))
++#define __SVE_PREGS_SIZE(vq) \
++	(__SVE_PREG_OFFSET(vq, __SVE_NUM_PREGS) - __SVE_PREGS_OFFSET(vq))
++
++#define __SVE_FFR_OFFSET(vq) \
++	(__SVE_PREGS_OFFSET(vq) + __SVE_PREGS_SIZE(vq))
++
++#endif /* ! _UAPI__ASM_SVE_CONTEXT_H */
 -- 
 2.1.4
 
