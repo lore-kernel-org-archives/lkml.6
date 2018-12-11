@@ -7,52 +7,62 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77CD3C5CFFE
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:45:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5A0AC5CFFE
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:46:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3D635208E7
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:45:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8AC9420870
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:46:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544543158;
-	bh=/uO9LvegOskOtYpNYJAyqXYSD9VwhWhBLsjwCBTgZJU=;
+	s=default; t=1544543162;
+	bh=14GOvzjcQlAF0wBBWwK0HtL0LQ4dwYbkAD5xhKvu4VE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=H/i9BVigz5Pkn0SMRnL/ngVsQ7P2ERwHDwUUMraybUL6rgL+4t0rS+iW6DBBIUVfJ
-	 4Yq3ijoSoEA/CrWQdZLnyiOJ4UrOlryULrOuICUpJJ/b+/rLC7KDVdbNfrRtxbvyWK
-	 +F/Qylgl9WO7OfuMAwqYgr5CX02SMZU4fV1s7WZQ=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D635208E7
+	b=v6NtM6BcV2M4AKcgwb547jXcyZwjzFul9P4SisJT3fdh/RSRHnjJTlijEUHCB2+F3
+	 lhYVkeRnjWyE+5cMmFLX3enmwjWQLly0w3sPTjCNehuGEwtjeAZUn8pDFlvDXneZqP
+	 MWwaftWG9+9r3Tk4X3tO0RL9JtUBF8KIIYwT3ivs=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8AC9420870
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727626AbeLKPp5 (ORCPT
+        id S1728246AbeLKPqB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 10:45:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34252 "EHLO mail.kernel.org"
+        Tue, 11 Dec 2018 10:46:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34312 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728199AbeLKPpy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:45:54 -0500
+        id S1728224AbeLKPp4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 10:45:56 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 051252087F;
-        Tue, 11 Dec 2018 15:45:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8866C21104;
+        Tue, 11 Dec 2018 15:45:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544543153;
-        bh=/uO9LvegOskOtYpNYJAyqXYSD9VwhWhBLsjwCBTgZJU=;
+        s=default; t=1544543156;
+        bh=14GOvzjcQlAF0wBBWwK0HtL0LQ4dwYbkAD5xhKvu4VE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EHki8lFyWAIZBOm/+GEz6hrdVDZl92xrtwsv+PAuJZEKlkIkoOsdmnRkP2BI8LLJ0
-         JXMWzVr2tgjYzA19jTL30/F855pTpd2k6rMuR2C57xOJfK68R6hc+WQciAvHS4Mrhp
-         sepPvLEQ7HUoD4h8dF1c45erxxUpQ/ldnLAE8q8c=
+        b=tqZU+ATdDGle1p67H3i8oyl1vYDrpdEk+Mh/COGIxL25wRHrzGpkISavtoU7FIzRq
+         0cHIOCmIKTMMxWZMUbUSKQlJCIE+Esk5BIh9+THD1SbJ5hLvWWuIsriIgDu50zXf98
+         2kqKWea3sFa/pIRyAgsYqN1QTuBTGK8g/MgLZfoQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mario Forner <m.forner@be4energy.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        Richard Genoud <richard.genoud@gmail.com>,
-        Vinod Koul <vkoul@kernel.org>
-Subject: [PATCH 4.4 15/91] dmaengine: at_hdmac: fix memory leak in at_dma_xlate()
-Date:   Tue, 11 Dec 2018 16:40:34 +0100
-Message-Id: <20181211151607.136130436@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Andrea Parri <andrea.parri@amarulasolutions.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Stephane Eranian <eranian@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vince Weaver <vincent.weaver@maine.edu>, stable@kernel.org,
+        Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.4 33/91] uprobes: Fix handle_swbp() vs. unregister() + register() race once more
+Date:   Tue, 11 Dec 2018 16:40:52 +0100
+Message-Id: <20181211151608.463823962@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181211151606.026852373@linuxfoundation.org>
 References: <20181211151606.026852373@linuxfoundation.org>
@@ -71,57 +81,79 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Richard Genoud <richard.genoud@gmail.com>
+From: Andrea Parri <andrea.parri@amarulasolutions.com>
 
-commit 98f5f932254b88ce828bc8e4d1642d14e5854caa upstream.
+commit 09d3f015d1e1b4fee7e9bbdcf54201d239393391 upstream.
 
-The leak was found when opening/closing a serial port a great number of
-time, increasing kmalloc-32 in slabinfo.
+Commit:
 
-Each time the port was opened, dma_request_slave_channel() was called.
-Then, in at_dma_xlate(), atslave was allocated with devm_kzalloc() and
-never freed. (Well, it was free at module unload, but that's not what we
-want).
-So, here, kzalloc is more suited for the job since it has to be freed in
-atc_free_chan_resources().
+  142b18ddc8143 ("uprobes: Fix handle_swbp() vs unregister() + register() race")
 
-Cc: stable@vger.kernel.org
-Fixes: bbe89c8e3d59 ("at_hdmac: move to generic DMA binding")
-Reported-by: Mario Forner <m.forner@be4energy.com>
-Suggested-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Acked-by: Ludovic Desroches <ludovic.desroches@microchip.com>
-Signed-off-by: Richard Genoud <richard.genoud@gmail.com>
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
+added the UPROBE_COPY_INSN flag, and corresponding smp_wmb() and smp_rmb()
+memory barriers, to ensure that handle_swbp() uses fully-initialized
+uprobes only.
+
+However, the smp_rmb() is mis-placed: this barrier should be placed
+after handle_swbp() has tested for the flag, thus guaranteeing that
+(program-order) subsequent loads from the uprobe can see the initial
+stores performed by prepare_uprobe().
+
+Move the smp_rmb() accordingly.  Also amend the comments associated
+to the two memory barriers to indicate their actual locations.
+
+Signed-off-by: Andrea Parri <andrea.parri@amarulasolutions.com>
+Acked-by: Oleg Nesterov <oleg@redhat.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Stephane Eranian <eranian@google.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Vince Weaver <vincent.weaver@maine.edu>
+Cc: stable@kernel.org
+Fixes: 142b18ddc8143 ("uprobes: Fix handle_swbp() vs unregister() + register() race")
+Link: http://lkml.kernel.org/r/20181122161031.15179-1-andrea.parri@amarulasolutions.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/dma/at_hdmac.c |    8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ kernel/events/uprobes.c |   12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
 
---- a/drivers/dma/at_hdmac.c
-+++ b/drivers/dma/at_hdmac.c
-@@ -1781,6 +1781,12 @@ static void atc_free_chan_resources(stru
- 	atchan->descs_allocated = 0;
- 	atchan->status = 0;
+--- a/kernel/events/uprobes.c
++++ b/kernel/events/uprobes.c
+@@ -606,7 +606,7 @@ static int prepare_uprobe(struct uprobe
+ 	BUG_ON((uprobe->offset & ~PAGE_MASK) +
+ 			UPROBE_SWBP_INSN_SIZE > PAGE_SIZE);
+ 
+-	smp_wmb(); /* pairs with rmb() in find_active_uprobe() */
++	smp_wmb(); /* pairs with the smp_rmb() in handle_swbp() */
+ 	set_bit(UPROBE_COPY_INSN, &uprobe->flags);
+ 
+  out:
+@@ -1892,10 +1892,18 @@ static void handle_swbp(struct pt_regs *
+ 	 * After we hit the bp, _unregister + _register can install the
+ 	 * new and not-yet-analyzed uprobe at the same address, restart.
+ 	 */
+-	smp_rmb(); /* pairs with wmb() in install_breakpoint() */
+ 	if (unlikely(!test_bit(UPROBE_COPY_INSN, &uprobe->flags)))
+ 		goto out;
  
 +	/*
-+	 * Free atslave allocated in at_dma_xlate()
++	 * Pairs with the smp_wmb() in prepare_uprobe().
++	 *
++	 * Guarantees that if we see the UPROBE_COPY_INSN bit set, then
++	 * we must also see the stores to &uprobe->arch performed by the
++	 * prepare_uprobe() call.
 +	 */
-+	kfree(chan->private);
-+	chan->private = NULL;
++	smp_rmb();
 +
- 	dev_vdbg(chan2dev(chan), "free_chan_resources: done\n");
- }
- 
-@@ -1815,7 +1821,7 @@ static struct dma_chan *at_dma_xlate(str
- 	dma_cap_zero(mask);
- 	dma_cap_set(DMA_SLAVE, mask);
- 
--	atslave = devm_kzalloc(&dmac_pdev->dev, sizeof(*atslave), GFP_KERNEL);
-+	atslave = kzalloc(sizeof(*atslave), GFP_KERNEL);
- 	if (!atslave)
- 		return NULL;
- 
+ 	/* Tracing handlers use ->utask to communicate with fetch methods */
+ 	if (!get_utask())
+ 		goto out;
 
 
