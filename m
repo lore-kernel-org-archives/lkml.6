@@ -2,122 +2,108 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 118A3C07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 12:15:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A0DCC07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 12:17:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC41A20811
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 12:15:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544530549;
-	bh=roZCx4HTVA3IisYCmPheiblNUEmrdwsjZvdv5ElZxXc=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:List-ID:From;
-	b=U+MLUkjGwXZVekxJ/ys//x66sy1Q9LZCnYsmN61EqIkYmYgBfCdFWogya8DaFMbYv
-	 UyCbvp5bL0vqLIXP1wVzzvcVcaeKPlub3gkOaWL6T0CA2+UKAz+elnTeNcGIt76XOF
-	 UIhwxKV31AfUiXfwUKAbICtex5PXPv6S7kbbdD68=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC41A20811
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id F272B20811
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 12:17:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F272B20811
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726349AbeLKMPs (ORCPT
+        id S1726298AbeLKMRw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 07:15:48 -0500
-Received: from mga04.intel.com ([192.55.52.120]:32945 "EHLO mga04.intel.com"
+        Tue, 11 Dec 2018 07:17:52 -0500
+Received: from foss.arm.com ([217.140.101.70]:46098 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726135AbeLKMPs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 07:15:48 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Dec 2018 04:15:47 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,342,1539673200"; 
-   d="asc'?scan'208";a="109461474"
-Received: from pipin.fi.intel.com (HELO localhost) ([10.237.72.175])
-  by orsmga003.jf.intel.com with ESMTP; 11 Dec 2018 04:15:43 -0800
-From:   Felipe Balbi <balbi@kernel.org>
-To:     Pawel Laszczak <pawell@cadence.com>, Roger Quadros <rogerq@ti.com>,
-        "devicetree\@vger.kernel.org" <devicetree@vger.kernel.org>
-Cc:     "gregkh\@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "linux-usb\@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Alan Douglas <adouglas@cadence.com>,
-        "jbergsagel\@ti.com" <jbergsagel@ti.com>,
-        "nsekhar\@ti.com" <nsekhar@ti.com>, "nm\@ti.com" <nm@ti.com>,
-        Suresh Punnoose <sureshp@cadence.com>,
-        "peter.chen\@nxp.com" <peter.chen@nxp.com>,
-        Pawel Jez <pjez@cadence.com>, Rahul Kumar <kurahul@cadence.com>
-Subject: RE: [PATCH v1 2/2] usb:cdns3 Add Cadence USB3 DRD Driver
-In-Reply-To: <BYAPR07MB47095A5EEBC106EE7CD0E078DDA60@BYAPR07MB4709.namprd07.prod.outlook.com>
-References: <1544445555-17325-1-git-send-email-pawell@cadence.com> <1544445555-17325-3-git-send-email-pawell@cadence.com> <5C0F85E4.10609@ti.com> <BYAPR07MB47095A5EEBC106EE7CD0E078DDA60@BYAPR07MB4709.namprd07.prod.outlook.com>
-Date:   Tue, 11 Dec 2018 14:15:39 +0200
-Message-ID: <87d0q8mf84.fsf@linux.intel.com>
+        id S1726130AbeLKMRv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 07:17:51 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D7710EBD;
+        Tue, 11 Dec 2018 04:17:50 -0800 (PST)
+Received: from queper01-lin (queper01-lin.cambridge.arm.com [10.1.195.48])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BB0C03F6A8;
+        Tue, 11 Dec 2018 04:17:46 -0800 (PST)
+Date:   Tue, 11 Dec 2018 12:17:45 +0000
+From:   Quentin Perret <quentin.perret@arm.com>
+To:     "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Chris Redpath <chris.redpath@arm.com>,
+        Patrick Bellasi <patrick.bellasi@arm.com>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Thara Gopinath <thara.gopinath@linaro.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Todd Kjos <tkjos@google.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Steve Muckle <smuckle@google.com>, adharmap@codeaurora.org,
+        Saravana Kannan <skannan@codeaurora.org>,
+        Pavan Kondeti <pkondeti@codeaurora.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        currojerez@riseup.net, Javi Merino <javi.merino@kernel.org>
+Subject: Re: [PATCH v10 02/15] sched/cpufreq: Prepare schedutil for Energy
+ Aware Scheduling
+Message-ID: <20181211121742.d6ujfyccwn7t63b3@queper01-lin>
+References: <20181203095628.11858-1-quentin.perret@arm.com>
+ <20181203095628.11858-3-quentin.perret@arm.com>
+ <CAJZ5v0iygh1Kh4FnOE=2GzcUHW+FBV+9ZrotAfmXtgdk==6tNg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha256; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJZ5v0iygh1Kh4FnOE=2GzcUHW+FBV+9ZrotAfmXtgdk==6tNg@mail.gmail.com>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+Hi Rafael,
 
+On Tuesday 11 Dec 2018 at 13:01:24 (+0100), Rafael J. Wysocki wrote:
+> On Mon, Dec 3, 2018 at 10:56 AM Quentin Perret <quentin.perret@arm.com> wrote:
+> 
+> [cut]
+> 
+> >  #ifdef CONFIG_CPU_FREQ_GOV_SCHEDUTIL
+> > +/**
+> > + * enum schedutil_type - CPU utilization type
+> > + * @FREQUENCY_UTIL:    Utilization used to select frequency
+> > + * @ENERGY_UTIL:       Utilization used during energy calculation
+> > + *
+> > + * The utilization signals of all scheduling classes (CFS/RT/DL) and IRQ time
+> > + * need to be aggregated differently depending on the usage made of them. This
+> > + * enum is used within schedutil_freq_util() to differentiate the types of
+> > + * utilization expected by the callers, and adjust the aggregation accordingly.
+> > + */
+> > +enum schedutil_type {
+> > +       FREQUENCY_UTIL,
+> > +       ENERGY_UTIL,
+> > +};
+> 
+> Why not to use bool instead of this?  Do you expect to have more than
+> just two values in the future?  If so, what would be the third one?
 
-Hi,
+Indeed, the only reason is that an enum is easier to extend, if need be.
+I think you mentioned some time ago that CPUIdle could be, in principle,
+interested in having access to aggregated utilization signals of CPUs:
 
-Pawel Laszczak <pawell@cadence.com> writes:
->>I think what Felipe meant was to only combine the gadget driver code into=
- one patch.
->>
->>The series could be split into 6 patches like so.
->>-dt binding
->>-pci glue
->>-core driver
->>-host driver
->>-gadget driver
->>-drd driver
->
-> Felipe wrote:
-> "=20
-> Frankly, I don't understand why this is a series. It's a single driver
-> and splitting it into a series just makes it more difficult to review,
-> actually.
->
-> Sure, a single patch will be large, but there's no way to have a
-> functional driver until all patches are applied, anyway.
-> "
->
-> Felipe should I split this driver as suggested by Roger ?.=20
-> Now it's very big patch but it's still a single driver.
+https://lore.kernel.org/lkml/CAJZ5v0j=EYnANGAj9bd44eeux1eCfeMtdn9npe5pSAzE8EVKaA@mail.gmail.com/
 
-don't bother. It's far easier to review as it is.
+So yeah, I kept Peter's original enum and went for documenting the type,
+as you suggested on v7 :-)
 
-=2D-=20
-balbi
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEElLzh7wn96CXwjh2IzL64meEamQYFAlwPqmsACgkQzL64meEa
-mQZPmQ//esDJQg93nkGwEMz/n7dBD/KM+sQAtvq4SeIeOwgcS0YyLYWFtu+lHxMJ
-S3+6BIkWVQksJ/38yscj6pohIjNLENdHDYKgqQDWf5bPJdLKXim4BJQ66I5b36VW
-C8RdDf55uzOgNVs4+3cwpVUoUTXRwmAdl/Hl3lj2VEYDnyYEl+r8LwHRue0D9JeK
-CrIlseRcHISvFEMjAN/0llqCBzDc4gvWU2nu+xiSfe2quPDzOP4ew0mdNr3diAo/
-QvkIAIDsCumQ7QumURLHhgPq4+BG5wdnYXGDlHyMx5UiiQgRXWjyZoc9ifJqA2mJ
-dgn+w7ZRNru1T108kC24zCIuoEvMb7pO9rEK2BclhGBMDreleEdOVnfFNoSno/Av
-5ehkQJpeSlGMguskkZ2jFZMCRL9Io813yqq/rV872xoyHVqSIIRWCJCAVa010oRm
-o52j+V5ezs9DyKnHMJJFVAHRF6BbWP7LQEgMVP24q0CQ+4+KySpAMtD0/iruSOCO
-W5GS6fwrRyfXIi9ex4AQS7Eb5bJs1GMVSiGkMP+8xTJnzWW+rcj03xmU8y8kHbGq
-lLxeR+3982xdCibam/7OVQEU6OFybxGByQzhsYSjgSZwo2BUD9P03zJcDkcF1bc4
-e9uCfDmZqHS17h2yPuFMOEM8WaQLE5ueSY16PwDzUfB5WjJg8B8=
-=HuLJ
------END PGP SIGNATURE-----
---=-=-=--
+Thanks,
+Quentin
