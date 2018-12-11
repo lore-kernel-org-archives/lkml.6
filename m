@@ -3,184 +3,117 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EBCFC07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 04:04:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5765EC67839
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 04:11:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5412320811
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 04:04:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5412320811
+	by mail.kernel.org (Postfix) with ESMTP id 2606120672
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 04:11:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2606120672
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730114AbeLKEEK (ORCPT
+        id S1730130AbeLKELZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 23:04:10 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:47236 "EHLO mx1.redhat.com"
+        Mon, 10 Dec 2018 23:11:25 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:43886 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727721AbeLKEEJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 23:04:09 -0500
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        id S1727566AbeLKELY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Dec 2018 23:11:24 -0500
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 5F2BC369A0;
-        Tue, 11 Dec 2018 04:04:09 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 4112458E2E;
+        Tue, 11 Dec 2018 04:11:24 +0000 (UTC)
 Received: from redhat.com (ovpn-120-187.rdu2.redhat.com [10.10.120.187])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 85BF660BF1;
-        Tue, 11 Dec 2018 04:04:08 +0000 (UTC)
-Date:   Mon, 10 Dec 2018 23:04:08 -0500
+        by smtp.corp.redhat.com (Postfix) with SMTP id DB3F6608F2;
+        Tue, 11 Dec 2018 04:11:22 +0000 (UTC)
+Date:   Mon, 10 Dec 2018 23:11:22 -0500
 From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Jason Wang <jasowang@redhat.com>
-Cc:     kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Tonghao Zhang <xiangxia.m.yue@gmail.com>
-Subject: Re: [PATCH net 2/4] vhost_net: rework on the lock ordering for busy
- polling
-Message-ID: <20181210230106-mutt-send-email-mst@kernel.org>
-References: <20181210094454.21144-1-jasowang@redhat.com>
- <20181210094454.21144-3-jasowang@redhat.com>
- <20181210203119-mutt-send-email-mst@kernel.org>
- <f2a98f3a-a5c5-b762-8ec3-119a7708795d@redhat.com>
+To:     xuyandong <xuyandong2@huawei.com>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        Yinghai Lu <yinghai@kernel.org>,
+        Jesse Barnes <jbarnes@virtuousgeek.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>
+Subject: Re: [PATCH] pci: avoid bridge feature re-probing on hotplug
+Message-ID: <20181210231038-mutt-send-email-mst@kernel.org>
+References: <20181211021617.24072-1-mst@redhat.com>
+ <7CECC2DFC21538489F72729DF5EFB4D908AC796C@DGGEMM501-MBX.china.huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <f2a98f3a-a5c5-b762-8ec3-119a7708795d@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Tue, 11 Dec 2018 04:04:09 +0000 (UTC)
+In-Reply-To: <7CECC2DFC21538489F72729DF5EFB4D908AC796C@DGGEMM501-MBX.china.huawei.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Tue, 11 Dec 2018 04:11:24 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 11, 2018 at 11:06:43AM +0800, Jason Wang wrote:
-> 
-> On 2018/12/11 上午9:34, Michael S. Tsirkin wrote:
-> > On Mon, Dec 10, 2018 at 05:44:52PM +0800, Jason Wang wrote:
-> > > When we try to do rx busy polling in tx path in commit 441abde4cd84
-> > > ("net: vhost: add rx busy polling in tx path"), we lock rx vq mutex
-> > > after tx vq mutex is held. This may lead deadlock so we try to lock vq
-> > > one by one in commit 78139c94dc8c ("net: vhost: lock the vqs one by
-> > > one"). With this commit, we avoid the deadlock with the assumption
-> > > that handle_rx() and handle_tx() run in a same process. But this
-> > > commit remove the protection for IOTLB updating which requires the
-> > > mutex of each vq to be held.
-> > > 
-> > > To solve this issue, the first step is to have a exact same lock
-> > > ordering for vhost_net. This is done through:
-> > > 
-> > > - For handle_rx(), if busy polling is enabled, lock tx vq immediately.
-> > > - For handle_tx(), always lock rx vq before tx vq, and unlock it if
-> > >    busy polling is not enabled.
-> > > - Remove the tricky locking codes in busy polling.
-> > > 
-> > > With this, we can have a exact same lock ordering for vhost_net, this
-> > > allows us to safely revert commit 78139c94dc8c ("net: vhost: lock the
-> > > vqs one by one") in next patch.
-> > > 
-> > > The patch will add two more atomic operations on the tx path during
-> > > each round of handle_tx(). 1 byte TCP_RR does not notice such
-> > > overhead.
-> > > 
-> > > Fixes: commit 78139c94dc8c ("net: vhost: lock the vqs one by one")
-> > > Cc: Tonghao Zhang<xiangxia.m.yue@gmail.com>
-> > > Signed-off-by: Jason Wang<jasowang@redhat.com>
-> > > ---
-> > >   drivers/vhost/net.c | 18 +++++++++++++++---
-> > >   1 file changed, 15 insertions(+), 3 deletions(-)
-> > > 
-> > > diff --git a/drivers/vhost/net.c b/drivers/vhost/net.c
-> > > index ab11b2bee273..5f272ab4d5b4 100644
-> > > --- a/drivers/vhost/net.c
-> > > +++ b/drivers/vhost/net.c
-> > > @@ -513,7 +513,6 @@ static void vhost_net_busy_poll(struct vhost_net *net,
-> > >   	struct socket *sock;
-> > >   	struct vhost_virtqueue *vq = poll_rx ? tvq : rvq;
-> > > -	mutex_lock_nested(&vq->mutex, poll_rx ? VHOST_NET_VQ_TX: VHOST_NET_VQ_RX);
-> > >   	vhost_disable_notify(&net->dev, vq);
-> > >   	sock = rvq->private_data;
-> > > @@ -543,8 +542,6 @@ static void vhost_net_busy_poll(struct vhost_net *net,
-> > >   		vhost_net_busy_poll_try_queue(net, vq);
-> > >   	else if (!poll_rx) /* On tx here, sock has no rx data. */
-> > >   		vhost_enable_notify(&net->dev, rvq);
-> > > -
-> > > -	mutex_unlock(&vq->mutex);
-> > >   }
-> > >   static int vhost_net_tx_get_vq_desc(struct vhost_net *net,
-> > > @@ -913,10 +910,16 @@ static void handle_tx_zerocopy(struct vhost_net *net, struct socket *sock)
-> > >   static void handle_tx(struct vhost_net *net)
-> > >   {
-> > >   	struct vhost_net_virtqueue *nvq = &net->vqs[VHOST_NET_VQ_TX];
-> > > +	struct vhost_net_virtqueue *nvq_rx = &net->vqs[VHOST_NET_VQ_RX];
-> > >   	struct vhost_virtqueue *vq = &nvq->vq;
-> > > +	struct vhost_virtqueue *vq_rx = &nvq_rx->vq;
-> > >   	struct socket *sock;
-> > > +	mutex_lock_nested(&vq_rx->mutex, VHOST_NET_VQ_RX);
-> > >   	mutex_lock_nested(&vq->mutex, VHOST_NET_VQ_TX);
-> > > +	if (!vq->busyloop_timeout)
-> > > +		mutex_unlock(&vq_rx->mutex);
-> > > +
-> > >   	sock = vq->private_data;
-> > >   	if (!sock)
-> > >   		goto out;
-> > > @@ -933,6 +936,8 @@ static void handle_tx(struct vhost_net *net)
-> > >   		handle_tx_copy(net, sock);
-> > >   out:
-> > > +	if (vq->busyloop_timeout)
-> > > +		mutex_unlock(&vq_rx->mutex);
-> > >   	mutex_unlock(&vq->mutex);
-> > >   }
-> > So rx mutex taken on tx path now.  And tx mutex is on rc path ...  This
-> > is just messed up. Why can't tx polling drop rx lock before
-> > getting the tx lock and vice versa?
+On Tue, Dec 11, 2018 at 02:45:44AM +0000, xuyandong wrote:
 > 
 > 
-> Because we want to poll both tx and rx virtqueue at the same time
-> (vhost_net_busy_poll()).
-> 
->     while (vhost_can_busy_poll(endtime)) {
->         if (vhost_has_work(&net->dev)) {
->             *busyloop_intr = true;
->             break;
->         }
-> 
->         if ((sock_has_rx_data(sock) &&
->              !vhost_vq_avail_empty(&net->dev, rvq)) ||
->             !vhost_vq_avail_empty(&net->dev, tvq))
->             break;
-> 
->         cpu_relax();
-> 
->     }
-> 
-> 
-> And we disable kicks and notification for better performance.
-
-Right but it's all slow path - it happens when queue is
-otherwise empty. So this is what I am saying: let's drop the locks
-we hold around this.
-
-
-> 
+> > -----Original Message-----
+> > From: Michael S. Tsirkin [mailto:mst@redhat.com]
+> > Sent: Tuesday, December 11, 2018 10:19 AM
+> > To: linux-kernel@vger.kernel.org
+> > Cc: xuyandong <xuyandong2@huawei.com>; stable@vger.kernel.org; Yinghai
+> > Lu <yinghai@kernel.org>; Jesse Barnes <jbarnes@virtuousgeek.org>; Bjorn
+> > Helgaas <bhelgaas@google.com>; linux-pci@vger.kernel.org
+> > Subject: [PATCH] pci: avoid bridge feature re-probing on hotplug
 > > 
-> > Or if we really wanted to force everything to be locked at
-> > all times, let's just use a single mutex.
+> > commit 1f82de10d6 ("PCI/x86: don't assume prefetchable ranges are
+> > 64bit") added probing of bridge support for 64 bit memory each time bridge is
+> > re-enumerated.
 > > 
+> > Unfortunately this probing is destructive if any device behind the bridge is in
+> > use at this time.
 > > 
+> > There's no real need to re-probe the bridge features as the regiters in question
+> > never change - detect that using the memory flag being set and skip the
+> > probing.
+> > Avoiding repeated calls to pci_bridge_check_ranges might be even nicer would
+> > be a bigger patch and probably not appropriate on stable.
 > > 
+> > Reported-by: xuyandong <xuyandong2@huawei.com>
+> > Cc: stable@vger.kernel.org
+> > Cc: Yinghai Lu <yinghai@kernel.org>
+> > Cc: Jesse Barnes <jbarnes@virtuousgeek.org>
+> > Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
 > 
-> We could, but it might requires more changes which could be done for -next I
-> believe.
-> 
-> 
-> Thanks
+> Tested-by: xuyandong <xuyandong2@huawei.com>
 
-I'd rather we kept the fine grained locking. E.g. people are
-looking at splitting the tx and rx threads. But if not possible
-let's fix it cleanly with a coarse-grained one. A mess here will
-just create more trouble later.
+Bjorn could you queue this for this release?
 
--- 
-MST
+> > ---
+> > 
+> > This issue has been reported on upstream Linux and Centos.
+> > 
+> >  drivers/pci/setup-bus.c | 7 +++++++
+> >  1 file changed, 7 insertions(+)
+> > 
+> > diff --git a/drivers/pci/setup-bus.c b/drivers/pci/setup-bus.c index
+> > ed960436df5e..7ab42f76579e 100644
+> > --- a/drivers/pci/setup-bus.c
+> > +++ b/drivers/pci/setup-bus.c
+> > @@ -741,6 +741,13 @@ static void pci_bridge_check_ranges(struct pci_bus
+> > *bus)
+> >  	struct resource *b_res;
+> > 
+> >  	b_res = &bridge->resource[PCI_BRIDGE_RESOURCES];
+> > +
+> > +	/* Don't re-check after this was called once already:
+> > +	 * important since bridge might be in use.
+> > +	 */
+> > +	if (b_res[1].flags & IORESOURCE_MEM)
+> > +		return;
+> > +
+> >  	b_res[1].flags |= IORESOURCE_MEM;
+> > 
+> >  	pci_read_config_word(bridge, PCI_IO_BASE, &io);
+> > --
+> > MST
