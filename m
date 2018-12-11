@@ -2,158 +2,340 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F997C07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 06:38:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4415FC07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 06:42:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F2FF020672
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 06:38:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F2FF020672
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fi.rohmeurope.com
+	by mail.kernel.org (Postfix) with ESMTP id DD0DF20672
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 06:42:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SlS6e9tD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD0DF20672
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727633AbeLKGif (ORCPT
+        id S1727034AbeLKGmk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 01:38:35 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:43783 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726614AbeLKGif (ORCPT
+        Tue, 11 Dec 2018 01:42:40 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:42028 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725923AbeLKGmk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 01:38:35 -0500
-Received: by mail-lj1-f194.google.com with SMTP id 83-v6so11909353ljf.10;
-        Mon, 10 Dec 2018 22:38:33 -0800 (PST)
+        Tue, 11 Dec 2018 01:42:40 -0500
+Received: by mail-wr1-f67.google.com with SMTP id q18so12823181wrx.9;
+        Mon, 10 Dec 2018 22:42:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=KXmtxN7ePXcIMgJ+dYxNG4yOdWzQoUxvuy6ni7g+6uU=;
+        b=SlS6e9tD5Qd3yzli5y9gY1NB3cek8arQ3IAvjSLrWaGOvrULz9wVLM6b55gyJqyDgO
+         YYYWjwJcgI71HBlA7HXYYWQRUwUpfHra+vNhaFjm6RU9moCFeCozIb12jkjByxaAkET5
+         8SL6iRlEw3ibm7xA5F+hYIU9sIBebpcvnT8wsUKpVqIh/+KHNzyCSqODVOTa2HQWRK/x
+         COIdf5wkz8Bcc5Q9hacaC59ugto7vtNxiCb6GNJSP3RmJ/rJgVlvEwAUBg5DmfzPJY3b
+         PtlaEVBehxzY156Ud4tYl+mzqdVep7c6P3oPTcUxB6zabj9ZuhOnSIlGcgKXn2aODZ+G
+         tCqQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Rkc0y4GFDr26BmMWhWVGSXNOScQPY2InCGTxmfAK7hM=;
-        b=pAFkxtTHqEMWRj7ngr4dwyBbzmvVUeomvYQJILYq/xI2GLNQy4OM4HeG9HnTfARmn7
-         iNxkJTB64raDPHzBgzstcZn5l4QiQKRZyUmEbojFtEms5WRB19Wco3KWIT/ONfPwB/fd
-         SQBlWXHusLqRCniSI+rwjuzpt7KVV6yVlBjlpWQSjk2nwu/OVAtYL9w6zN/r/qLfNAEj
-         tOKerO3aVD3sE4KKNbEkjRCfNSR0PMUBUYxczIIL/f5SNiBgWMS7+65tGKRuA9DZo0i0
-         C2nLK8khuVikKvllVzdf0ZnL/iMgikxLGGyIVmVDN8KLPy+6f4A6cYJz7XBkai5vnUVT
-         XFrw==
-X-Gm-Message-State: AA+aEWa3ezMtOL083l8BGOKh3JCx5x8vR+YsPSRcGa0LNNV6LvIcDmUn
-        PfOM/vLaaezdkWNwn72NRG/QIiwF
-X-Google-Smtp-Source: AFSGD/X1FzJtyeO7Qz9j7mKJg7owzeqUpxJES77ygujqkQFatDDFfuGiDPw24IDNFbaNN2ZoYOMffg==
-X-Received: by 2002:a2e:b1ca:: with SMTP id e10-v6mr9871968lja.16.1544510312711;
-        Mon, 10 Dec 2018 22:38:32 -0800 (PST)
-Received: from localhost.localdomain ([213.255.186.46])
-        by smtp.gmail.com with ESMTPSA id l21-v6sm2488614lji.6.2018.12.10.22.38.31
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 10 Dec 2018 22:38:32 -0800 (PST)
-Date:   Tue, 11 Dec 2018 08:38:25 +0200
-From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To:     Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-Cc:     mazziesaccount@gmail.com, broonie@kernel.org,
-        gregkh@linuxfoundation.org, rafael@kernel.org,
-        linus.walleij@linaro.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org, heikki.haikola@fi.rohmeurope.com,
-        mikko.mutanen@fi.rohmeurope.com
-Subject: Re: [PATCH] regmap: regmap-irq/gpio-max77620: add level-irq support
-Message-ID: <20181211063825.GA32557@localhost.localdomain>
-References: <20181210081437.GA32228@localhost.localdomain>
- <e378d050-01b4-9a6c-1c17-1f1ca04dd16e@mentor.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=KXmtxN7ePXcIMgJ+dYxNG4yOdWzQoUxvuy6ni7g+6uU=;
+        b=kKwihR9x9zm2TU9f94Zvnf/kYgOthAUx0+WHylW8i6GPfRaU981wtqFU+NR1isj8pn
+         0qVraRFcGwPUIELcfBYzxfLDQOctkAH3lD8PDe3O1/uo65IeldR9WDoZkNRovKWD/tQx
+         H/OgzvRNdPSb2xwlS0unSaSvY8CUJd79O96fbPAnzLXhSza4WHMqEbrZQFXR0HaD/8dk
+         ZE/TZtZml+Bz7CrKcz/v3WfNWtMmFi7O2LrxV8v1ML2PWeIKVI24kHeYJG/e0jPBLDuV
+         TFsSXLK5CLm7KB+3fHiTetIF7p2OnBDn8T6qMHgPUP14MPm5aloqX1SqkGEGOlPG8yKW
+         8fyA==
+X-Gm-Message-State: AA+aEWZyA7frELEE6vg/qdhIqw2N8qNUwI1/hDk6xUGF1+FjlFYzu/GK
+        0YEkHKzNtLomNPFDOxkVf1l8kusWHq71XlBajXQ=
+X-Google-Smtp-Source: AFSGD/WxgQULKArE5Wc55H2XDjRiuGZbEJN+WjT7ZRGi+lbVpIu6l6HjsxHEMXBhuhsedPsuC+mHvvEVMg3yAM3ymbM=
+X-Received: by 2002:adf:e08c:: with SMTP id c12mr11536584wri.199.1544510557499;
+ Mon, 10 Dec 2018 22:42:37 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e378d050-01b4-9a6c-1c17-1f1ca04dd16e@mentor.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+References: <8736rldyzm.fsf@oldenburg.str.redhat.com> <1543444466.5493.220.camel@redhat.com>
+ <87y39c2dsg.fsf@oldenburg.str.redhat.com> <1689938209.14804.1543502662882.JavaMail.zimbra@efficios.com>
+ <20181129150433.GH4170@linux.ibm.com> <CAHD6eXcvx1bskbp-X+vuMYoMQiCLOt0PiCZ5FT1yFsda9Ud-yA@mail.gmail.com>
+ <20181206215405.GL4170@linux.ibm.com>
+In-Reply-To: <20181206215405.GL4170@linux.ibm.com>
+From:   David Goldblatt <davidtgoldblatt@gmail.com>
+Date:   Mon, 10 Dec 2018 22:42:25 -0800
+Message-ID: <CAHD6eXeoAXBhGJpx6wY6g9UV4G+zmqTbjbUHnqXnVh2xiNLvug@mail.gmail.com>
+Subject: Re: [PATCH] Linux: Implement membarrier function
+To:     Paul McKenney <paulmck@linux.ibm.com>
+Cc:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Florian Weimer <fweimer@redhat.com>, triegel@redhat.com,
+        libc-alpha@sourceware.org, stern@rowland.harvard.edu,
+        andrea.parri@amarulasolutions.com,
+        Will Deacon <will.deacon@arm.com>, peterz@infradead.org,
+        boqun.feng@gmail.com, npiggin@gmail.com, dhowells@redhat.com,
+        j.alglave@ucl.ac.uk, luc.maranget@inria.fr, akiyks@gmail.com,
+        dlustig@nvidia.com, linux-arch@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Vladimir,
+Hi Paul, thank you for thinking about all this.
 
-Thanks for the review.
+I think the modelling you suggest captures most of the algorithms I
+would want to write. I think it's slightly too weak, though, to
+implement the model suggested in P1202R0[1], which permits the SC
+outcome to be recovered in C-Goldblat-memb-2[2] by inserting a second
+smp_memb() after the first, which is a rather nice property (and I
+believe is supported by the underlying implementation options). I
+afraid though that I'm not familiar enough with the Linux herd
+definitions to suggest a tweak (or know how easy a tweak might be).
 
-On Mon, Dec 10, 2018 at 05:16:28PM +0200, Vladimir Zapolskiy wrote:
-> On 12/10/2018 10:14 AM, Matti Vaittinen wrote:
-> > Add level active IRQ support to regmap-irq irqchip. Change breaks
-> > existing regmap-irq type setting. Convert the existing drivers which
-> > use regmap-irq with trigger type setting (gpio-max77620) to work
-> > with this new approach. So we do not magically support level-active
-> > IRQs on gpio-max77620 - but add support to the regmap-irq for chips
-> > which support them =)
-> > 
-> > We do not support distinguishing situation where HW supports rising
-> > and falling edge detection but not both. Separating this would require
-> > inventing yet another flags for IRQ types.
-> > 
-> > Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-> > ---
-> > I did both the regmap-irq and max77620 changes in same commit because
-> > I'd rather not cause spot where max77620 breaks. Besides the changes in
-> > max77620 driver are trivial. Please let me know if this is not Ok.
-> > 
-> > Reason why I submit this patch now - even though my driver which would
-> > use level active type setting with regmap-irq is not yet ready for
-> > being submited - is that I'd like to minimize amount of existing drivers
-> > we need to patch. And if we add level active irq support like this then
-> > we must patch all existing drivers using type setting with regmap-irq.
-> > So doing this now when only max77620 uses type setting may be easier
-> > than postponing this to the future.
-> > 
-> > And finally - I don't have max77620 so I have only done _wery_ limited
-> > testing. So I would really appreciate if someone had time to review this
-> > thoroughly - and even happier if someone had possibility to try this out
-> > with the max77620.
-> > 
-> 
-> [snip]
-> 
-> > diff --git a/include/linux/regmap.h b/include/linux/regmap.h
-> > index a367d59c301d..91c431ad98c3 100644
-> > --- a/include/linux/regmap.h
-> > +++ b/include/linux/regmap.h
-> > @@ -1098,6 +1098,9 @@ int regmap_fields_update_bits_base(struct regmap_field *field,  unsigned int id,
-> >   * @type_reg_offset: Offset register for the irq type setting.
-> >   * @type_rising_mask: Mask bit to configure RISING type irq.
-> >   * @type_falling_mask: Mask bit to configure FALLING type irq.
-> > + * @type_level_low_mask: Mask bit to configure LEVEL_LOW type irq.
-> > + * @type_level_high_mask: Mask bit to configure LEVEL_HIGH type irq.
-> > + * @types_supported: logical OR of IRQ_TYPE_* flags indicating supported types.
-> 
-> While the existing interface is awful, you don't make it better.
-> 
-> .types_supported value is always derived from non-zero .type_*_mask values, so
-> it is simply not needed, as well as the whole change to gpio-max77620.c driver.
+- David
 
-Right. I didn't consider the "type_inverted" flag in the struct
-regmap_irq_chip. I thought that "mask" is actually a register value -
-which could be zero for some HWs. Thanks for pointing that out. It will
-really make "types_supported" useless.
+[1] Which I think may be strengthened a little bit more even in R1.
+[2] As a nit, my name has two "t"'s in it, although I'd throw into the
+ring "memb-pairwise", "memb-nontransitive", and "memb-sequenced" if
+these get non-placeholder names.
 
-So please just drop this patch for now. There seems to be no need to
-touch the existing regmap-irq users after all so I can submit this patch
-together with the driver which needs to support the level active IRQs.
-
-> 
-> >   */
-> >  struct regmap_irq {
-> >  	unsigned int reg_offset;
-> > @@ -1105,6 +1108,9 @@ struct regmap_irq {
-> >  	unsigned int type_reg_offset;
-> >  	unsigned int type_rising_mask;
-> >  	unsigned int type_falling_mask;
-> > +	unsigned int type_level_low_mask;
-> > +	unsigned int type_level_high_mask;
-> > +	unsigned int types_supported;
-> >  };
-> >  
-> >  #define REGMAP_IRQ_REG(_irq, _off, _mask)		\
-> > 
-> 
-> --
-> Best wishes,
-> Vladimir
-
--- 
-Matti Vaittinen
-ROHM Semiconductors
-
-~~~ "I don't think so," said Rene Descartes.  Just then, he vanished ~~~
+On Thu, Dec 6, 2018 at 1:54 PM Paul E. McKenney <paulmck@linux.ibm.com> wrote:
+>
+> Hello, David,
+>
+> I took a crack at extending LKMM to accommodate what I think would
+> support what you have in your paper.  Please see the very end of this
+> email for a patch against the "dev" branch of my -rcu tree.
+>
+> This gives the expected result for the following three litmus tests,
+> but is probably deficient or otherwise misguided in other ways.  I have
+> added the LKMM maintainers on CC for their amusement.  ;-)
+>
+> Thoughts?
+>
+>                                                 Thanx, Paul
+>
+> ------------------------------------------------------------------------
+>
+> C C-Goldblat-memb-1
+> {
+> }
+>
+> P0(int *x0, int *x1)
+> {
+>         WRITE_ONCE(*x0, 1);
+>         r1 = READ_ONCE(*x1);
+> }
+>
+>
+> P1(int *x0, int *x1)
+> {
+>         WRITE_ONCE(*x1, 1);
+>         smp_memb();
+>         r2 = READ_ONCE(*x0);
+> }
+>
+> exists (0:r1=0 /\ 1:r2=0)
+>
+> ------------------------------------------------------------------------
+>
+> C C-Goldblat-memb-2
+> {
+> }
+>
+> P0(int *x0, int *x1)
+> {
+>         WRITE_ONCE(*x0, 1);
+>         r1 = READ_ONCE(*x1);
+> }
+>
+>
+> P1(int *x1, int *x2)
+> {
+>         WRITE_ONCE(*x1, 1);
+>         smp_memb();
+>         r1 = READ_ONCE(*x2);
+> }
+>
+> P2(int *x2, int *x0)
+> {
+>         WRITE_ONCE(*x2, 1);
+>         r1 = READ_ONCE(*x0);
+> }
+>
+> exists (0:r1=0 /\ 1:r1=0 /\ 2:r1=0)
+>
+> ------------------------------------------------------------------------
+>
+> C C-Goldblat-memb-3
+> {
+> }
+>
+> P0(int *x0, int *x1)
+> {
+>         WRITE_ONCE(*x0, 1);
+>         r1 = READ_ONCE(*x1);
+> }
+>
+>
+> P1(int *x1, int *x2)
+> {
+>         WRITE_ONCE(*x1, 1);
+>         smp_memb();
+>         r1 = READ_ONCE(*x2);
+> }
+>
+> P2(int *x2, int *x3)
+> {
+>         WRITE_ONCE(*x2, 1);
+>         r1 = READ_ONCE(*x3);
+> }
+>
+> P3(int *x3, int *x0)
+> {
+>         WRITE_ONCE(*x3, 1);
+>         smp_memb();
+>         r1 = READ_ONCE(*x0);
+> }
+>
+> exists (0:r1=0 /\ 1:r1=0 /\ 2:r1=0 /\ 3:r1=0)
+>
+> ------------------------------------------------------------------------
+>
+> On Thu, Nov 29, 2018 at 11:02:17AM -0800, David Goldblatt wrote:
+> > One note with the suggested patch is that
+> > `atomic_thread_fence(memory_order_acq_rel)` should probably be
+> > `atomic_thread_fence (memory_order_seq_cst)` (otherwise the call would
+> > be a no-op on, say, x86, which it very much isn't).
+> >
+> > The non-transitivity thing makes the resulting description arguably
+> > incorrect, but this is informal enough that it might not be a big deal
+> > to add something after "For these threads, the membarrier function
+> > call turns an existing compiler barrier (see above) executed by these
+> > threads into full memory barriers" that clarifies it. E.g. you could
+> > make it into "turns an existing compiler barrier [...] into full
+> > memory barriers, with respect to the calling thread".
+> >
+> > Since this is targeting the description of the OS call (and doesn't
+> > have to concern itself with also being implementable by other
+> > asymmetric techniques or degrading to architectural barriers), I think
+> > that the description in "approach 2" in P1202 would also make sense
+> > for a formal description of the syscall. (Of course, without the
+> > kernel itself committing to a rigorous semantics, anything specified
+> > on top of it will be on slightly shaky ground).
+> >
+> > - David
+> >
+> > On Thu, Nov 29, 2018 at 7:04 AM Paul E. McKenney <paulmck@linux.ibm.com> wrote:
+> > >
+> > > On Thu, Nov 29, 2018 at 09:44:22AM -0500, Mathieu Desnoyers wrote:
+> > > > ----- On Nov 29, 2018, at 8:50 AM, Florian Weimer fweimer@redhat.com wrote:
+> > > >
+> > > > > * Torvald Riegel:
+> > > > >
+> > > > >> On Wed, 2018-11-28 at 16:05 +0100, Florian Weimer wrote:
+> > > > >>> This is essentially a repost of last year's patch, rebased to the glibc
+> > > > >>> 2.29 symbol version and reflecting the introduction of
+> > > > >>> MEMBARRIER_CMD_GLOBAL.
+> > > > >>>
+> > > > >>> I'm not including any changes to manual/ here because the set of
+> > > > >>> supported operations is evolving rapidly, we could not get consensus for
+> > > > >>> the language I proposed the last time, and I do not want to contribute
+> > > > >>> to the manual for the time being.
+> > > > >>
+> > > > >> Fair enough.  Nonetheless, can you summarize how far you're along with
+> > > > >> properly defining the semantics (eg, based on the C/C++ memory model)?
+> > > > >
+> > > > > I wrote down what you could, but no one liked it.
+> > > > >
+> > > > > <https://sourceware.org/ml/libc-alpha/2017-12/msg00796.html>
+> > > > >
+> > > > > I expect that a formalization would interact in non-trivial ways with
+> > > > > any potential formalization of usable relaxed memory order semantics,
+> > > > > and I'm not sure if anyone knows how to do the latter today.
+> > > >
+> > > > Adding Paul E. McKenney in CC.
+> > >
+> > > There is some prototype C++ memory model wording from David Goldblatt (CCed)
+> > > here (search for "Standarese"):
+> > >
+> > > http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/p1202r0.pdf
+> > >
+> > > David's key insight is that (in Linuxese) light fences cannot pair with
+> > > each other.
+>
+> ------------------------------------------------------------------------
+>
+> commit 17e3b6b60e57d1cb791f68a1a6a36e942cb2baad
+> Author: Paul E. McKenney <paulmck@linux.ibm.com>
+> Date:   Thu Dec 6 13:40:40 2018 -0800
+>
+>     EXP tools/memory-model: Add semantics for sys_membarrier()
+>
+>     This prototype commit extends LKMM to accommodate sys_membarrier(),
+>     which is a asymmetric barrier with a limited ability to insert full
+>     ordering into tasks that provide only compiler ordering.  This commit
+>     currently uses the "po" relation for this purpose, but something more
+>     sophisticated will be required when plain accesses are added, which
+>     the compiler can reorder.
+>
+>     For more detail, please see David Goldblatt's C++ working paper:
+>     http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/p1202r0.pdf
+>
+>     Signed-off-by: Paul E. McKenney <paulmck@linux.ibm.com>
+>
+> diff --git a/tools/memory-model/linux-kernel.bell b/tools/memory-model/linux-kernel.bell
+> index 9c42cd9ddcb4..4ef41453f569 100644
+> --- a/tools/memory-model/linux-kernel.bell
+> +++ b/tools/memory-model/linux-kernel.bell
+> @@ -24,6 +24,7 @@ instructions RMW[{'once,'acquire,'release}]
+>  enum Barriers = 'wmb (*smp_wmb*) ||
+>                 'rmb (*smp_rmb*) ||
+>                 'mb (*smp_mb*) ||
+> +               'memb (*sys_membarrier*) ||
+>                 'rcu-lock (*rcu_read_lock*)  ||
+>                 'rcu-unlock (*rcu_read_unlock*) ||
+>                 'sync-rcu (*synchronize_rcu*) ||
+> diff --git a/tools/memory-model/linux-kernel.cat b/tools/memory-model/linux-kernel.cat
+> index 8dcb37835b61..837c3ee20bea 100644
+> --- a/tools/memory-model/linux-kernel.cat
+> +++ b/tools/memory-model/linux-kernel.cat
+> @@ -33,9 +33,10 @@ let mb = ([M] ; fencerel(Mb) ; [M]) |
+>         ([M] ; po? ; [LKW] ; fencerel(After-spinlock) ; [M]) |
+>         ([M] ; po ; [UL] ; (co | po) ; [LKW] ;
+>                 fencerel(After-unlock-lock) ; [M])
+> +let memb = [M] ; fencerel(Memb) ; [M]
+>  let gp = po ; [Sync-rcu | Sync-srcu] ; po?
+>
+> -let strong-fence = mb | gp
+> +let strong-fence = mb | gp | memb
+>
+>  (* Release Acquire *)
+>  let acq-po = [Acquire] ; po ; [M]
+> @@ -86,6 +87,13 @@ acyclic hb as happens-before
+>  let pb = prop ; strong-fence ; hb*
+>  acyclic pb as propagation
+>
+> +(********************)
+> +(* sys_membarrier() *)
+> +(********************)
+> +
+> +let memb-step = ( prop ; po ; prop )? ; memb
+> +acyclic memb-step as memb-before
+> +
+>  (*******)
+>  (* RCU *)
+>  (*******)
+> diff --git a/tools/memory-model/linux-kernel.def b/tools/memory-model/linux-kernel.def
+> index 1d6a120cde14..9ff0691c5f2c 100644
+> --- a/tools/memory-model/linux-kernel.def
+> +++ b/tools/memory-model/linux-kernel.def
+> @@ -17,6 +17,7 @@ rcu_dereference(X) __load{once}(X)
+>  smp_store_mb(X,V) { __store{once}(X,V); __fence{mb}; }
+>
+>  // Fences
+> +smp_memb() { __fence{memb}; }
+>  smp_mb() { __fence{mb}; }
+>  smp_rmb() { __fence{rmb}; }
+>  smp_wmb() { __fence{wmb}; }
+>
