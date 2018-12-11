@@ -7,62 +7,61 @@ X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1961C5CFFE
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 14:28:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5FFFC5CFFE
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 14:28:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A6AA12081B
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 14:28:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7AA8F2082F
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 14:28:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544538481;
-	bh=uQcX2dzqrQM2orVQMvndQm6fzR0+LxorEv1I86IHsDE=;
+	s=default; t=1544538486;
+	bh=B7R6Eim+WLAdgbvZoBLTgG3jKGZAMGXO06qll/hqrBI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=XHiOnvUVpVJbgCabRrIK/CUOfZf9lwPjwVLD3KofWasHGtrtJ7Cw8fKjhKwDbUbxn
-	 CxRsCe+JnTW+UfM2ctLg8exs69swWXRXtVKkdx+KUG/AsweVdDFJKGyiusvrbud/sm
-	 xmIm26px8I3hvVEddOBWsR4tuudyx8AVyw+tX48U=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A6AA12081B
+	b=Q1NmHa7zGkDLSv4xVmp2WL5xDuO54qBrEd1NvQbOyzgJSkzGPxkFXfiKKX7Td0ZCw
+	 YMaM/8vKB8kbYbNmm1617bCzNYhT4gQwF3Dkbb1834ryP/TWXIuzwKrHF7PJzpDb5v
+	 rLrSpw6WRU3ZQFKj6W+YG16A8b/jleQ4fwEcyOSk=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7AA8F2082F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726846AbeLKO14 (ORCPT
+        id S1726888AbeLKO2F (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 09:27:56 -0500
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:41566 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726241AbeLKO1w (ORCPT
+        Tue, 11 Dec 2018 09:28:05 -0500
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:43197 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726212AbeLKO1x (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 09:27:52 -0500
-Received: by mail-ed1-f65.google.com with SMTP id z28so12664312edi.8
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 06:27:51 -0800 (PST)
+        Tue, 11 Dec 2018 09:27:53 -0500
+Received: by mail-ed1-f68.google.com with SMTP id f9so12665477eds.10
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 06:27:52 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=xXwaJmog1/oEX/6A1+e5tKGx5C0bRqEwCwR2BHwUQq8=;
-        b=N8ccPL4uv0pN6Z7hsJ2mcCCMLxUlH10tPTDxeC+oJhi+hPGupzlXEmRhQZGS0PxoSL
-         6fs9bwp3x4VHVPSv5cTGA5RCbObjYDhEQ98HW2tpn7lsbt5DjVLVS7alnMliidFBUdEk
-         x/+KZRbQ7dVaT158S2XgB38M3DPAx8xQuD/Hp6noKeu18lmG3Uq20996ea3fwwi3vi7E
-         W4tiXjt6MsQay6KrkolTiyTQacQ/C56qKeSPQG0gub9m9Yt6sYyM6tZLdkGjO4h4xe4O
-         qIubck+Ldedf8H/KX80HyUUsP75mpxhefRwhHQn6dA1Uxq7DeLZl984ideQculN8MFcO
-         kzgw==
-X-Gm-Message-State: AA+aEWb7sTUkg/l+jxIlL1f44iENcmPAGjWyRNOvuJ5ni4+2Zc9zc0ej
-        K3zj/PrarcwKl4fVZ1zQBTs+T1XA
-X-Google-Smtp-Source: AFSGD/WU5eBB4mLDzkmMW5SXZsrmL9erDeMhxzG1pm5Jdw/nZ0jvoqQoYpuRcJhGY3RoLQMZAwf91Q==
-X-Received: by 2002:a17:906:7252:: with SMTP id n18-v6mr4309738ejk.192.1544538470766;
-        Tue, 11 Dec 2018 06:27:50 -0800 (PST)
+        bh=Q8sh+9FkpWv6DFNlPPgKqUlqTEtJzBvplK2abR1KP7U=;
+        b=PEemiriaLXX14G7zJ9RnZ9qBCWgmJ6S0YxOgT3p4YpK0hgtOHT2mZCbuQgz1c54WpB
+         ztGcZUd4nBp6mcYG2RS0oNaiubowu5oRtO/112iZGb1HamEBuGH9E//ZAOdb70bUHEL1
+         SabqWaV7XuVTJpWyyntPoJly7HCisPKg6glQmlvlO2Fqo8cT33VF6E7H61IbjOZVyvQf
+         X9+Lrz71+DZ3cY40409iGZJ0xrTAezI1NkgWizHazObWneuYfVaemFW9bcykXTH4QWeT
+         Rndf/3289jogQHaWqTaWV0BbrapDKcJci9v+WWaMIQu8TbHYH4LJIBbPd/PfnrhFKn3p
+         gmww==
+X-Gm-Message-State: AA+aEWadKu5sFdeqykVoPeyKmB/usJhnPtADFnz93SyUjzszikzKYraR
+        wkVB82TfJStOsg6W+FmIZ3U=
+X-Google-Smtp-Source: AFSGD/Xb/9v/+9EOR4DQqoxgTxgYu4+WFUeAMf/WERoa5tPJYu2EQVJWRavObQF6AqoNGie3Iwhl5g==
+X-Received: by 2002:a17:906:590a:: with SMTP id h10-v6mr13068100ejq.102.1544538471623;
+        Tue, 11 Dec 2018 06:27:51 -0800 (PST)
 Received: from tiehlicka.suse.cz (prg-ext-pat.suse.com. [213.151.95.130])
-        by smtp.gmail.com with ESMTPSA id g31sm4073975eda.96.2018.12.11.06.27.49
+        by smtp.gmail.com with ESMTPSA id g31sm4073975eda.96.2018.12.11.06.27.50
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 11 Dec 2018 06:27:50 -0800 (PST)
+        Tue, 11 Dec 2018 06:27:51 -0800 (PST)
 From:   Michal Hocko <mhocko@kernel.org>
 To:     Andrew Morton <akpm@linux-foundation.org>
 Cc:     <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
         Michal Hocko <mhocko@suse.com>,
         David Hildenbrand <david@redhat.com>,
-        Oscar Salvador <osalvador@suse.de>,
-        Pavel Tatashin <pasha.tatashin@soleen.com>
-Subject: [PATCH 1/3] mm, memory_hotplug: try to migrate full pfn range
-Date:   Tue, 11 Dec 2018 15:27:39 +0100
-Message-Id: <20181211142741.2607-2-mhocko@kernel.org>
+        Oscar Salvador <osalvador@suse.de>
+Subject: [PATCH 2/3] mm, memory_hotplug: deobfuscate migration part of offlining
+Date:   Tue, 11 Dec 2018 15:27:40 +0100
+Message-Id: <20181211142741.2607-3-mhocko@kernel.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181211142741.2607-1-mhocko@kernel.org>
 References: <20181211142741.2607-1-mhocko@kernel.org>
@@ -75,74 +74,98 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Michal Hocko <mhocko@suse.com>
 
-do_migrate_range has been limiting the number of pages to migrate to 256
-for some reason which is not documented. Even if the limit made some
-sense back then when it was introduced it doesn't really serve a good
-purpose these days. If the range contains huge pages then
-we break out of the loop too early and go through LRU and pcp
-caches draining and scan_movable_pages is quite suboptimal.
+Memory migration might fail during offlining and we keep retrying in
+that case. This is currently obfuscate by goto retry loop. The code
+is hard to follow and as a result it is even suboptimal becase each
+retry round scans the full range from start_pfn even though we have
+successfully scanned/migrated [start_pfn, pfn] range already. This
+is all only because check_pages_isolated failure has to rescan the full
+range again.
 
-The only reason to limit the number of pages I can think of is to reduce
-the potential time to react on the fatal signal. But even then the
-number of pages is a questionable metric because even a single page
-might migration block in a non-killable state (e.g. __unmap_and_move).
-
-Remove the limit and offline the full requested range (this is one
-membblock worth of pages with the current code). Should we ever get a
-report that offlining takes too long to react on fatal signal then we
-should rather fix the core migration to use killable waits and bailout
-on a signal.
+De-obfuscate the migration retry loop by promoting it to a real for
+loop. In fact remove the goto altogether by making it a proper double
+loop (yeah, gotos are nasty in this specific case). In the end we
+will get a slightly more optimal code which is better readable.
 
 Reviewed-by: David Hildenbrand <david@redhat.com>
-Reviewed-by: Pavel Tatashin <pasha.tatashin@soleen.com>
 Reviewed-by: Oscar Salvador <osalvador@suse.de>
 Signed-off-by: Michal Hocko <mhocko@suse.com>
 ---
- mm/memory_hotplug.c | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
+ mm/memory_hotplug.c | 58 ++++++++++++++++++++++-----------------------
+ 1 file changed, 29 insertions(+), 29 deletions(-)
 
 diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
-index c82193db4be6..6263c8cd4491 100644
+index 6263c8cd4491..c6c42a7425e5 100644
 --- a/mm/memory_hotplug.c
 +++ b/mm/memory_hotplug.c
-@@ -1339,18 +1339,16 @@ static struct page *new_node_page(struct page *page, unsigned long private)
- 	return new_page_nodemask(page, nid, &nmask);
- }
+@@ -1591,38 +1591,38 @@ static int __ref __offline_pages(unsigned long start_pfn,
+ 		goto failed_removal_isolated;
+ 	}
  
--#define NR_OFFLINE_AT_ONCE_PAGES	(256)
- static int
- do_migrate_range(unsigned long start_pfn, unsigned long end_pfn)
- {
- 	unsigned long pfn;
- 	struct page *page;
--	int move_pages = NR_OFFLINE_AT_ONCE_PAGES;
- 	int not_managed = 0;
- 	int ret = 0;
- 	LIST_HEAD(source);
+-	pfn = start_pfn;
+-repeat:
+-	/* start memory hot removal */
+-	ret = -EINTR;
+-	if (signal_pending(current)) {
+-		reason = "signal backoff";
+-		goto failed_removal_isolated;
+-	}
++	do {
++		for (pfn = start_pfn; pfn;) {
++			if (signal_pending(current)) {
++				ret = -EINTR;
++				reason = "signal backoff";
++				goto failed_removal_isolated;
++			}
  
--	for (pfn = start_pfn; pfn < end_pfn && move_pages > 0; pfn++) {
-+	for (pfn = start_pfn; pfn < end_pfn; pfn++) {
- 		if (!pfn_valid(pfn))
- 			continue;
- 		page = pfn_to_page(pfn);
-@@ -1362,8 +1360,7 @@ do_migrate_range(unsigned long start_pfn, unsigned long end_pfn)
- 				ret = -EBUSY;
- 				break;
- 			}
--			if (isolate_huge_page(page, &source))
--				move_pages -= 1 << compound_order(head);
-+			isolate_huge_page(page, &source);
- 			continue;
- 		} else if (PageTransHuge(page))
- 			pfn = page_to_pfn(compound_head(page))
-@@ -1382,7 +1379,6 @@ do_migrate_range(unsigned long start_pfn, unsigned long end_pfn)
- 		if (!ret) { /* Success */
- 			put_page(page);
- 			list_add_tail(&page->lru, &source);
--			move_pages--;
- 			if (!__PageMovable(page))
- 				inc_node_page_state(page, NR_ISOLATED_ANON +
- 						    page_is_file_cache(page));
+-	cond_resched();
+-	lru_add_drain_all();
+-	drain_all_pages(zone);
++			cond_resched();
++			lru_add_drain_all();
++			drain_all_pages(zone);
+ 
+-	pfn = scan_movable_pages(start_pfn, end_pfn);
+-	if (pfn) { /* We have movable pages */
+-		ret = do_migrate_range(pfn, end_pfn);
+-		goto repeat;
+-	}
++			pfn = scan_movable_pages(pfn, end_pfn);
++			if (pfn) {
++				/* TODO fatal migration failures should bail out */
++				do_migrate_range(pfn, end_pfn);
++			}
++		}
++
++		/*
++		 * dissolve free hugepages in the memory block before doing offlining
++		 * actually in order to make hugetlbfs's object counting consistent.
++		 */
++		ret = dissolve_free_huge_pages(start_pfn, end_pfn);
++		if (ret) {
++			reason = "failure to dissolve huge pages";
++			goto failed_removal_isolated;
++		}
++		/* check again */
++		offlined_pages = check_pages_isolated(start_pfn, end_pfn);
++	} while (offlined_pages < 0);
+ 
+-	/*
+-	 * dissolve free hugepages in the memory block before doing offlining
+-	 * actually in order to make hugetlbfs's object counting consistent.
+-	 */
+-	ret = dissolve_free_huge_pages(start_pfn, end_pfn);
+-	if (ret) {
+-		reason = "failure to dissolve huge pages";
+-		goto failed_removal_isolated;
+-	}
+-	/* check again */
+-	offlined_pages = check_pages_isolated(start_pfn, end_pfn);
+-	if (offlined_pages < 0)
+-		goto repeat;
+ 	pr_info("Offlined Pages %ld\n", offlined_pages);
+ 	/* Ok, all of our target is isolated.
+ 	   We cannot do rollback at this point. */
 -- 
 2.19.2
 
