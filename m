@@ -2,155 +2,114 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0B6FC5CFFE
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 19:30:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 929F9C67839
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 19:31:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 80D0520870
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 19:30:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="VRpjDVVX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 80D0520870
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id 61C8320811
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 19:31:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61C8320811
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726634AbeLKTa3 (ORCPT
+        id S1726714AbeLKTbq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 14:30:29 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:59124 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726365AbeLKTa2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 14:30:28 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wBBJTDT2114721;
-        Tue, 11 Dec 2018 19:29:30 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=tSuTGJwc5JcHn5S/sk2zNgsblWiGAiGQQ+g85SpyUrU=;
- b=VRpjDVVXWIhleb2/P8GhS0N0WFbwJODkaqK/p8G2zO93o4l9hv+k87NsW4xfuobxbdeP
- 2xLQBeBz9cbS2qMx1rgitKz4m8pa+ldmK/cCfmNQxZDCS6ka0yKH6GWogRLxujbtvL//
- qYt0p60CcSBlyaAC7Q3jYDdhv4BpVoq+Xm/kSqTP8U4K7gugSRJTm5Ya+Xe5o/jjQs0F
- jUG8JADsWUuG1svguu8KDtEYjE4kFXakDr6Y9e6khgKMwLseI8U6EruTFY8SQYEckiA8
- s5LVZ5KXc1dhZMTI6YHkkOwzuYyEOAtOJy9FJZjb3XMv73zqQzZ3Fser1iCZxuGeeu7+ tA== 
-Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
-        by userp2130.oracle.com with ESMTP id 2p85cu5x97-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 11 Dec 2018 19:29:30 +0000
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id wBBJTPOk022010
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 11 Dec 2018 19:29:25 GMT
-Received: from abhmp0009.oracle.com (abhmp0009.oracle.com [141.146.116.15])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id wBBJTNrA016477;
-        Tue, 11 Dec 2018 19:29:23 GMT
-Received: from [10.141.197.71] (/10.141.197.71)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 11 Dec 2018 11:29:22 -0800
-Subject: Re: [PATCH v9 0/7] KVM: x86: Allow Qemu/KVM to use PVH entry point
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     x86@kernel.org, xen-devel@lists.xenproject.org,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        pbonzini@redhat.com, jgross@suse.com, boris.ostrovsky@oracle.com,
-        bp@suse.de, dave.hansen@linux.intel.com, davem@davemloft.net,
-        gregkh@linuxfoundation.org, hpa@zytor.com, jpoimboe@redhat.com,
-        kirill.shutemov@linux.intel.com, luto@kernel.org,
-        mchehab@kernel.org, mingo@redhat.com, rdunlap@infradead.org,
-        tglx@linutronix.de, thomas.lendacky@amd.com, hch@infradead.org,
-        roger.pau@citrix.com, rkrcmar@redhat.com
-References: <1544468734-32763-1-git-send-email-maran.wilson@oracle.com>
- <20181211131825.GD27375@zn.tnic>
-From:   Maran Wilson <maran.wilson@oracle.com>
-Organization: Oracle Corporation
-Message-ID: <5fc083d4-1dbd-f2f9-3059-0e3e8dda9b25@oracle.com>
-Date:   Tue, 11 Dec 2018 11:29:21 -0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.2
+        Tue, 11 Dec 2018 14:31:46 -0500
+Received: from mga12.intel.com ([192.55.52.136]:26804 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726340AbeLKTbp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 14:31:45 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Dec 2018 11:31:44 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,343,1539673200"; 
+   d="scan'208";a="301317081"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.154])
+  by fmsmga006.fm.intel.com with ESMTP; 11 Dec 2018 11:31:44 -0800
+Date:   Tue, 11 Dec 2018 11:31:44 -0800
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Andy Lutomirski <luto@amacapital.net>
+Cc:     Andrew Lutomirski <luto@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        X86 ML <x86@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Josh Triplett <josh@joshtriplett.org>,
+        linux-sgx@vger.kernel.org, haitao.huang@linux.intel.com,
+        Jethro Beekman <jethro@fortanix.com>,
+        "Dr. Greg Wettstein" <greg@enjellic.com>
+Subject: Re: [RFC PATCH v2 4/4] x86/vdso: Add __vdso_sgx_enter_enclave() to
+ wrap SGX enclave transitions
+Message-ID: <20181211193144.GG14731@linux.intel.com>
+References: <20181206221922.31012-5-sean.j.christopherson@intel.com>
+ <CALCETrXRJ645=08fyeoMQ949fLB1TvhsgERFVx5mAHdViEjq8Q@mail.gmail.com>
+ <20181207165145.GB10404@linux.intel.com>
+ <CALCETrVkEW82PzQZhJ5iS849DLY1gbd8YjH5F7P1J7hgjkjiOQ@mail.gmail.com>
+ <20181207190257.GC10404@linux.intel.com>
+ <EFA99261-BE93-49DA-9A8F-E6FD28069AFC@amacapital.net>
+ <20181207200935.GE10404@linux.intel.com>
+ <4CEB5945-9562-40FA-8CCA-A1675D55B001@amacapital.net>
+ <20181207212649.GG10404@linux.intel.com>
+ <CALCETrVBR+2HjTqX=W4r9GOq69Xg36v4gmCKqK0wUjzAqBJnrw@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20181211131825.GD27375@zn.tnic>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9104 signatures=668679
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1812110173
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CALCETrVBR+2HjTqX=W4r9GOq69Xg36v4gmCKqK0wUjzAqBJnrw@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/11/2018 5:18 AM, Borislav Petkov wrote:
-> On Mon, Dec 10, 2018 at 11:05:34AM -0800, Maran Wilson wrote:
->> For certain applications it is desirable to rapidly boot a KVM virtual
->> machine. In cases where legacy hardware and software support within the
->> guest is not needed, Qemu should be able to boot directly into the
->> uncompressed Linux kernel binary without the need to run firmware.
->>
->> There already exists an ABI to allow this for Xen PVH guests and the ABI
->> is supported by Linux and FreeBSD:
->>
->>     https://xenbits.xen.org/docs/unstable/misc/pvh.html
->>
->> This patch series would enable Qemu to use that same entry point for
->> booting KVM guests.
-> How would I do that, practically?
->
-> Looking at those here:
->
->>   * Qemu and qboot RFC patches have been posted to show one example of how
->>     this functionality can be used. Some preliminary numbers are available
->>     in those cover letters showing the KVM guest boot time improvement.
->>        Qemu:
->>        http://lists.nongnu.org/archive/html/qemu-devel/2018-12/msg00957.html
->>        qboot:
->>        http://lists.nongnu.org/archive/html/qemu-devel/2018-12/msg00953.html
-> I might still need to do some dancing to get stuff going.
+On Fri, Dec 07, 2018 at 03:33:57PM -0800, Andy Lutomirski wrote:
+> On Fri, Dec 7, 2018 at 1:26 PM Sean Christopherson
+> <sean.j.christopherson@intel.com> wrote:
+> >
+> > Running a checksum on the stack for every exit doesn't seem like it'd
+> > be worth the effort, especially since this type of bug should be quite
+> > rare, at least in production environments.
+> >
+> > If we want to pursue the checksum idea I think the easiest approach
+> > would be to combine it with an exit_handler and do a simple check on
+> > the handler.  It'd be minimal overhead in the fast path and would flag
+> > cases where invoking exit_handle() would explode, while deferring all
+> > other checks to the user.
+> 
+> How about this variant?
+> 
+> #define MAGIC 0xaaaabbbbccccddddul
+> #define RETADDR_HASH ((unsigned long)__builtin_return_address(0) ^ MAGIC)
+> 
+> void foo(void)
+> {
+>     volatile unsigned long hash = RETADDR_HASH;
+> 
+>     /* placeholder for your actual code */
+>     asm volatile ("nop");
+> 
+>     if (hash != RETADDR_HASH)
+>         asm volatile ("ud2");
+> }
+> 
+> But I have a real argument for dropping exit_handler: in this new age
+> of Spectre, the indirect call is a retpoline, and it's therefore quite
+> slow.
 
-Is your question about what options you need to provide to Qemu? Or is 
-your question about the SW implementation choices?
+Technically slower, but would the extra CALL+RET pair even be noticeable
+in the grand scheme of SGX?
 
-Assuming the former... once you have compiled all 3 new binaries 
-(kernel, Qemu, and qboot) then you simply invoke qemu the same way you 
-normally invoke qemu with qboot + kernel binary, except you provide the 
-vmlinux (uncompressed) kernel binary when specifying the "-kernel" 
-parameter. Qemu/qboot will automatically detect that you have provided 
-an ELF binary, find the PVH ELF note to locate the entry point, and 
-proceed to boot the kernel via that method. On the other hand, if you 
-leave all the Qemu options as-is, but simply provide the bzImage 
-(compressed) kernel binary from the same build, Qemu/qboot will boot the 
-way it has always done and not look for PVH.
+> So I'm not saying NAK, but I do think it's unnecessary.
 
-To make it more concrete, here's an example of how I had been invoking 
-PVH boot recently:
-
-    x86_64-softmmu/qemu-system-x86_64 \
-      -name testvm01 \
-      -machine q35,accel=kvm,nvdimm \
-      -cpu host \
-      -m 1024,maxmem=20G,slots=2 \
-      -smp 1 \
-      -nodefaults \
-      -kernel binaries/vmlinux \
-      -object 
-memory-backend-file,id=mem0,share,mem-path=binaries/containers.img,size=235929600 
-\
-      -device nvdimm,memdev=mem0,id=nv0 \
-      -append 'console=ttyS0,115200,8n1 root=/dev/pmem0p1 panic=1 rw 
-init=/usr/lib/systemd/systemd rootfstype=ext4' \
-      -bios binaries/bios.bin \
-      -serial mon:stdio
-
-Thanks,
--Maran
-
-
-
-> Thx.
->
-
+Ya, definitely not necessary, but it does allow userspace do things that
+are otherwise cumbersome or impossible to do with the vanilla vDSO.  How
+much value that actually adds is another question...
