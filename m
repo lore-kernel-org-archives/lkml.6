@@ -2,145 +2,130 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC08FC07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 09:23:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC168C07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 09:25:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BCC832081B
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 09:23:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BCC832081B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=virtuozzo.com
+	by mail.kernel.org (Postfix) with ESMTP id 613E82081B
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 09:25:56 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="WOq7/LNK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 613E82081B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726243AbeLKJXQ (ORCPT
+        id S1726158AbeLKJZz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 04:23:16 -0500
-Received: from relay.sw.ru ([185.231.240.75]:45724 "EHLO relay.sw.ru"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726089AbeLKJXQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 04:23:16 -0500
-Received: from [172.16.25.169]
-        by relay.sw.ru with esmtp (Exim 4.91)
-        (envelope-from <ktkhai@virtuozzo.com>)
-        id 1gWeFz-0007RF-WA; Tue, 11 Dec 2018 12:23:12 +0300
-Subject: Re: [PATCH] ksm: React on changing "sleep_millisecs" parameter faster
-To:     Cyrill Gorcunov <gorcunov@gmail.com>
-Cc:     akpm@linux-foundation.org, mhocko@suse.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, gorcunov@virtuozzo.com
-References: <154445792450.3178.16241744401215933502.stgit@localhost.localdomain>
- <20181210201036.GC2342@uranus.lan>
-From:   Kirill Tkhai <ktkhai@virtuozzo.com>
-Message-ID: <db19c148-b375-b6f2-dbf5-9e78f5e46c04@virtuozzo.com>
-Date:   Tue, 11 Dec 2018 12:23:11 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
+        Tue, 11 Dec 2018 04:25:55 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:46041 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726085AbeLKJZy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 04:25:54 -0500
+Received: by mail-pg1-f194.google.com with SMTP id y4so6352411pgc.12
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 01:25:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=8tdgDo/HXIx0+xDqmYYm8THjkQtHccWwlqCwVYW+NFM=;
+        b=WOq7/LNK0L8ZgrBYnhUboQOH3ulg0gfBQ2JD5Jj+WDf6jVPH2Wrn3rCjrdIMtscoQn
+         fTXS5oI/OEeGNZDtKn/5yhtNrnVsWsHV98Vss7paO0GQIroNJy/XForOExHmoHxY0W2G
+         ytVDQ6/xncKVTNEtibbWFhb6zfT1BTyena6k8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=8tdgDo/HXIx0+xDqmYYm8THjkQtHccWwlqCwVYW+NFM=;
+        b=nIm5wvD2Siwkx2FRm0qacZgBxdPnIMsdmBN1SgFLXJjKzZMqF3iokRNm6AnNeNBzwL
+         mN2L2qOmdbI8Spcb7vw+kmZgt5LWZI7LdVtGG8OGrl/telcE+oBIazxIE1ySZsxawons
+         CWog4l7B6f9CtC0paR4b5yHsUcMwXMFXEMpREEQrpez98JPacptUHdjTnInwCKYCq/iB
+         fOQsDbvQzfrnfjVrrgiSrkjWoTZUkaoMdVMscpyTD8b1zTbbMeNfM0ecP//E8Sh/DBpS
+         FMDQ9EUa3MBlbBAQsTjRuoQ0ExWD81WU5/vb/JWdO8SfjzBoZpb+iUS6X7Sj3Bp6fNBQ
+         zyeg==
+X-Gm-Message-State: AA+aEWZ3xj4urLyCPRS1OVfnqV2TU6ixAUT55oN1OxWWzOWp21kW0npU
+        QmYh7LPjXsf8w4L2P/CGQbJKqQ==
+X-Google-Smtp-Source: AFSGD/VtsoC4MZ3cpTh5KBSb7nGeM3vLA8pSpM6tvfBxtz91JrdDIT3TsJFX0obhg0O1n5INBFUX3A==
+X-Received: by 2002:a63:e516:: with SMTP id r22mr14217318pgh.256.1544520352508;
+        Tue, 11 Dec 2018 01:25:52 -0800 (PST)
+Received: from localhost ([122.172.23.29])
+        by smtp.gmail.com with ESMTPSA id v184sm19188877pfb.182.2018.12.11.01.25.50
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 11 Dec 2018 01:25:51 -0800 (PST)
+Date:   Tue, 11 Dec 2018 14:55:49 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Quentin Perret <quentin.perret@arm.com>
+Cc:     vireshk@kernel.org, nm@ti.com, sboyd@kernel.org,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH] PM / OPP: Always expose one supply in debugfs
+Message-ID: <20181211092549.2ydogec7bnlfokwy@vireshk-i7>
+References: <20181210113247.11412-1-quentin.perret@arm.com>
+ <20181210115410.clyrxhp5plptrf5n@queper01-lin>
 MIME-Version: 1.0
-In-Reply-To: <20181210201036.GC2342@uranus.lan>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181210115410.clyrxhp5plptrf5n@queper01-lin>
+User-Agent: NeoMutt/20180323-120-3dd1ac
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Cyrill,
-
-On 10.12.2018 23:10, Cyrill Gorcunov wrote:
-> On Mon, Dec 10, 2018 at 07:06:18PM +0300, Kirill Tkhai wrote:
->> ksm thread unconditionally sleeps in ksm_scan_thread()
->> after each iteration:
->>
->> 	schedule_timeout_interruptible(
->> 		msecs_to_jiffies(ksm_thread_sleep_millisecs))
->>
->> The timeout is configured in /sys/kernel/mm/ksm/sleep_millisecs.
->>
->> In case of user writes a big value by a mistake, and the thread
->> enters into schedule_timeout_interruptible(), it's not possible
->> to cancel the sleep by writing a new smaler value; the thread
->> is just sleeping till timeout expires.
->>
->> The patch fixes the problem by waking the thread each time
->> after the value is updated.
->>
->> This also may be useful for debug purposes; and also for userspace
->> daemons, which change sleep_millisecs value in dependence of
->> system load.
->>
->> Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
+On 10-12-18, 11:54, Quentin Perret wrote:
+> On Monday 10 Dec 2018 at 11:32:47 (+0000), Quentin Perret wrote:
+> > On some platforms, the opp_table->regulator_count field is kept at zero
+> > even though opp->supplies is always allocated. However, the loop used to
+> > display the supplies in the debugfs doesn't deal correctly with this,
+> > which results in the supplies not being displayed in debugfs on those
+> > platforms.
+> > 
+> > Fix this by making sure to always display at least once supply in
+> > debugfs.
+> > 
+> > Signed-off-by: Quentin Perret <quentin.perret@arm.com>
+> > 
+> > ---
+> > 
+> > This has been observed on Juno r2 which uses SCPI and Hikey960 which
+> > uses DT. I am not particularly familiar with that part of the code, so
+> > I'm not sure if this is even remotely correct (hence the RFC tag).
+> > 
+> > I first thought setting opp_table->regulator_count to 1 would be the
+> > right fix but that causes other issues. This fix seems to work OK on
+> > Juno and Hikey960, at least.
+> > 
+> > Feedback is welcome :-)
 > 
-> Kirill, can we rather reuse @ksm_thread variable from ksm_init
-> (by moving it to static file level variable).
+> Hmm, so I just figured what I'm doing here is basically reverting:
+> 
+>     1fae788ed640 ("PM / OPP: Don't create debugfs "supply-0" directory unnecessarily")
+> 
+> Should I send a proper revert instead of this patch ? It _is_ handy to
+> read voltage numbers when available.
 
-I've considered using it, but this is not looks good for me.
-The problem is ksm thread may be parked, or it even may fail
-to start. But at the same time, parallel writes to "sleep_millisecs"
-are possible. There is a place for races, so to use the local
-variable in ksm_init() (like we have at the moment) looks better
-for me. At the patch the mutex protects against any races.
+First of all I am really happy that someone apart from me is using this debug
+interface :)
 
-> Also wakening up
-> unconditionally on write looks somehow suspicious to me
-> though I don't have a precise argument against.
+At least that patch was correct and if we have to fix something, it should be
+fixed somewhere else.
 
-The conditional wait requires one more wait_queue. This is
-the thing I tried to avoid. But. I also had doubts about
-this, so you are already the second person, who worries :)
-It looks like we really need to change this.
+I tried to reproduce the issue on hikey and straight away understood why it is
+behaving that way. There is no "cpu-supply" property defined for the CPUs.
 
-How are you about something like the below?
+I looked at juno driver and couldn't see any references to voltage there. Are
+you trying to add that support ?
 
-diff --git a/mm/ksm.c b/mm/ksm.c
-index 723bd32d4dd0..66d962a227e7 100644
---- a/mm/ksm.c
-+++ b/mm/ksm.c
-@@ -296,6 +296,7 @@ static unsigned long ksm_run = KSM_RUN_STOP;
- static void wait_while_offlining(void);
- 
- static DECLARE_WAIT_QUEUE_HEAD(ksm_thread_wait);
-+static DECLARE_WAIT_QUEUE_HEAD(ksm_iter_wait);
- static DEFINE_MUTEX(ksm_thread_mutex);
- static DEFINE_SPINLOCK(ksm_mmlist_lock);
- 
-@@ -2432,6 +2433,8 @@ static int ksmd_should_run(void)
- 
- static int ksm_scan_thread(void *nothing)
- {
-+	unsigned int sleep_ms;
-+
- 	set_freezable();
- 	set_user_nice(current, 5);
- 
-@@ -2440,13 +2443,15 @@ static int ksm_scan_thread(void *nothing)
- 		wait_while_offlining();
- 		if (ksmd_should_run())
- 			ksm_do_scan(ksm_thread_pages_to_scan);
-+		sleep_ms = ksm_thread_sleep_millisecs;
- 		mutex_unlock(&ksm_thread_mutex);
- 
- 		try_to_freeze();
- 
- 		if (ksmd_should_run()) {
--			schedule_timeout_interruptible(
--				msecs_to_jiffies(ksm_thread_sleep_millisecs));
-+			wait_event_interruptible_timeout(ksm_iter_wait,
-+					sleep_ms != ksm_thread_sleep_millisecs,
-+					msecs_to_jiffies(sleep_ms));
- 		} else {
- 			wait_event_freezable(ksm_thread_wait,
- 				ksmd_should_run() || kthread_should_stop());
-@@ -2864,7 +2869,10 @@ static ssize_t sleep_millisecs_store(struct kobject *kobj,
- 	if (err || msecs > UINT_MAX)
- 		return -EINVAL;
- 
-+	mutex_lock(&ksm_thread_mutex);
- 	ksm_thread_sleep_millisecs = msecs;
-+	mutex_unlock(&ksm_thread_mutex);
-+	wake_up_interruptible(&ksm_iter_wait);
- 
- 	return count;
- }
+Anyway, this should still be fixed irrespective of the "cpu-supply" property.
+The other fix you mentioned about setting opp_table->regulator_count to 1 is
+actually the right thing to do but the fix may require changes at multiple
+places. I can help writing a patch for that if you want, else I am open to you
+giving it a shot :)
+
+Thanks.
+
+-- 
+viresh
