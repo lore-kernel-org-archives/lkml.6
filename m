@@ -2,176 +2,198 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.9 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06277C5CFFE
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:38:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A6EBC07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:38:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 782702082F
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:38:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 782702082F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 4B1F020672
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:38:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B1F020672
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727199AbeLKPig (ORCPT
+        id S1727206AbeLKPi5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 10:38:36 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:15674 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726452AbeLKPif (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:38:35 -0500
-Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 25BC1E73FA4;
-        Tue, 11 Dec 2018 23:38:27 +0800 (CST)
-Received: from localhost (10.202.226.46) by DGGEMS404-HUB.china.huawei.com
- (10.3.19.204) with Microsoft SMTP Server id 14.3.408.0; Tue, 11 Dec 2018
- 23:38:27 +0800
-Date:   Tue, 11 Dec 2018 15:38:17 +0000
-From:   Jonathan Cameron <jonathan.cameron@huawei.com>
-To:     Robin Murphy <robin.murphy@arm.com>
-CC:     <will.deacon@arm.com>, <catalin.marinas@arm.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <cyrilc@xilinx.com>,
-        <james.morse@arm.com>, <anshuman.khandual@arm.com>
-Subject: Re: [PATCH] arm64: Add memory hotplug support
-Message-ID: <20181211153817.0000580d@huawei.com>
-In-Reply-To: <0a0c7d3b8fbe1b2b399eeb6889027031335d2af1.1544453739.git.robin.murphy@arm.com>
-References: <0a0c7d3b8fbe1b2b399eeb6889027031335d2af1.1544453739.git.robin.murphy@arm.com>
-Organization: Huawei
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; i686-w64-mingw32)
+        Tue, 11 Dec 2018 10:38:57 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:51487 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726448AbeLKPi5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 10:38:57 -0500
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wBBFcTtn4043326
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Tue, 11 Dec 2018 07:38:29 -0800
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wBBFcTCi4043322;
+        Tue, 11 Dec 2018 07:38:29 -0800
+Date:   Tue, 11 Dec 2018 07:38:29 -0800
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Quentin Perret <tipbot@zytor.com>
+Message-ID: <tip-390031e4c309c94ecc07a558187eb5185200df83@git.kernel.org>
+Cc:     quentin.perret@arm.com, mingo@kernel.org,
+        torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
+        tglx@linutronix.de, hpa@zytor.com, peterz@infradead.org,
+        efault@gmx.de
+Reply-To: mingo@kernel.org, quentin.perret@arm.com, peterz@infradead.org,
+          efault@gmx.de, torvalds@linux-foundation.org,
+          linux-kernel@vger.kernel.org, hpa@zytor.com, tglx@linutronix.de
+In-Reply-To: <20181203095628.11858-14-quentin.perret@arm.com>
+References: <20181203095628.11858-14-quentin.perret@arm.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:sched/core] sched/fair: Introduce an energy estimation helper
+ function
+Git-Commit-ID: 390031e4c309c94ecc07a558187eb5185200df83
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.226.46]
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 10 Dec 2018 15:29:01 +0000
-Robin Murphy <robin.murphy@arm.com> wrote:
+Commit-ID:  390031e4c309c94ecc07a558187eb5185200df83
+Gitweb:     https://git.kernel.org/tip/390031e4c309c94ecc07a558187eb5185200df83
+Author:     Quentin Perret <quentin.perret@arm.com>
+AuthorDate: Mon, 3 Dec 2018 09:56:26 +0000
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Tue, 11 Dec 2018 15:17:02 +0100
 
-> Wire up the basic support for hot-adding memory. Since memory hotplug
-> is fairly tightly coupled to sparsemem, we tweak pfn_valid() to also
-> cross-check the presence of a section in the manner of the generic
-> implementation, before falling back to memblock to check for no-map
-> regions within a present section as before. By having arch_add_memory(()
-> create the linear mapping first, this then makes everything work in the
-> way that __add_section() expects.
-> 
-> We expect hotplug to be ACPI-driven, so the swapper_pg_dir updates
-> should be safe from races by virtue of the global device hotplug lock.
-> 
-> Signed-off-by: Robin Murphy <robin.murphy@arm.com>
+sched/fair: Introduce an energy estimation helper function
 
-This did come out even shorter than I expected and the "work around" for
-the pfn_valid issue is neat and tidy.
+In preparation for the definition of an energy-aware wakeup path,
+introduce a helper function to estimate the consequence on system energy
+when a specific task wakes-up on a specific CPU. compute_energy()
+estimates the capacity state to be reached by all performance domains
+and estimates the consumption of each online CPU according to its Energy
+Model and its percentage of busy time.
 
-I've done some really quick checks bolting this in place of the old
-hotplug code  we were abusing with our NUMA handling (which is ripped out
-of the x86 code).  Seems to work well though I wouldn't describe these as
-proper testing as it was just a few cycles. It's somewhat of a pain to test
-until you add remove as have to keep rebooting :)
+Signed-off-by: Quentin Perret <quentin.perret@arm.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Mike Galbraith <efault@gmx.de>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: adharmap@codeaurora.org
+Cc: chris.redpath@arm.com
+Cc: currojerez@riseup.net
+Cc: dietmar.eggemann@arm.com
+Cc: edubezval@gmail.com
+Cc: gregkh@linuxfoundation.org
+Cc: javi.merino@kernel.org
+Cc: joel@joelfernandes.org
+Cc: juri.lelli@redhat.com
+Cc: morten.rasmussen@arm.com
+Cc: patrick.bellasi@arm.com
+Cc: pkondeti@codeaurora.org
+Cc: rjw@rjwysocki.net
+Cc: skannan@codeaurora.org
+Cc: smuckle@google.com
+Cc: srinivas.pandruvada@linux.intel.com
+Cc: thara.gopinath@linaro.org
+Cc: tkjos@google.com
+Cc: valentin.schneider@arm.com
+Cc: vincent.guittot@linaro.org
+Cc: viresh.kumar@linaro.org
+Link: https://lkml.kernel.org/r/20181203095628.11858-14-quentin.perret@arm.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ kernel/sched/fair.c | 76 +++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 76 insertions(+)
 
-The one case I have left that I'll try and run tomorrow is the one where
-we probe memory on a NUMA node that is empty at boot.
-There used to be a nasty work around needed for that path.  The core code
-has changed a fair bit since then so may be fine now. I'd just
-like to sanity check it. So for today I'll go with a resounding
-'seems good'.
-
-Thanks.
-
-Jonathan
-> ---
-> 
-> Looks like I'm not going to have the whole pte_devmap story figured out
-> in time to land any ZONE_DEVICE support this cycle, but since this patch
-> also stands alone as a complete feature (and has ended up remarkably
-> simple and self-contained), I hope we might consider getting it merged
-> on its own merit.
-> 
-> Robin.
-> 
->  arch/arm64/Kconfig   |  3 +++
->  arch/arm64/mm/init.c |  8 ++++++++
->  arch/arm64/mm/mmu.c  | 12 ++++++++++++
->  arch/arm64/mm/numa.c | 10 ++++++++++
->  4 files changed, 33 insertions(+)
-> 
-> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-> index 6d2b25f51bb3..7b855ae45747 100644
-> --- a/arch/arm64/Kconfig
-> +++ b/arch/arm64/Kconfig
-> @@ -261,6 +261,9 @@ config ZONE_DMA32
->  config HAVE_GENERIC_GUP
->  	def_bool y
->  
-> +config ARCH_ENABLE_MEMORY_HOTPLUG
-> +	def_bool y
-> +
->  config SMP
->  	def_bool y
->  
-> diff --git a/arch/arm64/mm/init.c b/arch/arm64/mm/init.c
-> index 2983e0fc1786..82e0b08f2e31 100644
-> --- a/arch/arm64/mm/init.c
-> +++ b/arch/arm64/mm/init.c
-> @@ -291,6 +291,14 @@ int pfn_valid(unsigned long pfn)
->  
->  	if ((addr >> PAGE_SHIFT) != pfn)
->  		return 0;
-> +
-> +#ifdef CONFIG_SPARSEMEM
-> +	if (pfn_to_section_nr(pfn) >= NR_MEM_SECTIONS)
-> +		return 0;
-> +
-> +	if (!valid_section(__nr_to_section(pfn_to_section_nr(pfn))))
-> +		return 0;
-> +#endif
->  	return memblock_is_map_memory(addr);
->  }
->  EXPORT_SYMBOL(pfn_valid);
-> diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
-> index e1b2d58a311a..22379a74d289 100644
-> --- a/arch/arm64/mm/mmu.c
-> +++ b/arch/arm64/mm/mmu.c
-> @@ -1044,3 +1044,15 @@ int pud_free_pmd_page(pud_t *pudp, unsigned long addr)
->  	pmd_free(NULL, table);
->  	return 1;
->  }
-> +
-> +#ifdef CONFIG_MEMORY_HOTPLUG
-> +int arch_add_memory(int nid, u64 start, u64 size, struct vmem_altmap *altmap,
-> +		    bool want_memblock)
-> +{
-> +	__create_pgd_mapping(swapper_pg_dir, start, __phys_to_virt(start),
-> +			     size, PAGE_KERNEL, pgd_pgtable_alloc, 0);
-> +
-> +	return __add_pages(nid, start >> PAGE_SHIFT, size >> PAGE_SHIFT,
-> +			   altmap, want_memblock);
-> +}
-> +#endif
-> diff --git a/arch/arm64/mm/numa.c b/arch/arm64/mm/numa.c
-> index 27a31efd9e8e..ae34e3a1cef1 100644
-> --- a/arch/arm64/mm/numa.c
-> +++ b/arch/arm64/mm/numa.c
-> @@ -466,3 +466,13 @@ void __init arm64_numa_init(void)
->  
->  	numa_init(dummy_numa_init);
->  }
-> +
-> +/*
-> + * We hope that we will be hotplugging memory on nodes we already know about,
-> + * such that acpi_get_node() succeeds and we never fall back to this...
-> + */
-> +int memory_add_physaddr_to_nid(u64 addr)
-> +{
-> +	pr_warn("Unknown node for memory at 0x%llx, assuming node 0\n", addr);
-> +	return 0;
-> +}
-
-
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 767e7675774b..b3c94584d947 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -6377,6 +6377,82 @@ static int wake_cap(struct task_struct *p, int cpu, int prev_cpu)
+ 	return !task_fits_capacity(p, min_cap);
+ }
+ 
++/*
++ * Predicts what cpu_util(@cpu) would return if @p was migrated (and enqueued)
++ * to @dst_cpu.
++ */
++static unsigned long cpu_util_next(int cpu, struct task_struct *p, int dst_cpu)
++{
++	struct cfs_rq *cfs_rq = &cpu_rq(cpu)->cfs;
++	unsigned long util_est, util = READ_ONCE(cfs_rq->avg.util_avg);
++
++	/*
++	 * If @p migrates from @cpu to another, remove its contribution. Or,
++	 * if @p migrates from another CPU to @cpu, add its contribution. In
++	 * the other cases, @cpu is not impacted by the migration, so the
++	 * util_avg should already be correct.
++	 */
++	if (task_cpu(p) == cpu && dst_cpu != cpu)
++		sub_positive(&util, task_util(p));
++	else if (task_cpu(p) != cpu && dst_cpu == cpu)
++		util += task_util(p);
++
++	if (sched_feat(UTIL_EST)) {
++		util_est = READ_ONCE(cfs_rq->avg.util_est.enqueued);
++
++		/*
++		 * During wake-up, the task isn't enqueued yet and doesn't
++		 * appear in the cfs_rq->avg.util_est.enqueued of any rq,
++		 * so just add it (if needed) to "simulate" what will be
++		 * cpu_util() after the task has been enqueued.
++		 */
++		if (dst_cpu == cpu)
++			util_est += _task_util_est(p);
++
++		util = max(util, util_est);
++	}
++
++	return min(util, capacity_orig_of(cpu));
++}
++
++/*
++ * compute_energy(): Estimates the energy that would be consumed if @p was
++ * migrated to @dst_cpu. compute_energy() predicts what will be the utilization
++ * landscape of the * CPUs after the task migration, and uses the Energy Model
++ * to compute what would be the energy if we decided to actually migrate that
++ * task.
++ */
++static long
++compute_energy(struct task_struct *p, int dst_cpu, struct perf_domain *pd)
++{
++	long util, max_util, sum_util, energy = 0;
++	int cpu;
++
++	for (; pd; pd = pd->next) {
++		max_util = sum_util = 0;
++		/*
++		 * The capacity state of CPUs of the current rd can be driven by
++		 * CPUs of another rd if they belong to the same performance
++		 * domain. So, account for the utilization of these CPUs too
++		 * by masking pd with cpu_online_mask instead of the rd span.
++		 *
++		 * If an entire performance domain is outside of the current rd,
++		 * it will not appear in its pd list and will not be accounted
++		 * by compute_energy().
++		 */
++		for_each_cpu_and(cpu, perf_domain_span(pd), cpu_online_mask) {
++			util = cpu_util_next(cpu, p, dst_cpu);
++			util = schedutil_energy_util(cpu, util);
++			max_util = max(util, max_util);
++			sum_util += util;
++		}
++
++		energy += em_pd_energy(pd->em_pd, max_util, sum_util);
++	}
++
++	return energy;
++}
++
+ /*
+  * select_task_rq_fair: Select target runqueue for the waking task in domains
+  * that have the 'sd_flag' flag set. In practice, this is SD_BALANCE_WAKE,
