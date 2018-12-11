@@ -2,139 +2,90 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DAE2FC07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 17:02:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE8A6C5CFFE
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 17:05:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A968520851
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 17:02:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A968520851
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cambridgegreys.com
+	by mail.kernel.org (Postfix) with ESMTP id 92CBC2081B
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 17:05:12 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZM1cv45y"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 92CBC2081B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727418AbeLKRCs (ORCPT
+        id S1727347AbeLKRFL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 12:02:48 -0500
-Received: from ivanoab6.miniserver.com ([5.153.251.140]:34110 "EHLO
-        www.kot-begemot.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726739AbeLKRCr (ORCPT
+        Tue, 11 Dec 2018 12:05:11 -0500
+Received: from mail-it1-f195.google.com ([209.85.166.195]:50648 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726808AbeLKRFL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 12:02:47 -0500
-Received: from [192.168.17.6] (helo=smaug.kot-begemot.co.uk)
-        by www.kot-begemot.co.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <anton.ivanov@cambridgegreys.com>)
-        id 1gWlPt-0006lP-RZ; Tue, 11 Dec 2018 17:01:54 +0000
-Received: from amistad.kot-begemot.co.uk ([192.168.3.89])
-        by smaug.kot-begemot.co.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.89)
-        (envelope-from <anton.ivanov@cambridgegreys.com>)
-        id 1gWlPp-0002WK-Av; Tue, 11 Dec 2018 17:01:53 +0000
-Subject: Re: [RFC v3 11/19] kunit: add Python libraries for handing KUnit
- config and kernel
-To:     Steven Rostedt <rostedt@goodmis.org>,
-        Petr Mladek <pmladek@suse.com>
-Cc:     brakmo@fb.com, Knut Omang <knut.omang@oracle.com>, jeffm@suse.com,
-        Brendan Higgins <brendanhiggins@google.com>,
-        dri-devel@lists.freedesktop.org,
-        Sasha Levin <Alexander.Levin@microsoft.com>,
-        Linux Trace Devel <linux-trace-devel@vger.kernel.org>,
-        linux-kselftest@vger.kernel.org, shuah@kernel.org,
-        Rob Herring <robh@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        linux-nvdimm@lists.01.org, mpe@ellerman.id.au,
-        Eric Sandeen <sandeen@sandeen.net>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Felix Guo <felixguoxiuping@gmail.com>,
-        Joel Stanley <joel@jms.id.au>,
-        Kent Overstreet <kent.overstreet@gmail.com>, jdike@addtoit.com,
-        Tim.Bird@sony.com, linux-um@lists.infradead.org,
-        Julia Lawall <julia.lawall@lip6.fr>, dan.j.williams@intel.com,
-        kunit-dev@googlegroups.com, richard@nod.at,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Eryu Guan <guaneryu@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Kees Cook <keescook@google.com>, joe@perches.com,
-        linux-fsdevel@vger.kernel.org, khilman@baylibre.com
-References: <20181128193636.254378-1-brendanhiggins@google.com>
- <20181128193636.254378-12-brendanhiggins@google.com>
- <841cf4ae-501b-05ae-5863-a51010709b67@ideasonboard.com>
- <CAFd5g47x-UNja72k-CWPmWz9+LTn8pF8Wj5Poq+2FJ93E=vymA@mail.gmail.com>
- <20181204204701.GT28501@garbanzo.do-not-panic.com>
- <f8722f4a-44c8-24c2-c433-5178f9f40b82@ideasonboard.com>
- <20181206153718.GD24603@bombadil.infradead.org>
- <20181211140926.7wzd5jh6klcfsfgz@pathway.suse.cz>
- <20181211094140.2a928fe7@gandalf.local.home>
-From:   Anton Ivanov <anton.ivanov@cambridgegreys.com>
-Organization: Cambridge Greys Limited
-Message-ID: <34f9e9f3-6bca-f11f-097c-c6e0cb779b61@cambridgegreys.com>
-Date:   Tue, 11 Dec 2018 17:01:48 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Tue, 11 Dec 2018 12:05:11 -0500
+Received: by mail-it1-f195.google.com with SMTP id z7so4680733iti.0
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 09:05:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=WFp1biiK9L/0jO6eo3TMlD4DXJOC45kmL5l3q73Hohc=;
+        b=ZM1cv45yYfAPEgI9xeRC9uhVY6ncoEYfp+DauNfU4CuqK4vXXl94Ep7osd2x45S/l9
+         ZVQ77rDWK/WpZsod0MJJ04ENnNzYz5N3hMkE5xHJaUHnQ+BKF3nroSr9PAEuCf7GmaRf
+         /BlBD43DHWhT6HAQ2SSyXrwwtD2e8aT1TLsdU+jh8j08D64d6CMuYrhAXac6e60Ah/Mm
+         LpOEnM3WC2W4mwAJzQ3wVFOopLaEksnZMeE0BhYbgEAGgsXO2RU9HlNu+0bvzQEjI2bf
+         /VKHJ8z/VtAz+S9Iq0VeM3eqpll7AGhJjJdfkqrLzFvQiKFknaSCJbh8grzwTOP+Bukm
+         IJJg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=WFp1biiK9L/0jO6eo3TMlD4DXJOC45kmL5l3q73Hohc=;
+        b=kWuRUVirWtr1gFWQrOKXhyiwRzhBtF2/pxJ+um6NjyZlcWilC9oL9vZdnstdPdK7I2
+         Om80p8Ish3SIg9wfBf1W3Lq0ycO/WPGOv5nbT7nNpqBsOGz+908LrsbFYwVajLJ/O1v3
+         Lh9UoZz/dEtzIzCLwMDXMURNKKf/QGnE3VWmx3J6fsYUOs71uR1nbHcZqjH3AyIPNO+Y
+         R6nCRIR7hWxAhfgu+tTa7nV8YEvu35KarrFFcjagewf1JvVkZdc0W6dS6bbQZnZvBR/B
+         rF7s6eoWkQBuvPwkGEffl52NNXrOX3LfKsrSb7vOZ3/jVv5zHsZ5z79AugF3wO9w6fXB
+         mEFQ==
+X-Gm-Message-State: AA+aEWYTusfbBOdcyR2tNUaFHHzJWXm+ZUyBn53TpKnyB2sGcIEFHhYD
+        mW+uXliwwUIEutjhcKqAtT0MwMidy3E3vD3KsYdeJA==
+X-Google-Smtp-Source: AFSGD/UrEV4LO4W7rrHejm7QMHz99wJVHZMb6/iKJuMz6cgiXbBol3dQ/DRBnfRbrzwO+c64c5AZZreBDaZPLVCCzAU=
+X-Received: by 2002:a24:5608:: with SMTP id o8mr2845072itb.35.1544547909928;
+ Tue, 11 Dec 2018 09:05:09 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20181211094140.2a928fe7@gandalf.local.home>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Clacks-Overhead: GNU Terry Pratchett
+References: <20181121145429.7582-1-thierry.reding@gmail.com>
+In-Reply-To: <20181121145429.7582-1-thierry.reding@gmail.com>
+From:   Jassi Brar <jassisinghbrar@gmail.com>
+Date:   Tue, 11 Dec 2018 22:34:59 +0530
+Message-ID: <CABb+yY3G3VQGcEHaSZq3bUYrJUToP4oQOCns92q3S0Nr9W_09A@mail.gmail.com>
+Subject: Re: [PATCH 00/19] mailbox: Device-managed registration
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-On 12/11/18 2:41 PM, Steven Rostedt wrote:
-> On Tue, 11 Dec 2018 15:09:26 +0100
-> Petr Mladek <pmladek@suse.com> wrote:
+On Wed, Nov 21, 2018 at 8:24 PM Thierry Reding <thierry.reding@gmail.com> wrote:
 >
->>> We have liburcu already, which is good.  The main sticking points are:
->>>
->>>   - printk has started adding a lot of %pX enhancements which printf
->>>     obviously doesn't know about.
->> I wonder how big problem it is and if it is worth using another
->> approach.
-> No, please do not change the %pX approach.
+> From: Thierry Reding <treding@nvidia.com>
 >
->> An alternative would be to replace them with helper functions
->> the would produce the same string. The meaning would be easier
->> to understand. But concatenating with the surrounding text
->> would be less elegant. People might start using pr_cont()
->> that is problematic (mixed lines).
->>
->> Also the %pX formats are mostly used to print context of some
->> structures. Even the helper functions would need some maintenance
->> to keep them compatible.
->>
->> BTW: The printk() feature has been introduced 10 years ago by
->> the commit 4d8a743cdd2690c0bc8 ("vsprintf: add infrastructure
->> support for extended '%p' specifiers").
-> trace-cmd and perf know about most of the %pX data and how to read it.
-> Perhaps we can extend the libtraceevent library to export a generic way
-> to read data from printk() output for other tools to use.
+> Hi,
+>
+> This series of patches adds device-managed registration functions for
+> mailbox controllers. A number of drivers can be simplified by making use
+> of this new API both in the error cleanup paths in their probe functions
+> and in the driver remove implementation.
+>
+> In addition to adding the new API this series converts all drivers to
+> use it. There is also an additional cleanup patch for the mtk-cmdq
+> driver that removes some calls to devm_kfree() that are not needed.
+>
+Any  Acked/Reviewed/Tested-by would have been great, but I see no
+driver author is CC'ed. Do you want to loop in authors too?
 
-Going back for a second to using UML for this. UML console at present is 
-interrupt driven - it emulates serial IO using several different 
-back-ends (file descriptors, xterm or actual tty/ptys). Epoll events on 
-the host side are used to trigger the UML interrupts - both read and write.
-
-This works OK for normal use, but may result in all kinds of interesting 
-false positives/false negatives when UML is used to run unit tests 
-against a change which changes interrupt behavior.
-
-IMO it may be useful to consider some alternatives specifically for unit 
-test coverage purposes where printk and/or the whole console output 
-altogether bypass some of the IRQ driven semantics.
-
--- 
-
-Anton R. Ivanov
-
-Cambridge Greys Limited, England and Wales company No 10273661
-http://www.cambridgegreys.com/
-
+Thanks.
