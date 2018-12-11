@@ -7,51 +7,52 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B01E7C5CFFE
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:51:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6344C07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:51:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 75B9120855
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:51:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7D5D720855
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:51:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544543496;
-	bh=HcBbmUyPL+/x/fbz30oUG+pJyFYIJgUIgRe5Um7cS/4=;
+	s=default; t=1544543501;
+	bh=BYT9JYCEsw3rtH/meSP8UZfkiyM19wf+N7zpNIvwMqI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=qiAi4AxmegBkgHABb6Pq52c+iENleJuQfGRgyhHCpN/wzORSMN48DCjgQyhphCklY
-	 pLXUADq96XtGKP2sXJbxwIMjKc3mJQOYjPveS5V2CHy5EiY4sartJCGnzTLCymJTIb
-	 G/6PUJM9m+eWHNP+4oa/yDSt26ZrTxUwmKmdDT5I=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75B9120855
+	b=o62p/+r1Hfw69lAxYpA5hZneleWIcyEk4Pc6dJuNphz+W/a26PpJ7eBB7Ppt9ME2N
+	 pTvceOyLsv1sxuBAxjFaoU36s2OaUQ+eSrXgdhXudQoxnyk6hlmPZ0n6eoULp+whRL
+	 Tbc6o+dmIDeB1Iixa8JhTba01ZJkEd22sJwh+uPM=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D5D720855
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729529AbeLKPvf (ORCPT
+        id S1729553AbeLKPvk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 10:51:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40204 "EHLO mail.kernel.org"
+        Tue, 11 Dec 2018 10:51:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40254 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728728AbeLKPvc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:51:32 -0500
+        id S1727236AbeLKPve (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 10:51:34 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BFBA320880;
-        Tue, 11 Dec 2018 15:51:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7190F20855;
+        Tue, 11 Dec 2018 15:51:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544543491;
-        bh=HcBbmUyPL+/x/fbz30oUG+pJyFYIJgUIgRe5Um7cS/4=;
+        s=default; t=1544543493;
+        bh=BYT9JYCEsw3rtH/meSP8UZfkiyM19wf+N7zpNIvwMqI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=obp/MRyGrLgZ63EBUuXiDf3xnnKhAZ2uEeG/t4cId3hEbzPA/iTZI1fGg9Uzrh7aX
-         o5WV9doNskqaVJIpSGto4uDvIToqP8nrFSCuEty9XQJ1iGsD835TKuUfcZfsiLDvyO
-         muN+xM28yrAw4qJdZP0SGK4QY6fMLGWlzba//vzQ=
+        b=FjMSRQBcbEjcvlGjlwYHgmXfPV9KR0NSDTBuqb8Ypm4W5bPPHM9nIiBgSELJ+7K1x
+         3liauAAwkUkNLCgNdMp4q0CxDzl9Q87zGtdIM7SM3gPboob7DuSC925v+OqeHkIPH+
+         sSGqBacoRR21dd0/HD0lg7z3QXc/vQuvKO7yGMJc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Olof Johansson <olof@lixom.net>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 19/67] mtd: rawnand: qcom: Namespace prefix some commands
-Date:   Tue, 11 Dec 2018 16:41:19 +0100
-Message-Id: <20181211151631.355350187@linuxfoundation.org>
+        stable@vger.kernel.org, Ashok Raj <ashok.raj@intel.com>,
+        Jacob Pan <jacob.jun.pan@linux.intel.com>,
+        Sohil Mehta <sohil.mehta@intel.com>,
+        Lu Baolu <baolu.lu@linux.intel.com>,
+        Joerg Roedel <jroedel@suse.de>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 02/67] iommu/vt-d: Fix NULL pointer dereference in prq_event_thread()
+Date:   Tue, 11 Dec 2018 16:41:02 +0100
+Message-Id: <20181211151630.492335502@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181211151630.378216233@linuxfoundation.org>
 References: <20181211151630.378216233@linuxfoundation.org>
@@ -70,110 +71,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 33bf5519ae5dd356b182a94e3622f42860274a38 ]
+[ Upstream commit 19ed3e2dd8549c1a34914e8dad01b64e7837645a ]
 
-PAGE_READ is used by RISC-V arch code included through mm headers,
-and it makes sense to bring in a prefix on these in the driver.
+When handling page request without pasid event, go to "no_pasid"
+branch instead of "bad_req". Otherwise, a NULL pointer deference
+will happen there.
 
-drivers/mtd/nand/raw/qcom_nandc.c:153: warning: "PAGE_READ" redefined
- #define PAGE_READ   0x2
-In file included from include/linux/memremap.h:7,
-                 from include/linux/mm.h:27,
-                 from include/linux/scatterlist.h:8,
-                 from include/linux/dma-mapping.h:11,
-                 from drivers/mtd/nand/raw/qcom_nandc.c:17:
-arch/riscv/include/asm/pgtable.h:48: note: this is the location of the previous definition
-
-Caught by riscv allmodconfig.
-
-Signed-off-by: Olof Johansson <olof@lixom.net>
-Reviewed-by: Miquel Raynal <miquel.raynal@bootlin.com>
-Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
+Cc: Ashok Raj <ashok.raj@intel.com>
+Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>
+Cc: Sohil Mehta <sohil.mehta@intel.com>
+Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+Fixes: a222a7f0bb6c9 'iommu/vt-d: Implement page request handling'
+Signed-off-by: Joerg Roedel <jroedel@suse.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/mtd/nand/qcom_nandc.c | 32 ++++++++++++++++----------------
- 1 file changed, 16 insertions(+), 16 deletions(-)
+ drivers/iommu/intel-svm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/mtd/nand/qcom_nandc.c b/drivers/mtd/nand/qcom_nandc.c
-index b49ca02b399d..09d5f7df6023 100644
---- a/drivers/mtd/nand/qcom_nandc.c
-+++ b/drivers/mtd/nand/qcom_nandc.c
-@@ -149,15 +149,15 @@
- #define	NAND_VERSION_MINOR_SHIFT	16
+diff --git a/drivers/iommu/intel-svm.c b/drivers/iommu/intel-svm.c
+index d7def26ccf79..f5573bb9f450 100644
+--- a/drivers/iommu/intel-svm.c
++++ b/drivers/iommu/intel-svm.c
+@@ -589,7 +589,7 @@ static irqreturn_t prq_event_thread(int irq, void *d)
+ 			pr_err("%s: Page request without PASID: %08llx %08llx\n",
+ 			       iommu->name, ((unsigned long long *)req)[0],
+ 			       ((unsigned long long *)req)[1]);
+-			goto bad_req;
++			goto no_pasid;
+ 		}
  
- /* NAND OP_CMDs */
--#define	PAGE_READ			0x2
--#define	PAGE_READ_WITH_ECC		0x3
--#define	PAGE_READ_WITH_ECC_SPARE	0x4
--#define	PROGRAM_PAGE			0x6
--#define	PAGE_PROGRAM_WITH_ECC		0x7
--#define	PROGRAM_PAGE_SPARE		0x9
--#define	BLOCK_ERASE			0xa
--#define	FETCH_ID			0xb
--#define	RESET_DEVICE			0xd
-+#define	OP_PAGE_READ			0x2
-+#define	OP_PAGE_READ_WITH_ECC		0x3
-+#define	OP_PAGE_READ_WITH_ECC_SPARE	0x4
-+#define	OP_PROGRAM_PAGE			0x6
-+#define	OP_PAGE_PROGRAM_WITH_ECC	0x7
-+#define	OP_PROGRAM_PAGE_SPARE		0x9
-+#define	OP_BLOCK_ERASE			0xa
-+#define	OP_FETCH_ID			0xb
-+#define	OP_RESET_DEVICE			0xd
- 
- /* Default Value for NAND_DEV_CMD_VLD */
- #define NAND_DEV_CMD_VLD_VAL		(READ_START_VLD | WRITE_START_VLD | \
-@@ -629,11 +629,11 @@ static void update_rw_regs(struct qcom_nand_host *host, int num_cw, bool read)
- 
- 	if (read) {
- 		if (host->use_ecc)
--			cmd = PAGE_READ_WITH_ECC | PAGE_ACC | LAST_PAGE;
-+			cmd = OP_PAGE_READ_WITH_ECC | PAGE_ACC | LAST_PAGE;
- 		else
--			cmd = PAGE_READ | PAGE_ACC | LAST_PAGE;
-+			cmd = OP_PAGE_READ | PAGE_ACC | LAST_PAGE;
- 	} else {
--			cmd = PROGRAM_PAGE | PAGE_ACC | LAST_PAGE;
-+		cmd = OP_PROGRAM_PAGE | PAGE_ACC | LAST_PAGE;
- 	}
- 
- 	if (host->use_ecc) {
-@@ -1030,7 +1030,7 @@ static int nandc_param(struct qcom_nand_host *host)
- 	 * in use. we configure the controller to perform a raw read of 512
- 	 * bytes to read onfi params
- 	 */
--	nandc_set_reg(nandc, NAND_FLASH_CMD, PAGE_READ | PAGE_ACC | LAST_PAGE);
-+	nandc_set_reg(nandc, NAND_FLASH_CMD, OP_PAGE_READ | PAGE_ACC | LAST_PAGE);
- 	nandc_set_reg(nandc, NAND_ADDR0, 0);
- 	nandc_set_reg(nandc, NAND_ADDR1, 0);
- 	nandc_set_reg(nandc, NAND_DEV0_CFG0, 0 << CW_PER_PAGE
-@@ -1084,7 +1084,7 @@ static int erase_block(struct qcom_nand_host *host, int page_addr)
- 	struct qcom_nand_controller *nandc = get_qcom_nand_controller(chip);
- 
- 	nandc_set_reg(nandc, NAND_FLASH_CMD,
--		      BLOCK_ERASE | PAGE_ACC | LAST_PAGE);
-+		      OP_BLOCK_ERASE | PAGE_ACC | LAST_PAGE);
- 	nandc_set_reg(nandc, NAND_ADDR0, page_addr);
- 	nandc_set_reg(nandc, NAND_ADDR1, 0);
- 	nandc_set_reg(nandc, NAND_DEV0_CFG0,
-@@ -1115,7 +1115,7 @@ static int read_id(struct qcom_nand_host *host, int column)
- 	if (column == -1)
- 		return 0;
- 
--	nandc_set_reg(nandc, NAND_FLASH_CMD, FETCH_ID);
-+	nandc_set_reg(nandc, NAND_FLASH_CMD, OP_FETCH_ID);
- 	nandc_set_reg(nandc, NAND_ADDR0, column);
- 	nandc_set_reg(nandc, NAND_ADDR1, 0);
- 	nandc_set_reg(nandc, NAND_FLASH_CHIP_SELECT,
-@@ -1136,7 +1136,7 @@ static int reset(struct qcom_nand_host *host)
- 	struct nand_chip *chip = &host->chip;
- 	struct qcom_nand_controller *nandc = get_qcom_nand_controller(chip);
- 
--	nandc_set_reg(nandc, NAND_FLASH_CMD, RESET_DEVICE);
-+	nandc_set_reg(nandc, NAND_FLASH_CMD, OP_RESET_DEVICE);
- 	nandc_set_reg(nandc, NAND_EXEC_CMD, 1);
- 
- 	write_reg_dma(nandc, NAND_FLASH_CMD, 1, NAND_BAM_NEXT_SGL);
+ 		if (!svm || svm->pasid != req->pasid) {
 -- 
 2.19.1
 
