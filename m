@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C48AC5CFFE
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 11:03:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B45AC5CFFE
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 11:03:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 082D12082F
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 11:03:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5ED6F2081B
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 11:03:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="Na+UKrL6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 082D12082F
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="EjeE9NkR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5ED6F2081B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726455AbeLKLCp (ORCPT
+        id S1726314AbeLKLDL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 06:02:45 -0500
-Received: from conuserg-11.nifty.com ([210.131.2.78]:36702 "EHLO
+        Tue, 11 Dec 2018 06:03:11 -0500
+Received: from conuserg-11.nifty.com ([210.131.2.78]:36714 "EHLO
         conuserg-11.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726606AbeLKLBo (ORCPT
+        with ESMTP id S1726618AbeLKLBn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 06:01:44 -0500
+        Tue, 11 Dec 2018 06:01:43 -0500
 Received: from pug.e01.socionext.com (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
-        by conuserg-11.nifty.com with ESMTP id wBBB1C5h017210;
-        Tue, 11 Dec 2018 20:01:17 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-11.nifty.com wBBB1C5h017210
+        by conuserg-11.nifty.com with ESMTP id wBBB1C5o017210;
+        Tue, 11 Dec 2018 20:01:22 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-11.nifty.com wBBB1C5o017210
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1544526077;
-        bh=G/ycLbPhkj1QR+lVIupeFYkdZAVqycrRJHc5wDj08Ec=;
+        s=dec2015msa; t=1544526082;
+        bh=S7ukwX6NkoGsh6wmesUTz6h4J/DCsX6bNDq3MpJLeqU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Na+UKrL6DVf5o+zTz2mscnsaOfrJg/RpbNiehbQPgf1+O9/dl0AO8EB0bnm84MXzi
-         UoxIcRd2bkcrQAMoap9eh9FgE0MA2Y1GgndVnQ0+fqG1FG/mZv0NrfT2JN/3XhDuBa
-         /HYby/XiCXzsI2EpEXncyyyVqlCRwPV6Y7w+HTXRtTdwwUTZ79Tzb57T+2oZW0b4gf
-         4gXaVcl1OAh1eZYaDXRKtJjJFdRgTcsVdRtmRBawetptn5kFNvkqPb5j65mRbCNmZJ
-         bV++p3kPVJvf1bLFkTZBnYDCDS3uG2vOkbDPiEL76ZJqWI4FnHxYBEx1hIDDE4OLW9
-         6As1Z/EdpfQUA==
+        b=EjeE9NkRQZByf0FXmq6z71dWwbxkAE/bleCS/A96rOjI5u/UbEoBmF2s68du9Me4t
+         +eZVn0oOt+CoDDNj4xIMaEYRTjvnwx9QxFdewaJce2cQbye3aNAQZtCCw5Iszcik5G
+         PVt3lTAxy6C7g2MLbyylyZ2W6RY8XC80ozYPw+nf3QNmdo0VkblH2NbHpGfh9exECg
+         7Q5s+KlH62M4je/Q9Is71f5aoaXf8+QIRwOFIJgtSJIKH09tFiiqpL76Mo0ngt3+KC
+         SAQ+evHHrGqVMWaFYNTF99cejzopivFULDkCTtcFxRcgCS7wNYR2ZiWIvmiCN4wpvs
+         i+YMce7aqMgUg==
 X-Nifty-SrcIP: [153.142.97.92]
 From:   Masahiro Yamada <yamada.masahiro@socionext.com>
 To:     linux-kbuild@vger.kernel.org
 Cc:     Ulf Magnusson <ulfalizer@gmail.com>, linux-kernel@vger.kernel.org,
         Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: [PATCH 06/27] kconfig: fix ambiguous grammar in terms of new lines
-Date:   Tue, 11 Dec 2018 20:00:49 +0900
-Message-Id: <1544526070-16690-7-git-send-email-yamada.masahiro@socionext.com>
+Subject: [PATCH 13/27] kconfig: loosen the order of "visible" and "depends on" in menu entry
+Date:   Tue, 11 Dec 2018 20:00:56 +0900
+Message-Id: <1544526070-16690-14-git-send-email-yamada.masahiro@socionext.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1544526070-16690-1-git-send-email-yamada.masahiro@socionext.com>
 References: <1544526070-16690-1-git-send-email-yamada.masahiro@socionext.com>
@@ -56,173 +56,71 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This commit decreases 8 shift/reduce conflicts.
+Currently, "visible" and "depends on", if defined in a menu entry,
+must appear in that order.
 
-A certain amount of grammatical ambiguity comes from how to reduce
-excessive T_EOL tokens.
+The real example is in drivers/media/tuners/Kconfig:
 
-Let's take a look at the example code below:
+  menu "Customize TV tuners"
+          visible if <expr1>
+          depends on <expr2>
 
-  1  config A
-  2          bool "a"
-  3
-  4          depends on B
-  5
-  6  config B
-  7          def_bool y
+... is fine, but you cannot change the property order like this:
 
-The line 3 is melt into "config_option_list", but the line 5 can be
-either a part of "config_option_list" or "common_stmt" by itself.
+  menu "Customize TV tuners"
+          depends on <expr2>
+          visible if <expr1>
 
-Currently, the lexer converts '\n' to T_EOL verbatim. In Kconfig,
-a new line is critical as a statement terminator, but new lines
-in empty lines are not important since empty lines (or lines that
-contain only whitespaces/comments) are just no-op.
+Kconfig does not require a specific order of properties. In this case,
+menu_add_visibility(() and menu_add_dep() are orthogonal.
 
-If the lexer simply discards no-op lines, the parser will not be
-bothered by excessive T_EOL tokens.
-
-Of course, this means we are shifting the complexity from the parser
-to the lexer, but it is much easier than tackling on shift/reduce
-conflicts.
-
-I introduced the second stage lexer to tweak the lexer.
-
-Discard T_EOL if the previous token is T_EOL or T_HELPTEXT.
-Two T_EOL tokens in a row is meaningless. T_HELPTEXT is a special
-token that is reduced without T_EOL.
+Loosen this unreasonable restriction.
 
 Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 ---
 
- scripts/kconfig/zconf.l | 21 +++++++++++++++++++++
- scripts/kconfig/zconf.y | 18 +++---------------
- 2 files changed, 24 insertions(+), 15 deletions(-)
+ scripts/kconfig/zconf.y | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/scripts/kconfig/zconf.l b/scripts/kconfig/zconf.l
-index b7bc164..847ba42 100644
---- a/scripts/kconfig/zconf.l
-+++ b/scripts/kconfig/zconf.l
-@@ -16,6 +16,8 @@
- 
- #include "lkc.h"
- 
-+#define YY_DECL		static int yylex1(void)
-+
- #define START_STRSIZE	16
- 
- static struct {
-@@ -23,6 +25,7 @@ static struct {
- 	int lineno;
- } current_pos;
- 
-+static int prev_token = T_EOL;
- static char *text;
- static int text_size, text_asize;
- 
-@@ -268,6 +271,24 @@ n	[A-Za-z0-9_-]
- }
- 
- %%
-+
-+/* second stage lexer */
-+int yylex(void)
-+{
-+	int token;
-+
-+repeat:
-+	token = yylex1();
-+
-+	/* Do not pass unneeded T_EOL to the parser. */
-+	if ((prev_token == T_EOL || prev_token == T_HELPTEXT) && token == T_EOL)
-+		goto repeat;
-+
-+	prev_token = token;
-+
-+	return token;
-+}
-+
- static char *expand_token(const char *in, size_t n)
- {
- 	char *out;
 diff --git a/scripts/kconfig/zconf.y b/scripts/kconfig/zconf.y
-index c28f1a8..02bfc62 100644
+index eeb449b..7cc8244 100644
 --- a/scripts/kconfig/zconf.y
 +++ b/scripts/kconfig/zconf.y
-@@ -31,7 +31,7 @@ struct symbol *symbol_hash[SYMBOL_HASHSIZE];
- static struct menu *current_menu, *current_entry;
+@@ -341,7 +341,7 @@ menu: T_MENU prompt T_EOL
+ 	printd(DEBUG_PARSE, "%s:%d:menu\n", zconf_curname(), zconf_lineno());
+ };
  
- %}
--%expect 29
-+%expect 21
- 
- %union
+-menu_entry: menu visibility_list depends_list
++menu_entry: menu menu_option_list
  {
-@@ -111,9 +111,7 @@ static struct menu *current_menu, *current_entry;
- %}
+ 	$$ = menu_add_menu();
+ };
+@@ -357,6 +357,12 @@ menu_end: end
+ menu_stmt: menu_entry stmt_list menu_end
+ ;
  
- %%
--input: nl start | start;
++menu_option_list:
++	  /* empty */
++	| menu_option_list visible
++	| menu_option_list depends
++;
++
+ source_stmt: T_SOURCE prompt T_EOL
+ {
+ 	printd(DEBUG_PARSE, "%s:%d:source %s\n", zconf_curname(), zconf_lineno(), $2);
+@@ -414,12 +420,6 @@ depends: T_DEPENDS T_ON expr T_EOL
+ };
+ 
+ /* visibility option */
 -
--start: mainmenu_stmt stmt_list | stmt_list;
-+input: mainmenu_stmt stmt_list | stmt_list;
- 
- /* mainmenu entry */
- 
-@@ -141,8 +139,7 @@ option_name:
- ;
- 
- common_stmt:
--	  T_EOL
--	| if_stmt
-+	  if_stmt
- 	| comment_stmt
- 	| config_stmt
- 	| menuconfig_stmt
-@@ -193,7 +190,6 @@ config_option_list:
- 	| config_option_list depends
- 	| config_option_list help
- 	| config_option_list option_error
--	| config_option_list T_EOL
- ;
- 
- config_option: T_TYPE prompt_stmt_opt T_EOL
-@@ -293,7 +289,6 @@ choice_option_list:
- 	| choice_option_list choice_option
- 	| choice_option_list depends
- 	| choice_option_list help
--	| choice_option_list T_EOL
- 	| choice_option_list option_error
- ;
- 
-@@ -443,7 +438,6 @@ help: help_start T_HELPTEXT
- depends_list:
- 	  /* empty */
- 	| depends_list depends
--	| depends_list T_EOL
- 	| depends_list option_error
- ;
- 
-@@ -458,7 +452,6 @@ depends: T_DEPENDS T_ON expr T_EOL
- visibility_list:
- 	  /* empty */
- 	| visibility_list visible
--	| visibility_list T_EOL
- ;
- 
- visible: T_VISIBLE if_expr T_EOL
-@@ -484,11 +477,6 @@ end:	  T_ENDMENU T_EOL	{ $$ = $1; }
- 	| T_ENDIF T_EOL		{ $$ = $1; }
- ;
- 
--nl:
--	  T_EOL
--	| nl T_EOL
+-visibility_list:
+-	  /* empty */
+-	| visibility_list visible
 -;
 -
- if_expr:  /* empty */			{ $$ = NULL; }
- 	| T_IF expr			{ $$ = $2; }
- ;
+ visible: T_VISIBLE if_expr T_EOL
+ {
+ 	menu_add_visibility($2);
 -- 
 2.7.4
 
