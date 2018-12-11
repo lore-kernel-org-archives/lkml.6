@@ -7,50 +7,51 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1A22C07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:58:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6523C07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:58:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 904862146D
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:58:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7DC482086D
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:58:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544543884;
-	bh=LxNGzLvHrLHnHUP7vXGqjyYA4CqtX2QP9zRblCOsAv0=;
+	s=default; t=1544543887;
+	bh=Mvb5qzCPtRGig0jiZ+mnYELrv7yVtjcHQoS34Qikgh8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=rsiaMMFo0hRXC/oZSCfnJiWmdsdJ4oNNUd1KtGjbgRah2jq1rBseaN+GJmDodzM0S
-	 qgDUBSFjOee9eWbjHnXJMCYR406orHEmoWQSwxpBtKeFYSVkKjYAwofult7HpJRczS
-	 JVG6wz5tm+xAxVOcj5TQQloIVYmJx3+lpjxATHss=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 904862146D
+	b=kYdtRh+56onqXyavv1hUmDMgUyvdgRobtBrreHUqZAhPQ4dfYO2g3kun/yum+pWkO
+	 6aNZ5nx23zMbiNDQv7lXcll5Z7Cv8uCdpn+XKLw/OAjBli8G5YPBSOt/eDAKfoI2bi
+	 4W42jr48ht2BpwTOf5q9NXyuEodUzzVzlTc8cwNY=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7DC482086D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730942AbeLKP6D (ORCPT
+        id S1730953AbeLKP6G (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 10:58:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47084 "EHLO mail.kernel.org"
+        Tue, 11 Dec 2018 10:58:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47216 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730924AbeLKP55 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:57:57 -0500
+        id S1730496AbeLKP6F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 10:58:05 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1EF6920855;
-        Tue, 11 Dec 2018 15:57:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E1BBE205C9;
+        Tue, 11 Dec 2018 15:58:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544543876;
-        bh=LxNGzLvHrLHnHUP7vXGqjyYA4CqtX2QP9zRblCOsAv0=;
+        s=default; t=1544543884;
+        bh=Mvb5qzCPtRGig0jiZ+mnYELrv7yVtjcHQoS34Qikgh8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VKJEaEeoTqwHR/i/CJLK/xVyCDBbfA1fZj7romD0zc/qpSPBQY1yBFI7yvyUXoyMr
-         795/4laaP5grxAjB0GfODgmfPdsD9RWvt42OyTTEDzcWO1DSIcR1eD6PTr2SVSUjLj
-         PfmK4O2EkZUa0aLirrts44q/EoAdvUt1PGHf/Nxo=
+        b=Ft5A/vWNC5PK0lrN20DBojqfIqIYTTjVuD8sB0jxNPl1VDAGxkKttDYu+U3Lov/y5
+         vhyk0URWoyZirtJTDZ7ZM9I3yI39lveySgoSsyIzW1GT2d2GohKAG/dfPJ8dgDJ6PY
+         oN8c9u3qwKin460reUNqNEaR9mnDuFvc4opoToSQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Keith Packard <keithp@keithp.com>,
-        Dave Airlie <airlied@redhat.com>,
-        Daniel Vetter <daniel.vetter@intel.com>
-Subject: [PATCH 4.19 098/118] drm/lease: Send a distinct uevent
-Date:   Tue, 11 Dec 2018 16:41:57 +0100
-Message-Id: <20181211151648.232890582@linuxfoundation.org>
+        stable@vger.kernel.org,
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+        Junwei Zhang <Jerry.Zhang@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>
+Subject: [PATCH 4.19 101/118] drm/amdgpu/gmc8: always load MC firmware in the driver
+Date:   Tue, 11 Dec 2018 16:42:00 +0100
+Message-Id: <20181211151648.346347639@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181211151644.216668863@linuxfoundation.org>
 References: <20181211151644.216668863@linuxfoundation.org>
@@ -69,80 +70,48 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Daniel Vetter <daniel.vetter@ffwll.ch>
+From: Alex Deucher <alexander.deucher@amd.com>
 
-commit ce85882860f0e756f7066cbda1c43e8b50b73ab6 upstream.
+commit b52b6738cc2d50d2a8f4d0095bcb5a86716008a5 upstream.
 
-Sending the exact same hotplug event is not great uapi. Luckily the
-only already merged implementation of leases (in the -modesetting
-driver) doesn't care about what kind of uevent it gets, and
-unconditionally processes both hotplug and lease changes. So we can
-still adjust the uapi here.
+Some power features rely on the driver loaded version so always
+load the MC firmware from the driver even if the vbios loaded
+a version already.
 
-But e.g. weston tries to filter stuff, and I guess others might want
-to do that too. Try to make that possible. Cc: stable since it's uapi
-adjustement that we want to roll out everywhere.
-
-Michel Dänzer mentioned on irc that -amdgpu also has lease support. It
-has the same code flow as -modesetting though, so we can still go
-ahead.
-
-v2: Mention -amdgpu (Michel)
-
-Cc: Keith Packard <keithp@keithp.com>
-Cc: Dave Airlie <airlied@redhat.com>
+Acked-by: Christian König <christian.koenig@amd.com>
+Reviewed-by: Junwei Zhang <Jerry.Zhang@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Cc: stable@vger.kernel.org
-Reviewed-by: Keith Packard <keithp@keithp.com>
-Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20181129094226.30591-1-daniel.vetter@ffwll.ch
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/drm_internal.h |    2 ++
- drivers/gpu/drm/drm_lease.c    |    2 +-
- drivers/gpu/drm/drm_sysfs.c    |   10 ++++++++++
- 3 files changed, 13 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/amd/amdgpu/gmc_v8_0.c |    9 +--------
+ 1 file changed, 1 insertion(+), 8 deletions(-)
 
---- a/drivers/gpu/drm/drm_internal.h
-+++ b/drivers/gpu/drm/drm_internal.h
-@@ -99,6 +99,8 @@ struct device *drm_sysfs_minor_alloc(str
- int drm_sysfs_connector_add(struct drm_connector *connector);
- void drm_sysfs_connector_remove(struct drm_connector *connector);
+--- a/drivers/gpu/drm/amd/amdgpu/gmc_v8_0.c
++++ b/drivers/gpu/drm/amd/amdgpu/gmc_v8_0.c
+@@ -365,7 +365,7 @@ static int gmc_v8_0_polaris_mc_load_micr
+ 	const struct mc_firmware_header_v1_0 *hdr;
+ 	const __le32 *fw_data = NULL;
+ 	const __le32 *io_mc_regs = NULL;
+-	u32 data, vbios_version;
++	u32 data;
+ 	int i, ucode_size, regs_size;
  
-+void drm_sysfs_lease_event(struct drm_device *dev);
-+
- /* drm_gem.c */
- int drm_gem_init(struct drm_device *dev);
- void drm_gem_destroy(struct drm_device *dev);
---- a/drivers/gpu/drm/drm_lease.c
-+++ b/drivers/gpu/drm/drm_lease.c
-@@ -296,7 +296,7 @@ void drm_lease_destroy(struct drm_master
+ 	/* Skip MC ucode loading on SR-IOV capable boards.
+@@ -376,13 +376,6 @@ static int gmc_v8_0_polaris_mc_load_micr
+ 	if (amdgpu_sriov_bios(adev))
+ 		return 0;
  
- 	if (master->lessor) {
- 		/* Tell the master to check the lessee list */
--		drm_sysfs_hotplug_event(dev);
-+		drm_sysfs_lease_event(dev);
- 		drm_master_put(&master->lessor);
- 	}
+-	WREG32(mmMC_SEQ_IO_DEBUG_INDEX, 0x9F);
+-	data = RREG32(mmMC_SEQ_IO_DEBUG_DATA);
+-	vbios_version = data & 0xf;
+-
+-	if (vbios_version == 0)
+-		return 0;
+-
+ 	if (!adev->gmc.fw)
+ 		return -EINVAL;
  
---- a/drivers/gpu/drm/drm_sysfs.c
-+++ b/drivers/gpu/drm/drm_sysfs.c
-@@ -301,6 +301,16 @@ void drm_sysfs_connector_remove(struct d
- 	connector->kdev = NULL;
- }
- 
-+void drm_sysfs_lease_event(struct drm_device *dev)
-+{
-+	char *event_string = "LEASE=1";
-+	char *envp[] = { event_string, NULL };
-+
-+	DRM_DEBUG("generating lease event\n");
-+
-+	kobject_uevent_env(&dev->primary->kdev->kobj, KOBJ_CHANGE, envp);
-+}
-+
- /**
-  * drm_sysfs_hotplug_event - generate a DRM uevent
-  * @dev: DRM device
 
 
