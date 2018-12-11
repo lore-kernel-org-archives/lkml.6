@@ -2,148 +2,493 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4842C07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 10:15:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1815AC07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 10:15:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 872112081B
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 10:15:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544523319;
-	bh=Ka0ivfetdG8R6q71brWHEdJYH8urzTD+rbaHcJqsz18=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=rQ6MXIywCW6WfBaOOf43WcXoopgfoXeipe4FwFxgI5mNUjFyT4EhHT8RAFAvky0Rm
-	 sJAfAozSjEkx+sDSLP0SEbKuoZCmJHJ76st43sPkNCjA+KFsmYtv2EOBEbKgRgfFOB
-	 gVxNnt4jh+6cuZJvFpxbM65kJdzXDjhGFkdsntvA=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 872112081B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id C667E2081B
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 10:15:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C667E2081B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hisilicon.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726412AbeLKKPS (ORCPT
+        id S1726415AbeLKKPz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 05:15:18 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:38249 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726114AbeLKKPR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 05:15:17 -0500
-Received: by mail-ot1-f66.google.com with SMTP id e12so13480408otl.5;
-        Tue, 11 Dec 2018 02:15:16 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=S2/HjXQk90vqltSEB0PRcazYDDBkbE8C+8BmOZL5LpQ=;
-        b=MuCrEFbHh/WrPraCx5Ve4ddveoB/99q5C0IrhCMKOaqlbtrBHESTzOp+5IbPW37mhx
-         CiHa9tjhbdoFq9i7fy1pV2UQu6CTpSeq8D/xzkGBHCHYTnfkoSgQomyHh7wjwsux5+JH
-         reB6RUxaFd1jEFuEh/581bUyR5B9fZLJaaqEa3/1E3NIXwQaKj6mIacGD6pKXDHkgSSO
-         yUmMQJvFo6OWhEaxR5pYZTN+MRhZ55PYbqGZnzAEWMn3COz5Vf85fvMl83Ad54LD12Fs
-         y/o9d5AmVGP8JFvDxPO1b3IwwM/b7Z+4lKkKaGG6ADUI3W6Qb6l06kZuHV+E3rKY/9FT
-         AzSA==
-X-Gm-Message-State: AA+aEWafx5mGU3x7uANGnmvAyo5wCLDrNvFu3dpEcvUxAGluVTtwF0KM
-        5YDr6asRcUhgpnMUr5A0ybaVb2lRv9vWk9Yic/A=
-X-Google-Smtp-Source: AFSGD/Wi5HCkN2HxAfgFPZSGZWG/PnhZqymO3DXYt4Xc+4Jc+bIM0VJtHKB3NQ2oEcaBwFndNnuglyNVvx4EOvGQyXI=
-X-Received: by 2002:a9d:2062:: with SMTP id n89mr10332185ota.244.1544523315557;
- Tue, 11 Dec 2018 02:15:15 -0800 (PST)
+        Tue, 11 Dec 2018 05:15:55 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:16109 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726114AbeLKKPz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 05:15:55 -0500
+Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id DE7798645B31F;
+        Tue, 11 Dec 2018 18:15:51 +0800 (CST)
+Received: from SHA1000170415.huawei.com (100.106.92.139) by
+ DGGEMS413-HUB.china.huawei.com (10.3.19.213) with Microsoft SMTP Server id
+ 14.3.408.0; Tue, 11 Dec 2018 18:15:47 +0800
+From:   Wanglai Shi <shiwanglai@hisilicon.com>
+To:     <robh+dt@kernel.org>, <mark.rutland@arm.com>
+CC:     <xuwei5@hisilicon.com>, <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <leo.yan@linaro.org>, <shiwanglai@hisilicon.com>
+Subject: [PATCH] dts: arm64: add CoreSight trace support for hi3660
+Date:   Tue, 11 Dec 2018 18:05:49 +0800
+Message-ID: <1544522749-54071-1-git-send-email-shiwanglai@hisilicon.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-References: <cover.1544199754.git.robin.murphy@arm.com> <fe956f04bfe7f8293f6205ee224b087046e40a91.1544199754.git.robin.murphy@arm.com>
-In-Reply-To: <fe956f04bfe7f8293f6205ee224b087046e40a91.1544199754.git.robin.murphy@arm.com>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Tue, 11 Dec 2018 11:15:04 +0100
-Message-ID: <CAJZ5v0g=RSXxFWU-Yu0UA2AFV+qNoW7Q6t1S8ecydrTrHJZwXA@mail.gmail.com>
-Subject: Re: [PATCH 2/2] ACPI / scan: Refactor _CCA enforcement
-To:     Robin Murphy <robin.murphy@arm.com>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        "open list:AMD IOMMU (AMD-VI)" <iommu@lists.linux-foundation.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Linux PCI <linux-pci@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Originating-IP: [100.106.92.139]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 7, 2018 at 5:31 PM Robin Murphy <robin.murphy@arm.com> wrote:
->
-> Rather than checking the DMA attribute at each callsite, just pass it
-> through for acpi_dma_configure() to handle directly. That can then deal
-> with the relatively exceptional DEV_DMA_NOT_SUPPORTED case by explicitly
-> installing dummy DMA ops instead of just skipping setup entirely. This
-> will then free up the dev->dma_ops == NULL case for some valuable
-> fastpath optimisations.
->
-> CC: Rafael J. Wysocki <rjw@rjwysocki.net>
-> CC: Len Brown <lenb@kernel.org>
-> CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> CC: Bjorn Helgaas <bhelgaas@google.com>
-> Signed-off-by: Robin Murphy <robin.murphy@arm.com>
+This patch adds devicetree entries for the CoreSight trace
+ components on hi3660.
 
-The changes in this patch are fine by me:
+Signed-off-by: Wanglai Shi <shiwanglai@hisilicon.com>
+---
+ .../arm64/boot/dts/hisilicon/hi3660-coresight.dtsi | 428 +++++++++++++++++++++
+ 1 file changed, 428 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/hisilicon/hi3660-coresight.dtsi
 
-Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+diff --git a/arch/arm64/boot/dts/hisilicon/hi3660-coresight.dtsi b/arch/arm64/boot/dts/hisilicon/hi3660-coresight.dtsi
+new file mode 100644
+index 0000000..95c79e4
+--- /dev/null
++++ b/arch/arm64/boot/dts/hisilicon/hi3660-coresight.dtsi
+@@ -0,0 +1,428 @@
++/*
++ * dtsi for Hisilicon Hi3660 Coresight
++ *
++ * Copyright (C) 2016-2017 Hisilicon Ltd.
++ *
++ * Author: Wanglai Shi <shiwanglai@hisilicon.com>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * publishhed by the Free Software Foundation.
++ */
++/ {
++	amba {
++		#address-cells = <2>;
++		#size-cells = <2>;
++		compatible = "arm,amba-bus";
++		ranges;
++
++		/* A53 cluster internal coresight */
++		etm@0,ecc40000 {
++			compatible = "arm,coresight-etm4x","arm,primecell";
++			reg = <0 0xecc40000 0 0x1000>;
++			clocks = <&pclk>;
++			clock-names = "apb_pclk";
++			cpu = <&cpu0>;
++			port {
++				etm0_out_port: endpoint {
++					remote-endpoint = <&funnel0_in_port0>;
++				};
++			};
++		};
++
++		etm@1,ecd40000 {
++			compatible = "arm,coresight-etm4x","arm,primecell";
++			reg = <0 0xecd40000 0 0x1000>;
++			clocks = <&pclk>;
++			clock-names = "apb_pclk";
++			cpu = <&cpu1>;
++			port {
++				etm1_out_port: endpoint {
++					remote-endpoint = <&funnel0_in_port1>;
++				};
++			};
++		};
++
++		etm@2,ece40000 {
++			compatible = "arm,coresight-etm4x","arm,primecell";
++			reg = <0 0xece40000 0 0x1000>;
++			clocks = <&pclk>;
++			clock-names = "apb_pclk";
++			cpu = <&cpu2>;
++			port {
++				etm2_out_port: endpoint {
++					remote-endpoint = <&funnel0_in_port2>;
++				};
++			};
++		};
++
++		etm@3,ecf40000 {
++			compatible = "arm,coresight-etm4x","arm,primecell";
++			reg = <0 0xecf40000 0 0x1000>;
++			clocks = <&pclk>;
++			clock-names = "apb_pclk";
++			cpu = <&cpu3>;
++			port {
++				etm3_out_port: endpoint {
++					remote-endpoint = <&funnel0_in_port3>;
++				};
++			};
++		};
++
++		funnel0:funnel@0,ec801000 {
++			compatible = "arm,coresight-funnel","arm,primecell";
++			reg = <0 0xec801000 0 0x1000>;
++			clocks = <&pclk>;
++			clock-names = "apb_pclk";
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				/* funnel output port */
++				port@0 {
++					reg = <0>;
++					funnel0_out_port: endpoint {
++						remote-endpoint =
++							<&etf0_in_port>;
++					};
++				};
++
++				/* funnel input ports */
++				port@1 {
++					reg = <0>;
++					funnel0_in_port0: endpoint {
++						slave-mode;
++						remote-endpoint =
++							<&etm0_out_port>;
++					};
++				};
++
++				port@2 {
++					reg = <1>;
++					funnel0_in_port1: endpoint {
++						slave-mode;
++						remote-endpoint =
++							<&etm1_out_port>;
++					};
++				};
++
++				port@3 {
++					reg = <2>;
++					funnel0_in_port2: endpoint {
++						slave-mode;
++						remote-endpoint =
++							<&etm2_out_port>;
++					};
++				};
++
++				port@4 {
++					reg = <3>;
++					funnel0_in_port3: endpoint {
++						slave-mode;
++						remote-endpoint =
++							<&etm3_out_port>;
++					};
++				};
++			};
++		};
++
++		etf0:etf@0,ec802000 {
++			compatible = "arm,coresight-tmc","arm,primecell";
++			reg = <0 0xec802000 0 0x1000>;
++			clocks = <&pclk>;
++			clock-names = "apb_pclk";
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++				/* input port */
++				port@0 {
++					reg = <0>;
++					etf0_in_port: endpoint {
++						slave-mode;
++						remote-endpoint =
++							<&funnel0_out_port>;
++					};
++				};
++
++				/* output port */
++				port@1 {
++					reg = <0>;
++					etf0_out_port: endpoint {
++						remote-endpoint =
++							<&funnel2_in_port0>;
++					};
++				};
++			};
++		};
++
++		/* A73 cluster internal coresight */
++		etm@4,ed440000 {
++			compatible = "arm,coresight-etm4x","arm,primecell";
++			reg = <0 0xed440000 0 0x1000>;
++			clocks = <&pclk>;
++			clock-names = "apb_pclk";
++			cpu = <&cpu4>;
++			port {
++				etm4_out_port: endpoint {
++				remote-endpoint = <&funnel1_in_port0>;
++				};
++			};
++		};
++
++		etm@5,ed540000 {
++			compatible = "arm,coresight-etm4x","arm,primecell";
++			reg = <0 0xed540000 0 0x1000>;
++			clocks = <&pclk>;
++			clock-names = "apb_pclk";
++			cpu = <&cpu5>;
++			port {
++				etm5_out_port: endpoint {
++				remote-endpoint = <&funnel1_in_port1>;
++				};
++			};
++		};
++
++		etm@6,ed640000 {
++			compatible = "arm,coresight-etm4x","arm,primecell";
++			reg = <0 0xed640000 0 0x1000>;
++			clocks = <&pclk>;
++			clock-names = "apb_pclk";
++			cpu = <&cpu6>;
++			port {
++				etm6_out_port: endpoint {
++					remote-endpoint = <&funnel1_in_port2>;
++				};
++			};
++		};
++
++		etm@7,ed740000 {
++			compatible = "arm,coresight-etm4x","arm,primecell";
++			reg = <0 0xed740000 0 0x1000>;
++			clocks = <&pclk>;
++			clock-names = "apb_pclk";
++			cpu = <&cpu7>;
++			port {
++				etm7_out_port: endpoint {
++					remote-endpoint = <&funnel1_in_port3>;
++				};
++			};
++		};
++
++		funnel1:funnel@1,ed001000 {
++			compatible = "arm,coresight-funnel","arm,primecell";
++			reg = <0 0xed001000 0 0x1000>;
++			clocks = <&pclk>;
++			clock-names = "apb_pclk";
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				/* funnel output port */
++				port@0 {
++					reg = <0>;
++					funnel1_out_port: endpoint {
++						remote-endpoint =
++							<&etf1_in_port>;
++					};
++				};
++
++				/* funnel input ports */
++				port@1 {
++					reg = <0>;
++					funnel1_in_port0: endpoint {
++						slave-mode;
++						remote-endpoint =
++							<&etm4_out_port>;
++					};
++				};
++
++				port@2 {
++					reg = <1>;
++					funnel1_in_port1: endpoint {
++						slave-mode;
++						remote-endpoint =
++							<&etm5_out_port>;
++					};
++				};
++
++				port@3 {
++					reg = <2>;
++					funnel1_in_port2: endpoint {
++						slave-mode;
++						remote-endpoint =
++							<&etm6_out_port>;
++					};
++				};
++
++				port@4 {
++					reg = <3>;
++					funnel1_in_port3: endpoint {
++						slave-mode;
++						remote-endpoint =
++							<&etm7_out_port>;
++					};
++				};
++			};
++		};
++
++		etf1:etf@1,ed002000 {
++			compatible = "arm,coresight-tmc","arm,primecell";
++			reg = <0 0xed002000 0 0x1000>;
++			clocks = <&pclk>;
++			clock-names = "apb_pclk";
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++				/* input port */
++				port@0 {
++					reg = <0>;
++					etf1_in_port: endpoint {
++						slave-mode;
++						remote-endpoint =
++							<&funnel1_out_port>;
++					};
++				};
++
++				/* output port */
++				port@1 {
++					reg = <0>;
++					etf1_out_port: endpoint {
++						remote-endpoint =
++							<&funnel2_in_port0>;
++					};
++				};
++			};
++		};
++
++		/* Top coresight config */
++		funnel@2,ec031000 {
++			compatible = "arm,coresight-funnel","arm,primecell";
++			reg = <0 0xec031000 0 0x1000>;
++			clocks = <&pclk>;
++			clock-names = "apb_pclk";
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				/* funnel output port */
++				port@0 {
++					reg = <0>;
++					funnel2_out_port: endpoint {
++						remote-endpoint =
++							<&etf2_in_port>;
++					};
++				};
++
++				/* funnel input ports */
++				port@1 {
++					reg = <0>;
++					funnel2_in_port0: endpoint {
++						slave-mode;
++						remote-endpoint =
++							<&etf0_out_port>;
++					};
++				};
++			};
++		};
++
++		etf@2,ec036000 {
++			compatible = "arm,coresight-tmc","arm,primecell";
++			reg = <0 0xec036000 0 0x1000>;
++			clocks = <&pclk>;
++			clock-names = "apb_pclk";
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++				/* input port */
++				port@0 {
++					reg = <0>;
++					etf2_in_port: endpoint {
++						slave-mode;
++						remote-endpoint =
++							<&funnel2_out_port>;
++					};
++				};
++
++				/* output port */
++				port@1 {
++					reg = <0>;
++					etf2_out_port: endpoint {
++						remote-endpoint =
++							<&replicator0_in_port>;
++					};
++				};
++			};
++		};
++
++		replicator {
++			compatible = "arm,coresight-replicator";
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				/* etr out port  */
++				port@0 {
++					reg = <0>;
++					replicator0_out_port0: endpoint {
++						remote-endpoint =
++							<&etr_in_port>;
++					};
++				};
++				/* TPIU out port  */
++				port@1 {
++					reg = <1>;
++					replicator0_out_port1: endpoint {
++						remote-endpoint =
++							<&tpiu_in_port>;
++					};
++				};
++				/* input port  */
++				port@2 {
++					reg = <0>;
++					replicator0_in_port: endpoint {
++						slave-mode;
++						remote-endpoint =
++							<&etf2_out_port>;
++					};
++				};
++			};
++		};
++
++		etr@0,ec033000 {
++			compatible = "arm,coresight-tmc","arm,primecell";
++			reg = <0 0xec033000 0 0x1000>;
++			clocks = <&pclk>;
++			clock-names = "apb_pclk";
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				/* etr input port  */
++				port@0 {
++					reg = <0>;
++					etr_in_port: endpoint {
++						slave-mode;
++						remote-endpoint =
++						<&replicator0_out_port0>;
++					};
++				};
++			};
++		};
++
++		tpiu@ec032000 {
++			compatible = "arm,coresight-tpiu", "arm,primecell";
++			reg = <0 0xec032000 0 0x1000>;
++
++			clocks = <&pclk>;
++			clock-names = "apb_pclk";
++			port {
++				tpiu_in_port: endpoint {
++					slave-mode;
++					remote-endpoint =
++						<&replicator0_out_port1>;
++				};
++			};
++		};
++	};
++};
+-- 
+2.7.4
 
-> ---
->  drivers/acpi/scan.c      | 5 +++++
->  drivers/base/platform.c  | 3 +--
->  drivers/pci/pci-driver.c | 3 +--
->  3 files changed, 7 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/acpi/scan.c b/drivers/acpi/scan.c
-> index bd1c59fb0e17..b75ae34ed188 100644
-> --- a/drivers/acpi/scan.c
-> +++ b/drivers/acpi/scan.c
-> @@ -1456,6 +1456,11 @@ int acpi_dma_configure(struct device *dev, enum dev_dma_attr attr)
->         const struct iommu_ops *iommu;
->         u64 dma_addr = 0, size = 0;
->
-> +       if (attr == DEV_DMA_NOT_SUPPORTED) {
-> +               set_dma_ops(dev, &dma_dummy_ops);
-> +               return 0;
-> +       }
-> +
->         iort_dma_setup(dev, &dma_addr, &size);
->
->         iommu = iort_iommu_configure(dev);
-> diff --git a/drivers/base/platform.c b/drivers/base/platform.c
-> index 41b91af95afb..c6daca875c17 100644
-> --- a/drivers/base/platform.c
-> +++ b/drivers/base/platform.c
-> @@ -1138,8 +1138,7 @@ int platform_dma_configure(struct device *dev)
->                 ret = of_dma_configure(dev, dev->of_node, true);
->         } else if (has_acpi_companion(dev)) {
->                 attr = acpi_get_dma_attr(to_acpi_device_node(dev->fwnode));
-> -               if (attr != DEV_DMA_NOT_SUPPORTED)
-> -                       ret = acpi_dma_configure(dev, attr);
-> +               ret = acpi_dma_configure(dev, attr);
->         }
->
->         return ret;
-> diff --git a/drivers/pci/pci-driver.c b/drivers/pci/pci-driver.c
-> index bef17c3fca67..f899a28b90f8 100644
-> --- a/drivers/pci/pci-driver.c
-> +++ b/drivers/pci/pci-driver.c
-> @@ -1602,8 +1602,7 @@ static int pci_dma_configure(struct device *dev)
->                 struct acpi_device *adev = to_acpi_device_node(bridge->fwnode);
->                 enum dev_dma_attr attr = acpi_get_dma_attr(adev);
->
-> -               if (attr != DEV_DMA_NOT_SUPPORTED)
-> -                       ret = acpi_dma_configure(dev, attr);
-> +               ret = acpi_dma_configure(dev, attr);
->         }
->
->         pci_put_host_bridge_device(bridge);
-> --
-> 2.19.1.dirty
->
