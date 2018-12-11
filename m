@@ -2,104 +2,136 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 843A0C6783B
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 18:38:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C41AC5CFFE
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 18:39:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 505C420870
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 18:38:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544553488;
-	bh=yCgCdyK1fBGSGXfuw9k6xiuVD+sR2FU2KbOb7mxa/RM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=Xfhh0LgNJWBIvmvXdV1MN5ArD33ETqpgeMRJgGx1UNrnsAajTzQrvIZGTYYjWoKnS
-	 Uad+t5BNgLlNc4iQsFfUgEj8ZtCAcyvXC7DDvQbvXJvR4VOg7EXqBbv+A0zE5LLMgE
-	 0jEFNNuoZBZiyDWdKS3Ip5ahrRSQhSz/UEj1yTyo=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 505C420870
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 3C55920855
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 18:39:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C55920855
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726687AbeLKSiH (ORCPT
+        id S1726700AbeLKSjm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 13:38:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34576 "EHLO mail.kernel.org"
+        Tue, 11 Dec 2018 13:39:42 -0500
+Received: from mga09.intel.com ([134.134.136.24]:51498 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726254AbeLKSiH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 13:38:07 -0500
-Received: from localhost (unknown [64.22.249.253])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4C7AC20855;
-        Tue, 11 Dec 2018 18:38:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544553486;
-        bh=yCgCdyK1fBGSGXfuw9k6xiuVD+sR2FU2KbOb7mxa/RM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=wH1kFZgZ7Qo8GZnz6QpgciHdnj48jmV5VN600zDocOjWu5jo4l/YmuO3LXQKsXJ32
-         sBCL+SgwGku9yUu2hueU30H3xPhgi7zELB2halDgKlGNk7wCpLwYQ013lM19cKBT0A
-         Fb/9T9MNxI2ZqppLJwI4B/3xgCMGXbGgNLs0bBWU=
-Date:   Tue, 11 Dec 2018 12:38:05 -0600
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     "Grumbach, Emmanuel" <emmanuel.grumbach@intel.com>
-Cc:     "bjorn@helgaas.com" <bjorn@helgaas.com>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "Mertarg10@gmail.com" <Mertarg10@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Fran RR <fjrr87@outlook.com>
-Subject: Re: Fwd: [Bug 201647] New: Intel Wireless card 3165 does not get
- detected but bluetooth works
-Message-ID: <20181211183805.GG99796@google.com>
-References: <bug-201647-193951@https.bugzilla.kernel.org/>
- <CABhMZUXc4FS-f52ZDsErEhbkm_jjEz+kn75YO5Tuvp42Qm+1xw@mail.gmail.com>
- <20181128211959.GB178809@google.com>
- <0BA3FCBA62E2DC44AF3030971E174FB3013373E4A3@HASMSX112.ger.corp.intel.com>
- <20181210222452.GC85090@google.com>
- <0BA3FCBA62E2DC44AF3030971E174FB30133754C00@HASMSX112.ger.corp.intel.com>
- <20181211135121.GB99796@google.com>
- <0BA3FCBA62E2DC44AF3030971E174FB30133756A29@HASMSX112.ger.corp.intel.com>
- <20181211182630.GF99796@google.com>
- <0BA3FCBA62E2DC44AF3030971E174FB30133756B5D@HASMSX112.ger.corp.intel.com>
+        id S1726252AbeLKSjl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 13:39:41 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Dec 2018 10:39:41 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,343,1539673200"; 
+   d="scan'208";a="258646831"
+Received: from yoojae-mobl1.amr.corp.intel.com (HELO [10.7.153.143]) ([10.7.153.143])
+  by orsmga004.jf.intel.com with ESMTP; 11 Dec 2018 10:39:41 -0800
+Subject: Re: [PATCH 2/2] ARM: dts: aspeed: Add KCS support for LPC BMC
+To:     Vijay Khemka <vijaykhemka@fb.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Joel Stanley <joel@jms.id.au>,
+        Andrew Jeffery <andrew@aj.id.au>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Cc:     "openbmc @ lists . ozlabs . org" <openbmc@lists.ozlabs.org>
+References: <20181210200753.3018124-1-vijaykhemka@fb.com>
+ <20181210200753.3018124-3-vijaykhemka@fb.com>
+From:   Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
+Message-ID: <584ddf6f-2e0c-5c1c-df06-bdd37ecd2489@linux.intel.com>
+Date:   Tue, 11 Dec 2018 10:39:40 -0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0BA3FCBA62E2DC44AF3030971E174FB30133756B5D@HASMSX112.ger.corp.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181210200753.3018124-3-vijaykhemka@fb.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 11, 2018 at 06:31:47PM +0000, Grumbach, Emmanuel wrote:
-> > On Tue, Dec 11, 2018 at 04:32:25PM +0000, Grumbach, Emmanuel wrote:
-> > > > On Tue, Dec 11, 2018 at 06:35:20AM +0000, Grumbach, Emmanuel wrote:
-> > > > > > > > > https://bugzilla.kernel.org/show_bug.cgi?id=201647
-> > > >
-> > > > > FWIW: I saw another problem like this with a 9650 device.
-> > > >
-> > > > Do you have a pointer to any info about this 9650 issue?  Maybe that
-> > > > would have a clue.
-> > >
-> > > I added him here so that you can ask whatever you like :) The story is
-> > > the same. I am attaching a picture I got from the reporter.
-> > > I can confirm that this device ID / subdevice ID is supported by the linux
-> > driver.
-> > 
-> > Was there a resolution, i.e., if somebody figured out how to make the
-> > 9650 wifi work, maybe a similar solution would work for the 3165?
+Hi Vijay,
+
+On 12/10/2018 12:07 PM, Vijay Khemka wrote:
+> Added kcs device support for lpc BMC.
 > 
-> Unfortunately not, I am stuck there at the exact same point.
-> No Wifi device shows up in lspci...
+> Signed-off-by: Vijay Khemka <vijaykhemka@fb.com>
+> ---
+>   arch/arm/boot/dts/aspeed-g5.dtsi | 29 ++++++++++++++++++++++++++++-
+>   1 file changed, 28 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm/boot/dts/aspeed-g5.dtsi b/arch/arm/boot/dts/aspeed-g5.dtsi
+> index d107459fc0f8..1bd48655bacb 100644
+> --- a/arch/arm/boot/dts/aspeed-g5.dtsi
+> +++ b/arch/arm/boot/dts/aspeed-g5.dtsi
+> @@ -330,8 +330,35 @@
+>   				ranges = <0x0 0x1e789000 0x1000>;
+>   
+>   				lpc_bmc: lpc-bmc@0 {
+> -					compatible = "aspeed,ast2500-lpc-bmc";
+> +					compatible = "aspeed,ast2500-lpc-bmc, "simple-mfd", "syscon"";
+>   					reg = <0x0 0x80>;
+> +					reg-io-width = <4>;
+> +
+> +					#address-cells = <1>;
+> +					#size-cells = <1>;
+> +					ranges = <0x0 0x0 0x80>;
+> +
+> +					kcs1: kcs1@0 {
+> +						compatible = "aspeed,ast2500-kcs-bmc";
+> +						reg = <0x0 0x80>;
 
-Is there a public spec?  My patience for reverse engineering things
-that are documented somewhere that I'm not allowed to see is pretty
-limited.  Presumably *you* should be able to see the spec, since this
-is an Intel device and you have an @intel.com address?
+This reg property isn't needed at here because kcs_bmc_aspeed module
+reads regmap from the parent node. Please check below code in the
+driver code.
 
-From what we can tell so far, I don't *think* this is a PCI issue.  If
-the device doesn't respond to a PCI config access, the PCI core can't
-really be expected to do anything about it.
+priv->map = syscon_node_to_regmap(dev->parent->of_node);
 
-Bjorn
+> +						interrupts = <8>;
+> +						kcs_chan = <1>;
+> +						status = "disabled";
+> +					};
+> +					kcs2: kcs2@0 {
+> +						compatible = "aspeed,ast2500-kcs-bmc";
+> +						reg = <0x0 0x80>;
+
+ditto.
+
+> +						interrupts = <8>;
+> +						kcs_chan = <2>;
+> +						status = "disabled";
+> +					};
+> +					kcs3: kcs3@0 {
+> +						compatible = "aspeed,ast2500-kcs-bmc";
+> +						reg = <0x0 0x80>;
+
+ditto.
+
+> +						interrupts = <8>;
+> +						kcs_chan = <3>;
+> +						status = "disabled";
+> +					};
+>   				};
+>   
+>   				lpc_host: lpc-host@80 {
+> 
+
+You might need to add kcs4 as a sub-node under lpc_host like below:
+
+kcs4: kcs4@0 {
+	compatible = "aspeed,ast2500-kcs-bmc";
+	interrupts = <8>;
+	kcs_chan = <4>;
+	status = "disabled";
+};
+
+This would be uses as an SMM channel.
+
+-Jae
