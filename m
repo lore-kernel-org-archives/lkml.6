@@ -2,148 +2,152 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBDE7C07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:56:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A78FC5CFFE
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:56:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F1392146F
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:56:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544543796;
-	bh=Y0f9E26U9k5rfXYldRoWbpsn8CGYMqPiKoD7VfivGqY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=T2j663eOOEGaNXEpijyEYfdmoH6IWKPMYQqESz6j3pg/pileH1aMBDwxsgeiwQwT/
-	 YBLq9Q1Bb5FMW+XDnIfVlWBubhQHsJg0qzkIFLaZ4n58oPM0hLECNYzTbBhrB7iAzj
-	 r+3qTV3nIvtzW7Sbicz8uintN9L4h/dRDZYUPe50=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F1392146F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 53EB3205C9
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:56:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=microchiptechnology.onmicrosoft.com header.i=@microchiptechnology.onmicrosoft.com header.b="QkvzSERL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 53EB3205C9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730609AbeLKP4f (ORCPT
+        id S1730621AbeLKP4j (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 11 Dec 2018 10:56:39 -0500
+Received: from esa2.microchip.iphmx.com ([68.232.149.84]:8836 "EHLO
+        esa2.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730577AbeLKP4f (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 11 Dec 2018 10:56:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45292 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730577AbeLKP4b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:56:31 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9139A205C9;
-        Tue, 11 Dec 2018 15:56:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544543791;
-        bh=Y0f9E26U9k5rfXYldRoWbpsn8CGYMqPiKoD7VfivGqY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=adJ1BImCfN/29aFGd329B5nGm++QHBMxLiU0GMOH5kvSQPtWcnaoMb/h76jKHaIS4
-         bX4KqNSKXOuxJlaG/N4uwFKxy3YWykVtMV345057jTQibjq2FbdxJMlmraMhi+vJBE
-         kC3pohULYBQjfphkeHf5ePEms/jqbJZLxcOKZ3Q8=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>,
-        Dave Gerlach <d-gerlach@ti.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 038/118] cpufreq: ti-cpufreq: Only register platform_device when supported
-Date:   Tue, 11 Dec 2018 16:40:57 +0100
-Message-Id: <20181211151645.775739449@linuxfoundation.org>
-X-Mailer: git-send-email 2.20.0
-In-Reply-To: <20181211151644.216668863@linuxfoundation.org>
-References: <20181211151644.216668863@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-X-Patchwork-Hint: ignore
+X-IronPort-AV: E=Sophos;i="5.56,342,1539673200"; 
+   d="scan'208";a="24082961"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa2.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 11 Dec 2018 08:56:34 -0700
+Received: from NAM02-CY1-obe.outbound.protection.outlook.com (10.10.215.89) by
+ email.microchip.com (10.10.76.38) with Microsoft SMTP Server (TLS) id
+ 14.3.352.0; Tue, 11 Dec 2018 08:56:34 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=microchiptechnology.onmicrosoft.com;
+ s=selector1-microchiptechnology-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=DV47vp1tjnqueMb3+EllqaOGAW3pX5/QbwcGwTxWHyc=;
+ b=QkvzSERLq2aHaHgZDOSV/dvbi5xZSDQnyv400EIQhymk0cb9KfkHPo7c/Ol4Gz8zJJzyKZFo3N0r9DjQXOFOPu40EcBefr7NMSz1igD80mVgaK6mFxu5GaEhAbwOgMN8XcIweXVib2TG06uA7gQkzNizlKuiJKwZ0WMWa8NUlfY=
+Received: from BY2PR11MB0744.namprd11.prod.outlook.com (10.163.112.142) by
+ BY2PR11MB0792.namprd11.prod.outlook.com (10.163.112.153) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1404.20; Tue, 11 Dec 2018 15:56:31 +0000
+Received: from BY2PR11MB0744.namprd11.prod.outlook.com
+ ([fe80::6c42:c3b0:5734:1681]) by BY2PR11MB0744.namprd11.prod.outlook.com
+ ([fe80::6c42:c3b0:5734:1681%5]) with mapi id 15.20.1404.026; Tue, 11 Dec 2018
+ 15:56:31 +0000
+From:   <Claudiu.Beznea@microchip.com>
+To:     <lgirdwood@gmail.com>, <broonie@kernel.org>, <robh+dt@kernel.org>,
+        <Nicolas.Ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
+        <Ludovic.Desroches@microchip.com>, <mark.rutland@arm.com>
+CC:     <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <Claudiu.Beznea@microchip.com>
+Subject: [PATCH v3 0/5] add PM functionality for act8945a PMIC
+Thread-Topic: [PATCH v3 0/5] add PM functionality for act8945a PMIC
+Thread-Index: AQHUkWoV0VCxjvOsEk2Y/ilFL0/wzg==
+Date:   Tue, 11 Dec 2018 15:56:31 +0000
+Message-ID: <1544543768-2066-1-git-send-email-claudiu.beznea@microchip.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: VI1PR0902CA0050.eurprd09.prod.outlook.com
+ (2603:10a6:802:1::39) To BY2PR11MB0744.namprd11.prod.outlook.com
+ (2a01:111:e400:52de::14)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Claudiu.Beznea@microchip.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [94.177.32.154]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BY2PR11MB0792;6:/ymUVXI5tjuSLrCr8/YqnPv3TpjcGK5dXQIUoVYnY2N3ppBkYcXbsRD75wNr2reqZExU3RLP5sjkCTq66zAnwlTFrsiB9BCFet0ZAunnw1LmuCvJ9A+neOjOae9raqWaeMM6ShUYn4eaOzJPjGv+anj41TMo/CXk9W2n1wrd7B1cR8VvfsDFLIsyRxjE61/RVd1vORkXV+2dD6rjM2K5Q98RqbEswXWsYILpM/kFT3Q5dswlJHT/Xkw60NK66XE8hHWJBAGxW0/tXxNyq+R72akvPAOoHP4cJ+lRzUHm0qgZYbDAfxE0GP1uwAn0ZpgWE+FwHbkH6/UmfBB8Ztv7FFRLM/G7GuLeTfb9ARivLv0X/ywv6LXLnr+irXsEZSZGxw3mjgM33Kf7neFq9jdk3ofk87VATnWiDYyqCBtX8g7gijeV9DF23ok9b0Y1NHeTp6Zf8Sm0ObI9HS8Lu8D7fA==;5:9JIO91/B6ppJ/5XghvivwCDprtFmIBMHcllt1h99G3S2soZj/vk7E5WUT/KSpajTS4MG94iDihs3bZV6CxdKOH64gccQDAGuZinNetbWHxNn47ihcPT2R6lxicma6+ZXsQC9+2T1kcswOpcsFg9blHCMD8kgVH5PtmwLawpaAbw=;7:tVIYP6HCxcP8/rI+Ctle3QZmdD8tCYfPeBugIzj9+LaJQKnZxGJNTm473Bgl2oqxXR6WrR9wbCLExrtmOPLHLXMF+gLkLCpeeWMWYxAF8CdseQEG99WfLTkIdtlEu9xjnZ9nODO0UZ2WwOpnRhlw9g==
+x-ms-office365-filtering-correlation-id: 028619ce-311b-4e8d-63a2-08d65f8137ee
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:BY2PR11MB0792;
+x-ms-traffictypediagnostic: BY2PR11MB0792:
+x-microsoft-antispam-prvs: <BY2PR11MB079266D8F74DF89EAE16076A87A60@BY2PR11MB0792.namprd11.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(3002001)(93006095)(93001095)(10201501046)(3231455)(999002)(944501520)(52105112)(148016)(149066)(150057)(6041310)(20161123560045)(20161123564045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(201708071742011)(7699051)(76991095);SRVR:BY2PR11MB0792;BCL:0;PCL:0;RULEID:;SRVR:BY2PR11MB0792;
+x-forefront-prvs: 08831F51DC
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(979002)(376002)(136003)(366004)(346002)(396003)(39860400002)(199004)(189003)(54906003)(36756003)(476003)(14454004)(39060400002)(68736007)(53936002)(72206003)(478600001)(316002)(106356001)(110136005)(305945005)(86362001)(107886003)(7736002)(2906002)(4326008)(102836004)(486006)(81166006)(99286004)(8936002)(25786009)(186003)(3846002)(66066001)(26005)(8676002)(71190400001)(71200400001)(6506007)(52116002)(386003)(6116002)(2501003)(81156014)(6512007)(5660300001)(97736004)(2616005)(6486002)(6436002)(14444005)(105586002)(256004)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1101;SCL:1;SRVR:BY2PR11MB0792;H:BY2PR11MB0744.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: microchip.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: XuwcaAxereoQHpsFQeOA7nQ3OsbuhZPahUaeDmScW58HD2a6KQ0BI5Mbn8L4A2kSBc7zzaYLqoDF3ucdTkkyBbKPQ4VrcKihJvZ4/VDnCFJcC0tJVRzxBJNuktktu2U36VDhuKpV+mREt9GSKHpOhQoqzMcZ9Lu3KgKXO8F2fzRk8QU7HFiDDwUY5mTjfoT10XpCGbVWIWJeWVVOJG2125R1EXcW87lifZP7HC2OcZSd2RdtyGXcx4+vc3eEX3TM79h9392MlmSQbv2ufFlwGyYTLxzRgXVVIOtNMfPME7JObSlFUWOotvABzFnZTpqe
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-MS-Exchange-CrossTenant-Network-Message-Id: 028619ce-311b-4e8d-63a2-08d65f8137ee
+X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Dec 2018 15:56:31.7517
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY2PR11MB0792
+X-OriginatorOrg: microchip.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.19-stable review patch.  If anyone has any objections, please let me know.
+From: Claudiu Beznea <claudiu.beznea@microchip.com>
 
-------------------
+This series implements PM functionality for act8945a PMIC and use that supp=
+ort
+on SAMA5D2 Xplained board.
 
-[ Upstream commit d98ccfc3948ab63152494bb6b9c17e15295c0310 ]
+Changes in v3:
+- add patch "unlock expert registers"; it was wrongly missed in previous ve=
+rsion
 
-Currently the ti-cpufreq driver blindly registers a 'ti-cpufreq' to force
-the driver to probe on any platforms where the driver is built in.
-However, this should only happen on platforms that actually can make use
-of the driver. There is already functionality in place to match the
-SoC compatible so let's factor this out into a separate call and
-make sure we find a match before creating the ti-cpufreq platform device.
+Changes in v2:
+- split patch 1/1 from previous series in 3 patches: one adding regmap,
+  one adding pm functionality, one adding shutdown functionality
+- use dev_pm_ops suspend function to set register specific to PWRHLD line: =
+this
+  is specific to PMIC itself and not to regulators
+- add mode support for LDOs
+- add constants for mode in dt-bindings/regulator/active-semi,8945a-regulat=
+or.h
+- document modes and regulator suspend states
+- remove rdevs from struct act8945a_pmic since were not used anywhere
+- add op_mode field in struct act8945a_pmic, update it when setting mode an=
+d
+  return it when reading mode (avoiding one extra register read while
+  reading mode)
+- add a patch to fix a checkpatch.pl warning
+- in shutdown function use directly act8945a->regmap instead of an intermed=
+iary
+  struct regmap variable
 
-Reviewed-by: Johan Hovold <johan@kernel.org>
-Signed-off-by: Dave Gerlach <d-gerlach@ti.com>
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/cpufreq/ti-cpufreq.c | 26 +++++++++++++++++++++-----
- 1 file changed, 21 insertions(+), 5 deletions(-)
+Boris Brezillon (2):
+  regulator: act8945a-regulator: Implement PM functionalities
+  ARM: dts: at91: sama5d2_xplained: Add proper regulator states for
+    suspend-to-mem
 
-diff --git a/drivers/cpufreq/ti-cpufreq.c b/drivers/cpufreq/ti-cpufreq.c
-index 3f0e2a14895a..22b53bf26817 100644
---- a/drivers/cpufreq/ti-cpufreq.c
-+++ b/drivers/cpufreq/ti-cpufreq.c
-@@ -201,19 +201,28 @@ static const struct of_device_id ti_cpufreq_of_match[] = {
- 	{},
- };
- 
-+static const struct of_device_id *ti_cpufreq_match_node(void)
-+{
-+	struct device_node *np;
-+	const struct of_device_id *match;
-+
-+	np = of_find_node_by_path("/");
-+	match = of_match_node(ti_cpufreq_of_match, np);
-+	of_node_put(np);
-+
-+	return match;
-+}
-+
- static int ti_cpufreq_probe(struct platform_device *pdev)
- {
- 	u32 version[VERSION_COUNT];
--	struct device_node *np;
- 	const struct of_device_id *match;
- 	struct opp_table *ti_opp_table;
- 	struct ti_cpufreq_data *opp_data;
- 	const char * const reg_names[] = {"vdd", "vbb"};
- 	int ret;
- 
--	np = of_find_node_by_path("/");
--	match = of_match_node(ti_cpufreq_of_match, np);
--	of_node_put(np);
-+	match = dev_get_platdata(&pdev->dev);
- 	if (!match)
- 		return -ENODEV;
- 
-@@ -290,7 +299,14 @@ fail_put_node:
- 
- static int ti_cpufreq_init(void)
- {
--	platform_device_register_simple("ti-cpufreq", -1, NULL, 0);
-+	const struct of_device_id *match;
-+
-+	/* Check to ensure we are on a compatible platform */
-+	match = ti_cpufreq_match_node();
-+	if (match)
-+		platform_device_register_data(NULL, "ti-cpufreq", -1, match,
-+					      sizeof(*match));
-+
- 	return 0;
- }
- module_init(ti_cpufreq_init);
--- 
-2.19.1
+Claudiu Beznea (3):
+  regulator: act8945a-regulator: fix line over 80 chars warning
+  regulator: act8945a-regulator: add shutdown function
+  regulator: add documentation for regulator modes and suspend states
 
+ .../bindings/regulator/act8945a-regulator.txt      |  34 ++++
+ arch/arm/boot/dts/at91-sama5d2_xplained.dts        |  54 ++++++
+ drivers/regulator/act8945a-regulator.c             | 200 +++++++++++++++++=
++++-
+ .../regulator/active-semi,8945a-regulator.h        |  30 ++++
+ 4 files changed, 312 insertions(+), 6 deletions(-)
+ create mode 100644 include/dt-bindings/regulator/active-semi,8945a-regulat=
+or.h
 
+--=20
+2.7.4
 
