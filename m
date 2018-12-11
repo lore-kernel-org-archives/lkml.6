@@ -2,98 +2,99 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7882FC6783B
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 22:51:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 494D3C6783B
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 22:53:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C4ED2084E
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 22:51:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544568713;
-	bh=EocnfZn8ja2uZ8G0caUenn982bCT4+rmB/82Tz4D5DY=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=EnB23tT7uEKdFiASJqKoXC8NwDoba1JgoB25C/hkeUF83huRw+3sAmfVeGDhEXtHj
-	 NKNFJCpsnU2FF1yzup2vHoJvJK+b0VVT5lhMDFshFU8x/7bdrmmbLoB+HHL1XURZRP
-	 uywJ3MF0WhfLQjRZiQjTmojcXlW7fETFmfY0xV3w=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C4ED2084E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 0FE7B2084E
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 22:53:45 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="nM+RFnw6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0FE7B2084E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726282AbeLKWvw (ORCPT
+        id S1726257AbeLKWxo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 17:51:52 -0500
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:34723 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726211AbeLKWvw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 17:51:52 -0500
-Received: by mail-ot1-f67.google.com with SMTP id t5so15823646otk.1;
-        Tue, 11 Dec 2018 14:51:51 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=EocnfZn8ja2uZ8G0caUenn982bCT4+rmB/82Tz4D5DY=;
-        b=uaY2ttYkiDjb+MNEWbBqHtXRtYQ+BgPjMXrBg7g6l8cWwdhFSMb3J3LSytYTeaba73
-         iGUDF61R0gHCaOlYuBFjfZwSd6gStWEng/dHSyJbNBIddlCBigsfg9yDgYKK3SNU39fo
-         2bs5Rk6TXzlGnsg7RH+uXqSD+kr9vdGab4dvv753TiKqfkXPhUUOzTh4ooNLmSh7cgub
-         j1rbnrlhUJCKQ9fkfapvftMgGb5shMFpEMh/u6XI0EASATQK+zPhQcZxBjH0JkkJIbLT
-         ix0TkNvGcTmhIPNNsQxIimi6aCHSi6df0EAUXKtLvu9SicPdmND2oTkx+1p0idA15hoE
-         nlpA==
-X-Gm-Message-State: AA+aEWbfgHzOXlAEi4vC6awYso1gJgyJHU6HFPcWa7yjIxHh+lr9VSnj
-        rVMQhs59qUSdPHd96/xsIfbrMOPkI9+poI15YJcU5A==
-X-Google-Smtp-Source: AFSGD/XjDXx2/txEZXocnz2w0CygNQc60vEaQXwPijSZA5n4mSm7/qUgnPBLN9rZjynyrhuSIDQ3tJ6JvGDsm5Zdm2Q=
-X-Received: by 2002:a9d:4c84:: with SMTP id m4mr11796373otf.124.1544568711146;
- Tue, 11 Dec 2018 14:51:51 -0800 (PST)
+        Tue, 11 Dec 2018 17:53:44 -0500
+Received: from ozlabs.org ([203.11.71.1]:48113 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726225AbeLKWxn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 17:53:43 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 43DwGX6RKYz9s3Z;
+        Wed, 12 Dec 2018 09:53:40 +1100 (AEDT)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1544568820;
+        bh=c6y859mSGyqs9PWN+JJoALJh4ZdfB4YU2AwKxJ6fpck=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=nM+RFnw6mvaptcYLyao2xcl6b/Nqdv8EH1uX14INVAJOBF89mll7j4KlJ8DFIHoLH
+         w0OFgTlB2xjI10i6bZVvq9F4FoFySQhoZS1rSZWSOYr6q+gecvDQDDAEIDCelILbko
+         QPrWVALkeMG5iED7/2AvrgRwHpOzycmvVVvova75G4EQy4Z2vnEC52IfVLAjhv5ceG
+         vIA/7ztD1uMLgzZLs/O4IexZsxbE5EBAX5qNg3XmeVc/XsTeIkNzQ0bWeudflKQuuN
+         HD88RiE0QyFlqcpg/km9NBUz4qE0f7BZA+vk8HJ4o2CBR9O0ERuLnISRE+tERJIn7O
+         LBqIg9SLASO2Q==
+Date:   Wed, 12 Dec 2018 09:53:40 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Nathan Chancellor <natechancellor@gmail.com>
+Cc:     Guenter Roeck <linux@roeck-us.net>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>
+Subject: Re: linux-next: Tree for Dec 11
+Message-ID: <20181212095340.35bcb8c6@canb.auug.org.au>
+In-Reply-To: <20181212093632.774c0603@canb.auug.org.au>
+References: <20181211182627.42b79e40@canb.auug.org.au>
+        <20181211173851.GA29028@roeck-us.net>
+        <20181211180437.GA28010@flashbox>
+        <20181212093632.774c0603@canb.auug.org.au>
 MIME-Version: 1.0
-References: <20181210181315.5023-1-okaya@kernel.org> <20181210181315.5023-2-okaya@kernel.org>
- <20181211170957.GA335@infradead.org> <342c5dd9-cb3d-d714-c87f-814a942cf395@kernel.org>
- <CAJZ5v0ia+eotSZgjbitt7TAT0ECSmTAz1XJhS3Auz5w5Z61SZA@mail.gmail.com>
- <a9c7cbe1-eef3-40ad-de62-8194df12ca20@kernel.org> <CAJZ5v0g5t4sx6mY=mCPWOdZLbhEAXo5Ah1TZw9jZNJQ-+cgWsw@mail.gmail.com>
- <6644defb-9199-6467-6e3e-8ce552b56f87@kernel.org>
-In-Reply-To: <6644defb-9199-6467-6e3e-8ce552b56f87@kernel.org>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Tue, 11 Dec 2018 23:51:39 +0100
-Message-ID: <CAJZ5v0i+rgLL+KrRs69URbGhUxDK9eUEuLifDWuL2mgpkAv_1g@mail.gmail.com>
-Subject: Re: [PATCH v3 2/3] ACPI / OSL: Allow PCI to be disabled
-To:     okaya@kernel.org
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/vy/Wia_MQaeOTG3UUXw_Z6R"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 11, 2018 at 11:22 PM Sinan Kaya <okaya@kernel.org> wrote:
->
-> On 12/11/2018 5:16 PM, Rafael J. Wysocki wrote:
-> >> AFAIK, ACPI spec says that AML code running on non-existing op-regions to be
-> >> discarded last time I checked.
-> > I guess you mean "disregarded"?
-> >
->
-> I have seen Linux complain about reads/writes to non-existing I2C opregions
-> before as a read/write failure for every single AML transaction. I was under the
-> impression that we didn't care.
->
-> > So the spec appears to expect the OS to silently ignore the failures
-> > in those cases, so why should an error be returned?
-> >
->
-> I can certainly return success for this case when CONFIG_PCI is not present.
->
-> >> I know Linux is noisy about these.
+--Sig_/vy/Wia_MQaeOTG3UUXw_Z6R
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Well, users running kernels with CONFIG_PCI unset on platforms
-expecting PCI support to be present in the OS may want to know that I
-suppose, so that would be a good reason to return an error, but
-perhaps just once rather than on every access (maybe unless debugging
-is enabled?).
+Hi Nathan,
+
+On Wed, 12 Dec 2018 09:36:32 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> I have added that patch after the v4l-dvb tree for today.  (and cc'd
+> the v4l-dvb maintainer - who is also the author of the patch in the
+> Fixes tag ...)
+
+Sorry, I just realised that your original patch was sent to Mauro.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/vy/Wia_MQaeOTG3UUXw_Z6R
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwQP/QACgkQAVBC80lX
+0Gypmgf/TY4VzFliygtN1u5DyUkxm8LGaYpUbPX63myw8gW/BICjzlEejK1SFHQ6
+0mk6DicvbWnAPd+Odh+6Trs/P6X65cCIxHbTp+vuIP2If2SZSbFfgzSNNqsrUT1s
+XpKQS1PjTZ9DGQazudbjQWvks2LTfpPfEYBJqXbtKfCXAujK5M2u71g6BwEM2tSW
+sbfeEqd0NfMKLEh9djICUFcEKYTbuRmj33FCpbbefZE9exzNvOe0snChYRuhG3IJ
+7R7POYqu1usKqm0VVP/xmiTrV03X6ElA+Nio3nxSToVTeOXH+mEui1AHSO5cpWdj
+OLsR0/LNfGgrxYk3bwV3s3PB5v2q2g==
+=EmKz
+-----END PGP SIGNATURE-----
+
+--Sig_/vy/Wia_MQaeOTG3UUXw_Z6R--
