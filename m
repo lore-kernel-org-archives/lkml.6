@@ -2,151 +2,200 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C97BAC07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 06:18:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42E97C07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 06:20:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 816F12084C
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 06:18:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 816F12084C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fromorbit.com
+	by mail.kernel.org (Postfix) with ESMTP id ED71F2081B
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 06:20:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="OP1m5Z0Z"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED71F2081B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729323AbeLKGSz (ORCPT
+        id S1729453AbeLKGUH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 01:18:55 -0500
-Received: from ipmail06.adl2.internode.on.net ([150.101.137.129]:17939 "EHLO
-        ipmail06.adl2.internode.on.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726607AbeLKGSy (ORCPT
+        Tue, 11 Dec 2018 01:20:07 -0500
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:9916 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726607AbeLKGUH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 01:18:54 -0500
-Received: from ppp121-44-12-151.lns20.syd4.internode.on.net (HELO dastard) ([121.44.12.151])
-  by ipmail06.adl2.internode.on.net with ESMTP; 11 Dec 2018 16:48:50 +1030
-Received: from dave by dastard with local (Exim 4.80)
-        (envelope-from <david@fromorbit.com>)
-        id 1gWbNX-0006gw-Ql; Tue, 11 Dec 2018 17:18:47 +1100
-Date:   Tue, 11 Dec 2018 17:18:47 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        John Hubbard <john.hubbard@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux MM <linux-mm@kvack.org>, Jan Kara <jack@suse.cz>,
-        tom@talpey.com, Al Viro <viro@zeniv.linux.org.uk>, benve@cisco.com,
-        Christopher Lameter <cl@linux.com>,
-        "Dalessandro, Dennis" <dennis.dalessandro@intel.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Michal Hocko <mhocko@kernel.org>,
-        Mike Marciniszyn <mike.marciniszyn@intel.com>,
-        rcampbell@nvidia.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH 1/2] mm: introduce put_user_page*(), placeholder versions
-Message-ID: <20181211061847.GG2398@dastard>
-References: <20181205011519.GV10377@bombadil.infradead.org>
- <20181205014441.GA3045@redhat.com>
- <59ca5c4b-fd5b-1fc6-f891-c7986d91908e@nvidia.com>
- <7b4733be-13d3-c790-ff1b-ac51b505e9a6@nvidia.com>
- <20181207191620.GD3293@redhat.com>
- <3c4d46c0-aced-f96f-1bf3-725d02f11b60@nvidia.com>
- <CAPcyv4hwtMA+4qc6500ucn5vf6fRrNdfyMHru_Jhzx86=1Wwww@mail.gmail.com>
- <20181208163353.GA2952@redhat.com>
- <20181208164825.GA26154@infradead.org>
- <CAPcyv4hP1XrheKTrapANmrg10xz6dpG7cj=qEG8La9L34bCKDQ@mail.gmail.com>
+        Tue, 11 Dec 2018 01:20:07 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c0f57120000>; Mon, 10 Dec 2018 22:20:02 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Mon, 10 Dec 2018 22:20:05 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Mon, 10 Dec 2018 22:20:05 -0800
+Received: from [10.19.225.182] (10.124.1.5) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 11 Dec
+ 2018 06:20:03 +0000
+Subject: Re: [PATCH] thermal: tegra: add get_trend ops
+From:   Wei Ni <wni@nvidia.com>
+To:     Eduardo Valentin <edubezval@gmail.com>,
+        <daniel.lezcano@linaro.org>, <rui.zhang@intel.com>
+CC:     Thierry Reding <thierry.reding@gmail.com>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <1542705077-29697-1-git-send-email-wni@nvidia.com>
+ <20181120153833.GB28796@ulmo>
+ <d510d768-452f-5f70-a9b6-37d6a63a56c9@nvidia.com>
+ <20181129170145.GG2688@localhost.localdomain>
+ <f2d10339-4086-7102-9949-719483f545bf@nvidia.com>
+ <92e4304d-df83-946f-a7d5-a12b77a9d9e8@nvidia.com>
+Message-ID: <1ab01422-c7c2-cc2a-23fd-6ab52a132f62@nvidia.com>
+Date:   Tue, 11 Dec 2018 14:20:00 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAPcyv4hP1XrheKTrapANmrg10xz6dpG7cj=qEG8La9L34bCKDQ@mail.gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <92e4304d-df83-946f-a7d5-a12b77a9d9e8@nvidia.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
+ HQMAIL101.nvidia.com (172.20.187.10)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1544509202; bh=ixmo/cZy/jJ1kWC3yQvlFbZtW45D2iVl6yZjdoCEBeo=;
+        h=X-PGP-Universal:Subject:From:To:CC:References:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=OP1m5Z0ZVz4qBNL4fTe/q0SyCfrTBhqWvGfOFTi8sbDzPweiDIVOcFzLl5vCrjp5E
+         N3NldrnSGIbAnZlcns6vyVmKYXXbuSW/tzKRhagC7gUKHGIZ7RmEm3mKZ5kqARGwqS
+         0wQhtlzsOqTw3j9QNI3gshAK3r8VW6EYkfiFUXgloPPIS0/lX0//r6IbrOq4fgQSkP
+         ouwWwttNtsPr5uo8uXG4rmTdoLyyuJ5kiS0VhzpxbouaT7J6x1++RK+l2N8CYImb+V
+         y+LWdT+iC1pFETYOrZeVi7jBNZBASMiucTFev8ABBwZvbibebvsyXP8YnKT5CoT75o
+         bmKJZnhFeZRLw==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Dec 08, 2018 at 10:09:26AM -0800, Dan Williams wrote:
-> On Sat, Dec 8, 2018 at 8:48 AM Christoph Hellwig <hch@infradead.org> wrote:
-> >
-> > On Sat, Dec 08, 2018 at 11:33:53AM -0500, Jerome Glisse wrote:
-> > > Patchset to use HMM inside nouveau have already been posted, some
-> > > of the bits have already made upstream and more are line up for
-> > > next merge window.
-> >
-> > Even with that it is a relative fringe feature compared to making
-> > something like get_user_pages() that is literally used every to actually
-> > work properly.
-> >
-> > So I think we need to kick out HMM here and just find another place for
-> > it to store data.
-> >
-> > And just to make clear that I'm not picking just on this - the same is
-> > true to a just a little smaller extent for the pgmap..
+Hi Rui & Eduardo,
+Could you please take this patch?
+
+Thanks.
+Wei.
+
+On 5/12/2018 4:30 PM, Wei Ni wrote:
+> Hi Daniel,
+> It seems no more comments, could this patch be approved?
 > 
-> Fair enough, I cringed as I took a full pointer for that use case, I'm
-> happy to look at ways of consolidating or dropping that usage.
+> Thanks.
+> Wei.
 > 
-> Another fix that may put pressure 'struct page' is resolving the
-> untenable situation of dax being incompatible with reflink, i.e.
-> reflink currently requires page-cache pages. Dave has talked about
-> silently establishing page-cache entries when a dax-page is cow'd for
-> reflink,
-
-I think you've got it the wrong way around there :)
-
-Think of a set of files with the following physical block mappings:
-
-index		0  1  2  3  4  5
-inode W		A  B  C  D  E  F
-inode X		B  C  D  E  F  A
-inode Y		C  D  E  F  A  B
-inode Z		D  E  F  A  B  C
-
-Basically, each block has 4 references (one from each file), and
-each reference to a block is from a diffent file offset. Now, with
-DAX, each inode wants to put the same struct page into their own
-address space mapping tree but have different page indexes.
-
-i.e. for block A, inode W wants page->index = 0, X wants 5, Y wants
-4 and Z wants 3.
-
-This is not possible with a single struct page and where the
-problem with DAX, struct pages and physically shared data lies.
-
-This is where the page cache is currently required - each mapping
-gets it's own copy of the shared block in volatile RAM, but when
-sharing is broken (by COW) we can toss the volatile copy and go back
-to using DAX for the newly allocated, single owner {block, struct
-page} tuple that replaces the shared page.
-
-> but I wonder if we could go the other way and introduce the
-> mechanism of a page belonging to multiple mappings simultaneously and
-> managed by the filesystem.
-
-That's pretty much what I suggested at LSFMM. We do lookups for
-shared extent mappings through the filesystem buffer cache (which is
-indexed by physical location) and hold the primary struct page in
-the filesystem buffer cache. We then hand out dynamically allocated
-struct pages back to the caller that point to the same physical page
-and place them in each inode's address space. When a write fault
-occurs, we allocate a new block, grab the physical struct page, copy
-the data across, and release the dynamically allocated read-only
-struct page and reference to the primary struct page held in the
-filesytem buffer cache.
-
-It's essentially the same model "cached page per inode address
-space" as using volatile RAM copies via the page cache, except
-the struct pages point back to the same physical location rather
-than having their own temporary, volatile copy of the data.
-
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+> On 30/11/2018 11:07 AM, Wei Ni wrote:
+>>
+>>
+>> On 30/11/2018 1:01 AM, Eduardo Valentin wrote:
+>>> On Wed, Nov 21, 2018 at 02:36:10PM +0800, Wei Ni wrote:
+>>>>
+>>>>
+>>>> On 20/11/2018 11:38 PM, Thierry Reding wrote:
+>>>>> On Tue, Nov 20, 2018 at 05:11:17PM +0800, Wei Ni wrote:
+>>>>>> Add support for get_trend ops that allows soctherm
+>>>>>> sensors to be used with the step-wise governor.
+>>>>>>
+>>>>>> Signed-off-by: Wei Ni <wni@nvidia.com>
+>>>>>> ---
+>>>>>>  drivers/thermal/tegra/soctherm.c | 34 ++++++++++++++++++++++++++++++++++
+>>>>>>  1 file changed, 34 insertions(+)
+>>>>>>
+>>>>>> diff --git a/drivers/thermal/tegra/soctherm.c b/drivers/thermal/tegra/soctherm.c
+>>>>>> index ed28110a3535..d2951fbe2b7c 100644
+>>>>>> --- a/drivers/thermal/tegra/soctherm.c
+>>>>>> +++ b/drivers/thermal/tegra/soctherm.c
+>>>>>> @@ -488,9 +488,43 @@ static int tegra_thermctl_set_trip_temp(void *data, int trip, int temp)
+>>>>>>  	return 0;
+>>>>>>  }
+>>>>>>  
+>>>>>> +static int tegra_thermctl_get_trend(void *data, int trip,
+>>>>>> +				    enum thermal_trend *trend)
+>>>>>> +{
+>>>>>> +	struct tegra_thermctl_zone *zone = data;
+>>>>>> +	struct thermal_zone_device *tz = zone->tz;
+>>>>>> +	int trip_temp, temp, last_temp, ret;
+>>>>>> +
+>>>>>> +	if (!tz)
+>>>>>> +		return -EINVAL;
+>>>>>> +
+>>>>>> +	ret = tz->ops->get_trip_temp(zone->tz, trip, &trip_temp);
+>>>>>> +	if (ret)
+>>>>>> +		return ret;
+>>>>>> +
+>>>>>> +	mutex_lock(&tz->lock);
+>>>>>> +	temp = tz->temperature;
+>>>>>> +	last_temp = tz->last_temperature;
+>>>>>> +	mutex_unlock(&tz->lock);
+>>>>>> +
+>>>>>> +	if (temp > trip_temp) {
+>>>>>> +		if (temp >= last_temp)
+>>>>>> +			*trend = THERMAL_TREND_RAISING;
+>>>>>> +		else
+>>>>>> +			*trend = THERMAL_TREND_STABLE;
+>>>>>> +	} else if (temp < trip_temp) {
+>>>>>> +		*trend = THERMAL_TREND_DROPPING;
+>>>>>> +	} else {
+>>>>>> +		*trend = THERMAL_TREND_STABLE;
+>>>>>> +	}
+>>>>>> +
+>>>>>> +	return 0;
+>>>>>> +}
+>>>>>
+>>>>> This looks like a reimplementation of the get_tz_trend() helper. Is
+>>>>> seems like that helper already has everything we need. Perhaps this
+>>>>> isn't working because of-thermal installs of_thermal_get_trend(), a
+>>>>> function that returns -EINVAL if the driver doesn't implement the
+>>>>> ->get_trend() callback.
+>>>>
+>>>> 1. The get_tz_trend() helper can work, because it has:
+>>>> if (tz->emul_temperature || !tz->ops->get_trend ||
+>>>>             tz->ops->get_trend(tz, trip, &trend)) {
+>>>> ...
+>>>> }
+>>>> the tz->ops->get_trend is of_thermal_get_trend(). If without special
+>>>> get_trend(), it will return -EINVAL, so it will implement the if block
+>>>> to get the "trend". If we have the special get_trend(), then the
+>>>> of_thermal_get_trend() will return 0, so this helper will not implement
+>>>> the if block, it will get the "trend" from the special get_trend().
+>>>
+>>> The idea of the helper is to provide a trend in case drivers dont have
+>>> a specific way of doing so. 
+>>
+>> Yes, thanks for your explanation.
+>>
+>>>
+>>>>
+>>>> 2. There has a little difference between the helper and our special
+>>>> callback. The tegra_thermctl_get_trend() consider the trip_temp, but the
+>>>> get_tz_trend() helper didn't.
+>>>>
+>>>
+>>> Yeah, if you are computing trend towards a trip, then yes, that is
+>>> different and this patch is needed.
+>>>
+>>>>>
+>>>>> Perhaps a better way would be to do something like this in
+>>>>> thermal_zone_of_add_sensor():
+>>>>>
+>>>>> 	if (ops->get_trend)
+>>>>> 		tzd->ops->get_trend = of_thermal_get_trend;
+>>>>>
+>>>>> That's similar to how ->set_trips() and ->set_emul_temp() are set up
+>>>>> and should make sure that get_tz_trend() will do the right thing for
+>>>>> all drivers that don't implement a special ->get_trend().
+>>>>
+>>>> As above description, I think the of_thermal_get_trend() already can
+>>>> handle this case, doesn't need to change.
+>>>>
+>>>> Wei.
+>>>>
+>>>>>
+>>>>> Thierry
+>>>>>
