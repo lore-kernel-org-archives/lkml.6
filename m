@@ -7,36 +7,36 @@ X-Spam-Status: No, score=-7.6 required=3.0 tests=DKIM_ADSP_ALL,DKIM_INVALID,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8DC3C5CFFE
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:17:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 041F2C5CFFE
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:17:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AACE420851
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:17:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BD3322084E
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:17:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=plaes.org header.i=@plaes.org header.b="GtcjlpRB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AACE420851
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=plaes.org header.i=@plaes.org header.b="oHMqxd0F"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD3322084E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=plaes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726792AbeLKPR1 (ORCPT
+        id S1726777AbeLKPR0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 10:17:27 -0500
-Received: from plaes.org ([188.166.43.21]:59600 "EHLO plaes.org"
+        Tue, 11 Dec 2018 10:17:26 -0500
+Received: from plaes.org ([188.166.43.21]:59638 "EHLO plaes.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726329AbeLKPRX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726722AbeLKPRX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 11 Dec 2018 10:17:23 -0500
 Received: from localhost (unknown [213.204.46.240])
-        by plaes.org (Postfix) with ESMTPSA id CA52D41105;
-        Tue, 11 Dec 2018 15:17:20 +0000 (UTC)
+        by plaes.org (Postfix) with ESMTPSA id E114941803;
+        Tue, 11 Dec 2018 15:17:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=plaes.org; s=mail;
-        t=1544541440; bh=kVazWeoBJTH1RfagB16nCXnVFLnAlX8uPnX2O4aNcZU=;
+        t=1544541442; bh=rL1R6deG8R4m86FOSDKOCU7rxrxi6SE5YJnbhqg7w48=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GtcjlpRBTZ4y9PguNQWmWbzKsRcrLFg4ogxeJiGhrTmVi9OT57KO6Sxst26rWloxS
-         2ZnYCUB9NpAXabu5T06gr5rhoAH57n/X8VhZoRVgnfFqQ2YPlSV5fS3LcJ/rlj7KFO
-         np0qfFuqgMG0mimMzu1HztPQ1OYAoV8npqyy6KFLG425RSp5RwlXzgG2HFsOwpMHzh
-         adXXch8dvt+Q2RXw2i1aU8dawDQXeiXHBxQGytcvuVuTKszVxj4exj7x7MzyFI3zhX
-         nu0yEUhWKHbvgFC4FCCydLoVx/Zns7cu8ZtDp6ivxsEMx+RUkU0D4q+5MwryAOj9+W
-         XwDFdiS6m7tqg==
+        b=oHMqxd0F9qGE6lgVaPX/rL2H9UKd/k6bbS7ymcHjc1n7JVX3kqCHbGmzlW83zr657
+         dkrm6dF64Vlo4XbOQsiG36/hVic4zad+njeQUjQiAUGuvyJWPquVTrpZhZEICPQCAg
+         6aSKkGTjrhrlyUNT504HuGdfWQmyyCLZFchBlgJMPNf/Cw2TbqKelmNoeBOU3Ej8ZA
+         PE3LSLfW5Ow/1p/1Txn6QpijEAUw5qnaMO2MFovGFwIfSeEsS2InhdRqGdIWpd6e4i
+         wf7wsr3aIua+RmUic2vuC4sI3zDxG4ZKrMO8Qnj0oxawQ21LE9KmcewBRQwVjm0Lj+
+         IhqirIZyBLPlw==
 From:   Priit Laes <plaes@plaes.org>
 To:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -48,9 +48,9 @@ To:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
         Olliver Schinagl <oliver@schinagl.nl>,
         linux-sunxi <linux-sunxi@googlegroups.com>
 Cc:     Priit Laes <plaes@plaes.org>
-Subject: [PATCH v2 4/8] regulator: axp20x: add software based soft_start for AXP209 LDO3
-Date:   Tue, 11 Dec 2018 17:17:08 +0200
-Message-Id: <c77b37b68b18a299cafd282ef1edf3434eabeb2d.1544512919.git-series.plaes@plaes.org>
+Subject: [PATCH v2 6/8] regulator: dts: enable soft-start and ramp delay for the OLinuXino Lime2
+Date:   Tue, 11 Dec 2018 17:17:10 +0200
+Message-Id: <b76e1964fee095164ed9313e9f57d4d4318c083f.1544512919.git-series.plaes@plaes.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <cover.923997dd7d7396bb4d71f8967698b58ca956b929.1544512919.git-series.plaes@plaes.org>
 References: <cover.923997dd7d7396bb4d71f8967698b58ca956b929.1544512919.git-series.plaes@plaes.org>
@@ -63,123 +63,30 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Olliver Schinagl <oliver@schinagl.nl>
 
-In the past, there have been words on various lists that if LDO3 is
-disabled in u-boot, but enabled in the DTS, the axp209 driver would
-fail to continue/hang. Several enable/disable patches have been
-issues to devicetree's in both the kernel and u-boot to address
-this issue.
+The OLinuXino Lime2 has a big capacitor on its LDO3 output. It is
+actually too large, causing the PMIC to shutdown when toggling the LDO3.
 
-What really happened however, was that the AXP209 shuts down without
-a notice and without setting an interrupt. This is caused when LDO3
-gets overloaded, for example with large capacitors on the LDO3 output.
-
-Normally, we would expect that AXP209 would source 200 mA as per
-datasheet and set and trigger an interrupt when being overloaded.
-For some reason however, this does not happen.
-
-As a work-around, we use the soft-start constraint of the regulator
-node to first bring up the LDO3 to the lowest possible voltage and
-then enable the LDO. After that, we can set the requested voltage
-as usual.
-
-Combining this setting with the regulator-ramp-delay allows LDO3 to
-enable voltage slowly and staggered, potentially reducing overall
-inrush current.
+By enabling soft-start and ramp delay we increase the time for the
+capacitor to charge lowering the current drain on the power regulator.
 
 Signed-off-by: Olliver Schinagl <oliver@schinagl.nl>
 Signed-off-by: Priit Laes <plaes@plaes.org>
 ---
- drivers/regulator/axp20x-regulator.c | 57 ++++++++++++++++++++++++++++-
- 1 file changed, 56 insertions(+), 1 deletion(-)
+ arch/arm/boot/dts/sun7i-a20-olinuxino-lime2.dts | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/regulator/axp20x-regulator.c b/drivers/regulator/axp20x-regulator.c
-index 1d9fa62..e8a895b 100644
---- a/drivers/regulator/axp20x-regulator.c
-+++ b/drivers/regulator/axp20x-regulator.c
-@@ -14,6 +14,7 @@
-  */
- 
- #include <linux/bitops.h>
-+#include <linux/delay.h>
- #include <linux/err.h>
- #include <linux/init.h>
- #include <linux/mfd/axp20x.h>
-@@ -23,6 +24,7 @@
- #include <linux/platform_device.h>
- #include <linux/regmap.h>
- #include <linux/regulator/driver.h>
-+#include <linux/regulator/machine.h>
- #include <linux/regulator/of_regulator.h>
- 
- #define AXP20X_GPIO0_FUNC_MASK		GENMASK(3, 0)
-@@ -430,6 +432,59 @@ static int axp20x_set_ramp_delay(struct regulator_dev *rdev, int ramp)
- 	return regmap_update_bits(axp20x->regmap, reg, mask, cfg);
- }
- 
-+static int axp20x_regulator_enable_regmap(struct regulator_dev *rdev)
-+{
-+	struct axp20x_dev *axp20x = rdev_get_drvdata(rdev);
-+	const struct regulator_desc *desc = rdev->desc;
-+
-+	if (!rdev)
-+		return -EINVAL;
-+
-+	switch (axp20x->variant) {
-+	case AXP209_ID:
-+		if ((desc->id == AXP20X_LDO3) &&
-+		    rdev->constraints && rdev->constraints->soft_start) {
-+			int v_out;
-+			int ret;
-+
-+			/*
-+			 * On some boards, the LDO3 can be overloaded when
-+			 * turning on, causing the entire PMIC to shutdown
-+			 * without warning. Turning it on at the minimal voltage
-+			 * and then setting the voltage to the requested value
-+			 * works reliably.
-+			 */
-+			if (regulator_is_enabled_regmap(rdev))
-+				break;
-+
-+			v_out = regulator_get_voltage_sel_regmap(rdev);
-+			if (v_out < 0)
-+				return v_out;
-+
-+			if (v_out == 0)
-+				break;
-+
-+			ret = regulator_set_voltage_sel_regmap(rdev, 0x00);
-+			/*
-+			 * A small pause is needed between
-+			 * setting the voltage and enabling the LDO to give the
-+			 * internal state machine time to process the request.
-+			 */
-+			usleep_range(1000, 5000);
-+			ret |= regulator_enable_regmap(rdev);
-+			ret |= regulator_set_voltage_sel_regmap(rdev, v_out);
-+
-+			return ret;
-+		}
-+		break;
-+	default:
-+		/* No quirks */
-+		break;
-+	}
-+
-+	return regulator_enable_regmap(rdev);
-+};
-+
- static const struct regulator_ops axp20x_ops_fixed = {
- 	.list_voltage		= regulator_list_voltage_linear,
+diff --git a/arch/arm/boot/dts/sun7i-a20-olinuxino-lime2.dts b/arch/arm/boot/dts/sun7i-a20-olinuxino-lime2.dts
+index 55c9086..4e1c590 100644
+--- a/arch/arm/boot/dts/sun7i-a20-olinuxino-lime2.dts
++++ b/arch/arm/boot/dts/sun7i-a20-olinuxino-lime2.dts
+@@ -232,6 +232,8 @@
+ 	regulator-min-microvolt = <2800000>;
+ 	regulator-max-microvolt = <2800000>;
+ 	regulator-name = "vddio-csi0";
++	regulator-soft-start;
++	regulator-ramp-delay = <1600>;
  };
-@@ -447,7 +502,7 @@ static const struct regulator_ops axp20x_ops = {
- 	.set_voltage_sel	= regulator_set_voltage_sel_regmap,
- 	.get_voltage_sel	= regulator_get_voltage_sel_regmap,
- 	.list_voltage		= regulator_list_voltage_linear,
--	.enable			= regulator_enable_regmap,
-+	.enable			= axp20x_regulator_enable_regmap,
- 	.disable		= regulator_disable_regmap,
- 	.is_enabled		= regulator_is_enabled_regmap,
- 	.set_ramp_delay		= axp20x_set_ramp_delay,
+ 
+ &reg_ldo4 {
 -- 
 git-series 0.9.1
