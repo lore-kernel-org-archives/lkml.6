@@ -2,94 +2,139 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E797C67839
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 21:02:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C18EBC67839
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 21:11:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3D9E120849
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 21:02:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D9E120849
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=the-dreams.de
+	by mail.kernel.org (Postfix) with ESMTP id 7B8E820851
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 21:11:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="a79PaNth"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B8E820851
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=marvell.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726323AbeLKVCC (ORCPT
+        id S1726239AbeLKVLy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 16:02:02 -0500
-Received: from sauhun.de ([88.99.104.3]:45872 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726134AbeLKVCB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 16:02:01 -0500
-Received: from localhost (p54B334A7.dip0.t-ipconnect.de [84.179.52.167])
-        by pokefinder.org (Postfix) with ESMTPSA id C412B4C0E8F;
-        Tue, 11 Dec 2018 22:01:59 +0100 (CET)
-Date:   Tue, 11 Dec 2018 22:01:59 +0100
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Elie Morisse <syniurge@gmail.com>
-Cc:     linux-i2c@vger.kernel.org, helgaas@kernel.org,
-        Nehal-bakulchandra.Shah@amd.com, Shyam-sundar.S-k@amd.com,
-        sandeep.singh@amd.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v13] i2c: Add drivers for the AMD PCIe MP2 I2C controller
-Message-ID: <20181211210159.to6okhbaqpymoax5@ninjato>
-References: <20181209155602.GA8414@syn-yoga530>
+        Tue, 11 Dec 2018 16:11:54 -0500
+Received: from mx0a-0016f401.pphosted.com ([67.231.148.174]:51314 "EHLO
+        mx0b-0016f401.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726134AbeLKVLy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 16:11:54 -0500
+Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
+        by mx0a-0016f401.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id wBBLBNiw019434;
+        Tue, 11 Dec 2018 13:11:35 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=from : to : cc :
+ subject : date : message-id : references : in-reply-to : content-type :
+ content-transfer-encoding : mime-version; s=pfpt0818;
+ bh=VzAAcXXXr4RsY8zVF9upsYkyLfjDudUX53nFrCF4JVU=;
+ b=a79PaNthuU+qAOH2n2AA211Mvo9LtB4C5gD1f5iml1baZNAma8IYViQsGrLQJ5UNtP/7
+ oWKGWAwr3uogZmzjb7IGdGUTFyjb9UwSz7QB17ye0eAhkRpadX3TJ9r7sG1zozeZuTfB
+ 14upkd9tecRZRUd2A+Fh+CfyGDebb1jZ/2KRopW4JUSrcZPuuvavFE1vLY2mwRXzL/e8
+ KoSuwOxr2cY+t59gv+4vBockYUVgm6783ZbawL/3dqpwU4NlVQ9xjkL7WnbiFRM1BE/8
+ xeNYA/NiTglCj4cuoYAbssMpeRxomylgIoDAn+iGF7t+SuH5SQ9IY4ruV8GBOIUFkGN9 Aw== 
+Received: from il-exch01.marvell.com ([199.203.130.101])
+        by mx0a-0016f401.pphosted.com with ESMTP id 2paa3dua2n-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Tue, 11 Dec 2018 13:11:35 -0800
+Received: from IL-EXCH01.marvell.com (10.4.102.220) by IL-EXCH01.marvell.com
+ (10.4.102.220) with Microsoft SMTP Server (TLS) id 15.0.1367.3; Tue, 11 Dec
+ 2018 23:11:32 +0200
+Received: from IL-EXCH01.marvell.com ([fe80::5d63:81cd:31e2:fc36]) by
+ IL-EXCH01.marvell.com ([fe80::5d63:81cd:31e2:fc36%20]) with mapi id
+ 15.00.1367.000; Tue, 11 Dec 2018 23:11:31 +0200
+From:   Stefan Chulski <stefanc@marvell.com>
+To:     Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Antoine Tenart <antoine.tenart@bootlin.com>
+CC:     "davem@davemloft.net" <davem@davemloft.net>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "thomas.petazzoni@bootlin.com" <thomas.petazzoni@bootlin.com>,
+        "maxime.chevallier@bootlin.com" <maxime.chevallier@bootlin.com>,
+        "gregory.clement@bootlin.com" <gregory.clement@bootlin.com>,
+        "miquel.raynal@bootlin.com" <miquel.raynal@bootlin.com>,
+        Nadav Haklai <nadavh@marvell.com>,
+        Yan Markman <ymarkman@marvell.com>,
+        "mw@semihalf.com" <mw@semihalf.com>,
+        Baruch Siach <baruch@tkos.co.il>
+Subject: RE: [PATCH net] net: mvpp2: 10G modes aren't supported on all ports
+Thread-Topic: [PATCH net] net: mvpp2: 10G modes aren't supported on all ports
+Thread-Index: AQHUkW/CrCkST3x9K0e6qPjMgD/EIKV6CGbQ
+Date:   Tue, 11 Dec 2018 21:11:31 +0000
+Message-ID: <7b61c1fbf51a409684568216e799ebe3@IL-EXCH01.marvell.com>
+References: <20181211163228.26130-1-antoine.tenart@bootlin.com>
+ <20181211163635.GG30658@n2100.armlinux.org.uk>
+In-Reply-To: <20181211163635.GG30658@n2100.armlinux.org.uk>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [199.203.130.14]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="wghqmh4wfsvnb5a7"
-Content-Disposition: inline
-In-Reply-To: <20181209155602.GA8414@syn-yoga530>
-User-Agent: NeoMutt/20170113 (1.7.2)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-11_07:,,
+ signatures=0
+X-Proofpoint-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1812110186
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---wghqmh4wfsvnb5a7
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Sun, Dec 09, 2018 at 12:56:02PM -0300, Elie Morisse wrote:
-> MP2 controllers have two separate busses, so may accommodate up to two I2C
-> adapters. Those adapters are listed in the ACPI namespace with the
-> "AMDI0011" HID, and probed by a platform driver.
+> -----Original Message-----
+> From: netdev-owner@vger.kernel.org <netdev-owner@vger.kernel.org>
+> On Behalf Of Russell King - ARM Linux
+> Sent: Tuesday, December 11, 2018 6:37 PM
+> To: Antoine Tenart <antoine.tenart@bootlin.com>
+> Cc: davem@davemloft.net; netdev@vger.kernel.org; linux-
+> kernel@vger.kernel.org; thomas.petazzoni@bootlin.com;
+> maxime.chevallier@bootlin.com; gregory.clement@bootlin.com;
+> miquel.raynal@bootlin.com; Nadav Haklai <nadavh@marvell.com>; Stefan
+> Chulski <stefanc@marvell.com>; Yan Markman <ymarkman@marvell.com>;
+> mw@semihalf.com; Baruch Siach <baruch@tkos.co.il>
+> Subject: Re: [PATCH net] net: mvpp2: 10G modes aren't supported on all
+> ports
 >=20
-> Communication with the MP2 takes place through iomapped registers, or
-> through DMA for more than 32 bytes transfers.
+> On Tue, Dec 11, 2018 at 05:32:28PM +0100, Antoine Tenart wrote:
+> > The mvpp2_phylink_validate() function sets all modes that are
+> > supported by a given PPv2 port. A recent change made all ports to
+> > advertise they support 10G modes in certain cases. This is not true,
+> > as only the port #0 can do so. This patch fixes it.
+> >
+> > Fixes: 01b3fd5ac97c ("net: mvpp2: fix detection of 10G SFP modules")
+> > Cc: Baruch Siach <baruch@tkos.co.il>
+> > Signed-off-by: Antoine Tenart <antoine.tenart@bootlin.com>
+> > ---
+> >  drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c | 14 ++++++++------
+> >  1 file changed, 8 insertions(+), 6 deletions(-)
+> >
+> > diff --git a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
+> > b/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
+> > index 125ea99418df..88aa488054a8 100644
+> > --- a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
+> > +++ b/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
+> > @@ -4405,12 +4405,14 @@ static void mvpp2_phylink_validate(struct
+> net_device *dev,
+> >  	case PHY_INTERFACE_MODE_10GKR:
+> >  	case PHY_INTERFACE_MODE_XAUI:
 >=20
-> This is major rework of the patch submitted by Nehal-bakulchandra Shah fr=
-om
-> AMD (https://patchwork.kernel.org/patch/10597369/).
->=20
-> Most of the event handling of v3 was rewritten to make it work with more
-> than one bus (e.g on Ryzen-based Lenovo Yoga 530), and this version
-> contains many other improvements.
->=20
-> Signed-off-by: Elie Morisse <syniurge@gmail.com>
+> Are these modes supported on anything except port 0?  If not, you should =
+be
+> rejecting these, rather than just treating them as RGMII.
 
-Nehal Shah, are you happy with this driver from your side?
+In CP115(which has PPv2) PHY_INTERFACE_MODE_10GKR supported on ports 0 and =
+1
+PHY_INTERFACE_MODE_XAUI/PHY_INTERFACE_MODE_RXAUI supported only on port 0.
 
-
---wghqmh4wfsvnb5a7
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlwQJcYACgkQFA3kzBSg
-KbaJ+Q//ScA4q0wj/5RXmv1TpYikIecDUlVYiO2UEQfaWzmj7ktGBFbf7Fn/1NLd
-gm1AizqoVxmG0fJwnUYE7fbFi0FKz8vAUl4R0tXk5rRsMD5S+nOIljAEx6M/TUT2
-TzjAKOTvCidmlWlmM1864CN8ZgBzC2zm111xTfGpwcsSAKKZXnV5S/CHP8fhfeZe
-zAtnopg/sy/QhSnhgLz8cqynO0rC47Py/+W/82g08BkTDr13DodJsQ2St34Y8teQ
-g/Otphjo7OG8yqG8INZJCVQvB8U6Pa0AGoPyhMddUqMUdbKjuDRiJqkzi8IxwpMV
-AnFQNcwWVUD9ppW9cX8vBOn8e5SaMrXyKHsRFkYWHYppPpenm3CCkpPqq/DqsJiZ
-s35YgTnTZMqGyQMcWFGUVRE6nC1FUzTYBs8aFlm5Ku+FY9SKUUUanp/aJvTOH14T
-jDs5UEt5n+wDNLTv/CYsWq1nXNU66ys88POCRKCy4xqCijpp9amvRKA4Nb5EdQji
-TI6EUcZQWozqzdC19+B2n+59w1jyr0HVjq1J9X0ivitGmHrogKcVIgRQaUlY6fp3
-s6RbLwmrZRS1n0xAn9B21OMwcVVZffNWQsmjfEHlPmNS018ClH5TnBVI8j9O9lFM
-e0AnqpoO9VhtMW79UfhoswltAdHnSRL/UP1ENWa1zIvMMvAz8ik=
-=6Pk7
------END PGP SIGNATURE-----
-
---wghqmh4wfsvnb5a7--
+Best Regards.
