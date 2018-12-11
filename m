@@ -2,55 +2,56 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B54AC5CFFE
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:09:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C561AC5CFFE
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:09:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 223A42084E
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:09:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8C7AA20879
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:09:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544544567;
-	bh=ISuk5gRApc7gthhZN2aMHoegNnLypWFHklhOVoz5TbA=;
+	s=default; t=1544544571;
+	bh=9GpkMUc592Vnk4Sgj9ziB7SSs/BHql6+9blfeMSh3lk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=mdVfodejsB9ot3q0Lox6cTSpwtpq5EJ89iKiEnYzr985/DgW3mUn47EHBUEFb+o98
-	 Wa21QP2oW+t/1LcbJJ0KU3kMdE59HC9BMV2vUg/NLF9/umLynyLcU2B4vqt/ZAn8AZ
-	 HgC323+EuA4HiX86ePapRFmGiqBC7ESmwtzhjU0k=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 223A42084E
+	b=Cxi6Xb2Ggir9zorNgBlXKMrHpXcMKl3anhWPkaCLqj0EiWDhC0Yu3w35+jPxHKc6c
+	 gzVaE5Y/2p+NJ1Yk3cpIdwpHMwSqbP1JxvrIs/Is0TOw0z47iyWLWq/c8eAppw7nnM
+	 NktU6aYR/djAHnnqukIgYvpSIreWL3EJ1oK6Q1vU=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C7AA20879
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729696AbeLKPwW (ORCPT
+        id S1730327AbeLKQJa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 10:52:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41010 "EHLO mail.kernel.org"
+        Tue, 11 Dec 2018 11:09:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41048 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727901AbeLKPwT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:52:19 -0500
+        id S1729678AbeLKPwW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 10:52:22 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1B0852145D;
-        Tue, 11 Dec 2018 15:52:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F104820855;
+        Tue, 11 Dec 2018 15:52:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544543538;
-        bh=ISuk5gRApc7gthhZN2aMHoegNnLypWFHklhOVoz5TbA=;
+        s=default; t=1544543541;
+        bh=9GpkMUc592Vnk4Sgj9ziB7SSs/BHql6+9blfeMSh3lk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sbmXujFgLB6ShngAYcMO1vyFZZaGu45l1FYED8tPdzidLSLQEl9KOZdZ+lRPf67BE
-         B4bxGX8aIjJzeREzYgFJFQ4ClO969fIY0aDIgodcTvBwvVGCv4h/u5Ea8H3zGUECJm
-         3UKu9vzjqI0Ml0KhB1afErgvIj0dhcIYrfGRWGzk=
+        b=VFzjU3DVn7Q1MAwMhUewZrwP5VsiaIRjq4HR8dMR7p2iHLMeTh0zIRuhl9x8sMydS
+         KssshktCplqi7LZ9xoJGxef1Ifts/6d4RAayfKAJ5PPsqKv/2+Rn9TiWQ1CsE2JshI
+         WkAJU+jBSRI61YAlogcZWNT8Bc3UgdBJH5ojnHuU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.14 35/67] ALSA: hda: Add support for AMD Stoney Ridge
-Date:   Tue, 11 Dec 2018 16:41:35 +0100
-Message-Id: <20181211151632.159820650@linuxfoundation.org>
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Joerg Roedel <jroedel@suse.de>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 04/67] iommu/ipmmu-vmsa: Fix crash on early domain free
+Date:   Tue, 11 Dec 2018 16:41:04 +0100
+Message-Id: <20181211151630.590896600@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181211151630.378216233@linuxfoundation.org>
 References: <20181211151630.378216233@linuxfoundation.org>
@@ -69,34 +70,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Kai-Heng Feng <kai.heng.feng@canonical.com>
+[ Upstream commit e5b78f2e349eef5d4fca5dc1cf5a3b4b2cc27abd ]
 
-commit 3deef52ce10514ccdebba8e8ab85f9cebd0eb3f7 upstream.
+If iommu_ops.add_device() fails, iommu_ops.domain_free() is still
+called, leading to a crash, as the domain was only partially
+initialized:
 
-It's similar to other AMD audio devices, it also supports D3, which can
-save some power drain.
+    ipmmu-vmsa e67b0000.mmu: Cannot accommodate DMA translation for IOMMU page tables
+    sata_rcar ee300000.sata: Unable to initialize IPMMU context
+    iommu: Failed to add device ee300000.sata to group 0: -22
+    Unable to handle kernel NULL pointer dereference at virtual address 0000000000000038
+    ...
+    Call trace:
+     ipmmu_domain_free+0x1c/0xa0
+     iommu_group_release+0x48/0x68
+     kobject_put+0x74/0xe8
+     kobject_del.part.0+0x3c/0x50
+     kobject_put+0x60/0xe8
+     iommu_group_get_for_dev+0xa8/0x1f0
+     ipmmu_add_device+0x1c/0x40
+     of_iommu_configure+0x118/0x190
 
-Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Fix this by checking if the domain's context already exists, before
+trying to destroy it.
 
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Robin Murphy <robin.murphy@arm.com>
+Fixes: d25a2a16f0889 ('iommu: Add driver for Renesas VMSA-compatible IPMMU')
+Signed-off-by: Joerg Roedel <jroedel@suse.de>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/pci/hda/hda_intel.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/iommu/ipmmu-vmsa.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/sound/pci/hda/hda_intel.c
-+++ b/sound/pci/hda/hda_intel.c
-@@ -2513,6 +2513,10 @@ static const struct pci_device_id azx_id
- 	/* AMD Hudson */
- 	{ PCI_DEVICE(0x1022, 0x780d),
- 	  .driver_data = AZX_DRIVER_GENERIC | AZX_DCAPS_PRESET_ATI_SB },
-+	/* AMD Stoney */
-+	{ PCI_DEVICE(0x1022, 0x157a),
-+	  .driver_data = AZX_DRIVER_GENERIC | AZX_DCAPS_PRESET_ATI_SB |
-+			 AZX_DCAPS_PM_RUNTIME },
- 	/* AMD Raven */
- 	{ PCI_DEVICE(0x1022, 0x15e3),
- 	  .driver_data = AZX_DRIVER_GENERIC | AZX_DCAPS_PRESET_ATI_SB |
+diff --git a/drivers/iommu/ipmmu-vmsa.c b/drivers/iommu/ipmmu-vmsa.c
+index 5d0ba5f644c4..777aff1f549f 100644
+--- a/drivers/iommu/ipmmu-vmsa.c
++++ b/drivers/iommu/ipmmu-vmsa.c
+@@ -424,6 +424,9 @@ static int ipmmu_domain_init_context(struct ipmmu_vmsa_domain *domain)
+ 
+ static void ipmmu_domain_destroy_context(struct ipmmu_vmsa_domain *domain)
+ {
++	if (!domain->mmu)
++		return;
++
+ 	/*
+ 	 * Disable the context. Flush the TLB as required when modifying the
+ 	 * context registers.
+-- 
+2.19.1
+
 
 
