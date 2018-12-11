@@ -2,181 +2,145 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AAA6C67839
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 01:41:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6174C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 01:43:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA0BE20672
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 01:41:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7F48F2084E
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 01:43:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="03E470CH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA0BE20672
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="hxcIwHvW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F48F2084E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729182AbeLKBld (ORCPT
+        id S1729208AbeLKBnW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 20:41:33 -0500
-Received: from aserp2130.oracle.com ([141.146.126.79]:54348 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728586AbeLKBld (ORCPT
+        Mon, 10 Dec 2018 20:43:22 -0500
+Received: from mailout1.samsung.com ([203.254.224.24]:51435 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727862AbeLKBnW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 20:41:33 -0500
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wBB1YPt2010319;
-        Tue, 11 Dec 2018 01:41:28 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=+BqcrYpxy5FhbcXFuoeBDdEk/8cWqUDOO4+BAyActtY=;
- b=03E470CHJ6TnfEhVEOx9se16Vc3fTDz9HchegaM/Vx3xAirRQ1qLybBY9UGetW5/Or10
- wOC5SXc2Z2SjT48qKlHt9pv9eUaRUbY5usSKyLj7jC6plBb0de7rvJDuqwB1+GqVI1vQ
- ZmvEwV4PLnOcHf6cz7Ao3R2lCae7zS9VhimErgnhUkcP0hktRjBVPyH8/sxaxFqqCT/X
- vTYWJjqmEwo9kqnFv/C1MGAOecU5VOEhNMc6GsAsvf3UxW6PKFjqexvJcMOVQY2TqatK
- nkEqmOTY1Z2YF1vJlBOfny793OYEA9q4Oi8yjYth7ClLKQ6InblxS5NE5sJW/EHK/qNx Nw== 
-Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
-        by aserp2130.oracle.com with ESMTP id 2p83fe1d56-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 11 Dec 2018 01:41:28 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id wBB1fQC1026840
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 11 Dec 2018 01:41:27 GMT
-Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wBB1fQQX000878;
-        Tue, 11 Dec 2018 01:41:26 GMT
-Received: from [10.182.69.118] (/10.182.69.118)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 10 Dec 2018 17:41:26 -0800
-Subject: Re: [PATCH V13 0/3] blk-mq: refactor code of issue directly
-To:     axboe@kernel.dk
-Cc:     ming.lei@redhat.com, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <1544410892-2905-1-git-send-email-jianchao.w.wang@oracle.com>
-From:   "jianchao.wang" <jianchao.w.wang@oracle.com>
-Message-ID: <e0048af3-6ba5-f397-9837-41fede63ce07@oracle.com>
-Date:   Tue, 11 Dec 2018 09:42:17 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <1544410892-2905-1-git-send-email-jianchao.w.wang@oracle.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9103 signatures=668679
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1812110014
+        Mon, 10 Dec 2018 20:43:22 -0500
+Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
+        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20181211014319epoutp017e8616ec41da6f918d2914b8d8282a25~vI9X755VV1700017000epoutp01Z
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 01:43:19 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20181211014319epoutp017e8616ec41da6f918d2914b8d8282a25~vI9X755VV1700017000epoutp01Z
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1544492599;
+        bh=N6gtlJaIZdoRTs9uBS6/4m50BwuZJ04ayUsPQyAtdHE=;
+        h=Subject:Reply-To:From:To:CC:In-Reply-To:Date:References:From;
+        b=hxcIwHvWVVaH0Gsehy0RFaaw/RO9Yu8Rz2x5flyjIEiPPZmz7CG4BboBwCX6rtQ7r
+         kvyP6UoodRyvm4IiU0n9ASs7/YW/bqUH3DZFRdHb/U4qgsorRBM/vaKe/yBHWJ6w5H
+         hcrVeDUVrkdDpnrtXXPfKvZtz17DvTjvmDvs07yQ=
+Received: from epsmges1p1.samsung.com (unknown [182.195.40.153]) by
+        epcas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20181211014315epcas1p235be1126f6a1b2156c68333bb87d1741~vI9U64bM40864408644epcas1p2r;
+        Tue, 11 Dec 2018 01:43:15 +0000 (GMT)
+X-AuditID: b6c32a35-e1fff70000000fda-e2-5c0f163391a4
+Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
+        epsmges1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
+        F4.6A.04058.3361F0C5; Tue, 11 Dec 2018 10:43:15 +0900 (KST)
+Mime-Version: 1.0
+Subject: RE: Re: [PATCH v3 2/5] devfreq: add support for suspend/resume of a
+ devfreq device
+Reply-To: myungjoo.ham@samsung.com
+From:   MyungJoo Ham <myungjoo.ham@samsung.com>
+To:     Chanwoo Choi <cw00.choi@samsung.com>,
+        Lukasz Luba <l.luba@partner.samsung.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+CC:     "tjakobi@math.uni-bielefeld.de" <tjakobi@math.uni-bielefeld.de>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        "rjw@rjwysocki.net" <rjw@rjwysocki.net>,
+        "len.brown@intel.com" <len.brown@intel.com>,
+        "pavel@ucw.cz" <pavel@ucw.cz>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "keescook@chromium.org" <keescook@chromium.org>,
+        "anton@enomsg.org" <anton@enomsg.org>,
+        "ccross@android.com" <ccross@android.com>,
+        "tony.luck@intel.com" <tony.luck@intel.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "kgene@kernel.org" <kgene@kernel.org>,
+        "krzk@kernel.org" <krzk@kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+X-Priority: 3
+X-Content-Kind-Code: NORMAL
+In-Reply-To: <5C0878C0.4060500@samsung.com>
+X-Drm-Type: N,general
+X-Msg-Generator: Mail
+X-Msg-Type: PERSONAL
+X-Reply-Demand: N
+Message-ID: <20181211014315epcms1p153a54217e587fd76a8198db77762699a@epcms1p1>
+Date:   Tue, 11 Dec 2018 10:43:15 +0900
+X-CMS-MailID: 20181211014315epcms1p153a54217e587fd76a8198db77762699a
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 101P
+X-Brightmail-Tracker: H4sIAAAAAAAAA01TfUwTZxz2vev1DmK7o6K+6Zg2l02DWuCsZS9GliUSc9l0IxH8Y+DgAjcg
+        9Cu9YtRtsRGdEz8oxmhTFMaEVT4WtEDt5MNRq1EZVpyD+QHqqDGKuEWYE4yyfhH978lzv+ee
+        5/m970vhip2kkioxWASzgdcx0liJ+3yiWq1Z8E5uyhF7KurtSESn7a0EOnP6OYGGJh8SqNZ3
+        lUDlJ1ql6Ld9elQ5OoYjv/8Uifp3PiHRLWsCchzuxpBrdJBAv589JkUTB3wA2f09GPrZN0yi
+        hqEBDA1fuRCU910n0O5uH4m+a/6HQE+ujUg+Xsi5O90E11LTArhq64CEs1U+A9yJrkcY52ra
+        K+XOHW8hubb6HdzriyTX+7QL49r/2CPhDrY3Ae5k838kN+FalCn/onRNscAXCmaVYCgwFpYY
+        itKZTzfmrc3TpqawajYNfcioDLxeSGcy1meq15XogvUZ1RZeVxakMnlRZJI/WmM2llkEVbFR
+        tKQzgqlQZ0ozJYm8XiwzFCUVGPWr2ZSUldrgYH5p8d07l0hTr3zr/ZnLUivYK68AMRSkV0Hb
+        6HOsAsRSCtoDYIO1ElQAipLRcfCVZ15oZh69GfbbrXgIK2gGWm/24BE+GX5/zw1CWEqrYcep
+        YUnoP/G0E4fPnCFBLIXT4wS8cvsXLOImg/Y9DyQR/C484+wIq2Po5fDQTKM0ws+HN5vHyVn8
+        98VaEMHxcPdIPx7BcfDeVGeUV8LAeF10fgccmvgx3AbSNgBf/jkT/ZAM/7pRHTaQ0Rtgb+P5
+        cCAJ/QG8O3QnGi4D+lu6wuHwYKCf6sbw0CZwOhG2nk2O0HL49N/9xGwXT00gKl0CvZ31UasE
+        2He0LiyFNAevXVBFljsJYE95OW4Dix1v9ut4y8zxxuwHgDeBBYJJ1BcJImti3z5SFwjf/2Va
+        Dzh8db0X0BRg5spUu+S5CoLfIm7TewGkcCZepv5KlquQFfLbtgtmY565TCeIXqANdq7ClfML
+        jMHXZLDksdqVGo0GrWJTtSzLLJQFlMdzFHQRbxFKBcEkmGd1GBWjtAIDcft6axs/NVE/7W88
+        0rb4VU72ocCKR3Pfs70/Wb+5NmZascKXlPV4JOGTarhp068vBl3ykSx7XHdX/qJ9HXOyB5pS
+        Cw6e+zKL/Nak4NY+aK9aqnmY3/34hncyY7vTXbX1m77lvtWfjzoGsTnHxj5rqNE2OL+WTg16
+        ZnIqN9in07IDjEQs5tlluFnk/wePnE3hFQQAAA==
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20181205110620eucas1p14de70dc092580b684a0304b5ce771605
+References: <5C0878C0.4060500@samsung.com>
+        <1544007956-28889-1-git-send-email-l.luba@partner.samsung.com>
+        <1544007956-28889-3-git-send-email-l.luba@partner.samsung.com>
+        <CGME20181205110620eucas1p14de70dc092580b684a0304b5ce771605@epcms1p1>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Ping ?
-
-Thanks
-Jianchao
-
-On 12/10/18 11:01 AM, Jianchao Wang wrote:
-> Hi Jens
-> 
-> Please consider this patchset for 4.21.
-> 
-> It refactors the code of issue request directly to unify the interface
-> and make the code clearer and more readable.
-> 
-> The 1st patch refactors the code of issue request directly to unify the
-> helper interface which could handle all the cases.
-> 
-> The 2nd patch make blk_mq_sched_insert_requests issue requests directly
-> with 'bypass' false, then it needn't to handle the non-issued requests
-> any more.
-> 
-> The 3rd patch replace and kill the blk_mq_request_issue_directly.
-> 
-> V13:
->  - remove the unused tag 'out' (1/3)
-> 
-> V12:
->  - remove the original 1st patch/
->  - rebase other 3 patches on newest for-4.21/block
->  - add some comment
-> 
-> V11:
->  - insert request to dispatch list when .queue_rq return
->    BLK_STS_RESOURCE/BLK_STS_DEV_RESOURCE. (2/4)
->  - stop to attempt direct-issue and insert the reset when meet
->    non-ok case (3/4).
-> 
-> V10:
->  - address Jen's comment.
->  - let blk_mq_try_issue_directly return actual result for case
->    'bypass == false'. (2/4)
->  - use return value of blk_mq_try_issue_directly to identify
->    whether the request is direct-issued successfully. (3/4)
-> 
-> V9:
->  - rebase on recent for-4.21/block
->  - add 1st patch
-> 
-> V8:
->  - drop the original 2nd patch which try to insert requests into hctx->dispatch
->    if quiesced or stopped.
->  - remove two wrong 'unlikely'
-> 
-> V7:
->  - drop the original 3rd patch which try to ensure hctx to be ran on
->    its mapped cpu in issueing directly path.
-> 
-> V6:
->  - drop original 1st patch to address Jen's comment
->  - discard the enum mq_issue_decision and blk_mq_make_decision and use
->    BLK_STS_* return values directly to address Jen's comment. (1/5)
->  - add 'unlikely' in blk_mq_try_issue_directly (1/5)
->  - refactor the 2nd and 3rd patch based on the new 1st patch.
->  - reserve the unused_cookie in 4th and 5th patch
-> 
-> V5:
->  - rebase against Jens' for-4.21/block branch
->  - adjust the order of patch04 and patch05
->  - add patch06 to replace and kill the one line blk_mq_request_bypass_insert
->  - comment changes
-> 
-> V4:
->  - split the original patch 1 into two patches, 1st and 2nd patch currently
->  - rename the mq_decision to mq_issue_decision
->  - comment changes
-> 
-> V3:
->  - Correct the code about the case bypass_insert is true and io scheduler
->    attached. The request still need to be issued in case above. (1/4)
->  - Refactor the code to make code clearer. blk_mq_make_request is introduced
->    to decide insert, end or just return based on the return value of .queue_rq
->    and bypass_insert (1/4) 
->  - Add the 2nd patch. It introduce a new decision result which indicates to
->    insert request with blk_mq_request_bypass_insert.
->  - Modify the code to adapt the new patch 1.
-> 
-> V2:
->  - Add 1st and 2nd patch to refactor the code.
-> 
-> 
-> Jianchao Wang (3)
-> blk-mq: refactor the code of issue request directly
-> blk-mq: issue directly with bypass 'false' in
-> blk-mq: replace and kill blk_mq_request_issue_directly
-> 
-> block/blk-core.c     |   4 +-
-> block/blk-mq-sched.c |   8 ++--
-> block/blk-mq.c       | 123 +++++++++++++++++++++++++--------------------------
-> block/blk-mq.h       |   6 ++-
-> 4 files changed, 70 insertions(+), 71 deletions(-)
-> 
-> Thanks
-> Jianchao
-> 
-> 
+> Hi Lukasz,
+>=20
+> On 2018=EB=85=84=2012=EC=9B=94=2005=EC=9D=BC=2020:05,=20Lukasz=20Luba=20w=
+rote:=0D=0A>=20>=20The=20patch=20prepares=20devfreq=20device=20for=20handli=
+ng=20suspend/resume=0D=0A>=20>=20functionality.=20The=20new=20fields=20will=
+=20store=20needed=20information=20during=20this=0D=0A>=20>=20process.=20Dev=
+freq=20framework=20handles=20opp-suspend=20DT=20entry=20and=20there=20is=20=
+no=0D=0A>=20>=20need=20of=20modyfications=20in=20the=20drivers=20code.=20It=
+=20uses=20atomic=20variables=20to=0D=0A>=20>=20make=20sure=20no=20race=20co=
+ndition=20affects=20the=20process.=0D=0A>=20>=20=0D=0A>=20>=20Suggested-by:=
+=20Tobias=20Jakobi=20<tjakobi=40math.uni-bielefeld.de>=0D=0A>=20>=20Suggest=
+ed-by:=20Chanwoo=20Choi=20<cw00.choi=40samsung.com>=0D=0A>=20>=20Signed-off=
+-by:=20Lukasz=20Luba=20<l.luba=40partner.samsung.com>=0D=0A>=20>=20---=0D=
+=0A>=20>=20=20drivers/devfreq/devfreq.c=20=7C=2047=20++++++++++++++++++++++=
++++++++++++++++++++------=0D=0A>=20>=20=20include/linux/devfreq.h=20=20=20=
+=7C=20=207=20+++++++=0D=0A>=20>=20=202=20files=20changed,=2048=20insertions=
+(+),=206=20deletions(-)=0D=0A>=20=0D=0A>=20Reviewed-by:=20Chanwoo=20Choi=20=
+<cw00.choi=40samsung.com>=0D=0A>=20=0D=0A=0D=0ALooks=20goot=20do=20me=20as=
+=20well.=0D=0A=0D=0AAcked-by:=20MyungJoo=20Ham=20<myungjoo.ham=40samsung.co=
+m>=0D=0A=0D=0A=0D=0AAnyway,=20for=20the=20sake=20of=20curiosity...=0D=0A=0D=
+=0AHaving=20suspend-frequency=20is=20usually=20required=20when=0D=0Athe=20f=
+requency=20configuration=20is=20reset=20with=20suspend-resume=0D=0Aas=20old=
+er=20Exynos's=20CPU=20did=20(I=20don't=20know=20whether=20it=20still=20does=
+).=0D=0A=0D=0ADoes=20GPU=20do=20this=20as=20well?=0D=0A(memory-bus=20won't=
+=20do=20this=20because=20they=20are=20kept=20turned=20on=20during=20suspend=
+)=0D=0A=0D=0A=0D=0ACheers,=0D=0AMyungJoo=0D=0A
