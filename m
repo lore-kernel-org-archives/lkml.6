@@ -7,52 +7,50 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46329C07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:51:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D2DCC5CFFE
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:51:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0C6DA20855
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:51:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C6B292145D
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:51:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544543486;
-	bh=nTWHnJR8OBOPGaIQYZPsNjOAehk6lY7Xnxqb4t/qYe0=;
+	s=default; t=1544543488;
+	bh=5xPVe/tki8YPMA4tZUeSXYKUz6SCW7YfaIZ9KkZ+KJo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=CtweK15VXPhbGIB7p2rsBl6UWFUrKIO6CaG7g3vrvERWt2601btgH8+BjUHNJO5wh
-	 zd5QPspJqtjbUiZ5op0Iq4f1tXxao5t9kb/jNt2w4b5NQR1/CwxR5GDBUY0rOc1YiR
-	 0ngIPQjuI61p0lCN+p1XDX4aBD3nNhc6mH5JOZSk=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C6DA20855
+	b=nFAu5vCLHdnq1jw1dA0VkNglgi6K05CIzs6VHNWy83Rh6vgwyASbC1RNu8ZiEz4FQ
+	 rxsIK465n13QFjUVEQ/yDcnI2DeMzZVrAc2VbxKmUiG52+BrRr/B6HVgRP9zdETR0E
+	 Ks6iz/QTBZs4NiKI5xKRRXAjt9uolEMkhPFQbFeA=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C6B292145D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729480AbeLKPvY (ORCPT
+        id S1729494AbeLKPv1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 10:51:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39994 "EHLO mail.kernel.org"
+        Tue, 11 Dec 2018 10:51:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40044 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728681AbeLKPvV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:51:21 -0500
+        id S1729031AbeLKPvX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 10:51:23 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 18B8A2084E;
-        Tue, 11 Dec 2018 15:51:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D539A20855;
+        Tue, 11 Dec 2018 15:51:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544543480;
-        bh=nTWHnJR8OBOPGaIQYZPsNjOAehk6lY7Xnxqb4t/qYe0=;
+        s=default; t=1544543483;
+        bh=5xPVe/tki8YPMA4tZUeSXYKUz6SCW7YfaIZ9KkZ+KJo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SWc1MbMSeFPfpp7T6w9G8kTIllHsfaSbezlMj7ICnVcQzubJfZpk16MNzZNrLPKcv
-         UdKGmrro+ZHdaAikNyoGVXqn0bNMvgQDJpPiCpNCpOIR39v6oUcXqvgheC0g4aSA5S
-         JYDGU8C90VxcAgEepYsHSPp14mpk+6z2w/eCDRqc=
+        b=lfZG15wkjtEEFdrK4+u7Q+qMbNS8JvEJe7CFf8stVFP8BLn6OsXpVO+nW0WTj5qHj
+         BOFpWVoSpWBzHWkv+OLkLSG1b7vnSPRDT8FibJp/HSnp7QEu1r05ICBTQjNz2F6S1/
+         TUPGWGXM1qWRBRMFkGtf8TZc3GTV61zynj5qK8xE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Jack Morgenstein <jackm@dev.mellanox.co.il>,
-        Tariq Toukan <tariqt@mellanox.com>,
+        stable@vger.kernel.org, Tariq Toukan <tariqt@mellanox.com>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 15/67] net/mlx4_core: Zero out lkey field in SW2HW_MPT fw command
-Date:   Tue, 11 Dec 2018 16:41:15 +0100
-Message-Id: <20181211151631.154785381@linuxfoundation.org>
+Subject: [PATCH 4.14 16/67] net/mlx4_core: Fix uninitialized variable compilation warning
+Date:   Tue, 11 Dec 2018 16:41:16 +0100
+Message-Id: <20181211151631.204866396@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181211151630.378216233@linuxfoundation.org>
 References: <20181211151630.378216233@linuxfoundation.org>
@@ -71,45 +69,31 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit bd85fbc2038a1bbe84990b23ff69b6fc81a32b2c ]
+[ Upstream commit 3ea7e7ea53c9f6ee41cb69a29c375fe9dd9a56a7 ]
 
-When re-registering a user mr, the mpt information for the
-existing mr when running SRIOV is obtained via the QUERY_MPT
-fw command. The returned information includes the mpt's lkey.
+Initialize the uid variable to zero to avoid the compilation warning.
 
-This retrieved mpt information is used to move the mpt back
-to hardware ownership in the rereg flow (via the SW2HW_MPT
-fw command when running SRIOV).
-
-The fw API spec states that for SW2HW_MPT, the lkey field
-must be zero. Any ConnectX-3 PF driver which checks for strict spec
-adherence will return failure for SW2HW_MPT if the lkey field is not
-zero (although the fw in practice ignores this field for SW2HW_MPT).
-
-Thus, in order to conform to the fw API spec, set the lkey field to zero
-before invoking SW2HW_MPT when running SRIOV.
-
-Fixes: e630664c8383 ("mlx4_core: Add helper functions to support MR re-registration")
-Signed-off-by: Jack Morgenstein <jackm@dev.mellanox.co.il>
+Fixes: 7a89399ffad7 ("net/mlx4: Add mlx4_bitmap zone allocator")
 Signed-off-by: Tariq Toukan <tariqt@mellanox.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/mellanox/mlx4/mr.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/ethernet/mellanox/mlx4/alloc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/mellanox/mlx4/mr.c b/drivers/net/ethernet/mellanox/mlx4/mr.c
-index c7c0764991c9..20043f82c1d8 100644
---- a/drivers/net/ethernet/mellanox/mlx4/mr.c
-+++ b/drivers/net/ethernet/mellanox/mlx4/mr.c
-@@ -363,6 +363,7 @@ int mlx4_mr_hw_write_mpt(struct mlx4_dev *dev, struct mlx4_mr *mmr,
- 			container_of((void *)mpt_entry, struct mlx4_cmd_mailbox,
- 				     buf);
- 
-+		(*mpt_entry)->lkey = 0;
- 		err = mlx4_SW2HW_MPT(dev, mailbox, key);
- 	}
- 
+diff --git a/drivers/net/ethernet/mellanox/mlx4/alloc.c b/drivers/net/ethernet/mellanox/mlx4/alloc.c
+index 6dabd983e7e0..94f4dc4a77e9 100644
+--- a/drivers/net/ethernet/mellanox/mlx4/alloc.c
++++ b/drivers/net/ethernet/mellanox/mlx4/alloc.c
+@@ -337,7 +337,7 @@ void mlx4_zone_allocator_destroy(struct mlx4_zone_allocator *zone_alloc)
+ static u32 __mlx4_alloc_from_zone(struct mlx4_zone_entry *zone, int count,
+ 				  int align, u32 skip_mask, u32 *puid)
+ {
+-	u32 uid;
++	u32 uid = 0;
+ 	u32 res;
+ 	struct mlx4_zone_allocator *zone_alloc = zone->allocator;
+ 	struct mlx4_zone_entry *curr_node;
 -- 
 2.19.1
 
