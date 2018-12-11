@@ -2,96 +2,130 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AF7CC5CFFE
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 18:51:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D446C67839
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 18:51:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E925F2086D
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 18:51:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="FmyCIeCm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E925F2086D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=alien8.de
+	by mail.kernel.org (Postfix) with ESMTP id 431B72086D
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 18:51:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 431B72086D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726774AbeLKSvM (ORCPT
+        id S1726787AbeLKSv3 convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 13:51:12 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:37512 "EHLO mail.skyhub.de"
+        Tue, 11 Dec 2018 13:51:29 -0500
+Received: from mga12.intel.com ([192.55.52.136]:21059 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726252AbeLKSvJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 13:51:09 -0500
-Received: from zn.tnic (p200300EC2BCD2B00A9CB44BC54679BA1.dip0.t-ipconnect.de [IPv6:2003:ec:2bcd:2b00:a9cb:44bc:5467:9ba1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id A7EA11EC0BAA;
-        Tue, 11 Dec 2018 19:51:07 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1544554267;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=oZZINlvYBbDILPSJNpIxdmlDy8Lws0mbvmdR00LVZZU=;
-        b=FmyCIeCmzyiLWVqKFDGNlbko/62SDCQE8+iZPQ9RraYiHbOFtCI1B0kchbZAjesytNoYss
-        VG9/sEja53DR07rDWx5+IrmSWPMlnF+dFnPv6lHRKHKMxG7Z2m1Ue1nRaeMLjhK0/LnRza
-        buisavFau49uPKwYvdl6cueamZnSxBM=
-Date:   Tue, 11 Dec 2018 19:50:59 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Reinette Chatre <reinette.chatre@intel.com>
-Cc:     tglx@linutronix.de, fenghua.yu@intel.com, tony.luck@intel.com,
-        gavin.hindman@intel.com, jithu.joseph@intel.com, mingo@redhat.com,
-        hpa@zytor.com, x86@kernel.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH V2] x86/intel_rdt: Ensure usage of CPUs are locked while
- needed
-Message-ID: <20181211185059.GP27375@zn.tnic>
-References: <b7b17432a80f95a1fa21a1698ba643014f58ad31.1544476425.git.reinette.chatre@intel.com>
- <20181211123404.GC27375@zn.tnic>
- <ece2581e-d5e5-c26c-53e5-0cef8b37e59f@intel.com>
+        id S1726252AbeLKSv2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 13:51:28 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Dec 2018 10:51:18 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,343,1539673200"; 
+   d="scan'208";a="117948271"
+Received: from fmsmsx107.amr.corp.intel.com ([10.18.124.205])
+  by orsmga001.jf.intel.com with ESMTP; 11 Dec 2018 10:51:18 -0800
+Received: from hasmsx106.ger.corp.intel.com (10.184.198.20) by
+ fmsmsx107.amr.corp.intel.com (10.18.124.205) with Microsoft SMTP Server (TLS)
+ id 14.3.408.0; Tue, 11 Dec 2018 10:51:17 -0800
+Received: from hasmsx112.ger.corp.intel.com ([169.254.11.88]) by
+ HASMSX106.ger.corp.intel.com ([169.254.10.192]) with mapi id 14.03.0415.000;
+ Tue, 11 Dec 2018 20:51:15 +0200
+From:   "Grumbach, Emmanuel" <emmanuel.grumbach@intel.com>
+To:     Bjorn Helgaas <helgaas@kernel.org>
+CC:     "bjorn@helgaas.com" <bjorn@helgaas.com>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "Mertarg10@gmail.com" <Mertarg10@gmail.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Fran RR <fjrr87@outlook.com>
+Subject: RE: Fwd: [Bug 201647] New: Intel Wireless card 3165 does not get
+ detected but bluetooth works
+Thread-Topic: Fwd: [Bug 201647] New: Intel Wireless card 3165 does not get
+ detected but bluetooth works
+Thread-Index: AQHUh2ApCc7lmNGfg0mZ5cTxRsuvBaVrCVdwgA10uACAAKnQcIAAWQuAgABN2ZD///8HAIAAIouA///gsoCAACJtkA==
+Date:   Tue, 11 Dec 2018 18:51:14 +0000
+Message-ID: <0BA3FCBA62E2DC44AF3030971E174FB30133756BE7@HASMSX112.ger.corp.intel.com>
+References: <bug-201647-193951@https.bugzilla.kernel.org/>
+ <CABhMZUXc4FS-f52ZDsErEhbkm_jjEz+kn75YO5Tuvp42Qm+1xw@mail.gmail.com>
+ <20181128211959.GB178809@google.com>
+ <0BA3FCBA62E2DC44AF3030971E174FB3013373E4A3@HASMSX112.ger.corp.intel.com>
+ <20181210222452.GC85090@google.com>
+ <0BA3FCBA62E2DC44AF3030971E174FB30133754C00@HASMSX112.ger.corp.intel.com>
+ <20181211135121.GB99796@google.com>
+ <0BA3FCBA62E2DC44AF3030971E174FB30133756A29@HASMSX112.ger.corp.intel.com>
+ <20181211182630.GF99796@google.com>
+ <0BA3FCBA62E2DC44AF3030971E174FB30133756B5D@HASMSX112.ger.corp.intel.com>
+ <20181211183805.GG99796@google.com>
+In-Reply-To: <20181211183805.GG99796@google.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiOTgwMDFjOGItNzRhNi00OGRiLWJmOGQtNmJhMmZmYjkyYTgxIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiclRmdWxWem1PcUZvQ0tybHBCUUQ4WDJVY3dBenZhMGpCd1wvcFBsNWkxNWl2QUlCNmljTjlwNUgrYTBMODRiMlMifQ==
+x-ctpclassification: CTP_NT
+dlp-product: dlpe-windows
+dlp-version: 11.0.400.15
+dlp-reaction: no-action
+x-originating-ip: [10.251.82.25]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <ece2581e-d5e5-c26c-53e5-0cef8b37e59f@intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 11, 2018 at 10:33:59AM -0800, Reinette Chatre wrote:
-> I am not sure that this is an issue when updating a schemata in the
-> general case. In the case when just CAT schemata (without
-> pseudo-locking) is updated then the cpu mask associated with the cache
-> instance is indeed used to determine which CPUs should have their
-> registers changed but only the current CPU is not checked for being
-> online, for the other CPUs smp_call_function_many() is used that
-> includes an online check.
+> 
+> On Tue, Dec 11, 2018 at 06:31:47PM +0000, Grumbach, Emmanuel wrote:
+> > > On Tue, Dec 11, 2018 at 04:32:25PM +0000, Grumbach, Emmanuel wrote:
+> > > > > On Tue, Dec 11, 2018 at 06:35:20AM +0000, Grumbach, Emmanuel
+> wrote:
+> > > > > > > > > > https://bugzilla.kernel.org/show_bug.cgi?id=201647
+> > > > >
+> > > > > > FWIW: I saw another problem like this with a 9650 device.
+> > > > >
+> > > > > Do you have a pointer to any info about this 9650 issue?  Maybe
+> > > > > that would have a clue.
+> > > >
+> > > > I added him here so that you can ask whatever you like :) The
+> > > > story is the same. I am attaching a picture I got from the reporter.
+> > > > I can confirm that this device ID / subdevice ID is supported by
+> > > > the linux
+> > > driver.
+> > >
+> > > Was there a resolution, i.e., if somebody figured out how to make
+> > > the
+> > > 9650 wifi work, maybe a similar solution would work for the 3165?
+> >
+> > Unfortunately not, I am stuck there at the exact same point.
+> > No Wifi device shows up in lspci...
+> 
+> Is there a public spec?  My patience for reverse engineering things that are
+> documented somewhere that I'm not allowed to see is pretty limited.
+> Presumably *you* should be able to see the spec, since this is an Intel device
+> and you have an @intel.com address?
 
-Well, in your fix rdtgroup_schemata_write() disables hotplug for its
-whole duration and doesn't look at what schemata update is being done,
-right?
+Ok, I start to understand. So no, no public spec. I am an Intel employee,
+I used to maintain the WiFi driver (iwlwifi). I don't know much about PCI though.
+I am definitely not asking you to reverse engineer our device :)
+I can try to ask internally what could be going on.
+The reason I haven't done so so far and reached out to you is because I am not
+aware about switches that we need to toggle to make the device magically
+show up. So I thought it'd be related to the PCI core, which take me to the next point...
 
-> I had the same question in V1's notes to the maintainer :)
+> 
+> From what we can tell so far, I don't *think* this is a PCI issue.  If the device
+> doesn't respond to a PCI config access, the PCI core can't really be expected
+> to do anything about it.
 
-Whoops, and I read that... Sorry. :-\
+Ok, thanks. So I understand from you that you didn't see any weird log from the
+PCI core saying: "I can see this device, but I can't enumerate it because XYZ".
+I tried to look for such a thing but couldn't.
 
-> My initial concern was the lack of IS_ERR checking. Understanding the
-> flow better now it seems to me that this is indeed not a bug now. The
-> reasoning is that an ERR_PTR is only returned when a negative id is
-> provided in the parameters to rdt_find_domain(). There are currently
-> only two places where a negative id could be provided to
-> rdt_find_domain(), domain_add_cpu() and domain_remove_cpu(), and both
-> locations test the return value using IS_ERR.
-
-Right. I'll queue it for the normal merge window.
-
-Thx.
-
--- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+From this point, I guess I can't do much either. I'll try to get info internally.
