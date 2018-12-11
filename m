@@ -2,106 +2,166 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5856C5CFFE
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 05:55:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5663BC07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 05:57:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 83EEC2082F
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 05:55:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1C8BE20672
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 05:57:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=brauner.io header.i=@brauner.io header.b="VkYLUTnk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 83EEC2082F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=brauner.io
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="nK10dm8q"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C8BE20672
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728848AbeLKFzA (ORCPT
+        id S1728963AbeLKF5q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 00:55:00 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:37031 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727352AbeLKFy7 (ORCPT
+        Tue, 11 Dec 2018 00:57:46 -0500
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:37594 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727352AbeLKF5p (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 00:54:59 -0500
-Received: by mail-wr1-f65.google.com with SMTP id j10so12753667wru.4
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Dec 2018 21:54:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brauner.io; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=nDwWbL9ECDS/hWmZfeH+S96T3x++2sjO36pBh4l9MPU=;
-        b=VkYLUTnkmhCmvMHz8v5j/cXkFMS7eT+fTKtolUVX2wgPU8WW7557diycrs9cUrADUK
-         V1FMV0o2jrDkZUavBpCop9u3x39AlEGMRwoV2D+NCIYrZ0+ACZG+UwRRvIFOpgP5ECvN
-         b+HTK1GgOq+Bb497gWaaVC4MN0+VK457baZdtf8NtE18J9WV6PHqw42T7dxOZFZzEQ9Y
-         MhSRLxG/i75MwqvdvvSv4RI8hHjG1tJZiE0XPr14NJ6LzjiSCCeftZ+GY6cyACB4eHoi
-         3rKIGTwJ9Jq+MWz7hHcZAYhdke7QmcpnFUqXu+r5mn1sBRY71JFN6MUhWdeXJ0ivuphX
-         fAyQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=nDwWbL9ECDS/hWmZfeH+S96T3x++2sjO36pBh4l9MPU=;
-        b=OMVj45owG+vSShIQBcCLtdNQQHa6RyA7bAuPbc0b4KoWbD1onYC9jeC+W2AEAqr4Yd
-         PjtFZ7QY59Amu1ZNbqbE+PFF7c3nlcLLmPxM3OpF88OasB1ZlfmRQDD72I0f4n9AFvr7
-         b//b2p5XL5d5VyfC2ufcvE3oYhDCin+ejCJ79WCTt8blYRE8i2Pe6u0vMjPk3cxNWLNL
-         3Bbe+NN23NuXUFxNpbgxNKdGwFs3FvMO0xnht1kf1dfc242mMWkDERZWLWSu77KvGxoh
-         n6CoeK7uoRzW/wp3N5e++ZDZwRyCgRens/uB3W+pgjC0wBnoow0LeHDMML4Q6G79/Z6b
-         ljAQ==
-X-Gm-Message-State: AA+aEWaFJKpZiBiQeWedAXbGYG9bhg9gHyrrwZfpBSK0QSmzE55558gW
-        DA93wFY002bz7vJ5gDOt9QNwpw==
-X-Google-Smtp-Source: AFSGD/X0DFbh51qKaP8Hgx/CmUgeu+0vF180BRC6s1Sp98HwS+A5KikpLWTCXJI4SSLoEv047r5JFQ==
-X-Received: by 2002:adf:f3c6:: with SMTP id g6mr12012411wrp.111.1544507698047;
-        Mon, 10 Dec 2018 21:54:58 -0800 (PST)
-Received: from brauner.io ([2a02:8070:88c2:4000:69e7:45c9:1529:166d])
-        by smtp.gmail.com with ESMTPSA id n20sm732358wmi.11.2018.12.10.21.54.56
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 10 Dec 2018 21:54:57 -0800 (PST)
-Date:   Tue, 11 Dec 2018 06:54:56 +0100
-From:   Christian Brauner <christian@brauner.io>
-To:     =?utf-8?B?Y2hvdXJ5emhvdSjlkajlqIEp?= <chouryzhou@tencent.com>
-Cc:     Todd Kjos <tkjos@google.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Todd Kjos <tkjos@android.com>,
-        Martijn Coenen <maco@android.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Arve =?utf-8?B?SGrDuG5uZXbDpWc=?= <arve@android.com>,
-        "joel@joelfernandes.org" <joel@joelfernandes.org>,
-        "darrick.wong@oracle.com" <darrick.wong@oracle.com>,
-        "david@fromorbit.com" <david@fromorbit.com>,
-        "kilobyte@angband.pl" <kilobyte@angband.pl>,
-        "open list:ANDROID DRIVERS" <devel@driverdev.osuosl.org>
-Subject: Re: [PATCH v1] binder: implement binderfs(Internet mail)
-Message-ID: <20181211055455.lb55hto554klzdvf@brauner.io>
-References: <20181207232509.31771-1-christian@brauner.io>
- <CAHRSSEzxR2wRw9UxaKkXTZ7cu989+70-V07PxMm6o+BfLTQ=6w@mail.gmail.com>
- <5FBCBE569E134E4CA167B91C0A77FD610198FD6A14@EXMBX-SZMAIL022.tencent.com>
+        Tue, 11 Dec 2018 00:57:45 -0500
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id wBB5vKaF095729;
+        Mon, 10 Dec 2018 23:57:20 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1544507840;
+        bh=RAAIZDjFLr1rMqXvymZpE2+y2wtLA3FnMfxg9cA8FuU=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=nK10dm8qAAsAUgOy2ocs3Uv/Ft6MmiSFEuHXF0fq0xosFQUvnK+rSqIdRu+/bWpdl
+         Z+FKmzsv+qf37TehznSgjhvRM6WVt69qnRAUjxhr5JXsSxcm9g2Yv//5H4qIYph3cJ
+         cf9JCchpz23JFcJzjCSnbygQ3e0nWYhMpcCwO9KU=
+Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wBB5vKBD012062
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 10 Dec 2018 23:57:20 -0600
+Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Mon, 10
+ Dec 2018 23:57:19 -0600
+Received: from dflp32.itg.ti.com (10.64.6.15) by DLEE113.ent.ti.com
+ (157.170.170.24) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Mon, 10 Dec 2018 23:57:20 -0600
+Received: from [172.24.190.89] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id wBB5vGXv017797;
+        Mon, 10 Dec 2018 23:57:16 -0600
+Subject: Re: [PATCH 2/2] arm64: dts: ti: k3-am654-base-board: Add MMC/SD
+ support
+To:     Faiz Abbas <faiz_abbas@ti.com>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+CC:     <mark.rutland@arm.com>, <nm@ti.com>, <ulf.hansson@linaro.org>,
+        <adrian.hunter@intel.com>, <kishon@ti.com>, <t-kristo@ti.com>,
+        <robh+dt@kernel.org>, <michal.simek@xilinx.com>
+References: <20181207084233.13700-1-faiz_abbas@ti.com>
+ <20181207084233.13700-3-faiz_abbas@ti.com>
+From:   Vignesh R <vigneshr@ti.com>
+Message-ID: <f549d2ef-d038-4976-620e-a32c6bd15dbf@ti.com>
+Date:   Tue, 11 Dec 2018 11:28:13 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <5FBCBE569E134E4CA167B91C0A77FD610198FD6A14@EXMBX-SZMAIL022.tencent.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20181207084233.13700-3-faiz_abbas@ti.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 11, 2018 at 03:44:48AM +0000, chouryzhou(周威) wrote:
-> > chouryzhou@, can you confirm that this implementation works for your
-> > android-in-container use-case?
-> > 
-> > -Todd
-> > 
-> We are running Android Pie in container now. If it works for later Android 
-> release, it will works for us.
 
-The patchset is absolutely agnostic as to what Android version is
-running. :) It has no userspace consequences.
-If at all it makes it possible for Android to upgrade its userspace to
-use additional devices in the future without having to recompile the
-kernel. There's a whole lot of interesting things one could potentially
-do with this. :)
+On 07/12/18 2:12 PM, Faiz Abbas wrote:
+> On the am654x-evm, sdhci0 node is connected to an eMMC while sdhci1
+> is connected to an SD card slot. Add nodes and pinmuxes for the same.
+> 
+> Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
+> ---
+>  .../arm64/boot/dts/ti/k3-am654-base-board.dts | 46 +++++++++++++++++++
+>  1 file changed, 46 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/ti/k3-am654-base-board.dts b/arch/arm64/boot/dts/ti/k3-am654-base-board.dts
+> index bd5a0069191d..5dcd16b787eb 100644
+> --- a/arch/arm64/boot/dts/ti/k3-am654-base-board.dts
+> +++ b/arch/arm64/boot/dts/ti/k3-am654-base-board.dts
+> @@ -60,6 +60,36 @@
+>  			AM65X_IOPAD(0x0070, PIN_INPUT, 5) /* (R25) GPMC0_CSn2.I2C2_SDA */
+>  		>;
+>  	};
+> +
+> +	main_mmc0_pins_default: main_mmc0_pins_default {
+
+
+make dtbs W=12 will warn you:
+Character '_' not recommended in node name
+
+
+> +		pinctrl-single,pins = <
+> +			AM65X_IOPAD(0x01a8, PIN_INPUT_PULLDOWN, 0) /* (B25) MMC0_CLK */
+> +			AM65X_IOPAD(0x01ac, PIN_INPUT_PULLUP, 0) /* (B27) MMC0_CMD */
+> +			AM65X_IOPAD(0x01a4, PIN_INPUT_PULLUP, 0) /* (A26) MMC0_DAT0 */
+> +			AM65X_IOPAD(0x01a0, PIN_INPUT_PULLUP, 0) /* (E25) MMC0_DAT1 */
+> +			AM65X_IOPAD(0x019c, PIN_INPUT_PULLUP, 0) /* (C26) MMC0_DAT2 */
+> +			AM65X_IOPAD(0x0198, PIN_INPUT_PULLUP, 0) /* (A25) MMC0_DAT3 */
+> +			AM65X_IOPAD(0x0194, PIN_INPUT_PULLUP, 0) /* (E24) MMC0_DAT4 */
+> +			AM65X_IOPAD(0x0190, PIN_INPUT_PULLUP, 0) /* (A24) MMC0_DAT5 */
+> +			AM65X_IOPAD(0x018c, PIN_INPUT_PULLUP, 0) /* (B26) MMC0_DAT6 */
+> +			AM65X_IOPAD(0x0188, PIN_INPUT_PULLUP, 0) /* (D25) MMC0_DAT7 */
+> +			AM65X_IOPAD(0x01b4, PIN_INPUT_PULLUP, 0) /* (A23) MMC0_SDCD */
+> +			AM65X_IOPAD(0x01b0, PIN_INPUT, 0) /* (C25) MMC0_DS */
+> +		>;
+> +	};
+> +
+> +	main_mmc1_pins_default: main_mmc1_pins_default {
+
+Same here
+
+Regards
+Vignesh
+
+> +		pinctrl-single,pins = <
+> +			AM65X_IOPAD(0x02d4, PIN_INPUT_PULLDOWN, 0) /* (C27) MMC1_CLK */
+> +			AM65X_IOPAD(0x02d8, PIN_INPUT_PULLUP, 0) /* (C28) MMC1_CMD */
+> +			AM65X_IOPAD(0x02d0, PIN_INPUT_PULLUP, 0) /* (D28) MMC1_DAT0 */
+> +			AM65X_IOPAD(0x02cc, PIN_INPUT_PULLUP, 0) /* (E27) MMC1_DAT1 */
+> +			AM65X_IOPAD(0x02c8, PIN_INPUT_PULLUP, 0) /* (D26) MMC1_DAT2 */
+> +			AM65X_IOPAD(0x02c4, PIN_INPUT_PULLUP, 0) /* (D27) MMC1_DAT3 */
+> +			AM65X_IOPAD(0x02dc, PIN_INPUT_PULLUP, 0) /* (B24) MMC1_SDCD */
+> +			AM65X_IOPAD(0x02e0, PIN_INPUT, 0) /* (C24) MMC1_SDWP */
+> +		>;
+> +	};
+>  };
+>  
+>  &main_pmx1 {
+> @@ -125,3 +155,19 @@
+>  	pinctrl-0 = <&main_i2c2_pins_default>;
+>  	clock-frequency = <400000>;
+>  };
+> +
+> +&sdhci0 {
+> +	status = "okay";
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&main_mmc0_pins_default>;
+> +	bus-width = <8>;
+> +	non-removable;
+> +	ti,driver-strength-ohm = <50>;
+> +};
+> +
+> +&sdhci1 {
+> +	status = "okay";
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&main_mmc1_pins_default>;
+> +	ti,driver-strength-ohm = <50>;
+> +};
+> 
+
+-- 
+Regards
+Vignesh
