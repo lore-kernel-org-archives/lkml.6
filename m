@@ -4,55 +4,54 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D7AFC07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:47:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16C0BC07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:47:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 52A8020989
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:47:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CE41D2145D
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:47:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544543237;
-	bh=318JnzFMhGUWIUYtqYAXXFr1OykE+rcTdNvE+NDn7ls=;
+	s=default; t=1544543240;
+	bh=udgaIKOM/ryxsNJgBuFb7iU//y+YUB/CkfPswMUNaY8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=AJ2wJS7a5wDpBue/daO1FNQ8yaE1sVmXyFnf2Q6s2s2EofdgfTjT20HtFR8Sge07U
-	 sjOr9BhlKc5MwIKiXXjYJpFuRJwQmJ4d7biOIvvZzF6P+/Q0VTvqp1j0zpJM+GT//z
-	 hO49wQPn++C99DB8EMdtK0CE6UbqJxBtA02VSRTI=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 52A8020989
+	b=ARsFUAoLzmKR2XDvi22Mk6yAS+Tq1/91YZliNQASmoBy46uPrkVpzbZwyAYbwC3aR
+	 311QUTxzLaL0SG5VSiWtBnbWV/qmjpsFRC4lGuMZ46xrNTt6eE1oMNe+N7QIc/2/o6
+	 3mykDRFVlGWcJp9iDNUquxKWSL5rPByz3ybgUhH0=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE41D2145D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728514AbeLKPrQ (ORCPT
+        id S1728521AbeLKPrT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 10:47:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35656 "EHLO mail.kernel.org"
+        Tue, 11 Dec 2018 10:47:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35776 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728499AbeLKPrN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:47:13 -0500
+        id S1727835AbeLKPrS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 10:47:18 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4954220989;
-        Tue, 11 Dec 2018 15:47:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7CE682146D;
+        Tue, 11 Dec 2018 15:47:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544543232;
-        bh=318JnzFMhGUWIUYtqYAXXFr1OykE+rcTdNvE+NDn7ls=;
+        s=default; t=1544543238;
+        bh=udgaIKOM/ryxsNJgBuFb7iU//y+YUB/CkfPswMUNaY8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=V9OoLMoFQ/wy7D5WPOFTkcPlfntEIOKRVuTLYcbi6malTGnlTPjigLzIHyw6yJa3C
-         b2Y06RmSAaI17pWlIYJLnujNSmkY+ddViLh1HirXLWIFWS+ouD54Sazmf9JeKKCAV9
-         CSjMnefhzqUdDQXjfrMqZp9XZqpIF7mexjY01U98=
+        b=rQepz3oGPuHSgq10dGEwuXaeOJnIZVU+LKashn2BnPTk4WCljnQiSsJeATr5O4/CL
+         Z6JTe6XcRCnIOnqnPUuLRI3di11Oeg2YW1VoGMnL2AHpGnVDwwadVVV53E560lJpqH
+         XUNOgjyQXglWGcLfIA+MVmyD3Eo+ACAa/gcr8+Y8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Jack Morgenstein <jackm@dev.mellanox.co.il>,
+        stable@vger.kernel.org, Aya Levin <ayal@mellanox.com>,
         Tariq Toukan <tariqt@mellanox.com>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 64/91] net/mlx4_core: Zero out lkey field in SW2HW_MPT fw command
-Date:   Tue, 11 Dec 2018 16:41:23 +0100
-Message-Id: <20181211151611.367407186@linuxfoundation.org>
+Subject: [PATCH 4.4 66/91] net/mlx4: Fix UBSAN warning of signed integer overflow
+Date:   Tue, 11 Dec 2018 16:41:25 +0100
+Message-Id: <20181211151611.631008994@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181211151606.026852373@linuxfoundation.org>
 References: <20181211151606.026852373@linuxfoundation.org>
@@ -71,45 +70,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit bd85fbc2038a1bbe84990b23ff69b6fc81a32b2c ]
+[ Upstream commit a463146e67c848cbab5ce706d6528281b7cded08 ]
 
-When re-registering a user mr, the mpt information for the
-existing mr when running SRIOV is obtained via the QUERY_MPT
-fw command. The returned information includes the mpt's lkey.
+UBSAN: Undefined behavior in
+drivers/net/ethernet/mellanox/mlx4/resource_tracker.c:626:29
+signed integer overflow: 1802201963 + 1802201963 cannot be represented
+in type 'int'
 
-This retrieved mpt information is used to move the mpt back
-to hardware ownership in the rereg flow (via the SW2HW_MPT
-fw command when running SRIOV).
+The union of res_reserved and res_port_rsvd[MLX4_MAX_PORTS] monitors
+granting of reserved resources. The grant operation is calculated and
+protected, thus both members of the union cannot be negative.  Changed
+type of res_reserved and of res_port_rsvd[MLX4_MAX_PORTS] from signed
+int to unsigned int, allowing large value.
 
-The fw API spec states that for SW2HW_MPT, the lkey field
-must be zero. Any ConnectX-3 PF driver which checks for strict spec
-adherence will return failure for SW2HW_MPT if the lkey field is not
-zero (although the fw in practice ignores this field for SW2HW_MPT).
-
-Thus, in order to conform to the fw API spec, set the lkey field to zero
-before invoking SW2HW_MPT when running SRIOV.
-
-Fixes: e630664c8383 ("mlx4_core: Add helper functions to support MR re-registration")
-Signed-off-by: Jack Morgenstein <jackm@dev.mellanox.co.il>
+Fixes: 5a0d0a6161ae ("mlx4: Structures and init/teardown for VF resource quotas")
+Signed-off-by: Aya Levin <ayal@mellanox.com>
 Signed-off-by: Tariq Toukan <tariqt@mellanox.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/mellanox/mlx4/mr.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/ethernet/mellanox/mlx4/mlx4.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/mellanox/mlx4/mr.c b/drivers/net/ethernet/mellanox/mlx4/mr.c
-index 93195191f45b..53833c06696f 100644
---- a/drivers/net/ethernet/mellanox/mlx4/mr.c
-+++ b/drivers/net/ethernet/mellanox/mlx4/mr.c
-@@ -366,6 +366,7 @@ int mlx4_mr_hw_write_mpt(struct mlx4_dev *dev, struct mlx4_mr *mmr,
- 			container_of((void *)mpt_entry, struct mlx4_cmd_mailbox,
- 				     buf);
- 
-+		(*mpt_entry)->lkey = 0;
- 		err = mlx4_SW2HW_MPT(dev, mailbox, key);
- 	}
- 
+diff --git a/drivers/net/ethernet/mellanox/mlx4/mlx4.h b/drivers/net/ethernet/mellanox/mlx4/mlx4.h
+index f5fdbd53d052..db40387ffaf6 100644
+--- a/drivers/net/ethernet/mellanox/mlx4/mlx4.h
++++ b/drivers/net/ethernet/mellanox/mlx4/mlx4.h
+@@ -537,8 +537,8 @@ struct slave_list {
+ struct resource_allocator {
+ 	spinlock_t alloc_lock; /* protect quotas */
+ 	union {
+-		int res_reserved;
+-		int res_port_rsvd[MLX4_MAX_PORTS];
++		unsigned int res_reserved;
++		unsigned int res_port_rsvd[MLX4_MAX_PORTS];
+ 	};
+ 	union {
+ 		int res_free;
 -- 
 2.19.1
 
