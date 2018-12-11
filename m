@@ -7,61 +7,55 @@ X-Spam-Status: No, score=-12.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB8C8C67839
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 01:15:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C19F0C5CFFE
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 01:16:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD0AE20851
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 01:15:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 88CE62084E
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 01:16:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544490959;
-	bh=HieifSIcrlHBbcfwdN7B4Cdiama0nh1hL5npdHUHXFA=;
+	s=default; t=1544490967;
+	bh=Q0/tS2ic1vRTzo99A8boCpe12yxJsLLtd9Olu5ZPbP4=;
 	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
-	b=1VK4Io2rtu7bwquDfF0WSSxr88Dz3PF5esoRTb4xTdCX7D0FcqUvhR+6l30V+hIoP
-	 Se43ycLfA6/cMWmARZuaQMwi23m5cCYJqLNKSdcp6dzeCTSelwoEdZreTU4PaY/FIB
-	 Eu1bs1kVUJ3gC0Q2g8o5ha30+iJjJ/Al0Of0V2kM=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD0AE20851
+	b=NKT7qNCxNYDs39bRrPbjtqK5cTNu8NNZUE5l+mzai+8jtTVLZl8cBwaHQbvvmcKBW
+	 TkubTnGFixp/D2NTpVroicWitnRW21FexIbf44fnDp6r7EAk0lGshvFbrBYGIKhqyx
+	 sGhZq3LL+4cdvCxh+zDVq8Rjg10wnic14mZ6fwDw=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 88CE62084E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727916AbeLKBP6 (ORCPT
+        id S1728059AbeLKBQG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 20:15:58 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:50560 "EHLO
+        Mon, 10 Dec 2018 20:16:06 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:50802 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726585AbeLKBP4 (ORCPT
+        with ESMTP id S1726585AbeLKBQE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 20:15:56 -0500
+        Mon, 10 Dec 2018 20:16:04 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=KDzxnoo9efXOS8nQfeIjn0Aj3VAJZ5uy8uUal97/syU=; b=YHw6aMRC7roN
-        Xg8v6L4+wzytAxxvM7Wy11Kb5xsP/Q3SJgyXD/7rMVFC9D8qRNF6aII+YEDCT2t8oju88ojteWTHy
-        s5vitxiY3hhuBpvAKYqed7UJBvEhC6/gvfjNs9PYncMvodmwEo85n1yfIKBpDlTNV0g8nRkcSkZUl
-        97e9I=;
+        List-Archive; bh=iFg0To4UdDSp3ZsDv5EQDmEaL6rOcFM9AJfxXE/QufA=; b=c7EKl46P452K
+        XbCEwUf/VGXVGX7dCX3GQDmU3BK3oXmT56tvzc5i/qO70L18KA9Txkiy+aKI8QKDrNGA053hmujwg
+        jdqrVZvDgEPzeOXXtBePl2igET+u2FxAdxkkuUgfyJBX2tsbNLfFNKZbxje52uiWuGyJJJSXHw6Tj
+        Q7GZk=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1gWWeI-0000KQ-3p; Tue, 11 Dec 2018 01:15:46 +0000
+        id 1gWWeW-0000L8-F7; Tue, 11 Dec 2018 01:16:00 +0000
 Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id C4DD111254C7; Tue, 11 Dec 2018 01:15:45 +0000 (GMT)
+        id 2CC9811254C7; Tue, 11 Dec 2018 01:16:00 +0000 (GMT)
 From:   Mark Brown <broonie@kernel.org>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Mark Brown <broonie@kernel.org>,
-        Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        linux-kernel@vger.kernel.org, Takashi Iwai <tiwai@suse.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>,
-        alsa-devel@alsa-project.org
-Subject: Applied "ASoC: simple-card-utils: fix build warning without CONFIG_OF" to the asoc tree
-In-Reply-To:  <20181210204640.2407929-1-arnd@arndb.de>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Applied "regulator: s2mps11: Hand over GPIO to regulator core" to the regulator tree
+In-Reply-To: 
 X-Patchwork-Hint: ignore
-Message-Id: <20181211011545.C4DD111254C7@debutante.sirena.org.uk>
-Date:   Tue, 11 Dec 2018 01:15:45 +0000 (GMT)
+Message-Id: <20181211011600.2CC9811254C7@debutante.sirena.org.uk>
+Date:   Tue, 11 Dec 2018 01:16:00 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -69,11 +63,11 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: simple-card-utils: fix build warning without CONFIG_OF
+   regulator: s2mps11: Hand over GPIO to regulator core
 
-has been applied to the asoc tree at
+has been applied to the regulator tree at
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git 
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
@@ -94,44 +88,47 @@ to this mail.
 Thanks,
 Mark
 
-From 2b320e046495e6cf02d1f0b1abf07042ac5635ea Mon Sep 17 00:00:00 2001
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Mon, 10 Dec 2018 21:46:10 +0100
-Subject: [PATCH] ASoC: simple-card-utils: fix build warning without CONFIG_OF
+From 2b96edb570709d6ca2e06842941c4bdf04b55f47 Mon Sep 17 00:00:00 2001
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Thu, 6 Dec 2018 13:43:51 +0100
+Subject: [PATCH] regulator: s2mps11: Hand over GPIO to regulator core
 
-When CONFIG_OF is disabled, of_graph_parse_endpoint() does not
-initialize 'info', and gcc can see that:
+The GPIO descriptors used by the S2MPS11 driver are retrieved
+during probe() and it is really helpful to have those under
+devres management because of all the errorpaths in the
+intialization.
 
-sound/soc/generic/simple-card-utils.c: In function 'asoc_simple_card_parse_graph_dai':
-sound/soc/generic/simple-card-utils.c:284:13: error: 'info.port' may be used uninitialized in this function [-Werror=maybe-uninitialized]
+Using the new dev_gpiod_unhinge() call we can remove the
+devres management of the descriptor right before handing
+it over to the regulators core.
 
-It's probably best to check the return code anyway, and that also
-takes care of the warning.
-
-Fixes: b6f3fc005a2c ("ASoC: simple-card-utils: fixup asoc_simple_card_get_dai_id() counting")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Acked-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Reviewed-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Reviewed-by: Charles Keepax <ckeepax@opensource.cirrus.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/generic/simple-card-utils.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/regulator/s2mps11.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/sound/soc/generic/simple-card-utils.c b/sound/soc/generic/simple-card-utils.c
-index 6a31d07976b9..17d8aee43835 100644
---- a/sound/soc/generic/simple-card-utils.c
-+++ b/sound/soc/generic/simple-card-utils.c
-@@ -280,7 +280,10 @@ static int asoc_simple_card_get_dai_id(struct device_node *ep)
- 	 * Non HDMI sound case, counting port/endpoint on its DT
- 	 * is enough. Let's count it.
- 	 */
--	of_graph_parse_endpoint(ep, &info);
-+	ret = of_graph_parse_endpoint(ep, &info);
-+	if (ret)
-+		return -ENXIO;
-+
- 	return info.port;
- }
- 
+diff --git a/drivers/regulator/s2mps11.c b/drivers/regulator/s2mps11.c
+index 63e66f485cc0..ee4a23ab0663 100644
+--- a/drivers/regulator/s2mps11.c
++++ b/drivers/regulator/s2mps11.c
+@@ -1178,7 +1178,12 @@ static int s2mps11_pmic_probe(struct platform_device *pdev)
+ 			config.of_node = rdata[i].of_node;
+ 		}
+ 		config.ena_gpiod = s2mps11->ext_control_gpiod[i];
+-
++		/*
++		 * Hand the GPIO descriptor management over to the regulator
++		 * core, remove it from devres management.
++		 */
++		if (config.ena_gpiod)
++			devm_gpiod_unhinge(&pdev->dev, config.ena_gpiod);
+ 		regulator = devm_regulator_register(&pdev->dev,
+ 						&regulators[i], &config);
+ 		if (IS_ERR(regulator)) {
 -- 
 2.19.0.rc2
 
