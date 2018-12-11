@@ -2,120 +2,120 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1EBCC07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 13:35:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9BB4C07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 13:35:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9065E2082F
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 13:35:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9065E2082F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id 672392081B
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 13:35:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="TS41cWMg";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="FAdklouO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 672392081B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726525AbeLKNfG (ORCPT
+        id S1726554AbeLKNfx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 08:35:06 -0500
-Received: from mout.kundenserver.de ([212.227.126.187]:38207 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726203AbeLKNfG (ORCPT
+        Tue, 11 Dec 2018 08:35:53 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:44908 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726203AbeLKNfw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 08:35:06 -0500
-Received: from wuerfel.lan ([109.192.41.194]) by mrelayeu.kundenserver.de
- (mreue009 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1MXp1Q-1gyDNP1nyu-00Y9S6; Tue, 11 Dec 2018 14:34:59 +0100
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>
-Cc:     Anders Roxell <anders.roxell@linaro.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Alexander Potapenko <glider@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: [PATCH] kasan: fix kasan_check_read/write definitions
-Date:   Tue, 11 Dec 2018 14:34:35 +0100
-Message-Id: <20181211133453.2835077-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.20.0
+        Tue, 11 Dec 2018 08:35:52 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id DA62060B12; Tue, 11 Dec 2018 13:35:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1544535351;
+        bh=3mhP44VEIklL1jEzZwWVjjGbYjG1kMIxVeJ26hT3k4E=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=TS41cWMg7uifZYJ07FavNoZtZeSAvmTC28j+19y5geTm65tvYkrVt64aXV4soCAWf
+         EjzLXmTg9R2ipAioS3D74cpYVUjwrTZXAdIRrqMba1IahZiRZg9tuFvMolrZcdC7mu
+         pSSCP+9eofd9aecW3EJTU7aT1Q5VLwbzyrmrMEKI=
+Received: from [10.79.160.15] (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: tdas@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 71CDB60224;
+        Tue, 11 Dec 2018 13:35:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1544535350;
+        bh=3mhP44VEIklL1jEzZwWVjjGbYjG1kMIxVeJ26hT3k4E=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=FAdklouOeKVKz0Kiz1+uf7R0z5dhv5CZ43/eksVqzj4fPnvwfa/u+1Bx7XrHkmLbh
+         sBAZkJHSXJdl+53RBO9qJfAl4YgbLYSZxD6CKnrinBs/0CHV2kNsEm/xwk3APzxZVN
+         6LKEHn00WGpu6xXzcO2BOXrJGxa6ComEw1iKYhz8=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 71CDB60224
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
+Subject: Re: [PATCH v11 2/2] cpufreq: qcom-hw: Add support for QCOM cpufreq HW
+ driver
+To:     Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        devicetree@vger.kernel.org, robh@kernel.org,
+        skannan@codeaurora.org, linux-arm-msm@vger.kernel.org,
+        evgreen@google.com
+References: <1543722903-10989-1-git-send-email-tdas@codeaurora.org>
+ <1543722903-10989-3-git-send-email-tdas@codeaurora.org>
+ <20181204051231.mm5ixli7ckpfzvd4@vireshk-i7>
+ <154396249199.88331.1800559141437859959@swboyd.mtv.corp.google.com>
+ <154396472692.88331.13742924031474269133@swboyd.mtv.corp.google.com>
+ <49139ae4-4373-9e70-02ad-80f7bbc4494c@codeaurora.org>
+ <20181205061600.7zglbpkgbktn27am@vireshk-i7>
+From:   Taniya Das <tdas@codeaurora.org>
+Message-ID: <82b168d1-79bc-f454-8e19-4f7630a34069@codeaurora.org>
+Date:   Tue, 11 Dec 2018 19:05:43 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.3
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:3NV4RcGQl1HBnCrKLlXV1Xu+qAbG+2o5BPe28qfau76/IQ0XUDe
- n1qHTrKjyqCnVLqJMeEafcYAZY1kcBx/unMD152Ef0ZO+O3iZHUl9HrecaJ8pR5/mXT+obu
- 1NNCkPg4DSuRJJneMlbLJkrTFL77BFtyjiCtjwUAo/1O0lEiZKPpo5BHF2YyTEsMNhwRsD2
- CkQxxuYJMeAy2hAd0/Lzw==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:rPwv5eM93nI=:p9zfN6yHNp8eRXxLlpjRvw
- KP660BQb2bNcXujATOGQ7MgKuNO9LS4uie+hacaxL7eZCvoiIPwB3mCtnfiYGl68fqC//Dxv1
- zBmAU5+oHkqxW/SfB9bobbPFGpcEo6f6h2GMdtwSwy9clqfJm8vs1QA7yuRNxRWLzMsqAsbyZ
- sPp2BByri/fi/lWTNLk7BIa4v85sWm/5vwZTTsFtf1MwQh9IMVVsdfulUFhNxiUGE+cJ6/k2b
- 3hb9IJqt4mooyt9W2J2hlUxrFZ3Hr4EV1YHhM94q271WDtvpg24H3EfBD4UU/LYtXIRDJGI5g
- YtEgoZ3Xdq/9qWAcd1tVHnI9NVuErY7+m00Ii1niH6Hld1Hyjm5420rn3uLvznl7gMb4z7/IU
- If11wn66EJ/kGLrhXbSxCHxe9+EOAulTcaMmi2n19CyIeFrtAqoV+/8BS5AOKrR7XyiCg3Iwb
- lTz4ShQYLdBEsHn5Pejj5tcj5wsAe7I6YAtvsiur60wDVSpkz+1YwhqbJMuaVUH23FZw4qDe1
- jpAp+6y01rIXj2/MwNv/WCjVmPme4XM9Q7MXir1u6EihfJXAtwBbC1c1lGHdjeD8pAQwEtFOv
- QemUHy8/SSmUed140DH4RNLfO5Zl1VcPnbi9yX4kuE+mk9sZtb1FmBxTMVesesZHD1a8SY2/n
- rzz0e93LfLJ07zPLotFvUem5w45U3OZ3i9rrkwFt6L6dvsR4jMmxKD5sUw68o3AkVQxsNo5Tj
- a1EvntzjtiT5jrgy32k0mpI1zOimV0c5/YqKQQ==
+In-Reply-To: <20181205061600.7zglbpkgbktn27am@vireshk-i7>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Building little-endian allmodconfig kernels on arm64 started failing
-with the generated atomic.h implementation, since we now try to call
-kasan helpers from the EFI stub:
+Hi Viresh,
 
-aarch64-linux-gnu-ld: drivers/firmware/efi/libstub/arm-stub.stub.o: in function `atomic_set':
-include/generated/atomic-instrumented.h:44: undefined reference to `__efistub_kasan_check_write'
+Sorry for the delayed response. Thanks for the patch.
 
-I suspect that we get similar problems in other files that explicitly
-disable KASAN for some reason but call atomic_t based helper functions.
+On 12/5/2018 11:46 AM, Viresh Kumar wrote:
+> On 05-12-18, 09:07, Taniya Das wrote:
+>> Hello Stephen, Viresh
+>>
+>> Thanks for the code and suggestions.
+>>
+>> Having a NR_DOMAINS '2' makes the driver not scalable for re-use.
+> 
+> Sure, I didn't like it either and that wasn't really what I was suggesting in
+> the first place. I didn't wanted to write the code myself and pass it on, but I
+> have it now anyway :)
+> 
+> It may have a bug or two in there, but compiles just fine and is rebased over
+> your patch Taniya.
+> 
 
-We can fix this by checking the predefined __SANITIZE_ADDRESS__ macro
-that the compiler sets instead of checking CONFIG_KASAN, but this in turn
-requires a small hack in mm/kasan/common.c so we do see the extern
-declaration there instead of the inline function.
+The design here assumes that there would not be any per-cpu/per-cluster 
+based SW requirement for the HW during frequency transitions, which 
+again makes me think that we would require to re-introduce these 
+structures again in case we have such requirements in near future.
 
-Fixes: b1864b828644 ("locking/atomics: build atomic headers as required")
-Reported-by: Anders Roxell <anders.roxell@linaro.org>
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- include/linux/kasan-checks.h | 2 +-
- mm/kasan/common.c            | 2 ++
- 2 files changed, 3 insertions(+), 1 deletion(-)
+Also I think leaving the structures also helps us debug any boot up 
+issues looking at the ram contents of the per-(cpu/cluster) structures 
+with the contents from the firmware.
 
-diff --git a/include/linux/kasan-checks.h b/include/linux/kasan-checks.h
-index d314150658a4..a61dc075e2ce 100644
---- a/include/linux/kasan-checks.h
-+++ b/include/linux/kasan-checks.h
-@@ -2,7 +2,7 @@
- #ifndef _LINUX_KASAN_CHECKS_H
- #define _LINUX_KASAN_CHECKS_H
- 
--#ifdef CONFIG_KASAN
-+#if defined(__SANITIZE_ADDRESS__) || defined(__KASAN_INTERNAL)
- void kasan_check_read(const volatile void *p, unsigned int size);
- void kasan_check_write(const volatile void *p, unsigned int size);
- #else
-diff --git a/mm/kasan/common.c b/mm/kasan/common.c
-index 03d5d1374ca7..51a7932c33a3 100644
---- a/mm/kasan/common.c
-+++ b/mm/kasan/common.c
-@@ -14,6 +14,8 @@
-  *
-  */
- 
-+#define __KASAN_INTERNAL
-+
- #include <linux/export.h>
- #include <linux/interrupt.h>
- #include <linux/init.h>
+Hope these above helps us to go ahead with the current SW design.
+
 -- 
-2.20.0
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation.
 
+--
