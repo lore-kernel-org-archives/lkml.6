@@ -7,49 +7,50 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87473C07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:43:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BCF3C5CFFE
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:43:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A180208E7
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:43:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5F05120855
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:43:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544542994;
-	bh=l39nIUf8k/xg5kIf9TYpw7uppwqxSlBJVTVK/yyenDQ=;
+	s=default; t=1544542996;
+	bh=FiEsUDgBVmx7ZKwnsp7N1vK34T18XK0gSdd2mlyJH3s=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=1GB+idpa9T3D9w3FiCeU70uPG6q0rWmWSIvIoNsnJlH4wUdzQ4CY7XimvtPjLDU/b
-	 LeWx5iyHPVYMcKUof9FgYmJVwuhxXkM5eSdgUaLcOOyFGtT/616wlPXwDStEfgu1Q7
-	 UJfA0WNEhXAiFp9p47FtxhIXjv9nPUnwEsB3vkus=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A180208E7
+	b=fwTxlIB+E7Jw1BYLOPtiF3+U/HM6BD+/KOZVv2NeJ/H8Bskqe5fgyn6z3Rn/csdG8
+	 kPcJefdUnsHV2pWg0SyvxZdlEAy1xv61uLHuHqQ8wrFVmvd+pmAl3BLUvNARbdFtw0
+	 QHdwHXxAe2cMEqVaX/R9m+wk9agifSGKstL447hw=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F05120855
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727459AbeLKPnM (ORCPT
+        id S1727474AbeLKPnP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 10:43:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59592 "EHLO mail.kernel.org"
+        Tue, 11 Dec 2018 10:43:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59642 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726919AbeLKPnK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:43:10 -0500
+        id S1726919AbeLKPnN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 10:43:13 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 69A7F2087F;
-        Tue, 11 Dec 2018 15:43:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 32F3320880;
+        Tue, 11 Dec 2018 15:43:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544542989;
-        bh=l39nIUf8k/xg5kIf9TYpw7uppwqxSlBJVTVK/yyenDQ=;
+        s=default; t=1544542992;
+        bh=FiEsUDgBVmx7ZKwnsp7N1vK34T18XK0gSdd2mlyJH3s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XG0aqBBWlFHoAPUSLnD0ohshIfxh6mfPjsD3kCRtiDFI9m0MAxs+Ky8nH28Y3oWsR
-         j+L8XuJi3d4yCYvECipvLuPHupt3GQlovmSX8CDDp2coi2DWr7IqWxMlgzk+jAHUrx
-         Mqwb/S8AhLKMEnPOKfM9J+3rCE49IbrUeIa3mGds=
+        b=oGN+qVB5mAEIe4A/iL8a9Tx0NJLMZeRIzmdOyRfvGK3O1JYaAfXlRs8BUOG9sG0zN
+         L5I0S1bo8FTdiZFBUlUfwCfU0rcm1DsGAvQ08ubDC0Bs8vJDb9FF705ne3PXszCmbE
+         liriNBW9uHdUjfBFI9C2ABIeCDCiWs7+SzY27K+I=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sam Bobroff <sbobroff@linux.ibm.com>,
-        Dave Airlie <airlied@redhat.com>
-Subject: [PATCH 3.18 25/54] drm/ast: Fix incorrect free on ioregs
-Date:   Tue, 11 Dec 2018 16:41:13 +0100
-Message-Id: <20181211151547.395287428@linuxfoundation.org>
+        stable@vger.kernel.org, Martin Wilck <mwilck@suse.com>,
+        Bart Van Assche <bart.vanassche@wdc.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH 3.18 26/54] scsi: scsi_devinfo: cleanly zero-pad devinfo strings
+Date:   Tue, 11 Dec 2018 16:41:14 +0100
+Message-Id: <20181211151547.472039485@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181211151546.010073210@linuxfoundation.org>
 References: <20181211151546.010073210@linuxfoundation.org>
@@ -68,38 +69,64 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sam Bobroff <sbobroff@linux.ibm.com>
+From: Martin Wilck <mwilck@suse.com>
 
-commit dc25ab067645eabd037f1a23d49a666f9e0b8c68 upstream.
+commit 81df022b688d43d2a3667518b2f755d384397910 upstream.
 
-If the platform has no IO space, ioregs is placed next to the already
-allocated regs. In this case, it should not be separately freed.
+Cleanly fill memory for "vendor" and "model" with 0-bytes for the
+"compatible" case rather than adding only a single 0 byte.  This
+simplifies the devinfo code a a bit, and avoids mistakes in other places
+of the code (not in current upstream, but we had one such mistake in the
+SUSE kernel).
 
-This prevents a kernel warning from __vunmap "Trying to vfree()
-nonexistent vm area" when unloading the driver.
+[mkp: applied by hand and added braces]
 
-Fixes: 0dd68309b9c5 ("drm/ast: Try to use MMIO registers when PIO isn't supported")
-
-Signed-off-by: Sam Bobroff <sbobroff@linux.ibm.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Dave Airlie <airlied@redhat.com>
+Signed-off-by: Martin Wilck <mwilck@suse.com>
+Reviewed-by: Bart Van Assche <bart.vanassche@wdc.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/ast/ast_main.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/scsi/scsi_devinfo.c |   22 +++++++---------------
+ 1 file changed, 7 insertions(+), 15 deletions(-)
 
---- a/drivers/gpu/drm/ast/ast_main.c
-+++ b/drivers/gpu/drm/ast/ast_main.c
-@@ -489,7 +489,8 @@ int ast_driver_unload(struct drm_device
- 	drm_mode_config_cleanup(dev);
+--- a/drivers/scsi/scsi_devinfo.c
++++ b/drivers/scsi/scsi_devinfo.c
+@@ -33,7 +33,6 @@ struct scsi_dev_info_list_table {
+ };
  
- 	ast_mm_fini(ast);
--	pci_iounmap(dev->pdev, ast->ioregs);
-+	if (ast->ioregs != ast->regs + AST_IO_MM_OFFSET)
-+		pci_iounmap(dev->pdev, ast->ioregs);
- 	pci_iounmap(dev->pdev, ast->regs);
- 	kfree(ast);
- 	return 0;
+ 
+-static const char spaces[] = "                "; /* 16 of them */
+ static unsigned scsi_default_dev_flags;
+ static LIST_HEAD(scsi_dev_info_list);
+ static char scsi_dev_flags[256];
+@@ -290,20 +289,13 @@ static void scsi_strcpy_devinfo(char *na
+ 	size_t from_length;
+ 
+ 	from_length = strlen(from);
+-	strncpy(to, from, min(to_length, from_length));
+-	if (from_length < to_length) {
+-		if (compatible) {
+-			/*
+-			 * NUL terminate the string if it is short.
+-			 */
+-			to[from_length] = '\0';
+-		} else {
+-			/* 
+-			 * space pad the string if it is short. 
+-			 */
+-			strncpy(&to[from_length], spaces,
+-				to_length - from_length);
+-		}
++	/* this zero-pads the destination */
++	strncpy(to, from, to_length);
++	if (from_length < to_length && !compatible) {
++		/*
++		 * space pad the string if it is short.
++		 */
++		memset(&to[from_length], ' ', to_length - from_length);
+ 	}
+ 	if (from_length > to_length)
+ 		 printk(KERN_WARNING "%s: %s string '%s' is too long\n",
 
 
