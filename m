@@ -2,86 +2,88 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0638C6783B
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 21:53:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7260C6783B
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 21:53:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B0E7120672
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 21:53:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B0E7120672
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id AE0AD20672
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 21:53:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Szsq2CvU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE0AD20672
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726358AbeLKVxV (ORCPT
+        id S1726368AbeLKVxp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 16:53:21 -0500
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:44884 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726209AbeLKVxV (ORCPT
+        Tue, 11 Dec 2018 16:53:45 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:39591 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726136AbeLKVxo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 16:53:21 -0500
-Received: by mail-qt1-f194.google.com with SMTP id n32so18257474qte.11
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 13:53:20 -0800 (PST)
+        Tue, 11 Dec 2018 16:53:44 -0500
+Received: by mail-pl1-f196.google.com with SMTP id 101so7547756pld.6
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 13:53:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:content-transfer-encoding:in-reply-to:message-id:to
+         :subject:from:user-agent:references:cc:date;
+        bh=ajn9n/zfE+h5ltelimETBP75iHPSzvnmxsltyMwfgqU=;
+        b=Szsq2CvUDGBfpyrEnpS9Lry+ZbbGlpvFYg02vLI4VTLb6h1xh6HK02WbqmNcuffyNz
+         9KgxmMHmwTUnzFG+309a7epLDoNAQ9tQ0edC3G0ZsPfOBDMcbXnDHGJVBdQGjrYOSGk0
+         LHP9YaIAI2IKQ4hlEVSG69uGTRy/HVHDMsI8s=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=4iNAYTw+5oqFyyzTQHdI60zXkOGgUyhw+emjW/uoGSk=;
-        b=WCj9K4ar4Ccjc/vik2pIZV4ZsmA7bbKnP8NGTFHjbAtFgL+kXrAm8SKzwvh9GiilTc
-         QsgntNakhCbNoPruNbUBCtKWHsm7VsQ58ho7LOhQtYTCSO8ouBLHVIpBClnPUQ/rDdnw
-         2Uq2UWJYJ1K3gUKuZ4ruXgweHZtaIHnJVFtLOeJZ8Y6OaoXGOJ9p4AqqVOk1katN/n6F
-         ag33D3PtrLu829KcmrULcV2FQSfx7h+t0X17y99+N5HxCV/zsntRTlwE/O/nFvS91s2o
-         mYgm3AmsYQnmtdhhe7F1vdpct76MgxVEY0/ZZ3/GG+z+XeTx1BkuifQwRXeXTAF/sPtv
-         fB3w==
-X-Gm-Message-State: AA+aEWZjcBRZcUo4yZ8Nx3YrhMjv77YhEFSEXIN905+kffO+8TUamfvz
-        9dT2TOW4ktm93nmcF7btc27c+qRuqVK9+oRWO1o=
-X-Google-Smtp-Source: AFSGD/XACUEsaYE/5CSRduyEkcN+PnEm6s3o040VE8t092qXBYgTa+EMxTvdzcPpO+9cJ+KhgJLkVs7PRdH3XWBcPsU=
-X-Received: by 2002:a0c:f50c:: with SMTP id j12mr16734587qvm.149.1544565200047;
- Tue, 11 Dec 2018 13:53:20 -0800 (PST)
+        h=x-gm-message-state:mime-version:content-transfer-encoding
+         :in-reply-to:message-id:to:subject:from:user-agent:references:cc
+         :date;
+        bh=ajn9n/zfE+h5ltelimETBP75iHPSzvnmxsltyMwfgqU=;
+        b=YrWNpahy2xinJkpmZgCk062GGZvjE6AC6hYiBJOGAaGIlll4KtF4DPiwEETzk/2QAE
+         DZ+cojcg6O+M5zlxix3HeK2usMcYPdLj46RvyKOu4fUk3oImDGv2nZuEzOk0F8w9rSzg
+         Yrmf2DvBN6HlIuNZIQl4l3thAunlpuMpSJaUDbalIhmDViVVZNsdSd23G0Vuc9YfOM7L
+         uzbsN51AN5fJKC3cwlHfTAZOCl09iOsmkuAXBnxa2/3UyGfBJiFRDS6MCFnNpyA5KS3v
+         wFEJfqnZiZlLHaFeucDHpo1O25zbk6zgs/tHNZT5ZcDddOL1gpEOag99GZJiFZEttjol
+         fUdg==
+X-Gm-Message-State: AA+aEWaJ6H9it6UXtFsFqUeGj6jss0iqO9QEv+5lB7KWP6QH+GJ1enHg
+        sqEtV5KjLQtytUQoDnuj7udQxw==
+X-Google-Smtp-Source: AFSGD/UWJ7jS3P2ZRHL9q6Auf4wEFSN/nGp2NE5APmKfkXo1OpncydDE7bIgxIYDh5vcDfMCDww+cg==
+X-Received: by 2002:a17:902:48:: with SMTP id 66mr17135040pla.68.1544565224406;
+        Tue, 11 Dec 2018 13:53:44 -0800 (PST)
+Received: from localhost ([2620:15c:202:1:fa53:7765:582b:82b9])
+        by smtp.gmail.com with ESMTPSA id w128sm24652550pfw.79.2018.12.11.13.53.43
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 11 Dec 2018 13:53:43 -0800 (PST)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <20181211200526.3868586-1-arnd@arndb.de> <20181211201909.GA6478@redhat.com>
- <alpine.DEB.2.21.1812111310320.87855@chino.kir.corp.google.com>
- <20181211213636.GB6478@redhat.com> <alpine.DEB.2.21.1812111341280.97190@chino.kir.corp.google.com>
-In-Reply-To: <alpine.DEB.2.21.1812111341280.97190@chino.kir.corp.google.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Tue, 11 Dec 2018 22:53:03 +0100
-Message-ID: <CAK8P3a1yn7RAp7Q29dx5Rcb0mCoDpcHPzxSGqKHdgfJd+=iiNw@mail.gmail.com>
-Subject: Re: [PATCH] mm/mmu_notifier: fix mmu_notifier_range_init warning
-To:     David Rientjes <rientjes@google.com>
-Cc:     =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Michal Hocko <mhocko@suse.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20181211094938.25086-6-rnayak@codeaurora.org>
+Message-ID: <154456522303.17204.12219752202510349550@swboyd.mtv.corp.google.com>
+To:     Rajendra Nayak <rnayak@codeaurora.org>, andy.gross@linaro.org,
+        collinsd@codeaurora.org, mka@chromium.org, robh@kernel.org,
+        ulf.hansson@linaro.org, viresh.kumar@linaro.org
+Subject: Re: [PATCH v6 05/10] arm64: dts: msm8996: Add rpmpd device node
+From:   Stephen Boyd <swboyd@chromium.org>
+User-Agent: alot/0.7
+References: <20181211094938.25086-1-rnayak@codeaurora.org> <20181211094938.25086-6-rnayak@codeaurora.org>
+Cc:     devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Rajendra Nayak <rnayak@codeaurora.org>
+Date:   Tue, 11 Dec 2018 13:53:43 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 11, 2018 at 10:43 PM David Rientjes <rientjes@google.com> wrote:
->
-> On Tue, 11 Dec 2018, Jerome Glisse wrote:
+Quoting Rajendra Nayak (2018-12-11 01:49:33)
+> Add rpmpd device node and its OPP table
+>=20
+> Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+> Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+> ---
 
->
-> Hmm, strange that Arnd's build failure is only reporting about an unused
-> variable instead of MMU_NOTIFY_CLEAR being undefined :/
->
-> I think this should be done so that anybody using
-> mmu_notifier_range_init() doesn't need to worry about the implications of
-> *any* unused formal parameter as a result of how the #define is formed:
+Reviewed-by: Stephen Boyd <swboyd@chromium.org>
 
-Your patch below is more or less what I tried at first, and that resulted
-in another build failure for
-
-mm/hugetlb.c:   mmu_notifier_range_init(&range, mm, start, end,
-MMU_NOTIFY_CLEAR);
-mm/hugetlb.c-   adjust_range_if_pmd_sharing_possible(vma,
-&range.start, &range.end);
-
-where range.end refers to a nonexisting member of range.
-
-          Arnd
