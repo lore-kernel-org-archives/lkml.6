@@ -2,101 +2,116 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CFE7C07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 11:51:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBF49C07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 11:53:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 486D720811
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 11:51:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 486D720811
+	by mail.kernel.org (Postfix) with ESMTP id 899BB20811
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 11:53:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 899BB20811
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726347AbeLKLvS (ORCPT
+        id S1726357AbeLKLxB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 06:51:18 -0500
-Received: from foss.arm.com ([217.140.101.70]:45448 "EHLO foss.arm.com"
+        Tue, 11 Dec 2018 06:53:01 -0500
+Received: from foss.arm.com ([217.140.101.70]:45512 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726227AbeLKLvR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 06:51:17 -0500
+        id S1726135AbeLKLxB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 06:53:01 -0500
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1B4D215AB;
-        Tue, 11 Dec 2018 03:51:17 -0800 (PST)
-Received: from [10.1.196.75] (e110467-lin.cambridge.arm.com [10.1.196.75])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 08B9E3F6A8;
-        Tue, 11 Dec 2018 03:51:15 -0800 (PST)
-Subject: Re: [PATCH] dma-debug: fix soft lockup when a lot of debug are
- enabled
-To:     Anders Roxell <anders.roxell@linaro.org>, hch@lst.de
-Cc:     m.szyprowski@samsung.com, iommu@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, rostedt@goodmis.org
-References: <20181211103616.22137-1-anders.roxell@linaro.org>
-From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <613667c4-f850-d88c-7a2e-76dda5d966f5@arm.com>
-Date:   Tue, 11 Dec 2018 11:51:14 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 51DEFEBD;
+        Tue, 11 Dec 2018 03:53:00 -0800 (PST)
+Received: from arrakis.emea.arm.com (arrakis.cambridge.arm.com [10.1.196.113])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A50BC3F6A8;
+        Tue, 11 Dec 2018 03:52:57 -0800 (PST)
+Date:   Tue, 11 Dec 2018 11:52:55 +0000
+From:   Catalin Marinas <catalin.marinas@arm.com>
+To:     Florian Weimer <fweimer@redhat.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>, Andy Lutomirski <luto@kernel.org>,
+        "H.J. Lu" <hjl.tools@gmail.com>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Borislav Petkov <bp@alien8.de>, vapier@gentoo.org,
+        Rich Felker <dalias@libc.org>, x32@buildd.debian.org,
+        Will Deacon <will.deacon@arm.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: Can we drop upstream Linux x32 support?
+Message-ID: <20181211115254.GC35824@arrakis.emea.arm.com>
+References: <CALCETrXoRAibsbWa9nfbDrt0iEuebMnCMhSFg-d9W-J2g8mDjw@mail.gmail.com>
+ <CAMe9rOp0m5sn59AsD2F2i2Ad2tb7ufPU1mMg-vUOfh+TnGMeaw@mail.gmail.com>
+ <CALCETrU5xw61=me1YcTO3VPzjNEZahMPpi-20-oiSGs+CHcj4g@mail.gmail.com>
+ <CAK8P3a0adxnXr9JLfpR5MBeEJXSCK2Rt4w7NFLUUwO6s6LBVPQ@mail.gmail.com>
+ <20181211113230.GB35824@arrakis.emea.arm.com>
+ <87efaoxpix.fsf@oldenburg2.str.redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <20181211103616.22137-1-anders.roxell@linaro.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87efaoxpix.fsf@oldenburg2.str.redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Anders,
-
-On 11/12/2018 10:36, Anders Roxell wrote:
-> When running a kernel in qemu with enough debugging options (slub-debug,
-> ftrace, kcov, kasan, ubsan, ...) enabled together, that results in a
-> slow initcall. So a 'watchdog: BUG: soft lockup' happens:
+On Tue, Dec 11, 2018 at 12:37:42PM +0100, Florian Weimer wrote:
+> * Catalin Marinas:
+> > On Tue, Dec 11, 2018 at 10:02:45AM +0100, Arnd Bergmann wrote:
+> >> On Tue, Dec 11, 2018 at 6:35 AM Andy Lutomirski <luto@kernel.org> wrote:
+> >> > I tried to understand what's going on.  As far as I can tell, most of
+> >> > the magic is the fact that __kernel_long_t and __kernel_ulong_t are
+> >> > 64-bit as seen by x32 user code.  This means that a decent number of
+> >> > uapi structures are the same on x32 and x86_64.  Syscalls that only
+> >> > use structures like this should route to the x86_64 entry points.  But
+> >> > the implementation is still highly dubious -- in_compat_syscall() will
+> >> > be *true* in such system calls,
+> >> 
+> >> I think the fundamental issue was that the intention had always been
+> >> to use only the 64-bit entry points for system calls, but the most
+> >> complex one we have -- ioctl() -- has to use the compat entry point
+> >> because device drivers define their own data structures using 'long'
+> >> and pointer members and they need translation, as well as
+> >> matching in_compat_syscall() checks. This in turn breaks down
+> >> again whenever a driver defines an ioctl command that takes
+> >> a __kernel_long_t or a derived type like timespec as its argument.
+> >
+> > With arm64 ILP32 we tried to avoid the ioctl() problem by having
+> > __kernel_long_t 32-bit, IOW mimicking the arm32 ABI (compat). The
+> > biggest pain point is signals where the state is completely different
+> > from arm32 (more, wider registers) and can't be dealt with by the compat
+> > layer.
 > 
-> [   44.105619] Call trace:
-> [   44.106709]  __slab_alloc+0x70/0x88
-> [   44.107757]  kmem_cache_alloc_trace+0x13c/0x590
-> [   44.108764]  prealloc_memory+0xb8/0x240
-> [   44.109768]  dma_debug_init+0x174/0x1f0
-> [   44.110725]  do_one_initcall+0x430/0x8b0
-> [   44.111719]  do_initcall_level+0x548/0x5b4
-> [   44.112672]  do_initcalls+0x28/0x4c
-> [   44.113628]  do_basic_setup+0x34/0x3c
-> [   44.114559]  kernel_init_freeable+0x194/0x24c
-> [   44.115570]  kernel_init+0x24/0x18c
-> [   44.116498]  ret_from_fork+0x10/0x18
-> 
-> Rework to call cond_resched(), in the function prealloc_memory()'s
-> for-loop.
+> I would expect to approach this from the opposite direction: use 64-bit
+> types in places where the 64-bit kernel interface uses 64-bit types.
+> After all, not everyone who is interested in ILP32 has a companion
+> 32-bit architecture which could serve as a model for the application
+> ABI.
 
-Funnily enough I've just done a bit of work in this area which should 
-make allocation a lot more efficient - would you mind giving this series 
-a spin on the same setup to see how much it helps the performance?
+I fully agree with you that if someone wants ILP32 for a 64-bit only
+architecture, they should use the 64-bit kernel interface and ensure
+POSIX is adjusted.
 
-https://lore.kernel.org/lkml/cover.1544447601.git.robin.murphy@arm.com/
+In the arm64 context, both options were discussed with the libc
+community complaining that a partial 64-bit syscall ABI breaks POSIX
+while the potential users were just asking for a 32-bit ABI to run their
+existing software stack on ARMv8 machines without native 32-bit support
+(until they complete the migration to 64-bit).
 
-Thanks,
-Robin.
+> (If there are conflicts with POSIX, then POSIX needs to be fixed to
+> support this.)
 
-> 
-> Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
-> ---
->   kernel/dma/debug.c | 1 +
->   1 file changed, 1 insertion(+)
-> 
-> diff --git a/kernel/dma/debug.c b/kernel/dma/debug.c
-> index 231ca4628062..2abdc265aec4 100644
-> --- a/kernel/dma/debug.c
-> +++ b/kernel/dma/debug.c
-> @@ -767,6 +767,7 @@ static int prealloc_memory(u32 num_entries)
->   	int i;
->   
->   	for (i = 0; i < num_entries; ++i) {
-> +		cond_resched();
->   		entry = kzalloc(sizeof(*entry), GFP_KERNEL);
->   		if (!entry)
->   			goto out_err;
-> 
+This would have been nice but no-one volunteered and, more importantly,
+there was no conclusive argument that ARM ILP32 is better than LP64
+(well, apart from a minority of benchmarks) and something that people
+would want to migrate to. Given that the only credible case made was
+about legacy code, we decided to go ahead with a (mostly) compat 32-bit
+ABI.
+
+-- 
+Catalin
