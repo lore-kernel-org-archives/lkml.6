@@ -2,146 +2,146 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.9 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ABA08C6783B
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 21:16:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23C4DC67839
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 21:19:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6E3A42086D
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 21:16:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E3A42086D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id CF8F820851
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 21:19:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cjz7Zjc0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF8F820851
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726283AbeLKVQI (ORCPT
+        id S1726235AbeLKVTb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 16:16:08 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:33273 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726134AbeLKVQH (ORCPT
+        Tue, 11 Dec 2018 16:19:31 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:41200 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726134AbeLKVTb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 16:16:07 -0500
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wBBLFvHJ4154914
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Tue, 11 Dec 2018 13:15:57 -0800
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wBBLFvAZ4154911;
-        Tue, 11 Dec 2018 13:15:57 -0800
-Date:   Tue, 11 Dec 2018 13:15:57 -0800
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Reinette Chatre <tipbot@zytor.com>
-Message-ID: <tip-52eb74339a6233c69f4e3794b69ea7c98eeeae1b@git.kernel.org>
-Cc:     bp@suse.de, tony.luck@intel.com, reinette.chatre@intel.com,
-        hpa@zytor.com, mingo@kernel.org, x86@kernel.org, mingo@redhat.com,
-        linux-kernel@vger.kernel.org, tglx@linutronix.de
-Reply-To: reinette.chatre@intel.com, bp@suse.de, tony.luck@intel.com,
-          tglx@linutronix.de, linux-kernel@vger.kernel.org,
-          mingo@redhat.com, hpa@zytor.com, mingo@kernel.org, x86@kernel.org
-In-Reply-To: <b88cd4ff6a75995bf8db9b0ea546908fe50f69f3.1544479852.git.reinette.chatre@intel.com>
-References: <b88cd4ff6a75995bf8db9b0ea546908fe50f69f3.1544479852.git.reinette.chatre@intel.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/cache] x86/resctrl: Fix rdt_find_domain() return value and
- checks
-Git-Commit-ID: 52eb74339a6233c69f4e3794b69ea7c98eeeae1b
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Tue, 11 Dec 2018 16:19:31 -0500
+Received: by mail-pf1-f194.google.com with SMTP id b7so7733558pfi.8;
+        Tue, 11 Dec 2018 13:19:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=5cMRJK/3F6tDpiBvZXh3f8P7FS10joZts+DR0lTUuww=;
+        b=cjz7Zjc0gMM0VUiQDaJRA+1BzoOK+xk+5qWdRX9TmG4mrwfw4XiqUSPRiN5u3bvTEi
+         D2XwV+J7/6HRc4FT4NlaC4InKXR6ELVYMiWK9Igf2L/2DdwHMlhutclEglzUM1+655LN
+         YOhV4VLnIfcmhmlYrTiouq31pQOBOYiWOKKkngRSK7qqLn7aILdxLfTxsHlhVRUF8Ixy
+         lzIzyP8jJYGvYhmLeyjpX/lHKPm84+PiSRvq1uhgiWCOoatHZ5bUW2iN/3a+8ZYW4m3V
+         MRf7FdzjPX08xp5l9+RMdKffSiYtLXRZWfItIJOmB9R7cOAuRsqv9L9ZFK6CS/5sZqaR
+         ucRQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=5cMRJK/3F6tDpiBvZXh3f8P7FS10joZts+DR0lTUuww=;
+        b=FcXU+G1mzMG99XmBBU15z/Cxq3m+NiU/FQHD/Zc7v1IqP7a+3saAyJIzMMnVs6Y51O
+         fthAkWsZnyIhIKqq0ZCz8zXsE2loX7CJ1PJEIeEg8Y3KmafPzNuQAJYvgIMT/fJOgakc
+         2KNkXL0pdYb/aOdlSv62TrBV5d0HnZ2jlDj+g/mg/MM/5mPklT9Jc/I+x2/+PF1a9+vv
+         RKcFIg8uY6reyNCDP8QdNZuQnjbBLxg2Udb80s5EaWco5fNt6wDqoaOibJDF+PkzJadY
+         uRkm1cEZKjS3KI/WVMmNnVCoyBYtkeiiH+ipJH3kBnBDA6b7kaCDne200Yto6byc/HVH
+         OqWg==
+X-Gm-Message-State: AA+aEWarCvl20l2gveLtUPI1Iu03Flo/TiwGmSiWCL7q4hSXlGwRNGbx
+        u+dfRvc92ZipcmevC9l5ht8=
+X-Google-Smtp-Source: AFSGD/XrRgA2FiLEmxa12zGcslH3ljYckka3zEk+G1FIS0TZV0Pk/Pk5BFcLv3JMpU9cFvYEuByLQQ==
+X-Received: by 2002:a63:61c8:: with SMTP id v191mr16275116pgb.242.1544563169769;
+        Tue, 11 Dec 2018 13:19:29 -0800 (PST)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id g136sm22600461pfb.154.2018.12.11.13.19.28
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 11 Dec 2018 13:19:29 -0800 (PST)
+Date:   Tue, 11 Dec 2018 13:19:28 -0800
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Nathan Chancellor <natechancellor@gmail.com>
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] media: ddbridge: Move asm includes after linux ones
+Message-ID: <20181211211928.GA5922@roeck-us.net>
+References: <20181210233514.3069-1-natechancellor@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20181210233514.3069-1-natechancellor@gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  52eb74339a6233c69f4e3794b69ea7c98eeeae1b
-Gitweb:     https://git.kernel.org/tip/52eb74339a6233c69f4e3794b69ea7c98eeeae1b
-Author:     Reinette Chatre <reinette.chatre@intel.com>
-AuthorDate: Mon, 10 Dec 2018 14:31:13 -0800
-Committer:  Borislav Petkov <bp@suse.de>
-CommitDate: Tue, 11 Dec 2018 22:09:28 +0100
+On Mon, Dec 10, 2018 at 04:35:14PM -0700, Nathan Chancellor wrote:
+> Without this, cpumask_t and bool are not defined:
+> 
+> In file included from drivers/media/pci/ddbridge/ddbridge-ci.c:19:
+> In file included from drivers/media/pci/ddbridge/ddbridge.h:22:
+> ./arch/arm/include/asm/irq.h:35:50: error: unknown type name 'cpumask_t'
+> extern void arch_trigger_cpumask_backtrace(const cpumask_t *mask,
+>                                                  ^
+> ./arch/arm/include/asm/irq.h:36:9: error: unknown type name 'bool'
+>                                            bool exclude_self);
+>                                            ^
+> 
+> Doing a survey of the kernel tree, this appears to be expected because
+> '#include <asm/irq.h>' is always after the linux includes.
+> 
+> This also fixes warnings of this variety (with Clang):
+> 
+> In file included from drivers/media/pci/ddbridge/ddbridge-ci.c:19:
+> In file included from drivers/media/pci/ddbridge/ddbridge.h:56:
+> In file included from ./include/media/dvb_net.h:22:
+> In file included from ./include/linux/netdevice.h:50:
+> In file included from ./include/uapi/linux/neighbour.h:6:
+> In file included from ./include/linux/netlink.h:9:
+> In file included from ./include/net/scm.h:11:
+> In file included from ./include/linux/sched/signal.h:6:
+> ./include/linux/signal.h:87:11: warning: array index 3 is past the end
+> of the array (which contains 2 elements) [-Warray-bounds]
+>                 return (set->sig[3] | set->sig[2] |
+>                         ^        ~
+> ./arch/arm/include/asm/signal.h:17:2: note: array 'sig' declared here
+>         unsigned long sig[_NSIG_WORDS];
+>         ^
+> 
+> Fixes: b6973637c4cc ("media: ddbridge: remove another duplicate of io.h and sort includes")
+> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
 
-x86/resctrl: Fix rdt_find_domain() return value and checks
+Tested-by: Guenter Roeck <linux@roeck-us.net>
 
-rdt_find_domain() returns an ERR_PTR() that is generated from a provided
-domain id when the value is negative.
-
-Care needs to be taken when creating an ERR_PTR() from this value
-because a subsequent check using IS_ERR() expects the error to
-be within the MAX_ERRNO range. Using an invalid domain id as an
-ERR_PTR() does work at this time since this is currently always -1.
-Using this undocumented assumption is fragile since future users of
-rdt_find_domain() may not be aware of thus assumption.
-
-Two related issues are addressed:
-
-- Ensure that rdt_find_domain() always returns a valid error value by
-forcing the error to be -ENODEV when a negative domain id is provided.
-
-- In a few instances the return value of rdt_find_domain() is just
-checked for NULL - fix these to include a check of ERR_PTR.
-
-Fixes: d89b7379015f ("x86/intel_rdt/cqm: Add mon_data")
-Fixes: 521348b011d6 ("x86/intel_rdt: Introduce utility to obtain CDP peer")
-Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Tony Luck <tony.luck@intel.com>
-Cc: fenghua.yu@intel.com
-Cc: gavin.hindman@intel.com
-Cc: jithu.joseph@intel.com
-Cc: x86-ml <x86@kernel.org>
-Link: https://lkml.kernel.org/r/b88cd4ff6a75995bf8db9b0ea546908fe50f69f3.1544479852.git.reinette.chatre@intel.com
----
- arch/x86/kernel/cpu/resctrl/core.c        | 2 +-
- arch/x86/kernel/cpu/resctrl/ctrlmondata.c | 2 +-
- arch/x86/kernel/cpu/resctrl/rdtgroup.c    | 2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/arch/x86/kernel/cpu/resctrl/core.c b/arch/x86/kernel/cpu/resctrl/core.c
-index 2ec252be4ed9..c3a9dc63edf2 100644
---- a/arch/x86/kernel/cpu/resctrl/core.c
-+++ b/arch/x86/kernel/cpu/resctrl/core.c
-@@ -454,7 +454,7 @@ struct rdt_domain *rdt_find_domain(struct rdt_resource *r, int id,
- 	struct list_head *l;
- 
- 	if (id < 0)
--		return ERR_PTR(id);
-+		return ERR_PTR(-ENODEV);
- 
- 	list_for_each(l, &r->domains) {
- 		d = list_entry(l, struct rdt_domain, list);
-diff --git a/arch/x86/kernel/cpu/resctrl/ctrlmondata.c b/arch/x86/kernel/cpu/resctrl/ctrlmondata.c
-index ba11f54f5ab8..3b943ace786c 100644
---- a/arch/x86/kernel/cpu/resctrl/ctrlmondata.c
-+++ b/arch/x86/kernel/cpu/resctrl/ctrlmondata.c
-@@ -534,7 +534,7 @@ int rdtgroup_mondata_show(struct seq_file *m, void *arg)
- 
- 	r = &rdt_resources_all[resid];
- 	d = rdt_find_domain(r, domid, NULL);
--	if (!d) {
-+	if (IS_ERR_OR_NULL(d)) {
- 		ret = -ENOENT;
- 		goto out;
- 	}
-diff --git a/arch/x86/kernel/cpu/resctrl/rdtgroup.c b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-index 017505017bdb..8388adf241b2 100644
---- a/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-+++ b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-@@ -1029,7 +1029,7 @@ static int rdt_cdp_peer_get(struct rdt_resource *r, struct rdt_domain *d,
- 	 * peer RDT CDP resource. Hence the WARN.
- 	 */
- 	_d_cdp = rdt_find_domain(_r_cdp, d->id, NULL);
--	if (WARN_ON(!_d_cdp)) {
-+	if (WARN_ON(IS_ERR_OR_NULL(_d_cdp))) {
- 		_r_cdp = NULL;
- 		ret = -EINVAL;
- 	}
+> ---
+>  drivers/media/pci/ddbridge/ddbridge.h | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/media/pci/ddbridge/ddbridge.h b/drivers/media/pci/ddbridge/ddbridge.h
+> index 0be6ed216e65..b834449e78f8 100644
+> --- a/drivers/media/pci/ddbridge/ddbridge.h
+> +++ b/drivers/media/pci/ddbridge/ddbridge.h
+> @@ -18,9 +18,6 @@
+>  #ifndef _DDBRIDGE_H_
+>  #define _DDBRIDGE_H_
+>  
+> -#include <asm/dma.h>
+> -#include <asm/irq.h>
+> -
+>  #include <linux/clk.h>
+>  #include <linux/completion.h>
+>  #include <linux/delay.h>
+> @@ -48,6 +45,9 @@
+>  #include <linux/vmalloc.h>
+>  #include <linux/workqueue.h>
+>  
+> +#include <asm/dma.h>
+> +#include <asm/irq.h>
+> +
+>  #include <media/dmxdev.h>
+>  #include <media/dvb_ca_en50221.h>
+>  #include <media/dvb_demux.h>
+> -- 
+> 2.20.0
+> 
