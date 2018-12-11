@@ -6,24 +6,24 @@ X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 315AFC07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 12:42:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFB5DC5CFFE
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 12:42:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F14462084A
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 12:42:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F14462084A
+	by mail.kernel.org (Postfix) with ESMTP id A24A82084C
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 12:42:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A24A82084C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codewreck.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726398AbeLKMmO (ORCPT
+        id S1726469AbeLKMmT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 07:42:14 -0500
-Received: from nautica.notk.org ([91.121.71.147]:49663 "EHLO nautica.notk.org"
+        Tue, 11 Dec 2018 07:42:19 -0500
+Received: from nautica.notk.org ([91.121.71.147]:49675 "EHLO nautica.notk.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726114AbeLKMmO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 07:42:14 -0500
+        id S1726203AbeLKMmQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 07:42:16 -0500
 Received: by nautica.notk.org (Postfix, from userid 1001)
-        id E5B0BC01D; Tue, 11 Dec 2018 13:42:11 +0100 (CET)
+        id 54B71C01E; Tue, 11 Dec 2018 13:42:13 +0100 (CET)
 From:   Dominique Martinet <asmadeus@codewreck.org>
 To:     v9fs-developer@lists.sourceforge.net
 Cc:     Dominique Martinet <dominique.martinet@cea.fr>,
@@ -32,10 +32,12 @@ Cc:     Dominique Martinet <dominique.martinet@cea.fr>,
         Latchesar Ionkov <lucho@ionkov.net>,
         Tomas Bortoli <tomasbortoli@gmail.com>,
         Dmitry Vyukov <dvyukov@google.com>
-Subject: [PATCH 1/3] 9p/net: implement asynchronous rpc
-Date:   Tue, 11 Dec 2018 13:41:46 +0100
-Message-Id: <1544532108-21689-1-git-send-email-asmadeus@codewreck.org>
+Subject: [PATCH 2/3] 9p/net: make clunk asynchronous
+Date:   Tue, 11 Dec 2018 13:41:47 +0100
+Message-Id: <1544532108-21689-2-git-send-email-asmadeus@codewreck.org>
 X-Mailer: git-send-email 1.7.10.4
+In-Reply-To: <1544532108-21689-1-git-send-email-asmadeus@codewreck.org>
+References: <1544532108-21689-1-git-send-email-asmadeus@codewreck.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -43,20 +45,14 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Dominique Martinet <dominique.martinet@cea.fr>
 
-Add p9_client_async_rpc that will let us send an rpc without waiting
-for the reply, as well as an async handler hook.
+clunk is defined as making the fid invalid whatever the server returns,
+and we should ignore errors so it is a good candidate for async call.
 
-The work done in the hook could mostly be done in the client callback,
-but I prefered not to for a couple of reasons:
- - the callback can be called in an IRQ for some transports, and the
-handler needs to call p9_tag_remove which takes the client lock that has
-recently been reworked to not be irq-compatible (as it was never taken
-in IRQs until now)
- - the handled replies can be handled anytime, there is nothing the
-userspace would care about and want to be notified of quickly
- - the async request list and this function would be needed anyway for
-when we disconnect the client, in order to not leak async requests that
-haven't been replied to
+The change should make 9p slightly faster (many vfs systeme calls won't
+need to wait for that clunk), but more importantly the flush rework
+means we won't clear pending signals and the current implementation of
+"retry twice then leak the fid" will stop working, so this needed
+improving.
 
 Signed-off-by: Dominique Martinet <dominique.martinet@cea.fr>
 Cc: Eric Van Hensbergen <ericvh@gmail.com>
@@ -64,166 +60,202 @@ Cc: Latchesar Ionkov <lucho@ionkov.net>
 Cc: Tomas Bortoli <tomasbortoli@gmail.com>
 Cc: Dmitry Vyukov <dvyukov@google.com>
 ---
-
-I've been sitting on these patches for almost a month now because I
-wanted to fix the cancel race, but I think it's what the most recent
-syzbot email is about so if it could find it without this it probably
-won't hurt to at least get some reviews for these three patches first.
-
-I won't submit these for next cycle, so will only put them into -next
-after 4.20 is released; hopefully I'll have time to look at the two
-pending refcount races around that time.
-Until then, comments please!
-
-
- include/net/9p/client.h |  9 +++++-
- net/9p/client.c         | 64 +++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 72 insertions(+), 1 deletion(-)
+ include/net/9p/client.h |   4 ++
+ net/9p/client.c         | 124 +++++++++++++++++++---------------------
+ 2 files changed, 62 insertions(+), 66 deletions(-)
 
 diff --git a/include/net/9p/client.h b/include/net/9p/client.h
-index 947a570307a6..a4ded7666c73 100644
+index a4ded7666c73..75d7f83e5b94 100644
 --- a/include/net/9p/client.h
 +++ b/include/net/9p/client.h
-@@ -89,7 +89,8 @@ enum p9_req_status_t {
-  * @tc: the request fcall structure
-  * @rc: the response fcall structure
+@@ -91,6 +91,7 @@ enum p9_req_status_t {
   * @aux: transport specific data (provided for trans_fd migration)
-- * @req_list: link for higher level objects to chain requests
-+ * @req_list: link used by trans_fd
-+ * @async_list: link used to check on async requests
+  * @req_list: link used by trans_fd
+  * @async_list: link used to check on async requests
++ * @clunked_fid: for clunk, points to fid
   */
  struct p9_req_t {
  	int status;
-@@ -100,6 +101,7 @@ struct p9_req_t {
- 	struct p9_fcall rc;
+@@ -102,6 +103,9 @@ struct p9_req_t {
  	void *aux;
  	struct list_head req_list;
-+	struct list_head async_list;
+ 	struct list_head async_list;
++	union {
++		struct p9_fid *clunked_fid;
++	};
  };
  
  /**
-@@ -110,6 +112,9 @@ struct p9_req_t {
-  * @trans_mod: module API instantiated with this client
-  * @status: connection state
-  * @trans: tranport instance state and API
-+ * @fcall_cache: kmem cache for client request data (msize-specific)
-+ * @async_req_lock: protects @async_req_list
-+ * @async_req_list: list of requests waiting a reply
-  * @fids: All active FID handles
-  * @reqs: All active requests.
-  * @name: node name used as client id
-@@ -125,6 +130,8 @@ struct p9_client {
- 	enum p9_trans_status status;
- 	void *trans;
- 	struct kmem_cache *fcall_cache;
-+	spinlock_t async_req_lock;
-+	struct list_head async_req_list;
- 
- 	union {
- 		struct {
 diff --git a/net/9p/client.c b/net/9p/client.c
-index 357214a51f13..0a67c3ccd4fd 100644
+index 0a67c3ccd4fd..a47b5a54573d 100644
 --- a/net/9p/client.c
 +++ b/net/9p/client.c
-@@ -729,6 +729,62 @@ static struct p9_req_t *p9_client_prepare_req(struct p9_client *c,
- 	return ERR_PTR(err);
+@@ -649,6 +649,51 @@ static int p9_check_zc_errors(struct p9_client *c, struct p9_req_t *req,
+ 	return err;
  }
  
-+static struct p9_req_t *
-+p9_client_async_rpc(struct p9_client *c, int8_t type, const char *fmt, ...)
++static struct p9_fid *p9_fid_create(struct p9_client *clnt)
 +{
-+	va_list ap;
-+	int err;
-+	struct p9_req_t *req;
++	int ret;
++	struct p9_fid *fid;
 +
-+	va_start(ap, fmt);
-+	req = p9_client_prepare_req(c, type, c->msize, fmt, ap);
-+	va_end(ap);
-+	if (IS_ERR(req))
-+		return req;
++	p9_debug(P9_DEBUG_FID, "clnt %p\n", clnt);
++	fid = kmalloc(sizeof(struct p9_fid), GFP_KERNEL);
++	if (!fid)
++		return NULL;
 +
-+	err = c->trans_mod->request(c, req);
-+	if (err < 0) {
-+		/* bail out without flushing... */
-+		p9_req_put(req);
-+		p9_tag_remove(c, req);
-+		if (err != -ERESTARTSYS && err != -EFAULT)
-+			c->status = Disconnected;
-+		return ERR_PTR(safe_errno(err));
-+	}
++	memset(&fid->qid, 0, sizeof(struct p9_qid));
++	fid->mode = -1;
++	fid->uid = current_fsuid();
++	fid->clnt = clnt;
++	fid->rdir = NULL;
++	fid->fid = 0;
 +
-+	return req;
++	idr_preload(GFP_KERNEL);
++	spin_lock_irq(&clnt->lock);
++	ret = idr_alloc_u32(&clnt->fids, fid, &fid->fid, P9_NOFID - 1,
++			    GFP_NOWAIT);
++	spin_unlock_irq(&clnt->lock);
++	idr_preload_end();
++
++	if (!ret)
++		return fid;
++
++	kfree(fid);
++	return NULL;
 +}
 +
-+static void p9_client_handle_async(struct p9_client *c, bool free_all)
++static void p9_fid_destroy(struct p9_fid *fid)
 +{
-+	struct p9_req_t *req, *nreq;
++	struct p9_client *clnt;
++	unsigned long flags;
 +
-+	/* it's ok to miss some async replies here, do a quick check without
-+	 * lock first unless called with free_all
-+	 */
-+	if (!free_all && list_empty(&c->async_req_list))
-+		return;
-+
-+	spin_lock_irq(&c->async_req_lock);
-+	list_for_each_entry_safe(req, nreq, &c->async_req_list, async_list) {
-+		if (free_all && req->status < REQ_STATUS_RCVD) {
-+			p9_debug(P9_DEBUG_ERROR,
-+				 "final async handler found req tag %d type %d status %d\n",
-+				 req->tc.tag, req->tc.id, req->status);
-+			if (c->trans_mod->cancelled)
-+				c->trans_mod->cancelled(c, req);
-+			/* won't receive reply now */
-+			p9_req_put(req);
-+		}
-+		if (free_all || req->status >= REQ_STATUS_RCVD) {
-+			/* Put old refs whatever reqs actually returned */
-+			list_del(&req->async_list);
-+			p9_tag_remove(c, req);
-+		}
-+	}
-+	spin_unlock_irq(&c->async_req_lock);
++	p9_debug(P9_DEBUG_FID, "fid %d\n", fid->fid);
++	clnt = fid->clnt;
++	spin_lock_irqsave(&clnt->lock, flags);
++	idr_remove(&clnt->fids, fid->fid);
++	spin_unlock_irqrestore(&clnt->lock, flags);
++	kfree(fid->rdir);
++	kfree(fid);
 +}
 +
- /**
-  * p9_client_rpc - issue a request and wait for a response
-  * @c: client session
-@@ -746,6 +802,8 @@ p9_client_rpc(struct p9_client *c, int8_t type, const char *fmt, ...)
- 	unsigned long flags;
+ static struct p9_req_t *
+ p9_client_rpc(struct p9_client *c, int8_t type, const char *fmt, ...);
+ 
+@@ -778,6 +823,9 @@ static void p9_client_handle_async(struct p9_client *c, bool free_all)
+ 		}
+ 		if (free_all || req->status >= REQ_STATUS_RCVD) {
+ 			/* Put old refs whatever reqs actually returned */
++			if (req->tc.id == P9_TCLUNK) {
++				p9_fid_destroy(req->clunked_fid);
++			}
+ 			list_del(&req->async_list);
+ 			p9_tag_remove(c, req);
+ 		}
+@@ -959,51 +1007,6 @@ static struct p9_req_t *p9_client_zc_rpc(struct p9_client *c, int8_t type,
+ 	return ERR_PTR(safe_errno(err));
+ }
+ 
+-static struct p9_fid *p9_fid_create(struct p9_client *clnt)
+-{
+-	int ret;
+-	struct p9_fid *fid;
+-
+-	p9_debug(P9_DEBUG_FID, "clnt %p\n", clnt);
+-	fid = kmalloc(sizeof(struct p9_fid), GFP_KERNEL);
+-	if (!fid)
+-		return NULL;
+-
+-	memset(&fid->qid, 0, sizeof(struct p9_qid));
+-	fid->mode = -1;
+-	fid->uid = current_fsuid();
+-	fid->clnt = clnt;
+-	fid->rdir = NULL;
+-	fid->fid = 0;
+-
+-	idr_preload(GFP_KERNEL);
+-	spin_lock_irq(&clnt->lock);
+-	ret = idr_alloc_u32(&clnt->fids, fid, &fid->fid, P9_NOFID - 1,
+-			    GFP_NOWAIT);
+-	spin_unlock_irq(&clnt->lock);
+-	idr_preload_end();
+-
+-	if (!ret)
+-		return fid;
+-
+-	kfree(fid);
+-	return NULL;
+-}
+-
+-static void p9_fid_destroy(struct p9_fid *fid)
+-{
+-	struct p9_client *clnt;
+-	unsigned long flags;
+-
+-	p9_debug(P9_DEBUG_FID, "fid %d\n", fid->fid);
+-	clnt = fid->clnt;
+-	spin_lock_irqsave(&clnt->lock, flags);
+-	idr_remove(&clnt->fids, fid->fid);
+-	spin_unlock_irqrestore(&clnt->lock, flags);
+-	kfree(fid->rdir);
+-	kfree(fid);
+-}
+-
+ static int p9_client_version(struct p9_client *c)
+ {
+ 	int err = 0;
+@@ -1534,7 +1537,6 @@ int p9_client_clunk(struct p9_fid *fid)
+ 	int err;
+ 	struct p9_client *clnt;
  	struct p9_req_t *req;
+-	int retries = 0;
  
-+	p9_client_handle_async(c, 0);
-+
- 	va_start(ap, fmt);
- 	req = p9_client_prepare_req(c, type, c->msize, fmt, ap);
- 	va_end(ap);
-@@ -841,6 +899,8 @@ static struct p9_req_t *p9_client_zc_rpc(struct p9_client *c, int8_t type,
- 	unsigned long flags;
- 	struct p9_req_t *req;
+ 	if (!fid) {
+ 		pr_warn("%s (%d): Trying to clunk with NULL fid\n",
+@@ -1543,33 +1545,23 @@ int p9_client_clunk(struct p9_fid *fid)
+ 		return 0;
+ 	}
  
-+	p9_client_handle_async(c, 0);
-+
- 	va_start(ap, fmt);
- 	/*
- 	 * We allocate a inline protocol data of only 4k bytes.
-@@ -1030,6 +1090,8 @@ struct p9_client *p9_client_create(const char *dev_name, char *options)
- 	memcpy(clnt->name, client_id, strlen(client_id) + 1);
+-again:
+-	p9_debug(P9_DEBUG_9P, ">>> TCLUNK fid %d (try %d)\n", fid->fid,
+-								retries);
++	p9_debug(P9_DEBUG_9P, ">>> TCLUNK fid %d\n", fid->fid);
+ 	err = 0;
+ 	clnt = fid->clnt;
  
- 	spin_lock_init(&clnt->lock);
-+	spin_lock_init(&clnt->async_req_lock);
-+	INIT_LIST_HEAD(&clnt->async_req_list);
- 	idr_init(&clnt->fids);
- 	idr_init(&clnt->reqs);
+-	req = p9_client_rpc(clnt, P9_TCLUNK, "d", fid->fid);
++	req = p9_client_async_rpc(clnt, P9_TCLUNK, "d", fid->fid);
+ 	if (IS_ERR(req)) {
+-		err = PTR_ERR(req);
+-		goto error;
++		return PTR_ERR(req);
+ 	}
  
-@@ -1101,6 +1163,8 @@ void p9_client_destroy(struct p9_client *clnt)
+-	p9_debug(P9_DEBUG_9P, "<<< RCLUNK fid %d\n", fid->fid);
++	p9_debug(P9_DEBUG_MUX, "sent clunk for fid %d, tag %d\n",
++		 fid->fid, req->tc.tag);
++	req->clunked_fid = fid;
++	spin_lock_irq(&clnt->lock);
++	list_add(&req->async_list, &clnt->async_req_list);
++	spin_unlock_irq(&clnt->lock);
  
- 	v9fs_put_trans(clnt->trans_mod);
+-	p9_tag_remove(clnt, req);
+-error:
+-	/*
+-	 * Fid is not valid even after a failed clunk
+-	 * If interrupted, retry once then give up and
+-	 * leak fid until umount.
+-	 */
+-	if (err == -ERESTARTSYS) {
+-		if (retries++ == 0)
+-			goto again;
+-	} else
+-		p9_fid_destroy(fid);
+-	return err;
++	return 0;
+ }
+ EXPORT_SYMBOL(p9_client_clunk);
  
-+	p9_client_handle_async(clnt, 1);
-+
- 	idr_for_each_entry(&clnt->fids, fid, id) {
- 		pr_info("Found fid %d not clunked\n", fid->fid);
- 		p9_fid_destroy(fid);
 -- 
 2.19.2
 
