@@ -2,110 +2,127 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB0E3C5CFFE
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:44:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DAE91C07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:44:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7BD742082F
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:44:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7BD742082F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 9AB672087F
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:44:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544543077;
+	bh=b7pxRANfTuSHHeZs2TXagvqzDHCv6dozbI6LKrVMaCQ=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=G2wy5VfCOtzpMrxsWSNfl/voHxlWFyYcHWNZ9/+oGBMYPDoXbHo4+PEv8kTYGjNR5
+	 zIzj8/q3BhTVrVQmeJlz3dmXB0Mdmn1/9pfz5cZvkJQVsGGTwUucsSf+dyQwwuN1OT
+	 QCu/+ZrzCTVOFGE4OAhLehKiz3GDx7wRZkc4tpCw=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9AB672087F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727877AbeLKPoc (ORCPT
+        id S1727891AbeLKPof (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 10:44:32 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:54669 "EHLO mail.bootlin.com"
+        Tue, 11 Dec 2018 10:44:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:32928 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727854AbeLKPo3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:44:29 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 4A6EE20726; Tue, 11 Dec 2018 16:44:27 +0100 (CET)
-Received: from localhost (aaubervilliers-681-1-89-7.w90-88.abo.wanadoo.fr [90.88.30.7])
-        by mail.bootlin.com (Postfix) with ESMTPSA id D2AFE2039F;
-        Tue, 11 Dec 2018 16:44:26 +0100 (CET)
-Date:   Tue, 11 Dec 2018 16:44:27 +0100
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Jagan Teki <jagan@amarulasolutions.com>
-Cc:     Yong Deng <yong.deng@magewell.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Chen-Yu Tsai <wens@csie.org>, linux-media@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-sunxi <linux-sunxi@googlegroups.com>,
-        linux-amarula@amarulasolutions.com,
-        Michael Trimarchi <michael@amarulasolutions.com>
-Subject: Re: [PATCH v3 3/6] media: sun6i: Set 300MHz mod clock for A64
-Message-ID: <20181211154427.uekytnmp2wlgxwm2@flea>
-References: <20181210115246.8188-1-jagan@amarulasolutions.com>
- <20181210115246.8188-4-jagan@amarulasolutions.com>
+        id S1727878AbeLKPoc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 10:44:32 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 56AE52082F;
+        Tue, 11 Dec 2018 15:44:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544543071;
+        bh=b7pxRANfTuSHHeZs2TXagvqzDHCv6dozbI6LKrVMaCQ=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=Me9ngs6gT7fepWQ8Kn69wMHCFgkMfdlrjcQq4V55WBmpSq2cC20XKFXiCVMj+sAof
+         81LEhs2jLLaW0niEVCJUbTwQ6o0iJl+jIPUbe1VmzCl50ww1oO6ToBYmFdfNgLyAwd
+         8PzUKuc7tLNdW7ZWNt6cL/k/jLbAcjQnfQ/yYcuA=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org,
+        Mathias Nyman <mathias.nyman@linux.intel.com>
+Subject: [PATCH 3.18 49/54] xhci: Prevent U1/U2 link pm states if exit latency is too long
+Date:   Tue, 11 Dec 2018 16:41:37 +0100
+Message-Id: <20181211151548.818270301@linuxfoundation.org>
+X-Mailer: git-send-email 2.20.0
+In-Reply-To: <20181211151546.010073210@linuxfoundation.org>
+References: <20181211151546.010073210@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="faq7xos5ziv2e6ih"
-Content-Disposition: inline
-In-Reply-To: <20181210115246.8188-4-jagan@amarulasolutions.com>
-User-Agent: NeoMutt/20180716
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+3.18-stable review patch.  If anyone has any objections, please let me know.
 
---faq7xos5ziv2e6ih
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+------------------
 
-On Mon, Dec 10, 2018 at 05:22:43PM +0530, Jagan Teki wrote:
-> The default CSI_SCLK seems unable to drive the sensor to capture
-> the image, so update it to working clock rate 300MHz for A64.
->=20
-> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> ---
->  drivers/media/platform/sunxi/sun6i-csi/sun6i_csi.c | 5 +++++
->  1 file changed, 5 insertions(+)
->=20
-> diff --git a/drivers/media/platform/sunxi/sun6i-csi/sun6i_csi.c b/drivers=
-/media/platform/sunxi/sun6i-csi/sun6i_csi.c
-> index bbe45e893722..4b872800b244 100644
-> --- a/drivers/media/platform/sunxi/sun6i-csi/sun6i_csi.c
-> +++ b/drivers/media/platform/sunxi/sun6i-csi/sun6i_csi.c
-> @@ -822,6 +822,11 @@ static int sun6i_csi_resource_request(struct sun6i_c=
-si_dev *sdev,
->  		return PTR_ERR(sdev->clk_mod);
->  	}
-> =20
-> +	/* A64 need 300MHz mod clock to operate properly */
-> +	if (of_device_is_compatible(pdev->dev.of_node,
-> +				    "allwinner,sun50i-a64-csi"))
-> +		clk_set_rate_exclusive(sdev->clk_mod, 300000000);
-> +
+From: Mathias Nyman <mathias.nyman@linux.intel.com>
 
-Where is that 300MHz coming from? You claim in your comment that it
-"operates properly", yet in your previous mail about this, you were
-saying that 1080p @30Hz is broken. Which one is it?
+commit 0472bf06c6fd33c1a18aaead4c8f91e5a03d8d7b upstream.
 
-Maxime
+Don't allow USB3 U1 or U2 if the latency to wake up from the U-state
+reaches the service interval for a periodic endpoint.
 
---=20
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+This is according to xhci 1.1 specification section 4.23.5.2 extra note:
 
---faq7xos5ziv2e6ih
-Content-Type: application/pgp-signature; name="signature.asc"
+"Software shall ensure that a device is prevented from entering a U-state
+ where its worst case exit latency approaches the ESIT."
 
------BEGIN PGP SIGNATURE-----
+Allowing too long exit latencies for periodic endpoint confuses xHC
+internal scheduling, and new devices may fail to enumerate with a
+"Not enough bandwidth for new device state" error from the host.
 
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXA/bWwAKCRDj7w1vZxhR
-xdDMAP94RaXCEgkDKmVxakpYTM+VI1y0/E/u//LXpAldXToWTAEA7RxTw+Ks7v57
-n5wjkBLnnQ0f0JWPzzSZZmA5AlLAUwY=
-=eSxP
------END PGP SIGNATURE-----
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
---faq7xos5ziv2e6ih--
+---
+ drivers/usb/host/xhci.c |   16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
+
+--- a/drivers/usb/host/xhci.c
++++ b/drivers/usb/host/xhci.c
+@@ -4377,6 +4377,14 @@ static u16 xhci_calculate_u1_timeout(str
+ {
+ 	unsigned long long timeout_ns;
+ 
++	/* Prevent U1 if service interval is shorter than U1 exit latency */
++	if (usb_endpoint_xfer_int(desc) || usb_endpoint_xfer_isoc(desc)) {
++		if (xhci_service_interval_to_ns(desc) <= udev->u1_params.mel) {
++			dev_dbg(&udev->dev, "Disable U1, ESIT shorter than exit latency\n");
++			return USB3_LPM_DISABLED;
++		}
++	}
++
+ 	if (xhci->quirks & XHCI_INTEL_HOST)
+ 		timeout_ns = xhci_calculate_intel_u1_timeout(udev, desc);
+ 	else
+@@ -4433,6 +4441,14 @@ static u16 xhci_calculate_u2_timeout(str
+ {
+ 	unsigned long long timeout_ns;
+ 
++	/* Prevent U2 if service interval is shorter than U2 exit latency */
++	if (usb_endpoint_xfer_int(desc) || usb_endpoint_xfer_isoc(desc)) {
++		if (xhci_service_interval_to_ns(desc) <= udev->u2_params.mel) {
++			dev_dbg(&udev->dev, "Disable U2, ESIT shorter than exit latency\n");
++			return USB3_LPM_DISABLED;
++		}
++	}
++
+ 	if (xhci->quirks & XHCI_INTEL_HOST)
+ 		timeout_ns = xhci_calculate_intel_u2_timeout(udev, desc);
+ 	else
+
+
