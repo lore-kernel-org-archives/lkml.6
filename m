@@ -2,246 +2,484 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41B25C6783B
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 22:14:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7114CC6783B
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 22:14:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ECD3420851
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 22:14:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=mailprotect.be header.i=@mailprotect.be header.b="FWYWJW0i"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ECD3420851
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=acm.org
+	by mail.kernel.org (Postfix) with ESMTP id 1E19B20851
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 22:14:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E19B20851
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726401AbeLKWOQ (ORCPT
+        id S1726506AbeLKWOz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 17:14:16 -0500
-Received: from com-out001.mailprotect.be ([83.217.72.83]:49095 "EHLO
-        com-out001.mailprotect.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726298AbeLKWOL (ORCPT
+        Tue, 11 Dec 2018 17:14:55 -0500
+Received: from mail-ua1-f65.google.com ([209.85.222.65]:40163 "EHLO
+        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726308AbeLKWOP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 17:14:11 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=mailprotect.be; s=mail; h=Content-Transfer-Encoding:MIME-Version:References
-        :In-Reply-To:Message-Id:Date:Subject:Cc:To:From:reply-to:sender:bcc:
-        content-type; bh=JwZMCMgn78abkOFENRU//jXfCeqdU/Sl/6xQSeD9x5A=; b=FWYWJW0i3zvV
-        umacMLC5rzhiUd0Jf4P1n3bXzue3U7h465e8cTaQe+YJSZRT19T4d6IsBRsUbrV6UOw/hKE6uwgWe
-        iolxXIt40vdD1MlbDgPj5Tn2DdgFLqlNf/l33lL4x2Oz4YVVm2tye7LLhwVsdOuhuNKXcEV9NjU6A
-        4Hrdaohfwdwz/4QcbUgstSjrpuQs35gSM2OOOOYiRGvRWOOvwhOFcDa2kGD1Eh88gcH56uTdJuRYf
-        DhiVknBwzxwdDR8+xfK7+ByIe2Aoq9LKDlZ9TElwOsnOzW6P/pCGtGgw7EKKyWKZYKzRxvPtlDbdX
-        4R/WpxLa5bRspwkC6RG1bg==;
-Received: from smtp-auth.mailprotect.be ([178.208.39.155])
-        by com-mpt-out001.mailprotect.be with esmtp (Exim 4.89)
-        (envelope-from <bvanassche@acm.org>)
-        id 1gWqHt-0005M7-1A; Tue, 11 Dec 2018 23:13:57 +0100
-Received: from desktop-bart.svl.corp.google.com (unknown [104.133.8.89])
-        (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by smtp-auth.mailprotect.be (Postfix) with ESMTPSA id 3AD86C0718;
-        Tue, 11 Dec 2018 23:13:55 +0100 (CET)
-From:   Bart Van Assche <bvanassche@acm.org>
-To:     peterz@infradead.org
-Cc:     mingo@redhat.com, tj@kernel.org, longman@redhat.com,
-        johannes.berg@intel.com, linux-kernel@vger.kernel.org,
-        Bart Van Assche <bvanassche@acm.org>,
-        Johannes Berg <johannes@sipsolutions.net>
-Subject: [PATCH v4 10/15] locking/lockdep: Reuse lock chains that have been freed
-Date:   Tue, 11 Dec 2018 14:13:16 -0800
-Message-Id: <20181211221321.196536-11-bvanassche@acm.org>
-X-Mailer: git-send-email 2.20.0.rc2.403.gdbc3b29805-goog
-In-Reply-To: <20181211221321.196536-1-bvanassche@acm.org>
-References: <20181211221321.196536-1-bvanassche@acm.org>
+        Tue, 11 Dec 2018 17:14:15 -0500
+Received: by mail-ua1-f65.google.com with SMTP id n7so5726713uao.7
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 14:14:14 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=dkU478LWAaLb4Ol4y/qFYD9IutDoc4youfnCAz0Ojrc=;
+        b=Spq6GZly/woS/9eUkCCGnMMbaQBoZbi+Xp14be6opCwVAJFNuoIV2PEygVVUJ69xq/
+         JAcoL/kNcXlUftjxUoLUeXsPPjUyzS46h3mbHdjRSiOBa1bqq83ViLNlN/OgYbmTacf9
+         6LJY1vzCZxOqEdllwEHzCW914YZJPNv1AMhyfToH25oAI7fo/B50M/Tdn469P81Hzfxx
+         igxCmoBO9G36ss3Emg15Ri03r3iLYR5ISRdAvibQxYqyMLopge79BN/3EYt75E32qvSF
+         lMHJ4RJRFY02NIQXz1sHh+rAMsNtR19m7pSOLFY+CqQIkDjGlpe3hzq4yVmLfNY0ws29
+         uTnQ==
+X-Gm-Message-State: AA+aEWbh7eksGWBHlJZz53PMFx9hRl5iiggDa9Fvir9DdMDYqlqOJprj
+        niGpipxYFeyaonvgn2Wcfkk16zqISieYfWHUbsI=
+X-Google-Smtp-Source: AFSGD/X1utqIvE+OT0Z4asXcDnDutTXpm9JVEWjN5w1IdPiD96qXlfP1uDAbLK5GraK+XtM3GA4D9arv6ZQLRtUloF8=
+X-Received: by 2002:ab0:210e:: with SMTP id d14mr8423329ual.20.1544566454163;
+ Tue, 11 Dec 2018 14:14:14 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: 178.208.39.155
-X-SpamExperts-Domain: mailprotect.be
-X-SpamExperts-Username: 178.208.39.128/27
-Authentication-Results: mailprotect.be; auth=pass smtp.auth=178.208.39.128/27@mailprotect.be
-X-SpamExperts-Outgoing-Class: ham
-X-SpamExperts-Outgoing-Evidence: SB/global_tokens (0.00687719624287)
-X-Recommended-Action: accept
-X-Filter-ID: EX5BVjFpneJeBchSMxfU5vnfMhM1+UrfQSDJlMM9Kvd602E9L7XzfQH6nu9C/Fh9KJzpNe6xgvOx
- q3u0UDjvO1tLifGj39bI0bcPyaJsYTb/+zriNZuqQk0xRpGwjn+MTR8dtByWYYhgj25jR+mEA3YO
- AtfhCcV13BpIh8lqRXSSiFVwqwU9VgKUrYQ0lqWyFDaym8oavoPYsm7m1mVEGf0/5ST3nkt5XYDK
- YAuRpmF7E2F3eqKXiTd2ECUghryWXlqwG31yUGf3t09vBVYS71V1Pk0aHudBU1wyWVTA5OYS1waI
- XXCBiQFDV0yen8nGcSeERs4TOTnIH1kc1IWc5eLazqbUYkjl7F1LyK0RORqR5WMxx0chtw61PzHp
- /s1ZSNgvEAWLFiDAlQR6Wu0I/iWDegq4fQ11AxLVlrI7DVFg5Rj2g0fgHrO2rAGaVRcnzDg6HYuT
- CyYgL61SIkBTYXPEvhymCNb22qmKERGbL1SqvGGff0htQqhQf0/aDrhpLM4xnCPpmyyS7jgD9Nen
- VVoB/PLX+rmdznc91veCJAwpCI+5VHpzDqRcT2+GtIE8SRAgmLDKAcp9i+Q+BEiSUj07SNjVkl0P
- Pj+OUYZX3/3Z86X+I1ED1LLv7p/g4HOOdbYb9IXfYGRpVS/0hA4Mwp9kB6JZdl+SJy+nWImyKEy/
- zJE11ZjKQFiKV8EwnkodMjMm/D2rEPnNAuCCnt9B91Ax/uigYcgpQGDKFCrOdd8gr/U0flMcy2Vi
- /IcBgY4aVBKUAPQbBk8nfWT8Lcjyyn9ZSA9YgSwQmLSJwsFnO3lUxpF8dVvwCXY/4mE1q/c/lcBJ
- DmoxYxZqr5EVgTOQJPtZblmQ0+ehzpa5Z4MWZxkx3D0EfhtC7ni2dUswWTi4X1KrFIDnIhhlHDLh
- vRwgYpikjrjEsQHYqzPksYepQjQSeP/rn+UB/EmrduGPxHj/dKsQ+WcgzL7pTOYRE2yEvlBrMyfp
- YuyanAZpMXssfrVwLrD8rqLg0SqQCDr4y/2a65z9c+BiwuOZk3tq4BixfE4fVLz9bC8BKm8kIsu/
- qIPYhBKQrXFod+WvUUP1Uys1EcG7yIy1/E3Wa9/NTnLEueuO5TcDeKjrEmYPn2IVWRtfdRHps2br
- TOkutpvyrdmtvbYO9ASW9x0dzW2b+IEXgSV5FVT0nNNOs1IDBtijAxf8XG910biZEcomWehz4u8s
- zDg6HYuTCyYgL61SIkBTYSiCBqrB4vMmHpjmx6wTDBzk2EPy497nssgnoMkIb3rMdj8luXC7km26
- QtXP9s02LA==
-X-Report-Abuse-To: spam@com-mpt-mgt001.mailprotect.be
+References: <20181211212428.28327-1-linus.walleij@linaro.org> <20181211212428.28327-3-linus.walleij@linaro.org>
+In-Reply-To: <20181211212428.28327-3-linus.walleij@linaro.org>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Tue, 11 Dec 2018 23:14:01 +0100
+Message-ID: <CAMuHMdXPVN36hHXkbWkwSN+NCq8n_8fZKROzajJpRvCZvXd+dQ@mail.gmail.com>
+Subject: Re: [PATCH 2/5 v8] regulator: fixed/gpio: Pull inversion/OD into gpiolib
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        ckeepax@opensource.cirrus.com,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Alexander Shiyan <shc_work@mail.ru>,
+        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        Aaro Koskinen <aaro.koskinen@iki.fi>,
+        ext Tony Lindgren <tony@atomide.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
+        Philipp Zabel <philipp.zabel@gmail.com>,
+        lost.distance@yahoo.com, Daniel Mack <zonque@gmail.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A previous patch introduced a lock chain leak. Fix that leak by reusing
-lock chains that have been freed.
+CC Jacopo, who has an Ecovec24
 
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Waiman Long <longman@redhat.com>
-Cc: Johannes Berg <johannes@sipsolutions.net>
-Signed-off-by: Bart Van Assche <bvanassche@acm.org>
----
- kernel/locking/lockdep.c | 48 +++++++++++++++++++++++++++-------------
- 1 file changed, 33 insertions(+), 15 deletions(-)
-
-diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
-index cdab3831beb2..8ba326c68253 100644
---- a/kernel/locking/lockdep.c
-+++ b/kernel/locking/lockdep.c
-@@ -299,6 +299,7 @@ static struct pending_free {
- 	struct rcu_head	 rcu_head;
- 	bool		 scheduled;
- 	DECLARE_BITMAP(list_entries_being_freed, MAX_LOCKDEP_ENTRIES);
-+	DECLARE_BITMAP(lock_chains_being_freed, MAX_LOCKDEP_CHAINS);
- } pending_free[2];
- static DECLARE_WAIT_QUEUE_HEAD(rcu_cb);
- 
-@@ -2092,8 +2093,8 @@ check_prevs_add(struct task_struct *curr, struct held_lock *next)
- 	return 0;
- }
- 
--static unsigned long nr_lock_chains;
- struct lock_chain lock_chains[MAX_LOCKDEP_CHAINS];
-+static DECLARE_BITMAP(lock_chains_in_use, MAX_LOCKDEP_CHAINS);
- int nr_chain_hlocks;
- static u16 chain_hlocks[MAX_LOCKDEP_CHAIN_HLOCKS];
- 
-@@ -2232,12 +2233,25 @@ static int check_no_collision(struct task_struct *curr,
-  */
- long lockdep_next_lockchain(long i)
- {
--	return i + 1 < nr_lock_chains ? i + 1 : -2;
-+	i = find_next_bit(lock_chains_in_use, ARRAY_SIZE(lock_chains), i + 1);
-+	return i < ARRAY_SIZE(lock_chains) ? i : -2;
- }
- 
- unsigned long lock_chain_count(void)
- {
--	return nr_lock_chains;
-+	return bitmap_weight(lock_chains_in_use, ARRAY_SIZE(lock_chains));
-+}
-+
-+/* Must be called with the graph lock held. */
-+static struct lock_chain *alloc_lock_chain(void)
-+{
-+	int idx = find_first_zero_bit(lock_chains_in_use,
-+				      ARRAY_SIZE(lock_chains));
-+
-+	if (unlikely(idx >= ARRAY_SIZE(lock_chains)))
-+		return NULL;
-+	__set_bit(idx, lock_chains_in_use);
-+	return lock_chains + idx;
- }
- 
- /*
-@@ -2269,7 +2283,8 @@ static inline int add_chain_cache(struct task_struct *curr,
- 	if (DEBUG_LOCKS_WARN_ON(!irqs_disabled()))
- 		return 0;
- 
--	if (unlikely(nr_lock_chains >= MAX_LOCKDEP_CHAINS)) {
-+	chain = alloc_lock_chain();
-+	if (!chain) {
- 		if (!debug_locks_off_graph_unlock())
- 			return 0;
- 
-@@ -2277,7 +2292,6 @@ static inline int add_chain_cache(struct task_struct *curr,
- 		dump_stack();
- 		return 0;
- 	}
--	chain = lock_chains + nr_lock_chains++;
- 	chain->chain_key = chain_key;
- 	chain->irq_context = hlock->irq_context;
- 	i = get_first_held_lock(curr, hlock);
-@@ -4214,7 +4228,8 @@ void lockdep_reset(void)
- }
- 
- /* Remove a class from a lock chain. Must be called with the graph lock held. */
--static void remove_class_from_lock_chain(struct lock_chain *chain,
-+static void remove_class_from_lock_chain(struct pending_free *pf,
-+					 struct lock_chain *chain,
- 					 struct lock_class *class)
- {
- #ifdef CONFIG_PROVE_LOCKING
-@@ -4252,6 +4267,7 @@ static void remove_class_from_lock_chain(struct lock_chain *chain,
- 	 * hlist_for_each_entry_rcu() loop is safe.
- 	 */
- 	hlist_del_rcu(&chain->entry);
-+	__set_bit(chain - lock_chains, pf->lock_chains_being_freed);
- 	if (chain->depth == 0)
- 		return;
- 	/*
-@@ -4260,22 +4276,19 @@ static void remove_class_from_lock_chain(struct lock_chain *chain,
- 	 */
- 	if (lookup_chain_cache(chain_key))
- 		return;
--	if (WARN_ON_ONCE(nr_lock_chains >= MAX_LOCKDEP_CHAINS)) {
-+	new_chain = alloc_lock_chain();
-+	if (WARN_ON_ONCE(!new_chain)) {
- 		debug_locks_off();
- 		return;
- 	}
--	/*
--	 * Leak *chain because it is not safe to reinsert it before an RCU
--	 * grace period has expired.
--	 */
--	new_chain = lock_chains + nr_lock_chains++;
- 	*new_chain = *chain;
- 	hlist_add_head_rcu(&new_chain->entry, chainhashentry(chain_key));
- #endif
- }
- 
- /* Must be called with the graph lock held. */
--static void remove_class_from_lock_chains(struct lock_class *class)
-+static void remove_class_from_lock_chains(struct pending_free *pf,
-+					  struct lock_class *class)
- {
- 	struct lock_chain *chain;
- 	struct hlist_head *head;
-@@ -4284,7 +4297,7 @@ static void remove_class_from_lock_chains(struct lock_class *class)
- 	for (i = 0; i < ARRAY_SIZE(chainhash_table); i++) {
- 		head = chainhash_table + i;
- 		hlist_for_each_entry_rcu(chain, head, entry) {
--			remove_class_from_lock_chain(chain, class);
-+			remove_class_from_lock_chain(pf, chain, class);
- 		}
- 	}
- }
-@@ -4324,7 +4337,7 @@ static void zap_class(struct pending_free *pf, struct lock_class *class)
- 			  class->name);
- 	}
- 
--	remove_class_from_lock_chains(class);
-+	remove_class_from_lock_chains(pf, class);
- }
- 
- static void reinit_class(struct lock_class *class)
-@@ -4373,6 +4386,11 @@ static void free_zapped_classes(struct rcu_head *ch)
- 	bitmap_andnot(list_entries_in_use, list_entries_in_use,
- 		      pf->list_entries_being_freed, ARRAY_SIZE(list_entries));
- 	bitmap_clear(pf->list_entries_being_freed, 0, ARRAY_SIZE(list_entries));
-+#ifdef CONFIG_PROVE_LOCKING
-+	bitmap_andnot(lock_chains_in_use, lock_chains_in_use,
-+		      pf->lock_chains_being_freed, ARRAY_SIZE(lock_chains));
-+	bitmap_clear(pf->lock_chains_being_freed, 0, ARRAY_SIZE(lock_chains));
-+#endif
- 	graph_unlock();
- restore_irqs:
- 	raw_local_irq_restore(flags);
--- 
-2.20.0.rc2.403.gdbc3b29805-goog
-
+On Tue, Dec 11, 2018 at 10:26 PM Linus Walleij <linus.walleij@linaro.org> wrote:
+> This pushes the handling of inversion semantics and open drain
+> settings to the GPIO descriptor and gpiolib. All affected board
+> files are also augmented.
+>
+> This is especially nice since we don't have to have any
+> confusing flags passed around to the left and right littering
+> the fixed and GPIO regulator drivers and the regulator core.
+> It is all just very straight-forward: the core asks the GPIO
+> line to be asserted or deasserted and gpiolib deals with the
+> rest depending on how the platform is configured: if the line
+> is active low, it deals with that, if the line is open drain,
+> it deals with that too.
+>
+> Cc: Alexander Shiyan <shc_work@mail.ru> # i.MX boards user
+> Cc: Haojian Zhuang <haojian.zhuang@gmail.com> # MMP2 maintainer
+> Cc: Aaro Koskinen <aaro.koskinen@iki.fi> # OMAP1 maintainer
+> Cc: Tony Lindgren <tony@atomide.com> # OMAP1,2,3 maintainer
+> Cc: Mike Rapoport <rppt@linux.vnet.ibm.com> # EM-X270 maintainer
+> Cc: Robert Jarzmik <robert.jarzmik@free.fr> # EZX maintainer
+> Cc: Philipp Zabel <philipp.zabel@gmail.com> # Magician maintainer
+> Cc: Petr Cvek <petr.cvek@tul.cz> # Magician
+> Cc: Robert Jarzmik <robert.jarzmik@free.fr> # PXA
+> Cc: Paul Parsons <lost.distance@yahoo.com> # hx4700
+> Cc: Daniel Mack <zonque@gmail.com> # Raumfeld maintainer
+> Cc: Marc Zyngier <marc.zyngier@arm.com> # Zeus maintainer
+> Cc: Geert Uytterhoeven <geert+renesas@glider.be> # SuperH pinctrl/GPIO maintainer
+> Cc: Russell King <rmk+kernel@armlinux.org.uk> # SA1100
+> Tested-by: Janusz Krzysztofik <jmkrzyszt@gmail.com> #OMAP1 Amstrad Delta
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
+> ChangeLog v7->v8:
+> - Collected Janusz Tested-by tag for OMAP1.
+> - Rebase on core fixes.
+> ChangeLog v6->v7:
+> - Fix a missed .enable_high on OMAP1.
+> ChangeLog v4->v6:
+> - Split out parts relation to GPIO regulator descriptor conversion
+>   to the right patch.
+> - Renumber to fit the rest of the series.
+> - Daniel Mack says he will probably delete the Raumfeld board file
+>   and replace it with a device tree, I suggest we just deal with that
+>   conflict upstream.
+> ChangeLog v3->v4:
+> - Rebase on fixed regulator changes.
+> ChangeLog v2->v3:
+> - Resending.
+> ChangeLog v1->v2:
+> - Rebase the patch series
+> - Cover the new user added in sa1100
+> ---
+>  arch/arm/mach-imx/mach-mx21ads.c              |  1 -
+>  arch/arm/mach-imx/mach-mx27ads.c              |  2 +-
+>  arch/arm/mach-mmp/brownstone.c                |  1 -
+>  arch/arm/mach-omap1/board-ams-delta.c         |  2 --
+>  arch/arm/mach-omap2/pdata-quirks.c            |  1 -
+>  arch/arm/mach-pxa/em-x270.c                   |  1 -
+>  arch/arm/mach-pxa/ezx.c                       |  3 +-
+>  arch/arm/mach-pxa/raumfeld.c                  |  1 -
+>  arch/arm/mach-pxa/zeus.c                      |  3 +-
+>  arch/arm/mach-sa1100/assabet.c                |  1 -
+>  arch/sh/boards/mach-ecovec24/setup.c          |  2 --
+>  .../intel-mid/device_libs/platform_bcm43xx.c  |  1 -
+>  drivers/regulator/core.c                      |  8 ++---
+>  drivers/regulator/da9055-regulator.c          |  1 -
+>  drivers/regulator/fixed.c                     | 35 +++++--------------
+>  include/linux/regulator/fixed.h               | 10 ------
+>  include/linux/regulator/gpio-regulator.h      |  6 ----
+>  17 files changed, 13 insertions(+), 66 deletions(-)
+>
+> diff --git a/arch/arm/mach-imx/mach-mx21ads.c b/arch/arm/mach-imx/mach-mx21ads.c
+> index 2e1e540f2e5a..d278fb672d40 100644
+> --- a/arch/arm/mach-imx/mach-mx21ads.c
+> +++ b/arch/arm/mach-imx/mach-mx21ads.c
+> @@ -205,7 +205,6 @@ static struct regulator_init_data mx21ads_lcd_regulator_init_data = {
+>  static struct fixed_voltage_config mx21ads_lcd_regulator_pdata = {
+>         .supply_name    = "LCD",
+>         .microvolts     = 3300000,
+> -       .enable_high    = 1,
+>         .init_data      = &mx21ads_lcd_regulator_init_data,
+>  };
+>
+> diff --git a/arch/arm/mach-imx/mach-mx27ads.c b/arch/arm/mach-imx/mach-mx27ads.c
+> index f5e04047ed13..6dd7f57c332f 100644
+> --- a/arch/arm/mach-imx/mach-mx27ads.c
+> +++ b/arch/arm/mach-imx/mach-mx27ads.c
+> @@ -237,7 +237,7 @@ static struct fixed_voltage_config mx27ads_lcd_regulator_pdata = {
+>  static struct gpiod_lookup_table mx27ads_lcd_regulator_gpiod_table = {
+>         .dev_id = "reg-fixed-voltage.0", /* Let's hope ID 0 is what we get */
+>         .table = {
+> -               GPIO_LOOKUP("LCD", 0, NULL, GPIO_ACTIVE_HIGH),
+> +               GPIO_LOOKUP("LCD", 0, NULL, GPIO_ACTIVE_LOW),
+>                 { },
+>         },
+>  };
+> diff --git a/arch/arm/mach-mmp/brownstone.c b/arch/arm/mach-mmp/brownstone.c
+> index a04e249c654b..d2560fb1e835 100644
+> --- a/arch/arm/mach-mmp/brownstone.c
+> +++ b/arch/arm/mach-mmp/brownstone.c
+> @@ -149,7 +149,6 @@ static struct regulator_init_data brownstone_v_5vp_data = {
+>  static struct fixed_voltage_config brownstone_v_5vp = {
+>         .supply_name            = "v_5vp",
+>         .microvolts             = 5000000,
+> -       .enable_high            = 1,
+>         .enabled_at_boot        = 1,
+>         .init_data              = &brownstone_v_5vp_data,
+>  };
+> diff --git a/arch/arm/mach-omap1/board-ams-delta.c b/arch/arm/mach-omap1/board-ams-delta.c
+> index 3d191fd52910..26e9b5969b0a 100644
+> --- a/arch/arm/mach-omap1/board-ams-delta.c
+> +++ b/arch/arm/mach-omap1/board-ams-delta.c
+> @@ -268,7 +268,6 @@ static struct fixed_voltage_config modem_nreset_config = {
+>         .supply_name            = "modem_nreset",
+>         .microvolts             = 3300000,
+>         .startup_delay          = 25000,
+> -       .enable_high            = 1,
+>         .enabled_at_boot        = 1,
+>         .init_data              = &modem_nreset_data,
+>  };
+> @@ -529,7 +528,6 @@ static struct regulator_init_data keybrd_pwr_initdata = {
+>  static struct fixed_voltage_config keybrd_pwr_config = {
+>         .supply_name            = "keybrd_pwr",
+>         .microvolts             = 5000000,
+> -       .enable_high            = 1,
+>         .init_data              = &keybrd_pwr_initdata,
+>  };
+>
+> diff --git a/arch/arm/mach-omap2/pdata-quirks.c b/arch/arm/mach-omap2/pdata-quirks.c
+> index 9fec5f84bf77..69a9182a9aff 100644
+> --- a/arch/arm/mach-omap2/pdata-quirks.c
+> +++ b/arch/arm/mach-omap2/pdata-quirks.c
+> @@ -330,7 +330,6 @@ static struct fixed_voltage_config pandora_vwlan = {
+>         .supply_name            = "vwlan",
+>         .microvolts             = 1800000, /* 1.8V */
+>         .startup_delay          = 50000, /* 50ms */
+> -       .enable_high            = 1,
+>         .init_data              = &pandora_vmmc3,
+>  };
+>
+> diff --git a/arch/arm/mach-pxa/em-x270.c b/arch/arm/mach-pxa/em-x270.c
+> index 67e37df637f5..97f428e3b77a 100644
+> --- a/arch/arm/mach-pxa/em-x270.c
+> +++ b/arch/arm/mach-pxa/em-x270.c
+> @@ -984,7 +984,6 @@ static struct fixed_voltage_config camera_dummy_config = {
+>         .supply_name            = "camera_vdd",
+>         .input_supply           = "vcc cam",
+>         .microvolts             = 2800000,
+> -       .enable_high            = 0,
+>         .init_data              = &camera_dummy_initdata,
+>  };
+>
+> diff --git a/arch/arm/mach-pxa/ezx.c b/arch/arm/mach-pxa/ezx.c
+> index 565965e9acc7..5e110e70ce5a 100644
+> --- a/arch/arm/mach-pxa/ezx.c
+> +++ b/arch/arm/mach-pxa/ezx.c
+> @@ -714,7 +714,6 @@ static struct regulator_init_data camera_regulator_initdata = {
+>  static struct fixed_voltage_config camera_regulator_config = {
+>         .supply_name            = "camera_vdd",
+>         .microvolts             = 2800000,
+> -       .enable_high            = 0,
+>         .init_data              = &camera_regulator_initdata,
+>  };
+>
+> @@ -730,7 +729,7 @@ static struct gpiod_lookup_table camera_supply_gpiod_table = {
+>         .dev_id = "reg-fixed-voltage.1",
+>         .table = {
+>                 GPIO_LOOKUP("gpio-pxa", GPIO50_nCAM_EN,
+> -                           NULL, GPIO_ACTIVE_HIGH),
+> +                           NULL, GPIO_ACTIVE_LOW),
+>                 { },
+>         },
+>  };
+> diff --git a/arch/arm/mach-pxa/raumfeld.c b/arch/arm/mach-pxa/raumfeld.c
+> index bd3c23ad6ce6..cffa182167a9 100644
+> --- a/arch/arm/mach-pxa/raumfeld.c
+> +++ b/arch/arm/mach-pxa/raumfeld.c
+> @@ -886,7 +886,6 @@ static struct regulator_init_data audio_va_initdata = {
+>  static struct fixed_voltage_config audio_va_config = {
+>         .supply_name            = "audio_va",
+>         .microvolts             = 5000000,
+> -       .enable_high            = 1,
+>         .enabled_at_boot        = 0,
+>         .init_data              = &audio_va_initdata,
+>  };
+> diff --git a/arch/arm/mach-pxa/zeus.c b/arch/arm/mach-pxa/zeus.c
+> index d53ea12fc766..9b8c2cf23111 100644
+> --- a/arch/arm/mach-pxa/zeus.c
+> +++ b/arch/arm/mach-pxa/zeus.c
+> @@ -426,7 +426,7 @@ static struct gpiod_lookup_table can_regulator_gpiod_table = {
+>         .dev_id = "reg-fixed-voltage.0",
+>         .table = {
+>                 GPIO_LOOKUP("gpio-pxa", ZEUS_CAN_SHDN_GPIO,
+> -                           NULL, GPIO_ACTIVE_HIGH),
+> +                           NULL, GPIO_ACTIVE_LOW),
+>                 { },
+>         },
+>  };
+> @@ -547,7 +547,6 @@ static struct regulator_init_data zeus_ohci_regulator_data = {
+>  static struct fixed_voltage_config zeus_ohci_regulator_config = {
+>         .supply_name            = "vbus2",
+>         .microvolts             = 5000000, /* 5.0V */
+> -       .enable_high            = 1,
+>         .startup_delay          = 0,
+>         .init_data              = &zeus_ohci_regulator_data,
+>  };
+> diff --git a/arch/arm/mach-sa1100/assabet.c b/arch/arm/mach-sa1100/assabet.c
+> index 3e8c0948abcc..3723d70af471 100644
+> --- a/arch/arm/mach-sa1100/assabet.c
+> +++ b/arch/arm/mach-sa1100/assabet.c
+> @@ -468,7 +468,6 @@ static struct regulator_consumer_supply assabet_cf_vcc_consumers[] = {
+>  static struct fixed_voltage_config assabet_cf_vcc_pdata __initdata = {
+>         .supply_name = "cf-power",
+>         .microvolts = 3300000,
+> -       .enable_high = 1,
+>  };
+>
+>  static struct gpiod_lookup_table assabet_cf_vcc_gpio_table = {
+> diff --git a/arch/sh/boards/mach-ecovec24/setup.c b/arch/sh/boards/mach-ecovec24/setup.c
+> index 06a894526a0b..ffddec161292 100644
+> --- a/arch/sh/boards/mach-ecovec24/setup.c
+> +++ b/arch/sh/boards/mach-ecovec24/setup.c
+> @@ -633,7 +633,6 @@ static struct regulator_init_data cn12_power_init_data = {
+>  static struct fixed_voltage_config cn12_power_info = {
+>         .supply_name = "CN12 SD/MMC Vdd",
+>         .microvolts = 3300000,
+> -       .enable_high = 1,
+>         .init_data = &cn12_power_init_data,
+>  };
+>
+> @@ -674,7 +673,6 @@ static struct regulator_init_data sdhi0_power_init_data = {
+>  static struct fixed_voltage_config sdhi0_power_info = {
+>         .supply_name = "CN11 SD/MMC Vdd",
+>         .microvolts = 3300000,
+> -       .enable_high = 1,
+>         .init_data = &sdhi0_power_init_data,
+>  };
+>
+> diff --git a/arch/x86/platform/intel-mid/device_libs/platform_bcm43xx.c b/arch/x86/platform/intel-mid/device_libs/platform_bcm43xx.c
+> index dbfc5cf2aa93..e3b57c346f3b 100644
+> --- a/arch/x86/platform/intel-mid/device_libs/platform_bcm43xx.c
+> +++ b/arch/x86/platform/intel-mid/device_libs/platform_bcm43xx.c
+> @@ -44,7 +44,6 @@ static struct fixed_voltage_config bcm43xx_vmmc = {
+>          */
+>         .microvolts             = 2000000,              /* 1.8V */
+>         .startup_delay          = 250 * 1000,           /* 250ms */
+> -       .enable_high            = 1,                    /* active high */
+>         .enabled_at_boot        = 0,                    /* disabled at boot */
+>         .init_data              = &bcm43xx_vmmc_data,
+>  };
+> diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
+> index 79cb090ff22f..8f3aa151bb72 100644
+> --- a/drivers/regulator/core.c
+> +++ b/drivers/regulator/core.c
+> @@ -82,7 +82,6 @@ struct regulator_enable_gpio {
+>         struct gpio_desc *gpiod;
+>         u32 enable_count;       /* a number of enabled shared GPIO */
+>         u32 request_count;      /* a number of requested shared GPIO */
+> -       unsigned int ena_gpio_invert:1;
+>  };
+>
+>  /*
+> @@ -2253,7 +2252,6 @@ static int regulator_ena_gpio_request(struct regulator_dev *rdev,
+>         }
+>
+>         pin->gpiod = gpiod;
+> -       pin->ena_gpio_invert = config->ena_gpio_invert;
+>         list_add(&pin->list, &regulator_ena_gpio_list);
+>
+>  update_ena_gpio_to_rdev:
+> @@ -2304,8 +2302,7 @@ static int regulator_ena_gpio_ctrl(struct regulator_dev *rdev, bool enable)
+>         if (enable) {
+>                 /* Enable GPIO at initial use */
+>                 if (pin->enable_count == 0)
+> -                       gpiod_set_value_cansleep(pin->gpiod,
+> -                                                !pin->ena_gpio_invert);
+> +                       gpiod_set_value_cansleep(pin->gpiod, 1);
+>
+>                 pin->enable_count++;
+>         } else {
+> @@ -2316,8 +2313,7 @@ static int regulator_ena_gpio_ctrl(struct regulator_dev *rdev, bool enable)
+>
+>                 /* Disable GPIO if not used */
+>                 if (pin->enable_count <= 1) {
+> -                       gpiod_set_value_cansleep(pin->gpiod,
+> -                                                pin->ena_gpio_invert);
+> +                       gpiod_set_value_cansleep(pin->gpiod, 0);
+>                         pin->enable_count = 0;
+>                 }
+>         }
+> diff --git a/drivers/regulator/da9055-regulator.c b/drivers/regulator/da9055-regulator.c
+> index 588c3d2445cf..417cafe2aba0 100644
+> --- a/drivers/regulator/da9055-regulator.c
+> +++ b/drivers/regulator/da9055-regulator.c
+> @@ -457,7 +457,6 @@ static int da9055_gpio_init(struct da9055_regulator *regulator,
+>                 int gpio_mux = pdata->gpio_ren[id];
+>
+>                 config->ena_gpiod = pdata->ena_gpiods[id];
+> -               config->ena_gpio_invert = 1;
+>
+>                 /*
+>                  * GPI pin is muxed with regulator to control the
+> diff --git a/drivers/regulator/fixed.c b/drivers/regulator/fixed.c
+> index 9abdb9130766..b5afc9db2c61 100644
+> --- a/drivers/regulator/fixed.c
+> +++ b/drivers/regulator/fixed.c
+> @@ -79,15 +79,6 @@ of_get_fixed_voltage_config(struct device *dev,
+>
+>         of_property_read_u32(np, "startup-delay-us", &config->startup_delay);
+>
+> -       /*
+> -        * FIXME: we pulled active low/high and open drain handling into
+> -        * gpiolib so it will be handled there. Delete this in the second
+> -        * step when we also remove the custom inversion handling for all
+> -        * legacy boardfiles.
+> -        */
+> -       config->enable_high = 1;
+> -       config->gpio_is_open_drain = 0;
+> -
+>         if (of_find_property(np, "vin-supply", NULL))
+>                 config->input_supply = "vin";
+>
+> @@ -151,24 +142,14 @@ static int reg_fixed_voltage_probe(struct platform_device *pdev)
+>
+>         drvdata->desc.fixed_uV = config->microvolts;
+>
+> -       cfg.ena_gpio_invert = !config->enable_high;
+> -       if (config->enabled_at_boot) {
+> -               if (config->enable_high)
+> -                       gflags = GPIOD_OUT_HIGH;
+> -               else
+> -                       gflags = GPIOD_OUT_LOW;
+> -       } else {
+> -               if (config->enable_high)
+> -                       gflags = GPIOD_OUT_LOW;
+> -               else
+> -                       gflags = GPIOD_OUT_HIGH;
+> -       }
+> -       if (config->gpio_is_open_drain) {
+> -               if (gflags == GPIOD_OUT_HIGH)
+> -                       gflags = GPIOD_OUT_HIGH_OPEN_DRAIN;
+> -               else
+> -                       gflags = GPIOD_OUT_LOW_OPEN_DRAIN;
+> -       }
+> +       /*
+> +        * The signal will be inverted by the GPIO core if flagged so in the
+> +        * decriptor.
+> +        */
+> +       if (config->enabled_at_boot)
+> +               gflags = GPIOD_OUT_HIGH;
+> +       else
+> +               gflags = GPIOD_OUT_LOW;
+>
+>         /*
+>          * Some fixed regulators share the enable line between two
+> diff --git a/include/linux/regulator/fixed.h b/include/linux/regulator/fixed.h
+> index 1a4340ed8e2b..f10140da7145 100644
+> --- a/include/linux/regulator/fixed.h
+> +++ b/include/linux/regulator/fixed.h
+> @@ -25,14 +25,6 @@ struct regulator_init_data;
+>   * @input_supply:      Name of the input regulator supply
+>   * @microvolts:                Output voltage of regulator
+>   * @startup_delay:     Start-up time in microseconds
+> - * @gpio_is_open_drain: Gpio pin is open drain or normal type.
+> - *                     If it is open drain type then HIGH will be set
+> - *                     through PULL-UP with setting gpio as input
+> - *                     and low will be set as gpio-output with driven
+> - *                     to low. For non-open-drain case, the gpio will
+> - *                     will be in output and drive to low/high accordingly.
+> - * @enable_high:       Polarity of enable GPIO
+> - *                     1 = Active high, 0 = Active low
+>   * @enabled_at_boot:   Whether regulator has been enabled at
+>   *                     boot or not. 1 = Yes, 0 = No
+>   *                     This is used to keep the regulator at
+> @@ -48,8 +40,6 @@ struct fixed_voltage_config {
+>         const char *input_supply;
+>         int microvolts;
+>         unsigned startup_delay;
+> -       unsigned gpio_is_open_drain:1;
+> -       unsigned enable_high:1;
+>         unsigned enabled_at_boot:1;
+>         struct regulator_init_data *init_data;
+>  };
+> diff --git a/include/linux/regulator/gpio-regulator.h b/include/linux/regulator/gpio-regulator.h
+> index 49c407afb944..11cd6375215d 100644
+> --- a/include/linux/regulator/gpio-regulator.h
+> +++ b/include/linux/regulator/gpio-regulator.h
+> @@ -46,10 +46,6 @@ struct gpio_regulator_state {
+>  /**
+>   * struct gpio_regulator_config - config structure
+>   * @supply_name:       Name of the regulator supply
+> - * @enable_gpio:       GPIO to use for enable control
+> - *                     set to -EINVAL if not used
+> - * @enable_high:       Polarity of enable GPIO
+> - *                     1 = Active high, 0 = Active low
+>   * @enabled_at_boot:   Whether regulator has been enabled at
+>   *                     boot or not. 1 = Yes, 0 = No
+>   *                     This is used to keep the regulator at
+> @@ -71,8 +67,6 @@ struct gpio_regulator_state {
+>  struct gpio_regulator_config {
+>         const char *supply_name;
+>
+> -       int enable_gpio;
+> -       unsigned enable_high:1;
+>         unsigned enabled_at_boot:1;
+>         unsigned startup_delay;
+>
+> --
+> 2.19.2
