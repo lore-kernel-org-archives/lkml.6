@@ -2,337 +2,100 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E76C5C5CFFE
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 11:24:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B118C07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 11:26:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A8AA22082F
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 11:24:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A8AA22082F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
+	by mail.kernel.org (Postfix) with ESMTP id 49C0E2082F
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 11:26:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 49C0E2082F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726502AbeLKLY4 (ORCPT
+        id S1726420AbeLKL0O (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 06:24:56 -0500
-Received: from mx2.suse.de ([195.135.220.15]:42086 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726170AbeLKLY4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 06:24:56 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id A4B8EAE6C;
-        Tue, 11 Dec 2018 11:24:50 +0000 (UTC)
-From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-To:     Henrik Rydberg <rydberg@bitmath.org>
-Cc:     linux-rpi-kernel@lists.infradead.org, stefan.wahren@i2se.com,
-        eric@anholt.net, agraf@suse.de, afaerber@suse.com,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Corentin Labbe <clabbe.montjoie@gmail.com>,
-        Mark Jonas <mark.jonas@de.bosch.com>,
-        Masanari Iida <standby24x7@gmail.com>,
-        Heiko Schocher <hs@denx.de>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Eugen Hristev <eugen.hristev@microchip.com>,
-        Zhu Yi <yi.zhu5@cn.bosch.com>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        linux-kernel@vger.kernel.org, linux-input@vger.kernel.org
-Subject: [PATCH v2 2/2] input: add official Raspberry Pi's touchscreen driver
-Date:   Tue, 11 Dec 2018 12:23:54 +0100
-Message-Id: <20181211112408.9524-3-nsaenzjulienne@suse.de>
-X-Mailer: git-send-email 2.19.2
-In-Reply-To: <20181211112408.9524-1-nsaenzjulienne@suse.de>
-References: <20181211112408.9524-1-nsaenzjulienne@suse.de>
+        Tue, 11 Dec 2018 06:26:14 -0500
+Received: from mail-vk1-f195.google.com ([209.85.221.195]:34668 "EHLO
+        mail-vk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726281AbeLKL0N (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 06:26:13 -0500
+Received: by mail-vk1-f195.google.com with SMTP id y14so3299314vkd.1;
+        Tue, 11 Dec 2018 03:26:11 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=bf/xfMLnPgwfdBxQ4RuQti2tz7jqx0xRV3g44stcn08=;
+        b=EJYZ1PVCpb/bcqt0GC5MgORM44wzZIYIvbGKr5RMK0reiuK4C/hd4PE9nlkblCKjO3
+         OXk/AwhV1FxSfRDdMTxP9a+TB8ikjNIW+8JlmB5YXA8owY5Y4o2HZjr+PzfM0VxIwtNA
+         qN0o7Nm8EMki6Zpca/Pub4ht+s3mrPa9fTAdjTUYwIbYzJqEKaSqB3VH13BjzgBTKQt3
+         9J+YfL+jcChdorKOIIeEc/pMdB7pQ1JGFYTEY0opI7Kub/HFJyNs4I39OSe0Ml0RrkWf
+         OFxAuZ0zkm3KBh+L8hxAm/czU0ryIXZ6KvsvonByk0wYThRlApG3FSTLdF3WkLV0LkvR
+         chvg==
+X-Gm-Message-State: AA+aEWYEWUtntfil4fTEH4y3TYVPiIDdXavn5mWknj1WRFVa0VIL8E1u
+        HHRrt3MKph+Evj6QG/9gBvSGfEMOUrWheRwO6+Q=
+X-Google-Smtp-Source: AFSGD/UHQs1zy9VFoF1TIVb6Z7dyhfGZi6LYpYu5LTPfY1/qTJFcQc11Frd5/y5mXeFy+BQF/xypd2jY+AWsTvUAH30=
+X-Received: by 2002:a1f:91cb:: with SMTP id t194mr6969031vkd.74.1544527571326;
+ Tue, 11 Dec 2018 03:26:11 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <1544526070-16690-1-git-send-email-yamada.masahiro@socionext.com> <1544526070-16690-22-git-send-email-yamada.masahiro@socionext.com>
+In-Reply-To: <1544526070-16690-22-git-send-email-yamada.masahiro@socionext.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Tue, 11 Dec 2018 12:25:59 +0100
+Message-ID: <CAMuHMdUcyzoMkiu-XaD5hM3uxhh+G3wMWWkVrFRNBkv5GbDGmA@mail.gmail.com>
+Subject: Re: [PATCH 21/27] treewide: surround file paths in Kconfig files with
+ double quotes
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     linux-kbuild <linux-kbuild@vger.kernel.org>,
+        Linux-Arch <linux-arch@vger.kernel.org>,
+        Ulf Magnusson <ulfalizer@gmail.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add's support to Raspberry Pi's 7" Touch device. Instead of using a
-conventional bus all information is copied into a memory mapped area by
-RPi's firmware.
+On Tue, Dec 11, 2018 at 12:03 PM Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
+> The Kconfig lexer supports special characters such as '.' and '/' in
+> the parameter context. In my understanding, the reason is just to
+> support bare file paths in the source statement.
+>
+> I do not see a good reason to complicate Kconfig for the room of
+> ambiguity.
+>
+> The majority of code already surround file paths with double quotes,
+> and it makes sense since the included file paths are constant string
+> literals.
+>
+> Make it treewide consistent now.
+>
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 
-Based on the driver found in RPi's kernel repository.
+>  arch/m68k/Kconfig            |  6 +++---
 
-Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
----
- drivers/input/touchscreen/Kconfig          |  12 ++
- drivers/input/touchscreen/Makefile         |   1 +
- drivers/input/touchscreen/raspberrypi-ts.c | 227 +++++++++++++++++++++
- 3 files changed, 240 insertions(+)
- create mode 100644 drivers/input/touchscreen/raspberrypi-ts.c
+Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
 
-diff --git a/drivers/input/touchscreen/Kconfig b/drivers/input/touchscreen/Kconfig
-index 2a80675cfd94..af6027cc7bbf 100644
---- a/drivers/input/touchscreen/Kconfig
-+++ b/drivers/input/touchscreen/Kconfig
-@@ -696,6 +696,18 @@ config TOUCHSCREEN_EDT_FT5X06
- 	  To compile this driver as a module, choose M here: the
- 	  module will be called edt-ft5x06.
- 
-+config TOUCHSCREEN_RASPBERRYPI_FW
-+	tristate "Raspberry Pi's firmware base touch screen support"
-+	depends on RASPBERRYPI_FIRMWARE || COMPILE_TEST
-+	help
-+	  Say Y here if you have the official Raspberry Pi 7 inch screen on
-+	  your system.
-+
-+	  If unsure, say N.
-+
-+	  To compile this driver as a module, choose M here: the
-+	  module will be called raspberrypi-ts.
-+
- config TOUCHSCREEN_MIGOR
- 	tristate "Renesas MIGO-R touchscreen"
- 	depends on (SH_MIGOR || COMPILE_TEST) && I2C
-diff --git a/drivers/input/touchscreen/Makefile b/drivers/input/touchscreen/Makefile
-index 5911a4190cd2..fcc7605fba8d 100644
---- a/drivers/input/touchscreen/Makefile
-+++ b/drivers/input/touchscreen/Makefile
-@@ -109,3 +109,4 @@ obj-$(CONFIG_TOUCHSCREEN_ZET6223)	+= zet6223.o
- obj-$(CONFIG_TOUCHSCREEN_ZFORCE)	+= zforce_ts.o
- obj-$(CONFIG_TOUCHSCREEN_COLIBRI_VF50)	+= colibri-vf50-ts.o
- obj-$(CONFIG_TOUCHSCREEN_ROHM_BU21023)	+= rohm_bu21023.o
-+obj-$(CONFIG_TOUCHSCREEN_RASPBERRYPI_FW)	+= raspberrypi-ts.o
-diff --git a/drivers/input/touchscreen/raspberrypi-ts.c b/drivers/input/touchscreen/raspberrypi-ts.c
-new file mode 100644
-index 000000000000..7f8873eb2379
---- /dev/null
-+++ b/drivers/input/touchscreen/raspberrypi-ts.c
-@@ -0,0 +1,227 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Raspberry Pi firmware based touchscreen driver
-+ *
-+ * Copyright (C) 2015, 2017 Raspberry Pi
-+ * Copyright (C) 2018 Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-+ */
-+
-+#include <linux/io.h>
-+#include <linux/of.h>
-+#include <linux/slab.h>
-+#include <linux/device.h>
-+#include <linux/module.h>
-+#include <linux/bitops.h>
-+#include <linux/dma-mapping.h>
-+#include <linux/platform_device.h>
-+#include <linux/input.h>
-+#include <linux/input/mt.h>
-+#include <linux/input-polldev.h>
-+#include <linux/input/touchscreen.h>
-+#include <soc/bcm2835/raspberrypi-firmware.h>
-+
-+#define RPI_TS_DEFAULT_WIDTH	800
-+#define RPI_TS_DEFAULT_HEIGHT	480
-+
-+#define RPI_TS_MAX_SUPPORTED_POINTS	10
-+
-+#define RPI_TS_FTS_TOUCH_DOWN		0
-+#define RPI_TS_FTS_TOUCH_CONTACT	2
-+
-+#define RPI_TS_POLL_INTERVAL		17	/* 60fps */
-+
-+#define RPI_TS_NPOINTS_REG_INVALIDATE	99
-+
-+struct rpi_ts {
-+	struct platform_device *pdev;
-+	struct input_polled_dev *poll_dev;
-+	struct touchscreen_properties prop;
-+
-+	void __iomem *fw_regs_va;
-+	dma_addr_t fw_regs_phys;
-+
-+	int known_ids;
-+};
-+
-+struct rpi_ts_regs {
-+	u8 device_mode;
-+	u8 gesture_id;
-+	u8 num_points;
-+	struct rpi_ts_touch {
-+		u8 xh;
-+		u8 xl;
-+		u8 yh;
-+		u8 yl;
-+		u8 pressure; /* Not supported */
-+		u8 area;     /* Not supported */
-+	} point[RPI_TS_MAX_SUPPORTED_POINTS];
-+};
-+
-+static void rpi_ts_poll(struct input_polled_dev *dev)
-+{
-+	struct input_dev *input = dev->input;
-+	struct rpi_ts *ts = dev->private;
-+	struct rpi_ts_regs regs;
-+	int modified_ids = 0;
-+	long released_ids;
-+	int event_type;
-+	int touchid;
-+	int x, y;
-+	int i;
-+
-+	memcpy_fromio(&regs, ts->fw_regs_va, sizeof(regs));
-+	/*
-+	 * We poll the memory based register copy of the touchscreen chip using
-+	 * the number of points register to know whether the copy has been
-+	 * updated (we write 99 to the memory copy, the GPU will write between
-+	 * 0 - 10 points)
-+	 */
-+	iowrite8(RPI_TS_NPOINTS_REG_INVALIDATE,
-+		 ts->fw_regs_va + offsetof(struct rpi_ts_regs, num_points));
-+
-+	if (regs.num_points == RPI_TS_NPOINTS_REG_INVALIDATE ||
-+	    (regs.num_points == 0 && ts->known_ids == 0))
-+	    return;
-+
-+	for (i = 0; i < regs.num_points; i++) {
-+		x = (((int)regs.point[i].xh & 0xf) << 8) + regs.point[i].xl;
-+		y = (((int)regs.point[i].yh & 0xf) << 8) + regs.point[i].yl;
-+		touchid = (regs.point[i].yh >> 4) & 0xf;
-+		event_type = (regs.point[i].xh >> 6) & 0x03;
-+
-+		modified_ids |= BIT(touchid);
-+
-+		if (event_type == RPI_TS_FTS_TOUCH_DOWN ||
-+		    event_type == RPI_TS_FTS_TOUCH_CONTACT) {
-+			input_mt_slot(input, touchid);
-+			input_mt_report_slot_state(input, MT_TOOL_FINGER, 1);
-+			touchscreen_report_pos(input, &ts->prop, x, y, true);
-+		}
-+	}
-+
-+	released_ids = ts->known_ids & ~modified_ids;
-+	for_each_set_bit(i, &released_ids, RPI_TS_MAX_SUPPORTED_POINTS) {
-+		input_mt_slot(input, i);
-+		input_mt_report_slot_state(input, MT_TOOL_FINGER, 0);
-+		modified_ids &= ~(BIT(i));
-+	}
-+	ts->known_ids = modified_ids;
-+
-+	input_mt_sync_frame(input);
-+	input_sync(input);
-+}
-+
-+static void rpi_ts_dma_cleanup(void *data)
-+{
-+	struct rpi_ts *ts = data;
-+	struct device *dev = &ts->pdev->dev;
-+
-+	dma_free_coherent(dev, PAGE_SIZE, ts->fw_regs_va, ts->fw_regs_phys);
-+}
-+
-+static int rpi_ts_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct device_node *np = dev->of_node;
-+	struct input_polled_dev *poll_dev;
-+	struct device_node *fw_node;
-+	struct rpi_firmware *fw;
-+	struct input_dev *input;
-+	struct rpi_ts *ts;
-+	u32 touchbuf;
-+	int error;
-+
-+	fw_node = of_get_parent(np);
-+	if (!fw_node) {
-+		dev_err(dev, "Missing firmware node\n");
-+		return -ENOENT;
-+	}
-+
-+	fw = rpi_firmware_get(fw_node);
-+	of_node_put(fw_node);
-+	if (!fw)
-+		return -EPROBE_DEFER;
-+
-+	ts = devm_kzalloc(dev, sizeof(*ts), GFP_KERNEL);
-+	if (!ts)
-+		return -ENOMEM;
-+	ts->pdev = pdev;
-+
-+	ts->fw_regs_va = dma_zalloc_coherent(dev, PAGE_SIZE, &ts->fw_regs_phys,
-+					     GFP_KERNEL);
-+	if (!ts->fw_regs_va) {
-+		dev_err(dev, "failed to dma_alloc_coherent\n");
-+		return -ENOMEM;
-+	}
-+
-+	error = devm_add_action_or_reset(dev, rpi_ts_dma_cleanup, ts);
-+	if (error) {
-+		dev_err(dev, "failed to devm_add_action_or_reset, %d\n", error);
-+		return error;
-+	}
-+
-+
-+	touchbuf = (u32)ts->fw_regs_phys;
-+	error = rpi_firmware_property(fw, RPI_FIRMWARE_FRAMEBUFFER_SET_TOUCHBUF,
-+				      &touchbuf, sizeof(touchbuf));
-+
-+	if (error || touchbuf != 0) {
-+		dev_warn(dev, "Failed to set touchbuf, %d\n", error);
-+		return error;
-+	}
-+
-+	poll_dev = devm_input_allocate_polled_device(dev);
-+	if (!poll_dev) {
-+		dev_err(dev, "Failed to allocate input device\n");
-+		return -ENOMEM;
-+	}
-+	ts->poll_dev = poll_dev;
-+	input = poll_dev->input;
-+
-+	input->name = "raspberrypi-ts";
-+	input->id.bustype = BUS_HOST;
-+	poll_dev->poll_interval = RPI_TS_POLL_INTERVAL;
-+	poll_dev->poll = rpi_ts_poll;
-+	poll_dev->private = ts;
-+
-+	input_set_abs_params(input, ABS_MT_POSITION_X, 0,
-+			     RPI_TS_DEFAULT_WIDTH, 0, 0);
-+	input_set_abs_params(input, ABS_MT_POSITION_Y, 0,
-+			     RPI_TS_DEFAULT_HEIGHT, 0, 0);
-+	touchscreen_parse_properties(input, true, &ts->prop);
-+
-+	error = input_mt_init_slots(input, RPI_TS_MAX_SUPPORTED_POINTS,
-+				    INPUT_MT_DIRECT);
-+	if (error) {
-+		dev_err(dev, "could not init mt slots, %d\n", error);
-+		return error;
-+	}
-+
-+	error = input_register_polled_device(poll_dev);
-+	if (error) {
-+		dev_err(dev, "could not register input device, %d\n", error);
-+		return error;
-+	}
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id rpi_ts_match[] = {
-+	{ .compatible = "raspberrypi,firmware-ts", },
-+	{},
-+};
-+MODULE_DEVICE_TABLE(of, rpi_ts_match);
-+
-+static struct platform_driver rpi_ts_driver = {
-+	.driver = {
-+		.name   = "raspberrypi-ts",
-+		.of_match_table = rpi_ts_match,
-+	},
-+	.probe          = rpi_ts_probe,
-+};
-+module_platform_driver(rpi_ts_driver);
-+
-+MODULE_AUTHOR("Gordon Hollingworth");
-+MODULE_AUTHOR("Nicolas Saenz Julienne <nsaenzjulienne@suse.de>");
-+MODULE_DESCRIPTION("Raspberry Pi firmware based touchscreen driver");
-+MODULE_LICENSE("GPL v2");
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.19.2
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
