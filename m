@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DFB4AC5CFFE
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 11:03:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7E3DC07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 11:03:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A49C92082F
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 11:03:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9E17A2081B
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 11:03:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="eVPfCaXP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A49C92082F
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="untWr3Gp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E17A2081B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726405AbeLKLD2 (ORCPT
+        id S1726451AbeLKLDg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 06:03:28 -0500
-Received: from conuserg-11.nifty.com ([210.131.2.78]:36641 "EHLO
+        Tue, 11 Dec 2018 06:03:36 -0500
+Received: from conuserg-11.nifty.com ([210.131.2.78]:36644 "EHLO
         conuserg-11.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726541AbeLKLBm (ORCPT
+        with ESMTP id S1726542AbeLKLBl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 06:01:42 -0500
+        Tue, 11 Dec 2018 06:01:41 -0500
 Received: from pug.e01.socionext.com (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
-        by conuserg-11.nifty.com with ESMTP id wBBB1C5j017210;
-        Tue, 11 Dec 2018 20:01:18 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-11.nifty.com wBBB1C5j017210
+        by conuserg-11.nifty.com with ESMTP id wBBB1C5e017210;
+        Tue, 11 Dec 2018 20:01:15 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-11.nifty.com wBBB1C5e017210
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1544526079;
-        bh=MlQs798fD3HimILsVIH/RMuv643LnBHtKXQ4IW5SZaA=;
+        s=dec2015msa; t=1544526075;
+        bh=pSsIoFlZj5d5mg6c+vr71NzXFRGXFCZclWcK8cltYHM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eVPfCaXPPe7n1cnw+Knr9Zsq/PwgTsxnsnIO5JAD4eHK/rYj0WDkkaK40Kp0rxyIg
-         muVXnZI3Ns4yE5N7y+ntHxoycTkegNmRZz5CTUT94jAAp2yvnGcq5TrcnyzZxCQJcX
-         ri7UlEK76wP/224x5G01yaW9VCUadESFBq8+BVTZblzNPtA8h0fqzKVit+IP8Am1pg
-         j97Yalx81TBg5Gdy+mDFFVqfCDo5ppNwo3WolTchGo36DFrg09UCYvzzPJ9ZvSWUYV
-         9Wngqbp0WRqENMXNSoV+Bw2tyKtPDNoZu6wLNZIDxP+FRXNj1CbY/4Bsz28e9W6aFu
-         Lvx8vVgCKILNA==
+        b=untWr3GpnaXWKHOiLx20lIAx1fr7m45U2/IR1ysuZ4TeHec4j70v35Ja58HIVUM9V
+         gGLPewbOoRLGxNp7XV+bJLv8Y0e/wG0MrUdEbsqFjV9ZLJMXv6hEUx1h2rkgnl/fca
+         94dmE3Xz21hLrOHIQjzdt/a4goOJcPgwYaS1Ov7/AQ5/byAZV61cPaoKuXpPtDGuFI
+         LdgfFDSWTIjliesccDgKjy/NNJZ0E35Nir8VWAw/VeGrxksR9vVnwEQ1Tg36JgmR4p
+         vbvqwtpFg3MbAYcCXR/FO2Tjmv3/nw4/FE0o5E5yMzrkQ5pMk0um+C8cJL/tR4hIh3
+         ILxNTfTKM6koQ==
 X-Nifty-SrcIP: [153.142.97.92]
 From:   Masahiro Yamada <yamada.masahiro@socionext.com>
 To:     linux-kbuild@vger.kernel.org
 Cc:     Ulf Magnusson <ulfalizer@gmail.com>, linux-kernel@vger.kernel.org,
         Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: [PATCH 08/27] kconfig: warn no new line at end of file
-Date:   Tue, 11 Dec 2018 20:00:51 +0900
-Message-Id: <1544526070-16690-9-git-send-email-yamada.masahiro@socionext.com>
+Subject: [PATCH 03/27] kconfig: require T_EOL to reduce visible statement
+Date:   Tue, 11 Dec 2018 20:00:46 +0900
+Message-Id: <1544526070-16690-4-git-send-email-yamada.masahiro@socionext.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1544526070-16690-1-git-send-email-yamada.masahiro@socionext.com>
 References: <1544526070-16690-1-git-send-email-yamada.masahiro@socionext.com>
@@ -56,68 +56,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It would be nice to warn if a new line is missing at end of file.
-
-We could do this by checkpatch.pl for arbitrary files, but new line
-is rather essential as a statement terminator in Kconfig.
-
-The warning message looks like this:
-
-  kernel/Kconfig.preempt:60:warning: no new line at end of file
-
-Currently, kernel/Kconfig.preempt is the only file with no new line
-at end of file. Fix it.
-
-I know there are some false negative cases. For example, no warning
-is displayed when the last line contains some whitespaces/comments,
-but no new line. Yet, this commit works well for most cases.
+All line-oriented statements should be reduced when seeing a T_EOL
+token. I guess missing T_EOL for the "visible" statement is just a
+mistake. This commit decreases one shift/reduce conflict.
 
 Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 ---
 
- kernel/Kconfig.preempt  |  2 +-
- scripts/kconfig/zconf.l | 10 ++++++++++
- 2 files changed, 11 insertions(+), 1 deletion(-)
+ scripts/kconfig/zconf.y | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/kernel/Kconfig.preempt b/kernel/Kconfig.preempt
-index cd16551..0fee5fe 100644
---- a/kernel/Kconfig.preempt
-+++ b/kernel/Kconfig.preempt
-@@ -57,4 +57,4 @@ config PREEMPT
- endchoice
+diff --git a/scripts/kconfig/zconf.y b/scripts/kconfig/zconf.y
+index 22fceb2..c28f1a8 100644
+--- a/scripts/kconfig/zconf.y
++++ b/scripts/kconfig/zconf.y
+@@ -31,7 +31,7 @@ struct symbol *symbol_hash[SYMBOL_HASHSIZE];
+ static struct menu *current_menu, *current_entry;
  
- config PREEMPT_COUNT
--       bool
-\ No newline at end of file
-+       bool
-diff --git a/scripts/kconfig/zconf.l b/scripts/kconfig/zconf.l
-index 9038e97..5046d3c 100644
---- a/scripts/kconfig/zconf.l
-+++ b/scripts/kconfig/zconf.l
-@@ -78,6 +78,13 @@ static void warn_ignored_character(char chr)
- 	        "%s:%d:warning: ignoring unsupported character '%c'\n",
- 	        current_file->name, yylineno, chr);
- }
-+
-+static void warn_no_newline(void)
-+{
-+	fprintf(stderr, "%s:%d:warning: no new line at end of file\n",
-+	        current_file->name, yylineno);
-+}
-+
  %}
+-%expect 30
++%expect 29
  
- n	[A-Za-z0-9_-]
-@@ -261,6 +268,9 @@ n	[A-Za-z0-9_-]
- <<EOF>>	{
- 	BEGIN(INITIAL);
+ %union
+ {
+@@ -461,7 +461,7 @@ visibility_list:
+ 	| visibility_list T_EOL
+ ;
  
-+	if (prev_token != T_EOL && prev_token != T_HELPTEXT)
-+		warn_no_newline();
-+
- 	if (current_file) {
- 		zconf_endfile();
- 		return T_EOL;
+-visible: T_VISIBLE if_expr
++visible: T_VISIBLE if_expr T_EOL
+ {
+ 	menu_add_visibility($2);
+ };
 -- 
 2.7.4
 
