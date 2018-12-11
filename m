@@ -2,94 +2,109 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF9EDC07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 03:57:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5725EC07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 03:59:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6FB1120811
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 03:57:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="jeoyj+8g"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6FB1120811
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 16F8320811
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 03:59:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 16F8320811
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730080AbeLKD5q (ORCPT
+        id S1730096AbeLKD7m (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 22:57:46 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:38952 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728751AbeLKD5p (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 22:57:45 -0500
-Received: by mail-pl1-f196.google.com with SMTP id 101so6279872pld.6
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Dec 2018 19:57:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=I3Et1lRyku9kNfBv9LJ10cT2UUplmBJDt4g4A+wa0tA=;
-        b=jeoyj+8g0bmoqrzicRP/IyUc9ZYien3uQIFc+zUauKWSx8TQeq7GwVPRHlTE7h4Njl
-         PN+3B4HS15kDwGHRR4Gv/dCV9rtvneZM4jkgUYDOXBDjPZLEaV6mH+n+VRvOteETbnaA
-         zHZbqCdiDo+AE9rR8GUDPFZ8CscjGUmHtjVOU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=I3Et1lRyku9kNfBv9LJ10cT2UUplmBJDt4g4A+wa0tA=;
-        b=FhpIHIoZFDFTiBdVsucY27v9aFbo3nXT/dhEluUAx38nZmjdb4EBnHPP9DLpgdfoKc
-         Kz4QHxtn28q6PPVGy5T3pr1iLWiR1Kd/JimJX49OHY8j9IlaUGyiagTlwIPEjBzZ80Il
-         T1SKwag9R94inJvRpWSJcarYbVMTACns0zlojV87Zg7Ud+bAuqOMl70kPWJeh3VGOt43
-         0+t4fISzmd9NV9U5P8crWeCpXJjKyK3qX8VcCg7PmtXrzSFmsRXAt+9LAdBu46L/MaZk
-         Wg1w7mJOxA4BZK6ojTvFSvT4MaWPXCfH3lUaYIINvtdX1zc7TiKAuoWDJjXmFhgDZymh
-         YEFg==
-X-Gm-Message-State: AA+aEWYQHFYTA237raTRd2ThGwQmUhbKo5hoXK2JzFVOXeqmBB8JaycL
-        UrDPvfztenMd0/D1MxHASiZm
-X-Google-Smtp-Source: AFSGD/X7rpQwE46xNICZte+mamiQKkNt/rfViHq5q44L4D1Qo0shrM5Vc/FHbZ+/SEVnKgO+/W1L3Q==
-X-Received: by 2002:a17:902:24a2:: with SMTP id w31mr14352262pla.216.1544500665015;
-        Mon, 10 Dec 2018 19:57:45 -0800 (PST)
-Received: from localhost.localdomain ([2409:4072:6305:a575:8874:2a8a:cc58:a5ef])
-        by smtp.gmail.com with ESMTPSA id n22sm22454944pfh.166.2018.12.10.19.57.38
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 10 Dec 2018 19:57:44 -0800 (PST)
-From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To:     orsonzhai@gmail.com, baolin.wang@linaro.org, zhang.lyra@gmail.com
-Cc:     linux-unisoc@lists.infradead.org,
+        Mon, 10 Dec 2018 22:59:42 -0500
+Received: from mx2.suse.de ([195.135.220.15]:58592 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727721AbeLKD7m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Dec 2018 22:59:42 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 1AE02AD8F;
+        Tue, 11 Dec 2018 03:59:39 +0000 (UTC)
+Subject: Re: [PATCH] Add linux-unisoc mailing list to Spreadtrum SoC support
+To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc:     orsonzhai@gmail.com, baolin.wang@linaro.org, zhang.lyra@gmail.com,
+        linux-unisoc@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        afaerber@suse.de, orson.zhai@unisoc.com, geng.ren@unisoc.com,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH] Add linux-unisoc mailing list to Spreadtrum SoC support
-Date:   Tue, 11 Dec 2018 09:27:25 +0530
-Message-Id: <20181211035725.5084-1-manivannan.sadhasivam@linaro.org>
-X-Mailer: git-send-email 2.17.1
+        orson.zhai@unisoc.com, geng.ren@unisoc.com
+References: <20181211035725.5084-1-manivannan.sadhasivam@linaro.org>
+From:   =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
+Openpgp: preference=signencrypt
+Autocrypt: addr=afaerber@suse.de; prefer-encrypt=mutual; keydata=
+ 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
+Organization: SUSE Linux GmbH
+Message-ID: <48534f01-b0db-ec09-cbc5-8d589804eb98@suse.de>
+Date:   Tue, 11 Dec 2018 04:59:37 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
+MIME-Version: 1.0
+In-Reply-To: <20181211035725.5084-1-manivannan.sadhasivam@linaro.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since Spreadtrum is now merged into Unisoc Communications, let's use the
-newly created linux-unisoc mailing list for all discussions around the
-Spreadtrum SoCs.
+Am 11.12.18 um 04:57 schrieb Manivannan Sadhasivam:
+> Since Spreadtrum is now merged into Unisoc Communications, let's use the
+> newly created linux-unisoc mailing list for all discussions around the
+> Spreadtrum SoCs.
+> 
+> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 
-Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
----
- MAINTAINERS | 1 +
- 1 file changed, 1 insertion(+)
+Reviewed-by: Andreas Färber <afaerber@suse.de>
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 6682420421c1..d1f768fd4f49 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -2108,6 +2108,7 @@ ARM/SPREADTRUM SoC SUPPORT
- M:	Orson Zhai <orsonzhai@gmail.com>
- M:	Baolin Wang <baolin.wang@linaro.org>
- M:	Chunyan Zhang <zhang.lyra@gmail.com>
-+L:	linux-unisoc@lists.infradead.org (moderated for non-subscribers)
- S:	Maintained
- F:	arch/arm64/boot/dts/sprd
- N:	sprd
+Thanks,
+Andreas
+
 -- 
-2.17.1
-
+SUSE Linux GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
+GF: Felix Imendörffer, Jane Smithard, Graham Norton
+HRB 21284 (AG Nürnberg)
