@@ -6,37 +6,37 @@ X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6414C5CFFE
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 17:14:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0B9CC5CFFE
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 17:14:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 89C712081B
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 17:14:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 89C712081B
+	by mail.kernel.org (Postfix) with ESMTP id 87D432081B
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 17:14:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 87D432081B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726970AbeLKROX (ORCPT
+        id S1726963AbeLKROW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 12:14:23 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:16114 "EHLO huawei.com"
+        Tue, 11 Dec 2018 12:14:22 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:16112 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726896AbeLKROV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 12:14:21 -0500
+        id S1726772AbeLKROT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 12:14:19 -0500
 Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 69B741D7A3359;
-        Wed, 12 Dec 2018 01:14:16 +0800 (CST)
+        by Forcepoint Email with ESMTP id 58DB4FF8243B0;
+        Wed, 12 Dec 2018 01:14:11 +0800 (CST)
 Received: from S00293818-DELL1.china.huawei.com (10.202.226.54) by
  DGGEMS403-HUB.china.huawei.com (10.3.19.203) with Microsoft SMTP Server id
- 14.3.408.0; Wed, 12 Dec 2018 01:14:09 +0800
+ 14.3.408.0; Wed, 12 Dec 2018 01:14:03 +0800
 From:   Salil Mehta <salil.mehta@huawei.com>
 To:     <davem@davemloft.net>
 CC:     <salil.mehta@huawei.com>, <yisen.zhuang@huawei.com>,
         <lipeng321@huawei.com>, <mehta.salil@opnsrc.net>,
         <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linuxarm@huawei.com>, liuzhongzhu <liuzhongzhu@huawei.com>
-Subject: [PATCH net-next 4/6] net: hns3: Add "dcb register" status information query function
-Date:   Tue, 11 Dec 2018 17:13:28 +0000
-Message-ID: <20181211171330.20592-5-salil.mehta@huawei.com>
+Subject: [PATCH net-next 2/6] net: hns3: Add "manager table" information query function
+Date:   Tue, 11 Dec 2018 17:13:26 +0000
+Message-ID: <20181211171330.20592-3-salil.mehta@huawei.com>
 X-Mailer: git-send-email 2.8.3
 In-Reply-To: <20181211171330.20592-1-salil.mehta@huawei.com>
 References: <20181211171330.20592-1-salil.mehta@huawei.com>
@@ -51,213 +51,183 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: liuzhongzhu <liuzhongzhu@huawei.com>
 
-This patch prints dcb register status  information by module.
+This patch prints manager table information.
 
 debugfs command:
-root@(none)# echo dump reg dcb > cmd
- roce_qset_mask: 0x0
- nic_qs_mask: 0x0
- qs_shaping_pass: 0x0
- qs_bp_sts: 0x0
- pri_mask: 0x0
- pri_cshaping_pass: 0x0
- pri_pshaping_pass: 0x0
+echo dump mng tbl > cmd
+
+Sample Command:
+root@(none)# echo dump mng tbl > cmd
+ entry|mac_addr         |mask|ether|mask|vlan|mask|i_map|i_dir|e_type
+ 00   |01:00:5e:00:00:01|0   |00000|0   |0000|0   |00   |00   |0
+ 01   |c2:f1:c5:82:68:17|0   |00000|0   |0000|0   |00   |00   |0
 root@(none)#
 
 Signed-off-by: liuzhongzhu <liuzhongzhu@huawei.com>
 Signed-off-by: Salil Mehta <salil.mehta@huawei.com>
 ---
- drivers/net/ethernet/hisilicon/hns3/hns3_debugfs.c |   7 ++
- .../net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h |   9 ++
- .../ethernet/hisilicon/hns3/hns3pf/hclge_debugfs.c | 102 +++++++++++++++++++++
- .../ethernet/hisilicon/hns3/hns3pf/hclge_debugfs.h |  16 ++++
- 4 files changed, 134 insertions(+)
+ drivers/net/ethernet/hisilicon/hns3/hns3_debugfs.c |  1 +
+ .../net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h | 19 +++++++
+ .../ethernet/hisilicon/hns3/hns3pf/hclge_debugfs.c | 66 ++++++++++++++++++++++
+ .../ethernet/hisilicon/hns3/hns3pf/hclge_debugfs.h | 12 ++++
+ 4 files changed, 98 insertions(+)
 
 diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_debugfs.c b/drivers/net/ethernet/hisilicon/hns3/hns3_debugfs.c
-index c34d412..be11e3d 100644
+index 9a02655..5067ee3 100644
 --- a/drivers/net/ethernet/hisilicon/hns3/hns3_debugfs.c
 +++ b/drivers/net/ethernet/hisilicon/hns3/hns3_debugfs.c
-@@ -226,6 +226,13 @@ static void hns3_dbg_help(struct hnae3_handle *h)
- 		" [rtc] [ppp] [rcb] [tqp <q_num>]]\n",
- 		HNS3_DBG_BUF_LEN - strlen(printf_buf));
- 	dev_info(&h->pdev->dev, "%s", printf_buf);
-+
-+	memset(printf_buf, 0, HNS3_DBG_BUF_LEN);
-+	strncat(printf_buf, "dump reg dcb [port_id] [pri_id] [pg_id]",
-+		HNS3_DBG_BUF_LEN);
-+	strncat(printf_buf + strlen(printf_buf), " [rq_id] [nq_id] [qset_id]\n",
-+		HNS3_DBG_BUF_LEN - strlen(printf_buf));
-+	dev_info(&h->pdev->dev, "%s", printf_buf);
+@@ -210,6 +210,7 @@ static void hns3_dbg_help(struct hnae3_handle *h)
+ 	dev_info(&h->pdev->dev, "dump qos pause cfg\n");
+ 	dev_info(&h->pdev->dev, "dump qos pri map\n");
+ 	dev_info(&h->pdev->dev, "dump qos buf cfg\n");
++	dev_info(&h->pdev->dev, "dump mng tbl\n");
  }
  
  static ssize_t hns3_dbg_cmd_read(struct file *filp, char __user *buffer,
 diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h
-index 5d69e0d..dc8b7c2 100644
+index b1ee6fe..61b617c 100644
 --- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h
 +++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h
-@@ -140,6 +140,15 @@ enum hclge_opcode_type {
- 	HCLGE_OPC_TM_QS_SCH_MODE_CFG    = 0x0814,
- 	HCLGE_OPC_TM_BP_TO_QSET_MAPPING = 0x0815,
- 	HCLGE_OPC_ETS_TC_WEIGHT		= 0x0843,
-+	HCLGE_OPC_QSET_DFX_STS		= 0x0844,
-+	HCLGE_OPC_PRI_DFX_STS		= 0x0845,
-+	HCLGE_OPC_PG_DFX_STS		= 0x0846,
-+	HCLGE_OPC_PORT_DFX_STS		= 0x0847,
-+	HCLGE_OPC_SCH_NQ_CNT		= 0x0848,
-+	HCLGE_OPC_SCH_RQ_CNT		= 0x0849,
-+	HCLGE_OPC_TM_INTERNAL_STS	= 0x0850,
-+	HCLGE_OPC_TM_INTERNAL_CNT	= 0x0851,
-+	HCLGE_OPC_TM_INTERNAL_STS_1	= 0x0852,
- 
- 	/* Packet buffer allocate commands */
- 	HCLGE_OPC_TX_BUFF_ALLOC		= 0x0901,
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_debugfs.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_debugfs.c
-index 3aa3483..d1d693b 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_debugfs.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_debugfs.c
-@@ -107,6 +107,106 @@ static void hclge_dbg_dump_reg_common(struct hclge_dev *hdev,
- 	kfree(desc_src);
- }
- 
-+static void hclge_dbg_dump_dcb(struct hclge_dev *hdev, char *cmd_buf)
-+{
-+	struct device *dev = &hdev->pdev->dev;
-+	struct hclge_dbg_bitmap_cmd *bitmap;
-+	int rq_id, pri_id, qset_id;
-+	int port_id, nq_id, pg_id;
-+	struct hclge_desc desc[2];
-+
-+	int cnt, ret;
-+
-+	cnt = sscanf(cmd_buf, "%i %i %i %i %i %i",
-+		     &port_id, &pri_id, &pg_id, &rq_id, &nq_id, &qset_id);
-+	if (cnt != 6) {
-+		dev_err(&hdev->pdev->dev,
-+			"dump dcb: bad command parameter, cnt=%d\n", cnt);
-+		return;
-+	}
-+
-+	ret = hclge_dbg_cmd_send(hdev, desc, qset_id, 1,
-+				 HCLGE_OPC_QSET_DFX_STS);
-+	if (ret)
-+		return;
-+
-+	bitmap = (struct hclge_dbg_bitmap_cmd *)&desc[0].data[1];
-+	dev_info(dev, "roce_qset_mask: 0x%x\n", bitmap->bit0);
-+	dev_info(dev, "nic_qs_mask: 0x%x\n", bitmap->bit1);
-+	dev_info(dev, "qs_shaping_pass: 0x%x\n", bitmap->bit2);
-+	dev_info(dev, "qs_bp_sts: 0x%x\n", bitmap->bit3);
-+
-+	ret = hclge_dbg_cmd_send(hdev, desc, pri_id, 1, HCLGE_OPC_PRI_DFX_STS);
-+	if (ret)
-+		return;
-+
-+	bitmap = (struct hclge_dbg_bitmap_cmd *)&desc[0].data[1];
-+	dev_info(dev, "pri_mask: 0x%x\n", bitmap->bit0);
-+	dev_info(dev, "pri_cshaping_pass: 0x%x\n", bitmap->bit1);
-+	dev_info(dev, "pri_pshaping_pass: 0x%x\n", bitmap->bit2);
-+
-+	ret = hclge_dbg_cmd_send(hdev, desc, pg_id, 1, HCLGE_OPC_PG_DFX_STS);
-+	if (ret)
-+		return;
-+
-+	bitmap = (struct hclge_dbg_bitmap_cmd *)&desc[0].data[1];
-+	dev_info(dev, "pg_mask: 0x%x\n", bitmap->bit0);
-+	dev_info(dev, "pg_cshaping_pass: 0x%x\n", bitmap->bit1);
-+	dev_info(dev, "pg_pshaping_pass: 0x%x\n", bitmap->bit2);
-+
-+	ret = hclge_dbg_cmd_send(hdev, desc, port_id, 1,
-+				 HCLGE_OPC_PORT_DFX_STS);
-+	if (ret)
-+		return;
-+
-+	bitmap = (struct hclge_dbg_bitmap_cmd *)&desc[0].data[1];
-+	dev_info(dev, "port_mask: 0x%x\n", bitmap->bit0);
-+	dev_info(dev, "port_shaping_pass: 0x%x\n", bitmap->bit1);
-+
-+	ret = hclge_dbg_cmd_send(hdev, desc, nq_id, 1, HCLGE_OPC_SCH_NQ_CNT);
-+	if (ret)
-+		return;
-+
-+	dev_info(dev, "sch_nq_cnt: 0x%x\n", desc[0].data[1]);
-+
-+	ret = hclge_dbg_cmd_send(hdev, desc, nq_id, 1, HCLGE_OPC_SCH_RQ_CNT);
-+	if (ret)
-+		return;
-+
-+	dev_info(dev, "sch_rq_cnt: 0x%x\n", desc[0].data[1]);
-+
-+	ret = hclge_dbg_cmd_send(hdev, desc, 0, 2, HCLGE_OPC_TM_INTERNAL_STS);
-+	if (ret)
-+		return;
-+
-+	dev_info(dev, "pri_bp: 0x%x\n", desc[0].data[1]);
-+	dev_info(dev, "fifo_dfx_info: 0x%x\n", desc[0].data[2]);
-+	dev_info(dev, "sch_roce_fifo_afull_gap: 0x%x\n", desc[0].data[3]);
-+	dev_info(dev, "tx_private_waterline: 0x%x\n", desc[0].data[4]);
-+	dev_info(dev, "tm_bypass_en: 0x%x\n", desc[0].data[5]);
-+	dev_info(dev, "SSU_TM_BYPASS_EN: 0x%x\n", desc[1].data[0]);
-+	dev_info(dev, "SSU_RESERVE_CFG: 0x%x\n", desc[1].data[1]);
-+
-+	ret = hclge_dbg_cmd_send(hdev, desc, port_id, 1,
-+				 HCLGE_OPC_TM_INTERNAL_CNT);
-+	if (ret)
-+		return;
-+
-+	dev_info(dev, "SCH_NIC_NUM: 0x%x\n", desc[0].data[1]);
-+	dev_info(dev, "SCH_ROCE_NUM: 0x%x\n", desc[0].data[2]);
-+
-+	ret = hclge_dbg_cmd_send(hdev, desc, port_id, 1,
-+				 HCLGE_OPC_TM_INTERNAL_STS_1);
-+	if (ret)
-+		return;
-+
-+	dev_info(dev, "TC_MAP_SEL: 0x%x\n", desc[0].data[1]);
-+	dev_info(dev, "IGU_PFC_PRI_EN: 0x%x\n", desc[0].data[2]);
-+	dev_info(dev, "MAC_PFC_PRI_EN: 0x%x\n", desc[0].data[3]);
-+	dev_info(dev, "IGU_PRI_MAP_TC_CFG: 0x%x\n", desc[0].data[4]);
-+	dev_info(dev, "IGU_TX_PRI_MAP_TC_CFG: 0x%x\n", desc[0].data[5]);
-+}
-+
- static void hclge_dbg_dump_reg_cmd(struct hclge_dev *hdev, char *cmd_buf)
- {
- 	int msg_num;
-@@ -195,6 +295,8 @@ static void hclge_dbg_dump_reg_cmd(struct hclge_dev *hdev, char *cmd_buf)
- 					  &cmd_buf[13], msg_num,
- 					  HCLGE_DBG_DFX_TQP_OFFSET,
- 					  HCLGE_OPC_DFX_TQP_REG);
-+	} else if (strncmp(&cmd_buf[9], "dcb", 3) == 0) {
-+		hclge_dbg_dump_dcb(hdev, &cmd_buf[13]);
- 	} else {
- 		dev_info(&hdev->pdev->dev, "unknown command\n");
- 		return;
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_debugfs.h b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_debugfs.h
-index f133779..e1a66a1 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_debugfs.h
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_debugfs.h
-@@ -47,6 +47,22 @@ struct hclge_qos_pri_map_cmd {
- 	   rev	    : 4;
+@@ -237,6 +237,7 @@ enum hclge_opcode_type {
+ 	HCLGE_TM_QCN_MEM_INT_CFG	= 0x1A14,
+ 	HCLGE_PPP_CMD0_INT_CMD		= 0x2100,
+ 	HCLGE_PPP_CMD1_INT_CMD		= 0x2101,
++	HCLGE_MAC_ETHERTYPE_IDX_RD	= 0x2105,
+ 	HCLGE_NCSI_INT_EN		= 0x2401,
  };
  
-+struct hclge_dbg_bitmap_cmd {
-+	union {
-+		u8 bitmap;
-+		struct {
-+			u8 bit0 : 1,
-+			   bit1 : 1,
-+			   bit2 : 1,
-+			   bit3 : 1,
-+			   bit4 : 1,
-+			   bit5 : 1,
-+			   bit6 : 1,
-+			   bit7 : 1;
-+		};
-+	};
+@@ -744,6 +745,24 @@ struct hclge_cfg_tx_queue_pointer_cmd {
+ 	u8 rsv[14];
+ };
+ 
++#pragma pack(1)
++struct hclge_mac_ethertype_idx_rd_cmd {
++	u8	flags;
++	u8	resp_code;
++	__le16  vlan_tag;
++	u8      mac_add[6];
++	__le16  index;
++	__le16	ethter_type;
++	__le16  egress_port;
++	__le16  egress_queue;
++	__le16  rev0;
++	u8	i_port_bitmap;
++	u8	i_port_direction;
++	u8	rev1[2];
 +};
 +
- struct hclge_dbg_dfx_message {
- 	int flag;
- 	char message[60];
++#pragma pack()
++
+ #define HCLGE_TSO_MSS_MIN_S	0
+ #define HCLGE_TSO_MSS_MIN_M	GENMASK(13, 0)
+ 
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_debugfs.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_debugfs.c
+index 14577bb..832c7f4 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_debugfs.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_debugfs.c
+@@ -407,6 +407,70 @@ static void hclge_dbg_dump_qos_buf_cfg(struct hclge_dev *hdev)
+ 		"dump qos buf cfg fail(0x%x), status is %d\n", cmd, ret);
+ }
+ 
++static void hclge_dbg_dump_mng_table(struct hclge_dev *hdev)
++{
++	struct hclge_mac_ethertype_idx_rd_cmd *req0;
++	char printf_buf[HCLGE_DBG_BUF_LEN];
++	struct hclge_desc desc;
++	int ret, i;
++
++	dev_info(&hdev->pdev->dev, "mng tab:\n");
++	memset(printf_buf, 0, HCLGE_DBG_BUF_LEN);
++	strncat(printf_buf,
++		"entry|mac_addr         |mask|ether|mask|vlan|mask",
++		HCLGE_DBG_BUF_LEN);
++	strncat(printf_buf + strlen(printf_buf),
++		"|i_map|i_dir|e_type|pf_id|vf_id|q_id|drop\n",
++		HCLGE_DBG_BUF_LEN - strlen(printf_buf));
++
++	dev_info(&hdev->pdev->dev, "%s", printf_buf);
++
++	for (i = 0; i < HCLGE_DBG_MNG_TBL_MAX; i++) {
++		hclge_cmd_setup_basic_desc(&desc, HCLGE_MAC_ETHERTYPE_IDX_RD,
++					   true);
++		req0 = (struct hclge_mac_ethertype_idx_rd_cmd *)&desc.data;
++		req0->index = cpu_to_le16(i);
++
++		ret = hclge_cmd_send(&hdev->hw, &desc, 1);
++		if (ret) {
++			dev_err(&hdev->pdev->dev,
++				"call hclge_cmd_send fail, ret = %d\n", ret);
++			return;
++		}
++
++		if (!req0->resp_code)
++			continue;
++
++		memset(printf_buf, 0, HCLGE_DBG_BUF_LEN);
++		snprintf(printf_buf, HCLGE_DBG_BUF_LEN,
++			 "%02u   |%02x:%02x:%02x:%02x:%02x:%02x|",
++			 req0->index, req0->mac_add[0], req0->mac_add[1],
++			 req0->mac_add[2], req0->mac_add[3], req0->mac_add[4],
++			 req0->mac_add[5]);
++
++		snprintf(printf_buf + strlen(printf_buf),
++			 HCLGE_DBG_BUF_LEN - strlen(printf_buf),
++			 "%x   |%04x |%x   |%04x|%x   |%02x   |%02x   |",
++			 !!(req0->flags & HCLGE_DBG_MNG_MAC_MASK_B),
++			 req0->ethter_type,
++			 !!(req0->flags & HCLGE_DBG_MNG_ETHER_MASK_B),
++			 req0->vlan_tag & HCLGE_DBG_MNG_VLAN_TAG,
++			 !!(req0->flags & HCLGE_DBG_MNG_VLAN_MASK_B),
++			 req0->i_port_bitmap, req0->i_port_direction);
++
++		snprintf(printf_buf + strlen(printf_buf),
++			 HCLGE_DBG_BUF_LEN - strlen(printf_buf),
++			 "%d     |%d    |%02d   |%04d|%x\n",
++			 !!(req0->egress_port & HCLGE_DBG_MNG_E_TYPE_B),
++			 req0->egress_port & HCLGE_DBG_MNG_PF_ID,
++			 (req0->egress_port >> 3) & HCLGE_DBG_MNG_VF_ID,
++			 req0->egress_queue,
++			 !!(req0->egress_port & HCLGE_DBG_MNG_DROP_B));
++
++		dev_info(&hdev->pdev->dev, "%s", printf_buf);
++	}
++}
++
+ static void hclge_dbg_fd_tcam_read(struct hclge_dev *hdev, u8 stage,
+ 				   bool sel_x, u32 loc)
+ {
+@@ -478,6 +542,8 @@ int hclge_dbg_run_cmd(struct hnae3_handle *handle, char *cmd_buf)
+ 		hclge_dbg_dump_qos_pri_map(hdev);
+ 	} else if (strncmp(cmd_buf, "dump qos buf cfg", 16) == 0) {
+ 		hclge_dbg_dump_qos_buf_cfg(hdev);
++	} else if (strncmp(cmd_buf, "dump mng tbl", 12) == 0) {
++		hclge_dbg_dump_mng_table(hdev);
+ 	} else {
+ 		dev_info(&hdev->pdev->dev, "unknown command\n");
+ 		return -EINVAL;
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_debugfs.h b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_debugfs.h
+index 50fd0b1..6097cd8 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_debugfs.h
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_debugfs.h
+@@ -4,6 +4,18 @@
+ #ifndef __HCLGE_DEBUGFS_H
+ #define __HCLGE_DEBUGFS_H
+ 
++#define HCLGE_DBG_BUF_LEN	   256
++#define HCLGE_DBG_MNG_TBL_MAX	   64
++
++#define HCLGE_DBG_MNG_VLAN_MASK_B  BIT(0)
++#define HCLGE_DBG_MNG_MAC_MASK_B   BIT(1)
++#define HCLGE_DBG_MNG_ETHER_MASK_B BIT(2)
++#define HCLGE_DBG_MNG_E_TYPE_B	   BIT(11)
++#define HCLGE_DBG_MNG_DROP_B	   BIT(13)
++#define HCLGE_DBG_MNG_VLAN_TAG	   0x0FFF
++#define HCLGE_DBG_MNG_PF_ID	   0x0007
++#define HCLGE_DBG_MNG_VF_ID	   0x00FF
++
+ #pragma pack(1)
+ 
+ struct hclge_qos_pri_map_cmd {
 -- 
 2.7.4
 
