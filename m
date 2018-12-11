@@ -4,69 +4,69 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1CB1C67839
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 19:18:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 420F4C67839
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 19:19:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BAE4F2087F
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 19:18:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0915E20880
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 19:19:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lightnvm-io.20150623.gappssmtp.com header.i=@lightnvm-io.20150623.gappssmtp.com header.b="iOk4yw4G"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BAE4F2087F
+	dkim=pass (2048-bit key) header.d=lightnvm-io.20150623.gappssmtp.com header.i=@lightnvm-io.20150623.gappssmtp.com header.b="nJAhIR2e"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0915E20880
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lightnvm.io
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727339AbeLKTS7 (ORCPT
+        id S1727354AbeLKTTB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 14:18:59 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:37748 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726792AbeLKTRE (ORCPT
+        Tue, 11 Dec 2018 14:19:01 -0500
+Received: from mail-lf1-f52.google.com ([209.85.167.52]:35177 "EHLO
+        mail-lf1-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726794AbeLKTRE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 11 Dec 2018 14:17:04 -0500
-Received: by mail-lj1-f195.google.com with SMTP id e5-v6so14039051lja.4
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 11:17:02 -0800 (PST)
+Received: by mail-lf1-f52.google.com with SMTP id e26so11632484lfc.2
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 11:17:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=lightnvm-io.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=nHnAI6INNpfEyeoVrs4hGgZP5NaC4/R4lNfx3MHbEtg=;
-        b=iOk4yw4GWJBIdDmIg6btixhc/royuqRtuMz1DggZ82XcXGZV+Xj+oWkCnURBzyKqOO
-         tjTRNdNWF8THoDdALsqaEEfkU/fhv0xVpUT6XUvOzAqhVJkTl4u5f45iaN/ZNcMSvL7l
-         vLpZ89PwNpzE9KAiNJtUNCLMV/xGyv8r0XkqnWxxEYL7nXf5GMWzmnoYcY2U9HbcsUb+
-         F3vmxLcYr37ddYtmGzuk42pc9CZP/o4rEg9wFpi4QiabKe525dbfBUfwrNxbtI1KwYnB
-         v0ZO/PHuuIuCI/0qQscuEnzLwUveCOXa7OPzgJl3cPo+3nxsy9zGCUD/sSaj4uAfUFNC
-         txKg==
+        bh=TmJnvhRDq+XrZ6hTWK6vWKJ3pmK1jX6DMSH7DISlQQQ=;
+        b=nJAhIR2ekuo/pDaTHJnKPQ41v1LVN+1Fcipk9yKag7i2HBjDKqwsneXLBAMZ3HNMPc
+         0Wkq9/9bEkmEC+p1pzJuJGlcYyYwF84qISAXEeWII4dWm5n1OJez4pAdATmBop3tWXVJ
+         6GZaX+6ttrlW4BHCCA2YB0uX2M8Q6h3hf0nf39JhRND46Ch6FNNpdWVvZ9K+fbpfhKoF
+         fqqV0xtsuqM6e4x8YqmtzFmClyuMGuAI8Th1oa9zJjVbjn4Jyjsqwt04Co2O/8vNztyO
+         LYSxoLhIiMo5gu42luuOjA6qQPcUc9CyjLgUbPDcMusOIVo58gDkBz5FsXliRdivX/rt
+         gydQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=nHnAI6INNpfEyeoVrs4hGgZP5NaC4/R4lNfx3MHbEtg=;
-        b=rHAtWc8q3IterQEsa1hUzVv24t7VyL5Sj03zev89blec6HNWu8RJmRAMyV3eVUixbU
-         vNpl8DP3f9eDEMSIZFG5Ir3p+75H6nak1t+sFuSOKgSyzu0x8sntDgFUTUtmUY9p9cLl
-         NPzFnnT3KnSAoW42aiYC7jZODatye6fD+cZvRLqo6Pz0uP2FdKoFPxn38BCYHgrPayNn
-         XoZe9cWtmqUGoBdReNCBJGGBoSTPpM69QSDM27Dq5bih9MLzyogdBXeYwsE2N+6lvmwA
-         q6AW/ViJTebHvnPj9te9/+biIfYajGiGmfLkTcLniNjIhrCStKFrzVCLpKUzgMezQP/G
-         N98w==
-X-Gm-Message-State: AA+aEWZgnnS7iZqz1qjaJlBWetXdsOHs9sf0cWmh27ivdluA2NMrpho8
-        96sMPk1ZmFAw+KznjLNH2Ue0VA==
-X-Google-Smtp-Source: AFSGD/UQ1PMhMoNRwjuZb8wv1xRZROqMX6+ALeQZ928+6fgXZVxIIQqjwjqmnngPlI/m2PNFaj9OFg==
-X-Received: by 2002:a2e:82d7:: with SMTP id n23-v6mr9194727ljh.143.1544555821617;
-        Tue, 11 Dec 2018 11:17:01 -0800 (PST)
+        bh=TmJnvhRDq+XrZ6hTWK6vWKJ3pmK1jX6DMSH7DISlQQQ=;
+        b=CFcAWwqItJDbrv6cnsWBdIUCq6pE8CSHNFWxhiSQ0emygT3ZTb2jsQxazQPjp5+FTn
+         xv0X1ojiWdOXT6pRag2w+d/eiILsoQN0lv2s5YaXIgEEKJkkeoxP3haHtBNFumtb6TsJ
+         dXJGdphUfpGxAzljvavr92rhDhLORtPacNcMYXjVh4w1QSoQRELxrCkE0rV5pLmn6xFq
+         FDRwlMQ+m9UvppYC+YL9sdDytdsXeN0xR1tsa239a8T8g1AbXuk0DKXWucwdOtYKc0m6
+         HcUKzGQkfeWcGy/ZLODNMjgUx9coiuziG1Z0D3mj3xqTZAuWYIk5upZjYdLeBuyysyzO
+         +HOw==
+X-Gm-Message-State: AA+aEWYYRp89ifkBTtZBRXUEpZOXSLaDOy2Xz8ONDPnOgz5mc+TOQWLq
+        XKdGn/05fPCG8VQ8sSbMn9DyKw==
+X-Google-Smtp-Source: AFSGD/V4z7A7w5bxMIBz3HhhLRXWA1lKxef+gsGt7P3OX7m9jF39S9EttCvgJw316YCkghb51g3WOA==
+X-Received: by 2002:a19:a149:: with SMTP id k70mr10051471lfe.5.1544555822844;
+        Tue, 11 Dec 2018 11:17:02 -0800 (PST)
 Received: from skyninja.webspeed.dk (95-166-82-66-cable.dk.customer.tdc.net. [95.166.82.66])
-        by smtp.gmail.com with ESMTPSA id v64sm2764583lfa.48.2018.12.11.11.17.00
+        by smtp.gmail.com with ESMTPSA id v64sm2764583lfa.48.2018.12.11.11.17.01
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 11 Dec 2018 11:17:00 -0800 (PST)
+        Tue, 11 Dec 2018 11:17:01 -0800 (PST)
 From:   =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
 To:     axboe@fb.com
 Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Hans Holmberg <hans.holmberg@cnexlabs.com>,
         =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
-Subject: [GIT PULL 02/21] lightnvm: Fix uninitialized return value in nvm_get_chunk_meta()
-Date:   Tue, 11 Dec 2018 20:16:08 +0100
-Message-Id: <20181211191627.15542-3-mb@lightnvm.io>
+Subject: [GIT PULL 03/21] lightnvm: pblk: fix chunk close trace event check
+Date:   Tue, 11 Dec 2018 20:16:09 +0100
+Message-Id: <20181211191627.15542-4-mb@lightnvm.io>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181211191627.15542-1-mb@lightnvm.io>
 References: <20181211191627.15542-1-mb@lightnvm.io>
@@ -78,60 +78,31 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Geert Uytterhoeven <geert@linux-m68k.org>
+From: Hans Holmberg <hans.holmberg@cnexlabs.com>
 
-With gcc 4.1:
+The check for chunk closes suffers from an off-by-one issue, leading
+to chunk close events not being traced.
 
-    drivers/lightnvm/core.c: In function ‘nvm_get_bb_meta’:
-    drivers/lightnvm/core.c:977: warning: ‘ret’ may be used uninitialized in this function
-
-and
-
-    drivers/nvme/host/lightnvm.c: In function ‘nvme_nvm_get_chk_meta’:
-    drivers/nvme/host/lightnvm.c:580: warning: ‘ret’ may be used uninitialized in this function
-
-Indeed, if (for the former) the number of channels or LUNs is zero, or
-(for both) the passed number of chunks is zero, ret will be returned
-uninitialized.
-
-Fix this by preinitializing ret to zero.
-
-Fixes: aff3fb18f957de93 ("lightnvm: move bad block and chunk state logic to core")
-Fixes: a294c199455187d1 ("lightnvm: implement get log report chunk helpers")
-Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Fixes: 4c44abf43d00 ("lightnvm: pblk: add trace events for chunk states")
+Signed-off-by: Hans Holmberg <hans.holmberg@cnexlabs.com>
 Signed-off-by: Matias Bjørling <mb@lightnvm.io>
 ---
- drivers/lightnvm/core.c      | 2 +-
- drivers/nvme/host/lightnvm.c | 3 ++-
- 2 files changed, 3 insertions(+), 2 deletions(-)
+ drivers/lightnvm/pblk-core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/lightnvm/core.c b/drivers/lightnvm/core.c
-index 60ab11fcc81c..10e541cb8dc3 100644
---- a/drivers/lightnvm/core.c
-+++ b/drivers/lightnvm/core.c
-@@ -974,7 +974,7 @@ static int nvm_get_bb_meta(struct nvm_dev *dev, sector_t slba,
- 	struct ppa_addr ppa;
- 	u8 *blks;
- 	int ch, lun, nr_blks;
--	int ret;
-+	int ret = 0;
- 
- 	ppa.ppa = slba;
- 	ppa = dev_to_generic_addr(dev, ppa);
-diff --git a/drivers/nvme/host/lightnvm.c b/drivers/nvme/host/lightnvm.c
-index a4f3b263cd6c..d64805dc8efb 100644
---- a/drivers/nvme/host/lightnvm.c
-+++ b/drivers/nvme/host/lightnvm.c
-@@ -577,7 +577,8 @@ static int nvme_nvm_get_chk_meta(struct nvm_dev *ndev,
- 	struct ppa_addr ppa;
- 	size_t left = nchks * sizeof(struct nvme_nvm_chk_meta);
- 	size_t log_pos, offset, len;
--	int ret, i, max_len;
-+	int i, max_len;
-+	int ret = 0;
- 
- 	/*
- 	 * limit requests to maximum 256K to avoid issuing arbitrary large
+diff --git a/drivers/lightnvm/pblk-core.c b/drivers/lightnvm/pblk-core.c
+index 6944aac43b01..6581c35f51ee 100644
+--- a/drivers/lightnvm/pblk-core.c
++++ b/drivers/lightnvm/pblk-core.c
+@@ -531,7 +531,7 @@ void pblk_check_chunk_state_update(struct pblk *pblk, struct nvm_rq *rqd)
+ 		if (caddr == 0)
+ 			trace_pblk_chunk_state(pblk_disk_name(pblk),
+ 							ppa, NVM_CHK_ST_OPEN);
+-		else if (caddr == chunk->cnlb)
++		else if (caddr == (chunk->cnlb - 1))
+ 			trace_pblk_chunk_state(pblk_disk_name(pblk),
+ 							ppa, NVM_CHK_ST_CLOSED);
+ 	}
 -- 
 2.17.1
 
