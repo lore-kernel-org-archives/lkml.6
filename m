@@ -7,49 +7,49 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D494C5CFFE
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:44:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF5A2C5CFFE
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:44:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2F6D520855
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:44:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7A3482082F
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:44:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544543055;
-	bh=zyLhz1bSH9QXTV77PLYiif6QDoXBiieVO0gn8vJSpqQ=;
+	s=default; t=1544543057;
+	bh=WQOxoe17j2fhNOLEme5S9jyAi4c1RTumgOBafmdWTFg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=JnpQsyMFQU0sBV58GpS/2E9FxiG39D5Cawj7km4jmoJVXth3jBd8oiLzKTJAQY2Ke
-	 CjG7yPAs5VOBo3XcZY2lTwisyEYXY2bdpA6MnTJhunyIVouS1sWLjqWxPIJXx2xXQ0
-	 VGdmSOhnAGyYMf36q0sQuNwqgj4Z8LsV+dCfbQyE=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F6D520855
+	b=s7+dgW18McQn56z2KmuF/w0ujU09KNNtSnw/PMg+QzelyexPTkZ4sV7881OMxLqpw
+	 lgmWPhBl3aSrhTajSPao8FfhS8fhnGxjk+t9X1Y8ygrPVUSTgVS0hcIFsdFyMCc4Pf
+	 zZ6ZBSqNwtPizRQLvjs1CcKWaPrKEzu1EeQi2+YY=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A3482082F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727769AbeLKPoO (ORCPT
+        id S1727800AbeLKPoQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 10:44:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60764 "EHLO mail.kernel.org"
+        Tue, 11 Dec 2018 10:44:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60814 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727254AbeLKPoM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:44:12 -0500
+        id S1727766AbeLKPoO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 10:44:14 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ADF5B2082F;
-        Tue, 11 Dec 2018 15:44:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3D5B72082F;
+        Tue, 11 Dec 2018 15:44:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544543051;
-        bh=zyLhz1bSH9QXTV77PLYiif6QDoXBiieVO0gn8vJSpqQ=;
+        s=default; t=1544543053;
+        bh=WQOxoe17j2fhNOLEme5S9jyAi4c1RTumgOBafmdWTFg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JqHDDx2P96U6W+bRqSjWVlvv2CnT9PbqXEnvOot5cD8GzQz3caqx6LEqqcuXFFNvB
-         NQyG8GBFNkoPD38t6Ik4STNx87dZ+WJImrs3uR+HD7mgD1gr8ZbdVKPwLc6IN4s1OY
-         3RTaGuFhIlkZgWAm90rMPYzhpQtMnQCoERjvgTPk=
+        b=ZSI5LRD6xaYbGAx0s1e3upGNv3xSLY9S4aenQMLcXa2WIqw9vf5UHMKO4/cwUHjzW
+         D2Z00NW5eXwptkbiMTrmDNIOpFNkiKMA+LDVSasaFu2SneyZzW+bnNayZ+MxSJKAZL
+         wymglRnrtyGylH0bEMYUNvz+/cM7mV/XLkn5H/MA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Xiongfeng Wang <xiongfeng.wang@linaro.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: [PATCH 3.18 13/54] Kbuild: suppress packed-not-aligned warning for default setting only
-Date:   Tue, 11 Dec 2018 16:41:01 +0100
-Message-Id: <20181211151546.730802170@linuxfoundation.org>
+        stable@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 3.18 14/54] disable stringop truncation warnings for now
+Date:   Tue, 11 Dec 2018 16:41:02 +0100
+Message-Id: <20181211151546.796099435@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181211151546.010073210@linuxfoundation.org>
 References: <20181211151546.010073210@linuxfoundation.org>
@@ -68,53 +68,31 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Xiongfeng Wang <xiongfeng.wang@linaro.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 
-commit 321cb0308a9e76841394b4bbab6a1107cfedbae0 upstream.
+commit 217c3e0196758662aa0429863b09d1c13da1c5d6 upstream.
 
-gcc-8 reports many -Wpacked-not-aligned warnings. The below are some
-examples.
+They are too noisy
 
-./include/linux/ceph/msgr.h:67:1: warning: alignment 1 of 'struct
-ceph_entity_addr' is less than 8 [-Wpacked-not-aligned]
- } __attribute__ ((packed));
-
-./include/linux/ceph/msgr.h:67:1: warning: alignment 1 of 'struct
-ceph_entity_addr' is less than 8 [-Wpacked-not-aligned]
- } __attribute__ ((packed));
-
-./include/linux/ceph/msgr.h:67:1: warning: alignment 1 of 'struct
-ceph_entity_addr' is less than 8 [-Wpacked-not-aligned]
- } __attribute__ ((packed));
-
-This patch suppresses this kind of warnings for default setting.
-
-Signed-off-by: Xiongfeng Wang <xiongfeng.wang@linaro.org>
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- scripts/Makefile.extrawarn |    3 +++
+ Makefile |    3 +++
  1 file changed, 3 insertions(+)
 
---- a/scripts/Makefile.extrawarn
-+++ b/scripts/Makefile.extrawarn
-@@ -10,6 +10,8 @@
- # are not supported by all versions of the compiler
- # ==========================================================================
+--- a/Makefile
++++ b/Makefile
+@@ -759,6 +759,9 @@ KBUILD_CFLAGS += $(call cc-option,-Wdecl
+ # disable pointer signed / unsigned warnings in gcc 4.0
+ KBUILD_CFLAGS += $(call cc-disable-warning, pointer-sign)
  
-+KBUILD_CFLAGS += $(call cc-disable-warning, packed-not-aligned)
++# disable stringop warnings in gcc 8+
++KBUILD_CFLAGS += $(call cc-disable-warning, stringop-truncation)
 +
- ifeq ("$(origin W)", "command line")
-   export KBUILD_ENABLE_EXTRA_GCC_CHECKS := $(W)
- endif
-@@ -25,6 +27,7 @@ warning-1 += -Wold-style-definition
- warning-1 += $(call cc-option, -Wmissing-include-dirs)
- warning-1 += $(call cc-option, -Wunused-but-set-variable)
- warning-1 += $(call cc-option, -Wunused-const-variable)
-+warning-1 += $(call cc-option, -Wpacked-not-aligned)
- warning-1 += $(call cc-disable-warning, missing-field-initializers)
+ # disable invalid "can't wrap" optimizations for signed / pointers
+ KBUILD_CFLAGS	+= $(call cc-option,-fno-strict-overflow)
  
- warning-2 := -Waggregate-return
 
 
