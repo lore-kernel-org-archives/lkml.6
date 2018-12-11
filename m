@@ -6,53 +6,53 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
 	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5E4EC6783B
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 21:44:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77F05C67839
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 21:44:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 68B3F2086D
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 21:44:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3ECD821104
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 21:44:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544564676;
-	bh=OGfE9wJUkhsRMDFl6rjfKN0rjVgOdVm+pcKJzvPhA1g=;
+	s=default; t=1544564689;
+	bh=G9m7ZnsUOUcvgkNn1ty8aRvY43XQq2TFmUz5gCVBXzA=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=Yb4UOI6Bp+H1m/CwlO2SIvbWdz/DalzxQnv5zKiOq5Sb0Qsc6crLveP54A4yXVk9h
-	 5BG2odY8xk+QFk2vduHQTOSOX4IN//IJDYQaDcGYmbT2OmF81lnX+ffI9wPXlFZmgQ
-	 CZLwSJ5hBxRp1gkJuQ2RFX5hGKBywx7orNqgsDcY=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 68B3F2086D
+	b=tZLYyCrzu1Vh8pF5S3nGY4295cQPiPBftb+eYh+4XeZCBsdV8tqxQmn6QYzAutTzZ
+	 wek5pn7TRbxx2ENq7skMDZdkOsb/q+2sabRF5MfL3/B3cXUKM7G84JfeAA9bur71Vv
+	 dnjMX2BVy1RDAwuVPHWcH52RkZt6n2qfEA+PuYAw=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3ECD821104
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726337AbeLKVof (ORCPT
+        id S1726365AbeLKVos (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 16:44:35 -0500
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:47008 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726146AbeLKVoe (ORCPT
+        Tue, 11 Dec 2018 16:44:48 -0500
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:38425 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726146AbeLKVor (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 16:44:34 -0500
-Received: by mail-ot1-f67.google.com with SMTP id w25so15564211otm.13;
-        Tue, 11 Dec 2018 13:44:34 -0800 (PST)
+        Tue, 11 Dec 2018 16:44:47 -0500
+Received: by mail-oi1-f193.google.com with SMTP id a77so13320480oii.5;
+        Tue, 11 Dec 2018 13:44:47 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=SxewEjABoL2XL2a2ZAoCry0dufPCPnX8qdtg/EJq7Bo=;
-        b=dirIX0mJhGFaatC54ofWSqy8n5xwWIvE/uagYQNoSrKIK+J0HaDnFDrf5eLTAxkfU0
-         i67QetnPdUZxere1ziiwGHHR9H+A74guiXBT8PpdouBlSLmm3bIwBPzEqotWBq9zaWin
-         Ow+7Tb4uGtF9c4VkdUZn6HUWlPaB7AESZlrlS2yG1KTy7XcjQeDss9vHhmF7T0IQyLjk
-         HK1XGsf8TlsK8KFcrX7FnWqncTTspzGaGXjEW4W3DDRwG0S54pVV/hIwMNTetLXLwXz6
-         LBQgFa73vFphhnHEQvukjo/4zEC5vTJxQ8eCaLFTVWDUTDer9R3Wphhc5CVFfSmoKhyz
-         6MQw==
-X-Gm-Message-State: AA+aEWZAJ3RkfduxNnllgqchl/Tmo4OfJmD4BBiCS+B41k7Si4q8LzgF
-        +6J53LNWO0Wet1Ng8nYhdg==
-X-Google-Smtp-Source: AFSGD/VBCjXFYmCrK2wzcW/UGw3/9X3g0VcnojV8THfikCQvw0ngBqBtCoyVrnWbWrkiRwEYS7QZGA==
-X-Received: by 2002:a9d:23e5:: with SMTP id t92mr12917058otb.159.1544564673901;
-        Tue, 11 Dec 2018 13:44:33 -0800 (PST)
+        bh=Y9EAWa1IC7qMF4Th+r9/Z//SfIrnlUcSsuJ4gReQCrg=;
+        b=bAckhk6Zp2OVkvfhl52mrBu+OfH1NXGDHumYgrVi3qUC9IJ744OKnZ2jBK72tpqZop
+         VmLg53da5eYSYoGTuMEQwvGSwmRaTvxSCDHtn6h7OxwMfDrWyg1i5lKGB6JFcnWJANaM
+         qLEVyl3hO+9lhcj1vNVSQHV/JmdDnVMxjW+PYSyo8HgMWqSRZTaczG1ytfTHE6aZuZnS
+         qMwzkQZ8kMct8g0DAnC9xy+ruKkBwO77SFV1dB9CT9r68ICL4g5My30WONiFcYfSs/qc
+         kwK440u63jLxIKFUEh/FZdyTC9A05M27zzdcZWR/dPV/nt6aQppkzVvP7Xz3m7q8+yZt
+         iU8w==
+X-Gm-Message-State: AA+aEWY9s4IfOKFOukTNGmAvZmwP08kU26U1kBEG57Vh2pfVv0bYuoum
+        tE8M8JDIJWgkXR1acLWrrnHcLE8=
+X-Google-Smtp-Source: AFSGD/UQFWfU1+x0TLFTIcWSuYESGa08TLRfjF45GGRlXNpbcpQ2JeZNjccZAa/FzkD8DzfsY3Z0aA==
+X-Received: by 2002:aca:dd57:: with SMTP id u84mr2354970oig.216.1544564686974;
+        Tue, 11 Dec 2018 13:44:46 -0800 (PST)
 Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id s186sm7272392oif.0.2018.12.11.13.44.33
+        by smtp.gmail.com with ESMTPSA id d66sm7788086oia.29.2018.12.11.13.44.46
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 11 Dec 2018 13:44:33 -0800 (PST)
-Date:   Tue, 11 Dec 2018 15:44:32 -0600
+        Tue, 11 Dec 2018 13:44:46 -0800 (PST)
+Date:   Tue, 11 Dec 2018 15:44:46 -0600
 From:   Rob Herring <robh@kernel.org>
 To:     Miquel Raynal <miquel.raynal@bootlin.com>
 Cc:     Gregory Clement <gregory.clement@bootlin.com>,
@@ -69,29 +69,28 @@ Cc:     Gregory Clement <gregory.clement@bootlin.com>,
         Maxime Chevallier <maxime.chevallier@bootlin.com>,
         Nadav Haklai <nadavh@marvell.com>,
         Miquel Raynal <miquel.raynal@bootlin.com>
-Subject: Re: [PATCH 06/12] dt-bindings: PCI: aardvark: describe the
- reset-gpios property
-Message-ID: <20181211214432.GA30246@bogus>
+Subject: Re: [PATCH 07/12] dt-bindings: PCI: aardvark: describe the clocks
+ property
+Message-ID: <20181211214446.GA30791@bogus>
 References: <20181123141831.8214-1-miquel.raynal@bootlin.com>
- <20181123141831.8214-7-miquel.raynal@bootlin.com>
+ <20181123141831.8214-8-miquel.raynal@bootlin.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181123141831.8214-7-miquel.raynal@bootlin.com>
+In-Reply-To: <20181123141831.8214-8-miquel.raynal@bootlin.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 23 Nov 2018 15:18:25 +0100, Miquel Raynal wrote:
-> A GPIO might be used to reset the PCI IP. Describe the property needed
-> in this case.
+On Fri, 23 Nov 2018 15:18:26 +0100, Miquel Raynal wrote:
+> Describe the missing gated clock feeding the PCIe IP.
 > 
 > Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
 > ---
->  Documentation/devicetree/bindings/pci/aardvark-pci.txt | 5 +++++
->  1 file changed, 5 insertions(+)
+>  Documentation/devicetree/bindings/pci/aardvark-pci.txt | 2 ++
+>  1 file changed, 2 insertions(+)
 > 
 
 Reviewed-by: Rob Herring <robh@kernel.org>
