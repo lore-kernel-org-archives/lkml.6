@@ -2,965 +2,757 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,LOCALPART_IN_SUBJECT,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D40B5C07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 07:21:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0449CC07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 07:26:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 682B920811
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 07:21:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 958C320849
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 07:26:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="UFRNufSi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 682B920811
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xilinx.com
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="quUmTOmH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 958C320849
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726146AbeLKHVd (ORCPT
+        id S1726135AbeLKH0h (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 02:21:33 -0500
-Received: from mail-eopbgr800080.outbound.protection.outlook.com ([40.107.80.80]:2561
-        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725966AbeLKHVd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 02:21:33 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=xilinx.onmicrosoft.com; s=selector1-xilinx-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=uAHKTRol4DM2jNZE1r8opfhnjAguAYqJVc7fUFKN6K4=;
- b=UFRNufSiP6dIgF7AKjpCLokOOhJseHbzeicl7FR5vOnYtJC2RjYBUxThXIzNSUrSkcEBZSqBJfTE4LGPwRXzbynRqR6u9lOiHXcendUKcZ3oNdsZv89C9juckvlGdun7Z+VP14eDkZlzYnDevm8ng6cUZ5erVc0OEIgX+H2V+Cw=
-Received: from DM5PR02MB2233.namprd02.prod.outlook.com (10.168.173.147) by
- DM5PR02MB3257.namprd02.prod.outlook.com (10.164.148.23) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1404.23; Tue, 11 Dec 2018 07:21:25 +0000
-Received: from DM5PR02MB2233.namprd02.prod.outlook.com
- ([fe80::7868:59ef:8f91:91e2]) by DM5PR02MB2233.namprd02.prod.outlook.com
- ([fe80::7868:59ef:8f91:91e2%3]) with mapi id 15.20.1404.026; Tue, 11 Dec 2018
- 07:21:24 +0000
-From:   Jiaying Liang <jliang@xilinx.com>
-To:     Jiaying Liang <jliang@xilinx.com>,
-        "jassisinghbrar@gmail.com" <jassisinghbrar@gmail.com>,
-        Michal Simek <michals@xilinx.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Subject: RE: [PATCH v6 1/2] mailbox: ZynqMP IPI mailbox controller
-Thread-Topic: [PATCH v6 1/2] mailbox: ZynqMP IPI mailbox controller
-Thread-Index: AQHUgE6OyhFL3CVf+Uas1Ia5YlNMbqV5Qj5g
-Date:   Tue, 11 Dec 2018 07:21:24 +0000
-Message-ID: <DM5PR02MB2233BD770FB1E58B592356BBB0A60@DM5PR02MB2233.namprd02.prod.outlook.com>
-References: <1542662761-31158-1-git-send-email-wendy.liang@xilinx.com>
- <1542662761-31158-2-git-send-email-wendy.liang@xilinx.com>
-In-Reply-To: <1542662761-31158-2-git-send-email-wendy.liang@xilinx.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=jliang@xilinx.com; 
-x-originating-ip: [149.199.62.133]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR02MB3257;6:/5VaLGvisseKkDhSlv/Kzc1EPgESI9KkjPV20lpDy+8kXtsZk9h0fgDHxZMNeCvGPUnyfknNJGt58f4Uq+KXLkZhrLEA3746DbTL4zvnY/+eCbWDstuk6fmmzSTkrAWSr5Yc7xlSNbUCfLBuGcF0AekGH2N2VawTHngP/1rQ1hh4WvyiZA9yoZHiX1KsNmn2TLfGJoVOJPn1Po+AmGm1KEIqbY19BX7nFQYxBf2GL7X8tq2sQtzhHFzJRNG7yZE+xjAPDnoVlxK3F0JNuqhDr3NDne6z1je8is24RkOnLq8/dJR1b0jGOJ4GIrgldsVfodhAesPZ1rwfU0u5R/uqHtx3Lz5wM1EZcByrf788/OJun4OJ3qP4pkDodyPXv9/ECs2+sDS2u1GGXx/Ufr7H+NVWtiBtQOgxeewZ9FsUmMn5+tqwY6gy+Combp604LO3vdW0nqw+RTJAMl1tiitTZg==;5:Ucv99ga7jXaEbPLgIFqTJd0N2086gJNF9MhnsLd/nU6A0tgyQk+r1u5vwcUGav1N5qC2CbQhgSO/5FuDkwzlo7rtF81Im71OSjUT/ND04N9DfAJKZYY9CyVNo6Edc0Zl4KIVl5IBGDN84hJshwinwb5qVBWqJqJjUDYIXPpxRls=;7:W5EPssHGRCj+pcPNoRh34IMuCQf0IsoYkyPI5Xqs/7zH6mi9Xn5dXIoP8OIc+Dy8qwb3ErF6755fT6axZvRVsoRq9GyuJmQKfw8hSiwPduTler99rHA/PE+U7ODdeTJ08/8sfGWr6I8zibxgNWyVUA==
-x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
-x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10009020)(396003)(39860400002)(376002)(346002)(136003)(366004)(13464003)(199004)(189003)(74316002)(86362001)(76176011)(186003)(55016002)(39060400002)(106356001)(575784001)(4744004)(102836004)(26005)(9686003)(53946003)(305945005)(14444005)(3846002)(53936002)(6436002)(478600001)(7696005)(14454004)(6116002)(256004)(2906002)(2501003)(71190400001)(53546011)(6506007)(71200400001)(8936002)(81166006)(81156014)(229853002)(33656002)(6246003)(68736007)(486006)(446003)(15650500001)(99286004)(66066001)(25786009)(316002)(476003)(11346002)(8676002)(105586002)(54906003)(110136005)(4326008)(97736004)(5660300001)(7736002)(579004)(559001);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR02MB3257;H:DM5PR02MB2233.namprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-x-ms-office365-filtering-correlation-id: 9cf7001e-bfce-46ab-4fd7-08d65f39420e
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:DM5PR02MB3257;
-x-ms-traffictypediagnostic: DM5PR02MB3257:
-x-microsoft-antispam-prvs: <DM5PR02MB3257D494AB07F499670A6032B0A60@DM5PR02MB3257.namprd02.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230017)(999002)(6040522)(2401047)(5005006)(8121501046)(10201501046)(3002001)(3231472)(944501520)(52105112)(93006095)(93001095)(6055026)(148016)(149066)(150057)(6041310)(20161123560045)(20161123558120)(20161123564045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:DM5PR02MB3257;BCL:0;PCL:0;RULEID:;SRVR:DM5PR02MB3257;
-x-forefront-prvs: 08831F51DC
-received-spf: None (protection.outlook.com: xilinx.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: tKV4Pbaya054Cv/HzT5QjzQJiWMF2uqh8YlYg5jUTS7uOg7hodwGnJyVcZcyOkJ/WU9J2WadFqQjXyqmpzjfXebpSCfbX4nskFc/lKClnAXN3SoBfxy4GICydXcmgPFwdio0lwDtT74gwxAMjol/QRICi77eReOasuIgnF6lVC2Q3mBLzDbnBjPGwS/3npR04YsO+pyUhUhAK7jO+jqlOpID15++JUzHL/vfADPk4TDvLdtqtucKGKX8sOdCut2Yi/nWfafDdrQAIfCHmmmQrRqlopCNfLFeiFPEy7YIu9MejdHehu+TF/g2BnZtXgum
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Tue, 11 Dec 2018 02:26:37 -0500
+Received: from ozlabs.org ([203.11.71.1]:37523 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725958AbeLKH0g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 02:26:36 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 43DWhh0FVlz9s3q;
+        Tue, 11 Dec 2018 18:26:28 +1100 (AEDT)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1544513188;
+        bh=ZGG8vlpJjEmdQsEi7CEcQpqJ71CsuK7zSCDwJ/omMC0=;
+        h=Date:From:To:Cc:Subject:From;
+        b=quUmTOmHuOZn+k0nT9FGLlnrBV8GcHogODe/COGRvRHUxMNMUGU8O0y3CCxon2/Bl
+         3a08MNtkfNO5sRB6o5qkycaG5hgzutbdG7FKM1uMQrCHh/GVw3NHE1Gf2oDU8XWpT2
+         EbYfFIiyQ/M7ltaY5q1yX+56FczTv17O6AyBxfZ/prJMEUltRyGVyiX57cgEh9v5zR
+         WbfjNN+bIPNGlmU0wbds+/haT17Wv+ei6oPbZfPz57CEHlDPse3kz/0iolRhVUyUBg
+         jwUvJrnjslA6m9hW5vsdh4Ds9zbWN7dYyvrXJDevTVwiDZ6N5EesSu/1roiFBNG3h8
+         9/MG2az3M0tew==
+Date:   Tue, 11 Dec 2018 18:26:27 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Linux Next Mailing List <linux-next@vger.kernel.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: Tree for Dec 11
+Message-ID: <20181211182627.42b79e40@canb.auug.org.au>
 MIME-Version: 1.0
-X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9cf7001e-bfce-46ab-4fd7-08d65f39420e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Dec 2018 07:21:24.4418
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR02MB3257
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/sTpnR7fxf/2Ac2AbJg3ZhnW"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+--Sig_/sTpnR7fxf/2Ac2AbJg3ZhnW
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
+Hi all,
 
-> -----Original Message-----
-> From: Wendy Liang [mailto:wendy.liang@xilinx.com]
-> Sent: Monday, November 19, 2018 1:26 PM
-> To: jassisinghbrar@gmail.com; Michal Simek <michals@xilinx.com>;
-> robh+dt@kernel.org; mark.rutland@arm.com
-> Cc: linux-kernel@vger.kernel.org; linux-arm-kernel@lists.infradead.org;
-> devicetree@vger.kernel.org; Jiaying Liang <jliang@xilinx.com>
-> Subject: [PATCH v6 1/2] mailbox: ZynqMP IPI mailbox controller
->=20
-> This patch is to introduce ZynqMP IPI mailbox controller driver to use th=
-e
-> ZynqMP IPI block as mailboxes.
->=20
-> Signed-off-by: Wendy Liang <wendy.liang@xilinx.com>
-> ---
->  drivers/mailbox/Kconfig                    |   9 +
->  drivers/mailbox/Makefile                   |   2 +
->  drivers/mailbox/zynqmp-ipi-mailbox.c       | 762
-> +++++++++++++++++++++++++++++
->  include/linux/mailbox/zynqmp-ipi-message.h |  24 +
->  4 files changed, 797 insertions(+)
->  create mode 100644 drivers/mailbox/zynqmp-ipi-mailbox.c
->  create mode 100644 include/linux/mailbox/zynqmp-ipi-message.h
->=20
-> diff --git a/drivers/mailbox/Kconfig b/drivers/mailbox/Kconfig index
-> 3eeb12e9..10bfe3f 100644
-> --- a/drivers/mailbox/Kconfig
-> +++ b/drivers/mailbox/Kconfig
-> @@ -205,4 +205,13 @@ config MTK_CMDQ_MBOX
->  	  mailbox driver. The CMDQ is used to help read/write registers with
->  	  critical time limitation, such as updating display configuration
->  	  during the vblank.
-> +
-> +config ZYNQMP_IPI_MBOX
-> +	tristate "Xilinx ZynqMP IPI Mailbox"
-> +	depends on ARCH_ZYNQMP && OF
-> +	help
-> +	  Mailbox implementation for Xilinx ZynqMP IPI controller. It is used
-> +	  to send notification or short message between processors on Xilinx
-> +	  UltraScale+ MPSoC platforms. Say Y here if you want to have this
-> +	  support.
->  endif
-> diff --git a/drivers/mailbox/Makefile b/drivers/mailbox/Makefile index
-> c818b5d..bb3d604 100644
-> --- a/drivers/mailbox/Makefile
-> +++ b/drivers/mailbox/Makefile
-> @@ -44,3 +44,5 @@ obj-$(CONFIG_TEGRA_HSP_MBOX)	+=3D tegra-
-> hsp.o
->  obj-$(CONFIG_STM32_IPCC) 	+=3D stm32-ipcc.o
->=20
->  obj-$(CONFIG_MTK_CMDQ_MBOX)	+=3D mtk-cmdq-mailbox.o
-> +
-> +obj-$(CONFIG_ZYNQMP_IPI_MBOX)  +=3D zynqmp-ipi-mailbox.o
-> diff --git a/drivers/mailbox/zynqmp-ipi-mailbox.c b/drivers/mailbox/zynqm=
-p-
-> ipi-mailbox.c
-> new file mode 100644
-> index 0000000..bc02864
-> --- /dev/null
-> +++ b/drivers/mailbox/zynqmp-ipi-mailbox.c
-> @@ -0,0 +1,762 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Xilinx Inter Processor Interrupt(IPI) Mailbox Driver
-> + *
-> + * Copyright (C) 2018 Xilinx Inc.
-> + *
-> + */
-> +
-> +#include <linux/arm-smccc.h>
-> +#include <linux/delay.h>
-> +#include <linux/device.h>
-> +#include <linux/interrupt.h>
-> +#include <linux/io.h>
-> +#include <linux/kernel.h>
-> +#include <linux/mailbox_controller.h>
-> +#include <linux/mailbox/zynqmp-ipi-message.h>
-> +#include <linux/module.h>
-> +#include <linux/of.h>
-> +#include <linux/of_address.h>
-> +#include <linux/of_device.h>
-> +#include <linux/of_irq.h>
-> +#include <linux/platform_device.h>
-> +
-> +/* IPI agent ID any */
-> +#define IPI_ID_ANY 0xFFUL
-> +
-> +/* indicate if ZynqMP IPI mailbox driver uses SMC calls or HVC calls */
-> +#define USE_SMC 0 #define USE_HVC 1
-> +
-> +/* Default IPI SMC function IDs */
-> +#define SMC_IPI_MAILBOX_OPEN            0x82001000U
-> +#define SMC_IPI_MAILBOX_RELEASE         0x82001001U
-> +#define SMC_IPI_MAILBOX_STATUS_ENQUIRY  0x82001002U
-> +#define SMC_IPI_MAILBOX_NOTIFY          0x82001003U
-> +#define SMC_IPI_MAILBOX_ACK             0x82001004U
-> +#define SMC_IPI_MAILBOX_ENABLE_IRQ      0x82001005U
-> +#define SMC_IPI_MAILBOX_DISABLE_IRQ     0x82001006U
-> +
-> +/* IPI SMC Macros */
-> +#define IPI_SMC_OPEN_IRQ_MASK		0x00000001UL /* IRQ enable
-> bit in IPI
-> +						      * open SMC call
-> +						      */
-> +#define IPI_SMC_NOTIFY_BLOCK_MASK	0x00000001UL /* Flag to
-> indicate if
-> +						      * IPI notification needs
-> +						      * to be blocking.
-> +						      */
-> +#define IPI_SMC_ENQUIRY_DIRQ_MASK       0x00000001UL /* Flag to
-> indicate if
-> +						      * notification interrupt
-> +						      * to be disabled.
-> +						      */
-> +#define IPI_SMC_ACK_EIRQ_MASK           0x00000001UL /* Flag to indicate=
- if
-> +						      * notification interrupt
-> +						      * to be enabled.
-> +						      */
-> +
-> +/* IPI mailbox status */
-> +#define IPI_MB_STATUS_IDLE              0
-> +#define IPI_MB_STATUS_SEND_PENDING      1
-> +#define IPI_MB_STATUS_RECV_PENDING      2
-> +
-> +#define IPI_MB_CHNL_TX 0 /* IPI mailbox TX channel */ #define
-> +IPI_MB_CHNL_RX 1 /* IPI mailbox RX channel */
-> +
-> +/**
-> + * struct zynqmp_ipi_mchan - Description of a Xilinx ZynqMP IPI mailbox
-> +channel
-> + * @is_opened: indicate if the IPI channel is opened
-> + * @req_buf: local to remote request buffer start address
-> + * @resp_buf: local to remote response buffer start address
-> + * @req_buf_size: request buffer size
-> + * @resp_buf_size: response buffer size
-> + * @rx_buf: receive buffer to pass received message to client
-> + * @chan_type: channel type
-> + */
-> +struct zynqmp_ipi_mchan {
-> +	int is_opened;
-> +	void __iomem *req_buf;
-> +	void __iomem *resp_buf;
-> +	void *rx_buf;
-> +	size_t req_buf_size;
-> +	size_t resp_buf_size;
-> +	unsigned int chan_type;
-> +};
-> +
-> +/**
-> + * struct zynqmp_ipi_mbox - Description of a ZynqMP IPI mailbox
-> + *                          platform data.
-> + * @pdata:		  pointer to the IPI private data
-> + * @dev:                  device pointer corresponding to the Xilinx Zyn=
-qMP
-> + *                        IPI mailbox
-> + * @remote_id:            remote IPI agent ID
-> + * @mbox:                 mailbox Controller
-> + * @mchans:               array for channels, tx channel and rx channel.
-> + * @irq:                  IPI agent interrupt ID
-> + */
-> +struct zynqmp_ipi_mbox {
-> +	struct zynqmp_ipi_pdata *pdata;
-> +	struct device dev;
-> +	u32 remote_id;
-> +	struct mbox_controller mbox;
-> +	struct zynqmp_ipi_mchan mchans[2];
-> +};
-> +
-> +/**
-> + * struct zynqmp_ipi_pdata - Description of z ZynqMP IPI agent platform
-> data.
-> + *
-> + * @dev:                  device pointer corresponding to the Xilinx Zyn=
-qMP
-> + *                        IPI agent
-> + * @irq:                  IPI agent interrupt ID
-> + * @method:               IPI SMC or HVC is going to be used
-> + * @local_id:             local IPI agent ID
-> + * @ipi_mboxes:           IPI mailboxes of this IPI agent
-> + */
-> +struct zynqmp_ipi_pdata {
-> +	struct device *dev;
-> +	int irq;
-> +	unsigned int method;
-> +	u32 local_id;
-> +	int num_mboxes;
-> +	struct zynqmp_ipi_mbox *ipi_mboxes;
-> +};
-> +
-> +static struct device_driver zynqmp_ipi_mbox_driver =3D {
-> +	.owner =3D THIS_MODULE,
-> +	.name =3D "zynqmp-ipi-mbox",
-> +};
-> +
-> +static void zynqmp_ipi_fw_call(struct zynqmp_ipi_mbox *ipi_mbox,
-> +			       unsigned long a0, unsigned long a3,
-> +			       unsigned long a4, unsigned long a5,
-> +			       unsigned long a6, unsigned long a7,
-> +			       struct arm_smccc_res *res)
-> +{
-> +	struct zynqmp_ipi_pdata *pdata =3D ipi_mbox->pdata;
-> +	unsigned long a1, a2;
-> +
-> +	a1 =3D pdata->local_id;
-> +	a2 =3D ipi_mbox->remote_id;
-> +	if (pdata->method =3D=3D USE_SMC)
-> +		arm_smccc_smc(a0, a1, a2, a3, a4, a5, a6, a7, res);
-> +	else
-> +		arm_smccc_hvc(a0, a1, a2, a3, a4, a5, a6, a7, res); }
-> +
-> +/**
-> + * zynqmp_ipi_interrupt - Interrupt handler for IPI notification
-> + *
-> + * @irq:  Interrupt number
-> + * @data: ZynqMP IPI mailbox platform data.
-> + *
-> + * Return: -EINVAL if there is no instance
-> + * IRQ_NONE if the interrupt is not ours.
-> + * IRQ_HANDLED if the rx interrupt was successfully handled.
-> + */
-> +static irqreturn_t zynqmp_ipi_interrupt(int irq, void *data) {
-> +	struct zynqmp_ipi_pdata *pdata =3D data;
-> +	struct mbox_chan *chan;
-> +	struct zynqmp_ipi_mbox *ipi_mbox;
-> +	struct zynqmp_ipi_mchan *mchan;
-> +	struct zynqmp_ipi_message *msg;
-> +	u64 arg0, arg3;
-> +	struct arm_smccc_res res;
-> +	int ret, i;
-> +
-> +	arg0 =3D SMC_IPI_MAILBOX_STATUS_ENQUIRY;
-> +	arg3 =3D IPI_SMC_ENQUIRY_DIRQ_MASK;
-> +	for (i =3D 0; i < pdata->num_mboxes; i++) {
-> +		ipi_mbox =3D &pdata->ipi_mboxes[i];
-> +		mchan =3D &ipi_mbox->mchans[IPI_MB_CHNL_RX];
-> +		chan =3D &ipi_mbox->mbox.chans[IPI_MB_CHNL_RX];
-> +		zynqmp_ipi_fw_call(ipi_mbox, arg0, arg3, 0, 0, 0, 0, &res);
-> +		ret =3D (int)(res.a0 & 0xFFFFFFFF);
-> +		if (ret > 0 && ret & IPI_MB_STATUS_RECV_PENDING) {
-> +			if (mchan->is_opened) {
-> +				msg =3D mchan->rx_buf;
-> +				msg->len =3D mchan->req_buf_size;
-> +				memcpy_fromio(msg->data, mchan->req_buf,
-> +					      msg->len);
-> +				mbox_chan_received_data(chan, (void
-> *)msg);
-> +				return IRQ_HANDLED;
-> +			}
-> +		}
-> +	}
-> +	return IRQ_NONE;
-> +}
-> +
-> +/**
-> + * zynqmp_ipi_peek_data - Peek to see if there are any rx messages.
-> + *
-> + * @chan: Channel Pointer
-> + *
-> + * Return: 'true' if there is pending rx data, 'false' if there is none.
-> + */
-> +static bool zynqmp_ipi_peek_data(struct mbox_chan *chan) {
-> +	struct device *dev =3D chan->mbox->dev;
-> +	struct zynqmp_ipi_mbox *ipi_mbox =3D dev_get_drvdata(dev);
-> +	struct zynqmp_ipi_mchan *mchan =3D chan->con_priv;
-> +	int ret;
-> +	u64 arg0;
-> +	struct arm_smccc_res res;
-> +
-> +	if (WARN_ON(!ipi_mbox)) {
-> +		dev_err(dev, "no platform drv data??\n");
-> +		return false;
-> +	}
-> +
-> +	arg0 =3D SMC_IPI_MAILBOX_STATUS_ENQUIRY;
-> +	zynqmp_ipi_fw_call(ipi_mbox, arg0, 0, 0, 0, 0, 0, &res);
-> +	ret =3D (int)(res.a0 & 0xFFFFFFFF);
-> +
-> +	if (mchan->chan_type =3D=3D IPI_MB_CHNL_TX) {
-> +		/* TX channel, check if the message has been acked
-> +		 * by the remote, if yes, response is available.
-> +		 */
-> +		if (ret < 0 || ret & IPI_MB_STATUS_SEND_PENDING)
-> +			return false;
-> +		else
-> +			return true;
-> +	} else if (ret > 0 && ret & IPI_MB_STATUS_RECV_PENDING) {
-> +		/* RX channel, check if there is message arrived. */
-> +		return true;
-> +	}
-> +	return false;
-> +}
-> +
-> +/**
-> + * zynqmp_ipi_last_tx_done - See if the last tx message is sent
-> + *
-> + * @chan: Channel pointer
-> + *
-> + * Return: 'true' is no pending tx data, 'false' if there are any.
-> + */
-> +static bool zynqmp_ipi_last_tx_done(struct mbox_chan *chan) {
-> +	struct device *dev =3D chan->mbox->dev;
-> +	struct zynqmp_ipi_mbox *ipi_mbox =3D dev_get_drvdata(dev);
-> +	struct zynqmp_ipi_mchan *mchan =3D chan->con_priv;
-> +	int ret;
-> +	u64 arg0;
-> +	struct arm_smccc_res res;
-> +	struct zynqmp_ipi_message *msg;
-> +
-> +	if (WARN_ON(!ipi_mbox)) {
-> +		dev_err(dev, "no platform drv data??\n");
-> +		return false;
-> +	}
-> +
-> +	if (mchan->chan_type =3D=3D IPI_MB_CHNL_TX) {
-> +		/* We only need to check if the message been taken
-> +		 * by the remote in the TX channel
-> +		 */
-> +		arg0 =3D SMC_IPI_MAILBOX_STATUS_ENQUIRY;
-> +		zynqmp_ipi_fw_call(ipi_mbox, arg0, 0, 0, 0, 0, 0, &res);
-> +		/* Check the SMC call status, a0 of the result */
-> +		ret =3D (int)(res.a0 & 0xFFFFFFFF);
-> +		if (ret < 0 || ret & IPI_MB_STATUS_SEND_PENDING)
-> +			return false;
-> +
-> +		msg =3D mchan->rx_buf;
-> +		msg->len =3D mchan->resp_buf_size;
-> +		memcpy_fromio(msg->data, mchan->resp_buf, msg->len);
-> +		mbox_chan_received_data(chan, (void *)msg);
-> +		return true;
-> +	}
-> +	/* Always true for the response message in RX channel */
-> +	return true;
-> +}
-> +
-> +/**
-> + * zynqmp_ipi_send_data - Send data
-> + *
-> + * @chan: Channel Pointer
-> + * @data: Message Pointer
-> + *
-> + * Return: 0 if all goes good, else appropriate error messages.
-> + */
-> +static int zynqmp_ipi_send_data(struct mbox_chan *chan, void *data) {
-> +	struct device *dev =3D chan->mbox->dev;
-> +	struct zynqmp_ipi_mbox *ipi_mbox =3D dev_get_drvdata(dev);
-> +	struct zynqmp_ipi_mchan *mchan =3D chan->con_priv;
-> +	struct zynqmp_ipi_message *msg =3D data;
-> +	u64 arg0;
-> +	struct arm_smccc_res res;
-> +	u32 timeout;
-> +	int ret;
-> +
-> +	if (WARN_ON(!ipi_mbox)) {
-> +		dev_err(dev, "no platform drv data??\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	if (mchan->chan_type =3D=3D IPI_MB_CHNL_TX) {
-> +		/* Send request message */
-> +		if (msg && msg->len > mchan->req_buf_size) {
-> +			dev_err(dev, "channel %d message length %u >
-> max %lu\n",
-> +				mchan->chan_type, (unsigned int)msg->len,
-> +				mchan->req_buf_size);
-> +			return -EINVAL;
-> +		}
-> +		/* Enquire if the mailbox is free to send message */
-> +		arg0 =3D SMC_IPI_MAILBOX_STATUS_ENQUIRY;
-> +		timeout =3D 10;
-> +		if (msg && msg->len) {
-> +			timeout =3D 10;
-> +			do {
-> +				zynqmp_ipi_fw_call(ipi_mbox, arg0,
-> +						   0, 0, 0, 0, 0, &res);
-> +				ret =3D res.a0 & 0xFFFFFFFF;
-> +				if (ret >=3D 0 &&
-> +				    !(ret & IPI_MB_STATUS_SEND_PENDING))
-> +					break;
-> +				usleep_range(1, 2);
-> +				timeout--;
-> +			} while (timeout);
-> +			if (!timeout) {
-> +				dev_warn(dev, "chan %d sending msg
-> timeout.\n",
-> +					 ipi_mbox->remote_id);
-> +				return -ETIME;
-> +			}
-> +			memcpy_toio(mchan->req_buf, msg->data, msg->len);
-> +		}
-> +		/* Kick IPI mailbox to send message */
-> +		arg0 =3D SMC_IPI_MAILBOX_NOTIFY;
-> +		zynqmp_ipi_fw_call(ipi_mbox, arg0, 0, 0, 0, 0, 0, &res);
-> +	} else {
-> +		/* Send response message */
-> +		if (msg && msg->len > mchan->resp_buf_size) {
-> +			dev_err(dev, "channel %d message length %u >
-> max %lu\n",
-> +				mchan->chan_type, (unsigned int)msg->len,
-> +				mchan->resp_buf_size);
-> +			return -EINVAL;
-> +		}
-> +		if (msg && msg->len)
-> +			memcpy(mchan->resp_buf, msg->data, msg->len);
-> +		arg0 =3D SMC_IPI_MAILBOX_NOTIFY;
-> +		arg0 =3D SMC_IPI_MAILBOX_ACK;
-> +		zynqmp_ipi_fw_call(ipi_mbox, arg0,
-> IPI_SMC_ACK_EIRQ_MASK,
-> +				   0, 0, 0, 0, &res);
-> +	}
-> +	return 0;
-> +}
-> +
-> +/**
-> + * zynqmp_ipi_startup - Startup the IPI channel
-> + *
-> + * @chan: Channel pointer
-> + *
-> + * Return: 0 if all goes good, else return corresponding error message
-> +*/ static int zynqmp_ipi_startup(struct mbox_chan *chan) {
-> +	struct device *dev =3D chan->mbox->dev;
-> +	struct zynqmp_ipi_mbox *ipi_mbox =3D dev_get_drvdata(dev);
-> +	struct zynqmp_ipi_mchan *mchan =3D chan->con_priv;
-> +	u64 arg0;
-> +	struct arm_smccc_res res;
-> +	int ret =3D 0;
-> +	unsigned int nchan_type;
-> +
-> +	if (mchan->is_opened)
-> +		return 0;
-> +
-> +	/* If no channel has been opened, open the IPI mailbox */
-> +	nchan_type =3D (mchan->chan_type + 1) % 2;
-> +	if (!ipi_mbox->mchans[nchan_type].is_opened) {
-> +		arg0 =3D SMC_IPI_MAILBOX_OPEN;
-> +		zynqmp_ipi_fw_call(ipi_mbox, arg0, 0, 0, 0, 0, 0, &res);
-> +		/* Check the SMC call status, a0 of the result */
-> +		ret =3D (int)(res.a0 | 0xFFFFFFFF);
-> +		if (res.a0 < 0) {
-> +			dev_err(dev, "SMC to open the IPI channel failed.\n");
-> +			ret =3D res.a0;
-> +			return ret;
-> +		}
-> +		ret =3D 0;
-> +	}
-> +
-> +	/* If it is RX channel, enable the IPI notification interrupt */
-> +	if (mchan->chan_type =3D=3D IPI_MB_CHNL_RX) {
-> +		arg0 =3D SMC_IPI_MAILBOX_ENABLE_IRQ;
-> +		zynqmp_ipi_fw_call(ipi_mbox, arg0, 0, 0, 0, 0, 0, &res);
-> +	}
-> +	mchan->is_opened =3D 1;
-> +
-> +	return ret;
-> +}
-> +
-> +/**
-> + * zynqmp_ipi_shutdown - Shutdown the IPI channel
-> + *
-> + * @chan: Channel pointer
-> + */
-> +static void zynqmp_ipi_shutdown(struct mbox_chan *chan) {
-> +	struct device *dev =3D chan->mbox->dev;
-> +	struct zynqmp_ipi_mbox *ipi_mbox =3D dev_get_drvdata(dev);
-> +	struct zynqmp_ipi_mchan *mchan =3D chan->con_priv;
-> +	u64 arg0;
-> +	struct arm_smccc_res res;
-> +	unsigned int chan_type;
-> +
-> +	if (!mchan->is_opened)
-> +		return;
-> +
-> +	/* If it is RX channel, disable notification interrupt */
-> +	chan_type =3D mchan->chan_type;
-> +	if (chan_type =3D=3D IPI_MB_CHNL_RX) {
-> +		arg0 =3D SMC_IPI_MAILBOX_DISABLE_IRQ;
-> +		zynqmp_ipi_fw_call(ipi_mbox, arg0, 0, 0, 0, 0, 0, &res);
-> +	}
-> +	/* Release IPI mailbox if no other channel is opened */
-> +	chan_type =3D (chan_type + 1) % 2;
-> +	if (!ipi_mbox->mchans[chan_type].is_opened) {
-> +		arg0 =3D SMC_IPI_MAILBOX_RELEASE;
-> +		zynqmp_ipi_fw_call(ipi_mbox, arg0, 0, 0, 0, 0, 0, &res);
-> +	}
-> +
-> +	mchan->is_opened =3D 0;
-> +}
-> +
-> +/* ZynqMP IPI mailbox operations */
-> +static const struct mbox_chan_ops zynqmp_ipi_chan_ops =3D {
-> +	.startup =3D zynqmp_ipi_startup,
-> +	.shutdown =3D zynqmp_ipi_shutdown,
-> +	.peek_data =3D zynqmp_ipi_peek_data,
-> +	.last_tx_done =3D zynqmp_ipi_last_tx_done,
-> +	.send_data =3D zynqmp_ipi_send_data,
-> +};
-> +
-> +/**
-> + * zynqmp_ipi_of_xlate - Translate of phandle to IPI mailbox channel
-> + *
-> + * @mbox: mailbox controller pointer
-> + * @p:    phandle pointer
-> + *
-> + * Return: Mailbox channel, else return error pointer.
-> + */
-> +static struct mbox_chan *zynqmp_ipi_of_xlate(struct mbox_controller
-> *mbox,
-> +					     const struct of_phandle_args *p) {
-> +	struct mbox_chan *chan;
-> +	struct device *dev =3D mbox->dev;
-> +	unsigned int chan_type;
-> +
-> +	/* Only supports TX and RX channels */
-> +	chan_type =3D p->args[0];
-> +	if (chan_type !=3D IPI_MB_CHNL_TX && chan_type !=3D IPI_MB_CHNL_RX)
-> {
-> +		dev_err(dev, "req chnl failure: invalid chnl type %u.\n",
-> +			chan_type);
-> +		return ERR_PTR(-EINVAL);
-> +	}
-> +	chan =3D &mbox->chans[chan_type];
-> +	return chan;
-> +}
-> +
-> +static const struct of_device_id zynqmp_ipi_of_match[] =3D {
-> +	{.compatible =3D "xlnx,zynqmp-ipi-mailbox"}, };
-[Wendy] should add missing sentinel to the end of of_device_id table
+Changes since 20181210:
 
-> MODULE_DEVICE_TABLE(of,
-> +zynqmp_ipi_of_match);
-> +
-> +/**
-> + * zynqmp_ipi_mbox_get_buf_res - Get buffer resource from the IPI dev
-> +node
-> + *
-> + * @node: IPI mbox device child node
-> + * @name: name of the IPI buffer
-> + * @res: pointer to where the resource information will be stored.
-> + *
-> + * Return: 0 for success, negative value for failure  */ static int
-> +zynqmp_ipi_mbox_get_buf_res(struct device_node *node,
-> +				       const char *name,
-> +				       struct resource *res)
-> +{
-> +	int ret, index;
-> +
-> +	index =3D of_property_match_string(node, "reg-names", name);
-> +	if (index >=3D 0) {
-> +		ret =3D of_address_to_resource(node, index, res);
-> +		if (ret < 0)
-> +			return -EINVAL;
-> +		return 0;
-> +	}
-> +	return -ENODEV;
-> +}
-> +
-> +/**
-> + * zynqmp_ipi_mbox_dev_release() - release the existence of a ipi mbox
-> +dev
-> + *
-> + * This is to avoid the no device release() function kernel warning.
-> + *
-> + * @dev: the ipi mailbox device
-> + */
-> +static void zynqmp_ipi_mbox_dev_release(struct device *dev) {
-> +	(void)dev;
-> +}
-> +
-> +/**
-> + * zynqmp_ipi_mbox_probe - probe IPI mailbox resource from device node
-> + *
-> + * @ipi_mbox: pointer to IPI mailbox private data structure
-> + * @node: IPI mailbox device node
-> + *
-> + * Return: 0 for success, negative value for failure  */ static int
-> +zynqmp_ipi_mbox_probe(struct zynqmp_ipi_mbox *ipi_mbox,
-> +				 struct device_node *node)
-> +{
-> +	struct zynqmp_ipi_mchan *mchan;
-> +	struct mbox_chan *chans;
-> +	struct mbox_controller *mbox;
-> +	struct resource res;
-> +	struct device *dev, *mdev;
-> +	const char *name;
-> +	int ret;
-> +
-> +	dev =3D ipi_mbox->pdata->dev;
-> +	/* Initialize dev for IPI mailbox */
-> +	ipi_mbox->dev.parent =3D dev;
-> +	ipi_mbox->dev.release =3D NULL;
-> +	ipi_mbox->dev.of_node =3D node;
-> +	dev_set_name(&ipi_mbox->dev, "%s", of_node_full_name(node));
-> +	dev_set_drvdata(&ipi_mbox->dev, ipi_mbox);
-> +	ipi_mbox->dev.release =3D zynqmp_ipi_mbox_dev_release;
-> +	ipi_mbox->dev.driver =3D &zynqmp_ipi_mbox_driver;
-> +	ret =3D device_register(&ipi_mbox->dev);
-> +	if (ret) {
-> +		dev_err(dev, "Failed to register ipi mbox dev.\n");
-> +		return ret;
-> +	}
-> +	mdev =3D &ipi_mbox->dev;
-> +
-> +	mchan =3D &ipi_mbox->mchans[IPI_MB_CHNL_TX];
-> +	name =3D "local_request_region";
-> +	ret =3D zynqmp_ipi_mbox_get_buf_res(node, name, &res);
-> +	if (!ret) {
-> +		mchan->req_buf_size =3D resource_size(&res);
-> +		mchan->req_buf =3D devm_ioremap(mdev, res.start,
-> +					      mchan->req_buf_size);
-> +		if (IS_ERR(mchan->req_buf)) {
-> +			dev_err(mdev, "Unable to map IPI buffer I/O
-> memory\n");
-> +			ret =3D PTR_ERR(mchan->req_buf);
-> +			return ret;
-> +		}
-> +	} else if (ret !=3D -ENODEV) {
-> +		dev_err(mdev, "Unmatched resource %s, %d.\n", name, ret);
-> +		return ret;
-> +	}
-> +
-> +	name =3D "remote_response_region";
-> +	ret =3D zynqmp_ipi_mbox_get_buf_res(node, name, &res);
-> +	if (!ret) {
-> +		mchan->resp_buf_size =3D resource_size(&res);
-> +		mchan->resp_buf =3D devm_ioremap(mdev, res.start,
-> +					       mchan->resp_buf_size);
-> +		if (IS_ERR(mchan->resp_buf)) {
-> +			dev_err(mdev, "Unable to map IPI buffer I/O
-> memory\n");
-> +			ret =3D PTR_ERR(mchan->resp_buf);
-> +			return ret;
-> +		}
-> +	} else if (ret !=3D -ENODEV) {
-> +		dev_err(mdev, "Unmatched resource %s.\n", name);
-> +		return ret;
-> +	}
-> +	mchan->rx_buf =3D devm_kzalloc(mdev,
-> +				     mchan->resp_buf_size +
-> +				     sizeof(struct zynqmp_ipi_message),
-> +				     GFP_KERNEL);
-> +	if (!mchan->rx_buf)
-> +		return -ENOMEM;
-> +
-> +	mchan =3D &ipi_mbox->mchans[IPI_MB_CHNL_RX];
-> +	name =3D "remote_request_region";
-> +	ret =3D zynqmp_ipi_mbox_get_buf_res(node, name, &res);
-> +	if (!ret) {
-> +		mchan->req_buf_size =3D resource_size(&res);
-> +		mchan->req_buf =3D devm_ioremap(mdev, res.start,
-> +					      mchan->req_buf_size);
-> +		if (IS_ERR(mchan->req_buf)) {
-> +			dev_err(mdev, "Unable to map IPI buffer I/O
-> memory\n");
-> +			ret =3D PTR_ERR(mchan->req_buf);
-> +			return ret;
-> +		}
-> +	} else if (ret !=3D -ENODEV) {
-> +		dev_err(mdev, "Unmatched resource %s.\n", name);
-> +		return ret;
-> +	}
-> +
-> +	name =3D "local_response_region";
-> +	ret =3D zynqmp_ipi_mbox_get_buf_res(node, name, &res);
-> +	if (!ret) {
-> +		mchan->resp_buf_size =3D resource_size(&res);
-> +		mchan->resp_buf =3D devm_ioremap(mdev, res.start,
-> +					       mchan->resp_buf_size);
-> +		if (IS_ERR(mchan->resp_buf)) {
-> +			dev_err(mdev, "Unable to map IPI buffer I/O
-> memory\n");
-> +			ret =3D PTR_ERR(mchan->resp_buf);
-> +			return ret;
-> +		}
-> +	} else if (ret !=3D -ENODEV) {
-> +		dev_err(mdev, "Unmatched resource %s.\n", name);
-> +		return ret;
-> +	}
-> +	mchan->rx_buf =3D devm_kzalloc(mdev,
-> +				     mchan->resp_buf_size +
-> +				     sizeof(struct zynqmp_ipi_message),
-> +				     GFP_KERNEL);
-> +	if (!mchan->rx_buf)
-> +		return -ENOMEM;
-> +
-> +	/* Get the IPI remote agent ID */
-> +	ret =3D of_property_read_u32(node, "xlnx,ipi-id", &ipi_mbox-
-> >remote_id);
-> +	if (ret < 0) {
-> +		dev_err(dev, "No IPI remote ID is specified.\n");
-> +		return ret;
-> +	}
-> +
-> +	mbox =3D &ipi_mbox->mbox;
-> +	mbox->dev =3D mdev;
-> +	mbox->ops =3D &zynqmp_ipi_chan_ops;
-> +	mbox->num_chans =3D 2;
-> +	mbox->txdone_irq =3D false;
-> +	mbox->txdone_poll =3D true;
-> +	mbox->txpoll_period =3D 5;
-> +	mbox->of_xlate =3D zynqmp_ipi_of_xlate;
-> +	chans =3D devm_kzalloc(mdev, 2 * sizeof(*chans), GFP_KERNEL);
-> +	if (!chans)
-> +		return -ENOMEM;
-> +	mbox->chans =3D chans;
-> +	chans[IPI_MB_CHNL_TX].con_priv =3D &ipi_mbox-
-> >mchans[IPI_MB_CHNL_TX];
-> +	chans[IPI_MB_CHNL_RX].con_priv =3D &ipi_mbox-
-> >mchans[IPI_MB_CHNL_RX];
-> +	ipi_mbox->mchans[IPI_MB_CHNL_TX].chan_type =3D IPI_MB_CHNL_TX;
-> +	ipi_mbox->mchans[IPI_MB_CHNL_RX].chan_type =3D IPI_MB_CHNL_RX;
-> +	ret =3D mbox_controller_register(mbox);
-> +	if (ret)
-> +		dev_err(mdev,
-> +			"Failed to register mbox_controller(%d)\n", ret);
-> +	else
-> +		dev_info(mdev, "Probed ZynqMP IPI Mailbox driver.\n");
-> +	return ret;
-> +}
-> +
-> +/**
-> + * zynqmp_ipi_free_mboxes - Free IPI mailboxes devices
-> + *
-> + * @pdata: IPI private data
-> + */
-> +static void zynqmp_ipi_free_mboxes(struct zynqmp_ipi_pdata *pdata) {
-> +	struct zynqmp_ipi_mbox *ipi_mbox;
-> +	int i;
-> +
-> +	i =3D pdata->num_mboxes;
-> +	for (; i >=3D 0; i--) {
-> +		ipi_mbox =3D &pdata->ipi_mboxes[i];
-> +		if (ipi_mbox->dev.parent) {
-> +			mbox_controller_unregister(&ipi_mbox->mbox);
-> +			device_unregister(&ipi_mbox->dev);
-> +		}
-> +	}
-> +}
-> +
-> +static int zynqmp_ipi_probe(struct platform_device *pdev) {
-> +	struct device *dev =3D &pdev->dev;
-> +	struct device_node *nc, *np =3D pdev->dev.of_node;
-> +	struct zynqmp_ipi_pdata *pdata;
-> +	struct zynqmp_ipi_mbox *mbox;
-> +	int i, ret =3D -EINVAL;
-> +
-> +	i =3D 0;
-> +	for_each_available_child_of_node(np, nc)
-> +		i++;
-> +	pdata =3D devm_kzalloc(dev, sizeof(*pdata) + (i * sizeof(*mbox)),
-> +			     GFP_KERNEL);
-> +	if (!pdata)
-> +		return -ENOMEM;
-> +	pdata->dev =3D dev;
-> +
-> +	/* Get the IPI local agents ID */
-> +	ret =3D of_property_read_u32(np, "xlnx,ipi-id", &pdata->local_id);
-> +	if (ret < 0) {
-> +		dev_err(dev, "No IPI local ID is specified.\n");
-> +		return ret;
-> +	}
-> +
-> +	pdata->num_mboxes =3D i;
-> +	pdata->ipi_mboxes =3D (struct zynqmp_ipi_mbox *)
-> +			    ((char *)pdata + sizeof(*pdata));
-> +
-> +	mbox =3D pdata->ipi_mboxes;
-> +	for_each_available_child_of_node(np, nc) {
-> +		mbox->pdata =3D pdata;
-> +		ret =3D zynqmp_ipi_mbox_probe(mbox, nc);
-> +		if (ret) {
-> +			dev_err(dev, "failed to probe subdev.\n");
-> +			ret =3D -EINVAL;
-> +			goto free_mbox_dev;
-> +		}
-> +		mbox++;
-> +	}
-> +
-> +	/* IPI IRQ */
-> +	ret =3D platform_get_irq(pdev, 0);
-> +	if (ret < 0) {
-> +		dev_err(dev, "unable to find IPI IRQ.\n");
-> +		goto free_mbox_dev;
-> +	}
-> +	pdata->irq =3D ret;
-> +	ret =3D devm_request_irq(dev, pdata->irq, zynqmp_ipi_interrupt,
-> +			       IRQF_SHARED, dev_name(dev), pdata);
-> +	if (ret) {
-> +		dev_err(dev, "IRQ %d is not requested successfully.\n",
-> +			pdata->irq);
-> +		goto free_mbox_dev;
-> +	}
-> +
-> +	platform_set_drvdata(pdev, pdata);
-> +	return ret;
-> +
-> +free_mbox_dev:
-> +	zynqmp_ipi_free_mboxes(pdata);
-> +	return ret;
-> +}
-> +
-> +static int zynqmp_ipi_remove(struct platform_device *pdev) {
-> +	struct zynqmp_ipi_pdata *pdata;
-> +
-> +	pdata =3D platform_get_drvdata(pdev);
-> +	zynqmp_ipi_free_mboxes(pdata);
-> +
-> +	return 0;
-> +}
-> +
-> +static struct platform_driver zynqmp_ipi_driver =3D {
-> +	.probe =3D zynqmp_ipi_probe,
-> +	.remove =3D zynqmp_ipi_remove,
-> +	.driver =3D {
-> +		   .name =3D "zynqmp-ipi",
-> +		   .of_match_table =3D of_match_ptr(zynqmp_ipi_of_match),
-> +	},
-> +};
-> +
-> +static int __init zynqmp_ipi_init(void) {
-> +	return platform_driver_register(&zynqmp_ipi_driver);
-> +}
-> +subsys_initcall(zynqmp_ipi_init);
-> +
-> +static void __exit zynqmp_ipi_exit(void) {
-> +	platform_driver_unregister(&zynqmp_ipi_driver);
-> +}
-> +module_exit(zynqmp_ipi_exit);
-> +
-> +MODULE_LICENSE("GPL v2");
-> +MODULE_DESCRIPTION("Xilinx ZynqMP IPI Mailbox driver");
-> +MODULE_AUTHOR("Xilinx Inc.");
-> diff --git a/include/linux/mailbox/zynqmp-ipi-message.h
-> b/include/linux/mailbox/zynqmp-ipi-message.h
-> new file mode 100644
-> index 0000000..72a9d9d
-> --- /dev/null
-> +++ b/include/linux/mailbox/zynqmp-ipi-message.h
-> @@ -0,0 +1,24 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +/*
-> + *  Copyright (C) 2017 Xilinx Inc.
-> + *
-> + */
-> +
-> +#ifndef _LINUX_ZYNQMP_IPI_MESSAGE_H_
-> +#define _LINUX_ZYNQMP_IPI_MESSAGE_H_
-> +
-> +/**
-> + * struct zynqmp_ipi_message - ZynqMP IPI message structure
-> + * @len:  Length of the request message
-> + * @data: Request message
-> + *
-> + * This is the structure for data used in mbox_send_message
-> + * the maximum length of data buffer is fixed to 12 bytes.
-> + * Client is supposed to be aware of this.
-> + */
-> +struct zynqmp_ipi_message {
-> +	size_t len;
-> +	u8 data[0];
-> +};
-> +
-> +#endif /* _LINUX_ZYNQMP_IPI_MESSAGE_H_ */
-> --
-> 2.7.4
+The arm64 tree gained a conflict against Linus' tree.
 
+The f2fs tree gained a conflict against the fscrypt tree.
+
+The ubifs tree gained a conflict against the fscrypt tree.
+
+The rdma tree still had its build failure so I used the version from
+next-20181203.
+
+The tip tree gained a conflict against the hwmon-staging tree.
+
+The gpio tree lost its build failure.
+
+The akpm-current tree lost its build failure but gained conflist against
+the arm64 tree.
+
+Non-merge commits (relative to Linus' tree): 7744
+ 8462 files changed, 365061 insertions(+), 211977 deletions(-)
+
+----------------------------------------------------------------------------
+
+I have created today's linux-next tree at
+git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+(patches at http://www.kernel.org/pub/linux/kernel/next/ ).  If you
+are tracking the linux-next tree using git, you should not use "git pull"
+to do so as that will try to merge the new linux-next release with the
+old one.  You should use "git fetch" and checkout or reset to the new
+master.
+
+You can see which trees have been included by looking in the Next/Trees
+file in the source.  There are also quilt-import.log and merge.log
+files in the Next directory.  Between each merge, the tree was built
+with a ppc64_defconfig for powerpc, an allmodconfig for x86_64, a
+multi_v7_defconfig for arm and a native build of tools/perf. After
+the final fixups (if any), I do an x86_64 modules_install followed by
+builds for x86_64 allnoconfig, powerpc allnoconfig (32 and 64 bit),
+ppc44x_defconfig, allyesconfig and pseries_le_defconfig and i386, sparc
+and sparc64 defconfig. And finally, a simple boot test of the powerpc
+pseries_le_defconfig kernel in qemu (with and without kvm enabled).
+
+Below is a summary of the state of the merge.
+
+I am currently merging 288 trees (counting Linus' and 68 trees of bug
+fix patches pending for the current merge release).
+
+Stats about the size of the tree over time can be seen at
+http://neuling.org/linux-next-size.html .
+
+Status of my local build tests will be at
+http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
+advice about cross compilers/configs that work, we are always open to add
+more builds.
+
+Thanks to Randy Dunlap for doing many randconfig builds.  And to Paul
+Gortmaker for triage and bug fixes.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+$ git checkout master
+$ git reset --hard stable
+Merging origin/master (f5d582777bcb Merge branch 'for-linus' of git://git.k=
+ernel.org/pub/scm/linux/kernel/git/hid/hid)
+Merging fixes/master (d8c137546ef8 powerpc: tag implicit fall throughs)
+Merging kbuild-current/fixes (ccda4af0f4b9 Linux 4.20-rc2)
+Merging arc-current/for-curr (4c567a448b30 ARC: perf: remove useless ifdefs)
+Merging arm-current/fixes (c2a3831df6dc ARM: 8816/1: dma-mapping: fix poten=
+tial uninitialized return)
+Merging arm64-fixes/for-next/fixes (b4aecf78083d arm64: hibernate: Avoid se=
+nding cross-calling with interrupts disabled)
+Merging m68k-current/for-linus (58c116fb7dc6 m68k/sun3: Remove is_medusa an=
+d m68k_pgtable_cachemode)
+Merging powerpc-fixes/fixes (9ef34630a461 powerpc/mm: Fallback to RAM if th=
+e altmap is unusable)
+Merging sparc/master (cf76c364a1e1 Merge tag 'scsi-fixes' of git://git.kern=
+el.org/pub/scm/linux/kernel/git/jejb/scsi)
+Merging fscrypt-current/for-stable (ae64f9bd1d36 Linux 4.15-rc2)
+Merging net/master (5648451e30a0 ipv4: Fix potential Spectre v1 vulnerabili=
+ty)
+Merging bpf/master (c2a20a2731df selftests/bpf: add missing pointer derefer=
+ence for map stacktrace fixup)
+Merging ipsec/master (4a135e538962 xfrm_user: fix freeing of xfrm states on=
+ acquire)
+Merging netfilter/master (530aad77010b netfilter: seqadj: re-load tcp heade=
+r pointer after possible head reallocation)
+Merging ipvs/master (feb9f55c33e5 netfilter: nft_dynset: allow dynamic upda=
+tes of non-anonymous set)
+Merging wireless-drivers/master (2e6e902d1850 Linux 4.20-rc4)
+Merging mac80211/master (312ca38ddda6 cfg80211: Fix busy loop regression in=
+ ieee80211_ie_split_ric())
+Merging rdma-fixes/for-rc (47f07f03b5ee IB/mlx5: Block DEVX umem from the n=
+on applicable cases)
+Merging sound-current/for-linus (0bea4cc83835 ALSA: hda/realtek: Enable aud=
+io jacks of ASUS UX433FN/UX333FA with ALC294)
+Merging sound-asoc-fixes/for-linus (b99f6edf9be5 Merge branch 'asoc-4.20' i=
+nto asoc-linus)
+Merging regmap-fixes/for-linus (9ff01193a20d Linux 4.20-rc3)
+Merging regulator-fixes/for-linus (8852a24b6675 Merge branch 'regulator-4.2=
+0' into regulator-linus)
+Merging spi-fixes/for-linus (a78de6b8fb72 Merge branch 'spi-4.20' into spi-=
+linus)
+Merging pci-current/for-linus (b07b864ee423 Revert "PCI/ASPM: Do not initia=
+lize link state when aspm_disabled is set")
+Merging driver-core.current/driver-core-linus (2595646791c3 Linux 4.20-rc5)
+Merging tty.current/tty-linus (40e020c129cf Linux 4.20-rc6)
+Merging usb.current/usb-linus (40e020c129cf Linux 4.20-rc6)
+Merging usb-gadget-fixes/fixes (069caf5950df USB: omap_udc: fix rejection o=
+f out transfers when DMA is used)
+Merging usb-serial-fixes/usb-linus (d57ec3c83b51 USB: serial: option: add H=
+P lt4132)
+Merging usb-chipidea-fixes/ci-for-usb-stable (a930d8bd94d8 usb: chipidea: A=
+lways build ULPI code)
+Merging phy/fixes (c88520db18ba phy: qcom-qusb2: Fix HSTX_TRIM tuning with =
+fused value for SDM845)
+Merging staging.current/staging-linus (40e020c129cf Linux 4.20-rc6)
+Merging char-misc.current/char-misc-linus (40e020c129cf Linux 4.20-rc6)
+Merging soundwire-fixes/fixes (651022382c7f Linux 4.20-rc1)
+Merging thunderbolt-fixes/fixes (40e020c129cf Linux 4.20-rc6)
+Merging input-current/for-linus (ca5047286c9c Input: synaptics - enable RMI=
+ on ThinkPad T560)
+Merging crypto-current/master (e61efff4ae94 crypto: user - Disable statisti=
+cs interface)
+Merging ide/master (adf040ddd001 ide: Use of_node_name_eq for node name com=
+parisons)
+Merging vfio-fixes/for-linus (0e714d27786c vfio/pci: Fix potential Spectre =
+v1)
+Merging kselftest-fixes/fixes (651022382c7f Linux 4.20-rc1)
+Merging modules-fixes/modules-linus (be71eda5383f module: Fix display of wr=
+ong module .text address)
+Merging slave-dma-fixes/fixes (ffe843b18211 dmaengine: dw: Fix FIFO size fo=
+r Intel Merrifield)
+Merging backlight-fixes/for-backlight-fixes (651022382c7f Linux 4.20-rc1)
+Merging mtd-fixes/master (40b412897ccb mtd: nand: Fix memory allocation in =
+nanddev_bbt_init())
+Merging spi-nor-fixes/spi-nor/fixes (7928b2cbe55b Linux 4.16-rc1)
+Merging mfd-fixes/for-mfd-fixes (48a2ca0ee399 Revert "mfd: cros_ec: Use dev=
+m_kzalloc for private data")
+Merging v4l-dvb-fixes/fixes (078ab3ea2c3b media: Add a Kconfig option for t=
+he Request API)
+Merging reset-fixes/reset/fixes (26fce0557fa6 reset: imx7: Fix always writi=
+ng bits as 0)
+Merging mips-fixes/mips-fixes (20b880a05f06 mips: bpf: fix encoding bug for=
+ mm_srlv32_op)
+Merging at91-fixes/at91-fixes (4ab7ca092c3c ARM: dts: at91: sama5d2: use th=
+e divided clock for SMC)
+Merging omap-fixes/fixes (84fb6c7feb14 ARM: dts: Fix OMAP4430 SDP Ethernet =
+startup)
+Merging kvm-fixes/master (fd65d3142f73 kvm: svm: Ensure an IBPB on all affe=
+cted CPUs when freeing a vmcb)
+Merging kvms390-fixes/master (40ebdb8e59df KVM: s390: Make huge pages unava=
+ilable in ucontrol VMs)
+Merging hwmon-fixes/hwmon (2595646791c3 Linux 4.20-rc5)
+Merging nvdimm-fixes/libnvdimm-fixes (2c5357c6a2f2 Merge branch 'for-4.20/d=
+ax-fixes' into libnvdimm-pending)
+Merging btrfs-fixes/next-fixes (72549bc085d6 Merge branch 'misc-4.20' into =
+next-fixes)
+Merging vfs-fixes/fixes (73116df7bb90 afs: Use d_instantiate() rather than =
+d_add() and don't d_drop())
+Merging dma-mapping-fixes/for-linus (cb216b84d6ea swiotlb: Skip cache maint=
+enance on map error)
+Merging i3c-fixes/master (651022382c7f Linux 4.20-rc1)
+Merging drivers-x86-fixes/fixes (651022382c7f Linux 4.20-rc1)
+Merging samsung-krzk-fixes/fixes (651022382c7f Linux 4.20-rc1)
+Merging pinctrl-samsung-fixes/pinctrl-fixes (651022382c7f Linux 4.20-rc1)
+Merging devicetree-fixes/dt/linus (89c38422e072 of, numa: Validate some dis=
+tance map rules)
+Merging scsi-fixes/fixes (60a89a3ce0cc scsi: t10-pi: Return correct ref tag=
+ when queue has no integrity profile)
+Merging drm-fixes/drm-fixes (e594a5e349dd drm/ast: Fix connector leak durin=
+g driver unload)
+Merging drm-intel-fixes/for-linux-next-fixes (d76b21ebf8ff Merge tag 'gvt-f=
+ixes-2018-12-04' of https://github.com/intel/gvt-linux into drm-intel-fixes)
+Merging mmc-fixes/fixes (b704441e38f6 mmc: sdhci: fix the timeout check win=
+dow for clock and reset)
+Merging rtc-fixes/rtc-fixes (9bde0afb7a90 rtc: pcf2127: fix a kmemleak caus=
+ed in pcf2127_i2c_gather_write)
+Merging gnss-fixes/gnss-linus (40e020c129cf Linux 4.20-rc6)
+Merging drm-misc-fixes/for-linux-next-fixes (b31a3ca745a4 drm/fb-helper: Fi=
+x typo in parameter description)
+Merging kbuild/for-next (59c128d5d483 Merge branch 'kbuild' into for-next)
+Merging compiler-attributes/compiler-attributes (24efee412c75 Compiler Attr=
+ibutes: improve explanation of header)
+Merging leaks/leaks-next (9f84a0f7f1a6 leaking_addresses: check if file nam=
+e contains address)
+Merging dma-mapping/for-next (7c703e54cc71 arch: switch the default on ARCH=
+_HAS_SG_CHAIN)
+Merging asm-generic/master (b7d624ab4312 asm-generic: unistd.h: fixup broke=
+n macro include.)
+Merging arc/for-next (4fbd8d194f06 Linux 4.15-rc1)
+Merging arm/for-next (eb1644e1ec8a Merge branches 'fixes', 'misc', 'sa1100-=
+for-next' and 'spectre' into for-next)
+Merging arm-perf/for-next/perf (69c32972d593 drivers/perf: Add Cavium Thund=
+erX2 SoC UNCORE PMU driver)
+Merging arm-soc/for-next (dabc839c6bd9 Merge branch 'fixes' into for-next)
+CONFLICT (content): Merge conflict in arch/arm/mach-socfpga/Kconfig
+Merging actions/for-next (fb9c1c1deb5e Merge branch 'v4.20/drivers+s900-sps=
+' into next)
+Merging alpine/alpine/for-next (7928b2cbe55b Linux 4.16-rc1)
+Merging amlogic/for-next (176c7c1bfd8f Merge branch 'v4.21/drivers' into tm=
+p/aml-rebuild)
+Merging aspeed/for-next (f59cffb441bc Merge branch 'dt-for-v4.21' into for-=
+next)
+Merging at91/at91-next (39d48eea7c35 Merge branch 'at91-dt' into at91-next)
+Merging bcm2835/for-next (3c9d403d2fe1 Merge branch 'bcm2835-drivers-next' =
+into for-next)
+Merging imx-mxs/for-next (12dfa1f0ff0d Merge branch 'imx/defconfig' into fo=
+r-next)
+Merging keystone/next (a74cab3c7dcb Merge branch 'for_4.20/drivers-soc' int=
+o next)
+Merging mediatek/for-next (c2f7a6c7e1e5 Merge branch 'v4.20-next/soc' into =
+for-next)
+Merging mvebu/for-next (280879ca263a Merge branch 'mvebu/dt64' into mvebu/f=
+or-next)
+Merging omap/for-next (36f22b9e78c5 Merge branch 'omap-for-v4.21/dt-ti-sysc=
+' into for-next)
+Merging reset/reset/next (8a1b9fd55f25 reset: uniphier-glue: Add AHCI reset=
+ control support in glue layer)
+CONFLICT (content): Merge conflict in arch/arm/mach-socfpga/socfpga.c
+Merging qcom/for-next (9a6ff76ee3da Merge tag 'qcom-drivers-for-4.21-2' int=
+o foobar-for-4.21)
+Merging renesas/next (87e4bacc17bc Merge branches 'fixes-for-v4.20', 'dt-bi=
+ndings-for-v4.21', 'drivers-for-v4.21', 'soc-for-v4.21', 'arm-defconfig-for=
+-v4.21', 'arm-dt-for-v4.21', 'arm64-dt-for-v4.21' and 'arm64-defconfig-for-=
+v4.21' into next)
+Merging rockchip/for-next (7c806b7f750d Merge branch 'v4.20-armsoc/dts64-fi=
+xes' into for-next)
+Merging samsung/for-next (bebc6082da0a Linux 4.14)
+Merging samsung-krzk/for-next (a409a4f4933a Merge branch 'next/defconfig' i=
+nto for-next)
+Merging sunxi/sunxi/for-next (ef9c186f08d7 Merge branch 'sunxi/dt-for-4.21'=
+ into sunxi/for-next)
+Merging tegra/for-next (2731820ce27b Merge branch for-4.21/clk into for-nex=
+t)
+Merging arm64/for-next/core (4a1daf29d33d arm64: mm: EXPORT vabits_user to =
+modules)
+CONFLICT (content): Merge conflict in arch/arm64/kernel/cpu_errata.c
+CONFLICT (content): Merge conflict in arch/arm64/Kconfig
+CONFLICT (content): Merge conflict in Documentation/arm64/silicon-errata.txt
+Merging clk/clk-next (63c7a6b68f5a Merge branch 'clk-managed-registration' =
+into clk-next)
+Merging clk-samsung/for-next (651022382c7f Linux 4.20-rc1)
+Merging c6x/for-linux-next (8adcc59974b8 Merge branch 'work.misc' of git://=
+git.kernel.org/pub/scm/linux/kernel/git/viro/vfs)
+Merging csky/linux-next (252050365823 dt-bindings: timer: gx6605s SOC timer)
+Merging h8300/h8300-next (4bdf61ccbe76 h8300: fix IRQ no)
+Merging ia64/next (c51836246f97 ia64: generate uapi header and system call =
+table files)
+Merging m68k/for-next (005e13a96c0e m68k: Generate uapi header and syscall =
+table header files)
+Merging m68knommu/for-next (2595646791c3 Linux 4.20-rc5)
+Merging microblaze/next (1e17ab5320a6 microblaze: generate uapi header and =
+system call table files)
+Merging mips/mips-next (ff4dd232ec45 MIPS: Expand MIPS32 ASIDs to 64 bits)
+CONFLICT (content): Merge conflict in arch/mips/Kconfig
+Merging nds32/next (e2f3f8b4a497 nds32: support hardware prefetcher)
+Merging nios2/for-next (1c286267aedf nios2: update_mmu_cache preload the TL=
+B with the new PTE)
+Merging openrisc/for-next (5600779ea5f3 openrisc: use generic dma_noncohere=
+nt_ops)
+Merging parisc-hd/for-next (930e12992ed3 parisc: syscalls: ignore nfsservct=
+l for other architectures)
+Merging powerpc/next (7c91efce1608 powerpc/mm: dump block address translati=
+on on book3s/32)
+Merging fsl/next (b6ae3550c8e2 powerpc/8xx: add missing header in 8xx_mmu.c)
+Merging risc-v-pjw/for-next (467e050e9760 Merge branch 'i2c/for-current' of=
+ git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux)
+Merging risc-v/for-next (7ac3574ad42f automerging branch "kernel.org-palmer=
+-linux/next-tracepoints" into "for-next")
+CONFLICT (modify/delete): Documentation/features/io/sg-chain/arch-support.t=
+xt deleted in HEAD and modified in risc-v/for-next. Version risc-v/for-next=
+ of Documentation/features/io/sg-chain/arch-support.txt left in tree.
+$ git rm -f Documentation/features/io/sg-chain/arch-support.txt
+Merging sifive/for-next (467e050e9760 Merge branch 'i2c/for-current' of git=
+://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux)
+Merging s390/features (5b39fc049ce1 s390: use common bust_spinlocks())
+Merging sparc-next/master (c23b8e7acea3 ALSA: sparc: Use of_node_name_eq fo=
+r node name comparisons)
+Merging sh/for-next (ac21fc2dcb40 sh: switch to NO_BOOTMEM)
+Merging uml/linux-next (917e2fd2c53e um: Make line/tty semantics use true w=
+rite IRQ)
+Merging xtensa/xtensa-for-next (cf991521b736 Merge branch 'xtensa-cleanups'=
+ into xtensa-for-next)
+Merging fscrypt/master (25da54f1d777 fsverity: Move verity status check to =
+fsverity_prepare_setattr)
+Merging befs/for-next (55d945e2e4aa fs: befs: btree: Fixed some coding stan=
+dard issues)
+Merging btrfs/next (29dcea88779c Linux 4.17)
+Merging btrfs-kdave/for-next (86db915ae814 Merge branch 'for-next-next-v4.2=
+0-20181206' into for-next-20181206)
+Merging ceph/master (7e241f647dc7 libceph: fall back to sendmsg for slab pa=
+ges)
+Merging cifs/for-next (1b472ce02520 cifs: remove set but not used variable =
+'smb_buf')
+Merging configfs/for-next (cc57c07343bd configfs: fix registered group remo=
+val)
+Merging ecryptfs/next (5dcea554d5ce eCryptfs: fix a couple type promotion b=
+ugs)
+Merging ext3/for_next (6eff7ce21cf1 Pull fanotify hardening from Kees Cook.)
+Merging ext4/dev (0a1e8258a4fe ext4: compare old and new mode before settin=
+g update_mode flag)
+Merging f2fs/dev (19880e6e5ff3 f2fs: make "f2fs_fault_name[]" const char *)
+CONFLICT (content): Merge conflict in fs/f2fs/dir.c
+Merging fuse/for-next (d72f70da60de fuse: Fix memory leak in fuse_dev_free(=
+))
+Merging jfs/jfs-next (a83722f45c5b jfs: fix spelling mistake, EACCESS -> EA=
+CCES)
+Merging nfs/linux-next (40e020c129cf Linux 4.20-rc6)
+Merging nfs-anna/linux-next (9f0c5124f4a8 NFS: Don't open code clearing of =
+delegation state)
+Merging nfsd/nfsd-next (255fbca65137 nfsd: Return EPERM, not EACCES, in som=
+e SETATTR cases)
+Merging orangefs/for-next (22fc9db296fc orangefs: no need to check for serv=
+ice_operation returns > 0)
+Merging overlayfs/overlayfs-next (ec7ba118b940 Revert "ovl: relax permissio=
+n checking on underlying layers")
+Merging ubifs/linux-next (001260910c46 ubifs: auth: add CONFIG_KEYS depende=
+ncy)
+CONFLICT (content): Merge conflict in fs/ubifs/Kconfig
+Merging v9fs/9p-next (7373bc7654c1 9p/net: put a lower bound on msize)
+Merging xfs/for-next (8f67b5adc030 iomap: partially revert 4721a601099 (sim=
+ulated directio short read on EFAULT))
+Merging file-locks/locks-next (7bbd1fc0e9f1 fs/locks: remove unnecessary wh=
+ite space.)
+Merging vfs/for-next (d708e87ca399 Merge branch 'work.mount' into for-next)
+CONFLICT (content): Merge conflict in include/linux/fs.h
+CONFLICT (content): Merge conflict in fs/proc/inode.c
+CONFLICT (content): Merge conflict in fs/f2fs/super.c
+CONFLICT (content): Merge conflict in fs/compat_ioctl.c
+CONFLICT (content): Merge conflict in fs/Makefile
+CONFLICT (content): Merge conflict in drivers/vfio/Kconfig
+CONFLICT (content): Merge conflict in drivers/infiniband/Kconfig
+CONFLICT (content): Merge conflict in arch/sparc/kernel/setup_64.c
+Merging printk/for-next (9adcfaffc34d printk: Make printk_emit() local func=
+tion.)
+Merging pci/next (c189eb40c3b9 Merge branch 'remotes/lorenzo/pci/mediatek')
+Merging pstore/for-next/pstore (8665569e97dd pstore/ram: Avoid NULL deref i=
+n ftrace merging failure path)
+Merging hid/for-next (11478e44de6f Merge branch 'for-4.21/highres-wheel' in=
+to for-next)
+Merging i2c/i2c/for-next (0fce295d45bf Merge branch 'i2c/for-current-fixed'=
+ into i2c/for-next)
+Merging i3c/i3c/next (afe120c777b7 ic3: off by one in mode_show())
+Merging dmi/master (57361846b52b Linux 4.19-rc2)
+Merging hwmon-staging/hwmon-next (4f96b0b37e0c hwmon: (ftsteutates) Use per=
+mission specific SENSOR[_DEVICE]_ATTR variants)
+Merging jc_docs/docs-next (f77af637f29d doc:process: add links where missin=
+g)
+CONFLICT (content): Merge conflict in Documentation/filesystems/index.rst
+Merging v4l-dvb/master (e159b6074c82 media: vimc: fix start stream when lin=
+k is disabled)
+Merging v4l-dvb-next/master (357b50f3ccc8 drm: amd: dc: don't use FP math w=
+hen Kcov is enabled)
+Merging fbdev/fbdev-for-next (217188d9f985 video: fbdev: remove redundant '=
+default n' from Kconfig-s)
+Merging pm/linux-next (c332f1e0d962 Merge branch 'devprop' into linux-next)
+Merging cpupower/cpupower (901d32bc69f3 cpupower : Auto-completion for cpup=
+ower tool)
+Merging opp/opp/linux-next (e822eac560a8 Merge branch 'opp/genpd/required-o=
+pps' into opp/linux-next)
+Merging thermal/next (eaaa598c0a28 Merge branches 'for-rc' and 'thermal-cor=
+e' into next)
+Merging thermal-soc/next (760eea43f8c6 thermal: da9062/61: Prevent hardware=
+ access during system suspend)
+Merging ieee1394/for-next (c820518f6ca1 firewire: Remove depends on HAS_DMA=
+ in case of platform dependency)
+Merging dlm/next (3595c559326d dlm: fix invalid cluster name warning)
+Merging swiotlb/linux-next (da689221f952 xen/blkfront: avoid NULL blkfront_=
+info dereference on device removal)
+Merging rdma/for-next (81fce6291d99 RDMA/hns: Add SRQ asynchronous event su=
+pport)
+$ git reset --hard HEAD^
+Merging next-20181203 version of rdma
+Merging net-next/master (d8ed257f313f tcp: handle EOR and FIN conditions th=
+e same in tcp_tso_should_defer())
+Merging bpf-next/master (aa570ff4fd36 Merge branch 'rename-info_cnt-to-nr_i=
+nfo')
+CONFLICT (content): Merge conflict in tools/testing/selftests/bpf/test_veri=
+fier.c
+CONFLICT (content): Merge conflict in net/core/filter.c
+CONFLICT (content): Merge conflict in include/uapi/linux/bpf.h
+CONFLICT (content): Merge conflict in arch/mips/include/uapi/asm/inst.h
+Merging ipsec-next/master (88584c30e319 xfrm: policy: fix policy hash rebui=
+ld)
+Merging mlx5-next/mlx5-next (6c22a11957f4 net/mlx5: Remove the get protocol=
+ device interface entry)
+CONFLICT (content): Merge conflict in drivers/infiniband/hw/mlx5/mlx5_ib.h
+CONFLICT (content): Merge conflict in drivers/infiniband/hw/mlx5/main.c
+Merging netfilter-next/master (6ed5943f8735 netfilter: nat: remove l4 proto=
+col port rovers)
+Merging nfc-next/master (1f008cfec5d5 NFC: fdp: Fix unused variable warning=
+s)
+Merging ipvs-next/master (26a1ccc6c117 bpf: test: fix spelling mistake "REU=
+SEEPORT" -> "REUSEPORT")
+Merging wireless-drivers-next/master (d9bbd6a1a56e net: marvell: convert to=
+ DEFINE_SHOW_ATTRIBUTE)
+Merging bluetooth/master (4cc1feeb6ffc Merge git://git.kernel.org/pub/scm/l=
+inux/kernel/git/davem/net)
+Merging mac80211-next/master (f6c7f03f69f7 mac80211: fix deauth TX when we =
+disconnect)
+Merging gfs2/for-next (b62cd8c96191 gfs2: Fix loop in gfs2_rbm_find)
+Merging mtd/mtd/next (9d3b5086f6d4 mtd: physmap_of_gemini: Handle pin contr=
+ol)
+Merging nand/nand/next (38842572df1c mtd: rawnand: jz4780: annotate implici=
+t fall throughs)
+Merging spi-nor/spi-nor/next (b422847877e3 mtd: spi-nor: Add support for is=
+25lp016d)
+Merging crypto/master (88d905e20b11 crypto: cavium/nitrox - convert to DEFI=
+NE_SHOW_ATTRIBUTE)
+Merging drm/drm-next (e69aa5f9b97f Merge tag 'drm-misc-next-2018-12-06' of =
+git://anongit.freedesktop.org/drm/drm-misc into drm-next)
+CONFLICT (content): Merge conflict in drivers/gpu/drm/meson/meson_crtc.c
+CONFLICT (content): Merge conflict in drivers/gpu/drm/i915/intel_workaround=
+s.h
+CONFLICT (content): Merge conflict in drivers/gpu/drm/i915/intel_workaround=
+s.c
+CONFLICT (content): Merge conflict in drivers/gpu/drm/i915/intel_ringbuffer=
+.h
+CONFLICT (content): Merge conflict in drivers/gpu/drm/i915/intel_lrc.c
+CONFLICT (content): Merge conflict in drivers/gpu/drm/i915/intel_engine_cs.c
+CONFLICT (content): Merge conflict in drivers/gpu/drm/i915/i915_gem.c
+CONFLICT (content): Merge conflict in drivers/gpu/drm/i915/i915_drv.h
+CONFLICT (content): Merge conflict in drivers/gpu/drm/amd/display/dc/dce110=
+/dce110_hw_sequencer.c
+CONFLICT (content): Merge conflict in drivers/gpu/drm/amd/display/amdgpu_dm=
+/amdgpu_dm.c
+Merging drm-intel/for-linux-next (e69aa5f9b97f Merge tag 'drm-misc-next-201=
+8-12-06' of git://anongit.freedesktop.org/drm/drm-misc into drm-next)
+Merging drm-tegra/drm/tegra/for-next (180b46ecdc9f drm/tegra: sor: Reset th=
+e SOR if possible)
+Merging drm-misc/for-linux-next (0b258ed1a219 drm: revert "expand replace_f=
+ence to support timeline point v2")
+Merging drm-msm/msm-next (fe466fb236fe drm/msm/dpu: Fix clock issue after b=
+ind failure)
+CONFLICT (content): Merge conflict in drivers/gpu/drm/msm/hdmi/hdmi.c
+CONFLICT (content): Merge conflict in drivers/gpu/drm/msm/adreno/a5xx_gpu.c
+CONFLICT (content): Merge conflict in drivers/gpu/drm/drm_atomic_helper.c
+Merging hdlcd/for-upstream/hdlcd (d664b851eb2b drm/arm/hdlcd: Reject atomic=
+ commits that disable only the plane)
+Merging mali-dp/for-upstream/mali-dp (fd99bd8b805c drm: malidp: Add the siz=
+e of the superblocks when calculating total size for AFBC buffers)
+Merging imx-drm/imx-drm/next (6cec571b70ec drm/imx: ipuv3-plane: add functi=
+on to query atomic update status)
+Merging etnaviv/etnaviv/next (99e294492ef9 drm/etnaviv: Replace drm_dev_unr=
+ef with drm_dev_put)
+CONFLICT (content): Merge conflict in drivers/gpu/drm/etnaviv/etnaviv_drv.c
+Merging kconfig/for-next (bebc6082da0a Linux 4.14)
+Merging regmap/for-next (52d613b36fb7 Merge remote-tracking branch 'regmap/=
+topic/irq' into regmap-next)
+Merging sound/for-next (46079bacb469 Merge branch 'for-linus' into for-next)
+Merging sound-asoc/for-next (92b1a8a2da37 Merge branch 'asoc-4.21' into aso=
+c-next)
+Merging modules/modules-next (2d25bc552353 module: make it clearer when we'=
+re handling kallsyms symbols vs exported symbols)
+Merging input/next (0832e93632c6 Input: rotary-encoder - don't log EPROBE_D=
+EFER to kernel log)
+Merging block/for-next (fa1b80970d36 Merge branch 'for-4.21/block' into for=
+-next)
+Merging device-mapper/for-next (bb81c39d8a63 Merge branch 'dm-4.21' into dm=
+-next)
+Merging pcmcia/pcmcia-next (95691e3eddc4 pcmcia: Implement CLKRUN protocol =
+disabling for Ricoh bridges)
+Merging mmc/next (43cee3e27ea0 sh: ecovec24: Fix an ifdef)
+Merging kgdb/kgdb-next (3bd67b37e350 kdb: print real address of pointers in=
+stead of hashed addresses)
+Merging md/for-next (cac09f066f0f md: remvoe redundant condition check)
+Merging mfd/for-mfd-next (8c5931b383b3 mfd: axp20x: Add supported cells for=
+ AXP803)
+Merging backlight/for-backlight-next (61170ee93868 backlight: pwm_bl: Fix d=
+evicetree parsing with auto-generated brightness tables)
+Merging battery/for-next (4a040e7c72e6 power: supply: sc27xx: Save last bat=
+tery capacity)
+Merging regulator/for-next (07d0c11fe37d Merge remote-tracking branch 'regu=
+lator/topic/coupled' into regulator-next)
+Merging security/next-testing (26b76320a8a5 Merge tag 'v4.20-rc2' into next=
+-general)
+Merging apparmor/apparmor-next (43aa09fee2f0 apparmor: Fix warning about un=
+used function apparmor_ipv6_postroute)
+Merging integrity/next-integrity (6cb1d5f9b5ac ima: Support platform keyrin=
+g for kernel appraisal)
+Merging selinux/next (ee1a84fdfeed selinux: overhaul sidtab to fix bug and =
+improve performance)
+CONFLICT (content): Merge conflict in security/selinux/hooks.c
+Merging tpmdd/next (8f82ffbc5b0b tpm: add support for partial reads)
+Merging watchdog/master (31eb42bd9353 watchdog: w83627hf_wdt: Add quirk for=
+ Inves system)
+Merging iommu/next (8c1ecb2dd889 Merge branches 'arm/renesas', 'arm/mediate=
+k', 'arm/tegra', 'arm/omap', 'x86/vt-d', 'x86/amd' and 'core' into next)
+Merging dwmw2-iommu/master (d8a5b80568a9 Linux 4.15)
+Merging vfio/next (104c7405a64d vfio: add edid support to mbochs sample dri=
+ver)
+Merging trivial/for-next (75a24b822d38 kfifo: fix inaccurate comment)
+Merging audit/next (9a547c7e575f audit: shorten PATH cap values when zero)
+Merging devicetree/for-next (8d2df40827fe Merge branch 'yaml-bindings-for-v=
+4.21' into dt/next)
+Merging mailbox/mailbox-for-next (9f0a0a381c5d mailbox: mediatek: Add check=
+ for possible failure of kzalloc)
+Merging spi/for-next (d54e69cde305 Merge remote-tracking branches 'spi/topi=
+c/mem' and 'spi/topic/mtd' into spi-next)
+Merging tip/auto-latest (5fa837519763 Merge branch 'x86/timers')
+CONFLICT (content): Merge conflict in net/bridge/br_multicast.c
+CONFLICT (content): Merge conflict in net/bridge/br_mdb.c
+CONFLICT (content): Merge conflict in drivers/hwmon/k10temp.c
+CONFLICT (content): Merge conflict in arch/x86/kernel/cpu/resctrl/rdtgroup.c
+CONFLICT (content): Merge conflict in MAINTAINERS
+Merging clockevents/clockevents/next (ded414ebcd58 clocksource/drivers/fttm=
+r010: Fix invalid interrupt register access)
+Merging edac-amd/for-next (8a880560d58a MAINTAINERS, EDAC: Drop bouncing em=
+ail)
+Merging irqchip/irq/irqchip-next (2130b789b3ef irqchip/gic: Unify GIC prior=
+ity definitions)
+Merging ftrace/for-next (dbc3f042fbc8 selftests/ftrace: Add testcases for d=
+ynamic event)
+Merging rcu/rcu/next (06aa5694f870 Merge LKMM and RCU commits)
+CONFLICT (add/add): Merge conflict in tools/memory-model/scripts/runlitmush=
+ist.sh
+CONFLICT (add/add): Merge conflict in tools/memory-model/scripts/parseargs.=
+sh
+CONFLICT (add/add): Merge conflict in tools/memory-model/scripts/newlitmush=
+ist.sh
+CONFLICT (add/add): Merge conflict in tools/memory-model/scripts/judgelitmu=
+s.sh
+CONFLICT (add/add): Merge conflict in tools/memory-model/scripts/initlitmus=
+hist.sh
+CONFLICT (add/add): Merge conflict in tools/memory-model/scripts/checklitmu=
+shist.sh
+CONFLICT (add/add): Merge conflict in tools/memory-model/scripts/checkghlit=
+mus.sh
+Merging kvm/linux-next (22a7cdcae6a4 KVM/nVMX: Do not validate that posted_=
+intr_desc_addr is page aligned)
+Merging kvm-arm/next (e4e11cc0f81e KVM: arm64: Safety check PSTATE when ent=
+ering guest and handle IL)
+Merging kvm-ppc/kvm-ppc-next (651022382c7f Linux 4.20-rc1)
+Merging kvms390/next (ed3054a30258 Merge branch 'apv11' of git://git.kernel=
+.org/pub/scm/linux/kernel/git/kvms390/linux into kernelorgnext)
+Merging xen-tip/linux-next (975ef94a0284 pvcalls-front: fixes incorrect err=
+or handling)
+Merging percpu/for-next (ad19ef010db1 Merge branch 'for-4.19-fixes' into fo=
+r-next)
+Merging workqueues/for-next (87915adc3f0a workqueue: re-add lockdep depende=
+ncies for flushing)
+Merging drivers-x86/for-next (fb7255a92311 platform/x86: mlx-platform: Conv=
+ert to use SPDX identifier)
+Merging chrome-platform/for-next (2a70a4cda0da MAINTAINERS: platform/chrome=
+: Add Enric as a maintainer)
+CONFLICT (content): Merge conflict in MAINTAINERS
+Merging hsi/for-next (3a658e09a215 HSI: omap_ssi: Change to use DEFINE_SHOW=
+_ATTRIBUTE macro)
+Merging leds/for-next (fd161fd213c5 leds: trigger: Add pattern initializati=
+on from Device Tree)
+Merging ipmi/for-next (5e6ddecfc90b ipmi:ssif: Change some pr_xxx to dev_xx=
+x calls)
+Merging driver-core/driver-core-next (df44b479654f kobject: return error co=
+de if writing /sys/.../uevent fails)
+CONFLICT (content): Merge conflict in drivers/base/platform.c
+Merging usb/usb-next (b53bde6686fb Merge 4.20-rc6 into usb-next)
+Merging usb-gadget/next (cc10ce0c51b1 usb: dwc2: disable power_down on Amlo=
+gic devices)
+Merging usb-serial/usb-next (01688a6d66b5 USB: serial: mos7840: remove set =
+but not used variables 'number, serial')
+Merging usb-chipidea-next/ci-for-usb-next (59739131e0ca usb: chipidea: Fix =
+otg event handler)
+Merging phy-next/next (42632988767e phy: ti: fix semicolon.cocci warnings)
+Merging tty/tty-next (9c96f401e91a Merge 4.20-rc6 into tty-next)
+Merging char-misc/char-misc-next (c4aa8b2a8b63 Merge 4.20-rc6 into char-mis=
+c-next)
+CONFLICT (content): Merge conflict in drivers/misc/Makefile
+Merging extcon/extcon-next (a2dc50914744 extcon: max8997: Fix lack of path =
+setting in USB device mode)
+Merging soundwire/next (b1635596860d soundwire: intel: constify snd_soc_dai=
+_ops structures)
+Merging thunderbolt/next (dcc3c9e37fbd thunderbolt: Export IOMMU based DMA =
+protection support to userspace)
+Merging staging/staging-next (d3086550faea Merge 4.20-rc6 into staging-next)
+CONFLICT (content): Merge conflict in drivers/staging/vboxvideo/vbox_ttm.c
+CONFLICT (content): Merge conflict in drivers/staging/media/tegra-vde/tegra=
+-vde.c
+Merging mux/for-next (a1ad5ff63944 Merge branch 'i2c-mux/for-next' into for=
+-next)
+Merging icc/icc-next (f8325633fbae MAINTAINERS: add a maintainer for the in=
+terconnect API)
+Merging slave-dma/next (2b4b64840d7f Merge branch 'topic/fsl' into next)
+Merging cgroup/for-next (87f902fab430 Merge branch 'for-4.21' into for-next)
+Merging scsi/for-next (dd94e7f59f63 Merge branch 'misc' into for-next)
+Merging scsi-mkp/for-next (de55b786b8a6 scsi: lpfc: update driver version t=
+o 12.0.0.9)
+Merging target-updates/for-next (1c130ae00b76 iscsi-target: make sure to wa=
+ke up sleeping login worker)
+Merging target-bva/for-next (60cc43fc8884 Linux 4.17-rc1)
+Merging vhost/linux-next (37d1246af2d5 virtio_net: bulk free tx skbs)
+Merging rpmsg/for-next (9099a252d44c Merge branches 'hwspinlock-next', 'rpm=
+sg-next' and 'rproc-next' into for-next)
+Merging gpio/for-next (74c79c5c3287 Merge branch 'devel' into for-next)
+Merging pinctrl/for-next (7d70d9e39bd0 Merge branch 'devel' into for-next)
+Merging pinctrl-samsung/for-next (651022382c7f Linux 4.20-rc1)
+Merging pwm/for-next (f82d15e22340 pwm: lpc18xx-sct: Don't reconfigure PWM =
+in .request and .free)
+Merging userns/for-next (1e9c75fb9c47 mnt: fix __detach_mounts infinite loo=
+p)
+Merging ktest/for-next (6cd110a91f52 ktest: Take submenu into account for g=
+rub2 menus)
+Merging random/dev (05cbbb6f9ed5 drivers/char/random.c: make primary_crng s=
+tatic)
+Merging kselftest/next (b708a3cc9600 selftests: do not macro-expand failed =
+assertion expressions)
+Merging y2038/y2038 (ccea641b6742 timekeeping: remove obsolete time accesso=
+rs)
+Merging livepatching/for-next (c72a7f515329 Merge branch 'for-4.18/upstream=
+' into for-next)
+Merging coresight/next (7ff8957175d6 coresight: Use of_node_name_eq for nod=
+e name comparisons)
+Merging rtc/rtc-next (8c4cf161a8b4 dt-bindings: rtc: sun6i-rtc: Fix registe=
+r range in example)
+Merging nvdimm/libnvdimm-for-next (594861215c83 acpi, nfit: Further restric=
+t userspace ARS start requests)
+Merging at24/at24/for-next (37cf28d3b5bc eeprom: at24: add support for 24c2=
+048)
+Merging ntb/ntb-next (651022382c7f Linux 4.20-rc1)
+Merging kspp/for-next/kspp (8fb2dfb228df stackleak: Register the 'stackleak=
+_cleanup' pass before the '*free_cfg' pass)
+Merging init_task/init_task (e1e871aff3de Expand INIT_STRUCT_PID and remove)
+Merging cisco/for-next (84a401a27506 Merge branch 'for-x86' into for-next)
+CONFLICT (content): Merge conflict in arch/x86/kernel/setup.c
+Merging gnss/gnss-next (2595646791c3 Linux 4.20-rc5)
+Merging fsi/master (d20810530b71 fsi: fsi-scom.c: Remove duplicate header)
+Merging siox/siox/next (1e4b044d2251 Linux 4.18-rc4)
+Merging slimbus/for-next (39a577fe6163 slimbus: ngd: fix spelling mistake "=
+exeeds" -> "exceeds")
+Merging nvmem/for-next (5035d66cc629 nvmem: meson-efuse: add peripheral clo=
+ck)
+CONFLICT (content): Merge conflict in include/linux/nvmem-provider.h
+Merging xarray/xarray (4f145cd66a1a XArray tests: Check iterating over mult=
+iorder entries)
+Merging akpm-current/current (d04978ca88ab ipc: conserve sequence numbers i=
+n extended IPCMNI mode)
+CONFLICT (content): Merge conflict in mm/page_io.c
+CONFLICT (content): Merge conflict in arch/arm64/mm/proc.S
+CONFLICT (content): Merge conflict in arch/arm64/include/asm/memory.h
+$ git checkout -b akpm remotes/origin/akpm/master
+Applying: scripts/atomic/check-atomics.sh: don't assume that scripts are ex=
+ecutable
+Applying: mm: treewide: remove unused address argument from pte_alloc funct=
+ions
+Applying: mm: speed up mremap by 20x on large regions
+Applying: mm/mremap: fix 'move_normal_pmd' unused function warning
+Applying: mm: select HAVE_MOVE_PMD on x86 for faster mremap
+Applying: kernel/async.c: remove some duplicated includes
+Applying: kernel/signal.c: remove some duplicated includes
+Applying: locking/atomics: build atomic headers as required
+Applying: mm: balloon: update comment about isolation/migration/compaction
+Applying: mm: convert PG_balloon to PG_offline
+Applying: mm-convert-pg_balloon-to-pg_offline-fix
+Applying: kexec: export PG_offline to VMCOREINFO
+Applying: xen/balloon: mark inflated pages PG_offline
+Applying: hv_balloon: mark inflated pages PG_offline
+Applying: vmw_balloon: mark inflated pages PG_offline
+Applying: vmw_balloon-mark-inflated-pages-pg_offline-v2
+Applying: PM/Hibernate: use pfn_to_online_page()
+Applying: PM/Hibernate: exclude all PageOffline() pages
+Applying: pm-hibernate-exclude-all-pageoffline-pages-v2
+Applying: kernel/locking/mutex.c: remove caller signal_pending branch predi=
+ctions
+Applying: kernel/sched/: remove caller signal_pending branch predictions
+Applying: arch/arc/mm/fault.c: remove caller signal_pending_branch predicti=
+ons
+Applying: mm/: remove caller signal_pending branch predictions
+Applying: fs/: remove caller signal_pending branch predictions
+Applying: fs-remove-caller-signal_pending-branch-predictions-fix
+Applying: include/linux/sched/signal.h: replace `tsk' with `task'
+Applying: fs: don't open code lru_to_page()
+Applying: drivers/base/platform.c: kmemleak ignore a known leak
+Applying: drivers/media/platform/sti/delta/delta-ipc.c: fix read buffer ove=
+rflow
+Merging akpm/master (aa00c448441e drivers/media/platform/sti/delta/delta-ip=
+c.c: fix read buffer overflow)
+
+--Sig_/sTpnR7fxf/2Ac2AbJg3ZhnW
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwPZqMACgkQAVBC80lX
+0Gxamwf/eD18tuSJkXbELyIt/62dih/uNTmazQgOMckNsyVkGIQzESTY+jwv5B6c
+p41WcV+Yn4OVRe+Jyjjmk/eV59h4t8ztjXL1lNIhuw//0+xrr3xFo08FmNnK2Qpv
+IIDC6J7nlLpAJDpcmPwus7g7eN4YxBfuloGZ56n3Jns2zkSFWygo4ZmCb0eHDSnz
+U8d5Cs/81WpxLDSJh2awSCvlXef1oZLvJmOVMZKz//ZYtufhsQkXj7DOmw05PXV+
+073Q4vbvL6mfK5Cqx0pQ7uNLB4DmKYsxpZvsCmO0w2+Ah2VC2vzdodfCWsr1OAwR
+Ny6euwrpt2XbcAmpeb09V8A0Mkg8pQ==
+=o9x1
+-----END PGP SIGNATURE-----
+
+--Sig_/sTpnR7fxf/2Ac2AbJg3ZhnW--
