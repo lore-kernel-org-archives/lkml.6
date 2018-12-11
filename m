@@ -7,50 +7,51 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44591C5CFFE
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:55:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4967EC5CFFE
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:55:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A2672146D
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:55:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0B6422146D
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:55:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544543723;
-	bh=EoooJqLEvVA2F92WAGrJgkjEBYAc5IpaBnmo5+LIE5A=;
+	s=default; t=1544543726;
+	bh=NpVw8TFo+75Ye6QSzYp35tGYf1GLwYOQ0138JmVeEzo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=hl1Jd58P4BrVeONbrYP5K24KQG462Lni5S6k5/NKUQOhAkuwaBlxSyOmWeQ5c2ssa
-	 CoGz9jNnP30SQ21+yxfMfhRPEBsAAnaRqBOb+XY7qr0ydZeUQtrIoaPFbiQsSravKx
-	 A8OvKFNZm6yDLtKZzExnZlY9WYMexIqcuiNsNrfI=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A2672146D
+	b=BQiq59lDw2g/7l9Q5nJ4q6bNboygQzsiZfc+lZnXUxSlPZhKNgoDHtAP4KKYxmZgi
+	 dBK02YbBDq4oUwE/8pqi/+/KAOeOowIUx5GofndFO/EKltJtdWpIaurtymqsl+DXzG
+	 oQQmZ7+5ZA8hFll5tnxF7sakkLKc1mib0BfaqZ68=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B6422146D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729925AbeLKPzW (ORCPT
+        id S1730129AbeLKPzY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 10:55:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43870 "EHLO mail.kernel.org"
+        Tue, 11 Dec 2018 10:55:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44036 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730357AbeLKPzO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:55:14 -0500
+        id S1730357AbeLKPzW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 10:55:22 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C2E4D2146D;
-        Tue, 11 Dec 2018 15:55:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 751C82146F;
+        Tue, 11 Dec 2018 15:55:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544543714;
-        bh=EoooJqLEvVA2F92WAGrJgkjEBYAc5IpaBnmo5+LIE5A=;
+        s=default; t=1544543722;
+        bh=NpVw8TFo+75Ye6QSzYp35tGYf1GLwYOQ0138JmVeEzo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mjgiUj5IVHBO3BFM26dgtgnNCENTTFVaFWPirz2v28OhES/7byQhln6Cq1BbspQ5/
-         ymgcMAgerwl7vP3bxY3V1bx6E+4GQM+7djL43jxxiFADZdQtzYMwzvjFCWKHCuD8BP
-         wTJFY56q2cmoc22hH4ffkHLtEio8enqZ3gX4bddQ=
+        b=wfrrIl+X0D8cBKd/0frQM4XffjRHpUNMB7mD3oDo+U+ks2kgStsx1rllTNgBdrKOT
+         KjEtd9oyb8s+DLXvkCjfy4m97brnz1qrHmnq1kKz2KQJn7f00wW7pv/JMhoQ+VhCSr
+         +8hLOM/SIb+47YEkA+Va/OiLcxuJfBGsstduiuzY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Bartosz Golaszewski <brgl@bgdev.pl>,
-        Linus Walleij <linus.walleij@linaro.org>,
+        stable@vger.kernel.org,
+        =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <rafal@milecki.pl>,
+        Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 034/118] gpio: mockup: fix indicated direction
-Date:   Tue, 11 Dec 2018 16:40:53 +0100
-Message-Id: <20181211151645.614766892@linuxfoundation.org>
+Subject: [PATCH 4.19 006/118] brcmutil: really fix decoding channel info for 160 MHz bandwidth
+Date:   Tue, 11 Dec 2018 16:40:25 +0100
+Message-Id: <20181211151644.478944899@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181211151644.216668863@linuxfoundation.org>
 References: <20181211151644.216668863@linuxfoundation.org>
@@ -69,45 +70,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit bff466bac59994cfcceabe4d0be5fdc1c20cd5b8 ]
+[ Upstream commit 3401d42c7ea2d064d15c66698ff8eb96553179ce ]
 
-Commit 3edfb7bd76bd ("gpiolib: Show correct direction from the
-beginning") fixed an existing issue but broke libgpiod tests by
-changing the default direction of dummy lines to output.
+Previous commit /adding/ support for 160 MHz chanspecs was incomplete.
+It didn't set bandwidth info and didn't extract control channel info. As
+the result it was also using uninitialized "sb" var.
 
-We don't break user-space so make gpio-mockup behave as before.
+This change has been tested for two chanspecs found to be reported by
+some devices/firmwares:
+1) 60/160 (0xee32)
+   Before: chnum:50 control_ch_num:36
+    After: chnum:50 control_ch_num:60
+2) 120/160 (0xed72)
+   Before: chnum:114 control_ch_num:100
+    After: chnum:114 control_ch_num:120
 
-Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Fixes: 330994e8e8ec ("brcmfmac: fix for proper support of 160MHz bandwidth")
+Signed-off-by: Rafał Miłecki <rafal@milecki.pl>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpio/gpio-mockup.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/net/wireless/broadcom/brcm80211/brcmutil/d11.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/gpio/gpio-mockup.c b/drivers/gpio/gpio-mockup.c
-index d66b7a768ecd..945bd13e5e79 100644
---- a/drivers/gpio/gpio-mockup.c
-+++ b/drivers/gpio/gpio-mockup.c
-@@ -32,8 +32,8 @@
- #define gpio_mockup_err(...)	pr_err(GPIO_MOCKUP_NAME ": " __VA_ARGS__)
- 
- enum {
--	GPIO_MOCKUP_DIR_OUT = 0,
--	GPIO_MOCKUP_DIR_IN = 1,
-+	GPIO_MOCKUP_DIR_IN = 0,
-+	GPIO_MOCKUP_DIR_OUT = 1,
- };
- 
- /*
-@@ -135,7 +135,7 @@ static int gpio_mockup_get_direction(struct gpio_chip *gc, unsigned int offset)
- {
- 	struct gpio_mockup_chip *chip = gpiochip_get_data(gc);
- 
--	return chip->lines[offset].dir;
-+	return !chip->lines[offset].dir;
- }
- 
- static int gpio_mockup_to_irq(struct gpio_chip *gc, unsigned int offset)
+diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmutil/d11.c b/drivers/net/wireless/broadcom/brcm80211/brcmutil/d11.c
+index e7584b842dce..eb5db94f5745 100644
+--- a/drivers/net/wireless/broadcom/brcm80211/brcmutil/d11.c
++++ b/drivers/net/wireless/broadcom/brcm80211/brcmutil/d11.c
+@@ -193,6 +193,9 @@ static void brcmu_d11ac_decchspec(struct brcmu_chan *ch)
+ 		}
+ 		break;
+ 	case BRCMU_CHSPEC_D11AC_BW_160:
++		ch->bw = BRCMU_CHAN_BW_160;
++		ch->sb = brcmu_maskget16(ch->chspec, BRCMU_CHSPEC_D11AC_SB_MASK,
++					 BRCMU_CHSPEC_D11AC_SB_SHIFT);
+ 		switch (ch->sb) {
+ 		case BRCMU_CHAN_SB_LLL:
+ 			ch->control_ch_num -= CH_70MHZ_APART;
 -- 
 2.19.1
 
