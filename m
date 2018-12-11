@@ -2,77 +2,120 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 167D0C67839
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 19:12:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3682AC5CFFE
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 19:12:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC97020879
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 19:12:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC97020879
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=atomide.com
+	by mail.kernel.org (Postfix) with ESMTP id EE1DB20879
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 19:12:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE1DB20879
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727070AbeLKTM0 (ORCPT
+        id S1726986AbeLKTMW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 14:12:26 -0500
-Received: from muru.com ([72.249.23.125]:57510 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726340AbeLKTMY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 14:12:24 -0500
-Received: from atomide.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTPS id 78B6B8027;
-        Tue, 11 Dec 2018 19:12:26 +0000 (UTC)
-Date:   Tue, 11 Dec 2018 11:12:20 -0800
-From:   Tony Lindgren <tony@atomide.com>
-To:     Chandan Rajendra <chandan@linux.vnet.ibm.com>,
-        Theodore Ts'o <tytso@mit.edu>
-Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org
-Subject: Regression in next-20181211 with fsverity changes
-Message-ID: <20181211191220.GW6707@atomide.com>
+        Tue, 11 Dec 2018 14:12:22 -0500
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:57712 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726923AbeLKTMR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 14:12:17 -0500
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id wBBJCEjk114460;
+        Tue, 11 Dec 2018 13:12:14 -0600
+Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wBBJCEiZ101998
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 11 Dec 2018 13:12:14 -0600
+Received: from DLEE110.ent.ti.com (157.170.170.21) by DLEE112.ent.ti.com
+ (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Tue, 11
+ Dec 2018 13:12:14 -0600
+Received: from dflp32.itg.ti.com (10.64.6.15) by DLEE110.ent.ti.com
+ (157.170.170.21) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Tue, 11 Dec 2018 13:12:14 -0600
+Received: from legion.dal.desgin.ti.com (legion.dal.design.ti.com [128.247.22.53])
+        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id wBBJCEVl008735;
+        Tue, 11 Dec 2018 13:12:14 -0600
+Received: from localhost (a0272616local-lt.dhcp.ti.com [172.22.100.89])
+        by legion.dal.desgin.ti.com (8.11.7p1+Sun/8.11.7) with ESMTP id wBBJCEU05336;
+        Tue, 11 Dec 2018 13:12:14 -0600 (CST)
+From:   Dan Murphy <dmurphy@ti.com>
+To:     <linux-iio@vger.kernel.org>
+CC:     <linux-kernel@vger.kernel.org>, <jic23@kernel.org>,
+        <robh+dt@kernel.org>, Dan Murphy <dmurphy@ti.com>
+Subject: [PATCH v2 4/4] iio: ti-ads8688: Migrate to device managed IIO calls
+Date:   Tue, 11 Dec 2018 13:12:07 -0600
+Message-ID: <20181211191207.21900-4-dmurphy@ti.com>
+X-Mailer: git-send-email 2.12.2
+In-Reply-To: <20181211191207.21900-1-dmurphy@ti.com>
+References: <20181211191207.21900-1-dmurphy@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Migrate the driver to use the devm IIO calls as opposed to
+the unmanaged calls.
 
-Looks like commit 4de97efb578a ("fsverity: Move verity status check
-to fsverity_file_open") causes a boot regression for me with root
-on ext4 SDIO card, see below.
+Signed-off-by: Dan Murphy <dmurphy@ti.com>
+---
 
-Any ideas what goes wrong?
+v2 - New patch
 
-Regards,
+ drivers/iio/adc/ti-ads8688.c | 17 +++++++----------
+ 1 file changed, 7 insertions(+), 10 deletions(-)
 
-Tony
+diff --git a/drivers/iio/adc/ti-ads8688.c b/drivers/iio/adc/ti-ads8688.c
+index 3597bc0697ee..8f42103a1fd9 100644
+--- a/drivers/iio/adc/ti-ads8688.c
++++ b/drivers/iio/adc/ti-ads8688.c
+@@ -462,21 +462,21 @@ static int ads8688_probe(struct spi_device *spi)
+ 
+ 	mutex_init(&st->lock);
+ 
+-	ret = iio_triggered_buffer_setup(indio_dev, NULL, ads8688_trigger_handler, NULL);
++	ret = devm_iio_triggered_buffer_setup(&spi->dev, indio_dev, NULL,
++					      ads8688_trigger_handler, NULL);
+ 	if (ret < 0) {
+ 		dev_err(&spi->dev, "iio triggered buffer setup failed\n");
+ 		goto err_regulator_disable;
+ 	}
+ 
+-	ret = iio_device_register(indio_dev);
+-	if (ret)
+-		goto err_buffer_cleanup;
++	ret = devm_iio_device_register(&spi->dev, indio_dev);
++	if (ret < 0) {
++		dev_err(&spi->dev, "iio device registration failed\n");
++		goto err_regulator_disable;
++	}
+ 
+ 	return 0;
+ 
+-err_buffer_cleanup:
+-	iio_triggered_buffer_cleanup(indio_dev);
+-
+ err_regulator_disable:
+ 	if (!IS_ERR(st->reg))
+ 		regulator_disable(st->reg);
+@@ -489,9 +489,6 @@ static int ads8688_remove(struct spi_device *spi)
+ 	struct iio_dev *indio_dev = spi_get_drvdata(spi);
+ 	struct ads8688_state *st = iio_priv(indio_dev);
+ 
+-	iio_device_unregister(indio_dev);
+-	iio_triggered_buffer_cleanup(indio_dev);
+-
+ 	if (!IS_ERR(st->reg))
+ 		regulator_disable(st->reg);
+ 
+-- 
+2.20.0.rc2.7.g965798d1f2
 
-8< ----------------------
-Starting init: /bin/sh exists but couldn't execute it (error -95)
-Kernel panic - not syncing: No working init found.  Try passing init= option to kernel. See Linux Documentation/admin-guide/init.rst for guidance.
-CPU1: stopping
-CPU: 1 PID: 0 Comm: swapper/1 Not tainted 4.20.0-rc6-next-20181211 #1080
-Hardware name: Generic OMAP4 (Flattened Device Tree)
-[<c0112a18>] (unwind_backtrace) from [<c010d090>] (show_stack+0x10/0x14)
-[<c010d090>] (show_stack) from [<c08eb854>] (dump_stack+0xb0/0xe8)
-[<c08eb854>] (dump_stack) from [<c0110da4>] (handle_IPI+0x318/0x380)
-[<c0110da4>] (handle_IPI) from [<c0534930>] (gic_handle_irq+0x94/0xa8)
-[<c0534930>] (gic_handle_irq) from [<c01019f0>] (__irq_svc+0x70/0x98)
-Exception stack(0xee911ef8 to 0xee911f40)
-1ee0:                                                       00000001 00000001
-1f00: 00000000 ee90a180 00000000 c0e13fc4 00000000 ef6afbb8 c0ec8830 de03d29f
-1f20: 00000000 00000000 00000000 ee911f48 c01a4120 c06f8fb4 20000153 ffffffff
-[<c01019f0>] (__irq_svc) from [<c06f8fb4>] (cpuidle_enter_state+0x270/0x46c)
-[<c06f8fb4>] (cpuidle_enter_state) from [<c06fb0a4>] (cpuidle_enter_state_coupled+0x148/0x3e0)
-[<c06fb0a4>] (cpuidle_enter_state_coupled) from [<c0173398>] (do_idle+0x234/0x2b8)
-[<c0173398>] (do_idle) from [<c01737b4>] (cpu_startup_entry+0x18/0x1c)
-[<c01737b4>] (cpu_startup_entry) from [<8010274c>] (0x8010274c)
----[ end Kernel panic - not syncing: No working init found.  Try passing init= option to kernel. See Linux Documentation/admin-guide/init.rst for guidance. ]---
