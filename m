@@ -7,52 +7,51 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43684C07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:51:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 504C8C07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:51:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 08A8A2084E
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:51:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 155F32084E
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:51:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544543504;
-	bh=lVYGa6LOLilxaIgoH4y/C11aRxiuqv1QiTdQpHhRAXY=;
+	s=default; t=1544543506;
+	bh=WslsZQQ8RCboNRjcGQ/uUhoFwrQlIoFrx1nxhJFrFiM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=k7kSDckS7LKR3FQN0im1TBDTG3l2JvM8Ev6h315/b+0GaeTYjJijkHBx6WoJtH6Cz
-	 xFC0hSx5N25ZNlvdNtKHK7/k5n0jlcpEvscf/GRiZcbHe+LGlNq5V0FxUBqunkr4/E
-	 1VxsXHsPs9+AawEuVEkgBfWJnMLH3BS5LGML55Og=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 08A8A2084E
+	b=PsWlQnz1/S5+F0l8JkP7RLQBC6xK7jY58WxC0BLlT46nLkl/teOUqNdF1kWDEKEpv
+	 2mdZf4vern5+iqaoGYLHRGtml96N7eZhOxJDsvlGyFM3qqbCpPWTmAnv2Pq2sbOAU1
+	 UXipLAZLiJjIDSk8X7C+McRAiBvIuT2vUHmN/8Co=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 155F32084E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729563AbeLKPvn (ORCPT
+        id S1729577AbeLKPvp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 10:51:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40328 "EHLO mail.kernel.org"
+        Tue, 11 Dec 2018 10:51:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40378 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729548AbeLKPvk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:51:40 -0500
+        id S1727236AbeLKPvm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 10:51:42 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BE4D02084E;
-        Tue, 11 Dec 2018 15:51:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4D32E2084E;
+        Tue, 11 Dec 2018 15:51:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544543499;
-        bh=lVYGa6LOLilxaIgoH4y/C11aRxiuqv1QiTdQpHhRAXY=;
+        s=default; t=1544543501;
+        bh=WslsZQQ8RCboNRjcGQ/uUhoFwrQlIoFrx1nxhJFrFiM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Wj8MD1w9Cx9ZawIuqTUkWAGEHJK3YUl8D88ASucfTzbABRZNC9VEDoN2JwafpCrE3
-         LVQ08PL+nVhCBuSgJafoc1PToTl+GdcCvd4Xffs3f8owXJMoUXzE2Gu2kAj8Qli2LM
-         Dcq/ONNBZEhq2jICFYVJqZ/S150coN9iDzPnPiOw=
+        b=gACrQ/Lep/QxbnHZDZLmRqI7FHRyAmSWWZCBSWzXtPDj3t0geqFQgOZxXTY5P7FK0
+         Y2BhuoIKVfmp2+L2vxlaTd2QpkVHTUyEBt7iDphiUUc0AYhbuXzh5edRulE4+G0DcE
+         G37n37v+wdDEkA+TtPkMKcFYNBylRpNMnPZHBD7U=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Adrian Amborzewicz <adrian.ambrozewicz@intel.com>,
-        Thor Thayer <thor.thayer@linux.intel.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
+        stable@vger.kernel.org, Denis Bolotin <denis.bolotin@cavium.com>,
+        Michal Kalderon <michal.kalderon@cavium.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 21/67] mtd: spi-nor: Fix Cadence QSPI page fault kernel panic
-Date:   Tue, 11 Dec 2018 16:41:21 +0100
-Message-Id: <20181211151631.465718966@linuxfoundation.org>
+Subject: [PATCH 4.14 22/67] qed: Fix bitmap_weight() check
+Date:   Tue, 11 Dec 2018 16:41:22 +0100
+Message-Id: <20181211151631.517921604@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181211151630.378216233@linuxfoundation.org>
 References: <20181211151630.378216233@linuxfoundation.org>
@@ -71,74 +70,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit a6a66f80c85e8e20573ca03fabf32445954a88d5 ]
+[ Upstream commit 276d43f0ae963312c0cd0e2b9a85fd11ac65dfcc ]
 
-The current Cadence QSPI driver caused a kernel panic sporadically
-when writing to QSPI. The problem was caused by writing more bytes
-than needed because the QSPI operated on 4 bytes at a time.
-<snip>
-[   11.202044] Unable to handle kernel paging request at virtual address bffd3000
-[   11.209254] pgd = e463054d
-[   11.211948] [bffd3000] *pgd=2fffb811, *pte=00000000, *ppte=00000000
-[   11.218202] Internal error: Oops: 7 [#1] SMP ARM
-[   11.222797] Modules linked in:
-[   11.225844] CPU: 1 PID: 1317 Comm: systemd-hwdb Not tainted 4.17.7-d0c45cd44a8f
-[   11.235796] Hardware name: Altera SOCFPGA Arria10
-[   11.240487] PC is at __raw_writesl+0x70/0xd4
-[   11.244741] LR is at cqspi_write+0x1a0/0x2cc
-</snip>
-On a page boundary limit the number of bytes copied from the tx buffer
-to remain within the page.
+Fix the condition which verifies that only one flag is set. The API
+bitmap_weight() should receive size in bits instead of bytes.
 
-This patch uses a temporary buffer to hold the 4 bytes to write and then
-copies only the bytes required from the tx buffer.
-
-Reported-by: Adrian Amborzewicz <adrian.ambrozewicz@intel.com>
-Signed-off-by: Thor Thayer <thor.thayer@linux.intel.com>
-Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
+Fixes: b5a9ee7cf3be ("qed: Revise QM cofiguration")
+Signed-off-by: Denis Bolotin <denis.bolotin@cavium.com>
+Signed-off-by: Michal Kalderon <michal.kalderon@cavium.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/mtd/spi-nor/cadence-quadspi.c | 19 ++++++++++++++++---
- 1 file changed, 16 insertions(+), 3 deletions(-)
+ drivers/net/ethernet/qlogic/qed/qed_dev.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/mtd/spi-nor/cadence-quadspi.c b/drivers/mtd/spi-nor/cadence-quadspi.c
-index 8d89204b90d2..f22dd34f4f83 100644
---- a/drivers/mtd/spi-nor/cadence-quadspi.c
-+++ b/drivers/mtd/spi-nor/cadence-quadspi.c
-@@ -625,9 +625,23 @@ static int cqspi_indirect_write_execute(struct spi_nor *nor,
- 	       reg_base + CQSPI_REG_INDIRECTWR);
+diff --git a/drivers/net/ethernet/qlogic/qed/qed_dev.c b/drivers/net/ethernet/qlogic/qed/qed_dev.c
+index ef2374699726..a51cd1028ecb 100644
+--- a/drivers/net/ethernet/qlogic/qed/qed_dev.c
++++ b/drivers/net/ethernet/qlogic/qed/qed_dev.c
+@@ -440,8 +440,11 @@ static u16 *qed_init_qm_get_idx_from_flags(struct qed_hwfn *p_hwfn,
+ 	struct qed_qm_info *qm_info = &p_hwfn->qm_info;
  
- 	while (remaining > 0) {
-+		size_t write_words, mod_bytes;
-+
- 		write_bytes = remaining > page_size ? page_size : remaining;
--		iowrite32_rep(cqspi->ahb_base, txbuf,
--			      DIV_ROUND_UP(write_bytes, 4));
-+		write_words = write_bytes / 4;
-+		mod_bytes = write_bytes % 4;
-+		/* Write 4 bytes at a time then single bytes. */
-+		if (write_words) {
-+			iowrite32_rep(cqspi->ahb_base, txbuf, write_words);
-+			txbuf += (write_words * 4);
-+		}
-+		if (mod_bytes) {
-+			unsigned int temp = 0xFFFFFFFF;
-+
-+			memcpy(&temp, txbuf, mod_bytes);
-+			iowrite32(temp, cqspi->ahb_base);
-+			txbuf += mod_bytes;
-+		}
+ 	/* Can't have multiple flags set here */
+-	if (bitmap_weight((unsigned long *)&pq_flags, sizeof(pq_flags)) > 1)
++	if (bitmap_weight((unsigned long *)&pq_flags,
++			  sizeof(pq_flags) * BITS_PER_BYTE) > 1) {
++		DP_ERR(p_hwfn, "requested multiple pq flags 0x%x\n", pq_flags);
+ 		goto err;
++	}
  
- 		ret = wait_for_completion_timeout(&cqspi->transfer_complete,
- 						  msecs_to_jiffies
-@@ -638,7 +652,6 @@ static int cqspi_indirect_write_execute(struct spi_nor *nor,
- 			goto failwr;
- 		}
- 
--		txbuf += write_bytes;
- 		remaining -= write_bytes;
- 
- 		if (remaining > 0)
+ 	switch (pq_flags) {
+ 	case PQ_FLAGS_RLS:
 -- 
 2.19.1
 
