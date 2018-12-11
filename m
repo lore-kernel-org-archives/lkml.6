@@ -2,399 +2,306 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B38B8C07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 04:39:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38CDBC07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 04:46:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E052D20811
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 04:39:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="Y0HKxL3A"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E052D20811
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	by mail.kernel.org (Postfix) with ESMTP id D91FA20811
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 04:46:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D91FA20811
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730175AbeLKEjN (ORCPT
+        id S1730180AbeLKEqk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 23:39:13 -0500
-Received: from conssluserg-06.nifty.com ([210.131.2.91]:49357 "EHLO
-        conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729060AbeLKEjN (ORCPT
+        Mon, 10 Dec 2018 23:46:40 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:33398 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729060AbeLKEqj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 23:39:13 -0500
-Received: from mail-vs1-f49.google.com (mail-vs1-f49.google.com [209.85.217.49]) (authenticated)
-        by conssluserg-06.nifty.com with ESMTP id wBB4d3a0009060;
-        Tue, 11 Dec 2018 13:39:04 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-06.nifty.com wBB4d3a0009060
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1544503144;
-        bh=Oood8TAfVHUh/TERJE8Q4Ksf5SJWTHtrCaWvyC4Mju8=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=Y0HKxL3AnARq5Mj2gyJpZZ6sQrKP6ZAgmjNbwPLaIMEF4bKHgWUDPnt3ulxxZoVSe
-         mSlb+/iQNf8A4HAq1EXJd5yHuOEnsGZ8KJRahw2uAOL3kgPgUx72wOz5QLWh/NUuFv
-         0p0oPMI61kAE7TMOrsPAY0CPK1vTOyRrItjb8oBZLAskzLfA3nx0Q5mpvmu6HE9ZiD
-         ofQk0LWIDm3m1qJ95/yb8pspspuJinJcJD5pDvVcWBzqYTOh6+F/BsKe1sZ6g5YC2c
-         9t9Ukq5KAehLglzo5H6z7FyIrXTIKWAgPgla781nOgPBGWGCHskM93Zfqro0Rma1r4
-         MTz1oT9FiF/0A==
-X-Nifty-SrcIP: [209.85.217.49]
-Received: by mail-vs1-f49.google.com with SMTP id y27so8124952vsi.1;
-        Mon, 10 Dec 2018 20:39:04 -0800 (PST)
-X-Gm-Message-State: AA+aEWaetB/GT608mt8WhZEBOTMHc7rsSWPAqnnmjA4OXVdhdx3ZjZmd
-        dHVpeGb+DBHtXrFbKzBAjfI63w6AItehEpZ+rNc=
-X-Google-Smtp-Source: AFSGD/WSCxoASVkdjL9j1CKQvTKRwFY3nYisnYvF2RHWQfsjn1uHbVVxpY3tjniQHMF/s702uLv6NKca+Msq9AIZWt4=
-X-Received: by 2002:a67:a858:: with SMTP id r85mr6427130vse.215.1544503142862;
- Mon, 10 Dec 2018 20:39:02 -0800 (PST)
+        Mon, 10 Dec 2018 23:46:39 -0500
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBB4j2Jp070480
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Dec 2018 23:46:37 -0500
+Received: from e14.ny.us.ibm.com (e14.ny.us.ibm.com [129.33.205.204])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2pa1xb1g02-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Dec 2018 23:46:37 -0500
+Received: from localhost
+        by e14.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Tue, 11 Dec 2018 04:46:37 -0000
+Received: from b01cxnp22033.gho.pok.ibm.com (9.57.198.23)
+        by e14.ny.us.ibm.com (146.89.104.201) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 11 Dec 2018 04:46:33 -0000
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp22033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBB4kWaG21626950
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 11 Dec 2018 04:46:32 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 92608B2066;
+        Tue, 11 Dec 2018 04:46:32 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 5DB7AB2065;
+        Tue, 11 Dec 2018 04:46:32 +0000 (GMT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.80.231.34])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Tue, 11 Dec 2018 04:46:32 +0000 (GMT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id EFA9816C5F79; Mon, 10 Dec 2018 20:46:31 -0800 (PST)
+Date:   Mon, 10 Dec 2018 20:46:31 -0800
+From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
+To:     "He, Bo" <bo.he@intel.com>
+Cc:     Steven Rostedt <rostedt@goodmis.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "josh@joshtriplett.org" <josh@joshtriplett.org>,
+        "mathieu.desnoyers@efficios.com" <mathieu.desnoyers@efficios.com>,
+        "jiangshanlai@gmail.com" <jiangshanlai@gmail.com>,
+        "Zhang, Jun" <jun.zhang@intel.com>,
+        "Xiao, Jin" <jin.xiao@intel.com>,
+        "Zhang, Yanmin" <yanmin.zhang@intel.com>,
+        "Bai, Jie A" <jie.a.bai@intel.com>
+Subject: Re: rcu_preempt caused oom
+Reply-To: paulmck@linux.ibm.com
+References: <20181204194936.GD4170@linux.ibm.com>
+ <CD6925E8781EFD4D8E11882D20FC406D52A16605@SHSMSX104.ccr.corp.intel.com>
+ <20181205174435.GU4170@linux.ibm.com>
+ <CD6925E8781EFD4D8E11882D20FC406D52A16C46@SHSMSX104.ccr.corp.intel.com>
+ <20181206173808.GI4170@linux.ibm.com>
+ <CD6925E8781EFD4D8E11882D20FC406D52A180C5@SHSMSX104.ccr.corp.intel.com>
+ <20181207141131.GP4170@linux.ibm.com>
+ <20181209195601.GA7854@linux.ibm.com>
+ <CD6925E8781EFD4D8E11882D20FC406D52A186D0@SHSMSX104.ccr.corp.intel.com>
+ <20181211003838.GD4170@linux.ibm.com>
 MIME-Version: 1.0
-References: <20181210203225.11179-1-robh@kernel.org>
-In-Reply-To: <20181210203225.11179-1-robh@kernel.org>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Tue, 11 Dec 2018 13:38:26 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAThtAOy4PQiYZ2X0oWrHdcLi7on8ctSXJ=bfT0HNh7NFQ@mail.gmail.com>
-Message-ID: <CAK7LNAThtAOy4PQiYZ2X0oWrHdcLi7on8ctSXJ=bfT0HNh7NFQ@mail.gmail.com>
-Subject: Re: [PATCH v3] kbuild: Add support for DT binding schema checks
-To:     Rob Herring <robh@kernel.org>
-Cc:     DTML <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        darknighte@darknighte.com, Frank Rowand <frowand.list@gmail.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        grant.likely@arm.com, Kumar Gala <kumar.gala@linaro.org>,
-        arm-soc <arm@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181211003838.GD4170@linux.ibm.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18121104-0052-0000-0000-00000365319F
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010211; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000270; SDB=6.01130043; UDB=6.00587171; IPR=6.00910176;
+ MB=3.00024649; MTD=3.00000008; XFM=3.00000015; UTC=2018-12-11 04:46:36
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18121104-0053-0000-0000-00005F0FCF2D
+Message-Id: <20181211044631.GA19942@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-11_02:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1812110044
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rob,
-
-On Tue, Dec 11, 2018 at 5:50 AM Rob Herring <robh@kernel.org> wrote:
->
-> This adds the build infrastructure for checking DT binding schema
-> documents and validating dts files using the binding schema.
->
-> Check DT binding schema documents:
-> make dt_binding_check
->
-> Build dts files and check using DT binding schema:
-> make dtbs_check
->
-> Optionally, DT_SCHEMA_FILES can passed in with a schema file(s) to use
-
-
-Perhaps, "can be passed" ?
-
-
-
-> for validation. This makes it easier to find and fix errors generated by
-> a specific schema.
->
-> Currently, the validation targets are separate from a normal build to
-> avoid a hard dependency on the external DT schema project and because
-> there are lots of warnings generated.
->
-> Cc: Jonathan Corbet <corbet@lwn.net>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
-> Cc: Michal Marek <michal.lkml@markovi.net>
-> Cc: linux-doc@vger.kernel.org
-> Cc: devicetree@vger.kernel.org
-> Cc: linux-kbuild@vger.kernel.org
-> Signed-off-by: Rob Herring <robh@kernel.org>
-> ---
-> v3:
-> - Fix error causing only 1st schema file to get used.
-> - Add a more useful error message when dtc is missing YAML support
-> telling the user they need to install libyaml devel package.
->
->
->  .gitignore                                   |  1 +
->  Documentation/Makefile                       |  2 +-
->  Documentation/devicetree/bindings/.gitignore |  1 +
->  Documentation/devicetree/bindings/Makefile   | 33 +++++++++++++++++
->  Makefile                                     | 11 ++++--
->  scripts/Makefile.lib                         | 37 ++++++++++++++++++--
->  6 files changed, 80 insertions(+), 5 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/.gitignore
->  create mode 100644 Documentation/devicetree/bindings/Makefile
->
-> diff --git a/.gitignore b/.gitignore
-> index 97ba6b79834c..a20ac26aa2f5 100644
-> --- a/.gitignore
-> +++ b/.gitignore
-> @@ -15,6 +15,7 @@
->  *.bin
->  *.bz2
->  *.c.[012]*.*
-> +*.dt.yaml
->  *.dtb
->  *.dtb.S
->  *.dwo
-> diff --git a/Documentation/Makefile b/Documentation/Makefile
-> index 2ca77ad0f238..9786957c6a35 100644
-> --- a/Documentation/Makefile
-> +++ b/Documentation/Makefile
-> @@ -2,7 +2,7 @@
->  # Makefile for Sphinx documentation
->  #
->
-> -subdir-y :=
-> +subdir-y := devicetree/bindings/
->
->  # You can set these variables from the command line.
->  SPHINXBUILD   = sphinx-build
-> diff --git a/Documentation/devicetree/bindings/.gitignore b/Documentation/devicetree/bindings/.gitignore
-> new file mode 100644
-> index 000000000000..d9194c02dd08
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/.gitignore
-> @@ -0,0 +1 @@
-> +*.example.dts
-> diff --git a/Documentation/devicetree/bindings/Makefile b/Documentation/devicetree/bindings/Makefile
-> new file mode 100644
-> index 000000000000..43f8657ab070
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/Makefile
-> @@ -0,0 +1,33 @@
-> +# SPDX-License-Identifier: GPL-2.0
-> +DT_DOC_CHECKER ?= dt-doc-validate
-> +DT_EXTRACT_EX ?= dt-extract-example
-> +DT_MK_SCHEMA ?= dt-mk-schema
-> +DT_MK_SCHEMA_FLAGS := $(if $(DT_SCHEMA_FILES), -u)
-> +
-> +quiet_cmd_chk_binding = CHKDT   $<
-
-
-In convention, the short log displays the target name
-instead of the prerequisite.
-
-If O=foo/bar is given, $< shows the full path,
-then log will look like follows:
-
-
-  CHKDT   /home/masahiro/ref/linux-devicetree/Documentation/devicetree/bindings/arm/calxeda.yaml
-  DTC     Documentation/devicetree/bindings/arm/calxeda.example.dtb
-  CHKDT   /home/masahiro/ref/linux-devicetree/Documentation/devicetree/bindings/arm/qcom.yaml
-  DTC     Documentation/devicetree/bindings/arm/qcom.example.dtb
-  CHKDT   /home/masahiro/ref/linux-devicetree/Documentation/devicetree/bindings/arm/xilinx.yaml
-  DTC     Documentation/devicetree/bindings/arm/xilinx.example.dtb
-  CHKDT   /home/masahiro/ref/linux-devicetree/Documentation/devicetree/bindings/arm/ti/nspire.yaml
-  DTC     Documentation/devicetree/bindings/arm/ti/nspire.example.dtb
-  CHKDT   /home/masahiro/ref/linux-devicetree/Documentation/devicetree/bindings/arm/ti/ti,davinci.yaml
-  DTC     Documentation/devicetree/bindings/arm/ti/ti,davinci.example.dtb
-  CHKDT   /home/masahiro/ref/linux-devicetree/Documentation/devicetree/bindings/arm/altera.yaml
-
-You might think it is ugly.
-
-
-
-
-> +      cmd_chk_binding = (set -e; \
-> +                         $(DT_DOC_CHECKER) $< ; \
-> +                         mkdir -p $(dir $@) ; \
-> +                         $(DT_EXTRACT_EX) $< > $@ )
-
-
-- 'set -e' is redundant because if_changed already has it.
-
-- 'mkdir mkdir -p $(dir $@)' is also redundant because
-   scripts/Makefile.build automatically creates it.
-
--  You do not need to execute this in a sub-shell
-
-
-
-You can simplify like this:
-
-       cmd_chk_binding = $(DT_DOC_CHECKER) $< ; \
-                         $(DT_EXTRACT_EX) $< > $@
-
-
-
-> +$(obj)/%.example.dts: $(src)/%.yaml FORCE
-> +       $(call if_changed,chk_binding)
-> +
-> +DT_TMP_SCHEMA := .schema.yaml.tmp
-
-
-BTW, why does this file start with a period?
-What is the meaning of '.tmp' extension?
-
-
-
-> +extra-y += $(DT_TMP_SCHEMA)
-> +
-> +quiet_cmd_mk_schema = SCHEMA  $@
-> +      cmd_mk_schema = mkdir -p $(obj); \
-> +                      rm -f $@; \
-> +                      $(DT_MK_SCHEMA) $(DT_MK_SCHEMA_FLAGS) -o $@ $(filter-out FORCE, $^)
-
-
-"mkdir -p $(obj)" is redundant.
-
-
-Why is 'rm -f $@' necessary ?
-Can't dt-mk-schema overwrite the output file?
-
-
-
-
-> +DT_DOCS = $(shell cd $(srctree)/$(src) && find * -name '*.yaml')
-> +DT_SCHEMA_FILES ?= $(addprefix $(src)/,$(DT_DOCS))
-> +
-> +extra-y += $(patsubst $(src)/%.yaml,%.example.dts, $(DT_SCHEMA_FILES))
-> +extra-y += $(patsubst $(src)/%.yaml,%.example.dtb, $(DT_SCHEMA_FILES))
-
-
-
-I assume you intentionally did not do like this:
-
-extra-y += $(patsubst %.yaml,%.example.dtb, $(DT_DOCS))
-
-From the commit description, DT_SCHEMA_FILES might be overridden by a user.
-So, I think this is OK.
-
-
-
-
-> +$(obj)/$(DT_TMP_SCHEMA): | $(addprefix $(obj)/,$(patsubst $(src)/%.yaml,%.example.dtb, $(DT_SCHEMA_FILES)))
-
-I do not understand this line.
-Why is it necessary?
-
-*.example.dtb files are generated anyway
-since they are listed in extra-y.
-
-
-
-
-> +$(obj)/$(DT_TMP_SCHEMA): $(addprefix $(srctree)/, $(DT_SCHEMA_FILES)) FORCE
-> +       $(call if_changed,mk_schema)
-
-
-You do not need to prefix $(srctree)/ because Kbuild uses VPATH.
-
-
-$(obj)/$(DT_TMP_SCHEMA): $(DT_SCHEMA_FILES) FORCE
-       $(call if_changed,mk_schema)
-
-
-is fine.
-
-
-
-
-
-
-
-> +cmd_dtc_yaml_chk = \
-> +       if ! echo "/dts-v1/; /{};" | $(DTC) -I dts -O yaml > /dev/null ; then \
-> +               echo "*"; \
-> +               echo "* dtc needs libyaml for DT schema validation support."; \
-> +               echo "* Install the necessary libyaml development package from your distro."; \
-> +               echo "*"; \
-> +               false; \
-> +       fi; \
-> +       touch $@
-> +
-> +$(objtree)/scripts/dtc/.dtc-yaml-chk.tmp: $(DTC) FORCE
-> +       $(call if_changed,dtc_yaml_chk)
-
-
-Hmm, this is kind of ugly.
-
-I'd rather check this in scripts/dtc/Makefile
-
-
-
-How about something like below?
-
-
-
-diff --git a/Makefile b/Makefile
-index ff59adf..a3e2db2 100644
---- a/Makefile
-+++ b/Makefile
-@@ -1233,11 +1233,11 @@ ifneq ($(dtstree),)
-        $(Q)$(MAKE) $(build)=$(dtstree) $(dtstree)/$@
-
- PHONY += dtbs dtbs_install dt_binding_check
--dtbs: prepare3 scripts_dtc
-+dtbs dtbs_check: prepare3 scripts_dtc
-        $(Q)$(MAKE) $(build)=$(dtstree)
-
--dtbs_check: prepare3 dt_binding_check
--       $(Q)$(MAKE) $(build)=$(dtstree) CHECK_DTBS=1
-+dtbs_check: export CHECK_DTBS=1
-+dtbs_check: dt_binding_check
-
- dtbs_install:
-        $(Q)$(MAKE) $(dtbinst)=$(dtstree)
-diff --git a/scripts/Makefile.lib b/scripts/Makefile.lib
-index 8a7d622..5017175 100644
---- a/scripts/Makefile.lib
-+++ b/scripts/Makefile.lib
-@@ -309,20 +309,7 @@ define rule_dtc_dt_yaml
-        $(call echo-cmd,dtb_check) $(cmd_dtb_check)
- endef
-
--cmd_dtc_yaml_chk = \
--       if ! echo "/dts-v1/; /{};" | $(DTC) -I dts -O yaml > /dev/null ; then \
--               echo "*"; \
--               echo "* dtc needs libyaml for DT schema validation support."; \
--               echo "* Install the necessary libyaml development
-package from your distro."; \
--               echo "*"; \
--               false; \
--       fi; \
--       touch $@
+On Mon, Dec 10, 2018 at 04:38:38PM -0800, Paul E. McKenney wrote:
+> On Mon, Dec 10, 2018 at 06:56:18AM +0000, He, Bo wrote:
+> > Hi, 
+> >    We have start the test with the CONFIG_PROVE_RCU=y, and also add one 2s to detect the preempt rcu hang, hope we can get more useful logs tomorrow.
+> >    I also enclosed the config and the debug patches for you review.
+> 
+> I instead suggest the (lightly tested) debug patch shown below, which
+> tracks wakeups of RCU's grace-period kthreads and dumps them out if a
+> given requested grace period fails to start.  Again, it is necessary to
+> build with CONFIG_PROVE_RCU=y, that is, with CONFIG_PROVE_LOCKING=y.
+
+Right.  This time without commenting out the wakeup as a test of the
+diagnostic.  :-/
+
+Please use the patch below instead of the one that I sent in my
+previous email.
+
+							Thanx, Paul
+
+------------------------------------------------------------------------
+
+commit adfc7dff659495a3433d5084256be59eee0ac6df
+Author: Paul E. McKenney <paulmck@linux.ibm.com>
+Date:   Mon Dec 10 16:33:59 2018 -0800
+
+    rcu: Improve diagnostics for failed RCU grace-period start
+    
+    Backported from v4.21/v5.0
+    
+    If a grace period fails to start (for example, because you commented
+    out the last two lines of rcu_accelerate_cbs_unlocked()), rcu_core()
+    will invoke rcu_check_gp_start_stall(), which will notice and complain.
+    However, this complaint is lacking crucial debugging information such
+    as when the last wakeup executed and what the value of ->gp_seq was at
+    that time.  This commit therefore removes the current pr_alert() from
+    rcu_check_gp_start_stall(), instead invoking show_rcu_gp_kthreads(),
+    which has been updated to print the needed information, which is collected
+    by rcu_gp_kthread_wake().
+    
+    Signed-off-by: Paul E. McKenney <paulmck@linux.ibm.com>
+
+diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+index 0b760c1369f7..4bcd8753e293 100644
+--- a/kernel/rcu/tree.c
++++ b/kernel/rcu/tree.c
+@@ -626,25 +626,57 @@ void rcu_sched_force_quiescent_state(void)
+ }
+ EXPORT_SYMBOL_GPL(rcu_sched_force_quiescent_state);
+ 
++/*
++ * Convert a ->gp_state value to a character string.
++ */
++static const char *gp_state_getname(short gs)
++{
++	if (gs < 0 || gs >= ARRAY_SIZE(gp_state_names))
++		return "???";
++	return gp_state_names[gs];
++}
++
++/*
++ * Return the root node of the specified rcu_state structure.
++ */
++static struct rcu_node *rcu_get_root(struct rcu_state *rsp)
++{
++	return &rsp->node[0];
++}
++
+ /*
+  * Show the state of the grace-period kthreads.
+  */
+ void show_rcu_gp_kthreads(void)
+ {
+ 	int cpu;
++	unsigned long j;
++	unsigned long ja;
++	unsigned long jr;
++	unsigned long jw;
+ 	struct rcu_data *rdp;
+ 	struct rcu_node *rnp;
+ 	struct rcu_state *rsp;
+ 
++	j = jiffies;
+ 	for_each_rcu_flavor(rsp) {
+-		pr_info("%s: wait state: %d ->state: %#lx\n",
+-			rsp->name, rsp->gp_state, rsp->gp_kthread->state);
++		ja = j - READ_ONCE(rsp->gp_activity);
++		jr = j - READ_ONCE(rsp->gp_req_activity);
++		jw = j - READ_ONCE(rsp->gp_wake_time);
++		pr_info("%s: wait state: %s(%d) ->state: %#lx delta ->gp_activity %lu ->gp_req_activity %lu ->gp_wake_time %lu ->gp_wake_seq %ld ->gp_seq %ld ->gp_seq_needed %ld ->gp_flags %#x\n",
++			rsp->name, gp_state_getname(rsp->gp_state),
++			rsp->gp_state,
++			rsp->gp_kthread ? rsp->gp_kthread->state : 0x1ffffL,
++			ja, jr, jw, (long)READ_ONCE(rsp->gp_wake_seq),
++			(long)READ_ONCE(rsp->gp_seq),
++			(long)READ_ONCE(rcu_get_root(rsp)->gp_seq_needed),
++			READ_ONCE(rsp->gp_flags));
+ 		rcu_for_each_node_breadth_first(rsp, rnp) {
+ 			if (ULONG_CMP_GE(rsp->gp_seq, rnp->gp_seq_needed))
+ 				continue;
+-			pr_info("\trcu_node %d:%d ->gp_seq %lu ->gp_seq_needed %lu\n",
+-				rnp->grplo, rnp->grphi, rnp->gp_seq,
+-				rnp->gp_seq_needed);
++			pr_info("\trcu_node %d:%d ->gp_seq %ld ->gp_seq_needed %ld\n",
++				rnp->grplo, rnp->grphi, (long)rnp->gp_seq,
++				(long)rnp->gp_seq_needed);
+ 			if (!rcu_is_leaf_node(rnp))
+ 				continue;
+ 			for_each_leaf_node_possible_cpu(rnp, cpu) {
+@@ -653,8 +685,8 @@ void show_rcu_gp_kthreads(void)
+ 				    ULONG_CMP_GE(rsp->gp_seq,
+ 						 rdp->gp_seq_needed))
+ 					continue;
+-				pr_info("\tcpu %d ->gp_seq_needed %lu\n",
+-					cpu, rdp->gp_seq_needed);
++				pr_info("\tcpu %d ->gp_seq_needed %ld\n",
++					cpu, (long)rdp->gp_seq_needed);
+ 			}
+ 		}
+ 		/* sched_show_task(rsp->gp_kthread); */
+@@ -690,14 +722,6 @@ void rcutorture_get_gp_data(enum rcutorture_type test_type, int *flags,
+ }
+ EXPORT_SYMBOL_GPL(rcutorture_get_gp_data);
+ 
+-/*
+- * Return the root node of the specified rcu_state structure.
+- */
+-static struct rcu_node *rcu_get_root(struct rcu_state *rsp)
+-{
+-	return &rsp->node[0];
+-}
 -
--$(objtree)/scripts/dtc/.dtc-yaml-chk.tmp: $(DTC) FORCE
--       $(call if_changed,dtc_yaml_chk)
+ /*
+  * Enter an RCU extended quiescent state, which can be either the
+  * idle loop or adaptive-tickless usermode execution.
+@@ -1285,16 +1309,6 @@ static void record_gp_stall_check_time(struct rcu_state *rsp)
+ 	rsp->n_force_qs_gpstart = READ_ONCE(rsp->n_force_qs);
+ }
+ 
+-/*
+- * Convert a ->gp_state value to a character string.
+- */
+-static const char *gp_state_getname(short gs)
+-{
+-	if (gs < 0 || gs >= ARRAY_SIZE(gp_state_names))
+-		return "???";
+-	return gp_state_names[gs];
+-}
 -
--$(obj)/%.dt.yaml: $(src)/%.dts $(DTC) $(DT_TMP_SCHEMA) FORCE |
-$(objtree)/scripts/dtc/.dtc-yaml-chk.tmp
-+$(obj)/%.dt.yaml: $(src)/%.dts $(DTC) $(DT_TMP_SCHEMA) FORCE
-        $(call if_changed_rule,dtc_dt_yaml)
+ /*
+  * Complain about starvation of grace-period kthread.
+  */
+@@ -1693,7 +1707,8 @@ static bool rcu_future_gp_cleanup(struct rcu_state *rsp, struct rcu_node *rnp)
+  * Don't do a self-awaken, and don't bother awakening when there is
+  * nothing for the grace-period kthread to do (as in several CPUs
+  * raced to awaken, and we lost), and finally don't try to awaken
+- * a kthread that has not yet been created.
++ * a kthread that has not yet been created.  If all those checks are
++ * passed, track some debug information and awaken.
+  */
+ static void rcu_gp_kthread_wake(struct rcu_state *rsp)
+ {
+@@ -1701,6 +1716,8 @@ static void rcu_gp_kthread_wake(struct rcu_state *rsp)
+ 	    !READ_ONCE(rsp->gp_flags) ||
+ 	    !rsp->gp_kthread)
+ 		return;
++	WRITE_ONCE(rsp->gp_wake_time, jiffies);
++	WRITE_ONCE(rsp->gp_wake_seq, READ_ONCE(rsp->gp_seq));
+ 	swake_up_one(&rsp->gp_wq);
+ }
+ 
+@@ -2802,16 +2819,11 @@ rcu_check_gp_start_stall(struct rcu_state *rsp, struct rcu_node *rnp,
+ 		raw_spin_unlock_irqrestore_rcu_node(rnp, flags);
+ 		return;
+ 	}
+-	pr_alert("%s: g%ld->%ld gar:%lu ga:%lu f%#x gs:%d %s->state:%#lx\n",
+-		 __func__, (long)READ_ONCE(rsp->gp_seq),
+-		 (long)READ_ONCE(rnp_root->gp_seq_needed),
+-		 j - rsp->gp_req_activity, j - rsp->gp_activity,
+-		 rsp->gp_flags, rsp->gp_state, rsp->name,
+-		 rsp->gp_kthread ? rsp->gp_kthread->state : 0x1ffffL);
+ 	WARN_ON(1);
+ 	if (rnp_root != rnp)
+ 		raw_spin_unlock_rcu_node(rnp_root);
+ 	raw_spin_unlock_irqrestore_rcu_node(rnp, flags);
++	show_rcu_gp_kthreads();
+ }
+ 
+ /*
+diff --git a/kernel/rcu/tree.h b/kernel/rcu/tree.h
+index 4e74df768c57..0e051d9b5f1a 100644
+--- a/kernel/rcu/tree.h
++++ b/kernel/rcu/tree.h
+@@ -327,6 +327,8 @@ struct rcu_state {
+ 	struct swait_queue_head gp_wq;		/* Where GP task waits. */
+ 	short gp_flags;				/* Commands for GP task. */
+ 	short gp_state;				/* GP kthread sleep state. */
++	unsigned long gp_wake_time;		/* Last GP kthread wake. */
++	unsigned long gp_wake_seq;		/* ->gp_seq at ^^^. */
+ 
+ 	/* End of fields guarded by root rcu_node's lock. */
+ 
 
- dtc-tmp = $(subst $(comma),_,$(dot-target).dts.tmp)
-diff --git a/scripts/dtc/Makefile b/scripts/dtc/Makefile
-index 056d5da..3e497f1 100644
---- a/scripts/dtc/Makefile
-+++ b/scripts/dtc/Makefile
-@@ -12,6 +12,10 @@ dtc-objs     += dtc-lexer.lex.o dtc-parser.tab.o
- HOST_EXTRACFLAGS := -I$(src)/libfdt
-
- ifeq ($(wildcard /usr/include/yaml.h),)
-+ifeq ($(CHECK_DTBS),1)
-+$(error dtc needs libyaml for DT schema validation support. \
-+        Install the necessary libyaml development package.)
-+endif
- HOST_EXTRACFLAGS += -DNO_YAML
- else
- dtc-objs       += yamltree.o
-
-
-
-
-
-One drawback of this approach is,
-this is not checked if you are using out-of-tree DTC.
-Probably, Rob is the only person that overrides DTC.
-
-
-
-
-
-
-
--- 
-Best Regards
-Masahiro Yamada
