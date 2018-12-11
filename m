@@ -7,48 +7,49 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74F7BC07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:44:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07DB4C07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:44:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2F82420870
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:44:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BF1C020870
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:44:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544543060;
-	bh=XFoGy2Px+3c33iyTdV7xQJniQwQPDp1TQ/cvroU8ZcE=;
+	s=default; t=1544543062;
+	bh=XadxK86EU5V8XbTLzGLtF6GPJnEtCtZY2BPgkpopyvw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=eehenez7YiTOqJJknv1t2qSOT6NRNfTUXrcyafal2q3WLRU+aGn9RXFv8f7x/cr8q
-	 SSC4pGJc1u+hUaC0HGkc4rRJI/UcQ+4uib4raO8bmS2AbmSPT6RfA3VywPKHkOWKhL
-	 IGs8xz8jwi7w+7M3olzYtdLlfZEsYVh0dCJz1eZU=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F82420870
+	b=f6G9/MYjlf2+CGvKzI39sdAU4m88ekvv55U/dt1f1WoADhpe7gTrB9oq6evo3r9Ve
+	 QePZzOA15r+L+kqeV56V0UPvWJaGD9s/gx9Cy+h2Wpxsgoxz9236mbb8iLJSXSamXv
+	 uUYQKlQJy2ZrmdNkYL2pxEvjqyGD7ZQkUHa7QWv8=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF1C020870
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727818AbeLKPoT (ORCPT
+        id S1727833AbeLKPoV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 10:44:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60872 "EHLO mail.kernel.org"
+        Tue, 11 Dec 2018 10:44:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60920 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727766AbeLKPoQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:44:16 -0500
+        id S1727814AbeLKPoT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 10:44:19 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BA2E020855;
-        Tue, 11 Dec 2018 15:44:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3677820870;
+        Tue, 11 Dec 2018 15:44:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544543056;
-        bh=XFoGy2Px+3c33iyTdV7xQJniQwQPDp1TQ/cvroU8ZcE=;
+        s=default; t=1544543058;
+        bh=XadxK86EU5V8XbTLzGLtF6GPJnEtCtZY2BPgkpopyvw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MB2zTuKYmfYrr7htGxh1bQMthD3zzVTmLtGg8lvSQ1tiCzKAyoFzhPI7rocK9KmRp
-         mP6IHklRpHL0j7iHldYQjAaw1J39IdpI9Fgk6w1VTcRfrt5Ea1Wyc15emxuNf8QJA2
-         jmBGkxafRhmitp+F/wFwslokHgenZSaUkYl3AHgM=
+        b=T6xJNaZ8dtWHE0Pgd5LHSUWb0rtdE8/Fv5XpSjv1CtlOe+2fvJo+Gs6COq9PD4BZf
+         yHXu3x4K+cBgzl9RQAlTVYxzzS//BImCBlTdBGglQcVvYbEfA5At6iTiS5pw7LOwxF
+         L6iFNmQinLaIZeWrCURjyR4OdEpH2xlUa1rf3PXw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>
-Subject: [PATCH 3.18 15/54] kobject: Replace strncpy with memcpy
-Date:   Tue, 11 Dec 2018 16:41:03 +0100
-Message-Id: <20181211151546.838702709@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 3.18 16/54] unifdef: use memcpy instead of strncpy
+Date:   Tue, 11 Dec 2018 16:41:04 +0100
+Message-Id: <20181211151546.889898580@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181211151546.010073210@linuxfoundation.org>
 References: <20181211151546.010073210@linuxfoundation.org>
@@ -67,40 +68,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Guenter Roeck <linux@roeck-us.net>
+From: Linus Torvalds <torvalds@linux-foundation.org>
 
-commit 77d2a24b6107bd9b3bf2403a65c1428a9da83dd0 upstream.
+commit 38c7b224ce22c25fed04007839edf974bd13439d upstream.
 
-gcc 8.1.0 complains:
+New versions of gcc reasonably warn about the odd pattern of
 
-lib/kobject.c:128:3: warning:
-	'strncpy' output truncated before terminating nul copying as many
-	bytes from a string as its length [-Wstringop-truncation]
-lib/kobject.c: In function 'kobject_get_path':
-lib/kobject.c:125:13: note: length computed here
+	strncpy(p, q, strlen(q));
 
-Using strncpy() is indeed less than perfect since the length of data to
-be copied has already been determined with strlen(). Replace strncpy()
-with memcpy() to address the warning and optimize the code a little.
+which really doesn't make sense: the strncpy() ends up being just a slow
+and odd way to write memcpy() in this case.
 
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+There was a comment about _why_ the code used strncpy - to avoid the
+terminating NUL byte, but memcpy does the same and avoids the warning.
+
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- lib/kobject.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ scripts/unifdef.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/lib/kobject.c
-+++ b/lib/kobject.c
-@@ -127,7 +127,7 @@ static void fill_kobj_path(struct kobjec
- 		int cur = strlen(kobject_name(parent));
- 		/* back up enough to print this name with '/' */
- 		length -= cur;
--		strncpy(path + length, kobject_name(parent), cur);
-+		memcpy(path + length, kobject_name(parent), cur);
- 		*(path + --length) = '/';
- 	}
- 
+--- a/scripts/unifdef.c
++++ b/scripts/unifdef.c
+@@ -395,7 +395,7 @@ usage(void)
+  * When we have processed a group that starts off with a known-false
+  * #if/#elif sequence (which has therefore been deleted) followed by a
+  * #elif that we don't understand and therefore must keep, we edit the
+- * latter into a #if to keep the nesting correct. We use strncpy() to
++ * latter into a #if to keep the nesting correct. We use memcpy() to
+  * overwrite the 4 byte token "elif" with "if  " without a '\0' byte.
+  *
+  * When we find a true #elif in a group, the following block will
+@@ -450,7 +450,7 @@ static void Idrop (void) { Fdrop();  ign
+ static void Itrue (void) { Ftrue();  ignoreon(); }
+ static void Ifalse(void) { Ffalse(); ignoreon(); }
+ /* modify this line */
+-static void Mpass (void) { strncpy(keyword, "if  ", 4); Pelif(); }
++static void Mpass (void) { memcpy(keyword, "if  ", 4); Pelif(); }
+ static void Mtrue (void) { keywordedit("else");  state(IS_TRUE_MIDDLE); }
+ static void Melif (void) { keywordedit("endif"); state(IS_FALSE_TRAILER); }
+ static void Melse (void) { keywordedit("endif"); state(IS_FALSE_ELSE); }
 
 
