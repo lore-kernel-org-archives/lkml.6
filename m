@@ -2,57 +2,55 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D40D7C07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:09:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B54AC5CFFE
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:09:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 93E6720880
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:09:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 223A42084E
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:09:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544544555;
-	bh=uQsCC59JKgkf4GEpfsYbOLXlPETtP4iiaUKEievQhPU=;
+	s=default; t=1544544567;
+	bh=ISuk5gRApc7gthhZN2aMHoegNnLypWFHklhOVoz5TbA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=b3BJv33I23kra2CSPKF1OlPy36UNOYnwy1lPJ/T9YHfNG7aR+km7jTZ/LTbpPEM0T
-	 NIROL23aP/RqDO36YncOFL0+uAgokRlIDSmesu3LG7SixDiKuLcrdt4hvbDaeXV2pG
-	 5wJ5oYjCPZl4aKr+7YKENvCCVsoDFR/+ia+awDew=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 93E6720880
+	b=mdVfodejsB9ot3q0Lox6cTSpwtpq5EJ89iKiEnYzr985/DgW3mUn47EHBUEFb+o98
+	 Wa21QP2oW+t/1LcbJJ0KU3kMdE59HC9BMV2vUg/NLF9/umLynyLcU2B4vqt/ZAn8AZ
+	 HgC323+EuA4HiX86ePapRFmGiqBC7ESmwtzhjU0k=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 223A42084E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729743AbeLKPwf (ORCPT
+        id S1729696AbeLKPwW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 10:52:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41224 "EHLO mail.kernel.org"
+        Tue, 11 Dec 2018 10:52:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41010 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729271AbeLKPwc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:52:32 -0500
+        id S1727901AbeLKPwT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 10:52:19 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 940D820855;
-        Tue, 11 Dec 2018 15:52:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1B0852145D;
+        Tue, 11 Dec 2018 15:52:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544543552;
-        bh=uQsCC59JKgkf4GEpfsYbOLXlPETtP4iiaUKEievQhPU=;
+        s=default; t=1544543538;
+        bh=ISuk5gRApc7gthhZN2aMHoegNnLypWFHklhOVoz5TbA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IfQp33GW7p97anqMVmrnnoeguyPUm/adaaClG45wTLE1lwhGg6wKsobC+MCtNOcSi
-         J2eLdrrmPvkoApaBtEH7TDf4tUESxgV2p3Vv8SdKKCF+piBUIhgJ+148qoRfCqfkUh
-         bxPMZssAiHsn9fT50jjuGhongAoZ4yHIkXL9EU1A=
+        b=sbmXujFgLB6ShngAYcMO1vyFZZaGu45l1FYED8tPdzidLSLQEl9KOZdZ+lRPf67BE
+         B4bxGX8aIjJzeREzYgFJFQ4ClO969fIY0aDIgodcTvBwvVGCv4h/u5Ea8H3zGUECJm
+         3UKu9vzjqI0Ml0KhB1afErgvIj0dhcIYrfGRWGzk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        =?UTF-8?q?Linus=20L=C3=BCssing?= <linus.luessing@c0d3.blue>,
-        Sven Eckelmann <sven@narfation.org>,
-        Simon Wunderlich <sw@simonwunderlich.de>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 08/67] batman-adv: Use explicit tvlv padding for ELP packets
-Date:   Tue, 11 Dec 2018 16:41:08 +0100
-Message-Id: <20181211151630.794271195@linuxfoundation.org>
+        Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.14 35/67] ALSA: hda: Add support for AMD Stoney Ridge
+Date:   Tue, 11 Dec 2018 16:41:35 +0100
+Message-Id: <20181211151632.159820650@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181211151630.378216233@linuxfoundation.org>
 References: <20181211151630.378216233@linuxfoundation.org>
@@ -71,61 +69,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit f4156f9656feac21f4de712fac94fae964c5d402 ]
+From: Kai-Heng Feng <kai.heng.feng@canonical.com>
 
-The announcement messages of batman-adv COMPAT_VERSION 15 have the
-possibility to announce additional information via a dynamic TVLV part.
-This part is optional for the ELP packets and currently not parsed by the
-Linux implementation. Still out-of-tree versions are using it to transport
-things like neighbor hashes to optimize the rebroadcast behavior.
+commit 3deef52ce10514ccdebba8e8ab85f9cebd0eb3f7 upstream.
 
-Since the ELP broadcast packets are smaller than the minimal ethernet
-packet, it often has to be padded. This is often done (as specified in
-RFC894) with octets of zero and thus work perfectly fine with the TVLV
-part (making it a zero length and thus empty). But not all ethernet
-compatible hardware seems to follow this advice. To avoid ambiguous
-situations when parsing the TVLV header, just force the 4 bytes (TVLV
-length + padding) after the required ELP header to zero.
+It's similar to other AMD audio devices, it also supports D3, which can
+save some power drain.
 
-Fixes: d6f94d91f766 ("batman-adv: ELP - adding basic infrastructure")
-Reported-by: Linus Lüssing <linus.luessing@c0d3.blue>
-Signed-off-by: Sven Eckelmann <sven@narfation.org>
-Signed-off-by: Simon Wunderlich <sw@simonwunderlich.de>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- net/batman-adv/bat_v_elp.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ sound/pci/hda/hda_intel.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/net/batman-adv/bat_v_elp.c b/net/batman-adv/bat_v_elp.c
-index e92dfedccc16..fbc132f4670e 100644
---- a/net/batman-adv/bat_v_elp.c
-+++ b/net/batman-adv/bat_v_elp.c
-@@ -338,19 +338,21 @@ out:
-  */
- int batadv_v_elp_iface_enable(struct batadv_hard_iface *hard_iface)
- {
-+	static const size_t tvlv_padding = sizeof(__be32);
- 	struct batadv_elp_packet *elp_packet;
- 	unsigned char *elp_buff;
- 	u32 random_seqno;
- 	size_t size;
- 	int res = -ENOMEM;
- 
--	size = ETH_HLEN + NET_IP_ALIGN + BATADV_ELP_HLEN;
-+	size = ETH_HLEN + NET_IP_ALIGN + BATADV_ELP_HLEN + tvlv_padding;
- 	hard_iface->bat_v.elp_skb = dev_alloc_skb(size);
- 	if (!hard_iface->bat_v.elp_skb)
- 		goto out;
- 
- 	skb_reserve(hard_iface->bat_v.elp_skb, ETH_HLEN + NET_IP_ALIGN);
--	elp_buff = skb_put_zero(hard_iface->bat_v.elp_skb, BATADV_ELP_HLEN);
-+	elp_buff = skb_put_zero(hard_iface->bat_v.elp_skb,
-+				BATADV_ELP_HLEN + tvlv_padding);
- 	elp_packet = (struct batadv_elp_packet *)elp_buff;
- 
- 	elp_packet->packet_type = BATADV_ELP;
--- 
-2.19.1
-
+--- a/sound/pci/hda/hda_intel.c
++++ b/sound/pci/hda/hda_intel.c
+@@ -2513,6 +2513,10 @@ static const struct pci_device_id azx_id
+ 	/* AMD Hudson */
+ 	{ PCI_DEVICE(0x1022, 0x780d),
+ 	  .driver_data = AZX_DRIVER_GENERIC | AZX_DCAPS_PRESET_ATI_SB },
++	/* AMD Stoney */
++	{ PCI_DEVICE(0x1022, 0x157a),
++	  .driver_data = AZX_DRIVER_GENERIC | AZX_DCAPS_PRESET_ATI_SB |
++			 AZX_DCAPS_PM_RUNTIME },
+ 	/* AMD Raven */
+ 	{ PCI_DEVICE(0x1022, 0x15e3),
+ 	  .driver_data = AZX_DRIVER_GENERIC | AZX_DCAPS_PRESET_ATI_SB |
 
 
