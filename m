@@ -2,519 +2,259 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 657EEC67839
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:59:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7495AC07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 17:00:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B2422086D
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:59:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="yHMt8fM+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B2422086D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	by mail.kernel.org (Postfix) with ESMTP id 33E3C2086D
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 17:00:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 33E3C2086D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727234AbeLKQ7s (ORCPT
+        id S1727276AbeLKRAA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 11:59:48 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:39974 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726867AbeLKQ7s (ORCPT
+        Tue, 11 Dec 2018 12:00:00 -0500
+Received: from vmicros1.altlinux.org ([194.107.17.57]:43632 "EHLO
+        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726714AbeLKQ77 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 11:59:48 -0500
-Received: by mail-wr1-f67.google.com with SMTP id p4so14854413wrt.7
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 08:59:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :user-agent:mime-version:content-transfer-encoding;
-        bh=xOKX2gbKoA2NpJTa7/BRU3Vb3BtYAQ+Du3EjLyCbzew=;
-        b=yHMt8fM+lM2b6e2iBNwZQiNNz+RmbfdgUt0WX7znzDNYKuObVcAp/fZZimJIlXofKh
-         3Zte+pQ7AdC3TbcehHb2vR/pUGf+ct46Zx1ye2VS9UjTsGufG1mkazVXvfynFrS1dhzm
-         MQkilBXIR4s8B3UCL0jHucERzjRJPC+Kw1wWjxaUw74cDppIdemD7qgiHkcB2LslHcnN
-         nvmukeZvhi22xuAV0Fr1+kDbdED4XRcLxOpSnTq0m5wDknOgePu/ZwnhFB5BA7yna1pU
-         2yQNkhWtL1NdOYKWe0gFzGM1eDYqZfluz+s/c0a7c/+iqghMFZuqJkK9ExIkO1MTImdL
-         xwiw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:user-agent:mime-version:content-transfer-encoding;
-        bh=xOKX2gbKoA2NpJTa7/BRU3Vb3BtYAQ+Du3EjLyCbzew=;
-        b=ulj35sXfp7unQCrKCoSPa9ds92n7KliEapL1dizbibgPahgqGfUTjGlbf4mHOS7Zas
-         5ZUQ+EgnFLRTJcVO6hE+p5Pgc99U5n93xmduW9ZL34Qux/C8pRGNbdGoJ19xVUfEbHFd
-         aWkKdlD8Y+P1jbzo0X8rnlKVAagatfKqMF53RHk9evXbNd3pGoIuEDzSNU1b/dtCwJgF
-         G8AOTszDabd//7LvUVTslnCPYd0HMzRAEsNmhSP7TQmnvIfidUJYxBYScZFyRz59rWiA
-         rMIa0/ijqhbZsp6dZMKAL2iI/maL5Ma/zSuhFFZhbydW1Y9jNtUCwcipHKYdl4RQRxxr
-         leZw==
-X-Gm-Message-State: AA+aEWZ/OXzLjxoEChIUu0BkS/Rn9FumNJpS0DmKsCgS4Y+Yj5Ta3yS4
-        L8ECf+W8XDenIbjuQscPhHb8JQ==
-X-Google-Smtp-Source: AFSGD/VdZzyUApqILkNjzgyyGcNYvsa8660u4HVWbs6gOSnxK971VCAku0WIo2pRgifC3jmJvNGo1A==
-X-Received: by 2002:adf:f504:: with SMTP id q4mr15086933wro.321.1544547584907;
-        Tue, 11 Dec 2018 08:59:44 -0800 (PST)
-Received: from boomer.baylibre.com ([2a01:e34:eeb6:4690:106b:bae3:31ed:7561])
-        by smtp.gmail.com with ESMTPSA id j33sm28683992wre.91.2018.12.11.08.59.42
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 11 Dec 2018 08:59:44 -0800 (PST)
-Message-ID: <10f2875c9724d9d9dd4bd32eab1fa3f8e42a809c.camel@baylibre.com>
-Subject: Re: [PATCH RESEND v7 3/4] clk: meson: add sub MMC clock controller
- driver
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Jianxin Pan <jianxin.pan@amlogic.com>,
-        Neil Armstrong <narmstrong@baylibre.com>
-Cc:     Yixun Lan <yixun.lan@amlogic.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Carlo Caione <carlo@caione.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Liang Yang <liang.yang@amlogic.com>,
-        Jian Hu <jian.hu@amlogic.com>,
-        Qiufang Dai <qiufang.dai@amlogic.com>,
-        Hanjie Lin <hanjie.lin@amlogic.com>,
-        Victor Wan <victor.wan@amlogic.com>, linux-clk@vger.kernel.org,
-        linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Date:   Tue, 11 Dec 2018 17:59:41 +0100
-In-Reply-To: <1544457877-51301-4-git-send-email-jianxin.pan@amlogic.com>
-References: <1544457877-51301-1-git-send-email-jianxin.pan@amlogic.com>
-         <1544457877-51301-4-git-send-email-jianxin.pan@amlogic.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.2 (3.30.2-2.fc29) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Tue, 11 Dec 2018 11:59:59 -0500
+Received: from imap.altlinux.org (imap.altlinux.org [194.107.17.38])
+        by vmicros1.altlinux.org (Postfix) with ESMTP id 86B9872CC6C;
+        Tue, 11 Dec 2018 19:59:53 +0300 (MSK)
+Received: from beacon.altlinux.org (unknown [185.6.174.98])
+        by imap.altlinux.org (Postfix) with ESMTPSA id 08CD64A4A14;
+        Tue, 11 Dec 2018 19:59:53 +0300 (MSK)
+From:   Vitaly Chikunov <vt@altlinux.org>
+To:     David Howells <dhowells@redhat.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>, keyrings@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [RFC PATCH] akcipher: Introduce verify2 for public key algorithms
+Date:   Tue, 11 Dec 2018 19:59:38 +0300
+Message-Id: <20181211165938.1150-1-vt@altlinux.org>
+X-Mailer: git-send-email 2.11.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-12-11 at 00:04 +0800, Jianxin Pan wrote:
-> From: Yixun Lan <yixun.lan@amlogic.com>
-> 
-> The patch will add a MMC clock controller driver which used by MMC or NAND,
-> It provide a mux and divider clock, and three phase clocks - core, tx, tx.
-> 
-> Two clocks are provided as the parent of MMC clock controller from
-> upper layer clock controller - eg "amlogic,axg-clkc" in AXG platform.
-> 
-> To specify which clock the MMC or NAND driver may consume,
-> the preprocessor macros in the dt-bindings/clock/amlogic,mmc-clkc.h header
-> can be used in the device tree sources.
-> 
-> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
-> Signed-off-by: Jianxin Pan <jianxin.pan@amlogic.com>
-> ---
->  drivers/clk/meson/Kconfig    |  10 ++
->  drivers/clk/meson/Makefile   |   1 +
->  drivers/clk/meson/mmc-clkc.c | 313
-> +++++++++++++++++++++++++++++++++++++++++++
->  3 files changed, 324 insertions(+)
->  create mode 100644 drivers/clk/meson/mmc-clkc.c
-> 
-> diff --git a/drivers/clk/meson/Kconfig b/drivers/clk/meson/Kconfig
-> index efaa70f..6bb0d44 100644
-> --- a/drivers/clk/meson/Kconfig
-> +++ b/drivers/clk/meson/Kconfig
-> @@ -15,6 +15,16 @@ config COMMON_CLK_MESON_AO
->  	select COMMON_CLK_REGMAP_MESON
->  	select RESET_CONTROLLER
->  
-> +config COMMON_CLK_MMC_MESON
-> +	tristate "Meson MMC Sub Clock Controller Driver"
-> +	select MFD_SYSCON
-> +	select COMMON_CLK_AMLOGIC
-> +	select COMMON_CLK_AMLOGIC_AUDIO
+Current akcipher .verify() just decrypts signature to uncover message
+hash, which is then verified in upper level public_key_verify_signature
+by memcmp with the expected signature value, which is never passed into
+verify().
 
-No it is wrong for the mmc to select AUDIO clocks.
-If as a result of your patch sclk is needed for things, make the necessary
-change in the Makefile.
+This approach is incompatible with ECDSA algorithms, because, to verify
+a signature ECDSA algorithm also needs a hash value as input; also, hash
+is used in ECDSA (together with a signature divided into halves `r||s`),
+not to produce hash, but to produce a number, which is then compared to
+`r` (first part of the signature) to determine if the signature is
+correct.  Thus, for ECDSA, nor requirements of .verify() itself, nor its
+output expectations in public_key_verify_signature aren't satisfied.
 
-> +	help
-> +	  Support for the MMC sub clock controller on Amlogic Meson Platform,
-> +	  which include S905 (GXBB, GXL), A113D/X (AXG) devices.
-> +	  Say Y if you want this clock enabled.
-> +
->  config COMMON_CLK_REGMAP_MESON
->  	bool
->  	select REGMAP
-> diff --git a/drivers/clk/meson/Makefile b/drivers/clk/meson/Makefile
-> index 39ce566..31c16d5 100644
-> --- a/drivers/clk/meson/Makefile
-> +++ b/drivers/clk/meson/Makefile
-> @@ -9,4 +9,5 @@ obj-$(CONFIG_COMMON_CLK_MESON8B) += meson8b.o
->  obj-$(CONFIG_COMMON_CLK_GXBB)	 += gxbb.o gxbb-aoclk.o gxbb-aoclk-
-> 32k.o
->  obj-$(CONFIG_COMMON_CLK_AXG)	 += axg.o axg-aoclk.o
->  obj-$(CONFIG_COMMON_CLK_AXG_AUDIO)	+= axg-audio.o
-> +obj-$(CONFIG_COMMON_CLK_MMC_MESON) 	+= mmc-clkc.o
->  obj-$(CONFIG_COMMON_CLK_REGMAP_MESON)	+= clk-regmap.o
-> diff --git a/drivers/clk/meson/mmc-clkc.c b/drivers/clk/meson/mmc-clkc.c
-> new file mode 100644
-> index 0000000..f5a79a4
-> --- /dev/null
-> +++ b/drivers/clk/meson/mmc-clkc.c
-> @@ -0,0 +1,313 @@
-> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-> +/*
-> + * Amlogic Meson MMC Sub Clock Controller Driver
-> + *
-> + * Copyright (c) 2017 Baylibre SAS.
-> + * Author: Jerome Brunet <jbrunet@baylibre.com>
-> + *
-> + * Copyright (c) 2018 Amlogic, inc.
-> + * Author: Yixun Lan <yixun.lan@amlogic.com>
-> + * Author: Jianxin Pan <jianxin.pan@amlogic.com>
-> + */
-> +
-> +#include <linux/clk.h>
-> +#include <linux/clk-provider.h>
-> +#include <linux/module.h>
-> +#include <linux/regmap.h>
-> +#include <linux/slab.h>
-> +#include <linux/of_device.h>
-> +#include <linux/mfd/syscon.h>
-> +#include <linux/platform_device.h>
-> +#include <dt-bindings/clock/amlogic,mmc-clkc.h>
-> +
-> +#include "clkc.h"
-> +#include "clkc-audio.h"
+Make alternative .verify2() call which gets hash value and produce
+complete signature check (without any output, thus max_size() call will
+not be needed for verify2() operation).
 
-Again having audio in the mmc controller is wrong.
-Please make the necessary rework.
+If .verify2() call is present, it should be used in place of .verify().
 
-> +
-> +/* clock ID used by internal driver */
-> +#define CLKID_MMC_MUX			0
-> +
-> +#define   SD_EMMC_CLOCK		0
-           ^
-why the multiple space here ? this looks odd
+Signed-off-by: Vitaly Chikunov <vt@altlinux.org>
+---
+ crypto/asymmetric_keys/public_key.c | 57 ++++++++++++++++++++++++-------------
+ include/crypto/akcipher.h           | 54 +++++++++++++++++++++++++++++++++--
+ 2 files changed, 89 insertions(+), 22 deletions(-)
 
-> +#define   CLK_DELAY_STEP_PS		200
-
-Please keep thing aligned aligned consistently.
-
-> +
-> +#define MUX_CLK_NUM_PARENTS		2
-> +#define MMC_MAX_CLKS			5
-> +
-> +struct mmc_clkc_data {
-> +	struct meson_clk_phase_delay_data	tx;
-> +	struct meson_clk_phase_delay_data	rx;
-
-Why use a tab above ?
-
-> +};
-> +
-> +static struct clk_regmap_mux_data mmc_clkc_mux_data = {
-> +	.offset		= SD_EMMC_CLOCK,
-> +	.mask		= 0x3,
-> +	.shift		= 6,
-> +};
-> +
-> +static const struct meson_sclk_div_data mmc_clkc_div_data = {
-> +	.div = {
-> +		.reg_off = SD_EMMC_CLOCK,
-> +		.shift   = (0),
-> +		.width   = (6),
-
-Please remove the unncessary parenthesis
-
-> +	},
-> +	.hi = {
-> +		.width   = 0,
-> +	},
-
-structure is a static const, all non-list members will be zero
-drop the 
-
-> +	.flags = CLK_DIVIDER_ONE_BASED,
-> +};
-> +
-> +static struct meson_clk_phase_data mmc_clkc_core_phase = {
-> +	.ph = {
-> +		.reg_off	= SD_EMMC_CLOCK,
-> +		.shift	= 8,
-> +		.width	= 2,
-> +	}
-> +};
-> +
-> +static const struct mmc_clkc_data mmc_clkc_gx_data = {
-> +	.tx = {
-> +		.phase = {
-> +			.reg_off	= SD_EMMC_CLOCK,
-> +			.shift	= 10,
-> +			.width	= 2,
-> +		},
-> +		.delay = {
-> +			.reg_off	= SD_EMMC_CLOCK,
-> +			.shift	= 16,
-> +			.width	= 4,
-> +		},
-
-Again, an effort on alignement would appreciated, same below
-
-> +		.delay_step_ps	= CLK_DELAY_STEP_PS,
-> +	},
-> +	.rx = {
-> +		.phase = {
-> +			.reg_off	= SD_EMMC_CLOCK,
-> +			.shift	= 12,
-> +			.width	= 2,
-> +		},
-> +		.delay = {
-> +			.reg_off	= SD_EMMC_CLOCK,
-> +			.shift	= 20,
-> +			.width	= 4,
-> +		},
-> +		.delay_step_ps	= CLK_DELAY_STEP_PS,
-> +	},
-> +};
-> +
-> +static const struct mmc_clkc_data mmc_clkc_axg_data = {
-> +	.tx = {
-> +		.phase = {
-> +			.reg_off	= SD_EMMC_CLOCK,
-> +			.shift	= 10,
-> +			.width	= 2,
-> +		},
-> +		.delay = {
-> +			.reg_off	= SD_EMMC_CLOCK,
-> +			.shift	= 16,
-> +			.width	= 6,
-> +		},
-> +		.delay_step_ps	= CLK_DELAY_STEP_PS,
-> +	},
-> +	.rx = {
-> +		.phase = {
-> +			.reg_off	= SD_EMMC_CLOCK,
-> +			.shift	= 12,
-> +			.width	= 2,
-> +		},
-> +		.delay = {
-> +			.reg_off	= SD_EMMC_CLOCK,
-> +			.shift	= 22,
-> +			.width	= 6,
-> +		},
-> +		.delay_step_ps	= CLK_DELAY_STEP_PS,
-> +	},
-> +};
-> +
-> +static const struct of_device_id mmc_clkc_match_table[] = {
-> +	{
-> +		.compatible	= "amlogic,gx-mmc-clkc",
-> +		.data		= &mmc_clkc_gx_data
-> +	},
-> +	{
-> +		.compatible	= "amlogic,axg-mmc-clkc",
-> +		.data		= &mmc_clkc_axg_data
-> +	},
-> +	{}
-> +};
-> +MODULE_DEVICE_TABLE(of, mmc_clkc_match_table);
-> +
-> +static struct clk_regmap *
-> +mmc_clkc_register_clk(struct device *dev, struct regmap *map,
-> +		      struct clk_init_data *init,
-> +		      const char *suffix, void *data)
-> +{
-> +	struct clk_regmap *clk;
-> +	char *name;
-> +	int ret;
-> +
-> +	clk = devm_kzalloc(dev, sizeof(*clk), GFP_KERNEL);
-> +	if (!clk)
-> +		return ERR_PTR(-ENOMEM);
-> +
-> +	name = kasprintf(GFP_KERNEL, "%s#%s", dev_name(dev), suffix);
-> +	if (!name)
-> +		return ERR_PTR(-ENOMEM);
-> +
-> +	init->name = name;
-> +
-
-nitpick: remove this newline
-
-> +	clk->map = map;
-> +	clk->data = data;
-> +	clk->hw.init = init;
-> +
-> +	ret = devm_clk_hw_register(dev, &clk->hw);
-> +	if (ret)
-> +		clk = ERR_PTR(ret);
-> +
-> +	kfree(name);
-> +	return clk;
-> +}
-> +
-> +static struct clk_regmap *mmc_clkc_register_mux(struct device *dev,
-> +						struct regmap *map)
-> +{
-> +	const char *parent_names[MUX_CLK_NUM_PARENTS];
-> +	struct clk_init_data init;
-> +	struct clk_regmap *mux;
-> +	struct clk *clk;
-> +	int i;
-> +
-> +	for (i = 0; i < MUX_CLK_NUM_PARENTS; i++) {
-> +		char name[8];
-> +
-> +		snprintf(name, sizeof(name), "clkin%d", i);
-> +		clk = devm_clk_get(dev, name);
-> +		if (IS_ERR(clk)) {
-> +			if (clk != ERR_PTR(-EPROBE_DEFER))
-> +				dev_err(dev, "Missing clock %s\n", name);
-> +			return ERR_PTR((long)clk);
-
-I don't think this cast is necessary     ^
-
-> +		}
-> +
-> +		parent_names[i] = __clk_get_name(clk);
-> +	}
-> +
-> +	init.ops = &clk_regmap_mux_ops;
-> +	init.flags = CLK_SET_RATE_PARENT;
-> +	init.parent_names = parent_names;
-> +	init.num_parents = MUX_CLK_NUM_PARENTS;
-> +
-> +	mux = mmc_clkc_register_clk(dev, map, &init, "mux",
-> &mmc_clkc_mux_data);
-> +	if (IS_ERR(mux))
-> +		dev_err(dev, "Mux clock registration failed\n");
-> +
-> +	return mux;
-> +}
-> +
-> +static struct clk_regmap *
-> +mmc_clkc_register_clk_with_parent(struct device *dev, struct regmap *map,
-> +				  char *suffix, const struct clk_hw *hw,
-> +				  unsigned long flags,
-> +				  const struct clk_ops *ops, void *data)
-> +{
-> +	struct clk_init_data init;
-> +	struct clk_regmap *clk;
-> +	const char *parent_name = clk_hw_get_name(hw);
-> +
-> +	init.ops = ops;
-> +	init.flags = flags;
-> +	init.parent_names = &parent_name;
-> +	init.num_parents = 1;
-> +
-> +	clk = mmc_clkc_register_clk(dev, map, &init, suffix, data);
-> +	if (IS_ERR(clk))
-> +		dev_err(dev, "Core %s clock registration failed\n", suffix);
-
-                               ^
-this function is not only called by the core clock, is it ?
-
-> +
-> +	return clk;
-> +}
-> +
-> +static int mmc_clkc_probe(struct platform_device *pdev)
-> +{
-> +	struct clk_hw_onecell_data *onecell_data;
-> +	struct device *dev = &pdev->dev;
-> +	struct mmc_clkc_data *data;
-> +	struct regmap *map;
-> +	struct clk_regmap *clk, *core;
-> +	struct meson_sclk_div_data *div_data;
-> +
-> +	/*cast to drop the const in match->data*/
-> +	data = (struct mmc_clkc_data *)of_device_get_match_data(dev);
-> +	if (!data)
-> +		return -ENODEV;
-> +
-> +	map = syscon_node_to_regmap(dev->of_node);
-> +	if (IS_ERR(map)) {
-> +		dev_err(dev, "could not find mmc clock controller\n");
-> +		return PTR_ERR(map);
-> +	}
-> +
-> +	onecell_data = devm_kzalloc(dev, sizeof(*onecell_data) +
-> +				    sizeof(*onecell_data->hws) * MMC_MAX_CLKS,
-> +				    GFP_KERNEL);
-> +	if (!onecell_data)
-> +		return -ENOMEM;
-> +
-> +	clk = mmc_clkc_register_mux(dev, map);
-> +	if (IS_ERR(clk))
-> +		return PTR_ERR(clk);
-> +	onecell_data->hws[CLKID_MMC_MUX]		= &clk->hw,
-
-It does not really need to have an ID or be in the onecell data if you are not
-going to expose it. On the other controllers, we are using the onecell for the
-registration as well, which is why there is unexpeosed IDs, but it is not the
-case here.
-
-... and please, stop with this unnecessary tab. a space will do. same below.
-
-> +
-> +	div_data = devm_kzalloc(dev, sizeof(*div_data), GFP_KERNEL);
-> +	if (!div_data)
-> +		return -ENOMEM;
-> +	*div_data = mmc_clkc_div_data;
-
-memcpy would be more appropriate.
-
-> +
-> +	clk = mmc_clkc_register_clk_with_parent(dev, map, "div",
-> +						&clk->hw,
-> +						CLK_SET_RATE_PARENT,
-> +						&meson_sclk_div_ops,
-> +						div_data);
-> +	if (IS_ERR(clk))
-> +		return PTR_ERR(clk);
-> +	onecell_data->hws[CLKID_MMC_DIV]		= &clk->hw,
-> +
-> +	core = mmc_clkc_register_clk_with_parent(dev, map, "core",
-> +						 &clk->hw,
-> +						 CLK_SET_RATE_PARENT,
-> +						 &meson_clk_phase_ops,
-> +						 &mmc_clkc_core_phase);
-> +	if (IS_ERR(core))
-> +		return PTR_ERR(core);
-> +	onecell_data->hws[CLKID_MMC_PHASE_CORE]		= &core->hw,
-> +
-> +	clk = mmc_clkc_register_clk_with_parent(dev, map, "rx",
-> +						&core->hw,  0,
-> +						&meson_clk_phase_delay_ops,
-> +						&data->rx);
-> +	if (IS_ERR(clk))
-> +		return PTR_ERR(clk);
-> +	onecell_data->hws[CLKID_MMC_PHASE_RX]		= &clk->hw,
-> +
-> +	clk = mmc_clkc_register_clk_with_parent(dev, map, "tx",
-> +						&core->hw,  0,
-> +						&meson_clk_phase_delay_ops,
-> +						&data->tx);
-> +	if (IS_ERR(clk))
-> +		return PTR_ERR(clk);
-> +	onecell_data->hws[CLKID_MMC_PHASE_TX]		= &clk->hw,
-> +
-> +	onecell_data->num				= MMC_MAX_CLKS;
-> +
-> +	return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
-> +					   onecell_data);
-> +}
-> +
-> +static struct platform_driver mmc_clkc_driver = {
-> +	.probe		= mmc_clkc_probe,
-> +	.driver		= {
-> +		.name	= "meson-mmc-clkc",
-> +		.of_match_table = of_match_ptr(mmc_clkc_match_table),
-> +	},
-> +};
-> +
-> +module_platform_driver(mmc_clkc_driver);
-> +
-> +MODULE_DESCRIPTION("Amlogic AXG MMC clock driver");
-> +MODULE_AUTHOR("Jianxin Pan <jianxin.pan@amlogic.com>");
-> +MODULE_LICENSE("GPL v2");
-
+diff --git a/crypto/asymmetric_keys/public_key.c b/crypto/asymmetric_keys/public_key.c
+index 3bc090b8adef..51dc1c858c7c 100644
+--- a/crypto/asymmetric_keys/public_key.c
++++ b/crypto/asymmetric_keys/public_key.c
+@@ -242,6 +242,7 @@ int public_key_verify_signature(const struct public_key *pkey,
+ 	char alg_name[CRYPTO_MAX_ALG_NAME];
+ 	void *output;
+ 	unsigned int outlen;
++	int verify2;
+ 	int ret;
+ 
+ 	pr_devel("==>%s()\n", __func__);
+@@ -279,14 +280,23 @@ int public_key_verify_signature(const struct public_key *pkey,
+ 	if (ret)
+ 		goto error_free_req;
+ 
+-	ret = -ENOMEM;
+-	outlen = crypto_akcipher_maxsize(tfm);
+-	output = kmalloc(outlen, GFP_KERNEL);
+-	if (!output)
+-		goto error_free_req;
+-
++	verify2 = crypto_akcipher_have_verify2(req);
++	if (!verify2) {
++		/* verify2 does not need output buffer */
++		ret = -ENOMEM;
++		outlen = crypto_akcipher_maxsize(tfm);
++		output = kmalloc(outlen, GFP_KERNEL);
++		if (!output)
++			goto error_free_req;
++
++		sg_init_one(&digest_sg, output, outlen);
++	} else {
++		/* dummy init digest_sg */
++		memset(&digest_sg, 0, sizeof(digest_sg));
++		output = NULL;
++		outlen = 0;
++	}
+ 	sg_init_one(&sig_sg, sig->s, sig->s_size);
+-	sg_init_one(&digest_sg, output, outlen);
+ 	akcipher_request_set_crypt(req, &sig_sg, &digest_sg, sig->s_size,
+ 				   outlen);
+ 	crypto_init_wait(&cwait);
+@@ -294,18 +304,27 @@ int public_key_verify_signature(const struct public_key *pkey,
+ 				      CRYPTO_TFM_REQ_MAY_SLEEP,
+ 				      crypto_req_done, &cwait);
+ 
+-	/* Perform the verification calculation.  This doesn't actually do the
+-	 * verification, but rather calculates the hash expected by the
+-	 * signature and returns that to us.
+-	 */
+-	ret = crypto_wait_req(crypto_akcipher_verify(req), &cwait);
+-	if (ret)
+-		goto out_free_output;
+-
+-	/* Do the actual verification step. */
+-	if (req->dst_len != sig->digest_size ||
+-	    memcmp(sig->digest, output, sig->digest_size) != 0)
+-		ret = -EKEYREJECTED;
++	if (!verify2) {
++		/* Perform the verification calculation.  This doesn't actually
++		 * do the verification, but rather calculates the hash expected
++		 * by the signature and returns that to us.
++		 */
++		ret = crypto_wait_req(crypto_akcipher_verify(req), &cwait);
++		if (ret)
++			goto out_free_output;
++
++		/* Do the actual verification step. */
++		if (req->dst_len != sig->digest_size ||
++		    memcmp(sig->digest, output, sig->digest_size) != 0)
++			ret = -EKEYREJECTED;
++	} else {
++		/* Perform full verification in one call. */
++		req->digest = sig->digest;
++		req->digest_len = sig->digest_size;
++		ret = crypto_wait_req(crypto_akcipher_verify2(req), &cwait);
++		if (ret)
++			goto out_free_output;
++	}
+ 
+ out_free_output:
+ 	kfree(output);
+diff --git a/include/crypto/akcipher.h b/include/crypto/akcipher.h
+index d6aba84ed2c4..f1ad67474bc1 100644
+--- a/include/crypto/akcipher.h
++++ b/include/crypto/akcipher.h
+@@ -28,6 +28,8 @@
+  *		result.
+  *		In case of error where the dst sgl size was insufficient,
+  *		it will be updated to the size required for the operation.
++ * @digest:	Digest for verify2.
++ * @digest_len:	Size of the digest.
+  * @__ctx:	Start of private context data
+  */
+ struct akcipher_request {
+@@ -36,6 +38,8 @@ struct akcipher_request {
+ 	struct scatterlist *dst;
+ 	unsigned int src_len;
+ 	unsigned int dst_len;
++	u8 *digest;
++	u8 digest_len;
+ 	void *__ctx[] CRYPTO_MINALIGN_ATTR;
+ };
+ 
+@@ -60,6 +64,8 @@ struct crypto_akcipher {
+  *		algorithm. In case of error, where the dst_len was insufficient,
+  *		the req->dst_len will be updated to the size required for the
+  *		operation
++ * @verify2:	Function performs a verify operation as defined by public key
++ *		algorithm.
+  * @encrypt:	Function performs an encrypt operation as defined by public key
+  *		algorithm. In case of error, where the dst_len was insufficient,
+  *		the req->dst_len will be updated to the size required for the
+@@ -96,6 +102,7 @@ struct crypto_akcipher {
+ struct akcipher_alg {
+ 	int (*sign)(struct akcipher_request *req);
+ 	int (*verify)(struct akcipher_request *req);
++	int (*verify2)(struct akcipher_request *req);
+ 	int (*encrypt)(struct akcipher_request *req);
+ 	int (*decrypt)(struct akcipher_request *req);
+ 	int (*set_pub_key)(struct crypto_akcipher *tfm, const void *key,
+@@ -400,11 +407,13 @@ static inline int crypto_akcipher_sign(struct akcipher_request *req)
+  * crypto_akcipher_verify() - Invoke public key verify operation
+  *
+  * Function invokes the specific public key verify operation for a given
+- * public key algorithm
++ * public key algorithm: basically it does (rsa) decrypt of signature
++ * producing decrypted hash into dst, which should be compared by a caller
++ * with expected hash value.
+  *
+- * @req:	asymmetric key request
++ * @req:	asymmetric key request (without hash)
+  *
+- * Return: zero on success; error code in case of error
++ * Return: zero on decryption success; error code in case of error
+  */
+ static inline int crypto_akcipher_verify(struct akcipher_request *req)
+ {
+@@ -418,6 +427,45 @@ static inline int crypto_akcipher_verify(struct akcipher_request *req)
+ }
+ 
+ /**
++ * crypto_akcipher_verify2() - Invoke public key verify operation
++ *
++ * Function performs complete public key verify operation for a given
++ * public key algorithm
++ *
++ * @req:	asymmetric key request (with hash)
++ *
++ * Return: zero on verification success; error code in case of error
++ */
++static inline int crypto_akcipher_verify2(struct akcipher_request *req)
++{
++	struct crypto_akcipher *tfm = crypto_akcipher_reqtfm(req);
++	struct akcipher_alg *alg = crypto_akcipher_alg(tfm);
++	int ret;
++
++	ret = alg->verify2(req);
++	crypto_stat_akcipher_verify(req, ret);
++	return ret;
++}
++
++/**
++ * crypto_akcipher_have_verify2() - Check for existence of public key verify2
++ * operation
++ *
++ * Function checks for existence of verify2 call for the public key algorithm
++ *
++ * @req:	asymmetric key request (with hash)
++ *
++ * Return: non-zero is verify2 call exists; zero if it does not
++ */
++static inline int crypto_akcipher_have_verify2(struct akcipher_request *req)
++{
++	struct crypto_akcipher *tfm = crypto_akcipher_reqtfm(req);
++	struct akcipher_alg *alg = crypto_akcipher_alg(tfm);
++
++	return !!alg->verify2;
++}
++
++/**
+  * crypto_akcipher_set_pub_key() - Invoke set public key operation
+  *
+  * Function invokes the algorithm specific set key function, which knows
+-- 
+2.11.0
 
