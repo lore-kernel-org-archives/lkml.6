@@ -2,132 +2,214 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.3 required=3.0 tests=FSL_HELO_FAKE,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A973DC07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 05:46:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C99D6C67839
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 05:46:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 782C32081B
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 05:46:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 782C32081B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
+	by mail.kernel.org (Postfix) with ESMTP id 82C422081B
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 05:46:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Baqr7tOc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 82C422081B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728697AbeLKFqW (ORCPT
+        id S1728822AbeLKFqv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 00:46:22 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:58158 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728340AbeLKFqU (ORCPT
+        Tue, 11 Dec 2018 00:46:51 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:38675 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727589AbeLKFqv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 00:46:20 -0500
-Received: from mail-wr1-f71.google.com ([209.85.221.71])
-        by youngberry.canonical.com with esmtps (TLS1.0:RSA_AES_128_CBC_SHA1:16)
-        (Exim 4.76)
-        (envelope-from <christian.brauner@canonical.com>)
-        id 1gWas7-0004y9-1b
-        for linux-kernel@vger.kernel.org; Tue, 11 Dec 2018 05:46:19 +0000
-Received: by mail-wr1-f71.google.com with SMTP id w16so4409591wrk.10
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Dec 2018 21:46:19 -0800 (PST)
+        Tue, 11 Dec 2018 00:46:51 -0500
+Received: by mail-pl1-f194.google.com with SMTP id e5so6410078plb.5
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Dec 2018 21:46:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:mail-followup-to:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=zhPCOr+gesxOtbwej8Ug6B66BepSASL63C1mfvGXgVQ=;
+        b=Baqr7tOcm2K56MXemu6O72YhW/Z1+si95z5pK9Lj35LaTdBp/8xxdg0tdlew0qz9J4
+         xlamSiOcHjWDdeU83EDmGL4k+yzmUQ9L+ZhVVkuRgS6W0kSQ83Jcd72X1LJCxBE/1NNY
+         IRH40GEXopZOfk7z/XrttCt/mRcGOe7pTXOi4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=zc62lPpReKanVnXBgIZYjooZr5Gd0lxAuQ8vSRxTRts=;
-        b=htKrpuN++DJ4P3VI6w7pbKVssag9/mSjPxwXbe1wlBrF9wl+qLZ2XLyxEtH1mo46id
-         aO9Ynuy1npGZR0aZfELscOV3KvKKPgnoDQWW3wo1sw3HtriPSpMbkJicxyUItFmcOIXD
-         UMIU6xtz889TuZZ73KBb28F9ja2Zf+gUafLhsI0P1BCcRMVVl9eNB0Di0IMbnQfyDBwb
-         vcV41iJJQqddYTcFOcW26wISUnMwl1ZGfqU4gc8961UCyNIbLu3vWTq+qVKuULKYHltO
-         E43cfFDAEV6sXEXsQMbr5C9TpP4SmB7PrBB/YXKfVXKcjQQWlEGI2smlNTiwXWavEVVJ
-         o0GA==
-X-Gm-Message-State: AA+aEWY+lCNHrMgZU1F5hz16m6j1e5lHdi4anFCYONMGFE0fOI+2Y5C7
-        sxlqg6tb7FNdGqdkRAyKHh40l+OnkAOIs4kLg2vEX+S4ht1Hoymcaul04Mk681jc1gKjLoZMR6y
-        PX8/f03kSX0WgrQ3DD4M0npSl0fP/AAkrV9Y+Enzkvg==
-X-Received: by 2002:a1c:ac42:: with SMTP id v63mr921973wme.119.1544507178468;
-        Mon, 10 Dec 2018 21:46:18 -0800 (PST)
-X-Google-Smtp-Source: AFSGD/V581xCPqG73cENKr4Aeq8xptuKH7+klUPR7Gq08BDS5Z0LWW65qhH7Unq0JZsxNsph9JOfMw==
-X-Received: by 2002:a1c:ac42:: with SMTP id v63mr921948wme.119.1544507178103;
-        Mon, 10 Dec 2018 21:46:18 -0800 (PST)
-Received: from gmail.com ([2a02:8070:88c2:4000:69e7:45c9:1529:166d])
-        by smtp.gmail.com with ESMTPSA id x8sm3990713wmd.45.2018.12.10.21.46.16
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 10 Dec 2018 21:46:17 -0800 (PST)
-From:   Christian Brauner <christian.brauner@canonical.com>
-X-Google-Original-From: Christian Brauner <christian@brauner.io>
-Date:   Tue, 11 Dec 2018 06:46:16 +0100
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Florian Weimer <fweimer@redhat.com>,
-        Mike Frysinger <vapier@gentoo.org>,
-        "H. J. Lu" <hjl.tools@gmail.com>, Rich Felker <dalias@libc.org>,
-        x32@buildd.debian.org, Arnd Bergmann <arnd@arndb.de>,
-        Will Deacon <will.deacon@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: Can we drop upstream Linux x32 support?
-Message-ID: <20181211054615.f2oefxhf6cuvx5ex@gmail.com>
-References: <CALCETrXoRAibsbWa9nfbDrt0iEuebMnCMhSFg-d9W-J2g8mDjw@mail.gmail.com>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=zhPCOr+gesxOtbwej8Ug6B66BepSASL63C1mfvGXgVQ=;
+        b=XUfJ8uDV+8uqGq2gHG+LUqRYGvbcLCusuxfnfmH1fuAYL900psbm6eQ+TaN/kuQBs+
+         WDCnoXmAUP/3QvOMI5ezRFuz/Kn6JwIcTKj8DASHV9bEU8Y/rnQh1JTISi3rduPqeMkd
+         PKD1d6lSXOURAbs+42yS+LoUhz+TrHhfpKPHd6DGi21RhxlM6T6VRPtVWf8MMom8jFB9
+         DA6P8SYx0AHvJsIZTS2v96P6jGjLQ10VX6uz9bKppS8AjwWB6+k4ROAcH7m0h2UKMaqF
+         kdDm98oUp2VBWEjH1OBlweRAfZFz4z4g/UIdt9laPd4Ufd66AJhe1ebId7/L6vLuhC8r
+         aX3g==
+X-Gm-Message-State: AA+aEWZHRwifN9+P2+GEaiRfoS1asl0pUZ4Mv+J2uLwZtn86xSqX06Pj
+        iEu3QEFjWirZ+c9XLDddNegfvQ==
+X-Google-Smtp-Source: AFSGD/UTPm6cehXdzedZY6PaqCe0uExS5SiGeG1KTkyAbSz3EuLDcBkgFY5BrzTGiIVR93OTA/NiVw==
+X-Received: by 2002:a17:902:f24:: with SMTP id 33mr15054106ply.65.1544507210466;
+        Mon, 10 Dec 2018 21:46:50 -0800 (PST)
+Received: from linaro.org ([121.95.100.191])
+        by smtp.googlemail.com with ESMTPSA id u6sm14711918pgr.79.2018.12.10.21.46.46
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 10 Dec 2018 21:46:49 -0800 (PST)
+Date:   Tue, 11 Dec 2018 14:50:02 +0900
+From:   AKASHI Takahiro <takahiro.akashi@linaro.org>
+To:     Will Deacon <will.deacon@arm.com>
+Cc:     catalin.marinas@arm.com, dhowells@redhat.com, vgoyal@redhat.com,
+        herbert@gondor.apana.org.au, davem@davemloft.net,
+        dyoung@redhat.com, bhe@redhat.com, arnd@arndb.de,
+        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
+        prudo@linux.ibm.com, ard.biesheuvel@linaro.org,
+        james.morse@arm.com, bhsharma@redhat.com,
+        kexec@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v16 16/16] arm64: kexec_file: add kaslr support
+Message-ID: <20181211055001.GE21466@linaro.org>
+Mail-Followup-To: AKASHI Takahiro <takahiro.akashi@linaro.org>,
+        Will Deacon <will.deacon@arm.com>, catalin.marinas@arm.com,
+        dhowells@redhat.com, vgoyal@redhat.com, herbert@gondor.apana.org.au,
+        davem@davemloft.net, dyoung@redhat.com, bhe@redhat.com,
+        arnd@arndb.de, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
+        prudo@linux.ibm.com, ard.biesheuvel@linaro.org, james.morse@arm.com,
+        bhsharma@redhat.com, kexec@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20181115055254.2812-1-takahiro.akashi@linaro.org>
+ <20181115055254.2812-17-takahiro.akashi@linaro.org>
+ <20181130131944.GA9000@arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CALCETrXoRAibsbWa9nfbDrt0iEuebMnCMhSFg-d9W-J2g8mDjw@mail.gmail.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20181130131944.GA9000@arm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 10, 2018 at 05:23:39PM -0800, Andy Lutomirski wrote:
-> Hi all-
+On Fri, Nov 30, 2018 at 01:19:44PM +0000, Will Deacon wrote:
+> On Thu, Nov 15, 2018 at 02:52:55PM +0900, AKASHI Takahiro wrote:
+> > Adding "kaslr-seed" to dtb enables triggering kaslr, or kernel virtual
+> > address randomization, at secondary kernel boot. We always do this as
+> > it will have no harm on kaslr-incapable kernel.
+> > 
+> > We don't have any "switch" to turn off this feature directly, but still
+> > can suppress it by passing "nokaslr" as a kernel boot argument.
+> > 
+> > Signed-off-by: AKASHI Takahiro <takahiro.akashi@linaro.org>
+> > Cc: Catalin Marinas <catalin.marinas@arm.com>
+> > Cc: Will Deacon <will.deacon@arm.com>
+> > ---
+> >  arch/arm64/kernel/machine_kexec_file.c | 46 +++++++++++++++++++++++++-
+> >  1 file changed, 45 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/arch/arm64/kernel/machine_kexec_file.c b/arch/arm64/kernel/machine_kexec_file.c
+> > index ab296b98d633..a0a730bd9be6 100644
+> > --- a/arch/arm64/kernel/machine_kexec_file.c
+> > +++ b/arch/arm64/kernel/machine_kexec_file.c
+> > @@ -16,6 +16,7 @@
+> >  #include <linux/libfdt.h>
+> >  #include <linux/memblock.h>
+> >  #include <linux/of_fdt.h>
+> > +#include <linux/random.h>
+> >  #include <linux/slab.h>
+> >  #include <linux/string.h>
+> >  #include <linux/types.h>
+> > @@ -28,6 +29,7 @@
+> >  #define FDT_PSTR_INITRD_STA	"linux,initrd-start"
+> >  #define FDT_PSTR_INITRD_END	"linux,initrd-end"
+> >  #define FDT_PSTR_BOOTARGS	"bootargs"
+> > +#define FDT_PSTR_KASLR_SEED	"kaslr-seed"
+> >  
+> >  const struct kexec_file_ops * const kexec_file_loaders[] = {
+> >  	&kexec_image_ops,
+> > @@ -46,11 +48,38 @@ int arch_kimage_file_post_load_cleanup(struct kimage *image)
+> >  	return kexec_image_post_load_cleanup_default(image);
+> >  }
+> >  
+> > +/* crng needs to have been initialized for providing kaslr-seed */
+> > +static int random_ready;
+> > +
+> > +static void random_ready_notified(struct random_ready_callback *unused)
+> > +{
+> > +	random_ready = 1;
+> > +}
+> > +
+> > +static struct random_ready_callback random_ready_cb = {
+> > +	.func = random_ready_notified,
+> > +};
+> > +
+> > +static __init int init_random_ready_cb(void)
+> > +{
+> > +	int ret;
+> > +
+> > +	ret = add_random_ready_callback(&random_ready_cb);
+> > +	if (ret == -EALREADY)
+> > +		random_ready = 1;
+> > +	else if (ret)
+> > +		pr_warn("failed to add a callback for random_ready\n");
+> > +
+> > +	return 0;
+> > +}
+> > +late_initcall(init_random_ready_cb)
 > 
-> I'm seriously considering sending a patch to remove x32 support from
-> upstream Linux.  Here are some problems with it:
-> 
-> 1. It's not entirely clear that it has users.  As far as I know, it's
-> supported on Gentoo and Debian, and the Debian popcon graph for x32
-> has been falling off dramatically.  I don't think that any enterprise
-> distro has ever supported x32.
-> 
-> 2. The way that system calls work is very strange.  Most syscalls on
-> x32 enter through their *native* (i.e. not COMPAT_SYSCALL_DEFINE)
-> entry point, and this is intentional.  For example, adjtimex() uses
-> the native entry, not the compat entry, because x32's struct timex
-> matches the x86_64 layout.  But a handful of syscalls have separate
-> entry points -- these are the syscalls starting at 512.  These enter
-> through the COMPAT_SYSCALL_DEFINE entry points.
-> 
-> The x32 syscalls that are *not* in the 512 range violate all semblance
-> of kernel syscall convention.  In the syscall handlers,
-> in_compat_syscall() returns true, but the COMPAT_SYSCALL_DEFINE entry
-> is not invoked.   This is nutty and risks breaking things when people
-> refactor their syscall implementations.  And no one tests these
-> things.  Similarly, if someone calls any of the syscalls below 512 but
-> sets bit 31 in RAX, then the native entry will be called with
-> in_compat_set().
-> 
-> Conversely, if you call a syscall in the 512 range with bit 31
-> *clear*, then the compat entry is set with in_compat_syscall()
-> *clear*.  This is also nutty.
-> 
-> Finally, the kernel has a weird distinction between CONFIG_X86_X32_ABI
-> and and CONFIG_X86_X32, which I suspect results in incorrect builds if
-> the host doesn't have an x32 toolchain installed.
-> 
-> I propose that we make CONFIG_X86_X32 depend on BROKEN for a release
-> or two and then remove all the code if no one complains.  If anyone
+> Why can't we just call crng_ready()?
 
-Based on the discussion we had at the beginning of the pidfd_send_signal
-syscall patchset I think this is a good idea. For once, the complex
-compat handling can make adding new syscalls that need to rely on compat
-types because of precedent established by older syscalls icky.
+because crng_ready() is locally defined in drivers/char/random.c.
+Instead, I'd like to use
+        wait_for_random_bytes();
+        value = get_random_u64();
 
-> wants to re-add it, IMO they're welcome to do so, but they need to do
-> it in a way that is maintainable.
+> > +
+> >  static int setup_dtb(struct kimage *image,
+> >  		     unsigned long initrd_load_addr, unsigned long initrd_len,
+> >  		     char *cmdline, void *dtb)
+> >  {
+> >  	int nodeoffset;
+> > +	u64 value;
+> >  	int ret;
+> >  
+> >  	nodeoffset = fdt_path_offset(dtb, "/chosen");
+> > @@ -106,12 +135,27 @@ static int setup_dtb(struct kimage *image,
+> >  			return -EINVAL;
+> >  	}
+> >  
+> > +	/* add kaslr-seed */
+> > +	ret = fdt_delprop(dtb, nodeoffset, FDT_PSTR_KASLR_SEED);
+> > +	if (ret && (ret != -FDT_ERR_NOTFOUND))
+> > +		return -EINVAL;
+> > +
+> > +	if (random_ready) {
+> > +		get_random_bytes(&value, sizeof(value));
 > 
-> --Andy
+> get_random_u64() ?
+
+OK.
+
+> > +		ret = fdt_setprop_u64(dtb, nodeoffset, FDT_PSTR_KASLR_SEED,
+> > +							value);
+> > +		if (ret)
+> > +			return (ret == -FDT_ERR_NOSPACE ? -ENOMEM : -EINVAL);
+> > +	} else {
+> 
+> Wouldn't we be better off preserving the previous seed here, if it was
+> present?
+
+While there's no guarantee that dtb won't be (partially) broken
+on failure, I will let this function return successfully
+by deleting succeeding fdt_delprop().
+
+
+> > +		pr_notice("kaslr-seed won't be fed\n");
+> 
+> "fed" is probably not the right word here.
+
+=> won't be *provided* on kexec?
+
+-Takahiro Akashi
+
+> Will
