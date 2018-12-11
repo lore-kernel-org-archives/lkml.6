@@ -7,43 +7,43 @@ X-Spam-Status: No, score=-11.9 required=3.0
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A110DC07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 13:31:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3615CC07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 13:31:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3B1712082F
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 13:31:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B1712082F
+	by mail.kernel.org (Postfix) with ESMTP id 0420B2082F
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 13:31:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0420B2082F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726444AbeLKNbH (ORCPT
+        id S1726540AbeLKNbh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 08:31:07 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:57129 "EHLO
+        Tue, 11 Dec 2018 08:31:37 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:52581 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726231AbeLKNbG (ORCPT
+        with ESMTP id S1726254AbeLKNbh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 08:31:06 -0500
+        Tue, 11 Dec 2018 08:31:37 -0500
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wBBDUsuD4004708
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wBBDVTAk4004762
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Tue, 11 Dec 2018 05:30:54 -0800
+        Tue, 11 Dec 2018 05:31:29 -0800
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wBBDUrxt4004705;
-        Tue, 11 Dec 2018 05:30:53 -0800
-Date:   Tue, 11 Dec 2018 05:30:53 -0800
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wBBDVTNF4004759;
+        Tue, 11 Dec 2018 05:31:29 -0800
+Date:   Tue, 11 Dec 2018 05:31:29 -0800
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Borislav Petkov <tipbot@zytor.com>
-Message-ID: <tip-21afaf181362b4aeb5be72705d2914673b336149@git.kernel.org>
-Cc:     hpa@zytor.com, bp@suse.de, tony.luck@intel.com,
-        linux-kernel@vger.kernel.org, mingo@kernel.org, tglx@linutronix.de
-Reply-To: linux-kernel@vger.kernel.org, tglx@linutronix.de,
-          mingo@kernel.org, hpa@zytor.com, bp@suse.de, tony.luck@intel.com
-In-Reply-To: <20181205141323.14995-1-bp@alien8.de>
-References: <20181205141323.14995-1-bp@alien8.de>
+Message-ID: <tip-3bfaf95cb1fe81872df884956c704469e68a5bee@git.kernel.org>
+Cc:     hpa@zytor.com, mingo@kernel.org, tglx@linutronix.de, bp@suse.de,
+        linux-kernel@vger.kernel.org, tony.luck@intel.com
+Reply-To: hpa@zytor.com, mingo@kernel.org, tglx@linutronix.de, bp@suse.de,
+          linux-kernel@vger.kernel.org, tony.luck@intel.com
+In-Reply-To: <20181205200913.GR29510@zn.tnic>
+References: <20181205200913.GR29510@zn.tnic>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:ras/core] x86/mce: Streamline MCE subsystem's naming
-Git-Commit-ID: 21afaf181362b4aeb5be72705d2914673b336149
+Subject: [tip:ras/core] x86/mce: Unify pr_* prefix
+Git-Commit-ID: 3bfaf95cb1fe81872df884956c704469e68a5bee
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -57,246 +57,122 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  21afaf181362b4aeb5be72705d2914673b336149
-Gitweb:     https://git.kernel.org/tip/21afaf181362b4aeb5be72705d2914673b336149
+Commit-ID:  3bfaf95cb1fe81872df884956c704469e68a5bee
+Gitweb:     https://git.kernel.org/tip/3bfaf95cb1fe81872df884956c704469e68a5bee
 Author:     Borislav Petkov <bp@suse.de>
-AuthorDate: Sun, 18 Nov 2018 15:15:05 +0100
+AuthorDate: Wed, 5 Dec 2018 21:05:13 +0100
 Committer:  Borislav Petkov <bp@suse.de>
-CommitDate: Wed, 5 Dec 2018 18:00:29 +0100
+CommitDate: Thu, 6 Dec 2018 12:04:52 +0100
 
-x86/mce: Streamline MCE subsystem's naming
+x86/mce: Unify pr_* prefix
 
-Rename the containing folder to "mce" which is the most widespread name.
-Drop the "mce[-_]" filename prefix of some compilation units (while
-others don't have it).
-
-This unifies the file naming in the MCE subsystem:
-
-mce/
-|-- amd.c
-|-- apei.c
-|-- core.c
-|-- dev-mcelog.c
-|-- genpool.c
-|-- inject.c
-|-- intel.c
-|-- internal.h
-|-- Makefile
-|-- p5.c
-|-- severity.c
-|-- therm_throt.c
-|-- threshold.c
-`-- winchip.c
+Move the pr_fmt prefix to internal.h and include it everywhere. This
+way, all pr_* printed strings will be prepended with "mce: ".
 
 No functional changes.
 
 Signed-off-by: Borislav Petkov <bp@suse.de>
-Reviewed-by: Ingo Molnar <mingo@kernel.org>
-Acked-by: Tony Luck <tony.luck@intel.com>
-Link: https://lkml.kernel.org/r/20181205141323.14995-1-bp@alien8.de
+Cc: Tony Luck <tony.luck@intel.com>
+Link: https://lkml.kernel.org/r/20181205200913.GR29510@zn.tnic
 ---
- arch/x86/kernel/cpu/Makefile                                  |  2 +-
- arch/x86/kernel/cpu/{mcheck => mce}/Makefile                  | 10 +++++-----
- arch/x86/kernel/cpu/{mcheck/mce_amd.c => mce/amd.c}           |  2 +-
- arch/x86/kernel/cpu/{mcheck/mce-apei.c => mce/apei.c}         |  2 +-
- arch/x86/kernel/cpu/{mcheck/mce.c => mce/core.c}              |  2 +-
- arch/x86/kernel/cpu/{mcheck => mce}/dev-mcelog.c              |  2 +-
- arch/x86/kernel/cpu/{mcheck/mce-genpool.c => mce/genpool.c}   |  2 +-
- arch/x86/kernel/cpu/{mcheck/mce-inject.c => mce/inject.c}     |  2 +-
- arch/x86/kernel/cpu/{mcheck/mce_intel.c => mce/intel.c}       |  2 +-
- arch/x86/kernel/cpu/{mcheck/mce-internal.h => mce/internal.h} |  0
- arch/x86/kernel/cpu/{mcheck => mce}/p5.c                      |  0
- arch/x86/kernel/cpu/{mcheck/mce-severity.c => mce/severity.c} |  2 +-
- arch/x86/kernel/cpu/{mcheck => mce}/therm_throt.c             |  0
- arch/x86/kernel/cpu/{mcheck => mce}/threshold.c               |  0
- arch/x86/kernel/cpu/{mcheck => mce}/winchip.c                 |  0
- 15 files changed, 14 insertions(+), 14 deletions(-)
+ arch/x86/kernel/cpu/mce/core.c        | 2 --
+ arch/x86/kernel/cpu/mce/dev-mcelog.c  | 2 --
+ arch/x86/kernel/cpu/mce/internal.h    | 3 +++
+ arch/x86/kernel/cpu/mce/p5.c          | 2 ++
+ arch/x86/kernel/cpu/mce/therm_throt.c | 2 ++
+ arch/x86/kernel/cpu/mce/threshold.c   | 2 ++
+ arch/x86/kernel/cpu/mce/winchip.c     | 2 ++
+ 7 files changed, 11 insertions(+), 4 deletions(-)
 
-diff --git a/arch/x86/kernel/cpu/Makefile b/arch/x86/kernel/cpu/Makefile
-index 1f5d2291c31e..43afe707c6fb 100644
---- a/arch/x86/kernel/cpu/Makefile
-+++ b/arch/x86/kernel/cpu/Makefile
-@@ -40,7 +40,7 @@ obj-$(CONFIG_INTEL_RDT)	+= intel_rdt.o intel_rdt_rdtgroup.o intel_rdt_monitor.o
- obj-$(CONFIG_INTEL_RDT)	+= intel_rdt_ctrlmondata.o intel_rdt_pseudo_lock.o
- CFLAGS_intel_rdt_pseudo_lock.o = -I$(src)
+diff --git a/arch/x86/kernel/cpu/mce/core.c b/arch/x86/kernel/cpu/mce/core.c
+index b0ae12cf7827..ad8f62a0c706 100644
+--- a/arch/x86/kernel/cpu/mce/core.c
++++ b/arch/x86/kernel/cpu/mce/core.c
+@@ -8,8 +8,6 @@
+  * Author: Andi Kleen
+  */
  
--obj-$(CONFIG_X86_MCE)			+= mcheck/
-+obj-$(CONFIG_X86_MCE)			+= mce/
- obj-$(CONFIG_MTRR)			+= mtrr/
- obj-$(CONFIG_MICROCODE)			+= microcode/
+-#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+-
+ #include <linux/thread_info.h>
+ #include <linux/capability.h>
+ #include <linux/miscdevice.h>
+diff --git a/arch/x86/kernel/cpu/mce/dev-mcelog.c b/arch/x86/kernel/cpu/mce/dev-mcelog.c
+index 41d9169d27fa..9690ec5c8051 100644
+--- a/arch/x86/kernel/cpu/mce/dev-mcelog.c
++++ b/arch/x86/kernel/cpu/mce/dev-mcelog.c
+@@ -8,8 +8,6 @@
+  * Author: Andi Kleen
+  */
  
-diff --git a/arch/x86/kernel/cpu/mcheck/Makefile b/arch/x86/kernel/cpu/mce/Makefile
-similarity index 52%
-rename from arch/x86/kernel/cpu/mcheck/Makefile
-rename to arch/x86/kernel/cpu/mce/Makefile
-index bcc7c54c7041..765759765ab7 100644
---- a/arch/x86/kernel/cpu/mcheck/Makefile
-+++ b/arch/x86/kernel/cpu/mce/Makefile
-@@ -1,14 +1,14 @@
- # SPDX-License-Identifier: GPL-2.0
--obj-y				=  mce.o mce-severity.o mce-genpool.o
-+obj-y				=  core.o severity.o genpool.o
+-#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+-
+ #include <linux/miscdevice.h>
+ #include <linux/slab.h>
+ #include <linux/kmod.h>
+diff --git a/arch/x86/kernel/cpu/mce/internal.h b/arch/x86/kernel/cpu/mce/internal.h
+index ceb67cd5918f..af5eab1e65e2 100644
+--- a/arch/x86/kernel/cpu/mce/internal.h
++++ b/arch/x86/kernel/cpu/mce/internal.h
+@@ -2,6 +2,9 @@
+ #ifndef __X86_MCE_INTERNAL_H__
+ #define __X86_MCE_INTERNAL_H__
  
- obj-$(CONFIG_X86_ANCIENT_MCE)	+= winchip.o p5.o
--obj-$(CONFIG_X86_MCE_INTEL)	+= mce_intel.o
--obj-$(CONFIG_X86_MCE_AMD)	+= mce_amd.o
-+obj-$(CONFIG_X86_MCE_INTEL)	+= intel.o
-+obj-$(CONFIG_X86_MCE_AMD)	+= amd.o
- obj-$(CONFIG_X86_MCE_THRESHOLD) += threshold.o
--obj-$(CONFIG_X86_MCE_INJECT)	+= mce-inject.o
-+obj-$(CONFIG_X86_MCE_INJECT)	+= inject.o
++#undef pr_fmt
++#define pr_fmt(fmt) "mce: " fmt
++
+ #include <linux/device.h>
+ #include <asm/mce.h>
  
- obj-$(CONFIG_X86_THERMAL_VECTOR) += therm_throt.o
+diff --git a/arch/x86/kernel/cpu/mce/p5.c b/arch/x86/kernel/cpu/mce/p5.c
+index 5cddf831720f..4ae6df556526 100644
+--- a/arch/x86/kernel/cpu/mce/p5.c
++++ b/arch/x86/kernel/cpu/mce/p5.c
+@@ -14,6 +14,8 @@
+ #include <asm/mce.h>
+ #include <asm/msr.h>
  
--obj-$(CONFIG_ACPI_APEI)		+= mce-apei.o
-+obj-$(CONFIG_ACPI_APEI)		+= apei.o
++#include "internal.h"
++
+ /* By default disabled */
+ int mce_p5_enabled __read_mostly;
  
- obj-$(CONFIG_X86_MCELOG_LEGACY)	+= dev-mcelog.o
-diff --git a/arch/x86/kernel/cpu/mcheck/mce_amd.c b/arch/x86/kernel/cpu/mce/amd.c
-similarity index 99%
-rename from arch/x86/kernel/cpu/mcheck/mce_amd.c
-rename to arch/x86/kernel/cpu/mce/amd.c
-index e12454e21b8a..4a2fb59a372e 100644
---- a/arch/x86/kernel/cpu/mcheck/mce_amd.c
-+++ b/arch/x86/kernel/cpu/mce/amd.c
-@@ -28,7 +28,7 @@
+diff --git a/arch/x86/kernel/cpu/mce/therm_throt.c b/arch/x86/kernel/cpu/mce/therm_throt.c
+index 2da67b70ba98..df01ff8513a5 100644
+--- a/arch/x86/kernel/cpu/mce/therm_throt.c
++++ b/arch/x86/kernel/cpu/mce/therm_throt.c
+@@ -30,6 +30,8 @@
  #include <asm/msr.h>
  #include <asm/trace/irq_vectors.h>
  
--#include "mce-internal.h"
 +#include "internal.h"
++
+ /* How long to wait between reporting thermal events */
+ #define CHECK_INTERVAL		(300 * HZ)
  
- #define NR_BLOCKS         5
- #define THRESHOLD_MAX     0xFFF
-diff --git a/arch/x86/kernel/cpu/mcheck/mce-apei.c b/arch/x86/kernel/cpu/mce/apei.c
-similarity index 99%
-rename from arch/x86/kernel/cpu/mcheck/mce-apei.c
-rename to arch/x86/kernel/cpu/mce/apei.c
-index 2eee85379689..1d9b3ce662a0 100644
---- a/arch/x86/kernel/cpu/mcheck/mce-apei.c
-+++ b/arch/x86/kernel/cpu/mce/apei.c
-@@ -36,7 +36,7 @@
- #include <acpi/ghes.h>
+diff --git a/arch/x86/kernel/cpu/mce/threshold.c b/arch/x86/kernel/cpu/mce/threshold.c
+index 2b584b319eff..10586a85c23f 100644
+--- a/arch/x86/kernel/cpu/mce/threshold.c
++++ b/arch/x86/kernel/cpu/mce/threshold.c
+@@ -10,6 +10,8 @@
  #include <asm/mce.h>
+ #include <asm/trace/irq_vectors.h>
  
--#include "mce-internal.h"
 +#include "internal.h"
- 
- void apei_mce_report_mem_error(int severity, struct cper_sec_mem_err *mem_err)
++
+ static void default_threshold_interrupt(void)
  {
-diff --git a/arch/x86/kernel/cpu/mcheck/mce.c b/arch/x86/kernel/cpu/mce/core.c
-similarity index 99%
-rename from arch/x86/kernel/cpu/mcheck/mce.c
-rename to arch/x86/kernel/cpu/mce/core.c
-index 36d2696c9563..b0ae12cf7827 100644
---- a/arch/x86/kernel/cpu/mcheck/mce.c
-+++ b/arch/x86/kernel/cpu/mce/core.c
-@@ -52,7 +52,7 @@
- #include <asm/msr.h>
- #include <asm/reboot.h>
- 
--#include "mce-internal.h"
-+#include "internal.h"
- 
- static DEFINE_MUTEX(mce_log_mutex);
- 
-diff --git a/arch/x86/kernel/cpu/mcheck/dev-mcelog.c b/arch/x86/kernel/cpu/mce/dev-mcelog.c
-similarity index 99%
-rename from arch/x86/kernel/cpu/mcheck/dev-mcelog.c
-rename to arch/x86/kernel/cpu/mce/dev-mcelog.c
-index 27f394ac983f..41d9169d27fa 100644
---- a/arch/x86/kernel/cpu/mcheck/dev-mcelog.c
-+++ b/arch/x86/kernel/cpu/mce/dev-mcelog.c
-@@ -15,7 +15,7 @@
- #include <linux/kmod.h>
- #include <linux/poll.h>
- 
--#include "mce-internal.h"
-+#include "internal.h"
- 
- static BLOCKING_NOTIFIER_HEAD(mce_injector_chain);
- 
-diff --git a/arch/x86/kernel/cpu/mcheck/mce-genpool.c b/arch/x86/kernel/cpu/mce/genpool.c
-similarity index 99%
-rename from arch/x86/kernel/cpu/mcheck/mce-genpool.c
-rename to arch/x86/kernel/cpu/mce/genpool.c
-index 217cd4449bc9..3395549c51d3 100644
---- a/arch/x86/kernel/cpu/mcheck/mce-genpool.c
-+++ b/arch/x86/kernel/cpu/mce/genpool.c
-@@ -10,7 +10,7 @@
- #include <linux/mm.h>
- #include <linux/genalloc.h>
- #include <linux/llist.h>
--#include "mce-internal.h"
-+#include "internal.h"
- 
- /*
-  * printk() is not safe in MCE context. This is a lock-less memory allocator
-diff --git a/arch/x86/kernel/cpu/mcheck/mce-inject.c b/arch/x86/kernel/cpu/mce/inject.c
-similarity index 99%
-rename from arch/x86/kernel/cpu/mcheck/mce-inject.c
-rename to arch/x86/kernel/cpu/mce/inject.c
-index 1fc424c40a31..8492ef7d9015 100644
---- a/arch/x86/kernel/cpu/mcheck/mce-inject.c
-+++ b/arch/x86/kernel/cpu/mce/inject.c
-@@ -38,7 +38,7 @@
- #include <asm/nmi.h>
- #include <asm/smp.h>
- 
--#include "mce-internal.h"
-+#include "internal.h"
- 
- /*
-  * Collect all the MCi_XXX settings
-diff --git a/arch/x86/kernel/cpu/mcheck/mce_intel.c b/arch/x86/kernel/cpu/mce/intel.c
-similarity index 99%
-rename from arch/x86/kernel/cpu/mcheck/mce_intel.c
-rename to arch/x86/kernel/cpu/mce/intel.c
-index d05be307d081..e43eb6732630 100644
---- a/arch/x86/kernel/cpu/mcheck/mce_intel.c
-+++ b/arch/x86/kernel/cpu/mce/intel.c
-@@ -18,7 +18,7 @@
- #include <asm/msr.h>
+ 	pr_err("Unexpected threshold interrupt at vector %x\n",
+diff --git a/arch/x86/kernel/cpu/mce/winchip.c b/arch/x86/kernel/cpu/mce/winchip.c
+index 3b45b270a865..a30ea13cccc2 100644
+--- a/arch/x86/kernel/cpu/mce/winchip.c
++++ b/arch/x86/kernel/cpu/mce/winchip.c
+@@ -13,6 +13,8 @@
  #include <asm/mce.h>
+ #include <asm/msr.h>
  
--#include "mce-internal.h"
 +#include "internal.h"
- 
- /*
-  * Support for Intel Correct Machine Check Interrupts. This allows
-diff --git a/arch/x86/kernel/cpu/mcheck/mce-internal.h b/arch/x86/kernel/cpu/mce/internal.h
-similarity index 100%
-rename from arch/x86/kernel/cpu/mcheck/mce-internal.h
-rename to arch/x86/kernel/cpu/mce/internal.h
-diff --git a/arch/x86/kernel/cpu/mcheck/p5.c b/arch/x86/kernel/cpu/mce/p5.c
-similarity index 100%
-rename from arch/x86/kernel/cpu/mcheck/p5.c
-rename to arch/x86/kernel/cpu/mce/p5.c
-diff --git a/arch/x86/kernel/cpu/mcheck/mce-severity.c b/arch/x86/kernel/cpu/mce/severity.c
-similarity index 99%
-rename from arch/x86/kernel/cpu/mcheck/mce-severity.c
-rename to arch/x86/kernel/cpu/mce/severity.c
-index 44396d521987..dc3e26e905a3 100644
---- a/arch/x86/kernel/cpu/mcheck/mce-severity.c
-+++ b/arch/x86/kernel/cpu/mce/severity.c
-@@ -16,7 +16,7 @@
- #include <asm/mce.h>
- #include <linux/uaccess.h>
- 
--#include "mce-internal.h"
-+#include "internal.h"
- 
- /*
-  * Grade an mce by severity. In general the most severe ones are processed
-diff --git a/arch/x86/kernel/cpu/mcheck/therm_throt.c b/arch/x86/kernel/cpu/mce/therm_throt.c
-similarity index 100%
-rename from arch/x86/kernel/cpu/mcheck/therm_throt.c
-rename to arch/x86/kernel/cpu/mce/therm_throt.c
-diff --git a/arch/x86/kernel/cpu/mcheck/threshold.c b/arch/x86/kernel/cpu/mce/threshold.c
-similarity index 100%
-rename from arch/x86/kernel/cpu/mcheck/threshold.c
-rename to arch/x86/kernel/cpu/mce/threshold.c
-diff --git a/arch/x86/kernel/cpu/mcheck/winchip.c b/arch/x86/kernel/cpu/mce/winchip.c
-similarity index 100%
-rename from arch/x86/kernel/cpu/mcheck/winchip.c
-rename to arch/x86/kernel/cpu/mce/winchip.c
++
+ /* Machine check handler for WinChip C6: */
+ static void winchip_machine_check(struct pt_regs *regs, long error_code)
+ {
