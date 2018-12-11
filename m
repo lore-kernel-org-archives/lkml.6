@@ -2,191 +2,134 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C55D9C07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 17:20:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FB1EC07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 17:20:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7B5D020870
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 17:20:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=micronovasrl.com header.i=@micronovasrl.com header.b="Q/XCbD4Y"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B5D020870
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=micronovasrl.com
+	by mail.kernel.org (Postfix) with ESMTP id 3D62220870
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 17:20:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D62220870
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727288AbeLKRUo (ORCPT
+        id S1727396AbeLKRU5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 12:20:44 -0500
-Received: from mail.micronovasrl.com ([212.103.203.10]:42438 "EHLO
-        mail.micronovasrl.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726464AbeLKRUo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 12:20:44 -0500
-Received: from mail.micronovasrl.com (mail.micronovasrl.com [127.0.0.1])
-        by mail.micronovasrl.com (Postfix) with ESMTP id 9DCDFB00B91
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 18:20:41 +0100 (CET)
-Authentication-Results: mail.micronovasrl.com (amavisd-new); dkim=pass
-        reason="pass (just generated, assumed good)" header.d=micronovasrl.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=micronovasrl.com;
-         h=content-transfer-encoding:content-language:content-type
-        :content-type:in-reply-to:mime-version:user-agent:date:date
-        :message-id:from:from:references:to:subject:subject; s=dkim; t=
-        1544548840; x=1545412841; bh=lzUdzsh9nSO9ox+zpeQnept2f623iwFC8hL
-        wWZnPPSs=; b=Q/XCbD4YW822u/bs0Rq3ekC73D/QRPYHFw5BVL2ICy3xLTR7h7Y
-        aZjNbYAE5IGpZU2wa+gd0ptGHK3kGKm0kvKeivz3BSZ5K4sUdfft7hViXuV69C8d
-        N5XQIIUpL0W2UVXY9Aufy/j9ZLcwhav5v9ZJxH2udhJHR/oevhZ43ji0=
-X-Virus-Scanned: Debian amavisd-new at mail.micronovasrl.com
-Received: from mail.micronovasrl.com ([127.0.0.1])
-        by mail.micronovasrl.com (mail.micronovasrl.com [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id WKFC7Wxxc27a for <linux-kernel@vger.kernel.org>;
-        Tue, 11 Dec 2018 18:20:40 +0100 (CET)
-Received: from [192.168.2.69] (88-149-228-83.v4.ngi.it [88.149.228.83])
-        by mail.micronovasrl.com (Postfix) with ESMTPSA id 7C26DB00307;
-        Tue, 11 Dec 2018 18:20:39 +0100 (CET)
-Subject: Re: [PATCH] drm/sun4i: fix HSYNC and VSYNC polarity
-To:     Jonathan Liu <net147@gmail.com>
-Cc:     Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-References: <1518717288-123578-1-git-send-email-giulio.benetti@micronovasrl.com>
- <CANwerB3Zr9axz+1rwCnNpLsX-xcOhOKEY4MT53v1+vzd99KRMg@mail.gmail.com>
- <57d929cf-4458-dae4-36d4-4e89170eba4a@micronovasrl.com>
- <CANwerB1aUP4Rw-B_qmzOu0BWmkpr-LQ5b4FKQbzZeeYHPtGoqA@mail.gmail.com>
-From:   Giulio Benetti <giulio.benetti@micronovasrl.com>
-Message-ID: <05786c98-6bc9-44f1-91ea-14452448cced@micronovasrl.com>
-Date:   Tue, 11 Dec 2018 18:20:42 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.3
+        Tue, 11 Dec 2018 12:20:57 -0500
+Received: from mga05.intel.com ([192.55.52.43]:48086 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726331AbeLKRU5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 12:20:57 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Dec 2018 09:20:56 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,343,1539673200"; 
+   d="scan'208";a="117921494"
+Received: from ray.jf.intel.com (HELO [10.7.201.17]) ([10.7.201.17])
+  by orsmga001.jf.intel.com with ESMTP; 11 Dec 2018 09:20:56 -0800
+Subject: Re: [PATCH v4 1/2] x86/fpu: track AVX-512 usage of tasks
+To:     Aubrey Li <aubrey.li@intel.com>, tglx@linutronix.de,
+        mingo@redhat.com, peterz@infradead.org, hpa@zytor.com
+Cc:     ak@linux.intel.com, tim.c.chen@linux.intel.com,
+        arjan@linux.intel.com, linux-kernel@vger.kernel.org,
+        Aubrey Li <aubrey.li@linux.intel.com>
+References: <20181211002448.3520-1-aubrey.li@intel.com>
+From:   Dave Hansen <dave.hansen@intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+ z5cecg==
+Message-ID: <e51c6513-3b5d-972c-5d26-d20283057bb8@intel.com>
+Date:   Tue, 11 Dec 2018 09:20:56 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <CANwerB1aUP4Rw-B_qmzOu0BWmkpr-LQ5b4FKQbzZeeYHPtGoqA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: it
+In-Reply-To: <20181211002448.3520-1-aubrey.li@intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jonathan,
+ to update AVX512 state
+> + */
+> +static inline void update_avx512_state(struct fpu *fpu)
+> +{
+> +	/*
+> +	 * AVX512 state is tracked here because its use is known to slow
+> +	 * the max clock speed of the core.
+> +	 *
+> +	 * However, AVX512-using tasks are expected to clear this state when
+> +	 * not actively using these registers. Thus, this tracking mechanism
+> +	 * can miss. To ensure that false-negatives do not immediately show
+> +	 * up, decay the usage count over time.
+> +	 */
+> +	if (fpu->state.xsave.header.xfeatures & XFEATURE_MASK_AVX512)
+> +		fpu->avx512_usage = AVX512_STATE_DECAY_COUNT;
+> +	else if (fpu->avx512_usage)
+> +		fpu->avx512_usage--;
+> +}
+> +
+>  /*
+>   * This function is called only during boot time when x86 caps are not set
+>   * up and alternative can not be used yet.
+> @@ -411,6 +432,7 @@ static inline int copy_fpregs_to_fpstate(struct fpu *fpu)
+>  {
+>  	if (likely(use_xsave())) {
+>  		copy_xregs_to_kernel(&fpu->state.xsave);
+> +		update_avx512_state(fpu);
+>  		return 1;
+>  	}
 
-Il 11/12/2018 11:49, Jonathan Liu ha scritto:
-> Hi Giulio,
-> 
-> On Thu, 6 Dec 2018 at 22:00, Giulio Benetti
-> <giulio.benetti@micronovasrl.com> wrote:
->>
->> Hi Jonathan,
->>
->> Il 06/12/2018 08:29, Jonathan Liu ha scritto:
->>> Hi Giulio,
->>>
->>> On Thu, 15 Feb 2018 at 17:54, Giulio Benetti
->>> <giulio.benetti@micronovasrl.com> wrote:
->>>>
->>>> Differently from other Lcd signals, HSYNC and VSYNC signals
->>>> result inverted if their bits are cleared to 0.
->>>>
->>>> Invert their settings of IO_POL register.
->>>>
->>>> Signed-off-by: Giulio Benetti <giulio.benetti@micronovasrl.com>
->>>> ---
->>>>    drivers/gpu/drm/sun4i/sun4i_tcon.c | 4 ++--
->>>>    1 file changed, 2 insertions(+), 2 deletions(-)
->>>>
->>>> diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
->>>> index 3c15cf2..aaf911a 100644
->>>> --- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
->>>> +++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
->>>> @@ -389,10 +389,10 @@ static void sun4i_tcon0_mode_set_rgb(struct sun4i_tcon *tcon,
->>>>                        SUN4I_TCON0_BASIC3_H_SYNC(hsync));
->>>>
->>>>           /* Setup the polarity of the various signals */
->>>> -       if (!(mode->flags & DRM_MODE_FLAG_PHSYNC))
->>>> +       if (mode->flags & DRM_MODE_FLAG_PHSYNC)
->>>>                   val |= SUN4I_TCON0_IO_POL_HSYNC_POSITIVE;
->>>>
->>>> -       if (!(mode->flags & DRM_MODE_FLAG_PVSYNC))
->>>> +       if (mode->flags & DRM_MODE_FLAG_PVSYNC)
->>>>                   val |= SUN4I_TCON0_IO_POL_VSYNC_POSITIVE;
->>>>
->>>>           regmap_update_bits(tcon->regs, SUN4I_TCON0_IO_POL_REG,
->>>
->>> I am running Linux 4.19.6 and noticed with Olimex LCD-OLinuXino-7TS 7"
->>> LCD touchscreen (Innolux AT070TN92) connected to Olimex
->>> A20-OLinuXino-MICRO that the image does not display correctly after
->>> this change.
->>> The image is shifted to the right.
->>>
->>> Reverting the change results in the image being displayed correctly on
->>> the screen.
->>>
->>> I have in the device tree a "panel" node with compatible =
->>> "innolux,at070tn92" which uses the timings in
->>> drivers/gpu/drm/panel/panel-simple.c.
->>>
->>> Any ideas?
-> 
->>
->> Checking Display Datasheet:
->> https://www.olimex.com/Products/Retired/A13-LCD7-TS/resources/S700-AT070TN92.pdf
->>
->> Page 13 section 3.3.2 you can see it needs active low VS and HS.
->>
->> You can refer to this Thread and check scope captures about VS and HS
->> versus TCON0_IOPOL register:
->> https://lists.freedesktop.org/archives/dri-devel/2018-January/163874.html
->>
->> There should be something that wrongly sets one of these or both:
->> mode->flags |= DRM_MODE_FLAG_PHSYNC;
->> and/or
->> mode->flags |= DRM_MODE_FLAG_PVSYNC;
->>
->> Checked in panel-simple.c but it's not there.
-> 
-> flags is 0 because it is not assigned in the struct definition for the panel.
 
-I don't think it is 0, because otherwise IO_POL_REG wouldn't be set to 
-0x03000000 but to 0.
-What is checked is exactly mode->flags, so the problem seems to be upstream.
+Is there a reason we shouldn't do:
 
-This is my doubt, it seems mode->flags is not initialized or overriden 
-at a certain point, this is why I want to debug it with Jtag tomorrow.
+	if (!cpu_feature_enabled(X86_FEATURE_AVX512F))
+		update_avx512_state(fpu);
 
-> Before this change, TCON0_IO_POL_REG would be 0x03000000 (both bits
-> set to 1) and image displays correctly > After this change, TCON0_IO_POL_REG is 0x00000000 (both bits set to 0)
-> and image doesn't display correctly.
-> 
-> Checked using "devmem2 0x01c0c088" on A20-OLinuXino-MICRO Rev J.
-
-0x03000000 as I've triple checked with scope means Positive H/Vsync,
-and 0x00000000 Negative H/VSync.
-
-Please check on the Thread I've pointed you above where there are all 
-the links to the scope captures.
-
-Are you completely sure you're using the correct panel?
-This is because if with 0x03000000 it works correctly, it means that 
-you're using Positive VS and HS but on datasheet on Figure 3.2 it shows 
-that they must be negative.
-
-Do you have any chance to measure those signals with a scope?
-
-Tomorrow, while debugging, I'll re-check H/Vsync signals again.
-
-Kind regards
--- 
-Giulio Benetti
-CTO
-
-MICRONOVA SRL
-Sede: Via A. Niedda 3 - 35010 Vigonza (PD)
-Tel. 049/8931563 - Fax 049/8931346
-Cod.Fiscale - P.IVA 02663420285
-Capitale Sociale € 26.000 i.v.
-Iscritta al Reg. Imprese di Padova N. 02663420285
-Numero R.E.A. 258642
+?
