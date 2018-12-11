@@ -4,52 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27EF6C5CFFE
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:48:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 236CEC07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:48:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E207920989
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:48:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DCC5420989
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:48:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544543318;
-	bh=DbTkrtTbs6ekCfL3duw1qqiA7tvUY8sL2yn3PS3vnFI=;
+	s=default; t=1544543322;
+	bh=1IMkMgZYv2AqH6GoVzHtDqUENGOMIzzaaSqpJOWqzZY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Auw4TlwMDSnsuk7CFG4qEuaK7mcpzRjlOdrEMT078vJNUoLNZN/55rf4oU8LOKt66
-	 dBlJcxWmA6IOg4FN2TasgHKr/jQkguLLADpGEVbV54UZ+OUOkfMYhJl2lrEO3UAUl7
-	 zoPOd52hZpjA1XMOJwKIZ3+KREGY11BdZcoGtxSQ=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E207920989
+	b=hsVYrUogy9QlNE2SSZwUHcRe+7ThNJlGwcNg0oiHKixXVGGUkgRqeqUbE0T3iD1Iz
+	 qXHVOPinEmB2Ygq8V4+qwvrV+ucTnLgfecuK18wLo3xBfvp91VBqBiiD1WOqIhiZXR
+	 De1bOJV+c+9OWH0w4xNX478OxSScigfw+DgQMOKs=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DCC5420989
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728843AbeLKPsh (ORCPT
+        id S1727899AbeLKPsl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 10:48:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36944 "EHLO mail.kernel.org"
+        Tue, 11 Dec 2018 10:48:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36964 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728823AbeLKPse (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:48:34 -0500
+        id S1728842AbeLKPsh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 10:48:37 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7CDF220870;
-        Tue, 11 Dec 2018 15:48:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EFC1220870;
+        Tue, 11 Dec 2018 15:48:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544543314;
-        bh=DbTkrtTbs6ekCfL3duw1qqiA7tvUY8sL2yn3PS3vnFI=;
+        s=default; t=1544543316;
+        bh=1IMkMgZYv2AqH6GoVzHtDqUENGOMIzzaaSqpJOWqzZY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VpTCW6mKch55ZkvmhGbn+y1DTqRajoHM0zb1hQp1qW3bhI7hR+QSz7G5CMPeD5nRO
-         8QvyWidE8mcQbML6xuZAuOVC7OoDDWk5pXTZPAknY5px4L3ivKw03PcXYfPx1AiOap
-         O3GlB6I9NuhQqKzkqA+apTWgxi+5VkPDbibvAK7s=
+        b=HEW6+YHm0W6N+V8nVpsSCLPRQfRiieBkMjLzJQ19MTs13SNa4O5Yy0fIRIcK7uB+l
+         Oxte9Q1rtSWyn5SoddDe9p2oumLnrR2Dsedqh58idy0plis9+aDANmd5qabLiWvnVV
+         UvxZPrp9ay3OcsaJz+FdfkV0HixSl96gEuRy5TGo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Vasyl Vavrychuk <vasyl.vavrychuk@globallogic.com>,
+        stable@vger.kernel.org, Ben Greear <greearb@candelatech.com>,
         Johannes Berg <johannes.berg@intel.com>
-Subject: [PATCH 4.4 87/91] mac80211_hwsim: Timer should be initialized before device registered
-Date:   Tue, 11 Dec 2018 16:41:46 +0100
-Message-Id: <20181211151613.958492049@linuxfoundation.org>
+Subject: [PATCH 4.4 88/91] mac80211: Clear beacon_int in ieee80211_do_stop
+Date:   Tue, 11 Dec 2018 16:41:47 +0100
+Message-Id: <20181211151614.100064574@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181211151606.026852373@linuxfoundation.org>
 References: <20181211151606.026852373@linuxfoundation.org>
@@ -68,54 +68,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Vasyl Vavrychuk <vasyl.vavrychuk@globallogic.com>
+From: Ben Greear <greearb@candelatech.com>
 
-commit a1881c9b8a1edef0a5ae1d5c1b61406fe3402114 upstream.
+commit 5c21e8100dfd57c806e833ae905e26efbb87840f upstream.
 
-Otherwise if network manager starts configuring Wi-Fi interface
-immidiatelly after getting notification of its creation, we will get
-NULL pointer dereference:
+This fixes stale beacon-int values that would keep a netdev
+from going up.
 
-  BUG: unable to handle kernel NULL pointer dereference at           (null)
-  IP: [<ffffffff95ae94c8>] hrtimer_active+0x28/0x50
-  ...
-  Call Trace:
-   [<ffffffff95ae9997>] ? hrtimer_try_to_cancel+0x27/0x110
-   [<ffffffff95ae9a95>] ? hrtimer_cancel+0x15/0x20
-   [<ffffffffc0803bf0>] ? mac80211_hwsim_config+0x140/0x1c0 [mac80211_hwsim]
+To reproduce:
+
+Create two VAP on one radio.
+vap1 has beacon-int 100, start it.
+vap2 has beacon-int 240, start it (and it will fail
+  because beacon-int mismatch).
+reconfigure vap2 to have beacon-int 100 and start it.
+  It will fail because the stale beacon-int 240 will be used
+  in the ifup path and hostapd never gets a chance to set the
+  new beacon interval.
 
 Cc: stable@vger.kernel.org
-Signed-off-by: Vasyl Vavrychuk <vasyl.vavrychuk@globallogic.com>
+Signed-off-by: Ben Greear <greearb@candelatech.com>
 Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/wireless/mac80211_hwsim.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ net/mac80211/iface.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/net/wireless/mac80211_hwsim.c
-+++ b/drivers/net/wireless/mac80211_hwsim.c
-@@ -2515,6 +2515,10 @@ static int mac80211_hwsim_new_radio(stru
- 	if (param->no_vif)
- 		ieee80211_hw_set(hw, NO_AUTO_VIF);
+--- a/net/mac80211/iface.c
++++ b/net/mac80211/iface.c
+@@ -987,6 +987,8 @@ static void ieee80211_do_stop(struct iee
+ 	if (local->open_count == 0)
+ 		ieee80211_clear_tx_pending(local);
  
-+	tasklet_hrtimer_init(&data->beacon_timer,
-+			     mac80211_hwsim_beacon,
-+			     CLOCK_MONOTONIC, HRTIMER_MODE_ABS);
++	sdata->vif.bss_conf.beacon_int = 0;
 +
- 	err = ieee80211_register_hw(hw);
- 	if (err < 0) {
- 		printk(KERN_DEBUG "mac80211_hwsim: ieee80211_register_hw failed (%d)\n",
-@@ -2539,10 +2543,6 @@ static int mac80211_hwsim_new_radio(stru
- 				    data->debugfs,
- 				    data, &hwsim_simulate_radar);
- 
--	tasklet_hrtimer_init(&data->beacon_timer,
--			     mac80211_hwsim_beacon,
--			     CLOCK_MONOTONIC, HRTIMER_MODE_ABS);
--
- 	spin_lock_bh(&hwsim_radio_lock);
- 	list_add_tail(&data->list, &hwsim_radios);
- 	spin_unlock_bh(&hwsim_radio_lock);
+ 	/*
+ 	 * If the interface goes down while suspended, presumably because
+ 	 * the device was unplugged and that happens before our resume,
 
 
