@@ -2,58 +2,55 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 962D6C07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:18:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A521C5CFFE
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:18:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5D82020851
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:18:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C54072084E
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:18:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544545096;
-	bh=nXIb51wCD0PLvnkwLgQjjxK/EeCGuYyikHc2EmuWBmE=;
+	s=default; t=1544545105;
+	bh=D7V2KyM2B8wU3qtJK3nEjjjoZupeDabQToKj2E9KfbQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=h/RspMmPpuCFqZiAZkzYG2dJtcwl+tloAZFFRQmSHnBdqg//GO3bqYlHUK8Hghc8X
-	 gNcVUu1OnSk9Jxr2uCi+t800TvUW1A0qfiXXt+04+q91DIU4VNDs+lZscGbfHvQ3+A
-	 6a50IdS2kOEvXHWKs6m/y882RQaj6hnLUxZ5wKdk=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D82020851
+	b=PPHklSCgNV1k87QouE0XKeYZcI20KBeGCGDQmdjWYXVuDZYPQpL7V8ePyeums+45J
+	 M2uAQJa4MNlg2A+EZ9WBKv+d4Y2xEM+dpcOEfF9f7oLLMc1ARn7XRKwJBDMZHWBEEP
+	 0zsAshKqRivGWQxmpg/NAsx27KMyzW4VQNOgZU/E=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C54072084E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728894AbeLKQSP (ORCPT
+        id S1729199AbeLKQSZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 11:18:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35066 "EHLO mail.kernel.org"
+        Tue, 11 Dec 2018 11:18:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34946 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728371AbeLKPqj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:46:39 -0500
+        id S1728349AbeLKPqc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 10:46:32 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AF53320870;
-        Tue, 11 Dec 2018 15:46:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0E4DF20870;
+        Tue, 11 Dec 2018 15:46:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544543199;
-        bh=nXIb51wCD0PLvnkwLgQjjxK/EeCGuYyikHc2EmuWBmE=;
+        s=default; t=1544543191;
+        bh=D7V2KyM2B8wU3qtJK3nEjjjoZupeDabQToKj2E9KfbQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cRoQvwQLXaOsMIAJEhjBSaRuBLMxwRQMZnAgJvg9PlryhIFq/F9N2/4/Todg3H8vF
-         kxZ6xYw3KmAMvQU9zMiCyWOKHMcCOiS5Qiyc+7nYpPqhf9SqCISMu8vJ09LMEAern7
-         cI1iB367L8qad1HkCoDxTKRAtGrF4AZc42JzoOrI=
+        b=obtR0t7LkVcfCZC6ZpnloGAvItDg6iFV4XL9N0yrKbmkIzrdOTFRcLIY9Af+DVu/N
+         uAa9492tu+JJBLNsKH9NJPCgaHM1DGbHVCBLp1exVnrfCkHuZEqVKokIaLFqS8uUm9
+         ueHlmd1uD7gJxX0iFJVT01xTeIbNUTa+d9EUlUQU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Omar Sandoval <osandov@fb.com>,
-        Liu Bo <bo.liu@linux.alibaba.com>,
-        Nikolay Borisov <nborisov@suse.com>,
-        Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 17/91] btrfs: release metadata before running delayed refs
-Date:   Tue, 11 Dec 2018 16:40:36 +0100
-Message-Id: <20181211151607.261293742@linuxfoundation.org>
+        stable@vger.kernel.org, Christian Hoff <christian_hoff@gmx.net>,
+        Sebastian Reichel <sre@kernel.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: [PATCH 4.4 46/91] Input: matrix_keypad - check for errors from of_get_named_gpio()
+Date:   Tue, 11 Dec 2018 16:41:05 +0100
+Message-Id: <20181211151609.727774116@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181211151606.026852373@linuxfoundation.org>
 References: <20181211151606.026852373@linuxfoundation.org>
@@ -72,47 +69,91 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-We want to release the unused reservation we have since it refills the
-delayed refs reserve, which will make everything go smoother when
-running the delayed refs if we're short on our reservation.
+From: Christian Hoff <christian_hoff@gmx.net>
 
-CC: stable@vger.kernel.org # 4.4+
-Reviewed-by: Omar Sandoval <osandov@fb.com>
-Reviewed-by: Liu Bo <bo.liu@linux.alibaba.com>
-Reviewed-by: Nikolay Borisov <nborisov@suse.com>
-Signed-off-by: Josef Bacik <josef@toxicpanda.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+commit d55bda1b3e7c5a87f10da54fdda866a9a9cef30b upstream.
+
+"of_get_named_gpio()" returns a negative error value if it fails
+and drivers should check for this. This missing check was now
+added to the matrix_keypad driver.
+
+In my case "of_get_named_gpio()" returned -EPROBE_DEFER because
+the referenced GPIOs belong to an I/O expander, which was not yet
+probed at the point in time when the matrix_keypad driver was
+loading. Because the driver did not check for errors from the
+"of_get_named_gpio()" routine, it was assuming that "-EPROBE_DEFER"
+is actually a GPIO number and continued as usual, which led to further
+errors like this later on:
+
+WARNING: CPU: 3 PID: 167 at drivers/gpio/gpiolib.c:114
+gpio_to_desc+0xc8/0xd0
+invalid GPIO -517
+
+Note that the "GPIO number" -517 in the error message above is
+actually "-EPROBE_DEFER".
+
+As part of the patch a misleading error message "no platform data defined"
+was also removed. This does not lead to information loss because the other
+error paths in matrix_keypad_parse_dt() already print an error.
+
+Signed-off-by: Christian Hoff <christian_hoff@gmx.net>
+Suggested-by: Sebastian Reichel <sre@kernel.org>
+Reviewed-by: Sebastian Reichel <sre@kernel.org>
+Cc: stable@vger.kernel.org
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- fs/btrfs/transaction.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/input/keyboard/matrix_keypad.c |   23 ++++++++++++++---------
+ 1 file changed, 14 insertions(+), 9 deletions(-)
 
-diff --git a/fs/btrfs/transaction.c b/fs/btrfs/transaction.c
-index be8eae80ff65..098016338f98 100644
---- a/fs/btrfs/transaction.c
-+++ b/fs/btrfs/transaction.c
-@@ -1821,6 +1821,9 @@ int btrfs_commit_transaction(struct btrfs_trans_handle *trans,
- 		return ret;
+--- a/drivers/input/keyboard/matrix_keypad.c
++++ b/drivers/input/keyboard/matrix_keypad.c
+@@ -405,7 +405,7 @@ matrix_keypad_parse_dt(struct device *de
+ 	struct matrix_keypad_platform_data *pdata;
+ 	struct device_node *np = dev->of_node;
+ 	unsigned int *gpios;
+-	int i, nrow, ncol;
++	int ret, i, nrow, ncol;
+ 
+ 	if (!np) {
+ 		dev_err(dev, "device lacks DT data\n");
+@@ -447,12 +447,19 @@ matrix_keypad_parse_dt(struct device *de
+ 		return ERR_PTR(-ENOMEM);
  	}
  
-+	btrfs_trans_release_metadata(trans, root);
-+	trans->block_rsv = NULL;
-+
- 	/* make a pass through all the delayed refs we have so far
- 	 * any runnings procs may add more while we are here
- 	 */
-@@ -1830,9 +1833,6 @@ int btrfs_commit_transaction(struct btrfs_trans_handle *trans,
- 		return ret;
- 	}
+-	for (i = 0; i < pdata->num_row_gpios; i++)
+-		gpios[i] = of_get_named_gpio(np, "row-gpios", i);
++	for (i = 0; i < nrow; i++) {
++		ret = of_get_named_gpio(np, "row-gpios", i);
++		if (ret < 0)
++			return ERR_PTR(ret);
++		gpios[i] = ret;
++	}
  
--	btrfs_trans_release_metadata(trans, root);
--	trans->block_rsv = NULL;
--
- 	cur_trans = trans->transaction;
+-	for (i = 0; i < pdata->num_col_gpios; i++)
+-		gpios[pdata->num_row_gpios + i] =
+-			of_get_named_gpio(np, "col-gpios", i);
++	for (i = 0; i < ncol; i++) {
++		ret = of_get_named_gpio(np, "col-gpios", i);
++		if (ret < 0)
++			return ERR_PTR(ret);
++		gpios[nrow + i] = ret;
++	}
  
- 	/*
--- 
-2.17.1
-
+ 	pdata->row_gpios = gpios;
+ 	pdata->col_gpios = &gpios[pdata->num_row_gpios];
+@@ -479,10 +486,8 @@ static int matrix_keypad_probe(struct pl
+ 	pdata = dev_get_platdata(&pdev->dev);
+ 	if (!pdata) {
+ 		pdata = matrix_keypad_parse_dt(&pdev->dev);
+-		if (IS_ERR(pdata)) {
+-			dev_err(&pdev->dev, "no platform data defined\n");
++		if (IS_ERR(pdata))
+ 			return PTR_ERR(pdata);
+-		}
+ 	} else if (!pdata->keymap_data) {
+ 		dev_err(&pdev->dev, "no keymap data defined\n");
+ 		return -EINVAL;
 
 
