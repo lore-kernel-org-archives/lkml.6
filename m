@@ -6,24 +6,24 @@ X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC6A5C5CFFE
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 13:43:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B59B9C07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 13:43:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AC8AC2054F
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 13:43:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC8AC2054F
+	by mail.kernel.org (Postfix) with ESMTP id 86F892054F
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 13:43:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 86F892054F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=8bytes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726599AbeLKNnv (ORCPT
+        id S1726639AbeLKNn4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 08:43:51 -0500
-Received: from 8bytes.org ([81.169.241.247]:53282 "EHLO theia.8bytes.org"
+        Tue, 11 Dec 2018 08:43:56 -0500
+Received: from 8bytes.org ([81.169.241.247]:53378 "EHLO theia.8bytes.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726286AbeLKNnt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 08:43:49 -0500
+        id S1726579AbeLKNnu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 08:43:50 -0500
 Received: by theia.8bytes.org (Postfix, from userid 1000)
-        id C824E387; Tue, 11 Dec 2018 14:43:46 +0100 (CET)
+        id 8720B5EC; Tue, 11 Dec 2018 14:43:47 +0100 (CET)
 From:   Joerg Roedel <joro@8bytes.org>
 To:     iommu@lists.linux-foundation.org
 Cc:     Russell Currey <ruscur@russell.cc>,
@@ -40,9 +40,9 @@ Cc:     Russell Currey <ruscur@russell.cc>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
         dmaengine@vger.kernel.org, linux-usb@vger.kernel.org
-Subject: [PATCH 2/6] iommu/of: Use device_iommu_mapped()
-Date:   Tue, 11 Dec 2018 14:43:39 +0100
-Message-Id: <20181211134343.10664-3-joro@8bytes.org>
+Subject: [PATCH 6/6] dmaengine: sh: rcar-dmac: Use device_iommu_mapped()
+Date:   Tue, 11 Dec 2018 14:43:43 +0100
+Message-Id: <20181211134343.10664-7-joro@8bytes.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181211134343.10664-1-joro@8bytes.org>
 References: <20181211134343.10664-1-joro@8bytes.org>
@@ -59,22 +59,22 @@ already mapped by an IOMMU.
 Acked-by: Robin Murphy <robin.murphy@arm.com>
 Signed-off-by: Joerg Roedel <jroedel@suse.de>
 ---
- drivers/iommu/of_iommu.c | 2 +-
+ drivers/dma/sh/rcar-dmac.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/iommu/of_iommu.c b/drivers/iommu/of_iommu.c
-index c5dd63072529..bfcf139503f0 100644
---- a/drivers/iommu/of_iommu.c
-+++ b/drivers/iommu/of_iommu.c
-@@ -220,7 +220,7 @@ const struct iommu_ops *of_iommu_configure(struct device *dev,
- 	 * If we have reason to believe the IOMMU driver missed the initial
- 	 * add_device callback for dev, replay it to get things in order.
+diff --git a/drivers/dma/sh/rcar-dmac.c b/drivers/dma/sh/rcar-dmac.c
+index 74fa2b1a6a86..2b4f25698169 100644
+--- a/drivers/dma/sh/rcar-dmac.c
++++ b/drivers/dma/sh/rcar-dmac.c
+@@ -1809,7 +1809,7 @@ static int rcar_dmac_probe(struct platform_device *pdev)
+ 	 * level we can't disable it selectively, so ignore channel 0 for now if
+ 	 * the device is part of an IOMMU group.
  	 */
--	if (ops && ops->add_device && dev->bus && !dev->iommu_group)
-+	if (ops && ops->add_device && dev->bus && !device_iommu_mapped(dev))
- 		err = ops->add_device(dev);
- 
- 	/* Ignore all other errors apart from EPROBE_DEFER */
+-	if (pdev->dev.iommu_group) {
++	if (device_iommu_mapped(&pdev->dev)) {
+ 		dmac->n_channels--;
+ 		channels_offset = 1;
+ 	}
 -- 
 2.17.1
 
