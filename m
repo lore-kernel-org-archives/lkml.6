@@ -7,54 +7,49 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 960EEC07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:46:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87F21C07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:46:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A0E32087F
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:46:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4E479208E7
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:46:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544543165;
-	bh=onUh5dAAW1TsKTGVZb/h3aRcDqtgclDKbd9X56PaTj8=;
+	s=default; t=1544543168;
+	bh=nHcHy5LtX49/uXZZVqJZwWzEuUOv75DCzDz0kT4loBI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=YP9+TX9yRw89C1oaiP0jkvhP8mzbctwzoGHW/aBwDRVa8FFRuCgd/u5cOUle3G2nS
-	 lokUabuH+Zd7M5rEQ0V84Qip568NfjxOjQfk1r9z4FPlCq7iXgrpzvYdIrtv3pOjJ3
-	 U2McYy8NxyrXhXHtZWYp6W6IOZ6zfVE47B5PQHOQ=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A0E32087F
+	b=d5XU6K5ULsCMZ/iwg8DEr4JuzRw0aiZPyodlmBSaWMP+jXF8YfaE3HI/wN2iGvd6C
+	 6PIzxULdqiiIN7zHh3sMPdvoiWCj7J6Se4PQNVdWINlo7pIz4o7El/fjHndFXKPcrE
+	 JpvTq5Piz2KfocHta7k1I6LBkjsQ4+jbIEcGq/BI=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E479208E7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728258AbeLKPqD (ORCPT
+        id S1728269AbeLKPqG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 10:46:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34384 "EHLO mail.kernel.org"
+        Tue, 11 Dec 2018 10:46:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34484 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728199AbeLKPp7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:45:59 -0500
+        id S1728199AbeLKPqE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 10:46:04 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 03A642087F;
-        Tue, 11 Dec 2018 15:45:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2A1F720870;
+        Tue, 11 Dec 2018 15:46:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544543158;
-        bh=onUh5dAAW1TsKTGVZb/h3aRcDqtgclDKbd9X56PaTj8=;
+        s=default; t=1544543163;
+        bh=nHcHy5LtX49/uXZZVqJZwWzEuUOv75DCzDz0kT4loBI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IGpY3Of66mp1u2tWnCfIEHejglOYcLDp7u81DHBLyniILReyd+7pJuCm/afNJaRne
-         ttZPIDOBCoaY2EGMGxEnzktyayftj5jBmXvGTXBfAtK0OmGj8Eaeubsyb63f7CPW1w
-         pLC61jzTp7X/9ZEmKDvSIt2U/Pw0eGKbEky9BpDI=
+        b=sN10GaSMKGkPlRnKXj+7Dh/oKmyRCBV9dibXGDbq5YOVouLteV6N3Al+wQQEOgA2d
+         KJ9z+tdlRSTvag/f0OdEJ1DLfix1aHssz6AW0NiBl16cJeYnMMfG1GSFKOaqHE/5+n
+         6TW1gFS8F43QVWKvDd4WvT/xwn2TihbegCALGEto=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Kristian Evensen <kristian.evensen@gmail.com>,
-        Mathias Kresin <dev@kresin.me>,
-        Paul Burton <paul.burton@mips.com>,
-        John Crispin <john@phrozen.org>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        James Hogan <jhogan@kernel.org>, linux-mips@linux-mips.org
-Subject: [PATCH 4.4 34/91] MIPS: ralink: Fix mt7620 nd_sd pinmux
-Date:   Tue, 11 Dec 2018 16:40:53 +0100
-Message-Id: <20181211151608.546691017@linuxfoundation.org>
+        stable@vger.kernel.org, Sam Bobroff <sbobroff@linux.ibm.com>,
+        Dave Airlie <airlied@redhat.com>
+Subject: [PATCH 4.4 36/91] drm/ast: Fix incorrect free on ioregs
+Date:   Tue, 11 Dec 2018 16:40:55 +0100
+Message-Id: <20181211151608.743958558@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181211151606.026852373@linuxfoundation.org>
 References: <20181211151606.026852373@linuxfoundation.org>
@@ -73,41 +68,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mathias Kresin <dev@kresin.me>
+From: Sam Bobroff <sbobroff@linux.ibm.com>
 
-commit 7d35baa4e9ec4b717bc0e58a39cdb6a1c50f5465 upstream.
+commit dc25ab067645eabd037f1a23d49a666f9e0b8c68 upstream.
 
-In case the nd_sd group is set to the sd-card function, Pins 45 + 46 are
-configured as GPIOs. If they are blocked by the sd function, they can't
-be used as GPIOs.
+If the platform has no IO space, ioregs is placed next to the already
+allocated regs. In this case, it should not be separately freed.
 
-Reported-by: Kristian Evensen <kristian.evensen@gmail.com>
-Signed-off-by: Mathias Kresin <dev@kresin.me>
-Signed-off-by: Paul Burton <paul.burton@mips.com>
-Fixes: f576fb6a0700 ("MIPS: ralink: cleanup the soc specific pinmux data")
-Patchwork: https://patchwork.linux-mips.org/patch/21220/
-Cc: John Crispin <john@phrozen.org>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: James Hogan <jhogan@kernel.org>
-Cc: linux-mips@linux-mips.org
-Cc: linux-kernel@vger.kernel.org
-Cc: stable@vger.kernel.org # v3.18+
+This prevents a kernel warning from __vunmap "Trying to vfree()
+nonexistent vm area" when unloading the driver.
+
+Fixes: 0dd68309b9c5 ("drm/ast: Try to use MMIO registers when PIO isn't supported")
+
+Signed-off-by: Sam Bobroff <sbobroff@linux.ibm.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Dave Airlie <airlied@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/mips/ralink/mt7620.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/ast/ast_main.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/arch/mips/ralink/mt7620.c
-+++ b/arch/mips/ralink/mt7620.c
-@@ -81,7 +81,7 @@ static struct rt2880_pmx_func pcie_rst_g
- };
- static struct rt2880_pmx_func nd_sd_grp[] = {
- 	FUNC("nand", MT7620_GPIO_MODE_NAND, 45, 15),
--	FUNC("sd", MT7620_GPIO_MODE_SD, 45, 15)
-+	FUNC("sd", MT7620_GPIO_MODE_SD, 47, 13)
- };
+--- a/drivers/gpu/drm/ast/ast_main.c
++++ b/drivers/gpu/drm/ast/ast_main.c
+@@ -557,7 +557,8 @@ int ast_driver_unload(struct drm_device
+ 	drm_mode_config_cleanup(dev);
  
- static struct rt2880_pmx_group mt7620a_pinmux_data[] = {
+ 	ast_mm_fini(ast);
+-	pci_iounmap(dev->pdev, ast->ioregs);
++	if (ast->ioregs != ast->regs + AST_IO_MM_OFFSET)
++		pci_iounmap(dev->pdev, ast->ioregs);
+ 	pci_iounmap(dev->pdev, ast->regs);
+ 	kfree(ast);
+ 	return 0;
 
 
