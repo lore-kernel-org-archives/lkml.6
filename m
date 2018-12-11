@@ -7,51 +7,50 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6769BC5CFFE
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:53:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1179DC07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:53:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E3892146D
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:53:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B228B2087F
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:53:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544543635;
-	bh=hYVFHLj7QxO49MOhGwiRsD5BTfppMnnrALpDJLY3ue4=;
+	s=default; t=1544543638;
+	bh=UaFsjiXOaUqlrozTbJrqt1rR7vqB2mRrOxOeNtPE/es=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=g2dI7ioRtbka9LIFOn02jcHUtUv/LpPYmpN/aaVjwtiuncQHqYx4cSstj+6XDlO+2
-	 XAlZ3nsvn1zZpPbyeNP+5WaBCOik/a7zmm943YfNLhRHGOcyATD3ZBKCqJ0ZDYHy3q
-	 q4Z50SYhO3PfbyPwZBHsOsH8GKYM1wwaZidcIP4w=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E3892146D
+	b=lYjSwFpjcaVTQ0bt1juGD8RM0cP5jBDUNPHX/TwnD7JXjN+/bmYAfZ0K6xAWhJzkH
+	 kuaBBCEXRKKptA5DlG+esi3mzVBJdpJUxuLrBTnsjnn7Vc3pdwc6kWtTQ771SSvLiM
+	 IJdq2b/gFIPzm4tbg/VqkHHZbP0951e0xUdDM0Yo=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B228B2087F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730028AbeLKPxy (ORCPT
+        id S1730040AbeLKPx5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 10:53:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42492 "EHLO mail.kernel.org"
+        Tue, 11 Dec 2018 10:53:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42542 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730012AbeLKPxt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:53:49 -0500
+        id S1729586AbeLKPxy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 10:53:54 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E728B2146F;
-        Tue, 11 Dec 2018 15:53:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5C0DB20855;
+        Tue, 11 Dec 2018 15:53:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544543628;
-        bh=hYVFHLj7QxO49MOhGwiRsD5BTfppMnnrALpDJLY3ue4=;
+        s=default; t=1544543633;
+        bh=UaFsjiXOaUqlrozTbJrqt1rR7vqB2mRrOxOeNtPE/es=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wUuTSveY+3y7dZDTcZfbIFRQgSxkJO4alo2xXWF0Bk3vJkToIpU0O7X0G3eDkCRtK
-         3gr3eRr5vc8nNejWFwRdxmMJN4lVkm+oIqSsI/3mu+B6AuRzkKoV0Da5pXsxlY4E+Z
-         A3Rs+7qqZCwedyWS1iArCM0FC4gWn4I2sLw2VSjw=
+        b=d2RuStoPiZvy6T7FbqPD45wMePKZ+be819Zpj3D22JaW7EIUrwpsGzqL47N0jzWxx
+         XLhQpM0Z6yjpOBXe39g0QgmfYq8sbpBlSN/IbEVMeqSBOPZl/28+mHvVf6Hgs7L4vl
+         fmmrlitgpAliqRYCVksWPEULIfhJlpTpHcwG3UM4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Halil Pasic <pasic@linux.ibm.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        Cornelia Huck <cohuck@redhat.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>
-Subject: [PATCH 4.14 41/67] virtio/s390: fix race in ccw_io_helper()
-Date:   Tue, 11 Dec 2018 16:41:41 +0100
-Message-Id: <20181211151632.469737628@linuxfoundation.org>
+        stable@vger.kernel.org, Chuck Lever <chuck.lever@oracle.com>,
+        stable@kernel.org,
+        Trond Myklebust <trond.myklebust@hammerspace.com>
+Subject: [PATCH 4.14 43/67] SUNRPC: Fix leak of krb5p encode pages
+Date:   Tue, 11 Dec 2018 16:41:43 +0100
+Message-Id: <20181211151632.570824813@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181211151630.378216233@linuxfoundation.org>
 References: <20181211151630.378216233@linuxfoundation.org>
@@ -70,79 +69,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Halil Pasic <pasic@linux.ibm.com>
+From: Chuck Lever <chuck.lever@oracle.com>
 
-commit 78b1a52e05c9db11d293342e8d6d8a230a04b4e7 upstream.
+commit 8dae5398ab1ac107b1517e8195ed043d5f422bd0 upstream.
 
-While ccw_io_helper() seems like intended to be exclusive in a sense that
-it is supposed to facilitate I/O for at most one thread at any given
-time, there is actually nothing ensuring that threads won't pile up at
-vcdev->wait_q. If they do, all threads get woken up and see the status
-that belongs to some other request than their own. This can lead to bugs.
-For an example see:
-https://bugs.launchpad.net/ubuntu/+source/linux/+bug/1788432
+call_encode can be invoked more than once per RPC call. Ensure that
+each call to gss_wrap_req_priv does not overwrite pointers to
+previously allocated memory.
 
-This race normally does not cause any problems. The operations provided
-by struct virtio_config_ops are usually invoked in a well defined
-sequence, normally don't fail, and are normally used quite infrequent
-too.
-
-Yet, if some of the these operations are directly triggered via sysfs
-attributes, like in the case described by the referenced bug, userspace
-is given an opportunity to force races by increasing the frequency of the
-given operations.
-
-Let us fix the problem by ensuring, that for each device, we finish
-processing the previous request before starting with a new one.
-
-Signed-off-by: Halil Pasic <pasic@linux.ibm.com>
-Reported-by: Colin Ian King <colin.king@canonical.com>
-Cc: stable@vger.kernel.org
-Message-Id: <20180925121309.58524-3-pasic@linux.ibm.com>
-Signed-off-by: Cornelia Huck <cohuck@redhat.com>
-Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
+Cc: stable@kernel.org
+Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/s390/virtio/virtio_ccw.c |    7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ net/sunrpc/auth_gss/auth_gss.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/drivers/s390/virtio/virtio_ccw.c
-+++ b/drivers/s390/virtio/virtio_ccw.c
-@@ -59,6 +59,7 @@ struct virtio_ccw_device {
- 	unsigned int revision; /* Transport revision */
- 	wait_queue_head_t wait_q;
- 	spinlock_t lock;
-+	struct mutex io_lock; /* Serializes I/O requests */
- 	struct list_head virtqueues;
- 	unsigned long indicators;
- 	unsigned long indicators2;
-@@ -299,6 +300,7 @@ static int ccw_io_helper(struct virtio_c
- 	unsigned long flags;
- 	int flag = intparm & VIRTIO_CCW_INTPARM_MASK;
- 
-+	mutex_lock(&vcdev->io_lock);
- 	do {
- 		spin_lock_irqsave(get_ccwdev_lock(vcdev->cdev), flags);
- 		ret = ccw_device_start(vcdev->cdev, ccw, intparm, 0, 0);
-@@ -311,7 +313,9 @@ static int ccw_io_helper(struct virtio_c
- 		cpu_relax();
- 	} while (ret == -EBUSY);
- 	wait_event(vcdev->wait_q, doing_io(vcdev, flag) == 0);
--	return ret ? ret : vcdev->err;
-+	ret = ret ? ret : vcdev->err;
-+	mutex_unlock(&vcdev->io_lock);
-+	return ret;
+--- a/net/sunrpc/auth_gss/auth_gss.c
++++ b/net/sunrpc/auth_gss/auth_gss.c
+@@ -1736,6 +1736,7 @@ priv_release_snd_buf(struct rpc_rqst *rq
+ 	for (i=0; i < rqstp->rq_enc_pages_num; i++)
+ 		__free_page(rqstp->rq_enc_pages[i]);
+ 	kfree(rqstp->rq_enc_pages);
++	rqstp->rq_release_snd_buf = NULL;
  }
  
- static void virtio_ccw_drop_indicator(struct virtio_ccw_device *vcdev,
-@@ -1256,6 +1260,7 @@ static int virtio_ccw_online(struct ccw_
- 	init_waitqueue_head(&vcdev->wait_q);
- 	INIT_LIST_HEAD(&vcdev->virtqueues);
- 	spin_lock_init(&vcdev->lock);
-+	mutex_init(&vcdev->io_lock);
+ static int
+@@ -1744,6 +1745,9 @@ alloc_enc_pages(struct rpc_rqst *rqstp)
+ 	struct xdr_buf *snd_buf = &rqstp->rq_snd_buf;
+ 	int first, last, i;
  
- 	spin_lock_irqsave(get_ccwdev_lock(cdev), flags);
- 	dev_set_drvdata(&cdev->dev, vcdev);
++	if (rqstp->rq_release_snd_buf)
++		rqstp->rq_release_snd_buf(rqstp);
++
+ 	if (snd_buf->page_len == 0) {
+ 		rqstp->rq_enc_pages_num = 0;
+ 		return 0;
 
 
