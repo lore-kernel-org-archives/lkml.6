@@ -2,313 +2,104 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E493DC6783B
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 22:24:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9287FC67839
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 22:25:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A334B2084C
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 22:24:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A334B2084C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com
+	by mail.kernel.org (Postfix) with ESMTP id 589AB2084C
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 22:25:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mPRQjjPK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 589AB2084C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726327AbeLKWYx (ORCPT
+        id S1726415AbeLKWZF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 17:24:53 -0500
-Received: from mail.hallyn.com ([178.63.66.53]:59758 "EHLO mail.hallyn.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726183AbeLKWYx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 17:24:53 -0500
-Received: by mail.hallyn.com (Postfix, from userid 1001)
-        id 390DFC32; Tue, 11 Dec 2018 16:24:49 -0600 (CST)
-Date:   Tue, 11 Dec 2018 16:24:49 -0600
-From:   "Serge E. Hallyn" <serge@hallyn.com>
-To:     Tycho Andersen <tycho@tycho.ws>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Oleg Nesterov <oleg@redhat.com>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Christian Brauner <christian@brauner.io>,
-        Tyler Hicks <tyhicks@canonical.com>,
-        Akihiro Suda <suda.akihiro@lab.ntt.co.jp>,
-        Aleksa Sarai <asarai@suse.de>, Jann Horn <jannh@google.com>,
-        linux-kernel@vger.kernel.org,
-        containers@lists.linux-foundation.org, linux-api@vger.kernel.org
-Subject: Re: [PATCH v10 4/4] samples: add an example of seccomp user trap
-Message-ID: <20181211222449.GA937@mail.hallyn.com>
-References: <20181209182414.30862-1-tycho@tycho.ws>
- <20181209182414.30862-5-tycho@tycho.ws>
+        Tue, 11 Dec 2018 17:25:05 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:45214 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726215AbeLKWZF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 17:25:05 -0500
+Received: by mail-pl1-f193.google.com with SMTP id a14so7575066plm.12
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 14:25:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=0QRHmOX9pOxuQEveIxHJT8YsVZ8O9ehPXeitj8Ev49Q=;
+        b=mPRQjjPKzEJ0PD4XUPmHNHtc/FmuH01KydfsgMF9KYjcJWV3GmwhgoewBPNaw6aSph
+         fQnAJ3GsDPqugwRCMkZWmnqxmhbgTYAxfH1wYIbU73uzkudkpI+O8JRKs9vr+5ZZZmSE
+         f7yd0F7WLyDRsRp8sEmEeRlTfPAMzTyYQKty5EErKpb4lWzA2zqdCAeJI5J56V60Fpff
+         eZhJq4myLL88ZCpvkSkChZ4jvFL62sVBsjJjOFwgbg/tubge8qVjxloU1kpNHdy1Ty6L
+         Qv80YGnXx9mkXj5xTaBldSsgEk7M0+rdPR5TVsSJTyZmgzD4+6vaX6RlJ5jcCzCvQ5KH
+         0IQw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=0QRHmOX9pOxuQEveIxHJT8YsVZ8O9ehPXeitj8Ev49Q=;
+        b=d/cgyAPACQrCxai1rEyiX0xCek7TiNbneGDc6Kv4aGgCMLgkgjltrI7eWHj6hN2efA
+         FJlPiI4xjythIqnak+rPMOZqLwMQbicKPm2fvoOy0M9PWWwnArt1L48ZIqOCJelm0R8m
+         Dy7aVTHos1k5Coy3aNSyJNn8GDCI8sk/9TTP/BRCts+61AmszXM61uiC+qvEpu5dEo9y
+         iGeYuCvc2jlDiv2RX5fWmM3WVK7NNKorveng0N2mBZYqVw4mcr3M6zn5MHPdzbosrfLM
+         WKS9dH/X+x013+t/QbsjyE13A+ThhST7v2T1LWKaTI5DGqJyyCDDL1Q7khig9e10Jpri
+         GcXA==
+X-Gm-Message-State: AA+aEWYu8MIDfDGE1URUeUfbkXL7xnFQu55Eb49SbT6bYeH5OatJr1EO
+        4MejbqG/z9+SwsDiwFhhQOBs+w==
+X-Google-Smtp-Source: AFSGD/UcBtYJ2hFGRrH/TBxT4L5V8OWnQy+19V3Ut2KzmlPUmLugSRbbAaTkHiIgbbsOBuokTJYJJQ==
+X-Received: by 2002:a17:902:d68c:: with SMTP id v12mr17411398ply.4.1544567104320;
+        Tue, 11 Dec 2018 14:25:04 -0800 (PST)
+Received: from [2620:15c:17:3:3a5:23a7:5e32:4598] ([2620:15c:17:3:3a5:23a7:5e32:4598])
+        by smtp.gmail.com with ESMTPSA id p67sm31082581pfi.85.2018.12.11.14.25.03
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 11 Dec 2018 14:25:03 -0800 (PST)
+Date:   Tue, 11 Dec 2018 14:25:02 -0800 (PST)
+From:   David Rientjes <rientjes@google.com>
+X-X-Sender: rientjes@chino.kir.corp.google.com
+To:     Arnd Bergmann <arnd@arndb.de>
+cc:     =?UTF-8?Q?J=C3=A9r=C3=B4me_Glisse?= <jglisse@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Michal Hocko <mhocko@suse.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] mm/mmu_notifier: fix mmu_notifier_range_init warning
+In-Reply-To: <CAK8P3a1yn7RAp7Q29dx5Rcb0mCoDpcHPzxSGqKHdgfJd+=iiNw@mail.gmail.com>
+Message-ID: <alpine.DEB.2.21.1812111424400.124369@chino.kir.corp.google.com>
+References: <20181211200526.3868586-1-arnd@arndb.de> <20181211201909.GA6478@redhat.com> <alpine.DEB.2.21.1812111310320.87855@chino.kir.corp.google.com> <20181211213636.GB6478@redhat.com> <alpine.DEB.2.21.1812111341280.97190@chino.kir.corp.google.com>
+ <CAK8P3a1yn7RAp7Q29dx5Rcb0mCoDpcHPzxSGqKHdgfJd+=iiNw@mail.gmail.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181209182414.30862-5-tycho@tycho.ws>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Dec 09, 2018 at 11:24:14AM -0700, Tycho Andersen wrote:
-> The idea here is just to give a demonstration of how one could safely use
-> the SECCOMP_RET_USER_NOTIF feature to do mount policies. This particular
-> policy is (as noted in the comment) not very interesting, but it serves to
-> illustrate how one might apply a policy dodging the various TOCTOU issues.
-> 
-> Signed-off-by: Tycho Andersen <tycho@tycho.ws>
-> CC: Kees Cook <keescook@chromium.org>
-> CC: Andy Lutomirski <luto@amacapital.net>
-> CC: Oleg Nesterov <oleg@redhat.com>
-> CC: Eric W. Biederman <ebiederm@xmission.com>
-> CC: "Serge E. Hallyn" <serge@hallyn.com>
-> CC: Christian Brauner <christian@brauner.io>
-> CC: Tyler Hicks <tyhicks@canonical.com>
-> CC: Akihiro Suda <suda.akihiro@lab.ntt.co.jp>
-> ---
-> v5: new in v5
-> v7: updates for v7 API changes
-> v8: * add some more comments about what's happening in main() (Kees)
->     * move from ptrace API to SECCOMP_FILTER_FLAG_NEW_LISTENER
-> v9: * s/mknod/mount in error message
->     * switch to the SECCOMP_GET_NOTIF_SIZES API
->     * add a note about getting ENOENT from SECCOMP_IOCTL_NOTIF_SEND
-> ---
->  samples/seccomp/.gitignore  |   1 +
->  samples/seccomp/Makefile    |   7 +-
->  samples/seccomp/user-trap.c | 375 ++++++++++++++++++++++++++++++++++++
->  3 files changed, 382 insertions(+), 1 deletion(-)
-> 
-> diff --git a/samples/seccomp/.gitignore b/samples/seccomp/.gitignore
-> index 78fb78184291..d1e2e817d556 100644
-> --- a/samples/seccomp/.gitignore
-> +++ b/samples/seccomp/.gitignore
-> @@ -1,3 +1,4 @@
->  bpf-direct
->  bpf-fancy
->  dropper
-> +user-trap
-> diff --git a/samples/seccomp/Makefile b/samples/seccomp/Makefile
-> index cf34ff6b4065..4920903c8009 100644
-> --- a/samples/seccomp/Makefile
-> +++ b/samples/seccomp/Makefile
-> @@ -1,6 +1,6 @@
->  # SPDX-License-Identifier: GPL-2.0
->  ifndef CROSS_COMPILE
-> -hostprogs-$(CONFIG_SAMPLE_SECCOMP) := bpf-fancy dropper bpf-direct
-> +hostprogs-$(CONFIG_SAMPLE_SECCOMP) := bpf-fancy dropper bpf-direct user-trap
->  
->  HOSTCFLAGS_bpf-fancy.o += -I$(objtree)/usr/include
->  HOSTCFLAGS_bpf-fancy.o += -idirafter $(objtree)/include
-> @@ -16,6 +16,10 @@ HOSTCFLAGS_bpf-direct.o += -I$(objtree)/usr/include
->  HOSTCFLAGS_bpf-direct.o += -idirafter $(objtree)/include
->  bpf-direct-objs := bpf-direct.o
->  
-> +HOSTCFLAGS_user-trap.o += -I$(objtree)/usr/include
-> +HOSTCFLAGS_user-trap.o += -idirafter $(objtree)/include
-> +user-trap-objs := user-trap.o
-> +
->  # Try to match the kernel target.
->  ifndef CONFIG_64BIT
->  
-> @@ -33,6 +37,7 @@ HOSTCFLAGS_bpf-fancy.o += $(MFLAG)
->  HOSTLDLIBS_bpf-direct += $(MFLAG)
->  HOSTLDLIBS_bpf-fancy += $(MFLAG)
->  HOSTLDLIBS_dropper += $(MFLAG)
-> +HOSTLDLIBS_user-trap += $(MFLAG)
->  endif
->  always := $(hostprogs-m)
->  endif
-> diff --git a/samples/seccomp/user-trap.c b/samples/seccomp/user-trap.c
-> new file mode 100644
-> index 000000000000..61267cb59c8e
-> --- /dev/null
-> +++ b/samples/seccomp/user-trap.c
-> @@ -0,0 +1,375 @@
-> +#include <signal.h>
-> +#include <stdio.h>
-> +#include <stdlib.h>
-> +#include <unistd.h>
-> +#include <errno.h>
-> +#include <fcntl.h>
-> +#include <string.h>
-> +#include <stddef.h>
-> +#include <sys/sysmacros.h>
-> +#include <sys/types.h>
-> +#include <sys/wait.h>
-> +#include <sys/socket.h>
-> +#include <sys/stat.h>
-> +#include <sys/mman.h>
-> +#include <sys/syscall.h>
-> +#include <sys/user.h>
-> +#include <sys/ioctl.h>
-> +#include <sys/ptrace.h>
-> +#include <sys/mount.h>
-> +#include <linux/limits.h>
-> +#include <linux/filter.h>
-> +#include <linux/seccomp.h>
-> +
-> +#define ARRAY_SIZE(x) (sizeof(x) / sizeof(*(x)))
-> +
-> +static int seccomp(unsigned int op, unsigned int flags, void *args)
-> +{
-> +	errno = 0;
-> +	return syscall(__NR_seccomp, op, flags, args);
-> +}
-> +
-> +static int send_fd(int sock, int fd)
-> +{
-> +	struct msghdr msg = {};
-> +	struct cmsghdr *cmsg;
-> +	char buf[CMSG_SPACE(sizeof(int))] = {0}, c = 'c';
-> +	struct iovec io = {
-> +		.iov_base = &c,
-> +		.iov_len = 1,
-> +	};
-> +
-> +	msg.msg_iov = &io;
-> +	msg.msg_iovlen = 1;
-> +	msg.msg_control = buf;
-> +	msg.msg_controllen = sizeof(buf);
-> +	cmsg = CMSG_FIRSTHDR(&msg);
-> +	cmsg->cmsg_level = SOL_SOCKET;
-> +	cmsg->cmsg_type = SCM_RIGHTS;
-> +	cmsg->cmsg_len = CMSG_LEN(sizeof(int));
-> +	*((int *)CMSG_DATA(cmsg)) = fd;
-> +	msg.msg_controllen = cmsg->cmsg_len;
-> +
-> +	if (sendmsg(sock, &msg, 0) < 0) {
-> +		perror("sendmsg");
-> +		return -1;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int recv_fd(int sock)
-> +{
-> +	struct msghdr msg = {};
-> +	struct cmsghdr *cmsg;
-> +	char buf[CMSG_SPACE(sizeof(int))] = {0}, c = 'c';
-> +	struct iovec io = {
-> +		.iov_base = &c,
-> +		.iov_len = 1,
-> +	};
-> +
-> +	msg.msg_iov = &io;
-> +	msg.msg_iovlen = 1;
-> +	msg.msg_control = buf;
-> +	msg.msg_controllen = sizeof(buf);
-> +
-> +	if (recvmsg(sock, &msg, 0) < 0) {
-> +		perror("recvmsg");
-> +		return -1;
-> +	}
-> +
-> +	cmsg = CMSG_FIRSTHDR(&msg);
-> +
-> +	return *((int *)CMSG_DATA(cmsg));
-> +}
-> +
-> +static int user_trap_syscall(int nr, unsigned int flags)
-> +{
-> +	struct sock_filter filter[] = {
-> +		BPF_STMT(BPF_LD+BPF_W+BPF_ABS,
-> +			offsetof(struct seccomp_data, nr)),
-> +		BPF_JUMP(BPF_JMP+BPF_JEQ+BPF_K, nr, 0, 1),
-> +		BPF_STMT(BPF_RET+BPF_K, SECCOMP_RET_USER_NOTIF),
-> +		BPF_STMT(BPF_RET+BPF_K, SECCOMP_RET_ALLOW),
-> +	};
-> +
-> +	struct sock_fprog prog = {
-> +		.len = (unsigned short)ARRAY_SIZE(filter),
-> +		.filter = filter,
-> +	};
-> +
-> +	return seccomp(SECCOMP_SET_MODE_FILTER, flags, &prog);
-> +}
-> +
-> +static int handle_req(struct seccomp_notif *req,
-> +		      struct seccomp_notif_resp *resp, int listener)
-> +{
-> +	char path[PATH_MAX], source[PATH_MAX], target[PATH_MAX];
-> +	int ret = -1, mem;
-> +
-> +	resp->id = req->id;
-> +	resp->error = -EPERM;
-> +	resp->val = 0;
-> +
-> +	if (req->data.nr != __NR_mount) {
-> +		fprintf(stderr, "huh? trapped something besides mount? %d\n", req->data.nr);
-> +		return -1;
-> +	}
-> +
-> +	/* Only allow bind mounts. */
-> +	if (!(req->data.args[3] & MS_BIND))
-> +		return 0;
-> +
-> +	/*
-> +	 * Ok, let's read the task's memory to see where they wanted their
-> +	 * mount to go.
-> +	 */
-> +	snprintf(path, sizeof(path), "/proc/%d/mem", req->pid);
-> +	mem = open(path, O_RDONLY);
-> +	if (mem < 0) {
-> +		perror("open mem");
-> +		return -1;
-> +	}
-> +
-> +	/*
-> +	 * Now we avoid a TOCTOU: we referred to a pid by its pid, but since
-> +	 * the pid that made the syscall may have died, we need to confirm that
-> +	 * the pid is still valid after we open its /proc/pid/mem file. We can
-> +	 * ask the listener fd this as follows.
-> +	 *
-> +	 * Note that this check should occur *after* any task-specific
-> +	 * resources are opened, to make sure that the task has not died and
-> +	 * we're not wrongly reading someone else's state in order to make
-> +	 * decisions.
-> +	 */
-> +	if (ioctl(listener, SECCOMP_IOCTL_NOTIF_ID_VALID, &req->id) < 0) {
-> +		fprintf(stderr, "task died before we could map its memory\n");
-> +		goto out;
-> +	}
-> +
-> +	/*
-> +	 * Phew, we've got the right /proc/pid/mem. Now we can read it. Note
-> +	 * that to avoid another TOCTOU, we should read all of the pointer args
-> +	 * before we decide to allow the syscall.
-> +	 */
-> +	if (lseek(mem, req->data.args[0], SEEK_SET) < 0) {
-> +		perror("seek");
-> +		goto out;
-> +	}
-> +
-> +	ret = read(mem, source, sizeof(source));
-> +	if (ret < 0) {
-> +		perror("read");
-> +		goto out;
-> +	}
-> +
-> +	if (lseek(mem, req->data.args[1], SEEK_SET) < 0) {
-> +		perror("seek");
-> +		goto out;
-> +	}
-> +
-> +	ret = read(mem, target, sizeof(target));
-> +	if (ret < 0) {
-> +		perror("read");
-> +		goto out;
-> +	}
-> +
-> +	/*
-> +	 * Our policy is to only allow bind mounts inside /tmp. This isn't very
-> +	 * interesting, because we could do unprivlieged bind mounts with user
-> +	 * namespaces already, but you get the idea.
-> +	 */
-> +	if (!strncmp(source, "/tmp", 4) && !strncmp(target, "/tmp", 4)) {
+On Tue, 11 Dec 2018, Arnd Bergmann wrote:
 
-Of course the host could have a /tmproot or somesuch, so you might want to
-check the first 5 characters :)
+> > Hmm, strange that Arnd's build failure is only reporting about an unused
+> > variable instead of MMU_NOTIFY_CLEAR being undefined :/
+> >
+> > I think this should be done so that anybody using
+> > mmu_notifier_range_init() doesn't need to worry about the implications of
+> > *any* unused formal parameter as a result of how the #define is formed:
+> 
+> Your patch below is more or less what I tried at first, and that resulted
+> in another build failure for
+> 
+> mm/hugetlb.c:   mmu_notifier_range_init(&range, mm, start, end,
+> MMU_NOTIFY_CLEAR);
+> mm/hugetlb.c-   adjust_range_if_pmd_sharing_possible(vma,
+> &range.start, &range.end);
+> 
+> where range.end refers to a nonexisting member of range.
+> 
+
+Isn't that separate?  It seems like there is a strict dependency that 
+CONFIG_HUGETLBFS has on CONFIG_MMU_NOTIFIER.
