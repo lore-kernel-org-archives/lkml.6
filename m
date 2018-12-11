@@ -7,49 +7,50 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7AFCC5CFFE
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:07:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BF34C07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:07:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F2A52081B
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:07:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D69602084E
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:07:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544544448;
-	bh=43OOgzE87EcSaQ0vt6uxA2NgEVK8/ve5p/wCTPUwOCA=;
+	s=default; t=1544544452;
+	bh=iKyIdUReulk93s5G2N8AKpG+gE54DrUqwMVZ13fxAXA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=1kxxHAyMvFLtQe8CoZE43WJU8TY+2eVW4ez/DhID4YKre/kaSfwaxb3ndce7Oj4Z4
-	 WRa7LdfgmfkP4p4Fvg0755b6sv0RCkkfA2Zjs+AoiZxkkWOFI8o1f6EjH62jE3b81+
-	 dCqe6xO7IJMD70TEZZGeBVPl2PJiIFBPNuY67d8s=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F2A52081B
+	b=Bv3rnzcZPX/nDA8OnlvkkKOCLp8msvKM9Rniuh0Gyd4tSUEvFyWh4z7iKR6T9ReI/
+	 rXgYJSOOJdobjU1yKuCrX7cW2CLkqNVaJAG6n9Ix4V0jiTClC58LyFQ28U0v2W5+9U
+	 e/+7oSOCw9dcv9QlwBQsVozRd2++PpZXM05lq9Yc=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D69602084E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729541AbeLKPxm (ORCPT
+        id S1730579AbeLKQHa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 10:53:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42350 "EHLO mail.kernel.org"
+        Tue, 11 Dec 2018 11:07:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42424 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729974AbeLKPxi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:53:38 -0500
+        id S1729993AbeLKPxn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 10:53:43 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6C1672146F;
-        Tue, 11 Dec 2018 15:53:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A5AD720855;
+        Tue, 11 Dec 2018 15:53:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544543617;
-        bh=43OOgzE87EcSaQ0vt6uxA2NgEVK8/ve5p/wCTPUwOCA=;
+        s=default; t=1544543623;
+        bh=iKyIdUReulk93s5G2N8AKpG+gE54DrUqwMVZ13fxAXA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mJukAg1IbU4oL8VilmeD/SyhWCOPh3uYVTv5uokvExWxUraUG9idQScbOXDi40KSi
-         7VjBv/oNcts4jrp6UlP/k+G5u2P405j1ajmV/sh0EFsxYuQZlQSNjYpQ3BbQvwlbze
-         XvY9MzMacyhaTMHmAFTsC3ltMCFSdLBor6ZxQllI=
+        b=0QYvauP9kaLk+vNlw7xeHlv0YwCU3HgufE0prFPRCs01f67KtQv9r5viE1Mkobzkv
+         F/E2PONbMjLVIO0GWN3nOa/3wJcsgPgXH2f0+7ZLaCFSeSXDWeCgz67eZRojWHfJVF
+         DbVKOj5IzltA5FqCm0yeGHgVi4dW3jWsxt3hefVU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>,
-        Jeremy Cline <jcline@redhat.com>
-Subject: [PATCH 4.14 39/67] ALSA: hda/realtek - Fix speaker output regression on Thinkpad T570
-Date:   Tue, 11 Dec 2018 16:41:39 +0100
-Message-Id: <20181211151632.375331752@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
+        Johannes Berg <johannes.berg@intel.com>
+Subject: [PATCH 4.14 67/67] mac80211: ignore NullFunc frames in the duplicate detection
+Date:   Tue, 11 Dec 2018 16:42:07 +0100
+Message-Id: <20181211151634.420430885@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181211151630.378216233@linuxfoundation.org>
 References: <20181211151630.378216233@linuxfoundation.org>
@@ -68,58 +69,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
 
-commit 54947cd64c1b8290f64bb2958e343c07270e3a58 upstream.
+commit 990d71846a0b7281bd933c34d734e6afc7408e7e upstream.
 
-We've got a regression report for some Thinkpad models (at least
-T570s) which shows the too low speaker output volume.  The bisection
-leaded to the commit 61fcf8ece9b6 ("ALSA: hda/realtek - Enable Thinkpad
-Dock device for ALC298 platform"), and it's basically adding the two
-pin configurations for the dock, and looks harmless.
+NullFunc packets should never be duplicate just like
+QoS-NullFunc packets.
 
-The real culprit seems, though, that the DAC assignment for the
-speaker pin is implicitly assumed on these devices, i.e. pin NID 0x14
-to be coupled with DAC NID 0x03.  When more pins are configured by the
-commit above, the auto-parser changes the DAC assignment, and this
-resulted in the regression.
+We saw a client that enters / exits power save with
+NullFunc frames (and not with QoS-NullFunc) despite the
+fact that the association supports HT.
+This specific client also re-uses a non-zero sequence number
+for different NullFunc frames.
+At some point, the client had to send a retransmission of
+the NullFunc frame and we dropped it, leading to a
+misalignment in the power save state.
+Fix this by never consider a NullFunc frame as duplicate,
+just like we do for QoS NullFunc frames.
 
-As a workaround, just provide the fixed pin / DAC mapping table for
-this Thinkpad fixup function.  It's no generic solution, but the
-problem itself is pretty much device-specific, so must be good
-enough.
+This fixes https://bugzilla.kernel.org/show_bug.cgi?id=201449
 
-Bugzilla: https://bugzilla.redhat.com/show_bug.cgi?id=1554304
-Fixes: 61fcf8ece9b6 ("ALSA: hda/realtek - Enable Thinkpad Dock device for ALC298 platform")
-Cc: <stable@vger.kernel.org>
-Reported-and-tested-by: Jeremy Cline <jcline@redhat.com>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+CC: <stable@vger.kernel.org>
+Signed-off-by: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/pci/hda/patch_realtek.c |    9 +++++++++
- 1 file changed, 9 insertions(+)
+ net/mac80211/rx.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/sound/pci/hda/patch_realtek.c
-+++ b/sound/pci/hda/patch_realtek.c
-@@ -4863,9 +4863,18 @@ static void alc_fixup_tpt470_dock(struct
- 		{ 0x19, 0x21a11010 }, /* dock mic */
- 		{ }
- 	};
-+	/* Assure the speaker pin to be coupled with DAC NID 0x03; otherwise
-+	 * the speaker output becomes too low by some reason on Thinkpads with
-+	 * ALC298 codec
-+	 */
-+	static hda_nid_t preferred_pairs[] = {
-+		0x14, 0x03, 0x17, 0x02, 0x21, 0x02,
-+		0
-+	};
- 	struct alc_spec *spec = codec->spec;
+--- a/net/mac80211/rx.c
++++ b/net/mac80211/rx.c
+@@ -1254,6 +1254,7 @@ ieee80211_rx_h_check_dup(struct ieee8021
+ 		return RX_CONTINUE;
  
- 	if (action == HDA_FIXUP_ACT_PRE_PROBE) {
-+		spec->gen.preferred_dacs = preferred_pairs;
- 		spec->parse_flags = HDA_PINCFG_NO_HP_FIXUP;
- 		snd_hda_apply_pincfgs(codec, pincfgs);
- 	} else if (action == HDA_FIXUP_ACT_INIT) {
+ 	if (ieee80211_is_ctl(hdr->frame_control) ||
++	    ieee80211_is_nullfunc(hdr->frame_control) ||
+ 	    ieee80211_is_qos_nullfunc(hdr->frame_control) ||
+ 	    is_multicast_ether_addr(hdr->addr1))
+ 		return RX_CONTINUE;
 
 
