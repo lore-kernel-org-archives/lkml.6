@@ -2,55 +2,55 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F70FC5CFFE
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:58:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8102BC07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:58:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1AF2220855
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:58:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4757520855
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:58:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544543920;
-	bh=X3k0x04FPCOy37LjcYQiV90JjboTVqFTm1BE3JV2DSw=;
+	s=default; t=1544543926;
+	bh=Q5TL262bfmcDZYUgkosnM5tsS6icbg6FqRQFqfpCIoc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Z10Uf7SBPNKuvPJ8FfD86ia0QPu/a8V78YO4IxV7j+cs5DKtJx0KbhH3gixICMsAu
-	 NeTB7FN8Hc8qBaTjHIvvJkzjGQh0ALYoBi/KsGToxN3+S7engTTwNxKOYlt4lveakx
-	 5f9tiO0hhtT+iNtx8zFFdpKeL9tY+YxKnXVW3dGA=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1AF2220855
+	b=P/uH9uh7jeb7uCkW76yIfanRgdnqW2l7mjbgmXLB9N2HQFo3ErS8jaVMS8hINT+Q9
+	 J52PyIJxufqI3vl4LXi/QiK7DvkzDnJs+X32WxH+AA+I5ceAWY48cScd7mkyNs+Ntt
+	 hb+N6LBh2Q1fdQ0ZmdK0PvqfYK/URxq4DBATPK54=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4757520855
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731041AbeLKP6i (ORCPT
+        id S1731077AbeLKP6p (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 10:58:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47982 "EHLO mail.kernel.org"
+        Tue, 11 Dec 2018 10:58:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48244 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727016AbeLKP6b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:58:31 -0500
+        id S1731059AbeLKP6n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 10:58:43 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9781C205C9;
-        Tue, 11 Dec 2018 15:58:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7B3D120855;
+        Tue, 11 Dec 2018 15:58:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544543910;
-        bh=X3k0x04FPCOy37LjcYQiV90JjboTVqFTm1BE3JV2DSw=;
+        s=default; t=1544543923;
+        bh=Q5TL262bfmcDZYUgkosnM5tsS6icbg6FqRQFqfpCIoc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pODLwA3LWjfUCAb3F4Fzw4yVSJzdj2HWZOvsODOlJCjO+6y+rpN/KhZ0do/1q28Sh
-         nW35ZaxEnwNL4MwYfnXiyGFMQa6kvFq6kD0oTEipIZ1c92Igdm+Skxw804Ktsb8ylq
-         ZgFAeuL1UuhL+8UW4SH1SpRTrrrtfH2ubYYj0KW4=
+        b=DJHv33pIf9Cr22mxGEjoqwBxNWhSbnvP+TKUxKD+K1HYYAWycQFXMivdU+eL/Jqis
+         lmzAgXbBR701JTYOzDYIMiIh4xpNlXybnSsiUqqtzGEsZHjWIevk8jyOVO4YMV7dKV
+         s9+NRI/v3pLl5JgLaKtHHo0LKsrdT+hD0287b044=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Patrick Geary <patrickg@supermicro.com>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        Dan Williams <dan.j.williams@intel.com>
-Subject: [PATCH 4.19 110/118] libnvdimm, pfn: Pad pfn namespaces relative to other regions
-Date:   Tue, 11 Dec 2018 16:42:09 +0100
-Message-Id: <20181211151648.704393916@linuxfoundation.org>
+        stable@vger.kernel.org, Chuck Lever <chuck.lever@oracle.com>,
+        stable@kernel.org,
+        Trond Myklebust <trond.myklebust@hammerspace.com>
+Subject: [PATCH 4.19 081/118] SUNRPC: Fix leak of krb5p encode pages
+Date:   Tue, 11 Dec 2018 16:41:40 +0100
+Message-Id: <20181211151647.538663339@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181211151644.216668863@linuxfoundation.org>
 References: <20181211151644.216668863@linuxfoundation.org>
@@ -69,194 +69,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dan Williams <dan.j.williams@intel.com>
+From: Chuck Lever <chuck.lever@oracle.com>
 
-commit ae86cbfef3818300f1972e52f67a93211acb0e24 upstream.
+commit 8dae5398ab1ac107b1517e8195ed043d5f422bd0 upstream.
 
-Commit cfe30b872058 "libnvdimm, pmem: adjust for section collisions with
-'System RAM'" enabled Linux to workaround occasions where platform
-firmware arranges for "System RAM" and "Persistent Memory" to collide
-within a single section boundary. Unfortunately, as reported in this
-issue [1], platform firmware can inflict the same collision between
-persistent memory regions.
+call_encode can be invoked more than once per RPC call. Ensure that
+each call to gss_wrap_req_priv does not overwrite pointers to
+previously allocated memory.
 
-The approach of interrogating iomem_resource does not work in this
-case because platform firmware may merge multiple regions into a single
-iomem_resource range. Instead provide a method to interrogate regions
-that share the same parent bus.
-
-This is a stop-gap until the core-MM can grow support for hotplug on
-sub-section boundaries.
-
-[1]: https://github.com/pmem/ndctl/issues/76
-
-Fixes: cfe30b872058 ("libnvdimm, pmem: adjust for section collisions with...")
-Cc: <stable@vger.kernel.org>
-Reported-by: Patrick Geary <patrickg@supermicro.com>
-Tested-by: Patrick Geary <patrickg@supermicro.com>
-Reviewed-by: Vishal Verma <vishal.l.verma@intel.com>
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
+Cc: stable@kernel.org
+Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/nvdimm/nd-core.h     |    2 +
- drivers/nvdimm/pfn_devs.c    |   64 ++++++++++++++++++++++++-------------------
- drivers/nvdimm/region_devs.c |   41 +++++++++++++++++++++++++++
- 3 files changed, 80 insertions(+), 27 deletions(-)
+ net/sunrpc/auth_gss/auth_gss.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/drivers/nvdimm/nd-core.h
-+++ b/drivers/nvdimm/nd-core.h
-@@ -112,6 +112,8 @@ resource_size_t nd_pmem_available_dpa(st
- 		struct nd_mapping *nd_mapping, resource_size_t *overlap);
- resource_size_t nd_blk_available_dpa(struct nd_region *nd_region);
- resource_size_t nd_region_available_dpa(struct nd_region *nd_region);
-+int nd_region_conflict(struct nd_region *nd_region, resource_size_t start,
-+		resource_size_t size);
- resource_size_t nvdimm_allocated_dpa(struct nvdimm_drvdata *ndd,
- 		struct nd_label_id *label_id);
- int alias_dpa_busy(struct device *dev, void *data);
---- a/drivers/nvdimm/pfn_devs.c
-+++ b/drivers/nvdimm/pfn_devs.c
-@@ -590,14 +590,47 @@ static u64 phys_pmem_align_down(struct n
- 			ALIGN_DOWN(phys, nd_pfn->align));
+--- a/net/sunrpc/auth_gss/auth_gss.c
++++ b/net/sunrpc/auth_gss/auth_gss.c
+@@ -1768,6 +1768,7 @@ priv_release_snd_buf(struct rpc_rqst *rq
+ 	for (i=0; i < rqstp->rq_enc_pages_num; i++)
+ 		__free_page(rqstp->rq_enc_pages[i]);
+ 	kfree(rqstp->rq_enc_pages);
++	rqstp->rq_release_snd_buf = NULL;
  }
  
-+/*
-+ * Check if pmem collides with 'System RAM', or other regions when
-+ * section aligned.  Trim it accordingly.
-+ */
-+static void trim_pfn_device(struct nd_pfn *nd_pfn, u32 *start_pad, u32 *end_trunc)
-+{
-+	struct nd_namespace_common *ndns = nd_pfn->ndns;
-+	struct nd_namespace_io *nsio = to_nd_namespace_io(&ndns->dev);
-+	struct nd_region *nd_region = to_nd_region(nd_pfn->dev.parent);
-+	const resource_size_t start = nsio->res.start;
-+	const resource_size_t end = start + resource_size(&nsio->res);
-+	resource_size_t adjust, size;
-+
-+	*start_pad = 0;
-+	*end_trunc = 0;
-+
-+	adjust = start - PHYS_SECTION_ALIGN_DOWN(start);
-+	size = resource_size(&nsio->res) + adjust;
-+	if (region_intersects(start - adjust, size, IORESOURCE_SYSTEM_RAM,
-+				IORES_DESC_NONE) == REGION_MIXED
-+			|| nd_region_conflict(nd_region, start - adjust, size))
-+		*start_pad = PHYS_SECTION_ALIGN_UP(start) - start;
-+
-+	/* Now check that end of the range does not collide. */
-+	adjust = PHYS_SECTION_ALIGN_UP(end) - end;
-+	size = resource_size(&nsio->res) + adjust;
-+	if (region_intersects(start, size, IORESOURCE_SYSTEM_RAM,
-+				IORES_DESC_NONE) == REGION_MIXED
-+			|| !IS_ALIGNED(end, nd_pfn->align)
-+			|| nd_region_conflict(nd_region, start, size + adjust))
-+		*end_trunc = end - phys_pmem_align_down(nd_pfn, end);
-+}
-+
- static int nd_pfn_init(struct nd_pfn *nd_pfn)
- {
- 	u32 dax_label_reserve = is_nd_dax(&nd_pfn->dev) ? SZ_128K : 0;
- 	struct nd_namespace_common *ndns = nd_pfn->ndns;
--	u32 start_pad = 0, end_trunc = 0;
-+	struct nd_namespace_io *nsio = to_nd_namespace_io(&ndns->dev);
- 	resource_size_t start, size;
--	struct nd_namespace_io *nsio;
- 	struct nd_region *nd_region;
-+	u32 start_pad, end_trunc;
- 	struct nd_pfn_sb *pfn_sb;
- 	unsigned long npfns;
- 	phys_addr_t offset;
-@@ -629,30 +662,7 @@ static int nd_pfn_init(struct nd_pfn *nd
+ static int
+@@ -1776,6 +1777,9 @@ alloc_enc_pages(struct rpc_rqst *rqstp)
+ 	struct xdr_buf *snd_buf = &rqstp->rq_snd_buf;
+ 	int first, last, i;
  
- 	memset(pfn_sb, 0, sizeof(*pfn_sb));
- 
--	/*
--	 * Check if pmem collides with 'System RAM' when section aligned and
--	 * trim it accordingly
--	 */
--	nsio = to_nd_namespace_io(&ndns->dev);
--	start = PHYS_SECTION_ALIGN_DOWN(nsio->res.start);
--	size = resource_size(&nsio->res);
--	if (region_intersects(start, size, IORESOURCE_SYSTEM_RAM,
--				IORES_DESC_NONE) == REGION_MIXED) {
--		start = nsio->res.start;
--		start_pad = PHYS_SECTION_ALIGN_UP(start) - start;
--	}
--
--	start = nsio->res.start;
--	size = PHYS_SECTION_ALIGN_UP(start + size) - start;
--	if (region_intersects(start, size, IORESOURCE_SYSTEM_RAM,
--				IORES_DESC_NONE) == REGION_MIXED
--			|| !IS_ALIGNED(start + resource_size(&nsio->res),
--				nd_pfn->align)) {
--		size = resource_size(&nsio->res);
--		end_trunc = start + size - phys_pmem_align_down(nd_pfn,
--				start + size);
--	}
--
-+	trim_pfn_device(nd_pfn, &start_pad, &end_trunc);
- 	if (start_pad + end_trunc)
- 		dev_info(&nd_pfn->dev, "%s alignment collision, truncate %d bytes\n",
- 				dev_name(&ndns->dev), start_pad + end_trunc);
-@@ -663,7 +673,7 @@ static int nd_pfn_init(struct nd_pfn *nd
- 	 * implementation will limit the pfns advertised through
- 	 * ->direct_access() to those that are included in the memmap.
- 	 */
--	start += start_pad;
-+	start = nsio->res.start + start_pad;
- 	size = resource_size(&nsio->res);
- 	npfns = PFN_SECTION_ALIGN_UP((size - start_pad - end_trunc - SZ_8K)
- 			/ PAGE_SIZE);
---- a/drivers/nvdimm/region_devs.c
-+++ b/drivers/nvdimm/region_devs.c
-@@ -1184,6 +1184,47 @@ int nvdimm_has_cache(struct nd_region *n
- }
- EXPORT_SYMBOL_GPL(nvdimm_has_cache);
- 
-+struct conflict_context {
-+	struct nd_region *nd_region;
-+	resource_size_t start, size;
-+};
++	if (rqstp->rq_release_snd_buf)
++		rqstp->rq_release_snd_buf(rqstp);
 +
-+static int region_conflict(struct device *dev, void *data)
-+{
-+	struct nd_region *nd_region;
-+	struct conflict_context *ctx = data;
-+	resource_size_t res_end, region_end, region_start;
-+
-+	if (!is_memory(dev))
-+		return 0;
-+
-+	nd_region = to_nd_region(dev);
-+	if (nd_region == ctx->nd_region)
-+		return 0;
-+
-+	res_end = ctx->start + ctx->size;
-+	region_start = nd_region->ndr_start;
-+	region_end = region_start + nd_region->ndr_size;
-+	if (ctx->start >= region_start && ctx->start < region_end)
-+		return -EBUSY;
-+	if (res_end > region_start && res_end <= region_end)
-+		return -EBUSY;
-+	return 0;
-+}
-+
-+int nd_region_conflict(struct nd_region *nd_region, resource_size_t start,
-+		resource_size_t size)
-+{
-+	struct nvdimm_bus *nvdimm_bus = walk_to_nvdimm_bus(&nd_region->dev);
-+	struct conflict_context ctx = {
-+		.nd_region = nd_region,
-+		.start = start,
-+		.size = size,
-+	};
-+
-+	return device_for_each_child(&nvdimm_bus->dev, &ctx, region_conflict);
-+}
-+
- void __exit nd_region_devs_exit(void)
- {
- 	ida_destroy(&region_ida);
+ 	if (snd_buf->page_len == 0) {
+ 		rqstp->rq_enc_pages_num = 0;
+ 		return 0;
 
 
