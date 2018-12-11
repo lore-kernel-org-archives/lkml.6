@@ -7,55 +7,55 @@ X-Spam-Status: No, score=-12.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09FA0C5CFFE
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 01:17:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CE89C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 01:17:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A17F120851
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 01:17:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C175620851
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 01:17:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544491047;
-	bh=p05hRoKbfqW08nwoSTMGkkQvHVbRpcUNC7jK/wOMJsI=;
+	s=default; t=1544491057;
+	bh=drYvqJ1n+ZlVvTVAlilGKdE0bTpidUJPJ4jG+Mde1e0=;
 	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
-	b=pEUu2tdrXnYEW5KCWEZi8zA1E7sj32hsqN7JiSmMExR4VRZ9WAlpbT0SmNVAJeY5E
-	 V04VCKGXbeJMH49J1tXMDbQPXCoaOtaDB0r724uvstbPjVpwYpnkU7qKiOoiL5IT+T
-	 mkO7f1I0v2+iwjLa0+ibWF4cWmdDfeGVzHQOAkBM=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A17F120851
+	b=FhMJTZA8hplCpNMvPA3ZT1gT5kidixO6wA0VDfmu5qcfTfkFEGpdlSAxlxn5XlhHY
+	 6/D/z3CMsP8q8cc287zC/zAbJtQ5ADM7oMgd3XvUSAH86w/P9+qTtjGxlXPqx19MWz
+	 CUBeunmln13Y+OspM/eZyzQxat+lvx1/JyEKBk70=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C175620851
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729088AbeLKBR0 (ORCPT
+        id S1729109AbeLKBRf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 20:17:26 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:51028 "EHLO
+        Mon, 10 Dec 2018 20:17:35 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:50836 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728232AbeLKBQL (ORCPT
+        with ESMTP id S1727919AbeLKBQF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 20:16:11 -0500
+        Mon, 10 Dec 2018 20:16:05 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=XCaJdIyA9ECwaIncB2hQosVntiKejaXUO0rm59q2Lyc=; b=iI7nsltgjDZ4
-        G0e60EVvcRI4/Ksa+pnSRPiAwlzxAl7M6ftP8V3OoHMn8MYHEjKwxhKZlvHmsa0kIGxZ+dDqu6KlC
-        /E5OLtHf6sKbHTKZqPVrz6/PO5TGBEszJVsLEP40w6EwbL33Rv/Pph5UAPJiizQS+Va2YbAsTacrw
-        A4544=;
+        List-Archive; bh=vPKB9uI1oyjk44TJrQGhUvRrSlS7jqE1SNlteaqNdKo=; b=sMAk1oFx0+ps
+        9bDCv23zuNo0/pyKTiHHXXpp1Z9Atd9LAY2YMDTLuM8/VzUHgV32T2feyDAL0Claa8oHc0yqHm71c
+        q2pepWTOxaRMipcWg+G9RyYWQknIcD9UvSmkllQi8grwk/Xuhk3iX449SoprwweB/QE16/jyQerW6
+        v51Cw=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1gWWee-0000Lh-I4; Tue, 11 Dec 2018 01:16:08 +0000
+        id 1gWWeY-0000LE-2m; Tue, 11 Dec 2018 01:16:02 +0000
 Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 3C17111254C7; Tue, 11 Dec 2018 01:16:08 +0000 (GMT)
+        id BF48F11254C7; Tue, 11 Dec 2018 01:16:01 +0000 (GMT)
 From:   Mark Brown <broonie@kernel.org>
 To:     Linus Walleij <linus.walleij@linaro.org>
 Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
         Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Applied "gpio: Add devm_gpiod_unhinge()" to the regulator tree
+Subject: Applied "regulator: tps65090: Hand over GPIO to regulator core" to the regulator tree
 In-Reply-To: 
 X-Patchwork-Hint: ignore
-Message-Id: <20181211011608.3C17111254C7@debutante.sirena.org.uk>
-Date:   Tue, 11 Dec 2018 01:16:08 +0000 (GMT)
+Message-Id: <20181211011601.BF48F11254C7@debutante.sirena.org.uk>
+Date:   Tue, 11 Dec 2018 01:16:01 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -63,7 +63,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   gpio: Add devm_gpiod_unhinge()
+   regulator: tps65090: Hand over GPIO to regulator core
 
 has been applied to the regulator tree at
 
@@ -88,24 +88,19 @@ to this mail.
 Thanks,
 Mark
 
-From 891ddbc79a61eb5b919cf56202ecaf7259878cb2 Mon Sep 17 00:00:00 2001
+From 870311e52bbf53838df937a5099ec92a657c1db5 Mon Sep 17 00:00:00 2001
 From: Linus Walleij <linus.walleij@linaro.org>
-Date: Thu, 6 Dec 2018 13:43:46 +0100
-Subject: [PATCH] gpio: Add devm_gpiod_unhinge()
+Date: Thu, 6 Dec 2018 13:43:50 +0100
+Subject: [PATCH] regulator: tps65090: Hand over GPIO to regulator core
 
-This adds a function named devm_gpiod_unhinge() that removes
-the resource management from a GPIO descriptor.
+The GPIO descriptors used by the TPS65090 driver are retrieved
+during probe() and it is really helpful to have those under
+devres management because of all the errorpaths in the
+intialization.
 
-I am not sure if this is the best anglosaxon name for the
-function, no other managed resources have an equivalent
-currently, but I chose "unhinge" as the closest intuitive
-thing I could imagine that fits Rusty Russell's API design
-criterions "the obvious use is the correct one" and
-"the name tells you how to use it".
-
-The idea came out of a remark from Mark Brown that it should
-be possible to handle over management of a resource from
-devres to the regulator core, and indeed we can do that.
+Using the new dev_gpiod_unhinge() call we can remove the
+devres management of the descriptor right before handing
+it over to the regulators core.
 
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Reviewed-by: Marek Szyprowski <m.szyprowski@samsung.com>
@@ -113,92 +108,26 @@ Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
 Reviewed-by: Charles Keepax <ckeepax@opensource.cirrus.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- Documentation/driver-model/devres.txt |  1 +
- drivers/gpio/gpiolib-devres.c         | 30 +++++++++++++++++++++++++++
- include/linux/gpio/consumer.h         | 10 +++++++++
- 3 files changed, 41 insertions(+)
+ drivers/regulator/tps65090-regulator.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/Documentation/driver-model/devres.txt b/Documentation/driver-model/devres.txt
-index 43681ca0837f..fc4cc24dfb97 100644
---- a/Documentation/driver-model/devres.txt
-+++ b/Documentation/driver-model/devres.txt
-@@ -254,6 +254,7 @@ GPIO
-   devm_gpiod_get_index_optional()
-   devm_gpiod_get_optional()
-   devm_gpiod_put()
-+  devm_gpiod_unhinge()
-   devm_gpiochip_add_data()
-   devm_gpiochip_remove()
-   devm_gpio_request()
-diff --git a/drivers/gpio/gpiolib-devres.c b/drivers/gpio/gpiolib-devres.c
-index f9591b5c9748..0acc2cc6e868 100644
---- a/drivers/gpio/gpiolib-devres.c
-+++ b/drivers/gpio/gpiolib-devres.c
-@@ -346,6 +346,36 @@ void devm_gpiod_put(struct device *dev, struct gpio_desc *desc)
- }
- EXPORT_SYMBOL(devm_gpiod_put);
+diff --git a/drivers/regulator/tps65090-regulator.c b/drivers/regulator/tps65090-regulator.c
+index db714d5edafc..0614551796a1 100644
+--- a/drivers/regulator/tps65090-regulator.c
++++ b/drivers/regulator/tps65090-regulator.c
+@@ -480,6 +480,12 @@ static int tps65090_regulator_probe(struct platform_device *pdev)
+ 		else
+ 			config.of_node = NULL;
  
-+/**
-+ * devm_gpiod_unhinge - Remove resource management from a gpio descriptor
-+ * @dev:	GPIO consumer
-+ * @desc:	GPIO descriptor to remove resource management from
-+ *
-+ * Remove resource management from a GPIO descriptor. This is needed when
-+ * you want to hand over lifecycle management of a descriptor to another
-+ * mechanism.
-+ */
-+
-+void devm_gpiod_unhinge(struct device *dev, struct gpio_desc *desc)
-+{
-+	int ret;
-+
-+	if (IS_ERR_OR_NULL(desc))
-+		return;
-+	ret = devres_destroy(dev, devm_gpiod_release,
-+			     devm_gpiod_match, &desc);
-+	/*
-+	 * If the GPIO descriptor is requested as nonexclusive, we
-+	 * may call this function several times on the same descriptor
-+	 * so it is OK if devres_destroy() returns -ENOENT.
-+	 */
-+	if (ret == -ENOENT)
-+		return;
-+	/* Anything else we should warn about */
-+	WARN_ON(ret);
-+}
-+EXPORT_SYMBOL(devm_gpiod_unhinge);
-+
- /**
-  * devm_gpiod_put_array - Resource-managed gpiod_put_array()
-  * @dev:	GPIO consumer
-diff --git a/include/linux/gpio/consumer.h b/include/linux/gpio/consumer.h
-index 348885f2f3d3..8aebcf822082 100644
---- a/include/linux/gpio/consumer.h
-+++ b/include/linux/gpio/consumer.h
-@@ -104,6 +104,7 @@ struct gpio_descs *__must_check
- devm_gpiod_get_array_optional(struct device *dev, const char *con_id,
- 			      enum gpiod_flags flags);
- void devm_gpiod_put(struct device *dev, struct gpio_desc *desc);
-+void devm_gpiod_unhinge(struct device *dev, struct gpio_desc *desc);
- void devm_gpiod_put_array(struct device *dev, struct gpio_descs *descs);
- 
- int gpiod_get_direction(struct gpio_desc *desc);
-@@ -249,6 +250,15 @@ static inline void gpiod_put(struct gpio_desc *desc)
- 	WARN_ON(1);
- }
- 
-+static inline void devm_gpiod_unhinge(struct device *dev,
-+				      struct gpio_desc *desc)
-+{
-+	might_sleep();
-+
-+	/* GPIO can never have been requested */
-+	WARN_ON(1);
-+}
-+
- static inline void gpiod_put_array(struct gpio_descs *descs)
- {
- 	might_sleep();
++		/*
++		 * Hand the GPIO descriptor management over to the regulator
++		 * core, remove it from devres management.
++		 */
++		if (config.ena_gpiod)
++			devm_gpiod_unhinge(&pdev->dev, config.ena_gpiod);
+ 		rdev = devm_regulator_register(&pdev->dev, ri->desc, &config);
+ 		if (IS_ERR(rdev)) {
+ 			dev_err(&pdev->dev, "failed to register regulator %s\n",
 -- 
 2.19.0.rc2
 
