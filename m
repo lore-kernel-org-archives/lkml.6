@@ -2,100 +2,119 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2C34C07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 08:39:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A38CFC07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 08:39:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F2572081B
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 08:39:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F2572081B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=datenfreihafen.org
+	by mail.kernel.org (Postfix) with ESMTP id 72CCD20849
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 08:39:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 72CCD20849
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726248AbeLKIjI (ORCPT
+        id S1726203AbeLKIjz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 03:39:08 -0500
-Received: from proxima.lasnet.de ([78.47.171.185]:55545 "EHLO
-        proxima.lasnet.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726094AbeLKIjI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 03:39:08 -0500
-Received: from localhost.localdomain (unknown [88.128.80.186])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: stefan@datenfreihafen.org)
-        by proxima.lasnet.de (Postfix) with ESMTPSA id 5A64CC8C29;
-        Tue, 11 Dec 2018 09:39:05 +0100 (CET)
-Subject: Re: [PATCH net-next] ieee802154: ca8210: fix possible u8 overflow in
- ca8210_rx_done
-To:     YueHaibing <yuehaibing@huawei.com>, davem@davemloft.net,
-        h.morris@cascoda.com, alex.aring@gmail.com
-Cc:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        linux-wpan@vger.kernel.org
-References: <20181211031339.21048-1-yuehaibing@huawei.com>
-From:   Stefan Schmidt <stefan@datenfreihafen.org>
-Message-ID: <843d7614-7a79-2108-076e-a56bb33cb283@datenfreihafen.org>
-Date:   Tue, 11 Dec 2018 09:39:04 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Tue, 11 Dec 2018 03:39:55 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:39308 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726089AbeLKIjz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 03:39:55 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 34C7320723; Tue, 11 Dec 2018 09:39:52 +0100 (CET)
+Received: from bbrezillon (aaubervilliers-681-1-79-44.w90-88.abo.wanadoo.fr [90.88.21.44])
+        by mail.bootlin.com (Postfix) with ESMTPSA id E1DB820717;
+        Tue, 11 Dec 2018 09:39:32 +0100 (CET)
+Date:   Tue, 11 Dec 2018 09:39:33 +0100
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     Liang Yang <liang.yang@amlogic.com>
+Cc:     Miquel Raynal <miquel.raynal@bootlin.com>,
+        Jianxin Pan <jianxin.pan@amlogic.com>,
+        <linux-mtd@lists.infradead.org>, Yixun Lan <yixun.lan@amlogic.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Carlo Caione <carlo@caione.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Rob Herring <robh@kernel.org>, Jian Hu <jian.hu@amlogic.com>,
+        Hanjie Lin <hanjie.lin@amlogic.com>,
+        Victor Wan <victor.wan@amlogic.com>,
+        <linux-amlogic@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v7 2/2] mtd: rawnand: meson: add support for Amlogic
+ NAND flash controller
+Message-ID: <20181211093933.2fab8cc3@bbrezillon>
+In-Reply-To: <d60bac6f-732d-0ddc-2644-17f650dfa885@amlogic.com>
+References: <1542386439-30166-1-git-send-email-jianxin.pan@amlogic.com>
+        <1542386439-30166-3-git-send-email-jianxin.pan@amlogic.com>
+        <20181207102456.1dc67e07@xps13>
+        <823825a3-86fb-9a20-ae29-85cc52d44093@amlogic.com>
+        <20181210123809.5ade45c4@bbrezillon>
+        <79a797c2-f37f-7f7c-e907-2d3c2283ec2d@amlogic.com>
+        <20181210155057.38788656@xps13>
+        <d60bac6f-732d-0ddc-2644-17f650dfa885@amlogic.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20181211031339.21048-1-yuehaibing@huawei.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello.
+On Tue, 11 Dec 2018 09:56:25 +0800
+Liang Yang <liang.yang@amlogic.com> wrote:
 
-On 11.12.18 04:13, YueHaibing wrote:
-> gcc warning this:
+> Hi Miquel,
 > 
-> drivers/net/ieee802154/ca8210.c:730:10: warning:
->  comparison is always false due to limited range of data type [-Wtype-limits]
-> 
-> 'len' is u8 type, we get it from buf[1] adding 2, which can overflow.
-> This patch change the type of 'len' to unsigned int to avoid this,also fix
-> the gcc warning.
-> 
-> Fixes: ded845a781a5 ("ieee802154: Add CA8210 IEEE 802.15.4 device driver")
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> ---
->  drivers/net/ieee802154/ca8210.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/net/ieee802154/ca8210.c b/drivers/net/ieee802154/ca8210.c
-> index 0ff5a40..b2ff903 100644
-> --- a/drivers/net/ieee802154/ca8210.c
-> +++ b/drivers/net/ieee802154/ca8210.c
-> @@ -721,7 +721,7 @@ static void ca8210_mlme_reset_worker(struct work_struct *work)
->  static void ca8210_rx_done(struct cas_control *cas_ctl)
->  {
->  	u8 *buf;
-> -	u8 len;
-> +	unsigned int len;
->  	struct work_priv_container *mlme_reset_wpc;
->  	struct ca8210_priv *priv = cas_ctl->priv;
->  
-> @@ -730,7 +730,7 @@ static void ca8210_rx_done(struct cas_control *cas_ctl)
->  	if (len > CA8210_SPI_BUF_SIZE) {
->  		dev_crit(
->  			&priv->spi->dev,
-> -			"Received packet len (%d) erroneously long\n",
-> +			"Received packet len (%u) erroneously long\n",
->  			len
->  		);
->  		goto finish;
-> 
+> On 2018/12/10 22:50, Miquel Raynal wrote:
+> > Hi Liang,
+> > 
+> > Liang Yang <liang.yang@amlogic.com> wrote on Mon, 10 Dec 2018 20:12:39
+> > +0800:
+> >   
+> >> On 2018/12/10 19:38, Boris Brezillon wrote:  
+> >>> On Mon, 10 Dec 2018 19:23:46 +0800
+> >>> Liang Yang <liang.yang@amlogic.com> wrote:
+> >>>      
+> >>>>>> +			mtd->ecc_stats.failed++;
+> >>>>>> +			continue;
+> >>>>>> +		}
+> >>>>>> +		mtd->ecc_stats.corrected += ECC_ERR_CNT(*info);
+> >>>>>> +		bitflips = max_t(u32, bitflips, ECC_ERR_CNT(*info));
+> >>>>>> +	}  
+> >>>>>
+> >>>>> Are you sure you handle correctly empty pages with bf?  
+> >>>>>     >> if scramble is enable, i would say yes here.  
+> >>>> when scramble is disabled, i am considering how to use the helper
+> >>>> nand_check_erased_ecc_chunk, but it seems that i can't get the ecc
+> >>>> bytes which is caculated by ecc engine.by the way, nfc dma doesn't send
+> >>>> out the ecc parity bytes.  
+> >>>
+> >>> Even if the ECC engine is disabled?
+> >>>      
+> >> No.
+> >> When ECC engine is disabled, it can read the ecc parity bytes ; but there is another problem that i need to consider how code struct looks better when reading error with ecc opened and then try to raw read.
+> >> Is there a good idea?  
+> > 
+> > When reading with ECC enabled, in case of uncorrectable error you
+> > must re-read without ECC, then check if the page is empty or not with
+> > the core helpers (nand_check_erased_*()).
+> > 
+> > Is this what you meant?
+> >   
+> yes. when uncorrectable ECC error, i need firstly read out the ECC bytes 
+> without ECC engine and then use the helper nand_check_erased_ecc_chunk 
+> to check if blank page.
+> Of course, the precondition is without scrambler, or the bland page can 
+> be detected by meson NFC.
 
-
-This patch has been applied to the wpan tree and will be
-part of the next pull request to net. Thanks!
-
-regards
-Stefan Schmidt
+Yep, raw accessors should disable both the scrambler and the ECC
+engine (see what's done in sunxi_nand.c).
