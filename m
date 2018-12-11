@@ -2,100 +2,146 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F15EC6783B
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 18:48:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC9ADC67839
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 18:48:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5BCB120811
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 18:48:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5BCB120811
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=namei.org
+	by mail.kernel.org (Postfix) with ESMTP id A115720811
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 18:48:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A115720811
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726658AbeLKSsU (ORCPT
+        id S1726717AbeLKSsy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 13:48:20 -0500
-Received: from namei.org ([65.99.196.166]:58982 "EHLO namei.org"
+        Tue, 11 Dec 2018 13:48:54 -0500
+Received: from foss.arm.com ([217.140.101.70]:55362 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726350AbeLKSsU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 13:48:20 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by namei.org (8.14.4/8.14.4) with ESMTP id wBBIlw8s012640;
-        Tue, 11 Dec 2018 18:47:58 GMT
-Date:   Wed, 12 Dec 2018 05:47:58 +1100 (AEDT)
-From:   James Morris <jmorris@namei.org>
-To:     Nayna Jain <nayna@linux.ibm.com>
-cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-efi@vger.kernel.org,
-        linux-kernel@vger.kernel.org, zohar@linux.ibm.com,
-        dhowells@redhat.com, jforbes@redhat.com,
-        seth.forshee@canonical.com, kexec@lists.infradead.org,
-        keyrings@vger.kernel.org, vgoyal@redhat.com, ebiederm@xmission.com,
-        mpe@ellerman.id.au, Josh Boyer <jwboyer@fedoraproject.org>
-Subject: Re: [PATCH v2 5/7] efi: Import certificates from UEFI Secure Boot
-In-Reply-To: <20181208202705.18673-6-nayna@linux.ibm.com>
-Message-ID: <alpine.LRH.2.21.1812120547110.11653@namei.org>
-References: <20181208202705.18673-1-nayna@linux.ibm.com> <20181208202705.18673-6-nayna@linux.ibm.com>
-User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
+        id S1726241AbeLKSsy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 13:48:54 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D75CFEBD;
+        Tue, 11 Dec 2018 10:48:53 -0800 (PST)
+Received: from e110467-lin.cambridge.arm.com (e110467-lin.cambridge.arm.com [10.1.196.75])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 381563F6A8;
+        Tue, 11 Dec 2018 10:48:52 -0800 (PST)
+From:   Robin Murphy <robin.murphy@arm.com>
+To:     will.deacon@arm.com, catalin.marinas@arm.com
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        jonathan.cameron@huawei.com, cyrilc@xilinx.com,
+        james.morse@arm.com, anshuman.khandual@arm.com, linux-mm@kvack.org
+Subject: [PATCH v2] arm64: Add memory hotplug support
+Date:   Tue, 11 Dec 2018 18:48:48 +0000
+Message-Id: <331db1485b4c8c3466217e16a1e1f05618e9bae8.1544553902.git.robin.murphy@arm.com>
+X-Mailer: git-send-email 2.19.1.dirty
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 9 Dec 2018, Nayna Jain wrote:
+Wire up the basic support for hot-adding memory. Since memory hotplug
+is fairly tightly coupled to sparsemem, we tweak pfn_valid() to also
+cross-check the presence of a section in the manner of the generic
+implementation, before falling back to memblock to check for no-map
+regions within a present section as before. By having arch_add_memory(()
+create the linear mapping first, this then makes everything work in the
+way that __add_section() expects.
 
-> +/*
-> + * Blacklist an X509 TBS hash.
-> + */
-> +static __init void uefi_blacklist_x509_tbs(const char *source,
-> +					   const void *data, size_t len)
-> +{
-> +	char *hash, *p;
-> +
-> +	hash = kmalloc(4 + len * 2 + 1, GFP_KERNEL);
-> +	if (!hash)
-> +		return;
-> +	p = memcpy(hash, "tbs:", 4);
-> +	p += 4;
-> +	bin2hex(p, data, len);
-> +	p += len * 2;
-> +	*p = 0;
-> +
-> +	mark_hash_blacklisted(hash);
-> +	kfree(hash);
-> +}
-> +
-> +/*
-> + * Blacklist the hash of an executable.
-> + */
-> +static __init void uefi_blacklist_binary(const char *source,
-> +					 const void *data, size_t len)
-> +{
-> +	char *hash, *p;
-> +
-> +	hash = kmalloc(4 + len * 2 + 1, GFP_KERNEL);
-> +	if (!hash)
-> +		return;
-> +	p = memcpy(hash, "bin:", 4);
-> +	p += 4;
-> +	bin2hex(p, data, len);
-> +	p += len * 2;
-> +	*p = 0;
-> +
-> +	mark_hash_blacklisted(hash);
-> +	kfree(hash);
-> +}
-> 
+We expect hotplug to be ACPI-driven, so the swapper_pg_dir updates
+should be safe from races by virtue of the global device hotplug lock.
 
-These could be refactored into one function.
+Signed-off-by: Robin Murphy <robin.murphy@arm.com>
+---
 
+v2: Handle page-mappings-only cases appropriately
 
+ arch/arm64/Kconfig   |  3 +++
+ arch/arm64/mm/init.c |  8 ++++++++
+ arch/arm64/mm/mmu.c  | 17 +++++++++++++++++
+ arch/arm64/mm/numa.c | 10 ++++++++++
+ 4 files changed, 38 insertions(+)
+
+diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+index 4dbef530cf58..be423fda5cec 100644
+--- a/arch/arm64/Kconfig
++++ b/arch/arm64/Kconfig
+@@ -261,6 +261,9 @@ config ZONE_DMA32
+ config HAVE_GENERIC_GUP
+ 	def_bool y
+ 
++config ARCH_ENABLE_MEMORY_HOTPLUG
++	def_bool y
++
+ config SMP
+ 	def_bool y
+ 
+diff --git a/arch/arm64/mm/init.c b/arch/arm64/mm/init.c
+index 6cde00554e9b..4bfe0fc9edac 100644
+--- a/arch/arm64/mm/init.c
++++ b/arch/arm64/mm/init.c
+@@ -291,6 +291,14 @@ int pfn_valid(unsigned long pfn)
+ 
+ 	if ((addr >> PAGE_SHIFT) != pfn)
+ 		return 0;
++
++#ifdef CONFIG_SPARSEMEM
++	if (pfn_to_section_nr(pfn) >= NR_MEM_SECTIONS)
++		return 0;
++
++	if (!valid_section(__nr_to_section(pfn_to_section_nr(pfn))))
++		return 0;
++#endif
+ 	return memblock_is_map_memory(addr);
+ }
+ EXPORT_SYMBOL(pfn_valid);
+diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
+index 674c409a8ce4..da513a1facf4 100644
+--- a/arch/arm64/mm/mmu.c
++++ b/arch/arm64/mm/mmu.c
+@@ -1046,3 +1046,20 @@ int pud_free_pmd_page(pud_t *pudp, unsigned long addr)
+ 	pmd_free(NULL, table);
+ 	return 1;
+ }
++
++#ifdef CONFIG_MEMORY_HOTPLUG
++int arch_add_memory(int nid, u64 start, u64 size, struct vmem_altmap *altmap,
++		    bool want_memblock)
++{
++	int flags = 0;
++
++	if (rodata_full || debug_pagealloc_enabled())
++		flags = NO_BLOCK_MAPPINGS | NO_CONT_MAPPINGS;
++
++	__create_pgd_mapping(swapper_pg_dir, start, __phys_to_virt(start),
++			     size, PAGE_KERNEL, pgd_pgtable_alloc, flags);
++
++	return __add_pages(nid, start >> PAGE_SHIFT, size >> PAGE_SHIFT,
++			   altmap, want_memblock);
++}
++#endif
+diff --git a/arch/arm64/mm/numa.c b/arch/arm64/mm/numa.c
+index 27a31efd9e8e..ae34e3a1cef1 100644
+--- a/arch/arm64/mm/numa.c
++++ b/arch/arm64/mm/numa.c
+@@ -466,3 +466,13 @@ void __init arm64_numa_init(void)
+ 
+ 	numa_init(dummy_numa_init);
+ }
++
++/*
++ * We hope that we will be hotplugging memory on nodes we already know about,
++ * such that acpi_get_node() succeeds and we never fall back to this...
++ */
++int memory_add_physaddr_to_nid(u64 addr)
++{
++	pr_warn("Unknown node for memory at 0x%llx, assuming node 0\n", addr);
++	return 0;
++}
 -- 
-James Morris
-<jmorris@namei.org>
+2.19.1.dirty
 
