@@ -7,51 +7,49 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51A86C07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:11:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8827C5CFFE
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:11:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 18ADA20879
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:11:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A00602084E
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:11:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544544702;
-	bh=3IkYE6LfZWz6wvQ3rXWzjd/qBnaVR4BOS2hB0iCQlSo=;
+	s=default; t=1544544706;
+	bh=ra+f4utofzdUj//KVKZGLcyyukLhOVbyVeRmzHsP9IA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=RprdaqdgZrxqYnaHacyMuom3OZO5kZjBKkYdE19nlwk+sKVrvLLoIIhR5fiJN10JG
-	 65TC4+jViOTpSgIHTnyQXm1NYisl7hobrhbVnI8AcVdDtI5mevahHrySmSMIOLWJbG
-	 +6ktRNp/UNqDChmViY3KHmvKdXAqTjTBkhMX2ozI=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 18ADA20879
+	b=K+b1K7kcvkDLsrfK+F7Wv25OjCWoz0lm9Rh5cCsk+a2ovTz2IW2TDJ+7RqNWwFcnR
+	 baXm2+Qdwlfd2790+JO9c6fFDv4WGWQno7YXfA5o04niCaJX3p08ikunxpDyaXzgWO
+	 N+ErAv+rWh47ME+OJnbZAh8uAbHK6yHvc92Z3YRk=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A00602084E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729344AbeLKPun (ORCPT
+        id S1729318AbeLKPug (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 10:50:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39258 "EHLO mail.kernel.org"
+        Tue, 11 Dec 2018 10:50:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39162 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729295AbeLKPuj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:50:39 -0500
+        id S1729284AbeLKPua (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 10:50:30 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DA8CE2084E;
-        Tue, 11 Dec 2018 15:50:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F08E72084E;
+        Tue, 11 Dec 2018 15:50:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544543438;
-        bh=3IkYE6LfZWz6wvQ3rXWzjd/qBnaVR4BOS2hB0iCQlSo=;
+        s=default; t=1544543430;
+        bh=ra+f4utofzdUj//KVKZGLcyyukLhOVbyVeRmzHsP9IA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JQmefxCc40W2uEHNsjdT0xLwWUk7TE2LtAFTT1GcHU20DQrKb9cVX8AA5xk/ZmMMo
-         wiFpZco88DJ4V+yyA4aQZB1X0MmYwDnO6+3sqwNohXfQUNeJQhEnN67Ua0Wrhy5n4w
-         VK3Ug+v+/sO8XGoIbUkeBdF8TjRZWJwopXQfssU0=
+        b=KtLkHqc3yxAcEA2G0YvtC/p7x40Wf1nHjYS/D39nK8r7jRjyl/INn9abTJmY0lubM
+         gAPo87O+lb3cpNMaIUJ11PU6adMc06kJC6JM4Kz8hPFeoDGV2DCaRKKAXtF8DTrrDN
+         3JrX30d1dG3sdOMTIy8V7llagdCiJk7/V01FNRIU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Matthias Kaehlcke <mka@chromium.org>
-Subject: [PATCH 4.9 50/51] kbuild: fix linker feature test macros when cross compiling with Clang
-Date:   Tue, 11 Dec 2018 16:41:58 +0100
-Message-Id: <20181211151618.539797359@linuxfoundation.org>
+        stable@vger.kernel.org, Felix Fietkau <nbd@nbd.name>,
+        Johannes Berg <johannes.berg@intel.com>
+Subject: [PATCH 4.9 47/51] mac80211: ignore tx status for PS stations in ieee80211_tx_status_ext
+Date:   Tue, 11 Dec 2018 16:41:55 +0100
+Message-Id: <20181211151618.224785516@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181211151612.328911565@linuxfoundation.org>
 References: <20181211151612.328911565@linuxfoundation.org>
@@ -70,70 +68,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Nick Desaulniers <ndesaulniers@google.com>
+From: Felix Fietkau <nbd@nbd.name>
 
-(commit 86a9df597cdd564d2d29c65897bcad42519e3678 upstream)
+commit a317e65face482371de30246b6494feb093ff7f9 upstream.
 
-I was not seeing my linker flags getting added when using ld-option when
-cross compiling with Clang. Upon investigation, this seems to be due to
-a difference in how GCC vs Clang handle cross compilation.
+Make it behave like regular ieee80211_tx_status calls, except for the lack of
+filtered frame processing.
+This fixes spurious low-ack triggered disconnections with powersave clients
+connected to an AP.
 
-GCC is configured at build time to support one backend, that is implicit
-when compiling.  Clang is explicit via the use of `-target <triple>` and
-ships with all supported backends by default.
-
-GNU Make feature test macros that compile then link will always fail
-when cross compiling with Clang unless Clang's triple is passed along to
-the compiler. For example:
-
-$ clang -x c /dev/null -c -o temp.o
-$ aarch64-linux-android/bin/ld -E temp.o
-aarch64-linux-android/bin/ld:
-unknown architecture of input file `temp.o' is incompatible with
-aarch64 output
-aarch64-linux-android/bin/ld:
-warning: cannot find entry symbol _start; defaulting to
-0000000000400078
-$ echo $?
-1
-
-$ clang -target aarch64-linux-android- -x c /dev/null -c -o temp.o
-$ aarch64-linux-android/bin/ld -E temp.o
-aarch64-linux-android/bin/ld:
-warning: cannot find entry symbol _start; defaulting to 00000000004002e4
-$ echo $?
-0
-
-This causes conditional checks that invoke $(CC) without the target
-triple, then $(LD) on the result, to always fail.
-
-Suggested-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
-Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-[ND: readjusted for context]
+Fixes: f027c2aca0cf4 ("mac80211: add ieee80211_tx_status_noskb")
+Cc: stable@vger.kernel.org
+Signed-off-by: Felix Fietkau <nbd@nbd.name>
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- scripts/Kbuild.include |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
 
---- a/scripts/Kbuild.include
-+++ b/scripts/Kbuild.include
-@@ -162,12 +162,13 @@ cc-ifversion = $(shell [ $(cc-version) $
- # cc-ldoption
- # Usage: ldflags += $(call cc-ldoption, -Wl$(comma)--hash-style=both)
- cc-ldoption = $(call try-run,\
--	$(CC) $(1) -nostdlib -x c /dev/null -o "$$TMP",$(1),$(2))
-+	$(CC) $(1) $(KBUILD_CPPFLAGS) $(CC_OPTION_CFLAGS) -nostdlib -x c /dev/null -o "$$TMP",$(1),$(2))
- 
- # ld-option
- # Usage: LDFLAGS += $(call ld-option, -X)
- ld-option = $(call try-run,\
--	$(CC) -x c /dev/null -c -o "$$TMPO" ; $(LD) $(1) "$$TMPO" -o "$$TMP",$(1),$(2))
-+	$(CC) $(KBUILD_CPPFLAGS) $(CC_OPTION_CFLAGS) -x c /dev/null -c -o "$$TMPO"; \
-+	$(LD) $(LDFLAGS) $(1) "$$TMPO" -o "$$TMP",$(1),$(2))
- 
- # ar-option
- # Usage: KBUILD_ARFLAGS := $(call ar-option,D)
+---
+ net/mac80211/status.c |    2 ++
+ 1 file changed, 2 insertions(+)
+
+--- a/net/mac80211/status.c
++++ b/net/mac80211/status.c
+@@ -660,6 +660,8 @@ void ieee80211_tx_status_noskb(struct ie
+ 			/* Track when last TDLS packet was ACKed */
+ 			if (test_sta_flag(sta, WLAN_STA_TDLS_PEER_AUTH))
+ 				sta->status_stats.last_tdls_pkt_time = jiffies;
++		} else if (test_sta_flag(sta, WLAN_STA_PS_STA)) {
++			return;
+ 		} else {
+ 			ieee80211_lost_packet(sta, info);
+ 		}
 
 
