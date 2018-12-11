@@ -7,66 +7,66 @@ X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE937C67839
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 19:18:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 549CAC5CFFE
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 19:18:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9DDF62087F
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 19:18:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1F9872087F
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 19:18:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lightnvm-io.20150623.gappssmtp.com header.i=@lightnvm-io.20150623.gappssmtp.com header.b="eOQjDB8N"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9DDF62087F
+	dkim=pass (2048-bit key) header.d=lightnvm-io.20150623.gappssmtp.com header.i=@lightnvm-io.20150623.gappssmtp.com header.b="c1L5Ikd+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F9872087F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lightnvm.io
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727158AbeLKTSh (ORCPT
+        id S1727067AbeLKTSl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 14:18:37 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:42601 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726945AbeLKTRM (ORCPT
+        Tue, 11 Dec 2018 14:18:41 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:41215 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726980AbeLKTRM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 11 Dec 2018 14:17:12 -0500
-Received: by mail-lj1-f194.google.com with SMTP id l15-v6so14025869lja.9
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 11:17:10 -0800 (PST)
+Received: by mail-lf1-f65.google.com with SMTP id c16so11607970lfj.8
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 11:17:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=lightnvm-io.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=yJB3xXv8lTFhwUBdJmWs7QY5xPeCzp6Ka4N9v4YQmKI=;
-        b=eOQjDB8Ngw8dV3qrDXwVv/kEng7X+goyPCyNIOs6DJyD0hXLTZ0hJt50G8hu6tTkma
-         14UbaeRW48TUZQQchxrZ5+80Dbgzg0xQEKaJytHoIuh/Pg61Xc98vOi0a072YReesIzp
-         c6v/aBDkAsB2KIPXKP1paHdHxfmjD8pljXF2XaYNrcHMPSW/iPsVuQujYhT+yNSnhfMr
-         g19c8kucE0tZmpal0eHTp1fW1953UpgGLTMQ1I2InE0wjw4u2JSIUpoEZZx2LqWrYbhd
-         jcJhPhMTkhu9S9Dehvo4PF1N1PKckcT8XUtzTH2XdCon7uYk2u+xiSIwzpN3BR9Mikuq
-         z5BA==
+        bh=WOW9wFX34gWOAKoN5HihAA6SRqAtZzTmFquuKLMZvdM=;
+        b=c1L5Ikd+EXv32Knl/Tz/CKL+UJQEeSF8PfbIDlTNRgWMLI3lP9DNhOe9noGCOjrIDN
+         /oIoexjQWE6TWGM/27v2QJgbdXUcpIsCKxY4nbvcdLBkjGfzaKNvwj9ZEGEkVeRXWxIq
+         TUrjZ0VxHXq3jICtKdoiQ7x2/k6qBYiwNgFhkI9NTrfChFpbmsr5nWXJX7sFmZXnhNwj
+         lZ9+hqWogwn2hl2Dur0+A7jqAl7LH710+zn4WMa+OepdBuJrwG4N/SWD/55uzdEq+ijt
+         86s8pX8Y8VoDxWYJEcT9ZUJ21s/zbhWuk+mS/k9P8E3zIFfmwP05xTqvG46cXD+lIy8K
+         fKBw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=yJB3xXv8lTFhwUBdJmWs7QY5xPeCzp6Ka4N9v4YQmKI=;
-        b=MyU5ZDIJM1srK9oN4xJo7E+QMksZPtawk5qPVldD49qym80kWPE8ghL4josNDpFlLs
-         2BiZ+EPoJGMKaeyiSmZk1iGupbgNeTuEA1sKChvK1bhAFjFrz9BP25wBJFT9XLaUijlI
-         UxrjA7cxm+NppRZBhChpNTQ/r1PXhjP7rlcxSVgIjVVzrqw35G1u0rpTtNOB/RpXrcul
-         uuqQO/iObFPTnTSm0Fe0EqXinOvxQevrhbMq5yV+1GnDozIo8uSKub2YEaCjQDTThsyo
-         yK+MsBvWpYaWMBdgdKstbh+w6T7PeMAiYx3gupP8yi8PHNvgnzmNZgmni9q7NZpFj85P
-         +QYw==
-X-Gm-Message-State: AA+aEWaj39NWKomzgAdWpGg78/nboWSBqB+2i7uDe2ihud0DMA06Zzl5
-        rL9rH6VV/MQDBQqD8KP2daOgKA==
-X-Google-Smtp-Source: AFSGD/X/+Hc0BMCzrXpJJ6+ghgf41LULRGx3VcZvD137G8a1ZjxjwSNlOnmrTLLXu7GkvArmCPcZWg==
-X-Received: by 2002:a2e:890b:: with SMTP id d11-v6mr10546667lji.113.1544555829130;
-        Tue, 11 Dec 2018 11:17:09 -0800 (PST)
+        bh=WOW9wFX34gWOAKoN5HihAA6SRqAtZzTmFquuKLMZvdM=;
+        b=qJ6Is8Vh+wOZUaz82UQDsa1manEWRkDUCpltUpAeDGUPGV+xdJiHsOWDRxYlaLNzcr
+         2ilZI9N0hWz1sRKpIgI9W5ySrZuGJOqOx857czT+zlBPjdhw5at/N43eJ5ZZipjy1UfL
+         2znD+UsBG6wRnilaDf8FcG+3GKm8i0bI3FmDAyDQ8xJjQuXaCLUY5sCoG2fili9JhiXz
+         3CobG4VcxpvDoQ1Ts4IgnCvX3py4X8FNKSlXlaHPALKUpWtlhDKmxb5UKXrSlG+WHNQI
+         v34ykzqh0hGHCrqBylV/C1F4ff3UkxmZH/R1t7TZXNnYUDE6sh5TEVJvkGixznQJp1Gb
+         KpNQ==
+X-Gm-Message-State: AA+aEWYYnSOuCIrhKxkSw8TfRXXNAEDRNoiqSoVhbtTz/3mNd0B1+2eC
+        J/+BNFF53258T2Zk1mFSU5fnkg==
+X-Google-Smtp-Source: AFSGD/VM+oaqfcsp+kc9wHOqGjj6QFmibLugoXvHGOVErcJmL65UcCF8yEMUbqjcaKzp1iY5h1iFHA==
+X-Received: by 2002:a19:94d5:: with SMTP id o82mr9557203lfk.155.1544555830462;
+        Tue, 11 Dec 2018 11:17:10 -0800 (PST)
 Received: from skyninja.webspeed.dk (95-166-82-66-cable.dk.customer.tdc.net. [95.166.82.66])
-        by smtp.gmail.com with ESMTPSA id v64sm2764583lfa.48.2018.12.11.11.17.07
+        by smtp.gmail.com with ESMTPSA id v64sm2764583lfa.48.2018.12.11.11.17.09
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 11 Dec 2018 11:17:08 -0800 (PST)
+        Tue, 11 Dec 2018 11:17:09 -0800 (PST)
 From:   =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
 To:     axboe@fb.com
 Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
         Hans Holmberg <hans.holmberg@cnexlabs.com>,
         =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
-Subject: [GIT PULL 08/21] lightnvm: pblk: remove unused macro
-Date:   Tue, 11 Dec 2018 20:16:14 +0100
-Message-Id: <20181211191627.15542-9-mb@lightnvm.io>
+Subject: [GIT PULL 09/21] lightnvm: pblk: fix pblk_lines_init error handling path
+Date:   Tue, 11 Dec 2018 20:16:15 +0100
+Message-Id: <20181211191627.15542-10-mb@lightnvm.io>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181211191627.15542-1-mb@lightnvm.io>
 References: <20181211191627.15542-1-mb@lightnvm.io>
@@ -80,29 +80,30 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Hans Holmberg <hans.holmberg@cnexlabs.com>
 
-ADDR_POOL_SIZE is not used anymore, so remove the macro.
+The chunk metadata is allocated with vmalloc, so we need to use
+vfree to free it.
 
+Fixes: 090ee26fd512 ("lightnvm: use internal allocation for chunk log page")
 Signed-off-by: Hans Holmberg <hans.holmberg@cnexlabs.com>
 Reviewed-by: Javier González <javier@javigon.com>
 Signed-off-by: Matias Bjørling <mb@lightnvm.io>
 ---
- drivers/lightnvm/pblk-init.c | 3 ---
- 1 file changed, 3 deletions(-)
+ drivers/lightnvm/pblk-init.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/lightnvm/pblk-init.c b/drivers/lightnvm/pblk-init.c
-index f083130d9920..3219f335fce9 100644
+index 3219f335fce9..0e37104de596 100644
 --- a/drivers/lightnvm/pblk-init.c
 +++ b/drivers/lightnvm/pblk-init.c
-@@ -207,9 +207,6 @@ static int pblk_rwb_init(struct pblk *pblk)
- 	return pblk_rb_init(&pblk->rwb, buffer_size, threshold, geo->csecs);
- }
- 
--/* Minimum pages needed within a lun */
--#define ADDR_POOL_SIZE 64
--
- static int pblk_set_addrf_12(struct pblk *pblk, struct nvm_geo *geo,
- 			     struct nvm_addrf_12 *dst)
- {
+@@ -1060,7 +1060,7 @@ static int pblk_lines_init(struct pblk *pblk)
+ 		pblk_line_meta_free(l_mg, &pblk->lines[i]);
+ 	kfree(pblk->lines);
+ fail_free_chunk_meta:
+-	kfree(chunk_meta);
++	vfree(chunk_meta);
+ fail_free_luns:
+ 	kfree(pblk->luns);
+ fail_free_meta:
 -- 
 2.17.1
 
