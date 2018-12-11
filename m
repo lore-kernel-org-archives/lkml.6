@@ -4,55 +4,55 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8724C5CFFE
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:05:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9ABF6C5CFFE
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:05:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 98A4D20851
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:05:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6066A2081B
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:05:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544544321;
-	bh=w06d0gsqifNvWk7Uo1DaAyX/g3DMORjB53DbmOBCNXk=;
+	s=default; t=1544544329;
+	bh=cx2yN399sfSPq4e/34CN0BofMuHAy22bp7Tlv0abq6A=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Zco3vmy2CxH5Hj+GXK4NPWp5nhSmdwkcuZXRWcdHFp3ZsW8KBQFCAkig0DgOChHkN
-	 kD9uFXrU/yxQk2coAYTHo0u3IW2ctv5MZPe/FFIz03Uv4ntE925Rue1jJHPR6oHDDq
-	 DbUSD/HifbetX4MkDEXGXNAv2XRKhG27lrqZM2zw=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98A4D20851
+	b=uT8UMr9kn1Eos8u+cOiI5S0fYPY5VCioOBVPQtQTATCPzzFSaLrSbsu3ghrgWo8RE
+	 u59FQvzz9bW9LtT3kEnYoPM/NeclMoWViAQIPWqi+w6cakX+u1I2ep8VIWKMaiEFtS
+	 iEdnKaHvV9efVWyUPMlrCn9qrPu56Av69+H6vUc0=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6066A2081B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730878AbeLKQFU (ORCPT
+        id S1730996AbeLKQF2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 11:05:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43988 "EHLO mail.kernel.org"
+        Tue, 11 Dec 2018 11:05:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43924 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730374AbeLKPzT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:55:19 -0500
+        id S1730343AbeLKPzR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 10:55:17 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D8C572146F;
-        Tue, 11 Dec 2018 15:55:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6109F2146D;
+        Tue, 11 Dec 2018 15:55:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544543719;
-        bh=w06d0gsqifNvWk7Uo1DaAyX/g3DMORjB53DbmOBCNXk=;
+        s=default; t=1544543716;
+        bh=cx2yN399sfSPq4e/34CN0BofMuHAy22bp7Tlv0abq6A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=R7H7GCaA9hBzYr/5AzClOAfux74I/XE79JAjBMX3l/q96nzV5rNgk0BrN3QK3KNKg
-         D3rY8omfYU/i96SEUihfQQ8yh2MVszR0iB4XU/pRz6WbU4Ya8/giwVH7xM9sE7A4VC
-         ZwKCjHlCzGgvB9hWaO+nJ0JVCljIHwwnwNjWJk34=
+        b=deWOk5j3vyHzuy2Elz1DD9vWg9HbV6EzVJvvUGubF3tsmgvfvsiL0icDyNaExE3EM
+         YFySEWi441lqDBmJcM4EAfhrJtZlJLV43f8XxZSp2IJV6unIiRwpmB9WrDqBpdQOR1
+         T72Vp1F2a62cPI7L3LzzCyX8W+WsQTHvzi8rj1oA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ashok Raj <ashok.raj@intel.com>,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>,
-        Sohil Mehta <sohil.mehta@intel.com>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        Joerg Roedel <jroedel@suse.de>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 005/118] iommu/vt-d: Fix NULL pointer dereference in prq_event_thread()
-Date:   Tue, 11 Dec 2018 16:40:24 +0100
-Message-Id: <20181211151644.435882036@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Bingbu Cao <bingbu.cao@intel.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 004/118] media: ipu3-cio2: Unregister device nodes first, then release resources
+Date:   Tue, 11 Dec 2018 16:40:23 +0100
+Message-Id: <20181211151644.396154031@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181211151644.216668863@linuxfoundation.org>
 References: <20181211151644.216668863@linuxfoundation.org>
@@ -71,36 +71,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 19ed3e2dd8549c1a34914e8dad01b64e7837645a ]
+[ Upstream commit 32388d6ef7cffc7d8291b67f8dfa26acd45217fd ]
 
-When handling page request without pasid event, go to "no_pasid"
-branch instead of "bad_req". Otherwise, a NULL pointer deference
-will happen there.
+While there are issues related to object lifetime management, unregister
+the media device first, followed immediately by other device nodes when
+the driver is being unbound. Only then the resources needed by the driver
+may be released. This is slightly safer.
 
-Cc: Ashok Raj <ashok.raj@intel.com>
-Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>
-Cc: Sohil Mehta <sohil.mehta@intel.com>
-Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
-Fixes: a222a7f0bb6c9 'iommu/vt-d: Implement page request handling'
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
+Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Tested-by: Bingbu Cao <bingbu.cao@intel.com>
+Reviewed-by: Bingbu Cao <bingbu.cao@intel.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/iommu/intel-svm.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/media/pci/intel/ipu3/ipu3-cio2.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/iommu/intel-svm.c b/drivers/iommu/intel-svm.c
-index 4a03e5090952..188f4eaed6e5 100644
---- a/drivers/iommu/intel-svm.c
-+++ b/drivers/iommu/intel-svm.c
-@@ -596,7 +596,7 @@ static irqreturn_t prq_event_thread(int irq, void *d)
- 			pr_err("%s: Page request without PASID: %08llx %08llx\n",
- 			       iommu->name, ((unsigned long long *)req)[0],
- 			       ((unsigned long long *)req)[1]);
--			goto bad_req;
-+			goto no_pasid;
- 		}
+diff --git a/drivers/media/pci/intel/ipu3/ipu3-cio2.c b/drivers/media/pci/intel/ipu3/ipu3-cio2.c
+index 29027159eced..ca1a4d8e972e 100644
+--- a/drivers/media/pci/intel/ipu3/ipu3-cio2.c
++++ b/drivers/media/pci/intel/ipu3/ipu3-cio2.c
+@@ -1846,12 +1846,12 @@ static void cio2_pci_remove(struct pci_dev *pci_dev)
+ 	struct cio2_device *cio2 = pci_get_drvdata(pci_dev);
+ 	unsigned int i;
  
- 		if (!svm || svm->pasid != req->pasid) {
++	media_device_unregister(&cio2->media_dev);
+ 	cio2_notifier_exit(cio2);
+-	cio2_fbpt_exit_dummy(cio2);
+ 	for (i = 0; i < CIO2_QUEUES; i++)
+ 		cio2_queue_exit(cio2, &cio2->queue[i]);
++	cio2_fbpt_exit_dummy(cio2);
+ 	v4l2_device_unregister(&cio2->v4l2_dev);
+-	media_device_unregister(&cio2->media_dev);
+ 	media_device_cleanup(&cio2->media_dev);
+ 	mutex_destroy(&cio2->lock);
+ }
 -- 
 2.19.1
 
