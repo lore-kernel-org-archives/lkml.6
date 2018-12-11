@@ -2,259 +2,120 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7495AC07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 17:00:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E193C5CFFE
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 17:00:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 33E3C2086D
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 17:00:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 33E3C2086D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org
+	by mail.kernel.org (Postfix) with ESMTP id 6528B20851
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 17:00:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="hVfpngYF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6528B20851
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727276AbeLKRAA (ORCPT
+        id S1727399AbeLKRAW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 12:00:00 -0500
-Received: from vmicros1.altlinux.org ([194.107.17.57]:43632 "EHLO
-        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726714AbeLKQ77 (ORCPT
+        Tue, 11 Dec 2018 12:00:22 -0500
+Received: from mail-io1-f65.google.com ([209.85.166.65]:36026 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726774AbeLKRAV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 11:59:59 -0500
-Received: from imap.altlinux.org (imap.altlinux.org [194.107.17.38])
-        by vmicros1.altlinux.org (Postfix) with ESMTP id 86B9872CC6C;
-        Tue, 11 Dec 2018 19:59:53 +0300 (MSK)
-Received: from beacon.altlinux.org (unknown [185.6.174.98])
-        by imap.altlinux.org (Postfix) with ESMTPSA id 08CD64A4A14;
-        Tue, 11 Dec 2018 19:59:53 +0300 (MSK)
-From:   Vitaly Chikunov <vt@altlinux.org>
-To:     David Howells <dhowells@redhat.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>, keyrings@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [RFC PATCH] akcipher: Introduce verify2 for public key algorithms
-Date:   Tue, 11 Dec 2018 19:59:38 +0300
-Message-Id: <20181211165938.1150-1-vt@altlinux.org>
-X-Mailer: git-send-email 2.11.0
+        Tue, 11 Dec 2018 12:00:21 -0500
+Received: by mail-io1-f65.google.com with SMTP id m19so12396099ioh.3
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 09:00:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=oRCOPzMLIrDwVjWJ2tEJutI5NVsDV0X/Aiu/VaWtEw0=;
+        b=hVfpngYF4ZURKVO1lak5Y+rAxRsd5bNbTZhiA8UgVdFMiUSp0oim5XNVLDvbf9HZVF
+         9zT+XYy0QsL7JuTLtYENzfM8rGh3CvcvNp36AMMhEd+mM6Izh69V5llW+JXGFW8aIojM
+         wGY/iS/3svL7kQDhbr5mTsw2hiH6fYfHyxIac=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=oRCOPzMLIrDwVjWJ2tEJutI5NVsDV0X/Aiu/VaWtEw0=;
+        b=L02/eox3ys0DB6GXeOry1f1mcjeBi1NgoMelNY18W2cCO8U3A8o/WMH1sUhYbxX9Ll
+         tOyD8ejc7+e87A7XOaznhUlr4TreoD2wFTzRpiCSX/taxGSORX76mDc13SmLEVbyXPJi
+         Hxi5Mg5Z1ybx+uatebqyd7nwa/UR7UVn3NEEdi/HlnZUm9O5pw5OWAB2eu4T95mmcgoF
+         ChqS97ZVjzpuGbr5RJw6tnanPae4la+7E28jru9HU1hxuzDyJolZg6vXzmMI60q+PeGx
+         MyNeynw1a7jUecHnpYemnR5hD6dqRW2hacSVqMZxpfw2nO7/xyy2vs9QBudqOmV2s5h4
+         U87Q==
+X-Gm-Message-State: AA+aEWYVuXLruEkmkc1VU1aEH67HKXrEy2DFKYYQsUk+0+slzLmVfhiN
+        jbJnR4ai5qrX1TIl4u5C0R6PhEMARHKd8mGQweBjoA==
+X-Google-Smtp-Source: AFSGD/X81VVihlLYP6XLcjhLKO7UOwos3IttGs5h+I85lBgxxLy+W1l64a29hAep4YMp64aI5Jxa1EEtAnhTarBFhMc=
+X-Received: by 2002:a5e:c609:: with SMTP id f9mr1247997iok.114.1544547620650;
+ Tue, 11 Dec 2018 09:00:20 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20181210161729.29720-1-jagan@amarulasolutions.com>
+ <20181210161729.29720-8-jagan@amarulasolutions.com> <20181211164900.wfmkmbrbj3nmlb3h@flea>
+In-Reply-To: <20181211164900.wfmkmbrbj3nmlb3h@flea>
+From:   Jagan Teki <jagan@amarulasolutions.com>
+Date:   Tue, 11 Dec 2018 22:30:08 +0530
+Message-ID: <CAMty3ZBzOyAGwgOZwArbvnqtcvwMkJrqwGQ-q7+XFX-BVs34RQ@mail.gmail.com>
+Subject: Re: [PATCH v5 07/17] drm/sun4i: sun6i_mipi_dsi: Refactor vertical
+ video start delay
+To:     Maxime Ripard <maxime.ripard@bootlin.com>
+Cc:     Chen-Yu Tsai <wens@csie.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        linux-sunxi <linux-sunxi@googlegroups.com>,
+        linux-amarula@amarulasolutions.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Current akcipher .verify() just decrypts signature to uncover message
-hash, which is then verified in upper level public_key_verify_signature
-by memcmp with the expected signature value, which is never passed into
-verify().
+On Tue, Dec 11, 2018 at 10:19 PM Maxime Ripard
+<maxime.ripard@bootlin.com> wrote:
+>
+> On Mon, Dec 10, 2018 at 09:47:19PM +0530, Jagan Teki wrote:
+> > Video start delay can be computed by subtracting total vertical
+> > timing with front porch timing and with adding 1 delay line for TCON.
+> >
+> > BSP code form BPI-M64-bsp is computing video start delay as
+> > (from linux-sunxi/
+> > drivers/video/sunxi/disp2/disp/de/lowlevel_sun50iw1/de_dsi.c)
+> >
+> > u32 vfp = panel->lcd_vt - panel->lcd_y - panel->lcd_vbp;
+> > => (panel->lcd_vt) - panel->lcd_y - (panel->lcd_vbp)
+> > => (timmings->ver_front_porch + panel->lcd_vbp + panel->lcd_y)
+> >    - panel->lcd_y - (panel->lcd_vbp)
+> > => timmings->ver_front_porch + panel->lcd_vbp + panel->lcd_y
+> >                            - panel->lcd_y - panel->lcd_vbp
+> > => timmings->ver_front_porch
+> >
+> > So, update the start delay computation accordingly.
+> >
+> > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+>
+> Even though it's a bit better now on my A33 board and I don't have the
+> white stripes on the bottom of the display, there's still some
+> flickering with your patches applied.
+>
+> Bisecting it seems to point at that patch, but reverting it doesn't
+> make the issue go away, so it's not really clear which one exactly is
+> at fault.
+>
+> So, just like I asked in your v4, twice,
+>
+> http://lists.infradead.org/pipermail/linux-arm-kernel/2018-November/615339.html
 
-This approach is incompatible with ECDSA algorithms, because, to verify
-a signature ECDSA algorithm also needs a hash value as input; also, hash
-is used in ECDSA (together with a signature divided into halves `r||s`),
-not to produce hash, but to produce a number, which is then compared to
-`r` (first part of the signature) to determine if the signature is
-correct.  Thus, for ECDSA, nor requirements of .verify() itself, nor its
-output expectations in public_key_verify_signature aren't satisfied.
+I don't know how can I comment here. Not quite clearly understand your
+setup, because I have verified 3 different panels from different
+vendors one with 2-lane, another with 4-lane and one with video format
+and another one is burstmode format. I even verified with the clock
+rate and register details.
 
-Make alternative .verify2() call which gets hash value and produce
-complete signature check (without any output, thus max_size() call will
-not be needed for verify2() operation).
-
-If .verify2() call is present, it should be used in place of .verify().
-
-Signed-off-by: Vitaly Chikunov <vt@altlinux.org>
----
- crypto/asymmetric_keys/public_key.c | 57 ++++++++++++++++++++++++-------------
- include/crypto/akcipher.h           | 54 +++++++++++++++++++++++++++++++++--
- 2 files changed, 89 insertions(+), 22 deletions(-)
-
-diff --git a/crypto/asymmetric_keys/public_key.c b/crypto/asymmetric_keys/public_key.c
-index 3bc090b8adef..51dc1c858c7c 100644
---- a/crypto/asymmetric_keys/public_key.c
-+++ b/crypto/asymmetric_keys/public_key.c
-@@ -242,6 +242,7 @@ int public_key_verify_signature(const struct public_key *pkey,
- 	char alg_name[CRYPTO_MAX_ALG_NAME];
- 	void *output;
- 	unsigned int outlen;
-+	int verify2;
- 	int ret;
- 
- 	pr_devel("==>%s()\n", __func__);
-@@ -279,14 +280,23 @@ int public_key_verify_signature(const struct public_key *pkey,
- 	if (ret)
- 		goto error_free_req;
- 
--	ret = -ENOMEM;
--	outlen = crypto_akcipher_maxsize(tfm);
--	output = kmalloc(outlen, GFP_KERNEL);
--	if (!output)
--		goto error_free_req;
--
-+	verify2 = crypto_akcipher_have_verify2(req);
-+	if (!verify2) {
-+		/* verify2 does not need output buffer */
-+		ret = -ENOMEM;
-+		outlen = crypto_akcipher_maxsize(tfm);
-+		output = kmalloc(outlen, GFP_KERNEL);
-+		if (!output)
-+			goto error_free_req;
-+
-+		sg_init_one(&digest_sg, output, outlen);
-+	} else {
-+		/* dummy init digest_sg */
-+		memset(&digest_sg, 0, sizeof(digest_sg));
-+		output = NULL;
-+		outlen = 0;
-+	}
- 	sg_init_one(&sig_sg, sig->s, sig->s_size);
--	sg_init_one(&digest_sg, output, outlen);
- 	akcipher_request_set_crypt(req, &sig_sg, &digest_sg, sig->s_size,
- 				   outlen);
- 	crypto_init_wait(&cwait);
-@@ -294,18 +304,27 @@ int public_key_verify_signature(const struct public_key *pkey,
- 				      CRYPTO_TFM_REQ_MAY_SLEEP,
- 				      crypto_req_done, &cwait);
- 
--	/* Perform the verification calculation.  This doesn't actually do the
--	 * verification, but rather calculates the hash expected by the
--	 * signature and returns that to us.
--	 */
--	ret = crypto_wait_req(crypto_akcipher_verify(req), &cwait);
--	if (ret)
--		goto out_free_output;
--
--	/* Do the actual verification step. */
--	if (req->dst_len != sig->digest_size ||
--	    memcmp(sig->digest, output, sig->digest_size) != 0)
--		ret = -EKEYREJECTED;
-+	if (!verify2) {
-+		/* Perform the verification calculation.  This doesn't actually
-+		 * do the verification, but rather calculates the hash expected
-+		 * by the signature and returns that to us.
-+		 */
-+		ret = crypto_wait_req(crypto_akcipher_verify(req), &cwait);
-+		if (ret)
-+			goto out_free_output;
-+
-+		/* Do the actual verification step. */
-+		if (req->dst_len != sig->digest_size ||
-+		    memcmp(sig->digest, output, sig->digest_size) != 0)
-+			ret = -EKEYREJECTED;
-+	} else {
-+		/* Perform full verification in one call. */
-+		req->digest = sig->digest;
-+		req->digest_len = sig->digest_size;
-+		ret = crypto_wait_req(crypto_akcipher_verify2(req), &cwait);
-+		if (ret)
-+			goto out_free_output;
-+	}
- 
- out_free_output:
- 	kfree(output);
-diff --git a/include/crypto/akcipher.h b/include/crypto/akcipher.h
-index d6aba84ed2c4..f1ad67474bc1 100644
---- a/include/crypto/akcipher.h
-+++ b/include/crypto/akcipher.h
-@@ -28,6 +28,8 @@
-  *		result.
-  *		In case of error where the dst sgl size was insufficient,
-  *		it will be updated to the size required for the operation.
-+ * @digest:	Digest for verify2.
-+ * @digest_len:	Size of the digest.
-  * @__ctx:	Start of private context data
-  */
- struct akcipher_request {
-@@ -36,6 +38,8 @@ struct akcipher_request {
- 	struct scatterlist *dst;
- 	unsigned int src_len;
- 	unsigned int dst_len;
-+	u8 *digest;
-+	u8 digest_len;
- 	void *__ctx[] CRYPTO_MINALIGN_ATTR;
- };
- 
-@@ -60,6 +64,8 @@ struct crypto_akcipher {
-  *		algorithm. In case of error, where the dst_len was insufficient,
-  *		the req->dst_len will be updated to the size required for the
-  *		operation
-+ * @verify2:	Function performs a verify operation as defined by public key
-+ *		algorithm.
-  * @encrypt:	Function performs an encrypt operation as defined by public key
-  *		algorithm. In case of error, where the dst_len was insufficient,
-  *		the req->dst_len will be updated to the size required for the
-@@ -96,6 +102,7 @@ struct crypto_akcipher {
- struct akcipher_alg {
- 	int (*sign)(struct akcipher_request *req);
- 	int (*verify)(struct akcipher_request *req);
-+	int (*verify2)(struct akcipher_request *req);
- 	int (*encrypt)(struct akcipher_request *req);
- 	int (*decrypt)(struct akcipher_request *req);
- 	int (*set_pub_key)(struct crypto_akcipher *tfm, const void *key,
-@@ -400,11 +407,13 @@ static inline int crypto_akcipher_sign(struct akcipher_request *req)
-  * crypto_akcipher_verify() - Invoke public key verify operation
-  *
-  * Function invokes the specific public key verify operation for a given
-- * public key algorithm
-+ * public key algorithm: basically it does (rsa) decrypt of signature
-+ * producing decrypted hash into dst, which should be compared by a caller
-+ * with expected hash value.
-  *
-- * @req:	asymmetric key request
-+ * @req:	asymmetric key request (without hash)
-  *
-- * Return: zero on success; error code in case of error
-+ * Return: zero on decryption success; error code in case of error
-  */
- static inline int crypto_akcipher_verify(struct akcipher_request *req)
- {
-@@ -418,6 +427,45 @@ static inline int crypto_akcipher_verify(struct akcipher_request *req)
- }
- 
- /**
-+ * crypto_akcipher_verify2() - Invoke public key verify operation
-+ *
-+ * Function performs complete public key verify operation for a given
-+ * public key algorithm
-+ *
-+ * @req:	asymmetric key request (with hash)
-+ *
-+ * Return: zero on verification success; error code in case of error
-+ */
-+static inline int crypto_akcipher_verify2(struct akcipher_request *req)
-+{
-+	struct crypto_akcipher *tfm = crypto_akcipher_reqtfm(req);
-+	struct akcipher_alg *alg = crypto_akcipher_alg(tfm);
-+	int ret;
-+
-+	ret = alg->verify2(req);
-+	crypto_stat_akcipher_verify(req, ret);
-+	return ret;
-+}
-+
-+/**
-+ * crypto_akcipher_have_verify2() - Check for existence of public key verify2
-+ * operation
-+ *
-+ * Function checks for existence of verify2 call for the public key algorithm
-+ *
-+ * @req:	asymmetric key request (with hash)
-+ *
-+ * Return: non-zero is verify2 call exists; zero if it does not
-+ */
-+static inline int crypto_akcipher_have_verify2(struct akcipher_request *req)
-+{
-+	struct crypto_akcipher *tfm = crypto_akcipher_reqtfm(req);
-+	struct akcipher_alg *alg = crypto_akcipher_alg(tfm);
-+
-+	return !!alg->verify2;
-+}
-+
-+/**
-  * crypto_akcipher_set_pub_key() - Invoke set public key operation
-  *
-  * Function invokes the algorithm specific set key function, which knows
--- 
-2.11.0
-
+Please suggest me, what can look further on this.
