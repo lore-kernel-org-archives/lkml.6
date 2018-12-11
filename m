@@ -2,113 +2,251 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A597CC67839
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 08:03:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F255C07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 08:05:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A3DD2084A
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 08:03:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544515386;
-	bh=27qKANtVyfxGEReXEC/rQ61r+efcmhaDdmDRwkL0jS8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=2i6vWHwsoeWM8l7uykUDtLgBxwMdT9JAYzkGmEYcxW+k1FGD9BrMlZulb05lfcKcn
-	 1U6J/Pmhs68997fu3U8IKNr1sEI/xZJucydh+kQH1tJpQeIZ4O5ttQqyWeC01UlZxU
-	 VHVEka7op5WeVeenEG3FVNLT2NFwMBIsBcvIsQWU=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A3DD2084A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id E898A2081B
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 08:04:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E898A2081B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726218AbeLKIDF (ORCPT
+        id S1726176AbeLKIE6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 03:03:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51024 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726036AbeLKIDE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 03:03:04 -0500
-Received: from dragon (61-216-91-114.HINET-IP.hinet.net [61.216.91.114])
-        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 931602081B;
-        Tue, 11 Dec 2018 08:02:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544515384;
-        bh=27qKANtVyfxGEReXEC/rQ61r+efcmhaDdmDRwkL0jS8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=jucL7OdGvNUFtwk2AR6s4lOan8LP23jXKWbLuBLIKooszl8d9UY1DVRno1F9T5Dm2
-         KNeYhKXqSsAISUi7b+DoUV3z81X81v1j8L1c9a8Bzc2V+j/iV838v2eRnCa36RIO3r
-         dybtzjt8cIDwhJhf/wiBnj8skIZEo7mmWzk3eRYg=
-Date:   Tue, 11 Dec 2018 16:02:09 +0800
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Abel Vesa <abel.vesa@nxp.com>, Aisheng DONG <aisheng.dong@nxp.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Abel Vesa <abelvesa@linux.com>
-Subject: Re: [PATCH v13 0/5] Add i.MX8MQ clock driver
-Message-ID: <20181211080208.GY3987@dragon>
-References: <1542125975-8448-1-git-send-email-abel.vesa@nxp.com>
- <154345210894.88331.8277410833858111600@swboyd.mtv.corp.google.com>
- <AM0PR04MB42117F72B9C4D41C14B96CBD80D20@AM0PR04MB4211.eurprd04.prod.outlook.com>
- <154352826457.88331.16669625591730377740@swboyd.mtv.corp.google.com>
+        Tue, 11 Dec 2018 03:04:58 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:45334 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726036AbeLKIE6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 03:04:58 -0500
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBB84org089025
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 03:04:57 -0500
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2pa4ta1yym-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 03:04:56 -0500
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <stli@linux.ibm.com>;
+        Tue, 11 Dec 2018 08:04:54 -0000
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 11 Dec 2018 08:04:51 -0000
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBB84ogi48693320
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 11 Dec 2018 08:04:50 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C41FDAE045;
+        Tue, 11 Dec 2018 08:04:50 +0000 (GMT)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 7F63FAE04D;
+        Tue, 11 Dec 2018 08:04:50 +0000 (GMT)
+Received: from oc4452167425.ibm.com (unknown [9.152.222.184])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Tue, 11 Dec 2018 08:04:50 +0000 (GMT)
+Subject: Re: [patch] futex: Cure exit race
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        LKML <linux-kernel@vger.kernel.org>
+Cc:     Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Darren Hart <dvhart@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>
+References: <20181210152311.986181245@linutronix.de>
+From:   Stefan Liebler <stli@linux.ibm.com>
+Date:   Tue, 11 Dec 2018 09:04:50 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <154352826457.88331.16669625591730377740@swboyd.mtv.corp.google.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20181210152311.986181245@linutronix.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-IE
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18121108-0016-0000-0000-00000234D28E
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18121108-0017-0000-0000-0000328CFE8E
+Message-Id: <06e7e269-6c87-f5f2-9a15-435b0a376105@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-11_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=982 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1812110077
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 29, 2018 at 01:51:04PM -0800, Stephen Boyd wrote:
-> Quoting Aisheng DONG (2018-11-28 23:46:41)
-> > > -----Original Message-----
-> > > From: Stephen Boyd [mailto:sboyd@kernel.org]
-> > [...]
-> > > >
-> > > > Changes since v12:
-> > > >  * replaced the division in clk_pll_recalc_rate in clk-frac
-> > > >    with do_div as suggested by Stephen
-> > > >
-> > > > Abel Vesa (2):
-> > > >   clk: imx: Add imx composite clock
-> > > >   clk: imx: Add clock driver for i.MX8MQ CCM
-> > > >
-> > > > Lucas Stach (3):
-> > > >   dt-bindings: add binding for i.MX8MQ CCM
-> > > >   clk: imx: add fractional PLL output clock
-> > > >   clk: imx: Add SCCG PLL type
-> > > >
-> > > 
-> > > I had to apply this set of fixes to silence sparse and smatch warnings about
-> > > things that are not right. Please take a look over things and see if it's sane.
-> > > 
-> > 
-> > The change looks good to me and tested ok.
-> > I did not see this patch series in your tree.
-> > Do you want us to apply your changes and re-send for easy pick up?
-> > 
+Hi Thomas,
+
+does this also handle the ESRCH returned by
+attach_to_pi_owner(...)
+{...
+	if (!pid)
+		return -ESRCH;
+	p = find_get_task_by_vpid(pid);
+	if (!p)
+		return -ESRCH;
+...
+
+I think pid should never be zero when attach_to_pi_owner is called.
+But it can happen that p is null? At least I traced the "return -ESRCH" 
+with the 4.17 kernel. Unfortunately both returns were done by the same 
+instruction address.
+
+Bye
+Stefan
+
+On 12/10/2018 04:23 PM, Thomas Gleixner wrote:
+> Stefan reported, that the glibc tst-robustpi4 test case fails
+> occasionally. That case creates the following race between
+> sys_exit() and sys_futex(LOCK_PI):
 > 
-> I applied this version and my fixes. I'll just mark v14 as superseded.
-> Thanks for testing!
+>   CPU0				CPU1
+> 
+>   sys_exit()			sys_futex()
+>    do_exit()			 futex_lock_pi()
+>     exit_signals(tsk)		  No waiters:
+>      tsk->flags |= PF_EXITING;	  *uaddr == 0x00000PID
+>    mm_release(tsk)		  Set waiter bit
+>     exit_robust_list(tsk) {	  *uaddr = 0x80000PID;
+>        Set owner died		  attach_to_pi_owner() {
+>      *uaddr = 0xC0000000;	   tsk = get_task(PID);
+>     }				   if (!tsk->flags & PF_EXITING) {
+>    ...				     attach();
+>    tsk->flags |= PF_EXITPIDONE;	   } else {
+> 				     if (!(tsk->flags & PF_EXITPIDONE))
+> 				       return -EAGAIN;
+> 				     return -ESRCH; <--- FAIL
+> 				   }
+> 
+> ESRCH is returned all the way to user space, which triggers the glibc test
+> case assert. Returning ESRCH unconditionally is wrong here because the user
+> space value has been changed by the exiting task to 0xC0000000, i.e. the
+> FUTEX_OWNER_DIED bit is set and the futex PID value has been cleared. This
+> is a valid state and the kernel has to handle it, i.e. taking the futex.
+> 
+> Cure it by rereading the user space value when PF_EXITING and PF_EXITPIDONE
+> is set in the task which owns the futex. If the value has changed, let
+> the kernel retry the operation, which includes all regular sanity checks
+> and correctly handles the FUTEX_OWNER_DIED case.
+> 
+> If it hasn't changed, then return ESRCH as there is no way to distinguish
+> this case from malfunctioning user space. This happens when the exiting
+> task did not have a robust list, the robust list was corrupted or the user
+> space value in the futex was simply bogus.
+> 
+> Reported-by: Stefan Liebler <stli@linux.ibm.com>
+> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Darren Hart <dvhart@infradead.org>
+> Cc: Ingo Molnar <mingo@kernel.org>
+> Cc: stable@vger.kernel.org
+> Link: https://bugzilla.kernel.org/show_bug.cgi?id=200467
+> ---
+>   kernel/futex.c |   57 +++++++++++++++++++++++++++++++++++++++++++++++++++++----
+>   1 file changed, 53 insertions(+), 4 deletions(-)
+> 
+> --- a/kernel/futex.c
+> +++ b/kernel/futex.c
+> @@ -1148,11 +1148,60 @@ static int attach_to_pi_state(u32 __user
+>   	return ret;
+>   }
+>   
+> +static int handle_exit_race(u32 __user *uaddr, u32 uval, struct task_struct *tsk)
+> +{
+> +	u32 uval2;
+> +
+> +	/*
+> +	 * If PF_EXITPIDONE is not yet set try again.
+> +	 */
+> +	if (!(tsk->flags & PF_EXITPIDONE))
+> +		return -EAGAIN;
+> +
+> +	/*
+> +	 * Reread the user space value to handle the following situation:
+> +	 *
+> +	 * CPU0				CPU1
+> +	 *
+> +	 * sys_exit()			sys_futex()
+> +	 *  do_exit()			 futex_lock_pi()
+> +	 *   exit_signals(tsk)		  No waiters:
+> +	 *    tsk->flags |= PF_EXITING;	  *uaddr == 0x00000PID
+> +	 *  mm_release(tsk)		  Set waiter bit
+> +	 *   exit_robust_list(tsk) {	  *uaddr = 0x80000PID;
+> +	 *      Set owner died		  attach_to_pi_owner() {
+> +	 *    *uaddr = 0xC0000000;	   tsk = get_task(PID);
+> +	 *   }				   if (!tsk->flags & PF_EXITING) {
+> +	 *  ...				     attach();
+> +	 *  tsk->flags |= PF_EXITPIDONE;   } else {
+> +	 *				     if (!(tsk->flags & PF_EXITPIDONE))
+> +	 *				       return -EAGAIN;
+> +	 *				     return -ESRCH; <--- FAIL
+> +	 *				   }
+> +	 *
+> +	 * Returning ESRCH unconditionally is wrong here because the
+> +	 * user space value has been changed by the exiting task.
+> +	 */
+> +	if (get_futex_value_locked(&uval2, uaddr))
+> +		return -EFAULT;
+> +
+> +	/* If the user space value has changed, try again. */
+> +	if (uval2 != uval)
+> +		return -EAGAIN;
+> +
+> +	/*
+> +	 * The exiting task did not have a robust list, the robust list was
+> +	 * corrupted or the user space value in *uaddr is simply bogus.
+> +	 * Give up and tell user space.
+> +	 */
+> +	return -ESRCH;
+> +}
+> +
+>   /*
+>    * Lookup the task for the TID provided from user space and attach to
+>    * it after doing proper sanity checks.
+>    */
+> -static int attach_to_pi_owner(u32 uval, union futex_key *key,
+> +static int attach_to_pi_owner(u32 __user *uaddr, u32 uval, union futex_key *key,
+>   			      struct futex_pi_state **ps)
+>   {
+>   	pid_t pid = uval & FUTEX_TID_MASK;
+> @@ -1187,7 +1236,7 @@ static int attach_to_pi_owner(u32 uval,
+>   		 * set, we know that the task has finished the
+>   		 * cleanup:
+>   		 */
+> -		int ret = (p->flags & PF_EXITPIDONE) ? -ESRCH : -EAGAIN;
+> +		int ret = handle_exit_race(uaddr, uval, p);
+>   
+>   		raw_spin_unlock_irq(&p->pi_lock);
+>   		put_task_struct(p);
+> @@ -1244,7 +1293,7 @@ static int lookup_pi_state(u32 __user *u
+>   	 * We are the first waiter - try to look up the owner based on
+>   	 * @uval and attach to it.
+>   	 */
+> -	return attach_to_pi_owner(uval, key, ps);
+> +	return attach_to_pi_owner(uaddr, uval, key, ps);
+>   }
+>   
+>   static int lock_pi_update_atomic(u32 __user *uaddr, u32 uval, u32 newval)
+> @@ -1352,7 +1401,7 @@ static int futex_lock_pi_atomic(u32 __us
+>   	 * attach to the owner. If that fails, no harm done, we only
+>   	 * set the FUTEX_WAITERS bit in the user space variable.
+>   	 */
+> -	return attach_to_pi_owner(uval, key, ps);
+> +	return attach_to_pi_owner(uaddr, uval, key, ps);
+>   }
+>   
+>   /**
+> 
+> 
 
-Hi Stephen,
-
-For the same reason as clk-imx7ulp, please keep branch clk-imx8mq
-stable.  Thanks.
-
-Shawn
