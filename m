@@ -2,88 +2,51 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DE91C5CFFE
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 18:33:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B3E7C5CFFE
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 18:34:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D9C520851
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 18:33:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="q0FIl0uM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D9C520851
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+	by mail.kernel.org (Postfix) with ESMTP id 1EB8120851
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 18:34:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1EB8120851
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726899AbeLKSc7 (ORCPT
+        id S1727115AbeLKSeB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 13:32:59 -0500
-Received: from mail-io1-f67.google.com ([209.85.166.67]:36406 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726618AbeLKSc6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 13:32:58 -0500
-Received: by mail-io1-f67.google.com with SMTP id m19so12655208ioh.3
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 10:32:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=V678lObyQXAGDUycAkU7vh0Hh4W41IpIfx8gVzVLppE=;
-        b=q0FIl0uMgMf2gBeTHKcNI6rkQ1BswPFMi/ChD4qKXBJViUHXx0K3ZiJgP4W1LkXZGd
-         fxVc5TTqv3mi2eiEauzLhd/pAgHI2T0apPkqggAzuobKd4oF9HAb98jAe6UHwviJxK1m
-         OVq5tvUzclqBHRwYUd1CI4PeySoB64EVfYQi9PhMNaGcyFvbp0EqZvJG6RZHOodcNpAr
-         00c2ZFWHZmQtdKzROIHYMhfSzbLFMEloJoYHBKHtZD7rkHEDqTiWuMSuKq8I1WNKraVO
-         bsdEhee/pw0e9F27yCClNV9zgQedIiZczBF9GjhKf6UmPBXFx9pRvbdWybeSaxNBbkfS
-         6ghA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=V678lObyQXAGDUycAkU7vh0Hh4W41IpIfx8gVzVLppE=;
-        b=rJ/7zzN59NR9ktz6ugedlv1NP2hIHHIA6RJegmJm1ZlpoHgil7cX+qrKry/so3LiMV
-         Dg2j/L7Ojyfjl0gdmNm3a77RNJxTgB3bTSW2vHXbBnnhTtI/oz7/WTJqkvLla3Q8MAqX
-         0rKoj4y+rg8NU/7B76aniCR5Xc/NhTCH3dueAGgOWUK7DjlvYmxd+ZTUv5IXEmx8kXsW
-         O6KWlikpeQpVo4ornNk2j51YaqxXj7CPY6fXT9gwWKblLgDX04fbxm3p2SCoQdbHWliV
-         R+YNdqsqn3uIIbTz9f6i9IysPkvY9NWjCUw3tqszAwH5JwJaTipOv477GpTPVlVbPyh7
-         E+Sw==
-X-Gm-Message-State: AA+aEWYWQMK2lNJJIRAFdXA7HXMd9XFOlCjE5/sBWHOlLM1PPxLFKH1T
-        TD05wG7SmzKxSaDRaMjUi0vrHg==
-X-Google-Smtp-Source: AFSGD/VkTT+tMPnd/nPcoK4VH9MRjsbpuWw9EEMlJsWLi3JoHgs9pBZatcFvVJTsYhiIJOAXAdM+bQ==
-X-Received: by 2002:a6b:5804:: with SMTP id m4mr6753301iob.47.1544553177501;
-        Tue, 11 Dec 2018 10:32:57 -0800 (PST)
-Received: from [192.168.1.56] ([216.160.245.98])
-        by smtp.gmail.com with ESMTPSA id v74sm1597657ita.27.2018.12.11.10.32.55
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 11 Dec 2018 10:32:55 -0800 (PST)
-Subject: Re: [PATCH] aio: Convert ioctx_table to XArray
-From:   Jens Axboe <axboe@kernel.dk>
-To:     Jeff Moyer <jmoyer@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Benjamin LaHaise <bcrl@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Kees Cook <keescook@chromium.org>,
-        linux-fsdevel@vger.kernel.org, linux-aio@kvack.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        kent.overstreet@gmail.com
-References: <20181128183531.5139-1-willy@infradead.org>
- <x49va46e1p0.fsf@segfault.boston.devel.redhat.com>
- <x49pnuee1gm.fsf@segfault.boston.devel.redhat.com>
- <x49mupcm11r.fsf@segfault.boston.devel.redhat.com>
- <20181211175156.GF6830@bombadil.infradead.org>
- <x495zw0lz68.fsf@segfault.boston.devel.redhat.com>
- <0f77a532-0d88-78bc-b9cc-06bb203a0405@kernel.dk>
-Message-ID: <6b9a45c4-47a2-4c44-aa7e-6e5e90eff9df@kernel.dk>
-Date:   Tue, 11 Dec 2018 11:32:54 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Tue, 11 Dec 2018 13:34:01 -0500
+Received: from mga11.intel.com ([192.55.52.93]:2450 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726556AbeLKSeB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 13:34:01 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Dec 2018 10:34:00 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,343,1539673200"; 
+   d="scan'208";a="97945078"
+Received: from rchatre-mobl.amr.corp.intel.com (HELO [10.24.14.157]) ([10.24.14.157])
+  by orsmga007.jf.intel.com with ESMTP; 11 Dec 2018 10:34:00 -0800
+Subject: Re: [PATCH V2] x86/intel_rdt: Ensure usage of CPUs are locked while
+ needed
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     tglx@linutronix.de, fenghua.yu@intel.com, tony.luck@intel.com,
+        gavin.hindman@intel.com, jithu.joseph@intel.com, mingo@redhat.com,
+        hpa@zytor.com, x86@kernel.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org
+References: <b7b17432a80f95a1fa21a1698ba643014f58ad31.1544476425.git.reinette.chatre@intel.com>
+ <20181211123404.GC27375@zn.tnic>
+From:   Reinette Chatre <reinette.chatre@intel.com>
+Message-ID: <ece2581e-d5e5-c26c-53e5-0cef8b37e59f@intel.com>
+Date:   Tue, 11 Dec 2018 10:33:59 -0800
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <0f77a532-0d88-78bc-b9cc-06bb203a0405@kernel.dk>
+In-Reply-To: <20181211123404.GC27375@zn.tnic>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -92,53 +55,76 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/11/18 11:05 AM, Jens Axboe wrote:
-> On 12/11/18 11:02 AM, Jeff Moyer wrote:
->> Matthew Wilcox <willy@infradead.org> writes:
+Hi Boris,
+
+On 12/11/2018 4:34 AM, Borislav Petkov wrote:
+> On Mon, Dec 10, 2018 at 01:21:54PM -0800, Reinette Chatre wrote:
+>> The user triggers the creation of a pseudo-locked region when writing
+>> the requested schemata to the schemata resctrl file. The pseudo-locking
+>> of a region is required to be done on a CPU that is associated with the
+>> cache on which the pseudo-locked region will reside. In order to run the
+>> locking code on a specific CPU the needed CPU has to be selected and
+>> ensured to remain online during the entire locking sequence.
 >>
->>> On Tue, Dec 11, 2018 at 12:21:52PM -0500, Jeff Moyer wrote:
->>>> I'm going to submit this version formally.  If you're interested in
->>>> converting the ioctx_table to xarray, you can do that separately from a
->>>> security fix.  I would include a performance analysis with that patch,
->>>> though.  The idea of using a radix tree for the ioctx table was
->>>> discarded due to performance reasons--see commit db446a08c23d5 ("aio:
->>>> convert the ioctx list to table lookup v3").  I suspect using the xarray
->>>> will perform similarly.
->>>
->>> There's a big difference between Octavian's patch and mine.  That patch
->>> indexed into the radix tree by 'ctx_id' directly, which was pretty
->>> much guaranteed to exhibit some close-to-worst-case behaviour from the
->>> radix tree due to IDs being sparsely assigned.  My patch uses the ring
->>> ID which _we_ assigned, and so is nicely behaved, being usually a very
->>> small integer.
+>> At this time the cpu_hotplug_lock is not taken during the pseudo-lock
+>> region creation and it is thus possible for a CPU to be selected to run
+>> the pseudo-locking code and then that CPU to go offline before the
+>> thread is able to run on it.
 >>
->> OK, good to know.  I obviously didn't look too closely at the two.
+>> Fix this by ensuring that the cpu_hotplug_lock is taken while the CPU on
+>> which code has to run needs to be controlled. Since the cpu_hotplug_lock
+>> is always taken before rdtgroup_mutex the lock order is maintained.
 >>
->>> What performance analysis would you find compelling?  Octavian's original
->>> fio script:
->>>
->>>> rw=randrw; size=256k ;directory=/mnt/fio; ioengine=libaio; iodepth=1
->>>> blocksize=1024; numjobs=512; thread; loops=100
->>>>
->>>> on an EXT2 filesystem mounted on top of a ramdisk
->>>
->>> or something else?
+>> Fixes: e0bdfe8e36f3 ("x86/intel_rdt: Support creation/removal of pseudo-locked region")
+>> Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
+>> Cc: stable@vger.kernel.org
+>> ---
+>> V2:
+>> - Rebase against tip/x86/urgent
+>> - Modify subject from x86/resctrl to x86/intel_rdt to match subject used
+>>   before the code reorganization.
 >>
->> I think the most common use case is a small number of ioctx-s, so I'd
->> like to see that use case not regress (that should be easy, right?).
->> Kent, what were the tests you were using when doing this work?  Jens,
->> since you're doing performance work in this area now, are there any
->> particular test cases you care about?
+>>  arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c | 4 ++++
+>>  1 file changed, 4 insertions(+)
 > 
-> I can give it a spin, ioctx lookup is in the fast path, and for "classic"
-> aio we do it twice for each IO...
+> I took it but changed the subject to the more straight-forward:
 
-Don't see any regressions. But if we're fiddling with it anyway, can't
-we do something smarter? Make the fast path just index a table, and put
-all the big hammers in setup/destroy. We're spending a non-substantial
-amount of time doing lookups, that's really no different before and
-after the patch.
+Thank you very much.
 
--- 
-Jens Axboe
+> 
+> "x86/intel_rdt: Disable CPU hotplug while modifying schemata"
+
+I am not sure that this is an issue when updating a schemata in the
+general case. In the case when just CAT schemata (without
+pseudo-locking) is updated then the cpu mask associated with the cache
+instance is indeed used to determine which CPUs should have their
+registers changed but only the current CPU is not checked for being
+online, for the other CPUs smp_call_function_many() is used that
+includes an online check.
+
+> Now, your second patch:
+> 
+>   Subject: [PATCH V2] x86/resctrl: Fix rdt_find_domain() return value and checks
+>   Message-Id: <b88cd4ff6a75995bf8db9b0ea546908fe50f69f3.1544479852.git.reinette.chatre@intel.com>
+> 
+> has the new file paths, has Fixes: tags but no CC:stable.
+> 
+> I'm guessing it needs to go in the next merge window with the rest of
+> the new stuff and not now, with the urgent pile?
+> 
+> I'm thinking that because it is not really a bug now, as the negative ID
+> happens to work.
+
+I had the same question in V1's notes to the maintainer :)
+
+My initial concern was the lack of IS_ERR checking. Understanding the
+flow better now it seems to me that this is indeed not a bug now. The
+reasoning is that an ERR_PTR is only returned when a negative id is
+provided in the parameters to rdt_find_domain(). There are currently
+only two places where a negative id could be provided to
+rdt_find_domain(), domain_add_cpu() and domain_remove_cpu(), and both
+locations test the return value using IS_ERR.
+
+Reinette
+
 
