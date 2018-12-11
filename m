@@ -2,122 +2,411 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF9A7C5CFFE
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 10:12:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF2AFC07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 10:12:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B5BD72081B
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 10:12:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544523170;
-	bh=8stYEgMD5RkkhsElbhk54+08JK/8VpeUh2ydXdSb4GA=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=y5M3DqK/epcE2C2AiwiklVV8bF+y/DeadLyn9Exbr/9UJMemrEhya8a+xkI4iu7wh
-	 5KLcEKkF9Jy2cLu7Q1nrJbLiikWM86Bfe3+C1gQQNS5DWLvqt63FHcOxyhxE9pntFD
-	 MGrsv58JQqRjw3FCNo64E8u+YX0GMxk/Y6ySXJZU=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B5BD72081B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id A16D120849
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 10:12:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A16D120849
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726374AbeLKKMt (ORCPT
+        id S1726404AbeLKKM5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 05:12:49 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:36382 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726179AbeLKKMt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 05:12:49 -0500
-Received: by mail-ot1-f66.google.com with SMTP id k98so13487893otk.3;
-        Tue, 11 Dec 2018 02:12:48 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=oek6EKid2RfGsvU9DoiWaFOn1V2LvxS24Ia1j0J7ydA=;
-        b=Fl/V46OphESidghD7Me0L24YTLXvVLWODN9o2PwcfpyzAOPtSJX57ncCeCNNk3lHrU
-         pAm3ulpFzRmg+UoHoVWu+0VpGfXGor8ZIiU18WySwncV9yRNmdhm34bObVxSM68z4xSN
-         DmhLDwn+1bvEDbu7uZWFnovmQiPxriAfX72afZFWnCF0AtACAgvcHEQg/oPdM9tcdymO
-         4Vo4Ly7FqlaoGO6DYkNACTl3kuMs/iTq8HZkkbXkH5Buo9mIYKXrAesz7Ck5Dfw0fZm0
-         LsOdDQgqJq5o/ZO1cbbEVThbxPKBsuSADECz3GwSiUmWxPwiljW40jhrksMIOO2iHMFQ
-         gUJw==
-X-Gm-Message-State: AA+aEWYsN0SvBD84ei20ALNqz1WiCb9OvpDL4sM6gGuWYouVX4VGy9t1
-        OQiV12ABDtV9NVxIOZl+1ntNWS6KC+phJrDawDI=
-X-Google-Smtp-Source: AFSGD/U23idKC0NK/SJsRqlxNnYRp4BrKQ5ax5FFVGIjLoqK1RPG5OVAQGUp+KbvaIEwTzygneXfitTqgP86QmRcWn4=
-X-Received: by 2002:a9d:588c:: with SMTP id x12mr712220otg.139.1544523167923;
- Tue, 11 Dec 2018 02:12:47 -0800 (PST)
+        Tue, 11 Dec 2018 05:12:57 -0500
+Received: from mga03.intel.com ([134.134.136.65]:6790 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726179AbeLKKM4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 05:12:56 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Dec 2018 02:12:55 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,342,1539673200"; 
+   d="scan'208";a="108638863"
+Received: from twinkler-lnx.jer.intel.com ([10.12.91.48])
+  by fmsmga008.fm.intel.com with ESMTP; 11 Dec 2018 02:12:52 -0800
+From:   Tomas Winkler <tomas.winkler@intel.com>
+To:     "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Vinayak Holikatti <vinholikatti@gmail.com>,
+        Adrian Hunter <adrian.hunter@intel.com>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Subhash Jadavani <subhashj@codeaurora.org>,
+        Alex Lemberg <Alex.Lemberg@wdc.com>,
+        Avri Altman <Avri.Altman@wdc.com>, linux-scsi@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Tomas Winkler <tomas.winkler@intel.com>
+Subject: [PATCH] scsi: ufs: revamp string descriptor reading
+Date:   Tue, 11 Dec 2018 13:07:05 +0200
+Message-Id: <20181211110705.11646-1-tomas.winkler@intel.com>
+X-Mailer: git-send-email 2.19.2
 MIME-Version: 1.0
-References: <20181208214644.5374-1-okaya@kernel.org>
-In-Reply-To: <20181208214644.5374-1-okaya@kernel.org>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Tue, 11 Dec 2018 11:12:36 +0100
-Message-ID: <CAJZ5v0jV+UZ7A46Kiyv6JysoFJ=_ts7O_p3z9F1Uze3OwZdh_Q@mail.gmail.com>
-Subject: Re: [PATCH v2 1/3] ACPI: Allow PCI to be disabled for reboot
-To:     okaya@kernel.org
-Cc:     ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Dec 8, 2018 at 10:47 PM Sinan Kaya <okaya@kernel.org> wrote:
->
-> Make PCI reboot conditional on PCI support being present on the kernel
-> configuration.
->
-> Signed-off-by: Sinan Kaya <okaya@kernel.org>
+Define new a type: uc_string_id for easier string
+handling and less casting. Reduce number or string
+copies in price of a dynamic allocation.
 
-Same comment as for patch [2/3]: make the subject say clearly that
-this is about CONFIG_PCI.
+Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+---
+ drivers/scsi/ufs/ufs-sysfs.c |  20 ++---
+ drivers/scsi/ufs/ufs.h       |   2 +-
+ drivers/scsi/ufs/ufshcd.c    | 164 +++++++++++++++++++++--------------
+ drivers/scsi/ufs/ufshcd.h    |   9 +-
+ 4 files changed, 115 insertions(+), 80 deletions(-)
 
-> ---
->  drivers/acpi/reboot.c | 12 +++++++++---
->  1 file changed, 9 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/acpi/reboot.c b/drivers/acpi/reboot.c
-> index 6fa9c2a4cfe9..9aa367f098a6 100644
-> --- a/drivers/acpi/reboot.c
-> +++ b/drivers/acpi/reboot.c
-> @@ -7,8 +7,6 @@
->  void acpi_reboot(void)
->  {
->         struct acpi_generic_address *rr;
-> -       struct pci_bus *bus0;
-> -       unsigned int devfn;
->         u8 reset_value;
->
->         if (acpi_disabled)
-> @@ -33,6 +31,11 @@ void acpi_reboot(void)
->          * on a device on bus 0. */
->         switch (rr->space_id) {
->         case ACPI_ADR_SPACE_PCI_CONFIG:
-> +       {
-> +#ifdef CONFIG_PCI
-> +               unsigned int devfn;
-> +               struct pci_bus *bus0;
-> +
->                 /* The reset register can only live on bus 0. */
->                 bus0 = pci_find_bus(0, 0);
->                 if (!bus0)
-> @@ -45,7 +48,10 @@ void acpi_reboot(void)
->                 pci_bus_write_config_byte(bus0, devfn,
->                                 (rr->address & 0xffff), reset_value);
->                 break;
-> -
-> +#else
-> +               return;
+diff --git a/drivers/scsi/ufs/ufs-sysfs.c b/drivers/scsi/ufs/ufs-sysfs.c
+index 8d9332bb7d0c..0b221c5a244c 100644
+--- a/drivers/scsi/ufs/ufs-sysfs.c
++++ b/drivers/scsi/ufs/ufs-sysfs.c
+@@ -570,10 +570,11 @@ static ssize_t _name##_show(struct device *dev,				\
+ 	struct ufs_hba *hba = dev_get_drvdata(dev);			\
+ 	int ret;							\
+ 	int desc_len = QUERY_DESC_MAX_SIZE;				\
+-	u8 *desc_buf;							\
++	char *desc_buf;							\
++									\
+ 	desc_buf = kzalloc(QUERY_DESC_MAX_SIZE, GFP_ATOMIC);		\
+-	if (!desc_buf)							\
+-		return -ENOMEM;						\
++	if (!desc_buf)                                                  \
++		return -ENOMEM;                                         \
+ 	ret = ufshcd_query_descriptor_retry(hba,			\
+ 		UPIU_QUERY_OPCODE_READ_DESC, QUERY_DESC_IDN_DEVICE,	\
+ 		0, 0, desc_buf, &desc_len);				\
+@@ -582,14 +583,13 @@ static ssize_t _name##_show(struct device *dev,				\
+ 		goto out;						\
+ 	}								\
+ 	index = desc_buf[DEVICE_DESC_PARAM##_pname];			\
+-	memset(desc_buf, 0, QUERY_DESC_MAX_SIZE);			\
+-	if (ufshcd_read_string_desc(hba, index, desc_buf,		\
+-		QUERY_DESC_MAX_SIZE, true)) {				\
+-		ret = -EINVAL;						\
++	kfree(desc_buf);						\
++	desc_buf = NULL;						\
++	ret = ufshcd_read_string_desc(hba, index, &desc_buf,		\
++				      SD_ASCII_STD);			\
++	if (ret < 0)							\
+ 		goto out;						\
+-	}								\
+-	ret = snprintf(buf, PAGE_SIZE, "%s\n",				\
+-		desc_buf + QUERY_DESC_HDR_SIZE);			\
++	ret = snprintf(buf, PAGE_SIZE, "%s\n", desc_buf);		\
+ out:									\
+ 	kfree(desc_buf);						\
+ 	return ret;							\
+diff --git a/drivers/scsi/ufs/ufs.h b/drivers/scsi/ufs/ufs.h
+index dd65fea07687..06ec7bbf5b97 100644
+--- a/drivers/scsi/ufs/ufs.h
++++ b/drivers/scsi/ufs/ufs.h
+@@ -543,7 +543,7 @@ struct ufs_dev_info {
+  */
+ struct ufs_dev_desc {
+ 	u16 wmanufacturerid;
+-	char model[MAX_MODEL_LEN + 1];
++	char *model;
+ };
+ 
+ /**
+diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
+index 86fe114f1f53..f1845698413c 100644
+--- a/drivers/scsi/ufs/ufshcd.c
++++ b/drivers/scsi/ufs/ufshcd.c
+@@ -298,16 +298,6 @@ static void ufshcd_scsi_block_requests(struct ufs_hba *hba)
+ 		scsi_block_requests(hba->host);
+ }
+ 
+-/* replace non-printable or non-ASCII characters with spaces */
+-static inline void ufshcd_remove_non_printable(char *val)
+-{
+-	if (!val)
+-		return;
+-
+-	if (*val < 0x20 || *val > 0x7e)
+-		*val = ' ';
+-}
+-
+ static void ufshcd_add_cmd_upiu_trace(struct ufs_hba *hba, unsigned int tag,
+ 		const char *str)
+ {
+@@ -3124,7 +3114,7 @@ int ufshcd_read_desc_param(struct ufs_hba *hba,
+ 			   enum desc_idn desc_id,
+ 			   int desc_index,
+ 			   u8 param_offset,
+-			   u8 *param_read_buf,
++			   void *param_read_buf,
+ 			   u8 param_size)
+ {
+ 	int ret;
+@@ -3192,7 +3182,7 @@ int ufshcd_read_desc_param(struct ufs_hba *hba,
+ static inline int ufshcd_read_desc(struct ufs_hba *hba,
+ 				   enum desc_idn desc_id,
+ 				   int desc_index,
+-				   u8 *buf,
++				   void *buf,
+ 				   u32 size)
+ {
+ 	return ufshcd_read_desc_param(hba, desc_id, desc_index, 0, buf, size);
+@@ -3210,49 +3200,78 @@ static int ufshcd_read_device_desc(struct ufs_hba *hba, u8 *buf, u32 size)
+ 	return ufshcd_read_desc(hba, QUERY_DESC_IDN_DEVICE, 0, buf, size);
+ }
+ 
++/**
++ * struct uc_string_id - unicode string
++ *
++ * @len: size of this descriptor inclusive
++ * @type: descriptor type
++ * @uc: unicode string character
++ */
++struct uc_string_id {
++	u8 len;
++	u8 type;
++	wchar_t uc[0];
++} __packed;
++
++/* replace non-printable or non-ASCII characters with spaces */
++static inline char ufshcd_remove_non_printable(char ch)
++{
++	return (ch >= 0x20 && ch <= 0x7e) ? ch : ' ';
++}
++
+ /**
+  * ufshcd_read_string_desc - read string descriptor
+  * @hba: pointer to adapter instance
+  * @desc_index: descriptor index
+- * @buf: pointer to buffer where descriptor would be read
+- * @size: size of buf
++ * @buf: pointer to buffer where descriptor would be read,
++ *       the caller should free the memory.
+  * @ascii: if true convert from unicode to ascii characters
++ *         null terminated string.
+  *
+- * Return 0 in case of success, non-zero otherwise
++ * Return:
++ * *      string size on success.
++ * *      -ENOMEM: on allocation failure
++ * *      -EINVAL: on a wrong parameter
+  */
+-int ufshcd_read_string_desc(struct ufs_hba *hba, int desc_index,
+-			    u8 *buf, u32 size, bool ascii)
++int ufshcd_read_string_desc(struct ufs_hba *hba, u8 desc_index,
++			    char **buf, bool ascii)
+ {
+-	int err = 0;
++	struct uc_string_id *uc_str;
++	char *str;
++	int ret;
+ 
+-	err = ufshcd_read_desc(hba,
+-				QUERY_DESC_IDN_STRING, desc_index, buf, size);
++	if (!buf)
++		return -EINVAL;
+ 
+-	if (err) {
+-		dev_err(hba->dev, "%s: reading String Desc failed after %d retries. err = %d\n",
+-			__func__, QUERY_REQ_RETRIES, err);
++	uc_str = kzalloc(QUERY_DESC_MAX_SIZE, GFP_KERNEL);
++	if (!uc_str)
++		return -ENOMEM;
++
++	ret = ufshcd_read_desc(hba, QUERY_DESC_IDN_STRING,
++			       desc_index, uc_str,
++			       QUERY_DESC_MAX_SIZE);
++	if (ret < 0) {
++		dev_err(hba->dev, "Reading String Desc failed after %d retries. err = %d\n",
++			QUERY_REQ_RETRIES, ret);
++		str = NULL;
++		goto out;
++	}
++
++	if (uc_str->len <= QUERY_DESC_HDR_SIZE) {
++		dev_dbg(hba->dev, "String Desc is of zero length\n");
++		str = NULL;
++		ret = 0;
+ 		goto out;
+ 	}
+ 
+ 	if (ascii) {
+-		int desc_len;
+-		int ascii_len;
++		ssize_t ascii_len;
+ 		int i;
+-		char *buff_ascii;
+-
+-		desc_len = buf[0];
+ 		/* remove header and divide by 2 to move from UTF16 to UTF8 */
+-		ascii_len = (desc_len - QUERY_DESC_HDR_SIZE) / 2 + 1;
+-		if (size < ascii_len + QUERY_DESC_HDR_SIZE) {
+-			dev_err(hba->dev, "%s: buffer allocated size is too small\n",
+-					__func__);
+-			err = -ENOMEM;
+-			goto out;
+-		}
+-
+-		buff_ascii = kmalloc(ascii_len, GFP_KERNEL);
+-		if (!buff_ascii) {
+-			err = -ENOMEM;
++		ascii_len = (uc_str->len - QUERY_DESC_HDR_SIZE) / 2 + 1;
++		str = kzalloc(ascii_len, GFP_KERNEL);
++		if (!str) {
++			ret = -ENOMEM;
+ 			goto out;
+ 		}
+ 
+@@ -3260,22 +3279,29 @@ int ufshcd_read_string_desc(struct ufs_hba *hba, int desc_index,
+ 		 * the descriptor contains string in UTF16 format
+ 		 * we need to convert to utf-8 so it can be displayed
+ 		 */
+-		utf16s_to_utf8s((wchar_t *)&buf[QUERY_DESC_HDR_SIZE],
+-				desc_len - QUERY_DESC_HDR_SIZE,
+-				UTF16_BIG_ENDIAN, buff_ascii, ascii_len);
++		ret = utf16s_to_utf8s(uc_str->uc,
++				      uc_str->len - QUERY_DESC_HDR_SIZE,
++				      UTF16_BIG_ENDIAN, str, ascii_len);
+ 
+ 		/* replace non-printable or non-ASCII characters with spaces */
+-		for (i = 0; i < ascii_len; i++)
+-			ufshcd_remove_non_printable(&buff_ascii[i]);
++		for (i = 0; i < ret; i++)
++			str[i] = ufshcd_remove_non_printable(str[i]);
+ 
+-		memset(buf + QUERY_DESC_HDR_SIZE, 0,
+-				size - QUERY_DESC_HDR_SIZE);
+-		memcpy(buf + QUERY_DESC_HDR_SIZE, buff_ascii, ascii_len);
+-		buf[QUERY_DESC_LENGTH_OFFSET] = ascii_len + QUERY_DESC_HDR_SIZE;
+-		kfree(buff_ascii);
++		str[ret++] = '\0';
++
++	} else {
++		str = kzalloc(uc_str->len, GFP_KERNEL);
++		if (!str) {
++			ret = -ENOMEM;
++			goto out;
++		}
++		memcpy(str, uc_str, uc_str->len);
++		ret = uc_str->len;
+ 	}
+ out:
+-	return err;
++	*buf = str;
++	kfree(uc_str);
++	return ret;
+ }
+ 
+ /**
+@@ -6409,6 +6435,9 @@ static int ufs_get_device_desc(struct ufs_hba *hba,
+ 	u8 model_index;
+ 	u8 *desc_buf;
+ 
++	if (!dev_desc)
++		return -EINVAL;
++
+ 	buff_len = max_t(size_t, hba->desc_size.dev_desc,
+ 			 QUERY_DESC_MAX_SIZE + 1);
+ 	desc_buf = kmalloc(buff_len, GFP_KERNEL);
+@@ -6432,31 +6461,31 @@ static int ufs_get_device_desc(struct ufs_hba *hba,
+ 				     desc_buf[DEVICE_DESC_PARAM_MANF_ID + 1];
+ 
+ 	model_index = desc_buf[DEVICE_DESC_PARAM_PRDCT_NAME];
+-
+-	/* Zero-pad entire buffer for string termination. */
+-	memset(desc_buf, 0, buff_len);
+-
+-	err = ufshcd_read_string_desc(hba, model_index, desc_buf,
+-				      QUERY_DESC_MAX_SIZE, true/*ASCII*/);
+-	if (err) {
++	err = ufshcd_read_string_desc(hba, model_index,
++				      &dev_desc->model, SD_ASCII_STD);
++	if (err < 0) {
+ 		dev_err(hba->dev, "%s: Failed reading Product Name. err = %d\n",
+ 			__func__, err);
+ 		goto out;
+ 	}
+ 
+-	desc_buf[QUERY_DESC_MAX_SIZE] = '\0';
+-	strlcpy(dev_desc->model, (desc_buf + QUERY_DESC_HDR_SIZE),
+-		min_t(u8, desc_buf[QUERY_DESC_LENGTH_OFFSET],
+-		      MAX_MODEL_LEN));
+-
+-	/* Null terminate the model string */
+-	dev_desc->model[MAX_MODEL_LEN] = '\0';
++	/*
++	 * ufshcd_read_string_desc returns size of the string
++	 * reset the error value
++	 */
++	err = 0;
+ 
+ out:
+ 	kfree(desc_buf);
+ 	return err;
+ }
+ 
++static void ufs_put_device_desc(struct ufs_dev_desc *dev_desc)
++{
++	kfree(dev_desc->model);
++	dev_desc->model = NULL;
++}
++
+ static void ufs_fixup_device_setup(struct ufs_hba *hba,
+ 				   struct ufs_dev_desc *dev_desc)
+ {
+@@ -6465,8 +6494,9 @@ static void ufs_fixup_device_setup(struct ufs_hba *hba,
+ 	for (f = ufs_fixups; f->quirk; f++) {
+ 		if ((f->card.wmanufacturerid == dev_desc->wmanufacturerid ||
+ 		     f->card.wmanufacturerid == UFS_ANY_VENDOR) &&
+-		    (STR_PRFX_EQUAL(f->card.model, dev_desc->model) ||
+-		     !strcmp(f->card.model, UFS_ANY_MODEL)))
++		     ((dev_desc->model &&
++		       STR_PRFX_EQUAL(f->card.model, dev_desc->model)) ||
++		      !strcmp(f->card.model, UFS_ANY_MODEL)))
+ 			hba->dev_quirks |= f->quirk;
+ 	}
+ }
+@@ -6817,6 +6847,8 @@ static int ufshcd_probe_hba(struct ufs_hba *hba)
+ 	}
+ 
+ 	ufs_fixup_device_setup(hba, &card);
++	ufs_put_device_desc(&card);
++
+ 	ufshcd_tune_unipro_params(hba);
+ 
+ 	ret = ufshcd_set_vccq_rail_unused(hba,
+diff --git a/drivers/scsi/ufs/ufshcd.h b/drivers/scsi/ufs/ufshcd.h
+index 69ba7445d2b3..4647bd0745c4 100644
+--- a/drivers/scsi/ufs/ufshcd.h
++++ b/drivers/scsi/ufs/ufshcd.h
+@@ -880,14 +880,17 @@ int ufshcd_read_desc_param(struct ufs_hba *hba,
+ 			   enum desc_idn desc_id,
+ 			   int desc_index,
+ 			   u8 param_offset,
+-			   u8 *param_read_buf,
++			   void *param_read_buf,
+ 			   u8 param_size);
+ int ufshcd_query_attr(struct ufs_hba *hba, enum query_opcode opcode,
+ 		      enum attr_idn idn, u8 index, u8 selector, u32 *attr_val);
+ int ufshcd_query_flag(struct ufs_hba *hba, enum query_opcode opcode,
+ 	enum flag_idn idn, bool *flag_res);
+-int ufshcd_read_string_desc(struct ufs_hba *hba, int desc_index,
+-			    u8 *buf, u32 size, bool ascii);
++
++#define SD_ASCII_STD true
++#define SD_RAW false
++int ufshcd_read_string_desc(struct ufs_hba *hba, u8 desc_index,
++			    char **buf, bool ascii);
+ 
+ int ufshcd_hold(struct ufs_hba *hba, bool async);
+ void ufshcd_release(struct ufs_hba *hba);
+-- 
+2.19.2
 
-Why not "break"?
-
-> +#endif
-> +       }
->         case ACPI_ADR_SPACE_SYSTEM_MEMORY:
->         case ACPI_ADR_SPACE_SYSTEM_IO:
->                 printk(KERN_DEBUG "ACPI MEMORY or I/O RESET_REG.\n");
-> --
