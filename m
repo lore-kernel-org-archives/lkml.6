@@ -2,123 +2,214 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE90EC07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 17:58:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F8F1C07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 17:59:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B65D020855
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 17:58:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544551115;
-	bh=IT+/Sn539b1Hv8g6PSWkXhUMKvsM5oSYYLuIqhpavcs=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=kOFerPOGQzPScrJqOM7bx1dGdQh/nfvYDgeSJh3bU5xkioEJWvp7TkTatca8Oxzz+
-	 2D/ij8/DqL2Oia+MdHOq5BbqjtjlfSlUtt9dWTHnWdvGlm7LdkLEjPeGAtYZ0TySUW
-	 cDHge8NzACxPu5ZyDLYsMRIM/nR64Muy7+jkx74g=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B65D020855
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 0DF4820855
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 17:59:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0DF4820855
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726775AbeLKR6e (ORCPT
+        id S1726877AbeLKR7t (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 12:58:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46976 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726485AbeLKR6e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 12:58:34 -0500
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0321F208E7
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 17:58:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544551113;
-        bh=IT+/Sn539b1Hv8g6PSWkXhUMKvsM5oSYYLuIqhpavcs=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=KzPMVCIasypCyr/lG9ew7dulA9cm+XNoq7h1/vatjcUMLSWnwovRqtB0FCoa9oEG+
-         3sNT2Kd29o/3Mlbbll7HAaSHlJc+55hE+ERi8s9Rl20c2d3cpdVv3DC5oROgbT6dq+
-         Yo241SoQrwAjqZQZULXXHnxfRs+NI30mhvrlsKD8=
-Received: by mail-wm1-f46.google.com with SMTP id m22so3263765wml.3
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 09:58:32 -0800 (PST)
-X-Gm-Message-State: AA+aEWZjJH3r50xQPDMtDVUZAzBiLVp7umzahiQXq17lfRh6xSuLKnKz
-        tV5OTVt7uUYnlf8W8akSurzYqvvfcWddiYPBSbQ4jA==
-X-Google-Smtp-Source: AFSGD/VZqjpsAKbB53VjIJvHUw8HgLmuFtHxraUUCrmVWwQsuDerPo/JeZR7SnVU9e2mbHYCy63hBJUbTsU5dCMewtk=
-X-Received: by 2002:a1c:aa0f:: with SMTP id t15mr3219252wme.108.1544551111470;
- Tue, 11 Dec 2018 09:58:31 -0800 (PST)
+        Tue, 11 Dec 2018 12:59:49 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:48792 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726470AbeLKR7s (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 12:59:48 -0500
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: eballetbo)
+        with ESMTPSA id 6518627DE40
+From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
+To:     lee.jones@linaro.org
+Cc:     gwendal@chromium.org, drinkcat@chromium.org,
+        linux-kernel@vger.kernel.org, groeck@chromium.org,
+        kernel@collabora.com, bleung@chromium.org,
+        Olof Johansson <olof@lixom.net>
+Subject: [PATCH v4 1/7] mfd / platform: cros_ec: use devm_mfd_add_devices
+Date:   Tue, 11 Dec 2018 18:59:28 +0100
+Message-Id: <20181211175934.10238-2-enric.balletbo@collabora.com>
+X-Mailer: git-send-email 2.19.2
+In-Reply-To: <20181211175934.10238-1-enric.balletbo@collabora.com>
+References: <20181211175934.10238-1-enric.balletbo@collabora.com>
 MIME-Version: 1.0
-References: <20181210232141.5425-1-sean.j.christopherson@intel.com>
- <20181210232449.GA11843@localhost> <EEE078E7-7F37-4F74-8874-46E16C1E0A77@amacapital.net>
- <20181211165253.GB14731@linux.intel.com>
-In-Reply-To: <20181211165253.GB14731@linux.intel.com>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Tue, 11 Dec 2018 09:58:19 -0800
-X-Gmail-Original-Message-ID: <CALCETrXOXh8Gb_d7NYLakx4w+JVEe79t11wFPLpy+5MEq9kq=A@mail.gmail.com>
-Message-ID: <CALCETrXOXh8Gb_d7NYLakx4w+JVEe79t11wFPLpy+5MEq9kq=A@mail.gmail.com>
-Subject: Re: [RFC PATCH v3 0/4] x86: Add exception fixup for SGX ENCLU
-To:     "Christopherson, Sean J" <sean.j.christopherson@intel.com>
-Cc:     Josh Triplett <josh@joshtriplett.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        X86 ML <x86@kernel.org>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andrew Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        LKML <linux-kernel@vger.kernel.org>, linux-sgx@vger.kernel.org,
-        Haitao Huang <haitao.huang@linux.intel.com>,
-        Jethro Beekman <jethro@fortanix.com>,
-        "Dr. Greg Wettstein" <greg@enjellic.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> On Dec 11, 2018, at 8:52 AM, Sean Christopherson <sean.j.christopherson@i=
-ntel.com> wrote:
->
->> On Tue, Dec 11, 2018 at 07:41:27AM -0800, Andy Lutomirski wrote:
->>
->>
->>>> On Dec 10, 2018, at 3:24 PM, Josh Triplett <josh@joshtriplett.org> wro=
-te:
->>>>
->>>> On Mon, Dec 10, 2018 at 03:21:37PM -0800, Sean Christopherson wrote:
->>>> At that point I realized it's a hell of a lot easier to simply provide
->>>> an IOCTL via /dev/sgx that allows userspace to register a per-process
->>>> ENCLU exception handler.  At a high level, the basic idea is the same
->>>> as the vDSO approach: provide a hardcoded fixup handler for ENCLU and
->>>> attempt to fixup select unhandled exceptions that occurred in user cod=
-e.
->>>
->>> So, on the one hand, this is *absolutely* much cleaner than the VDSO
->>> approach. On the other hand, this is global process state and has some
->>> of the same problems as a signal handler as a result.
->>
->> I liked the old version better for this reason
->
-> This isn't fundamentally different than forcing all EENTER calls through
-> the vDSO, which is also per-process.  Technically this is more flexible
-> in that regard since userspace gets to choose where their one ENCLU gets
-> to reside.  Userspace can have per-enclave entry flows so long as the
-> actual ENLU[EENTER] is common, same as vDSO.
+Use devm_mfd_add_devices() for adding cros-ec core MFD child devices. This
+reduces the need of remove callback from platform/chrome for removing the
+MFD child devices.
 
-Right. The problem is that user libraries have a remarkably hard time
-agreeing on where their one copy of anything lives.
+Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Reviewed-by: Guenter Roeck <groeck@chromium.org>
+---
 
->
->> and for another reason:
->> while this new one looks very very simple, it still has the hidden
->> complexity that the magic values written to registers in the event of an
->> exception are very much Linux specific.
->
-> Definitely more magical, but not necessarily more difficult to document.
-> It'd essentially be an extension of hardware's AEE/AEP behavior.
->
->> OTOH, the old approach clobbered more regs than needed, but that=E2=80=
-=99s a easy fix.
+Changes in v4:
+- Added Reviewed-by tags.
+- Moved mfd_remove_devices to another patch, it's already queued in Lee's tree.
+- Removed patch 8 from the series, was a fix and it's already applied in current mainline.
+
+Changes in v3:
+- Removed cros_ec_remove from include file.
+
+Changes in v2:
+- Use devm only for the cros-ec core.
+
+ drivers/mfd/cros_ec.c                 | 14 +++-----------
+ drivers/platform/chrome/cros_ec_i2c.c | 10 ----------
+ drivers/platform/chrome/cros_ec_lpc.c |  4 ----
+ drivers/platform/chrome/cros_ec_spi.c | 11 -----------
+ include/linux/mfd/cros_ec.h           | 10 ----------
+ 5 files changed, 3 insertions(+), 46 deletions(-)
+
+diff --git a/drivers/mfd/cros_ec.c b/drivers/mfd/cros_ec.c
+index fe6f83766144..6acfe036d522 100644
+--- a/drivers/mfd/cros_ec.c
++++ b/drivers/mfd/cros_ec.c
+@@ -129,8 +129,8 @@ int cros_ec_register(struct cros_ec_device *ec_dev)
+ 		}
+ 	}
+ 
+-	err = mfd_add_devices(ec_dev->dev, PLATFORM_DEVID_AUTO, &ec_cell, 1,
+-			      NULL, ec_dev->irq, NULL);
++	err = devm_mfd_add_devices(ec_dev->dev, PLATFORM_DEVID_AUTO, &ec_cell,
++				   1, NULL, ec_dev->irq, NULL);
+ 	if (err) {
+ 		dev_err(dev,
+ 			"Failed to register Embedded Controller subdevice %d\n",
+@@ -147,7 +147,7 @@ int cros_ec_register(struct cros_ec_device *ec_dev)
+ 		 * - the EC is responsive at init time (it is not true for a
+ 		 *   sensor hub.
+ 		 */
+-		err = mfd_add_devices(ec_dev->dev, PLATFORM_DEVID_AUTO,
++		err = devm_mfd_add_devices(ec_dev->dev, PLATFORM_DEVID_AUTO,
+ 				      &ec_pd_cell, 1, NULL, ec_dev->irq, NULL);
+ 		if (err) {
+ 			dev_err(dev,
+@@ -181,14 +181,6 @@ int cros_ec_register(struct cros_ec_device *ec_dev)
+ }
+ EXPORT_SYMBOL(cros_ec_register);
+ 
+-int cros_ec_remove(struct cros_ec_device *ec_dev)
+-{
+-	mfd_remove_devices(ec_dev->dev);
+-
+-	return 0;
+-}
+-EXPORT_SYMBOL(cros_ec_remove);
+-
+ #ifdef CONFIG_PM_SLEEP
+ int cros_ec_suspend(struct cros_ec_device *ec_dev)
+ {
+diff --git a/drivers/platform/chrome/cros_ec_i2c.c b/drivers/platform/chrome/cros_ec_i2c.c
+index ef9b4763356f..9a009eaa4ada 100644
+--- a/drivers/platform/chrome/cros_ec_i2c.c
++++ b/drivers/platform/chrome/cros_ec_i2c.c
+@@ -317,15 +317,6 @@ static int cros_ec_i2c_probe(struct i2c_client *client,
+ 	return 0;
+ }
+ 
+-static int cros_ec_i2c_remove(struct i2c_client *client)
+-{
+-	struct cros_ec_device *ec_dev = i2c_get_clientdata(client);
+-
+-	cros_ec_remove(ec_dev);
+-
+-	return 0;
+-}
+-
+ #ifdef CONFIG_PM_SLEEP
+ static int cros_ec_i2c_suspend(struct device *dev)
+ {
+@@ -376,7 +367,6 @@ static struct i2c_driver cros_ec_driver = {
+ 		.pm	= &cros_ec_i2c_pm_ops,
+ 	},
+ 	.probe		= cros_ec_i2c_probe,
+-	.remove		= cros_ec_i2c_remove,
+ 	.id_table	= cros_ec_i2c_id,
+ };
+ 
+diff --git a/drivers/platform/chrome/cros_ec_lpc.c b/drivers/platform/chrome/cros_ec_lpc.c
+index e1b75775cd4a..14684a56e40f 100644
+--- a/drivers/platform/chrome/cros_ec_lpc.c
++++ b/drivers/platform/chrome/cros_ec_lpc.c
+@@ -327,7 +327,6 @@ static int cros_ec_lpc_probe(struct platform_device *pdev)
+ 
+ static int cros_ec_lpc_remove(struct platform_device *pdev)
+ {
+-	struct cros_ec_device *ec_dev;
+ 	struct acpi_device *adev;
+ 
+ 	adev = ACPI_COMPANION(&pdev->dev);
+@@ -335,9 +334,6 @@ static int cros_ec_lpc_remove(struct platform_device *pdev)
+ 		acpi_remove_notify_handler(adev->handle, ACPI_ALL_NOTIFY,
+ 					   cros_ec_lpc_acpi_notify);
+ 
+-	ec_dev = platform_get_drvdata(pdev);
+-	cros_ec_remove(ec_dev);
+-
+ 	return 0;
+ }
+ 
+diff --git a/drivers/platform/chrome/cros_ec_spi.c b/drivers/platform/chrome/cros_ec_spi.c
+index 2060d1483043..6cfbc2835beb 100644
+--- a/drivers/platform/chrome/cros_ec_spi.c
++++ b/drivers/platform/chrome/cros_ec_spi.c
+@@ -685,16 +685,6 @@ static int cros_ec_spi_probe(struct spi_device *spi)
+ 	return 0;
+ }
+ 
+-static int cros_ec_spi_remove(struct spi_device *spi)
+-{
+-	struct cros_ec_device *ec_dev;
+-
+-	ec_dev = spi_get_drvdata(spi);
+-	cros_ec_remove(ec_dev);
+-
+-	return 0;
+-}
+-
+ #ifdef CONFIG_PM_SLEEP
+ static int cros_ec_spi_suspend(struct device *dev)
+ {
+@@ -733,7 +723,6 @@ static struct spi_driver cros_ec_driver_spi = {
+ 		.pm	= &cros_ec_spi_pm_ops,
+ 	},
+ 	.probe		= cros_ec_spi_probe,
+-	.remove		= cros_ec_spi_remove,
+ 	.id_table	= cros_ec_spi_id,
+ };
+ 
+diff --git a/include/linux/mfd/cros_ec.h b/include/linux/mfd/cros_ec.h
+index e44e3ec8a9c7..706dd724de52 100644
+--- a/include/linux/mfd/cros_ec.h
++++ b/include/linux/mfd/cros_ec.h
+@@ -281,16 +281,6 @@ int cros_ec_cmd_xfer(struct cros_ec_device *ec_dev,
+ int cros_ec_cmd_xfer_status(struct cros_ec_device *ec_dev,
+ 			    struct cros_ec_command *msg);
+ 
+-/**
+- * cros_ec_remove() - Remove a ChromeOS EC.
+- * @ec_dev: Device to register.
+- *
+- * Call this to deregister a ChromeOS EC, then clean up any private data.
+- *
+- * Return: 0 on success or negative error code.
+- */
+-int cros_ec_remove(struct cros_ec_device *ec_dev);
+-
+ /**
+  * cros_ec_register() - Register a new ChromeOS EC, using the provided info.
+  * @ec_dev: Device to register.
+-- 
+2.19.2
+
