@@ -2,56 +2,53 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE96AC07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:56:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63EE1C5CFFE
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:56:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 96095205C9
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:56:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2BFFD2086D
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:56:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544543769;
-	bh=ILS/+K3ZazkkcjXMs41L2TjVMomfkUwmUWYacHHYRh0=;
+	s=default; t=1544543773;
+	bh=5eUx0PDkYhDJKR/ifYIt8bBcBfyBmVqx6RoYvpiGUhs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Ys1+lXLKYEddOmu0OnZWYIxoziYDimI+P7RA9gByJfhB0PnhAZk9R53/MyZttdp2a
-	 UZoqZon5Ydnw19ymXOgmiPTogQQK7ci5AAkzgvcYiU4iSDJQi7cHDwiKgYUDBhtx5K
-	 tfcHFm19JjWGFh1oMxZaX29GvQdLsER4DtWeZ/2g=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 96095205C9
+	b=YmIgVo5ngRkZXaRhGAm9oToMngjwTyVgMHqekGWv1H5gz7y9gesn/XS1irXMFkr8A
+	 tuyEEPyPqP7iD6zS6GkNu6bblBArFnSXRrD0ffkxqo0HU6MHHO1fDlGCAwdgXgviyC
+	 04bCg7NPTDT+pgu2HaMgQ/lGb5bkR55Hu8AIEbK4=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2BFFD2086D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730533AbeLKP4I (ORCPT
+        id S1730541AbeLKP4L (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 10:56:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44862 "EHLO mail.kernel.org"
+        Tue, 11 Dec 2018 10:56:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44944 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730515AbeLKP4D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:56:03 -0500
+        id S1728890AbeLKP4J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 10:56:09 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8DB4B205C9;
-        Tue, 11 Dec 2018 15:56:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B3104205C9;
+        Tue, 11 Dec 2018 15:56:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544543763;
-        bh=ILS/+K3ZazkkcjXMs41L2TjVMomfkUwmUWYacHHYRh0=;
+        s=default; t=1544543768;
+        bh=5eUx0PDkYhDJKR/ifYIt8bBcBfyBmVqx6RoYvpiGUhs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UZIlrbvSsbxOKpsbkVy0BjNMwcupT2EXdJafXxxoQLPNeAq9d2L8wiZFTpvsvcHX/
-         vVh+0TaiQ7O99whIJ/PQlZMX5C5FfkALn2c91s2DwCDUqOjM9vAKQnPlzct6kU3dKZ
-         5FrEHid8Dshqa+6JkerKSYN02G9L5s8DbZZnxQLQ=
+        b=eP7AuuDXw1Mu/l+oZsLSw3eO9Y2Ng7kiZJN2TZVF4ruze5OSQsVVVCUpVzH/4BT5G
+         GxzFvfBL/AZj6f6n6sEw2fBKg8qnplT8kQe25blCGiUPVG0ueELqbjRqWxYDkWSuz+
+         Z+aPRx1xvLl2FnlsZFhrbuB+bw/3h4RocP96PFms=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Olof Johansson <olof@lixom.net>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 037/118] mtd: rawnand: qcom: Namespace prefix some commands
-Date:   Tue, 11 Dec 2018 16:40:56 +0100
-Message-Id: <20181211151645.737603410@linuxfoundation.org>
+        stable@vger.kernel.org, Harry Pan <harry.pan@intel.com>
+Subject: [PATCH 4.19 056/118] usb: quirk: add no-LPM quirk on SanDisk Ultra Flair device
+Date:   Tue, 11 Dec 2018 16:41:15 +0100
+Message-Id: <20181211151646.507158793@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181211151644.216668863@linuxfoundation.org>
 References: <20181211151644.216668863@linuxfoundation.org>
@@ -70,112 +67,66 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 33bf5519ae5dd356b182a94e3622f42860274a38 ]
+From: Harry Pan <harry.pan@intel.com>
 
-PAGE_READ is used by RISC-V arch code included through mm headers,
-and it makes sense to bring in a prefix on these in the driver.
+commit 2f2dde6ba89b1ef1fe23c1138131b315d9aa4019 upstream.
 
-drivers/mtd/nand/raw/qcom_nandc.c:153: warning: "PAGE_READ" redefined
- #define PAGE_READ   0x2
-In file included from include/linux/memremap.h:7,
-                 from include/linux/mm.h:27,
-                 from include/linux/scatterlist.h:8,
-                 from include/linux/dma-mapping.h:11,
-                 from drivers/mtd/nand/raw/qcom_nandc.c:17:
-arch/riscv/include/asm/pgtable.h:48: note: this is the location of the previous definition
+Some lower volume SanDisk Ultra Flair in 16GB, which the VID:PID is
+in 0781:5591, will aggressively request LPM of U1/U2 during runtime,
+when using this thumb drive as the OS installation key we found the
+device will generate failure during U1 exit path making it dropped
+from the USB bus, this causes a corrupted installation in system at
+the end.
 
-Caught by riscv allmodconfig.
+i.e.,
+[  166.918296] hub 2-0:1.0: state 7 ports 7 chg 0000 evt 0004
+[  166.918327] usb usb2-port2: link state change
+[  166.918337] usb usb2-port2: do warm reset
+[  166.970039] usb usb2-port2: not warm reset yet, waiting 50ms
+[  167.022040] usb usb2-port2: not warm reset yet, waiting 200ms
+[  167.276043] usb usb2-port2: status 02c0, change 0041, 5.0 Gb/s
+[  167.276050] usb 2-2: USB disconnect, device number 2
+[  167.276058] usb 2-2: unregistering device
+[  167.276060] usb 2-2: unregistering interface 2-2:1.0
+[  167.276170] xhci_hcd 0000:00:15.0: shutdown urb ffffa3c7cc695cc0 ep1in-bulk
+[  167.284055] sd 0:0:0:0: [sda] tag#0 FAILED Result: hostbyte=DID_NO_CONNECT driverbyte=DRIVER_OK
+[  167.284064] sd 0:0:0:0: [sda] tag#0 CDB: Read(10) 28 00 00 33 04 90 00 01 00 00
+...
 
-Signed-off-by: Olof Johansson <olof@lixom.net>
-Reviewed-by: Miquel Raynal <miquel.raynal@bootlin.com>
-Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Analyzed the USB trace in the link layer we realized it is because
+of the 6-ms timer of tRecoveryConfigurationTimeout which documented
+on the USB 3.2 Revision 1.0, the section 7.5.10.4.2 of "Exit from
+Recovery.Configuration"; device initiates U1 exit -> Recovery.Active
+-> Recovery.Configuration, then the host timer timeout makes the link
+transits to eSS.Inactive -> Rx.Detect follows by a Warm Reset.
+
+Interestingly, the other higher volume of SanDisk Ultra Flair sharing
+the same VID:PID, such as 64GB, would not request LPM during runtime,
+it sticks at U0 always, thus disabling LPM does not affect those thumb
+drives at all.
+
+The same odd occures in SanDisk Ultra Fit 16GB, VID:PID in 0781:5583.
+
+Signed-off-by: Harry Pan <harry.pan@intel.com>
+Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/mtd/nand/raw/qcom_nandc.c | 32 +++++++++++++++----------------
- 1 file changed, 16 insertions(+), 16 deletions(-)
+ drivers/usb/core/quirks.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/mtd/nand/raw/qcom_nandc.c b/drivers/mtd/nand/raw/qcom_nandc.c
-index d1d470bb32e4..8815f3e2b718 100644
---- a/drivers/mtd/nand/raw/qcom_nandc.c
-+++ b/drivers/mtd/nand/raw/qcom_nandc.c
-@@ -151,15 +151,15 @@
- #define	NAND_VERSION_MINOR_SHIFT	16
+--- a/drivers/usb/core/quirks.c
++++ b/drivers/usb/core/quirks.c
+@@ -333,6 +333,10 @@ static const struct usb_device_id usb_qu
+ 	/* Midiman M-Audio Keystation 88es */
+ 	{ USB_DEVICE(0x0763, 0x0192), .driver_info = USB_QUIRK_RESET_RESUME },
  
- /* NAND OP_CMDs */
--#define	PAGE_READ			0x2
--#define	PAGE_READ_WITH_ECC		0x3
--#define	PAGE_READ_WITH_ECC_SPARE	0x4
--#define	PROGRAM_PAGE			0x6
--#define	PAGE_PROGRAM_WITH_ECC		0x7
--#define	PROGRAM_PAGE_SPARE		0x9
--#define	BLOCK_ERASE			0xa
--#define	FETCH_ID			0xb
--#define	RESET_DEVICE			0xd
-+#define	OP_PAGE_READ			0x2
-+#define	OP_PAGE_READ_WITH_ECC		0x3
-+#define	OP_PAGE_READ_WITH_ECC_SPARE	0x4
-+#define	OP_PROGRAM_PAGE			0x6
-+#define	OP_PAGE_PROGRAM_WITH_ECC	0x7
-+#define	OP_PROGRAM_PAGE_SPARE		0x9
-+#define	OP_BLOCK_ERASE			0xa
-+#define	OP_FETCH_ID			0xb
-+#define	OP_RESET_DEVICE			0xd
++	/* SanDisk Ultra Fit and Ultra Flair */
++	{ USB_DEVICE(0x0781, 0x5583), .driver_info = USB_QUIRK_NO_LPM },
++	{ USB_DEVICE(0x0781, 0x5591), .driver_info = USB_QUIRK_NO_LPM },
++
+ 	/* M-Systems Flash Disk Pioneers */
+ 	{ USB_DEVICE(0x08ec, 0x1000), .driver_info = USB_QUIRK_RESET_RESUME },
  
- /* Default Value for NAND_DEV_CMD_VLD */
- #define NAND_DEV_CMD_VLD_VAL		(READ_START_VLD | WRITE_START_VLD | \
-@@ -692,11 +692,11 @@ static void update_rw_regs(struct qcom_nand_host *host, int num_cw, bool read)
- 
- 	if (read) {
- 		if (host->use_ecc)
--			cmd = PAGE_READ_WITH_ECC | PAGE_ACC | LAST_PAGE;
-+			cmd = OP_PAGE_READ_WITH_ECC | PAGE_ACC | LAST_PAGE;
- 		else
--			cmd = PAGE_READ | PAGE_ACC | LAST_PAGE;
-+			cmd = OP_PAGE_READ | PAGE_ACC | LAST_PAGE;
- 	} else {
--			cmd = PROGRAM_PAGE | PAGE_ACC | LAST_PAGE;
-+		cmd = OP_PROGRAM_PAGE | PAGE_ACC | LAST_PAGE;
- 	}
- 
- 	if (host->use_ecc) {
-@@ -1170,7 +1170,7 @@ static int nandc_param(struct qcom_nand_host *host)
- 	 * in use. we configure the controller to perform a raw read of 512
- 	 * bytes to read onfi params
- 	 */
--	nandc_set_reg(nandc, NAND_FLASH_CMD, PAGE_READ | PAGE_ACC | LAST_PAGE);
-+	nandc_set_reg(nandc, NAND_FLASH_CMD, OP_PAGE_READ | PAGE_ACC | LAST_PAGE);
- 	nandc_set_reg(nandc, NAND_ADDR0, 0);
- 	nandc_set_reg(nandc, NAND_ADDR1, 0);
- 	nandc_set_reg(nandc, NAND_DEV0_CFG0, 0 << CW_PER_PAGE
-@@ -1224,7 +1224,7 @@ static int erase_block(struct qcom_nand_host *host, int page_addr)
- 	struct qcom_nand_controller *nandc = get_qcom_nand_controller(chip);
- 
- 	nandc_set_reg(nandc, NAND_FLASH_CMD,
--		      BLOCK_ERASE | PAGE_ACC | LAST_PAGE);
-+		      OP_BLOCK_ERASE | PAGE_ACC | LAST_PAGE);
- 	nandc_set_reg(nandc, NAND_ADDR0, page_addr);
- 	nandc_set_reg(nandc, NAND_ADDR1, 0);
- 	nandc_set_reg(nandc, NAND_DEV0_CFG0,
-@@ -1255,7 +1255,7 @@ static int read_id(struct qcom_nand_host *host, int column)
- 	if (column == -1)
- 		return 0;
- 
--	nandc_set_reg(nandc, NAND_FLASH_CMD, FETCH_ID);
-+	nandc_set_reg(nandc, NAND_FLASH_CMD, OP_FETCH_ID);
- 	nandc_set_reg(nandc, NAND_ADDR0, column);
- 	nandc_set_reg(nandc, NAND_ADDR1, 0);
- 	nandc_set_reg(nandc, NAND_FLASH_CHIP_SELECT,
-@@ -1276,7 +1276,7 @@ static int reset(struct qcom_nand_host *host)
- 	struct nand_chip *chip = &host->chip;
- 	struct qcom_nand_controller *nandc = get_qcom_nand_controller(chip);
- 
--	nandc_set_reg(nandc, NAND_FLASH_CMD, RESET_DEVICE);
-+	nandc_set_reg(nandc, NAND_FLASH_CMD, OP_RESET_DEVICE);
- 	nandc_set_reg(nandc, NAND_EXEC_CMD, 1);
- 
- 	write_reg_dma(nandc, NAND_FLASH_CMD, 1, NAND_BAM_NEXT_SGL);
--- 
-2.19.1
-
 
 
