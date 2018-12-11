@@ -2,108 +2,142 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A0DCC07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 12:17:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CAEAC07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 12:19:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F272B20811
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 12:17:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F272B20811
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 67CBE20811
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 12:19:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 67CBE20811
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=8bytes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726298AbeLKMRw (ORCPT
+        id S1726384AbeLKMTO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 07:17:52 -0500
-Received: from foss.arm.com ([217.140.101.70]:46098 "EHLO foss.arm.com"
+        Tue, 11 Dec 2018 07:19:14 -0500
+Received: from 8bytes.org ([81.169.241.247]:53092 "EHLO theia.8bytes.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726130AbeLKMRv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 07:17:51 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D7710EBD;
-        Tue, 11 Dec 2018 04:17:50 -0800 (PST)
-Received: from queper01-lin (queper01-lin.cambridge.arm.com [10.1.195.48])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BB0C03F6A8;
-        Tue, 11 Dec 2018 04:17:46 -0800 (PST)
-Date:   Tue, 11 Dec 2018 12:17:45 +0000
-From:   Quentin Perret <quentin.perret@arm.com>
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Chris Redpath <chris.redpath@arm.com>,
-        Patrick Bellasi <patrick.bellasi@arm.com>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Thara Gopinath <thara.gopinath@linaro.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Todd Kjos <tkjos@google.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Steve Muckle <smuckle@google.com>, adharmap@codeaurora.org,
-        Saravana Kannan <skannan@codeaurora.org>,
-        Pavan Kondeti <pkondeti@codeaurora.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        currojerez@riseup.net, Javi Merino <javi.merino@kernel.org>
-Subject: Re: [PATCH v10 02/15] sched/cpufreq: Prepare schedutil for Energy
- Aware Scheduling
-Message-ID: <20181211121742.d6ujfyccwn7t63b3@queper01-lin>
-References: <20181203095628.11858-1-quentin.perret@arm.com>
- <20181203095628.11858-3-quentin.perret@arm.com>
- <CAJZ5v0iygh1Kh4FnOE=2GzcUHW+FBV+9ZrotAfmXtgdk==6tNg@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJZ5v0iygh1Kh4FnOE=2GzcUHW+FBV+9ZrotAfmXtgdk==6tNg@mail.gmail.com>
-User-Agent: NeoMutt/20171215
+        id S1726190AbeLKMTN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 07:19:13 -0500
+Received: by theia.8bytes.org (Postfix, from userid 1000)
+        id 33AC5284; Tue, 11 Dec 2018 13:19:12 +0100 (CET)
+From:   Joerg Roedel <joro@8bytes.org>
+To:     iommu@lists.linux-foundation.org
+Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Hanjun Guo <hanjun.guo@linaro.org>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Rob Clark <robdclark@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        linux-kernel@vger.kernel.org, Joerg Roedel <jroedel@suse.de>
+Subject: [PATCH 1/9] iommu: Introduce wrappers around dev->iommu_fwspec
+Date:   Tue, 11 Dec 2018 13:19:02 +0100
+Message-Id: <20181211121910.5604-2-joro@8bytes.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20181211121910.5604-1-joro@8bytes.org>
+References: <20181211121910.5604-1-joro@8bytes.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rafael,
+From: Joerg Roedel <jroedel@suse.de>
 
-On Tuesday 11 Dec 2018 at 13:01:24 (+0100), Rafael J. Wysocki wrote:
-> On Mon, Dec 3, 2018 at 10:56 AM Quentin Perret <quentin.perret@arm.com> wrote:
-> 
-> [cut]
-> 
-> >  #ifdef CONFIG_CPU_FREQ_GOV_SCHEDUTIL
-> > +/**
-> > + * enum schedutil_type - CPU utilization type
-> > + * @FREQUENCY_UTIL:    Utilization used to select frequency
-> > + * @ENERGY_UTIL:       Utilization used during energy calculation
-> > + *
-> > + * The utilization signals of all scheduling classes (CFS/RT/DL) and IRQ time
-> > + * need to be aggregated differently depending on the usage made of them. This
-> > + * enum is used within schedutil_freq_util() to differentiate the types of
-> > + * utilization expected by the callers, and adjust the aggregation accordingly.
-> > + */
-> > +enum schedutil_type {
-> > +       FREQUENCY_UTIL,
-> > +       ENERGY_UTIL,
-> > +};
-> 
-> Why not to use bool instead of this?  Do you expect to have more than
-> just two values in the future?  If so, what would be the third one?
+These wrappers will be used to easily change the location of
+the field later when all users are converted.
 
-Indeed, the only reason is that an enum is easier to extend, if need be.
-I think you mentioned some time ago that CPUIdle could be, in principle,
-interested in having access to aggregated utilization signals of CPUs:
+Signed-off-by: Joerg Roedel <jroedel@suse.de>
+---
+ drivers/iommu/iommu.c | 14 +++++++-------
+ include/linux/iommu.h | 11 +++++++++++
+ 2 files changed, 18 insertions(+), 7 deletions(-)
 
-https://lore.kernel.org/lkml/CAJZ5v0j=EYnANGAj9bd44eeux1eCfeMtdn9npe5pSAzE8EVKaA@mail.gmail.com/
+diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
+index edbdf5d6962c..4cfd407b972c 100644
+--- a/drivers/iommu/iommu.c
++++ b/drivers/iommu/iommu.c
+@@ -1976,7 +1976,7 @@ const struct iommu_ops *iommu_ops_from_fwnode(struct fwnode_handle *fwnode)
+ int iommu_fwspec_init(struct device *dev, struct fwnode_handle *iommu_fwnode,
+ 		      const struct iommu_ops *ops)
+ {
+-	struct iommu_fwspec *fwspec = dev->iommu_fwspec;
++	struct iommu_fwspec *fwspec = dev_iommu_fwspec_get(dev);
+ 
+ 	if (fwspec)
+ 		return ops == fwspec->ops ? 0 : -EINVAL;
+@@ -1988,26 +1988,26 @@ int iommu_fwspec_init(struct device *dev, struct fwnode_handle *iommu_fwnode,
+ 	of_node_get(to_of_node(iommu_fwnode));
+ 	fwspec->iommu_fwnode = iommu_fwnode;
+ 	fwspec->ops = ops;
+-	dev->iommu_fwspec = fwspec;
++	dev_iommu_fwspec_set(dev, fwspec);
+ 	return 0;
+ }
+ EXPORT_SYMBOL_GPL(iommu_fwspec_init);
+ 
+ void iommu_fwspec_free(struct device *dev)
+ {
+-	struct iommu_fwspec *fwspec = dev->iommu_fwspec;
++	struct iommu_fwspec *fwspec = dev_iommu_fwspec_get(dev);
+ 
+ 	if (fwspec) {
+ 		fwnode_handle_put(fwspec->iommu_fwnode);
+ 		kfree(fwspec);
+-		dev->iommu_fwspec = NULL;
++		dev_iommu_fwspec_set(dev, NULL);
+ 	}
+ }
+ EXPORT_SYMBOL_GPL(iommu_fwspec_free);
+ 
+ int iommu_fwspec_add_ids(struct device *dev, u32 *ids, int num_ids)
+ {
+-	struct iommu_fwspec *fwspec = dev->iommu_fwspec;
++	struct iommu_fwspec *fwspec = dev_iommu_fwspec_get(dev);
+ 	size_t size;
+ 	int i;
+ 
+@@ -2016,11 +2016,11 @@ int iommu_fwspec_add_ids(struct device *dev, u32 *ids, int num_ids)
+ 
+ 	size = offsetof(struct iommu_fwspec, ids[fwspec->num_ids + num_ids]);
+ 	if (size > sizeof(*fwspec)) {
+-		fwspec = krealloc(dev->iommu_fwspec, size, GFP_KERNEL);
++		fwspec = krealloc(fwspec, size, GFP_KERNEL);
+ 		if (!fwspec)
+ 			return -ENOMEM;
+ 
+-		dev->iommu_fwspec = fwspec;
++		dev_iommu_fwspec_set(dev, fwspec);
+ 	}
+ 
+ 	for (i = 0; i < num_ids; i++)
+diff --git a/include/linux/iommu.h b/include/linux/iommu.h
+index a1d28f42cb77..f93fdcf7d130 100644
+--- a/include/linux/iommu.h
++++ b/include/linux/iommu.h
+@@ -398,6 +398,17 @@ void iommu_fwspec_free(struct device *dev);
+ int iommu_fwspec_add_ids(struct device *dev, u32 *ids, int num_ids);
+ const struct iommu_ops *iommu_ops_from_fwnode(struct fwnode_handle *fwnode);
+ 
++static inline struct iommu_fwspec *dev_iommu_fwspec_get(struct device *dev)
++{
++	return dev->iommu_fwspec;
++}
++
++static inline void dev_iommu_fwspec_set(struct device *dev,
++					struct iommu_fwspec *fwspec)
++{
++	dev->iommu_fwspec = fwspec;
++}
++
+ #else /* CONFIG_IOMMU_API */
+ 
+ struct iommu_ops {};
+-- 
+2.17.1
 
-So yeah, I kept Peter's original enum and went for documenting the type,
-as you suggested on v7 :-)
-
-Thanks,
-Quentin
