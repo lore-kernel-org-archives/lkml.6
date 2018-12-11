@@ -2,91 +2,165 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BDA40C6783C
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 20:24:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B626C6783B
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 20:27:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2540B20851
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 20:24:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="U/XiwwdM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2540B20851
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	by mail.kernel.org (Postfix) with ESMTP id CAAEE20851
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 20:27:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CAAEE20851
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726339AbeLKUYM (ORCPT
+        id S1726246AbeLKU1O (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 15:24:12 -0500
-Received: from ozlabs.org ([203.11.71.1]:39137 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726134AbeLKUYL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 15:24:11 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 43Dry133Cvz9s1c;
-        Wed, 12 Dec 2018 07:24:09 +1100 (AEDT)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1544559849;
-        bh=MTvTMn3D+494wQJ7djJinH9eaAXyR64uR0mMHLhSMCc=;
-        h=Date:From:To:Cc:Subject:From;
-        b=U/XiwwdMPIKdDBi+Tpdlbp6x1HaveVApu3tBr1n88Yi7UT26E2E8LhV4XvVi1/ySe
-         a0vhQvAM2LG7F37NQlx5zoIrvKiMUSefqnzeC+iWrAkJItkGO9amj4U+TSd16F2wUs
-         +7RBAjJJT2/TCw0C9J7bOL2+N8DNubiD7N+XMsJeKk4Vm7SH15pVJIaW+59oU+w2IN
-         1TLs5LtXf8+Dgcu6oTOLrBCQ8HE/YzYRkMnAqnxrXsCP+xJnWmo+QDUA8fvfg8zrOy
-         +XFnKudtYE/2neRY3bM84TScOCX63y05CiVGXzivqfZ1Jc8nvwwMaGhUJg4oZqMm8u
-         qOI/EAZUjxBrg==
-Date:   Wed, 12 Dec 2018 07:24:02 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Steven Whitehouse <swhiteho@redhat.com>,
-        Bob Peterson <rpeterso@redhat.com>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andreas Gruenbacher <agruenba@redhat.com>
-Subject: linux-next: Signed-off-by missing for commit in the gfs2 tree
-Message-ID: <20181212072402.7b967df7@canb.auug.org.au>
+        Tue, 11 Dec 2018 15:27:14 -0500
+Received: from vmicros1.altlinux.org ([194.107.17.57]:41112 "EHLO
+        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726125AbeLKU1N (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 15:27:13 -0500
+Received: from mua.local.altlinux.org (mua.local.altlinux.org [192.168.1.14])
+        by vmicros1.altlinux.org (Postfix) with ESMTP id E820C72CC6C;
+        Tue, 11 Dec 2018 23:27:09 +0300 (MSK)
+Received: by mua.local.altlinux.org (Postfix, from userid 508)
+        id D9D6C7CFBE2; Tue, 11 Dec 2018 23:27:09 +0300 (MSK)
+Date:   Tue, 11 Dec 2018 23:27:09 +0300
+From:   "Dmitry V. Levin" <ldv@altlinux.org>
+To:     Oleg Nesterov <oleg@redhat.com>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Elvira Khabirova <lineprinter@altlinux.org>,
+        Eugene Syromyatnikov <esyr@redhat.com>,
+        Kees Cook <keescook@chromium.org>,
+        Jann Horn <jannh@google.com>, linux-api@vger.kernel.org,
+        strace-devel@lists.strace.io, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 24/25] ptrace: add PTRACE_GET_SYSCALL_INFO request
+Message-ID: <20181211202709.GA3839@altlinux.org>
+References: <20181210042352.GA6092@altlinux.org>
+ <20181210043126.GX6131@altlinux.org>
+ <20181210141107.GB4177@redhat.com>
+ <20181210162131.GG14149@altlinux.org>
+ <20181211152953.GA8504@redhat.com>
+ <20181211162305.GA480@altlinux.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/M8NGu9AN0qZCubDrYoPDlQ_"; protocol="application/pgp-signature"
+        protocol="application/pgp-signature"; boundary="lrZ03NoBR/3+SXJZ"
+Content-Disposition: inline
+In-Reply-To: <20181211162305.GA480@altlinux.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/M8NGu9AN0qZCubDrYoPDlQ_
-Content-Type: text/plain; charset=US-ASCII
+
+--lrZ03NoBR/3+SXJZ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+On Tue, Dec 11, 2018 at 07:23:05PM +0300, Dmitry V. Levin wrote:
+> On Tue, Dec 11, 2018 at 04:29:54PM +0100, Oleg Nesterov wrote:
+> > On 12/10, Dmitry V. Levin wrote:
+> > > On Mon, Dec 10, 2018 at 03:11:07PM +0100, Oleg Nesterov wrote:
+> > > > On 12/10, Dmitry V. Levin wrote:
+> > > > >
+> > > > > +struct ptrace_syscall_info {
+> > > > > +	__u8 op;	/* PTRACE_SYSCALL_INFO_* */
+> > > > > +	__u8 __pad0[3];
+> > > > > +	__u32 arch;
+> > > > > +	__u64 instruction_pointer;
+> > > > > +	__u64 stack_pointer;
+> > > > > +	__u64 frame_pointer;
+> > > > > +	union {
+> > > > > +		struct {
+> > > > > +			__u64 nr;
+> > > > > +			__u64 args[6];
+> > > > > +		} entry;
+> > > > > +		struct {
+> > > > > +			__s64 rval;
+> > > > > +			__u8 is_error;
+> > > > > +			__u8 __pad1[7];
+> > > > > +		} exit;
+> > > > > +		struct {
+> > > > > +			__u64 nr;
+> > > > > +			__u64 args[6];
+> > > > > +			__u32 ret_data;
+> > > > > +			__u8 __pad2[4];
+> > > > > +		} seccomp;
+> > > > > +	};
+> > > > > +};
+> > > >
+> > > > Could you explain why ptrace_syscall_info needs __pad{0,1,2} ? I si=
+mply can't
+> > > > understand why...
+> > >
+> > > I suppose the idea behind the use of these pads was to make the struc=
+ture
+> > > arch-independent.
+> >=20
+> > Still can't understand... are you saying that without (say) __pad2[4]
+> > sizeof(ptrace_syscall_info) or offsetofend(ptrace_syscall_info, seccomp)
+> > will depend on arch? Or what? I am just curious.
+>=20
+> Yes, without padding these sizes will depend on architecture:
+>=20
+> $ cat t.c
+> #include <linux/types.h>
+> int main() {
+> 	struct s {
+> 		__u64 nr;
+> 		__u64 args[6];
+> 		__u32 ret_data;
+> 	};
+> 	return sizeof(struct s);
+> }
+>=20
+> $ gcc -m64 -Wall -O2 t.c && ./a.out; echo $?
+> 64
+> $ gcc -m32 -Wall -O2 t.c && ./a.out; echo $?
+> 60
+>=20
+> This happens because __u64 has 32-bit alignment on some 32-bit
+> architectures like x86.
+>=20
+> There is also m68k where __u32 has 16-bit alignment.
 
-Commit
+Said that, I think it would be better if PTRACE_GET_SYSCALL_INFO
+did not take these trailing pads into account, e.g.
 
-  ec702fa79702 ("gfs2: Dump nrpages for inodes and their glocks")
+-       return offsetofend(struct ptrace_syscall_info, seccomp);
++       return offsetofend(struct ptrace_syscall_info, seccomp.ret_data);
+=2E..
+-       return offsetofend(struct ptrace_syscall_info, exit);
++       return offsetofend(struct ptrace_syscall_info, exit.is_error);
 
-is missing a Signed-off-by from its committer.
+The reason is that it would allow to fill these trailing pads with
+something useful in the future.
+
 
 --=20
-Cheers,
-Stephen Rothwell
+ldv
 
---Sig_/M8NGu9AN0qZCubDrYoPDlQ_
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+--lrZ03NoBR/3+SXJZ
+Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwQHOIACgkQAVBC80lX
-0GzsUwf+IlfRH/ejw9dftfobCVrGG1j/dX7txmrfqzRyuW1IkVAMeK5msA6V1Jcw
-3KZZmxYnbx506muCfbNzM1z5xzwophX7sR2qaAImDSakZlmIXKVmuAIKYlmojXzs
-Ws8loSGiSxP832sTKft8RFRMIx0Tv+4WyEUdHIInZZBi4Ei2xuWIDp4NKRzTXJJ1
-7NAdERa2TvMMzHtosyKdbdk63YBN79ZCjgCL7GFeVDy8aW2o6YEbxkXoUw6JrQsY
-o8IsTFtk7Y2CGg4u8vafYzvXfY+s8Qf65b5rDPGSilFHL+1FYQa/gbZeoOgPUJus
-LpwXTuaU9o12MNv1wIHKDwJuL3K1Rg==
-=0PFl
+iQIcBAEBCAAGBQJcEB2dAAoJEAVFT+BVnCUIJ84QAOfJ5fXfvifiGBZCU6BShuZt
+byv2O2D/UqiXyLRPJ9xHxXzaI/3mMOe+M6zjrTmZuac4o/AIp6AecW+kKU7/9Q8h
+3x/CS5TXCEn1np+Dg1a7hK3h1GRta+N4sOtl3T67t/NnCaAcUSjx+liRLmQMbc/k
+9yNjcGNPGbnqE01zQYxMrrr9e+YSZapyFJTpKFPDokwrKoPbRWp3bqDgOgU4dHAs
+tNHlwT1oT/ZFZCZqpyRagtB1RQbCUuwMgxsCAOr4FgmgFJTN/6+INbeg38EW7Wk2
+SX8yddqbAmPuUxDfnCrcfrU/oQrAS9JZNITxQmEFgzIkCm7pazXJE+rUTFzrXeW7
+cCbjsALXEQcVpP28K2muEhHuGky3qRQ12k/bc9bUOvvfUmfYm+S0vGG+ahFoKhcV
+hpumhBRXnwnOgMOKr90DyCWxnABSciUfaJdOuzcO+zWwztdvP/ZwbxovkkDbF68C
+b6Y1NBaBkEzwpDMrO9giCrcRvz2popcsye4zzHAPebmShzri2C+iJrlbUo0osGz+
++r7n5wO5qOtsM2kEOwn/Eopwiv4kZ3HrkMleLSn3Fit6dZXQEuWvUcRodM5Kr6Pw
+xR1ZeY2TiDiLh1+Hjyiy2hXGu/EAOYzC9057fKhJUE8Kk5NtSBsjZjFbWy8a0+T/
+ufWPiKdmiEeuYxn4Vfs5
+=yQae
 -----END PGP SIGNATURE-----
 
---Sig_/M8NGu9AN0qZCubDrYoPDlQ_--
+--lrZ03NoBR/3+SXJZ--
