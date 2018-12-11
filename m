@@ -2,143 +2,111 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=FROM_EXCESS_BASE64,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F43EC07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 10:38:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8563BC07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 10:39:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6978E20849
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 10:38:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6978E20849
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 48B162082F
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 10:39:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 48B162082F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726434AbeLKKis (ORCPT
+        id S1726444AbeLKKjc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 05:38:48 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:52806 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726114AbeLKKir (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 05:38:47 -0500
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 6C25F30B933E;
-        Tue, 11 Dec 2018 10:38:47 +0000 (UTC)
-Received: from redhat.com (ovpn-112-59.ams2.redhat.com [10.36.112.59])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 49294600D6;
-        Tue, 11 Dec 2018 10:38:42 +0000 (UTC)
-Date:   Tue, 11 Dec 2018 10:38:39 +0000
-From:   Daniel =?utf-8?B?UC4gQmVycmFuZ8Op?= <berrange@redhat.com>
-To:     Eduardo Habkost <ehabkost@redhat.com>
-Cc:     Borislav Petkov <bp@alien8.de>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        =?utf-8?B?SsO2cmcgUsO2ZGVs?= <joro@8bytes.org>,
-        Andre Przywara <andre.przywara@arm.com>,
-        kvm ML <kvm@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Eric Blake <eblake@redhat.com>
-Subject: Re: kvm: RDTSCP on AMD
-Message-ID: <20181211103839.GC921@redhat.com>
-Reply-To: Daniel =?utf-8?B?UC4gQmVycmFuZ8Op?= <berrange@redhat.com>
-References: <20181210181328.GA762@zn.tnic>
- <20181210183730.GJ4669@habkost.net>
- <20181210184153.GB5482@zn.tnic>
- <20181210190600.GK4669@habkost.net>
- <20181210194258.GD5482@zn.tnic>
- <20181210200843.GN4669@habkost.net>
+        Tue, 11 Dec 2018 05:39:32 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:44032 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726114AbeLKKjb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 05:39:31 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0EE3D1596;
+        Tue, 11 Dec 2018 02:39:31 -0800 (PST)
+Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id D2B983F6A8;
+        Tue, 11 Dec 2018 02:39:30 -0800 (PST)
+Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
+        id CBCDB1AE0B6A; Tue, 11 Dec 2018 10:39:53 +0000 (GMT)
+Date:   Tue, 11 Dec 2018 10:39:53 +0000
+From:   Will Deacon <will.deacon@arm.com>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andrey Konovalov <andreyknvl@google.com>,
+        Steve Capper <steve.capper@arm.com>
+Subject: Re: linux-next: manual merge of the akpm-current tree with the arm64
+ tree
+Message-ID: <20181211103953.GC12006@edgewater-inn.cambridge.arm.com>
+References: <20181211171102.14c0be9f@canb.auug.org.au>
+ <20181211171230.7847fd48@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181210200843.GN4669@habkost.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.49]); Tue, 11 Dec 2018 10:38:47 +0000 (UTC)
+In-Reply-To: <20181211171230.7847fd48@canb.auug.org.au>
+User-Agent: Mutt/1.11.1+30 (d10eec459b35) ()
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 10, 2018 at 06:08:43PM -0200, Eduardo Habkost wrote:
-> On Mon, Dec 10, 2018 at 08:42:58PM +0100, Borislav Petkov wrote:
-> > On Mon, Dec 10, 2018 at 05:06:00PM -0200, Eduardo Habkost wrote:
-> > > I mean documenting it.  We already have code that will print
-> > > warnings if a feature isn't available.
-> > > 
-> > > See my previous attempt to document the minimum kernel version
-> > > at <https://www.mail-archive.com/qemu-devel@nongnu.org/msg486559.html>.
+On Tue, Dec 11, 2018 at 05:12:30PM +1100, Stephen Rothwell wrote:
+> On Tue, 11 Dec 2018 17:11:02 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> >
+> > Today's linux-next merge of the akpm-current tree got a conflict in:
 > > 
-> > Something like this?
+> >   arch/arm64/mm/proc.S
 > > 
-> > I still have no clue how to add RDTSCP on pc-*-4.0 and newer.
-> 
-> qemu.git master have no PC_COMPAT_3_1 and pc-*-4.0 machine-types
-> yet.  I've sent another reply with additional pointers.
-> 
+> > between commits:
 > > 
-> > Thx.
+> >   67e7fdfcc682 ("arm64: mm: introduce 52-bit userspace support")
+> >   68d23da4373a ("rm64: Kconfig: Re-jig CONFIG options for 52-bit VA")
 > > 
-> > ---
-> > diff --git a/qemu-doc.texi b/qemu-doc.texi
-> > index f7ad1dfe4b69..913b2ef68d54 100644
-> > --- a/qemu-doc.texi
-> > +++ b/qemu-doc.texi
-> > @@ -37,6 +37,7 @@
-> >  * QEMU System emulator for non PC targets::
-> >  * QEMU Guest Agent::
-> >  * QEMU User space emulator::
-> > +* System requirements::
-> >  * Implementation notes::
-> >  * Deprecated features::
-> >  * Supported build platforms::
-> > @@ -2813,6 +2814,13 @@ Act as if the host page size was 'pagesize' bytes
-> >  Run the emulation in single step mode.
-> >  @end table
-> >  
-> > +@node System requirements
-> > +@chapter System requirements
-> > +
-> > +@section KVM kernel module
-> > +
-> > +On x86_64 hosts, the default set of CPU features enabled by the KVM accelerator
-> > +require the host to be running Linux v4.5 or newer.
-> >  
-> 
-> Sounds good, but it would be nice to document what exactly makes
-> Linux 4.5+ necessary.  e.g.:
-> 
-> | On x86_64 hosts, it is recommended to run Linux 4.5 or newer on
-> | the host when using the KVM accelerator.
-> | 
-> | The Opteron_G2, OpteronG3, Opteron_G4, and Opteron_G5 CPU
-> | models require KVM support for RDTSCP, which was added on
-> | Linux 4.5.
-> 
-> I'm CCing some people who may help review English grammar and
-> style.
+> > from the arm64 tree and commit:
+> > 
+> >   089dc516f651 ("kasan, arm64: enable top byte ignore for the kernel")
+> > 
+> > from the akpm-current tree.
+> > 
+> > I fixed it up (see below) and can carry the fix as necessary. This
+> > is now fixed as far as linux-next is concerned, but any non trivial
+> > conflicts should be mentioned to your upstream maintainer when your tree
+> > is submitted for merging.  You may also want to consider cooperating
+> > with the maintainer of the conflicting tree to minimise any particularly
+> > complex conflicts.
+> > 
+> > -- 
+> > Cheers,
+> > Stephen Rothwell
+> > 
+> > diff --cc arch/arm64/mm/proc.S
+> > index e05b3ce1db6b,d861f208eeb1..73886a5f1f30
+> > --- a/arch/arm64/mm/proc.S
+> > +++ b/arch/arm64/mm/proc.S
+> > @@@ -449,16 -451,8 +455,16 @@@ ENTRY(__cpu_setup
+> >   	 */
+> >   	ldr	x10, =TCR_TxSZ(VA_BITS) | TCR_CACHE_FLAGS | TCR_SMP_FLAGS | \
+> >   			TCR_TG_FLAGS | TCR_KASLR_FLAGS | TCR_ASID16 | \
+> > - 			TCR_TBI0 | TCR_A1
+> > + 			TCR_TBI0 | TCR_A1 | TCR_KASAN_FLAGS
+> >  -	tcr_set_idmap_t0sz	x10, x9
+> >  +
+> >  +#ifdef CONFIG_ARM64_USER_VA_BITS_52
+> >  +	ldr_l		x9, vabits_user
+> >  +	sub		x9, xzr, x9
+> >  +	add		x9, x9, #64
+> >  +#else
+> >  +	ldr_l		x9, idmap_t0sz
+> >  +#endif
+> >  +	tcr_set_t0sz	x10, x9
+> >   
+> >   	/*
+> >   	 * Set the IPS bits in TCR_EL1.
 
-Note that QEMU has a declared supported platform list which is used to
-set the minimum software versions required.
+This looks good to me. Thanks, Stephen.
 
-   https://qemu.weilnetz.de/doc/qemu-doc.html#Linux-OS
-
-Based on that policy, the Linux distros we aim to support have the
-following kernel versions:
-
-  - Debian Jessie: 4.5
-  - Debian Stretch: 4.5
-  - RHEL-7: 3.10
-  - Ubuntu LTS (Xenial): 4.5
-  - OpenSUSE Leap 15: 4.12.14
-
-So we can't require Linux 4.5 as a minimum version at this time.
-
-Regards,
-Daniel
--- 
-|: https://berrange.com      -o-    https://www.flickr.com/photos/dberrange :|
-|: https://libvirt.org         -o-            https://fstop138.berrange.com :|
-|: https://entangle-photo.org    -o-    https://www.instagram.com/dberrange :|
+Will
