@@ -2,148 +2,110 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 517DAC67839
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 22:48:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DF30C6783B
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 22:50:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 166AB20672
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 22:48:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E4CFF20672
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 22:50:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="WCL6SN0e"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 166AB20672
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+	dkim=pass (1024-bit key) header.d=neverware.com header.i=@neverware.com header.b="OUSbKthQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E4CFF20672
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=neverware.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726301AbeLKWn1 (ORCPT
+        id S1726295AbeLKWuG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 17:43:27 -0500
-Received: from sonic316-27.consmr.mail.ne1.yahoo.com ([66.163.187.153]:33870
-        "EHLO sonic316-27.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726183AbeLKWn0 (ORCPT
+        Tue, 11 Dec 2018 17:50:06 -0500
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:41016 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726201AbeLKWuG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 17:43:26 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1544568205; bh=WT5A35EHIXDk4c6XxSfr7BOxdAICWJo3sRrzhtAFt40=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject; b=WCL6SN0ed/rykvI+CC53zp6lYNEw7acT6UsZ8wv/Ai6R3qB8719/I8rlvAfNtOjTSBz10UGkFVDOjNbPg33brC+4E1PDXTyRf2tGvXSGARbXlwGUKy85KmejGDy0SlrpOUaQChg011yxoDjEr+OFY8jouqOUyS0WIXrBrwV8C8moCA9+9CNM9HsV54z46B0e4E5FCBntc9gXru+il8TRi1XvAxpyhntjej/4pNsmm6OvuKgGb8MW3k8b81moA6bujNtPKLKg1YZOq5u2wRt+eeHbgJOtiPtdi3v5R9PGAwrMUnGtJcPWpUee1Vi73cfUlca4WDc1MNXMmJO5iazFNQ==
-X-YMail-OSG: 6zt4hPoVM1ljIDxM4Z0xkdmtw0fRx4cgUSfmtnnCOBvLBqd8tXdlRE0nNzMYQFY
- NwMz_kR5Wxb4PHnepdXiplWkXPJEVld_Bwl3.2D0Dhpwj2WjRQPrmspCvdsnVzlfyCte94wSTXsY
- 61jlgF9Hi6UACMxQNgafHgrzWYqKNSnqTUw8Ke2Itj6jGEtMbnRmC7yiHAjmcvfs8fgW3a2Jpef8
- E1VPusijMjbWa.tm3FOLLAr.xURE6D_rgMcwEBHRedrfV8RGKzfTlRBbjouWNr9lQWCwQAkA9Uwh
- rdZBB5VeFDVfIh2zkH37VCyobWsn_ke3JwvWyUq_T9JKfSTEIxFa2AlgUI4hUPYnAVP.Xc_Q9dEu
- 0JpQVV82eI8FA93IGsnkoX9Zzn_7FfuK6S8nXHy9VxM525vjxBQUqqepmNTgE2di7AMNWyGvbRVL
- 8eBOhhM0937U2DWIFUMNNThNPVI4Vi0W4PrWrfIsYSThGWEeLaAd7NfZXdmqirFyOFjrcArAvjJg
- SlA48QaC2qQIh4cff9tqd6jsxnUhBFai0vf1BiN8zlEk8zlQq1voyow79xgA5wjUm02POl.NasVV
- 9aHtRJgIaLTkLGRbGQWUIFRqb2luywe5YrCqmalqeetBl1k674chB.RcTaDH53xWNy1kC5q958JB
- fiEOsLLORvqO.5ztFCE5fQ2mbJ7ckjhbMOadxISAXQmjv76tCdqXrbdRO6Voqy3KOwjHWv2jDsHZ
- HKkpQPJJwveqUq63n.FfHtn1qSFZNLLaMSl.UIG0WMGC73T.BrLYtr3oUR9op0EdC1fnxZmGZtt9
- 1wUFjhZSM01s0L8wNTI9238bmOLKUpBStovPqQ4.xLqMI5qrZoT3SnHJ7qe9mvdT5ybnRbIoJkt_
- 3NFjeFx1mjBcsoPlbUn4hwrtUNPax7jhJr2CpWioiF3WuygaypjNyjlt8ssclnnU9fJEiTuRhHXj
- 9PvrMG3Yg3i31PjmtU2xXQJYnF41MljDMsjlNqWU0JcE1uewYjxvEeHXYEmCUf.z1S3J5Nd57rsT
- cY4YZa..Bop_aZH6SRb7nOFXmW1rTTkcQS9DfVd..SaKrr_DObc3JRCT17Vb4P6f953mBcwPEpW8
- RyISazgIf5OTkpg6pTbh7O9ChWofSfOpnNlr3YvID
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic316.consmr.mail.ne1.yahoo.com with HTTP; Tue, 11 Dec 2018 22:43:25 +0000
-Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO localhost.localdomain) ([67.169.65.224])
-          by smtp422.mail.ne1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID db48327a3d58729724c38eee90dbab73;
-          Tue, 11 Dec 2018 22:43:25 +0000 (UTC)
-From:   Casey Schaufler <casey@schaufler-ca.com>
-To:     jmorris@namei.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, selinux@vger.kernel.org
-Cc:     john.johansen@canonical.com, keescook@chromium.org,
-        penguin-kernel@i-love.sakura.ne.jp, paul@paul-moore.com,
-        linux-fsdevel@vger.kernel.org, sds@tycho.nsa.gov,
-        adobriyan@gmail.com, mic@digikod.net, s.mesoraca16@gmail.com,
-        casey@schaufler-ca.com
-Subject: [PATCH v5 01/38] LSM: Introduce LSM_FLAG_LEGACY_MAJOR
-Date:   Tue, 11 Dec 2018 14:42:37 -0800
-Message-Id: <20181211224314.22412-2-casey@schaufler-ca.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20181211224314.22412-1-casey@schaufler-ca.com>
-References: <20181211224314.22412-1-casey@schaufler-ca.com>
+        Tue, 11 Dec 2018 17:50:06 -0500
+Received: by mail-qt1-f195.google.com with SMTP id d18so18423513qto.8
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 14:50:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=neverware.com; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=kCcVZCFcQP8h5Lw4sHSIAZ/fdHniF/n0Tl4rMUpKOyI=;
+        b=OUSbKthQXOwHxc9obTikSr1JR8ZBaQCtvqq63IqwQtowjmI+xsV11H4tlhJGdV2HDa
+         2GvvifhkHG/jZVtHWlFMvlBKOopJNkwWA0C9DnAKaOv8m2XAd6bT96GgzcSd+Mm/eTVr
+         hlUzTxzrlrFahMzyGM6YtADiU/A+MbUfler4A=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=kCcVZCFcQP8h5Lw4sHSIAZ/fdHniF/n0Tl4rMUpKOyI=;
+        b=nwC9Q1WDPuqsrvvuX66XODVGHbzUKzaRtCeZLBJl1oD8AUqImPzwNEqGs7GisQc+UF
+         hKPba2BiZIrdp/8zaL7GP/Jhz6vETfiAQLESP6bqiMZ5feF3fC/+oeW0YlpW+jNOClqH
+         wvGs+Y/ZkbYI7Gp7vaOchZPvChoRojohsYjXrsIQ/WFx1smneZECAKye+F11tulzd1hp
+         iqnwu69jmei1Zv73TkuoYXNb8ekNwbMy99apFdliskhqYn49wCEtoTA+TIYrBWrnlYjN
+         f5woT1WiyYvER8VlXJlxrO+l5jAdkPaf+7cbX2nKxKKCuau/FZRn71yw7U2LLK2dVRiC
+         dkZg==
+X-Gm-Message-State: AA+aEWaGrIRMPPJscbuztW4ewyVslFgjm3il990K1iUE694zMJ5IoqOt
+        mR/TqCYMdROvXKByuOLo07UtAQ==
+X-Google-Smtp-Source: AFSGD/US2/4fR9ywxbuY3t+ofblPwZQ+fI9AsffBLwvwE1//mCl/eFjn8vf48TWFvdv0x1VYLuMkSg==
+X-Received: by 2002:aed:23c5:: with SMTP id k5mr18090212qtc.39.1544568604861;
+        Tue, 11 Dec 2018 14:50:04 -0800 (PST)
+Received: from Puget-178128.seaworld.local (rrcs-208-105-51-90.nyc.biz.rr.com. [208.105.51.90])
+        by smtp.googlemail.com with ESMTPSA id z23sm14509860qkg.50.2018.12.11.14.50.04
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 11 Dec 2018 14:50:04 -0800 (PST)
+From:   Girija Kumar Kasinadhuni <gkumar@neverware.com>
+To:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        Kailang Yang <kailang@realtek.com>,
+        Hui Wang <hui.wang@canonical.com>, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org
+Cc:     Girija Kumar Kasinadhuni <gkumar@neverware.com>
+Subject: [PATCH] ALSA: hda/realtek - Add quirks for Dell Optiplex 5060, 7060 for audio out while using headphones
+Date:   Tue, 11 Dec 2018 17:49:36 -0500
+Message-Id: <20181211224937.28889-1-gkumar@neverware.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kees Cook <keescook@chromium.org>
+There are two audio ports on these machines - headset and mic.
+There' s no sound when hp is inserted into the headset port,
+though the hp is detected. Without pulseaudio, this issue is
+seen on both the Optiplex machines. The issue goes away with the
+"options snd-hda-intel model=dell-headset-dock" quirk in the
+/etc/modprobe.d/alsa-base.conf or /etc/modprobe.d/alsa.conf
+Getting this fix into the kernel instead of fixing in an
+application layer above, or in a .conf file. This is also helpful
+for audio clients using the ALSA api like cras from ChromiumOS.
 
-This adds a flag for the current "major" LSMs to distinguish them when
-we have a universal method for ordering all LSMs. It's called "legacy"
-since the distinction of "major" will go away in the blob-sharing world.
-
-Signed-off-by: Kees Cook <keescook@chromium.org>
-Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
-Reviewed-by: John Johansen <john.johansen@canonical.com>
+Signed-off-by: Girija Kumar Kasinadhuni <gkumar@neverware.com>
 ---
- include/linux/lsm_hooks.h  | 3 +++
- security/apparmor/lsm.c    | 1 +
- security/selinux/hooks.c   | 1 +
- security/smack/smack_lsm.c | 1 +
- security/tomoyo/tomoyo.c   | 1 +
- 5 files changed, 7 insertions(+)
+alsa-info:
 
-diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-index aaeb7fa24dc4..63c0e102de20 100644
---- a/include/linux/lsm_hooks.h
-+++ b/include/linux/lsm_hooks.h
-@@ -2039,8 +2039,11 @@ extern char *lsm_names;
- extern void security_add_hooks(struct security_hook_list *hooks, int count,
- 				char *lsm);
- 
-+#define LSM_FLAG_LEGACY_MAJOR	BIT(0)
-+
- struct lsm_info {
- 	const char *name;	/* Required. */
-+	unsigned long flags;	/* Optional: flags describing LSM */
- 	int (*init)(void);	/* Required. */
- };
- 
-diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
-index 42446a216f3b..2edd35ca5044 100644
---- a/security/apparmor/lsm.c
-+++ b/security/apparmor/lsm.c
-@@ -1728,5 +1728,6 @@ static int __init apparmor_init(void)
- 
- DEFINE_LSM(apparmor) = {
- 	.name = "apparmor",
-+	.flags = LSM_FLAG_LEGACY_MAJOR,
- 	.init = apparmor_init,
- };
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index 7ce683259357..56c6f1849c80 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -7209,6 +7209,7 @@ void selinux_complete_init(void)
-    all processes and objects when they are created. */
- DEFINE_LSM(selinux) = {
- 	.name = "selinux",
-+	.flags = LSM_FLAG_LEGACY_MAJOR,
- 	.init = selinux_init,
- };
- 
-diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-index 81fb4c1631e9..3639e55b1f4b 100644
---- a/security/smack/smack_lsm.c
-+++ b/security/smack/smack_lsm.c
-@@ -4891,5 +4891,6 @@ static __init int smack_init(void)
-  */
- DEFINE_LSM(smack) = {
- 	.name = "smack",
-+	.flags = LSM_FLAG_LEGACY_MAJOR,
- 	.init = smack_init,
- };
-diff --git a/security/tomoyo/tomoyo.c b/security/tomoyo/tomoyo.c
-index 1b5b5097efd7..09f7af130d3a 100644
---- a/security/tomoyo/tomoyo.c
-+++ b/security/tomoyo/tomoyo.c
-@@ -552,5 +552,6 @@ static int __init tomoyo_init(void)
- 
- DEFINE_LSM(tomoyo) = {
- 	.name = "tomoyo",
-+	.flags = LSM_FLAG_LEGACY_MAJOR,
- 	.init = tomoyo_init,
- };
+ Optiplex 5060 -
+ - without fix:	http://www.alsa-project.org/db/?f=2cf3c4354e82bde4aa480612a914535982fa3f91
+ - with fix: http://www.alsa-project.org/db/?f=7a928960400ec828b82632411284ad8a63727b92
+ Optiplex 7060
+ - without fix: http://www.alsa-project.org/db/?f=69fa554faa712e7cad1f188be4a5192353d64f2c
+ - with fix: http://www.alsa-project.org/db/?f=80ce1fb178b377b27b0795ac1c55e8cbee1b5b96
+
+ sound/pci/hda/patch_realtek.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/sound/pci/hda/patch_realtek.c b/sound/pci/hda/patch_realtek.c
+index 8d75597028ee..581f6a288abf 100644
+--- a/sound/pci/hda/patch_realtek.c
++++ b/sound/pci/hda/patch_realtek.c
+@@ -6444,6 +6444,8 @@ static const struct snd_pci_quirk alc269_fixup_tbl[] = {
+ 	SND_PCI_QUIRK(0x1028, 0x064b, "Dell", ALC293_FIXUP_DELL1_MIC_NO_PRESENCE),
+ 	SND_PCI_QUIRK(0x1028, 0x0665, "Dell XPS 13", ALC288_FIXUP_DELL_XPS_13),
+ 	SND_PCI_QUIRK(0x1028, 0x0669, "Dell Optiplex 9020m", ALC255_FIXUP_DELL1_MIC_NO_PRESENCE),
++	SND_PCI_QUIRK(0x1028, 0x085b, "Dell Optiplex 5060", ALC269_FIXUP_DELL2_MIC_NO_PRESENCE),
++	SND_PCI_QUIRK(0x1028, 0x085a, "Dell Optiplex 7060", ALC269_FIXUP_DELL2_MIC_NO_PRESENCE),
+ 	SND_PCI_QUIRK(0x1028, 0x069a, "Dell Vostro 5480", ALC290_FIXUP_SUBWOOFER_HSJACK),
+ 	SND_PCI_QUIRK(0x1028, 0x06c7, "Dell", ALC255_FIXUP_DELL1_MIC_NO_PRESENCE),
+ 	SND_PCI_QUIRK(0x1028, 0x06d9, "Dell", ALC293_FIXUP_DELL1_MIC_NO_PRESENCE),
 -- 
-2.14.5
+2.17.1
 
