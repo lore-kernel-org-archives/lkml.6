@@ -2,306 +2,188 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-14.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF3E0C67839
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 21:22:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6822AC67839
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 21:25:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8408C204FD
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 21:22:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8408C204FD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 1CAFC20870
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 21:25:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="s+Ek+dMf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1CAFC20870
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726317AbeLKVWO (ORCPT
+        id S1726245AbeLKVZM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 16:22:14 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:47386 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726247AbeLKVWN (ORCPT
+        Tue, 11 Dec 2018 16:25:12 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:32855 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726134AbeLKVZM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 16:22:13 -0500
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBBLEHtT069215
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 16:22:12 -0500
-Received: from e14.ny.us.ibm.com (e14.ny.us.ibm.com [129.33.205.204])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2pajuye6nh-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 16:22:11 -0500
-Received: from localhost
-        by e14.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Tue, 11 Dec 2018 21:22:10 -0000
-Received: from b01cxnp23034.gho.pok.ibm.com (9.57.198.29)
-        by e14.ny.us.ibm.com (146.89.104.201) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 11 Dec 2018 21:22:05 -0000
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBBLM43b19660826
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 11 Dec 2018 21:22:04 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8C38BB2066;
-        Tue, 11 Dec 2018 21:22:04 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 5A6DCB2064;
-        Tue, 11 Dec 2018 21:22:04 +0000 (GMT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.38])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Tue, 11 Dec 2018 21:22:04 +0000 (GMT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 9113016C2BD9; Tue, 11 Dec 2018 13:22:04 -0800 (PST)
-Date:   Tue, 11 Dec 2018 13:22:04 -0800
-From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
-To:     Alan Stern <stern@rowland.harvard.edu>
-Cc:     David Goldblatt <davidtgoldblatt@gmail.com>,
-        mathieu.desnoyers@efficios.com,
-        Florian Weimer <fweimer@redhat.com>, triegel@redhat.com,
-        libc-alpha@sourceware.org, andrea.parri@amarulasolutions.com,
-        will.deacon@arm.com, peterz@infradead.org, boqun.feng@gmail.com,
-        npiggin@gmail.com, dhowells@redhat.com, j.alglave@ucl.ac.uk,
-        luc.maranget@inria.fr, akiyks@gmail.com, dlustig@nvidia.com,
-        linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Linux: Implement membarrier function
-Reply-To: paulmck@linux.ibm.com
-References: <20181211190801.GO4170@linux.ibm.com>
- <Pine.LNX.4.44L0.1812111446150.1538-100000@iolanthe.rowland.org>
+        Tue, 11 Dec 2018 16:25:12 -0500
+Received: by mail-pg1-f193.google.com with SMTP id z11so7248139pgu.0
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 13:25:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=SUG8wLqK3LkDCBK9Mi1GQnFqyXw85mqX04pXHST8jRE=;
+        b=s+Ek+dMfmkYIRCxBn99R4Pmxr4+G0eJel6lofpVXMoUQsnyB04jJ5zWupwOlOV3Mlo
+         58iihqdfa/Mg9ud/1gwMmNdceG97Xu82IU1bR0qdBw9nXKU5G7w9T+0kF11hVkgXg1nb
+         MYl6rV1JWG5RsrJD1etzYabLl9eGhKwhHsV3bXk/ij1kX87Skh2+w1E+InLol6OSUCjg
+         mfCmn+0nKkoGYc0QguxblBS/qdqh1ppQGa6VqNpPWRnLK7j6yfpw34OSUqrdFV0VfB3j
+         RdwSJePLZNP6mUhxrR8fvNXkOJO/YdAO6wfNjQ2HWq0KUGy/HL4exl0Ftb7EXCz02Fhe
+         uI+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=SUG8wLqK3LkDCBK9Mi1GQnFqyXw85mqX04pXHST8jRE=;
+        b=CCV3T5lJzN8xZuPNkgkRq/e9QBtZoBKw285pvIseiAnrP9Bpm7GGZjPbLmRxoKeTTK
+         PNwrww9EsZWezzCxV33j5CF1OtQBj8E/4VbaRUoqpjO/38SaRMq/McJhd7ZScPinevh3
+         63q6th329RJZfBjk/YfYcSSawaVNiIT/IVLbsfl7KZrlkwDd9Ga3t70fwIYNbRsx7iUJ
+         Oyc3uoQffXQPFV7pS55kyWBKMxOE/7ogfO+303bxf2jlRFA2+DUWf9qEHkC99u1s699Q
+         mQe8xM0FiiPBXZ6iNl8juq0ikL/5uUyX6c1jS8PD7DjIAaUw0omdOAz3dBd9aZJvpyBi
+         mLnA==
+X-Gm-Message-State: AA+aEWbaFxbcwR4RF/XxGjXfF31ZtN5S4aa4tuXiIKt50HcBUJ4pO6D5
+        vDAUQOF8JNMxKlm8IxbQgbrHH66Bgdm53A7cCHps7g==
+X-Google-Smtp-Source: AFSGD/WevDDcn/E44p/xzMoUY4wPhSV1VhQwGlfvFmXW17PYSScWt1GQFLIcyQZaq/xQHibHfnMJgapYT8oBC/qwK7c=
+X-Received: by 2002:a65:4683:: with SMTP id h3mr15374396pgr.225.1544563511163;
+ Tue, 11 Dec 2018 13:25:11 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Pine.LNX.4.44L0.1812111446150.1538-100000@iolanthe.rowland.org>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18121121-0052-0000-0000-000003659962
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010214; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000270; SDB=6.01130375; UDB=6.00587369; IPR=6.00910508;
- MB=3.00024658; MTD=3.00000008; XFM=3.00000015; UTC=2018-12-11 21:22:09
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18121121-0053-0000-0000-00005F11D72F
-Message-Id: <20181211212204.GR4170@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-11_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1812110187
+References: <20181210234201.4850-1-natechancellor@gmail.com>
+In-Reply-To: <20181210234201.4850-1-natechancellor@gmail.com>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Tue, 11 Dec 2018 13:25:00 -0800
+Message-ID: <CAKwvOdkOwdrsOAADGp9To2F5o2AAW7123yADFzYLMawwsinmug@mail.gmail.com>
+Subject: Re: [PATCH] drm/amd/display: Pass app_tf by value rather than by reference
+To:     Nathan Chancellor <natechancellor@gmail.com>
+Cc:     Harry Wentland <harry.wentland@amd.com>, sunpeng.li@amd.com,
+        alexander.deucher@amd.com, christian.koenig@amd.com,
+        David1.Zhou@amd.com, amd-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 11, 2018 at 03:09:33PM -0500, Alan Stern wrote:
-> On Tue, 11 Dec 2018, Paul E. McKenney wrote:
-> 
-> > > Rewriting the litmus test in these terms gives:
-> > > 
-> > >         P0      P1      P2      P3      P4      P5
-> > >         Wa=2    Wb=2    Wc=2    [mb23]  [mb14]  [mb05]
-> > >         mb0s    mb1s    mb2s    Wd=2    We=2    Wf=2
-> > >         mb0e    mb1e    mb2e    Re=0    Rf=0    Ra=0
-> > >         Rb=0    Rc=0    Rd=0
-> > > 
-> > > Here the brackets in "[mb23]", "[mb14]", and "[mb05]" mean that the
-> > > positions of these barriers in their respective threads' program
-> > > orderings is undetermined; they need not come at the top as shown.
-> > > 
-> > > (Also, in case David is unfamiliar with it, the "Wa=2" notation is
-> > > shorthand for "Write 2 to a" and "Rb=0" is short for "Read 0 from b".)
-> > > 
-> > > Finally, here are a few facts which may be well known and obvious, but
-> > > I'll state them anyway:
-> > > 
-> > > 	A CPU cannot reorder instructions across a memory barrier.
-> > > 	If x is po-after a barrier then x executes after the barrier
-> > > 	is finished.
-> > > 
-> > > 	If a store is po-before a barrier then the store propagates
-> > > 	to every CPU before the barrier finishes.
-> > > 
-> > > 	If a store propagates to some CPU before a load on that CPU
-> > > 	reads from the same location, then the load will obtain the
-> > > 	value from that store or a co-later store.  This implies that
-> > > 	if a load obtains a value co-earlier than some store then the
-> > > 	load must have executed before the store propagated to the
-> > > 	load's CPU.
-> > > 
-> > > The proof consists of three main stages, each requiring three steps.
-> > > Using the facts that b - f are all read as 0, I'll show that P1
-> > > executes Rc before P3 executes Re, then that P0 executes Rb before P4
-> > > executes Rf, and lastly that P5's Ra must obtain 2, not 0.  This will
-> > > demonstrate that the litmus test is not allowed.
-> > > 
-> > > 1.	Suppose that mb23 ends up coming po-later than Wd in P3.
-> > > 	Then we would have:
-> > > 
-> > > 		Wd propagates to P2 < mb23 < mb2e < Rd,
-> > > 
-> > > 	and so Rd would obtain 2, not 0.  Hence mb23 must come
-> > > 	po-before Wd (as shown in the listing):  mb23 < Wd.
-> > > 
-> > > 2.	Since mb23 therefore occurs po-before Re and instructions
-> > > 	cannot be reordered across barriers,  mb23 < Re.
-> > > 
-> > > 3.	Since Rc obtains 0, we must have:
-> > > 
-> > > 		Rc < Wc propagates to P1 < mb2s < mb23 < Re.
-> > > 
-> > > 	Thus Rc < Re.
-> > > 
-> > > 4.	Suppose that mb14 ends up coming po-later than We in P4.
-> > > 	Then we would have:
-> > > 
-> > > 		We propagates to P3 < mb14 < mb1e < Rc < Re,
-> > > 
-> > > 	and so Re would obtain 2, not 0.  Hence mb14 must come
-> > > 	po-before We (as shown in the listing):  mb14 < We.
-> > > 
-> > > 5.	Since mb14 therefore occurs po-before Rf and instructions
-> > > 	cannot be reordered across barriers,  mb14 < Rf.
-> > > 
-> > > 6.	Since Rb obtains 0, we must have:
-> > > 
-> > > 		Rb < Wb propagates to P0 < mb1s < mb14 < Rf.
-> > > 
-> > > 	Thus Rb < Rf.
-> > > 
-> > > 7.	Suppose that mb05 ends up coming po-later than Wf in P5.
-> > > 	Then we would have:
-> > > 
-> > > 		Wf propagates to P4 < mb05 < mb0e < Rb < Rf,
-> > > 
-> > > 	and so Rf would obtain 2, not 0.  Hence mb05 must come
-> > > 	po-before Wf (as shown in the listing):  mb05 < Wf.
-> > > 
-> > > 8.	Since mb05 therefore occurs po-before Ra and instructions
-> > > 	cannot be reordered across barriers,  mb05 < Ra.
-> > > 
-> > > 9.	Now we have:
-> > > 
-> > > 		Wa propagates to P5 < mb0s < mb05 < Ra,
-> > > 
-> > > 	and so Ra must obtain 2, not 0.  QED.
-> > 
-> > Like this, then, with maximal reordering of P3-P5's reads?
-> > 
-> >          P0      P1      P2      P3      P4      P5
-> >          Wa=2
-> >          mb0s
-> >                                                  [mb05]
-> >          mb0e                                    Ra=0
-> >          Rb=0    Wb=2
-> >                  mb1s
-> >                                          [mb14]
-> >                  mb1e                    Rf=0
-> >                  Rc=0    Wc=2                    Wf=2
-> >                          mb2s
-> >                                  [mb23]
-> >                          mb2e    Re=0
-> >                          Rd=0            We=2
-> >                                  Wd=2
-> 
-> Yes, that's right.  This shows how P5's Ra must obtain 2 instead of 0.
-> 
-> > But don't the sys_membarrier() calls affect everyone, especially given
-> > the shared-variable communication?
-> 
-> They do, but the other effects are irrelevant for this proof.
+On Mon, Dec 10, 2018 at 3:42 PM Nathan Chancellor
+<natechancellor@gmail.com> wrote:
+>
+> Clang warns when an expression that equals zero is used as a null
+> pointer constant (in lieu of NULL):
+>
+> drivers/gpu/drm/amd/amdgpu/../display/amdgpu_dm/amdgpu_dm.c:4435:3:
+> warning: expression which evaluates to zero treated as a null pointer
+> constant of type 'const enum color_transfer_func *'
+> [-Wnon-literal-null-conversion]
+>                 TRANSFER_FUNC_UNKNOWN,
+>                 ^~~~~~~~~~~~~~~~~~~~~
+> 1 warning generated.
+>
+> This warning is caused by commit bb47de736661 ("drm/amdgpu: Set FreeSync
+> state using drm VRR properties") and it could be solved by using NULL
+> instead of TRANSFER_FUNC_UNKNOWN or casting TRANSFER_FUNC_UNKNOWN as a
+> pointer. However, after looking into it, there doesn't appear to be a
+> good reason to pass app_tf by reference as it is never mutated along the
+> way. This is the only code path in which app_tf is used:
+>
+> mod_freesync_build_vrr_infopacket ->
+>     build_vrr_infopacket_v2 ->
+>         build_vrr_infopacket_fs2_data
+>
+> Neither mod_freesync_build_vrr_infopacket or build_vrr_infopacket_v2
+> modify app_tf's value and build_vrr_infopacket_fs2_data expects just
+> the value so we can avoid dereferencing anything by just passing in
+> app_tf's value to mod_freesync_build_vrr_infopacket and
+> build_vrr_infopacket_v2.
+>
+> There is no functional change because build_vrr_infopacket_fs2_data
+> doesn't do anything if TRANSFER_FUNC_UNKNOWN is passed to it, the same
+> as not calling build_vrr_infopacket_fs2_data at all like before this
+> change when NULL was used for app_tf.
 
-If I understand correctly, the shared-variable communication within
-sys_membarrier() is included in your proof in the form of ordering
-between memory barriers in the mainline sys_membarrier() code and
-in the IPI handlers.
+Nathan,
+Thanks for sending this patch.  I was hoping to provide review sooner,
+but have been quite busy lately.
 
-> >  If so, why wouldn't this more strict
-> > variant hold?
-> > 
-> >          P0      P1      P2      P3      P4      P5
-> >          Wa=2
-> >          mb0s
-> >                                  [mb05]  [mb05]  [mb05]
-> 
-> You have misunderstood the naming scheme.  mb05 is the barrier injected 
-> by P0's sys_membarrier call into P5.  So the three barriers above 
-> should be named "mb03", "mb04", and "mb05".  And you left out mb01 and 
-> mb02.
+Yeah, especially for LP64 targets, the pointer to enum is larger than
+just the enum, and if it's not being updated ("in/out paramter")
+there's no need to pass by pointer.
 
-The former is a copy-and-paste error on my part, the latter was
-intentional because the IPIs among P0, P1, and P2 don't seem to
-strengthen the ordering.
+>
+> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+> ---
+>  drivers/gpu/drm/amd/display/modules/freesync/freesync.c | 7 +++----
+>  drivers/gpu/drm/amd/display/modules/inc/mod_freesync.h  | 2 +-
+>  2 files changed, 4 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/amd/display/modules/freesync/freesync.c b/drivers/gpu/drm/amd/display/modules/freesync/freesync.c
+> index 620a171620ee..520665a9d81a 100644
+> --- a/drivers/gpu/drm/amd/display/modules/freesync/freesync.c
+> +++ b/drivers/gpu/drm/amd/display/modules/freesync/freesync.c
+> @@ -656,7 +656,7 @@ static void build_vrr_infopacket_v1(enum signal_type signal,
+>
+>  static void build_vrr_infopacket_v2(enum signal_type signal,
+>                 const struct mod_vrr_params *vrr,
+> -               const enum color_transfer_func *app_tf,
+> +               enum color_transfer_func app_tf,
+>                 struct dc_info_packet *infopacket)
+>  {
+>         unsigned int payload_size = 0;
+> @@ -664,8 +664,7 @@ static void build_vrr_infopacket_v2(enum signal_type signal,
+>         build_vrr_infopacket_header_v2(signal, infopacket, &payload_size);
+>         build_vrr_infopacket_data(vrr, infopacket);
+>
+> -       if (app_tf != NULL)
+> -               build_vrr_infopacket_fs2_data(*app_tf, infopacket);
+> +       build_vrr_infopacket_fs2_data(app_tf, infopacket);
+>
+>         build_vrr_infopacket_checksum(&payload_size, infopacket);
+>
+> @@ -676,7 +675,7 @@ void mod_freesync_build_vrr_infopacket(struct mod_freesync *mod_freesync,
+>                 const struct dc_stream_state *stream,
+>                 const struct mod_vrr_params *vrr,
+>                 enum vrr_packet_type packet_type,
+> -               const enum color_transfer_func *app_tf,
+> +               enum color_transfer_func app_tf,
+>                 struct dc_info_packet *infopacket)
+>  {
+>         /* SPD info packet for FreeSync */
+> diff --git a/drivers/gpu/drm/amd/display/modules/inc/mod_freesync.h b/drivers/gpu/drm/amd/display/modules/inc/mod_freesync.h
+> index 949a8b62aa98..063af6258fd9 100644
+> --- a/drivers/gpu/drm/amd/display/modules/inc/mod_freesync.h
+> +++ b/drivers/gpu/drm/amd/display/modules/inc/mod_freesync.h
+> @@ -145,7 +145,7 @@ void mod_freesync_build_vrr_infopacket(struct mod_freesync *mod_freesync,
+>                 const struct dc_stream_state *stream,
+>                 const struct mod_vrr_params *vrr,
+>                 enum vrr_packet_type packet_type,
+> -               const enum color_transfer_func *app_tf,
+> +               enum color_transfer_func app_tf,
 
-> >          mb0e
-> >          Rb=0    Wb=2
-> >                  mb1s
-> >                                  [mb14]  [mb14]  [mb14]
-> >                  mb1e
-> >                  Rc=0    Wc=2
-> >                          mb2s
-> >                                  [mb23]  [mb23]  [mb23]
-> >                          mb2e    Re=0    Rf=0    Ra=0
-> >                          Rd=0            We=2    Wf=2
-> >                                  Wd=2
-> 
-> Yes, this does hold.  But since it doesn't affect the end result, 
-> there's no point in mentioning all those other barriers.
-> 
-> > In which case, wouldn't this cycle be forbidden even if it had only one
-> > sys_membarrier() call?
-> 
-> No, it wouldn't.  I don't understand why you might think it would.  
+Don't you need to update the callsite of `mod_freesync_build_vrr_infopacket` in
 
-Because I hadn't yet thought of the scenario I showed below.
+drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c#4949:
 
-> This is just like RCU, if you imagine a tiny critical section between 
-> each adjacent pair of instructions.  You wouldn't expect RCU to enforce 
-> ordering among six CPUs with only one synchronize_rcu call.
+-                                           NULL,
++                                          transfer_func_unknown,
 
-Yes, I do now agree in light of the scenario shown below.
+Maybe at that point the `if (app_tf != NULL)` could be replaced with
+`if (app_tf != transfer_func_unknown)` hoisted from
+`build_vrr_infopacket_fs2_data`? (There's only one caller of
+`build_vrr_infopacket_fs2_data` today, maybe fine to leave the
+unconditional call and check).
 
-> > Ah, but the IPIs are not necessarily synchronized across the CPUs,
-> > so that the following could happen:
-> > 
-> >          P0      P1      P2      P3      P4      P5
-> >          Wa=2
-> >          mb0s
-> >                                  [mb05]  [mb05]  [mb05]
-> >          mb0e                                    Ra=0
-> >          Rb=0    Wb=2
-> >                  mb1s
-> >                                  [mb14]  [mb14]
-> >                                          Rf=0
-> >                                                  Wf=2
-> >                                                  [mb14]
-> >                  mb1e
-> >                  Rc=0    Wc=2
-> >                          mb2s
-> >                                  [mb23]
-> >                                  Re=0
-> >                                          We=2
-> >                                          [mb23]  [mb23]
-> >                          mb2e
-> >                          Rd=0
-> >                                  Wd=2
-> 
-> Yes it could.  But even in this execution you would end up with Ra=2 
-> instead of Ra=0.
-
-Agreed.  Or I should have said that the above execution is forbidden,
-either way.
-
-> > I guess in light of this post in 2001, I really don't have an excuse,
-> > do I?  ;-)
-> > 
-> > 	https://lists.gt.net/linux/kernel/223555
-> > 
-> > Or am I still missing something here?
-> 
-> You tell me...
-
-I think I am on board.  ;-)
-
-							Thanx, Paul
-
+Either way, I suspect without the change to
+drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c, that this fails to
+compile?
+-- 
+Thanks,
+~Nick Desaulniers
