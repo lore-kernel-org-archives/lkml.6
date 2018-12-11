@@ -7,50 +7,51 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4293C07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:51:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 167E8C5CFFE
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:51:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6CED420880
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:51:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D183B2145D
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:51:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544543464;
-	bh=ZShHpVnuuL/xjVxHnef/pKWMk+2XiMoqV21r/CH7YFw=;
+	s=default; t=1544543466;
+	bh=FNbz2ei/rZheKpg4zVmaKcRcX+FGu70e4+3pqrGghr8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=fG+But9752Oo5W/izEi4bmWlPZNkf6LDvHa6PHwsvfgmfZRe7VnmgKZyT4PHmuOz+
-	 Drl057wXi+ripUZ5rP09mRVs3Ighzaf0aD5xUaukml/x4ax0LKFjR8VKBBGaUiKFov
-	 WyBYxBzwY8gQVJNrN5XnppcQ/qCyvlTk7GtFZcAw=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6CED420880
+	b=nfZD5UmtRw/8Vb/ojgoQbAccE3aUZCTLRRZs7id0P4YUhwlev/N+0bLNh0FKIodHM
+	 pE9978ZdanQ5ab2v5oQC/ZvvrG70JZpjifgOzBQuAELHZQ3EEjDgeYmkEsFN592Rk8
+	 QIxEobdtTnE3De1VJYDdGHbXpURt3wUTtcfmnyoo=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D183B2145D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729413AbeLKPvC (ORCPT
+        id S1729425AbeLKPvG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 10:51:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39602 "EHLO mail.kernel.org"
+        Tue, 11 Dec 2018 10:51:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39652 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728634AbeLKPvA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:51:00 -0500
+        id S1728953AbeLKPvD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 10:51:03 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F410C20855;
-        Tue, 11 Dec 2018 15:50:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9E90D20855;
+        Tue, 11 Dec 2018 15:51:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544543459;
-        bh=ZShHpVnuuL/xjVxHnef/pKWMk+2XiMoqV21r/CH7YFw=;
+        s=default; t=1544543462;
+        bh=FNbz2ei/rZheKpg4zVmaKcRcX+FGu70e4+3pqrGghr8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TMWq7FW59meD3ztxm9kvEOjXfk47wo3wPVJ5grPGTvyp5ypmU1FNgjB+4Xk8EERGJ
-         26XfTDBEc6y45G1lw7iHHKRDuZnQBNGWu0qecc8RSTQqqnB43hKsl07gQt7aFu1JWu
-         fgUWEt80k+l/CdOTRBxh2puFCHxc4q0JAIdtdM2M=
+        b=usTZuwPTBRoo03TXAjGJiQcXH+7RKaR3ZdzHgV6TygsRijV6tFMMJHJDG0vOyV3gX
+         eGalFgyWCfS1xkQpen8us0xNPCTpw65aOlja5G5MnYIo9fI7/+ANLjmFaObK3F3ESb
+         JJuErpCnJAui5+IBu0Rtao2uPI1dtgqsb67K2y4o=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chuck Lever <chuck.lever@oracle.com>,
-        stable@kernel.org,
-        Trond Myklebust <trond.myklebust@hammerspace.com>
-Subject: [PATCH 4.9 32/51] SUNRPC: Fix leak of krb5p encode pages
-Date:   Tue, 11 Dec 2018 16:41:40 +0100
-Message-Id: <20181211151616.755917173@linuxfoundation.org>
+        stable@vger.kernel.org, Hui Peng <benquike@gmail.com>,
+        Mathias Payer <mathias.payer@nebelwelt.net>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        stable <stable@kernel.org>
+Subject: [PATCH 4.9 23/51] USB: check usb_get_extra_descriptor for proper size
+Date:   Tue, 11 Dec 2018 16:41:31 +0100
+Message-Id: <20181211151615.211327664@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181211151612.328911565@linuxfoundation.org>
 References: <20181211151612.328911565@linuxfoundation.org>
@@ -69,42 +70,95 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Chuck Lever <chuck.lever@oracle.com>
+From: Mathias Payer <mathias.payer@nebelwelt.net>
 
-commit 8dae5398ab1ac107b1517e8195ed043d5f422bd0 upstream.
+commit 704620afc70cf47abb9d6a1a57f3825d2bca49cf upstream.
 
-call_encode can be invoked more than once per RPC call. Ensure that
-each call to gss_wrap_req_priv does not overwrite pointers to
-previously allocated memory.
+When reading an extra descriptor, we need to properly check the minimum
+and maximum size allowed, to prevent from invalid data being sent by a
+device.
 
-Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
-Cc: stable@kernel.org
-Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
+Reported-by: Hui Peng <benquike@gmail.com>
+Reported-by: Mathias Payer <mathias.payer@nebelwelt.net>
+Co-developed-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Hui Peng <benquike@gmail.com>
+Signed-off-by: Mathias Payer <mathias.payer@nebelwelt.net>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: stable <stable@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/sunrpc/auth_gss/auth_gss.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/usb/core/hub.c    |    2 +-
+ drivers/usb/core/usb.c    |    6 +++---
+ drivers/usb/host/hwa-hc.c |    2 +-
+ include/linux/usb.h       |    4 ++--
+ 4 files changed, 7 insertions(+), 7 deletions(-)
 
---- a/net/sunrpc/auth_gss/auth_gss.c
-+++ b/net/sunrpc/auth_gss/auth_gss.c
-@@ -1736,6 +1736,7 @@ priv_release_snd_buf(struct rpc_rqst *rq
- 	for (i=0; i < rqstp->rq_enc_pages_num; i++)
- 		__free_page(rqstp->rq_enc_pages[i]);
- 	kfree(rqstp->rq_enc_pages);
-+	rqstp->rq_release_snd_buf = NULL;
- }
+--- a/drivers/usb/core/hub.c
++++ b/drivers/usb/core/hub.c
+@@ -2225,7 +2225,7 @@ static int usb_enumerate_device_otg(stru
+ 		/* descriptor may appear anywhere in config */
+ 		err = __usb_get_extra_descriptor(udev->rawdescriptors[0],
+ 				le16_to_cpu(udev->config[0].desc.wTotalLength),
+-				USB_DT_OTG, (void **) &desc);
++				USB_DT_OTG, (void **) &desc, sizeof(*desc));
+ 		if (err || !(desc->bmAttributes & USB_OTG_HNP))
+ 			return 0;
  
- static int
-@@ -1744,6 +1745,9 @@ alloc_enc_pages(struct rpc_rqst *rqstp)
- 	struct xdr_buf *snd_buf = &rqstp->rq_snd_buf;
- 	int first, last, i;
+--- a/drivers/usb/core/usb.c
++++ b/drivers/usb/core/usb.c
+@@ -696,14 +696,14 @@ EXPORT_SYMBOL_GPL(usb_get_current_frame_
+  */
  
-+	if (rqstp->rq_release_snd_buf)
-+		rqstp->rq_release_snd_buf(rqstp);
-+
- 	if (snd_buf->page_len == 0) {
- 		rqstp->rq_enc_pages_num = 0;
+ int __usb_get_extra_descriptor(char *buffer, unsigned size,
+-			       unsigned char type, void **ptr)
++			       unsigned char type, void **ptr, size_t minsize)
+ {
+ 	struct usb_descriptor_header *header;
+ 
+ 	while (size >= sizeof(struct usb_descriptor_header)) {
+ 		header = (struct usb_descriptor_header *)buffer;
+ 
+-		if (header->bLength < 2) {
++		if (header->bLength < 2 || header->bLength > size) {
+ 			printk(KERN_ERR
+ 				"%s: bogus descriptor, type %d length %d\n",
+ 				usbcore_name,
+@@ -712,7 +712,7 @@ int __usb_get_extra_descriptor(char *buf
+ 			return -1;
+ 		}
+ 
+-		if (header->bDescriptorType == type) {
++		if (header->bDescriptorType == type && header->bLength >= minsize) {
+ 			*ptr = header;
+ 			return 0;
+ 		}
+--- a/drivers/usb/host/hwa-hc.c
++++ b/drivers/usb/host/hwa-hc.c
+@@ -654,7 +654,7 @@ static int hwahc_security_create(struct
+ 	top = itr + itr_size;
+ 	result = __usb_get_extra_descriptor(usb_dev->rawdescriptors[index],
+ 			le16_to_cpu(usb_dev->actconfig->desc.wTotalLength),
+-			USB_DT_SECURITY, (void **) &secd);
++			USB_DT_SECURITY, (void **) &secd, sizeof(*secd));
+ 	if (result == -1) {
+ 		dev_warn(dev, "BUG? WUSB host has no security descriptors\n");
  		return 0;
+--- a/include/linux/usb.h
++++ b/include/linux/usb.h
+@@ -336,11 +336,11 @@ struct usb_host_bos {
+ };
+ 
+ int __usb_get_extra_descriptor(char *buffer, unsigned size,
+-	unsigned char type, void **ptr);
++	unsigned char type, void **ptr, size_t min);
+ #define usb_get_extra_descriptor(ifpoint, type, ptr) \
+ 				__usb_get_extra_descriptor((ifpoint)->extra, \
+ 				(ifpoint)->extralen, \
+-				type, (void **)ptr)
++				type, (void **)ptr, sizeof(**(ptr)))
+ 
+ /* ----------------------------------------------------------------------- */
+ 
 
 
