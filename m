@@ -7,49 +7,49 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFCC4C07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:01:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10ABCC07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:01:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 74BFF205C9
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:01:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CD38A2084E
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:01:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544544060;
-	bh=vW3i6k1dGNRMAGtGCQSbwYbSPeoH9MyeB3H25d9C/CE=;
+	s=default; t=1544544068;
+	bh=6l4Cq8rrkeClX+SxAqIV3/BsQcmI7MAGzbAxeeoyqJ4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=RG2hs98//CZL1laddC69SocJ69x4Z5mQOT7d3PbJ5ZDF29LkAu6Ih++H2LxHBV3Hd
-	 9g8cMskTRKqbWg1DSyGnqpqN3tVbXrjz4GYvvqmKhEFj/j8WBPZAnOTD4qhvwWtOAx
-	 mclpmu0TezoeTy8OIFOFdPiX/Iq0gjbYJU7iSnC0=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 74BFF205C9
+	b=n/eSms78bN4Qltu238KQUUC5irQUMfwFvx55/F8DNJzwGXqGfI1y9CDHQFq6aaRME
+	 CGDpitJQ2TPEFTWzoGZt0Bn/TesMW/Kvw+M3npo8hpimLW0ov2R8O1XkOFuE6P+POW
+	 v7H9fITZwnb8DGfQ4BRnDSDxEuKnC0xu+W8w10aI=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD38A2084E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730967AbeLKQA7 (ORCPT
+        id S1731068AbeLKQBH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 11:00:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46960 "EHLO mail.kernel.org"
+        Tue, 11 Dec 2018 11:01:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46896 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730910AbeLKP5w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:57:52 -0500
+        id S1730900AbeLKP5t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 10:57:49 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 103032086D;
-        Tue, 11 Dec 2018 15:57:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 599B620855;
+        Tue, 11 Dec 2018 15:57:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544543871;
-        bh=vW3i6k1dGNRMAGtGCQSbwYbSPeoH9MyeB3H25d9C/CE=;
+        s=default; t=1544543868;
+        bh=6l4Cq8rrkeClX+SxAqIV3/BsQcmI7MAGzbAxeeoyqJ4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hrAYY3xpMyesgAHdLOJE8Gz/B4qRaknQZzuqo/5Mn/9EHCdUStI8Ze1jcoJZ+ieSw
-         sqo11GRDEq9JGCSmW23WYxIAbY0H5lSCo91RAluHuteEo7biM3UD1EUQ6sgCrpBsOt
-         XDKSyeAiLK7/1xtZkfvr9cdk270Btczqvqv79ZS4=
+        b=N0v1cM5266PcQ1IkHRYjNlgnZuBI5T/Pi2dapI/tnu6RSS7q8Ubenh/oy7TS5+On6
+         4HfS+CFUq6l0Gbjo63IDXRcufmS+xS4prg5TrJsaXqgADskIFN4Xe6weV5btqEZEFK
+         J/RCRtb/UlktAUzk5vZDbwy6o0erMxGTlluy1gqo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Pan Bian <bianpan2016@163.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 4.19 096/118] crypto: do not free algorithm before using
-Date:   Tue, 11 Dec 2018 16:41:55 +0100
-Message-Id: <20181211151648.142392381@linuxfoundation.org>
+        stable@vger.kernel.org, Young Xiao <YangX92@hotmail.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>
+Subject: [PATCH 4.19 095/118] Revert commit ef9209b642f "staging: rtl8723bs: Fix indenting errors and an off-by-one mistake in core/rtw_mlme_ext.c"
+Date:   Tue, 11 Dec 2018 16:41:54 +0100
+Message-Id: <20181211151648.103638389@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181211151644.216668863@linuxfoundation.org>
 References: <20181211151644.216668863@linuxfoundation.org>
@@ -68,115 +68,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Pan Bian <bianpan2016@163.com>
+From: Young Xiao <YangX92@hotmail.com>
 
-commit e5bde04ccce64d808f8b00a489a1fe5825d285cb upstream.
+commit 87e4a5405f087427fbf8b437d2796283dce2b38f upstream.
 
-In multiple functions, the algorithm fields are read after its reference
-is dropped through crypto_mod_put. In this case, the algorithm memory
-may be freed, resulting in use-after-free bugs. This patch delays the
-put operation until the algorithm is never used.
+pstapriv->max_num_sta is always <= NUM_STA, since max_num_sta is either
+set in _rtw_init_sta_priv() or rtw_set_beacon().
 
-Fixes: 79c65d179a40 ("crypto: cbc - Convert to skcipher")
-Fixes: a7d85e06ed80 ("crypto: cfb - add support for Cipher FeedBack mode")
-Fixes: 043a44001b9e ("crypto: pcbc - Convert to skcipher")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Pan Bian <bianpan2016@163.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Fixes: ef9209b642f1 ("staging: rtl8723bs: Fix indenting errors and an off-by-one mistake in core/rtw_mlme_ext.c")
+Signed-off-by: Young Xiao <YangX92@hotmail.com>
+Reviewed-by: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- crypto/cbc.c  |    6 ++++--
- crypto/cfb.c  |    6 ++++--
- crypto/pcbc.c |    6 ++++--
- 3 files changed, 12 insertions(+), 6 deletions(-)
+ drivers/staging/rtl8723bs/core/rtw_mlme_ext.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/crypto/cbc.c
-+++ b/crypto/cbc.c
-@@ -140,9 +140,8 @@ static int crypto_cbc_create(struct cryp
- 	spawn = skcipher_instance_ctx(inst);
- 	err = crypto_init_spawn(spawn, alg, skcipher_crypto_instance(inst),
- 				CRYPTO_ALG_TYPE_MASK);
--	crypto_mod_put(alg);
- 	if (err)
--		goto err_free_inst;
-+		goto err_put_alg;
+--- a/drivers/staging/rtl8723bs/core/rtw_mlme_ext.c
++++ b/drivers/staging/rtl8723bs/core/rtw_mlme_ext.c
+@@ -1566,7 +1566,7 @@ unsigned int OnAssocReq(struct adapter *
+ 	if (pstat->aid > 0) {
+ 		DBG_871X("  old AID %d\n", pstat->aid);
+ 	} else {
+-		for (pstat->aid = 1; pstat->aid < NUM_STA; pstat->aid++)
++		for (pstat->aid = 1; pstat->aid <= NUM_STA; pstat->aid++)
+ 			if (pstapriv->sta_aid[pstat->aid - 1] == NULL)
+ 				break;
  
- 	err = crypto_inst_setname(skcipher_crypto_instance(inst), "cbc", alg);
- 	if (err)
-@@ -174,12 +173,15 @@ static int crypto_cbc_create(struct cryp
- 	err = skcipher_register_instance(tmpl, inst);
- 	if (err)
- 		goto err_drop_spawn;
-+	crypto_mod_put(alg);
- 
- out:
- 	return err;
- 
- err_drop_spawn:
- 	crypto_drop_spawn(spawn);
-+err_put_alg:
-+	crypto_mod_put(alg);
- err_free_inst:
- 	kfree(inst);
- 	goto out;
---- a/crypto/cfb.c
-+++ b/crypto/cfb.c
-@@ -286,9 +286,8 @@ static int crypto_cfb_create(struct cryp
- 	spawn = skcipher_instance_ctx(inst);
- 	err = crypto_init_spawn(spawn, alg, skcipher_crypto_instance(inst),
- 				CRYPTO_ALG_TYPE_MASK);
--	crypto_mod_put(alg);
- 	if (err)
--		goto err_free_inst;
-+		goto err_put_alg;
- 
- 	err = crypto_inst_setname(skcipher_crypto_instance(inst), "cfb", alg);
- 	if (err)
-@@ -317,12 +316,15 @@ static int crypto_cfb_create(struct cryp
- 	err = skcipher_register_instance(tmpl, inst);
- 	if (err)
- 		goto err_drop_spawn;
-+	crypto_mod_put(alg);
- 
- out:
- 	return err;
- 
- err_drop_spawn:
- 	crypto_drop_spawn(spawn);
-+err_put_alg:
-+	crypto_mod_put(alg);
- err_free_inst:
- 	kfree(inst);
- 	goto out;
---- a/crypto/pcbc.c
-+++ b/crypto/pcbc.c
-@@ -244,9 +244,8 @@ static int crypto_pcbc_create(struct cry
- 	spawn = skcipher_instance_ctx(inst);
- 	err = crypto_init_spawn(spawn, alg, skcipher_crypto_instance(inst),
- 				CRYPTO_ALG_TYPE_MASK);
--	crypto_mod_put(alg);
- 	if (err)
--		goto err_free_inst;
-+		goto err_put_alg;
- 
- 	err = crypto_inst_setname(skcipher_crypto_instance(inst), "pcbc", alg);
- 	if (err)
-@@ -275,12 +274,15 @@ static int crypto_pcbc_create(struct cry
- 	err = skcipher_register_instance(tmpl, inst);
- 	if (err)
- 		goto err_drop_spawn;
-+	crypto_mod_put(alg);
- 
- out:
- 	return err;
- 
- err_drop_spawn:
- 	crypto_drop_spawn(spawn);
-+err_put_alg:
-+	crypto_mod_put(alg);
- err_free_inst:
- 	kfree(inst);
- 	goto out;
 
 
