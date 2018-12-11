@@ -2,94 +2,236 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F0EAC07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 12:02:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F326C07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 12:03:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0706220811
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 12:02:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="2sk5z57m"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0706220811
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	by mail.kernel.org (Postfix) with ESMTP id 5618A2084A
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 12:03:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544529823;
+	bh=+pZmcssiwvH5/LDB7RHzVGPPLG/zrDKdISRzO4N+gcI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=HvavdQfkJk0FMMP2LQvrALbsUyXaGePC4mg+x9e5KJGuNHHJi0U8DkQCkJkkSjEY0
+	 mMjInyiZz0CFXjaR2ZmEiZT/77PP/614DmGAxBHrg0xMs+FoCD6XLygsF4wXNtSG3i
+	 XqpsWfnXpv4nOD/cFh6iY4NFczz8DJpFgAyMC+pQ=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5618A2084A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726531AbeLKMCX (ORCPT
+        id S1726499AbeLKMDm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 07:02:23 -0500
-Received: from conuserg-08.nifty.com ([210.131.2.75]:34039 "EHLO
-        conuserg-08.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726439AbeLKMCL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 07:02:11 -0500
-Received: from pug.e01.socionext.com (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
-        by conuserg-08.nifty.com with ESMTP id wBBC1w9Y007779;
-        Tue, 11 Dec 2018 21:02:00 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-08.nifty.com wBBC1w9Y007779
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1544529720;
-        bh=JOz1NbW/eQCO86k0paK1LttJjfqJznbFcoz0vSbQd00=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2sk5z57mVCjmkomfBvYnN4HY9u1Z9qK42vbmwRGKzhYsKtgJwuGmA23xdYVI6ozzq
-         8jn1BL1wYYRV6qjJH4gAJzhxAJ7zhbOfJ6XfhTfEU22Bieg2wajMYd0ugstg1Mi4JH
-         Seb2dPu4MdPq1EIxZ8fiDMWASLtKA9c1HnHGftyTLK10lzhCFhb4oiPVZ8dNprj9hW
-         iL7uKvOV/KGlG8CRYgDXvQe6a9dPbhzPcoac55BxeN3kOVaFjiEpMDVkzHVm13CaEZ
-         n4oXRnonvdHwJzjvGt86gaN0t4OgIeXoKGv5Di3NLM4HgZ/NhSAz6SFRCV5S2lODf4
-         neT2gk4kQXtbQ==
-X-Nifty-SrcIP: [153.142.97.92]
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-To:     linux-kbuild@vger.kernel.org
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 2/4] kbuild: refactor quiet_modtag
-Date:   Tue, 11 Dec 2018 21:01:54 +0900
-Message-Id: <1544529716-4917-2-git-send-email-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1544529716-4917-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1544529716-4917-1-git-send-email-yamada.masahiro@socionext.com>
+        Tue, 11 Dec 2018 07:03:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60460 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726114AbeLKMDl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 07:03:41 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5986120811;
+        Tue, 11 Dec 2018 12:03:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544529820;
+        bh=+pZmcssiwvH5/LDB7RHzVGPPLG/zrDKdISRzO4N+gcI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=BC9CfASbnYKb32Ps8bRQRjBJMB2FejF9WgJmWoeQePTY/lt+py3sWn446833zYSBp
+         zs8Xsa+/GQfGTOdrZ4rIfNe71l+QYc+ZGANTqemEzmiSzgImPWSQQdGvWkhzuOwv80
+         YV8byCNy6Y0MpZj8IiGbt2xiwkPf18IloehYtE3A=
+Date:   Tue, 11 Dec 2018 13:03:37 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Parshuram Thombare <pthombar@cadence.com>
+Cc:     axboe@kernel.dk, vinholikatti@gmail.com, jejb@linux.vnet.ibm.com,
+        martin.petersen@oracle.com, mchehab+samsung@kernel.org,
+        davem@davemloft.net, akpm@linux-foundation.org,
+        nicolas.ferre@microchip.com, arnd@arndb.de,
+        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-scsi@vger.kernel.org, adouglas@cadence.com, jank@cadence.com,
+        rafalc@cadence.com
+Subject: Re: [PATCH 2/2] scsi: ufs: add inline crypto support to UFS HCD
+Message-ID: <20181211120337.GA3023@kroah.com>
+References: <20181211095027.GA3316@lvlogina.cadence.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181211095027.GA3316@lvlogina.cadence.com>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-part-of-module and quiet_modtag are set for the same targets.
-Define quiet_modtag based on part-of-module.
+On Tue, Dec 11, 2018 at 09:50:27AM +0000, Parshuram Thombare wrote:
+> Add real time crypto support to UFS HCD using new device
+> mapper 'crypto-ufs'. dmsetup tool can be used to enable
+> real time / inline crypto support using device mapper
+> 'crypt-ufs'.
+> 
+> Signed-off-by: Parshuram Thombare <pthombar@cadence.com>
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
+As you cc:ed me, I'll provide some minor review comments:
 
- scripts/Makefile.build | 7 +------
- 1 file changed, 1 insertion(+), 6 deletions(-)
+> +config BLK_DEV_HW_RT_ENCRYPTION
+> +	bool
+> +	depends on SCSI_UFSHCD_RT_ENCRYPTION
+> +	default n
 
-diff --git a/scripts/Makefile.build b/scripts/Makefile.build
-index 5a4fd82..f26ae45 100644
---- a/scripts/Makefile.build
-+++ b/scripts/Makefile.build
-@@ -98,18 +98,13 @@ modkern_cflags =                                          \
- 	$(if $(part-of-module),                           \
- 		$(KBUILD_CFLAGS_MODULE) $(CFLAGS_MODULE), \
- 		$(KBUILD_CFLAGS_KERNEL) $(CFLAGS_KERNEL))
--quiet_modtag := $(empty)   $(empty)
-+quiet_modtag = $(if $(part-of-module),[M],   )
- 
- $(real-obj-m)        : part-of-module := y
- $(real-obj-m:.o=.i)  : part-of-module := y
- $(real-obj-m:.o=.s)  : part-of-module := y
- $(real-obj-m:.o=.lst): part-of-module := y
- 
--$(real-obj-m)        : quiet_modtag := [M]
--$(real-obj-m:.o=.i)  : quiet_modtag := [M]
--$(real-obj-m:.o=.s)  : quiet_modtag := [M]
--$(real-obj-m:.o=.lst): quiet_modtag := [M]
--
- quiet_cmd_cc_s_c = CC $(quiet_modtag)  $@
- cmd_cc_s_c       = $(CC) $(c_flags) $(DISABLE_LTO) -fverbose-asm -S -o $@ $<
- 
--- 
-2.7.4
+n is always the default, you never need to list that.
 
+> +
+>  source block/Kconfig.iosched
+> diff --git a/drivers/scsi/ufs/Kconfig b/drivers/scsi/ufs/Kconfig
+> index 2ddbb26..09a3ec0 100644
+> --- a/drivers/scsi/ufs/Kconfig
+> +++ b/drivers/scsi/ufs/Kconfig
+> @@ -136,3 +136,15 @@ config SCSI_UFS_BSG
+>  
+>  	  Select this if you need a bsg device node for your UFS controller.
+>  	  If unsure, say N.
+> +
+> +config SCSI_UFSHCD_RT_ENCRYPTION
+> +	bool "Universal Flash Storage Controller RT encryption support"
+> +	depends on SCSI_UFSHCD
+> +	default n
+
+Same here.
+
+> +	select BLK_DEV_HW_RT_ENCRYPTION if SCSI_UFSHCD_RT_ENCRYPTION
+> +	select BLK_DEV_DM if SCSI_UFSHCD_RT_ENCRYPTION
+> +	help
+> +	Universal Flash Storage Controller RT encryption support
+> +
+> +	Select this if you want to enable real time encryption on UFS controller
+> +	If unsure, say N.
+
+Don't you need to indent the help lines?
+
+> +int ufshcd_crypto_init(struct ufs_hba *hba);
+> +void ufshcd_crypto_remove(struct ufs_hba *hba);
+> +void ufshcd_prepare_for_crypto(struct ufs_hba *hba, struct ufshcd_lrb *lrbp);
+> +#endif
+
+You need to provide inline functions for when your config option is not
+enabled here.
+
+That way you don't have to do this mess:
+
+> diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
+> index 86fe114..a96b038 100644
+> --- a/drivers/scsi/ufs/ufshcd.c
+> +++ b/drivers/scsi/ufs/ufshcd.c
+> @@ -47,6 +47,9 @@
+>  #include "unipro.h"
+>  #include "ufs-sysfs.h"
+>  #include "ufs_bsg.h"
+> +#ifdef CONFIG_SCSI_UFSHCD_RT_ENCRYPTION
+> +#include "ufshcd-crypto.h"
+> +#endif
+
+No need for #ifdefs in .c files at all.  Always include the .h file, and
+then since your functions are all inline void functions, the code just
+compiles away into nothing.
+
+
+>  
+>  #define CREATE_TRACE_POINTS
+>  #include <trace/events/ufs.h>
+> @@ -2198,6 +2201,14 @@ static void ufshcd_prepare_req_desc_hdr(struct ufshcd_lrb *lrbp,
+>  
+>  	dword_0 = data_direction | (lrbp->command_type
+>  				<< UPIU_COMMAND_TYPE_OFFSET);
+> +#ifdef CONFIG_SCSI_UFSHCD_RT_ENCRYPTION
+> +	if (lrbp->cci >= 0) {
+> +		dword_0 |= (1 << CRYPTO_UTP_REQ_DESC_DWORD0_CE_SHIFT);
+> +		dword_0 |= ((lrbp->cci << CRYPTO_UTP_REQ_DESC_DWORD0_CCI_SHIFT)
+> +				& CRYPTO_UTP_REQ_DESC_DWORD0_CCI_MASK);
+> +	} else
+> +		dword_0 &= ~CRYPTO_UTP_REQ_DESC_DWORD0_CE_MASK;
+> +#endif
+
+Some comments on what this is trying to do here?
+
+
+>  	if (lrbp->intr_cmd)
+>  		dword_0 |= UTP_REQ_DESC_INT_CMD;
+>  
+> @@ -2462,6 +2473,12 @@ static int ufshcd_queuecommand(struct Scsi_Host *host, struct scsi_cmnd *cmd)
+>  	lrbp->intr_cmd = !ufshcd_is_intr_aggr_allowed(hba) ? true : false;
+>  	lrbp->req_abort_skip = false;
+>  
+> +#ifdef CONFIG_SCSI_UFSHCD_RT_ENCRYPTION
+> +	lrbp->cci = -1;
+
+What does -1 mean?  You should have a type for it if it is something
+"special".
+
+> +	/* prepare block for crypto */
+> +	if (hba->capabilities & MASK_CRYPTO_SUPPORT)
+> +		ufshcd_prepare_for_crypto(hba, lrbp);
+> +#endif
+
+Again, no #ifdefs needed please.
+
+
+>  	ufshcd_comp_scsi_upiu(hba, lrbp);
+>  
+>  	err = ufshcd_map_sg(hba, lrbp);
+> @@ -8119,6 +8136,11 @@ void ufshcd_remove(struct ufs_hba *hba)
+>  	ufs_bsg_remove(hba);
+>  	ufs_sysfs_remove_nodes(hba->dev);
+>  	scsi_remove_host(hba->host);
+> +#ifdef CONFIG_SCSI_UFSHCD_RT_ENCRYPTION
+> +	if (hba->capabilities & MASK_CRYPTO_SUPPORT)
+> +		ufshcd_crypto_remove(hba);
+> +#endif
+
+Same ifdef here, and everywhere else in this file.
+
+> --- a/drivers/scsi/ufs/ufshcd.h
+> +++ b/drivers/scsi/ufs/ufshcd.h
+> @@ -193,6 +193,9 @@ struct ufshcd_lrb {
+>  	ktime_t compl_time_stamp;
+>  
+>  	bool req_abort_skip;
+> +#ifdef CONFIG_SCSI_UFSHCD_RT_ENCRYPTION
+> +	int cci;
+> +#endif
+
+No need for a #ifdef here.  But comment on exactly what "cci" means,
+that seems to not make any sense to me.
+
+>  };
+>  
+>  /**
+> @@ -706,6 +709,9 @@ struct ufs_hba {
+>  
+>  	struct device		bsg_dev;
+>  	struct request_queue	*bsg_queue;
+> +#ifdef CONFIG_SCSI_UFSHCD_RT_ENCRYPTION
+> +	struct ufshcd_crypto_ctx *cctx;
+> +#endif
+
+or here.
+
+>  };
+>  
+>  /* Returns true if clocks can be gated. Otherwise false */
+> diff --git a/drivers/scsi/ufs/ufshci.h b/drivers/scsi/ufs/ufshci.h
+> index 6fa889d..fe5a92d 100644
+> --- a/drivers/scsi/ufs/ufshci.h
+> +++ b/drivers/scsi/ufs/ufshci.h
+> @@ -90,6 +90,7 @@ enum {
+>  	MASK_64_ADDRESSING_SUPPORT		= 0x01000000,
+>  	MASK_OUT_OF_ORDER_DATA_DELIVERY_SUPPORT	= 0x02000000,
+>  	MASK_UIC_DME_TEST_MODE_SUPPORT		= 0x04000000,
+> +	MASK_CRYPTO_SUPPORT                     = 0x10000000,
+
+Why are you all not using the BIT(N) macro for these?
+
+thanks,
+
+greg k-h
