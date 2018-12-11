@@ -2,174 +2,151 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A12AC07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 17:37:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22DBBC5CFFE
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 17:38:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 16AAF2086D
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 17:37:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 16AAF2086D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id D7A932086D
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 17:38:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=toxicpanda-com.20150623.gappssmtp.com header.i=@toxicpanda-com.20150623.gappssmtp.com header.b="vOKL819r"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D7A932086D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726800AbeLKRht (ORCPT
+        id S1726860AbeLKRiH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 12:37:49 -0500
-Received: from foss.arm.com ([217.140.101.70]:54250 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726620AbeLKRhs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 12:37:48 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 301A9EBD;
-        Tue, 11 Dec 2018 09:37:48 -0800 (PST)
-Received: from [10.1.196.75] (e110467-lin.cambridge.arm.com [10.1.196.75])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CB8A93F6A8;
-        Tue, 11 Dec 2018 09:37:46 -0800 (PST)
-Subject: Re: [PATCH] arm64: Add memory hotplug support
-To:     Will Deacon <will.deacon@arm.com>
-Cc:     catalin.marinas@arm.com, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, jonathan.cameron@huawei.com,
-        cyrilc@xilinx.com, james.morse@arm.com, anshuman.khandual@arm.com
-References: <0a0c7d3b8fbe1b2b399eeb6889027031335d2af1.1544453739.git.robin.murphy@arm.com>
- <20181211163605.GC12597@edgewater-inn.cambridge.arm.com>
- <b6a21681-beee-4083-89ce-cdfdbb958cbf@arm.com>
- <20181211172418.GA29593@edgewater-inn.cambridge.arm.com>
-From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <d5fff85d-9e26-4619-b61c-5f01433b43c9@arm.com>
-Date:   Tue, 11 Dec 2018 17:37:45 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <20181211172418.GA29593@edgewater-inn.cambridge.arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+        Tue, 11 Dec 2018 12:38:07 -0500
+Received: from mail-yw1-f66.google.com ([209.85.161.66]:33096 "EHLO
+        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726620AbeLKRiH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 12:38:07 -0500
+Received: by mail-yw1-f66.google.com with SMTP id q11so5779144ywa.0
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 09:38:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toxicpanda-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:subject:date:message-id;
+        bh=TqxTYYL678habTdU2pMfSU1dK9Ap6pTHGuRGBvTv1I4=;
+        b=vOKL819ri/0ZFDVzSa9awoHdgDpkol8NKXosA/YMYh7+LcCtNQihvtDe7BEj3is1yZ
+         Kxor6NV7VcXhtKu/AgNNSbNc7p4I+5Z7OjnQSsTynBjY5idkKMgtyx3dnYDyPne+LuO7
+         IrVmfsZezyFy9iQIPFq6huRUR0ltDEEaxKmBswGIMmdpT5whFM1eSHDKwu9542lr4eOF
+         1myZf04jVmRfz5iROSVLd0NEO+PJzAfGn0/m68ImvZ/elZZTtQkvWlQEJmu4rEeSOBj8
+         UTdiKwMGm5hL/B5tpA2CJnhWW5+XrjRm3EKazFhE3O67YXRDEKwdjNTuGvCio7ErriMm
+         Dq2w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:subject:date:message-id;
+        bh=TqxTYYL678habTdU2pMfSU1dK9Ap6pTHGuRGBvTv1I4=;
+        b=ZwDI9MEQvxtgh3XQ2kG+GRmmEpmGVUIZSf/SoJ0Su2NDCuGkcZU8Gv90NvUXD+2UoQ
+         ESgxR7+gplpj/YIOyk5VYaC9Z/x3l+LSKc2Y8TgrulzMtw6aII6Ps3rxSw+a/2Xi38GX
+         7HpHd3WTBsY6HxyTz1YUgThc6HG/vNsRytF9liO1piYg/RCE0I8unCZF0DVdCWokBb/p
+         Hmcl9+AJCtRF7UcEKnUgZSsQAbw9HeoIsfKLuX69xEomE2jezQcEMSR4xoJ9FcaXsYR+
+         YqbS+0mI64axUhH1MCA20SYIcgi90JLDD+O4KTxcaDp4eO/wyrvzpfNcvljxyiohpQy3
+         YpYA==
+X-Gm-Message-State: AA+aEWYPUa3NKDPT9li7+xg1HH5HcN2gDwHhXPdz23i/hz1R7Znood7I
+        eWw51P5JWiHZat+yuhV/6j0zUg==
+X-Google-Smtp-Source: AFSGD/XomaM/Mo7pPyxnXqFG9XSwFtveYlG3CDEZ/MYoH51XeWiL7okZe7yzhc7olWc2SMNr/VdkSg==
+X-Received: by 2002:a81:ac56:: with SMTP id z22mr18220920ywj.40.1544549885863;
+        Tue, 11 Dec 2018 09:38:05 -0800 (PST)
+Received: from localhost ([107.15.81.208])
+        by smtp.gmail.com with ESMTPSA id d138sm6079424ywb.44.2018.12.11.09.38.04
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 11 Dec 2018 09:38:04 -0800 (PST)
+From:   Josef Bacik <josef@toxicpanda.com>
+To:     kernel-team@fb.com, hannes@cmpxchg.org,
+        linux-kernel@vger.kernel.org, tj@kernel.org, david@fromorbit.com,
+        akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, riel@redhat.com, jack@suse.cz
+Subject: [PATCH 0/3][V5] drop the mmap_sem when doing IO in the fault path
+Date:   Tue, 11 Dec 2018 12:37:58 -0500
+Message-Id: <20181211173801.29535-1-josef@toxicpanda.com>
+X-Mailer: git-send-email 2.14.3
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/12/2018 17:24, Will Deacon wrote:
-> On Tue, Dec 11, 2018 at 05:21:24PM +0000, Robin Murphy wrote:
->> On 11/12/2018 16:36, Will Deacon wrote:
->>> On Mon, Dec 10, 2018 at 03:29:01PM +0000, Robin Murphy wrote:
->>>> Wire up the basic support for hot-adding memory. Since memory hotplug
->>>> is fairly tightly coupled to sparsemem, we tweak pfn_valid() to also
->>>> cross-check the presence of a section in the manner of the generic
->>>> implementation, before falling back to memblock to check for no-map
->>>> regions within a present section as before. By having arch_add_memory(()
->>>> create the linear mapping first, this then makes everything work in the
->>>> way that __add_section() expects.
->>>>
->>>> We expect hotplug to be ACPI-driven, so the swapper_pg_dir updates
->>>> should be safe from races by virtue of the global device hotplug lock.
->>>>
->>>> Signed-off-by: Robin Murphy <robin.murphy@arm.com>
->>>> ---
->>>>
->>>> Looks like I'm not going to have the whole pte_devmap story figured out
->>>> in time to land any ZONE_DEVICE support this cycle, but since this patch
->>>> also stands alone as a complete feature (and has ended up remarkably
->>>> simple and self-contained), I hope we might consider getting it merged
->>>> on its own merit.
->>>>
->>>> Robin.
->>>>
->>>>    arch/arm64/Kconfig   |  3 +++
->>>>    arch/arm64/mm/init.c |  8 ++++++++
->>>>    arch/arm64/mm/mmu.c  | 12 ++++++++++++
->>>>    arch/arm64/mm/numa.c | 10 ++++++++++
->>>>    4 files changed, 33 insertions(+)
->>>>
->>>> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
->>>> index 6d2b25f51bb3..7b855ae45747 100644
->>>> --- a/arch/arm64/Kconfig
->>>> +++ b/arch/arm64/Kconfig
->>>> @@ -261,6 +261,9 @@ config ZONE_DMA32
->>>>    config HAVE_GENERIC_GUP
->>>>    	def_bool y
->>>> +config ARCH_ENABLE_MEMORY_HOTPLUG
->>>> +	def_bool y
->>>> +
->>>>    config SMP
->>>>    	def_bool y
->>>> diff --git a/arch/arm64/mm/init.c b/arch/arm64/mm/init.c
->>>> index 2983e0fc1786..82e0b08f2e31 100644
->>>> --- a/arch/arm64/mm/init.c
->>>> +++ b/arch/arm64/mm/init.c
->>>> @@ -291,6 +291,14 @@ int pfn_valid(unsigned long pfn)
->>>>    	if ((addr >> PAGE_SHIFT) != pfn)
->>>>    		return 0;
->>>> +
->>>> +#ifdef CONFIG_SPARSEMEM
->>>> +	if (pfn_to_section_nr(pfn) >= NR_MEM_SECTIONS)
->>>> +		return 0;
->>>> +
->>>> +	if (!valid_section(__nr_to_section(pfn_to_section_nr(pfn))))
->>>> +		return 0;
->>>
->>> I'm a bit nervous about the call to __nr_to_section() here. How do we
->>> ensure that the section number we're passing stays within the bounds of
->>> the mem_section array?
->>
->> The same way every other sparsemem user (apart from arch/arm) does, I guess
->> - this is literally a copy-paste of the generic pfn_valid() implementation
->> :/
-> 
-> I don't trust the generic pfn_valid() at all :)
-> 
->> Given the implementation of __nr_to_section() respective of how
->> memory_present() and sparse_index_init() set up mem_section in the first
->> place, I can't see how there can be a problem. You did see the bit 4 lines
->> above, right?
-> 
-> D'oh, yes, I read that and then instantly forgot it. Ok, so that should be
-> fine.
-> 
->>>> +#endif
->>>>    	return memblock_is_map_memory(addr);
->>>>    }
->>>>    EXPORT_SYMBOL(pfn_valid);
->>>> diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
->>>> index e1b2d58a311a..22379a74d289 100644
->>>> --- a/arch/arm64/mm/mmu.c
->>>> +++ b/arch/arm64/mm/mmu.c
->>>> @@ -1044,3 +1044,15 @@ int pud_free_pmd_page(pud_t *pudp, unsigned long addr)
->>>>    	pmd_free(NULL, table);
->>>>    	return 1;
->>>>    }
->>>> +
->>>> +#ifdef CONFIG_MEMORY_HOTPLUG
->>>> +int arch_add_memory(int nid, u64 start, u64 size, struct vmem_altmap *altmap,
->>>> +		    bool want_memblock)
->>>> +{
->>>> +	__create_pgd_mapping(swapper_pg_dir, start, __phys_to_virt(start),
->>>> +			     size, PAGE_KERNEL, pgd_pgtable_alloc, 0);
->>>> +
->>>> +	return __add_pages(nid, start >> PAGE_SHIFT, size >> PAGE_SHIFT,
->>>> +			   altmap, want_memblock);
->>>> +}
->>>
->>> If we're mapping the new memory into the linear map, shouldn't we be
->>> respecting rodata_full and debug page alloc by forcing page granularity
->>> and tweaking the permissions?
->>
->> Bah, James mentioned debug_pagealloc long ago, and I did have a slight
->> nagging feeling that I was still missing something - yes, I need to fix the
->> flags for that case. I'm not sure about rodata_full (do you mean
->> STRICT_KERNEL_RWX?) since a section being added here won't contain kernel
->> text nor data, and I can't seem to find anywhere that rodata options affect
->> the linear mapping of plain free RAM.
-> 
-> Ah, we've got code queued on for-next/core so that changing vmalloc()
-> permissions makes the same changes to the linear map.
+Here's the latest version, slimmed down a bit from my last submission with more
+details in the changelogs as requested.
 
-Gotcha, I see "arm64: mm: apply r/o permissions of VM areas to its 
-linear alias as well" now, no wonder I couldn't find anything relevant 
-in my rc3-based development branch. I'll rebase and add that case too.
+v4->v5:
+- dropped the cached_page infrastructure and the addition of the
+  handle_mm_fault_cacheable helper as it had no discernable bearing on
+  performance in my performance testing.
+- reworked the page lock dropping logic in order to be it's own helper, which
+  comments describing how to use it.
+- added more details to the changelog for the fpin patch.
+- added a patch to cleanup the arguments for the readahead functions for mmap as
+  per Jan's suggestion.
 
-Thanks,
-Robin.
+v3->v4:
+- dropped the ->page_mkwrite portion of these patches, we don't actually see
+  issues with mkwrite in production, and I kept running into corner cases where
+  I missed something important.  I want to wait on that part until I have a real
+  reason to do the work so I can have a solid test in place.
+- completely reworked how we drop the mmap_sem in filemap_fault and cleaned it
+  up a bit.  Once I started actually testing this with our horrifying reproducer
+  I saw a bunch of places where we still ended up doing IO under the mmap_sem
+  because I had missed a few corner cases.  Fixed this by reworking
+  filemap_fault to only return RETRY once it has a completely uptodate page
+  ready to be used.
+- lots more testing, including production testing.
+
+v2->v3:
+- dropped the RFC, ready for a real review.
+- fixed a kbuild error for !MMU configs.
+- dropped the swapcache patches since Johannes is still working on those parts.
+
+v1->v2:
+- reworked so it only affects x86, since its the only arch I can build and test.
+- fixed the fact that do_page_mkwrite wasn't actually sending ALLOW_RETRY down
+  to ->page_mkwrite.
+- fixed error handling in do_page_mkwrite/callers to explicitly catch
+  VM_FAULT_RETRY.
+- fixed btrfs to set ->cached_page properly.
+
+-- Original message --
+
+Now that we have proper isolation in place with cgroups2 we have started going
+through and fixing the various priority inversions.  Most are all gone now, but
+this one is sort of weird since it's not necessarily a priority inversion that
+happens within the kernel, but rather because of something userspace does.
+
+We have giant applications that we want to protect, and parts of these giant
+applications do things like watch the system state to determine how healthy the
+box is for load balancing and such.  This involves running 'ps' or other such
+utilities.  These utilities will often walk /proc/<pid>/whatever, and these
+files can sometimes need to down_read(&task->mmap_sem).  Not usually a big deal,
+but we noticed when we are stress testing that sometimes our protected
+application has latency spikes trying to get the mmap_sem for tasks that are in
+lower priority cgroups.
+
+This is because any down_write() on a semaphore essentially turns it into a
+mutex, so even if we currently have it held for reading, any new readers will
+not be allowed on to keep from starving the writer.  This is fine, except a
+lower priority task could be stuck doing IO because it has been throttled to the
+point that its IO is taking much longer than normal.  But because a higher
+priority group depends on this completing it is now stuck behind lower priority
+work.
+
+In order to avoid this particular priority inversion we want to use the existing
+retry mechanism to stop from holding the mmap_sem at all if we are going to do
+IO.  This already exists in the read case sort of, but needed to be extended for
+more than just grabbing the page lock.  With io.latency we throttle at
+submit_bio() time, so the readahead stuff can block and even page_cache_read can
+block, so all these paths need to have the mmap_sem dropped.
+
+The other big thing is ->page_mkwrite.  btrfs is particularly shitty here
+because we have to reserve space for the dirty page, which can be a very
+expensive operation.  We use the same retry method as the read path, and simply
+cache the page and verify the page is still setup properly the next pass through
+->page_mkwrite().
+
+I've tested these patches with xfstests and there are no regressions.  Let me
+know what you think.  Thanks,
+
+Josef
