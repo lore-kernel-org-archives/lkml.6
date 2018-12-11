@@ -6,64 +6,63 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FC32C5CFFE
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 18:36:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B85BC5CFFE
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 18:37:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6CBA720870
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 18:36:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C7F5520855
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 18:37:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="DaLh2nJY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6CBA720870
+	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="JfFwcuKv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C7F5520855
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727145AbeLKSgp (ORCPT
+        id S1727150AbeLKShr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 13:36:45 -0500
-Received: from mail-it1-f195.google.com ([209.85.166.195]:55540 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726536AbeLKSgo (ORCPT
+        Tue, 11 Dec 2018 13:37:47 -0500
+Received: from mail-it1-f193.google.com ([209.85.166.193]:33097 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726536AbeLKShr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 13:36:44 -0500
-Received: by mail-it1-f195.google.com with SMTP id o19so5094385itg.5
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 10:36:44 -0800 (PST)
+        Tue, 11 Dec 2018 13:37:47 -0500
+Received: by mail-it1-f193.google.com with SMTP id m8so11556787itk.0
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 10:37:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:from:to:cc:references:message-id:date:user-agent
+        h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=5sP8BrMmGL+4vp6LwQoT7fF2LtbFDXTIdgV2PMryJ6s=;
-        b=DaLh2nJYv16RjOVbiqUfw64V7HqRZ4Tv9ZE8i1cLCdu4ECmmGypLrJo0w5FF8VMNq+
-         nwtIzkmV3ZmuxoBzdqZMQdIm3ZkOUMccDTqaOvCdZoblcOxrJ0ETq0huIFOes2V/k8Vp
-         54PxF/rTN/QB6yIsmHvFtEEAN78y2zVMr5X3NY+s9QpfPHwD0fFwFD+Ryqw7IJCfPtec
-         LU8k0/7V2n3wOC/gW9ol0qm0Lv2Xup3LQqXrWtfeyESgQ7xkpxjIN6O2nBLv5BvhlHZJ
-         WnumZjlSkQQzvIVk7jqahycGxCN4Fst5UD2xWkNnACtgFlxqV317PiC2NlyyzMivjxoB
-         qn5w==
+        bh=hyx3XvPnB/BHGAPSL/gyaplMREpyCUPZyZWsNoHH9s0=;
+        b=JfFwcuKveabowZXTS0V2pvri6YdFux5CLNxVYw9X3od5WrQs85Iz3eZJjOxrD/KGiG
+         xTpICFx5iOlswQ+TVIsHC09AwUD6Sktp4Bt0lNpsxaqnvsBQk/Iw2/YwCeawqQTJ9DgP
+         YZz1e/Gi/8a62bGMVx+vCFyk5HA1UXccT12UmSViHqxP7PCJytGBDMT5Ggzr9Tp6nwbb
+         JHKmi+aSeUJwL0cCp+i8wklJqUXMahMMJiio5v+NaGb4jvmaZy0Sx797TC36LogSh6AA
+         bDFgsaOZJzD4yPQujUzV+Dum4pn19gdDoaa0D0WOWUA+RnyH+iNhBvL3ljkth0YZgppE
+         Ibig==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=5sP8BrMmGL+4vp6LwQoT7fF2LtbFDXTIdgV2PMryJ6s=;
-        b=WIROiXv1m55ruzIvOdwezl4h7chpfwFOrHUbOl10der7EbmBf037n/l6VTT3SOV6kY
-         f4lE3ZxeTp7d8/5RiN9OlA6ank3Gb4+PyejtCuvfQX8KSVhI01MZqkIEfYTYmlccm5Xj
-         3kvqyDcYxcd6i2ePXUShF/n17up1a9zm4n8vflWi9DeLu79lkFJbffKapcI3zGvQLUoV
-         h7mYmnZU04l0dyvUQmi4biTn2AFc1R/iWQopO9RXEA15TVU/xa95If25H5idXtw7LdhK
-         wYypjRqjyycTEwWJnFJnEx35FBD9X+o59m+4HEGTZ5RADNNvkMAWbKnlVehnmP2TiL5P
-         4ySA==
-X-Gm-Message-State: AA+aEWa0djudYARePv0mwDly7iMIYXqVjurs+vTcItpCdU4utn2KP7Nc
-        1yodLzIcDCcWK1u72DtdTeyJB1qHflDiSQ==
-X-Google-Smtp-Source: AFSGD/WgGbL2T4a6OSY1ns7v8VGRbKeU9HH/DIAs1SdJhZ9ZeePZkTYYVuuAh8Q5FXSKwVi71u3PTQ==
-X-Received: by 2002:a02:1b1d:: with SMTP id l29mr16620921jad.98.1544553403731;
-        Tue, 11 Dec 2018 10:36:43 -0800 (PST)
+        bh=hyx3XvPnB/BHGAPSL/gyaplMREpyCUPZyZWsNoHH9s0=;
+        b=lqoKYHkfqpLSA92TBJWQw1t/lYoq9DW8jK/fjKEwMykI7WMx2VETo3Hg+xdjW9zCJ7
+         GpzTOGAbamN6ZDlQu756AsqzKUK1DJdKvx2jEbNW7+hBF//yfZ1WP5bzTEDZheoCov+Q
+         bsX4rKPCOL0zMMOej4AoocqdMJ3IOSwDCGi8M8wjZgqhov5JTYfFlxJM7fN55Om9al9+
+         KxXON/uYLFXZ+ezGwoi0qxq852lN1DP9mXx8cJiPw0Y1Gc/9BsyBziFKJyWcjk0QPW0D
+         Bdrt3Ma+5ytyNiLJtO/6zX078S6Ka2a3CwonxMAW8WlXSXS0VrLNZpP8/OQDkO7HzrUw
+         nISA==
+X-Gm-Message-State: AA+aEWZ+KbcRUIeKBlZQp5xYlSSRv+ZB85fOrl0wmewihivfDsh+1873
+        7UVHDnKTiQ83gC1DFIc3FzFj5Q==
+X-Google-Smtp-Source: AFSGD/UJVS2q+Wy/lvonEV24tV6A2qMYndgsOt8dI/JlzdATt05F8E0vYdSgzrYEcUAUiEJx6ugJ2Q==
+X-Received: by 2002:a24:3dd5:: with SMTP id n204mr3490481itn.104.1544553466126;
+        Tue, 11 Dec 2018 10:37:46 -0800 (PST)
 Received: from [192.168.1.56] ([216.160.245.98])
-        by smtp.gmail.com with ESMTPSA id a17sm702500ioc.67.2018.12.11.10.36.42
+        by smtp.gmail.com with ESMTPSA id t6sm6266549ioc.87.2018.12.11.10.37.44
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 11 Dec 2018 10:36:42 -0800 (PST)
+        Tue, 11 Dec 2018 10:37:45 -0800 (PST)
 Subject: Re: [PATCH] aio: Convert ioctx_table to XArray
-From:   Jens Axboe <axboe@kernel.dk>
-To:     Jeff Moyer <jmoyer@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+To:     Jeff Moyer <jmoyer@redhat.com>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
         Benjamin LaHaise <bcrl@kvack.org>,
         Andrew Morton <akpm@linux-foundation.org>,
         Kees Cook <keescook@chromium.org>,
@@ -78,13 +77,14 @@ References: <20181128183531.5139-1-willy@infradead.org>
  <20181211175156.GF6830@bombadil.infradead.org>
  <x495zw0lz68.fsf@segfault.boston.devel.redhat.com>
  <0f77a532-0d88-78bc-b9cc-06bb203a0405@kernel.dk>
- <6b9a45c4-47a2-4c44-aa7e-6e5e90eff9df@kernel.dk>
-Message-ID: <78dfbfa3-b2d1-4e9d-f59c-b263678a9866@kernel.dk>
-Date:   Tue, 11 Dec 2018 11:36:41 -0700
+ <x49y38wkkaa.fsf@segfault.boston.devel.redhat.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <cad87c5f-532c-fb3d-b904-70af0d8ad150@kernel.dk>
+Date:   Tue, 11 Dec 2018 11:37:44 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <6b9a45c4-47a2-4c44-aa7e-6e5e90eff9df@kernel.dk>
+In-Reply-To: <x49y38wkkaa.fsf@segfault.boston.devel.redhat.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -93,8 +93,9 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/11/18 11:32 AM, Jens Axboe wrote:
-> On 12/11/18 11:05 AM, Jens Axboe wrote:
+On 12/11/18 11:09 AM, Jeff Moyer wrote:
+> Jens Axboe <axboe@kernel.dk> writes:
+> 
 >> On 12/11/18 11:02 AM, Jeff Moyer wrote:
 >>> Matthew Wilcox <willy@infradead.org> writes:
 >>>
@@ -128,6 +129,9 @@ On 12/11/18 11:32 AM, Jens Axboe wrote:
 >>>
 >>> I think the most common use case is a small number of ioctx-s, so I'd
 >>> like to see that use case not regress (that should be easy, right?).
+> 
+> Bah, I meant a small number of threads doing submit/getevents.
+> 
 >>> Kent, what were the tests you were using when doing this work?  Jens,
 >>> since you're doing performance work in this area now, are there any
 >>> particular test cases you care about?
@@ -135,14 +139,11 @@ On 12/11/18 11:32 AM, Jens Axboe wrote:
 >> I can give it a spin, ioctx lookup is in the fast path, and for "classic"
 >> aio we do it twice for each IO...
 > 
-> Don't see any regressions. But if we're fiddling with it anyway, can't
-> we do something smarter? Make the fast path just index a table, and put
-> all the big hammers in setup/destroy. We're spending a non-substantial
-> amount of time doing lookups, that's really no different before and
-> after the patch.
+> Thanks!
 
-Looks like it's the percpu ref get, in terms of "lookup" we already
-look pretty good.
+You can add my reviewed-by/tested-by. Do you want me to carry this one?
+I can rebase on top of the aio.c nospec lookup patch, we should do
+those separately.
 
 -- 
 Jens Axboe
