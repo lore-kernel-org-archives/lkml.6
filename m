@@ -7,54 +7,50 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1969EC5CFFE
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:59:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E623DC5CFFE
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:59:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C86FD20855
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:59:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AB137205C9
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:59:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544543991;
-	bh=eo7v4Pzn8rLp8zNnvypSMEHm6w74bLzHYv4iW6w4g8s=;
+	s=default; t=1544543997;
+	bh=YGoYFKU9MHgWINLcKbW+v0gW2ztLPjUdDRWvDvxCUMo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=U9bd9SPLsocl0cG4PpYmFkcMv9jeHggG1DZ46X7PhSbIWuoFz93K33qqUkrj1I56W
-	 ig4EJgkhk5/Sc5qnI/ZuoZ8JyrCZHgJhKSDpgWk3OI34EAa8yFVzOf8d3nQGxSwbQN
-	 xFx61562H/rcd2/TBIxEQf9KftATr4vhXOAsIX24=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C86FD20855
+	b=GtVLPknMTmb4BFTqDgG+Qo5se1SXrBZH0QatWwt0LLJbI+GM3vWn7ex4QR9EDHdiE
+	 Ue3SDG4pJYfZa9hscHvzKbUlrUFtsB35cI1y04A2djsKqtckbN2l7AcML8aCPlF12z
+	 otYBR0JZeVEKQjzdnZ0A3RJlZH6fC44jrmKfCiNM=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB137205C9
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731054AbeLKP6m (ORCPT
+        id S1731032AbeLKP6g (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 10:58:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48162 "EHLO mail.kernel.org"
+        Tue, 11 Dec 2018 10:58:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48034 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731040AbeLKP6i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:58:38 -0500
+        id S1727061AbeLKP6d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 10:58:33 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4E0C3208E7;
-        Tue, 11 Dec 2018 15:58:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 40653205C9;
+        Tue, 11 Dec 2018 15:58:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544543917;
-        bh=eo7v4Pzn8rLp8zNnvypSMEHm6w74bLzHYv4iW6w4g8s=;
+        s=default; t=1544543912;
+        bh=YGoYFKU9MHgWINLcKbW+v0gW2ztLPjUdDRWvDvxCUMo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=G6ZsgS1SGqSIBFvblwW0WitR6g14tQIQ0OdvboLbokr5ubvjTAmhqkyPF9EFTupBy
-         jEg0Tjfkf0bay/Cpt5BnITsFZNZE6+lk6dcUoFo3qgMKY/wQDnCQBrdYJyyQmHZpSx
-         xKzD+xx8WbkAOYA4CHXmY3Xp904s4l8QpW9CbfSY=
+        b=qJWEWYEL2QOsYHK5N9/K581GjA8dPM3ft6fs2iYTCfrEjjemgcNWMsSFQpyYMirD7
+         6vm7A7dSaxHXJAGF1zQB+QhjOUtV5ernV/DZR1MK4DcENqghEusuHToYhuqbyac0BD
+         7nPOuEitHl23MGXzQnaZVgr+J+dSuV9ZycXFdKYk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+e3e074963495f92a89ed@syzkaller.appspotmail.com,
-        syzbot+d5a0a170c5069658b141@syzkaller.appspotmail.com,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        syzbot+bd391451452fb0b93039@syzkaller.appspotmail.com
-Subject: [PATCH 4.19 079/118] vhost/vsock: fix use-after-free in network stack callers
-Date:   Tue, 11 Dec 2018 16:41:38 +0100
-Message-Id: <20181211151647.450861711@linuxfoundation.org>
+        stable@vger.kernel.org, Halil Pasic <pasic@linux.ibm.com>,
+        Cornelia Huck <cohuck@redhat.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>
+Subject: [PATCH 4.19 077/118] virtio/s390: avoid race on vcdev->config
+Date:   Tue, 11 Dec 2018 16:41:36 +0100
+Message-Id: <20181211151647.367917105@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181211151644.216668863@linuxfoundation.org>
 References: <20181211151644.216668863@linuxfoundation.org>
@@ -73,193 +69,74 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Stefan Hajnoczi <stefanha@redhat.com>
+From: Halil Pasic <pasic@linux.ibm.com>
 
-commit 834e772c8db0c6a275d75315d90aba4ebbb1e249 upstream.
+commit 2448a299ec416a80f699940a86f4a6d9a4f643b1 upstream.
 
-If the network stack calls .send_pkt()/.cancel_pkt() during .release(),
-a struct vhost_vsock use-after-free is possible.  This occurs because
-.release() does not wait for other CPUs to stop using struct
-vhost_vsock.
+Currently we have a race on vcdev->config in virtio_ccw_get_config() and
+in virtio_ccw_set_config().
 
-Switch to an RCU-enabled hashtable (indexed by guest CID) so that
-.release() can wait for other CPUs by calling synchronize_rcu().  This
-also eliminates vhost_vsock_lock acquisition in the data path so it
-could have a positive effect on performance.
+This normally does not cause problems, as these are usually infrequent
+operations. However, for some devices writing to/reading from the config
+space can be triggered through sysfs attributes. For these, userspace can
+force the race by increasing the frequency.
 
-This is CVE-2018-14625 "kernel: use-after-free Read in vhost_transport_send_pkt".
-
+Signed-off-by: Halil Pasic <pasic@linux.ibm.com>
 Cc: stable@vger.kernel.org
-Reported-and-tested-by: syzbot+bd391451452fb0b93039@syzkaller.appspotmail.com
-Reported-by: syzbot+e3e074963495f92a89ed@syzkaller.appspotmail.com
-Reported-by: syzbot+d5a0a170c5069658b141@syzkaller.appspotmail.com
-Signed-off-by: Stefan Hajnoczi <stefanha@redhat.com>
+Message-Id: <20180925121309.58524-2-pasic@linux.ibm.com>
+Signed-off-by: Cornelia Huck <cohuck@redhat.com>
 Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
-Acked-by: Jason Wang <jasowang@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/vhost/vsock.c |   57 ++++++++++++++++++++++++++++----------------------
- 1 file changed, 33 insertions(+), 24 deletions(-)
+ drivers/s390/virtio/virtio_ccw.c |   10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
---- a/drivers/vhost/vsock.c
-+++ b/drivers/vhost/vsock.c
-@@ -15,6 +15,7 @@
- #include <net/sock.h>
- #include <linux/virtio_vsock.h>
- #include <linux/vhost.h>
-+#include <linux/hashtable.h>
+--- a/drivers/s390/virtio/virtio_ccw.c
++++ b/drivers/s390/virtio/virtio_ccw.c
+@@ -828,6 +828,7 @@ static void virtio_ccw_get_config(struct
+ 	int ret;
+ 	struct ccw1 *ccw;
+ 	void *config_area;
++	unsigned long flags;
  
- #include <net/af_vsock.h>
- #include "vhost.h"
-@@ -27,14 +28,14 @@ enum {
+ 	ccw = kzalloc(sizeof(*ccw), GFP_DMA | GFP_KERNEL);
+ 	if (!ccw)
+@@ -846,11 +847,13 @@ static void virtio_ccw_get_config(struct
+ 	if (ret)
+ 		goto out_free;
  
- /* Used to track all the vhost_vsock instances on the system. */
- static DEFINE_SPINLOCK(vhost_vsock_lock);
--static LIST_HEAD(vhost_vsock_list);
-+static DEFINE_READ_MOSTLY_HASHTABLE(vhost_vsock_hash, 8);
++	spin_lock_irqsave(&vcdev->lock, flags);
+ 	memcpy(vcdev->config, config_area, offset + len);
+-	if (buf)
+-		memcpy(buf, &vcdev->config[offset], len);
+ 	if (vcdev->config_ready < offset + len)
+ 		vcdev->config_ready = offset + len;
++	spin_unlock_irqrestore(&vcdev->lock, flags);
++	if (buf)
++		memcpy(buf, config_area + offset, len);
  
- struct vhost_vsock {
- 	struct vhost_dev dev;
- 	struct vhost_virtqueue vqs[2];
+ out_free:
+ 	kfree(config_area);
+@@ -864,6 +867,7 @@ static void virtio_ccw_set_config(struct
+ 	struct virtio_ccw_device *vcdev = to_vc_device(vdev);
+ 	struct ccw1 *ccw;
+ 	void *config_area;
++	unsigned long flags;
  
--	/* Link to global vhost_vsock_list, protected by vhost_vsock_lock */
--	struct list_head list;
-+	/* Link to global vhost_vsock_hash, writes use vhost_vsock_lock */
-+	struct hlist_node hash;
- 
- 	struct vhost_work send_pkt_work;
- 	spinlock_t send_pkt_list_lock;
-@@ -50,11 +51,14 @@ static u32 vhost_transport_get_local_cid
- 	return VHOST_VSOCK_DEFAULT_HOST_CID;
- }
- 
--static struct vhost_vsock *__vhost_vsock_get(u32 guest_cid)
-+/* Callers that dereference the return value must hold vhost_vsock_lock or the
-+ * RCU read lock.
-+ */
-+static struct vhost_vsock *vhost_vsock_get(u32 guest_cid)
- {
- 	struct vhost_vsock *vsock;
- 
--	list_for_each_entry(vsock, &vhost_vsock_list, list) {
-+	hash_for_each_possible_rcu(vhost_vsock_hash, vsock, hash, guest_cid) {
- 		u32 other_cid = vsock->guest_cid;
- 
- 		/* Skip instances that have no CID yet */
-@@ -69,17 +73,6 @@ static struct vhost_vsock *__vhost_vsock
- 	return NULL;
- }
- 
--static struct vhost_vsock *vhost_vsock_get(u32 guest_cid)
--{
--	struct vhost_vsock *vsock;
--
--	spin_lock_bh(&vhost_vsock_lock);
--	vsock = __vhost_vsock_get(guest_cid);
--	spin_unlock_bh(&vhost_vsock_lock);
--
--	return vsock;
--}
--
- static void
- vhost_transport_do_send_pkt(struct vhost_vsock *vsock,
- 			    struct vhost_virtqueue *vq)
-@@ -210,9 +203,12 @@ vhost_transport_send_pkt(struct virtio_v
- 	struct vhost_vsock *vsock;
- 	int len = pkt->len;
- 
-+	rcu_read_lock();
-+
- 	/* Find the vhost_vsock according to guest context id  */
- 	vsock = vhost_vsock_get(le64_to_cpu(pkt->hdr.dst_cid));
- 	if (!vsock) {
-+		rcu_read_unlock();
- 		virtio_transport_free_pkt(pkt);
- 		return -ENODEV;
- 	}
-@@ -225,6 +221,8 @@ vhost_transport_send_pkt(struct virtio_v
- 	spin_unlock_bh(&vsock->send_pkt_list_lock);
- 
- 	vhost_work_queue(&vsock->dev, &vsock->send_pkt_work);
-+
-+	rcu_read_unlock();
- 	return len;
- }
- 
-@@ -234,12 +232,15 @@ vhost_transport_cancel_pkt(struct vsock_
- 	struct vhost_vsock *vsock;
- 	struct virtio_vsock_pkt *pkt, *n;
- 	int cnt = 0;
-+	int ret = -ENODEV;
- 	LIST_HEAD(freeme);
- 
-+	rcu_read_lock();
-+
- 	/* Find the vhost_vsock according to guest context id  */
- 	vsock = vhost_vsock_get(vsk->remote_addr.svm_cid);
- 	if (!vsock)
--		return -ENODEV;
-+		goto out;
- 
- 	spin_lock_bh(&vsock->send_pkt_list_lock);
- 	list_for_each_entry_safe(pkt, n, &vsock->send_pkt_list, list) {
-@@ -265,7 +266,10 @@ vhost_transport_cancel_pkt(struct vsock_
- 			vhost_poll_queue(&tx_vq->poll);
- 	}
- 
--	return 0;
-+	ret = 0;
-+out:
-+	rcu_read_unlock();
-+	return ret;
- }
- 
- static struct virtio_vsock_pkt *
-@@ -533,10 +537,6 @@ static int vhost_vsock_dev_open(struct i
- 	spin_lock_init(&vsock->send_pkt_list_lock);
- 	INIT_LIST_HEAD(&vsock->send_pkt_list);
- 	vhost_work_init(&vsock->send_pkt_work, vhost_transport_send_pkt_work);
--
--	spin_lock_bh(&vhost_vsock_lock);
--	list_add_tail(&vsock->list, &vhost_vsock_list);
--	spin_unlock_bh(&vhost_vsock_lock);
- 	return 0;
- 
- out:
-@@ -577,9 +577,13 @@ static int vhost_vsock_dev_release(struc
- 	struct vhost_vsock *vsock = file->private_data;
- 
- 	spin_lock_bh(&vhost_vsock_lock);
--	list_del(&vsock->list);
-+	if (vsock->guest_cid)
-+		hash_del_rcu(&vsock->hash);
- 	spin_unlock_bh(&vhost_vsock_lock);
- 
-+	/* Wait for other CPUs to finish using vsock */
-+	synchronize_rcu();
-+
- 	/* Iterating over all connections for all CIDs to find orphans is
- 	 * inefficient.  Room for improvement here. */
- 	vsock_for_each_connected_socket(vhost_vsock_reset_orphans);
-@@ -620,12 +624,17 @@ static int vhost_vsock_set_cid(struct vh
- 
- 	/* Refuse if CID is already in use */
- 	spin_lock_bh(&vhost_vsock_lock);
--	other = __vhost_vsock_get(guest_cid);
-+	other = vhost_vsock_get(guest_cid);
- 	if (other && other != vsock) {
- 		spin_unlock_bh(&vhost_vsock_lock);
- 		return -EADDRINUSE;
- 	}
-+
-+	if (vsock->guest_cid)
-+		hash_del_rcu(&vsock->hash);
-+
- 	vsock->guest_cid = guest_cid;
-+	hash_add_rcu(vhost_vsock_hash, &vsock->hash, guest_cid);
- 	spin_unlock_bh(&vhost_vsock_lock);
- 
- 	return 0;
+ 	ccw = kzalloc(sizeof(*ccw), GFP_DMA | GFP_KERNEL);
+ 	if (!ccw)
+@@ -876,9 +880,11 @@ static void virtio_ccw_set_config(struct
+ 	/* Make sure we don't overwrite fields. */
+ 	if (vcdev->config_ready < offset)
+ 		virtio_ccw_get_config(vdev, 0, NULL, offset);
++	spin_lock_irqsave(&vcdev->lock, flags);
+ 	memcpy(&vcdev->config[offset], buf, len);
+ 	/* Write the config area to the host. */
+ 	memcpy(config_area, vcdev->config, sizeof(vcdev->config));
++	spin_unlock_irqrestore(&vcdev->lock, flags);
+ 	ccw->cmd_code = CCW_CMD_WRITE_CONF;
+ 	ccw->flags = 0;
+ 	ccw->count = offset + len;
 
 
