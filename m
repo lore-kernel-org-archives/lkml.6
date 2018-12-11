@@ -2,126 +2,118 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06E73C6783B
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 23:26:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4CD2C67839
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 23:29:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 98D6D20672
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 23:26:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="01WSNWk8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98D6D20672
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=paul-moore.com
+	by mail.kernel.org (Postfix) with ESMTP id 735E820672
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 23:29:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 735E820672
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726255AbeLKX04 (ORCPT
+        id S1726235AbeLKX3x (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 18:26:56 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:42856 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726218AbeLKX04 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 18:26:56 -0500
-Received: by mail-lf1-f68.google.com with SMTP id l10so12096667lfh.9
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 15:26:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=vzICyHmd0JEn5UWsVCk7go+fTmvEQXBnI3wfUaeZzo0=;
-        b=01WSNWk8LJUMV7S71iFqrRfVJtWrveC8bt6ldAQ/nnO3M9iuzrFYXGTQ2mDpis9d1X
-         2pQ+lJNra+KD5jgurk0n8IVjxxX6pBl/SNZinhYRjZL5swpmb0XlCeDo75+7451n86JB
-         3y65h2W5Kp1Ctax6gnidPUfQCsUxD9zlLzoVH1i+kCLj2tdKVlbmJ0G4O1KTAfiPHDF+
-         cVeVag/awxcFwyeSvrNVYjDlkyXtKJZ52fuyY7DHw4eNAdSGSaQU5iT0ib1tsYohIOVo
-         ml6BBmeGp3OCBEMsUNoxlILLEGj5NbR664nRL1sPACm/NXR08spLPaPhyI6/jHDs7H24
-         IlwQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=vzICyHmd0JEn5UWsVCk7go+fTmvEQXBnI3wfUaeZzo0=;
-        b=RpR2Hv9V87d+d9pKo1P5g+CK2Hwmhk8ZOsxG2qG5xMnnu/m27IcIJwcossuzv7xwTR
-         h22D6rxXI0X4o13zOrzQqTA2hRmCXPblwMjG+IcCvqUjyvHrAPW/uonI25vL9lSdLaRk
-         gI6oEbT6jZmrGsetQwR+p8OMRf8T/qdJrHHGyb8AZGcpWjWmKicitNuiNKpgoUc620dL
-         r+i9obCBvyH7TIc+h+kSNaAMZjcANlPKO0ir47MqHQXZ53jO+IGvmk4RCgHhBoPlxV9d
-         XVm6frGwY4a9FmUgt3EK660ubsyJBz/O3iVlgJb5jgqhNjQtxjJsOKHsUdTY3m823Zh0
-         W7aQ==
-X-Gm-Message-State: AA+aEWa+Sm084Vel04298OX1Oe7NAhL5KLkbFBcqTB/A9aJoVba6BRF4
-        BYyae6IqEdpDU1+cBaZCSUjuA9FEA8Vu1diucIoc
-X-Google-Smtp-Source: AFSGD/VFrrs1mZDaWPFiePS1U6TxyutSdhbdsYIqi2zRu0pgPGRaQUbaF/wfO/tc35sQTOtXVKgsRxbT8g0UgQZOG5g=
-X-Received: by 2002:a19:e601:: with SMTP id d1mr10839000lfh.71.1544570813365;
- Tue, 11 Dec 2018 15:26:53 -0800 (PST)
+        Tue, 11 Dec 2018 18:29:53 -0500
+Received: from mga02.intel.com ([134.134.136.20]:34190 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726183AbeLKX3w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 18:29:52 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Dec 2018 15:29:51 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,343,1539673200"; 
+   d="scan'208";a="125057550"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.154])
+  by fmsmga002.fm.intel.com with ESMTP; 11 Dec 2018 15:29:51 -0800
+Date:   Tue, 11 Dec 2018 15:29:51 -0800
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     Josh Triplett <josh@joshtriplett.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        X86 ML <x86@kernel.org>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        LKML <linux-kernel@vger.kernel.org>, linux-sgx@vger.kernel.org,
+        Haitao Huang <haitao.huang@linux.intel.com>,
+        Jethro Beekman <jethro@fortanix.com>,
+        "Dr. Greg Wettstein" <greg@enjellic.com>
+Subject: Re: [RFC PATCH v3 0/4] x86: Add exception fixup for SGX ENCLU
+Message-ID: <20181211232951.GK14731@linux.intel.com>
+References: <20181210232141.5425-1-sean.j.christopherson@intel.com>
+ <20181210232449.GA11843@localhost>
+ <EEE078E7-7F37-4F74-8874-46E16C1E0A77@amacapital.net>
+ <20181211165253.GB14731@linux.intel.com>
+ <CALCETrXOXh8Gb_d7NYLakx4w+JVEe79t11wFPLpy+5MEq9kq=A@mail.gmail.com>
+ <20181211222312.GI14731@linux.intel.com>
+ <CALCETrW5Z_4+Yo+D1KgahHHqGdb+tgyWMRvB8eozbW82jZqK3w@mail.gmail.com>
 MIME-Version: 1.0
-References: <cover.1544477629.git.rgb@redhat.com> <CAHC9VhRqMt2k+pL7YF0MaZQfXZzttyHAXBJhHH56Mvswii4EKg@mail.gmail.com>
- <20181211224107.vdeksnc5bd5bb7mb@madcap2.tricolour.ca>
-In-Reply-To: <20181211224107.vdeksnc5bd5bb7mb@madcap2.tricolour.ca>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Tue, 11 Dec 2018 18:26:42 -0500
-Message-ID: <CAHC9VhSkKqdm=q5r4Y0-kEg2j84-AG5omo6frfORXVcJ_orUaw@mail.gmail.com>
-Subject: Re: [PATCH ghak59 V3 0/4] audit: config_change normalizations and
- event record gathering
-To:     rgb@redhat.com
-Cc:     linux-kernel@vger.kernel.org, linux-audit@redhat.com,
-        Eric Paris <eparis@redhat.com>, viro@zeniv.linux.org.uk,
-        sgrubb@redhat.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CALCETrW5Z_4+Yo+D1KgahHHqGdb+tgyWMRvB8eozbW82jZqK3w@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 11, 2018 at 5:41 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> On 2018-12-11 17:31, Paul Moore wrote:
-> > On Mon, Dec 10, 2018 at 5:18 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-
-...
-
-> > > Richard Guy Briggs (4):
-> > >   audit: give a clue what CONFIG_CHANGE op was involved
-> > >   audit: add syscall information to CONFIG_CHANGE records
-> > >   audit: hand taken context to audit_kill_trees for syscall logging
-> > >   audit: extend config_change mark/watch/tree rule changes
-> > >
-> > >  kernel/audit.c          | 33 +++++++++++++++++++++++----------
-> > >  kernel/audit.h          |  4 ++--
-> > >  kernel/audit_fsnotify.c |  4 ++--
-> > >  kernel/audit_tree.c     | 28 +++++++++++++++-------------
-> > >  kernel/audit_watch.c    |  8 +++++---
-> > >  kernel/auditfilter.c    |  2 +-
-> > >  kernel/auditsc.c        | 12 ++++++------
-> > >  7 files changed, 54 insertions(+), 37 deletions(-)
+On Tue, Dec 11, 2018 at 03:10:52PM -0800, Andy Lutomirski wrote:
+> On Tue, Dec 11, 2018 at 2:23 PM Sean Christopherson
+> <sean.j.christopherson@intel.com> wrote:
 > >
-> > In order to make sure expectations are set appropriately, as we are at
-> > -rc6 right now this is not something that would go into audit/next now
-> > (assuming everything looks okay on review), it would go into
-> > audit/next *after* the upcoming merge window.
->
-> I agree it is a bit late for this.  I wasn't expecting it to go in this
-> one.  I'm filling the queue since I'm blocked on other review for
-> ghak81(5.5wks), ghak90(5.5wks), ghak100(3.5wks).  ghak90 missed another
-> merge window.
+> > On Tue, Dec 11, 2018 at 09:58:19AM -0800, Andy Lutomirski wrote:
+> > > > On Dec 11, 2018, at 8:52 AM, Sean Christopherson <sean.j.christopherson@intel.com> wrote:
+> > > >
+> > > >> On Tue, Dec 11, 2018 at 07:41:27AM -0800, Andy Lutomirski wrote:
+> > > >>
+> > > >>
+> > > >>>> On Dec 10, 2018, at 3:24 PM, Josh Triplett <josh@joshtriplett.org> wrote:
+> > > >>>>
+> > > >>>> On Mon, Dec 10, 2018 at 03:21:37PM -0800, Sean Christopherson wrote:
+> > > >>>> At that point I realized it's a hell of a lot easier to simply provide
+> > > >>>> an IOCTL via /dev/sgx that allows userspace to register a per-process
+> > > >>>> ENCLU exception handler.  At a high level, the basic idea is the same
+> > > >>>> as the vDSO approach: provide a hardcoded fixup handler for ENCLU and
+> > > >>>> attempt to fixup select unhandled exceptions that occurred in user code.
+> > > >>>
+> > > >>> So, on the one hand, this is *absolutely* much cleaner than the VDSO
+> > > >>> approach. On the other hand, this is global process state and has some
+> > > >>> of the same problems as a signal handler as a result.
+> > > >>
+> > > >> I liked the old version better for this reason
+> > > >
+> > > > This isn't fundamentally different than forcing all EENTER calls through
+> > > > the vDSO, which is also per-process.  Technically this is more flexible
+> > > > in that regard since userspace gets to choose where their one ENCLU gets
+> > > > to reside.  Userspace can have per-enclave entry flows so long as the
+> > > > actual ENLU[EENTER] is common, same as vDSO.
+> > >
+> > > Right. The problem is that user libraries have a remarkably hard time
+> > > agreeing on where their one copy of anything lives.
+> >
+> > Are you concerned about userspace shooting themselves in the foot, e.g.
+> > unknowingly overwriting their handler?  Requiring unregister->register
+> > to change the handler would mitigate that issue for the most part.  Or
+> > we could even say it's a write-once property.
+> >
+> > That obviously doesn't solve the issue of a userspace application
+> > deliberately using two different libraries to run enclaves in a single
+> > process, but I have a hard time envisioning a scenario where someone
+> > would want to use two different *SGX* libraries in a single process.
+> > Don't most of the signal issue arise due to loading multiple libraries
+> > that provide *different* services needing to handle signals?
+> 
+> I can easily imagine two SGX libraries that know nothing about each
+> other running in the same process.  One or both could be PKCS#11
+> modules, for example.
 
-As discussed previously, GHAK81
-(https://github.com/linux-audit/audit-kernel/issues/81) is something
-that I consider part of the audit container ID work (GHAK90).  I
-believe it's time to stop treating it as a separate issue.
-
-The audit container ID work, GHAK90
-(https://github.com/linux-audit/audit-kernel/issues/90), is where all
-the dragon's lie.  That one takes a good deal of time to review, and
-quite frankly I'm really the only one who seems to be looking at it
-anymore, so it takes a bit longer.
-
-Beside the fact that GHAK100
-(https://github.com/linux-audit/audit-kernel/issues/100) was marked as
-a RFC, I've been waiting to hear back from the VFS folks if they are
-comfortable with it.  Miklos Szeredi in particular had some concerns
-and it isn't clear to me from that thread that his concerns have been
-resolved.
-
--- 
-paul moore
-www.paul-moore.com
+Argh, wasn't thinking about loading other libraries that would also be
+using SGX.
