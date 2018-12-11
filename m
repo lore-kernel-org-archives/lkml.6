@@ -2,111 +2,138 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD15AC07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 08:32:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE908C07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 08:36:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 88C672082F
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 08:32:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 88C672082F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id AB8FE20849
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 08:36:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB8FE20849
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amlogic.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726157AbeLKIcd (ORCPT
+        id S1726137AbeLKIgj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 03:32:33 -0500
-Received: from mx2.suse.de ([195.135.220.15]:57860 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726072AbeLKIcc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 03:32:32 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 1929CAF09;
-        Tue, 11 Dec 2018 08:32:31 +0000 (UTC)
-Date:   Tue, 11 Dec 2018 09:32:30 +0100
-From:   Petr Mladek <pmladek@suse.com>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Steven Rostedt <rostedt@goodmis.org>,
-        Feng Tang <feng.tang@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@suse.de>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Sasha Levin <sashal@kernel.org>, stable@kernel.org
-Subject: Re: [PATCH v4] panic: Avoid the extra noise dmesg
-Message-ID: <20181211083230.x6s44wsgfgijl4ws@pathway.suse.cz>
-References: <1544176279-77828-1-git-send-email-feng.tang@intel.com>
- <20181210131729.04b8e0d3@gandalf.local.home>
- <CAGXu5jJrC5J7YNJ24JNNkNTRr7qRfQa+x+dePC0OOrpcEJFwaA@mail.gmail.com>
+        Tue, 11 Dec 2018 03:36:39 -0500
+Received: from mail-sz2.amlogic.com ([211.162.65.114]:24372 "EHLO
+        mail-sz2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726085AbeLKIgj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 03:36:39 -0500
+Received: from [10.28.18.115] (10.28.18.115) by mail-sz2.amlogic.com
+ (10.28.11.6) with Microsoft SMTP Server (TLS) id 15.0.1320.4; Tue, 11 Dec
+ 2018 16:36:47 +0800
+Subject: Re: [PATCH v7 2/2] mtd: rawnand: meson: add support for Amlogic NAND
+ flash controller
+To:     Miquel Raynal <miquel.raynal@bootlin.com>
+CC:     Boris Brezillon <boris.brezillon@bootlin.com>,
+        Jianxin Pan <jianxin.pan@amlogic.com>,
+        <linux-mtd@lists.infradead.org>, Yixun Lan <yixun.lan@amlogic.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Carlo Caione <carlo@caione.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Rob Herring <robh@kernel.org>, Jian Hu <jian.hu@amlogic.com>,
+        Hanjie Lin <hanjie.lin@amlogic.com>,
+        Victor Wan <victor.wan@amlogic.com>,
+        <linux-amlogic@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+References: <1542386439-30166-1-git-send-email-jianxin.pan@amlogic.com>
+ <1542386439-30166-3-git-send-email-jianxin.pan@amlogic.com>
+ <20181207102456.1dc67e07@xps13>
+ <823825a3-86fb-9a20-ae29-85cc52d44093@amlogic.com>
+ <20181210123809.5ade45c4@bbrezillon>
+ <79a797c2-f37f-7f7c-e907-2d3c2283ec2d@amlogic.com>
+ <20181210155057.38788656@xps13>
+ <d60bac6f-732d-0ddc-2644-17f650dfa885@amlogic.com>
+ <20181211085445.68e57e0e@xps13>
+From:   Liang Yang <liang.yang@amlogic.com>
+Message-ID: <356aed95-518d-7cd0-4337-184f181472ad@amlogic.com>
+Date:   Tue, 11 Dec 2018 16:36:47 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAGXu5jJrC5J7YNJ24JNNkNTRr7qRfQa+x+dePC0OOrpcEJFwaA@mail.gmail.com>
-User-Agent: NeoMutt/20170421 (1.8.2)
+In-Reply-To: <20181211085445.68e57e0e@xps13>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.28.18.115]
+X-ClientProxiedBy: mail-sz2.amlogic.com (10.28.11.6) To mail-sz2.amlogic.com
+ (10.28.11.6)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 2018-12-10 10:49:22, Kees Cook wrote:
-> On Mon, Dec 10, 2018 at 10:17 AM Steven Rostedt <rostedt@goodmis.org> wrote:
-> >
-> > On Fri,  7 Dec 2018 17:51:19 +0800
-> > Feng Tang <feng.tang@intel.com> wrote:
-> >
-> > > When kernel panic happens, it will first print the panic call stack,
-> > > then the ending msg like:
-> > >
-> > > [   35.743249] ---[ end Kernel panic - not syncing: Fatal exception
-> > > [   35.749975] ------------[ cut here ]------------
-> > >
-> > > The above message are very useful for debugging.
-> > >
-> > > But if system is configured to not reboot on panic, say the "panic_timeout"
-> > > parameter equals 0, it will likely print out many noisy message like
-> > > WARN() call stack for each and every CPU except the panic one, messages
-> > > like below:
-> >
-> >
-> > > Keeping the interrupt disabled will avoid the noisy message.
-> > >
-> > > When code runs to this point, it means user has chosed to not reboot, or
-> > > do any special handling by using the panic notifier method, the only reason
-> > > to enable the interrupt may be sysrq migic key and panic_blink function
-> > > (though may not work even with irq enabled).
-> > >
-> > > So make the irq disabled by default and add a cmdline parameter
-> > > "panic_keep_irq_on" to turn it on when needed.
-> > >
-> > > Signed-off-by: Feng Tang <feng.tang@intel.com>
-> > >
-> >
-> > Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Hi Miquel,
+
+Thanks for your quickly reply.
+
+On 2018/12/11 15:54, Miquel Raynal wrote:
+> Hi Liang,
 > 
-> I'm fine with the new boot param, but I think we need to leave it how
-> it was by default: systems that want to see the blinking aren't going
-> to have a screen to read about what boot param they need to add.
-> Currently, we'll blink and spew extra warnings. With this patch we'll
-> not blink and not spew: a headless machine will have no indication
-> that a panic happened.
+> Liang Yang <liang.yang@amlogic.com> wrote on Tue, 11 Dec 2018 09:56:25
+> +0800:
+> 
+>> Hi Miquel,
+>>
+>> On 2018/12/10 22:50, Miquel Raynal wrote:
+>>> Hi Liang,
+>>>
+>>> Liang Yang <liang.yang@amlogic.com> wrote on Mon, 10 Dec 2018 20:12:39
+>>> +0800:
+>>>    
+>>>> On 2018/12/10 19:38, Boris Brezillon wrote:
+>>>>> On Mon, 10 Dec 2018 19:23:46 +0800
+>>>>> Liang Yang <liang.yang@amlogic.com> wrote:
+>>>>>     >>>>>> +			mtd->ecc_stats.failed++;
+>>>>>>>> +			continue;
+>>>>>>>> +		}
+>>>>>>>> +		mtd->ecc_stats.corrected += ECC_ERR_CNT(*info);
+>>>>>>>> +		bitflips = max_t(u32, bitflips, ECC_ERR_CNT(*info));
+>>>>>>>> +	}
+>>>>>>>
+>>>>>>> Are you sure you handle correctly empty pages with bf?
+>>>>>>>      >> if scramble is enable, i would say yes here.
+>>>>>> when scramble is disabled, i am considering how to use the helper
+>>>>>> nand_check_erased_ecc_chunk, but it seems that i can't get the ecc
+>>>>>> bytes which is caculated by ecc engine.by the way, nfc dma doesn't send
+>>>>>> out the ecc parity bytes.
+>>>>>
+>>>>> Even if the ECC engine is disabled?
+>>>>>     >> No.
+>>>> When ECC engine is disabled, it can read the ecc parity bytes ; but there is another problem that i need to consider how code struct looks better when reading error with ecc opened and then try to raw read.
+>>>> Is there a good idea?
+>>>
+>>> When reading with ECC enabled, in case of uncorrectable error you
+>>> must re-read without ECC, then check if the page is empty or not with
+>>> the core helpers (nand_check_erased_*()).
+>>>
+>>> Is this what you meant?
+>>>    
+>> yes. when uncorrectable ECC error, i need firstly read out the ECC bytes without ECC engine and then use the helper nand_check_erased_ecc_chunk to check if blank page.
+>> Of course, the precondition is without scrambler, or the bland page can be detected by meson NFC.
+> 
+> A suppose you meant "blank page"? If yes, then you don't need the
+> helper to check for only-0xFF pages. If the controller tells you if the
+> page was blank, then just check for that bit.
+> 
 
-Just to be sure, in case, you did not follow the other long
-discussion.
+i think not. we need to return back the previous problem that how i can 
+get the bitflips of one blank page. i think i need the helper.
 
-I had an alternative approach to switch printk() into nop at
-this panic() stage. It can be restored when sysrq is triggered.
-This approach allows to keep blinking and sysrq working. People
-debugging the blinking would need to block this change but it
-should be rare.
-
-I do not resist on my solution. It looks a bit hacky. But it
-is simple and rather straightforward.
-
-Best Regards,
-Petr
+> 
+> Thanks,
+> Miquèl
+> 
+> .
+> 
