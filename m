@@ -6,24 +6,24 @@ X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B4EDC07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 13:44:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C2A0C07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 13:44:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 283F92081B
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 13:44:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 283F92081B
+	by mail.kernel.org (Postfix) with ESMTP id 4A6D12054F
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 13:44:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A6D12054F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=8bytes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726680AbeLKNoS (ORCPT
+        id S1726700AbeLKNo3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 08:44:18 -0500
-Received: from 8bytes.org ([81.169.241.247]:53346 "EHLO theia.8bytes.org"
+        Tue, 11 Dec 2018 08:44:29 -0500
+Received: from 8bytes.org ([81.169.241.247]:53236 "EHLO theia.8bytes.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726559AbeLKNnt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 08:43:49 -0500
+        id S1726203AbeLKNns (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 08:43:48 -0500
 Received: by theia.8bytes.org (Postfix, from userid 1000)
-        id 1D1BD533; Tue, 11 Dec 2018 14:43:47 +0100 (CET)
+        id A68D33AF; Tue, 11 Dec 2018 14:43:46 +0100 (CET)
 From:   Joerg Roedel <joro@8bytes.org>
 To:     iommu@lists.linux-foundation.org
 Cc:     Russell Currey <ruscur@russell.cc>,
@@ -40,9 +40,9 @@ Cc:     Russell Currey <ruscur@russell.cc>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
         dmaengine@vger.kernel.org, linux-usb@vger.kernel.org
-Subject: [PATCH 4/6] powerpc/iommu: Use device_iommu_mapped()
-Date:   Tue, 11 Dec 2018 14:43:41 +0100
-Message-Id: <20181211134343.10664-5-joro@8bytes.org>
+Subject: [PATCH 1/6] driver core: Introduce device_iommu_mapped() function
+Date:   Tue, 11 Dec 2018 14:43:38 +0100
+Message-Id: <20181211134343.10664-2-joro@8bytes.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181211134343.10664-1-joro@8bytes.org>
 References: <20181211134343.10664-1-joro@8bytes.org>
@@ -53,63 +53,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Joerg Roedel <jroedel@suse.de>
 
-Use the new function to replace the open-coded iommu check.
+Some places in the kernel check the iommu_group pointer in
+'struct device' in order to find ot whether a device is
+mapped by an IOMMU.
 
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: Paul Mackerras <paulus@samba.org>
-Cc: Russell Currey <ruscur@russell.cc>
-Cc: Sam Bobroff <sbobroff@linux.ibm.com>
+This is not good way to make this check, as the pointer will
+be moved to 'struct dev_iommu_data'. This way to make the
+check is also not very readable.
+
+Introduce an explicit function to perform this check.
+
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Acked-by: Robin Murphy <robin.murphy@arm.com>
 Signed-off-by: Joerg Roedel <jroedel@suse.de>
 ---
- arch/powerpc/kernel/eeh.c   | 2 +-
- arch/powerpc/kernel/iommu.c | 6 +++---
- 2 files changed, 4 insertions(+), 4 deletions(-)
+ include/linux/device.h | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/arch/powerpc/kernel/eeh.c b/arch/powerpc/kernel/eeh.c
-index 6cae6b56ffd6..23fe62f11486 100644
---- a/arch/powerpc/kernel/eeh.c
-+++ b/arch/powerpc/kernel/eeh.c
-@@ -1472,7 +1472,7 @@ static int dev_has_iommu_table(struct device *dev, void *data)
- 	if (!dev)
- 		return 0;
+diff --git a/include/linux/device.h b/include/linux/device.h
+index 1b25c7a43f4c..6cb4640b6160 100644
+--- a/include/linux/device.h
++++ b/include/linux/device.h
+@@ -1058,6 +1058,16 @@ static inline struct device *kobj_to_dev(struct kobject *kobj)
+ 	return container_of(kobj, struct device, kobj);
+ }
  
--	if (dev->iommu_group) {
-+	if (device_iommu_mapped(dev)) {
- 		*ppdev = pdev;
- 		return 1;
- 	}
-diff --git a/arch/powerpc/kernel/iommu.c b/arch/powerpc/kernel/iommu.c
-index f0dc680e659a..48d58d1dcac2 100644
---- a/arch/powerpc/kernel/iommu.c
-+++ b/arch/powerpc/kernel/iommu.c
-@@ -1086,7 +1086,7 @@ int iommu_add_device(struct device *dev)
- 	if (!device_is_registered(dev))
- 		return -ENOENT;
++/**
++ * device_iommu_mapped - Returns true when the device DMA is translated
++ *			 by an IOMMU
++ * @dev: Device to perform the check on
++ */
++static inline bool device_iommu_mapped(struct device *dev)
++{
++	return (dev->iommu_group != NULL);
++}
++
+ /* Get the wakeup routines, which depend on struct device */
+ #include <linux/pm_wakeup.h>
  
--	if (dev->iommu_group) {
-+	if (device_iommu_mapped(dev)) {
- 		pr_debug("%s: Skipping device %s with iommu group %d\n",
- 			 __func__, dev_name(dev),
- 			 iommu_group_id(dev->iommu_group));
-@@ -1129,7 +1129,7 @@ void iommu_del_device(struct device *dev)
- 	 * and we needn't detach them from the associated
- 	 * IOMMU groups
- 	 */
--	if (!dev->iommu_group) {
-+	if (!device_iommu_mapped(dev)) {
- 		pr_debug("iommu_tce: skipping device %s with no tbl\n",
- 			 dev_name(dev));
- 		return;
-@@ -1148,7 +1148,7 @@ static int tce_iommu_bus_notifier(struct notifier_block *nb,
-         case BUS_NOTIFY_ADD_DEVICE:
-                 return iommu_add_device(dev);
-         case BUS_NOTIFY_DEL_DEVICE:
--                if (dev->iommu_group)
-+                if (device_iommu_mapped(dev))
-                         iommu_del_device(dev);
-                 return 0;
-         default:
 -- 
 2.17.1
 
