@@ -7,51 +7,52 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35A5FC5CFFE
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:47:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D7AFC07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:47:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EBE3020989
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:47:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 52A8020989
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:47:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544543235;
-	bh=A6V1Hq06bn19ISrH+ofeByRCf3jCqEkPFyfmzRhaeqg=;
+	s=default; t=1544543237;
+	bh=318JnzFMhGUWIUYtqYAXXFr1OykE+rcTdNvE+NDn7ls=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=kWioLxcD3lUndncGmq2zqCplN8c52iKYG0ZbTaLr6IVBXx8L9Rjqsf51tXDX8Zz+m
-	 zZJYtmPL4rvRmN/54tW3YAsTr3+kE+r+kMe1OelHRVUh9l3fo3mVtMaZIZ9vRnfwLZ
-	 NivGRZKYSpE77Q9hat1ZkdXx1PYh45TysUtsc+qM=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EBE3020989
+	b=AJ2wJS7a5wDpBue/daO1FNQ8yaE1sVmXyFnf2Q6s2s2EofdgfTjT20HtFR8Sge07U
+	 sjOr9BhlKc5MwIKiXXjYJpFuRJwQmJ4d7biOIvvZzF6P+/Q0VTvqp1j0zpJM+GT//z
+	 hO49wQPn++C99DB8EMdtK0CE6UbqJxBtA02VSRTI=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 52A8020989
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728500AbeLKPrN (ORCPT
+        id S1728514AbeLKPrQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 10:47:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35606 "EHLO mail.kernel.org"
+        Tue, 11 Dec 2018 10:47:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35656 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728486AbeLKPrK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:47:10 -0500
+        id S1728499AbeLKPrN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 10:47:13 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 987342133F;
-        Tue, 11 Dec 2018 15:47:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4954220989;
+        Tue, 11 Dec 2018 15:47:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544543230;
-        bh=A6V1Hq06bn19ISrH+ofeByRCf3jCqEkPFyfmzRhaeqg=;
+        s=default; t=1544543232;
+        bh=318JnzFMhGUWIUYtqYAXXFr1OykE+rcTdNvE+NDn7ls=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LBbfIrzS7qyk4V9eT42OgLEBLFb8qfQ3BNgW4g8Fvvavgd2JGFgEeOFXjAD0xu1Il
-         t8zQMGiuPovsGZm6buRkOtMBQY+Yr2itpvOq+sjZVM/+ffZ5DjCOhU4sR+FpqW3x+W
-         xjhmJm85ZpHQOnyG2oAKhQIsIi1dzaRmdKo0Gark=
+        b=V9OoLMoFQ/wy7D5WPOFTkcPlfntEIOKRVuTLYcbi6malTGnlTPjigLzIHyw6yJa3C
+         b2Y06RmSAaI17pWlIYJLnujNSmkY+ddViLh1HirXLWIFWS+ouD54Sazmf9JeKKCAV9
+         CSjMnefhzqUdDQXjfrMqZp9XZqpIF7mexjY01U98=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Denis Bolotin <denis.bolotin@cavium.com>,
-        Michal Kalderon <michal.kalderon@cavium.com>,
+        stable@vger.kernel.org,
+        Jack Morgenstein <jackm@dev.mellanox.co.il>,
+        Tariq Toukan <tariqt@mellanox.com>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 63/91] qed: Fix reading wrong value in loop condition
-Date:   Tue, 11 Dec 2018 16:41:22 +0100
-Message-Id: <20181211151611.216751710@linuxfoundation.org>
+Subject: [PATCH 4.4 64/91] net/mlx4_core: Zero out lkey field in SW2HW_MPT fw command
+Date:   Tue, 11 Dec 2018 16:41:23 +0100
+Message-Id: <20181211151611.367407186@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181211151606.026852373@linuxfoundation.org>
 References: <20181211151606.026852373@linuxfoundation.org>
@@ -70,32 +71,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit ed4eac20dcffdad47709422e0cb925981b056668 ]
+[ Upstream commit bd85fbc2038a1bbe84990b23ff69b6fc81a32b2c ]
 
-The value of "sb_index" is written by the hardware. Reading its value and
-writing it to "index" must finish before checking the loop condition.
+When re-registering a user mr, the mpt information for the
+existing mr when running SRIOV is obtained via the QUERY_MPT
+fw command. The returned information includes the mpt's lkey.
 
-Signed-off-by: Denis Bolotin <denis.bolotin@cavium.com>
-Signed-off-by: Michal Kalderon <michal.kalderon@cavium.com>
+This retrieved mpt information is used to move the mpt back
+to hardware ownership in the rereg flow (via the SW2HW_MPT
+fw command when running SRIOV).
+
+The fw API spec states that for SW2HW_MPT, the lkey field
+must be zero. Any ConnectX-3 PF driver which checks for strict spec
+adherence will return failure for SW2HW_MPT if the lkey field is not
+zero (although the fw in practice ignores this field for SW2HW_MPT).
+
+Thus, in order to conform to the fw API spec, set the lkey field to zero
+before invoking SW2HW_MPT when running SRIOV.
+
+Fixes: e630664c8383 ("mlx4_core: Add helper functions to support MR re-registration")
+Signed-off-by: Jack Morgenstein <jackm@dev.mellanox.co.il>
+Signed-off-by: Tariq Toukan <tariqt@mellanox.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/qlogic/qed/qed_int.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/net/ethernet/mellanox/mlx4/mr.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/net/ethernet/qlogic/qed/qed_int.c b/drivers/net/ethernet/qlogic/qed/qed_int.c
-index 9cc9d62c1fec..8b15a018d625 100644
---- a/drivers/net/ethernet/qlogic/qed/qed_int.c
-+++ b/drivers/net/ethernet/qlogic/qed/qed_int.c
-@@ -177,6 +177,8 @@ static int qed_int_attentions(struct qed_hwfn *p_hwfn)
- 	 */
- 	do {
- 		index = p_sb_attn->sb_index;
-+		/* finish reading index before the loop condition */
-+		dma_rmb();
- 		attn_bits = le32_to_cpu(p_sb_attn->atten_bits);
- 		attn_acks = le32_to_cpu(p_sb_attn->atten_ack);
- 	} while (index != p_sb_attn->sb_index);
+diff --git a/drivers/net/ethernet/mellanox/mlx4/mr.c b/drivers/net/ethernet/mellanox/mlx4/mr.c
+index 93195191f45b..53833c06696f 100644
+--- a/drivers/net/ethernet/mellanox/mlx4/mr.c
++++ b/drivers/net/ethernet/mellanox/mlx4/mr.c
+@@ -366,6 +366,7 @@ int mlx4_mr_hw_write_mpt(struct mlx4_dev *dev, struct mlx4_mr *mmr,
+ 			container_of((void *)mpt_entry, struct mlx4_cmd_mailbox,
+ 				     buf);
+ 
++		(*mpt_entry)->lkey = 0;
+ 		err = mlx4_SW2HW_MPT(dev, mailbox, key);
+ 	}
+ 
 -- 
 2.19.1
 
