@@ -2,129 +2,215 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B3E7C5CFFE
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 18:34:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3846C5CFFE
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 18:35:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1EB8120851
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 18:34:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1EB8120851
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id A440B20855
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 18:35:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544553342;
+	bh=p8EYJ/W+tstdk9YOyWSoVKU0GF7Ar/LYqGAocqTKjN4=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=RqedqQ3MKHbCB+oGBjBakjPccYW3GDgtPbRFp2avrdMnbQEk8ysstNGqAo7MnmfE3
+	 0nBFetxvgKlJpwuonVpERgwubwWaKjGFHpStJl0znCQP/d3JJAdP3id5P8gFMj+DUL
+	 3jsyS/WbgEtUkRdupNNqclHa2V/PFgFrA8CmQIUQ=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A440B20855
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727115AbeLKSeB (ORCPT
+        id S1727133AbeLKSfl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 13:34:01 -0500
-Received: from mga11.intel.com ([192.55.52.93]:2450 "EHLO mga11.intel.com"
+        Tue, 11 Dec 2018 13:35:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33842 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726556AbeLKSeB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 13:34:01 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Dec 2018 10:34:00 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,343,1539673200"; 
-   d="scan'208";a="97945078"
-Received: from rchatre-mobl.amr.corp.intel.com (HELO [10.24.14.157]) ([10.24.14.157])
-  by orsmga007.jf.intel.com with ESMTP; 11 Dec 2018 10:34:00 -0800
-Subject: Re: [PATCH V2] x86/intel_rdt: Ensure usage of CPUs are locked while
- needed
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     tglx@linutronix.de, fenghua.yu@intel.com, tony.luck@intel.com,
-        gavin.hindman@intel.com, jithu.joseph@intel.com, mingo@redhat.com,
-        hpa@zytor.com, x86@kernel.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org
-References: <b7b17432a80f95a1fa21a1698ba643014f58ad31.1544476425.git.reinette.chatre@intel.com>
- <20181211123404.GC27375@zn.tnic>
-From:   Reinette Chatre <reinette.chatre@intel.com>
-Message-ID: <ece2581e-d5e5-c26c-53e5-0cef8b37e59f@intel.com>
-Date:   Tue, 11 Dec 2018 10:33:59 -0800
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1726252AbeLKSfl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 13:35:41 -0500
+Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8CA37208E7;
+        Tue, 11 Dec 2018 18:35:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544553339;
+        bh=p8EYJ/W+tstdk9YOyWSoVKU0GF7Ar/LYqGAocqTKjN4=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=OWQ81JFKXZTiHWodKIjRr+PHBOP1poJulI2bqPwB6Dw9OgiKT9r5Bt9tJT9LED/ON
+         qY6kCVSeQIrh7w35A/PMsdTz5nYfAaEsvglLfTQITTa4rdrM6DcR6z41Uvm9yEnPjh
+         AwQ8ZkQpf4FXa0veSWmAmxFqskHCGIa1/xUXNrmE=
+Received: by mail-qt1-f169.google.com with SMTP id p17so17582344qtl.5;
+        Tue, 11 Dec 2018 10:35:39 -0800 (PST)
+X-Gm-Message-State: AA+aEWaCU5e5ozyTaEAimvjl1t/oLUv+hTo9HBBT7b4sPtuEPTK5j3gu
+        isJLV2+9sCJEnODNYRylcDpzsrWUEnvT1PvqQw==
+X-Google-Smtp-Source: AFSGD/XseHpa+vQVxHR9GEAcS6cxLcCfOLfE/L6WOZfoUsMgmKGeQvPeV58OCxEJnc4x9BXpjTkrK4b0fW9kWb7Db+w=
+X-Received: by 2002:ac8:1712:: with SMTP id w18mr16930766qtj.76.1544553338724;
+ Tue, 11 Dec 2018 10:35:38 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20181211123404.GC27375@zn.tnic>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20181210203225.11179-1-robh@kernel.org> <CAK7LNAThtAOy4PQiYZ2X0oWrHdcLi7on8ctSXJ=bfT0HNh7NFQ@mail.gmail.com>
+ <CAL_JsqL7n2sjLbJVieVDQ4YtKMi2COCaijO9ZNu7ggzmXXxLEg@mail.gmail.com> <CAK7LNARkr-g9ae+74QE6GMuxLM0JPgEqYOkwb0njXcb9-=nBdQ@mail.gmail.com>
+In-Reply-To: <CAK7LNARkr-g9ae+74QE6GMuxLM0JPgEqYOkwb0njXcb9-=nBdQ@mail.gmail.com>
+From:   Rob Herring <robh@kernel.org>
+Date:   Tue, 11 Dec 2018 12:35:26 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqJ_1RukAZx5tCpp+X8mdNuOT6LTAdYOzN5UyhRK6SAo2Q@mail.gmail.com>
+Message-ID: <CAL_JsqJ_1RukAZx5tCpp+X8mdNuOT6LTAdYOzN5UyhRK6SAo2Q@mail.gmail.com>
+Subject: Re: [PATCH v3] kbuild: Add support for DT binding schema checks
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Sean Hudson <darknighte@darknighte.com>,
+        Frank Rowand <frowand.list@gmail.com>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        Grant Likely <grant.likely@arm.com>,
+        Kumar Gala <kumar.gala@linaro.org>,
+        ARM-SoC Maintainers <arm@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Boris,
+On Tue, Dec 11, 2018 at 10:03 AM Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
+>
+> On Wed, Dec 12, 2018 at 12:13 AM Rob Herring <robh@kernel.org> wrote:
+>
+> >
+> > > > +$(obj)/%.example.dts: $(src)/%.yaml FORCE
+> > > > +       $(call if_changed,chk_binding)
+> > > > +
+> > > > +DT_TMP_SCHEMA := .schema.yaml.tmp
+> > >
+> > >
+> > > BTW, why does this file start with a period?
+> > > What is the meaning of '.tmp' extension?
+> >
+> > Nothing really. Just named it something so it gets cleaned and ignored by git.
+>
+>
+> It is cleaned whatever file name you use.
+>
+>
+> See scripts/Makefile.clean
+>
+> __clean-files   := $(extra-y) $(extra-m) $(extra-)       \
+>                    $(always) $(targets) $(clean-files)   \
+>                    $(hostprogs-y) $(hostprogs-m) $(hostprogs-) \
+>                    $(hostlibs-y) $(hostlibs-m) $(hostlibs-) \
+>                    $(hostcxxlibs-y) $(hostcxxlibs-m)
+>
+>
+> $(extra-y) is cleaned.
 
-On 12/11/2018 4:34 AM, Borislav Petkov wrote:
-> On Mon, Dec 10, 2018 at 01:21:54PM -0800, Reinette Chatre wrote:
->> The user triggers the creation of a pseudo-locked region when writing
->> the requested schemata to the schemata resctrl file. The pseudo-locking
->> of a region is required to be done on a CPU that is associated with the
->> cache on which the pseudo-locked region will reside. In order to run the
->> locking code on a specific CPU the needed CPU has to be selected and
->> ensured to remain online during the entire locking sequence.
->>
->> At this time the cpu_hotplug_lock is not taken during the pseudo-lock
->> region creation and it is thus possible for a CPU to be selected to run
->> the pseudo-locking code and then that CPU to go offline before the
->> thread is able to run on it.
->>
->> Fix this by ensuring that the cpu_hotplug_lock is taken while the CPU on
->> which code has to run needs to be controlled. Since the cpu_hotplug_lock
->> is always taken before rdtgroup_mutex the lock order is maintained.
->>
->> Fixes: e0bdfe8e36f3 ("x86/intel_rdt: Support creation/removal of pseudo-locked region")
->> Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
->> Cc: stable@vger.kernel.org
->> ---
->> V2:
->> - Rebase against tip/x86/urgent
->> - Modify subject from x86/resctrl to x86/intel_rdt to match subject used
->>   before the code reorganization.
->>
->>  arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c | 4 ++++
->>  1 file changed, 4 insertions(+)
-> 
-> I took it but changed the subject to the more straight-forward:
+True.
 
-Thank you very much.
+>
+>
+> You are adding *.example.dts to .gitignore
+>
+> Why not "schema.yaml" ?
 
-> 
-> "x86/intel_rdt: Disable CPU hotplug while modifying schemata"
+Okay. I'll do "processed-schema.yaml" to give a bit better name of
+what it contains.
 
-I am not sure that this is an issue when updating a schemata in the
-general case. In the case when just CAT schemata (without
-pseudo-locking) is updated then the cpu mask associated with the cache
-instance is indeed used to determine which CPUs should have their
-registers changed but only the current CPU is not checked for being
-online, for the other CPUs smp_call_function_many() is used that
-includes an online check.
+>
+> > > > +extra-y += $(DT_TMP_SCHEMA)
+> > > > +
+> > > > +quiet_cmd_mk_schema = SCHEMA  $@
+> > > > +      cmd_mk_schema = mkdir -p $(obj); \
+> > > > +                      rm -f $@; \
+> > > > +                      $(DT_MK_SCHEMA) $(DT_MK_SCHEMA_FLAGS) -o $@ $(filter-out FORCE, $^)
+> > >
+> > >
+> > > "mkdir -p $(obj)" is redundant.
+> > >
+> > >
+> > > Why is 'rm -f $@' necessary ?
+> > > Can't dt-mk-schema overwrite the output file?
+> >
+> > It is for error case when the output file is not generated. I can
+> > handle this within dt-mk-schema instead.
+> > > > +DT_DOCS = $(shell cd $(srctree)/$(src) && find * -name '*.yaml')
+> > > > +DT_SCHEMA_FILES ?= $(addprefix $(src)/,$(DT_DOCS))
+> > > > +
+> > > > +extra-y += $(patsubst $(src)/%.yaml,%.example.dts, $(DT_SCHEMA_FILES))
+> > > > +extra-y += $(patsubst $(src)/%.yaml,%.example.dtb, $(DT_SCHEMA_FILES))
+> > >
+> > >
+> > >
+> > > I assume you intentionally did not do like this:
+> > >
+> > > extra-y += $(patsubst %.yaml,%.example.dtb, $(DT_DOCS))
+> > >
+> > > From the commit description, DT_SCHEMA_FILES might be overridden by a user.
+> > > So, I think this is OK.
+> > >
+> > >
+> > >
+> > >
+> > > > +$(obj)/$(DT_TMP_SCHEMA): | $(addprefix $(obj)/,$(patsubst $(src)/%.yaml,%.example.dtb, $(DT_SCHEMA_FILES)))
+> > >
+> > > I do not understand this line.
+> > > Why is it necessary?
+> > >
+> > > *.example.dtb files are generated anyway
+> > > since they are listed in extra-y.
+> >
+> > It is enforcing the ordering. Without it, the binding checks and
+> > building .schema.yaml.tmp happen in parallel because both only have
+> > the source files as dependencies. The '|' keeps the dependencies out
+> > of the dependency list($^).
+>
+>
+> What kind problem would you see if
+> the binding checks and building .schema.yaml.tmp
+> happen in parallel?
 
-> Now, your second patch:
-> 
->   Subject: [PATCH V2] x86/resctrl: Fix rdt_find_domain() return value and checks
->   Message-Id: <b88cd4ff6a75995bf8db9b0ea546908fe50f69f3.1544479852.git.reinette.chatre@intel.com>
-> 
-> has the new file paths, has Fixes: tags but no CC:stable.
-> 
-> I'm guessing it needs to go in the next merge window with the rest of
-> the new stuff and not now, with the urgent pile?
-> 
-> I'm thinking that because it is not really a bug now, as the negative ID
-> happens to work.
+In case of no errors in the binding docs, it doesn't matter. If there
+are errors, I don't want the dtbs validation to run if any schema
+doesn't validate. However, I played around with this a bit more and it
+seems like having the examples' dts/dtb in extra-y prevents that from
+happening. Does that match your expections? If so, then I think we can
+remove the dependency.
 
-I had the same question in V1's notes to the maintainer :)
+Here's an example.
 
-My initial concern was the lack of IS_ERR checking. Understanding the
-flow better now it seems to me that this is indeed not a bug now. The
-reasoning is that an ERR_PTR is only returned when a negative id is
-provided in the parameters to rdt_find_domain(). There are currently
-only two places where a negative id could be provided to
-rdt_find_domain(), domain_add_cpu() and domain_remove_cpu(), and both
-locations test the return value using IS_ERR.
+  SCHEMA  Documentation/devicetree/bindings/.schema.yaml.tmp
+  CHKDT   Documentation/devicetree/bindings/arm/vt8500.yaml
+  CHKDT   Documentation/devicetree/bindings/arm/zte.yaml
+  CHKDT   Documentation/devicetree/bindings/arm/altera/socfpga-clk-manager.yaml
+  CHKDT   Documentation/devicetree/bindings/arm/ti/ti,davinci.yaml
+  CHKDT   Documentation/devicetree/bindings/arm/ti/nspire.yaml
+  CHKDT   Documentation/devicetree/bindings/arm/spear.yaml
+  CHKDT   Documentation/devicetree/bindings/arm/altera.yaml
+warning: no schema found in file:
+../Documentation/devicetree/bindings/arm/xilinx.yaml
+/home/rob/proj/git/linux-2.6/Documentation/devicetree/bindings/arm/xilinx.yaml:
+ignoring, error in schema 'onOf'
+  CHKDT   Documentation/devicetree/bindings/arm/sti.yaml
+  CHKDT   Documentation/devicetree/bindings/arm/qcom.yaml
+  CHKDT   Documentation/devicetree/bindings/arm/primecell.yaml
+  CHKDT   Documentation/devicetree/bindings/arm/cpus.yaml
+  CHKDT   Documentation/devicetree/bindings/arm/sirf.yaml
+  CHKDT   Documentation/devicetree/bindings/arm/calxeda.yaml
+  CHKDT   Documentation/devicetree/bindings/arm/xilinx.yaml
+  CHKDT   Documentation/devicetree/bindings/example-schema.yaml
+/home/rob/proj/git/linux-2.6/Documentation/devicetree/bindings/arm/xilinx.yaml:
+properties:compatible:onOf: 'onOf' is not one of ['$ref',
+'additionalItems', 'allOf', 'const', 'contains', 'default',
+'dependencies', 'description', 'enum', 'items', 'minItems', 'minimum',
+'maxItems', 'maximum', 'not', 'oneOf', 'pattern', 'patternProperties',
+'properties', 'required', 'type', 'typeSize']
+make[2]: *** [../Documentation/devicetree/bindings/Makefile:12:
+Documentation/devicetree/bindings/arm/xilinx.example.dts] Error 1
 
-Reinette
-
-
+Rob
