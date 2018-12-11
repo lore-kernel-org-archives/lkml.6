@@ -2,129 +2,110 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-2.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15FA7C5CFFE
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 20:04:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 179D6C5CFFE
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 20:04:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C2F6020870
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 20:04:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544558672;
-	bh=iceCIJ+MOdnemZmdzZgpg+G/tOQaPMTxkFD74NoBchM=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=ENGq774O82fyQCWBqGjTZ7tGuyU+f5rQ/HK3D0+i3l8L28r9atT5w5vpKMEY7OFsC
-	 1JUNl2siIfsEbuvfiMoNV4bol7BWKhbv97TNMOpJMHm+dlbDPE1d9yNEU4aDDGT8qF
-	 8MGid31ZNxHDEE5KJr/XlN9n3iLebo8UTmqWHDSE=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C2F6020870
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id DD25C20870
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 20:04:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD25C20870
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=the-dreams.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726230AbeLKUEb (ORCPT
+        id S1726256AbeLKUEj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 15:04:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55828 "EHLO mail.kernel.org"
+        Tue, 11 Dec 2018 15:04:39 -0500
+Received: from sauhun.de ([88.99.104.3]:45336 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726125AbeLKUEb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 15:04:31 -0500
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 04B7320870
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 20:04:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544558670;
-        bh=iceCIJ+MOdnemZmdzZgpg+G/tOQaPMTxkFD74NoBchM=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=lVJVN7Yn138t2ZkHGtkzYmRtwHAPjhugGq8/SDYGjJP+Hcyvr3WyxGQZtAFI6Pise
-         9dcfj+lUj96mfD6p4LlorR4LVhDbuq9xmTp8xxanOOx78SB7Kf4c539eRrh0F0OZg8
-         6qQidZ/pBs1Noo3Sbqf3zEU6868nY7PKkkCQL0cU=
-Received: by mail-wm1-f42.google.com with SMTP id y1so3502894wmi.3
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 12:04:29 -0800 (PST)
-X-Gm-Message-State: AA+aEWYPOb5pi1DnQcg2luEE+HApiZAbkbzr4EP5r35dQ/0RPPoYUdYO
-        VbyMXiGlCYeVp1XqYBZvZ5RWRKt8OTPxM94oCI2chg==
-X-Google-Smtp-Source: AFSGD/UQAbvOnZAq9uAz0UTPhT+24+VMhs2cZvY/GWHDpJF6CeQydOf4v7dEjxwhplk9wj6qKGqCncbepg+za7t4QwY=
-X-Received: by 2002:a1c:b1d5:: with SMTP id a204mr3904123wmf.32.1544558668451;
- Tue, 11 Dec 2018 12:04:28 -0800 (PST)
+        id S1726125AbeLKUEi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 15:04:38 -0500
+Received: from localhost (p54B334A7.dip0.t-ipconnect.de [84.179.52.167])
+        by pokefinder.org (Postfix) with ESMTPSA id 9B7524C0E8F;
+        Tue, 11 Dec 2018 21:04:36 +0100 (CET)
+Date:   Tue, 11 Dec 2018 21:04:36 +0100
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     "Adamski, Krzysztof (Nokia - PL/Wroclaw)" 
+        <krzysztof.adamski@nokia.com>
+Cc:     "Sverdlin, Alexander (Nokia - DE/Ulm)" <alexander.sverdlin@nokia.com>,
+        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Tobias Jordan <Tobias.Jordan@elektrobit.com>,
+        Peter Rosin <peda@axentia.se>
+Subject: Re: [PATCH 3/3] i2c-axxia: support sequence command mode
+Message-ID: <20181211200435.abk3jdsmltz7c26w@ninjato>
+References: <cover.1544453688.git.krzysztof.adamski@nokia.com>
+ <8515ba7093f5be3ad7bd31d68efedcbe17958282.1544453688.git.krzysztof.adamski@nokia.com>
 MIME-Version: 1.0
-References: <20181206221922.31012-5-sean.j.christopherson@intel.com>
- <CALCETrXRJ645=08fyeoMQ949fLB1TvhsgERFVx5mAHdViEjq8Q@mail.gmail.com>
- <20181207165145.GB10404@linux.intel.com> <CALCETrVkEW82PzQZhJ5iS849DLY1gbd8YjH5F7P1J7hgjkjiOQ@mail.gmail.com>
- <20181207190257.GC10404@linux.intel.com> <EFA99261-BE93-49DA-9A8F-E6FD28069AFC@amacapital.net>
- <20181207200935.GE10404@linux.intel.com> <4CEB5945-9562-40FA-8CCA-A1675D55B001@amacapital.net>
- <20181207212649.GG10404@linux.intel.com> <CALCETrVBR+2HjTqX=W4r9GOq69Xg36v4gmCKqK0wUjzAqBJnrw@mail.gmail.com>
- <20181211193144.GG14731@linux.intel.com>
-In-Reply-To: <20181211193144.GG14731@linux.intel.com>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Tue, 11 Dec 2018 12:04:15 -0800
-X-Gmail-Original-Message-ID: <CALCETrXbCFRQ_8Uu8Yh9EDeWJMEzZ+Dr386XrAprz1E6g+3X+Q@mail.gmail.com>
-Message-ID: <CALCETrXbCFRQ_8Uu8Yh9EDeWJMEzZ+Dr386XrAprz1E6g+3X+Q@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 4/4] x86/vdso: Add __vdso_sgx_enter_enclave() to
- wrap SGX enclave transitions
-To:     "Christopherson, Sean J" <sean.j.christopherson@intel.com>
-Cc:     Andrew Lutomirski <luto@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        X86 ML <x86@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Josh Triplett <josh@joshtriplett.org>,
-        linux-sgx@vger.kernel.org,
-        Haitao Huang <haitao.huang@linux.intel.com>,
-        Jethro Beekman <jethro@fortanix.com>,
-        "Dr. Greg Wettstein" <greg@enjellic.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="c3m5n2s5rtnxudgq"
+Content-Disposition: inline
+In-Reply-To: <8515ba7093f5be3ad7bd31d68efedcbe17958282.1544453688.git.krzysztof.adamski@nokia.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 11, 2018 at 11:31 AM Sean Christopherson
-<sean.j.christopherson@intel.com> wrote:
->
-> On Fri, Dec 07, 2018 at 03:33:57PM -0800, Andy Lutomirski wrote:
-> > On Fri, Dec 7, 2018 at 1:26 PM Sean Christopherson
-> > <sean.j.christopherson@intel.com> wrote:
-> > >
-> > > Running a checksum on the stack for every exit doesn't seem like it'd
-> > > be worth the effort, especially since this type of bug should be quite
-> > > rare, at least in production environments.
-> > >
-> > > If we want to pursue the checksum idea I think the easiest approach
-> > > would be to combine it with an exit_handler and do a simple check on
-> > > the handler.  It'd be minimal overhead in the fast path and would flag
-> > > cases where invoking exit_handle() would explode, while deferring all
-> > > other checks to the user.
-> >
-> > How about this variant?
-> >
-> > #define MAGIC 0xaaaabbbbccccddddul
-> > #define RETADDR_HASH ((unsigned long)__builtin_return_address(0) ^ MAGIC)
-> >
-> > void foo(void)
-> > {
-> >     volatile unsigned long hash = RETADDR_HASH;
-> >
-> >     /* placeholder for your actual code */
-> >     asm volatile ("nop");
-> >
-> >     if (hash != RETADDR_HASH)
-> >         asm volatile ("ud2");
-> > }
-> >
-> > But I have a real argument for dropping exit_handler: in this new age
-> > of Spectre, the indirect call is a retpoline, and it's therefore quite
-> > slow.
->
-> Technically slower, but would the extra CALL+RET pair even be noticeable
-> in the grand scheme of SGX?
 
-But it's CALL, CALL, MOV to overwrite return address, intentionally
-midpredicted RET, and RET because Spectre.  That whole sequence seems
-to be several tens of cycles, so it's a lot worse than just CALL+RET.
-Whether it's noticeable overall is a fair question, though.
+--c3m5n2s5rtnxudgq
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+Hi,
+
+> +static void axxia_i2c_handle_seq_nak(struct axxia_i2c_dev *idev)
+> +{
+> +	while (readl(idev->base + MST_COMMAND) & CMD_BUSY)
+> +		udelay(100);
+> +}
+
+My code checkers rightfully complain about this:
+
+  CHECKPATCH
+CHECK: usleep_range is preferred over udelay; see Documentation/timers/timers-howto.txt
+
+  SMATCH
+drivers/i2c/busses/i2c-axxia.c:382 axxia_i2c_handle_seq_nak() warn: this loop depends on readl() succeeding
+
+(and I get those as well, but not related to your patch; still while I am here)
+
+  GCC
+drivers/i2c/busses/i2c-axxia.c:98: warning: cannot understand function prototype: 'struct axxia_i2c_dev '
+drivers/i2c/busses/i2c-axxia.c:130: warning: Function parameter or member 'ns' not described in 'ns_to_clk'
+drivers/i2c/busses/i2c-axxia.c:130: warning: Function parameter or member 'clk_mhz' not described in 'ns_to_clk'
+drivers/i2c/busses/i2c-axxia.c:229: warning: Function parameter or member 'idev' not described in 'axxia_i2c_empty_rx_fifo'
+drivers/i2c/busses/i2c-axxia.c:261: warning: Function parameter or member 'idev' not described in 'axxia_i2c_fill_tx_fifo'
+
+Also, for $subject, please change the prefix to "i2c: axxia:"
+
+Thanks,
+
+   Wolfram
+
+
+--c3m5n2s5rtnxudgq
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlwQGFMACgkQFA3kzBSg
+KbZjBQ/+JKkZOieWNTHYtxct2MfgBqvV/GjQ2LNchV0lAsarOYL5+70J8ZRiX3e9
+PB/cb5mkjw8muL0fl41fOonxiel/mxy8X9JdVrnPJj7xSbsbbn9s91dBmaKXr8Tp
+hGDfBdtTQm2EPwWWIeKsCbd6aRwXsCDdUiQLFSiw21F0QuGBJxywKT4V0rNkfBDK
+whew5E94SpVKO74DZZhUO3qT3zGbJIdwfgl3jU9aPAJbpD4GxLWDMenEVkI7bnIO
+SOMsmF6S6sp+O1ZSRARaO6qm28RYoi4I96hU/aoJxmT73LiUagbPuPFd9P9aV/vs
+ucxXDjQhscVbvqeY+EMLU05mwLicfhwT38j0au8Xa0zDLYCKyzUNa2F7gu82yMpS
+lL+LyUYsKWWLUp36pkriH3Hk24jjwXaxqv9JlTuuMf0/QuVRhoIexA9h/eUh/keB
+7Xr2wHvGvLgY9VfIlXpC8PyJvnvBT6wxc/R0p8h1IRuOp234DagQhenDySV0htnx
+s+9Dl+HusBfufX7ACPa/l+PwIOGCBJ7oEHASq+E5NXJ4zdtSi4d1xZToldT2JBdj
+Sm0n6R2p+Gc0vegX9fmin0lqIynb9girYSl3LYbVY0ZE6eXg+8bWun4rJ3447OE7
+QOFSN06zcuedwhaqcg6u2v1kBTRYJZ3qRYjMIbiSu9EwjHK9Jic=
+=Oulp
+-----END PGP SIGNATURE-----
+
+--c3m5n2s5rtnxudgq--
