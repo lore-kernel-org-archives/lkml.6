@@ -2,136 +2,260 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A32D9C07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 10:26:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A67DFC07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 10:26:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5BBDF20811
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 10:26:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="TZzewEeG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5BBDF20811
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	by mail.kernel.org (Postfix) with ESMTP id 6CDA420811
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 10:26:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6CDA420811
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i-love.sakura.ne.jp
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726358AbeLKK0m (ORCPT
+        id S1726434AbeLKK0w (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 05:26:42 -0500
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:37654 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726134AbeLKK0m (ORCPT
+        Tue, 11 Dec 2018 05:26:52 -0500
+Received: from www262.sakura.ne.jp ([202.181.97.72]:24243 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726134AbeLKK0v (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 05:26:42 -0500
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id wBBAQWbg056290;
-        Tue, 11 Dec 2018 04:26:32 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1544523992;
-        bh=L5gU2CnGhylx1EcelkJad5vEp7e18dyf5E3gjQ9DWA4=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=TZzewEeG39gwSaFJxc0SLgjjlzl60CHOl+WlZc2Qa9Dn+n4a6pPXkuPK1WQ8Unb5t
-         flaNYkxpbDpBc3RhNYouKJ7FaGV3TDI2fxCrQXBsHZOj1VJlxNhu9nfuCik+9P2PJL
-         EGxAd1CYWajia5OOnm0M321yY4gfRdSLcr1pseyQ=
-Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wBBAQWjS011081
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 11 Dec 2018 04:26:32 -0600
-Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Tue, 11
- Dec 2018 04:26:32 -0600
-Received: from dflp33.itg.ti.com (10.64.6.16) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Tue, 11 Dec 2018 04:26:31 -0600
-Received: from [172.24.190.233] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id wBBAQRgY015978;
-        Tue, 11 Dec 2018 04:26:28 -0600
-Subject: Re: [PATCH v7 0/5] arm64: dts: qcom: sdm845: Add UFS DT nodes
-To:     Evan Green <evgreen@chromium.org>,
-        Andy Gross <andy.gross@linaro.org>
-CC:     Douglas Anderson <dianders@chromium.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        <devicetree@vger.kernel.org>, Rob Herring <robh@kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, Can Guo <cang@codeaurora.org>,
-        <linux-kernel@vger.kernel.org>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Manu Gautam <mgautam@codeaurora.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        David Brown <david.brown@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        <linux-soc@vger.kernel.org>
-References: <20181210192826.241350-1-evgreen@chromium.org>
-From:   Kishon Vijay Abraham I <kishon@ti.com>
-Message-ID: <1d00081d-7ef5-20fb-b04b-3b51ca9cd6da@ti.com>
-Date:   Tue, 11 Dec 2018 15:56:16 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Tue, 11 Dec 2018 05:26:51 -0500
+Received: from fsav403.sakura.ne.jp (fsav403.sakura.ne.jp [133.242.250.102])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id wBBAQnm7069524;
+        Tue, 11 Dec 2018 19:26:49 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav403.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav403.sakura.ne.jp);
+ Tue, 11 Dec 2018 19:26:49 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav403.sakura.ne.jp)
+Received: from [192.168.1.8] (softbank126126163036.bbtec.net [126.126.163.36])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id wBBAQnkU069519
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
+        Tue, 11 Dec 2018 19:26:49 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: [PATCH] printk: Add caller information to printk() output.
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+To:     Petr Mladek <pmladek@suse.com>
+Cc:     Dmitry Vyukov <dvyukov@google.com>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        syzkaller <syzkaller@googlegroups.com>
+References: <1543045075-3008-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
+ <20181130154024.ls3mntfdr4zvluub@pathway.suse.cz>
+ <f224bd68-7394-ff70-cad6-d3fbbb3b5f7d@i-love.sakura.ne.jp>
+ <20181203150603.cdqii263e4kmmibo@pathway.suse.cz>
+ <b38c6957-c3c1-54fc-781e-06d7eed6a9b1@i-love.sakura.ne.jp>
+ <20181204152724.ypk44mi4a56nrud4@pathway.suse.cz>
+ <459018db-763b-9520-ead2-2c0d5975fbf3@i-love.sakura.ne.jp>
+ <20181210130930.bas4fozjhe3dc5nu@pathway.suse.cz>
+ <c5b5d660-d217-35f0-c4f1-7252367934d1@i-love.sakura.ne.jp>
+Message-ID: <e3f69846-ef08-c8f5-368f-4dada13c9970@i-love.sakura.ne.jp>
+Date:   Tue, 11 Dec 2018 19:26:48 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.3
 MIME-Version: 1.0
-In-Reply-To: <20181210192826.241350-1-evgreen@chromium.org>
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <c5b5d660-d217-35f0-c4f1-7252367934d1@i-love.sakura.ne.jp>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From bdb80508390694456f3f864f9651d047ded109bf Mon Sep 17 00:00:00 2001
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Date: Tue, 11 Dec 2018 19:23:30 +0900
+Subject: [PATCH v4] printk: Add caller information to printk() output.
+
+Sometimes we want to print a series of printk() messages to consoles
+without being disturbed by concurrent printk() from interrupts and/or
+other threads. But we can't enforce printk() callers to use their local
+buffers because we need to ask them to make too much changes. Also, even
+buffering up to one line inside printk() might cause failing to emit
+an important clue under critical situation.
+
+Therefore, instead of trying to help buffering, let's try to help
+reconstructing messages by saving caller information as of calling
+log_store() and adding it as "[T$thread_id]" or "[C$processor_id]"
+upon printing to consoles.
+
+Some examples for console output:
+
+  [    1.222773][    T1] x86: Booting SMP configuration:
+  [    2.779635][    T1] pci 0000:00:01.0: PCI bridge to [bus 01]
+  [    5.069193][  T268] Fusion MPT base driver 3.04.20
+  [    9.316504][    C2] random: fast init done
+  [   13.413336][ T3355] Initialized host personality
+
+Some examples for /dev/kmsg output:
+
+  6,496,1222773,-,from=T1;x86: Booting SMP configuration:
+  6,968,2779635,-,from=T1;pci 0000:00:01.0: PCI bridge to [bus 01]
+   SUBSYSTEM=pci
+   DEVICE=+pci:0000:00:01.0
+  6,1353,5069193,-,from=T268;Fusion MPT base driver 3.04.20
+  5,1526,9316504,-,from=C2;random: fast init done
+  6,1575,13413336,-,from=T3355;Initialized host personality
+
+Note that this patch changes max length of messages which can be printed
+by printk() or written to /dev/kmsg interface from 992 bytes to 976 bytes,
+based on an assumption that userspace won't try to write messages hitting
+that border line to /dev/kmsg interface.
+
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+---
+ kernel/printk/printk.c | 50 ++++++++++++++++++++++++++++++++++++++++++++++----
+ lib/Kconfig.debug      | 17 +++++++++++++++++
+ 2 files changed, 63 insertions(+), 4 deletions(-)
+
+diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+index 1306fe0..84e5425 100644
+--- a/kernel/printk/printk.c
++++ b/kernel/printk/printk.c
+@@ -356,6 +356,9 @@ struct printk_log {
+ 	u8 facility;		/* syslog facility */
+ 	u8 flags:5;		/* internal record flags */
+ 	u8 level:3;		/* syslog level */
++#ifdef CONFIG_PRINTK_FROM
++	u32 from_id;            /* thread id or processor id */
++#endif
+ }
+ #ifdef CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS
+ __packed __aligned(4)
+@@ -422,7 +425,11 @@ __packed __aligned(4)
+ static u64 clear_seq;
+ static u32 clear_idx;
+ 
++#ifdef CONFIG_PRINTK_FROM
++#define PREFIX_MAX		48
++#else
+ #define PREFIX_MAX		32
++#endif
+ #define LOG_LINE_MAX		(1024 - PREFIX_MAX)
+ 
+ #define LOG_LEVEL(v)		((v) & 0x07)
+@@ -625,6 +632,12 @@ static int log_store(int facility, int level,
+ 		msg->ts_nsec = ts_nsec;
+ 	else
+ 		msg->ts_nsec = local_clock();
++#ifdef CONFIG_PRINTK_FROM
++	if (in_task())
++		msg->from_id = task_pid_nr(current);
++	else
++		msg->from_id = 0x80000000 + raw_smp_processor_id();
++#endif
+ 	memset(log_dict(msg) + dict_len, 0, pad_len);
+ 	msg->len = size;
+ 
+@@ -688,12 +701,21 @@ static ssize_t msg_print_ext_header(char *buf, size_t size,
+ 				    struct printk_log *msg, u64 seq)
+ {
+ 	u64 ts_usec = msg->ts_nsec;
++	char from[18];
++#ifdef CONFIG_PRINTK_FROM
++	u32 id = msg->from_id;
++
++	snprintf(from, sizeof(from), ",from=%c%u",
++		 id & 0x80000000 ? 'C' : 'T', id & ~0x80000000);
++#else
++	from[0] = '\0';
++#endif
+ 
+ 	do_div(ts_usec, 1000);
+ 
+-	return scnprintf(buf, size, "%u,%llu,%llu,%c;",
+-		       (msg->facility << 3) | msg->level, seq, ts_usec,
+-		       msg->flags & LOG_CONT ? 'c' : '-');
++	return scnprintf(buf, size, "%u,%llu,%llu,%c%s;",
++			 (msg->facility << 3) | msg->level, seq, ts_usec,
++			 msg->flags & LOG_CONT ? 'c' : '-', from);
+ }
+ 
+ static ssize_t msg_print_ext_body(char *buf, size_t size,
+@@ -1038,6 +1060,9 @@ void log_buf_vmcoreinfo_setup(void)
+ 	VMCOREINFO_OFFSET(printk_log, len);
+ 	VMCOREINFO_OFFSET(printk_log, text_len);
+ 	VMCOREINFO_OFFSET(printk_log, dict_len);
++#ifdef CONFIG_PRINTK_FROM
++	VMCOREINFO_OFFSET(printk_log, from_id);
++#endif
+ }
+ #endif
+ 
+@@ -1236,10 +1261,21 @@ static size_t print_time(u64 ts, char *buf)
+ {
+ 	unsigned long rem_nsec = do_div(ts, 1000000000);
+ 
+-	return sprintf(buf, "[%5lu.%06lu] ",
++	return sprintf(buf, "[%5lu.%06lu]",
+ 		       (unsigned long)ts, rem_nsec / 1000);
+ }
+ 
++#ifdef CONFIG_PRINTK_FROM
++static size_t print_from(u32 id, char *buf)
++{
++	char from[12];
++
++	snprintf(from, sizeof(from), "%c%u",
++		 id & 0x80000000 ? 'C' : 'T', id & ~0x80000000);
++	return sprintf(buf, "[%6s]", from);
++}
++#endif
++
+ static size_t print_prefix(const struct printk_log *msg, bool syslog,
+ 			   bool time, char *buf)
+ {
+@@ -1249,6 +1285,12 @@ static size_t print_prefix(const struct printk_log *msg, bool syslog,
+ 		len = print_syslog((msg->facility << 3) | msg->level, buf);
+ 	if (time)
+ 		len += print_time(msg->ts_nsec, buf + len);
++#ifdef CONFIG_PRINTK_FROM
++	len += print_from(msg->from_id, buf + len);
++#endif
++	if (IS_ENABLED(CONFIG_PRINTK_FROM) || time)
++		buf[len++] = ' ';
++	buf[len] = '\0'; /* For safety in case of accessed as a string. */
+ 	return len;
+ }
+ 
+diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
+index d312188..e626bd7 100644
+--- a/lib/Kconfig.debug
++++ b/lib/Kconfig.debug
+@@ -17,6 +17,23 @@ config PRINTK_TIME
+ 	  The behavior is also controlled by the kernel command line
+ 	  parameter printk.time=1. See Documentation/admin-guide/kernel-parameters.rst
+ 
++config PRINTK_FROM
++	bool "Show caller information on printks"
++	depends on PRINTK
++	help
++	  Selecting this option causes "thread id" (if in task context) or
++	  "processor id" (if not in task context) of the printk() messages
++	  to be added.
++
++	  This option is intended for environments where multiple threads
++	  concurrently call printk() for many times, for it is difficult to
++	  interpret without knowing where these lines (or sometimes individual
++	  line which was divided into multiple lines due to race) came from.
++
++	  Since toggling after boot makes the code racy, currently there is
++	  no option to enable/disable at the kernel command line parameter or
++	  sysfs interface.
++
+ config CONSOLE_LOGLEVEL_DEFAULT
+ 	int "Default console loglevel (1-15)"
+ 	range 1 15
+-- 
+1.8.3.1
 
 
-On 11/12/18 12:58 AM, Evan Green wrote:
-> Update the device tree bindings for the QMP PHY to properly
-> specify the registers for dual-lane PHYs. Update the driver to use
-> those new registers. Add the DT nodes for UFS on SDM845 and MTP.
-> Finally, fix up the USB3 PHY on SDM845, which also has a dual-lane phy
-> 
-> This series is now based on phy/next, and given that the changes stack,
-> I guess that means Kishon will take the whole thing?
-
-No. I'll take only the phy changes. The dts changes can probably be taken by
-Andy during the early 4.21 -rc cycle.
-
-Thanks
-Kishon
-> 
-> Changes in v7:
->  - Rebased on top of phy/next
-> 
-> Changes in v6:
-> - Removed resets and reset-names (Bjorn)
-> - Renamed nodes (Bjorn)
-> - Fix renamed nodes in MTP (Bjorn)
-> 
-> Changes in v5:
-> - Fix incorrect register value in example, copied from real life!
-> 
-> Changes in v4:
-> - Remove "status" from DT binding example (Rob)
-> 
-> Changes in v3:
->  - Removed erroneous fixup for USB UniPro PHY, which is not dual lane (Doug)
-> 
-> Changes in v2:
-> - Added dt bindings change, corresponding driver fixup, and USB PHY fixup
-> - Renamed ufsphy to phy (Vivek)
-> - Removed #clock-cells (Vivek)
-> 
-> Can Guo (1):
->   arm64: dts: qcom: sdm845: Add UFS nodes for sdm845-mtp
-> 
-> Evan Green (4):
->   dt-bindings: phy-qcom-qmp: Fix register underspecification
->   phy: qcom-qmp: Utilize fully-specified DT registers
->   arm64: dts: qcom: sdm845: add UFS controller
->   arm64: dts: qcom: sdm845: Add USB PHY lane two
-> 
->  .../devicetree/bindings/phy/qcom-qmp-phy.txt  | 69 +++++++++++++++++--
->  arch/arm64/boot/dts/qcom/sdm845-mtp.dts       | 14 ++++
->  arch/arm64/boot/dts/qcom/sdm845.dtsi          | 68 +++++++++++++++++-
->  drivers/phy/qualcomm/phy-qcom-qmp.c           | 51 ++++++++++----
->  4 files changed, 181 insertions(+), 21 deletions(-)
-> 
