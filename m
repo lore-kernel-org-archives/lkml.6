@@ -2,44 +2,42 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1D01C5CFFE
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 17:14:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5358C07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 17:15:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 884FB2081B
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 17:14:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 884FB2081B
+	by mail.kernel.org (Postfix) with ESMTP id 8625A2086D
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 17:15:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8625A2086D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727026AbeLKROl (ORCPT
+        id S1727052AbeLKRPF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 12:14:41 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:47023 "EHLO huawei.com"
+        Tue, 11 Dec 2018 12:15:05 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:16110 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726784AbeLKROf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 12:14:35 -0500
-Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 0A16FFBDEDF64;
-        Wed, 12 Dec 2018 01:14:21 +0800 (CST)
+        id S1726402AbeLKROM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 12:14:12 -0500
+Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 4AFE725D08026;
+        Wed, 12 Dec 2018 01:14:06 +0800 (CST)
 Received: from S00293818-DELL1.china.huawei.com (10.202.226.54) by
  DGGEMS403-HUB.china.huawei.com (10.3.19.203) with Microsoft SMTP Server id
- 14.3.408.0; Wed, 12 Dec 2018 01:14:14 +0800
+ 14.3.408.0; Wed, 12 Dec 2018 01:13:58 +0800
 From:   Salil Mehta <salil.mehta@huawei.com>
 To:     <davem@davemloft.net>
 CC:     <salil.mehta@huawei.com>, <yisen.zhuang@huawei.com>,
         <lipeng321@huawei.com>, <mehta.salil@opnsrc.net>,
         <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linuxarm@huawei.com>, liuzhongzhu <liuzhongzhu@huawei.com>
-Subject: [PATCH net-next 6/6] net: hns3: Add "tm map" status information query function
-Date:   Tue, 11 Dec 2018 17:13:30 +0000
-Message-ID: <20181211171330.20592-7-salil.mehta@huawei.com>
+        <linuxarm@huawei.com>
+Subject: [PATCH net-next 0/6]  net: hns3: Add more commands to Debugfs in HNS3 driver
+Date:   Tue, 11 Dec 2018 17:13:24 +0000
+Message-ID: <20181211171330.20592-1-salil.mehta@huawei.com>
 X-Mailer: git-send-email 2.8.3
-In-Reply-To: <20181211171330.20592-1-salil.mehta@huawei.com>
-References: <20181211171330.20592-1-salil.mehta@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [10.202.226.54]
@@ -49,169 +47,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: liuzhongzhu <liuzhongzhu@huawei.com>
+This patch-set adds few more debugfs commands to HNS3 Ethernet
+Driver. Support has been added to query info related to below
+items:
+1. Packet buffer descriptor ("echo bd info [queue no] [bd index] > cmd")
+2. Manager table("echo dump mng tbl > cmd")
+3. Dfx status register("echo dump reg ssu [prt id] > cmd")
+4. Dcb status register("echo dump reg dcb [port id] > cmd")
+5. Queue map ("echo queue map [queue no] > cmd")
+6. Tm map ("echo tm map [queue no] > cmd")
 
-This patch prints dcb register status  information by module.
+NOTE: Above commands are *read-only* and are only intended to
+query the information from the SoC(and dump inside the kernel,
+for now) and in no way tries to perform write operations for
+the purpose of configuration etc.
 
-debugfs command:
-root@(none)# echo dump tm map 100 > cmd
-queue_id | qset_id | pri_id | tc_id
-0100     | 0065    | 08     | 00
-root@(none)#
+liuzhongzhu (6):
+  net: hns3: Add "bd info" query function
+  net: hns3: Add "manager table" information query function
+  net: hns3: Add "status register" information query function
+  net: hns3: Add "dcb register" status information query function
+  net: hns3: Add "queue map" information query function
+  net: hns3: Add "tm map" status information query function
 
-Signed-off-by: liuzhongzhu <liuzhongzhu@huawei.com>
-Signed-off-by: Salil Mehta <salil.mehta@huawei.com>
----
- drivers/net/ethernet/hisilicon/hns3/hns3_debugfs.c |  1 +
- .../net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h |  1 +
- .../ethernet/hisilicon/hns3/hns3pf/hclge_debugfs.c | 84 ++++++++++++++++++++++
- .../net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.h  |  7 ++
- 4 files changed, 93 insertions(+)
+ drivers/net/ethernet/hisilicon/hns3/hclge_mbx.h    |   1 +
+ drivers/net/ethernet/hisilicon/hns3/hnae3.h        |   1 +
+ drivers/net/ethernet/hisilicon/hns3/hns3_debugfs.c | 136 +++-
+ .../net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h |  43 ++
+ .../ethernet/hisilicon/hns3/hns3pf/hclge_debugfs.c | 446 +++++++++++++
+ .../ethernet/hisilicon/hns3/hns3pf/hclge_debugfs.h | 690 +++++++++++++++++++++
+ .../ethernet/hisilicon/hns3/hns3pf/hclge_main.c    |   4 +-
+ .../ethernet/hisilicon/hns3/hns3pf/hclge_main.h    |   1 +
+ .../net/ethernet/hisilicon/hns3/hns3pf/hclge_mbx.c |  20 +
+ .../net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.h  |   7 +
+ .../ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c  |  18 +
+ 11 files changed, 1364 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_debugfs.c b/drivers/net/ethernet/hisilicon/hns3/hns3_debugfs.c
-index fe5ec68..0872ca5 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3_debugfs.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3_debugfs.c
-@@ -241,6 +241,7 @@ static void hns3_dbg_help(struct hnae3_handle *h)
- 	dev_info(&h->pdev->dev, "bd info [q_num] <bd index>\n");
- 	dev_info(&h->pdev->dev, "dump fd tcam\n");
- 	dev_info(&h->pdev->dev, "dump tc\n");
-+	dev_info(&h->pdev->dev, "dump tm map [q_num]\n");
- 	dev_info(&h->pdev->dev, "dump tm\n");
- 	dev_info(&h->pdev->dev, "dump qos pause cfg\n");
- 	dev_info(&h->pdev->dev, "dump qos pri map\n");
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h
-index dc8b7c2..71c1678 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h
-@@ -165,6 +165,7 @@ enum hclge_opcode_type {
- 	HCLGE_OPC_CFG_TX_QUEUE		= 0x0B01,
- 	HCLGE_OPC_QUERY_TX_POINTER	= 0x0B02,
- 	HCLGE_OPC_QUERY_TX_STATUS	= 0x0B03,
-+	HCLGE_OPC_TQP_TX_QUEUE_TC	= 0x0B04,
- 	HCLGE_OPC_CFG_RX_QUEUE		= 0x0B11,
- 	HCLGE_OPC_QUERY_RX_POINTER	= 0x0B12,
- 	HCLGE_OPC_QUERY_RX_STATUS	= 0x0B13,
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_debugfs.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_debugfs.c
-index d1d693b..dda5f00 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_debugfs.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_debugfs.c
-@@ -537,6 +537,88 @@ static void hclge_dbg_dump_tm(struct hclge_dev *hdev)
- 		cmd, ret);
- }
- 
-+static void hclge_dbg_dump_tm_map(struct hclge_dev *hdev, char *cmd_buf)
-+{
-+	struct hclge_bp_to_qs_map_cmd *bp_to_qs_map_cmd;
-+	struct hclge_nq_to_qs_link_cmd *nq_to_qs_map;
-+	struct hclge_qs_to_pri_link_cmd *map;
-+	struct hclge_tqp_tx_queue_tc_cmd *tc;
-+	enum hclge_opcode_type cmd;
-+	struct hclge_desc desc;
-+	int queue_id, group_id;
-+	u32 qset_maping[32];
-+	int tc_id, qset_id;
-+	int pri_id, ret;
-+	u32 i;
-+
-+	ret = kstrtouint(&cmd_buf[12], 10, &queue_id);
-+	queue_id = (ret != 0) ? 0 : queue_id;
-+
-+	cmd = HCLGE_OPC_TM_NQ_TO_QS_LINK;
-+	nq_to_qs_map = (struct hclge_nq_to_qs_link_cmd *)desc.data;
-+	hclge_cmd_setup_basic_desc(&desc, cmd, true);
-+	nq_to_qs_map->nq_id = cpu_to_le16(queue_id);
-+	ret = hclge_cmd_send(&hdev->hw, &desc, 1);
-+	if (ret)
-+		goto err_tm_map_cmd_send;
-+	qset_id = nq_to_qs_map->qset_id & 0x3FF;
-+
-+	cmd = HCLGE_OPC_TM_QS_TO_PRI_LINK;
-+	map = (struct hclge_qs_to_pri_link_cmd *)desc.data;
-+	hclge_cmd_setup_basic_desc(&desc, cmd, true);
-+	map->qs_id = cpu_to_le16(qset_id);
-+	ret = hclge_cmd_send(&hdev->hw, &desc, 1);
-+	if (ret)
-+		goto err_tm_map_cmd_send;
-+	pri_id = map->priority;
-+
-+	cmd = HCLGE_OPC_TQP_TX_QUEUE_TC;
-+	tc = (struct hclge_tqp_tx_queue_tc_cmd *)desc.data;
-+	hclge_cmd_setup_basic_desc(&desc, cmd, true);
-+	tc->queue_id = cpu_to_le16(queue_id);
-+	ret = hclge_cmd_send(&hdev->hw, &desc, 1);
-+	if (ret)
-+		goto err_tm_map_cmd_send;
-+	tc_id = tc->tc_id & 0x7;
-+
-+	dev_info(&hdev->pdev->dev, "queue_id | qset_id | pri_id | tc_id\n");
-+	dev_info(&hdev->pdev->dev, "%04d     | %04d    | %02d     | %02d\n",
-+		 queue_id, qset_id, pri_id, tc_id);
-+
-+	cmd = HCLGE_OPC_TM_BP_TO_QSET_MAPPING;
-+	bp_to_qs_map_cmd = (struct hclge_bp_to_qs_map_cmd *)desc.data;
-+	for (group_id = 0; group_id < 32; group_id++) {
-+		hclge_cmd_setup_basic_desc(&desc, cmd, true);
-+		bp_to_qs_map_cmd->tc_id = tc_id;
-+		bp_to_qs_map_cmd->qs_group_id = group_id;
-+		ret = hclge_cmd_send(&hdev->hw, &desc, 1);
-+		if (ret)
-+			goto err_tm_map_cmd_send;
-+
-+		qset_maping[group_id] = bp_to_qs_map_cmd->qs_bit_map;
-+	}
-+
-+	dev_info(&hdev->pdev->dev, "index | tm bp qset maping:\n");
-+
-+	i = 0;
-+	for (group_id = 0; group_id < 4; group_id++) {
-+		dev_info(&hdev->pdev->dev,
-+			 "%04d  | %08x:%08x:%08x:%08x:%08x:%08x:%08x:%08x\n",
-+			 group_id * 256, qset_maping[(u32)(i + 7)],
-+			 qset_maping[(u32)(i + 6)], qset_maping[(u32)(i + 5)],
-+			 qset_maping[(u32)(i + 4)], qset_maping[(u32)(i + 3)],
-+			 qset_maping[(u32)(i + 2)], qset_maping[(u32)(i + 1)],
-+			 qset_maping[i]);
-+		i += 8;
-+	}
-+
-+	return;
-+
-+err_tm_map_cmd_send:
-+	dev_err(&hdev->pdev->dev, "dump tqp map fail(0x%x), status is %d\n",
-+		cmd, ret);
-+}
-+
- static void hclge_dbg_dump_qos_pause_cfg(struct hclge_dev *hdev)
- {
- 	struct hclge_cfg_pause_param_cmd *pause_param;
-@@ -828,6 +910,8 @@ int hclge_dbg_run_cmd(struct hnae3_handle *handle, char *cmd_buf)
- 		hclge_dbg_fd_tcam(hdev);
- 	} else if (strncmp(cmd_buf, "dump tc", 7) == 0) {
- 		hclge_dbg_dump_tc(hdev);
-+	} else if (strncmp(cmd_buf, "dump tm map", 11) == 0) {
-+		hclge_dbg_dump_tm_map(hdev, cmd_buf);
- 	} else if (strncmp(cmd_buf, "dump tm", 7) == 0) {
- 		hclge_dbg_dump_tm(hdev);
- 	} else if (strncmp(cmd_buf, "dump qos pause cfg", 18) == 0) {
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.h b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.h
-index 9c6192c..b6496a4 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.h
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.h
-@@ -40,6 +40,13 @@ struct hclge_nq_to_qs_link_cmd {
- 	__le16 qset_id;
- };
- 
-+struct hclge_tqp_tx_queue_tc_cmd {
-+	__le16 queue_id;
-+	__le16 rsvd;
-+	u8 tc_id;
-+	u8 rev[3];
-+};
-+
- struct hclge_pg_weight_cmd {
- 	u8 pg_id;
- 	u8 dwrr;
 -- 
 2.7.4
 
