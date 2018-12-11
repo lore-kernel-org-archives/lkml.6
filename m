@@ -2,126 +2,161 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+X-Spam-Status: No, score=-11.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3C11C67839
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 22:46:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BDAADC6783B
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 22:46:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 844B820672
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 22:46:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6B94C20672
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 22:46:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="UeX3hPoK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 844B820672
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="mOksNH0G"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B94C20672
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amd.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726740AbeLKWqU (ORCPT
+        id S1726776AbeLKWqX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 11 Dec 2018 17:46:23 -0500
+Received: from mail-eopbgr720046.outbound.protection.outlook.com ([40.107.72.46]:34114
+        "EHLO NAM05-CO1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726361AbeLKWqU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 11 Dec 2018 17:46:20 -0500
-Received: from sonic308-17.consmr.mail.ne1.yahoo.com ([66.163.187.40]:46339
-        "EHLO sonic308-17.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726557AbeLKWnw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 17:43:52 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1544568231; bh=yzS41n1rCVRHChOBSSjNfES4FV7tKjQHrZu9+D9erQU=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject; b=UeX3hPoKqVD/YNQuBS8PHgMl5zaQDEJqy0q6m5QWgDOzRZDBd7QiX3mjvVy/7wR+uZh3ngZ7yU2BXXl7bxSZh2gJq+r8VHApWZWlw5bRpmhDY76LuSAMEd5xx+hZimH+GZ+KspZp2YrBoimByLaIqi59nQi3zflWM6P71D8nofPsPduxuxYa+DW3v0GVa8EIejjaDz8FM+TpGLufaO4lUkEapkZFkunujjYa0TyCEbcJbDwizEaXwPsBij8y87ZkeSxVwxGHTPbDP7EAueGQLLmGOfD2UDosFCkhIXXowZGXqaB1cgT2GYLdmYxtLx7TuFg8bJn/wlQHPZz5vVP6Rw==
-X-YMail-OSG: R.R8J4wVM1kHGFDRAkC59YJWoZP3nfRZMilZ24D_9Gqo94RD1cb7jqe2n.NPlLP
- _gg4RQaA6XXE0lKnoFjxHqRFapXHT1gVWCM7Ombddy9dOBkXnXUZfUuAPOyiWIXYbZvPRNRdBgqP
- WFo_cuZ9TPwY.AjLUsP8z4.xFIc12BOg.OYFRsyQ2aovskvQULOFzOT1xushjxuK1KuSCoS0McNN
- 58PnS2HhyuOw4SociF9MXeiJzQ3l6wQHJGU4pAZM4Lb9cGtTDQJuG5f.EjvQ.wKAdl27iGxwxD09
- aBY0a3bXY1AjQHdPaVFweQpGCnpkj1to9EkvQg6KHcaiFMskGgKYCcxenUyGbui_6pP0cuwI366c
- cdJyK4Mx2rkVMZ_QoI215IgADJkgtWvHBwA0pJEdy7ONfuBozmyIgP1E6xjuEc0CCTXuFYE0LNJs
- uBeeKlGUpI45sIO.ChNpGkdTF517KdrcTtrr6a4JAlCJdJrE8KFgG22NFSITvan4F2UjIe3iP.J9
- HQP1kD2RfpqlnAzpCyGbAq978AGDmQm2.4JlflPHeXptPmr1d9_8v80Sl8.iM3ogriUsuIB3r44Z
- Km7uSKVPa7IW6juQ4Da.ZHmb_VN3umpurSP6A7dbDxi7ZQWDYtdxGLcRJHNQbq.TxUh40HsujnNf
- Wa5mb1yBCVQxLL6i6Kd.hdntbE1JNL30FyNDPL23esBKV6cl6wzupgEm48mR8q79mt.K8OqJ94ni
- BRsRsnQUQ0BmlXPIQHM8p_DdW01IUAB79BAov5STMR62ujI_e7X_hkfq.iW0vQkG8fCm0FWT3o3n
- SnAN5iOkYctkVqd2.l1AWoCPU.4SEJ.wCpSEoPwkfBMKHuCBucO.XQHFKhKXCN_ptgfjB5ITG_f1
- dVqQUzHSI8deCACV0WZnalq6R92LreJxMhlomAmEPgumdTNzKKbTggD3xa1KaknMFcJvamCX4ADp
- KT32j48jOs2UDOetdUF78wbWrPbiN.R8Kn5lry5hAAqrbOlXBE.UQ0_suEbuDBARl9jqksHGn2oJ
- rpl278XV3Y1oq6SXfMeZKw4BaKDrfeT_8CbnIiyt6e8OAAC5nnoHzuKdfblN6bLFmerWUfH_Bi4X
- lnxRbe2vLWQiCbQXmDy9XaKtWFdcLX6.pM1nrAg--
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic308.consmr.mail.ne1.yahoo.com with HTTP; Tue, 11 Dec 2018 22:43:51 +0000
-Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO localhost.localdomain) ([67.169.65.224])
-          by smtp415.mail.ne1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 8f4847c15ff2a33ea2e557120f9f24e5;
-          Tue, 11 Dec 2018 22:43:50 +0000 (UTC)
-From:   Casey Schaufler <casey@schaufler-ca.com>
-To:     jmorris@namei.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, selinux@vger.kernel.org
-Cc:     john.johansen@canonical.com, keescook@chromium.org,
-        penguin-kernel@i-love.sakura.ne.jp, paul@paul-moore.com,
-        linux-fsdevel@vger.kernel.org, sds@tycho.nsa.gov,
-        adobriyan@gmail.com, mic@digikod.net, s.mesoraca16@gmail.com,
-        casey@schaufler-ca.com
-Subject: [PATCH v5 23/38] SELinux: Remove cred security blob poisoning
-Date:   Tue, 11 Dec 2018 14:42:59 -0800
-Message-Id: <20181211224314.22412-24-casey@schaufler-ca.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20181211224314.22412-1-casey@schaufler-ca.com>
-References: <20181211224314.22412-1-casey@schaufler-ca.com>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=CumKVzNJIVp3sFfpHVZSP953H8JPy5OIFTFWZUlbY1I=;
+ b=mOksNH0GcPfrwUSuGS1cRHzhiu5aTCrHN3rn0HYgBoXKCAbQ96Hf7woL66qRrQE0v3vNuB/TgyddZ9J3frUPDrBPNhQZRwEAqM5DY6TbJAm4xHCiVCzAddFEfWIboiraypI8j5EYT3UcRljY1f/aLCpL10xdjsiNvocH9mPq1eI=
+Received: from SN1PR12MB0175.namprd12.prod.outlook.com (10.162.3.15) by
+ SN1PR12MB2445.namprd12.prod.outlook.com (52.132.195.148) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1425.19; Tue, 11 Dec 2018 22:46:17 +0000
+Received: from SN1PR12MB0175.namprd12.prod.outlook.com
+ ([fe80::bc0e:7f7f:ee65:e2d5]) by SN1PR12MB0175.namprd12.prod.outlook.com
+ ([fe80::bc0e:7f7f:ee65:e2d5%6]) with mapi id 15.20.1425.016; Tue, 11 Dec 2018
+ 22:46:17 +0000
+From:   "Lendacky, Thomas" <Thomas.Lendacky@amd.com>
+To:     "x86@kernel.org" <x86@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC:     Andrea Arcangeli <aarcange@redhat.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Jiri Kosina <jkosina@suse.cz>, Ingo Molnar <mingo@redhat.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        David Woodhouse <dwmw@amazon.co.uk>
+Subject: [PATCH v2] x86/speculation: Add support for STIBP always-on preferred
+ mode
+Thread-Topic: [PATCH v2] x86/speculation: Add support for STIBP always-on
+ preferred mode
+Thread-Index: AQHUkaNTNctPywnCTEqVxIZjhKo+lQ==
+Date:   Tue, 11 Dec 2018 22:46:16 +0000
+Message-ID: <20181211224615.5373.65736.stgit@tlendack-t1.amdoffice.net>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: SN4PR0201CA0055.namprd02.prod.outlook.com
+ (2603:10b6:803:20::17) To SN1PR12MB0175.namprd12.prod.outlook.com
+ (2a01:111:e400:5143::15)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Thomas.Lendacky@amd.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [165.204.77.1]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;SN1PR12MB2445;20:S22ogREjwXjOPovUb0cPYNPuwA6l941tV0wCSNvroG2O8uS/2ZovdyzqM+gLUMMHLPp7vw9c/SR9N4uMNc7nTRsP1Iui4fV8pT/laHJCAaNVv+jsRCcrOG86ogIehedWmOozAZGdkhkGfFCLGBZVNuOQmPZ3NRY3DSmK+ofvsnlaLh8W+DEQx6zh7b3a3X5VOHmqo49RcTJaoqcmCoc7u3hSMwGYsJiRDKJhIJORlrwbP2DA7kdM607/xILc25mo
+x-ms-office365-filtering-correlation-id: 8d7c8a71-e271-4fb0-5693-08d65fba75db
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:SN1PR12MB2445;
+x-ms-traffictypediagnostic: SN1PR12MB2445:
+x-microsoft-antispam-prvs: <SN1PR12MB24458608CC65212FE2D118CEECA60@SN1PR12MB2445.namprd12.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(823302103)(3002001)(10201501046)(3231455)(999002)(944501520)(52105112)(93006095)(93001095)(6055026)(148016)(149066)(150057)(6041310)(20161123562045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123560045)(201708071742011)(7699051)(76991095);SRVR:SN1PR12MB2445;BCL:0;PCL:0;RULEID:;SRVR:SN1PR12MB2445;
+x-forefront-prvs: 08831F51DC
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(346002)(136003)(39860400002)(396003)(366004)(199004)(189003)(81156014)(71200400001)(316002)(8676002)(8936002)(81166006)(54906003)(71190400001)(476003)(6506007)(478600001)(7416002)(486006)(110136005)(99286004)(4326008)(386003)(52116002)(68736007)(2906002)(97746001)(33896004)(256004)(14444005)(7736002)(86362001)(97736004)(102836004)(186003)(26005)(6486002)(5660300001)(9686003)(1076002)(6512007)(305945005)(14454004)(66066001)(6436002)(3846002)(103116003)(53936002)(2501003)(6116002)(72206003)(106356001)(25786009)(105586002);DIR:OUT;SFP:1101;SCL:1;SRVR:SN1PR12MB2445;H:SN1PR12MB0175.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: amd.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: +hGrp9Jb3zc4KrFzqNJ12Cwd1M7x2ewpkBVp+BwPL3AYChXSpYweP3TMsKXf3ku2F4pi1UuCYsdHba+qF6jasUK3neOICqeU019qJCouFW0fXWG7z6NQmRIrKGFB3Of9uGOLBbx/jUNAZ+1G3eICbGe/P5dQVkCRqzh01LonDJCLdqfIKAfmRmZkXNtO94U6x0JMTv/qJbWbYuA0tH0JTzAhiyEVBApCl5Nxg/NuzP7A9FfUoADdYAkZ/wSlYyIhUj1pUyMG2epuV4zNLlUWIJXNJp75vNTITzrf1GuslsILE+IGxCo3zJxB7Z2dW7Fu
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <0A76A1C96716C144A7102BD39F6F412A@namprd12.prod.outlook.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8d7c8a71-e271-4fb0-5693-08d65fba75db
+X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Dec 2018 22:46:16.8340
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN1PR12MB2445
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The SELinux specific credential poisioning only makes sense
-if SELinux is managing the credentials. As the intent of this
-patch set is to move the blob management out of the modules
-and into the infrastructure, the SELinux specific code has
-to go. The poisioning could be introduced into the infrastructure
-at some later date.
-
-Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
-Reviewed-by: Kees Cook <keescook@chromium.org>
-Signed-off-by: Kees Cook <keescook@chromium.org>
----
- kernel/cred.c            | 13 -------------
- security/selinux/hooks.c |  6 ------
- 2 files changed, 19 deletions(-)
-
-diff --git a/kernel/cred.c b/kernel/cred.c
-index ecf03657e71c..fa2061ee4955 100644
---- a/kernel/cred.c
-+++ b/kernel/cred.c
-@@ -704,19 +704,6 @@ bool creds_are_invalid(const struct cred *cred)
- {
- 	if (cred->magic != CRED_MAGIC)
- 		return true;
--#ifdef CONFIG_SECURITY_SELINUX
--	/*
--	 * cred->security == NULL if security_cred_alloc_blank() or
--	 * security_prepare_creds() returned an error.
--	 */
--	if (selinux_is_enabled() && cred->security) {
--		if ((unsigned long) cred->security < PAGE_SIZE)
--			return true;
--		if ((*(u32 *)cred->security & 0xffffff00) ==
--		    (POISON_FREE << 24 | POISON_FREE << 16 | POISON_FREE << 8))
--			return true;
--	}
--#endif
- 	return false;
- }
- EXPORT_SYMBOL(creds_are_invalid);
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index 24b6b459fa2a..41b230d459a6 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -3922,12 +3922,6 @@ static void selinux_cred_free(struct cred *cred)
- {
- 	struct task_security_struct *tsec = selinux_cred(cred);
- 
--	/*
--	 * cred->security == NULL if security_cred_alloc_blank() or
--	 * security_prepare_creds() returned an error.
--	 */
--	BUG_ON(cred->security && (unsigned long) cred->security < PAGE_SIZE);
--	cred->security = (void *) 0x7UL;
- 	kfree(tsec);
- }
- 
--- 
-2.14.5
-
+RGlmZmVyZW50IEFNRCBwcm9jZXNzb3JzIG1heSBoYXZlIGRpZmZlcmVudCBpbXBsZW1lbnRhdGlv
+bnMgb2YgU1RJQlAuDQpXaGVuIFNUSUJQIGlzIGNvbmRpdGlvbmFsbHkgZW5hYmxlZCwgc29tZSBp
+bXBsZW1lbnRhdGlvbnMgd291bGQgYmVuZWZpdA0KZnJvbSBoYXZpbmcgU1RJQlAgYWx3YXlzIG9u
+IGluc3RlYWQgb2YgdG9nZ2xpbmcgdGhlIFNUSUJQIGJpdCB0aHJvdWdoIE1TUg0Kd3JpdGVzLiBU
+aGlzIHByZWZlcmVuY2UgaXMgYWR2ZXJ0aXNlZCB0aHJvdWdoIGEgQ1BVSUQgZmVhdHVyZSBiaXQu
+DQoNCldoZW4gY29uZGl0aW9uYWwgU1RJQlAgc3VwcG9ydCBpcyByZXF1ZXN0ZWQgYXQgYm9vdCBh
+bmQgdGhlIENQVSBhZHZlcnRpc2VzDQpTVElCUCBhbHdheXMtb24gbW9kZSBhcyBwcmVmZXJyZWQs
+IHN3aXRjaCB0byBTVElCUCAib24iIHN1cHBvcnQuIFByaW50IGENCm1lc3NhZ2UgdG8gbGV0IHRo
+ZSB1c2VyIGtub3cgdGhpcyBvY2N1cnJlZC4gQWxzbywgcHJvdmlkZSBhIGJvb2xlYW4gdGhhdA0K
+YmUgdXNlZCBpbiBzdGlicF9zdGF0ZSgpIHRvIHJldHVybiBhIG1lc3NhZ2UgdGFpbG9yZWQgdG8g
+dGhlIGFsd2F5cy1vbg0Kc3VwcG9ydC4NCg0KU2lnbmVkLW9mZi1ieTogVG9tIExlbmRhY2t5IDx0
+aG9tYXMubGVuZGFja3lAYW1kLmNvbT4NCi0tLQ0KDQpUaGlzIHBhdGNoIGlzIGFnYWluc3QgdGhl
+IHg4Ni9wdGkgYnJhbmNoIG9mIHRoZSB0aXAgdHJlZToNCiAgZ2l0Oi8vZ2l0Lmtlcm5lbC5vcmcv
+cHViL3NjbS9saW51eC9rZXJuZWwvZ2l0L3RpcC90aXAuZ2l0IHg4Ni9wdGkNCg0KQ2hhbmdlcyBm
+cm9tIHYxOg0KLSBSZW1vdmVkIGV4cGxpY2l0IFNQRUNUUkVfVjJfVVNFUl9TVFJJQ1RfUFJFRkVS
+UkVEIG1vZGUNCi0gQWRkZWQgYSBtZXNzYWdlIHdoZW4gc3dpdGNoaW5nIHRvIGFsd2F5cy1vbiBt
+b2RlDQotIFNldCBhbmQgdXNlZCBhIHN0YXRpYyBib29sZWFuIGZvciB0aGUgc3RyaW5nIGluIHN0
+aWJwX3N0YXRlKCkNCg0KIGFyY2gveDg2L2luY2x1ZGUvYXNtL2NwdWZlYXR1cmVzLmggfCAgICAx
+ICsNCiBhcmNoL3g4Ni9rZXJuZWwvY3B1L2J1Z3MuYyAgICAgICAgIHwgICAxNyArKysrKysrKysr
+KysrKysrLQ0KIDIgZmlsZXMgY2hhbmdlZCwgMTcgaW5zZXJ0aW9ucygrKSwgMSBkZWxldGlvbigt
+KQ0KDQpkaWZmIC0tZ2l0IGEvYXJjaC94ODYvaW5jbHVkZS9hc20vY3B1ZmVhdHVyZXMuaCBiL2Fy
+Y2gveDg2L2luY2x1ZGUvYXNtL2NwdWZlYXR1cmVzLmgNCmluZGV4IDI4YzRhNTAuLmRmOGU5NGUy
+IDEwMDY0NA0KLS0tIGEvYXJjaC94ODYvaW5jbHVkZS9hc20vY3B1ZmVhdHVyZXMuaA0KKysrIGIv
+YXJjaC94ODYvaW5jbHVkZS9hc20vY3B1ZmVhdHVyZXMuaA0KQEAgLTI4NCw2ICsyODQsNyBAQA0K
+ICNkZWZpbmUgWDg2X0ZFQVRVUkVfQU1EX0lCUEIJCSgxMyozMisxMikgLyogIiIgSW5kaXJlY3Qg
+QnJhbmNoIFByZWRpY3Rpb24gQmFycmllciAqLw0KICNkZWZpbmUgWDg2X0ZFQVRVUkVfQU1EX0lC
+UlMJCSgxMyozMisxNCkgLyogIiIgSW5kaXJlY3QgQnJhbmNoIFJlc3RyaWN0ZWQgU3BlY3VsYXRp
+b24gKi8NCiAjZGVmaW5lIFg4Nl9GRUFUVVJFX0FNRF9TVElCUAkJKDEzKjMyKzE1KSAvKiAiIiBT
+aW5nbGUgVGhyZWFkIEluZGlyZWN0IEJyYW5jaCBQcmVkaWN0b3JzICovDQorI2RlZmluZSBYODZf
+RkVBVFVSRV9BTURfU1RJQlBfQUxXQVlTX09OCSgxMyozMisxNykgLyogIiIgU2luZ2xlIFRocmVh
+ZCBJbmRpcmVjdCBCcmFuY2ggUHJlZGljdG9ycyBhbHdheXMtb24gcHJlZmVycmVkICovDQogI2Rl
+ZmluZSBYODZfRkVBVFVSRV9BTURfU1NCRAkJKDEzKjMyKzI0KSAvKiAiIiBTcGVjdWxhdGl2ZSBT
+dG9yZSBCeXBhc3MgRGlzYWJsZSAqLw0KICNkZWZpbmUgWDg2X0ZFQVRVUkVfVklSVF9TU0JECQko
+MTMqMzIrMjUpIC8qIFZpcnR1YWxpemVkIFNwZWN1bGF0aXZlIFN0b3JlIEJ5cGFzcyBEaXNhYmxl
+ICovDQogI2RlZmluZSBYODZfRkVBVFVSRV9BTURfU1NCX05PCQkoMTMqMzIrMjYpIC8qICIiIFNw
+ZWN1bGF0aXZlIFN0b3JlIEJ5cGFzcyBpcyBmaXhlZCBpbiBoYXJkd2FyZS4gKi8NCmRpZmYgLS1n
+aXQgYS9hcmNoL3g4Ni9rZXJuZWwvY3B1L2J1Z3MuYyBiL2FyY2gveDg2L2tlcm5lbC9jcHUvYnVn
+cy5jDQppbmRleCA1ODY4OWFjLi5kYjE1NmUxIDEwMDY0NA0KLS0tIGEvYXJjaC94ODYva2VybmVs
+L2NwdS9idWdzLmMNCisrKyBiL2FyY2gveDg2L2tlcm5lbC9jcHUvYnVncy5jDQpAQCAtNjEsNiAr
+NjEsOCBAQA0KIC8qIENvbnRyb2wgdW5jb25kaXRpb25hbCBJQlBCIGluIHN3aXRjaF9tbSgpICov
+DQogREVGSU5FX1NUQVRJQ19LRVlfRkFMU0Uoc3dpdGNoX21tX2Fsd2F5c19pYnBiKTsNCiANCitz
+dGF0aWMgYm9vbCBzdGlicF9hbHdheXNfb247DQorDQogdm9pZCBfX2luaXQgY2hlY2tfYnVncyh2
+b2lkKQ0KIHsNCiAJaWRlbnRpZnlfYm9vdF9jcHUoKTsNCkBAIC0zNTUsNiArMzU3LDE4IEBAIHN0
+YXRpYyB2b2lkIF9faW5pdCBzcGVjX3YyX3VzZXJfcHJpbnRfY29uZChjb25zdCBjaGFyICpyZWFz
+b24sIGJvb2wgc2VjdXJlKQ0KIAkJYnJlYWs7DQogCX0NCiANCisJLyoNCisJICogQXQgdGhpcyBw
+b2ludCwgYW4gU1RJQlAgbW9kZSBvdGhlciB0aGFuICJvZmYiIGhhcyBiZWVuIHNldC4NCisJICog
+SWYgU1RJQlAgc3VwcG9ydCBpcyBub3QgYmVpbmcgZm9yY2VkLCBjaGVjayBpZiBTVElCUCBhbHdh
+eXMtb24NCisJICogaXMgcHJlZmVycmVkLg0KKwkgKi8NCisJaWYgKG1vZGUgIT0gU1BFQ1RSRV9W
+Ml9VU0VSX1NUUklDVCAmJg0KKwkgICAgYm9vdF9jcHVfaGFzKFg4Nl9GRUFUVVJFX0FNRF9TVElC
+UF9BTFdBWVNfT04pKSB7DQorCQlzdGlicF9hbHdheXNfb24gPSB0cnVlOw0KKwkJbW9kZSA9IFNQ
+RUNUUkVfVjJfVVNFUl9TVFJJQ1Q7DQorCQlwcl9pbmZvKCJtaXRpZ2F0aW9uOiBTVElCUCBhbHdh
+eXMtb24gaXMgcHJlZmVycmVkXG4iKTsNCisJfQ0KKw0KIAkvKiBJbml0aWFsaXplIEluZGlyZWN0
+IEJyYW5jaCBQcmVkaWN0aW9uIEJhcnJpZXIgKi8NCiAJaWYgKGJvb3RfY3B1X2hhcyhYODZfRkVB
+VFVSRV9JQlBCKSkgew0KIAkJc2V0dXBfZm9yY2VfY3B1X2NhcChYODZfRkVBVFVSRV9VU0VfSUJQ
+Qik7DQpAQCAtMTA4OCw3ICsxMTAyLDggQEAgc3RhdGljIGNoYXIgKnN0aWJwX3N0YXRlKHZvaWQp
+DQogCWNhc2UgU1BFQ1RSRV9WMl9VU0VSX05PTkU6DQogCQlyZXR1cm4gIiwgU1RJQlA6IGRpc2Fi
+bGVkIjsNCiAJY2FzZSBTUEVDVFJFX1YyX1VTRVJfU1RSSUNUOg0KLQkJcmV0dXJuICIsIFNUSUJQ
+OiBmb3JjZWQiOw0KKwkJcmV0dXJuIHN0aWJwX2Fsd2F5c19vbiA/ICIsIFNUSUJQOiBhbHdheXMt
+b24iDQorCQkJCSAgICAgICA6ICIsIFNUSUJQOiBmb3JjZWQiOw0KIAljYXNlIFNQRUNUUkVfVjJf
+VVNFUl9QUkNUTDoNCiAJY2FzZSBTUEVDVFJFX1YyX1VTRVJfU0VDQ09NUDoNCiAJCWlmIChzdGF0
+aWNfa2V5X2VuYWJsZWQoJnN3aXRjaF90b19jb25kX3N0aWJwKSkNCg0K
