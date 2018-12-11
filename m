@@ -6,51 +6,48 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96BDEC07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:58:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E22EC5CFFE
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:58:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 46BB72086D
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:58:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 40EA1208E7
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:58:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544543906;
-	bh=dElc6LkdyZZQyKZYjdrCvVUBBYx0AxFpA3GfQgzjaQU=;
+	s=default; t=1544543910;
+	bh=rm7OpMeeljMOVL1T1Yq9FWR0rU904UztWpyVoIuc3pM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=uSVZu03KJC0GudF1tEmrOg1Ysf77rCRs5u9dmV2vMbSJSunrjPliWkE2SMYnah8/y
-	 kojWq6xuZhllDn9q3GXNR+ba4S9qEQ/RPX+9NbREhE5+ZCmukjmxRvpyt+xgNDqERc
-	 HI0QT8an0/LCbHER6nE4sm+VkCPJRibuzcCTjE3w=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 46BB72086D
+	b=DZUNv+ldAn8Me3Jr5WFkpyB/TkgW53ytC3eHGBvOeOi6NO/qQJSohqCp51yxQootk
+	 J7nfYVySLvB9vgO/16QXzZWLucRBEV3fYL02AEnEDcxoVYAcV+t+lECNTd0nyvnTvi
+	 iEy1PptR/9b8iC9nAagse8uUW931vZwuJ6DR/flY=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 40EA1208E7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730556AbeLKP6Y (ORCPT
+        id S1726957AbeLKP62 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 10:58:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47780 "EHLO mail.kernel.org"
+        Tue, 11 Dec 2018 10:58:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47882 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726723AbeLKP6S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:58:18 -0500
+        id S1726859AbeLKP6Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 10:58:25 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A9DA82086D;
-        Tue, 11 Dec 2018 15:58:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6D445208E7;
+        Tue, 11 Dec 2018 15:58:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544543897;
-        bh=dElc6LkdyZZQyKZYjdrCvVUBBYx0AxFpA3GfQgzjaQU=;
+        s=default; t=1544543904;
+        bh=rm7OpMeeljMOVL1T1Yq9FWR0rU904UztWpyVoIuc3pM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=miMC1YFWNUfGXa4HcuF/5DQRmCb75NAH+dNiBzFQYp/fZhLzZwRZP/WDSChih2som
-         1mIOqrn1EUfTFFRVgWHCHBWet6zg87DRcBOK+813Mis/XLKhv19Ebs5eZmX3kbyJV+
-         GXaf8Doppzj3FSty4WuvCY4GKe/Oh0VdfVTBRP9w=
+        b=eBAIDS4/WEB++S92P6kVkler9pbk8Z1EM1saMHh9DTpliW7dicjtrVeWqmVIxvhOF
+         /ZeRxtG6QKeIcdAIvOC/ADH/9Ru/e5Y2j4/Pj3sYsp6u1YwufNugKuK1BDe6dZiAJ9
+         DxcyC/Q9eQLZMlKbsSlTmQFqL9xB8rXJ5JAKsPuk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Stephen Hemminger <sthemmin@microsoft.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Dexuan Cui <decui@microsoft.com>
-Subject: [PATCH 4.19 105/118] Drivers: hv: vmbus: Offload the handling of channels to two workqueues
-Date:   Tue, 11 Dec 2018 16:42:04 +0100
-Message-Id: <20181211151648.506915457@linuxfoundation.org>
+        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>
+Subject: [PATCH 4.19 108/118] gnss: sirf: fix activation retry handling
+Date:   Tue, 11 Dec 2018 16:42:07 +0100
+Message-Id: <20181211151648.625438898@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181211151644.216668863@linuxfoundation.org>
 References: <20181211151644.216668863@linuxfoundation.org>
@@ -69,390 +66,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dexuan Cui <decui@microsoft.com>
+From: Johan Hovold <johan@kernel.org>
 
-commit 37c2578c0c40e286bc0d30bdc05290b2058cf66e upstream.
+commit 06fd9ab12b804451b14d538adbf98a57c2d6846b upstream.
 
-vmbus_process_offer() mustn't call channel->sc_creation_callback()
-directly for sub-channels, because sc_creation_callback() ->
-vmbus_open() may never get the host's response to the
-OPEN_CHANNEL message (the host may rescind a channel at any time,
-e.g. in the case of hot removing a NIC), and vmbus_onoffer_rescind()
-may not wake up the vmbus_open() as it's blocked due to a non-zero
-vmbus_connection.offer_in_progress, and finally we have a deadlock.
+Fix activation helper which would return -ETIMEDOUT even if the last
+retry attempt was successful.
 
-The above is also true for primary channels, if the related device
-drivers use sync probing mode by default.
+Also change the semantics of the retries variable so that it actually
+holds the number of retries (rather than tries).
 
-And, usually the handling of primary channels and sub-channels can
-depend on each other, so we should offload them to different
-workqueues to avoid possible deadlock, e.g. in sync-probing mode,
-NIC1's netvsc_subchan_work() can race with NIC2's netvsc_probe() ->
-rtnl_lock(), and causes deadlock: the former gets the rtnl_lock
-and waits for all the sub-channels to appear, but the latter
-can't get the rtnl_lock and this blocks the handling of sub-channels.
-
-The patch can fix the multiple-NIC deadlock described above for
-v3.x kernels (e.g. RHEL 7.x) which don't support async-probing
-of devices, and v4.4, v4.9, v4.14 and v4.18 which support async-probing
-but don't enable async-probing for Hyper-V drivers (yet).
-
-The patch can also fix the hang issue in sub-channel's handling described
-above for all versions of kernels, including v4.19 and v4.20-rc4.
-
-So actually the patch should be applied to all the existing kernels,
-not only the kernels that have 8195b1396ec8.
-
-Fixes: 8195b1396ec8 ("hv_netvsc: fix deadlock on hotplug")
-Cc: stable@vger.kernel.org
-Cc: Stephen Hemminger <sthemmin@microsoft.com>
-Cc: K. Y. Srinivasan <kys@microsoft.com>
-Cc: Haiyang Zhang <haiyangz@microsoft.com>
-Signed-off-by: Dexuan Cui <decui@microsoft.com>
-Signed-off-by: K. Y. Srinivasan <kys@microsoft.com>
+Fixes: d2efbbd18b1e ("gnss: add driver for sirfstar-based receivers")
+Cc: stable <stable@vger.kernel.org>	# 4.19
+Signed-off-by: Johan Hovold <johan@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/hv/channel_mgmt.c |  189 ++++++++++++++++++++++++++++++----------------
- drivers/hv/connection.c   |   24 +++++
- drivers/hv/hyperv_vmbus.h |    7 +
- include/linux/hyperv.h    |    7 +
- 4 files changed, 161 insertions(+), 66 deletions(-)
+ drivers/gnss/sirf.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/drivers/hv/channel_mgmt.c
-+++ b/drivers/hv/channel_mgmt.c
-@@ -447,61 +447,16 @@ void vmbus_free_channels(void)
- 	}
- }
+--- a/drivers/gnss/sirf.c
++++ b/drivers/gnss/sirf.c
+@@ -168,7 +168,7 @@ static int sirf_set_active(struct sirf_d
+ 	else
+ 		timeout = SIRF_HIBERNATE_TIMEOUT;
  
--/*
-- * vmbus_process_offer - Process the offer by creating a channel/device
-- * associated with this offer
-- */
--static void vmbus_process_offer(struct vmbus_channel *newchannel)
-+/* Note: the function can run concurrently for primary/sub channels. */
-+static void vmbus_add_channel_work(struct work_struct *work)
- {
--	struct vmbus_channel *channel;
--	bool fnew = true;
-+	struct vmbus_channel *newchannel =
-+		container_of(work, struct vmbus_channel, add_channel_work);
-+	struct vmbus_channel *primary_channel = newchannel->primary_channel;
- 	unsigned long flags;
- 	u16 dev_type;
- 	int ret;
+-	while (retries-- > 0) {
++	do {
+ 		sirf_pulse_on_off(data);
+ 		ret = sirf_wait_for_power_state(data, active, timeout);
+ 		if (ret < 0) {
+@@ -179,9 +179,9 @@ static int sirf_set_active(struct sirf_d
+ 		}
  
--	/* Make sure this is a new offer */
--	mutex_lock(&vmbus_connection.channel_mutex);
--
--	/*
--	 * Now that we have acquired the channel_mutex,
--	 * we can release the potentially racing rescind thread.
--	 */
--	atomic_dec(&vmbus_connection.offer_in_progress);
--
--	list_for_each_entry(channel, &vmbus_connection.chn_list, listentry) {
--		if (!uuid_le_cmp(channel->offermsg.offer.if_type,
--			newchannel->offermsg.offer.if_type) &&
--			!uuid_le_cmp(channel->offermsg.offer.if_instance,
--				newchannel->offermsg.offer.if_instance)) {
--			fnew = false;
--			break;
--		}
+ 		break;
 -	}
--
--	if (fnew)
--		list_add_tail(&newchannel->listentry,
--			      &vmbus_connection.chn_list);
--
--	mutex_unlock(&vmbus_connection.channel_mutex);
--
--	if (!fnew) {
--		/*
--		 * Check to see if this is a sub-channel.
--		 */
--		if (newchannel->offermsg.offer.sub_channel_index != 0) {
--			/*
--			 * Process the sub-channel.
--			 */
--			newchannel->primary_channel = channel;
--			spin_lock_irqsave(&channel->lock, flags);
--			list_add_tail(&newchannel->sc_list, &channel->sc_list);
--			channel->num_sc++;
--			spin_unlock_irqrestore(&channel->lock, flags);
--		} else {
--			goto err_free_chan;
--		}
--	}
--
- 	dev_type = hv_get_dev_type(newchannel);
++	} while (retries--);
  
- 	init_vp_index(newchannel, dev_type);
-@@ -519,27 +474,26 @@ static void vmbus_process_offer(struct v
- 	/*
- 	 * This state is used to indicate a successful open
- 	 * so that when we do close the channel normally, we
--	 * can cleanup properly
-+	 * can cleanup properly.
- 	 */
- 	newchannel->state = CHANNEL_OPEN_STATE;
+-	if (retries == 0)
++	if (retries < 0)
+ 		return -ETIMEDOUT;
  
--	if (!fnew) {
--		struct hv_device *dev
--			= newchannel->primary_channel->device_obj;
-+	if (primary_channel != NULL) {
-+		/* newchannel is a sub-channel. */
-+		struct hv_device *dev = primary_channel->device_obj;
- 
- 		if (vmbus_add_channel_kobj(dev, newchannel))
--			goto err_free_chan;
-+			goto err_deq_chan;
-+
-+		if (primary_channel->sc_creation_callback != NULL)
-+			primary_channel->sc_creation_callback(newchannel);
- 
--		if (channel->sc_creation_callback != NULL)
--			channel->sc_creation_callback(newchannel);
- 		newchannel->probe_done = true;
- 		return;
- 	}
- 
- 	/*
--	 * Start the process of binding this offer to the driver
--	 * We need to set the DeviceObject field before calling
--	 * vmbus_child_dev_add()
-+	 * Start the process of binding the primary channel to the driver
- 	 */
- 	newchannel->device_obj = vmbus_device_create(
- 		&newchannel->offermsg.offer.if_type,
-@@ -568,13 +522,28 @@ static void vmbus_process_offer(struct v
- 
- err_deq_chan:
- 	mutex_lock(&vmbus_connection.channel_mutex);
--	list_del(&newchannel->listentry);
-+
-+	/*
-+	 * We need to set the flag, otherwise
-+	 * vmbus_onoffer_rescind() can be blocked.
-+	 */
-+	newchannel->probe_done = true;
-+
-+	if (primary_channel == NULL) {
-+		list_del(&newchannel->listentry);
-+	} else {
-+		spin_lock_irqsave(&primary_channel->lock, flags);
-+		list_del(&newchannel->sc_list);
-+		spin_unlock_irqrestore(&primary_channel->lock, flags);
-+	}
-+
- 	mutex_unlock(&vmbus_connection.channel_mutex);
- 
- 	if (newchannel->target_cpu != get_cpu()) {
- 		put_cpu();
- 		smp_call_function_single(newchannel->target_cpu,
--					 percpu_channel_deq, newchannel, true);
-+					 percpu_channel_deq,
-+					 newchannel, true);
- 	} else {
- 		percpu_channel_deq(newchannel);
- 		put_cpu();
-@@ -582,14 +551,104 @@ err_deq_chan:
- 
- 	vmbus_release_relid(newchannel->offermsg.child_relid);
- 
--err_free_chan:
- 	free_channel(newchannel);
- }
- 
- /*
-+ * vmbus_process_offer - Process the offer by creating a channel/device
-+ * associated with this offer
-+ */
-+static void vmbus_process_offer(struct vmbus_channel *newchannel)
-+{
-+	struct vmbus_channel *channel;
-+	struct workqueue_struct *wq;
-+	unsigned long flags;
-+	bool fnew = true;
-+
-+	mutex_lock(&vmbus_connection.channel_mutex);
-+
-+	/*
-+	 * Now that we have acquired the channel_mutex,
-+	 * we can release the potentially racing rescind thread.
-+	 */
-+	atomic_dec(&vmbus_connection.offer_in_progress);
-+
-+	list_for_each_entry(channel, &vmbus_connection.chn_list, listentry) {
-+		if (!uuid_le_cmp(channel->offermsg.offer.if_type,
-+				 newchannel->offermsg.offer.if_type) &&
-+		    !uuid_le_cmp(channel->offermsg.offer.if_instance,
-+				 newchannel->offermsg.offer.if_instance)) {
-+			fnew = false;
-+			break;
-+		}
-+	}
-+
-+	if (fnew)
-+		list_add_tail(&newchannel->listentry,
-+			      &vmbus_connection.chn_list);
-+	else {
-+		/*
-+		 * Check to see if this is a valid sub-channel.
-+		 */
-+		if (newchannel->offermsg.offer.sub_channel_index == 0) {
-+			mutex_unlock(&vmbus_connection.channel_mutex);
-+			/*
-+			 * Don't call free_channel(), because newchannel->kobj
-+			 * is not initialized yet.
-+			 */
-+			kfree(newchannel);
-+			WARN_ON_ONCE(1);
-+			return;
-+		}
-+		/*
-+		 * Process the sub-channel.
-+		 */
-+		newchannel->primary_channel = channel;
-+		spin_lock_irqsave(&channel->lock, flags);
-+		list_add_tail(&newchannel->sc_list, &channel->sc_list);
-+		spin_unlock_irqrestore(&channel->lock, flags);
-+	}
-+
-+	mutex_unlock(&vmbus_connection.channel_mutex);
-+
-+	/*
-+	 * vmbus_process_offer() mustn't call channel->sc_creation_callback()
-+	 * directly for sub-channels, because sc_creation_callback() ->
-+	 * vmbus_open() may never get the host's response to the
-+	 * OPEN_CHANNEL message (the host may rescind a channel at any time,
-+	 * e.g. in the case of hot removing a NIC), and vmbus_onoffer_rescind()
-+	 * may not wake up the vmbus_open() as it's blocked due to a non-zero
-+	 * vmbus_connection.offer_in_progress, and finally we have a deadlock.
-+	 *
-+	 * The above is also true for primary channels, if the related device
-+	 * drivers use sync probing mode by default.
-+	 *
-+	 * And, usually the handling of primary channels and sub-channels can
-+	 * depend on each other, so we should offload them to different
-+	 * workqueues to avoid possible deadlock, e.g. in sync-probing mode,
-+	 * NIC1's netvsc_subchan_work() can race with NIC2's netvsc_probe() ->
-+	 * rtnl_lock(), and causes deadlock: the former gets the rtnl_lock
-+	 * and waits for all the sub-channels to appear, but the latter
-+	 * can't get the rtnl_lock and this blocks the handling of
-+	 * sub-channels.
-+	 */
-+	INIT_WORK(&newchannel->add_channel_work, vmbus_add_channel_work);
-+	wq = fnew ? vmbus_connection.handle_primary_chan_wq :
-+		    vmbus_connection.handle_sub_chan_wq;
-+	queue_work(wq, &newchannel->add_channel_work);
-+}
-+
-+/*
-  * We use this state to statically distribute the channel interrupt load.
-  */
- static int next_numa_node_id;
-+/*
-+ * init_vp_index() accesses global variables like next_numa_node_id, and
-+ * it can run concurrently for primary channels and sub-channels: see
-+ * vmbus_process_offer(), so we need the lock to protect the global
-+ * variables.
-+ */
-+static DEFINE_SPINLOCK(bind_channel_to_cpu_lock);
- 
- /*
-  * Starting with Win8, we can statically distribute the incoming
-@@ -625,6 +684,8 @@ static void init_vp_index(struct vmbus_c
- 		return;
- 	}
- 
-+	spin_lock(&bind_channel_to_cpu_lock);
-+
- 	/*
- 	 * Based on the channel affinity policy, we will assign the NUMA
- 	 * nodes.
-@@ -707,6 +768,8 @@ static void init_vp_index(struct vmbus_c
- 	channel->target_cpu = cur_cpu;
- 	channel->target_vp = hv_cpu_number_to_vp_number(cur_cpu);
- 
-+	spin_unlock(&bind_channel_to_cpu_lock);
-+
- 	free_cpumask_var(available_mask);
- }
- 
---- a/drivers/hv/connection.c
-+++ b/drivers/hv/connection.c
-@@ -190,6 +190,20 @@ int vmbus_connect(void)
- 		goto cleanup;
- 	}
- 
-+	vmbus_connection.handle_primary_chan_wq =
-+		create_workqueue("hv_pri_chan");
-+	if (!vmbus_connection.handle_primary_chan_wq) {
-+		ret = -ENOMEM;
-+		goto cleanup;
-+	}
-+
-+	vmbus_connection.handle_sub_chan_wq =
-+		create_workqueue("hv_sub_chan");
-+	if (!vmbus_connection.handle_sub_chan_wq) {
-+		ret = -ENOMEM;
-+		goto cleanup;
-+	}
-+
- 	INIT_LIST_HEAD(&vmbus_connection.chn_msg_list);
- 	spin_lock_init(&vmbus_connection.channelmsg_lock);
- 
-@@ -280,10 +294,14 @@ void vmbus_disconnect(void)
- 	 */
- 	vmbus_initiate_unload(false);
- 
--	if (vmbus_connection.work_queue) {
--		drain_workqueue(vmbus_connection.work_queue);
-+	if (vmbus_connection.handle_sub_chan_wq)
-+		destroy_workqueue(vmbus_connection.handle_sub_chan_wq);
-+
-+	if (vmbus_connection.handle_primary_chan_wq)
-+		destroy_workqueue(vmbus_connection.handle_primary_chan_wq);
-+
-+	if (vmbus_connection.work_queue)
- 		destroy_workqueue(vmbus_connection.work_queue);
--	}
- 
- 	if (vmbus_connection.int_page) {
- 		free_pages((unsigned long)vmbus_connection.int_page, 0);
---- a/drivers/hv/hyperv_vmbus.h
-+++ b/drivers/hv/hyperv_vmbus.h
-@@ -335,7 +335,14 @@ struct vmbus_connection {
- 	struct list_head chn_list;
- 	struct mutex channel_mutex;
- 
-+	/*
-+	 * An offer message is handled first on the work_queue, and then
-+	 * is further handled on handle_primary_chan_wq or
-+	 * handle_sub_chan_wq.
-+	 */
- 	struct workqueue_struct *work_queue;
-+	struct workqueue_struct *handle_primary_chan_wq;
-+	struct workqueue_struct *handle_sub_chan_wq;
- };
- 
- 
---- a/include/linux/hyperv.h
-+++ b/include/linux/hyperv.h
-@@ -904,6 +904,13 @@ struct vmbus_channel {
- 
- 	bool probe_done;
- 
-+	/*
-+	 * We must offload the handling of the primary/sub channels
-+	 * from the single-threaded vmbus_connection.work_queue to
-+	 * two different workqueue, otherwise we can block
-+	 * vmbus_connection.work_queue and hang: see vmbus_process_offer().
-+	 */
-+	struct work_struct add_channel_work;
- };
- 
- static inline bool is_hvsock_channel(const struct vmbus_channel *c)
+ 	return 0;
 
 
