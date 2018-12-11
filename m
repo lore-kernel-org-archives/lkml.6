@@ -2,134 +2,117 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C161BC07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 09:01:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44311C07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 09:03:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 780762084A
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 09:01:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544518863;
-	bh=e8YHmbGw7SCHlxyIsYFHZ8qDYTJ6akeBJxHkzWdvXKs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=nLA0qa+Atl8hhkMFQ+2jjfmREYU50waJABH2fpW2wG5/OgYBTfVXa+O8LcKOov80n
-	 LWjE4Qw/7LGuNM4GhfhxL0cfwYsYn94uaG5EvFMPgS0tU/XH1Y5jCbybkps0DNV56F
-	 qox/nm0N/h+pntir7rPXO8HnZY/FMpK1B2OADIz4=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 780762084A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id F099E2084C
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 09:03:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F099E2084C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726170AbeLKJBC (ORCPT
+        id S1726200AbeLKJDG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 04:01:02 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:45174 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726094AbeLKJBB (ORCPT
+        Tue, 11 Dec 2018 04:03:06 -0500
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:33077 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726085AbeLKJDF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 04:01:01 -0500
-Received: by mail-wr1-f66.google.com with SMTP id b14so13181793wru.12;
-        Tue, 11 Dec 2018 01:01:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=uXEzyFPCa+8P7PACWC73ZYZnsVLAkBBXSJSrQtjuu+w=;
-        b=G7RhiWkx0kE5Fz3xRHcu45Ghqc70/kxr62mF+Ml74ZWbVh1zJ1GpsxcOUL23POdPhQ
-         GBKPEP70psB5Q+DmgyR1xUpQ8gYMTNymo9llJPrWKCLWryB0Fw95USRARs/Cpp4Hifsu
-         ACYgFqWvXpZGWBtsxHfEPdfFVg2McaqBpQ4RBguaq8xteHFZE888wgVGrFrjUduce0Yh
-         AePj4Wi0TBTf5vJc8ocTywsSXrbvFz4NFnxITDiF61itAUQPYzlofFaH7PD8yt7/9VLW
-         hrliRYc54T2SY4vu/FFlXDbO7E/ymdVjc1V/V2sUELWzhYDnKZJascxBhx/o99mL3Ow0
-         K3Kw==
+        Tue, 11 Dec 2018 04:03:05 -0500
+Received: by mail-qk1-f195.google.com with SMTP id o89so8182709qko.0;
+        Tue, 11 Dec 2018 01:03:04 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=uXEzyFPCa+8P7PACWC73ZYZnsVLAkBBXSJSrQtjuu+w=;
-        b=Gskw08xRv/0cPvY/Ie5Tq1HFHCze6O8FNiMEMvrzxexNrJBTV3wP47VlSXZowxmkx9
-         tmlC4qkCXpSEa+2vc1E2gSUq1+HoT1UxiSSheByxiqxIrEX0QLPcuioer/voeD92a8s+
-         fAcoTSmb432MGfiWzk/aoPRxPM7oJNinsp1fA8sSeH5Ny+bCXcKJeZndX6zM+E2fX7Fw
-         KboON1qrA2TfSLK9G34q8h4JvIweudE/AEVMVKCVK0UiKt6eKd+yaxCWP46c4mWpH5h/
-         nrrPgwoJpeV4/5Afh0u2i0NBN1+hPeA7SwLcuVFxI3hO7OTSDEFUbRJre9HjrnFVhjn6
-         1AlQ==
-X-Gm-Message-State: AA+aEWa3vJU/J80sXGCIh20oTivzwIJeSL3qsnSa+326pnIFNVoKjZU8
-        cNWPIx7D0B51bB3Yju0SiNc=
-X-Google-Smtp-Source: AFSGD/UZZYinTu1pPaMHQG2gOnreUnWC3o2Hg0MVAto2dRUfGv8DG7TUUq2l+2jVhRjCOK+KF8GWaQ==
-X-Received: by 2002:adf:ea11:: with SMTP id q17mr12090255wrm.328.1544518859824;
-        Tue, 11 Dec 2018 01:00:59 -0800 (PST)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id l20sm36151764wrb.93.2018.12.11.01.00.58
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 11 Dec 2018 01:00:58 -0800 (PST)
-Date:   Tue, 11 Dec 2018 10:00:56 +0100
-From:   Ingo Molnar <mingo@kernel.org>
-To:     linux-mm@kvack.org, mhocko@suse.com, bp@suse.de,
-        pasha.tatashin@soleen.com, tglx@linutronix.de,
-        linux-kernel@vger.kernel.org, dave.hansen@intel.com,
-        torvalds@linux-foundation.org, hpa@zytor.com, jkosina@suse.cz,
-        ak@linux.intel.com
-Cc:     linux-tip-commits@vger.kernel.org
-Subject: Re: [tip:x86/pti] x86/speculation/l1tf: Drop the swap storage limit
- restriction when l1tf=off
-Message-ID: <20181211090056.GA30493@gmail.com>
-References: <20181113184910.26697-1-mhocko@kernel.org>
- <tip-f4abaa98c4575cc06ea5e1a593e3bc2c8de8ef48@git.kernel.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=oeWJmY84JG6eAX2k07pciE7NYOZrbaPRTVaeLim/GR0=;
+        b=VShOFWPXfyxhnKLoG8Goxl8xI7RjLSpv9mhke8F/RL8bW2pisyY1qWdpma5uqKfGf3
+         rbuOmlrOdsEEiRxyLaq8ro2wDjWb/mcSGybUjBdw34dfAbGedqcAE1xiUUzPai8LPesX
+         1wMs8NTh6agKpVEwRD5a+Am1FfHrvo6uvfwfb9hfINDG0ngsO0Sj1mrnyF/LKc01ajaj
+         3E0dA8Ut5wGOMAT6FdxqOXaOKng/a1A+qkvtof/U6RaxS2GgGu7T9h23snE9iFELbA0p
+         ArWQXTn2ln7nIVWxYnlVAZz5s6XM+QII0vkZIq1C0IAKgjGuZvNpBBYKwd2FQ0ugfhCr
+         lOHA==
+X-Gm-Message-State: AA+aEWZ59dxeqzVY3nFvAoLW2+PHNV07FJhIFupKHC+0YfYj7vLw9tA/
+        jir8L90rxkpSZGJ/qjkR5G1rQcLVKv1kk5U8AZQ=
+X-Google-Smtp-Source: AFSGD/U3y+u2T4/tfzFvoe+M9zw4vSGqYVf+T9V3TbWFrXx++KX80jLRAPwyyvZkd6snk4e3dR82KH0HQHNUpFAfY0w=
+X-Received: by 2002:ae9:d8c2:: with SMTP id u185mr13129956qkf.107.1544518984309;
+ Tue, 11 Dec 2018 01:03:04 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <tip-f4abaa98c4575cc06ea5e1a593e3bc2c8de8ef48@git.kernel.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <CALCETrXoRAibsbWa9nfbDrt0iEuebMnCMhSFg-d9W-J2g8mDjw@mail.gmail.com>
+ <CAMe9rOp0m5sn59AsD2F2i2Ad2tb7ufPU1mMg-vUOfh+TnGMeaw@mail.gmail.com> <CALCETrU5xw61=me1YcTO3VPzjNEZahMPpi-20-oiSGs+CHcj4g@mail.gmail.com>
+In-Reply-To: <CALCETrU5xw61=me1YcTO3VPzjNEZahMPpi-20-oiSGs+CHcj4g@mail.gmail.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Tue, 11 Dec 2018 10:02:45 +0100
+Message-ID: <CAK8P3a0adxnXr9JLfpR5MBeEJXSCK2Rt4w7NFLUUwO6s6LBVPQ@mail.gmail.com>
+Subject: Re: Can we drop upstream Linux x32 support?
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     "H.J. Lu" <hjl.tools@gmail.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Florian Weimer <fweimer@redhat.com>, vapier@gentoo.org,
+        Rich Felker <dalias@libc.org>, x32@buildd.debian.org,
+        Will Deacon <will.deacon@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Dec 11, 2018 at 6:35 AM Andy Lutomirski <luto@kernel.org> wrote:
+> On Mon, Dec 10, 2018 at 7:15 PM H.J. Lu <hjl.tools@gmail.com> wrote:
+> > On Mon, Dec 10, 2018 at 5:23 PM Andy Lutomirski <luto@kernel.org> wrote:
+> Right.  My question wasn't whether x32 had developers -- it was
+> whether it had users.  If the only users are a small handful of people
+> who keep the toolchain and working and some people who benchmark it,
+> then I think the case for keeping it in upstream Linux is a bit weak.
 
-* tip-bot for Michal Hocko <tipbot@zytor.com> wrote:
++1
 
-> Commit-ID:  f4abaa98c4575cc06ea5e1a593e3bc2c8de8ef48
-> Gitweb:     https://git.kernel.org/tip/f4abaa98c4575cc06ea5e1a593e3bc2c8de8ef48
-> Author:     Michal Hocko <mhocko@suse.com>
-> AuthorDate: Tue, 13 Nov 2018 19:49:10 +0100
-> Committer:  Thomas Gleixner <tglx@linutronix.de>
-> CommitDate: Mon, 10 Dec 2018 22:07:02 +0100
-> 
-> x86/speculation/l1tf: Drop the swap storage limit restriction when l1tf=off
+> > > Conversely, if you call a syscall in the 512 range with bit 31
+> > > *clear*, then the compat entry is set with in_compat_syscall()
+> > > *clear*.  This is also nutty.
+> >
+> > This is to share syscalls between LP64 and ILP32 (x32) in x86-64 kernel.
+> >
+>
+> I tried to understand what's going on.  As far as I can tell, most of
+> the magic is the fact that __kernel_long_t and __kernel_ulong_t are
+> 64-bit as seen by x32 user code.  This means that a decent number of
+> uapi structures are the same on x32 and x86_64.  Syscalls that only
+> use structures like this should route to the x86_64 entry points.  But
+> the implementation is still highly dubious -- in_compat_syscall() will
+> be *true* in such system calls,
 
-> [ tglx: Folded the documentation delta change ]
+I think the fundamental issue was that the intention had always been
+to use only the 64-bit entry points for system calls, but the most
+complex one we have -- ioctl() -- has to use the compat entry point
+because device drivers define their own data structures using 'long'
+and pointer members and they need translation, as well as
+matching in_compat_syscall() checks. This in turn breaks down
+again whenever a driver defines an ioctl command that takes
+a __kernel_long_t or a derived type like timespec as its argument.
 
-> --- a/Documentation/admin-guide/kernel-parameters.txt
-> +++ b/Documentation/admin-guide/kernel-parameters.txt
-> @@ -2095,6 +2095,9 @@
->  			off
->  				Disables hypervisor mitigations and doesn't
->  				emit any warnings.
-> +				It also drops the swap size and available
-> +				RAM limit restriction on both hypervisor and
-> +				bare metal.
+> which means that, if someone changes:
+>
+...
+> where one argument has x32 and x86_64 matching but the other has x32
+> and x86_32 matching.
+>
+> This whole thing seems extremely fragile.
 
->  
->  			Default is 'flush'.
->  
-> diff --git a/Documentation/admin-guide/l1tf.rst b/Documentation/admin-guide/l1tf.rst
-> index b85dd80510b0..2e65e6cb033e 100644
-> --- a/Documentation/admin-guide/l1tf.rst
-> +++ b/Documentation/admin-guide/l1tf.rst
-> @@ -405,6 +405,9 @@ time with the option "l1tf=". The valid arguments for this option are:
->  
->    off		Disables hypervisor mitigations and doesn't emit any
->  		warnings.
-> +		It also drops the swap size and available RAM limit restrictions
-> +                on both hypervisor and bare metal.
-> +
+It definitely is. We have lots of workarounds specifically for
+x32 in device drivers, but in the time_t conversion for y2038
+I still found ones that had not been caught earlier, and for each
+y2038 conversion that someone did to a driver or syscall, we have
+to make sure that it doesn't break x32 in the process.
 
-Note tha there's also some whitespace damage here: all other similar 
-lines in this RST file start with two tabs, this one starts with 8 
-spaces.
-
-Thanks,
-
-	Ingo
+         Arnd
