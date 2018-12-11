@@ -2,166 +2,68 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5663BC07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 05:57:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C97DCC07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 06:01:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C8BE20672
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 05:57:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="nK10dm8q"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C8BE20672
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	by mail.kernel.org (Postfix) with ESMTP id 8857120851
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 06:01:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8857120851
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728963AbeLKF5q (ORCPT
+        id S1729053AbeLKGBJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 00:57:46 -0500
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:37594 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727352AbeLKF5p (ORCPT
+        Tue, 11 Dec 2018 01:01:09 -0500
+Received: from shards.monkeyblade.net ([23.128.96.9]:53784 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727352AbeLKGBI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 00:57:45 -0500
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id wBB5vKaF095729;
-        Mon, 10 Dec 2018 23:57:20 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1544507840;
-        bh=RAAIZDjFLr1rMqXvymZpE2+y2wtLA3FnMfxg9cA8FuU=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=nK10dm8qAAsAUgOy2ocs3Uv/Ft6MmiSFEuHXF0fq0xosFQUvnK+rSqIdRu+/bWpdl
-         Z+FKmzsv+qf37TehznSgjhvRM6WVt69qnRAUjxhr5JXsSxcm9g2Yv//5H4qIYph3cJ
-         cf9JCchpz23JFcJzjCSnbygQ3e0nWYhMpcCwO9KU=
-Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wBB5vKBD012062
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 10 Dec 2018 23:57:20 -0600
-Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE103.ent.ti.com
- (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Mon, 10
- Dec 2018 23:57:19 -0600
-Received: from dflp32.itg.ti.com (10.64.6.15) by DLEE113.ent.ti.com
- (157.170.170.24) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Mon, 10 Dec 2018 23:57:20 -0600
-Received: from [172.24.190.89] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id wBB5vGXv017797;
-        Mon, 10 Dec 2018 23:57:16 -0600
-Subject: Re: [PATCH 2/2] arm64: dts: ti: k3-am654-base-board: Add MMC/SD
- support
-To:     Faiz Abbas <faiz_abbas@ti.com>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-CC:     <mark.rutland@arm.com>, <nm@ti.com>, <ulf.hansson@linaro.org>,
-        <adrian.hunter@intel.com>, <kishon@ti.com>, <t-kristo@ti.com>,
-        <robh+dt@kernel.org>, <michal.simek@xilinx.com>
-References: <20181207084233.13700-1-faiz_abbas@ti.com>
- <20181207084233.13700-3-faiz_abbas@ti.com>
-From:   Vignesh R <vigneshr@ti.com>
-Message-ID: <f549d2ef-d038-4976-620e-a32c6bd15dbf@ti.com>
-Date:   Tue, 11 Dec 2018 11:28:13 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <20181207084233.13700-3-faiz_abbas@ti.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
+        Tue, 11 Dec 2018 01:01:08 -0500
+Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::bf5])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 328331000B09D;
+        Mon, 10 Dec 2018 22:01:08 -0800 (PST)
+Date:   Mon, 10 Dec 2018 22:01:07 -0800 (PST)
+Message-Id: <20181210.220107.751606140724107779.davem@davemloft.net>
+To:     yuehaibing@huawei.com
+Cc:     h.morris@cascoda.com, alex.aring@gmail.com,
+        stefan@datenfreihafen.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, linux-wpan@vger.kernel.org
+Subject: Re: [PATCH net-next] ieee802154: ca8210: fix possible u8 overflow
+ in ca8210_rx_done
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20181211031339.21048-1-yuehaibing@huawei.com>
+References: <20181211031339.21048-1-yuehaibing@huawei.com>
+X-Mailer: Mew version 6.8 on Emacs 26.1
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Mon, 10 Dec 2018 22:01:08 -0800 (PST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Tue, 11 Dec 2018 11:13:39 +0800
 
-On 07/12/18 2:12 PM, Faiz Abbas wrote:
-> On the am654x-evm, sdhci0 node is connected to an eMMC while sdhci1
-> is connected to an SD card slot. Add nodes and pinmuxes for the same.
+> gcc warning this:
 > 
-> Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
-> ---
->  .../arm64/boot/dts/ti/k3-am654-base-board.dts | 46 +++++++++++++++++++
->  1 file changed, 46 insertions(+)
+> drivers/net/ieee802154/ca8210.c:730:10: warning:
+>  comparison is always false due to limited range of data type [-Wtype-limits]
 > 
-> diff --git a/arch/arm64/boot/dts/ti/k3-am654-base-board.dts b/arch/arm64/boot/dts/ti/k3-am654-base-board.dts
-> index bd5a0069191d..5dcd16b787eb 100644
-> --- a/arch/arm64/boot/dts/ti/k3-am654-base-board.dts
-> +++ b/arch/arm64/boot/dts/ti/k3-am654-base-board.dts
-> @@ -60,6 +60,36 @@
->  			AM65X_IOPAD(0x0070, PIN_INPUT, 5) /* (R25) GPMC0_CSn2.I2C2_SDA */
->  		>;
->  	};
-> +
-> +	main_mmc0_pins_default: main_mmc0_pins_default {
-
-
-make dtbs W=12 will warn you:
-Character '_' not recommended in node name
-
-
-> +		pinctrl-single,pins = <
-> +			AM65X_IOPAD(0x01a8, PIN_INPUT_PULLDOWN, 0) /* (B25) MMC0_CLK */
-> +			AM65X_IOPAD(0x01ac, PIN_INPUT_PULLUP, 0) /* (B27) MMC0_CMD */
-> +			AM65X_IOPAD(0x01a4, PIN_INPUT_PULLUP, 0) /* (A26) MMC0_DAT0 */
-> +			AM65X_IOPAD(0x01a0, PIN_INPUT_PULLUP, 0) /* (E25) MMC0_DAT1 */
-> +			AM65X_IOPAD(0x019c, PIN_INPUT_PULLUP, 0) /* (C26) MMC0_DAT2 */
-> +			AM65X_IOPAD(0x0198, PIN_INPUT_PULLUP, 0) /* (A25) MMC0_DAT3 */
-> +			AM65X_IOPAD(0x0194, PIN_INPUT_PULLUP, 0) /* (E24) MMC0_DAT4 */
-> +			AM65X_IOPAD(0x0190, PIN_INPUT_PULLUP, 0) /* (A24) MMC0_DAT5 */
-> +			AM65X_IOPAD(0x018c, PIN_INPUT_PULLUP, 0) /* (B26) MMC0_DAT6 */
-> +			AM65X_IOPAD(0x0188, PIN_INPUT_PULLUP, 0) /* (D25) MMC0_DAT7 */
-> +			AM65X_IOPAD(0x01b4, PIN_INPUT_PULLUP, 0) /* (A23) MMC0_SDCD */
-> +			AM65X_IOPAD(0x01b0, PIN_INPUT, 0) /* (C25) MMC0_DS */
-> +		>;
-> +	};
-> +
-> +	main_mmc1_pins_default: main_mmc1_pins_default {
-
-Same here
-
-Regards
-Vignesh
-
-> +		pinctrl-single,pins = <
-> +			AM65X_IOPAD(0x02d4, PIN_INPUT_PULLDOWN, 0) /* (C27) MMC1_CLK */
-> +			AM65X_IOPAD(0x02d8, PIN_INPUT_PULLUP, 0) /* (C28) MMC1_CMD */
-> +			AM65X_IOPAD(0x02d0, PIN_INPUT_PULLUP, 0) /* (D28) MMC1_DAT0 */
-> +			AM65X_IOPAD(0x02cc, PIN_INPUT_PULLUP, 0) /* (E27) MMC1_DAT1 */
-> +			AM65X_IOPAD(0x02c8, PIN_INPUT_PULLUP, 0) /* (D26) MMC1_DAT2 */
-> +			AM65X_IOPAD(0x02c4, PIN_INPUT_PULLUP, 0) /* (D27) MMC1_DAT3 */
-> +			AM65X_IOPAD(0x02dc, PIN_INPUT_PULLUP, 0) /* (B24) MMC1_SDCD */
-> +			AM65X_IOPAD(0x02e0, PIN_INPUT, 0) /* (C24) MMC1_SDWP */
-> +		>;
-> +	};
->  };
->  
->  &main_pmx1 {
-> @@ -125,3 +155,19 @@
->  	pinctrl-0 = <&main_i2c2_pins_default>;
->  	clock-frequency = <400000>;
->  };
-> +
-> +&sdhci0 {
-> +	status = "okay";
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&main_mmc0_pins_default>;
-> +	bus-width = <8>;
-> +	non-removable;
-> +	ti,driver-strength-ohm = <50>;
-> +};
-> +
-> +&sdhci1 {
-> +	status = "okay";
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&main_mmc1_pins_default>;
-> +	ti,driver-strength-ohm = <50>;
-> +};
+> 'len' is u8 type, we get it from buf[1] adding 2, which can overflow.
+> This patch change the type of 'len' to unsigned int to avoid this,also fix
+> the gcc warning.
 > 
+> Fixes: ded845a781a5 ("ieee802154: Add CA8210 IEEE 802.15.4 device driver")
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 
--- 
-Regards
-Vignesh
+WPAN maintainers, I am assuming that as maintainers you will be
+picking this up and sending it to me.
