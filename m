@@ -2,173 +2,153 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFB3EC5CFFE
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 14:16:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 196E0C5CFFE
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 14:16:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8DD422084E
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 14:16:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=dell.com header.i=@dell.com header.b="Nn/amUGF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8DD422084E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=dell.com
+	by mail.kernel.org (Postfix) with ESMTP id DE46120849
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 14:16:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE46120849
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726806AbeLKOQ3 (ORCPT
+        id S1726833AbeLKOQg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 09:16:29 -0500
-Received: from esa7.dell-outbound.iphmx.com ([68.232.153.96]:5755 "EHLO
-        esa7.dell-outbound.iphmx.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726448AbeLKOQ3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 09:16:29 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=dell.com; i=@dell.com; q=dns/txt; s=smtpout;
-  t=1544537778; x=1576073778;
-  h=from:to:cc:subject:date:message-id;
-  bh=5a8oGUomlONxYXp5vnFXmGGsI+vXGPfLoQ0LOLOMbWc=;
-  b=Nn/amUGFIZVw3WK201ep3/aNSelZCkg4VCRSrkJbB2IkDj/PdaJz9vpp
-   smhZ2JvV0iyWq/Cx9+q0eEJVZQ6A8mzIPvpn6DhqFWXIRSz/WLiRxwo8n
-   Qj5xAY0jMlWn+LkS7U1SiQss919Ce29fSgLkDJ6xO/OrjvGb8aJ2qfFJi
-   k=;
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2GFAQBUxQ9chyWd50NlHQEBBQEHBQG?=
- =?us-ascii?q?BZYNsJ4xzizGDCZhRCwEBhGyCbyI4EgEDAQECAQECAQECEAEBAQoLCQgpL4I?=
- =?us-ascii?q?2JAGCZRYVUikmbxMign+CApkYPQKBEIlYAQEBgWoziiuHfIQ/gVc/gRGCXQe?=
- =?us-ascii?q?Bb4kbAok7hwGQPwcCgiIEjysCFpE/AZkMAgQCBAUCFIFdgXhwgzyCJwwCCY4?=
- =?us-ascii?q?8IQExi2gBAQ?=
-X-IPAS-Result: =?us-ascii?q?A2GFAQBUxQ9chyWd50NlHQEBBQEHBQGBZYNsJ4xzizGDC?=
- =?us-ascii?q?ZhRCwEBhGyCbyI4EgEDAQECAQECAQECEAEBAQoLCQgpL4I2JAGCZRYVUikmb?=
- =?us-ascii?q?xMign+CApkYPQKBEIlYAQEBgWoziiuHfIQ/gVc/gRGCXQeBb4kbAok7hwGQP?=
- =?us-ascii?q?wcCgiIEjysCFpE/AZkMAgQCBAUCFIFdgXhwgzyCJwwCCY48IQExi2gBAQ?=
-Received: from mx0b-00154901.pphosted.com ([67.231.157.37])
-  by esa7.dell-outbound.iphmx.com with ESMTP/TLS/AES256-SHA256; 11 Dec 2018 08:16:17 -0600
-Received: from pps.filterd (m0089483.ppops.net [127.0.0.1])
-        by mx0b-00154901.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id wBBED4Vu056376;
-        Tue, 11 Dec 2018 09:16:27 -0500
-Received: from esa2.dell-outbound2.iphmx.com (esa2.dell-outbound2.iphmx.com [68.232.153.202])
-        by mx0b-00154901.pphosted.com with ESMTP id 2pab5q173m-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 11 Dec 2018 09:16:27 -0500
-Received: from ausxipps310.us.dell.com ([143.166.148.211])
-  by esa2.dell-outbound2.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA256; 11 Dec 2018 20:16:10 +0600
-X-LoopCount0: from 10.173.37.27
-X-IronPort-AV: E=Sophos;i="5.56,342,1539666000"; 
-   d="scan'208";a="293934597"
-From:   Mario Limonciello <mario.limonciello@dell.com>
-To:     David Miller <davem@davemloft.net>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Netdev <netdev@vger.kernel.org>,
-        Linux USB <linux-usb@vger.kernel.org>,
-        anthony.wong@canonical.com,
-        Mario Limonciello <mario.limonciello@dell.com>
-Subject: [PATCH] r8152: Add support for MAC address pass through on RTL8153-BND
-Date:   Tue, 11 Dec 2018 08:16:14 -0600
-Message-Id: <1544537774-4370-1-git-send-email-mario.limonciello@dell.com>
-X-Mailer: git-send-email 2.7.4
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-11_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1812110129
+        Tue, 11 Dec 2018 09:16:36 -0500
+Received: from foss.arm.com ([217.140.101.70]:48198 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726448AbeLKOQg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 09:16:36 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 426F61596;
+        Tue, 11 Dec 2018 06:16:35 -0800 (PST)
+Received: from e107981-ln.cambridge.arm.com (e107981-ln.cambridge.arm.com [10.1.197.40])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2B0FF3F59C;
+        Tue, 11 Dec 2018 06:16:32 -0800 (PST)
+Date:   Tue, 11 Dec 2018 14:16:27 +0000
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>, sboyd@kernel.org
+Cc:     Miquel Raynal <miquel.raynal@bootlin.com>, sudeep.holla@arm.com,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
+        Maxime Chevallier <maxime.chevallier@bootlin.com>,
+        Nadav Haklai <nadavh@marvell.com>
+Subject: Re: [PATCH 05/12] PCI: aardvark: add suspend to RAM support
+Message-ID: <20181211141627.GA526@e107981-ln.cambridge.arm.com>
+References: <20181123141831.8214-1-miquel.raynal@bootlin.com>
+ <1999610.6DN9RK2Tt3@aspire.rjw.lan>
+ <20181204094558.GA24588@e107981-ln.cambridge.arm.com>
+ <1966692.fVZYlVgWHv@aspire.rjw.lan>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1966692.fVZYlVgWHv@aspire.rjw.lan>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-All previous docks and dongles that have supported this feature use
-the RTL8153-AD chip.
+On Tue, Dec 04, 2018 at 10:42:19PM +0100, Rafael J. Wysocki wrote:
+> On Tuesday, December 4, 2018 10:45:58 AM CET Lorenzo Pieralisi wrote:
+> > On Mon, Dec 03, 2018 at 11:00:20PM +0100, Rafael J. Wysocki wrote:
+> > > On Monday, December 3, 2018 4:38:46 PM CET Miquel Raynal wrote:
+> > > > Hi Lorenzo,
+> > > > 
+> > > > Lorenzo Pieralisi <lorenzo.pieralisi@arm.com> wrote on Mon, 3 Dec 2018
+> > > > 10:27:08 +0000:
+> > > > 
+> > > > > [+Rafael, Sudeep]
+> > > > > 
+> > > > > On Fri, Nov 23, 2018 at 03:18:24PM +0100, Miquel Raynal wrote:
+> > > > > > Add suspend and resume callbacks. The priority of these are
+> > > > > > "_noirq()", to workaround early access to the registers done by the
+> > > > > > PCI core through the ->read()/->write() callbacks at resume time.
+> > > > > > 
+> > > > > > Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
+> > > > > > ---
+> > > > > >  drivers/pci/controller/pci-aardvark.c | 52 +++++++++++++++++++++++++++
+> > > > > >  1 file changed, 52 insertions(+)
+> > > > > > 
+> > > > > > diff --git a/drivers/pci/controller/pci-aardvark.c b/drivers/pci/controller/pci-aardvark.c
+> > > > > > index 108b3f15c410..7ecf1ac4036b 100644
+> > > > > > --- a/drivers/pci/controller/pci-aardvark.c
+> > > > > > +++ b/drivers/pci/controller/pci-aardvark.c
+> > > > > > @@ -1108,6 +1108,55 @@ static int advk_pcie_setup_clk(struct advk_pcie *pci
+> > > > > >  	return ret;
+> > > > > >  }
+> > > > > >  
+> > > > > > +static int __maybe_unused advk_pcie_suspend(struct device *dev)
+> > > > > > +{
+> > > > > > +	struct advk_pcie *pcie = dev_get_drvdata(dev);
+> > > > > > +
+> > > > > > +	advk_pcie_disable_phy(pcie);
+> > > > > > +
+> > > > > > +	clk_disable_unprepare(pcie->clk);  
+> > > > > 
+> > > > > I have noticed it is common practice, still, I would like to check whether
+> > > > > it is allowed to call functions that may sleep in a NOIRQ suspend/resume
+> > > > > callback ?
+> > > > 
+> > > > You are right this is weird. I double checked and for instance,
+> > > > pcie-mediatek.c, pci-tegra.c and pci-imx6.c do the exact same thing. There are
+> > > > probably other cases where drivers call functions that may sleep from a NOIRQ
+> > > > context. I am interested to know if this is valid and if not, what is the
+> > > > alternative?
+> > > > 
+> > > 
+> > > Yes, it is valid.  _noirq means that the high-level action handlers
+> > > will not be invoked for interrupts occurring during that period, but
+> > > that doesn't apply to timer interrupts.
+> > > 
+> > > IOW, don't expect *your* IRQ handler to be invoked then (if this is
+> > > not a timer IRQ), but you can sleep.
+> > 
+> > Hi Rafael, all,
+> > 
+> > I did not ask my question (that may be silly) properly apologies. I know
+> > that the S2R context allows sleeping the question is, in case
+> > clk_disable_unprepare() (and resume counterparts) sleeps,
+> 
+> If it just sleeps, then this is not a problem, but if it actually *waits*
+> for something meaningful to happen (which I guess is what you really mean),
+> then things may go awry.
+> 
+> > what is going to wake it up, given that we are in the S2R NOIRQ phase and as
+> > you said the action handlers (that are possibly required to wake up the eg
+> > clk_disable_unprepare() caller) are disabled (unless, AFAIK,
+> > IRQF_NO_SUSPEND is passed at IRQ request time in the respective driver).
+> 
+> So if it waits for an action handler to do something and wake it up, it may
+> very well deadlock.  I have no idea if that really happens, though.
+> 
+> > The clk API implementations back-ends are beyond my depth, I just wanted
+> > to make sure I understand how the S2R flow is expected to work in this
+> > specific case.
+> 
+> Action handlers won't run unless the IRQs are marked as IRQF_NO_SUSPEND
+> (well, there are a few more complications I don't recall exactly, but
+> that's the basic rule).  If anything depends on them to run, it will block.
 
-RTL8153-BND is a new chip that will be used in upcoming Dell type-C docks.
-It should be added to the whitelist of devices to activate MAC address
-pass through.
+Stephen, any comments on this ? I would like to understand if it is safe
+to call a clk_*unprepare/prepare_* function (that may have a blocking
+back-end waiting on a wake-up event triggered by an IRQ action) in the
+suspend/resume NOIRQ phase.
 
-Per confirming with Realtek all devices containing RTL8153-BND should
-activate MAC pass through and there won't use pass through bit on efuse
-like in RTL8153-AD.
+It is not clear how the unprepare/prepare() callers can possibly know
+whether it is safe to block at that stage given that IRQ actions are
+suspended and the wake-up may never trigger.
 
-Signed-off-by: Mario Limonciello <mario.limonciello@dell.com>
----
- drivers/net/usb/r8152.c | 33 ++++++++++++++++++++++-----------
- 1 file changed, 22 insertions(+), 11 deletions(-)
-
-diff --git a/drivers/net/usb/r8152.c b/drivers/net/usb/r8152.c
-index f1b5201..60dd1ec 100644
---- a/drivers/net/usb/r8152.c
-+++ b/drivers/net/usb/r8152.c
-@@ -129,6 +129,7 @@
- #define USB_UPS_CTRL		0xd800
- #define USB_POWER_CUT		0xd80a
- #define USB_MISC_0		0xd81a
-+#define USB_MISC_1		0xd81f
- #define USB_AFE_CTRL2		0xd824
- #define USB_UPS_CFG		0xd842
- #define USB_UPS_FLAGS		0xd848
-@@ -555,6 +556,7 @@ enum spd_duplex {
- 
- /* MAC PASSTHRU */
- #define AD_MASK			0xfee0
-+#define BND_MASK		0x0004
- #define EFUSE			0xcfdb
- #define PASS_THRU_MASK		0x1
- 
-@@ -1150,7 +1152,7 @@ static int rtl8152_set_mac_address(struct net_device *netdev, void *p)
- 	return ret;
- }
- 
--/* Devices containing RTL8153-AD can support a persistent
-+/* Devices containing proper chips can support a persistent
-  * host system provided MAC address.
-  * Examples of this are Dell TB15 and Dell WD15 docks
-  */
-@@ -1165,13 +1167,23 @@ static int vendor_mac_passthru_addr_read(struct r8152 *tp, struct sockaddr *sa)
- 
- 	/* test for -AD variant of RTL8153 */
- 	ocp_data = ocp_read_word(tp, MCU_TYPE_USB, USB_MISC_0);
--	if ((ocp_data & AD_MASK) != 0x1000)
--		return -ENODEV;
--
--	/* test for MAC address pass-through bit */
--	ocp_data = ocp_read_byte(tp, MCU_TYPE_USB, EFUSE);
--	if ((ocp_data & PASS_THRU_MASK) != 1)
--		return -ENODEV;
-+	if ((ocp_data & AD_MASK) == 0x1000) {
-+		/* test for MAC address pass-through bit */
-+		ocp_data = ocp_read_byte(tp, MCU_TYPE_USB, EFUSE);
-+		if ((ocp_data & PASS_THRU_MASK) != 1) {
-+			netif_dbg(tp, probe, tp->netdev,
-+				  "No efuse for RTL8153-AD MAC pass through\n");
-+			return -ENODEV;
-+		}
-+	} else {
-+		/* test for RTL8153-BND */
-+		ocp_data = ocp_read_byte(tp, MCU_TYPE_USB, USB_MISC_1);
-+		if ((ocp_data & BND_MASK) == 0) {
-+			netif_dbg(tp, probe, tp->netdev,
-+				  "Invalid variant for MAC pass through\n");
-+			return -ENODEV;
-+		}
-+	}
- 
- 	/* returns _AUXMAC_#AABBCCDDEEFF# */
- 	status = acpi_evaluate_object(NULL, "\\_SB.AMAC", NULL, &buffer);
-@@ -1217,9 +1229,8 @@ static int set_ethernet_addr(struct r8152 *tp)
- 	if (tp->version == RTL_VER_01) {
- 		ret = pla_ocp_read(tp, PLA_IDR, 8, sa.sa_data);
- 	} else {
--		/* if this is not an RTL8153-AD, no eFuse mac pass thru set,
--		 * or system doesn't provide valid _SB.AMAC this will be
--		 * be expected to non-zero
-+		/* if device doesn't support MAC pass through this will
-+		 * be expected to be non-zero
- 		 */
- 		ret = vendor_mac_passthru_addr_read(tp, &sa);
- 		if (ret < 0)
--- 
-2.7.4
-
+Thanks,
+Lorenzo
