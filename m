@@ -7,51 +7,51 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4967EC5CFFE
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:55:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF49DC07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:55:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B6422146D
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:55:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B4A0E208E7
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:55:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544543726;
-	bh=NpVw8TFo+75Ye6QSzYp35tGYf1GLwYOQ0138JmVeEzo=;
+	s=default; t=1544543729;
+	bh=R0N20KxLBFMoe9grg9yE86InSOKh7+4HZ2o1AbgGBZA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=BQiq59lDw2g/7l9Q5nJ4q6bNboygQzsiZfc+lZnXUxSlPZhKNgoDHtAP4KKYxmZgi
-	 dBK02YbBDq4oUwE/8pqi/+/KAOeOowIUx5GofndFO/EKltJtdWpIaurtymqsl+DXzG
-	 oQQmZ7+5ZA8hFll5tnxF7sakkLKc1mib0BfaqZ68=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B6422146D
+	b=t9oyyPwfWlwCilUgPSMwnOnShIaYXLkl0fkPBbk8UmQM10mC+Ot8/IFFt3O5qPs/3
+	 iYCCbdzeIoNmkkYONv9lYYZ6ENEEKDdm9gAsAfKc93QoWDpNMoNAh3fUkbej+zgndj
+	 V2ogPF8CzB+5Z2tVt9KpczY6xcu4tmPEA+uO6lNY=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B4A0E208E7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730129AbeLKPzY (ORCPT
+        id S1730139AbeLKPz2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 10:55:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44036 "EHLO mail.kernel.org"
+        Tue, 11 Dec 2018 10:55:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44088 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730357AbeLKPzW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:55:22 -0500
+        id S1730126AbeLKPzZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 10:55:25 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 751C82146F;
-        Tue, 11 Dec 2018 15:55:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0677020855;
+        Tue, 11 Dec 2018 15:55:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544543722;
-        bh=NpVw8TFo+75Ye6QSzYp35tGYf1GLwYOQ0138JmVeEzo=;
+        s=default; t=1544543724;
+        bh=R0N20KxLBFMoe9grg9yE86InSOKh7+4HZ2o1AbgGBZA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wfrrIl+X0D8cBKd/0frQM4XffjRHpUNMB7mD3oDo+U+ks2kgStsx1rllTNgBdrKOT
-         KjEtd9oyb8s+DLXvkCjfy4m97brnz1qrHmnq1kKz2KQJn7f00wW7pv/JMhoQ+VhCSr
-         +8hLOM/SIb+47YEkA+Va/OiLcxuJfBGsstduiuzY=
+        b=UY1n0sKUjUO5j4aa7B6FlvVQa9AqEHi8ioeIdQOfATU7gXTBfwzc7XP+GoJvtu8fk
+         ZlxwWrMsj4OmGbIb90Y+7y89HKrXPqNYrcdzDAAyIJSu4EPiXRZLStif9/vOf3cXIt
+         PlCXcp/rfsVcSy10wQmDXrECPqjvP+ChehxyoXqY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <rafal@milecki.pl>,
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Lorenzo Bianconi <lorenzo.bianconi@redhat.com>,
         Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 006/118] brcmutil: really fix decoding channel info for 160 MHz bandwidth
-Date:   Tue, 11 Dec 2018 16:40:25 +0100
-Message-Id: <20181211151644.478944899@linuxfoundation.org>
+Subject: [PATCH 4.19 007/118] mt76: fix building without CONFIG_LEDS_CLASS
+Date:   Tue, 11 Dec 2018 16:40:26 +0100
+Message-Id: <20181211151644.518636200@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181211151644.216668863@linuxfoundation.org>
 References: <20181211151644.216668863@linuxfoundation.org>
@@ -70,43 +70,84 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 3401d42c7ea2d064d15c66698ff8eb96553179ce ]
+[ Upstream commit b374e8686fc35ae124e62dc78725ea656ba1ef8a ]
 
-Previous commit /adding/ support for 160 MHz chanspecs was incomplete.
-It didn't set bandwidth info and didn't extract control channel info. As
-the result it was also using uninitialized "sb" var.
+When CONFIG_LEDS_CLASS is disabled, or it is a loadable module while
+mt76 is built-in, we run into a link error:
 
-This change has been tested for two chanspecs found to be reported by
-some devices/firmwares:
-1) 60/160 (0xee32)
-   Before: chnum:50 control_ch_num:36
-    After: chnum:50 control_ch_num:60
-2) 120/160 (0xed72)
-   Before: chnum:114 control_ch_num:100
-    After: chnum:114 control_ch_num:120
+drivers/net/wireless/mediatek/mt76/mac80211.o: In function `mt76_register_device':
+mac80211.c:(.text+0xb78): relocation truncated to fit: R_AARCH64_CALL26 against undefined symbol `devm_of_led_classdev_register'
 
-Fixes: 330994e8e8ec ("brcmfmac: fix for proper support of 160MHz bandwidth")
-Signed-off-by: Rafał Miłecki <rafal@milecki.pl>
+We don't really need a hard dependency here as the driver can presumably
+work just fine without LEDs, so this follows the iwlwifi example and
+adds a separate Kconfig option for the LED support, this will be available
+whenever it will link, and otherwise the respective code gets left out from
+the driver object.
+
+Fixes: 17f1de56df05 ("mt76: add common code shared between multiple chipsets")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
 Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/broadcom/brcm80211/brcmutil/d11.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/net/wireless/mediatek/mt76/Kconfig       | 6 ++++++
+ drivers/net/wireless/mediatek/mt76/mac80211.c    | 8 +++++---
+ drivers/net/wireless/mediatek/mt76/mt76x2_init.c | 6 ++++--
+ 3 files changed, 15 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmutil/d11.c b/drivers/net/wireless/broadcom/brcm80211/brcmutil/d11.c
-index e7584b842dce..eb5db94f5745 100644
---- a/drivers/net/wireless/broadcom/brcm80211/brcmutil/d11.c
-+++ b/drivers/net/wireless/broadcom/brcm80211/brcmutil/d11.c
-@@ -193,6 +193,9 @@ static void brcmu_d11ac_decchspec(struct brcmu_chan *ch)
- 		}
- 		break;
- 	case BRCMU_CHSPEC_D11AC_BW_160:
-+		ch->bw = BRCMU_CHAN_BW_160;
-+		ch->sb = brcmu_maskget16(ch->chspec, BRCMU_CHSPEC_D11AC_SB_MASK,
-+					 BRCMU_CHSPEC_D11AC_SB_SHIFT);
- 		switch (ch->sb) {
- 		case BRCMU_CHAN_SB_LLL:
- 			ch->control_ch_num -= CH_70MHZ_APART;
+diff --git a/drivers/net/wireless/mediatek/mt76/Kconfig b/drivers/net/wireless/mediatek/mt76/Kconfig
+index b6c5f17dca30..27826217ff76 100644
+--- a/drivers/net/wireless/mediatek/mt76/Kconfig
++++ b/drivers/net/wireless/mediatek/mt76/Kconfig
+@@ -1,6 +1,12 @@
+ config MT76_CORE
+ 	tristate
+ 
++config MT76_LEDS
++	bool
++	depends on MT76_CORE
++	depends on LEDS_CLASS=y || MT76_CORE=LEDS_CLASS
++	default y
++
+ config MT76_USB
+ 	tristate
+ 	depends on MT76_CORE
+diff --git a/drivers/net/wireless/mediatek/mt76/mac80211.c b/drivers/net/wireless/mediatek/mt76/mac80211.c
+index 029d54bce9e8..ade4a2029a24 100644
+--- a/drivers/net/wireless/mediatek/mt76/mac80211.c
++++ b/drivers/net/wireless/mediatek/mt76/mac80211.c
+@@ -342,9 +342,11 @@ int mt76_register_device(struct mt76_dev *dev, bool vht,
+ 	mt76_check_sband(dev, NL80211_BAND_2GHZ);
+ 	mt76_check_sband(dev, NL80211_BAND_5GHZ);
+ 
+-	ret = mt76_led_init(dev);
+-	if (ret)
+-		return ret;
++	if (IS_ENABLED(CONFIG_MT76_LEDS)) {
++		ret = mt76_led_init(dev);
++		if (ret)
++			return ret;
++	}
+ 
+ 	return ieee80211_register_hw(hw);
+ }
+diff --git a/drivers/net/wireless/mediatek/mt76/mt76x2_init.c b/drivers/net/wireless/mediatek/mt76/mt76x2_init.c
+index b814391f79ac..03b103c45d69 100644
+--- a/drivers/net/wireless/mediatek/mt76/mt76x2_init.c
++++ b/drivers/net/wireless/mediatek/mt76/mt76x2_init.c
+@@ -581,8 +581,10 @@ int mt76x2_register_device(struct mt76x2_dev *dev)
+ 	mt76x2_dfs_init_detector(dev);
+ 
+ 	/* init led callbacks */
+-	dev->mt76.led_cdev.brightness_set = mt76x2_led_set_brightness;
+-	dev->mt76.led_cdev.blink_set = mt76x2_led_set_blink;
++	if (IS_ENABLED(CONFIG_MT76_LEDS)) {
++		dev->mt76.led_cdev.brightness_set = mt76x2_led_set_brightness;
++		dev->mt76.led_cdev.blink_set = mt76x2_led_set_blink;
++	}
+ 
+ 	ret = mt76_register_device(&dev->mt76, true, mt76x2_rates,
+ 				   ARRAY_SIZE(mt76x2_rates));
 -- 
 2.19.1
 
