@@ -2,212 +2,115 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DFE8C6783B
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 22:16:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06D35C67839
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 22:16:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 08D7620851
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 22:16:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=mailprotect.be header.i=@mailprotect.be header.b="Yl/DdfDI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 08D7620851
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=acm.org
+	by mail.kernel.org (Postfix) with ESMTP id BF29A20851
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 22:16:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544566596;
+	bh=bxGMdLW9iozKcZQ5uq6UHyiDdW/t4w9dCuMbjm5XC4g=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=ovLmsKwCslQZ4og2qZ671yTVjsgUTHlm2HB8jaHf3mE9/A7w71pHYP5nBk8YiXH9S
+	 BC40OJ6vNeTYRl/9B6NWLe0kr8goV592rE09NRH5pt2l/FGzR8dMClgpri6fuui4Nt
+	 UuCbDW53V1SpS2Tq9uXYttqH1i7ek5GKJDBDyNto=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF29A20851
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726614AbeLKWQB (ORCPT
+        id S1726430AbeLKWQf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 17:16:01 -0500
-Received: from com-out001.mailprotect.be ([83.217.72.83]:35927 "EHLO
-        com-out001.mailprotect.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726305AbeLKWOL (ORCPT
+        Tue, 11 Dec 2018 17:16:35 -0500
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:43084 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726136AbeLKWQe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 17:14:11 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=mailprotect.be; s=mail; h=Content-Transfer-Encoding:MIME-Version:References
-        :In-Reply-To:Message-Id:Date:Subject:Cc:To:From:reply-to:sender:bcc:
-        content-type; bh=o7tXSJlOfScEy/51es8gD9E5byJW55frhbO4qMvIuaQ=; b=Yl/DdfDI+dVB
-        b7fOYVrrK9pGaxoGhy+01rn63GLqeXZMXYRI2IBMxai0d31t2n0rIpoT28tPPB4dY8Wl/llCE8zw6
-        oPYnUaWADjygSZAKL77Fdw81SY5jIfYwSEvByTzD5NOkMFbyVXgnwm+sVBscPn+FdhxmZWXD/hDwl
-        ctENPAr16MqlvKEtBermA7MW1KvPYO8ZwFEng9MBy+hpz2JqitdB3J/vg4MA/UAgkY9gm2qMSoZDp
-        8rhMV+7JwZ+e+XD70JLCG5zYtB+2VQRRp5mSZEwrEVkd7C/HdDb69PFLNgi5n65oSC18FDbXnxvKj
-        oOu+EZXHAQswBq3Rr8ctQA==;
-Received: from smtp-auth.mailprotect.be ([178.208.39.155])
-        by com-mpt-out001.mailprotect.be with esmtp (Exim 4.89)
-        (envelope-from <bvanassche@acm.org>)
-        id 1gWqHp-0005NF-HB; Tue, 11 Dec 2018 23:13:54 +0100
-Received: from desktop-bart.svl.corp.google.com (unknown [104.133.8.89])
-        (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by smtp-auth.mailprotect.be (Postfix) with ESMTPSA id A9472C09DB;
-        Tue, 11 Dec 2018 23:13:51 +0100 (CET)
-From:   Bart Van Assche <bvanassche@acm.org>
-To:     peterz@infradead.org
-Cc:     mingo@redhat.com, tj@kernel.org, longman@redhat.com,
-        johannes.berg@intel.com, linux-kernel@vger.kernel.org,
-        Bart Van Assche <bvanassche@acm.org>,
-        Johannes Berg <johannes@sipsolutions.net>
-Subject: [PATCH v4 08/15] locking/lockdep: Reuse list entries that are no longer in use
-Date:   Tue, 11 Dec 2018 14:13:14 -0800
-Message-Id: <20181211221321.196536-9-bvanassche@acm.org>
-X-Mailer: git-send-email 2.20.0.rc2.403.gdbc3b29805-goog
-In-Reply-To: <20181211221321.196536-1-bvanassche@acm.org>
-References: <20181211221321.196536-1-bvanassche@acm.org>
+        Tue, 11 Dec 2018 17:16:34 -0500
+Received: by mail-oi1-f196.google.com with SMTP id u18so13381834oie.10;
+        Tue, 11 Dec 2018 14:16:34 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=cq6WvAF7qrqngI0ZO6SgAyV0Mg+pnA2WeEZIZT6IIzA=;
+        b=ZgMsvRKw6FFY3yFL4puYgQ5WwFENW6aUdQzUJHDoLXnuD2RkoyOPyxSzdRU1b15gN2
+         FuCy6A/GER1yWAHdQgFhvwot1oSl1IIqWeB+LdSya3F01eEFXer1rb2iosp84e2dMxQc
+         /3Op9zW7PRJlEx1AKM+EEHi8EUAK9xqVTPLpriS/93W/VwkJPRI7VmOWZpm9ErsknwdU
+         4+R3I5XykHZTRP1m5anEvWNEFJeBhmbaSlvaaUnmn0JRXIPd1nX01jyDigFVMLP5KwvL
+         7dQCN23WC5eIkae8LHy2AJXe0yByylXKVY+wt2uR6hoJe2L2/IoQsNkTk6bPNibsRRo/
+         9w5A==
+X-Gm-Message-State: AA+aEWbI6UY5Z6MiMzAgExqEkl67f0JGKUTZZ/B063h4IbHd2Dwpkh8t
+        LRtRUI6Jr5LnG7g5UdyA+wmzIzDVFYD0tNnqYZyhVw==
+X-Google-Smtp-Source: AFSGD/WM8sR0e9WLnTC7oDzYMmI6NtwQIdc0O+scapBJgZhy1CcJdYUmbEfiFadSqaSf6k/Ir6AHVkIU99uIQVp93zE=
+X-Received: by 2002:aca:a698:: with SMTP id t24mr2390688oij.76.1544566593769;
+ Tue, 11 Dec 2018 14:16:33 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: 178.208.39.155
-X-SpamExperts-Domain: mailprotect.be
-X-SpamExperts-Username: 178.208.39.128/27
-Authentication-Results: mailprotect.be; auth=pass smtp.auth=178.208.39.128/27@mailprotect.be
-X-SpamExperts-Outgoing-Class: ham
-X-SpamExperts-Outgoing-Evidence: Combined (0.02)
-X-Recommended-Action: accept
-X-Filter-ID: EX5BVjFpneJeBchSMxfU5hyzKBUC78Yl+qfLkYux10t602E9L7XzfQH6nu9C/Fh9KJzpNe6xgvOx
- q3u0UDjvO1tLifGj39bI0bcPyaJsYTb/+zriNZuqQk0xRpGwjn+MTR8dtByWYYhgj25jR+mEA3YO
- AtfhCcV13BpIh8lqRXSSiFVwqwU9VgKUrYQ0lqWyFDaym8oavoPYsm7m1mVEGf0/5ST3nkt5XYDK
- YAuRpmF7E2F3eqKXiTd2ECUghryWXlqwG31yUGf3t09vBVYS71V1Pk0aHudBU1wyWVTA5OYS1waI
- XXCBiQFDV0yen8nGcSeERs4TOTnIH1kc1IWc5eLazqbUYkjl7F1LyK0RORpNi5kHhTOtgfj/V5da
- 35caSNgvEAWLFiDAlQR6Wu0I/iWDegq4fQ11AxLVlrI7DVFg5Rj2g0fgHrO2rAGaVRcnzDg6HYuT
- CyYgL61SIkBTYXPEvhymCNb22qmKERGbL1SqvGGff0htQqhQf0/aDrhpLM4xnCPpmyyS7jgD9Nen
- VVoB/PLX+rmdznc91veCJAwpCI+5VHpzDqRcT2+GtIE8SRAgmLDKAcp9i+Q+BEiSUj07SNjVkl0P
- Pj+OUYZX3/1fKPQPEuPra72LpiTN2rUT6Y9xm3kmEG6YzhU+GhpkbBQllJXXeGX8fAMzPNqrCG8d
- f68W0InH/+bTMKNm38MHmfnhF9U/dVeZ9xbDBH3UiCDt3yfQxlhCaKc8coJFU+8pOMQJvQ/Ck3ii
- U+4DQAj38VcpxSBd167NiiR0DMS/T4GvZUhi7BJ7QOeRk66G/m8FNKZFrpMP+RrTJ6+mm5EZIJGM
- wI7EsU9X7t6jyXWnUCFeETgDl3PwKvXCHlDl/OyqltsYPx2OGpapJQwbU6lxiSPQp1QN34zBsoOP
- LAVTMEsOC75ReJHeVybconOP07vieGH1wwKQhUuVJ6kr80wTGaiTXW7z2lMqAnbumOwh0pBt+CpM
- AQh13vqug5h3DxzXti4dc8mSdWWWnq5+T0OlQCXHAnYN7KgY5ZOOQJ3pEpIAiDKO1d3jsySf+J0s
- zc3volzWZu5fe7ghC/HzOt6Mfqb5R4VemuUI6bcEARsm0JyPNwoZFF/BeruF9IPYgMLyX2cd5RrN
- VWdImRunoKaV5Izq4VabSfIGUY8RJ38dSGEP+JYPRX76oPSBtBBPLYw1mZQfhvSXPX1npIQpGBE7
- MnJiHvQ8gQs8eCOaG4DvtrnB4hxWBV/7jCqhcJq0hur2OKHH5lr9xXvSM4nM3avg
-X-Report-Abuse-To: spam@com-mpt-mgt001.mailprotect.be
+References: <20181210181315.5023-1-okaya@kernel.org> <20181210181315.5023-2-okaya@kernel.org>
+ <20181211170957.GA335@infradead.org> <342c5dd9-cb3d-d714-c87f-814a942cf395@kernel.org>
+ <CAJZ5v0ia+eotSZgjbitt7TAT0ECSmTAz1XJhS3Auz5w5Z61SZA@mail.gmail.com> <a9c7cbe1-eef3-40ad-de62-8194df12ca20@kernel.org>
+In-Reply-To: <a9c7cbe1-eef3-40ad-de62-8194df12ca20@kernel.org>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Tue, 11 Dec 2018 23:16:23 +0100
+Message-ID: <CAJZ5v0g5t4sx6mY=mCPWOdZLbhEAXo5Ah1TZw9jZNJQ-+cgWsw@mail.gmail.com>
+Subject: Re: [PATCH v3 2/3] ACPI / OSL: Allow PCI to be disabled
+To:     okaya@kernel.org
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Instead of abandoning elements of list_entries[] that are no longer in
-use, make alloc_list_entry() reuse array elements that have been freed.
+On Tue, Dec 11, 2018 at 10:57 PM Sinan Kaya <okaya@kernel.org> wrote:
+>
+> On 12/11/2018 4:46 PM, Rafael J. Wysocki wrote:
+> > On Tue, Dec 11, 2018 at 6:37 PM Sinan Kaya <okaya@kernel.org> wrote:
+> >>
+> >> On 12/11/2018 12:09 PM, Christoph Hellwig wrote:
+> >>> On Mon, Dec 10, 2018 at 06:13:14PM +0000, Sinan Kaya wrote:
+> >>>> Getting ready to allow PCI to be disabled with ACPI enabled. Stub
+> >>>> out calls that depend on PCI.
+> >>>
+> >>> I think you want to skip building at least all of hwpci.c if CONFIG_PCI
+> >>> is disabled.  Or replace that whole stiking pile of crap with something
+> >>> resembling C code..
+> >>>
+> >>
+> >> I can give it a try but I'm under the impression that we don't touch
+> >> ACPICA code in general.
+> >>
+> >> Feel free to correct me.
+> >
+> > We don't as a rule, but depending on what the patch looks like, we
+> > might not follow the rule this time.
+> >
+>
+> OK. Good to know. I'll take a stab at it.
+>
+> > I wonder though what we do if some AML wants to access PCI config
+> > space via an opregion in there.  Have you thought about that?
+> >
+>
+> Return an error.
+>
+> AFAIK, ACPI spec says that AML code running on non-existing op-regions to be
+> discarded last time I checked.
 
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Waiman Long <longman@redhat.com>
-Cc: Johannes Berg <johannes@sipsolutions.net>
-Signed-off-by: Bart Van Assche <bvanassche@acm.org>
----
- kernel/locking/lockdep.c | 33 +++++++++++++++++++++++----------
- 1 file changed, 23 insertions(+), 10 deletions(-)
+I guess you mean "disregarded"?
 
-diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
-index 82dd7d2851eb..2da45621f741 100644
---- a/kernel/locking/lockdep.c
-+++ b/kernel/locking/lockdep.c
-@@ -45,6 +45,7 @@
- #include <linux/hash.h>
- #include <linux/ftrace.h>
- #include <linux/stringify.h>
-+#include <linux/bitmap.h>
- #include <linux/bitops.h>
- #include <linux/gfp.h>
- #include <linux/random.h>
-@@ -132,6 +133,7 @@ static inline int debug_locks_off_graph_unlock(void)
- 
- unsigned long nr_list_entries;
- static struct lock_list list_entries[MAX_LOCKDEP_ENTRIES];
-+static DECLARE_BITMAP(list_entries_in_use, MAX_LOCKDEP_ENTRIES);
- 
- /*
-  * All data structures here are protected by the global debug_lock.
-@@ -296,6 +298,7 @@ static struct pending_free {
- 	struct list_head zapped_classes;
- 	struct rcu_head	 rcu_head;
- 	bool		 scheduled;
-+	DECLARE_BITMAP(list_entries_being_freed, MAX_LOCKDEP_ENTRIES);
- } pending_free[2];
- static DECLARE_WAIT_QUEUE_HEAD(rcu_cb);
- 
-@@ -891,7 +894,10 @@ register_lock_class(struct lockdep_map *lock, unsigned int subclass, int force)
-  */
- static struct lock_list *alloc_list_entry(void)
- {
--	if (nr_list_entries >= MAX_LOCKDEP_ENTRIES) {
-+	int idx = find_first_zero_bit(list_entries_in_use,
-+				      ARRAY_SIZE(list_entries));
-+
-+	if (idx >= ARRAY_SIZE(list_entries)) {
- 		if (!debug_locks_off_graph_unlock())
- 			return NULL;
- 
-@@ -899,7 +905,9 @@ static struct lock_list *alloc_list_entry(void)
- 		dump_stack();
- 		return NULL;
- 	}
--	return list_entries + nr_list_entries++;
-+	nr_list_entries++;
-+	__set_bit(idx, list_entries_in_use);
-+	return list_entries + idx;
- }
- 
- /*
-@@ -1003,7 +1011,7 @@ static inline void mark_lock_accessed(struct lock_list *lock,
- 	unsigned long nr;
- 
- 	nr = lock - list_entries;
--	WARN_ON(nr >= nr_list_entries); /* Out-of-bounds, input fail */
-+	WARN_ON(nr >= ARRAY_SIZE(list_entries)); /* Out-of-bounds, input fail */
- 	lock->parent = parent;
- 	lock->class->dep_gen_id = lockdep_dependency_gen_id;
- }
-@@ -1013,7 +1021,7 @@ static inline unsigned long lock_accessed(struct lock_list *lock)
- 	unsigned long nr;
- 
- 	nr = lock - list_entries;
--	WARN_ON(nr >= nr_list_entries); /* Out-of-bounds, input fail */
-+	WARN_ON(nr >= ARRAY_SIZE(list_entries)); /* Out-of-bounds, input fail */
- 	return lock->class->dep_gen_id == lockdep_dependency_gen_id;
- }
- 
-@@ -4281,13 +4289,14 @@ static void zap_class(struct pending_free *pf, struct lock_class *class)
- 	 * Remove all dependencies this lock is
- 	 * involved in:
- 	 */
--	for (i = 0, entry = list_entries; i < nr_list_entries; i++, entry++) {
-+	for_each_set_bit(i, list_entries_in_use, ARRAY_SIZE(list_entries)) {
-+		entry = list_entries + i;
- 		if (entry->class != class && entry->links_to != class)
- 			continue;
-+		if (__test_and_set_bit(i, pf->list_entries_being_freed))
-+			continue;
-+		nr_list_entries--;
- 		list_del_rcu(&entry->entry);
--		/* Clear .class and .links_to to avoid double removal. */
--		WRITE_ONCE(entry->class, NULL);
--		WRITE_ONCE(entry->links_to, NULL);
- 	}
- 	if (list_empty(&class->locks_after) &&
- 	    list_empty(&class->locks_before)) {
-@@ -4329,8 +4338,9 @@ static bool inside_selftest(void)
- }
- 
- /*
-- * Free all lock classes that are on the pf->zapped_classes list. May be called
-- * from RCU callback context.
-+ * Free all lock classes that are on the pf->zapped_classes list and also all
-+ * list entries that have been marked as being freed. Called as an RCU
-+ * callback function. May be called from RCU callback context.
-  */
- static void free_zapped_classes(struct rcu_head *ch)
- {
-@@ -4346,6 +4356,9 @@ static void free_zapped_classes(struct rcu_head *ch)
- 		reinit_class(class);
- 	}
- 	list_splice_init(&pf->zapped_classes, &free_lock_classes);
-+	bitmap_andnot(list_entries_in_use, list_entries_in_use,
-+		      pf->list_entries_being_freed, ARRAY_SIZE(list_entries));
-+	bitmap_clear(pf->list_entries_being_freed, 0, ARRAY_SIZE(list_entries));
- 	graph_unlock();
- restore_irqs:
- 	raw_local_irq_restore(flags);
--- 
-2.20.0.rc2.403.gdbc3b29805-goog
+So the spec appears to expect the OS to silently ignore the failures
+in those cases, so why should an error be returned?
 
+> I know Linux is noisy about these.
+>
+> I did boot QEMU without CONFIG_PCI. There was a bunch of ACPI errors reported
+> during boot as expected but boot succeeded. There was no hard lockup/failure.
