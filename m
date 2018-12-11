@@ -2,108 +2,109 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41416C07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 08:22:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0365AC5CFFE
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 08:22:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 10FF22082F
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 08:22:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 10FF22082F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id C93A72082F
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 08:22:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C93A72082F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726215AbeLKIWZ (ORCPT
+        id S1726232AbeLKIWl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 03:22:25 -0500
-Received: from mx2.suse.de ([195.135.220.15]:56728 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726069AbeLKIWY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 03:22:24 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 722BBAEBD;
-        Tue, 11 Dec 2018 08:22:22 +0000 (UTC)
-Date:   Tue, 11 Dec 2018 09:22:21 +0100
-From:   Petr Mladek <pmladek@suse.com>
-To:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Cc:     Feng Tang <feng.tang@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        akpm@linux-foundation.org, bp@suse.de, keescook@chromium.org,
-        mm-commits@vger.kernel.org, sergey.senozhatsky@gmail.com,
-        stable@vger.kernel.org, tglx@linutronix.de,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Sasha Levin <sashal@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>, linux-kernel@vger.kernel.org
-Subject: Re: + panic-avoid-the-extra-noise-dmesg.patch added to -mm tree
-Message-ID: <20181211082221.3wovowe6tql5o3s4@pathway.suse.cz>
-References: <20181205024713.nqyt6qiamokq7qtl@shbuild888>
- <20181205025728.GC503@jagdpanzerIV>
- <20181205052912.GA423@jagdpanzerIV>
- <20181205080044.GA11190@jagdpanzerIV>
- <20181205154620.4dqtledc2duhrp2c@shbuild888>
- <20181206035825.jz2bfh3errj23rjq@shbuild888>
- <20181207095004.GB3729@jagdpanzerIV>
- <20181210094554.z5n7dmkrnlcpygg4@shbuild888>
- <20181210155705.qowbi7xvszzfonzk@pathway.suse.cz>
- <20181211080743.GB521@jagdpanzerIV>
+        Tue, 11 Dec 2018 03:22:41 -0500
+Received: from mail-vs1-f67.google.com ([209.85.217.67]:43318 "EHLO
+        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726069AbeLKIWl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 03:22:41 -0500
+Received: by mail-vs1-f67.google.com with SMTP id x1so8335327vsc.10;
+        Tue, 11 Dec 2018 00:22:39 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=G9/hmsRGEdefgYhVHTSwZCfJfZAjpuXMVO80BSy706s=;
+        b=KfpIS9n1637qUkwV343ikak3oz+ctZisluV2AhbbfJwf9wspnAHLs20d9tvp+u4W13
+         Qo3/AwYk7O5YjOyI507KppBGJxL+EkVqamvFg4aWluNeSvcJlifSc+4L1EoHW2iL0RqH
+         lsSBG9Gsj2PfLvvQS7FMyY2MUQkOczHqAlx5yuCG99R6kR8ItGEID8wBBtagB4UYxn7P
+         IJ5XBt+7a4GBehrJQ8aXaP31IcV/JcV+BUkC021IJm/+qt5Q8PkAmetnBZIESLnQudqv
+         QgF76Xe1YlmBqH7qEXrfahHSPfHjygfXe3Xb2f5ZMHVC5zxHGYqXvV2pd5EXGpKPZq7j
+         MsUg==
+X-Gm-Message-State: AA+aEWZF9/m/FLzWzZzzr614aOrJ9srV/BZRAD+3q7bOHH6EXjIndZc4
+        Un0LABj7bqOMJQdVeoovY77Kso4SsZIyBnwIDXk=
+X-Google-Smtp-Source: AFSGD/XKI8ZTA7djbzd9I0Nto10D9+bCYn3Xv+HaEyUwTCST/E/cI5g0/+MiW9+AyFXaZ3zhD8Af3naPd9WJ+NSiDik=
+X-Received: by 2002:a67:c202:: with SMTP id i2mr6170025vsj.11.1544516559148;
+ Tue, 11 Dec 2018 00:22:39 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181211080743.GB521@jagdpanzerIV>
-User-Agent: NeoMutt/20170421 (1.8.2)
+References: <20181210210033.3276054-1-arnd@arndb.de>
+In-Reply-To: <20181210210033.3276054-1-arnd@arndb.de>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Tue, 11 Dec 2018 09:22:26 +0100
+Message-ID: <CAMuHMdU0fp5p1QoD=h6v=RW9V5NgMvhz-NpoK5_8NNsnMKtjhA@mail.gmail.com>
+Subject: Re: [PATCH] ARM: shmobile: fix build regressions
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 2018-12-11 17:07:43, Sergey Senozhatsky wrote:
-> On (12/10/18 16:57), Petr Mladek wrote:
-> > > > (masked out) and on panic_cpu disables only SDEI (interrupts from firmware,
-> > > > if I got it right); so it seems that arm64 can handle IRQs after panic. And
-> > > > if there are platforms that handle IRQ (including sysrq) after panic, then
-> > > > both options - making printk a noop or keeping local irqs off - maybe can
-> > > > cause some problems. Or maybe not. We better ask arch people.
-> > > 
-> > > Yes, this is very valid concern. And after Petr and you raised it, I did
-> > > some experiments with 3 x86 platforms at my hand, one Apollolake IOT device
-> > > with serial console, one IvyBridge laptop and one Kabylake NUC, the magic key
-> > > all works well before panic, and fails after panic. But I did remember the
-> > > PageUp/PageDown key worked on some laptop years ago. And you actually raised a
-> > > good question: what do we expect for the post-panic kernel?
-> > 
-> > I am not sure why it does not work. But it would be nice if sysrq
-> > worked.
-> 
-> Absolutely.
-> 
-> [..]
-> > I still think that calming down printk() is acceptable when
-> > it can be restored from sysrq.
-> 
-> I would agree; peeking one of the two solutions, printk patch is
-> probably preferable.
-> 
-> > I think that only few people might be interested into debugging
-> > post-panic problems. We could print a warning for them about
-> > that printk() has got disabled.
-> 
-> Dunno. This _maybe_ (speculation!) can upset folks on those platforms
-> that have sysrq working after panic. printk is a common code.
-> 
-> I'm probably missing a lot of things here, but just in case, I'm not
-> sure at which point the idea of patching some files under arch/x86
-> directory was ruled out and why.
+Hi Arnd,
 
-I suggested to clear the panic_blinking (or whatever name) in
-__handle_sysrq(). The idea is that sysrq needs manual intervention.
-It allows to see the original message before it gets overridden
-by a potential sysrq-related output.
+On Mon, Dec 10, 2018 at 10:00 PM Arnd Bergmann <arnd@arndb.de> wrote:
+> A number of Kconfig options have become available now to random ARM
+> platforms outside of ARCH_MULTIPLATFORM, which now causes Kconfig
+> warnings, and other build errors when those select options that
+> lack additonal dependencies, e.g.:
+>
+> WARNING: unmet direct dependencies detected for HAVE_ARM_ARCH_TIMER
+>   Depends on [n]: CPU_V7 [=n]
+>   Selected by [y]:
+>   - ARCH_RCAR_GEN2 [=y] && SOC_RENESAS [=y]
+>   - ARCH_R8A73A4 [=y] && SOC_RENESAS [=y] && ARM [=y]
+>
+> WARNING: unmet direct dependencies detected for SYS_SUPPORTS_EM_STI
+>   Depends on [n]: GENERIC_CLOCKEVENTS [=n]
+>   Selected by [y]:
+>   - ARCH_EMEV2 [=y] && SOC_RENESAS [=y] && ARM [=y]
+>
+> Put the old dependency on ARCH_RENESAS back for the moment to restore
+> the previous behavior.
 
-It assumes that sysrq is the only interesting operation when
-printk() might be useful at this state.
+Thanks, the build bots must be lazy or overloaded these days...
+The ARM selects are indeed more troublesome than the ARM64 ones.
 
-Best Regards,
-Petr
+BTW, did you see issues with the ARM64 Kconfig symbol move too,
+or is that mitigated by ARM64 always selecting GENERIC_CLOCKEVENTS?
+
+> Fixes: 062887bf5ef7 ("ARM: shmobile: Move SoC Kconfig symbols to drivers/soc/renesas/")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
