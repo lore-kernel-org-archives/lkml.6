@@ -7,50 +7,48 @@ X-Spam-Status: No, score=-11.9 required=3.0
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EB20C5CFFE
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:23:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EE95C5CFFE
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:23:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C781820849
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:23:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C781820849
+	by mail.kernel.org (Postfix) with ESMTP id 2F08220849
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:23:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F08220849
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726764AbeLKPXU (ORCPT
+        id S1726808AbeLKPXt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 10:23:20 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:36729 "EHLO
+        Tue, 11 Dec 2018 10:23:49 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:41063 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726329AbeLKPXU (ORCPT
+        with ESMTP id S1726329AbeLKPXs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:23:20 -0500
+        Tue, 11 Dec 2018 10:23:48 -0500
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wBBFMfIW4038940
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wBBFNF2f4038981
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Tue, 11 Dec 2018 07:22:41 -0800
+        Tue, 11 Dec 2018 07:23:15 -0800
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wBBFMeK24038935;
-        Tue, 11 Dec 2018 07:22:40 -0800
-Date:   Tue, 11 Dec 2018 07:22:40 -0800
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wBBFNEG64038978;
+        Tue, 11 Dec 2018 07:23:14 -0800
+Date:   Tue, 11 Dec 2018 07:23:14 -0800
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Bart Van Assche <tipbot@zytor.com>
-Message-ID: <tip-da087b2229618f78ecea5c203fed8ba2245de636@git.kernel.org>
-Cc:     bvanassche@acm.org, sasha.levin@oracle.com,
-        linux-kernel@vger.kernel.org, johannes@sipsolutions.net,
-        tglx@linutronix.de, mingo@kernel.org,
-        torvalds@linux-foundation.org, peterz@infradead.org,
-        longman@redhat.com, hpa@zytor.com
-Reply-To: linux-kernel@vger.kernel.org, tglx@linutronix.de,
-          johannes@sipsolutions.net, bvanassche@acm.org,
-          sasha.levin@oracle.com, peterz@infradead.org, hpa@zytor.com,
-          longman@redhat.com, mingo@kernel.org,
-          torvalds@linux-foundation.org
-In-Reply-To: <20181207011148.251812-2-bvanassche@acm.org>
-References: <20181207011148.251812-2-bvanassche@acm.org>
+Message-ID: <tip-7e9798871a9186cb831cf693d7ff58085384ccbd@git.kernel.org>
+Cc:     tglx@linutronix.de, johannes@sipsolutions.net, longman@redhat.com,
+        sasha.levin@oracle.com, peterz@infradead.org,
+        torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
+        mingo@kernel.org, hpa@zytor.com, bvanassche@acm.org
+Reply-To: bvanassche@acm.org, hpa@zytor.com, mingo@kernel.org,
+          linux-kernel@vger.kernel.org, peterz@infradead.org,
+          torvalds@linux-foundation.org, longman@redhat.com,
+          sasha.levin@oracle.com, johannes@sipsolutions.net,
+          tglx@linutronix.de
+In-Reply-To: <20181207011148.251812-3-bvanassche@acm.org>
+References: <20181207011148.251812-3-bvanassche@acm.org>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:locking/core] tools/lib/lockdep/tests: Display compiler
- warning and error messages
-Git-Commit-ID: da087b2229618f78ecea5c203fed8ba2245de636
+Subject: [tip:locking/core] tools/lib/lockdep/tests: Fix shellcheck warnings
+Git-Commit-ID: 7e9798871a9186cb831cf693d7ff58085384ccbd
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -64,19 +62,18 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  da087b2229618f78ecea5c203fed8ba2245de636
-Gitweb:     https://git.kernel.org/tip/da087b2229618f78ecea5c203fed8ba2245de636
+Commit-ID:  7e9798871a9186cb831cf693d7ff58085384ccbd
+Gitweb:     https://git.kernel.org/tip/7e9798871a9186cb831cf693d7ff58085384ccbd
 Author:     Bart Van Assche <bvanassche@acm.org>
-AuthorDate: Thu, 6 Dec 2018 17:11:25 -0800
+AuthorDate: Thu, 6 Dec 2018 17:11:26 -0800
 Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Tue, 11 Dec 2018 14:54:47 +0100
+CommitDate: Tue, 11 Dec 2018 14:54:48 +0100
 
-tools/lib/lockdep/tests: Display compiler warning and error messages
+tools/lib/lockdep/tests: Fix shellcheck warnings
 
-If compilation of liblockdep fails, display an error message and exit
-immediately. Display compiler warning and error messages that are
-generated while building a test. Only run a test if compilation of it
-succeeded.
+Use find instead of ls to avoid splitting filenames that contain spaces.
+Use rm -f instead of if ... then rm ...; fi. This patch addresses all
+shellcheck complaints about the run_tests.sh shell script.
 
 Signed-off-by: Bart Van Assche <bvanassche@acm.org>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
@@ -88,46 +85,46 @@ Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Waiman Long <longman@redhat.com>
 Cc: johannes.berg@intel.com
 Cc: tj@kernel.org
-Link: https://lkml.kernel.org/r/20181207011148.251812-2-bvanassche@acm.org
+Link: https://lkml.kernel.org/r/20181207011148.251812-3-bvanassche@acm.org
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- tools/lib/lockdep/run_tests.sh | 14 +++++++++-----
- 1 file changed, 9 insertions(+), 5 deletions(-)
+ tools/lib/lockdep/run_tests.sh | 12 ++++--------
+ 1 file changed, 4 insertions(+), 8 deletions(-)
 
 diff --git a/tools/lib/lockdep/run_tests.sh b/tools/lib/lockdep/run_tests.sh
-index 2e570a188f16..9f31f84e7fac 100755
+index 9f31f84e7fac..253719ee6377 100755
 --- a/tools/lib/lockdep/run_tests.sh
 +++ b/tools/lib/lockdep/run_tests.sh
-@@ -1,13 +1,17 @@
- #! /bin/bash
- # SPDX-License-Identifier: GPL-2.0
+@@ -7,7 +7,7 @@ if ! make >/dev/null; then
+     exit 1
+ fi
  
--make &> /dev/null
-+if ! make >/dev/null; then
-+    echo "Building liblockdep failed."
-+    echo "FAILED!"
-+    exit 1
-+fi
- 
- for i in `ls tests/*.c`; do
+-for i in `ls tests/*.c`; do
++find tests -name '*.c' | sort | while read -r i; do
  	testname=$(basename "$i" .c)
--	gcc -o tests/$testname -pthread $i liblockdep.a -Iinclude -D__USE_LIBLOCKDEP &> /dev/null
  	echo -ne "$testname... "
--	if [ $(timeout 1 ./tests/$testname 2>&1 | wc -l) -gt 0 ]; then
-+	if gcc -o "tests/$testname" -pthread "$i" liblockdep.a -Iinclude -D__USE_LIBLOCKDEP &&
-+		[ "$(timeout 1 "./tests/$testname" 2>&1 | wc -l)" -gt 0 ]; then
- 		echo "PASSED!"
+ 	if gcc -o "tests/$testname" -pthread "$i" liblockdep.a -Iinclude -D__USE_LIBLOCKDEP &&
+@@ -16,12 +16,10 @@ for i in `ls tests/*.c`; do
  	else
  		echo "FAILED!"
-@@ -19,9 +23,9 @@ done
+ 	fi
+-	if [ -f "tests/$testname" ]; then
+-		rm tests/$testname
+-	fi
++	rm -f "tests/$testname"
+ done
  
- for i in `ls tests/*.c`; do
+-for i in `ls tests/*.c`; do
++find tests -name '*.c' | sort | while read -r i; do
  	testname=$(basename "$i" .c)
--	gcc -o tests/$testname -pthread -Iinclude $i &> /dev/null
  	echo -ne "(PRELOAD) $testname... "
--	if [ $(timeout 1 ./lockdep ./tests/$testname 2>&1 | wc -l) -gt 0 ]; then
-+	if gcc -o "tests/$testname" -pthread -Iinclude "$i" &&
-+		[ "$(timeout 1 ./lockdep "./tests/$testname" 2>&1 | wc -l)" -gt 0 ]; then
- 		echo "PASSED!"
+ 	if gcc -o "tests/$testname" -pthread -Iinclude "$i" &&
+@@ -30,7 +28,5 @@ for i in `ls tests/*.c`; do
  	else
  		echo "FAILED!"
+ 	fi
+-	if [ -f "tests/$testname" ]; then
+-		rm tests/$testname
+-	fi
++	rm -f "tests/$testname"
+ done
