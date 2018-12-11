@@ -2,139 +2,127 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C18EBC67839
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 21:11:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B394C6783B
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 21:12:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7B8E820851
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 21:11:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 182C520851
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 21:12:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="a79PaNth"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B8E820851
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=marvell.com
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TvvrhnAU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 182C520851
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726239AbeLKVLy (ORCPT
+        id S1726258AbeLKVM5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 16:11:54 -0500
-Received: from mx0a-0016f401.pphosted.com ([67.231.148.174]:51314 "EHLO
-        mx0b-0016f401.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726134AbeLKVLy (ORCPT
+        Tue, 11 Dec 2018 16:12:57 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:42787 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726134AbeLKVM4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 16:11:54 -0500
-Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
-        by mx0a-0016f401.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id wBBLBNiw019434;
-        Tue, 11 Dec 2018 13:11:35 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=from : to : cc :
- subject : date : message-id : references : in-reply-to : content-type :
- content-transfer-encoding : mime-version; s=pfpt0818;
- bh=VzAAcXXXr4RsY8zVF9upsYkyLfjDudUX53nFrCF4JVU=;
- b=a79PaNthuU+qAOH2n2AA211Mvo9LtB4C5gD1f5iml1baZNAma8IYViQsGrLQJ5UNtP/7
- oWKGWAwr3uogZmzjb7IGdGUTFyjb9UwSz7QB17ye0eAhkRpadX3TJ9r7sG1zozeZuTfB
- 14upkd9tecRZRUd2A+Fh+CfyGDebb1jZ/2KRopW4JUSrcZPuuvavFE1vLY2mwRXzL/e8
- KoSuwOxr2cY+t59gv+4vBockYUVgm6783ZbawL/3dqpwU4NlVQ9xjkL7WnbiFRM1BE/8
- xeNYA/NiTglCj4cuoYAbssMpeRxomylgIoDAn+iGF7t+SuH5SQ9IY4ruV8GBOIUFkGN9 Aw== 
-Received: from il-exch01.marvell.com ([199.203.130.101])
-        by mx0a-0016f401.pphosted.com with ESMTP id 2paa3dua2n-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Tue, 11 Dec 2018 13:11:35 -0800
-Received: from IL-EXCH01.marvell.com (10.4.102.220) by IL-EXCH01.marvell.com
- (10.4.102.220) with Microsoft SMTP Server (TLS) id 15.0.1367.3; Tue, 11 Dec
- 2018 23:11:32 +0200
-Received: from IL-EXCH01.marvell.com ([fe80::5d63:81cd:31e2:fc36]) by
- IL-EXCH01.marvell.com ([fe80::5d63:81cd:31e2:fc36%20]) with mapi id
- 15.00.1367.000; Tue, 11 Dec 2018 23:11:31 +0200
-From:   Stefan Chulski <stefanc@marvell.com>
-To:     Russell King - ARM Linux <linux@armlinux.org.uk>,
-        Antoine Tenart <antoine.tenart@bootlin.com>
-CC:     "davem@davemloft.net" <davem@davemloft.net>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "thomas.petazzoni@bootlin.com" <thomas.petazzoni@bootlin.com>,
-        "maxime.chevallier@bootlin.com" <maxime.chevallier@bootlin.com>,
-        "gregory.clement@bootlin.com" <gregory.clement@bootlin.com>,
-        "miquel.raynal@bootlin.com" <miquel.raynal@bootlin.com>,
-        Nadav Haklai <nadavh@marvell.com>,
-        Yan Markman <ymarkman@marvell.com>,
-        "mw@semihalf.com" <mw@semihalf.com>,
-        Baruch Siach <baruch@tkos.co.il>
-Subject: RE: [PATCH net] net: mvpp2: 10G modes aren't supported on all ports
-Thread-Topic: [PATCH net] net: mvpp2: 10G modes aren't supported on all ports
-Thread-Index: AQHUkW/CrCkST3x9K0e6qPjMgD/EIKV6CGbQ
-Date:   Tue, 11 Dec 2018 21:11:31 +0000
-Message-ID: <7b61c1fbf51a409684568216e799ebe3@IL-EXCH01.marvell.com>
-References: <20181211163228.26130-1-antoine.tenart@bootlin.com>
- <20181211163635.GG30658@n2100.armlinux.org.uk>
-In-Reply-To: <20181211163635.GG30658@n2100.armlinux.org.uk>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [199.203.130.14]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Tue, 11 Dec 2018 16:12:56 -0500
+Received: by mail-pl1-f195.google.com with SMTP id y1so7494530plp.9
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 13:12:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=lPrFjhTsNHUUayrOVZ+SpfzOV4fwLjJ9piWRaxrSzko=;
+        b=TvvrhnAUzDAlfjotKGhxfewuauVpZld1xXZ05uqRFJ+QMOGmLdUv6WeF2zyAq5AaPL
+         ZNlsc+HPoOOGAbghz93ggz7EoS9WntxLPXsUw1t/Les2dYBlfXaqoVBmzeDtQKfdeXC2
+         aEvdpjExbiN1zlAreBZBoDImLY4awKlNw9ZZ6zwvQQSRST0kAYw6bcBxDN2Or/mvFZYF
+         be4MIULUFl8LeZ35OL7aOHTsZPOgmOMhGdTUT2/skioMBhOQNmhFylxWz4aPJ8XkKzBi
+         6l5Z7k3RYLR/echceWFpDe45ygsiiJ2t2r3x5Tqi1Fhgk6UhiJIJVj0H8B5cU2Ys2P49
+         B/Qw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=lPrFjhTsNHUUayrOVZ+SpfzOV4fwLjJ9piWRaxrSzko=;
+        b=KVqVXH5TsFvvGOFGWhz9UXqgYDyyUTfWm7AV1yKv4iMXXbAdsLeoPmCXbdMjWSgcbz
+         V6GjWtPtF0DWwstHpT8V73zRC9UlhU+NICsr9r8+uR+udtDR7o0Gb14F9/ueKINXmaVm
+         Cd8Gt3GqddbnE179Wh7SVW5R8hotU9q1j8iQkWGHWmZySvAMPiaTyzoYvbKbZtqf9uHm
+         qeYrKmk8NajTJfCaPoPTluyvZLkycSZtcTCksUdd7oyZkKqfGIA4b1iqYcMXT9YaLL8y
+         ePnQtCclyO6IMqUbu8eZjy6euMO0jGkAnpXEE98FPikB2akNMrKduU/pOAiTTDv7+0bO
+         utHg==
+X-Gm-Message-State: AA+aEWYXE4dvODoY89VnSzGGuRkmCTwjajegwJOLzPAJ2Bv7+M4DGu3N
+        Kwl9WGScR5E/3EaokxIWU5PcnQ==
+X-Google-Smtp-Source: AFSGD/UJ9uaV7drFVRG56eHW2DQeRtWMmnnJ7r2kyQs6EpbfVs8o/kj92RICmAwWp7FvAr/DlwC7jg==
+X-Received: by 2002:a17:902:8f97:: with SMTP id z23mr17748953plo.283.1544562775705;
+        Tue, 11 Dec 2018 13:12:55 -0800 (PST)
+Received: from [2620:15c:17:3:3a5:23a7:5e32:4598] ([2620:15c:17:3:3a5:23a7:5e32:4598])
+        by smtp.gmail.com with ESMTPSA id e86sm23104576pfb.6.2018.12.11.13.12.54
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 11 Dec 2018 13:12:54 -0800 (PST)
+Date:   Tue, 11 Dec 2018 13:12:54 -0800 (PST)
+From:   David Rientjes <rientjes@google.com>
+X-X-Sender: rientjes@chino.kir.corp.google.com
+To:     Jerome Glisse <jglisse@redhat.com>
+cc:     Arnd Bergmann <arnd@arndb.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Michal Hocko <mhocko@suse.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm/mmu_notifier: fix mmu_notifier_range_init warning
+In-Reply-To: <20181211201909.GA6478@redhat.com>
+Message-ID: <alpine.DEB.2.21.1812111310320.87855@chino.kir.corp.google.com>
+References: <20181211200526.3868586-1-arnd@arndb.de> <20181211201909.GA6478@redhat.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-11_07:,,
- signatures=0
-X-Proofpoint-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1812110186
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, 11 Dec 2018, Jerome Glisse wrote:
 
+> On Tue, Dec 11, 2018 at 09:04:43PM +0100, Arnd Bergmann wrote:
+> > The macro version of mmu_notifier_range_init() for CONFIG_MMU_NOTIFIER=n
+> > does not evaluate all its arguments, leading to a warning in one case:
+> > 
+> > mm/migrate.c: In function 'migrate_vma_pages':
+> > mm/migrate.c:2711:20: error: unused variable 'mm' [-Werror=unused-variable]
+> >   struct mm_struct *mm = vma->vm_mm;
+> > 
+> > Pass down the 'mm' as into the inline function as well so gcc can
+> > see why the variable exists.
+> > 
+> > Fixes: 137d92bd73b1 ("mm/mmu_notifier: use structure for invalidate_range_start/end calls v2")
+> 
+> What about changing migrate.c (i actualy tried to do that everywhere in
+> the patchset but i missed that spot) So we avoid one useless variable on
+> such configuration:
+> 
+> diff --git a/mm/migrate.c b/mm/migrate.c
+> index f02bb4b22c1a..883fce631f47 100644
+> --- a/mm/migrate.c
+> +++ b/mm/migrate.c
+> @@ -2701,7 +2701,6 @@ static void migrate_vma_pages(struct migrate_vma *migrate)
+>  	const unsigned long npages = migrate->npages;
+>  	const unsigned long start = migrate->start;
+>  	struct vm_area_struct *vma = migrate->vma;
+> -	struct mm_struct *mm = vma->vm_mm;
+>  	struct mmu_notifier_range range;
+>  	unsigned long addr, i;
+>  	bool notified = false;
+> @@ -2724,8 +2723,8 @@ static void migrate_vma_pages(struct migrate_vma *migrate)
+>  			if (!notified) {
+>  				notified = true;
+>  
+> -				mmu_notifier_range_init(&range, mm, addr,
+> -							migrate->end,
+> +				mmu_notifier_range_init(&range, vma->vm_mm,
+> +							addr, migrate->end,
+>  							MMU_NOTIFY_CLEAR);
+>  				mmu_notifier_invalidate_range_start(&range);
+>  			}
 
-> -----Original Message-----
-> From: netdev-owner@vger.kernel.org <netdev-owner@vger.kernel.org>
-> On Behalf Of Russell King - ARM Linux
-> Sent: Tuesday, December 11, 2018 6:37 PM
-> To: Antoine Tenart <antoine.tenart@bootlin.com>
-> Cc: davem@davemloft.net; netdev@vger.kernel.org; linux-
-> kernel@vger.kernel.org; thomas.petazzoni@bootlin.com;
-> maxime.chevallier@bootlin.com; gregory.clement@bootlin.com;
-> miquel.raynal@bootlin.com; Nadav Haklai <nadavh@marvell.com>; Stefan
-> Chulski <stefanc@marvell.com>; Yan Markman <ymarkman@marvell.com>;
-> mw@semihalf.com; Baruch Siach <baruch@tkos.co.il>
-> Subject: Re: [PATCH net] net: mvpp2: 10G modes aren't supported on all
-> ports
->=20
-> On Tue, Dec 11, 2018 at 05:32:28PM +0100, Antoine Tenart wrote:
-> > The mvpp2_phylink_validate() function sets all modes that are
-> > supported by a given PPv2 port. A recent change made all ports to
-> > advertise they support 10G modes in certain cases. This is not true,
-> > as only the port #0 can do so. This patch fixes it.
-> >
-> > Fixes: 01b3fd5ac97c ("net: mvpp2: fix detection of 10G SFP modules")
-> > Cc: Baruch Siach <baruch@tkos.co.il>
-> > Signed-off-by: Antoine Tenart <antoine.tenart@bootlin.com>
-> > ---
-> >  drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c | 14 ++++++++------
-> >  1 file changed, 8 insertions(+), 6 deletions(-)
-> >
-> > diff --git a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
-> > b/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
-> > index 125ea99418df..88aa488054a8 100644
-> > --- a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
-> > +++ b/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
-> > @@ -4405,12 +4405,14 @@ static void mvpp2_phylink_validate(struct
-> net_device *dev,
-> >  	case PHY_INTERFACE_MODE_10GKR:
-> >  	case PHY_INTERFACE_MODE_XAUI:
->=20
-> Are these modes supported on anything except port 0?  If not, you should =
-be
-> rejecting these, rather than just treating them as RGMII.
-
-In CP115(which has PPv2) PHY_INTERFACE_MODE_10GKR supported on ports 0 and =
-1
-PHY_INTERFACE_MODE_XAUI/PHY_INTERFACE_MODE_RXAUI supported only on port 0.
-
-Best Regards.
+Wouldn't it be better to just declare mmu_notifier_range_init() as a 
+static inline function rather than a #define to avoid this warning?
