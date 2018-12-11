@@ -2,72 +2,126 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_ADSP_ALL,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 902F2C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 02:13:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45FD8C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 02:17:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 54C4F2084C
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 02:13:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544494381;
-	bh=1OSvtFaQq6P1XEzWAYQcCvidSvCuOqcP/zeyayT5R/4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=Y9AnHZntSl3JEWU7Nt2eXZ89EQS6jt3MhK63qmY9ecqk9XBo77jkxLlty61JWhFcY
-	 xxoalH+0oLI/YlcAvb9B3yc5Wwb5hPaMltZNr1vYvlXllpUc0dD5p6JR8NbOyMJseJ
-	 prB7wJkJqm4UvnTi5N3MgGOZ77NVcs/O52K0kJu8=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 54C4F2084C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id E617E2081F
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 02:17:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E617E2081F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=aussec.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729576AbeLKCNA (ORCPT
+        id S1729465AbeLKCRl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 21:13:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43178 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727485AbeLKCNA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 21:13:00 -0500
-Received: from dragon (61-216-91-114.HINET-IP.hinet.net [61.216.91.114])
-        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 815F820672;
-        Tue, 11 Dec 2018 02:12:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544494379;
-        bh=1OSvtFaQq6P1XEzWAYQcCvidSvCuOqcP/zeyayT5R/4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Wux8QDHHAwXG7XertLHqx8AaFDNfDFGgirzfr1QUFIxq8I5pkfOw1gBdR0WCw/tD3
-         q5nwhqqalXbW3MuBcOOeb5UqRswO9L8r9h3Th20hV3L8TL9OFrOpVzzIQ96xmt9CfD
-         eNHzr0+68KHq4hY/Vp0vDhEa23Ku6n2uVT4uhBa4=
-Date:   Tue, 11 Dec 2018 10:12:06 +0800
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc:     linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Hans de Goede <hdegoede@redhat.com>,
-        linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Jun Nie <jun.nie@linaro.org>, linux-kernel@vger.kernel.org
-Subject: Re: [RFC/RFT 05/10] i2c: zx2967: use core helper to mark adapter
- suspended
-Message-ID: <20181211021205.GS3987@dragon>
-References: <20181210210310.12677-1-wsa+renesas@sang-engineering.com>
- <20181210210310.12677-6-wsa+renesas@sang-engineering.com>
+        Mon, 10 Dec 2018 21:17:41 -0500
+Received: from csm1.csm-office.com.au ([165.228.118.109]:49806 "EHLO
+        sleepy.aussec.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727485AbeLKCRl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Dec 2018 21:17:41 -0500
+X-Virus-Scanned: amavisd-new at aussec.com
+Received: from sneezy.aussec.com (sneezy.aussec.com [172.16.0.4])
+        by sleepy.aussec.com (8.15.2/8.15.2) with ESMTP id wBB2HLlH018717;
+        Tue, 11 Dec 2018 13:17:26 +1100
+Received: from 1.132.107.23 ([1.132.107.23]) by www.aussec.com (Horde
+ Framework) with HTTP; Tue, 11 Dec 2018 13:17:16 +1100
+Message-ID: <20181211131716.931947v9gya4ajos@www.aussec.com>
+Date:   Tue, 11 Dec 2018 13:17:16 +1100
+From:   tom burkart <tom@aussec.com>
+To:     Rob Herring <robh@kernel.org>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        devicetree@vger.kernel.org, lukas@fridolin.com
+Subject: Re: [PATCH v9 3/4] dt-bindings: pps: pps-gpio PPS ECHO
+ implementation
+References: <20181122094602.5156-1-tom@aussec.com>
+ <20181122094602.5156-2-tom@aussec.com>
+ <20181122094602.5156-3-tom@aussec.com>
+ <20181122094602.5156-4-tom@aussec.com>
+ <CAL_JsqJ6fM3+pcC3b-eXEex=j_ft6Z=vukhLK9wULfWJqOTN-A@mail.gmail.com>
+ <20181127150629.10795h1esqtc53ut@aussec.com>
+ <CAL_JsqJmuDbPgc3WYRU8y3hbDL5A4_Luj0FfAiSvJ2+J-TM9_g@mail.gmail.com>
+In-Reply-To:  <CAL_JsqJmuDbPgc3WYRU8y3hbDL5A4_Luj0FfAiSvJ2+J-TM9_g@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain;
+ charset=UTF-8;
+ DelSp="Yes";
+ format="flowed"
 Content-Disposition: inline
-In-Reply-To: <20181210210310.12677-6-wsa+renesas@sang-engineering.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Transfer-Encoding: 7bit
+User-Agent: Internet Messaging Program (IMP) H3 (4.3.9)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 10, 2018 at 10:03:03PM +0100, Wolfram Sang wrote:
-> Rejecting transfers should be handled by the core. Also, this will
-> ensure proper locking which was forgotten in this open coded version
-> and make sure resume mark is set after enabling clocks (not before).
-> 
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Quoting Rob Herring <robh@kernel.org>:
 
-Acked-by: Shawn Guo <shawnguo@kernel.org>
+> On Mon, Nov 26, 2018 at 10:06 PM tom burkart <tom@aussec.com> wrote:
+>>
+>> Quoting Rob Herring <robh@kernel.org>:
+>>
+>> > On Thu, Nov 22, 2018 at 3:49 AM Tom Burkart <tom@aussec.com> wrote:
+>> >>
+>> >> This patch implements the device tree changes required for the pps
+>> >> echo functionality for pps-gpio, that sysfs claims is available
+>> >> already.
+>> >>
+>> >> This patch was originally written by Lukas Senger as part of a masters
+>> >> thesis project and modified for inclusion into the linux kernel by Tom
+>> >> Burkart.
+>> >>
+>> >> Signed-off-by: Lukas Senger <lukas@fridolin.com>
+>> >> Signed-off-by: Tom Burkart <tom@aussec.com>
+>> >> ---
+>> >>  Documentation/devicetree/bindings/pps/pps-gpio.txt | 9 +++++++++
+>> >>  1 file changed, 9 insertions(+)
+>> >>
+>> >> diff --git a/Documentation/devicetree/bindings/pps/pps-gpio.txt
+>> >> b/Documentation/devicetree/bindings/pps/pps-gpio.txt
+>> >> index 1155d49c2699..e09f6f2405c5 100644
+>> >> --- a/Documentation/devicetree/bindings/pps/pps-gpio.txt
+>> >> +++ b/Documentation/devicetree/bindings/pps/pps-gpio.txt
+>> >> @@ -7,10 +7,15 @@ Required properties:
+>> >>  - compatible: should be "pps-gpio"
+>> >>  - gpios: one PPS GPIO in the format described by ../gpio/gpio.txt
+>> >>
+>> >> +Additional required properties for the PPS ECHO functionality:
+>> >> +- echo-gpios: one PPS ECHO GPIO in the format described by  
+>> ../gpio/gpio.txt
+>> >> +- echo-active-ms: duration in ms of the active portion of the echo pulse
+>> >> +
+>> >>  Optional properties:
+>> >>  - assert-falling-edge: when present, assert is indicated by a  
+>> falling edge
+>> >>                         (instead of by a rising edge)
+>> >>  - capture-clear: when present, also capture the PPS clear event
+>> >> +- invert-pps-echo: when present, invert the PPS ECHO pulse
+>> >
+>> > Why do you need this? Can't you just make the echo gpio GPIO_ACTIVE_LOW?
+>> >
+>> > BTW, using the flag probably should have been done for
+>> > 'assert-falling-edge' as well.
+>>
+>> The hardware I use expects a positive-going echo pulse, however, it
+>> was really easy to give users the option to have it inverted in case
+>> they use different hardware that expects a negative-going edge.
+>
+> It will be even easier to implement if you use GPIO_ACTIVE_LOW or
+> GPIO_ACTIVE_HIGH as appropriate. If the flag is set appropriately,
+> then gpiod_set_value(gpio, 1) asserts the pulse and
+> gpiod_set_value(gpio, 0) deasserts it no matter which way the h/w is
+> wired. You can then get rid of invert_pps_echo in the driver.
+
+Hi Rob,
+I have looked at the appropriate changes to my code to implement the  
+above.  However, there is no GPIO_ACTIVE_* as part of the gpiod_flags  
+enum (include/linux/gpio/consumer.h).
+
+What am I missing?
+
+Tom
+
