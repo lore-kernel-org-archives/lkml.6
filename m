@@ -6,39 +6,39 @@ X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9ADF7C5CFFE
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 08:05:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3CE2C07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 08:05:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A77C20811
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 08:05:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A77C20811
+	by mail.kernel.org (Postfix) with ESMTP id C594320811
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 08:05:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C594320811
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=denx.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726296AbeLKIFf (ORCPT
+        id S1726266AbeLKIF3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 03:05:35 -0500
-Received: from mail-out.m-online.net ([212.18.0.9]:48498 "EHLO
+        Tue, 11 Dec 2018 03:05:29 -0500
+Received: from mail-out.m-online.net ([212.18.0.10]:46936 "EHLO
         mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726243AbeLKIF0 (ORCPT
+        with ESMTP id S1726242AbeLKIF0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 11 Dec 2018 03:05:26 -0500
 Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
-        by mail-out.m-online.net (Postfix) with ESMTP id 43DXYc1FDXz1r2cC;
-        Tue, 11 Dec 2018 09:05:24 +0100 (CET)
+        by mail-out.m-online.net (Postfix) with ESMTP id 43DXYb1sk1z1r5Mt;
+        Tue, 11 Dec 2018 09:05:22 +0100 (CET)
 Received: from localhost (dynscan1.mnet-online.de [192.168.6.70])
-        by mail.m-online.net (Postfix) with ESMTP id 43DXYc0Ghqz1qrnJ;
-        Tue, 11 Dec 2018 09:05:24 +0100 (CET)
+        by mail.m-online.net (Postfix) with ESMTP id 43DXYZ3X5kz1qrnD;
+        Tue, 11 Dec 2018 09:05:22 +0100 (CET)
 X-Virus-Scanned: amavisd-new at mnet-online.de
 Received: from mail.mnet-online.de ([192.168.8.182])
         by localhost (dynscan1.mail.m-online.net [192.168.6.70]) (amavisd-new, port 10024)
-        with ESMTP id 7tYr4Ma-_Qow; Tue, 11 Dec 2018 09:05:22 +0100 (CET)
-X-Auth-Info: vEhu7Uh0aFLABhva+u7giMJXYyMx2ajaAFfp049DCYg=
+        with ESMTP id 65p2Mj8oLDOI; Tue, 11 Dec 2018 09:05:20 +0100 (CET)
+X-Auth-Info: LhEY347YrBlAk+fPl7tpuUS2xqJgOtlqrk80fpvAg0k=
 Received: from xpert.denx.de (unknown [62.91.23.180])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
         by mail.mnet-online.de (Postfix) with ESMTPSA;
-        Tue, 11 Dec 2018 09:05:22 +0100 (CET)
+        Tue, 11 Dec 2018 09:05:20 +0100 (CET)
 From:   Parthiban Nallathambi <pn@denx.de>
 To:     manivannan.sadhasivam@linaro.org, afaerber@suse.de,
         robh+dt@kernel.org, mark.rutland@arm.com, wsa@the-dreams.de
@@ -47,9 +47,9 @@ Cc:     linux-arm-kernel@lists.infradead.org, linux-i2c@vger.kernel.org,
         linux@cubietech.com, thomas.liau@actions-semi.com,
         linux-actions@lists.infradead.org,
         Parthiban Nallathambi <pn@denx.de>
-Subject: [PATCH v3 3/4] i2c: Add Actions Semiconductor Owl family S700 I2C support
-Date:   Tue, 11 Dec 2018 09:04:47 +0100
-Message-Id: <20181211080448.24007-4-pn@denx.de>
+Subject: [PATCH v3 2/4] arm64: dts: actions: s700: Add I2C controller nodes
+Date:   Tue, 11 Dec 2018 09:04:46 +0100
+Message-Id: <20181211080448.24007-3-pn@denx.de>
 X-Mailer: git-send-email 2.17.2
 In-Reply-To: <20181211080448.24007-1-pn@denx.de>
 References: <20181211080448.24007-1-pn@denx.de>
@@ -58,28 +58,65 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add S700 to the list of devices supported by Owl I2C driver.
-
-Add Actions Semiconductor Owl family S700 I2C driver.
+Add I2C controller nodes for Actions Semiconductor S700 SoC.
 
 Signed-off-by: Parthiban Nallathambi <pn@denx.de>
 Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 ---
- drivers/i2c/busses/i2c-owl.c | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm64/boot/dts/actions/s700.dtsi | 40 +++++++++++++++++++++++++++
+ 1 file changed, 40 insertions(+)
 
-diff --git a/drivers/i2c/busses/i2c-owl.c b/drivers/i2c/busses/i2c-owl.c
-index 96b4572e6d9c..b6b5a495118b 100644
---- a/drivers/i2c/busses/i2c-owl.c
-+++ b/drivers/i2c/busses/i2c-owl.c
-@@ -475,6 +475,7 @@ static int owl_i2c_probe(struct platform_device *pdev)
- }
+diff --git a/arch/arm64/boot/dts/actions/s700.dtsi b/arch/arm64/boot/dts/actions/s700.dtsi
+index 192c7b39c8c1..35fddba2af1c 100644
+--- a/arch/arm64/boot/dts/actions/s700.dtsi
++++ b/arch/arm64/boot/dts/actions/s700.dtsi
+@@ -174,6 +174,46 @@
+ 			#clock-cells = <1>;
+ 		};
  
- static const struct of_device_id owl_i2c_of_match[] = {
-+	{ .compatible = "actions,s700-i2c" },
- 	{ .compatible = "actions,s900-i2c" },
- 	{ /* sentinel */ }
- };
++		i2c0: i2c@e0170000 {
++			compatible = "actions,s700-i2c";
++			reg = <0 0xe0170000 0 0x1000>;
++			clocks = <&cmu CLK_I2C0>;
++			interrupts = <GIC_SPI 25 IRQ_TYPE_LEVEL_HIGH>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
++		};
++
++		i2c1: i2c@e0174000 {
++			compatible = "actions,s700-i2c";
++			reg = <0 0xe0174000 0 0x1000>;
++			clocks = <&cmu CLK_I2C1>;
++			interrupts = <GIC_SPI 26 IRQ_TYPE_LEVEL_HIGH>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
++		};
++
++		i2c2: i2c@e0178000 {
++			compatible = "actions,s700-i2c";
++			reg = <0 0xe0178000 0 0x1000>;
++			clocks = <&cmu CLK_I2C2>;
++			interrupts = <GIC_SPI 27 IRQ_TYPE_LEVEL_HIGH>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
++		};
++
++		i2c3: i2c@e017c000 {
++			compatible = "actions,s700-i2c";
++			reg = <0 0xe017c000 0 0x1000>;
++			clocks = <&cmu CLK_I2C3>;
++			interrupts = <GIC_SPI 28 IRQ_TYPE_LEVEL_HIGH>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
++		};
++
+ 		sps: power-controller@e01b0100 {
+ 			compatible = "actions,s700-sps";
+ 			reg = <0x0 0xe01b0100 0x0 0x100>;
 -- 
 2.17.2
 
