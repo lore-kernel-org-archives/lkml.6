@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04FF2C5CFFE
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 17:12:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AFC5C07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 17:12:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C93A72081B
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 17:12:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C93A72081B
+	by mail.kernel.org (Postfix) with ESMTP id 0C98420870
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 17:12:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C98420870
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728168AbeLKRMv (ORCPT
+        id S1727637AbeLKRML (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 12:12:51 -0500
-Received: from foss.arm.com ([217.140.101.70]:53570 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727674AbeLKRMM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 12:12:12 -0500
+        Tue, 11 Dec 2018 12:12:11 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:53550 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726170AbeLKRMI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 12:12:08 -0500
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 35AB01684;
-        Tue, 11 Dec 2018 09:12:12 -0800 (PST)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 23D6715AB;
+        Tue, 11 Dec 2018 09:12:08 -0800 (PST)
 Received: from en101.cambridge.arm.com (en101.cambridge.arm.com [10.1.196.93])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 695C13F6A8;
-        Tue, 11 Dec 2018 09:12:10 -0800 (PST)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 5860B3F6A8;
+        Tue, 11 Dec 2018 09:12:06 -0800 (PST)
 From:   Suzuki K Poulose <suzuki.poulose@arm.com>
 To:     linux-arm-kernel@lists.infradead.org
 Cc:     suzuki.poulose@arm.com, linux-kernel@vger.kernel.org,
@@ -35,9 +35,9 @@ Cc:     suzuki.poulose@arm.com, linux-kernel@vger.kernel.org,
         marc.zyngier@arm.com, christoffer.dall@arm.com,
         will.deacon@arm.com, catalin.marinas@arm.com,
         anshuman.khandual@arm.com
-Subject: [PATCH v10 3/8] KVM: arm/arm64: Introduce helpers to manipulate page table entries
-Date:   Tue, 11 Dec 2018 17:10:36 +0000
-Message-Id: <1544548241-6417-4-git-send-email-suzuki.poulose@arm.com>
+Subject: [PATCH v10 1/8] KVM: arm/arm64: Share common code in user_mem_abort()
+Date:   Tue, 11 Dec 2018 17:10:34 +0000
+Message-Id: <1544548241-6417-2-git-send-email-suzuki.poulose@arm.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1544548241-6417-1-git-send-email-suzuki.poulose@arm.com>
 References: <1544548241-6417-1-git-send-email-suzuki.poulose@arm.com>
@@ -48,112 +48,125 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Punit Agrawal <punit.agrawal@arm.com>
 
-Introduce helpers to abstract architectural handling of the conversion
-of pfn to page table entries and marking a PMD page table entry as a
-block entry.
+The code for operations such as marking the pfn as dirty, and
+dcache/icache maintenance during stage 2 fault handling is duplicated
+between normal pages and PMD hugepages.
 
-The helpers are introduced in preparation for supporting PUD hugepages
-at stage 2 - which are supported on arm64 but do not exist on arm.
+Instead of creating another copy of the operations when we introduce
+PUD hugepages, let's share them across the different pagesizes.
 
 Signed-off-by: Punit Agrawal <punit.agrawal@arm.com>
 Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-Acked-by: Christoffer Dall <christoffer.dall@arm.com>
+Cc: Christoffer Dall <christoffer.dall@arm.com>
 Cc: Marc Zyngier <marc.zyngier@arm.com>
-Cc: Russell King <linux@armlinux.org.uk>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
 ---
- arch/arm/include/asm/kvm_mmu.h   |  5 +++++
- arch/arm64/include/asm/kvm_mmu.h |  5 +++++
- virt/kvm/arm/mmu.c               | 14 ++++++++------
- 3 files changed, 18 insertions(+), 6 deletions(-)
+ virt/kvm/arm/mmu.c | 49 ++++++++++++++++++++++++++++++-------------------
+ 1 file changed, 30 insertions(+), 19 deletions(-)
 
-diff --git a/arch/arm/include/asm/kvm_mmu.h b/arch/arm/include/asm/kvm_mmu.h
-index 1098ffc..e6eff8b 100644
---- a/arch/arm/include/asm/kvm_mmu.h
-+++ b/arch/arm/include/asm/kvm_mmu.h
-@@ -82,6 +82,11 @@ void kvm_clear_hyp_idmap(void);
- #define kvm_mk_pud(pmdp)	__pud(__pa(pmdp) | PMD_TYPE_TABLE)
- #define kvm_mk_pgd(pudp)	({ BUILD_BUG(); 0; })
- 
-+#define kvm_pfn_pte(pfn, prot)	pfn_pte(pfn, prot)
-+#define kvm_pfn_pmd(pfn, prot)	pfn_pmd(pfn, prot)
-+
-+#define kvm_pmd_mkhuge(pmd)	pmd_mkhuge(pmd)
-+
- static inline pte_t kvm_s2pte_mkwrite(pte_t pte)
- {
- 	pte_val(pte) |= L_PTE_S2_RDWR;
-diff --git a/arch/arm64/include/asm/kvm_mmu.h b/arch/arm64/include/asm/kvm_mmu.h
-index 65865736..13d4827 100644
---- a/arch/arm64/include/asm/kvm_mmu.h
-+++ b/arch/arm64/include/asm/kvm_mmu.h
-@@ -184,6 +184,11 @@ void kvm_clear_hyp_idmap(void);
- #define kvm_mk_pgd(pudp)					\
- 	__pgd(__phys_to_pgd_val(__pa(pudp)) | PUD_TYPE_TABLE)
- 
-+#define kvm_pfn_pte(pfn, prot)		pfn_pte(pfn, prot)
-+#define kvm_pfn_pmd(pfn, prot)		pfn_pmd(pfn, prot)
-+
-+#define kvm_pmd_mkhuge(pmd)		pmd_mkhuge(pmd)
-+
- static inline pte_t kvm_s2pte_mkwrite(pte_t pte)
- {
- 	pte_val(pte) |= PTE_S2_RDWR;
 diff --git a/virt/kvm/arm/mmu.c b/virt/kvm/arm/mmu.c
-index 6912529..fb5325f 100644
+index 5eca48b..5959520 100644
 --- a/virt/kvm/arm/mmu.c
 +++ b/virt/kvm/arm/mmu.c
-@@ -607,7 +607,7 @@ static void create_hyp_pte_mappings(pmd_t *pmd, unsigned long start,
- 	addr = start;
- 	do {
- 		pte = pte_offset_kernel(pmd, addr);
--		kvm_set_pte(pte, pfn_pte(pfn, prot));
-+		kvm_set_pte(pte, kvm_pfn_pte(pfn, prot));
- 		get_page(virt_to_page(pte));
- 		pfn++;
- 	} while (addr += PAGE_SIZE, addr != end);
-@@ -1202,7 +1202,7 @@ int kvm_phys_addr_ioremap(struct kvm *kvm, phys_addr_t guest_ipa,
- 	pfn = __phys_to_pfn(pa);
+@@ -1475,7 +1475,7 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
+ 			  unsigned long fault_status)
+ {
+ 	int ret;
+-	bool write_fault, exec_fault, writable, hugetlb = false, force_pte = false;
++	bool write_fault, exec_fault, writable, force_pte = false;
+ 	unsigned long mmu_seq;
+ 	gfn_t gfn = fault_ipa >> PAGE_SHIFT;
+ 	struct kvm *kvm = vcpu->kvm;
+@@ -1484,7 +1484,7 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
+ 	kvm_pfn_t pfn;
+ 	pgprot_t mem_type = PAGE_S2;
+ 	bool logging_active = memslot_is_logging(memslot);
+-	unsigned long flags = 0;
++	unsigned long vma_pagesize, flags = 0;
  
- 	for (addr = guest_ipa; addr < end; addr += PAGE_SIZE) {
--		pte_t pte = pfn_pte(pfn, PAGE_S2_DEVICE);
-+		pte_t pte = kvm_pfn_pte(pfn, PAGE_S2_DEVICE);
+ 	write_fault = kvm_is_write_fault(vcpu);
+ 	exec_fault = kvm_vcpu_trap_is_iabt(vcpu);
+@@ -1504,11 +1504,17 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
+ 		return -EFAULT;
+ 	}
  
- 		if (writable)
- 			pte = kvm_s2pte_mkwrite(pte);
-@@ -1611,8 +1611,10 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
- 		(fault_status == FSC_PERM && stage2_is_exec(kvm, fault_ipa));
- 
- 	if (vma_pagesize == PMD_SIZE) {
--		pmd_t new_pmd = pfn_pmd(pfn, mem_type);
--		new_pmd = pmd_mkhuge(new_pmd);
-+		pmd_t new_pmd = kvm_pfn_pmd(pfn, mem_type);
-+
-+		new_pmd = kvm_pmd_mkhuge(new_pmd);
-+
- 		if (writable)
- 			new_pmd = kvm_s2pmd_mkwrite(new_pmd);
- 
-@@ -1621,7 +1623,7 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
- 
- 		ret = stage2_set_pmd_huge(kvm, memcache, fault_ipa, &new_pmd);
+-	if (vma_kernel_pagesize(vma) == PMD_SIZE && !logging_active) {
+-		hugetlb = true;
++	vma_pagesize = vma_kernel_pagesize(vma);
++	if (vma_pagesize == PMD_SIZE && !logging_active) {
+ 		gfn = (fault_ipa & PMD_MASK) >> PAGE_SHIFT;
  	} else {
--		pte_t new_pte = pfn_pte(pfn, mem_type);
-+		pte_t new_pte = kvm_pfn_pte(pfn, mem_type);
+ 		/*
++		 * Fallback to PTE if it's not one of the Stage 2
++		 * supported hugepage sizes
++		 */
++		vma_pagesize = PAGE_SIZE;
++
++		/*
+ 		 * Pages belonging to memslots that don't have the same
+ 		 * alignment for userspace and IPA cannot be mapped using
+ 		 * block descriptors even if the pages belong to a THP for
+@@ -1573,23 +1579,33 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
+ 	if (mmu_notifier_retry(kvm, mmu_seq))
+ 		goto out_unlock;
+ 
+-	if (!hugetlb && !force_pte)
+-		hugetlb = transparent_hugepage_adjust(&pfn, &fault_ipa);
++	if (vma_pagesize == PAGE_SIZE && !force_pte) {
++		/*
++		 * Only PMD_SIZE transparent hugepages(THP) are
++		 * currently supported. This code will need to be
++		 * updated to support other THP sizes.
++		 */
++		if (transparent_hugepage_adjust(&pfn, &fault_ipa))
++			vma_pagesize = PMD_SIZE;
++	}
+ 
+-	if (hugetlb) {
++	if (writable)
++		kvm_set_pfn_dirty(pfn);
++
++	if (fault_status != FSC_PERM)
++		clean_dcache_guest_page(pfn, vma_pagesize);
++
++	if (exec_fault)
++		invalidate_icache_guest_page(pfn, vma_pagesize);
++
++	if (vma_pagesize == PMD_SIZE) {
+ 		pmd_t new_pmd = pfn_pmd(pfn, mem_type);
+ 		new_pmd = pmd_mkhuge(new_pmd);
+-		if (writable) {
++		if (writable)
+ 			new_pmd = kvm_s2pmd_mkwrite(new_pmd);
+-			kvm_set_pfn_dirty(pfn);
+-		}
+-
+-		if (fault_status != FSC_PERM)
+-			clean_dcache_guest_page(pfn, PMD_SIZE);
+ 
+ 		if (exec_fault) {
+ 			new_pmd = kvm_s2pmd_mkexec(new_pmd);
+-			invalidate_icache_guest_page(pfn, PMD_SIZE);
+ 		} else if (fault_status == FSC_PERM) {
+ 			/* Preserve execute if XN was already cleared */
+ 			if (stage2_is_exec(kvm, fault_ipa))
+@@ -1602,16 +1618,11 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
  
  		if (writable) {
  			new_pte = kvm_s2pte_mkwrite(new_pte);
-@@ -1878,7 +1880,7 @@ void kvm_set_spte_hva(struct kvm *kvm, unsigned long hva, pte_t pte)
- 	 * just like a translation fault and clean the cache to the PoC.
- 	 */
- 	clean_dcache_guest_page(pfn, PAGE_SIZE);
--	stage2_pte = pfn_pte(pfn, PAGE_S2);
-+	stage2_pte = kvm_pfn_pte(pfn, PAGE_S2);
- 	handle_hva_to_gpa(kvm, hva, end, &kvm_set_spte_handler, &stage2_pte);
- }
+-			kvm_set_pfn_dirty(pfn);
+ 			mark_page_dirty(kvm, gfn);
+ 		}
  
+-		if (fault_status != FSC_PERM)
+-			clean_dcache_guest_page(pfn, PAGE_SIZE);
+-
+ 		if (exec_fault) {
+ 			new_pte = kvm_s2pte_mkexec(new_pte);
+-			invalidate_icache_guest_page(pfn, PAGE_SIZE);
+ 		} else if (fault_status == FSC_PERM) {
+ 			/* Preserve execute if XN was already cleared */
+ 			if (stage2_is_exec(kvm, fault_ipa))
 -- 
 2.7.4
 
