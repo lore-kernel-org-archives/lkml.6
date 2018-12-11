@@ -7,48 +7,49 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03890C07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:16:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1DE9C07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:16:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BE94B2084E
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:16:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 85A202084E
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:16:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544544992;
-	bh=SApW4XrJIda38W+MDnq98peXuwKoRZXg5tvpP02SKog=;
+	s=default; t=1544544999;
+	bh=X3Lr5a8bw7CkPJ/1qBznnjqBqZnWWI1ScVNEd2xW7gk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=tmv86ctRAcYXFQBxlPLN1hacFZelIOSsXR24sCJjBKhTqyjyHzvb8V6BGZDihn4mf
-	 73/vR0cEg4Dvoss4dTwkzkw4QZe7bgDAYrDf++JX5xsBhSNom7/Ymqzdn6J2KbsfqV
-	 /jVQiVi6Xpg+nxaTllfIkR5l8UF6XalS8ChPWB0g=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE94B2084E
+	b=jasGxijjO/Uo4m4gFxTN41X6Wjpcnr5AyEyIpw9DYWzN0moYiI6hjylE8cm2xsj57
+	 3z3cdJ7Eg7d1aSu/gc4/TwUzHO9N1/R7HO73X/BFwKPKHDxEWgJUasQUXIfedhvqdl
+	 Bjg1+kN5+SHJT/qI/Eeiz0g0hJ00bl5NWjSQ2Kz0=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85A202084E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728678AbeLKPry (ORCPT
+        id S1729162AbeLKQQi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 10:47:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36252 "EHLO mail.kernel.org"
+        Tue, 11 Dec 2018 11:16:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36224 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728152AbeLKPru (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:47:50 -0500
+        id S1728656AbeLKPrr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 10:47:47 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0CF5E20989;
-        Tue, 11 Dec 2018 15:47:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6FFCD20989;
+        Tue, 11 Dec 2018 15:47:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544543269;
-        bh=SApW4XrJIda38W+MDnq98peXuwKoRZXg5tvpP02SKog=;
+        s=default; t=1544543266;
+        bh=X3Lr5a8bw7CkPJ/1qBznnjqBqZnWWI1ScVNEd2xW7gk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oky/TVoc5pRxbsOjQOhbYpFV6n3rwZPb0B3pJcf3OqFcKhiF+EvOBvyPwf5+Bwx4/
-         YZQGX6kwcBXDOOsuL6bN6BLEE5xvX2H47SollbjOjxd90kZQUEkMwqgqaUoGsDgoNY
-         4TUya8zAUrKAOQ8VK4PlOxpkFWX6lemXvHp9YtTs=
+        b=B8GdngnAtm+GdZcVbBm9zceypOHj8p9l3BSLPQnSZ017flNt83q9IbR1RYl7gFGhU
+         cvioRf2rw8awVSU2OPgkM2sVfMwvmVx58cXWwvaB0D6EvfndHYRYBI8GZCM8lFdNN8
+         C25w9qsTbpwIMhEYCcvvhovI9sgqbFMEsLEQY2Eo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.4 77/91] ALSA: pcm: Fix interval evaluation with openmin/max
-Date:   Tue, 11 Dec 2018 16:41:36 +0100
-Message-Id: <20181211151612.799803925@linuxfoundation.org>
+        stable@vger.kernel.org, Chanho Min <chanho.min@lge.com>,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.4 76/91] ALSA: pcm: Call snd_pcm_unlink() conditionally at closing
+Date:   Tue, 11 Dec 2018 16:41:35 +0100
+Message-Id: <20181211151612.682070420@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181211151606.026852373@linuxfoundation.org>
 References: <20181211151606.026852373@linuxfoundation.org>
@@ -69,38 +70,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Takashi Iwai <tiwai@suse.de>
 
-commit 5363857b916c1f48027e9b96ee8be8376bf20811 upstream.
+commit b51abed8355e5556886623b2772fa6b7598d2282 upstream.
 
-As addressed in alsa-lib (commit b420056604f0), we need to fix the
-case where the evaluation of PCM interval "(x x+1]" leading to
--EINVAL.  After applying rules, such an interval may be translated as
-"(x x+1)".
+Currently the PCM core calls snd_pcm_unlink() always unconditionally
+at closing a stream.  However, since snd_pcm_unlink() invokes the
+global rwsem down, the lock can be easily contended.  More badly, when
+a thread runs in a high priority RT-FIFO, it may stall at spinning.
 
-Fixes: ff2d6acdf6f1 ("ALSA: pcm: Fix snd_interval_refine first/last with open min/max")
+Basically the call of snd_pcm_unlink() is required only for the linked
+streams that are already rare occasion.  For normal use cases, this
+code path is fairly superfluous.
+
+As an optimization (and also as a workaround for the RT problem
+above in normal situations without linked streams), this patch adds a
+check before calling snd_pcm_unlink() and calls it only when needed.
+
+Reported-by: Chanho Min <chanho.min@lge.com>
 Cc: <stable@vger.kernel.org>
 Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- include/sound/pcm_params.h |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ sound/core/pcm_native.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/include/sound/pcm_params.h
-+++ b/include/sound/pcm_params.h
-@@ -247,11 +247,13 @@ static inline int snd_interval_empty(con
- static inline int snd_interval_single(const struct snd_interval *i)
+--- a/sound/core/pcm_native.c
++++ b/sound/core/pcm_native.c
+@@ -2225,7 +2225,8 @@ int snd_pcm_hw_constraints_complete(stru
+ 
+ static void pcm_release_private(struct snd_pcm_substream *substream)
  {
- 	return (i->min == i->max || 
--		(i->min + 1 == i->max && i->openmax));
-+		(i->min + 1 == i->max && (i->openmin || i->openmax)));
+-	snd_pcm_unlink(substream);
++	if (snd_pcm_stream_linked(substream))
++		snd_pcm_unlink(substream);
  }
  
- static inline int snd_interval_value(const struct snd_interval *i)
- {
-+	if (i->openmin && !i->openmax)
-+		return i->max;
- 	return i->min;
- }
- 
+ void snd_pcm_release_substream(struct snd_pcm_substream *substream)
 
 
