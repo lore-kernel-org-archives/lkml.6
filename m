@@ -4,52 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83518C5CFFE
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:53:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1985EC07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:53:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 49A7720855
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:53:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D33AF2146D
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:53:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544543617;
-	bh=26DbjZNIChgAYwyqGEynAcYUgLsCquh6EGAkT4SHwHM=;
+	s=default; t=1544543620;
+	bh=2do8wXOQBscJdwzFDTTLcAENiHiltrw0pTO+gvfvmoU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=BrQiOxixvHAYFuJbHQ/Zuh7wE412VjBJqen16kbtHJFl67Av7uRHcwAL/3QOUSE7s
-	 X8Xt0CSi3Tpy3B1kqSk+YrfoPOzlAtfzwpcdxziPvDsglTA2sakewoa3kVv9kkgioI
-	 f83bYu12NynhZX/oUHaVu5di9KeTypnDpjOLC1qM=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 49A7720855
+	b=IQEBFVSErtHjJ7pfX3IuZqq0MyZ/fkCP2k3GhVSvNbBKBJ1sf6YhhvQjOkm8ETh3e
+	 xdFmB3JsFONgtmSnOhizYIlapvwM9dRf6Kn8hq9Fw7coUze+9e8DgdwRBGBSkFTx8b
+	 LgFD8CBbVI/xEO+BeCzRrAyyPcHa5txtHxaV3jSM=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D33AF2146D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729968AbeLKPxf (ORCPT
+        id S1729981AbeLKPxj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 10:53:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42216 "EHLO mail.kernel.org"
+        Tue, 11 Dec 2018 10:53:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42294 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729503AbeLKPxa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:53:30 -0500
+        id S1729966AbeLKPxf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 10:53:35 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 961742146E;
-        Tue, 11 Dec 2018 15:53:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D2C912146D;
+        Tue, 11 Dec 2018 15:53:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544543610;
-        bh=26DbjZNIChgAYwyqGEynAcYUgLsCquh6EGAkT4SHwHM=;
+        s=default; t=1544543615;
+        bh=2do8wXOQBscJdwzFDTTLcAENiHiltrw0pTO+gvfvmoU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=yHwcWjpoMPd13TDQNyRCAmesGzx5K3OWYDxQzdg3F00NyD3H6d5GXbD8vl5C4Gxh0
-         bcB7PjIwtYEaii5bLNFo/F2GG9A355+IbGD20wjogvoPh/T2H64tDDYWPRaCCqtxjj
-         Up7dBG9fpGslcRsoMdxaf+s0lkF5gqfSyoHvwF5I=
+        b=YAvXEm9k1MY7/H8r+BzNpwsaBARdRdFjh9K70UWVZYD9bjOJhtBiXn77ybknyKci1
+         77/jXO671BNUjUOq1w20urScx5OFJ7z3wm+Xsa5nhFOI9bNeynDMD77Ap9wGwcJayS
+         johonUF7tIgd7is493Ijdb4dt8JksK/n0PjXQD4c=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Vasyl Vavrychuk <vasyl.vavrychuk@globallogic.com>,
+        stable@vger.kernel.org, Felix Fietkau <nbd@nbd.name>,
         Johannes Berg <johannes.berg@intel.com>
-Subject: [PATCH 4.14 63/67] mac80211_hwsim: Timer should be initialized before device registered
-Date:   Tue, 11 Dec 2018 16:42:03 +0100
-Message-Id: <20181211151633.950280204@linuxfoundation.org>
+Subject: [PATCH 4.14 65/67] mac80211: ignore tx status for PS stations in ieee80211_tx_status_ext
+Date:   Tue, 11 Dec 2018 16:42:05 +0100
+Message-Id: <20181211151634.150129688@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181211151630.378216233@linuxfoundation.org>
 References: <20181211151630.378216233@linuxfoundation.org>
@@ -68,54 +68,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Vasyl Vavrychuk <vasyl.vavrychuk@globallogic.com>
+From: Felix Fietkau <nbd@nbd.name>
 
-commit a1881c9b8a1edef0a5ae1d5c1b61406fe3402114 upstream.
+commit a317e65face482371de30246b6494feb093ff7f9 upstream.
 
-Otherwise if network manager starts configuring Wi-Fi interface
-immidiatelly after getting notification of its creation, we will get
-NULL pointer dereference:
+Make it behave like regular ieee80211_tx_status calls, except for the lack of
+filtered frame processing.
+This fixes spurious low-ack triggered disconnections with powersave clients
+connected to an AP.
 
-  BUG: unable to handle kernel NULL pointer dereference at           (null)
-  IP: [<ffffffff95ae94c8>] hrtimer_active+0x28/0x50
-  ...
-  Call Trace:
-   [<ffffffff95ae9997>] ? hrtimer_try_to_cancel+0x27/0x110
-   [<ffffffff95ae9a95>] ? hrtimer_cancel+0x15/0x20
-   [<ffffffffc0803bf0>] ? mac80211_hwsim_config+0x140/0x1c0 [mac80211_hwsim]
-
+Fixes: f027c2aca0cf4 ("mac80211: add ieee80211_tx_status_noskb")
 Cc: stable@vger.kernel.org
-Signed-off-by: Vasyl Vavrychuk <vasyl.vavrychuk@globallogic.com>
+Signed-off-by: Felix Fietkau <nbd@nbd.name>
 Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/wireless/mac80211_hwsim.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ net/mac80211/status.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/net/wireless/mac80211_hwsim.c
-+++ b/drivers/net/wireless/mac80211_hwsim.c
-@@ -2698,6 +2698,10 @@ static int mac80211_hwsim_new_radio(stru
- 
- 	wiphy_ext_feature_set(hw->wiphy, NL80211_EXT_FEATURE_CQM_RSSI_LIST);
- 
-+	tasklet_hrtimer_init(&data->beacon_timer,
-+			     mac80211_hwsim_beacon,
-+			     CLOCK_MONOTONIC, HRTIMER_MODE_ABS);
-+
- 	err = ieee80211_register_hw(hw);
- 	if (err < 0) {
- 		printk(KERN_DEBUG "mac80211_hwsim: ieee80211_register_hw failed (%d)\n",
-@@ -2722,10 +2726,6 @@ static int mac80211_hwsim_new_radio(stru
- 				    data->debugfs,
- 				    data, &hwsim_simulate_radar);
- 
--	tasklet_hrtimer_init(&data->beacon_timer,
--			     mac80211_hwsim_beacon,
--			     CLOCK_MONOTONIC, HRTIMER_MODE_ABS);
--
- 	spin_lock_bh(&hwsim_radio_lock);
- 	list_add_tail(&data->list, &hwsim_radios);
- 	spin_unlock_bh(&hwsim_radio_lock);
+--- a/net/mac80211/status.c
++++ b/net/mac80211/status.c
+@@ -953,6 +953,8 @@ void ieee80211_tx_status_ext(struct ieee
+ 			/* Track when last TDLS packet was ACKed */
+ 			if (test_sta_flag(sta, WLAN_STA_TDLS_PEER_AUTH))
+ 				sta->status_stats.last_tdls_pkt_time = jiffies;
++		} else if (test_sta_flag(sta, WLAN_STA_PS_STA)) {
++			return;
+ 		} else {
+ 			ieee80211_lost_packet(sta, info);
+ 		}
 
 
