@@ -7,50 +7,49 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02BA8C07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:56:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CF50C07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:56:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C07A22146D
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:56:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1051B21104
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:56:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544543786;
-	bh=5KFRpNovaCOr16lwarSTSNjAPc+H2JwKjgTZzamUb5k=;
+	s=default; t=1544543792;
+	bh=XY5SW411y3RF0m0AEwQ7B74kBrJorzbAfR88lJx55p0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=mzfPVwjMVoGcGeyegehkfJeguwpw+YfiH+evgVpYnz9O9OUQO6teapdQ7ZFMrk/mS
-	 bwYpdFJ0YQMYoY+JEq9H5AzM1gAYogv+kRUhL1wPbyx+bRPtZN0eO8i3e1DuBcslDD
-	 5GAoV20hvfoRd81ByAFqhqWO3WDs09AmGkLJlU5s=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C07A22146D
+	b=qnVi0IFgaHrXylyuWxLgZAHiCrwFYJOe0P7IAAz3bsP/Gt3xGwhUIxU83kIwekwtK
+	 Exl2ACBEYCwvB5XIU+q9xAG/xY+fDe1IJvLGXf04Lt3ndgSOnVDrfzjBWYdUyx9Wl2
+	 +EZEES9VFJnie64dSLh1n8URaOAa0IN9SeQStzBs=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1051B21104
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730573AbeLKP4Z (ORCPT
+        id S1730595AbeLKP4a (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 10:56:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45144 "EHLO mail.kernel.org"
+        Tue, 11 Dec 2018 10:56:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45270 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730561AbeLKP4V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:56:21 -0500
+        id S1730577AbeLKP43 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 10:56:29 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8139A2086D;
-        Tue, 11 Dec 2018 15:56:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0533A205C9;
+        Tue, 11 Dec 2018 15:56:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544543781;
-        bh=5KFRpNovaCOr16lwarSTSNjAPc+H2JwKjgTZzamUb5k=;
+        s=default; t=1544543788;
+        bh=XY5SW411y3RF0m0AEwQ7B74kBrJorzbAfR88lJx55p0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=j+AX+A/zC/Zj9FnIsqAELgEnGsDHvSCGywLTG9oh5ij9TdwSNE5qYCxTfn8WJvaRi
-         VJEYYobisMqBMy5dCAIroqUkpjZoPkR3EGTPBI1+k9Hjiy51C9m0Zo4FH1vz+X/t+A
-         Z6sko/9Rt2V4biKLjGPUrV+xmu/3OmCPP+VhwMl8=
+        b=hVMBKrFqdrveEpfiXElR/vYQB6Q5/qWI4c44ADyOnXc8C0WjGVZNsInV5Ydwp1MzI
+         eBz4H6jxtY/S4dDAjWgaEe9GsLx8ES13ydlgGu5rJ2ZGpqzU2+tdGyCWPK2BQ+UVaG
+         EbdMsPNS79u7V037QgQrarjgW719OGiHnfM/WsTk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hui Peng <benquike@gmail.com>,
-        Mathias Payer <mathias.payer@nebelwelt.net>,
+        stable@vger.kernel.org, Chanho Min <chanho.min@lge.com>,
         Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.19 061/118] ALSA: usb-audio: Fix UAF decrement if card has no live interfaces in card.c
-Date:   Tue, 11 Dec 2018 16:41:20 +0100
-Message-Id: <20181211151646.701378689@linuxfoundation.org>
+Subject: [PATCH 4.19 064/118] ALSA: pcm: Call snd_pcm_unlink() conditionally at closing
+Date:   Tue, 11 Dec 2018 16:41:23 +0100
+Message-Id: <20181211151646.822488652@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181211151644.216668863@linuxfoundation.org>
 References: <20181211151644.216668863@linuxfoundation.org>
@@ -69,49 +68,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Hui Peng <benquike@gmail.com>
+From: Takashi Iwai <tiwai@suse.de>
 
-commit 5f8cf712582617d523120df67d392059eaf2fc4b upstream.
+commit b51abed8355e5556886623b2772fa6b7598d2282 upstream.
 
-If a USB sound card reports 0 interfaces, an error condition is triggered
-and the function usb_audio_probe errors out. In the error path, there was a
-use-after-free vulnerability where the memory object of the card was first
-freed, followed by a decrement of the number of active chips. Moving the
-decrement above the atomic_dec fixes the UAF.
+Currently the PCM core calls snd_pcm_unlink() always unconditionally
+at closing a stream.  However, since snd_pcm_unlink() invokes the
+global rwsem down, the lock can be easily contended.  More badly, when
+a thread runs in a high priority RT-FIFO, it may stall at spinning.
 
-[ The original problem was introduced in 3.1 kernel, while it was
-  developed in a different form.  The Fixes tag below indicates the
-  original commit but it doesn't mean that the patch is applicable
-  cleanly. -- tiwai ]
+Basically the call of snd_pcm_unlink() is required only for the linked
+streams that are already rare occasion.  For normal use cases, this
+code path is fairly superfluous.
 
-Fixes: 362e4e49abe5 ("ALSA: usb-audio - clear chip->probing on error exit")
-Reported-by: Hui Peng <benquike@gmail.com>
-Reported-by: Mathias Payer <mathias.payer@nebelwelt.net>
-Signed-off-by: Hui Peng <benquike@gmail.com>
-Signed-off-by: Mathias Payer <mathias.payer@nebelwelt.net>
+As an optimization (and also as a workaround for the RT problem
+above in normal situations without linked streams), this patch adds a
+check before calling snd_pcm_unlink() and calls it only when needed.
+
+Reported-by: Chanho Min <chanho.min@lge.com>
 Cc: <stable@vger.kernel.org>
 Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/usb/card.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ sound/core/pcm_native.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/sound/usb/card.c
-+++ b/sound/usb/card.c
-@@ -682,9 +682,12 @@ static int usb_audio_probe(struct usb_in
+--- a/sound/core/pcm_native.c
++++ b/sound/core/pcm_native.c
+@@ -2370,7 +2370,8 @@ int snd_pcm_hw_constraints_complete(stru
  
-  __error:
- 	if (chip) {
-+		/* chip->active is inside the chip->card object,
-+		 * decrement before memory is possibly returned.
-+		 */
-+		atomic_dec(&chip->active);
- 		if (!chip->num_interfaces)
- 			snd_card_free(chip->card);
--		atomic_dec(&chip->active);
- 	}
- 	mutex_unlock(&register_mutex);
- 	return err;
+ static void pcm_release_private(struct snd_pcm_substream *substream)
+ {
+-	snd_pcm_unlink(substream);
++	if (snd_pcm_stream_linked(substream))
++		snd_pcm_unlink(substream);
+ }
+ 
+ void snd_pcm_release_substream(struct snd_pcm_substream *substream)
 
 
