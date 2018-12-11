@@ -7,52 +7,50 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BDD46C5CFFE
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:55:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A347AC07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:56:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8579221104
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:55:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 616C5205C9
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:56:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544543757;
-	bh=9gLoI4135MNFTtMqmmpSjCxKzxevEMXtiP6KiYTew5U=;
+	s=default; t=1544543760;
+	bh=n3ssv5CCc1/08MFwH5QSaKBXoRPAXml7ZUIBBoiJWAQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=KYAwAPxM3FdhAENzS0tgB62evBQs58MLAK04QeQDgpW0HMfOyhIPVnTi1bTLtnH8x
-	 se4bnfJyx/+lCU8q9uyyzTgRbuNl7RW3dulJCJlL2Dbf8qN6ImkbLLV5I+UCerrP/d
-	 nb9AwNgp/S4jLWBhoAJBrGFfNG8NMcazYqKAQ1Yc=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8579221104
+	b=mmfu9k03dcrpYSde9pR6mNiEXSvpJWhC/o7oKYP3cdA0J/cFYfcYvl/cTR8SJ0TtH
+	 d2JpbHaNSw3mqGeWp9x/ycR7T8tlxcQjawP5E4SyzBd2FQkX1Lpr8vbOKQJieIQvtc
+	 i3E+aiJ7xcOZs86pQsNUu7A8ozWw7w9SsCmh8gQM=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 616C5205C9
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730479AbeLKPz4 (ORCPT
+        id S1729144AbeLKPz7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 10:55:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44642 "EHLO mail.kernel.org"
+        Tue, 11 Dec 2018 10:55:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44620 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730450AbeLKPzx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:55:53 -0500
+        id S1729246AbeLKPzv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 10:55:51 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 28855205C9;
-        Tue, 11 Dec 2018 15:55:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6789A21104;
+        Tue, 11 Dec 2018 15:55:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544543752;
-        bh=9gLoI4135MNFTtMqmmpSjCxKzxevEMXtiP6KiYTew5U=;
+        s=default; t=1544543749;
+        bh=n3ssv5CCc1/08MFwH5QSaKBXoRPAXml7ZUIBBoiJWAQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=egYXQ5XP0EwQTIP7KCZstcHLK7pWT79NHgwFxEiem+LF/KEpcfEFtq5gbHK2u1n0h
-         Om3H7z47A+Qz9ZEk7xtklkFSlmtdO47QbqehQbRVgA2/2Mf7U4sl0CrfLH22nVQoPX
-         QtQrJdE8qH0v3tqnPo8qOitzJdKhpRew4x+acpik=
+        b=pzb8hfyxwB8QJs404WgtHbCzKhujxwaECatzyRC7YhsSvc6UJhnG0vrHt59JJSfP3
+         VOYGjbWmw6wTBQRiv+0UvSxeXgUwdTN6q4HI3dQL41i22uVXs9XUI/Kl+hX9vPdmZo
+         DBZNTxhVMP6yfAtSvOIUZK0hrN/9PXjkbNUqo93w=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Tigran Mkrtchyan <tigran.mkrtchyan@desy.de>,
-        Rick Macklem <rmacklem@uoguelph.ca>,
+        stable@vger.kernel.org, Olga Kornievskaia <kolga@netapp.com>,
         Trond Myklebust <trond.myklebust@hammerspace.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 051/118] flexfiles: use per-mirror specified stateid for IO
-Date:   Tue, 11 Dec 2018 16:41:10 +0100
-Message-Id: <20181211151646.307760274@linuxfoundation.org>
+Subject: [PATCH 4.19 050/118] NFSv4.2 copy do not allocate memory under the lock
+Date:   Tue, 11 Dec 2018 16:41:09 +0100
+Message-Id: <20181211151646.268676335@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181211151644.216668863@linuxfoundation.org>
 References: <20181211151644.216668863@linuxfoundation.org>
@@ -71,127 +69,118 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit bb21ce0ad227b69ec0f83279297ee44232105d96 ]
+[ Upstream commit 99f2c55591fb5c1b536263970d98c2ebc2089906 ]
 
-rfc8435 says:
+Bruce pointed out that we shouldn't allocate memory while holding
+a lock in the nfs4_callback_offload() and handle_async_copy()
+that deal with a racing CB_OFFLOAD and reply to COPY case.
 
-  For tight coupling, ffds_stateid provides the stateid to be used by
-  the client to access the file.
-
-However current implementation replaces per-mirror provided stateid with
-by open or lock stateid.
-
-Ensure that per-mirror stateid is used by ff_layout_write_prepare_v4 and
-nfs4_ff_layout_prepare_ds.
-
-Signed-off-by: Tigran Mkrtchyan <tigran.mkrtchyan@desy.de>
-Signed-off-by: Rick Macklem <rmacklem@uoguelph.ca>
+Signed-off-by: Olga Kornievskaia <kolga@netapp.com>
 Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/nfs/flexfilelayout/flexfilelayout.c    | 21 +++++++++------------
- fs/nfs/flexfilelayout/flexfilelayout.h    |  4 ++++
- fs/nfs/flexfilelayout/flexfilelayoutdev.c | 19 +++++++++++++++++++
- 3 files changed, 32 insertions(+), 12 deletions(-)
+ fs/nfs/callback_proc.c | 22 +++++++++++-----------
+ fs/nfs/nfs42proc.c     | 19 ++++++++++---------
+ 2 files changed, 21 insertions(+), 20 deletions(-)
 
-diff --git a/fs/nfs/flexfilelayout/flexfilelayout.c b/fs/nfs/flexfilelayout/flexfilelayout.c
-index cae43333ef16..86ac2c5b93fe 100644
---- a/fs/nfs/flexfilelayout/flexfilelayout.c
-+++ b/fs/nfs/flexfilelayout/flexfilelayout.c
-@@ -1361,12 +1361,7 @@ static void ff_layout_read_prepare_v4(struct rpc_task *task, void *data)
- 				task))
- 		return;
+diff --git a/fs/nfs/callback_proc.c b/fs/nfs/callback_proc.c
+index 7b861bbc0b43..315967354954 100644
+--- a/fs/nfs/callback_proc.c
++++ b/fs/nfs/callback_proc.c
+@@ -686,20 +686,24 @@ __be32 nfs4_callback_offload(void *data, void *dummy,
+ {
+ 	struct cb_offloadargs *args = data;
+ 	struct nfs_server *server;
+-	struct nfs4_copy_state *copy;
++	struct nfs4_copy_state *copy, *tmp_copy;
+ 	bool found = false;
  
--	if (ff_layout_read_prepare_common(task, hdr))
--		return;
--
--	if (nfs4_set_rw_stateid(&hdr->args.stateid, hdr->args.context,
--			hdr->args.lock_context, FMODE_READ) == -EIO)
--		rpc_exit(task, -EIO); /* lost lock, terminate I/O */
-+	ff_layout_read_prepare_common(task, hdr);
- }
- 
- static void ff_layout_read_call_done(struct rpc_task *task, void *data)
-@@ -1542,12 +1537,7 @@ static void ff_layout_write_prepare_v4(struct rpc_task *task, void *data)
- 				task))
- 		return;
- 
--	if (ff_layout_write_prepare_common(task, hdr))
--		return;
--
--	if (nfs4_set_rw_stateid(&hdr->args.stateid, hdr->args.context,
--			hdr->args.lock_context, FMODE_WRITE) == -EIO)
--		rpc_exit(task, -EIO); /* lost lock, terminate I/O */
-+	ff_layout_write_prepare_common(task, hdr);
- }
- 
- static void ff_layout_write_call_done(struct rpc_task *task, void *data)
-@@ -1742,6 +1732,10 @@ ff_layout_read_pagelist(struct nfs_pgio_header *hdr)
- 	fh = nfs4_ff_layout_select_ds_fh(lseg, idx);
- 	if (fh)
- 		hdr->args.fh = fh;
++	copy = kzalloc(sizeof(struct nfs4_copy_state), GFP_NOFS);
++	if (!copy)
++		return htonl(NFS4ERR_SERVERFAULT);
 +
-+	if (!nfs4_ff_layout_select_ds_stateid(lseg, idx, &hdr->args.stateid))
-+		goto out_failed;
-+
- 	/*
- 	 * Note that if we ever decide to split across DSes,
- 	 * then we may need to handle dense-like offsets.
-@@ -1804,6 +1798,9 @@ ff_layout_write_pagelist(struct nfs_pgio_header *hdr, int sync)
- 	if (fh)
- 		hdr->args.fh = fh;
+ 	spin_lock(&cps->clp->cl_lock);
+ 	rcu_read_lock();
+ 	list_for_each_entry_rcu(server, &cps->clp->cl_superblocks,
+ 				client_link) {
+-		list_for_each_entry(copy, &server->ss_copies, copies) {
++		list_for_each_entry(tmp_copy, &server->ss_copies, copies) {
+ 			if (memcmp(args->coa_stateid.other,
+-					copy->stateid.other,
++					tmp_copy->stateid.other,
+ 					sizeof(args->coa_stateid.other)))
+ 				continue;
+-			nfs4_copy_cb_args(copy, args);
+-			complete(&copy->completion);
++			nfs4_copy_cb_args(tmp_copy, args);
++			complete(&tmp_copy->completion);
+ 			found = true;
+ 			goto out;
+ 		}
+@@ -707,15 +711,11 @@ __be32 nfs4_callback_offload(void *data, void *dummy,
+ out:
+ 	rcu_read_unlock();
+ 	if (!found) {
+-		copy = kzalloc(sizeof(struct nfs4_copy_state), GFP_NOFS);
+-		if (!copy) {
+-			spin_unlock(&cps->clp->cl_lock);
+-			return htonl(NFS4ERR_SERVERFAULT);
+-		}
+ 		memcpy(&copy->stateid, &args->coa_stateid, NFS4_STATEID_SIZE);
+ 		nfs4_copy_cb_args(copy, args);
+ 		list_add_tail(&copy->copies, &cps->clp->pending_cb_stateids);
+-	}
++	} else
++		kfree(copy);
+ 	spin_unlock(&cps->clp->cl_lock);
  
-+	if (!nfs4_ff_layout_select_ds_stateid(lseg, idx, &hdr->args.stateid))
-+		goto out_failed;
-+
- 	/*
- 	 * Note that if we ever decide to split across DSes,
- 	 * then we may need to handle dense-like offsets.
-diff --git a/fs/nfs/flexfilelayout/flexfilelayout.h b/fs/nfs/flexfilelayout/flexfilelayout.h
-index 411798346e48..de50a342d5a5 100644
---- a/fs/nfs/flexfilelayout/flexfilelayout.h
-+++ b/fs/nfs/flexfilelayout/flexfilelayout.h
-@@ -215,6 +215,10 @@ unsigned int ff_layout_fetch_ds_ioerr(struct pnfs_layout_hdr *lo,
- 		unsigned int maxnum);
- struct nfs_fh *
- nfs4_ff_layout_select_ds_fh(struct pnfs_layout_segment *lseg, u32 mirror_idx);
-+int
-+nfs4_ff_layout_select_ds_stateid(struct pnfs_layout_segment *lseg,
-+				u32 mirror_idx,
-+				nfs4_stateid *stateid);
+ 	return 0;
+diff --git a/fs/nfs/nfs42proc.c b/fs/nfs/nfs42proc.c
+index ac5b784a1de0..fed06fd9998d 100644
+--- a/fs/nfs/nfs42proc.c
++++ b/fs/nfs/nfs42proc.c
+@@ -137,31 +137,32 @@ static int handle_async_copy(struct nfs42_copy_res *res,
+ 			     struct file *dst,
+ 			     nfs4_stateid *src_stateid)
+ {
+-	struct nfs4_copy_state *copy;
++	struct nfs4_copy_state *copy, *tmp_copy;
+ 	int status = NFS4_OK;
+ 	bool found_pending = false;
+ 	struct nfs_open_context *ctx = nfs_file_open_context(dst);
  
- struct nfs4_pnfs_ds *
- nfs4_ff_layout_prepare_ds(struct pnfs_layout_segment *lseg, u32 ds_idx,
-diff --git a/fs/nfs/flexfilelayout/flexfilelayoutdev.c b/fs/nfs/flexfilelayout/flexfilelayoutdev.c
-index 59aa04976331..a8df2f496898 100644
---- a/fs/nfs/flexfilelayout/flexfilelayoutdev.c
-+++ b/fs/nfs/flexfilelayout/flexfilelayoutdev.c
-@@ -370,6 +370,25 @@ out:
- 	return fh;
- }
++	copy = kzalloc(sizeof(struct nfs4_copy_state), GFP_NOFS);
++	if (!copy)
++		return -ENOMEM;
++
+ 	spin_lock(&server->nfs_client->cl_lock);
+-	list_for_each_entry(copy, &server->nfs_client->pending_cb_stateids,
++	list_for_each_entry(tmp_copy, &server->nfs_client->pending_cb_stateids,
+ 				copies) {
+-		if (memcmp(&res->write_res.stateid, &copy->stateid,
++		if (memcmp(&res->write_res.stateid, &tmp_copy->stateid,
+ 				NFS4_STATEID_SIZE))
+ 			continue;
+ 		found_pending = true;
+-		list_del(&copy->copies);
++		list_del(&tmp_copy->copies);
+ 		break;
+ 	}
+ 	if (found_pending) {
+ 		spin_unlock(&server->nfs_client->cl_lock);
++		kfree(copy);
++		copy = tmp_copy;
+ 		goto out;
+ 	}
  
-+int
-+nfs4_ff_layout_select_ds_stateid(struct pnfs_layout_segment *lseg,
-+				u32 mirror_idx,
-+				nfs4_stateid *stateid)
-+{
-+	struct nfs4_ff_layout_mirror *mirror = FF_LAYOUT_COMP(lseg, mirror_idx);
-+
-+	if (!ff_layout_mirror_valid(lseg, mirror, false)) {
-+		pr_err_ratelimited("NFS: %s: No data server for mirror offset index %d\n",
-+			__func__, mirror_idx);
-+		goto out;
-+	}
-+
-+	nfs4_stateid_copy(stateid, &mirror->stateid);
-+	return 1;
-+out:
-+	return 0;
-+}
-+
- /**
-  * nfs4_ff_layout_prepare_ds - prepare a DS connection for an RPC call
-  * @lseg: the layout segment we're operating on
+-	copy = kzalloc(sizeof(struct nfs4_copy_state), GFP_NOFS);
+-	if (!copy) {
+-		spin_unlock(&server->nfs_client->cl_lock);
+-		return -ENOMEM;
+-	}
+ 	memcpy(&copy->stateid, &res->write_res.stateid, NFS4_STATEID_SIZE);
+ 	init_completion(&copy->completion);
+ 	copy->parent_state = ctx->state;
 -- 
 2.19.1
 
