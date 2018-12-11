@@ -7,49 +7,50 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1DE9C07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:16:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D03CC07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:16:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 85A202084E
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:16:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BF4C22084E
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:16:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544544999;
-	bh=X3Lr5a8bw7CkPJ/1qBznnjqBqZnWWI1ScVNEd2xW7gk=;
+	s=default; t=1544545003;
+	bh=qoWOv9u/0EBNJLgDuR9Sw6tatcpwtJ/edl7TInkeCWA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=jasGxijjO/Uo4m4gFxTN41X6Wjpcnr5AyEyIpw9DYWzN0moYiI6hjylE8cm2xsj57
-	 3z3cdJ7Eg7d1aSu/gc4/TwUzHO9N1/R7HO73X/BFwKPKHDxEWgJUasQUXIfedhvqdl
-	 Bjg1+kN5+SHJT/qI/Eeiz0g0hJ00bl5NWjSQ2Kz0=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85A202084E
+	b=CZxOrOek6B6qYJ6z9EOfZMIdvUUFwmMc7J/LarGPh+DP1ZZBwsoARQfoXFPS4iOh0
+	 CAP93WIZP7BGep9C2X1mfBD2CNcXbWCiFhkbL1RsOkeCUQFJNAJgQ9FubGu/J9uiYM
+	 Pp1KPDo+9byIPxV2NybcRplUOxFRYyrT9S5S9y/w=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF4C22084E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729162AbeLKQQi (ORCPT
+        id S1728654AbeLKPrq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 11:16:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36224 "EHLO mail.kernel.org"
+        Tue, 11 Dec 2018 10:47:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36162 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728656AbeLKPrr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:47:47 -0500
+        id S1728627AbeLKPrm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 10:47:42 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6FFCD20989;
-        Tue, 11 Dec 2018 15:47:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 304EA20989;
+        Tue, 11 Dec 2018 15:47:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544543266;
-        bh=X3Lr5a8bw7CkPJ/1qBznnjqBqZnWWI1ScVNEd2xW7gk=;
+        s=default; t=1544543261;
+        bh=qoWOv9u/0EBNJLgDuR9Sw6tatcpwtJ/edl7TInkeCWA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=B8GdngnAtm+GdZcVbBm9zceypOHj8p9l3BSLPQnSZ017flNt83q9IbR1RYl7gFGhU
-         cvioRf2rw8awVSU2OPgkM2sVfMwvmVx58cXWwvaB0D6EvfndHYRYBI8GZCM8lFdNN8
-         C25w9qsTbpwIMhEYCcvvhovI9sgqbFMEsLEQY2Eo=
+        b=bM3rxYDUIv4nb8H03rDGpYmleiu6+jHh+FvjVwx/05gJype097ydiq05D5DcicOIg
+         7yJuIP8XqAQECYVXrDa4sZjj+aWM79Ut8oMjyxPH3aKhbxDbOZ5BIBBriFI0AQ7w4c
+         0vJCaDGw9TTWkE6OyshhwKV6/LZCVQLtqpBtO1no=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chanho Min <chanho.min@lge.com>,
+        stable@vger.kernel.org,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>,
         Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.4 76/91] ALSA: pcm: Call snd_pcm_unlink() conditionally at closing
-Date:   Tue, 11 Dec 2018 16:41:35 +0100
-Message-Id: <20181211151612.682070420@linuxfoundation.org>
+Subject: [PATCH 4.4 74/91] ALSA: hda: Add support for AMD Stoney Ridge
+Date:   Tue, 11 Dec 2018 16:41:33 +0100
+Message-Id: <20181211151612.452925185@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181211151606.026852373@linuxfoundation.org>
 References: <20181211151606.026852373@linuxfoundation.org>
@@ -68,43 +69,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Kai-Heng Feng <kai.heng.feng@canonical.com>
 
-commit b51abed8355e5556886623b2772fa6b7598d2282 upstream.
+commit 3deef52ce10514ccdebba8e8ab85f9cebd0eb3f7 upstream.
 
-Currently the PCM core calls snd_pcm_unlink() always unconditionally
-at closing a stream.  However, since snd_pcm_unlink() invokes the
-global rwsem down, the lock can be easily contended.  More badly, when
-a thread runs in a high priority RT-FIFO, it may stall at spinning.
+It's similar to other AMD audio devices, it also supports D3, which can
+save some power drain.
 
-Basically the call of snd_pcm_unlink() is required only for the linked
-streams that are already rare occasion.  For normal use cases, this
-code path is fairly superfluous.
-
-As an optimization (and also as a workaround for the RT problem
-above in normal situations without linked streams), this patch adds a
-check before calling snd_pcm_unlink() and calls it only when needed.
-
-Reported-by: Chanho Min <chanho.min@lge.com>
+Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
 Cc: <stable@vger.kernel.org>
 Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/core/pcm_native.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ sound/pci/hda/hda_intel.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/sound/core/pcm_native.c
-+++ b/sound/core/pcm_native.c
-@@ -2225,7 +2225,8 @@ int snd_pcm_hw_constraints_complete(stru
- 
- static void pcm_release_private(struct snd_pcm_substream *substream)
- {
--	snd_pcm_unlink(substream);
-+	if (snd_pcm_stream_linked(substream))
-+		snd_pcm_unlink(substream);
- }
- 
- void snd_pcm_release_substream(struct snd_pcm_substream *substream)
+--- a/sound/pci/hda/hda_intel.c
++++ b/sound/pci/hda/hda_intel.c
+@@ -2363,6 +2363,10 @@ static const struct pci_device_id azx_id
+ 	/* AMD Hudson */
+ 	{ PCI_DEVICE(0x1022, 0x780d),
+ 	  .driver_data = AZX_DRIVER_GENERIC | AZX_DCAPS_PRESET_ATI_SB },
++	/* AMD Stoney */
++	{ PCI_DEVICE(0x1022, 0x157a),
++	  .driver_data = AZX_DRIVER_GENERIC | AZX_DCAPS_PRESET_ATI_SB |
++			 AZX_DCAPS_PM_RUNTIME },
+ 	/* AMD Raven */
+ 	{ PCI_DEVICE(0x1022, 0x15e3),
+ 	  .driver_data = AZX_DRIVER_GENERIC | AZX_DCAPS_PRESET_ATI_SB |
 
 
