@@ -2,93 +2,160 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DC37C67839
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 17:21:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80311C07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 17:21:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1695920879
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 17:21:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544548875;
-	bh=bIupKJXndQrvoZl7qrIQ8LtY8Dq6t80vBt/IGmb1j7M=;
-	h=In-Reply-To:To:Subject:From:References:Cc:Date:List-ID:From;
-	b=X1Siq85OUyf8J3yJHPS5NtzIve0Eh4ZmLa6qeSaZCntKlE9NMo+sohAyv8t/3gGxA
-	 HkH9jsq6So92rSjYpjBcjbdr13aT/jh38d75SC9ANZ4nTvixFwvG9DIiw+yrg/6Tea
-	 HnYnm7PzaW3F8NLDellHwKOB7xEFqA9P6eMXGTZ0=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1695920879
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 4D39520870
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 17:21:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D39520870
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727408AbeLKRVO (ORCPT
+        id S1727338AbeLKRV2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 12:21:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56476 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726329AbeLKRVN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 12:21:13 -0500
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4DD9820851;
-        Tue, 11 Dec 2018 17:21:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544548872;
-        bh=bIupKJXndQrvoZl7qrIQ8LtY8Dq6t80vBt/IGmb1j7M=;
-        h=In-Reply-To:To:Subject:From:References:Cc:Date:From;
-        b=PzVVPE0Q124CvIkWgAIHvcGIZd2EcmCqWJL9Wgi2yQOOUTLkWhulDHQp6s5ujr50S
-         /yBLiUMpGIUtUmIUQW+UeoK2aWCDYnjOZBkhNrTzbD5OrD5mKWUHjBbKO5gGVD44qV
-         YrH80X1TB4nyyr6dqg0YNePuTJLR8CiWR6p4XsPY=
-Content-Type: text/plain; charset="utf-8"
+        Tue, 11 Dec 2018 12:21:28 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:54056 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726366AbeLKRV1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 12:21:27 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 391B21596;
+        Tue, 11 Dec 2018 09:21:27 -0800 (PST)
+Received: from [10.1.196.75] (e110467-lin.cambridge.arm.com [10.1.196.75])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D46173F6A8;
+        Tue, 11 Dec 2018 09:21:25 -0800 (PST)
+Subject: Re: [PATCH] arm64: Add memory hotplug support
+To:     Will Deacon <will.deacon@arm.com>
+Cc:     catalin.marinas@arm.com, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, jonathan.cameron@huawei.com,
+        cyrilc@xilinx.com, james.morse@arm.com, anshuman.khandual@arm.com
+References: <0a0c7d3b8fbe1b2b399eeb6889027031335d2af1.1544453739.git.robin.murphy@arm.com>
+ <20181211163605.GC12597@edgewater-inn.cambridge.arm.com>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <b6a21681-beee-4083-89ce-cdfdbb958cbf@arm.com>
+Date:   Tue, 11 Dec 2018 17:21:24 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20181211143528.2024488-1-arnd@arndb.de>
-Message-ID: <154454887151.17204.5632248748272979028@swboyd.mtv.corp.google.com>
-To:     Arnd Bergmann <arnd@arndb.de>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>
-Subject: Re: [PATCH] clk: tegra: fix SMP build
-From:   Stephen Boyd <sboyd@kernel.org>
-User-Agent: alot/0.7
-References: <20181211143528.2024488-1-arnd@arndb.de>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Dmitry Osipenko <digetx@gmail.com>,
-        Aapo Vienamo <avienamo@nvidia.com>, linux-clk@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Tue, 11 Dec 2018 09:21:11 -0800
+In-Reply-To: <20181211163605.GC12597@edgewater-inn.cambridge.arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Arnd Bergmann (2018-12-11 06:35:07)
-> When CONFIG_SMP is disabled, the tegra clk driver now fails to build:
->=20
-> drivers/clk/tegra/clk-tegra30.c: In function 'tegra30_cpu_rail_off_ready':
-> drivers/clk/tegra/clk-tegra30.c:1151:19: error: implicit declaration of f=
-unction 'tegra_pmc_cpu_is_powered'; did you mean 'tegra_powergate_is_powere=
-d'? [-Werror=3Dimplicit-function-declaration]
->   cpu_pwr_status =3D tegra_pmc_cpu_is_powered(1) ||
->=20
-> I don't know if tegra works without CONFIG_SMP, but we can get it to
-> build by making the calls conditional, and removing the pointless
-> ifdef around the declaration. The assumption now is that in a
-> non-SMP system, the secondary CPUs are always disabled.
->=20
-> Fixes: 61866523ed6e ("clk: tegra30: Use Tegra CPU powergate helper functi=
-on")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
-> Not sure if this is the best solution. If you think it's not, please
-> submit a different fix.
+On 11/12/2018 16:36, Will Deacon wrote:
+> On Mon, Dec 10, 2018 at 03:29:01PM +0000, Robin Murphy wrote:
+>> Wire up the basic support for hot-adding memory. Since memory hotplug
+>> is fairly tightly coupled to sparsemem, we tweak pfn_valid() to also
+>> cross-check the presence of a section in the manner of the generic
+>> implementation, before falling back to memblock to check for no-map
+>> regions within a present section as before. By having arch_add_memory(()
+>> create the linear mapping first, this then makes everything work in the
+>> way that __add_section() expects.
+>>
+>> We expect hotplug to be ACPI-driven, so the swapper_pg_dir updates
+>> should be safe from races by virtue of the global device hotplug lock.
+>>
+>> Signed-off-by: Robin Murphy <robin.murphy@arm.com>
+>> ---
+>>
+>> Looks like I'm not going to have the whole pte_devmap story figured out
+>> in time to land any ZONE_DEVICE support this cycle, but since this patch
+>> also stands alone as a complete feature (and has ended up remarkably
+>> simple and self-contained), I hope we might consider getting it merged
+>> on its own merit.
+>>
+>> Robin.
+>>
+>>   arch/arm64/Kconfig   |  3 +++
+>>   arch/arm64/mm/init.c |  8 ++++++++
+>>   arch/arm64/mm/mmu.c  | 12 ++++++++++++
+>>   arch/arm64/mm/numa.c | 10 ++++++++++
+>>   4 files changed, 33 insertions(+)
+>>
+>> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+>> index 6d2b25f51bb3..7b855ae45747 100644
+>> --- a/arch/arm64/Kconfig
+>> +++ b/arch/arm64/Kconfig
+>> @@ -261,6 +261,9 @@ config ZONE_DMA32
+>>   config HAVE_GENERIC_GUP
+>>   	def_bool y
+>>   
+>> +config ARCH_ENABLE_MEMORY_HOTPLUG
+>> +	def_bool y
+>> +
+>>   config SMP
+>>   	def_bool y
+>>   
+>> diff --git a/arch/arm64/mm/init.c b/arch/arm64/mm/init.c
+>> index 2983e0fc1786..82e0b08f2e31 100644
+>> --- a/arch/arm64/mm/init.c
+>> +++ b/arch/arm64/mm/init.c
+>> @@ -291,6 +291,14 @@ int pfn_valid(unsigned long pfn)
+>>   
+>>   	if ((addr >> PAGE_SHIFT) != pfn)
+>>   		return 0;
+>> +
+>> +#ifdef CONFIG_SPARSEMEM
+>> +	if (pfn_to_section_nr(pfn) >= NR_MEM_SECTIONS)
+>> +		return 0;
+>> +
+>> +	if (!valid_section(__nr_to_section(pfn_to_section_nr(pfn))))
+>> +		return 0;
+> 
+> I'm a bit nervous about the call to __nr_to_section() here. How do we
+> ensure that the section number we're passing stays within the bounds of
+> the mem_section array?
 
-Hmm.. Is there any reason why the implementation of
-tegra_pmc_cpu_is_powered() is under an ifdef CONFIG_SMP? I'd rather not
-have to think about SMP or not in this clk code and have the
-tegra_pmc_cpu_is_powered() function do the UP vs SMP code optimization.
+The same way every other sparsemem user (apart from arch/arm) does, I 
+guess - this is literally a copy-paste of the generic pfn_valid() 
+implementation :/
 
+Given the implementation of __nr_to_section() respective of how 
+memory_present() and sparse_index_init() set up mem_section in the first 
+place, I can't see how there can be a problem. You did see the bit 4 
+lines above, right?
+
+>> +#endif
+>>   	return memblock_is_map_memory(addr);
+>>   }
+>>   EXPORT_SYMBOL(pfn_valid);
+>> diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
+>> index e1b2d58a311a..22379a74d289 100644
+>> --- a/arch/arm64/mm/mmu.c
+>> +++ b/arch/arm64/mm/mmu.c
+>> @@ -1044,3 +1044,15 @@ int pud_free_pmd_page(pud_t *pudp, unsigned long addr)
+>>   	pmd_free(NULL, table);
+>>   	return 1;
+>>   }
+>> +
+>> +#ifdef CONFIG_MEMORY_HOTPLUG
+>> +int arch_add_memory(int nid, u64 start, u64 size, struct vmem_altmap *altmap,
+>> +		    bool want_memblock)
+>> +{
+>> +	__create_pgd_mapping(swapper_pg_dir, start, __phys_to_virt(start),
+>> +			     size, PAGE_KERNEL, pgd_pgtable_alloc, 0);
+>> +
+>> +	return __add_pages(nid, start >> PAGE_SHIFT, size >> PAGE_SHIFT,
+>> +			   altmap, want_memblock);
+>> +}
+> 
+> If we're mapping the new memory into the linear map, shouldn't we be
+> respecting rodata_full and debug page alloc by forcing page granularity
+> and tweaking the permissions?
+
+Bah, James mentioned debug_pagealloc long ago, and I did have a slight 
+nagging feeling that I was still missing something - yes, I need to fix 
+the flags for that case. I'm not sure about rodata_full (do you mean 
+STRICT_KERNEL_RWX?) since a section being added here won't contain 
+kernel text nor data, and I can't seem to find anywhere that rodata 
+options affect the linear mapping of plain free RAM.
+
+Robin.
