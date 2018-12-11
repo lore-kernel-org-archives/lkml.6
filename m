@@ -2,118 +2,70 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.9 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BE5CC5CFFE
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 19:10:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37E3EC5CFFE
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 19:11:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F294420870
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 19:10:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F294420870
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.com
+	by mail.kernel.org (Postfix) with ESMTP id 0797A20879
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 19:11:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0797A20879
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sntech.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726883AbeLKTKH (ORCPT
+        id S1726789AbeLKTL1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 14:10:07 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:49118 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726329AbeLKTKG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 14:10:06 -0500
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: eballetbo)
-        with ESMTPSA id 1DB64260976
-From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Alessandro Zummo <a.zummo@towertech.it>, linux-pwm@vger.kernel.org,
-        linux-iio@vger.kernel.org,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        linux-i2c@vger.kernel.org, groeck@chromium.org,
-        kernel@collabora.com, linux-rtc@vger.kernel.org,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Benson Leung <bleung@chromium.org>,
-        Sebastian Reichel <sre@kernel.org>,
-        linux-input@vger.kernel.org,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        devicetree@vger.kernel.org,
-        Thierry Reding <thierry.reding@gmail.com>,
-        linux-pm@vger.kernel.org, MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "David S. Miller" <davem@davemloft.net>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: [PATCH v2] MAINTAINERS: add maintainers for ChromeOS EC sub-drivers
-Date:   Tue, 11 Dec 2018 20:09:52 +0100
-Message-Id: <20181211190953.13626-1-enric.balletbo@collabora.com>
-X-Mailer: git-send-email 2.19.2
+        Tue, 11 Dec 2018 14:11:27 -0500
+Received: from gloria.sntech.de ([185.11.138.130]:46568 "EHLO gloria.sntech.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726340AbeLKTLZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 14:11:25 -0500
+Received: from p5b127a5a.dip0.t-ipconnect.de ([91.18.122.90] helo=phil.localnet)
+        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <heiko@sntech.de>)
+        id 1gWnR4-0007xb-Da; Tue, 11 Dec 2018 20:11:14 +0100
+From:   Heiko Stuebner <heiko@sntech.de>
+To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc:     robh@kernel.org, ezequiel@collabora.com, xuwei5@hisilicon.com,
+        michal.simek@xilinx.com, pavel@ucw.cz, andy.gross@linaro.org,
+        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-rockchip@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+        linux-soc@vger.kernel.org, daniel.thompson@linaro.org,
+        amit.kucheria@linaro.org, linus.walleij@linaro.org,
+        koen.kooi@linaro.org, nicolas.dechesne@linaro.org
+Subject: Re: [PATCH v3 1/7] arm64: dts: rockchip: ficus: Add on-board LED support
+Date:   Tue, 11 Dec 2018 20:11:13 +0100
+Message-ID: <44132232.o28PC2y76u@phil>
+In-Reply-To: <20181029094245.7886-2-manivannan.sadhasivam@linaro.org>
+References: <20181029094245.7886-1-manivannan.sadhasivam@linaro.org> <20181029094245.7886-2-manivannan.sadhasivam@linaro.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There are multiple ChromeOS EC sub-drivers spread in different
-subsystems, as all of them are related to the Chrome stuff add
-Benson and myself as a maintainers for all these sub-drivers.
+Am Montag, 29. Oktober 2018, 10:42:39 CET schrieb Manivannan Sadhasivam:
+> Add on-board LED support for Ficus board based on the following
+> standard used by other 96Boards:
+> 
+> red:user1  default-trigger: heartbeat
+> red:user2  default-trigger: mmc0/disk-activity (onboard-storage)
+> red:user3  default-trigger: mmc1 (SD-card)
+> red:user4  default-trigger: none, panic-indicator
+> red:wlan   default-trigger: phy0tx
+> red:bt     default-trigger: hci0-power
+> 
+> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 
-Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
----
+applied for 4.21
 
-Changes in v2:
-- Fix typo in Benson email address.
+Thanks
+Heiko
 
- MAINTAINERS | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index a24129b0b043..bbe7180e2851 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -3625,6 +3625,30 @@ S:	Maintained
- T:	git git://git.kernel.org/pub/scm/linux/kernel/git/bleung/chrome-platform.git
- F:	drivers/platform/chrome/
- 
-+CHROMEOS EC SUBDRIVERS
-+M:	Benson Leung <bleung@chromium.org>
-+M:	Enric Balletbo i Serra <enric.balletbo@collabora.com>
-+S:	Maintained
-+F:	Documentation/devicetree/bindings/extcon/extcon-usbc-cros-ec.txt
-+F:	Documentation/devicetree/bindings/input/cros-ec-keyb.txt
-+F:	Documentation/devicetree/bindings/pwm/google,cros-ec-pwm.txt
-+F:	Documentation/devicetree/bindings/i2c/i2c-cros-ec-tunnel.txt
-+F:	Documentation/devicetree/bindings/mfd/cros-ec.txt
-+F:	Documentation/ABI/testing/sysfs-bus-iio-cros-ec
-+F:	drivers/extcon/extcon-usbc-cros-ec.c
-+F:	drivers/i2c/busses/i2c-cros-ec-tunnel.c
-+F:	drivers/iio/accel/cros_ec*
-+F:	drivers/iio/common/cros_ec_sensors/
-+F:	drivers/iio/light/cros_ec*
-+F:	drivers/iio/pressure/cros_ec*
-+F:	drivers/input/keyboard/cros_ec*
-+F:	drivers/mfd/cros_ec*
-+F:	drivers/power/supply/cros_usbpd-charger.c
-+F:	drivers/pwm/pwm-cros-ec.c
-+F:	drivers/rtc/rtc-cros-ec.c
-+F:	include/linux/iio/common/cros_ec_sensors_core.h
-+F:	include/linux/mfd/cros_ec*
-+
- CIRRUS LOGIC AUDIO CODEC DRIVERS
- M:	Brian Austin <brian.austin@cirrus.com>
- M:	Paul Handrigan <Paul.Handrigan@cirrus.com>
--- 
-2.19.2
 
