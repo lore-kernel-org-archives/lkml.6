@@ -2,208 +2,200 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.9 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFC83C07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 11:47:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83A51C07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 11:49:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 743452081B
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 11:47:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 743452081B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=diasemi.com
+	by mail.kernel.org (Postfix) with ESMTP id 3C2B92081B
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 11:49:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h5fd4b53"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C2B92081B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726356AbeLKLre convert rfc822-to-8bit (ORCPT
+        id S1726278AbeLKLts (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 06:47:34 -0500
-Received: from mail1.bemta26.messagelabs.com ([85.158.142.117]:45007 "EHLO
-        mail1.bemta26.messagelabs.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726135AbeLKLrb (ORCPT
+        Tue, 11 Dec 2018 06:49:48 -0500
+Received: from mail-it1-f196.google.com ([209.85.166.196]:50859 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726130AbeLKLtq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 06:47:31 -0500
-Received: from [85.158.142.201] (using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256 bits))
-        by server-6.bemta.az-b.eu-central-1.aws.symcld.net id 2D/EC-11519-0D3AF0C5; Tue, 11 Dec 2018 11:47:28 +0000
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrHKsWRWlGSWpSXmKPExsVy8IPnUd0Li/l
-  jDPZ9Fbc4OyHQov31VkaLy7vmsFk8WXiGyYHFY+f3BnaP9Vuusnh83iQXwBzFmpmXlF+RwJpx
-  d/1ttoLpyhVf/1xibGDcKtfFyMUhJLCMUaJz/3TGLkZODjYBQ4l5b96D2SICahLNp1rYQIqYB
-  bYySqz/M5UNJCEskC7xbelqZoiiDInr16dA2UYSr+Z0sIDYLAKqEh3XT4LV8woESEy98pgdxB
-  YSqJZY2/iPCcTmFHCR+LZ1HlicUUBW4ksjxExmAXGJW0/mg9VICAhILNlznhnCFpV4+fgfK4Q
-  tL3F3zRKoGnuJ1/feAe3lALL1JfoaiyHChhKrph1ggbDNJa7uXsYCMV5HYsHuT2wQtrbEsoWv
-  mSHOFJQ4OfMJywRG8VlIrpiFpGUWkpZZSFoWMLKsYrRMKspMzyjJTczM0TU0MNA1NDTWNdE1N
-  DHSS6zSTdJLLdVNTs0rKUoEyuollhfrFVfmJuek6OWllmxiBMZrSiFL3w7Gj+3phxglOZiURH
-  m3vuaKEeJLyk+pzEgszogvKs1JLT7EKMPBoSTBm7qIP0ZIsCg1PbUiLTMHmDhg0hIcPEoivBN
-  B0rzFBYm5xZnpEKlTjIpS4rwJIAkBkERGaR5cGyxZXWKUlRLmZWRgYBDiKUgtys0sQZV/xSjO
-  wagkzFsDMoUnM68EbvoroMVMQItztjCBLC5JREhJNTDKqx7tczog8r16UwrPxdfb7bYXdlt7s
-  y77+U3Ty+n8BqvEy/orWXs2/9pqLP73plNteoiI+J71/pkJi9pL47e2SxkF5ln1hkl/Omj77k
-  Li9Q7rkE1hM+9bspg2THPtODQjnGHnym5bW66Hq98z/XvPKfjpILeakfa0mmtznRfXxaT+3Zu
-  5wlaJpTgj0VCLuag4EQCuCd0NUQMAAA==
-X-Env-Sender: stwiss.opensource@diasemi.com
-X-Msg-Ref: server-8.tower-246.messagelabs.com!1544528848!2604776!1
-X-Originating-IP: [193.240.73.197]
-X-SYMC-ESS-Client-Auth: outbound-route-from=pass
-X-StarScan-Received: 
-X-StarScan-Version: 9.14.24; banners=-,-,-
-X-VirusChecked: Checked
-Received: (qmail 25245 invoked from network); 11 Dec 2018 11:47:28 -0000
-Received: from unknown (HELO sw-ex-cashub01.diasemi.com) (193.240.73.197)
-  by server-8.tower-246.messagelabs.com with AES128-SHA256 encrypted SMTP; 11 Dec 2018 11:47:28 -0000
-Received: from SW-EX-MBX02.diasemi.com ([169.254.4.108]) by
- sw-ex-cashub01.diasemi.com ([10.20.16.141]) with mapi id 14.03.0382.000; Tue,
- 11 Dec 2018 11:47:27 +0000
-From:   Steve Twiss <stwiss.opensource@diasemi.com>
-To:     Guenter Roeck <linux@roeck-us.net>
-CC:     Hardware Monitoring <linux-hwmon@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Jean Delvare <jdelvare@suse.com>,
-        "Support Opensource" <Support.Opensource@diasemi.com>
-Subject: RE: [PATCH 22/30] hwmon: (da9055-hwmon) Use permission specific
- SENSOR[_DEVICE]_ATTR variants
-Thread-Topic: [PATCH 22/30] hwmon: (da9055-hwmon) Use permission specific
- SENSOR[_DEVICE]_ATTR variants
-Thread-Index: AQHUkNVBAn1JHx544UmtQKXk9ThDIqV5amnA
-Date:   Tue, 11 Dec 2018 11:47:26 +0000
-Message-ID: <6ED8E3B22081A4459DAC7699F3695FB7021C50E53C@SW-EX-MBX02.diasemi.com>
-References: <1544479728-30077-1-git-send-email-linux@roeck-us.net>
- <1544479728-30077-23-git-send-email-linux@roeck-us.net>
-In-Reply-To: <1544479728-30077-23-git-send-email-linux@roeck-us.net>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.20.27.87]
-x-kse-attachmentfiltering-interceptor-info: protection disabled
-x-kse-serverinfo: sw-ex-cashub01.diasemi.com, 9
-x-kse-antivirus-interceptor-info: scan successful
-x-kse-antivirus-info: Clean, bases: 11/12/2018 07:58:00
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        Tue, 11 Dec 2018 06:49:46 -0500
+Received: by mail-it1-f196.google.com with SMTP id z7so3122124iti.0;
+        Tue, 11 Dec 2018 03:49:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=g5YDmiWca5IoF3gLg6Bb64LY2v7tAav6jZhl6mD04MM=;
+        b=h5fd4b53VSNSoiG2XTneCLlMnzOIbEG7CqmPT2U7ErrdVcIvK4+MfhSAbfcryPBabM
+         SNKGxOQPqqTZvcoWk0vwJUr2q0u/fWPubzyfoa5xmD/Zm29SSkhJIa52dyeg6mi+JYV8
+         uZWTFqM1Nn+ogNaw0MrgQuKMTa7Zm32uNI79v85TwfLO69g02n6rC/ez3yRjFOR6URji
+         +eartszSghWGHOSNBPFo9tNSDKuxg4q8V3uNqUXKfvBAB4FBrYCqJwXraGaE/32JfdEa
+         0XAbLXfa0fr+QWJZGOa5YEOF1dKyBxQdJEPXC2RJ7iWCdr6tLB1eU8p0zpw6TpQI49xq
+         Pw6A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=g5YDmiWca5IoF3gLg6Bb64LY2v7tAav6jZhl6mD04MM=;
+        b=oq+pbtR+I24J/GD2bHkzE/pqPAg7LCKkGiJIFE5a7TpXzpFKRj/byTTyClptTMXDFP
+         Ul+AgQVKnOm237fugu7q0W1yiHPBGbkou5KMVX8rY6wRnuRfWZR4/OkKx7i0yGVG36tz
+         1O3pylaj5ihMZeXrfzwVlyyN3J0DZGapqzpg6BViq0o4BjABEX9KkkuBWxCp6M1Np+J4
+         fAQjdE4lowhflRwWoFGDZQexQuKRRmB/7lGtu1bc6+LgfWQuAAN/Y98silD3bWTrJdA3
+         SKTnhtP7Owb9Rujpw+tiTFCeeVnFk7AfONPZ8cPz8D5yGDcuX1O5eWv+HxPgU8Lb9dgw
+         KjPg==
+X-Gm-Message-State: AA+aEWb3tv5kq1ba/xOrh4wnKtjw82Hrl/Mq9f6W8PYf+R3v2UDsOON/
+        EPxeb6+zK+4q/JE+8rVy7BtmiIrhSfnExj/E2KWtWP/l
+X-Google-Smtp-Source: AFSGD/XmLZzv5nE3Suk1Vhxix9aIHvgAy9Jblz0odHbduKaz/EzP4+wyJCwJKDhc34aY9tf0RAKgQDdegi549m4N2xI=
+X-Received: by 2002:a24:4648:: with SMTP id j69mr1891789itb.56.1544528985188;
+ Tue, 11 Dec 2018 03:49:45 -0800 (PST)
 MIME-Version: 1.0
+References: <20181210154433.28319-1-hardiksingh.k@gmail.com> <44f0a055e4085824629285e78ac4928e15c494e3.camel@perches.com>
+In-Reply-To: <44f0a055e4085824629285e78ac4928e15c494e3.camel@perches.com>
+From:   Hardiksingh Rathore <hardiksingh.k@gmail.com>
+Date:   Tue, 11 Dec 2018 17:19:33 +0530
+Message-ID: <CALxnk1NLo9cAUXB=oxkvz7AQnxb7dqdeG9A_MA=OwgTkYfu-yg@mail.gmail.com>
+Subject: Re: [PATCH] Input: touchscreen: ad7879: Fix ERROR: foo* bar should be
+ "foo *bar"
+To:     joe@perches.com
+Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        michael.hennerich@analog.com, linux-input@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Guenter, 
+Hi Joe,
 
-On 10 December 2018 22:09, Guenter Roeck wrote:
+On Tue, 11 Dec 2018 at 01:07, Joe Perches <joe@perches.com> wrote:
+>
+> On Mon, 2018-12-10 at 21:14 +0530, Hardik Singh Rathore wrote:
+> > Fix the coding style problem reported by checkpatch.pl.
+>
+> While whitespace only checkpatch cleanups are generally not
+> well accepted, why do one pointer location cleanup when you
+> could them all:
+>
+As suggested, I have sent the v2 patch for pointer location cleanups
+in all other
+drivers/input/touchscreen/* files.
 
-> Subject: [PATCH 22/30] hwmon: (da9055-hwmon) Use permission specific
-> SENSOR[_DEVICE]_ATTR variants
-> 
-> Use SENSOR[_DEVICE]_ATTR[_2]_{RO,RW,WO} to simplify the source code,
-> to improve readbility, and to reduce the chance of inconsistencies.
-> 
-> Also replace any remaining S_<PERMS> in the driver with octal values.
-> 
-> The conversion was done automatically with coccinelle. The semantic patches
-> and the scripts used to generate this commit log are available at
-> https://github.com/groeck/coccinelle-patches/hwmon/.
-> 
-> This patch does not introduce functional changes. It was verified by
-> compiling the old and new files and comparing text and data sizes.
-> 
-> Cc: Support Opensource <support.opensource@diasemi.com>
-> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+> $ ./scripts/checkpatch.pl -f --types=pointer_location --fix-inplace drivers/input/touchscreen/*.[ch]
+> $ git diff --stat -p drivers/input/touchscreen/
+>
+> produces:
 > ---
-
-Thanks, 
-Same again.
-
-Acked-by: Steve Twiss <stwiss.opensource@diasemi.com>
-
-... with the patch [01/10] hwmon: Introduce SENSOR_DEVICE_ATTR_{RO,RW,WO} and variants
-https://patchwork.kernel.org/patch/9489915/ 
-
-Regards,
-Steve
-
-
->  drivers/hwmon/da9055-hwmon.c | 41 ++++++++++++++++-------------------------
->  1 file changed, 16 insertions(+), 25 deletions(-)
-> 
-> diff --git a/drivers/hwmon/da9055-hwmon.c b/drivers/hwmon/da9055-hwmon.c
-> index f6e159cabe23..4de6de683908 100644
-> --- a/drivers/hwmon/da9055-hwmon.c
-> +++ b/drivers/hwmon/da9055-hwmon.c
-> @@ -140,8 +140,9 @@ static int da9055_disable_auto_mode(struct da9055
-> *da9055, int channel)
->  	return da9055_reg_update(da9055, DA9055_REG_ADC_CONT, 1 <<
-> channel, 0);
+>  drivers/input/touchscreen/ad7879.c   | 2 +-
+>  drivers/input/touchscreen/ektf2127.c | 2 +-
+>  drivers/input/touchscreen/gunze.c    | 4 ++--
+>  drivers/input/touchscreen/inexio.c   | 4 ++--
+>  drivers/input/touchscreen/mtouch.c   | 4 ++--
+>  5 files changed, 8 insertions(+), 8 deletions(-)
+>
+> diff --git a/drivers/input/touchscreen/ad7879.c b/drivers/input/touchscreen/ad7879.c
+> index 2aae880c8aa6..6fa714c587b4 100644
+> --- a/drivers/input/touchscreen/ad7879.c
+> +++ b/drivers/input/touchscreen/ad7879.c
+> @@ -289,7 +289,7 @@ static int ad7879_open(struct input_dev *input)
+>         return 0;
 >  }
-> 
-> -static ssize_t da9055_read_auto_ch(struct device *dev,
-> -				struct device_attribute *devattr, char *buf)
-> +static ssize_t da9055_auto_ch_show(struct device *dev,
-> +				   struct device_attribute *devattr,
-> +				   char *buf)
+>
+> -static void ad7879_close(struct input_dev* input)
+> +static void ad7879_close(struct input_dev *input)
 >  {
->  	struct da9055_hwmon *hwmon = dev_get_drvdata(dev);
->  	int ret, adc;
-> @@ -176,7 +177,7 @@ static ssize_t da9055_read_auto_ch(struct device *dev,
->  	return ret;
->  }
-> 
-> -static ssize_t da9055_read_tjunc(struct device *dev,
-> +static ssize_t da9055_tjunc_show(struct device *dev,
->  				 struct device_attribute *devattr, char *buf)
+>         struct ad7879 *ts = input_get_drvdata(input);
+>
+> diff --git a/drivers/input/touchscreen/ektf2127.c b/drivers/input/touchscreen/ektf2127.c
+> index 0ed34ff787ce..28fa1b36f7a5 100644
+> --- a/drivers/input/touchscreen/ektf2127.c
+> +++ b/drivers/input/touchscreen/ektf2127.c
+> @@ -51,7 +51,7 @@ struct ektf2127_ts {
+>         struct touchscreen_properties prop;
+>  };
+>
+> -static void ektf2127_parse_coordinates(const u8* buf, unsigned int touch_count,
+> +static void ektf2127_parse_coordinates(const u8 *buf, unsigned int touch_count,
+>                                        struct input_mt_pos *touches)
 >  {
->  	struct da9055_hwmon *hwmon = dev_get_drvdata(dev);
-> @@ -199,34 +200,24 @@ static ssize_t da9055_read_tjunc(struct device *dev,
->  							+ 3076332, 10000));
->  }
-> 
-> -static ssize_t show_label(struct device *dev,
-> +static ssize_t label_show(struct device *dev,
->  			  struct device_attribute *devattr, char *buf)
+>         int index = 0;
+> diff --git a/drivers/input/touchscreen/gunze.c b/drivers/input/touchscreen/gunze.c
+> index 054c2537b392..56cf1a1ea3ea 100644
+> --- a/drivers/input/touchscreen/gunze.c
+> +++ b/drivers/input/touchscreen/gunze.c
+> @@ -53,7 +53,7 @@ struct gunze {
+>         char phys[32];
+>  };
+>
+> -static void gunze_process_packet(struct gunze* gunze)
+> +static void gunze_process_packet(struct gunze *gunze)
 >  {
->  	return sprintf(buf, "%s\n",
->  		       input_names[to_sensor_dev_attr(devattr)->index]);
->  }
-> 
-> -static SENSOR_DEVICE_ATTR(in0_input, S_IRUGO, da9055_read_auto_ch, NULL,
-> -			  DA9055_ADC_VSYS);
-> -static SENSOR_DEVICE_ATTR(in0_label, S_IRUGO, show_label, NULL,
-> -			  DA9055_ADC_VSYS);
-> -static SENSOR_DEVICE_ATTR(in1_input, S_IRUGO, da9055_read_auto_ch, NULL,
-> -			  DA9055_ADC_ADCIN1);
-> -static SENSOR_DEVICE_ATTR(in1_label, S_IRUGO, show_label, NULL,
-> -			  DA9055_ADC_ADCIN1);
-> -static SENSOR_DEVICE_ATTR(in2_input, S_IRUGO, da9055_read_auto_ch, NULL,
-> -			  DA9055_ADC_ADCIN2);
-> -static SENSOR_DEVICE_ATTR(in2_label, S_IRUGO, show_label, NULL,
-> -			  DA9055_ADC_ADCIN2);
-> -static SENSOR_DEVICE_ATTR(in3_input, S_IRUGO, da9055_read_auto_ch, NULL,
-> -			  DA9055_ADC_ADCIN3);
-> -static SENSOR_DEVICE_ATTR(in3_label, S_IRUGO, show_label, NULL,
-> -			  DA9055_ADC_ADCIN3);
-> -
-> -static SENSOR_DEVICE_ATTR(temp1_input, S_IRUGO, da9055_read_tjunc,
-> NULL,
-> -			  DA9055_ADC_TJUNC);
-> -static SENSOR_DEVICE_ATTR(temp1_label, S_IRUGO, show_label, NULL,
-> -			  DA9055_ADC_TJUNC);
-> +static SENSOR_DEVICE_ATTR_RO(in0_input, da9055_auto_ch,
-> DA9055_ADC_VSYS);
-> +static SENSOR_DEVICE_ATTR_RO(in0_label, label, DA9055_ADC_VSYS);
-> +static SENSOR_DEVICE_ATTR_RO(in1_input, da9055_auto_ch,
-> DA9055_ADC_ADCIN1);
-> +static SENSOR_DEVICE_ATTR_RO(in1_label, label, DA9055_ADC_ADCIN1);
-> +static SENSOR_DEVICE_ATTR_RO(in2_input, da9055_auto_ch,
-> DA9055_ADC_ADCIN2);
-> +static SENSOR_DEVICE_ATTR_RO(in2_label, label, DA9055_ADC_ADCIN2);
-> +static SENSOR_DEVICE_ATTR_RO(in3_input, da9055_auto_ch,
-> DA9055_ADC_ADCIN3);
-> +static SENSOR_DEVICE_ATTR_RO(in3_label, label, DA9055_ADC_ADCIN3);
-> +
-> +static SENSOR_DEVICE_ATTR_RO(temp1_input, da9055_tjunc,
-> DA9055_ADC_TJUNC);
-> +static SENSOR_DEVICE_ATTR_RO(temp1_label, label, DA9055_ADC_TJUNC);
-> 
->  static struct attribute *da9055_attrs[] = {
->  	&sensor_dev_attr_in0_input.dev_attr.attr,
-> --
-> 2.7.4
+>         struct input_dev *dev = gunze->dev;
+>
+> @@ -72,7 +72,7 @@ static void gunze_process_packet(struct gunze* gunze)
+>  static irqreturn_t gunze_interrupt(struct serio *serio,
+>                 unsigned char data, unsigned int flags)
+>  {
+> -       struct gunze* gunze = serio_get_drvdata(serio);
+> +       struct gunze *gunze = serio_get_drvdata(serio);
+>
+>         if (data == '\r') {
+>                 gunze_process_packet(gunze);
+> diff --git a/drivers/input/touchscreen/inexio.c b/drivers/input/touchscreen/inexio.c
+> index b9bc56233ccc..13bd0bf580a7 100644
+> --- a/drivers/input/touchscreen/inexio.c
+> +++ b/drivers/input/touchscreen/inexio.c
+> @@ -79,7 +79,7 @@ static void inexio_process_data(struct inexio *pinexio)
+>  static irqreturn_t inexio_interrupt(struct serio *serio,
+>                 unsigned char data, unsigned int flags)
+>  {
+> -       struct inexio* pinexio = serio_get_drvdata(serio);
+> +       struct inexio *pinexio = serio_get_drvdata(serio);
+>
+>         pinexio->data[pinexio->idx] = data;
+>
+> @@ -97,7 +97,7 @@ static irqreturn_t inexio_interrupt(struct serio *serio,
+>
+>  static void inexio_disconnect(struct serio *serio)
+>  {
+> -       struct inexio* pinexio = serio_get_drvdata(serio);
+> +       struct inexio *pinexio = serio_get_drvdata(serio);
+>
+>         input_get_device(pinexio->dev);
+>         input_unregister_device(pinexio->dev);
+> diff --git a/drivers/input/touchscreen/mtouch.c b/drivers/input/touchscreen/mtouch.c
+> index a3707fad4d1c..8278a9058640 100644
+> --- a/drivers/input/touchscreen/mtouch.c
+> +++ b/drivers/input/touchscreen/mtouch.c
+> @@ -90,7 +90,7 @@ static void mtouch_process_response(struct mtouch *mtouch)
+>  static irqreturn_t mtouch_interrupt(struct serio *serio,
+>                 unsigned char data, unsigned int flags)
+>  {
+> -       struct mtouch* mtouch = serio_get_drvdata(serio);
+> +       struct mtouch *mtouch = serio_get_drvdata(serio);
+>
+>         mtouch->data[mtouch->idx] = data;
+>
+> @@ -110,7 +110,7 @@ static irqreturn_t mtouch_interrupt(struct serio *serio,
+>
+>  static void mtouch_disconnect(struct serio *serio)
+>  {
+> -       struct mtouch* mtouch = serio_get_drvdata(serio);
+> +       struct mtouch *mtouch = serio_get_drvdata(serio);
+>
+>         input_get_device(mtouch->dev);
+>         input_unregister_device(mtouch->dev);
+>
+>
 
+
+-- 
+Thanks,
+Hardik
