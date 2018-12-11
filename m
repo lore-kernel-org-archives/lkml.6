@@ -2,189 +2,113 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.6 required=3.0 tests=DKIM_ADSP_ALL,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 639C3C07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 06:58:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 145A8C07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 07:11:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EA8B82084A
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 06:58:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544511494;
-	bh=6zcVvbr8JGU5yyY++Zj7+SSmlt6zOr8mHaWHy7ty/NI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=MStIF7w7sIK2CDattwYcJ/fhgWWI6i8qjPX0WjPbOv9pujQeQClMm1RuD9U/2upeI
-	 x3JdF4y0OtT3bKy3J+jlR0tC/2FHbjHOBPaFA6fyslhx12THWfDhGBpzFVdtDSAZFW
-	 ggboE+0C8z3kgoMLCiLZvAa6L2eJFtCVV4t3Zg2w=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA8B82084A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id B79E220851
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 07:11:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=plaes.org header.i=@plaes.org header.b="O3NIhjjy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B79E220851
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=plaes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726137AbeLKG6N (ORCPT
+        id S1726126AbeLKHLk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 01:58:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49764 "EHLO mail.kernel.org"
+        Tue, 11 Dec 2018 02:11:40 -0500
+Received: from plaes.org ([188.166.43.21]:57416 "EHLO plaes.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725923AbeLKG6M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 01:58:12 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 356492082F;
-        Tue, 11 Dec 2018 06:58:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544511491;
-        bh=6zcVvbr8JGU5yyY++Zj7+SSmlt6zOr8mHaWHy7ty/NI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=N+KAtT87xI/tM2P4xmCKL41sG1q/8QKQZTqvtWGeB3/zHszZqEg7amICRDTq1kWkK
-         wm0JdPnDrZ9xehgspP3G+rfSMfI02O3bsIZtqAXamX3Fu5czAMWw+Yf3lIhqPpGs4d
-         /qg0yfUsPzfMKOiNoznG97mhzMQNtyP8IrowB0oc=
-Date:   Tue, 11 Dec 2018 07:58:08 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Georgi Djakov <georgi.djakov@linaro.org>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
-        evgreen@chromium.org, Linux PM <linux-pm@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Saravana Kannan <skannan@codeaurora.org>,
-        bjorn.andersson@linaro.org,
-        Amit Kucheria <amit.kucheria@linaro.org>,
-        seansw@qti.qualcomm.com, daidavid1@codeaurora.org,
+        id S1725966AbeLKHLk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 02:11:40 -0500
+Received: from plaes.org (localhost [127.0.0.1])
+        by plaes.org (Postfix) with ESMTPSA id 76D194002F;
+        Tue, 11 Dec 2018 07:11:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=plaes.org; s=mail;
+        t=1544512298; bh=SRtpF62rPLRr88K1h+vRUay4KSxTaf4gZ27/Ozn4POk=;
+        h=Date:From:To:Subject:References:In-Reply-To:From;
+        b=O3NIhjjyZjGCqXI+3EtG/Jho0Mw2+/G702jrnAEVFa5BQODrKOyPrxxFPJaNQYJOs
+         bwUTmt+veOhPl3K9C2G5bU22vWT2pSXjes8w9y6lvOAv44NqlJEh1IxDcVlHTzu13U
+         qSGlCtRWwa6B9VawBY6YXvERt6h93TNq4CtSqfVcYtyewMkrIyI/zkwFVfjUnZgXg8
+         Ckx4H9yFnG/zw1LtuZYZo5GZxQGWPWgZ8gP83xUfH4Xt3ZiILqMjz47UHSu0vSe3mz
+         aXttaewmDcFc+FbGaHS1xqY8A7sAp7hlstQGVfJvdMJTb6d+qrSYq1vuQyGxDJFaY9
+         eHqhOjEpA9hFg==
+Date:   Tue, 11 Dec 2018 07:11:37 +0000
+From:   Priit Laes <plaes@plaes.org>
+To:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        abailon@baylibre.com, maxime.ripard@bootlin.com,
-        Thierry Reding <thierry.reding@gmail.com>,
-        ksitaraman@nvidia.com, sanjayc@nvidia.com,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        linux-tegra@vger.kernel.org, Doug Anderson <dianders@chromium.org>,
-        Andy Gross <andy.gross@linaro.org>
-Subject: Re: [PATCH v10 0/8] Introduce on-chip interconnect API
-Message-ID: <20181211065808.GB5161@kroah.com>
-References: <20181127180349.29997-1-georgi.djakov@linaro.org>
- <CAE=gft4jUjr3oDAZrM=-orLM-YoVAwa+e=crDDC_p9ArGE1dig@mail.gmail.com>
- <20181206145547.GA7884@kroah.com>
- <CAJZ5v0gP50tmq4ZzB7LLSaWGWjGjK31y=qFg5PS9B7c2XQ+DyQ@mail.gmail.com>
- <6923d6ed-e357-b083-1830-8396d788efe5@linaro.org>
- <CAJZ5v0jZMqFwYgnfRz04ELLRk=0U8Uv=acw0t9Azxk_HYL0gSQ@mail.gmail.com>
- <9a3aae02-c7e0-97e3-2330-af4fccee6c14@linaro.org>
+        Chen-Yu Tsai <wens@csie.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Olliver Schinagl <oliver@schinagl.nl>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Subject: Re: [linux-sunxi] [PATCH 0/8] This is a second edition of a series
+ that implements voltage
+Message-ID: <20181211071137.k3rqwctnibg6tyc2@plaes.org>
+References: <cover.4110554ae84987dedb8b58888a8a63d6b7f98c72.1544466940.git-series.plaes@plaes.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <9a3aae02-c7e0-97e3-2330-af4fccee6c14@linaro.org>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+In-Reply-To: <cover.4110554ae84987dedb8b58888a8a63d6b7f98c72.1544466940.git-series.plaes@plaes.org>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 10, 2018 at 04:50:00PM +0200, Georgi Djakov wrote:
-> On 12/10/18 13:00, Rafael J. Wysocki wrote:
-> > On Mon, Dec 10, 2018 at 11:18 AM Georgi Djakov <georgi.djakov@linaro.org> wrote:
-> >>
-> >> Hi Rafael,
-> >>
-> >> On 12/10/18 11:04, Rafael J. Wysocki wrote:
-> >>> On Thu, Dec 6, 2018 at 3:55 PM Greg KH <gregkh@linuxfoundation.org> wrote:
-> >>>>
-> >>>> On Wed, Dec 05, 2018 at 12:41:35PM -0800, Evan Green wrote:
-> >>>>> On Tue, Nov 27, 2018 at 10:03 AM Georgi Djakov <georgi.djakov@linaro.org> wrote:
-> >>>>>>
-> >>>>>> Modern SoCs have multiple processors and various dedicated cores (video, gpu,
-> >>>>>> graphics, modem). These cores are talking to each other and can generate a
-> >>>>>> lot of data flowing through the on-chip interconnects. These interconnect
-> >>>>>> buses could form different topologies such as crossbar, point to point buses,
-> >>>>>> hierarchical buses or use the network-on-chip concept.
-> >>>>>>
-> >>>>>> These buses have been sized usually to handle use cases with high data
-> >>>>>> throughput but it is not necessary all the time and consume a lot of power.
-> >>>>>> Furthermore, the priority between masters can vary depending on the running
-> >>>>>> use case like video playback or CPU intensive tasks.
-> >>>>>>
-> >>>>>> Having an API to control the requirement of the system in terms of bandwidth
-> >>>>>> and QoS, so we can adapt the interconnect configuration to match those by
-> >>>>>> scaling the frequencies, setting link priority and tuning QoS parameters.
-> >>>>>> This configuration can be a static, one-time operation done at boot for some
-> >>>>>> platforms or a dynamic set of operations that happen at run-time.
-> >>>>>>
-> >>>>>> This patchset introduce a new API to get the requirement and configure the
-> >>>>>> interconnect buses across the entire chipset to fit with the current demand.
-> >>>>>> The API is NOT for changing the performance of the endpoint devices, but only
-> >>>>>> the interconnect path in between them.
-> >>>>>
-> >>>>> For what it's worth, we are ready to land this in Chrome OS. I think
-> >>>>> this series has been very well discussed and reviewed, hasn't changed
-> >>>>> much in the last few spins, and is in good enough shape to use as a
-> >>>>> base for future patches. Georgi's also done a great job reaching out
-> >>>>> to other SoC vendors, and there appears to be enough consensus that
-> >>>>> this framework will be usable by more than just Qualcomm. There are
-> >>>>> also several drivers out on the list trying to add patches to use this
-> >>>>> framework, with more to come, so it made sense (to us) to get this
-> >>>>> base framework nailed down. In my experiments this is an important
-> >>>>> piece of the overall power management story, especially on systems
-> >>>>> that are mostly idle.
-> >>>>>
-> >>>>> I'll continue to track changes to this series and we will ultimately
-> >>>>> reconcile with whatever happens upstream, but I thought it was worth
-> >>>>> sending this note to express our "thumbs up" towards this framework.
-> >>>>
-> >>>> Looks like a v11 will be forthcoming, so I'll wait for that one to apply
-> >>>> it to the tree if all looks good.
-> >>>
-> >>> I'm honestly not sure if it is ready yet.
-> >>>
-> >>> New versions are coming on and on, which may make such an impression,
-> >>> but we had some discussion on it at the LPC and some serious questions
-> >>> were asked during it, for instance regarding the DT binding introduced
-> >>> here.  I'm not sure how this particular issue has been addressed here,
-> >>> for example.
-> >>
-> >> There have been no changes in bindings since v4 (other than squashing
-> >> consumer and provider bindings into a single patch and fixing typos).
-> >>
-> >> The last DT comment was on v9 [1] where Rob wanted confirmation from
-> >> other SoC vendors that this works for them too. And now we have that
-> >> confirmation and there are patches posted on the list [2].
-> > 
-> > OK
-> > 
-> >> The second thing (also discussed at LPC) was about possible cases where
-> >> some consumer drivers can't calculate how much bandwidth they actually
-> >> need and how to address that. The proposal was to extend the OPP
-> >> bindings with one more property, but this is not part of this patchset.
-> >> It is a future step that needs more discussion on the mailing list. If a
-> >> driver really needs some bandwidth data now, it should be put into the
-> >> driver and not in DT. After we have enough consumers, we can discuss
-> >> again if it makes sense to extract something into DT or not.
-> > 
-> > That's fine by me.
-> > 
-> > Admittedly, I have some reservations regarding the extent to which
-> > this approach will turn out to be useful in practice, but I guess as
-> > long as there is enough traction, the best way to find out it to try
-> > and see. :-)
-> > 
-> > From now on I will assume that this series is going to be applied by Greg.
+On Mon, Dec 10, 2018 at 08:42:11PM +0200, Priit Laes wrote:
+> ramping for AXP209 DCDC2 and LDO3 regulators and software
+> based soft-start for AXP209 LDO3 regulator.
+
+Ugh.. managed to botch this series. I'll send a fixed one
+today.
+
 > 
-> That was the initial idea, but the problem is that there is a recent
-> change in the cmd_db API (needed by the sdm845 provider driver), which
-> is going through arm-soc/qcom/drivers. So either Greg pulls also the
-> qcom-drivers-for-4.21 tag from Andy or the whole series goes via Olof
-> and Arnd. Maybe there are other options. I don't have any preference and
-> don't want to put extra burden on any maintainers, so i am ok with what
-> they prefer.
-
-Let me take the time later this week to review the code, which I haven't
-done in a while...
-
-thanks,
-
-greg k-h
+> Both features are needed to work around a PMIC shutdown when
+> toggling LDO3 on certain boards with high capacitance on the
+> LDO3 output.
+> 
+> Similar features (or workarounds) have been also implemented
+> on u-boot side [1].
+> 
+> Changes since v1:
+> - Rebased on top of next and dropped already merged patches.
+> - Dropped LDO4 full range devicetree change for Lime2 (prev patch 9)
+>   in favor of general pin-bank regulator dependency [2].
+> - Fixed paths in devicetree bindings (patch 3)
+> - Added note about software based soft-start for LDO3 (patch 5)
+> 
+> [1] https://lists.denx.de/pipermail/u-boot/2018-November/348612.html
+> [2] http://lists.infradead.org/pipermail/linux-arm-kernel/2018-December/618459.html
+> 
+> Olliver Schinagl (8):
+>   mfd: axp20x: name voltage ramping define properly
+>   regulator: axp20x: add support for set_ramp_delay for AXP209
+>   dt-bindings: mfd: axp20x: add support for regulator-ramp-delay for AXP209
+>   regulator: axp20x: add software based soft_start for AXP209 LDO3
+>   dt-bindings: mfd: axp20x: Add software based soft_start for AXP209 LDO3
+>   regulator: dts: enable soft-start and ramp delay for the OLinuXino Lime2
+>   mfd: axp20x: Clean up included headers
+>   mfd: axp20x: use explicit bit defines
+> 
+>  Documentation/devicetree/bindings/mfd/axp20x.txt |   9 +-
+>  arch/arm/boot/dts/sun7i-a20-olinuxino-lime2.dts  |   2 +-
+>  drivers/mfd/axp20x.c                             |  13 +-
+>  drivers/regulator/axp20x-regulator.c             | 142 +++++++++++++++-
+>  include/linux/mfd/axp20x.h                       |   4 +-
+>  5 files changed, 161 insertions(+), 9 deletions(-)
+> 
+> base-commit: 14cf8c1d5b90a0cf6a8ba51ef59db8da8c7a2622
+> -- 
+> git-series 0.9.1
+> 
+> -- 
+> You received this message because you are subscribed to the Google Groups "linux-sunxi" group.
+> To unsubscribe from this group and stop receiving emails from it, send an email to linux-sunxi+unsubscribe@googlegroups.com.
+> For more options, visit https://groups.google.com/d/optout.
