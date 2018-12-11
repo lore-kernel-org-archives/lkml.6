@@ -2,126 +2,118 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9DC3C07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:47:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2359C07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:49:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6BBFF20855
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:47:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544546841;
-	bh=m1H4LsR9P96rDdiaaJZaHH+v9Rn/w1+E+NbTZTtFieI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=IU7IOT1q2yd0v+k5Gg83/fiIka1GlkJ2kSDvlp9BZ3Cy8Tsi0YKMhfQ9Stv5cJmvt
-	 sA+xGE71P4I2qVEkLqGGitozRL5UrJvT8jcznjMGUR7V9MN3ZmeVyYUqAutRduRuG8
-	 h5lmVVPac7jg1ZkOPv/fwVdWWf9HEDrWKmcggr3U=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6BBFF20855
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 7ED7420855
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:49:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7ED7420855
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728057AbeLKQrU (ORCPT
+        id S1728029AbeLKQtY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 11:47:20 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:60430 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727280AbeLKQrU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 11:47:20 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=xqiz+wkFzBYV7aW60asqBnJ9KnKUJwPszxanHWrGxeY=; b=m2A+jHn1sFFHKLdIKuazg5BTX
-        oRntLbzTEhwG9b33OHcpp5wC0J8DmM1yQOAoxcKo+6h4QaYG3urs83jcv1NsmT0GRAeq0qzUG+IbT
-        5XHq7cpmzWnH2n5j7ApXIN3xvQtIR3OtrxnO5qtRq/yNfIz9Os2epEwRdjd40sGHmJA70=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1gWlBb-0001Gg-0Y; Tue, 11 Dec 2018 16:47:07 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 76B69112540E; Tue, 11 Dec 2018 16:47:06 +0000 (GMT)
-Date:   Tue, 11 Dec 2018 16:47:06 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Andrei.Stefanescu@microchip.com
-Cc:     robh+dt@kernel.org, lgirdwood@gmail.com, mark.rutland@arm.com,
-        gregkh@linuxfoundation.org, Cristian.Birsan@microchip.com,
-        Nicolas.Ferre@microchip.com, Claudiu.Beznea@microchip.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: [RESEND PATCH v3 3/3] regulator: mcp16502: add regulator driver
- for MCP16502
-Message-ID: <20181211164706.GL6686@sirena.org.uk>
-References: <1544522876-15967-1-git-send-email-andrei.stefanescu@microchip.com>
- <1544522876-15967-4-git-send-email-andrei.stefanescu@microchip.com>
+        Tue, 11 Dec 2018 11:49:24 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:60183 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726808AbeLKQtY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 11:49:24 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id DD8B3208E3; Tue, 11 Dec 2018 17:49:21 +0100 (CET)
+Received: from localhost (unknown [185.94.189.187])
+        by mail.bootlin.com (Postfix) with ESMTPSA id F06A320DC3;
+        Tue, 11 Dec 2018 17:48:59 +0100 (CET)
+Date:   Tue, 11 Dec 2018 17:49:00 +0100
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Jagan Teki <jagan@amarulasolutions.com>
+Cc:     Chen-Yu Tsai <wens@csie.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        linux-sunxi <linux-sunxi@googlegroups.com>,
+        linux-amarula@amarulasolutions.com
+Subject: Re: [PATCH v5 07/17] drm/sun4i: sun6i_mipi_dsi: Refactor vertical
+ video start delay
+Message-ID: <20181211164900.wfmkmbrbj3nmlb3h@flea>
+References: <20181210161729.29720-1-jagan@amarulasolutions.com>
+ <20181210161729.29720-8-jagan@amarulasolutions.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="umrsQkkrw7viUWFs"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="o2iryg5ow5l3has3"
 Content-Disposition: inline
-In-Reply-To: <1544522876-15967-4-git-send-email-andrei.stefanescu@microchip.com>
-X-Cookie: Immanuel doesn't pun, he Kant.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181210161729.29720-8-jagan@amarulasolutions.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---umrsQkkrw7viUWFs
+--o2iryg5ow5l3has3
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Dec 11, 2018 at 10:09:15AM +0000, Andrei.Stefanescu@microchip.com wrote:
-> This patch adds a regulator driver for the MCP16502 PMIC.
-> This drivers supports basic operations through the
-> regulator interface such as:
+On Mon, Dec 10, 2018 at 09:47:19PM +0530, Jagan Teki wrote:
+> Video start delay can be computed by subtracting total vertical
+> timing with front porch timing and with adding 1 delay line for TCON.
+>=20
+> BSP code form BPI-M64-bsp is computing video start delay as
+> (from linux-sunxi/
+> drivers/video/sunxi/disp2/disp/de/lowlevel_sun50iw1/de_dsi.c)
+>=20
+> u32 vfp =3D panel->lcd_vt - panel->lcd_y - panel->lcd_vbp;
+> =3D> (panel->lcd_vt) - panel->lcd_y - (panel->lcd_vbp)
+> =3D> (timmings->ver_front_porch + panel->lcd_vbp + panel->lcd_y)
+>    - panel->lcd_y - (panel->lcd_vbp)
+> =3D> timmings->ver_front_porch + panel->lcd_vbp + panel->lcd_y
+>   			     - panel->lcd_y - panel->lcd_vbp
+> =3D> timmings->ver_front_porch
+>=20
+> So, update the start delay computation accordingly.
+>=20
+> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
 
-Overall this looks really good, just a couple of comments:
+Even though it's a bit better now on my A33 board and I don't have the
+white stripes on the bottom of the display, there's still some
+flickering with your patches applied.
 
-> +++ b/drivers/regulator/mcp16502.c
-> @@ -0,0 +1,555 @@
-> +/* SPDX-License-Identifier: GPL-2.0
-> + *
-> + * MCP16502 PMIC driver
+Bisecting it seems to point at that patch, but reverting it doesn't
+make the issue go away, so it's not really clear which one exactly is
+at fault.
 
-SPDX headers need to be C++ comments - please make the entire comment
-block a C++ one so it looks more intentional.
+So, just like I asked in your v4, twice,
 
-> +#ifdef CONFIG_SUSPEND
-> +static int mcp16502_suspend(struct device *dev)
-> +{
-> +	struct i2c_client *client = to_i2c_client(dev);
-> +	struct mcp16502 *mcp = i2c_get_clientdata(client);
-> +
-> +	mcp16502_gpio_set_mode(mcp, MCP16502_OPMODE_LPM);
-> +
-> +	return 0;
-> +}
+http://lists.infradead.org/pipermail/linux-arm-kernel/2018-November/615339.=
+html
 
-This puts the device into low power mode when the suspend function gets
-called but this might not be safe - devices using the regulator may not
-be suspended yet so could still need full regulation.  Normally a GPIO
-triggered transition like this would be being done by hardware as part
-of the process of suspending the SoC.  Is there some reason to do this
-manually?
+> Since the documentation is quite sparse, and a MIPI-DSI analyzer is
+> way too expensive, I'd really like to have at least what each of
+> these commits are actually fixing, and what symptoms each of these
+> were causing, and not just "the BSP does it".
 
---umrsQkkrw7viUWFs
+Maxime
+
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--o2iryg5ow5l3has3
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlwP6gkACgkQJNaLcl1U
-h9BHwwf/cHsTUWUp5ToG+Kb4Fuv/H6ZxHsx3rArRbP6RrZs8AcV8P59bDdcVWgjQ
-Jvrzl5wA1njl0bXYYCyNXWAsApqj5396NAHrZJhzpjYDTZu8rLQnqpJoyHsc6nUJ
-UptK/vhhmZEH78iiEqBIUcQY/JzYxz4cC3iVl24+O3l30AvbrHiXeMALUGr1fJ80
-RutTjPkvA67Gq1ogrfhy8IALDzFDGM7bX+Xe4jha//+23lf1f8HRTCXf3dMydP0A
-Lk3z/8C4Dz2p4c7GZZMzwhjKrsp7AVGIH29SX0BAvM9cp6EnTv0B2l1xLQv3oXV3
-OAviYfR1XwagJG5wcHyko6KGnNSjtQ==
-=9bae
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXA/qfAAKCRDj7w1vZxhR
+xQ9uAP9KufcyAaepQ146pqXJyHiBpHHjhCG0nERCxU1HYrCa6QEA0CTXdLfEFhRU
+ma8TfNxYc8TtkrXtx0qDanfiHpkoRgg=
+=qqPn
 -----END PGP SIGNATURE-----
 
---umrsQkkrw7viUWFs--
+--o2iryg5ow5l3has3--
