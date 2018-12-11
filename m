@@ -2,112 +2,86 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-2.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FDEBC07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 14:15:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA489C5CFFE
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 14:15:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1071320849
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 14:15:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1071320849
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=virtuozzo.com
+	by mail.kernel.org (Postfix) with ESMTP id 7DB8B2084C
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 14:15:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7DB8B2084C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726631AbeLKOPG (ORCPT
+        id S1726690AbeLKOPN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 09:15:06 -0500
-Received: from relay.sw.ru ([185.231.240.75]:56516 "EHLO relay.sw.ru"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726444AbeLKOPG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 09:15:06 -0500
-Received: from [172.16.25.169]
-        by relay.sw.ru with esmtp (Exim 4.91)
-        (envelope-from <ktkhai@virtuozzo.com>)
-        id 1gWioP-0000o2-9r; Tue, 11 Dec 2018 17:15:01 +0300
-Subject: Re: [PATCH v2] ksm: React on changing "sleep_millisecs" parameter
- faster
-To:     Cyrill Gorcunov <gorcunov@gmail.com>
-Cc:     akpm@linux-foundation.org, mhocko@suse.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, gorcunov@virtuozzo.com
-References: <20181211100346.GE2342@uranus.lan>
- <154452399396.4921.3418365102240528000.stgit@localhost.localdomain>
- <20181211111300.GF2342@uranus.lan>
- <26fb047f-9164-96ae-a6cd-7a7efa41d43b@virtuozzo.com>
- <20181211123455.GI2342@uranus.lan>
-From:   Kirill Tkhai <ktkhai@virtuozzo.com>
-Message-ID: <2dd9cc7b-9384-df11-bb5a-3aed45cc914b@virtuozzo.com>
-Date:   Tue, 11 Dec 2018 17:15:00 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
+        Tue, 11 Dec 2018 09:15:13 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:51167 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726444AbeLKOPM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 09:15:12 -0500
+Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1gWioY-0004mm-5d; Tue, 11 Dec 2018 15:15:10 +0100
+Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1gWioX-0008EC-Fu; Tue, 11 Dec 2018 15:15:09 +0100
+Date:   Tue, 11 Dec 2018 15:15:09 +0100
+From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Bartosz Golaszewski <brgl@bgdev.pl>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: Re: [PATCH 2/2] gpio: mockup: use irq_sim_fire_edge()
+Message-ID: <20181211141509.6x74jlzipj6o2exh@pengutronix.de>
+References: <20181120134032.31645-1-brgl@bgdev.pl>
+ <20181120134032.31645-3-brgl@bgdev.pl>
+ <20181203110916.eseh2udxvhi4lf3v@pengutronix.de>
 MIME-Version: 1.0
-In-Reply-To: <20181211123455.GI2342@uranus.lan>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181203110916.eseh2udxvhi4lf3v@pengutronix.de>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11.12.2018 15:34, Cyrill Gorcunov wrote:
-> On Tue, Dec 11, 2018 at 03:22:42PM +0300, Kirill Tkhai wrote:
->> On 11.12.2018 14:13, Cyrill Gorcunov wrote:
->>> On Tue, Dec 11, 2018 at 01:26:59PM +0300, Kirill Tkhai wrote:
->>>> ksm thread unconditionally sleeps in ksm_scan_thread()
->>>> after each iteration:
->>>>
->>>> 	schedule_timeout_interruptible(
->>>> 		msecs_to_jiffies(ksm_thread_sleep_millisecs))
->>>>
->>>> The timeout is configured in /sys/kernel/mm/ksm/sleep_millisecs.
->>>>
->>>> In case of user writes a big value by a mistake, and the thread
->>>> enters into schedule_timeout_interruptible(), it's not possible
->>>> to cancel the sleep by writing a new smaler value; the thread
->>>> is just sleeping till timeout expires.
->>>>
->>>> The patch fixes the problem by waking the thread each time
->>>> after the value is updated.
->>>>
->>>> This also may be useful for debug purposes; and also for userspace
->>>> daemons, which change sleep_millisecs value in dependence of
->>>> system load.
->>>>
->>>> Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
->>>>
->>>> v2: Use wait_event_interruptible_timeout() instead of unconditional
->>>>     schedule_timeout().
->>> ...
->>>> @@ -2844,7 +2849,10 @@ static ssize_t sleep_millisecs_store(struct kobject *kobj,
->>>>  	if (err || msecs > UINT_MAX)
->>>>  		return -EINVAL;
->>>>  
->>>> +	mutex_lock(&ksm_thread_mutex);
->>>>  	ksm_thread_sleep_millisecs = msecs;
->>>> +	mutex_unlock(&ksm_thread_mutex);
->>>> +	wake_up_interruptible(&ksm_iter_wait);
->>>
->>> Btw, just thought -- if we start using this mutex here don't we
->>> open a window for force attack on the thread self execution,
->>> iow if there gonna be a million of writers do we have a guarantee
->>> thread ksm_scan_thread will grab the mutex earlier than writers
->>> (or somewhere inbetween)?
->>
->> This file is permitted for global root only. I don't think there is
->> a problem.
->>
->> If someone wants to make ksm helpless, a person may just write a big
->> "sleep_millisecs" value. KSM thread won't be executed almost all the time
->> in this case.
-> 
-> True. Still I think if we can leave without taking a lock it a rule of thumb.
-> Something like
-> 
-> 	if (msecs != ksm_thread_sleep_millisecs)
-> 		wake_up_interruptable(&ksm_iter_wait);
-> 
-> Thoughts?
+Hello Bartosz,
 
-Ok, good idea.
+On Mon, Dec 03, 2018 at 12:09:16PM +0100, Uwe Kleine-König wrote:
+> On Tue, Nov 20, 2018 at 02:40:32PM +0100, Bartosz Golaszewski wrote:
+> > @@ -213,7 +213,8 @@ static ssize_t gpio_mockup_event_write(struct file *file,
+> >  	chip = priv->chip;
+> >  
+> >  	gpiod_set_value_cansleep(desc, val);
+> > -	irq_sim_fire(&chip->irqsim, priv->offset);
+> > +	edge = val == 0 ? IRQ_TYPE_EDGE_FALLING : IRQ_TYPE_EDGE_RISING;
+> > +	irq_sim_fire_edge(&chip->irqsim, priv->offset, edge);
+> 
+> If I write 0 twice into the debugfs file, does it fire two irqs or only
+> one? I think it fires two but only one would be the right behaviour?!
+
+If you still think that patch 1 of this series is the way to go, I think
+this objection is still valid. Then you need to check the state of the
+line by at least calling (something like) .get_value to determine if the
+previous value was different.
+
+Best regards
+Uwe
+
+-- 
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
