@@ -2,105 +2,70 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3AC1C07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 11:27:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54A2BC5CFFE
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 11:28:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A3BF520849
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 11:27:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="WZt/lpk1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A3BF520849
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 219F62082F
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 11:28:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 219F62082F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726536AbeLKL11 (ORCPT
+        id S1726498AbeLKL2Q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 06:27:27 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:36520 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726311AbeLKL10 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 06:27:26 -0500
-Received: by mail-pg1-f195.google.com with SMTP id n2so6507806pgm.3
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 03:27:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=SA9o5mAjw2q28kPC9SbbnqGe1fygAS1n3wV7jQYTufA=;
-        b=WZt/lpk1msibE5YcbQq0X/K7tRpJXNf/VtJB3gEWFGXIkxCTebWnM+w5EwMRaXMwvR
-         p35usD2ij8+vBmMG+lv/XscEihhRnb69+yncip7koNmmTZE14H/217zN5qOugZQ59JCn
-         URWc6IcC+oHnDYWdUlXnYIjbKW3rgaIAGf0bA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=SA9o5mAjw2q28kPC9SbbnqGe1fygAS1n3wV7jQYTufA=;
-        b=iHr2ox3huNEhWHsZTNTldAYZjkdh1FiPyew/yyT5X3dK12CGeYRmylxI0g8tMPQS18
-         RESmv9mIRFPU6Wv+Z5UhDAMScDKHd9RPyTkoWL8tfu4CeaEUtF65eYMiwyi+QIug+vCy
-         5rQz4MIJMph3ijvfIpzrgXrBCEUhfq7kssREnjxwu+4Ll1A4+NqyB5KnZZHfbMivIWbk
-         S0kfcF8ZCnR8UD7Y4Lu/jQjeu4Em5bJ7DC3u4UapGYVb0kMVe/DLoEIscd5IgaoBNJg0
-         qzjbAE479Vi+3+1fW5m3z3yWqCkNlFq3d6e7E7pUgOrRpXgTr0lGyNK7tzs0sCUFBGkb
-         fOUQ==
-X-Gm-Message-State: AA+aEWaIXZI77uqCLNkltrDYkBvG+zWDfymx98wHm4JFuwJ2QMWR0A7E
-        Cydpn3g/aPSqnyVPELs7ME3UAA==
-X-Google-Smtp-Source: AFSGD/UjAX0zYrGxVmy34PJ2Vc8pMqDRl3RBtc8NzFiduW82rRDiq0GmueFPEtl+LEUMu+rM66OVNQ==
-X-Received: by 2002:a63:8c2:: with SMTP id 185mr14559027pgi.26.1544527645357;
-        Tue, 11 Dec 2018 03:27:25 -0800 (PST)
-Received: from localhost ([122.172.23.29])
-        by smtp.gmail.com with ESMTPSA id z7sm15100454pga.6.2018.12.11.03.27.24
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 11 Dec 2018 03:27:24 -0800 (PST)
-Date:   Tue, 11 Dec 2018 16:57:22 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Quentin Perret <quentin.perret@arm.com>
-Cc:     vireshk@kernel.org, nm@ti.com, sboyd@kernel.org,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH] PM / OPP: Always expose one supply in debugfs
-Message-ID: <20181211112722.vu2zrpcdw3ez3kag@vireshk-i7>
-References: <20181210113247.11412-1-quentin.perret@arm.com>
- <20181210115410.clyrxhp5plptrf5n@queper01-lin>
- <20181211092549.2ydogec7bnlfokwy@vireshk-i7>
- <20181211094908.2dzmmzu6aq6cs4yn@queper01-lin>
+        Tue, 11 Dec 2018 06:28:16 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:15673 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726190AbeLKL2Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 06:28:16 -0500
+Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id EA1AD384715A5;
+        Tue, 11 Dec 2018 19:28:12 +0800 (CST)
+Received: from [10.151.23.176] (10.151.23.176) by smtp.huawei.com
+ (10.3.19.209) with Microsoft SMTP Server (TLS) id 14.3.408.0; Tue, 11 Dec
+ 2018 19:28:07 +0800
+Subject: Re: [PATCH 3/5] drivers: staging: erofs: Fix spelling issue
+To:     Aaron Strahlberger <aaron.strahlberger@posteo.de>
+CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Chao Yu <yuchao0@huawei.com>, <linux-erofs@lists.ozlabs.org>,
+        <devel@driverdev.osuosl.org>, <linux-kernel@vger.kernel.org>,
+        <linux-kernel@i4.cs.fau.de>,
+        Julius Wiedmann <julius.wiedmann@fau.de>,
+        Dominik Huber <domi250@gmx.de>
+References: <0ed9f3e7-9081-4a8a-06b0-e5ad14e2c872@huawei.com>
+ <20181211105443.21826-1-aaron.strahlberger@posteo.de>
+ <20181211105443.21826-4-aaron.strahlberger@posteo.de>
+From:   Gao Xiang <gaoxiang25@huawei.com>
+Message-ID: <b9f1bc3b-6bdc-0c6c-e3b5-edbf53d82a2d@huawei.com>
+Date:   Tue, 11 Dec 2018 19:27:51 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181211094908.2dzmmzu6aq6cs4yn@queper01-lin>
-User-Agent: NeoMutt/20180323-120-3dd1ac
+In-Reply-To: <20181211105443.21826-4-aaron.strahlberger@posteo.de>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.151.23.176]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11-12-18, 09:49, Quentin Perret wrote:
-> So, on Juno we do get voltage numbers from firmware, and those get
-> registered properly in PM_OPP, exactly like for Hikey960. So it's
-> probably the same problem in both cases.
-> 
-> FWIW, this is what I get on juno with my 'fix' applied:
-> 
->   $ cat /sys/kernel/debug/opp/cpu0/*/supply-0/u_volt_target
->   820000
->   850000
->   900000
->   950000
->   1000000
-> 
-> > Anyway, this should still be fixed irrespective of the "cpu-supply" property.
-> > The other fix you mentioned about setting opp_table->regulator_count to 1 is
-> > actually the right thing to do but the fix may require changes at multiple
-> > places. I can help writing a patch for that if you want, else I am open to you
-> > giving it a shot :)
-> 
-> You'll definitely know the code better than me so if you have a patch in
-> mind, please don't hesitate. I'll be happy to test it on my two boards
-> here :-)
 
-Sent some patches, please give them a try.
+On 2018/12/11 18:54, Aaron Strahlberger wrote:
+> Changed "stoped" to "stopped".
+> 
+> Signed-off-by: Aaron Strahlberger <aaron.strahlberger@posteo.de>
+> Signed-off-by: Julius Wiedmann <julius.wiedmann@fau.de>
+> Signed-off-by: Dominik Huber <domi250@gmx.de>
 
--- 
-viresh
+A typo fix... I'm not a native English speaker, help me if it has more typo errors...
+
+Reviewed-by: Gao Xiang <gaoxiang25@huawei.com>
+
+Thanks,
+Gao Xiang
