@@ -4,267 +4,273 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84A91C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 03:27:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D33EC67839
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 03:29:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A2EA20672
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 03:27:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B090520672
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 03:29:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="bcAXsOzc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A2EA20672
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="wLL8/OI6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B090520672
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729905AbeLKD1J (ORCPT
+        id S1729933AbeLKD3K (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 22:27:09 -0500
-Received: from mail-eopbgr140049.outbound.protection.outlook.com ([40.107.14.49]:59105
-        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
+        Mon, 10 Dec 2018 22:29:10 -0500
+Received: from mail-eopbgr70085.outbound.protection.outlook.com ([40.107.7.85]:1120
+        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728584AbeLKD1I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 22:27:08 -0500
+        id S1728584AbeLKD3K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Dec 2018 22:29:10 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=EaUnRcLWtNN5JE7WZgOcq8+ePfJFL312uKH1i2g3Bow=;
- b=bcAXsOzcmFaoLrS23/8nU/5zsvgDhN8xsZf8BAYsjuz2mrRdG2jLrCM6a+f3dHEwckqCrEcxj19w8XeRjtmjIoIT7MqAALnQzz17aIadq17cv3VF0+h99CNkEHwvGFJPe7B5BLg/2/ps+QxxAMUtp14Hi8k0zxemRRUsXjgW0wk=
+ bh=0bKgzDad34eWvO7hgmn7LygevSBp6j1O916ugdOWoaE=;
+ b=wLL8/OI6EAEySzRB+kwH9ouAKVCoqpkuVm3PPvuHutas6y6tMCJmhrUlc9jSzD+7KUxBzZp5Z6/OGTRFX04Tl1cG/9DBfjMArU70iwFYIZFIF+FQt4bpmdfctqfY376m49FRmOtNfeKwZhzkjBQh1ErQilgNRVt40GTwZIBNyCg=
 Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com (52.134.72.18) by
- DB3PR0402MB3786.eurprd04.prod.outlook.com (52.134.71.21) with Microsoft SMTP
+ DB3PR0402MB3833.eurprd04.prod.outlook.com (52.134.67.14) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1404.22; Tue, 11 Dec 2018 03:24:10 +0000
+ 15.20.1404.23; Tue, 11 Dec 2018 03:29:03 +0000
 Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com
  ([fe80::adf8:f49d:deb4:58fd]) by DB3PR0402MB3916.eurprd04.prod.outlook.com
  ([fe80::adf8:f49d:deb4:58fd%3]) with mapi id 15.20.1404.026; Tue, 11 Dec 2018
- 03:24:10 +0000
+ 03:29:03 +0000
 From:   Anson Huang <anson.huang@nxp.com>
 To:     "jic23@kernel.org" <jic23@kernel.org>,
         "knaack.h@gmx.de" <knaack.h@gmx.de>,
         "lars@metafoo.de" <lars@metafoo.de>,
         "pmeerw@pmeerw.net" <pmeerw@pmeerw.net>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "rtresidd@electromag.com.au" <rtresidd@electromag.com.au>,
         "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "festevam@gmail.com" <festevam@gmail.com>,
         "preid@electromag.com.au" <preid@electromag.com.au>
 CC:     dl-linux-imx <linux-imx@nxp.com>
-Subject: [PATCH V4 2/2] iio: light: isl29018: add optional vdd/vdda regulator
- operation support
-Thread-Topic: [PATCH V4 2/2] iio: light: isl29018: add optional vdd/vdda
+Subject: [PATCH V3] iio: magnetometer: mag3110: add optional vdd/vddio
  regulator operation support
-Thread-Index: AQHUkQD7YnUpJgt5iEONteRFHRrUpA==
-Date:   Tue, 11 Dec 2018 03:24:10 +0000
-Message-ID: <1544498291-2716-2-git-send-email-Anson.Huang@nxp.com>
-References: <1544498291-2716-1-git-send-email-Anson.Huang@nxp.com>
-In-Reply-To: <1544498291-2716-1-git-send-email-Anson.Huang@nxp.com>
+Thread-Topic: [PATCH V3] iio: magnetometer: mag3110: add optional vdd/vddio
+ regulator operation support
+Thread-Index: AQHUkQGpKTF8HPdmxEG4gZUKwuf97Q==
+Date:   Tue, 11 Dec 2018 03:29:03 +0000
+Message-ID: <1544498589-2785-1-git-send-email-Anson.Huang@nxp.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
 x-mailer: git-send-email 2.7.4
-x-clientproxiedby: HK2PR04CA0067.apcprd04.prod.outlook.com
- (2603:1096:202:15::11) To DB3PR0402MB3916.eurprd04.prod.outlook.com
+x-clientproxiedby: HK0PR01CA0047.apcprd01.prod.exchangelabs.com
+ (2603:1096:203:3e::35) To DB3PR0402MB3916.eurprd04.prod.outlook.com
  (2603:10a6:8:10::18)
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=anson.huang@nxp.com; 
 x-ms-exchange-messagesentrepresentingtype: 1
 x-originating-ip: [119.31.174.66]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DB3PR0402MB3786;6:TII0+9m00aWuwbReDIyXDUwv/t1bpsSfuw02MJjQk4wNEOJYTwuoQbvwDE4fIb6fPQT83LRSFC6tfmS2F3XzFc/hof8zeupKMT9LQWfIcetfW5lsa7Y9eVpfmSoTy8Ux0jCoCI/7df2dG0nyj5qQOyztZzZsGLApHq3poD5U/DxkO66OH2g7D5VcRQRNijS/ZA282gO30lxz+P9CHEizxEUzpTWiRl7jYsNBlHfW7YkVMDm6ALZCRTmY/qCecyRygQCxe4sdxcjfuwnZgnCCku+xb+/2EfPIdIdgRzzwcGaXdSALuQ4JBlnTGADqepJDPrx+0ntEQYSKcL3tqazE14YskPi2PMykSYMOfHHuDQXxbD43sV+36AZqP8IZj9IcJfPiMSrSZnGf4vrdaE/m/kTH32kKD96TfG+BXfELmBMneccBoGrnLS7RstPxcdkBeTqMlRx4MAZ7en2bPET3WQ==;5:d9hY98vFjuBWE7HV+OAOMAqUs7kvWym7donihx0TNhTL2kHYWDNwyCuBOetuMzY34I5j4ZCubUlRKhfBolXnp+iwuSLrvAUaq1D0cgtrnlfn4e8EoeS81Swrbxw4nsQfs8XP8hqNVJNUDh3rBXZUinMhmB4RG0Agdbbr0q1a8eo=;7:SzEOsWO5jhUfR2gwIr2sx37F4QzNmagYdyuHTu5ACCf/rEskcQsNRTLExm8F67elIM72kCa9s8eQoQ8W6eP90VYrNAwWviFoaLiV6obN+cWkztsAkJ+yhRi+TE+h3J+LOXjiF+Ye5HkgzlC4nXIrCA==
-x-ms-office365-filtering-correlation-id: 2bdf4f2c-5638-4961-fd25-08d65f181ddc
+x-microsoft-exchange-diagnostics: 1;DB3PR0402MB3833;6:ibe8juvg+U1cz1N8AUb2x4fbHypE5M9f2343P4547/neLdJEQyBe/NFAP+mARzdLcEmv6RTpMai//mDo5HXBxQf3i+f/kQV3n19bMoojkFlzMyNobix6SAToERnBsVouusf9EbJBNWNpHo7r4Ks0leg3tOWc5mbvILBR+nLPae+moLoOIpjJCPwC0ieU6kcNndKVpIehuRNDxfYfsZdr62sbgXLYk773+s/bvzguXgibOPDAsj7fpBqXcuIN2DBum8jxkTQ8AxqzqSoJtOsEFgt52gN0kCQ4n5vxTVFfIx53lhuNL81Q0GxiHRl70dBVE6RhtTaphj9mbxq/LRxqLEFG/Ob76uD5+QdgfwdN/0oarqzr4WOpcIlnYG6wW1ICCQ5oUhNxOX1Q9tQnAq6+HgwGEUuWZUS+TzHZa20yx9RwvSmC4geFtGfGMCocKDSAyXyVF1UEiIST4l3Jv701zg==;5:hIN7XHuLLXEtfZqDE6wHe4fuKxsGDgZgcC/dqz316wn5p/uE9MzJWFLAf2e8zcyVrpEO+CDHK203Tx2tUrES02Vb5AMBqjdIT5daYM6e8IMefMmzTC3oocmE5pyHApbbVFIvxVVoRQ2z123lqxvbW4ETEhb9/ZjssOjw/kPV10E=;7:eXlmX5Sd5f2UbLbBahNhhDSYyBoBnboi2yU0iZs9+HZjsMYUczOs8O35vHsp99fNS/B7t+AN6cMFubrLzosxdod7TbrIGOc5AHkx3alglptu6p0DMau2ve6qn8Og+jqDwtvmovZysrJQObO0ISQvGA==
+x-ms-office365-filtering-correlation-id: 71d8bdc9-46f0-4a1b-2191-08d65f18cc16
 x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:DB3PR0402MB3786;
-x-ms-traffictypediagnostic: DB3PR0402MB3786:
-x-microsoft-antispam-prvs: <DB3PR0402MB378638BAA7868FEBD44E528CF5A60@DB3PR0402MB3786.eurprd04.prod.outlook.com>
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:DB3PR0402MB3833;
+x-ms-traffictypediagnostic: DB3PR0402MB3833:
+x-microsoft-antispam-prvs: <DB3PR0402MB383330A1072BF79748BA3520F5A60@DB3PR0402MB3833.eurprd04.prod.outlook.com>
 x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231455)(999002)(944501520)(52105112)(10201501046)(93006095)(93001095)(3002001)(6055026)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123564045)(20161123558120)(20161123560045)(201708071742011)(7699051)(76991095);SRVR:DB3PR0402MB3786;BCL:0;PCL:0;RULEID:;SRVR:DB3PR0402MB3786;
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(3231455)(999002)(944501520)(52105112)(3002001)(93006095)(93001095)(6055026)(148016)(149066)(150057)(6041310)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123564045)(20161123560045)(201708071742011)(7699051)(76991095);SRVR:DB3PR0402MB3833;BCL:0;PCL:0;RULEID:;SRVR:DB3PR0402MB3833;
 x-forefront-prvs: 08831F51DC
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(376002)(366004)(136003)(346002)(39860400002)(189003)(199004)(54534003)(478600001)(2501003)(6486002)(446003)(14454004)(305945005)(97736004)(3846002)(6512007)(2201001)(5660300001)(86362001)(7416002)(11346002)(4326008)(2616005)(39060400002)(36756003)(71200400001)(7736002)(71190400001)(6116002)(316002)(186003)(476003)(2906002)(8676002)(386003)(106356001)(25786009)(105586002)(26005)(66066001)(50226002)(102836004)(6506007)(110136005)(81156014)(52116002)(6436002)(99286004)(14444005)(256004)(486006)(53936002)(8936002)(81166006)(68736007)(76176011)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:DB3PR0402MB3786;H:DB3PR0402MB3916.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(396003)(136003)(39860400002)(346002)(376002)(54534003)(189003)(199004)(386003)(105586002)(71190400001)(71200400001)(68736007)(14454004)(110136005)(25786009)(316002)(6116002)(3846002)(2906002)(97736004)(99286004)(2501003)(6436002)(36756003)(6486002)(2201001)(81156014)(86362001)(8936002)(50226002)(256004)(8676002)(14444005)(81166006)(52116002)(102836004)(53936002)(4326008)(305945005)(7736002)(26005)(476003)(2616005)(66066001)(5660300001)(186003)(6512007)(39060400002)(478600001)(106356001)(6506007)(486006);DIR:OUT;SFP:1101;SCL:1;SRVR:DB3PR0402MB3833;H:DB3PR0402MB3916.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
 received-spf: None (protection.outlook.com: nxp.com does not designate
  permitted sender hosts)
-x-microsoft-antispam-message-info: 1WLb9zIiA6HYK0GOmUNWbzKqBNgwAG9v6k4rI7c0L9nxfPuQrOev2CjNBtTkYoDcOyFZfEskrZiWKZdVM7mH0p6WnHB6YAU3M1VbjFF3HpmKQ6Smh3mjg2GrEfDw6jirybmfoGxWUdG45eGgK+cCORmNOnX/q4acxGnTg6mlWyZQam/M9Yrl3HOvMyi4U5pAW9ukthiymHEPdf0NH9qYw/2fHXKWScKXrartsKvsJ+sPsYR1SCE+gPkWNQXFyPA2wyqGsQyX17NO+QOjSufjd+Z/EQMt9F+x1TeW60QvqKAYAft6AtjzV2LKu44AxBh8
+x-microsoft-antispam-message-info: 9g1l3/rM2yxbvfXFuVBs7GhTci5hfWulQhcmI1suUJBa+ajZ+5IITdsXoiof2Wlsms6kqvnDFkpgzuLM8p3oy/H2F/53tzeITT8/MY9eYGM8wjpRnLRhkmgpvXQumrxh+4vQPKOYzDN62FS6foWFi7onK+HTuS9Z3CjczZdd/nRLqJfiqdjgaUPIfZm1Qi+/aSoGRQt/qhRUiNSsXPZpG0m/SuIJSHMnsgWPzvgzRi+skTjTq68qo6k4rPfCep7HrtpiDrLr3J2q294i4f7XBI6USBPji6GHQn/eicABv5iey20XwRgAn/4uc8My+a/R
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2bdf4f2c-5638-4961-fd25-08d65f181ddc
-X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Dec 2018 03:24:10.7271
+X-MS-Exchange-CrossTenant-Network-Message-Id: 71d8bdc9-46f0-4a1b-2191-08d65f18cc16
+X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Dec 2018 03:29:03.1613
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB3PR0402MB3786
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB3PR0402MB3833
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The light sensor's power supply could be controlled by regulator
-on some platforms, such as i.MX6Q-SABRESD board, the light sensor
-isl29023's power supply is controlled by a GPIO fixed regulator,
-need to make sure the regulator is enabled before any operation of
-sensor, this patch adds optional vdd/vdda regulator operation support.
+The magnetometer's power supply could be controlled by regulator
+on some platforms, such as i.MX6Q-SABRESD board, the mag3110's
+power supply is controlled by a GPIO fixed regulator, need to make
+sure the regulator is enabled before any communication with mag3110,
+this patch adds optional vdd/vddio regulator operation support.
 
 Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 ---
-ChangeLog since V3:
+ChangeLog since V2:
 	- improve the error handling of devm_regulator_get_optional;
 	- make sure regulators are disabled in error path.
 ---
- drivers/iio/light/isl29018.c | 83 ++++++++++++++++++++++++++++++++++++++++=
-++--
- 1 file changed, 80 insertions(+), 3 deletions(-)
+ drivers/iio/magnetometer/mag3110.c | 97 ++++++++++++++++++++++++++++++++++=
+----
+ 1 file changed, 89 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/iio/light/isl29018.c b/drivers/iio/light/isl29018.c
-index b45400f..a21652b 100644
---- a/drivers/iio/light/isl29018.c
-+++ b/drivers/iio/light/isl29018.c
-@@ -23,6 +23,7 @@
- #include <linux/mutex.h>
+diff --git a/drivers/iio/magnetometer/mag3110.c b/drivers/iio/magnetometer/=
+mag3110.c
+index f063355..120f383 100644
+--- a/drivers/iio/magnetometer/mag3110.c
++++ b/drivers/iio/magnetometer/mag3110.c
+@@ -20,6 +20,7 @@
+ #include <linux/iio/buffer.h>
+ #include <linux/iio/triggered_buffer.h>
  #include <linux/delay.h>
- #include <linux/regmap.h>
 +#include <linux/regulator/consumer.h>
- #include <linux/slab.h>
- #include <linux/iio/iio.h>
- #include <linux/iio/sysfs.h>
-@@ -95,6 +96,8 @@ struct isl29018_chip {
- 	struct isl29018_scale	scale;
- 	int			prox_scheme;
- 	bool			suspended;
-+	struct regulator	*vdd_reg;
-+	struct regulator	*vdda_reg;
+=20
+ #define MAG3110_STATUS 0x00
+ #define MAG3110_OUT_X 0x01 /* MSB first */
+@@ -56,6 +57,8 @@ struct mag3110_data {
+ 	struct mutex lock;
+ 	u8 ctrl_reg1;
+ 	int sleep_val;
++	struct regulator *vdd_reg;
++	struct regulator *vddio_reg;
  };
 =20
- static int isl29018_set_integration_time(struct isl29018_chip *chip,
-@@ -735,6 +738,34 @@ static int isl29018_probe(struct i2c_client *client,
+ static int mag3110_request(struct mag3110_data *data)
+@@ -469,17 +472,48 @@ static int mag3110_probe(struct i2c_client *client,
+ 	struct iio_dev *indio_dev;
+ 	int ret;
 =20
- 	mutex_init(&chip->lock);
+-	ret =3D i2c_smbus_read_byte_data(client, MAG3110_WHO_AM_I);
+-	if (ret < 0)
+-		return ret;
+-	if (ret !=3D MAG3110_DEVICE_ID)
+-		return -ENODEV;
+-
+ 	indio_dev =3D devm_iio_device_alloc(&client->dev, sizeof(*data));
+ 	if (!indio_dev)
+ 		return -ENOMEM;
 =20
-+	chip->vdd_reg =3D devm_regulator_get_optional(&client->dev, "vdd");
-+	if (!IS_ERR(chip->vdd_reg)) {
-+		err =3D regulator_enable(chip->vdd_reg);
-+		if (err) {
+ 	data =3D iio_priv(indio_dev);
++
++	data->vdd_reg =3D devm_regulator_get_optional(&client->dev, "vdd");
++	if (!IS_ERR(data->vdd_reg)) {
++		ret =3D regulator_enable(data->vdd_reg);
++		if (ret) {
 +			dev_err(&client->dev, "failed to enable VDD regulator\n");
-+			return err;
++			return ret;
 +		}
 +	} else {
-+		err =3D PTR_ERR(chip->vdd_reg);
-+		if (err !=3D -ENODEV)
-+			return err;
++		ret =3D PTR_ERR(data->vdd_reg);
++		if (ret !=3D -ENODEV)
++			return ret;
 +	}
 +
-+	chip->vdda_reg =3D devm_regulator_get_optional(&client->dev, "vdda");
-+	if (!IS_ERR(chip->vdda_reg)) {
-+		err =3D regulator_enable(chip->vdda_reg);
-+		if (err) {
-+			dev_err(&client->dev, "failed to enable VDDA regulator\n");
-+			if (!IS_ERR(chip->vdd_reg))
-+				regulator_disable(chip->vdd_reg);
-+			return err;
++	data->vddio_reg =3D devm_regulator_get_optional(&client->dev, "vddio");
++	if (!IS_ERR(data->vddio_reg)) {
++		ret =3D regulator_enable(data->vddio_reg);
++		if (ret) {
++			dev_err(&client->dev, "failed to enable VDDIO regulator\n");
++			if (!IS_ERR(data->vdd_reg))
++				regulator_disable(data->vdd_reg);
++			return ret;
 +		}
 +	} else {
-+		err =3D PTR_ERR(chip->vdda_reg);
-+		if (err !=3D -ENODEV)
-+			return err;
++		ret =3D PTR_ERR(data->vddio_reg);
++		if (ret !=3D -ENODEV)
++			return ret;
 +	}
 +
- 	chip->type =3D dev_id;
- 	chip->calibscale =3D 1;
- 	chip->ucalibscale =3D 0;
-@@ -747,12 +778,12 @@ static int isl29018_probe(struct i2c_client *client,
- 	if (IS_ERR(chip->regmap)) {
- 		err =3D PTR_ERR(chip->regmap);
- 		dev_err(&client->dev, "regmap initialization fails: %d\n", err);
--		return err;
++	ret =3D i2c_smbus_read_byte_data(client, MAG3110_WHO_AM_I);
++	if (ret < 0)
 +		goto disable_regulators;
- 	}
-=20
- 	err =3D isl29018_chip_init(chip);
- 	if (err)
--		return err;
++	if (ret !=3D MAG3110_DEVICE_ID) {
++		ret =3D -ENODEV;
 +		goto disable_regulators;
-=20
- 	indio_dev->info =3D isl29018_chip_info_tbl[dev_id].indio_info;
- 	indio_dev->channels =3D isl29018_chip_info_tbl[dev_id].channels;
-@@ -761,13 +792,24 @@ static int isl29018_probe(struct i2c_client *client,
- 	indio_dev->dev.parent =3D &client->dev;
- 	indio_dev->modes =3D INDIO_DIRECT_MODE;
-=20
--	return devm_iio_device_register(&client->dev, indio_dev);
-+	err =3D devm_iio_device_register(&client->dev, indio_dev);
-+	if (!err)
-+		return 0;
++	}
 +
+ 	data->client =3D client;
+ 	mutex_init(&data->lock);
+=20
+@@ -499,7 +533,7 @@ static int mag3110_probe(struct i2c_client *client,
+=20
+ 	ret =3D mag3110_change_config(data, MAG3110_CTRL_REG1, data->ctrl_reg1);
+ 	if (ret < 0)
+-		return ret;
++		goto disable_regulators;
+=20
+ 	ret =3D i2c_smbus_write_byte_data(client, MAG3110_CTRL_REG2,
+ 		MAG3110_CTRL_AUTO_MRST_EN);
+@@ -520,6 +554,12 @@ static int mag3110_probe(struct i2c_client *client,
+ 	iio_triggered_buffer_cleanup(indio_dev);
+ standby_on_error:
+ 	mag3110_standby(iio_priv(indio_dev));
 +disable_regulators:
-+	if (!IS_ERR(chip->vdd_reg))
-+		regulator_disable(chip->vdd_reg);
-+	if (!IS_ERR(chip->vdda_reg))
-+		regulator_disable(chip->vdda_reg);
++	if (!IS_ERR(data->vdd_reg))
++		regulator_disable(data->vdd_reg);
++	if (!IS_ERR(data->vddio_reg))
++		regulator_disable(data->vddio_reg);
 +
-+	return err;
+ 	return ret;
  }
 =20
+@@ -537,14 +577,55 @@ static int mag3110_remove(struct i2c_client *client)
  #ifdef CONFIG_PM_SLEEP
- static int isl29018_suspend(struct device *dev)
+ static int mag3110_suspend(struct device *dev)
  {
- 	struct isl29018_chip *chip =3D iio_priv(dev_get_drvdata(dev));
+-	return mag3110_standby(iio_priv(i2c_get_clientdata(
++	struct mag3110_data *data =3D iio_priv(i2c_get_clientdata(
++		to_i2c_client(dev)));
 +	int ret;
-=20
- 	mutex_lock(&chip->lock);
-=20
-@@ -777,6 +819,22 @@ static int isl29018_suspend(struct device *dev)
- 	 * So we do not have much to do here.
- 	 */
- 	chip->suspended =3D true;
-+	if (!IS_ERR(chip->vdd_reg)) {
-+		ret =3D regulator_disable(chip->vdd_reg);
++
++	ret =3D mag3110_standby(iio_priv(i2c_get_clientdata(
+ 		to_i2c_client(dev))));
++	if (ret)
++		return ret;
++
++	if (!IS_ERR(data->vdd_reg)) {
++		ret =3D regulator_disable(data->vdd_reg);
 +		if (ret) {
 +			dev_err(dev, "failed to disable VDD regulator\n");
-+			mutex_unlock(&chip->lock);
 +			return ret;
 +		}
 +	}
-+	if (!IS_ERR(chip->vdda_reg)) {
-+		ret =3D regulator_disable(chip->vdda_reg);
++	if (!IS_ERR(data->vddio_reg)) {
++		ret =3D regulator_disable(data->vddio_reg);
 +		if (ret) {
-+			dev_err(dev, "failed to disable VDDA regulator\n");
-+			mutex_unlock(&chip->lock);
++			dev_err(dev, "failed to disable VDDIO regulator\n");
 +			return ret;
-+		}
-+	}
-=20
- 	mutex_unlock(&chip->lock);
-=20
-@@ -790,6 +848,25 @@ static int isl29018_resume(struct device *dev)
-=20
- 	mutex_lock(&chip->lock);
-=20
-+	if (!IS_ERR(chip->vdd_reg)) {
-+		err =3D regulator_enable(chip->vdd_reg);
-+		if (err) {
-+			dev_err(dev, "failed to enable VDD regulator\n");
-+			mutex_unlock(&chip->lock);
-+			return err;
-+		}
-+	}
-+	if (!IS_ERR(chip->vdda_reg)) {
-+		err =3D regulator_enable(chip->vdda_reg);
-+		if (err) {
-+			dev_err(dev, "failed to enable VDDA regulator\n");
-+			if (!IS_ERR(chip->vdd_reg))
-+				regulator_disable(chip->vdd_reg);
-+			mutex_unlock(&chip->lock);
-+			return err;
 +		}
 +	}
 +
- 	err =3D isl29018_chip_init(chip);
- 	if (!err)
- 		chip->suspended =3D false;
++	return 0;
+ }
+=20
+ static int mag3110_resume(struct device *dev)
+ {
+ 	struct mag3110_data *data =3D iio_priv(i2c_get_clientdata(
+ 		to_i2c_client(dev)));
++	int ret;
++
++	if (!IS_ERR(data->vdd_reg)) {
++		ret =3D regulator_enable(data->vdd_reg);
++		if (ret) {
++			dev_err(dev, "failed to enable VDD regulator\n");
++			return ret;
++		}
++	}
++	if (!IS_ERR(data->vddio_reg)) {
++		ret =3D regulator_enable(data->vddio_reg);
++		if (ret) {
++			dev_err(dev, "failed to enable VDDIO regulator\n");
++			if (!IS_ERR(data->vdd_reg))
++				regulator_disable(data->vdd_reg);
++			return ret;
++		}
++	}
+=20
+ 	return i2c_smbus_write_byte_data(data->client, MAG3110_CTRL_REG1,
+ 		data->ctrl_reg1);
 --=20
 2.7.4
 
