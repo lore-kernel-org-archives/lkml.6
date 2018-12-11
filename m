@@ -4,53 +4,55 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 239BAC5CFFE
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:01:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D37A3C5CFFE
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:02:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD0102084E
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:01:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9B68B2084E
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:02:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544544118;
-	bh=udwFmnrLpJTNwrC9NMr7XKU9rBbrGoMF0fX5rgR800E=;
+	s=default; t=1544544123;
+	bh=BTtkimGuGQkuQeaMWEc1mv9ww5EFL9N8nS4IFLM76zM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=PT9t3enUE35B+5a4dtHn5Xxl4QfVt2SxSLAOEj5ecwOacRDByabYMgNJTLUb0VbFJ
-	 kF3syd+wunIuR0sWWEgisBqXF6uinpmsLgDk4OMmP/27mYu9Lb4n7wS47rvexYXu6i
-	 yiGgLTvxUsFz8TypG3Zu7pE0bEyF7KtA6nAdg8hM=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD0102084E
+	b=sm5sfO+TDBhcsMw5877Yd27Kyw4vgg1U2//K27VG2cCLdIM3Y7wHXDq4GX+hm5FRA
+	 VkjJ1OK8hf35eqW8UkT3RzMG3PMi0BQoPjCaQ4TK/B6qjDZcrLHufgpo40dct06sqW
+	 IGF3aaeygulSP70aybZ5uDBozRjaA7o3GJthbFns=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B68B2084E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731045AbeLKQB4 (ORCPT
+        id S1730732AbeLKP5F (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 11:01:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46086 "EHLO mail.kernel.org"
+        Tue, 11 Dec 2018 10:57:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45866 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730748AbeLKP5K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:57:10 -0500
+        id S1730704AbeLKP5A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 10:57:00 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D645E205C9;
-        Tue, 11 Dec 2018 15:57:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CB12A205C9;
+        Tue, 11 Dec 2018 15:56:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544543829;
-        bh=udwFmnrLpJTNwrC9NMr7XKU9rBbrGoMF0fX5rgR800E=;
+        s=default; t=1544543819;
+        bh=BTtkimGuGQkuQeaMWEc1mv9ww5EFL9N8nS4IFLM76zM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=r+nkLEo9fa3+IQvWxxzDNO06e3RMWGjGDwtE0oDFNBOPr+CbfAtM6I5esqi66llZn
-         tzrd9Ti8YjKmJb2mpwH4NXAUxS3580VxhliOaHEglj7FOu520Ce3xvKSeXizEZkA95
-         Pf7cwMXjRI+qrPNjlhZCMNa6XRGalUyxlLiKAzew=
+        b=o8OVEc6TN0E4p/El0KXskH1OoLBLeLgpZ44EeSjkYH2xCqp1ptsaqjtAyU6wJRvar
+         rENn6VVANEOgeGOw9AcBhHIVmi3zmVyomQ5bcTazwHlWvss3LkrdLt5Pmf1YYPJran
+         R/4WcppN29CfXelj+lxviQuS9VmYLDd60nXvp/x0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lucas Bates <lucasb@mojatatu.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org,
+        Adrian Amborzewicz <adrian.ambrozewicz@intel.com>,
+        Thor Thayer <thor.thayer@linux.intel.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 035/118] tc-testing: tdc.py: ignore errors when decoding stdout/stderr
-Date:   Tue, 11 Dec 2018 16:40:54 +0100
-Message-Id: <20181211151645.652891414@linuxfoundation.org>
+Subject: [PATCH 4.19 041/118] mtd: spi-nor: Fix Cadence QSPI page fault kernel panic
+Date:   Tue, 11 Dec 2018 16:41:00 +0100
+Message-Id: <20181211151645.894859419@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181211151644.216668863@linuxfoundation.org>
 References: <20181211151644.216668863@linuxfoundation.org>
@@ -69,36 +71,74 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 5aaf6428526bcad98d6f51f2f679c919bb75d7e9 ]
+[ Upstream commit a6a66f80c85e8e20573ca03fabf32445954a88d5 ]
 
-Prevent exceptions from being raised while decoding output
-from an executed command. There is no impact on tdc's
-execution and the verify command phase would fail the pattern
-match.
+The current Cadence QSPI driver caused a kernel panic sporadically
+when writing to QSPI. The problem was caused by writing more bytes
+than needed because the QSPI operated on 4 bytes at a time.
+<snip>
+[   11.202044] Unable to handle kernel paging request at virtual address bffd3000
+[   11.209254] pgd = e463054d
+[   11.211948] [bffd3000] *pgd=2fffb811, *pte=00000000, *ppte=00000000
+[   11.218202] Internal error: Oops: 7 [#1] SMP ARM
+[   11.222797] Modules linked in:
+[   11.225844] CPU: 1 PID: 1317 Comm: systemd-hwdb Not tainted 4.17.7-d0c45cd44a8f
+[   11.235796] Hardware name: Altera SOCFPGA Arria10
+[   11.240487] PC is at __raw_writesl+0x70/0xd4
+[   11.244741] LR is at cqspi_write+0x1a0/0x2cc
+</snip>
+On a page boundary limit the number of bytes copied from the tx buffer
+to remain within the page.
 
-Signed-off-by: Lucas Bates <lucasb@mojatatu.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+This patch uses a temporary buffer to hold the 4 bytes to write and then
+copies only the bytes required from the tx buffer.
+
+Reported-by: Adrian Amborzewicz <adrian.ambrozewicz@intel.com>
+Signed-off-by: Thor Thayer <thor.thayer@linux.intel.com>
+Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/testing/selftests/tc-testing/tdc.py | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/mtd/spi-nor/cadence-quadspi.c | 19 ++++++++++++++++---
+ 1 file changed, 16 insertions(+), 3 deletions(-)
 
-diff --git a/tools/testing/selftests/tc-testing/tdc.py b/tools/testing/selftests/tc-testing/tdc.py
-index 87a04a8a5945..9b3f414ff1e9 100755
---- a/tools/testing/selftests/tc-testing/tdc.py
-+++ b/tools/testing/selftests/tc-testing/tdc.py
-@@ -134,9 +134,9 @@ def exec_cmd(args, pm, stage, command):
-     (rawout, serr) = proc.communicate()
+diff --git a/drivers/mtd/spi-nor/cadence-quadspi.c b/drivers/mtd/spi-nor/cadence-quadspi.c
+index 6e9cbd1a0b6d..0806c7a81c0f 100644
+--- a/drivers/mtd/spi-nor/cadence-quadspi.c
++++ b/drivers/mtd/spi-nor/cadence-quadspi.c
+@@ -644,9 +644,23 @@ static int cqspi_indirect_write_execute(struct spi_nor *nor, loff_t to_addr,
+ 		ndelay(cqspi->wr_delay);
  
-     if proc.returncode != 0 and len(serr) > 0:
--        foutput = serr.decode("utf-8")
-+        foutput = serr.decode("utf-8", errors="ignore")
-     else:
--        foutput = rawout.decode("utf-8")
-+        foutput = rawout.decode("utf-8", errors="ignore")
+ 	while (remaining > 0) {
++		size_t write_words, mod_bytes;
++
+ 		write_bytes = remaining > page_size ? page_size : remaining;
+-		iowrite32_rep(cqspi->ahb_base, txbuf,
+-			      DIV_ROUND_UP(write_bytes, 4));
++		write_words = write_bytes / 4;
++		mod_bytes = write_bytes % 4;
++		/* Write 4 bytes at a time then single bytes. */
++		if (write_words) {
++			iowrite32_rep(cqspi->ahb_base, txbuf, write_words);
++			txbuf += (write_words * 4);
++		}
++		if (mod_bytes) {
++			unsigned int temp = 0xFFFFFFFF;
++
++			memcpy(&temp, txbuf, mod_bytes);
++			iowrite32(temp, cqspi->ahb_base);
++			txbuf += mod_bytes;
++		}
  
-     proc.stdout.close()
-     proc.stderr.close()
+ 		if (!wait_for_completion_timeout(&cqspi->transfer_complete,
+ 					msecs_to_jiffies(CQSPI_TIMEOUT_MS))) {
+@@ -655,7 +669,6 @@ static int cqspi_indirect_write_execute(struct spi_nor *nor, loff_t to_addr,
+ 			goto failwr;
+ 		}
+ 
+-		txbuf += write_bytes;
+ 		remaining -= write_bytes;
+ 
+ 		if (remaining > 0)
 -- 
 2.19.1
 
