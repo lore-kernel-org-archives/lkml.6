@@ -2,96 +2,130 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25040C07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 14:29:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80A66C07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 14:29:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DF2162082F
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 14:29:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544538563;
-	bh=ktqVvGBZiKeRkHXf8gaVlAJEysO7FRLivHJkl40VbKY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=fQ4/aIO7Y0FQ14aQmYrRAWy9RS5eluDWR1mqxf1bpxEq0KdgkX60BXLTjHBP7WKsR
-	 JhUx6JKE/FSLM0+lCBcQ9jUvgSCqIbTc1qrjivLC0dYpRQ6xZK4D/44b4Cp5A+IPlq
-	 s8UTYOFpRzIPIzaeVzAYG5hdV9WyQcIGwKzRZjhs=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF2162082F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 475442081B
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 14:29:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Hpp5jXGo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 475442081B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726568AbeLKO3V (ORCPT
+        id S1726585AbeLKO3s (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 09:29:21 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:54942 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726350AbeLKO3V (ORCPT
+        Tue, 11 Dec 2018 09:29:48 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:54958 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726231AbeLKO3r (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 09:29:21 -0500
+        Tue, 11 Dec 2018 09:29:47 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
         List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=ktqVvGBZiKeRkHXf8gaVlAJEysO7FRLivHJkl40VbKY=; b=MtpncsoWXF4YOdBdTJmbEB5vl
-        IsTy1qi+dgzwpjR4Z+T2lU/coLJeOmQ3gn5ZVbL8gPNnKyAolZ4wDEW71cZR428/vAXntd2fPVa1j
-        3NRYLz0+Qx42euM+g8Z7WQtBjVu8Esy2QwEFOrcv3tPfEcorI6g7INQKkY3by6mj3vrBw=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1gWj2F-00017R-Ed; Tue, 11 Dec 2018 14:29:19 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 27077112540E; Tue, 11 Dec 2018 14:29:19 +0000 (GMT)
-Date:   Tue, 11 Dec 2018 14:29:19 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Clark Wang <xiaoning.wang@nxp.com>
-Cc:     "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] spi: lpspi: Improve the stability of lpspi data
- transmission
-Message-ID: <20181211142919.GI6686@sirena.org.uk>
-References: <20181204062122.28745-1-xiaoning.wang@nxp.com>
+         bh=3lZ6iH/hfEnxvUJ99+5wMLUzxVp8nF2STyXFCHfIi18=; b=Hpp5jXGoZjC/IW8pQWwu/VHWG
+        UbwpCH15sJU2/c5U7wNsvPRkZuWf5l8Ug0mbl0XwdmgeJZv99uDJr32/mCzYCX3mN24K8YYBHzz4m
+        tp8nHvElVsOEJ5Otc2tIIPGqaH9A32/LmL5d7/i9zwPVVaBuHftW6aVMiQyn5dp8F3jAg/isa3AR2
+        t344JJI5ilFNoqAizZMp5DfsjKcPpxdV/ZP5uOSuO1JrBPgwXD8aHM5Ezs2Th3MXjDrJRrlUeL2c+
+        +TszgFeyUg04HBTmQUUP+6WB0CueTOkdhj2yo/sQ/8bGojwHdxoC1G0COIt3fdcdeOuP3aKT+FeED
+        /1PnKcGww==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gWj2h-0004fr-9q; Tue, 11 Dec 2018 14:29:47 +0000
+Date:   Tue, 11 Dec 2018 06:29:47 -0800
+From:   Matthew Wilcox <willy@infradead.org>
+To:     kernel test robot <rong.a.chen@intel.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>, lkp@01.org
+Subject: Re: [LKP] [xarray] 4e99d4e957: BUG:soft_lockup-CPU##stuck_for#s
+Message-ID: <20181211142947.GC6830@bombadil.infradead.org>
+References: <20181211095441.GR23332@shao2-debian>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="3U8TY7m7wOx7RL1F"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181204062122.28745-1-xiaoning.wang@nxp.com>
-X-Cookie: Immanuel doesn't pun, he Kant.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181211095441.GR23332@shao2-debian>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Dec 11, 2018 at 05:54:41PM +0800, kernel test robot wrote:
+> # To reproduce,
+> # 1) save job-script and this script (both are attached in 0day report email)
+> # 2) run this script with your compiled kernel and optional env $INSTALL_MOD_PATH
+> 
+> kernel=$1
+> 
+> initrds=(
+> 	/osimage/yocto/yocto-tiny-i386-2016-04-22.cgz
+> 	/lkp/lkp/lkp-i386.cgz
+> 	/osimage/deps/debian-x86_64-2016-08-31.cgz/run-ipconfig.i386_2016-09-03.cgz
+> )
+> 
+> HTTP_PREFIX=https://download.01.org/0day-ci/lkp-qemu
+> wget --timestamping "${initrds[@]/#/$HTTP_PREFIX}"
+> 
+> {
+> 	cat "${initrds[@]//*\//}"
+> 	[[ $INSTALL_MOD_PATH ]] && (
+> 		cd "$INSTALL_MOD_PATH"
+> 
+> 
+> To reproduce:
+> 
+>         git clone https://github.com/intel/lkp-tests.git
+>         cd lkp-tests
+>         bin/lkp qemu -k <bzImage> job-script # job-script is attached in this email
 
---3U8TY7m7wOx7RL1F
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+When I do this, the only output I get is:
 
-On Tue, Dec 04, 2018 at 06:22:15AM +0000, Clark Wang wrote:
-> Use SR_TDF to judge if need to send data, and SR_FCF is to judge if
-> transmission end and to replace the waiting after transmission end.
-> This waiting has no actual meaning, for module will set the FCF
-> flag at the real end.
+make: Entering directory '/home/willy/kernel/lkp-tests/bin/event'
+gcc    -c -o wakeup.o wakeup.c
+gcc  -static -o wakeup wakeup.o
+rm -f wakeup.o
+strip wakeup
+make: Leaving directory '/home/willy/kernel/lkp-tests/bin/event'
 
-This doesn't apply against current code, please check and resend.
+Running under sh -x, I get as far as:
 
---3U8TY7m7wOx7RL1F
-Content-Type: application/pgp-signature; name="signature.asc"
++ exec /home/willy/kernel/lkp-tests/lkp-exec/qemu -k ../idrext/.build-yocto/arch/x86/boot/bzImage job-script
 
------BEGIN PGP SIGNATURE-----
+Editing that script to set -x, I get to:
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlwPyb4ACgkQJNaLcl1U
-h9CHXAf9FzW3QYoHquCa9xNOaHc8+L8/4d8c8CsaMHI/hjWw2TNzTKR15YFgmJZf
-68l/M19BJNklr7pLcp+Vp0C39N5GM8FXxZXrOJqRQ7c8Vxp5tBajb4oxNaoag9xc
-Gc7nq55WTK4zyp3A2d4K7aATEuo4eEYCaZGKbIFgowKstKYAJ6JMGFWrUTi7DoPx
-KN+odSPJxxRB0HqLmNYRLsPB5S07e4cI7cVd8Kr79YvIbwJgMsmqFEzSpY40x1//
-+la+hkQ09O39H0MCZkBnt17T1PWJLwj/vozapy6ElTnoVEMs+0aLMpt5zwtY21O2
-2ZtYP2FphHoJT1vnvKkz7IEBKkojag==
-=iClv
------END PGP SIGNATURE-----
++ /home/willy/kernel/lkp-tests/sbin/pack -f -a x86_64 lkp-src
+make: Entering directory '/home/willy/kernel/lkp-tests/bin/event'
+gcc    -c -o wakeup.o wakeup.c
+gcc  -static -o wakeup wakeup.o
+rm -f wakeup.o
+strip wakeup
+make: Leaving directory '/home/willy/kernel/lkp-tests/bin/event'
++ exit
 
---3U8TY7m7wOx7RL1F--
+which would seem to indicate your 'pack' command failed with a non-zero
+exit code?  Adding set -x to _that_ script gives me:
+
++ find . -type d -exec chmod g+rwx '{}' ';'
++ chmod -R g+rw etc lib root usr
++ '[' -d /osimage/addon-x86_64 ']'
++ gzip -n -9 /home/willy/.lkp/cache/lkp-x86_64.cpio
++ mv -f /home/willy/.lkp/cache/lkp-x86_64.cpio.gz /home/willy/.lkp/cache/lkp-x86_64.cgz
++ [[ -n '' ]]
++ [[ -n '' ]]
++ exit
+
+I'm using your top-of-tree lkp-tests, commit
+e28c726dfe85e3e595ba4776a4eb92f2559d3ac0
+
+By the way, I took this kernel config and ran it under one of your other
+test cases (the one which runs Trinity) and didn't see a boot problem,
+so either it's something specific to this setup, or the problem got
+fixed between this commit and current top-of-tree.
