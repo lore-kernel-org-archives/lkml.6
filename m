@@ -2,125 +2,126 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB664C67839
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 12:29:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96964C07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 12:29:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF7882081B
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 12:29:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Dekquo6w"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF7882081B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 5A7972081B
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 12:29:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544531397;
+	bh=RBNTldWktr52Y6MxAAfN+HXAfEJpD4kjE75GrOVAGok=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=JOz9YQ68pkbCae9t0UUY1qah16eR0DZh6By+jY6HuW2v+8vnFM/OnVrdSci53yTCJ
+	 BSALfMV73zNkfUmCMDS2MiVXvPs0P0NM9mykonVW37NWC9KOaC2oybjAmh+dQ/6Bp3
+	 4bk8QzlDlAvpqGMeqH3phubwSbJuBa9xsV4/IAqk=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A7972081B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726384AbeLKM3d (ORCPT
+        id S1726435AbeLKM34 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 07:29:33 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:43213 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726114AbeLKM3d (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 07:29:33 -0500
-Received: by mail-pg1-f194.google.com with SMTP id v28so6570534pgk.10;
-        Tue, 11 Dec 2018 04:29:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=fviaOuLg+5HEMbPXn/VS/NYB3t6jd2kDqQAWBGUaYng=;
-        b=Dekquo6wvz5BaqNZU5998jEuQIl+pkeA4x5SG7LayWDmzOU1kk78YadfkHbvC5lygc
-         7zVmcXqnW3M8mclYodsAHUg2Eo8/strNvg9202ZaOHBYEpdaF5bEvSv6yEJMh7xmI2Za
-         I/2xSeWuvQCIVh9vlh7j8SgtMFfo5/InDhZQI5doX9nFOQTEtz006mJjmyDeZQa44Nbn
-         SNfKTj8armty9fiaGKOWpYNQnxik0pfDiN3m7VzmYvM6fzM8MrkWVwZkU1rXvZ2Jls1k
-         luXLjPWL7I+vIknFEjCZ6zSp6CDrlQL0CZ9cp+JneFk84EkGTm1VcNsvmLp6ZE+vUPhT
-         XSWA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=fviaOuLg+5HEMbPXn/VS/NYB3t6jd2kDqQAWBGUaYng=;
-        b=CLpNNg67p8ki+2yv+98UbMvab/8hjSuZ1uUkO72f0vXUfbX9sJs8g5P6kXHIK5j7Cg
-         hgCFTNMnJFC4S4bvmxl0x7kkPJGtHgAo86pDIOntK3/gZ+T6mRWD8j9biiT2InGj0LnH
-         2UeaNVdmuveI0Fx43CZJkefoLx47kteYu1nnx/c44RqsTot3QzZE7VJ67CFu5zlv0B4q
-         WTfvSNRM+wveBxuUD8k+baBDg/JDSIqeLZaRKQV2ybec0AGcVfi9Z+56J84Q/tW72pWp
-         XEdlCqzbd18nlDtFvCFZBMZw+QzNYobdVtkU0Lg3PGaNILraG7YcbAyqVyeGVJ5tn86S
-         Rt1g==
-X-Gm-Message-State: AA+aEWaXDAh9wXVpgjFAAERBgyYUuSUkxAMf9Abag2NkoZ0Y2mZtGEzC
-        Y8PW79k1X1Gr8dpjqJIxnx9lWoaKIP7hqZIbbcQ=
-X-Google-Smtp-Source: AFSGD/W4XUD/v2nqk8ciGeefGAgIch9OsxIUDREMnbZpfjySavASDlLOKPxf4CN5e+oPGP9hSKF0V0cYWbf6uDrnStc=
-X-Received: by 2002:a63:d450:: with SMTP id i16mr14176351pgj.246.1544531372284;
- Tue, 11 Dec 2018 04:29:32 -0800 (PST)
+        Tue, 11 Dec 2018 07:29:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45122 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726230AbeLKM3z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 07:29:55 -0500
+Received: from quaco.ghostprotocols.net (unknown [190.15.121.82])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B25D42081B;
+        Tue, 11 Dec 2018 12:29:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544531394;
+        bh=RBNTldWktr52Y6MxAAfN+HXAfEJpD4kjE75GrOVAGok=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ENaMKYoQyK0hRQsjc6LCUEOtjvAmrCTVjJa09tXaZk0tdfSw6/93ssqquABb6aofr
+         6FXEC5Cqe3Y5Km/uUocXkrr2t8b1c4TVbbYypfw4/5nXeIneTHfeUPSS48a0b3w36C
+         /G1+hdt74RDWVydKKoJkykSh1fN7cnubxfLPBjfo=
+Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
+        id 7D5834042C; Tue, 11 Dec 2018 09:29:52 -0300 (-03)
+Date:   Tue, 11 Dec 2018 09:29:52 -0300
+From:   Arnaldo Carvalho de Melo <acme@kernel.org>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Linux Trace Devel <linux-trace-devel@vger.kernel.org>,
+        Jiri Olsa <jolsa@redhat.com>, Ingo Molnar <mingo@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>
+Subject: Re: [PATCH] tools/lib/traceevent: Fix processing of dereferenced
+ args in bprintk events
+Message-ID: <20181211122952.GC14480@kernel.org>
+References: <20181210134522.3f71e2ca@gandalf.local.home>
+ <20181210184807.GA26445@kernel.org>
+ <20181210162621.2050475a@gandalf.local.home>
 MIME-Version: 1.0
-References: <20181204212330.69515-1-andriy.shevchenko@linux.intel.com>
- <20181204212330.69515-21-andriy.shevchenko@linux.intel.com> <8224399.K2TIF5fxr2@aspire.rjw.lan>
-In-Reply-To: <8224399.K2TIF5fxr2@aspire.rjw.lan>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Tue, 11 Dec 2018 14:29:20 +0200
-Message-ID: <CAHp75Vc_vQE60UQQWGHJ8BvZSCK-VoU6n76pE-=SDKpkz2MU5w@mail.gmail.com>
-Subject: Re: [PATCH v6 20/20] PM: Switch to use %ptR
-To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        "open list:REAL TIME CLOCK (RTC) SUBSYSTEM" 
-        <linux-rtc@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        Joe Perches <joe@perches.com>,
-        Mark Salyzyn <salyzyn@android.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Rasmus Villemoes <rasmus.villemoes@prevas.dk>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linux PM <linux-pm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181210162621.2050475a@gandalf.local.home>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 11, 2018 at 2:12 PM Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
->
-> On Tuesday, December 4, 2018 10:23:30 PM CET Andy Shevchenko wrote:
-> > Use %ptR instead of open coded variant to print content of
-> > struct rtc_time in human readable format.
-> >
-> > Cc: linux-pm@vger.kernel.org
-> > Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
->
-> Do you want me to take this patch?
+Em Mon, Dec 10, 2018 at 04:26:21PM -0500, Steven Rostedt escreveu:
+> On Mon, 10 Dec 2018 15:48:07 -0300
+> Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
+> 
+> > Em Mon, Dec 10, 2018 at 01:45:22PM -0500, Steven Rostedt escreveu:
+> > > From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+> > > 
+> > > In the case that a bprintk event has a dereferenced pointer that is stored
+> > > as a string, and there's more values to process (more args), the arg was not
+> > > updated to point to the next arg after processing the dereferenced pointer,
+> > > and it screwed up what was to be displayed.  
+> > 
+> > Thanks, applied.
+> >  
+> > > Cc: stable@vger.kernel.org
+> > > Fixes: 7db96bb49629 ("tools lib traceevent: Handle new pointer processing of bprint strings")  
+> 
+> Arnaldo,
+> 
+> It seems that I cut and pasted the sha1 of the "fixes" part wrong. Can
+> you add a "3". That is, the above should have been: 37db96bb49629
 
-Alexandre took all of them, thanks!
+Done, git rebase -i + reword -> push -f'ed :-)
 
->
-> > ---
-> >  drivers/base/power/trace.c | 4 +---
-> >  1 file changed, 1 insertion(+), 3 deletions(-)
-> >
-> > diff --git a/drivers/base/power/trace.c b/drivers/base/power/trace.c
-> > index 1cda505d6a85..b11f47a1e819 100644
-> > --- a/drivers/base/power/trace.c
-> > +++ b/drivers/base/power/trace.c
-> > @@ -118,9 +118,7 @@ static unsigned int read_magic_time(void)
-> >       unsigned int val;
-> >
-> >       mc146818_get_time(&time);
-> > -     pr_info("RTC time: %2d:%02d:%02d, date: %02d/%02d/%02d\n",
-> > -             time.tm_hour, time.tm_min, time.tm_sec,
-> > -             time.tm_mon + 1, time.tm_mday, time.tm_year % 100);
-> > +     pr_info("RTC time: %ptRt, date: %ptRd\n", &time, &time);
-> >       val = time.tm_year;                             /* 100 years */
-> >       if (val > 100)
-> >               val -= 100;
-> >
->
->
+https://git.kernel.org/acme/c/1e862fa6b4e9
 
+- Arnaldo
+ 
+> Thanks,
+> 
+> -- Steve
+> 
+> > 
+> > > Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+> > > ---
+> > >  tools/lib/traceevent/event-parse.c | 1 +
+> > >  1 file changed, 1 insertion(+)
+> > > 
+> > > diff --git a/tools/lib/traceevent/event-parse.c b/tools/lib/traceevent/event-parse.c
+> > > index 3692f29fee46..70144b98141c 100644
+> > > --- a/tools/lib/traceevent/event-parse.c
+> > > +++ b/tools/lib/traceevent/event-parse.c
+> > > @@ -4970,6 +4970,7 @@ static void pretty_print(struct trace_seq *s, void *data, int size, struct tep_e
+> > >  
+> > >  				if (arg->type == TEP_PRINT_BSTRING) {
+> > >  					trace_seq_puts(s, arg->string.string);
+> > > +					arg = arg->next;
+> > >  					break;
+> > >  				}
+> > >  
+> > > -- 
+> > > 2.19.1  
+> > 
 
 -- 
-With Best Regards,
-Andy Shevchenko
+
+- Arnaldo
