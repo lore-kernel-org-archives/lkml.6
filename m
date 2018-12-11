@@ -2,142 +2,84 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D21C2C67839
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 14:18:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12584C07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 14:18:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9A46E2084C
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 14:18:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544537891;
-	bh=mjcczxHWBLk6glsEhzWjENo8W7uzGln1zCBrMNLVbC8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=sFoCE5V5+V7W/yWO+z8AjMLxvcWVSn/W0sA0FcipCpNfyVF7HUgMV4x4RW45TpDb+
-	 C+yuVuIoL4kLZBu+E3JfT2xhNPxLKhrKdY0J3dmW9PM6VlNOgBEc5kJCdHZqXO2nVh
-	 RW6or+2MDKYc1o/2lSVfeCPqVDvHh5So7C22XSTE=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A46E2084C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id D59B920849
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 14:18:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D59B920849
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726803AbeLKOSK (ORCPT
+        id S1726836AbeLKOSU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 09:18:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40058 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726444AbeLKOSK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 09:18:10 -0500
-Received: from localhost (173-25-171-118.client.mchsi.com [173.25.171.118])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 23F3C20849;
-        Tue, 11 Dec 2018 14:18:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544537889;
-        bh=mjcczxHWBLk6glsEhzWjENo8W7uzGln1zCBrMNLVbC8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=GIebsVLlqSfTxhsvT8uw4oEcp/Rl1ouHa/FoxwZC7+yfgsKKifqKq5GzVYogkuU5T
-         jeQdOb7qOawENsjzijzakr7sNH2qJhl6HKhthch4iHoP+Wko3bs2B3R6+T5Dc/gH+h
-         Gavuwy9F5YfV7eAPetKdFSMQUr7UbtRgAqvuy6+A=
-Date:   Tue, 11 Dec 2018 08:18:08 -0600
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     "Michael S. Tsirkin" <mst@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, xuyandong <xuyandong2@huawei.com>,
-        stable@vger.kernel.org, Yinghai Lu <yinghai@kernel.org>,
-        Jesse Barnes <jbarnes@virtuousgeek.org>,
-        linux-pci@vger.kernel.org
-Subject: Re: [PATCH] pci: avoid bridge feature re-probing on hotplug
-Message-ID: <20181211141808.GE99796@google.com>
-References: <20181211021617.24072-1-mst@redhat.com>
+        Tue, 11 Dec 2018 09:18:20 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:48256 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726444AbeLKOSU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 09:18:20 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E47E21596;
+        Tue, 11 Dec 2018 06:18:19 -0800 (PST)
+Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id B57043F59C;
+        Tue, 11 Dec 2018 06:18:19 -0800 (PST)
+Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
+        id BE1781AE0B6B; Tue, 11 Dec 2018 14:18:42 +0000 (GMT)
+Date:   Tue, 11 Dec 2018 14:18:42 +0000
+From:   Will Deacon <will.deacon@arm.com>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Catalin Marinas <catalin.marinas@arm.com>,
+        Kristina Martsenko <kristina.martsenko@arm.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arm64: fix ARM64_USER_VA_BITS_52 builds
+Message-ID: <20181211141842.GA11618@edgewater-inn.cambridge.arm.com>
+References: <20181211140832.567893-1-arnd@arndb.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181211021617.24072-1-mst@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181211140832.567893-1-arnd@arndb.de>
+User-Agent: Mutt/1.11.1+30 (d10eec459b35) ()
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Michael,
-
-Please run "git log --oneline drivers/pci/setup-bus.c" and follow
-the usual style.
-
-On Mon, Dec 10, 2018 at 09:18:40PM -0500, Michael S. Tsirkin wrote:
-> commit 1f82de10d6 ("PCI/x86: don't assume prefetchable ranges are
-> 64bit") added probing of bridge support for 64 bit memory
-> each time bridge is re-enumerated.
-
-Use conventional SHA1 reference (12-char SHA1).
-
-> Unfortunately this probing is destructive if any device behind
-> the bridge is in use at this time.
-
-Agreed, this sounds like a problem.
-
-> There's no real need to re-probe the bridge features as the
-> regiters in question never change - detect that using
-> the memory flag being set and skip the probing.
-
-s/regiters/registers/
-
-> Avoiding repeated calls to pci_bridge_check_ranges might be even nicer
-> would be a bigger patch and probably not appropriate on stable.
-
-Maybe so.  The ideal thing might be to have a trivial patch like this
-that can be marked for stable, immediately followed by the nicer
-patch.  Trivial band-aids tend to accumulate and make things harder in
-the future.
-
-I'd have to take a much harder look at the problem to understand
-1f82de10d6b1.  The comment about "double check" seems misleading -- as
-you say, the hardware doesn't change and checking once should be
-enough.  And if we're calling pci_bridge_check_ranges() more than
-necessary, that sounds like a problem, too.
-
-> Reported-by: xuyandong <xuyandong2@huawei.com>
-> Cc: stable@vger.kernel.org
-> Cc: Yinghai Lu <yinghai@kernel.org>
-> Cc: Jesse Barnes <jbarnes@virtuousgeek.org>
-> Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+On Tue, Dec 11, 2018 at 03:08:10PM +0100, Arnd Bergmann wrote:
+> In some randconfig builds, the new CONFIG_ARM64_USER_VA_BITS_52
+> triggered a build failure:
+> 
+> arch/arm64/mm/proc.S:287: Error: immediate out of range
+> 
+> As it turns out, we were incorrectly setting PGTABLE_LEVELS here,
+> lacking any other default value.
+> This fixes the calculation of CONFIG_PGTABLE_LEVELS to consider
+> all combinations again.
+> 
+> Fixes: 68d23da4373a ("arm64: Kconfig: Re-jig CONFIG options for 52-bit VA")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 > ---
+>  arch/arm64/Kconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> This issue has been reported on upstream Linux and Centos.
+> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+> index df201d93697d..a0f3b921b6e6 100644
+> --- a/arch/arm64/Kconfig
+> +++ b/arch/arm64/Kconfig
+> @@ -278,7 +278,7 @@ config PGTABLE_LEVELS
+>  	int
+>  	default 2 if ARM64_16K_PAGES && ARM64_VA_BITS_36
+>  	default 2 if ARM64_64K_PAGES && ARM64_VA_BITS_42
+> -	default 3 if ARM64_64K_PAGES && ARM64_VA_BITS_48
+> +	default 3 if ARM64_64K_PAGES && (ARM64_VA_BITS_48 || ARM64_USER_VA_BITS_52)
+>  	default 3 if ARM64_4K_PAGES && ARM64_VA_BITS_39
+>  	default 3 if ARM64_16K_PAGES && ARM64_VA_BITS_47
+>  	default 4 if !ARM64_64K_PAGES && ARM64_VA_BITS_48
 
-Are there URLs to these reports that we could include in the changelog?
+Thanks, Arnd. I'll pick this one up too.
 
->  drivers/pci/setup-bus.c | 7 +++++++
->  1 file changed, 7 insertions(+)
-> 
-> diff --git a/drivers/pci/setup-bus.c b/drivers/pci/setup-bus.c
-> index ed960436df5e..7ab42f76579e 100644
-> --- a/drivers/pci/setup-bus.c
-> +++ b/drivers/pci/setup-bus.c
-> @@ -741,6 +741,13 @@ static void pci_bridge_check_ranges(struct pci_bus *bus)
->  	struct resource *b_res;
->  
->  	b_res = &bridge->resource[PCI_BRIDGE_RESOURCES];
-> +
-> +	/* Don't re-check after this was called once already:
-> +	 * important since bridge might be in use.
-> +	 */
-> +	if (b_res[1].flags & IORESOURCE_MEM)
-> +		return;
-
-Use conventional multi-line comment style.
-
-This test isn't 100%: devices below the bridge could be using only IO,
-or theoretically could be even using just config space.
-
-If it's safe to bail out if the bridge is in use, why isn't it safe to
-bail out *always*?
-
->  	b_res[1].flags |= IORESOURCE_MEM;
->  
->  	pci_read_config_word(bridge, PCI_IO_BASE, &io);
-> -- 
-> MST
+Will
