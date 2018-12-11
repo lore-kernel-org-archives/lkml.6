@@ -6,36 +6,37 @@ X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F875C07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 10:46:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBFEEC07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 10:48:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F1F162086D
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 10:46:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F1F162086D
+	by mail.kernel.org (Postfix) with ESMTP id BB62D2082F
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 10:48:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB62D2082F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726465AbeLKKqu (ORCPT
+        id S1726471AbeLKKsF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 05:46:50 -0500
-Received: from cloudserver094114.home.pl ([79.96.170.134]:58447 "EHLO
+        Tue, 11 Dec 2018 05:48:05 -0500
+Received: from cloudserver094114.home.pl ([79.96.170.134]:58880 "EHLO
         cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726104AbeLKKqt (ORCPT
+        with ESMTP id S1726104AbeLKKsF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 05:46:49 -0500
+        Tue, 11 Dec 2018 05:48:05 -0500
 Received: from 79.184.252.35.ipv4.supernova.orange.pl (79.184.252.35) (HELO aspire.rjw.lan)
  by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.183)
- id b0a1c4ebf1536e1a; Tue, 11 Dec 2018 11:46:47 +0100
+ id 7b48bb81d93096dd; Tue, 11 Dec 2018 11:48:03 +0100
 From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Cc:     lenb@kernel.org, viresh.kumar@linaro.org, corbet@lwn.net,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, yu.c.chen@intel.com
-Subject: Re: [PATCH 1/2] cpufreq: intel_pstate: Force HWP min perf before offline
-Date:   Tue, 11 Dec 2018 11:46:29 +0100
-Message-ID: <1570245.TxyEhuTLgx@aspire.rjw.lan>
-In-Reply-To: <20181116222420.24260-1-srinivas.pandruvada@linux.intel.com>
-References: <20181116222420.24260-1-srinivas.pandruvada@linux.intel.com>
+To:     Viresh Kumar <viresh.kumar@linaro.org>,
+        Yangtao Li <tiny.windzz@gmail.com>
+Cc:     benh@kernel.crashing.org, paulus@samba.org, mpe@ellerman.id.au,
+        linux-pm@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] cpufreq: pmac64: add of_node_put()
+Date:   Tue, 11 Dec 2018 11:47:45 +0100
+Message-ID: <1962056.WEnsRsenr7@aspire.rjw.lan>
+In-Reply-To: <20181126060226.wsludir4g7bao4lk@vireshk-i7>
+References: <20181123133340.26849-1-tiny.windzz@gmail.com> <20181126060226.wsludir4g7bao4lk@vireshk-i7>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="us-ascii"
@@ -44,70 +45,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Friday, November 16, 2018 11:24:19 PM CET Srinivas Pandruvada wrote:
-> Force HWP Request MAX = HWP Request MIN = HWP Capability MIN and EPP to
-> 0xFF. In this way the performance limits on the offlined CPU will not
-> influence performance limits on its sibling CPU, which is still online.
+On Monday, November 26, 2018 7:02:26 AM CET Viresh Kumar wrote:
+> On 23-11-18, 08:33, Yangtao Li wrote:
+> > of_find_node_by_path() acquires a reference to the node
+> > returned by it and that reference needs to be dropped by its caller.
+> > g5_neo2_cpufreq_init() doesn't do that, so fix it.
+> > 
+> > Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+> > Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+> > ---
+> > Changes in v2:
+> > -update changelog
+> > ---
+> >  drivers/cpufreq/pmac64-cpufreq.c | 1 +
+> >  1 file changed, 1 insertion(+)
+> > 
+> > diff --git a/drivers/cpufreq/pmac64-cpufreq.c b/drivers/cpufreq/pmac64-cpufreq.c
+> > index be623dd7b9f2..1d32a863332d 100644
+> > --- a/drivers/cpufreq/pmac64-cpufreq.c
+> > +++ b/drivers/cpufreq/pmac64-cpufreq.c
+> > @@ -411,6 +411,7 @@ static int __init g5_neo2_cpufreq_init(struct device_node *cpunode)
+> >  		pfunc_set_vdnap0 = pmf_find_function(root, "set-vdnap0");
+> >  		pfunc_vdnap0_complete =
+> >  			pmf_find_function(root, "slewing-done");
+> > +		of_node_put(root);
+> >  		if (pfunc_set_vdnap0 == NULL ||
+> >  		    pfunc_vdnap0_complete == NULL) {
+> >  			pr_err("Can't find required platform function\n");
 > 
-> If the sibling CPU is calling for higher performance, it will impact the
-> max core performance. Here core performance will follow higher of the
-> performance requests from each sibling.
-> 
-> Reported-and-tested-by: Chen Yu <yu.c.chen@intel.com>
-> Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-> ---
->  drivers/cpufreq/intel_pstate.c | 28 ++++++++++++++++++++++++++--
->  1 file changed, 26 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/cpufreq/intel_pstate.c b/drivers/cpufreq/intel_pstate.c
-> index 14f551a3d36e..501ab9f4489a 100644
-> --- a/drivers/cpufreq/intel_pstate.c
-> +++ b/drivers/cpufreq/intel_pstate.c
-> @@ -830,6 +830,28 @@ static void intel_pstate_hwp_set(unsigned int cpu)
->  	wrmsrl_on_cpu(cpu, MSR_HWP_REQUEST, value);
->  }
->  
-> +static void intel_pstate_hwp_force_min_perf(int cpu)
-> +{
-> +	u64 value;
-> +	int min_perf;
-> +
-> +	value = all_cpu_data[cpu]->hwp_req_cached;
-> +	value &= ~GENMASK_ULL(31, 0);
-> +	min_perf = HWP_LOWEST_PERF(all_cpu_data[cpu]->hwp_cap_cached);
-> +
-> +	/* Set hwp_max = hwp_min */
-> +	value |= HWP_MAX_PERF(min_perf);
-> +	value |= HWP_MIN_PERF(min_perf);
-> +
-> +	/* Set EPP/EPB to min */
-> +	if (static_cpu_has(X86_FEATURE_HWP_EPP))
-> +		value |= HWP_ENERGY_PERF_PREFERENCE(HWP_EPP_POWERSAVE);
-> +	else
-> +		intel_pstate_set_epb(cpu, HWP_EPP_BALANCE_POWERSAVE);
-> +
-> +	wrmsrl_on_cpu(cpu, MSR_HWP_REQUEST, value);
-> +}
-> +
->  static int intel_pstate_hwp_save_state(struct cpufreq_policy *policy)
->  {
->  	struct cpudata *cpu_data = all_cpu_data[policy->cpu];
-> @@ -2093,10 +2115,12 @@ static void intel_pstate_stop_cpu(struct cpufreq_policy *policy)
->  	pr_debug("CPU %d exiting\n", policy->cpu);
->  
->  	intel_pstate_clear_update_util_hook(policy->cpu);
-> -	if (hwp_active)
-> +	if (hwp_active) {
->  		intel_pstate_hwp_save_state(policy);
-> -	else
-> +		intel_pstate_hwp_force_min_perf(policy->cpu);
-> +	} else {
->  		intel_cpufreq_stop_cpu(policy);
-> +	}
->  }
->  
->  static int intel_pstate_cpu_exit(struct cpufreq_policy *policy)
-> 
+> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 
-Both this one and the [2/2] applied, thanks!
+Patch applied, thanks!
 
