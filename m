@@ -2,185 +2,119 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D28C3C07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 11:58:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC41BC07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 11:58:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F7D820811
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 11:58:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 646F220811
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 11:58:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="txAP1hNZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F7D820811
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	dkim=pass (1024-bit key) header.d=nokia.onmicrosoft.com header.i=@nokia.onmicrosoft.com header.b="fp+FrajC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 646F220811
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nokia.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726388AbeLKL6I (ORCPT
+        id S1726413AbeLKL60 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 06:58:08 -0500
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:50512 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726154AbeLKL6I (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 06:58:08 -0500
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id wBBBvxWp079391;
-        Tue, 11 Dec 2018 05:57:59 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1544529479;
-        bh=187Rsf4EelGv9DlRifQPc+KEenFEMf8MbAizh0anMr4=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=txAP1hNZTuoaQH7LGACPLPO9ldref4wGLd+sqnT7rnXR69Wg+nUAlDydA1Ar4An+s
-         lvk+JhJbFec4rm+7ldsGs8E4BRRf69xjL2YP/2t4TISSec9RiNAM2Yto6O5g+ytyGq
-         XO35RqMO/LWwXW4vc2bTlsNBsb38yqBW/vjtWmZg=
-Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wBBBvxK5096841
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 11 Dec 2018 05:57:59 -0600
-Received: from DFLE108.ent.ti.com (10.64.6.29) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Tue, 11
- Dec 2018 05:57:59 -0600
-Received: from dflp33.itg.ti.com (10.64.6.16) by DFLE108.ent.ti.com
- (10.64.6.29) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Tue, 11 Dec 2018 05:57:59 -0600
-Received: from [172.24.190.215] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id wBBBvv01013686;
-        Tue, 11 Dec 2018 05:57:57 -0600
-Subject: Re: [PATCH] mmc: sdhci-omap: Workaround errata regarding SDR104/HS200
- tuning failures (i929)
-To:     Ulf Hansson <ulf.hansson@linaro.org>
-CC:     Kishon <kishon@ti.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Adrian Hunter <adrian.hunter@intel.com>
-References: <20181129190503.6040-1-faiz_abbas@ti.com>
- <cb1e8e88-4c9d-741d-79cd-57b03c5e0808@ti.com>
- <c4704766-7a58-8aa4-6bc0-b9373b15096c@ti.com>
- <CAPDyKFqMW+tMaVsS_c=kPztZRjX97Nzr2W0egvDkyzkpWckHRA@mail.gmail.com>
- <d1ae4e93-4b17-9574-00b1-bfa268cb7574@ti.com>
- <CAPDyKFrLzEfGKkC3K9znjJUKO1MUjdBpaL0HEtHYOzbAgNO-fg@mail.gmail.com>
- <e19a5c39-028e-8dda-aa0a-3968a213cd47@ti.com>
- <CAPDyKFoO7tn1Xdu9ROqRVjZ1SZnzXcxduB97OQtmz2d2E_epUQ@mail.gmail.com>
- <218be2af-8f81-47b4-f782-b774e10642c1@ti.com>
- <CAPDyKFou7hSELknyOV-eP+6ROJozwc-7vPBy2Rkb7hSdL37Pqg@mail.gmail.com>
-From:   Faiz Abbas <faiz_abbas@ti.com>
-Message-ID: <4d893ae8-f0a2-2e67-8100-b934340f4e4a@ti.com>
-Date:   Tue, 11 Dec 2018 17:30:43 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <CAPDyKFou7hSELknyOV-eP+6ROJozwc-7vPBy2Rkb7hSdL37Pqg@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
+        Tue, 11 Dec 2018 06:58:26 -0500
+Received: from mail-eopbgr30109.outbound.protection.outlook.com ([40.107.3.109]:36241
+        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726154AbeLKL6Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 06:58:25 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nokia.onmicrosoft.com;
+ s=selector1-nokia-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=48BMNXiAYD34aRsHMe5wS3ulrzabDgvwtVGoUnYbEE0=;
+ b=fp+FrajCQqHLebW2uRz9RuvXvZoZr3Geg42SkhW3G2PenA5MQtGB4ciR6phuIaA6VuaBeXW9QuYDEAYibh03V4qhOUBxXXLa1rLIBi6ryrphuSCWE9Upg/HkmX7nrBPul9p+OkcZTW+FzbHQqHIgHLIsiCY4LXaPek55PYBvhhQ=
+Received: from VI1PR07MB5088.eurprd07.prod.outlook.com (20.177.203.160) by
+ VI1PR07MB5855.eurprd07.prod.outlook.com (20.178.122.213) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1425.10; Tue, 11 Dec 2018 11:58:22 +0000
+Received: from VI1PR07MB5088.eurprd07.prod.outlook.com
+ ([fe80::c6b:1f98:e4e9:7240]) by VI1PR07MB5088.eurprd07.prod.outlook.com
+ ([fe80::c6b:1f98:e4e9:7240%3]) with mapi id 15.20.1425.016; Tue, 11 Dec 2018
+ 11:58:22 +0000
+From:   "Sverdlin, Alexander (Nokia - DE/Ulm)" <alexander.sverdlin@nokia.com>
+To:     "Adamski, Krzysztof (Nokia - PL/Wroclaw)" 
+        <krzysztof.adamski@nokia.com>, Wolfram Sang <wsa@the-dreams.de>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
+Subject: Re: [PATCH] MAINTAINERS: add entry for i2c-axxia driver
+Thread-Topic: [PATCH] MAINTAINERS: add entry for i2c-axxia driver
+Thread-Index: AQHUkUjQStRrcBVA/U+Pk41ciGV4Pg==
+Date:   Tue, 11 Dec 2018 11:58:22 +0000
+Message-ID: <44c12ad6-8d22-3e68-9099-6f224917cce3@nokia.com>
+References: <20181211091733.GA28051@localhost.localdomain>
+In-Reply-To: <20181211091733.GA28051@localhost.localdomain>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [131.228.32.165]
+user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.2
+x-clientproxiedby: HE1P18901CA0001.EURP189.PROD.OUTLOOK.COM
+ (2603:10a6:3:8b::11) To VI1PR07MB5088.eurprd07.prod.outlook.com
+ (2603:10a6:803:9e::32)
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;VI1PR07MB5855;6:dxkMtHEWnmRbGu36hopt6IZT/4fASgFICFeTMpHJ84jQ2QdUIaK+2OocLBRxZ9JwC2fJpGxVq6flWgnOGyDBD8215y6L+8RnP7hRTeW+NOxN/BHaPmUiqxfQ20MChl8Vwvwg3P0aRHFntLcfLhPMzwXq3yIXlt4kViehSCmXIFkZnf2aERX9nL1+9mj98FMYa/XgFgyf/+WSfoMh0QE/VVgIg9uZCXuOHocCE/8VYZZoPGS7Vu3tw3QuIW7l6FbCVT+VPbwuFn7mv/ZkbFCtxDz33gBhVUEvjYZKbJ5OtxMH9IYA4RslXWOJr4rE5w03EPE+5X9gf9qwtaUwqVe7mg0Lsq35vly/ZveThP9mRxjR4ihIR1gzaLdVrIj5XWthyuhTqgtLaTxacJkgVCY6oZkCpusk917FfLu8MZ7pnl6eeOstq2JqCVOIdbhDnU1iqCPgYJh5JrTD9pEse62O0w==;5:8gU+W6O0c0HIHljZJUgjgSX6ghsmAr3b37lAB/xSBZWbmHCfAjn4y9MD1K1wzNlA2BIbMseIIg6vuMtDq4IdlL4WwtOAQM09PHDuyS3kJnY/2RBsNRQq4AdTLd5pwTgIPRabdO1uAfxnllHONxoKwiCOYk1M3EC8JcJnPDrFG0Q=;7:Fh62p5fDbrtIsGrlN3hivrpS7eVcEu3lb1sXkBnxV5+nVuU+CczguPZC06gfkLJRf8eQkTAEriq00mFTZtB+JSBYUJSNj69t15QRgJW31JovhHirVrXS6ll0ug6Nm3w6cRiQ+RmNjiJF7nnVWQvEUg==
+x-ms-office365-filtering-correlation-id: e07ef5a8-98e4-4ebb-77df-08d65f5ff319
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:VI1PR07MB5855;
+x-ms-traffictypediagnostic: VI1PR07MB5855:
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=alexander.sverdlin@nokia.com; 
+x-microsoft-antispam-prvs: <VI1PR07MB5855A873A5D2F977BDE939E288A60@VI1PR07MB5855.eurprd07.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230017)(999002)(11241501185)(806100)(6040522)(2401047)(8121501046)(5005006)(3231472)(944501520)(52105112)(10201501046)(3002001)(93006095)(93001095)(6055026)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123562045)(20161123558120)(201708071742011)(7699051)(76991095);SRVR:VI1PR07MB5855;BCL:0;PCL:0;RULEID:;SRVR:VI1PR07MB5855;
+x-forefront-prvs: 08831F51DC
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(396003)(376002)(136003)(366004)(39860400002)(199004)(189003)(97736004)(64126003)(36756003)(3846002)(6116002)(6246003)(53936002)(2906002)(31696002)(6512007)(305945005)(7736002)(14454004)(58126008)(8936002)(81166006)(54906003)(110136005)(478600001)(316002)(25786009)(8676002)(81156014)(26005)(186003)(256004)(53546011)(386003)(102836004)(476003)(6506007)(14444005)(106356001)(486006)(446003)(11346002)(105586002)(2616005)(65826007)(6436002)(31686004)(229853002)(68736007)(86362001)(4326008)(575784001)(52116002)(65956001)(76176011)(5660300001)(6486002)(99286004)(65806001)(71190400001)(66066001)(71200400001);DIR:OUT;SFP:1102;SCL:1;SRVR:VI1PR07MB5855;H:VI1PR07MB5088.eurprd07.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nokia.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: qOQdL9A1LNqwL4fx38I54WfyC9oJQDzZyhe4mkHrOne5eHZ5EL/u+CNJ3D8q/XWrfuS0H2++DKLEE4m7+GYhYXL4SzZzSH6hWtQxrgq1op5Cp6g4xEX9BhxgsCgb47kRVn5XLYCNb0B/qtqT/3hPObSIpJ6iLcyOkXB8AcY3nYxlAVNtzDHe2DQmhN8hiEccNCUqAD+/aJkXJK3O47iR7DfWdCEIkSaHLOxjer2zpH8y5jyu8W1FdtHk27USuR00e5EQR/pAOoWIARYgdMep/kfrC4bsb+t+UIcihMHZmYjs+HInwGgWnRYh/vKiryPX
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <2F9FB8E6E776F844BD18B79C016BAA14@eurprd07.prod.outlook.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: nokia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e07ef5a8-98e4-4ebb-77df-08d65f5ff319
+X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Dec 2018 11:58:22.6899
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 5d471751-9675-428d-917b-70f44f9630b0
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR07MB5855
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On 10/12/18 10:26 PM, Ulf Hansson wrote:
-> On Mon, 10 Dec 2018 at 17:43, Faiz Abbas <faiz_abbas@ti.com> wrote:
->>
->> Hi,
->>
->> On 10/12/18 8:55 PM, Ulf Hansson wrote:
->>> On Mon, 10 Dec 2018 at 15:04, Faiz Abbas <faiz_abbas@ti.com> wrote:
->>>>
->>>> Hi,
->>>>
->>>> On 10/12/18 7:15 PM, Ulf Hansson wrote:
->>>>> On Mon, 10 Dec 2018 at 14:23, Faiz Abbas <faiz_abbas@ti.com> wrote:
->>>>>>
->>>>>> Hi Uffe,
->>>>>>
->>>>>> On 05/12/18 7:20 PM, Ulf Hansson wrote:
->>>>>>> On Fri, 30 Nov 2018 at 06:53, Faiz Abbas <faiz_abbas@ti.com> wrote:
->>>>>>>>
->>>>>>>> Hi Kishon,
->>>>>>>>
->>>>>>>> On 30/11/18 10:10 AM, Kishon Vijay Abraham I wrote:
->>>>>>>>> Hi Faiz,
->>>>>>>>>
->>>>>>>>> On 30/11/18 12:35 AM, Faiz Abbas wrote:
->>>>>>>>>> Errata i929 in certain OMAP5/DRA7XX/AM57XX silicon revisions
->>>>>>>>>> (SPRZ426D - November 2014 - Revised February 2018 [1]) mentions
->>>>>>>>>> unexpected tuning pattern errors. A small failure band may be present
->>>>>>>>>> in the tuning range which may be missed by the current algorithm.
->>>>>>>>>> Furthermore, the failure bands vary with temperature leading to
->>>>>>>>>> different optimum tuning values for different temperatures.
->>>>>>>>>>
->>>>>>>>>> As suggested in the related Application Report (SPRACA9B - October 2017
->>>>>>>>>> - Revised July 2018 [2]), tuning should be done in two stages.
->>>>>>>>>> In stage 1, assign the optimum ratio in the maximum pass window for the
->>>>>>>>>> current temperature. In stage 2, if the chosen value is close to the
->>>>>>>>>> small failure band, move away from it in the appropriate direction.
->>>>>>>>>>
->>>>>>>>>> References:
->>>>>>>>>> [1] http://www.ti.com/lit/pdf/sprz426
->>>>>>>>>> [2] http://www.ti.com/lit/pdf/SPRACA9
->>>>>>>>>>
->>>>>>>>>> Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
->>>>>>>>>> ---
->>>> ...
->>>>>>>>>
->>>>>>>>> Can't we get thermal zone once during probe?
->>>>>>>>>
->>>>>>>>
->>>>>>>> Tuning is also (ideally) supposed to happen only once per enumeration.
->>>>>>>> Also it doesn't make sense to get a thermal zone for lower speed systems
->>>>>>>> that won't do tuning.
->>>>>>>
->>>>>>> Currently sdhci-omap calls pm_runtime_get_sync() during probe, and
->>>>>>> then keeps the host device runtime resumed until ->remove() is called
->>>>>>> on it. I assume you are going to change that, at some point!?
->>>>>>>
->>>>>>> In other words, what will happen to the host device when it becomes
->>>>>>> runtime suspended? Is re-tuning needed when it gets runtime resumed,
->>>>>>> which is the case for many other sdhci variants?
->>>>>>
->>>>>> There are no plans to support runtime_suspend()/resume() any time in the
->>>>>> near future. If its ok with you, I would like to get this patch in
->>>>>> without any changes. We can change it in case a need for
->>>>>> runtime_suspend()/_resume() does arise.
->>>>>
->>>>> Right, I am okay with that. Due to recent changes to sdhci-omap
->>>>> $subject patch doesn't apply, can you please rebase!?
->>>>>
->>>>> Additionally, I realized that we should fold in patch updating the DT
->>>>> doc for sdhci-omap, adding the property for the thermal zone. I
->>>>> regards to that, I am wondering if "cpu_thermal", is really the
->>>>> correct name of the zone. The point is, I am guessing the zone could
->>>>> change along with the SoCs/platforms.
->>>>>
->>>>
->>>> As you have probably noticed, we are introducing a new driver
->>>> (sdhci_am654) for newer platforms. I don't foresee using sdhci-omap
->>>> driver with any other platforms. In case we do use it, we can add the dt
->>>> property at that point of time and default to "cpu_thermal" to maintain
->>>> dt compatibility.
->>>>
->>>> Will rebase and send v2 if you are ok with above.
->>>
->>> I see, but you still need to update the DT doc for sdhci-omap.
->>>
->>
->> I didn't get you. There are no changes in dt. What changes should I
->> document?
-> 
-> Well, you are fetching a thermal zone using a specific name. It's
-> quite similar to how we document other resources (pinctrls for
-> example) that sdhci omap depends on, so that needs to be document too.
-> 
-
-Ok. Will add a note for "cpu_thermal" in the documentation.
-
-Thanks,
-Faiz
+SGkhDQoNCk9uIDExLzEyLzIwMTggMTA6MTcsIEFkYW1za2ksIEtyenlzenRvZiAoTm9raWEgLSBQ
+TC9Xcm9jbGF3KSB3cm90ZToNCj4gQ3JlYXRlIHNlcGFyYXRlIGVudHJ5IGZvciBpMmMtYXh4aWEg
+YW5kIHNldCBteXNlbGYgYXMgbWFpbnRhaW5lci4NCj4gDQo+IEV2ZW4gdGhvdWdoIEkgZG9uJ3Qg
+d29yayBmb3IgSW50ZWwvTFNJIHdobyBpcyB0aGUgbWFudWZhY3R1cmVyIG9mIHRoaXMNCj4gSVAs
+IEkgZG8gaGF2ZSBhY2Nlc3MgdG8gc29tZSBkb2N1bWVudGF0aW9uIGFuZCB0aGUgYWN0dWFsIGhh
+cmR3YXJlIHVzaW5nDQo+IHRoaXMgZHJpdmVyIGFuZCBJJ20gZmFtaWxpYXIgd2l0aCB0aGUgY29k
+ZS4NCg0KU291bmRzIGdvb2QgdG8gbWUsDQpSZXZpZXdlZC1ieTogQWxleGFuZGVyIFN2ZXJkbGlu
+IDxhbGV4YW5kZXIuc3ZlcmRsaW5Abm9raWEuY29tPg0KDQo+IFNpZ25lZC1vZmYtYnk6IEtyenlz
+enRvZiBBZGFtc2tpIDxrcnp5c3p0b2YuYWRhbXNraUBub2tpYS5jb20+DQo+IC0tLQ0KPiAgTUFJ
+TlRBSU5FUlMgfCA3ICsrKysrKysNCj4gIDEgZmlsZSBjaGFuZ2VkLCA3IGluc2VydGlvbnMoKykN
+Cj4gDQo+IGRpZmYgLS1naXQgYS9NQUlOVEFJTkVSUyBiL01BSU5UQUlORVJTDQo+IGluZGV4IDA3
+NjdmMWQxYjU3OS4uMjk2MWI0ZDBhOGU4IDEwMDY0NA0KPiAtLS0gYS9NQUlOVEFJTkVSUw0KPiAr
+KysgYi9NQUlOVEFJTkVSUw0KPiBAQCAtMjYzMyw2ICsyNjMzLDEzIEBAIFM6CU1haW50YWluZWQN
+Cj4gIEY6CURvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9zb3VuZC9heGVudGlhLCoN
+Cj4gIEY6CXNvdW5kL3NvYy9hdG1lbC90c2U4NTAtcGNtNTE0Mi5jDQo+ICANCj4gK0FYWElBIEky
+QyBDT05UUk9MTEVSDQo+ICtNOglLcnp5c3p0b2YgQWRhbXNraSA8a3J6eXN6dG9mLmFkYW1za2lA
+bm9raWEuY29tPg0KPiArTDoJbGludXgtaTJjQHZnZXIua2VybmVsLm9yZw0KPiArUzoJTWFpbnRh
+aW5lZA0KPiArRjoJRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2kyYy9pMmMtYXh4
+aWEudHh0DQo+ICtGOglkcml2ZXJzL2kyYy9idXNzZXMvaTJjLWF4eGlhLmMNCj4gKw0KPiAgQVo2
+MDA3IERWQiBEUklWRVINCj4gIE06CU1hdXJvIENhcnZhbGhvIENoZWhhYiA8bWNoZWhhYkBrZXJu
+ZWwub3JnPg0KPiAgTDoJbGludXgtbWVkaWFAdmdlci5rZXJuZWwub3JnDQoNCi0tIA0KQmVzdCBy
+ZWdhcmRzLA0KQWxleGFuZGVyIFN2ZXJkbGluLg0K
