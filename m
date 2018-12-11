@@ -2,119 +2,120 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A38CFC07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 08:39:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C89E9C07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 08:42:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 72CCD20849
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 08:39:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 72CCD20849
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 8277D2081B
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 08:42:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8277D2081B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726203AbeLKIjz (ORCPT
+        id S1726179AbeLKIma (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 03:39:55 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:39308 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726089AbeLKIjz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 03:39:55 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 34C7320723; Tue, 11 Dec 2018 09:39:52 +0100 (CET)
-Received: from bbrezillon (aaubervilliers-681-1-79-44.w90-88.abo.wanadoo.fr [90.88.21.44])
-        by mail.bootlin.com (Postfix) with ESMTPSA id E1DB820717;
-        Tue, 11 Dec 2018 09:39:32 +0100 (CET)
-Date:   Tue, 11 Dec 2018 09:39:33 +0100
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     Liang Yang <liang.yang@amlogic.com>
-Cc:     Miquel Raynal <miquel.raynal@bootlin.com>,
-        Jianxin Pan <jianxin.pan@amlogic.com>,
-        <linux-mtd@lists.infradead.org>, Yixun Lan <yixun.lan@amlogic.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Carlo Caione <carlo@caione.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Rob Herring <robh@kernel.org>, Jian Hu <jian.hu@amlogic.com>,
-        Hanjie Lin <hanjie.lin@amlogic.com>,
-        Victor Wan <victor.wan@amlogic.com>,
-        <linux-amlogic@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v7 2/2] mtd: rawnand: meson: add support for Amlogic
- NAND flash controller
-Message-ID: <20181211093933.2fab8cc3@bbrezillon>
-In-Reply-To: <d60bac6f-732d-0ddc-2644-17f650dfa885@amlogic.com>
-References: <1542386439-30166-1-git-send-email-jianxin.pan@amlogic.com>
-        <1542386439-30166-3-git-send-email-jianxin.pan@amlogic.com>
-        <20181207102456.1dc67e07@xps13>
-        <823825a3-86fb-9a20-ae29-85cc52d44093@amlogic.com>
-        <20181210123809.5ade45c4@bbrezillon>
-        <79a797c2-f37f-7f7c-e907-2d3c2283ec2d@amlogic.com>
-        <20181210155057.38788656@xps13>
-        <d60bac6f-732d-0ddc-2644-17f650dfa885@amlogic.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Tue, 11 Dec 2018 03:42:30 -0500
+Received: from mail-vs1-f65.google.com ([209.85.217.65]:40978 "EHLO
+        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726089AbeLKIma (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 03:42:30 -0500
+Received: by mail-vs1-f65.google.com with SMTP id t17so8381926vsc.8;
+        Tue, 11 Dec 2018 00:42:29 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=eOCeScDpJ+HUcMzfhApTNK8g4kv95VN6HJPOAn8Lzy4=;
+        b=Z8bREjKYkTitZKdoVyzk6Aw221K/zp3DXRJAg9WWifFAJJ8lQm1f81/n7MOW61MT9l
+         bV0ldBEBGkZhzR8PM4hxxKJU++nzeilOQHhrkLRPa/Jf0e/wnBs9owMge7ZZL9/DXUhe
+         NEoKlUjwPYyNJJehZHn5hJ9pKVwtmKqgHj0epijUXJ3ld9psTGX7snaDISkLHk7a11lQ
+         mt21GEtIZX+dXOgyqvLEJ1bAzJL+S2Tuq/btC+qjTfcVimMNPQxGF7xZqQLT3vaSJ/eA
+         GpiPlA/6kbIqEfHKl76XZJrbXkRrQKb8b1s1wDSSKYUnBTGtcZsvGDhdbmrOy3n96IJq
+         quyw==
+X-Gm-Message-State: AA+aEWYOzAi8r8qZGr86HhL6+5X8OvWBNWxSCm6T36cT9iEWyyhLVg8T
+        5K7fTT+SmEYh3L30UsdtIrxp4nP/FcDy/lLi2nc=
+X-Google-Smtp-Source: AFSGD/VxnisM+g0tv4kR4ePqy60E12ufWlEyo3Kf/AAeVrCadES59ihg7kYGihpNthCVhEX5HFL9Vnhriw6egvczEIM=
+X-Received: by 2002:a67:d119:: with SMTP id u25mr6357416vsi.63.1544517748420;
+ Tue, 11 Dec 2018 00:42:28 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20181113133520.20889-1-geert+renesas@glider.be> <CAMuHMdX-X6dTJi6WgRKYVs-w+rxO3cJP8kX5AZwOXNO4qpgcqQ@mail.gmail.com>
+In-Reply-To: <CAMuHMdX-X6dTJi6WgRKYVs-w+rxO3cJP8kX5AZwOXNO4qpgcqQ@mail.gmail.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Tue, 11 Dec 2018 09:42:16 +0100
+Message-ID: <CAMuHMdWVFUGPgaChSn2K3schA0uJJVjxs2Z4FB2hb1_UdW3FiA@mail.gmail.com>
+Subject: Re: [PATCH v3] reset: Exclusive resets must be dedicated to a single
+ hardware block
+To:     Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>
+Cc:     Philipp Zabel <p.zabel@pengutronix.de>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Auger Eric <eric.auger@redhat.com>,
+        Alex Williamson <alex.williamson@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 11 Dec 2018 09:56:25 +0800
-Liang Yang <liang.yang@amlogic.com> wrote:
+Hi Mark, Rob, Frank,
 
-> Hi Miquel,
-> 
-> On 2018/12/10 22:50, Miquel Raynal wrote:
-> > Hi Liang,
-> > 
-> > Liang Yang <liang.yang@amlogic.com> wrote on Mon, 10 Dec 2018 20:12:39
-> > +0800:
-> >   
-> >> On 2018/12/10 19:38, Boris Brezillon wrote:  
-> >>> On Mon, 10 Dec 2018 19:23:46 +0800
-> >>> Liang Yang <liang.yang@amlogic.com> wrote:
-> >>>      
-> >>>>>> +			mtd->ecc_stats.failed++;
-> >>>>>> +			continue;
-> >>>>>> +		}
-> >>>>>> +		mtd->ecc_stats.corrected += ECC_ERR_CNT(*info);
-> >>>>>> +		bitflips = max_t(u32, bitflips, ECC_ERR_CNT(*info));
-> >>>>>> +	}  
-> >>>>>
-> >>>>> Are you sure you handle correctly empty pages with bf?  
-> >>>>>     >> if scramble is enable, i would say yes here.  
-> >>>> when scramble is disabled, i am considering how to use the helper
-> >>>> nand_check_erased_ecc_chunk, but it seems that i can't get the ecc
-> >>>> bytes which is caculated by ecc engine.by the way, nfc dma doesn't send
-> >>>> out the ecc parity bytes.  
-> >>>
-> >>> Even if the ECC engine is disabled?
-> >>>      
-> >> No.
-> >> When ECC engine is disabled, it can read the ecc parity bytes ; but there is another problem that i need to consider how code struct looks better when reading error with ecc opened and then try to raw read.
-> >> Is there a good idea?  
-> > 
-> > When reading with ECC enabled, in case of uncorrectable error you
-> > must re-read without ECC, then check if the page is empty or not with
-> > the core helpers (nand_check_erased_*()).
-> > 
-> > Is this what you meant?
-> >   
-> yes. when uncorrectable ECC error, i need firstly read out the ECC bytes 
-> without ECC engine and then use the helper nand_check_erased_ecc_chunk 
-> to check if blank page.
-> Of course, the precondition is without scrambler, or the bland page can 
-> be detected by meson NFC.
+On Wed, Nov 28, 2018 at 10:28 AM Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
+> On Tue, Nov 13, 2018 at 2:35 PM Geert Uytterhoeven
+> <geert+renesas@glider.be> wrote:
+> > In some SoCs multiple hardware blocks may share a reset control.
+> > The reset control API for shared resets will only assert such a reset
+> > when the drivers for all hardware blocks agree.
+> > The exclusive reset control API still allows to assert such a reset, but
+> > that impacts all other hardware blocks sharing the reset.
+> >
+> > While the kernel doc comments clearly state that the API for shared
+> > resets applies to reset controls which are shared between hardware
+> > blocks, the exact meaning of exclusive resets is not documented.
+> > Fix the semantic ambiguity with respect to exclusive access vs.
+> > exclusive reset lines by:
+> >   1. Clarifying that exclusive resets really are intended for use with
+> >      reset controls which are dedicated to a single hardware block,
+> >   2. Ensuring that obtaining an exclusive reset control will fail if the
+> >      reset is shared by multiple hardware blocks, for both DT-based and
+> >      lookup-based reset controls.
+> >
+> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > ---
+> > Question from Philipp for the DT maintainers:
+> >
+> >    "I'd still like to hear the device tree maintainers' opinion on
+> >     parsing the whole DT for "resets" phandle properties to find shared
+> >     resets like this."
+>
+> Mark, Rob: Ping?
 
-Yep, raw accessors should disable both the scrambler and the ECC
-engine (see what's done in sunxi_nand.c).
+Do you have any comments about this?
+(In case you lost the link to the original patch:
+ https://lore.kernel.org/lkml/20181113133520.20889-1-geert+renesas@glider.be/).
+
+This is a safeguard dependency for "[PATCH v5] vfio: platform: Add
+generic reset controller support"
+(https://lore.kernel.org/lkml/20181113131508.18246-1-geert+renesas@glider.be/).
+
+Thanks!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
