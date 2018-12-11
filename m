@@ -7,51 +7,52 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6CC5C5CFFE
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:49:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5461AC07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:49:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8CBDB2146D
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:49:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1BB392133F
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:49:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544543380;
-	bh=wOd/Ml20No4T5bFzaBjvSB/dhXDhBhLauyZ2NmJ/W2I=;
+	s=default; t=1544543385;
+	bh=232dUI4lUgCUSljIiysL3/KJLMUhH3ddz0rHvRYED8U=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=oX4HnADJ3kSPrns7DmZglgiLl52M1JIrfh3a6ZYbWvAcgKH/jVZfRhT8sgYRoGdzM
-	 4I8gwK5r10QwsmRNIJ1sYZExkr4o9BCJl3U9A0ED02gAfciEQGrfKHCLD70+BbeU9G
-	 LzYpd31HbHL+QI2mXZSIbN8rpLBjIWHwwjJy9pOs=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8CBDB2146D
+	b=JRWmAh5QiqoOBc/RSX3dLghAarv2TWpv+gEtvmQL7C+N7gcjgkRm40onZeomTa06T
+	 M1hZHITr6GDLWv12oqysdMWOFZ4uR5pxbC8eM1BdIt58hAiqOwDeytm7FjGXnzF1G+
+	 0B2BylqOwQqgnp7OVo70ihOp2MpWfmaU3bT9WyGI=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1BB392133F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729097AbeLKPtj (ORCPT
+        id S1729107AbeLKPto (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 10:49:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37888 "EHLO mail.kernel.org"
+        Tue, 11 Dec 2018 10:49:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38040 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729064AbeLKPtb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:49:31 -0500
+        id S1727668AbeLKPtl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 10:49:41 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D720220989;
-        Tue, 11 Dec 2018 15:49:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1947A2133F;
+        Tue, 11 Dec 2018 15:49:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544543370;
-        bh=wOd/Ml20No4T5bFzaBjvSB/dhXDhBhLauyZ2NmJ/W2I=;
+        s=default; t=1544543380;
+        bh=232dUI4lUgCUSljIiysL3/KJLMUhH3ddz0rHvRYED8U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fFXsajm8SPq+7lELla65w82PoEQwqk+H1hfMaW1mp07RCTUT3nFJyGsXxR4fw+H/m
-         HR8nJtOOPnlxa1ro669bqQeENd8mbpYna0ymcJQdPCL0FQU/a0nmzKr/Jak/qbjF6T
-         o56SaE50oS3VIShjymulaBuQ9RvhOnjvge5gJgLs=
+        b=09Vl4CvZMpzTrFrwwIej0bIcz5TMnMpMejipuYxkj6htR8VSbDL5KK0eEX42oT5af
+         GUamnugk/4cNbv+RsyFR4Cd5KKHOeoqtWUFwYDE0m/ZjWR+sE4G3NVLwMM2SNO1aXg
+         rQqv47XkUFqmGKtFaEsg9bM6I0QWdFUUm4jdFLBs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Joerg Roedel <jroedel@suse.de>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 04/51] iommu/ipmmu-vmsa: Fix crash on early domain free
-Date:   Tue, 11 Dec 2018 16:41:12 +0100
-Message-Id: <20181211151612.838723292@linuxfoundation.org>
+        Sudarsana Reddy Kalluru <Sudarsana.Kalluru@cavium.com>,
+        Michal Kalderon <Michal.Kalderon@cavium.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 08/51] bnx2x: Assign unique DMAE channel number for FW DMAE transactions.
+Date:   Tue, 11 Dec 2018 16:41:16 +0100
+Message-Id: <20181211151613.398066875@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181211151612.328911565@linuxfoundation.org>
 References: <20181211151612.328911565@linuxfoundation.org>
@@ -70,53 +71,64 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit e5b78f2e349eef5d4fca5dc1cf5a3b4b2cc27abd ]
+[ Upstream commit 77e461d14ed141253573eeeb4d34eccc51e38328 ]
 
-If iommu_ops.add_device() fails, iommu_ops.domain_free() is still
-called, leading to a crash, as the domain was only partially
-initialized:
+Driver assigns DMAE channel 0 for FW as part of START_RAMROD command. FW
+uses this channel for DMAE operations (e.g., TIME_SYNC implementation).
+Driver also uses the same channel 0 for DMAE operations for some of the PFs
+(e.g., PF0 on Port0). This could lead to concurrent access to the DMAE
+channel by FW and driver which is not legal. Hence need to assign unique
+DMAE id for FW.
+Currently following DMAE channels are used by the clients,
+  MFW - OCBB/OCSD functionality uses DMAE channel 14/15
+  Driver 0-3 and 8-11 (for PF dmae operations)
+         4 and 12 (for stats requests)
+Assigning unique dmae_id '13' to the FW.
 
-    ipmmu-vmsa e67b0000.mmu: Cannot accommodate DMA translation for IOMMU page tables
-    sata_rcar ee300000.sata: Unable to initialize IPMMU context
-    iommu: Failed to add device ee300000.sata to group 0: -22
-    Unable to handle kernel NULL pointer dereference at virtual address 0000000000000038
-    ...
-    Call trace:
-     ipmmu_domain_free+0x1c/0xa0
-     iommu_group_release+0x48/0x68
-     kobject_put+0x74/0xe8
-     kobject_del.part.0+0x3c/0x50
-     kobject_put+0x60/0xe8
-     iommu_group_get_for_dev+0xa8/0x1f0
-     ipmmu_add_device+0x1c/0x40
-     of_iommu_configure+0x118/0x190
+Changes from previous version:
+------------------------------
+v2: Incorporated the review comments.
 
-Fix this by checking if the domain's context already exists, before
-trying to destroy it.
+Signed-off-by: Sudarsana Reddy Kalluru <Sudarsana.Kalluru@cavium.com>
+Signed-off-by: Michal Kalderon <Michal.Kalderon@cavium.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Robin Murphy <robin.murphy@arm.com>
-Fixes: d25a2a16f0889 ('iommu: Add driver for Renesas VMSA-compatible IPMMU')
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/iommu/ipmmu-vmsa.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/net/ethernet/broadcom/bnx2x/bnx2x.h    | 7 +++++++
+ drivers/net/ethernet/broadcom/bnx2x/bnx2x_sp.c | 1 +
+ 2 files changed, 8 insertions(+)
 
-diff --git a/drivers/iommu/ipmmu-vmsa.c b/drivers/iommu/ipmmu-vmsa.c
-index 85b5e75c7faa..3d2e9ca78f02 100644
---- a/drivers/iommu/ipmmu-vmsa.c
-+++ b/drivers/iommu/ipmmu-vmsa.c
-@@ -372,6 +372,9 @@ static int ipmmu_domain_init_context(struct ipmmu_vmsa_domain *domain)
+diff --git a/drivers/net/ethernet/broadcom/bnx2x/bnx2x.h b/drivers/net/ethernet/broadcom/bnx2x/bnx2x.h
+index f3f2d66432ab..d5e4c42662b6 100644
+--- a/drivers/net/ethernet/broadcom/bnx2x/bnx2x.h
++++ b/drivers/net/ethernet/broadcom/bnx2x/bnx2x.h
+@@ -2187,6 +2187,13 @@ void bnx2x_igu_clear_sb_gen(struct bnx2x *bp, u8 func, u8 idu_sb_id,
+ #define PMF_DMAE_C(bp)			(BP_PORT(bp) * MAX_DMAE_C_PER_PORT + \
+ 					 E1HVN_MAX)
  
- static void ipmmu_domain_destroy_context(struct ipmmu_vmsa_domain *domain)
- {
-+	if (!domain->mmu)
-+		return;
++/* Following is the DMAE channel number allocation for the clients.
++ *   MFW: OCBB/OCSD implementations use DMAE channels 14/15 respectively.
++ *   Driver: 0-3 and 8-11 (for PF dmae operations)
++ *           4 and 12 (for stats requests)
++ */
++#define BNX2X_FW_DMAE_C                 13 /* Channel for FW DMAE operations */
 +
- 	/*
- 	 * Disable the context. Flush the TLB as required when modifying the
- 	 * context registers.
+ /* PCIE link and speed */
+ #define PCICFG_LINK_WIDTH		0x1f00000
+ #define PCICFG_LINK_WIDTH_SHIFT		20
+diff --git a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_sp.c b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_sp.c
+index cea6bdcde33f..bf760c9cff6a 100644
+--- a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_sp.c
++++ b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_sp.c
+@@ -6149,6 +6149,7 @@ static inline int bnx2x_func_send_start(struct bnx2x *bp,
+ 	rdata->sd_vlan_tag	= cpu_to_le16(start_params->sd_vlan_tag);
+ 	rdata->path_id		= BP_PATH(bp);
+ 	rdata->network_cos_mode	= start_params->network_cos_mode;
++	rdata->dmae_cmd_id	= BNX2X_FW_DMAE_C;
+ 
+ 	rdata->vxlan_dst_port	= cpu_to_le16(start_params->vxlan_dst_port);
+ 	rdata->geneve_dst_port	= cpu_to_le16(start_params->geneve_dst_port);
 -- 
 2.19.1
 
