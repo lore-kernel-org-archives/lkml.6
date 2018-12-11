@@ -2,90 +2,126 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B209C07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 10:08:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49514C5CFFE
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 10:08:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C8AA2081B
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 10:08:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 06AEC2081B
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 10:08:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="3Cxpj2mk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C8AA2081B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SIoyo/lN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 06AEC2081B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726324AbeLKKIP (ORCPT
+        id S1726350AbeLKKIh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 05:08:15 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:53722 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726104AbeLKKIP (ORCPT
+        Tue, 11 Dec 2018 05:08:37 -0500
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:35470 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726327AbeLKKIg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 05:08:15 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wBBA3fep187673;
-        Tue, 11 Dec 2018 10:07:47 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=xcfh6X1iCfgCIOM5TA1lbZ+h6nUBiMBhdmWu9whNHn8=;
- b=3Cxpj2mklIxyFEdp+01BAfDwnqtq0xOZ2gNzCfthciaFbN8MJzR1qKX3eMPaKmBBuo20
- 5/QyQ3iXJUjdznVZi5QphWKcwGpj+8U/4VABcvqYczNq2A9XAJ0H2cKolnZLwsipSq/b
- 6p8yWceMC9JmaPjGj9APDcvTKo0zEC2oMHHLafc9pA/dDFosrSPwHi2l+6TZM7I8iehT
- N8rx6ZVcUMXWo0Ou8850U81orQb0CbkjgQ8adKIkLDEbKOvJKkWFbNJY3UHTywCwzmVQ
- EJGTSIC3hrUVcNv3W3dzxfU08AF3RlmdP2Av6ZF9x20ZMhAtqgXS19as+jSAG3D10nQX xg== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by userp2120.oracle.com with ESMTP id 2p86kqtx6f-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 11 Dec 2018 10:07:47 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wBBA7eNj001895
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 11 Dec 2018 10:07:41 GMT
-Received: from abhmp0002.oracle.com (abhmp0002.oracle.com [141.146.116.8])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wBBA7du2024301;
-        Tue, 11 Dec 2018 10:07:39 GMT
-Received: from kadam (/10.175.35.120)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 11 Dec 2018 02:07:38 -0800
-Date:   Tue, 11 Dec 2018 13:07:28 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
+        Tue, 11 Dec 2018 05:08:36 -0500
+Received: by mail-ed1-f65.google.com with SMTP id x30so12032186edx.2;
+        Tue, 11 Dec 2018 02:08:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=A/lPT8PaFurXAjyHVr34gJC59b0hP9R1KpUmpqWNP30=;
+        b=SIoyo/lNrRSFm6Euc2fMO89PpKxGQu3x70wRXEDIhlQW3BhDmwXrYMlQRAbOpzbKyZ
+         AkcUvP4KF5kpsosDvtpj7pXjYRjmIIRMXslqgB4Hse0RF1u2aWEKGWRwnlUPsFch7apE
+         RExQaIKQBQQwvVg009og18OsMcxioC7ji/LRyw/3PHrjiPNwSjxScoIIHgqEDTmjLykn
+         0g3UyTRz3nMyZGA921Hp7xPJ5J0Rwhn6KZGTktF6MECeO0HilVMF8WgyTti35rXl3193
+         +DR5I+iay2tutrlFiEYmMfgHIdAIUNfXGjitAIWASlmdYTQSltH1ZfeOBzL8yQfTMRWd
+         +O/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=A/lPT8PaFurXAjyHVr34gJC59b0hP9R1KpUmpqWNP30=;
+        b=E02KkHB9guMngQDTlh77offCaLS3+xlVAmlEisXswAGbNaJN6ol5+mq0k+hkR8vLa9
+         Z1UIdeorffPgZTO++NABsAJP6+w2xWkGSGkLEkwg48TocudTFpGgMey+Hg7784eqSApr
+         wVWP9/GhbkTmfvt2iiq3Bp2/Zxp3Msjiolf/6CaJv+KKN/2GsAhiwVuysn9x3d3KcXec
+         sAld0RCcYus40yFLfk2hezWlORTnxMA9JdTJIqtv0e1LkpnaMYVqm82AYH1gpaCwOHFA
+         fhkko7JVWxYTVAb96Q/hRxDQj1BoFd4v2Pft//niWkCfbN5AU0wpAq701d6yhD0xhi9q
+         2Eew==
+X-Gm-Message-State: AA+aEWYwErTaRlV9Zk/b/073apHIvaft0xizkbaPx0KLaiJLGFOQMJ53
+        CUKuwRj+KDrLXHEECsfSs9w=
+X-Google-Smtp-Source: AFSGD/U05q0wG9Jai33f48xk3AgDfm/xa1bY6kw0SoJS1Rhz5zbUjJyY3R2dMxYSQWeLp//dM/Pl+A==
+X-Received: by 2002:a50:9b1d:: with SMTP id o29mr13695312edi.246.1544522914428;
+        Tue, 11 Dec 2018 02:08:34 -0800 (PST)
+Received: from localhost (pD9E51040.dip0.t-ipconnect.de. [217.229.16.64])
+        by smtp.gmail.com with ESMTPSA id z9sm4060180edr.61.2018.12.11.02.08.33
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 11 Dec 2018 02:08:33 -0800 (PST)
+Date:   Tue, 11 Dec 2018 11:08:32 +0100
+From:   Thierry Reding <thierry.reding@gmail.com>
 To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Eric Anholt <eric@anholt.net>,
-        Stefan Wahren <stefan.wahren@i2se.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        devel@driverdev.osuosl.org, Tara Null <tn@fastmail.net>,
-        linux-kernel@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] staging: vchiq: rework remove_event handling
-Message-ID: <20181211100728.GC3116@kadam>
-References: <20181210211231.4084251-1-arnd@arndb.de>
+Cc:     Mikko Perttunen <cyndis@kapsi.fi>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        Emil Goode <emil.fsw@goode.io>,
+        dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] host1x: cdma: use completion instead of semaphore
+Message-ID: <20181211100832.GE14426@ulmo>
+References: <20181210215119.1903413-1-arnd@arndb.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="r7U+bLA8boMOj+mD"
 Content-Disposition: inline
-In-Reply-To: <20181210211231.4084251-1-arnd@arndb.de>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9103 signatures=668679
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=948
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1812110095
+In-Reply-To: <20181210215119.1903413-1-arnd@arndb.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 10, 2018 at 10:11:58PM +0100, Arnd Bergmann wrote:
-> Note that I'm changing it back to 'killable' after the previous patch
-> changed 'killable' to 'interruptible', apparently based on a misunderstanding
-> of the subtle down_interruptible() macro override in vchiq_killable.h.
 
-Oh wow...  The non standard down_interruptible() macro is ugly.
+--r7U+bLA8boMOj+mD
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-regards,
-dan carpenter
+On Mon, Dec 10, 2018 at 10:51:04PM +0100, Arnd Bergmann wrote:
+> In this usage, the two are completely equivalent, but the
+> completion documents better what is going on, and we generally
+> try to avoid semaphores these days.
+>=20
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  drivers/gpu/host1x/cdma.c | 6 +++---
+>  drivers/gpu/host1x/cdma.h | 4 ++--
+>  2 files changed, 5 insertions(+), 5 deletions(-)
 
+My understanding is that potentially many userspace processes could be
+blocking on this, which I think is the reason for it being a semaphore.
+Is the completion going to work for those cases as well?
+
+Thierry
+
+--r7U+bLA8boMOj+mD
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlwPjKAACgkQ3SOs138+
+s6F4YA//cuiEcBrx+Cqz4xqncvpwk/VeJ6Ag2er4y2er5lZL5OWJbSdKQuhw8ns7
+l1OQ3VLF0Js9hLaDLEfdgxR3zzu0Ok5cyKeUH0bC1VZ8ces8ER1xHK24W7YeINAn
+ST8okJEV97mSHiiWe/p8nrYq5iIH7giUb9iZT57AX+6nxGAcg+XJ2gietauU2RUB
+RFSOcO2AQboWC9CWCcY0sW04IIP2+z4CMLeRDbe1TIGZzgyuG1p/WEuMqQ0AN+qv
+njAP8w9OyW1cltuoLqthFmdScsqc30H22RI/dISgFlLdYgu5PeGeYUeO5P+RB0Js
+iHk8T/wsr7+HTfnfpxZXYJnA1YtvIGEVe7RkTscAYjm9/UU//bke5OqjQJ4AOasn
+83rXE9hhvNk+Vx7tzr0hQP20vm/3a5shTWWtOf/l8pJFhOqvMpJzZ1UBj4nz92XL
+6ObY5XB8apbuFtqEVmUenOyZbRuJdpXOexerOJ82vBsu/WANpdOQP+9bo2Tdgtwv
+mNGWauAS3DJExL42UN2t6PnK7a9O/s7Wr0j7K9vhYNjZrgTsXOQcLMPLVhuJ3w8X
+gJvl3qJ8ZaGZcIh8MtQG3mG/qiALn3VwctxsIFkgX/a5IqTudIHsplq9/srLW0SX
+7p1scDD9ON05LCWGW8J7DFgbS3vd2vL++IUwoYjudZTC2hG0GSI=
+=IYkF
+-----END PGP SIGNATURE-----
+
+--r7U+bLA8boMOj+mD--
