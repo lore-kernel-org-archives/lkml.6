@@ -2,131 +2,213 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 002CAC5CFFE
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 09:32:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D02BAC07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 09:35:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA7D62081B
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 09:32:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="iz9728MI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA7D62081B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 87FCE20849
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 09:35:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 87FCE20849
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726241AbeLKJck (ORCPT
+        id S1726137AbeLKJf5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 04:32:40 -0500
-Received: from mail-vs1-f66.google.com ([209.85.217.66]:42448 "EHLO
-        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726137AbeLKJck (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 04:32:40 -0500
-Received: by mail-vs1-f66.google.com with SMTP id b74so8461843vsd.9
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 01:32:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=OFTRYNH/uemX7W+T0FFPzR+3gEy7EW+TmKaAd7Nbgcg=;
-        b=iz9728MIWNkugNQZajnrF2W/SJtUSODYXl+fw2R555Pk7ePU6OTF+tOofSV43AMHEa
-         5oF0bBpT6hA+hcgT2ZltvM36/Y82EB2WpCmiPEtziC3A6FI3SAV1RRgHGVj/ADiVH0bj
-         sfL9GHFac7NxCOnUbAUstOddyfb0ew9GnRE/k=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=OFTRYNH/uemX7W+T0FFPzR+3gEy7EW+TmKaAd7Nbgcg=;
-        b=VkYVvjZj3rq61buU08eGJN8wIbtR5pFS2dMb0Sk83z6eMRybKqqwzllVBod2OSLIaz
-         TAhaFk8vJel/FDxHv65j3CbWWpku0V9+pFW0BzAQecLJIvLZXR4ICSHG73LVhESLxwow
-         hHTOE9VVQ7/OowgikhOqbr8iwAHcTsyIMt/DsmHmJIIx/8dMu8qX6zv+h7hI/KTR0uLF
-         YneD004nPjxAyFCtd1zFf411dzdrsUIsluYHKoYrFnXPfyJux1AIU9PCbtOkiKb6/xAN
-         gF/njoOwyV45aEVyof/Kdvdn/V1aVZBZUhjrhHobnwGqlW5isdUFQFOoOy031fD29Asd
-         jf0Q==
-X-Gm-Message-State: AA+aEWay1yEXGY7wz8ls4yv3ldKaO2tDlo3bfCBUmigRm7mz9Nnz8Hkd
-        MD5oyVt8JNHhME9Pbbu6PfzopFGWiibwTk0wuKdgIw==
-X-Google-Smtp-Source: AFSGD/VBbWfmjWQHPO2N2ypvxVD2cFOYDRMvPU5QSem1xKcDDccdcvtCRovUvOVA9zR1K1Ndnf4J+HAKJSHsmj9qhkk=
-X-Received: by 2002:a67:1a84:: with SMTP id a126mr6848245vsa.165.1544520758884;
- Tue, 11 Dec 2018 01:32:38 -0800 (PST)
+        Tue, 11 Dec 2018 04:35:57 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:50246 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726085AbeLKJf4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 04:35:56 -0500
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id DCF0F308212D;
+        Tue, 11 Dec 2018 09:35:55 +0000 (UTC)
+Received: from [10.36.117.115] (ovpn-117-115.ams2.redhat.com [10.36.117.115])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 3DDA7608F7;
+        Tue, 11 Dec 2018 09:35:54 +0000 (UTC)
+Subject: Re: [PATCH] mm, memory_hotplug: Don't bail out in do_migrate_range
+ prematurely
+To:     Oscar Salvador <osalvador@suse.de>, akpm@linux-foundation.org
+Cc:     mhocko@suse.com, pasha.tatashin@soleen.com,
+        dan.j.williams@gmail.com, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org
+References: <20181211085042.2696-1-osalvador@suse.de>
+From:   David Hildenbrand <david@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ SE+xAvmumFBY
+Organization: Red Hat GmbH
+Message-ID: <5e3e33e3-bea8-249c-2b05-665f40d70df4@redhat.com>
+Date:   Tue, 11 Dec 2018 10:35:53 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-References: <20181206151828.24417-1-jbrunet@baylibre.com>
-In-Reply-To: <20181206151828.24417-1-jbrunet@baylibre.com>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Tue, 11 Dec 2018 10:32:03 +0100
-Message-ID: <CAPDyKFp8H6jW-d8b51F2CZvr04setP443YbjbJX7dDLbbAtfVg@mail.gmail.com>
-Subject: Re: [PATCH 0/4] mmc: meson-gx: chained descriptor fixup and improvements
-To:     Jerome Brunet <jbrunet@baylibre.com>
-Cc:     Carlo Caione <carlo@caione.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20181211085042.2696-1-osalvador@suse.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Tue, 11 Dec 2018 09:35:55 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 6 Dec 2018 at 16:18, Jerome Brunet <jbrunet@baylibre.com> wrote:
->
-> The goal of the patchset was mainly to address the following warning:
->
-> WARNING: CPU: 0 PID: 0 at /usr/src/kernel/drivers/mmc/host/meson-gx-mmc.c:1025 meson_mmc_irq+0xc0/0x1e0
-> Modules linked in: crc32_ce crct10dif_ce ipv6 overlay
-> CPU: 0 PID: 0 Comm: swapper/0 Tainted: G        W         4.19.1 #1
-> Hardware name: Some A113 Board (DT)
-> pstate: 40000085 (nZcv daIf -PAN -UAO)
-> pc : meson_mmc_irq+0xc0/0x1e0
-> lr : __handle_irq_event_percpu+0x70/0x180
-> sp : ffff000008003980
-> x29: ffff000008003980 x28: 0000000000000000
-> [...]
-> x1 : ffff80001a71bd40 x0 : 0000000000000000
-> Call trace:
->  meson_mmc_irq+0xc0/0x1e0
->  __handle_irq_event_percpu+0x70/0x180
->  handle_irq_event_percpu+0x34/0x88
->  handle_irq_event+0x48/0x78
->  handle_fasteoi_irq+0xa0/0x180
->  generic_handle_irq+0x24/0x38
->  __handle_domain_irq+0x5c/0xb8
->  gic_handle_irq+0x58/0xa8
->
-> This happens when using the chained descriptor mode. If there is an
-> error, we call mmc_request_done(), loosing any reference to the cmd. It
-> turns out that the chained descriptor does really stops when we do so, at
-> least not completly. Most of the time, it can be seen with this harmless
-> warning because the descriptor will raise another unexpected IRQ. On rare
-> occasion, it will completly break the MMC.
->
-> This is mostly adressed by patch #1.
-> With this fixed, I took (yet) another look at the ultra-high speed modes
-> and the tuning.
->
-> I came up with new settings in patch 3 and 4. I've tested them on eMMC,
-> sdcard and sdio on the following platforms:
->  * gxbb p200
->  * gxl p230, libretech (eMMC only), kvim.
->  * axg s400
->
-> So far, these new settings seems to be working great but I think it
-> would be nice if others could test this and provide their feedback.
-> This why  patch 3 and 4 are RFT tagged.
->
-> Jerome Brunet (4):
->   mmc: meson-gx: make sure the descriptor is stopped on errors
->   mmc: meson-gx: remove useless lock
->   mmc: meson-gx: align default phase on soc vendor tree
->   mmc: meson-gx: add signal resampling
->
->  drivers/mmc/host/meson-gx-mmc.c | 100 ++++++++++++++++++++++++--------
->  1 file changed, 75 insertions(+), 25 deletions(-)
->
+On 11.12.18 09:50, Oscar Salvador wrote:
+> do_migrate_ranges() takes a memory range and tries to isolate the
+> pages to put them into a list.
+> This list will be later on used in migrate_pages() to know
+> the pages we need to migrate.
+> 
+> Currently, if we fail to isolate a single page, we put all already
+> isolated pages back to their LRU and we bail out from the function.
+> This is quite suboptimal, as this will force us to start over again
+> because scan_movable_pages will give us the same range.
+> If there is no chance that we can isolate that page, we will loop here
+> forever.
+> 
+> Issue debugged in 4d0c7db96 ("hwpoison, memory_hotplug: allow hwpoisoned
+> pages to be offlined") has proved that.
+> During the debugging of that issue, it was noticed that if
+> do_migrate_ranges() fails to isolate a single page, we will
+> just discard the work we have done so far and bail out, which means
+> that scan_movable_pages() will find again the same set of pages.
+> 
+> Instead, we can just skip the error, keep isolating as much pages
+> as possible and then proceed with the call to migrate_pages().
+> This will allow us to do some work at least.
+> 
+> There is no danger in the skipped pages to be lost, because
+> scan_movable_pages() will give us them as they could not
+> be isolated and therefore migrated.
+> 
+> Although this patch has proved to be useful when dealing with
+> 4d0c7db96 because it allows us to move forward as long as the
+> page is not in LRU, we still need 4d0c7db96
+> ("hwpoison, memory_hotplug: allow hwpoisoned pages to be offlined")
+> to handle the LRU case and the unmapping of the page if needed.
+> So, this is just a follow-up cleanup.
 
-Following Kevin's approach, applied for next to get this tested, thanks!
+So if I get it right the behavior of the function is now
 
-Kind regards
-Uffe
+"If at least one page could be migrated, return 0. If no pages could be
+migrated, return an error."
+
+Don't we want that to be
+
+"If all pages could be migrated, return 0. If only a subset could be
+migrated, return -EAGAIN. If no pages could be migrated, return the
+causing error."
+
+So somehow remember if we had issues with one page and instead of
+reporting 0, report e.g. -EAGAIN?
+
+Meaning something like "If you get -EAGAIN, try again to get the real
+reason".
+
+> 
+> Signed-off-by: Oscar Salvador <osalvador@suse.de>
+> ---
+>  mm/memory_hotplug.c | 19 +------------------
+>  1 file changed, 1 insertion(+), 18 deletions(-)
+> 
+> diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
+> index 86ab673fc4e3..804d0280d2ab 100644
+> --- a/mm/memory_hotplug.c
+> +++ b/mm/memory_hotplug.c
+> @@ -1339,7 +1339,6 @@ do_migrate_range(unsigned long start_pfn, unsigned long end_pfn)
+>  	unsigned long pfn;
+>  	struct page *page;
+>  	int move_pages = NR_OFFLINE_AT_ONCE_PAGES;
+> -	int not_managed = 0;
+>  	int ret = 0;
+>  	LIST_HEAD(source);
+>  
+> @@ -1395,25 +1394,9 @@ do_migrate_range(unsigned long start_pfn, unsigned long end_pfn)
+>  				inc_node_page_state(page, NR_ISOLATED_ANON +
+>  						    page_is_file_cache(page));
+>  
+> -		} else {
+> -			pr_warn("failed to isolate pfn %lx\n", pfn);
+> -			dump_page(page, "isolation failed");
+> -			put_page(page);
+> -			/* Because we don't have big zone->lock. we should
+> -			   check this again here. */
+> -			if (page_count(page)) {
+> -				not_managed++;
+> -				ret = -EBUSY;
+> -				break;
+> -			}
+>  		}
+>  	}
+>  	if (!list_empty(&source)) {
+> -		if (not_managed) {
+> -			putback_movable_pages(&source);
+> -			goto out;
+> -		}
+> -
+>  		/* Allocate a new page from the nearest neighbor node */
+>  		ret = migrate_pages(&source, new_node_page, NULL, 0,
+>  					MIGRATE_SYNC, MR_MEMORY_HOTPLUG);
+> @@ -1426,7 +1409,7 @@ do_migrate_range(unsigned long start_pfn, unsigned long end_pfn)
+>  			putback_movable_pages(&source);
+>  		}
+>  	}
+> -out:
+> +
+>  	return ret;
+>  }
+>  
+> 
+
+
+-- 
+
+Thanks,
+
+David / dhildenb
