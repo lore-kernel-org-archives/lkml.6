@@ -2,108 +2,85 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B01EC67839
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 23:38:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F969C67839
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 23:39:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D7A7520851
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 23:38:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D7A7520851
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=libc.org
+	by mail.kernel.org (Postfix) with ESMTP id 6F1EE2084E
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 23:39:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F1EE2084E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=grimberg.me
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726259AbeLKXiK (ORCPT
+        id S1726263AbeLKXjC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 18:38:10 -0500
-Received: from 216-12-86-13.cv.mvl.ntelos.net ([216.12.86.13]:58778 "EHLO
-        brightrain.aerifal.cx" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726158AbeLKXiK (ORCPT
+        Tue, 11 Dec 2018 18:39:02 -0500
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:35044 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726158AbeLKXjB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 18:38:10 -0500
-Received: from dalias by brightrain.aerifal.cx with local (Exim 3.15 #2)
-        id 1gWrbJ-0007pV-00; Tue, 11 Dec 2018 23:38:05 +0000
-Date:   Tue, 11 Dec 2018 18:38:05 -0500
-From:   Rich Felker <dalias@libc.org>
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     tg@mirbsd.de, Linus Torvalds <torvalds@linux-foundation.org>,
-        X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Florian Weimer <fweimer@redhat.com>,
-        Mike Frysinger <vapier@gentoo.org>,
-        "H. J. Lu" <hjl.tools@gmail.com>, x32@buildd.debian.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Will Deacon <will.deacon@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>
-Subject: Re: Can we drop upstream Linux x32 support?
-Message-ID: <20181211233805.GO23599@brightrain.aerifal.cx>
-References: <CALCETrXoRAibsbWa9nfbDrt0iEuebMnCMhSFg-d9W-J2g8mDjw@mail.gmail.com>
- <CAHk-=wi_Kp=3XmGDdzmadzFSPFvuL+aAJ6ZPAR=o4z=KwYT2vw@mail.gmail.com>
- <Pine.BSM.4.64L.1812112150480.21176@herc.mirbsd.org>
- <CALCETrWgpAX7FV23zHmid83SsgnwFMKD4a_-xSEgB6v0kJR5sA@mail.gmail.com>
+        Tue, 11 Dec 2018 18:39:01 -0500
+Received: by mail-ot1-f65.google.com with SMTP id 81so15906573otj.2
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 15:39:01 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=VZ+c/zPZIl/2ZFGhTHuBpV4gAexNl5wODnJ7t/X6I6M=;
+        b=SK3oUtyJK96DOkxpnVQsljLKXxSB2AOT8DF/VdOMsl8WP2bswHT/WMH6fvfiyTgImH
+         f2DFBTitwGNC6d31nbjGqtUukNgTVvGjtsjSBagpEroR8e/Z6LjKYVjWu732vWFHU82A
+         2IgR24rCQpedZCc0mHD1vUQ7CAQJ7db5uz6gnSZuqYIoM79bIbkmT3Qoep3xdrKVwSCC
+         ezW30wAaVaq+MV/x1N0phyvC9ZQ/psn29+cGcoYqH8/q+LiU3B6m7+IainfQqVreLTK/
+         F+Uw6U5Eb60krazQUrTgC1UbpwIxncczCnAROhnMQ7dFcqsbkvWrBeioyGx5W3G6ybgV
+         5D3A==
+X-Gm-Message-State: AA+aEWZeZB4Xj9OSA2wN6YnhbSVYffzDwUTT9zbEhV1NX5yBeq+WsQGC
+        4KMzYYH+hRDl1umwmuwHxXw=
+X-Google-Smtp-Source: AFSGD/UBBvUdUiBTKCJYMBRCB6vb1Il2tnSdemydMJuX7WjX8gBgFM/KK0moPnwhSXm+VtuxQsSD1g==
+X-Received: by 2002:a9d:a78:: with SMTP id 111mr12577789otg.229.1544571541120;
+        Tue, 11 Dec 2018 15:39:01 -0800 (PST)
+Received: from ?IPv6:2600:1700:65a0:78e0:514:7862:1503:8e4d? ([2600:1700:65a0:78e0:514:7862:1503:8e4d])
+        by smtp.gmail.com with ESMTPSA id l1sm7815580oib.10.2018.12.11.15.38.59
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 11 Dec 2018 15:39:00 -0800 (PST)
+Subject: Re: [PATCH] nvme-rdma: complete requests from ->timeout
+To:     Jaesoo Lee <jalee@purestorage.com>, nitzanc@mellanox.com
+Cc:     keith.busch@intel.com, axboe@fb.com, hch@lst.de,
+        Roland Dreier <roland@purestorage.com>,
+        Prabhath Sajeepa <psajeepa@purestorage.com>,
+        Ashish Karkare <ashishk@purestorage.com>,
+        linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org
+References: <1543535954-28073-1-git-send-email-jalee@purestorage.com>
+ <cc7cbad6-0e7d-8328-c602-61d659c3a7de@grimberg.me>
+ <b7b26a7a-70be-d805-ee64-67fba0b4efa8@mellanox.com>
+ <CAJX3Cti_ZJF5E+NRuRzSeEUgaXsbA2U9C+Rh5OdYd4EMwXC1gw@mail.gmail.com>
+ <773bb91f-40a4-a525-f7b8-db821b402821@mellanox.com>
+ <CAJX3Ctjtt2zebuLfzKM30PV1x3fm8HaJJFJw3zZSOShWnQnu=Q@mail.gmail.com>
+From:   Sagi Grimberg <sagi@grimberg.me>
+Message-ID: <c645f196-3fbb-c9b9-5686-730ceed102fa@grimberg.me>
+Date:   Tue, 11 Dec 2018 15:38:57 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CALCETrWgpAX7FV23zHmid83SsgnwFMKD4a_-xSEgB6v0kJR5sA@mail.gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <CAJX3Ctjtt2zebuLfzKM30PV1x3fm8HaJJFJw3zZSOShWnQnu=Q@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 11, 2018 at 03:22:43PM -0800, Andy Lutomirski wrote:
-> On Tue, Dec 11, 2018 at 2:14 PM Thorsten Glaser <tg@mirbsd.de> wrote:
-> > I was also considering investing a nontrivial amount of
-> > work into porting klibc to x32, since hpa does not wish
-> > to do it himself. Thankfully I have only done a bit yet.
-> >
-> > Furthermore, x32 was the first of the many *64ilp32
-> > architectures; I know I’ve seen amd64ilp32 and at least
-> > one other I don’t recall. It will have prototyped many
-> > of the problems users of these will run in, and I’d prefer
-> > to keep it (completely selfish because I don’t wish to
-> > have to crossgrade a whole system yet again).
+> I cannot reproduce the bug with the patch; in my failure scenarios, it
+> seems that completing the request on errors in nvme_rdma_send_done
+> makes __nvme_submit_sync_cmd to be unblocked. Also, I think this is
+> safe from the double completions.
 > 
-> it kind of seems like arm64's lesson is "don't do it like x32".
-> 
-> There's some effort going on right now to make it possible to add
-> syscalls without having to muck with every single architecture.  I
-> don't really want x32 to derail that effort.  I suppose we could say
-> that x32 stays but that it simply gets no new syscalls, but that seems
-> a bit lame.  Unfortunately, on x86, x32 really is a third ABI that is
-> not compatible in a structure-memory-layout sense with the other two.
-> What happens if someone adds a struct like:
-> 
-> struct nasty_on_x32 {
->   __kernel_long_t a;
->   void * __user b;
-> };
-> 
-> On x86_64, that's two 8-byte fields.  On x86_32, it's two four-byte
-> fields.  On x32, it's an 8-byte field and a 4-byte field.  Now what?
-> 
-> I'm sure we could have some magic gcc plugin or other nifty tool that gives us:
-> 
-> copy_from_user(struct struct_name, kernel_ptr, user_ptr);
-> 
-> where it automatically generates code for all possible ABIs to copy
-> over the struct and dispatches dynamically based on the current
-> syscall ABI, but I have trouble imagining anyone volunteering to
-> actually do this work.  Instead we get ad hoc fixes for each syscall,
-> along the lines of preadv64v2(), which get done when somebody notices
-> a problem.
+> However, it seems that nvme_rdma_timeout code is still not free from
+> the double completion problem. So, it looks promising to me if you
+> could separate out the nvme_rdma_wr_error handling code as a new
+> patch.
 
-For what it's worth, this is exactly what I plan to do if/when I ever
-get to doing my kernel with multiple/universal userspace ABI support:
-pure-data markup for the data structures (and syscall argument
-arrangements) userspace is speaking, with generic marshalling code.
-But I don't think it's easy to retrofit to Linux, and probably
-wouldn't be welcome there.
-
-Rich
+Guys, can you please send proper patches so we can review properly?
