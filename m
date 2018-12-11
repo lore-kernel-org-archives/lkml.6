@@ -2,56 +2,56 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE59DC5CFFE
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:43:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AB5CC5CFFE
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:43:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 824B62087F
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:43:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3EFBB208E7
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:43:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544543018;
-	bh=8ee5csuBoPGvKgb5+WrQ3q5m/c5hSpxW2Zn5wvAOM0k=;
+	s=default; t=1544543023;
+	bh=PFUHQ0lZ7W+tzOoOz1jobs+RqyC9CUusRAhw8OJpDdg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Rp66VF46EfZ7YZlVYtbB/vfonVKJ2YPkXalkN3CiLAFKm+FYPQ9Sqr4sOD0ENewdh
-	 Gsv+bXMcwU/ysP+iviKlmUSrS6IFszxIYIHD9fPI6DV2VgkvCdXCabrExMvKzzzE7N
-	 I0yDsbAycNI7wV2S0lCTOzi5SpjHNJk2HJEwZkMg=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 824B62087F
+	b=IQsFdCUD5x8uLOFkMfuTOYIsboLUcIY5T2VrfaWUOrw0SUDTl88bM3nZp6HqHju2U
+	 bAAzUnj2M4+yd7X/PQ4xeD0VTYWeM2dGrJp2TeCXPal6iQSulpwiPoW10++s+p4ldp
+	 UP1ldASANsAyuAgynrAafzMSMbfKve5XyBYIU+0Q=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3EFBB208E7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727577AbeLKPnh (ORCPT
+        id S1727605AbeLKPnm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 10:43:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60094 "EHLO mail.kernel.org"
+        Tue, 11 Dec 2018 10:43:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60136 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727559AbeLKPnd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:43:33 -0500
+        id S1727230AbeLKPng (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 10:43:36 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 768B020870;
-        Tue, 11 Dec 2018 15:43:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CB33220672;
+        Tue, 11 Dec 2018 15:43:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544543012;
-        bh=8ee5csuBoPGvKgb5+WrQ3q5m/c5hSpxW2Zn5wvAOM0k=;
+        s=default; t=1544543015;
+        bh=PFUHQ0lZ7W+tzOoOz1jobs+RqyC9CUusRAhw8OJpDdg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1HRiLaTDtzq0RKVVfLNKxLgRAM/18ftJpPOWGomWDTy9FCetQzu8hKF14YGKaGEf+
-         /3q1A7fJKGtJX4RX1U1iIS3VOVxTR4Nv1dqASvWUb/TRZQSRc/TD95dwlS3fZ/ESyT
-         0zMGjMnYShYs25OES0XvWyOq/fm9Q5JWr//qqspY=
+        b=nX5TRA8p6i2aI2X8CizJ/iAV5WvXFkWSwyfOfIwAQBF1yIonZ3E5gpGK1FNZ0pJQL
+         eY6Jo98x9w7oruC3JdJooHQik50B0MNXYFURWST+nvBhPyg3P0A5YIaZilD7hebHBA
+         YdB5V1U366uglzs8+vczsidg3DyZK+QPr+SSihDU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tatyana Brokhman <tlinder@codeaurora.org>,
-        Felipe Balbi <balbi@kernel.org>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>
-Subject: [PATCH 3.18 33/54] usb: gadget: dummy: fix nonsensical comparisons
-Date:   Tue, 11 Dec 2018 16:41:21 +0100
-Message-Id: <20181211151547.964103910@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Joerg Roedel <jroedel@suse.de>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 3.18 34/54] iommu/ipmmu-vmsa: Fix crash on early domain free
+Date:   Tue, 11 Dec 2018 16:41:22 +0100
+Message-Id: <20181211151548.012124488@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181211151546.010073210@linuxfoundation.org>
 References: <20181211151546.010073210@linuxfoundation.org>
@@ -70,59 +70,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Arnd Bergmann <arnd@arndb.de>
+[ Upstream commit e5b78f2e349eef5d4fca5dc1cf5a3b4b2cc27abd ]
 
-commit 7661ca09b2ff98f48693f431bb01fed62830e433 upstream.
+If iommu_ops.add_device() fails, iommu_ops.domain_free() is still
+called, leading to a crash, as the domain was only partially
+initialized:
 
-gcc-8 points out two comparisons that are clearly bogus
-and almost certainly not what the author intended to write:
+    ipmmu-vmsa e67b0000.mmu: Cannot accommodate DMA translation for IOMMU page tables
+    sata_rcar ee300000.sata: Unable to initialize IPMMU context
+    iommu: Failed to add device ee300000.sata to group 0: -22
+    Unable to handle kernel NULL pointer dereference at virtual address 0000000000000038
+    ...
+    Call trace:
+     ipmmu_domain_free+0x1c/0xa0
+     iommu_group_release+0x48/0x68
+     kobject_put+0x74/0xe8
+     kobject_del.part.0+0x3c/0x50
+     kobject_put+0x60/0xe8
+     iommu_group_get_for_dev+0xa8/0x1f0
+     ipmmu_add_device+0x1c/0x40
+     of_iommu_configure+0x118/0x190
 
-drivers/usb/gadget/udc/dummy_hcd.c: In function 'set_link_state_by_speed':
-drivers/usb/gadget/udc/dummy_hcd.c:379:31: error: bitwise comparison always evaluates to false [-Werror=tautological-compare]
-         USB_PORT_STAT_ENABLE) == 1 &&
-                               ^~
-drivers/usb/gadget/udc/dummy_hcd.c:381:25: error: bitwise comparison always evaluates to false [-Werror=tautological-compare]
-      USB_SS_PORT_LS_U0) == 1 &&
-                         ^~
+Fix this by checking if the domain's context already exists, before
+trying to destroy it.
 
-I looked at the code for a bit and came up with a change that makes
-it look like what the author probably meant here. This makes it
-look reasonable to me and to gcc, shutting up the warning.
-
-It does of course change behavior as the two conditions are actually
-evaluated rather than being hardcoded to false, and I have made no
-attempt at verifying that the changed logic makes sense in the context
-of a USB HCD, so that part needs to be reviewed carefully.
-
-Fixes: 1cd8fd2887e1 ("usb: gadget: dummy_hcd: add SuperSpeed support")
-Cc: Tatyana Brokhman <tlinder@codeaurora.org>
-Cc: Felipe Balbi <balbi@kernel.org>
-Acked-by: Alan Stern <stern@rowland.harvard.edu>
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Robin Murphy <robin.murphy@arm.com>
+Fixes: d25a2a16f0889 ('iommu: Add driver for Renesas VMSA-compatible IPMMU')
+Signed-off-by: Joerg Roedel <jroedel@suse.de>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/gadget/udc/dummy_hcd.c |    9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+ drivers/iommu/ipmmu-vmsa.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/usb/gadget/udc/dummy_hcd.c
-+++ b/drivers/usb/gadget/udc/dummy_hcd.c
-@@ -313,11 +313,10 @@ static void set_link_state_by_speed(stru
- 			     USB_PORT_STAT_CONNECTION) == 0)
- 				dum_hcd->port_status |=
- 					(USB_PORT_STAT_C_CONNECTION << 16);
--			if ((dum_hcd->port_status &
--			     USB_PORT_STAT_ENABLE) == 1 &&
--				(dum_hcd->port_status &
--				 USB_SS_PORT_LS_U0) == 1 &&
--				dum_hcd->rh_state != DUMMY_RH_SUSPENDED)
-+			if ((dum_hcd->port_status & USB_PORT_STAT_ENABLE) &&
-+			    (dum_hcd->port_status &
-+			     USB_PORT_STAT_LINK_STATE) == USB_SS_PORT_LS_U0 &&
-+			    dum_hcd->rh_state != DUMMY_RH_SUSPENDED)
- 				dum_hcd->active = 1;
- 		}
- 	} else {
+diff --git a/drivers/iommu/ipmmu-vmsa.c b/drivers/iommu/ipmmu-vmsa.c
+index 7dab5cbcc775..47e8db51288b 100644
+--- a/drivers/iommu/ipmmu-vmsa.c
++++ b/drivers/iommu/ipmmu-vmsa.c
+@@ -383,6 +383,9 @@ static int ipmmu_domain_init_context(struct ipmmu_vmsa_domain *domain)
+ 
+ static void ipmmu_domain_destroy_context(struct ipmmu_vmsa_domain *domain)
+ {
++	if (!domain->mmu)
++		return;
++
+ 	/*
+ 	 * Disable the context. Flush the TLB as required when modifying the
+ 	 * context registers.
+-- 
+2.19.1
+
 
 
