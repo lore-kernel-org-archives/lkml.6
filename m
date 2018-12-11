@@ -2,77 +2,90 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA9D0C07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 10:07:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B209C07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 10:08:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B21642081B
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 10:07:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544522842;
-	bh=LXHml/Uve5wVCTjJwp+U4ppI8WnmmADPNw81zJsP5rc=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=2JHP0MT//u4ULraUdNPY56gNJG0IYhfsFEaXV5Abu186baEiPZ5h70tnXKCrucJh6
-	 QB+lK6crKBzrh48hcXcl7X47FXwJFFu81dKOOghyqRlnOFLV9Ft9XQ+EO11k9els8F
-	 jRaITL8JKt1avOsUTcAaos/3md+1SvqbCnUIYCIM=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B21642081B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 3C8AA2081B
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 10:08:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="3Cxpj2mk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C8AA2081B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726317AbeLKKHV (ORCPT
+        id S1726324AbeLKKIP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 05:07:21 -0500
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:42179 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726104AbeLKKHV (ORCPT
+        Tue, 11 Dec 2018 05:08:15 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:53722 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726104AbeLKKIP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 05:07:21 -0500
-Received: by mail-oi1-f195.google.com with SMTP id w13so11524162oiw.9;
-        Tue, 11 Dec 2018 02:07:20 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=LXHml/Uve5wVCTjJwp+U4ppI8WnmmADPNw81zJsP5rc=;
-        b=tbR0aIZfIdoWmlrkxyCpTxZ+2yaMvxsCkOsT4dekxqxNsBJihs197ZxFXd1C3nml0J
-         Pb89iGRYaa9sgx3yY4mDFXHtqEVpQkrl8ofYg3QF+/IPrvcUxTcSbjoW5U4/xpITW51G
-         Q/aWrLKEXUEwL9plzcTpvdHLlNKD87FIhCcvuelcYyl1TbQmaCktixrmYahcO68i7/D4
-         zHmV2IgIiG+7fqHen2+WZhs87kXYE5GOG6eXvZ+w1IZmtxRnZUad+PZgpvfYSQAsoDmm
-         L3aMBXcTJ4zEQz4tmpepogu23Ljc5A7SKaWsc75hVFr500iSPMu5mlqHeqAKXLF4r12a
-         LRjQ==
-X-Gm-Message-State: AA+aEWbJEf9gSmtZRK6+OulGsZ7SCp4BX1mPVhsQBiwlqGOF8p3vRUP3
-        r0oguWPpAi7pEkakMHZ/TW1OoTvOvLbh/Ix4RT0=
-X-Google-Smtp-Source: AFSGD/Vn1PP+FASMV7zxOIQbWxnCQZIyWu6VeYuLnww/3AfvmxCONTOS1Ph+3RjLGSp1pvgWVIBVVShAi9dmG6kdZgU=
-X-Received: by 2002:aca:368a:: with SMTP id d132mr956821oia.193.1544522839776;
- Tue, 11 Dec 2018 02:07:19 -0800 (PST)
+        Tue, 11 Dec 2018 05:08:15 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wBBA3fep187673;
+        Tue, 11 Dec 2018 10:07:47 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=xcfh6X1iCfgCIOM5TA1lbZ+h6nUBiMBhdmWu9whNHn8=;
+ b=3Cxpj2mklIxyFEdp+01BAfDwnqtq0xOZ2gNzCfthciaFbN8MJzR1qKX3eMPaKmBBuo20
+ 5/QyQ3iXJUjdznVZi5QphWKcwGpj+8U/4VABcvqYczNq2A9XAJ0H2cKolnZLwsipSq/b
+ 6p8yWceMC9JmaPjGj9APDcvTKo0zEC2oMHHLafc9pA/dDFosrSPwHi2l+6TZM7I8iehT
+ N8rx6ZVcUMXWo0Ou8850U81orQb0CbkjgQ8adKIkLDEbKOvJKkWFbNJY3UHTywCwzmVQ
+ EJGTSIC3hrUVcNv3W3dzxfU08AF3RlmdP2Av6ZF9x20ZMhAtqgXS19as+jSAG3D10nQX xg== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by userp2120.oracle.com with ESMTP id 2p86kqtx6f-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 11 Dec 2018 10:07:47 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wBBA7eNj001895
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 11 Dec 2018 10:07:41 GMT
+Received: from abhmp0002.oracle.com (abhmp0002.oracle.com [141.146.116.8])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wBBA7du2024301;
+        Tue, 11 Dec 2018 10:07:39 GMT
+Received: from kadam (/10.175.35.120)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 11 Dec 2018 02:07:38 -0800
+Date:   Tue, 11 Dec 2018 13:07:28 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Eric Anholt <eric@anholt.net>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        devel@driverdev.osuosl.org, Tara Null <tn@fastmail.net>,
+        linux-kernel@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] staging: vchiq: rework remove_event handling
+Message-ID: <20181211100728.GC3116@kadam>
+References: <20181210211231.4084251-1-arnd@arndb.de>
 MIME-Version: 1.0
-References: <20181210181315.5023-1-okaya@kernel.org> <20181210181315.5023-2-okaya@kernel.org>
-In-Reply-To: <20181210181315.5023-2-okaya@kernel.org>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Tue, 11 Dec 2018 11:07:08 +0100
-Message-ID: <CAJZ5v0htmHTgRa9TZ7f0XcGEt_XMmfEYhcQ=N2Lcn1V+TxPzxg@mail.gmail.com>
-Subject: Re: [PATCH v3 2/3] ACPI / OSL: Allow PCI to be disabled
-To:     okaya@kernel.org
-Cc:     ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181210211231.4084251-1-arnd@arndb.de>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9103 signatures=668679
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=948
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1812110095
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 10, 2018 at 7:13 PM Sinan Kaya <okaya@kernel.org> wrote:
->
-> Getting ready to allow PCI to be disabled with ACPI enabled. Stub
-> out calls that depend on PCI.
+On Mon, Dec 10, 2018 at 10:11:58PM +0100, Arnd Bergmann wrote:
+> Note that I'm changing it back to 'killable' after the previous patch
+> changed 'killable' to 'interruptible', apparently based on a misunderstanding
+> of the subtle down_interruptible() macro override in vchiq_killable.h.
 
-I would prefer the subject to say something like "Allow CONFIG_PCI to
-be unset" or "Allow PCI to be disabled in Kconfig".
+Oh wow...  The non standard down_interruptible() macro is ugly.
 
-It is somewhat ambiguous otherwise and one has to look at the patch to
-see what it really is about.
+regards,
+dan carpenter
+
