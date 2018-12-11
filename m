@@ -2,198 +2,115 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.9 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A6EBC07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:38:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4854CC5CFFE
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:39:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4B1F020672
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:38:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B1F020672
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id 0C61720672
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:39:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="l0ds9tv2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C61720672
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727206AbeLKPi5 (ORCPT
+        id S1727217AbeLKPjH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 10:38:57 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:51487 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726448AbeLKPi5 (ORCPT
+        Tue, 11 Dec 2018 10:39:07 -0500
+Received: from mail-io1-f68.google.com ([209.85.166.68]:44076 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726499AbeLKPjG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:38:57 -0500
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wBBFcTtn4043326
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Tue, 11 Dec 2018 07:38:29 -0800
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wBBFcTCi4043322;
-        Tue, 11 Dec 2018 07:38:29 -0800
-Date:   Tue, 11 Dec 2018 07:38:29 -0800
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Quentin Perret <tipbot@zytor.com>
-Message-ID: <tip-390031e4c309c94ecc07a558187eb5185200df83@git.kernel.org>
-Cc:     quentin.perret@arm.com, mingo@kernel.org,
-        torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
-        tglx@linutronix.de, hpa@zytor.com, peterz@infradead.org,
-        efault@gmx.de
-Reply-To: mingo@kernel.org, quentin.perret@arm.com, peterz@infradead.org,
-          efault@gmx.de, torvalds@linux-foundation.org,
-          linux-kernel@vger.kernel.org, hpa@zytor.com, tglx@linutronix.de
-In-Reply-To: <20181203095628.11858-14-quentin.perret@arm.com>
-References: <20181203095628.11858-14-quentin.perret@arm.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:sched/core] sched/fair: Introduce an energy estimation helper
- function
-Git-Commit-ID: 390031e4c309c94ecc07a558187eb5185200df83
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Tue, 11 Dec 2018 10:39:06 -0500
+Received: by mail-io1-f68.google.com with SMTP id r200so12090269iod.11
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 07:39:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=Z67cECj/N8A+GztAxrBX6BJXkk6pkF30/HSeWqeZTVE=;
+        b=l0ds9tv2UKGL66zlj+teDMfqrbzMa5ePyPCexFJ0WTgtQZ5aEjcsxMGrV4pxc828KK
+         IPoMU1tGgkQ+UZA2wqOL8eFwzxIO/xvzLmSqQ3FFCRMl9lBTsOLP1xWYfomgriLvp5dR
+         EI03HaLsbZYwvztBvR05g4cXSg9y9XiAjJVKtWHQBxXrYae7z+TKkYEbN3ecZ5cvcqh1
+         MoaB8k43/Adrf5fVlpCZ8bSAXpiDJVofaGpIOn/a5FLzi5tYjsh6BZfM/DrQzholH2Fq
+         YnpUboCEJ0OszBFlD5wBUrHak+4O9z7NynabNU3NQbyR/g1akCRC41X8HR0YfJcwKNI7
+         xJLQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=Z67cECj/N8A+GztAxrBX6BJXkk6pkF30/HSeWqeZTVE=;
+        b=gI6hBUZhxZoXieEsBJ+5UWODNMrl/QsT/wAHS0/pPbId1bHZHKIVgzVHJGsdUTRNl5
+         0OroqZprW77AhmekVhQx+h1UEuWzg79FLQIDxrWZ0aMuOrvwlY7hzLTgwdTZolDHMhhK
+         UFCQ7O4Cys8q1a8OyqnsYHNCV4rh5dS0aB1G7b4+8PFiHMtziB9wqtk2lqJYwO6nStrN
+         Soy9rBjsaKIBw+UYfYDFCpT/wqH+I9zk7fd5tYXZ/T04ufZi7iTxv/7KwadskRCPWZ95
+         rHgbAWamg5Lf8esbHCscc6yaZmyQ6czENyvhgaGxMXiPCwYaWZ4vq5VhNJ3eA5XG2eXU
+         lYPg==
+X-Gm-Message-State: AA+aEWaG3bPcY07xFUdFrWwg4KmbZT2qobSKxAyUfoXYdd15NiLGFTE5
+        deynA+i7LOmntlhhEEcNCW8wTHKhZkZlgKg8GoC22g==
+X-Google-Smtp-Source: AFSGD/V/dRZRfa1JKWOYTmQh03EBByV6dbf/fju/CVzgAIZD2SZT0yfZEHNC6qSNgWKgbt0znEBXxP52K74bGUJMmO4=
+X-Received: by 2002:a5d:9298:: with SMTP id s24mr14555922iom.111.1544542745437;
+ Tue, 11 Dec 2018 07:39:05 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+References: <20181120134032.31645-1-brgl@bgdev.pl> <20181120134032.31645-3-brgl@bgdev.pl>
+ <20181203110916.eseh2udxvhi4lf3v@pengutronix.de> <20181211141509.6x74jlzipj6o2exh@pengutronix.de>
+In-Reply-To: <20181211141509.6x74jlzipj6o2exh@pengutronix.de>
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Tue, 11 Dec 2018 16:38:54 +0100
+Message-ID: <CAMRc=MepmF4phnh_cSE5sFDMYcYEtyh0KGeBot_tu1jnq1276A@mail.gmail.com>
+Subject: Re: [PATCH 2/2] gpio: mockup: use irq_sim_fire_edge()
+To:     =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  390031e4c309c94ecc07a558187eb5185200df83
-Gitweb:     https://git.kernel.org/tip/390031e4c309c94ecc07a558187eb5185200df83
-Author:     Quentin Perret <quentin.perret@arm.com>
-AuthorDate: Mon, 3 Dec 2018 09:56:26 +0000
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Tue, 11 Dec 2018 15:17:02 +0100
+wt., 11 gru 2018 o 15:15 Uwe Kleine-K=C3=B6nig
+<u.kleine-koenig@pengutronix.de> napisa=C5=82(a):
+>
+> Hello Bartosz,
+>
+> On Mon, Dec 03, 2018 at 12:09:16PM +0100, Uwe Kleine-K=C3=B6nig wrote:
+> > On Tue, Nov 20, 2018 at 02:40:32PM +0100, Bartosz Golaszewski wrote:
+> > > @@ -213,7 +213,8 @@ static ssize_t gpio_mockup_event_write(struct fil=
+e *file,
+> > >     chip =3D priv->chip;
+> > >
+> > >     gpiod_set_value_cansleep(desc, val);
+> > > -   irq_sim_fire(&chip->irqsim, priv->offset);
+> > > +   edge =3D val =3D=3D 0 ? IRQ_TYPE_EDGE_FALLING : IRQ_TYPE_EDGE_RIS=
+ING;
+> > > +   irq_sim_fire_edge(&chip->irqsim, priv->offset, edge);
+> >
+> > If I write 0 twice into the debugfs file, does it fire two irqs or only
+> > one? I think it fires two but only one would be the right behaviour?!
+>
+> If you still think that patch 1 of this series is the way to go, I think
+> this objection is still valid. Then you need to check the state of the
+> line by at least calling (something like) .get_value to determine if the
+> previous value was different.
+>
 
-sched/fair: Introduce an energy estimation helper function
+Hi Uwe,
 
-In preparation for the definition of an energy-aware wakeup path,
-introduce a helper function to estimate the consequence on system energy
-when a specific task wakes-up on a specific CPU. compute_energy()
-estimates the capacity state to be reached by all performance domains
-and estimates the consumption of each online CPU according to its Energy
-Model and its percentage of busy time.
+I've already started working on a series improving the entire concept.
+I've taken some of your suggestions into account.
 
-Signed-off-by: Quentin Perret <quentin.perret@arm.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Mike Galbraith <efault@gmx.de>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: adharmap@codeaurora.org
-Cc: chris.redpath@arm.com
-Cc: currojerez@riseup.net
-Cc: dietmar.eggemann@arm.com
-Cc: edubezval@gmail.com
-Cc: gregkh@linuxfoundation.org
-Cc: javi.merino@kernel.org
-Cc: joel@joelfernandes.org
-Cc: juri.lelli@redhat.com
-Cc: morten.rasmussen@arm.com
-Cc: patrick.bellasi@arm.com
-Cc: pkondeti@codeaurora.org
-Cc: rjw@rjwysocki.net
-Cc: skannan@codeaurora.org
-Cc: smuckle@google.com
-Cc: srinivas.pandruvada@linux.intel.com
-Cc: thara.gopinath@linaro.org
-Cc: tkjos@google.com
-Cc: valentin.schneider@arm.com
-Cc: vincent.guittot@linaro.org
-Cc: viresh.kumar@linaro.org
-Link: https://lkml.kernel.org/r/20181203095628.11858-14-quentin.perret@arm.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- kernel/sched/fair.c | 76 +++++++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 76 insertions(+)
+Since we're already at rc-6 I'd like to get those upstream despite
+there being some disagreements to keep the userspace intact.
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 767e7675774b..b3c94584d947 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -6377,6 +6377,82 @@ static int wake_cap(struct task_struct *p, int cpu, int prev_cpu)
- 	return !task_fits_capacity(p, min_cap);
- }
- 
-+/*
-+ * Predicts what cpu_util(@cpu) would return if @p was migrated (and enqueued)
-+ * to @dst_cpu.
-+ */
-+static unsigned long cpu_util_next(int cpu, struct task_struct *p, int dst_cpu)
-+{
-+	struct cfs_rq *cfs_rq = &cpu_rq(cpu)->cfs;
-+	unsigned long util_est, util = READ_ONCE(cfs_rq->avg.util_avg);
-+
-+	/*
-+	 * If @p migrates from @cpu to another, remove its contribution. Or,
-+	 * if @p migrates from another CPU to @cpu, add its contribution. In
-+	 * the other cases, @cpu is not impacted by the migration, so the
-+	 * util_avg should already be correct.
-+	 */
-+	if (task_cpu(p) == cpu && dst_cpu != cpu)
-+		sub_positive(&util, task_util(p));
-+	else if (task_cpu(p) != cpu && dst_cpu == cpu)
-+		util += task_util(p);
-+
-+	if (sched_feat(UTIL_EST)) {
-+		util_est = READ_ONCE(cfs_rq->avg.util_est.enqueued);
-+
-+		/*
-+		 * During wake-up, the task isn't enqueued yet and doesn't
-+		 * appear in the cfs_rq->avg.util_est.enqueued of any rq,
-+		 * so just add it (if needed) to "simulate" what will be
-+		 * cpu_util() after the task has been enqueued.
-+		 */
-+		if (dst_cpu == cpu)
-+			util_est += _task_util_est(p);
-+
-+		util = max(util, util_est);
-+	}
-+
-+	return min(util, capacity_orig_of(cpu));
-+}
-+
-+/*
-+ * compute_energy(): Estimates the energy that would be consumed if @p was
-+ * migrated to @dst_cpu. compute_energy() predicts what will be the utilization
-+ * landscape of the * CPUs after the task migration, and uses the Energy Model
-+ * to compute what would be the energy if we decided to actually migrate that
-+ * task.
-+ */
-+static long
-+compute_energy(struct task_struct *p, int dst_cpu, struct perf_domain *pd)
-+{
-+	long util, max_util, sum_util, energy = 0;
-+	int cpu;
-+
-+	for (; pd; pd = pd->next) {
-+		max_util = sum_util = 0;
-+		/*
-+		 * The capacity state of CPUs of the current rd can be driven by
-+		 * CPUs of another rd if they belong to the same performance
-+		 * domain. So, account for the utilization of these CPUs too
-+		 * by masking pd with cpu_online_mask instead of the rd span.
-+		 *
-+		 * If an entire performance domain is outside of the current rd,
-+		 * it will not appear in its pd list and will not be accounted
-+		 * by compute_energy().
-+		 */
-+		for_each_cpu_and(cpu, perf_domain_span(pd), cpu_online_mask) {
-+			util = cpu_util_next(cpu, p, dst_cpu);
-+			util = schedutil_energy_util(cpu, util);
-+			max_util = max(util, max_util);
-+			sum_util += util;
-+		}
-+
-+		energy += em_pd_energy(pd->em_pd, max_util, sum_util);
-+	}
-+
-+	return energy;
-+}
-+
- /*
-  * select_task_rq_fair: Select target runqueue for the waking task in domains
-  * that have the 'sd_flag' flag set. In practice, this is SD_BALANCE_WAKE,
+For now it will generate two falling edge interrupts when you write 0 twice=
+.
+
+Bart
