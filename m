@@ -7,49 +7,50 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89F4EC5CFFE
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:47:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85AC9C5CFFE
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:47:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 458A12133F
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:47:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4CDAF2133F
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:47:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544543271;
-	bh=wCZKrx4H0QRBi2A+ox/vSfx+q10GvK0cBg14mkYv/yQ=;
+	s=default; t=1544543278;
+	bh=10HNzsinpM/ebLOFLl6kdEI2bgl51pOXS53D7vwxyis=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=tdyVgf1IzWxpLu0fRMRvykuuEo6/UMK8FnNVTMJjoqB74EYZy4T2iBhmiRcrYbauU
-	 QL1WXYmw0Xtemfc92DhGoeI8IaVg7m/sMOtRP3tESivVcJzbPRF0+Ace1yaSOiBBuG
-	 Pde7unl5rXW2YMlEl3bfbO9XiA8Gn6TzgQ3QO8wI=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 458A12133F
+	b=b+WATBDZ9+WmI6f4T9gyHu2MRjcaXsKs5LzcPGkKmVLLN7zY1vKrENYzY+Erqft5q
+	 yqe2jEvSOcQ9TxOVUkrdXdOV7ZDVDDRBQzpXKZF/8CLjmHeCtOemkIXrAaCqCIB+Ji
+	 ht1XBj5NlyY2VEHzv1qgqy6TIqKgOZeAYCzjEUCU=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4CDAF2133F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728663AbeLKPrt (ORCPT
+        id S1728690AbeLKPr5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 10:47:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36204 "EHLO mail.kernel.org"
+        Tue, 11 Dec 2018 10:47:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36296 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728152AbeLKPrp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:47:45 -0500
+        id S1728667AbeLKPrw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 10:47:52 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A5F322145D;
-        Tue, 11 Dec 2018 15:47:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C224F2133F;
+        Tue, 11 Dec 2018 15:47:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544543264;
-        bh=wCZKrx4H0QRBi2A+ox/vSfx+q10GvK0cBg14mkYv/yQ=;
+        s=default; t=1544543272;
+        bh=10HNzsinpM/ebLOFLl6kdEI2bgl51pOXS53D7vwxyis=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YpUZlKo5/OhUJclfdaL0z0Mcgc5EMC2FlWlX6GSGSeqKRkKNu/Cv87OuCn9jgbSl4
-         LViyxD/hKx/84UvXQrLbdJskEzsiIEFdi17sddwilzgB2SEqAMEb/cW7zlEFi2tZ7s
-         X0CCZx5SfeYBSl7P3+6yGOVejOjuc0bJqdzDCE2c=
+        b=i/dWX/KY04EfZm4eNKTSOrVrxO7J/BQ7WA865ZTIMmTwNAd9qAq+We57CUMWqY7Ir
+         HpFASmpAE+qoAnLlkkee+jXZ5sEN2+v+ujsunaw8SC9enf8hfs1pz52TILluK8QFqN
+         T6DQItO3J/padZBg9v+37ngO/bz/cOH/h15BDQMg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wonmin Jung <wonmin.jung@lge.com>,
-        Chanho Min <chanho.min@lge.com>, Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.4 75/91] ALSA: pcm: Fix starvation on down_write_nonblock()
-Date:   Tue, 11 Dec 2018 16:41:34 +0100
-Message-Id: <20181211151612.555362106@linuxfoundation.org>
+        stable@vger.kernel.org, Halil Pasic <pasic@linux.ibm.com>,
+        Cornelia Huck <cohuck@redhat.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>
+Subject: [PATCH 4.4 78/91] virtio/s390: avoid race on vcdev->config
+Date:   Tue, 11 Dec 2018 16:41:37 +0100
+Message-Id: <20181211151612.962127872@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181211151606.026852373@linuxfoundation.org>
 References: <20181211151606.026852373@linuxfoundation.org>
@@ -68,91 +69,74 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Chanho Min <chanho.min@lge.com>
+From: Halil Pasic <pasic@linux.ibm.com>
 
-commit b888a5f713e4d17faaaff24316585a4eb07f35b7 upstream.
+commit 2448a299ec416a80f699940a86f4a6d9a4f643b1 upstream.
 
-Commit 67ec1072b053 ("ALSA: pcm: Fix rwsem deadlock for non-atomic PCM
-stream") fixes deadlock for non-atomic PCM stream. But, This patch
-causes antother stuck.
-If writer is RT thread and reader is a normal thread, the reader
-thread will be difficult to get scheduled. It may not give chance to
-release readlocks and writer gets stuck for a long time if they are
-pinned to single cpu.
+Currently we have a race on vcdev->config in virtio_ccw_get_config() and
+in virtio_ccw_set_config().
 
-The deadlock described in the previous commit is because the linux
-rwsem queues like a FIFO. So, we might need non-FIFO writelock, not
-non-block one.
+This normally does not cause problems, as these are usually infrequent
+operations. However, for some devices writing to/reading from the config
+space can be triggered through sysfs attributes. For these, userspace can
+force the race by increasing the frequency.
 
-My suggestion is that the writer gives reader a chance to be scheduled
-by using the minimum msleep() instaed of spinning without blocking by
-writer. Also, The *_nonblock may be changed to *_nonfifo appropriately
-to this concept.
-In terms of performance, when trylock is failed, this minimum periodic
-msleep will have the same performance as the tick-based
-schedule()/wake_up_q().
-
-[ Although this has a fairly high performance penalty, the relevant
-  code path became already rare due to the previous commit ("ALSA:
-  pcm: Call snd_pcm_unlink() conditionally at closing").  That is, now
-  this unconditional msleep appears only when using linked streams,
-  and this must be a rare case.  So we accept this as a quick
-  workaround until finding a more suitable one -- tiwai ]
-
-Fixes: 67ec1072b053 ("ALSA: pcm: Fix rwsem deadlock for non-atomic PCM stream")
-Suggested-by: Wonmin Jung <wonmin.jung@lge.com>
-Signed-off-by: Chanho Min <chanho.min@lge.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Halil Pasic <pasic@linux.ibm.com>
+Cc: stable@vger.kernel.org
+Message-Id: <20180925121309.58524-2-pasic@linux.ibm.com>
+Signed-off-by: Cornelia Huck <cohuck@redhat.com>
+Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/core/pcm_native.c |   11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+ drivers/s390/virtio/virtio_ccw.c |   10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
---- a/sound/core/pcm_native.c
-+++ b/sound/core/pcm_native.c
-@@ -35,6 +35,7 @@
- #include <sound/timer.h>
- #include <sound/minors.h>
- #include <linux/uio.h>
-+#include <linux/delay.h>
+--- a/drivers/s390/virtio/virtio_ccw.c
++++ b/drivers/s390/virtio/virtio_ccw.c
+@@ -833,6 +833,7 @@ static void virtio_ccw_get_config(struct
+ 	int ret;
+ 	struct ccw1 *ccw;
+ 	void *config_area;
++	unsigned long flags;
  
- /*
-  *  Compatibility
-@@ -78,12 +79,12 @@ static DECLARE_RWSEM(snd_pcm_link_rwsem)
-  * and this may lead to a deadlock when the code path takes read sem
-  * twice (e.g. one in snd_pcm_action_nonatomic() and another in
-  * snd_pcm_stream_lock()).  As a (suboptimal) workaround, let writer to
-- * spin until it gets the lock.
-+ * sleep until all the readers are completed without blocking by writer.
-  */
--static inline void down_write_nonblock(struct rw_semaphore *lock)
-+static inline void down_write_nonfifo(struct rw_semaphore *lock)
- {
- 	while (!down_write_trylock(lock))
--		cond_resched();
-+		msleep(1);
- }
+ 	ccw = kzalloc(sizeof(*ccw), GFP_DMA | GFP_KERNEL);
+ 	if (!ccw)
+@@ -851,11 +852,13 @@ static void virtio_ccw_get_config(struct
+ 	if (ret)
+ 		goto out_free;
  
- /**
-@@ -1825,7 +1826,7 @@ static int snd_pcm_link(struct snd_pcm_s
- 		res = -ENOMEM;
- 		goto _nolock;
- 	}
--	down_write_nonblock(&snd_pcm_link_rwsem);
-+	down_write_nonfifo(&snd_pcm_link_rwsem);
- 	write_lock_irq(&snd_pcm_link_rwlock);
- 	if (substream->runtime->status->state == SNDRV_PCM_STATE_OPEN ||
- 	    substream->runtime->status->state != substream1->runtime->status->state ||
-@@ -1872,7 +1873,7 @@ static int snd_pcm_unlink(struct snd_pcm
- 	struct snd_pcm_substream *s;
- 	int res = 0;
++	spin_lock_irqsave(&vcdev->lock, flags);
+ 	memcpy(vcdev->config, config_area, offset + len);
+-	if (buf)
+-		memcpy(buf, &vcdev->config[offset], len);
+ 	if (vcdev->config_ready < offset + len)
+ 		vcdev->config_ready = offset + len;
++	spin_unlock_irqrestore(&vcdev->lock, flags);
++	if (buf)
++		memcpy(buf, config_area + offset, len);
  
--	down_write_nonblock(&snd_pcm_link_rwsem);
-+	down_write_nonfifo(&snd_pcm_link_rwsem);
- 	write_lock_irq(&snd_pcm_link_rwlock);
- 	if (!snd_pcm_stream_linked(substream)) {
- 		res = -EALREADY;
+ out_free:
+ 	kfree(config_area);
+@@ -869,6 +872,7 @@ static void virtio_ccw_set_config(struct
+ 	struct virtio_ccw_device *vcdev = to_vc_device(vdev);
+ 	struct ccw1 *ccw;
+ 	void *config_area;
++	unsigned long flags;
+ 
+ 	ccw = kzalloc(sizeof(*ccw), GFP_DMA | GFP_KERNEL);
+ 	if (!ccw)
+@@ -881,9 +885,11 @@ static void virtio_ccw_set_config(struct
+ 	/* Make sure we don't overwrite fields. */
+ 	if (vcdev->config_ready < offset)
+ 		virtio_ccw_get_config(vdev, 0, NULL, offset);
++	spin_lock_irqsave(&vcdev->lock, flags);
+ 	memcpy(&vcdev->config[offset], buf, len);
+ 	/* Write the config area to the host. */
+ 	memcpy(config_area, vcdev->config, sizeof(vcdev->config));
++	spin_unlock_irqrestore(&vcdev->lock, flags);
+ 	ccw->cmd_code = CCW_CMD_WRITE_CONF;
+ 	ccw->flags = 0;
+ 	ccw->count = offset + len;
 
 
