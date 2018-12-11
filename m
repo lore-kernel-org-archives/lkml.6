@@ -2,103 +2,227 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+X-Spam-Status: No, score=-8.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 334BEC67839
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 20:06:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64B02C6783B
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 20:08:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 01AA520811
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 20:06:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 01AA520811
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id 199DB20811
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 20:08:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 199DB20811
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726297AbeLKUGQ (ORCPT
+        id S1726248AbeLKUIL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 15:06:16 -0500
-Received: from mout.kundenserver.de ([212.227.126.130]:42815 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726125AbeLKUGQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 15:06:16 -0500
-Received: from wuerfel.lan ([109.192.41.194]) by mrelayeu.kundenserver.de
- (mreue010 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1MJEMt-1grUtW2az5-00Kk4w; Tue, 11 Dec 2018 21:05:29 +0100
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Michal Hocko <mhocko@suse.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        David Rientjes <rientjes@google.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] mm/mmu_notifier: fix mmu_notifier_range_init warning
-Date:   Tue, 11 Dec 2018 21:04:43 +0100
-Message-Id: <20181211200526.3868586-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.20.0
+        Tue, 11 Dec 2018 15:08:11 -0500
+Received: from foss.arm.com ([217.140.101.70]:56620 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726125AbeLKUIL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 15:08:11 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0944280D;
+        Tue, 11 Dec 2018 12:08:11 -0800 (PST)
+Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id C99803F6A8;
+        Tue, 11 Dec 2018 12:08:10 -0800 (PST)
+Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
+        id E4F2C1AE0B70; Tue, 11 Dec 2018 20:08:33 +0000 (GMT)
+Date:   Tue, 11 Dec 2018 20:08:33 +0000
+From:   Will Deacon <will.deacon@arm.com>
+To:     Kristina Martsenko <kristina.martsenko@arm.com>
+Cc:     Richard Henderson <richard.henderson@linaro.org>,
+        linux-arm-kernel@lists.infradead.org,
+        Adam Wallis <awallis@codeaurora.org>,
+        Amit Kachhap <amit.kachhap@arm.com>,
+        Andrew Jones <drjones@redhat.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Christoffer Dall <christoffer.dall@arm.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Dave P Martin <dave.martin@arm.com>,
+        Jacob Bramley <jacob.bramley@arm.com>,
+        Kees Cook <keescook@chromium.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ramana Radhakrishnan <ramana.radhakrishnan@arm.com>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        kvmarm@lists.cs.columbia.edu, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 02/13] arm64: add pointer authentication register bits
+Message-ID: <20181211200754.GA5218@edgewater-inn.cambridge.arm.com>
+References: <20181207183931.4285-1-kristina.martsenko@arm.com>
+ <20181207183931.4285-3-kristina.martsenko@arm.com>
+ <ef051a9b-d58f-07af-a446-4b7326ff9311@linaro.org>
+ <1e72484b-f89f-eacd-1976-14fdf6f23e26@arm.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:1MkcEApk+eXxquabhdLak8+/CEQwfqjWwL9KHXt8d14hBX7aRFV
- n20GdNsInfN2uBT80nbrsTwwpW2EGb1WGABGmcv+pfdLL/kh4+qtlJmaZDHf1/3G9Dk4kM6
- 7R0QHqVJ36mV8wl1Y0oWXQYLXlGSByoglDxKDn0Fnd09MwYjSFAbm/YYBgUbnnzKmP+rfVx
- /qvAIHUwkbQJjFlnjNnhA==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:nD4ZS/AeEqc=:HaU6cQ914RV1gbo3pr93+3
- GiP2vc4XFTHNQXp5Ld8hq9Ik++AtNzwaGb4p++wVGNDKQi1DC4VXCs5jzCJAA31McvQ5vnmDe
- hnNL6fXeZxOYtp8KaqU/v+xEmESaSNRVNfFzmGys1XHAvMl4WQx8gK+RTqrKAkykZsssmu15C
- QTIQeB/ZDvjUvkpSeJWR+YHuzwatlowwTJd1JMrQPZzAYO9dneP8OB2JULvNwPZyHAHZIt4nw
- zV9WkavQfkiW/Y/O7Py2v0llKpLd7kjSnQXAN/r5uovQ2CBUrCmb9sXzzCQDDp64A4YtgYGrW
- o2yMf7IrFwPpXMtJcA6cX6k03bTmF10EPI9y3/zr+tWG0w0QCQUKC/dH61woEIHuogny8iED7
- w7q29xfskQSeRT2LvNAzrS+eGbswe9+kgvj7kwrm9M2bx5jDs7wkLV6WjGdIcdWNyilTytDIE
- sinJebFU6+DuIr2E4sr711jYbWQL/Vl9THQRvygqk3ASaJjFKnEshW0rWEpMzfD1N/vmIievK
- 2R6UdLVLd9y+Jdtj1vP+bndPXL1BeSJuNvuUuPcwNdYVyQQ8zESXe8IVOoxI+f+3Vr2JDTEsK
- 41B518WB3RxCfFGebPgHE0rb/74FH00hymCVJxOJ68Lfk51z768hlRGPc2OXmIdRvwrQe5Yie
- KdYUOTc5Tfh/17UwFxND2qgA86kF5isOzNdvSxY12tLtstcP4DfvMDD1sshx8Q4QgcAXn3l7h
- SEdjNxY3uL3b60S1Nh0JuEXOin1NR0HamuDlrQ==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1e72484b-f89f-eacd-1976-14fdf6f23e26@arm.com>
+User-Agent: Mutt/1.11.1+30 (d10eec459b35) ()
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The macro version of mmu_notifier_range_init() for CONFIG_MMU_NOTIFIER=n
-does not evaluate all its arguments, leading to a warning in one case:
+On Mon, Dec 10, 2018 at 07:54:25PM +0000, Kristina Martsenko wrote:
+> On 09/12/2018 14:24, Richard Henderson wrote:
+> > On 12/7/18 12:39 PM, Kristina Martsenko wrote:
+> >>  #define SCTLR_ELx_DSSBS	(1UL << 44)
+> >> +#define SCTLR_ELx_ENIA	(1 << 31)
+> > 
+> > 1U or 1UL lest you produce signed -0x80000000.
+> 
+> Thanks, this was setting all SCTLR bits above 31 as well... Now fixed.
 
-mm/migrate.c: In function 'migrate_vma_pages':
-mm/migrate.c:2711:20: error: unused variable 'mm' [-Werror=unused-variable]
-  struct mm_struct *mm = vma->vm_mm;
+Ouch, that's subtle and a mistake that we're likely to keep making in
+the future, I fear. I've bitten the bullet and replaced all these
+definitions with the _BITUL() macro instead. That also means we don't
+have to worry about these constants being used in assembly files when
+using older versions of binutils.
 
-Pass down the 'mm' as into the inline function as well so gcc can
-see why the variable exists.
+Will
 
-Fixes: 137d92bd73b1 ("mm/mmu_notifier: use structure for invalidate_range_start/end calls v2")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+--->8
+
+From 25f3852cd8912174c3410414115783799357230a Mon Sep 17 00:00:00 2001
+From: Will Deacon <will.deacon@arm.com>
+Date: Tue, 11 Dec 2018 16:42:31 +0000
+Subject: [PATCH] arm64: sysreg: Use _BITUL() when defining register bits
+
+Using shifts directly is error-prone and can cause inadvertent sign
+extensions or build problems with older versions of binutils.
+
+Consistent use of the _BITUL() macro makes these problems disappear.
+
+Signed-off-by: Will Deacon <will.deacon@arm.com>
 ---
- include/linux/mmu_notifier.h | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/arm64/include/asm/sysreg.h | 81 +++++++++++++++++++++--------------------
+ 1 file changed, 41 insertions(+), 40 deletions(-)
 
-diff --git a/include/linux/mmu_notifier.h b/include/linux/mmu_notifier.h
-index 29f7b9670ba3..b13ea00ded5d 100644
---- a/include/linux/mmu_notifier.h
-+++ b/include/linux/mmu_notifier.h
-@@ -476,6 +476,7 @@ struct mmu_notifier_range {
- };
+diff --git a/arch/arm64/include/asm/sysreg.h b/arch/arm64/include/asm/sysreg.h
+index cea9e53be729..8310cc58d50c 100644
+--- a/arch/arm64/include/asm/sysreg.h
++++ b/arch/arm64/include/asm/sysreg.h
+@@ -20,6 +20,7 @@
+ #ifndef __ASM_SYSREG_H
+ #define __ASM_SYSREG_H
  
- static inline void _mmu_notifier_range_init(struct mmu_notifier_range *range,
-+					    struct mm_struct *mm,
- 					    unsigned long start,
- 					    unsigned long end)
- {
-@@ -484,7 +485,7 @@ static inline void _mmu_notifier_range_init(struct mmu_notifier_range *range,
- }
++#include <linux/const.h>
+ #include <linux/stringify.h>
  
- #define mmu_notifier_range_init(range, mm, start, end, event) \
--	_mmu_notifier_range_init(range, start, end)
-+	_mmu_notifier_range_init(range, mm, start, end)
+ /*
+@@ -444,31 +445,31 @@
+ #define SYS_ICH_LR15_EL2		__SYS__LR8_EL2(7)
+ 
+ /* Common SCTLR_ELx flags. */
+-#define SCTLR_ELx_DSSBS	(1UL << 44)
+-#define SCTLR_ELx_ENIA	(1 << 31)
+-#define SCTLR_ELx_ENIB	(1 << 30)
+-#define SCTLR_ELx_ENDA	(1 << 27)
+-#define SCTLR_ELx_EE    (1 << 25)
+-#define SCTLR_ELx_IESB	(1 << 21)
+-#define SCTLR_ELx_WXN	(1 << 19)
+-#define SCTLR_ELx_ENDB	(1 << 13)
+-#define SCTLR_ELx_I	(1 << 12)
+-#define SCTLR_ELx_SA	(1 << 3)
+-#define SCTLR_ELx_C	(1 << 2)
+-#define SCTLR_ELx_A	(1 << 1)
+-#define SCTLR_ELx_M	1
++#define SCTLR_ELx_DSSBS	(_BITUL(44))
++#define SCTLR_ELx_ENIA	(_BITUL(31))
++#define SCTLR_ELx_ENIB	(_BITUL(30))
++#define SCTLR_ELx_ENDA	(_BITUL(27))
++#define SCTLR_ELx_EE    (_BITUL(25))
++#define SCTLR_ELx_IESB	(_BITUL(21))
++#define SCTLR_ELx_WXN	(_BITUL(19))
++#define SCTLR_ELx_ENDB	(_BITUL(13))
++#define SCTLR_ELx_I	(_BITUL(12))
++#define SCTLR_ELx_SA	(_BITUL(3))
++#define SCTLR_ELx_C	(_BITUL(2))
++#define SCTLR_ELx_A	(_BITUL(1))
++#define SCTLR_ELx_M	(_BITUL(0))
+ 
+ #define SCTLR_ELx_FLAGS	(SCTLR_ELx_M  | SCTLR_ELx_A | SCTLR_ELx_C | \
+ 			 SCTLR_ELx_SA | SCTLR_ELx_I | SCTLR_ELx_IESB)
+ 
+ /* SCTLR_EL2 specific flags. */
+-#define SCTLR_EL2_RES1	((1 << 4)  | (1 << 5)  | (1 << 11) | (1 << 16) | \
+-			 (1 << 18) | (1 << 22) | (1 << 23) | (1 << 28) | \
+-			 (1 << 29))
+-#define SCTLR_EL2_RES0	((1 << 6)  | (1 << 7)  | (1 << 8)  | (1 << 9)  | \
+-			 (1 << 10) | (1 << 13) | (1 << 14) | (1 << 15) | \
+-			 (1 << 17) | (1 << 20) | (1 << 24) | (1 << 26) | \
+-			 (1 << 27) | (1 << 30) | (1 << 31) | \
++#define SCTLR_EL2_RES1	((_BITUL(4))  | (_BITUL(5))  | (_BITUL(11)) | (_BITUL(16)) | \
++			 (_BITUL(18)) | (_BITUL(22)) | (_BITUL(23)) | (_BITUL(28)) | \
++			 (_BITUL(29)))
++#define SCTLR_EL2_RES0	((_BITUL(6))  | (_BITUL(7))  | (_BITUL(8))  | (_BITUL(9))  | \
++			 (_BITUL(10)) | (_BITUL(13)) | (_BITUL(14)) | (_BITUL(15)) | \
++			 (_BITUL(17)) | (_BITUL(20)) | (_BITUL(24)) | (_BITUL(26)) | \
++			 (_BITUL(27)) | (_BITUL(30)) | (_BITUL(31)) | \
+ 			 (0xffffefffUL << 32))
+ 
+ #ifdef CONFIG_CPU_BIG_ENDIAN
+@@ -490,23 +491,23 @@
+ #endif
+ 
+ /* SCTLR_EL1 specific flags. */
+-#define SCTLR_EL1_UCI		(1 << 26)
+-#define SCTLR_EL1_E0E		(1 << 24)
+-#define SCTLR_EL1_SPAN		(1 << 23)
+-#define SCTLR_EL1_NTWE		(1 << 18)
+-#define SCTLR_EL1_NTWI		(1 << 16)
+-#define SCTLR_EL1_UCT		(1 << 15)
+-#define SCTLR_EL1_DZE		(1 << 14)
+-#define SCTLR_EL1_UMA		(1 << 9)
+-#define SCTLR_EL1_SED		(1 << 8)
+-#define SCTLR_EL1_ITD		(1 << 7)
+-#define SCTLR_EL1_CP15BEN	(1 << 5)
+-#define SCTLR_EL1_SA0		(1 << 4)
+-
+-#define SCTLR_EL1_RES1	((1 << 11) | (1 << 20) | (1 << 22) | (1 << 28) | \
+-			 (1 << 29))
+-#define SCTLR_EL1_RES0  ((1 << 6)  | (1 << 10) | (1 << 13) | (1 << 17) | \
+-			 (1 << 27) | (1 << 30) | (1 << 31) | \
++#define SCTLR_EL1_UCI		(_BITUL(26))
++#define SCTLR_EL1_E0E		(_BITUL(24))
++#define SCTLR_EL1_SPAN		(_BITUL(23))
++#define SCTLR_EL1_NTWE		(_BITUL(18))
++#define SCTLR_EL1_NTWI		(_BITUL(16))
++#define SCTLR_EL1_UCT		(_BITUL(15))
++#define SCTLR_EL1_DZE		(_BITUL(14))
++#define SCTLR_EL1_UMA		(_BITUL(9))
++#define SCTLR_EL1_SED		(_BITUL(8))
++#define SCTLR_EL1_ITD		(_BITUL(7))
++#define SCTLR_EL1_CP15BEN	(_BITUL(5))
++#define SCTLR_EL1_SA0		(_BITUL(4))
++
++#define SCTLR_EL1_RES1	((_BITUL(11)) | (_BITUL(20)) | (_BITUL(22)) | (_BITUL(28)) | \
++			 (_BITUL(29)))
++#define SCTLR_EL1_RES0  ((_BITUL(6))  | (_BITUL(10)) | (_BITUL(13)) | (_BITUL(17)) | \
++			 (_BITUL(27)) | (_BITUL(30)) | (_BITUL(31)) | \
+ 			 (0xffffefffUL << 32))
+ 
+ #ifdef CONFIG_CPU_BIG_ENDIAN
+@@ -706,13 +707,13 @@
+ #define ZCR_ELx_LEN_SIZE	9
+ #define ZCR_ELx_LEN_MASK	0x1ff
+ 
+-#define CPACR_EL1_ZEN_EL1EN	(1 << 16) /* enable EL1 access */
+-#define CPACR_EL1_ZEN_EL0EN	(1 << 17) /* enable EL0 access, if EL1EN set */
++#define CPACR_EL1_ZEN_EL1EN	(_BITUL(16)) /* enable EL1 access */
++#define CPACR_EL1_ZEN_EL0EN	(_BITUL(17)) /* enable EL0 access, if EL1EN set */
+ #define CPACR_EL1_ZEN		(CPACR_EL1_ZEN_EL1EN | CPACR_EL1_ZEN_EL0EN)
  
  
- static inline int mm_has_notifiers(struct mm_struct *mm)
+ /* Safe value for MPIDR_EL1: Bit31:RES1, Bit30:U:0, Bit24:MT:0 */
+-#define SYS_MPIDR_SAFE_VAL		(1UL << 31)
++#define SYS_MPIDR_SAFE_VAL	(_BITUL(31))
+ 
+ #ifdef __ASSEMBLY__
+ 
 -- 
-2.20.0
+2.1.4
 
