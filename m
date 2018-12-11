@@ -7,50 +7,50 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 305D6C07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:51:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4293C07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:51:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EAC9820880
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:50:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6CED420880
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:51:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544543460;
-	bh=V06aAWoFIjpprFabkx1EE5pHz7E4Zh9YQv9qC78QM60=;
+	s=default; t=1544543464;
+	bh=ZShHpVnuuL/xjVxHnef/pKWMk+2XiMoqV21r/CH7YFw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=k/BUzF+IB3d07Bt1GrtMNtdWBzpNAbm7zDHAcCnG2I4nlDErsk2sju8nM7xI2oOhv
-	 QYDx1u59DNOJwjxjOR3huEotyzH/BYJ0PgT8lmNTbfnFb7EwOyuhkwIv+t/n4JxBvE
-	 WbtO23yhriRds95J6Polwl3kzX91pWFmFheifS+g=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EAC9820880
+	b=fG+But9752Oo5W/izEi4bmWlPZNkf6LDvHa6PHwsvfgmfZRe7VnmgKZyT4PHmuOz+
+	 Drl057wXi+ripUZ5rP09mRVs3Ighzaf0aD5xUaukml/x4ax0LKFjR8VKBBGaUiKFov
+	 WyBYxBzwY8gQVJNrN5XnppcQ/qCyvlTk7GtFZcAw=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6CED420880
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729402AbeLKPu6 (ORCPT
+        id S1729413AbeLKPvC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 10:50:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39530 "EHLO mail.kernel.org"
+        Tue, 11 Dec 2018 10:51:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39602 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729384AbeLKPuy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:50:54 -0500
+        id S1728634AbeLKPvA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 10:51:00 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A21192146E;
-        Tue, 11 Dec 2018 15:50:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F410C20855;
+        Tue, 11 Dec 2018 15:50:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544543454;
-        bh=V06aAWoFIjpprFabkx1EE5pHz7E4Zh9YQv9qC78QM60=;
+        s=default; t=1544543459;
+        bh=ZShHpVnuuL/xjVxHnef/pKWMk+2XiMoqV21r/CH7YFw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=G90T/x2vDr6IjtpBtck++r6GceXKjzeveVebB+EW43GQgqTOA4lwPewXIWLyxkTaJ
-         buPeQWJqpwUI30eLBBU/I6lImdOuS/BRIZ6BJB5OLhVRa5/QaKchRAp0EOJbapImCr
-         9uPCZznkom2iDZJMDhvqesc57TpP9uy+YOxB2guI=
+        b=TMWq7FW59meD3ztxm9kvEOjXfk47wo3wPVJ5grPGTvyp5ypmU1FNgjB+4Xk8EERGJ
+         26XfTDBEc6y45G1lw7iHHKRDuZnQBNGWu0qecc8RSTQqqnB43hKsl07gQt7aFu1JWu
+         fgUWEt80k+l/CdOTRBxh2puFCHxc4q0JAIdtdM2M=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Halil Pasic <pasic@linux.ibm.com>,
-        Cornelia Huck <cohuck@redhat.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>
-Subject: [PATCH 4.9 30/51] virtio/s390: avoid race on vcdev->config
-Date:   Tue, 11 Dec 2018 16:41:38 +0100
-Message-Id: <20181211151616.597241287@linuxfoundation.org>
+        stable@vger.kernel.org, Chuck Lever <chuck.lever@oracle.com>,
+        stable@kernel.org,
+        Trond Myklebust <trond.myklebust@hammerspace.com>
+Subject: [PATCH 4.9 32/51] SUNRPC: Fix leak of krb5p encode pages
+Date:   Tue, 11 Dec 2018 16:41:40 +0100
+Message-Id: <20181211151616.755917173@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181211151612.328911565@linuxfoundation.org>
 References: <20181211151612.328911565@linuxfoundation.org>
@@ -69,74 +69,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Halil Pasic <pasic@linux.ibm.com>
+From: Chuck Lever <chuck.lever@oracle.com>
 
-commit 2448a299ec416a80f699940a86f4a6d9a4f643b1 upstream.
+commit 8dae5398ab1ac107b1517e8195ed043d5f422bd0 upstream.
 
-Currently we have a race on vcdev->config in virtio_ccw_get_config() and
-in virtio_ccw_set_config().
+call_encode can be invoked more than once per RPC call. Ensure that
+each call to gss_wrap_req_priv does not overwrite pointers to
+previously allocated memory.
 
-This normally does not cause problems, as these are usually infrequent
-operations. However, for some devices writing to/reading from the config
-space can be triggered through sysfs attributes. For these, userspace can
-force the race by increasing the frequency.
-
-Signed-off-by: Halil Pasic <pasic@linux.ibm.com>
-Cc: stable@vger.kernel.org
-Message-Id: <20180925121309.58524-2-pasic@linux.ibm.com>
-Signed-off-by: Cornelia Huck <cohuck@redhat.com>
-Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
+Cc: stable@kernel.org
+Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/s390/virtio/virtio_ccw.c |   10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ net/sunrpc/auth_gss/auth_gss.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/drivers/s390/virtio/virtio_ccw.c
-+++ b/drivers/s390/virtio/virtio_ccw.c
-@@ -837,6 +837,7 @@ static void virtio_ccw_get_config(struct
- 	int ret;
- 	struct ccw1 *ccw;
- 	void *config_area;
-+	unsigned long flags;
+--- a/net/sunrpc/auth_gss/auth_gss.c
++++ b/net/sunrpc/auth_gss/auth_gss.c
+@@ -1736,6 +1736,7 @@ priv_release_snd_buf(struct rpc_rqst *rq
+ 	for (i=0; i < rqstp->rq_enc_pages_num; i++)
+ 		__free_page(rqstp->rq_enc_pages[i]);
+ 	kfree(rqstp->rq_enc_pages);
++	rqstp->rq_release_snd_buf = NULL;
+ }
  
- 	ccw = kzalloc(sizeof(*ccw), GFP_DMA | GFP_KERNEL);
- 	if (!ccw)
-@@ -855,11 +856,13 @@ static void virtio_ccw_get_config(struct
- 	if (ret)
- 		goto out_free;
+ static int
+@@ -1744,6 +1745,9 @@ alloc_enc_pages(struct rpc_rqst *rqstp)
+ 	struct xdr_buf *snd_buf = &rqstp->rq_snd_buf;
+ 	int first, last, i;
  
-+	spin_lock_irqsave(&vcdev->lock, flags);
- 	memcpy(vcdev->config, config_area, offset + len);
--	if (buf)
--		memcpy(buf, &vcdev->config[offset], len);
- 	if (vcdev->config_ready < offset + len)
- 		vcdev->config_ready = offset + len;
-+	spin_unlock_irqrestore(&vcdev->lock, flags);
-+	if (buf)
-+		memcpy(buf, config_area + offset, len);
- 
- out_free:
- 	kfree(config_area);
-@@ -873,6 +876,7 @@ static void virtio_ccw_set_config(struct
- 	struct virtio_ccw_device *vcdev = to_vc_device(vdev);
- 	struct ccw1 *ccw;
- 	void *config_area;
-+	unsigned long flags;
- 
- 	ccw = kzalloc(sizeof(*ccw), GFP_DMA | GFP_KERNEL);
- 	if (!ccw)
-@@ -885,9 +889,11 @@ static void virtio_ccw_set_config(struct
- 	/* Make sure we don't overwrite fields. */
- 	if (vcdev->config_ready < offset)
- 		virtio_ccw_get_config(vdev, 0, NULL, offset);
-+	spin_lock_irqsave(&vcdev->lock, flags);
- 	memcpy(&vcdev->config[offset], buf, len);
- 	/* Write the config area to the host. */
- 	memcpy(config_area, vcdev->config, sizeof(vcdev->config));
-+	spin_unlock_irqrestore(&vcdev->lock, flags);
- 	ccw->cmd_code = CCW_CMD_WRITE_CONF;
- 	ccw->flags = 0;
- 	ccw->count = offset + len;
++	if (rqstp->rq_release_snd_buf)
++		rqstp->rq_release_snd_buf(rqstp);
++
+ 	if (snd_buf->page_len == 0) {
+ 		rqstp->rq_enc_pages_num = 0;
+ 		return 0;
 
 
