@@ -2,74 +2,123 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B359FC07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 13:45:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E409C07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 13:46:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7E46F2081B
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 13:45:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E46F2081B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+	by mail.kernel.org (Postfix) with ESMTP id 3BFE22054F
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 13:46:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="C8Wetplr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3BFE22054F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726595AbeLKNpz (ORCPT
+        id S1726620AbeLKNqg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 08:45:55 -0500
-Received: from ozlabs.org ([203.11.71.1]:39307 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726203AbeLKNpy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 08:45:54 -0500
-Received: by ozlabs.org (Postfix, from userid 1034)
-        id 43Dh6S55N5z9s3q; Wed, 12 Dec 2018 00:45:52 +1100 (AEDT)
-X-powerpc-patch-notification: thanks
-X-powerpc-patch-commit: a225f1567405558fb5410e9b2b90805819df1c67
-X-Patchwork-Hint: ignore
-In-Reply-To: <20181207155605.GB28964@altlinux.org>
-To:     "Dmitry V. Levin" <ldv@altlinux.org>
-From:   Michael Ellerman <patch-notifications@ellerman.id.au>
-Cc:     Oleg Nesterov <oleg@redhat.com>,
-        Eugene Syromyatnikov <esyr@redhat.com>,
-        Elvira Khabirova <lineprinter@altlinux.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Breno Leitao <leitao@debian.org>,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: Re: [v5] powerpc/ptrace: replace ptrace_report_syscall() with a tracehook call
-Message-Id: <43Dh6S55N5z9s3q@ozlabs.org>
-Date:   Wed, 12 Dec 2018 00:45:52 +1100 (AEDT)
+        Tue, 11 Dec 2018 08:46:36 -0500
+Received: from aserp2130.oracle.com ([141.146.126.79]:40482 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726350AbeLKNqg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 08:46:36 -0500
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wBBDj2fI157583;
+        Tue, 11 Dec 2018 13:46:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=content-type :
+ mime-version : subject : from : in-reply-to : date : cc :
+ content-transfer-encoding : message-id : references : to;
+ s=corp-2018-07-02; bh=Ef75vfYiMOTcBq3TxerXoyc0CZo7uizpPZ1Z2wozglE=;
+ b=C8Wetplrn7lqPhqcLmZh6U/fZdPj6W5RxX+nbApm05O3XpqkIdmfneFWrI4i5nIqjij9
+ UnvVu7+RDt6jZm8S++P3+AhudY1/so9qvrVoo/CsAahd0HUEH2Cjyic0y6ffAARlbu9V
+ hEgHEcIm2j15YMx97RiI4NMH8cdrKJ4rGzeM+xDihvPNsFIA35SlwYXwgS/ArJ31ibyS
+ gO+4PWFkS89imkCP9mCgfb1+lvZ4wXlOQRl+GH859DVON92VrB88z2fIz2PaHg01+gor
+ HufgdbB2wwVrwZhttIM2ItE5ImHmOqMqUTs90fJJVmET7ucHwzeyaBlhAFywYKJeMfpd Dg== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by aserp2130.oracle.com with ESMTP id 2p83fe423a-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 11 Dec 2018 13:46:22 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id wBBDkGNg032375
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 11 Dec 2018 13:46:16 GMT
+Received: from abhmp0015.oracle.com (abhmp0015.oracle.com [141.146.116.21])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wBBDkESj016641;
+        Tue, 11 Dec 2018 13:46:14 GMT
+Received: from [192.168.0.110] (/73.243.10.6)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 11 Dec 2018 05:46:14 -0800
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 12.2 \(3445.102.3\))
+Subject: Re: [PATCH v2] userfaultfd: clear flag if remap event not enabled
+From:   William Kucharski <william.kucharski@oracle.com>
+In-Reply-To: <20181211053409.20317-1-peterx@redhat.com>
+Date:   Tue, 11 Dec 2018 06:46:13 -0700
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        "Kirill A . Shutemov" <kirill@shutemov.name>,
+        Hugh Dickins <hughd@google.com>,
+        Pavel Emelyanov <xemul@virtuozzo.com>,
+        Pravin Shedge <pravin.shedge4linux@gmail.com>,
+        linux-mm@kvack.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <FB9EEE4D-B2E6-44B9-9145-259E785AD3F4@oracle.com>
+References: <20181211053409.20317-1-peterx@redhat.com>
+To:     Peter Xu <peterx@redhat.com>
+X-Mailer: Apple Mail (2.3445.102.3)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9103 signatures=668679
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=895
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1812110125
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2018-12-07 at 15:56:05 UTC, "Dmitry V. Levin" wrote:
-> From: Elvira Khabirova <lineprinter@altlinux.org>
-> 
-> Arch code should use tracehook_*() helpers, as documented
-> in include/linux/tracehook.h,
-> ptrace_report_syscall() is not expected to be used outside that file.
-> 
-> The patch does not look very nice, but at least it is correct
-> and opens the way for PTRACE_GET_SYSCALL_INFO API.
-> 
-> Co-authored-by: Dmitry V. Levin <ldv@altlinux.org>
-> Fixes: 5521eb4bca2d ("powerpc/ptrace: Add support for PTRACE_SYSEMU")
-> Cc: Michael Ellerman <mpe@ellerman.id.au>
-> Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-> Cc: Paul Mackerras <paulus@samba.org>
-> Cc: Oleg Nesterov <oleg@redhat.com>
-> Cc: Breno Leitao <leitao@debian.org>
-> Cc: Andy Lutomirski <luto@kernel.org>
-> Cc: Eugene Syromyatnikov <esyr@redhat.com>
-> Cc: linuxppc-dev@lists.ozlabs.org
-> Signed-off-by: Elvira Khabirova <lineprinter@altlinux.org>
-> Signed-off-by: Dmitry V. Levin <ldv@altlinux.org>
 
-Applied to powerpc fixes, thanks.
 
-https://git.kernel.org/powerpc/c/a225f1567405558fb5410e9b2b9080
+> On Dec 10, 2018, at 10:34 PM, Peter Xu <peterx@redhat.com> wrote:
+>=20
+> ---
+> fs/userfaultfd.c | 10 +++++++++-
+> 1 file changed, 9 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
+> index cd58939dc977..4567b5b6fd32 100644
+> --- a/fs/userfaultfd.c
+> +++ b/fs/userfaultfd.c
+> @@ -736,10 +736,18 @@ void mremap_userfaultfd_prep(struct =
+vm_area_struct *vma,
+> 	struct userfaultfd_ctx *ctx;
+>=20
+> 	ctx =3D vma->vm_userfaultfd_ctx.ctx;
+> -	if (ctx && (ctx->features & UFFD_FEATURE_EVENT_REMAP)) {
+> +
+> +	if (!ctx)
+> +		return;
+> +
+> +	if (ctx->features & UFFD_FEATURE_EVENT_REMAP) {
+> 		vm_ctx->ctx =3D ctx;
+> 		userfaultfd_ctx_get(ctx);
+> 		WRITE_ONCE(ctx->mmap_changing, true);
+> +	} else {
+> +		/* Drop uffd context if remap feature not enabled */
+> +		vma->vm_userfaultfd_ctx =3D NULL_VM_UFFD_CTX;
+> +		vma->vm_flags &=3D ~(VM_UFFD_WP | VM_UFFD_MISSING);
+> 	}
+> }
+>=20
+> --=20
+> 2.17.1
+>=20
 
-cheers
+Looks good.
+
+Reviewed-by: William Kucharski <william.kucharski@oracle.com>=
