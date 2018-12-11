@@ -2,146 +2,132 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CED8C07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 18:04:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19498C07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 18:05:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E5E7D20855
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 18:04:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ldgt74xp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5E7D20855
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id DC5E320879
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 18:05:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC5E320879
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726784AbeLKSEm (ORCPT
+        id S1727005AbeLKSFE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 13:04:42 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:39914 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726241AbeLKSEl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 13:04:41 -0500
-Received: by mail-wm1-f66.google.com with SMTP id f81so3246369wmd.4;
-        Tue, 11 Dec 2018 10:04:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=GwWUMo6beCgCPrW5yYM3akx4k7A7+JHyKA351TyVZk0=;
-        b=Ldgt74xpxmIV+6JnS6m63rEB2Kb680fv5IIh1Q+vf16i18Fa3lzAL7GT1yUcBnvK2Z
-         0oiTXe4MwuWc+tZFbGHouGB3QyQcFgOl0Xq6NIYSrjS3Cm1gKRRX352mm5T7HzInjhnV
-         ln0zJZeykB0ZVQaCJmfs9CKqFgu69cR6uh2GG+l2H5fjvGAVjXi9n4CsrnmFcxTxoK8P
-         pG8XzQE2ZzCFOp2MlF1bWTALDdSPLSl9ZqmxBc+tmmycc5kbqe2lF0P5xZD5TM0rUPTw
-         5DZ8C99m7YNyJxsRAN470+EYKn1DAU/4Fx9pQzQXG8p/X+zi80nayn35VodAlKXIp/Iy
-         bNEg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=GwWUMo6beCgCPrW5yYM3akx4k7A7+JHyKA351TyVZk0=;
-        b=LXLDnd6toYySHbCVT1xWy8RlOjLLg47xrOizV+tHNpbVl0v6/eCYvwsA9itbvISOBS
-         XB66HWizAI4bGBoxP/wCZsf7gDvoFzvIrZh16JCDpcedXWGilWsdJWcfAa3q5ubdfN5S
-         Tbg92e6grH+sq7mwElFWd2X54T6o0XwPhXuWCHzqtp7ywE0pJB68fUmG9RVa0hWuGH3e
-         rloQvQa3dD43OiJsNgCw1bPsqDhUGPtP3ulgxU8FohzpAb+Fj4uxl4ggu2ccvofcrmzs
-         P41SC/hKcJ3bft9lzqO5vPzVPZtK/XC2Nh4awHzyb0AAJs6do01VUBJq3r0O3uougJgI
-         s9sw==
-X-Gm-Message-State: AA+aEWYsI9GmqS/ae6izw6TxnoFHdglCC1RncCagkKQTHf1ZuTzIAQnr
-        YywMBAZke7FjMIyT7Ajy4cz8x4lvROfZPQ==
-X-Google-Smtp-Source: AFSGD/XKOa0F2x3vxauth/h0HvPbkZ+SqENRkpl7xU4xN1mcGgJygx/kcZrStaokMZsFu53+2rFHKg==
-X-Received: by 2002:a1c:d7d3:: with SMTP id o202mr3516324wmg.135.1544551479444;
-        Tue, 11 Dec 2018 10:04:39 -0800 (PST)
-Received: from flashbox ([2a01:4f8:10b:24a5::2])
-        by smtp.gmail.com with ESMTPSA id j8sm1074859wmd.0.2018.12.11.10.04.38
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 11 Dec 2018 10:04:38 -0800 (PST)
-Date:   Tue, 11 Dec 2018 11:04:37 -0700
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: Tree for Dec 11
-Message-ID: <20181211180437.GA28010@flashbox>
-References: <20181211182627.42b79e40@canb.auug.org.au>
- <20181211173851.GA29028@roeck-us.net>
+        Tue, 11 Dec 2018 13:05:04 -0500
+Received: from mga11.intel.com ([192.55.52.93]:62974 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726241AbeLKSFE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 13:05:04 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Dec 2018 10:05:03 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,343,1539673200"; 
+   d="scan'208";a="282759412"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.72.86])
+  by orsmga005.jf.intel.com with ESMTP; 11 Dec 2018 10:05:00 -0800
+Received: from andy by smile with local (Exim 4.91)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1gWmOw-0002DZ-TV; Tue, 11 Dec 2018 20:04:58 +0200
+Date:   Tue, 11 Dec 2018 20:04:58 +0200
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     thomas.preston@codethink.co.uk,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Petr Mladek <pmladek@suse.com>,
+        Steven Rostedt <rostedt@goodmis.org>, geert+renesas@glider.be,
+        Jonathan Corbet <corbet@lwn.net>, tcharding <me@tobin.cc>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        ben.dooks@codethink.co.uk
+Subject: Re: [PATCH 2/2] vsprintf: Stop using obsolete simple_strtoul()
+Message-ID: <20181211180458.GE10650@smile.fi.intel.com>
+References: <20181211152113.8523-1-thomas.preston@codethink.co.uk>
+ <20181211152113.8523-3-thomas.preston@codethink.co.uk>
+ <CAHk-=wi2kvoDh3z_X3ZCBcyAX1MU4OedPkQjA-4=bR=6q7AT3w@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181211173851.GA29028@roeck-us.net>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+In-Reply-To: <CAHk-=wi2kvoDh3z_X3ZCBcyAX1MU4OedPkQjA-4=bR=6q7AT3w@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 11, 2018 at 09:38:51AM -0800, Guenter Roeck wrote:
-> On Tue, Dec 11, 2018 at 06:26:27PM +1100, Stephen Rothwell wrote:
-> > Hi all,
-> > 
-> > Changes since 20181210:
-> > 
-> > The arm64 tree gained a conflict against Linus' tree.
-> > 
-> > The f2fs tree gained a conflict against the fscrypt tree.
-> > 
-> > The ubifs tree gained a conflict against the fscrypt tree.
-> > 
-> > The rdma tree still had its build failure so I used the version from
-> > next-20181203.
-> > 
-> > The tip tree gained a conflict against the hwmon-staging tree.
-> > 
-> > The gpio tree lost its build failure.
-> > 
-> > The akpm-current tree lost its build failure but gained conflist against
-> > the arm64 tree.
-> > 
-> > Non-merge commits (relative to Linus' tree): 7744
-> >  8462 files changed, 365061 insertions(+), 211977 deletions(-)
-> > 
+On Tue, Dec 11, 2018 at 09:22:22AM -0800, Linus Torvalds wrote:
+> On Tue, Dec 11, 2018 at 7:21 AM Thomas Preston
+> <thomas.preston@codethink.co.uk> wrote:
+> >
+> > Stop using the obsolete functions simple_strtoul() and
+> > simple_strtoull(). Instead, we should use the improved kstrtol() and
+> > kstrtoll() functions. To do this, we must copy the current field into a
+> > null-terminated tmpstr and advance the variable `next` manually.
 > 
-> Build results:
-> 	total: 152 pass: 150 fail: 2
-> Failed builds: 
-> 	arm:allmodconfig 
-> 	arm64:allmodconfig 
-> Qemu test results:
-> 	total: 337 pass: 137 fail: 200
+> I see what you're trying to do, but this fix is much much worse than
+> the bug was.
 > 
-> Build failures:
+> > +               if (field_width > 0) {
+> > +                       char tmpstr[INT_BUF_LEN];
+> > +                       int ret;
+> > +
+> > +                       strscpy(tmpstr, str, field_width+1);
 > 
-> arm:
+> If field_width is larger than INT_BUF_LEN, you are now corrupting kernel stack.
 > 
-> In file included from drivers/media/pci/ddbridge/ddbridge.h:22:0,
->                  from drivers/media/pci/ddbridge/ddbridge-ci.c:19:
-> arch/arm/include/asm/irq.h:35:50: error: unknown type name 'cpumask_t'
+> And no, you can't fix it by limiting field_width, since a large
+> field_width is quite possible and might even be valid - and still fit
+> in an int. Maybe the number is
 > 
+>     000000000000000000000001
+> 
+> or something?
+> 
+> A fix might be to skip leading zeroes.
+> 
+> Honestly, just do it by hand. Don't use kstrol and friends at all.
+> Just do something like
+> 
+>     unsigned long long val = 0;
+>     p = str;
+>     for (;;) {
+>         int c;
+>         if (field_width > 0 && p - str >= field_width)
+>             break;
+>         c = hexval(*p++);
+>         if (c < 0 || c > base)
+>             break;
+>         val = val * base + c;
+>         // check for overflow
 
-Just FYI, I noticed this one yesterday on next-20181210 and sent a patch:
-https://lore.kernel.org/linux-media/20181210233514.3069-1-natechancellor@gmail.com/
+I think it's slightly more complicated, I run the following test case on glibc:
 
-> arm64:
-> 
-> arch/arm64/kernel/entry-ftrace.o:(_kprobe_blacklist+0x0): dangerous relocation:
-> 	unsupported relocation
-> 
-> The latter is with gcc 7.3.0. I'll build and try with gcc 7.4.0 and
-> the most recent binutils later.
-> 
-> Most of the failing qemu tests fail with something like
-> 
-> Starting init: /sbin/init exists but couldn't execute it (error -95)
-> 
-> Others (such as aarch64) crash silently.
-> 
-> Has anyone reported this already, or do I need to run bisect ?
-> 
-> Guenter
+	uint32_t hi, lo, t;
 
-Thanks,
-Nathan
+        sscanf("00fafafafa0d0b0b0b0c000000", "%8x%8x%x", &hi, &lo, &t);
+
+64-bit:
+	HI: 00fafafa LO: fa0d0b0b (c000000)
+32-bit:
+	HI: 00fafafa LO: fa0d0b0b (ffffffff)
+
+>     }
+>     /* Now do "sign" and range checking on val */
+>     /* Ta-daa, all done */
+> 
+> or similar.  Treat the above as pseudo-code, I didn't fill in all the details.
+> 
+>             Linus
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
