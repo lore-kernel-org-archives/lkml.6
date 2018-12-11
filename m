@@ -2,88 +2,119 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3569CC67839
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:01:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83F60C07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:04:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 03B532082F
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:01:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 03B532082F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 53B9D2082F
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:04:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 53B9D2082F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726508AbeLKPBx (ORCPT
+        id S1726559AbeLKPEG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 10:01:53 -0500
-Received: from mga06.intel.com ([134.134.136.31]:52613 "EHLO mga06.intel.com"
+        Tue, 11 Dec 2018 10:04:06 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:58158 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726212AbeLKPBx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:01:53 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Dec 2018 07:01:52 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,342,1539673200"; 
-   d="scan'208";a="100651266"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.154])
-  by orsmga008.jf.intel.com with ESMTP; 11 Dec 2018 07:01:52 -0800
-Date:   Tue, 11 Dec 2018 07:01:52 -0800
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     "Dr. Greg" <greg@enjellic.com>
-Cc:     Josh Triplett <josh@joshtriplett.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
-        linux-sgx@vger.kernel.org, Andy Lutomirski <luto@amacapital.net>,
-        Haitao Huang <haitao.huang@linux.intel.com>,
-        Jethro Beekman <jethro@fortanix.com>
-Subject: Re: [RFC PATCH v3 0/4] x86: Add exception fixup for SGX ENCLU
-Message-ID: <20181211150152.GA14731@linux.intel.com>
-References: <20181210232141.5425-1-sean.j.christopherson@intel.com>
- <20181210232449.GA11843@localhost>
- <20181211145339.GA7528@wind.enjellic.com>
+        id S1726241AbeLKPEG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 10:04:06 -0500
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 0DF24307D846;
+        Tue, 11 Dec 2018 15:04:05 +0000 (UTC)
+Received: from vitty.brq.redhat.com.redhat.com (unknown [10.34.244.70])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id CE1425D717;
+        Tue, 11 Dec 2018 15:04:02 +0000 (UTC)
+From:   Vitaly Kuznetsov <vkuznets@redhat.com>
+To:     Roman Kagan <rkagan@virtuozzo.com>
+Cc:     "kvm\@vger.kernel.org" <kvm@vger.kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        "x86\@kernel.org" <x86@kernel.org>,
+        "Michael Kelley \(EOSG\)" <Michael.H.Kelley@microsoft.com>,
+        Eduardo Habkost <ehabkost@redhat.com>
+Subject: Re: [PATCH v2 4/7] x86/kvm/hyper-v: Introduce KVM_GET_SUPPORTED_HV_CPUID
+In-Reply-To: <20181211140247.GC2378@rkaganb.sw.ru>
+References: <20181210172159.410-1-vkuznets@redhat.com> <20181210172159.410-5-vkuznets@redhat.com> <20181211124956.GA2378@rkaganb.sw.ru> <87bm5sp501.fsf@vitty.brq.redhat.com> <20181211140247.GC2378@rkaganb.sw.ru>
+Date:   Tue, 11 Dec 2018 16:04:01 +0100
+Message-ID: <87woognlzy.fsf@vitty.brq.redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181211145339.GA7528@wind.enjellic.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.48]); Tue, 11 Dec 2018 15:04:05 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 11, 2018 at 08:53:39AM -0600, Dr. Greg wrote:
-> On Mon, Dec 10, 2018 at 03:24:50PM -0800, Josh Triplett wrote:
-> 
-> Good morning to everyone, I hope the week is progressing well.
-> 
-> > On Mon, Dec 10, 2018 at 03:21:37PM -0800, Sean Christopherson wrote:
-> > > At that point I realized it's a hell of a lot easier to simply provide
-> > > an IOCTL via /dev/sgx that allows userspace to register a per-process
-> > > ENCLU exception handler.  At a high level, the basic idea is the same
-> > > as the vDSO approach: provide a hardcoded fixup handler for ENCLU and
-> > > attempt to fixup select unhandled exceptions that occurred in user code.
-> 
-> > So, on the one hand, this is *absolutely* much cleaner than the VDSO
-> > approach. On the other hand, this is global process state and has
-> > some of the same problems as a signal handler as a result.
-> 
-> Sean's architecture is very simple and straight forward and thus has a
-> lot going for it.
-> 
-> As Sean's approach indicates, by linking the exception handler to
-> current->mm, SGX is very much a per memory map concept.  The issue is
-> that there can be multiple enclaves loaded and excecuting in a
-> processes memory map, the problem is, execution and thus exception
-> handling, is very much at the per thread level.
+Roman Kagan <rkagan@virtuozzo.com> writes:
 
-Right, but is there a need to have a per-thread code page?  The handler
-isn't per-process any more than the AEP is per-process.
+> On Tue, Dec 11, 2018 at 02:28:14PM +0100, Vitaly Kuznetsov wrote:
+>> Roman Kagan <rkagan@virtuozzo.com> writes:
+>> 
+>> > On Mon, Dec 10, 2018 at 06:21:56PM +0100, Vitaly Kuznetsov wrote:
+>> 
+>> >> +
+>> >> +Currently, the following list of CPUID leaves are returned:
+>> >> + HYPERV_CPUID_VENDOR_AND_MAX_FUNCTIONS
+>> >> + HYPERV_CPUID_INTERFACE
+>> >> + HYPERV_CPUID_VERSION
+>> >> + HYPERV_CPUID_FEATURES
+>> >> + HYPERV_CPUID_ENLIGHTMENT_INFO
+>> >> + HYPERV_CPUID_IMPLEMENT_LIMITS
+>> >> + HYPERV_CPUID_NESTED_FEATURES
+>> >> +
+>> >> +HYPERV_CPUID_NESTED_FEATURES leaf is only exposed when Enlightened VMCS was
+>> >> +enabled on the corresponding vCPU (KVM_CAP_HYPERV_ENLIGHTENED_VMCS).
+>> >
+>> > IOW the output of ioctl(KVM_GET_SUPPORTED_HV_CPUID) depends on
+>> > whether ioctl(KVM_ENABLE_CAP, KVM_CAP_HYPERV_ENLIGHTENED_VMCS) has
+>> > already been called on that vcpu?  I wonder if this fits the intended
+>> > usage?
+>> 
+>> I added HYPERV_CPUID_NESTED_FEATURES in the list (and made the new ioctl
+>> per-cpu and not per-vm) for consistency. *In theory*
+>> KVM_CAP_HYPERV_ENLIGHTENED_VMCS is also enabled per-vcpu so some
+>> hypothetical userspace can later check enabled eVMCS versions (which can
+>> differ across vCPUs!) with KVM_GET_SUPPORTED_HV_CPUID. We will also have
+>> direct tlb flush and other nested features there so to avoid addning new
+>> KVM_CAP_* for them we need the CPUID.
+>
+> This is different from how KVM_GET_SUPPORTED_CPUID is used: QEMU assumes
+> that its output doesn't change between calls, and even caches the result
+> calling the ioctl only once.
+>
+
+Yes, I'm not sure if we have to have full consistency between
+KVM_GET_SUPPORTED_CPUID and KVM_GET_SUPPORTED_HV_CPUID.
+
+>> Another thing I'm thinking about is something like 'hv_all' cpu flag for
+>> Qemu which would enable everything by setting guest CPUIDs to what
+>> KVM_GET_SUPPORTED_HV_CPUID returns. In that case it would also be
+>> convenient to have HYPERV_CPUID_NESTED_FEATURES properly filled (or not
+>> filled when eVMCS was not enabled).
+>
+> I think this is orthogonal to the way you obtain capability info from
+> the kernel.
+
+Not necessarily. If very dumb userspace does 'host passthrough' for
+Hyper-V features without doing anything (e.g. not enabling Enlightened
+VMCS) it will just put the result of KVM_GET_SUPPORTED_HV_CPUID in guest
+facing CPUIDs and it will all work. In case eVMCS was previously enabled
+it again just copies everything and this still works.
+
+We don't probably need this for Qemu though. If you think it would be
+better to have HYPERV_CPUID_NESTED_FEATURES returned regardless of eVMCS
+enablement I'm ready to budge)
+
+-- 
+Vitaly
