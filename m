@@ -2,411 +2,402 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF2AFC07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 10:12:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 281A6C07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 10:14:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A16D120849
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 10:12:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A16D120849
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id C42472081B
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 10:14:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nmW0HHQX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C42472081B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726404AbeLKKM5 (ORCPT
+        id S1726283AbeLKKOt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 05:12:57 -0500
-Received: from mga03.intel.com ([134.134.136.65]:6790 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726179AbeLKKM4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 05:12:56 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Dec 2018 02:12:55 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,342,1539673200"; 
-   d="scan'208";a="108638863"
-Received: from twinkler-lnx.jer.intel.com ([10.12.91.48])
-  by fmsmga008.fm.intel.com with ESMTP; 11 Dec 2018 02:12:52 -0800
-From:   Tomas Winkler <tomas.winkler@intel.com>
-To:     "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Vinayak Holikatti <vinholikatti@gmail.com>,
-        Adrian Hunter <adrian.hunter@intel.com>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Subhash Jadavani <subhashj@codeaurora.org>,
-        Alex Lemberg <Alex.Lemberg@wdc.com>,
-        Avri Altman <Avri.Altman@wdc.com>, linux-scsi@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Tomas Winkler <tomas.winkler@intel.com>
-Subject: [PATCH] scsi: ufs: revamp string descriptor reading
-Date:   Tue, 11 Dec 2018 13:07:05 +0200
-Message-Id: <20181211110705.11646-1-tomas.winkler@intel.com>
-X-Mailer: git-send-email 2.19.2
+        Tue, 11 Dec 2018 05:14:49 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:46672 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726154AbeLKKOr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 05:14:47 -0500
+Received: by mail-pg1-f194.google.com with SMTP id w7so6409983pgp.13;
+        Tue, 11 Dec 2018 02:14:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=KpwThYJ9AsasxoIu8w4YOsJz0iJ7REbtmnQ0JDcF+n0=;
+        b=nmW0HHQXJi29cdsE9iJCWE+bWhZPzuKWjj1s8//asVsvwwfnw6NaXDi1XpcA+lP00S
+         aIiEnWdbI6isE3xLEfs9XSa3rOXwLpMbbVd17ck89Vio62LINXPaLKPMrBfRpaF1mcfB
+         GI699Dxsy7VPBP0vUSIW7ipDcdVeovHf5hdNko7sBuiigBvPRI/tISDeSk8U5JN662Xi
+         x1SGKRXDhFKoaV2vZIwsrL1myf+PJAnhSX51n1zI2GAZJMIrb7chXpjNDp9RNnwrJfoZ
+         3QkaxToiTvbd5LVOU2FL4Ermi/mxtPPfJL7pSAMeTwp6jOjkvqbo3r0sn4Vqm/jk9+yR
+         N0kw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=KpwThYJ9AsasxoIu8w4YOsJz0iJ7REbtmnQ0JDcF+n0=;
+        b=TMjCu64bJpuIBN6AUom5xdQOyh3mWInnwQpWouf4RsLRfoV0Tk+w1sk4uUpQxtTJdT
+         r7UN2VroL5f5nI5BMnRhYZJHXmU/1tZCZn8Gr/vX3jbdUyI/5k7en+1I3WfX7sjNLuiv
+         qiQvs/cubCycvkh/2WPhBmV1shrgQKHb2sFUEcZ3fyJwQPZ/Y18IYL/wn6hA9NkIhEqu
+         sQZyVBJrJ5M+M3wqd2f2/9h8jhNQoHNMFsblMogCy/RVkNYtMy0FJb6H+1nTkGGuwO30
+         olOC6ZJz31I4obctDLE57BRxk697TlLA5/GXqdks7Ash6fR0B/X2crQtzAoJ5f53wu//
+         dZrQ==
+X-Gm-Message-State: AA+aEWYZ6kvUurmVtbJlJEbstPF0PiIjURPn1xlvoKYNf3YMr3Qldk+N
+        ctDHwP10Nfjj4wblUHPz37ZpwkN9wVqapdmz5O4=
+X-Google-Smtp-Source: AFSGD/VE+6T/KzK6rxdi6g3yXyUOaQeowvoGdub0uzTLJovSXA4gG9WNQPDwyyP7denYdmVkuf7iW0oCQfxCLCFyxqs=
+X-Received: by 2002:a62:34c6:: with SMTP id b189mr16164496pfa.229.1544523285888;
+ Tue, 11 Dec 2018 02:14:45 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20181211060125.28671-1-ayman.bagabas@gmail.com> <20181211060125.28671-3-ayman.bagabas@gmail.com>
+In-Reply-To: <20181211060125.28671-3-ayman.bagabas@gmail.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Tue, 11 Dec 2018 12:14:33 +0200
+Message-ID: <CAHp75VcNstKd3JW-D8QSQWez-TxrwsKrkA-a1D11kZW72fSqfw@mail.gmail.com>
+Subject: Re: [PATCH v10 2/3] x86: add support for Huawei WMI hotkeys.
+To:     Ayman Bagabas <ayman.bagabas@gmail.com>
+Cc:     Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Kailang Yang <kailang@realtek.com>,
+        Hui Wang <hui.wang@canonical.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        ALSA Development Mailing List <alsa-devel@alsa-project.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Define new a type: uc_string_id for easier string
-handling and less casting. Reduce number or string
-copies in price of a dynamic allocation.
+On Tue, Dec 11, 2018 at 8:02 AM Ayman Bagabas <ayman.bagabas@gmail.com> wrote:
+>
+> This driver adds support for missing hotkeys on some Huawei laptops.
+> Laptops such as the Matebook X have non functioning hotkeys. Whereas
+> newer laptops such as the Matebook X Pro come with working hotkeys out
+> of the box.
+>
+> Old laptops, such as the Matebook X, report hotkey events through ACPI
+> device "\WMI0". However, new laptops, such as the Matebook X Pro,
+> does not have this WMI device.
+>
+> All the hotkeys on the Matebook X Pro work fine
+> without this patch except (micmute, wlan, and huawei key). These keys
+> and the brightness keys report events to "\AMW0" ACPI device. One
+> problem is that brightness keys on the Matebook X Pro work without this
+> patch. This results in reporting two brightness key press
+> events one is captured by ACPI and another by this driver.
+>
+> A solution would be to check if such event came from the "\AMW0" WMI driver
+> then skip reporting event. Another solution would be to leave this to
+> user-space to handle. Which can be achieved by using "hwdb" tables and
+> remap those keys to "unknown". This solution seems more natural to me
+> because it leaves the decision to user-space.
+>
+> Reviewed-by: Takashi Iwai <tiwai@suse.de>
+> Signed-off-by: Ayman Bagabas <ayman.bagabas@gmail.com>
+> ---
+>  drivers/platform/x86/Kconfig      |  17 +++
+>  drivers/platform/x86/Makefile     |   1 +
+>  drivers/platform/x86/huawei-wmi.c | 220 ++++++++++++++++++++++++++++++
+>  3 files changed, 238 insertions(+)
+>  create mode 100644 drivers/platform/x86/huawei-wmi.c
+>
+> diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
+> index 87f70e8f4dd0..45ef4d22f14c 100644
+> --- a/drivers/platform/x86/Kconfig
+> +++ b/drivers/platform/x86/Kconfig
+> @@ -1292,6 +1292,23 @@ config INTEL_ATOMISP2_PM
+>           To compile this driver as a module, choose M here: the module
+>           will be called intel_atomisp2_pm.
+>
+> +config HUAWEI_WMI
+> +       tristate "Huawei WMI hotkeys driver"
+> +       depends on ACPI_WMI
+> +       depends on INPUT
+> +       select INPUT_SPARSEKMAP
+> +       select LEDS_CLASS
+> +       select LEDS_TRIGGERS
+> +       select LEDS_TRIGGER_AUDIO
+> +       select NEW_LEDS
+> +       help
+> +         This driver provides support for Huawei WMI hotkeys.
+> +         It enables the missing keys and adds support to the micmute
+> +         LED found on some of these laptops.
+> +
+> +         To compile this driver as a module, choose M here: the module
+> +         will be called huawei-wmi.
+> +
+>  endif # X86_PLATFORM_DEVICES
+>
+>  config PMC_ATOM
+> diff --git a/drivers/platform/x86/Makefile b/drivers/platform/x86/Makefile
+> index 39ae94135406..d841c550e3cc 100644
+> --- a/drivers/platform/x86/Makefile
+> +++ b/drivers/platform/x86/Makefile
+> @@ -32,6 +32,7 @@ obj-$(CONFIG_ACERHDF)         += acerhdf.o
+>  obj-$(CONFIG_HP_ACCEL)         += hp_accel.o
+>  obj-$(CONFIG_HP_WIRELESS)      += hp-wireless.o
+>  obj-$(CONFIG_HP_WMI)           += hp-wmi.o
+> +obj-$(CONFIG_HUAWEI_WMI)               += huawei-wmi.o
+>  obj-$(CONFIG_AMILO_RFKILL)     += amilo-rfkill.o
+>  obj-$(CONFIG_GPD_POCKET_FAN)   += gpd-pocket-fan.o
+>  obj-$(CONFIG_TC1100_WMI)       += tc1100-wmi.o
+> diff --git a/drivers/platform/x86/huawei-wmi.c b/drivers/platform/x86/huawei-wmi.c
+> new file mode 100644
+> index 000000000000..89ba7ea33499
+> --- /dev/null
+> +++ b/drivers/platform/x86/huawei-wmi.c
+> @@ -0,0 +1,220 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + *  Huawei WMI hotkeys
+> + *
+> + *  Copyright (C) 2018       Ayman Bagabas <ayman.bagabas@gmail.com>
+> + */
+> +
+> +#include <linux/acpi.h>
+> +#include <linux/input.h>
+> +#include <linux/input/sparse-keymap.h>
+> +#include <linux/leds.h>
+> +#include <linux/module.h>
+> +#include <linux/wmi.h>
+> +
+> +/*
+> + * Huawei WMI GUIDs
+> + */
+> +#define WMI0_EVENT_GUID "59142400-C6A3-40fa-BADB-8A2652834100"
+> +#define AMW0_EVENT_GUID "ABBC0F5C-8EA1-11D1-A000-C90629100000"
+> +
+> +#define WMI0_EXPENSIVE_GUID "39142400-C6A3-40fa-BADB-8A2652834100"
+> +
+> +struct huawei_wmi_priv {
+> +       struct input_dev *idev;
+> +       struct led_classdev cdev;
+> +       acpi_handle handle;
+> +       char *acpi_method;
+> +};
+> +
+> +static const struct key_entry huawei_wmi_keymap[] = {
+> +       { KE_KEY,    0x281, { KEY_BRIGHTNESSDOWN } },
+> +       { KE_KEY,    0x282, { KEY_BRIGHTNESSUP } },
+> +       { KE_KEY,    0x284, { KEY_MUTE } },
+> +       { KE_KEY,    0x285, { KEY_VOLUMEDOWN } },
+> +       { KE_KEY,    0x286, { KEY_VOLUMEUP } },
+> +       { KE_KEY,    0x287, { KEY_MICMUTE } },
+> +       { KE_KEY,    0x289, { KEY_WLAN } },
+> +       // Huawei |M| key
+> +       { KE_KEY,    0x28a, { KEY_CONFIG } },
+> +       // Keyboard backlight
+> +       { KE_IGNORE, 0x293, { KEY_KBDILLUMTOGGLE } },
+> +       { KE_IGNORE, 0x294, { KEY_KBDILLUMUP } },
+> +       { KE_IGNORE, 0x295, { KEY_KBDILLUMUP } },
+> +       { KE_END,        0 }
+> +};
+> +
+> +static int huawei_wmi_micmute_led_set(struct led_classdev *led_cdev,
+> +               enum led_brightness brightness)
+> +{
+> +       struct huawei_wmi_priv *priv = dev_get_drvdata(led_cdev->dev->parent);
+> +       acpi_status status;
+> +       union acpi_object args[3];
+> +       struct acpi_object_list arg_list = {
+> +               .pointer = args,
+> +               .count = ARRAY_SIZE(args),
+> +       };
+> +
+> +       args[0].type = args[1].type = args[2].type = ACPI_TYPE_INTEGER;
+> +       args[1].integer.value = 0x04;
+> +
+> +       if (strcmp(priv->acpi_method, "SPIN") == 0) {
+> +               args[0].integer.value = 0;
+> +               args[2].integer.value = brightness ? 1 : 0;
+> +       } else if (strcmp(priv->acpi_method, "WPIN") == 0) {
+> +               args[0].integer.value = 1;
+> +               args[2].integer.value = brightness ? 0 : 1;
+> +       } else {
+> +               return -EINVAL;
+> +       }
+> +
+> +       status = acpi_evaluate_object(priv->handle, priv->acpi_method, &arg_list, NULL);
+> +       if (ACPI_FAILURE(status))
+> +               return -ENXIO;
+> +
+> +       return 0;
+> +}
+> +
+> +static int huawei_wmi_leds_setup(struct wmi_device *wdev)
+> +{
+> +       struct huawei_wmi_priv *priv = dev_get_drvdata(&wdev->dev);
+> +       acpi_status status;
+> +
 
-Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
----
- drivers/scsi/ufs/ufs-sysfs.c |  20 ++---
- drivers/scsi/ufs/ufs.h       |   2 +-
- drivers/scsi/ufs/ufshcd.c    | 164 +++++++++++++++++++++--------------
- drivers/scsi/ufs/ufshcd.h    |   9 +-
- 4 files changed, 115 insertions(+), 80 deletions(-)
+> +       /* Skip registering LED subsystem if no ACPI method was found.
+> +        * ec_get_handle() returns the first embedded controller device
+> +        * handle which then used to locate SPIN and WPIN methods.
+> +        */
 
-diff --git a/drivers/scsi/ufs/ufs-sysfs.c b/drivers/scsi/ufs/ufs-sysfs.c
-index 8d9332bb7d0c..0b221c5a244c 100644
---- a/drivers/scsi/ufs/ufs-sysfs.c
-+++ b/drivers/scsi/ufs/ufs-sysfs.c
-@@ -570,10 +570,11 @@ static ssize_t _name##_show(struct device *dev,				\
- 	struct ufs_hba *hba = dev_get_drvdata(dev);			\
- 	int ret;							\
- 	int desc_len = QUERY_DESC_MAX_SIZE;				\
--	u8 *desc_buf;							\
-+	char *desc_buf;							\
-+									\
- 	desc_buf = kzalloc(QUERY_DESC_MAX_SIZE, GFP_ATOMIC);		\
--	if (!desc_buf)							\
--		return -ENOMEM;						\
-+	if (!desc_buf)                                                  \
-+		return -ENOMEM;                                         \
- 	ret = ufshcd_query_descriptor_retry(hba,			\
- 		UPIU_QUERY_OPCODE_READ_DESC, QUERY_DESC_IDN_DEVICE,	\
- 		0, 0, desc_buf, &desc_len);				\
-@@ -582,14 +583,13 @@ static ssize_t _name##_show(struct device *dev,				\
- 		goto out;						\
- 	}								\
- 	index = desc_buf[DEVICE_DESC_PARAM##_pname];			\
--	memset(desc_buf, 0, QUERY_DESC_MAX_SIZE);			\
--	if (ufshcd_read_string_desc(hba, index, desc_buf,		\
--		QUERY_DESC_MAX_SIZE, true)) {				\
--		ret = -EINVAL;						\
-+	kfree(desc_buf);						\
-+	desc_buf = NULL;						\
-+	ret = ufshcd_read_string_desc(hba, index, &desc_buf,		\
-+				      SD_ASCII_STD);			\
-+	if (ret < 0)							\
- 		goto out;						\
--	}								\
--	ret = snprintf(buf, PAGE_SIZE, "%s\n",				\
--		desc_buf + QUERY_DESC_HDR_SIZE);			\
-+	ret = snprintf(buf, PAGE_SIZE, "%s\n", desc_buf);		\
- out:									\
- 	kfree(desc_buf);						\
- 	return ret;							\
-diff --git a/drivers/scsi/ufs/ufs.h b/drivers/scsi/ufs/ufs.h
-index dd65fea07687..06ec7bbf5b97 100644
---- a/drivers/scsi/ufs/ufs.h
-+++ b/drivers/scsi/ufs/ufs.h
-@@ -543,7 +543,7 @@ struct ufs_dev_info {
-  */
- struct ufs_dev_desc {
- 	u16 wmanufacturerid;
--	char model[MAX_MODEL_LEN + 1];
-+	char *model;
- };
- 
- /**
-diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
-index 86fe114f1f53..f1845698413c 100644
---- a/drivers/scsi/ufs/ufshcd.c
-+++ b/drivers/scsi/ufs/ufshcd.c
-@@ -298,16 +298,6 @@ static void ufshcd_scsi_block_requests(struct ufs_hba *hba)
- 		scsi_block_requests(hba->host);
- }
- 
--/* replace non-printable or non-ASCII characters with spaces */
--static inline void ufshcd_remove_non_printable(char *val)
--{
--	if (!val)
--		return;
--
--	if (*val < 0x20 || *val > 0x7e)
--		*val = ' ';
--}
--
- static void ufshcd_add_cmd_upiu_trace(struct ufs_hba *hba, unsigned int tag,
- 		const char *str)
- {
-@@ -3124,7 +3114,7 @@ int ufshcd_read_desc_param(struct ufs_hba *hba,
- 			   enum desc_idn desc_id,
- 			   int desc_index,
- 			   u8 param_offset,
--			   u8 *param_read_buf,
-+			   void *param_read_buf,
- 			   u8 param_size)
- {
- 	int ret;
-@@ -3192,7 +3182,7 @@ int ufshcd_read_desc_param(struct ufs_hba *hba,
- static inline int ufshcd_read_desc(struct ufs_hba *hba,
- 				   enum desc_idn desc_id,
- 				   int desc_index,
--				   u8 *buf,
-+				   void *buf,
- 				   u32 size)
- {
- 	return ufshcd_read_desc_param(hba, desc_id, desc_index, 0, buf, size);
-@@ -3210,49 +3200,78 @@ static int ufshcd_read_device_desc(struct ufs_hba *hba, u8 *buf, u32 size)
- 	return ufshcd_read_desc(hba, QUERY_DESC_IDN_DEVICE, 0, buf, size);
- }
- 
-+/**
-+ * struct uc_string_id - unicode string
-+ *
-+ * @len: size of this descriptor inclusive
-+ * @type: descriptor type
-+ * @uc: unicode string character
-+ */
-+struct uc_string_id {
-+	u8 len;
-+	u8 type;
-+	wchar_t uc[0];
-+} __packed;
-+
-+/* replace non-printable or non-ASCII characters with spaces */
-+static inline char ufshcd_remove_non_printable(char ch)
-+{
-+	return (ch >= 0x20 && ch <= 0x7e) ? ch : ' ';
-+}
-+
- /**
-  * ufshcd_read_string_desc - read string descriptor
-  * @hba: pointer to adapter instance
-  * @desc_index: descriptor index
-- * @buf: pointer to buffer where descriptor would be read
-- * @size: size of buf
-+ * @buf: pointer to buffer where descriptor would be read,
-+ *       the caller should free the memory.
-  * @ascii: if true convert from unicode to ascii characters
-+ *         null terminated string.
-  *
-- * Return 0 in case of success, non-zero otherwise
-+ * Return:
-+ * *      string size on success.
-+ * *      -ENOMEM: on allocation failure
-+ * *      -EINVAL: on a wrong parameter
-  */
--int ufshcd_read_string_desc(struct ufs_hba *hba, int desc_index,
--			    u8 *buf, u32 size, bool ascii)
-+int ufshcd_read_string_desc(struct ufs_hba *hba, u8 desc_index,
-+			    char **buf, bool ascii)
- {
--	int err = 0;
-+	struct uc_string_id *uc_str;
-+	char *str;
-+	int ret;
- 
--	err = ufshcd_read_desc(hba,
--				QUERY_DESC_IDN_STRING, desc_index, buf, size);
-+	if (!buf)
-+		return -EINVAL;
- 
--	if (err) {
--		dev_err(hba->dev, "%s: reading String Desc failed after %d retries. err = %d\n",
--			__func__, QUERY_REQ_RETRIES, err);
-+	uc_str = kzalloc(QUERY_DESC_MAX_SIZE, GFP_KERNEL);
-+	if (!uc_str)
-+		return -ENOMEM;
-+
-+	ret = ufshcd_read_desc(hba, QUERY_DESC_IDN_STRING,
-+			       desc_index, uc_str,
-+			       QUERY_DESC_MAX_SIZE);
-+	if (ret < 0) {
-+		dev_err(hba->dev, "Reading String Desc failed after %d retries. err = %d\n",
-+			QUERY_REQ_RETRIES, ret);
-+		str = NULL;
-+		goto out;
-+	}
-+
-+	if (uc_str->len <= QUERY_DESC_HDR_SIZE) {
-+		dev_dbg(hba->dev, "String Desc is of zero length\n");
-+		str = NULL;
-+		ret = 0;
- 		goto out;
- 	}
- 
- 	if (ascii) {
--		int desc_len;
--		int ascii_len;
-+		ssize_t ascii_len;
- 		int i;
--		char *buff_ascii;
--
--		desc_len = buf[0];
- 		/* remove header and divide by 2 to move from UTF16 to UTF8 */
--		ascii_len = (desc_len - QUERY_DESC_HDR_SIZE) / 2 + 1;
--		if (size < ascii_len + QUERY_DESC_HDR_SIZE) {
--			dev_err(hba->dev, "%s: buffer allocated size is too small\n",
--					__func__);
--			err = -ENOMEM;
--			goto out;
--		}
--
--		buff_ascii = kmalloc(ascii_len, GFP_KERNEL);
--		if (!buff_ascii) {
--			err = -ENOMEM;
-+		ascii_len = (uc_str->len - QUERY_DESC_HDR_SIZE) / 2 + 1;
-+		str = kzalloc(ascii_len, GFP_KERNEL);
-+		if (!str) {
-+			ret = -ENOMEM;
- 			goto out;
- 		}
- 
-@@ -3260,22 +3279,29 @@ int ufshcd_read_string_desc(struct ufs_hba *hba, int desc_index,
- 		 * the descriptor contains string in UTF16 format
- 		 * we need to convert to utf-8 so it can be displayed
- 		 */
--		utf16s_to_utf8s((wchar_t *)&buf[QUERY_DESC_HDR_SIZE],
--				desc_len - QUERY_DESC_HDR_SIZE,
--				UTF16_BIG_ENDIAN, buff_ascii, ascii_len);
-+		ret = utf16s_to_utf8s(uc_str->uc,
-+				      uc_str->len - QUERY_DESC_HDR_SIZE,
-+				      UTF16_BIG_ENDIAN, str, ascii_len);
- 
- 		/* replace non-printable or non-ASCII characters with spaces */
--		for (i = 0; i < ascii_len; i++)
--			ufshcd_remove_non_printable(&buff_ascii[i]);
-+		for (i = 0; i < ret; i++)
-+			str[i] = ufshcd_remove_non_printable(str[i]);
- 
--		memset(buf + QUERY_DESC_HDR_SIZE, 0,
--				size - QUERY_DESC_HDR_SIZE);
--		memcpy(buf + QUERY_DESC_HDR_SIZE, buff_ascii, ascii_len);
--		buf[QUERY_DESC_LENGTH_OFFSET] = ascii_len + QUERY_DESC_HDR_SIZE;
--		kfree(buff_ascii);
-+		str[ret++] = '\0';
-+
-+	} else {
-+		str = kzalloc(uc_str->len, GFP_KERNEL);
-+		if (!str) {
-+			ret = -ENOMEM;
-+			goto out;
-+		}
-+		memcpy(str, uc_str, uc_str->len);
-+		ret = uc_str->len;
- 	}
- out:
--	return err;
-+	*buf = str;
-+	kfree(uc_str);
-+	return ret;
- }
- 
- /**
-@@ -6409,6 +6435,9 @@ static int ufs_get_device_desc(struct ufs_hba *hba,
- 	u8 model_index;
- 	u8 *desc_buf;
- 
-+	if (!dev_desc)
-+		return -EINVAL;
-+
- 	buff_len = max_t(size_t, hba->desc_size.dev_desc,
- 			 QUERY_DESC_MAX_SIZE + 1);
- 	desc_buf = kmalloc(buff_len, GFP_KERNEL);
-@@ -6432,31 +6461,31 @@ static int ufs_get_device_desc(struct ufs_hba *hba,
- 				     desc_buf[DEVICE_DESC_PARAM_MANF_ID + 1];
- 
- 	model_index = desc_buf[DEVICE_DESC_PARAM_PRDCT_NAME];
--
--	/* Zero-pad entire buffer for string termination. */
--	memset(desc_buf, 0, buff_len);
--
--	err = ufshcd_read_string_desc(hba, model_index, desc_buf,
--				      QUERY_DESC_MAX_SIZE, true/*ASCII*/);
--	if (err) {
-+	err = ufshcd_read_string_desc(hba, model_index,
-+				      &dev_desc->model, SD_ASCII_STD);
-+	if (err < 0) {
- 		dev_err(hba->dev, "%s: Failed reading Product Name. err = %d\n",
- 			__func__, err);
- 		goto out;
- 	}
- 
--	desc_buf[QUERY_DESC_MAX_SIZE] = '\0';
--	strlcpy(dev_desc->model, (desc_buf + QUERY_DESC_HDR_SIZE),
--		min_t(u8, desc_buf[QUERY_DESC_LENGTH_OFFSET],
--		      MAX_MODEL_LEN));
--
--	/* Null terminate the model string */
--	dev_desc->model[MAX_MODEL_LEN] = '\0';
-+	/*
-+	 * ufshcd_read_string_desc returns size of the string
-+	 * reset the error value
-+	 */
-+	err = 0;
- 
- out:
- 	kfree(desc_buf);
- 	return err;
- }
- 
-+static void ufs_put_device_desc(struct ufs_dev_desc *dev_desc)
-+{
-+	kfree(dev_desc->model);
-+	dev_desc->model = NULL;
-+}
-+
- static void ufs_fixup_device_setup(struct ufs_hba *hba,
- 				   struct ufs_dev_desc *dev_desc)
- {
-@@ -6465,8 +6494,9 @@ static void ufs_fixup_device_setup(struct ufs_hba *hba,
- 	for (f = ufs_fixups; f->quirk; f++) {
- 		if ((f->card.wmanufacturerid == dev_desc->wmanufacturerid ||
- 		     f->card.wmanufacturerid == UFS_ANY_VENDOR) &&
--		    (STR_PRFX_EQUAL(f->card.model, dev_desc->model) ||
--		     !strcmp(f->card.model, UFS_ANY_MODEL)))
-+		     ((dev_desc->model &&
-+		       STR_PRFX_EQUAL(f->card.model, dev_desc->model)) ||
-+		      !strcmp(f->card.model, UFS_ANY_MODEL)))
- 			hba->dev_quirks |= f->quirk;
- 	}
- }
-@@ -6817,6 +6847,8 @@ static int ufshcd_probe_hba(struct ufs_hba *hba)
- 	}
- 
- 	ufs_fixup_device_setup(hba, &card);
-+	ufs_put_device_desc(&card);
-+
- 	ufshcd_tune_unipro_params(hba);
- 
- 	ret = ufshcd_set_vccq_rail_unused(hba,
-diff --git a/drivers/scsi/ufs/ufshcd.h b/drivers/scsi/ufs/ufshcd.h
-index 69ba7445d2b3..4647bd0745c4 100644
---- a/drivers/scsi/ufs/ufshcd.h
-+++ b/drivers/scsi/ufs/ufshcd.h
-@@ -880,14 +880,17 @@ int ufshcd_read_desc_param(struct ufs_hba *hba,
- 			   enum desc_idn desc_id,
- 			   int desc_index,
- 			   u8 param_offset,
--			   u8 *param_read_buf,
-+			   void *param_read_buf,
- 			   u8 param_size);
- int ufshcd_query_attr(struct ufs_hba *hba, enum query_opcode opcode,
- 		      enum attr_idn idn, u8 index, u8 selector, u32 *attr_val);
- int ufshcd_query_flag(struct ufs_hba *hba, enum query_opcode opcode,
- 	enum flag_idn idn, bool *flag_res);
--int ufshcd_read_string_desc(struct ufs_hba *hba, int desc_index,
--			    u8 *buf, u32 size, bool ascii);
-+
-+#define SD_ASCII_STD true
-+#define SD_RAW false
-+int ufshcd_read_string_desc(struct ufs_hba *hba, u8 desc_index,
-+			    char **buf, bool ascii);
- 
- int ufshcd_hold(struct ufs_hba *hba, bool async);
- void ufshcd_release(struct ufs_hba *hba);
+Comment style is cripple here.
+All issues we may fix when applying.
+
+> +       priv->handle = ec_get_handle();
+> +       if (!priv->handle)
+> +               return 0;
+> +
+> +       if (acpi_has_method(priv->handle, "SPIN"))
+> +               priv->acpi_method = "SPIN";
+> +       else if (acpi_has_method(priv->handle, "WPIN"))
+> +               priv->acpi_method = "WPIN";
+> +       else
+> +               return 0;
+> +
+> +       priv->cdev.name = "platform::micmute";
+> +       priv->cdev.max_brightness = 1;
+> +       priv->cdev.brightness_set_blocking = huawei_wmi_micmute_led_set;
+> +       priv->cdev.default_trigger = "audio-micmute";
+> +       priv->cdev.brightness = ledtrig_audio_get(LED_AUDIO_MICMUTE);
+> +       priv->cdev.dev = &wdev->dev;
+> +       priv->cdev.flags = LED_CORE_SUSPENDRESUME;
+> +
+> +       return devm_led_classdev_register(&wdev->dev, &priv->cdev);
+> +}
+> +
+> +static void huawei_wmi_process_key(struct wmi_device *wdev, int code)
+> +{
+> +       struct huawei_wmi_priv *priv = dev_get_drvdata(&wdev->dev);
+> +       const struct key_entry *key;
+> +
+> +       /*
+> +        * WMI0 uses code 0x80 to indicate a hotkey event.
+> +        * The actual key is fetched from the method WQ00
+> +        * using WMI0_EXPENSIVE_GUID.
+> +        */
+> +       if (code == 0x80) {
+> +               struct acpi_buffer response = { ACPI_ALLOCATE_BUFFER, NULL };
+> +               union acpi_object *obj;
+> +               acpi_status status;
+> +
+> +               status = wmi_query_block(WMI0_EXPENSIVE_GUID, 0, &response);
+> +               if (ACPI_FAILURE(status))
+> +                       return;
+> +
+> +               obj = (union acpi_object *)response.pointer;
+> +               if (obj && obj->type == ACPI_TYPE_INTEGER)
+> +                       code = obj->integer.value;
+> +
+> +               kfree(response.pointer);
+> +       }
+> +
+> +       key = sparse_keymap_entry_from_scancode(priv->idev, code);
+> +       if (!key) {
+> +               dev_info(&wdev->dev, "Unknown key pressed, code: 0x%04x\n", code);
+> +               return;
+> +       }
+> +
+> +       sparse_keymap_report_entry(priv->idev, key, 1, true);
+> +}
+> +
+> +static void huawei_wmi_notify(struct wmi_device *wdev,
+> +               union acpi_object *obj)
+> +{
+> +       if (obj->type == ACPI_TYPE_INTEGER)
+> +               huawei_wmi_process_key(wdev, obj->integer.value);
+> +       else
+> +               dev_info(&wdev->dev, "Bad response type %d\n", obj->type);
+> +}
+> +
+> +static int huawei_wmi_input_setup(struct wmi_device *wdev)
+> +{
+> +       struct huawei_wmi_priv *priv = dev_get_drvdata(&wdev->dev);
+> +       int err;
+> +
+> +       priv->idev = devm_input_allocate_device(&wdev->dev);
+> +       if (!priv->idev)
+> +               return -ENOMEM;
+> +
+> +       priv->idev->name = "Huawei WMI hotkeys";
+> +       priv->idev->phys = "wmi/input0";
+> +       priv->idev->id.bustype = BUS_HOST;
+> +       priv->idev->dev.parent = &wdev->dev;
+> +
+> +       err = sparse_keymap_setup(priv->idev, huawei_wmi_keymap, NULL);
+> +       if (err)
+> +               return err;
+> +
+
+> +       err = input_register_device(priv->idev);
+> +       if (err)
+> +               return err;
+> +
+> +       return 0;
+
+return input_register_device(...);
+
+> +}
+> +
+> +static int huawei_wmi_probe(struct wmi_device *wdev)
+> +{
+> +       struct huawei_wmi_priv *priv;
+> +       int err;
+> +
+> +       priv = devm_kzalloc(&wdev->dev, sizeof(struct huawei_wmi_priv), GFP_KERNEL);
+> +       if (!priv)
+> +               return -ENOMEM;
+
++ blank line.
+
+> +       dev_set_drvdata(&wdev->dev, priv);
+> +
+> +       err = huawei_wmi_input_setup(wdev);
+> +       if (err)
+> +               return err;
+> +
+
+> +       err = huawei_wmi_leds_setup(wdev);
+> +       if (err)
+> +               return err;
+> +
+> +       return 0;
+
+return huawei_wmi_leds_setup(...);
+
+> +}
+> +
+> +static const struct wmi_device_id huawei_wmi_id_table[] = {
+> +       { .guid_string = WMI0_EVENT_GUID },
+> +       { .guid_string = AMW0_EVENT_GUID },
+> +       {  }
+> +};
+> +
+> +static struct wmi_driver huawei_wmi_driver = {
+> +       .driver = {
+> +               .name = "huawei-wmi",
+> +       },
+> +       .id_table = huawei_wmi_id_table,
+> +       .probe = huawei_wmi_probe,
+> +       .notify = huawei_wmi_notify,
+> +};
+> +
+> +module_wmi_driver(huawei_wmi_driver);
+> +
+> +MODULE_ALIAS("wmi:"WMI0_EVENT_GUID);
+> +MODULE_ALIAS("wmi:"AMW0_EVENT_GUID);
+> +MODULE_AUTHOR("Ayman Bagabas <ayman.bagabas@gmail.com>");
+> +MODULE_DESCRIPTION("Huawei WMI hotkeys");
+> +MODULE_LICENSE("GPL v2");
+> --
+> 2.19.2
+>
+
+
 -- 
-2.19.2
-
+With Best Regards,
+Andy Shevchenko
