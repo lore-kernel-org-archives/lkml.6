@@ -2,154 +2,122 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FE5DC04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 01:54:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FF00C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 01:56:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 38BC52146D
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 01:54:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38BC52146D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 5D4FC20851
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 01:56:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D4FC20851
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amlogic.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729289AbeLKByt convert rfc822-to-8bit (ORCPT
+        id S1729310AbeLKB4Q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 20:54:49 -0500
-Received: from mga01.intel.com ([192.55.52.88]:19281 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727540AbeLKBys (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 20:54:48 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Dec 2018 17:54:47 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,340,1539673200"; 
-   d="scan'208";a="282558745"
-Received: from fmsmsx104.amr.corp.intel.com ([10.18.124.202])
-  by orsmga005.jf.intel.com with ESMTP; 10 Dec 2018 17:54:47 -0800
-Received: from shsmsx104.ccr.corp.intel.com (10.239.4.70) by
- fmsmsx104.amr.corp.intel.com (10.18.124.202) with Microsoft SMTP Server (TLS)
- id 14.3.408.0; Mon, 10 Dec 2018 17:54:47 -0800
-Received: from shsmsx101.ccr.corp.intel.com ([169.254.1.201]) by
- SHSMSX104.ccr.corp.intel.com ([169.254.5.203]) with mapi id 14.03.0415.000;
- Tue, 11 Dec 2018 09:54:45 +0800
-From:   "Liu, Chuansheng" <chuansheng.liu@intel.com>
-To:     "'akpm@linux-foundation.org'" <akpm@linux-foundation.org>,
-        "'sergey.senozhatsky@gmail.com'" <sergey.senozhatsky@gmail.com>,
-        "'dvyukov@google.com'" <dvyukov@google.com>,
-        "'penguin-kernel@I-love.SAKURA.ne.jp'" 
-        <penguin-kernel@I-love.SAKURA.ne.jp>
-CC:     "'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>,
-        "Liu, Chuansheng" <chuansheng.liu@intel.com>
-Subject: [PATCH V1] kernel/hung_task.c: Force console verbose before panic
-Thread-Topic: [PATCH V1] kernel/hung_task.c: Force console verbose before
- panic
-Thread-Index: AdSQ9AvMP4cc4O7IS6+xvm4BbQadDA==
-Date:   Tue, 11 Dec 2018 01:54:45 +0000
-Message-ID: <27240C0AC20F114CBF8149A2696CBE4A6015ABFC@SHSMSX101.ccr.corp.intel.com>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ctpclassification: CTP_NT
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiNjIxODhlYjAtM2RiNi00NGYxLWE3MTAtNTkyMzkxZDI2Y2IyIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiRWlWdkZWcGxwYUdBQ1lOQjFqc2ZMaTc4ckNsM2pwbnRMT3g0ak1wbmNWSDFOU1RGNjZ2XC9OaE9Za0FnbGhybm4ifQ==
-dlp-product: dlpe-windows
-dlp-version: 11.0.400.15
-dlp-reaction: no-action
-x-originating-ip: [10.239.127.40]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        Mon, 10 Dec 2018 20:56:16 -0500
+Received: from mail-sz2.amlogic.com ([211.162.65.114]:10412 "EHLO
+        mail-sz2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727485AbeLKB4P (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Dec 2018 20:56:15 -0500
+Received: from [10.28.18.115] (10.28.18.115) by mail-sz2.amlogic.com
+ (10.28.11.6) with Microsoft SMTP Server (TLS) id 15.0.1320.4; Tue, 11 Dec
+ 2018 09:56:25 +0800
+Subject: Re: [PATCH v7 2/2] mtd: rawnand: meson: add support for Amlogic NAND
+ flash controller
+To:     Miquel Raynal <miquel.raynal@bootlin.com>
+CC:     Boris Brezillon <boris.brezillon@bootlin.com>,
+        Jianxin Pan <jianxin.pan@amlogic.com>,
+        <linux-mtd@lists.infradead.org>, Yixun Lan <yixun.lan@amlogic.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Carlo Caione <carlo@caione.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Rob Herring <robh@kernel.org>, Jian Hu <jian.hu@amlogic.com>,
+        Hanjie Lin <hanjie.lin@amlogic.com>,
+        Victor Wan <victor.wan@amlogic.com>,
+        <linux-amlogic@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+References: <1542386439-30166-1-git-send-email-jianxin.pan@amlogic.com>
+ <1542386439-30166-3-git-send-email-jianxin.pan@amlogic.com>
+ <20181207102456.1dc67e07@xps13>
+ <823825a3-86fb-9a20-ae29-85cc52d44093@amlogic.com>
+ <20181210123809.5ade45c4@bbrezillon>
+ <79a797c2-f37f-7f7c-e907-2d3c2283ec2d@amlogic.com>
+ <20181210155057.38788656@xps13>
+From:   Liang Yang <liang.yang@amlogic.com>
+Message-ID: <d60bac6f-732d-0ddc-2644-17f650dfa885@amlogic.com>
+Date:   Tue, 11 Dec 2018 09:56:25 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.2
 MIME-Version: 1.0
+In-Reply-To: <20181210155057.38788656@xps13>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.28.18.115]
+X-ClientProxiedBy: mail-sz2.amlogic.com (10.28.11.6) To mail-sz2.amlogic.com
+ (10.28.11.6)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Based on patch commit 401c636a0eeb ("kernel/hung_task.c:
-show all hung tasks before panic"), we could get the
-call stack of hung task.
+Hi Miquel,
 
-However, if the console loglevel is not high, we still
-can not see the useful panic information in practice,
-and in most cases users don't set console loglevel to
-high level.
+On 2018/12/10 22:50, Miquel Raynal wrote:
+> Hi Liang,
+> 
+> Liang Yang <liang.yang@amlogic.com> wrote on Mon, 10 Dec 2018 20:12:39
+> +0800:
+> 
+>> On 2018/12/10 19:38, Boris Brezillon wrote:
+>>> On Mon, 10 Dec 2018 19:23:46 +0800
+>>> Liang Yang <liang.yang@amlogic.com> wrote:
+>>>    
+>>>>>> +			mtd->ecc_stats.failed++;
+>>>>>> +			continue;
+>>>>>> +		}
+>>>>>> +		mtd->ecc_stats.corrected += ECC_ERR_CNT(*info);
+>>>>>> +		bitflips = max_t(u32, bitflips, ECC_ERR_CNT(*info));
+>>>>>> +	}
+>>>>>
+>>>>> Are you sure you handle correctly empty pages with bf?
+>>>>>     >> if scramble is enable, i would say yes here.
+>>>> when scramble is disabled, i am considering how to use the helper
+>>>> nand_check_erased_ecc_chunk, but it seems that i can't get the ecc
+>>>> bytes which is caculated by ecc engine.by the way, nfc dma doesn't send
+>>>> out the ecc parity bytes.
+>>>
+>>> Even if the ECC engine is disabled?
+>>>    
+>> No.
+>> When ECC engine is disabled, it can read the ecc parity bytes ; but there is another problem that i need to consider how code struct looks better when reading error with ecc opened and then try to raw read.
+>> Is there a good idea?
+> 
+> When reading with ECC enabled, in case of uncorrectable error you
+> must re-read without ECC, then check if the page is empty or not with
+> the core helpers (nand_check_erased_*()).
+> 
+> Is this what you meant?
+> 
+yes. when uncorrectable ECC error, i need firstly read out the ECC bytes 
+without ECC engine and then use the helper nand_check_erased_ecc_chunk 
+to check if blank page.
+Of course, the precondition is without scrambler, or the bland page can 
+be detected by meson NFC.
 
-This patch is to force console verbose before system
-panic, so that the real useful information can be seen
-in the console, instead of being like the following,
-which doesn't have hung task information.
-
-[  246.916600] INFO: task init:1 blocked for more than 120 seconds.
-[  246.922320]       Tainted: G     U  W         4.19.0-quilt-2e5dc0ac-g51b6c21d76cc #1
-[  246.926790] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-[  246.932553] Kernel panic - not syncing: hung_task: blocked tasks
-[  246.938503] CPU: 2 PID: 479 Comm: khungtaskd Tainted: G     U  W         4.19.0-quilt-2e5dc0ac-g51b6c21d76cc #1
-[  246.990266] Call Trace:
-[  246.991707]  dump_stack+0x4f/0x65
-[  246.993710]  panic+0xde/0x231
-[  246.995445]  watchdog+0x290/0x410
-[  246.997390]  kthread+0x12c/0x150
-[  246.999301]  ? reset_hung_task_detector+0x20/0x20
-[  247.004825]  ? kthread_create_worker_on_cpu+0x70/0x70
-[  247.007735]  ret_from_fork+0x35/0x40
-[  247.010280] reboot: panic mode set: p,w
-[  247.012619] Kernel Offset: 0x34000000 from 0xffffffff81000000 (relocation range: 0xffffffff80000000-0xffffffffbfffffff)
-
-V1: console_verbose() is used instead of ignore_loglevel,
-    suggested by Sergey.
-    Tweak the function check_hung_task() suggested by
-    Tetsuo to make code more readable.
-
-Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Cc: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Signed-off-by: Chuansheng Liu <chuansheng.liu@intel.com>
----
- kernel/hung_task.c | 17 +++++++----------
- 1 file changed, 7 insertions(+), 10 deletions(-)
-
-diff --git a/kernel/hung_task.c b/kernel/hung_task.c
-index cb8e3e8..8db421f 100644
---- a/kernel/hung_task.c
-+++ b/kernel/hung_task.c
-@@ -112,14 +112,16 @@ static void check_hung_task(struct task_struct *t, unsigned long timeout)
-
-        trace_sched_process_hang(t);
-
--       if (!sysctl_hung_task_warnings && !sysctl_hung_task_panic)
--               return;
--
-        /*
-         * Ok, the task did not get scheduled for more than 2 minutes,
-         * complain:
-         */
--       if (sysctl_hung_task_warnings) {
-+       if (sysctl_hung_task_panic || sysctl_hung_task_warnings) {
-+               if (sysctl_hung_task_panic) {
-+                       console_verbose();
-+                       hung_task_call_panic = true;
-+               }
-+
-                if (sysctl_hung_task_warnings > 0)
-                        sysctl_hung_task_warnings--;
-                pr_err("INFO: task %s:%d blocked for more than %ld seconds.\n",
-@@ -132,13 +134,8 @@ static void check_hung_task(struct task_struct *t, unsigned long timeout)
-                        " disables this message.\n");
-                sched_show_task(t);
-                hung_task_show_lock = true;
--       }
--
--       touch_nmi_watchdog();
-
--       if (sysctl_hung_task_panic) {
--               hung_task_show_lock = true;
--               hung_task_call_panic = true;
-+               touch_nmi_watchdog();
-        }
- }
-
---
-2.7.4
+> Thanks,
+> Miquèl
+> 
+> .
+> 
