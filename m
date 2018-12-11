@@ -2,99 +2,132 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2A65C07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 17:54:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 235E3C07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 17:57:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6FA8C20855
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 17:54:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="AmenClFQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6FA8C20855
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id DD03520855
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 17:57:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD03520855
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727000AbeLKRyC (ORCPT
+        id S1726568AbeLKR5E convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 12:54:02 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:39791 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726231AbeLKRyB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 12:54:01 -0500
-Received: by mail-pl1-f195.google.com with SMTP id 101so7264828pld.6
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 09:54:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=fnCYDLd8JaIeqhRy1AB47UYKu5VVnuK62IDyTPBKCYc=;
-        b=AmenClFQciiWHcFYAUMPMExHowU9pDeOKYFOQESQ1dpJ7xgnjKss21680iKdCN9I1a
-         r7YTiQqRF0Cd2YsDSbaQuxqm7rUfZO3MYRyMOdnqB6rmCukaY+N2BwmEn74SgFhaQH0P
-         yesasQU7UZe+HbjJ+lL1PKZ0thucFQTd1d1I0PYE8jvIX26BVd8T5cwei2HlqlUuRyCI
-         huq4+BhEEv25WwrnMjZcQYHAV3B4IPKqL7a51Tsi2krTK1VhGKOgMqR4erc/sjaEt/3+
-         eZvz6o8+Nc2EcxhOk4LNxQikdonvpDIFRk2GZ24AVp9cy/Dpmf+RwleU0rnj3OzfJy1l
-         TfUA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=fnCYDLd8JaIeqhRy1AB47UYKu5VVnuK62IDyTPBKCYc=;
-        b=E2jfstoObAiFm/+jV3BaW6F28c56bIq5NfOHy0xULm7laiyqCILDEUkXtOZI7E6kMQ
-         Xwds6MdnyWwEtLG4t0bqPIKyJhz615V75TKW7SctrLdma+vdcjGyiW52lcKJHt+36D4m
-         OabCHRdkbcZvASmox8AVxsnkQf2kSC4Bw2IbsGqRsHd0bFcHX1e5QzxrCs8khGvgvoJV
-         r03P+inY4alqr2CMoK7bMdemLazl8riCZEkjPeXcaEVWdUHXBxSunWToqqRKnkz7zZip
-         pvnWHAgy92yMXZZIErqv89zrHMjHzWyd8yA2SlNpiBZiD73BqNeBm0YwJKFIvtwg5O6c
-         0I1w==
-X-Gm-Message-State: AA+aEWbtnZ2h376s46iWibzbjBITSYInNZE0UvRPLC3W3uXNSvoBCMQ2
-        KtVf7RXoXwTQ75qLHP+AHipsaFjTsNynRtUTrhZTETdP
-X-Google-Smtp-Source: AFSGD/U1Bmds0zhCEJUG8fJRwU7ZPSS/lwTExtHfLrkz4K0VY3FoM/L6UxoVCAn+/vJSW3bQM1zqCDqH8hqLw0QgzCk=
-X-Received: by 2002:a17:902:820d:: with SMTP id x13mr17407605pln.229.1544550840960;
- Tue, 11 Dec 2018 09:54:00 -0800 (PST)
+        Tue, 11 Dec 2018 12:57:04 -0500
+Received: from mga03.intel.com ([134.134.136.65]:61843 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726411AbeLKR5E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 12:57:04 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Dec 2018 09:57:04 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,343,1539673200"; 
+   d="scan'208";a="127013498"
+Received: from schen9-mobl3.jf.intel.com ([10.24.9.33])
+  by fmsmga004.fm.intel.com with ESMTP; 11 Dec 2018 09:57:03 -0800
+Subject: Re: [PATCH v4 2/2] proc: add AVX-512 usage to /proc/pid/status
+To:     Aubrey Li <aubrey.li@intel.com>, tglx@linutronix.de,
+        mingo@redhat.com, peterz@infradead.org, hpa@zytor.com
+Cc:     ak@linux.intel.com, dave.hansen@intel.com, arjan@linux.intel.com,
+        linux-kernel@vger.kernel.org, Aubrey Li <aubrey.li@linux.intel.com>
+References: <20181211002448.3520-1-aubrey.li@intel.com>
+ <20181211002448.3520-2-aubrey.li@intel.com>
+From:   Tim Chen <tim.c.chen@linux.intel.com>
+Message-ID: <6d6af89a-4490-ffc3-9c16-90cbec2b1300@linux.intel.com>
+Date:   Tue, 11 Dec 2018 09:57:03 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-References: <20181206191231.192355-1-ndesaulniers@google.com>
- <tip-f4313ba52f9caccfda6a55f991c84aba6726b88f@git.kernel.org>
- <CAKwvOdmBNvpjiYDdP88c9TZHzqbf-GTcQqPdft+LgJXC+W26Dw@mail.gmail.com>
- <5480353.C3TqP6Wb6x@blindfold> <20181211174658.GN27375@zn.tnic>
-In-Reply-To: <20181211174658.GN27375@zn.tnic>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Tue, 11 Dec 2018 09:53:49 -0800
-Message-ID: <CAKwvOdnkqbxTYudCWH+Q_nuGbpKp8w3_3zHpxe29nirKKPrpsQ@mail.gmail.com>
-Subject: Re: [tip:x86/build] x86/um/vdso: Drop implicit common-page-size
- linker flag
-To:     bp@alien8.de
-Cc:     richard@nod.at, Masahiro Yamada <yamada.masahiro@socionext.com>,
-        mingo@redhat.com, LKML <linux-kernel@vger.kernel.org>,
-        x86@kernel.org, hpa@zytor.com, jdike@addtoit.com,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>, bp@suse.de,
-        linux-tip-commits@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20181211002448.3520-2-aubrey.li@intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 11, 2018 at 9:47 AM Borislav Petkov <bp@alien8.de> wrote:
->
-> On Tue, Dec 11, 2018 at 06:43:39PM +0100, Richard Weinberger wrote:
-> > https://lore.kernel.org/lkml/1633144.08IGjMOzBB@blindfold/
-> >
-> > Maybe google started to hate my mailserver (again).
->
-> You probably need DKIM fun. It is most likely marked as spam in his
-> mbox.
 
-Indeed it was.  I'm forced to use Gmail's clients for this work
-account and all that implies (no plain text responses when mobile).
-Man do I miss Thunderbird properly threading responses clearly by use
-of indentation.  Gmail literally did not show any responses even in
-search for my patch (even from someone on the to/cc list!).  Maybe I
-can file a bug about this internally...
--- 
-Thanks,
-~Nick Desaulniers
+
+On 12/10/18 4:24 PM, Aubrey Li wrote:
+> AVX-512 components usage could cause core turbo frequency drop. So
+> it's useful to expose AVX-512 components usage as a heuristic hint
+> for the user space job scheduler to cluster the AVX-512 using tasks
+> together.
+> 
+> Example:
+> $ cat /proc/pid/status | grep AVX512_hint
+> AVX512_hint:   1
+> 
+> The hint number '0' indicates the task recently didn't use AVX-512
+> components thus unlikely has frequency drop issue. And the number '1'
+> indicates the task recently used AVX-512 components thus could cause
+> core frequency drop. User space tools may want to further check by:
+> 
+> $ perf stat --pid <pid> -e core_power.lvl2_turbo_license -- sleep 1
+> 
+>  Performance counter stats for process id '3558':
+> 
+>      3,251,565,961      core_power.lvl2_turbo_license
+> 
+>        1.004031387 seconds time elapsed
+> 
+> Non-zero counter value confirms that the task causes frequency drop.
+> 
+> Signed-off-by: Aubrey Li <aubrey.li@linux.intel.com>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Andi Kleen <ak@linux.intel.com>
+> Cc: Tim Chen <tim.c.chen@linux.intel.com>
+> Cc: Dave Hansen <dave.hansen@intel.com>
+> Cc: Arjan van de Ven <arjan@linux.intel.com>
+> ---
+>  arch/x86/kernel/fpu/xstate.c | 19 +++++++++++++++++++
+>  fs/proc/array.c              |  5 +++++
+>  2 files changed, 24 insertions(+)
+> 
+> diff --git a/arch/x86/kernel/fpu/xstate.c b/arch/x86/kernel/fpu/xstate.c
+> index 87a57b7642d3..98baa47c97b0 100644
+> --- a/arch/x86/kernel/fpu/xstate.c
+> +++ b/arch/x86/kernel/fpu/xstate.c
+> @@ -7,6 +7,7 @@
+>  #include <linux/cpu.h>
+>  #include <linux/mman.h>
+>  #include <linux/pkeys.h>
+> +#include <linux/seq_file.h>
+>  
+>  #include <asm/fpu/api.h>
+>  #include <asm/fpu/internal.h>
+> @@ -1245,3 +1246,21 @@ int copy_user_to_xstate(struct xregs_state *xsave, const void __user *ubuf)
+>  
+>  	return 0;
+>  }
+> +
+> +/*
+> + * Report CPU specific thread state
+> + */
+> +void arch_task_state(struct seq_file *m, struct task_struct *task)
+> +{
+> +	/*
+> +	 * Check the processor and build option if AVX512 is supported.
+> +	 */
+> +	if (!cpu_feature_enabled(X86_FEATURE_AVX512F))
+> +		return;
+> +	/*
+> +	 * Report AVX-512 components usage:
+> +	 */
+> +	seq_put_decimal_ull(m, "AVX512_hint:\t",
+> +				task->thread.fpu.avx512_usage ? 1 : 0);
+
+I believe you need some kind of documentation of this new interface
+in kernel's Documentation.  So an admin doesn't need to look into the
+kernel code to figure out what this /proc/pid/status is supposed to do.
+
+Tim
+
+
