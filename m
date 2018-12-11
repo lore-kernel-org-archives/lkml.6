@@ -2,121 +2,112 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5129C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 00:10:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EBCDC04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 00:10:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 718932081F
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 00:10:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 033482081F
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 00:10:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=aj.id.au header.i=@aj.id.au header.b="EALjCgjE";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="w2pdJkUd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 718932081F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=aj.id.au
+	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="SMwiI9t1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 033482081F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728388AbeLKAKL (ORCPT
+        id S1728697AbeLKAKo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 19:10:11 -0500
-Received: from out1-smtp.messagingengine.com ([66.111.4.25]:47419 "EHLO
-        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726720AbeLKAKL (ORCPT
+        Mon, 10 Dec 2018 19:10:44 -0500
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:38672 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726720AbeLKAKo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 19:10:11 -0500
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailout.nyi.internal (Postfix) with ESMTP id A29A321A90;
-        Mon, 10 Dec 2018 19:10:09 -0500 (EST)
-Received: from web5 ([10.202.2.215])
-  by compute4.internal (MEProxy); Mon, 10 Dec 2018 19:10:09 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aj.id.au; h=
-        message-id:from:to:cc:mime-version:content-transfer-encoding
-        :content-type:in-reply-to:references:date:subject; s=fm1; bh=tx+
-        hCwzUrGyW7rgdf/IRZt6IwmVugK9fuCA7nltuc0A=; b=EALjCgjEtijU1zXmDui
-        0ybRVO3+jiiWg8zkWNIkGthCbrTn5RRDumY4fF4pNlbY8kcrnnyEtaxF6SjQ68yH
-        0Y0zDoezhlUrwBLdZpmf5GW2frhVPeg+tQqamBKOMTnOLAa5uuVUVAPQasCw/w81
-        vYbw7SMd1t/LmB7W1QQPBaHJsYk6IPgyJwKjNvtQNagBtXsf2KLbt38tqhy+2KtG
-        V4vVunBeQUk0wqVM/CcoUMrfPz7tr19h7XTFd3GP6+W7qnBLc88iJfkPWc28ckzP
-        uESdU3Zj1t/Zn4yL9OAwV+VNwH7TC2rYD6Pt/nfvH4K/6eDDZQKr7XsFB/jcjAUa
-        Ahw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:content-type
-        :date:from:in-reply-to:message-id:mime-version:references
-        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm1; bh=tx+hCwzUrGyW7rgdf/IRZt6IwmVugK9fuCA7nltuc
-        0A=; b=w2pdJkUdA6VkbWC8UzTsdNtqXdVH2dv4g2rrMl45RVbm0Zy1XdkvmV9pM
-        Ul3AKK4HYQp15I6LgySNhcL/g/M7nreIHEzRZdcSrkQHoSTxB0uK1rNRfFnF/BC6
-        ni4mnjs2oz6jv0c0u7m/jf0dL5Xx7jXQLniw8aSsY/TrM2u57RzLgdNbW0Qs1DY5
-        GiHFvTY9VVSownKMV8oK7WechBEQcRV8hy3Ba4MdEhADNl7UEEhqEKkZd+x+izMV
-        qoFJ2dSFCBZUOiX4z9m1ltrMt+zgJEVaBfVP154iPbSJhcvhwmwjJVBu6Z5Nz4Ix
-        uFrM9lYq19GpbC2nYiNLnsbAMingQ==
-X-ME-Sender: <xms:XwAPXIN9VAJU_5JGKvxgsnP-HVDZkjYksZTOPIABAqDzMZz-EZsSLQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedtkedrudegiedgudekucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfquhhtnecuuegrihhlohhuthemucef
-    tddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkhffvggfgtg
-    fojghffffusehtjeertdertdejnecuhfhrohhmpeetnhgurhgvficulfgvfhhfvghrhicu
-    oegrnhgurhgvfiesrghjrdhiugdrrghuqeenucfrrghrrghmpehmrghilhhfrhhomheprg
-    hnughrvgifsegrjhdrihgurdgruhenucevlhhushhtvghrufhiiigvpedt
-X-ME-Proxy: <xmx:XwAPXJioMMSh0KPjFFDuEkuXVkmpg_UgPVx1bqZla8au7xDDPByF9g>
-    <xmx:XwAPXONOmbDz1NFjd9FKhhr89hhR_GzW9Ed-sIEiuN2oQmfO6Dhkpg>
-    <xmx:XwAPXK7RRKnOQ4ujr8oC4r8vOVsE2FzA9jtUW1DZBaJ_h6qnOH2uDA>
-    <xmx:XwAPXM0Y3gAPUiFy0AEE5S2xTKT25oeK2yCqnmPFIhHZasEbZqPxiw>
-    <xmx:XwAPXLaobClMQlMIhVAG3WvjRbTv1jkTpQjv_sjMJLdI0cAW5eYI7A>
-    <xmx:YQAPXD_9LmAnNUmSubr-jTnb4bmrbi7yf7L-NL2QC3wldADCpFwW3w>
-Received: by mailuser.nyi.internal (Postfix, from userid 99)
-        id E6B2F9E149; Mon, 10 Dec 2018 19:10:06 -0500 (EST)
-Message-Id: <1544487006.3301683.1605247720.567E9685@webmail.messagingengine.com>
-From:   Andrew Jeffery <andrew@aj.id.au>
-To:     Nathan Chancellor <natechancellor@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc:     Joel Stanley <joel@jms.id.au>, linux-gpio@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org
+        Mon, 10 Dec 2018 19:10:44 -0500
+Received: by mail-oi1-f194.google.com with SMTP id a77so10583255oii.5
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Dec 2018 16:10:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
+        bh=yi1VF96O/q8BCikgm25lag/fmoX6JrFGqfib6kD7cMo=;
+        b=SMwiI9t1szhtExZ4zKZzTD2Xqq8bjMi8Ht4SZDzQC8L17IrgIDSRQWAZn4Maf+5D3e
+         AmS8nDPTGpBoEyA5uyzbGgQGarVOGRzxMAi8nJKO56Yno1mx6JHll3xtNDZ8NDMz+gZe
+         8A5lZ9WXfvbykOp2DCHCEseD2lKFgw7FLXEIekcSXqEgmMTpWgstajDqicyhpdL3/lBr
+         MofVO/cz1rbKVoIjkftwOfM5ptIW17YX+IbPKJxmfYUTNjOuUV5yyF1UC88sWzdHYIlC
+         REuV+/iI75QL0Ml08Nk+TFtIstSE9tGdrP3D2BYzbadhzxSi2yzivL3oDXb73pwDbJ9R
+         oEpw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to;
+        bh=yi1VF96O/q8BCikgm25lag/fmoX6JrFGqfib6kD7cMo=;
+        b=b2/9mN9sV/WU5dkL1SMI8ik4xWZG1K/MIPJeGmksfgJ9+51H0irhCVfsnn6ttm6eC3
+         Mjk//Ae34nlXB51SB9I7g+5ZUCXyTQtBJPwR8Qu4sh63BhXCCPDkimZoXBsvp7ah+R//
+         XkWMbfrpsNChO1yKOpxIIGMqZrUPkWzQEyqmM7XubOOQ4oqT5X1ASsruS2z5rsSjJl1o
+         +k9ajXYVs4l7Vsrrj0l933VQnWaTOp8snSoGSlJQ4XGMC4pzhqHZK2tm2ACVA99TLHsq
+         8MqN//V3NQvuea+b48bzlEGB2hGrIPBMmUkwHqkBHa7B/E6jdauyPyR8q4l0tOJMgKE4
+         UbGA==
+X-Gm-Message-State: AA+aEWa8yWeUeQ0yBodCqf9ou3mO3rT1GbbywDQTlcg7JW6RG7DOyLfD
+        nd1xbw0dxy2qgUufHqxZktH2gNbu+Ob93vSoYh/ImA==
+X-Google-Smtp-Source: AFSGD/U9fkviS0WqQTaJiACbHQOcSpOVSimdAl9DgNHDHCZZGzBjUp0IDAt7q/57xoa3TB10jaUStuEpZC81NX7byWc=
+X-Received: by 2002:aca:d905:: with SMTP id q5mr119976oig.0.1544487043418;
+ Mon, 10 Dec 2018 16:10:43 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Type: text/plain; charset="utf-8"
-X-Mailer: MessagingEngine.com Webmail Interface - ajax-2f590f9a
-In-Reply-To: <20181211000506.7559-1-natechancellor@gmail.com>
-References: <20181211000506.7559-1-natechancellor@gmail.com>
-Date:   Tue, 11 Dec 2018 10:40:06 +1030
-Subject: Re: [PATCH] pinctrl: aspeed: Wrap -Woverride-init with cc-option
+References: <46441800c43f029757c70d8386e3112701081503.1534160958.git.yi.z.zhang@linux.intel.com>
+ <1534787638.13739.52.camel@intel.com> <89e7bd54-4afa-614d-ec54-49af7928d6c7@intel.com>
+ <20180821161657.GA22028@tiger-server>
+In-Reply-To: <20180821161657.GA22028@tiger-server>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Mon, 10 Dec 2018 16:10:31 -0800
+Message-ID: <CAPcyv4gZ8WBhUZkoUd1m6bCrtKW0EmfWfCtpGULvjfM=yJ9_sg@mail.gmail.com>
+Subject: Re: [PATCH V2 1/1] device-dax: check for vma range while dax_mmap.
+To:     Dave Jiang <dave.jiang@intel.com>,
+        Vishal L Verma <vishal.l.verma@intel.com>,
+        "Zhang, Yu C" <yu.c.zhang@intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>, zwisler@kernel.org,
+        Jan Kara <jack@suse.cz>, "Zhang, Yi Z" <yi.z.zhang@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Aug 21, 2018 at 12:38 AM Yi Zhang <yi.z.zhang@linux.intel.com> wrote:
+>
+> On 2018-08-20 at 12:50:31 -0700, Dave Jiang wrote:
+> >
+> >
+> > On 08/20/2018 10:53 AM, Verma, Vishal L wrote:
+> > >
+> > > On Mon, 2018-08-13 at 20:02 +0800, Zhang Yi wrote:
+> > >> This patch prevents a user mapping an illegal vma range that is larger
+> > >> than a dax device physical resource.
+> > >>
+> > >> When qemu maps the dax device for virtual nvdimm's backend device, the
+> > >> v-nvdimm label area is defined at the end of mapped range. By using an
+> > >> illegal size that exceeds the range of the device dax, it will trigger a
+> > >> fault with qemu.
+> > >>
+> > >> Signed-off-by: Zhang Yi <yi.z.zhang@linux.intel.com>
+> > >> ---
+> > >>  drivers/dax/device.c | 29 +++++++++++++++++++++++++++++
+> > >>  1 file changed, 29 insertions(+)
+> > >>
+> > >
+> > > Looks good to me:
+> > > Reviewed-by: Vishal Verma <vishal.l.verma@intel.com>
+> >
+> > Applied.
+> Thanks Dava and Vishal's kindly review. Thank you.
 
+So, it turns out this patch did not get merged for 4.20. I fumbled it
+when returning from vacation. However, I'm not sure it is needed. As
+long as attempts to access the out-of-range capacity results in SIGBUS
+then the implementation is correct. This is similar to the case where
+a file is truncated after the vma is established. That size is
+validated at fault time.
 
-On Tue, 11 Dec 2018, at 10:35, Nathan Chancellor wrote:
-> Clang does not support this option:
-> 
-> warning: unknown warning option '-Woverride-init'; did you mean
-> '-Woverride-module'? [-Wunknown-warning-option]
-> 1 warning generated.
-> 
-> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-
-Acked-by: Andrew Jeffery <andrew@aj.id.au>
-
-> ---
->  drivers/pinctrl/aspeed/Makefile | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pinctrl/aspeed/Makefile b/drivers/pinctrl/aspeed/Makefile
-> index 191ed0fc1804..790b406aae19 100644
-> --- a/drivers/pinctrl/aspeed/Makefile
-> +++ b/drivers/pinctrl/aspeed/Makefile
-> @@ -1,6 +1,6 @@
->  # Aspeed pinctrl support
->  
-> -ccflags-y += -Woverride-init
-> +ccflags-y += $(call cc-option,-Woverride-init)
->  obj-$(CONFIG_PINCTRL_ASPEED)	+= pinctrl-aspeed.o
->  obj-$(CONFIG_PINCTRL_ASPEED_G4)	+= pinctrl-aspeed-g4.o
->  obj-$(CONFIG_PINCTRL_ASPEED_G5)	+= pinctrl-aspeed-g5.o
-> -- 
-> 2.20.0
-> 
+Could you be clearer about why this is a problem? The fault sounds
+like the correct result.
