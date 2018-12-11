@@ -7,49 +7,49 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42A09C67839
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:44:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43421C07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:44:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0935620855
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:44:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0AA6620870
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:44:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544543086;
-	bh=6Zx2hjK8jucerjTjeOsCYKXBznSN0JHyB9vQ8CAv7Sc=;
+	s=default; t=1544543090;
+	bh=uwwXRYwthtTbN4KdYGqmNXx4ycYmO3gN/Ot2LupCw3E=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=j8EksKtsqZNzdBBqqjBMzC/nn+BvYs+QfCxiLyuY72ezTAjOjVssPabSog+G257Gz
-	 pE9YacuvQXxyPcGIqqIf7bnGaEAlhwzJ6moK3Nd1c3hNVzpBudXq1mdAeotHk0KXXv
-	 j4NXmwZZYD9nUsiQGWStX0d/ZG9wmvOBmIRNwIbU=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0935620855
+	b=OgbqImGmohNTjtk5UuovpMHKSP9RDTP7VQ4wk8Sqv7yB5pXZOPEU1nANjKpADJ1o/
+	 iECnlKvjxB3Mb6TI6N8q/0GMiaDtzVh/G/hsjUmHSAe/AbtvOOtBXWl6CO3CvnMxV4
+	 hYC0PQw97nDYe8oJh7WqXLi3rJL6Sj2nj3M2Rh7U=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0AA6620870
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727917AbeLKPoo (ORCPT
+        id S1727942AbeLKPot (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 10:44:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33044 "EHLO mail.kernel.org"
+        Tue, 11 Dec 2018 10:44:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33064 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727897AbeLKPok (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:44:40 -0500
+        id S1727394AbeLKPon (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 10:44:43 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1265C20855;
-        Tue, 11 Dec 2018 15:44:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D165620855;
+        Tue, 11 Dec 2018 15:44:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544543079;
-        bh=6Zx2hjK8jucerjTjeOsCYKXBznSN0JHyB9vQ8CAv7Sc=;
+        s=default; t=1544543082;
+        bh=uwwXRYwthtTbN4KdYGqmNXx4ycYmO3gN/Ot2LupCw3E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LADm3bVxPifAsBuu+D4PdlKWfIsYAUeeE28VK58J82j3etovGw/m//ykgXZvbwBkY
-         6Gh0jbiqdee5XwoP88VSPYIHhYflYQicddTIKKnoeHiTsel2J43v6bczAKmAO7KKOm
-         EUAFfgTVmnNybpRwnXwsL6rDvwEDiyCY1p0QeHq0=
+        b=P+JrsxebRwMU92VRm7lGwt8b8UcI8A+PwUYdXqGfGKidEoVscWfsK6FUYiiTCrZcW
+         GNO9iIeZrQVoy+zzWlwswwGK7W+oK5Jyp5kcauhWpePf/yAVCw+/FY+mVTGu3K0/tk
+         OJ+OKQrBCFz6LCvMIRSKfQf4cEOdPMZCVIYb38Ig=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Macpaul Lin <macpaul@gmail.com>,
-        Daniel Thompson <daniel.thompson@linaro.org>
-Subject: [PATCH 3.18 52/54] kgdboc: fix KASAN global-out-of-bounds bug in param_set_kgdboc_var()
-Date:   Tue, 11 Dec 2018 16:41:40 +0100
-Message-Id: <20181211151548.979018838@linuxfoundation.org>
+        stable@vger.kernel.org, Ben Greear <greearb@candelatech.com>,
+        Johannes Berg <johannes.berg@intel.com>
+Subject: [PATCH 3.18 53/54] mac80211: Clear beacon_int in ieee80211_do_stop
+Date:   Tue, 11 Dec 2018 16:41:41 +0100
+Message-Id: <20181211151549.040520968@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181211151546.010073210@linuxfoundation.org>
 References: <20181211151546.010073210@linuxfoundation.org>
@@ -68,82 +68,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Macpaul Lin <macpaul@gmail.com>
+From: Ben Greear <greearb@candelatech.com>
 
-commit dada6a43b0402eba438a17ac86fdc64ac56a4607 upstream.
+commit 5c21e8100dfd57c806e833ae905e26efbb87840f upstream.
 
-This patch is trying to fix KE issue due to
-"BUG: KASAN: global-out-of-bounds in param_set_kgdboc_var+0x194/0x198"
-reported by Syzkaller scan."
+This fixes stale beacon-int values that would keep a netdev
+from going up.
 
-[26364:syz-executor0][name:report8t]BUG: KASAN: global-out-of-bounds in param_set_kgdboc_var+0x194/0x198
-[26364:syz-executor0][name:report&]Read of size 1 at addr ffffff900e44f95f by task syz-executor0/26364
-[26364:syz-executor0][name:report&]
-[26364:syz-executor0]CPU: 7 PID: 26364 Comm: syz-executor0 Tainted: G W 0
-[26364:syz-executor0]Call trace:
-[26364:syz-executor0][<ffffff9008095cf8>] dump_bacIctrace+Ox0/0x470
-[26364:syz-executor0][<ffffff9008096de0>] show_stack+0x20/0x30
-[26364:syz-executor0][<ffffff90089cc9c8>] dump_stack+Oxd8/0x128
-[26364:syz-executor0][<ffffff90084edb38>] print_address_description +0x80/0x4a8
-[26364:syz-executor0][<ffffff90084ee270>] kasan_report+Ox178/0x390
-[26364:syz-executor0][<ffffff90084ee4a0>] _asan_report_loadi_noabort+Ox18/0x20
-[26364:syz-executor0][<ffffff9008b092ac>] param_set_kgdboc_var+Ox194/0x198
-[26364:syz-executor0][<ffffff900813af64>] param_attr_store+Ox14c/0x270
-[26364:syz-executor0][<ffffff90081394c8>] module_attr_store+0x60/0x90
-[26364:syz-executor0][<ffffff90086690c0>] sysfs_kl_write+Ox100/0x158
-[26364:syz-executor0][<ffffff9008666d84>] kernfs_fop_write+0x27c/0x3a8
-[26364:syz-executor0][<ffffff9008508264>] do_loop_readv_writev+0x114/0x1b0
-[26364:syz-executor0][<ffffff9008509ac8>] do_readv_writev+0x4f8/0x5e0
-[26364:syz-executor0][<ffffff9008509ce4>] vfs_writev+0x7c/Oxb8
-[26364:syz-executor0][<ffffff900850ba64>] SyS_writev+Oxcc/0x208
-[26364:syz-executor0][<ffffff90080883f0>] elO_svc_naked +0x24/0x28
-[26364:syz-executor0][name:report&]
-[26364:syz-executor0][name:report&]The buggy address belongs to the variable:
-[26364:syz-executor0][name:report&] kgdb_tty_line+Ox3f/0x40
-[26364:syz-executor0][name:report&]
-[26364:syz-executor0][name:report&]Memory state around the buggy address:
-[26364:syz-executor0] ffffff900e44f800: 00 00 00 00 00 04 fa fa fa fa fa fa 00 fa fa fa
-[26364:syz-executor0] ffffff900e44f880: fa fa fa fa 00 fa fa fa fa fa fa fa 00 fa fa fa
-[26364:syz-executor0]> ffffff900e44f900: fa fa fa fa 04 fa fa fa fa fa fa fa 00 00 00 00
-[26364:syz-executor0][name:report&]                                       ^
-[26364:syz-executor0] ffffff900e44f980: 00 fa fa fa fa fa fa fa 04 fa fa fa fa fa fa fa
-[26364:syz-executor0] ffffff900e44fa00: 04 fa fa fa fa fa fa fa 00 fa fa fa fa fa fa fa
-[26364:syz-executor0][name:report&]
-[26364:syz-executor0][name:panic&]Disabling lock debugging due to kernel taint
-[26364:syz-executor0]------------[cut here]------------
+To reproduce:
 
-After checking the source code, we've found there might be an out-of-bounds
-access to "config[len - 1]" array when the variable "len" is zero.
+Create two VAP on one radio.
+vap1 has beacon-int 100, start it.
+vap2 has beacon-int 240, start it (and it will fail
+  because beacon-int mismatch).
+reconfigure vap2 to have beacon-int 100 and start it.
+  It will fail because the stale beacon-int 240 will be used
+  in the ifup path and hostapd never gets a chance to set the
+  new beacon interval.
 
-Signed-off-by: Macpaul Lin <macpaul@gmail.com>
-Acked-by: Daniel Thompson <daniel.thompson@linaro.org>
-Cc: stable <stable@vger.kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org
+Signed-off-by: Ben Greear <greearb@candelatech.com>
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/tty/serial/kgdboc.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ net/mac80211/iface.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/tty/serial/kgdboc.c
-+++ b/drivers/tty/serial/kgdboc.c
-@@ -232,7 +232,7 @@ static void kgdboc_put_char(u8 chr)
+--- a/net/mac80211/iface.c
++++ b/net/mac80211/iface.c
+@@ -958,6 +958,8 @@ static void ieee80211_do_stop(struct iee
+ 	if (local->open_count == 0)
+ 		ieee80211_clear_tx_pending(local);
  
- static int param_set_kgdboc_var(const char *kmessage, struct kernel_param *kp)
- {
--	int len = strlen(kmessage);
-+	size_t len = strlen(kmessage);
- 
- 	if (len >= MAX_CONFIG_LEN) {
- 		printk(KERN_ERR "kgdboc: config string too long\n");
-@@ -254,7 +254,7 @@ static int param_set_kgdboc_var(const ch
- 
- 	strcpy(config, kmessage);
- 	/* Chop out \n char as a result of echo */
--	if (config[len - 1] == '\n')
-+	if (len && config[len - 1] == '\n')
- 		config[len - 1] = '\0';
- 
- 	if (configured == 1)
++	sdata->vif.bss_conf.beacon_int = 0;
++
+ 	/*
+ 	 * If the interface goes down while suspended, presumably because
+ 	 * the device was unplugged and that happens before our resume,
 
 
