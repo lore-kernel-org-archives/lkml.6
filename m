@@ -7,51 +7,51 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 699BAC5CFFE
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:56:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE96AC07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:56:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 229912146D
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:56:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 96095205C9
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:56:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544543765;
-	bh=kY03nsUMsAbpRFscAA/k/Niz9pX/I+vJpZLQQYc8sWA=;
+	s=default; t=1544543769;
+	bh=ILS/+K3ZazkkcjXMs41L2TjVMomfkUwmUWYacHHYRh0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=unllzFnuF2FDVk1wESNZzlSMfqXFMjCkRNY95xysCmO59VWZo8iTegk24lwco43t2
-	 SkWBPAucmEa7rXGCzkfdbhRVrShi9meZ30bRJYoF1mNC8gjxlOqG7ZQu8T1HrsZ4vB
-	 zwo5+BNAOi4srwuXwAnElZqcyIbUtyupFF2kCBbg=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 229912146D
+	b=Ys1+lXLKYEddOmu0OnZWYIxoziYDimI+P7RA9gByJfhB0PnhAZk9R53/MyZttdp2a
+	 UZoqZon5Ydnw19ymXOgmiPTogQQK7ci5AAkzgvcYiU4iSDJQi7cHDwiKgYUDBhtx5K
+	 tfcHFm19JjWGFh1oMxZaX29GvQdLsER4DtWeZ/2g=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 96095205C9
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730518AbeLKP4D (ORCPT
+        id S1730533AbeLKP4I (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 10:56:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44790 "EHLO mail.kernel.org"
+        Tue, 11 Dec 2018 10:56:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44862 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730498AbeLKP4B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:56:01 -0500
+        id S1730515AbeLKP4D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 10:56:03 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D4EBC2146D;
-        Tue, 11 Dec 2018 15:55:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8DB4B205C9;
+        Tue, 11 Dec 2018 15:56:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544543760;
-        bh=kY03nsUMsAbpRFscAA/k/Niz9pX/I+vJpZLQQYc8sWA=;
+        s=default; t=1544543763;
+        bh=ILS/+K3ZazkkcjXMs41L2TjVMomfkUwmUWYacHHYRh0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vsZ5b2cHHmOawzMdtIze0FyHerQODvVjq6GGRN1CP64MPMr/FBflEEodkAchKjEVR
-         oMmQogd6lLFZETGS1UdnhP+TL2H2Im730ff1jWCtBnuu2hQiJY3ykVRzlslZqW46qQ
-         Ad3srw8o4qZMQE6BU7uqkYhbmIJn3WnhLmJySFcI=
+        b=UZIlrbvSsbxOKpsbkVy0BjNMwcupT2EXdJafXxxoQLPNeAq9d2L8wiZFTpvsvcHX/
+         vVh+0TaiQ7O99whIJ/PQlZMX5C5FfkALn2c91s2DwCDUqOjM9vAKQnPlzct6kU3dKZ
+         5FrEHid8Dshqa+6JkerKSYN02G9L5s8DbZZnxQLQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Liang Li <liali@redhat.com>,
-        Hangbin Liu <liuhangbin@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Olof Johansson <olof@lixom.net>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 054/118] team: no need to do team_notify_peers or team_mcast_rejoin when disabling port
-Date:   Tue, 11 Dec 2018 16:41:13 +0100
-Message-Id: <20181211151646.428160652@linuxfoundation.org>
+Subject: [PATCH 4.19 037/118] mtd: rawnand: qcom: Namespace prefix some commands
+Date:   Tue, 11 Dec 2018 16:40:56 +0100
+Message-Id: <20181211151645.737603410@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181211151644.216668863@linuxfoundation.org>
 References: <20181211151644.216668863@linuxfoundation.org>
@@ -70,45 +70,110 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 5ed9dc99107144f83b6c1bb52a69b58875baf540 ]
+[ Upstream commit 33bf5519ae5dd356b182a94e3622f42860274a38 ]
 
-team_notify_peers() will send ARP and NA to notify peers. team_mcast_rejoin()
-will send multicast join group message to notify peers. We should do this when
-enabling/changed to a new port. But it doesn't make sense to do it when a port
-is disabled.
+PAGE_READ is used by RISC-V arch code included through mm headers,
+and it makes sense to bring in a prefix on these in the driver.
 
-On the other hand, when we set mcast_rejoin_count to 2, and do a failover,
-team_port_disable() will increase mcast_rejoin.count_pending to 2 and then
-team_port_enable() will increase mcast_rejoin.count_pending to 4. We will send
-4 mcast rejoin messages at latest, which will make user confused. The same
-with notify_peers.count.
+drivers/mtd/nand/raw/qcom_nandc.c:153: warning: "PAGE_READ" redefined
+ #define PAGE_READ   0x2
+In file included from include/linux/memremap.h:7,
+                 from include/linux/mm.h:27,
+                 from include/linux/scatterlist.h:8,
+                 from include/linux/dma-mapping.h:11,
+                 from drivers/mtd/nand/raw/qcom_nandc.c:17:
+arch/riscv/include/asm/pgtable.h:48: note: this is the location of the previous definition
 
-Fix it by deleting team_notify_peers() and team_mcast_rejoin() in
-team_port_disable().
+Caught by riscv allmodconfig.
 
-Reported-by: Liang Li <liali@redhat.com>
-Fixes: fc423ff00df3a ("team: add peer notification")
-Fixes: 492b200efdd20 ("team: add support for sending multicast rejoins")
-Signed-off-by: Hangbin Liu <liuhangbin@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Olof Johansson <olof@lixom.net>
+Reviewed-by: Miquel Raynal <miquel.raynal@bootlin.com>
+Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/team/team.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/mtd/nand/raw/qcom_nandc.c | 32 +++++++++++++++----------------
+ 1 file changed, 16 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/net/team/team.c b/drivers/net/team/team.c
-index d887016e54b6..4b6572f0188a 100644
---- a/drivers/net/team/team.c
-+++ b/drivers/net/team/team.c
-@@ -985,8 +985,6 @@ static void team_port_disable(struct team *team,
- 	team->en_port_count--;
- 	team_queue_override_port_del(team, port);
- 	team_adjust_ops(team);
--	team_notify_peers(team);
--	team_mcast_rejoin(team);
- 	team_lower_state_changed(port);
- }
+diff --git a/drivers/mtd/nand/raw/qcom_nandc.c b/drivers/mtd/nand/raw/qcom_nandc.c
+index d1d470bb32e4..8815f3e2b718 100644
+--- a/drivers/mtd/nand/raw/qcom_nandc.c
++++ b/drivers/mtd/nand/raw/qcom_nandc.c
+@@ -151,15 +151,15 @@
+ #define	NAND_VERSION_MINOR_SHIFT	16
  
+ /* NAND OP_CMDs */
+-#define	PAGE_READ			0x2
+-#define	PAGE_READ_WITH_ECC		0x3
+-#define	PAGE_READ_WITH_ECC_SPARE	0x4
+-#define	PROGRAM_PAGE			0x6
+-#define	PAGE_PROGRAM_WITH_ECC		0x7
+-#define	PROGRAM_PAGE_SPARE		0x9
+-#define	BLOCK_ERASE			0xa
+-#define	FETCH_ID			0xb
+-#define	RESET_DEVICE			0xd
++#define	OP_PAGE_READ			0x2
++#define	OP_PAGE_READ_WITH_ECC		0x3
++#define	OP_PAGE_READ_WITH_ECC_SPARE	0x4
++#define	OP_PROGRAM_PAGE			0x6
++#define	OP_PAGE_PROGRAM_WITH_ECC	0x7
++#define	OP_PROGRAM_PAGE_SPARE		0x9
++#define	OP_BLOCK_ERASE			0xa
++#define	OP_FETCH_ID			0xb
++#define	OP_RESET_DEVICE			0xd
+ 
+ /* Default Value for NAND_DEV_CMD_VLD */
+ #define NAND_DEV_CMD_VLD_VAL		(READ_START_VLD | WRITE_START_VLD | \
+@@ -692,11 +692,11 @@ static void update_rw_regs(struct qcom_nand_host *host, int num_cw, bool read)
+ 
+ 	if (read) {
+ 		if (host->use_ecc)
+-			cmd = PAGE_READ_WITH_ECC | PAGE_ACC | LAST_PAGE;
++			cmd = OP_PAGE_READ_WITH_ECC | PAGE_ACC | LAST_PAGE;
+ 		else
+-			cmd = PAGE_READ | PAGE_ACC | LAST_PAGE;
++			cmd = OP_PAGE_READ | PAGE_ACC | LAST_PAGE;
+ 	} else {
+-			cmd = PROGRAM_PAGE | PAGE_ACC | LAST_PAGE;
++		cmd = OP_PROGRAM_PAGE | PAGE_ACC | LAST_PAGE;
+ 	}
+ 
+ 	if (host->use_ecc) {
+@@ -1170,7 +1170,7 @@ static int nandc_param(struct qcom_nand_host *host)
+ 	 * in use. we configure the controller to perform a raw read of 512
+ 	 * bytes to read onfi params
+ 	 */
+-	nandc_set_reg(nandc, NAND_FLASH_CMD, PAGE_READ | PAGE_ACC | LAST_PAGE);
++	nandc_set_reg(nandc, NAND_FLASH_CMD, OP_PAGE_READ | PAGE_ACC | LAST_PAGE);
+ 	nandc_set_reg(nandc, NAND_ADDR0, 0);
+ 	nandc_set_reg(nandc, NAND_ADDR1, 0);
+ 	nandc_set_reg(nandc, NAND_DEV0_CFG0, 0 << CW_PER_PAGE
+@@ -1224,7 +1224,7 @@ static int erase_block(struct qcom_nand_host *host, int page_addr)
+ 	struct qcom_nand_controller *nandc = get_qcom_nand_controller(chip);
+ 
+ 	nandc_set_reg(nandc, NAND_FLASH_CMD,
+-		      BLOCK_ERASE | PAGE_ACC | LAST_PAGE);
++		      OP_BLOCK_ERASE | PAGE_ACC | LAST_PAGE);
+ 	nandc_set_reg(nandc, NAND_ADDR0, page_addr);
+ 	nandc_set_reg(nandc, NAND_ADDR1, 0);
+ 	nandc_set_reg(nandc, NAND_DEV0_CFG0,
+@@ -1255,7 +1255,7 @@ static int read_id(struct qcom_nand_host *host, int column)
+ 	if (column == -1)
+ 		return 0;
+ 
+-	nandc_set_reg(nandc, NAND_FLASH_CMD, FETCH_ID);
++	nandc_set_reg(nandc, NAND_FLASH_CMD, OP_FETCH_ID);
+ 	nandc_set_reg(nandc, NAND_ADDR0, column);
+ 	nandc_set_reg(nandc, NAND_ADDR1, 0);
+ 	nandc_set_reg(nandc, NAND_FLASH_CHIP_SELECT,
+@@ -1276,7 +1276,7 @@ static int reset(struct qcom_nand_host *host)
+ 	struct nand_chip *chip = &host->chip;
+ 	struct qcom_nand_controller *nandc = get_qcom_nand_controller(chip);
+ 
+-	nandc_set_reg(nandc, NAND_FLASH_CMD, RESET_DEVICE);
++	nandc_set_reg(nandc, NAND_FLASH_CMD, OP_RESET_DEVICE);
+ 	nandc_set_reg(nandc, NAND_EXEC_CMD, 1);
+ 
+ 	write_reg_dma(nandc, NAND_FLASH_CMD, 1, NAND_BAM_NEXT_SGL);
 -- 
 2.19.1
 
