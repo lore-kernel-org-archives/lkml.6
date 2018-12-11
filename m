@@ -7,56 +7,55 @@ X-Spam-Status: No, score=-12.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84770C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 01:16:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C821C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 01:16:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4BB0E2084E
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 01:16:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 14A3520851
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 01:16:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544490980;
-	bh=VrBRcdgfM9hJijfIzhXNGKH0pF0bQwIdl2SjHBlBle0=;
+	s=default; t=1544490983;
+	bh=85YMVMhYaOTXlaE/Dxwmmj7lAoowDYKdQM60LQZU8TY=;
 	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
-	b=2ZN297qFpaKbpZJ8EAsOne86RwS3OO1fs2Q49GddY+3XcTPXNVYBWGR7f1J+Ebzyd
-	 QPrpQPDykujF+/RCWVlFExi0hHpGhIy0N/Ee1b2FwPCMWiwoX41UoaKWWry1wW8uFq
-	 YaxtiVIV6AA3txi6FZNIjgzCqDSvTbalCG6OY/r0=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4BB0E2084E
+	b=V8/Jo73aemSV6SUyPGlqbIrW3ijn68W7BbN8Un4lXS/turLEvsklpKvCVeWV7JSN0
+	 6Q/64AK39KTlaDoycHQHs5MtLuDrZ7ULo6WOyjRsqLRK7LFJhSLfhCQzm5ROvm0IOW
+	 5mighvco24J2YuQXrdcmJXcXJpsghL2zytIEa4+Y=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 14A3520851
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727442AbeLKBQT (ORCPT
+        id S1728563AbeLKBQW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 20:16:19 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:51092 "EHLO
+        Mon, 10 Dec 2018 20:16:22 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:51192 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728283AbeLKBQN (ORCPT
+        with ESMTP id S1728375AbeLKBQR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 20:16:13 -0500
+        Mon, 10 Dec 2018 20:16:17 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=cD5zjDyUXieUheO20Ld7DzUYylufB0J98rDcc7p8iKY=; b=viTIUDSjStCV
-        iADBiRW6cW+QisYn92ynDeBklA0dqrCBgdoRcYSyPlSzC8v8hQWZ9v+9G5fdNRlDw2FwYDEiGTDWl
-        JowytMnbcKNSuC5pZM2o5ohkQIFPwtvMsnwG+uPdpwdy6DL7ITxOYDdoKaCeZntmHQtceArci3gPv
-        LaS/I=;
+        List-Archive; bh=HLeYB78qRjRKsb2QgM8O5Wa4o/mUpnsvaU1+CL8uJNc=; b=Yb2nBpENF2vD
+        ZYGfO7YrA2Up9jQH2S+RLOixsTEPS1HTZSKZtYxBBpKPrjSaCJfc87eG2Sae1pT3Hy0lgD4WGwhHy
+        btGUY5nPeLVT50NvjY1vMwaQrWokNjFkHpfZS1+U1ncN8cmsIuZOye+su9v55qmmveL4BAiSbEeJ0
+        PtN6o=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1gWWeg-0000Ln-5l; Tue, 11 Dec 2018 01:16:10 +0000
+        id 1gWWej-0000M1-De; Tue, 11 Dec 2018 01:16:13 +0000
 Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id DB1AB11254C7; Tue, 11 Dec 2018 01:16:09 +0000 (GMT)
+        id 1D9F411254C7; Tue, 11 Dec 2018 01:16:13 +0000 (GMT)
 From:   Mark Brown <broonie@kernel.org>
 To:     Linus Walleij <linus.walleij@linaro.org>
 Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
         Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Applied "gpio: devres: Handle nonexclusive GPIOs" to the regulator tree
+Subject: Applied "regulator: max77686: Let core handle GPIO descriptor" to the regulator tree
 In-Reply-To: 
 X-Patchwork-Hint: ignore
-Message-Id: <20181211011609.DB1AB11254C7@debutante.sirena.org.uk>
-Date:   Tue, 11 Dec 2018 01:16:09 +0000 (GMT)
+Message-Id: <20181211011613.1D9F411254C7@debutante.sirena.org.uk>
+Date:   Tue, 11 Dec 2018 01:16:13 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -64,7 +63,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   gpio: devres: Handle nonexclusive GPIOs
+   regulator: max77686: Let core handle GPIO descriptor
 
 has been applied to the regulator tree at
 
@@ -89,104 +88,68 @@ to this mail.
 Thanks,
 Mark
 
-From cb28ee388e465a956b05ada682f9ef90e776a9b7 Mon Sep 17 00:00:00 2001
+From d03c63dbcaa1ee570d0435a7f79c7083ffb59245 Mon Sep 17 00:00:00 2001
 From: Linus Walleij <linus.walleij@linaro.org>
-Date: Thu, 6 Dec 2018 13:43:45 +0100
-Subject: [PATCH] gpio: devres: Handle nonexclusive GPIOs
+Date: Thu, 6 Dec 2018 13:43:43 +0100
+Subject: [PATCH] regulator: max77686: Let core handle GPIO descriptor
 
-When we get a nonexeclusive GPIO descriptor using managed
-resources, we should only add it to the list of managed
-resources once: on the first user. Augment the
-devm_gpiod_get_index() and devm_gpiod_get_from_of_node()
-calls to account for this by checking if the descriptor
-is already resource managed before we proceed to allocate
-a new resource management struct.
+Use the gpiod_get_from_of_node() rather than the devm_*
+version so that the regulator core can handle the lifecycle
+of these descriptors.
 
-Fixes: b0ce7b29bfcd ("regulator/gpio: Allow nonexclusive GPIO access")
-Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Fix up the errorpath so that we free this descriptor if
+an error occurs in the callback. Rely on the regulator
+core to deal with it after this point: a previous patch
+fixed up the regulator core to properly dispose any
+GPIO descriptors once you call regulator_register().
+
+Fixes: 96392c3d8ca4 ("regulator: max77686: Pass descriptor instead of GPIO number")
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Reviewed-by: Marek Szyprowski <m.szyprowski@samsung.com>
 Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
 Reviewed-by: Charles Keepax <ckeepax@opensource.cirrus.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/gpio/gpiolib-devres.c | 50 ++++++++++++++++++++++++++---------
- 1 file changed, 38 insertions(+), 12 deletions(-)
+ drivers/regulator/max77686-regulator.c | 14 +++++++++-----
+ 1 file changed, 9 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/gpio/gpiolib-devres.c b/drivers/gpio/gpiolib-devres.c
-index 01959369360b..f9591b5c9748 100644
---- a/drivers/gpio/gpiolib-devres.c
-+++ b/drivers/gpio/gpiolib-devres.c
-@@ -98,15 +98,28 @@ struct gpio_desc *__must_check devm_gpiod_get_index(struct device *dev,
- 	struct gpio_desc **dr;
- 	struct gpio_desc *desc;
+diff --git a/drivers/regulator/max77686-regulator.c b/drivers/regulator/max77686-regulator.c
+index f5cee1775905..8020eb57374a 100644
+--- a/drivers/regulator/max77686-regulator.c
++++ b/drivers/regulator/max77686-regulator.c
+@@ -250,13 +250,13 @@ static int max77686_of_parse_cb(struct device_node *np,
+ 		struct regulator_config *config)
+ {
+ 	struct max77686_data *max77686 = config->driver_data;
++	int ret;
  
-+	desc = gpiod_get_index(dev, con_id, idx, flags);
-+	if (IS_ERR(desc))
-+		return desc;
-+
-+	/*
-+	 * For non-exclusive GPIO descriptors, check if this descriptor is
-+	 * already under resource management by this device.
-+	 */
-+	if (flags & GPIOD_FLAGS_BIT_NONEXCLUSIVE) {
-+		struct devres *dres;
-+
-+		dres = devres_find(dev, devm_gpiod_release,
-+				   devm_gpiod_match, &desc);
-+		if (dres)
-+			return desc;
-+	}
-+
- 	dr = devres_alloc(devm_gpiod_release, sizeof(struct gpio_desc *),
- 			  GFP_KERNEL);
--	if (!dr)
-+	if (!dr) {
-+		gpiod_put(desc);
- 		return ERR_PTR(-ENOMEM);
--
--	desc = gpiod_get_index(dev, con_id, idx, flags);
--	if (IS_ERR(desc)) {
--		devres_free(dr);
--		return desc;
+ 	switch (desc->id) {
+ 	case MAX77686_BUCK8:
+ 	case MAX77686_BUCK9:
+ 	case MAX77686_LDO20 ... MAX77686_LDO22:
+-		config->ena_gpiod = devm_gpiod_get_from_of_node(max77686->dev,
+-				np,
++		config->ena_gpiod = gpiod_get_from_of_node(np,
+ 				"maxim,ena",
+ 				0,
+ 				GPIOD_OUT_HIGH | GPIOD_FLAGS_BIT_NONEXCLUSIVE,
+@@ -271,9 +271,13 @@ static int max77686_of_parse_cb(struct device_node *np,
+ 	if (config->ena_gpiod) {
+ 		set_bit(desc->id, max77686->gpio_enabled);
+ 
+-		return regmap_update_bits(config->regmap, desc->enable_reg,
+-					  desc->enable_mask,
+-					  MAX77686_GPIO_CONTROL);
++		ret = regmap_update_bits(config->regmap, desc->enable_reg,
++					 desc->enable_mask,
++					 MAX77686_GPIO_CONTROL);
++		if (ret) {
++			gpiod_put(config->ena_gpiod);
++			config->ena_gpiod = NULL;
++		}
  	}
  
- 	*dr = desc;
-@@ -140,15 +153,28 @@ struct gpio_desc *devm_gpiod_get_from_of_node(struct device *dev,
- 	struct gpio_desc **dr;
- 	struct gpio_desc *desc;
- 
-+	desc = gpiod_get_from_of_node(node, propname, index, dflags, label);
-+	if (IS_ERR(desc))
-+		return desc;
-+
-+	/*
-+	 * For non-exclusive GPIO descriptors, check if this descriptor is
-+	 * already under resource management by this device.
-+	 */
-+	if (dflags & GPIOD_FLAGS_BIT_NONEXCLUSIVE) {
-+		struct devres *dres;
-+
-+		dres = devres_find(dev, devm_gpiod_release,
-+				   devm_gpiod_match, &desc);
-+		if (dres)
-+			return desc;
-+	}
-+
- 	dr = devres_alloc(devm_gpiod_release, sizeof(struct gpio_desc *),
- 			  GFP_KERNEL);
--	if (!dr)
-+	if (!dr) {
-+		gpiod_put(desc);
- 		return ERR_PTR(-ENOMEM);
--
--	desc = gpiod_get_from_of_node(node, propname, index, dflags, label);
--	if (IS_ERR(desc)) {
--		devres_free(dr);
--		return desc;
- 	}
- 
- 	*dr = desc;
+ 	return 0;
 -- 
 2.19.0.rc2
 
