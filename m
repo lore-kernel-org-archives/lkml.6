@@ -7,48 +7,49 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48DEDC5CFFE
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:46:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB102C5CFFE
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:46:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0DD222087F
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:46:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7036B21104
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:46:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544543176;
-	bh=Sb2LZhea8SCJikvrUTUObU7rv/95/9mz2XLpBNxe47U=;
+	s=default; t=1544543181;
+	bh=FN0nVgiizvVtNgxqljH4hMf2nWkcV5pSPsehAz0hfGY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=SCIgI4pmmf8bPY9fYLMWXBaj63lfxOAQaUYzO3BlzxEjCMcKwguPEmfro1Dn+gnzR
-	 zWrkZzh9uAdS0zi6I7Zk6rzYymERPBKA6/EAVol1HQkgXuTlZpol51PsVTC7tGVJ0s
-	 zTTEV4TiZeQD3zGTwkSMb4T6Fq61ynDB0zN26AJ4=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0DD222087F
+	b=EZssHgWaJpoeJtVqrEcT92EFWOujcD6x6KkNey1JoRp3Uz30MxoeTcIUmViLwbSaN
+	 DiJSupAUNOMerueJahRKVWDA4xlOazUtnfnOTq35K94co+J3fJg+aw9GWLShpUncaT
+	 RBrbbNb6rtSNa4zMhQsy8HlMIHcfj/HYaKpgacI0=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7036B21104
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728301AbeLKPqO (ORCPT
+        id S1728325AbeLKPqU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 10:46:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34588 "EHLO mail.kernel.org"
+        Tue, 11 Dec 2018 10:46:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34662 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728278AbeLKPqJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:46:09 -0500
+        id S1728295AbeLKPqO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 10:46:14 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2F62A2087F;
-        Tue, 11 Dec 2018 15:46:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2CA212087F;
+        Tue, 11 Dec 2018 15:46:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544543168;
-        bh=Sb2LZhea8SCJikvrUTUObU7rv/95/9mz2XLpBNxe47U=;
+        s=default; t=1544543173;
+        bh=FN0nVgiizvVtNgxqljH4hMf2nWkcV5pSPsehAz0hfGY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zAChU/mp2QPhwj0JKpD/Sngl3TSbdiTELR+MYeWgS4hFq98xNZizj6+9m1IAswWd3
-         sokHeWMZCxp9SRcFboUVd+7THBl5oKFIdYX9EOVtTMRUTMxBOQTXHRHAC4PcfvVNf4
-         Tpm/uE0X1ptMs/yuVf8CsH1bY/FGs0tELifjtTrU=
+        b=BknMEHFVVAXdb2/IvW0W2v9OLSn6dIylJtIFiWUUec7Cr0XkaW/0QnnZqzuUjiaQO
+         HL3Ckdvsdsz36AyYiSxcahSkAdJBWA1GoK6fI0U09SKAq9QJNHgWMq0kAE+DrNEFp9
+         ujmA2TZFalS9ubRvO7xkB/tmXNKyO08ALhSUWJvs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.4 38/91] ALSA: trident: Suppress gcc string warning
-Date:   Tue, 11 Dec 2018 16:40:57 +0100
-Message-Id: <20181211151608.968759154@linuxfoundation.org>
+        stable@vger.kernel.org, Laura Abbott <labbott@redhat.com>,
+        Daniel Thompson <daniel.thompson@linaro.org>
+Subject: [PATCH 4.4 40/91] kgdboc: Fix restrict error
+Date:   Tue, 11 Dec 2018 16:40:59 +0100
+Message-Id: <20181211151609.155918034@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181211151606.026852373@linuxfoundation.org>
 References: <20181211151606.026852373@linuxfoundation.org>
@@ -67,40 +68,49 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Laura Abbott <labbott@redhat.com>
 
-commit d6b340d7cb33c816ef4abe8143764ec5ab14a5cc upstream.
+commit 2dd453168643d9475028cd867c57e65956a0f7f9 upstream.
 
-The meddlesome gcc warns about the possible shortname string in
-trident driver code:
-  sound/pci/trident/trident.c: In function ‘snd_trident_probe’:
-  sound/pci/trident/trident.c:126:2: warning: ‘strcat’ accessing 17 or more bytes at offsets 36 and 20 may overlap 1 byte at offset 36 [-Wrestrict]
-  strcat(card->shortname, card->driver);
+There's an error when compiled with restrict:
 
-It happens since gcc calculates the possible string size from
-card->driver, but this can't be true since we did set the string just
-before that, and they are much shorter.
+drivers/tty/serial/kgdboc.c: In function ‘configure_kgdboc’:
+drivers/tty/serial/kgdboc.c:137:2: error: ‘strcpy’ source argument is the same
+as destination [-Werror=restrict]
+  strcpy(config, opt);
+  ^~~~~~~~~~~~~~~~~~~
 
-For shutting it up, use the exactly same string set to card->driver
-for strcat() to card->shortname, too.
+As the error implies, this is from trying to use config as both source and
+destination. Drop the call to the function where config is the argument
+since nothing else happens in the function.
 
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Laura Abbott <labbott@redhat.com>
+Reviewed-by: Daniel Thompson <daniel.thompson@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/pci/trident/trident.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/tty/serial/kgdboc.c |    6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
---- a/sound/pci/trident/trident.c
-+++ b/sound/pci/trident/trident.c
-@@ -123,7 +123,7 @@ static int snd_trident_probe(struct pci_
- 	} else {
- 		strcpy(card->shortname, "Trident ");
- 	}
--	strcat(card->shortname, card->driver);
-+	strcat(card->shortname, str);
- 	sprintf(card->longname, "%s PCI Audio at 0x%lx, irq %d",
- 		card->shortname, trident->port, trident->irq);
+--- a/drivers/tty/serial/kgdboc.c
++++ b/drivers/tty/serial/kgdboc.c
+@@ -162,15 +162,13 @@ static int configure_kgdboc(void)
+ {
+ 	struct tty_driver *p;
+ 	int tty_line = 0;
+-	int err;
++	int err = -ENODEV;
+ 	char *cptr = config;
+ 	struct console *cons;
+ 
+-	err = kgdboc_option_setup(config);
+-	if (err || !strlen(config) || isspace(config[0]))
++	if (!strlen(config) || isspace(config[0]))
+ 		goto noconfig;
+ 
+-	err = -ENODEV;
+ 	kgdboc_io_ops.is_console = 0;
+ 	kgdb_tty_driver = NULL;
  
 
 
