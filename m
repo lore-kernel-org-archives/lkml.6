@@ -2,355 +2,126 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.7 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05777C07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 18:16:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62656C07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 18:17:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B2F632087F
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 18:16:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544552213;
-	bh=ITJJnguWLBjf1qHjp0nvGSWqLvd44wkFB9jR2TfmrEI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=ZHTzqPKoMMi9cRBL9Llke26MA6FcJPKBDNufPxSQFNSlRXfhjHwqzLZc1YdHM2Ubf
-	 T63GVMOYXeNsbap8QD9DjFLDQbJ4KYDZnI3Zh2bQ5oIlrdk22k+JlOD8Zyedxr2tdT
-	 2+LYzLWKZJhE2BabzV1Ryjd5aJC8nRCWNQKutNz0=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B2F632087F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 199B020870
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 18:17:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=xenosoft.de header.i=@xenosoft.de header.b="XvlQdtZY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 199B020870
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xenosoft.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727034AbeLKSQw (ORCPT
+        id S1727097AbeLKSRN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 13:16:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51084 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726722AbeLKSQw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 13:16:52 -0500
-Received: from gmail.com (unknown [104.132.1.77])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D815520851;
-        Tue, 11 Dec 2018 18:16:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544552210;
-        bh=ITJJnguWLBjf1qHjp0nvGSWqLvd44wkFB9jR2TfmrEI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=AUWzxm0LfJmHKhSUEcMe+NGorUjaA2bwQo7k/2SwcxhM1PwrjUJt1OICCYA+zWMkr
-         GeNFF1K785+lYRCUaCvPHho2REhE3ATbU2yasSsVObobO0OF+eEDUyI2qVn8aGGpPY
-         c0freWWq8lxsD56sUeRvbyjhQCvLbmg71bCyGiR4=
-Date:   Tue, 11 Dec 2018 10:16:48 -0800
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Parshuram Thombare <pthombar@cadence.com>
-Cc:     axboe@kernel.dk, vinholikatti@gmail.com, jejb@linux.vnet.ibm.com,
-        martin.petersen@oracle.com, mchehab+samsung@kernel.org,
-        gregkh@linuxfoundation.org, davem@davemloft.net,
-        akpm@linux-foundation.org, nicolas.ferre@microchip.com,
-        arnd@arndb.de, linux-kernel@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
-        adouglas@cadence.com, jank@cadence.com, rafalc@cadence.com,
-        AnilKumar Chimata <anilc@codeaurora.org>,
-        Ladvine D Almeida <ladvine@synopsys.com>,
-        Satya Tangirala <satyat@google.com>,
-        Paul Crowley <paulcrowley@google.com>
-Subject: Re: [PATCH 2/2] scsi: ufs: add inline crypto support to UFS HCD
-Message-ID: <20181211181647.GC221175@gmail.com>
-References: <20181211095027.GA3316@lvlogina.cadence.com>
+        Tue, 11 Dec 2018 13:17:13 -0500
+Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.54]:24769 "EHLO
+        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727027AbeLKSRM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 13:17:12 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1544552227;
+        s=strato-dkim-0002; d=xenosoft.de;
+        h=In-Reply-To:Date:Message-ID:References:Cc:To:From:Subject:
+        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
+        bh=m6l3qXELKbs/O0GRo+MxuQFKSwj02GVfBj4EedOHVpM=;
+        b=XvlQdtZYATsuOf1Dg9/w30y+qqPSTZilTQ2HKv1kDyMCe0oi9UcKhuzZpUEyfA4ZqD
+        l9IOId78PzW1bjUbSkyl3hSrhs7wraNWR0BpOyfDkdx6vISkg36bq2VW+WgVnw/gJ17r
+        3Tm+CKur1Nrcajx7Lw6BL3ovbd7Grj/eMYtY6BxHutjjy616+RiKMCBI0JPZv4Zh7aYu
+        hrNGb/6XaI304KaA2E+spz/qTvqw3/J6ohTJXxBAyNVRFT+7ndQCYZZpQofPqFHtfL94
+        McAZ7xVdI6Vzjg4d8PKaWd7fxWKCRJ4Ug5nwYnouJiTFlqDe52E6CkiPNzOj2fxHdSA8
+        WmSg==
+X-RZG-AUTH: ":L2QefEenb+UdBJSdRCXu93KJ1bmSGnhMdmOod1DhGM4l4Hio94KKxRySfLxnHfJ+Dkjp5G5MdirQj0WG7CkGilHp+9VUkHIzm+DEvUK8o5nh4w=="
+X-RZG-CLASS-ID: mo00
+Received: from [IPv6:2a02:8109:a400:162c:9412:ea7f:6067:9fc7]
+        by smtp.strato.de (RZmta 44.7 AUTH)
+        with ESMTPSA id j074b8uBBIH546U
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
+        (Client did not present a certificate);
+        Tue, 11 Dec 2018 19:17:05 +0100 (CET)
+Subject: Re: use generic DMA mapping code in powerpc V4
+From:   Christian Zigotzky <chzigotzky@xenosoft.de>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     linux-arch@vger.kernel.org,
+        Darren Stevens <darren@stevens-zone.net>,
+        linux-kernel@vger.kernel.org, Julian Margetson <runaway@candw.ms>,
+        linux-mm@kvack.org, iommu@lists.linux-foundation.org,
+        Paul Mackerras <paulus@samba.org>,
+        Olof Johansson <olof@lixom.net>, linuxppc-dev@lists.ozlabs.org
+References: <20181129170351.GC27951@lst.de>
+ <d0e04a85-f17d-414e-6fea-971414417430@xenosoft.de>
+ <20181130105346.GB26765@lst.de>
+ <8694431d-c669-b7b9-99fa-e99db5d45a7d@xenosoft.de>
+ <20181130131056.GA5211@lst.de>
+ <25999587-2d91-a63c-ed38-c3fb0075d9f1@xenosoft.de>
+ <c5202d29-863d-1377-0e2d-762203b317e2@xenosoft.de>
+ <58c61afb-290f-6196-c72c-ac7b61b84718@xenosoft.de>
+ <20181204142426.GA2743@lst.de>
+ <ef56d279-f75d-008e-71ba-7068c1b37c48@xenosoft.de>
+ <20181205140550.GA27549@lst.de>
+ <1948cf84-49ab-543c-472c-d18e27751903@xenosoft.de>
+ <5a2ea855-b4b0-e48a-5c3e-c859a8451ca2@xenosoft.de>
+ <7B6DDB28-8BF6-4589-84ED-F1D4D13BFED6@xenosoft.de>
+ <8a2c4581-0c85-8065-f37e-984755eb31ab@xenosoft.de>
+ <424bb228-c9e5-6593-1ab7-5950d9b2bd4e@xenosoft.de>
+ <c86d76b4-b199-557e-bc64-4235729c1e72@xenosoft.de>
+ <1ecb7692-f3fb-a246-91f9-2db1b9496305@xenosoft.de>
+ <6c997c03-e072-97a9-8ae0-38a4363df919@xenosoft.de>
+ <4cfb3f26-74e1-db01-b014-759f188bb5a6@xenosoft.de>
+Message-ID: <82879d3f-83de-6438-c1d6-49c571dcb671@xenosoft.de>
+Date:   Tue, 11 Dec 2018 19:17:05 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.3
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181211095027.GA3316@lvlogina.cadence.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <4cfb3f26-74e1-db01-b014-759f188bb5a6@xenosoft.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: de-DE
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[+Cc other people who have been working on this]
+Next step: 7decbcfc656805603ab97206b3f816f26cd2cf7d (powerpc/dma: use 
+generic direct and swiotlb ops)
 
-Hi Parshuram,
+git checkout 7decbcfc656805603ab97206b3f816f26cd2cf7d
 
-On Tue, Dec 11, 2018 at 09:50:27AM +0000, Parshuram Thombare wrote:
-> Add real time crypto support to UFS HCD using new device
-> mapper 'crypto-ufs'. dmsetup tool can be used to enable
-> real time / inline crypto support using device mapper
-> 'crypt-ufs'.
-> 
-> Signed-off-by: Parshuram Thombare <pthombar@cadence.com>
-> ---
->  MAINTAINERS                      |    7 +
->  block/Kconfig                    |    5 +
->  drivers/scsi/ufs/Kconfig         |   12 +
->  drivers/scsi/ufs/Makefile        |    1 +
->  drivers/scsi/ufs/ufshcd-crypto.c |  453 ++++++++++++++++++++++++++++++++++++++
->  drivers/scsi/ufs/ufshcd-crypto.h |  102 +++++++++
->  drivers/scsi/ufs/ufshcd.c        |   27 +++-
->  drivers/scsi/ufs/ufshcd.h        |    6 +
->  drivers/scsi/ufs/ufshci.h        |    1 +
->  9 files changed, 613 insertions(+), 1 deletions(-)
->  create mode 100644 drivers/scsi/ufs/ufshcd-crypto.c
->  create mode 100644 drivers/scsi/ufs/ufshcd-crypto.h
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index f485597..3a68126 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -15340,6 +15340,13 @@ S:	Supported
->  F:	Documentation/scsi/ufs.txt
->  F:	drivers/scsi/ufs/
->  
-> +UNIVERSAL FLASH STORAGE HOST CONTROLLER CRYPTO DRIVER
-> +M:	Parshuram Thombare <pthombar@cadence.com>
-> +L:	linux-scsi@vger.kernel.org
-> +S:	Supported
-> +F:	drivers/scsi/ufs/ufshcd-crypto.c
-> +F:	drivers/scsi/ufs/ufshcd-crypto.h
-> +
->  UNIVERSAL FLASH STORAGE HOST CONTROLLER DRIVER DWC HOOKS
->  M:	Joao Pinto <jpinto@synopsys.com>
->  L:	linux-scsi@vger.kernel.org
-> diff --git a/block/Kconfig b/block/Kconfig
-> index f7045aa..6afe131 100644
-> --- a/block/Kconfig
-> +++ b/block/Kconfig
-> @@ -224,4 +224,9 @@ config BLK_MQ_RDMA
->  config BLK_PM
->  	def_bool BLOCK && PM
->  
-> +config BLK_DEV_HW_RT_ENCRYPTION
-> +	bool
-> +	depends on SCSI_UFSHCD_RT_ENCRYPTION
-> +	default n
-> +
->  source block/Kconfig.iosched
-> diff --git a/drivers/scsi/ufs/Kconfig b/drivers/scsi/ufs/Kconfig
-> index 2ddbb26..09a3ec0 100644
-> --- a/drivers/scsi/ufs/Kconfig
-> +++ b/drivers/scsi/ufs/Kconfig
-> @@ -136,3 +136,15 @@ config SCSI_UFS_BSG
->  
->  	  Select this if you need a bsg device node for your UFS controller.
->  	  If unsure, say N.
-> +
-> +config SCSI_UFSHCD_RT_ENCRYPTION
-> +	bool "Universal Flash Storage Controller RT encryption support"
-> +	depends on SCSI_UFSHCD
-> +	default n
-> +	select BLK_DEV_HW_RT_ENCRYPTION if SCSI_UFSHCD_RT_ENCRYPTION
-> +	select BLK_DEV_DM if SCSI_UFSHCD_RT_ENCRYPTION
-> +	help
-> +	Universal Flash Storage Controller RT encryption support
-> +
-> +	Select this if you want to enable real time encryption on UFS controller
-> +	If unsure, say N.
-> diff --git a/drivers/scsi/ufs/Makefile b/drivers/scsi/ufs/Makefile
-> index a3bd70c..6169096 100644
-> --- a/drivers/scsi/ufs/Makefile
-> +++ b/drivers/scsi/ufs/Makefile
-> @@ -7,6 +7,7 @@ obj-$(CONFIG_SCSI_UFS_QCOM) += ufs-qcom.o
->  obj-$(CONFIG_SCSI_UFSHCD) += ufshcd-core.o
->  ufshcd-core-y				+= ufshcd.o ufs-sysfs.o
->  ufshcd-core-$(CONFIG_SCSI_UFS_BSG)	+= ufs_bsg.o
-> +ufshcd-core-$(CONFIG_SCSI_UFSHCD_RT_ENCRYPTION) += ufshcd-crypto.o
->  obj-$(CONFIG_SCSI_UFSHCD_PCI) += ufshcd-pci.o
->  obj-$(CONFIG_SCSI_UFSHCD_PLATFORM) += ufshcd-pltfrm.o
->  obj-$(CONFIG_SCSI_UFS_HISI) += ufs-hisi.o
-> diff --git a/drivers/scsi/ufs/ufshcd-crypto.c b/drivers/scsi/ufs/ufshcd-crypto.c
-> new file mode 100644
-> index 0000000..9c95ff3
-> --- /dev/null
-> +++ b/drivers/scsi/ufs/ufshcd-crypto.c
-> @@ -0,0 +1,453 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * UFS Host controller crypto driver
-> + *
-> + * Copyright (C) 2018 Cadence Design Systems, Inc.
-> + *
-> + * Authors:
-> + *	Parshuram Thombare <pthombar@cadence.com>
-> + *
-> + */
-> +
-> +#include <linux/module.h>
-> +#include <linux/kernel.h>
-> +#include <crypto/aes.h>
-> +#include <linux/device-mapper.h>
-> +#include "ufshcd.h"
-> +#include "ufshcd-crypto.h"
-> +#include "scsi/scsi_device.h"
-> +#include "scsi/scsi_host.h"
-> +
-> +struct ufshcd_dm_ctx {
-> +	struct dm_dev *dev;
-> +	sector_t start;
-> +	unsigned short int sector_size;
-> +	unsigned char sector_shift;
-> +	int cci;
-> +	int cap_idx;
-> +	char key[AES_MAX_KEY_SIZE];
-> +	struct ufs_hba *hba;
-> +};
-> +
-> +static int dm_registered;
-> +
-> +static inline int
-> +ufshcd_key_id_to_len(int key_id)
-> +{
-> +	int key_len = -1;
-> +
-> +	switch (key_id) {
-> +	case UFS_CRYPTO_KEY_ID_128BITS:
-> +		key_len = AES_KEYSIZE_128;
-> +		break;
-> +	case UFS_CRYPTO_KEY_ID_192BITS:
-> +		key_len = AES_KEYSIZE_192;
-> +		break;
-> +	case UFS_CRYPTO_KEY_ID_256BITS:
-> +		key_len = AES_KEYSIZE_256;
-> +		break;
-> +	default:
-> +		break;
-> +	}
-> +	return key_len;
-> +}
-> +
-> +static inline int
-> +ufshcd_key_len_to_id(int key_len)
-> +{
-> +	int key_id = -1;
-> +
-> +	switch (key_len) {
-> +	case AES_KEYSIZE_128:
-> +		key_id = UFS_CRYPTO_KEY_ID_128BITS;
-> +		break;
-> +	case AES_KEYSIZE_192:
-> +		key_id = UFS_CRYPTO_KEY_ID_192BITS;
-> +		break;
-> +	case AES_KEYSIZE_256:
-> +		key_id = UFS_CRYPTO_KEY_ID_256BITS;
-> +		break;
-> +	default:
-> +		break;
-> +	}
-> +	return key_id;
-> +}
-> +
-> +static void
-> +ufshcd_read_crypto_capabilities(struct ufs_hba *hba)
-> +{
-> +	u32 tmp, i;
-> +	struct ufshcd_crypto_ctx *cctx = hba->cctx;
-> +
-> +	for (i = 0; i < cctx->cap_cnt; i++) {
-> +		tmp = ufshcd_readl(hba, REG_UFS_CRYPTOCAP + i);
-> +		cctx->ccaps[i].key_id = (tmp & CRYPTO_CAPS_KS_MASK) >>
-> +						CRYPTO_CAPS_KS_SHIFT;
-> +		cctx->ccaps[i].sdusb = (tmp & CRYPTO_CAPS_SDUSB_MASK) >>
-> +						CRYPTO_CAPS_SDUSB_SHIFT;
-> +		cctx->ccaps[i].alg_id = (tmp & CRYPTO_CAPS_ALG_ID_MASK) >>
-> +						CRYPTO_CAPS_ALG_ID_SHIFT;
-> +	}
-> +}
-> +
-> +static inline int
-> +ufshcd_get_cap_idx(struct ufshcd_crypto_ctx *cctx, int alg_id,
-> +	int key_id)
-> +{
-> +	int cap_idx;
-> +
-> +	for (cap_idx = 0; cap_idx < cctx->cap_cnt; cap_idx++) {
-> +		if (((cctx->ccaps[cap_idx].alg_id == alg_id) &&
-> +			cctx->ccaps[cap_idx].key_id == key_id))
-> +			break;
-> +	}
-> +	return ((cap_idx < cctx->cap_cnt) ? cap_idx : -1);
-> +}
-> +
-> +static inline int
-> +ufshcd_get_cci_slot(struct ufshcd_crypto_ctx *cctx)
-> +{
-> +	int  cci;
-> +
-> +	for (cci = 0; cci < cctx->config_cnt; cci++) {
-> +		if (!cctx->cconfigs[cci].cfge) {
-> +			cctx->cconfigs[cci].cfge = 1;
-> +			break;
-> +		}
-> +	}
-> +	return ((cci < cctx->config_cnt) ? cci : -1);
-> +}
-> +
-> +static void
-> +ufshcd_aes_ecb_set_key(struct ufshcd_dm_ctx *ctx)
-> +{
-> +	int i, key_size;
-> +	u32 val, cconfig16, crypto_config_addr;
-> +	struct ufshcd_crypto_ctx *cctx;
-> +	struct ufshcd_crypto_config *cconfig;
-> +	struct ufshcd_crypto_cap ccap;
-> +
-> +	cctx = ctx->hba->cctx;
-> +	if (ctx->cci <= 0)
-> +		ctx->cci = ufshcd_get_cci_slot(cctx);
-> +	/* If no slot is available, slot 0 is shared */
-> +	ctx->cci = ctx->cci < 0 ? 0 : ctx->cci;
-> +	cconfig = &(cctx->cconfigs[ctx->cci]);
-> +	ccap = cctx->ccaps[ctx->cap_idx];
-> +	key_size = ufshcd_key_id_to_len(ccap.key_id);
-> +
-> +	if ((cconfig->cap_idx != ctx->cap_idx) ||
-> +		((key_size > 0) &&
-> +		memcmp(cconfig->key, ctx->key, key_size))) {
-> +		cconfig->cap_idx = ctx->cap_idx;
-> +		memcpy(cconfig->key, ctx->key, key_size);
-> +		crypto_config_addr = cctx->crypto_config_base_addr +
-> +				ctx->cci * CRYPTO_CONFIG_SIZE;
-> +		cconfig16 = ccap.sdusb | (1 << CRYPTO_CCONFIG16_CFGE_SHIFT);
-> +		cconfig16 |= ((ctx->cap_idx << CRYPTO_CCONFIG16_CAP_IDX_SHIFT) &
-> +				CRYPTO_CCONFIG16_CAP_IDX_MASK);
-> +		spin_lock(&cctx->crypto_lock);
-> +		for (i = 0; i < key_size; i += 4) {
-> +			val = (ctx->key[i] | (ctx->key[i + 1] << 8) |
-> +				(ctx->key[i + 2] << 16) |
-> +				(ctx->key[i + 3] << 24));
-> +			ufshcd_writel(ctx->hba, val, crypto_config_addr + i);
-> +		}
-> +		ufshcd_writel(ctx->hba, cpu_to_le32(cconfig16),
-> +				crypto_config_addr + (4 * 16));
-> +		spin_unlock(&cctx->crypto_lock);
-> +		/* Make sure keys are programmed */
-> +		mb();
-> +	}
-> +}
+We have the bad commit! :-) The PASEMI onboard ethernet doesn't work 
+with this commit anymore.
 
-First of all, thanks for working on this.  A lot of Android device vendors would
-like to have upstream support for inline encryption.  However, are you aware of
-previous (unsuccessful) patchsets by other people working on this?  Have you
-addressed the concerns and improved on their work, or is this just yet another
-new effort starting from scratch?
+Error messages:
 
-AnilKumar Chimata <anilc@codeaurora.org> (Qualcomm) in October 2018:
+[  367.627623] pci 0000:00:1a.0: dma_direct_map_page: overflow 
+0x000000026bcb5002+110 of device mask ffffffff bus mask 0
+[  367.627631] pci 0000:00:1a.0: dma_direct_map_page: overflow 
+0x000000026bcb5002+110 of device mask ffffffff bus mask 0
+[  367.627639] pci 0000:00:1a.0: dma_direct_map_page: overflow 
+0x000000026bcb5002+110 of device mask ffffffff bus mask 0
+[  367.627647] pci 0000:00:1a.0: dma_direct_map_page: overflow 
+0x000000026bcb5002+110 of device mask ffffffff bus mask 0
 
-	https://patchwork.kernel.org/cover/10645739/
+pci 0000:00:1a.0 = 00:1a.0 DMA controller: PA Semi, Inc PWRficient DMA 
+Controller (rev 12)
 
-Ladvine D Almeida <ladvine@synopsys.com> in May 2018:
+X5000 (P5020 board): U-Boot loads the kernel and the dtb file. Then the 
+kernel starts but it doesn't find any hard disks (partitions). That 
+means this is also the bad commit for the P5020 board.
 
-	http://lists-archives.com/linux-kernel/29135393-scsi-ufs-ufs-host-controller-crypto-changes.html	
+Link to the bad commit: 
+http://git.infradead.org/users/hch/misc.git/commit/7decbcfc656805603ab97206b3f816f26cd2cf7d
 
-Satya Tangirala <satyat@google.com> is also working on it but I don't believe
-he's sent out a patchset yet.
+Link to the Git: 
+http://git.infradead.org/users/hch/misc.git/shortlog/refs/heads/powerpc-dma.5
 
-It would be nice to coordinate to get a proper solution upstream that works for
-everyone, rather than having everyone try independently and fail repeatedly :-)
+The commit before (977706f9755d2d697aa6f45b4f9f0e07516efeda - 
+powerpc/dma: remove dma_nommu_mmap_coherent) works without any problems.
 
-Also, note that ECB mode is not appropriate for disk encryption.  So this patch
-(and the hardware you tested it on, if that's all it supports) is effectively
-useless as-is.  You need to support XTS mode.
+-- Christian
 
-Thanks!
 
-- Eric
