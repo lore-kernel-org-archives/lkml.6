@@ -2,114 +2,147 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 046A3C5CFFE
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 13:59:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE073C67839
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 14:01:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C72422082F
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 13:59:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C72422082F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id A44EA20849
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 14:01:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544536907;
+	bh=BrPCIYw4y3W3jjjxvy14qmwei0MW0x6KeI0SPMGcEfU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=c0AL+yZavqfoAtvAIKBxIZOgfGk+dos2MLMQPlMK6j6hFq0WmQjz7tQ//oIbR4aOd
+	 Lseyw6QyGF5C45IPLXJ2cL88Qde4DTejSTZ240TW0qSupQVqMgZWVEj0pnKMGxfXwy
+	 BS0x31NO0S6eLzLOcYStB61afsOKsDoP3yMHOZdY=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A44EA20849
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726721AbeLKN73 (ORCPT
+        id S1726704AbeLKOBq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 08:59:29 -0500
-Received: from mga14.intel.com ([192.55.52.115]:20922 "EHLO mga14.intel.com"
+        Tue, 11 Dec 2018 09:01:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52266 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726203AbeLKN73 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 08:59:29 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Dec 2018 05:59:28 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,342,1539673200"; 
-   d="scan'208";a="126944647"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.72.86])
-  by fmsmga004.fm.intel.com with ESMTP; 11 Dec 2018 05:59:26 -0800
-Received: from andy by smile with local (Exim 4.91)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1gWiZJ-0000CU-Oc; Tue, 11 Dec 2018 15:59:25 +0200
-Date:   Tue, 11 Dec 2018 15:59:25 +0200
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Rob Herring <robh@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH v6 0/3] device property: Add fwnode_get_name() helper
-Message-ID: <20181211135925.GD10650@smile.fi.intel.com>
-References: <20181211131451.52832-1-heikki.krogerus@linux.intel.com>
+        id S1726350AbeLKOBq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 09:01:46 -0500
+Received: from localhost (173-25-171-118.client.mchsi.com [173.25.171.118])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8AC0A2082F;
+        Tue, 11 Dec 2018 14:01:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544536904;
+        bh=BrPCIYw4y3W3jjjxvy14qmwei0MW0x6KeI0SPMGcEfU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=IYJcHiouudMefyK2+ftBv4ygnhtWrjBASJZ2+b39da1AoxIV9eMyIbVglsmQ21zVl
+         P9ABEhOghbslkvWKe0VIFQJQ1eyje/h9sgocdfEjWBhvcy2/L4N+WCTNVLEkHx0iQc
+         t0JLdTPENVgofOobfER9jqD79nEpCk+H2FDby0yg=
+Date:   Tue, 11 Dec 2018 08:01:43 -0600
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     David Gibson <david@gibson.dropbear.id.au>
+Cc:     davem@davemloft.net, saeedm@mellanox.com, ogerlitz@mellanox.com,
+        tariqt@mellanox.com, leon@kernel.org, linux-kernel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, netdev@vger.kernel.org,
+        alex.williamson@redhat.com, linux-pci@vger.kernel.org,
+        linux-rdma@vger.kernel.org, sbest@redhat.com, paulus@samba.org,
+        benh@kernel.crashing.org
+Subject: Re: [PATCH] PCI: Add no-D3 quirk for Mellanox ConnectX-[45]
+Message-ID: <20181211140143.GD99796@google.com>
+References: <20181206041951.22413-1-david@gibson.dropbear.id.au>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181211131451.52832-1-heikki.krogerus@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20181206041951.22413-1-david@gibson.dropbear.id.au>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 11, 2018 at 04:14:48PM +0300, Heikki Krogerus wrote:
-> Hi,
-> 
-> Andy, I dropped you Reviewed-by tag because of the last change to this
-> series, so if you could check these again I would much appreciate.
+Hi David,
 
-They all looks fine,
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+I see you're still working on this, but if you do end up going this
+direction eventually, would you mind splitting this into two patches:
+1) rename the quirk to make it more generic (but not changing any
+behavior), and 2) add the ConnectX devices to the quirk.  That way
+the ConnectX change is smaller and more easily understood/reverted/etc.
 
+On Thu, Dec 06, 2018 at 03:19:51PM +1100, David Gibson wrote:
+> Mellanox ConnectX-5 IB cards (MT27800) seem to cause a call trace when
+> unbound from their regular driver and attached to vfio-pci in order to pass
+> them through to a guest.
 > 
-> Changes since v5:
-> - No longer reading "name" device property as fallback.
+> This goes away if the disable_idle_d3 option is used, so it looks like a
+> problem with the hardware handling D3 state.  To fix that more permanently,
+> use a device quirk to disable D3 state for these devices.
 > 
-> Changes since v4:
-> - No changes. There was an extra patch in v3. This was just a resend
->   of v3 without that extra patch.
+> We do this by renaming the existing quirk_no_ata_d3() more generally and
+> attaching it to the ConnectX-[45] devices (0x15b3:0x1013).
 > 
-> Changes since v3:
-> - I'm now returning -EOVERFLOW if the buffer is not big enough as
->   proposed by Andy.
+> Signed-off-by: David Gibson <david@gibson.dropbear.id.au>
+> ---
+>  drivers/pci/quirks.c | 17 +++++++++++------
+>  1 file changed, 11 insertions(+), 6 deletions(-)
 > 
-> This is the cover letter from v3:
-> 
-> This is the third version of my proposal for this helper. The
-> second version can be checked here:
-> https://lkml.org/lkml/2018/11/8/1005
-> 
-> I'm now passing the length as proposed by both Rob and Andy. I'm also
-> leaving the .get_named_child_node fwnode op untouched.
-> 
-> --
-> heikki
-> 
-> 
-> Heikki Krogerus (3):
->   device property: Introduce fwnode_get_name()
->   ACPI: property: Add acpi_fwnode_name()
->   of/property: Add of_fwnode_name()
-> 
->  drivers/acpi/property.c  | 28 ++++++++++++++++++++++++++++
->  drivers/base/property.c  | 17 +++++++++++++++++
->  drivers/of/property.c    | 13 +++++++++++++
->  include/linux/fwnode.h   |  3 +++
->  include/linux/property.h |  2 ++
->  5 files changed, 63 insertions(+)
-> 
+> diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
+> index 4700d24e5d55..add3f516ca12 100644
+> --- a/drivers/pci/quirks.c
+> +++ b/drivers/pci/quirks.c
+> @@ -1315,23 +1315,24 @@ static void quirk_ide_samemode(struct pci_dev *pdev)
+>  }
+>  DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_82801CA_10, quirk_ide_samemode);
+>  
+> -/* Some ATA devices break if put into D3 */
+> -static void quirk_no_ata_d3(struct pci_dev *pdev)
+> +/* Some devices (including a number of ATA cards) break if put into D3 */
+> +static void quirk_no_d3(struct pci_dev *pdev)
+>  {
+>  	pdev->dev_flags |= PCI_DEV_FLAGS_NO_D3;
+>  }
+> +
+>  /* Quirk the legacy ATA devices only. The AHCI ones are ok */
+>  DECLARE_PCI_FIXUP_CLASS_EARLY(PCI_VENDOR_ID_SERVERWORKS, PCI_ANY_ID,
+> -				PCI_CLASS_STORAGE_IDE, 8, quirk_no_ata_d3);
+> +				PCI_CLASS_STORAGE_IDE, 8, quirk_no_d3);
+>  DECLARE_PCI_FIXUP_CLASS_EARLY(PCI_VENDOR_ID_ATI, PCI_ANY_ID,
+> -				PCI_CLASS_STORAGE_IDE, 8, quirk_no_ata_d3);
+> +				PCI_CLASS_STORAGE_IDE, 8, quirk_no_d3);
+>  /* ALi loses some register settings that we cannot then restore */
+>  DECLARE_PCI_FIXUP_CLASS_EARLY(PCI_VENDOR_ID_AL, PCI_ANY_ID,
+> -				PCI_CLASS_STORAGE_IDE, 8, quirk_no_ata_d3);
+> +				PCI_CLASS_STORAGE_IDE, 8, quirk_no_d3);
+>  /* VIA comes back fine but we need to keep it alive or ACPI GTM failures
+>     occur when mode detecting */
+>  DECLARE_PCI_FIXUP_CLASS_EARLY(PCI_VENDOR_ID_VIA, PCI_ANY_ID,
+> -				PCI_CLASS_STORAGE_IDE, 8, quirk_no_ata_d3);
+> +				PCI_CLASS_STORAGE_IDE, 8, quirk_no_d3);
+>  
+>  /*
+>   * This was originally an Alpha-specific thing, but it really fits here.
+> @@ -3367,6 +3368,10 @@ static void mellanox_check_broken_intx_masking(struct pci_dev *pdev)
+>  DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_MELLANOX, PCI_ANY_ID,
+>  			mellanox_check_broken_intx_masking);
+>  
+> +/* Mellanox MT27800 (ConnectX-5) IB card seems to break with D3
+> + * In particular this shows up when the device is bound to the vfio-pci driver */
+
+Follow usual multiline comment style, i.e.,
+
+  /*
+   * text ...
+   * more text ...
+   */
+
+> +DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_MELLANOX, PCI_DEVICE_ID_MELLANOX_CONNECTX4, quirk_no_d3)
+> +
+>  static void quirk_no_bus_reset(struct pci_dev *dev)
+>  {
+>  	dev->dev_flags |= PCI_DEV_FLAGS_NO_BUS_RESET;
 > -- 
 > 2.19.2
 > 
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
